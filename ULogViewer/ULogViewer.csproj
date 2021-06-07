@@ -21,6 +21,8 @@
     <PackageReference Include="Avalonia" Version="0.10.6" />
     <PackageReference Include="Avalonia.Controls.DataGrid" Version="0.10.6" />
     <PackageReference Include="Avalonia.Desktop" Version="0.10.6" />
+    <PackageReference Include="CarinaStudio.AppBase.Configuration" Version="0.9.4.607" />
+    <PackageReference Include="CarinaStudio.AppBase.Core" Version="0.9.4.607" />
     <PackageReference Include="NLog" Version="4.7.10" />
     <PackageReference Include="ReactiveUI" Version="13.3.2" />
   </ItemGroup>
