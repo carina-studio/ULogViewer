@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyVersion>0.1.0</AssemblyVersion>
+		<Version>0.1.0</Version>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>CarinaStudio.ULogViewer</RootNamespace>
+    <Nullable>enable</Nullable>
+    <Authors>Carina Studio</Authors>
+    <Company>Carina Studio</Company>
+    <Copyright>©2021 Carina Studio</Copyright>
+    <StartupObject>CarinaStudio.ULogViewer.App</StartupObject>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="0.10.6" />
+    <PackageReference Include="Avalonia.Controls.DataGrid" Version="0.10.6" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.10.6" />
+    <PackageReference Include="NLog" Version="4.7.10" />
+    <PackageReference Include="ReactiveUI" Version="13.3.2" />
+  </ItemGroup>
+
+</Project>
