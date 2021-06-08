@@ -11,11 +11,20 @@
     <Company>Carina Studio</Company>
     <Copyright>©2021 Carina Studio</Copyright>
     <StartupObject>CarinaStudio.ULogViewer.App</StartupObject>
+    <ApplicationIcon>AppIcon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DefineConstants>DEBUG;TRACE</DefineConstants>
   </PropertyGroup>
+
+  <ItemGroup>
+    <AvaloniaResource Include="Resources/AppIcon_128px.png" />
+    <AvaloniaResource Include="Resources/AppIcon_256px.png" />
+    <AvaloniaResource Include="Resources/AppIcon_32px.png" />
+    <AvaloniaResource Include="Resources/AppIcon_512px.png" />
+    <AvaloniaResource Include="Resources/AppIcon_64px.png" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="0.10.6" />
@@ -25,6 +34,12 @@
     <PackageReference Include="CarinaStudio.AppBase.Core" Version="0.9.4.607" />
     <PackageReference Include="NLog" Version="4.7.10" />
     <PackageReference Include="ReactiveUI" Version="13.3.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="AppIcon_128px.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
