@@ -22,4 +22,10 @@ Global
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1D477602-23E4-4596-AABB-D13472C608C5}
 	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		Policies = $0
+		$0.TextStylePolicy = $1
+		$1.FileWidth = 80
+		$1.scope = text/plain
+	EndGlobalSection
 EndGlobal
