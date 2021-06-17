@@ -14,8 +14,8 @@ namespace CarinaStudio.ULogViewer
 
 
 		/// <summary>
-        /// Get line number.
-        /// </summary>
+		/// Get line number.
+		/// </summary>
 		int? LineNumber { get; }
 
 
