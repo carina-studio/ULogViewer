@@ -14,6 +14,12 @@ namespace CarinaStudio.ULogViewer
 
 
 		/// <summary>
+        /// Get line number.
+        /// </summary>
+		int? LineNumber { get; }
+
+
+		/// <summary>
 		/// Get message.
 		/// </summary>
 		string? Message { get; }
