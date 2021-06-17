@@ -30,6 +30,7 @@
     <PackageReference Include="Avalonia" Version="0.10.6" />
     <PackageReference Include="Avalonia.Controls.DataGrid" Version="0.10.6" />
     <PackageReference Include="Avalonia.Desktop" Version="0.10.6" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.6" />
     <PackageReference Include="CarinaStudio.AppBase.Application" Version="0.10.0.616" />
     <PackageReference Include="CarinaStudio.AppBase.Configuration" Version="0.10.0.616" />
     <PackageReference Include="CarinaStudio.AppBase.Core" Version="0.10.0.616" />
@@ -40,6 +41,9 @@
 
   <ItemGroup>
     <None Update="AppIcon_128px.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="NLog.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
