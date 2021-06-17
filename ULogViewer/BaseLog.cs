@@ -21,6 +21,12 @@ namespace CarinaStudio.ULogViewer
 
 
 		/// <summary>
+        /// Get line number.
+        /// </summary>
+		public virtual int? LineNumber { get; }
+
+
+		/// <summary>
 		/// Get message.
 		/// </summary>
 		public virtual string? Message { get; }
