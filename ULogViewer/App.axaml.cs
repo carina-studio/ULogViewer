@@ -1,8 +1,10 @@
 using Avalonia;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.ReactiveUI;
 using Avalonia.Markup.Xaml;
 using CarinaStudio;
 using CarinaStudio.Configuration;
+using CarinaStudio.Threading;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using System;
@@ -20,6 +22,7 @@ namespace CarinaStudio.ULogViewer
 	{
 		// Fields.
 		readonly ILogger logger;
+		MainWindow? mainWindow;
 		volatile Settings? settings;
 		readonly string settingsFilePath;
 		volatile SynchronizationContext? synchronizationContext;
@@ -103,6 +106,75 @@ namespace CarinaStudio.ULogViewer
 			{
 				this.logger.LogWarning(ex, "Unable to load settings");
 			}
+
+			// setup shutdown mode
+			if (this.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime)
+				desktopLifetime.ShutdownMode = Avalonia.Controls.ShutdownMode.OnExplicitShutdown;
+
+			// show main window
+			this.synchronizationContext.Post(this.ShowMainWindow);
+		}
+
+
+		// Called when main window closed.
+		async void OnMainWindowClosed()
+		{
+			this.logger.LogWarning("Main window closed");
+
+			// detach from main window
+			this.mainWindow = this.mainWindow?.Let((it) =>
+			{
+				it.DataContext = null;
+				return (MainWindow?)null;
+			});
+
+			// save settings
+			this.logger.LogDebug("Start saving settings");
+			try
+			{
+				await this.Settings.SaveAsync(this.settingsFilePath);
+				this.logger.LogDebug("Settings saved");
+			}
+			catch (Exception ex)
+			{
+				this.logger.LogError(ex, "Unable to save settings");
+			}
+
+			// restart main window
+			//
+
+			// shutdown application
+			if (this.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime)
+			{
+				this.logger.LogWarning("Shutdown");
+				desktopLifetime.Shutdown();
+			}
+		}
+
+
+		// Create and show main window.
+		void ShowMainWindow()
+		{
+			// check state
+			if (this.mainWindow != null)
+			{
+				this.logger.LogError("Already shown main window");
+				return;
+			}
+
+			// check application update
+			//
+
+			// update styles
+			//
+
+			// show main window
+			this.mainWindow = new MainWindow().Also((it) =>
+			{
+				it.Closed += (_, e) => this.OnMainWindowClosed();
+			});
+			this.logger.LogWarning("Show main window");
+			this.mainWindow.Show();
 		}
 
 
