@@ -1,7 +1,6 @@
 ﻿using CarinaStudio.Threading;
 using System;
 using System.ComponentModel;
-using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer
 {
@@ -23,11 +22,11 @@ namespace CarinaStudio.ULogViewer
 
 
 		/// <summary>
-		/// Create <see cref="ILogDataSource"/> instance asynchronously.
+		/// Create <see cref="ILogDataSource"/> instance.
 		/// </summary>
 		/// <param name="options">Options.</param>
-		/// <returns>Task of creating <see cref="ILogDataSource"/> instance.</returns>
-		Task<ILogDataSource> CreateSourceAsync(LogDataSourceOptions options);
+		/// <returns><see cref="ILogDataSource"/> instance.</returns>
+		ILogDataSource CreateSource(LogDataSourceOptions options);
 
 
 		/// <summary>

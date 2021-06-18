@@ -111,6 +111,9 @@ namespace CarinaStudio.ULogViewer
 			if (this.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime)
 				desktopLifetime.ShutdownMode = Avalonia.Controls.ShutdownMode.OnExplicitShutdown;
 
+			// initialize log data source providers
+			LogDataSourceProviders.Initialize(this);
+
 			// show main window
 			this.synchronizationContext.Post(this.ShowMainWindow);
 		}
