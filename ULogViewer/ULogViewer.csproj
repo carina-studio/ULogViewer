@@ -19,6 +19,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <AvaloniaResource Include="AppIcon.ico" />
     <AvaloniaResource Include="Resources/AppIcon_128px.png" />
     <AvaloniaResource Include="Resources/AppIcon_256px.png" />
     <AvaloniaResource Include="Resources/AppIcon_32px.png" />
