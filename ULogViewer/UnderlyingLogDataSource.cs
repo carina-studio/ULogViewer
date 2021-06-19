@@ -16,12 +16,12 @@ namespace CarinaStudio.ULogViewer
 		/// </summary>
 		File,
 		/// <summary>
-		/// Network.
-		/// </summary>
-		Network,
-		/// <summary>
 		/// Standard output of process.
 		/// </summary>
 		StandardOutput,
+		/// <summary>
+		/// Web request.
+		/// </summary>
+		WebRequest,
 	}
 }

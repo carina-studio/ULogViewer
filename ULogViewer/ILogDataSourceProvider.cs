@@ -1,6 +1,8 @@
 ﻿using CarinaStudio.Threading;
 using System;
 using System.ComponentModel;
+using System.Net;
+using System.Text;
 
 namespace CarinaStudio.ULogViewer
 {
@@ -56,18 +58,42 @@ namespace CarinaStudio.ULogViewer
 		/// <summary>
 		/// Get or set command to start process.
 		/// </summary>
+		/// <remarks>Available for <see cref="UnderlyingLogDataSource.StandardOutput"/>.</remarks>
 		public string? Command { get; set; }
+
+
+		/// <summary>
+		/// Get or set encoding of text.
+		/// </summary>
+		/// <remarks>Available for <see cref="UnderlyingLogDataSource.File"/>.</remarks>
+		public Encoding? Encoding { get; set; }
 
 
 		/// <summary>
 		/// Get or set name of file to open.
 		/// </summary>
+		/// <remarks>Available for <see cref="UnderlyingLogDataSource.File"/>.</remarks>
 		public string? FileName { get; set; }
 
 
 		/// <summary>
 		/// Get or set URI to connect.
 		/// </summary>
+		/// <remarks>Available for <see cref="UnderlyingLogDataSource.WebRequest"/>.</remarks>
 		public Uri? Uri { get; set; }
+
+
+		/// <summary>
+		/// Get or set credentials.
+		/// </summary>
+		/// <remarks>Available for <see cref="UnderlyingLogDataSource.WebRequest"/>.</remarks>
+		public ICredentials? WebRequestCredentials { get; set; }
+
+
+		/// <summary>
+		/// Path of working directory.
+		/// </summary>
+		/// <remarks>Available for <see cref="UnderlyingLogDataSource.StandardOutput"/>.</remarks>
+		public string? WorkingDirectory { get; set; }
 	}
 }

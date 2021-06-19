@@ -18,22 +18,12 @@ namespace CarinaStudio.ULogViewer
 
 
 		/// <summary>
-		/// Check whether data in source are generated continuously or not.
+		/// Open <see cref="TextReader"/> to read log data asynchronously.
 		/// </summary>
-		bool IsContinuousStream { get; }
-
-
-		/// <summary>
-		/// Check whether it is valid to reading data from source or not.
-		/// </summary>
-		bool IsValid { get; }
-
-
-		/// <summary>
-		/// Open <see cref="StreamReader"/> to read log data asynchronously.
-		/// </summary>
-		/// <returns>Task of opening <see cref="StreamReader"/>.</returns>
-		Task<StreamReader> OpenReaderAsync();
+		/// <returns>Task of opening <see cref="TextReader"/>.</returns>
+		/// <exception cref="InvalidOperationException">Current state is not <see cref="LogDataSourceState.ReadyToOpenReader"/>.</exception>
+		/// <exception cref="ObjectDisposedException">Instance has been disposed.</exception>
+		Task<TextReader> OpenReaderAsync();
 
 
 		/// <summary>
@@ -43,8 +33,58 @@ namespace CarinaStudio.ULogViewer
 
 
 		/// <summary>
+		/// Get current state.
+		/// </summary>
+		LogDataSourceState State { get; }
+
+
+		/// <summary>
 		/// Get underlying source of log.
 		/// </summary>
 		UnderlyingLogDataSource UnderlyingSource { get; }
+	}
+
+
+	/// <summary>
+	/// State of <see cref="ILogDataSource"/>.
+	/// </summary>
+	enum LogDataSourceState
+	{
+		/// <summary>
+		/// Initializing. This is the initial state.
+		/// </summary>
+		Initializing,
+		/// <summary>
+		/// Preparing.
+		/// </summary>
+		Preparing,
+		/// <summary>
+		/// Ready to call <see cref="ILogDataSource.OpenReaderAsync"/>.
+		/// </summary>
+		ReadyToOpenReader,
+		/// <summary>
+		/// Opening reader
+		/// </summary>
+		OpeningReader,
+		/// <summary>
+		/// Reader has been opened successfully.
+		/// </summary>
+		ReaderOpened,
+		/// <summary>
+		/// Closing opened reader.
+		/// </summary>
+		ClosingReader,
+		/// <summary>
+		/// Source cannot be found.
+		/// </summary>
+		SourceNotFound,
+		/// <summary>
+		/// Unclassified error.
+		/// </summary>
+		UnclassifiedError,
+		/// <summary>
+		/// Disposed.
+		/// </summary>
+		Disposed,
 	}
 }
