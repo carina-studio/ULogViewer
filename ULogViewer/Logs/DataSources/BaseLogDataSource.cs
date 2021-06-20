@@ -169,7 +169,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				throw new InternalStateCorruptedException("Internal state has been changed when opening reader.");
 
 			// prepare action to dispose reader
-			async void disposeReader(TextReader? reader)
+			void disposeReader(TextReader? reader)
 			{
 				if (reader == null)
 					return;
