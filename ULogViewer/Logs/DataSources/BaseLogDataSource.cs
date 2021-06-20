@@ -168,22 +168,6 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			if (this.ChangeState(LogDataSourceState.OpeningReader) != LogDataSourceState.OpeningReader)
 				throw new InternalStateCorruptedException("Internal state has been changed when opening reader.");
 
-			// prepare action to dispose reader
-			void disposeReader(TextReader? reader)
-			{
-				if (reader == null)
-					return;
-				_ = Task.Run(() =>
-				{
-					try
-					{
-						reader.Dispose();
-					}
-					catch
-					{ }
-				});
-			}
-
 			// open reader
 			var reader = (TextReader?)null;
 			var openingResult = LogDataSourceState.UnclassifiedError;
@@ -194,14 +178,14 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			catch(Exception ex)
 			{
 				this.Logger.LogError(ex, "Unable to open reader");
-				disposeReader(reader);
+				Global.RunWithoutErrorAsync(() => reader?.Close());
 				this.ChangeState(LogDataSourceState.UnclassifiedError);
 				throw;
 			}
 			if (this.state != LogDataSourceState.OpeningReader)
 			{
 				this.Logger.LogWarning($"State has been changed to {this.state} when opening reader");
-				disposeReader(reader);
+				Global.RunWithoutErrorAsync(() => reader?.Close());
 				if (this.IsDisposed)
 					throw new ObjectDisposedException("Source has been disposed when opening reader.");
 				throw new InternalStateCorruptedException("Internal state has been changed when opening reader.");
@@ -217,17 +201,17 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 					}
 					break;
 				case LogDataSourceState.SourceNotFound:
-					disposeReader(reader);
+					Global.RunWithoutErrorAsync(() => reader?.Close());
 					this.ChangeState(LogDataSourceState.SourceNotFound);
 					throw new Exception("Cannot open reader because source cannot be found.");
 				default:
-					disposeReader(reader);
+					Global.RunWithoutErrorAsync(() => reader?.Close());
 					this.ChangeState(LogDataSourceState.UnclassifiedError);
 					throw new Exception("Unclassified error while opening reader.");
 			}
 			if (this.ChangeState(LogDataSourceState.ReaderOpened) != LogDataSourceState.ReaderOpened)
 			{
-				disposeReader(reader);
+				Global.RunWithoutErrorAsync(() => reader?.Close());
 				throw new InternalStateCorruptedException("Internal state has been changed when opening reader.");
 			}
 			return new TextReaderWrapper(this, reader);
