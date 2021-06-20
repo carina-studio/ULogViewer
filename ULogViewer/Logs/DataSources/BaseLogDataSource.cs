@@ -144,7 +144,12 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			this.Logger.LogDebug("Reader closed");
 			if (this.IsDisposed)
 				return;
-			if (this.ChangeState(LogDataSourceState.ClosingReader) != LogDataSourceState.ClosingReader)
+			if (this.state != LogDataSourceState.ReaderOpened)
+			{
+				this.Logger.LogWarning($"Reader closed when state is {this.state}");
+				return;
+			}
+			else if (this.ChangeState(LogDataSourceState.ClosingReader) != LogDataSourceState.ClosingReader)
 				return;
 			this.SynchronizationContext.Post(this.Prepare);
 		}
@@ -163,11 +168,11 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			if (this.ChangeState(LogDataSourceState.OpeningReader) != LogDataSourceState.OpeningReader)
 				throw new InternalStateCorruptedException("Internal state has been changed when opening reader.");
 
-			// open reader
-			var reader = await Task.Run(this.OpenReaderCore);
-			if (this.state != LogDataSourceState.OpeningReader)
+			// prepare action to dispose reader
+			async void disposeReader(TextReader? reader)
 			{
-				this.Logger.LogWarning($"State has been changed to {this.state} when opening reader");
+				if (reader == null)
+					return;
 				_ = Task.Run(() =>
 				{
 					try
@@ -177,21 +182,52 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 					catch
 					{ }
 				});
+			}
+
+			// open reader
+			var reader = (TextReader?)null;
+			var openingResult = LogDataSourceState.UnclassifiedError;
+			try
+			{
+				openingResult = await Task.Run(() => this.OpenReaderCore(out reader));
+			}
+			catch(Exception ex)
+			{
+				this.Logger.LogError(ex, "Unable to open reader");
+				disposeReader(reader);
+				this.ChangeState(LogDataSourceState.UnclassifiedError);
+				throw;
+			}
+			if (this.state != LogDataSourceState.OpeningReader)
+			{
+				this.Logger.LogWarning($"State has been changed to {this.state} when opening reader");
+				disposeReader(reader);
 				if (this.IsDisposed)
 					throw new ObjectDisposedException("Source has been disposed when opening reader.");
 				throw new InternalStateCorruptedException("Internal state has been changed when opening reader.");
 			}
+			switch (openingResult)
+			{
+				case LogDataSourceState.ReaderOpened:
+					if (reader == null)
+					{
+						this.Logger.LogError("No reader opened");
+						this.ChangeState(LogDataSourceState.UnclassifiedError);
+						throw new InternalStateCorruptedException("No reader opened.");
+					}
+					break;
+				case LogDataSourceState.SourceNotFound:
+					disposeReader(reader);
+					this.ChangeState(LogDataSourceState.SourceNotFound);
+					throw new Exception("Cannot open reader because source cannot be found.");
+				default:
+					disposeReader(reader);
+					this.ChangeState(LogDataSourceState.UnclassifiedError);
+					throw new Exception("Unclassified error while opening reader.");
+			}
 			if (this.ChangeState(LogDataSourceState.ReaderOpened) != LogDataSourceState.ReaderOpened)
 			{
-				_ = Task.Run(() =>
-				{
-					try
-					{
-						reader.Dispose();
-					}
-					catch
-					{ }
-				});
+				disposeReader(reader);
 				throw new InternalStateCorruptedException("Internal state has been changed when opening reader.");
 			}
 			return new TextReaderWrapper(this, reader);
@@ -202,8 +238,9 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// Open <see cref="TextReader"/> to read log data.
 		/// </summary>
 		/// <remarks>The method will be called in background thead.</remarks>
-		/// <returns><see cref="TextReader"/>.</returns>
-		protected abstract TextReader OpenReaderCore();
+		/// <param name="reader">Opened <see cref="TextReader"/>.</param>
+		/// <returns>One of <see cref="LogDataSourceState.ReaderOpened"/>, <see cref="LogDataSourceState.SourceNotFound"/>, <see cref="LogDataSourceState.UnclassifiedError"/></returns>
+		protected abstract LogDataSourceState OpenReaderCore(out TextReader? reader);
 
 
 		/// <summary>
@@ -263,7 +300,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// Prepare source.
 		/// </summary>
 		/// <remarks>The method will be called in background thead.</remarks>
-		/// <returns>One of <see cref="LogDataSourceState.ReadyToOpenReader"/>, <see cref="LogDataSourceState.SourceNotFound"/>, <see cref="LogDataSourceState.UnclassifiedError"/></returns>
+		/// <returns>One of <see cref="LogDataSourceState.ReadyToOpenReader"/>, <see cref="LogDataSourceState.SourceNotFound"/>, <see cref="LogDataSourceState.UnclassifiedError"/>.</returns>
 		protected abstract LogDataSourceState PrepareCore();
 
 
