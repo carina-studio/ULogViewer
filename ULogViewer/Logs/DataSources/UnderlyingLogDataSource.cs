@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CarinaStudio.ULogViewer
+namespace CarinaStudio.ULogViewer.Logs.DataSources
 {
 	/// <summary>
 	/// Low-level source of log data.

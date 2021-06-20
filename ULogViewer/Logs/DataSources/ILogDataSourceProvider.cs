@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Net;
 using System.Text;
 
-namespace CarinaStudio.ULogViewer
+namespace CarinaStudio.ULogViewer.Logs.DataSources
 {
 	/// <summary>
 	/// Provider of <see cref="ILogDataSource"/>.

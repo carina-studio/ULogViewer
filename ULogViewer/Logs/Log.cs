@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace CarinaStudio.ULogViewer
+namespace CarinaStudio.ULogViewer.Logs
 {
 	/// <summary>
 	/// Represents a single log.

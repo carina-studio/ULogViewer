@@ -6,7 +6,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CarinaStudio.ULogViewer
+namespace CarinaStudio.ULogViewer.Logs.DataSources
 {
 	/// <summary>
 	/// Base implementation of <see cref="ILogDataSource"/>.

@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
-namespace CarinaStudio.ULogViewer
+namespace CarinaStudio.ULogViewer.Logs.DataSources
 {
 	/// <summary>
 	/// Manage all <see cref="ILogDataSourceProvider"/>s in application.

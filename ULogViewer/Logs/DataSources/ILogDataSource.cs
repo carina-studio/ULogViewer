@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace CarinaStudio.ULogViewer
+namespace CarinaStudio.ULogViewer.Logs.DataSources
 {
 	/// <summary>
 	/// Interface of source providing log data.
