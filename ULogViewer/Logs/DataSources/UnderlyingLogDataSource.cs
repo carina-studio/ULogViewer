@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CarinaStudio.ULogViewer
+namespace CarinaStudio.ULogViewer.Logs.DataSources
 {
 	/// <summary>
 	/// Low-level source of log data.
@@ -16,12 +16,12 @@ namespace CarinaStudio.ULogViewer
 		/// </summary>
 		File,
 		/// <summary>
-		/// Network.
-		/// </summary>
-		Network,
-		/// <summary>
 		/// Standard output of process.
 		/// </summary>
 		StandardOutput,
+		/// <summary>
+		/// Web request.
+		/// </summary>
+		WebRequest,
 	}
 }

@@ -5,6 +5,7 @@ using Avalonia.Markup.Xaml;
 using CarinaStudio;
 using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
+using CarinaStudio.ULogViewer.Logs.DataSources;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using System;

@@ -4,7 +4,7 @@
     <AssemblyVersion>0.1.0</AssemblyVersion>
 		<Version>0.1.0</Version>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <RootNamespace>CarinaStudio.ULogViewer</RootNamespace>
     <Nullable>enable</Nullable>
     <Authors>Carina Studio</Authors>

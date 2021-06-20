@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CarinaStudio.ULogViewer
+namespace CarinaStudio.ULogViewer.Logs
 {
 	/// <summary>
 	/// Level of log.
