@@ -12,6 +12,12 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 	interface ILogDataSource : IApplicationObject, IDisposable, INotifyPropertyChanged, IThreadDependent
 	{
 		/// <summary>
+		/// Get <see cref="LogDataSourceOptions"/> of creating this source.
+		/// </summary>
+		LogDataSourceOptions CreationOptions { get; }
+
+
+		/// <summary>
 		/// Get name for displaying purpose.
 		/// </summary>
 		string? DisplayName { get; }

@@ -61,12 +61,14 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// Initialize new <see cref="BaseLogDataSource"/> instance.
 		/// </summary>
 		/// <param name="provider"><see cref="ILogDataSourceProvider"/> which creates this instane.</param>
-		protected BaseLogDataSource(ILogDataSourceProvider provider)
+		/// <param name="options"><see cref="LogDataSourceOptions"/> to create instance.</param>
+		protected BaseLogDataSource(ILogDataSourceProvider provider, LogDataSourceOptions options)
 		{
 			provider.VerifyAccess();
 			this.Id = nextId++;
 			this.Logger = provider.Application.LoggerFactory.CreateLogger($"{this.GetType().Name}-{this.Id}");
 			this.Provider = provider;
+			this.CreationOptions = options;
 			this.SynchronizationContext.Post(this.Prepare);
 		}
 
@@ -294,6 +296,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 		// Interface implementations.
 		public bool CheckAccess() => this.Provider.CheckAccess();
+		public LogDataSourceOptions CreationOptions { get; }
 		IApplication IApplicationObject.Application { get => this.Application; }
 		public event PropertyChangedEventHandler? PropertyChanged;
 		public ILogDataSourceProvider Provider { get; }

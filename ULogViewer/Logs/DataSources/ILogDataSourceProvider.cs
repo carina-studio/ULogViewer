@@ -63,10 +63,74 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		/// <summary>
+		/// Create <see cref="LogDataSourceOptions"/> for <see cref="UnderlyingLogDataSource.File"/> case.
+		/// </summary>
+		/// <param name="fileName">File name.</param>
+		/// <param name="encoding">Text encoding.</param>
+		public static LogDataSourceOptions CreateForFile(string fileName, Encoding? encoding = null) => new LogDataSourceOptions().Also(it =>
+		{
+			it.Command = null;
+			it.Encoding = encoding;
+			it.FileName = fileName;
+			it.Uri = null;
+			it.WebRequestCredentials = null;
+			it.WorkingDirectory = null;
+		});
+
+
+		/// <summary>
+		/// Create <see cref="LogDataSourceOptions"/> for <see cref="UnderlyingLogDataSource.StandardOutput"/> case.
+		/// </summary>
+		/// <param name="command">Command.</param>
+		/// <param name="workingDirectory">Working directory.</param>
+		public static LogDataSourceOptions CreateForStandardOutput(string command, string? workingDirectory = null) => new LogDataSourceOptions().Also(it =>
+		{
+			it.Command = command;
+			it.Encoding = null;
+			it.FileName = null;
+			it.Uri = null;
+			it.WebRequestCredentials = null;
+			it.WorkingDirectory = workingDirectory;
+		});
+
+
+		/// <summary>
+		/// Create <see cref="LogDataSourceOptions"/> for <see cref="UnderlyingLogDataSource.WebRequest"/> case.
+		/// </summary>
+		/// <param name="uri">Uri of request.</param>
+		/// <param name="credentials">Credentials.</param>
+		public static LogDataSourceOptions CreateForWebRequest(Uri uri, ICredentials? credentials = null) => new LogDataSourceOptions().Also(it =>
+		{
+			it.Command = null;
+			it.Encoding = null;
+			it.FileName = null;
+			it.Uri = uri;
+			it.WebRequestCredentials = credentials;
+			it.WorkingDirectory = null;
+		});
+
+
+		/// <summary>
 		/// Get or set encoding of text.
 		/// </summary>
 		/// <remarks>Available for <see cref="UnderlyingLogDataSource.File"/>.</remarks>
 		public Encoding? Encoding { get; set; }
+
+
+		// Check equality.
+		public override bool Equals(object? obj)
+		{
+			if (obj is LogDataSourceOptions options)
+			{
+				return this.Command == options.Command
+					&& this.Encoding == options.Encoding
+					&& this.FileName == options.FileName
+					&& this.Uri == options.Uri
+					&& (this.WebRequestCredentials?.Equals(options.WebRequestCredentials) ?? options.WebRequestCredentials == null)
+					&& this.WorkingDirectory == options.WorkingDirectory;
+			}
+			return false;
+		}
 
 
 		/// <summary>
@@ -74,6 +138,19 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// </summary>
 		/// <remarks>Available for <see cref="UnderlyingLogDataSource.File"/>.</remarks>
 		public string? FileName { get; set; }
+
+
+		// Get hash code.
+		public override int GetHashCode()
+		{
+			if (this.Command != null)
+				return this.Command.GetHashCode();
+			if (this.FileName != null)
+				return this.FileName.GetHashCode();
+			if (this.Uri != null)
+				return this.Uri.GetHashCode();
+			return 0;
+		}
 
 
 		/// <summary>
