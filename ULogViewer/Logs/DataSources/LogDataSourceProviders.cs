@@ -46,6 +46,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 			// create providers
 			logger.LogDebug("Initialize");
+			providers.Add(new FileLogDataSourceProvider(app));
 		}
 
 

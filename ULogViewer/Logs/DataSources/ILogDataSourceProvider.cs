@@ -67,15 +67,15 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// </summary>
 		/// <param name="fileName">File name.</param>
 		/// <param name="encoding">Text encoding.</param>
-		public static LogDataSourceOptions CreateForFile(string fileName, Encoding? encoding = null) => new LogDataSourceOptions().Also(it =>
+		public static LogDataSourceOptions CreateForFile(string fileName, Encoding? encoding = null) => new LogDataSourceOptions()
 		{
-			it.Command = null;
-			it.Encoding = encoding;
-			it.FileName = fileName;
-			it.Uri = null;
-			it.WebRequestCredentials = null;
-			it.WorkingDirectory = null;
-		});
+			Command = null,
+			Encoding = encoding,
+			FileName = fileName,
+			Uri = null,
+			WebRequestCredentials = null,
+			WorkingDirectory = null,
+		};
 
 
 		/// <summary>
@@ -83,15 +83,15 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// </summary>
 		/// <param name="command">Command.</param>
 		/// <param name="workingDirectory">Working directory.</param>
-		public static LogDataSourceOptions CreateForStandardOutput(string command, string? workingDirectory = null) => new LogDataSourceOptions().Also(it =>
+		public static LogDataSourceOptions CreateForStandardOutput(string command, string? workingDirectory = null) => new LogDataSourceOptions()
 		{
-			it.Command = command;
-			it.Encoding = null;
-			it.FileName = null;
-			it.Uri = null;
-			it.WebRequestCredentials = null;
-			it.WorkingDirectory = workingDirectory;
-		});
+			Command = command,
+			Encoding = null,
+			FileName = null,
+			Uri = null,
+			WebRequestCredentials = null,
+			WorkingDirectory = workingDirectory,
+		};
 
 
 		/// <summary>
@@ -99,15 +99,15 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// </summary>
 		/// <param name="uri">Uri of request.</param>
 		/// <param name="credentials">Credentials.</param>
-		public static LogDataSourceOptions CreateForWebRequest(Uri uri, ICredentials? credentials = null) => new LogDataSourceOptions().Also(it =>
+		public static LogDataSourceOptions CreateForWebRequest(Uri uri, ICredentials? credentials = null) => new LogDataSourceOptions()
 		{
-			it.Command = null;
-			it.Encoding = null;
-			it.FileName = null;
-			it.Uri = uri;
-			it.WebRequestCredentials = credentials;
-			it.WorkingDirectory = null;
-		});
+			Command = null,
+			Encoding = null,
+			FileName = null,
+			Uri = uri,
+			WebRequestCredentials = credentials,
+			WorkingDirectory = null,
+		};
 
 
 		/// <summary>

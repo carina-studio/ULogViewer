@@ -3,6 +3,7 @@ using Avalonia.ReactiveUI;
 using CarinaStudio.Threading;
 using System;
 using System.Runtime.CompilerServices;
+using System.Threading;
 
 namespace CarinaStudio.ULogViewer
 {
@@ -16,11 +17,27 @@ namespace CarinaStudio.ULogViewer
 		static volatile SingleThreadSynchronizationContext? syncContext;
 
 
+		// Constructor.
+		public TestApp() : base(true)
+		{ }
+
+
 		// Avalonia configuration, don't remove; also used by visual designer.
 		static AppBuilder BuildAvaloniaApp() => AppBuilder.Configure<TestApp>()
 			.UsePlatformDetect()
 			.UseReactiveUI()
 			.LogToTrace();
+
+
+		// Called when Avalonia initialization completed.
+		public override void OnFrameworkInitializationCompleted()
+		{
+			base.OnFrameworkInitializationCompleted();
+			lock (typeof(TestApp))
+			{
+				Monitor.Pulse(typeof(TestApp));
+			}
+		}
 
 
 		/// <summary>
@@ -35,8 +52,9 @@ namespace CarinaStudio.ULogViewer
 			syncContext = new SingleThreadSynchronizationContext();
 			syncContext.Post(() =>
 			{
-				BuildAvaloniaApp().SetupWithoutStarting();
+				BuildAvaloniaApp().StartWithClassicDesktopLifetime(new string[0]);
 			});
+			Monitor.Wait(typeof(TestApp));
 		}
 	}
 }
