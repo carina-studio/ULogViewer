@@ -1,8 +1,11 @@
-﻿using CarinaStudio.Threading;
+﻿using CarinaStudio.Tests;
+using CarinaStudio.Threading;
 using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.Logs.DataSources
 {
@@ -12,7 +15,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 	abstract class BaseLogDataSourceTests : AppBasedTests
 	{
 		// Fields.
-		readonly Random random = new Random();
+		readonly System.Random random = new System.Random();
 		string? testDirectoryPath;
 
 
@@ -53,7 +56,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				var provider = this.CreateProvider();
 
 				// create 1st instance
-				this.PrepareSource(provider, this.GenerateRandomLines(4), out var options);
+				this.PrepareSource(provider, this.GenerateRandomLines(), out var options);
 				using var source1 = provider.CreateSource(options);
 				Assert.AreSame(provider, source1.Provider, "Provider reported by source is different.");
 				Assert.AreEqual(options, source1.CreationOptions, "Options reported by source is different.");
@@ -61,7 +64,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				// create 2nd source
 				try
 				{
-					this.PrepareSource(provider, this.GenerateRandomLines(4), out options);
+					this.PrepareSource(provider, this.GenerateRandomLines(), out options);
 					using var source2 = provider.CreateSource(options);
 					Assert.AreSame(provider, source2.Provider, "Provider reported by source is different.");
 					Assert.AreEqual(options, source2.CreationOptions, "Options reported by source is different.");
@@ -78,7 +81,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				source1.Dispose();
 
 				// create 3rd instance
-				this.PrepareSource(provider, this.GenerateRandomLines(4), out options);
+				this.PrepareSource(provider, this.GenerateRandomLines(), out options);
 				using var source3 = provider.CreateSource(options);
 				Assert.AreSame(provider, source3.Provider, "Provider reported by source is different.");
 				Assert.AreEqual(options, source3.CreationOptions, "Options reported by source is different.");
@@ -125,7 +128,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// <param name="lineCount">Number of lines.</param>
 		/// <param name="lineLength">Length of each line.</param>
 		/// <returns>Lines of string.</returns>
-		protected string[] GenerateRandomLines(int lineCount, int lineLength = 256) => new string[lineCount].Also(lines =>
+		protected string[] GenerateRandomLines(int lineCount = 16, int lineLength = 256) => new string[lineCount].Also(lines =>
 		{
 			for (var i = lineCount - 1; i >= 0; --i)
 				lines[i] = this.GenerateRandomLine(lineLength);
@@ -139,5 +142,65 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// <param name="data">Log data.</param>
 		/// <param name="options"><see cref="LogDataSourceOptions"/> to create source.</param>
 		protected abstract void PrepareSource(ILogDataSourceProvider provider, string[] data, out LogDataSourceOptions options);
+
+
+		/// <summary>
+		/// Test for reading data from source.
+		/// </summary>
+		[Test]
+		public void ReadingFromSourceTest()
+		{
+			this.AsyncTestOnApplicationThread(async () =>
+			{
+				var provider = this.CreateProvider();
+				for (var i = 0; i < 5; ++i)
+					await this.ReadingFromSourceTest(provider);
+			});
+		}
+
+
+		// Test for reading data from source.
+		async Task ReadingFromSourceTest(ILogDataSourceProvider provider)
+		{
+			// prepare
+			var lines = this.GenerateRandomLines();
+			this.PrepareSource(provider, lines, out var options);
+			using var source = provider.CreateSource(options);
+
+			// wait for ready to open reader
+			Assert.IsTrue(await source.WaitForPropertyAsync(nameof(ILogDataSource.State), LogDataSourceState.ReadyToOpenReader, 5000));
+
+			// open reader
+			var openReaderTask = source.OpenReaderAsync();
+			Assert.AreEqual(LogDataSourceState.OpeningReader, source.State);
+			using var reader = await openReaderTask;
+			Assert.AreEqual(LogDataSourceState.ReaderOpened, source.State);
+
+			// check data
+			var readLines = new List<string>();
+			var readLine = reader.ReadLine();
+			while (readLine != null)
+			{
+				readLines.Add(readLine);
+				readLine = reader.ReadLine();
+			}
+			Assert.AreEqual(lines.Length, readLines.Count);
+			for (var i = lines.Length - 1; i >= 0; --i)
+				Assert.AreEqual(lines[i], readLines[i]);
+			Assert.AreEqual(LogDataSourceState.ReaderOpened, source.State);
+
+			// close reader
+			reader.Close();
+			if (source.State == LogDataSourceState.ReaderOpened)
+				Assert.IsTrue(await source.WaitForPropertyAsync(nameof(ILogDataSource.State), LogDataSourceState.ClosingReader, 5000));
+			if (source.State == LogDataSourceState.ClosingReader)
+				Assert.IsTrue(await source.WaitForPropertyAsync(nameof(ILogDataSource.State), LogDataSourceState.Preparing, 5000));
+			else
+				Assert.AreEqual(LogDataSourceState.Preparing, source.State);
+
+			// dispose source
+			source.Dispose();
+			Assert.IsTrue(await source.WaitForPropertyAsync(nameof(ILogDataSource.State), LogDataSourceState.Disposed, 5000));
+		}
 	}
 }
