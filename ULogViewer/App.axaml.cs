@@ -22,6 +22,7 @@ namespace CarinaStudio.ULogViewer
 	class App : Application, IApplication
 	{
 		// Fields.
+		readonly bool isTestingProcess;
 		readonly ILogger logger;
 		MainWindow? mainWindow;
 		volatile Settings? settings;
@@ -30,7 +31,9 @@ namespace CarinaStudio.ULogViewer
 
 
 		// Constructor.
-		public App()
+		public App() : this(false)
+		{ }
+		protected App(bool isTesting)
 		{
 			// setup logger
 			this.logger = this.LoggerFactory.CreateLogger("App");
@@ -48,6 +51,9 @@ namespace CarinaStudio.ULogViewer
 
 			// prepare file path of settings
 			this.settingsFilePath = Path.Combine(this.RootPrivateDirectoryPath, "Settings.json");
+
+			// keep testing state
+			this.isTestingProcess = isTesting;
 		}
 
 
@@ -116,7 +122,8 @@ namespace CarinaStudio.ULogViewer
 			LogDataSourceProviders.Initialize(this);
 
 			// show main window
-			this.synchronizationContext.Post(this.ShowMainWindow);
+			if (!this.isTestingProcess)
+				this.synchronizationContext.Post(this.ShowMainWindow);
 		}
 
 

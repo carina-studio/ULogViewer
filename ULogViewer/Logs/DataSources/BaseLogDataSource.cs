@@ -61,12 +61,14 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// Initialize new <see cref="BaseLogDataSource"/> instance.
 		/// </summary>
 		/// <param name="provider"><see cref="ILogDataSourceProvider"/> which creates this instane.</param>
-		protected BaseLogDataSource(ILogDataSourceProvider provider)
+		/// <param name="options"><see cref="LogDataSourceOptions"/> to create instance.</param>
+		protected BaseLogDataSource(ILogDataSourceProvider provider, LogDataSourceOptions options)
 		{
 			provider.VerifyAccess();
 			this.Id = nextId++;
 			this.Logger = provider.Application.LoggerFactory.CreateLogger($"{this.GetType().Name}-{this.Id}");
 			this.Provider = provider;
+			this.CreationOptions = options;
 			this.SynchronizationContext.Post(this.Prepare);
 		}
 
@@ -168,22 +170,6 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			if (this.ChangeState(LogDataSourceState.OpeningReader) != LogDataSourceState.OpeningReader)
 				throw new InternalStateCorruptedException("Internal state has been changed when opening reader.");
 
-			// prepare action to dispose reader
-			void disposeReader(TextReader? reader)
-			{
-				if (reader == null)
-					return;
-				_ = Task.Run(() =>
-				{
-					try
-					{
-						reader.Dispose();
-					}
-					catch
-					{ }
-				});
-			}
-
 			// open reader
 			var reader = (TextReader?)null;
 			var openingResult = LogDataSourceState.UnclassifiedError;
@@ -194,14 +180,14 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			catch(Exception ex)
 			{
 				this.Logger.LogError(ex, "Unable to open reader");
-				disposeReader(reader);
+				Global.RunWithoutErrorAsync(() => reader?.Close());
 				this.ChangeState(LogDataSourceState.UnclassifiedError);
 				throw;
 			}
 			if (this.state != LogDataSourceState.OpeningReader)
 			{
 				this.Logger.LogWarning($"State has been changed to {this.state} when opening reader");
-				disposeReader(reader);
+				Global.RunWithoutErrorAsync(() => reader?.Close());
 				if (this.IsDisposed)
 					throw new ObjectDisposedException("Source has been disposed when opening reader.");
 				throw new InternalStateCorruptedException("Internal state has been changed when opening reader.");
@@ -217,17 +203,17 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 					}
 					break;
 				case LogDataSourceState.SourceNotFound:
-					disposeReader(reader);
+					Global.RunWithoutErrorAsync(() => reader?.Close());
 					this.ChangeState(LogDataSourceState.SourceNotFound);
 					throw new Exception("Cannot open reader because source cannot be found.");
 				default:
-					disposeReader(reader);
+					Global.RunWithoutErrorAsync(() => reader?.Close());
 					this.ChangeState(LogDataSourceState.UnclassifiedError);
 					throw new Exception("Unclassified error while opening reader.");
 			}
 			if (this.ChangeState(LogDataSourceState.ReaderOpened) != LogDataSourceState.ReaderOpened)
 			{
-				disposeReader(reader);
+				Global.RunWithoutErrorAsync(() => reader?.Close());
 				throw new InternalStateCorruptedException("Internal state has been changed when opening reader.");
 			}
 			return new TextReaderWrapper(this, reader);
@@ -310,6 +296,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 		// Interface implementations.
 		public bool CheckAccess() => this.Provider.CheckAccess();
+		public LogDataSourceOptions CreationOptions { get; }
 		IApplication IApplicationObject.Application { get => this.Application; }
 		public event PropertyChangedEventHandler? PropertyChanged;
 		public ILogDataSourceProvider Provider { get; }
