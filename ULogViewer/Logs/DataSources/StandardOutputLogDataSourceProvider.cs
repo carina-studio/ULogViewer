@@ -2,7 +2,7 @@
 namespace CarinaStudio.ULogViewer.Logs.DataSources
 {
 	/// <summary>
-	/// Implementation of <see cref="StandardOutputLogDataSourceProvider"/>.
+	/// <see cref="ILogDataSourceProvider"/> for <see cref="StandardOutputLogDataSource"/>.
 	/// </summary>
 	class StandardOutputLogDataSourceProvider : BaseLogDataSourceProvider
 	{

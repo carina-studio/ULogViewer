@@ -8,13 +8,15 @@ using Microsoft.Extensions.Logging;
 namespace CarinaStudio.ULogViewer.Logs.DataSources
 {
 	/// <summary>
-	/// Implementation of <see cref="StandardOutputLogDataSource"/>.
+	/// <see cref="ILogDataSource"/> for standard output.
 	/// </summary>
 	class StandardOutputLogDataSource : BaseLogDataSource
 	{
 		// Fields.
-		string? commandFileOnReady;
-		readonly LogDataSourceOptions options;
+		volatile string? arguments;
+		volatile string? commandFileOnReady;
+		volatile Process? process;
+		static readonly Regex regex = new Regex("^(?<ExecutableCommand>([^\\s\"]*)|\"([^\\s])*\")[\\s$]");
 
 
 		/// <summary>
@@ -24,7 +26,15 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// <param name="options"><see cref="LogDataSourceOptions"/> to create source.</param>
 		internal StandardOutputLogDataSource(StandardOutputLogDataSourceProvider provider, LogDataSourceOptions options) : base(provider, options)
 		{
-			this.options = options;
+		}
+
+
+		// Reader closed.
+		protected override void OnReaderClosed()
+		{
+			base.OnReaderClosed();
+			if (this.process != null)
+				this.process.WaitForExit();
 		}
 
 
@@ -36,12 +46,16 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				reader = null;
 				return LogDataSourceState.SourceNotFound;
 			}
-			using var process = new Process();
-			process.StartInfo.FileName = commandFileOnReady;
-			process.StartInfo.UseShellExecute = false;
-			process.StartInfo.RedirectStandardOutput = true;
-			process.Start();
-			reader = process.StandardOutput;
+			this.process = new Process();
+			this.process.StartInfo.FileName = commandFileOnReady;
+			if (this.CreationOptions.WorkingDirectory != null)
+				this.process.StartInfo.WorkingDirectory = this.CreationOptions.WorkingDirectory;
+			if (this.arguments != null)
+				this.process.StartInfo.Arguments = this.arguments;
+			this.process.StartInfo.UseShellExecute = false;
+			this.process.StartInfo.RedirectStandardOutput = true;
+			this.process.Start();
+			reader = this.process.StandardOutput;
 			return LogDataSourceState.ReaderOpened;
 		}
 
@@ -49,15 +63,14 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		// Prepare core.
 		protected override LogDataSourceState PrepareCore()
 		{
-			if (string.IsNullOrEmpty(options.Command))
+			if (string.IsNullOrEmpty(this.CreationOptions.Command))
 				return LogDataSourceState.SourceNotFound;
-			var regex = new Regex("^(?<ExecutableCommand>([^\\s\"]*)|\"([^\\s])*\")[\\s$]");
-			var match = regex.Match(options.Command);
+			var match = StandardOutputLogDataSource.regex.Match(this.CreationOptions.Command);
 			if (!match.Success)
 				return LogDataSourceState.SourceNotFound;
 			var commandGroup = match.Groups["ExecutableCommand"];
-			var command = options.Command.Substring(0, commandGroup.Length - 1);
-			var args = options.Command.Substring(commandGroup.Length);
+			var command = this.CreationOptions.Command.Substring(0, commandGroup.Length - 1);
+			this.arguments = this.CreationOptions.Command.Substring(commandGroup.Length);
 			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && !command.EndsWith(".exe"))
 				command += ".exe";
 			if (Path.IsPathRooted(command))
@@ -71,9 +84,9 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			}
 			else
 			{
-				if (options.WorkingDirectory != null)
+				if (this.CreationOptions.WorkingDirectory != null)
 				{
-					string commandFile = Path.Combine(options.WorkingDirectory, command);
+					string commandFile = Path.Combine(this.CreationOptions.WorkingDirectory, command);
 					if (File.Exists(commandFile))
 					{
 						this.Logger.LogDebug($"Command file from working directory: {commandFile}");
