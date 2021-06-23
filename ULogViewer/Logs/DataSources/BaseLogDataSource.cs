@@ -34,7 +34,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				if (Interlocked.Exchange(ref this.isClosed, 1) != 0)
 					return;
 				base.Close();
-				this.source.SynchronizationContext.Post(source.OnReaderClosed);
+				this.source.SynchronizationContext.Post(() => source.OnReaderClosed(this));
 			}
 
 			// Implementations.
@@ -54,6 +54,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 		// Fields.
 		string? displayName;
+		TextReaderWrapper? openedReader;
 		LogDataSourceState state = LogDataSourceState.Initializing;
 
 
@@ -114,6 +115,12 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		{
 			this.VerifyAccess();
 			this.ChangeState(LogDataSourceState.Disposed);
+			this.openedReader?.Let(reader =>
+			{
+				this.Logger.LogWarning("Close opened reader because of disposing");
+				this.openedReader = null;
+				Global.RunWithoutErrorAsync(reader.Close);
+			});
 			if (this.Provider is BaseLogDataSourceProvider baseProvider)
 				baseProvider.NotifySourceDisposedInternal(this);
 		}
@@ -138,12 +145,25 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		protected virtual void OnPropertyChanged(string propertyName) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
 
+		// Called when opened reader has been closed.
+		void OnReaderClosed(TextReaderWrapper reader)
+		{
+			if (this.openedReader == reader)
+			{
+				this.Logger.LogDebug("Reader closed");
+				this.openedReader = null;
+				this.OnReaderClosed();
+			}
+			else
+				this.Logger.LogWarning("Unknown reader closed");
+		}
+
+
 		/// <summary>
 		/// Called when opened reader has been closed.
 		/// </summary>
 		protected virtual void OnReaderClosed()
 		{
-			this.Logger.LogDebug("Reader closed");
 			if (this.IsDisposed)
 				return;
 			if (this.state != LogDataSourceState.ReaderOpened)
@@ -216,7 +236,8 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				Global.RunWithoutErrorAsync(() => reader?.Close());
 				throw new InternalStateCorruptedException("Internal state has been changed when opening reader.");
 			}
-			return new TextReaderWrapper(this, reader);
+			this.openedReader = new TextReaderWrapper(this, reader);
+			return this.openedReader;
 		}
 
 
