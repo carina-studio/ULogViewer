@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace CarinaStudio.ULogViewer
 {
 	/// <summary>
-	/// Base implementations of <see cref="App"/> based tests.
+	/// Base implementations of <see cref="IApplication"/> based tests.
 	/// </summary>
 	abstract class AppBasedTests
 	{
@@ -17,7 +17,7 @@ namespace CarinaStudio.ULogViewer
 
 
 		/// <summary>
-		/// Get <see cref="App"/> instance.
+		/// Get <see cref="IApplication"/> instance.
 		/// </summary>
 		protected IApplication Application { get => this.app ?? throw new InvalidOperationException("Application is not ready."); }
 
@@ -56,7 +56,7 @@ namespace CarinaStudio.ULogViewer
 
 
 		/// <summary>
-		/// Setup <see cref="App"/> for testing.
+		/// Setup <see cref="IApplication"/> for testing.
 		/// </summary>
 		[OneTimeSetUp]
 		public void SetupApp()
@@ -67,13 +67,13 @@ namespace CarinaStudio.ULogViewer
 
 
 		/// <summary>
-		/// Get <see cref="SynchronizationContext"/> provided by <see cref="App"/>.
+		/// Get <see cref="SynchronizationContext"/> provided by <see cref="IApplication"/>.
 		/// </summary>
 		protected SynchronizationContext SynchronizationContext { get => this.app?.SynchronizationContext ?? throw new InvalidOperationException("Application is not ready."); }
 
 
 		/// <summary>
-		/// Run testing on thread of <see cref="App"/>.
+		/// Run testing on thread of <see cref="IApplication"/>.
 		/// </summary>
 		/// <param name="test">Test action.</param>
 		protected void TestOnApplicationThread(Action test)
