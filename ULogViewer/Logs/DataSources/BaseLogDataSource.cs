@@ -119,6 +119,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				this.Logger.LogWarning("Close opened reader because of disposing");
 				this.openedReader = null;
 				Global.RunWithoutErrorAsync(reader.Close);
+				this.OnReaderClosed();
 			});
 			if (this.Provider is BaseLogDataSourceProvider baseProvider)
 				baseProvider.NotifySourceDisposedInternal(this);
