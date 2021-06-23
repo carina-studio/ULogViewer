@@ -15,7 +15,6 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 	abstract class BaseLogDataSourceTests : AppBasedTests
 	{
 		// Fields.
-		readonly System.Random random = new System.Random();
 		string? testDirectoryPath;
 
 
@@ -35,12 +34,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		{
 			if (this.testDirectoryPath == null)
 				this.testDirectoryPath = this.Application.CreatePrivateDirectory(this.GetType().Name + "_test").FullName;
-			while (true)
-			{
-				var filePath = Path.Combine(this.testDirectoryPath, this.GenerateRandomLine(8));
-				if (!File.Exists(filePath))
-					return File.Create(filePath).Use(_ => filePath);
-			}
+			return Tests.Random.CreateFileWithRandomName(this.testDirectoryPath).Use(it => it.Name);
 		}
 
 
@@ -105,21 +99,95 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		/// <summary>
+		/// Test for disposing source when using source.
+		/// </summary>
+		[Test]
+		public void DisposingSourceWhenUsingTest()
+		{
+			this.AsyncTestOnApplicationThread(async () =>
+			{
+				// prepare
+				var provider = this.CreateProvider();
+				this.PrepareSource(provider, this.GenerateRandomLines(), out var options);
+
+				// dispose immediately after creation
+				using (var source = provider.CreateSource(options))
+				{ }
+
+				// dispose when ready to open reader
+				using (var source = provider.CreateSource(options))
+				{
+					Assert.IsTrue(await source.WaitForPropertyAsync(nameof(ILogDataSource.State), LogDataSourceState.ReadyToOpenReader, 5000));
+				}
+
+				// dispose when opening reader
+				using (var source = provider.CreateSource(options))
+				{
+					Assert.IsTrue(await source.WaitForPropertyAsync(nameof(ILogDataSource.State), LogDataSourceState.ReadyToOpenReader, 5000));
+					var openReaderTask = source.OpenReaderAsync();
+					Assert.IsTrue(await source.WaitForPropertyAsync(nameof(ILogDataSource.State), LogDataSourceState.OpeningReader, 5000));
+					source.Dispose();
+					try
+					{
+						await openReaderTask;
+						throw new AssertionException("Opening reader should be failed after disposing source.");
+					}
+					catch(Exception ex)
+					{
+						if (ex is AssertionException)
+							throw;
+					}
+				}
+
+				// dispose when reading data
+				using (var source = provider.CreateSource(options))
+				{
+					Assert.IsTrue(await source.WaitForPropertyAsync(nameof(ILogDataSource.State), LogDataSourceState.ReadyToOpenReader, 5000));
+					using var reader = await source.OpenReaderAsync();
+					Assert.IsNotNull(reader.ReadLine());
+					source.Dispose();
+					try
+					{
+						await Task.Delay(1000);
+						reader.ReadLine();
+						throw new AssertionException("Opened reader should be closed after disposing source.");
+					}
+					catch (Exception ex)
+					{
+						if (ex is AssertionException)
+							throw;
+					}
+				}
+
+				// dispose immediately after closing reader
+				using (var source = provider.CreateSource(options))
+				{
+					Assert.IsTrue(await source.WaitForPropertyAsync(nameof(ILogDataSource.State), LogDataSourceState.ReadyToOpenReader, 5000));
+					using (var reader = await source.OpenReaderAsync())
+						Assert.IsNotNull(reader.ReadLine());
+				}
+
+				// dispose when preparing after closing reader
+				using (var source = provider.CreateSource(options))
+				{
+					Assert.IsTrue(await source.WaitForPropertyAsync(nameof(ILogDataSource.State), LogDataSourceState.ReadyToOpenReader, 5000));
+					using (var reader = await source.OpenReaderAsync())
+						Assert.IsNotNull(reader.ReadLine());
+					Assert.IsTrue(await source.WaitForPropertyAsync(nameof(ILogDataSource.State), LogDataSourceState.Preparing, 5000));
+				}
+
+				// delay to make sure that testing resources has been released
+				await Task.Delay(1000);
+			});
+		}
+
+
+		/// <summary>
 		/// Generate line of string with random content.
 		/// </summary>
 		/// <param name="lineLength">Length of string.</param>
 		/// <returns>Line of string.</returns>
-		protected string GenerateRandomLine(int lineLength = 256) => new string(new char[lineLength].Also(it =>
-		{
-			for (var i = lineLength - 1; i >= 0; --i)
-			{
-				var n = this.random.Next(0, 36);
-				if (n < 10)
-					it[i] = (char)('0' + n);
-				else
-					it[i] = (char)('a' + (n - 10));
-			}
-		}));
+		protected string GenerateRandomLine(int lineLength = 256) => Tests.Random.GenerateRandomString(lineLength);
 
 
 		/// <summary>

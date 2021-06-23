@@ -28,16 +28,15 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				this.textReader = textReader;
 			}
 
-			// Close.
-			public override void Close()
+			// Implementations.
+			protected override void Dispose(bool disposing)
 			{
+				base.Dispose(disposing);
+				this.textReader.Dispose();
 				if (Interlocked.Exchange(ref this.isClosed, 1) != 0)
 					return;
-				base.Close();
 				this.source.SynchronizationContext.Post(() => source.OnReaderClosed(this));
 			}
-
-			// Implementations.
 			public override int Peek() => this.textReader.Peek();
 			public override int Read() => this.textReader.Read();
 			public override int Read(char[] buffer, int index, int count) => this.textReader.Read(buffer, index, count);
@@ -209,7 +208,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				this.Logger.LogWarning($"State has been changed to {this.state} when opening reader");
 				Global.RunWithoutErrorAsync(() => reader?.Close());
 				if (this.IsDisposed)
-					throw new ObjectDisposedException("Source has been disposed when opening reader.");
+					throw new InvalidOperationException("Source has been disposed when opening reader.");
 				throw new InternalStateCorruptedException("Internal state has been changed when opening reader.");
 			}
 			switch (openingResult)
