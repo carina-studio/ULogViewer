@@ -24,7 +24,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// </summary>
 		/// <param name="provider"><see cref="StandardOutputLogDataSourceProvider"/> which creates this instane.</param>
 		/// <param name="options"><see cref="LogDataSourceOptions"/> to create source.</param>
-		internal StandardOutputLogDataSource(StandardOutputLogDataSourceProvider provider, LogDataSourceOptions options) : base(provider, options)
+		public StandardOutputLogDataSource(StandardOutputLogDataSourceProvider provider, LogDataSourceOptions options) : base(provider, options)
 		{
 		}
 
@@ -34,7 +34,11 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		{
 			base.OnReaderClosed();
 			if (this.process != null)
+			{
+				this.process.Kill();
 				this.process.WaitForExit();
+				this.process = null;
+			}
 		}
 
 

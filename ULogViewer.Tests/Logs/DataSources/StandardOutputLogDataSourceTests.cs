@@ -6,7 +6,7 @@ using System.Text;
 namespace CarinaStudio.ULogViewer.Logs.DataSources
 {
 	/// <summary>
-	/// Tests of <see cref="FileLogDataSource"/>.
+	/// Tests of <see cref="StandardOutputLogDataSource"/>.
 	/// </summary>
 	[TestFixture]
 	class StandardOutputLogDataSourceTests : BaseLogDataSourceTests
