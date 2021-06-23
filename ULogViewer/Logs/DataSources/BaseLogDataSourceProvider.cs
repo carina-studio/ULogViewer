@@ -20,8 +20,8 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// <summary>
 		/// Initialize new <see cref="BaseLogDataSourceProvider"/> instance.
 		/// </summary>
-		/// <param name="app"><see cref="App"/>.</param>
-		protected BaseLogDataSourceProvider(App app)
+		/// <param name="app"><see cref="IApplication"/>.</param>
+		protected BaseLogDataSourceProvider(IApplication app)
 		{
 			app.VerifyAccess();
 			this.Application = app;
@@ -31,10 +31,9 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		/// <summary>
-		/// Get <see cref="App"/> instance.
+		/// Get <see cref="IApplication"/> instance.
 		/// </summary>
-		public App Application { get; }
-
+		public IApplication Application { get; }
 
 
 		/// <summary>
@@ -114,7 +113,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		public int ActiveSourceCount { get => this.activeSources.Count; }
 		public virtual bool AllowMultipleSources => true;
 		public bool CheckAccess() => this.Application.CheckAccess();
-		IApplication IApplicationObject.Application { get => this.Application; }
+		CarinaStudio.IApplication IApplicationObject.Application { get => this.Application; }
 		public abstract string Name { get; }
 		public event PropertyChangedEventHandler? PropertyChanged;
 		public SynchronizationContext SynchronizationContext => this.Application.SynchronizationContext;

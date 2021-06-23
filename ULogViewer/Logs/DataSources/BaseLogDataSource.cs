@@ -74,9 +74,9 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		/// <summary>
-		/// Get <see cref="App"/> instance.
+		/// Get <see cref="IApplication"/> instance.
 		/// </summary>
-		public App Application { get => (App)this.Provider.Application; }
+		public IApplication Application { get => (IApplication)this.Provider.Application; }
 
 
 		// change state.
@@ -317,7 +317,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		// Interface implementations.
 		public bool CheckAccess() => this.Provider.CheckAccess();
 		public LogDataSourceOptions CreationOptions { get; }
-		IApplication IApplicationObject.Application { get => this.Application; }
+		CarinaStudio.IApplication IApplicationObject.Application { get => this.Application; }
 		public event PropertyChangedEventHandler? PropertyChanged;
 		public ILogDataSourceProvider Provider { get; }
 		public SynchronizationContext SynchronizationContext => this.Provider.SynchronizationContext;

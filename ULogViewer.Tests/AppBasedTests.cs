@@ -13,13 +13,13 @@ namespace CarinaStudio.ULogViewer
 	abstract class AppBasedTests
 	{
 		// Fields.
-		volatile App? app;
+		volatile IApplication? app;
 
 
 		/// <summary>
 		/// Get <see cref="App"/> instance.
 		/// </summary>
-		protected App Application { get => this.app ?? throw new InvalidOperationException("Application is not ready."); }
+		protected IApplication Application { get => this.app ?? throw new InvalidOperationException("Application is not ready."); }
 
 
 		/// <summary>
@@ -62,7 +62,7 @@ namespace CarinaStudio.ULogViewer
 		public void SetupApp()
 		{
 			TestApp.Setup();
-			this.app = App.Current;
+			this.app = TestApp.Current;
 		}
 
 

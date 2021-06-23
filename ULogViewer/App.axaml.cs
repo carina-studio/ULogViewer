@@ -22,7 +22,6 @@ namespace CarinaStudio.ULogViewer
 	class App : Application, IApplication
 	{
 		// Fields.
-		readonly bool isTestingProcess;
 		readonly ILogger logger;
 		MainWindow? mainWindow;
 		volatile Settings? settings;
@@ -31,9 +30,7 @@ namespace CarinaStudio.ULogViewer
 
 
 		// Constructor.
-		public App() : this(false)
-		{ }
-		protected App(bool isTesting)
+		public App()
 		{
 			// setup logger
 			this.logger = this.LoggerFactory.CreateLogger("App");
@@ -51,9 +48,6 @@ namespace CarinaStudio.ULogViewer
 
 			// prepare file path of settings
 			this.settingsFilePath = Path.Combine(this.RootPrivateDirectoryPath, "Settings.json");
-
-			// keep testing state
-			this.isTestingProcess = isTesting;
 		}
 
 
@@ -122,8 +116,7 @@ namespace CarinaStudio.ULogViewer
 			LogDataSourceProviders.Initialize(this);
 
 			// show main window
-			if (!this.isTestingProcess)
-				this.synchronizationContext.Post(this.ShowMainWindow);
+			this.synchronizationContext.Post(this.ShowMainWindow);
 		}
 
 
@@ -191,8 +184,9 @@ namespace CarinaStudio.ULogViewer
 
 		// Interface implementations.
 		public bool IsShutdownStarted { get; private set; }
+		public bool IsTesting => false;
 		public ILoggerFactory LoggerFactory => new LoggerFactory(new ILoggerProvider[] { new NLogLoggerProvider() });
-		public string RootPrivateDirectoryPath => Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName) ?? throw new ArgumentException("Unable to get directory of application.");
+		public string RootPrivateDirectoryPath => Path.GetDirectoryName(Process.GetCurrentProcess().MainModule?.FileName) ?? throw new ArgumentException("Unable to get directory of application.");
 		public BaseSettings Settings { get => this.settings ?? throw new InvalidOperationException("Application is not ready."); }
 		public SynchronizationContext SynchronizationContext { get => this.synchronizationContext ?? throw new InvalidOperationException("Application is not ready."); }
 	}
