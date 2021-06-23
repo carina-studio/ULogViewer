@@ -1,6 +1,7 @@
 ﻿using CarinaStudio.Threading;
 using NUnit.Framework;
 using System;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -33,11 +34,13 @@ namespace CarinaStudio.ULogViewer
 			else
 			{
 				var syncLock = new object();
+				var awaiter = new TaskAwaiter();
 				lock (syncLock)
 				{
 					app.SynchronizationContext.Post(() =>
 					{
-						asyncTest().GetAwaiter().OnCompleted(() =>
+						awaiter = asyncTest().GetAwaiter();
+						awaiter.OnCompleted(() =>
 						{
 							lock (syncLock)
 							{
@@ -46,6 +49,7 @@ namespace CarinaStudio.ULogViewer
 						});
 					});
 					Monitor.Wait(syncLock);
+					awaiter.GetResult();
 				}
 			}
 		}
