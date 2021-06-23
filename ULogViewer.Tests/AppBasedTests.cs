@@ -35,12 +35,15 @@ namespace CarinaStudio.ULogViewer
 				var syncLock = new object();
 				lock (syncLock)
 				{
-					asyncTest().GetAwaiter().OnCompleted(() =>
+					app.SynchronizationContext.Post(() =>
 					{
-						lock (syncLock)
+						asyncTest().GetAwaiter().OnCompleted(() =>
 						{
-							Monitor.Pulse(syncLock);
-						}
+							lock (syncLock)
+							{
+								Monitor.Pulse(syncLock);
+							}
+						});
 					});
 					Monitor.Wait(syncLock);
 				}
