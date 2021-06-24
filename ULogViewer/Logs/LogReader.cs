@@ -31,11 +31,14 @@ namespace CarinaStudio.ULogViewer.Logs
 		// Fields.
 		readonly ScheduledAction flushPendingLogsAction;
 		bool isContinuousReading;
+		readonly Dictionary<string, LogLevel> logLevelMap = new Dictionary<string, LogLevel>();
 		IList<LogPattern> logPatterns = new LogPattern[0];
 		readonly ObservableCollection<Log> logs = new ObservableCollection<Log>();
 		CancellationTokenSource? logsReadingCancellationTokenSource;
 		readonly List<Log> pendingLogs = new List<Log>();
+		readonly IDictionary<string, LogLevel> readOnlyLogLevelMap;
 		LogReaderState state = LogReaderState.Preparing;
+		string? timestampFormat;
 
 
 		/// <summary>
@@ -54,6 +57,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			this.Id = nextId++;
 			this.Logger = dataSource.Application.LoggerFactory.CreateLogger($"{this.GetType().Name}-{this.Id}");
 			this.Logs = new ReadOnlyObservableCollection<Log>(this.logs);
+			this.readOnlyLogLevelMap = new ReadOnlyDictionary<string, LogLevel>(this.logLevelMap);
 
 			// create scheduled actions
 			this.flushPendingLogsAction = new ScheduledAction(() =>
@@ -203,6 +207,27 @@ namespace CarinaStudio.ULogViewer.Logs
 		protected ILogger Logger { get; }
 
 
+		/// <summary>
+		/// Get or set <see cref="IDictionary{TKey, TValue}"/> to map from string to <see cref="LogLevel"/>.
+		/// </summary>
+		public IDictionary<string, LogLevel> LogLevelMap
+		{
+			get => this.readOnlyLogLevelMap;
+			set
+			{
+				this.VerifyAccess();
+				if (this.state != LogReaderState.Preparing)
+					throw new InvalidOperationException($"Cannot change {nameof(LogLevelMap)} when state is {this.state}.");
+				if (this.logLevelMap.SequenceEqual(value))
+					return;
+				this.logLevelMap.Clear();
+				foreach (var pair in value)
+					this.logLevelMap.Add(pair.Key, pair.Value);
+				this.OnPropertyChanged(nameof(LogLevelMap));
+			}
+		}
+
+
 		// Called when property of data source has been changed.
 		void OnDataSourcePropertyChanged(object? sender, PropertyChangedEventArgs e) => this.OnDataSourcePropertyChanged(e);
 
@@ -315,8 +340,21 @@ namespace CarinaStudio.ULogViewer.Logs
 				var name = group.Name;
 				switch(name)
 				{
+					case nameof(Log.Level):
+						if (this.logLevelMap.TryGetValue(group.Value, out var level))
+							logBuilder.Set(name, level.ToString());
+						break;
 					case nameof(Log.Message):
 						logBuilder.AppendToNextLine(name, group.Value);
+						break;
+					case nameof(Log.Timestamp):
+						this.timestampFormat.Let(format =>
+						{
+							if (format == null)
+								logBuilder.Set(name, group.Value);
+							else if (DateTime.TryParseExact(group.Value, format, null, System.Globalization.DateTimeStyles.None, out var timestamp))
+								logBuilder.Set(name, timestamp.ToBinary().ToString());
+						});
 						break;
 					default:
 						logBuilder.Set(name, group.Value);
@@ -491,8 +529,10 @@ namespace CarinaStudio.ULogViewer.Logs
 			this.VerifyAccess();
 			if (this.state != LogReaderState.Preparing)
 				throw new InvalidOperationException($"Cannot start log reading when state is {this.state}.");
+			if (this.logLevelMap.IsEmpty())
+				throw new InvalidOperationException("No log level mapping specified.");
 			if (this.logPatterns.IsEmpty())
-				throw new ArgumentException("No log pattern specified.");
+				throw new InvalidOperationException("No log pattern specified.");
 
 			// start
 			this.StartReadingLogs();
@@ -557,6 +597,25 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// Get current state of <see cref="LogReader"/>.
 		/// </summary>
 		public LogReaderState State { get => this.state; }
+
+
+		/// <summary>
+		/// Get or set format to parse timestamp of log.
+		/// </summary>
+		public string? TimestampFormat
+		{
+			get => this.timestampFormat;
+			set
+			{
+				this.VerifyAccess();
+				if (this.state != LogReaderState.Preparing)
+					throw new InvalidOperationException($"Cannot change {nameof(TimestampFormat)} when state is {this.state}.");
+				if (this.timestampFormat == value)
+					return;
+				this.timestampFormat = value;
+				this.OnPropertyChanged(nameof(TimestampFormat));
+			}
+		}
 
 
 		// Implementations.
