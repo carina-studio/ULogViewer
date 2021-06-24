@@ -73,7 +73,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			if (!match.Success)
 				return LogDataSourceState.SourceNotFound;
 			var commandGroup = match.Groups["ExecutableCommand"];
-			var command = this.CreationOptions.Command.Substring(0, commandGroup.Length - 1);
+			var command = this.CreationOptions.Command.Substring(0, commandGroup.Length);
 			this.arguments = this.CreationOptions.Command.Substring(commandGroup.Length);
 			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && !command.EndsWith(".exe"))
 				command += ".exe";
