@@ -11,7 +11,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// Initiaize new <see cref="FileLogDataSourceProvider"/> instance.
 		/// </summary>
 		/// <param name="app">Application.</param>
-		public FileLogDataSourceProvider(App app) : base(app)
+		public FileLogDataSourceProvider(IApplication app) : base(app)
 		{ }
 
 

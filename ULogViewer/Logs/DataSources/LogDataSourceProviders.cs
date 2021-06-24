@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using CarinaStudio.Threading;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -11,7 +12,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 	static class LogDataSourceProviders
 	{
 		// Fields.
-		static volatile App? app;
+		static volatile IApplication? app;
 		static volatile ILogger? logger;
 		static readonly List<ILogDataSourceProvider> providers = new List<ILogDataSourceProvider>();
 
@@ -27,7 +28,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// </summary>
 		/// <param name="app">Application.</param>
 		[MethodImpl(MethodImplOptions.Synchronized)]
-		public static void Initialize(App app)
+		public static void Initialize(IApplication app)
 		{
 			// check state
 			app.VerifyAccess();

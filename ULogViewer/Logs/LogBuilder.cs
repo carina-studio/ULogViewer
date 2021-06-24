@@ -124,6 +124,20 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		/// <summary>
+		/// Check whether no log property has been set or not.
+		/// </summary>
+		/// <returns></returns>
+		public bool IsEmpty() => this.properties.Count == 0;
+
+
+		/// <summary>
+		/// Check whether at least one log property has been set or not.
+		/// </summary>
+		/// <returns></returns>
+		public bool IsNotEmpty() => this.properties.Count > 0;
+
+
+		/// <summary>
 		/// Clear all log properties.
 		/// </summary>
 		public void Reset() => this.properties.Clear();

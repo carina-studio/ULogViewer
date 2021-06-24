@@ -28,16 +28,15 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				this.textReader = textReader;
 			}
 
-			// Close.
-			public override void Close()
+			// Implementations.
+			protected override void Dispose(bool disposing)
 			{
+				base.Dispose(disposing);
+				this.textReader.Dispose();
 				if (Interlocked.Exchange(ref this.isClosed, 1) != 0)
 					return;
-				base.Close();
-				this.source.SynchronizationContext.Post(source.OnReaderClosed);
+				this.source.SynchronizationContext.Post(() => source.OnReaderClosed(this));
 			}
-
-			// Implementations.
 			public override int Peek() => this.textReader.Peek();
 			public override int Read() => this.textReader.Read();
 			public override int Read(char[] buffer, int index, int count) => this.textReader.Read(buffer, index, count);
@@ -54,6 +53,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 		// Fields.
 		string? displayName;
+		TextReaderWrapper? openedReader;
 		LogDataSourceState state = LogDataSourceState.Initializing;
 
 
@@ -74,9 +74,9 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		/// <summary>
-		/// Get <see cref="App"/> instance.
+		/// Get <see cref="IApplication"/> instance.
 		/// </summary>
-		public App Application { get => (App)this.Provider.Application; }
+		public IApplication Application { get => (IApplication)this.Provider.Application; }
 
 
 		// change state.
@@ -114,6 +114,13 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		{
 			this.VerifyAccess();
 			this.ChangeState(LogDataSourceState.Disposed);
+			this.openedReader?.Let(reader =>
+			{
+				this.Logger.LogWarning("Close opened reader because of disposing");
+				this.openedReader = null;
+				Global.RunWithoutErrorAsync(reader.Close);
+				this.OnReaderClosed();
+			});
 			if (this.Provider is BaseLogDataSourceProvider baseProvider)
 				baseProvider.NotifySourceDisposedInternal(this);
 		}
@@ -138,12 +145,25 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		protected virtual void OnPropertyChanged(string propertyName) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
 
+		// Called when opened reader has been closed.
+		void OnReaderClosed(TextReaderWrapper reader)
+		{
+			if (this.openedReader == reader)
+			{
+				this.Logger.LogDebug("Reader closed");
+				this.openedReader = null;
+				this.OnReaderClosed();
+			}
+			else
+				this.Logger.LogWarning("Unknown reader closed");
+		}
+
+
 		/// <summary>
 		/// Called when opened reader has been closed.
 		/// </summary>
 		protected virtual void OnReaderClosed()
 		{
-			this.Logger.LogDebug("Reader closed");
 			if (this.IsDisposed)
 				return;
 			if (this.state != LogDataSourceState.ReaderOpened)
@@ -189,7 +209,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				this.Logger.LogWarning($"State has been changed to {this.state} when opening reader");
 				Global.RunWithoutErrorAsync(() => reader?.Close());
 				if (this.IsDisposed)
-					throw new ObjectDisposedException("Source has been disposed when opening reader.");
+					throw new InvalidOperationException("Source has been disposed when opening reader.");
 				throw new InternalStateCorruptedException("Internal state has been changed when opening reader.");
 			}
 			switch (openingResult)
@@ -216,7 +236,8 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				Global.RunWithoutErrorAsync(() => reader?.Close());
 				throw new InternalStateCorruptedException("Internal state has been changed when opening reader.");
 			}
-			return new TextReaderWrapper(this, reader);
+			this.openedReader = new TextReaderWrapper(this, reader);
+			return this.openedReader;
 		}
 
 
@@ -297,7 +318,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		// Interface implementations.
 		public bool CheckAccess() => this.Provider.CheckAccess();
 		public LogDataSourceOptions CreationOptions { get; }
-		IApplication IApplicationObject.Application { get => this.Application; }
+		CarinaStudio.IApplication IApplicationObject.Application { get => this.Application; }
 		public event PropertyChangedEventHandler? PropertyChanged;
 		public ILogDataSourceProvider Provider { get; }
 		public SynchronizationContext SynchronizationContext => this.Provider.SynchronizationContext;

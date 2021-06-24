@@ -1,24 +1,25 @@
 ﻿using CarinaStudio.Threading;
 using NUnit.Framework;
 using System;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer
 {
 	/// <summary>
-	/// Base implementations of <see cref="App"/> based tests.
+	/// Base implementations of <see cref="IApplication"/> based tests.
 	/// </summary>
 	abstract class AppBasedTests
 	{
 		// Fields.
-		volatile App? app;
+		volatile IApplication? app;
 
 
 		/// <summary>
-		/// Get <see cref="App"/> instance.
+		/// Get <see cref="IApplication"/> instance.
 		/// </summary>
-		protected App Application { get => this.app ?? throw new InvalidOperationException("Application is not ready."); }
+		protected IApplication Application { get => this.app ?? throw new InvalidOperationException("Application is not ready."); }
 
 
 		/// <summary>
@@ -33,40 +34,46 @@ namespace CarinaStudio.ULogViewer
 			else
 			{
 				var syncLock = new object();
+				var awaiter = new TaskAwaiter();
 				lock (syncLock)
 				{
-					asyncTest().GetAwaiter().OnCompleted(() =>
+					app.SynchronizationContext.Post(() =>
 					{
-						lock (syncLock)
+						awaiter = asyncTest().GetAwaiter();
+						awaiter.OnCompleted(() =>
 						{
-							Monitor.Pulse(syncLock);
-						}
+							lock (syncLock)
+							{
+								Monitor.Pulse(syncLock);
+							}
+						});
 					});
 					Monitor.Wait(syncLock);
+					awaiter.GetResult();
 				}
 			}
 		}
 
 
 		/// <summary>
-		/// Setup <see cref="App"/> for testing.
+		/// Setup <see cref="IApplication"/> for testing.
 		/// </summary>
 		[OneTimeSetUp]
 		public void SetupApp()
 		{
 			TestApp.Setup();
-			this.app = App.Current;
+			this.app = TestApp.Current;
 		}
 
 
 		/// <summary>
-		/// Get <see cref="SynchronizationContext"/> provided by <see cref="App"/>.
+		/// Get <see cref="SynchronizationContext"/> provided by <see cref="IApplication"/>.
 		/// </summary>
 		protected SynchronizationContext SynchronizationContext { get => this.app?.SynchronizationContext ?? throw new InvalidOperationException("Application is not ready."); }
 
 
 		/// <summary>
-		/// Run testing on thread of <see cref="App"/>.
+		/// Run testing on thread of <see cref="IApplication"/>.
 		/// </summary>
 		/// <param name="test">Test action.</param>
 		protected void TestOnApplicationThread(Action test)
