@@ -1,13 +1,16 @@
-﻿using CarinaStudio.Threading;
+﻿using CarinaStudio.Collections;
+using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.DataSources;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.Logs
 {
@@ -16,10 +19,22 @@ namespace CarinaStudio.ULogViewer.Logs
 	/// </summary>
 	class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 	{
+		// Constants.
+		const int FlushPendingLogsInterval = 100;
+		const int LogsReadingChunkSize = 1024;
+
+
+		// Static fields.
+		static int nextId = 1;
+
+
 		// Fields.
+		readonly ScheduledAction flushPendingLogsAction;
 		bool isContinuousReading;
 		IList<LogPattern> logPatterns = new LogPattern[0];
 		readonly ObservableCollection<Log> logs = new ObservableCollection<Log>();
+		CancellationTokenSource? logsReadingCancellationTokenSource;
+		readonly List<Log> pendingLogs = new List<Log>();
 		LogReaderState state = LogReaderState.Preparing;
 
 
@@ -36,10 +51,27 @@ namespace CarinaStudio.ULogViewer.Logs
 			// setup properties
 			this.Application = (IApplication)dataSource.Application;
 			this.DataSource = dataSource;
+			this.Id = nextId++;
+			this.Logger = dataSource.Application.LoggerFactory.CreateLogger($"{this.GetType().Name}-{this.Id}");
 			this.Logs = new ReadOnlyObservableCollection<Log>(this.logs);
+
+			// create scheduled actions
+			this.flushPendingLogsAction = new ScheduledAction(() =>
+			{
+				if (this.pendingLogs.IsEmpty())
+					return;
+				if (!this.CanAddLogs)
+					return;
+				var logs = this.logs;
+				foreach (var log in this.pendingLogs)
+					logs.Add(log);
+				this.pendingLogs.Clear();
+			});
 
 			// attach to data source
 			dataSource.PropertyChanged += this.OnDataSourcePropertyChanged;
+
+			this.Logger.LogDebug($"Create with data source: {dataSource}");
 		}
 
 
@@ -49,12 +81,27 @@ namespace CarinaStudio.ULogViewer.Logs
 		public IApplication Application { get; }
 
 
+		// Whether read logs can be added or not.
+		bool CanAddLogs
+		{
+			get => this.state switch
+			{
+				LogReaderState.Starting => true,
+				LogReaderState.ReadingLogs => true,
+				LogReaderState.Stopping => true,
+				_ => false,
+			};
+		}
+
+
 		// Change state.
 		bool ChangeState(LogReaderState state)
 		{
-			if (this.state == state)
+			var prevState = this.state;
+			if (prevState == state)
 				return true;
 			this.state = state;
+			this.Logger.LogDebug($"Change state from {prevState} to {state}");
 			this.OnPropertyChanged(nameof(State));
 			return (this.state == state);
 		}
@@ -81,9 +128,26 @@ namespace CarinaStudio.ULogViewer.Logs
 			// detach from data source
 			this.DataSource.PropertyChanged -= this.OnDataSourcePropertyChanged;
 
+			// cancel reading logs
+			this.logsReadingCancellationTokenSource?.Let(it =>
+			{
+				this.Logger.LogWarning("Cancel reading logs because of disposing");
+				it.Cancel();
+				it.Dispose();
+				this.logsReadingCancellationTokenSource = null;
+			});
+			this.flushPendingLogsAction.Cancel();
+
 			// clear logs
+			this.pendingLogs.Clear();
 			this.logs.Clear();
 		}
+
+
+		/// <summary>
+		/// Get unique ID of this <see cref="LogReader"/> instance.
+		/// </summary>
+		public int Id { get; }
 
 
 		/// <summary>
@@ -133,6 +197,12 @@ namespace CarinaStudio.ULogViewer.Logs
 		public IList<Log> Logs { get; }
 
 
+		/// <summary>
+		/// Get logger.
+		/// </summary>
+		protected ILogger Logger { get; }
+
+
 		// Called when property of data source has been changed.
 		void OnDataSourcePropertyChanged(object? sender, PropertyChangedEventArgs e) => this.OnDataSourcePropertyChanged(e);
 
@@ -153,7 +223,81 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// </summary>
 		/// <param name="state">New state.</param>
 		protected virtual void OnDataSourceStateChanged(LogDataSourceState state)
-		{ }
+		{
+			if (state == LogDataSourceState.ReadyToOpenReader && this.state == LogReaderState.Starting)
+			{
+				this.Logger.LogWarning("Data source is ready to open reader, start reading logs");
+				this.StartReadingLogs();
+			}
+		}
+
+
+		// Called when logs read.
+		void OnLogRead(Log log)
+		{
+			if (!this.CanAddLogs)
+				return;
+			if (this.isContinuousReading)
+			{
+				this.pendingLogs.Add(log);
+				this.flushPendingLogsAction.Schedule(FlushPendingLogsInterval);
+			}
+			else
+				this.logs.Add(log);
+		}
+
+
+		// Called when logs read.
+		void OnLogsRead(IEnumerable<Log> readLogs)
+		{
+			if (!this.CanAddLogs)
+				return;
+			if (this.isContinuousReading)
+			{
+				this.pendingLogs.AddRange(readLogs);
+				this.flushPendingLogsAction.Schedule(FlushPendingLogsInterval);
+			}
+			else
+			{
+				var logs = this.logs;
+				foreach (var log in readLogs)
+					logs.Add(log);
+			}
+		}
+
+
+		// Called when all logs read.
+		void OnLogsReadingCompleted(Exception? ex)
+		{
+			// check state
+			if (this.state != LogReaderState.ReadingLogs)
+				return;
+
+			this.Logger.LogWarning("Complete reading logs");
+
+			// release cancellation token
+			this.logsReadingCancellationTokenSource = this.logsReadingCancellationTokenSource.DisposeAndReturnNull();
+
+			// change state
+			if (!this.isContinuousReading)
+			{
+				if (ex != null)
+				{
+					if (this.ChangeState(LogReaderState.Stopping))
+					{
+						this.flushPendingLogsAction.ExecuteIfScheduled();
+						this.ChangeState(LogReaderState.Stopped);
+					}
+				}
+				else
+					this.ChangeState(LogReaderState.UnclassifiedError);
+				return;
+			}
+
+			// restart reading
+			this.Logger.LogWarning("Restart reading logs");
+			this.StartReadingLogs();
+		}
 
 
 		/// <summary>
@@ -163,17 +307,264 @@ namespace CarinaStudio.ULogViewer.Logs
 		protected virtual void OnPropertyChanged(string propertyName) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
 
+		// Read single line of log.
+		void ReadLog(LogBuilder logBuilder, Match match)
+		{
+			foreach (Group group in match.Groups)
+			{
+				var name = group.Name;
+				switch(name)
+				{
+					case nameof(Log.Message):
+						logBuilder.AppendToNextLine(name, group.Value);
+						break;
+					default:
+						logBuilder.Set(name, group.Value);
+						break;
+				}
+			}
+		}
+
+
+		// Read logs.
+		void ReadLogs(TextReader reader, CancellationToken cancellationToken)
+		{
+			this.Logger.LogDebug("Start reading logs in background");
+			var readLogs = new List<Log>();
+			var logPatterns = this.logPatterns;
+			var logBuilder = new LogBuilder();
+			var syncContext = this.SynchronizationContext;
+			var isContinuousReading = this.isContinuousReading;
+			var exception = (Exception?)null;
+			try
+			{
+				var prevLogPattern = (LogPattern?)null;
+				var logPatternIndex = 0;
+				var lastLogPatternIndex = (logPatterns.Count - 1);
+				var logLine = reader.ReadLine();
+				while (logLine != null && !cancellationToken.IsCancellationRequested)
+				{
+					var logPattern = logPatterns[logPatternIndex];
+					try
+					{
+						var match = logPattern.Regex.Match(logLine);
+						if (match.Success)
+						{
+							// read log
+							this.ReadLog(logBuilder, match);
+
+							// creat log and move to next pattern
+							if (!logPattern.IsRepeatable)
+							{
+								if (logPatternIndex == lastLogPatternIndex)
+								{
+									if (logBuilder.IsNotEmpty())
+										readLogs.Add(logBuilder.BuildAndReset());
+									logPatternIndex = 0;
+								}
+								else
+									++logPatternIndex;
+							}
+
+							// read next line
+							logLine = reader.ReadLine();
+						}
+						else if (logPattern.IsSkippable)
+						{
+							// move to next pattern
+							if (logPatternIndex < lastLogPatternIndex)
+							{
+								++logPatternIndex;
+								continue;
+							}
+
+							// build log if this is the last pattern
+							if (logBuilder.IsNotEmpty())
+								readLogs.Add(logBuilder.BuildAndReset());
+
+							// move to first pattern
+							logPatternIndex = 0;
+
+							// need to move to next line because there is only one pattern
+							if (lastLogPatternIndex == 0)
+								logLine = reader.ReadLine();
+						}
+						else if (logPattern.IsRepeatable)
+						{
+							// drop this log if this pattern never be matched
+							if (prevLogPattern != logPattern)
+							{
+								// drop log
+								logBuilder.Reset();
+
+								// move to first pattern
+								logPatternIndex = 0;
+
+								// need to move to next line because there is only one pattern
+								if (lastLogPatternIndex == 0)
+									logLine = reader.ReadLine();
+								continue;
+							}
+
+							// move to next pattern
+							if (logPatternIndex != lastLogPatternIndex)
+							{
+								++logPatternIndex;
+								continue;
+							}
+
+							// build log if this is the last pattern
+							if (logBuilder.IsNotEmpty())
+								readLogs.Add(logBuilder.BuildAndReset());
+
+							// move to first pattern
+							logPatternIndex = 0;
+
+							// need to move to next line because there is only one pattern
+							if (lastLogPatternIndex == 0)
+								logLine = reader.ReadLine();
+						}
+						else
+						{
+							// drop log
+							logBuilder.Reset();
+
+							// move to first pattern
+							logPatternIndex = 0;
+
+							// need to move to next line because there is only one pattern
+							if (lastLogPatternIndex == 0)
+								logLine = reader.ReadLine();
+						}
+					}
+					finally
+					{
+						if (isContinuousReading)
+						{
+							if (readLogs.IsNotEmpty())
+							{
+								var log = readLogs[0];
+								readLogs.Clear();
+								syncContext.Post(() => this.OnLogRead(log));
+							}
+						}
+						else if (readLogs.Count >= LogsReadingChunkSize)
+						{
+							var logArray = readLogs.ToArray();
+							readLogs.Clear();
+							syncContext.Post(() => this.OnLogsRead(logArray));
+						}
+						prevLogPattern = logPattern;
+					}
+				}
+				if (logLine != null && cancellationToken.IsCancellationRequested)
+					this.Logger.LogWarning("Logs reading has been cancelled");
+			}
+			catch (Exception ex)
+			{
+				this.Logger.LogError(ex, "Error occurred while reading logs.");
+				exception = ex;
+			}
+			finally
+			{
+				this.Logger.LogDebug("Complete reading logs in background");
+
+				// send last chunk of logs
+				if (readLogs.IsNotEmpty())
+					syncContext.Post(() => this.OnLogsRead(readLogs));
+
+				// close reader
+				Global.RunWithoutError(reader.Close);
+
+				// complete reading
+				syncContext.Post(() => this.OnLogsReadingCompleted(exception));
+			}
+		}
+
+
+		/// <summary>
+		/// Start reading logs.
+		/// </summary>
+		public void Start()
+		{
+			// check state
+			this.VerifyAccess();
+			if (this.state != LogReaderState.Preparing)
+				throw new InvalidOperationException($"Cannot start log reading when state is {this.state}.");
+			if (this.logPatterns.IsEmpty())
+				throw new ArgumentException("No log pattern specified.");
+
+			// start
+			this.StartReadingLogs();
+		}
+
+
+		// Start reading logs.
+		async void StartReadingLogs()
+		{
+			// change state
+			if (!this.ChangeState(LogReaderState.Starting))
+				return;
+
+			// check source state
+			if (this.DataSource.State != LogDataSourceState.ReadyToOpenReader)
+			{
+				this.Logger.LogWarning("Wait for data source ready to open reader");
+				return;
+			}
+
+			// open reader
+			var reader = (TextReader?)null;
+			try
+			{
+				this.Logger.LogDebug("Start opening reader");
+				reader = await this.DataSource.OpenReaderAsync();
+				this.Logger.LogDebug("Reader opened");
+			}
+			catch (Exception ex)
+			{
+				this.Logger.LogError(ex, "Unable to open reader");
+			}
+
+			// check state
+			if (this.state != LogReaderState.Starting)
+			{
+				this.Logger.LogWarning($"State has been changed to {this.state} when opening reader");
+				Global.RunWithoutErrorAsync(() => reader?.Close());
+				return;
+			}
+			if (reader == null)
+			{
+				this.ChangeState(LogReaderState.DataSourceError);
+				return;
+			}
+
+			// change state
+			if (!this.ChangeState(LogReaderState.ReadingLogs))
+			{
+				Global.RunWithoutErrorAsync(() => reader?.Close());
+				return;
+			}
+
+			// read logs
+			this.logsReadingCancellationTokenSource = new CancellationTokenSource();
+			var cancellationToken = this.logsReadingCancellationTokenSource.Token;
+			ThreadPool.QueueUserWorkItem(_ => this.ReadLogs(reader, cancellationToken));
+		}
+
+
 		/// <summary>
 		/// Get current state of <see cref="LogReader"/>.
 		/// </summary>
 		public LogReaderState State { get => this.state; }
 
 
-		// Interface implementations.
+		// Implementations.
 		public bool CheckAccess() => this.Application.CheckAccess();
 		CarinaStudio.IApplication IApplicationObject.Application { get => this.Application; }
 		public event PropertyChangedEventHandler? PropertyChanged;
 		public SynchronizationContext SynchronizationContext { get => this.Application.SynchronizationContext; }
+		public override string ToString() => $"{this.GetType().Name}-{this.Id}";
 	}
 
 
