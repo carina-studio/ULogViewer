@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Threading;
 
 namespace CarinaStudio.ULogViewer
@@ -64,7 +65,12 @@ namespace CarinaStudio.ULogViewer
 		public bool IsTesting => true;
 		public ILoggerFactory LoggerFactory => new LoggerFactory(new ILoggerProvider[] { new NLogLoggerProvider() });
 		public event PropertyChangedEventHandler? PropertyChanged;
-		public string RootPrivateDirectoryPath => Path.GetDirectoryName(Process.GetCurrentProcess().MainModule?.FileName) ?? throw new ArgumentException("Unable to get directory of application.");
+		public string RootPrivateDirectoryPath => Global.Run(() =>
+		{
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+				return Path.GetDirectoryName(Process.GetCurrentProcess().MainModule?.FileName);
+			return Path.GetTempPath();
+		}) ?? throw new ArgumentException("Unable to get directory of application.");
 		public BaseSettings Settings => new Settings();
 		public SynchronizationContext SynchronizationContext => syncContext ?? throw new InternalStateCorruptedException();
 	}
