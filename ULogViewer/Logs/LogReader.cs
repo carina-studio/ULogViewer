@@ -35,6 +35,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		IList<LogPattern> logPatterns = new LogPattern[0];
 		readonly ObservableCollection<Log> logs = new ObservableCollection<Log>();
 		CancellationTokenSource? logsReadingCancellationTokenSource;
+		object logsReadingToken = new object();
 		readonly List<Log> pendingLogs = new List<Log>();
 		readonly IDictionary<string, LogLevel> readOnlyLogLevelMap;
 		LogReaderState state = LogReaderState.Preparing;
@@ -92,7 +93,6 @@ namespace CarinaStudio.ULogViewer.Logs
 			{
 				LogReaderState.Starting => true,
 				LogReaderState.ReadingLogs => true,
-				LogReaderState.Stopping => true,
 				_ => false,
 			};
 		}
@@ -249,18 +249,42 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <param name="state">New state.</param>
 		protected virtual void OnDataSourceStateChanged(LogDataSourceState state)
 		{
-			if (state == LogDataSourceState.ReadyToOpenReader && this.state == LogReaderState.Starting)
+			switch(state)
 			{
-				this.Logger.LogWarning("Data source is ready to open reader, start reading logs");
-				this.StartReadingLogs();
+				case LogDataSourceState.ReadyToOpenReader:
+					switch (this.state)
+					{
+						case LogReaderState.Starting:
+						case LogReaderState.StartingWhenPaused:
+							this.Logger.LogWarning("Data source is ready to open reader, start reading logs");
+							this.StartReadingLogs();
+							break;
+					}
+					break;
+				case LogDataSourceState.OpeningReader:
+				case LogDataSourceState.ReaderOpened:
+				case LogDataSourceState.ClosingReader:
+					break;
+				default:
+					switch (this.state)
+					{
+						case LogReaderState.Starting:
+						case LogReaderState.StartingWhenPaused:
+						case LogReaderState.ReadingLogs:
+						case LogReaderState.Paused:
+							this.Logger.LogWarning($"Data source state changed to {state}, cancel reading logs");
+							this.OnLogsReadingCompleted(new Exception("State of data source has been changed during reading logs."));
+							break;
+					}
+					break;
 			}
 		}
 
 
 		// Called when logs read.
-		void OnLogRead(Log log)
+		void OnLogRead(object readingToken, Log log)
 		{
-			if (!this.CanAddLogs)
+			if (!this.CanAddLogs || this.logsReadingToken != readingToken)
 				return;
 			if (this.isContinuousReading)
 			{
@@ -273,9 +297,9 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		// Called when logs read.
-		void OnLogsRead(IEnumerable<Log> readLogs)
+		void OnLogsRead(object readingToken, IEnumerable<Log> readLogs)
 		{
-			if (!this.CanAddLogs)
+			if (!this.CanAddLogs || this.logsReadingToken != readingToken)
 				return;
 			if (this.isContinuousReading)
 			{
@@ -295,24 +319,33 @@ namespace CarinaStudio.ULogViewer.Logs
 		void OnLogsReadingCompleted(Exception? ex)
 		{
 			// check state
-			if (this.state != LogReaderState.ReadingLogs)
-				return;
+			switch(this.state)
+			{
+				case LogReaderState.Starting:
+				case LogReaderState.ReadingLogs:
+				case LogReaderState.Paused:
+					break;
+				default:
+					return;
+			}
 
 			this.Logger.LogWarning("Complete reading logs");
 
 			// release cancellation token
-			this.logsReadingCancellationTokenSource = this.logsReadingCancellationTokenSource.DisposeAndReturnNull();
+			this.logsReadingCancellationTokenSource?.Let(it =>
+			{
+				it.Cancel();
+				it.Dispose();
+				this.logsReadingCancellationTokenSource = null;
+			});
 
 			// change state
 			if (!this.isContinuousReading)
 			{
 				if (ex != null)
 				{
-					if (this.ChangeState(LogReaderState.Stopping))
-					{
-						this.flushPendingLogsAction.ExecuteIfScheduled();
-						this.ChangeState(LogReaderState.Stopped);
-					}
+					this.flushPendingLogsAction.ExecuteIfScheduled();
+					this.ChangeState(LogReaderState.Stopped);
 				}
 				else
 					this.ChangeState(LogReaderState.UnclassifiedError);
@@ -330,6 +363,39 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// </summary>
 		/// <param name="propertyName">Name of changed property.</param>
 		protected virtual void OnPropertyChanged(string propertyName) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+
+		/// <summary>
+		/// Pause reading logs.
+		/// </summary>
+		/// <returns>True if logs reading has been paused successfully.</returns>
+		public bool Pause()
+		{
+			this.VerifyAccess();
+			switch (this.state)
+			{
+				case LogReaderState.StartingWhenPaused:
+				case LogReaderState.Paused:
+					return true;
+				case LogReaderState.Starting:
+					if (!this.isContinuousReading)
+					{
+						this.Logger.LogWarning($"Cannot pause logs reading when {nameof(IsContinuousReading)} is false");
+						return false;
+					}
+					return this.ChangeState(LogReaderState.StartingWhenPaused);
+				case LogReaderState.ReadingLogs:
+					if (!this.isContinuousReading)
+					{
+						this.Logger.LogWarning($"Cannot pause logs reading when {nameof(IsContinuousReading)} is false");
+						return false;
+					}
+					return this.ChangeState(LogReaderState.Paused);
+				default:
+					this.Logger.LogWarning($"Cannot pause logs reading when state is {this.state}");
+					return false;
+			}
+		}
 
 
 		// Read single line of log.
@@ -365,7 +431,7 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		// Read logs.
-		void ReadLogs(TextReader reader, CancellationToken cancellationToken)
+		void ReadLogs(object readingToken, TextReader reader, CancellationToken cancellationToken)
 		{
 			this.Logger.LogDebug("Start reading logs in background");
 			var readLogs = new List<Log>();
@@ -483,14 +549,14 @@ namespace CarinaStudio.ULogViewer.Logs
 							{
 								var log = readLogs[0];
 								readLogs.Clear();
-								syncContext.Post(() => this.OnLogRead(log));
+								syncContext.Post(() => this.OnLogRead(readingToken, log));
 							}
 						}
 						else if (readLogs.Count >= LogsReadingChunkSize)
 						{
 							var logArray = readLogs.ToArray();
 							readLogs.Clear();
-							syncContext.Post(() => this.OnLogsRead(logArray));
+							syncContext.Post(() => this.OnLogsRead(readingToken, logArray));
 						}
 						prevLogPattern = logPattern;
 					}
@@ -509,13 +575,36 @@ namespace CarinaStudio.ULogViewer.Logs
 
 				// send last chunk of logs
 				if (readLogs.IsNotEmpty())
-					syncContext.Post(() => this.OnLogsRead(readLogs));
+					syncContext.Post(() => this.OnLogsRead(readingToken, readLogs));
 
 				// close reader
 				Global.RunWithoutError(reader.Close);
 
 				// complete reading
 				syncContext.Post(() => this.OnLogsReadingCompleted(exception));
+			}
+		}
+
+
+		/// <summary>
+		/// Resume reading logs.
+		/// </summary>
+		/// <returns>True if logs reading has been resumed successfully.</returns>
+		public bool Resume()
+		{
+			this.VerifyAccess();
+			switch (this.state)
+			{
+				case LogReaderState.Starting:
+				case LogReaderState.ReadingLogs:
+					return true;
+				case LogReaderState.StartingWhenPaused:
+					return this.ChangeState(LogReaderState.Starting);
+				case LogReaderState.Paused:
+					return this.ChangeState(LogReaderState.ReadingLogs);
+				default:
+					this.Logger.LogWarning($"Cannot resume logs reading when state is {this.state}");
+					return false;
 			}
 		}
 
@@ -543,8 +632,25 @@ namespace CarinaStudio.ULogViewer.Logs
 		async void StartReadingLogs()
 		{
 			// change state
-			if (!this.ChangeState(LogReaderState.Starting))
-				return;
+			switch (this.state)
+			{
+				case LogReaderState.Preparing:
+				case LogReaderState.ReadingLogs:
+					if (!this.ChangeState(LogReaderState.Starting))
+						return;
+					break;
+				case LogReaderState.Paused:
+					if (!this.ChangeState(LogReaderState.StartingWhenPaused))
+						return;
+					break;
+				case LogReaderState.Starting:
+				case LogReaderState.StartingWhenPaused:
+					break;
+				default:
+					this.Logger.LogError($"Cannot start readong logs when state is {this.state}");
+					return;
+			}
+			
 
 			// check source state
 			if (this.DataSource.State != LogDataSourceState.ReadyToOpenReader)
@@ -566,30 +672,45 @@ namespace CarinaStudio.ULogViewer.Logs
 				this.Logger.LogError(ex, "Unable to open reader");
 			}
 
-			// check state
-			if (this.state != LogReaderState.Starting)
-			{
-				this.Logger.LogWarning($"State has been changed to {this.state} when opening reader");
-				Global.RunWithoutErrorAsync(() => reader?.Close());
-				return;
-			}
-			if (reader == null)
-			{
-				this.ChangeState(LogReaderState.DataSourceError);
-				return;
-			}
-
 			// change state
-			if (!this.ChangeState(LogReaderState.ReadingLogs))
+			switch(this.state)
 			{
-				Global.RunWithoutErrorAsync(() => reader?.Close());
-				return;
+				case LogReaderState.Starting:
+					if (reader == null)
+					{
+						this.ChangeState(LogReaderState.DataSourceError);
+						return;
+					}
+					if (!this.ChangeState(LogReaderState.ReadingLogs))
+					{
+						Global.RunWithoutErrorAsync(() => reader?.Close());
+						return;
+					}
+					break;
+				case LogReaderState.StartingWhenPaused:
+					if (reader == null)
+					{
+						this.ChangeState(LogReaderState.DataSourceError);
+						return;
+					}
+					if (!this.ChangeState(LogReaderState.Paused))
+					{
+						Global.RunWithoutErrorAsync(() => reader?.Close());
+						return;
+					}
+					break;
+				default:
+					this.Logger.LogWarning($"State has been changed to {this.state} when opening reader");
+					Global.RunWithoutErrorAsync(() => reader?.Close());
+					return;
 			}
 
 			// read logs
+			this.logsReadingToken = new object();
 			this.logsReadingCancellationTokenSource = new CancellationTokenSource();
+			var readingToken = this.logsReadingToken;
 			var cancellationToken = this.logsReadingCancellationTokenSource.Token;
-			ThreadPool.QueueUserWorkItem(_ => this.ReadLogs(reader, cancellationToken));
+			ThreadPool.QueueUserWorkItem(_ => this.ReadLogs(readingToken, reader, cancellationToken));
 		}
 
 
@@ -641,13 +762,17 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// </summary>
 		Starting,
 		/// <summary>
+		/// Starting to read logs but pausing logs reading has been requested.
+		/// </summary>
+		StartingWhenPaused,
+		/// <summary>
 		/// Reading logs.
 		/// </summary>
 		ReadingLogs,
 		/// <summary>
-		/// Stopping from reading logs.
+		/// Pause reading logs.
 		/// </summary>
-		Stopping,
+		Paused,
 		/// <summary>
 		/// Stopped.
 		/// </summary>
