@@ -183,5 +183,59 @@ namespace CarinaStudio.ULogViewer.Logs
 				}
 			});
 		}
+
+
+		/// <summary>
+		/// Test for reading logs from invalid file.
+		/// </summary>
+		[Test]
+		public void ReadingLogsFromInvalidFileTest()
+		{
+			this.AsyncTestOnApplicationThread(async () =>
+			{
+				// prepare source
+				var options = LogDataSourceOptions.CreateForFile("Invalid");
+
+				// create source
+				if (!LogDataSourceProviders.TryFindProviderByName("File", out var provider) || provider == null)
+					throw new AssertionException("Cannot find file log data source provider.");
+				using var source = provider.CreateSource(options);
+
+				// create log reader
+				using var logReader1 = new LogReader(source)
+				{
+					LogLevelMap = LogLevelMap,
+					LogPatterns = new LogPattern[]
+					{
+						new LogPattern(LogHeaderRegex, false, false),
+						new LogPattern(LogMessageRegex, true, true),
+						new LogPattern(LogTailRegex, false, false),
+					},
+					TimestampFormat = TimestampFormat,
+				};
+
+				// read logs
+				logReader1.Start();
+				Assert.AreEqual(LogReaderState.Starting, logReader1.State);
+				Assert.IsTrue(await logReader1.WaitForPropertyAsync(nameof(LogReader.State), LogReaderState.DataSourceError, 5000));
+				Assert.AreEqual(0, logReader1.Logs.Count);
+				logReader1.Dispose();
+
+				// create another log reader
+				using var logReader2 = new LogReader(source)
+				{
+					LogLevelMap = LogLevelMap,
+					LogPatterns = new LogPattern[]
+					{
+						new LogPattern(LogHeaderRegex, false, false),
+						new LogPattern(LogMessageRegex, true, true),
+						new LogPattern(LogTailRegex, false, false),
+					},
+					TimestampFormat = TimestampFormat,
+				};
+				logReader2.Start();
+				Assert.AreEqual(LogReaderState.DataSourceError, logReader2.State);
+			});
+		}
 	}
 }

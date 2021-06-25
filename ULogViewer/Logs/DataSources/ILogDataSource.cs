@@ -52,6 +52,25 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 	/// <summary>
+	/// Extensions for <see cref="ILogDataSource"/>.
+	/// </summary>
+	static class LogDataSourceExtensions
+	{
+		/// <summary>
+		/// Check whether given <see cref="ILogDataSource"/> is now in error state or not.
+		/// </summary>
+		/// <param name="source"><see cref="ILogDataSource"/>.</param>
+		/// <returns>True if given <see cref="ILogDataSource"/> is now in error state.</returns>
+		public static bool IsErrorState(this ILogDataSource source) => source.State switch
+		{
+			LogDataSourceState.SourceNotFound => true,
+			LogDataSourceState.UnclassifiedError => true,
+			_ => false,
+		};
+	}
+
+
+	/// <summary>
 	/// State of <see cref="ILogDataSource"/>.
 	/// </summary>
 	enum LogDataSourceState
