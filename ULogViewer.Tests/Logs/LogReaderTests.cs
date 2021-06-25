@@ -1,4 +1,5 @@
 ﻿using CarinaStudio.Collections;
+using CarinaStudio.Tests;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using NUnit.Framework;
 using System;
@@ -32,7 +33,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			{ "V", LogLevel.Verbose },
 			{ "W", LogLevel.Warn },
 		};
-		static readonly Regex LogMessageRegex = new Regex("^[\\s]{2}(?<Message>.*)$");
+		static readonly Regex LogMessageRegex = new Regex("^[\\s]{2}(?<Message>[^\\[]*)$");
 		static readonly Regex LogTailRegex = new Regex("^[\\s]{2}\\[TAIL\\]$");
 
 
@@ -122,5 +123,65 @@ namespace CarinaStudio.ULogViewer.Logs
 
 		// Generate tail line of log.
 		string GenerateLogTailLine() => "  [TAIL]";
+
+
+		/// <summary>
+		/// Test for reading logs from file.
+		/// </summary>
+		[Test]
+		public void ReadingLogsFromFileTest()
+		{
+			this.AsyncTestOnApplicationThread(async () =>
+			{
+				if (!LogDataSourceProviders.TryFindProviderByName("File", out var provider) || provider == null)
+					throw new AssertionException("Cannot find file log data source provider.");
+				for (var i = 0; i < 10; ++i)
+				{
+					// prepare source
+					var logCount = 256;
+					var filePath = this.GenerateLogFile(logCount);
+					var options = LogDataSourceOptions.CreateForFile(filePath);
+
+					// create source
+					using var source = provider.CreateSource(options);
+
+					// create log reader
+					using var logReader1 = new LogReader(source)
+					{
+						LogLevelMap = LogLevelMap,
+						LogPatterns = new LogPattern[]
+						{
+						new LogPattern(LogHeaderRegex, false, false),
+						new LogPattern(LogMessageRegex, true, true),
+						new LogPattern(LogTailRegex, false, false),
+						},
+						TimestampFormat = TimestampFormat,
+					};
+
+					// read logs
+					logReader1.Start();
+					Assert.AreEqual(LogReaderState.Starting, logReader1.State);
+					Assert.IsTrue(await logReader1.WaitForPropertyAsync(nameof(LogReader.State), LogReaderState.ReadingLogs, 5000));
+					Assert.IsTrue(await logReader1.WaitForPropertyAsync(nameof(LogReader.State), LogReaderState.Stopped, -1));
+					Assert.AreEqual(logCount, logReader1.Logs.Count);
+
+					// try reading logs again
+					try
+					{
+						logReader1.Start();
+						throw new AssertionException("Should not allow restart reading logs.");
+					}
+					catch (Exception ex)
+					{
+						if (ex is AssertionException)
+							throw;
+					}
+
+					// dispose log reader
+					logReader1.Dispose();
+					Assert.AreEqual(LogReaderState.Disposed, logReader1.State);
+				}
+			});
+		}
 	}
 }

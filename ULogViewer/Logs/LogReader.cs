@@ -46,8 +46,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// Initialize new <see cref="LogReader"/> instance.
 		/// </summary>
 		/// <param name="dataSource"><see cref="ILogDataSource"/> to read log data from.</param>
-		/// <param name="logPatterns">Log patterns to parse log data.</param>
-		public LogReader(ILogDataSource dataSource, IEnumerable<LogPattern> logPatterns)
+		public LogReader(ILogDataSource dataSource)
 		{
 			// check thread
 			dataSource.VerifyAccess();
@@ -270,6 +269,9 @@ namespace CarinaStudio.ULogViewer.Logs
 					{
 						case LogReaderState.Starting:
 						case LogReaderState.StartingWhenPaused:
+							if (state == LogDataSourceState.Preparing)
+								break;
+							goto case LogReaderState.ReadingLogs;
 						case LogReaderState.ReadingLogs:
 						case LogReaderState.Paused:
 							this.Logger.LogWarning($"Data source state changed to {state}, cancel reading logs");
@@ -322,6 +324,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			switch(this.state)
 			{
 				case LogReaderState.Starting:
+				case LogReaderState.StartingWhenPaused:
 				case LogReaderState.ReadingLogs:
 				case LogReaderState.Paused:
 					break;
@@ -342,7 +345,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			// change state
 			if (!this.isContinuousReading)
 			{
-				if (ex != null)
+				if (ex == null)
 				{
 					this.flushPendingLogsAction.ExecuteIfScheduled();
 					this.ChangeState(LogReaderState.Stopped);
@@ -486,12 +489,12 @@ namespace CarinaStudio.ULogViewer.Logs
 							if (logBuilder.IsNotEmpty())
 								readLogs.Add(logBuilder.BuildAndReset());
 
+							// need to move to next line if there is only one pattern or this is the first pattern
+							if (logPatternIndex == 0 || lastLogPatternIndex == 0)
+								logLine = reader.ReadLine();
+
 							// move to first pattern
 							logPatternIndex = 0;
-
-							// need to move to next line because there is only one pattern
-							if (lastLogPatternIndex == 0)
-								logLine = reader.ReadLine();
 						}
 						else if (logPattern.IsRepeatable)
 						{
@@ -501,12 +504,12 @@ namespace CarinaStudio.ULogViewer.Logs
 								// drop log
 								logBuilder.Reset();
 
+								// need to move to next line if there is only one pattern or this is the first pattern
+								if (logPatternIndex == 0 || lastLogPatternIndex == 0)
+									logLine = reader.ReadLine();
+
 								// move to first pattern
 								logPatternIndex = 0;
-
-								// need to move to next line because there is only one pattern
-								if (lastLogPatternIndex == 0)
-									logLine = reader.ReadLine();
 								continue;
 							}
 
@@ -521,24 +524,24 @@ namespace CarinaStudio.ULogViewer.Logs
 							if (logBuilder.IsNotEmpty())
 								readLogs.Add(logBuilder.BuildAndReset());
 
+							// need to move to next line if there is only one pattern or this is the first pattern
+							if (logPatternIndex == 0 || lastLogPatternIndex == 0)
+								logLine = reader.ReadLine();
+
 							// move to first pattern
 							logPatternIndex = 0;
-
-							// need to move to next line because there is only one pattern
-							if (lastLogPatternIndex == 0)
-								logLine = reader.ReadLine();
 						}
 						else
 						{
 							// drop log
 							logBuilder.Reset();
 
+							// need to move to next line if there is only one pattern or this is the first pattern
+							if (logPatternIndex == 0 || lastLogPatternIndex == 0)
+								logLine = reader.ReadLine();
+
 							// move to first pattern
 							logPatternIndex = 0;
-
-							// need to move to next line because there is only one pattern
-							if (lastLogPatternIndex == 0)
-								logLine = reader.ReadLine();
 						}
 					}
 					finally
