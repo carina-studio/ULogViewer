@@ -34,11 +34,66 @@ namespace CarinaStudio.ULogViewer.Logs
 			{ "W", LogLevel.Warn },
 		};
 		static readonly Regex LogMessageRegex = new Regex("^[\\s]{2}(?<Message>[^\\[]*)$");
+		static readonly LogPattern[] LogPatterns;
 		static readonly Regex LogTailRegex = new Regex("^[\\s]{2}\\[TAIL\\]$");
 
 
 		// Fields.
 		string? testDirectoryPath;
+
+
+		// Static initializer.
+		static LogReaderTests()
+		{
+			LogPatterns = new LogPattern[] {
+				new LogPattern(LogHeaderRegex, false, false),
+				new LogPattern(LogMessageRegex, true, true),
+				new LogPattern(LogTailRegex, false, false),
+			};
+		}
+
+
+		/// <summary>
+		/// Test for reading logs continuously from file.
+		/// </summary>
+		[Test]
+		public void ContinuousReadingLogsFromFileTest()
+		{
+			this.AsyncTestOnApplicationThread(async () =>
+			{
+				if (!LogDataSourceProviders.TryFindProviderByName("File", out var provider) || provider == null)
+					throw new AssertionException("Cannot find file log data source provider.");
+				for (var i = 0; i < 10; ++i)
+				{
+					// prepare source
+					var logCount = 256;
+					var filePath = this.GenerateLogFile(logCount);
+					var options = LogDataSourceOptions.CreateForFile(filePath);
+
+					// create source
+					using var source = provider.CreateSource(options);
+
+					// create log reader
+					using var logReader = new LogReader(source)
+					{
+						IsContinuousReading = true,
+						LogLevelMap = LogLevelMap,
+						LogPatterns = LogPatterns,
+						TimestampFormat = TimestampFormat,
+					};
+
+					// read logs 10 times
+					logReader.Start();
+					for (var j = 0; j < 50; ++j)
+					{
+						Assert.IsTrue(await logReader.WaitForPropertyAsync(nameof(LogReader.State), LogReaderState.Starting, 5000));
+						Assert.IsTrue(await logReader.WaitForPropertyAsync(nameof(LogReader.State), LogReaderState.ReadingLogs, 5000));
+						Assert.IsTrue(await logReader.WaitForPropertyAsync(nameof(LogReader.State), LogReaderState.Starting, -1));
+					}
+					Assert.LessOrEqual(logCount * 40, logReader.Logs.Count);
+				}
+			});
+		}
 
 
 		/// <summary>
@@ -149,12 +204,7 @@ namespace CarinaStudio.ULogViewer.Logs
 					using var logReader1 = new LogReader(source)
 					{
 						LogLevelMap = LogLevelMap,
-						LogPatterns = new LogPattern[]
-						{
-						new LogPattern(LogHeaderRegex, false, false),
-						new LogPattern(LogMessageRegex, true, true),
-						new LogPattern(LogTailRegex, false, false),
-						},
+						LogPatterns = LogPatterns,
 						TimestampFormat = TimestampFormat,
 					};
 
@@ -205,12 +255,7 @@ namespace CarinaStudio.ULogViewer.Logs
 				using var logReader1 = new LogReader(source)
 				{
 					LogLevelMap = LogLevelMap,
-					LogPatterns = new LogPattern[]
-					{
-						new LogPattern(LogHeaderRegex, false, false),
-						new LogPattern(LogMessageRegex, true, true),
-						new LogPattern(LogTailRegex, false, false),
-					},
+					LogPatterns = LogPatterns,
 					TimestampFormat = TimestampFormat,
 				};
 
@@ -225,12 +270,7 @@ namespace CarinaStudio.ULogViewer.Logs
 				using var logReader2 = new LogReader(source)
 				{
 					LogLevelMap = LogLevelMap,
-					LogPatterns = new LogPattern[]
-					{
-						new LogPattern(LogHeaderRegex, false, false),
-						new LogPattern(LogMessageRegex, true, true),
-						new LogPattern(LogTailRegex, false, false),
-					},
+					LogPatterns = LogPatterns,
 					TimestampFormat = TimestampFormat,
 				};
 				logReader2.Start();
