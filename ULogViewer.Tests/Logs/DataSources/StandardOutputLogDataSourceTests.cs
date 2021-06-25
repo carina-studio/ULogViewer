@@ -32,7 +32,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				writer.Write(data[i]);
 			}
 			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-				options = LogDataSourceOptions.CreateForStandardOutput($"type \"{filePath}\"");
+				options = LogDataSourceOptions.CreateForStandardOutput($"cmd /c type \"{filePath}\"");
 			else
 				options = LogDataSourceOptions.CreateForStandardOutput($"cat \"{filePath}\"");
 		}
