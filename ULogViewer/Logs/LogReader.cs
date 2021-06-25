@@ -269,13 +269,13 @@ namespace CarinaStudio.ULogViewer.Logs
 					{
 						case LogReaderState.Starting:
 						case LogReaderState.StartingWhenPaused:
-							if (state == LogDataSourceState.Preparing)
-								break;
-							goto case LogReaderState.ReadingLogs;
 						case LogReaderState.ReadingLogs:
 						case LogReaderState.Paused:
-							this.Logger.LogWarning($"Data source state changed to {state}, cancel reading logs");
-							this.OnLogsReadingCompleted(new Exception("State of data source has been changed during reading logs."));
+							if (this.DataSource.IsErrorState())
+							{
+								this.Logger.LogWarning($"Data source state changed to {state}, cancel reading logs");
+								this.OnLogsReadingCompleted(null);
+							}
 							break;
 					}
 					break;
@@ -345,11 +345,14 @@ namespace CarinaStudio.ULogViewer.Logs
 			// change state
 			if (!this.isContinuousReading)
 			{
-				if (ex == null)
+				this.flushPendingLogsAction.ExecuteIfScheduled();
+				if (this.DataSource.IsErrorState())
 				{
-					this.flushPendingLogsAction.ExecuteIfScheduled();
-					this.ChangeState(LogReaderState.Stopped);
+					this.Logger.LogError($"Data source state is {this.DataSource.State} when completing reading logs");
+					this.ChangeState(LogReaderState.DataSourceError);
 				}
+				else if (ex == null)
+					this.ChangeState(LogReaderState.Stopped);
 				else
 					this.ChangeState(LogReaderState.UnclassifiedError);
 				return;
@@ -653,12 +656,18 @@ namespace CarinaStudio.ULogViewer.Logs
 					this.Logger.LogError($"Cannot start readong logs when state is {this.state}");
 					return;
 			}
-			
+
 
 			// check source state
 			if (this.DataSource.State != LogDataSourceState.ReadyToOpenReader)
 			{
-				this.Logger.LogWarning("Wait for data source ready to open reader");
+				if (this.DataSource.IsErrorState())
+				{
+					this.Logger.LogError($"Data source state is {this.DataSource.State} when starting reading logs");
+					this.ChangeState(LogReaderState.DataSourceError);
+				}
+				else
+					this.Logger.LogWarning("Wait for data source ready to open reader");
 				return;
 			}
 
