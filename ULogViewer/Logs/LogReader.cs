@@ -115,6 +115,18 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		/// <summary>
+		/// Clear all read logs.
+		/// </summary>
+		public void ClearLogs()
+		{
+			this.VerifyAccess();
+			this.flushPendingLogsAction.Cancel();
+			this.pendingLogs.Clear();
+			this.logs.Clear();
+		}
+
+
+		/// <summary>
 		/// Update interval of <see cref="Logs"/> in milliseconds when <see cref="IsContinuousReading"/> is true.
 		/// </summary>
 		public int ContinuousReadingUpdateInterval
