@@ -90,7 +90,7 @@ namespace CarinaStudio.ULogViewer.Logs
 						Assert.IsTrue(await logReader.WaitForPropertyAsync(nameof(LogReader.State), LogReaderState.ReadingLogs, 5000));
 						Assert.IsTrue(await logReader.WaitForPropertyAsync(nameof(LogReader.State), LogReaderState.Starting, -1));
 					}
-					Assert.LessOrEqual(logCount * 40, logReader.Logs.Count);
+					Assert.LessOrEqual(logCount * 30, logReader.Logs.Count);
 				}
 			});
 		}
@@ -178,6 +178,86 @@ namespace CarinaStudio.ULogViewer.Logs
 
 		// Generate tail line of log.
 		string GenerateLogTailLine() => "  [TAIL]";
+
+
+		/// <summary>
+		/// Test for setting max/drop log count.
+		/// </summary>
+		[Test]
+		public void MaxLogCountTest()
+		{
+			this.AsyncTestOnApplicationThread(async () =>
+			{
+				// prepare source
+				var logCount = 256;
+				var filePath = this.GenerateLogFile(logCount);
+				var options = LogDataSourceOptions.CreateForFile(filePath);
+
+				// create source
+				if (!LogDataSourceProviders.TryFindProviderByName("File", out var provider) || provider == null)
+					throw new AssertionException("Cannot find file log data source provider.");
+				using var source = provider.CreateSource(options);
+
+				// create log reader
+				using var logReader1 = new LogReader(source)
+				{
+					DropLogCount = 1024,
+					IsContinuousReading = true,
+					LogLevelMap = LogLevelMap,
+					LogPatterns = LogPatterns,
+					MaxLogCount = 2048,
+					TimestampFormat = TimestampFormat,
+				};
+
+				// start reading logs and check log count
+				logReader1.Start();
+				for (var j = 0; j < 100; ++j)
+				{
+					await Task.Delay(200);
+					Assert.LessOrEqual(logReader1.Logs.Count, logReader1.MaxLogCount);
+				}
+				logReader1.Dispose();
+
+				// create log reader
+				using var logReader2 = new LogReader(source)
+				{
+					IsContinuousReading = true,
+					LogLevelMap = LogLevelMap,
+					LogPatterns = LogPatterns,
+					MaxLogCount = 2048,
+					TimestampFormat = TimestampFormat,
+				};
+
+				// start reading logs and check log count
+				logReader2.Start();
+				for (var j = 0; j < 100; ++j)
+				{
+					await Task.Delay(200);
+					Assert.LessOrEqual(logReader2.Logs.Count, logReader2.MaxLogCount);
+				}
+				logReader2.Dispose();
+
+				// create log reader
+				using var logReader3 = new LogReader(source)
+				{
+					DropLogCount = 4096,
+					IsContinuousReading = true,
+					LogLevelMap = LogLevelMap,
+					LogPatterns = LogPatterns,
+					MaxLogCount = 2048,
+					TimestampFormat = TimestampFormat,
+				};
+
+				// start reading logs and check log count
+				logReader3.Start();
+				for (var j = 0; j < 100; ++j)
+				{
+					await Task.Delay(200);
+					Assert.LessOrEqual(logReader3.Logs.Count, logReader3.MaxLogCount);
+				}
+				logReader3.Dispose();
+			});
+		}
 
 
 		/// <summary>
