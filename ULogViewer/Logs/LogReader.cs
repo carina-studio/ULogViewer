@@ -20,7 +20,6 @@ namespace CarinaStudio.ULogViewer.Logs
 	class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 	{
 		// Constants.
-		const int FlushPendingLogsInterval = 100;
 		const int LogsReadingChunkSize = 1024;
 
 
@@ -29,6 +28,8 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		// Fields.
+		int continuousReadingUpdateInterval = 200;
+		int dropLogCount = -1;
 		readonly ScheduledAction flushPendingLogsAction;
 		bool isContinuousReading;
 		readonly Dictionary<string, LogLevel> logLevelMap = new Dictionary<string, LogLevel>();
@@ -36,6 +37,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		readonly ObservableCollection<Log> logs = new ObservableCollection<Log>();
 		CancellationTokenSource? logsReadingCancellationTokenSource;
 		object logsReadingToken = new object();
+		int maxLogCount = -1;
 		readonly List<Log> pendingLogs = new List<Log>();
 		readonly IDictionary<string, LogLevel> readOnlyLogLevelMap;
 		LogReaderState state = LogReaderState.Preparing;
@@ -67,9 +69,11 @@ namespace CarinaStudio.ULogViewer.Logs
 				if (!this.CanAddLogs)
 					return;
 				var logs = this.logs;
+				this.DropLogs(this.pendingLogs.Count);
 				foreach (var log in this.pendingLogs)
 					logs.Add(log);
 				this.pendingLogs.Clear();
+				this.DropLogs(0);
 			});
 
 			// attach to data source
@@ -111,6 +115,26 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		/// <summary>
+		/// Update interval of <see cref="Logs"/> in milliseconds when <see cref="IsContinuousReading"/> is true.
+		/// </summary>
+		public int ContinuousReadingUpdateInterval
+		{
+			get => this.continuousReadingUpdateInterval;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyDisposed();
+				if (value < 0)
+					throw new ArgumentOutOfRangeException();
+				if (this.continuousReadingUpdateInterval == value)
+					return;
+				this.continuousReadingUpdateInterval = value;
+				this.OnPropertyChanged(nameof(ContinuousReadingUpdateInterval));
+			}
+		}
+
+
+		/// <summary>
 		/// Get <see cref="ILogDataSource"/> to read log data from.
 		/// </summary>
 		public ILogDataSource DataSource { get; }
@@ -144,6 +168,54 @@ namespace CarinaStudio.ULogViewer.Logs
 			// clear logs
 			this.pendingLogs.Clear();
 			this.logs.Clear();
+		}
+
+
+		/// <summary>
+		/// Get or set number of logs to drop when number of logs reaches <see cref="MaxLogCount"/>.
+		/// </summary>
+		/// <remarks>Negative value means dropping 10% of read logs.</remarks>
+		public int DropLogCount
+		{
+			get => this.dropLogCount;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyDisposed();
+				if (value == 0)
+					throw new ArgumentOutOfRangeException();
+				if (this.dropLogCount == value)
+					return;
+				this.dropLogCount = value;
+				this.OnPropertyChanged(nameof(DropLogCount));
+			}
+		}
+
+
+		// Drop exceeded logs.
+		void DropLogs(int addingLogCount)
+		{
+			// prepare dropping information
+			if (this.maxLogCount < 0)
+				return;
+			var logs = this.logs;
+			var logCount = logs.Count + addingLogCount;
+			var droppingLogCount = (logCount - this.maxLogCount);
+			if (droppingLogCount <= 0)
+				return;
+			if (this.dropLogCount < 0)
+				droppingLogCount += (this.maxLogCount / 10);
+			else
+				droppingLogCount += this.dropLogCount;
+
+			// drop logs
+			if (droppingLogCount < logs.Count)
+			{
+				for (var i = droppingLogCount - 1; i >= 0; --i)
+					logs.RemoveAt(i);
+			}
+			else
+				logs.Clear();
 		}
 
 
@@ -227,6 +299,28 @@ namespace CarinaStudio.ULogViewer.Logs
 		}
 
 
+		/// <summary>
+		/// Get or set maximum number of logs to read. Logs read earlier will be dropped if number of logs reaches <see cref="MaxLogCount"/>.
+		/// </summary>
+		/// <remarks>Negative number means unlimited number of logs.</remarks>
+		public int MaxLogCount
+		{
+			get => this.maxLogCount;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyDisposed();
+				if (value == 0)
+					throw new ArgumentOutOfRangeException();
+				if (this.maxLogCount == value)
+					return;
+				this.maxLogCount = value;
+				this.DropLogs(0);
+				this.OnPropertyChanged(nameof(MaxLogCount));
+			}
+		}
+
+
 		// Called when property of data source has been changed.
 		void OnDataSourcePropertyChanged(object? sender, PropertyChangedEventArgs e) => this.OnDataSourcePropertyChanged(e);
 
@@ -291,28 +385,33 @@ namespace CarinaStudio.ULogViewer.Logs
 			if (this.isContinuousReading)
 			{
 				this.pendingLogs.Add(log);
-				this.flushPendingLogsAction.Schedule(FlushPendingLogsInterval);
+				this.flushPendingLogsAction.Schedule(this.continuousReadingUpdateInterval);
 			}
 			else
+			{
+				this.DropLogs(1);
 				this.logs.Add(log);
+			}
 		}
 
 
 		// Called when logs read.
-		void OnLogsRead(object readingToken, IEnumerable<Log> readLogs)
+		void OnLogsRead(object readingToken, ICollection<Log> readLogs)
 		{
 			if (!this.CanAddLogs || this.logsReadingToken != readingToken)
 				return;
 			if (this.isContinuousReading)
 			{
 				this.pendingLogs.AddRange(readLogs);
-				this.flushPendingLogsAction.Schedule(FlushPendingLogsInterval);
+				this.flushPendingLogsAction.Schedule(this.continuousReadingUpdateInterval);
 			}
 			else
 			{
 				var logs = this.logs;
+				this.DropLogs(readLogs.Count);
 				foreach (var log in readLogs)
 					logs.Add(log);
+				this.DropLogs(0);
 			}
 		}
 
