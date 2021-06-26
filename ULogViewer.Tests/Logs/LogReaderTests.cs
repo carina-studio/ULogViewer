@@ -181,6 +181,61 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		/// <summary>
+		/// Test for pausing reading logs.
+		/// </summary>
+		[Test]
+		public void PauseReadingLogsTest()
+		{
+			this.AsyncTestOnApplicationThread(async () =>
+			{
+				// prepare source
+				var logCount = 256;
+				var filePath = this.GenerateLogFile(logCount);
+				var options = LogDataSourceOptions.CreateForFile(filePath);
+
+				// create source
+				if (!LogDataSourceProviders.TryFindProviderByName("File", out var provider) || provider == null)
+					throw new AssertionException("Cannot find file log data source provider.");
+				using var source = provider.CreateSource(options);
+
+				// create log reader
+				using var logReader = new LogReader(source)
+				{
+					IsContinuousReading = true,
+					LogLevelMap = LogLevelMap,
+					LogPatterns = LogPatterns,
+					TimestampFormat = TimestampFormat,
+				};
+
+				// start reading logs and check pause/resume
+				logReader.Start();
+				var prevReadLogCount = 0;
+				for (var j = 0; j < 10; ++j)
+				{
+					// read logs
+					await Task.Delay(1000);
+
+					// pause
+					Assert.IsTrue(logReader.Pause());
+					var readLogCount = logReader.Logs.Count;
+					if (logReader.State == LogReaderState.Paused)
+						Assert.IsTrue(await logReader.WaitForPropertyAsync(nameof(LogReader.State), LogReaderState.StartingWhenPaused, -1));
+					else
+						Assert.IsTrue(await logReader.WaitForPropertyAsync(nameof(LogReader.State), LogReaderState.Paused, -1));
+					await Task.Delay(1000);
+					Assert.AreEqual(readLogCount, logReader.Logs.Count);
+					Assert.Greater(readLogCount, prevReadLogCount);
+					prevReadLogCount = readLogCount;
+
+					// resume
+					Assert.IsTrue(logReader.Resume());
+					Assert.IsTrue(logReader.State == LogReaderState.Starting || logReader.State == LogReaderState.ReadingLogs);
+				}
+			});
+		}
+
+
+		/// <summary>
 		/// Test for reading logs from file.
 		/// </summary>
 		[Test]
@@ -230,6 +285,23 @@ namespace CarinaStudio.ULogViewer.Logs
 					// dispose log reader
 					logReader1.Dispose();
 					Assert.AreEqual(LogReaderState.Disposed, logReader1.State);
+
+					// create log reader
+					using var logReader2 = new LogReader(source)
+					{
+						LogLevelMap = LogLevelMap,
+						LogPatterns = new LogPattern[] { 
+							new LogPattern(LogHeaderRegex, false, false),
+						},
+						TimestampFormat = TimestampFormat,
+					};
+
+					// read logs
+					logReader2.Start();
+					Assert.AreEqual(LogReaderState.Starting, logReader2.State);
+					Assert.IsTrue(await logReader2.WaitForPropertyAsync(nameof(LogReader.State), LogReaderState.ReadingLogs, 5000));
+					Assert.IsTrue(await logReader2.WaitForPropertyAsync(nameof(LogReader.State), LogReaderState.Stopped, -1));
+					Assert.AreEqual(logCount, logReader2.Logs.Count);
 				}
 			});
 		}
