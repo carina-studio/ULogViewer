@@ -34,7 +34,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		bool isContinuousReading;
 		readonly Dictionary<string, LogLevel> logLevelMap = new Dictionary<string, LogLevel>();
 		IList<LogPattern> logPatterns = new LogPattern[0];
-		readonly ObservableCollection<Log> logs = new ObservableCollection<Log>();
+		readonly ObservableList<Log> logs = new ObservableList<Log>();
 		CancellationTokenSource? logsReadingCancellationTokenSource;
 		object logsReadingToken = new object();
 		int maxLogCount = -1;
@@ -58,7 +58,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			this.DataSource = dataSource;
 			this.Id = nextId++;
 			this.Logger = dataSource.Application.LoggerFactory.CreateLogger($"{this.GetType().Name}-{this.Id}");
-			this.Logs = new ReadOnlyObservableCollection<Log>(this.logs);
+			this.Logs = new ReadOnlyObservableList<Log>(this.logs);
 			this.readOnlyLogLevelMap = new ReadOnlyDictionary<string, LogLevel>(this.logLevelMap);
 
 			// create scheduled actions
@@ -68,10 +68,8 @@ namespace CarinaStudio.ULogViewer.Logs
 					return;
 				if (!this.CanAddLogs)
 					return;
-				var logs = this.logs;
 				this.DropLogs(this.pendingLogs.Count);
-				foreach (var log in this.pendingLogs)
-					logs.Add(log);
+				this.logs.AddRange(this.pendingLogs);
 				this.pendingLogs.Clear();
 				this.DropLogs(0);
 			});
@@ -419,10 +417,8 @@ namespace CarinaStudio.ULogViewer.Logs
 			}
 			else
 			{
-				var logs = this.logs;
 				this.DropLogs(readLogs.Count);
-				foreach (var log in readLogs)
-					logs.Add(log);
+				this.logs.AddRange(readLogs);
 				this.DropLogs(0);
 			}
 		}
