@@ -9,6 +9,12 @@ namespace CarinaStudio.ULogViewer
 	class Settings : BaseSettings
 	{
 		/// <summary>
+		/// Select language automatically.
+		/// </summary>
+		public static readonly SettingKey<bool> SelectLanguageAutomatically = new SettingKey<bool>(nameof(SelectLanguageAutomatically), true);
+
+
+		/// <summary>
 		/// Initialize new <see cref="Settings"/> instance.
 		/// </summary>
 		public Settings() : base(JsonSettingsSerializer.Default)

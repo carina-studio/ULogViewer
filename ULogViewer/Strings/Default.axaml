@@ -1,0 +1,15 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+										xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+	<!-- Common -->
+	<sys:String x:Key="String.Common.Cancel">Cancel</sys:String>
+	<sys:String x:Key="String.Common.Delete">Delete</sys:String>
+	<sys:String x:Key="String.Common.KnowMoreAbout">Know more about</sys:String>
+	<sys:String x:Key="String.Common.No">No</sys:String>
+	<sys:String x:Key="String.Common.OK">OK</sys:String>
+	<sys:String x:Key="String.Common.Options">Options</sys:String>
+	<sys:String x:Key="String.Common.Rename">Rename</sys:String>
+	<sys:String x:Key="String.Common.Yes">Yes</sys:String>
+
+</ResourceDictionary>

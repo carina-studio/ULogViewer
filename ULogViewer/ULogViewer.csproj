@@ -26,6 +26,9 @@
     <AvaloniaResource Include="Resources/AppIcon_32px.png" />
     <AvaloniaResource Include="Resources/AppIcon_512px.png" />
     <AvaloniaResource Include="Resources/AppIcon_64px.png" />
+    <AvaloniaResource Include="Strings/Default.axaml" />
+		<AvaloniaResource Include="Strings/Default-Linux.axaml" />
+    <AvaloniaResource Include="Strings/zh-TW.axaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -36,6 +39,7 @@
     <PackageReference Include="CarinaStudio.AppBase.Application" Version="0.13.0.626" />
     <PackageReference Include="CarinaStudio.AppBase.Configuration" Version="0.13.0.626" />
     <PackageReference Include="CarinaStudio.AppBase.Core" Version="0.13.0.626" />
+    <PackageReference Include="Microsoft.Win32.SystemEvents" Version="5.0.0" />
     <PackageReference Include="NLog" Version="4.7.10" />
     <PackageReference Include="NLog.Extensions.Logging" Version="1.7.3" />
     <PackageReference Include="ReactiveUI" Version="14.1.1" />
