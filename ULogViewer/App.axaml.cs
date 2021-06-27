@@ -2,16 +2,20 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.ReactiveUI;
 using Avalonia.Markup.Xaml;
-using CarinaStudio;
+using Avalonia.Markup.Xaml.MarkupExtensions;
 using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using Microsoft.Extensions.Logging;
+using Microsoft.Win32;
 using NLog.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.IO;
+using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
+using System.IO;
+using System.Runtime.InteropServices;
 using System.Threading;
 
 namespace CarinaStudio.ULogViewer
@@ -24,8 +28,11 @@ namespace CarinaStudio.ULogViewer
 		// Fields.
 		readonly ILogger logger;
 		MainWindow? mainWindow;
+		PropertyChangedEventHandler? propertyChangedHandlers;
 		volatile Settings? settings;
 		readonly string settingsFilePath;
+		ResourceInclude? stringResources;
+		ResourceInclude? stringResourcesLinux;
 		volatile SynchronizationContext? synchronizationContext;
 
 
@@ -59,6 +66,12 @@ namespace CarinaStudio.ULogViewer
 
 
 		/// <summary>
+		/// Get <see cref="CultureInfo"/> applied on application.
+		/// </summary>
+		public CultureInfo CultureInfo { get; private set; } = CultureInfo.CurrentCulture;
+
+
+		/// <summary>
 		/// Get <see cref="App"/> instance for current process.
 		/// </summary>
 		public static new App Current
@@ -67,8 +80,24 @@ namespace CarinaStudio.ULogViewer
 		}
 
 
+		// Deinitialize.
+		void Deinitialize()
+		{
+			// detach from system events
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+				SystemEvents.UserPreferenceChanged -= this.OnWindowsUserPreferenceChanged;
+
+			this.logger.LogWarning("Stop");
+		}
+
+
 		// Get string.
-		public string? GetString(string key, string? defaultValue = null) => defaultValue;
+		public string? GetString(string key, string? defaultValue = null)
+		{
+			if (this.Resources.TryGetResource($"String.{key}", out var value) && value is string str)
+				return str;
+			return defaultValue;
+		}
 
 
 		// Initialize.
@@ -81,8 +110,8 @@ namespace CarinaStudio.ULogViewer
 			// start application
 			BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
 
-			// stop
-			App.Current?.logger?.LogWarning("Stop");
+			// deinitialize application
+			App.Current?.Deinitialize();
 		}
 
 
@@ -107,13 +136,28 @@ namespace CarinaStudio.ULogViewer
 			{
 				this.logger.LogWarning(ex, "Unable to load settings");
 			}
+			this.settings.SettingChanged += this.OnSettingChanged;
 
 			// setup shutdown mode
 			if (this.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime)
 				desktopLifetime.ShutdownMode = Avalonia.Controls.ShutdownMode.OnExplicitShutdown;
 
+			// load strings
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+			{
+				this.Resources.MergedDictionaries.Add(new ResourceInclude()
+				{
+					Source = new Uri($"avares://ULogViewer/Strings/Default-Linux.axaml")
+				});
+			}
+			this.UpdateStringResources();
+
 			// initialize log data source providers
 			LogDataSourceProviders.Initialize(this);
+
+			// attach to system events
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+				SystemEvents.UserPreferenceChanged += this.OnWindowsUserPreferenceChanged;
 
 			// show main window
 			this.synchronizationContext.Post(this.ShowMainWindow);
@@ -156,6 +200,49 @@ namespace CarinaStudio.ULogViewer
 		}
 
 
+		// Called when setting changed.
+		void OnSettingChanged(object? sender, SettingChangedEventArgs e)
+		{
+			if (e.Key == ULogViewer.Settings.SelectLanguageAutomatically)
+				this.UpdateStringResources();
+		}
+
+
+		// Called when system culture info has been changed.
+		void OnSystemCultureInfoChanged()
+		{
+			this.logger.LogWarning("Culture info of system has been changed");
+
+			// update culture info
+			this.CultureInfo = CultureInfo.CurrentCulture;
+			this.CultureInfo.ClearCachedData();
+			this.propertyChangedHandlers?.Invoke(this, new PropertyChangedEventArgs(nameof(CultureInfo)));
+
+			// update string resources
+			if (this.stringResources != null)
+			{
+				this.Resources.MergedDictionaries.Remove(this.stringResources);
+				this.stringResources = null;
+			}
+			if (this.stringResourcesLinux != null)
+			{
+				this.Resources.MergedDictionaries.Remove(this.stringResourcesLinux);
+				this.stringResourcesLinux = null;
+			}
+			this.UpdateStringResources();
+		}
+
+
+#pragma warning disable CA1416
+		// Called when user preference changed on Windows
+		void OnWindowsUserPreferenceChanged(object? sender, UserPreferenceChangedEventArgs e)
+		{
+			if (e.Category == UserPreferenceCategory.Locale)
+				this.OnSystemCultureInfoChanged();
+		}
+#pragma warning restore CA1416
+
+
 		// Create and show main window.
 		void ShowMainWindow()
 		{
@@ -182,10 +269,80 @@ namespace CarinaStudio.ULogViewer
 		}
 
 
+		// Update string resources according to current culture info and settings.
+		void UpdateStringResources()
+		{
+			if (this.Settings.GetValueOrDefault(ULogViewer.Settings.SelectLanguageAutomatically))
+			{
+				// base resources
+				var localeName = this.CultureInfo.Name;
+				if (this.stringResources == null)
+				{
+					try
+					{
+						this.stringResources = new ResourceInclude()
+						{
+							Source = new Uri($"avares://ULogViewer/Strings/{localeName}.axaml")
+						};
+						_ = this.stringResources.Loaded; // trigger error if resource not found
+						this.logger.LogInformation($"Load strings for {localeName}");
+					}
+					catch
+					{
+						this.stringResources = null;
+						this.logger.LogWarning($"No strings for {localeName}");
+						return;
+					}
+					this.Resources.MergedDictionaries.Add(this.stringResources);
+				}
+				else if (!this.Resources.MergedDictionaries.Contains(this.stringResources))
+					this.Resources.MergedDictionaries.Add(this.stringResources);
+
+				// resources for specific OS
+				if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+				{
+					if (this.stringResourcesLinux == null)
+					{
+						try
+						{
+							this.stringResourcesLinux = new ResourceInclude()
+							{
+								Source = new Uri($"avares://ULogViewer/Strings/{localeName}-Linux.axaml")
+							};
+							_ = this.stringResourcesLinux.Loaded; // trigger error if resource not found
+							this.logger.LogInformation($"Load strings (Linux) for {localeName}.");
+						}
+						catch
+						{
+							this.stringResourcesLinux = null;
+							this.logger.LogWarning($"No strings (Linux) for {localeName}.");
+							return;
+						}
+						this.Resources.MergedDictionaries.Add(this.stringResourcesLinux);
+					}
+					else if (!this.Resources.MergedDictionaries.Contains(this.stringResourcesLinux))
+						this.Resources.MergedDictionaries.Add(this.stringResourcesLinux);
+				}
+			}
+			else
+			{
+				if (this.stringResources != null)
+					this.Resources.MergedDictionaries.Remove(this.stringResources);
+				if (this.stringResourcesLinux != null)
+					this.Resources.MergedDictionaries.Remove(this.stringResourcesLinux);
+			}
+		}
+
+
 		// Interface implementations.
 		public bool IsShutdownStarted { get; private set; }
 		public bool IsTesting => false;
 		public ILoggerFactory LoggerFactory => new LoggerFactory(new ILoggerProvider[] { new NLogLoggerProvider() });
+		event PropertyChangedEventHandler? INotifyPropertyChanged.PropertyChanged
+		{
+			add => this.propertyChangedHandlers += value;
+			remove => this.propertyChangedHandlers -= value;
+		}
 		public string RootPrivateDirectoryPath => Path.GetDirectoryName(Process.GetCurrentProcess().MainModule?.FileName) ?? throw new ArgumentException("Unable to get directory of application.");
 		public BaseSettings Settings { get => this.settings ?? throw new InvalidOperationException("Application is not ready."); }
 		public SynchronizationContext SynchronizationContext { get => this.synchronizationContext ?? throw new InvalidOperationException("Application is not ready."); }
