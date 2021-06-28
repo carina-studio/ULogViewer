@@ -1,0 +1,30 @@
+﻿{
+	"DataSource": {
+		"Name": "StandardOutput",
+		"Command": "git --no-pager log"
+	},
+	"LogPatterns": [
+		{
+			"Regex": "^commit[\\s]+.+$"
+		},
+		{
+			"Regex": "^Author:[\\s]+(?<UserName>.+)$"
+		},
+		{
+			"Regex": "^Date:[\\s]+[\\w]+[\\s]+(?<Timestamp>[\\w]+[\\s]+[\\d]+[\\s]+[\\d]+:[\\d]+:[\\d]+[\\s]+[\\d]+).*$"
+		},
+		{
+			"Regex": "^[\\s]*$"
+		},
+		{
+			"IsRepeatable": true,
+			"IsSkippable": true,
+			"Regex": "^[\\s]{4}(?<Message>.*)$"
+		},
+		{
+			"Regex": "^[\\s]*$"
+		}
+	],
+	"SortDirection": "Descending",
+	"TimestampFormatForReading": "MMM dd HH:mm:ss yyyy"
+}

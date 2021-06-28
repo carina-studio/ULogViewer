@@ -6,6 +6,7 @@ using Avalonia.Markup.Xaml.MarkupExtensions;
 using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.DataSources;
+using CarinaStudio.ULogViewer.Logs.Profiles;
 using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
 using NLog.Extensions.Logging;
@@ -154,6 +155,9 @@ namespace CarinaStudio.ULogViewer
 
 			// initialize log data source providers
 			LogDataSourceProviders.Initialize(this);
+
+			// initialize log profiles
+			await LogProfiles.InitializeAsync(this);
 
 			// attach to system events
 			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
