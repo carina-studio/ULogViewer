@@ -60,4 +60,8 @@
 		</AssemblyAttribute>
 	</ItemGroup>
 
+	<ItemGroup>
+	  <EmbeddedResource Include="Logs/Profiles/BuiltIn/GitLog.json" />
+	</ItemGroup>
+
 </Project>

@@ -1,6 +1,7 @@
 ﻿using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.DataSources;
+using CarinaStudio.ULogViewer.Logs.Profiles;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using System;
@@ -23,14 +24,6 @@ namespace CarinaStudio.ULogViewer
 		static volatile SingleThreadSynchronizationContext? syncContext;
 
 
-		// Constructor.
-		public TestApp()
-		{
-			// Initialize log data source providers
-			LogDataSourceProviders.Initialize(this);
-		}
-
-
 		/// <summary>
 		/// Get <see cref="TestApp"/> instance.
 		/// </summary>
@@ -46,9 +39,16 @@ namespace CarinaStudio.ULogViewer
 			if (current != null)
 				return;
 			syncContext = new SingleThreadSynchronizationContext();
-			syncContext.Post(() =>
+			syncContext.Post(async () =>
 			{
+				// create application
 				current = new TestApp();
+
+				// initialize components
+				LogDataSourceProviders.Initialize(current);
+				await LogProfiles.InitializeAsync(current);
+
+				// complete
 				lock (typeof(TestApp))
 				{
 					Monitor.Pulse(typeof(TestApp));
