@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 
 namespace CarinaStudio.ULogViewer.Logs
 {
@@ -7,12 +8,17 @@ namespace CarinaStudio.ULogViewer.Logs
 	/// </summary>
 	class Log
 	{
+		// Fields.
+		static long nextId = 0;
+
+
 		/// <summary>
 		/// Initialize new <see cref="Log"/> instance.
 		/// </summary>
 		/// <param name="builder"><see cref="LogBuilder"/>.</param>
 		internal Log(LogBuilder builder)
 		{
+			this.Id = Interlocked.Increment(ref nextId);
 			this.Level = builder.GetEnumOrNull<LogLevel>(nameof(Level)) ?? LogLevel.Undefined;
 			this.LineNumber = builder.GetInt32OrNull(nameof(LineNumber));
 			this.Message = builder.GetStringOrNull(nameof(Message));
@@ -25,6 +31,12 @@ namespace CarinaStudio.ULogViewer.Logs
 			this.UserId = builder.GetStringOrNull(nameof(UserId));
 			this.UserName = builder.GetStringOrNull(nameof(UserName));
 		}
+
+
+		/// <summary>
+		/// Get unique incremental ID of this instance.
+		/// </summary>
+		public long Id { get; }
 
 
 		/// <summary>
