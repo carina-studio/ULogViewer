@@ -154,6 +154,18 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		/// <summary>
+		/// Equality operator.
+		/// </summary>
+		public static bool operator ==(LogDataSourceOptions x, LogDataSourceOptions y) => x.Equals(y);
+
+
+		/// <summary>
+		/// Inequality operator.
+		/// </summary>
+		public static bool operator !=(LogDataSourceOptions x, LogDataSourceOptions y) => !x.Equals(y);
+
+
+		/// <summary>
 		/// Get or set URI to connect.
 		/// </summary>
 		/// <remarks>Available for <see cref="UnderlyingLogDataSource.WebRequest"/>.</remarks>

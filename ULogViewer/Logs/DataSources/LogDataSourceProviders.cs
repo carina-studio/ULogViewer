@@ -13,6 +13,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 	{
 		// Fields.
 		static volatile IApplication? app;
+		static volatile EmptyLogDataSourceProvider? empty;
 		static volatile ILogger? logger;
 		static readonly List<ILogDataSourceProvider> providers = new List<ILogDataSourceProvider>();
 
@@ -21,6 +22,12 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// Get all providers.
 		/// </summary>
 		public static IList<ILogDataSourceProvider> All { get; } = providers.AsReadOnly();
+
+
+		/// <summary>
+		/// Get empty implementation of <see cref="ILogDataSourceProvider"/>.
+		/// </summary>
+		public static ILogDataSourceProvider Empty { get => empty ?? throw new InvalidOperationException($"{nameof(LogDataSourceProviders)} is not initialized yet."); }
 
 
 		/// <summary>
@@ -47,6 +54,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 			// create providers
 			logger.LogDebug("Initialize");
+			empty = new EmptyLogDataSourceProvider(app);
 			providers.Add(new FileLogDataSourceProvider(app));
 			providers.Add(new StandardOutputLogDataSourceProvider(app));
 		}
