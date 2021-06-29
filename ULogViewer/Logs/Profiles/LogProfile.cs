@@ -3,7 +3,9 @@ using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -19,18 +21,57 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 	/// </summary>
 	class LogProfile : IApplicationObject, INotifyPropertyChanged
 	{
+		/// <summary>
+		/// Default comparer for <see cref="LogProfile"/>.
+		/// </summary>
+		public static readonly IComparer<LogProfile> Comparer = Comparer<LogProfile>.Create(Compare);
+
+
 		// Fields.
 		LogDataSourceOptions dataSourceOptions;
 		ILogDataSourceProvider dataSourceProvider = LogDataSourceProviders.Empty;
+		Dictionary<string, LogLevel> logLevelMap = new Dictionary<string, LogLevel>();
 		IList<LogPattern> logPatterns = new LogPattern[0];
+		string name = "";
+		IDictionary<string, LogLevel> readOnlyLogLevelMap;
+		SortDirection sortDirection = SortDirection.Ascending;
+		string? timestampFormatForReading;
 
 
-		// Constructor for built-in profile.
-		LogProfile(IApplication app, string builtInId)
+		/// <summary>
+		/// Initialize new <see cref="LogProfile"/> instance.
+		/// </summary>
+		/// <param name="app">Application.</param>
+		public LogProfile(IApplication app)
 		{
 			app.VerifyAccess();
 			this.Application = app;
+			this.readOnlyLogLevelMap = new ReadOnlyDictionary<string, LogLevel>(this.logLevelMap);
+		}
+
+
+		/// <summary>
+		/// Initialize new <see cref="LogProfile"/> instance.
+		/// </summary>
+		/// <param name="template">Template profile.</param>
+		public LogProfile(LogProfile template) : this(template.Application)
+		{
+			this.dataSourceOptions = template.dataSourceOptions;
+			this.dataSourceProvider = template.dataSourceProvider;
+			foreach (var pair in template.logLevelMap)
+				this.logLevelMap[pair.Key] = pair.Value;
+			this.logPatterns = template.logPatterns;
+			this.name = template.name;
+			this.sortDirection = template.sortDirection;
+			this.timestampFormatForReading = template.timestampFormatForReading;
+		}
+
+
+		// Constructor for built-in profile.
+		LogProfile(IApplication app, string builtInId) : this(app)
+		{
 			this.BuiltInId = builtInId;
+			this.UpdateBuiltInName();
 		}
 
 
@@ -42,6 +83,43 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 
 		// ID of built-in profile.
 		string? BuiltInId { get; }
+
+
+		// Compare profiles.
+		static int Compare(LogProfile? x, LogProfile? y)
+		{
+			// check instance
+			if (x == null)
+			{
+				if (y == null)
+					return 0;
+				return -1;
+			}
+			if (y == null)
+				return 1;
+
+			// compare by name of data source provider
+			var result = x.dataSourceProvider.Name.CompareTo(y.dataSourceProvider.Name);
+			if (result != 0)
+				return result;
+
+			// compare by built-in state
+			if (x.IsBuiltIn)
+			{
+				if (!y.IsBuiltIn)
+					return -1;
+			}
+			else if (y.IsBuiltIn)
+				return 1;
+
+			// compare by name
+			result = x.name.CompareTo(y.name);
+			if (result != 0)
+				return result;
+
+			// compare by hash-code
+			return (x.GetHashCode() - y.GetHashCode());
+		}
 
 
 		/// <summary>
@@ -141,12 +219,37 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		void LoadFromJson(JsonElement profileElement)
 		{
 			// data source
-			if (profileElement.TryGetProperty("DataSource", out var jsonProperty))
-				this.LoadDataSourceFromJson(jsonProperty);
+			if (profileElement.TryGetProperty("DataSource", out var jsonValue))
+				this.LoadDataSourceFromJson(jsonValue);
+
+			// log level map
+			if (profileElement.TryGetProperty("LogLevelMap", out jsonValue))
+				this.LoadLogLevelMapFromJson(jsonValue);
 
 			// log patterns
-			if (profileElement.TryGetProperty("LogPatterns", out jsonProperty))
-				this.LoadLogPatternsFromJson(jsonProperty);
+			if (profileElement.TryGetProperty("LogPatterns", out jsonValue))
+				this.LoadLogPatternsFromJson(jsonValue);
+
+			// sort direction
+			if (profileElement.TryGetProperty("SortDirection", out jsonValue))
+				this.sortDirection = Enum.Parse<SortDirection>(jsonValue.GetString().AsNonNull());
+
+			// timestamp format
+			if (profileElement.TryGetProperty("TimestampFormatForReading", out jsonValue))
+				this.timestampFormatForReading = jsonValue.GetString();
+		}
+
+
+		// Load log level map from JSON.
+		void LoadLogLevelMapFromJson(JsonElement logLevelMapElement)
+		{
+			this.logLevelMap.Clear();
+			foreach (var jsonProperty in logLevelMapElement.EnumerateObject())
+			{
+				var key = jsonProperty.Name;
+				var logLevel = Enum.Parse<LogLevel>(jsonProperty.Value.GetString() ?? "");
+				this.logLevelMap[key] = logLevel;
+			}
 		}
 
 
@@ -170,6 +273,24 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 
 
 		/// <summary>
+		/// Get or set map of conversion from string to <see cref="LogLevel"/>.
+		/// </summary>
+		public IDictionary<string, LogLevel> LogLevelMap
+		{
+			get => this.readOnlyLogLevelMap;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				this.logLevelMap.Clear();
+				foreach (var pair in value)
+					this.logLevelMap[pair.Key] = pair.Value;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LogLevelMap)));
+			}
+		}
+
+
+		/// <summary>
 		/// Get of set list of <see cref="LogPattern"/> to parse log data.
 		/// </summary>
 		public IList<LogPattern> LogPatterns
@@ -188,9 +309,82 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 
 
 		/// <summary>
+		/// Get of set name of profile.
+		/// </summary>
+		public string Name
+		{
+			get => this.name;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (this.name == value)
+					return;
+				this.name = value;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Name)));
+			}
+		}
+
+
+		/// <summary>
+		/// Called when application string resources updated.
+		/// </summary>
+		public void OnApplicationStringsUpdated() => this.UpdateBuiltInName();
+
+
+		/// <summary>
 		/// Raised when property changed.
 		/// </summary>
 		public event PropertyChangedEventHandler? PropertyChanged;
+
+
+		/// <summary>
+		/// Get of set direction of log sorting.
+		/// </summary>
+		public SortDirection SortDirection
+		{
+			get => this.sortDirection;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (this.sortDirection == value)
+					return;
+				this.sortDirection = value;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SortDirection)));
+			}
+		}
+
+
+		/// <summary>
+		/// Get or set format of timestamp for reading logs.
+		/// </summary>
+		public string? TimestampFormatForReading
+		{
+			get => this.timestampFormatForReading;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (this.timestampFormatForReading == value)
+					return;
+				this.timestampFormatForReading = value;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TimestampFormatForReading)));
+			}
+		}
+
+
+		// Update name of built-in profile.
+		void UpdateBuiltInName()
+		{
+			if (this.BuiltInId == null)
+				return;
+			var name = this.Application.GetStringNonNull($"BuiltInProfile.{this.BuiltInId}", this.BuiltInId);
+			if (this.name == name)
+				return;
+			this.name = name;
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Name)));
+		}
 
 
 		/// <summary>
@@ -199,12 +393,6 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// <returns>True if properties of profile is valid.</returns>
 		public bool Validate() => !(this.dataSourceProvider is EmptyLogDataSourceProvider)
 				&& this.logPatterns.IsNotEmpty();
-
-
-		/// <summary>
-		/// Get or set format of timestamp for reading logs.
-		/// </summary>
-		public string? TimestampFormatForReading { get; set; }
 
 
 		// Throw exception if profile is built-in.
