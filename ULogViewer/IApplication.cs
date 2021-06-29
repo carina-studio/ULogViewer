@@ -11,5 +11,11 @@ namespace CarinaStudio.ULogViewer
 		/// Check whether application is running for testing purpose or not.
 		/// </summary>
 		bool IsTesting { get; }
+
+
+		/// <summary>
+		/// Raised after string resources are updated.
+		/// </summary>
+		event EventHandler StringsUpdated;
 	}
 }
