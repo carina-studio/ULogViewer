@@ -11,5 +11,8 @@
 	<sys:String x:Key="String.Common.Options">選項</sys:String>
 	<sys:String x:Key="String.Common.Rename">重新命名</sys:String>
 	<sys:String x:Key="String.Common.Yes">是</sys:String>
+
+	<!-- Built-in profile -->
+	<sys:String x:Key="String.BuiltInProfile.GitLog">Git 提交紀錄</sys:String>
 	
 </ResourceDictionary>

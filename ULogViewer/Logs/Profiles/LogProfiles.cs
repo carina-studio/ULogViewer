@@ -49,6 +49,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 
 			// attach to application
 			LogProfiles.app = app;
+			app.StringsUpdated += OnApplicationStringsUpdated;
 
 			// create logger
 			logger = app.LoggerFactory.CreateLogger(nameof(LogProfiles));
@@ -61,6 +62,14 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				profiles.Add(await LogProfile.LoadBuiltInProfileAsync(app, id));
 			}
 			logger.LogDebug("Complete loading built-in profiles");
+		}
+
+
+		// Called when application string resources updated.
+		static void OnApplicationStringsUpdated(object? sender, EventArgs e)
+		{
+			foreach (var profile in profiles)
+				profile.OnApplicationStringsUpdated();
 		}
 	}
 }

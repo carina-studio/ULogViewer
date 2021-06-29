@@ -12,4 +12,7 @@
 	<sys:String x:Key="String.Common.Rename">Rename</sys:String>
 	<sys:String x:Key="String.Common.Yes">Yes</sys:String>
 
+	<!-- Built-in profile -->
+	<sys:String x:Key="String.BuiltInProfile.GitLog">Git log</sys:String>
+
 </ResourceDictionary>
