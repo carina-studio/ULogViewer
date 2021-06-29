@@ -3,6 +3,7 @@ using CarinaStudio.Threading;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.Logs.Profiles
@@ -18,6 +19,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			"GitLog",
 		};
 		static volatile ILogger? logger;
+		static readonly ObservableList<LogProfile> pinnedProfiles = new ObservableList<LogProfile>();
 		static readonly ObservableList<LogProfile> profiles = new ObservableList<LogProfile>();
 
 
@@ -25,6 +27,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		static LogProfiles()
 		{
 			All = profiles.AsReadOnly();
+			Pinned = pinnedProfiles.AsReadOnly();
 		}
 
 
@@ -33,6 +36,31 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// </summary>
 		/// <remarks>The list will implement <see cref="System.Collections.Specialized.INotifyCollectionChanged"/> interface.</remarks>
 		public static IList<LogProfile> All { get; }
+
+
+		// Attach to profile.
+		static void AttachToProfile(LogProfile profile)
+		{
+			// add handler
+			profile.PropertyChanged += OnProfilePropertyChanged;
+
+			// add to lists
+			profiles.Add(profile);
+			if (profile.IsPinned)
+				pinnedProfiles.Add(profile);
+		}
+
+
+		// Detach from profile.
+		static void DetachFromProfile(LogProfile profile)
+		{
+			// remove handler
+			profile.PropertyChanged -= OnProfilePropertyChanged;
+
+			// remove from lists
+			pinnedProfiles.Remove(profile);
+			profiles.Remove(profile);
+		}
 
 
 		/// <summary>
@@ -59,7 +87,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			foreach (var id in builtInProfileIDs)
 			{
 				logger.LogDebug($"Load '{id}'");
-				profiles.Add(await LogProfile.LoadBuiltInProfileAsync(app, id));
+				AttachToProfile(await LogProfile.LoadBuiltInProfileAsync(app, id));
 			}
 			logger.LogDebug("Complete loading built-in profiles");
 		}
@@ -71,5 +99,29 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			foreach (var profile in profiles)
 				profile.OnApplicationStringsUpdated();
 		}
+
+
+		// Called when profile changed.
+		static void OnProfilePropertyChanged(object? sender, PropertyChangedEventArgs e)
+		{
+			if (sender is not LogProfile profile)
+				return;
+			switch (e.PropertyName)
+			{
+				case nameof(LogProfile.IsPinned):
+					if (profile.IsPinned)
+						pinnedProfiles.Add(profile);
+					else
+						pinnedProfiles.Remove(profile);
+					break;
+			}
+		}
+
+
+		/// <summary>
+		/// Get list of pinned <see cref="LogProfile"/>s.
+		/// </summary>
+		/// <remarks>The list will implement <see cref="System.Collections.Specialized.INotifyCollectionChanged"/> interface.</remarks>
+		public static IList<LogProfile> Pinned { get; }
 	}
 }

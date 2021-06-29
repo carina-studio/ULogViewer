@@ -1,5 +1,9 @@
-﻿using System;
+﻿using CarinaStudio.Collections;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
+using System.Reflection;
 
 namespace CarinaStudio.ULogViewer.Logs
 {
@@ -8,8 +12,11 @@ namespace CarinaStudio.ULogViewer.Logs
 	/// </summary>
 	class Log
 	{
-		// Fields.
+		// Static fields.
+		static volatile bool isPropertyMapReady;
 		static long nextId = 0;
+		static Dictionary<string, PropertyInfo> propertyMap = new Dictionary<string, PropertyInfo>();
+		static volatile IList<string>? propertyNames;
 
 
 		/// <summary>
@@ -30,6 +37,18 @@ namespace CarinaStudio.ULogViewer.Logs
 			this.Timestamp = builder.GetDateTimeOrNull(nameof(Timestamp));
 			this.UserId = builder.GetStringOrNull(nameof(UserId));
 			this.UserName = builder.GetStringOrNull(nameof(UserName));
+		}
+
+
+		/// <summary>
+		/// Check whether given log property is exported by <see cref="Log"/> or not.
+		/// </summary>
+		/// <param name="propertyName">Name of property.</param>
+		/// <returns>True if given log property is exported.</returns>
+		public static bool HasProperty(string propertyName)
+		{
+			SetupPropertyMap();
+			return propertyMap.ContainsKey(propertyName);
 		}
 
 
@@ -67,6 +86,48 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// Get name of process which generates log.
 		/// </summary>
 		public string? ProcessName { get; }
+
+
+		/// <summary>
+		/// Get list of log properties exported by <see cref="Log"/>.
+		/// </summary>
+		public static IList<string> PropertyNames
+		{
+			get
+			{
+				SetupPropertyMap();
+				if (propertyNames == null)
+				{
+					lock (typeof(Log))
+					{
+						if (propertyNames == null)
+							propertyNames = propertyMap.Keys.ToArray().AsReadOnly();
+					}
+				}
+				return propertyNames;
+			}
+		}
+
+
+		// Setup property map.
+		static void SetupPropertyMap()
+		{
+			if (!isPropertyMapReady)
+			{
+				lock (typeof(Log))
+				{
+					if (!isPropertyMapReady)
+					{
+						foreach (var propertyInfo in typeof(Log).GetProperties())
+						{
+							if (propertyInfo.Name != "Id")
+								propertyMap[propertyInfo.Name] = propertyInfo;
+						}
+						isPropertyMapReady = true;
+					}
+				}
+			}
+		}
 
 
 		/// <summary>

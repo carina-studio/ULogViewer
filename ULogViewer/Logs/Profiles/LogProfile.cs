@@ -1,4 +1,5 @@
 ﻿using CarinaStudio.Collections;
+using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using System;
@@ -30,12 +31,15 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		// Fields.
 		LogDataSourceOptions dataSourceOptions;
 		ILogDataSourceProvider dataSourceProvider = LogDataSourceProviders.Empty;
+		bool isPinned;
+		SettingKey<bool>? isPinnedSettingKey;
 		Dictionary<string, LogLevel> logLevelMap = new Dictionary<string, LogLevel>();
 		IList<LogPattern> logPatterns = new LogPattern[0];
 		string name = "";
 		IDictionary<string, LogLevel> readOnlyLogLevelMap;
 		SortDirection sortDirection = SortDirection.Ascending;
 		string? timestampFormatForReading;
+		IList<string> visibleLogProperties = new string[0];
 
 
 		/// <summary>
@@ -71,6 +75,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		LogProfile(IApplication app, string builtInId) : this(app)
 		{
 			this.BuiltInId = builtInId;
+			this.isPinnedSettingKey = new SettingKey<bool>($"BuiltInProfile.{builtInId}.IsPinned");
 			this.UpdateBuiltInName();
 		}
 
@@ -154,6 +159,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 					return;
 				this.dataSourceProvider = value;
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(DataSourceProvider)));
+				this.Validate();
 			}
 		}
 
@@ -162,6 +168,31 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// Check whether instance represents a built-in profile or not.
 		/// </summary>
 		public bool IsBuiltIn { get => this.BuiltInId != null; }
+
+
+		/// <summary>
+		/// Get or set whether profile should be pinned at quick access area or not.
+		/// </summary>
+		public bool IsPinned
+		{
+			get => this.isPinned;
+			set
+			{
+				this.VerifyAccess();
+				if (this.isPinned == value)
+					return;
+				this.isPinned = value;
+				if (this.IsBuiltIn)
+					this.Application.Settings.SetValue(this.isPinnedSettingKey.AsNonNull(), value);
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsPinned)));
+			}
+		}
+
+
+		/// <summary>
+		/// Check whether properties of profile is valid or not.
+		/// </summary>
+		public bool IsValid { get; private set; }
 
 
 		/// <summary>
@@ -184,6 +215,10 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 
 			// load profile
 			await Task.Run(() => profile.LoadFromJson(jsonDocument.RootElement));
+			profile.isPinned = app.Settings.GetValueOrDefault(profile.isPinnedSettingKey.AsNonNull());
+
+			// validate
+			profile.Validate();
 
 			// complete
 			return profile;
@@ -237,6 +272,10 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			// timestamp format
 			if (profileElement.TryGetProperty("TimestampFormatForReading", out jsonValue))
 				this.timestampFormatForReading = jsonValue.GetString();
+
+			// visible log properties
+			if (profileElement.TryGetProperty("VisibleLogProperties", out jsonValue))
+				this.LoadVisibleLogPropertiesFromJson(jsonValue);
 		}
 
 
@@ -272,6 +311,16 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		}
 
 
+		// Load visible log properties from JSON.
+		void LoadVisibleLogPropertiesFromJson(JsonElement visibleLogPropertiesElement)
+		{
+			var logProperties = new List<string>();
+			foreach (var name in visibleLogPropertiesElement.EnumerateArray())
+				logProperties.Add(name.GetString().AsNonNull());
+			this.visibleLogProperties = logProperties.AsReadOnly();
+		}
+
+
 		/// <summary>
 		/// Get or set map of conversion from string to <see cref="LogLevel"/>.
 		/// </summary>
@@ -304,6 +353,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 					return;
 				this.logPatterns = value.AsReadOnly();
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LogPatterns)));
+				this.Validate();
 			}
 		}
 
@@ -387,12 +437,27 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		}
 
 
-		/// <summary>
-		/// Check whether properties of profile is valid or not.
-		/// </summary>
-		/// <returns>True if properties of profile is valid.</returns>
-		public bool Validate() => !(this.dataSourceProvider is EmptyLogDataSourceProvider)
-				&& this.logPatterns.IsNotEmpty();
+		// Check whether properties of profile is valid or not.
+		void Validate()
+		{
+			var isValid = this.dataSourceProvider is not EmptyLogDataSourceProvider
+				&& this.logPatterns.IsNotEmpty()
+				&& this.visibleLogProperties.Let(it =>
+				{
+					if (it.IsEmpty())
+						return false;
+					foreach (var name in it)
+					{
+						if (!Log.HasProperty(name))
+							return false;
+					}
+					return true;
+				});
+			if (this.IsValid == isValid)
+				return;
+			this.IsValid = isValid;
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsValid)));
+		}
 
 
 		// Throw exception if profile is built-in.
@@ -400,6 +465,25 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		{
 			if (this.IsBuiltIn)
 				throw new InvalidOperationException();
+		}
+
+
+		// <summary>
+		/// Get of set list of log properties to be shown to user.
+		/// </summary>
+		public IList<string> VisibleLogProperties
+		{
+			get => this.visibleLogProperties;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (this.visibleLogProperties.SequenceEqual(value))
+					return;
+				this.visibleLogProperties = value.AsReadOnly();
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(VisibleLogProperties)));
+				this.Validate();
+			}
 		}
 
 
