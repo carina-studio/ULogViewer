@@ -276,6 +276,7 @@ namespace CarinaStudio.ULogViewer
 		// Update string resources according to current culture info and settings.
 		void UpdateStringResources()
 		{
+			var updated = false;
 			if (this.Settings.GetValueOrDefault(ULogViewer.Settings.SelectLanguageAutomatically))
 			{
 				// base resources
@@ -298,9 +299,13 @@ namespace CarinaStudio.ULogViewer
 						return;
 					}
 					this.Resources.MergedDictionaries.Add(this.stringResources);
+					updated = true;
 				}
 				else if (!this.Resources.MergedDictionaries.Contains(this.stringResources))
+				{
 					this.Resources.MergedDictionaries.Add(this.stringResources);
+					updated = true;
+				}
 
 				// resources for specific OS
 				if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
@@ -323,18 +328,24 @@ namespace CarinaStudio.ULogViewer
 							return;
 						}
 						this.Resources.MergedDictionaries.Add(this.stringResourcesLinux);
+						updated = true;
 					}
 					else if (!this.Resources.MergedDictionaries.Contains(this.stringResourcesLinux))
+					{
 						this.Resources.MergedDictionaries.Add(this.stringResourcesLinux);
+						updated = true;
+					}
 				}
 			}
 			else
 			{
 				if (this.stringResources != null)
-					this.Resources.MergedDictionaries.Remove(this.stringResources);
+					updated |= this.Resources.MergedDictionaries.Remove(this.stringResources);
 				if (this.stringResourcesLinux != null)
-					this.Resources.MergedDictionaries.Remove(this.stringResourcesLinux);
+					updated |= this.Resources.MergedDictionaries.Remove(this.stringResourcesLinux);
 			}
+			if (updated)
+				this.StringsUpdated?.Invoke(this, EventArgs.Empty);
 		}
 
 
@@ -349,6 +360,7 @@ namespace CarinaStudio.ULogViewer
 		}
 		public string RootPrivateDirectoryPath => Path.GetDirectoryName(Process.GetCurrentProcess().MainModule?.FileName) ?? throw new ArgumentException("Unable to get directory of application.");
 		public BaseSettings Settings { get => this.settings ?? throw new InvalidOperationException("Application is not ready."); }
+		public event EventHandler? StringsUpdated;
 		public SynchronizationContext SynchronizationContext { get => this.synchronizationContext ?? throw new InvalidOperationException("Application is not ready."); }
 	}
 }

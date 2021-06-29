@@ -72,6 +72,7 @@ namespace CarinaStudio.ULogViewer
 			return Path.GetTempPath();
 		}) ?? throw new ArgumentException("Unable to get directory of application.");
 		public BaseSettings Settings => new Settings();
+		public event EventHandler? StringsUpdated;
 		public SynchronizationContext SynchronizationContext => syncContext ?? throw new InternalStateCorruptedException();
 	}
 }
