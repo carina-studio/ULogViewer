@@ -25,12 +25,14 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <param name="builder"><see cref="LogBuilder"/>.</param>
 		internal Log(LogBuilder builder)
 		{
+			this.FileName = builder.GetStringOrNull(nameof(FileName));
 			this.Id = Interlocked.Increment(ref nextId);
 			this.Level = builder.GetEnumOrNull<LogLevel>(nameof(Level)) ?? LogLevel.Undefined;
 			this.LineNumber = builder.GetInt32OrNull(nameof(LineNumber));
 			this.Message = builder.GetStringOrNull(nameof(Message));
 			this.ProcessId = builder.GetInt32OrNull(nameof(ProcessId));
 			this.ProcessName = builder.GetStringOrNull(nameof(ProcessName));
+			this.Reader = builder.Reader;
 			this.SourceName = builder.GetStringOrNull(nameof(SourceName));
 			this.ThreadId = builder.GetInt32OrNull(nameof(ThreadId));
 			this.ThreadName = builder.GetStringOrNull(nameof(ThreadName));
@@ -38,6 +40,12 @@ namespace CarinaStudio.ULogViewer.Logs
 			this.UserId = builder.GetStringOrNull(nameof(UserId));
 			this.UserName = builder.GetStringOrNull(nameof(UserName));
 		}
+
+
+		/// <summary>
+		/// Get name of file which log read from.
+		/// </summary>
+		public string? FileName { get; }
 
 
 		/// <summary>
@@ -109,6 +117,12 @@ namespace CarinaStudio.ULogViewer.Logs
 		}
 
 
+		/// <summary>
+		/// Get <see cref="LogReader"/> which generates this instance.
+		/// </summary>
+		public LogReader? Reader { get; }
+
+
 		// Setup property map.
 		static void SetupPropertyMap()
 		{
@@ -120,8 +134,15 @@ namespace CarinaStudio.ULogViewer.Logs
 					{
 						foreach (var propertyInfo in typeof(Log).GetProperties())
 						{
-							if (propertyInfo.Name != "Id")
-								propertyMap[propertyInfo.Name] = propertyInfo;
+							switch(propertyInfo.Name)
+							{
+								case "Id":
+								case "Reader":
+									break;
+								default:
+									propertyMap[propertyInfo.Name] = propertyInfo;
+									break;
+							}
 						}
 						isPropertyMapReady = true;
 					}
