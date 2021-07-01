@@ -58,7 +58,10 @@ namespace CarinaStudio.ULogViewer.Logs
 			this.DataSource = dataSource;
 			this.Id = nextId++;
 			this.Logger = dataSource.Application.LoggerFactory.CreateLogger($"{this.GetType().Name}-{this.Id}");
-			this.Logs = new ReadOnlyObservableList<Log>(this.logs);
+			this.Logs = new ReadOnlyObservableList<Log>(this.logs).Also(it =>
+			{
+				it.CollectionChanged += (_, e) => this.LogsChanged?.Invoke(this, e);
+			});
 			this.readOnlyLogLevelMap = new ReadOnlyDictionary<string, LogLevel>(this.logLevelMap);
 
 			// create scheduled actions
@@ -280,6 +283,12 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// </summary>
 		/// <remarks>The list implements <see cref="INotifyCollectionChanged"/> interface.</remarks>
 		public IList<Log> Logs { get; }
+
+
+		/// <summary>
+		/// Raised when elements in <see cref="Logs"/> has been changed.
+		/// </summary>
+		public event NotifyCollectionChangedEventHandler? LogsChanged;
 
 
 		/// <summary>
