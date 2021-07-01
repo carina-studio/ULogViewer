@@ -16,6 +16,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 
@@ -64,12 +65,6 @@ namespace CarinaStudio.ULogViewer
 			.UsePlatformDetect()
 			.UseReactiveUI()
 			.LogToTrace();
-
-
-		/// <summary>
-		/// Get <see cref="CultureInfo"/> applied on application.
-		/// </summary>
-		public CultureInfo CultureInfo { get; private set; } = CultureInfo.CurrentCulture;
 
 
 		/// <summary>
@@ -350,6 +345,8 @@ namespace CarinaStudio.ULogViewer
 
 
 		// Interface implementations.
+		public Assembly Assembly { get; } = Assembly.GetExecutingAssembly();
+		public CultureInfo CultureInfo { get; private set; } = CultureInfo.CurrentCulture;
 		public bool IsShutdownStarted { get; private set; }
 		public bool IsTesting => false;
 		public ILoggerFactory LoggerFactory => new LoggerFactory(new ILoggerProvider[] { new NLogLoggerProvider() });

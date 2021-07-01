@@ -7,7 +7,9 @@ using NLog.Extensions.Logging;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -59,7 +61,9 @@ namespace CarinaStudio.ULogViewer
 
 
 		// Interface implementations.
+		public Assembly Assembly { get; } = Assembly.GetExecutingAssembly();
 		public bool CheckAccess() => Thread.CurrentThread == syncContext?.ExecutionThread;
+		public CultureInfo CultureInfo { get; private set; } = CultureInfo.CurrentCulture;
 		public string? GetString(string key, string? defaultValue = null) => defaultValue;
 		public bool IsShutdownStarted => false;
 		public bool IsTesting => true;
