@@ -13,6 +13,16 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		/// <summary>
+		/// Initialize new <see cref="LogBuilder"/> instance.
+		/// </summary>
+		/// <param name="reader"><see cref="LogReader"/> owns this builder.</param>
+		public LogBuilder(LogReader? reader = null)
+		{
+			this.Reader = reader;
+		}
+
+
+		/// <summary>
 		/// Append value into property.
 		/// </summary>
 		/// <param name="propertyName">Name of property of log.</param>
@@ -135,6 +145,12 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// </summary>
 		/// <returns></returns>
 		public bool IsNotEmpty() => this.properties.Count > 0;
+
+
+		/// <summary>
+		/// Get <see cref="LogReader"/> which owns this builder.
+		/// </summary>
+		public LogReader? Reader { get; }
 
 
 		/// <summary>
