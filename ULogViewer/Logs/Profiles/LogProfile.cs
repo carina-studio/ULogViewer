@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -41,6 +42,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		string name = "";
 		IDictionary<string, LogLevel> readOnlyLogLevelMap;
 		SortDirection sortDirection = SortDirection.Ascending;
+		CultureInfo? timestampCultureInfoForReading;
 		string? timestampFormatForDisplaying;
 		string? timestampFormatForReading;
 		IList<string> visibleLogProperties = new string[0];
@@ -310,6 +312,9 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 					case "SortDirection":
 						this.sortDirection = Enum.Parse<SortDirection>(jsonProperty.Value.GetString().AsNonNull());
 						break;
+					case "TimestampCultureInfoForReading":
+						this.timestampCultureInfoForReading = CultureInfo.GetCultureInfo(jsonProperty.Value.GetString().AsNonNull());
+						break;
 					case "TimestampFormatForDisplaying":
 						this.timestampFormatForDisplaying = jsonProperty.Value.GetString();
 						break;
@@ -450,6 +455,24 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 					return;
 				this.sortDirection = value;
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SortDirection)));
+			}
+		}
+
+
+		/// <summary>
+		/// Get or set <see cref="CultureInfo"/> of timestamp for reading logs.
+		/// </summary>
+		public CultureInfo? TimestampCultureInfoForReading
+		{
+			get => this.timestampCultureInfoForReading;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (this.timestampCultureInfoForReading?.Equals(value) ?? value == null)
+					return;
+				this.timestampCultureInfoForReading = value;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TimestampCultureInfoForReading)));
 			}
 		}
 

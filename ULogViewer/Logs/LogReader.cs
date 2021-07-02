@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -41,6 +42,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		readonly List<Log> pendingLogs = new List<Log>();
 		readonly IDictionary<string, LogLevel> readOnlyLogLevelMap;
 		LogReaderState state = LogReaderState.Preparing;
+		CultureInfo? timestampCultureInfo;
 		string? timestampFormat;
 
 
@@ -58,10 +60,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			this.DataSource = dataSource;
 			this.Id = nextId++;
 			this.Logger = dataSource.Application.LoggerFactory.CreateLogger($"{this.GetType().Name}-{this.Id}");
-			this.Logs = new ReadOnlyObservableList<Log>(this.logs).Also(it =>
-			{
-				it.CollectionChanged += (_, e) => this.LogsChanged?.Invoke(this, e);
-			});
+			this.Logs = new ReadOnlyObservableList<Log>(this.logs);
 			this.readOnlyLogLevelMap = new ReadOnlyDictionary<string, LogLevel>(this.logLevelMap);
 
 			// create scheduled actions
@@ -79,6 +78,9 @@ namespace CarinaStudio.ULogViewer.Logs
 
 			// attach to data source
 			dataSource.PropertyChanged += this.OnDataSourcePropertyChanged;
+
+			// attach to log list
+			this.logs.CollectionChanged += (_, e) => this.LogsChanged?.Invoke(this, e);
 
 			this.Logger.LogDebug($"Create with data source: {dataSource}");
 		}
@@ -540,7 +542,7 @@ namespace CarinaStudio.ULogViewer.Logs
 						{
 							if (format == null)
 								logBuilder.Set(name, group.Value);
-							else if (DateTime.TryParseExact(group.Value, format, null, System.Globalization.DateTimeStyles.None, out var timestamp))
+							else if (DateTime.TryParseExact(group.Value, format, this.timestampCultureInfo, DateTimeStyles.None, out var timestamp))
 								logBuilder.Set(name, timestamp.ToBinary().ToString());
 						});
 						break;
@@ -763,8 +765,6 @@ namespace CarinaStudio.ULogViewer.Logs
 			this.VerifyAccess();
 			if (this.state != LogReaderState.Preparing)
 				throw new InvalidOperationException($"Cannot start log reading when state is {this.state}.");
-			if (this.logLevelMap.IsEmpty())
-				throw new InvalidOperationException("No log level mapping specified.");
 			if (this.logPatterns.IsEmpty())
 				throw new InvalidOperationException("No log pattern specified.");
 
@@ -869,6 +869,25 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// Get current state of <see cref="LogReader"/>.
 		/// </summary>
 		public LogReaderState State { get => this.state; }
+
+
+		/// <summary>
+		/// Get or set <see cref="CultureInfo"/> to parse timestamp of log.
+		/// </summary>
+		public CultureInfo? TimestampCultureInfo
+		{
+			get => this.timestampCultureInfo;
+			set
+			{
+				this.VerifyAccess();
+				if (this.state != LogReaderState.Preparing)
+					throw new InvalidOperationException($"Cannot change {nameof(TimestampCultureInfo)} when state is {this.state}.");
+				if (this.timestampCultureInfo?.Equals(value) ?? value == null)
+					return;
+				this.timestampCultureInfo = value;
+				this.OnPropertyChanged(nameof(TimestampCultureInfo));
+			}
+		}
 
 
 		/// <summary>
