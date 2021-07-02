@@ -558,7 +558,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			this.Logger.LogDebug("Start reading logs in background");
 			var readLogs = new List<Log>();
 			var logPatterns = this.logPatterns;
-			var logBuilder = new LogBuilder(this);
+			var logBuilder = new LogBuilder();
 			var syncContext = this.SynchronizationContext;
 			var isContinuousReading = this.isContinuousReading;
 			var isReadingFromFile = this.DataSource.UnderlyingSource == UnderlyingLogDataSource.File;

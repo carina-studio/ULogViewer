@@ -30,14 +30,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Property of <see cref="Logs"/>.
 		/// </summary>
-		public static readonly ObservableProperty<IList<Log>> LogsProperty = ObservableProperty.Register<Session, IList<Log>>(nameof(Logs), new Log[0]);
+		public static readonly ObservableProperty<IList<DisplayableLog>> LogsProperty = ObservableProperty.Register<Session, IList<DisplayableLog>>(nameof(Logs), new DisplayableLog[0]);
 
 
 		// Fields.
-		readonly SortedObservableList<Log> allLogs;
+		readonly SortedObservableList<DisplayableLog> allLogs;
 		readonly MutableObservableBoolean canOpenFile = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canResetLogProfile = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSelectLogProfile = new MutableObservableBoolean();
+		Comparison<DisplayableLog?> compareDisplayableLogsDelegate;
+		DisplayableLogGroup? displayableLogGroup;
 		IComparer<Log> logComparer = LogComparers.TimestampAsc;
 		readonly HashSet<LogReader> logReaders = new HashSet<LogReader>();
 		readonly HashSet<string> openedFilePaths = new HashSet<string>(PathEqualityComparer.Default);
@@ -56,18 +58,75 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.canSelectLogProfile.Update(true);
 
 			// create collections
-			this.allLogs = new SortedObservableList<Log>(this.CompareLogs).Also(it =>
+			this.allLogs = new SortedObservableList<DisplayableLog>(this.CompareDisplayableLogs).Also(it =>
 			{
 				it.CollectionChanged += this.OnAllLogsChanged;
 			});
 
 			// setup properties
 			this.SetValue(LogsProperty, this.allLogs.AsReadOnly());
+
+			// setup delegates
+			this.compareDisplayableLogsDelegate = this.CompareDisplayableLogsAsc;
 		}
 
 
-		// Compare logs.
-		int CompareLogs(Log? x, Log? y) => this.logComparer.Compare(x, y);
+		// Compare displayable logs.
+		int CompareDisplayableLogs(DisplayableLog? x, DisplayableLog? y) => this.compareDisplayableLogsDelegate(x, y);
+		int CompareDisplayableLogsAsc(DisplayableLog? x, DisplayableLog? y)
+		{
+			// compare by reference
+			if (x == null)
+			{
+				if (y == null)
+					return 0;
+				return -1;
+			}
+			if (y == null)
+				return 1;
+
+			// compare by timestamp
+			var diff = x.BinaryTimestamp - y.BinaryTimestamp;
+			if (diff < 0)
+				return -1;
+			if (diff > 0)
+				return 1;
+
+			// compare by ID
+			diff = x.LogId - y.LogId;
+			if (diff < 0)
+				return -1;
+			if (diff > 0)
+				return 1;
+			return 0;
+		}
+		int CompareDisplayableLogsDesc(DisplayableLog? x, DisplayableLog? y)
+		{
+			// compare by reference
+			if (x == null)
+			{
+				if (y == null)
+					return 0;
+				return -1;
+			}
+			if (y == null)
+				return 1;
+
+			// compare by timestamp
+			var diff = x.BinaryTimestamp - y.BinaryTimestamp;
+			if (diff < 0)
+				return 1;
+			if (diff > 0)
+				return -1;
+
+			// compare by ID
+			diff = x.LogId - y.LogId;
+			if (diff < 0)
+				return 1;
+			if (diff > 0)
+				return -1;
+			return 0;
+		}
 
 
 		// Try creating log data source.
@@ -99,7 +158,15 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			logReader.PropertyChanged += this.OnLogReaderPropertyChanged;
 
 			// add logs
-			this.allLogs.AddAll(logReader.Logs);
+			var displayableLogGroup = this.displayableLogGroup ?? throw new InternalStateCorruptedException("No displayable log group.");
+			this.allLogs.AddAll(logReader.Logs.Let(logs =>
+			{
+				return new DisplayableLog[logs.Count].Also(array =>
+				{
+					for (var i = array.Length - 1; i >= 0; --i)
+						array[i] = displayableLogGroup.CreateDisplayableLog(logReader, logs[i]);
+				});
+			}));
 		}
 
 
@@ -123,7 +190,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.DisposeLogReaders(false);
 
 			// clear logs
+			foreach (var displayableLog in this.allLogs)
+				displayableLog.Dispose();
 			this.allLogs.Clear();
+			this.displayableLogGroup = this.displayableLogGroup.DisposeAndReturnNull();
 
 			// call base
 			base.Dispose(disposing);
@@ -145,7 +215,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// remove logs
 			if (removeLogs)
-				this.allLogs.RemoveAll(it => it.Reader == logReader);
+				this.allLogs.RemoveAll(it => it.LogReader == logReader);
 
 			// dispose data source and log reader
 			logReader.Dispose();
@@ -169,16 +239,23 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
-		/// Get list of <see cref="Log"/>s to display.
+		/// Get list of <see cref="DisplayableLog"/>s to display.
 		/// </summary>
-		public IList<Log> Logs { get => this.GetValue(LogsProperty); }
+		public IList<DisplayableLog> Logs { get => this.GetValue(LogsProperty); }
 
 
 		// Called when logs in allLogs has been changed.
 		void OnAllLogsChanged(object? sender, NotifyCollectionChangedEventArgs e)
 		{
-			if (this.LogProfile == null || this.IsDisposed)
-				return;
+			switch (e.Action)
+			{
+				case NotifyCollectionChangedAction.Add:
+					break;
+				case NotifyCollectionChangedAction.Remove:
+					foreach (DisplayableLog displayableLog in e.OldItems.AsNonNull())
+						displayableLog.Dispose();
+					break;
+			}
 		}
 
 
@@ -194,13 +271,33 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			switch (e.Action)
 			{
 				case NotifyCollectionChangedAction.Add:
-					this.allLogs.AddAll((IEnumerable<Log>)e.NewItems.AsNonNull());
+					this.allLogs.AddAll(e.NewItems.AsNonNull().Let(logs=>
+					{
+						var displayableLogGroup = this.displayableLogGroup ?? throw new InternalStateCorruptedException("No displayable log group.");
+						return new DisplayableLog[logs.Count].Also(array =>
+						{
+							for (var i = array.Length - 1; i >= 0; --i)
+								array[i] = displayableLogGroup.CreateDisplayableLog(logReader, (Log)logs[i].AsNonNull());
+						});
+					}));
 					break;
 				case NotifyCollectionChangedAction.Remove:
-					this.allLogs.RemoveAll((IEnumerable<Log>)e.OldItems.AsNonNull());
+					e.OldItems.AsNonNull().Let(oldItems =>
+					{
+						if (oldItems.Count == 1)
+						{
+							var removedLog = (Log)oldItems[0].AsNonNull();
+							this.allLogs.RemoveAll(it => it.Log == removedLog);
+						}
+						else
+						{
+							var removedLogs = new HashSet<Log>((IEnumerable<Log>)oldItems);
+							this.allLogs.RemoveAll(it => removedLogs.Contains(it.Log));
+						}
+					});
 					break;
 				case NotifyCollectionChangedAction.Reset:
-					this.allLogs.RemoveAll(it => it.Reader == logReader);
+					this.allLogs.RemoveAll(it => it.LogReader == logReader);
 					break;
 				default:
 					throw new InvalidOperationException($"Unsupported logs change action: {e.Action}.");
@@ -276,7 +373,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.DisposeLogReaders(false);
 
 			// clear logs
+			foreach (var displayableLog in this.allLogs)
+				displayableLog.Dispose();
 			this.allLogs.Clear();
+			this.displayableLogGroup = this.displayableLogGroup.DisposeAndReturnNull();
 
 			// clear file name table
 			this.openedFilePaths.Clear();
@@ -311,6 +411,15 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.Logger.LogWarning($"Select profile '{profile.Name}'");
 			this.canSelectLogProfile.Update(false);
 			this.SetValue(LogProfileProperty, profile);
+
+			// prepare displayable log group
+			this.displayableLogGroup = new DisplayableLogGroup(profile);
+
+			// setup log comparer
+			if (profile.SortDirection == SortDirection.Ascending)
+				this.compareDisplayableLogsDelegate = this.CompareDisplayableLogsAsc;
+			else
+				this.compareDisplayableLogsDelegate = this.CompareDisplayableLogsDesc;
 
 			// read logs or wait for more actions
 			var dataSourceOptions = profile.DataSourceOptions;
