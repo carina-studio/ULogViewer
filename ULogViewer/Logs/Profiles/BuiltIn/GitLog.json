@@ -27,8 +27,9 @@
 		}
 	],
 	"SortDirection": "Descending",
-	"TimestampFormatForDisplaying": "yyyy/MM/dd HH:mm:ss",
-	"TimestampFormatForReading": "MMM dd HH:mm:ss yyyy",
+	"TimestampCultureInfoForReading": "en-US",
+	"TimestampFormatForDisplaying": "yyyy/M/d HH:mm:ss",
+	"TimestampFormatForReading": "MMM d HH:mm:ss yyyy",
 	"VisibleLogProperties": [
 		"Timestamp",
 		"UserName",
