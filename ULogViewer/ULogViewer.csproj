@@ -54,9 +54,9 @@
     <PackageReference Include="Avalonia.Controls.DataGrid" Version="0.10.6" />
     <PackageReference Include="Avalonia.Desktop" Version="0.10.6" />
     <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.6" />
-    <PackageReference Include="CarinaStudio.AppBase.Application" Version="0.15.0.701" />
-    <PackageReference Include="CarinaStudio.AppBase.Configuration" Version="0.15.0.701" />
-    <PackageReference Include="CarinaStudio.AppBase.Core" Version="0.15.0.701" />
+    <PackageReference Include="CarinaStudio.AppBase.Application" Version="0.15.1.702" />
+    <PackageReference Include="CarinaStudio.AppBase.Configuration" Version="0.15.1.702" />
+    <PackageReference Include="CarinaStudio.AppBase.Core" Version="0.15.1.702" />
     <PackageReference Include="Microsoft.Win32.SystemEvents" Version="5.0.0" />
     <PackageReference Include="NLog" Version="4.7.10" />
     <PackageReference Include="NLog.Extensions.Logging" Version="1.7.3" />
