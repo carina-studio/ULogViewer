@@ -15,11 +15,8 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <summary>
 		/// Initialize new <see cref="LogBuilder"/> instance.
 		/// </summary>
-		/// <param name="reader"><see cref="LogReader"/> owns this builder.</param>
-		public LogBuilder(LogReader? reader = null)
-		{
-			this.Reader = reader;
-		}
+		public LogBuilder()
+		{ }
 
 
 		/// <summary>

@@ -32,7 +32,6 @@ namespace CarinaStudio.ULogViewer.Logs
 			this.Message = builder.GetStringOrNull(nameof(Message));
 			this.ProcessId = builder.GetInt32OrNull(nameof(ProcessId));
 			this.ProcessName = builder.GetStringOrNull(nameof(ProcessName));
-			this.Reader = builder.Reader;
 			this.SourceName = builder.GetStringOrNull(nameof(SourceName));
 			this.ThreadId = builder.GetInt32OrNull(nameof(ThreadId));
 			this.ThreadName = builder.GetStringOrNull(nameof(ThreadName));
@@ -115,12 +114,6 @@ namespace CarinaStudio.ULogViewer.Logs
 				return propertyNames;
 			}
 		}
-
-
-		/// <summary>
-		/// Get <see cref="LogReader"/> which generates this instance.
-		/// </summary>
-		public LogReader? Reader { get; }
 
 
 		// Setup property map.
