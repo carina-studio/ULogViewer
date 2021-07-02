@@ -3,6 +3,7 @@
 		"Name": "StandardOutput",
 		"Command": "git --no-pager log"
 	},
+	"IsWorkingDirectoryNeeded": true,
 	"LogPatterns": [
 		{
 			"Regex": "^commit[\\s]+.+$"
@@ -26,6 +27,7 @@
 		}
 	],
 	"SortDirection": "Descending",
+	"TimestampFormatForDisplaying": "yyyy/MM/dd HH:mm:ss",
 	"TimestampFormatForReading": "MMM dd HH:mm:ss yyyy",
 	"VisibleLogProperties": [
 		"Timestamp",

@@ -2,6 +2,7 @@
 using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.DataSources;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -33,11 +34,14 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		ILogDataSourceProvider dataSourceProvider = LogDataSourceProviders.Empty;
 		bool isPinned;
 		SettingKey<bool>? isPinnedSettingKey;
+		bool isWorkingDirectoryNeeded;
+		readonly ILogger logger;
 		Dictionary<string, LogLevel> logLevelMap = new Dictionary<string, LogLevel>();
 		IList<LogPattern> logPatterns = new LogPattern[0];
 		string name = "";
 		IDictionary<string, LogLevel> readOnlyLogLevelMap;
 		SortDirection sortDirection = SortDirection.Ascending;
+		string? timestampFormatForDisplaying;
 		string? timestampFormatForReading;
 		IList<string> visibleLogProperties = new string[0];
 
@@ -50,6 +54,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		{
 			app.VerifyAccess();
 			this.Application = app;
+			this.logger = app.LoggerFactory.CreateLogger(this.GetType().Name);
 			this.readOnlyLogLevelMap = new ReadOnlyDictionary<string, LogLevel>(this.logLevelMap);
 		}
 
@@ -196,6 +201,24 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 
 
 		/// <summary>
+		/// Get or set whether working directory is needed to be set before reading logs or not.
+		/// </summary>
+		public bool IsWorkingDirectoryNeeded
+		{
+			get => this.isWorkingDirectoryNeeded;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (this.isWorkingDirectoryNeeded == value)
+					return;
+				this.isWorkingDirectoryNeeded = value;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsWorkingDirectoryNeeded)));
+			}
+		}
+
+
+		/// <summary>
 		/// Load built-in profile asynchronously.
 		/// </summary>
 		/// <param name="app">Application.</param>
@@ -235,14 +258,29 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 
 			// get options
 			var options = new LogDataSourceOptions();
-			if (dataSourceElement.TryGetProperty("Command", out var jsonProperty))
-				options.Command = jsonProperty.GetString();
-			if (dataSourceElement.TryGetProperty("Encoding", out jsonProperty))
-				options.Encoding = Encoding.GetEncoding(jsonProperty.GetString().AsNonNull());
-			if (dataSourceElement.TryGetProperty("FileName", out jsonProperty))
-				options.FileName = jsonProperty.GetString();
-			if (dataSourceElement.TryGetProperty("WorkingDirectory", out jsonProperty))
-				options.WorkingDirectory = jsonProperty.GetString();
+			foreach (var jsonProperty in dataSourceElement.EnumerateObject())
+			{
+				switch (jsonProperty.Name)
+				{
+					case nameof(LogDataSourceOptions.Command):
+						options.Command = jsonProperty.Value.GetString();
+						break;
+					case nameof(LogDataSourceOptions.Encoding):
+						options.Encoding = Encoding.GetEncoding(jsonProperty.Value.GetString().AsNonNull());
+						break;
+					case nameof(LogDataSourceOptions.FileName):
+						options.FileName = jsonProperty.Value.GetString();
+						break;
+					case "Name":
+						break;
+					case nameof(LogDataSourceOptions.WorkingDirectory):
+						options.WorkingDirectory = jsonProperty.Value.GetString();
+						break;
+					default:
+						this.logger.LogWarning($"Unknown property of DataSource: {jsonProperty.Name}");
+						break;
+				}
+			}
 
 			// complete
 			this.dataSourceOptions = options;
@@ -253,29 +291,39 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		// Load profile from JSON element.
 		void LoadFromJson(JsonElement profileElement)
 		{
-			// data source
-			if (profileElement.TryGetProperty("DataSource", out var jsonValue))
-				this.LoadDataSourceFromJson(jsonValue);
-
-			// log level map
-			if (profileElement.TryGetProperty("LogLevelMap", out jsonValue))
-				this.LoadLogLevelMapFromJson(jsonValue);
-
-			// log patterns
-			if (profileElement.TryGetProperty("LogPatterns", out jsonValue))
-				this.LoadLogPatternsFromJson(jsonValue);
-
-			// sort direction
-			if (profileElement.TryGetProperty("SortDirection", out jsonValue))
-				this.sortDirection = Enum.Parse<SortDirection>(jsonValue.GetString().AsNonNull());
-
-			// timestamp format
-			if (profileElement.TryGetProperty("TimestampFormatForReading", out jsonValue))
-				this.timestampFormatForReading = jsonValue.GetString();
-
-			// visible log properties
-			if (profileElement.TryGetProperty("VisibleLogProperties", out jsonValue))
-				this.LoadVisibleLogPropertiesFromJson(jsonValue);
+			foreach (var jsonProperty in profileElement.EnumerateObject())
+			{
+				switch (jsonProperty.Name)
+				{
+					case "DataSource":
+						this.LoadDataSourceFromJson(jsonProperty.Value);
+						break;
+					case "IsWorkingDirectoryNeeded":
+						this.isWorkingDirectoryNeeded = jsonProperty.Value.GetBoolean();
+						break;
+					case "LogLevelMap":
+						this.LoadLogLevelMapFromJson(jsonProperty.Value);
+						break;
+					case "LogPatterns":
+						this.LoadLogPatternsFromJson(jsonProperty.Value);
+						break;
+					case "SortDirection":
+						this.sortDirection = Enum.Parse<SortDirection>(jsonProperty.Value.GetString().AsNonNull());
+						break;
+					case "TimestampFormatForDisplaying":
+						this.timestampFormatForDisplaying = jsonProperty.Value.GetString();
+						break;
+					case "TimestampFormatForReading":
+						this.timestampFormatForReading = jsonProperty.Value.GetString();
+						break;
+					case "VisibleLogProperties":
+						this.LoadVisibleLogPropertiesFromJson(jsonProperty.Value);
+						break;
+					default:
+						this.logger.LogWarning($"Unknown property of profile: {jsonProperty.Name}");
+						break;
+				}
+			}
 		}
 
 
@@ -402,6 +450,24 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 					return;
 				this.sortDirection = value;
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SortDirection)));
+			}
+		}
+
+
+		/// <summary>
+		/// Get or set format of timestamp for displaying logs.
+		/// </summary>
+		public string? TimestampFormatForDisplaying
+		{
+			get => this.timestampFormatForDisplaying;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (this.timestampFormatForDisplaying == value)
+					return;
+				this.timestampFormatForDisplaying = value;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TimestampFormatForDisplaying)));
 			}
 		}
 
