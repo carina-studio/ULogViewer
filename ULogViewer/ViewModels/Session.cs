@@ -37,7 +37,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly SortedObservableList<DisplayableLog> allLogs;
 		readonly MutableObservableBoolean canOpenFile = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canResetLogProfile = new MutableObservableBoolean();
-		readonly MutableObservableBoolean canSelectLogProfile = new MutableObservableBoolean();
+		readonly MutableObservableBoolean canSetLogProfile = new MutableObservableBoolean();
+		readonly MutableObservableBoolean canSetWorkingDirectory = new MutableObservableBoolean();
 		Comparison<DisplayableLog?> compareDisplayableLogsDelegate;
 		DisplayableLogGroup? displayableLogGroup;
 		IComparer<Log> logComparer = LogComparers.TimestampAsc;
@@ -54,8 +55,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// create commands
 			this.OpenLogFileCommand = ReactiveCommand.Create<string?>(this.OpenLogFile, this.canOpenFile);
 			this.ResetLogProfileCommand = ReactiveCommand.Create(this.ResetLogProfile, this.canResetLogProfile);
-			this.SelectLogProfileCommand = ReactiveCommand.Create<LogProfile?>(this.SelectLogProfile, this.canSelectLogProfile);
-			this.canSelectLogProfile.Update(true);
+			this.SetLogProfileCommand = ReactiveCommand.Create<LogProfile?>(this.SetLogProfile, this.canSetLogProfile);
+			this.SetWorkingDirectoryCommand = ReactiveCommand.Create<string?>(this.SetWorkingDirectory, this.canSetWorkingDirectory);
+			this.canSetLogProfile.Update(true);
 
 			// create collections
 			this.allLogs = new SortedObservableList<DisplayableLog>(this.CompareDisplayableLogs).Also(it =>
@@ -332,6 +334,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				return;
 			}
 
+			this.Logger.LogDebug($"Open file '{fileName}'");
+
 			// create data source
 			dataSourceOptions.FileName = fileName;
 			var dataSource = this.CreateLogDataSourceOrNull(profile.DataSourceProvider, dataSourceOptions);
@@ -383,8 +387,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// update state
 			this.canOpenFile.Update(false);
+			this.canSetWorkingDirectory.Update(false);
 			this.canResetLogProfile.Update(false);
-			this.canSelectLogProfile.Update(true);
+			this.canSetLogProfile.Update(true);
 		}
 
 
@@ -394,22 +399,22 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public ICommand ResetLogProfileCommand { get; }
 
 
-		// Select log profile.
-		void SelectLogProfile(LogProfile? profile)
+		// Set log profile.
+		void SetLogProfile(LogProfile? profile)
 		{
 			// check parameter and state
 			this.VerifyAccess();
 			this.VerifyDisposed();
-			if (!this.canSelectLogProfile.Value)
+			if (!this.canSetLogProfile.Value)
 				return;
 			if (profile == null)
 				throw new ArgumentNullException(nameof(profile));
 			if (this.LogProfile != null)
-				throw new InternalStateCorruptedException("Already select another log profile.");
+				throw new InternalStateCorruptedException("Already set another log profile.");
 
 			// select profile
-			this.Logger.LogWarning($"Select profile '{profile.Name}'");
-			this.canSelectLogProfile.Update(false);
+			this.Logger.LogWarning($"Set profile '{profile.Name}'");
+			this.canSetLogProfile.Update(false);
 			this.SetValue(LogProfileProperty, profile);
 
 			// prepare displayable log group
@@ -443,6 +448,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				case UnderlyingLogDataSource.StandardOutput:
 					if (dataSourceOptions.Command == null)
 						this.Logger.LogError("No command to open standard output");
+					else if (dataSourceOptions.WorkingDirectory == null && profile.IsWorkingDirectoryNeeded)
+					{
+						this.Logger.LogDebug("Need working directory, waiting for setting working directory");
+						this.canSetWorkingDirectory.Update(true);
+					}
 					else
 					{
 						this.Logger.LogDebug("Start reading logs from standard output");
@@ -462,9 +472,49 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
-		/// Command to select specific log profile.
+		/// Command to set specific log profile.
 		/// </summary>
 		/// <remarks>Type of command parameter is <see cref="LogProfile"/>.</remarks>
-		public ICommand SelectLogProfileCommand { get; }
+		public ICommand SetLogProfileCommand { get; }
+
+
+		// Set working directory.
+		void SetWorkingDirectory(string? directory)
+		{
+			// check parameter and state
+			this.VerifyAccess();
+			this.VerifyDisposed();
+			if (!this.canSetWorkingDirectory.Value)
+				return;
+			if (directory == null)
+				throw new ArgumentNullException(nameof(directory));
+			var profile = this.LogProfile ?? throw new InternalStateCorruptedException("No log profile to set working directory.");
+			if (profile.DataSourceProvider.UnderlyingSource != UnderlyingLogDataSource.StandardOutput)
+				throw new InternalStateCorruptedException($"Cannot set working directory because underlying data source type is {profile.DataSourceProvider.UnderlyingSource}.");
+			var dataSourceOptions = profile.DataSourceOptions;
+			if (dataSourceOptions.WorkingDirectory != null)
+				throw new InternalStateCorruptedException($"Cannot set working directory because working directory is already specified.");
+
+			this.Logger.LogDebug($"Set working directory to '{directory}'");
+
+			// create data source
+			dataSourceOptions.WorkingDirectory = directory;
+			var dataSource = this.CreateLogDataSourceOrNull(profile.DataSourceProvider, dataSourceOptions);
+			if (dataSource == null)
+				return;
+
+			// update state
+			this.canSetWorkingDirectory.Update(false);
+
+			// create log reader
+			this.CreateLogReader(dataSource);
+		}
+
+
+		/// <summary>
+		/// Command to set working directory.
+		/// </summary>
+		/// <remarks>Type of command parameter is <see cref="string"/>.</remarks>
+		public ICommand SetWorkingDirectoryCommand { get; }
 	}
 }
