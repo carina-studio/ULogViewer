@@ -58,6 +58,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				this.process.StartInfo.Arguments = this.arguments;
 			this.process.StartInfo.UseShellExecute = false;
 			this.process.StartInfo.RedirectStandardOutput = true;
+			this.process.StartInfo.CreateNoWindow = true;
 			this.process.Start();
 			reader = this.process.StandardOutput;
 			return LogDataSourceState.ReaderOpened;
