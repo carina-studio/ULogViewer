@@ -24,6 +24,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 	class Session : ViewModel
 	{
 		/// <summary>
+		/// Property of <see cref="DisplayLogProperties"/>.
+		/// </summary>
+		public static readonly ObservableProperty<IList<DisplayableLogProperty>> DisplayLogPropertiesProperty = ObservableProperty.Register<Session, IList<DisplayableLogProperty>>(nameof(DisplayLogProperties), new DisplayableLogProperty[0]);
+		/// <summary>
 		/// Property of <see cref="LogProfile"/>.
 		/// </summary>
 		public static readonly ObservableProperty<LogProfile?> LogProfileProperty = ObservableProperty.Register<Session, LogProfile?>(nameof(LogProfile));
@@ -180,6 +184,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				});
 			}));
 		}
+
+
+		/// <summary>
+		/// Get list of property of <see cref="DisplayableLog"/> needed to be shown on UI.
+		/// </summary>
+		public IList<DisplayableLogProperty> DisplayLogProperties { get => this.GetValue(DisplayLogPropertiesProperty); }
 
 
 		// Dispose.
@@ -395,6 +405,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// clear file name table
 			this.openedFilePaths.Clear();
 
+			// clear display log properties
+			this.UpdateDisplayLogProperties();
+
 			// update state
 			this.canOpenFile.Update(false);
 			this.canSetWorkingDirectory.Update(false);
@@ -476,6 +489,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					break;
 			}
 
+			// update display log properties
+			this.UpdateDisplayLogProperties();
+
 			// update state
 			this.canResetLogProfile.Update(true);
 		}
@@ -526,5 +542,25 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		/// <remarks>Type of command parameter is <see cref="string"/>.</remarks>
 		public ICommand SetWorkingDirectoryCommand { get; }
+
+
+		// Update list of display log properties according to profile.
+		void UpdateDisplayLogProperties()
+		{
+			var profile = this.LogProfile;
+			if (profile == null)
+				this.SetValue(DisplayLogPropertiesProperty, DisplayLogPropertiesProperty.DefaultValue);
+			else
+			{
+				var app = (IApplication)this.Application;
+				var visibleLogProperties = profile.VisibleLogProperties;
+				var displayLogProperties = new List<DisplayableLogProperty>();
+				foreach (var logProperty in visibleLogProperties)
+					displayLogProperties.Add(new DisplayableLogProperty(app, logProperty));
+				if (displayLogProperties.IsEmpty())
+					displayLogProperties.Add(new DisplayableLogProperty(app, nameof(DisplayableLog.Message), null, null));
+				this.SetValue(DisplayLogPropertiesProperty, displayLogProperties.AsReadOnly());
+			}
+		}
 	}
 }
