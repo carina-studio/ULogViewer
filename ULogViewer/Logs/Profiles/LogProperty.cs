@@ -11,12 +11,20 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// Initialize new <see cref="LogProperty"/> instance.
 		/// </summary>
 		/// <param name="name">Name of property of log.</param>
+		/// <param name="displayName">Name which is suitable to display on UI.</param>
 		/// <param name="width">Width of UI field to show property in characters.</param>
-		public LogProperty(string name, int? width)
+		public LogProperty(string name, string? displayName, int? width)
 		{
+			this.DisplayName = displayName ?? name;
 			this.Name = name;
 			this.Width = width;
 		}
+
+
+		/// <summary>
+		/// Name which is suitable to display on UI.
+		/// </summary>
+		public string DisplayName { get; }
 
 
 		// Check equality.
@@ -25,6 +33,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			if (obj is LogProperty logProperty)
 			{
 				return this.Name == logProperty.Name
+					&& this.DisplayName == logProperty.DisplayName
 					&& this.Width == logProperty.Width;
 			}
 			return false;

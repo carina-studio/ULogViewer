@@ -36,6 +36,7 @@
 			"Width": 54
 		},
 		{
+			"DisplayName": "Author",
 			"Name": "UserName",
 			"Width": 60
 		},

@@ -371,10 +371,13 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			foreach (var logPropertyElement in visibleLogPropertiesElement.EnumerateArray())
 			{
 				var name = logPropertyElement.GetProperty("Name").GetString().AsNonNull();
+				var displayName = (string?)null;
 				var width = (int?)null;
-				if (logPropertyElement.TryGetProperty("Width", out var jsonElement))
+				if (logPropertyElement.TryGetProperty("DisplayName", out var jsonElement))
+					displayName = jsonElement.GetString();
+				if (logPropertyElement.TryGetProperty("Width", out jsonElement))
 					width = jsonElement.GetInt32();
-				logProperties.Add(new LogProperty(name, width));
+				logProperties.Add(new LogProperty(name, displayName, width));
 			}
 			this.visibleLogProperties = logProperties.AsReadOnly();
 		}
