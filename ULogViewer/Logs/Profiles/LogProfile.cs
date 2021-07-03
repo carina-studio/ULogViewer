@@ -45,7 +45,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		CultureInfo? timestampCultureInfoForReading;
 		string? timestampFormatForDisplaying;
 		string? timestampFormatForReading;
-		IList<string> visibleLogProperties = new string[0];
+		IList<LogProperty> visibleLogProperties = new LogProperty[0];
 
 
 		/// <summary>
@@ -367,9 +367,15 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		// Load visible log properties from JSON.
 		void LoadVisibleLogPropertiesFromJson(JsonElement visibleLogPropertiesElement)
 		{
-			var logProperties = new List<string>();
-			foreach (var name in visibleLogPropertiesElement.EnumerateArray())
-				logProperties.Add(name.GetString().AsNonNull());
+			var logProperties = new List<LogProperty>();
+			foreach (var logPropertyElement in visibleLogPropertiesElement.EnumerateArray())
+			{
+				var name = logPropertyElement.GetProperty("Name").GetString().AsNonNull();
+				var width = (int?)null;
+				if (logPropertyElement.TryGetProperty("Width", out var jsonElement))
+					width = jsonElement.GetInt32();
+				logProperties.Add(new LogProperty(name, width));
+			}
 			this.visibleLogProperties = logProperties.AsReadOnly();
 		}
 
@@ -535,9 +541,9 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				{
 					if (it.IsEmpty())
 						return false;
-					foreach (var name in it)
+					foreach (var property in it)
 					{
-						if (!Log.HasProperty(name))
+						if (!Log.HasProperty(property.Name))
 							return false;
 					}
 					return true;
@@ -560,7 +566,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		// <summary>
 		/// Get of set list of log properties to be shown to user.
 		/// </summary>
-		public IList<string> VisibleLogProperties
+		public IList<LogProperty> VisibleLogProperties
 		{
 			get => this.visibleLogProperties;
 			set

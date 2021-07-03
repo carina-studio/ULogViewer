@@ -31,8 +31,16 @@
 	"TimestampFormatForDisplaying": "yyyy/M/d HH:mm:ss",
 	"TimestampFormatForReading": "MMM d HH:mm:ss yyyy",
 	"VisibleLogProperties": [
-		"Timestamp",
-		"UserName",
-		"Message"
+		{
+			"Name": "Timestamp",
+			"Width": 54
+		},
+		{
+			"Name": "UserName",
+			"Width": 60
+		},
+		{
+			"Name": "Message"
+		}
 	]
 }
