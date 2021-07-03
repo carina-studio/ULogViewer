@@ -6,19 +6,37 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="CarinaStudio.ULogViewer.Controls.SessionView">
 
+	<!-- Data templates -->
+	<UserControl.DataTemplates>
+
+		<!-- Log header -->
+		<DataTemplate DataType="{x:Type appViewModels:DisplayableLogProperty}">
+			<Border BorderBrush="{StaticResource Brush.SessionView.LogHeader.Separator}" BorderThickness="1,0,0,0" Margin="{StaticResource Thickness.SessionView.LogHeader.Margin}" Padding="{StaticResource Thickness.SessionView.LogHeader.Padding}">
+				<Grid>
+					<TextBlock Name="widthControlTextBlock" Opacity="0" TextWrapping="NoWrap"/>
+					<TextBlock Name="displayNameTextBlock" Text="{Binding DisplayName}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"/>
+				</Grid>
+			</Border>
+		</DataTemplate>
+		
+	</UserControl.DataTemplates>
+	
+	<!-- Content -->
 	<Grid>
 
 		<!-- Logs -->
-		<DockPanel Grid.IsSharedSizeScope="True">
+		<Border Name="logListBoxContainer" BorderBrush="{StaticResource Brush.SessionView.LogListBox.Border}" BorderThickness="{StaticResource Thickness.SessionView.LogListBox.Border}" CornerRadius="{StaticResource CornerRadius.SessionView.LogListBox.Border}">
+			<DockPanel Grid.IsSharedSizeScope="True">
 
-			<!-- Header -->
-			<Grid x:Name="logHeaderGrid" DockPanel.Dock="Top" Height="50"/>
+				<!-- Header -->
+				<Grid Name="logHeaderGrid" DockPanel.Dock="Top"/>
 
-			<!-- ListBox -->
-			<ListBox x:Name="logListBox" Items="{Binding Logs}" SelectionMode="Multiple"/>
-			
-		</DockPanel>
-		
+				<!-- ListBox -->
+				<ListBox Name="logListBox" Background="{x:Static Brushes.Transparent}" Items="{Binding Logs}" SelectionMode="Multiple"/>
+
+			</DockPanel>
+		</Border>
+
 	</Grid>
 
 
