@@ -8,6 +8,12 @@
 				Icon="AppIcon.ico"
         Title="ULogViewer">
 
-	<appControls:SessionView/>
-  
+	<TabControl>
+
+		<TabItem Header="Test">
+			<appControls:SessionView x:Name="sessionView" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+		</TabItem>
+
+	</TabControl>
+
 </Window>
