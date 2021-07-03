@@ -9,9 +9,17 @@ namespace CarinaStudio.ULogViewer
 	class Settings : BaseSettings
 	{
 		/// <summary>
+		/// Select log files immediately when they are needed.
+		/// </summary>
+		public static readonly SettingKey<bool> SelectLogFilesWhenNeeded = new SettingKey<bool>(nameof(SelectLogFilesWhenNeeded), false);
+		/// <summary>
 		/// Select language automatically.
 		/// </summary>
 		public static readonly SettingKey<bool> SelectLanguageAutomatically = new SettingKey<bool>(nameof(SelectLanguageAutomatically), true);
+		/// <summary>
+		/// Select working directory immediately when it is needed.
+		/// </summary>
+		public static readonly SettingKey<bool> SelectWorkingDirectoryWhenNeeded = new SettingKey<bool>(nameof(SelectWorkingDirectoryWhenNeeded), true);
 
 
 		/// <summary>
