@@ -5,5 +5,21 @@
 						 xmlns:appViewModels="clr-namespace:CarinaStudio.ULogViewer.ViewModels;assembly=ULogViewer"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="CarinaStudio.ULogViewer.Controls.SessionView">
-  
+
+	<Grid>
+
+		<!-- Logs -->
+		<DockPanel Grid.IsSharedSizeScope="True">
+
+			<!-- Header -->
+			<Grid x:Name="logHeaderGrid" DockPanel.Dock="Top" Height="50"/>
+
+			<!-- ListBox -->
+			<ListBox x:Name="logListBox" Items="{Binding Logs}" SelectionMode="Multiple"/>
+			
+		</DockPanel>
+		
+	</Grid>
+
+
 </UserControl>

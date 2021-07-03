@@ -242,6 +242,12 @@ namespace CarinaStudio.ULogViewer
 #pragma warning restore CA1416
 
 
+		/// <summary>
+		/// Get application settings.
+		/// </summary>
+		public Settings Settings { get => this.settings ?? throw new InvalidOperationException("Application is not ready."); }
+
+
 		// Create and show main window.
 		void ShowMainWindow()
 		{
@@ -272,7 +278,7 @@ namespace CarinaStudio.ULogViewer
 		void UpdateStringResources()
 		{
 			var updated = false;
-			if (this.Settings.GetValueOrDefault(ULogViewer.Settings.SelectLanguageAutomatically))
+			if (this.Settings.GetValueOrDefault(Settings.SelectLanguageAutomatically))
 			{
 				// base resources
 				var localeName = this.CultureInfo.Name;
@@ -356,7 +362,7 @@ namespace CarinaStudio.ULogViewer
 			remove => this.propertyChangedHandlers -= value;
 		}
 		public string RootPrivateDirectoryPath => Path.GetDirectoryName(Process.GetCurrentProcess().MainModule?.FileName) ?? throw new ArgumentException("Unable to get directory of application.");
-		public BaseSettings Settings { get => this.settings ?? throw new InvalidOperationException("Application is not ready."); }
+		BaseSettings CarinaStudio.IApplication.Settings { get => this.Settings; }
 		public event EventHandler? StringsUpdated;
 		public SynchronizationContext SynchronizationContext { get => this.synchronizationContext ?? throw new InvalidOperationException("Application is not ready."); }
 	}

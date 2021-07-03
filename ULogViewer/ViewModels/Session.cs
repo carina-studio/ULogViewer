@@ -150,7 +150,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		void CreateLogReader(ILogDataSource dataSource)
 		{
 			// create log reader
-			var logReader = new LogReader(dataSource);
+			var profile = this.LogProfile ?? throw new InternalStateCorruptedException("No log profile to create log reader.");
+			var logReader = new LogReader(dataSource).Also(it =>
+			{
+				it.LogLevelMap = profile.LogLevelMap;
+				it.LogPatterns = profile.LogPatterns;
+				it.TimestampCultureInfo = profile.TimestampCultureInfoForReading;
+				it.TimestampFormat = profile.TimestampFormatForReading;
+			});
 			this.logReaders.Add(logReader);
 			this.Logger.LogDebug($"Log reader '{logReader.Id} created");
 
@@ -158,6 +165,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			dataSource.PropertyChanged += this.OnLogDataSourcePropertyChanged;
 			logReader.LogsChanged += this.OnLogReaderLogsChanged;
 			logReader.PropertyChanged += this.OnLogReaderPropertyChanged;
+
+			// start reading logs
+			logReader.Start();
 
 			// add logs
 			var displayableLogGroup = this.displayableLogGroup ?? throw new InternalStateCorruptedException("No displayable log group.");
