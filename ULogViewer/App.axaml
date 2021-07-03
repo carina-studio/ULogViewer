@@ -14,9 +14,7 @@
 
 	<!-- Styles -->
 	<Application.Styles>
-		<FluentTheme Mode="Dark"/>
-		<StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Default.xaml"/>
-		<!--StyleInclude Source="/Styles/Dark.axaml"/-->
+		<StyleInclude Source="/Styles/Default.axaml"/>
 	</Application.Styles>
 	
 </Application>

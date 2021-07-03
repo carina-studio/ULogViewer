@@ -3,6 +3,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.ReactiveUI;
 using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.MarkupExtensions;
+using Avalonia.Markup.Xaml.Styling;
 using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.DataSources;
@@ -35,6 +36,8 @@ namespace CarinaStudio.ULogViewer
 		readonly string settingsFilePath;
 		ResourceInclude? stringResources;
 		ResourceInclude? stringResourcesLinux;
+		StyleInclude? stylesDark;
+		StyleInclude? stylesLight;
 		volatile SynchronizationContext? synchronizationContext;
 
 
@@ -262,7 +265,7 @@ namespace CarinaStudio.ULogViewer
 			//
 
 			// update styles
-			//
+			this.UpdateStyles();
 
 			// show main window
 			this.mainWindow = new MainWindow().Also((it) =>
@@ -347,6 +350,38 @@ namespace CarinaStudio.ULogViewer
 			}
 			if (updated)
 				this.StringsUpdated?.Invoke(this, EventArgs.Empty);
+		}
+
+
+		// Update styles according to settings.
+		void UpdateStyles()
+		{
+			// select style
+			var darkMode = this.Settings.GetValueOrDefault(Settings.DarkMode);
+			var addingStyle = darkMode switch
+			{
+				true => this.stylesDark ?? new StyleInclude(new Uri("avares://ULogViewer/")).Also((it) =>
+				{
+					it.Source = new Uri("avares://ULogViewer/Styles/Dark.axaml");
+					this.stylesDark = it;
+				}),
+				_ => this.stylesLight ?? new StyleInclude(new Uri("avares://ULogViewer/")).Also((it) =>
+				{
+					it.Source = new Uri("avares://ULogViewer/Styles/Light.axaml");
+					this.stylesLight = it;
+				}),
+			};
+			var removingStyle = darkMode switch
+			{
+				true => this.stylesLight,
+				_ => this.stylesDark,
+			};
+
+			// update style
+			if (removingStyle != null)
+				this.Styles.Remove(removingStyle);
+			if (!this.Styles.Contains(addingStyle))
+				this.Styles.Add(addingStyle);
 		}
 
 
