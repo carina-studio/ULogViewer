@@ -20,6 +20,10 @@ namespace CarinaStudio.ULogViewer
 		/// Select working directory immediately when it is needed.
 		/// </summary>
 		public static readonly SettingKey<bool> SelectWorkingDirectoryWhenNeeded = new SettingKey<bool>(nameof(SelectWorkingDirectoryWhenNeeded), true);
+		/// <summary>
+		/// Use dark mode UI or not.
+		/// </summary>
+		public static readonly SettingKey<bool> DarkMode = new SettingKey<bool>(nameof(DarkMode), true);
 
 
 		/// <summary>

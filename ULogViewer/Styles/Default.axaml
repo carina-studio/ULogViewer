@@ -1,0 +1,20 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+	<!-- Resources -->
+	<Styles.Resources>
+		<ResourceDictionary>
+
+			<!-- Base resources -->
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceInclude Source="/Styles/Resources.axaml"/>
+			</ResourceDictionary.MergedDictionaries>
+
+			<!-- SessionView -->
+			<SolidColorBrush x:Key="Brush.SessionView.LogHeader.Separator">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.SessionView.LogListBox.Border">#000000</SolidColorBrush>
+
+		</ResourceDictionary>
+	</Styles.Resources>
+
+</Styles>
