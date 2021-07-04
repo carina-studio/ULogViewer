@@ -2,10 +2,51 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+				xmlns:appProfiles="clr-namespace:CarinaStudio.ULogViewer.Logs.Profiles;assembly=ULogViewer"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.LogProfileSelectionDialog"
 				Classes="Dialog"
+				Height="{StaticResource Double.LogProfileSelectionDialog.Height}"
         Title="{DynamicResource String.LogProfileSelectionDialog.Title}"
 				Width="{StaticResource Double.LogProfileSelectionDialog.Width}">
-  
+
+	<!-- Styles -->
+	<Window.Styles>
+		<Style Selector="ListBox.LogProfiles">
+			<Setter Property="Background" Value="{x:Static Brushes.Transparent}"/>
+			<Setter Property="ItemTemplate">
+				<Setter.Value>
+					<DataTemplate DataType="{x:Type appProfiles:LogProfile}">
+						<TextBlock Text="{Binding Name}"/>
+					</DataTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+	</Window.Styles>
+	
+	<!-- Content -->
+	<DockPanel>
+
+		<!-- Control buttons -->
+		<StackPanel Classes="Dialog_ControlButtonsPanel" DockPanel.Dock="Bottom">
+			<Button Classes="Dialog_ControlButton_WithSeparator" Click="OnAddLogProfileClick" Content="{DynamicResource String.LogProfileSelectionDialog.AddLogProfile}"/>
+			<Button Classes="Dialog_ControlButton" Click="OnOKClick" Content="{DynamicResource String.Common.OK}" IsEnabled="{Binding $parent[Window].HasSelectedLogProfile}"/>
+			<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].CloseDialogCommand}" Content="{DynamicResource String.Common.Cancel}"/>
+		</StackPanel>
+		
+		<!-- Log profiles -->
+		<Grid ColumnDefinitions="*,Auto" Margin="{StaticResource Thickness.Dialog.Content.Padding}" RowDefinitions="Auto,Auto,Auto,*">
+
+			<!-- Pinned profiles -->
+			<TextBlock IsVisible="{Binding $parent[Window].HasPinnedLogProfiles}" Text="{DynamicResource String.LogProfileSelectionDialog.PinnedLogProfiles}"/>
+			<ListBox Name="pinnedLogProfileListBox" Classes="LogProfiles" Grid.Row="1" Items="{Binding $parent[Window].PinnedLogProfiles}" IsVisible="{Binding $parent[Window].HasPinnedLogProfiles}" MaxHeight="{StaticResource Double.LogProfileSelectionDialog.PinnedLogProfileListBox.MaxHeight}" SelectionChanged="OnAllLogProfilesSelectionChanged"/>
+			
+			<!-- All profiles -->
+			<TextBlock Grid.Row="2" Text="{DynamicResource String.LogProfileSelectionDialog.AllLogProfiles}"/>
+			<ListBox Name="allLogProfileListBox" Classes="LogProfiles" Grid.Row="3" Items="{Binding $parent[Window].AllLogProfiles}" SelectionChanged="OnPinnedLogProfilesSelectionChanged"/>
+			
+		</Grid>
+		
+	</DockPanel>
+	
 </Window>

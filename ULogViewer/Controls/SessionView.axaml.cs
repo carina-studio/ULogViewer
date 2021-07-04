@@ -70,9 +70,10 @@ namespace CarinaStudio.ULogViewer.Controls
 			session.PropertyChanged += this.OnSessionPropertyChanged;
 
 			// attach to command
+			session.ResetLogProfileCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
 			session.SetLogProfileCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
 			session.SetWorkingDirectoryCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
-			this.canSetLogProfile.Update(session.SetLogProfileCommand.CanExecute(null));
+			this.canSetLogProfile.Update(session.ResetLogProfileCommand.CanExecute(null) || session.SetLogProfileCommand.CanExecute(null));
 			this.canSetWorkingDirectory.Update(session.SetWorkingDirectoryCommand.CanExecute(null));
 
 			// update UI
@@ -87,6 +88,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			session.PropertyChanged -= this.OnSessionPropertyChanged;
 
 			// detach from commands
+			session.SetLogProfileCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
 			session.SetLogProfileCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
 			session.SetWorkingDirectoryCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
 			this.canSetLogProfile.Update(false);
@@ -245,8 +247,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (this.DataContext is not Session session)
 				return;
-			if (sender == session.SetLogProfileCommand)
-				this.canSetLogProfile.Update(session.SetLogProfileCommand.CanExecute(null));
+			if (sender == session.ResetLogProfileCommand || sender == session.SetLogProfileCommand)
+				this.canSetLogProfile.Update(session.ResetLogProfileCommand.CanExecute(null) || session.SetLogProfileCommand.CanExecute(null));
 			else if (sender == session.SetWorkingDirectoryCommand)
 			{
 				if (session.SetWorkingDirectoryCommand.CanExecute(null))
