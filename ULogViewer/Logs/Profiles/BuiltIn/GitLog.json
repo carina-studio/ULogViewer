@@ -33,12 +33,12 @@
 	"VisibleLogProperties": [
 		{
 			"Name": "Timestamp",
-			"Width": 54
+			"Width": 100
 		},
 		{
 			"DisplayName": "Author",
 			"Name": "UserName",
-			"Width": 60
+			"Width": 150
 		},
 		{
 			"Name": "Message"

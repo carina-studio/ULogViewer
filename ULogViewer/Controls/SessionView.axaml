@@ -11,11 +11,8 @@
 
 		<!-- Log header -->
 		<DataTemplate DataType="{x:Type appViewModels:DisplayableLogProperty}">
-			<Border BorderBrush="{StaticResource Brush.SessionView.LogHeader.Separator}" BorderThickness="1,0,0,0" Margin="{StaticResource Thickness.SessionView.LogHeader.Margin}" Padding="{StaticResource Thickness.SessionView.LogHeader.Padding}">
-				<Grid>
-					<TextBlock Name="widthControlTextBlock" Opacity="0" TextWrapping="NoWrap"/>
-					<TextBlock Name="displayNameTextBlock" Text="{Binding DisplayName}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"/>
-				</Grid>
+			<Border BorderBrush="{StaticResource Brush.SessionView.LogHeader.Separator}" BorderThickness="1,0,0,0" HorizontalAlignment="Stretch" Margin="{StaticResource Thickness.SessionView.LogHeader.Margin}" Padding="{StaticResource Thickness.SessionView.LogHeader.Padding}">
+				<TextBlock Text="{Binding DisplayName}" HorizontalAlignment="Stretch" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"/>
 			</Border>
 		</DataTemplate>
 		
@@ -26,13 +23,16 @@
 
 		<!-- Logs -->
 		<Border Name="logListBoxContainer" BorderBrush="{StaticResource Brush.SessionView.LogListBox.Border}" BorderThickness="{StaticResource Thickness.SessionView.LogListBox.Border}" CornerRadius="{StaticResource CornerRadius.SessionView.LogListBox.Border}">
-			<DockPanel Grid.IsSharedSizeScope="True">
+			<DockPanel>
 
 				<!-- Header -->
-				<Grid Name="logHeaderGrid" DockPanel.Dock="Top"/>
+				<Grid DockPanel.Dock="Top">
+					<TextBlock Margin="{StaticResource Thickness.SessionView.LogHeader.Margin}" Padding="{StaticResource Thickness.SessionView.LogHeader.Padding}" Text=" "/>
+					<Grid Name="logHeaderGrid"/>
+				</Grid>
 
 				<!-- ListBox -->
-				<ListBox Name="logListBox" Background="{x:Static Brushes.Transparent}" Items="{Binding Logs}" SelectionMode="Multiple"/>
+				<ListBox Name="logListBox" AutoScrollToSelectedItem="False" Background="{x:Static Brushes.Transparent}" Items="{Binding Logs}" ScrollViewer.HorizontalScrollBarVisibility="Auto" SelectionMode="Multiple" VirtualizationMode="Simple"/>
 
 			</DockPanel>
 		</Border>
