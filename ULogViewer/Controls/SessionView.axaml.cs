@@ -28,6 +28,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly MutableObservableBoolean canSetWorkingDirectory = new MutableObservableBoolean();
 		readonly Grid logHeaderGrid;
 		readonly ListBox logListBox;
+		ScrollViewer? logScrollViewer;
 
 
 		/// <summary>
@@ -43,7 +44,19 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// setup controls
 			this.logHeaderGrid = this.FindControl<Grid>("logHeaderGrid").AsNonNull();
-			this.logListBox = this.FindControl<ListBox>("logListBox").AsNonNull();
+			this.logListBox = this.FindControl<ListBox>("logListBox").AsNonNull().Also(it =>
+			{
+				it.PropertyChanged += (_, e) =>
+				{
+					if (e.Property == ListBox.ScrollProperty)
+					{
+						this.logScrollViewer = (it.Scroll as ScrollViewer)?.Also(scrollViewer =>
+						{
+							scrollViewer.AllowAutoHide = false;
+						});
+					}
+				};
+			});
 		}
 
 
@@ -97,41 +110,52 @@ namespace CarinaStudio.ULogViewer.Controls
 			var logProperties = (this.DataContext as Session)?.DisplayLogProperties;
 			if (logProperties == null || logProperties.IsEmpty())
 				return;
+			var logPropertyCount = logProperties.Count;
 
 			// build headers
 			var app = (App)this.Application;
 			var splitterWidth = app.Resources.TryGetResource("Double.GridSplitter.Thickness", out var rawResource) ? (double)rawResource.AsNonNull() : 0.0;
 			var minHeaderWidth = app.Resources.TryGetResource("Double.SessionView.LogHeader.MinWidth", out rawResource) ? (double)rawResource.AsNonNull() : 0.0;
 			var headerTemplate = (DataTemplate)this.DataTemplates.First(it => it is DataTemplate dt && dt.DataType == typeof(DisplayableLogProperty));
-			for (int i = 0, count = logProperties.Count; i < count; ++i)
+			var headerColumns = new ColumnDefinition[logPropertyCount];
+			var headerColumnWidths = new MutableObservableValue<GridLength>[logPropertyCount];
+			for (var i = 0; i < logPropertyCount; ++i)
 			{
 				// define splitter column
-				var logProperty = logProperties[i];
-				if (i > 0)
+				var logPropertyIndex = i;
+				if (logPropertyIndex > 0)
 					this.logHeaderGrid.ColumnDefinitions.Add(new ColumnDefinition(splitterWidth, GridUnitType.Pixel));
 
 				// define header column
+				var logProperty = logProperties[logPropertyIndex];
 				var width = logProperty.Width;
-				var columnWidth = width.Let(width =>
+				if (width == null)
+					headerColumnWidths[logPropertyIndex] = new MutableObservableValue<GridLength>(new GridLength(1, GridUnitType.Star));
+				else
+					headerColumnWidths[logPropertyIndex] = new MutableObservableValue<GridLength>(new GridLength(width.Value, GridUnitType.Pixel));
+				var headerColumn = new ColumnDefinition(headerColumnWidths[logPropertyIndex].Value).Also(it =>
 				{
-					if (width == null)
-						return new GridLength(1, GridUnitType.Star);
-					return new GridLength(0, GridUnitType.Auto);
+					it.MinWidth = minHeaderWidth;
 				});
-				this.logHeaderGrid.ColumnDefinitions.Add(new ColumnDefinition(columnWidth)
-				{
-					MinWidth = minHeaderWidth,
-				});
+				headerColumns[logPropertyIndex] = headerColumn;
+				this.logHeaderGrid.ColumnDefinitions.Add(headerColumn);
 
 				// create splitter view
-				if (i > 0)
+				if (logPropertyIndex > 0)
 				{
-					var splitter = new GridSplitter()
+					var splitter = new GridSplitter().Also(it =>
 					{
-						HorizontalAlignment = HorizontalAlignment.Stretch,
-						VerticalAlignment = VerticalAlignment.Stretch,
-					};
-					Grid.SetColumn(splitter, i * 2 - 1);
+						it.Background = Brushes.Transparent;
+						it.DragDelta += (_, e) =>
+						{
+							var headerColumnWidth = headerColumnWidths[logPropertyIndex - 1];
+							if (headerColumnWidth.Value.GridUnitType == GridUnitType.Pixel)
+								headerColumnWidth.Update(new GridLength(headerColumns[logPropertyIndex - 1].ActualWidth, GridUnitType.Pixel));
+						};
+						it.HorizontalAlignment = HorizontalAlignment.Stretch;
+						it.VerticalAlignment = VerticalAlignment.Stretch;
+					});
+					Grid.SetColumn(splitter, logPropertyIndex * 2 - 1);
 					this.logHeaderGrid.Children.Add(splitter);
 				}
 
@@ -139,20 +163,10 @@ namespace CarinaStudio.ULogViewer.Controls
 				var headerView = ((Border)headerTemplate.Build(logProperty)).Also(it =>
 				{
 					it.DataContext = logProperty;
-					if (i == 0)
+					if (logPropertyIndex == 0)
 						it.BorderThickness = new Thickness();
-					if (width == null)
-						it.HorizontalAlignment = HorizontalAlignment.Stretch;
-					else if (width > 0)
-					{
-						it.FindChildControl<TextBlock>("widthControlTextBlock").AsNonNull().Text = new string(new char[width.Value].Also(it =>
-						{
-							for (var j = it.Length - 1; j >= 0; --j)
-								it[j] = ' ';
-						}));
-					}
-					Grid.SetColumn(it, i * 2);
 				});
+				Grid.SetColumn(headerView, logPropertyIndex * 2);
 				this.logHeaderGrid.Children.Add(headerView);
 			}
 
@@ -160,22 +174,24 @@ namespace CarinaStudio.ULogViewer.Controls
 			var itemTemplateContent = new Func<IServiceProvider, object>(_ =>
 			{
 				var itemGrid = new Grid();
-				for (int i = 0, count = logProperties.Count; i < count; ++i)
+				for (var i = 0; i < logPropertyCount; ++i)
 				{
-					// define column
-					var logProperty = logProperties[i];
+					// define splitter column
+					var logPropertyIndex = i;
+					if (logPropertyIndex > 0)
+						itemGrid.ColumnDefinitions.Add(new ColumnDefinition(splitterWidth, GridUnitType.Pixel));
+
+					// define property column
+					var logProperty = logProperties[logPropertyIndex];
 					var width = logProperty.Width;
-					var columnWidth = width.Let(width =>
+					var propertyColumn = new ColumnDefinition(new GridLength()).Also(it =>
 					{
 						if (width == null)
-							return new GridLength(1, GridUnitType.Star);
-						return new GridLength(0, GridUnitType.Auto);
+							it.Width = new GridLength(1, GridUnitType.Star);
+						else
+							it.Bind(ColumnDefinition.WidthProperty, headerColumnWidths[logPropertyIndex]);
 					});
-					var column = new ColumnDefinition(columnWidth).Also(it =>
-					{
-						//it.SharedSizeGroup = logProperty.Name;
-					});
-					itemGrid.ColumnDefinitions.Add(column);
+					itemGrid.ColumnDefinitions.Add(propertyColumn);
 
 					// create property view
 					var propertyView = logProperty.Name switch
@@ -191,7 +207,7 @@ namespace CarinaStudio.ULogViewer.Controls
 							it.VerticalAlignment = VerticalAlignment.Top;
 						}),
 					};
-					Grid.SetColumn(propertyView, i);
+					Grid.SetColumn(propertyView, logPropertyIndex * 2);
 					itemGrid.Children.Add(propertyView);
 				}
 				return new ControlTemplateResult(itemGrid, null);

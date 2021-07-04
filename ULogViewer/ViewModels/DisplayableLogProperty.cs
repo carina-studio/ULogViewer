@@ -21,7 +21,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <param name="app">Application.</param>
 		/// <param name="name">Name of property.</param>
 		/// <param name="displayName">Name for displaying.</param>
-		/// <param name="width">Width of UI field to show property in characters.</param>
+		/// <param name="width">Width of UI field to show property in pixels.</param>
 		public DisplayableLogProperty(IApplication app, string name, string? displayName, int? width)
 		{
 			this.app = app;
@@ -90,7 +90,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
-		/// Width of UI field to show property in characters.
+		/// Width of UI field to show property in pixels.
 		/// </summary>
 		public int? Width { get; }
 	}

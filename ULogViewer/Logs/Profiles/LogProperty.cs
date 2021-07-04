@@ -12,7 +12,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// </summary>
 		/// <param name="name">Name of property of log.</param>
 		/// <param name="displayName">Name which is suitable to display on UI.</param>
-		/// <param name="width">Width of UI field to show property in characters.</param>
+		/// <param name="width">Width of UI field to show property in pixels.</param>
 		public LogProperty(string name, string? displayName, int? width)
 		{
 			this.DisplayName = displayName ?? name;
@@ -55,7 +55,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 
 
 		/// <summary>
-		/// Width of UI field to show property in characters.
+		/// Width of UI field to show property in pixels.
 		/// </summary>
 		public int? Width { get; }
 	}
