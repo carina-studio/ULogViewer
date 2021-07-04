@@ -11,5 +11,6 @@
 	<Thickness x:Key="Thickness.SessionView.LogHeader.Margin">3,10,3,10</Thickness>
 	<Thickness x:Key="Thickness.SessionView.LogHeader.Padding">5,0,5,0</Thickness>
 	<Thickness x:Key="Thickness.SessionView.LogListBox.Border">1</Thickness>
+	<Thickness x:Key="Thickness.SessionView.LogListBox.Item.Padding">8,3,8,3</Thickness>
 	
 </ResourceDictionary>

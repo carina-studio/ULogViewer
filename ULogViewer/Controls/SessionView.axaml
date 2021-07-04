@@ -26,13 +26,24 @@
 			<DockPanel>
 
 				<!-- Header -->
-				<Grid DockPanel.Dock="Top">
+				<Grid Background="{StaticResource Brush.SessionView.LogHeader.Background}" DockPanel.Dock="Top">
 					<TextBlock Margin="{StaticResource Thickness.SessionView.LogHeader.Margin}" Padding="{StaticResource Thickness.SessionView.LogHeader.Padding}" Text=" "/>
 					<Grid Name="logHeaderGrid"/>
 				</Grid>
 
 				<!-- ListBox -->
-				<ListBox Name="logListBox" AutoScrollToSelectedItem="False" Background="{x:Static Brushes.Transparent}" Items="{Binding Logs}" ScrollViewer.HorizontalScrollBarVisibility="Auto" SelectionMode="Multiple" VirtualizationMode="Simple"/>
+				<ListBox Name="logListBox" AutoScrollToSelectedItem="False" Background="{StaticResource Brush.SessionView.LogListBox.Background}" Items="{Binding Logs}" ScrollViewer.HorizontalScrollBarVisibility="Auto" SelectionMode="Multiple" VirtualizationMode="Simple">
+					<ListBox.Styles>
+						<Style Selector="ListBoxItem">
+							<Setter Property="HorizontalAlignment" Value="Stretch"/>
+							<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+							<Setter Property="Padding" Value="{StaticResource Thickness.SessionView.LogListBox.Item.Padding}"/>
+						</Style>
+						<Style Selector="TextBlock">
+							<Setter Property="FontFamily" Value="Consolas"/>
+						</Style>
+					</ListBox.Styles>
+				</ListBox>
 
 			</DockPanel>
 		</Border>
