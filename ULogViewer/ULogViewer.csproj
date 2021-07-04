@@ -44,6 +44,7 @@
     <AvaloniaResource Include="Resources/LogProfile.Terminal.64px.png" />
     <AvaloniaResource Include="Resources/LogProfile.Usb.128px.png" />
     <AvaloniaResource Include="Resources/LogProfile.Usb.64px.png" />
+    <AvaloniaResource Include="Resources/LogProfiles.64px.png" />
     <AvaloniaResource Include="Strings/Default.axaml" />
 		<AvaloniaResource Include="Strings/Default-Linux.axaml" />
     <AvaloniaResource Include="Strings/zh-TW.axaml" />
