@@ -16,6 +16,12 @@
 	<sys:String x:Key="String.BuiltInProfile.GitLog">Git 提交紀錄</sys:String>
 
 	<!-- LogProfileSelectionDialog -->
+	<sys:String x:Key="String.LogProfileSelectionDialog.AddLogProfile">建立...</sys:String>
+	<sys:String x:Key="String.LogProfileSelectionDialog.AllLogProfiles">所有日誌類型：</sys:String>
+	<sys:String x:Key="String.LogProfileSelectionDialog.EditLogProfile">編輯日誌類型</sys:String>
+	<sys:String x:Key="String.LogProfileSelectionDialog.PinnedLogProfiles">已釘選：</sys:String>
+	<sys:String x:Key="String.LogProfileSelectionDialog.PinUnpinLogProfile">釘選/移除釘選日誌類型</sys:String>
+	<sys:String x:Key="String.LogProfileSelectionDialog.RemoveLogProfile">刪除日誌類型</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.Title">選擇日誌類型</sys:String>
 	
 </ResourceDictionary>

@@ -16,6 +16,12 @@
 	<sys:String x:Key="String.BuiltInProfile.GitLog">Git log</sys:String>
 
 	<!-- LogProfileSelectionDialog -->
+	<sys:String x:Key="String.LogProfileSelectionDialog.AddLogProfile">Create...</sys:String>
+	<sys:String x:Key="String.LogProfileSelectionDialog.AllLogProfiles">All profiles:</sys:String>
+	<sys:String x:Key="String.LogProfileSelectionDialog.EditLogProfile">Edit profile</sys:String>
+	<sys:String x:Key="String.LogProfileSelectionDialog.PinnedLogProfiles">Pinned:</sys:String>
+	<sys:String x:Key="String.LogProfileSelectionDialog.PinUnpinLogProfile">Pin/Unpin profile</sys:String>
+	<sys:String x:Key="String.LogProfileSelectionDialog.RemoveLogProfile">Delete profile</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.Title">Select log profile</sys:String>
 
 </ResourceDictionary>

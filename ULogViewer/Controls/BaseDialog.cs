@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ReactiveUI;
+using System;
+using System.Windows.Input;
 
 namespace CarinaStudio.ULogViewer.Controls
 {
@@ -9,6 +11,21 @@ namespace CarinaStudio.ULogViewer.Controls
 	{
 		// Fields.
 		BaseWindow? ownerWindow;
+
+
+		/// <summary>
+		/// Initialize new <see cref="BaseDialog"/> instance.
+		/// </summary>
+		protected BaseDialog()
+		{
+			this.CloseDialogCommand = ReactiveCommand.Create(this.Close);
+		}
+
+
+		/// <summary>
+		/// Command to close dialog.
+		/// </summary>
+		public ICommand CloseDialogCommand { get; }
 
 
 		// Called when closed.
