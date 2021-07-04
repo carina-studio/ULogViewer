@@ -19,10 +19,25 @@
 	</UserControl.DataTemplates>
 	
 	<!-- Content -->
-	<Grid>
+	<Grid RowDefinitions="Auto,*">
+
+		<!-- Toolbar -->
+		<Grid Margin="{StaticResource Thickness.SessionView.ToolBar.Padding}">
+
+			<!-- Log actions -->
+			<StackPanel Orientation="Horizontal">
+
+				<!-- Select log profiles -->
+				<Button Classes="SessionView_ToolBar_Button">
+					<Image Classes="SessionView_ToolBar_Button_Icon" Source="/Resources/LogProfiles.64px.png"/>
+				</Button>
+				
+			</StackPanel>
+			
+		</Grid>
 
 		<!-- Logs -->
-		<Border Name="logListBoxContainer" BorderBrush="{StaticResource Brush.SessionView.LogListBox.Border}" BorderThickness="{StaticResource Thickness.SessionView.LogListBox.Border}" CornerRadius="{StaticResource CornerRadius.SessionView.LogListBox.Border}">
+		<Border Name="logListBoxContainer" BorderBrush="{StaticResource Brush.SessionView.LogListBox.Border}" BorderThickness="{StaticResource Thickness.SessionView.LogListBox.Border}" CornerRadius="{StaticResource CornerRadius.SessionView.LogListBox.Border}" Grid.Row="1">
 			<DockPanel>
 
 				<!-- Header -->
