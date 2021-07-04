@@ -1,9 +1,12 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Templates;
+using Avalonia.Data;
 using Avalonia.Layout;
 using Avalonia.LogicalTree;
 using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.Templates;
+using Avalonia.Media;
 using Avalonia.VisualTree;
 using CarinaStudio.Collections;
 using CarinaStudio.ULogViewer.ViewModels;
@@ -87,6 +90,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.logHeaderGrid.Children.Clear();
 			this.logHeaderGrid.ColumnDefinitions.Clear();
 
+			// clear item template
+			this.logListBox.ItemTemplate = null;
+
 			// get display log properties
 			var logProperties = (this.DataContext as Session)?.DisplayLogProperties;
 			if (logProperties == null || logProperties.IsEmpty())
@@ -131,6 +137,52 @@ namespace CarinaStudio.ULogViewer.Controls
 				});
 				this.logHeaderGrid.Children.Add(headerView);
 			}
+
+			// build item template
+			var itemTemplateContent = new Func<IServiceProvider, object>(_ =>
+			{
+				var itemGrid = new Grid();
+				for (int i = 0, count = logProperties.Count; i < count; ++i)
+				{
+					// define column
+					var logProperty = logProperties[i];
+					var width = logProperty.Width;
+					var columnWidth = width.Let(width =>
+					{
+						if (width == null)
+							return new GridLength(1, GridUnitType.Star);
+						return new GridLength(0, GridUnitType.Auto);
+					});
+					var column = new ColumnDefinition(columnWidth).Also(it =>
+					{
+						//it.SharedSizeGroup = logProperty.Name;
+					});
+					itemGrid.ColumnDefinitions.Add(column);
+
+					// create property view
+					var propertyView = logProperty.Name switch
+					{
+						_ => new TextBlock().Also(it =>
+						{
+							it.Bind(TextBlock.TextProperty, new Binding()
+							{
+								Path = logProperty.Name
+							});
+							it.TextTrimming = TextTrimming.CharacterEllipsis;
+							it.TextWrapping = TextWrapping.NoWrap;
+							it.VerticalAlignment = VerticalAlignment.Top;
+						}),
+					};
+					Grid.SetColumn(propertyView, i);
+					itemGrid.Children.Add(propertyView);
+				}
+				return new ControlTemplateResult(itemGrid, null);
+			});
+			this.logListBox.ItemTemplate = new DataTemplate()
+			{
+				Content = itemTemplateContent,
+				DataType = typeof(DisplayableLog),
+			};
 		}
 
 
