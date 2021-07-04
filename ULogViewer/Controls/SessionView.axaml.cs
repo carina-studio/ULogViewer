@@ -99,11 +99,18 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 
 			// build headers
+			var app = (App)this.Application;
+			var splitterWidth = app.Resources.TryGetResource("Double.GridSplitter.Thickness", out var rawResource) ? (double)rawResource.AsNonNull() : 0.0;
+			var minHeaderWidth = app.Resources.TryGetResource("Double.SessionView.LogHeader.MinWidth", out rawResource) ? (double)rawResource.AsNonNull() : 0.0;
 			var headerTemplate = (DataTemplate)this.DataTemplates.First(it => it is DataTemplate dt && dt.DataType == typeof(DisplayableLogProperty));
 			for (int i = 0, count = logProperties.Count; i < count; ++i)
 			{
-				// define column
+				// define splitter column
 				var logProperty = logProperties[i];
+				if (i > 0)
+					this.logHeaderGrid.ColumnDefinitions.Add(new ColumnDefinition(splitterWidth, GridUnitType.Pixel));
+
+				// define header column
 				var width = logProperty.Width;
 				var columnWidth = width.Let(width =>
 				{
@@ -111,11 +118,22 @@ namespace CarinaStudio.ULogViewer.Controls
 						return new GridLength(1, GridUnitType.Star);
 					return new GridLength(0, GridUnitType.Auto);
 				});
-				var column = new ColumnDefinition(columnWidth).Also(it =>
+				this.logHeaderGrid.ColumnDefinitions.Add(new ColumnDefinition(columnWidth)
 				{
-					it.SharedSizeGroup = logProperty.Name;
+					MinWidth = minHeaderWidth,
 				});
-				this.logHeaderGrid.ColumnDefinitions.Add(column);
+
+				// create splitter view
+				if (i > 0)
+				{
+					var splitter = new GridSplitter()
+					{
+						HorizontalAlignment = HorizontalAlignment.Stretch,
+						VerticalAlignment = VerticalAlignment.Stretch,
+					};
+					Grid.SetColumn(splitter, i * 2 - 1);
+					this.logHeaderGrid.Children.Add(splitter);
+				}
 
 				// create header view
 				var headerView = ((Border)headerTemplate.Build(logProperty)).Also(it =>
@@ -133,7 +151,7 @@ namespace CarinaStudio.ULogViewer.Controls
 								it[j] = ' ';
 						}));
 					}
-					Grid.SetColumn(it, i);
+					Grid.SetColumn(it, i * 2);
 				});
 				this.logHeaderGrid.Children.Add(headerView);
 			}

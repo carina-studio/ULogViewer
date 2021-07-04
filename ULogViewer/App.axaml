@@ -6,7 +6,7 @@
 	<Application.Resources>
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
-				<!--ResourceInclude Source="/Resources/Default.axaml"/-->
+				<ResourceInclude Source="/Styles/Resources.axaml"/>
 				<ResourceInclude Source="/Strings/Default.axaml"/>
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
