@@ -2,10 +2,14 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 										xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
+	<!-- GridSplitter -->
+	<sys:Double x:Key="Double.GridSplitter.Thickness">5</sys:Double>
+	
 	<!-- SessionView -->
-	<CornerRadius x:Key="CornerRadius.SessionView.LogListBox.Border">3</CornerRadius>
-	<Thickness x:Key="Thickness.SessionView.LogHeader.Margin">3</Thickness>
-	<Thickness x:Key="Thickness.SessionView.LogHeader.Padding">3,0,3,0</Thickness>
+	<CornerRadius x:Key="CornerRadius.SessionView.LogListBox.Border">1</CornerRadius>
+	<sys:Double x:Key="Double.SessionView.LogHeader.MinWidth">50</sys:Double>
+	<Thickness x:Key="Thickness.SessionView.LogHeader.Margin">0,3,0,3</Thickness>
+	<Thickness x:Key="Thickness.SessionView.LogHeader.Padding">5,0,5,0</Thickness>
 	<Thickness x:Key="Thickness.SessionView.LogListBox.Border">1</Thickness>
 	
 </ResourceDictionary>
