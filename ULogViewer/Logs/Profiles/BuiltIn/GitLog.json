@@ -28,17 +28,17 @@
 	],
 	"SortDirection": "Descending",
 	"TimestampCultureInfoForReading": "en-US",
-	"TimestampFormatForDisplaying": "yyyy/M/d HH:mm:ss",
+	"TimestampFormatForDisplaying": "yyyy/MM/dd HH:mm:ss",
 	"TimestampFormatForReading": "MMM d HH:mm:ss yyyy",
 	"VisibleLogProperties": [
 		{
 			"Name": "Timestamp",
-			"Width": 100
+			"Width": 180
 		},
 		{
 			"DisplayName": "Author",
 			"Name": "UserName",
-			"Width": 150
+			"Width": 250
 		},
 		{
 			"Name": "Message"

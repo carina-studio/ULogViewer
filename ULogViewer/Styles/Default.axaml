@@ -11,10 +11,20 @@
 			</ResourceDictionary.MergedDictionaries>
 
 			<!-- SessionView -->
+			<SolidColorBrush x:Key="Brush.SessionView.LogHeader.Background">#0e0e0e</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.SessionView.LogHeader.Separator">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.SessionView.LogListBox.Background">#000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.SessionView.LogListBox.Border">#000000</SolidColorBrush>
+
+			<!-- Window -->
+			<SolidColorBrush x:Key="Brush.Window.Background">#ffffff</SolidColorBrush>
 
 		</ResourceDictionary>
 	</Styles.Resources>
+
+	<!-- MainWindow -->
+	<Style Selector="Window.MainWindow">
+		<Setter Property="Background" Value="{DynamicResource Brush.Window.Background}"/>
+	</Style>
 
 </Styles>
