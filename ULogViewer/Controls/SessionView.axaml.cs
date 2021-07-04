@@ -9,6 +9,7 @@ using Avalonia.Markup.Xaml.Templates;
 using Avalonia.Media;
 using Avalonia.VisualTree;
 using CarinaStudio.Collections;
+using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ULogViewer.ViewModels;
 using Microsoft.Extensions.Logging;
 using ReactiveUI;
@@ -25,6 +26,7 @@ namespace CarinaStudio.ULogViewer.Controls
 	partial class SessionView : BaseView
 	{
 		// Fields.
+		readonly MutableObservableBoolean canSetLogProfile = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSetWorkingDirectory = new MutableObservableBoolean();
 		readonly Grid logHeaderGrid;
 		readonly ListBox logListBox;
@@ -37,6 +39,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		public SessionView()
 		{
 			// create commands
+			this.SetLogProfileCommand = ReactiveCommand.Create(this.SetLogProfile, this.canSetLogProfile);
 			this.SetWorkingDirectoryCommand = ReactiveCommand.Create(this.SetWorkingDirectory, this.canSetWorkingDirectory);
 
 			// initialize
@@ -67,7 +70,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			session.PropertyChanged += this.OnSessionPropertyChanged;
 
 			// attach to command
+			session.SetLogProfileCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
 			session.SetWorkingDirectoryCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
+			this.canSetLogProfile.Update(session.SetLogProfileCommand.CanExecute(null));
 			this.canSetWorkingDirectory.Update(session.SetWorkingDirectoryCommand.CanExecute(null));
 
 			// update UI
@@ -82,7 +87,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			session.PropertyChanged -= this.OnSessionPropertyChanged;
 
 			// detach from commands
+			session.SetLogProfileCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
 			session.SetWorkingDirectoryCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
+			this.canSetLogProfile.Update(false);
 			this.canSetWorkingDirectory.Update(false);
 
 			// update UI
@@ -238,7 +245,9 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (this.DataContext is not Session session)
 				return;
-			if (sender == session.SetWorkingDirectoryCommand)
+			if (sender == session.SetLogProfileCommand)
+				this.canSetLogProfile.Update(session.SetLogProfileCommand.CanExecute(null));
+			else if (sender == session.SetWorkingDirectoryCommand)
 			{
 				if (session.SetWorkingDirectoryCommand.CanExecute(null))
 				{
@@ -262,6 +271,45 @@ namespace CarinaStudio.ULogViewer.Controls
 					break;
 			}
 		}
+
+
+		// Set log profile.
+		async void SetLogProfile()
+		{
+			// check state
+			if (!this.canSetLogProfile.Value)
+				return;
+			var window = this.FindLogicalAncestorOfType<Window>();
+			if (window == null)
+			{
+				this.Logger.LogError("Unable to set log profile without attaching to window");
+				return;
+			}
+
+			// select profile
+			var logProfile = await new LogProfileSelectionDialog().ShowDialog<LogProfile>(window);
+			if (logProfile == null)
+				return;
+
+			// reset log profile
+			if (this.DataContext is not Session session)
+				return;
+			if (session.ResetLogProfileCommand.CanExecute(null))
+				session.ResetLogProfileCommand.Execute(null);
+
+			// check state
+			if (!this.canSetLogProfile.Value)
+				return;
+
+			// set log profile
+			session.SetLogProfileCommand.Execute(logProfile);
+		}
+
+
+		/// <summary>
+		/// Command to set log profile.
+		/// </summary>
+		public ICommand SetLogProfileCommand { get; }
 
 
 		// Set working directory.

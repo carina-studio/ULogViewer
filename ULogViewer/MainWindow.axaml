@@ -6,7 +6,6 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.MainWindow"
 				Classes="MainWindow"
-				Icon="AppIcon.ico"
         Title="ULogViewer">
 
 	<TabControl>

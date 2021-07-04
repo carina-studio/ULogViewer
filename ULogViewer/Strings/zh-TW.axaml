@@ -14,5 +14,8 @@
 
 	<!-- Built-in profile -->
 	<sys:String x:Key="String.BuiltInProfile.GitLog">Git 提交紀錄</sys:String>
+
+	<!-- LogProfileSelectionDialog -->
+	<sys:String x:Key="String.LogProfileSelectionDialog.Title">選擇日誌類型</sys:String>
 	
 </ResourceDictionary>

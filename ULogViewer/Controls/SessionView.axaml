@@ -28,7 +28,7 @@
 			<StackPanel Orientation="Horizontal">
 
 				<!-- Select log profiles -->
-				<Button Classes="SessionView_ToolBar_Button">
+				<Button Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].SetLogProfileCommand}">
 					<Image Classes="SessionView_ToolBar_Button_Icon" Source="/Resources/LogProfiles.64px.png"/>
 				</Button>
 				

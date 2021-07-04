@@ -2,8 +2,18 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 										xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
+	<!-- Dialog -->
+	<sys:Double x:Key="Double.Dialog.ControlButton.MinWidth">100</sys:Double>
+	<Thickness x:Key="Thickness.Dialog.Content.Padding">15,15,15,0</Thickness>
+	<Thickness x:Key="Thickness.Dialog.ControlButton.Margin">5,0,0,0</Thickness>
+	<Thickness x:Key="Thickness.Dialog.ControlButton.Padding">10</Thickness>
+	<Thickness x:Key="Thickness.Dialog.ControlButtonsPanel.Padding">15</Thickness>
+	
 	<!-- GridSplitter -->
 	<sys:Double x:Key="Double.GridSplitter.Thickness">5</sys:Double>
+
+	<!-- LogProfileSelectionDialog -->
+	<sys:Double x:Key="Double.LogProfileSelectionDialog.Width">500</sys:Double>
 	
 	<!-- SessionView -->
 	<CornerRadius x:Key="CornerRadius.SessionView.LogListBox.Border">1</CornerRadius>

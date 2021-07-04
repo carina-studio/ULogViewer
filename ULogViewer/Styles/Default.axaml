@@ -10,6 +10,9 @@
 				<ResourceInclude Source="/Styles/Resources.axaml"/>
 			</ResourceDictionary.MergedDictionaries>
 
+			<!-- Dialog -->
+			<SolidColorBrush x:Key="Brush.Dialog.Background">#ffffff</SolidColorBrush>
+
 			<!-- SessionView -->
 			<SolidColorBrush x:Key="Brush.SessionView.LogHeader.Background">#0e0e0e</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.SessionView.LogHeader.Separator">#000000</SolidColorBrush>
@@ -22,9 +25,30 @@
 		</ResourceDictionary>
 	</Styles.Resources>
 
+	<!-- Dialog -->
+	<Style Selector="Button.Dialog_ControlButton">
+		<Setter Property="HorizontalContentAlignment" Value="Center"/>
+		<Setter Property="Margin" Value="{StaticResource Thickness.Dialog.ControlButton.Margin}"/>
+		<Setter Property="MinWidth" Value="{StaticResource Double.Dialog.ControlButton.MinWidth}"/>
+		<Setter Property="Padding" Value="{StaticResource Thickness.Dialog.ControlButton.Padding}"/>
+	</Style>
+	<Style Selector="StackPanel.Dialog_ControlsButtonPanel">
+		<Setter Property="HorizontalAlignment" Value="Right"/>
+		<Setter Property="Margin" Value="{StaticResource Thickness.Dialog.ControlButtonsPanel.Padding}"/>
+		<Setter Property="Orientation" Value="Horizontal"/>
+	</Style>
+	<Style Selector="Window.Dialog">
+		<Setter Property="Background" Value="{DynamicResource Brush.Dialog.Background}"/>
+		<Setter Property="CanResize" Value="False"/>
+		<Setter Property="Icon" Value="/AppIcon.ico"/>
+		<Setter Property="ShowInTaskbar" Value="False"/>
+		<Setter Property="WindowStartupLocation" Value="CenterOwner"/>
+	</Style>
+
 	<!-- MainWindow -->
 	<Style Selector="Window.MainWindow">
 		<Setter Property="Background" Value="{DynamicResource Brush.Window.Background}"/>
+		<Setter Property="Icon" Value="/AppIcon.ico"/>
 	</Style>
 
 	<!-- SessionView -->
