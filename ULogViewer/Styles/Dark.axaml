@@ -8,6 +8,9 @@
 	<Styles.Resources>
 		<ResourceDictionary>
 
+			<!-- Dialog -->
+			<SolidColorBrush x:Key="Brush.Dialog.Background">#1e1e1e</SolidColorBrush>
+
 			<!-- SessionView -->
 			<SolidColorBrush x:Key="Brush.SessionView.LogHeader.Background">#0e0e0e</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.SessionView.LogHeader.Separator">#7fffffff</SolidColorBrush>

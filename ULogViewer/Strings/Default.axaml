@@ -15,4 +15,7 @@
 	<!-- Built-in profile -->
 	<sys:String x:Key="String.BuiltInProfile.GitLog">Git log</sys:String>
 
+	<!-- LogProfileSelectionDialog -->
+	<sys:String x:Key="String.LogProfileSelectionDialog.Title">Select log profile</sys:String>
+
 </ResourceDictionary>

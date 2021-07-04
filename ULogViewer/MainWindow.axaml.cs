@@ -31,13 +31,5 @@ namespace CarinaStudio.ULogViewer
 
 		// Initialize Avalonia components.
 		private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
-
-
-		protected override void OnOpened(EventArgs e)
-		{
-			base.OnOpened(e);
-
-			this.SynchronizationContext.PostDelayed(() => session.SetLogProfileCommand.Execute(Logs.Profiles.LogProfiles.All[0]), 1000);
-		}
 	}
 }
