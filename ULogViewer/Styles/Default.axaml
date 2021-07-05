@@ -13,6 +13,10 @@
 			<!-- Dialog -->
 			<SolidColorBrush x:Key="Brush.Dialog.Background">#ffffff</SolidColorBrush>
 
+			<!-- LogProfileSelectionDialog -->
+			<SolidColorBrush x:Key="Brush.LogProfileSelectionDialog.Label.Background">#00000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.LogProfileSelectionDialog.Label.Border">#00000000</SolidColorBrush>
+
 			<!-- SessionView -->
 			<SolidColorBrush x:Key="Brush.SessionView.LogHeader.Background">#0e0e0e</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.SessionView.LogHeader.Separator">#000000</SolidColorBrush>
@@ -38,10 +42,28 @@
 		<Setter Property="MinWidth" Value="{StaticResource Double.Dialog.ControlButton.MinWidth}"/>
 		<Setter Property="Padding" Value="{StaticResource Thickness.Dialog.ControlButton.Padding}"/>
 	</Style>
+	<Style Selector="Separator.Dialog_Separator_Horizontal">
+		<Setter Property="Background" Value="{x:Null}"/>
+		<Setter Property="Height" Value="{StaticResource Double.Dialog.Separator.Size}"/>
+		<Setter Property="HorizontalAlignment" Value="Stretch"/>
+	</Style>
+	<Style Selector="Separator.Dialog_Separator_Vertical">
+		<Setter Property="Background" Value="{x:Null}"/>
+		<Setter Property="VerticalAlignment" Value="Stretch"/>
+		<Setter Property="Width" Value="{StaticResource Double.Dialog.Separator.Size}"/>
+	</Style>
 	<Style Selector="StackPanel.Dialog_ControlButtonsPanel">
 		<Setter Property="HorizontalAlignment" Value="Right"/>
 		<Setter Property="Margin" Value="{StaticResource Thickness.Dialog.ControlButtonsPanel.Padding}"/>
 		<Setter Property="Orientation" Value="Horizontal"/>
+	</Style>
+	<Style Selector="TextBlock.Dialog_Label_Header1">
+		<Setter Property="FontSize" Value="{StaticResource Double.Dialog.Label.Header1.FontSize}"/>
+		<Setter Property="Margin" Value="{StaticResource Thickness.Dialog.Label.Header1.Margin}"/>
+	</Style>
+	<Style Selector="TextBlock.Dialog_Label_Header2">
+		<Setter Property="FontSize" Value="{StaticResource Double.Dialog.Label.Header2.FontSize}"/>
+		<Setter Property="Margin" Value="{StaticResource Thickness.Dialog.Label.Header2.Margin}"/>
 	</Style>
 	<Style Selector="Window.Dialog">
 		<Setter Property="Background" Value="{DynamicResource Brush.Dialog.Background}"/>
@@ -49,6 +71,28 @@
 		<Setter Property="Icon" Value="/AppIcon.ico"/>
 		<Setter Property="ShowInTaskbar" Value="False"/>
 		<Setter Property="WindowStartupLocation" Value="CenterOwner"/>
+	</Style>
+
+	<!-- LogProfileSelectionDialog -->
+	<Style Selector="Border.LogProfileSelectionDialog_LogProfile_Label">
+		<Setter Property="Background" Value="{DynamicResource Brush.LogProfileSelectionDialog.Label.Background}"/>
+		<Setter Property="BorderBrush" Value="{DynamicResource Brush.LogProfileSelectionDialog.Label.Border}"/>
+		<Setter Property="BorderThickness" Value="1"/>
+		<Setter Property="Margin" Value="{StaticResource Thickness.LogProfileSelectionDialog.LogProfile.Label.Margin}"/>
+		<Setter Property="Padding" Value="{StaticResource Thickness.LogProfileSelectionDialog.LogProfile.Label.Padding}"/>
+	</Style>
+	<Style Selector="Button.LogProfileSelectionDialog_LogProfile_Action">
+		<Setter Property="Background" Value="{x:Static Brushes.Transparent}"/>
+		<Setter Property="Margin" Value="{StaticResource Thickness.LogProfileSelectionDialog.LogProfile.Action.Margin}"/>
+		<Setter Property="Padding" Value="{StaticResource Thickness.LogProfileSelectionDialog.LogProfile.Action.Padding}"/>
+	</Style>
+	<Style Selector="Image.LogProfileSelectionDialog_LogProfile_Action">
+		<Setter Property="Height" Value="{StaticResource Double.LogProfileSelectionDialog.LogProfile.Action.Icon.Size}"/>
+		<Setter Property="Width" Value="{StaticResource Double.LogProfileSelectionDialog.LogProfile.Action.Icon.Size}"/>
+	</Style>
+	<Style Selector="TextBlock.LogProfileSelectionDialog_LogProfile_Label">
+		<Setter Property="FontSize" Value="{StaticResource Double.LogProfileSelectionDialog.LogProfile.Label.FontSize}"/>
+		<Setter Property="Opacity" Value="0.75"/>
 	</Style>
 
 	<!-- MainWindow -->

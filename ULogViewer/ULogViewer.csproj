@@ -45,6 +45,11 @@
     <AvaloniaResource Include="Resources/LogProfile.Usb.128px.png" />
     <AvaloniaResource Include="Resources/LogProfile.Usb.64px.png" />
     <AvaloniaResource Include="Resources/LogProfiles.64px.png" />
+    <AvaloniaResource Include="Resources/Delete.32px.png" />
+    <AvaloniaResource Include="Resources/Delete.64px.png" />
+    <AvaloniaResource Include="Resources/Edit.32px.png" />
+    <AvaloniaResource Include="Resources/Edit.64px.png" />
+    <AvaloniaResource Include="Resources/Pin.32px.png" />
     <AvaloniaResource Include="Strings/Default.axaml" />
 		<AvaloniaResource Include="Strings/Default-Linux.axaml" />
     <AvaloniaResource Include="Strings/zh-TW.axaml" />
