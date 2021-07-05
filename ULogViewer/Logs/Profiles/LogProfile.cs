@@ -33,6 +33,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		// Fields.
 		LogDataSourceOptions dataSourceOptions;
 		ILogDataSourceProvider dataSourceProvider = LogDataSourceProviders.Empty;
+		LogProfileIcon icon = LogProfileIcon.File;
 		bool isPinned;
 		SettingKey<bool>? isPinnedSettingKey;
 		bool isWorkingDirectoryNeeded;
@@ -172,6 +173,24 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 
 
 		/// <summary>
+		/// Get or set icon.
+		/// </summary>
+		public LogProfileIcon Icon
+		{
+			get => this.icon;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (this.icon == value)
+					return;
+				this.icon = value;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Icon)));
+			}
+		}
+
+
+		/// <summary>
 		/// Check whether instance represents a built-in profile or not.
 		/// </summary>
 		public bool IsBuiltIn { get => this.BuiltInId != null; }
@@ -299,6 +318,10 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				{
 					case "DataSource":
 						this.LoadDataSourceFromJson(jsonProperty.Value);
+						break;
+					case "Icon":
+						if (Enum.TryParse<LogProfileIcon>(jsonProperty.Value.GetString(), out var profileIcon))
+							this.icon = profileIcon;
 						break;
 					case "IsWorkingDirectoryNeeded":
 						this.isWorkingDirectoryNeeded = jsonProperty.Value.GetBoolean();
