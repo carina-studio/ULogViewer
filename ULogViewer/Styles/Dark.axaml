@@ -11,6 +11,10 @@
 			<!-- Dialog -->
 			<SolidColorBrush x:Key="Brush.Dialog.Background">#1e1e1e</SolidColorBrush>
 
+			<!-- LogProfileSelectionDialog -->
+			<SolidColorBrush x:Key="Brush.LogProfileSelectionDialog.Label.Background">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.LogProfileSelectionDialog.Label.Border">#000000</SolidColorBrush>
+
 			<!-- SessionView -->
 			<SolidColorBrush x:Key="Brush.SessionView.LogHeader.Background">#0e0e0e</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.SessionView.LogHeader.Separator">#7fffffff</SolidColorBrush>

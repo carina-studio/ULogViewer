@@ -4,19 +4,34 @@
 
 	<!-- Dialog -->
 	<sys:Double x:Key="Double.Dialog.ControlButton.MinWidth">100</sys:Double>
+	<sys:Double x:Key="Double.Dialog.Label.Header1.FontSize">24</sys:Double>
+	<sys:Double x:Key="Double.Dialog.Label.Header2.FontSize">20</sys:Double>
+	<sys:Double x:Key="Double.Dialog.Separator.Size">15</sys:Double>
 	<Thickness x:Key="Thickness.Dialog.Content.Padding">15,15,15,0</Thickness>
 	<Thickness x:Key="Thickness.Dialog.ControlButton.Margin">5,0,0,0</Thickness>
 	<Thickness x:Key="Thickness.Dialog.ControlButton.Margin.WithSeparator">5,0,10,0</Thickness>
 	<Thickness x:Key="Thickness.Dialog.ControlButton.Padding">10,5,10,5</Thickness>
 	<Thickness x:Key="Thickness.Dialog.ControlButtonsPanel.Padding">15</Thickness>
+	<Thickness x:Key="Thickness.Dialog.Label.Header1.Margin">0,0,0,5</Thickness>
+	<Thickness x:Key="Thickness.Dialog.Label.Header2.Margin">0,0,0,5</Thickness>
 	
 	<!-- GridSplitter -->
 	<sys:Double x:Key="Double.GridSplitter.Thickness">5</sys:Double>
 
 	<!-- LogProfileSelectionDialog -->
-	<sys:Double x:Key="Double.LogProfileSelectionDialog.Height">600</sys:Double>
-	<sys:Double x:Key="Double.LogProfileSelectionDialog.PinnedLogProfileListBox.MaxHeight">200</sys:Double>
-	<sys:Double x:Key="Double.LogProfileSelectionDialog.Width">600</sys:Double>
+	<sys:Double x:Key="Double.LogProfileSelectionDialog.Content.MaxHeight">400</sys:Double>
+	<sys:Double x:Key="Double.LogProfileSelectionDialog.LogProfile.Action.Icon.Size">10</sys:Double>
+	<sys:Double x:Key="Double.LogProfileSelectionDialog.LogProfile.Icon.Size">30</sys:Double>
+	<sys:Double x:Key="Double.LogProfileSelectionDialog.LogProfile.Label.FontSize">10</sys:Double>
+	<sys:Double x:Key="Double.LogProfileSelectionDialog.LogProfile.Name.FontSize">20</sys:Double>
+	<sys:Double x:Key="Double.LogProfileSelectionDialog.Width">400</sys:Double>
+	<Thickness x:Key="Thickness.LogProfileSelectionDialog.LogProfile.Action.Margin">3,0,0,0</Thickness>
+	<Thickness x:Key="Thickness.LogProfileSelectionDialog.LogProfile.Action.Padding">3</Thickness>
+	<Thickness x:Key="Thickness.LogProfileSelectionDialog.LogProfile.Icon.Margin">0,5,10,0</Thickness>
+	<Thickness x:Key="Thickness.LogProfileSelectionDialog.LogProfile.Label.Margin">0,0,5,0</Thickness>
+	<Thickness x:Key="Thickness.LogProfileSelectionDialog.LogProfile.Label.Padding">3</Thickness>
+	<Thickness x:Key="Thickness.LogProfileSelectionDialog.LogProfile.Name.Margin">0,0,5,5</Thickness>
+	<Thickness x:Key="Thickness.LogProfileSelectionDialog.LogProfile.Padding">10</Thickness>
 	
 	<!-- SessionView -->
 	<CornerRadius x:Key="CornerRadius.SessionView.LogListBox.Border">1</CornerRadius>
