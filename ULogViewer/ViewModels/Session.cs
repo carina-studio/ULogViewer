@@ -521,6 +521,19 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			if (dataSourceOptions.WorkingDirectory != null)
 				throw new InternalStateCorruptedException($"Cannot set working directory because working directory is already specified.");
 
+			// check current working directory
+			if (this.logReaders.IsNotEmpty())
+			{
+				if (PathEqualityComparer.Default.Equals(this.logReaders.First().DataSource.CreationOptions.WorkingDirectory, directory))
+				{
+					this.Logger.LogDebug("Set to same working directory");
+					return;
+				}
+			}
+
+			// dispose current log readers
+			this.DisposeLogReaders(true);
+
 			this.Logger.LogDebug($"Set working directory to '{directory}'");
 
 			// create data source
@@ -528,9 +541,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			var dataSource = this.CreateLogDataSourceOrNull(profile.DataSourceProvider, dataSourceOptions);
 			if (dataSource == null)
 				return;
-
-			// update state
-			this.canSetWorkingDirectory.Update(false);
 
 			// create log reader
 			this.CreateLogReader(dataSource);
