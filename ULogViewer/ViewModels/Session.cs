@@ -36,6 +36,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsReadingLogsProperty = ObservableProperty.Register<Session, bool>(nameof(IsReadingLogs));
 		/// <summary>
+		/// Property of <see cref="IsProcessingLogs"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> IsProcessingLogsProperty = ObservableProperty.Register<Session, bool>(nameof(IsProcessingLogs));
+		/// <summary>
 		/// Property of <see cref="LogProfile"/>.
 		/// </summary>
 		public static readonly ObservableProperty<LogProfile?> LogProfileProperty = ObservableProperty.Register<Session, LogProfile?>(nameof(LogProfile));
@@ -57,6 +61,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		IComparer<Log> logComparer = LogComparers.TimestampAsc;
 		readonly HashSet<LogReader> logReaders = new HashSet<LogReader>();
 		readonly ScheduledAction updateIsReadingLogsAction;
+		readonly ScheduledAction updateIsProcessingLogsAction;
 
 
 		/// <summary>
@@ -103,6 +108,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					}
 					this.SetValue(IsReadingLogsProperty, false);
 				}
+			});
+			this.updateIsProcessingLogsAction = new ScheduledAction(() =>
+			{
+				var logProfile = this.LogProfile;
+				if (logProfile == null || logProfile.IsContinuousReading)
+					this.SetValue(IsProcessingLogsProperty, false);
+				else if (this.IsFilteringLogs || this.IsReadingLogs)
+					this.SetValue(IsProcessingLogsProperty, true);
+				else
+					this.SetValue(IsProcessingLogsProperty, false);
 			});
 		}
 
@@ -324,6 +339,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			foreach (var logReader in this.logReaders.ToArray())
 				this.DisposeLogReader(logReader, removeLogs);
 			this.updateIsReadingLogsAction.Execute();
+			this.updateIsProcessingLogsAction.Execute();
 		}
 
 
@@ -337,6 +353,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Check whether logs are being read or not.
 		/// </summary>
 		public bool IsReadingLogs { get => this.GetValue(IsReadingLogsProperty); }
+
+
+		/// <summary>
+		/// Check whether logs are being processed or not.
+		/// </summary>
+		public bool IsProcessingLogs { get => this.GetValue(IsProcessingLogsProperty); }
 
 
 		/// <summary>
@@ -421,6 +443,15 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.updateIsReadingLogsAction.Schedule();
 					break;
 			}
+		}
+
+
+		// Called when property changed.
+		protected override void OnPropertyChanged(ObservableProperty property, object? oldValue, object? newValue)
+		{
+			base.OnPropertyChanged(property, oldValue, newValue);
+			if (property == IsFilteringLogsProperty || property == IsReadingLogsProperty)
+				this.updateIsProcessingLogsAction.Schedule();
 		}
 
 
