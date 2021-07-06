@@ -34,6 +34,7 @@
 	<Thickness x:Key="Thickness.LogProfileSelectionDialog.LogProfile.Padding">10</Thickness>
 	
 	<!-- SessionView -->
+	<sys:Double x:Key="Double.SessionView.Hint.NoLogToShow.FontSize">30</sys:Double>
 	<sys:Double x:Key="Double.SessionView.LogHeader.MinWidth">50</sys:Double>
 	<sys:Double x:Key="Double.SessionView.SidePanel.MaxWidth">400</sys:Double>
 	<sys:Double x:Key="Double.SessionView.SidePanel.MinWidth">200</sys:Double>

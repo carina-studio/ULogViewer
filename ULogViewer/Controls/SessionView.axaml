@@ -58,16 +58,16 @@
 		<ProgressBar Grid.ColumnSpan="3" Grid.Row="1" IsIndeterminate="True" IsVisible="{Binding IsProcessingLogs}"/>
 
 		<!-- Logs -->
-		<DockPanel Grid.Row="2">
+		<Grid Grid.Row="2" RowDefinitions="Auto,*">
 
 			<!-- Header -->
-			<Grid Background="{StaticResource Brush.SessionView.LogHeader.Background}" DockPanel.Dock="Top">
+			<Grid Background="{StaticResource Brush.SessionView.LogHeader.Background}">
 				<TextBlock Margin="{StaticResource Thickness.SessionView.LogHeader.Margin}" Padding="{StaticResource Thickness.SessionView.LogHeader.Padding}" Text=" "/>
 				<Grid Name="logHeaderGrid"/>
 			</Grid>
 
 			<!-- ListBox -->
-			<ListBox Name="logListBox" AutoScrollToSelectedItem="False" Background="{StaticResource Brush.SessionView.LogListBox.Background}" Items="{Binding Logs}" ScrollViewer.HorizontalScrollBarVisibility="Auto" SelectionMode="Multiple" VirtualizationMode="Simple">
+			<ListBox Name="logListBox" AutoScrollToSelectedItem="False" Background="{StaticResource Brush.SessionView.LogListBox.Background}" Grid.Row="1" HorizontalAlignment="Stretch" Items="{Binding Logs}" ScrollViewer.HorizontalScrollBarVisibility="Auto" SelectionMode="Multiple" VirtualizationMode="Simple">
 				<ListBox.Styles>
 					<Style Selector="ListBoxItem">
 						<Setter Property="HorizontalAlignment" Value="Stretch"/>
@@ -80,7 +80,12 @@
 				</ListBox.Styles>
 			</ListBox>
 
-		</DockPanel>
+			<!-- Hint: no log to show -->
+			<Border Grid.Row="1" IsVisible="{Binding !HasLogs}">
+				<TextBlock FontSize="{StaticResource Double.SessionView.Hint.NoLogToShow.FontSize}" HorizontalAlignment="Center" Text="{DynamicResource String.SessionView.NoLogToShow}" TextWrapping="Wrap" VerticalAlignment="Center"/>
+			</Border>
+
+		</Grid>
 
 		<!-- Status bar -->
 		<Border Background="{StaticResource Brush.SessionView.StatusBar.Background}" Grid.ColumnSpan="3" Grid.Row="3" Padding="{StaticResource Thickness.SessionView.StatucBar.Padding}">

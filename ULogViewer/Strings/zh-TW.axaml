@@ -27,6 +27,7 @@
 
 	<!-- SessionView -->
 	<sys:String x:Key="String.SessionView.AddLogFiles">加入日誌檔案</sys:String>
+	<sys:String x:Key="String.SessionView.NoLogToShow">沒有日誌可以顯示</sys:String>
 	<sys:String x:Key="String.SessionView.SetLogProfile">選取/變更日誌類型</sys:String>
 	<sys:String x:Key="String.SessionView.SetWorkingDirectory">選取/變更工作目錄</sys:String>
 
