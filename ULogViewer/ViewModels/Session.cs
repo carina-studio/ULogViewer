@@ -28,6 +28,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<IList<DisplayableLogProperty>> DisplayLogPropertiesProperty = ObservableProperty.Register<Session, IList<DisplayableLogProperty>>(nameof(DisplayLogProperties), new DisplayableLogProperty[0]);
 		/// <summary>
+		/// Property of <see cref="HasLogs"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> HasLogsProperty = ObservableProperty.Register<Session, bool>(nameof(HasLogs));
+		/// <summary>
 		/// Property of <see cref="IsFilteringLogs"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsFilteringLogsProperty = ObservableProperty.Register<Session, bool>(nameof(IsFilteringLogs));
@@ -344,6 +348,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Check whether at least one log is read or not.
+		/// </summary>
+		public bool HasLogs { get => this.GetValue(HasLogsProperty); }
+
+
+		/// <summary>
 		/// Check whether logs are being filtered or not.
 		/// </summary>
 		public bool IsFilteringLogs { get => this.GetValue(IsFilteringLogsProperty); }
@@ -385,6 +395,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						displayableLog.Dispose();
 					break;
 			}
+			this.SetValue(HasLogsProperty, this.allLogs.IsNotEmpty());
 		}
 
 
