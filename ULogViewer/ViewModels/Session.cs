@@ -38,8 +38,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		// Fields.
+		readonly HashSet<string> addedFilePaths = new HashSet<string>(PathEqualityComparer.Default);
 		readonly SortedObservableList<DisplayableLog> allLogs;
-		readonly MutableObservableBoolean canOpenFile = new MutableObservableBoolean();
+		readonly MutableObservableBoolean canAddFile = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canResetLogProfile = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSetLogProfile = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSetWorkingDirectory = new MutableObservableBoolean();
@@ -47,7 +48,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		DisplayableLogGroup? displayableLogGroup;
 		IComparer<Log> logComparer = LogComparers.TimestampAsc;
 		readonly HashSet<LogReader> logReaders = new HashSet<LogReader>();
-		readonly HashSet<string> openedFilePaths = new HashSet<string>(PathEqualityComparer.Default);
 
 
 		/// <summary>
@@ -57,7 +57,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public Session(IApplication app) : base(app)
 		{
 			// create commands
-			this.OpenLogFileCommand = ReactiveCommand.Create<string?>(this.OpenLogFile, this.canOpenFile);
+			this.AddLogFileCommand = ReactiveCommand.Create<string?>(this.AddLogFile, this.canAddFile);
 			this.ResetLogProfileCommand = ReactiveCommand.Create(this.ResetLogProfile, this.canResetLogProfile);
 			this.SetLogProfileCommand = ReactiveCommand.Create<LogProfile?>(this.SetLogProfile, this.canSetLogProfile);
 			this.SetWorkingDirectoryCommand = ReactiveCommand.Create<string?>(this.SetWorkingDirectory, this.canSetWorkingDirectory);
@@ -75,6 +75,48 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// setup delegates
 			this.compareDisplayableLogsDelegate = this.CompareDisplayableLogsAsc;
 		}
+
+
+		// Add file.
+		void AddLogFile(string? fileName)
+		{
+			// check parameter and state
+			this.VerifyAccess();
+			this.VerifyDisposed();
+			if (!this.canAddFile.Value)
+				return;
+			if (fileName == null)
+				throw new ArgumentNullException(nameof(fileName));
+			var profile = this.LogProfile ?? throw new InternalStateCorruptedException("No log profile to add log file.");
+			if (profile.DataSourceProvider.UnderlyingSource != UnderlyingLogDataSource.File)
+				throw new InternalStateCorruptedException($"Cannot add log file because underlying data source type is {profile.DataSourceProvider.UnderlyingSource}.");
+			var dataSourceOptions = profile.DataSourceOptions;
+			if (dataSourceOptions.FileName != null)
+				throw new InternalStateCorruptedException($"Cannot add log file because file name is already specified.");
+			if (!this.addedFilePaths.Add(fileName))
+			{
+				this.Logger.LogWarning($"File '{fileName}' is already added");
+				return;
+			}
+
+			this.Logger.LogDebug($"Add log file '{fileName}'");
+
+			// create data source
+			dataSourceOptions.FileName = fileName;
+			var dataSource = this.CreateLogDataSourceOrNull(profile.DataSourceProvider, dataSourceOptions);
+			if (dataSource == null)
+				return;
+
+			// create log reader
+			this.CreateLogReader(dataSource);
+		}
+
+
+		/// <summary>
+		/// Command to add log file.
+		/// </summary>
+		/// <remarks>Type of command parameter is <see cref="string"/>.</remarks>
+		public ICommand AddLogFileCommand { get; }
 
 
 		// Compare displayable logs.
@@ -332,48 +374,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{ }
 
 
-		// Open file.
-		void OpenLogFile(string? fileName)
-		{
-			// check parameter and state
-			this.VerifyAccess();
-			this.VerifyDisposed();
-			if (!this.canOpenFile.Value)
-				return;
-			if (fileName == null)
-				throw new ArgumentNullException(nameof(fileName));
-			var profile = this.LogProfile ?? throw new InternalStateCorruptedException("No log profile to open file.");
-			if (profile.DataSourceProvider.UnderlyingSource != UnderlyingLogDataSource.File)
-				throw new InternalStateCorruptedException($"Cannot open file because underlying data source type is {profile.DataSourceProvider.UnderlyingSource}.");
-			var dataSourceOptions = profile.DataSourceOptions;
-			if (dataSourceOptions.FileName != null)
-				throw new InternalStateCorruptedException($"Cannot open file because file name is already specified.");
-			if (!this.openedFilePaths.Add(fileName))
-			{
-				this.Logger.LogWarning($"File '{fileName}' is already opened");
-				return;
-			}
-
-			this.Logger.LogDebug($"Open file '{fileName}'");
-
-			// create data source
-			dataSourceOptions.FileName = fileName;
-			var dataSource = this.CreateLogDataSourceOrNull(profile.DataSourceProvider, dataSourceOptions);
-			if (dataSource == null)
-				return;
-
-			// create log reader
-			this.CreateLogReader(dataSource);
-		}
-
-
-		/// <summary>
-		/// Command to open log file.
-		/// </summary>
-		/// <remarks>Type of command parameter is <see cref="string"/>.</remarks>
-		public ICommand OpenLogFileCommand { get; }
-
-
 		// Reset log profile.
 		void ResetLogProfile()
 		{
@@ -403,13 +403,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.displayableLogGroup = this.displayableLogGroup.DisposeAndReturnNull();
 
 			// clear file name table
-			this.openedFilePaths.Clear();
+			this.addedFilePaths.Clear();
 
 			// clear display log properties
 			this.UpdateDisplayLogProperties();
 
 			// update state
-			this.canOpenFile.Update(false);
+			this.canAddFile.Update(false);
 			this.canSetWorkingDirectory.Update(false);
 			this.canResetLogProfile.Update(false);
 			this.canSetLogProfile.Update(true);
@@ -458,7 +458,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					if (dataSourceOptions.FileName == null)
 					{
 						this.Logger.LogDebug("No file name specified, waiting for opening file");
-						this.canOpenFile.Update(true);
+						this.canAddFile.Update(true);
 					}
 					else
 					{

@@ -25,6 +25,11 @@
 	<sys:String x:Key="String.LogProfileSelectionDialog.RemoveLogProfile">Delete profile</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.Title">Select log profile</sys:String>
 
+	<!-- SessionView -->
+	<sys:String x:Key="String.SessionView.AddLogFiles">Add log files</sys:String>
+	<sys:String x:Key="String.SessionView.SetLogProfile">Select/Change log profile</sys:String>
+	<sys:String x:Key="String.SessionView.SetWorkingDirectory">Select/Change working directory</sys:String>
+
 	<!-- UnderlyingLogDataSource -->
 	<sys:String x:Key="String.UnderlyingLogDataSource.File">File</sys:String>
 	<sys:String x:Key="String.UnderlyingLogDataSource.StandardOutput">Standard output</sys:String>
