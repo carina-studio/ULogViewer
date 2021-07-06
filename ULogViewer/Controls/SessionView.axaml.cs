@@ -28,6 +28,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Fields.
 		readonly MutableObservableBoolean canSetLogProfile = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSetWorkingDirectory = new MutableObservableBoolean();
+		bool isWorkingDirNeededAfterLogProfileSet;
 		readonly Grid logHeaderGrid;
 		readonly ListBox logListBox;
 		ScrollViewer? logScrollViewer;
@@ -254,8 +255,11 @@ namespace CarinaStudio.ULogViewer.Controls
 				if (session.SetWorkingDirectoryCommand.CanExecute(null))
 				{
 					this.canSetWorkingDirectory.Update(true);
-					if (this.Application.Settings.GetValueOrDefault(Settings.SelectWorkingDirectoryWhenNeeded))
+					if (this.isWorkingDirNeededAfterLogProfileSet)
+					{
+						this.isWorkingDirNeededAfterLogProfileSet = false;
 						this.SetWorkingDirectory();
+					}
 				}
 				else
 					this.canSetWorkingDirectory.Update(false);
@@ -296,6 +300,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			// reset log profile
 			if (this.DataContext is not Session session)
 				return;
+			this.isWorkingDirNeededAfterLogProfileSet = false;
 			if (session.ResetLogProfileCommand.CanExecute(null))
 				session.ResetLogProfileCommand.Execute(null);
 
@@ -304,6 +309,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 
 			// set log profile
+			this.isWorkingDirNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(Settings.SelectWorkingDirectoryWhenNeeded);
 			session.SetLogProfileCommand.Execute(logProfile);
 		}
 

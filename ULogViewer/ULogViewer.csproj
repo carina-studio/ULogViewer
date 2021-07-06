@@ -50,6 +50,12 @@
     <AvaloniaResource Include="Resources/Edit.32px.png" />
     <AvaloniaResource Include="Resources/Edit.64px.png" />
     <AvaloniaResource Include="Resources/Pin.32px.png" />
+    <AvaloniaResource Include="Resources/AddFile.64px.png" />
+    <AvaloniaResource Include="Resources/Folder.32px.png" />
+    <AvaloniaResource Include="Resources/Folder.64px.png" />
+    <AvaloniaResource Include="Resources/RemoveFile.64px.png" />
+    <AvaloniaResource Include="Resources/Save.32px.png" />
+    <AvaloniaResource Include="Resources/Save.64px.png" />
     <AvaloniaResource Include="Strings/Default.axaml" />
 		<AvaloniaResource Include="Strings/Default-Linux.axaml" />
     <AvaloniaResource Include="Strings/zh-TW.axaml" />

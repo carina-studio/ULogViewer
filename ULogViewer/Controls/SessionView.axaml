@@ -31,6 +31,16 @@
 				<Button Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].SetLogProfileCommand}">
 					<Image Classes="SessionView_ToolBar_Button_Icon" Source="/Resources/LogProfiles.64px.png"/>
 				</Button>
+
+				<!-- Set working directory -->
+				<Button Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].SetWorkingDirectoryCommand}">
+					<Image Classes="SessionView_ToolBar_Button_Icon" Source="/Resources/Folder.64px.png"/>
+				</Button>
+
+				<!-- Add file -->
+				<Button Classes="SessionView_ToolBar_Button">
+					<Image Classes="SessionView_ToolBar_Button_Icon" Source="/Resources/AddFile.64px.png"/>
+				</Button>
 				
 			</StackPanel>
 			
