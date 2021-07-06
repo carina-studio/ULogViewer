@@ -25,6 +25,11 @@
 	<sys:String x:Key="String.LogProfileSelectionDialog.RemoveLogProfile">刪除日誌類型</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.Title">選擇日誌類型</sys:String>
 
+	<!-- SessionView -->
+	<sys:String x:Key="String.SessionView.AddLogFiles">加入日誌檔案</sys:String>
+	<sys:String x:Key="String.SessionView.SetLogProfile">選取/變更日誌類型</sys:String>
+	<sys:String x:Key="String.SessionView.SetWorkingDirectory">選取/變更工作目錄</sys:String>
+
 	<!-- UnderlyingLogDataSource -->
 	<sys:String x:Key="String.UnderlyingLogDataSource.File">檔案</sys:String>
 	<sys:String x:Key="String.UnderlyingLogDataSource.StandardOutput">標準輸出</sys:String>

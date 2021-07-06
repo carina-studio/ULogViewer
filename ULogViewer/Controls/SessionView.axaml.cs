@@ -26,6 +26,7 @@ namespace CarinaStudio.ULogViewer.Controls
 	partial class SessionView : BaseView
 	{
 		// Fields.
+		readonly MutableObservableBoolean canAddLogFiles = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSetLogProfile = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSetWorkingDirectory = new MutableObservableBoolean();
 		bool isWorkingDirNeededAfterLogProfileSet;
@@ -40,6 +41,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		public SessionView()
 		{
 			// create commands
+			this.AddLogFilesCommand = ReactiveCommand.Create(this.AddLogFiles, this.canAddLogFiles);
 			this.SetLogProfileCommand = ReactiveCommand.Create(this.SetLogProfile, this.canSetLogProfile);
 			this.SetWorkingDirectoryCommand = ReactiveCommand.Create(this.SetWorkingDirectory, this.canSetWorkingDirectory);
 
@@ -64,6 +66,46 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Add log files.
+		async void AddLogFiles()
+		{
+			// check state
+			if (!this.canAddLogFiles.Value)
+				return;
+			var window = this.FindLogicalAncestorOfType<Window>();
+			if (window == null)
+			{
+				this.Logger.LogError("Unable to add log files without attaching to window");
+				return;
+			}
+
+			// select files
+			var fileNames = await new OpenFileDialog()
+			{
+				AllowMultiple = true,
+				Title = this.Application.GetString("SessionView.AddLogFiles"),
+			}.ShowAsync(window);
+			if (fileNames == null || fileNames.Length == 0)
+				return;
+
+			// check state
+			if (this.DataContext is not Session session)
+				return;
+			if (!this.canSetLogProfile.Value)
+				return;
+
+			// add log files
+			foreach (var fileName in fileNames)
+				session.AddLogFileCommand.Execute(fileName);
+		}
+
+
+		/// <summary>
+		/// Command to add log files.
+		/// </summary>
+		public ICommand AddLogFilesCommand { get; }
+
+
 		// Attach to session.
 		void AttachToSession(Session session)
 		{
@@ -71,9 +113,11 @@ namespace CarinaStudio.ULogViewer.Controls
 			session.PropertyChanged += this.OnSessionPropertyChanged;
 
 			// attach to command
+			session.AddLogFileCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
 			session.ResetLogProfileCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
 			session.SetLogProfileCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
 			session.SetWorkingDirectoryCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
+			this.canAddLogFiles.Update(session.AddLogFileCommand.CanExecute(null));
 			this.canSetLogProfile.Update(session.ResetLogProfileCommand.CanExecute(null) || session.SetLogProfileCommand.CanExecute(null));
 			this.canSetWorkingDirectory.Update(session.SetWorkingDirectoryCommand.CanExecute(null));
 
@@ -89,9 +133,11 @@ namespace CarinaStudio.ULogViewer.Controls
 			session.PropertyChanged -= this.OnSessionPropertyChanged;
 
 			// detach from commands
+			session.AddLogFileCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
 			session.SetLogProfileCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
 			session.SetLogProfileCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
 			session.SetWorkingDirectoryCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
+			this.canAddLogFiles.Update(false);
 			this.canSetLogProfile.Update(false);
 			this.canSetWorkingDirectory.Update(false);
 
@@ -248,7 +294,9 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (this.DataContext is not Session session)
 				return;
-			if (sender == session.ResetLogProfileCommand || sender == session.SetLogProfileCommand)
+			if (sender == session.AddLogFileCommand)
+				this.canAddLogFiles.Update(session.AddLogFileCommand.CanExecute(null));
+			else if (sender == session.ResetLogProfileCommand || sender == session.SetLogProfileCommand)
 				this.canSetLogProfile.Update(session.ResetLogProfileCommand.CanExecute(null) || session.SetLogProfileCommand.CanExecute(null));
 			else if (sender == session.SetWorkingDirectoryCommand)
 			{
@@ -334,7 +382,10 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 
 			// select directory
-			var directory = await new OpenFolderDialog().ShowAsync(window);
+			var directory = await new OpenFolderDialog()
+			{
+				Title = this.Application.GetString("SessionView.SetWorkingDirectory"),
+			}.ShowAsync(window);
 			if (string.IsNullOrWhiteSpace(directory))
 				return;
 
