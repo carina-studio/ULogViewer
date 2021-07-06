@@ -28,6 +28,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<IList<DisplayableLogProperty>> DisplayLogPropertiesProperty = ObservableProperty.Register<Session, IList<DisplayableLogProperty>>(nameof(DisplayLogProperties), new DisplayableLogProperty[0]);
 		/// <summary>
+		/// Property of <see cref="IsFilteringLogs"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> IsFilteringLogsProperty = ObservableProperty.Register<Session, bool>(nameof(IsFilteringLogs));
+		/// <summary>
+		/// Property of <see cref="IsReadingLogs"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> IsReadingLogsProperty = ObservableProperty.Register<Session, bool>(nameof(IsReadingLogs));
+		/// <summary>
 		/// Property of <see cref="LogProfile"/>.
 		/// </summary>
 		public static readonly ObservableProperty<LogProfile?> LogProfileProperty = ObservableProperty.Register<Session, LogProfile?>(nameof(LogProfile));
@@ -48,6 +56,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		DisplayableLogGroup? displayableLogGroup;
 		IComparer<Log> logComparer = LogComparers.TimestampAsc;
 		readonly HashSet<LogReader> logReaders = new HashSet<LogReader>();
+		readonly ScheduledAction updateIsReadingLogsAction;
 
 
 		/// <summary>
@@ -74,6 +83,27 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// setup delegates
 			this.compareDisplayableLogsDelegate = this.CompareDisplayableLogsAsc;
+
+			// create scheduled actions
+			this.updateIsReadingLogsAction = new ScheduledAction(() =>
+			{
+				if (this.logReaders.IsEmpty())
+					this.SetValue(IsReadingLogsProperty, false);
+				else
+				{
+					foreach (var logReader in this.logReaders)
+					{
+						switch (logReader.State)
+						{
+							case LogReaderState.Starting:
+							case LogReaderState.ReadingLogs:
+								this.SetValue(IsReadingLogsProperty, true);
+								return;
+						}
+					}
+					this.SetValue(IsReadingLogsProperty, false);
+				}
+			});
 		}
 
 
@@ -293,7 +323,20 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			foreach (var logReader in this.logReaders.ToArray())
 				this.DisposeLogReader(logReader, removeLogs);
+			this.updateIsReadingLogsAction.Execute();
 		}
+
+
+		/// <summary>
+		/// Check whether logs are being filtered or not.
+		/// </summary>
+		public bool IsFilteringLogs { get => this.GetValue(IsFilteringLogsProperty); }
+
+
+		/// <summary>
+		/// Check whether logs are being read or not.
+		/// </summary>
+		public bool IsReadingLogs { get => this.GetValue(IsReadingLogsProperty); }
 
 
 		/// <summary>
@@ -371,7 +414,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 		// Called when property of log reader changed.
 		void OnLogReaderPropertyChanged(object? sender, PropertyChangedEventArgs e)
-		{ }
+		{
+			switch (e.PropertyName)
+			{
+				case nameof(LogReader.State):
+					this.updateIsReadingLogsAction.Schedule();
+					break;
+			}
+		}
 
 
 		// Reset log profile.
