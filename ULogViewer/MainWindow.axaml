@@ -8,7 +8,7 @@
 				Classes="MainWindow"
         Title="ULogViewer">
 
-	<TabControl>
+	<TabControl Padding="0">
 
 		<TabItem Header="Test">
 			<appControls:SessionView x:Name="sessionView" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>

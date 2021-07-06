@@ -18,7 +18,8 @@
 			<!-- SessionView -->
 			<SolidColorBrush x:Key="Brush.SessionView.LogHeader.Background">#0e0e0e</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.SessionView.LogHeader.Separator">#7fffffff</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.SessionView.LogListBox.Border">#ffffff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.SessionView.SidePanel.Background">#161616</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.SessionView.StatusBar.Background">#007acc</SolidColorBrush>
 
 			<!-- Window -->
 			<SolidColorBrush x:Key="Brush.Window.Background">#1e1e1e</SolidColorBrush>

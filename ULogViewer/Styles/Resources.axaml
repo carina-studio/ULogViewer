@@ -34,14 +34,15 @@
 	<Thickness x:Key="Thickness.LogProfileSelectionDialog.LogProfile.Padding">10</Thickness>
 	
 	<!-- SessionView -->
-	<CornerRadius x:Key="CornerRadius.SessionView.LogListBox.Border">1</CornerRadius>
 	<sys:Double x:Key="Double.SessionView.LogHeader.MinWidth">50</sys:Double>
+	<sys:Double x:Key="Double.SessionView.SidePanel.MaxWidth">400</sys:Double>
+	<sys:Double x:Key="Double.SessionView.SidePanel.MinWidth">200</sys:Double>
 	<sys:Double x:Key="Double.SessionView.ToolBar.Button.Icon.Size">24</sys:Double>
 	<Thickness x:Key="Thickness.SessionView.LogHeader.Margin">3,10,3,10</Thickness>
 	<Thickness x:Key="Thickness.SessionView.LogHeader.Padding">5,0,5,0</Thickness>
-	<Thickness x:Key="Thickness.SessionView.LogListBox.Border">1</Thickness>
 	<Thickness x:Key="Thickness.SessionView.LogListBox.Item.Padding">8,3,8,3</Thickness>
+	<Thickness x:Key="Thickness.SessionView.StatucBar.Padding">3</Thickness>
 	<Thickness x:Key="Thickness.SessionView.ToolBar.Button.Padding">5</Thickness>
-	<Thickness x:Key="Thickness.SessionView.ToolBar.Padding">0,5,0,5</Thickness>
+	<Thickness x:Key="Thickness.SessionView.ToolBar.Padding">5,5,5,2</Thickness>
 	
 </ResourceDictionary>
