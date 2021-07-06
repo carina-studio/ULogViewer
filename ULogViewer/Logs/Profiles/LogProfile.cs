@@ -34,6 +34,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		LogDataSourceOptions dataSourceOptions;
 		ILogDataSourceProvider dataSourceProvider = LogDataSourceProviders.Empty;
 		LogProfileIcon icon = LogProfileIcon.File;
+		bool isContinuousReading;
 		bool isPinned;
 		SettingKey<bool>? isPinnedSettingKey;
 		bool isWorkingDirectoryNeeded;
@@ -197,6 +198,24 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 
 
 		/// <summary>
+		/// Get or set whether should be read continuously or not.
+		/// </summary>
+		public bool IsContinuousReading
+		{
+			get => this.isContinuousReading;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (this.isContinuousReading == value)
+					return;
+				this.isContinuousReading = value;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsContinuousReading)));
+			}
+		}
+
+
+		/// <summary>
 		/// Get or set whether profile should be pinned at quick access area or not.
 		/// </summary>
 		public bool IsPinned
@@ -322,6 +341,9 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 					case "Icon":
 						if (Enum.TryParse<LogProfileIcon>(jsonProperty.Value.GetString(), out var profileIcon))
 							this.icon = profileIcon;
+						break;
+					case "IsContinuousReading":
+						this.isContinuousReading = jsonProperty.Value.GetBoolean();
 						break;
 					case "IsWorkingDirectoryNeeded":
 						this.isWorkingDirectoryNeeded = jsonProperty.Value.GetBoolean();

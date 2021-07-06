@@ -55,7 +55,7 @@
 
 		<!-- Progress bar -->
 		<ProgressBar Grid.Row="1" Opacity="0"/>
-		<ProgressBar Grid.ColumnSpan="3" Grid.Row="1" IsIndeterminate="True" IsVisible="{Binding IsReadingLogs}"/>
+		<ProgressBar Grid.ColumnSpan="3" Grid.Row="1" IsIndeterminate="True" IsVisible="{Binding IsProcessingLogs}"/>
 
 		<!-- Logs -->
 		<DockPanel Grid.Row="2">
