@@ -13,6 +13,9 @@
 			<!-- Dialog -->
 			<SolidColorBrush x:Key="Brush.Dialog.Background">#ffffff</SolidColorBrush>
 
+			<!-- Icon -->
+			<SolidColorBrush x:Key="Brush.Icon">#000000</SolidColorBrush>
+
 			<!-- LogProfileSelectionDialog -->
 			<SolidColorBrush x:Key="Brush.LogProfileSelectionDialog.Label.Background">#00000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.LogProfileSelectionDialog.Label.Border">#00000000</SolidColorBrush>
@@ -103,12 +106,23 @@
 	</Style>
 
 	<!-- SessionView -->
+	<Style Selector="Border.SessionView_ToolBar_Button_Icon">
+		<Setter Property="Height" Value="{StaticResource Double.SessionView.ToolBar.Button.Icon.Size}"/>
+		<Setter Property="Width" Value="{StaticResource Double.SessionView.ToolBar.Button.Icon.Size}"/>
+	</Style>
 	<Style Selector="Button.SessionView_ToolBar_Button">
 		<Setter Property="Background" Value="{x:Static Brushes.Transparent}"/>
+		<Setter Property="HorizontalContentAlignment" Value="Center"/>
 		<Setter Property="Padding" Value="{StaticResource Thickness.SessionView.ToolBar.Button.Padding}"/>
+		<Setter Property="VerticalContentAlignment" Value="Center"/>
 	</Style>
 	<Style Selector="Button.SessionView_ToolBar_Button:disabled">
 		<Setter Property="Opacity" Value="0.3"/>
+	</Style>
+	<Style Selector="DrawingPresenter.SessionView_ToolBar_Button_Icon">
+		<Setter Property="HorizontalAlignment" Value="Center"/>
+		<Setter Property="Stretch" Value="Uniform"/>
+		<Setter Property="VerticalAlignment" Value="Center"/>
 	</Style>
 	<Style Selector="Image.SessionView_ToolBar_Button_Icon">
 		<Setter Property="Height" Value="{StaticResource Double.SessionView.ToolBar.Button.Icon.Size}"/>

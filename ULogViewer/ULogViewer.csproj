@@ -44,15 +44,11 @@
     <AvaloniaResource Include="Resources/LogProfile.Terminal.64px.png" />
     <AvaloniaResource Include="Resources/LogProfile.Usb.128px.png" />
     <AvaloniaResource Include="Resources/LogProfile.Usb.64px.png" />
-    <AvaloniaResource Include="Resources/LogProfiles.64px.png" />
     <AvaloniaResource Include="Resources/Delete.32px.png" />
     <AvaloniaResource Include="Resources/Delete.64px.png" />
     <AvaloniaResource Include="Resources/Edit.32px.png" />
     <AvaloniaResource Include="Resources/Edit.64px.png" />
     <AvaloniaResource Include="Resources/Pin.32px.png" />
-    <AvaloniaResource Include="Resources/AddFile.64px.png" />
-    <AvaloniaResource Include="Resources/Folder.32px.png" />
-    <AvaloniaResource Include="Resources/Folder.64px.png" />
     <AvaloniaResource Include="Resources/RemoveFile.64px.png" />
     <AvaloniaResource Include="Resources/Save.32px.png" />
     <AvaloniaResource Include="Resources/Save.64px.png" />

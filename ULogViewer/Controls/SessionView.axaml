@@ -36,17 +36,23 @@
 
 				<!-- Select log profiles -->
 				<Button Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].SetLogProfileCommand}" ToolTip.Tip="{DynamicResource String.SessionView.SetLogProfile}">
-					<Image Classes="SessionView_ToolBar_Button_Icon" Source="/Resources/LogProfiles.64px.png"/>
+					<Border Classes="SessionView_ToolBar_Button_Icon">
+						<DrawingPresenter Classes="SessionView_ToolBar_Button_Icon" Drawing="{StaticResource Drawing.LogProfiles}"/>
+					</Border>
 				</Button>
 
 				<!-- Set working directory -->
 				<Button Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].SetWorkingDirectoryCommand}" ToolTip.Tip="{DynamicResource String.SessionView.SetWorkingDirectory}">
-					<Image Classes="SessionView_ToolBar_Button_Icon" Source="/Resources/Folder.64px.png"/>
+					<Border Classes="SessionView_ToolBar_Button_Icon">
+						<DrawingPresenter Classes="SessionView_ToolBar_Button_Icon" Drawing="{StaticResource Drawing.AddFolder}"/>
+					</Border>
 				</Button>
 
 				<!-- Add file -->
 				<Button Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].AddLogFilesCommand}" ToolTip.Tip="{DynamicResource String.SessionView.AddLogFiles}">
-					<Image Classes="SessionView_ToolBar_Button_Icon" Source="/Resources/AddFile.64px.png"/>
+					<Border Classes="SessionView_ToolBar_Button_Icon">
+						<DrawingPresenter Classes="SessionView_ToolBar_Button_Icon" Drawing="{StaticResource Drawing.AddFile}"/>
+					</Border>
 				</Button>
 				
 			</StackPanel>
