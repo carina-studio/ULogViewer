@@ -10,6 +10,7 @@
 
 			<!-- Dialog -->
 			<SolidColorBrush x:Key="Brush.Dialog.Background">#1e1e1e</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.Dialog.ControlButtonsPanel.Background">#141414</SolidColorBrush>
 
 			<!-- Icon -->
 			<SolidColorBrush x:Key="Brush.Icon">#ffffff</SolidColorBrush>

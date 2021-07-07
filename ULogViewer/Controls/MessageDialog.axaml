@@ -20,12 +20,14 @@
 		</Grid>
 
 		<!-- Control buttons -->
-		<StackPanel Classes="Dialog_ControlButtonsPanel" Grid.Row="1">
-			<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].SelectResultCommand}" CommandParameter="{Binding $parent[Window].Button1Result}" Content="{Binding $parent[Window].Button1Text}" IsVisible="{Binding $parent[Window].IsButton1Visible}"/>
-			<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].SelectResultCommand}" CommandParameter="{Binding $parent[Window].Button2Result}" Content="{Binding $parent[Window].Button2Text}" IsVisible="{Binding $parent[Window].IsButton2Visible}"/>
-			<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].SelectResultCommand}" CommandParameter="{Binding $parent[Window].Button3Result}" Content="{Binding $parent[Window].Button3Text}" IsVisible="{Binding $parent[Window].IsButton3Visible}"/>
-		</StackPanel>
-		
+		<Border Classes="Dialog_ControlButtonsPanel" Grid.Row="1">
+			<StackPanel Classes="Dialog_ControlButtonsPanel">
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].SelectResultCommand}" CommandParameter="{Binding $parent[Window].Button1Result}" Content="{Binding $parent[Window].Button1Text}" IsVisible="{Binding $parent[Window].IsButton1Visible}"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].SelectResultCommand}" CommandParameter="{Binding $parent[Window].Button2Result}" Content="{Binding $parent[Window].Button2Text}" IsVisible="{Binding $parent[Window].IsButton2Visible}"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].SelectResultCommand}" CommandParameter="{Binding $parent[Window].Button3Result}" Content="{Binding $parent[Window].Button3Text}" IsVisible="{Binding $parent[Window].IsButton3Visible}"/>
+			</StackPanel>
+		</Border>
+
 	</Grid>
 	
 </Window>
