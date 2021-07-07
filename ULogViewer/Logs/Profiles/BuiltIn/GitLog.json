@@ -3,7 +3,7 @@
 		"Name": "StandardOutput",
 		"Command": "git --no-pager log"
 	},
-	"Icon": "Code",
+	"Icon": "VersionControl",
 	"IsWorkingDirectoryNeeded": true,
 	"LogPatterns": [
 		{

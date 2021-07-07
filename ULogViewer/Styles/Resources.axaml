@@ -25,13 +25,14 @@
 	<sys:Double x:Key="Double.LogProfileSelectionDialog.LogProfile.Label.FontSize">10</sys:Double>
 	<sys:Double x:Key="Double.LogProfileSelectionDialog.LogProfile.Name.FontSize">20</sys:Double>
 	<sys:Double x:Key="Double.LogProfileSelectionDialog.Width">400</sys:Double>
+	<Thickness x:Key="Thickness.LogProfileSelectionDialog.Label.Margin">15,15,15,10</Thickness>
 	<Thickness x:Key="Thickness.LogProfileSelectionDialog.LogProfile.Action.Margin">3,0,0,0</Thickness>
 	<Thickness x:Key="Thickness.LogProfileSelectionDialog.LogProfile.Action.Padding">3</Thickness>
-	<Thickness x:Key="Thickness.LogProfileSelectionDialog.LogProfile.Icon.Margin">0,5,10,0</Thickness>
+	<Thickness x:Key="Thickness.LogProfileSelectionDialog.LogProfile.Icon.Margin">0,5,15,0</Thickness>
 	<Thickness x:Key="Thickness.LogProfileSelectionDialog.LogProfile.Label.Margin">0,0,5,0</Thickness>
 	<Thickness x:Key="Thickness.LogProfileSelectionDialog.LogProfile.Label.Padding">3</Thickness>
 	<Thickness x:Key="Thickness.LogProfileSelectionDialog.LogProfile.Name.Margin">0,0,5,5</Thickness>
-	<Thickness x:Key="Thickness.LogProfileSelectionDialog.LogProfile.Padding">10</Thickness>
+	<Thickness x:Key="Thickness.LogProfileSelectionDialog.LogProfile.Padding">15,10,25,10</Thickness>
 
 	<!-- MessageDialog -->
 	<sys:Double x:Key="Double.MessageDialog.Icon.Size">36</sys:Double>

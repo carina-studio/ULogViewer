@@ -39,10 +39,6 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		/// <summary>
-		/// Converter of <see cref="LogProfileIcon"/>.
-		/// </summary>
-		public static readonly IValueConverter LogProfileIconConverter = new LogProfileIconConverter(IconSize.Large);
-		/// <summary>
 		/// <see cref="IValueConverter"/> for showing <see cref="UnderlyingLogDataSource"/>.
 		/// </summary>
 		public static readonly IValueConverter UnderlyingLogDataSourceConverter = new EnumConverter<UnderlyingLogDataSource>(App.Current);

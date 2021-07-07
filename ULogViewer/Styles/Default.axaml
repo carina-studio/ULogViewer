@@ -18,6 +18,7 @@
 			<SolidColorBrush x:Key="Brush.Icon">#000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.Icon.Error">#ff3232</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.Icon.Info">#007acc</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.Icon.LogProfile">#7ac0ff</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.Icon.Warning">#ff8432</SolidColorBrush>
 
 			<!-- LogProfileSelectionDialog -->
@@ -85,6 +86,10 @@
 	</Style>
 
 	<!-- LogProfileSelectionDialog -->
+	<Style Selector="Border.LogProfileSelectionDialog_LogProfile_Action">
+		<Setter Property="Height" Value="{StaticResource Double.LogProfileSelectionDialog.LogProfile.Action.Icon.Size}"/>
+		<Setter Property="Width" Value="{StaticResource Double.LogProfileSelectionDialog.LogProfile.Action.Icon.Size}"/>
+	</Style>
 	<Style Selector="Border.LogProfileSelectionDialog_LogProfile_Label">
 		<Setter Property="Background" Value="{DynamicResource Brush.LogProfileSelectionDialog.Label.Background}"/>
 		<Setter Property="BorderBrush" Value="{DynamicResource Brush.LogProfileSelectionDialog.Label.Border}"/>
@@ -97,9 +102,10 @@
 		<Setter Property="Margin" Value="{StaticResource Thickness.LogProfileSelectionDialog.LogProfile.Action.Margin}"/>
 		<Setter Property="Padding" Value="{StaticResource Thickness.LogProfileSelectionDialog.LogProfile.Action.Padding}"/>
 	</Style>
-	<Style Selector="Image.LogProfileSelectionDialog_LogProfile_Action">
-		<Setter Property="Height" Value="{StaticResource Double.LogProfileSelectionDialog.LogProfile.Action.Icon.Size}"/>
-		<Setter Property="Width" Value="{StaticResource Double.LogProfileSelectionDialog.LogProfile.Action.Icon.Size}"/>
+	<Style Selector="DrawingPresenter.LogProfileSelectionDialog_LogProfile_Action">
+		<Setter Property="HorizontalAlignment" Value="Center"/>
+		<Setter Property="Stretch" Value="Uniform"/>
+		<Setter Property="VerticalAlignment" Value="Center"/>
 	</Style>
 	<Style Selector="TextBlock.LogProfileSelectionDialog_LogProfile_Label">
 		<Setter Property="FontSize" Value="{StaticResource Double.LogProfileSelectionDialog.LogProfile.Label.FontSize}"/>

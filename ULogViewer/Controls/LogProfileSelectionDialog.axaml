@@ -3,6 +3,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 				xmlns:appControls="clr-namespace:CarinaStudio.ULogViewer.Controls;assembly=ULogViewer"
+				xmlns:appConverters="clr-namespace:CarinaStudio.ULogViewer.Converters;assembly=ULogViewer"
 				xmlns:appProfiles="clr-namespace:CarinaStudio.ULogViewer.Logs.Profiles;assembly=ULogViewer"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.LogProfileSelectionDialog"
@@ -22,8 +23,10 @@
 							<Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto">
 
 								<!-- Icon -->
-								<Image Grid.RowSpan="1" Height="{StaticResource Double.LogProfileSelectionDialog.LogProfile.Icon.Size}" Margin="{StaticResource Thickness.LogProfileSelectionDialog.LogProfile.Icon.Margin}" Source="{Binding Icon, Converter={x:Static appControls:LogProfileSelectionDialog.LogProfileIconConverter}}" VerticalAlignment="Top" Width="{StaticResource Double.LogProfileSelectionDialog.LogProfile.Icon.Size}"/>
-
+								<Border Grid.RowSpan="1" Height="{StaticResource Double.LogProfileSelectionDialog.LogProfile.Icon.Size}" Margin="{StaticResource Thickness.LogProfileSelectionDialog.LogProfile.Icon.Margin}" VerticalAlignment="Top" Width="{StaticResource Double.LogProfileSelectionDialog.LogProfile.Icon.Size}">
+									<DrawingPresenter Drawing="{Binding Icon, Converter={x:Static appConverters:LogProfileIconConverter.Default}}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+								</Border>
+								
 								<!-- Name -->
 								<TextBlock Grid.Column="1" FontSize="{StaticResource Double.LogProfileSelectionDialog.LogProfile.Name.FontSize}" Margin="{StaticResource Thickness.LogProfileSelectionDialog.LogProfile.Name.Margin}" Text="{Binding Name}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
 
@@ -40,13 +43,19 @@
 								<!-- Actions -->
 								<StackPanel Grid.Column="2" Orientation="Horizontal">
 									<Button Classes="LogProfileSelectionDialog_LogProfile_Action" Command="{Binding $parent[Window].PinUnpinLogProfileCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" IsVisible="{Binding !IsBuiltIn}" ToolTip.Tip="{DynamicResource String.LogProfileSelectionDialog.RemoveLogProfile}">
-										<Image Classes="LogProfileSelectionDialog_LogProfile_Action" Source="/Resources/Delete.32px.png"/>
+										<Border Classes="LogProfileSelectionDialog_LogProfile_Action">
+											<DrawingPresenter Classes="LogProfileSelectionDialog_LogProfile_Action" Drawing="{StaticResource Drawing.Delete.Highlight}"/>
+										</Border>
 									</Button>
 									<Button Classes="LogProfileSelectionDialog_LogProfile_Action" Command="{Binding $parent[Window].PinUnpinLogProfileCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" IsVisible="{Binding !IsBuiltIn}" ToolTip.Tip="{DynamicResource String.LogProfileSelectionDialog.EditLogProfile}">
-										<Image Classes="LogProfileSelectionDialog_LogProfile_Action" Source="/Resources/Edit.32px.png"/>
+										<Border Classes="LogProfileSelectionDialog_LogProfile_Action">
+											<DrawingPresenter Classes="LogProfileSelectionDialog_LogProfile_Action" Drawing="{StaticResource Drawing.Edit}"/>
+										</Border>
 									</Button>
 									<Button Classes="LogProfileSelectionDialog_LogProfile_Action" Command="{Binding $parent[Window].PinUnpinLogProfileCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String.LogProfileSelectionDialog.PinUnpinLogProfile}">
-										<Image Classes="LogProfileSelectionDialog_LogProfile_Action" Source="/Resources/Pin.32px.png"/>
+										<Border Classes="LogProfileSelectionDialog_LogProfile_Action">
+											<DrawingPresenter Classes="LogProfileSelectionDialog_LogProfile_Action" Drawing="{StaticResource Drawing.Pin}"/>
+										</Border>
 									</Button>
 								</StackPanel>
 
@@ -71,11 +80,11 @@
 		</Border>
 
 		<!-- Log profiles -->
-		<ScrollViewer MaxHeight="{StaticResource Double.LogProfileSelectionDialog.Content.MaxHeight}" Padding="{StaticResource Thickness.Dialog.Content.Padding}">
+		<ScrollViewer MaxHeight="{StaticResource Double.LogProfileSelectionDialog.Content.MaxHeight}">
 			<Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto">
 
 				<!-- Pinned profiles -->
-				<TextBlock Classes="Dialog_Label_Header1" IsVisible="{Binding $parent[Window].HasPinnedLogProfiles}" Text="{DynamicResource String.LogProfileSelectionDialog.PinnedLogProfiles}"/>
+				<TextBlock Classes="Dialog_Label_Header1" IsVisible="{Binding $parent[Window].HasPinnedLogProfiles}" Margin="{StaticResource Thickness.LogProfileSelectionDialog.Label.Margin}" Text="{DynamicResource String.LogProfileSelectionDialog.PinnedLogProfiles}"/>
 				<ListBox Name="pinnedLogProfileListBox" Classes="LogProfiles" Grid.Row="1" Items="{Binding $parent[Window].PinnedLogProfiles}" IsVisible="{Binding $parent[Window].HasPinnedLogProfiles}" SelectionChanged="OnPinnedLogProfilesSelectionChanged">
 					<ListBox.Styles>
 						<Style Selector="ListBoxItem">
@@ -87,7 +96,7 @@
 				<Separator Classes="Dialog_Separator_Horizontal" Grid.Row="2" IsVisible="{Binding $parent[Window].HasPinnedLogProfiles}"/>
 
 				<!-- All profiles -->
-				<TextBlock Classes="Dialog_Label_Header1" Grid.Row="3" Text="{DynamicResource String.LogProfileSelectionDialog.AllLogProfiles}"/>
+				<TextBlock Classes="Dialog_Label_Header1" Grid.Row="3" Margin="{StaticResource Thickness.LogProfileSelectionDialog.Label.Margin}" Text="{DynamicResource String.LogProfileSelectionDialog.AllLogProfiles}"/>
 				<ListBox Name="allLogProfileListBox" Classes="LogProfiles" Grid.Row="4" Items="{Binding $parent[Window].AllLogProfiles}" SelectionChanged="OnAllLogProfilesSelectionChanged">
 					<ListBox.Styles>
 						<Style Selector="ListBoxItem">
