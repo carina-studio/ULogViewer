@@ -20,10 +20,6 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// </summary>
 		Computer,
 		/// <summary>
-		/// Development.
-		/// </summary>
-		Development,
-		/// <summary>
 		/// File.
 		/// </summary>
 		File,
@@ -43,5 +39,9 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// USB.
 		/// </summary>
 		Usb,
+		/// <summary>
+		/// Version control.
+		/// </summary>
+		VersionControl,
 	}
 }

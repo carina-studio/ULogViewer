@@ -1,33 +1,30 @@
-﻿using Avalonia;
-using Avalonia.Data.Converters;
-using Avalonia.Media.Imaging;
-using Avalonia.Platform;
-using CarinaStudio.ULogViewer.Controls;
+﻿using Avalonia.Data.Converters;
+using Avalonia.Media;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 
 namespace CarinaStudio.ULogViewer.Converters
 {
 	/// <summary>
-	/// <see cref="IValueConverter"/> to convert from <see cref="LogProfileIcon"/> to <see cref="IBitmap"/>.
+	/// <see cref="IValueConverter"/> to convert from <see cref="LogProfileIcon"/> to <see cref="Drawing"/>.
 	/// </summary>
 	class LogProfileIconConverter : IValueConverter
 	{
-		// Fields.
-		readonly IAssetLoader assetLoader = AvaloniaLocator.Current.GetService<IAssetLoader>();
-		readonly Dictionary<LogProfileIcon, IBitmap> icons = new Dictionary<LogProfileIcon, IBitmap>();
-		readonly IconSize iconSize;
-
-
 		/// <summary>
-		/// Initialize new <see cref="LogProfileIconConverter"/> instance.
+		/// Default instance.
 		/// </summary>
-		/// <param name="iconSize">Desired icon size.</param>
-		public LogProfileIconConverter(IconSize iconSize)
+		public static readonly LogProfileIconConverter Default = new LogProfileIconConverter(App.Current);
+
+
+		// Fields.
+		readonly App app;
+
+
+		// Constructor.
+		LogProfileIconConverter(App app)
 		{
-			this.iconSize = iconSize;
+			this.app = app;
 		}
 
 
@@ -36,13 +33,11 @@ namespace CarinaStudio.ULogViewer.Converters
 		{
 			if (value is not LogProfileIcon icon)
 				return null;
-			if (this.icons.TryGetValue(icon, out var bitmap))
-				return bitmap;
-			var bitmapSize = (this.iconSize == IconSize.Large ? 128 : 64);
-			using var stream = this.assetLoader.Open(new Uri($"avares://ULogViewer/Resources/LogProfile.{icon}.{bitmapSize}px.png"));
-			bitmap = new Bitmap(stream);
-			this.icons[icon] = bitmap;
-			return bitmap;
+			if (app.Resources.TryGetResource($"Drawing.LogProfile.{icon}", out var res) && res is Drawing)
+				return res;
+			if (app.Resources.TryGetResource($"Drawing.LogProfile.File", out res) && res is Drawing)
+				return res;
+			return null;
 		}
 
 
