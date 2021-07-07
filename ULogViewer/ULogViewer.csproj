@@ -55,14 +55,6 @@
     <AvaloniaResource Include="Resources/Add.32px.png" />
     <AvaloniaResource Include="Resources/AppOptions.64px.png" />
     <AvaloniaResource Include="Resources/Close.32px.png" />
-    <AvaloniaResource Include="Resources/Error.128px.png" />
-    <AvaloniaResource Include="Resources/Error.64px.png" />
-    <AvaloniaResource Include="Resources/Information.128px.png" />
-    <AvaloniaResource Include="Resources/Information.64px.png" />
-    <AvaloniaResource Include="Resources/Question.128px.png" />
-    <AvaloniaResource Include="Resources/Question.64px.png" />
-    <AvaloniaResource Include="Resources/Warning.128px.png" />
-    <AvaloniaResource Include="Resources/Warning.64px.png" />
     <AvaloniaResource Include="Strings/Default.axaml" />
 		<AvaloniaResource Include="Strings/Default-Linux.axaml" />
     <AvaloniaResource Include="Strings/zh-TW.axaml" />

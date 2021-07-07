@@ -15,6 +15,9 @@
 
 			<!-- Icon -->
 			<SolidColorBrush x:Key="Brush.Icon">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.Icon.Error">#ff3232</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.Icon.Info">#007acc</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.Icon.Warning">#ff8432</SolidColorBrush>
 
 			<!-- LogProfileSelectionDialog -->
 			<SolidColorBrush x:Key="Brush.LogProfileSelectionDialog.Label.Background">#00000000</SolidColorBrush>
@@ -57,7 +60,7 @@
 		<Setter Property="Width" Value="{StaticResource Double.Dialog.Separator.Size}"/>
 	</Style>
 	<Style Selector="StackPanel.Dialog_ControlButtonsPanel">
-		<Setter Property="HorizontalAlignment" Value="Right"/>
+		<Setter Property="HorizontalAlignment" Value="Center"/>
 		<Setter Property="Margin" Value="{StaticResource Thickness.Dialog.ControlButtonsPanel.Padding}"/>
 		<Setter Property="Orientation" Value="Horizontal"/>
 	</Style>
