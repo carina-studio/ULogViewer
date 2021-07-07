@@ -12,6 +12,7 @@
 
 			<!-- Dialog -->
 			<SolidColorBrush x:Key="Brush.Dialog.Background">#ffffff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.Dialog.ControlButtonsPanel.Background">#ffffff</SolidColorBrush>
 
 			<!-- Icon -->
 			<SolidColorBrush x:Key="Brush.Icon">#000000</SolidColorBrush>
@@ -37,6 +38,10 @@
 	</Styles.Resources>
 
 	<!-- Dialog -->
+	<Style Selector="Border.Dialog_ControlButtonsPanel">
+		<Setter Property="Background" Value="{DynamicResource Brush.Dialog.ControlButtonsPanel.Background}"/>
+		<Setter Property="Padding" Value="{StaticResource Thickness.Dialog.ControlButtonsPanel.Padding}"/>
+	</Style>
 	<Style Selector="Button.Dialog_ControlButton">
 		<Setter Property="HorizontalContentAlignment" Value="Center"/>
 		<Setter Property="Margin" Value="{StaticResource Thickness.Dialog.ControlButton.Margin}"/>
@@ -61,7 +66,6 @@
 	</Style>
 	<Style Selector="StackPanel.Dialog_ControlButtonsPanel">
 		<Setter Property="HorizontalAlignment" Value="Center"/>
-		<Setter Property="Margin" Value="{StaticResource Thickness.Dialog.ControlButtonsPanel.Padding}"/>
 		<Setter Property="Orientation" Value="Horizontal"/>
 	</Style>
 	<Style Selector="TextBlock.Dialog_Label_Header1">

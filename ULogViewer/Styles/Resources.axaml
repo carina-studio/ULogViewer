@@ -7,7 +7,7 @@
 	<sys:Double x:Key="Double.Dialog.Label.Header1.FontSize">24</sys:Double>
 	<sys:Double x:Key="Double.Dialog.Label.Header2.FontSize">20</sys:Double>
 	<sys:Double x:Key="Double.Dialog.Separator.Size">15</sys:Double>
-	<Thickness x:Key="Thickness.Dialog.Content.Padding">15,15,15,0</Thickness>
+	<Thickness x:Key="Thickness.Dialog.Content.Padding">15</Thickness>
 	<Thickness x:Key="Thickness.Dialog.ControlButton.Margin">3,0,3,0</Thickness>
 	<Thickness x:Key="Thickness.Dialog.ControlButton.Margin.WithSeparator">3,0,13,0</Thickness>
 	<Thickness x:Key="Thickness.Dialog.ControlButton.Padding">10,5,10,5</Thickness>

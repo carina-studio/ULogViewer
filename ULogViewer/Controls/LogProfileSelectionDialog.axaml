@@ -62,12 +62,14 @@
 	<DockPanel>
 
 		<!-- Control buttons -->
-		<StackPanel Classes="Dialog_ControlButtonsPanel" DockPanel.Dock="Bottom">
-			<Button Classes="Dialog_ControlButton_WithSeparator" Click="OnAddLogProfileClick" Content="{DynamicResource String.LogProfileSelectionDialog.AddLogProfile}"/>
-			<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].ConfirmSelectedLogProfileCommand}" Content="{DynamicResource String.Common.OK}"/>
-			<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].CloseDialogCommand}" Content="{DynamicResource String.Common.Cancel}"/>
-		</StackPanel>
-		
+		<Border Classes="Dialog_ControlButtonsPanel" DockPanel.Dock="Bottom">
+			<StackPanel Classes="Dialog_ControlButtonsPanel">
+				<Button Classes="Dialog_ControlButton_WithSeparator" Click="OnAddLogProfileClick" Content="{DynamicResource String.LogProfileSelectionDialog.AddLogProfile}"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].ConfirmSelectedLogProfileCommand}" Content="{DynamicResource String.Common.OK}"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].CloseDialogCommand}" Content="{DynamicResource String.Common.Cancel}"/>
+			</StackPanel>
+		</Border>
+
 		<!-- Log profiles -->
 		<ScrollViewer MaxHeight="{StaticResource Double.LogProfileSelectionDialog.Content.MaxHeight}" Padding="{StaticResource Thickness.Dialog.Content.Padding}">
 			<Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto">
