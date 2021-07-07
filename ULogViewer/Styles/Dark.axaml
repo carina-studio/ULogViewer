@@ -11,6 +11,9 @@
 			<!-- Dialog -->
 			<SolidColorBrush x:Key="Brush.Dialog.Background">#1e1e1e</SolidColorBrush>
 
+			<!-- Icon -->
+			<SolidColorBrush x:Key="Brush.Icon">#ffffff</SolidColorBrush>
+
 			<!-- LogProfileSelectionDialog -->
 			<SolidColorBrush x:Key="Brush.LogProfileSelectionDialog.Label.Background">#000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.LogProfileSelectionDialog.Label.Border">#000000</SolidColorBrush>
