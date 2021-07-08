@@ -1,6 +1,8 @@
-﻿using CarinaStudio.Collections;
+﻿using Avalonia.Media;
+using CarinaStudio.Collections;
 using CarinaStudio.IO;
 using CarinaStudio.Threading;
+using CarinaStudio.ULogViewer.Converters;
 using CarinaStudio.ULogViewer.Logs;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.ULogViewer.Logs.Profiles;
@@ -32,6 +34,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<bool> HasLogsProperty = ObservableProperty.Register<Session, bool>(nameof(HasLogs));
 		/// <summary>
+		/// Property of <see cref="Icon"/>.
+		/// </summary>
+		public static readonly ObservableProperty<Drawing?> IconProperty = ObservableProperty.Register<Session, Drawing?>(nameof(Icon));
+		/// <summary>
 		/// Property of <see cref="IsFilteringLogs"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsFilteringLogsProperty = ObservableProperty.Register<Session, bool>(nameof(IsFilteringLogs));
@@ -51,6 +57,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Property of <see cref="Logs"/>.
 		/// </summary>
 		public static readonly ObservableProperty<IList<DisplayableLog>> LogsProperty = ObservableProperty.Register<Session, IList<DisplayableLog>>(nameof(Logs), new DisplayableLog[0]);
+		/// <summary>
+		/// Property of <see cref="Title"/>.
+		/// </summary>
+		public static readonly ObservableProperty<string?> TitleProperty = ObservableProperty.Register<Session, string?>(nameof(Title));
 
 
 		// Fields.
@@ -66,6 +76,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly HashSet<LogReader> logReaders = new HashSet<LogReader>();
 		readonly ScheduledAction updateIsReadingLogsAction;
 		readonly ScheduledAction updateIsProcessingLogsAction;
+		readonly ScheduledAction updateTitleAndIconAction;
 
 
 		/// <summary>
@@ -128,6 +139,42 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				else
 					this.SetValue(IsProcessingLogsProperty, false);
 			});
+			this.updateTitleAndIconAction = new ScheduledAction(() =>
+			{
+				// check state
+				if (this.IsDisposed)
+					return;
+
+				// select icon
+				var app = this.Application as App;
+				var logProfile = this.LogProfile;
+				var icon = Global.Run(() =>
+				{
+					if (logProfile == null)
+					{
+						var res = (object?)null;
+						app?.Resources?.TryGetResource("Drawing.EmptySession", out res);
+						return res as Drawing;
+					}
+					else if (app != null)
+						return LogProfileIconConverter.Default.Convert(logProfile.Icon, typeof(Drawing), null, app.CultureInfo) as Drawing;
+					return null;
+				});
+
+				// select title
+				var title = Global.Run(() =>
+				{
+					if (logProfile == null)
+						return app?.GetString("Session.Empty");
+					if (logProfile.DataSourceProvider.UnderlyingSource != UnderlyingLogDataSource.File || this.addedFilePaths.IsEmpty())
+						return logProfile.Name;
+					return $"{logProfile.Name} ({this.addedFilePaths.Count})";
+				});
+
+				// update properties
+				this.SetValue(IconProperty, icon);
+				this.SetValue(TitleProperty, title);
+			});
 		}
 
 
@@ -163,6 +210,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// create log reader
 			this.CreateLogReader(dataSource);
+
+			// update title
+			this.updateTitleAndIconAction.Schedule();
 		}
 
 
@@ -313,6 +363,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.allLogs.Clear();
 			this.displayableLogGroup = this.displayableLogGroup.DisposeAndReturnNull();
 
+			// detach from log profile
+			this.LogProfile?.Let(it => it.PropertyChanged -= this.OnLogProfilePropertyChanged);
+
 			// call base
 			base.Dispose(disposing);
 		}
@@ -356,6 +409,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Check whether at least one log is read or not.
 		/// </summary>
 		public bool HasLogs { get => this.GetValue(HasLogsProperty); }
+
+
+		/// <summary>
+		/// Get icon of session.
+		/// </summary>
+		public Drawing? Icon { get => this.GetValue(IconProperty); }
 
 
 		/// <summary>
@@ -408,6 +467,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		// Called when property of log data source changed.
 		void OnLogDataSourcePropertyChanged(object? sender, PropertyChangedEventArgs e)
 		{ }
+
+
+		// Called when property of log profile changed.
+		void OnLogProfilePropertyChanged(object? sender, PropertyChangedEventArgs e)
+		{
+			if (sender != this.LogProfile)
+				return;
+			if (e.PropertyName == nameof(LogProfile.Name))
+				this.updateTitleAndIconAction.Schedule();
+		}
 
 
 		// Called when logs of log reader has been changed.
@@ -484,6 +553,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			if (profile == null)
 				throw new InternalStateCorruptedException("No log profile to reset.");
 
+			// detach from log profile
+			profile.PropertyChanged -= this.OnLogProfilePropertyChanged;
+
 			// clear profile
 			this.Logger.LogWarning($"Reset log profile '{profile.Name}'");
 			this.SetValue(LogProfileProperty, null);
@@ -505,6 +577,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// clear display log properties
 			this.UpdateDisplayLogProperties();
+
+			// update title
+			this.updateTitleAndIconAction.Schedule();
 
 			// update state
 			this.canAddFile.Update(false);
@@ -537,6 +612,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.Logger.LogWarning($"Set profile '{profile.Name}'");
 			this.canSetLogProfile.Update(false);
 			this.SetValue(LogProfileProperty, profile);
+
+			// attach to log profile
+			profile.PropertyChanged += this.OnLogProfilePropertyChanged;
 
 			// prepare displayable log group
 			this.displayableLogGroup = new DisplayableLogGroup(profile);
@@ -589,6 +667,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// update display log properties
 			this.UpdateDisplayLogProperties();
+
+			// update title
+			this.updateTitleAndIconAction.Schedule();
 
 			// update state
 			this.canResetLogProfile.Update(true);
@@ -650,6 +731,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		/// <remarks>Type of command parameter is <see cref="string"/>.</remarks>
 		public ICommand SetWorkingDirectoryCommand { get; }
+
+
+		/// <summary>
+		/// Get title of session.
+		/// </summary>
+		string? Title { get => this.GetValue(TitleProperty); }
 
 
 		// Update list of display log properties according to profile.

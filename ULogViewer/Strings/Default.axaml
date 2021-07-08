@@ -25,6 +25,9 @@
 	<sys:String x:Key="String.LogProfileSelectionDialog.RemoveLogProfile">Delete profile</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.Title">Select log profile</sys:String>
 
+	<!-- Session -->
+	<sys:String x:Key="String.Session.Empty">Empty Tab</sys:String>
+
 	<!-- SessionView -->
 	<sys:String x:Key="String.SessionView.AddLogFiles">Add log files</sys:String>
 	<sys:String x:Key="String.SessionView.NoLogToShow">No log to show</sys:String>
