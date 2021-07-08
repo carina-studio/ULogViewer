@@ -175,6 +175,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.SetValue(IconProperty, icon);
 				this.SetValue(TitleProperty, title);
 			});
+			this.updateTitleAndIconAction.Execute();
 		}
 
 
@@ -736,7 +737,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get title of session.
 		/// </summary>
-		string? Title { get => this.GetValue(TitleProperty); }
+		public string? Title { get => this.GetValue(TitleProperty); }
 
 
 		// Update list of display log properties according to profile.

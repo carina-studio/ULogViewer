@@ -7,13 +7,21 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.MainWindow"
 				Classes="MainWindow"
-        Title="ULogViewer">
+        Title="{Binding Title}">
 
 	<!-- Data templates -->
 	<Window.DataTemplates>
 		<DataTemplate DataType="{x:Type appViewModels:Session}">
-			<Grid ColumnDefinitions="Auto,Auto,Auto" Margin="10">
-				<TextBlock FontSize="{StaticResource Double.MainWindow.TabItem.FontSize}" Grid.Column="1" Text="{Binding}"/>
+			<Grid ColumnDefinitions="Auto,Auto,Auto" Margin="{StaticResource Thickness.MainWindow.TabItem.Padding}">
+				<Border Height="{StaticResource Double.MainWindow.TabItem.Icon.Size}" Margin="{StaticResource Thickness.MainWindow.TabItem.Icon.Margin}" VerticalAlignment="Center" Width="{StaticResource Double.MainWindow.TabItem.Icon.Size}">
+					<DrawingPresenter Drawing="{Binding Icon}" HorizontalAlignment="Center" Stretch="Uniform" VerticalAlignment="Center"/>
+				</Border>
+				<TextBlock FontSize="{StaticResource Double.MainWindow.TabItem.FontSize}" Grid.Column="1" MaxWidth="200" Text="{Binding Title}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+				<Button Background="{x:Static Brushes.Transparent}" Click="OnTabItemCloseButtonClick" Grid.Column="2" Margin="{StaticResource Thickness.MainWindow.TabItem.CloseButton.Margin}" Padding="{StaticResource Thickness.MainWindow.TabItem.CloseButton.Padding}" ToolTip.Tip="{DynamicResource String.MainWindow.CloseSession}" VerticalAlignment="Center">
+					<Border Height="{StaticResource Double.MainWindow.TabItem.CloseButton.Icon.Size}" VerticalAlignment="Center" Width="{StaticResource Double.MainWindow.TabItem.CloseButton.Icon.Size}">
+						<DrawingPresenter Drawing="{DynamicResource Drawing.Close}" HorizontalAlignment="Center" Stretch="Uniform" VerticalAlignment="Center"/>
+					</Border>
+				</Button>
 			</Grid>
 		</DataTemplate>
 	</Window.DataTemplates>
@@ -21,17 +29,20 @@
 	<!-- Styles -->
 	<Window.Styles>
 		<Style Selector="TabItem">
-			<Setter Property="MinHeight" Value="0"/>
+			<Setter Property="MinHeight" Value="{StaticResource Double.MainWindow.TabItem.MinHeight}"/>
 		</Style>
 	</Window.Styles>
 
 	<!-- Content -->
 	<TabControl Name="tabControl" Padding="0">
 
-		<!-- Data template -->
-
-		<TabItem Header="Test">
-			<appControls:SessionView x:Name="sessionView" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+		<!-- Add new tab -->
+		<TabItem>
+			<TabItem.Header>
+				<Border Background="{x:Static Brushes.Transparent}" Height="{StaticResource Double.MainWindow.TabItem.Icon.Size}" ToolTip.Tip="{DynamicResource String.MainWindow.CreateSession}" Width="{StaticResource Double.MainWindow.TabItem.Icon.Size}">
+					<DrawingPresenter Drawing="{DynamicResource Drawing.Add}" HorizontalAlignment="Center" Stretch="Uniform" VerticalAlignment="Center"/>
+				</Border>
+			</TabItem.Header>
 		</TabItem>
 
 	</TabControl>

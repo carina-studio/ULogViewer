@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.ViewModels
@@ -23,10 +22,15 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Property of <see cref="ActiveSession"/>.
 		/// </summary>
 		public static readonly ObservableProperty<Session?> ActiveSessionProperty = ObservableProperty.Register<Workspace, Session?>(nameof(ActiveSession));
+		/// <summary>
+		/// Property of <see cref="Title"/>.
+		/// </summary>
+		public static readonly ObservableProperty<string?> TitleProperty = ObservableProperty.Register<Workspace, string?>(nameof(Title));
 
 
 		// Fields.
 		readonly ObservableCollection<Session> sessions = new ObservableCollection<Session>();
+		readonly ScheduledAction updateTitleAction;
 
 
 		/// <summary>
@@ -35,7 +39,21 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <param name="app">Application.</param>
 		public Workspace(IApplication app) : base(app)
 		{
+			// setup properties
 			this.Sessions = this.sessions.AsReadOnly();
+
+			// create scheduled actions
+			this.updateTitleAction = new ScheduledAction(() =>
+			{
+				if (this.IsDisposed)
+					return;
+				var session = this.ActiveSession;
+				if (session == null)
+					this.SetValue(TitleProperty, "ULogViewer");
+				else
+					this.SetValue(TitleProperty, $"ULogViewer - {session.Title}");
+			});
+			this.updateTitleAction.Execute();
 		}
 
 
@@ -54,6 +72,41 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			// add event handler
 			session.PropertyChanged += this.OnSessionPropertyChanged;
+		}
+
+
+		/// <summary>
+		/// Close and dispose given session.
+		/// </summary>
+		/// <param name="session">Session to close.</param>
+		public void CloseSession(Session session)
+		{
+			// check state
+			this.VerifyAccess();
+			this.VerifyDisposed();
+
+			// check parameter
+			var index = this.sessions.IndexOf(session);
+			if (index < 0)
+			{
+				this.Logger.LogError($"Unknown session '{session}' to close");
+				return;
+			}
+
+			this.Logger.LogDebug($"Close session '{session}' at position {index}");
+
+			// remove from list
+			this.sessions.RemoveAt(index);
+
+			// deactivate
+			if (this.ActiveSession == session)
+				this.ActiveSession = null;
+
+			// detach
+			this.DetachFromSession(session);
+
+			// dispose
+			session.Dispose();
 		}
 
 
@@ -85,11 +138,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			var session = new Session(this);
 			this.sessions.Insert(index, session);
 			this.AttachToSession(session);
-			this.Logger.LogDebug($"Session {session} created at position {index}");
+			this.Logger.LogDebug($"Session '{session}' created at position {index}");
 
 			// set log profile
 			if (logProfile != null && !session.SetLogProfileCommand.TryExecute(logProfile))
-				this.Logger.LogWarning($"Unable to set initial log profile '{logProfile.Name}' to {session}");
+				this.Logger.LogWarning($"Unable to set initial log profile '{logProfile.Name}' to session '{session}'");
 
 			// complete
 			return session;
@@ -130,10 +183,29 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		}
 
 
+		// Called when property changed.
+		protected override void OnPropertyChanged(ObservableProperty property, object? oldValue, object? newValue)
+		{
+			base.OnPropertyChanged(property, oldValue, newValue);
+			if (property == ActiveSessionProperty)
+			{
+				if (newValue is Session session && !this.sessions.Contains(session))
+					throw new ArgumentException($"Cannot activate {session} which is not belong to this workspace.");
+				this.updateTitleAction.Schedule();
+			}
+		}
+
+
 		// Called when property of session has been changed.
 		void OnSessionPropertyChanged(object? sender, PropertyChangedEventArgs e)
 		{
-
+			switch (e.PropertyName)
+			{
+				case nameof(Session.Title):
+					if (sender == this.ActiveSession)
+						this.updateTitleAction.Schedule();
+					break;
+			}
 		}
 
 
@@ -141,5 +213,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Get list of <see cref="Session"/>s.
 		/// </summary>
 		public IList<Session> Sessions { get; }
+
+
+		/// <summary>
+		/// Get title.
+		/// </summary>
+		public string? Title { get => this.GetValue(TitleProperty); }
 	}
 }
