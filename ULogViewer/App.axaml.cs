@@ -8,6 +8,7 @@ using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.ULogViewer.Logs.Profiles;
+using CarinaStudio.ULogViewer.ViewModels;
 using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
 using NLog.Extensions.Logging;
@@ -39,6 +40,7 @@ namespace CarinaStudio.ULogViewer
 		StyleInclude? stylesDark;
 		StyleInclude? stylesLight;
 		volatile SynchronizationContext? synchronizationContext;
+		Workspace? workspace;
 
 
 		// Constructor.
@@ -82,6 +84,9 @@ namespace CarinaStudio.ULogViewer
 		// Deinitialize.
 		void Deinitialize()
 		{
+			// dispose workspace
+			this.workspace?.Dispose();
+
 			// detach from system events
 			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 				SystemEvents.UserPreferenceChanged -= this.OnWindowsUserPreferenceChanged;
@@ -160,6 +165,9 @@ namespace CarinaStudio.ULogViewer
 			// attach to system events
 			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 				SystemEvents.UserPreferenceChanged += this.OnWindowsUserPreferenceChanged;
+
+			// create workspace
+			this.workspace = new Workspace(this);
 
 			// show main window
 			this.synchronizationContext.Post(this.ShowMainWindow);
@@ -271,6 +279,7 @@ namespace CarinaStudio.ULogViewer
 			this.mainWindow = new MainWindow().Also((it) =>
 			{
 				it.Closed += (_, e) => this.OnMainWindowClosed();
+				it.DataContext = this.workspace;
 			});
 			this.logger.LogWarning("Show main window");
 			this.mainWindow.Show();

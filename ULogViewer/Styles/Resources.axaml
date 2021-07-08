@@ -34,6 +34,9 @@
 	<Thickness x:Key="Thickness.LogProfileSelectionDialog.LogProfile.Name.Margin">0,0,5,5</Thickness>
 	<Thickness x:Key="Thickness.LogProfileSelectionDialog.LogProfile.Padding">15,10,25,10</Thickness>
 
+	<!-- MainWindow -->
+	<sys:Double x:Key="Double.MainWindow.TabItem.FontSize">16</sys:Double>
+
 	<!-- MessageDialog -->
 	<sys:Double x:Key="Double.MessageDialog.Icon.Size">36</sys:Double>
 	<sys:Double x:Key="Double.MessageDialog.MinWidth">200</sys:Double>

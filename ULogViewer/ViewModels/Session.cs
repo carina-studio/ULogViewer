@@ -71,8 +71,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Initialize new <see cref="Session"/> instance.
 		/// </summary>
-		/// <param name="app">Application.</param>
-		public Session(IApplication app) : base(app)
+		/// <param name="workspace"><see cref="Workspace"/>.</param>
+		public Session(Workspace workspace) : base(workspace.Application)
 		{
 			// create commands
 			this.AddLogFileCommand = ReactiveCommand.Create<string?>(this.AddLogFile, this.canAddFile);
@@ -89,6 +89,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// setup properties
 			this.SetValue(LogsProperty, this.allLogs.AsReadOnly());
+			this.Workspace = workspace;
 
 			// setup delegates
 			this.compareDisplayableLogsDelegate = this.CompareDisplayableLogsAsc;
@@ -96,6 +97,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// create scheduled actions
 			this.updateIsReadingLogsAction = new ScheduledAction(() =>
 			{
+				if (this.IsDisposed)
+					return;
 				if (this.logReaders.IsEmpty())
 					this.SetValue(IsReadingLogsProperty, false);
 				else
@@ -115,6 +118,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			});
 			this.updateIsProcessingLogsAction = new ScheduledAction(() =>
 			{
+				if (this.IsDisposed)
+					return;
 				var logProfile = this.LogProfile;
 				if (logProfile == null || logProfile.IsContinuousReading)
 					this.SetValue(IsProcessingLogsProperty, false);
@@ -395,7 +400,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						displayableLog.Dispose();
 					break;
 			}
-			this.SetValue(HasLogsProperty, this.allLogs.IsNotEmpty());
+			if (!this.IsDisposed)
+				this.SetValue(HasLogsProperty, this.allLogs.IsNotEmpty());
 		}
 
 
@@ -664,5 +670,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.SetValue(DisplayLogPropertiesProperty, displayLogProperties.AsReadOnly());
 			}
 		}
+
+
+		/// <summary>
+		/// Get <see cref="Workspace"/> which session belongs to.
+		/// </summary>
+		public Workspace Workspace { get; }
 	}
 }
