@@ -33,10 +33,13 @@
 	<sys:String x:Key="String.Session.Empty">空白分頁</sys:String>
 
 	<!-- SessionView -->
+	<sys:String x:Key="String.SessionView.AppInfo">關於 ULogViewer...</sys:String>
 	<sys:String x:Key="String.SessionView.AddLogFiles">加入日誌檔案</sys:String>
+	<sys:String x:Key="String.SessionView.AppOptions">應用程式選項...</sys:String>
 	<sys:String x:Key="String.SessionView.NoLogToShow">沒有日誌可以顯示</sys:String>
 	<sys:String x:Key="String.SessionView.SetLogProfile">選取/變更日誌類型</sys:String>
 	<sys:String x:Key="String.SessionView.SetWorkingDirectory">選取/變更工作目錄</sys:String>
+	<sys:String x:Key="String.SessionView.OtherActions">其他動作</sys:String>
 
 	<!-- UnderlyingLogDataSource -->
 	<sys:String x:Key="String.UnderlyingLogDataSource.File">檔案</sys:String>

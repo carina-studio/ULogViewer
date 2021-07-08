@@ -17,6 +17,17 @@
 		</DataTemplate>
 		
 	</UserControl.DataTemplates>
+
+	<!-- Resources -->
+	<UserControl.Resources>
+
+		<!-- Other actions menu -->
+		<ContextMenu x:Key="otherActionsMenu">
+			<MenuItem Header="{DynamicResource String.SessionView.AppOptions}"/>
+			<MenuItem Header="{DynamicResource String.SessionView.AppInfo}"/>
+		</ContextMenu>
+		
+	</UserControl.Resources>
 	
 	<!-- Content -->
 	<Grid RowDefinitions="Auto,Auto,*,Auto">
@@ -29,7 +40,7 @@
 		</Grid.ColumnDefinitions>
 
 		<!-- Toolbar -->
-		<Grid Grid.ColumnSpan="3" Margin="{StaticResource Thickness.SessionView.ToolBar.Padding}">
+		<Grid ColumnDefinitions="Auto,*,Auto" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" Margin="{StaticResource Thickness.SessionView.ToolBar.Padding}">
 
 			<!-- Log actions -->
 			<StackPanel Orientation="Horizontal">
@@ -56,6 +67,13 @@
 				</Button>
 				
 			</StackPanel>
+
+			<!-- Other actions -->
+			<Button Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].ShowOtherActionsCommand}" Grid.Column="2" ToolTip.Tip="{DynamicResource String.SessionView.OtherActions}">
+				<Border Classes="SessionView_ToolBar_Button_Icon">
+					<DrawingPresenter Classes="SessionView_ToolBar_Button_Icon" Drawing="{StaticResource Drawing.OtherActions}"/>
+				</Border>
+			</Button>
 			
 		</Grid>
 

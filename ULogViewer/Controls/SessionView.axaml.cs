@@ -33,6 +33,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly Grid logHeaderGrid;
 		readonly ListBox logListBox;
 		ScrollViewer? logScrollViewer;
+		readonly ContextMenu otherActionsMenu;
 
 
 		/// <summary>
@@ -44,6 +45,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.AddLogFilesCommand = ReactiveCommand.Create(this.AddLogFiles, this.canAddLogFiles);
 			this.SetLogProfileCommand = ReactiveCommand.Create(this.SetLogProfile, this.canSetLogProfile);
 			this.SetWorkingDirectoryCommand = ReactiveCommand.Create(this.SetWorkingDirectory, this.canSetWorkingDirectory);
+			this.ShowOtherActionsCommand = ReactiveCommand.Create(this.ShowOtherActions);
 
 			// initialize
 			this.InitializeComponent();
@@ -63,6 +65,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					}
 				};
 			});
+			this.otherActionsMenu = (ContextMenu)this.Resources["otherActionsMenu"].AsNonNull();
 		}
 
 
@@ -404,5 +407,18 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// Command to set working directory.
 		/// </summary>
 		public ICommand SetWorkingDirectoryCommand { get; }
+
+
+		// Show UI of other actions.
+		void ShowOtherActions()
+		{
+			this.otherActionsMenu.Open(this);
+		}
+
+
+		/// <summary>
+		/// Command to show UI of other actions.
+		/// </summary>
+		public ICommand ShowOtherActionsCommand { get; }
 	}
 }
