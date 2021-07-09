@@ -26,9 +26,17 @@ namespace CarinaStudio.ULogViewer.ViewModels
 	class Session : ViewModel
 	{
 		/// <summary>
+		/// Property of <see cref="AllLogCount"/>.
+		/// </summary>
+		public static readonly ObservableProperty<int> AllLogCountProperty = ObservableProperty.Register<Session, int>(nameof(AllLogCount));
+		/// <summary>
 		/// Property of <see cref="DisplayLogProperties"/>.
 		/// </summary>
 		public static readonly ObservableProperty<IList<DisplayableLogProperty>> DisplayLogPropertiesProperty = ObservableProperty.Register<Session, IList<DisplayableLogProperty>>(nameof(DisplayLogProperties), new DisplayableLogProperty[0]);
+		/// <summary>
+		/// Property of <see cref="FilteredLogCount"/>.
+		/// </summary>
+		public static readonly ObservableProperty<int> FilteredLogCountProperty = ObservableProperty.Register<Session, int>(nameof(FilteredLogCount));
 		/// <summary>
 		/// Property of <see cref="HasLogs"/>.
 		/// </summary>
@@ -41,6 +49,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Property of <see cref="IsFilteringLogs"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsFilteringLogsProperty = ObservableProperty.Register<Session, bool>(nameof(IsFilteringLogs));
+		/// <summary>
+		/// Property of <see cref="IsFilteringLogsNeeded"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> IsFilteringLogsNeededProperty = ObservableProperty.Register<Session, bool>(nameof(IsFilteringLogsNeeded));
 		/// <summary>
 		/// Property of <see cref="IsReadingLogs"/>.
 		/// </summary>
@@ -101,6 +113,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// create log filter
 			this.logFilter = new DisplayableLogFilter((IApplication)this.Application, this.allLogs, this.CompareDisplayableLogs).Also(it =>
 			{
+				((INotifyCollectionChanged)it.FilteredLogs).CollectionChanged += this.OnFilteredLogsChanged;
 				it.PropertyChanged += this.OnLogFilterPropertyChanged;
 			});
 
@@ -228,6 +241,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		/// <remarks>Type of command parameter is <see cref="string"/>.</remarks>
 		public ICommand AddLogFileCommand { get; }
+
+
+		/// <summary>
+		/// Get number of all read logs.
+		/// </summary>
+		public int AllLogCount { get => this.GetValue(AllLogCountProperty); }
 
 
 		// Compare displayable logs.
@@ -359,6 +378,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.VerifyAccess();
 
 			// cancel filtering
+			((INotifyCollectionChanged)this.logFilter.FilteredLogs).CollectionChanged -= this.OnFilteredLogsChanged;
 			this.logFilter.PropertyChanged -= this.OnLogFilterPropertyChanged;
 			this.logFilter.Dispose();
 
@@ -414,6 +434,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Get number of filtered logs.
+		/// </summary>
+		public int FilteredLogCount { get => this.GetValue(FilteredLogCountProperty); }
+
+
+		/// <summary>
 		/// Check whether at least one log is read or not.
 		/// </summary>
 		public bool HasLogs { get => this.GetValue(HasLogsProperty); }
@@ -429,6 +455,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Check whether logs are being filtered or not.
 		/// </summary>
 		public bool IsFilteringLogs { get => this.GetValue(IsFilteringLogsProperty); }
+
+
+		/// <summary>
+		/// Check whether logs filtering is needed or not.
+		/// </summary>
+		public bool IsFilteringLogsNeeded { get => this.GetValue(IsFilteringLogsNeededProperty); }
 
 
 		/// <summary>
@@ -468,7 +500,23 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					break;
 			}
 			if (!this.IsDisposed)
-				this.SetValue(HasLogsProperty, this.allLogs.IsNotEmpty());
+			{
+				if (!this.logFilter.IsFilteringNeeded)
+					this.SetValue(HasLogsProperty, this.allLogs.IsNotEmpty());
+				this.SetValue(AllLogCountProperty, this.allLogs.Count);
+			}
+		}
+
+
+		// Called when filtered logs has been changed.
+		void OnFilteredLogsChanged(object? sender, NotifyCollectionChangedEventArgs e)
+		{
+			if (!this.IsDisposed)
+			{
+				if (this.logFilter.IsFilteringNeeded)
+					this.SetValue(HasLogsProperty, this.logFilter.FilteredLogs.IsNotEmpty());
+				this.SetValue(FilteredLogCountProperty, this.logFilter.FilteredLogs.Count);
+			}
 		}
 
 
@@ -490,9 +538,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					break;
 				case nameof(DisplayableLogFilter.IsFilteringNeeded):
 					if (this.logFilter.IsFilteringNeeded)
+					{
 						this.SetValue(LogsProperty, logFilter.FilteredLogs);
+						this.SetValue(HasLogsProperty, logFilter.FilteredLogs.IsNotEmpty());
+					}
 					else
+					{
 						this.SetValue(LogsProperty, this.allLogs.AsReadOnly());
+						this.SetValue(HasLogsProperty, this.allLogs.IsNotEmpty());
+					}
+					this.SetValue(IsFilteringLogsNeededProperty, this.logFilter.IsFilteringNeeded);
 					break;
 			}
 		}

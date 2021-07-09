@@ -436,7 +436,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					if (this.currentFilterParams != null)
 					{
 						this.unfilteredLogs.AddAll(e.NewItems.AsNonNull().Cast<DisplayableLog>(), true);
-						this.FilterNextChunk(this.currentFilterParams);
+						for (var i = this.maxFilteringConcurrencyLevel; i > 0; --i)
+							this.FilterNextChunk(this.currentFilterParams);
 					}
 					break;
 				case NotifyCollectionChangedAction.Remove:

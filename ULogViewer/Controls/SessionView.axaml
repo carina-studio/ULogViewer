@@ -91,7 +91,7 @@
 			</Grid>
 
 			<!-- ListBox -->
-			<ListBox Name="logListBox" AutoScrollToSelectedItem="False" Background="{StaticResource Brush.SessionView.LogListBox.Background}" Grid.Row="1" HorizontalAlignment="Stretch" Items="{Binding Logs}" ScrollViewer.HorizontalScrollBarVisibility="Auto" SelectionMode="Multiple" VirtualizationMode="Simple">
+			<ListBox Name="logListBox" AutoScrollToSelectedItem="False" Background="{StaticResource Brush.SessionView.LogListBox.Background}" Grid.Row="1" HorizontalAlignment="Stretch" Items="{Binding Logs}" Padding="{StaticResource Thickness.SessionView.LogListBox.Padding}" ScrollViewer.HorizontalScrollBarVisibility="Visible" SelectionMode="Multiple" VirtualizationMode="Simple">
 				<ListBox.Styles>
 					<Style Selector="ListBoxItem">
 						<Setter Property="HorizontalAlignment" Value="Stretch"/>
@@ -117,6 +117,14 @@
 
 				<!-- Empty view to reserve space -->
 				<TextBlock Text=" " Opacity="0"/>
+
+				<!-- Number of logs -->
+				<StackPanel IsVisible="{Binding HasLogs}" Orientation="Horizontal">
+					<TextBlock Text="{DynamicResource String.SessionView.AllLogCount}"/>
+					<TextBlock Text="{Binding AllLogCount}"/>
+					<TextBlock IsVisible="{Binding IsFilteringLogsNeeded}" Text="{DynamicResource String.SessionView.FilteredLogCount}"/>
+					<TextBlock IsVisible="{Binding IsFilteringLogsNeeded}" Text="{Binding FilteredLogCount}"/>
+				</StackPanel>
 				
 			</Grid>
 		</Border>
