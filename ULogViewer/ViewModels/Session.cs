@@ -14,7 +14,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -72,7 +72,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly MutableObservableBoolean canSetWorkingDirectory = new MutableObservableBoolean();
 		Comparison<DisplayableLog?> compareDisplayableLogsDelegate;
 		DisplayableLogGroup? displayableLogGroup;
-		IComparer<Log> logComparer = LogComparers.TimestampAsc;
+		readonly DisplayableLogFilter logFilter;
 		readonly HashSet<LogReader> logReaders = new HashSet<LogReader>();
 		readonly ScheduledAction updateIsReadingLogsAction;
 		readonly ScheduledAction updateIsProcessingLogsAction;
@@ -96,6 +96,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.allLogs = new SortedObservableList<DisplayableLog>(this.CompareDisplayableLogs).Also(it =>
 			{
 				it.CollectionChanged += this.OnAllLogsChanged;
+			});
+
+			// create log filter
+			this.logFilter = new DisplayableLogFilter((IApplication)this.Application, this.allLogs, this.CompareDisplayableLogs).Also(it =>
+			{
+				it.PropertyChanged += this.OnLogFilterPropertyChanged;
 			});
 
 			// setup properties
@@ -353,7 +359,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.VerifyAccess();
 
 			// cancel filtering
-			//
+			this.logFilter.PropertyChanged -= this.OnLogFilterPropertyChanged;
+			this.logFilter.Dispose();
 
 			// dispose log readers
 			this.DisposeLogReaders(false);
@@ -470,6 +477,27 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{ }
 
 
+		// Called when property of log filter changed.
+		void OnLogFilterPropertyChanged(object? sender, PropertyChangedEventArgs e)
+		{
+			switch (e.PropertyName)
+			{
+				case nameof(DisplayableLogFilter.FilteringProgress):
+					//
+					break;
+				case nameof(DisplayableLogFilter.IsFiltering):
+					this.SetValue(IsFilteringLogsProperty, this.logFilter.IsFiltering);
+					break;
+				case nameof(DisplayableLogFilter.IsFilteringNeeded):
+					if (this.logFilter.IsFilteringNeeded)
+						this.SetValue(LogsProperty, logFilter.FilteredLogs);
+					else
+						this.SetValue(LogsProperty, this.allLogs.AsReadOnly());
+					break;
+			}
+		}
+
+
 		// Called when property of log profile changed.
 		void OnLogProfilePropertyChanged(object? sender, PropertyChangedEventArgs e)
 		{
@@ -562,7 +590,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.SetValue(LogProfileProperty, null);
 
 			// cancel filtering
-			//
+			this.logFilter.FilteringLogProperties = DisplayLogPropertiesProperty.DefaultValue;
 
 			// dispose log readers
 			this.DisposeLogReaders(false);
@@ -745,7 +773,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			var profile = this.LogProfile;
 			if (profile == null)
+			{
 				this.SetValue(DisplayLogPropertiesProperty, DisplayLogPropertiesProperty.DefaultValue);
+				this.logFilter.FilteringLogProperties = DisplayLogPropertiesProperty.DefaultValue;
+			}
 			else
 			{
 				var app = (IApplication)this.Application;
@@ -756,6 +787,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				if (displayLogProperties.IsEmpty())
 					displayLogProperties.Add(new DisplayableLogProperty(app, nameof(DisplayableLog.Message), null, null));
 				this.SetValue(DisplayLogPropertiesProperty, displayLogProperties.AsReadOnly());
+				this.logFilter.FilteringLogProperties = displayLogProperties;
 			}
 		}
 
