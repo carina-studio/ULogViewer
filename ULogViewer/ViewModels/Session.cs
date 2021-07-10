@@ -1,4 +1,5 @@
-﻿using Avalonia.Media;
+﻿using Avalonia.Data.Converters;
+using Avalonia.Media;
 using CarinaStudio.Collections;
 using CarinaStudio.IO;
 using CarinaStudio.Threading;
@@ -70,6 +71,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<IList<DisplayableLog>> LogsProperty = ObservableProperty.Register<Session, IList<DisplayableLog>>(nameof(Logs), new DisplayableLog[0]);
 		/// <summary>
+		/// Property of <see cref="LogsFilteringProgress"/>.
+		/// </summary>
+		public static readonly ObservableProperty<double> LogsFilteringProgressProperty = ObservableProperty.Register<Session, double>(nameof(LogsFilteringProgress));
+		/// <summary>
 		/// Property of <see cref="LogTextFilterRegex"/>.
 		/// </summary>
 		public static readonly ObservableProperty<Regex?> LogTextFilterRegexProperty = ObservableProperty.Register<Session, Regex?>(nameof(LogTextFilterRegex));
@@ -77,6 +82,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Property of <see cref="Title"/>.
 		/// </summary>
 		public static readonly ObservableProperty<string?> TitleProperty = ObservableProperty.Register<Session, string?>(nameof(Title));
+
+
+		/// <summary>
+		/// <see cref="IValueConverter"/> to convert from logs filtering progress to readable string.
+		/// </summary>
+		public static readonly IValueConverter LogsFilteringProgressConverter = new RatioToPercentageConverter(1);
 
 
 		// Fields.
@@ -505,6 +516,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Get progress of logs filtering.
+		/// </summary>
+		public double LogsFilteringProgress { get => this.GetValue(LogsFilteringProgressProperty); }
+
+
+		/// <summary>
 		/// Get or set <see cref="Regex"/> for log text filtering.
 		/// </summary>
 		public Regex? LogTextFilterRegex
@@ -558,7 +575,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			switch (e.PropertyName)
 			{
 				case nameof(DisplayableLogFilter.FilteringProgress):
-					//
+					this.SetValue(LogsFilteringProgressProperty, this.logFilter.FilteringProgress);
 					break;
 				case nameof(DisplayableLogFilter.IsFiltering):
 					this.SetValue(IsFilteringLogsProperty, this.logFilter.IsFiltering);

@@ -155,10 +155,10 @@
 
 		<!-- Status bar -->
 		<Border Background="{StaticResource Brush.SessionView.StatusBar.Background}" Grid.ColumnSpan="3" Grid.Row="3" Padding="{StaticResource Thickness.SessionView.StatucBar.Padding}">
-			<Grid>
+			<Grid ColumnDefinitions="Auto,Auto,*">
 
 				<!-- Empty view to reserve space -->
-				<TextBlock Text=" " Opacity="0"/>
+				<TextBlock Grid.ColumnSpan="5" Text=" " Opacity="0"/>
 
 				<!-- Number of logs -->
 				<StackPanel IsVisible="{Binding HasLogs}" Orientation="Horizontal">
@@ -166,6 +166,13 @@
 					<TextBlock Text="{Binding AllLogCount}"/>
 					<TextBlock IsVisible="{Binding IsFilteringLogsNeeded}" Text="{DynamicResource String.SessionView.FilteredLogCount}"/>
 					<TextBlock IsVisible="{Binding IsFilteringLogsNeeded}" Text="{Binding FilteredLogCount}"/>
+					<Separator Classes="SessionView_StatusBar_Separator"/>
+				</StackPanel>
+
+				<!-- Filtering progress -->
+				<StackPanel Grid.Column="1" IsVisible="{Binding IsFilteringLogs}" Orientation="Horizontal">
+					<TextBlock Text="{DynamicResource String.SessionView.LogsFilteringProgress}"/>
+					<TextBlock Text="{Binding LogsFilteringProgress, Converter={x:Static appViewModels:Session.LogsFilteringProgressConverter}}"/>
 				</StackPanel>
 				
 			</Grid>

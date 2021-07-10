@@ -147,6 +147,10 @@
 		<Setter Property="Height" Value="{StaticResource Double.SessionView.ToolBar.Button.Icon.Size}"/>
 		<Setter Property="Width" Value="{StaticResource Double.SessionView.ToolBar.Button.Icon.Size}"/>
 	</Style>
+	<Style Selector="Separator.SessionView_StatusBar_Separator">
+		<Setter Property="Background" Value="{x:Null}"/>
+		<Setter Property="Width" Value="{StaticResource Double.SessionView.StatusBar.Separator.Size}"/>
+	</Style>
 	<Style Selector="Separator.SessionView_ToolBar_Separator">
 		<Setter Property="Background" Value="{DynamicResource Brush.Separator.Background}"/>
 		<Setter Property="Margin" Value="{StaticResource Thickness.SessionView.ToolBar.Separator.Margin}"/>
