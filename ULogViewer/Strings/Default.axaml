@@ -16,6 +16,21 @@
 	<sys:String x:Key="String.BuiltInProfile.GitLog">Git log</sys:String>
 	<sys:String x:Key="String.BuiltInProfile.ULogViewerLog">ULogViewer log (DEBUG build only)</sys:String>
 
+	<!-- DisplayableLogProperty -->
+	<sys:String x:Key="String.DisplayableLogProperty.Author">Author</sys:String>
+	<sys:String x:Key="String.DisplayableLogProperty.Level">Level</sys:String>
+	<sys:String x:Key="String.DisplayableLogProperty.Message">Message</sys:String>
+	<sys:String x:Key="String.DisplayableLogProperty.ProcessId">PID</sys:String>
+	<sys:String x:Key="String.DisplayableLogProperty.ProcessName">Process</sys:String>
+	<sys:String x:Key="String.DisplayableLogProperty.SourceName">Source</sys:String>
+	<sys:String x:Key="String.DisplayableLogProperty.Tag">Tag</sys:String>
+	<sys:String x:Key="String.DisplayableLogProperty.ThreadId">TID</sys:String>
+	<sys:String x:Key="String.DisplayableLogProperty.ThreadName">Thread</sys:String>
+	<sys:String x:Key="String.DisplayableLogProperty.Timestamp">Timestamp</sys:String>
+	<sys:String x:Key="String.DisplayableLogProperty.TimestampString">Timestamp</sys:String>
+	<sys:String x:Key="String.DisplayableLogProperty.UserId">UID</sys:String>
+	<sys:String x:Key="String.DisplayableLogProperty.UserName">User</sys:String>
+
 	<!-- LogProfileSelectionDialog -->
 	<sys:String x:Key="String.LogProfileSelectionDialog.AddLogProfile">Create...</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.AllLogProfiles">All profiles</sys:String>

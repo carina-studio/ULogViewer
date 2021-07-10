@@ -15,6 +15,18 @@
 	<!-- Built-in profile -->
 	<sys:String x:Key="String.BuiltInProfile.GitLog">Git 提交紀錄</sys:String>
 
+	<!-- DisplayableLogProperty -->
+	<sys:String x:Key="String.DisplayableLogProperty.Author">作者</sys:String>
+	<sys:String x:Key="String.DisplayableLogProperty.Level">等級</sys:String>
+	<sys:String x:Key="String.DisplayableLogProperty.Message">訊息</sys:String>
+	<sys:String x:Key="String.DisplayableLogProperty.ProcessName">處理程序</sys:String>
+	<sys:String x:Key="String.DisplayableLogProperty.SourceName">來源</sys:String>
+	<sys:String x:Key="String.DisplayableLogProperty.Tag">標籤</sys:String>
+	<sys:String x:Key="String.DisplayableLogProperty.ThreadName">執行緒</sys:String>
+	<sys:String x:Key="String.DisplayableLogProperty.Timestamp">時間</sys:String>
+	<sys:String x:Key="String.DisplayableLogProperty.TimestampString">時間</sys:String>
+	<sys:String x:Key="String.DisplayableLogProperty.UserName">使用者</sys:String>
+
 	<!-- LogProfileSelectionDialog -->
 	<sys:String x:Key="String.LogProfileSelectionDialog.AddLogProfile">建立...</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.AllLogProfiles">所有日誌類型</sys:String>
