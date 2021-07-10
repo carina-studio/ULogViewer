@@ -298,9 +298,22 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 
 			// build item template
+			var itemPadding = app.Resources.TryGetResource("Thickness.SessionView.LogListBox.Item.Padding", out rawResource) ? (Thickness)rawResource.AsNonNull() : new Thickness();
 			var itemTemplateContent = new Func<IServiceProvider, object>(_ =>
 			{
-				var itemGrid = new Grid();
+				var itemPanel = new Panel().Also(it =>
+				{
+					it.Children.Add(new Border().Also(border =>
+					{
+						border.Bind(Border.BackgroundProperty, border.GetResourceObservable("Brush.SessionView.LogListBox.Item.Background.Marked"));
+						border.Bind(Border.IsVisibleProperty, new Binding() { Path = nameof(DisplayableLog.IsMarked) });
+					}));
+				});
+				var itemGrid = new Grid().Also(it =>
+				{
+					it.Margin = itemPadding;
+					itemPanel.Children.Add(it);
+				});
 				for (var i = 0; i < logPropertyCount; ++i)
 				{
 					// define splitter column
@@ -325,10 +338,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					{
 						_ => new TextBlock().Also(it =>
 						{
-							it.Bind(TextBlock.TextProperty, new Binding()
-							{
-								Path = logProperty.Name
-							});
+							it.Bind(TextBlock.TextProperty, new Binding() { Path = logProperty.Name });
 							it.TextTrimming = TextTrimming.CharacterEllipsis;
 							it.TextWrapping = TextWrapping.NoWrap;
 							it.VerticalAlignment = VerticalAlignment.Top;
@@ -337,7 +347,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					Grid.SetColumn(propertyView, logPropertyIndex * 2);
 					itemGrid.Children.Add(propertyView);
 				}
-				return new ControlTemplateResult(itemGrid, null);
+				return new ControlTemplateResult(itemPanel, null);
 			});
 			this.logListBox.ItemTemplate = new DataTemplate()
 			{
