@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using Avalonia.Data;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.LogicalTree;
@@ -351,6 +352,53 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (e.Property == TextBlock.TextProperty)
 				this.updateLogTextFilterAction.Reschedule(this.UpdateLogFilterParamsDelay);
+		}
+
+
+		// Called when key down.
+		protected override void OnKeyDown(KeyEventArgs e)
+		{
+			// handle key event for combo keys
+			if (!e.Handled && (e.KeyModifiers & KeyModifiers.Control) != 0)
+			{
+				switch (e.Key)
+				{
+					case Key.F:
+						if (e.Source is not TextBox)
+						{
+							this.logTextFilterTextBox.Focus();
+							this.logTextFilterTextBox.SelectAll();
+							e.Handled = true;
+						}
+						break;
+				}
+			}
+
+			// call base
+			base.OnKeyDown(e);
+		}
+
+
+		// Called when key up.
+		protected override void OnKeyUp(KeyEventArgs e)
+		{
+			// handle key event for single key
+			if (!e.Handled && e.KeyModifiers == KeyModifiers.None)
+			{
+				switch (e.Key)
+				{
+					case Key.Escape:
+						if (e.Source is TextBox)
+						{
+							this.logListBox.Focus();
+							e.Handled = true;
+						}
+						break;
+				}
+			}
+
+			// call base
+			base.OnKeyUp(e);
 		}
 
 

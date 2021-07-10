@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.Templates;
@@ -22,6 +23,7 @@ namespace CarinaStudio.ULogViewer
 	partial class MainWindow : BaseWindow
 	{
 		// Fields.
+		readonly ScheduledAction focusOnTabItemContentAction;
 		readonly DataTemplate sessionTabItemHeaderTemplate;
 		readonly TabControl tabControl;
 		readonly IList tabItems;
@@ -44,6 +46,12 @@ namespace CarinaStudio.ULogViewer
 				it.SelectionChanged += this.OnTabControlSelectionChanged;
 			});
 			this.tabItems = (IList)this.tabControl.Items;
+
+			// create scheduled actions
+			this.focusOnTabItemContentAction = new ScheduledAction(() =>
+			{
+				((this.tabControl.SelectedItem as TabItem)?.Content as IControl)?.Focus();
+			});
 		}
 
 
@@ -125,6 +133,42 @@ namespace CarinaStudio.ULogViewer
 		private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
 
 
+		// Called when key down.
+		protected override void OnKeyDown(KeyEventArgs e)
+		{
+			// handle key event for combo keys
+			if (!e.Handled && (e.KeyModifiers & KeyModifiers.Control) != 0)
+			{
+				switch (e.Key)
+				{
+					case Key.Tab:
+						if (this.tabItems.Count > 2)
+						{
+							var index = this.tabControl.SelectedIndex;
+							if ((e.KeyModifiers & KeyModifiers.Shift) == 0)
+							{
+								++index;
+								if (index >= this.tabItems.Count - 1)
+									index = 0;
+							}
+							else
+							{
+								--index;
+								if (index < 0)
+									index = this.tabItems.Count - 2;
+							}
+							this.tabControl.SelectedIndex = index;
+						}
+						e.Handled = true;
+						break;
+				}
+			}
+
+			// call base
+			base.OnKeyDown(e);
+		}
+
+
 		// Called when property changed.
 		protected override void OnPropertyChanged<T>(AvaloniaPropertyChangedEventArgs<T> change)
 		{
@@ -178,6 +222,7 @@ namespace CarinaStudio.ULogViewer
 				workspace.ActiveSession = workspace.CreateSession();
 			else
 				workspace.ActiveSession = (Session)((TabItem)this.tabItems[index].AsNonNull()).DataContext.AsNonNull();
+			this.focusOnTabItemContentAction.Schedule();
 		}
 
 
