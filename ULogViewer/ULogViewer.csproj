@@ -63,6 +63,7 @@
 
 	<ItemGroup>
 	  <EmbeddedResource Include="Logs/Profiles/BuiltIn/GitLog.json" />
+	  <EmbeddedResource Include="Logs/Profiles/BuiltIn/ULogViewerLog.json" />
 	</ItemGroup>
 
 </Project>
