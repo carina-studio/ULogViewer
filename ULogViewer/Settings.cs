@@ -9,6 +9,10 @@ namespace CarinaStudio.ULogViewer
 	class Settings : BaseSettings
 	{
 		/// <summary>
+		/// Use dark mode UI or not.
+		/// </summary>
+		public static readonly SettingKey<bool> DarkMode = new SettingKey<bool>(nameof(DarkMode), true);
+		/// <summary>
 		/// Select log files immediately when they are needed.
 		/// </summary>
 		public static readonly SettingKey<bool> SelectLogFilesWhenNeeded = new SettingKey<bool>(nameof(SelectLogFilesWhenNeeded), false);
@@ -21,9 +25,9 @@ namespace CarinaStudio.ULogViewer
 		/// </summary>
 		public static readonly SettingKey<bool> SelectWorkingDirectoryWhenNeeded = new SettingKey<bool>(nameof(SelectWorkingDirectoryWhenNeeded), true);
 		/// <summary>
-		/// Use dark mode UI or not.
+		/// Delay of updating log filter after changing related parameters in milliseconds.
 		/// </summary>
-		public static readonly SettingKey<bool> DarkMode = new SettingKey<bool>(nameof(DarkMode), true);
+		public static readonly SettingKey<int> UpdateLogFilterDelay = new SettingKey<int>(nameof(UpdateLogFilterDelay), 500);
 
 
 		/// <summary>

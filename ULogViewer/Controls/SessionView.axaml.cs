@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using Avalonia.Data;
+using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.LogicalTree;
 using Avalonia.Markup.Xaml;
@@ -9,6 +10,7 @@ using Avalonia.Markup.Xaml.Templates;
 using Avalonia.Media;
 using Avalonia.VisualTree;
 using CarinaStudio.Collections;
+using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ULogViewer.ViewModels;
 using Microsoft.Extensions.Logging;
@@ -16,6 +18,7 @@ using ReactiveUI;
 using System;
 using System.ComponentModel;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Input;
 
 namespace CarinaStudio.ULogViewer.Controls
@@ -25,6 +28,16 @@ namespace CarinaStudio.ULogViewer.Controls
 	/// </summary>
 	partial class SessionView : BaseView
 	{
+		/// <summary>
+		/// Property of <see cref="HasLogProfile"/>.
+		/// </summary>
+		public static readonly AvaloniaProperty<bool> HasLogProfileProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(HasLogProfile), false);
+		/// <summary>
+		/// Property of <see cref="IsLogTextFilterValid"/>.
+		/// </summary>
+		public static readonly AvaloniaProperty<bool> IsLogTextFilterValidProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(IsLogTextFilterValid), true);
+
+
 		// Fields.
 		readonly MutableObservableBoolean canAddLogFiles = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSetLogProfile = new MutableObservableBoolean();
@@ -33,7 +46,9 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly Grid logHeaderGrid;
 		readonly ListBox logListBox;
 		ScrollViewer? logScrollViewer;
+		readonly TextBox logTextFilterTextBox;
 		readonly ContextMenu otherActionsMenu;
+		readonly ScheduledAction updateLogTextFilterAction;
 
 
 		/// <summary>
@@ -43,6 +58,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			// create commands
 			this.AddLogFilesCommand = ReactiveCommand.Create(this.AddLogFiles, this.canAddLogFiles);
+			this.ResetLogFiltersCommand = ReactiveCommand.Create(this.ResetLogFilters, this.GetObservable<bool>(HasLogProfileProperty));
 			this.SetLogProfileCommand = ReactiveCommand.Create(this.SetLogProfile, this.canSetLogProfile);
 			this.SetWorkingDirectoryCommand = ReactiveCommand.Create(this.SetWorkingDirectory, this.canSetWorkingDirectory);
 			this.ShowOtherActionsCommand = ReactiveCommand.Create(this.ShowOtherActions);
@@ -65,7 +81,36 @@ namespace CarinaStudio.ULogViewer.Controls
 					}
 				};
 			});
+			this.logTextFilterTextBox = this.FindControl<TextBox>("logTextFilterTextBox").AsNonNull();
 			this.otherActionsMenu = (ContextMenu)this.Resources["otherActionsMenu"].AsNonNull();
+
+			// create scheduled actions
+			this.updateLogTextFilterAction = new ScheduledAction(() =>
+			{
+				// get session
+				if (this.DataContext is not Session session)
+					return;
+
+				// create regex
+				var regex = (Regex?)null;
+				var pattern = this.logTextFilterTextBox.Text?.Trim();
+				if (!string.IsNullOrEmpty(pattern))
+				{
+					try
+					{
+						regex = new Regex(pattern);
+					}
+					catch
+					{
+						this.SetValue<bool>(IsLogTextFilterValidProperty, false);
+						return;
+					}
+				}
+				this.SetValue<bool>(IsLogTextFilterValidProperty, true);
+
+				// update session
+				session.LogTextFilterRegex = regex;
+			});
 		}
 
 
@@ -124,6 +169,13 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.canSetLogProfile.Update(session.ResetLogProfileCommand.CanExecute(null) || session.SetLogProfileCommand.CanExecute(null));
 			this.canSetWorkingDirectory.Update(session.SetWorkingDirectoryCommand.CanExecute(null));
 
+			// update properties
+			this.SetValue<bool>(HasLogProfileProperty, session.LogProfile != null);
+
+			// sync log filters to UI
+			this.logTextFilterTextBox.Text = session.LogTextFilterRegex?.ToString() ?? "";
+			this.updateLogTextFilterAction.Cancel();
+
 			// update UI
 			this.OnDisplayLogPropertiesChanged();
 		}
@@ -144,13 +196,28 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.canSetLogProfile.Update(false);
 			this.canSetWorkingDirectory.Update(false);
 
+			// update properties
+			this.SetValue<bool>(HasLogProfileProperty, false);
+
 			// update UI
 			this.OnDisplayLogPropertiesChanged();
 		}
 
 
+		/// <summary>
+		/// Check whether log profile has been set or not.
+		/// </summary>
+		public bool HasLogProfile { get => this.GetValue<bool>(HasLogProfileProperty); }
+
+
 		// Initialize Avalonia components.
 		private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
+
+
+		/// <summary>
+		/// Check whether pattern of log text filter is valid or not.
+		/// </summary>
+		public bool IsLogTextFilterValid { get => this.GetValue<bool>(IsLogTextFilterValidProperty); }
 
 
 		// Called when display log properties changed.
@@ -279,6 +346,14 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Called when property of log text filter text box changed.
+		void OnLogTextFilterTextBoxPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
+		{
+			if (e.Property == TextBlock.TextProperty)
+				this.updateLogTextFilterAction.Reschedule(this.UpdateLogFilterParamsDelay);
+		}
+
+
 		// Property changed.
 		protected override void OnPropertyChanged<T>(AvaloniaPropertyChangedEventArgs<T> change)
 		{
@@ -321,13 +396,32 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when property of session has been changed.
 		void OnSessionPropertyChanged(object? sender, PropertyChangedEventArgs e)
 		{
+			if (sender is not Session session)
+				return;
 			switch (e.PropertyName)
 			{
 				case nameof(Session.DisplayLogProperties):
 					this.OnDisplayLogPropertiesChanged();
 					break;
+				case nameof(Session.LogProfile):
+					this.SetValue<bool>(HasLogProfileProperty, session.LogProfile != null);
+					break;
 			}
 		}
+
+
+		// Reset all log filters.
+		void ResetLogFilters()
+		{
+			this.logTextFilterTextBox.Text = "";
+			this.updateLogTextFilterAction.Execute();
+		}
+
+
+		/// <summary>
+		/// Command to reset all log filters.
+		/// </summary>
+		public ICommand ResetLogFiltersCommand { get; }
 
 
 		// Set log profile.
@@ -348,9 +442,14 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (logProfile == null)
 				return;
 
-			// reset log profile
+			// check state
 			if (this.DataContext is not Session session)
 				return;
+
+			// reset log filters
+			this.ResetLogFilters();
+
+			// reset log profile
 			this.isWorkingDirNeededAfterLogProfileSet = false;
 			if (session.ResetLogProfileCommand.CanExecute(null))
 				session.ResetLogProfileCommand.Execute(null);
@@ -420,5 +519,9 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// Command to show UI of other actions.
 		/// </summary>
 		public ICommand ShowOtherActionsCommand { get; }
+
+
+		// Get delay of updating log filter.
+		int UpdateLogFilterParamsDelay { get => Math.Max(500, Math.Min(1000, this.Settings.GetValueOrDefault(Settings.UpdateLogFilterDelay))); }
 	}
 }
