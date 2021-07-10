@@ -12,6 +12,15 @@
 			<SolidColorBrush x:Key="Brush.Dialog.Background">#1e1e1e</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.Dialog.ControlButtonsPanel.Background">#141414</SolidColorBrush>
 
+			<!-- DisplayableLog -->
+			<SolidColorBrush x:Key="Brush.DisplayableLog.Level.Debug">#32aaff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.DisplayableLog.Level.Error">#ff3f3f</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.DisplayableLog.Level.Fatal">#ff3f3f</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.DisplayableLog.Level.Info">#4cff00</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.DisplayableLog.Level.Undefined">#ffffff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.DisplayableLog.Level.Verbose">#ffffff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.DisplayableLog.Level.Warn">#ff8432</SolidColorBrush>
+
 			<!-- Icon -->
 			<SolidColorBrush x:Key="Brush.Icon">#ffffff</SolidColorBrush>
 

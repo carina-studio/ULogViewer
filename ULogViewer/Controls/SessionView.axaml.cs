@@ -338,6 +338,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					{
 						_ => new TextBlock().Also(it =>
 						{
+							it.Bind(TextBlock.ForegroundProperty, new Binding() { Path = nameof(DisplayableLog.LevelBrush) });
 							it.Bind(TextBlock.TextProperty, new Binding() { Path = logProperty.Name });
 							it.TextTrimming = TextTrimming.CharacterEllipsis;
 							it.TextWrapping = TextWrapping.NoWrap;

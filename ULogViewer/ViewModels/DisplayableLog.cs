@@ -1,4 +1,5 @@
-﻿using CarinaStudio.Threading;
+﻿using Avalonia.Media;
+using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs;
 using System;
 using System.Collections.Generic;
@@ -28,6 +29,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.Application = group.Application;
 			this.BinaryTimestamp = log.Timestamp?.ToBinary() ?? 0L;
 			this.Group = group;
+			this.LevelBrush = group.GetLevelBrush(log.Level);
 			this.Log = log;
 			this.LogReader = reader;
 			this.TrackingNode = new LinkedListNode<DisplayableLog>(this);
@@ -89,9 +91,15 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
-		/// Get level or log.
+		/// Get level of log.
 		/// </summary>
 		public LogLevel Level { get => this.Log.Level; }
+
+
+		/// <summary>
+		/// Get <see cref="IBrush"/> according to level of log.
+		/// </summary>
+		public IBrush LevelBrush { get; private set; }
 
 
 		/// <summary>
@@ -129,6 +137,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		internal void OnApplicationStringsUpdated()
 		{ }
+
+
+		/// <summary>
+		/// Called when style related resources has been updated.
+		/// </summary>
+		internal void OnStyleResourcesUpdated()
+		{
+			this.LevelBrush = this.Group.GetLevelBrush(this.Log.Level);
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LevelBrush)));
+		}
 
 
 		/// <summary>
