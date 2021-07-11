@@ -313,6 +313,20 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 						break;
 					case "Name":
 						break;
+					case nameof(LogDataSourceOptions.SetupCommands):
+						options.SetupCommands = new List<string>().Also(it =>
+						{
+							foreach (var jsonElement in jsonProperty.Value.EnumerateArray())
+								it.Add(jsonElement.GetString().AsNonNull());
+						});
+						break;
+					case nameof(LogDataSourceOptions.TeardownCommands):
+						options.TeardownCommands = new List<string>().Also(it =>
+						{
+							foreach (var jsonElement in jsonProperty.Value.EnumerateArray())
+								it.Add(jsonElement.GetString().AsNonNull());
+						});
+						break;
 					case nameof(LogDataSourceOptions.WorkingDirectory):
 						options.WorkingDirectory = jsonProperty.Value.GetString();
 						break;

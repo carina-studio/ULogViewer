@@ -1,7 +1,10 @@
 ﻿{
 	"DataSource": {
 		"Name": "StandardOutput",
-		"Command": "adb logcat -v threadtime"
+		"Command": "adb logcat -v threadtime",
+		"SetupCommands": [
+			"adb logcat -c"
+		]
 	},
 	"Icon": "Phone",
 	"IsContinuousReading": true,
