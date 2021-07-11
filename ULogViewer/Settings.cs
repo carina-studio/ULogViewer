@@ -13,6 +13,10 @@ namespace CarinaStudio.ULogViewer
 		/// </summary>
 		public static readonly SettingKey<bool> DarkMode = new SettingKey<bool>(nameof(DarkMode), true);
 		/// <summary>
+		/// Ignore case of log text filter.
+		/// </summary>
+		public static readonly SettingKey<bool> IgnoreCaseOfLogTextFilter = new SettingKey<bool>(nameof(IgnoreCaseOfLogTextFilter), true);
+		/// <summary>
 		/// Select log files immediately when they are needed.
 		/// </summary>
 		public static readonly SettingKey<bool> SelectLogFilesWhenNeeded = new SettingKey<bool>(nameof(SelectLogFilesWhenNeeded), false);

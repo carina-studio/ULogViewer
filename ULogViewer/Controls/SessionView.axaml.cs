@@ -99,7 +99,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				{
 					try
 					{
-						regex = new Regex(pattern);
+						regex = new Regex(pattern, this.Settings.GetValueOrDefault(Settings.IgnoreCaseOfLogTextFilter) ? RegexOptions.IgnoreCase : RegexOptions.None);
 					}
 					catch
 					{
