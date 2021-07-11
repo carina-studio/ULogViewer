@@ -13,6 +13,7 @@
 	<sys:String x:Key="String.Common.Yes">是</sys:String>
 
 	<!-- Built-in profile -->
+	<sys:String x:Key="String.BuiltInProfile.AndroidDeviceLog">Android 裝置日誌</sys:String>
 	<sys:String x:Key="String.BuiltInProfile.GitLog">Git 提交紀錄</sys:String>
 
 	<!-- DisplayableLogProperty -->

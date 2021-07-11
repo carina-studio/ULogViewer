@@ -16,6 +16,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		// Fields.
 		static volatile IApplication? app;
 		static readonly IList<string> builtInProfileIDs = new List<string>(new string[] {
+			"AndroidDeviceLog",
 			"GitLog",
 		});
 		static volatile ILogger? logger;
