@@ -71,7 +71,12 @@
 				<!-- Separator -->
 				<Separator Classes="SessionView_ToolBar_Separator"/>
 
-				<!-- Refresh logs -->
+				<!-- Reload logs -->
+				<Button Classes="SessionView_ToolBar_Button" Command="{Binding ReloadLogsCommand}" ToolTip.Tip="{DynamicResource String.SessionView.ReloadLogs}">
+					<Border Classes="SessionView_ToolBar_Button_Icon">
+						<DrawingPresenter Classes="SessionView_ToolBar_Button_Icon" Drawing="{StaticResource Drawing.Refresh}"/>
+					</Border>
+				</Button>
 
 				<!-- Scroll to latest log -->
 				<ToggleButton Classes="SessionView_ToolBar_Button" IsChecked="{Binding $parent[UserControl].IsScrollingToLatestLogNeeded, Mode=TwoWay}" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" ToolTip.Tip="{DynamicResource String.SessionView.ScrollToLatestLog}">

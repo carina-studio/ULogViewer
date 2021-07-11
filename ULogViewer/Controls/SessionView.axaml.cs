@@ -509,6 +509,9 @@ namespace CarinaStudio.ULogViewer.Controls
 							e.Handled = true;
 						}
 						break;
+					case Key.F5:
+						(this.DataContext as Session)?.ReloadLogsCommand?.TryExecute();
+						break;
 				}
 			}
 

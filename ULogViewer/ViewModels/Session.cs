@@ -94,6 +94,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly HashSet<string> addedFilePaths = new HashSet<string>(PathEqualityComparer.Default);
 		readonly SortedObservableList<DisplayableLog> allLogs;
 		readonly MutableObservableBoolean canAddFile = new MutableObservableBoolean();
+		readonly MutableObservableBoolean canReloadLogs = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canResetLogProfile = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSetLogProfile = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSetWorkingDirectory = new MutableObservableBoolean();
@@ -115,6 +116,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			// create commands
 			this.AddLogFileCommand = ReactiveCommand.Create<string?>(this.AddLogFile, this.canAddFile);
+			this.ReloadLogsCommand = ReactiveCommand.Create(this.ReloadLogs, this.canReloadLogs);
 			this.ResetLogProfileCommand = ReactiveCommand.Create(this.ResetLogProfile, this.canResetLogProfile);
 			this.SetLogProfileCommand = ReactiveCommand.Create<LogProfile?>(this.SetLogProfile, this.canSetLogProfile);
 			this.SetWorkingDirectoryCommand = ReactiveCommand.Create<string?>(this.SetWorkingDirectory, this.canSetWorkingDirectory);
@@ -261,6 +263,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// update title
 			this.updateTitleAndIconAction.Schedule();
+
+			// update state
+			this.canReloadLogs.Update(true);
 		}
 
 
@@ -672,6 +677,47 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		}
 
 
+		// Reload logs.
+		void ReloadLogs()
+		{
+			// check state
+			this.VerifyAccess();
+			this.VerifyDisposed();
+			if (!this.canReloadLogs.Value || this.logReaders.IsEmpty())
+				return;
+			var profile = this.LogProfile;
+			if (profile == null)
+				throw new InternalStateCorruptedException("No log profile to reload logs.");
+
+			// collect data source options
+			var dataSourceOptions = new List<LogDataSourceOptions>().Also(it =>
+			{
+				foreach (var logReader in this.logReaders)
+					it.Add(logReader.DataSource.CreationOptions);
+			});
+
+			this.Logger.LogWarning($"Reload logs with {dataSourceOptions.Count} log reader(s)");
+
+			// dispose log readers
+			this.DisposeLogReaders(true);
+
+			// recreate log readers
+			var dataSourceProvider = profile.DataSourceProvider;
+			foreach (var dataSourceOption in dataSourceOptions)
+			{
+				var dataSource = this.CreateLogDataSourceOrNull(dataSourceProvider, dataSourceOption);
+				if (dataSource != null)
+					this.CreateLogReader(dataSource);
+			}
+		}
+
+
+		/// <summary>
+		/// Command to reload logs.
+		/// </summary>
+		public ICommand ReloadLogsCommand { get; }
+
+
 		// Reset log profile.
 		void ResetLogProfile()
 		{
@@ -716,6 +762,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// update state
 			this.canAddFile.Update(false);
 			this.canSetWorkingDirectory.Update(false);
+			this.canReloadLogs.Update(false);
 			this.canResetLogProfile.Update(false);
 			this.canSetLogProfile.Update(true);
 		}
@@ -807,6 +854,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.updateLogFilterAction.Reschedule();
 
 			// update state
+			if (this.logReaders.IsNotEmpty())
+				this.canReloadLogs.Update(true);
 			this.canResetLogProfile.Update(true);
 		}
 
@@ -858,6 +907,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// create log reader
 			this.CreateLogReader(dataSource);
+
+			// update state
+			this.canReloadLogs.Update(true);
 		}
 
 
