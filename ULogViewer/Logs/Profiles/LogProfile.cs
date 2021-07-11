@@ -44,6 +44,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		string name = "";
 		IDictionary<string, LogLevel> readOnlyLogLevelMap;
 		SortDirection sortDirection = SortDirection.Ascending;
+		LogSortKey sortKey = LogSortKey.Timestamp;
 		CultureInfo? timestampCultureInfoForReading;
 		string? timestampFormatForDisplaying;
 		string? timestampFormatForReading;
@@ -352,35 +353,38 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 					case "DataSource":
 						this.LoadDataSourceFromJson(jsonProperty.Value);
 						break;
-					case "Icon":
+					case nameof(Icon):
 						if (Enum.TryParse<LogProfileIcon>(jsonProperty.Value.GetString(), out var profileIcon))
 							this.icon = profileIcon;
 						break;
-					case "IsContinuousReading":
+					case nameof(IsContinuousReading):
 						this.isContinuousReading = jsonProperty.Value.GetBoolean();
 						break;
-					case "IsWorkingDirectoryNeeded":
+					case nameof(IsWorkingDirectoryNeeded):
 						this.isWorkingDirectoryNeeded = jsonProperty.Value.GetBoolean();
 						break;
-					case "LogLevelMap":
+					case nameof(LogLevelMap):
 						this.LoadLogLevelMapFromJson(jsonProperty.Value);
 						break;
-					case "LogPatterns":
+					case nameof(LogPatterns):
 						this.LoadLogPatternsFromJson(jsonProperty.Value);
 						break;
-					case "SortDirection":
+					case nameof(SortDirection):
 						this.sortDirection = Enum.Parse<SortDirection>(jsonProperty.Value.GetString().AsNonNull());
 						break;
-					case "TimestampCultureInfoForReading":
+					case nameof(SortKey):
+						this.sortKey = Enum.Parse<LogSortKey>(jsonProperty.Value.GetString().AsNonNull());
+						break;
+					case nameof(TimestampCultureInfoForReading):
 						this.timestampCultureInfoForReading = CultureInfo.GetCultureInfo(jsonProperty.Value.GetString().AsNonNull());
 						break;
-					case "TimestampFormatForDisplaying":
+					case nameof(TimestampFormatForDisplaying):
 						this.timestampFormatForDisplaying = jsonProperty.Value.GetString();
 						break;
-					case "TimestampFormatForReading":
+					case nameof(TimestampFormatForReading):
 						this.timestampFormatForReading = jsonProperty.Value.GetString();
 						break;
-					case "VisibleLogProperties":
+					case nameof(VisibleLogProperties):
 						this.LoadVisibleLogPropertiesFromJson(jsonProperty.Value);
 						break;
 					default:
@@ -523,6 +527,24 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 					return;
 				this.sortDirection = value;
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SortDirection)));
+			}
+		}
+
+
+		/// <summary>
+		/// Get of set key of log sorting.
+		/// </summary>
+		public LogSortKey SortKey
+		{
+			get => this.sortKey;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (this.sortKey == value)
+					return;
+				this.sortKey = value;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SortKey)));
 			}
 		}
 

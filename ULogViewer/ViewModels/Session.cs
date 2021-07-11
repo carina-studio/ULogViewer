@@ -140,7 +140,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.Workspace = workspace;
 
 			// setup delegates
-			this.compareDisplayableLogsDelegate = this.CompareDisplayableLogsAsc;
+			this.compareDisplayableLogsDelegate = CompareDisplayableLogsById;
 
 			// create scheduled actions
 			this.updateIsReadingLogsAction = new ScheduledAction(() =>
@@ -284,7 +284,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 		// Compare displayable logs.
 		int CompareDisplayableLogs(DisplayableLog? x, DisplayableLog? y) => this.compareDisplayableLogsDelegate(x, y);
-		int CompareDisplayableLogsAsc(DisplayableLog? x, DisplayableLog? y)
+		static int CompareDisplayableLogsById(DisplayableLog? x, DisplayableLog? y)
 		{
 			// compare by reference
 			if (x == null)
@@ -296,22 +296,19 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			if (y == null)
 				return 1;
 
-			// compare by timestamp
-			var diff = x.BinaryTimestamp - y.BinaryTimestamp;
-			if (diff < 0)
-				return -1;
-			if (diff > 0)
-				return 1;
-
 			// compare by ID
-			diff = x.LogId - y.LogId;
+			return CompareDisplayableLogsByIdNonNull(x, y);
+		}
+		static int CompareDisplayableLogsByIdNonNull(DisplayableLog x, DisplayableLog y)
+		{
+			var diff = x.LogId - y.LogId;
 			if (diff < 0)
 				return -1;
 			if (diff > 0)
 				return 1;
 			return 0;
 		}
-		int CompareDisplayableLogsDesc(DisplayableLog? x, DisplayableLog? y)
+		static int CompareDisplayableLogsByTimestamp(DisplayableLog? x, DisplayableLog? y)
 		{
 			// compare by reference
 			if (x == null)
@@ -326,17 +323,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// compare by timestamp
 			var diff = x.BinaryTimestamp - y.BinaryTimestamp;
 			if (diff < 0)
-				return 1;
-			if (diff > 0)
 				return -1;
+			if (diff > 0)
+				return 1;
 
 			// compare by ID
-			diff = x.LogId - y.LogId;
-			if (diff < 0)
-				return 1;
-			if (diff > 0)
-				return -1;
-			return 0;
+			return CompareDisplayableLogsByIdNonNull(x, y);
 		}
 
 
@@ -799,10 +791,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.displayableLogGroup = new DisplayableLogGroup(profile);
 
 			// setup log comparer
-			if (profile.SortDirection == SortDirection.Ascending)
-				this.compareDisplayableLogsDelegate = this.CompareDisplayableLogsAsc;
-			else
-				this.compareDisplayableLogsDelegate = this.CompareDisplayableLogsDesc;
+			this.compareDisplayableLogsDelegate = profile.SortKey switch
+			{
+				LogSortKey.Timestamp => CompareDisplayableLogsByTimestamp,
+				_ => CompareDisplayableLogsById,
+			};
+			if (profile.SortDirection == SortDirection.Descending)
+				this.compareDisplayableLogsDelegate = this.compareDisplayableLogsDelegate.Invert();
 
 			// read logs or wait for more actions
 			var dataSourceOptions = profile.DataSourceOptions;

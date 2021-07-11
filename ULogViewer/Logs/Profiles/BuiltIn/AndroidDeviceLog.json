@@ -21,6 +21,7 @@
 			"Regex": "^(?<Timestamp>[^\\s]+[\\s]+[^\\s]+)[\\s]+(?<ProcessId>[\\d]+)[\\s]+(?<ThreadId>[\\d]+)[\\s]+(?<Level>[\\w]+)[\\s]+(?<SourceName>[^\\s\\:]*([\\s]+[^\\s\\:]*)*)\\:[\\s](?<Message>.*)$"
 		}
 	],
+	"SortKey": "Id",
 	"TimestampCultureInfoForReading": "en-US",
 	"TimestampFormatForDisplaying": "MM/dd HH:mm:ss.fff",
 	"TimestampFormatForReading": "MM-dd HH:mm:ss.fff",
