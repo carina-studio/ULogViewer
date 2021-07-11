@@ -29,7 +29,8 @@
 	<!-- Styles -->
 	<Window.Styles>
 		<Style Selector="TabItem">
-			<Setter Property="MinHeight" Value="{StaticResource Double.MainWindow.TabItem.MinHeight}"/>
+			<Setter Property="MaxHeight" Value="{StaticResource Double.MainWindow.TabItem.Height}"/>
+			<Setter Property="MinHeight" Value="{StaticResource Double.MainWindow.TabItem.Height}"/>
 		</Style>
 	</Window.Styles>
 
