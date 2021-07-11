@@ -70,6 +70,18 @@
 
 				<!-- Separator -->
 				<Separator Classes="SessionView_ToolBar_Separator"/>
+
+				<!-- Refresh logs -->
+
+				<!-- Scroll to latest log -->
+				<ToggleButton Classes="SessionView_ToolBar_Button" IsChecked="{Binding $parent[UserControl].IsScrollingToLatestLogNeeded, Mode=TwoWay}" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" ToolTip.Tip="{DynamicResource String.SessionView.ScrollToLatestLog}">
+					<Border Classes="SessionView_ToolBar_Button_Icon">
+						<DrawingPresenter Classes="SessionView_ToolBar_Button_Icon" Drawing="{StaticResource Drawing.Scrolling}"/>
+					</Border>
+				</ToggleButton>
+
+				<!-- Separator -->
+				<Separator Classes="SessionView_ToolBar_Separator"/>
 				
 			</StackPanel>
 

@@ -29,7 +29,7 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		// Fields.
-		int continuousReadingUpdateInterval = 200;
+		int continuousReadingUpdateInterval = 100;
 		int dropLogCount = -1;
 		readonly ScheduledAction flushPendingLogsAction;
 		bool isContinuousReading;
