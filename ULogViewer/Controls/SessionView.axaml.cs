@@ -2,6 +2,8 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using Avalonia.Data;
+using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.LogicalTree;
 using Avalonia.Markup.Xaml;
@@ -9,13 +11,16 @@ using Avalonia.Markup.Xaml.Templates;
 using Avalonia.Media;
 using Avalonia.VisualTree;
 using CarinaStudio.Collections;
+using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ULogViewer.ViewModels;
+using CarinaStudio.Windows.Input;
 using Microsoft.Extensions.Logging;
 using ReactiveUI;
 using System;
 using System.ComponentModel;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Input;
 
 namespace CarinaStudio.ULogViewer.Controls
@@ -25,14 +30,37 @@ namespace CarinaStudio.ULogViewer.Controls
 	/// </summary>
 	partial class SessionView : BaseView
 	{
+		/// <summary>
+		/// Property of <see cref="HasLogProfile"/>.
+		/// </summary>
+		public static readonly AvaloniaProperty<bool> HasLogProfileProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(HasLogProfile), false);
+		/// <summary>
+		/// Property of <see cref="IsLogTextFilterValid"/>.
+		/// </summary>
+		public static readonly AvaloniaProperty<bool> IsLogTextFilterValidProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(IsLogTextFilterValid), true);
+		/// <summary>
+		/// Property of <see cref="IsScrollingToLatestLogNeeded"/>.
+		/// </summary>
+		public static readonly AvaloniaProperty<bool> IsScrollingToLatestLogNeededProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(IsScrollingToLatestLogNeeded), true);
+
+
+		// Constants.
+		const int ScrollingToLatestLogInterval = 100;
+
+
 		// Fields.
 		readonly MutableObservableBoolean canAddLogFiles = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSetLogProfile = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSetWorkingDirectory = new MutableObservableBoolean();
 		bool isWorkingDirNeededAfterLogProfileSet;
+		readonly Control logHeaderContainer;
 		readonly Grid logHeaderGrid;
 		readonly ListBox logListBox;
 		ScrollViewer? logScrollViewer;
+		readonly TextBox logTextFilterTextBox;
+		readonly ContextMenu otherActionsMenu;
+		readonly ScheduledAction scrollToLatestLogAction;
+		readonly ScheduledAction updateLogTextFilterAction;
 
 
 		/// <summary>
@@ -42,13 +70,16 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			// create commands
 			this.AddLogFilesCommand = ReactiveCommand.Create(this.AddLogFiles, this.canAddLogFiles);
+			this.ResetLogFiltersCommand = ReactiveCommand.Create(this.ResetLogFilters, this.GetObservable<bool>(HasLogProfileProperty));
 			this.SetLogProfileCommand = ReactiveCommand.Create(this.SetLogProfile, this.canSetLogProfile);
 			this.SetWorkingDirectoryCommand = ReactiveCommand.Create(this.SetWorkingDirectory, this.canSetWorkingDirectory);
+			this.ShowOtherActionsCommand = ReactiveCommand.Create(this.ShowOtherActions);
 
 			// initialize
 			this.InitializeComponent();
 
 			// setup controls
+			this.logHeaderContainer = this.FindControl<Control>("logHeaderContainer").AsNonNull();
 			this.logHeaderGrid = this.FindControl<Grid>("logHeaderGrid").AsNonNull();
 			this.logListBox = this.FindControl<ListBox>("logListBox").AsNonNull().Also(it =>
 			{
@@ -59,9 +90,57 @@ namespace CarinaStudio.ULogViewer.Controls
 						this.logScrollViewer = (it.Scroll as ScrollViewer)?.Also(scrollViewer =>
 						{
 							scrollViewer.AllowAutoHide = false;
+							scrollViewer.ScrollChanged += this.OnLogListBoxScrollChanged;
 						});
 					}
 				};
+			});
+			this.logTextFilterTextBox = this.FindControl<TextBox>("logTextFilterTextBox").AsNonNull();
+			this.otherActionsMenu = (ContextMenu)this.Resources["otherActionsMenu"].AsNonNull();
+
+			// create scheduled actions
+			this.scrollToLatestLogAction = new ScheduledAction(() =>
+			{
+				// check state
+				if (!this.IsScrollingToLatestLogNeeded)
+					return;
+				if (this.DataContext is not Session session)
+					return;
+				if (session.Logs.IsEmpty() || session.LogProfile == null)
+					return;
+
+				// find log index
+				var logIndex = session.LogProfile.SortDirection == SortDirection.Ascending ? session.Logs.Count - 1 : 0;
+
+				// scroll to latest log
+				this.logListBox.ScrollIntoView(logIndex);
+				this.scrollToLatestLogAction?.Schedule(ScrollingToLatestLogInterval);
+			});
+			this.updateLogTextFilterAction = new ScheduledAction(() =>
+			{
+				// get session
+				if (this.DataContext is not Session session)
+					return;
+
+				// create regex
+				var regex = (Regex?)null;
+				var pattern = this.logTextFilterTextBox.Text?.Trim();
+				if (!string.IsNullOrEmpty(pattern))
+				{
+					try
+					{
+						regex = new Regex(pattern, this.Settings.GetValueOrDefault(Settings.IgnoreCaseOfLogTextFilter) ? RegexOptions.IgnoreCase : RegexOptions.None);
+					}
+					catch
+					{
+						this.SetValue<bool>(IsLogTextFilterValidProperty, false);
+						return;
+					}
+				}
+				this.SetValue<bool>(IsLogTextFilterValidProperty, true);
+
+				// update session
+				session.LogTextFilterRegex = regex;
 			});
 		}
 
@@ -121,6 +200,17 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.canSetLogProfile.Update(session.ResetLogProfileCommand.CanExecute(null) || session.SetLogProfileCommand.CanExecute(null));
 			this.canSetWorkingDirectory.Update(session.SetWorkingDirectoryCommand.CanExecute(null));
 
+			// update properties
+			this.SetValue<bool>(HasLogProfileProperty, session.LogProfile != null);
+
+			// start auto scrolling
+			if (session.HasLogs && this.IsScrollingToLatestLogNeeded)
+				this.scrollToLatestLogAction.Schedule(ScrollingToLatestLogInterval);
+
+			// sync log filters to UI
+			this.logTextFilterTextBox.Text = session.LogTextFilterRegex?.ToString() ?? "";
+			this.updateLogTextFilterAction.Cancel();
+
 			// update UI
 			this.OnDisplayLogPropertiesChanged();
 		}
@@ -141,13 +231,41 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.canSetLogProfile.Update(false);
 			this.canSetWorkingDirectory.Update(false);
 
+			// update properties
+			this.SetValue<bool>(HasLogProfileProperty, false);
+
+			// stop auto scrolling
+			this.scrollToLatestLogAction.Cancel();
+
 			// update UI
 			this.OnDisplayLogPropertiesChanged();
 		}
 
 
+		/// <summary>
+		/// Check whether log profile has been set or not.
+		/// </summary>
+		public bool HasLogProfile { get => this.GetValue<bool>(HasLogProfileProperty); }
+
+
 		// Initialize Avalonia components.
 		private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
+
+
+		/// <summary>
+		/// Check whether pattern of log text filter is valid or not.
+		/// </summary>
+		public bool IsLogTextFilterValid { get => this.GetValue<bool>(IsLogTextFilterValidProperty); }
+
+
+		/// <summary>
+		/// Get or set whether scrolling to latest log is needed or not.
+		/// </summary>
+		public bool IsScrollingToLatestLogNeeded
+		{
+			get => this.GetValue<bool>(IsScrollingToLatestLogNeededProperty);
+			set => this.SetValue<bool>(IsScrollingToLatestLogNeededProperty, value);
+		}
 
 
 		// Called when display log properties changed.
@@ -227,9 +345,22 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 
 			// build item template
+			var itemPadding = app.Resources.TryGetResource("Thickness.SessionView.LogListBox.Item.Padding", out rawResource) ? (Thickness)rawResource.AsNonNull() : new Thickness();
 			var itemTemplateContent = new Func<IServiceProvider, object>(_ =>
 			{
-				var itemGrid = new Grid();
+				var itemPanel = new Panel().Also(it =>
+				{
+					it.Children.Add(new Border().Also(border =>
+					{
+						border.Bind(Border.BackgroundProperty, border.GetResourceObservable("Brush.SessionView.LogListBox.Item.Background.Marked"));
+						border.Bind(Border.IsVisibleProperty, new Binding() { Path = nameof(DisplayableLog.IsMarked) });
+					}));
+				});
+				var itemGrid = new Grid().Also(it =>
+				{
+					it.Margin = itemPadding;
+					itemPanel.Children.Add(it);
+				});
 				for (var i = 0; i < logPropertyCount; ++i)
 				{
 					// define splitter column
@@ -254,10 +385,8 @@ namespace CarinaStudio.ULogViewer.Controls
 					{
 						_ => new TextBlock().Also(it =>
 						{
-							it.Bind(TextBlock.TextProperty, new Binding()
-							{
-								Path = logProperty.Name
-							});
+							it.Bind(TextBlock.ForegroundProperty, new Binding() { Path = nameof(DisplayableLog.LevelBrush) });
+							it.Bind(TextBlock.TextProperty, new Binding() { Path = logProperty.Name });
 							it.TextTrimming = TextTrimming.CharacterEllipsis;
 							it.TextWrapping = TextWrapping.NoWrap;
 							it.VerticalAlignment = VerticalAlignment.Top;
@@ -266,13 +395,128 @@ namespace CarinaStudio.ULogViewer.Controls
 					Grid.SetColumn(propertyView, logPropertyIndex * 2);
 					itemGrid.Children.Add(propertyView);
 				}
-				return new ControlTemplateResult(itemGrid, null);
+				return new ControlTemplateResult(itemPanel, null);
 			});
 			this.logListBox.ItemTemplate = new DataTemplate()
 			{
 				Content = itemTemplateContent,
 				DataType = typeof(DisplayableLog),
 			};
+		}
+
+
+		// Called when log list box scrolled.
+		void OnLogListBoxScrollChanged(object? sender, ScrollChangedEventArgs e)
+		{
+			// check state
+			var logScrollViewer = this.logScrollViewer;
+			if (logScrollViewer == null)
+				return;
+
+			// update auto scrolling state
+			var logProfile = (this.HasLogProfile ? (this.DataContext as Session)?.LogProfile : null);
+			if (this.logListBox.IsPointerOver && logProfile != null)
+			{
+				if (this.IsScrollingToLatestLogNeeded)
+				{
+					if (logProfile.SortDirection == SortDirection.Ascending)
+					{
+						if (e.OffsetDelta.Y < 0)
+						{
+							this.Logger.LogDebug("Cancel auto scrolling because of user scrolling up");
+							this.IsScrollingToLatestLogNeeded = false;
+						}
+					}
+					else
+					{
+						if (e.OffsetDelta.Y > 0)
+						{
+							this.Logger.LogDebug("Cancel auto scrolling because of user scrolling down");
+							this.IsScrollingToLatestLogNeeded = false;
+						}
+					}
+				}
+				else if (logProfile != null && logProfile.IsContinuousReading)
+				{
+					if (logProfile.SortDirection == SortDirection.Ascending)
+					{
+						if (e.OffsetDelta.Y > 0 && ((logScrollViewer.Offset.Y + logScrollViewer.Viewport.Height) / (double)logScrollViewer.Extent.Height) >= 0.999)
+						{
+							this.Logger.LogDebug("Start auto scrolling because of user scrolling down");
+							this.IsScrollingToLatestLogNeeded = true;
+						}
+					}
+					else
+					{
+						if (e.OffsetDelta.Y < 0 && (logScrollViewer.Offset.Y / (double)logScrollViewer.Extent.Height) <= 0.001)
+						{
+							this.Logger.LogDebug("Start auto scrolling because of user scrolling up");
+							this.IsScrollingToLatestLogNeeded = true;
+						}
+					}
+				}
+			}
+
+			// sync log header offset
+			this.logHeaderContainer.Margin = new Thickness(-logScrollViewer.Offset.X, 0, 0, 0);
+		}
+
+
+		// Called when property of log text filter text box changed.
+		void OnLogTextFilterTextBoxPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
+		{
+			if (e.Property == TextBlock.TextProperty)
+				this.updateLogTextFilterAction.Reschedule(this.UpdateLogFilterParamsDelay);
+		}
+
+
+		// Called when key down.
+		protected override void OnKeyDown(KeyEventArgs e)
+		{
+			// handle key event for combo keys
+			if (!e.Handled && (e.KeyModifiers & KeyModifiers.Control) != 0)
+			{
+				switch (e.Key)
+				{
+					case Key.F:
+						if (e.Source is not TextBox)
+						{
+							this.logTextFilterTextBox.Focus();
+							this.logTextFilterTextBox.SelectAll();
+							e.Handled = true;
+						}
+						break;
+				}
+			}
+
+			// call base
+			base.OnKeyDown(e);
+		}
+
+
+		// Called when key up.
+		protected override void OnKeyUp(KeyEventArgs e)
+		{
+			// handle key event for single key
+			if (!e.Handled && e.KeyModifiers == KeyModifiers.None)
+			{
+				switch (e.Key)
+				{
+					case Key.Escape:
+						if (e.Source is TextBox)
+						{
+							this.logListBox.Focus();
+							e.Handled = true;
+						}
+						break;
+					case Key.F5:
+						(this.DataContext as Session)?.ReloadLogsCommand?.TryExecute();
+						break;
+				}
+			}
+
+			// call base
+			base.OnKeyUp(e);
 		}
 
 
@@ -285,6 +529,22 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				(change.OldValue.Value as Session)?.Let(session => this.DetachFromSession(session));
 				(change.NewValue.Value as Session)?.Let(session => this.AttachToSession(session));
+			}
+			else if (property == IsScrollingToLatestLogNeededProperty)
+			{
+				if (this.IsScrollingToLatestLogNeeded)
+				{
+					var logProfile = (this.DataContext as Session)?.LogProfile;
+					if (logProfile != null && !logProfile.IsContinuousReading)
+					{
+						this.scrollToLatestLogAction.Execute();
+						this.SynchronizationContext.Post(() => this.IsScrollingToLatestLogNeeded = false);
+					}
+					else
+						this.scrollToLatestLogAction.Schedule(ScrollingToLatestLogInterval);
+				}
+				else
+					this.scrollToLatestLogAction.Cancel();
 			}
 		}
 
@@ -318,13 +578,38 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when property of session has been changed.
 		void OnSessionPropertyChanged(object? sender, PropertyChangedEventArgs e)
 		{
+			if (sender is not Session session)
+				return;
 			switch (e.PropertyName)
 			{
 				case nameof(Session.DisplayLogProperties):
 					this.OnDisplayLogPropertiesChanged();
 					break;
+				case nameof(Session.HasLogs):
+					if (!session.HasLogs)
+						this.scrollToLatestLogAction.Cancel();
+					else if (this.IsScrollingToLatestLogNeeded)
+						this.scrollToLatestLogAction.Schedule(ScrollingToLatestLogInterval);
+					break;
+				case nameof(Session.LogProfile):
+					this.SetValue<bool>(HasLogProfileProperty, session.LogProfile != null);
+					break;
 			}
 		}
+
+
+		// Reset all log filters.
+		void ResetLogFilters()
+		{
+			this.logTextFilterTextBox.Text = "";
+			this.updateLogTextFilterAction.Execute();
+		}
+
+
+		/// <summary>
+		/// Command to reset all log filters.
+		/// </summary>
+		public ICommand ResetLogFiltersCommand { get; }
 
 
 		// Set log profile.
@@ -345,9 +630,14 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (logProfile == null)
 				return;
 
-			// reset log profile
+			// check state
 			if (this.DataContext is not Session session)
 				return;
+
+			// reset log filters
+			this.ResetLogFilters();
+
+			// reset log profile
 			this.isWorkingDirNeededAfterLogProfileSet = false;
 			if (session.ResetLogProfileCommand.CanExecute(null))
 				session.ResetLogProfileCommand.Execute(null);
@@ -358,7 +648,14 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// set log profile
 			this.isWorkingDirNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(Settings.SelectWorkingDirectoryWhenNeeded);
-			session.SetLogProfileCommand.Execute(logProfile);
+			if (!session.SetLogProfileCommand.TryExecute(logProfile))
+			{
+				this.Logger.LogError("Unable to set log profile to session");
+				return;
+			}
+
+			// reset auto scrolling
+			this.IsScrollingToLatestLogNeeded = logProfile.IsContinuousReading;
 		}
 
 
@@ -404,5 +701,22 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// Command to set working directory.
 		/// </summary>
 		public ICommand SetWorkingDirectoryCommand { get; }
+
+
+		// Show UI of other actions.
+		void ShowOtherActions()
+		{
+			this.otherActionsMenu.Open(this);
+		}
+
+
+		/// <summary>
+		/// Command to show UI of other actions.
+		/// </summary>
+		public ICommand ShowOtherActionsCommand { get; }
+
+
+		// Get delay of updating log filter.
+		int UpdateLogFilterParamsDelay { get => Math.Max(500, Math.Min(1000, this.Settings.GetValueOrDefault(Settings.UpdateLogFilterDelay))); }
 	}
 }

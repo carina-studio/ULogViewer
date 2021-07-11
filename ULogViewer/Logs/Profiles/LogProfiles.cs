@@ -15,9 +15,10 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 	{
 		// Fields.
 		static volatile IApplication? app;
-		static readonly string[] builtInProfileIDs = new string[] {
+		static readonly IList<string> builtInProfileIDs = new List<string>(new string[] {
+			"AndroidDeviceLog",
 			"GitLog",
-		};
+		});
 		static volatile ILogger? logger;
 		static readonly ObservableList<LogProfile> pinnedProfiles = new ObservableList<LogProfile>();
 		static readonly ObservableList<LogProfile> profiles = new ObservableList<LogProfile>();
@@ -28,6 +29,9 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		{
 			All = profiles.AsReadOnly();
 			Pinned = pinnedProfiles.AsReadOnly();
+#if DEBUG
+			builtInProfileIDs.Add("ULogViewerLog");
+#endif
 		}
 
 

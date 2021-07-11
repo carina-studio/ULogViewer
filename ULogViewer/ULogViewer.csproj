@@ -20,6 +20,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Logs\Profiles\BuiltIn\AndroidDeviceLog.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <AvaloniaResource Include="AppIcon.ico" />
     <AvaloniaResource Include="Resources/AppIcon_128px.png" />
     <AvaloniaResource Include="Resources/AppIcon_256px.png" />
@@ -36,9 +40,10 @@
     <PackageReference Include="Avalonia.Controls.DataGrid" Version="0.10.6" />
     <PackageReference Include="Avalonia.Desktop" Version="0.10.6" />
     <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.6" />
-    <PackageReference Include="CarinaStudio.AppBase.Application" Version="0.16.0.706" />
-    <PackageReference Include="CarinaStudio.AppBase.Configuration" Version="0.16.0.706" />
-    <PackageReference Include="CarinaStudio.AppBase.Core" Version="0.16.0.706" />
+    <PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.10.6.3" />
+    <PackageReference Include="CarinaStudio.AppBase.Application" Version="0.17.1.709" />
+    <PackageReference Include="CarinaStudio.AppBase.Configuration" Version="0.17.1.709" />
+    <PackageReference Include="CarinaStudio.AppBase.Core" Version="0.17.1.709" />
     <PackageReference Include="Microsoft.Win32.SystemEvents" Version="5.0.0" />
     <PackageReference Include="NLog" Version="4.7.10" />
     <PackageReference Include="NLog.Extensions.Logging" Version="1.7.3" />
@@ -61,7 +66,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/AndroidDeviceLog.json" />
 	  <EmbeddedResource Include="Logs/Profiles/BuiltIn/GitLog.json" />
+	  <EmbeddedResource Include="Logs/Profiles/BuiltIn/ULogViewerLog.json" />
 	</ItemGroup>
 
 </Project>

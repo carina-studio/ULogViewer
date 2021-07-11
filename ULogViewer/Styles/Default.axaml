@@ -14,6 +14,15 @@
 			<SolidColorBrush x:Key="Brush.Dialog.Background">#ffffff</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.Dialog.ControlButtonsPanel.Background">#ffffff</SolidColorBrush>
 
+			<!-- DisplayableLog -->
+			<SolidColorBrush x:Key="Brush.DisplayableLog.Level.Debug">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.DisplayableLog.Level.Error">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.DisplayableLog.Level.Fatal">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.DisplayableLog.Level.Info">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.DisplayableLog.Level.Undefined">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.DisplayableLog.Level.Verbose">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.DisplayableLog.Level.Warn">#000000</SolidColorBrush>
+
 			<!-- Icon -->
 			<SolidColorBrush x:Key="Brush.Icon">#000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.Icon.Error">#ff3232</SolidColorBrush>
@@ -25,10 +34,16 @@
 			<SolidColorBrush x:Key="Brush.LogProfileSelectionDialog.Label.Background">#00000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.LogProfileSelectionDialog.Label.Border">#00000000</SolidColorBrush>
 
+			<!-- Separator -->
+			<SolidColorBrush x:Key="Brush.Separator.Background">#00000000</SolidColorBrush>
+
 			<!-- SessionView -->
 			<SolidColorBrush x:Key="Brush.SessionView.LogHeader.Background">#0e0e0e</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.SessionView.LogHeader.Separator">#000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.SessionView.LogListBox.Background">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.SessionView.LogListBox.Item.Background.Marked">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.SessionView.LogTextFilter.Background">#00000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.SessionView.LogTextFilter.Foreground.Error">#00000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.SessionView.SidePanel.Background">#000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.SessionView.StatusBar.Background">#000000</SolidColorBrush>
 
@@ -126,6 +141,7 @@
 	<Style Selector="Button.SessionView_ToolBar_Button">
 		<Setter Property="Background" Value="{x:Static Brushes.Transparent}"/>
 		<Setter Property="HorizontalContentAlignment" Value="Center"/>
+		<Setter Property="Margin" Value="{StaticResource Thickness.SessionView.ToolBar.Button.Margin}"/>
 		<Setter Property="Padding" Value="{StaticResource Thickness.SessionView.ToolBar.Button.Padding}"/>
 		<Setter Property="VerticalContentAlignment" Value="Center"/>
 	</Style>
@@ -140,6 +156,29 @@
 	<Style Selector="Image.SessionView_ToolBar_Button_Icon">
 		<Setter Property="Height" Value="{StaticResource Double.SessionView.ToolBar.Button.Icon.Size}"/>
 		<Setter Property="Width" Value="{StaticResource Double.SessionView.ToolBar.Button.Icon.Size}"/>
+	</Style>
+	<Style Selector="Separator.SessionView_StatusBar_Separator">
+		<Setter Property="Background" Value="{x:Null}"/>
+		<Setter Property="Width" Value="{StaticResource Double.SessionView.StatusBar.Separator.Size}"/>
+	</Style>
+	<Style Selector="Separator.SessionView_ToolBar_Separator">
+		<Setter Property="Background" Value="{DynamicResource Brush.Separator.Background}"/>
+		<Setter Property="Margin" Value="{StaticResource Thickness.SessionView.ToolBar.Separator.Margin}"/>
+		<Setter Property="Width" Value="{StaticResource Double.SessionView.ToolBar.Separator.Size}"/>
+	</Style>
+	<Style Selector="TextBox.SessionView_ToolBar_LogTextFilter">
+		<Setter Property="Background" Value="{DynamicResource Brush.SessionView.LogTextFilter.Background}"/>
+		<Setter Property="VerticalAlignment" Value="Center"/>
+	</Style>
+	<Style Selector="ToggleButton.SessionView_ToolBar_Button">
+		<Setter Property="Background" Value="{x:Static Brushes.Transparent}"/>
+		<Setter Property="HorizontalContentAlignment" Value="Center"/>
+		<Setter Property="Margin" Value="{StaticResource Thickness.SessionView.ToolBar.Button.Margin}"/>
+		<Setter Property="Padding" Value="{StaticResource Thickness.SessionView.ToolBar.Button.Padding}"/>
+		<Setter Property="VerticalContentAlignment" Value="Center"/>
+	</Style>
+	<Style Selector="ToggleButton.SessionView_ToolBar_Button:disabled">
+		<Setter Property="Opacity" Value="0.3"/>
 	</Style>
 
 </Styles>

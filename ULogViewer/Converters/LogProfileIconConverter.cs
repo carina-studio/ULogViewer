@@ -29,9 +29,9 @@ namespace CarinaStudio.ULogViewer.Converters
 
 
 		// Convert.
-		public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
+		public object? Convert(object value, Type targetType, object? parameter, CultureInfo culture)
 		{
-			if (value is not LogProfileIcon icon)
+			if (value is not LogProfileIcon icon || !typeof(Drawing).IsAssignableFrom(targetType))
 				return null;
 			if (app.Resources.TryGetResource($"Drawing.LogProfile.{icon}", out var res) && res is Drawing)
 				return res;

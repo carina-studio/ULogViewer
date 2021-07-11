@@ -1,0 +1,46 @@
+﻿{
+	"DataSource": {
+		"Name": "File"
+	},
+	"Icon": "File",
+	"LogLevelMap": {
+		"DEBUG": "Debug",
+		"ERROR": "Error",
+		"INFO": "Info",
+		"WARN": "Warn"
+	},
+	"LogPatterns": [
+		{
+			"Regex": "^(?<Timestamp>[^\\s]+[\\s]+[^\\s]+)[\\s]+(?<ProcessId>[\\d]+)[\\s]+(?<ThreadId>[\\d]+)[\\s]+(?<Level>[\\w]+)[\\s]+(?<SourceName>[^\\:]*)\\:[\\s](?<Message>.*)$"
+		},
+		{
+			"Regex": "^[\\s](?<Message>.*)$",
+			"IsSkippable": true,
+			"IsRepeatable": true
+		}
+	],
+	"TimestampCultureInfoForReading": "en-US",
+	"TimestampFormatForDisplaying": "yyyy/MM/dd HH:mm:ss.ffff",
+	"TimestampFormatForReading": "yyyy-MM-dd HH:mm:ss.ffff",
+	"VisibleLogProperties": [
+		{
+			"Name": "Timestamp",
+			"Width": 200
+		},
+		{
+			"Name": "ProcessId",
+			"Width": 80
+		},
+		{
+			"Name": "ThreadId",
+			"Width": 60
+		},
+		{
+			"Name": "SourceName",
+			"Width": 100
+		},
+		{
+			"Name": "Message"
+		}
+	]
+}

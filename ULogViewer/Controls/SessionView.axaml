@@ -2,6 +2,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+						 xmlns:ia="using:Avalonia.Xaml.Interactivity"
+						 xmlns:iaCore="using:Avalonia.Xaml.Interactions.Core"
 						 xmlns:appViewModels="clr-namespace:CarinaStudio.ULogViewer.ViewModels;assembly=ULogViewer"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="CarinaStudio.ULogViewer.Controls.SessionView">
@@ -17,6 +19,17 @@
 		</DataTemplate>
 		
 	</UserControl.DataTemplates>
+
+	<!-- Resources -->
+	<UserControl.Resources>
+
+		<!-- Other actions menu -->
+		<ContextMenu x:Key="otherActionsMenu">
+			<MenuItem Header="{DynamicResource String.SessionView.AppOptions}"/>
+			<MenuItem Header="{DynamicResource String.SessionView.AppInfo}"/>
+		</ContextMenu>
+		
+	</UserControl.Resources>
 	
 	<!-- Content -->
 	<Grid RowDefinitions="Auto,Auto,*,Auto">
@@ -29,7 +42,7 @@
 		</Grid.ColumnDefinitions>
 
 		<!-- Toolbar -->
-		<Grid Grid.ColumnSpan="3" Margin="{StaticResource Thickness.SessionView.ToolBar.Padding}">
+		<Grid ColumnDefinitions="Auto,*,Auto" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" Margin="{StaticResource Thickness.SessionView.ToolBar.Padding}">
 
 			<!-- Log actions -->
 			<StackPanel Orientation="Horizontal">
@@ -54,7 +67,71 @@
 						<DrawingPresenter Classes="SessionView_ToolBar_Button_Icon" Drawing="{StaticResource Drawing.AddFile}"/>
 					</Border>
 				</Button>
+
+				<!-- Separator -->
+				<Separator Classes="SessionView_ToolBar_Separator"/>
+
+				<!-- Reload logs -->
+				<Button Classes="SessionView_ToolBar_Button" Command="{Binding ReloadLogsCommand}" ToolTip.Tip="{DynamicResource String.SessionView.ReloadLogs}">
+					<Border Classes="SessionView_ToolBar_Button_Icon">
+						<DrawingPresenter Classes="SessionView_ToolBar_Button_Icon" Drawing="{StaticResource Drawing.Refresh}"/>
+					</Border>
+				</Button>
+
+				<!-- Scroll to latest log -->
+				<ToggleButton Classes="SessionView_ToolBar_Button" IsChecked="{Binding $parent[UserControl].IsScrollingToLatestLogNeeded, Mode=TwoWay}" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" ToolTip.Tip="{DynamicResource String.SessionView.ScrollToLatestLog}">
+					<Border Classes="SessionView_ToolBar_Button_Icon">
+						<DrawingPresenter Classes="SessionView_ToolBar_Button_Icon" Drawing="{StaticResource Drawing.Scrolling}"/>
+					</Border>
+				</ToggleButton>
+
+				<!-- Separator -->
+				<Separator Classes="SessionView_ToolBar_Separator"/>
 				
+			</StackPanel>
+
+			<!-- Log filters -->
+			<Grid ColumnDefinitions="*,Auto" Grid.Column="1" HorizontalAlignment="Stretch" Margin="{StaticResource Thickness.SessionView.ToolBar.LogFilters.Padding}" VerticalAlignment="Stretch">
+
+				<!-- Text filter -->
+				<TextBox Name="logTextFilterTextBox" Classes="SessionView_ToolBar_LogTextFilter" Grid.Column="0" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" Margin="{StaticResource Thickness.SessionView.ToolBar.LogTextFilter.Margin}" PropertyChanged="OnLogTextFilterTextBoxPropertyChanged" Watermark="{DynamicResource String.SessionView.LogTextFilterHint}">
+					<ia:Interaction.Behaviors>
+						<iaCore:DataTriggerBehavior Binding="{Binding $parent[UserControl].IsLogTextFilterValid}" ComparisonCondition="Equal" Value="True">
+							<iaCore:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource TextControlForeground}"/>
+						</iaCore:DataTriggerBehavior>
+						<iaCore:DataTriggerBehavior Binding="{Binding $parent[UserControl].IsLogTextFilterValid}" ComparisonCondition="Equal" Value="False">
+							<iaCore:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource Brush.SessionView.LogTextFilter.Foreground.Error}"/>
+						</iaCore:DataTriggerBehavior>
+					</ia:Interaction.Behaviors>
+				</TextBox>
+
+				<!-- Filter actions -->
+				<StackPanel Grid.Column="1" Orientation="Horizontal">
+
+					<!-- Reset log filters -->
+					<Button Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].ResetLogFiltersCommand}" ToolTip.Tip="{DynamicResource String.SessionView.ResetLogFilters}">
+						<Border Classes="SessionView_ToolBar_Button_Icon">
+							<DrawingPresenter Classes="SessionView_ToolBar_Button_Icon" Drawing="{StaticResource Drawing.Delete}"/>
+						</Border>
+					</Button>
+
+				</StackPanel>
+				
+			</Grid>
+
+			<!-- Other actions -->
+			<StackPanel Grid.Column="2" Orientation="Horizontal">
+
+				<!-- Separator -->
+				<Separator Classes="SessionView_ToolBar_Separator"/>
+
+				<!-- Other actions -->
+				<Button Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].ShowOtherActionsCommand}" ToolTip.Tip="{DynamicResource String.SessionView.OtherActions}">
+					<Border Classes="SessionView_ToolBar_Button_Icon">
+						<DrawingPresenter Classes="SessionView_ToolBar_Button_Icon" Drawing="{StaticResource Drawing.OtherActions}"/>
+					</Border>
+				</Button>
+
 			</StackPanel>
 			
 		</Grid>
@@ -67,18 +144,18 @@
 		<Grid Grid.Row="2" RowDefinitions="Auto,*">
 
 			<!-- Header -->
-			<Grid Background="{StaticResource Brush.SessionView.LogHeader.Background}">
+			<Grid Name="logHeaderContainer" Background="{StaticResource Brush.SessionView.LogHeader.Background}">
 				<TextBlock Margin="{StaticResource Thickness.SessionView.LogHeader.Margin}" Padding="{StaticResource Thickness.SessionView.LogHeader.Padding}" Text=" "/>
 				<Grid Name="logHeaderGrid"/>
 			</Grid>
 
 			<!-- ListBox -->
-			<ListBox Name="logListBox" AutoScrollToSelectedItem="False" Background="{StaticResource Brush.SessionView.LogListBox.Background}" Grid.Row="1" HorizontalAlignment="Stretch" Items="{Binding Logs}" ScrollViewer.HorizontalScrollBarVisibility="Auto" SelectionMode="Multiple" VirtualizationMode="Simple">
+			<ListBox Name="logListBox" AutoScrollToSelectedItem="False" Background="{StaticResource Brush.SessionView.LogListBox.Background}" Grid.Row="1" HorizontalAlignment="Stretch" Items="{Binding Logs}" Padding="{StaticResource Thickness.SessionView.LogListBox.Padding}" ScrollViewer.HorizontalScrollBarVisibility="Visible" SelectionMode="Multiple" VirtualizationMode="Simple">
 				<ListBox.Styles>
 					<Style Selector="ListBoxItem">
 						<Setter Property="HorizontalAlignment" Value="Stretch"/>
 						<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-						<Setter Property="Padding" Value="{StaticResource Thickness.SessionView.LogListBox.Item.Padding}"/>
+						<Setter Property="Padding" Value="0"/>
 					</Style>
 					<Style Selector="TextBlock">
 						<Setter Property="FontFamily" Value="Consolas"/>
@@ -95,10 +172,25 @@
 
 		<!-- Status bar -->
 		<Border Background="{StaticResource Brush.SessionView.StatusBar.Background}" Grid.ColumnSpan="3" Grid.Row="3" Padding="{StaticResource Thickness.SessionView.StatucBar.Padding}">
-			<Grid>
+			<Grid ColumnDefinitions="Auto,Auto,*">
 
 				<!-- Empty view to reserve space -->
-				<TextBlock Text=" " Opacity="0"/>
+				<TextBlock Grid.ColumnSpan="5" Text=" " Opacity="0"/>
+
+				<!-- Number of logs -->
+				<StackPanel IsVisible="{Binding HasLogs}" Orientation="Horizontal">
+					<TextBlock Text="{DynamicResource String.SessionView.AllLogCount}"/>
+					<TextBlock Text="{Binding AllLogCount}"/>
+					<TextBlock IsVisible="{Binding IsFilteringLogsNeeded}" Text="{DynamicResource String.SessionView.FilteredLogCount}"/>
+					<TextBlock IsVisible="{Binding IsFilteringLogsNeeded}" Text="{Binding FilteredLogCount}"/>
+					<Separator Classes="SessionView_StatusBar_Separator"/>
+				</StackPanel>
+
+				<!-- Filtering progress -->
+				<StackPanel Grid.Column="1" IsVisible="{Binding IsFilteringLogs}" Orientation="Horizontal">
+					<TextBlock Text="{DynamicResource String.SessionView.LogsFilteringProgress}"/>
+					<TextBlock Text="{Binding LogsFilteringProgress, Converter={x:Static appViewModels:Session.LogsFilteringProgressConverter}}"/>
+				</StackPanel>
 				
 			</Grid>
 		</Border>

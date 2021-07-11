@@ -1,13 +1,12 @@
-﻿using CarinaStudio.Threading;
+﻿using Avalonia.Media;
+using CarinaStudio.Configuration;
+using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.ViewModels
 {
@@ -18,6 +17,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 	{
 		// Fields.
 		readonly LinkedList<DisplayableLog> displayableLogs = new LinkedList<DisplayableLog>();
+		readonly Dictionary<LogLevel, IBrush> levelBrushes = new Dictionary<LogLevel, IBrush>();
 
 
 		/// <summary>
@@ -31,8 +31,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.LogProfile = profile;
 
 			// add event handlers
+			this.Application.Settings.SettingChanged += this.OnSettingChanged;
 			this.Application.StringsUpdated += this.OnApplicationStringsUpdated;
 			profile.PropertyChanged += this.OnLogProfilePropertyChanged;
+
+			// setup level brushes
+			this.UpdateLevelBrushes();
 		}
 
 
@@ -67,8 +71,24 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.VerifyAccess();
 
 			// remove event handlers
+			this.Application.Settings.SettingChanged -= this.OnSettingChanged;
 			this.Application.StringsUpdated -= this.OnApplicationStringsUpdated;
 			this.LogProfile.PropertyChanged -= this.OnLogProfilePropertyChanged;
+		}
+
+
+		/// <summary>
+		/// Get <see cref="IBrush"/> for given log level.
+		/// </summary>
+		/// <param name="level">Log level.</param>
+		/// <returns><see cref="IBrush"/> for given log level.</returns>
+		internal IBrush GetLevelBrush(LogLevel level)
+		{
+			if (this.levelBrushes.TryGetValue(level, out var brush))
+				return brush.AsNonNull();
+			if (this.levelBrushes.TryGetValue(LogLevel.Undefined, out brush))
+				return brush.AsNonNull();
+			throw new ArgumentException($"Cannot get brush for log level {level}.");
 		}
 
 
@@ -121,6 +141,40 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					node.Value.OnTimestampFormatChanged();
 					node = node.Next;
 				}
+			}
+		}
+
+
+		// Called when setting changed.
+		void OnSettingChanged(object? sender, SettingChangedEventArgs e)
+		{
+			if (e.Key == Settings.DarkMode)
+			{
+				this.SynchronizationContext.Post(() =>
+				{
+					this.UpdateLevelBrushes();
+					var node = this.displayableLogs.First;
+					while (node != null)
+					{
+						node.Value.OnStyleResourcesUpdated();
+						node = node.Next;
+					}
+				});
+			}
+		}
+
+
+		// Update level brushes.
+		void UpdateLevelBrushes()
+		{
+			if (this.Application is not App app)
+				return;
+			var resources = app.Styles;
+			this.levelBrushes.Clear();
+			foreach (var level in (LogLevel[])Enum.GetValues(typeof(LogLevel)))
+			{
+				if (resources.TryGetResource($"Brush.DisplayableLog.Level.{level}", out var res))
+					this.levelBrushes[level] = (IBrush)res.AsNonNull();
 			}
 		}
 

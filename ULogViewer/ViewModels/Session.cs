@@ -1,6 +1,9 @@
-﻿using CarinaStudio.Collections;
+﻿using Avalonia.Data.Converters;
+using Avalonia.Media;
+using CarinaStudio.Collections;
 using CarinaStudio.IO;
 using CarinaStudio.Threading;
+using CarinaStudio.ULogViewer.Converters;
 using CarinaStudio.ULogViewer.Logs;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.ULogViewer.Logs.Profiles;
@@ -12,7 +15,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -24,17 +27,33 @@ namespace CarinaStudio.ULogViewer.ViewModels
 	class Session : ViewModel
 	{
 		/// <summary>
+		/// Property of <see cref="AllLogCount"/>.
+		/// </summary>
+		public static readonly ObservableProperty<int> AllLogCountProperty = ObservableProperty.Register<Session, int>(nameof(AllLogCount));
+		/// <summary>
 		/// Property of <see cref="DisplayLogProperties"/>.
 		/// </summary>
 		public static readonly ObservableProperty<IList<DisplayableLogProperty>> DisplayLogPropertiesProperty = ObservableProperty.Register<Session, IList<DisplayableLogProperty>>(nameof(DisplayLogProperties), new DisplayableLogProperty[0]);
+		/// <summary>
+		/// Property of <see cref="FilteredLogCount"/>.
+		/// </summary>
+		public static readonly ObservableProperty<int> FilteredLogCountProperty = ObservableProperty.Register<Session, int>(nameof(FilteredLogCount));
 		/// <summary>
 		/// Property of <see cref="HasLogs"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> HasLogsProperty = ObservableProperty.Register<Session, bool>(nameof(HasLogs));
 		/// <summary>
+		/// Property of <see cref="Icon"/>.
+		/// </summary>
+		public static readonly ObservableProperty<Drawing?> IconProperty = ObservableProperty.Register<Session, Drawing?>(nameof(Icon));
+		/// <summary>
 		/// Property of <see cref="IsFilteringLogs"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsFilteringLogsProperty = ObservableProperty.Register<Session, bool>(nameof(IsFilteringLogs));
+		/// <summary>
+		/// Property of <see cref="IsFilteringLogsNeeded"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> IsFilteringLogsNeededProperty = ObservableProperty.Register<Session, bool>(nameof(IsFilteringLogsNeeded));
 		/// <summary>
 		/// Property of <see cref="IsReadingLogs"/>.
 		/// </summary>
@@ -51,31 +70,53 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Property of <see cref="Logs"/>.
 		/// </summary>
 		public static readonly ObservableProperty<IList<DisplayableLog>> LogsProperty = ObservableProperty.Register<Session, IList<DisplayableLog>>(nameof(Logs), new DisplayableLog[0]);
+		/// <summary>
+		/// Property of <see cref="LogsFilteringProgress"/>.
+		/// </summary>
+		public static readonly ObservableProperty<double> LogsFilteringProgressProperty = ObservableProperty.Register<Session, double>(nameof(LogsFilteringProgress));
+		/// <summary>
+		/// Property of <see cref="LogTextFilterRegex"/>.
+		/// </summary>
+		public static readonly ObservableProperty<Regex?> LogTextFilterRegexProperty = ObservableProperty.Register<Session, Regex?>(nameof(LogTextFilterRegex));
+		/// <summary>
+		/// Property of <see cref="Title"/>.
+		/// </summary>
+		public static readonly ObservableProperty<string?> TitleProperty = ObservableProperty.Register<Session, string?>(nameof(Title));
+
+
+		/// <summary>
+		/// <see cref="IValueConverter"/> to convert from logs filtering progress to readable string.
+		/// </summary>
+		public static readonly IValueConverter LogsFilteringProgressConverter = new RatioToPercentageConverter(1);
 
 
 		// Fields.
 		readonly HashSet<string> addedFilePaths = new HashSet<string>(PathEqualityComparer.Default);
 		readonly SortedObservableList<DisplayableLog> allLogs;
 		readonly MutableObservableBoolean canAddFile = new MutableObservableBoolean();
+		readonly MutableObservableBoolean canReloadLogs = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canResetLogProfile = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSetLogProfile = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSetWorkingDirectory = new MutableObservableBoolean();
 		Comparison<DisplayableLog?> compareDisplayableLogsDelegate;
 		DisplayableLogGroup? displayableLogGroup;
-		IComparer<Log> logComparer = LogComparers.TimestampAsc;
+		readonly DisplayableLogFilter logFilter;
 		readonly HashSet<LogReader> logReaders = new HashSet<LogReader>();
 		readonly ScheduledAction updateIsReadingLogsAction;
 		readonly ScheduledAction updateIsProcessingLogsAction;
+		readonly ScheduledAction updateLogFilterAction;
+		readonly ScheduledAction updateTitleAndIconAction;
 
 
 		/// <summary>
 		/// Initialize new <see cref="Session"/> instance.
 		/// </summary>
-		/// <param name="app">Application.</param>
-		public Session(IApplication app) : base(app)
+		/// <param name="workspace"><see cref="Workspace"/>.</param>
+		public Session(Workspace workspace) : base(workspace.Application)
 		{
 			// create commands
 			this.AddLogFileCommand = ReactiveCommand.Create<string?>(this.AddLogFile, this.canAddFile);
+			this.ReloadLogsCommand = ReactiveCommand.Create(this.ReloadLogs, this.canReloadLogs);
 			this.ResetLogProfileCommand = ReactiveCommand.Create(this.ResetLogProfile, this.canResetLogProfile);
 			this.SetLogProfileCommand = ReactiveCommand.Create<LogProfile?>(this.SetLogProfile, this.canSetLogProfile);
 			this.SetWorkingDirectoryCommand = ReactiveCommand.Create<string?>(this.SetWorkingDirectory, this.canSetWorkingDirectory);
@@ -87,15 +128,25 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				it.CollectionChanged += this.OnAllLogsChanged;
 			});
 
+			// create log filter
+			this.logFilter = new DisplayableLogFilter((IApplication)this.Application, this.allLogs, this.CompareDisplayableLogs).Also(it =>
+			{
+				((INotifyCollectionChanged)it.FilteredLogs).CollectionChanged += this.OnFilteredLogsChanged;
+				it.PropertyChanged += this.OnLogFilterPropertyChanged;
+			});
+
 			// setup properties
 			this.SetValue(LogsProperty, this.allLogs.AsReadOnly());
+			this.Workspace = workspace;
 
 			// setup delegates
-			this.compareDisplayableLogsDelegate = this.CompareDisplayableLogsAsc;
+			this.compareDisplayableLogsDelegate = CompareDisplayableLogsById;
 
 			// create scheduled actions
 			this.updateIsReadingLogsAction = new ScheduledAction(() =>
 			{
+				if (this.IsDisposed)
+					return;
 				if (this.logReaders.IsEmpty())
 					this.SetValue(IsReadingLogsProperty, false);
 				else
@@ -115,6 +166,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			});
 			this.updateIsProcessingLogsAction = new ScheduledAction(() =>
 			{
+				if (this.IsDisposed)
+					return;
 				var logProfile = this.LogProfile;
 				if (logProfile == null || logProfile.IsContinuousReading)
 					this.SetValue(IsProcessingLogsProperty, false);
@@ -123,6 +176,55 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				else
 					this.SetValue(IsProcessingLogsProperty, false);
 			});
+			this.updateLogFilterAction = new ScheduledAction(() =>
+			{
+				// check state
+				if (this.IsDisposed || this.LogProfile == null)
+					return;
+
+				// setup text regex
+				if (this.LogTextFilterRegex == null)
+					this.logFilter.TextRegexList = new Regex[0];
+				else
+					this.logFilter.TextRegexList = new Regex[] { this.LogTextFilterRegex };
+			});
+			this.updateTitleAndIconAction = new ScheduledAction(() =>
+			{
+				// check state
+				if (this.IsDisposed)
+					return;
+
+				// select icon
+				var app = this.Application as App;
+				var logProfile = this.LogProfile;
+				var icon = Global.Run(() =>
+				{
+					if (logProfile == null)
+					{
+						var res = (object?)null;
+						app?.Resources?.TryGetResource("Drawing.EmptySession", out res);
+						return res as Drawing;
+					}
+					else if (app != null)
+						return LogProfileIconConverter.Default.Convert(logProfile.Icon, typeof(Drawing), null, app.CultureInfo) as Drawing;
+					return null;
+				});
+
+				// select title
+				var title = Global.Run(() =>
+				{
+					if (logProfile == null)
+						return app?.GetString("Session.Empty");
+					if (logProfile.DataSourceProvider.UnderlyingSource != UnderlyingLogDataSource.File || this.addedFilePaths.IsEmpty())
+						return logProfile.Name;
+					return $"{logProfile.Name} ({this.addedFilePaths.Count})";
+				});
+
+				// update properties
+				this.SetValue(IconProperty, icon);
+				this.SetValue(TitleProperty, title);
+			});
+			this.updateTitleAndIconAction.Execute();
 		}
 
 
@@ -158,6 +260,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// create log reader
 			this.CreateLogReader(dataSource);
+
+			// update title
+			this.updateTitleAndIconAction.Schedule();
+
+			// update state
+			this.canReloadLogs.Update(true);
 		}
 
 
@@ -168,9 +276,15 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public ICommand AddLogFileCommand { get; }
 
 
+		/// <summary>
+		/// Get number of all read logs.
+		/// </summary>
+		public int AllLogCount { get => this.GetValue(AllLogCountProperty); }
+
+
 		// Compare displayable logs.
 		int CompareDisplayableLogs(DisplayableLog? x, DisplayableLog? y) => this.compareDisplayableLogsDelegate(x, y);
-		int CompareDisplayableLogsAsc(DisplayableLog? x, DisplayableLog? y)
+		static int CompareDisplayableLogsById(DisplayableLog? x, DisplayableLog? y)
 		{
 			// compare by reference
 			if (x == null)
@@ -182,22 +296,19 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			if (y == null)
 				return 1;
 
-			// compare by timestamp
-			var diff = x.BinaryTimestamp - y.BinaryTimestamp;
-			if (diff < 0)
-				return -1;
-			if (diff > 0)
-				return 1;
-
 			// compare by ID
-			diff = x.LogId - y.LogId;
+			return CompareDisplayableLogsByIdNonNull(x, y);
+		}
+		static int CompareDisplayableLogsByIdNonNull(DisplayableLog x, DisplayableLog y)
+		{
+			var diff = x.LogId - y.LogId;
 			if (diff < 0)
 				return -1;
 			if (diff > 0)
 				return 1;
 			return 0;
 		}
-		int CompareDisplayableLogsDesc(DisplayableLog? x, DisplayableLog? y)
+		static int CompareDisplayableLogsByTimestamp(DisplayableLog? x, DisplayableLog? y)
 		{
 			// compare by reference
 			if (x == null)
@@ -212,17 +323,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// compare by timestamp
 			var diff = x.BinaryTimestamp - y.BinaryTimestamp;
 			if (diff < 0)
-				return 1;
-			if (diff > 0)
 				return -1;
+			if (diff > 0)
+				return 1;
 
 			// compare by ID
-			diff = x.LogId - y.LogId;
-			if (diff < 0)
-				return 1;
-			if (diff > 0)
-				return -1;
-			return 0;
+			return CompareDisplayableLogsByIdNonNull(x, y);
 		}
 
 
@@ -248,6 +354,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			var profile = this.LogProfile ?? throw new InternalStateCorruptedException("No log profile to create log reader.");
 			var logReader = new LogReader(dataSource).Also(it =>
 			{
+				it.IsContinuousReading = profile.IsContinuousReading;
 				it.LogLevelMap = profile.LogLevelMap;
 				it.LogPatterns = profile.LogPatterns;
 				it.TimestampCultureInfo = profile.TimestampCultureInfoForReading;
@@ -297,7 +404,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.VerifyAccess();
 
 			// cancel filtering
-			//
+			((INotifyCollectionChanged)this.logFilter.FilteredLogs).CollectionChanged -= this.OnFilteredLogsChanged;
+			this.logFilter.PropertyChanged -= this.OnLogFilterPropertyChanged;
+			this.logFilter.Dispose();
 
 			// dispose log readers
 			this.DisposeLogReaders(false);
@@ -307,6 +416,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				displayableLog.Dispose();
 			this.allLogs.Clear();
 			this.displayableLogGroup = this.displayableLogGroup.DisposeAndReturnNull();
+
+			// detach from log profile
+			this.LogProfile?.Let(it => it.PropertyChanged -= this.OnLogProfilePropertyChanged);
 
 			// call base
 			base.Dispose(disposing);
@@ -348,15 +460,33 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Get number of filtered logs.
+		/// </summary>
+		public int FilteredLogCount { get => this.GetValue(FilteredLogCountProperty); }
+
+
+		/// <summary>
 		/// Check whether at least one log is read or not.
 		/// </summary>
 		public bool HasLogs { get => this.GetValue(HasLogsProperty); }
 
 
 		/// <summary>
+		/// Get icon of session.
+		/// </summary>
+		public Drawing? Icon { get => this.GetValue(IconProperty); }
+
+
+		/// <summary>
 		/// Check whether logs are being filtered or not.
 		/// </summary>
 		public bool IsFilteringLogs { get => this.GetValue(IsFilteringLogsProperty); }
+
+
+		/// <summary>
+		/// Check whether logs filtering is needed or not.
+		/// </summary>
+		public bool IsFilteringLogsNeeded { get => this.GetValue(IsFilteringLogsNeededProperty); }
 
 
 		/// <summary>
@@ -383,6 +513,22 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public IList<DisplayableLog> Logs { get => this.GetValue(LogsProperty); }
 
 
+		/// <summary>
+		/// Get progress of logs filtering.
+		/// </summary>
+		public double LogsFilteringProgress { get => this.GetValue(LogsFilteringProgressProperty); }
+
+
+		/// <summary>
+		/// Get or set <see cref="Regex"/> for log text filtering.
+		/// </summary>
+		public Regex? LogTextFilterRegex
+		{
+			get => this.GetValue(LogTextFilterRegexProperty);
+			set => this.SetValue(LogTextFilterRegexProperty, value);
+		}
+
+
 		// Called when logs in allLogs has been changed.
 		void OnAllLogsChanged(object? sender, NotifyCollectionChangedEventArgs e)
 		{
@@ -395,13 +541,68 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						displayableLog.Dispose();
 					break;
 			}
-			this.SetValue(HasLogsProperty, this.allLogs.IsNotEmpty());
+			if (!this.IsDisposed)
+			{
+				if (!this.logFilter.IsFilteringNeeded)
+					this.SetValue(HasLogsProperty, this.allLogs.IsNotEmpty());
+				this.SetValue(AllLogCountProperty, this.allLogs.Count);
+			}
+		}
+
+
+		// Called when filtered logs has been changed.
+		void OnFilteredLogsChanged(object? sender, NotifyCollectionChangedEventArgs e)
+		{
+			if (!this.IsDisposed)
+			{
+				if (this.logFilter.IsFilteringNeeded)
+					this.SetValue(HasLogsProperty, this.logFilter.FilteredLogs.IsNotEmpty());
+				this.SetValue(FilteredLogCountProperty, this.logFilter.FilteredLogs.Count);
+			}
 		}
 
 
 		// Called when property of log data source changed.
 		void OnLogDataSourcePropertyChanged(object? sender, PropertyChangedEventArgs e)
 		{ }
+
+
+		// Called when property of log filter changed.
+		void OnLogFilterPropertyChanged(object? sender, PropertyChangedEventArgs e)
+		{
+			switch (e.PropertyName)
+			{
+				case nameof(DisplayableLogFilter.FilteringProgress):
+					this.SetValue(LogsFilteringProgressProperty, this.logFilter.FilteringProgress);
+					break;
+				case nameof(DisplayableLogFilter.IsFiltering):
+					this.SetValue(IsFilteringLogsProperty, this.logFilter.IsFiltering);
+					break;
+				case nameof(DisplayableLogFilter.IsFilteringNeeded):
+					if (this.logFilter.IsFilteringNeeded)
+					{
+						this.SetValue(LogsProperty, logFilter.FilteredLogs);
+						this.SetValue(HasLogsProperty, logFilter.FilteredLogs.IsNotEmpty());
+					}
+					else
+					{
+						this.SetValue(LogsProperty, this.allLogs.AsReadOnly());
+						this.SetValue(HasLogsProperty, this.allLogs.IsNotEmpty());
+					}
+					this.SetValue(IsFilteringLogsNeededProperty, this.logFilter.IsFilteringNeeded);
+					break;
+			}
+		}
+
+
+		// Called when property of log profile changed.
+		void OnLogProfilePropertyChanged(object? sender, PropertyChangedEventArgs e)
+		{
+			if (sender != this.LogProfile)
+				return;
+			if (e.PropertyName == nameof(LogProfile.Name))
+				this.updateTitleAndIconAction.Schedule();
+		}
 
 
 		// Called when logs of log reader has been changed.
@@ -463,7 +664,50 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			base.OnPropertyChanged(property, oldValue, newValue);
 			if (property == IsFilteringLogsProperty || property == IsReadingLogsProperty)
 				this.updateIsProcessingLogsAction.Schedule();
+			else if (property == LogTextFilterRegexProperty)
+				this.updateLogFilterAction.Reschedule();
 		}
+
+
+		// Reload logs.
+		void ReloadLogs()
+		{
+			// check state
+			this.VerifyAccess();
+			this.VerifyDisposed();
+			if (!this.canReloadLogs.Value || this.logReaders.IsEmpty())
+				return;
+			var profile = this.LogProfile;
+			if (profile == null)
+				throw new InternalStateCorruptedException("No log profile to reload logs.");
+
+			// collect data source options
+			var dataSourceOptions = new List<LogDataSourceOptions>().Also(it =>
+			{
+				foreach (var logReader in this.logReaders)
+					it.Add(logReader.DataSource.CreationOptions);
+			});
+
+			this.Logger.LogWarning($"Reload logs with {dataSourceOptions.Count} log reader(s)");
+
+			// dispose log readers
+			this.DisposeLogReaders(true);
+
+			// recreate log readers
+			var dataSourceProvider = profile.DataSourceProvider;
+			foreach (var dataSourceOption in dataSourceOptions)
+			{
+				var dataSource = this.CreateLogDataSourceOrNull(dataSourceProvider, dataSourceOption);
+				if (dataSource != null)
+					this.CreateLogReader(dataSource);
+			}
+		}
+
+
+		/// <summary>
+		/// Command to reload logs.
+		/// </summary>
+		public ICommand ReloadLogsCommand { get; }
 
 
 		// Reset log profile.
@@ -478,12 +722,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			if (profile == null)
 				throw new InternalStateCorruptedException("No log profile to reset.");
 
+			// detach from log profile
+			profile.PropertyChanged -= this.OnLogProfilePropertyChanged;
+
 			// clear profile
 			this.Logger.LogWarning($"Reset log profile '{profile.Name}'");
 			this.SetValue(LogProfileProperty, null);
 
 			// cancel filtering
-			//
+			this.logFilter.FilteringLogProperties = DisplayLogPropertiesProperty.DefaultValue;
+			this.updateLogFilterAction.Cancel();
 
 			// dispose log readers
 			this.DisposeLogReaders(false);
@@ -500,9 +748,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// clear display log properties
 			this.UpdateDisplayLogProperties();
 
+			// update title
+			this.updateTitleAndIconAction.Schedule();
+
 			// update state
 			this.canAddFile.Update(false);
 			this.canSetWorkingDirectory.Update(false);
+			this.canReloadLogs.Update(false);
 			this.canResetLogProfile.Update(false);
 			this.canSetLogProfile.Update(true);
 		}
@@ -532,14 +784,20 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.canSetLogProfile.Update(false);
 			this.SetValue(LogProfileProperty, profile);
 
+			// attach to log profile
+			profile.PropertyChanged += this.OnLogProfilePropertyChanged;
+
 			// prepare displayable log group
 			this.displayableLogGroup = new DisplayableLogGroup(profile);
 
 			// setup log comparer
-			if (profile.SortDirection == SortDirection.Ascending)
-				this.compareDisplayableLogsDelegate = this.CompareDisplayableLogsAsc;
-			else
-				this.compareDisplayableLogsDelegate = this.CompareDisplayableLogsDesc;
+			this.compareDisplayableLogsDelegate = profile.SortKey switch
+			{
+				LogSortKey.Timestamp => CompareDisplayableLogsByTimestamp,
+				_ => CompareDisplayableLogsById,
+			};
+			if (profile.SortDirection == SortDirection.Descending)
+				this.compareDisplayableLogsDelegate = this.compareDisplayableLogsDelegate.Invert();
 
 			// read logs or wait for more actions
 			var dataSourceOptions = profile.DataSourceOptions;
@@ -584,7 +842,15 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// update display log properties
 			this.UpdateDisplayLogProperties();
 
+			// update title
+			this.updateTitleAndIconAction.Schedule();
+
+			// update log filter
+			this.updateLogFilterAction.Reschedule();
+
 			// update state
+			if (this.logReaders.IsNotEmpty())
+				this.canReloadLogs.Update(true);
 			this.canResetLogProfile.Update(true);
 		}
 
@@ -636,6 +902,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// create log reader
 			this.CreateLogReader(dataSource);
+
+			// update state
+			this.canReloadLogs.Update(true);
 		}
 
 
@@ -646,12 +915,21 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public ICommand SetWorkingDirectoryCommand { get; }
 
 
+		/// <summary>
+		/// Get title of session.
+		/// </summary>
+		public string? Title { get => this.GetValue(TitleProperty); }
+
+
 		// Update list of display log properties according to profile.
 		void UpdateDisplayLogProperties()
 		{
 			var profile = this.LogProfile;
 			if (profile == null)
+			{
 				this.SetValue(DisplayLogPropertiesProperty, DisplayLogPropertiesProperty.DefaultValue);
+				this.logFilter.FilteringLogProperties = DisplayLogPropertiesProperty.DefaultValue;
+			}
 			else
 			{
 				var app = (IApplication)this.Application;
@@ -662,7 +940,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				if (displayLogProperties.IsEmpty())
 					displayLogProperties.Add(new DisplayableLogProperty(app, nameof(DisplayableLog.Message), null, null));
 				this.SetValue(DisplayLogPropertiesProperty, displayLogProperties.AsReadOnly());
+				this.logFilter.FilteringLogProperties = displayLogProperties;
 			}
 		}
+
+
+		/// <summary>
+		/// Get <see cref="Workspace"/> which session belongs to.
+		/// </summary>
+		public Workspace Workspace { get; }
 	}
 }

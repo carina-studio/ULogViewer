@@ -1,9 +1,12 @@
-﻿using System;
+﻿using CarinaStudio.Collections;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
-using Microsoft.Extensions.Logging;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.Logs.DataSources
 {
@@ -15,8 +18,10 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		// Fields.
 		volatile string? arguments;
 		volatile string? commandFileOnReady;
+		volatile bool isExecutingTeardownCommands;
 		volatile Process? process;
 		static readonly Regex regex = new Regex("^(?<ExecutableCommand>([^\\s\"]*)|\"([^\\s])*\")[\\s$]");
+		readonly object teardownCommandsLock = new object();
 
 
 		/// <summary>
@@ -25,7 +30,41 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// <param name="provider"><see cref="StandardOutputLogDataSourceProvider"/> which creates this instane.</param>
 		/// <param name="options"><see cref="LogDataSourceOptions"/> to create source.</param>
 		public StandardOutputLogDataSource(StandardOutputLogDataSourceProvider provider, LogDataSourceOptions options) : base(provider, options)
+		{ }
+
+
+		// Execute command and wait for exit.
+		bool ExecuteCommandAndWaitForExit(string command, string? workingDirectory, int timeoutMillis = 10000)
 		{
+			if (!this.ParseCommand(command, workingDirectory, out var executablePath, out var args))
+				return false;
+			try
+			{
+				var process = new Process().Also(process =>
+				{
+					process.StartInfo.Let(it =>
+					{
+						it.Arguments = args ?? "";
+						it.CreateNoWindow = true;
+						it.FileName = executablePath.AsNonNull();
+						it.UseShellExecute = false;
+						it.WorkingDirectory = workingDirectory ?? "";
+					});
+				});
+				if (!process.Start())
+				{
+					this.Logger.LogWarning($"Unable to execute command: {command}");
+					return false;
+				}
+				process.WaitForExit(timeoutMillis);
+				Global.RunWithoutError(process.Kill);
+				return true;
+			}
+			catch(Exception ex)
+			{
+				this.Logger.LogWarning(ex, $"Unable to execute command: {command}");
+				return false;
+			}
 		}
 
 
@@ -39,17 +78,67 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				this.process.WaitForExit();
 				this.process = null;
 			}
+			var options = this.CreationOptions;
+			if (options.TeardownCommands.IsNotEmpty())
+			{
+				Task.Run(() =>
+				{
+					lock (this.teardownCommandsLock)
+					{
+						this.Logger.LogWarning("Start executing teardown commands");
+						this.isExecutingTeardownCommands = true;
+					}
+					foreach (var command in options.TeardownCommands)
+						this.ExecuteCommandAndWaitForExit(command, options.WorkingDirectory);
+					lock (this.teardownCommandsLock)
+					{
+						this.Logger.LogWarning("Complete executing teardown commands");
+						this.isExecutingTeardownCommands = false;
+						Monitor.PulseAll(this.teardownCommandsLock);
+					}
+				});
+			}
 		}
 
 
 		// Open reader core.
 		protected override LogDataSourceState OpenReaderCore(out TextReader? reader)
 		{
+			// check state
 			if (commandFileOnReady == null)
 			{
 				reader = null;
 				return LogDataSourceState.SourceNotFound;
 			}
+
+			// wait for teardown commands
+			lock (this.teardownCommandsLock)
+			{
+				if (this.isExecutingTeardownCommands)
+				{
+					this.Logger.LogWarning("Wait for teardown commands");
+					Monitor.Wait(this.teardownCommandsLock);
+				}
+			}
+
+			// execute setup commands
+			var options = this.CreationOptions;
+			if (options.SetupCommands.IsNotEmpty())
+			{
+				this.Logger.LogWarning("Start executing setup commands");
+				foreach (var command in options.SetupCommands)
+				{
+					if (!this.ExecuteCommandAndWaitForExit(command, options.WorkingDirectory))
+					{
+						this.Logger.LogError($"Unable to execute setup command: {command}");
+						reader = null;
+						return LogDataSourceState.UnclassifiedError;
+					}
+				}
+				this.Logger.LogWarning("Complete executing setup commands");
+			}
+
+			// start process
 			this.process = new Process();
 			this.process.StartInfo.FileName = commandFileOnReady;
 			if (this.CreationOptions.WorkingDirectory != null)
@@ -65,38 +154,35 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		}
 
 
-		// Prepare core.
-		protected override LogDataSourceState PrepareCore()
+		// Parse command.
+		bool ParseCommand(string? command, string? workingDirectory, out string? executablePath, out string? arguments)
 		{
-			if (string.IsNullOrEmpty(this.CreationOptions.Command))
-				return LogDataSourceState.SourceNotFound;
-			var match = StandardOutputLogDataSource.regex.Match(this.CreationOptions.Command);
+			// check command
+			executablePath = null;
+			arguments = null;
+			if (string.IsNullOrWhiteSpace(command))
+				return false;
+
+			// find executable path
+			var match = regex.Match(command);
 			if (!match.Success)
-				return LogDataSourceState.SourceNotFound;
+				return false;
 			var commandGroup = match.Groups["ExecutableCommand"];
-			var command = this.CreationOptions.Command.Substring(0, commandGroup.Length);
-			this.arguments = this.CreationOptions.Command.Substring(commandGroup.Length);
-			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && !command.EndsWith(".exe"))
-				command += ".exe";
-			if (Path.IsPathRooted(command))
-			{
-				if (File.Exists(command))
-				{
-					this.Logger.LogDebug($"Command file found: {command}");
-					this.commandFileOnReady = command;
-					return LogDataSourceState.ReadyToOpenReader;
-				}
-			}
+			executablePath = command.Substring(0, commandGroup.Length);
+			arguments = command.Substring(commandGroup.Length);
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && !executablePath.EndsWith(".exe"))
+				executablePath += ".exe";
+			if (Path.IsPathRooted(executablePath))
+				return File.Exists(executablePath);
 			else
 			{
-				if (this.CreationOptions.WorkingDirectory != null)
+				if (workingDirectory != null)
 				{
-					string commandFile = Path.Combine(this.CreationOptions.WorkingDirectory, command);
+					string commandFile = Path.Combine(workingDirectory, executablePath);
 					if (File.Exists(commandFile))
 					{
-						this.Logger.LogDebug($"Command file from working directory: {commandFile}");
-						this.commandFileOnReady = commandFile;
-						return LogDataSourceState.ReadyToOpenReader;
+						executablePath = commandFile;
+						return true;
 					}
 				}
 				var environmentPaths = Environment.GetEnvironmentVariable("PATH");
@@ -104,17 +190,35 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				{
 					foreach (var environmentPath in environmentPaths.Split(Path.PathSeparator))
 					{
-						string commandFile = Path.Combine(environmentPath, command);
+						string commandFile = Path.Combine(environmentPath, executablePath);
 						if (File.Exists(commandFile))
 						{
-							this.Logger.LogDebug($"Command file from environment path: {commandFile}");
-							this.commandFileOnReady = commandFile;
-							return LogDataSourceState.ReadyToOpenReader;
+							executablePath = commandFile;
+							return true;
 						}
 					}
 				}
 			}
-			return LogDataSourceState.SourceNotFound;
+
+			// cannot find executable
+			executablePath = null;
+			arguments = null;
+			return false;
+		}
+
+
+		// Prepare core.
+		protected override LogDataSourceState PrepareCore()
+		{
+			if (!this.ParseCommand(this.CreationOptions.Command, this.CreationOptions.WorkingDirectory, out var executablePath, out var arguments))
+			{
+				this.Logger.LogError($"Unable to locate executable for command: {this.CreationOptions.Command}");
+				return LogDataSourceState.SourceNotFound;
+			}
+			this.Logger.LogDebug($"Executable found: {executablePath}");
+			this.commandFileOnReady = executablePath;
+			this.arguments = arguments;
+			return LogDataSourceState.ReadyToOpenReader;
 		}
 	}
 }
