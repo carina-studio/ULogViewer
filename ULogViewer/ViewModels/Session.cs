@@ -357,6 +357,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			var profile = this.LogProfile ?? throw new InternalStateCorruptedException("No log profile to create log reader.");
 			var logReader = new LogReader(dataSource).Also(it =>
 			{
+				it.IsContinuousReading = profile.IsContinuousReading;
 				it.LogLevelMap = profile.LogLevelMap;
 				it.LogPatterns = profile.LogPatterns;
 				it.TimestampCultureInfo = profile.TimestampCultureInfoForReading;
