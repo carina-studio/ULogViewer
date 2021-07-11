@@ -139,7 +139,7 @@
 		<Grid Grid.Row="2" RowDefinitions="Auto,*">
 
 			<!-- Header -->
-			<Grid Background="{StaticResource Brush.SessionView.LogHeader.Background}">
+			<Grid Name="logHeaderContainer" Background="{StaticResource Brush.SessionView.LogHeader.Background}">
 				<TextBlock Margin="{StaticResource Thickness.SessionView.LogHeader.Margin}" Padding="{StaticResource Thickness.SessionView.LogHeader.Padding}" Text=" "/>
 				<Grid Name="logHeaderGrid"/>
 			</Grid>

@@ -53,6 +53,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly MutableObservableBoolean canSetLogProfile = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSetWorkingDirectory = new MutableObservableBoolean();
 		bool isWorkingDirNeededAfterLogProfileSet;
+		readonly Control logHeaderContainer;
 		readonly Grid logHeaderGrid;
 		readonly ListBox logListBox;
 		ScrollViewer? logScrollViewer;
@@ -78,6 +79,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.InitializeComponent();
 
 			// setup controls
+			this.logHeaderContainer = this.FindControl<Control>("logHeaderContainer").AsNonNull();
 			this.logHeaderGrid = this.FindControl<Grid>("logHeaderGrid").AsNonNull();
 			this.logListBox = this.FindControl<ListBox>("logListBox").AsNonNull().Also(it =>
 			{
@@ -406,6 +408,12 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when log list box scrolled.
 		void OnLogListBoxScrollChanged(object? sender, ScrollChangedEventArgs e)
 		{
+			// check state
+			var logScrollViewer = this.logScrollViewer;
+			if (logScrollViewer == null)
+				return;
+
+			// update auto scrolling state
 			var logProfile = (this.HasLogProfile ? (this.DataContext as Session)?.LogProfile : null);
 			if (this.logListBox.IsPointerOver && logProfile != null)
 			{
@@ -428,11 +436,11 @@ namespace CarinaStudio.ULogViewer.Controls
 						}
 					}
 				}
-				else if (logProfile != null && logProfile.IsContinuousReading && this.logScrollViewer != null)
+				else if (logProfile != null && logProfile.IsContinuousReading)
 				{
 					if (logProfile.SortDirection == SortDirection.Ascending)
 					{
-						if (e.OffsetDelta.Y > 0 && ((this.logScrollViewer.Offset.Y + this.logScrollViewer.Viewport.Height) / (double)this.logScrollViewer.Extent.Height) >= 0.999)
+						if (e.OffsetDelta.Y > 0 && ((logScrollViewer.Offset.Y + logScrollViewer.Viewport.Height) / (double)logScrollViewer.Extent.Height) >= 0.999)
 						{
 							this.Logger.LogDebug("Start auto scrolling because of user scrolling down");
 							this.IsScrollingToLatestLogNeeded = true;
@@ -440,7 +448,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					}
 					else
 					{
-						if (e.OffsetDelta.Y < 0 && (this.logScrollViewer.Offset.Y / (double)this.logScrollViewer.Extent.Height) <= 0.001)
+						if (e.OffsetDelta.Y < 0 && (logScrollViewer.Offset.Y / (double)logScrollViewer.Extent.Height) <= 0.001)
 						{
 							this.Logger.LogDebug("Start auto scrolling because of user scrolling up");
 							this.IsScrollingToLatestLogNeeded = true;
@@ -448,6 +456,9 @@ namespace CarinaStudio.ULogViewer.Controls
 					}
 				}
 			}
+
+			// sync log header offset
+			this.logHeaderContainer.Margin = new Thickness(-logScrollViewer.Offset.X, 0, 0, 0);
 		}
 
 
