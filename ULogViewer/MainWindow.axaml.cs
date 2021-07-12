@@ -6,6 +6,7 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.Templates;
 using Avalonia.VisualTree;
 using CarinaStudio.Collections;
+using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Controls;
 using CarinaStudio.ULogViewer.ViewModels;
@@ -22,8 +23,19 @@ namespace CarinaStudio.ULogViewer
 	/// </summary>
 	partial class MainWindow : BaseWindow
 	{
+		// Static fields.
+		static readonly SettingKey<int> WindowHeightSettingKey = new SettingKey<int>("MainWindow.Height", 600);
+		static readonly SettingKey<WindowState> WindowStateSettingKey = new SettingKey<WindowState>("MainWindow.State", WindowState.Maximized);
+		static readonly SettingKey<int> WindowWidthSettingKey = new SettingKey<int>("MainWindow.Width", 800);
+
+
+		// Constants.
+		const int SaveWindowSizeDelay = 300;
+
+
 		// Fields.
 		readonly ScheduledAction focusOnTabItemContentAction;
+		readonly ScheduledAction saveWindowSizeAction;
 		readonly DataTemplate sessionTabItemHeaderTemplate;
 		readonly TabControl tabControl;
 		readonly IList tabItems;
@@ -51,6 +63,22 @@ namespace CarinaStudio.ULogViewer
 			this.focusOnTabItemContentAction = new ScheduledAction(() =>
 			{
 				((this.tabControl.SelectedItem as TabItem)?.Content as IControl)?.Focus();
+			});
+			this.saveWindowSizeAction = new ScheduledAction(() =>
+			{
+				if (this.WindowState == WindowState.Normal)
+				{
+					this.Settings.SetValue(WindowWidthSettingKey, (int)(this.Width + 0.5));
+					this.Settings.SetValue(WindowHeightSettingKey, (int)(this.Height + 0.5));
+				}
+			});
+
+			// restore window state
+			this.Settings.Let(it =>
+			{
+				this.Height = Math.Max(0, it.GetValueOrDefault(WindowHeightSettingKey));
+				this.Width = Math.Max(0, it.GetValueOrDefault(WindowWidthSettingKey));
+				this.WindowState = it.GetValueOrDefault(WindowStateSettingKey);
 			});
 		}
 
@@ -173,10 +201,18 @@ namespace CarinaStudio.ULogViewer
 		protected override void OnPropertyChanged<T>(AvaloniaPropertyChangedEventArgs<T> change)
 		{
 			base.OnPropertyChanged(change);
-			if (change.Property == DataContextProperty)
+			var property = change.Property;
+			if (property == DataContextProperty)
 			{
 				(change.OldValue.Value as Workspace)?.Let(it => this.DetachFronWorkspace(it));
 				(change.NewValue.Value as Workspace)?.Let(it => this.AttachToWorkspace(it));
+			}
+			else if (property == HeightProperty || property == WidthProperty)
+				this.saveWindowSizeAction.Reschedule(SaveWindowSizeDelay);
+			else if (property == WindowStateProperty)
+			{
+				if (this.WindowState != WindowState.Minimized)
+					this.Settings.SetValue(WindowStateSettingKey, this.WindowState);
 			}
 		}
 
