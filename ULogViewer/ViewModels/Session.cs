@@ -79,6 +79,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<Logs.LogLevel> LogLevelFilterProperty = ObservableProperty.Register<Session, Logs.LogLevel>(nameof(LogLevelFilter), ULogViewer.Logs.LogLevel.Undefined);
 		/// <summary>
+		/// Property of <see cref="LogProcessIdFilter"/>.
+		/// </summary>
+		public static readonly ObservableProperty<int?> LogProcessIdFilterProperty = ObservableProperty.Register<Session, int?>(nameof(LogProcessIdFilter));
+		/// <summary>
 		/// Property of <see cref="LogProfile"/>.
 		/// </summary>
 		public static readonly ObservableProperty<LogProfile?> LogProfileProperty = ObservableProperty.Register<Session, LogProfile?>(nameof(LogProfile));
@@ -94,6 +98,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Property of <see cref="LogTextFilter"/>.
 		/// </summary>
 		public static readonly ObservableProperty<Regex?> LogTextFilterProperty = ObservableProperty.Register<Session, Regex?>(nameof(LogTextFilter));
+		/// <summary>
+		/// Property of <see cref="LogThreadIdFilter"/>.
+		/// </summary>
+		public static readonly ObservableProperty<int?> LogThreadIdFilterProperty = ObservableProperty.Register<Session, int?>(nameof(LogThreadIdFilter));
 		/// <summary>
 		/// Property of <see cref="Title"/>.
 		/// </summary>
@@ -202,6 +210,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 				// setup level
 				this.logFilter.Level = this.LogLevelFilter;
+
+				// setup PID and TID
+				this.logFilter.ProcessId = this.LogProcessIdFilter;
+				this.logFilter.ThreadId = this.LogThreadIdFilter;
 
 				// setup combination mode
 				this.logFilter.CombinationMode = this.LogFiltersCombinationMode;
@@ -563,12 +575,22 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
-		/// Get or set level to filter log.
+		/// Get or set level to filter logs.
 		/// </summary>
 		public Logs.LogLevel LogLevelFilter 
 		{ 
 			get => this.GetValue(LogLevelFilterProperty);
 			set => this.SetValue(LogLevelFilterProperty, value);
+		}
+
+
+		/// <summary>
+		/// Get or set process ID to filter logs.
+		/// </summary>
+		public int? LogProcessIdFilter
+		{
+			get => this.GetValue(LogProcessIdFilterProperty);
+			set => this.SetValue(LogProcessIdFilterProperty, value);
 		}
 
 
@@ -597,6 +619,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			get => this.GetValue(LogTextFilterProperty);
 			set => this.SetValue(LogTextFilterProperty, value);
+		}
+
+
+		/// <summary>
+		/// Get or set thread ID to filter logs.
+		/// </summary>
+		public int? LogThreadIdFilter
+		{
+			get => this.GetValue(LogThreadIdFilterProperty);
+			set => this.SetValue(LogThreadIdFilterProperty, value);
 		}
 
 
@@ -740,7 +772,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			}
 			else if (property == LogFiltersCombinationModeProperty 
 				|| property == LogLevelFilterProperty
-				|| property == LogTextFilterProperty)
+				|| property == LogProcessIdFilterProperty
+				|| property == LogTextFilterProperty
+				|| property == LogThreadIdFilterProperty)
 			{
 				this.updateLogFilterAction.Schedule();
 			}

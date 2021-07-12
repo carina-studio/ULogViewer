@@ -143,6 +143,12 @@
 					<ComboBoxItem Content="{DynamicResource String.LogLevel.Fatal}" Foreground="{DynamicResource Brush.DisplayableLog.Level.Fatal}" Tag="Fatal"/>
 				</ComboBox>
 
+				<!-- PID filter -->
+				<TextBox Name="logProcessIdFilterTextBox" Grid.Column="1" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" IsVisible="False" PropertyChanged="OnLogTextFilterTextBoxPropertyChanged" Margin="{StaticResource Thickness.SessionView.ToolBar.LogProcessIdFilter.Margin}" VerticalAlignment="Center" Watermark="{DynamicResource String.DisplayableLogProperty.ProcessId}" Width="{StaticResource Double.SessionView.ToolBar.LogProcessIdFilter.Width}"/>
+
+				<!-- TID filter -->
+				<TextBox Name="logThreadIdFilterTextBox" Grid.Column="2" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" IsVisible="False" PropertyChanged="OnLogTextFilterTextBoxPropertyChanged" Margin="{StaticResource Thickness.SessionView.ToolBar.LogProcessIdFilter.Margin}" VerticalAlignment="Center" Watermark="{DynamicResource String.DisplayableLogProperty.ThreadId}" Width="{StaticResource Double.SessionView.ToolBar.LogProcessIdFilter.Width}"/>
+
 				<!-- Filters combinatin mode -->
 				<Button Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].SwitchLogFiltersCombinationModeCommand}" Grid.Column="3" ToolTip.Tip="{DynamicResource String.SessionView.LogFiltersCombinationMode}">
 					<Border Classes="SessionView_ToolBar_Button_Icon">
@@ -160,7 +166,7 @@
 				</Button>
 				
 				<!-- Text filter -->
-				<TextBox Name="logTextFilterTextBox" Classes="SessionView_ToolBar_LogTextFilter" Grid.Column="4" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" Margin="{StaticResource Thickness.SessionView.ToolBar.LogTextFilter.Margin}" PropertyChanged="OnLogTextFilterTextBoxPropertyChanged" Watermark="{DynamicResource String.SessionView.LogTextFilterHint}">
+				<TextBox Name="logTextFilterTextBox" Grid.Column="4" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" Margin="{StaticResource Thickness.SessionView.ToolBar.LogTextFilter.Margin}" PropertyChanged="OnLogTextFilterTextBoxPropertyChanged" VerticalAlignment="Center" Watermark="{DynamicResource String.SessionView.LogTextFilterHint}">
 					<ia:Interaction.Behaviors>
 						<iaCore:DataTriggerBehavior Binding="{Binding $parent[UserControl].IsLogTextFilterValid}" ComparisonCondition="Equal" Value="True">
 							<iaCore:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource TextControlForeground}"/>

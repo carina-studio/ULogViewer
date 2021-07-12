@@ -60,8 +60,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly Grid logHeaderGrid;
 		readonly ComboBox logLevelFilterComboBox;
 		readonly ListBox logListBox;
+		readonly TextBox logProcessIdFilterTextBox;
 		ScrollViewer? logScrollViewer;
 		readonly TextBox logTextFilterTextBox;
+		readonly TextBox logThreadIdFilterTextBox;
 		readonly ContextMenu otherActionsMenu;
 		readonly ScheduledAction scrollToLatestLogAction;
 		readonly ScheduledAction updateLogFiltersAction;
@@ -102,7 +104,15 @@ namespace CarinaStudio.ULogViewer.Controls
 					}
 				};
 			});
+			this.logProcessIdFilterTextBox = this.FindControl<TextBox>("logProcessIdFilterTextBox").AsNonNull().Also(it =>
+			{
+				it.AddHandler(TextBox.TextInputEvent, this.OnLogProcessIdTextBoxTextInput, RoutingStrategies.Tunnel);
+			});
 			this.logTextFilterTextBox = this.FindControl<TextBox>("logTextFilterTextBox").AsNonNull();
+			this.logThreadIdFilterTextBox = this.FindControl<TextBox>("logThreadIdFilterTextBox").AsNonNull().Also(it =>
+			{
+				it.AddHandler(TextBox.TextInputEvent, this.OnLogProcessIdTextBoxTextInput, RoutingStrategies.Tunnel);
+			});
 			this.otherActionsMenu = (ContextMenu)this.Resources["otherActionsMenu"].AsNonNull();
 
 			// create scheduled actions
@@ -149,8 +159,23 @@ namespace CarinaStudio.ULogViewer.Controls
 				// set level
 				session.LogLevelFilter = Enum.Parse<Logs.LogLevel>((string)((ComboBoxItem)this.logLevelFilterComboBox.SelectedItem.AsNonNull()).Tag.AsNonNull());
 
-				// set combination mode
-				//
+				// set PID
+				this.logProcessIdFilterTextBox.Text.Let(it =>
+				{
+					if (it.Length > 0 && int.TryParse(it, out var pid))
+						session.LogProcessIdFilter = pid;
+					else
+						session.LogProcessIdFilter = null;
+				});
+
+				// set TID
+				this.logThreadIdFilterTextBox.Text.Let(it =>
+				{
+					if (it.Length > 0 && int.TryParse(it, out var tid))
+						session.LogThreadIdFilter = tid;
+					else
+						session.LogThreadIdFilter = null;
+				});
 
 				// update session
 				session.LogTextFilter = regex;
@@ -233,7 +258,9 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.scrollToLatestLogAction.Schedule(ScrollingToLatestLogInterval);
 
 			// sync log filters to UI
+			this.logProcessIdFilterTextBox.Text = session.LogProcessIdFilter?.ToString() ?? "";
 			this.logTextFilterTextBox.Text = session.LogTextFilter?.ToString() ?? "";
+			this.logThreadIdFilterTextBox.Text = session.LogThreadIdFilter?.ToString() ?? "";
 			session.LogLevelFilter.Let(it =>
 			{
 				foreach (var item in this.logLevelFilterComboBox.Items)
@@ -456,6 +483,20 @@ namespace CarinaStudio.ULogViewer.Controls
 						break;
 				}
 			}
+			if (hasPid)
+				this.logProcessIdFilterTextBox.IsVisible = true;
+			else
+			{
+				this.logProcessIdFilterTextBox.IsVisible = false;
+				this.logProcessIdFilterTextBox.Text = "";
+			}
+			if (hasTid)
+				this.logThreadIdFilterTextBox.IsVisible = true;
+			else
+			{
+				this.logThreadIdFilterTextBox.IsVisible = false;
+				this.logThreadIdFilterTextBox.Text = "";
+			}
 		}
 
 
@@ -520,6 +561,18 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Called when PID/TID text box input.
+		void OnLogProcessIdTextBoxTextInput(object? sender, TextInputEventArgs e)
+		{
+			if (!char.IsDigit(e.Text?[0] ?? '\0'))
+			{
+				e.Handled = true;
+				return;
+			}
+			this.updateLogFiltersAction.Reschedule(this.UpdateLogFilterParamsDelay);
+		}
+
+
 		// Called when property of log text filter text box changed.
 		void OnLogTextFilterTextBoxPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
 		{
@@ -531,6 +584,38 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when key down.
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
+			// prevent entering non-numeric key to PID/TID filter
+			if (e.Source == this.logProcessIdFilterTextBox || e.Source == this.logThreadIdFilterTextBox)
+			{
+				switch (e.Key)
+				{
+					case Key.D0:
+					case Key.D1:
+					case Key.D2:
+					case Key.D3:
+					case Key.D4:
+					case Key.D5:
+					case Key.D6:
+					case Key.D7:
+					case Key.D8:
+					case Key.D9:
+					case Key.NumPad0:
+					case Key.NumPad1:
+					case Key.NumPad2:
+					case Key.NumPad3:
+					case Key.NumPad4:
+					case Key.NumPad5:
+					case Key.NumPad6:
+					case Key.NumPad7:
+					case Key.NumPad8:
+					case Key.NumPad9:
+						break;
+					default:
+						e.Handled = true;
+						return;
+				}
+			}
+
 			// handle key event for combo keys
 			if (!e.Handled && (e.KeyModifiers & KeyModifiers.Control) != 0)
 			{
@@ -669,7 +754,9 @@ namespace CarinaStudio.ULogViewer.Controls
 		void ResetLogFilters()
 		{
 			this.logLevelFilterComboBox.SelectedIndex = 0;
+			this.logProcessIdFilterTextBox.Text = "";
 			this.logTextFilterTextBox.Text = "";
+			this.logThreadIdFilterTextBox.Text = "";
 			this.updateLogFiltersAction.Execute();
 		}
 
