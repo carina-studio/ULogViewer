@@ -19,6 +19,7 @@
 	<sys:Double x:Key="Double.GridSplitter.Thickness">5</sys:Double>
 
 	<!-- LogProfileSelectionDialog -->
+	<CornerRadius x:Key="CornerRadius.LogProfileSelectionDialog.Label">2</CornerRadius>
 	<sys:Double x:Key="Double.LogProfileSelectionDialog.Content.MaxHeight">400</sys:Double>
 	<sys:Double x:Key="Double.LogProfileSelectionDialog.LogProfile.Action.Icon.Size">10</sys:Double>
 	<sys:Double x:Key="Double.LogProfileSelectionDialog.LogProfile.Icon.Size">30</sys:Double>
@@ -29,7 +30,7 @@
 	<Thickness x:Key="Thickness.LogProfileSelectionDialog.LogProfile.Action.Margin">3,0,0,0</Thickness>
 	<Thickness x:Key="Thickness.LogProfileSelectionDialog.LogProfile.Action.Padding">3</Thickness>
 	<Thickness x:Key="Thickness.LogProfileSelectionDialog.LogProfile.Icon.Margin">0,5,15,0</Thickness>
-	<Thickness x:Key="Thickness.LogProfileSelectionDialog.LogProfile.Label.Margin">0,0,5,0</Thickness>
+	<Thickness x:Key="Thickness.LogProfileSelectionDialog.LogProfile.Label.Margin">0,2,5,0</Thickness>
 	<Thickness x:Key="Thickness.LogProfileSelectionDialog.LogProfile.Label.Padding">3</Thickness>
 	<Thickness x:Key="Thickness.LogProfileSelectionDialog.LogProfile.Name.Margin">0,0,5,5</Thickness>
 	<Thickness x:Key="Thickness.LogProfileSelectionDialog.LogProfile.Padding">15,10,25,10</Thickness>

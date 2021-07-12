@@ -31,14 +31,20 @@
 								<TextBlock Grid.Column="1" FontSize="{StaticResource Double.LogProfileSelectionDialog.LogProfile.Name.FontSize}" Margin="{StaticResource Thickness.LogProfileSelectionDialog.LogProfile.Name.Margin}" Text="{Binding Name}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
 
 								<!-- Labels -->
-								<StackPanel Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="1" Orientation="Horizontal">
+								<WrapPanel Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="1" Orientation="Horizontal">
 									<Border Classes="LogProfileSelectionDialog_LogProfile_Label">
 										<TextBlock Classes="LogProfileSelectionDialog_LogProfile_Label" Text="{Binding DataSourceProvider.UnderlyingSource, Converter={x:Static appControls:LogProfileSelectionDialog.UnderlyingLogDataSourceConverter}}"/>
 									</Border>
-									<Border Classes="LogProfileSelectionDialog_LogProfile_Label">
-										<TextBlock Classes="LogProfileSelectionDialog_LogProfile_Label" IsVisible="{Binding IsBuiltIn}" Text="{DynamicResource String.LogProfileSelectionDialog.BuiltInLogProfile}"/>
+									<Border Classes="LogProfileSelectionDialog_LogProfile_Label" IsVisible="{Binding IsBuiltIn}">
+										<TextBlock Classes="LogProfileSelectionDialog_LogProfile_Label" Text="{DynamicResource String.LogProfileSelectionDialog.BuiltInLogProfile}"/>
 									</Border>
-								</StackPanel>
+									<Border Classes="LogProfileSelectionDialog_LogProfile_Label" IsVisible="{Binding IsContinuousReading}">
+										<TextBlock Classes="LogProfileSelectionDialog_LogProfile_Label" Text="{DynamicResource String.LogProfileSelectionDialog.IsContinuousReading}"/>
+									</Border>
+									<Border Classes="LogProfileSelectionDialog_LogProfile_Label" IsVisible="{Binding IsWorkingDirectoryNeeded}">
+										<TextBlock Classes="LogProfileSelectionDialog_LogProfile_Label" Text="{DynamicResource String.LogProfileSelectionDialog.IsWorkingDirectoryNeeded}"/>
+									</Border>
+								</WrapPanel>
 
 								<!-- Actions -->
 								<StackPanel Grid.Column="2" Orientation="Horizontal">

@@ -112,6 +112,7 @@
 		<Setter Property="Background" Value="{DynamicResource Brush.LogProfileSelectionDialog.Label.Background}"/>
 		<Setter Property="BorderBrush" Value="{DynamicResource Brush.LogProfileSelectionDialog.Label.Border}"/>
 		<Setter Property="BorderThickness" Value="1"/>
+		<Setter Property="CornerRadius" Value="{StaticResource CornerRadius.LogProfileSelectionDialog.Label}"/>
 		<Setter Property="Margin" Value="{StaticResource Thickness.LogProfileSelectionDialog.LogProfile.Label.Margin}"/>
 		<Setter Property="Padding" Value="{StaticResource Thickness.LogProfileSelectionDialog.LogProfile.Label.Padding}"/>
 	</Style>

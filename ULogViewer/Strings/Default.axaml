@@ -15,7 +15,7 @@
 	<!-- Built-in profile -->
 	<sys:String x:Key="String.BuiltInProfile.AndroidDeviceLog">Android device log</sys:String>
 	<sys:String x:Key="String.BuiltInProfile.GitLog">Git log</sys:String>
-	<sys:String x:Key="String.BuiltInProfile.ULogViewerLog">ULogViewer log (DEBUG build only)</sys:String>
+	<sys:String x:Key="String.BuiltInProfile.ULogViewerLog">ULogViewer log (DEBUG)</sys:String>
 
 	<!-- DisplayableLogProperty -->
 	<sys:String x:Key="String.DisplayableLogProperty.Author">Author</sys:String>
@@ -37,6 +37,8 @@
 	<sys:String x:Key="String.LogProfileSelectionDialog.AllLogProfiles">All profiles</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.BuiltInLogProfile">Built-in</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.EditLogProfile">Edit profile</sys:String>
+	<sys:String x:Key="String.LogProfileSelectionDialog.IsContinuousReading">Continuous reading</sys:String>
+	<sys:String x:Key="String.LogProfileSelectionDialog.IsWorkingDirectoryNeeded">Working directory needed</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.PinnedLogProfiles">Pinned</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.PinUnpinLogProfile">Pin/Unpin profile</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.RemoveLogProfile">Delete profile</sys:String>
