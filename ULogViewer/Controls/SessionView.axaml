@@ -107,10 +107,44 @@
 			</StackPanel>
 
 			<!-- Log filters -->
-			<Grid ColumnDefinitions="*,Auto" Grid.Column="1" HorizontalAlignment="Stretch" Margin="{StaticResource Thickness.SessionView.ToolBar.LogFilters.Padding}" VerticalAlignment="Stretch">
+			<Grid ColumnDefinitions="Auto,Auto,Auto,Auto,*,Auto" Grid.Column="1" HorizontalAlignment="Stretch" Margin="{StaticResource Thickness.SessionView.ToolBar.LogFilters.Padding}" VerticalAlignment="Stretch">
 
+				<!-- Level filter -->
+				<ComboBox Name="logLevelFilterComboBox" Foreground="{DynamicResource Brush.DisplayableLog.Level.Undefined}" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" Margin="{StaticResource Thickness.SessionView.ToolBar.LogLevelFilter.Margin}" SelectedIndex="0" SelectionChanged="OnLogLevelFilterComboBoxSelectionChanged" VerticalAlignment="Center" Width="{StaticResource Double.SessionView.ToolBar.LogLevelFilter.Width}">
+					<ia:Interaction.Behaviors>
+						<iaCore:DataTriggerBehavior Binding="{Binding $self.SelectedItem.Tag}" ComparisonCondition="Equal" Value="Undefined">
+							<iaCore:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource Brush.DisplayableLog.Level.Undefined}"/>
+						</iaCore:DataTriggerBehavior>
+						<iaCore:DataTriggerBehavior Binding="{Binding $self.SelectedItem.Tag}" ComparisonCondition="Equal" Value="Info">
+							<iaCore:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource Brush.DisplayableLog.Level.Info}"/>
+						</iaCore:DataTriggerBehavior>
+						<iaCore:DataTriggerBehavior Binding="{Binding $self.SelectedItem.Tag}" ComparisonCondition="Equal" Value="Verbose">
+							<iaCore:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource Brush.DisplayableLog.Level.Verbose}"/>
+						</iaCore:DataTriggerBehavior>
+						<iaCore:DataTriggerBehavior Binding="{Binding $self.SelectedItem.Tag}" ComparisonCondition="Equal" Value="Debug">
+							<iaCore:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource Brush.DisplayableLog.Level.Debug}"/>
+						</iaCore:DataTriggerBehavior>
+						<iaCore:DataTriggerBehavior Binding="{Binding $self.SelectedItem.Tag}" ComparisonCondition="Equal" Value="Warn">
+							<iaCore:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource Brush.DisplayableLog.Level.Warn}"/>
+						</iaCore:DataTriggerBehavior>
+						<iaCore:DataTriggerBehavior Binding="{Binding $self.SelectedItem.Tag}" ComparisonCondition="Equal" Value="Error">
+							<iaCore:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource Brush.DisplayableLog.Level.Error}"/>
+						</iaCore:DataTriggerBehavior>
+						<iaCore:DataTriggerBehavior Binding="{Binding $self.SelectedItem.Tag}" ComparisonCondition="Equal" Value="Fatal">
+							<iaCore:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource Brush.DisplayableLog.Level.Fatal}"/>
+						</iaCore:DataTriggerBehavior>
+					</ia:Interaction.Behaviors>
+					<ComboBoxItem Content="{DynamicResource String.SessionView.AllLogLevels}" Foreground="{DynamicResource Brush.DisplayableLog.Level.Undefined}" Tag="Undefined"/>
+					<ComboBoxItem Content="{DynamicResource String.LogLevel.Info}" Foreground="{DynamicResource Brush.DisplayableLog.Level.Info}" Tag="Info"/>
+					<ComboBoxItem Content="{DynamicResource String.LogLevel.Verbose}" Foreground="{DynamicResource Brush.DisplayableLog.Level.Verbose}" Tag="Verbose"/>
+					<ComboBoxItem Content="{DynamicResource String.LogLevel.Debug}" Foreground="{DynamicResource Brush.DisplayableLog.Level.Debug}" Tag="Debug"/>
+					<ComboBoxItem Content="{DynamicResource String.LogLevel.Warn}" Foreground="{DynamicResource Brush.DisplayableLog.Level.Warn}" Tag="Warn"/>
+					<ComboBoxItem Content="{DynamicResource String.LogLevel.Error}" Foreground="{DynamicResource Brush.DisplayableLog.Level.Error}" Tag="Error"/>
+					<ComboBoxItem Content="{DynamicResource String.LogLevel.Fatal}" Foreground="{DynamicResource Brush.DisplayableLog.Level.Fatal}" Tag="Fatal"/>
+				</ComboBox>
+				
 				<!-- Text filter -->
-				<TextBox Name="logTextFilterTextBox" Classes="SessionView_ToolBar_LogTextFilter" Grid.Column="0" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" Margin="{StaticResource Thickness.SessionView.ToolBar.LogTextFilter.Margin}" PropertyChanged="OnLogTextFilterTextBoxPropertyChanged" Watermark="{DynamicResource String.SessionView.LogTextFilterHint}">
+				<TextBox Name="logTextFilterTextBox" Classes="SessionView_ToolBar_LogTextFilter" Grid.Column="4" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" Margin="{StaticResource Thickness.SessionView.ToolBar.LogTextFilter.Margin}" PropertyChanged="OnLogTextFilterTextBoxPropertyChanged" Watermark="{DynamicResource String.SessionView.LogTextFilterHint}">
 					<ia:Interaction.Behaviors>
 						<iaCore:DataTriggerBehavior Binding="{Binding $parent[UserControl].IsLogTextFilterValid}" ComparisonCondition="Equal" Value="True">
 							<iaCore:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource TextControlForeground}"/>
@@ -122,7 +156,7 @@
 				</TextBox>
 
 				<!-- Filter actions -->
-				<StackPanel Grid.Column="1" Orientation="Horizontal">
+				<StackPanel Grid.Column="5" Orientation="Horizontal">
 
 					<!-- Reset log filters -->
 					<Button Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].ResetLogFiltersCommand}" ToolTip.Tip="{DynamicResource String.SessionView.ResetLogFilters}">

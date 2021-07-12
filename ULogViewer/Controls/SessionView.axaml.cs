@@ -58,12 +58,13 @@ namespace CarinaStudio.ULogViewer.Controls
 		bool isWorkingDirNeededAfterLogProfileSet;
 		readonly Control logHeaderContainer;
 		readonly Grid logHeaderGrid;
+		readonly ComboBox logLevelFilterComboBox;
 		readonly ListBox logListBox;
 		ScrollViewer? logScrollViewer;
 		readonly TextBox logTextFilterTextBox;
 		readonly ContextMenu otherActionsMenu;
 		readonly ScheduledAction scrollToLatestLogAction;
-		readonly ScheduledAction updateLogTextFilterAction;
+		readonly ScheduledAction updateLogFiltersAction;
 		readonly ScheduledAction updateStatusBarStateAction;
 
 
@@ -85,6 +86,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			// setup controls
 			this.logHeaderContainer = this.FindControl<Control>("logHeaderContainer").AsNonNull();
 			this.logHeaderGrid = this.FindControl<Grid>("logHeaderGrid").AsNonNull();
+			this.logLevelFilterComboBox = this.FindControl<ComboBox>("logLevelFilterComboBox").AsNonNull();
 			this.logListBox = this.FindControl<ListBox>("logListBox").AsNonNull().Also(it =>
 			{
 				it.PropertyChanged += (_, e) =>
@@ -120,7 +122,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.logListBox.ScrollIntoView(logIndex);
 				this.scrollToLatestLogAction?.Schedule(ScrollingToLatestLogInterval);
 			});
-			this.updateLogTextFilterAction = new ScheduledAction(() =>
+			this.updateLogFiltersAction = new ScheduledAction(() =>
 			{
 				// get session
 				if (this.DataContext is not Session session)
@@ -143,8 +145,11 @@ namespace CarinaStudio.ULogViewer.Controls
 				}
 				this.SetValue<bool>(IsLogTextFilterValidProperty, true);
 
+				// set level
+				session.LogLevelFilter = Enum.Parse<Logs.LogLevel>((string)((ComboBoxItem)this.logLevelFilterComboBox.SelectedItem.AsNonNull()).Tag.AsNonNull());
+
 				// update session
-				session.LogTextFilterRegex = regex;
+				session.LogTextFilter = regex;
 			});
 			this.updateStatusBarStateAction = new ScheduledAction(() =>
 			{
@@ -224,8 +229,19 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.scrollToLatestLogAction.Schedule(ScrollingToLatestLogInterval);
 
 			// sync log filters to UI
-			this.logTextFilterTextBox.Text = session.LogTextFilterRegex?.ToString() ?? "";
-			this.updateLogTextFilterAction.Cancel();
+			this.logTextFilterTextBox.Text = session.LogTextFilter?.ToString() ?? "";
+			session.LogLevelFilter.Let(it =>
+			{
+				foreach (var item in this.logLevelFilterComboBox.Items)
+				{
+					if ((string)((ComboBoxItem)item.AsNonNull()).Tag.AsNonNull() == it.ToString())
+					{
+						this.logLevelFilterComboBox.SelectedItem = item;
+						break;
+					}
+				}
+			});
+			this.updateLogFiltersAction.Cancel();
 
 			// update UI
 			this.OnDisplayLogPropertiesChanged();
@@ -420,7 +436,27 @@ namespace CarinaStudio.ULogViewer.Controls
 				Content = itemTemplateContent,
 				DataType = typeof(DisplayableLog),
 			};
+
+			// show/hide log filters UI
+			var hasPid = false;
+			var hasTid = false;
+			foreach (var logProperty in logProperties)
+			{
+				switch (logProperty.Name)
+				{
+					case nameof(DisplayableLog.ProcessId):
+						hasPid = true;
+						break;
+					case nameof(DisplayableLog.ThreadId):
+						hasTid = true;
+						break;
+				}
+			}
 		}
+
+
+		// Called when selected log level filter has been changed.
+		void OnLogLevelFilterComboBoxSelectionChanged(object? sender, SelectionChangedEventArgs e) => this.updateLogFiltersAction?.Reschedule();
 
 
 		// Called when log list box scrolled.
@@ -484,7 +520,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		void OnLogTextFilterTextBoxPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
 		{
 			if (e.Property == TextBlock.TextProperty)
-				this.updateLogTextFilterAction.Reschedule(this.UpdateLogFilterParamsDelay);
+				this.updateLogFiltersAction.Reschedule(this.UpdateLogFilterParamsDelay);
 		}
 
 
@@ -628,8 +664,9 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Reset all log filters.
 		void ResetLogFilters()
 		{
+			this.logLevelFilterComboBox.SelectedIndex = 0;
 			this.logTextFilterTextBox.Text = "";
-			this.updateLogTextFilterAction.Execute();
+			this.updateLogFiltersAction.Execute();
 		}
 
 

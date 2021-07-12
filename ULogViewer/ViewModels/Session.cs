@@ -71,6 +71,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsReadingLogsProperty = ObservableProperty.Register<Session, bool>(nameof(IsReadingLogs));
 		/// <summary>
+		/// Property of <see cref="LogLevelFilter"/>.
+		/// </summary>
+		public static readonly ObservableProperty<Logs.LogLevel> LogLevelFilterProperty = ObservableProperty.Register<Session, Logs.LogLevel>(nameof(LogLevelFilter), ULogViewer.Logs.LogLevel.Undefined);
+		/// <summary>
 		/// Property of <see cref="LogProfile"/>.
 		/// </summary>
 		public static readonly ObservableProperty<LogProfile?> LogProfileProperty = ObservableProperty.Register<Session, LogProfile?>(nameof(LogProfile));
@@ -83,9 +87,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<double> LogsFilteringProgressProperty = ObservableProperty.Register<Session, double>(nameof(LogsFilteringProgress));
 		/// <summary>
-		/// Property of <see cref="LogTextFilterRegex"/>.
+		/// Property of <see cref="LogTextFilter"/>.
 		/// </summary>
-		public static readonly ObservableProperty<Regex?> LogTextFilterRegexProperty = ObservableProperty.Register<Session, Regex?>(nameof(LogTextFilterRegex));
+		public static readonly ObservableProperty<Regex?> LogTextFilterProperty = ObservableProperty.Register<Session, Regex?>(nameof(LogTextFilter));
 		/// <summary>
 		/// Property of <see cref="Title"/>.
 		/// </summary>
@@ -192,11 +196,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				if (this.IsDisposed || this.LogProfile == null)
 					return;
 
+				// setup level
+				this.logFilter.Level = this.LogLevelFilter;
+
+				// setup combination mode
+
 				// setup text regex
-				if (this.LogTextFilterRegex == null)
+				if (this.LogTextFilter == null)
 					this.logFilter.TextRegexList = new Regex[0];
 				else
-					this.logFilter.TextRegexList = new Regex[] { this.LogTextFilterRegex };
+					this.logFilter.TextRegexList = new Regex[] { this.LogTextFilter };
 			});
 			this.updateTitleAndIconAction = new ScheduledAction(() =>
 			{
@@ -539,6 +548,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Get or set level to filter log.
+		/// </summary>
+		public Logs.LogLevel LogLevelFilter 
+		{ 
+			get => this.GetValue(LogLevelFilterProperty);
+			set => this.SetValue(LogLevelFilterProperty, value);
+		}
+
+
+		/// <summary>
 		/// Get current log profile.
 		/// </summary>
 		public LogProfile? LogProfile { get => this.GetValue(LogProfileProperty); }
@@ -559,10 +578,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get or set <see cref="Regex"/> for log text filtering.
 		/// </summary>
-		public Regex? LogTextFilterRegex
+		public Regex? LogTextFilter
 		{
-			get => this.GetValue(LogTextFilterRegexProperty);
-			set => this.SetValue(LogTextFilterRegexProperty, value);
+			get => this.GetValue(LogTextFilterProperty);
+			set => this.SetValue(LogTextFilterProperty, value);
 		}
 
 
@@ -701,8 +720,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			base.OnPropertyChanged(property, oldValue, newValue);
 			if (property == IsFilteringLogsProperty || property == IsReadingLogsProperty)
 				this.updateIsProcessingLogsAction.Schedule();
-			else if (property == LogTextFilterRegexProperty)
-				this.updateLogFilterAction.Reschedule();
+			else if (property == LogLevelFilterProperty || property == LogTextFilterProperty)
+				this.updateLogFilterAction.Schedule();
 		}
 
 

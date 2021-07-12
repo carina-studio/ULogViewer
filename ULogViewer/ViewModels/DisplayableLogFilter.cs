@@ -237,7 +237,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				}
 
 				// check text regex
-				var isTextRegexMatched = false;
+				var isTextRegexMatched = (textRegexCount == 0);
 				for (var j = textRegexCount - 1; j >= 0; --j)
 				{
 					var textRegex = textRegexList[j];
@@ -587,6 +587,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				else
 					isFilteringNeeded = false;
 			}
+			if (!isFilteringNeeded && this.level != Logs.LogLevel.Undefined)
+				isFilteringNeeded = true;
 
 			// no need to filter
 			if (!isFilteringNeeded)

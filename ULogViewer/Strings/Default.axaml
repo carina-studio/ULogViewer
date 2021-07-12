@@ -64,6 +64,7 @@
 	<!-- SessionView -->
 	<sys:String x:Key="String.SessionView.AddLogFiles">Add log files</sys:String>
 	<sys:String x:Key="String.SessionView.AllLogCount">Total: </sys:String>
+	<sys:String x:Key="String.SessionView.AllLogLevels">All levels</sys:String>
 	<sys:String x:Key="String.SessionView.AppInfo">About ULogViewer...</sys:String>
 	<sys:String x:Key="String.SessionView.AppOptions">Options...</sys:String>
 	<sys:String x:Key="String.SessionView.FilteredLogCount">, Filtered: </sys:String>
