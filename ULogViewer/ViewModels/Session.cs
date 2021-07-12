@@ -71,6 +71,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsReadingLogsProperty = ObservableProperty.Register<Session, bool>(nameof(IsReadingLogs));
 		/// <summary>
+		/// Property of <see cref="LogFiltersCombinationMode"/>.
+		/// </summary>
+		public static readonly ObservableProperty<FilterCombinationMode> LogFiltersCombinationModeProperty = ObservableProperty.Register<Session, FilterCombinationMode>(nameof(LogFiltersCombinationMode), FilterCombinationMode.Intersection);
+		/// <summary>
 		/// Property of <see cref="LogLevelFilter"/>.
 		/// </summary>
 		public static readonly ObservableProperty<Logs.LogLevel> LogLevelFilterProperty = ObservableProperty.Register<Session, Logs.LogLevel>(nameof(LogLevelFilter), ULogViewer.Logs.LogLevel.Undefined);
@@ -200,6 +204,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.logFilter.Level = this.LogLevelFilter;
 
 				// setup combination mode
+				this.logFilter.CombinationMode = this.LogFiltersCombinationMode;
 
 				// setup text regex
 				if (this.LogTextFilter == null)
@@ -548,6 +553,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Get or set mode to combine condition of <see cref="LogTextFilter"/> and other conditions for logs filtering.
+		/// </summary>
+		public FilterCombinationMode LogFiltersCombinationMode 
+		{
+			get => this.GetValue(LogFiltersCombinationModeProperty);
+			set => this.SetValue(LogFiltersCombinationModeProperty, value);
+		}
+
+
+		/// <summary>
 		/// Get or set level to filter log.
 		/// </summary>
 		public Logs.LogLevel LogLevelFilter 
@@ -718,10 +733,17 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		protected override void OnPropertyChanged(ObservableProperty property, object? oldValue, object? newValue)
 		{
 			base.OnPropertyChanged(property, oldValue, newValue);
-			if (property == IsFilteringLogsProperty || property == IsReadingLogsProperty)
+			if (property == IsFilteringLogsProperty 
+				|| property == IsReadingLogsProperty)
+			{
 				this.updateIsProcessingLogsAction.Schedule();
-			else if (property == LogLevelFilterProperty || property == LogTextFilterProperty)
+			}
+			else if (property == LogFiltersCombinationModeProperty 
+				|| property == LogLevelFilterProperty
+				|| property == LogTextFilterProperty)
+			{
 				this.updateLogFilterAction.Schedule();
+			}
 		}
 
 

@@ -142,6 +142,22 @@
 					<ComboBoxItem Content="{DynamicResource String.LogLevel.Error}" Foreground="{DynamicResource Brush.DisplayableLog.Level.Error}" Tag="Error"/>
 					<ComboBoxItem Content="{DynamicResource String.LogLevel.Fatal}" Foreground="{DynamicResource Brush.DisplayableLog.Level.Fatal}" Tag="Fatal"/>
 				</ComboBox>
+
+				<!-- Filters combinatin mode -->
+				<Button Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].SwitchLogFiltersCombinationModeCommand}" Grid.Column="3" ToolTip.Tip="{DynamicResource String.SessionView.LogFiltersCombinationMode}">
+					<Border Classes="SessionView_ToolBar_Button_Icon">
+						<DrawingPresenter Classes="SessionView_ToolBar_Button_Icon">
+							<ia:Interaction.Behaviors>
+								<iaCore:DataTriggerBehavior Binding="{Binding LogFiltersCombinationMode}" ComparisonCondition="Equal" Value="Intersection">
+									<iaCore:ChangePropertyAction PropertyName="Drawing" Value="{StaticResource Drawing.Intersection}"/>
+								</iaCore:DataTriggerBehavior>
+								<iaCore:DataTriggerBehavior Binding="{Binding LogFiltersCombinationMode}" ComparisonCondition="Equal" Value="Union">
+									<iaCore:ChangePropertyAction PropertyName="Drawing" Value="{StaticResource Drawing.Union}"/>
+								</iaCore:DataTriggerBehavior>
+							</ia:Interaction.Behaviors>
+						</DrawingPresenter>
+					</Border>
+				</Button>
 				
 				<!-- Text filter -->
 				<TextBox Name="logTextFilterTextBox" Classes="SessionView_ToolBar_LogTextFilter" Grid.Column="4" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" Margin="{StaticResource Thickness.SessionView.ToolBar.LogTextFilter.Margin}" PropertyChanged="OnLogTextFilterTextBoxPropertyChanged" Watermark="{DynamicResource String.SessionView.LogTextFilterHint}">

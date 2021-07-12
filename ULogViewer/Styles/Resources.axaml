@@ -68,7 +68,7 @@
 	<Thickness x:Key="Thickness.SessionView.ToolBar.Button.Padding">5</Thickness>
 	<Thickness x:Key="Thickness.SessionView.ToolBar.LogFilters.Padding">5,0,0,0</Thickness>
 	<Thickness x:Key="Thickness.SessionView.ToolBar.LogLevelFilter.Margin">0,0,5,0</Thickness>
-	<Thickness x:Key="Thickness.SessionView.ToolBar.LogTextFilter.Margin">0,0,5,0</Thickness>
+	<Thickness x:Key="Thickness.SessionView.ToolBar.LogTextFilter.Margin">5,0,5,0</Thickness>
 	<Thickness x:Key="Thickness.SessionView.ToolBar.Padding">5,5,5,2</Thickness>
 	<Thickness x:Key="Thickness.SessionView.ToolBar.Separator.Margin">1,2,1,2</Thickness>
 	

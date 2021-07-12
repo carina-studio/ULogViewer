@@ -79,6 +79,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.SetLogProfileCommand = ReactiveCommand.Create(this.SetLogProfile, this.canSetLogProfile);
 			this.SetWorkingDirectoryCommand = ReactiveCommand.Create(this.SetWorkingDirectory, this.canSetWorkingDirectory);
 			this.ShowOtherActionsCommand = ReactiveCommand.Create(this.ShowOtherActions);
+			this.SwitchLogFiltersCombinationModeCommand = ReactiveCommand.Create(this.SwitchLogFiltersCombinationMode, this.GetObservable<bool>(HasLogProfileProperty));
 
 			// initialize
 			this.InitializeComponent();
@@ -147,6 +148,9 @@ namespace CarinaStudio.ULogViewer.Controls
 
 				// set level
 				session.LogLevelFilter = Enum.Parse<Logs.LogLevel>((string)((ComboBoxItem)this.logLevelFilterComboBox.SelectedItem.AsNonNull()).Tag.AsNonNull());
+
+				// set combination mode
+				//
 
 				// update session
 				session.LogTextFilter = regex;
@@ -784,6 +788,25 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// Get current state of status bar.
 		/// </summary>
 		public SessionViewStatusBarState StatusBarState { get => this.GetValue<SessionViewStatusBarState>(StatusBarStateProperty); }
+
+
+		// Switch filters combination mode.
+		void SwitchLogFiltersCombinationMode()
+		{
+			if (this.DataContext is not Session session)
+				return;
+			session.LogFiltersCombinationMode = session.LogFiltersCombinationMode switch
+			{
+				FilterCombinationMode.Intersection => FilterCombinationMode.Union,
+				_ => FilterCombinationMode.Intersection,
+			};
+		}
+
+
+		/// <summary>
+		/// Command to switch combination mode of log filters.
+		/// </summary>
+		public ICommand SwitchLogFiltersCombinationModeCommand { get; }
 
 
 		// Get delay of updating log filter.
