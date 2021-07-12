@@ -42,10 +42,15 @@
 			<SolidColorBrush x:Key="Brush.SessionView.LogHeader.Separator">#000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.SessionView.LogListBox.Background">#000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.SessionView.LogListBox.Item.Background.Marked">#000000</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.SessionView.LogTextFilter.Background">#00000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.SessionView.LogListBox.Item.Background.Pressed">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.SessionView.LogListBox.Item.Background.Selected">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.SessionView.LogListBox.Item.Background.Selected.PointerOver">#000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.SessionView.LogTextFilter.Foreground.Error">#00000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.SessionView.SidePanel.Background">#000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.SessionView.StatusBar.Background">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.SessionView.StatusBar.Background.Active">#007acc</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.SessionView.StatusBar.Background.Error">#ff3232</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.SessionView.StatusBar.Background.Paused">#ca5100</SolidColorBrush>
 
 			<!-- Window -->
 			<SolidColorBrush x:Key="Brush.Window.Background">#ffffff</SolidColorBrush>
@@ -109,6 +114,7 @@
 		<Setter Property="Background" Value="{DynamicResource Brush.LogProfileSelectionDialog.Label.Background}"/>
 		<Setter Property="BorderBrush" Value="{DynamicResource Brush.LogProfileSelectionDialog.Label.Border}"/>
 		<Setter Property="BorderThickness" Value="1"/>
+		<Setter Property="CornerRadius" Value="{StaticResource CornerRadius.LogProfileSelectionDialog.Label}"/>
 		<Setter Property="Margin" Value="{StaticResource Thickness.LogProfileSelectionDialog.LogProfile.Label.Margin}"/>
 		<Setter Property="Padding" Value="{StaticResource Thickness.LogProfileSelectionDialog.LogProfile.Label.Padding}"/>
 	</Style>
@@ -165,10 +171,6 @@
 		<Setter Property="Background" Value="{DynamicResource Brush.Separator.Background}"/>
 		<Setter Property="Margin" Value="{StaticResource Thickness.SessionView.ToolBar.Separator.Margin}"/>
 		<Setter Property="Width" Value="{StaticResource Double.SessionView.ToolBar.Separator.Size}"/>
-	</Style>
-	<Style Selector="TextBox.SessionView_ToolBar_LogTextFilter">
-		<Setter Property="Background" Value="{DynamicResource Brush.SessionView.LogTextFilter.Background}"/>
-		<Setter Property="VerticalAlignment" Value="Center"/>
 	</Style>
 	<Style Selector="ToggleButton.SessionView_ToolBar_Button">
 		<Setter Property="Background" Value="{x:Static Brushes.Transparent}"/>

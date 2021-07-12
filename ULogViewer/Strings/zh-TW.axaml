@@ -14,6 +14,7 @@
 
 	<!-- Built-in profile -->
 	<sys:String x:Key="String.BuiltInProfile.AndroidDeviceLog">Android 裝置日誌</sys:String>
+	<sys:String x:Key="String.BuiltInProfile.AndroidFileLog">Android 日誌檔案</sys:String>
 	<sys:String x:Key="String.BuiltInProfile.GitLog">Git 提交紀錄</sys:String>
 
 	<!-- DisplayableLogProperty -->
@@ -28,11 +29,22 @@
 	<sys:String x:Key="String.DisplayableLogProperty.TimestampString">時間</sys:String>
 	<sys:String x:Key="String.DisplayableLogProperty.UserName">使用者</sys:String>
 
+	<!-- LogLevel -->
+	<sys:String x:Key="String.LogLevel.Debug">偵錯</sys:String>
+	<sys:String x:Key="String.LogLevel.Error">錯誤</sys:String>
+	<sys:String x:Key="String.LogLevel.Fatal">嚴重錯誤</sys:String>
+	<sys:String x:Key="String.LogLevel.Info">資訊</sys:String>
+	<sys:String x:Key="String.LogLevel.Undefined">未定義</sys:String>
+	<sys:String x:Key="String.LogLevel.Verbose">詳細資訊</sys:String>
+	<sys:String x:Key="String.LogLevel.Warn">警告</sys:String>
+
 	<!-- LogProfileSelectionDialog -->
 	<sys:String x:Key="String.LogProfileSelectionDialog.AddLogProfile">建立...</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.AllLogProfiles">所有日誌類型</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.BuiltInLogProfile">內建</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.EditLogProfile">編輯日誌類型</sys:String>
+	<sys:String x:Key="String.LogProfileSelectionDialog.IsContinuousReading">連續讀取</sys:String>
+	<sys:String x:Key="String.LogProfileSelectionDialog.IsWorkingDirectoryNeeded">需要工作目錄</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.PinnedLogProfiles">已釘選</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.PinUnpinLogProfile">釘選/移除釘選日誌類型</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.RemoveLogProfile">刪除日誌類型</sys:String>
@@ -48,12 +60,15 @@
 	<!-- SessionView -->
 	<sys:String x:Key="String.SessionView.AddLogFiles">加入日誌檔案</sys:String>
 	<sys:String x:Key="String.SessionView.AllLogCount">總數：</sys:String>
+	<sys:String x:Key="String.SessionView.AllLogLevels">所有等級</sys:String>
 	<sys:String x:Key="String.SessionView.AppInfo">關於 ULogViewer...</sys:String>
 	<sys:String x:Key="String.SessionView.AppOptions">應用程式選項...</sys:String>
 	<sys:String x:Key="String.SessionView.FilteredLogCount">，已篩選：</sys:String>
+	<sys:String x:Key="String.SessionView.LogFiltersCombinationMode">篩選條件運算方式</sys:String>
 	<sys:String x:Key="String.SessionView.LogsFilteringProgress">篩選進度：</sys:String>
 	<sys:String x:Key="String.SessionView.LogTextFilterHint">文字篩選 (正規表示式)</sys:String>
 	<sys:String x:Key="String.SessionView.NoLogToShow">沒有日誌可以顯示</sys:String>
+	<sys:String x:Key="String.SessionView.PauseResumeLogsReading">暫停/繼續讀取日誌 (P)</sys:String>
 	<sys:String x:Key="String.SessionView.ReloadLogs">重新載入日誌 (F5)</sys:String>
 	<sys:String x:Key="String.SessionView.ResetLogFilters">清除所有篩選設定</sys:String>
 	<sys:String x:Key="String.SessionView.ScrollToLatestLog">捲動至最新的日誌</sys:String>

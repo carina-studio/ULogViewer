@@ -22,17 +22,23 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		class FilteringParams
 		{
 			// Fields.
+			public FilterCombinationMode CombinationMode;
 			public volatile int CompletedChunkId;
 			public int ConcurrencyLevel;
 			public readonly object FilteringChunkLock = new object();
 			public bool HasLogMessage;
+			public bool HasLogProcessId;
 			public bool HasLogProcessName;
 			public bool HasLogSourceName;
+			public bool HasLogThreadId;
 			public bool HasLogThreadName;
 			public bool HasLogUserId;
 			public bool HasLogUserName;
 			public bool IncludeMarkedLogs;
+			public Logs.LogLevel Level;
 			public int NextChunkId = 1;
+			public int? ProcessId;
+			public int? ThreadId;
 			public IList<Regex> TextRegexList = new Regex[0];
 		}
 
@@ -46,15 +52,19 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		// Fields.
+		FilterCombinationMode combinationMode = FilterCombinationMode.Intersection;
 		volatile FilteringParams? currentFilterParams;
 		readonly SortedObservableList<DisplayableLog> filteredLogs;
 		IList<DisplayableLogProperty> filteringLogProperties = new DisplayableLogProperty[0];
 		readonly TaskFactory filteringTaskFactory;
 		readonly FixedThreadsTaskScheduler filteringTaskScheduler;
 		bool includeMarkedLogs = true;
+		Logs.LogLevel level = Logs.LogLevel.Undefined;
 		readonly int maxFilteringConcurrencyLevel = Environment.ProcessorCount;
+		int? processId;
 		readonly ScheduledAction startFilteringLogsAction;
 		IList<Regex> textRegexList = new Regex[0];
+		int? threadId;
 		readonly SortedObservableList<DisplayableLog> unfilteredLogs;
 
 
@@ -133,6 +143,25 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		}
 
 
+		/// <summary>
+		/// Get or set mode to combine condition of <see cref="TextRegexList"/> and other conditions excluding <see cref="IncludeMarkedLogs"/>.
+		/// </summary>
+		public FilterCombinationMode CombinationMode
+		{
+			get => this.combinationMode;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyDisposed();
+				if (this.combinationMode == value)
+					return;
+				this.combinationMode = value;
+				this.startFilteringLogsAction.Schedule();
+				this.OnPropertyChanged(nameof(CombinationMode));
+			}
+		}
+
+
 		// Dispose
 		protected override void Dispose(bool disposing)
 		{
@@ -198,13 +227,25 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// filter logs
 			var filteredLogs = new List<DisplayableLog>();
+			var combinationMode = filteringParams.CombinationMode;
+			var includeMarkLogs = filteringParams.IncludeMarkedLogs;
+			var level = filteringParams.Level;
+			var pid = filteringParams.ProcessId;
+			var tid = filteringParams.ThreadId;
 			var textRegexList = filteringParams.TextRegexList;
 			var textRegexCount = textRegexList.Count;
 			for (int i = 0, count = logs.Count; i < count; ++i)
 			{
-				// filter by text regex
+				// check marking state
 				var log = logs[i];
-				var isTextRegexMatched = false;
+				if (includeMarkLogs && log.IsMarked)
+				{
+					filteredLogs.Add(log);
+					continue;
+				}
+
+				// check text regex
+				var isTextRegexMatched = (textRegexCount == 0);
 				for (var j = textRegexCount - 1; j >= 0; --j)
 				{
 					var textRegex = textRegexList[j];
@@ -239,10 +280,27 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						break;
 					}
 				}
-
-				//
-				if (isTextRegexMatched)
+				if (isTextRegexMatched && combinationMode == FilterCombinationMode.Union)
+				{
 					filteredLogs.Add(log);
+					continue;
+				}
+
+				// check level
+				var areOtherConditionsMatched = true;
+				if (level != Logs.LogLevel.Undefined && log.Level != level)
+					areOtherConditionsMatched = false;
+				if (areOtherConditionsMatched && pid != null && filteringParams.HasLogProcessId)
+					areOtherConditionsMatched = (pid == log.ProcessId);
+				if (areOtherConditionsMatched && tid != null && filteringParams.HasLogThreadId)
+					areOtherConditionsMatched = (tid == log.ThreadId);
+
+				// filter
+				if (areOtherConditionsMatched)
+				{
+					if (isTextRegexMatched || combinationMode == FilterCombinationMode.Union)
+						filteredLogs.Add(log);
+				}
 			}
 
 			// wait for previous chunks
@@ -361,6 +419,25 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public bool IsFilteringNeeded { get; private set; }
 
 
+		/// <summary>
+		/// Get or set level of log to be filtered.
+		/// </summary>
+		public Logs.LogLevel Level
+		{
+			get => this.level;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyDisposed();
+				if (this.level == value)
+					return;
+				this.level = value;
+				this.startFilteringLogsAction.Schedule();
+				this.OnPropertyChanged(nameof(Level));
+			}
+		}
+
+
 		// Called when chunk of logs filtered.
 		void OnChunkFiltered(FilteringParams filteringParams, int chunkId, IList<DisplayableLog> filteredLogs)
 		{
@@ -390,13 +467,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				var comparer = this.filteredLogs.Comparer;
 				while (filteredIndex >= 0)
 				{
-					sourceIndex = sourceLogs.IndexOf(filteredLogs[filteredIndex--]);
+					sourceIndex = sourceLogs.IndexOf(filteredLogs[filteredIndex]);
 					if (sourceIndex >= 0)
 					{
 						--sourceIndex;
+						--filteredIndex;
 						break;
 					}
-					filteredLogs.RemoveAt(filteredIndex);
+					filteredLogs.RemoveAt(filteredIndex--);
 				}
 				while (filteredIndex >= 0 && sourceIndex >= 0)
 				{
@@ -457,6 +535,25 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Get or set process ID of log to filter.
+		/// </summary>
+		public int? ProcessId
+		{
+			get => this.processId;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyDisposed();
+				if (this.processId == value)
+					return;
+				this.processId = value;
+				this.startFilteringLogsAction.Schedule();
+				this.OnPropertyChanged(nameof(ProcessId));
+			}
+		}
+
+
+		/// <summary>
 		/// Get source list of <see cref="DisplayableLog"/> to be filtered.
 		/// </summary>
 		public IList<DisplayableLog> SourceLogs { get; }
@@ -483,12 +580,20 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						filteringParams.HasLogMessage = true;
 						isFilteringNeeded = true;
 						break;
+					case nameof(DisplayableLog.ProcessId):
+						filteringParams.HasLogProcessId = true;
+						isFilteringNeeded = true;
+						break;
 					case nameof(DisplayableLog.ProcessName):
 						filteringParams.HasLogProcessName = true;
 						isFilteringNeeded = true;
 						break;
 					case nameof(DisplayableLog.SourceName):
 						filteringParams.HasLogSourceName = true;
+						isFilteringNeeded = true;
+						break;
+					case nameof(DisplayableLog.ThreadId):
+						filteringParams.HasLogThreadId = true;
 						isFilteringNeeded = true;
 						break;
 					case nameof(DisplayableLog.ThreadName):
@@ -521,6 +626,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				else
 					isFilteringNeeded = false;
 			}
+			if (!isFilteringNeeded)
+				isFilteringNeeded = (this.level != Logs.LogLevel.Undefined);
+			if (!isFilteringNeeded)
+				isFilteringNeeded = (this.processId != null);
+			if (!isFilteringNeeded)
+				isFilteringNeeded = (this.threadId != null);
 
 			// no need to filter
 			if (!isFilteringNeeded)
@@ -546,8 +657,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.IsFilteringNeeded = true;
 				this.OnPropertyChanged(nameof(IsFilteringNeeded));
 			}
+			filteringParams.CombinationMode = this.combinationMode;
 			filteringParams.IncludeMarkedLogs = this.includeMarkedLogs;
+			filteringParams.Level = this.level;
+			filteringParams.ProcessId = this.processId;
 			filteringParams.TextRegexList = this.textRegexList;
+			filteringParams.ThreadId = this.threadId;
 			this.unfilteredLogs.AddAll(this.SourceLogs, true);
 			this.currentFilterParams = filteringParams;
 			for (var i = 0; i < this.maxFilteringConcurrencyLevel; ++i)
@@ -570,6 +685,25 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.textRegexList = new List<Regex>(value).AsReadOnly();
 				this.startFilteringLogsAction.Schedule();
 				this.OnPropertyChanged(nameof(TextRegexList));
+			}
+		}
+
+
+		/// <summary>
+		/// Get or set thread ID of log to filter.
+		/// </summary>
+		public int? ThreadId
+		{
+			get => this.threadId;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyDisposed();
+				if (this.threadId == value)
+					return;
+				this.threadId = value;
+				this.startFilteringLogsAction.Schedule();
+				this.OnPropertyChanged(nameof(ThreadId));
 			}
 		}
 

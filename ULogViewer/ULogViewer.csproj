@@ -20,10 +20,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Logs\Profiles\BuiltIn\AndroidDeviceLog.json" />
-  </ItemGroup>
-
-  <ItemGroup>
     <AvaloniaResource Include="AppIcon.ico" />
     <AvaloniaResource Include="Resources/AppIcon_128px.png" />
     <AvaloniaResource Include="Resources/AppIcon_256px.png" />
@@ -67,6 +63,7 @@
 
 	<ItemGroup>
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/AndroidDeviceLog.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/AndroidFileLog.json" />
 	  <EmbeddedResource Include="Logs/Profiles/BuiltIn/GitLog.json" />
 	  <EmbeddedResource Include="Logs/Profiles/BuiltIn/ULogViewerLog.json" />
 	</ItemGroup>
