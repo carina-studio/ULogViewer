@@ -229,6 +229,18 @@
 						<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
 						<Setter Property="Padding" Value="0"/>
 					</Style>
+					<Style Selector="ListBoxItem:pressed /template/ ContentPresenter#PART_ContentPresenter">
+						<Setter Property="Background" Value="{DynamicResource Brush.SessionView.LogListBox.Item.Background.Pressed}"/>
+					</Style>
+					<Style Selector="ListBoxItem:selected /template/ ContentPresenter#PART_ContentPresenter">
+						<Setter Property="Background" Value="{DynamicResource Brush.SessionView.LogListBox.Item.Background.Selected}"/>
+					</Style>
+					<Style Selector="ListBoxItem:selected:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+						<Setter Property="Background" Value="{DynamicResource Brush.SessionView.LogListBox.Item.Background.Selected.PointerOver}"/>
+					</Style>
+					<Style Selector="ListBoxItem:selected:pressed /template/ ContentPresenter#PART_ContentPresenter">
+						<Setter Property="Background" Value="{DynamicResource Brush.SessionView.LogListBox.Item.Background.Pressed}"/>
+					</Style>
 					<Style Selector="TextBlock">
 						<Setter Property="FontFamily" Value="Consolas"/>
 					</Style>
