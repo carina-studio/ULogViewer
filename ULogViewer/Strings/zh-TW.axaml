@@ -14,6 +14,7 @@
 
 	<!-- Built-in profile -->
 	<sys:String x:Key="String.BuiltInProfile.AndroidDeviceLog">Android 裝置日誌</sys:String>
+	<sys:String x:Key="String.BuiltInProfile.AndroidFileLog">Android 日誌檔案</sys:String>
 	<sys:String x:Key="String.BuiltInProfile.GitLog">Git 提交紀錄</sys:String>
 
 	<!-- DisplayableLogProperty -->

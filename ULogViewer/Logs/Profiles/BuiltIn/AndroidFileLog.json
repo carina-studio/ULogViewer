@@ -1,0 +1,44 @@
+﻿{
+	"DataSource": {
+		"Name": "File"
+	},
+	"Icon": "Phone",
+	"LogLevelMap": {
+		"D": "Debug",
+		"E": "Error",
+		"F": "Fatal",
+		"I": "Info",
+		"V": "Verbose",
+		"W": "Warn"
+	},
+	"LogPatterns": [
+		{
+			"Regex": "^(?<Timestamp>[^\\s]+[\\s]+[^\\s]+)[\\s]+(?<ProcessId>[\\d]+)[\\s]+(?<ThreadId>[\\d]+)[\\s]+(?<Level>[\\w]+)[\\s]+(?<SourceName>[^\\s\\:]*([\\s]+[^\\s\\:]*)*)\\:[\\s](?<Message>.*)$"
+		}
+	],
+	"TimestampCultureInfoForReading": "en-US",
+	"TimestampFormatForDisplaying": "MM/dd HH:mm:ss.fff",
+	"TimestampFormatForReading": "MM-dd HH:mm:ss.fff",
+	"VisibleLogProperties": [
+		{
+			"Name": "Timestamp",
+			"Width": 180
+		},
+		{
+			"Name": "ProcessId",
+			"Width": 80
+		},
+		{
+			"Name": "ThreadId",
+			"Width": 80
+		},
+		{
+			"DisplayName": "Tag",
+			"Name": "SourceName",
+			"Width": 100
+		},
+		{
+			"Name": "Message"
+		}
+	]
+}

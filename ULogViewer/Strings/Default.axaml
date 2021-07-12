@@ -14,6 +14,7 @@
 
 	<!-- Built-in profile -->
 	<sys:String x:Key="String.BuiltInProfile.AndroidDeviceLog">Android device log</sys:String>
+	<sys:String x:Key="String.BuiltInProfile.AndroidFileLog">Android log files</sys:String>
 	<sys:String x:Key="String.BuiltInProfile.GitLog">Git log</sys:String>
 	<sys:String x:Key="String.BuiltInProfile.ULogViewerLog">ULogViewer log (DEBUG)</sys:String>
 
