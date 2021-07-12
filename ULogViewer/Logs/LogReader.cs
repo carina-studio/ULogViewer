@@ -523,7 +523,7 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		// Read single line of log.
-		void ReadLog(LogBuilder logBuilder, Match match)
+		void ReadLog(LogBuilder logBuilder, Match match, StringPool stringPool)
 		{
 			foreach (Group group in match.Groups)
 			{
@@ -546,6 +546,15 @@ namespace CarinaStudio.ULogViewer.Logs
 								logBuilder.Set(name, timestamp.ToBinary().ToString());
 						});
 						break;
+					case nameof(Log.ProcessId):
+					case nameof(Log.ProcessName):
+					case nameof(Log.SourceName):
+					case nameof(Log.ThreadId):
+					case nameof(Log.ThreadName):
+					case nameof(Log.UserId):
+					case nameof(Log.UserName):
+						logBuilder.Set(name, stringPool[group.Value]);
+						break;
 					default:
 						logBuilder.Set(name, group.Value);
 						break;
@@ -565,6 +574,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			var isContinuousReading = this.isContinuousReading;
 			var isReadingFromFile = this.DataSource.UnderlyingSource == UnderlyingLogDataSource.File;
 			var dataSourceOptions = this.DataSource.CreationOptions;
+			var stringPool = new StringPool();
 			var exception = (Exception?)null;
 			try
 			{
@@ -582,7 +592,7 @@ namespace CarinaStudio.ULogViewer.Logs
 						if (match.Success)
 						{
 							// read log
-							this.ReadLog(logBuilder, match);
+							this.ReadLog(logBuilder, match, stringPool);
 
 							// set file name and line number
 							if (logPatternIndex == 0 && isReadingFromFile)
