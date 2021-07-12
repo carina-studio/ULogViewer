@@ -333,6 +333,22 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Mark or unmark selected logs.
+		void MarkUnmarkSelectedLogs()
+		{
+			if (this.DataContext is not Session session)
+				return;
+			var logs = this.logListBox.SelectedItems.Cast<DisplayableLog>();
+			session.MarkUnmarkLogsCommand.TryExecute(logs);
+		}
+
+
+		/// <summary>
+		/// Command to mark or unmark selected logs 
+		/// </summary>
+		public ICommand MarkUnmarkSelectedLogsCommand { get; }
+
+
 		// Called when display log properties changed.
 		void OnDisplayLogPropertiesChanged()
 		{
@@ -654,6 +670,9 @@ namespace CarinaStudio.ULogViewer.Controls
 						break;
 					case Key.F5:
 						(this.DataContext as Session)?.ReloadLogsCommand?.TryExecute();
+						break;
+					case Key.M:
+						this.MarkUnmarkSelectedLogs();
 						break;
 					case Key.P:
 						(this.DataContext as Session)?.PauseResumeLogsReadingCommand?.TryExecute();

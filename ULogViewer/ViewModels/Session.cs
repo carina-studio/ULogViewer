@@ -118,6 +118,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly HashSet<string> addedFilePaths = new HashSet<string>(PathEqualityComparer.Default);
 		readonly SortedObservableList<DisplayableLog> allLogs;
 		readonly MutableObservableBoolean canAddFile = new MutableObservableBoolean();
+		readonly MutableObservableBoolean canMarkUnmarkLogs = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canPauseResumeLogsReading = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canReloadLogs = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canResetLogProfile = new MutableObservableBoolean();
@@ -141,6 +142,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			// create commands
 			this.AddLogFileCommand = ReactiveCommand.Create<string?>(this.AddLogFile, this.canAddFile);
+			this.MarkUnmarkLogsCommand = ReactiveCommand.Create<IEnumerable<DisplayableLog>>(this.MarkUnmarkLogs, this.canMarkUnmarkLogs);
 			this.PauseResumeLogsReadingCommand = ReactiveCommand.Create(this.PauseResumeLogsReading, this.canPauseResumeLogsReading);
 			this.ReloadLogsCommand = ReactiveCommand.Create(this.ReloadLogs, this.canReloadLogs);
 			this.ResetLogProfileCommand = ReactiveCommand.Create(this.ResetLogProfile, this.canResetLogProfile);
@@ -416,6 +418,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			}));
 
 			// update state
+			this.canMarkUnmarkLogs.Update(true);
 			this.canPauseResumeLogsReading.Update(profile.IsContinuousReading);
 			this.canReloadLogs.Update(true);
 			this.SetValue(HasLogReadersProperty, true);
@@ -491,6 +494,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.Logger.LogDebug($"The last log reader disposed");
 				if (!this.IsDisposed)
 				{
+					this.canMarkUnmarkLogs.Update(false);
 					this.canPauseResumeLogsReading.Update(false);
 					this.canReloadLogs.Update(false);
 					this.SetValue(HasLogReadersProperty, false);
@@ -630,6 +634,39 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			get => this.GetValue(LogThreadIdFilterProperty);
 			set => this.SetValue(LogThreadIdFilterProperty, value);
 		}
+
+
+		// Mark or unmark logs.
+		void MarkUnmarkLogs(IEnumerable<DisplayableLog> logs)
+		{
+			if (!this.canMarkUnmarkLogs.Value)
+				return;
+			var allLogsAreMarked = true;
+			foreach (var log in logs)
+			{
+				if (!log.IsMarked)
+				{
+					allLogsAreMarked = false;
+					break;
+				}
+			}
+			if (allLogsAreMarked)
+			{
+				foreach (var log in logs)
+					log.IsMarked = false;
+			}
+			else
+			{
+				foreach (var log in logs)
+					log.IsMarked = true;
+			}
+		}
+
+
+		/// <summary>
+		/// Command to mark or ummark logs.
+		/// </summary>
+		public ICommand MarkUnmarkLogsCommand { get; }
 
 
 		// Called when logs in allLogs has been changed.
