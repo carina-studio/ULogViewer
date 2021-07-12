@@ -85,6 +85,22 @@
 					</Border>
 				</ToggleButton>
 
+				<!-- Pause/resume -->
+				<Button Classes="SessionView_ToolBar_Button" Command="{Binding PauseResumeLogsReadingCommand}" ToolTip.Tip="{DynamicResource String.SessionView.PauseResumeLogsReading}">
+					<Border Classes="SessionView_ToolBar_Button_Icon">
+						<DrawingPresenter Classes="SessionView_ToolBar_Button_Icon">
+							<ia:Interaction.Behaviors>
+								<iaCore:DataTriggerBehavior Binding="{Binding IsLogsReadingPaused}" ComparisonCondition="Equal" Value="True">
+									<iaCore:ChangePropertyAction PropertyName="Drawing" Value="{StaticResource Drawing.Play}"/>
+								</iaCore:DataTriggerBehavior>
+								<iaCore:DataTriggerBehavior Binding="{Binding IsLogsReadingPaused}" ComparisonCondition="Equal" Value="False">
+									<iaCore:ChangePropertyAction PropertyName="Drawing" Value="{StaticResource Drawing.Pause}"/>
+								</iaCore:DataTriggerBehavior>
+							</ia:Interaction.Behaviors>
+						</DrawingPresenter>
+					</Border>
+				</Button>
+
 				<!-- Separator -->
 				<Separator Classes="SessionView_ToolBar_Separator"/>
 				

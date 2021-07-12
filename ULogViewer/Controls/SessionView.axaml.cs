@@ -9,7 +9,6 @@ using Avalonia.LogicalTree;
 using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.Templates;
 using Avalonia.Media;
-using Avalonia.VisualTree;
 using CarinaStudio.Collections;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.Profiles;
@@ -511,6 +510,9 @@ namespace CarinaStudio.ULogViewer.Controls
 						break;
 					case Key.F5:
 						(this.DataContext as Session)?.ReloadLogsCommand?.TryExecute();
+						break;
+					case Key.P:
+						(this.DataContext as Session)?.PauseResumeLogsReadingCommand?.TryExecute();
 						break;
 				}
 			}

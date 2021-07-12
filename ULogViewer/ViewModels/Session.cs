@@ -55,13 +55,17 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsFilteringLogsNeededProperty = ObservableProperty.Register<Session, bool>(nameof(IsFilteringLogsNeeded));
 		/// <summary>
-		/// Property of <see cref="IsReadingLogs"/>.
+		/// Property of <see cref="IsLogsReadingPaused"/>.
 		/// </summary>
-		public static readonly ObservableProperty<bool> IsReadingLogsProperty = ObservableProperty.Register<Session, bool>(nameof(IsReadingLogs));
+		public static readonly ObservableProperty<bool> IsLogsReadingPausedProperty = ObservableProperty.Register<Session, bool>(nameof(IsLogsReadingPaused));
 		/// <summary>
 		/// Property of <see cref="IsProcessingLogs"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsProcessingLogsProperty = ObservableProperty.Register<Session, bool>(nameof(IsProcessingLogs));
+		/// <summary>
+		/// Property of <see cref="IsReadingLogs"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> IsReadingLogsProperty = ObservableProperty.Register<Session, bool>(nameof(IsReadingLogs));
 		/// <summary>
 		/// Property of <see cref="LogProfile"/>.
 		/// </summary>
@@ -94,6 +98,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly HashSet<string> addedFilePaths = new HashSet<string>(PathEqualityComparer.Default);
 		readonly SortedObservableList<DisplayableLog> allLogs;
 		readonly MutableObservableBoolean canAddFile = new MutableObservableBoolean();
+		readonly MutableObservableBoolean canPauseResumeLogsReading = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canReloadLogs = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canResetLogProfile = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSetLogProfile = new MutableObservableBoolean();
@@ -116,6 +121,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			// create commands
 			this.AddLogFileCommand = ReactiveCommand.Create<string?>(this.AddLogFile, this.canAddFile);
+			this.PauseResumeLogsReadingCommand = ReactiveCommand.Create(this.PauseResumeLogsReading, this.canPauseResumeLogsReading);
 			this.ReloadLogsCommand = ReactiveCommand.Create(this.ReloadLogs, this.canReloadLogs);
 			this.ResetLogProfileCommand = ReactiveCommand.Create(this.ResetLogProfile, this.canResetLogProfile);
 			this.SetLogProfileCommand = ReactiveCommand.Create<LogProfile?>(this.SetLogProfile, this.canSetLogProfile);
@@ -263,9 +269,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// update title
 			this.updateTitleAndIconAction.Schedule();
-
-			// update state
-			this.canReloadLogs.Update(true);
 		}
 
 
@@ -381,6 +384,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						array[i] = displayableLogGroup.CreateDisplayableLog(logReader, logs[i]);
 				});
 			}));
+
+			// update state
+			this.canPauseResumeLogsReading.Update(profile.IsContinuousReading);
+			this.canReloadLogs.Update(true);
 		}
 
 
@@ -446,6 +453,20 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			logReader.Dispose();
 			dataSource.Dispose();
 			this.Logger.LogDebug($"Log reader '{logReader.Id} disposed");
+
+			// update state
+			if (this.logReaders.IsEmpty())
+			{
+				this.Logger.LogDebug($"The last log reader disposed");
+				if (!this.IsDisposed)
+				{
+					this.canPauseResumeLogsReading.Update(false);
+					this.canReloadLogs.Update(false);
+					this.SetValue(IsLogsReadingPausedProperty, false);
+					this.updateIsReadingLogsAction.Execute();
+					this.updateIsProcessingLogsAction.Execute();
+				}
+			}
 		}
 
 
@@ -454,8 +475,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			foreach (var logReader in this.logReaders.ToArray())
 				this.DisposeLogReader(logReader, removeLogs);
-			this.updateIsReadingLogsAction.Execute();
-			this.updateIsProcessingLogsAction.Execute();
 		}
 
 
@@ -490,15 +509,21 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
-		/// Check whether logs are being read or not.
+		/// CHeck whether logs reading has been paused or not.
 		/// </summary>
-		public bool IsReadingLogs { get => this.GetValue(IsReadingLogsProperty); }
+		public bool IsLogsReadingPaused { get => this.GetValue(IsLogsReadingPausedProperty); }
 
 
 		/// <summary>
 		/// Check whether logs are being processed or not.
 		/// </summary>
 		public bool IsProcessingLogs { get => this.GetValue(IsProcessingLogsProperty); }
+
+
+		/// <summary>
+		/// Check whether logs are being read or not.
+		/// </summary>
+		public bool IsReadingLogs { get => this.GetValue(IsReadingLogsProperty); }
 
 
 		/// <summary>
@@ -669,6 +694,39 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		}
 
 
+		// Pause or resume logs reading.
+		void PauseResumeLogsReading()
+		{
+			// check state
+			this.VerifyAccess();
+			this.VerifyDisposed();
+			if (!this.canPauseResumeLogsReading.Value)
+				return;
+			if (this.logReaders.IsEmpty())
+				throw new InternalStateCorruptedException("No log reader to pause/resume logs reading.");
+
+			// pause or resume
+			if (this.IsLogsReadingPaused)
+			{
+				foreach (var logReader in this.logReaders)
+					logReader.Resume();
+				this.SetValue(IsLogsReadingPausedProperty, false);
+			}
+			else
+			{
+				foreach (var logReader in this.logReaders)
+					logReader.Pause();
+				this.SetValue(IsLogsReadingPausedProperty, true);
+			}
+		}
+
+
+		/// <summary>
+		/// Command to pause or resume logs reading.
+		/// </summary>
+		public ICommand PauseResumeLogsReadingCommand { get; }
+
+
 		// Reload logs.
 		void ReloadLogs()
 		{
@@ -754,7 +812,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// update state
 			this.canAddFile.Update(false);
 			this.canSetWorkingDirectory.Update(false);
-			this.canReloadLogs.Update(false);
 			this.canResetLogProfile.Update(false);
 			this.canSetLogProfile.Update(true);
 		}
@@ -849,8 +906,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.updateLogFilterAction.Reschedule();
 
 			// update state
-			if (this.logReaders.IsNotEmpty())
-				this.canReloadLogs.Update(true);
 			this.canResetLogProfile.Update(true);
 		}
 
@@ -902,9 +957,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// create log reader
 			this.CreateLogReader(dataSource);
-
-			// update state
-			this.canReloadLogs.Update(true);
 		}
 
 
