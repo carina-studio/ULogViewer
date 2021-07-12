@@ -39,6 +39,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<int> FilteredLogCountProperty = ObservableProperty.Register<Session, int>(nameof(FilteredLogCount));
 		/// <summary>
+		/// Property of <see cref="HasLogReaders"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> HasLogReadersProperty = ObservableProperty.Register<Session, bool>(nameof(HasLogReaders));
+		/// <summary>
 		/// Property of <see cref="HasLogs"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> HasLogsProperty = ObservableProperty.Register<Session, bool>(nameof(HasLogs));
@@ -388,6 +392,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// update state
 			this.canPauseResumeLogsReading.Update(profile.IsContinuousReading);
 			this.canReloadLogs.Update(true);
+			this.SetValue(HasLogReadersProperty, true);
 		}
 
 
@@ -462,6 +467,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				{
 					this.canPauseResumeLogsReading.Update(false);
 					this.canReloadLogs.Update(false);
+					this.SetValue(HasLogReadersProperty, false);
 					this.SetValue(IsLogsReadingPausedProperty, false);
 					this.updateIsReadingLogsAction.Execute();
 					this.updateIsProcessingLogsAction.Execute();
@@ -482,6 +488,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Get number of filtered logs.
 		/// </summary>
 		public int FilteredLogCount { get => this.GetValue(FilteredLogCountProperty); }
+
+
+		/// <summary>
+		/// Check whether at least one log reader created or not.
+		/// </summary>
+		public bool HasLogReaders { get => this.GetValue(HasLogReadersProperty); }
 
 
 		/// <summary>

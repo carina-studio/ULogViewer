@@ -188,6 +188,20 @@
 
 		<!-- Status bar -->
 		<Border Background="{StaticResource Brush.SessionView.StatusBar.Background}" Grid.ColumnSpan="3" Grid.Row="3" Padding="{StaticResource Thickness.SessionView.StatucBar.Padding}">
+			<ia:Interaction.Behaviors>
+				<iaCore:DataTriggerBehavior Binding="{Binding $parent[UserControl].StatusBarState}" ComparisonCondition="Equal" Value="None">
+					<iaCore:ChangePropertyAction PropertyName="Background" Value="{StaticResource Brush.SessionView.StatusBar.Background}"/>
+				</iaCore:DataTriggerBehavior>
+				<iaCore:DataTriggerBehavior Binding="{Binding $parent[UserControl].StatusBarState}" ComparisonCondition="Equal" Value="Active">
+					<iaCore:ChangePropertyAction PropertyName="Background" Value="{StaticResource Brush.SessionView.StatusBar.Background.Active}"/>
+				</iaCore:DataTriggerBehavior>
+				<iaCore:DataTriggerBehavior Binding="{Binding $parent[UserControl].StatusBarState}" ComparisonCondition="Equal" Value="Error">
+					<iaCore:ChangePropertyAction PropertyName="Background" Value="{StaticResource Brush.SessionView.StatusBar.Background.Error}"/>
+				</iaCore:DataTriggerBehavior>
+				<iaCore:DataTriggerBehavior Binding="{Binding $parent[UserControl].StatusBarState}" ComparisonCondition="Equal" Value="Paused">
+					<iaCore:ChangePropertyAction PropertyName="Background" Value="{StaticResource Brush.SessionView.StatusBar.Background.Paused}"/>
+				</iaCore:DataTriggerBehavior>
+			</ia:Interaction.Behaviors>
 			<Grid ColumnDefinitions="Auto,Auto,*">
 
 				<!-- Empty view to reserve space -->

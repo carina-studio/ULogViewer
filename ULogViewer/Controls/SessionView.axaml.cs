@@ -41,6 +41,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// Property of <see cref="IsScrollingToLatestLogNeeded"/>.
 		/// </summary>
 		public static readonly AvaloniaProperty<bool> IsScrollingToLatestLogNeededProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(IsScrollingToLatestLogNeeded), true);
+		/// <summary>
+		/// Property of <see cref="StatusBarState"/>.
+		/// </summary>
+		public static readonly AvaloniaProperty<SessionViewStatusBarState> StatusBarStateProperty = AvaloniaProperty.Register<SessionView, SessionViewStatusBarState>(nameof(StatusBarState), SessionViewStatusBarState.None);
 
 
 		// Constants.
@@ -60,6 +64,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ContextMenu otherActionsMenu;
 		readonly ScheduledAction scrollToLatestLogAction;
 		readonly ScheduledAction updateLogTextFilterAction;
+		readonly ScheduledAction updateStatusBarStateAction;
 
 
 		/// <summary>
@@ -141,6 +146,18 @@ namespace CarinaStudio.ULogViewer.Controls
 				// update session
 				session.LogTextFilterRegex = regex;
 			});
+			this.updateStatusBarStateAction = new ScheduledAction(() =>
+			{
+				if (this.DataContext is not Session session || !session.HasLogReaders)
+				{
+					this.SetValue<SessionViewStatusBarState>(StatusBarStateProperty, SessionViewStatusBarState.None);
+					return;
+				}
+				if (session.IsLogsReadingPaused)
+					this.SetValue<SessionViewStatusBarState>(StatusBarStateProperty, SessionViewStatusBarState.Paused);
+				else
+					this.SetValue<SessionViewStatusBarState>(StatusBarStateProperty, SessionViewStatusBarState.Active);
+			});
 		}
 
 
@@ -212,6 +229,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// update UI
 			this.OnDisplayLogPropertiesChanged();
+			this.updateStatusBarStateAction.Schedule();
 		}
 
 
@@ -238,6 +256,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// update UI
 			this.OnDisplayLogPropertiesChanged();
+			this.updateStatusBarStateAction.Schedule();
 		}
 
 
@@ -587,11 +606,17 @@ namespace CarinaStudio.ULogViewer.Controls
 				case nameof(Session.DisplayLogProperties):
 					this.OnDisplayLogPropertiesChanged();
 					break;
+				case nameof(Session.HasLogReaders):
+					this.updateStatusBarStateAction.Schedule();
+					break;
 				case nameof(Session.HasLogs):
 					if (!session.HasLogs)
 						this.scrollToLatestLogAction.Cancel();
 					else if (this.IsScrollingToLatestLogNeeded)
 						this.scrollToLatestLogAction.Schedule(ScrollingToLatestLogInterval);
+					break;
+				case nameof(Session.IsLogsReadingPaused):
+					this.updateStatusBarStateAction.Schedule();
 					break;
 				case nameof(Session.LogProfile):
 					this.SetValue<bool>(HasLogProfileProperty, session.LogProfile != null);
@@ -716,6 +741,12 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// Command to show UI of other actions.
 		/// </summary>
 		public ICommand ShowOtherActionsCommand { get; }
+
+
+		/// <summary>
+		/// Get current state of status bar.
+		/// </summary>
+		public SessionViewStatusBarState StatusBarState { get => this.GetValue<SessionViewStatusBarState>(StatusBarStateProperty); }
 
 
 		// Get delay of updating log filter.
