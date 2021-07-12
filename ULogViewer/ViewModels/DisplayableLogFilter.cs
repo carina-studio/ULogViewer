@@ -22,6 +22,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		class FilteringParams
 		{
 			// Fields.
+			public FilterCombinationMode CombinationMode;
 			public volatile int CompletedChunkId;
 			public int ConcurrencyLevel;
 			public readonly object FilteringChunkLock = new object();
@@ -32,6 +33,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			public bool HasLogUserId;
 			public bool HasLogUserName;
 			public bool IncludeMarkedLogs;
+			public Logs.LogLevel Level;
 			public int NextChunkId = 1;
 			public IList<Regex> TextRegexList = new Regex[0];
 		}
@@ -46,12 +48,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		// Fields.
+		FilterCombinationMode combinationMode = FilterCombinationMode.Intersection;
 		volatile FilteringParams? currentFilterParams;
 		readonly SortedObservableList<DisplayableLog> filteredLogs;
 		IList<DisplayableLogProperty> filteringLogProperties = new DisplayableLogProperty[0];
 		readonly TaskFactory filteringTaskFactory;
 		readonly FixedThreadsTaskScheduler filteringTaskScheduler;
 		bool includeMarkedLogs = true;
+		Logs.LogLevel level = Logs.LogLevel.Undefined;
 		readonly int maxFilteringConcurrencyLevel = Environment.ProcessorCount;
 		readonly ScheduledAction startFilteringLogsAction;
 		IList<Regex> textRegexList = new Regex[0];
@@ -133,6 +137,25 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		}
 
 
+		/// <summary>
+		/// Get or set mode to combine condition of <see cref="TextRegexList"/> and other conditions excluding <see cref="IncludeMarkedLogs"/>.
+		/// </summary>
+		public FilterCombinationMode CombinationMode
+		{
+			get => this.combinationMode;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyDisposed();
+				if (this.combinationMode == value)
+					return;
+				this.combinationMode = value;
+				this.startFilteringLogsAction.Schedule();
+				this.OnPropertyChanged(nameof(CombinationMode));
+			}
+		}
+
+
 		// Dispose
 		protected override void Dispose(bool disposing)
 		{
@@ -198,12 +221,22 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// filter logs
 			var filteredLogs = new List<DisplayableLog>();
+			var combinationMode = filteringParams.CombinationMode;
+			var includeMarkLogs = filteringParams.IncludeMarkedLogs;
+			var level = filteringParams.Level;
 			var textRegexList = filteringParams.TextRegexList;
 			var textRegexCount = textRegexList.Count;
 			for (int i = 0, count = logs.Count; i < count; ++i)
 			{
-				// filter by text regex
+				// check marking state
 				var log = logs[i];
+				if (includeMarkLogs && log.IsMarked)
+				{
+					filteredLogs.Add(log);
+					continue;
+				}
+
+				// check text regex
 				var isTextRegexMatched = false;
 				for (var j = textRegexCount - 1; j >= 0; --j)
 				{
@@ -239,10 +272,23 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						break;
 					}
 				}
-
-				//
-				if (isTextRegexMatched)
+				if (isTextRegexMatched && combinationMode == FilterCombinationMode.Union)
+				{
 					filteredLogs.Add(log);
+					continue;
+				}
+
+				// check level
+				var areOtherConditionsMatched = true;
+				if (level != Logs.LogLevel.Undefined && log.Level != level)
+					areOtherConditionsMatched = false;
+
+				// filter
+				if (areOtherConditionsMatched)
+				{
+					if (isTextRegexMatched || combinationMode == FilterCombinationMode.Union)
+						filteredLogs.Add(log);
+				}
 			}
 
 			// wait for previous chunks
@@ -361,6 +407,25 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public bool IsFilteringNeeded { get; private set; }
 
 
+		/// <summary>
+		/// Get or set level of log to be filtered.
+		/// </summary>
+		public Logs.LogLevel Level
+		{
+			get => this.level;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyDisposed();
+				if (this.level == value)
+					return;
+				this.level = value;
+				this.startFilteringLogsAction.Schedule();
+				this.OnPropertyChanged(nameof(Level));
+			}
+		}
+
+
 		// Called when chunk of logs filtered.
 		void OnChunkFiltered(FilteringParams filteringParams, int chunkId, IList<DisplayableLog> filteredLogs)
 		{
@@ -390,13 +455,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				var comparer = this.filteredLogs.Comparer;
 				while (filteredIndex >= 0)
 				{
-					sourceIndex = sourceLogs.IndexOf(filteredLogs[filteredIndex--]);
+					sourceIndex = sourceLogs.IndexOf(filteredLogs[filteredIndex]);
 					if (sourceIndex >= 0)
 					{
 						--sourceIndex;
+						--filteredIndex;
 						break;
 					}
-					filteredLogs.RemoveAt(filteredIndex);
+					filteredLogs.RemoveAt(filteredIndex--);
 				}
 				while (filteredIndex >= 0 && sourceIndex >= 0)
 				{
@@ -546,7 +612,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.IsFilteringNeeded = true;
 				this.OnPropertyChanged(nameof(IsFilteringNeeded));
 			}
+			filteringParams.CombinationMode = this.combinationMode;
 			filteringParams.IncludeMarkedLogs = this.includeMarkedLogs;
+			filteringParams.Level = this.level;
 			filteringParams.TextRegexList = this.textRegexList;
 			this.unfilteredLogs.AddAll(this.SourceLogs, true);
 			this.currentFilterParams = filteringParams;

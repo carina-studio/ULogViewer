@@ -33,6 +33,15 @@
 	<sys:String x:Key="String.DisplayableLogProperty.UserId">UID</sys:String>
 	<sys:String x:Key="String.DisplayableLogProperty.UserName">User</sys:String>
 
+	<!-- LogLevel -->
+	<sys:String x:Key="String.LogLevel.Debug">Debug</sys:String>
+	<sys:String x:Key="String.LogLevel.Error">Error</sys:String>
+	<sys:String x:Key="String.LogLevel.Fatal">Fatal</sys:String>
+	<sys:String x:Key="String.LogLevel.Info">Info</sys:String>
+	<sys:String x:Key="String.LogLevel.Undefined">Undefined</sys:String>
+	<sys:String x:Key="String.LogLevel.Verbose">Verbose</sys:String>
+	<sys:String x:Key="String.LogLevel.Warn">Warn</sys:String>
+
 	<!-- LogProfileSelectionDialog -->
 	<sys:String x:Key="String.LogProfileSelectionDialog.AddLogProfile">Create...</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.AllLogProfiles">All profiles</sys:String>
