@@ -6,7 +6,7 @@
 			"adb logcat -c"
 		]
 	},
-	"Icon": "Phone",
+	"Icon": "Android",
 	"IsContinuousReading": true,
 	"LogLevelMap": {
 		"D": "Debug",

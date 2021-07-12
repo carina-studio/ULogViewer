@@ -8,6 +8,14 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 	enum LogProfileIcon
 	{
 		/// <summary>
+		/// Android.
+		/// </summary>
+		Android,
+		/// <summary>
+		/// Apple.
+		/// </summary>
+		Apple,
+		/// <summary>
 		/// Cloud data.
 		/// </summary>
 		Cloud,
@@ -19,6 +27,10 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// Computer.
 		/// </summary>
 		Computer,
+		/// <summary>
+		/// Debug.
+		/// </summary>
+		Debug,
 		/// <summary>
 		/// File.
 		/// </summary>
@@ -43,5 +55,9 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// Version control.
 		/// </summary>
 		VersionControl,
+		/// <summary>
+		/// Windows.
+		/// </summary>
+		Windows,
 	}
 }

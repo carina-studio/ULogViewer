@@ -2,7 +2,7 @@
 	"DataSource": {
 		"Name": "File"
 	},
-	"Icon": "Phone",
+	"Icon": "Android",
 	"LogLevelMap": {
 		"D": "Debug",
 		"E": "Error",

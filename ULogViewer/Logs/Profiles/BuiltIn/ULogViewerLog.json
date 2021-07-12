@@ -2,7 +2,7 @@
 	"DataSource": {
 		"Name": "File"
 	},
-	"Icon": "File",
+	"Icon": "Debug",
 	"LogLevelMap": {
 		"DEBUG": "Debug",
 		"ERROR": "Error",
