@@ -280,9 +280,17 @@
 			<Grid ColumnDefinitions="Auto,Auto,*">
 
 				<!-- Empty view to reserve space -->
-				<TextBlock Grid.ColumnSpan="5" Text=" " Opacity="0"/>
+				<TextBlock Grid.ColumnSpan="5" Text="{DynamicResource String.SessionView.AllLogCount}" Opacity="0"/>
 
 				<!-- Number of logs -->
+				<StackPanel IsVisible="{Binding HasLogs}" Opacity="0" Orientation="Horizontal">
+					<!-- Empty view to reserve space -->
+					<TextBlock Text="{DynamicResource String.SessionView.AllLogCount}"/>
+					<TextBlock Text="00000000"/>
+					<TextBlock IsVisible="{Binding IsFilteringLogsNeeded}" Text="{DynamicResource String.SessionView.FilteredLogCount}"/>
+					<TextBlock IsVisible="{Binding IsFilteringLogsNeeded}" Text="00000000"/>
+					<Separator Classes="SessionView_StatusBar_Separator"/>
+				</StackPanel>
 				<StackPanel IsVisible="{Binding HasLogs}" Orientation="Horizontal">
 					<TextBlock Text="{DynamicResource String.SessionView.AllLogCount}"/>
 					<TextBlock Text="{Binding AllLogCount}"/>
