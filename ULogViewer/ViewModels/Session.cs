@@ -448,7 +448,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// update state
 			this.canClearLogFiles.Update(profile.DataSourceProvider.UnderlyingSource == UnderlyingLogDataSource.File);
-      this.canMarkUnmarkLogs.Update(true);
+			this.canMarkUnmarkLogs.Update(true);
 			this.canPauseResumeLogsReading.Update(profile.IsContinuousReading);
 			this.canReloadLogs.Update(true);
 			this.SetValue(HasLogReadersProperty, true);
