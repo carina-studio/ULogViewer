@@ -109,6 +109,7 @@ namespace CarinaStudio.ULogViewer
 
 
 		// Program entry.
+		[STAThread]
 		static void Main(string[] args)
 		{
 			// start application
