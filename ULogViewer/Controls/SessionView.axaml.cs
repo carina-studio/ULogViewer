@@ -743,13 +743,16 @@ namespace CarinaStudio.ULogViewer.Controls
 						}
 						break;
 					case Key.F5:
-						(this.DataContext as Session)?.ReloadLogsCommand?.TryExecute();
+						if (e.Source is not TextBox)
+							(this.DataContext as Session)?.ReloadLogsCommand?.TryExecute();
 						break;
 					case Key.M:
-						this.MarkUnmarkSelectedLogs();
+						if (e.Source is not TextBox)
+							this.MarkUnmarkSelectedLogs();
 						break;
 					case Key.P:
-						(this.DataContext as Session)?.PauseResumeLogsReadingCommand?.TryExecute();
+						if (e.Source is not TextBox)
+							(this.DataContext as Session)?.PauseResumeLogsReadingCommand?.TryExecute();
 						break;
 				}
 			}
