@@ -11,15 +11,19 @@ using Avalonia.Markup.Xaml.Templates;
 using Avalonia.Media;
 using CarinaStudio.Collections;
 using CarinaStudio.Threading;
+using CarinaStudio.ULogViewer.Input;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ULogViewer.ViewModels;
 using CarinaStudio.Windows.Input;
 using Microsoft.Extensions.Logging;
 using ReactiveUI;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace CarinaStudio.ULogViewer.Controls
@@ -357,6 +361,30 @@ namespace CarinaStudio.ULogViewer.Controls
 		public ICommand MarkUnmarkSelectedLogsCommand { get; }
 
 
+		// Called when attaching to view tree.
+		protected override void OnAttachedToLogicalTree(LogicalTreeAttachmentEventArgs e)
+		{
+			// call base
+			base.OnAttachedToLogicalTree(e);
+
+			// add event handlers
+			this.AddHandler(DragDrop.DragOverEvent, this.OnDragOver);
+			this.AddHandler(DragDrop.DropEvent, this.OnDrop);
+		}
+
+
+		// Called when detach from view tree.
+		protected override void OnDetachedFromLogicalTree(LogicalTreeAttachmentEventArgs e)
+		{
+			// remove event handlers
+			this.RemoveHandler(DragDrop.DragOverEvent, this.OnDragOver);
+			this.RemoveHandler(DragDrop.DropEvent, this.OnDrop);
+
+			// call base
+			base.OnDetachedFromLogicalTree(e);
+		}
+
+
 		// Called when display log properties changed.
 		void OnDisplayLogPropertiesChanged()
 		{
@@ -524,6 +552,64 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Called when drag over.
+		void OnDragOver(object? sender, DragEventArgs e)
+		{
+			// mark as handled
+			e.Handled = true;
+
+			// check session
+			if (this.DataContext is not Session session || !session.AddLogFileCommand.CanExecute(null))
+			{
+				e.DragEffects = DragDropEffects.None;
+				return;
+			}
+
+			// check data
+			e.DragEffects = e.Data.HasFileNames()
+				? DragDropEffects.Copy
+				: DragDropEffects.None;
+		}
+
+
+		// Called when drop data on view.
+		async void OnDrop(object? sender, DragEventArgs e)
+		{
+			// mark as handled
+			e.Handled = true;
+
+			// check data
+			if (!e.Data.HasFileNames())
+				return;
+
+			// collect files
+			var dropFilePaths = e.Data.GetFileNames().AsNonNull();
+			var filePaths = await Task.Run(() =>
+			{
+				var filePaths = new List<string>();
+				foreach (var filePath in dropFilePaths)
+				{
+					try
+					{
+						if (File.Exists(filePath))
+							filePaths.Add(filePath);
+					}
+					catch
+					{ }
+				}
+				return filePaths;
+			});
+			if (filePaths.IsEmpty())
+				return;
+
+			// add files
+			if (this.DataContext is not Session session || !session.AddLogFileCommand.CanExecute(null))
+				return;
+			foreach (var filePath in filePaths)
+				session.AddLogFileCommand.TryExecute(filePath);
+		}
+
+
 		// Called when selected log level filter has been changed.
 		void OnLogLevelFilterComboBoxSelectionChanged(object? sender, SelectionChangedEventArgs e) => this.updateLogFiltersAction?.Reschedule();
 
@@ -620,38 +706,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when key down.
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
-			// prevent entering non-numeric key to PID/TID filter
-			if (e.Source == this.logProcessIdFilterTextBox || e.Source == this.logThreadIdFilterTextBox)
-			{
-				switch (e.Key)
-				{
-					case Key.D0:
-					case Key.D1:
-					case Key.D2:
-					case Key.D3:
-					case Key.D4:
-					case Key.D5:
-					case Key.D6:
-					case Key.D7:
-					case Key.D8:
-					case Key.D9:
-					case Key.NumPad0:
-					case Key.NumPad1:
-					case Key.NumPad2:
-					case Key.NumPad3:
-					case Key.NumPad4:
-					case Key.NumPad5:
-					case Key.NumPad6:
-					case Key.NumPad7:
-					case Key.NumPad8:
-					case Key.NumPad9:
-						break;
-					default:
-						e.Handled = true;
-						return;
-				}
-			}
-
 			// handle key event for combo keys
 			if (!e.Handled && (e.KeyModifiers & KeyModifiers.Control) != 0)
 			{
@@ -689,13 +743,19 @@ namespace CarinaStudio.ULogViewer.Controls
 						}
 						break;
 					case Key.F5:
-						(this.DataContext as Session)?.ReloadLogsCommand?.TryExecute();
+						if (e.Source is not TextBox)
+							(this.DataContext as Session)?.ReloadLogsCommand?.TryExecute();
+						break;
+					case Key.M:
+						if (e.Source is not TextBox)
+							this.MarkUnmarkSelectedLogs();
 						break;
 					case Key.M:
 						this.MarkUnmarkSelectedLogs();
 						break;
 					case Key.P:
-						(this.DataContext as Session)?.PauseResumeLogsReadingCommand?.TryExecute();
+						if (e.Source is not TextBox)
+							(this.DataContext as Session)?.PauseResumeLogsReadingCommand?.TryExecute();
 						break;
 				}
 			}
