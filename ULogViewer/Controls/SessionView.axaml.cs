@@ -588,7 +588,9 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when log list box selection changed.
 		void OnLogListBoxSelectionChanged(object? sender, SelectionChangedEventArgs e)
 		{
-			if (this.logListBox.SelectedItems.Count > 0)
+			if (this.DataContext is not Session session)
+				return;
+			if (this.logListBox.SelectedItems.Count > 0 && session.MarkUnmarkLogsCommand.CanExecute(null))
 				this.canMarkUnmarkSelectedLogs.Update(true);
 			else
 				this.canMarkUnmarkSelectedLogs.Update(false);
@@ -740,7 +742,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (sender == session.AddLogFileCommand)
 				this.canAddLogFiles.Update(session.AddLogFileCommand.CanExecute(null));
 			else if (sender == session.MarkUnmarkLogsCommand)
-				this.canMarkUnmarkSelectedLogs.Update(session.MarkUnmarkLogsCommand.CanExecute(null));
+				this.canMarkUnmarkSelectedLogs.Update(this.logListBox.SelectedItems.Count > 0 && session.MarkUnmarkLogsCommand.CanExecute(null));
 			else if (sender == session.ResetLogProfileCommand || sender == session.SetLogProfileCommand)
 				this.canSetLogProfile.Update(session.ResetLogProfileCommand.CanExecute(null) || session.SetLogProfileCommand.CanExecute(null));
 			else if (sender == session.SetWorkingDirectoryCommand)
