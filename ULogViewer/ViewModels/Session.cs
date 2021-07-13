@@ -144,7 +144,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// create commands
 			this.AddLogFileCommand = ReactiveCommand.Create<string?>(this.AddLogFile, this.canAddLogFile);
 			this.ClearLogFilesCommand = ReactiveCommand.Create(this.ClearLogFiles, this.canClearLogFiles);
-      this.MarkUnmarkLogsCommand = ReactiveCommand.Create<IEnumerable<DisplayableLog>>(this.MarkUnmarkLogs, this.canMarkUnmarkLogs);
+			this.MarkUnmarkLogsCommand = ReactiveCommand.Create<IEnumerable<DisplayableLog>>(this.MarkUnmarkLogs, this.canMarkUnmarkLogs);
 			this.PauseResumeLogsReadingCommand = ReactiveCommand.Create(this.PauseResumeLogsReading, this.canPauseResumeLogsReading);
 			this.ReloadLogsCommand = ReactiveCommand.Create(this.ReloadLogs, this.canReloadLogs);
 			this.ResetLogProfileCommand = ReactiveCommand.Create(this.ResetLogProfile, this.canResetLogProfile);
@@ -525,7 +525,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				if (!this.IsDisposed)
 				{
 					this.canClearLogFiles.Update(false);
-          this.canMarkUnmarkLogs.Update(false);
+					this.canMarkUnmarkLogs.Update(false);
 					this.canPauseResumeLogsReading.Update(false);
 					this.canReloadLogs.Update(false);
 					this.SetValue(HasLogReadersProperty, false);
@@ -670,6 +670,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		// Mark or unmark logs.
 		void MarkUnmarkLogs(IEnumerable<DisplayableLog> logs)
 		{
+			this.VerifyAccess();
+			this.VerifyDisposed();
 			if (!this.canMarkUnmarkLogs.Value)
 				return;
 			var allLogsAreMarked = true;
