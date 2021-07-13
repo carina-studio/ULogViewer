@@ -61,10 +61,17 @@
 					</Border>
 				</Button>
 
-				<!-- Add file -->
+				<!-- Add files -->
 				<Button Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].AddLogFilesCommand}" ToolTip.Tip="{DynamicResource String.SessionView.AddLogFiles}">
 					<Border Classes="SessionView_ToolBar_Button_Icon">
 						<DrawingPresenter Classes="SessionView_ToolBar_Button_Icon" Drawing="{StaticResource Drawing.AddFile}"/>
+					</Border>
+				</Button>
+
+				<!-- Clear files -->
+				<Button Classes="SessionView_ToolBar_Button" Command="{Binding ClearLogFilesCommand}" ToolTip.Tip="{DynamicResource String.SessionView.ClearLogFiles}">
+					<Border Classes="SessionView_ToolBar_Button_Icon">
+						<DrawingPresenter Classes="SessionView_ToolBar_Button_Icon" Drawing="{StaticResource Drawing.Delete}"/>
 					</Border>
 				</Button>
 
@@ -183,7 +190,7 @@
 					<!-- Reset log filters -->
 					<Button Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].ResetLogFiltersCommand}" ToolTip.Tip="{DynamicResource String.SessionView.ResetLogFilters}">
 						<Border Classes="SessionView_ToolBar_Button_Icon">
-							<DrawingPresenter Classes="SessionView_ToolBar_Button_Icon" Drawing="{StaticResource Drawing.Delete}"/>
+							<DrawingPresenter Classes="SessionView_ToolBar_Button_Icon" Drawing="{StaticResource Drawing.Reset}"/>
 						</Border>
 					</Button>
 
