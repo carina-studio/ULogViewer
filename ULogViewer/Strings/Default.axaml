@@ -67,6 +67,7 @@
 	<sys:String x:Key="String.SessionView.AllLogLevels">All levels</sys:String>
 	<sys:String x:Key="String.SessionView.AppInfo">About ULogViewer...</sys:String>
 	<sys:String x:Key="String.SessionView.AppOptions">Options...</sys:String>
+	<sys:String x:Key="String.SessionView.ClearLogFiles">Clear all added log files</sys:String>
 	<sys:String x:Key="String.SessionView.FilteredLogCount">, Filtered: </sys:String>
 	<sys:String x:Key="String.SessionView.LogFiltersCombinationMode">Way to combine conditions</sys:String>
 	<sys:String x:Key="String.SessionView.LogsFilteringProgress">Filtering progress: </sys:String>

@@ -115,9 +115,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		// Fields.
-		readonly HashSet<string> addedFilePaths = new HashSet<string>(PathEqualityComparer.Default);
+		readonly HashSet<string> addedLogFilePaths = new HashSet<string>(PathEqualityComparer.Default);
 		readonly SortedObservableList<DisplayableLog> allLogs;
-		readonly MutableObservableBoolean canAddFile = new MutableObservableBoolean();
+		readonly MutableObservableBoolean canAddLogFile = new MutableObservableBoolean();
+		readonly MutableObservableBoolean canClearLogFiles = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canMarkUnmarkLogs = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canPauseResumeLogsReading = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canReloadLogs = new MutableObservableBoolean();
@@ -141,8 +142,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public Session(Workspace workspace) : base(workspace.Application)
 		{
 			// create commands
-			this.AddLogFileCommand = ReactiveCommand.Create<string?>(this.AddLogFile, this.canAddFile);
-			this.MarkUnmarkLogsCommand = ReactiveCommand.Create<IEnumerable<DisplayableLog>>(this.MarkUnmarkLogs, this.canMarkUnmarkLogs);
+			this.AddLogFileCommand = ReactiveCommand.Create<string?>(this.AddLogFile, this.canAddLogFile);
+			this.ClearLogFilesCommand = ReactiveCommand.Create(this.ClearLogFiles, this.canClearLogFiles);
+      this.MarkUnmarkLogsCommand = ReactiveCommand.Create<IEnumerable<DisplayableLog>>(this.MarkUnmarkLogs, this.canMarkUnmarkLogs);
 			this.PauseResumeLogsReadingCommand = ReactiveCommand.Create(this.PauseResumeLogsReading, this.canPauseResumeLogsReading);
 			this.ReloadLogsCommand = ReactiveCommand.Create(this.ReloadLogs, this.canReloadLogs);
 			this.ResetLogProfileCommand = ReactiveCommand.Create(this.ResetLogProfile, this.canResetLogProfile);
@@ -253,9 +255,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				{
 					if (logProfile == null)
 						return app?.GetString("Session.Empty");
-					if (logProfile.DataSourceProvider.UnderlyingSource != UnderlyingLogDataSource.File || this.addedFilePaths.IsEmpty())
+					if (logProfile.DataSourceProvider.UnderlyingSource != UnderlyingLogDataSource.File || this.addedLogFilePaths.IsEmpty())
 						return logProfile.Name;
-					return $"{logProfile.Name} ({this.addedFilePaths.Count})";
+					return $"{logProfile.Name} ({this.addedLogFilePaths.Count})";
 				});
 
 				// update properties
@@ -272,7 +274,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// check parameter and state
 			this.VerifyAccess();
 			this.VerifyDisposed();
-			if (!this.canAddFile.Value)
+			if (!this.canAddLogFile.Value)
 				return;
 			if (fileName == null)
 				throw new ArgumentNullException(nameof(fileName));
@@ -282,7 +284,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			var dataSourceOptions = profile.DataSourceOptions;
 			if (dataSourceOptions.FileName != null)
 				throw new InternalStateCorruptedException($"Cannot add log file because file name is already specified.");
-			if (!this.addedFilePaths.Add(fileName))
+			if (!this.addedLogFilePaths.Add(fileName))
 			{
 				this.Logger.LogWarning($"File '{fileName}' is already added");
 				return;
@@ -315,6 +317,33 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Get number of all read logs.
 		/// </summary>
 		public int AllLogCount { get => this.GetValue(AllLogCountProperty); }
+
+
+		// Clear all log files.
+		void ClearLogFiles()
+		{
+			// check state
+			this.VerifyAccess();
+			this.VerifyDisposed();
+			if (!this.canClearLogFiles.Value)
+				return;
+			var profile = this.LogProfile ?? throw new InternalStateCorruptedException("No log profile to cler log files.");
+			if (profile.DataSourceProvider.UnderlyingSource != UnderlyingLogDataSource.File)
+				throw new InternalStateCorruptedException($"Cannot cler log files when underlying data source is {profile.DataSourceProvider.UnderlyingSource}.");
+
+			// clear
+			this.DisposeLogReaders(true);
+			this.addedLogFilePaths.Clear();
+
+			// update title
+			this.updateTitleAndIconAction.Schedule();
+		}
+
+
+		/// <summary>
+		/// Command to clear all added log files.
+		/// </summary>
+		public ICommand ClearLogFilesCommand { get; }
 
 
 		// Compare displayable logs.
@@ -418,7 +447,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			}));
 
 			// update state
-			this.canMarkUnmarkLogs.Update(true);
+			this.canClearLogFiles.Update(profile.DataSourceProvider.UnderlyingSource == UnderlyingLogDataSource.File);
+      this.canMarkUnmarkLogs.Update(true);
 			this.canPauseResumeLogsReading.Update(profile.IsContinuousReading);
 			this.canReloadLogs.Update(true);
 			this.SetValue(HasLogReadersProperty, true);
@@ -494,7 +524,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.Logger.LogDebug($"The last log reader disposed");
 				if (!this.IsDisposed)
 				{
-					this.canMarkUnmarkLogs.Update(false);
+					this.canClearLogFiles.Update(false);
+          this.canMarkUnmarkLogs.Update(false);
 					this.canPauseResumeLogsReading.Update(false);
 					this.canReloadLogs.Update(false);
 					this.SetValue(HasLogReadersProperty, false);
@@ -925,7 +956,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.displayableLogGroup = this.displayableLogGroup.DisposeAndReturnNull();
 
 			// clear file name table
-			this.addedFilePaths.Clear();
+			this.addedLogFilePaths.Clear();
 
 			// clear display log properties
 			this.UpdateDisplayLogProperties();
@@ -934,7 +965,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.updateTitleAndIconAction.Schedule();
 
 			// update state
-			this.canAddFile.Update(false);
+			this.canAddLogFile.Update(false);
 			this.canSetWorkingDirectory.Update(false);
 			this.canResetLogProfile.Update(false);
 			this.canSetLogProfile.Update(true);
@@ -989,7 +1020,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					if (dataSourceOptions.FileName == null)
 					{
 						this.Logger.LogDebug("No file name specified, waiting for opening file");
-						this.canAddFile.Update(true);
+						this.canAddLogFile.Update(true);
 					}
 					else
 					{

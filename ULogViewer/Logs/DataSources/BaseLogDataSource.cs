@@ -48,6 +48,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		// Static fields.
+		static readonly TaskFactory defaultTaskFactory = new TaskFactory();
 		static int nextId = 1;
 
 
@@ -195,7 +196,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			var openingResult = LogDataSourceState.UnclassifiedError;
 			try
 			{
-				openingResult = await Task.Run(() => this.OpenReaderCore(out reader));
+				openingResult = await this.TaskFactory.StartNew(() => this.OpenReaderCore(out reader));
 			}
 			catch(Exception ex)
 			{
@@ -278,7 +279,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				return;
 
 			// prepare
-			var result = await Task.Run(() =>
+			var result = await this.TaskFactory.StartNew(() =>
 			{
 				try
 				{
@@ -309,6 +310,12 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// <remarks>The method will be called in background thead.</remarks>
 		/// <returns>One of <see cref="LogDataSourceState.ReadyToOpenReader"/>, <see cref="LogDataSourceState.SourceNotFound"/>, <see cref="LogDataSourceState.UnclassifiedError"/>.</returns>
 		protected abstract LogDataSourceState PrepareCore();
+
+
+		/// <summary>
+		/// Get <see cref="TaskFactory"/> for execution of internal actions.
+		/// </summary>
+		protected virtual TaskFactory TaskFactory { get => defaultTaskFactory; }
 
 
 		// Get readable string.

@@ -1,5 +1,6 @@
 ﻿using CarinaStudio.Collections;
 using CarinaStudio.Threading;
+using CarinaStudio.Threading.Tasks;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using Microsoft.Extensions.Logging;
 using System;
@@ -12,6 +13,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.Logs
 {
@@ -21,10 +23,12 @@ namespace CarinaStudio.ULogViewer.Logs
 	class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 	{
 		// Constants.
-		const int LogsReadingChunkSize = 1024;
+		const int LogsReadingChunkSize = 65536;
 
 
 		// Static fields.
+		static readonly TaskFactory defaultReadingTaskFactory = new TaskFactory(TaskScheduler.Default);
+		static readonly TaskFactory fileReadingTaskFactory = new TaskFactory(new FixedThreadsTaskScheduler(2));
 		static int nextId = 1;
 
 
@@ -713,7 +717,7 @@ namespace CarinaStudio.ULogViewer.Logs
 						{
 							var logArray = readLogs.ToArray();
 							readLogs.Clear();
-							syncContext.Post(() => this.OnLogsRead(readingToken, logArray));
+							syncContext.PostDelayed(() => this.OnLogsRead(readingToken, logArray), 100);
 						}
 						prevLogPattern = logPattern;
 					}
@@ -732,7 +736,7 @@ namespace CarinaStudio.ULogViewer.Logs
 
 				// send last chunk of logs
 				if (readLogs.IsNotEmpty())
-					syncContext.Post(() => this.OnLogsRead(readingToken, readLogs));
+					syncContext.PostDelayed(() => this.OnLogsRead(readingToken, readLogs), 100);
 
 				// close reader
 				Global.RunWithoutError(reader.Close);
@@ -871,7 +875,12 @@ namespace CarinaStudio.ULogViewer.Logs
 			this.logsReadingCancellationTokenSource = new CancellationTokenSource();
 			var readingToken = this.logsReadingToken;
 			var cancellationToken = this.logsReadingCancellationTokenSource.Token;
-			ThreadPool.QueueUserWorkItem(_ => this.ReadLogs(readingToken, reader, cancellationToken));
+			var taskFactory = this.DataSource.UnderlyingSource switch
+			{
+				UnderlyingLogDataSource.File => fileReadingTaskFactory,
+				_ => defaultReadingTaskFactory,
+			};
+			_ = taskFactory.StartNew(() => this.ReadLogs(readingToken, reader, cancellationToken));
 		}
 
 

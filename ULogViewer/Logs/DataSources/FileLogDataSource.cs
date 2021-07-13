@@ -1,7 +1,9 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using CarinaStudio.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.Logs.DataSources
 {
@@ -10,6 +12,10 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 	/// </summary>
 	class FileLogDataSource : BaseLogDataSource
 	{
+		// Static fields.
+		static readonly TaskFactory taskFactory = new TaskFactory(new FixedThreadsTaskScheduler(2));
+
+
 		/// <summary>
 		/// Initialize new <see cref="FileLogDataSource"/> instance.
 		/// </summary>

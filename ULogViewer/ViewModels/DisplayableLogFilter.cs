@@ -44,7 +44,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		// Constants.
-		const int ChunkSize = 1024;
+		const int ChunkSize = 10240;
 
 
 		// Static fields.
@@ -221,6 +221,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		// Filter chunk of logs.
 		void FilterChunk(FilteringParams filteringParams, int chunkId, IList<DisplayableLog> logs)
 		{
+			// delay to prevent busy on main thread
+			Thread.Sleep(30);
+
 			// check state
 			if (this.currentFilterParams != filteringParams)
 				return;
