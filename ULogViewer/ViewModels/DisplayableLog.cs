@@ -84,7 +84,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.VerifyDisposed();
 				if (this.isMarked == value)
 					return;
-				this.isMarked = true;
+				this.isMarked = value;
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsMarked)));
 			}
 		}

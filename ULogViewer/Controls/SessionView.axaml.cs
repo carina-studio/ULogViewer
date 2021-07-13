@@ -53,6 +53,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Fields.
 		readonly MutableObservableBoolean canAddLogFiles = new MutableObservableBoolean();
+		readonly MutableObservableBoolean canMarkUnmarkSelectedLogs = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSetLogProfile = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSetWorkingDirectory = new MutableObservableBoolean();
 		bool isWorkingDirNeededAfterLogProfileSet;
@@ -77,6 +78,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			// create commands
 			this.AddLogFilesCommand = ReactiveCommand.Create(this.AddLogFiles, this.canAddLogFiles);
+			this.MarkUnmarkSelectedLogsCommand = ReactiveCommand.Create(this.MarkUnmarkSelectedLogs, this.canMarkUnmarkSelectedLogs);
 			this.ResetLogFiltersCommand = ReactiveCommand.Create(this.ResetLogFilters, this.GetObservable<bool>(HasLogProfileProperty));
 			this.SetLogProfileCommand = ReactiveCommand.Create(this.SetLogProfile, this.canSetLogProfile);
 			this.SetWorkingDirectoryCommand = ReactiveCommand.Create(this.SetWorkingDirectory, this.canSetWorkingDirectory);
@@ -243,10 +245,12 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// attach to command
 			session.AddLogFileCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
+			session.MarkUnmarkLogsCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
 			session.ResetLogProfileCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
 			session.SetLogProfileCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
 			session.SetWorkingDirectoryCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
 			this.canAddLogFiles.Update(session.AddLogFileCommand.CanExecute(null));
+			this.canMarkUnmarkSelectedLogs.Update(session.MarkUnmarkLogsCommand.CanExecute(null));
 			this.canSetLogProfile.Update(session.ResetLogProfileCommand.CanExecute(null) || session.SetLogProfileCommand.CanExecute(null));
 			this.canSetWorkingDirectory.Update(session.SetWorkingDirectoryCommand.CanExecute(null));
 
@@ -288,10 +292,12 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// detach from commands
 			session.AddLogFileCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
+			session.MarkUnmarkLogsCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
 			session.SetLogProfileCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
 			session.SetLogProfileCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
 			session.SetWorkingDirectoryCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
 			this.canAddLogFiles.Update(false);
+			this.canMarkUnmarkSelectedLogs.Update(false);
 			this.canSetLogProfile.Update(false);
 			this.canSetWorkingDirectory.Update(false);
 
@@ -331,6 +337,24 @@ namespace CarinaStudio.ULogViewer.Controls
 			get => this.GetValue<bool>(IsScrollingToLatestLogNeededProperty);
 			set => this.SetValue<bool>(IsScrollingToLatestLogNeededProperty, value);
 		}
+
+
+		// Mark or unmark selected logs.
+		void MarkUnmarkSelectedLogs()
+		{
+			if (!this.canMarkUnmarkSelectedLogs.Value)
+				return;
+			if (this.DataContext is not Session session)
+				return;
+			var logs = this.logListBox.SelectedItems.Cast<DisplayableLog>();
+			session.MarkUnmarkLogsCommand.TryExecute(logs);
+		}
+
+
+		/// <summary>
+		/// Command to mark or unmark selected logs 
+		/// </summary>
+		public ICommand MarkUnmarkSelectedLogsCommand { get; }
 
 
 		// Called when display log properties changed.
@@ -561,6 +585,18 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Called when log list box selection changed.
+		void OnLogListBoxSelectionChanged(object? sender, SelectionChangedEventArgs e)
+		{
+			if (this.DataContext is not Session session)
+				return;
+			if (this.logListBox.SelectedItems.Count > 0 && session.MarkUnmarkLogsCommand.CanExecute(null))
+				this.canMarkUnmarkSelectedLogs.Update(true);
+			else
+				this.canMarkUnmarkSelectedLogs.Update(false);
+		}
+
+
 		// Called when PID/TID text box input.
 		void OnLogProcessIdTextBoxTextInput(object? sender, TextInputEventArgs e)
 		{
@@ -655,6 +691,9 @@ namespace CarinaStudio.ULogViewer.Controls
 					case Key.F5:
 						(this.DataContext as Session)?.ReloadLogsCommand?.TryExecute();
 						break;
+					case Key.M:
+						this.MarkUnmarkSelectedLogs();
+						break;
 					case Key.P:
 						(this.DataContext as Session)?.PauseResumeLogsReadingCommand?.TryExecute();
 						break;
@@ -702,6 +741,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 			if (sender == session.AddLogFileCommand)
 				this.canAddLogFiles.Update(session.AddLogFileCommand.CanExecute(null));
+			else if (sender == session.MarkUnmarkLogsCommand)
+				this.canMarkUnmarkSelectedLogs.Update(this.logListBox.SelectedItems.Count > 0 && session.MarkUnmarkLogsCommand.CanExecute(null));
 			else if (sender == session.ResetLogProfileCommand || sender == session.SetLogProfileCommand)
 				this.canSetLogProfile.Update(session.ResetLogProfileCommand.CanExecute(null) || session.SetLogProfileCommand.CanExecute(null));
 			else if (sender == session.SetWorkingDirectoryCommand)
