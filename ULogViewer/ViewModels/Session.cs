@@ -167,7 +167,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			});
 
 			// create marked logs
-			this.markedLogs = new SortedObservableList<DisplayableLog>();
+			this.markedLogs = new SortedObservableList<DisplayableLog>(this.CompareDisplayableLogs);
 			this.MarkedLogs = this.markedLogs.AsReadOnly();
 
 			// setup properties
