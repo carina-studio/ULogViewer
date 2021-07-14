@@ -315,12 +315,6 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		/// <summary>
-		/// Check whether pattern of log text filter is valid or not.
-		/// </summary>
-		public bool IsLogTextFilterValid { get => this.GetValue<bool>(IsLogTextFilterValidProperty); }
-
-
-		/// <summary>
 		/// Get or set whether scrolling to latest log is needed or not.
 		/// </summary>
 		public bool IsScrollingToLatestLogNeeded
