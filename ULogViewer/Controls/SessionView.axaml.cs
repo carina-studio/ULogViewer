@@ -750,9 +750,6 @@ namespace CarinaStudio.ULogViewer.Controls
 						if (e.Source is not TextBox)
 							this.MarkUnmarkSelectedLogs();
 						break;
-					case Key.M:
-						this.MarkUnmarkSelectedLogs();
-						break;
 					case Key.P:
 						if (e.Source is not TextBox)
 							(this.DataContext as Session)?.PauseResumeLogsReadingCommand?.TryExecute();
