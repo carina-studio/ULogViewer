@@ -129,6 +129,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		DisplayableLogGroup? displayableLogGroup;
 		readonly DisplayableLogFilter logFilter;
 		readonly HashSet<LogReader> logReaders = new HashSet<LogReader>();
+		readonly SortedObservableList<DisplayableLog> markedLogs;
 		readonly ScheduledAction updateIsReadingLogsAction;
 		readonly ScheduledAction updateIsProcessingLogsAction;
 		readonly ScheduledAction updateLogFilterAction;
@@ -164,6 +165,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				((INotifyCollectionChanged)it.FilteredLogs).CollectionChanged += this.OnFilteredLogsChanged;
 				it.PropertyChanged += this.OnLogFilterPropertyChanged;
 			});
+
+			// create marked logs
+			this.markedLogs = new SortedObservableList<DisplayableLog>(this.CompareDisplayableLogs);
+			this.MarkedLogs = this.markedLogs.AsReadOnly();
 
 			// setup properties
 			this.SetValue(LogsProperty, this.allLogs.AsReadOnly());
@@ -667,6 +672,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		}
 
 
+		/// <summary>
+		/// Get list of marked <see cref="DisplayableLog"/>s .
+		/// </summary>
+		public IList<DisplayableLog> MarkedLogs { get; }
+
+
 		// Mark or unmark logs.
 		void MarkUnmarkLogs(IEnumerable<DisplayableLog> logs)
 		{
@@ -686,12 +697,24 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			if (allLogsAreMarked)
 			{
 				foreach (var log in logs)
-					log.IsMarked = false;
+				{
+					if (log.IsMarked)
+					{
+						log.IsMarked = false;
+						this.markedLogs.Remove(log);
+					}
+				}
 			}
 			else
 			{
 				foreach (var log in logs)
-					log.IsMarked = true;
+				{
+					if(!log.IsMarked)
+					{
+						log.IsMarked = true;
+						this.markedLogs.Add(log);
+					}
+				}
 			}
 		}
 
@@ -710,6 +733,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				case NotifyCollectionChangedAction.Add:
 					break;
 				case NotifyCollectionChangedAction.Remove:
+					this.markedLogs.RemoveAll(e.OldItems.AsNonNull().Cast<DisplayableLog>(), true);
 					foreach (DisplayableLog displayableLog in e.OldItems.AsNonNull())
 						displayableLog.Dispose();
 					break;

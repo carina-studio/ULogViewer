@@ -314,6 +314,16 @@ namespace CarinaStudio.ULogViewer.Controls
 		private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
 
 
+		/// <summary>
+		/// Get or set whether scrolling to latest log is needed or not.
+		/// </summary>
+		public bool IsScrollingToLatestLogNeeded
+		{
+			get => this.GetValue<bool>(IsScrollingToLatestLogNeededProperty);
+			set => this.SetValue<bool>(IsScrollingToLatestLogNeededProperty, value);
+		}
+
+
 		// Mark or unmark selected logs.
 		void MarkUnmarkSelectedLogs()
 		{
@@ -330,16 +340,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// Command to mark or unmark selected logs 
 		/// </summary>
 		public ICommand MarkUnmarkSelectedLogsCommand { get; }
-
-
-		/// <summary>
-		/// Get or set whether scrolling to latest log is needed or not.
-		/// </summary>
-		public bool IsScrollingToLatestLogNeeded
-		{
-			get => this.GetValue<bool>(IsScrollingToLatestLogNeededProperty);
-			set => this.SetValue<bool>(IsScrollingToLatestLogNeededProperty, value);
-		}
 
 
 		// Called when attaching to view tree.
