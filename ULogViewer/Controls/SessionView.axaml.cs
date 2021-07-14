@@ -10,6 +10,7 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.Templates;
 using Avalonia.Media;
 using CarinaStudio.Collections;
+using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Input;
 using CarinaStudio.ULogViewer.Logs.Profiles;
@@ -38,10 +39,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// </summary>
 		public static readonly AvaloniaProperty<bool> HasLogProfileProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(HasLogProfile), false);
 		/// <summary>
-		/// Property of <see cref="IsLogTextFilterValid"/>.
-		/// </summary>
-		public static readonly AvaloniaProperty<bool> IsLogTextFilterValidProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(IsLogTextFilterValid), true);
-		/// <summary>
 		/// Property of <see cref="IsScrollingToLatestLogNeeded"/>.
 		/// </summary>
 		public static readonly AvaloniaProperty<bool> IsScrollingToLatestLogNeededProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(IsScrollingToLatestLogNeeded), true);
@@ -67,7 +64,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ListBox logListBox;
 		readonly TextBox logProcessIdFilterTextBox;
 		ScrollViewer? logScrollViewer;
-		readonly TextBox logTextFilterTextBox;
+		readonly RegexTextBox logTextFilterTextBox;
 		readonly TextBox logThreadIdFilterTextBox;
 		readonly ContextMenu otherActionsMenu;
 		readonly ScheduledAction scrollToLatestLogAction;
@@ -114,12 +111,19 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				it.AddHandler(TextBox.TextInputEvent, this.OnLogProcessIdTextBoxTextInput, RoutingStrategies.Tunnel);
 			});
-			this.logTextFilterTextBox = this.FindControl<TextBox>("logTextFilterTextBox").AsNonNull();
+			this.logTextFilterTextBox = this.FindControl<RegexTextBox>("logTextFilterTextBox").AsNonNull().Also(it =>
+			{
+				it.IgnoreCase = this.Settings.GetValueOrDefault(Settings.IgnoreCaseOfLogTextFilter);
+				it.ValidationDelay = this.UpdateLogFilterParamsDelay;
+			});
 			this.logThreadIdFilterTextBox = this.FindControl<TextBox>("logThreadIdFilterTextBox").AsNonNull().Also(it =>
 			{
 				it.AddHandler(TextBox.TextInputEvent, this.OnLogProcessIdTextBoxTextInput, RoutingStrategies.Tunnel);
 			});
 			this.otherActionsMenu = (ContextMenu)this.Resources["otherActionsMenu"].AsNonNull();
+#if !DEBUG
+			this.FindControl<Button>("testButton").AsNonNull().IsVisible = false;
+#endif
 
 			// create scheduled actions
 			this.scrollToLatestLogAction = new ScheduledAction(() =>
@@ -145,23 +149,6 @@ namespace CarinaStudio.ULogViewer.Controls
 				if (this.DataContext is not Session session)
 					return;
 
-				// create regex
-				var regex = (Regex?)null;
-				var pattern = this.logTextFilterTextBox.Text?.Trim();
-				if (!string.IsNullOrEmpty(pattern))
-				{
-					try
-					{
-						regex = new Regex(pattern, this.Settings.GetValueOrDefault(Settings.IgnoreCaseOfLogTextFilter) ? RegexOptions.IgnoreCase : RegexOptions.None);
-					}
-					catch
-					{
-						this.SetValue<bool>(IsLogTextFilterValidProperty, false);
-						return;
-					}
-				}
-				this.SetValue<bool>(IsLogTextFilterValidProperty, true);
-
 				// set level
 				session.LogLevelFilter = Enum.Parse<Logs.LogLevel>((string)((ComboBoxItem)this.logLevelFilterComboBox.SelectedItem.AsNonNull()).Tag.AsNonNull());
 
@@ -184,7 +171,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				});
 
 				// update session
-				session.LogTextFilter = regex;
+				session.LogTextFilter = this.logTextFilterTextBox.Regex;
 			});
 			this.updateStatusBarStateAction = new ScheduledAction(() =>
 			{
@@ -267,7 +254,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// sync log filters to UI
 			this.logProcessIdFilterTextBox.Text = session.LogProcessIdFilter?.ToString() ?? "";
-			this.logTextFilterTextBox.Text = session.LogTextFilter?.ToString() ?? "";
+			this.logTextFilterTextBox.Regex = session.LogTextFilter;
 			this.logThreadIdFilterTextBox.Text = session.LogThreadIdFilter?.ToString() ?? "";
 			session.LogLevelFilter.Let(it =>
 			{
@@ -368,6 +355,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			base.OnAttachedToLogicalTree(e);
 
 			// add event handlers
+			this.Settings.SettingChanged += this.OnSettingChanged;
 			this.AddHandler(DragDrop.DragOverEvent, this.OnDragOver);
 			this.AddHandler(DragDrop.DropEvent, this.OnDrop);
 		}
@@ -377,6 +365,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		protected override void OnDetachedFromLogicalTree(LogicalTreeAttachmentEventArgs e)
 		{
 			// remove event handlers
+			this.Settings.SettingChanged -= this.OnSettingChanged;
 			this.RemoveHandler(DragDrop.DragOverEvent, this.OnDragOver);
 			this.RemoveHandler(DragDrop.DropEvent, this.OnDrop);
 
@@ -610,6 +599,16 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Called when property of log filter text box changed.
+		void OnLogFilterTextBoxPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
+		{
+			if (e.Property == TextBlock.TextProperty && sender != this.logTextFilterTextBox)
+				this.updateLogFiltersAction.Reschedule(this.UpdateLogFilterParamsDelay);
+			else if (e.Property == RegexTextBox.RegexProperty)
+				this.updateLogFiltersAction.Reschedule();
+		}
+
+
 		// Called when selected log level filter has been changed.
 		void OnLogLevelFilterComboBoxSelectionChanged(object? sender, SelectionChangedEventArgs e) => this.updateLogFiltersAction?.Reschedule();
 
@@ -692,14 +691,6 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 			}
 			this.updateLogFiltersAction.Reschedule(this.UpdateLogFilterParamsDelay);
-		}
-
-
-		// Called when property of log text filter text box changed.
-		void OnLogTextFilterTextBoxPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
-		{
-			if (e.Property == TextBlock.TextProperty)
-				this.updateLogFiltersAction.Reschedule(this.UpdateLogFilterParamsDelay);
 		}
 
 
@@ -851,12 +842,22 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Called when setting changed.
+		void OnSettingChanged(object? sender, SettingChangedEventArgs e)
+		{
+			if (e.Key == Settings.IgnoreCaseOfLogTextFilter)
+				this.logTextFilterTextBox.IgnoreCase = (bool)e.Value;
+			else if (e.Key == Settings.UpdateLogFilterDelay)
+				this.logTextFilterTextBox.ValidationDelay = this.UpdateLogFilterParamsDelay;
+		}
+
+
 		// Reset all log filters.
 		void ResetLogFilters()
 		{
 			this.logLevelFilterComboBox.SelectedIndex = 0;
 			this.logProcessIdFilterTextBox.Text = "";
-			this.logTextFilterTextBox.Text = "";
+			this.logTextFilterTextBox.Regex = null;
 			this.logThreadIdFilterTextBox.Text = "";
 			this.updateLogFiltersAction.Execute();
 		}
@@ -997,7 +998,12 @@ namespace CarinaStudio.ULogViewer.Controls
 		public ICommand SwitchLogFiltersCombinationModeCommand { get; }
 
 
+		// Called when test button clicked.
+		void OnTestButtonClick(object? sender, RoutedEventArgs e)
+		{ }
+
+
 		// Get delay of updating log filter.
-		int UpdateLogFilterParamsDelay { get => Math.Max(500, Math.Min(1000, this.Settings.GetValueOrDefault(Settings.UpdateLogFilterDelay))); }
+		int UpdateLogFilterParamsDelay { get => Math.Max(Settings.MinUpdateLogFilterDelay, Math.Min(Settings.MaxUpdateLogFilterDelay, this.Settings.GetValueOrDefault(Settings.UpdateLogFilterDelay))); }
 	}
 }

@@ -163,6 +163,9 @@ namespace CarinaStudio.ULogViewer
 			// initialize log profiles
 			await LogProfiles.InitializeAsync(this);
 
+			// initialize predefined log text filters
+			await PredefinedLogTextFilters.InitializeAsync(this);
+
 			// attach to system events
 			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 				SystemEvents.UserPreferenceChanged += this.OnWindowsUserPreferenceChanged;
@@ -198,6 +201,9 @@ namespace CarinaStudio.ULogViewer
 			{
 				this.logger.LogError(ex, "Unable to save settings");
 			}
+
+			// save predefined log text filters
+			await PredefinedLogTextFilters.SaveAllAsync();
 
 			// restart main window
 			//

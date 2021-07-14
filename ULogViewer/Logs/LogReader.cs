@@ -742,7 +742,10 @@ namespace CarinaStudio.ULogViewer.Logs
 				Global.RunWithoutError(reader.Close);
 
 				// complete reading
-				syncContext.Post(() => this.OnLogsReadingCompleted(exception));
+				if (readLogs.IsNotEmpty())
+					syncContext.PostDelayed(() => this.OnLogsReadingCompleted(exception), 100);
+				else
+					syncContext.Post(() => this.OnLogsReadingCompleted(exception));
 			}
 		}
 
