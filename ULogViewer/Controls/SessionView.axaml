@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 						 xmlns:ia="using:Avalonia.Xaml.Interactivity"
 						 xmlns:iaCore="using:Avalonia.Xaml.Interactions.Core"
+						 xmlns:appControls="clr-namespace:CarinaStudio.ULogViewer.Controls;assembly=ULogViewer"
 						 xmlns:appViewModels="clr-namespace:CarinaStudio.ULogViewer.ViewModels;assembly=ULogViewer"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="CarinaStudio.ULogViewer.Controls.SessionView">
@@ -151,10 +152,10 @@
 				</ComboBox>
 
 				<!-- PID filter -->
-				<TextBox Name="logProcessIdFilterTextBox" Grid.Column="1" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" IsVisible="False" PropertyChanged="OnLogTextFilterTextBoxPropertyChanged" Margin="{StaticResource Thickness.SessionView.ToolBar.LogProcessIdFilter.Margin}" VerticalAlignment="Center" Watermark="{DynamicResource String.DisplayableLogProperty.ProcessId}" Width="{StaticResource Double.SessionView.ToolBar.LogProcessIdFilter.Width}"/>
+				<TextBox Name="logProcessIdFilterTextBox" Grid.Column="1" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" IsVisible="False" PropertyChanged="OnLogFilterTextBoxPropertyChanged" Margin="{StaticResource Thickness.SessionView.ToolBar.LogProcessIdFilter.Margin}" VerticalAlignment="Center" Watermark="{DynamicResource String.DisplayableLogProperty.ProcessId}" Width="{StaticResource Double.SessionView.ToolBar.LogProcessIdFilter.Width}"/>
 
 				<!-- TID filter -->
-				<TextBox Name="logThreadIdFilterTextBox" Grid.Column="2" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" IsVisible="False" PropertyChanged="OnLogTextFilterTextBoxPropertyChanged" Margin="{StaticResource Thickness.SessionView.ToolBar.LogProcessIdFilter.Margin}" VerticalAlignment="Center" Watermark="{DynamicResource String.DisplayableLogProperty.ThreadId}" Width="{StaticResource Double.SessionView.ToolBar.LogProcessIdFilter.Width}"/>
+				<TextBox Name="logThreadIdFilterTextBox" Grid.Column="2" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" IsVisible="False" PropertyChanged="OnLogFilterTextBoxPropertyChanged" Margin="{StaticResource Thickness.SessionView.ToolBar.LogProcessIdFilter.Margin}" VerticalAlignment="Center" Watermark="{DynamicResource String.DisplayableLogProperty.ThreadId}" Width="{StaticResource Double.SessionView.ToolBar.LogProcessIdFilter.Width}"/>
 
 				<!-- Filters combinatin mode -->
 				<Button Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].SwitchLogFiltersCombinationModeCommand}" Grid.Column="3" ToolTip.Tip="{DynamicResource String.SessionView.LogFiltersCombinationMode}">
@@ -173,16 +174,7 @@
 				</Button>
 				
 				<!-- Text filter -->
-				<TextBox Name="logTextFilterTextBox" Grid.Column="4" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" Margin="{StaticResource Thickness.SessionView.ToolBar.LogTextFilter.Margin}" PropertyChanged="OnLogTextFilterTextBoxPropertyChanged" VerticalAlignment="Center" Watermark="{DynamicResource String.SessionView.LogTextFilterHint}">
-					<ia:Interaction.Behaviors>
-						<iaCore:DataTriggerBehavior Binding="{Binding $parent[UserControl].IsLogTextFilterValid}" ComparisonCondition="Equal" Value="True">
-							<iaCore:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource TextControlForeground}"/>
-						</iaCore:DataTriggerBehavior>
-						<iaCore:DataTriggerBehavior Binding="{Binding $parent[UserControl].IsLogTextFilterValid}" ComparisonCondition="Equal" Value="False">
-							<iaCore:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource Brush.SessionView.LogTextFilter.Foreground.Error}"/>
-						</iaCore:DataTriggerBehavior>
-					</ia:Interaction.Behaviors>
-				</TextBox>
+				<appControls:RegexTextBox Name="logTextFilterTextBox" Classes="RegexTextBox_InvalidText" Grid.Column="4" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" Margin="{StaticResource Thickness.SessionView.ToolBar.LogTextFilter.Margin}" PropertyChanged="OnLogFilterTextBoxPropertyChanged" VerticalAlignment="Center" Watermark="{DynamicResource String.SessionView.LogTextFilterHint}"/>
 
 				<!-- Filter actions -->
 				<StackPanel Grid.Column="5" Orientation="Horizontal">
