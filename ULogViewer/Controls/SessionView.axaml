@@ -196,6 +196,13 @@
 				<!-- Separator -->
 				<Separator Classes="SessionView_ToolBar_Separator"/>
 
+				<!-- Test -->
+				<Button Name="testButton" Classes="SessionView_ToolBar_Button" Click="OnTestButtonClick" ToolTip.Tip="Test">
+					<Border Classes="SessionView_ToolBar_Button_Icon">
+						<DrawingPresenter Classes="SessionView_ToolBar_Button_Icon" Drawing="{StaticResource Drawing.Test}"/>
+					</Border>
+				</Button>
+
 				<!-- Other actions -->
 				<Button Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].ShowOtherActionsCommand}" ToolTip.Tip="{DynamicResource String.SessionView.OtherActions}">
 					<Border Classes="SessionView_ToolBar_Button_Icon">

@@ -121,6 +121,9 @@ namespace CarinaStudio.ULogViewer.Controls
 				it.AddHandler(TextBox.TextInputEvent, this.OnLogProcessIdTextBoxTextInput, RoutingStrategies.Tunnel);
 			});
 			this.otherActionsMenu = (ContextMenu)this.Resources["otherActionsMenu"].AsNonNull();
+#if !DEBUG
+			this.FindControl<Button>("testButton").AsNonNull().IsVisible = false;
+#endif
 
 			// create scheduled actions
 			this.scrollToLatestLogAction = new ScheduledAction(() =>
@@ -984,6 +987,11 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// Command to switch combination mode of log filters.
 		/// </summary>
 		public ICommand SwitchLogFiltersCombinationModeCommand { get; }
+
+
+		// Called when test button clicked.
+		void OnTestButtonClick(object? sender, RoutedEventArgs e)
+		{ }
 
 
 		// Get delay of updating log filter.
