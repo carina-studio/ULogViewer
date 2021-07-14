@@ -446,7 +446,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.logHeaderGrid.Children.Add(headerView);
 			}
 
-			// build item template
+			// build item template for log list box
 			var itemPadding = app.Resources.TryGetResource("Thickness.SessionView.LogListBox.Item.Padding", out rawResource) ? (Thickness)rawResource.AsNonNull() : new Thickness();
 			var itemTemplateContent = new Func<IServiceProvider, object>(_ =>
 			{
@@ -505,21 +505,70 @@ namespace CarinaStudio.ULogViewer.Controls
 				DataType = typeof(DisplayableLog),
 			};
 
-			// show/hide log filters UI
+			// check visible properties
+			var hasMessage = false;
+			var hasSourceName = false;
+			var hasTimestamp = false;
 			var hasPid = false;
 			var hasTid = false;
 			foreach (var logProperty in logProperties)
 			{
 				switch (logProperty.Name)
 				{
+					case nameof(DisplayableLog.Message):
+						hasMessage = true;
+						break;
 					case nameof(DisplayableLog.ProcessId):
 						hasPid = true;
+						break;
+					case nameof(DisplayableLog.SourceName):
+						hasSourceName = true;
 						break;
 					case nameof(DisplayableLog.ThreadId):
 						hasTid = true;
 						break;
+					case nameof(DisplayableLog.TimestampString):
+						hasTimestamp = true;
+						break;
 				}
 			}
+
+			// build item template for marked log list box
+			var propertyInMarkedItem = Global.Run(() =>
+			{
+				if (hasMessage)
+					return nameof(DisplayableLog.Message);
+				if (hasSourceName)
+					return nameof(DisplayableLog.SourceName);
+				if (hasTimestamp)
+					return nameof(DisplayableLog.TimestampString);
+				return nameof(DisplayableLog.LogId);
+			});
+			var markedItemPadding = app.Resources.TryGetResource("Thickness.SessionView.MarkedLogListBox.Item.Padding", out rawResource) ? (Thickness)rawResource.AsNonNull() : new Thickness();
+			var markedItemTemplateContent = new Func<IServiceProvider, object>(_ =>
+			{
+				var itemPanel = new DockPanel();
+				var propertyView = new TextBlock().Also(it =>
+				{
+					it.Bind(TextBlock.ForegroundProperty, new Binding() { Path = nameof(DisplayableLog.LevelBrush) });
+					it.Bind(TextBlock.TextProperty, new Binding() { Path = propertyInMarkedItem });
+					it.Margin = markedItemPadding;
+					it.TextTrimming = TextTrimming.CharacterEllipsis;
+					it.TextWrapping = TextWrapping.NoWrap;
+					it.VerticalAlignment = VerticalAlignment.Top;
+					if(hasTimestamp)
+						it.Bind(ToolTip.TipProperty, new Binding() { Path = nameof(DisplayableLog.TimestampString) });
+				});
+				itemPanel.Children.Add(propertyView);
+				return new ControlTemplateResult(itemPanel, null);
+			});
+			this.markedLogListBox.ItemTemplate = new DataTemplate()
+			{
+				Content = markedItemTemplateContent,
+				DataType = typeof(DisplayableLog),
+			};
+
+			// show/hide log filters UI
 			if (hasPid)
 				this.logProcessIdFilterTextBox.IsVisible = true;
 			else
