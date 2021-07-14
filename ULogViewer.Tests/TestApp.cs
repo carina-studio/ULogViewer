@@ -2,6 +2,7 @@
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.ULogViewer.Logs.Profiles;
+using CarinaStudio.ULogViewer.ViewModels;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using System;
@@ -49,6 +50,7 @@ namespace CarinaStudio.ULogViewer
 				// initialize components
 				LogDataSourceProviders.Initialize(current);
 				await LogProfiles.InitializeAsync(current);
+				await PredefinedLogTextFilters.InitializeAsync(current);
 
 				// complete
 				lock (typeof(TestApp))

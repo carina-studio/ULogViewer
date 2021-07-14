@@ -35,6 +35,16 @@ namespace CarinaStudio.ULogViewer
 
 
 		/// <summary>
+		/// Maximum value of <see cref="UpdateLogFilterDelay"/>.
+		/// </summary>
+		public const int MaxUpdateLogFilterDelay = 1500;
+		/// <summary>
+		/// Minimum value of <see cref="UpdateLogFilterDelay"/>.
+		/// </summary>
+		public const int MinUpdateLogFilterDelay = 300;
+
+
+		/// <summary>
 		/// Initialize new <see cref="Settings"/> instance.
 		/// </summary>
 		public Settings() : base(JsonSettingsSerializer.Default)
