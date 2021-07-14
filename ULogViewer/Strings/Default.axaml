@@ -5,6 +5,7 @@
 	<!-- Common -->
 	<sys:String x:Key="String.Common.Cancel">Cancel</sys:String>
 	<sys:String x:Key="String.Common.Delete">Delete</sys:String>
+	<sys:String x:Key="String.Common.Empty">Empty</sys:String>
 	<sys:String x:Key="String.Common.KnowMoreAbout">Know more about</sys:String>
 	<sys:String x:Key="String.Common.No">No</sys:String>
 	<sys:String x:Key="String.Common.OK">OK</sys:String>
@@ -72,6 +73,7 @@
 	<sys:String x:Key="String.SessionView.LogFiltersCombinationMode">Way to combine conditions</sys:String>
 	<sys:String x:Key="String.SessionView.LogsFilteringProgress">Filtering progress: </sys:String>
 	<sys:String x:Key="String.SessionView.LogTextFilterHint">Text filtering (Regular Expression)</sys:String>
+	<sys:String x:Key="String.SessionView.MarkedLogs">Marked logs</sys:String>
 	<sys:String x:Key="String.SessionView.NoLogToShow">No log to show</sys:String>
 	<sys:String x:Key="String.SessionView.PauseResumeLogsReading">Pause/Resume reading logs (P)</sys:String>
 	<sys:String x:Key="String.SessionView.ReloadLogs">Reload logs (F5)</sys:String>

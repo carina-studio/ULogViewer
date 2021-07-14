@@ -308,8 +308,42 @@
 		</Border>
 
 		<!-- Side panel -->
-		<GridSplitter Background="{StaticResource Brush.SessionView.SidePanel.Background}" Grid.Column="1" Grid.Row="2" Width="{StaticResource Double.GridSplitter.Thickness}"/>
-		<ScrollViewer Background="{StaticResource Brush.SessionView.SidePanel.Background}" Grid.Column="2" Grid.Row="2"/>
+		<ScrollViewer Background="{DynamicResource Brush.SessionView.SidePanel.Background}" Grid.Column="2" Grid.ColumnSpan="1" Grid.Row="2" HorizontalAlignment="Stretch" HorizontalScrollBarVisibility="Disabled" IsEnabled="{Binding $parent[UserControl].HasProfile}">
+			<StackPanel HorizontalAlignment="Stretch" Orientation="Vertical">
+
+				<!-- Marked logs -->
+				<TextBlock Classes="SessionView_SidePanel_Header" Text="{DynamicResource String.SessionView.MarkedLogs}"/>
+				<Panel>
+					<ListBox Name="markedLogListBox" Background="{x:Static Brushes.Transparent}" IsVisible="{Binding HasMarkedLogs}" Items="{Binding MarkedLogs}" SelectionChanged="OnMarkedLogListBoxSelectionChanged" SelectionMode="Single" VirtualizationMode="None">
+						<ListBox.Styles>
+							<Style Selector="ListBoxItem">
+								<Setter Property="HorizontalAlignment" Value="Stretch"/>
+								<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+								<Setter Property="Padding" Value="0"/>
+							</Style>
+							<Style Selector="ListBoxItem:pressed /template/ ContentPresenter#PART_ContentPresenter">
+								<Setter Property="Background" Value="{DynamicResource Brush.SessionView.LogListBox.Item.Background.Pressed}"/>
+							</Style>
+							<Style Selector="ListBoxItem:selected /template/ ContentPresenter#PART_ContentPresenter">
+								<Setter Property="Background" Value="{DynamicResource Brush.SessionView.LogListBox.Item.Background.Selected}"/>
+							</Style>
+							<Style Selector="ListBoxItem:selected:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+								<Setter Property="Background" Value="{DynamicResource Brush.SessionView.LogListBox.Item.Background.Selected.PointerOver}"/>
+							</Style>
+							<Style Selector="ListBoxItem:selected:pressed /template/ ContentPresenter#PART_ContentPresenter">
+								<Setter Property="Background" Value="{DynamicResource Brush.SessionView.LogListBox.Item.Background.Pressed}"/>
+							</Style>
+							<Style Selector="TextBlock">
+								<Setter Property="FontFamily" Value="Consolas"/>
+							</Style>
+						</ListBox.Styles>
+					</ListBox>
+					<TextBlock Classes="SessionView_SidePanel_EmptyHint" IsVisible="{Binding !HasMarkedLogs}" Text="{DynamicResource String.Common.Empty}"/>
+				</Panel>
+				
+			</StackPanel>
+		</ScrollViewer>
+		<GridSplitter Background="{DynamicResource Brush.SessionView.SidePanel.Background}" Grid.Column="1" Grid.Row="2" Width="{StaticResource Double.GridSplitter.Thickness}"/>
 
 	</Grid>
 

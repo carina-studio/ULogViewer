@@ -53,6 +53,7 @@
 	<!-- SessionView -->
 	<sys:Double x:Key="Double.SessionView.Hint.NoLogToShow.FontSize">30</sys:Double>
 	<sys:Double x:Key="Double.SessionView.LogHeader.MinWidth">50</sys:Double>
+	<sys:Double x:Key="Double.SessionView.SidePanel.Header.FontSize">16</sys:Double>
 	<sys:Double x:Key="Double.SessionView.SidePanel.MaxWidth">400</sys:Double>
 	<sys:Double x:Key="Double.SessionView.SidePanel.MinWidth">200</sys:Double>
 	<sys:Double x:Key="Double.SessionView.StatusBar.Separator.Size">20</sys:Double>
@@ -64,6 +65,8 @@
 	<Thickness x:Key="Thickness.SessionView.LogHeader.Padding">5,0,5,0</Thickness>
 	<Thickness x:Key="Thickness.SessionView.LogListBox.Item.Padding">8,3,8,3</Thickness>
 	<Thickness x:Key="Thickness.SessionView.LogListBox.Padding">0,0,0,20</Thickness>
+	<Thickness x:Key="Thickness.SessionView.SidePanel.EmptyHint.Margin">20,0,10,0</Thickness>
+	<Thickness x:Key="Thickness.SessionView.SidePanel.Header.Margin">10,10,10,5</Thickness>
 	<Thickness x:Key="Thickness.SessionView.StatucBar.Padding">3</Thickness>
 	<Thickness x:Key="Thickness.SessionView.ToolBar.Button.Margin">1,0,1,0</Thickness>
 	<Thickness x:Key="Thickness.SessionView.ToolBar.Button.Padding">5</Thickness>

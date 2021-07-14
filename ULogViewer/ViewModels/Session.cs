@@ -47,6 +47,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<bool> HasLogsProperty = ObservableProperty.Register<Session, bool>(nameof(HasLogs));
 		/// <summary>
+		/// Property of <see cref="HasMarkedLogs"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> HasMarkedLogsProperty = ObservableProperty.Register<Session, bool>(nameof(HasMarkedLogs));
+		/// <summary>
 		/// Property of <see cref="Icon"/>.
 		/// </summary>
 		public static readonly ObservableProperty<Drawing?> IconProperty = ObservableProperty.Register<Session, Drawing?>(nameof(Icon));
@@ -158,6 +162,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			{
 				it.CollectionChanged += this.OnAllLogsChanged;
 			});
+			this.markedLogs = new SortedObservableList<DisplayableLog>(this.CompareDisplayableLogs).Also(it =>
+			{
+				it.CollectionChanged += (_, e) => this.SetValue(HasMarkedLogsProperty, it.IsNotEmpty());
+			});
 
 			// create log filter
 			this.logFilter = new DisplayableLogFilter((IApplication)this.Application, this.allLogs, this.CompareDisplayableLogs).Also(it =>
@@ -166,12 +174,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				it.PropertyChanged += this.OnLogFilterPropertyChanged;
 			});
 
-			// create marked logs
-			this.markedLogs = new SortedObservableList<DisplayableLog>(this.CompareDisplayableLogs);
-			this.MarkedLogs = this.markedLogs.AsReadOnly();
-
 			// setup properties
 			this.SetValue(LogsProperty, this.allLogs.AsReadOnly());
+			this.MarkedLogs = this.markedLogs.AsReadOnly();
 			this.Workspace = workspace;
 
 			// setup delegates
@@ -566,6 +571,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Check whether at least one log is read or not.
 		/// </summary>
 		public bool HasLogs { get => this.GetValue(HasLogsProperty); }
+
+
+		/// <summary>
+		/// Check whether at least one log has been marked or not.
+		/// </summary>
+		public bool HasMarkedLogs { get => this.GetValue(HasMarkedLogsProperty); }
 
 
 		/// <summary>

@@ -66,6 +66,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		ScrollViewer? logScrollViewer;
 		readonly RegexTextBox logTextFilterTextBox;
 		readonly TextBox logThreadIdFilterTextBox;
+		readonly ListBox markedLogListBox;
 		readonly ContextMenu otherActionsMenu;
 		readonly ScheduledAction scrollToLatestLogAction;
 		readonly ScheduledAction updateLogFiltersAction;
@@ -120,6 +121,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				it.AddHandler(TextBox.TextInputEvent, this.OnLogProcessIdTextBoxTextInput, RoutingStrategies.Tunnel);
 			});
+			this.markedLogListBox = this.FindControl<ListBox>("markedLogListBox").AsNonNull();
 			this.otherActionsMenu = (ContextMenu)this.Resources["otherActionsMenu"].AsNonNull();
 #if !DEBUG
 			this.FindControl<Button>("testButton").AsNonNull().IsVisible = false;
@@ -744,6 +746,23 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// call base
 			base.OnKeyUp(e);
+		}
+
+
+		// Called when selection in marked log list box has been changed.
+		void OnMarkedLogListBoxSelectionChanged(object? sender, SelectionChangedEventArgs e)
+		{
+			var log = this.markedLogListBox.SelectedItem as DisplayableLog;
+			if (log == null)
+				return;
+			this.SynchronizationContext.Post(() => this.markedLogListBox.SelectedItem = null);
+			this.logListBox.Let(it =>
+			{
+				it.SelectedItems.Clear();
+				it.SelectedItem = log;
+				it.ScrollIntoView(log);
+				it.Focus();
+			});
 		}
 
 

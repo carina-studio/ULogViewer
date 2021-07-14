@@ -5,6 +5,7 @@
 	<!-- Common -->
 	<sys:String x:Key="String.Common.Cancel">取消</sys:String>
 	<sys:String x:Key="String.Common.Delete">刪除</sys:String>
+	<sys:String x:Key="String.Common.Empty">空</sys:String>
 	<sys:String x:Key="String.Common.KnowMoreAbout">了解更多</sys:String>
 	<sys:String x:Key="String.Common.No">否</sys:String>
 	<sys:String x:Key="String.Common.OK">好</sys:String>
@@ -68,6 +69,7 @@
 	<sys:String x:Key="String.SessionView.LogFiltersCombinationMode">篩選條件運算方式</sys:String>
 	<sys:String x:Key="String.SessionView.LogsFilteringProgress">篩選進度：</sys:String>
 	<sys:String x:Key="String.SessionView.LogTextFilterHint">文字篩選 (正規表示式)</sys:String>
+	<sys:String x:Key="String.SessionView.MarkedLogs">已標記日誌</sys:String>
 	<sys:String x:Key="String.SessionView.NoLogToShow">沒有日誌可以顯示</sys:String>
 	<sys:String x:Key="String.SessionView.PauseResumeLogsReading">暫停/繼續讀取日誌 (P)</sys:String>
 	<sys:String x:Key="String.SessionView.ReloadLogs">重新載入日誌 (F5)</sys:String>
