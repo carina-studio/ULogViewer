@@ -178,8 +178,11 @@ namespace CarinaStudio.ULogViewer.Controls
 						session.LogThreadIdFilter = null;
 				});
 
-				// update session
+				// update text filters
 				session.LogTextFilter = this.logTextFilterTextBox.Regex;
+				session.PredefinedLogTextFilters.Clear();
+				foreach (PredefinedLogTextFilter filter in this.predefinedLogTextFilterListBox.SelectedItems)
+					session.PredefinedLogTextFilters.Add(filter);
 			});
 			this.updateStatusBarStateAction = new ScheduledAction(() =>
 			{
@@ -516,6 +519,21 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.Settings.SettingChanged += this.OnSettingChanged;
 			this.AddHandler(DragDrop.DragOverEvent, this.OnDragOver);
 			this.AddHandler(DragDrop.DropEvent, this.OnDrop);
+		}
+
+
+		// Called when button of clearing predefined log text fliter selection clicked.
+		void OnClearPredefinedLogTextFilterSelectionButtonClick(object? sender, RoutedEventArgs e)
+		{
+			this.predefinedLogTextFilterListBox.SelectedItems.Clear();
+			this.updateLogFiltersAction.Reschedule();
+		}
+
+
+		// Called when button of creating predefined log text fliter clicked.
+		void OnCreatePredefinedLogTextFilterButtonClick(object? sender, RoutedEventArgs e)
+		{
+			//
 		}
 
 
@@ -889,6 +907,13 @@ namespace CarinaStudio.ULogViewer.Controls
 				it.ScrollIntoView(log);
 				it.Focus();
 			});
+		}
+
+
+		// Called when selection of list box of predefined log text fliter has been changed.
+		void OnPredefinedLogTextFilterListBoxSelectionChanged(object? sender, SelectionChangedEventArgs e)
+		{
+			this.updateLogFiltersAction.Reschedule(this.UpdateLogFilterParamsDelay);
 		}
 
 

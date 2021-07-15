@@ -73,6 +73,7 @@
 	<sys:String x:Key="String.SessionView.LogTextFilterHint">文字篩選 (正規表示式)</sys:String>
 	<sys:String x:Key="String.SessionView.MarkedLogs">已標記日誌</sys:String>
 	<sys:String x:Key="String.SessionView.NoLogToShow">沒有日誌可以顯示</sys:String>
+	<sys:String x:Key="String.SessionView.NoPredefinedLogTextFilter">沒有已儲存的文字篩選</sys:String>
 	<sys:String x:Key="String.SessionView.PauseResumeLogsReading">暫停/繼續讀取日誌 (P)</sys:String>
 	<sys:String x:Key="String.SessionView.PredefinedLogTextFilters">已儲存的文字篩選</sys:String>
 	<sys:String x:Key="String.SessionView.ReloadLogs">重新載入日誌 (F5)</sys:String>

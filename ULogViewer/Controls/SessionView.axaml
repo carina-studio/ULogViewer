@@ -199,12 +199,15 @@
 									<DockPanel>
 										<Border DockPanel.Dock="Bottom" Padding="{StaticResource Thickness.Dialog.ControlButtonsPanel.Padding}">
 											<StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-												<Button Classes="Dialog_ControlButton" Content="{DynamicResource String.SessionView.CreatePredefinedLogTextFilter}"/>
-												<Button Classes="Dialog_ControlButton" Content="{DynamicResource String.SessionView.ClearPredefinedLogTextFiltersSelection}"/>
+												<Button Classes="Dialog_ControlButton" Click="OnCreatePredefinedLogTextFilterButtonClick" Content="{DynamicResource String.SessionView.CreatePredefinedLogTextFilter}"/>
+												<Button Classes="Dialog_ControlButton" Click="OnClearPredefinedLogTextFilterSelectionButtonClick" IsEnabled="{Binding ElementName=predefinedLogTextFilterListBox, Path=SelectedItems.Count}" Content="{DynamicResource String.SessionView.ClearPredefinedLogTextFiltersSelection}"/>
 											</StackPanel>
 										</Border>
-										<ListBox Name="predefinedLogTextFilterListBox" Items="{x:Static appViewModels:PredefinedLogTextFilters.All}" SelectionMode="Multiple">
-										</ListBox>
+										<Panel>
+											<ListBox Name="predefinedLogTextFilterListBox" IsVisible="{Binding Source={x:Static appViewModels:PredefinedLogTextFilters.All}, Path=Count}" Items="{x:Static appViewModels:PredefinedLogTextFilters.All}" SelectionChanged="OnPredefinedLogTextFilterListBoxSelectionChanged" SelectionMode="Multiple">
+											</ListBox>
+											<TextBlock HorizontalAlignment="Center" IsVisible="{Binding Source={x:Static appViewModels:PredefinedLogTextFilters.All}, Path=!Count}" Margin="{StaticResource Thickness.SessionView.NoPredefinedLogTextFilterHint.Margin}" Text="{DynamicResource String.SessionView.NoPredefinedLogTextFilter}" TextWrapping="Wrap"/>
+										</Panel>
 									</DockPanel>
 								</Border>
 							</Popup>
