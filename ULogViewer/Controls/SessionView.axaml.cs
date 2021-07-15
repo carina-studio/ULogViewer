@@ -60,6 +60,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		bool isWorkingDirNeededAfterLogProfileSet;
 		readonly Control logHeaderContainer;
 		readonly Grid logHeaderGrid;
+		readonly List<MutableObservableValue<GridLength>> logHeaderWidths = new List<MutableObservableValue<GridLength>>();
 		readonly ComboBox logLevelFilterComboBox;
 		readonly ListBox logListBox;
 		readonly TextBox logProcessIdFilterTextBox;
@@ -277,6 +278,147 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Create item template for item of log list box.
+		DataTemplate CreateLogItemTemplate(LogProfile profile, IList<DisplayableLogProperty> logProperties)
+		{
+			var app = (App)this.Application;
+			var logPropertyCount = logProperties.Count;
+			var colorIndicatorWidth = app.Resources.TryGetResource("Double.SessionView.LogListBox.ColorIndicator.Width", out var rawResource) ? (double)rawResource.AsNonNull() : 0.0;
+			var itemPadding = app.Resources.TryGetResource("Thickness.SessionView.LogListBox.Item.Padding", out rawResource) ? (Thickness)rawResource.AsNonNull() : new Thickness();
+			var splitterWidth = app.Resources.TryGetResource("Double.GridSplitter.Thickness", out rawResource) ? (double)rawResource.AsNonNull() : 0.0;
+			if (profile.ColorIndicator != LogColorIndicator.None)
+				itemPadding = new Thickness(itemPadding.Left + colorIndicatorWidth, itemPadding.Top, itemPadding.Right, itemPadding.Bottom);
+			var itemTemplateContent = new Func<IServiceProvider, object>(_ =>
+			{
+				var itemPanel = new Panel().Also(it =>
+				{
+					it.Children.Add(new Border().Also(border =>
+					{
+						border.Bind(Border.BackgroundProperty, border.GetResourceObservable("Brush.SessionView.LogListBox.Item.Background.Marked"));
+						border.Bind(Border.IsVisibleProperty, new Binding() { Path = nameof(DisplayableLog.IsMarked) });
+					}));
+				});
+				var itemGrid = new Grid().Also(it =>
+				{
+					it.Margin = itemPadding;
+					itemPanel.Children.Add(it);
+				});
+				for (var i = 0; i < logPropertyCount; ++i)
+				{
+					// define splitter column
+					var logPropertyIndex = i;
+					if (logPropertyIndex > 0)
+						itemGrid.ColumnDefinitions.Add(new ColumnDefinition(splitterWidth, GridUnitType.Pixel));
+
+					// define property column
+					var logProperty = logProperties[logPropertyIndex];
+					var width = logProperty.Width;
+					var propertyColumn = new ColumnDefinition(new GridLength()).Also(it =>
+					{
+						if (width == null)
+							it.Width = new GridLength(1, GridUnitType.Star);
+						else
+							it.Bind(ColumnDefinition.WidthProperty, this.logHeaderWidths[logPropertyIndex]);
+					});
+					itemGrid.ColumnDefinitions.Add(propertyColumn);
+
+					// create property view
+					var propertyView = logProperty.Name switch
+					{
+						_ => new TextBlock().Also(it =>
+						{
+							it.Bind(TextBlock.ForegroundProperty, new Binding() { Path = nameof(DisplayableLog.LevelBrush) });
+							it.Bind(TextBlock.TextProperty, new Binding() { Path = logProperty.Name });
+							it.TextTrimming = TextTrimming.CharacterEllipsis;
+							it.TextWrapping = TextWrapping.NoWrap;
+							it.VerticalAlignment = VerticalAlignment.Top;
+						}),
+					};
+					Grid.SetColumn(propertyView, logPropertyIndex * 2);
+					itemGrid.Children.Add(propertyView);
+				}
+				if (profile.ColorIndicator != LogColorIndicator.None)
+				{
+					new Border().Also(it =>
+					{
+						it.Bind(Border.BackgroundProperty, new Binding() { Path = nameof(DisplayableLog.ColorIndicatorBrush) });
+						it.HorizontalAlignment = HorizontalAlignment.Left;
+						it.Bind(ToolTip.TipProperty, new Binding() { Path = profile.ColorIndicator.ToString() });
+						it.Width = colorIndicatorWidth;
+						itemPanel.Children.Add(it);
+					});
+				}
+				return new ControlTemplateResult(itemPanel, null);
+			});
+			return new DataTemplate()
+			{
+				Content = itemTemplateContent,
+				DataType = typeof(DisplayableLog),
+			};
+		}
+
+
+		// Create item template for item of marked log list box.
+		DataTemplate CreateMarkedLogItemTemplate(LogProfile profile, IList<DisplayableLogProperty> logProperties)
+		{
+			// check visible properties
+			var hasMessage = false;
+			var hasSourceName = false;
+			var hasTimestamp = false;
+			foreach (var logProperty in logProperties)
+			{
+				switch (logProperty.Name)
+				{
+					case nameof(DisplayableLog.Message):
+						hasMessage = true;
+						break;
+					case nameof(DisplayableLog.SourceName):
+						hasSourceName = true;
+						break;
+					case nameof(DisplayableLog.TimestampString):
+						hasTimestamp = true;
+						break;
+				}
+			}
+
+			// build item template for marked log list box
+			var propertyInMarkedItem = Global.Run(() =>
+			{
+				if (hasMessage)
+					return nameof(DisplayableLog.Message);
+				if (hasSourceName)
+					return nameof(DisplayableLog.SourceName);
+				if (hasTimestamp)
+					return nameof(DisplayableLog.TimestampString);
+				return nameof(DisplayableLog.LogId);
+			});
+			var app = (App)this.Application;
+			var markedItemPadding = app.Resources.TryGetResource("Thickness.SessionView.MarkedLogListBox.Item.Padding", out var rawResource) ? (Thickness)rawResource.AsNonNull() : new Thickness();
+			var markedItemTemplateContent = new Func<IServiceProvider, object>(_ =>
+			{
+				var itemPanel = new DockPanel();
+				var propertyView = new TextBlock().Also(it =>
+				{
+					it.Bind(TextBlock.ForegroundProperty, new Binding() { Path = nameof(DisplayableLog.LevelBrush) });
+					it.Bind(TextBlock.TextProperty, new Binding() { Path = propertyInMarkedItem });
+					it.Margin = markedItemPadding;
+					it.TextTrimming = TextTrimming.CharacterEllipsis;
+					it.TextWrapping = TextWrapping.NoWrap;
+					it.VerticalAlignment = VerticalAlignment.Top;
+					if (hasTimestamp)
+						it.Bind(ToolTip.TipProperty, new Binding() { Path = nameof(DisplayableLog.TimestampString) });
+				});
+				itemPanel.Children.Add(propertyView);
+				return new ControlTemplateResult(itemPanel, null);
+			});
+			return new DataTemplate()
+			{
+				Content = markedItemTemplateContent,
+				DataType = typeof(DisplayableLog),
+			};
+		}
+
+
 		// Detach from session.
 		void DetachFromSession(Session session)
 		{
@@ -378,13 +520,22 @@ namespace CarinaStudio.ULogViewer.Controls
 				control.DataContext = null;
 			this.logHeaderGrid.Children.Clear();
 			this.logHeaderGrid.ColumnDefinitions.Clear();
+			this.logHeaderWidths.Clear();
 
 			// clear item template
 			this.logListBox.ItemTemplate = null;
+			this.markedLogListBox.ItemTemplate = null;
+
+			// get profile
+			if (this.DataContext is not Session session)
+				return;
+			var profile = session.LogProfile;
+			if (profile == null)
+				return;
 
 			// get display log properties
-			var logProperties = (this.DataContext as Session)?.DisplayLogProperties;
-			if (logProperties == null || logProperties.IsEmpty())
+			var logProperties = session.DisplayLogProperties;
+			if (logProperties.IsEmpty())
 				return;
 			var logPropertyCount = logProperties.Count;
 
@@ -392,9 +543,15 @@ namespace CarinaStudio.ULogViewer.Controls
 			var app = (App)this.Application;
 			var splitterWidth = app.Resources.TryGetResource("Double.GridSplitter.Thickness", out var rawResource) ? (double)rawResource.AsNonNull() : 0.0;
 			var minHeaderWidth = app.Resources.TryGetResource("Double.SessionView.LogHeader.MinWidth", out rawResource) ? (double)rawResource.AsNonNull() : 0.0;
+			var colorIndicatorWidth = app.Resources.TryGetResource("Double.SessionView.LogListBox.ColorIndicator.Width", out rawResource) ? (double)rawResource.AsNonNull() : 0.0;
 			var headerTemplate = (DataTemplate)this.DataTemplates.First(it => it is DataTemplate dt && dt.DataType == typeof(DisplayableLogProperty));
 			var headerColumns = new ColumnDefinition[logPropertyCount];
-			var headerColumnWidths = new MutableObservableValue<GridLength>[logPropertyCount];
+			var columIndexOffset = 0;
+			if (profile.ColorIndicator != LogColorIndicator.None)
+			{
+				this.logHeaderGrid.ColumnDefinitions.Add(new ColumnDefinition(colorIndicatorWidth, GridUnitType.Pixel));
+				++columIndexOffset;
+			}
 			for (var i = 0; i < logPropertyCount; ++i)
 			{
 				// define splitter column
@@ -406,10 +563,10 @@ namespace CarinaStudio.ULogViewer.Controls
 				var logProperty = logProperties[logPropertyIndex];
 				var width = logProperty.Width;
 				if (width == null)
-					headerColumnWidths[logPropertyIndex] = new MutableObservableValue<GridLength>(new GridLength(1, GridUnitType.Star));
+					this.logHeaderWidths.Add(new MutableObservableValue<GridLength>(new GridLength(1, GridUnitType.Star)));
 				else
-					headerColumnWidths[logPropertyIndex] = new MutableObservableValue<GridLength>(new GridLength(width.Value, GridUnitType.Pixel));
-				var headerColumn = new ColumnDefinition(headerColumnWidths[logPropertyIndex].Value).Also(it =>
+					this.logHeaderWidths.Add(new MutableObservableValue<GridLength>(new GridLength(width.Value, GridUnitType.Pixel)));
+				var headerColumn = new ColumnDefinition(this.logHeaderWidths[logPropertyIndex].Value).Also(it =>
 				{
 					it.MinWidth = minHeaderWidth;
 				});
@@ -424,14 +581,14 @@ namespace CarinaStudio.ULogViewer.Controls
 						it.Background = Brushes.Transparent;
 						it.DragDelta += (_, e) =>
 						{
-							var headerColumnWidth = headerColumnWidths[logPropertyIndex - 1];
+							var headerColumnWidth = this.logHeaderWidths[logPropertyIndex - 1];
 							if (headerColumnWidth.Value.GridUnitType == GridUnitType.Pixel)
 								headerColumnWidth.Update(new GridLength(headerColumns[logPropertyIndex - 1].ActualWidth, GridUnitType.Pixel));
 						};
 						it.HorizontalAlignment = HorizontalAlignment.Stretch;
 						it.VerticalAlignment = VerticalAlignment.Stretch;
 					});
-					Grid.SetColumn(splitter, logPropertyIndex * 2 - 1);
+					Grid.SetColumn(splitter, logPropertyIndex * 2 - 1 + columIndexOffset);
 					this.logHeaderGrid.Children.Add(splitter);
 				}
 
@@ -442,131 +599,31 @@ namespace CarinaStudio.ULogViewer.Controls
 					if (logPropertyIndex == 0)
 						it.BorderThickness = new Thickness();
 				});
-				Grid.SetColumn(headerView, logPropertyIndex * 2);
+				Grid.SetColumn(headerView, logPropertyIndex * 2 + columIndexOffset);
 				this.logHeaderGrid.Children.Add(headerView);
 			}
 
 			// build item template for log list box
-			var itemPadding = app.Resources.TryGetResource("Thickness.SessionView.LogListBox.Item.Padding", out rawResource) ? (Thickness)rawResource.AsNonNull() : new Thickness();
-			var itemTemplateContent = new Func<IServiceProvider, object>(_ =>
-			{
-				var itemPanel = new Panel().Also(it =>
-				{
-					it.Children.Add(new Border().Also(border =>
-					{
-						border.Bind(Border.BackgroundProperty, border.GetResourceObservable("Brush.SessionView.LogListBox.Item.Background.Marked"));
-						border.Bind(Border.IsVisibleProperty, new Binding() { Path = nameof(DisplayableLog.IsMarked) });
-					}));
-				});
-				var itemGrid = new Grid().Also(it =>
-				{
-					it.Margin = itemPadding;
-					itemPanel.Children.Add(it);
-				});
-				for (var i = 0; i < logPropertyCount; ++i)
-				{
-					// define splitter column
-					var logPropertyIndex = i;
-					if (logPropertyIndex > 0)
-						itemGrid.ColumnDefinitions.Add(new ColumnDefinition(splitterWidth, GridUnitType.Pixel));
+			this.logListBox.ItemTemplate = this.CreateLogItemTemplate(profile, logProperties);
 
-					// define property column
-					var logProperty = logProperties[logPropertyIndex];
-					var width = logProperty.Width;
-					var propertyColumn = new ColumnDefinition(new GridLength()).Also(it =>
-					{
-						if (width == null)
-							it.Width = new GridLength(1, GridUnitType.Star);
-						else
-							it.Bind(ColumnDefinition.WidthProperty, headerColumnWidths[logPropertyIndex]);
-					});
-					itemGrid.ColumnDefinitions.Add(propertyColumn);
-
-					// create property view
-					var propertyView = logProperty.Name switch
-					{
-						_ => new TextBlock().Also(it =>
-						{
-							it.Bind(TextBlock.ForegroundProperty, new Binding() { Path = nameof(DisplayableLog.LevelBrush) });
-							it.Bind(TextBlock.TextProperty, new Binding() { Path = logProperty.Name });
-							it.TextTrimming = TextTrimming.CharacterEllipsis;
-							it.TextWrapping = TextWrapping.NoWrap;
-							it.VerticalAlignment = VerticalAlignment.Top;
-						}),
-					};
-					Grid.SetColumn(propertyView, logPropertyIndex * 2);
-					itemGrid.Children.Add(propertyView);
-				}
-				return new ControlTemplateResult(itemPanel, null);
-			});
-			this.logListBox.ItemTemplate = new DataTemplate()
-			{
-				Content = itemTemplateContent,
-				DataType = typeof(DisplayableLog),
-			};
+			// build item template for marked log list box
+			this.markedLogListBox.ItemTemplate = this.CreateMarkedLogItemTemplate(profile, logProperties);
 
 			// check visible properties
-			var hasMessage = false;
-			var hasSourceName = false;
-			var hasTimestamp = false;
 			var hasPid = false;
 			var hasTid = false;
 			foreach (var logProperty in logProperties)
 			{
 				switch (logProperty.Name)
 				{
-					case nameof(DisplayableLog.Message):
-						hasMessage = true;
-						break;
 					case nameof(DisplayableLog.ProcessId):
 						hasPid = true;
-						break;
-					case nameof(DisplayableLog.SourceName):
-						hasSourceName = true;
 						break;
 					case nameof(DisplayableLog.ThreadId):
 						hasTid = true;
 						break;
-					case nameof(DisplayableLog.TimestampString):
-						hasTimestamp = true;
-						break;
 				}
 			}
-
-			// build item template for marked log list box
-			var propertyInMarkedItem = Global.Run(() =>
-			{
-				if (hasMessage)
-					return nameof(DisplayableLog.Message);
-				if (hasSourceName)
-					return nameof(DisplayableLog.SourceName);
-				if (hasTimestamp)
-					return nameof(DisplayableLog.TimestampString);
-				return nameof(DisplayableLog.LogId);
-			});
-			var markedItemPadding = app.Resources.TryGetResource("Thickness.SessionView.MarkedLogListBox.Item.Padding", out rawResource) ? (Thickness)rawResource.AsNonNull() : new Thickness();
-			var markedItemTemplateContent = new Func<IServiceProvider, object>(_ =>
-			{
-				var itemPanel = new DockPanel();
-				var propertyView = new TextBlock().Also(it =>
-				{
-					it.Bind(TextBlock.ForegroundProperty, new Binding() { Path = nameof(DisplayableLog.LevelBrush) });
-					it.Bind(TextBlock.TextProperty, new Binding() { Path = propertyInMarkedItem });
-					it.Margin = markedItemPadding;
-					it.TextTrimming = TextTrimming.CharacterEllipsis;
-					it.TextWrapping = TextWrapping.NoWrap;
-					it.VerticalAlignment = VerticalAlignment.Top;
-					if(hasTimestamp)
-						it.Bind(ToolTip.TipProperty, new Binding() { Path = nameof(DisplayableLog.TimestampString) });
-				});
-				itemPanel.Children.Add(propertyView);
-				return new ControlTemplateResult(itemPanel, null);
-			});
-			this.markedLogListBox.ItemTemplate = new DataTemplate()
-			{
-				Content = markedItemTemplateContent,
-				DataType = typeof(DisplayableLog),
-			};
 
 			// show/hide log filters UI
 			if (hasPid)

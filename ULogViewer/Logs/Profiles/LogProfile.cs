@@ -31,6 +31,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 
 
 		// Fields.
+		LogColorIndicator colorIndicator = LogColorIndicator.None;
 		LogDataSourceOptions dataSourceOptions;
 		ILogDataSourceProvider dataSourceProvider = LogDataSourceProviders.Empty;
 		LogProfileIcon icon = LogProfileIcon.File;
@@ -98,6 +99,24 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 
 		// ID of built-in profile.
 		string? BuiltInId { get; }
+
+
+		/// <summary>
+		/// Get or set color indicator of log.
+		/// </summary>
+		public LogColorIndicator ColorIndicator
+		{
+			get => this.colorIndicator;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (this.colorIndicator == value)
+					return;
+				this.colorIndicator = value;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ColorIndicator)));
+			}
+		}
 
 
 		// Compare profiles.
@@ -352,6 +371,9 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				{
 					case "DataSource":
 						this.LoadDataSourceFromJson(jsonProperty.Value);
+						break;
+					case nameof(ColorIndicator):
+						this.colorIndicator = Enum.Parse<LogColorIndicator>(jsonProperty.Value.GetString().AsNonNull());
 						break;
 					case nameof(Icon):
 						if (Enum.TryParse<LogProfileIcon>(jsonProperty.Value.GetString(), out var profileIcon))
