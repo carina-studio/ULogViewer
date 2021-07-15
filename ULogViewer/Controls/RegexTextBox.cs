@@ -139,7 +139,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.validateAction.Cancel();
 
 			// trim leading spaces
-			var text = this.Text;
+			var text = this.Text ?? "";
 			if (text.Length > 0 && char.IsWhiteSpace(text[0]))
 			{
 				text = text.TrimStart();

@@ -531,9 +531,21 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Called when button of creating predefined log text fliter clicked.
-		void OnCreatePredefinedLogTextFilterButtonClick(object? sender, RoutedEventArgs e)
+		async void OnCreatePredefinedLogTextFilterButtonClick(object? sender, RoutedEventArgs e)
 		{
-			//
+			// check state
+			var window = this.FindLogicalAncestorOfType<Window>();
+			if (window == null)
+				return;
+
+			// create filter
+			var filter = await new PredefinedLogTextFilterEditorDialog()
+			{
+				Regex = this.logTextFilterTextBox.Regex
+			}.ShowDialog<PredefinedLogTextFilter>(window);
+			if (filter == null)
+				return;
+			PredefinedLogTextFilters.Add(filter);
 		}
 
 

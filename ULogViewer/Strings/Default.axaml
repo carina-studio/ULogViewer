@@ -59,6 +59,14 @@
 	<sys:String x:Key="String.MainWindow.CloseSession">Close this tab</sys:String>
 	<sys:String x:Key="String.MainWindow.CreateSession">Create new tab</sys:String>
 
+	<!-- PredefinedLogTextFilterEditorDialog -->
+	<sys:String x:Key="String.PredefinedLogTextFilterEditorDialog.IgnoreCase">Ignore case</sys:String>
+	<sys:String x:Key="String.PredefinedLogTextFilterEditorDialog.Name">Name (required)</sys:String>
+	<sys:String x:Key="String.PredefinedLogTextFilterEditorDialog.Regex">Text filter (required)</sys:String>
+	<sys:String x:Key="String.PredefinedLogTextFilterEditorDialog.Regex.Watermark">Regular expression</sys:String>
+	<sys:String x:Key="String.PredefinedLogTextFilterEditorDialog.Title.Create">Create text filter</sys:String>
+	<sys:String x:Key="String.PredefinedLogTextFilterEditorDialog.Title.Edit">Edit text filter</sys:String>
+
 	<!-- Session -->
 	<sys:String x:Key="String.Session.Empty">Empty Tab</sys:String>
 

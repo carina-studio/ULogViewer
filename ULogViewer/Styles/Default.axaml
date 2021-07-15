@@ -92,6 +92,9 @@
 		<Setter Property="HorizontalAlignment" Value="Center"/>
 		<Setter Property="Orientation" Value="Horizontal"/>
 	</Style>
+	<Style Selector="TextBlock.Dialog_Label">
+		<Setter Property="Margin" Value="{StaticResource Thickness.Dialog.Label.Margin}"/>
+	</Style>
 	<Style Selector="TextBlock.Dialog_Label_Header1">
 		<Setter Property="FontSize" Value="{StaticResource Double.Dialog.Label.Header1.FontSize}"/>
 		<Setter Property="Margin" Value="{StaticResource Thickness.Dialog.Label.Header1.Margin}"/>

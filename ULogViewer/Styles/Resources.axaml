@@ -14,6 +14,7 @@
 	<Thickness x:Key="Thickness.Dialog.ControlButtonsPanel.Padding">15</Thickness>
 	<Thickness x:Key="Thickness.Dialog.Label.Header1.Margin">0,0,0,5</Thickness>
 	<Thickness x:Key="Thickness.Dialog.Label.Header2.Margin">0,0,0,5</Thickness>
+	<Thickness x:Key="Thickness.Dialog.Label.Margin">0,0,0,5</Thickness>
 	
 	<!-- GridSplitter -->
 	<sys:Double x:Key="Double.GridSplitter.Thickness">5</sys:Double>
@@ -49,6 +50,9 @@
 	<sys:Double x:Key="Double.MessageDialog.Icon.Size">36</sys:Double>
 	<sys:Double x:Key="Double.MessageDialog.MinWidth">200</sys:Double>
 	<Thickness x:Key="Thickness.MessageDialog.Icon.Margin">0,0,15,0</Thickness>
+
+	<!-- PredefinedLogTextFilterEditorDialog -->
+	<sys:Double x:Key="Double.PredefinedLogTextFilterEditorDialog.Width">400</sys:Double>
 	
 	<!-- SessionView -->
 	<sys:Double x:Key="Double.SessionView.Hint.NoLogToShow.FontSize">30</sys:Double>
