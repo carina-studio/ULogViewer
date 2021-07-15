@@ -393,15 +393,19 @@ namespace CarinaStudio.ULogViewer.Controls
 				return nameof(DisplayableLog.LogId);
 			});
 			var app = (App)this.Application;
-			var markedItemPadding = app.Resources.TryGetResource("Thickness.SessionView.MarkedLogListBox.Item.Padding", out var rawResource) ? (Thickness)rawResource.AsNonNull() : new Thickness();
-			var markedItemTemplateContent = new Func<IServiceProvider, object>(_ =>
+			var colorIndicatorWidth = app.Resources.TryGetResource("Double.SessionView.LogListBox.ColorIndicator.Width", out var rawResource) ? (double)rawResource.AsNonNull() : 0.0;
+			var itemPadding = app.Resources.TryGetResource("Thickness.SessionView.MarkedLogListBox.Item.Padding", out rawResource) ? (Thickness)rawResource.AsNonNull() : new Thickness();
+			if (profile.ColorIndicator != LogColorIndicator.None)
+				itemPadding = new Thickness(itemPadding.Left + colorIndicatorWidth, itemPadding.Top, itemPadding.Right, itemPadding.Bottom);
+			var itemTemplateContent = new Func<IServiceProvider, object>(_ =>
 			{
-				var itemPanel = new DockPanel();
+				var itemPanel = new Panel();
 				var propertyView = new TextBlock().Also(it =>
 				{
 					it.Bind(TextBlock.ForegroundProperty, new Binding() { Path = nameof(DisplayableLog.LevelBrush) });
 					it.Bind(TextBlock.TextProperty, new Binding() { Path = propertyInMarkedItem });
-					it.Margin = markedItemPadding;
+					it.Margin = itemPadding;
+					it.MaxLines = 1;
 					it.TextTrimming = TextTrimming.CharacterEllipsis;
 					it.TextWrapping = TextWrapping.NoWrap;
 					it.VerticalAlignment = VerticalAlignment.Top;
@@ -409,11 +413,22 @@ namespace CarinaStudio.ULogViewer.Controls
 						it.Bind(ToolTip.TipProperty, new Binding() { Path = nameof(DisplayableLog.TimestampString) });
 				});
 				itemPanel.Children.Add(propertyView);
+				if (profile.ColorIndicator != LogColorIndicator.None)
+				{
+					new Border().Also(it =>
+					{
+						it.Bind(Border.BackgroundProperty, new Binding() { Path = nameof(DisplayableLog.ColorIndicatorBrush) });
+						it.HorizontalAlignment = HorizontalAlignment.Left;
+						it.Bind(ToolTip.TipProperty, new Binding() { Path = profile.ColorIndicator.ToString() });
+						it.Width = colorIndicatorWidth;
+						itemPanel.Children.Add(it);
+					});
+				}
 				return new ControlTemplateResult(itemPanel, null);
 			});
 			return new DataTemplate()
 			{
-				Content = markedItemTemplateContent,
+				Content = itemTemplateContent,
 				DataType = typeof(DisplayableLog),
 			};
 		}
