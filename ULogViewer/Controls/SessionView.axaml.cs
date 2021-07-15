@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Controls.Templates;
 using Avalonia.Data;
 using Avalonia.Input;
@@ -69,6 +70,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly TextBox logThreadIdFilterTextBox;
 		readonly ListBox markedLogListBox;
 		readonly ContextMenu otherActionsMenu;
+		readonly ListBox predefinedLogTextFilterListBox;
+		readonly Popup predefinedLogTextFiltersPopup;
 		readonly ScheduledAction scrollToLatestLogAction;
 		readonly ScheduledAction updateLogFiltersAction;
 		readonly ScheduledAction updateStatusBarStateAction;
@@ -124,6 +127,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			});
 			this.markedLogListBox = this.FindControl<ListBox>("markedLogListBox").AsNonNull();
 			this.otherActionsMenu = (ContextMenu)this.Resources["otherActionsMenu"].AsNonNull();
+			this.predefinedLogTextFilterListBox = this.FindControl<ListBox>("predefinedLogTextFilterListBox").AsNonNull();
+			this.predefinedLogTextFiltersPopup = this.FindControl<Popup>("predefinedLogTextFiltersPopup").AsNonNull();
 #if !DEBUG
 			this.FindControl<Button>("testButton").AsNonNull().IsVisible = false;
 #endif

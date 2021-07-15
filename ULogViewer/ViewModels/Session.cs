@@ -51,6 +51,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<bool> HasMarkedLogsProperty = ObservableProperty.Register<Session, bool>(nameof(HasMarkedLogs));
 		/// <summary>
+		/// Property of <see cref="HasPredefinedLogTextFilters"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> HasPredefinedLogTextFiltersProperty = ObservableProperty.Register<Session, bool>(nameof(HasPredefinedLogTextFilters));
+		/// <summary>
 		/// Property of <see cref="Icon"/>.
 		/// </summary>
 		public static readonly ObservableProperty<Drawing?> IconProperty = ObservableProperty.Register<Session, Drawing?>(nameof(Icon));
@@ -173,7 +177,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			});
 			this.predefinedLogTextFilters = new ObservableList<PredefinedLogTextFilter>().Also(it =>
 			{
-				it.CollectionChanged += (_, e) => this.updateLogFilterAction?.Reschedule();
+				it.CollectionChanged += (_, e) =>
+				{
+					if (this.IsDisposed)
+						return;
+					this.SetValue(HasPredefinedLogTextFiltersProperty, it.IsNotEmpty());
+					this.updateLogFilterAction?.Reschedule();
+				};
 			});
 
 			// create log filter
@@ -590,6 +600,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Check whether at least one <see cref="PredefinedLogTextFilters"/> has been added to <see cref="PredefinedLogTextFilters"/> or not.
+		/// </summary>
+		public bool HasPredefinedLogTextFilters { get => this.GetValue(HasPredefinedLogTextFiltersProperty); }
+
+
+		/// <summary>
 		/// Get icon of session.
 		/// </summary>
 		public Drawing? Icon { get => this.GetValue(IconProperty); }
@@ -941,9 +957,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
-		/// Get list of <see cref="PredefinedLogTextFilter"/>s to filter logs.
+		/// Get list of <see cref="PredefinedLogTextFilters"/>s to filter logs.
 		/// </summary>
-		public IList<PredefinedLogTextFilter> PredefinedLogTextFilter { get => this.predefinedLogTextFilters; }
+		public IList<PredefinedLogTextFilter> PredefinedLogTextFilters { get => this.predefinedLogTextFilters; }
 
 
 		// Reload logs.

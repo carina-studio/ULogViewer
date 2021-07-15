@@ -25,6 +25,7 @@
 
 			<!-- Icon -->
 			<SolidColorBrush x:Key="Brush.Icon">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.Icon.Active">#7ac0ff</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.Icon.Error">#ff3232</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.Icon.Info">#007acc</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.Icon.LogProfile">#7ac0ff</SolidColorBrush>

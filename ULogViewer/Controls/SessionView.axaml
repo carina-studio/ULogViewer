@@ -179,6 +179,38 @@
 				<!-- Filter actions -->
 				<StackPanel Grid.Column="5" Orientation="Horizontal">
 
+					<!-- Predefined text filters -->
+					<ToggleButton Classes="SessionView_ToolBar_Button" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" ToolTip.Tip="{DynamicResource String.SessionView.PredefinedLogTextFilters}">
+						<Panel>
+							<Border Classes="SessionView_ToolBar_Button_Icon">
+								<DrawingPresenter Classes="SessionView_ToolBar_Button_Icon">
+									<ia:Interaction.Behaviors>
+										<iaCore:DataTriggerBehavior Binding="{Binding HasPredefinedLogTextFilters}" ComparisonCondition="Equal" Value="True">
+											<iaCore:ChangePropertyAction PropertyName="Drawing" Value="{StaticResource Drawing.Filter.Active}"/>
+										</iaCore:DataTriggerBehavior>
+										<iaCore:DataTriggerBehavior Binding="{Binding HasPredefinedLogTextFilters}" ComparisonCondition="Equal" Value="False">
+											<iaCore:ChangePropertyAction PropertyName="Drawing" Value="{StaticResource Drawing.Filter}"/>
+										</iaCore:DataTriggerBehavior>
+									</ia:Interaction.Behaviors>
+								</DrawingPresenter>
+							</Border>
+							<Popup Name="predefinedLogTextFiltersPopup" IsLightDismissEnabled="True" IsOpen="{Binding $parent[ToggleButton].IsChecked, Mode=TwoWay}" MaxHeight="{StaticResource Double.SessionView.PredefinedLogTextFiltersPopup.MaxHeight}" PlacementTarget="{Binding $parent[ToggleButton]}" Width="{StaticResource Double.SessionView.PredefinedLogTextFiltersPopup.Width}">
+								<Border Background="{DynamicResource ComboBoxDropDownBackground}" BorderBrush="{DynamicResource ComboBoxDropDownBorderBrush}" BorderThickness="{DynamicResource ComboBoxDropdownBorderThickness}" CornerRadius="{DynamicResource OverlayCornerRadius}">
+									<DockPanel>
+										<Border DockPanel.Dock="Bottom" Padding="{StaticResource Thickness.Dialog.ControlButtonsPanel.Padding}">
+											<StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+												<Button Classes="Dialog_ControlButton" Content="{DynamicResource String.SessionView.CreatePredefinedLogTextFilter}"/>
+												<Button Classes="Dialog_ControlButton" Content="{DynamicResource String.SessionView.ClearPredefinedLogTextFiltersSelection}"/>
+											</StackPanel>
+										</Border>
+										<ListBox Name="predefinedLogTextFilterListBox" Items="{x:Static appViewModels:PredefinedLogTextFilters.All}" SelectionMode="Multiple">
+										</ListBox>
+									</DockPanel>
+								</Border>
+							</Popup>
+						</Panel>
+					</ToggleButton>
+
 					<!-- Reset log filters -->
 					<Button Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].ResetLogFiltersCommand}" ToolTip.Tip="{DynamicResource String.SessionView.ResetLogFilters}">
 						<Border Classes="SessionView_ToolBar_Button_Icon">

@@ -65,6 +65,8 @@
 	<sys:String x:Key="String.SessionView.AppInfo">關於 ULogViewer...</sys:String>
 	<sys:String x:Key="String.SessionView.AppOptions">應用程式選項...</sys:String>
 	<sys:String x:Key="String.SessionView.ClearLogFiles">清除所有已加入的日誌檔案</sys:String>
+	<sys:String x:Key="String.SessionView.ClearPredefinedLogTextFiltersSelection">清除選取</sys:String>
+	<sys:String x:Key="String.SessionView.CreatePredefinedLogTextFilter">建立...</sys:String>
 	<sys:String x:Key="String.SessionView.FilteredLogCount">，已篩選：</sys:String>
 	<sys:String x:Key="String.SessionView.LogFiltersCombinationMode">篩選條件運算方式</sys:String>
 	<sys:String x:Key="String.SessionView.LogsFilteringProgress">篩選進度：</sys:String>
@@ -72,6 +74,7 @@
 	<sys:String x:Key="String.SessionView.MarkedLogs">已標記日誌</sys:String>
 	<sys:String x:Key="String.SessionView.NoLogToShow">沒有日誌可以顯示</sys:String>
 	<sys:String x:Key="String.SessionView.PauseResumeLogsReading">暫停/繼續讀取日誌 (P)</sys:String>
+	<sys:String x:Key="String.SessionView.PredefinedLogTextFilters">已儲存的文字篩選</sys:String>
 	<sys:String x:Key="String.SessionView.ReloadLogs">重新載入日誌 (F5)</sys:String>
 	<sys:String x:Key="String.SessionView.ResetLogFilters">清除所有篩選設定</sys:String>
 	<sys:String x:Key="String.SessionView.ScrollToLatestLog">捲動至最新的日誌</sys:String>
