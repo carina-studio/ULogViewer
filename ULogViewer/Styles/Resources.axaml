@@ -73,7 +73,9 @@
 	<Thickness x:Key="Thickness.SessionView.LogListBox.Item.Padding">8,3,8,3</Thickness>
 	<Thickness x:Key="Thickness.SessionView.LogListBox.Padding">0,0,0,20</Thickness>
 	<Thickness x:Key="Thickness.SessionView.MarkedLogListBox.Item.Padding">3</Thickness>
-	<Thickness x:Key="Thickness.SessionView.NoPredefinedLogTextFilterHint.Margin">15,15,15,0</Thickness>
+	<Thickness x:Key="Thickness.SessionView.NoPredefinedLogTextFilterHint.Margin">15,12,15,0</Thickness>
+	<Thickness x:Key="Thickness.SessionView.PredefinedLogTextFilterListBox.Item.Padding">15,5,15,5</Thickness>
+	<Thickness x:Key="Thickness.SessionView.PredefinedLogTextFiltersPopup.Padding">0,3,0,0</Thickness>
 	<Thickness x:Key="Thickness.SessionView.SidePanel.EmptyHint.Margin">20,0,10,0</Thickness>
 	<Thickness x:Key="Thickness.SessionView.SidePanel.Header.Margin">10,10,10,5</Thickness>
 	<Thickness x:Key="Thickness.SessionView.StatucBar.Padding">3</Thickness>

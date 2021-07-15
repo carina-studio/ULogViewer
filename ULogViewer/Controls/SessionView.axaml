@@ -185,28 +185,39 @@
 							<Border Classes="SessionView_ToolBar_Button_Icon">
 								<DrawingPresenter Classes="SessionView_ToolBar_Button_Icon">
 									<ia:Interaction.Behaviors>
-										<iaCore:DataTriggerBehavior Binding="{Binding HasPredefinedLogTextFilters}" ComparisonCondition="Equal" Value="True">
+										<iaCore:DataTriggerBehavior Binding="{Binding ElementName=predefinedLogTextFilterListBox, Path=SelectedItems.Count}" ComparisonCondition="GreaterThan" Value="0">
 											<iaCore:ChangePropertyAction PropertyName="Drawing" Value="{StaticResource Drawing.Filter.Active}"/>
 										</iaCore:DataTriggerBehavior>
-										<iaCore:DataTriggerBehavior Binding="{Binding HasPredefinedLogTextFilters}" ComparisonCondition="Equal" Value="False">
+										<iaCore:DataTriggerBehavior Binding="{Binding ElementName=predefinedLogTextFilterListBox, Path=SelectedItems.Count}" ComparisonCondition="Equal" Value="0">
 											<iaCore:ChangePropertyAction PropertyName="Drawing" Value="{StaticResource Drawing.Filter}"/>
 										</iaCore:DataTriggerBehavior>
 									</ia:Interaction.Behaviors>
 								</DrawingPresenter>
 							</Border>
-							<Popup Name="predefinedLogTextFiltersPopup" IsLightDismissEnabled="True" IsOpen="{Binding $parent[ToggleButton].IsChecked, Mode=TwoWay}" MaxHeight="{StaticResource Double.SessionView.PredefinedLogTextFiltersPopup.MaxHeight}" PlacementTarget="{Binding $parent[ToggleButton]}" Width="{StaticResource Double.SessionView.PredefinedLogTextFiltersPopup.Width}">
-								<Border Background="{DynamicResource ComboBoxDropDownBackground}" BorderBrush="{DynamicResource ComboBoxDropDownBorderBrush}" BorderThickness="{DynamicResource ComboBoxDropdownBorderThickness}" CornerRadius="{DynamicResource OverlayCornerRadius}">
+							<Popup Name="predefinedLogTextFiltersPopup" IsLightDismissEnabled="True" IsOpen="{Binding $parent[ToggleButton].IsChecked, Mode=TwoWay}" MaxHeight="{StaticResource Double.SessionView.PredefinedLogTextFiltersPopup.MaxHeight}" PlacementTarget="{Binding $parent[ToggleButton]}" Width="{StaticResource Double.SessionView.PredefinedLogTextFiltersPopup.Width}" WindowManagerAddShadowHint="True">
+								<Border Background="{DynamicResource ComboBoxDropDownBackground}" BorderBrush="{DynamicResource ComboBoxDropDownBorderBrush}" BorderThickness="{DynamicResource ComboBoxDropdownBorderThickness}" CornerRadius="{DynamicResource OverlayCornerRadius}" Padding="{StaticResource Thickness.SessionView.PredefinedLogTextFiltersPopup.Padding}">
 									<DockPanel>
-										<Border DockPanel.Dock="Bottom" Padding="{StaticResource Thickness.Dialog.ControlButtonsPanel.Padding}">
+										<Border Background="{DynamicResource Brush.Dialog.ControlButtonsPanel.Background}" DockPanel.Dock="Bottom" Padding="{StaticResource Thickness.Dialog.ControlButtonsPanel.Padding}">
 											<StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
 												<Button Classes="Dialog_ControlButton" Click="OnCreatePredefinedLogTextFilterButtonClick" Content="{DynamicResource String.SessionView.CreatePredefinedLogTextFilter}"/>
 												<Button Classes="Dialog_ControlButton" Click="OnClearPredefinedLogTextFilterSelectionButtonClick" IsEnabled="{Binding ElementName=predefinedLogTextFilterListBox, Path=SelectedItems.Count}" Content="{DynamicResource String.SessionView.ClearPredefinedLogTextFiltersSelection}"/>
 											</StackPanel>
 										</Border>
 										<Panel>
-											<ListBox Name="predefinedLogTextFilterListBox" IsVisible="{Binding Source={x:Static appViewModels:PredefinedLogTextFilters.All}, Path=Count}" Items="{x:Static appViewModels:PredefinedLogTextFilters.All}" SelectionChanged="OnPredefinedLogTextFilterListBoxSelectionChanged" SelectionMode="Multiple">
+											<ListBox Name="predefinedLogTextFilterListBox" Background="{x:Static Brushes.Transparent}" IsVisible="{Binding $parent[UserControl].PredefinedLogTextFilters.Count}" Items="{Binding $parent[UserControl].PredefinedLogTextFilters}" SelectionChanged="OnPredefinedLogTextFilterListBoxSelectionChanged" SelectionMode="Multiple">
+												<ListBox.ItemTemplate>
+													<DataTemplate DataType="{x:Type appViewModels:PredefinedLogTextFilter}">
+														<TextBlock Text="{Binding Name}"/>
+													</DataTemplate>
+												</ListBox.ItemTemplate>
+												<ListBox.Styles>
+													<Style Selector="ListBoxItem">
+														<Setter Property="Padding" Value="{StaticResource Thickness.SessionView.PredefinedLogTextFilterListBox.Item.Padding}"/>
+														<Setter Property="ToolTip.Tip" Value="{Binding Regex}"/>
+													</Style>
+												</ListBox.Styles>
 											</ListBox>
-											<TextBlock HorizontalAlignment="Center" IsVisible="{Binding Source={x:Static appViewModels:PredefinedLogTextFilters.All}, Path=!Count}" Margin="{StaticResource Thickness.SessionView.NoPredefinedLogTextFilterHint.Margin}" Text="{DynamicResource String.SessionView.NoPredefinedLogTextFilter}" TextWrapping="Wrap"/>
+											<TextBlock HorizontalAlignment="Center" IsVisible="{Binding !$parent[UserControl].PredefinedLogTextFilters.Count}" Margin="{StaticResource Thickness.SessionView.NoPredefinedLogTextFilterHint.Margin}" Text="{DynamicResource String.SessionView.NoPredefinedLogTextFilter}" TextWrapping="Wrap"/>
 										</Panel>
 									</DockPanel>
 								</Border>
