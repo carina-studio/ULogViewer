@@ -816,8 +816,15 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			if (sender != this.LogProfile)
 				return;
-			if (e.PropertyName == nameof(LogProfile.Name))
-				this.updateTitleAndIconAction.Schedule();
+			switch (e.PropertyName)
+			{
+				case nameof(LogProfile.ColorIndicator):
+					this.UpdateDisplayLogProperties();
+					break;
+				case nameof(LogProfile.Name):
+					this.updateTitleAndIconAction.Schedule();
+					break;
+			}
 		}
 
 
