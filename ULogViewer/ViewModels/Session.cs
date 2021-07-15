@@ -134,6 +134,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly DisplayableLogFilter logFilter;
 		readonly HashSet<LogReader> logReaders = new HashSet<LogReader>();
 		readonly SortedObservableList<DisplayableLog> markedLogs;
+		readonly ObservableList<PredefinedLogTextFilter> predefinedLogTextFilters;
 		readonly ScheduledAction updateIsReadingLogsAction;
 		readonly ScheduledAction updateIsProcessingLogsAction;
 		readonly ScheduledAction updateLogFilterAction;
@@ -169,6 +170,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					if (!this.IsDisposed)
 						this.SetValue(HasMarkedLogsProperty, it.IsNotEmpty());
 				};
+			});
+			this.predefinedLogTextFilters = new ObservableList<PredefinedLogTextFilter>().Also(it =>
+			{
+				it.CollectionChanged += (_, e) => this.updateLogFilterAction?.Reschedule();
 			});
 
 			// create log filter
@@ -237,10 +242,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.logFilter.CombinationMode = this.LogFiltersCombinationMode;
 
 				// setup text regex
-				if (this.LogTextFilter == null)
-					this.logFilter.TextRegexList = new Regex[0];
-				else
-					this.logFilter.TextRegexList = new Regex[] { this.LogTextFilter };
+				List<Regex> textRegexList = new List<Regex>();
+				this.LogTextFilter?.Let(it => textRegexList.Add(it));
+				foreach (var filter in this.predefinedLogTextFilters)
+					textRegexList.Add(filter.Regex);
+				this.logFilter.TextRegexList = textRegexList;
 			});
 			this.updateTitleAndIconAction = new ScheduledAction(() =>
 			{
@@ -932,6 +938,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Command to pause or resume logs reading.
 		/// </summary>
 		public ICommand PauseResumeLogsReadingCommand { get; }
+
+
+		/// <summary>
+		/// Get list of <see cref="PredefinedLogTextFilter"/>s to filter logs.
+		/// </summary>
+		public IList<PredefinedLogTextFilter> PredefinedLogTextFilter { get => this.predefinedLogTextFilters; }
 
 
 		// Reload logs.
