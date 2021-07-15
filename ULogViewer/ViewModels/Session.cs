@@ -164,7 +164,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			});
 			this.markedLogs = new SortedObservableList<DisplayableLog>(this.CompareDisplayableLogs).Also(it =>
 			{
-				it.CollectionChanged += (_, e) => this.SetValue(HasMarkedLogsProperty, it.IsNotEmpty());
+				it.CollectionChanged += (_, e) =>
+				{
+					if (!this.IsDisposed)
+						this.SetValue(HasMarkedLogsProperty, it.IsNotEmpty());
+				};
 			});
 
 			// create log filter
@@ -747,6 +751,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.markedLogs.RemoveAll(e.OldItems.AsNonNull().Cast<DisplayableLog>(), true);
 					foreach (DisplayableLog displayableLog in e.OldItems.AsNonNull())
 						displayableLog.Dispose();
+					break;
+				case NotifyCollectionChangedAction.Reset:
+					this.markedLogs.Clear();
+					this.markedLogs.AddAll(this.allLogs.TakeWhile(it => it.IsMarked));
 					break;
 			}
 			if (!this.IsDisposed)
