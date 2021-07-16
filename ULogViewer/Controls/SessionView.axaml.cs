@@ -500,6 +500,24 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Edit given predefined log text filter.
+		void EditPredefinedLogTextFilter(PredefinedLogTextFilter? filter)
+		{
+			// check state
+			if (filter == null)
+				return;
+			var window = this.FindLogicalAncestorOfType<Window>();
+			if (window == null)
+				return;
+
+			// edit filter
+			new PredefinedLogTextFilterEditorDialog()
+			{
+				Filter = filter
+			}.ShowDialog(window);
+		}
+
+
 		/// <summary>
 		/// Check whether log profile has been set or not.
 		/// </summary>
@@ -1160,6 +1178,15 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Sorted predefined log text filters.
 		IList<PredefinedLogTextFilter> PredefinedLogTextFilters { get => this.predefinedLogTextFilters; }
+
+
+		// Remove given predefined log text filter.
+		void RemovePredefinedLogTextFilter(PredefinedLogTextFilter? filter)
+		{
+			if (filter == null)
+				return;
+			PredefinedLogTextFilters.Remove(filter);
+		}
 
 
 		// Reset all log filters.

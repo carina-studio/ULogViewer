@@ -14,10 +14,8 @@ namespace CarinaStudio.ULogViewer.Controls
 	/// </summary>
 	partial class PredefinedLogTextFilterEditorDialog : BaseDialog
 	{
-		/// <summary>
-		/// Property of <see cref="IsValidFilterParams"/>.
-		/// </summary>
-		public static readonly AvaloniaProperty<bool> IsValidFilterParamsProperty = AvaloniaProperty.Register<PredefinedLogTextFilterEditorDialog, bool>(nameof(IsValidFilterParams));
+		// Static fields.
+		static readonly AvaloniaProperty<bool> IsValidFilterParamsProperty = AvaloniaProperty.Register<PredefinedLogTextFilterEditorDialog, bool>(nameof(IsValidFilterParams));
 
 
 		// Fields.
@@ -48,10 +46,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
 
 
-		/// <summary>
-		/// Check whether parameters of filter is valid or not.
-		/// </summary>
-		public bool IsValidFilterParams { get => this.GetValue<bool>(IsValidFilterParamsProperty); }
+		// Check whether parameters of filter is valid or not.
+		bool IsValidFilterParams { get => this.GetValue<bool>(IsValidFilterParamsProperty); }
 
 
 		// Called when property of name text box changed.
@@ -65,6 +61,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when OK clicked.
 		void OnOKClick(object? sender, RoutedEventArgs e)
 		{
+			this.regexTextBox.Validate();
 			if (!this.IsValidFilterParams)
 				return;
 			var name = this.nameTextBox.Text;

@@ -1,4 +1,5 @@
 ﻿using CarinaStudio.Threading;
+using CarinaStudio.Threading.Tasks;
 using System;
 using System.ComponentModel;
 using System.IO;
@@ -15,11 +16,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 	/// </summary>
 	class PredefinedLogTextFilter : IApplicationObject, INotifyPropertyChanged
 	{
+		// Static fields.
+		static readonly TaskFactory savingTaskFactory = new TaskFactory(new FixedThreadsTaskScheduler(1));
+
+
 		// Fields.
 		string? fileName;
-		bool isModified;
 		string name;
 		Regex regex;
+		int savedVersion;
+		int version;
 
 
 		/// <summary>
@@ -31,9 +37,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public PredefinedLogTextFilter(IApplication app, string name, Regex regex)
 		{
 			this.Application = app;
-			this.isModified = true;
 			this.name = name;
 			this.regex = regex;
+			++this.version;
 		}
 
 
@@ -114,7 +120,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			return new PredefinedLogTextFilter(app, name, regex.AsNonNull()).Also(it =>
 			{
 				it.fileName = fileName;
-				it.isModified = false;
+				it.savedVersion = it.version;
 			});
 		}
 
@@ -131,7 +137,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				if (this.name == value)
 					return;
 				this.name = value;
-				this.isModified = true;
+				++this.version;
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Name)));
 			}
 		}
@@ -146,10 +152,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			set
 			{
 				this.VerifyAccess();
-				if (this.regex == value)
+				if (this.regex.ToString() == value.ToString() && this.regex.Options == value.Options)
 					return;
 				this.regex = value;
-				this.isModified = true;
+				++this.version;
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Regex)));
 			}
 		}
@@ -164,14 +170,15 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			// check state
 			this.VerifyAccess();
-			if (this.fileName == fileName && !this.isModified)
+			if (this.fileName == fileName && this.savedVersion == this.version)
 				return;
 
 			// save to file
 			var prevFileName = this.fileName;
 			var name = this.name;
 			var regex = this.regex;
-			await Task.Run(() =>
+			var version = this.version;
+			await savingTaskFactory.StartNew(() =>
 			{
 				// delete previous file
 				if (prevFileName != null && prevFileName != fileName)
@@ -193,7 +200,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// update state
 			this.fileName = fileName;
-			this.isModified = false;
+			this.savedVersion = version;
 		}
 
 

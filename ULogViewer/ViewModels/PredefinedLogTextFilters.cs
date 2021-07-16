@@ -3,6 +3,7 @@ using CarinaStudio.Threading;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -30,7 +31,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Add <see cref="PredefinedLogTextFilter"/>.
 		/// </summary>
 		/// <param name="filter"><see cref="PredefinedLogTextFilter"/> to add.</param>
-		public static void Add(PredefinedLogTextFilter filter)
+		public static async void Add(PredefinedLogTextFilter filter)
 		{
 			// check state
 			var app = PredefinedLogTextFilters.app ?? throw new InvalidOperationException();
@@ -40,6 +41,18 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// add filter
 			filters.Add(filter);
+			filter.PropertyChanged += OnPredefinedLogTextFilterPropertyChanged;
+
+			// save filter
+			try
+			{
+				logger?.LogDebug($"Save added filter '{filter.Name}'");
+				await filter.SaveAsync(await filter.FindValidFileNameAsync(directoryPath));
+			}
+			catch(Exception ex)
+			{
+				logger?.LogError(ex, $"Unable to save filter '{filter.Name}' to file after adding");
+			}
 		}
 
 
@@ -102,6 +115,28 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		}
 
 
+		// Salled when property of predefined log text filter changed.
+		static void OnPredefinedLogTextFilterPropertyChanged(object? sender, PropertyChangedEventArgs e)
+		{
+			if (sender is not PredefinedLogTextFilter filter)
+				return;
+			switch(e.PropertyName)
+			{
+				case nameof(PredefinedLogTextFilter.Name):
+				case nameof(PredefinedLogTextFilter.Regex):
+					app?.SynchronizationContext?.PostDelayed(async () =>
+					{
+						if (filters.Contains(filter) && filter.FileName != null)
+						{
+							logger?.LogDebug($"Save changed filter '{filter.Name}'");
+							await filter.SaveAsync(filter.FileName);
+						}
+					}, 100);
+					break;
+			}
+		}
+
+
 		/// <summary>
 		/// Remove <see cref="PredefinedLogTextFilter"/>.
 		/// </summary>
@@ -115,6 +150,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// remove
 			if (!filters.Remove(filter))
 				return;
+			filter.PropertyChanged -= OnPredefinedLogTextFilterPropertyChanged;
+			logger?.LogDebug($"Remove filter '{filter.Name}");
 
 			// delete file
 			filter.FileName?.Let(fileName =>
