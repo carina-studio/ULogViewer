@@ -265,7 +265,7 @@
 				</Button>
 
 				<!-- Other actions -->
-				<Button Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].ShowOtherActionsCommand}" ToolTip.Tip="{DynamicResource String.SessionView.OtherActions}">
+				<Button Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].ShowOtherActions}" ToolTip.Tip="{DynamicResource String.SessionView.OtherActions}">
 					<Border Classes="SessionView_ToolBar_Button_Icon">
 						<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.OtherActions}"/>
 					</Border>

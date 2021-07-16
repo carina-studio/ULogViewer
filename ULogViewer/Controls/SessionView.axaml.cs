@@ -36,22 +36,14 @@ namespace CarinaStudio.ULogViewer.Controls
 	/// </summary>
 	partial class SessionView : BaseView
 	{
-		/// <summary>
-		/// Property of <see cref="HasLogProfile"/>.
-		/// </summary>
-		public static readonly AvaloniaProperty<bool> HasLogProfileProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(HasLogProfile), false);
-		/// <summary>
-		/// Property of <see cref="IsScrollingToLatestLogNeeded"/>.
-		/// </summary>
-		public static readonly AvaloniaProperty<bool> IsScrollingToLatestLogNeededProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(IsScrollingToLatestLogNeeded), true);
-		/// <summary>
-		/// Property of <see cref="StatusBarState"/>.
-		/// </summary>
-		public static readonly AvaloniaProperty<SessionViewStatusBarState> StatusBarStateProperty = AvaloniaProperty.Register<SessionView, SessionViewStatusBarState>(nameof(StatusBarState), SessionViewStatusBarState.None);
-
-
 		// Constants.
 		const int ScrollingToLatestLogInterval = 100;
+
+
+		// Static fields.
+		static readonly AvaloniaProperty<bool> HasLogProfileProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(HasLogProfile), false);
+		static readonly AvaloniaProperty<bool> IsScrollingToLatestLogNeededProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(IsScrollingToLatestLogNeeded), true);
+		static readonly AvaloniaProperty<SessionViewStatusBarState> StatusBarStateProperty = AvaloniaProperty.Register<SessionView, SessionViewStatusBarState>(nameof(StatusBarState), SessionViewStatusBarState.None);
 
 
 		// Fields.
@@ -91,7 +83,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.ResetLogFiltersCommand = ReactiveCommand.Create(this.ResetLogFilters, this.GetObservable<bool>(HasLogProfileProperty));
 			this.SetLogProfileCommand = ReactiveCommand.Create(this.SetLogProfile, this.canSetLogProfile);
 			this.SetWorkingDirectoryCommand = ReactiveCommand.Create(this.SetWorkingDirectory, this.canSetWorkingDirectory);
-			this.ShowOtherActionsCommand = ReactiveCommand.Create(this.ShowOtherActions);
 			this.SwitchLogFiltersCombinationModeCommand = ReactiveCommand.Create(this.SwitchLogFiltersCombinationMode, this.GetObservable<bool>(HasLogProfileProperty));
 
 			// initialize
@@ -236,10 +227,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		/// <summary>
-		/// Command to add log files.
-		/// </summary>
-		public ICommand AddLogFilesCommand { get; }
+		// Command to add log files.
+		ICommand AddLogFilesCommand { get; }
 
 
 		// Attach to predefined log text filter
@@ -518,20 +507,16 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		/// <summary>
-		/// Check whether log profile has been set or not.
-		/// </summary>
-		public bool HasLogProfile { get => this.GetValue<bool>(HasLogProfileProperty); }
+		// Check whether log profile has been set or not.
+		bool HasLogProfile { get => this.GetValue<bool>(HasLogProfileProperty); }
 
 
 		// Initialize Avalonia components.
 		private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
 
 
-		/// <summary>
-		/// Get or set whether scrolling to latest log is needed or not.
-		/// </summary>
-		public bool IsScrollingToLatestLogNeeded
+		// Get or set whether scrolling to latest log is needed or not.
+		bool IsScrollingToLatestLogNeeded
 		{
 			get => this.GetValue<bool>(IsScrollingToLatestLogNeededProperty);
 			set => this.SetValue<bool>(IsScrollingToLatestLogNeededProperty, value);
@@ -550,10 +535,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		/// <summary>
-		/// Command to mark or unmark selected logs 
-		/// </summary>
-		public ICommand MarkUnmarkSelectedLogsCommand { get; }
+		// Command to mark or unmark selected logs.
+		ICommand MarkUnmarkSelectedLogsCommand { get; }
 
 
 		// Called when attaching to view tree.
@@ -1201,10 +1184,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		/// <summary>
-		/// Command to reset all log filters.
-		/// </summary>
-		public ICommand ResetLogFiltersCommand { get; }
+		// Command to reset all log filters.
+		ICommand ResetLogFiltersCommand { get; }
 
 
 		// Set log profile.
@@ -1254,10 +1235,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		/// <summary>
-		/// Command to set log profile.
-		/// </summary>
-		public ICommand SetLogProfileCommand { get; }
+		// Command to set log profile.
+		ICommand SetLogProfileCommand { get; }
 
 
 		// Set working directory.
@@ -1292,10 +1271,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		/// <summary>
-		/// Command to set working directory.
-		/// </summary>
-		public ICommand SetWorkingDirectoryCommand { get; }
+		// Command to set working directory.
+		ICommand SetWorkingDirectoryCommand { get; }
 
 
 		// Show UI of other actions.
@@ -1305,16 +1282,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		/// <summary>
-		/// Command to show UI of other actions.
-		/// </summary>
-		public ICommand ShowOtherActionsCommand { get; }
-
-
-		/// <summary>
-		/// Get current state of status bar.
-		/// </summary>
-		public SessionViewStatusBarState StatusBarState { get => this.GetValue<SessionViewStatusBarState>(StatusBarStateProperty); }
+		// Get current state of status bar.
+		SessionViewStatusBarState StatusBarState { get => this.GetValue<SessionViewStatusBarState>(StatusBarStateProperty); }
 
 
 		// Switch filters combination mode.
@@ -1330,10 +1299,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		/// <summary>
-		/// Command to switch combination mode of log filters.
-		/// </summary>
-		public ICommand SwitchLogFiltersCombinationModeCommand { get; }
+		// Command to switch combination mode of log filters.
+		ICommand SwitchLogFiltersCombinationModeCommand { get; }
 
 
 		// Get delay of updating log filter.
