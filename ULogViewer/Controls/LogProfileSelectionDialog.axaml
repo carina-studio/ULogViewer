@@ -48,17 +48,17 @@
 
 								<!-- Actions -->
 								<StackPanel Grid.Column="2" Orientation="Horizontal">
-									<Button Classes="LogProfileSelectionDialog_LogProfile_Action" Command="{Binding $parent[Window].PinUnpinLogProfileCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" IsVisible="{Binding !IsBuiltIn}" ToolTip.Tip="{DynamicResource String.LogProfileSelectionDialog.RemoveLogProfile}">
+									<Button Classes="LogProfileSelectionDialog_LogProfile_Action" Command="{Binding $parent[Window].PinUnpinLogProfile}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" IsVisible="{Binding !IsBuiltIn}" ToolTip.Tip="{DynamicResource String.LogProfileSelectionDialog.RemoveLogProfile}">
 										<Border Classes="LogProfileSelectionDialog_LogProfile_Action">
 											<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Delete.Highlight}"/>
 										</Border>
 									</Button>
-									<Button Classes="LogProfileSelectionDialog_LogProfile_Action" Command="{Binding $parent[Window].PinUnpinLogProfileCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" IsVisible="{Binding !IsBuiltIn}" ToolTip.Tip="{DynamicResource String.LogProfileSelectionDialog.EditLogProfile}">
+									<Button Classes="LogProfileSelectionDialog_LogProfile_Action" Command="{Binding $parent[Window].PinUnpinLogProfile}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" IsVisible="{Binding !IsBuiltIn}" ToolTip.Tip="{DynamicResource String.LogProfileSelectionDialog.EditLogProfile}">
 										<Border Classes="LogProfileSelectionDialog_LogProfile_Action">
 											<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Edit}"/>
 										</Border>
 									</Button>
-									<Button Classes="LogProfileSelectionDialog_LogProfile_Action" Command="{Binding $parent[Window].PinUnpinLogProfileCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String.LogProfileSelectionDialog.PinUnpinLogProfile}">
+									<Button Classes="LogProfileSelectionDialog_LogProfile_Action" Command="{Binding $parent[Window].PinUnpinLogProfile}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String.LogProfileSelectionDialog.PinUnpinLogProfile}">
 										<Border Classes="LogProfileSelectionDialog_LogProfile_Action">
 											<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Pin}"/>
 										</Border>
@@ -87,32 +87,38 @@
 
 		<!-- Log profiles -->
 		<ScrollViewer MaxHeight="{StaticResource Double.LogProfileSelectionDialog.Content.MaxHeight}">
-			<Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto">
+			<StackPanel HorizontalAlignment="Stretch" Orientation="Vertical">
 
 				<!-- Pinned profiles -->
-				<TextBlock Classes="Dialog_Label_Header1" IsVisible="{Binding $parent[Window].HasPinnedLogProfiles}" Margin="{StaticResource Thickness.LogProfileSelectionDialog.Label.Margin}" Text="{DynamicResource String.LogProfileSelectionDialog.PinnedLogProfiles}"/>
-				<ListBox Name="pinnedLogProfileListBox" Classes="LogProfiles" Grid.Row="1" Items="{Binding $parent[Window].PinnedLogProfiles}" IsVisible="{Binding $parent[Window].HasPinnedLogProfiles}" SelectionChanged="OnPinnedLogProfilesSelectionChanged">
-					<ListBox.Styles>
-						<Style Selector="ListBoxItem">
-							<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-							<Setter Property="Padding" Value="0"/>
-						</Style>
-					</ListBox.Styles>
-				</ListBox>
-				<Separator Classes="Dialog_Separator_Horizontal" Grid.Row="2" IsVisible="{Binding $parent[Window].HasPinnedLogProfiles}"/>
+				<StackPanel HorizontalAlignment="Stretch" IsVisible="{Binding $parent[Window].PinnedLogProfiles.Count}" Orientation="Vertical">
+					<TextBlock Classes="Dialog_Label_Header1" Margin="{StaticResource Thickness.LogProfileSelectionDialog.Label.Margin}" Text="{DynamicResource String.LogProfileSelectionDialog.PinnedLogProfiles}"/>
+					<ListBox Name="pinnedLogProfileListBox" Classes="LogProfiles" Items="{Binding $parent[Window].PinnedLogProfiles}" ScrollViewer.VerticalScrollBarVisibility="Disabled" SelectionChanged="OnPinnedLogProfilesSelectionChanged" VirtualizationMode="None">
+						<ListBox.Styles>
+							<Style Selector="ListBoxItem">
+								<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+								<Setter Property="Padding" Value="0"/>
+							</Style>
+						</ListBox.Styles>
+					</ListBox>
+					<Separator Classes="Dialog_Separator_Horizontal"/>
+				</StackPanel>
+				
+				<!-- Other profiles -->
+				<StackPanel HorizontalAlignment="Stretch" IsVisible="{Binding $parent[Window].OtherLogProfiles.Count}" Orientation="Vertical">
+					<TextBlock Classes="Dialog_Label_Header1" IsVisible="{Binding $parent[Window].PinnedLogProfiles.Count}" Margin="{StaticResource Thickness.LogProfileSelectionDialog.Label.Margin}" Text="{DynamicResource String.LogProfileSelectionDialog.OtherLogProfiles}"/>
+					<TextBlock Classes="Dialog_Label_Header1" IsVisible="{Binding !$parent[Window].PinnedLogProfiles.Count}" Margin="{StaticResource Thickness.LogProfileSelectionDialog.Label.Margin}" Text="{DynamicResource String.LogProfileSelectionDialog.AllLogProfiles}"/>
+					<ListBox Name="otherLogProfileListBox" Classes="LogProfiles" Items="{Binding $parent[Window].OtherLogProfiles}" ScrollViewer.VerticalScrollBarVisibility="Disabled" SelectionChanged="OnOtherLogProfilesSelectionChanged" VirtualizationMode="None">
+						<ListBox.Styles>
+							<Style Selector="ListBoxItem">
+								<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+								<Setter Property="Padding" Value="0"/>
+							</Style>
+						</ListBox.Styles>
+					</ListBox>
+					<Separator Classes="Dialog_Separator_Horizontal"/>
+				</StackPanel>
 
-				<!-- All profiles -->
-				<TextBlock Classes="Dialog_Label_Header1" Grid.Row="3" Margin="{StaticResource Thickness.LogProfileSelectionDialog.Label.Margin}" Text="{DynamicResource String.LogProfileSelectionDialog.AllLogProfiles}"/>
-				<ListBox Name="allLogProfileListBox" Classes="LogProfiles" Grid.Row="4" Items="{Binding $parent[Window].AllLogProfiles}" SelectionChanged="OnAllLogProfilesSelectionChanged">
-					<ListBox.Styles>
-						<Style Selector="ListBoxItem">
-							<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-							<Setter Property="Padding" Value="0"/>
-						</Style>
-					</ListBox.Styles>
-				</ListBox>
-
-			</Grid>
+			</StackPanel>
 		</ScrollViewer>
 		
 	</DockPanel>

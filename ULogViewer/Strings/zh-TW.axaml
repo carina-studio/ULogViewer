@@ -47,6 +47,7 @@
 	<sys:String x:Key="String.LogProfileSelectionDialog.EditLogProfile">編輯日誌類型</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.IsContinuousReading">連續讀取</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.IsWorkingDirectoryNeeded">需要工作目錄</sys:String>
+	<sys:String x:Key="String.LogProfileSelectionDialog.OtherLogProfiles">其他日誌類型</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.PinnedLogProfiles">已釘選</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.PinUnpinLogProfile">釘選/移除釘選日誌類型</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.RemoveLogProfile">刪除日誌類型</sys:String>

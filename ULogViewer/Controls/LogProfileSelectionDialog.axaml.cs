@@ -11,6 +11,7 @@ using ReactiveUI;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Windows.Input;
 
 namespace CarinaStudio.ULogViewer.Controls
@@ -21,32 +22,18 @@ namespace CarinaStudio.ULogViewer.Controls
 	partial class LogProfileSelectionDialog : BaseDialog
 	{
 		/// <summary>
-		/// Property of <see cref="AllLogProfiles"/>.
-		/// </summary>
-		public static readonly AvaloniaProperty<IList<LogProfile>> AllLogProfilesProperty = AvaloniaProperty.Register<LogProfileSelectionDialog, IList<LogProfile>>(nameof(AllLogProfiles), new LogProfile[0]);
-		/// <summary>
-		/// Property of <see cref="HasPinnedLogProfiles"/>.
-		/// </summary>
-		public static readonly AvaloniaProperty<bool> HasPinnedLogProfilesProperty = AvaloniaProperty.Register<LogProfileSelectionDialog, bool>(nameof(HasPinnedLogProfiles), false);
-		/// <summary>
-		/// Property of <see cref="HasSelectedLogProfile"/>.
-		/// </summary>
-		public static readonly AvaloniaProperty<bool> HasSelectedLogProfileProperty = AvaloniaProperty.Register<LogProfileSelectionDialog, bool>(nameof(HasSelectedLogProfile), false);
-		/// <summary>
-		/// Property of <see cref="PinnedLogProfiles"/>.
-		/// </summary>
-		public static readonly AvaloniaProperty<IList<LogProfile>> PinnedLogProfilesProperty = AvaloniaProperty.Register<LogProfileSelectionDialog, IList<LogProfile>>(nameof(PinnedLogProfiles), new LogProfile[0]);
-
-
-		/// <summary>
 		/// <see cref="IValueConverter"/> for showing <see cref="UnderlyingLogDataSource"/>.
 		/// </summary>
 		public static readonly IValueConverter UnderlyingLogDataSourceConverter = new EnumConverter<UnderlyingLogDataSource>(App.Current);
 
 
+		// Static fields.
+		static readonly AvaloniaProperty<bool> HasSelectedLogProfileProperty = AvaloniaProperty.Register<LogProfileSelectionDialog, bool>(nameof(HasSelectedLogProfile), false);
+		
+
 		// Fields.
-		readonly ListBox allLogProfileListBox;
-		readonly SortedObservableList<LogProfile> allLogProfiles = new SortedObservableList<LogProfile>(CompareLogProfiles);
+		readonly ListBox otherLogProfileListBox;
+		readonly SortedObservableList<LogProfile> otherLogProfiles = new SortedObservableList<LogProfile>(CompareLogProfiles);
 		readonly ListBox pinnedLogProfileListBox;
 		readonly SortedObservableList<LogProfile> pinnedLogProfiles = new SortedObservableList<LogProfile>(CompareLogProfiles);
 
@@ -57,35 +44,30 @@ namespace CarinaStudio.ULogViewer.Controls
 		public LogProfileSelectionDialog()
 		{
 			// setup properties
-			this.SetValue<IList<LogProfile>>(AllLogProfilesProperty, this.allLogProfiles.AsReadOnly());
-			this.SetValue<IList<LogProfile>>(PinnedLogProfilesProperty, this.pinnedLogProfiles.AsReadOnly());
+			this.OtherLogProfiles = this.otherLogProfiles.AsReadOnly();
+			this.PinnedLogProfiles = this.pinnedLogProfiles.AsReadOnly();
 
 			// create commends
 			this.ConfirmSelectedLogProfileCommand = ReactiveCommand.Create(this.ConfirmSelectedLogProfile, this.GetObservable<bool>(HasSelectedLogProfileProperty));
-			this.EditLogProfileCommand = ReactiveCommand.Create<LogProfile?>(this.EditLogProfile);
-			this.PinUnpinLogProfileCommand = ReactiveCommand.Create<LogProfile?>(this.PinUnpinLogProfile);
-			this.RemoveLogProfileCommand = ReactiveCommand.Create<LogProfile?>(this.RemoveLogProfile);
 
 			// initialize
 			this.InitializeComponent();
 
 			// setup controls
-			this.allLogProfileListBox = this.FindControl<ListBox>("allLogProfileListBox").AsNonNull();
+			this.otherLogProfileListBox = this.FindControl<ListBox>("otherLogProfileListBox").AsNonNull();
 			this.pinnedLogProfileListBox = this.FindControl<ListBox>("pinnedLogProfileListBox").AsNonNull();
 
 			// attach to log profiles
 			((INotifyCollectionChanged)LogProfiles.All).CollectionChanged += this.OnAllLogProfilesChanged;
-			((INotifyCollectionChanged)LogProfiles.Pinned).CollectionChanged += this.OnPinnedLogProfilesChanged;
-			this.allLogProfiles.AddAll(LogProfiles.All);
-			this.pinnedLogProfiles.AddAll(LogProfiles.Pinned);
-			this.SetValue<bool>(HasPinnedLogProfilesProperty, this.pinnedLogProfiles.IsNotEmpty());
+			foreach(var profile in LogProfiles.All)
+			{
+				if (profile.IsPinned)
+					this.pinnedLogProfiles.Add(profile);
+				else
+					this.otherLogProfiles.Add(profile);
+				profile.PropertyChanged += this.OnLogProdilePropertyChanged;
+			}
 		}
-
-
-		/// <summary>
-		/// Get all log profiles.
-		/// </summary>
-		public IList<LogProfile> AllLogProfiles { get => this.GetValue<IList<LogProfile>>(AllLogProfilesProperty); }
 
 
 		// Compare log profiles.
@@ -103,7 +85,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Confirm selected log profile and close dialog.
 		void ConfirmSelectedLogProfile()
 		{
-			var logProfile = this.allLogProfileListBox.SelectedItem as LogProfile;
+			var logProfile = this.otherLogProfileListBox.SelectedItem as LogProfile;
 			if (logProfile == null)
 			{
 				logProfile = this.pinnedLogProfileListBox.SelectedItem as LogProfile;
@@ -117,7 +99,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// <summary>
 		/// Command to confirm selected log profile and close dialog.
 		/// </summary>
-		public ICommand ConfirmSelectedLogProfileCommand { get; }
+		ICommand ConfirmSelectedLogProfileCommand { get; }
 
 
 		// Edit log profile.
@@ -127,19 +109,6 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 			//
 		}
-
-
-		/// <summary>
-		/// Command to edit given log profile.
-		/// </summary>
-		/// <remarks>Type of parameter is <see cref="LogProfile"/>.</remarks>
-		public ICommand EditLogProfileCommand { get; }
-
-
-		/// <summary>
-		/// Check whether at least one log profile is pinned or not.
-		/// </summary>
-		public bool HasPinnedLogProfiles { get => this.GetValue<bool>(HasPinnedLogProfilesProperty); }
 
 
 		/// <summary>
@@ -166,22 +135,23 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				case NotifyCollectionChangedAction.Add:
 					foreach (LogProfile logProfile in e.NewItems.AsNonNull())
-						this.allLogProfiles.Add(logProfile);
+					{
+						if (logProfile.IsPinned)
+							this.pinnedLogProfiles.Add(logProfile);
+						else
+							this.otherLogProfiles.Add(logProfile);
+						logProfile.PropertyChanged += this.OnLogProdilePropertyChanged;
+					}
 					break;
 				case NotifyCollectionChangedAction.Remove:
 					foreach (LogProfile logProfile in e.OldItems.AsNonNull())
-						this.allLogProfiles.Remove(logProfile);
+					{
+						logProfile.PropertyChanged -= this.OnLogProdilePropertyChanged;
+						this.otherLogProfiles.Remove(logProfile);
+						this.pinnedLogProfiles.Remove(logProfile);
+					}
 					break;
 			}
-		}
-
-
-		// Called when selection in all log profiles changed.
-		void OnAllLogProfilesSelectionChanged(object? sender, SelectionChangedEventArgs e)
-		{
-			if (this.allLogProfileListBox.SelectedIndex >= 0)
-				this.pinnedLogProfileListBox.SelectedIndex = -1;
-			this.SetValue<bool>(HasSelectedLogProfileProperty, this.allLogProfileListBox.SelectedIndex >= 0 || this.pinnedLogProfileListBox.SelectedIndex >= 0);
 		}
 
 
@@ -190,7 +160,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			// detach from log profiles
 			((INotifyCollectionChanged)LogProfiles.All).CollectionChanged -= this.OnAllLogProfilesChanged;
-			((INotifyCollectionChanged)LogProfiles.Pinned).CollectionChanged -= this.OnPinnedLogProfilesChanged;
+			foreach (var profile in LogProfiles.All)
+				profile.PropertyChanged -= this.OnLogProdilePropertyChanged;
 
 			// call base
 			base.OnClosed(e);
@@ -201,21 +172,39 @@ namespace CarinaStudio.ULogViewer.Controls
 		void OnLogProfileItemDoubleTapped(object? sender, RoutedEventArgs e) => this.ConfirmSelectedLogProfile();
 
 
-		// Called when list of pinned log profiles changed.
-		void OnPinnedLogProfilesChanged(object? sender, NotifyCollectionChangedEventArgs e)
+		// Called when property of log profile has been changed.
+		void OnLogProdilePropertyChanged(object? sender, PropertyChangedEventArgs e)
 		{
-			switch (e.Action)
+			if (sender is not LogProfile profile)
+				return;
+			switch (e.PropertyName)
 			{
-				case NotifyCollectionChangedAction.Add:
-					foreach (LogProfile logProfile in e.NewItems.AsNonNull())
-						this.pinnedLogProfiles.Add(logProfile);
+				case nameof(LogProfile.IsPinned):
+					if (profile.IsPinned)
+					{
+						this.otherLogProfiles.Remove(profile);
+						this.pinnedLogProfiles.Add(profile);
+					}
+					else
+					{
+						this.pinnedLogProfiles.Remove(profile);
+						this.otherLogProfiles.Add(profile);
+					}
 					break;
-				case NotifyCollectionChangedAction.Remove:
-					foreach (LogProfile logProfile in e.OldItems.AsNonNull())
-						this.pinnedLogProfiles.Remove(logProfile);
+				case nameof(LogProfile.Name):
+					this.otherLogProfiles.Sort(profile);
+					this.pinnedLogProfiles.Sort(profile);
 					break;
 			}
-			this.SetValue<bool>(HasPinnedLogProfilesProperty, this.pinnedLogProfiles.IsNotEmpty());
+		}
+
+
+		// Called when selection in other log profiles changed.
+		void OnOtherLogProfilesSelectionChanged(object? sender, SelectionChangedEventArgs e)
+		{
+			if (this.otherLogProfileListBox.SelectedIndex >= 0)
+				this.pinnedLogProfileListBox.SelectedIndex = -1;
+			this.SetValue<bool>(HasSelectedLogProfileProperty, this.otherLogProfileListBox.SelectedIndex >= 0 || this.pinnedLogProfileListBox.SelectedIndex >= 0);
 		}
 
 
@@ -223,15 +212,21 @@ namespace CarinaStudio.ULogViewer.Controls
 		void OnPinnedLogProfilesSelectionChanged(object? sender, SelectionChangedEventArgs e)
 		{
 			if (this.pinnedLogProfileListBox.SelectedIndex >= 0)
-				this.allLogProfileListBox.SelectedIndex = -1;
-			this.SetValue<bool>(HasSelectedLogProfileProperty, this.allLogProfileListBox.SelectedIndex >= 0 || this.pinnedLogProfileListBox.SelectedIndex >= 0);
+				this.otherLogProfileListBox.SelectedIndex = -1;
+			this.SetValue<bool>(HasSelectedLogProfileProperty, this.otherLogProfileListBox.SelectedIndex >= 0 || this.pinnedLogProfileListBox.SelectedIndex >= 0);
 		}
+
+
+		/// <summary>
+		/// Get other log profiles.
+		/// </summary>
+		IList<LogProfile> OtherLogProfiles { get; }
 
 
 		/// <summary>
 		/// Get pinned log profiles.
 		/// </summary>
-		public IList<LogProfile> PinnedLogProfiles { get => this.GetValue<IList<LogProfile>>(PinnedLogProfilesProperty); }
+		IList<LogProfile> PinnedLogProfiles { get; }
 
 
 		// Pin/Unpin log profile.
@@ -243,13 +238,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		/// <summary>
-		/// Command to pin/unpin given log profile.
-		/// </summary>
-		/// <remarks>Type of parameter is <see cref="LogProfile"/>.</remarks>
-		public ICommand PinUnpinLogProfileCommand { get; }
-
-
 		// Remove log profile.
 		void RemoveLogProfile(LogProfile? logProfile)
 		{
@@ -257,12 +245,5 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 			//
 		}
-
-
-		/// <summary>
-		/// Command to remove given log profile.
-		/// </summary>
-		/// <remarks>Type of parameter is <see cref="LogProfile"/>.</remarks>
-		public ICommand RemoveLogProfileCommand { get; }
 	}
 }

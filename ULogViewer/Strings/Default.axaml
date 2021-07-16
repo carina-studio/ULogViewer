@@ -51,6 +51,7 @@
 	<sys:String x:Key="String.LogProfileSelectionDialog.EditLogProfile">Edit profile</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.IsContinuousReading">Continuous reading</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.IsWorkingDirectoryNeeded">Working directory needed</sys:String>
+	<sys:String x:Key="String.LogProfileSelectionDialog.OtherLogProfiles">Other profiles</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.PinnedLogProfiles">Pinned</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.PinUnpinLogProfile">Pin/Unpin profile</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.RemoveLogProfile">Delete profile</sys:String>
