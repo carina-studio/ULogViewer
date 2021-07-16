@@ -21,7 +21,6 @@ using Microsoft.Extensions.Logging;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
@@ -64,7 +63,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ListBox markedLogListBox;
 		readonly ContextMenu otherActionsMenu;
 		readonly ListBox predefinedLogTextFilterListBox;
-		readonly ObservableCollection<PredefinedLogTextFilter> predefinedLogTextFilters = new ObservableCollection<PredefinedLogTextFilter>();
+		readonly SortedObservableList<PredefinedLogTextFilter> predefinedLogTextFilters;
 		readonly Popup predefinedLogTextFiltersPopup;
 		readonly ScheduledAction scrollToLatestLogAction;
 		readonly HashSet<PredefinedLogTextFilter> selectedPredefinedLogTextFilters = new HashSet<PredefinedLogTextFilter>();
@@ -84,6 +83,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.SetLogProfileCommand = ReactiveCommand.Create(this.SetLogProfile, this.canSetLogProfile);
 			this.SetWorkingDirectoryCommand = ReactiveCommand.Create(this.SetWorkingDirectory, this.canSetWorkingDirectory);
 			this.SwitchLogFiltersCombinationModeCommand = ReactiveCommand.Create(this.SwitchLogFiltersCombinationMode, this.GetObservable<bool>(HasLogProfileProperty));
+
+			// create collections
+			this.predefinedLogTextFilters = new SortedObservableList<PredefinedLogTextFilter>(ComparePredefinedLogTextFilters);
 
 			// initialize
 			this.InitializeComponent();
@@ -551,15 +553,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.AddHandler(DragDrop.DropEvent, this.OnDrop);
 
 			// setup predefined log text filter list
+			this.predefinedLogTextFilters.AddAll(ViewModels.PredefinedLogTextFilters.All);
 			foreach (var filter in ViewModels.PredefinedLogTextFilters.All)
-			{
-				var index = this.predefinedLogTextFilters.BinarySearch(filter, ComparePredefinedLogTextFilters);
-				if (index < 0)
-				{
-					this.predefinedLogTextFilters.Insert(~index, filter);
-					this.AttachToPredefinedLogTextFilter(filter);
-				}
-			}
+				this.AttachToPredefinedLogTextFilter(filter);
 			((INotifyCollectionChanged)ViewModels.PredefinedLogTextFilters.All).CollectionChanged += this.OnPredefinedLogTextFiltersChanged;
 		}
 
@@ -1010,17 +1006,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			switch (e.PropertyName)
 			{
 				case nameof(PredefinedLogTextFilter.Name):
-					{
-						var isSelected = this.predefinedLogTextFilterListBox.SelectedItems.Contains(filter);
-						this.predefinedLogTextFilters.Remove(filter);
-						var index = this.predefinedLogTextFilters.BinarySearch(filter, ComparePredefinedLogTextFilters);
-						if (index < 0)
-						{
-							this.predefinedLogTextFilters.Insert(~index, filter);
-							if (isSelected)
-								this.predefinedLogTextFilterListBox.SelectedItems.Add(filter);
-						}
-					}
+					this.predefinedLogTextFilters.Sort(filter);
 					break;
 				case nameof(PredefinedLogTextFilter.Regex):
 					if (this.predefinedLogTextFilterListBox.SelectedItems.Contains(filter))
@@ -1038,12 +1024,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				case NotifyCollectionChangedAction.Add:
 					foreach (var filter in e.NewItems.AsNonNull().Cast<PredefinedLogTextFilter>())
 					{
-						var index = this.predefinedLogTextFilters.BinarySearch(filter, ComparePredefinedLogTextFilters);
-						if (index < 0)
-						{
-							this.predefinedLogTextFilters.Insert(~index, filter);
-							this.AttachToPredefinedLogTextFilter(filter);
-						}
+						this.AttachToPredefinedLogTextFilter(filter);
+						this.predefinedLogTextFilters.Add(filter);
 					}
 					break;
 				case NotifyCollectionChangedAction.Remove:
