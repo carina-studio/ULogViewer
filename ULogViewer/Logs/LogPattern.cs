@@ -37,6 +37,24 @@ namespace CarinaStudio.ULogViewer.Logs
 		}
 
 
+		// Check quality.
+		public override bool Equals(object? obj)
+		{
+			if(obj is LogPattern pattern)
+			{
+				return this.Regex.ToString() == pattern.Regex.ToString()
+					&& this.Regex.Options == pattern.Regex.Options
+					&& this.IsRepeatable == pattern.IsRepeatable
+					&& this.IsSkippable == pattern.IsSkippable;
+			}
+			return false;
+		}
+
+
+		// Get hash-code.
+		public override int GetHashCode() => this.Regex.GetHashCode();
+
+
 		/// <summary>
 		/// Get whether the pattern is repeatable or not when parsing log data.
 		/// </summary>
@@ -47,6 +65,18 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// Get whether the pattern can be skipped or not when parsing log data.
 		/// </summary>
 		public bool IsSkippable { get; }
+
+
+		/// <summary>
+		/// Equality operator.
+		/// </summary>
+		public static bool operator ==(LogPattern? x, LogPattern? y) => x?.Equals(y) ?? object.ReferenceEquals(y, null);
+
+
+		/// <summary>
+		/// Inequality operator.
+		/// </summary>
+		public static bool operator !=(LogPattern? x, LogPattern? y) => !(x?.Equals(y) ?? object.ReferenceEquals(y, null));
 
 
 		/// <summary>

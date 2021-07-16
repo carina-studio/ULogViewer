@@ -19,6 +19,9 @@
 	<!-- GridSplitter -->
 	<sys:Double x:Key="Double.GridSplitter.Thickness">5</sys:Double>
 
+	<!-- LogPatternEditorDialog -->
+	<sys:Double x:Key="Double.LogPatternEditorDialog.Width">500</sys:Double>
+
 	<!-- LogProfileSelectionDialog -->
 	<CornerRadius x:Key="CornerRadius.LogProfileSelectionDialog.Label">2</CornerRadius>
 	<sys:Double x:Key="Double.LogProfileSelectionDialog.Content.MaxHeight">400</sys:Double>

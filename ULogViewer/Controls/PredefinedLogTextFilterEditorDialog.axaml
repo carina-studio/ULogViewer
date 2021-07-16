@@ -21,7 +21,7 @@
 
 			<!-- Regex -->
 			<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.PredefinedLogTextFilterEditorDialog.Regex}"/>
-			<appControls:RegexTextBox Name="regexTextBox" HorizontalAlignment="Stretch" PropertyChanged="OnRegexTextBoxPropertyChanged" Watermark="{DynamicResource String.PredefinedLogTextFilterEditorDialog.Regex.Watermark}"/>
+			<appControls:RegexTextBox Name="regexTextBox" HorizontalAlignment="Stretch" PropertyChanged="OnRegexTextBoxPropertyChanged" Watermark="{DynamicResource String.Common.RegularExpression}"/>
 			<Separator Classes="Dialog_Separator_Horizontal"/>
 
 			<!-- Ignore case -->

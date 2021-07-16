@@ -11,6 +11,7 @@
 	<sys:String x:Key="String.Common.No">否</sys:String>
 	<sys:String x:Key="String.Common.OK">好</sys:String>
 	<sys:String x:Key="String.Common.Options">選項</sys:String>
+	<sys:String x:Key="String.Common.RegularExpression">正規表示式</sys:String>
 	<sys:String x:Key="String.Common.Rename">重新命名</sys:String>
 	<sys:String x:Key="String.Common.Yes">是</sys:String>
 
@@ -40,6 +41,12 @@
 	<sys:String x:Key="String.LogLevel.Verbose">詳細資訊</sys:String>
 	<sys:String x:Key="String.LogLevel.Warn">警告</sys:String>
 
+	<!-- LogPatternEditorDialog -->
+	<sys:String x:Key="String.LogPatternEditorDialog.IsSkippable">此行可以被忽略</sys:String>
+	<sys:String x:Key="String.LogPatternEditorDialog.IsRepeatable">此行可以連續重複出現</sys:String>
+	<sys:String x:Key="String.LogPatternEditorDialog.Regex">格式 (必須)</sys:String>
+	<sys:String x:Key="String.LogPatternEditorDialog.Title">日誌行格式</sys:String>
+
 	<!-- LogProfileSelectionDialog -->
 	<sys:String x:Key="String.LogProfileSelectionDialog.AddLogProfile">建立...</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.AllLogProfiles">所有日誌類型</sys:String>
@@ -61,7 +68,6 @@
 	<sys:String x:Key="String.PredefinedLogTextFilterEditorDialog.IgnoreCase">忽略大小寫</sys:String>
 	<sys:String x:Key="String.PredefinedLogTextFilterEditorDialog.Name">名稱 (必要)</sys:String>
 	<sys:String x:Key="String.PredefinedLogTextFilterEditorDialog.Regex">文字篩選 (必要)</sys:String>
-	<sys:String x:Key="String.PredefinedLogTextFilterEditorDialog.Regex.Watermark">正規表示式</sys:String>
 	<sys:String x:Key="String.PredefinedLogTextFilterEditorDialog.Title.Create">建立文字篩選</sys:String>
 	<sys:String x:Key="String.PredefinedLogTextFilterEditorDialog.Title.Edit">編輯文字篩選</sys:String>
 
