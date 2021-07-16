@@ -61,6 +61,13 @@
 		</ResourceDictionary>
 	</Styles.Resources>
 
+	<!-- Common -->
+	<Style Selector="DrawingPresenter.Icon">
+		<Setter Property="HorizontalAlignment" Value="Center"/>
+		<Setter Property="Stretch" Value="Uniform"/>
+		<Setter Property="VerticalAlignment" Value="Center"/>
+	</Style>
+
 	<!-- Dialog -->
 	<Style Selector="Border.Dialog_ControlButtonsPanel">
 		<Setter Property="Background" Value="{DynamicResource Brush.Dialog.ControlButtonsPanel.Background}"/>
@@ -146,9 +153,20 @@
 	</Style>
 
 	<!-- SessionView -->
+	<Style Selector="Border.SessionView_PredefinedLogTextFilterListBox_Action">
+		<Setter Property="Height" Value="{StaticResource Double.SessionView.PredefinedLogTextFilterListBox.Action.IconSize}"/>
+		<Setter Property="Width" Value="{StaticResource Double.SessionView.PredefinedLogTextFilterListBox.Action.IconSize}"/>
+	</Style>
 	<Style Selector="Border.SessionView_ToolBar_Button_Icon">
 		<Setter Property="Height" Value="{StaticResource Double.SessionView.ToolBar.Button.Icon.Size}"/>
 		<Setter Property="Width" Value="{StaticResource Double.SessionView.ToolBar.Button.Icon.Size}"/>
+	</Style>
+	<Style Selector="Button.SessionView_PredefinedLogTextFilterListBox_Action">
+		<Setter Property="Background" Value="{x:Static Brushes.Transparent}"/>
+		<Setter Property="HorizontalContentAlignment" Value="Center"/>
+		<Setter Property="Margin" Value="{StaticResource Thickness.SessionView.PredefinedLogTextFilterListBox.Action.Margin}"/>
+		<Setter Property="Padding" Value="{StaticResource Thickness.SessionView.PredefinedLogTextFilterListBox.Action.Padding}"/>
+		<Setter Property="VerticalContentAlignment" Value="Center"/>
 	</Style>
 	<Style Selector="Button.SessionView_ToolBar_Button">
 		<Setter Property="Background" Value="{x:Static Brushes.Transparent}"/>
@@ -159,15 +177,6 @@
 	</Style>
 	<Style Selector="Button.SessionView_ToolBar_Button:disabled">
 		<Setter Property="Opacity" Value="0.3"/>
-	</Style>
-	<Style Selector="DrawingPresenter.SessionView_ToolBar_Button_Icon">
-		<Setter Property="HorizontalAlignment" Value="Center"/>
-		<Setter Property="Stretch" Value="Uniform"/>
-		<Setter Property="VerticalAlignment" Value="Center"/>
-	</Style>
-	<Style Selector="Image.SessionView_ToolBar_Button_Icon">
-		<Setter Property="Height" Value="{StaticResource Double.SessionView.ToolBar.Button.Icon.Size}"/>
-		<Setter Property="Width" Value="{StaticResource Double.SessionView.ToolBar.Button.Icon.Size}"/>
 	</Style>
 	<Style Selector="Separator.SessionView_StatusBar_Separator">
 		<Setter Property="Background" Value="{x:Null}"/>

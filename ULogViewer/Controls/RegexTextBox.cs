@@ -156,7 +156,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 
 			// check current regex
-			if (this.Regex != null && this.Regex.ToString() == text)
+			var options = (this.IgnoreCase ? RegexOptions.IgnoreCase : RegexOptions.None);
+			if (this.Regex != null && this.Regex.ToString() == text && this.Regex.Options == options)
 			{
 				this.SetValue<bool>(IsTextValidProperty, true);
 				return true;
@@ -165,7 +166,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			// create regex
 			try
 			{
-				this.Regex = new Regex(text, this.IgnoreCase ? RegexOptions.IgnoreCase : RegexOptions.None);
+				this.Regex = new Regex(text, options);
 				this.SetValue<bool>(IsTextValidProperty, true);
 				return true;
 			}

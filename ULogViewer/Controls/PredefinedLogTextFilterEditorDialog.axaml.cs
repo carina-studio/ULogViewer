@@ -87,6 +87,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				this.Bind(TitleProperty, this.GetResourceObservable("String.PredefinedLogTextFilterEditorDialog.Title.Create"));
 				this.regexTextBox.Regex = this.Regex;
+				this.ignoreCaseSwitch.IsChecked = true;
 			}
 			else
 			{

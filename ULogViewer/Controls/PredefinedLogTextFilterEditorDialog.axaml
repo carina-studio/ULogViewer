@@ -21,12 +21,12 @@
 
 			<!-- Regex -->
 			<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.PredefinedLogTextFilterEditorDialog.Regex}"/>
-			<appControls:RegexTextBox Name="regexTextBox" HorizontalAlignment="Stretch" IgnoreCase="{Binding ElementName=ignoreCaseSwitch, Path=IsChecked}" PropertyChanged="OnRegexTextBoxPropertyChanged" Watermark="{DynamicResource String.PredefinedLogTextFilterEditorDialog.Regex.Watermark}"/>
+			<appControls:RegexTextBox Name="regexTextBox" HorizontalAlignment="Stretch" PropertyChanged="OnRegexTextBoxPropertyChanged" Watermark="{DynamicResource String.PredefinedLogTextFilterEditorDialog.Regex.Watermark}"/>
 			<Separator Classes="Dialog_Separator_Horizontal"/>
 
 			<!-- Ignore case -->
 			<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.PredefinedLogTextFilterEditorDialog.IgnoreCase}"/>
-			<ToggleSwitch Name="ignoreCaseSwitch" IsChecked="True"/>
+			<ToggleSwitch Name="ignoreCaseSwitch" IsChecked="{Binding ElementName=regexTextBox, Path=IgnoreCase, Mode=OneWayToSource}"/>
 			
 		</StackPanel>
 

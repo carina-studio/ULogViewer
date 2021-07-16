@@ -51,28 +51,28 @@
 				<!-- Select log profiles -->
 				<Button Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].SetLogProfileCommand}" ToolTip.Tip="{DynamicResource String.SessionView.SetLogProfile}">
 					<Border Classes="SessionView_ToolBar_Button_Icon">
-						<DrawingPresenter Classes="SessionView_ToolBar_Button_Icon" Drawing="{StaticResource Drawing.LogProfiles}"/>
+						<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.LogProfiles}"/>
 					</Border>
 				</Button>
 
 				<!-- Set working directory -->
 				<Button Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].SetWorkingDirectoryCommand}" ToolTip.Tip="{DynamicResource String.SessionView.SetWorkingDirectory}">
 					<Border Classes="SessionView_ToolBar_Button_Icon">
-						<DrawingPresenter Classes="SessionView_ToolBar_Button_Icon" Drawing="{StaticResource Drawing.AddFolder}"/>
+						<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.AddFolder}"/>
 					</Border>
 				</Button>
 
 				<!-- Add files -->
 				<Button Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].AddLogFilesCommand}" ToolTip.Tip="{DynamicResource String.SessionView.AddLogFiles}">
 					<Border Classes="SessionView_ToolBar_Button_Icon">
-						<DrawingPresenter Classes="SessionView_ToolBar_Button_Icon" Drawing="{StaticResource Drawing.AddFile}"/>
+						<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.AddFile}"/>
 					</Border>
 				</Button>
 
 				<!-- Clear files -->
 				<Button Classes="SessionView_ToolBar_Button" Command="{Binding ClearLogFilesCommand}" ToolTip.Tip="{DynamicResource String.SessionView.ClearLogFiles}">
 					<Border Classes="SessionView_ToolBar_Button_Icon">
-						<DrawingPresenter Classes="SessionView_ToolBar_Button_Icon" Drawing="{StaticResource Drawing.Delete}"/>
+						<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Delete}"/>
 					</Border>
 				</Button>
 
@@ -82,21 +82,21 @@
 				<!-- Reload logs -->
 				<Button Classes="SessionView_ToolBar_Button" Command="{Binding ReloadLogsCommand}" ToolTip.Tip="{DynamicResource String.SessionView.ReloadLogs}">
 					<Border Classes="SessionView_ToolBar_Button_Icon">
-						<DrawingPresenter Classes="SessionView_ToolBar_Button_Icon" Drawing="{StaticResource Drawing.Refresh}"/>
+						<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Refresh}"/>
 					</Border>
 				</Button>
 
 				<!-- Scroll to latest log -->
 				<ToggleButton Classes="SessionView_ToolBar_Button" IsChecked="{Binding $parent[UserControl].IsScrollingToLatestLogNeeded, Mode=TwoWay}" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" ToolTip.Tip="{DynamicResource String.SessionView.ScrollToLatestLog}">
 					<Border Classes="SessionView_ToolBar_Button_Icon">
-						<DrawingPresenter Classes="SessionView_ToolBar_Button_Icon" Drawing="{StaticResource Drawing.Scrolling}"/>
+						<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Scrolling}"/>
 					</Border>
 				</ToggleButton>
 
 				<!-- Pause/resume -->
 				<Button Classes="SessionView_ToolBar_Button" Command="{Binding PauseResumeLogsReadingCommand}" ToolTip.Tip="{DynamicResource String.SessionView.PauseResumeLogsReading}">
 					<Border Classes="SessionView_ToolBar_Button_Icon">
-						<DrawingPresenter Classes="SessionView_ToolBar_Button_Icon">
+						<DrawingPresenter Classes="Icon">
 							<ia:Interaction.Behaviors>
 								<iaCore:DataTriggerBehavior Binding="{Binding IsLogsReadingPaused}" ComparisonCondition="Equal" Value="True">
 									<iaCore:ChangePropertyAction PropertyName="Drawing" Value="{StaticResource Drawing.Play}"/>
@@ -160,7 +160,7 @@
 				<!-- Filters combinatin mode -->
 				<Button Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].SwitchLogFiltersCombinationModeCommand}" Grid.Column="3" ToolTip.Tip="{DynamicResource String.SessionView.LogFiltersCombinationMode}">
 					<Border Classes="SessionView_ToolBar_Button_Icon">
-						<DrawingPresenter Classes="SessionView_ToolBar_Button_Icon">
+						<DrawingPresenter Classes="Icon">
 							<ia:Interaction.Behaviors>
 								<iaCore:DataTriggerBehavior Binding="{Binding LogFiltersCombinationMode}" ComparisonCondition="Equal" Value="Intersection">
 									<iaCore:ChangePropertyAction PropertyName="Drawing" Value="{StaticResource Drawing.Intersection}"/>
@@ -183,7 +183,7 @@
 					<ToggleButton Classes="SessionView_ToolBar_Button" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" ToolTip.Tip="{DynamicResource String.SessionView.PredefinedLogTextFilters}">
 						<Panel>
 							<Border Classes="SessionView_ToolBar_Button_Icon">
-								<DrawingPresenter Classes="SessionView_ToolBar_Button_Icon">
+								<DrawingPresenter Classes="Icon">
 									<ia:Interaction.Behaviors>
 										<iaCore:DataTriggerBehavior Binding="{Binding ElementName=predefinedLogTextFilterListBox, Path=SelectedItems.Count}" ComparisonCondition="GreaterThan" Value="0">
 											<iaCore:ChangePropertyAction PropertyName="Drawing" Value="{StaticResource Drawing.Filter.Active}"/>
@@ -207,11 +207,26 @@
 											<ListBox Name="predefinedLogTextFilterListBox" Background="{x:Static Brushes.Transparent}" IsVisible="{Binding $parent[UserControl].PredefinedLogTextFilters.Count}" Items="{Binding $parent[UserControl].PredefinedLogTextFilters}" SelectionChanged="OnPredefinedLogTextFilterListBoxSelectionChanged" SelectionMode="Multiple">
 												<ListBox.ItemTemplate>
 													<DataTemplate DataType="{x:Type appViewModels:PredefinedLogTextFilter}">
-														<TextBlock Text="{Binding Name}"/>
+														<Grid ColumnDefinitions="*,Auto">
+															<TextBlock Text="{Binding Name}"/>
+															<StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+																<Button Classes="SessionView_PredefinedLogTextFilterListBox_Action" Command="{Binding $parent[UserControl].RemovePredefinedLogTextFilter}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String.Common.Delete}">
+																	<Border Classes="SessionView_PredefinedLogTextFilterListBox_Action">
+																		<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Delete}"/>
+																	</Border>
+																</Button>
+																<Button Classes="SessionView_PredefinedLogTextFilterListBox_Action" Command="{Binding $parent[UserControl].EditPredefinedLogTextFilter}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String.Common.Edit}">
+																	<Border Classes="SessionView_PredefinedLogTextFilterListBox_Action">
+																		<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Edit}"/>
+																	</Border>
+																</Button>
+															</StackPanel>
+														</Grid>
 													</DataTemplate>
 												</ListBox.ItemTemplate>
 												<ListBox.Styles>
 													<Style Selector="ListBoxItem">
+														<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
 														<Setter Property="Padding" Value="{StaticResource Thickness.SessionView.PredefinedLogTextFilterListBox.Item.Padding}"/>
 														<Setter Property="ToolTip.Tip" Value="{Binding Regex}"/>
 													</Style>
@@ -228,7 +243,7 @@
 					<!-- Reset log filters -->
 					<Button Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].ResetLogFiltersCommand}" ToolTip.Tip="{DynamicResource String.SessionView.ResetLogFilters}">
 						<Border Classes="SessionView_ToolBar_Button_Icon">
-							<DrawingPresenter Classes="SessionView_ToolBar_Button_Icon" Drawing="{StaticResource Drawing.Reset}"/>
+							<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Reset}"/>
 						</Border>
 					</Button>
 
@@ -245,14 +260,14 @@
 				<!-- Test -->
 				<Button Name="testButton" Classes="SessionView_ToolBar_Button" Click="OnTestButtonClick" ToolTip.Tip="Test">
 					<Border Classes="SessionView_ToolBar_Button_Icon">
-						<DrawingPresenter Classes="SessionView_ToolBar_Button_Icon" Drawing="{StaticResource Drawing.Test}"/>
+						<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Test}"/>
 					</Border>
 				</Button>
 
 				<!-- Other actions -->
 				<Button Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].ShowOtherActionsCommand}" ToolTip.Tip="{DynamicResource String.SessionView.OtherActions}">
 					<Border Classes="SessionView_ToolBar_Button_Icon">
-						<DrawingPresenter Classes="SessionView_ToolBar_Button_Icon" Drawing="{StaticResource Drawing.OtherActions}"/>
+						<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.OtherActions}"/>
 					</Border>
 				</Button>
 
