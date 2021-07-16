@@ -136,11 +136,6 @@
 		<Setter Property="Margin" Value="{StaticResource Thickness.LogProfileSelectionDialog.LogProfile.Action.Margin}"/>
 		<Setter Property="Padding" Value="{StaticResource Thickness.LogProfileSelectionDialog.LogProfile.Action.Padding}"/>
 	</Style>
-	<Style Selector="DrawingPresenter.LogProfileSelectionDialog_LogProfile_Action">
-		<Setter Property="HorizontalAlignment" Value="Center"/>
-		<Setter Property="Stretch" Value="Uniform"/>
-		<Setter Property="VerticalAlignment" Value="Center"/>
-	</Style>
 	<Style Selector="TextBlock.LogProfileSelectionDialog_LogProfile_Label">
 		<Setter Property="FontSize" Value="{StaticResource Double.LogProfileSelectionDialog.LogProfile.Label.FontSize}"/>
 		<Setter Property="Opacity" Value="0.75"/>

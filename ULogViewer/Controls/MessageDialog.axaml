@@ -14,7 +14,7 @@
 		<!-- Content -->
 		<Grid ColumnDefinitions="Auto,*" Margin="{StaticResource Thickness.Dialog.Content.Padding}">
 			<Border Height="{StaticResource Double.MessageDialog.Icon.Size}" Margin="{StaticResource Thickness.MessageDialog.Icon.Margin}" VerticalAlignment="Top" Width="{StaticResource Double.MessageDialog.Icon.Size}">
-				<DrawingPresenter Drawing="{Binding $parent[Window].IconDrawing}" HorizontalAlignment="Center" Stretch="Uniform" VerticalAlignment="Center"/>
+				<DrawingPresenter Classes="Icon" Drawing="{Binding $parent[Window].IconDrawing}"/>
 			</Border>
 			<TextBlock Grid.Column="1" Text="{Binding $parent[Window].Message}" TextWrapping="Wrap" VerticalAlignment="Center"/>
 		</Grid>
