@@ -158,10 +158,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			logger?.LogDebug($"Remove filter '{filter.Name}");
 
 			// delete file
-			filter.FileName?.Let(fileName =>
-			{
-				Task.Run(() => Global.RunWithoutError(() => File.Delete(fileName)));
-			});
+			_ = filter.DeleteFileAsync();
 		}
 
 

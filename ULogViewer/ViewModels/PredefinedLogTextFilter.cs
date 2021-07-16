@@ -50,6 +50,21 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Delete the file which the filter be saved to.
+		/// </summary>
+		/// <returns>Task of deleting operation.</returns>
+		public async Task DeleteFileAsync()
+		{
+			var fileName = this.fileName;
+			if (fileName == null)
+				return;
+			await savingTaskFactory.StartNew(() => Global.RunWithoutError(() => File.Delete(fileName)));
+			this.fileName = null;
+			this.savedVersion = 0;
+		}
+
+
+		/// <summary>
 		/// Get name of file which instance has been saved to or loaded from.
 		/// </summary>
 		public string? FileName { get => this.fileName; }

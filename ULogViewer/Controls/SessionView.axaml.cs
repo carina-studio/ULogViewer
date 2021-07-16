@@ -604,7 +604,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			}.ShowDialog<PredefinedLogTextFilter>(window);
 			if (filter == null)
 				return;
-			PredefinedLogTextFilters.Add(filter);
+			ViewModels.PredefinedLogTextFilters.Add(filter);
 		}
 
 
@@ -1185,7 +1185,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (filter == null)
 				return;
-			PredefinedLogTextFilters.Remove(filter);
+			ViewModels.PredefinedLogTextFilters.Remove(filter);
 		}
 
 

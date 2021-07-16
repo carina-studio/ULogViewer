@@ -15,8 +15,8 @@
 		<StackPanel HorizontalAlignment="Stretch" Margin="{StaticResource Thickness.Dialog.Content.Padding}" Orientation="Vertical">
 
 			<!-- Name -->
-			<TextBlock Classes="Dialog_Label" PropertyChanged="OnNameTextBoxPropertyChanged" Text="{DynamicResource String.PredefinedLogTextFilterEditorDialog.Name}"/>
-			<TextBox Name="nameTextBox" HorizontalAlignment="Stretch" MaxLength="256"/>
+			<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.PredefinedLogTextFilterEditorDialog.Name}"/>
+			<TextBox Name="nameTextBox" HorizontalAlignment="Stretch" MaxLength="256" PropertyChanged="OnNameTextBoxPropertyChanged"/>
 			<Separator Classes="Dialog_Separator_Horizontal"/>
 
 			<!-- Regex -->
