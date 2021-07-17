@@ -33,7 +33,7 @@
 								<!-- Labels -->
 								<WrapPanel Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="1" Orientation="Horizontal">
 									<Border Classes="LogProfileSelectionDialog_LogProfile_Label">
-										<TextBlock Classes="LogProfileSelectionDialog_LogProfile_Label" Text="{Binding DataSourceProvider.UnderlyingSource, Converter={x:Static appControls:LogProfileSelectionDialog.UnderlyingLogDataSourceConverter}}"/>
+										<TextBlock Classes="LogProfileSelectionDialog_LogProfile_Label" Text="{Binding DataSourceProvider.DisplayName}"/>
 									</Border>
 									<Border Classes="LogProfileSelectionDialog_LogProfile_Label" IsVisible="{Binding IsBuiltIn}">
 										<TextBlock Classes="LogProfileSelectionDialog_LogProfile_Label" Text="{DynamicResource String.LogProfileSelectionDialog.BuiltInLogProfile}"/>

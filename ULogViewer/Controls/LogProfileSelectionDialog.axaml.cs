@@ -1,11 +1,8 @@
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Data.Converters;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using CarinaStudio.Collections;
-using CarinaStudio.ULogViewer.Converters;
-using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using ReactiveUI;
 using System;
@@ -21,12 +18,6 @@ namespace CarinaStudio.ULogViewer.Controls
 	/// </summary>
 	partial class LogProfileSelectionDialog : BaseDialog
 	{
-		/// <summary>
-		/// <see cref="IValueConverter"/> for showing <see cref="UnderlyingLogDataSource"/>.
-		/// </summary>
-		public static readonly IValueConverter UnderlyingLogDataSourceConverter = new EnumConverter<UnderlyingLogDataSource>(App.Current);
-
-
 		// Static fields.
 		static readonly AvaloniaProperty<bool> HasSelectedLogProfileProperty = AvaloniaProperty.Register<LogProfileSelectionDialog, bool>(nameof(HasSelectedLogProfile), false);
 		
