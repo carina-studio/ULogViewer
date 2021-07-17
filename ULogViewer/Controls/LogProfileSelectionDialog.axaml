@@ -48,18 +48,18 @@
 
 								<!-- Actions -->
 								<StackPanel Grid.Column="2" Orientation="Horizontal">
-									<Button Classes="LogProfileSelectionDialog_LogProfile_Action" Command="{Binding $parent[Window].PinUnpinLogProfile}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" IsVisible="{Binding !IsBuiltIn}" ToolTip.Tip="{DynamicResource String.LogProfileSelectionDialog.RemoveLogProfile}">
-										<Border Classes="LogProfileSelectionDialog_LogProfile_Action">
+									<Button Classes="InPlaceAction" Command="{Binding $parent[Window].PinUnpinLogProfile}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" IsVisible="{Binding !IsBuiltIn}" ToolTip.Tip="{DynamicResource String.LogProfileSelectionDialog.RemoveLogProfile}">
+										<Border Classes="InPlaceAction">
 											<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Delete.Highlight}"/>
 										</Border>
 									</Button>
-									<Button Classes="LogProfileSelectionDialog_LogProfile_Action" Command="{Binding $parent[Window].PinUnpinLogProfile}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" IsVisible="{Binding !IsBuiltIn}" ToolTip.Tip="{DynamicResource String.LogProfileSelectionDialog.EditLogProfile}">
-										<Border Classes="LogProfileSelectionDialog_LogProfile_Action">
+									<Button Classes="InPlaceAction" Command="{Binding $parent[Window].PinUnpinLogProfile}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" IsVisible="{Binding !IsBuiltIn}" ToolTip.Tip="{DynamicResource String.LogProfileSelectionDialog.EditLogProfile}">
+										<Border Classes="InPlaceAction">
 											<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Edit}"/>
 										</Border>
 									</Button>
-									<Button Classes="LogProfileSelectionDialog_LogProfile_Action" Command="{Binding $parent[Window].PinUnpinLogProfile}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String.LogProfileSelectionDialog.PinUnpinLogProfile}">
-										<Border Classes="LogProfileSelectionDialog_LogProfile_Action">
+									<Button Classes="InPlaceAction" Command="{Binding $parent[Window].PinUnpinLogProfile}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String.LogProfileSelectionDialog.PinUnpinLogProfile}">
+										<Border Classes="InPlaceAction">
 											<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Pin}"/>
 										</Border>
 									</Button>

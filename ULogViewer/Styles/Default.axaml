@@ -118,11 +118,20 @@
 		<Setter Property="WindowStartupLocation" Value="CenterOwner"/>
 	</Style>
 
-	<!-- LogProfileSelectionDialog -->
-	<Style Selector="Border.LogProfileSelectionDialog_LogProfile_Action">
-		<Setter Property="Height" Value="{StaticResource Double.LogProfileSelectionDialog.LogProfile.Action.Icon.Size}"/>
-		<Setter Property="Width" Value="{StaticResource Double.LogProfileSelectionDialog.LogProfile.Action.Icon.Size}"/>
+	<!-- InPlaceAction -->
+	<Style Selector="Border.InPlaceAction">
+		<Setter Property="Height" Value="{StaticResource Double.InPlaceAction.IconSize}"/>
+		<Setter Property="Width" Value="{StaticResource Double.InPlaceAction.IconSize}"/>
 	</Style>
+	<Style Selector="Button.InPlaceAction">
+		<Setter Property="Background" Value="{x:Static Brushes.Transparent}"/>
+		<Setter Property="HorizontalContentAlignment" Value="Center"/>
+		<Setter Property="Margin" Value="{StaticResource Thickness.InPlaceAction.Margin}"/>
+		<Setter Property="Padding" Value="{StaticResource Thickness.InPlaceAction.Padding}"/>
+		<Setter Property="VerticalContentAlignment" Value="Center"/>
+	</Style>
+
+	<!-- LogProfileSelectionDialog -->
 	<Style Selector="Border.LogProfileSelectionDialog_LogProfile_Label">
 		<Setter Property="Background" Value="{DynamicResource Brush.LogProfileSelectionDialog.Label.Background}"/>
 		<Setter Property="BorderBrush" Value="{DynamicResource Brush.LogProfileSelectionDialog.Label.Border}"/>
@@ -130,11 +139,6 @@
 		<Setter Property="CornerRadius" Value="{StaticResource CornerRadius.LogProfileSelectionDialog.Label}"/>
 		<Setter Property="Margin" Value="{StaticResource Thickness.LogProfileSelectionDialog.LogProfile.Label.Margin}"/>
 		<Setter Property="Padding" Value="{StaticResource Thickness.LogProfileSelectionDialog.LogProfile.Label.Padding}"/>
-	</Style>
-	<Style Selector="Button.LogProfileSelectionDialog_LogProfile_Action">
-		<Setter Property="Background" Value="{x:Static Brushes.Transparent}"/>
-		<Setter Property="Margin" Value="{StaticResource Thickness.LogProfileSelectionDialog.LogProfile.Action.Margin}"/>
-		<Setter Property="Padding" Value="{StaticResource Thickness.LogProfileSelectionDialog.LogProfile.Action.Padding}"/>
 	</Style>
 	<Style Selector="TextBlock.LogProfileSelectionDialog_LogProfile_Label">
 		<Setter Property="FontSize" Value="{StaticResource Double.LogProfileSelectionDialog.LogProfile.Label.FontSize}"/>
@@ -148,20 +152,9 @@
 	</Style>
 
 	<!-- SessionView -->
-	<Style Selector="Border.SessionView_PredefinedLogTextFilterListBox_Action">
-		<Setter Property="Height" Value="{StaticResource Double.SessionView.PredefinedLogTextFilterListBox.Action.IconSize}"/>
-		<Setter Property="Width" Value="{StaticResource Double.SessionView.PredefinedLogTextFilterListBox.Action.IconSize}"/>
-	</Style>
 	<Style Selector="Border.SessionView_ToolBar_Button_Icon">
 		<Setter Property="Height" Value="{StaticResource Double.SessionView.ToolBar.Button.Icon.Size}"/>
 		<Setter Property="Width" Value="{StaticResource Double.SessionView.ToolBar.Button.Icon.Size}"/>
-	</Style>
-	<Style Selector="Button.SessionView_PredefinedLogTextFilterListBox_Action">
-		<Setter Property="Background" Value="{x:Static Brushes.Transparent}"/>
-		<Setter Property="HorizontalContentAlignment" Value="Center"/>
-		<Setter Property="Margin" Value="{StaticResource Thickness.SessionView.PredefinedLogTextFilterListBox.Action.Margin}"/>
-		<Setter Property="Padding" Value="{StaticResource Thickness.SessionView.PredefinedLogTextFilterListBox.Action.Padding}"/>
-		<Setter Property="VerticalContentAlignment" Value="Center"/>
 	</Style>
 	<Style Selector="Button.SessionView_ToolBar_Button">
 		<Setter Property="Background" Value="{x:Static Brushes.Transparent}"/>

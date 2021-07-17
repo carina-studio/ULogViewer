@@ -19,6 +19,11 @@
 	<!-- GridSplitter -->
 	<sys:Double x:Key="Double.GridSplitter.Thickness">5</sys:Double>
 
+	<!-- InPlaceAction -->
+	<sys:Double x:Key="Double.InPlaceAction.IconSize">10</sys:Double>
+	<Thickness x:Key="Thickness.InPlaceAction.Margin">3,0,0,0</Thickness>
+	<Thickness x:Key="Thickness.InPlaceAction.Padding">3</Thickness>
+
 	<!-- LogDataSourceOptionsDialog -->
 	<sys:Double x:Key="Double.LogDataSourceOptionsDialog.Width">500</sys:Double>
 
@@ -28,14 +33,11 @@
 	<!-- LogProfileSelectionDialog -->
 	<CornerRadius x:Key="CornerRadius.LogProfileSelectionDialog.Label">2</CornerRadius>
 	<sys:Double x:Key="Double.LogProfileSelectionDialog.Content.MaxHeight">400</sys:Double>
-	<sys:Double x:Key="Double.LogProfileSelectionDialog.LogProfile.Action.Icon.Size">10</sys:Double>
 	<sys:Double x:Key="Double.LogProfileSelectionDialog.LogProfile.Icon.Size">30</sys:Double>
 	<sys:Double x:Key="Double.LogProfileSelectionDialog.LogProfile.Label.FontSize">10</sys:Double>
 	<sys:Double x:Key="Double.LogProfileSelectionDialog.LogProfile.Name.FontSize">20</sys:Double>
 	<sys:Double x:Key="Double.LogProfileSelectionDialog.Width">400</sys:Double>
 	<Thickness x:Key="Thickness.LogProfileSelectionDialog.Label.Margin">15,15,15,10</Thickness>
-	<Thickness x:Key="Thickness.LogProfileSelectionDialog.LogProfile.Action.Margin">3,0,0,0</Thickness>
-	<Thickness x:Key="Thickness.LogProfileSelectionDialog.LogProfile.Action.Padding">3</Thickness>
 	<Thickness x:Key="Thickness.LogProfileSelectionDialog.LogProfile.Icon.Margin">0,5,15,0</Thickness>
 	<Thickness x:Key="Thickness.LogProfileSelectionDialog.LogProfile.Label.Margin">0,2,5,0</Thickness>
 	<Thickness x:Key="Thickness.LogProfileSelectionDialog.LogProfile.Label.Padding">3</Thickness>
@@ -64,7 +66,6 @@
 	<sys:Double x:Key="Double.SessionView.Hint.NoLogToShow.FontSize">30</sys:Double>
 	<sys:Double x:Key="Double.SessionView.LogHeader.MinWidth">50</sys:Double>
 	<sys:Double x:Key="Double.SessionView.LogListBox.ColorIndicator.Width">8</sys:Double>
-	<sys:Double x:Key="Double.SessionView.PredefinedLogTextFilterListBox.Action.IconSize">10</sys:Double>
 	<sys:Double x:Key="Double.SessionView.PredefinedLogTextFiltersPopup.MaxHeight">500</sys:Double>
 	<sys:Double x:Key="Double.SessionView.PredefinedLogTextFiltersPopup.Width">300</sys:Double>
 	<sys:Double x:Key="Double.SessionView.SidePanel.Header.FontSize">16</sys:Double>
@@ -81,8 +82,6 @@
 	<Thickness x:Key="Thickness.SessionView.LogListBox.Padding">0,0,0,20</Thickness>
 	<Thickness x:Key="Thickness.SessionView.MarkedLogListBox.Item.Padding">3</Thickness>
 	<Thickness x:Key="Thickness.SessionView.NoPredefinedLogTextFilterHint.Margin">15,12,15,15</Thickness>
-	<Thickness x:Key="Thickness.SessionView.PredefinedLogTextFilterListBox.Action.Margin">3,0,0,0</Thickness>
-	<Thickness x:Key="Thickness.SessionView.PredefinedLogTextFilterListBox.Action.Padding">3</Thickness>
 	<Thickness x:Key="Thickness.SessionView.PredefinedLogTextFilterListBox.Item.Padding">15,5,20,5</Thickness>
 	<Thickness x:Key="Thickness.SessionView.PredefinedLogTextFiltersPopup.Padding">0,3,0,0</Thickness>
 	<Thickness x:Key="Thickness.SessionView.SidePanel.EmptyHint.Margin">20,0,10,0</Thickness>

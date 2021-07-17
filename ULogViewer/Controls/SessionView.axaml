@@ -210,13 +210,13 @@
 														<Grid ColumnDefinitions="*,Auto">
 															<TextBlock Text="{Binding Name}"/>
 															<StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-																<Button Classes="SessionView_PredefinedLogTextFilterListBox_Action" Command="{Binding $parent[UserControl].RemovePredefinedLogTextFilter}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String.Common.Delete}">
-																	<Border Classes="SessionView_PredefinedLogTextFilterListBox_Action">
+																<Button Classes="InPlaceAction" Command="{Binding $parent[UserControl].RemovePredefinedLogTextFilter}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String.Common.Delete}">
+																	<Border Classes="InPlaceAction">
 																		<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Delete}"/>
 																	</Border>
 																</Button>
-																<Button Classes="SessionView_PredefinedLogTextFilterListBox_Action" Command="{Binding $parent[UserControl].EditPredefinedLogTextFilter}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String.Common.Edit}">
-																	<Border Classes="SessionView_PredefinedLogTextFilterListBox_Action">
+																<Button Classes="InPlaceAction" Command="{Binding $parent[UserControl].EditPredefinedLogTextFilter}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String.Common.Edit}">
+																	<Border Classes="InPlaceAction">
 																		<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Edit}"/>
 																	</Border>
 																</Button>
