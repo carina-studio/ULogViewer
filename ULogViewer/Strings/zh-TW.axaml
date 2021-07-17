@@ -3,6 +3,7 @@
 										xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
 	<!-- Common -->
+	<sys:String x:Key="String.Common.Browse">瀏覽...</sys:String>
 	<sys:String x:Key="String.Common.Cancel">取消</sys:String>
 	<sys:String x:Key="String.Common.Delete">刪除</sys:String>
 	<sys:String x:Key="String.Common.Edit">編輯</sys:String>
@@ -19,6 +20,15 @@
 	<sys:String x:Key="String.BuiltInProfile.AndroidDeviceLog">Android 裝置日誌</sys:String>
 	<sys:String x:Key="String.BuiltInProfile.AndroidFileLog">Android 日誌檔案</sys:String>
 	<sys:String x:Key="String.BuiltInProfile.GitLog">Git 提交紀錄</sys:String>
+
+	<!-- LogDataSourceOptionsDialog -->
+	<sys:String x:Key="String.LogDataSourceOptionsDialog.Command">指令 (必須)</sys:String>
+	<sys:String x:Key="String.LogDataSourceOptionsDialog.Encoding">文字編碼</sys:String>
+	<sys:String x:Key="String.LogDataSourceOptionsDialog.FileName">檔案路徑</sys:String>
+	<sys:String x:Key="String.LogDataSourceOptionsDialog.SetupCommands">日誌讀取前指令</sys:String>
+	<sys:String x:Key="String.LogDataSourceOptionsDialog.TeardownCommands">日誌讀取後指令</sys:String>
+	<sys:String x:Key="String.LogDataSourceOptionsDialog.Title">資料來源參數</sys:String>
+	<sys:String x:Key="String.LogDataSourceOptionsDialog.WorkingDirectory">工作目錄</sys:String>
 
 	<!-- LogLevel -->
 	<sys:String x:Key="String.LogLevel.Debug">偵錯</sys:String>

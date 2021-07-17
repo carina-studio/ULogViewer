@@ -19,6 +19,9 @@
 	<!-- GridSplitter -->
 	<sys:Double x:Key="Double.GridSplitter.Thickness">5</sys:Double>
 
+	<!-- LogDataSourceOptionsDialog -->
+	<sys:Double x:Key="Double.LogDataSourceOptionsDialog.Width">500</sys:Double>
+
 	<!-- LogPatternEditorDialog -->
 	<sys:Double x:Key="Double.LogPatternEditorDialog.Width">500</sys:Double>
 
