@@ -26,6 +26,7 @@
 
 	<!-- InPlaceAction -->
 	<sys:Double x:Key="Double.InPlaceAction.IconSize">10</sys:Double>
+	<sys:Double x:Key="Double.InPlaceAction.ReservedHeight">18</sys:Double>
 	<Thickness x:Key="Thickness.InPlaceAction.Margin">3,0,0,0</Thickness>
 	<Thickness x:Key="Thickness.InPlaceAction.Padding">3</Thickness>
 

@@ -130,11 +130,17 @@
 		<Setter Property="Height" Value="{StaticResource Double.InPlaceAction.IconSize}"/>
 		<Setter Property="Width" Value="{StaticResource Double.InPlaceAction.IconSize}"/>
 	</Style>
+	<Style Selector="Border.InPlaceAction_Reserved">
+		<Setter Property="Height" Value="{StaticResource Double.InPlaceAction.ReservedHeight}"/>
+		<Setter Property="Opacity" Value="0"/>
+		<Setter Property="Width" Value="1"/>
+	</Style>
 	<Style Selector="Button.InPlaceAction">
 		<Setter Property="Background" Value="{x:Static Brushes.Transparent}"/>
 		<Setter Property="HorizontalContentAlignment" Value="Center"/>
 		<Setter Property="Margin" Value="{StaticResource Thickness.InPlaceAction.Margin}"/>
 		<Setter Property="Padding" Value="{StaticResource Thickness.InPlaceAction.Padding}"/>
+		<Setter Property="VerticalAlignment" Value="Center"/>
 		<Setter Property="VerticalContentAlignment" Value="Center"/>
 	</Style>
 

@@ -204,12 +204,13 @@
 											</StackPanel>
 										</Border>
 										<Panel>
-											<ListBox Name="predefinedLogTextFilterListBox" Background="{x:Static Brushes.Transparent}" IsVisible="{Binding $parent[UserControl].PredefinedLogTextFilters.Count}" Items="{Binding $parent[UserControl].PredefinedLogTextFilters}" SelectionChanged="OnPredefinedLogTextFilterListBoxSelectionChanged" SelectionMode="Multiple">
+											<ListBox Name="predefinedLogTextFilterListBox" Background="{x:Static Brushes.Transparent}" IsVisible="{Binding $parent[UserControl].PredefinedLogTextFilters.Count}" Items="{Binding $parent[UserControl].PredefinedLogTextFilters}" SelectionChanged="OnPredefinedLogTextFilterListBoxSelectionChanged" SelectionMode="Multiple" VirtualizationMode="None">
 												<ListBox.ItemTemplate>
 													<DataTemplate DataType="{x:Type appViewModels:PredefinedLogTextFilter}">
 														<Grid ColumnDefinitions="*,Auto">
-															<TextBlock Text="{Binding Name}"/>
-															<StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+															<TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
+															<Border Classes="InPlaceAction_Reserved"/>
+															<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal" VerticalAlignment="Center">
 																<Button Classes="InPlaceAction" Command="{Binding $parent[UserControl].RemovePredefinedLogTextFilter}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String.Common.Delete}">
 																	<Border Classes="InPlaceAction">
 																		<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Delete}"/>

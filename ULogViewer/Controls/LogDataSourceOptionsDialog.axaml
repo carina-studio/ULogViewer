@@ -66,10 +66,16 @@
 						<DataTemplate>
 							<Grid ColumnDefinitions="*,Auto">
 								<TextBlock Text="{Binding}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"/>
-								<StackPanel Grid.Column="1" Orientation="Horizontal">
+								<Border Classes="InPlaceAction_Reserved"/>
+								<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
 									<Button Classes="InPlaceAction" ToolTip.Tip="{DynamicResource String.Common.Delete}">
 										<Border Classes="InPlaceAction">
 											<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Delete}"/>
+										</Border>
+									</Button>
+									<Button Classes="InPlaceAction" ToolTip.Tip="{DynamicResource String.Common.Edit}">
+										<Border Classes="InPlaceAction">
+											<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Edit}"/>
 										</Border>
 									</Button>
 									<Button Classes="InPlaceAction" ToolTip.Tip="{DynamicResource String.Common.MoveUp}">

@@ -47,7 +47,7 @@
 								</WrapPanel>
 
 								<!-- Actions -->
-								<StackPanel Grid.Column="2" Orientation="Horizontal">
+								<StackPanel Grid.Column="2" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
 									<Button Classes="InPlaceAction" Command="{Binding $parent[Window].PinUnpinLogProfile}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" IsVisible="{Binding !IsBuiltIn}" ToolTip.Tip="{DynamicResource String.LogProfileSelectionDialog.RemoveLogProfile}">
 										<Border Classes="InPlaceAction">
 											<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Delete.Highlight}"/>
