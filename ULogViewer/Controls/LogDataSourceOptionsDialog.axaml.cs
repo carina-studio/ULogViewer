@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using CarinaStudio.ULogViewer.Logs.DataSources;
+using System;
 
 namespace CarinaStudio.ULogViewer.Controls
 {
@@ -21,5 +22,12 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Initialize.
 		private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
+
+
+		// Generate valid result.
+		protected override object? OnGenerateResult()
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

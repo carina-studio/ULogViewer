@@ -17,49 +17,22 @@ namespace CarinaStudio.ULogViewer.Controls
 	partial class MessageDialog : BaseDialog
 	{
 		/// <summary>
-		/// Property of <see cref="Button1Result"/>.
-		/// </summary>
-		public static readonly AvaloniaProperty<MessageDialogResult?> Button1ResultProperty = AvaloniaProperty.Register<MessageDialog, MessageDialogResult?>(nameof(Button1Result));
-		/// <summary>
-		/// Property of <see cref="Button1Text"/>.
-		/// </summary>
-		public static readonly AvaloniaProperty<string?> Button1TextProperty = AvaloniaProperty.Register<MessageDialog, string?>(nameof(Button1Text));
-		/// <summary>
-		/// Property of <see cref="Button2Result"/>.
-		/// </summary>
-		public static readonly AvaloniaProperty<MessageDialogResult?> Button2ResultProperty = AvaloniaProperty.Register<MessageDialog, MessageDialogResult?>(nameof(Button2Result));
-		/// <summary>
-		/// Property of <see cref="Button2Text"/>.
-		/// </summary>
-		public static readonly AvaloniaProperty<string?> Button2TextProperty = AvaloniaProperty.Register<MessageDialog, string?>(nameof(Button2Text));
-		/// <summary>
-		/// Property of <see cref="Button3Result"/>.
-		/// </summary>
-		public static readonly AvaloniaProperty<MessageDialogResult?> Button3ResultProperty = AvaloniaProperty.Register<MessageDialog, MessageDialogResult?>(nameof(Button3Result));
-		/// <summary>
-		/// Property of <see cref="Button3Text"/>.
-		/// </summary>
-		public static readonly AvaloniaProperty<string?> Button3TextProperty = AvaloniaProperty.Register<MessageDialog, string?>(nameof(Button3Text));
-		/// <summary>
-		/// Property of <see cref="IconDrawing"/>.
-		/// </summary>
-		public static readonly AvaloniaProperty<Drawing?> IconDrawingProperty = AvaloniaProperty.Register<MessageDialog, Drawing?>(nameof(IconDrawing));
-		/// <summary>
-		/// Property of <see cref="IsButton1Visible"/>.
-		/// </summary>
-		public static readonly AvaloniaProperty<bool> IsButton1VisibleProperty = AvaloniaProperty.Register<MessageDialog, bool>(nameof(IsButton1Visible));
-		/// <summary>
-		/// Property of <see cref="IsButton2Visible"/>.
-		/// </summary>
-		public static readonly AvaloniaProperty<bool> IsButton2VisibleProperty = AvaloniaProperty.Register<MessageDialog, bool>(nameof(IsButton2Visible));
-		/// <summary>
-		/// Property of <see cref="IsButton3Visible"/>.
-		/// </summary>
-		public static readonly AvaloniaProperty<bool> IsButton3VisibleProperty = AvaloniaProperty.Register<MessageDialog, bool>(nameof(IsButton3Visible));
-		/// <summary>
 		/// Property of <see cref="Message"/>.
 		/// </summary>
 		public static readonly AvaloniaProperty<string?> MessageProperty = AvaloniaProperty.Register<MessageDialog, string?>(nameof(Message));
+
+
+		// Static fields.
+		static readonly AvaloniaProperty<MessageDialogResult?> Button1ResultProperty = AvaloniaProperty.Register<MessageDialog, MessageDialogResult?>(nameof(Button1Result));
+		static readonly AvaloniaProperty<string?> Button1TextProperty = AvaloniaProperty.Register<MessageDialog, string?>(nameof(Button1Text));
+		static readonly AvaloniaProperty<MessageDialogResult?> Button2ResultProperty = AvaloniaProperty.Register<MessageDialog, MessageDialogResult?>(nameof(Button2Result));
+		static readonly AvaloniaProperty<string?> Button2TextProperty = AvaloniaProperty.Register<MessageDialog, string?>(nameof(Button2Text));
+		static readonly AvaloniaProperty<MessageDialogResult?> Button3ResultProperty = AvaloniaProperty.Register<MessageDialog, MessageDialogResult?>(nameof(Button3Result));
+		static readonly AvaloniaProperty<string?> Button3TextProperty = AvaloniaProperty.Register<MessageDialog, string?>(nameof(Button3Text));
+		static readonly AvaloniaProperty<Drawing?> IconDrawingProperty = AvaloniaProperty.Register<MessageDialog, Drawing?>(nameof(IconDrawing));
+		static readonly AvaloniaProperty<bool> IsButton1VisibleProperty = AvaloniaProperty.Register<MessageDialog, bool>(nameof(IsButton1Visible));
+		static readonly AvaloniaProperty<bool> IsButton2VisibleProperty = AvaloniaProperty.Register<MessageDialog, bool>(nameof(IsButton2Visible));
+		static readonly AvaloniaProperty<bool> IsButton3VisibleProperty = AvaloniaProperty.Register<MessageDialog, bool>(nameof(IsButton3Visible));
 
 
 		// Fields.
@@ -71,54 +44,36 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// </summary>
 		public MessageDialog()
 		{
-			// create command
-			this.SelectResultCommand = ReactiveCommand.Create<MessageDialogResult?>(this.SelectResult);
-
-			// initialize
 			InitializeComponent();
 		}
 
 
-		/// <summary>
-		/// Get result of button 1.
-		/// </summary>
-		public MessageDialogResult? Button1Result { get => this.GetValue<MessageDialogResult?>(Button1ResultProperty); }
+		// Get result of button 1.
+		MessageDialogResult? Button1Result { get => this.GetValue<MessageDialogResult?>(Button1ResultProperty); }
 
 
-		/// <summary>
-		/// Get text of button 1.
-		/// </summary>
-		public string? Button1Text { get => this.GetValue<string?>(Button1TextProperty); }
+		// Get text of button 1.
+		string? Button1Text { get => this.GetValue<string?>(Button1TextProperty); }
 
 
-		/// <summary>
-		/// Get result of button 2.
-		/// </summary>
-		public MessageDialogResult? Button2Result { get => this.GetValue<MessageDialogResult?>(Button2ResultProperty); }
+		// Get result of button 2.
+		MessageDialogResult? Button2Result { get => this.GetValue<MessageDialogResult?>(Button2ResultProperty); }
 
 
-		/// <summary>
-		/// Get text of button 2.
-		/// </summary>
-		public string? Button2Text { get => this.GetValue<string?>(Button2TextProperty); }
+		// Get text of button 2.
+		string? Button2Text { get => this.GetValue<string?>(Button2TextProperty); }
 
 
-		/// <summary>
-		/// Get result of button 3.
-		/// </summary>
-		public MessageDialogResult? Button3Result { get => this.GetValue<MessageDialogResult?>(Button3ResultProperty); }
+		// Get result of button 3.
+		MessageDialogResult? Button3Result { get => this.GetValue<MessageDialogResult?>(Button3ResultProperty); }
 
 
-		/// <summary>
-		/// Get text of button 3.
-		/// </summary>
-		public string? Button3Text { get => this.GetValue<string?>(Button3TextProperty); }
+		// Get text of button 3.
+		string? Button3Text { get => this.GetValue<string?>(Button3TextProperty); }
 
 
-		/// <summary>
-		/// Get or set buttons.
-		/// </summary>
-		public MessageDialogButtons Buttons { get; set; } = MessageDialogButtons.OK;
+		// Get or set buttons.
+		MessageDialogButtons Buttons { get; set; } = MessageDialogButtons.OK;
 
 
 		/// <summary>
@@ -127,32 +82,24 @@ namespace CarinaStudio.ULogViewer.Controls
 		public new MessageDialogIcon Icon { get; set; } = MessageDialogIcon.Information;
 
 
-		/// <summary>
-		/// Get <see cref="Drawing"/> according to <see cref="Icon"/>.
-		/// </summary>
-		public Drawing? IconDrawing { get => this.GetValue<Drawing?>(IconDrawingProperty); }
+		// Get Drawing according to Icon.
+		Drawing? IconDrawing { get => this.GetValue<Drawing?>(IconDrawingProperty); }
 
 
 		// Initialize Avalonia components.
 		private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
 
 
-		/// <summary>
-		/// Check whether button 1 is visible or not.
-		/// </summary>
-		public bool IsButton1Visible { get => this.GetValue<bool>(IsButton1VisibleProperty); }
+		// Check whether button 1 is visible or not.
+		bool IsButton1Visible { get => this.GetValue<bool>(IsButton1VisibleProperty); }
 
 
-		/// <summary>
-		/// Check whether button 2 is visible or not.
-		/// </summary>
-		public bool IsButton2Visible { get => this.GetValue<bool>(IsButton2VisibleProperty); }
+		// Check whether button 2 is visible or not.
+		bool IsButton2Visible { get => this.GetValue<bool>(IsButton2VisibleProperty); }
 
 
-		/// <summary>
-		/// Check whether button 3 is visible or not.
-		/// </summary>
-		public bool IsButton3Visible { get => this.GetValue<bool>(IsButton3VisibleProperty); }
+		// Check whether button 3 is visible or not.
+		bool IsButton3Visible { get => this.GetValue<bool>(IsButton3VisibleProperty); }
 
 
 		/// <summary>
@@ -172,6 +119,10 @@ namespace CarinaStudio.ULogViewer.Controls
 				e.Cancel = true;
 			base.OnClosing(e);
 		}
+
+
+		// Generate result (not used).
+		protected override object? OnGenerateResult() => null;
 
 
 		// Called when opened.
@@ -235,12 +186,6 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.Close(result);
 			}
 		}
-
-
-		/// <summary>
-		/// Command to select result.
-		/// </summary>
-		public ICommand SelectResultCommand { get; }
 	}
 
 

@@ -1,7 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs;
 using System;
 
@@ -12,15 +11,10 @@ namespace CarinaStudio.ULogViewer.Controls
 	/// </summary>
 	partial class LogPatternEditorDialog : BaseDialog
 	{
-		// Static fields.
-		static readonly AvaloniaProperty<bool> AreValidParamsProperty = AvaloniaProperty.Register<LogPatternEditorDialog, bool>(nameof(AreValidParams));
-
-
 		// Fields.
 		readonly RegexTextBox regexTextBox;
 		readonly ToggleSwitch repeatableSwitch;
 		readonly ToggleSwitch skippableSwitch;
-		readonly ScheduledAction validateParamsAction;
 
 
 		/// <summary>
@@ -32,37 +26,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.regexTextBox = this.FindControl<RegexTextBox>("regexTextBox");
 			this.repeatableSwitch = this.FindControl<ToggleSwitch>("repeatableSwitch");
 			this.skippableSwitch = this.FindControl<ToggleSwitch>("skippableSwitch");
-			this.validateParamsAction = new ScheduledAction(() =>
-			{
-				this.SetValue<bool>(AreValidParamsProperty, this.regexTextBox.IsTextValid && this.regexTextBox.Regex != null);
-			});
-		}
-
-
-		// Check whether parameters are valid or not.
-		bool AreValidParams { get => this.GetValue<bool>(AreValidParamsProperty); }
-
-
-		// Complete pattern editing.
-		void CompleteEditing()
-		{
-			// check state
-			this.regexTextBox.Validate();
-			this.validateParamsAction.Execute();
-			if (!this.AreValidParams)
-				return;
-
-			// create pattern
-			var editingLogPattern = this.LogPattern;
-			var newLogPattern = new LogPattern(this.regexTextBox.Regex.AsNonNull(), this.repeatableSwitch.IsChecked.GetValueOrDefault(), this.skippableSwitch.IsChecked.GetValueOrDefault());
-			if (editingLogPattern != null && editingLogPattern == newLogPattern)
-			{
-				this.Close(editingLogPattern);
-				return;
-			}
-
-			// complete
-			this.Close(newLogPattern);
 		}
 
 
@@ -74,6 +37,18 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// Get or set <see cref="LogPattern"/> to be edited.
 		/// </summary>
 		public LogPattern? LogPattern { get; set; }
+
+
+		// Generate result.
+		protected override object? OnGenerateResult()
+		{
+			// create pattern
+			var editingLogPattern = this.LogPattern;
+			var newLogPattern = new LogPattern(this.regexTextBox.Regex.AsNonNull(), this.repeatableSwitch.IsChecked.GetValueOrDefault(), this.skippableSwitch.IsChecked.GetValueOrDefault());
+			if (editingLogPattern != null && editingLogPattern == newLogPattern)
+				return editingLogPattern;
+			return newLogPattern;
+		}
 
 
 		// Called when opened.
@@ -95,7 +70,14 @@ namespace CarinaStudio.ULogViewer.Controls
 		void OnRegexTextBoxPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
 		{
 			if (e.Property == RegexTextBox.IsTextValidProperty || e.Property == RegexTextBox.RegexProperty)
-				this.validateParamsAction.Reschedule();
+				this.InvalidateInput();
+		}
+
+
+		// Validate input.
+		protected override bool OnValidateInput()
+		{
+			return base.OnValidateInput() && this.regexTextBox.IsTextValid && this.regexTextBox.Regex != null;
 		}
 	}
 }

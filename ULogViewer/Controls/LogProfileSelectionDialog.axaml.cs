@@ -4,12 +4,11 @@ using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using CarinaStudio.Collections;
 using CarinaStudio.ULogViewer.Logs.Profiles;
-using ReactiveUI;
+using CarinaStudio.Windows.Input;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Windows.Input;
 
 namespace CarinaStudio.ULogViewer.Controls
 {
@@ -18,10 +17,6 @@ namespace CarinaStudio.ULogViewer.Controls
 	/// </summary>
 	partial class LogProfileSelectionDialog : BaseDialog
 	{
-		// Static fields.
-		static readonly AvaloniaProperty<bool> HasSelectedLogProfileProperty = AvaloniaProperty.Register<LogProfileSelectionDialog, bool>(nameof(HasSelectedLogProfile), false);
-		
-
 		// Fields.
 		readonly ListBox otherLogProfileListBox;
 		readonly SortedObservableList<LogProfile> otherLogProfiles = new SortedObservableList<LogProfile>(CompareLogProfiles);
@@ -37,9 +32,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			// setup properties
 			this.OtherLogProfiles = this.otherLogProfiles.AsReadOnly();
 			this.PinnedLogProfiles = this.pinnedLogProfiles.AsReadOnly();
-
-			// create commends
-			this.ConfirmSelectedLogProfileCommand = ReactiveCommand.Create(this.ConfirmSelectedLogProfile, this.GetObservable<bool>(HasSelectedLogProfileProperty));
 
 			// initialize
 			this.InitializeComponent();
@@ -73,26 +65,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Confirm selected log profile and close dialog.
-		void ConfirmSelectedLogProfile()
-		{
-			var logProfile = this.otherLogProfileListBox.SelectedItem as LogProfile;
-			if (logProfile == null)
-			{
-				logProfile = this.pinnedLogProfileListBox.SelectedItem as LogProfile;
-				if (logProfile == null)
-					return;
-			}
-			this.Close(logProfile);
-		}
-
-
-		/// <summary>
-		/// Command to confirm selected log profile and close dialog.
-		/// </summary>
-		ICommand ConfirmSelectedLogProfileCommand { get; }
-
-
 		// Edit log profile.
 		void EditLogProfile(LogProfile? logProfile)
 		{
@@ -100,12 +72,6 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 			//
 		}
-
-
-		/// <summary>
-		/// Check whether one log profile is selected or not.
-		/// </summary>
-		public bool HasSelectedLogProfile { get => this.GetValue<bool>(HasSelectedLogProfileProperty); }
 
 
 		// Initialize Avalonia components.
@@ -159,8 +125,18 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Generate result.
+		protected override object? OnGenerateResult()
+		{
+			var logProfile = this.otherLogProfileListBox.SelectedItem as LogProfile;
+			if (logProfile == null)
+				logProfile = this.pinnedLogProfileListBox.SelectedItem as LogProfile;
+			return logProfile;
+		}
+
+
 		// Called when double tapped on item of log profile.
-		void OnLogProfileItemDoubleTapped(object? sender, RoutedEventArgs e) => this.ConfirmSelectedLogProfile();
+		void OnLogProfileItemDoubleTapped(object? sender, RoutedEventArgs e) => this.GenerateResultCommand.TryExecute();
 
 
 		// Called when property of log profile has been changed.
@@ -195,7 +171,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (this.otherLogProfileListBox.SelectedIndex >= 0)
 				this.pinnedLogProfileListBox.SelectedIndex = -1;
-			this.SetValue<bool>(HasSelectedLogProfileProperty, this.otherLogProfileListBox.SelectedIndex >= 0 || this.pinnedLogProfileListBox.SelectedIndex >= 0);
+			this.InvalidateInput();
 		}
 
 
@@ -204,7 +180,14 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (this.pinnedLogProfileListBox.SelectedIndex >= 0)
 				this.otherLogProfileListBox.SelectedIndex = -1;
-			this.SetValue<bool>(HasSelectedLogProfileProperty, this.otherLogProfileListBox.SelectedIndex >= 0 || this.pinnedLogProfileListBox.SelectedIndex >= 0);
+			this.InvalidateInput();
+		}
+
+
+		// Validate input.
+		protected override bool OnValidateInput()
+		{
+			return base.OnValidateInput() && (this.pinnedLogProfileListBox.SelectedItem != null || this.otherLogProfileListBox.SelectedItem != null);
 		}
 
 

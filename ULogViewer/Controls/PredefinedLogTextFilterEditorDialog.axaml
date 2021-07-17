@@ -33,8 +33,8 @@
 		<!-- Control buttons -->
 		<Border Classes="Dialog_ControlButtonsPanel" Grid.Row="1">
 			<StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-				<Button Classes="Dialog_ControlButton" Click="OnOKClick" Content="{DynamicResource String.Common.OK}" IsEnabled="{Binding $parent[Window].IsValidFilterParams}"/>
-				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].CloseDialogCommand}" Content="{DynamicResource String.Common.Cancel}"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].GenerateResultCommand}" Content="{DynamicResource String.Common.OK}"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].CancelCommand}" Content="{DynamicResource String.Common.Cancel}"/>
 			</StackPanel>
 		</Border>
 		
