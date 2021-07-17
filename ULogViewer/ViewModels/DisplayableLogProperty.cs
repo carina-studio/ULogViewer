@@ -1,6 +1,8 @@
-﻿using CarinaStudio.ULogViewer.Logs;
+﻿using CarinaStudio.ULogViewer.Converters;
+using CarinaStudio.ULogViewer.Logs;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace CarinaStudio.ULogViewer.ViewModels
@@ -10,6 +12,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 	/// </summary>
 	class DisplayableLogProperty : BaseDisposable, INotifyPropertyChanged
 	{
+		// Static fields.
+		static IList<string>? displayNames;
+
+
 		// Fields.
 		readonly IApplication app;
 		readonly string displayNameId;
@@ -26,7 +32,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			this.app = app;
 			this.displayNameId = displayName ?? name;
-			this.DisplayName = app.GetStringNonNull($"DisplayableLogProperty.{this.displayNameId}", this.displayNameId);
+			this.DisplayName = LogPropertyNameConverter.Default.Convert(this.displayNameId);
 			this.Name = name;
 			this.Width = width;
 			app.StringsUpdated += this.OnApplicationStringsUpdated;
@@ -47,7 +53,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				nameof(Log.Timestamp) => nameof(DisplayableLog.TimestampString),
 				_ => logProperty.Name,
 			};
-			this.DisplayName = app.GetStringNonNull($"DisplayableLogProperty.{this.displayNameId}", this.displayNameId);
+			this.DisplayName = LogPropertyNameConverter.Default.Convert(this.displayNameId);
 			this.Width = logProperty.Width;
 			app.StringsUpdated += this.OnApplicationStringsUpdated;
 		}
@@ -57,6 +63,26 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Get name for displaying.
 		/// </summary>
 		public string DisplayName { get; private set; }
+
+
+		/// <summary>
+		/// Get available display names.
+		/// </summary>
+		public static IList<string> DisplayNames
+		{
+			get
+			{
+				if (displayNames == null)
+				{
+					displayNames = new List<string>(Log.PropertyNames).Also(it =>
+					{
+						it.Add("Author");
+						it.Add("Tag");
+					}).AsReadOnly();
+				}
+				return displayNames;
+			}
+		}
 
 
 		// Dispose.
@@ -75,7 +101,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		// Called when application strings updated.
 		void OnApplicationStringsUpdated(object? sender, EventArgs e)
 		{
-			var newDisplayName = this.app.GetStringNonNull($"DisplayableLogProperty.{this.displayNameId}", this.displayNameId);
+			var newDisplayName = LogPropertyNameConverter.Default.Convert(this.displayNameId);
 			if (this.DisplayName == newDisplayName)
 				return;
 			this.DisplayName = newDisplayName;

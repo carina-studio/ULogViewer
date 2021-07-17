@@ -20,18 +20,6 @@
 	<sys:String x:Key="String.BuiltInProfile.AndroidFileLog">Android 日誌檔案</sys:String>
 	<sys:String x:Key="String.BuiltInProfile.GitLog">Git 提交紀錄</sys:String>
 
-	<!-- DisplayableLogProperty -->
-	<sys:String x:Key="String.DisplayableLogProperty.Author">作者</sys:String>
-	<sys:String x:Key="String.DisplayableLogProperty.Level">等級</sys:String>
-	<sys:String x:Key="String.DisplayableLogProperty.Message">訊息</sys:String>
-	<sys:String x:Key="String.DisplayableLogProperty.ProcessName">處理程序</sys:String>
-	<sys:String x:Key="String.DisplayableLogProperty.SourceName">來源</sys:String>
-	<sys:String x:Key="String.DisplayableLogProperty.Tag">標籤</sys:String>
-	<sys:String x:Key="String.DisplayableLogProperty.ThreadName">執行緒</sys:String>
-	<sys:String x:Key="String.DisplayableLogProperty.Timestamp">時間</sys:String>
-	<sys:String x:Key="String.DisplayableLogProperty.TimestampString">時間</sys:String>
-	<sys:String x:Key="String.DisplayableLogProperty.UserName">使用者</sys:String>
-
 	<!-- LogLevel -->
 	<sys:String x:Key="String.LogLevel.Debug">偵錯</sys:String>
 	<sys:String x:Key="String.LogLevel.Error">錯誤</sys:String>
@@ -59,6 +47,18 @@
 	<sys:String x:Key="String.LogProfileSelectionDialog.PinUnpinLogProfile">釘選/移除釘選日誌類型</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.RemoveLogProfile">刪除日誌類型</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.Title">選擇日誌類型</sys:String>
+
+	<!-- LogProperty -->
+	<sys:String x:Key="String.LogProperty.Author">作者</sys:String>
+	<sys:String x:Key="String.LogProperty.Level">等級</sys:String>
+	<sys:String x:Key="String.LogProperty.Message">訊息</sys:String>
+	<sys:String x:Key="String.LogProperty.ProcessName">處理程序</sys:String>
+	<sys:String x:Key="String.LogProperty.SourceName">來源</sys:String>
+	<sys:String x:Key="String.LogProperty.Tag">標籤</sys:String>
+	<sys:String x:Key="String.LogProperty.ThreadName">執行緒</sys:String>
+	<sys:String x:Key="String.LogProperty.Timestamp">時間</sys:String>
+	<sys:String x:Key="String.LogProperty.TimestampString">時間</sys:String>
+	<sys:String x:Key="String.LogProperty.UserName">使用者</sys:String>
 
 	<!-- MainWindow -->
 	<sys:String x:Key="String.MainWindow.CloseSession">關閉此分頁</sys:String>

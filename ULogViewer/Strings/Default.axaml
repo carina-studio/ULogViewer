@@ -21,21 +21,6 @@
 	<sys:String x:Key="String.BuiltInProfile.GitLog">Git log</sys:String>
 	<sys:String x:Key="String.BuiltInProfile.ULogViewerLog">ULogViewer log (DEBUG)</sys:String>
 
-	<!-- DisplayableLogProperty -->
-	<sys:String x:Key="String.DisplayableLogProperty.Author">Author</sys:String>
-	<sys:String x:Key="String.DisplayableLogProperty.Level">Level</sys:String>
-	<sys:String x:Key="String.DisplayableLogProperty.Message">Message</sys:String>
-	<sys:String x:Key="String.DisplayableLogProperty.ProcessId">PID</sys:String>
-	<sys:String x:Key="String.DisplayableLogProperty.ProcessName">Process</sys:String>
-	<sys:String x:Key="String.DisplayableLogProperty.SourceName">Source</sys:String>
-	<sys:String x:Key="String.DisplayableLogProperty.Tag">Tag</sys:String>
-	<sys:String x:Key="String.DisplayableLogProperty.ThreadId">TID</sys:String>
-	<sys:String x:Key="String.DisplayableLogProperty.ThreadName">Thread</sys:String>
-	<sys:String x:Key="String.DisplayableLogProperty.Timestamp">Timestamp</sys:String>
-	<sys:String x:Key="String.DisplayableLogProperty.TimestampString">Timestamp</sys:String>
-	<sys:String x:Key="String.DisplayableLogProperty.UserId">UID</sys:String>
-	<sys:String x:Key="String.DisplayableLogProperty.UserName">User</sys:String>
-
 	<!-- LogLevel -->
 	<sys:String x:Key="String.LogLevel.Debug">Debug</sys:String>
 	<sys:String x:Key="String.LogLevel.Error">Error</sys:String>
@@ -63,6 +48,21 @@
 	<sys:String x:Key="String.LogProfileSelectionDialog.PinUnpinLogProfile">Pin/Unpin profile</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.RemoveLogProfile">Delete profile</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.Title">Select log profile</sys:String>
+
+	<!-- LogProperty -->
+	<sys:String x:Key="String.LogProperty.Author">Author</sys:String>
+	<sys:String x:Key="String.LogProperty.Level">Level</sys:String>
+	<sys:String x:Key="String.LogProperty.Message">Message</sys:String>
+	<sys:String x:Key="String.LogProperty.ProcessId">PID</sys:String>
+	<sys:String x:Key="String.LogProperty.ProcessName">Process</sys:String>
+	<sys:String x:Key="String.LogProperty.SourceName">Source</sys:String>
+	<sys:String x:Key="String.LogProperty.Tag">Tag</sys:String>
+	<sys:String x:Key="String.LogProperty.ThreadId">TID</sys:String>
+	<sys:String x:Key="String.LogProperty.ThreadName">Thread</sys:String>
+	<sys:String x:Key="String.LogProperty.Timestamp">Timestamp</sys:String>
+	<sys:String x:Key="String.LogProperty.TimestampString">Timestamp</sys:String>
+	<sys:String x:Key="String.LogProperty.UserId">UID</sys:String>
+	<sys:String x:Key="String.LogProperty.UserName">User</sys:String>
 
 	<!-- MainWindow -->
 	<sys:String x:Key="String.MainWindow.CloseSession">Close this tab</sys:String>
