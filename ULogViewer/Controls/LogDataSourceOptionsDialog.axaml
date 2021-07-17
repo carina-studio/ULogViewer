@@ -2,6 +2,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+				xmlns:ia="using:Avalonia.Xaml.Interactivity"
+				xmlns:iaCore="using:Avalonia.Xaml.Interactions.Core"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.LogDataSourceOptionsDialog"
 				Classes="Dialog"
@@ -9,6 +11,18 @@
         Title="{DynamicResource String.LogDataSourceOptionsDialog.Title}"
 				Width="{StaticResource Double.LogDataSourceOptionsDialog.Width}">
 
+	<!-- Styles -->
+	<Window.Styles>
+		<Style Selector="ListBox">
+			<Setter Property="BorderThickness" Value="1"/>
+		</Style>
+		<Style Selector="ListBoxItem">
+			<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+			<Setter Property="Padding" Value="{StaticResource Thickness.Dialog.ListBox.Item.WithInPlaceActions.Padding}"/>
+		</Style>
+	</Window.Styles>
+	
+	<!-- Content -->
 	<DockPanel>
 
 		<!-- Control buttons -->
@@ -20,9 +34,72 @@
 		</Border>
 
 		<!-- Content -->
-		<StackPanel Margin="{StaticResource Thickness.Dialog.Content.Padding}" Orientation="Vertical">
+		<Panel Margin="{StaticResource Thickness.Dialog.Content.Padding}">
+
+			<!-- Standard output -->
+			<StackPanel HorizontalAlignment="Stretch" IsVisible="False" Orientation="Vertical">
+
+				<!-- Behaviors -->
+				<ia:Interaction.Behaviors>
+					<iaCore:DataTriggerBehavior Binding="{Binding $parent[Window].UnderlyingLogDataSource}" ComparisonCondition="Equal" Value="StandardOutput">
+						<iaCore:ChangePropertyAction PropertyName="IsVisible" Value="True"/>
+					</iaCore:DataTriggerBehavior>
+				</ia:Interaction.Behaviors>
+
+				<!-- Command -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogDataSourceOptionsDialog.Command}"/>
+				<TextBox Name="commandTextBox" PropertyChanged="OnEditorControlPropertyChanged"/>
+				<Separator Classes="Dialog_Separator_Horizontal"/>
+
+				<!-- Working directory -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogDataSourceOptionsDialog.WorkingDirectory}"/>
+				<Grid ColumnDefinitions="*,Auto">
+					<TextBox Name="workingDirectoryTextBox"/>
+					<Button Classes="Browse" Command="{Binding $parent[Window].SelectWorkingDirectory}" Grid.Column="1"/>
+				</Grid>
+				<Separator Classes="Dialog_Separator_Horizontal"/>
+
+				<!-- Setup commands -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogDataSourceOptionsDialog.SetupCommands}"/>
+				<ListBox Name="setupCommandsListBox" Height="{StaticResource Double.LogDataSourceOptionsDialog.CommandListBox.Height}" Items="{Binding $parent[Window].setupCommands}" VirtualizationMode="None">
+					<ListBox.ItemTemplate>
+						<DataTemplate>
+							<Grid ColumnDefinitions="*,Auto">
+								<TextBlock Text="{Binding}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"/>
+								<StackPanel Grid.Column="1" Orientation="Horizontal">
+									<Button Classes="InPlaceAction" ToolTip.Tip="{DynamicResource String.Common.Delete}">
+										<Border Classes="InPlaceAction">
+											<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Delete}"/>
+										</Border>
+									</Button>
+									<Button Classes="InPlaceAction" ToolTip.Tip="{DynamicResource String.Common.MoveUp}">
+										<Border Classes="InPlaceAction">
+											<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.MoveUp}"/>
+										</Border>
+									</Button>
+									<Button Classes="InPlaceAction" ToolTip.Tip="{DynamicResource String.Common.MoveDown}">
+										<Border Classes="InPlaceAction">
+											<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.MoveDown}"/>
+										</Border>
+									</Button>
+								</StackPanel>
+							</Grid>
+						</DataTemplate>
+					</ListBox.ItemTemplate>
+				</ListBox>
+				<Button Classes="ListAction" Command="{Binding $parent[Window].AddSetupCommand}" Content="{DynamicResource String.Common.Add}"/>
+				<Separator Classes="Dialog_Separator_Horizontal"/>
+
+				<!-- Teardown commands -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogDataSourceOptionsDialog.TeardownCommands}"/>
+				<ListBox Name="teardownCommandsListBox" Height="{StaticResource Double.LogDataSourceOptionsDialog.CommandListBox.Height}" Items="{Binding $parent[Window].teardownCommands}" VirtualizationMode="None">
+
+				</ListBox>
+				<Button Classes="ListAction" Command="{Binding $parent[Window].AddTeardownCommand}" Content="{DynamicResource String.Common.Add}"/>
+				
+			</StackPanel>
 			
-		</StackPanel>
+		</Panel>
 		
 	</DockPanel>
   

@@ -3,12 +3,14 @@
 										xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
 	<!-- Common -->
-	<sys:String x:Key="String.Common.Browse">Browse...</sys:String>
+	<sys:String x:Key="String.Common.Add">Add</sys:String>
 	<sys:String x:Key="String.Common.Cancel">Cancel</sys:String>
 	<sys:String x:Key="String.Common.Delete">Delete</sys:String>
 	<sys:String x:Key="String.Common.Edit">Edit</sys:String>
 	<sys:String x:Key="String.Common.Empty">Empty</sys:String>
 	<sys:String x:Key="String.Common.KnowMoreAbout">Know more about</sys:String>
+	<sys:String x:Key="String.Common.MoveDown">Move down</sys:String>
+	<sys:String x:Key="String.Common.MoveUp">Move up</sys:String>
 	<sys:String x:Key="String.Common.No">No</sys:String>
 	<sys:String x:Key="String.Common.OK">OK</sys:String>
 	<sys:String x:Key="String.Common.Options">Options</sys:String>

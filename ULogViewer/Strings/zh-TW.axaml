@@ -3,12 +3,14 @@
 										xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
 	<!-- Common -->
-	<sys:String x:Key="String.Common.Browse">瀏覽...</sys:String>
+	<sys:String x:Key="String.Common.Add">新增</sys:String>
 	<sys:String x:Key="String.Common.Cancel">取消</sys:String>
 	<sys:String x:Key="String.Common.Delete">刪除</sys:String>
 	<sys:String x:Key="String.Common.Edit">編輯</sys:String>
 	<sys:String x:Key="String.Common.Empty">空</sys:String>
 	<sys:String x:Key="String.Common.KnowMoreAbout">了解更多</sys:String>
+	<sys:String x:Key="String.Common.MoveDown">下移</sys:String>
+	<sys:String x:Key="String.Common.MoveUp">上移</sys:String>
 	<sys:String x:Key="String.Common.No">否</sys:String>
 	<sys:String x:Key="String.Common.OK">好</sys:String>
 	<sys:String x:Key="String.Common.Options">選項</sys:String>

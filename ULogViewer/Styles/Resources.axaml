@@ -2,6 +2,9 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 										xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
+	<!-- Browse -->
+	<Thickness x:Key="Thickness.Browse.Margin">5,0,0,0</Thickness>
+	
 	<!-- Dialog -->
 	<sys:Double x:Key="Double.Dialog.ControlButton.MinWidth">100</sys:Double>
 	<sys:Double x:Key="Double.Dialog.Label.Header1.FontSize">24</sys:Double>
@@ -15,6 +18,8 @@
 	<Thickness x:Key="Thickness.Dialog.Label.Header1.Margin">0,0,0,5</Thickness>
 	<Thickness x:Key="Thickness.Dialog.Label.Header2.Margin">0,0,0,5</Thickness>
 	<Thickness x:Key="Thickness.Dialog.Label.Margin">0,0,0,5</Thickness>
+	<Thickness x:Key="Thickness.Dialog.ListBox.Item.Padding">10,5,10,5</Thickness>
+	<Thickness x:Key="Thickness.Dialog.ListBox.Item.WithInPlaceActions.Padding">10,5,20,5</Thickness>
 	
 	<!-- GridSplitter -->
 	<sys:Double x:Key="Double.GridSplitter.Thickness">5</sys:Double>
@@ -24,8 +29,14 @@
 	<Thickness x:Key="Thickness.InPlaceAction.Margin">3,0,0,0</Thickness>
 	<Thickness x:Key="Thickness.InPlaceAction.Padding">3</Thickness>
 
+	<!-- ListAction -->
+	<sys:Double x:Key="Double.ListAction.MinWidth">80</sys:Double>
+	<Thickness x:Key="Thickness.ListAction.Padding">10,5,10,5</Thickness>
+	<Thickness x:Key="Thickness.ListAction.Margin">3,5,0,0</Thickness>
+
 	<!-- LogDataSourceOptionsDialog -->
 	<sys:Double x:Key="Double.LogDataSourceOptionsDialog.Width">500</sys:Double>
+	<sys:Double x:Key="Double.LogDataSourceOptionsDialog.CommandListBox.Height">70</sys:Double>
 
 	<!-- LogPatternEditorDialog -->
 	<sys:Double x:Key="Double.LogPatternEditorDialog.Width">500</sys:Double>

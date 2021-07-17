@@ -1137,8 +1137,14 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Called when test button clicked.
-		void OnTestButtonClick(object? sender, RoutedEventArgs e)
-		{ }
+		async void OnTestButtonClick(object? sender, RoutedEventArgs e)
+		{
+			var window = this.FindLogicalAncestorOfType<Window>().AsNonNull();
+			var result = await new LogDataSourceOptionsDialog()
+			{
+				UnderlyingLogDataSource = Logs.DataSources.UnderlyingLogDataSource.StandardOutput
+			}.ShowDialog<object>(window);
+		}
 
 
 		// Sorted predefined log text filters.
