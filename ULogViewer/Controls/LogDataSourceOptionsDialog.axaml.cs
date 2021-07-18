@@ -2,10 +2,13 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.VisualTree;
+using CarinaStudio.Collections;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Text;
 
 namespace CarinaStudio.ULogViewer.Controls
 {
@@ -17,11 +20,13 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// <summary>
 		/// Property of <see cref="UnderlyingLogDataSource"/>.
 		/// </summary>
-		public static readonly AvaloniaProperty<UnderlyingLogDataSource> UnderlyingLogDataSourceProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, UnderlyingLogDataSource>(nameof(UnderlyingLogDataSource), UnderlyingLogDataSource.File);
+		public static readonly AvaloniaProperty<UnderlyingLogDataSource> UnderlyingLogDataSourceProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, UnderlyingLogDataSource>(nameof(UnderlyingLogDataSource), UnderlyingLogDataSource.Undefined);
 
 
 		// Fields.
 		readonly TextBox commandTextBox;
+		readonly ComboBox encodingComboBox;
+		readonly TextBox fileNameTextBox;
 		readonly ObservableCollection<string> setupCommands = new ObservableCollection<string>();
 		readonly ListBox setupCommandsListBox;
 		readonly ObservableCollection<string> teardownCommands = new ObservableCollection<string>();
@@ -36,6 +41,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			InitializeComponent();
 			this.commandTextBox = this.FindControl<TextBox>("commandTextBox").AsNonNull();
+			this.encodingComboBox = this.FindControl<ComboBox>("encodingComboBox").AsNonNull();
+			this.fileNameTextBox = this.FindControl<TextBox>("fileNameTextBox").AsNonNull();
 			this.setupCommandsListBox = this.FindControl<ListBox>("setupCommandsListBox").AsNonNull();
 			this.teardownCommandsListBox = this.FindControl<ListBox>("teardownCommandsListBox").AsNonNull();
 			this.workingDirectoryTextBox = this.FindControl<TextBox>("workingDirectoryTextBox").AsNonNull();
@@ -66,6 +73,10 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (!string.IsNullOrEmpty(command))
 				this.teardownCommands.Add(command);
 		}
+
+
+		// All encodings.
+		IList<EncodingInfo> Encodings { get; } = Encoding.GetEncodings();
 
 
 		// Edit given setup or teardown command.
@@ -144,6 +155,11 @@ namespace CarinaStudio.ULogViewer.Controls
 			switch (this.UnderlyingLogDataSource)
 			{
 				case UnderlyingLogDataSource.File:
+					options.FileName = this.fileNameTextBox.Text?.Trim();
+					options.Encoding = this.encodingComboBox.SelectedItem?.Let(it =>
+					{
+						return ((EncodingInfo)it).GetEncoding();
+					});
 					break;
 				case UnderlyingLogDataSource.StandardOutput:
 					options.Command = this.commandTextBox.Text.AsNonNull().Trim();
@@ -159,14 +175,23 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when opened.
 		protected override void OnOpened(EventArgs e)
 		{
-			base.OnOpened(e);
 			var options = this.Options;
 			switch (this.UnderlyingLogDataSource)
 			{
 				case UnderlyingLogDataSource.File:
+					this.fileNameTextBox.Text = options.FileName?.Trim();
+					this.encodingComboBox.SelectedItem = options.Encoding?.Let(it =>
+					{
+						return this.Encodings.FirstOrDefault(info => info.CodePage == it.CodePage);
+					}) ?? Global.Run(() =>
+					{
+						var utf8CodePage = Encoding.UTF8.CodePage;
+						return this.Encodings.FirstOrDefault(info => info.CodePage == utf8CodePage) ?? this.Encodings[0];
+					});
+					this.fileNameTextBox.Focus();
 					break;
 				case UnderlyingLogDataSource.StandardOutput:
-					this.commandTextBox.Text = options.Command;
+					this.commandTextBox.Text = options.Command?.Trim();
 					foreach (var command in options.SetupCommands)
 						this.setupCommands.Add(command);
 					foreach (var command in options.TeardownCommands)
@@ -175,6 +200,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.commandTextBox.Focus();
 					break;
 			}
+			base.OnOpened(e);
 		}
 
 
@@ -186,7 +212,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			switch (this.UnderlyingLogDataSource)
 			{
 				case UnderlyingLogDataSource.File:
-					return false;
+					return true;
 				case UnderlyingLogDataSource.StandardOutput:
 					return !string.IsNullOrEmpty(this.commandTextBox.Text?.Trim());
 				default:
@@ -214,6 +240,19 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.setupCommands.RemoveAt(index);
 			else
 				this.teardownCommands.RemoveAt(index);
+		}
+
+
+		// Select file name.
+		async void SelectFileName()
+		{
+			var fileNames = await new OpenFileDialog()
+			{
+				InitialFileName = this.fileNameTextBox.Text?.Trim()
+			}.ShowAsync(this);
+			if (fileNames == null || fileNames.IsEmpty())
+				return;
+			this.fileNameTextBox.Text = fileNames[0];
 		}
 
 

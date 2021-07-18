@@ -72,16 +72,42 @@
 		<!-- Content -->
 		<Panel Margin="{StaticResource Thickness.Dialog.Content.Padding}">
 
+			<!-- Behaviors -->
+			<ia:Interaction.Behaviors>
+				<iaCore:DataTriggerBehavior Binding="{Binding $parent[Window].UnderlyingLogDataSource}" ComparisonCondition="Equal" Value="File">
+					<iaCore:ChangePropertyAction PropertyName="IsVisible" TargetObject="{Binding #fileParamsPanel}" Value="True"/>
+				</iaCore:DataTriggerBehavior>
+				<iaCore:DataTriggerBehavior Binding="{Binding $parent[Window].UnderlyingLogDataSource}" ComparisonCondition="Equal" Value="StandardOutput">
+					<iaCore:ChangePropertyAction PropertyName="IsVisible" TargetObject="{Binding #stdoutParamsPanel}" Value="True"/>
+				</iaCore:DataTriggerBehavior>
+			</ia:Interaction.Behaviors>
+
+			<!-- File -->
+			<StackPanel Name="fileParamsPanel" HorizontalAlignment="Stretch" IsVisible="False" Orientation="Vertical">
+
+				<!--File name -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogDataSourceOptionsDialog.FileName}"/>
+				<Grid ColumnDefinitions="*,Auto">
+					<TextBox Name="fileNameTextBox"/>
+					<Button Classes="Browse" Command="{Binding $parent[Window].SelectFileName}" Grid.Column="1"/>
+				</Grid>
+				<Separator Classes="Dialog_Separator_Horizontal"/>
+
+				<!-- Encoding -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogDataSourceOptionsDialog.Encoding}"/>
+				<ComboBox Name="encodingComboBox" HorizontalAlignment="Stretch" Items="{Binding $parent[Window].Encodings}">
+					<ComboBox.ItemTemplate>
+						<DataTemplate>
+							<TextBlock Text="{Binding DisplayName}"/>
+						</DataTemplate>
+					</ComboBox.ItemTemplate>
+				</ComboBox>
+				
+			</StackPanel>
+
 			<!-- Standard output -->
-			<StackPanel HorizontalAlignment="Stretch" IsVisible="False" Orientation="Vertical">
-
-				<!-- Behaviors -->
-				<ia:Interaction.Behaviors>
-					<iaCore:DataTriggerBehavior Binding="{Binding $parent[Window].UnderlyingLogDataSource}" ComparisonCondition="Equal" Value="StandardOutput">
-						<iaCore:ChangePropertyAction PropertyName="IsVisible" Value="True"/>
-					</iaCore:DataTriggerBehavior>
-				</ia:Interaction.Behaviors>
-
+			<StackPanel Name="stdoutParamsPanel" HorizontalAlignment="Stretch" IsVisible="False" Orientation="Vertical">
+				
 				<!-- Command -->
 				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogDataSourceOptionsDialog.Command}"/>
 				<TextBox Name="commandTextBox" PropertyChanged="OnEditorControlPropertyChanged"/>
