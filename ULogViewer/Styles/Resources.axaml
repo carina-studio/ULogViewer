@@ -10,6 +10,7 @@
 	<sys:Double x:Key="Double.Dialog.Label.Header1.FontSize">24</sys:Double>
 	<sys:Double x:Key="Double.Dialog.Label.Header2.FontSize">20</sys:Double>
 	<sys:Double x:Key="Double.Dialog.Separator.Size">15</sys:Double>
+	<sys:Double x:Key="Double.Dialog.Separator.Size.Large">30</sys:Double>
 	<Thickness x:Key="Thickness.Dialog.Content.Padding">15</Thickness>
 	<Thickness x:Key="Thickness.Dialog.ControlButton.Margin">3,0,3,0</Thickness>
 	<Thickness x:Key="Thickness.Dialog.ControlButton.Margin.WithSeparator">3,0,13,0</Thickness>
@@ -46,6 +47,7 @@
 	<!-- LogProfileEditorDialog -->
 	<sys:Double x:Key="Double.LogProfileEditorDialog.Content.MaxHeight">600</sys:Double>
 	<sys:Double x:Key="Double.LogProfileEditorDialog.IconComboBox.Icon.Size">18</sys:Double>
+	<sys:Double x:Key="Double.LogProfileEditorDialog.ListBox.Height">100</sys:Double>
 	<sys:Double x:Key="Double.LogProfileEditorDialog.Width">500</sys:Double>
 	<Thickness x:Key="Thickness.LogProfileEditorDialog.IconComboBox.Icon.Margin">0,0,10,0</Thickness>
 

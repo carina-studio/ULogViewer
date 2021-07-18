@@ -46,7 +46,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.dataSourceProviderComboBox = this.FindControl<ComboBox>("dataSourceProviderComboBox").AsNonNull();
 			this.iconComboBox = this.FindControl<ComboBox>("iconComboBox").AsNonNull();
 			this.nameTextBox = this.FindControl<TextBox>("nameTextBox").AsNonNull();
-			this.workingDirNeededSwitch = this.FindControl<ToggleSwitch>("nameworkingDirNeededSwitchTextBox").AsNonNull();
+			this.workingDirNeededSwitch = this.FindControl<ToggleSwitch>("workingDirNeededSwitch").AsNonNull();
 		}
 
 

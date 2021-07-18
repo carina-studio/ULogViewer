@@ -13,6 +13,19 @@
 				SizeToContent="Height"
 				Width="{StaticResource Double.LogProfileEditorDialog.Width}">
 
+	<!-- Styles -->
+	<Window.Styles>
+		<Style Selector="ListBox">
+			<Setter Property="BorderThickness" Value="1"/>
+			<Setter Property="Height" Value="{StaticResource Double.LogProfileEditorDialog.ListBox.Height}"/>
+			<Setter Property="VirtualizationMode" Value="None"/>
+		</Style>
+		<Style Selector="ListBoxItem">
+			<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+			<Setter Property="Padding" Value="{StaticResource Thickness.Dialog.ListBox.Item.WithInPlaceActions.Padding}"/>
+		</Style>
+	</Window.Styles>
+
 	<!-- Content -->
 	<DockPanel>
 
@@ -25,9 +38,12 @@
 		</Border>
 
 		<!-- Content -->
-		<ScrollViewer HorizontalScrollBarVisibility="Disabled" MaxHeight="{StaticResource Double.LogProfileEditorDialog.Content.MaxHeight}" Padding="{StaticResource Thickness.Dialog.Content.Padding}">
-			<StackPanel HorizontalAlignment="Stretch" Orientation="Vertical">
+		<ScrollViewer HorizontalScrollBarVisibility="Disabled" MaxHeight="{StaticResource Double.LogProfileEditorDialog.Content.MaxHeight}">
+			<StackPanel HorizontalAlignment="Stretch" Margin="{StaticResource Thickness.Dialog.Content.Padding}" Orientation="Vertical">
 
+				<!-- Header -->
+				<TextBlock Classes="Dialog_Label_Header1" Text="{DynamicResource String.LogProfileEditorDialog.Common}"/>
+				
 				<!-- Name -->
 				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.Name}"/>
 				<TextBox Name="nameTextBox" MaxLength="256" PropertyChanged="OnEditorControlPropertyChanged"/>
@@ -47,7 +63,10 @@
 						</DataTemplate>
 					</ComboBox.ItemTemplate>
 				</ComboBox>
-				<Separator Classes="Dialog_Separator_Horizontal"/>
+				<Separator Classes="Dialog_Separator_Large_Horizontal"/>
+
+				<!-- Header -->
+				<TextBlock Classes="Dialog_Label_Header1" Text="{DynamicResource String.LogProfileEditorDialog.LogReading}"/>
 
 				<!-- DataSource -->
 				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.DataSourceProvider}"/>
@@ -78,6 +97,46 @@
 					<ToggleSwitch Name="workingDirNeededSwitch"/>
 					<Separator Classes="Dialog_Separator_Horizontal"/>
 				</StackPanel>
+
+				<!-- Log level map -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.LogLevelMap}"/>
+				<ListBox Name="logLevelMapListBox"/>
+				<Button Classes="ListAction" Content="{DynamicResource String.Common.Add}"/>
+				<Separator Classes="Dialog_Separator_Horizontal"/>
+
+				<!-- Log patterns -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.LogPatterns}"/>
+				<ListBox Name="logPatternListBox"/>
+				<Button Classes="ListAction" Content="{DynamicResource String.Common.Add}"/>
+				<Separator Classes="Dialog_Separator_Horizontal"/>
+
+				<!-- Timestamp format for reading -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.TimestampFormatForReading}"/>
+				<TextBox Name="timestampFormatForReadingTextBox" MaxLength="256"/>
+				<Separator Classes="Dialog_Separator_Large_Horizontal"/>
+
+				<!-- Header -->
+				<TextBlock Classes="Dialog_Label_Header1" Text="{DynamicResource String.LogProfileEditorDialog.LogDisplaying}"/>
+
+				<!-- Visible log properties -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.VisibleLogProperties}"/>
+				<ListBox Name="visibleLogPropertyListBox"/>
+				<Button Classes="ListAction" Content="{DynamicResource String.Common.Add}"/>
+				<Separator Classes="Dialog_Separator_Horizontal"/>
+
+				<!-- Timestamp format for displaying -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.TimestampFormatForDisplaying}"/>
+				<TextBox Name="timestampFormatForDisplayingTextBox" MaxLength="256"/>
+				<Separator Classes="Dialog_Separator_Horizontal"/>
+
+				<!-- Sort key -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.SortKey}"/>
+				<ComboBox Name="sortKeyComboBox" HorizontalAlignment="Stretch"/>
+				<Separator Classes="Dialog_Separator_Horizontal"/>
+
+				<!-- Sort direction -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.SortDirection}"/>
+				<ComboBox Name="sortDirectionComboBox" HorizontalAlignment="Stretch"/>
 
 			</StackPanel>
 		</ScrollViewer>
