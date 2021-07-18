@@ -2,8 +2,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+				xmlns:ia="using:Avalonia.Xaml.Interactivity"
+				xmlns:iaCore="using:Avalonia.Xaml.Interactions.Core"
 				xmlns:appControls="clr-namespace:CarinaStudio.ULogViewer.Controls;assembly=ULogViewer"
 				xmlns:appConverters="clr-namespace:CarinaStudio.ULogViewer.Converters;assembly=ULogViewer"
+				xmlns:appDataSources="clr-namespace:CarinaStudio.ULogViewer.Logs.DataSources;assembly=ULogViewer"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.LogProfileEditorDialog"
 				Classes="Dialog"
@@ -44,7 +47,37 @@
 						</DataTemplate>
 					</ComboBox.ItemTemplate>
 				</ComboBox>
-				<Separator Classes="Dialog_Separtor_Horizontal"/>
+				<Separator Classes="Dialog_Separator_Horizontal"/>
+
+				<!-- DataSource -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.DataSourceProvider}"/>
+				<Grid ColumnDefinitions="*,Auto">
+					<ComboBox Name="dataSourceProviderComboBox" HorizontalAlignment="Stretch" Items="{x:Static appDataSources:LogDataSourceProviders.All}" SelectionChanged="OnDataSourceProviderComboBoxSelectionChanged">
+						<ComboBox.ItemTemplate>
+							<DataTemplate>
+								<TextBlock Text="{Binding DisplayName}" TextTrimming="CharacterEllipsis"/>
+							</DataTemplate>
+						</ComboBox.ItemTemplate>
+					</ComboBox>
+					<Button Classes="Browse" Command="{Binding $parent[Window].SetDataSourceOptions}" Content="{DynamicResource String.LogProfileEditorDialog.DataSourceOptions}" Grid.Column="1"/>
+				</Grid>
+				<TextBlock Classes="Dialog_Description_Error" IsVisible="{Binding !$parent[Window].IsValidDataSourceOptions}" Text="{DynamicResource String.LogProfileEditorDialog.InvalidDataSourceOptions}"/>
+				<Separator Classes="Dialog_Separator_Horizontal"/>
+
+				<!-- Is working directory needed -->
+				<StackPanel HorizontalAlignment="Stretch" Orientation="Vertical">
+					<ia:Interaction.Behaviors>
+						<iaCore:DataTriggerBehavior Binding="{Binding $parent[Window].UnderlyingDataSource}" ComparisonCondition="Equal" Value="StandardOutput">
+							<iaCore:ChangePropertyAction PropertyName="IsEnabled" Value="True"/>
+						</iaCore:DataTriggerBehavior>
+						<iaCore:DataTriggerBehavior Binding="{Binding $parent[Window].UnderlyingDataSource}" ComparisonCondition="NotEqual" Value="StandardOutput">
+							<iaCore:ChangePropertyAction PropertyName="IsEnabled" Value="False"/>
+						</iaCore:DataTriggerBehavior>
+					</ia:Interaction.Behaviors>
+					<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.IsWorkingDirectoryNeeded}"/>
+					<ToggleSwitch Name="workingDirNeededSwitch"/>
+					<Separator Classes="Dialog_Separator_Horizontal"/>
+				</StackPanel>
 
 			</StackPanel>
 		</ScrollViewer>

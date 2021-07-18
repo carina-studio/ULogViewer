@@ -65,8 +65,10 @@
 
 	<!-- LogProfileEditorDialog -->
 	<sys:String x:Key="String.LogProfileEditorDialog.ColorIndicator">Color indicator</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.DataSourceOptions">Parameters...</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.DataSourceProvider">Data source</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.Icon">Icon</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.InvalidDataSourceOptions">Need to set valid parameters</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.IsWorkingDirectoryNeeded">Need to select working directory</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogLevelMap">Mapping of log level</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogPatterns">Log line patterns</sys:String>

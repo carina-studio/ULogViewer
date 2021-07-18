@@ -11,6 +11,7 @@
 			<!-- Dialog -->
 			<SolidColorBrush x:Key="Brush.Dialog.Background">#1e1e1e</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.Dialog.ControlButtonsPanel.Background">#141414</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.Dialog.Description.Foreground">#7fffffff</SolidColorBrush>
 
 			<!-- DisplayableLog -->
 			<SolidColorBrush x:Key="Brush.DisplayableLog.Level.Debug">#32aaff</SolidColorBrush>
