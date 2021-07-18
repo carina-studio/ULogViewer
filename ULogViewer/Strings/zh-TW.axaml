@@ -47,6 +47,33 @@
 	<sys:String x:Key="String.LogPatternEditorDialog.Regex">格式 (必須)</sys:String>
 	<sys:String x:Key="String.LogPatternEditorDialog.Title">日誌行格式</sys:String>
 
+	<!-- LogProfileIcon -->
+	<sys:String x:Key="String.LogProfileIcon.Cloud">雲端</sys:String>
+	<sys:String x:Key="String.LogProfileIcon.Code">程式碼</sys:String>
+	<sys:String x:Key="String.LogProfileIcon.Computer">電腦</sys:String>
+	<sys:String x:Key="String.LogProfileIcon.Debug">偵錯</sys:String>
+	<sys:String x:Key="String.LogProfileIcon.File">檔案</sys:String>
+	<sys:String x:Key="String.LogProfileIcon.Network">網路</sys:String>
+	<sys:String x:Key="String.LogProfileIcon.Phone">手機</sys:String>
+	<sys:String x:Key="String.LogProfileIcon.Terminal">終端機</sys:String>
+	<sys:String x:Key="String.LogProfileIcon.VersionControl">版本控制</sys:String>
+
+	<!-- LogProfileEditorDialog -->
+	<sys:String x:Key="String.LogProfileEditorDialog.ColorIndicator">色彩指示</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.DataSourceProvider">資料來源</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.Icon">圖示</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.IsWorkingDirectoryNeeded">必須選擇工作目錄</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.LogLevelMap">日誌等級對照表</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.LogPatterns">日誌行格式</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.Name">名稱 (必須)</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.SortDirection">日誌排序方向</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.SortKey">日誌排序依據</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.TimestampFormatForDisplaying">日誌時間顯示格式</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.TimestampFormatForReading">日誌時間讀取格式</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.Title.Create">建立新的日誌類型</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.Title.Edit">編輯日誌類型</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.VisibleLogProperties">顯示的日誌屬性</sys:String>
+
 	<!-- LogProfileSelectionDialog -->
 	<sys:String x:Key="String.LogProfileSelectionDialog.AddLogProfile">建立...</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.AllLogProfiles">所有日誌類型</sys:String>

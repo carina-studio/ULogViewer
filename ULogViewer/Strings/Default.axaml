@@ -48,6 +48,37 @@
 	<sys:String x:Key="String.LogPatternEditorDialog.Regex">Pattern (required)</sys:String>
 	<sys:String x:Key="String.LogPatternEditorDialog.Title">Pattern of log line</sys:String>
 
+	<!-- LogProfileIcon -->
+	<sys:String x:Key="String.LogProfileIcon.Android">Android</sys:String>
+	<sys:String x:Key="String.LogProfileIcon.Apple">Apple</sys:String>
+	<sys:String x:Key="String.LogProfileIcon.Cloud">Cloud</sys:String>
+	<sys:String x:Key="String.LogProfileIcon.Code">Code</sys:String>
+	<sys:String x:Key="String.LogProfileIcon.Computer">Computer</sys:String>
+	<sys:String x:Key="String.LogProfileIcon.Debug">Debug</sys:String>
+	<sys:String x:Key="String.LogProfileIcon.File">File</sys:String>
+	<sys:String x:Key="String.LogProfileIcon.Network">Network</sys:String>
+	<sys:String x:Key="String.LogProfileIcon.Phone">Mobile phone</sys:String>
+	<sys:String x:Key="String.LogProfileIcon.Terminal">Terminal</sys:String>
+	<sys:String x:Key="String.LogProfileIcon.Usb">USB</sys:String>
+	<sys:String x:Key="String.LogProfileIcon.VersionControl">Version control</sys:String>
+	<sys:String x:Key="String.LogProfileIcon.Windows">Windows</sys:String>
+
+	<!-- LogProfileEditorDialog -->
+	<sys:String x:Key="String.LogProfileEditorDialog.ColorIndicator">Color indicator</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.DataSourceProvider">Data source</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.Icon">Icon</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.IsWorkingDirectoryNeeded">Need to select working directory</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.LogLevelMap">Mapping of log level</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.LogPatterns">Log line patterns</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.Name">Name (required)</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.SortDirection">Sort direction of log</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.SortKey">Sort key of log</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.TimestampFormatForDisplaying">Format of timestamp for displaying</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.TimestampFormatForReading">Format of timestamp for reading</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.Title.Create">Create new log profile</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.Title.Edit">Edit log profile</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.VisibleLogProperties">Log properties to show</sys:String>
+
 	<!-- LogProfileSelectionDialog -->
 	<sys:String x:Key="String.LogProfileSelectionDialog.AddLogProfile">Create...</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.AllLogProfiles">All profiles</sys:String>

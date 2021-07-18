@@ -79,9 +79,12 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Called when clicking add log profile.
-		void OnAddLogProfileClick(object? sender, RoutedEventArgs e)
+		async void OnAddLogProfileClick(object? sender, RoutedEventArgs e)
 		{
-			//
+			// create new profile
+			var profile = await new LogProfileEditorDialog().ShowDialog<LogProfile>(this);
+			if (profile == null)
+				return;
 		}
 
 
