@@ -13,13 +13,49 @@
 
 	<!-- Styles -->
 	<Window.Styles>
+		
 		<Style Selector="ListBox">
 			<Setter Property="BorderThickness" Value="1"/>
+		</Style>
+		<Style Selector="ListBox.Commands">
+			<Setter Property="ItemTemplate">
+				<Setter.Value>
+					<DataTemplate>
+						<Grid ColumnDefinitions="*,Auto">
+							<TextBlock Text="{Binding}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"/>
+							<Border Classes="InPlaceAction_Reserved"/>
+							<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
+								<Button Classes="InPlaceAction" Command="{Binding $parent[Window].RemoveSetupTeardownCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String.Common.Delete}">
+									<Border Classes="InPlaceAction">
+										<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Delete}"/>
+									</Border>
+								</Button>
+								<Button Classes="InPlaceAction" Command="{Binding $parent[Window].EditSetupTeardownCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String.Common.Edit}">
+									<Border Classes="InPlaceAction">
+										<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Edit}"/>
+									</Border>
+								</Button>
+								<Button Classes="InPlaceAction" Command="{Binding $parent[Window].MoveSetupTeardownCommandUp}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String.Common.MoveUp}">
+									<Border Classes="InPlaceAction">
+										<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.MoveUp}"/>
+									</Border>
+								</Button>
+								<Button Classes="InPlaceAction" Command="{Binding $parent[Window].MoveSetupTeardownCommandDown}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String.Common.MoveDown}">
+									<Border Classes="InPlaceAction">
+										<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.MoveDown}"/>
+									</Border>
+								</Button>
+							</StackPanel>
+						</Grid>
+					</DataTemplate>
+				</Setter.Value>
+			</Setter>
 		</Style>
 		<Style Selector="ListBoxItem">
 			<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
 			<Setter Property="Padding" Value="{StaticResource Thickness.Dialog.ListBox.Item.WithInPlaceActions.Padding}"/>
 		</Style>
+		
 	</Window.Styles>
 	
 	<!-- Content -->
@@ -61,44 +97,14 @@
 
 				<!-- Setup commands -->
 				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogDataSourceOptionsDialog.SetupCommands}"/>
-				<ListBox Name="setupCommandsListBox" Height="{StaticResource Double.LogDataSourceOptionsDialog.CommandListBox.Height}" Items="{Binding $parent[Window].setupCommands}" VirtualizationMode="None">
-					<ListBox.ItemTemplate>
-						<DataTemplate>
-							<Grid ColumnDefinitions="*,Auto">
-								<TextBlock Text="{Binding}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"/>
-								<Border Classes="InPlaceAction_Reserved"/>
-								<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
-									<Button Classes="InPlaceAction" ToolTip.Tip="{DynamicResource String.Common.Delete}">
-										<Border Classes="InPlaceAction">
-											<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Delete}"/>
-										</Border>
-									</Button>
-									<Button Classes="InPlaceAction" ToolTip.Tip="{DynamicResource String.Common.Edit}">
-										<Border Classes="InPlaceAction">
-											<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Edit}"/>
-										</Border>
-									</Button>
-									<Button Classes="InPlaceAction" ToolTip.Tip="{DynamicResource String.Common.MoveUp}">
-										<Border Classes="InPlaceAction">
-											<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.MoveUp}"/>
-										</Border>
-									</Button>
-									<Button Classes="InPlaceAction" ToolTip.Tip="{DynamicResource String.Common.MoveDown}">
-										<Border Classes="InPlaceAction">
-											<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.MoveDown}"/>
-										</Border>
-									</Button>
-								</StackPanel>
-							</Grid>
-						</DataTemplate>
-					</ListBox.ItemTemplate>
+				<ListBox Name="setupCommandsListBox" Classes="Commands" Height="{StaticResource Double.LogDataSourceOptionsDialog.CommandListBox.Height}" Items="{Binding $parent[Window].SetupCommands}" VirtualizationMode="None">
 				</ListBox>
 				<Button Classes="ListAction" Command="{Binding $parent[Window].AddSetupCommand}" Content="{DynamicResource String.Common.Add}"/>
 				<Separator Classes="Dialog_Separator_Horizontal"/>
 
 				<!-- Teardown commands -->
 				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogDataSourceOptionsDialog.TeardownCommands}"/>
-				<ListBox Name="teardownCommandsListBox" Height="{StaticResource Double.LogDataSourceOptionsDialog.CommandListBox.Height}" Items="{Binding $parent[Window].teardownCommands}" VirtualizationMode="None">
+				<ListBox Name="teardownCommandsListBox" Classes="Commands" Height="{StaticResource Double.LogDataSourceOptionsDialog.CommandListBox.Height}" Items="{Binding $parent[Window].TeardownCommands}" VirtualizationMode="None">
 
 				</ListBox>
 				<Button Classes="ListAction" Command="{Binding $parent[Window].AddTeardownCommand}" Content="{DynamicResource String.Common.Add}"/>

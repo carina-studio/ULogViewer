@@ -1,8 +1,10 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using Avalonia.VisualTree;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace CarinaStudio.ULogViewer.Controls
@@ -42,16 +44,88 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Add setup command.
 		async void AddSetupCommand()
-		{ }
+		{
+			var command = (await new TextInputDialog()
+			{
+				Message = this.Application.GetString("LogDataSourceOptionsDialog.Command"),
+				Title = this.Application.GetString("LogDataSourceOptionsDialog.SetupCommands"),
+			}.ShowDialog<string>(this))?.Trim();
+			if (!string.IsNullOrEmpty(command))
+				this.setupCommands.Add(command);
+		}
 
 
 		// Add teardown command.
 		async void AddTeardownCommand()
-		{ }
+		{
+			var command = (await new TextInputDialog()
+			{
+				Message = this.Application.GetString("LogDataSourceOptionsDialog.Command"),
+				Title = this.Application.GetString("LogDataSourceOptionsDialog.TeardownCommands"),
+			}.ShowDialog<string>(this))?.Trim();
+			if (!string.IsNullOrEmpty(command))
+				this.teardownCommands.Add(command);
+		}
+
+
+		// Edit given setup or teardown command.
+		async void EditSetupTeardownCommand(ListBoxItem item)
+		{
+			// find index of command
+			var index = (item.GetVisualParent() as Panel)?.Children?.IndexOf(item) ?? -1;
+			if (index < 0)
+				return;
+
+			// edit
+			var isSetupCommand = (item.Parent == this.setupCommandsListBox);
+			var newCommand = (await new TextInputDialog()
+			{
+				Message = this.Application.GetString("LogDataSourceOptionsDialog.Command"),
+				Text = (item.DataContext as string),
+				Title = this.Application.GetString(isSetupCommand ? "LogDataSourceOptionsDialog.SetupCommands" : "LogDataSourceOptionsDialog.TeardownCommands"),
+			}.ShowDialog<string>(this))?.Trim();
+			if (string.IsNullOrEmpty(newCommand))
+				return;
+
+			// update command
+			if (isSetupCommand)
+				this.setupCommands[index] = newCommand;
+			else
+				this.teardownCommands[index] = newCommand;
+		}
 
 
 		// Initialize.
 		private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
+
+
+		// Move given setup or teardown command down.
+		void MoveSetupTeardownCommandDown(ListBoxItem item)
+		{
+			// find index of command
+			var index = (item.GetVisualParent() as Panel)?.Children?.IndexOf(item) ?? -1;
+			if (index < 0)
+				return;
+
+			// move command
+			var commands = (item.Parent == this.setupCommandsListBox ? this.setupCommands : this.teardownCommands);
+			if (index < commands.Count - 1)
+				commands.Move(index, index + 1);
+		}
+
+
+		// Move given setup or teardown command up.
+		void MoveSetupTeardownCommandUp(ListBoxItem item)
+		{
+			// find index of command
+			var index = (item.GetVisualParent() as Panel)?.Children?.IndexOf(item) ?? -1;
+			if (index <= 0)
+				return;
+
+			// move command
+			var commands = (item.Parent == this.setupCommandsListBox ? this.setupCommands : this.teardownCommands);
+			commands.Move(index, index - 1);
+		}
 
 
 		// Called when property of editor control changed.
@@ -127,6 +201,22 @@ namespace CarinaStudio.ULogViewer.Controls
 		public LogDataSourceOptions Options { get; set; }
 
 
+		// Remove given setup or teardown command.
+		void RemoveSetupTeardownCommand(ListBoxItem item)
+		{
+			// find index of command
+			var index = (item.GetVisualParent() as Panel)?.Children?.IndexOf(item) ?? -1;
+			if (index < 0)
+				return;
+
+			// remove command
+			if (item.Parent == this.setupCommandsListBox)
+				this.setupCommands.RemoveAt(index);
+			else
+				this.teardownCommands.RemoveAt(index);
+		}
+
+
 		// Select working directory.
 		async void SelectWorkingDirectory()
 		{
@@ -137,6 +227,14 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (!string.IsNullOrEmpty(dirPath))
 				this.workingDirectoryTextBox.Text = dirPath;
 		}
+
+
+		// Setup commands.
+		IList<string> SetupCommands { get => this.setupCommands; }
+
+
+		// Teardown commands.
+		IList<string> TeardownCommands { get => this.teardownCommands; }
 
 
 		/// <summary>
