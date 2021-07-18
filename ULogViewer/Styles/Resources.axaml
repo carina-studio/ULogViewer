@@ -107,5 +107,8 @@
 	<Thickness x:Key="Thickness.SessionView.ToolBar.LogTextFilter.Margin">5,0,5,0</Thickness>
 	<Thickness x:Key="Thickness.SessionView.ToolBar.Padding">5,5,5,2</Thickness>
 	<Thickness x:Key="Thickness.SessionView.ToolBar.Separator.Margin">1,2,1,2</Thickness>
+
+	<!-- TextInputDialog -->
+	<sys:Double x:Key="Double.TextInputDialog.Width">450</sys:Double>
 	
 </ResourceDictionary>
