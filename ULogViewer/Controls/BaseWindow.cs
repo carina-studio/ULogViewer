@@ -1,4 +1,5 @@
 ﻿using Avalonia;
+using Avalonia.Animation;
 using Avalonia.Controls;
 using CarinaStudio.Collections;
 using CarinaStudio.Threading;
@@ -60,7 +61,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		internal protected virtual void OnDialogClosed(BaseDialog dialog)
 		{
 			if (this.dialogs.Remove(dialog) && this.dialogs.IsEmpty())
+			{
+				(this.Content as Control)?.Let(it => it.Opacity = 1);
 				this.SetValue<bool>(HasDialogsProperty, false);
+			}
 		}
 
 
@@ -72,7 +76,26 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			this.dialogs.Add(dialog);
 			if (this.dialogs.Count == 1)
+			{
+				(this.Content as Control)?.Let(it => it.Opacity = 0.2);
 				this.SetValue<bool>(HasDialogsProperty, true);
+			}
+		}
+
+
+		// Called when property changed.
+		protected override void OnPropertyChanged<T>(AvaloniaPropertyChangedEventArgs<T> change)
+		{
+			base.OnPropertyChanged(change);
+			if (change.Property == ContentProperty && change.NewValue.Value is Control control)
+			{
+				var transitions = control.Transitions ?? new Transitions().Also(it => control.Transitions = it);
+				transitions.Add(new DoubleTransition()
+				{
+					Duration = TimeSpan.FromMilliseconds(500),
+					Property = OpacityProperty
+				});
+			}
 		}
 
 
