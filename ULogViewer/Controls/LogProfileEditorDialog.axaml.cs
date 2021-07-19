@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Data.Converters;
+using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using Avalonia.VisualTree;
 using CarinaStudio.Collections;
@@ -24,7 +25,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// <summary>
 		/// <see cref="IValueConverter"/> to convert <see cref="LogProfileIcon"/> to display name.
 		/// </summary>
-		public static readonly IValueConverter LogProfileNameConverter = new EnumConverter<LogProfileIcon>(App.Current);
+		public static readonly IValueConverter LogProfileIconNameConverter = new EnumConverter<LogProfileIcon>(App.Current);
 
 
 		// Static fields.
@@ -38,6 +39,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ComboBox iconComboBox;
 		readonly ObservableCollection<LogPattern> logPatterns = new ObservableCollection<LogPattern>();
 		readonly TextBox nameTextBox;
+		readonly ComboBox sortDirectionComboBox;
+		readonly ComboBox sortKeyComboBox;
+		readonly TextBox timestampFormatForReadingTextBox;
+		readonly TextBox timestampFormatForDisplayingTextBox;
 		readonly ToggleSwitch workingDirNeededSwitch;
 
 
@@ -54,6 +59,10 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.dataSourceProviderComboBox = this.FindControl<ComboBox>("dataSourceProviderComboBox").AsNonNull();
 			this.iconComboBox = this.FindControl<ComboBox>("iconComboBox").AsNonNull();
 			this.nameTextBox = this.FindControl<TextBox>("nameTextBox").AsNonNull();
+			this.sortDirectionComboBox = this.FindControl<ComboBox>("sortDirectionComboBox").AsNonNull();
+			this.sortKeyComboBox = this.FindControl<ComboBox>("sortKeyComboBox").AsNonNull();
+			this.timestampFormatForReadingTextBox = this.FindControl<TextBox>("timestampFormatForReadingTextBox").AsNonNull();
+			this.timestampFormatForDisplayingTextBox = this.FindControl<TextBox>("timestampFormatForDisplayingTextBox").AsNonNull();
 			this.workingDirNeededSwitch = this.FindControl<ToggleSwitch>("workingDirNeededSwitch").AsNonNull();
 		}
 
@@ -154,6 +163,14 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Called when pointer released on description text.
+		void OnLinkDescriptionPointerReleased(object? sender, PointerReleasedEventArgs e)
+		{
+			if (sender is Control control && control.Tag is string uri)
+				this.OpenLink(uri);
+		}
+
+
 		// Called when opened.
 		protected override void OnOpened(EventArgs e)
 		{
@@ -163,6 +180,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.Title = this.Application.GetString("LogProfileEditorDialog.Title.Create");
 				this.dataSourceProviderComboBox.SelectedItem = LogDataSourceProviders.All.FirstOrDefault(it => it is FileLogDataSourceProvider);
 				this.iconComboBox.SelectedItem = LogProfileIcon.File;
+				this.sortDirectionComboBox.SelectedItem = SortDirection.Ascending;
+				this.sortKeyComboBox.SelectedItem = LogSortKey.Timestamp;
 			}
 			else if (!profile.IsBuiltIn)
 			{
@@ -170,7 +189,13 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.dataSourceOptions = profile.DataSourceOptions;
 				this.dataSourceProviderComboBox.SelectedItem = profile.DataSourceProvider;
 				this.iconComboBox.SelectedItem = profile.Icon;
+				foreach (var logPattern in profile.LogPatterns)
+					this.logPatterns.Add(logPattern);
 				this.nameTextBox.Text = profile.Name;
+				this.sortDirectionComboBox.SelectedItem = profile.SortDirection;
+				this.sortKeyComboBox.SelectedItem = profile.SortKey;
+				this.timestampFormatForDisplayingTextBox.Text = profile.TimestampFormatForDisplaying;
+				this.timestampFormatForReadingTextBox.Text = profile.TimestampFormatForReading;
 				this.workingDirNeededSwitch.IsChecked = profile.IsWorkingDirectoryNeeded;
 			}
 			else

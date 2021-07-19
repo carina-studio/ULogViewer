@@ -15,6 +15,7 @@
 			<SolidColorBrush x:Key="Brush.Dialog.ControlButtonsPanel.Background">#ffffff</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.Dialog.Description.Foreground">#000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.Dialog.Description.Foreground.Error">#ff0000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.Dialog.Description.Foreground.Link">#007acc</SolidColorBrush>
 
 			<!-- DisplayableLog -->
 			<SolidColorBrush x:Key="Brush.DisplayableLog.Level.Debug">#000000</SolidColorBrush>
@@ -119,6 +120,11 @@
 	</Style>
 	<Style Selector="TextBlock.Dialog_Description_Error">
 		<Setter Property="Foreground" Value="{DynamicResource Brush.Dialog.Description.Foreground.Error}"/>
+		<Setter Property="Margin" Value="{StaticResource Thickness.Dialog.Description.Margin}"/>
+	</Style>
+	<Style Selector="TextBlock.Dialog_Description_Link">
+		<Setter Property="Cursor" Value="Hand"/>
+		<Setter Property="Foreground" Value="{DynamicResource Brush.Dialog.Description.Foreground.Link}"/>
 		<Setter Property="Margin" Value="{StaticResource Thickness.Dialog.Description.Margin}"/>
 	</Style>
 	<Style Selector="TextBlock.Dialog_Label">

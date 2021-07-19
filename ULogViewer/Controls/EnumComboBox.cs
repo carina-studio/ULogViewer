@@ -1,6 +1,8 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Templates;
 using Avalonia.Data;
+using Avalonia.Markup.Xaml.Templates;
 using Avalonia.Styling;
 using CarinaStudio.ULogViewer.Converters;
 using System;
@@ -20,7 +22,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Fields.
 		EnumConverter? enumConverter;
-		IDisposable? itemsBinding;
+		Array? enumValues;
 
 
 		/// <summary>
@@ -33,29 +35,34 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Values of enumeration.
-		Array? EnumValues { get; set; }
-
-
 		// Called when property changed.
 		protected override void OnPropertyChanged<T>(AvaloniaPropertyChangedEventArgs<T> change)
 		{
 			base.OnPropertyChanged(change);
 			if (change.Property == EnumTypeProperty)
 			{
-				this.EnumValues = null;
 				this.enumConverter = null;
-				this.itemsBinding = this.itemsBinding.DisposeAndReturnNull();
+				this.enumValues = null;
+				this.Items = null;
+				this.ItemTemplate = null;
 				if (change.NewValue.Value is Type type)
 				{
-					this.EnumValues = Enum.GetValues(type);
 					this.enumConverter = new EnumConverter(App.Current, type);
-					this.itemsBinding = this.Bind(ItemsProperty, new Binding()
+					this.enumValues = Enum.GetValues(type);
+					this.Items = this.enumValues;
+					this.ItemTemplate = new DataTemplate()
 					{
-						Converter = this.enumConverter,
-						Path = nameof(EnumValues),
-						Source = this,
-					});
+						Content = new Func<IServiceProvider, object>(_ =>
+						{
+							var textBlock = new TextBlock().Also(it =>
+							{
+								it.Bind(TextBlock.TextProperty, new Binding { Converter = this.enumConverter });
+								it.TextTrimming = Avalonia.Media.TextTrimming.CharacterEllipsis;
+							});
+							return new ControlTemplateResult(textBlock, null);
+						}),
+						DataType = type,
+					};
 				}
 			}
 		}

@@ -78,6 +78,7 @@
 	<sys:String x:Key="String.LogProfileEditorDialog.Name">Name (required)</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.SortDirection">Sort direction of log</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.SortKey">Sort key of log</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.TimestampFormatDescription">Format description</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.TimestampFormatForDisplaying">Format of timestamp for displaying</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.TimestampFormatForReading">Format of timestamp for reading</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.Title.Create">Create new log profile</sys:String>
@@ -111,6 +112,10 @@
 	<sys:String x:Key="String.LogProperty.TimestampString">Timestamp</sys:String>
 	<sys:String x:Key="String.LogProperty.UserId">UID</sys:String>
 	<sys:String x:Key="String.LogProperty.UserName">User</sys:String>
+
+	<!-- LogSortKey -->
+	<sys:String x:Key="String.LogSortKey.Id">Incremental ID of log</sys:String>
+	<sys:String x:Key="String.LogSortKey.Timestamp">Timestamp of log</sys:String>
 
 	<!-- MainWindow -->
 	<sys:String x:Key="String.MainWindow.CloseSession">Close this tab</sys:String>
@@ -150,6 +155,10 @@
 	<sys:String x:Key="String.SessionView.SetLogProfile">Select/Change log profile</sys:String>
 	<sys:String x:Key="String.SessionView.SetWorkingDirectory">Select/Change working directory</sys:String>
 	<sys:String x:Key="String.SessionView.OtherActions">Other actions</sys:String>
+
+	<!-- SortDirection -->
+	<sys:String x:Key="String.SortDirection.Ascending">Ascending</sys:String>
+	<sys:String x:Key="String.SortDirection.Descending">Descending</sys:String>
 
 	<!-- UnderlyingLogDataSource -->
 	<sys:String x:Key="String.UnderlyingLogDataSource.File">File</sys:String>

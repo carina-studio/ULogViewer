@@ -73,6 +73,7 @@
 	<sys:String x:Key="String.LogProfileEditorDialog.Name">名稱 (必須)</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.SortDirection">日誌排序方向</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.SortKey">日誌排序依據</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.TimestampFormatDescription">格式說明</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.TimestampFormatForDisplaying">日誌時間顯示格式</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.TimestampFormatForReading">日誌時間讀取格式</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.Title.Create">建立新的日誌類型</sys:String>
@@ -103,6 +104,10 @@
 	<sys:String x:Key="String.LogProperty.Timestamp">時間</sys:String>
 	<sys:String x:Key="String.LogProperty.TimestampString">時間</sys:String>
 	<sys:String x:Key="String.LogProperty.UserName">使用者</sys:String>
+
+	<!-- LogSortKey -->
+	<sys:String x:Key="String.LogSortKey.Id">日誌流水編號</sys:String>
+	<sys:String x:Key="String.LogSortKey.Timestamp">日誌時間</sys:String>
 
 	<!-- MainWindow -->
 	<sys:String x:Key="String.MainWindow.CloseSession">關閉此分頁</sys:String>
@@ -142,6 +147,10 @@
 	<sys:String x:Key="String.SessionView.SetLogProfile">選取/變更日誌類型</sys:String>
 	<sys:String x:Key="String.SessionView.SetWorkingDirectory">選取/變更工作目錄</sys:String>
 	<sys:String x:Key="String.SessionView.OtherActions">其他動作</sys:String>
+
+	<!-- SortDirection -->
+	<sys:String x:Key="String.SortDirection.Ascending">遞增</sys:String>
+	<sys:String x:Key="String.SortDirection.Descending">遞減</sys:String>
 
 	<!-- UnderlyingLogDataSource -->
 	<sys:String x:Key="String.UnderlyingLogDataSource.File">檔案</sys:String>
