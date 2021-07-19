@@ -68,7 +68,7 @@
 	<sys:String x:Key="String.LogProfileEditorDialog.IsWorkingDirectoryNeeded">必須選擇工作目錄</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogDisplaying">日誌顯示設定</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogLevelMap">日誌等級對照表</sys:String>
-	<sys:String x:Key="String.LogProfileEditorDialog.LogPatterns">日誌行格式</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.LogPatterns">日誌行格式 (必須)</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogReading">日誌讀取設定</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.Name">名稱 (必須)</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.SortDirection">日誌排序方向</sys:String>
@@ -77,7 +77,7 @@
 	<sys:String x:Key="String.LogProfileEditorDialog.TimestampFormatForReading">日誌時間讀取格式</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.Title.Create">建立新的日誌類型</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.Title.Edit">編輯日誌類型</sys:String>
-	<sys:String x:Key="String.LogProfileEditorDialog.VisibleLogProperties">顯示的日誌屬性</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.VisibleLogProperties">顯示的日誌屬性 (必須)</sys:String>
 
 	<!-- LogProfileSelectionDialog -->
 	<sys:String x:Key="String.LogProfileSelectionDialog.AddLogProfile">建立...</sys:String>

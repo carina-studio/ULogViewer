@@ -73,7 +73,7 @@
 	<sys:String x:Key="String.LogProfileEditorDialog.IsWorkingDirectoryNeeded">Need to select working directory</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogDisplaying">Log displaying</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogLevelMap">Mapping of log level</sys:String>
-	<sys:String x:Key="String.LogProfileEditorDialog.LogPatterns">Log line patterns</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.LogPatterns">Log line patterns (required)</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogReading">Log reading</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.Name">Name (required)</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.SortDirection">Sort direction of log</sys:String>
@@ -82,7 +82,7 @@
 	<sys:String x:Key="String.LogProfileEditorDialog.TimestampFormatForReading">Format of timestamp for reading</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.Title.Create">Create new log profile</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.Title.Edit">Edit log profile</sys:String>
-	<sys:String x:Key="String.LogProfileEditorDialog.VisibleLogProperties">Log properties to show</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.VisibleLogProperties">Log properties to show (required)</sys:String>
 
 	<!-- LogProfileSelectionDialog -->
 	<sys:String x:Key="String.LogProfileSelectionDialog.AddLogProfile">Create...</sys:String>

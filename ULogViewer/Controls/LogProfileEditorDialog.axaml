@@ -7,6 +7,7 @@
 				xmlns:appControls="clr-namespace:CarinaStudio.ULogViewer.Controls;assembly=ULogViewer"
 				xmlns:appConverters="clr-namespace:CarinaStudio.ULogViewer.Converters;assembly=ULogViewer"
 				xmlns:appDataSources="clr-namespace:CarinaStudio.ULogViewer.Logs.DataSources;assembly=ULogViewer"
+				xmlns:appLogs="clr-namespace:CarinaStudio.ULogViewer.Logs;assembly=ULogViewer"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.LogProfileEditorDialog"
 				Classes="Dialog"
@@ -106,8 +107,39 @@
 
 				<!-- Log patterns -->
 				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.LogPatterns}"/>
-				<ListBox Name="logPatternListBox"/>
-				<Button Classes="ListAction" Content="{DynamicResource String.Common.Add}"/>
+				<ListBox Name="logPatternListBox" Items="{Binding $parent[Window].LogPatterns}">
+					<ListBox.ItemTemplate>
+						<DataTemplate DataType="{x:Type appLogs:LogPattern}">
+							<Grid ColumnDefinitions="*,Auto">
+								<TextBlock Text="{Binding Regex}" TextTrimming="CharacterEllipsis"/>
+								<Border Classes="InPlaceAction_Reserved"/>
+								<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
+									<Button Classes="InPlaceAction" Command="{Binding $parent[Window].RemoveLogPattern}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String.Common.Delete}">
+										<Border Classes="InPlaceAction">
+											<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Delete}"/>
+										</Border>
+									</Button>
+									<Button Classes="InPlaceAction" Command="{Binding $parent[Window].EditLogPattern}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String.Common.Edit}">
+										<Border Classes="InPlaceAction">
+											<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Edit}"/>
+										</Border>
+									</Button>
+									<Button Classes="InPlaceAction" Command="{Binding $parent[Window].MoveLogPatternUp}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String.Common.MoveUp}">
+										<Border Classes="InPlaceAction">
+											<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.MoveUp}"/>
+										</Border>
+									</Button>
+									<Button Classes="InPlaceAction" Command="{Binding $parent[Window].MoveLogPatternDown}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String.Common.MoveDown}">
+										<Border Classes="InPlaceAction">
+											<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.MoveDown}"/>
+										</Border>
+									</Button>
+								</StackPanel>
+							</Grid>
+						</DataTemplate>
+					</ListBox.ItemTemplate>
+				</ListBox>
+				<Button Classes="ListAction" Command="{Binding $parent[Window].AddLogPattern}" Content="{DynamicResource String.Common.Add}"/>
 				<Separator Classes="Dialog_Separator_Horizontal"/>
 
 				<!-- Timestamp format for reading -->

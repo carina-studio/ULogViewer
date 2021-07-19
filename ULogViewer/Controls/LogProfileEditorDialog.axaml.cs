@@ -2,13 +2,16 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Data.Converters;
 using Avalonia.Markup.Xaml;
+using Avalonia.VisualTree;
 using CarinaStudio.Collections;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Converters;
+using CarinaStudio.ULogViewer.Logs;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace CarinaStudio.ULogViewer.Controls
@@ -33,6 +36,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		LogDataSourceOptions dataSourceOptions;
 		readonly ComboBox dataSourceProviderComboBox;
 		readonly ComboBox iconComboBox;
+		readonly ObservableCollection<LogPattern> logPatterns = new ObservableCollection<LogPattern>();
 		readonly TextBox nameTextBox;
 		readonly ToggleSwitch workingDirNeededSwitch;
 
@@ -42,11 +46,41 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// </summary>
 		public LogProfileEditorDialog()
 		{
+			this.LogPatterns = this.logPatterns.Also(it =>
+			{
+				it.CollectionChanged += (_, e) => this.InvalidateInput();
+			}).AsReadOnly();
 			InitializeComponent();
 			this.dataSourceProviderComboBox = this.FindControl<ComboBox>("dataSourceProviderComboBox").AsNonNull();
 			this.iconComboBox = this.FindControl<ComboBox>("iconComboBox").AsNonNull();
 			this.nameTextBox = this.FindControl<TextBox>("nameTextBox").AsNonNull();
 			this.workingDirNeededSwitch = this.FindControl<ToggleSwitch>("workingDirNeededSwitch").AsNonNull();
+		}
+
+
+		// Add log pattern.
+		async void AddLogPattern()
+		{
+			var logPattern = await new LogPatternEditorDialog().ShowDialog<LogPattern>(this);
+			if (logPattern != null)
+				this.logPatterns.Add(logPattern);
+		}
+
+
+		// Edit log pattern.
+		async void EditLogPattern(ListBoxItem item)
+		{
+			var index = (item.GetVisualParent() as Panel)?.Children?.IndexOf(item) ?? -1;
+			if (index < 0)
+				return;
+			if (item.DataContext is not LogPattern logPattern)
+				return;
+			var newLlogPattern = await new LogPatternEditorDialog()
+			{
+				LogPattern = logPattern
+			}.ShowDialog<LogPattern>(this);
+			if (newLlogPattern != null && newLlogPattern != logPattern)
+				this.logPatterns[index] = newLlogPattern;
 		}
 
 
@@ -58,6 +92,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		bool IsValidDataSourceOptions { get => this.GetValue<bool>(IsValidDataSourceOptionsProperty); }
 
 
+		// Log patterns.
+		IList<LogPattern> LogPatterns { get; }
+
+
 		/// <summary>
 		/// Get or set <see cref="LogProfile"/> to be edited.
 		/// </summary>
@@ -66,6 +104,27 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// All log profile icons.
 		IList<LogProfileIcon> LogProfileIcons { get; } = (LogProfileIcon[])Enum.GetValues(typeof(LogProfileIcon));
+
+
+		// Move log pattern down.
+		void MoveLogPatternDown(ListBoxItem item)
+		{
+			var index = (item.GetVisualParent() as Panel)?.Children?.IndexOf(item) ?? -1;
+			if (index < 0)
+				return;
+			if (index < this.logPatterns.Count - 1)
+				this.logPatterns.Move(index, index + 1);
+		}
+
+
+		// Move log pattern up.
+		void MoveLogPatternUp(ListBoxItem item)
+		{
+			var index = (item.GetVisualParent() as Panel)?.Children?.IndexOf(item) ?? -1;
+			if (index <= 0)
+				return;
+			this.logPatterns.Move(index, index - 1);
+		}
 
 
 		// Called when selection of data source provider changed.
@@ -143,8 +202,22 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (string.IsNullOrEmpty(this.nameTextBox.Text))
 				return false;
 
+			// check log patterns
+			if (this.logPatterns.IsEmpty())
+				return false;
+
 			// ok
 			return true;
+		}
+
+
+		// Remove log pattern.
+		void RemoveLogPattern(ListBoxItem item)
+		{
+			var index = (item.GetVisualParent() as Panel)?.Children?.IndexOf(item) ?? -1;
+			if (index < 0)
+				return;
+			this.logPatterns.RemoveAt(index);
 		}
 
 
