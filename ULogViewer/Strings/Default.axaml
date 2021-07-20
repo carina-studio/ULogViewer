@@ -107,7 +107,9 @@
 
 	<!-- LogProperty -->
 	<sys:String x:Key="String.LogProperty.Author">Author</sys:String>
+	<sys:String x:Key="String.LogProperty.FileName">File</sys:String>
 	<sys:String x:Key="String.LogProperty.Level">Level</sys:String>
+	<sys:String x:Key="String.LogProperty.LineNumber">Line number</sys:String>
 	<sys:String x:Key="String.LogProperty.Message">Message</sys:String>
 	<sys:String x:Key="String.LogProperty.ProcessId">PID</sys:String>
 	<sys:String x:Key="String.LogProperty.ProcessName">Process</sys:String>
@@ -172,5 +174,12 @@
 	<sys:String x:Key="String.UnderlyingLogDataSource.StandardOutput">Standard output</sys:String>
 	<sys:String x:Key="String.UnderlyingLogDataSource.Undefined">Undefined source</sys:String>
 	<sys:String x:Key="String.UnderlyingLogDataSource.WebRequest">Network</sys:String>
+
+	<!-- VisibleLogPropertyEditorDialog -->
+	<sys:String x:Key="String.VisibleLogPropertyEditorDialog.DisplayName">Display name</sys:String>
+	<sys:String x:Key="String.VisibleLogPropertyEditorDialog.Name">Property</sys:String>
+	<sys:String x:Key="String.VisibleLogPropertyEditorDialog.SpecifyWidth">Speficy the column width</sys:String>
+	<sys:String x:Key="String.VisibleLogPropertyEditorDialog.Title">Visible log property</sys:String>
+	<sys:String x:Key="String.VisibleLogPropertyEditorDialog.Width">Column width</sys:String>
 
 </ResourceDictionary>

@@ -122,5 +122,8 @@
 
 	<!-- TextInputDialog -->
 	<sys:Double x:Key="Double.TextInputDialog.Width">450</sys:Double>
+
+	<!-- VisibleLogPropertyEditorDialog -->
+	<sys:Double x:Key="Double.VisibleLogPropertyEditorDialog.Width">400</sys:Double>
 	
 </ResourceDictionary>
