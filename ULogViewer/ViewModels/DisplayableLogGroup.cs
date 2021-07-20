@@ -1,6 +1,7 @@
 ﻿using Avalonia.Media;
 using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
+using CarinaStudio.ULogViewer.Converters;
 using CarinaStudio.ULogViewer.Logs;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using System;
@@ -231,14 +232,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		// Update level brushes.
 		void UpdateLevelBrushes()
 		{
-			if (this.Application is not App app)
-				return;
-			var resources = app.Styles;
 			this.levelBrushes.Clear();
 			foreach (var level in (LogLevel[])Enum.GetValues(typeof(LogLevel)))
 			{
-				if (resources.TryGetResource($"Brush.DisplayableLog.Level.{level}", out var res))
-					this.levelBrushes[level] = (IBrush)res.AsNonNull();
+				var brush = LogLevelBrushConverter.Default.Convert(level, typeof(IBrush), null, this.Application.CultureInfo) as IBrush;
+				if (brush != null)
+					this.levelBrushes[level] = brush;
 			}
 		}
 

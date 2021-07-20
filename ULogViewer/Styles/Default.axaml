@@ -17,15 +17,6 @@
 			<SolidColorBrush x:Key="Brush.Dialog.Description.Foreground.Error">#ff0000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.Dialog.Description.Foreground.Link">#007acc</SolidColorBrush>
 
-			<!-- DisplayableLog -->
-			<SolidColorBrush x:Key="Brush.DisplayableLog.Level.Debug">#000000</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.DisplayableLog.Level.Error">#000000</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.DisplayableLog.Level.Fatal">#000000</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.DisplayableLog.Level.Info">#000000</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.DisplayableLog.Level.Undefined">#000000</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.DisplayableLog.Level.Verbose">#000000</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.DisplayableLog.Level.Warn">#000000</SolidColorBrush>
-
 			<!-- Icon -->
 			<SolidColorBrush x:Key="Brush.Icon">#000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.Icon.Active">#7ac0ff</SolidColorBrush>
@@ -33,6 +24,15 @@
 			<SolidColorBrush x:Key="Brush.Icon.Info">#007acc</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.Icon.LogProfile">#7ac0ff</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.Icon.Warning">#ff8432</SolidColorBrush>
+
+			<!-- LogLevel -->
+			<SolidColorBrush x:Key="Brush.LogLevel.Debug">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.LogLevel.Error">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.LogLevel.Fatal">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.LogLevel.Info">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.LogLevel.Undefined">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.LogLevel.Verbose">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.LogLevel.Warn">#000000</SolidColorBrush>
 
 			<!-- LogProfileSelectionDialog -->
 			<SolidColorBrush x:Key="Brush.LogProfileSelectionDialog.Label.Background">#00000000</SolidColorBrush>

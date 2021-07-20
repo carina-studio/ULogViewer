@@ -118,37 +118,37 @@
 			<Grid ColumnDefinitions="Auto,Auto,Auto,Auto,*,Auto" Grid.Column="1" HorizontalAlignment="Stretch" Margin="{StaticResource Thickness.SessionView.ToolBar.LogFilters.Padding}" VerticalAlignment="Stretch">
 
 				<!-- Level filter -->
-				<ComboBox Name="logLevelFilterComboBox" Foreground="{DynamicResource Brush.DisplayableLog.Level.Undefined}" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" Margin="{StaticResource Thickness.SessionView.ToolBar.LogLevelFilter.Margin}" SelectedIndex="0" SelectionChanged="OnLogLevelFilterComboBoxSelectionChanged" VerticalAlignment="Center" Width="{StaticResource Double.SessionView.ToolBar.LogLevelFilter.Width}">
+				<ComboBox Name="logLevelFilterComboBox" Foreground="{DynamicResource Brush.LogLevel.Undefined}" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" Margin="{StaticResource Thickness.SessionView.ToolBar.LogLevelFilter.Margin}" SelectedIndex="0" SelectionChanged="OnLogLevelFilterComboBoxSelectionChanged" VerticalAlignment="Center" Width="{StaticResource Double.SessionView.ToolBar.LogLevelFilter.Width}">
 					<ia:Interaction.Behaviors>
 						<iaCore:DataTriggerBehavior Binding="{Binding $self.SelectedItem.Tag}" ComparisonCondition="Equal" Value="Undefined">
-							<iaCore:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource Brush.DisplayableLog.Level.Undefined}"/>
+							<iaCore:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource Brush.LogLevel.Undefined}"/>
 						</iaCore:DataTriggerBehavior>
 						<iaCore:DataTriggerBehavior Binding="{Binding $self.SelectedItem.Tag}" ComparisonCondition="Equal" Value="Info">
-							<iaCore:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource Brush.DisplayableLog.Level.Info}"/>
+							<iaCore:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource Brush.LogLevel.Info}"/>
 						</iaCore:DataTriggerBehavior>
 						<iaCore:DataTriggerBehavior Binding="{Binding $self.SelectedItem.Tag}" ComparisonCondition="Equal" Value="Verbose">
-							<iaCore:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource Brush.DisplayableLog.Level.Verbose}"/>
+							<iaCore:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource Brush.LogLevel.Verbose}"/>
 						</iaCore:DataTriggerBehavior>
 						<iaCore:DataTriggerBehavior Binding="{Binding $self.SelectedItem.Tag}" ComparisonCondition="Equal" Value="Debug">
-							<iaCore:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource Brush.DisplayableLog.Level.Debug}"/>
+							<iaCore:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource Brush.LogLevel.Debug}"/>
 						</iaCore:DataTriggerBehavior>
 						<iaCore:DataTriggerBehavior Binding="{Binding $self.SelectedItem.Tag}" ComparisonCondition="Equal" Value="Warn">
-							<iaCore:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource Brush.DisplayableLog.Level.Warn}"/>
+							<iaCore:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource Brush.LogLevel.Warn}"/>
 						</iaCore:DataTriggerBehavior>
 						<iaCore:DataTriggerBehavior Binding="{Binding $self.SelectedItem.Tag}" ComparisonCondition="Equal" Value="Error">
-							<iaCore:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource Brush.DisplayableLog.Level.Error}"/>
+							<iaCore:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource Brush.LogLevel.Error}"/>
 						</iaCore:DataTriggerBehavior>
 						<iaCore:DataTriggerBehavior Binding="{Binding $self.SelectedItem.Tag}" ComparisonCondition="Equal" Value="Fatal">
-							<iaCore:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource Brush.DisplayableLog.Level.Fatal}"/>
+							<iaCore:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource Brush.LogLevel.Fatal}"/>
 						</iaCore:DataTriggerBehavior>
 					</ia:Interaction.Behaviors>
-					<ComboBoxItem Content="{DynamicResource String.SessionView.AllLogLevels}" Foreground="{DynamicResource Brush.DisplayableLog.Level.Undefined}" Tag="Undefined"/>
-					<ComboBoxItem Content="{DynamicResource String.LogLevel.Info}" Foreground="{DynamicResource Brush.DisplayableLog.Level.Info}" Tag="Info"/>
-					<ComboBoxItem Content="{DynamicResource String.LogLevel.Verbose}" Foreground="{DynamicResource Brush.DisplayableLog.Level.Verbose}" Tag="Verbose"/>
-					<ComboBoxItem Content="{DynamicResource String.LogLevel.Debug}" Foreground="{DynamicResource Brush.DisplayableLog.Level.Debug}" Tag="Debug"/>
-					<ComboBoxItem Content="{DynamicResource String.LogLevel.Warn}" Foreground="{DynamicResource Brush.DisplayableLog.Level.Warn}" Tag="Warn"/>
-					<ComboBoxItem Content="{DynamicResource String.LogLevel.Error}" Foreground="{DynamicResource Brush.DisplayableLog.Level.Error}" Tag="Error"/>
-					<ComboBoxItem Content="{DynamicResource String.LogLevel.Fatal}" Foreground="{DynamicResource Brush.DisplayableLog.Level.Fatal}" Tag="Fatal"/>
+					<ComboBoxItem Content="{DynamicResource String.SessionView.AllLogLevels}" Foreground="{DynamicResource Brush.LogLevel.Undefined}" Tag="Undefined"/>
+					<ComboBoxItem Content="{DynamicResource String.LogLevel.Info}" Foreground="{DynamicResource Brush.LogLevel.Info}" Tag="Info"/>
+					<ComboBoxItem Content="{DynamicResource String.LogLevel.Verbose}" Foreground="{DynamicResource Brush.LogLevel.Verbose}" Tag="Verbose"/>
+					<ComboBoxItem Content="{DynamicResource String.LogLevel.Debug}" Foreground="{DynamicResource Brush.LogLevel.Debug}" Tag="Debug"/>
+					<ComboBoxItem Content="{DynamicResource String.LogLevel.Warn}" Foreground="{DynamicResource Brush.LogLevel.Warn}" Tag="Warn"/>
+					<ComboBoxItem Content="{DynamicResource String.LogLevel.Error}" Foreground="{DynamicResource Brush.LogLevel.Error}" Tag="Error"/>
+					<ComboBoxItem Content="{DynamicResource String.LogLevel.Fatal}" Foreground="{DynamicResource Brush.LogLevel.Fatal}" Tag="Fatal"/>
 				</ComboBox>
 
 				<!-- PID filter -->
