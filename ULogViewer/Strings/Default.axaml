@@ -42,6 +42,11 @@
 	<sys:String x:Key="String.LogLevel.Verbose">Verbose</sys:String>
 	<sys:String x:Key="String.LogLevel.Warn">Warn</sys:String>
 
+	<!-- LogLevelMapEntryEditor -->
+	<sys:String x:Key="String.LogLevelMapEntryEditor.LogLevel">Mapped log level</sys:String>
+	<sys:String x:Key="String.LogLevelMapEntryEditor.Text">Text (required)</sys:String>
+	<sys:String x:Key="String.LogLevelMapEntryEditor.Title">Mapping of log level</sys:String>
+
 	<!-- LogPatternEditorDialog -->
 	<sys:String x:Key="String.LogPatternEditorDialog.IsSkippable">The line can be skipped</sys:String>
 	<sys:String x:Key="String.LogPatternEditorDialog.IsRepeatable">The line can be repeated continuously</sys:String>
