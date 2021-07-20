@@ -199,6 +199,21 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 
 
 		/// <summary>
+		/// Delete the file which instance load from or save to asynchronously.
+		/// </summary>
+		/// <returns></returns>
+		public async Task DeleteFileAsync()
+		{
+			this.VerifyAccess();
+			var fileName = this.FileName;
+			if (fileName == null)
+				return;
+			this.FileName = null;
+			await ioTaskFactory.StartNew(() => Global.RunWithoutError(() => File.Delete(fileName)));
+		}
+
+
+		/// <summary>
 		/// Get name of file which instance loaded from or saved to.
 		/// </summary>
 		public string? FileName { get; private set; }
@@ -434,6 +449,9 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 					case nameof(IsContinuousReading):
 						this.isContinuousReading = jsonProperty.Value.GetBoolean();
 						break;
+					case nameof(IsPinned):
+						this.isPinned = jsonProperty.Value.GetBoolean();
+						break;
 					case nameof(IsWorkingDirectoryNeeded):
 						this.isWorkingDirectoryNeeded = jsonProperty.Value.GetBoolean();
 						break;
@@ -652,6 +670,8 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				writer.WriteString(nameof(Icon), this.icon.ToString());
 				if (this.isContinuousReading)
 					writer.WriteBoolean(nameof(IsContinuousReading), true);
+				if (this.isPinned)
+					writer.WriteBoolean(nameof(IsPinned), true);
 				if (this.isWorkingDirectoryNeeded)
 					writer.WriteBoolean(nameof(IsWorkingDirectoryNeeded), true);
 				writer.WritePropertyName(nameof(LogLevelMap));
