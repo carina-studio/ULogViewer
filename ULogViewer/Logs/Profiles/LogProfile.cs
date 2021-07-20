@@ -77,6 +77,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// <param name="template">Template profile.</param>
 		public LogProfile(LogProfile template) : this(template.Application)
 		{
+			this.colorIndicator = template.colorIndicator;
 			this.dataSourceOptions = template.dataSourceOptions;
 			this.dataSourceProvider = template.dataSourceProvider;
 			this.icon = template.icon;
