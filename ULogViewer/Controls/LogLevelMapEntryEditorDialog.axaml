@@ -8,7 +8,7 @@
 				xmlns:appConverters="clr-namespace:CarinaStudio.ULogViewer.Converters;assembly=ULogViewer"
 				xmlns:appLogs="clr-namespace:CarinaStudio.ULogViewer.Logs;assembly=ULogViewer"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="CarinaStudio.ULogViewer.Controls.LogLevelMapEntryEditor"
+        x:Class="CarinaStudio.ULogViewer.Controls.LogLevelMapEntryEditorDialog"
 				Classes="Dialog"
 				SizeToContent="Height"
         Title="{DynamicResource String.LogLevelMapEntryEditor.Title}"
@@ -43,7 +43,7 @@
 				<appLogs:LogLevel>Fatal</appLogs:LogLevel>
 				<ComboBox.ItemTemplate>
 					<DataTemplate>
-						<TextBlock Foreground="{Binding Converter={x:Static appConverters:LogLevelBrushConverter.Default}}" Text="{Binding Converter={x:Static appControls:LogLevelMapEntryEditor.LogLevelNameConverter}}"/>
+						<TextBlock Foreground="{Binding Converter={x:Static appConverters:LogLevelBrushConverter.Default}}" Text="{Binding Converter={x:Static appControls:LogLevelMapEntryEditorDialog.LogLevelNameConverter}}"/>
 					</DataTemplate>
 				</ComboBox.ItemTemplate>
 			</ComboBox>

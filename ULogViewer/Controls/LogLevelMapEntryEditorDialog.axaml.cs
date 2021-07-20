@@ -12,7 +12,7 @@ namespace CarinaStudio.ULogViewer.Controls
 	/// <summary>
 	/// Dialog to edit <see cref="KeyValuePair{String, LogLevel}"/>.
 	/// </summary>
-	partial class LogLevelMapEntryEditor : BaseDialog
+	partial class LogLevelMapEntryEditorDialog : BaseDialog
 	{
 		/// <summary>
 		/// <see cref="IValueConverter"/> to convert <see cref="LogLevel"/> to readable name.
@@ -26,9 +26,9 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		/// <summary>
-		/// Initialize new <see cref="LogLevelMapEntryEditor"/> instance.
+		/// Initialize new <see cref="LogLevelMapEntryEditorDialog"/> instance.
 		/// </summary>
-		public LogLevelMapEntryEditor()
+		public LogLevelMapEntryEditorDialog()
 		{
 			InitializeComponent();
 			this.logLevelComboBox = this.FindControl<ComboBox>("logLevelComboBox").AsNonNull();

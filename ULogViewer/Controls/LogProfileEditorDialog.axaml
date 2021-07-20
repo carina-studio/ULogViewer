@@ -103,8 +103,32 @@
 
 				<!-- Log level map -->
 				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.LogLevelMap}"/>
-				<ListBox Name="logLevelMapListBox"/>
-				<Button Classes="ListAction" Content="{DynamicResource String.Common.Add}"/>
+				<ListBox Name="logLevelMapListBox" Items="{Binding $parent[Window].LogLevelMapEntries}">
+					<ListBox.ItemTemplate>
+						<DataTemplate>
+							<Grid ColumnDefinitions="*,*">
+								<TextBlock Text="{Binding Key}" TextTrimming="CharacterEllipsis"/>
+								<Border Classes="InPlaceAction_Reserved"/>
+								<DockPanel Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+									<StackPanel DockPanel.Dock="Right" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
+										<Button Classes="InPlaceAction" Command="{Binding $parent[Window].RemoveLogLevelMapEntry}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String.Common.Delete}">
+											<Border Classes="InPlaceAction">
+												<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Delete}"/>
+											</Border>
+										</Button>
+										<Button Classes="InPlaceAction" Command="{Binding $parent[Window].EditLogLevelMapEntry}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String.Common.Edit}">
+											<Border Classes="InPlaceAction">
+												<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Edit}"/>
+											</Border>
+										</Button>
+									</StackPanel>
+									<TextBlock Foreground="{Binding Value, Converter={x:Static appConverters:LogLevelBrushConverter.Default}}" Grid.Column="1" Text="{Binding Value, Converter={x:Static appControls:LogProfileEditorDialog.LogLevelNameConverter}}" TextTrimming="CharacterEllipsis"/>
+								</DockPanel>
+							</Grid>
+						</DataTemplate>
+					</ListBox.ItemTemplate>
+				</ListBox>
+				<Button Classes="ListAction" Command="{Binding $parent[Window].AddLogLevelMapEntry}" Content="{DynamicResource String.Common.Add}"/>
 				<Separator Classes="Dialog_Separator_Horizontal"/>
 
 				<!-- Log patterns -->

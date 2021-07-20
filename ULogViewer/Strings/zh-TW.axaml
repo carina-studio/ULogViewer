@@ -69,6 +69,7 @@
 	<sys:String x:Key="String.LogProfileEditorDialog.Common">一般設定</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.DataSourceOptions">參數...</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.DataSourceProvider">資料來源</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.DuplicateLogLevelMapEntry">已經定義 '{0}'。</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.Icon">圖示</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.InvalidDataSourceOptions">需要有效的參數</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.IsWorkingDirectoryNeeded">必須選擇工作目錄</sys:String>

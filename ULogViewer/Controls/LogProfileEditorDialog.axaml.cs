@@ -23,6 +23,10 @@ namespace CarinaStudio.ULogViewer.Controls
 	partial class LogProfileEditorDialog : BaseDialog
 	{
 		/// <summary>
+		/// <see cref="IValueConverter"/> to convert <see cref="LogLevel"/> to readable name.
+		/// </summary>
+		public static readonly IValueConverter LogLevelNameConverter = new EnumConverter<LogLevel>(App.Current);
+		/// <summary>
 		/// <see cref="IValueConverter"/> to convert <see cref="LogProfileIcon"/> to display name.
 		/// </summary>
 		public static readonly IValueConverter LogProfileIconNameConverter = new EnumConverter<LogProfileIcon>(App.Current);
@@ -37,6 +41,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		LogDataSourceOptions dataSourceOptions;
 		readonly ComboBox dataSourceProviderComboBox;
 		readonly ComboBox iconComboBox;
+		readonly SortedObservableList<KeyValuePair<string, LogLevel>> logLevelMapEntries = new SortedObservableList<KeyValuePair<string, LogLevel>>((x, y) => x.Key.CompareTo(y.Key));
 		readonly ObservableCollection<LogPattern> logPatterns = new ObservableCollection<LogPattern>();
 		readonly TextBox nameTextBox;
 		readonly ComboBox sortDirectionComboBox;
@@ -51,6 +56,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// </summary>
 		public LogProfileEditorDialog()
 		{
+			this.LogLevelMapEntries = this.logLevelMapEntries.AsReadOnly();
 			this.LogPatterns = this.logPatterns.Also(it =>
 			{
 				it.CollectionChanged += (_, e) => this.InvalidateInput();
@@ -67,12 +73,69 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Add log level map entry.
+		async void AddLogLevelMapEntry()
+		{
+			var entry = (KeyValuePair<string, LogLevel>?)null;
+			while (true)
+			{
+				entry = await new LogLevelMapEntryEditorDialog()
+				{
+					Entry = entry
+				}.ShowDialog<KeyValuePair<string, LogLevel>?>(this);
+				if (entry == null)
+					return;
+				if (this.logLevelMapEntries.Contains(entry.Value))
+				{
+					await new MessageDialog()
+					{
+						Icon = MessageDialogIcon.Warning,
+						Message = this.Application.GetFormattedString("LogProfileEditorDialog.DuplicateLogLevelMapEntry", entry.Value.Key),
+						Title = this.Application.GetString("LogProfileEditorDialog.LogLevelMap"),
+					}.ShowDialog(this);
+					continue;
+				}
+				this.logLevelMapEntries.Add(entry.Value);
+				break;
+			}
+		}
+
+
 		// Add log pattern.
 		async void AddLogPattern()
 		{
 			var logPattern = await new LogPatternEditorDialog().ShowDialog<LogPattern>(this);
 			if (logPattern != null)
 				this.logPatterns.Add(logPattern);
+		}
+
+
+		// Edit log level map entry.
+		async void EditLogLevelMapEntry(KeyValuePair<string, LogLevel> entry)
+		{
+			var newEntry = (KeyValuePair<string, LogLevel>?)entry;
+			while (true)
+			{
+				newEntry = await new LogLevelMapEntryEditorDialog()
+				{
+					Entry = newEntry
+				}.ShowDialog<KeyValuePair<string, LogLevel>?>(this);
+				if (newEntry == null || newEntry.Value.Equals(entry))
+					return;
+				if (this.logLevelMapEntries.Contains(newEntry.Value))
+				{
+					await new MessageDialog()
+					{
+						Icon = MessageDialogIcon.Warning,
+						Message = this.Application.GetFormattedString("LogProfileEditorDialog.DuplicateLogLevelMapEntry", newEntry.Value.Key),
+						Title = this.Application.GetString("LogProfileEditorDialog.LogLevelMap"),
+					}.ShowDialog(this);
+					continue;
+				}
+				this.logLevelMapEntries.Remove(entry);
+				this.logLevelMapEntries.Add(newEntry.Value);
+				break;
+			}
 		}
 
 
@@ -99,6 +162,10 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Check whether log data source options is valid or not.
 		bool IsValidDataSourceOptions { get => this.GetValue<bool>(IsValidDataSourceOptionsProperty); }
+
+
+		// Entries of log level map.
+		IList<KeyValuePair<string, LogLevel>> LogLevelMapEntries { get; }
 
 
 		// Log patterns.
@@ -189,6 +256,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.dataSourceOptions = profile.DataSourceOptions;
 				this.dataSourceProviderComboBox.SelectedItem = profile.DataSourceProvider;
 				this.iconComboBox.SelectedItem = profile.Icon;
+				this.logLevelMapEntries.AddAll(profile.LogLevelMap);
 				foreach (var logPattern in profile.LogPatterns)
 					this.logPatterns.Add(logPattern);
 				this.nameTextBox.Text = profile.Name;
@@ -234,6 +302,10 @@ namespace CarinaStudio.ULogViewer.Controls
 			// ok
 			return true;
 		}
+
+
+		// Remove log level map entry.
+		void RemoveLogLevelMapEntry(KeyValuePair<string, LogLevel> entry) => this.logLevelMapEntries.Remove(entry);
 
 
 		// Remove log pattern.
