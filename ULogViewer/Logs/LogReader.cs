@@ -28,6 +28,7 @@ namespace CarinaStudio.ULogViewer.Logs
 
 		// Static fields.
 		static readonly TaskFactory defaultReadingTaskFactory = new TaskFactory(TaskScheduler.Default);
+		static readonly CultureInfo defaultTimestampCultureInfo = CultureInfo.GetCultureInfo("en-US");
 		static readonly TaskFactory fileReadingTaskFactory = new TaskFactory(new FixedThreadsTaskScheduler(2));
 		static int nextId = 1;
 
@@ -46,7 +47,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		readonly List<Log> pendingLogs = new List<Log>();
 		readonly IDictionary<string, LogLevel> readOnlyLogLevelMap;
 		LogReaderState state = LogReaderState.Preparing;
-		CultureInfo? timestampCultureInfo;
+		CultureInfo timestampCultureInfo = defaultTimestampCultureInfo;
 		string? timestampFormat;
 
 
@@ -896,7 +897,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <summary>
 		/// Get or set <see cref="CultureInfo"/> to parse timestamp of log.
 		/// </summary>
-		public CultureInfo? TimestampCultureInfo
+		public CultureInfo TimestampCultureInfo
 		{
 			get => this.timestampCultureInfo;
 			set
@@ -904,7 +905,7 @@ namespace CarinaStudio.ULogViewer.Logs
 				this.VerifyAccess();
 				if (this.state != LogReaderState.Preparing)
 					throw new InvalidOperationException($"Cannot change {nameof(TimestampCultureInfo)} when state is {this.state}.");
-				if (this.timestampCultureInfo?.Equals(value) ?? value == null)
+				if (this.timestampCultureInfo.Equals(value))
 					return;
 				this.timestampCultureInfo = value;
 				this.OnPropertyChanged(nameof(TimestampCultureInfo));

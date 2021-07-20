@@ -32,6 +32,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 
 
 		// Static fields.
+		static readonly CultureInfo defaultTimestampCultureInfoForReading = CultureInfo.GetCultureInfo("en-US");
 		static readonly TaskFactory ioTaskFactory = new TaskFactory(new FixedThreadsTaskScheduler(1));
 
 
@@ -51,7 +52,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		IDictionary<string, LogLevel> readOnlyLogLevelMap;
 		SortDirection sortDirection = SortDirection.Ascending;
 		LogSortKey sortKey = LogSortKey.Timestamp;
-		CultureInfo? timestampCultureInfoForReading;
+		CultureInfo timestampCultureInfoForReading = defaultTimestampCultureInfoForReading;
 		string? timestampFormatForDisplaying;
 		string? timestampFormatForReading;
 		IList<LogProperty> visibleLogProperties = new LogProperty[0];
@@ -688,7 +689,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				writer.WriteString(nameof(Name), this.name);
 				writer.WriteString(nameof(SortDirection), this.sortDirection.ToString());
 				writer.WriteString(nameof(SortKey), this.sortKey.ToString());
-				this.timestampCultureInfoForReading?.Let(it => writer.WriteString(nameof(TimestampCultureInfoForReading), it.ToString()));
+				writer.WriteString(nameof(TimestampCultureInfoForReading), this.timestampCultureInfoForReading.ToString());
 				writer.WriteString(nameof(TimestampFormatForDisplaying), this.timestampFormatForDisplaying);
 				writer.WriteString(nameof(TimestampFormatForReading), this.timestampFormatForReading);
 				writer.WritePropertyName(nameof(VisibleLogProperties));
@@ -829,14 +830,14 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// <summary>
 		/// Get or set <see cref="CultureInfo"/> of timestamp for reading logs.
 		/// </summary>
-		public CultureInfo? TimestampCultureInfoForReading
+		public CultureInfo TimestampCultureInfoForReading
 		{
 			get => this.timestampCultureInfoForReading;
 			set
 			{
 				this.VerifyAccess();
 				this.VerifyBuiltIn();
-				if (this.timestampCultureInfoForReading?.Equals(value) ?? value == null)
+				if (this.timestampCultureInfoForReading.Equals(value))
 					return;
 				this.timestampCultureInfoForReading = value;
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TimestampCultureInfoForReading)));
