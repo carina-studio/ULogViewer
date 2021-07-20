@@ -103,7 +103,7 @@
 
 				<!-- Log level map -->
 				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.LogLevelMap}"/>
-				<ListBox Name="logLevelMapListBox" Items="{Binding $parent[Window].LogLevelMapEntries}">
+				<ListBox Name="logLevelMapListBox" Items="{Binding $parent[Window].LogLevelMapEntries}" SelectionChanged="OnListBoxSelectionChanged">
 					<ListBox.ItemTemplate>
 						<DataTemplate>
 							<Grid ColumnDefinitions="*,*">
@@ -133,7 +133,7 @@
 
 				<!-- Log patterns -->
 				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.LogPatterns}"/>
-				<ListBox Name="logPatternListBox" Items="{Binding $parent[Window].LogPatterns}">
+				<ListBox Name="logPatternListBox" Items="{Binding $parent[Window].LogPatterns}" SelectionChanged="OnListBoxSelectionChanged">
 					<ListBox.ItemTemplate>
 						<DataTemplate DataType="{x:Type appLogs:LogPattern}">
 							<Grid ColumnDefinitions="*,Auto">
@@ -179,8 +179,46 @@
 
 				<!-- Visible log properties -->
 				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.VisibleLogProperties}"/>
-				<ListBox Name="visibleLogPropertyListBox"/>
-				<Button Classes="ListAction" Content="{DynamicResource String.Common.Add}"/>
+				<ListBox Name="visibleLogPropertyListBox" Items="{Binding $parent[Window].VisibleLogProperties}" SelectionChanged="OnListBoxSelectionChanged">
+					<ListBox.ItemTemplate>
+						<DataTemplate DataType="{x:Type appLogProfiles:LogProperty}">
+							<Grid ColumnDefinitions="Auto,*,Auto">
+								<TextBlock Text="{Binding DisplayName, Converter={x:Static appConverters:LogPropertyNameConverter.Default}}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+								<Border Classes="InPlaceAction_Reserved"/>
+								<TextBlock Grid.Column="1" Opacity="0.3" TextTrimming="CharacterEllipsis" VerticalAlignment="Center">
+									<TextBlock.Text>
+										<MultiBinding StringFormat="{} ({0})">
+											<Binding Path="Name"/>
+										</MultiBinding>
+									</TextBlock.Text>
+								</TextBlock>
+								<StackPanel Grid.Column="2" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
+									<Button Classes="InPlaceAction" Command="{Binding $parent[Window].RemoveVisibleLogProperty}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String.Common.Delete}">
+										<Border Classes="InPlaceAction">
+											<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Delete}"/>
+										</Border>
+									</Button>
+									<Button Classes="InPlaceAction" Command="{Binding $parent[Window].EditVisibleLogProperty}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String.Common.Edit}">
+										<Border Classes="InPlaceAction">
+											<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Edit}"/>
+										</Border>
+									</Button>
+									<Button Classes="InPlaceAction" Command="{Binding $parent[Window].MoveVisibleLogPropertyUp}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String.Common.MoveUp}">
+										<Border Classes="InPlaceAction">
+											<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.MoveUp}"/>
+										</Border>
+									</Button>
+									<Button Classes="InPlaceAction" Command="{Binding $parent[Window].MoveVisibleLogPropertyDown}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String.Common.MoveDown}">
+										<Border Classes="InPlaceAction">
+											<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.MoveDown}"/>
+										</Border>
+									</Button>
+								</StackPanel>
+							</Grid>
+						</DataTemplate>
+					</ListBox.ItemTemplate>
+				</ListBox>
+				<Button Classes="ListAction" Command="{Binding $parent[Window].AddVisibleLogProperty}" Content="{DynamicResource String.Common.Add}"/>
 				<Separator Classes="Dialog_Separator_Horizontal"/>
 
 				<!-- Timestamp format for displaying -->

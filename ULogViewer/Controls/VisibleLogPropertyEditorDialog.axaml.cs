@@ -45,7 +45,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Generate result.
 		protected override object? OnGenerateResult()
 		{
-			var width = this.specifyWidthSwitch.IsChecked.GetValueOrDefault() ? null : (int?)this.widthUpDown.Value;
+			var width = this.specifyWidthSwitch.IsChecked.GetValueOrDefault() ? (int?)this.widthUpDown.Value : null;
 			return new LogProperty((string)this.nameComboBox.SelectedItem.AsNonNull(), (string)this.displayNameComboBox.SelectedItem.AsNonNull(), width);
 		}
 
@@ -64,6 +64,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (property == null)
 			{
 				this.nameComboBox.SelectedItem = nameof(Log.Message);
+				this.specifyWidthSwitch.IsChecked = false;
 				this.widthUpDown.Value = 100;
 			}
 			else

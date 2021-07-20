@@ -841,7 +841,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			switch (e.PropertyName)
 			{
 				case nameof(LogProfile.ColorIndicator):
-					this.ReloadLogs(true);
+					this.SynchronizationContext.Post(() => this.ReloadLogs(true));
 					break;
 				case nameof(LogProfile.LogLevelMap):
 				case nameof(LogProfile.LogPatterns):
@@ -850,13 +850,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				case nameof(LogProfile.TimestampCultureInfoForReading):
 				case nameof(LogProfile.TimestampFormatForDisplaying):
 				case nameof(LogProfile.TimestampFormatForReading):
-					this.ReloadLogs();
+					this.SynchronizationContext.Post(() => this.ReloadLogs());
 					break;
 				case nameof(LogProfile.Name):
 					this.updateTitleAndIconAction.Schedule();
 					break;
 				case nameof(LogProfile.VisibleLogProperties):
-					this.ReloadLogs(true);
+					this.SynchronizationContext.Post(() => this.ReloadLogs(true));
 					break;
 			}
 		}
