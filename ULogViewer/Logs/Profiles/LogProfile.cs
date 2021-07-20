@@ -1,6 +1,7 @@
 ﻿using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
+using CarinaStudio.Threading.Tasks;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using Microsoft.Extensions.Logging;
 using System;
@@ -28,6 +29,10 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// Default comparer for <see cref="LogProfile"/>.
 		/// </summary>
 		public static readonly IComparer<LogProfile> Comparer = Comparer<LogProfile>.Create(Compare);
+
+
+		// Static fields.
+		static readonly TaskFactory ioTaskFactory = new TaskFactory(new FixedThreadsTaskScheduler(1));
 
 
 		// Fields.
@@ -194,6 +199,53 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 
 
 		/// <summary>
+		/// Get name of file which instance loaded from or saved to.
+		/// </summary>
+		public string? FileName { get; private set; }
+
+
+		/// <summary>
+		/// Find valid file name for saving <see cref="LogProfile"/> to file in given directory asynchronously.
+		/// </summary>
+		/// <param name="directoryName">Name of directory contains file.</param>
+		/// <returns>Found file name.</returns>
+		public async Task<string> FindValidFileNameAsync(string directoryName)
+		{
+			// generate base name for file
+			var baseNameBuilder = new StringBuilder(this.name);
+			if (baseNameBuilder.Length > 0)
+			{
+				for (var i = baseNameBuilder.Length - 1; i >= 0; --i)
+				{
+					var c = baseNameBuilder[i];
+					if (char.IsWhiteSpace(c))
+						baseNameBuilder[i] = '_';
+					if (!char.IsDigit(c) && !char.IsLetter(c) && c != '-')
+						baseNameBuilder[i] = '_';
+				}
+			}
+			else
+				baseNameBuilder.Append("Empty");
+			var baseName = baseNameBuilder.ToString();
+
+			// find valid file name
+			return await ioTaskFactory.StartNew(() =>
+			{
+				var fileName = Path.Combine(directoryName, $"{baseName}.json");
+				if (!File.Exists(fileName) && !Directory.Exists(fileName))
+					return fileName;
+				for (var i = 1; i <= 1000; ++i)
+				{
+					fileName = Path.Combine(directoryName, $"{baseName}_{i}.json");
+					if (!File.Exists(fileName) && !Directory.Exists(fileName))
+						return fileName;
+				}
+				throw new ArgumentException($"Unable to find proper file name for '{this.name}' in directory '{directoryName}'.");
+			});
+		}
+
+
+		/// <summary>
 		/// Get or set icon.
 		/// </summary>
 		public LogProfileIcon Icon
@@ -287,7 +339,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		public static async Task<LogProfile> LoadBuiltInProfileAsync(IApplication app, string id)
 		{
 			// load JSON document
-			var jsonDocument = await Task.Run(() =>
+			var jsonDocument = await ioTaskFactory.StartNew(() =>
 			{
 				using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream($"CarinaStudio.ULogViewer.Logs.Profiles.BuiltIn.{id}.json") ?? throw new ArgumentException($"Cannot find built-in profile '{id}'.");
 				return JsonDocument.Parse(stream);
@@ -297,7 +349,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			var profile = new LogProfile(app, id);
 
 			// load profile
-			await Task.Run(() => profile.LoadFromJson(jsonDocument.RootElement));
+			await ioTaskFactory.StartNew(() => profile.LoadFromJson(jsonDocument.RootElement));
 			profile.isPinned = app.Settings.GetValueOrDefault(profile.isPinnedSettingKey.AsNonNull());
 
 			// validate
@@ -391,6 +443,9 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 					case nameof(LogPatterns):
 						this.LoadLogPatternsFromJson(jsonProperty.Value);
 						break;
+					case nameof(Name):
+						this.name = jsonProperty.Value.GetString() ?? "";
+						break;
 					case nameof(SortDirection):
 						this.sortDirection = Enum.Parse<SortDirection>(jsonProperty.Value.GetString().AsNonNull());
 						break;
@@ -446,6 +501,38 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				logPatterns.Add(new LogPattern(regex, isRepeatable, isSkippable));
 			}
 			this.logPatterns = logPatterns.AsReadOnly();
+		}
+
+
+		/// <summary>
+		/// Load profile asynchronously.
+		/// </summary>
+		/// <param name="app">Application.</param>
+		/// <param name="fileName">Name of profile file.</param>
+		/// <returns>Task of loading operation.</returns>
+		public static async Task<LogProfile> LoadProfileAsync(IApplication app, string fileName)
+		{
+			// load JSON document
+			var jsonDocument = await ioTaskFactory.StartNew(() =>
+			{
+				using var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read);
+				return JsonDocument.Parse(stream);
+			});
+
+			// prepare profile
+			var profile = new LogProfile(app);
+
+			// load profile
+			await ioTaskFactory.StartNew(() => profile.LoadFromJson(jsonDocument.RootElement));
+			if (string.IsNullOrEmpty(profile.name))
+				profile.name = Path.GetFileName(fileName);
+			profile.FileName = fileName;
+
+			// validate
+			profile.Validate();
+
+			// complete
+			return profile;
 		}
 
 
@@ -533,6 +620,147 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// Raised when property changed.
 		/// </summary>
 		public event PropertyChangedEventHandler? PropertyChanged;
+
+
+		/// <summary>
+		/// Save profile to file asynchronously.
+		/// </summary>
+		/// <param name="fileName">Name of file.</param>
+		/// <returns>Task of saving.</returns>
+		public async Task SaveAsync(string fileName)
+		{
+			this.VerifyAccess();
+			this.VerifyBuiltIn();
+			var prevFileName = this.FileName;
+			await ioTaskFactory.StartNew(() =>
+			{
+				// delete previous file
+				if (prevFileName != null && prevFileName != fileName)
+					Global.RunWithoutError(() => File.Delete(prevFileName));
+
+				// create directory
+				if (Path.IsPathRooted(fileName))
+					Directory.CreateDirectory(Path.GetDirectoryName(fileName).AsNonNull());
+
+				// save to file
+				using var stream = new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite);
+				using var writer = new Utf8JsonWriter(stream, new JsonWriterOptions() { Indented = true });
+				writer.WriteStartObject();
+				writer.WritePropertyName("DataSource");
+				this.SaveDataSourceToJson(writer);
+				writer.WriteString(nameof(ColorIndicator), this.colorIndicator.ToString());
+				writer.WriteString(nameof(Icon), this.icon.ToString());
+				if (this.isContinuousReading)
+					writer.WriteBoolean(nameof(IsContinuousReading), true);
+				if (this.isWorkingDirectoryNeeded)
+					writer.WriteBoolean(nameof(IsWorkingDirectoryNeeded), true);
+				writer.WritePropertyName(nameof(LogLevelMap));
+				this.SaveLogLevelMapToJson(writer);
+				writer.WritePropertyName(nameof(LogPatterns));
+				this.SaveLogPatternsToJson(writer);
+				writer.WriteString(nameof(Name), this.name);
+				writer.WriteString(nameof(SortDirection), this.sortDirection.ToString());
+				writer.WriteString(nameof(SortKey), this.sortKey.ToString());
+				this.timestampCultureInfoForReading?.Let(it => writer.WriteString(nameof(TimestampCultureInfoForReading), it.ToString()));
+				writer.WriteString(nameof(TimestampFormatForDisplaying), this.timestampFormatForDisplaying);
+				writer.WriteString(nameof(TimestampFormatForReading), this.timestampFormatForReading);
+				writer.WritePropertyName(nameof(VisibleLogProperties));
+				this.SaveVisibleLogPropertiesToJson(writer);
+				writer.WriteEndObject();
+			});
+			this.FileName = fileName;
+		}
+
+
+		// Save data source info in JSON format.
+		void SaveDataSourceToJson(Utf8JsonWriter writer)
+		{
+			var options = this.dataSourceOptions;
+			writer.WriteStartObject();
+			writer.WriteString("Name", this.dataSourceProvider.Name);
+			switch (this.dataSourceProvider.UnderlyingSource)
+			{
+				case UnderlyingLogDataSource.File:
+					options.Encoding?.Let(it => writer.WriteString(nameof(LogDataSourceOptions.Encoding), it.ToString()));
+					options.FileName?.Let(it => writer.WriteString(nameof(LogDataSourceOptions.FileName), it));
+					break;
+				case UnderlyingLogDataSource.StandardOutput:
+					options.Command?.Let(it => writer.WriteString(nameof(LogDataSourceOptions.Command), it));
+					options.SetupCommands.Let(it =>
+					{
+						if (it.IsNotEmpty())
+						{
+							writer.WritePropertyName(nameof(LogDataSourceOptions.SetupCommands));
+							writer.WriteStartArray();
+							foreach (var command in it)
+								writer.WriteStringValue(command);
+							writer.WriteEndArray();
+						}
+					});
+					options.TeardownCommands.Let(it =>
+					{
+						if (it.IsNotEmpty())
+						{
+							writer.WritePropertyName(nameof(LogDataSourceOptions.TeardownCommands));
+							writer.WriteStartArray();
+							foreach (var command in it)
+								writer.WriteStringValue(command);
+							writer.WriteEndArray();
+						}
+					});
+					options.WorkingDirectory?.Let(it => writer.WriteString(nameof(LogDataSourceOptions.WorkingDirectory), it));
+					break;
+			}
+			writer.WriteEndObject();
+		}
+
+
+		// Save log level map in JSON format.
+		void SaveLogLevelMapToJson(Utf8JsonWriter writer)
+		{
+			var map = this.logLevelMap;
+			writer.WriteStartObject();
+			foreach (var kvPair in map)
+				writer.WriteString(kvPair.Key, kvPair.Value.ToString());
+			writer.WriteEndObject();
+		}
+
+
+		// Save log patterns in JSON format.
+		void SaveLogPatternsToJson(Utf8JsonWriter writer)
+		{
+			var patterns = this.logPatterns;
+			writer.WriteStartArray();
+			foreach (var pattern in patterns)
+			{
+				writer.WriteStartObject();
+				writer.WriteString(nameof(LogPattern.Regex), pattern.Regex.ToString());
+				if (pattern.IsRepeatable)
+					writer.WriteBoolean(nameof(LogPattern.IsRepeatable), true);
+				if (pattern.IsSkippable)
+					writer.WriteBoolean(nameof(LogPattern.IsSkippable), true);
+				writer.WriteEndObject();
+			}
+			writer.WriteEndArray();
+		}
+
+
+		// Save visible log properties in JSON format.
+		void SaveVisibleLogPropertiesToJson(Utf8JsonWriter writer)
+		{
+			var properties = this.visibleLogProperties;
+			writer.WriteStartArray();
+			foreach (var property in properties)
+			{
+				writer.WriteStartObject();
+				if (property.DisplayName != property.Name)
+					writer.WriteString(nameof(LogProperty.DisplayName), property.DisplayName);
+				writer.WriteString(nameof(LogProperty.Name), property.Name);
+				property.Width?.Let(it => writer.WriteNumber(nameof(LogProperty.Width), it));
+				writer.WriteEndObject();
+			}
+			writer.WriteEndArray();
+		}
 
 
 		/// <summary>
@@ -686,6 +914,13 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				this.Validate();
 			}
 		}
+
+
+		/// <summary>
+		/// Wait for completion of all IO tasks.
+		/// </summary>
+		/// <returns>Task of waiting.</returns>
+		public static async Task WaitForIOCompletionAsync() => await ioTaskFactory.StartNew(() => { });
 
 
 		// Interface implementations.

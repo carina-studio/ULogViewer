@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.Logs.Profiles
@@ -23,6 +24,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		static volatile ILogger? logger;
 		static readonly ObservableList<LogProfile> pinnedProfiles = new ObservableList<LogProfile>();
 		static readonly ObservableList<LogProfile> profiles = new ObservableList<LogProfile>();
+		static string profilesDirectoryPath = "";
 
 
 		// Static initializer.
@@ -89,12 +91,45 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 
 			// load build-in profiles
 			logger.LogDebug("Start loading built-in profiles");
+			var profileCount = 0;
 			foreach (var id in builtInProfileIDs)
 			{
 				logger.LogDebug($"Load '{id}'");
 				AttachToProfile(await LogProfile.LoadBuiltInProfileAsync(app, id));
 			}
-			logger.LogDebug("Complete loading built-in profiles");
+			logger.LogDebug($"Complete loading {profileCount} built-in profile(s)");
+
+			// load profiles
+			profilesDirectoryPath = Path.Combine(app.RootPrivateDirectoryPath, "Profiles");
+			profileCount = 0;
+			logger.LogDebug("Start loading profiles");
+			var fileNames = await Task.Run(() =>
+			{
+				try
+				{
+					if (!Directory.Exists(profilesDirectoryPath))
+						return new string[0];
+					return Directory.GetFiles(profilesDirectoryPath, "*.json");
+				}
+				catch (Exception ex)
+				{
+					logger.LogError(ex, $"Unable to check profiles in directory '{profilesDirectoryPath}'");
+					return new string[0];
+				}
+			});
+			foreach (var fileName in fileNames)
+			{
+				try
+				{
+					profiles.Add(await LogProfile.LoadProfileAsync(app, fileName));
+					++profileCount;
+				}
+				catch (Exception ex)
+				{
+					logger.LogError(ex, $"Unable to load profile from '{fileName}'");
+				}
+			}
+			logger.LogDebug($"Complete loading {profileCount} profile(s)");
 		}
 
 
@@ -128,5 +163,16 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// </summary>
 		/// <remarks>The list will implement <see cref="System.Collections.Specialized.INotifyCollectionChanged"/> interface.</remarks>
 		public static IList<LogProfile> Pinned { get; }
+
+
+		/// <summary>
+		/// Wait for completion of all IO tasks.
+		/// </summary>
+		/// <returns>Task of waiting.</returns>
+		public static async Task WaitForIOCompletionAsync()
+		{
+			logger?.LogDebug("Wait for IO completion");
+			await LogProfile.WaitForIOCompletionAsync();
+		}
 	}
 }
