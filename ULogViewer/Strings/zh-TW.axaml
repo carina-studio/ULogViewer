@@ -5,6 +5,7 @@
 	<!-- Common -->
 	<sys:String x:Key="String.Common.Add">新增</sys:String>
 	<sys:String x:Key="String.Common.Cancel">取消</sys:String>
+	<sys:String x:Key="String.Common.Copy">複製</sys:String>
 	<sys:String x:Key="String.Common.Delete">刪除</sys:String>
 	<sys:String x:Key="String.Common.Edit">編輯</sys:String>
 	<sys:String x:Key="String.Common.Empty">空</sys:String>

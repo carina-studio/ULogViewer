@@ -65,12 +65,26 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Edit log profile.
-		void EditLogProfile(LogProfile? logProfile)
+		// Copy log profile.
+		void CopyLogProfile(LogProfile? logProfile)
 		{
 			if (logProfile == null)
 				return;
-			//
+			var newProfile = new LogProfile(logProfile);
+			newProfile.Name = $"{logProfile.Name} (2)";
+			LogProfiles.Add(newProfile);
+		}
+
+
+		// Edit log profile.
+		async void EditLogProfile(LogProfile? logProfile)
+		{
+			if (logProfile == null)
+				return;
+			await new LogProfileEditorDialog()
+			{
+				LogProfile = logProfile
+			}.ShowDialog(this);
 		}
 
 
@@ -220,7 +234,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (logProfile == null)
 				return;
-			//
+			LogProfiles.Remove(logProfile);
 		}
 	}
 }

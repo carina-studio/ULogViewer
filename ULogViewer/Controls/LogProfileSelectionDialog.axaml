@@ -48,12 +48,17 @@
 
 								<!-- Actions -->
 								<StackPanel Grid.Column="2" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
-									<Button Classes="InPlaceAction" Command="{Binding $parent[Window].PinUnpinLogProfile}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" IsVisible="{Binding !IsBuiltIn}" ToolTip.Tip="{DynamicResource String.LogProfileSelectionDialog.RemoveLogProfile}">
+									<Button Classes="InPlaceAction" Command="{Binding $parent[Window].RemoveLogProfile}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" IsVisible="{Binding !IsBuiltIn}" ToolTip.Tip="{DynamicResource String.LogProfileSelectionDialog.RemoveLogProfile}">
 										<Border Classes="InPlaceAction">
-											<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Delete.Highlight}"/>
+											<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Delete}"/>
 										</Border>
 									</Button>
-									<Button Classes="InPlaceAction" Command="{Binding $parent[Window].PinUnpinLogProfile}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" IsVisible="{Binding !IsBuiltIn}" ToolTip.Tip="{DynamicResource String.LogProfileSelectionDialog.EditLogProfile}">
+									<Button Classes="InPlaceAction" Command="{Binding $parent[Window].CopyLogProfile}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String.Common.Copy}">
+										<Border Classes="InPlaceAction">
+											<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Copy}"/>
+										</Border>
+									</Button>
+									<Button Classes="InPlaceAction" Command="{Binding $parent[Window].EditLogProfile}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" IsVisible="{Binding !IsBuiltIn}" ToolTip.Tip="{DynamicResource String.LogProfileSelectionDialog.EditLogProfile}">
 										<Border Classes="InPlaceAction">
 											<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Edit}"/>
 										</Border>

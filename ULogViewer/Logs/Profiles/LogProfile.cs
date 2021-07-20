@@ -78,12 +78,19 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		{
 			this.dataSourceOptions = template.dataSourceOptions;
 			this.dataSourceProvider = template.dataSourceProvider;
+			this.icon = template.icon;
+			this.isPinned = template.isPinned;
+			this.isWorkingDirectoryNeeded = template.isWorkingDirectoryNeeded;
 			foreach (var pair in template.logLevelMap)
 				this.logLevelMap[pair.Key] = pair.Value;
 			this.logPatterns = template.logPatterns;
 			this.name = template.name;
 			this.sortDirection = template.sortDirection;
+			this.sortKey = template.sortKey;
+			this.timestampCultureInfoForReading = template.timestampCultureInfoForReading;
+			this.timestampFormatForDisplaying = template.timestampFormatForDisplaying;
 			this.timestampFormatForReading = template.timestampFormatForReading;
+			this.visibleLogProperties = template.visibleLogProperties;
 		}
 
 
@@ -603,7 +610,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				this.VerifyBuiltIn();
 				if (this.logPatterns.SequenceEqual(value))
 					return;
-				this.logPatterns = value.AsReadOnly();
+				this.logPatterns = new List<LogPattern>(value).AsReadOnly();
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LogPatterns)));
 				this.Validate();
 			}
@@ -929,7 +936,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				this.VerifyBuiltIn();
 				if (this.visibleLogProperties.SequenceEqual(value))
 					return;
-				this.visibleLogProperties = value.AsReadOnly();
+				this.visibleLogProperties = new List<LogProperty>(value).AsReadOnly();
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(VisibleLogProperties)));
 				this.Validate();
 			}
