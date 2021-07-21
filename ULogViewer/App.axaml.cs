@@ -205,6 +205,9 @@ namespace CarinaStudio.ULogViewer
 			// save predefined log text filters
 			await PredefinedLogTextFilters.SaveAllAsync();
 
+			// wait for IO completion of log profiles
+			await LogProfiles.WaitForIOCompletionAsync();
+
 			// restart main window
 			//
 

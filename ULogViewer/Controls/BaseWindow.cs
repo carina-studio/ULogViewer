@@ -1,10 +1,13 @@
 ﻿using Avalonia;
+using Avalonia.Animation;
 using Avalonia.Controls;
 using CarinaStudio.Collections;
 using CarinaStudio.Threading;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Threading;
 
 namespace CarinaStudio.ULogViewer.Controls
@@ -60,7 +63,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		internal protected virtual void OnDialogClosed(BaseDialog dialog)
 		{
 			if (this.dialogs.Remove(dialog) && this.dialogs.IsEmpty())
+			{
+				(this.Content as Control)?.Let(it => it.Opacity = 1);
 				this.SetValue<bool>(HasDialogsProperty, false);
+			}
 		}
 
 
@@ -72,7 +78,60 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			this.dialogs.Add(dialog);
 			if (this.dialogs.Count == 1)
+			{
+				(this.Content as Control)?.Let(it => it.Opacity = 0.2);
 				this.SetValue<bool>(HasDialogsProperty, true);
+			}
+		}
+
+
+		// Called when property changed.
+		protected override void OnPropertyChanged<T>(AvaloniaPropertyChangedEventArgs<T> change)
+		{
+			base.OnPropertyChanged(change);
+			if (change.Property == ContentProperty && change.NewValue.Value is Control control)
+			{
+				var transitions = control.Transitions ?? new Transitions().Also(it => control.Transitions = it);
+				transitions.Add(new DoubleTransition()
+				{
+					Duration = TimeSpan.FromMilliseconds(500),
+					Property = OpacityProperty
+				});
+			}
+		}
+
+
+		/// <summary>
+		/// Open given URI by default browser.
+		/// </summary>
+		/// <param name="uri">URI to open.</param>
+		protected void OpenLink(string uri) => this.OpenLink(new Uri(uri));
+
+
+		/// <summary>
+		/// Open given <see cref="Uri"/> by default browser.
+		/// </summary>
+		/// <param name="uri"><see cref="Uri"/> to open.</param>
+		protected void OpenLink(Uri uri)
+		{
+			try
+			{
+				if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+				{
+					Process.Start(new ProcessStartInfo("cmd", $"/c start {uri}")
+					{
+						CreateNoWindow = true
+					});
+				}
+				else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+					Process.Start("xdg-open", uri.ToString());
+				else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+					Process.Start("open", uri.ToString());
+			}
+			catch (Exception ex)
+			{
+				this.Logger.LogError(ex, $"Unable to open link: {uri}");
+			}
 		}
 
 

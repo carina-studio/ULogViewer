@@ -50,6 +50,18 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		public string Name { get; }
 
 
+		/// <summary>
+		/// Equality operator.
+		/// </summary>
+		public static bool operator ==(LogProperty? x, LogProperty? y) => (x?.Equals(y) ?? object.ReferenceEquals(y, null));
+
+
+		/// <summary>
+		/// Inquality operator.
+		/// </summary>
+		public static bool operator !=(LogProperty? x, LogProperty? y) => !(x?.Equals(y) ?? object.ReferenceEquals(y, null));
+
+
 		// Get readable string.
 		public override string ToString() => this.Name;
 

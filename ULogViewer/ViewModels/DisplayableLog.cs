@@ -14,7 +14,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 	class DisplayableLog : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 	{
 		// Fields.
+		IBrush? colorIndicatorBrush;
+		bool isColorIndicatorBrushSet;
+		bool isLevelBrushSet;
 		bool isMarked;
+		IBrush? levelBrush;
 		string? timestampString;
 
 
@@ -29,7 +33,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.Application = group.Application;
 			this.BinaryTimestamp = log.Timestamp?.ToBinary() ?? 0L;
 			this.Group = group;
-			this.LevelBrush = group.GetLevelBrush(log.Level);
 			this.Log = log;
 			this.LogReader = reader;
 			this.TrackingNode = new LinkedListNode<DisplayableLog>(this);
@@ -49,6 +52,23 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public long BinaryTimestamp { get; }
 
 
+		/// <summary>
+		/// Get <see cref="IBrush"/> of color indicator.
+		/// </summary>
+		public IBrush? ColorIndicatorBrush
+		{
+			get
+			{
+				if (!this.isColorIndicatorBrushSet)
+				{
+					this.colorIndicatorBrush = this.Group.GetColorIndicatorBrush(this);
+					this.isColorIndicatorBrushSet = true;
+				}
+				return this.colorIndicatorBrush;
+			}
+		}
+
+
 		// Dispose.
 		protected override void Dispose(bool disposing)
 		{
@@ -57,6 +77,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// notify
 			this.Group.OnDisplayableLogDisposed(this);
+
+			// release resources
+			this.colorIndicatorBrush = null;
+			this.levelBrush = null;
 		}
 
 
@@ -99,7 +123,18 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get <see cref="IBrush"/> according to level of log.
 		/// </summary>
-		public IBrush LevelBrush { get; private set; }
+		public IBrush LevelBrush
+		{
+			get
+			{
+				if (!this.isLevelBrushSet)
+				{
+					this.levelBrush = this.Group.GetLevelBrush(this);
+					this.isLevelBrushSet = true;
+				}
+				return this.levelBrush.AsNonNull();
+			}
+		}
 
 
 		/// <summary>
@@ -144,8 +179,18 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		internal void OnStyleResourcesUpdated()
 		{
-			this.LevelBrush = this.Group.GetLevelBrush(this.Log.Level);
-			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LevelBrush)));
+			if (this.isColorIndicatorBrushSet)
+			{
+				this.isColorIndicatorBrushSet = false;
+				this.colorIndicatorBrush = null;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ColorIndicatorBrush)));
+			}
+			if (this.isLevelBrushSet)
+			{
+				this.isLevelBrushSet = false;
+				this.levelBrush = null;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LevelBrush)));
+			}
 		}
 
 

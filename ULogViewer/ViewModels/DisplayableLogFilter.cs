@@ -1,12 +1,12 @@
 ﻿using CarinaStudio.Collections;
 using CarinaStudio.Threading;
 using CarinaStudio.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -26,16 +26,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			public volatile int CompletedChunkId;
 			public int ConcurrencyLevel;
 			public readonly object FilteringChunkLock = new object();
-			public bool HasLogMessage;
 			public bool HasLogProcessId;
-			public bool HasLogProcessName;
-			public bool HasLogSourceName;
 			public bool HasLogThreadId;
-			public bool HasLogThreadName;
-			public bool HasLogUserId;
-			public bool HasLogUserName;
 			public bool IncludeMarkedLogs;
 			public Logs.LogLevel Level;
+			public IList<Func<DisplayableLog, string>> LogTextPropertyGetters = new Func<DisplayableLog, string>[0];
 			public int NextChunkId = 1;
 			public int? ProcessId;
 			public int? ThreadId;
@@ -237,6 +232,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			var tid = filteringParams.ThreadId;
 			var textRegexList = filteringParams.TextRegexList;
 			var textRegexCount = textRegexList.Count;
+			var textPropertyGetters = filteringParams.LogTextPropertyGetters;
+			var textPropertyCount = textPropertyGetters.Count;
+			var textToMatchBuilder = new StringBuilder();
 			for (int i = 0, count = logs.Count; i < count; ++i)
 			{
 				// check marking state
@@ -248,40 +246,24 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				}
 
 				// check text regex
-				var isTextRegexMatched = (textRegexCount == 0);
-				for (var j = textRegexCount - 1; j >= 0; --j)
+				var isTextRegexMatched = (textRegexCount == 0 || textPropertyCount == 0);
+				if (!isTextRegexMatched)
 				{
-					var textRegex = textRegexList[j];
-					if (filteringParams.HasLogMessage && textRegex.IsMatch(log.Message ?? ""))
+					for (var j = 0; j < textPropertyCount; ++j)
 					{
-						isTextRegexMatched = true;
-						break;
+						if (j > 0)
+							textToMatchBuilder.Append('█'); // special separator between text properties
+						textToMatchBuilder.Append(textPropertyGetters[j](log));
 					}
-					if (filteringParams.HasLogProcessName && textRegex.IsMatch(log.ProcessName ?? ""))
+					for (var j = textRegexCount - 1; j >= 0; --j)
 					{
-						isTextRegexMatched = true;
-						break;
+						if (textRegexList[j].IsMatch(textToMatchBuilder.ToString()))
+						{
+							isTextRegexMatched = true;
+							break;
+						}
 					}
-					if (filteringParams.HasLogSourceName && textRegex.IsMatch(log.SourceName ?? ""))
-					{
-						isTextRegexMatched = true;
-						break;
-					}
-					if (filteringParams.HasLogThreadName && textRegex.IsMatch(log.ThreadName ?? ""))
-					{
-						isTextRegexMatched = true;
-						break;
-					}
-					if (filteringParams.HasLogUserId && textRegex.IsMatch(log.UserId ?? ""))
-					{
-						isTextRegexMatched = true;
-						break;
-					}
-					if (filteringParams.HasLogUserName && textRegex.IsMatch(log.UserName ?? ""))
-					{
-						isTextRegexMatched = true;
-						break;
-					}
+					textToMatchBuilder.Remove(0, textToMatchBuilder.Length);
 				}
 				if (isTextRegexMatched && combinationMode == FilterCombinationMode.Union)
 				{
@@ -572,15 +554,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// cancel current filtering
 			this.CancelFiltering();
 
-			// check filtering parameters
+			// check log properties
 			var isFilteringNeeded = false;
 			var filteringParams = new FilteringParams();
+			var textPropertyGetters = new List<Func<DisplayableLog, string>>();
 			foreach (var logProperty in this.filteringLogProperties)
 			{
 				switch(logProperty.Name)
 				{
 					case nameof(DisplayableLog.Message):
-						filteringParams.HasLogMessage = true;
+						textPropertyGetters.Add(it => it.Message ?? "");
 						isFilteringNeeded = true;
 						break;
 					case nameof(DisplayableLog.ProcessId):
@@ -588,11 +571,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						isFilteringNeeded = true;
 						break;
 					case nameof(DisplayableLog.ProcessName):
-						filteringParams.HasLogProcessName = true;
+						textPropertyGetters.Add(it => it.ProcessName ?? "");
 						isFilteringNeeded = true;
 						break;
 					case nameof(DisplayableLog.SourceName):
-						filteringParams.HasLogSourceName = true;
+						textPropertyGetters.Add(it => it.SourceName ?? "");
 						isFilteringNeeded = true;
 						break;
 					case nameof(DisplayableLog.ThreadId):
@@ -600,15 +583,15 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						isFilteringNeeded = true;
 						break;
 					case nameof(DisplayableLog.ThreadName):
-						filteringParams.HasLogThreadName = true;
+						textPropertyGetters.Add(it => it.ThreadName ?? "");
 						isFilteringNeeded = true;
 						break;
 					case nameof(DisplayableLog.UserId):
-						filteringParams.HasLogUserId = true;
+						textPropertyGetters.Add(it => it.UserId ?? "");
 						isFilteringNeeded = true;
 						break;
 					case nameof(DisplayableLog.UserName):
-						filteringParams.HasLogUserName = true;
+						textPropertyGetters.Add(it => it.UserName ?? "");
 						isFilteringNeeded = true;
 						break;
 				}
@@ -663,6 +646,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			filteringParams.CombinationMode = this.combinationMode;
 			filteringParams.IncludeMarkedLogs = this.includeMarkedLogs;
 			filteringParams.Level = this.level;
+			filteringParams.LogTextPropertyGetters = textPropertyGetters;
 			filteringParams.ProcessId = this.processId;
 			filteringParams.TextRegexList = this.textRegexList;
 			filteringParams.ThreadId = this.threadId;

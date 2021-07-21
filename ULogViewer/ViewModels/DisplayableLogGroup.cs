@@ -1,6 +1,7 @@
 ﻿using Avalonia.Media;
 using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
+using CarinaStudio.ULogViewer.Converters;
 using CarinaStudio.ULogViewer.Logs;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using System;
@@ -16,8 +17,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 	class DisplayableLogGroup : BaseDisposable, IApplicationObject
 	{
 		// Fields.
+		readonly Dictionary<string, IBrush> colorIndicatorBrushes = new Dictionary<string, IBrush>();
+		Func<DisplayableLog, string>? colorIndicatorKeyGetter;
 		readonly LinkedList<DisplayableLog> displayableLogs = new LinkedList<DisplayableLog>();
 		readonly Dictionary<LogLevel, IBrush> levelBrushes = new Dictionary<LogLevel, IBrush>();
+		readonly Random random = new Random();
 
 
 		/// <summary>
@@ -35,7 +39,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.Application.StringsUpdated += this.OnApplicationStringsUpdated;
 			profile.PropertyChanged += this.OnLogProfilePropertyChanged;
 
-			// setup level brushes
+			// setup brushes
+			this.UpdateColorIndicatorBrushes();
 			this.UpdateLevelBrushes();
 		}
 
@@ -74,21 +79,45 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.Application.Settings.SettingChanged -= this.OnSettingChanged;
 			this.Application.StringsUpdated -= this.OnApplicationStringsUpdated;
 			this.LogProfile.PropertyChanged -= this.OnLogProfilePropertyChanged;
+
+			// clear resources
+			this.colorIndicatorBrushes.Clear();
+			this.levelBrushes.Clear();
 		}
 
 
 		/// <summary>
-		/// Get <see cref="IBrush"/> for given log level.
+		/// Get <see cref="IBrush"/> of color indicator for given log.
 		/// </summary>
-		/// <param name="level">Log level.</param>
-		/// <returns><see cref="IBrush"/> for given log level.</returns>
-		internal IBrush GetLevelBrush(LogLevel level)
+		/// <param name="log"><see cref="DisplayableLog"/>.</param>
+		/// <returns><see cref="IBrush"/> of color indicator.</returns>
+		internal IBrush? GetColorIndicatorBrush(DisplayableLog log)
 		{
-			if (this.levelBrushes.TryGetValue(level, out var brush))
+			this.VerifyDisposed();
+			if (this.colorIndicatorKeyGetter == null)
+				return null;
+			var key = this.colorIndicatorKeyGetter(log);
+			if (this.colorIndicatorBrushes.TryGetValue(key, out var brush))
+				return brush.AsNonNull();
+			brush = new SolidColorBrush(Color.FromArgb(255, (byte)this.random.Next(100, 201), (byte)this.random.Next(100, 201), (byte)this.random.Next(100, 201)));
+			this.colorIndicatorBrushes[key] = brush;
+			return brush;
+		}
+
+
+		/// <summary>
+		/// Get <see cref="IBrush"/> for given log.
+		/// </summary>
+		/// <param name="log"><see cref="DisplayableLog"/>.</param>
+		/// <returns><see cref="IBrush"/> for given log.</returns>
+		internal IBrush GetLevelBrush(DisplayableLog log)
+		{
+			this.VerifyDisposed();
+			if (this.levelBrushes.TryGetValue(log.Level, out var brush))
 				return brush.AsNonNull();
 			if (this.levelBrushes.TryGetValue(LogLevel.Undefined, out brush))
 				return brush.AsNonNull();
-			throw new ArgumentException($"Cannot get brush for log level {level}.");
+			throw new ArgumentException($"Cannot get brush for log level {log.Level}.");
 		}
 
 
@@ -133,14 +162,29 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		// Called when property of log profile has been changed.
 		void OnLogProfilePropertyChanged(object? sender, PropertyChangedEventArgs e)
 		{
-			if (e.PropertyName == nameof(LogProfile.TimestampFormatForDisplaying))
+			switch(e.PropertyName)
 			{
-				var node = this.displayableLogs.First;
-				while (node != null)
-				{
-					node.Value.OnTimestampFormatChanged();
-					node = node.Next;
-				}
+				case nameof(LogProfile.ColorIndicator):
+					{
+						this.UpdateColorIndicatorBrushes();
+						var node = this.displayableLogs.First;
+						while (node != null)
+						{
+							node.Value.OnStyleResourcesUpdated();
+							node = node.Next;
+						}
+					}
+					break;
+				case nameof(LogProfile.TimestampFormatForDisplaying):
+					{
+						var node = this.displayableLogs.First;
+						while (node != null)
+						{
+							node.Value.OnTimestampFormatChanged();
+							node = node.Next;
+						}
+					}
+					break;
 			}
 		}
 
@@ -164,17 +208,36 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		}
 
 
+		// Update color indicator brushes.
+		void UpdateColorIndicatorBrushes()
+		{
+			// clear brushes
+			this.colorIndicatorBrushes.Clear();
+
+			// setup key getter
+			this.colorIndicatorKeyGetter = this.LogProfile.ColorIndicator switch
+			{
+				LogColorIndicator.FileName => it => it.FileName ?? "",
+				LogColorIndicator.ProcessId => it => it.ProcessId?.ToString() ?? "",
+				LogColorIndicator.ProcessName => it => it.ProcessName ?? "",
+				LogColorIndicator.ThreadId => it => it.ThreadId?.ToString() ?? "",
+				LogColorIndicator.ThreadName => it => it.ThreadName ?? "",
+				LogColorIndicator.UserId => it => it.UserId ?? "",
+				LogColorIndicator.UserName => it => it.UserName ?? "",
+				_ => null,
+			};
+		}
+
+
 		// Update level brushes.
 		void UpdateLevelBrushes()
 		{
-			if (this.Application is not App app)
-				return;
-			var resources = app.Styles;
 			this.levelBrushes.Clear();
 			foreach (var level in (LogLevel[])Enum.GetValues(typeof(LogLevel)))
 			{
-				if (resources.TryGetResource($"Brush.DisplayableLog.Level.{level}", out var res))
-					this.levelBrushes[level] = (IBrush)res.AsNonNull();
+				var brush = LogLevelBrushConverter.Default.Convert(level, typeof(IBrush), null, this.Application.CultureInfo) as IBrush;
+				if (brush != null)
+					this.levelBrushes[level] = brush;
 			}
 		}
 

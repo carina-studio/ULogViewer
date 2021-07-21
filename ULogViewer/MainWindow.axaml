@@ -14,7 +14,7 @@
 		<DataTemplate DataType="{x:Type appViewModels:Session}">
 			<Grid ColumnDefinitions="Auto,Auto,Auto" Margin="{StaticResource Thickness.MainWindow.TabItem.Padding}">
 				<Border Height="{StaticResource Double.MainWindow.TabItem.Icon.Size}" Margin="{StaticResource Thickness.MainWindow.TabItem.Icon.Margin}" VerticalAlignment="Center" Width="{StaticResource Double.MainWindow.TabItem.Icon.Size}">
-					<DrawingPresenter Drawing="{Binding Icon}" HorizontalAlignment="Center" Stretch="Uniform" VerticalAlignment="Center"/>
+					<DrawingPresenter Classes="Icon" Drawing="{Binding Icon}"/>
 				</Border>
 				<TextBlock FontSize="{StaticResource Double.MainWindow.TabItem.FontSize}" Grid.Column="1" MaxWidth="200" Text="{Binding Title}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
 				<Button Background="{x:Static Brushes.Transparent}" Click="OnTabItemCloseButtonClick" Grid.Column="2" Margin="{StaticResource Thickness.MainWindow.TabItem.CloseButton.Margin}" Padding="{StaticResource Thickness.MainWindow.TabItem.CloseButton.Padding}" ToolTip.Tip="{DynamicResource String.MainWindow.CloseSession}" VerticalAlignment="Center">

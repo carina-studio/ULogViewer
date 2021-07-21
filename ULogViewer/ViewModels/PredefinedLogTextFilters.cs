@@ -3,6 +3,7 @@ using CarinaStudio.Threading;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -40,6 +41,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// add filter
 			filters.Add(filter);
+			filter.PropertyChanged += OnPredefinedLogTextFilterPropertyChanged;
+
+			// save filter
+			_ = SaveFilter(filter, true);
 		}
 
 
@@ -91,7 +96,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			{
 				try
 				{
-					filters.Add(await PredefinedLogTextFilter.LoadAsync(app, fileName));
+					filters.Add((await PredefinedLogTextFilter.LoadAsync(app, fileName)).Also(it =>
+					{
+						it.PropertyChanged += OnPredefinedLogTextFilterPropertyChanged;
+					}));
 				}
 				catch (Exception ex)
 				{
@@ -99,6 +107,37 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				}
 			}
 			logger.LogDebug($"{filters.Count} filter(s) loaded");
+		}
+
+
+		// Salled when property of predefined log text filter changed.
+		static void OnPredefinedLogTextFilterPropertyChanged(object? sender, PropertyChangedEventArgs e)
+		{
+			if (sender is not PredefinedLogTextFilter filter)
+				return;
+			switch(e.PropertyName)
+			{
+				case nameof(PredefinedLogTextFilter.Name):
+					app?.SynchronizationContext?.PostDelayed(() =>
+					{
+						if (filters.Contains(filter))
+						{
+							logger?.LogDebug($"Save renamed filter '{filter.Name}'");
+							_ = SaveFilter(filter, true);
+						}
+					}, 100);
+					break;
+				case nameof(PredefinedLogTextFilter.Regex):
+					app?.SynchronizationContext?.PostDelayed(() =>
+					{
+						if (filters.Contains(filter))
+						{
+							logger?.LogDebug($"Save changed filter '{filter.Name}'");
+							_ = SaveFilter(filter, false);
+						}
+					}, 100);
+					break;
+			}
 		}
 
 
@@ -115,12 +154,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// remove
 			if (!filters.Remove(filter))
 				return;
+			filter.PropertyChanged -= OnPredefinedLogTextFilterPropertyChanged;
+			logger?.LogDebug($"Remove filter '{filter.Name}");
 
 			// delete file
-			filter.FileName?.Let(fileName =>
-			{
-				Task.Run(() => Global.RunWithoutError(() => File.Delete(fileName)));
-			});
+			_ = filter.DeleteFileAsync();
 		}
 
 
@@ -139,30 +177,41 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			logger?.LogDebug("Start saving all filters");
 			foreach (var filter in filters)
 			{
-				var fileName = filter.FileName;
-				if (fileName == null)
-				{
-					try
-					{
-						fileName = await filter.FindValidFileNameAsync(directoryPath);
-					}
-					catch (Exception ex)
-					{
-						logger?.LogError(ex, $"Unable to find file name for filter '{filter.Name}'");
-						continue;
-					}
-				}
+				if (await SaveFilter(filter, false))
+					++savedCount;
+			}
+			logger?.LogDebug($"{savedCount} filter(s) saved");
+		}
+
+
+		// Save given filter.
+		static async Task<bool> SaveFilter(PredefinedLogTextFilter filter, bool saveAs)
+		{
+			var fileName = filter.FileName;
+			if (!saveAs && fileName == null)
+				saveAs = true;
+			if (saveAs)
+			{
 				try
 				{
-					await filter.SaveAsync(fileName);
-					++savedCount;
+					fileName = await filter.FindValidFileNameAsync(directoryPath);
 				}
 				catch (Exception ex)
 				{
-					logger?.LogError(ex, $"Unable to save filter '{filter.Name}' to file '{fileName}'");
+					logger?.LogError(ex, $"Unable to find file name for filter '{filter.Name}'");
+					return false;
 				}
 			}
-			logger?.LogDebug($"{savedCount} filter(s) saved");
+			try
+			{
+				await filter.SaveAsync(fileName.AsNonNull());
+				return true;
+			}
+			catch (Exception ex)
+			{
+				logger?.LogError(ex, $"Unable to save filter '{filter.Name}' to file '{fileName}'");
+				return false;
+			}
 		}
 	}
 }

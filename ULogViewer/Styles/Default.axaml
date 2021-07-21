@@ -13,22 +13,26 @@
 			<!-- Dialog -->
 			<SolidColorBrush x:Key="Brush.Dialog.Background">#ffffff</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.Dialog.ControlButtonsPanel.Background">#ffffff</SolidColorBrush>
-
-			<!-- DisplayableLog -->
-			<SolidColorBrush x:Key="Brush.DisplayableLog.Level.Debug">#000000</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.DisplayableLog.Level.Error">#000000</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.DisplayableLog.Level.Fatal">#000000</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.DisplayableLog.Level.Info">#000000</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.DisplayableLog.Level.Undefined">#000000</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.DisplayableLog.Level.Verbose">#000000</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.DisplayableLog.Level.Warn">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.Dialog.Description.Foreground">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.Dialog.Description.Foreground.Error">#ff0000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.Dialog.Description.Foreground.Link">#007acc</SolidColorBrush>
 
 			<!-- Icon -->
 			<SolidColorBrush x:Key="Brush.Icon">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.Icon.Active">#7ac0ff</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.Icon.Error">#ff3232</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.Icon.Info">#007acc</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.Icon.LogProfile">#7ac0ff</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.Icon.Warning">#ff8432</SolidColorBrush>
+
+			<!-- LogLevel -->
+			<SolidColorBrush x:Key="Brush.LogLevel.Debug">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.LogLevel.Error">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.LogLevel.Fatal">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.LogLevel.Info">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.LogLevel.Undefined">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.LogLevel.Verbose">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.LogLevel.Warn">#000000</SolidColorBrush>
 
 			<!-- LogProfileSelectionDialog -->
 			<SolidColorBrush x:Key="Brush.LogProfileSelectionDialog.Label.Background">#00000000</SolidColorBrush>
@@ -60,6 +64,25 @@
 		</ResourceDictionary>
 	</Styles.Resources>
 
+	<!-- Browse -->
+	<Style Selector="Button.Browse">
+		<Setter Property="Content" Value="..."/>
+		<Setter Property="Margin" Value="{StaticResource Thickness.Browse.Margin}"/>
+		<Setter Property="VerticalAlignment" Value="Stretch"/>
+	</Style>
+	<Style Selector="ToggleButton.Browse">
+		<Setter Property="Content" Value="..."/>
+		<Setter Property="Margin" Value="{StaticResource Thickness.Browse.Margin}"/>
+		<Setter Property="VerticalAlignment" Value="Stretch"/>
+	</Style>
+
+	<!-- Common -->
+	<Style Selector="DrawingPresenter.Icon">
+		<Setter Property="HorizontalAlignment" Value="Center"/>
+		<Setter Property="Stretch" Value="Uniform"/>
+		<Setter Property="VerticalAlignment" Value="Center"/>
+	</Style>
+
 	<!-- Dialog -->
 	<Style Selector="Border.Dialog_ControlButtonsPanel">
 		<Setter Property="Background" Value="{DynamicResource Brush.Dialog.ControlButtonsPanel.Background}"/>
@@ -82,6 +105,11 @@
 		<Setter Property="Height" Value="{StaticResource Double.Dialog.Separator.Size}"/>
 		<Setter Property="HorizontalAlignment" Value="Stretch"/>
 	</Style>
+	<Style Selector="Separator.Dialog_Separator_Large_Horizontal">
+		<Setter Property="Background" Value="{x:Null}"/>
+		<Setter Property="Height" Value="{StaticResource Double.Dialog.Separator.Size.Large}"/>
+		<Setter Property="HorizontalAlignment" Value="Stretch"/>
+	</Style>
 	<Style Selector="Separator.Dialog_Separator_Vertical">
 		<Setter Property="Background" Value="{x:Null}"/>
 		<Setter Property="VerticalAlignment" Value="Stretch"/>
@@ -91,13 +119,36 @@
 		<Setter Property="HorizontalAlignment" Value="Center"/>
 		<Setter Property="Orientation" Value="Horizontal"/>
 	</Style>
+	<Style Selector="TextBlock.Dialog_Description">
+		<Setter Property="Foreground" Value="{DynamicResource Brush.Dialog.Description.Foreground}"/>
+		<Setter Property="Margin" Value="{StaticResource Thickness.Dialog.Description.Margin}"/>
+		<Setter Property="TextWrapping" Value="WrapWithOverflow"/>
+	</Style>
+	<Style Selector="TextBlock.Dialog_Description_Error">
+		<Setter Property="Foreground" Value="{DynamicResource Brush.Dialog.Description.Foreground.Error}"/>
+		<Setter Property="Margin" Value="{StaticResource Thickness.Dialog.Description.Margin}"/>
+		<Setter Property="TextWrapping" Value="WrapWithOverflow"/>
+	</Style>
+	<Style Selector="TextBlock.Dialog_Description_Link">
+		<Setter Property="Cursor" Value="Hand"/>
+		<Setter Property="Foreground" Value="{DynamicResource Brush.Dialog.Description.Foreground.Link}"/>
+		<Setter Property="Margin" Value="{StaticResource Thickness.Dialog.Description.Margin}"/>
+		<Setter Property="TextWrapping" Value="WrapWithOverflow"/>
+	</Style>
+	<Style Selector="TextBlock.Dialog_Label">
+		<Setter Property="FontSize" Value="{StaticResource Double.Dialog.Label.FontSize}"/>
+		<Setter Property="Margin" Value="{StaticResource Thickness.Dialog.Label.Margin}"/>
+		<Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+	</Style>
 	<Style Selector="TextBlock.Dialog_Label_Header1">
 		<Setter Property="FontSize" Value="{StaticResource Double.Dialog.Label.Header1.FontSize}"/>
 		<Setter Property="Margin" Value="{StaticResource Thickness.Dialog.Label.Header1.Margin}"/>
+		<Setter Property="TextTrimming" Value="CharacterEllipsis"/>
 	</Style>
 	<Style Selector="TextBlock.Dialog_Label_Header2">
 		<Setter Property="FontSize" Value="{StaticResource Double.Dialog.Label.Header2.FontSize}"/>
 		<Setter Property="Margin" Value="{StaticResource Thickness.Dialog.Label.Header2.Margin}"/>
+		<Setter Property="TextTrimming" Value="CharacterEllipsis"/>
 	</Style>
 	<Style Selector="Window.Dialog">
 		<Setter Property="Background" Value="{DynamicResource Brush.Dialog.Background}"/>
@@ -107,11 +158,36 @@
 		<Setter Property="WindowStartupLocation" Value="CenterOwner"/>
 	</Style>
 
-	<!-- LogProfileSelectionDialog -->
-	<Style Selector="Border.LogProfileSelectionDialog_LogProfile_Action">
-		<Setter Property="Height" Value="{StaticResource Double.LogProfileSelectionDialog.LogProfile.Action.Icon.Size}"/>
-		<Setter Property="Width" Value="{StaticResource Double.LogProfileSelectionDialog.LogProfile.Action.Icon.Size}"/>
+	<!-- InPlaceAction -->
+	<Style Selector="Border.InPlaceAction">
+		<Setter Property="Height" Value="{StaticResource Double.InPlaceAction.IconSize}"/>
+		<Setter Property="Width" Value="{StaticResource Double.InPlaceAction.IconSize}"/>
 	</Style>
+	<Style Selector="Border.InPlaceAction_Reserved">
+		<Setter Property="Height" Value="{StaticResource Double.InPlaceAction.ReservedHeight}"/>
+		<Setter Property="Opacity" Value="0"/>
+		<Setter Property="Width" Value="1"/>
+	</Style>
+	<Style Selector="Button.InPlaceAction">
+		<Setter Property="Background" Value="{x:Static Brushes.Transparent}"/>
+		<Setter Property="HorizontalContentAlignment" Value="Center"/>
+		<Setter Property="Margin" Value="{StaticResource Thickness.InPlaceAction.Margin}"/>
+		<Setter Property="Padding" Value="{StaticResource Thickness.InPlaceAction.Padding}"/>
+		<Setter Property="VerticalAlignment" Value="Center"/>
+		<Setter Property="VerticalContentAlignment" Value="Center"/>
+	</Style>
+
+	<!-- ListAction -->
+	<Style Selector="Button.ListAction">
+		<Setter Property="HorizontalAlignment" Value="Right"/>
+		<Setter Property="HorizontalContentAlignment" Value="Center"/>
+		<Setter Property="Margin" Value="{StaticResource Thickness.ListAction.Margin}"/>
+		<Setter Property="MinWidth" Value="{StaticResource Double.ListAction.MinWidth}"/>
+		<Setter Property="Padding" Value="{StaticResource Thickness.ListAction.Padding}"/>
+		<Setter Property="VerticalContentAlignment" Value="Center"/>
+	</Style>
+
+	<!-- LogProfileSelectionDialog -->
 	<Style Selector="Border.LogProfileSelectionDialog_LogProfile_Label">
 		<Setter Property="Background" Value="{DynamicResource Brush.LogProfileSelectionDialog.Label.Background}"/>
 		<Setter Property="BorderBrush" Value="{DynamicResource Brush.LogProfileSelectionDialog.Label.Border}"/>
@@ -119,16 +195,6 @@
 		<Setter Property="CornerRadius" Value="{StaticResource CornerRadius.LogProfileSelectionDialog.Label}"/>
 		<Setter Property="Margin" Value="{StaticResource Thickness.LogProfileSelectionDialog.LogProfile.Label.Margin}"/>
 		<Setter Property="Padding" Value="{StaticResource Thickness.LogProfileSelectionDialog.LogProfile.Label.Padding}"/>
-	</Style>
-	<Style Selector="Button.LogProfileSelectionDialog_LogProfile_Action">
-		<Setter Property="Background" Value="{x:Static Brushes.Transparent}"/>
-		<Setter Property="Margin" Value="{StaticResource Thickness.LogProfileSelectionDialog.LogProfile.Action.Margin}"/>
-		<Setter Property="Padding" Value="{StaticResource Thickness.LogProfileSelectionDialog.LogProfile.Action.Padding}"/>
-	</Style>
-	<Style Selector="DrawingPresenter.LogProfileSelectionDialog_LogProfile_Action">
-		<Setter Property="HorizontalAlignment" Value="Center"/>
-		<Setter Property="Stretch" Value="Uniform"/>
-		<Setter Property="VerticalAlignment" Value="Center"/>
 	</Style>
 	<Style Selector="TextBlock.LogProfileSelectionDialog_LogProfile_Label">
 		<Setter Property="FontSize" Value="{StaticResource Double.LogProfileSelectionDialog.LogProfile.Label.FontSize}"/>
@@ -148,6 +214,7 @@
 	</Style>
 	<Style Selector="Button.SessionView_ToolBar_Button">
 		<Setter Property="Background" Value="{x:Static Brushes.Transparent}"/>
+		<Setter Property="BorderThickness" Value="0"/>
 		<Setter Property="HorizontalContentAlignment" Value="Center"/>
 		<Setter Property="Margin" Value="{StaticResource Thickness.SessionView.ToolBar.Button.Margin}"/>
 		<Setter Property="Padding" Value="{StaticResource Thickness.SessionView.ToolBar.Button.Padding}"/>
@@ -155,15 +222,6 @@
 	</Style>
 	<Style Selector="Button.SessionView_ToolBar_Button:disabled">
 		<Setter Property="Opacity" Value="0.3"/>
-	</Style>
-	<Style Selector="DrawingPresenter.SessionView_ToolBar_Button_Icon">
-		<Setter Property="HorizontalAlignment" Value="Center"/>
-		<Setter Property="Stretch" Value="Uniform"/>
-		<Setter Property="VerticalAlignment" Value="Center"/>
-	</Style>
-	<Style Selector="Image.SessionView_ToolBar_Button_Icon">
-		<Setter Property="Height" Value="{StaticResource Double.SessionView.ToolBar.Button.Icon.Size}"/>
-		<Setter Property="Width" Value="{StaticResource Double.SessionView.ToolBar.Button.Icon.Size}"/>
 	</Style>
 	<Style Selector="Separator.SessionView_StatusBar_Separator">
 		<Setter Property="Background" Value="{x:Null}"/>
@@ -173,6 +231,18 @@
 		<Setter Property="Background" Value="{DynamicResource Brush.Separator.Background}"/>
 		<Setter Property="Margin" Value="{StaticResource Thickness.SessionView.ToolBar.Separator.Margin}"/>
 		<Setter Property="Width" Value="{StaticResource Double.SessionView.ToolBar.Separator.Size}"/>
+	</Style>
+	<Style Selector="TextBlock.SessionView_SidePanel_EmptyHint">
+		<Setter Property="Margin" Value="{StaticResource Thickness.SessionView.SidePanel.EmptyHint.Margin}"/>
+		<Setter Property="Opacity" Value="0.3"/>
+		<Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+		<Setter Property="TextWrapping" Value="NoWrap"/>
+	</Style>
+	<Style Selector="TextBlock.SessionView_SidePanel_Header">
+		<Setter Property="FontSize" Value="{StaticResource Double.SessionView.SidePanel.Header.FontSize}"/>
+		<Setter Property="Margin" Value="{StaticResource Thickness.SessionView.SidePanel.Header.Margin}"/>
+		<Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+		<Setter Property="TextWrapping" Value="NoWrap"/>
 	</Style>
 	<Style Selector="ToggleButton.SessionView_ToolBar_Button">
 		<Setter Property="Background" Value="{x:Static Brushes.Transparent}"/>

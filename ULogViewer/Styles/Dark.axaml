@@ -11,18 +11,19 @@
 			<!-- Dialog -->
 			<SolidColorBrush x:Key="Brush.Dialog.Background">#1e1e1e</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.Dialog.ControlButtonsPanel.Background">#141414</SolidColorBrush>
-
-			<!-- DisplayableLog -->
-			<SolidColorBrush x:Key="Brush.DisplayableLog.Level.Debug">#32aaff</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.DisplayableLog.Level.Error">#ff3f3f</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.DisplayableLog.Level.Fatal">#ff3f3f</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.DisplayableLog.Level.Info">#4cff00</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.DisplayableLog.Level.Undefined">#ffffff</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.DisplayableLog.Level.Verbose">#ffffff</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.DisplayableLog.Level.Warn">#ff8432</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.Dialog.Description.Foreground">#7fffffff</SolidColorBrush>
 
 			<!-- Icon -->
 			<SolidColorBrush x:Key="Brush.Icon">#ffffff</SolidColorBrush>
+
+			<!-- LogLevel -->
+			<SolidColorBrush x:Key="Brush.LogLevel.Debug">#32aaff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.LogLevel.Error">#ff3f3f</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.LogLevel.Fatal">#ff3f3f</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.LogLevel.Info">#4cff00</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.LogLevel.Undefined">#ffffff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.LogLevel.Verbose">#ffffff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.LogLevel.Warn">#ff8432</SolidColorBrush>
 
 			<!-- LogProfileSelectionDialog -->
 			<SolidColorBrush x:Key="Brush.LogProfileSelectionDialog.Label.Background">#000000</SolidColorBrush>

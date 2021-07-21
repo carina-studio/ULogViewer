@@ -13,7 +13,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 	abstract class BaseLogDataSourceProvider : ILogDataSourceProvider
 	{
 		// Fields.
-		string displayName;
+		string displayName = "";
 		readonly ICollection<ILogDataSource> activeSources = new List<ILogDataSource>();
 
 
@@ -25,8 +25,9 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		{
 			app.VerifyAccess();
 			this.Application = app;
-			this.displayName = this.GetType().Name;
 			this.Logger = app.LoggerFactory.CreateLogger(this.displayName);
+			app.StringsUpdated += (_, e) => this.DisplayName = this.OnUpdateDisplayName();
+			this.SynchronizationContext.Post(() => this.DisplayName = this.OnUpdateDisplayName());
 		}
 
 
@@ -37,12 +38,12 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		/// <summary>
-		/// Get or set name for displaying purpose.
+		/// Get name for displaying purpose.
 		/// </summary>
 		public string DisplayName
 		{
 			get => this.displayName;
-			protected set
+			private set
 			{
 				this.VerifyAccess();
 				if (this.displayName == value)
@@ -84,6 +85,13 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			this.Logger.LogDebug($"Source {source} disposed, active source count: {this.activeSources.Count}");
 			this.OnPropertyChanged(nameof(ActiveSourceCount));
 		}
+
+
+		/// <summary>
+		/// Called to update <see cref="DisplayName"/>.
+		/// </summary>
+		/// <returns>Display name.</returns>
+		protected virtual string OnUpdateDisplayName() => this.Application.GetStringNonNull($"UnderlyingLogDataSource.{this.UnderlyingSource}", this.GetType().Name);
 
 
 		// Create source.

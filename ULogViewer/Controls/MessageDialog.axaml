@@ -14,7 +14,7 @@
 		<!-- Content -->
 		<Grid ColumnDefinitions="Auto,*" Margin="{StaticResource Thickness.Dialog.Content.Padding}">
 			<Border Height="{StaticResource Double.MessageDialog.Icon.Size}" Margin="{StaticResource Thickness.MessageDialog.Icon.Margin}" VerticalAlignment="Top" Width="{StaticResource Double.MessageDialog.Icon.Size}">
-				<DrawingPresenter Drawing="{Binding $parent[Window].IconDrawing}" HorizontalAlignment="Center" Stretch="Uniform" VerticalAlignment="Center"/>
+				<DrawingPresenter Classes="Icon" Drawing="{Binding $parent[Window].IconDrawing}"/>
 			</Border>
 			<TextBlock Grid.Column="1" Text="{Binding $parent[Window].Message}" TextWrapping="Wrap" VerticalAlignment="Center"/>
 		</Grid>
@@ -22,9 +22,9 @@
 		<!-- Control buttons -->
 		<Border Classes="Dialog_ControlButtonsPanel" Grid.Row="1">
 			<StackPanel Classes="Dialog_ControlButtonsPanel">
-				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].SelectResultCommand}" CommandParameter="{Binding $parent[Window].Button1Result}" Content="{Binding $parent[Window].Button1Text}" IsVisible="{Binding $parent[Window].IsButton1Visible}"/>
-				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].SelectResultCommand}" CommandParameter="{Binding $parent[Window].Button2Result}" Content="{Binding $parent[Window].Button2Text}" IsVisible="{Binding $parent[Window].IsButton2Visible}"/>
-				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].SelectResultCommand}" CommandParameter="{Binding $parent[Window].Button3Result}" Content="{Binding $parent[Window].Button3Text}" IsVisible="{Binding $parent[Window].IsButton3Visible}"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].SelectResult}" CommandParameter="{Binding $parent[Window].Button1Result}" Content="{Binding $parent[Window].Button1Text}" IsVisible="{Binding $parent[Window].IsButton1Visible}"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].SelectResult}" CommandParameter="{Binding $parent[Window].Button2Result}" Content="{Binding $parent[Window].Button2Text}" IsVisible="{Binding $parent[Window].IsButton2Visible}"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].SelectResult}" CommandParameter="{Binding $parent[Window].Button3Result}" Content="{Binding $parent[Window].Button3Text}" IsVisible="{Binding $parent[Window].IsButton3Visible}"/>
 			</StackPanel>
 		</Border>
 
