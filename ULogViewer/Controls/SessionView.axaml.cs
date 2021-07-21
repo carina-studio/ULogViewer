@@ -51,6 +51,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly MutableObservableBoolean canSetLogProfile = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSetWorkingDirectory = new MutableObservableBoolean();
 		bool isWorkingDirNeededAfterLogProfileSet;
+		readonly ContextMenu logActionMenu;
 		readonly Control logHeaderContainer;
 		readonly Grid logHeaderGrid;
 		readonly List<MutableObservableValue<GridLength>> logHeaderWidths = new List<MutableObservableValue<GridLength>>();
@@ -92,6 +93,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.InitializeComponent();
 
 			// setup controls
+			this.logActionMenu = (ContextMenu)this.Resources["logActionMenu"].AsNonNull();
 			this.logHeaderContainer = this.FindControl<Control>("logHeaderContainer").AsNonNull();
 			this.logHeaderGrid = this.FindControl<Grid>("logHeaderGrid").AsNonNull();
 			this.logLevelFilterComboBox = this.FindControl<ComboBox>("logLevelFilterComboBox").AsNonNull();
@@ -816,6 +818,15 @@ namespace CarinaStudio.ULogViewer.Controls
 		void OnLogLevelFilterComboBoxSelectionChanged(object? sender, SelectionChangedEventArgs e) => this.updateLogFiltersAction?.Reschedule();
 
 
+		// Called when pointer released on log list box.
+		void OnLogListBoxPointerReleased(object? sender, PointerReleasedEventArgs e)
+		{
+			if (e.InitialPressMouseButton != MouseButton.Right)
+				return;
+			this.ShowLogActionsMenu();
+		}
+
+
 		// Called when log list box scrolled.
 		void OnLogListBoxScrollChanged(object? sender, ScrollChangedEventArgs e)
 		{
@@ -876,12 +887,18 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when log list box selection changed.
 		void OnLogListBoxSelectionChanged(object? sender, SelectionChangedEventArgs e)
 		{
-			if (this.DataContext is not Session session)
-				return;
-			if (this.logListBox.SelectedItems.Count > 0 && session.MarkUnmarkLogsCommand.CanExecute(null))
-				this.canMarkUnmarkSelectedLogs.Update(true);
-			else
-				this.canMarkUnmarkSelectedLogs.Update(false);
+			// [Workaround] ListBox.SelectedItems is not update yet when calling this method
+			this.SynchronizationContext.Post(() =>
+			{
+				// check state
+				if (this.DataContext is not Session session)
+					return;
+				var selectionCount = this.logListBox.SelectedItems.Count;
+				var hasSelectedItems = (selectionCount > 0);
+
+				// update command states
+				this.canMarkUnmarkSelectedLogs.Update(hasSelectedItems && session.MarkUnmarkLogsCommand.CanExecute(null));
+			});
 		}
 
 
@@ -929,6 +946,10 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				switch (e.Key)
 				{
+					case Key.Apps:
+						if (e.Source is not TextBox)
+							this.ShowLogActionsMenu();
+						break;
 					case Key.Escape:
 						if (e.Source is TextBox)
 						{
@@ -1261,6 +1282,14 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Command to set working directory.
 		ICommand SetWorkingDirectoryCommand { get; }
+
+
+		// Show menu of log actions.
+		void ShowLogActionsMenu()
+		{
+			if (this.logListBox.IsPointerOver && this.HasLogProfile)
+				this.logActionMenu.Open(this);
+		}
 
 
 		// Show UI of other actions.
