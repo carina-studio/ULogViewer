@@ -101,6 +101,11 @@
 					<Separator Classes="Dialog_Separator_Horizontal"/>
 				</StackPanel>
 
+				<!-- Is continuous reading -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.IsContinuousReading}"/>
+				<ToggleSwitch Name="continuousReadingSwitch"/>
+				<Separator Classes="Dialog_Separator_Horizontal"/>
+
 				<!-- Log level map -->
 				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.LogLevelMap}"/>
 				<ListBox Name="logLevelMapListBox" Items="{Binding $parent[Window].LogLevelMapEntries}" SelectionChanged="OnListBoxSelectionChanged">
@@ -225,6 +230,11 @@
 				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.TimestampFormatForDisplaying}"/>
 				<TextBox Name="timestampFormatForDisplayingTextBox" MaxLength="256"/>
 				<TextBlock Classes="Dialog_Description_Link" PointerReleased="OnLinkDescriptionPointerReleased" Tag="https://docs.microsoft.com/en-us/dotnet/standard/base-types/standard-date-and-time-format-strings" Text="{DynamicResource String.LogProfileEditorDialog.TimestampFormatDescription}"/>
+				<Separator Classes="Dialog_Separator_Horizontal"/>
+
+				<!-- Color indicator -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.ColorIndicator}"/>
+				<appControls:EnumComboBox Name="colorIndicatorComboBox" EnumType="{x:Type appLogProfiles:LogColorIndicator}" HorizontalAlignment="Stretch"/>
 				<Separator Classes="Dialog_Separator_Horizontal"/>
 
 				<!-- Sort key -->

@@ -38,6 +38,8 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Fields.
+		readonly ComboBox colorIndicatorComboBox;
+		readonly ToggleSwitch continuousReadingSwitch;
 		LogDataSourceOptions dataSourceOptions;
 		readonly ComboBox dataSourceProviderComboBox;
 		readonly ComboBox iconComboBox;
@@ -67,6 +69,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				it.CollectionChanged += (_, e) => this.InvalidateInput();
 			}).AsReadOnly();
 			InitializeComponent();
+			this.colorIndicatorComboBox = this.FindControl<ComboBox>("colorIndicatorComboBox").AsNonNull();
+			this.continuousReadingSwitch = this.FindControl<ToggleSwitch>("continuousReadingSwitch").AsNonNull();
 			this.dataSourceProviderComboBox = this.FindControl<ComboBox>("dataSourceProviderComboBox").AsNonNull();
 			this.iconComboBox = this.FindControl<ComboBox>("iconComboBox").AsNonNull();
 			this.nameTextBox = this.FindControl<TextBox>("nameTextBox").AsNonNull();
@@ -279,11 +283,11 @@ namespace CarinaStudio.ULogViewer.Controls
 		protected override object? OnGenerateResult()
 		{
 			var logProfile = this.LogProfile ?? new LogProfile(this.Application);
-			// color indicator
+			logProfile.ColorIndicator = (LogColorIndicator)this.colorIndicatorComboBox.SelectedItem.AsNonNull();
 			logProfile.DataSourceOptions = this.dataSourceOptions;
 			logProfile.DataSourceProvider = (ILogDataSourceProvider)this.dataSourceProviderComboBox.SelectedItem.AsNonNull();
 			logProfile.Icon = (LogProfileIcon)this.iconComboBox.SelectedItem.AsNonNull();
-			// continuous reading
+			logProfile.IsContinuousReading = this.continuousReadingSwitch.IsChecked.GetValueOrDefault();
 			logProfile.IsWorkingDirectoryNeeded = this.workingDirNeededSwitch.IsChecked.GetValueOrDefault();
 			logProfile.LogLevelMap = new Dictionary<string, LogLevel>(this.logLevelMapEntries);
 			logProfile.LogPatterns = this.logPatterns;
@@ -322,6 +326,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (profile == null)
 			{
 				this.Title = this.Application.GetString("LogProfileEditorDialog.Title.Create");
+				this.colorIndicatorComboBox.SelectedItem = LogColorIndicator.None;
 				this.dataSourceProviderComboBox.SelectedItem = LogDataSourceProviders.All.FirstOrDefault(it => it is FileLogDataSourceProvider);
 				this.iconComboBox.SelectedItem = LogProfileIcon.File;
 				this.sortDirectionComboBox.SelectedItem = SortDirection.Ascending;
@@ -330,9 +335,11 @@ namespace CarinaStudio.ULogViewer.Controls
 			else if (!profile.IsBuiltIn)
 			{
 				this.Title = this.Application.GetString("LogProfileEditorDialog.Title.Edit");
+				this.colorIndicatorComboBox.SelectedItem = profile.ColorIndicator;
 				this.dataSourceOptions = profile.DataSourceOptions;
 				this.dataSourceProviderComboBox.SelectedItem = profile.DataSourceProvider;
 				this.iconComboBox.SelectedItem = profile.Icon;
+				this.continuousReadingSwitch.IsChecked = profile.IsContinuousReading;
 				this.logLevelMapEntries.AddAll(profile.LogLevelMap);
 				foreach (var logPattern in profile.LogPatterns)
 					this.logPatterns.Add(logPattern);

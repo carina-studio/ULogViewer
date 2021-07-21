@@ -24,6 +24,13 @@
 	<sys:String x:Key="String.BuiltInProfile.AndroidFileLog">Android 日誌檔案</sys:String>
 	<sys:String x:Key="String.BuiltInProfile.GitLog">Git 提交紀錄</sys:String>
 
+	<!-- LogColorIndicator -->
+	<sys:String x:Key="String.LogColorIndicator.FileName">檔案</sys:String>
+	<sys:String x:Key="String.LogColorIndicator.None">無</sys:String>
+	<sys:String x:Key="String.LogColorIndicator.ProcessName">處理程序</sys:String>
+	<sys:String x:Key="String.LogColorIndicator.ThreadName">執行緒</sys:String>
+	<sys:String x:Key="String.LogColorIndicator.UserName">使用者</sys:String>
+
 	<!-- LogDataSourceOptionsDialog -->
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.Command">指令 (必須)</sys:String>
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.Encoding">文字編碼</sys:String>
@@ -72,6 +79,7 @@
 	<sys:String x:Key="String.LogProfileEditorDialog.DuplicateLogLevelMapEntry">已經定義 '{0}'。</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.Icon">圖示</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.InvalidDataSourceOptions">需要有效的參數</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.IsContinuousReading">連續讀取</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.IsWorkingDirectoryNeeded">必須選擇工作目錄</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogDisplaying">日誌顯示設定</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogLevelMap">日誌等級對照表</sys:String>

@@ -25,6 +25,16 @@
 	<sys:String x:Key="String.BuiltInProfile.GitLog">Git log</sys:String>
 	<sys:String x:Key="String.BuiltInProfile.ULogViewerLog">ULogViewer log (DEBUG)</sys:String>
 
+	<!-- LogColorIndicator -->
+	<sys:String x:Key="String.LogColorIndicator.FileName">File</sys:String>
+	<sys:String x:Key="String.LogColorIndicator.None">None</sys:String>
+	<sys:String x:Key="String.LogColorIndicator.ProcessId">PID</sys:String>
+	<sys:String x:Key="String.LogColorIndicator.ProcessName">Process</sys:String>
+	<sys:String x:Key="String.LogColorIndicator.ThreadId">TID</sys:String>
+	<sys:String x:Key="String.LogColorIndicator.ThreadName">Thread</sys:String>
+	<sys:String x:Key="String.LogColorIndicator.UserId">UID</sys:String>
+	<sys:String x:Key="String.LogColorIndicator.UserName">User</sys:String>
+
 	<!-- LogDataSourceOptionsDialog -->
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.Command">Command (required)</sys:String>
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.Encoding">Text encoding</sys:String>
@@ -77,6 +87,7 @@
 	<sys:String x:Key="String.LogProfileEditorDialog.DuplicateLogLevelMapEntry">'{0}' is already defined.</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.Icon">Icon</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.InvalidDataSourceOptions">Need to set valid parameters</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.IsContinuousReading">Continuous reading</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.IsWorkingDirectoryNeeded">Need to select working directory</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogDisplaying">Log displaying</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogLevelMap">Mapping of log level</sys:String>
