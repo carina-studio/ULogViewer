@@ -81,6 +81,7 @@
 
 	<!-- LogProfileEditorDialog -->
 	<sys:String x:Key="String.LogProfileEditorDialog.ColorIndicator">Color indicator</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.ColorIndicator.Description">Way of grouping to show color block on the left hand side of each log</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.Common">Common</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.DataSourceOptions">Parameters...</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.DataSourceProvider">Data source</sys:String>
@@ -88,10 +89,13 @@
 	<sys:String x:Key="String.LogProfileEditorDialog.Icon">Icon</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.InvalidDataSourceOptions">Need to set valid parameters</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.IsContinuousReading">Continuous reading</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.IsContinuousReading.Description">Restart reading logs automatically when reaching end of data source</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.IsWorkingDirectoryNeeded">Need to select working directory</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogDisplaying">Log displaying</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogLevelMap">Mapping of log level</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.LogLevelMap.Description">Convert specific text in raw log into log level</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogPatterns">Log line patterns (required)</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.LogPatterns.Description">Pattern to parse each line of raw log</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogReading">Log reading</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.Name">Name (required)</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.SortDirection">Sort direction of log</sys:String>
@@ -102,6 +106,7 @@
 	<sys:String x:Key="String.LogProfileEditorDialog.Title.Create">Create new log profile</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.Title.Edit">Edit log profile</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.VisibleLogProperties">Log properties to show (required)</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.VisibleLogProperties.Description">Specify what properties of log can be seen in viewer</sys:String>
 
 	<!-- LogProfileSelectionDialog -->
 	<sys:String x:Key="String.LogProfileSelectionDialog.AddLogProfile">Create...</sys:String>

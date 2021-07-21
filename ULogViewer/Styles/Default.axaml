@@ -128,6 +128,7 @@
 		<Setter Property="Margin" Value="{StaticResource Thickness.Dialog.Description.Margin}"/>
 	</Style>
 	<Style Selector="TextBlock.Dialog_Label">
+		<Setter Property="FontSize" Value="{StaticResource Double.Dialog.Label.FontSize}"/>
 		<Setter Property="Margin" Value="{StaticResource Thickness.Dialog.Label.Margin}"/>
 	</Style>
 	<Style Selector="TextBlock.Dialog_Label_Header1">

@@ -104,6 +104,7 @@
 				<!-- Is continuous reading -->
 				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.IsContinuousReading}"/>
 				<ToggleSwitch Name="continuousReadingSwitch"/>
+				<TextBlock Classes="Dialog_Description" Text="{DynamicResource String.LogProfileEditorDialog.IsContinuousReading.Description}"/>
 				<Separator Classes="Dialog_Separator_Horizontal"/>
 
 				<!-- Log level map -->
@@ -133,7 +134,10 @@
 						</DataTemplate>
 					</ListBox.ItemTemplate>
 				</ListBox>
-				<Button Classes="ListAction" Command="{Binding $parent[Window].AddLogLevelMapEntry}" Content="{DynamicResource String.Common.Add}"/>
+				<Grid ColumnDefinitions="*,Auto">
+					<TextBlock Classes="Dialog_Description" Text="{DynamicResource String.LogProfileEditorDialog.LogLevelMap.Description}" VerticalAlignment="Top"/>
+					<Button Classes="ListAction" Command="{Binding $parent[Window].AddLogLevelMapEntry}" Content="{DynamicResource String.Common.Add}" Grid.Column="1" VerticalAlignment="Top"/>
+				</Grid>
 				<Separator Classes="Dialog_Separator_Horizontal"/>
 
 				<!-- Log patterns -->
@@ -170,7 +174,10 @@
 						</DataTemplate>
 					</ListBox.ItemTemplate>
 				</ListBox>
-				<Button Classes="ListAction" Command="{Binding $parent[Window].AddLogPattern}" Content="{DynamicResource String.Common.Add}"/>
+				<Grid ColumnDefinitions="*,Auto">
+					<TextBlock Classes="Dialog_Description" Text="{DynamicResource String.LogProfileEditorDialog.LogPatterns.Description}" VerticalAlignment="Top"/>
+					<Button Classes="ListAction" Command="{Binding $parent[Window].AddLogPattern}" Content="{DynamicResource String.Common.Add}" Grid.Column="1" VerticalAlignment="Top"/>
+				</Grid>
 				<Separator Classes="Dialog_Separator_Horizontal"/>
 
 				<!-- Timestamp format for reading -->
@@ -223,7 +230,10 @@
 						</DataTemplate>
 					</ListBox.ItemTemplate>
 				</ListBox>
-				<Button Classes="ListAction" Command="{Binding $parent[Window].AddVisibleLogProperty}" Content="{DynamicResource String.Common.Add}"/>
+				<Grid ColumnDefinitions="*,Auto">
+					<TextBlock Classes="Dialog_Description" Text="{DynamicResource String.LogProfileEditorDialog.VisibleLogProperties.Description}" VerticalAlignment="Top"/>
+					<Button Classes="ListAction" Command="{Binding $parent[Window].AddVisibleLogProperty}" Content="{DynamicResource String.Common.Add}" Grid.Column="1" VerticalAlignment="Top"/>
+				</Grid>
 				<Separator Classes="Dialog_Separator_Horizontal"/>
 
 				<!-- Timestamp format for displaying -->
@@ -235,6 +245,7 @@
 				<!-- Color indicator -->
 				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.ColorIndicator}"/>
 				<appControls:EnumComboBox Name="colorIndicatorComboBox" EnumType="{x:Type appLogProfiles:LogColorIndicator}" HorizontalAlignment="Stretch"/>
+				<TextBlock Classes="Dialog_Description" Text="{DynamicResource String.LogProfileEditorDialog.ColorIndicator.Description}"/>
 				<Separator Classes="Dialog_Separator_Horizontal"/>
 
 				<!-- Sort key -->

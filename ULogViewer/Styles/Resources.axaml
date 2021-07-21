@@ -7,15 +7,16 @@
 	
 	<!-- Dialog -->
 	<sys:Double x:Key="Double.Dialog.ControlButton.MinWidth">100</sys:Double>
+	<sys:Double x:Key="Double.Dialog.Label.FontSize">16</sys:Double>
 	<sys:Double x:Key="Double.Dialog.Label.Header1.FontSize">24</sys:Double>
 	<sys:Double x:Key="Double.Dialog.Label.Header2.FontSize">20</sys:Double>
 	<sys:Double x:Key="Double.Dialog.Separator.Size">15</sys:Double>
 	<sys:Double x:Key="Double.Dialog.Separator.Size.Large">30</sys:Double>
-	<Thickness x:Key="Thickness.Dialog.Content.Padding">15</Thickness>
+	<Thickness x:Key="Thickness.Dialog.Content.Padding">20,15,20,15</Thickness>
 	<Thickness x:Key="Thickness.Dialog.ControlButton.Margin">3,0,3,0</Thickness>
 	<Thickness x:Key="Thickness.Dialog.ControlButton.Margin.WithSeparator">3,0,13,0</Thickness>
 	<Thickness x:Key="Thickness.Dialog.ControlButton.Padding">10,5,10,5</Thickness>
-	<Thickness x:Key="Thickness.Dialog.ControlButtonsPanel.Padding">15</Thickness>
+	<Thickness x:Key="Thickness.Dialog.ControlButtonsPanel.Padding">20,15,20,15</Thickness>
 	<Thickness x:Key="Thickness.Dialog.Description.Margin">0,5,0,0</Thickness>
 	<Thickness x:Key="Thickness.Dialog.Label.Header1.Margin">0,0,0,5</Thickness>
 	<Thickness x:Key="Thickness.Dialog.Label.Header2.Margin">0,0,0,5</Thickness>
@@ -35,7 +36,7 @@
 	<!-- ListAction -->
 	<sys:Double x:Key="Double.ListAction.MinWidth">80</sys:Double>
 	<Thickness x:Key="Thickness.ListAction.Padding">10,5,10,5</Thickness>
-	<Thickness x:Key="Thickness.ListAction.Margin">3,5,0,0</Thickness>
+	<Thickness x:Key="Thickness.ListAction.Margin">5,5,0,0</Thickness>
 
 	<!-- LogDataSourceOptionsDialog -->
 	<sys:Double x:Key="Double.LogDataSourceOptionsDialog.CommandListBox.Height">70</sys:Double>
@@ -61,12 +62,12 @@
 	<sys:Double x:Key="Double.LogProfileSelectionDialog.LogProfile.Label.FontSize">10</sys:Double>
 	<sys:Double x:Key="Double.LogProfileSelectionDialog.LogProfile.Name.FontSize">20</sys:Double>
 	<sys:Double x:Key="Double.LogProfileSelectionDialog.Width">400</sys:Double>
-	<Thickness x:Key="Thickness.LogProfileSelectionDialog.Label.Margin">15,15,15,10</Thickness>
+	<Thickness x:Key="Thickness.LogProfileSelectionDialog.Label.Margin">20,15,20,10</Thickness>
 	<Thickness x:Key="Thickness.LogProfileSelectionDialog.LogProfile.Icon.Margin">0,5,15,0</Thickness>
 	<Thickness x:Key="Thickness.LogProfileSelectionDialog.LogProfile.Label.Margin">0,2,5,0</Thickness>
 	<Thickness x:Key="Thickness.LogProfileSelectionDialog.LogProfile.Label.Padding">3</Thickness>
 	<Thickness x:Key="Thickness.LogProfileSelectionDialog.LogProfile.Name.Margin">0,0,5,5</Thickness>
-	<Thickness x:Key="Thickness.LogProfileSelectionDialog.LogProfile.Padding">15,10,25,10</Thickness>
+	<Thickness x:Key="Thickness.LogProfileSelectionDialog.LogProfile.Padding">20,10,20,10</Thickness>
 
 	<!-- MainWindow -->
 	<sys:Double x:Key="Double.MainWindow.TabItem.CloseButton.Icon.Size">12</sys:Double>

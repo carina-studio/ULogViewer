@@ -73,6 +73,7 @@
 
 	<!-- LogProfileEditorDialog -->
 	<sys:String x:Key="String.LogProfileEditorDialog.ColorIndicator">色彩指示</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.ColorIndicator.Description">顯示於日誌左側的色塊分組方式</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.Common">一般設定</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.DataSourceOptions">參數...</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.DataSourceProvider">資料來源</sys:String>
@@ -80,10 +81,13 @@
 	<sys:String x:Key="String.LogProfileEditorDialog.Icon">圖示</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.InvalidDataSourceOptions">需要有效的參數</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.IsContinuousReading">連續讀取</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.IsContinuousReading.Description">讀取至資料末端時將自動重新開始讀取日誌</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.IsWorkingDirectoryNeeded">必須選擇工作目錄</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogDisplaying">日誌顯示設定</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogLevelMap">日誌等級對照表</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.LogLevelMap.Description">將原始日誌中的特定文字對應至日誌等級</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogPatterns">日誌行格式 (必須)</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.LogPatterns.Description">分析原始日誌每一行的格式</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogReading">日誌讀取設定</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.Name">名稱 (必須)</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.SortDirection">日誌排序方向</sys:String>
@@ -94,6 +98,7 @@
 	<sys:String x:Key="String.LogProfileEditorDialog.Title.Create">建立新的日誌類型</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.Title.Edit">編輯日誌類型</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.VisibleLogProperties">顯示的日誌屬性 (必須)</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.VisibleLogProperties.Description">指定有哪些日誌屬性可以在檢視器中看見</sys:String>
 
 	<!-- LogProfileSelectionDialog -->
 	<sys:String x:Key="String.LogProfileSelectionDialog.AddLogProfile">建立...</sys:String>
