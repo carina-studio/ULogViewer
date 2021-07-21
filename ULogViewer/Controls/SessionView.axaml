@@ -45,6 +45,12 @@
 		<!-- Toolbar -->
 		<Grid ColumnDefinitions="Auto,*,Auto" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" Margin="{StaticResource Thickness.SessionView.ToolBar.Padding}">
 
+			<!-- Resources -->
+			<Grid.Resources>
+				<SolidColorBrush x:Key="ButtonBackgroundDisabled">#00000000</SolidColorBrush>
+				<SolidColorBrush x:Key="ToggleButtonBackgroundDisabled">#00000000</SolidColorBrush>
+			</Grid.Resources>
+			
 			<!-- Log actions -->
 			<StackPanel Orientation="Horizontal">
 

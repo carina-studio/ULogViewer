@@ -209,6 +209,7 @@
 	</Style>
 	<Style Selector="Button.SessionView_ToolBar_Button">
 		<Setter Property="Background" Value="{x:Static Brushes.Transparent}"/>
+		<Setter Property="BorderThickness" Value="0"/>
 		<Setter Property="HorizontalContentAlignment" Value="Center"/>
 		<Setter Property="Margin" Value="{StaticResource Thickness.SessionView.ToolBar.Button.Margin}"/>
 		<Setter Property="Padding" Value="{StaticResource Thickness.SessionView.ToolBar.Button.Padding}"/>
