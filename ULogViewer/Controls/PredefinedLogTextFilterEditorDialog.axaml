@@ -22,6 +22,7 @@
 			<!-- Regex -->
 			<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.PredefinedLogTextFilterEditorDialog.Regex}"/>
 			<appControls:RegexTextBox Name="regexTextBox" HorizontalAlignment="Stretch" PropertyChanged="OnRegexTextBoxPropertyChanged" Watermark="{DynamicResource String.Common.RegularExpression}"/>
+			<TextBlock Classes="Dialog_Description_Link" PointerReleased="OnLinkDescriptionPointerReleased" Tag="https://docs.microsoft.com/en-us/dotnet/standard/base-types/regular-expression-language-quick-reference" Text="{DynamicResource String.Common.RegularExpression.Reference}"/>
 			<Separator Classes="Dialog_Separator_Horizontal"/>
 
 			<!-- Ignore case -->

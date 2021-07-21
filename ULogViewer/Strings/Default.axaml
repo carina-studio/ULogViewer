@@ -16,6 +16,7 @@
 	<sys:String x:Key="String.Common.OK">OK</sys:String>
 	<sys:String x:Key="String.Common.Options">Options</sys:String>
 	<sys:String x:Key="String.Common.RegularExpression">Regular expression</sys:String>
+	<sys:String x:Key="String.Common.RegularExpression.Reference">Syntax reference</sys:String>
 	<sys:String x:Key="String.Common.Rename">Rename</sys:String>
 	<sys:String x:Key="String.Common.Yes">Yes</sys:String>
 

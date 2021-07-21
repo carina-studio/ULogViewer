@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using CarinaStudio.ULogViewer.ViewModels;
 using System;
@@ -52,6 +53,16 @@ namespace CarinaStudio.ULogViewer.Controls
 			else
 				filter = new PredefinedLogTextFilter(this.Application, name, regex);
 			return filter;
+		}
+
+
+		// Called when pointer released on link text block.
+		void OnLinkDescriptionPointerReleased(object? sender, PointerReleasedEventArgs e)
+		{
+			if (e.InitialPressMouseButton != MouseButton.Left)
+				return;
+			if ((sender as Control)?.Tag is string uri)
+				this.OpenLink(uri);
 		}
 
 

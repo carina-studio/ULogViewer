@@ -304,6 +304,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when pointer released on description text.
 		void OnLinkDescriptionPointerReleased(object? sender, PointerReleasedEventArgs e)
 		{
+			if (e.InitialPressMouseButton != MouseButton.Left)
+				return;
 			if (sender is Control control && control.Tag is string uri)
 				this.OpenLink(uri);
 		}

@@ -16,6 +16,7 @@
 	<sys:String x:Key="String.Common.OK">好</sys:String>
 	<sys:String x:Key="String.Common.Options">選項</sys:String>
 	<sys:String x:Key="String.Common.RegularExpression">正規表示式</sys:String>
+	<sys:String x:Key="String.Common.RegularExpression.Reference">語法說明</sys:String>
 	<sys:String x:Key="String.Common.Rename">重新命名</sys:String>
 	<sys:String x:Key="String.Common.Yes">是</sys:String>
 

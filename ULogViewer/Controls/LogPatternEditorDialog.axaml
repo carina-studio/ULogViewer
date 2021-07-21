@@ -25,7 +25,10 @@
 
 			<!-- Regex -->
 			<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogPatternEditorDialog.Regex}"/>
-			<appControls:RegexTextBox Name="regexTextBox" IgnoreCase="False" PropertyChanged="OnRegexTextBoxPropertyChanged" Watermark="{DynamicResource String.Common.RegularExpression}"/>
+			<Grid ColumnDefinitions="*,Auto">
+				<appControls:RegexTextBox Name="regexTextBox" IgnoreCase="False" PropertyChanged="OnRegexTextBoxPropertyChanged" Watermark="{DynamicResource String.Common.RegularExpression}"/>
+			</Grid>
+			<TextBlock Classes="Dialog_Description_Link" PointerReleased="OnLinkDescriptionPointerReleased" Tag="https://docs.microsoft.com/en-us/dotnet/standard/base-types/regular-expression-language-quick-reference" Text="{DynamicResource String.Common.RegularExpression.Reference}"/>
 			<Separator Classes="Dialog_Separator_Horizontal"/>
 
 			<!-- Repeatable -->
