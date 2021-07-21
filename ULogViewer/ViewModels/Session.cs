@@ -1,6 +1,7 @@
 ﻿using Avalonia.Data.Converters;
 using Avalonia.Media;
 using CarinaStudio.Collections;
+using CarinaStudio.Configuration;
 using CarinaStudio.IO;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Converters;
@@ -451,6 +452,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				it.IsContinuousReading = profile.IsContinuousReading;
 				it.LogLevelMap = profile.LogLevelMap;
 				it.LogPatterns = profile.LogPatterns;
+				if (profile.IsContinuousReading)
+					it.MaxLogCount = this.Settings.GetValueOrDefault(ULogViewer.Settings.MaxContinuousLogCount);
 				it.TimestampCultureInfo = profile.TimestampCultureInfoForReading;
 				it.TimestampFormat = profile.TimestampFormatForReading;
 			});
@@ -931,6 +934,18 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				|| property == LogThreadIdFilterProperty)
 			{
 				this.updateLogFilterAction.Schedule();
+			}
+		}
+
+
+		// Called when setting changed.
+		protected override void OnSettingChanged(SettingChangedEventArgs e)
+		{
+			base.OnSettingChanged(e);
+			if (e.Key == ULogViewer.Settings.MaxContinuousLogCount)
+			{
+				if (this.LogProfile?.IsContinuousReading == true && this.logReaders.IsNotEmpty())
+					this.logReaders.First().MaxLogCount = (int)e.Value;
 			}
 		}
 
