@@ -123,14 +123,14 @@
 
 				<!-- Setup commands -->
 				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogDataSourceOptionsDialog.SetupCommands}"/>
-				<ListBox Name="setupCommandsListBox" Classes="Commands" Height="{StaticResource Double.LogDataSourceOptionsDialog.CommandListBox.Height}" Items="{Binding $parent[Window].SetupCommands}" VirtualizationMode="None">
+				<ListBox Name="setupCommandsListBox" Classes="Commands" Height="{StaticResource Double.LogDataSourceOptionsDialog.CommandListBox.Height}" Items="{Binding $parent[Window].SetupCommands}" SelectionChanged="OnListBoxSelectionChanged" VirtualizationMode="None">
 				</ListBox>
 				<Button Classes="ListAction" Command="{Binding $parent[Window].AddSetupCommand}" Content="{DynamicResource String.Common.Add}"/>
 				<Separator Classes="Dialog_Separator_Horizontal"/>
 
 				<!-- Teardown commands -->
 				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogDataSourceOptionsDialog.TeardownCommands}"/>
-				<ListBox Name="teardownCommandsListBox" Classes="Commands" Height="{StaticResource Double.LogDataSourceOptionsDialog.CommandListBox.Height}" Items="{Binding $parent[Window].TeardownCommands}" VirtualizationMode="None">
+				<ListBox Name="teardownCommandsListBox" Classes="Commands" Height="{StaticResource Double.LogDataSourceOptionsDialog.CommandListBox.Height}" Items="{Binding $parent[Window].TeardownCommands}" SelectionChanged="OnListBoxSelectionChanged" VirtualizationMode="None">
 
 				</ListBox>
 				<Button Classes="ListAction" Command="{Binding $parent[Window].AddTeardownCommand}" Content="{DynamicResource String.Common.Add}"/>

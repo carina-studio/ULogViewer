@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.VisualTree;
 using CarinaStudio.Collections;
+using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using System;
 using System.Collections.Generic;
@@ -169,6 +170,16 @@ namespace CarinaStudio.ULogViewer.Controls
 					break;
 			}
 			return options;
+		}
+
+
+		// Called when selection in list box changed.
+		void OnListBoxSelectionChanged(object? sender, SelectionChangedEventArgs e)
+		{
+			if (sender is not ListBox listBox)
+				return;
+			if (e.AddedItems.Count > 0)
+				this.SynchronizationContext.Post(() => listBox.SelectedItem = null);
 		}
 
 
