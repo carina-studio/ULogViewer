@@ -47,9 +47,13 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Fields.
 		readonly MutableObservableBoolean canAddLogFiles = new MutableObservableBoolean();
+		readonly MutableObservableBoolean canFilterLogsByPid = new MutableObservableBoolean();
+		readonly MutableObservableBoolean canFilterLogsByTid = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canMarkUnmarkSelectedLogs = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSetLogProfile = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSetWorkingDirectory = new MutableObservableBoolean();
+		bool isPidLogPropertyVisible;
+		bool isTidLogPropertyVisible;
 		bool isWorkingDirNeededAfterLogProfileSet;
 		readonly ContextMenu logActionMenu;
 		readonly Control logHeaderContainer;
@@ -80,6 +84,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			// create commands
 			this.AddLogFilesCommand = ReactiveCommand.Create(this.AddLogFiles, this.canAddLogFiles);
+			this.FilterLogsByProcessIdCommand = ReactiveCommand.Create<bool>(this.FilterLogsByProcessId, this.canFilterLogsByPid);
+			this.FilterLogsByThreadIdCommand = ReactiveCommand.Create<bool>(this.FilterLogsByThreadId, this.canFilterLogsByTid);
 			this.MarkUnmarkSelectedLogsCommand = ReactiveCommand.Create(this.MarkUnmarkSelectedLogs, this.canMarkUnmarkSelectedLogs);
 			this.ResetLogFiltersCommand = ReactiveCommand.Create(this.ResetLogFilters, this.GetObservable<bool>(HasLogProfileProperty));
 			this.SetLogProfileCommand = ReactiveCommand.Create(this.SetLogProfile, this.canSetLogProfile);
@@ -517,6 +523,58 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Filter logs by process ID.
+		void FilterLogsByProcessId(bool resetOtherFilters)
+		{
+			// check state
+			this.VerifyAccess();
+			if (!this.canFilterLogsByPid.Value)
+				return;
+			if (this.logListBox.SelectedItems.Count != 1)
+				return;
+			var log = (DisplayableLog)this.logListBox.SelectedItem.AsNonNull();
+			var pid = log.ProcessId;
+			if (pid == null)
+				return;
+
+			// filter
+			if (resetOtherFilters)
+				this.ResetLogFilters();
+			this.logProcessIdFilterTextBox.Text = pid.Value.ToString();
+			this.updateLogFiltersAction.Reschedule();
+		}
+
+
+		// Command to filter logs by selected PID.
+		ICommand FilterLogsByProcessIdCommand { get; }
+
+
+		// Filter logs by thread ID.
+		void FilterLogsByThreadId(bool resetOtherFilters)
+		{
+			// check state
+			this.VerifyAccess();
+			if (!this.canFilterLogsByTid.Value)
+				return;
+			if (this.logListBox.SelectedItems.Count != 1)
+				return;
+			var log = (DisplayableLog)this.logListBox.SelectedItem.AsNonNull();
+			var tid = log.ThreadId;
+			if (tid == null)
+				return;
+
+			// filter
+			if (resetOtherFilters)
+				this.ResetLogFilters();
+			this.logThreadIdFilterTextBox.Text = tid.Value.ToString();
+			this.updateLogFiltersAction.Reschedule();
+		}
+
+
+		// Command to filter logs by selected TID.
+		ICommand FilterLogsByThreadIdCommand { get; }
+
+
 		// Check whether log profile has been set or not.
 		bool HasLogProfile { get => this.GetValue<bool>(HasLogProfileProperty); }
 
@@ -713,30 +771,30 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.markedLogListBox.ItemTemplate = this.CreateMarkedLogItemTemplate(profile, logProperties);
 
 			// check visible properties
-			var hasPid = false;
-			var hasTid = false;
+			this.isPidLogPropertyVisible = false;
+			this.isTidLogPropertyVisible = false;
 			foreach (var logProperty in logProperties)
 			{
 				switch (logProperty.Name)
 				{
 					case nameof(DisplayableLog.ProcessId):
-						hasPid = true;
+						this.isPidLogPropertyVisible = true;
 						break;
 					case nameof(DisplayableLog.ThreadId):
-						hasTid = true;
+						this.isTidLogPropertyVisible = true;
 						break;
 				}
 			}
 
 			// show/hide log filters UI
-			if (hasPid)
+			if (this.isPidLogPropertyVisible)
 				this.logProcessIdFilterTextBox.IsVisible = true;
 			else
 			{
 				this.logProcessIdFilterTextBox.IsVisible = false;
 				this.logProcessIdFilterTextBox.Text = "";
 			}
-			if (hasTid)
+			if (this.isTidLogPropertyVisible)
 				this.logThreadIdFilterTextBox.IsVisible = true;
 			else
 			{
@@ -895,8 +953,11 @@ namespace CarinaStudio.ULogViewer.Controls
 					return;
 				var selectionCount = this.logListBox.SelectedItems.Count;
 				var hasSelectedItems = (selectionCount > 0);
+				var hasSingleSelectedItem = (selectionCount == 1);
 
 				// update command states
+				this.canFilterLogsByPid.Update(hasSingleSelectedItem && this.isPidLogPropertyVisible);
+				this.canFilterLogsByTid.Update(hasSingleSelectedItem && this.isTidLogPropertyVisible);
 				this.canMarkUnmarkSelectedLogs.Update(hasSelectedItems && session.MarkUnmarkLogsCommand.CanExecute(null));
 			});
 		}

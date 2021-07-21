@@ -168,6 +168,10 @@
 	<sys:String x:Key="String.SessionView.ClearPredefinedLogTextFiltersSelection">Clear selection</sys:String>
 	<sys:String x:Key="String.SessionView.CreatePredefinedLogTextFilter">Create...</sys:String>
 	<sys:String x:Key="String.SessionView.FilteredLogCount">, Filtered: </sys:String>
+	<sys:String x:Key="String.SessionView.FilterLogsBySelectedProcessId">Filter by selected PID</sys:String>
+	<sys:String x:Key="String.SessionView.FilterLogsBySelectedProcessIdOnly">Filter by selected PID only</sys:String>
+	<sys:String x:Key="String.SessionView.FilterLogsBySelectedThreadId">Filter by selected TID</sys:String>
+	<sys:String x:Key="String.SessionView.FilterLogsBySelectedThreadIdOnly">Filter by selected TID only</sys:String>
 	<sys:String x:Key="String.SessionView.LogFiltersCombinationMode">Way to combine conditions</sys:String>
 	<sys:String x:Key="String.SessionView.LogsFilteringProgress">Filtering progress: </sys:String>
 	<sys:String x:Key="String.SessionView.LogTextFilterHint">Text filtering (Regular Expression)</sys:String>
