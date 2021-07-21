@@ -1,0 +1,144 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+				xmlns:ia="using:Avalonia.Xaml.Interactivity"
+				xmlns:iaCore="using:Avalonia.Xaml.Interactions.Core"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="CarinaStudio.ULogViewer.Controls.LogDataSourceOptionsDialog"
+				Classes="Dialog"
+				SizeToContent="Height"
+        Title="{DynamicResource String.LogDataSourceOptionsDialog.Title}"
+				Width="{StaticResource Double.LogDataSourceOptionsDialog.Width}">
+
+	<!-- Styles -->
+	<Window.Styles>
+		
+		<Style Selector="ListBox">
+			<Setter Property="BorderThickness" Value="1"/>
+		</Style>
+		<Style Selector="ListBox.Commands">
+			<Setter Property="ItemTemplate">
+				<Setter.Value>
+					<DataTemplate>
+						<Grid ColumnDefinitions="*,Auto">
+							<TextBlock Text="{Binding}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"/>
+							<Border Classes="InPlaceAction_Reserved"/>
+							<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
+								<Button Classes="InPlaceAction" Command="{Binding $parent[Window].RemoveSetupTeardownCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String.Common.Delete}">
+									<Border Classes="InPlaceAction">
+										<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Delete}"/>
+									</Border>
+								</Button>
+								<Button Classes="InPlaceAction" Command="{Binding $parent[Window].EditSetupTeardownCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String.Common.Edit}">
+									<Border Classes="InPlaceAction">
+										<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Edit}"/>
+									</Border>
+								</Button>
+								<Button Classes="InPlaceAction" Command="{Binding $parent[Window].MoveSetupTeardownCommandUp}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String.Common.MoveUp}">
+									<Border Classes="InPlaceAction">
+										<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.MoveUp}"/>
+									</Border>
+								</Button>
+								<Button Classes="InPlaceAction" Command="{Binding $parent[Window].MoveSetupTeardownCommandDown}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String.Common.MoveDown}">
+									<Border Classes="InPlaceAction">
+										<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.MoveDown}"/>
+									</Border>
+								</Button>
+							</StackPanel>
+						</Grid>
+					</DataTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+		<Style Selector="ListBoxItem">
+			<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+			<Setter Property="Padding" Value="{StaticResource Thickness.Dialog.ListBox.Item.WithInPlaceActions.Padding}"/>
+		</Style>
+		
+	</Window.Styles>
+	
+	<!-- Content -->
+	<DockPanel>
+
+		<!-- Control buttons -->
+		<Border Classes="Dialog_ControlButtonsPanel" DockPanel.Dock="Bottom">
+			<StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].GenerateResultCommand}" Content="{DynamicResource String.Common.OK}"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].CancelCommand}" Content="{DynamicResource String.Common.Cancel}"/>
+			</StackPanel>
+		</Border>
+
+		<!-- Content -->
+		<Panel Margin="{StaticResource Thickness.Dialog.Content.Padding}">
+
+			<!-- Behaviors -->
+			<ia:Interaction.Behaviors>
+				<iaCore:DataTriggerBehavior Binding="{Binding $parent[Window].UnderlyingLogDataSource}" ComparisonCondition="Equal" Value="File">
+					<iaCore:ChangePropertyAction PropertyName="IsVisible" TargetObject="{Binding #fileParamsPanel}" Value="True"/>
+				</iaCore:DataTriggerBehavior>
+				<iaCore:DataTriggerBehavior Binding="{Binding $parent[Window].UnderlyingLogDataSource}" ComparisonCondition="Equal" Value="StandardOutput">
+					<iaCore:ChangePropertyAction PropertyName="IsVisible" TargetObject="{Binding #stdoutParamsPanel}" Value="True"/>
+				</iaCore:DataTriggerBehavior>
+			</ia:Interaction.Behaviors>
+
+			<!-- File -->
+			<StackPanel Name="fileParamsPanel" HorizontalAlignment="Stretch" IsVisible="False" Orientation="Vertical">
+
+				<!--File name -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogDataSourceOptionsDialog.FileName}"/>
+				<Grid ColumnDefinitions="*,Auto">
+					<TextBox Name="fileNameTextBox"/>
+					<Button Classes="Browse" Command="{Binding $parent[Window].SelectFileName}" Grid.Column="1"/>
+				</Grid>
+				<Separator Classes="Dialog_Separator_Horizontal"/>
+
+				<!-- Encoding -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogDataSourceOptionsDialog.Encoding}"/>
+				<ComboBox Name="encodingComboBox" HorizontalAlignment="Stretch" Items="{Binding $parent[Window].Encodings}">
+					<ComboBox.ItemTemplate>
+						<DataTemplate>
+							<TextBlock Text="{Binding DisplayName}"/>
+						</DataTemplate>
+					</ComboBox.ItemTemplate>
+				</ComboBox>
+				
+			</StackPanel>
+
+			<!-- Standard output -->
+			<StackPanel Name="stdoutParamsPanel" HorizontalAlignment="Stretch" IsVisible="False" Orientation="Vertical">
+				
+				<!-- Command -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogDataSourceOptionsDialog.Command}"/>
+				<TextBox Name="commandTextBox" PropertyChanged="OnEditorControlPropertyChanged"/>
+				<Separator Classes="Dialog_Separator_Horizontal"/>
+
+				<!-- Working directory -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogDataSourceOptionsDialog.WorkingDirectory}"/>
+				<Grid ColumnDefinitions="*,Auto">
+					<TextBox Name="workingDirectoryTextBox"/>
+					<Button Classes="Browse" Command="{Binding $parent[Window].SelectWorkingDirectory}" Grid.Column="1"/>
+				</Grid>
+				<Separator Classes="Dialog_Separator_Horizontal"/>
+
+				<!-- Setup commands -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogDataSourceOptionsDialog.SetupCommands}"/>
+				<ListBox Name="setupCommandsListBox" Classes="Commands" Height="{StaticResource Double.LogDataSourceOptionsDialog.CommandListBox.Height}" Items="{Binding $parent[Window].SetupCommands}" SelectionChanged="OnListBoxSelectionChanged" VirtualizationMode="None">
+				</ListBox>
+				<Button Classes="ListAction" Command="{Binding $parent[Window].AddSetupCommand}" Content="{DynamicResource String.Common.Add}"/>
+				<Separator Classes="Dialog_Separator_Horizontal"/>
+
+				<!-- Teardown commands -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogDataSourceOptionsDialog.TeardownCommands}"/>
+				<ListBox Name="teardownCommandsListBox" Classes="Commands" Height="{StaticResource Double.LogDataSourceOptionsDialog.CommandListBox.Height}" Items="{Binding $parent[Window].TeardownCommands}" SelectionChanged="OnListBoxSelectionChanged" VirtualizationMode="None">
+
+				</ListBox>
+				<Button Classes="ListAction" Command="{Binding $parent[Window].AddTeardownCommand}" Content="{DynamicResource String.Common.Add}"/>
+				
+			</StackPanel>
+			
+		</Panel>
+		
+	</DockPanel>
+  
+</Window>

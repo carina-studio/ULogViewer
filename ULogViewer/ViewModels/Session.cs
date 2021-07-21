@@ -1,6 +1,7 @@
 ﻿using Avalonia.Data.Converters;
 using Avalonia.Media;
 using CarinaStudio.Collections;
+using CarinaStudio.Configuration;
 using CarinaStudio.IO;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Converters;
@@ -46,6 +47,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Property of <see cref="HasLogs"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> HasLogsProperty = ObservableProperty.Register<Session, bool>(nameof(HasLogs));
+		/// <summary>
+		/// Property of <see cref="HasMarkedLogs"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> HasMarkedLogsProperty = ObservableProperty.Register<Session, bool>(nameof(HasMarkedLogs));
+		/// <summary>
+		/// Property of <see cref="HasPredefinedLogTextFilters"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> HasPredefinedLogTextFiltersProperty = ObservableProperty.Register<Session, bool>(nameof(HasPredefinedLogTextFilters));
 		/// <summary>
 		/// Property of <see cref="Icon"/>.
 		/// </summary>
@@ -130,6 +139,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly DisplayableLogFilter logFilter;
 		readonly HashSet<LogReader> logReaders = new HashSet<LogReader>();
 		readonly SortedObservableList<DisplayableLog> markedLogs;
+		readonly ObservableList<PredefinedLogTextFilter> predefinedLogTextFilters;
 		readonly ScheduledAction updateIsReadingLogsAction;
 		readonly ScheduledAction updateIsProcessingLogsAction;
 		readonly ScheduledAction updateLogFilterAction;
@@ -147,7 +157,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.ClearLogFilesCommand = ReactiveCommand.Create(this.ClearLogFiles, this.canClearLogFiles);
 			this.MarkUnmarkLogsCommand = ReactiveCommand.Create<IEnumerable<DisplayableLog>>(this.MarkUnmarkLogs, this.canMarkUnmarkLogs);
 			this.PauseResumeLogsReadingCommand = ReactiveCommand.Create(this.PauseResumeLogsReading, this.canPauseResumeLogsReading);
-			this.ReloadLogsCommand = ReactiveCommand.Create(this.ReloadLogs, this.canReloadLogs);
+			this.ReloadLogsCommand = ReactiveCommand.Create(() => this.ReloadLogs(), this.canReloadLogs);
 			this.ResetLogProfileCommand = ReactiveCommand.Create(this.ResetLogProfile, this.canResetLogProfile);
 			this.SetLogProfileCommand = ReactiveCommand.Create<LogProfile?>(this.SetLogProfile, this.canSetLogProfile);
 			this.SetWorkingDirectoryCommand = ReactiveCommand.Create<string?>(this.SetWorkingDirectory, this.canSetWorkingDirectory);
@@ -157,6 +167,24 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.allLogs = new SortedObservableList<DisplayableLog>(this.CompareDisplayableLogs).Also(it =>
 			{
 				it.CollectionChanged += this.OnAllLogsChanged;
+			});
+			this.markedLogs = new SortedObservableList<DisplayableLog>(this.CompareDisplayableLogs).Also(it =>
+			{
+				it.CollectionChanged += (_, e) =>
+				{
+					if (!this.IsDisposed)
+						this.SetValue(HasMarkedLogsProperty, it.IsNotEmpty());
+				};
+			});
+			this.predefinedLogTextFilters = new ObservableList<PredefinedLogTextFilter>().Also(it =>
+			{
+				it.CollectionChanged += (_, e) =>
+				{
+					if (this.IsDisposed)
+						return;
+					this.SetValue(HasPredefinedLogTextFiltersProperty, it.IsNotEmpty());
+					this.updateLogFilterAction?.Reschedule();
+				};
 			});
 
 			// create log filter
@@ -172,6 +200,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// setup properties
 			this.SetValue(LogsProperty, this.allLogs.AsReadOnly());
+			this.MarkedLogs = this.markedLogs.AsReadOnly();
 			this.Workspace = workspace;
 
 			// setup delegates
@@ -228,10 +257,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.logFilter.CombinationMode = this.LogFiltersCombinationMode;
 
 				// setup text regex
-				if (this.LogTextFilter == null)
-					this.logFilter.TextRegexList = new Regex[0];
-				else
-					this.logFilter.TextRegexList = new Regex[] { this.LogTextFilter };
+				List<Regex> textRegexList = new List<Regex>();
+				this.LogTextFilter?.Let(it => textRegexList.Add(it));
+				foreach (var filter in this.predefinedLogTextFilters)
+					textRegexList.Add(filter.Regex);
+				this.logFilter.TextRegexList = textRegexList;
 			});
 			this.updateTitleAndIconAction = new ScheduledAction(() =>
 			{
@@ -426,6 +456,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				it.IsContinuousReading = profile.IsContinuousReading;
 				it.LogLevelMap = profile.LogLevelMap;
 				it.LogPatterns = profile.LogPatterns;
+				if (profile.IsContinuousReading)
+					it.MaxLogCount = this.Settings.GetValueOrDefault(ULogViewer.Settings.MaxContinuousLogCount);
 				it.TimestampCultureInfo = profile.TimestampCultureInfoForReading;
 				it.TimestampFormat = profile.TimestampFormatForReading;
 			});
@@ -566,6 +598,18 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Check whether at least one log is read or not.
 		/// </summary>
 		public bool HasLogs { get => this.GetValue(HasLogsProperty); }
+
+
+		/// <summary>
+		/// Check whether at least one log has been marked or not.
+		/// </summary>
+		public bool HasMarkedLogs { get => this.GetValue(HasMarkedLogsProperty); }
+
+
+		/// <summary>
+		/// Check whether at least one <see cref="PredefinedLogTextFilters"/> has been added to <see cref="PredefinedLogTextFilters"/> or not.
+		/// </summary>
+		public bool HasPredefinedLogTextFilters { get => this.GetValue(HasPredefinedLogTextFiltersProperty); }
 
 
 		/// <summary>
@@ -737,6 +781,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					foreach (DisplayableLog displayableLog in e.OldItems.AsNonNull())
 						displayableLog.Dispose();
 					break;
+				case NotifyCollectionChangedAction.Reset:
+					this.markedLogs.Clear();
+					this.markedLogs.AddAll(this.allLogs.TakeWhile(it => it.IsMarked));
+					break;
 			}
 			if (!this.IsDisposed)
 			{
@@ -797,8 +845,27 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			if (sender != this.LogProfile)
 				return;
-			if (e.PropertyName == nameof(LogProfile.Name))
-				this.updateTitleAndIconAction.Schedule();
+			switch (e.PropertyName)
+			{
+				case nameof(LogProfile.ColorIndicator):
+					this.SynchronizationContext.Post(() => this.ReloadLogs(true));
+					break;
+				case nameof(LogProfile.LogLevelMap):
+				case nameof(LogProfile.LogPatterns):
+				case nameof(LogProfile.SortDirection):
+				case nameof(LogProfile.SortKey):
+				case nameof(LogProfile.TimestampCultureInfoForReading):
+				case nameof(LogProfile.TimestampFormatForDisplaying):
+				case nameof(LogProfile.TimestampFormatForReading):
+					this.SynchronizationContext.Post(() => this.ReloadLogs());
+					break;
+				case nameof(LogProfile.Name):
+					this.updateTitleAndIconAction.Schedule();
+					break;
+				case nameof(LogProfile.VisibleLogProperties):
+					this.SynchronizationContext.Post(() => this.ReloadLogs(true));
+					break;
+			}
 		}
 
 
@@ -875,6 +942,18 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		}
 
 
+		// Called when setting changed.
+		protected override void OnSettingChanged(SettingChangedEventArgs e)
+		{
+			base.OnSettingChanged(e);
+			if (e.Key == ULogViewer.Settings.MaxContinuousLogCount)
+			{
+				if (this.LogProfile?.IsContinuousReading == true && this.logReaders.IsNotEmpty())
+					this.logReaders.First().MaxLogCount = (int)e.Value;
+			}
+		}
+
+
 		// Pause or resume logs reading.
 		void PauseResumeLogsReading()
 		{
@@ -908,8 +987,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public ICommand PauseResumeLogsReadingCommand { get; }
 
 
+		/// <summary>
+		/// Get list of <see cref="PredefinedLogTextFilters"/>s to filter logs.
+		/// </summary>
+		public IList<PredefinedLogTextFilter> PredefinedLogTextFilters { get => this.predefinedLogTextFilters; }
+
+
 		// Reload logs.
-		void ReloadLogs()
+		void ReloadLogs(bool updateDisplayLogProperties = false)
 		{
 			// check state
 			this.VerifyAccess();
@@ -931,6 +1016,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// dispose log readers
 			this.DisposeLogReaders(true);
+
+			// setup log comparer
+			this.UpdateDisplayableLogComparison();
+
+			// update display log properties
+			if (updateDisplayLogProperties)
+				this.UpdateDisplayLogProperties();
 
 			// recreate log readers
 			var dataSourceProvider = profile.DataSourceProvider;
@@ -1029,13 +1121,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.displayableLogGroup = new DisplayableLogGroup(profile);
 
 			// setup log comparer
-			this.compareDisplayableLogsDelegate = profile.SortKey switch
-			{
-				LogSortKey.Timestamp => CompareDisplayableLogsByTimestamp,
-				_ => CompareDisplayableLogsById,
-			};
-			if (profile.SortDirection == SortDirection.Descending)
-				this.compareDisplayableLogsDelegate = this.compareDisplayableLogsDelegate.Invert();
+			this.UpdateDisplayableLogComparison();
 
 			// read logs or wait for more actions
 			var dataSourceOptions = profile.DataSourceOptions;
@@ -1152,6 +1238,20 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Get title of session.
 		/// </summary>
 		public string? Title { get => this.GetValue(TitleProperty); }
+
+
+		// Update comparison for displayable logs.
+		void UpdateDisplayableLogComparison()
+		{
+			var profile = this.LogProfile.AsNonNull();
+			this.compareDisplayableLogsDelegate = profile.SortKey switch
+			{
+				LogSortKey.Timestamp => CompareDisplayableLogsByTimestamp,
+				_ => CompareDisplayableLogsById,
+			};
+			if (profile.SortDirection == SortDirection.Descending)
+				this.compareDisplayableLogsDelegate = this.compareDisplayableLogsDelegate.Invert();
+		}
 
 
 		// Update list of display log properties according to profile.

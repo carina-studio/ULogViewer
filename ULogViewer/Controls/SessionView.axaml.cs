@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Controls.Templates;
 using Avalonia.Data;
 using Avalonia.Input;
@@ -20,10 +21,10 @@ using Microsoft.Extensions.Logging;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -34,40 +35,44 @@ namespace CarinaStudio.ULogViewer.Controls
 	/// </summary>
 	partial class SessionView : BaseView
 	{
-		/// <summary>
-		/// Property of <see cref="HasLogProfile"/>.
-		/// </summary>
-		public static readonly AvaloniaProperty<bool> HasLogProfileProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(HasLogProfile), false);
-		/// <summary>
-		/// Property of <see cref="IsScrollingToLatestLogNeeded"/>.
-		/// </summary>
-		public static readonly AvaloniaProperty<bool> IsScrollingToLatestLogNeededProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(IsScrollingToLatestLogNeeded), true);
-		/// <summary>
-		/// Property of <see cref="StatusBarState"/>.
-		/// </summary>
-		public static readonly AvaloniaProperty<SessionViewStatusBarState> StatusBarStateProperty = AvaloniaProperty.Register<SessionView, SessionViewStatusBarState>(nameof(StatusBarState), SessionViewStatusBarState.None);
-
-
 		// Constants.
 		const int ScrollingToLatestLogInterval = 100;
 
 
+		// Static fields.
+		static readonly AvaloniaProperty<bool> HasLogProfileProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(HasLogProfile), false);
+		static readonly AvaloniaProperty<bool> IsScrollingToLatestLogNeededProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(IsScrollingToLatestLogNeeded), true);
+		static readonly AvaloniaProperty<SessionViewStatusBarState> StatusBarStateProperty = AvaloniaProperty.Register<SessionView, SessionViewStatusBarState>(nameof(StatusBarState), SessionViewStatusBarState.None);
+
+
 		// Fields.
 		readonly MutableObservableBoolean canAddLogFiles = new MutableObservableBoolean();
+		readonly MutableObservableBoolean canFilterLogsByPid = new MutableObservableBoolean();
+		readonly MutableObservableBoolean canFilterLogsByTid = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canMarkUnmarkSelectedLogs = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSetLogProfile = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSetWorkingDirectory = new MutableObservableBoolean();
+		bool isPidLogPropertyVisible;
+		bool isTidLogPropertyVisible;
 		bool isWorkingDirNeededAfterLogProfileSet;
+		readonly ContextMenu logActionMenu;
 		readonly Control logHeaderContainer;
 		readonly Grid logHeaderGrid;
+		readonly List<MutableObservableValue<GridLength>> logHeaderWidths = new List<MutableObservableValue<GridLength>>();
 		readonly ComboBox logLevelFilterComboBox;
 		readonly ListBox logListBox;
 		readonly TextBox logProcessIdFilterTextBox;
 		ScrollViewer? logScrollViewer;
 		readonly RegexTextBox logTextFilterTextBox;
 		readonly TextBox logThreadIdFilterTextBox;
+		readonly ListBox markedLogListBox;
+		readonly ToggleButton otherActionsButton;
 		readonly ContextMenu otherActionsMenu;
+		readonly ListBox predefinedLogTextFilterListBox;
+		readonly SortedObservableList<PredefinedLogTextFilter> predefinedLogTextFilters;
+		readonly Popup predefinedLogTextFiltersPopup;
 		readonly ScheduledAction scrollToLatestLogAction;
+		readonly HashSet<PredefinedLogTextFilter> selectedPredefinedLogTextFilters = new HashSet<PredefinedLogTextFilter>();
 		readonly ScheduledAction updateLogFiltersAction;
 		readonly ScheduledAction updateStatusBarStateAction;
 
@@ -79,17 +84,22 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			// create commands
 			this.AddLogFilesCommand = ReactiveCommand.Create(this.AddLogFiles, this.canAddLogFiles);
+			this.FilterLogsByProcessIdCommand = ReactiveCommand.Create<bool>(this.FilterLogsByProcessId, this.canFilterLogsByPid);
+			this.FilterLogsByThreadIdCommand = ReactiveCommand.Create<bool>(this.FilterLogsByThreadId, this.canFilterLogsByTid);
 			this.MarkUnmarkSelectedLogsCommand = ReactiveCommand.Create(this.MarkUnmarkSelectedLogs, this.canMarkUnmarkSelectedLogs);
 			this.ResetLogFiltersCommand = ReactiveCommand.Create(this.ResetLogFilters, this.GetObservable<bool>(HasLogProfileProperty));
 			this.SetLogProfileCommand = ReactiveCommand.Create(this.SetLogProfile, this.canSetLogProfile);
 			this.SetWorkingDirectoryCommand = ReactiveCommand.Create(this.SetWorkingDirectory, this.canSetWorkingDirectory);
-			this.ShowOtherActionsCommand = ReactiveCommand.Create(this.ShowOtherActions);
 			this.SwitchLogFiltersCombinationModeCommand = ReactiveCommand.Create(this.SwitchLogFiltersCombinationMode, this.GetObservable<bool>(HasLogProfileProperty));
+
+			// create collections
+			this.predefinedLogTextFilters = new SortedObservableList<PredefinedLogTextFilter>(ComparePredefinedLogTextFilters);
 
 			// initialize
 			this.InitializeComponent();
 
 			// setup controls
+			this.logActionMenu = (ContextMenu)this.Resources["logActionMenu"].AsNonNull();
 			this.logHeaderContainer = this.FindControl<Control>("logHeaderContainer").AsNonNull();
 			this.logHeaderGrid = this.FindControl<Grid>("logHeaderGrid").AsNonNull();
 			this.logLevelFilterComboBox = this.FindControl<ComboBox>("logLevelFilterComboBox").AsNonNull();
@@ -120,7 +130,15 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				it.AddHandler(TextBox.TextInputEvent, this.OnLogProcessIdTextBoxTextInput, RoutingStrategies.Tunnel);
 			});
-			this.otherActionsMenu = (ContextMenu)this.Resources["otherActionsMenu"].AsNonNull();
+			this.markedLogListBox = this.FindControl<ListBox>("markedLogListBox").AsNonNull();
+			this.otherActionsButton = this.FindControl<ToggleButton>("otherActionsButton").AsNonNull();
+			this.otherActionsMenu = ((ContextMenu)this.Resources["otherActionsMenu"].AsNonNull()).Also(it =>
+			{
+				it.MenuClosed += (_, e) => this.SynchronizationContext.Post(() => this.otherActionsButton.IsChecked = false);
+				it.MenuOpened += (_, e) => this.SynchronizationContext.Post(() => this.otherActionsButton.IsChecked = true);
+			});
+			this.predefinedLogTextFilterListBox = this.FindControl<ListBox>("predefinedLogTextFilterListBox").AsNonNull();
+			this.predefinedLogTextFiltersPopup = this.FindControl<Popup>("predefinedLogTextFiltersPopup").AsNonNull();
 #if !DEBUG
 			this.FindControl<Button>("testButton").AsNonNull().IsVisible = false;
 #endif
@@ -170,8 +188,11 @@ namespace CarinaStudio.ULogViewer.Controls
 						session.LogThreadIdFilter = null;
 				});
 
-				// update session
+				// update text filters
 				session.LogTextFilter = this.logTextFilterTextBox.Regex;
+				session.PredefinedLogTextFilters.Clear();
+				foreach (var filter in this.selectedPredefinedLogTextFilters)
+					session.PredefinedLogTextFilters.Add(filter);
 			});
 			this.updateStatusBarStateAction = new ScheduledAction(() =>
 			{
@@ -222,10 +243,12 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		/// <summary>
-		/// Command to add log files.
-		/// </summary>
-		public ICommand AddLogFilesCommand { get; }
+		// Command to add log files.
+		ICommand AddLogFilesCommand { get; }
+
+
+		// Attach to predefined log text filter
+		void AttachToPredefinedLogTextFilter(PredefinedLogTextFilter filter) => filter.PropertyChanged += this.OnPredefinedLogTextFilterPropertyChanged;
 
 
 		// Attach to session.
@@ -275,177 +298,34 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Detach from session.
-		void DetachFromSession(Session session)
+		// Compare predefined log text filters.
+		static int ComparePredefinedLogTextFilters(PredefinedLogTextFilter? x, PredefinedLogTextFilter? y)
 		{
-			// remove event handler
-			session.PropertyChanged -= this.OnSessionPropertyChanged;
-
-			// detach from commands
-			session.AddLogFileCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
-			session.MarkUnmarkLogsCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
-			session.SetLogProfileCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
-			session.SetLogProfileCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
-			session.SetWorkingDirectoryCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
-			this.canAddLogFiles.Update(false);
-			this.canMarkUnmarkSelectedLogs.Update(false);
-			this.canSetLogProfile.Update(false);
-			this.canSetWorkingDirectory.Update(false);
-
-			// update properties
-			this.SetValue<bool>(HasLogProfileProperty, false);
-
-			// stop auto scrolling
-			this.scrollToLatestLogAction.Cancel();
-
-			// update UI
-			this.OnDisplayLogPropertiesChanged();
-			this.updateStatusBarStateAction.Schedule();
-		}
-
-
-		/// <summary>
-		/// Check whether log profile has been set or not.
-		/// </summary>
-		public bool HasLogProfile { get => this.GetValue<bool>(HasLogProfileProperty); }
-
-
-		// Initialize Avalonia components.
-		private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
-
-
-		/// <summary>
-		/// Get or set whether scrolling to latest log is needed or not.
-		/// </summary>
-		public bool IsScrollingToLatestLogNeeded
-		{
-			get => this.GetValue<bool>(IsScrollingToLatestLogNeededProperty);
-			set => this.SetValue<bool>(IsScrollingToLatestLogNeededProperty, value);
-		}
-
-
-		// Mark or unmark selected logs.
-		void MarkUnmarkSelectedLogs()
-		{
-			if (!this.canMarkUnmarkSelectedLogs.Value)
-				return;
-			if (this.DataContext is not Session session)
-				return;
-			var logs = this.logListBox.SelectedItems.Cast<DisplayableLog>();
-			session.MarkUnmarkLogsCommand.TryExecute(logs);
-		}
-
-
-		/// <summary>
-		/// Command to mark or unmark selected logs 
-		/// </summary>
-		public ICommand MarkUnmarkSelectedLogsCommand { get; }
-
-
-		// Called when attaching to view tree.
-		protected override void OnAttachedToLogicalTree(LogicalTreeAttachmentEventArgs e)
-		{
-			// call base
-			base.OnAttachedToLogicalTree(e);
-
-			// add event handlers
-			this.Settings.SettingChanged += this.OnSettingChanged;
-			this.AddHandler(DragDrop.DragOverEvent, this.OnDragOver);
-			this.AddHandler(DragDrop.DropEvent, this.OnDrop);
-		}
-
-
-		// Called when detach from view tree.
-		protected override void OnDetachedFromLogicalTree(LogicalTreeAttachmentEventArgs e)
-		{
-			// remove event handlers
-			this.Settings.SettingChanged -= this.OnSettingChanged;
-			this.RemoveHandler(DragDrop.DragOverEvent, this.OnDragOver);
-			this.RemoveHandler(DragDrop.DropEvent, this.OnDrop);
-
-			// call base
-			base.OnDetachedFromLogicalTree(e);
-		}
-
-
-		// Called when display log properties changed.
-		void OnDisplayLogPropertiesChanged()
-		{
-			// clear headers
-			foreach (var control in this.logHeaderGrid.Children)
-				control.DataContext = null;
-			this.logHeaderGrid.Children.Clear();
-			this.logHeaderGrid.ColumnDefinitions.Clear();
-
-			// clear item template
-			this.logListBox.ItemTemplate = null;
-
-			// get display log properties
-			var logProperties = (this.DataContext as Session)?.DisplayLogProperties;
-			if (logProperties == null || logProperties.IsEmpty())
-				return;
-			var logPropertyCount = logProperties.Count;
-
-			// build headers
-			var app = (App)this.Application;
-			var splitterWidth = app.Resources.TryGetResource("Double.GridSplitter.Thickness", out var rawResource) ? (double)rawResource.AsNonNull() : 0.0;
-			var minHeaderWidth = app.Resources.TryGetResource("Double.SessionView.LogHeader.MinWidth", out rawResource) ? (double)rawResource.AsNonNull() : 0.0;
-			var headerTemplate = (DataTemplate)this.DataTemplates.First(it => it is DataTemplate dt && dt.DataType == typeof(DisplayableLogProperty));
-			var headerColumns = new ColumnDefinition[logPropertyCount];
-			var headerColumnWidths = new MutableObservableValue<GridLength>[logPropertyCount];
-			for (var i = 0; i < logPropertyCount; ++i)
+			if (x == null)
 			{
-				// define splitter column
-				var logPropertyIndex = i;
-				if (logPropertyIndex > 0)
-					this.logHeaderGrid.ColumnDefinitions.Add(new ColumnDefinition(splitterWidth, GridUnitType.Pixel));
-
-				// define header column
-				var logProperty = logProperties[logPropertyIndex];
-				var width = logProperty.Width;
-				if (width == null)
-					headerColumnWidths[logPropertyIndex] = new MutableObservableValue<GridLength>(new GridLength(1, GridUnitType.Star));
-				else
-					headerColumnWidths[logPropertyIndex] = new MutableObservableValue<GridLength>(new GridLength(width.Value, GridUnitType.Pixel));
-				var headerColumn = new ColumnDefinition(headerColumnWidths[logPropertyIndex].Value).Also(it =>
-				{
-					it.MinWidth = minHeaderWidth;
-				});
-				headerColumns[logPropertyIndex] = headerColumn;
-				this.logHeaderGrid.ColumnDefinitions.Add(headerColumn);
-
-				// create splitter view
-				if (logPropertyIndex > 0)
-				{
-					var splitter = new GridSplitter().Also(it =>
-					{
-						it.Background = Brushes.Transparent;
-						it.DragDelta += (_, e) =>
-						{
-							var headerColumnWidth = headerColumnWidths[logPropertyIndex - 1];
-							if (headerColumnWidth.Value.GridUnitType == GridUnitType.Pixel)
-								headerColumnWidth.Update(new GridLength(headerColumns[logPropertyIndex - 1].ActualWidth, GridUnitType.Pixel));
-						};
-						it.HorizontalAlignment = HorizontalAlignment.Stretch;
-						it.VerticalAlignment = VerticalAlignment.Stretch;
-					});
-					Grid.SetColumn(splitter, logPropertyIndex * 2 - 1);
-					this.logHeaderGrid.Children.Add(splitter);
-				}
-
-				// create header view
-				var headerView = ((Border)headerTemplate.Build(logProperty)).Also(it =>
-				{
-					it.DataContext = logProperty;
-					if (logPropertyIndex == 0)
-						it.BorderThickness = new Thickness();
-				});
-				Grid.SetColumn(headerView, logPropertyIndex * 2);
-				this.logHeaderGrid.Children.Add(headerView);
+				if (y == null)
+					return 0;
+				return -1;
 			}
+			if (y == null)
+				return 1;
+			var result = x.Name.CompareTo(y.Name);
+			if (result != 0)
+				return result;
+			return x.GetHashCode() - y.GetHashCode();
+		}
 
-			// build item template
+
+		// Create item template for item of log list box.
+		DataTemplate CreateLogItemTemplate(LogProfile profile, IList<DisplayableLogProperty> logProperties)
+		{
+			var app = (App)this.Application;
+			var logPropertyCount = logProperties.Count;
+			var colorIndicatorWidth = app.Resources.TryGetResource("Double.SessionView.LogListBox.ColorIndicator.Width", out var rawResource) ? (double)rawResource.AsNonNull() : 0.0;
 			var itemPadding = app.Resources.TryGetResource("Thickness.SessionView.LogListBox.Item.Padding", out rawResource) ? (Thickness)rawResource.AsNonNull() : new Thickness();
+			var splitterWidth = app.Resources.TryGetResource("Double.GridSplitter.Thickness", out rawResource) ? (double)rawResource.AsNonNull() : 0.0;
+			if (profile.ColorIndicator != LogColorIndicator.None)
+				itemPadding = new Thickness(itemPadding.Left + colorIndicatorWidth, itemPadding.Top, itemPadding.Right, itemPadding.Bottom);
 			var itemTemplateContent = new Func<IServiceProvider, object>(_ =>
 			{
 				var itemPanel = new Panel().Also(it =>
@@ -476,7 +356,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						if (width == null)
 							it.Width = new GridLength(1, GridUnitType.Star);
 						else
-							it.Bind(ColumnDefinition.WidthProperty, headerColumnWidths[logPropertyIndex]);
+							it.Bind(ColumnDefinition.WidthProperty, this.logHeaderWidths[logPropertyIndex]);
 					});
 					itemGrid.ColumnDefinitions.Add(propertyColumn);
 
@@ -495,37 +375,426 @@ namespace CarinaStudio.ULogViewer.Controls
 					Grid.SetColumn(propertyView, logPropertyIndex * 2);
 					itemGrid.Children.Add(propertyView);
 				}
+				if (profile.ColorIndicator != LogColorIndicator.None)
+				{
+					new Border().Also(it =>
+					{
+						it.Bind(Border.BackgroundProperty, new Binding() { Path = nameof(DisplayableLog.ColorIndicatorBrush) });
+						it.HorizontalAlignment = HorizontalAlignment.Left;
+						it.Bind(ToolTip.TipProperty, new Binding() { Path = profile.ColorIndicator.ToString() });
+						it.Width = colorIndicatorWidth;
+						itemPanel.Children.Add(it);
+					});
+				}
 				return new ControlTemplateResult(itemPanel, null);
 			});
-			this.logListBox.ItemTemplate = new DataTemplate()
+			return new DataTemplate()
 			{
 				Content = itemTemplateContent,
 				DataType = typeof(DisplayableLog),
 			};
+		}
 
-			// show/hide log filters UI
-			var hasPid = false;
-			var hasTid = false;
+
+		// Create item template for item of marked log list box.
+		DataTemplate CreateMarkedLogItemTemplate(LogProfile profile, IList<DisplayableLogProperty> logProperties)
+		{
+			// check visible properties
+			var hasMessage = false;
+			var hasSourceName = false;
+			var hasTimestamp = false;
+			foreach (var logProperty in logProperties)
+			{
+				switch (logProperty.Name)
+				{
+					case nameof(DisplayableLog.Message):
+						hasMessage = true;
+						break;
+					case nameof(DisplayableLog.SourceName):
+						hasSourceName = true;
+						break;
+					case nameof(DisplayableLog.TimestampString):
+						hasTimestamp = true;
+						break;
+				}
+			}
+
+			// build item template for marked log list box
+			var propertyInMarkedItem = Global.Run(() =>
+			{
+				if (hasMessage)
+					return nameof(DisplayableLog.Message);
+				if (hasSourceName)
+					return nameof(DisplayableLog.SourceName);
+				if (hasTimestamp)
+					return nameof(DisplayableLog.TimestampString);
+				return nameof(DisplayableLog.LogId);
+			});
+			var app = (App)this.Application;
+			var colorIndicatorWidth = app.Resources.TryGetResource("Double.SessionView.LogListBox.ColorIndicator.Width", out var rawResource) ? (double)rawResource.AsNonNull() : 0.0;
+			var itemPadding = app.Resources.TryGetResource("Thickness.SessionView.MarkedLogListBox.Item.Padding", out rawResource) ? (Thickness)rawResource.AsNonNull() : new Thickness();
+			if (profile.ColorIndicator != LogColorIndicator.None)
+				itemPadding = new Thickness(itemPadding.Left + colorIndicatorWidth, itemPadding.Top, itemPadding.Right, itemPadding.Bottom);
+			var itemTemplateContent = new Func<IServiceProvider, object>(_ =>
+			{
+				var itemPanel = new Panel();
+				var propertyView = new TextBlock().Also(it =>
+				{
+					it.Bind(TextBlock.ForegroundProperty, new Binding() { Path = nameof(DisplayableLog.LevelBrush) });
+					it.Bind(TextBlock.TextProperty, new Binding() { Path = propertyInMarkedItem });
+					it.Margin = itemPadding;
+					it.MaxLines = 1;
+					it.TextTrimming = TextTrimming.CharacterEllipsis;
+					it.TextWrapping = TextWrapping.NoWrap;
+					it.VerticalAlignment = VerticalAlignment.Top;
+					if (hasTimestamp)
+						it.Bind(ToolTip.TipProperty, new Binding() { Path = nameof(DisplayableLog.TimestampString) });
+				});
+				itemPanel.Children.Add(propertyView);
+				if (profile.ColorIndicator != LogColorIndicator.None)
+				{
+					new Border().Also(it =>
+					{
+						it.Bind(Border.BackgroundProperty, new Binding() { Path = nameof(DisplayableLog.ColorIndicatorBrush) });
+						it.HorizontalAlignment = HorizontalAlignment.Left;
+						it.Bind(ToolTip.TipProperty, new Binding() { Path = profile.ColorIndicator.ToString() });
+						it.Width = colorIndicatorWidth;
+						itemPanel.Children.Add(it);
+					});
+				}
+				return new ControlTemplateResult(itemPanel, null);
+			});
+			return new DataTemplate()
+			{
+				Content = itemTemplateContent,
+				DataType = typeof(DisplayableLog),
+			};
+		}
+
+
+		// Detach from predefined log text filter
+		void DetachFromPredefinedLogTextFilter(PredefinedLogTextFilter filter) => filter.PropertyChanged -= this.OnPredefinedLogTextFilterPropertyChanged;
+
+
+		// Detach from session.
+		void DetachFromSession(Session session)
+		{
+			// remove event handler
+			session.PropertyChanged -= this.OnSessionPropertyChanged;
+
+			// detach from commands
+			session.AddLogFileCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
+			session.MarkUnmarkLogsCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
+			session.SetLogProfileCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
+			session.SetLogProfileCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
+			session.SetWorkingDirectoryCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
+			this.canAddLogFiles.Update(false);
+			this.canMarkUnmarkSelectedLogs.Update(false);
+			this.canSetLogProfile.Update(false);
+			this.canSetWorkingDirectory.Update(false);
+
+			// update properties
+			this.SetValue<bool>(HasLogProfileProperty, false);
+
+			// stop auto scrolling
+			this.scrollToLatestLogAction.Cancel();
+
+			// update UI
+			this.OnDisplayLogPropertiesChanged();
+			this.updateStatusBarStateAction.Schedule();
+		}
+
+
+		// Edit given predefined log text filter.
+		void EditPredefinedLogTextFilter(PredefinedLogTextFilter? filter)
+		{
+			// check state
+			if (filter == null)
+				return;
+			var window = this.FindLogicalAncestorOfType<Window>();
+			if (window == null)
+				return;
+
+			// edit filter
+			new PredefinedLogTextFilterEditorDialog()
+			{
+				Filter = filter
+			}.ShowDialog(window);
+		}
+
+
+		// Filter logs by process ID.
+		void FilterLogsByProcessId(bool resetOtherFilters)
+		{
+			// check state
+			this.VerifyAccess();
+			if (!this.canFilterLogsByPid.Value)
+				return;
+			if (this.logListBox.SelectedItems.Count != 1)
+				return;
+			var log = (DisplayableLog)this.logListBox.SelectedItem.AsNonNull();
+			var pid = log.ProcessId;
+			if (pid == null)
+				return;
+
+			// filter
+			if (resetOtherFilters)
+				this.ResetLogFilters();
+			this.logProcessIdFilterTextBox.Text = pid.Value.ToString();
+			this.updateLogFiltersAction.Reschedule();
+		}
+
+
+		// Command to filter logs by selected PID.
+		ICommand FilterLogsByProcessIdCommand { get; }
+
+
+		// Filter logs by thread ID.
+		void FilterLogsByThreadId(bool resetOtherFilters)
+		{
+			// check state
+			this.VerifyAccess();
+			if (!this.canFilterLogsByTid.Value)
+				return;
+			if (this.logListBox.SelectedItems.Count != 1)
+				return;
+			var log = (DisplayableLog)this.logListBox.SelectedItem.AsNonNull();
+			var tid = log.ThreadId;
+			if (tid == null)
+				return;
+
+			// filter
+			if (resetOtherFilters)
+				this.ResetLogFilters();
+			this.logThreadIdFilterTextBox.Text = tid.Value.ToString();
+			this.updateLogFiltersAction.Reschedule();
+		}
+
+
+		// Command to filter logs by selected TID.
+		ICommand FilterLogsByThreadIdCommand { get; }
+
+
+		// Check whether log profile has been set or not.
+		bool HasLogProfile { get => this.GetValue<bool>(HasLogProfileProperty); }
+
+
+		// Initialize Avalonia components.
+		private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
+
+
+		// Get or set whether scrolling to latest log is needed or not.
+		bool IsScrollingToLatestLogNeeded
+		{
+			get => this.GetValue<bool>(IsScrollingToLatestLogNeededProperty);
+			set => this.SetValue<bool>(IsScrollingToLatestLogNeededProperty, value);
+		}
+
+
+		// Mark or unmark selected logs.
+		void MarkUnmarkSelectedLogs()
+		{
+			if (!this.canMarkUnmarkSelectedLogs.Value)
+				return;
+			if (this.DataContext is not Session session)
+				return;
+			var logs = this.logListBox.SelectedItems.Cast<DisplayableLog>();
+			session.MarkUnmarkLogsCommand.TryExecute(logs);
+		}
+
+
+		// Command to mark or unmark selected logs.
+		ICommand MarkUnmarkSelectedLogsCommand { get; }
+
+
+		// Called when attaching to view tree.
+		protected override void OnAttachedToLogicalTree(LogicalTreeAttachmentEventArgs e)
+		{
+			// call base
+			base.OnAttachedToLogicalTree(e);
+
+			// add event handlers
+			this.Settings.SettingChanged += this.OnSettingChanged;
+			this.AddHandler(DragDrop.DragOverEvent, this.OnDragOver);
+			this.AddHandler(DragDrop.DropEvent, this.OnDrop);
+
+			// setup predefined log text filter list
+			this.predefinedLogTextFilters.AddAll(ViewModels.PredefinedLogTextFilters.All);
+			foreach (var filter in ViewModels.PredefinedLogTextFilters.All)
+				this.AttachToPredefinedLogTextFilter(filter);
+			((INotifyCollectionChanged)ViewModels.PredefinedLogTextFilters.All).CollectionChanged += this.OnPredefinedLogTextFiltersChanged;
+		}
+
+
+		// Called when button of clearing predefined log text fliter selection clicked.
+		void OnClearPredefinedLogTextFilterSelectionButtonClick(object? sender, RoutedEventArgs e)
+		{
+			this.predefinedLogTextFilterListBox.SelectedItems.Clear();
+			this.updateLogFiltersAction.Reschedule();
+		}
+
+
+		// Called when button of creating predefined log text fliter clicked.
+		async void OnCreatePredefinedLogTextFilterButtonClick(object? sender, RoutedEventArgs e)
+		{
+			// check state
+			var window = this.FindLogicalAncestorOfType<Window>();
+			if (window == null)
+				return;
+
+			// create filter
+			var filter = await new PredefinedLogTextFilterEditorDialog()
+			{
+				Regex = this.logTextFilterTextBox.Regex
+			}.ShowDialog<PredefinedLogTextFilter>(window);
+			if (filter == null)
+				return;
+			ViewModels.PredefinedLogTextFilters.Add(filter);
+		}
+
+
+		// Called when detach from view tree.
+		protected override void OnDetachedFromLogicalTree(LogicalTreeAttachmentEventArgs e)
+		{
+			// remove event handlers
+			this.Settings.SettingChanged -= this.OnSettingChanged;
+			this.RemoveHandler(DragDrop.DragOverEvent, this.OnDragOver);
+			this.RemoveHandler(DragDrop.DropEvent, this.OnDrop);
+
+			// release predefined log text filter list
+			((INotifyCollectionChanged)ViewModels.PredefinedLogTextFilters.All).CollectionChanged -= this.OnPredefinedLogTextFiltersChanged;
+			foreach (var filter in this.predefinedLogTextFilters)
+				this.DetachFromPredefinedLogTextFilter(filter);
+			this.predefinedLogTextFilters.Clear();
+			this.selectedPredefinedLogTextFilters.Clear();
+
+			// call base
+			base.OnDetachedFromLogicalTree(e);
+		}
+
+
+		// Called when display log properties changed.
+		void OnDisplayLogPropertiesChanged()
+		{
+			// clear headers
+			foreach (var control in this.logHeaderGrid.Children)
+				control.DataContext = null;
+			this.logHeaderGrid.Children.Clear();
+			this.logHeaderGrid.ColumnDefinitions.Clear();
+			this.logHeaderWidths.Clear();
+
+			// clear item template
+			this.logListBox.ItemTemplate = null;
+			this.markedLogListBox.ItemTemplate = null;
+
+			// get profile
+			if (this.DataContext is not Session session)
+				return;
+			var profile = session.LogProfile;
+			if (profile == null)
+				return;
+
+			// get display log properties
+			var logProperties = session.DisplayLogProperties;
+			if (logProperties.IsEmpty())
+				return;
+			var logPropertyCount = logProperties.Count;
+
+			// build headers
+			var app = (App)this.Application;
+			var splitterWidth = app.Resources.TryGetResource("Double.GridSplitter.Thickness", out var rawResource) ? (double)rawResource.AsNonNull() : 0.0;
+			var minHeaderWidth = app.Resources.TryGetResource("Double.SessionView.LogHeader.MinWidth", out rawResource) ? (double)rawResource.AsNonNull() : 0.0;
+			var colorIndicatorWidth = app.Resources.TryGetResource("Double.SessionView.LogListBox.ColorIndicator.Width", out rawResource) ? (double)rawResource.AsNonNull() : 0.0;
+			var headerTemplate = (DataTemplate)this.DataTemplates.First(it => it is DataTemplate dt && dt.DataType == typeof(DisplayableLogProperty));
+			var headerColumns = new ColumnDefinition[logPropertyCount];
+			var columIndexOffset = 0;
+			if (profile.ColorIndicator != LogColorIndicator.None)
+			{
+				this.logHeaderGrid.ColumnDefinitions.Add(new ColumnDefinition(colorIndicatorWidth, GridUnitType.Pixel));
+				++columIndexOffset;
+			}
+			for (var i = 0; i < logPropertyCount; ++i)
+			{
+				// define splitter column
+				var logPropertyIndex = i;
+				if (logPropertyIndex > 0)
+					this.logHeaderGrid.ColumnDefinitions.Add(new ColumnDefinition(splitterWidth, GridUnitType.Pixel));
+
+				// define header column
+				var logProperty = logProperties[logPropertyIndex];
+				var width = logProperty.Width;
+				if (width == null)
+					this.logHeaderWidths.Add(new MutableObservableValue<GridLength>(new GridLength(1, GridUnitType.Star)));
+				else
+					this.logHeaderWidths.Add(new MutableObservableValue<GridLength>(new GridLength(width.Value, GridUnitType.Pixel)));
+				var headerColumn = new ColumnDefinition(this.logHeaderWidths[logPropertyIndex].Value).Also(it =>
+				{
+					it.MinWidth = minHeaderWidth;
+				});
+				headerColumns[logPropertyIndex] = headerColumn;
+				this.logHeaderGrid.ColumnDefinitions.Add(headerColumn);
+
+				// create splitter view
+				if (logPropertyIndex > 0)
+				{
+					var splitter = new GridSplitter().Also(it =>
+					{
+						it.Background = Brushes.Transparent;
+						it.DragDelta += (_, e) =>
+						{
+							var headerColumnWidth = this.logHeaderWidths[logPropertyIndex - 1];
+							if (headerColumnWidth.Value.GridUnitType == GridUnitType.Pixel)
+								headerColumnWidth.Update(new GridLength(headerColumns[logPropertyIndex - 1].ActualWidth, GridUnitType.Pixel));
+						};
+						it.HorizontalAlignment = HorizontalAlignment.Stretch;
+						it.VerticalAlignment = VerticalAlignment.Stretch;
+					});
+					Grid.SetColumn(splitter, logPropertyIndex * 2 - 1 + columIndexOffset);
+					this.logHeaderGrid.Children.Add(splitter);
+				}
+
+				// create header view
+				var headerView = ((Border)headerTemplate.Build(logProperty)).Also(it =>
+				{
+					it.DataContext = logProperty;
+					if (logPropertyIndex == 0)
+						it.BorderThickness = new Thickness();
+				});
+				Grid.SetColumn(headerView, logPropertyIndex * 2 + columIndexOffset);
+				this.logHeaderGrid.Children.Add(headerView);
+			}
+
+			// build item template for log list box
+			this.logListBox.ItemTemplate = this.CreateLogItemTemplate(profile, logProperties);
+
+			// build item template for marked log list box
+			this.markedLogListBox.ItemTemplate = this.CreateMarkedLogItemTemplate(profile, logProperties);
+
+			// check visible properties
+			this.isPidLogPropertyVisible = false;
+			this.isTidLogPropertyVisible = false;
 			foreach (var logProperty in logProperties)
 			{
 				switch (logProperty.Name)
 				{
 					case nameof(DisplayableLog.ProcessId):
-						hasPid = true;
+						this.isPidLogPropertyVisible = true;
 						break;
 					case nameof(DisplayableLog.ThreadId):
-						hasTid = true;
+						this.isTidLogPropertyVisible = true;
 						break;
 				}
 			}
-			if (hasPid)
+
+			// show/hide log filters UI
+			if (this.isPidLogPropertyVisible)
 				this.logProcessIdFilterTextBox.IsVisible = true;
 			else
 			{
 				this.logProcessIdFilterTextBox.IsVisible = false;
 				this.logProcessIdFilterTextBox.Text = "";
 			}
-			if (hasTid)
+			if (this.isTidLogPropertyVisible)
 				this.logThreadIdFilterTextBox.IsVisible = true;
 			else
 			{
@@ -607,6 +876,15 @@ namespace CarinaStudio.ULogViewer.Controls
 		void OnLogLevelFilterComboBoxSelectionChanged(object? sender, SelectionChangedEventArgs e) => this.updateLogFiltersAction?.Reschedule();
 
 
+		// Called when pointer released on log list box.
+		void OnLogListBoxPointerReleased(object? sender, PointerReleasedEventArgs e)
+		{
+			if (e.InitialPressMouseButton != MouseButton.Right)
+				return;
+			this.ShowLogActionsMenu();
+		}
+
+
 		// Called when log list box scrolled.
 		void OnLogListBoxScrollChanged(object? sender, ScrollChangedEventArgs e)
 		{
@@ -667,12 +945,21 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when log list box selection changed.
 		void OnLogListBoxSelectionChanged(object? sender, SelectionChangedEventArgs e)
 		{
-			if (this.DataContext is not Session session)
-				return;
-			if (this.logListBox.SelectedItems.Count > 0 && session.MarkUnmarkLogsCommand.CanExecute(null))
-				this.canMarkUnmarkSelectedLogs.Update(true);
-			else
-				this.canMarkUnmarkSelectedLogs.Update(false);
+			// [Workaround] ListBox.SelectedItems is not update yet when calling this method
+			this.SynchronizationContext.Post(() =>
+			{
+				// check state
+				if (this.DataContext is not Session session)
+					return;
+				var selectionCount = this.logListBox.SelectedItems.Count;
+				var hasSelectedItems = (selectionCount > 0);
+				var hasSingleSelectedItem = (selectionCount == 1);
+
+				// update command states
+				this.canFilterLogsByPid.Update(hasSingleSelectedItem && this.isPidLogPropertyVisible);
+				this.canFilterLogsByTid.Update(hasSingleSelectedItem && this.isTidLogPropertyVisible);
+				this.canMarkUnmarkSelectedLogs.Update(hasSelectedItems && session.MarkUnmarkLogsCommand.CanExecute(null));
+			});
 		}
 
 
@@ -720,6 +1007,10 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				switch (e.Key)
 				{
+					case Key.Apps:
+						if (e.Source is not TextBox)
+							this.ShowLogActionsMenu();
+						break;
 					case Key.Escape:
 						if (e.Source is TextBox)
 						{
@@ -744,6 +1035,96 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// call base
 			base.OnKeyUp(e);
+		}
+
+
+		// Called when selection in marked log list box has been changed.
+		void OnMarkedLogListBoxSelectionChanged(object? sender, SelectionChangedEventArgs e)
+		{
+			var log = this.markedLogListBox.SelectedItem as DisplayableLog;
+			if (log == null)
+				return;
+			this.SynchronizationContext.Post(() => this.markedLogListBox.SelectedItem = null);
+			this.logListBox.Let(it =>
+			{
+				it.SelectedItems.Clear();
+				it.SelectedItem = log;
+				it.ScrollIntoView(log);
+				it.Focus();
+			});
+		}
+
+
+		// Called when selection of list box of predefined log text fliter has been changed.
+		void OnPredefinedLogTextFilterListBoxSelectionChanged(object? sender, SelectionChangedEventArgs e)
+		{
+			foreach (var filter in e.RemovedItems.Cast<PredefinedLogTextFilter>())
+				this.selectedPredefinedLogTextFilters.Remove(filter);
+			foreach (var filter in e.AddedItems.Cast<PredefinedLogTextFilter>())
+				this.selectedPredefinedLogTextFilters.Add(filter);
+			if (this.selectedPredefinedLogTextFilters.Count != this.predefinedLogTextFilterListBox.SelectedItems.Count)
+			{
+				// [Workaround] Need to sync selection back to control because selection will be cleared when popup opened
+				if (this.selectedPredefinedLogTextFilters.IsNotEmpty())
+				{
+					var isScheduled = this.updateLogFiltersAction?.IsScheduled ?? false;
+					this.selectedPredefinedLogTextFilters.ToArray().Let(it =>
+					{
+						this.SynchronizationContext.Post(() =>
+						{
+							this.predefinedLogTextFilterListBox.SelectedItems.Clear();
+							foreach (var filter in it)
+								this.predefinedLogTextFilterListBox.SelectedItems.Add(filter);
+							if (!isScheduled)
+								this.updateLogFiltersAction?.Cancel();
+						});
+					});
+				}
+			}
+			else
+				this.updateLogFiltersAction.Reschedule(this.UpdateLogFilterParamsDelay);
+		}
+
+
+		// Called when property of predefined log text filter has been changed.
+		void OnPredefinedLogTextFilterPropertyChanged(object? sender, PropertyChangedEventArgs e)
+		{
+			if (sender is not PredefinedLogTextFilter filter)
+				return;
+			switch (e.PropertyName)
+			{
+				case nameof(PredefinedLogTextFilter.Name):
+					this.predefinedLogTextFilters.Sort(filter);
+					break;
+				case nameof(PredefinedLogTextFilter.Regex):
+					if (this.predefinedLogTextFilterListBox.SelectedItems.Contains(filter))
+						this.updateLogFiltersAction.Reschedule();
+					break;
+			}
+		}
+
+
+		// Called when list of predefined log text filters has been changed.
+		void OnPredefinedLogTextFiltersChanged(object? sender, NotifyCollectionChangedEventArgs e)
+		{
+			switch (e.Action)
+			{
+				case NotifyCollectionChangedAction.Add:
+					foreach (var filter in e.NewItems.AsNonNull().Cast<PredefinedLogTextFilter>())
+					{
+						this.AttachToPredefinedLogTextFilter(filter);
+						this.predefinedLogTextFilters.Add(filter);
+					}
+					break;
+				case NotifyCollectionChangedAction.Remove:
+					foreach (var filter in e.OldItems.AsNonNull().Cast<PredefinedLogTextFilter>())
+					{
+						this.DetachFromPredefinedLogTextFilter(filter);
+						this.predefinedLogTextFilters.Remove(filter);
+						this.selectedPredefinedLogTextFilters.Remove(filter);
+					}
+					break;
+			}
 		}
 
 
@@ -843,6 +1224,24 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Called when test button clicked.
+		void OnTestButtonClick(object? sender, RoutedEventArgs e)
+		{ }
+
+
+		// Sorted predefined log text filters.
+		IList<PredefinedLogTextFilter> PredefinedLogTextFilters { get => this.predefinedLogTextFilters; }
+
+
+		// Remove given predefined log text filter.
+		void RemovePredefinedLogTextFilter(PredefinedLogTextFilter? filter)
+		{
+			if (filter == null)
+				return;
+			ViewModels.PredefinedLogTextFilters.Remove(filter);
+		}
+
+
 		// Reset all log filters.
 		void ResetLogFilters()
 		{
@@ -850,14 +1249,13 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.logProcessIdFilterTextBox.Text = "";
 			this.logTextFilterTextBox.Regex = null;
 			this.logThreadIdFilterTextBox.Text = "";
+			this.predefinedLogTextFilterListBox.SelectedItems.Clear();
 			this.updateLogFiltersAction.Execute();
 		}
 
 
-		/// <summary>
-		/// Command to reset all log filters.
-		/// </summary>
-		public ICommand ResetLogFiltersCommand { get; }
+		// Command to reset all log filters.
+		ICommand ResetLogFiltersCommand { get; }
 
 
 		// Set log profile.
@@ -907,10 +1305,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		/// <summary>
-		/// Command to set log profile.
-		/// </summary>
-		public ICommand SetLogProfileCommand { get; }
+		// Command to set log profile.
+		ICommand SetLogProfileCommand { get; }
 
 
 		// Set working directory.
@@ -945,29 +1341,29 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		/// <summary>
-		/// Command to set working directory.
-		/// </summary>
-		public ICommand SetWorkingDirectoryCommand { get; }
+		// Command to set working directory.
+		ICommand SetWorkingDirectoryCommand { get; }
+
+
+		// Show menu of log actions.
+		void ShowLogActionsMenu()
+		{
+			if (this.logListBox.IsPointerOver && this.HasLogProfile)
+				this.logActionMenu.Open(this);
+		}
 
 
 		// Show UI of other actions.
 		void ShowOtherActions()
 		{
+			if (this.otherActionsMenu.PlacementTarget == null)
+				this.otherActionsMenu.PlacementTarget = this.otherActionsButton;
 			this.otherActionsMenu.Open(this);
 		}
 
 
-		/// <summary>
-		/// Command to show UI of other actions.
-		/// </summary>
-		public ICommand ShowOtherActionsCommand { get; }
-
-
-		/// <summary>
-		/// Get current state of status bar.
-		/// </summary>
-		public SessionViewStatusBarState StatusBarState { get => this.GetValue<SessionViewStatusBarState>(StatusBarStateProperty); }
+		// Get current state of status bar.
+		SessionViewStatusBarState StatusBarState { get => this.GetValue<SessionViewStatusBarState>(StatusBarStateProperty); }
 
 
 		// Switch filters combination mode.
@@ -983,15 +1379,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		/// <summary>
-		/// Command to switch combination mode of log filters.
-		/// </summary>
-		public ICommand SwitchLogFiltersCombinationModeCommand { get; }
-
-
-		// Called when test button clicked.
-		void OnTestButtonClick(object? sender, RoutedEventArgs e)
-		{ }
+		// Command to switch combination mode of log filters.
+		ICommand SwitchLogFiltersCombinationModeCommand { get; }
 
 
 		// Get delay of updating log filter.

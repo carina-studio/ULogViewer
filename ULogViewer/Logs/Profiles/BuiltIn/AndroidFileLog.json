@@ -2,6 +2,7 @@
 	"DataSource": {
 		"Name": "File"
 	},
+	"ColorIndicator": "FileName",
 	"Icon": "Android",
 	"LogLevelMap": {
 		"D": "Debug",

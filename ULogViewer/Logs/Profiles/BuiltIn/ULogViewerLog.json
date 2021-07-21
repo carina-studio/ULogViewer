@@ -2,6 +2,7 @@
 	"DataSource": {
 		"Name": "File"
 	},
+	"ColorIndicator": "ProcessId",
 	"Icon": "Debug",
 	"LogLevelMap": {
 		"DEBUG": "Debug",
