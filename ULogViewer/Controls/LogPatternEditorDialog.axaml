@@ -17,7 +17,7 @@
 	<Window.Resources>
 
 		<!-- Add property group menu -->
-		<ContextMenu x:Key="addLogPropertyGroupMenu">
+		<ContextMenu x:Key="addLogPropertyGroupMenu" PlacementMode="Bottom">
 			<ContextMenu.DataTemplates>
 				<DataTemplate DataType="{x:Type sys:String}">
 					<StackPanel Orientation="Horizontal">
@@ -54,7 +54,7 @@
 			<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogPatternEditorDialog.Regex}"/>
 			<Grid ColumnDefinitions="*,Auto">
 				<appControls:RegexTextBox Name="regexTextBox" IgnoreCase="False" PropertyChanged="OnRegexTextBoxPropertyChanged" Watermark="{DynamicResource String.Common.RegularExpression}"/>
-				<Button Classes="Browse" Command="{Binding $parent[Window].ShowAddLogPropertyGroupMenu}" Grid.Column="1"/>
+				<ToggleButton Name="addLogPropertyGroupButton" Classes="Browse" Command="{Binding $parent[Window].ShowAddLogPropertyGroupMenu}" Grid.Column="1"/>
 			</Grid>
 			<TextBlock Classes="Dialog_Description" Text="{DynamicResource String.LogPatternEditorDialog.Regex.Description}"/>
 			<TextBlock Classes="Dialog_Description_Link" PointerReleased="OnLinkDescriptionPointerReleased" Tag="https://docs.microsoft.com/en-us/dotnet/standard/base-types/regular-expression-language-quick-reference" Text="{DynamicResource String.Common.RegularExpression.Reference}"/>

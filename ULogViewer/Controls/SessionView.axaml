@@ -25,7 +25,7 @@
 	<UserControl.Resources>
 
 		<!-- Other actions menu -->
-		<ContextMenu x:Key="otherActionsMenu">
+		<ContextMenu x:Key="otherActionsMenu" PlacementMode="Bottom">
 			<MenuItem Header="{DynamicResource String.SessionView.AppOptions}"/>
 			<MenuItem Header="{DynamicResource String.SessionView.AppInfo}"/>
 		</ContextMenu>
@@ -272,11 +272,11 @@
 				</Button>
 
 				<!-- Other actions -->
-				<Button Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].ShowOtherActions}" ToolTip.Tip="{DynamicResource String.SessionView.OtherActions}">
+				<ToggleButton Name="otherActionsButton" Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].ShowOtherActions}" ToolTip.Tip="{DynamicResource String.SessionView.OtherActions}">
 					<Border Classes="SessionView_ToolBar_Button_Icon">
 						<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.OtherActions}"/>
 					</Border>
-				</Button>
+				</ToggleButton>
 
 			</StackPanel>
 			

@@ -61,6 +61,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly RegexTextBox logTextFilterTextBox;
 		readonly TextBox logThreadIdFilterTextBox;
 		readonly ListBox markedLogListBox;
+		readonly ToggleButton otherActionsButton;
 		readonly ContextMenu otherActionsMenu;
 		readonly ListBox predefinedLogTextFilterListBox;
 		readonly SortedObservableList<PredefinedLogTextFilter> predefinedLogTextFilters;
@@ -122,7 +123,12 @@ namespace CarinaStudio.ULogViewer.Controls
 				it.AddHandler(TextBox.TextInputEvent, this.OnLogProcessIdTextBoxTextInput, RoutingStrategies.Tunnel);
 			});
 			this.markedLogListBox = this.FindControl<ListBox>("markedLogListBox").AsNonNull();
-			this.otherActionsMenu = (ContextMenu)this.Resources["otherActionsMenu"].AsNonNull();
+			this.otherActionsButton = this.FindControl<ToggleButton>("otherActionsButton").AsNonNull();
+			this.otherActionsMenu = ((ContextMenu)this.Resources["otherActionsMenu"].AsNonNull()).Also(it =>
+			{
+				it.MenuClosed += (_, e) => this.SynchronizationContext.Post(() => this.otherActionsButton.IsChecked = false);
+				it.MenuOpened += (_, e) => this.SynchronizationContext.Post(() => this.otherActionsButton.IsChecked = true);
+			});
 			this.predefinedLogTextFilterListBox = this.FindControl<ListBox>("predefinedLogTextFilterListBox").AsNonNull();
 			this.predefinedLogTextFiltersPopup = this.FindControl<Popup>("predefinedLogTextFiltersPopup").AsNonNull();
 #if !DEBUG
@@ -1260,6 +1266,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Show UI of other actions.
 		void ShowOtherActions()
 		{
+			if (this.otherActionsMenu.PlacementTarget == null)
+				this.otherActionsMenu.PlacementTarget = this.otherActionsButton;
 			this.otherActionsMenu.Open(this);
 		}
 
