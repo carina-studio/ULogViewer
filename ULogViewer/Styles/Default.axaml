@@ -117,27 +117,33 @@
 	<Style Selector="TextBlock.Dialog_Description">
 		<Setter Property="Foreground" Value="{DynamicResource Brush.Dialog.Description.Foreground}"/>
 		<Setter Property="Margin" Value="{StaticResource Thickness.Dialog.Description.Margin}"/>
+		<Setter Property="TextWrapping" Value="WrapWithOverflow"/>
 	</Style>
 	<Style Selector="TextBlock.Dialog_Description_Error">
 		<Setter Property="Foreground" Value="{DynamicResource Brush.Dialog.Description.Foreground.Error}"/>
 		<Setter Property="Margin" Value="{StaticResource Thickness.Dialog.Description.Margin}"/>
+		<Setter Property="TextWrapping" Value="WrapWithOverflow"/>
 	</Style>
 	<Style Selector="TextBlock.Dialog_Description_Link">
 		<Setter Property="Cursor" Value="Hand"/>
 		<Setter Property="Foreground" Value="{DynamicResource Brush.Dialog.Description.Foreground.Link}"/>
 		<Setter Property="Margin" Value="{StaticResource Thickness.Dialog.Description.Margin}"/>
+		<Setter Property="TextWrapping" Value="WrapWithOverflow"/>
 	</Style>
 	<Style Selector="TextBlock.Dialog_Label">
 		<Setter Property="FontSize" Value="{StaticResource Double.Dialog.Label.FontSize}"/>
 		<Setter Property="Margin" Value="{StaticResource Thickness.Dialog.Label.Margin}"/>
+		<Setter Property="TextTrimming" Value="CharacterEllipsis"/>
 	</Style>
 	<Style Selector="TextBlock.Dialog_Label_Header1">
 		<Setter Property="FontSize" Value="{StaticResource Double.Dialog.Label.Header1.FontSize}"/>
 		<Setter Property="Margin" Value="{StaticResource Thickness.Dialog.Label.Header1.Margin}"/>
+		<Setter Property="TextTrimming" Value="CharacterEllipsis"/>
 	</Style>
 	<Style Selector="TextBlock.Dialog_Label_Header2">
 		<Setter Property="FontSize" Value="{StaticResource Double.Dialog.Label.Header2.FontSize}"/>
 		<Setter Property="Margin" Value="{StaticResource Thickness.Dialog.Label.Header2.Margin}"/>
+		<Setter Property="TextTrimming" Value="CharacterEllipsis"/>
 	</Style>
 	<Style Selector="Window.Dialog">
 		<Setter Property="Background" Value="{DynamicResource Brush.Dialog.Background}"/>

@@ -59,6 +59,7 @@
 	<sys:String x:Key="String.LogPatternEditorDialog.IsSkippable">此行可以被忽略</sys:String>
 	<sys:String x:Key="String.LogPatternEditorDialog.IsRepeatable">此行可以連續重複出現</sys:String>
 	<sys:String x:Key="String.LogPatternEditorDialog.Regex">格式 (必須)</sys:String>
+	<sys:String x:Key="String.LogPatternEditorDialog.Regex.Description">您可以使用右側按鈕加入 "分組語法" 以從原始日誌中擷取對應的日誌屬性</sys:String>
 	<sys:String x:Key="String.LogPatternEditorDialog.Title">日誌行格式</sys:String>
 
 	<!-- LogProfileIcon -->
