@@ -103,7 +103,17 @@
 
 				<!-- Is continuous reading -->
 				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.IsContinuousReading}"/>
-				<ToggleSwitch Name="continuousReadingSwitch"/>
+				<ToggleSwitch Name="continuousReadingSwitch">
+					<ia:Interaction.Behaviors>
+						<iaCore:DataTriggerBehavior Binding="{Binding #dataSourceProviderComboBox.SelectedItem.UnderlyingSource}" ComparisonCondition="Equal" Value="File">
+							<iaCore:ChangePropertyAction PropertyName="IsChecked" Value="False"/>
+							<iaCore:ChangePropertyAction PropertyName="IsEnabled" Value="False"/>
+						</iaCore:DataTriggerBehavior>
+						<iaCore:DataTriggerBehavior Binding="{Binding #dataSourceProviderComboBox.SelectedItem.UnderlyingSource}" ComparisonCondition="NotEqual" Value="File">
+							<iaCore:ChangePropertyAction PropertyName="IsEnabled" Value="True"/>
+						</iaCore:DataTriggerBehavior>
+					</ia:Interaction.Behaviors>
+				</ToggleSwitch>
 				<TextBlock Classes="Dialog_Description" Text="{DynamicResource String.LogProfileEditorDialog.IsContinuousReading.Description}"/>
 				<Separator Classes="Dialog_Separator_Horizontal"/>
 
