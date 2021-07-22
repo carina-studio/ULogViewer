@@ -89,11 +89,11 @@
 	<sys:String x:Key="String.LogProfileEditorDialog.ColorIndicator">Color indicator</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.ColorIndicator.Description">Way of grouping to show color block on the left hand side of each log</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.Common">Common</sys:String>
-	<sys:String x:Key="String.LogProfileEditorDialog.DataSourceOptions">Parameters…</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.DataSourceOptions">Options…</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.DataSourceProvider">Data source</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.DuplicateLogLevelMapEntry">'{0}' is already defined.</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.Icon">Icon</sys:String>
-	<sys:String x:Key="String.LogProfileEditorDialog.InvalidDataSourceOptions">Need to set valid parameters</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.InvalidDataSourceOptions">Need to set valid options</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.IsContinuousReading">Continuous reading</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.IsContinuousReading.Description">Restart reading logs automatically when reaching end of data source</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.IsWorkingDirectoryNeeded">Need to select working directory</sys:String>
