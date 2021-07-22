@@ -257,4 +257,10 @@
 		<Setter Property="Opacity" Value="0.3"/>
 	</Style>
 
+	<!-- ToggleSwitch -->
+	<Style Selector="ToggleSwitch">
+		<Setter Property="OffContent" Value="{x:Null}"/>
+		<Setter Property="OnContent" Value="{x:Null}"/>
+	</Style>
+
 </Styles>

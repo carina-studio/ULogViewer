@@ -19,6 +19,7 @@
 	<!-- Styles -->
 	<Window.Styles>
 		<Style Selector="ListBox">
+			<Setter Property="Background" Value="{DynamicResource TextControlBackground}"/>
 			<Setter Property="BorderThickness" Value="1"/>
 			<Setter Property="Height" Value="{StaticResource Double.LogProfileEditorDialog.ListBox.Height}"/>
 			<Setter Property="VirtualizationMode" Value="None"/>
