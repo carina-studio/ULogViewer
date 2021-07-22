@@ -27,6 +27,9 @@
 
 		<!-- Log actions menu -->
 		<ContextMenu x:Key="logActionMenu">
+			<MenuItem Command="{Binding $parent[UserControl].MarkUnmarkSelectedLogsCommand}" Header="{DynamicResource String.SessionView.MarkUnmarkLogs}"/>
+			<MenuItem Command="{Binding $parent[UserControl].SelectMarkedLogsCommand}" Header="{DynamicResource String.SessionView.SelectMarkedLogs}"/>
+			<Separator/>
 			<MenuItem Command="{Binding $parent[UserControl].FilterLogsByProcessIdCommand}" Header="{DynamicResource String.SessionView.FilterLogsBySelectedProcessId}">
 				<MenuItem.CommandParameter>
 					<sys:Boolean>False</sys:Boolean>
@@ -47,8 +50,6 @@
 					<sys:Boolean>True</sys:Boolean>
 				</MenuItem.CommandParameter>
 			</MenuItem>
-			<Separator/>
-			<MenuItem Command="{Binding $parent[UserControl].MarkUnmarkSelectedLogsCommand}" Header="{DynamicResource String.SessionView.MarkUnmarkLogs}"/>
 		</ContextMenu>
 
 		<!-- Other actions menu -->

@@ -50,6 +50,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly MutableObservableBoolean canFilterLogsByPid = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canFilterLogsByTid = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canMarkUnmarkSelectedLogs = new MutableObservableBoolean();
+		readonly MutableObservableBoolean canSelectMarkedLogs = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSetLogProfile = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSetWorkingDirectory = new MutableObservableBoolean();
 		bool isPidLogPropertyVisible;
@@ -90,6 +91,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.FilterLogsByThreadIdCommand = ReactiveCommand.Create<bool>(this.FilterLogsByThreadId, this.canFilterLogsByTid);
 			this.MarkUnmarkSelectedLogsCommand = ReactiveCommand.Create(this.MarkUnmarkSelectedLogs, this.canMarkUnmarkSelectedLogs);
 			this.ResetLogFiltersCommand = ReactiveCommand.Create(this.ResetLogFilters, this.GetObservable<bool>(HasLogProfileProperty));
+			this.SelectMarkedLogsCommand = ReactiveCommand.Create(this.SelectMarkedLogs, this.canSelectMarkedLogs);
 			this.SetLogProfileCommand = ReactiveCommand.Create(this.SetLogProfile, this.canSetLogProfile);
 			this.SetWorkingDirectoryCommand = ReactiveCommand.Create(this.SetWorkingDirectory, this.canSetWorkingDirectory);
 			this.SwitchLogFiltersCombinationModeCommand = ReactiveCommand.Create(this.SwitchLogFiltersCombinationMode, this.GetObservable<bool>(HasLogProfileProperty));
@@ -278,6 +280,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.canAddLogFiles.Update(session.AddLogFileCommand.CanExecute(null));
 			this.canMarkUnmarkSelectedLogs.Update(session.MarkUnmarkLogsCommand.CanExecute(null));
 			this.canSetLogProfile.Update(session.ResetLogProfileCommand.CanExecute(null) || session.SetLogProfileCommand.CanExecute(null));
+			this.canSelectMarkedLogs.Update(session.HasMarkedLogs);
 			this.canSetWorkingDirectory.Update(session.SetWorkingDirectoryCommand.CanExecute(null));
 
 			// update properties
@@ -502,6 +505,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			session.SetWorkingDirectoryCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
 			this.canAddLogFiles.Update(false);
 			this.canMarkUnmarkSelectedLogs.Update(false);
+			this.canSelectMarkedLogs.Update(false);
 			this.canSetLogProfile.Update(false);
 			this.canSetWorkingDirectory.Update(false);
 
@@ -1021,6 +1025,10 @@ namespace CarinaStudio.ULogViewer.Controls
 						if (e.Source is not TextBox)
 							(this.DataContext as Session)?.PauseResumeLogsReadingCommand?.TryExecute();
 						break;
+					case Key.S:
+						if (e.Source is not TextBox)
+							this.SelectMarkedLogs();
+						break;
 				}
 			}
 
@@ -1195,6 +1203,9 @@ namespace CarinaStudio.ULogViewer.Controls
 					else if (this.IsScrollingToLatestLogNeeded)
 						this.scrollToLatestLogAction.Schedule(ScrollingToLatestLogInterval);
 					break;
+				case nameof(Session.HasMarkedLogs):
+					this.canSelectMarkedLogs.Update(session.HasMarkedLogs);
+					break;
 				case nameof(Session.IsLogsReadingPaused):
 					this.updateStatusBarStateAction.Schedule();
 					break;
@@ -1263,6 +1274,25 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Command to reset all log filters.
 		ICommand ResetLogFiltersCommand { get; }
+
+
+		// Select all marked logs.
+		void SelectMarkedLogs()
+		{
+			if (this.DataContext is not Session session)
+				return;
+			var logs = session.Logs;
+			this.logListBox.SelectedItems.Clear();
+			foreach (var log in session.MarkedLogs)
+			{
+				if (logs.Contains(log))
+					this.logListBox.SelectedItems.Add(log);
+			}
+		}
+
+
+		// Command to select marked logs.
+		ICommand SelectMarkedLogsCommand { get; }
 
 
 		// Set log profile.
