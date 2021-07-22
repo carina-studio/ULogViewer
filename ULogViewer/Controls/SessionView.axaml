@@ -389,17 +389,30 @@
 					<Separator Classes="SessionView_StatusBar_Separator"/>
 				</StackPanel>
 				<StackPanel IsVisible="{Binding HasLogs}" Orientation="Horizontal">
-					<TextBlock Text="{DynamicResource String.SessionView.AllLogCount}"/>
-					<TextBlock Text="{Binding AllLogCount}"/>
-					<TextBlock IsVisible="{Binding IsFilteringLogsNeeded}" Text="{DynamicResource String.SessionView.FilteredLogCount}"/>
-					<TextBlock IsVisible="{Binding IsFilteringLogsNeeded}" Text="{Binding FilteredLogCount}"/>
+					<TextBlock Text="{DynamicResource String.SessionView.AllLogCount}" VerticalAlignment="Center"/>
+					<TextBlock Text="{Binding AllLogCount}" VerticalAlignment="Center"/>
+					<TextBlock IsVisible="{Binding IsFilteringLogsNeeded}" Text="{DynamicResource String.SessionView.FilteredLogCount}" VerticalAlignment="Center"/>
+					<TextBlock IsVisible="{Binding IsFilteringLogsNeeded}" Text="{Binding FilteredLogCount}" VerticalAlignment="Center"/>
 					<Separator Classes="SessionView_StatusBar_Separator"/>
 				</StackPanel>
 
 				<!-- Filtering progress -->
-				<StackPanel Grid.Column="1" IsVisible="{Binding IsFilteringLogs}" Orientation="Horizontal">
+				<StackPanel Grid.Column="1" Opacity="0" Orientation="Horizontal">
 					<TextBlock Text="{DynamicResource String.SessionView.LogsFilteringProgress}"/>
-					<TextBlock Text="{Binding LogsFilteringProgress, Converter={x:Static appViewModels:Session.LogsFilteringProgressConverter}}"/>
+					<TextBlock Text="00000"/>
+					<Separator Classes="SessionView_StatusBar_Separator"/>
+				</StackPanel>
+				<StackPanel Grid.Column="1" IsVisible="{Binding IsFilteringLogs}" Orientation="Horizontal">
+					<TextBlock Text="{DynamicResource String.SessionView.LogsFilteringProgress}" VerticalAlignment="Center"/>
+					<TextBlock Text="{Binding LogsFilteringProgress, Converter={x:Static appViewModels:Session.LogsFilteringProgressConverter}}" VerticalAlignment="Center"/>
+					<Separator Classes="SessionView_StatusBar_Separator"/>
+				</StackPanel>
+
+				<!-- Selected logs -->
+				<StackPanel Grid.Column="2" IsVisible="{Binding #logListBox.SelectedItems.Count}" Orientation="Horizontal">
+					<TextBlock Text="{DynamicResource String.SessionView.SelectedLogCount}" VerticalAlignment="Center"/>
+					<TextBlock Text="{Binding #logListBox.SelectedItems.Count}" VerticalAlignment="Center"/>
+					<Separator Classes="SessionView_StatusBar_Separator"/>
 				</StackPanel>
 				
 			</Grid>

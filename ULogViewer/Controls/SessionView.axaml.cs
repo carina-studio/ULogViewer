@@ -1281,6 +1281,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (this.DataContext is not Session session)
 				return;
+			if (!this.canSelectMarkedLogs.Value)
+				return;
 			var logs = session.Logs;
 			this.logListBox.SelectedItems.Clear();
 			foreach (var log in session.MarkedLogs)
