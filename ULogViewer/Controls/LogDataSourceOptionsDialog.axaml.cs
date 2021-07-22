@@ -7,7 +7,6 @@ using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 
@@ -28,9 +27,9 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly TextBox commandTextBox;
 		readonly ComboBox encodingComboBox;
 		readonly TextBox fileNameTextBox;
-		readonly ObservableCollection<string> setupCommands = new ObservableCollection<string>();
+		readonly ObservableList<string> setupCommands = new ObservableList<string>();
 		readonly ListBox setupCommandsListBox;
-		readonly ObservableCollection<string> teardownCommands = new ObservableCollection<string>();
+		readonly ObservableList<string> teardownCommands = new ObservableList<string>();
 		readonly ListBox teardownCommandsListBox;
 		readonly TextBox workingDirectoryTextBox;
 
@@ -203,10 +202,8 @@ namespace CarinaStudio.ULogViewer.Controls
 					break;
 				case UnderlyingLogDataSource.StandardOutput:
 					this.commandTextBox.Text = options.Command?.Trim();
-					foreach (var command in options.SetupCommands)
-						this.setupCommands.Add(command);
-					foreach (var command in options.TeardownCommands)
-						this.teardownCommands.Add(command);
+					this.setupCommands.AddRange(options.SetupCommands);
+					this.teardownCommands.AddRange(options.TeardownCommands);
 					this.workingDirectoryTextBox.Text = options.WorkingDirectory;
 					this.commandTextBox.Focus();
 					break;

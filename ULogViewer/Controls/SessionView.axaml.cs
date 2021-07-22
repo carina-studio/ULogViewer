@@ -53,6 +53,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly MutableObservableBoolean canSetLogProfile = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSetWorkingDirectory = new MutableObservableBoolean();
 		bool isPidLogPropertyVisible;
+		bool isPointerPressedOnLogListBox;
 		bool isTidLogPropertyVisible;
 		bool isWorkingDirNeededAfterLogProfileSet;
 		readonly ContextMenu logActionMenu;
@@ -105,6 +106,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.logLevelFilterComboBox = this.FindControl<ComboBox>("logLevelFilterComboBox").AsNonNull();
 			this.logListBox = this.FindControl<ListBox>("logListBox").AsNonNull().Also(it =>
 			{
+				it.AddHandler(ListBox.PointerPressedEvent, this.OnLogListBoxPointerPressed, RoutingStrategies.Tunnel);
+				it.AddHandler(ListBox.PointerReleasedEvent, this.OnLogListBoxPointerReleased, RoutingStrategies.Tunnel);
+				it.AddHandler(ListBox.PointerWheelChangedEvent, this.OnLogListBoxPointerWheelChanged, RoutingStrategies.Tunnel);
 				it.PropertyChanged += (_, e) =>
 				{
 					if (e.Property == ListBox.ScrollProperty)
@@ -876,69 +880,42 @@ namespace CarinaStudio.ULogViewer.Controls
 		void OnLogLevelFilterComboBoxSelectionChanged(object? sender, SelectionChangedEventArgs e) => this.updateLogFiltersAction?.Reschedule();
 
 
+		// Called when pointer pressed on log list box.
+		void OnLogListBoxPointerPressed(object? sender, PointerPressedEventArgs e)
+		{
+			if (e.GetCurrentPoint(this.logListBox).Properties.IsLeftButtonPressed)
+				this.isPointerPressedOnLogListBox = true;
+		}
+
+
 		// Called when pointer released on log list box.
 		void OnLogListBoxPointerReleased(object? sender, PointerReleasedEventArgs e)
 		{
-			if (e.InitialPressMouseButton != MouseButton.Right)
-				return;
-			this.ShowLogActionsMenu();
+			if (e.InitialPressMouseButton == MouseButton.Left)
+				this.isPointerPressedOnLogListBox = false;
+			if (e.InitialPressMouseButton == MouseButton.Right)
+				this.ShowLogActionsMenu();
+		}
+
+
+		// Called when pointer wheel change on log list box.
+		void OnLogListBoxPointerWheelChanged(object? sender, PointerWheelEventArgs e)
+		{
+			this.SynchronizationContext.Post(() => this.UpdateIsScrollingToLatestLogNeeded(-e.Delta.Y));
 		}
 
 
 		// Called when log list box scrolled.
 		void OnLogListBoxScrollChanged(object? sender, ScrollChangedEventArgs e)
 		{
-			// check state
-			var logScrollViewer = this.logScrollViewer;
-			if (logScrollViewer == null)
-				return;
-
 			// update auto scrolling state
-			var logProfile = (this.HasLogProfile ? (this.DataContext as Session)?.LogProfile : null);
-			if (this.logListBox.IsPointerOver && logProfile != null)
-			{
-				if (this.IsScrollingToLatestLogNeeded)
-				{
-					if (logProfile.SortDirection == SortDirection.Ascending)
-					{
-						if (e.OffsetDelta.Y < 0)
-						{
-							this.Logger.LogDebug("Cancel auto scrolling because of user scrolling up");
-							this.IsScrollingToLatestLogNeeded = false;
-						}
-					}
-					else
-					{
-						if (e.OffsetDelta.Y > 0)
-						{
-							this.Logger.LogDebug("Cancel auto scrolling because of user scrolling down");
-							this.IsScrollingToLatestLogNeeded = false;
-						}
-					}
-				}
-				else if (logProfile != null && logProfile.IsContinuousReading)
-				{
-					if (logProfile.SortDirection == SortDirection.Ascending)
-					{
-						if (e.OffsetDelta.Y > 0 && ((logScrollViewer.Offset.Y + logScrollViewer.Viewport.Height) / (double)logScrollViewer.Extent.Height) >= 0.999)
-						{
-							this.Logger.LogDebug("Start auto scrolling because of user scrolling down");
-							this.IsScrollingToLatestLogNeeded = true;
-						}
-					}
-					else
-					{
-						if (e.OffsetDelta.Y < 0 && (logScrollViewer.Offset.Y / (double)logScrollViewer.Extent.Height) <= 0.001)
-						{
-							this.Logger.LogDebug("Start auto scrolling because of user scrolling up");
-							this.IsScrollingToLatestLogNeeded = true;
-						}
-					}
-				}
-			}
+			if (this.isPointerPressedOnLogListBox)
+				this.UpdateIsScrollingToLatestLogNeeded(e.OffsetDelta.Y);
 
 			// sync log header offset
-			this.logHeaderContainer.Margin = new Thickness(-logScrollViewer.Offset.X, 0, 0, 0);
+			var logScrollViewer = this.logScrollViewer;
+			if (logScrollViewer != null)
+				this.logHeaderContainer.Margin = new Thickness(-logScrollViewer.Offset.X, 0, logScrollViewer.Offset.X, 0);
 		}
 
 
@@ -1381,6 +1358,56 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Command to switch combination mode of log filters.
 		ICommand SwitchLogFiltersCombinationModeCommand { get; }
+
+
+		// Update auto scrolling state according to user scrolling state.
+		void UpdateIsScrollingToLatestLogNeeded(double userScrollingDelta)
+		{
+			var logScrollViewer = this.logScrollViewer;
+			if (logScrollViewer == null)
+				return;
+			var logProfile = (this.HasLogProfile ? (this.DataContext as Session)?.LogProfile : null);
+			if (logProfile == null)
+				return;
+			if (this.IsScrollingToLatestLogNeeded)
+			{
+				if (logProfile.SortDirection == SortDirection.Ascending)
+				{
+					if (userScrollingDelta < 0)
+					{
+						this.Logger.LogDebug("Cancel auto scrolling because of user scrolling up");
+						this.IsScrollingToLatestLogNeeded = false;
+					}
+				}
+				else
+				{
+					if (userScrollingDelta > 0)
+					{
+						this.Logger.LogDebug("Cancel auto scrolling because of user scrolling down");
+						this.IsScrollingToLatestLogNeeded = false;
+					}
+				}
+			}
+			else if (logProfile != null && logProfile.IsContinuousReading)
+			{
+				if (logProfile.SortDirection == SortDirection.Ascending)
+				{
+					if (userScrollingDelta > 0 && ((logScrollViewer.Offset.Y + logScrollViewer.Viewport.Height) / (double)logScrollViewer.Extent.Height) >= 0.999)
+					{
+						this.Logger.LogDebug("Start auto scrolling because of user scrolling down");
+						this.IsScrollingToLatestLogNeeded = true;
+					}
+				}
+				else
+				{
+					if (userScrollingDelta < 0 && (logScrollViewer.Offset.Y / (double)logScrollViewer.Extent.Height) <= 0.001)
+					{
+						this.Logger.LogDebug("Start auto scrolling because of user scrolling up");
+						this.IsScrollingToLatestLogNeeded = true;
+					}
+				}
+			}
+		}
 
 
 		// Get delay of updating log filter.
