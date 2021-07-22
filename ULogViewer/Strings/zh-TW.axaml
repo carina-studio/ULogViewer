@@ -55,6 +55,10 @@
 	<sys:String x:Key="String.LogLevelMapEntryEditor.Text">文字 (必須)</sys:String>
 	<sys:String x:Key="String.LogLevelMapEntryEditor.Title">日誌等級對照</sys:String>
 
+	<!-- LogMessageDialog -->
+	<sys:String x:Key="String.LogMessageDialog.WrapText">自動換行</sys:String>
+	<sys:String x:Key="String.LogMessageDialog.Title">日誌訊息</sys:String>
+
 	<!-- LogPatternEditorDialog -->
 	<sys:String x:Key="String.LogPatternEditorDialog.IsSkippable">此行可以被忽略</sys:String>
 	<sys:String x:Key="String.LogPatternEditorDialog.IsRepeatable">此行可以連續重複出現</sys:String>

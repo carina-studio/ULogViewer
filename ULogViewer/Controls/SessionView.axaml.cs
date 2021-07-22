@@ -399,6 +399,17 @@ namespace CarinaStudio.ULogViewer.Controls
 								viewDetails.Cursor = new Cursor(StandardCursorType.Hand);
 								viewDetails.Bind(TextBlock.IsVisibleProperty, new Binding() { Path = nameof(DisplayableLog.HasExtraLinesOfMessage) });
 								viewDetails.Bind(TextBlock.TextProperty, viewDetails.GetResourceObservable("String.SessionView.ViewFullLogMessage"));
+								viewDetails.PointerReleased += (_, e) =>
+								{
+									if (e.InitialPressMouseButton == MouseButton.Left 
+										&& viewDetails.FindLogicalAncestorOfType<ListBoxItem>()?.DataContext is DisplayableLog log)
+									{
+										this.FindLogicalAncestorOfType<Window>()?.Let(window =>
+										{
+											new LogMessageDialog() { Log = log.Log }.ShowDialog(window);
+										});
+									}
+								};
 							}));
 							it.Orientation = Orientation.Vertical;
 						});
