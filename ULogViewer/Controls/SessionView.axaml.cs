@@ -57,6 +57,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		bool isTidLogPropertyVisible;
 		bool isWorkingDirNeededAfterLogProfileSet;
 		readonly ContextMenu logActionMenu;
+		readonly List<ColumnDefinition> logHeaderColumns = new List<ColumnDefinition>();
 		readonly Control logHeaderContainer;
 		readonly Grid logHeaderGrid;
 		readonly List<MutableObservableValue<GridLength>> logHeaderWidths = new List<MutableObservableValue<GridLength>>();
@@ -102,7 +103,14 @@ namespace CarinaStudio.ULogViewer.Controls
 			// setup controls
 			this.logActionMenu = (ContextMenu)this.Resources["logActionMenu"].AsNonNull();
 			this.logHeaderContainer = this.FindControl<Control>("logHeaderContainer").AsNonNull();
-			this.logHeaderGrid = this.FindControl<Grid>("logHeaderGrid").AsNonNull();
+			this.logHeaderGrid = this.FindControl<Grid>("logHeaderGrid").AsNonNull().Also(it =>
+			{
+				it.PropertyChanged += (_, e) =>
+				{
+					if (e.Property == Grid.BoundsProperty)
+						this.ReportLogHeaderColumnWidths();
+				};
+			});
 			this.logLevelFilterComboBox = this.FindControl<ComboBox>("logLevelFilterComboBox").AsNonNull();
 			this.logListBox = this.FindControl<ListBox>("logListBox").AsNonNull().Also(it =>
 			{
@@ -357,7 +365,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					var width = logProperty.Width;
 					var propertyColumn = new ColumnDefinition(new GridLength()).Also(it =>
 					{
-						if (width == null)
+						if (width == null && logPropertyIndex == logPropertyCount - 1)
 							it.Width = new GridLength(1, GridUnitType.Star);
 						else
 							it.Bind(ColumnDefinition.WidthProperty, this.logHeaderWidths[logPropertyIndex]);
@@ -685,6 +693,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				control.DataContext = null;
 			this.logHeaderGrid.Children.Clear();
 			this.logHeaderGrid.ColumnDefinitions.Clear();
+			this.logHeaderColumns.Clear();
 			this.logHeaderWidths.Clear();
 
 			// clear item template
@@ -710,13 +719,21 @@ namespace CarinaStudio.ULogViewer.Controls
 			var minHeaderWidth = app.Resources.TryGetResource("Double.SessionView.LogHeader.MinWidth", out rawResource) ? (double)rawResource.AsNonNull() : 0.0;
 			var colorIndicatorWidth = app.Resources.TryGetResource("Double.SessionView.LogListBox.ColorIndicator.Width", out rawResource) ? (double)rawResource.AsNonNull() : 0.0;
 			var headerTemplate = (DataTemplate)this.DataTemplates.First(it => it is DataTemplate dt && dt.DataType == typeof(DisplayableLogProperty));
-			var headerColumns = new ColumnDefinition[logPropertyCount];
 			var columIndexOffset = 0;
 			if (profile.ColorIndicator != LogColorIndicator.None)
 			{
 				this.logHeaderGrid.ColumnDefinitions.Add(new ColumnDefinition(colorIndicatorWidth, GridUnitType.Pixel));
 				++columIndexOffset;
 			}
+			this.logHeaderGrid.Children.Add(new Border().Also(it => // Empty control in order to get first layout event of log header grid
+			{
+				it.HorizontalAlignment = HorizontalAlignment.Stretch;
+				it.PropertyChanged += (_, e) =>
+				{
+					if (e.Property == Border.BoundsProperty)
+						this.ReportLogHeaderColumnWidths();
+				};
+			}));
 			for (var i = 0; i < logPropertyCount; ++i)
 			{
 				// define splitter column
@@ -735,7 +752,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				{
 					it.MinWidth = minHeaderWidth;
 				});
-				headerColumns[logPropertyIndex] = headerColumn;
+				this.logHeaderColumns.Add(headerColumn);
 				this.logHeaderGrid.ColumnDefinitions.Add(headerColumn);
 
 				// create splitter view
@@ -744,13 +761,10 @@ namespace CarinaStudio.ULogViewer.Controls
 					var splitter = new GridSplitter().Also(it =>
 					{
 						it.Background = Brushes.Transparent;
-						it.DragDelta += (_, e) =>
-						{
-							var headerColumnWidth = this.logHeaderWidths[logPropertyIndex - 1];
-							if (headerColumnWidth.Value.GridUnitType == GridUnitType.Pixel)
-								headerColumnWidth.Update(new GridLength(headerColumns[logPropertyIndex - 1].ActualWidth, GridUnitType.Pixel));
-						};
+						it.DragDelta += (_, e) => this.ReportLogHeaderColumnWidths();
 						it.HorizontalAlignment = HorizontalAlignment.Stretch;
+						it.IsEnabled = this.logHeaderColumns[logPropertyIndex - 1].Width.GridUnitType == GridUnitType.Pixel
+							|| headerColumn.Width.GridUnitType == GridUnitType.Pixel;
 						it.VerticalAlignment = VerticalAlignment.Stretch;
 					});
 					Grid.SetColumn(splitter, logPropertyIndex * 2 - 1 + columIndexOffset);
@@ -1216,6 +1230,22 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (filter == null)
 				return;
 			ViewModels.PredefinedLogTextFilters.Remove(filter);
+		}
+
+
+		// Report width of each log header so that items in log list box can change width of each column.
+		void ReportLogHeaderColumnWidths()
+		{
+			if (this.DataContext is not Session session)
+				return;
+			var lastLogPropertyIndex = session.DisplayLogProperties.Count - 1;
+			for (var columnIndex = 0; columnIndex <= lastLogPropertyIndex; ++columnIndex)
+			{
+				var headerColumn = this.logHeaderColumns[columnIndex];
+				var headerColumnWidth = this.logHeaderWidths[columnIndex];
+				if (headerColumnWidth.Value.GridUnitType == GridUnitType.Pixel || columnIndex < lastLogPropertyIndex)
+					headerColumnWidth.Update(new GridLength(headerColumn.ActualWidth, GridUnitType.Pixel));
+			}
 		}
 
 
