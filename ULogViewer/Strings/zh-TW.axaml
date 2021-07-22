@@ -81,7 +81,7 @@
 	<sys:String x:Key="String.LogProfileEditorDialog.ColorIndicator">色彩指示</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.ColorIndicator.Description">顯示於日誌左側的色塊分組方式</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.Common">一般設定</sys:String>
-	<sys:String x:Key="String.LogProfileEditorDialog.DataSourceOptions">參數...</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.DataSourceOptions">參數…</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.DataSourceProvider">資料來源</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.DuplicateLogLevelMapEntry">已經定義 '{0}'。</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.Icon">圖示</sys:String>
@@ -107,7 +107,7 @@
 	<sys:String x:Key="String.LogProfileEditorDialog.VisibleLogProperties.Description">指定有哪些日誌屬性可以在檢視器中看見</sys:String>
 
 	<!-- LogProfileSelectionDialog -->
-	<sys:String x:Key="String.LogProfileSelectionDialog.AddLogProfile">建立...</sys:String>
+	<sys:String x:Key="String.LogProfileSelectionDialog.AddLogProfile">建立…</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.AllLogProfiles">所有日誌類型</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.BuiltInLogProfile">內建</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.EditLogProfile">編輯日誌類型</sys:String>
@@ -155,11 +155,11 @@
 	<sys:String x:Key="String.SessionView.AddLogFiles">加入日誌檔案</sys:String>
 	<sys:String x:Key="String.SessionView.AllLogCount">總數：</sys:String>
 	<sys:String x:Key="String.SessionView.AllLogLevels">所有等級</sys:String>
-	<sys:String x:Key="String.SessionView.AppInfo">關於 ULogViewer...</sys:String>
-	<sys:String x:Key="String.SessionView.AppOptions">應用程式選項...</sys:String>
+	<sys:String x:Key="String.SessionView.AppInfo">關於 ULogViewer…</sys:String>
+	<sys:String x:Key="String.SessionView.AppOptions">應用程式選項…</sys:String>
 	<sys:String x:Key="String.SessionView.ClearLogFiles">清除所有已加入的日誌檔案</sys:String>
 	<sys:String x:Key="String.SessionView.ClearPredefinedLogTextFiltersSelection">清除選取</sys:String>
-	<sys:String x:Key="String.SessionView.CreatePredefinedLogTextFilter">建立...</sys:String>
+	<sys:String x:Key="String.SessionView.CreatePredefinedLogTextFilter">建立…</sys:String>
 	<sys:String x:Key="String.SessionView.FilteredLogCount">，已篩選：</sys:String>
 	<sys:String x:Key="String.SessionView.FilterLogsBySelectedProcessId">使用選取的 PID 篩選</sys:String>
 	<sys:String x:Key="String.SessionView.FilterLogsBySelectedProcessIdOnly">只使用選取的 PID 篩選</sys:String>
@@ -182,7 +182,7 @@
 	<sys:String x:Key="String.SessionView.SetLogProfile">選取/變更日誌類型</sys:String>
 	<sys:String x:Key="String.SessionView.SetWorkingDirectory">選取/變更工作目錄</sys:String>
 	<sys:String x:Key="String.SessionView.OtherActions">其他動作</sys:String>
-	<sys:String x:Key="String.SessionView.ViewFullLogMessage">檢視更多...</sys:String>
+	<sys:String x:Key="String.SessionView.ViewFullLogMessage">檢視更多…</sys:String>
 
 	<!-- SortDirection -->
 	<sys:String x:Key="String.SortDirection.Ascending">遞增</sys:String>

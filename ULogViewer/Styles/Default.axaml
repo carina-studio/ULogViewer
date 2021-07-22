@@ -68,12 +68,12 @@
 
 	<!-- Browse -->
 	<Style Selector="Button.Browse">
-		<Setter Property="Content" Value="..."/>
+		<Setter Property="Content" Value="…"/>
 		<Setter Property="Margin" Value="{StaticResource Thickness.Browse.Margin}"/>
 		<Setter Property="VerticalAlignment" Value="Stretch"/>
 	</Style>
 	<Style Selector="ToggleButton.Browse">
-		<Setter Property="Content" Value="..."/>
+		<Setter Property="Content" Value="…"/>
 		<Setter Property="Margin" Value="{StaticResource Thickness.Browse.Margin}"/>
 		<Setter Property="VerticalAlignment" Value="Stretch"/>
 	</Style>

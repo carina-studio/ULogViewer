@@ -89,7 +89,7 @@
 	<sys:String x:Key="String.LogProfileEditorDialog.ColorIndicator">Color indicator</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.ColorIndicator.Description">Way of grouping to show color block on the left hand side of each log</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.Common">Common</sys:String>
-	<sys:String x:Key="String.LogProfileEditorDialog.DataSourceOptions">Parameters...</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.DataSourceOptions">Parameters…</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.DataSourceProvider">Data source</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.DuplicateLogLevelMapEntry">'{0}' is already defined.</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.Icon">Icon</sys:String>
@@ -115,7 +115,7 @@
 	<sys:String x:Key="String.LogProfileEditorDialog.VisibleLogProperties.Description">Specify what properties of log can be seen in viewer</sys:String>
 
 	<!-- LogProfileSelectionDialog -->
-	<sys:String x:Key="String.LogProfileSelectionDialog.AddLogProfile">Create...</sys:String>
+	<sys:String x:Key="String.LogProfileSelectionDialog.AddLogProfile">Create…</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.AllLogProfiles">All profiles</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.BuiltInLogProfile">Built-in</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.EditLogProfile">Edit profile</sys:String>
@@ -166,11 +166,11 @@
 	<sys:String x:Key="String.SessionView.AddLogFiles">Add log files</sys:String>
 	<sys:String x:Key="String.SessionView.AllLogCount">Total: </sys:String>
 	<sys:String x:Key="String.SessionView.AllLogLevels">All levels</sys:String>
-	<sys:String x:Key="String.SessionView.AppInfo">About ULogViewer...</sys:String>
-	<sys:String x:Key="String.SessionView.AppOptions">Options...</sys:String>
+	<sys:String x:Key="String.SessionView.AppInfo">About ULogViewer…</sys:String>
+	<sys:String x:Key="String.SessionView.AppOptions">Options…</sys:String>
 	<sys:String x:Key="String.SessionView.ClearLogFiles">Clear all added log files</sys:String>
 	<sys:String x:Key="String.SessionView.ClearPredefinedLogTextFiltersSelection">Clear selection</sys:String>
-	<sys:String x:Key="String.SessionView.CreatePredefinedLogTextFilter">Create...</sys:String>
+	<sys:String x:Key="String.SessionView.CreatePredefinedLogTextFilter">Create…</sys:String>
 	<sys:String x:Key="String.SessionView.FilteredLogCount">, Filtered: </sys:String>
 	<sys:String x:Key="String.SessionView.FilterLogsBySelectedProcessId">Filter by selected PID</sys:String>
 	<sys:String x:Key="String.SessionView.FilterLogsBySelectedProcessIdOnly">Filter by selected PID only</sys:String>
@@ -193,7 +193,7 @@
 	<sys:String x:Key="String.SessionView.SetLogProfile">Select/Change log profile</sys:String>
 	<sys:String x:Key="String.SessionView.SetWorkingDirectory">Select/Change working directory</sys:String>
 	<sys:String x:Key="String.SessionView.OtherActions">Other actions</sys:String>
-	<sys:String x:Key="String.SessionView.ViewFullLogMessage">View more...</sys:String>
+	<sys:String x:Key="String.SessionView.ViewFullLogMessage">View more…</sys:String>
 
 	<!-- SortDirection -->
 	<sys:String x:Key="String.SortDirection.Ascending">Ascending</sys:String>
