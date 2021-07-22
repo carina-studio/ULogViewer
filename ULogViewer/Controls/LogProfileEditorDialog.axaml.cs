@@ -12,7 +12,6 @@ using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace CarinaStudio.ULogViewer.Controls
@@ -44,13 +43,13 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ComboBox dataSourceProviderComboBox;
 		readonly ComboBox iconComboBox;
 		readonly SortedObservableList<KeyValuePair<string, LogLevel>> logLevelMapEntries = new SortedObservableList<KeyValuePair<string, LogLevel>>((x, y) => x.Key.CompareTo(y.Key));
-		readonly ObservableCollection<LogPattern> logPatterns = new ObservableCollection<LogPattern>();
+		readonly ObservableList<LogPattern> logPatterns = new ObservableList<LogPattern>();
 		readonly TextBox nameTextBox;
 		readonly ComboBox sortDirectionComboBox;
 		readonly ComboBox sortKeyComboBox;
 		readonly TextBox timestampFormatForReadingTextBox;
 		readonly TextBox timestampFormatForDisplayingTextBox;
-		readonly ObservableCollection<LogProperty> visibleLogProperties = new ObservableCollection<LogProperty>();
+		readonly ObservableList<LogProperty> visibleLogProperties = new ObservableList<LogProperty>();
 		readonly ToggleSwitch workingDirNeededSwitch;
 
 
@@ -343,15 +342,13 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.iconComboBox.SelectedItem = profile.Icon;
 				this.continuousReadingSwitch.IsChecked = profile.IsContinuousReading;
 				this.logLevelMapEntries.AddAll(profile.LogLevelMap);
-				foreach (var logPattern in profile.LogPatterns)
-					this.logPatterns.Add(logPattern);
+				this.logPatterns.AddRange(profile.LogPatterns);
 				this.nameTextBox.Text = profile.Name;
 				this.sortDirectionComboBox.SelectedItem = profile.SortDirection;
 				this.sortKeyComboBox.SelectedItem = profile.SortKey;
 				this.timestampFormatForDisplayingTextBox.Text = profile.TimestampFormatForDisplaying;
 				this.timestampFormatForReadingTextBox.Text = profile.TimestampFormatForReading;
-				foreach (var logProperty in profile.VisibleLogProperties)
-					this.visibleLogProperties.Add(logProperty);
+				this.visibleLogProperties.AddRange(profile.VisibleLogProperties);
 				this.workingDirNeededSwitch.IsChecked = profile.IsWorkingDirectoryNeeded;
 			}
 			else
