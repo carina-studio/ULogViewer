@@ -178,6 +178,7 @@
 	<sys:String x:Key="String.SessionView.SetLogProfile">選取/變更日誌類型</sys:String>
 	<sys:String x:Key="String.SessionView.SetWorkingDirectory">選取/變更工作目錄</sys:String>
 	<sys:String x:Key="String.SessionView.OtherActions">其他動作</sys:String>
+	<sys:String x:Key="String.SessionView.ViewFullLogMessage">檢視更多...</sys:String>
 
 	<!-- SortDirection -->
 	<sys:String x:Key="String.SortDirection.Ascending">遞增</sys:String>

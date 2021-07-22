@@ -378,15 +378,31 @@ namespace CarinaStudio.ULogViewer.Controls
 					// create property view
 					var propertyView = logProperty.Name switch
 					{
-						_ => new TextBlock().Also(it =>
+						_ => (Control)new TextBlock().Also(it =>
 						{
 							it.Bind(TextBlock.ForegroundProperty, new Binding() { Path = nameof(DisplayableLog.LevelBrush) });
 							it.Bind(TextBlock.TextProperty, new Binding() { Path = logProperty.Name });
+							it.MaxLines = DisplayableLog.MaxDisplayableLineCount;
 							it.TextTrimming = TextTrimming.CharacterEllipsis;
 							it.TextWrapping = TextWrapping.NoWrap;
 							it.VerticalAlignment = VerticalAlignment.Top;
 						}),
 					};
+					if (logProperty.Name == nameof(DisplayableLog.Message))
+					{
+						propertyView = new StackPanel().Also(it =>
+						{
+							it.Children.Add(propertyView);
+							it.Children.Add(new TextBlock().Also(viewDetails =>
+							{
+								viewDetails.Bind(TextBlock.ForegroundProperty, viewDetails.GetResourceObservable("Brush.TextBlock.Foreground.Link"));
+								viewDetails.Cursor = new Cursor(StandardCursorType.Hand);
+								viewDetails.Bind(TextBlock.IsVisibleProperty, new Binding() { Path = nameof(DisplayableLog.HasExtraLinesOfMessage) });
+								viewDetails.Bind(TextBlock.TextProperty, viewDetails.GetResourceObservable("String.SessionView.ViewFullLogMessage"));
+							}));
+							it.Orientation = Orientation.Vertical;
+						});
+					}
 					Grid.SetColumn(propertyView, logPropertyIndex * 2);
 					itemGrid.Children.Add(propertyView);
 				}
