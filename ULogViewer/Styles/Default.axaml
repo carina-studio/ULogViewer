@@ -257,6 +257,11 @@
 		<Setter Property="Opacity" Value="0.3"/>
 	</Style>
 
+	<!-- TextBox -->
+	<Style Selector="TextBox">
+		<Setter Property="FontFamily" Value="{DynamicResource FontFamily.TextBox}"/>
+	</Style>
+
 	<!-- ToggleSwitch -->
 	<Style Selector="ToggleSwitch">
 		<Setter Property="OffContent" Value="{x:Null}"/>

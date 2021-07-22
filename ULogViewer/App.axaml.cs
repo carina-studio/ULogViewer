@@ -30,6 +30,7 @@ namespace CarinaStudio.ULogViewer
 	class App : Application, IApplication
 	{
 		// Fields.
+		ResourceInclude? cultureStyleResources;
 		readonly ILogger logger;
 		MainWindow? mainWindow;
 		PropertyChangedEventHandler? propertyChangedHandlers;
@@ -250,6 +251,14 @@ namespace CarinaStudio.ULogViewer
 				this.stringResourcesLinux = null;
 			}
 			this.UpdateStringResources();
+
+			// update culture style resources
+			if (this.cultureStyleResources != null)
+			{
+				this.Resources.MergedDictionaries.Remove(this.cultureStyleResources);
+				this.cultureStyleResources = null;
+			}
+			this.UpdateCultureStyleResources();
 		}
 
 
@@ -293,6 +302,42 @@ namespace CarinaStudio.ULogViewer
 			});
 			this.logger.LogWarning("Show main window");
 			this.mainWindow.Show();
+		}
+
+
+		// Update culture style resources according to current culture info and settings.
+		void UpdateCultureStyleResources()
+		{
+			if (this.Settings.GetValueOrDefault(Settings.SelectLanguageAutomatically))
+			{
+				var localeName = this.CultureInfo.Name;
+				if (this.cultureStyleResources == null)
+				{
+					try
+					{
+						this.cultureStyleResources = new ResourceInclude()
+						{
+							Source = new Uri($"avares://ULogViewer/Styles/Resources-{localeName}.axaml")
+						};
+						_ = this.cultureStyleResources.Loaded; // trigger error if resource not found
+						this.logger.LogInformation($"Load culture style resources for {localeName}");
+					}
+					catch
+					{
+						this.cultureStyleResources = null;
+						this.logger.LogWarning($"No culture style resources for {localeName}");
+						return;
+					}
+					this.Resources.MergedDictionaries.Add(this.cultureStyleResources);
+				}
+				else if (!this.Resources.MergedDictionaries.Contains(this.cultureStyleResources))
+					this.Resources.MergedDictionaries.Add(this.cultureStyleResources);
+			}
+			else
+			{
+				if (this.cultureStyleResources != null)
+					this.Resources.MergedDictionaries.Remove(this.cultureStyleResources);
+			}
 		}
 
 
@@ -375,6 +420,9 @@ namespace CarinaStudio.ULogViewer
 		// Update styles according to settings.
 		void UpdateStyles()
 		{
+			// update culture resources
+			this.UpdateCultureStyleResources();
+
 			// select style
 			var darkMode = this.Settings.GetValueOrDefault(Settings.DarkMode);
 			var addingStyle = darkMode switch
