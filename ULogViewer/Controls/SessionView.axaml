@@ -317,10 +317,12 @@
 		<Grid Grid.Row="2" RowDefinitions="Auto,*">
 
 			<!-- Header -->
-			<Grid Name="logHeaderContainer" Background="{StaticResource Brush.SessionView.LogHeader.Background}">
-				<TextBlock Margin="{StaticResource Thickness.SessionView.LogHeader.Margin}" Padding="{StaticResource Thickness.SessionView.LogHeader.Padding}" Text=" "/>
-				<Grid Name="logHeaderGrid"/>
-			</Grid>
+			<Border Background="{StaticResource Brush.SessionView.LogHeader.Background}">
+				<Grid Name="logHeaderContainer">
+					<TextBlock Margin="{StaticResource Thickness.SessionView.LogHeader.Margin}" Padding="{StaticResource Thickness.SessionView.LogHeader.Padding}" Text=" "/>
+					<Grid Name="logHeaderGrid"/>
+				</Grid>
+			</Border>
 
 			<!-- ListBox -->
 			<ListBox Name="logListBox" AutoScrollToSelectedItem="False" Background="{StaticResource Brush.SessionView.LogListBox.Background}" DragDrop.AllowDrop="True" Grid.Row="1" HorizontalAlignment="Stretch" Items="{Binding Logs}" Padding="{StaticResource Thickness.SessionView.LogListBox.Padding}" ScrollViewer.HorizontalScrollBarVisibility="Visible" SelectionChanged="OnLogListBoxSelectionChanged" SelectionMode="Multiple" VirtualizationMode="Simple">
