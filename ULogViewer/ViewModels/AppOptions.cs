@@ -32,6 +32,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Get or set whether case of text filter can be ignored or not.
+		/// </summary>
+		public bool IgnoreCaseOfLogTextFilter
+		{
+			get => this.Settings.GetValueOrDefault(ULogViewer.Settings.IgnoreCaseOfLogTextFilter);
+			set => this.Settings.SetValue(ULogViewer.Settings.IgnoreCaseOfLogTextFilter, value);
+		}
+
+
+		/// <summary>
 		/// Get or set maximum number of logs for continuous logs reading.
 		/// </summary>
 		public int MaxContinuousLogCount
@@ -56,12 +66,42 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Get or set whether to select log files immediately when they are needed or not.
+		/// </summary>
+		public bool SelectLogFilesWhenNeeded
+		{
+			get => this.Settings.GetValueOrDefault(ULogViewer.Settings.SelectLogFilesWhenNeeded);
+			set => this.Settings.SetValue(ULogViewer.Settings.SelectLogFilesWhenNeeded, value);
+		}
+
+
+		/// <summary>
+		/// Get or set whether to select working directory immediately when they are needed or not.
+		/// </summary>
+		public bool SelectWorkingDirectoryWhenNeeded
+		{
+			get => this.Settings.GetValueOrDefault(ULogViewer.Settings.SelectWorkingDirectoryWhenNeeded);
+			set => this.Settings.SetValue(ULogViewer.Settings.SelectWorkingDirectoryWhenNeeded, value);
+		}
+
+
+		/// <summary>
 		/// Get or set application theme mode.
 		/// </summary>
 		public ThemeMode ThemeMode
 		{
 			get => this.Settings.GetValueOrDefault(ULogViewer.Settings.ThemeMode);
 			set => this.Settings.SetValue(ULogViewer.Settings.ThemeMode, value);
+		}
+
+
+		/// <summary>
+		/// Get or set delay between changing filter conditions and start filtering.
+		/// </summary>
+		public int UpdateLogFilterDelay
+		{
+			get => this.Settings.GetValueOrDefault(ULogViewer.Settings.UpdateLogFilterDelay);
+			set => this.Settings.SetValue(ULogViewer.Settings.UpdateLogFilterDelay, value);
 		}
 	}
 }

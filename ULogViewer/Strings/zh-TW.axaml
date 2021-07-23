@@ -7,11 +7,16 @@
 
 	<!-- AppOptionsDialog -->
 	<sys:String x:Key="String.AppOptionsDialog.Culture">語系</sys:String>
-	<sys:String x:Key="String.AppOptionsDialog.LogDisplaying">日誌顯示</sys:String>
+	<sys:String x:Key="String.AppOptionsDialog.IgnoreCaseOfLogTextFilter">文字篩選忽略大小寫</sys:String>
+	<sys:String x:Key="String.AppOptionsDialog.LogFiltering">日誌篩選</sys:String>
+	<sys:String x:Key="String.AppOptionsDialog.LogOperations">日誌操作</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.MaxContinuousLogCount">連續讀取時的最大日誌個數</sys:String>
-	<sys:String x:Key="String.AppOptionsDialog.UserInterface">使用者介面</sys:String>
+	<sys:String x:Key="String.AppOptionsDialog.SelectLogFilesWhenNeeded">當需要日誌檔案時立即開啟檔案選取介面</sys:String>
+	<sys:String x:Key="String.AppOptionsDialog.SelectWorkingDirectoryWhenNeeded">當需要工作目錄時立即開啟目錄選取介面</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.ThemeMode">佈景主題</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.Title">應用程式選項</sys:String>
+	<sys:String x:Key="String.AppOptionsDialog.UpdateLogFilterDelay">條件改變至開始篩選的延遲時間 (毫秒)</sys:String>
+	<sys:String x:Key="String.AppOptionsDialog.UserInterface">使用者介面</sys:String>
 	
 	<!-- Common -->
 	<sys:String x:Key="String.Common.Add">新增</sys:String>

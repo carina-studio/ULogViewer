@@ -9,11 +9,16 @@
 
 	<!-- AppOptionsDialog -->
 	<sys:String x:Key="String.AppOptionsDialog.Culture">Language</sys:String>
-	<sys:String x:Key="String.AppOptionsDialog.LogDisplaying">Log Displaying</sys:String>
+	<sys:String x:Key="String.AppOptionsDialog.IgnoreCaseOfLogTextFilter">Ignore case of text filter</sys:String>
+	<sys:String x:Key="String.AppOptionsDialog.LogFiltering">Log Filtering</sys:String>
+	<sys:String x:Key="String.AppOptionsDialog.LogOperations">Log Operations</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.MaxContinuousLogCount">Maximum number of logs when continuous reading</sys:String>
-	<sys:String x:Key="String.AppOptionsDialog.UserInterface">User Interface</sys:String>
+	<sys:String x:Key="String.AppOptionsDialog.SelectLogFilesWhenNeeded">Show file selector when log files are needed</sys:String>
+	<sys:String x:Key="String.AppOptionsDialog.SelectWorkingDirectoryWhenNeeded">Show directory selector when working directory is needed</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.ThemeMode">Theme</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.Title">Application options</sys:String>
+	<sys:String x:Key="String.AppOptionsDialog.UpdateLogFilterDelay">Delay between changing conditions and start filtering (milliseconds)</sys:String>
+	<sys:String x:Key="String.AppOptionsDialog.UserInterface">User Interface</sys:String>
 	
 	<!-- Common -->
 	<sys:String x:Key="String.Common.Add">Add</sys:String>
