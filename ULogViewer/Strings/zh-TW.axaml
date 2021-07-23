@@ -25,6 +25,9 @@
 	<sys:String x:Key="String.BuiltInProfile.AndroidFileLog">Android 日誌檔案</sys:String>
 	<sys:String x:Key="String.BuiltInProfile.GitLog">Git 提交紀錄</sys:String>
 
+	<!-- FallbackFontFamilies -->
+	<sys:String x:Key="String.FallbackFontFamilies">123,Microsoft JhengHei</sys:String>
+
 	<!-- LogColorIndicator -->
 	<sys:String x:Key="String.LogColorIndicator.FileName">檔案</sys:String>
 	<sys:String x:Key="String.LogColorIndicator.None">無</sys:String>

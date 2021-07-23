@@ -4,6 +4,7 @@ using Avalonia.ReactiveUI;
 using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.Markup.Xaml.Styling;
+using Avalonia.Media;
 using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.DataSources;
@@ -29,8 +30,11 @@ namespace CarinaStudio.ULogViewer
 	/// </summary>
 	class App : Application, IApplication
 	{
+		// Constants.
+		const string TextBoxFontFamilyResourceKey = "FontFamily.TextBox";
+
+
 		// Fields.
-		ResourceInclude? cultureStyleResources;
 		readonly ILogger logger;
 		MainWindow? mainWindow;
 		PropertyChangedEventHandler? propertyChangedHandlers;
@@ -251,14 +255,6 @@ namespace CarinaStudio.ULogViewer
 				this.stringResourcesLinux = null;
 			}
 			this.UpdateStringResources();
-
-			// update culture style resources
-			if (this.cultureStyleResources != null)
-			{
-				this.Resources.MergedDictionaries.Remove(this.cultureStyleResources);
-				this.cultureStyleResources = null;
-			}
-			this.UpdateCultureStyleResources();
 		}
 
 
@@ -305,39 +301,19 @@ namespace CarinaStudio.ULogViewer
 		}
 
 
-		// Update culture style resources according to current culture info and settings.
-		void UpdateCultureStyleResources()
+		// Update dynamic font families according to current culture info and settings.
+		void UpdateDynamicFontFamilies()
 		{
-			if (this.Settings.GetValueOrDefault(Settings.SelectLanguageAutomatically))
+			var fontFamily = Global.Run(() =>
 			{
-				var localeName = this.CultureInfo.Name;
-				if (this.cultureStyleResources == null)
-				{
-					try
-					{
-						this.cultureStyleResources = new ResourceInclude()
-						{
-							Source = new Uri($"avares://ULogViewer/Styles/Resources-{localeName}.axaml")
-						};
-						_ = this.cultureStyleResources.Loaded; // trigger error if resource not found
-						this.logger.LogInformation($"Load culture style resources for {localeName}");
-					}
-					catch
-					{
-						this.cultureStyleResources = null;
-						this.logger.LogWarning($"No culture style resources for {localeName}");
-						return;
-					}
-					this.Resources.MergedDictionaries.Add(this.cultureStyleResources);
-				}
-				else if (!this.Resources.MergedDictionaries.Contains(this.cultureStyleResources))
-					this.Resources.MergedDictionaries.Add(this.cultureStyleResources);
-			}
+				if (!this.Resources.TryGetResource("String.FallbackFontFamilies", out var res) || res is not string fontFamilies)
+					return null;
+				return $"{fontFamilies}";
+			})?.Let(it => new FontFamily(it));
+			if (fontFamily != null)
+				this.Resources[TextBoxFontFamilyResourceKey] = fontFamily;
 			else
-			{
-				if (this.cultureStyleResources != null)
-					this.Resources.MergedDictionaries.Remove(this.cultureStyleResources);
-			}
+				this.Resources.Remove(TextBoxFontFamilyResourceKey);
 		}
 
 
@@ -413,16 +389,16 @@ namespace CarinaStudio.ULogViewer
 					updated |= this.Resources.MergedDictionaries.Remove(this.stringResourcesLinux);
 			}
 			if (updated)
+			{
+				this.UpdateDynamicFontFamilies();
 				this.StringsUpdated?.Invoke(this, EventArgs.Empty);
+			}
 		}
 
 
 		// Update styles according to settings.
 		void UpdateStyles()
 		{
-			// update culture resources
-			this.UpdateCultureStyleResources();
-
 			// select style
 			var darkMode = this.Settings.GetValueOrDefault(Settings.DarkMode);
 			var addingStyle = darkMode switch
