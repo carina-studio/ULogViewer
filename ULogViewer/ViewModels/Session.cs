@@ -791,6 +791,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		}
 
 
+		// Called when string resources updated.
+		protected override void OnApplicationStringsUpdated()
+		{
+			base.OnApplicationStringsUpdated();
+			this.updateTitleAndIconAction.Schedule();
+		}
+
+
 		// Called when filtered logs has been changed.
 		void OnFilteredLogsChanged(object? sender, NotifyCollectionChangedEventArgs e)
 		{

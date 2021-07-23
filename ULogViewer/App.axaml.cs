@@ -42,6 +42,7 @@ namespace CarinaStudio.ULogViewer
 		volatile Settings? settings;
 		readonly string settingsFilePath;
 		ResourceInclude? stringResources;
+		CultureInfo? stringResourcesCulture;
 		ResourceInclude? stringResourcesLinux;
 		StyleInclude? stylesDark;
 		StyleInclude? stylesLight;
@@ -333,16 +334,6 @@ namespace CarinaStudio.ULogViewer
 			this.propertyChangedHandlers?.Invoke(this, new PropertyChangedEventArgs(nameof(CultureInfo)));
 
 			// update string resources
-			if (this.stringResources != null)
-			{
-				this.Resources.MergedDictionaries.Remove(this.stringResources);
-				this.stringResources = null;
-			}
-			if (this.stringResourcesLinux != null)
-			{
-				this.Resources.MergedDictionaries.Remove(this.stringResourcesLinux);
-				this.stringResourcesLinux = null;
-			}
 			this.UpdateStringResources();
 		}
 
@@ -367,25 +358,42 @@ namespace CarinaStudio.ULogViewer
 		void UpdateStringResources()
 		{
 			var updated = false;
-			if (this.CultureInfo.ToString() != "en-US")
+			var cultureInfo = this.CultureInfo;
+			if (cultureInfo.Name != "en-US")
 			{
+				// clear resources
+				if (!cultureInfo.Equals(this.stringResourcesCulture))
+				{
+					if (this.stringResources != null)
+					{
+						this.Resources.MergedDictionaries.Remove(this.stringResources);
+						this.stringResources = null;
+						updated = true;
+					}
+					if (this.stringResourcesLinux != null)
+					{
+						this.Resources.MergedDictionaries.Remove(this.stringResourcesLinux);
+						this.stringResourcesLinux = null;
+						updated = true;
+					}
+				}
+
 				// base resources
-				var localeName = this.CultureInfo.Name;
 				if (this.stringResources == null)
 				{
 					try
 					{
 						this.stringResources = new ResourceInclude()
 						{
-							Source = new Uri($"avares://ULogViewer/Strings/{localeName}.axaml")
+							Source = new Uri($"avares://ULogViewer/Strings/{cultureInfo.Name}.axaml")
 						};
 						_ = this.stringResources.Loaded; // trigger error if resource not found
-						this.logger.LogInformation($"Load strings for {localeName}");
+						this.logger.LogInformation($"Load strings for {cultureInfo.Name}");
 					}
 					catch
 					{
 						this.stringResources = null;
-						this.logger.LogWarning($"No strings for {localeName}");
+						this.logger.LogWarning($"No strings for {cultureInfo.Name}");
 						return;
 					}
 					this.Resources.MergedDictionaries.Add(this.stringResources);
@@ -406,15 +414,15 @@ namespace CarinaStudio.ULogViewer
 						{
 							this.stringResourcesLinux = new ResourceInclude()
 							{
-								Source = new Uri($"avares://ULogViewer/Strings/{localeName}-Linux.axaml")
+								Source = new Uri($"avares://ULogViewer/Strings/{cultureInfo.Name}-Linux.axaml")
 							};
 							_ = this.stringResourcesLinux.Loaded; // trigger error if resource not found
-							this.logger.LogInformation($"Load strings (Linux) for {localeName}.");
+							this.logger.LogInformation($"Load strings (Linux) for {cultureInfo.Name}.");
 						}
 						catch
 						{
 							this.stringResourcesLinux = null;
-							this.logger.LogWarning($"No strings (Linux) for {localeName}.");
+							this.logger.LogWarning($"No strings (Linux) for {cultureInfo.Name}.");
 							return;
 						}
 						this.Resources.MergedDictionaries.Add(this.stringResourcesLinux);
@@ -436,6 +444,7 @@ namespace CarinaStudio.ULogViewer
 			}
 			if (updated)
 			{
+				this.stringResourcesCulture = cultureInfo;
 				this.UpdateDynamicFontFamilies();
 				this.StringsUpdated?.Invoke(this, EventArgs.Empty);
 			}

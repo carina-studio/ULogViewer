@@ -650,6 +650,22 @@ namespace CarinaStudio.ULogViewer.Controls
 		ICommand MarkUnmarkSelectedLogsCommand { get; }
 
 
+		// Called when application string resources updated.
+		void OnApplicationStringsUpdated(object? sender, EventArgs e)
+		{
+			// [Worksround] Force update content shown in controls
+			var isScheduled = this.updateLogFiltersAction.IsScheduled;
+			var selectedIndex = this.logLevelFilterComboBox.SelectedIndex;
+			if (selectedIndex > 0)
+				this.logLevelFilterComboBox.SelectedIndex = 0;
+			else
+				this.logLevelFilterComboBox.SelectedIndex = 1;
+			this.logLevelFilterComboBox.SelectedIndex = selectedIndex;
+			if (!isScheduled)
+				this.updateLogFiltersAction.Cancel();
+		}
+
+
 		// Called when attaching to view tree.
 		protected override void OnAttachedToLogicalTree(LogicalTreeAttachmentEventArgs e)
 		{
@@ -657,6 +673,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			base.OnAttachedToLogicalTree(e);
 
 			// add event handlers
+			this.Application.StringsUpdated += this.OnApplicationStringsUpdated;
 			this.Settings.SettingChanged += this.OnSettingChanged;
 			this.AddHandler(DragDrop.DragOverEvent, this.OnDragOver);
 			this.AddHandler(DragDrop.DropEvent, this.OnDrop);
@@ -700,6 +717,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		protected override void OnDetachedFromLogicalTree(LogicalTreeAttachmentEventArgs e)
 		{
 			// remove event handlers
+			this.Application.StringsUpdated -= this.OnApplicationStringsUpdated;
 			this.Settings.SettingChanged -= this.OnSettingChanged;
 			this.RemoveHandler(DragDrop.DragOverEvent, this.OnDragOver);
 			this.RemoveHandler(DragDrop.DropEvent, this.OnDrop);
