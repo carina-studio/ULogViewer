@@ -9,6 +9,10 @@ namespace CarinaStudio.ULogViewer
 	class Settings : BaseSettings
 	{
 		/// <summary>
+		/// Interval of updating logs for continuous reading.
+		/// </summary>
+		public static readonly SettingKey<int> ContinuousLogReadingUpdateInterval = new SettingKey<int>(nameof(ContinuousLogReadingUpdateInterval), 100);
+		/// <summary>
 		/// Application culture.
 		/// </summary>
 		public static readonly SettingKey<AppCulture> Culture = new SettingKey<AppCulture>(nameof(Culture), AppCulture.System);
@@ -39,9 +43,17 @@ namespace CarinaStudio.ULogViewer
 
 
 		/// <summary>
+		/// Maximum value of <see cref="ContinuousLogReadingUpdateInterval"/>.
+		/// </summary>
+		public const int MaxContinuousLogReadingUpdateInterval = 1000;
+		/// <summary>
 		/// Maximum value of <see cref="UpdateLogFilterDelay"/>.
 		/// </summary>
 		public const int MaxUpdateLogFilterDelay = 1500;
+		/// <summary>
+		/// Minimum value of <see cref="ContinuousLogReadingUpdateInterval"/>.
+		/// </summary>
+		public const int MinContinuousLogReadingUpdateInterval = 50;
 		/// <summary>
 		/// Minimum value of <see cref="UpdateLogFilterDelay"/>.
 		/// </summary>

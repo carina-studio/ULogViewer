@@ -22,6 +22,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Get or set interval of updating logs for continuous reading.
+		/// </summary>
+		public int ContinuousLogReadingUpdateInterval
+		{
+			get => this.Settings.GetValueOrDefault(ULogViewer.Settings.ContinuousLogReadingUpdateInterval);
+			set => this.Settings.SetValue(ULogViewer.Settings.ContinuousLogReadingUpdateInterval, value);
+		}
+
+
+		/// <summary>
 		/// Get or set application culture.
 		/// </summary>
 		public AppCulture Culture
@@ -56,12 +66,20 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			base.OnSettingChanged(e);
 			var key = e.Key;
-			if (key == ULogViewer.Settings.Culture)
+			if (key == ULogViewer.Settings.ContinuousLogReadingUpdateInterval)
+				this.OnPropertyChanged(nameof(ContinuousLogReadingUpdateInterval));
+			else if (key == ULogViewer.Settings.Culture)
 				this.OnPropertyChanged(nameof(Culture));
 			else if (key == ULogViewer.Settings.MaxContinuousLogCount)
 				this.OnPropertyChanged(nameof(MaxContinuousLogCount));
+			else if (key == ULogViewer.Settings.SelectLogFilesWhenNeeded)
+				this.OnPropertyChanged(nameof(SelectLogFilesWhenNeeded));
+			else if (key == ULogViewer.Settings.SelectWorkingDirectoryWhenNeeded)
+				this.OnPropertyChanged(nameof(SelectWorkingDirectoryWhenNeeded));
 			else if (key == ULogViewer.Settings.ThemeMode)
 				this.OnPropertyChanged(nameof(ThemeMode));
+			else if (key == ULogViewer.Settings.UpdateLogFilterDelay)
+				this.OnPropertyChanged(nameof(UpdateLogFilterDelay));
 		}
 
 

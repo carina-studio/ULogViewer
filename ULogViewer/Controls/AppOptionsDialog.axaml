@@ -54,6 +54,11 @@
 				<!-- Max log count -->
 				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.AppOptionsDialog.MaxContinuousLogCount}"/>
 				<NumericUpDown HorizontalAlignment="Stretch" Maximum="10000000" Minimum="10000" Value="{Binding MaxContinuousLogCount, Mode=TwoWay}"/>
+				<Separator Classes="Dialog_Separator_Horizontal"/>
+
+				<!-- Update interval -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.AppOptionsDialog.ContinuousLogReadingUpdateInterval}"/>
+				<NumericUpDown HorizontalAlignment="Stretch" Maximum="1000" Minimum="50" Value="{Binding ContinuousLogReadingUpdateInterval, Mode=TwoWay}"/>
 				<Separator Classes="Dialog_Separator_Large_Horizontal"/>
 
 				<!-- Log filtering -->

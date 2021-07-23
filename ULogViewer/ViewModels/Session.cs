@@ -449,6 +449,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			var profile = this.LogProfile ?? throw new InternalStateCorruptedException("No log profile to create log reader.");
 			var logReader = new LogReader(dataSource).Also(it =>
 			{
+				if (profile.IsContinuousReading)
+					it.ContinuousReadingUpdateInterval = Math.Max(Math.Min(this.Settings.GetValueOrDefault(ULogViewer.Settings.ContinuousLogReadingUpdateInterval), ULogViewer.Settings.MaxContinuousLogReadingUpdateInterval), ULogViewer.Settings.MinContinuousLogReadingUpdateInterval);
 				it.IsContinuousReading = profile.IsContinuousReading;
 				it.LogLevelMap = profile.LogLevelMap;
 				it.LogPatterns = profile.LogPatterns;
@@ -950,7 +952,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		protected override void OnSettingChanged(SettingChangedEventArgs e)
 		{
 			base.OnSettingChanged(e);
-			if (e.Key == ULogViewer.Settings.MaxContinuousLogCount)
+			if (e.Key == ULogViewer.Settings.ContinuousLogReadingUpdateInterval)
+			{
+				if (this.LogProfile?.IsContinuousReading == true && this.logReaders.IsNotEmpty())
+					this.logReaders.First().MaxLogCount = Math.Max(Math.Min((int)e.Value, ULogViewer.Settings.MaxContinuousLogReadingUpdateInterval), ULogViewer.Settings.MinContinuousLogReadingUpdateInterval);
+			}
+			else if (e.Key == ULogViewer.Settings.MaxContinuousLogCount)
 			{
 				if (this.LogProfile?.IsContinuousReading == true && this.logReaders.IsNotEmpty())
 					this.logReaders.First().MaxLogCount = (int)e.Value;
