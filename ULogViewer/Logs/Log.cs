@@ -147,8 +147,9 @@ namespace CarinaStudio.ULogViewer.Logs
 						{
 							switch(propertyInfo.Name)
 							{
-								case "Id":
-								case "PropertyNames":
+								case nameof(Id):
+								case nameof(MessageLineCount):
+								case nameof(PropertyNames):
 									break;
 								default:
 									propertyMap[propertyInfo.Name] = propertyInfo;

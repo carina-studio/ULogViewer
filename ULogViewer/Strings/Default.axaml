@@ -117,7 +117,7 @@
 	<sys:String x:Key="String.LogProfileEditorDialog.Title.Create">Create new log profile</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.Title.Edit">Edit log profile</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.VisibleLogProperties">Log properties to show (required)</sys:String>
-	<sys:String x:Key="String.LogProfileEditorDialog.VisibleLogProperties.Description">Specify what properties of log can be seen in viewer</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.VisibleLogProperties.Description">Specify which properties of log can be seen in viewer</sys:String>
 
 	<!-- LogProfileSelectionDialog -->
 	<sys:String x:Key="String.LogProfileSelectionDialog.AddLogProfile">Create…</sys:String>
