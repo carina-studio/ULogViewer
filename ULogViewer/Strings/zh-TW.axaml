@@ -26,7 +26,7 @@
 	<sys:String x:Key="String.BuiltInProfile.GitLog">Git 提交紀錄</sys:String>
 
 	<!-- FallbackFontFamilies -->
-	<sys:String x:Key="String.FallbackFontFamilies">123,Microsoft JhengHei</sys:String>
+	<sys:String x:Key="String.FallbackFontFamilies">Microsoft JhengHei</sys:String>
 
 	<!-- LogColorIndicator -->
 	<sys:String x:Key="String.LogColorIndicator.FileName">檔案</sys:String>
