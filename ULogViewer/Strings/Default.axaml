@@ -12,6 +12,7 @@
 	<sys:String x:Key="String.AppOptionsDialog.LogDisplaying">Log Displaying</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.MaxContinuousLogCount">Maximum number of logs when continuous reading</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.UserInterface">User Interface</sys:String>
+	<sys:String x:Key="String.AppOptionsDialog.ThemeMode">Theme</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.Title">Application options</sys:String>
 	
 	<!-- Common -->
@@ -210,6 +211,10 @@
 	<!-- SortDirection -->
 	<sys:String x:Key="String.SortDirection.Ascending">Ascending</sys:String>
 	<sys:String x:Key="String.SortDirection.Descending">Descending</sys:String>
+
+	<!-- ThemeMode -->
+	<sys:String x:Key="String.ThemeMode.Dark">Dark</sys:String>
+	<sys:String x:Key="String.ThemeMode.Light">Light</sys:String>
 
 	<!-- UnderlyingLogDataSource -->
 	<sys:String x:Key="String.UnderlyingLogDataSource.File">File</sys:String>

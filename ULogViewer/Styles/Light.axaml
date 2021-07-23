@@ -1,0 +1,52 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+	<!-- Base style -->
+	<FluentTheme Mode="Light"/>
+
+	<!-- Resources -->
+	<Styles.Resources>
+		<ResourceDictionary>
+
+			<!-- Dialog -->
+			<SolidColorBrush x:Key="Brush.Dialog.Background">#ffffff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.Dialog.ControlButtonsPanel.Background">#eeeeee</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.Dialog.Description.Foreground">#7f000000</SolidColorBrush>
+
+			<!-- Icon -->
+			<SolidColorBrush x:Key="Brush.Icon">#222222</SolidColorBrush>
+
+			<!-- LogLevel -->
+			<SolidColorBrush x:Key="Brush.LogLevel.Debug">#32aaff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.LogLevel.Error">#ff3f3f</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.LogLevel.Fatal">#ff3f3f</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.LogLevel.Info">#4cff00</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.LogLevel.Undefined">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.LogLevel.Verbose">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.LogLevel.Warn">#ff8432</SolidColorBrush>
+
+			<!-- LogProfileSelectionDialog -->
+			<SolidColorBrush x:Key="Brush.LogProfileSelectionDialog.Label.Background">#cccccc</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.LogProfileSelectionDialog.Label.Border">#808080</SolidColorBrush>
+
+			<!-- Separator -->
+			<SolidColorBrush x:Key="Brush.Separator.Background">#7f000000</SolidColorBrush>
+
+			<!-- SessionView -->
+			<SolidColorBrush x:Key="Brush.SessionView.LogHeader.Background">#dddddd</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.SessionView.LogHeader.Separator">#7f000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.SessionView.LogListBox.Background">#ffffff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.SessionView.LogListBox.Item.Background.Marked">#1f000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.SessionView.LogListBox.Item.Background.Pressed">#7f0073cc</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.SessionView.LogListBox.Item.Background.Selected">#7f004881</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.SessionView.LogListBox.Item.Background.Selected.PointerOver">#7f0073cc</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.SessionView.SidePanel.Background">#eeeeee</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.SessionView.StatusBar.Background">#aaaaaa</SolidColorBrush>
+
+			<!-- Window -->
+			<SolidColorBrush x:Key="Brush.Window.Background">#ffffff</SolidColorBrush>
+
+		</ResourceDictionary>
+	</Styles.Resources>
+	
+</Styles>

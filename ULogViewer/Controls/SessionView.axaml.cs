@@ -287,6 +287,11 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.SetValue<bool>(HasLogProfileProperty, session.LogProfile != null);
 
 			// start auto scrolling
+			session.LogProfile?.Let(profile =>
+			{
+				if (!profile.IsContinuousReading)
+					this.IsScrollingToLatestLogNeeded = false;
+			});
 			if (session.HasLogs && this.IsScrollingToLatestLogNeeded)
 				this.scrollToLatestLogAction.Schedule(ScrollingToLatestLogInterval);
 

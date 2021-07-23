@@ -44,8 +44,8 @@ namespace CarinaStudio.ULogViewer
 		ResourceInclude? stringResources;
 		CultureInfo? stringResourcesCulture;
 		ResourceInclude? stringResourcesLinux;
-		StyleInclude? stylesDark;
-		StyleInclude? stylesLight;
+		StyleInclude? styles;
+		ThemeMode? stylesThemeMode;
 		volatile SynchronizationContext? synchronizationContext;
 		Workspace? workspace;
 
@@ -235,6 +235,8 @@ namespace CarinaStudio.ULogViewer
 		{
 			if (e.Key == Settings.Culture)
 				this.UpdateCultureInfo();
+			else if (e.Key == Settings.ThemeMode)
+				this.UpdateStyles();
 		}
 
 
@@ -454,32 +456,31 @@ namespace CarinaStudio.ULogViewer
 		// Update styles according to settings.
 		void UpdateStyles()
 		{
-			// select style
-			var darkMode = this.Settings.GetValueOrDefault(Settings.DarkMode);
-			var addingStyle = darkMode switch
+			// check current styles
+			var themeMode = this.Settings.GetValueOrDefault(Settings.ThemeMode);
+			var stylesToRemove = (StyleInclude?)null;
+			if (this.stylesThemeMode != themeMode && this.styles != null)
 			{
-				true => this.stylesDark ?? new StyleInclude(new Uri("avares://ULogViewer/")).Also((it) =>
-				{
-					it.Source = new Uri("avares://ULogViewer/Styles/Dark.axaml");
-					this.stylesDark = it;
-				}),
-				_ => this.stylesLight ?? new StyleInclude(new Uri("avares://ULogViewer/")).Also((it) =>
-				{
-					it.Source = new Uri("avares://ULogViewer/Styles/Light.axaml");
-					this.stylesLight = it;
-				}),
-			};
-			var removingStyle = darkMode switch
-			{
-				true => this.stylesLight,
-				_ => this.stylesDark,
-			};
+				stylesToRemove = this.styles;
+				this.styles = null;
+			}
 
-			// update style
-			if (removingStyle != null)
-				this.Styles.Remove(removingStyle);
-			if (!this.Styles.Contains(addingStyle))
-				this.Styles.Add(addingStyle);
+			// update styles
+			if (this.styles == null)
+			{
+				this.styles = new StyleInclude(new Uri("avares://ULogViewer/"))
+				{
+					Source = new Uri($"avares://ULogViewer/Styles/{themeMode}.axaml")
+				};
+				this.Styles.Add(this.styles);
+			}
+			else if (!this.Styles.Contains(this.styles))
+				this.Styles.Add(this.styles);
+			this.stylesThemeMode = themeMode;
+
+			// remove styles
+			if (stylesToRemove != null)
+				this.Styles.Remove(stylesToRemove);
 		}
 
 

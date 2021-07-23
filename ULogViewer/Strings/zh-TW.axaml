@@ -10,6 +10,7 @@
 	<sys:String x:Key="String.AppOptionsDialog.LogDisplaying">日誌顯示</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.MaxContinuousLogCount">連續讀取時的最大日誌個數</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.UserInterface">使用者介面</sys:String>
+	<sys:String x:Key="String.AppOptionsDialog.ThemeMode">佈景主題</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.Title">應用程式選項</sys:String>
 	
 	<!-- Common -->
@@ -200,6 +201,10 @@
 	<!-- SortDirection -->
 	<sys:String x:Key="String.SortDirection.Ascending">遞增</sys:String>
 	<sys:String x:Key="String.SortDirection.Descending">遞減</sys:String>
+
+	<!-- ThemeMode -->
+	<sys:String x:Key="String.ThemeMode.Dark">深色</sys:String>
+	<sys:String x:Key="String.ThemeMode.Light">淺色</sys:String>
 
 	<!-- UnderlyingLogDataSource -->
 	<sys:String x:Key="String.UnderlyingLogDataSource.File">檔案</sys:String>

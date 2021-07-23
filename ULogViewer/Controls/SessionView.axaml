@@ -376,6 +376,13 @@
 			</ia:Interaction.Behaviors>
 			<Grid ColumnDefinitions="Auto,Auto,*">
 
+				<!-- Styles -->
+				<Grid.Styles>
+					<Style Selector="TextBlock">
+						<Setter Property="Foreground" Value="{DynamicResource Brush.SessionView.StatusBar.Foreground}"/>
+					</Style>
+				</Grid.Styles>
+
 				<!-- Empty view to reserve space -->
 				<TextBlock Grid.ColumnSpan="5" Text="{DynamicResource String.SessionView.AllLogCount}" Opacity="0"/>
 

@@ -13,10 +13,6 @@ namespace CarinaStudio.ULogViewer
 		/// </summary>
 		public static readonly SettingKey<AppCulture> Culture = new SettingKey<AppCulture>(nameof(Culture), AppCulture.System);
 		/// <summary>
-		/// Use dark mode UI or not.
-		/// </summary>
-		public static readonly SettingKey<bool> DarkMode = new SettingKey<bool>(nameof(DarkMode), true);
-		/// <summary>
 		/// Ignore case of log text filter.
 		/// </summary>
 		public static readonly SettingKey<bool> IgnoreCaseOfLogTextFilter = new SettingKey<bool>(nameof(IgnoreCaseOfLogTextFilter), true);
@@ -32,6 +28,10 @@ namespace CarinaStudio.ULogViewer
 		/// Select working directory immediately when it is needed.
 		/// </summary>
 		public static readonly SettingKey<bool> SelectWorkingDirectoryWhenNeeded = new SettingKey<bool>(nameof(SelectWorkingDirectoryWhenNeeded), true);
+		/// <summary>
+		/// Application theme mode.
+		/// </summary>
+		public static readonly SettingKey<ThemeMode> ThemeMode = new SettingKey<ThemeMode>(nameof(ThemeMode), ULogViewer.ThemeMode.Dark);
 		/// <summary>
 		/// Delay of updating log filter after changing related parameters in milliseconds.
 		/// </summary>

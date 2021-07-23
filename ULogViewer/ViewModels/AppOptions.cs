@@ -3,9 +3,6 @@ using CarinaStudio.Configuration;
 using CarinaStudio.ViewModels;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.ViewModels
 {
@@ -53,6 +50,18 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.OnPropertyChanged(nameof(Culture));
 			else if (key == ULogViewer.Settings.MaxContinuousLogCount)
 				this.OnPropertyChanged(nameof(MaxContinuousLogCount));
+			else if (key == ULogViewer.Settings.ThemeMode)
+				this.OnPropertyChanged(nameof(ThemeMode));
+		}
+
+
+		/// <summary>
+		/// Get or set application theme mode.
+		/// </summary>
+		public ThemeMode ThemeMode
+		{
+			get => this.Settings.GetValueOrDefault(ULogViewer.Settings.ThemeMode);
+			set => this.Settings.SetValue(ULogViewer.Settings.ThemeMode, value);
 		}
 	}
 }
