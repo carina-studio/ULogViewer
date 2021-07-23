@@ -150,7 +150,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Initialize new <see cref="Session"/> instance.
 		/// </summary>
 		/// <param name="workspace"><see cref="Workspace"/>.</param>
-		public Session(Workspace workspace) : base(workspace.Application)
+		public Session(Workspace workspace) : base(workspace)
 		{
 			// create commands
 			this.AddLogFileCommand = ReactiveCommand.Create<string?>(this.AddLogFile, this.canAddLogFile);
