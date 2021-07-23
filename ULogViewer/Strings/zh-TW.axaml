@@ -4,6 +4,9 @@
 
 	<!-- AppCulture -->
 	<sys:String x:Key="String.AppCulture.System">自動</sys:String>
+
+	<!-- AppOptionsDialog -->
+	<sys:String x:Key="String.AppOptionsDialog.Title">應用程式選項</sys:String>
 	
 	<!-- Common -->
 	<sys:String x:Key="String.Common.Add">新增</sys:String>

@@ -1,0 +1,30 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="CarinaStudio.ULogViewer.Controls.AppOptionsDialog"
+				Classes="Dialog"
+				SizeToContent="Height"
+        Title="{DynamicResource String.AppOptionsDialog.Title}"
+				Width="{StaticResource Double.AppOptionsDialog.Width}">
+
+	<DockPanel>
+
+		<!-- Control buttons -->
+		<Border Classes="Dialog_ControlButtonsPanel" DockPanel.Dock="Bottom">
+			<StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].CancelCommand}" Content="{DynamicResource String.Common.OK}"/>
+			</StackPanel>
+		</Border>
+
+		<!-- Content -->
+		<ScrollViewer MaxHeight="{StaticResource Double.AppOptionsDialog.Content.MaxHeight}">
+			<StackPanel Margin="{StaticResource Thickness.Dialog.Content.Padding}" Orientation="Vertical">
+
+			</StackPanel>
+		</ScrollViewer>
+
+	</DockPanel>
+	
+</Window>

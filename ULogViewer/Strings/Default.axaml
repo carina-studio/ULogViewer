@@ -6,6 +6,9 @@
 	<sys:String x:Key="String.AppCulture.EN_US">English (United States)</sys:String>
 	<sys:String x:Key="String.AppCulture.System">Auto</sys:String>
 	<sys:String x:Key="String.AppCulture.ZH_TW">正體中文 (台灣)</sys:String>
+
+	<!-- AppOptionsDialog -->
+	<sys:String x:Key="String.AppOptionsDialog.Title">Application options</sys:String>
 	
 	<!-- Common -->
 	<sys:String x:Key="String.Common.Add">Add</sys:String>

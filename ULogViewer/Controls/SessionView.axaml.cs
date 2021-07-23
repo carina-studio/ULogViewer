@@ -1411,6 +1411,16 @@ namespace CarinaStudio.ULogViewer.Controls
 		ICommand SetWorkingDirectoryCommand { get; }
 
 
+		// Show application options.
+		void ShowAppOptions()
+		{
+			this.FindLogicalAncestorOfType<Window>()?.Let(window =>
+			{
+				new AppOptionsDialog().ShowDialog(window);
+			});
+		}
+
+
 		// Show menu of log actions.
 		void ShowLogActionsMenu()
 		{

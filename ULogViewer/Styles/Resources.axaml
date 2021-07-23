@@ -2,6 +2,10 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 										xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
+	<!-- AppOptionsDialog -->
+	<sys:Double x:Key="Double.AppOptionsDialog.Content.MaxHeight">500</sys:Double>
+	<sys:Double x:Key="Double.AppOptionsDialog.Width">500</sys:Double>
+	
 	<!-- Browse -->
 	<Thickness x:Key="Thickness.Browse.Margin">5,0,0,0</Thickness>
 	

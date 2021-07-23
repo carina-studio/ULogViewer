@@ -54,7 +54,7 @@
 
 		<!-- Other actions menu -->
 		<ContextMenu x:Key="otherActionsMenu" PlacementMode="Bottom">
-			<MenuItem Header="{DynamicResource String.SessionView.AppOptions}"/>
+			<MenuItem Command="{Binding $parent[UserControl].ShowAppOptions}" Header="{DynamicResource String.SessionView.AppOptions}"/>
 			<MenuItem Header="{DynamicResource String.SessionView.AppInfo}"/>
 		</ContextMenu>
 		
