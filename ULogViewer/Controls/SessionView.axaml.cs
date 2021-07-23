@@ -86,6 +86,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly MutableObservableBoolean canSelectMarkedLogs = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSetLogProfile = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSetWorkingDirectory = new MutableObservableBoolean();
+		bool isLogFileNeededAfterLogProfileSet;
 		bool isPidLogPropertyVisible;
 		bool isPointerPressedOnLogListBox;
 		bool isTidLogPropertyVisible;
@@ -1235,7 +1236,19 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (this.DataContext is not Session session)
 				return;
 			if (sender == session.AddLogFileCommand)
-				this.canAddLogFiles.Update(session.AddLogFileCommand.CanExecute(null));
+			{
+				if (session.AddLogFileCommand.CanExecute(null))
+				{
+					this.canAddLogFiles.Update(true);
+					if (this.isLogFileNeededAfterLogProfileSet)
+					{
+						this.isLogFileNeededAfterLogProfileSet = false;
+						this.AddLogFiles();
+					}
+				}
+				else
+					this.canAddLogFiles.Update(false);
+			}
 			else if (sender == session.MarkUnmarkLogsCommand)
 				this.canMarkUnmarkSelectedLogs.Update(this.logListBox.SelectedItems.Count > 0 && session.MarkUnmarkLogsCommand.CanExecute(null));
 			else if (sender == session.ResetLogProfileCommand || sender == session.SetLogProfileCommand)
@@ -1396,6 +1409,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.ResetLogFilters();
 
 			// reset log profile
+			this.isLogFileNeededAfterLogProfileSet = false;
 			this.isWorkingDirNeededAfterLogProfileSet = false;
 			if (session.ResetLogProfileCommand.CanExecute(null))
 				session.ResetLogProfileCommand.Execute(null);
@@ -1405,6 +1419,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 
 			// set log profile
+			this.isLogFileNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(Settings.SelectLogFilesWhenNeeded);
 			this.isWorkingDirNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(Settings.SelectWorkingDirectoryWhenNeeded);
 			if (!session.SetLogProfileCommand.TryExecute(logProfile))
 			{
