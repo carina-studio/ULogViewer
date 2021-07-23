@@ -21,6 +21,7 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading;
 
 namespace CarinaStudio.ULogViewer
@@ -152,6 +153,9 @@ namespace CarinaStudio.ULogViewer
 			if (this.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime)
 				desktopLifetime.ShutdownMode = Avalonia.Controls.ShutdownMode.OnExplicitShutdown;
 
+			// setup culture info
+			this.UpdateCultureInfo();
+
 			// load strings
 			if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
 			{
@@ -228,8 +232,8 @@ namespace CarinaStudio.ULogViewer
 		// Called when setting changed.
 		void OnSettingChanged(object? sender, SettingChangedEventArgs e)
 		{
-			if (e.Key == ULogViewer.Settings.SelectLanguageAutomatically)
-				this.UpdateStringResources();
+			if (e.Key == Settings.Culture)
+				this.UpdateCultureInfo();
 		}
 
 
@@ -239,22 +243,8 @@ namespace CarinaStudio.ULogViewer
 			this.logger.LogWarning("Culture info of system has been changed");
 
 			// update culture info
-			this.CultureInfo = CultureInfo.CurrentCulture;
-			this.CultureInfo.ClearCachedData();
-			this.propertyChangedHandlers?.Invoke(this, new PropertyChangedEventArgs(nameof(CultureInfo)));
-
-			// update string resources
-			if (this.stringResources != null)
-			{
-				this.Resources.MergedDictionaries.Remove(this.stringResources);
-				this.stringResources = null;
-			}
-			if (this.stringResourcesLinux != null)
-			{
-				this.Resources.MergedDictionaries.Remove(this.stringResourcesLinux);
-				this.stringResourcesLinux = null;
-			}
-			this.UpdateStringResources();
+			if (this.Settings.GetValueOrDefault(Settings.Culture) == AppCulture.System)
+				this.UpdateCultureInfo();
 		}
 
 
@@ -301,6 +291,62 @@ namespace CarinaStudio.ULogViewer
 		}
 
 
+		// Update culture info according to current culture info and settings.
+		void UpdateCultureInfo()
+		{
+			// select culture info
+			var cultureInfo = this.Settings.GetValueOrDefault(Settings.Culture).Let(it =>
+			{
+				if (it == AppCulture.System)
+					return CultureInfo.CurrentCulture;
+				var name = new StringBuilder(it.ToString());
+				for (var i = 0; i < name.Length; ++i)
+				{
+					var c = name[i];
+					if (c == '_')
+					{
+						name[i] = '-';
+						break;
+					}
+					name[i] = char.ToLower(c);
+				}
+				try
+				{
+					return CultureInfo.GetCultureInfo(name.ToString());
+				}
+				catch
+				{
+					logger.LogError($"Unknown culture: {name}");
+					return CultureInfo.CurrentCulture;
+				}
+			});
+			cultureInfo.ClearCachedData();
+
+			// check current culture info
+			if (this.CultureInfo.Equals(cultureInfo))
+				return;
+
+			logger.LogWarning($"Update application culture to {cultureInfo.Name}");
+
+			// change culture info
+			this.CultureInfo = cultureInfo;
+			this.propertyChangedHandlers?.Invoke(this, new PropertyChangedEventArgs(nameof(CultureInfo)));
+
+			// update string resources
+			if (this.stringResources != null)
+			{
+				this.Resources.MergedDictionaries.Remove(this.stringResources);
+				this.stringResources = null;
+			}
+			if (this.stringResourcesLinux != null)
+			{
+				this.Resources.MergedDictionaries.Remove(this.stringResourcesLinux);
+				this.stringResourcesLinux = null;
+			}
+			this.UpdateStringResources();
+		}
+
+
 		// Update dynamic font families according to current culture info and settings.
 		void UpdateDynamicFontFamilies()
 		{
@@ -321,7 +367,7 @@ namespace CarinaStudio.ULogViewer
 		void UpdateStringResources()
 		{
 			var updated = false;
-			if (this.Settings.GetValueOrDefault(Settings.SelectLanguageAutomatically))
+			if (this.CultureInfo.ToString() != "en-US")
 			{
 				// base resources
 				var localeName = this.CultureInfo.Name;

@@ -2,6 +2,9 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 										xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
+	<!-- AppCulture -->
+	<sys:String x:Key="String.AppCulture.System">自動</sys:String>
+	
 	<!-- Common -->
 	<sys:String x:Key="String.Common.Add">新增</sys:String>
 	<sys:String x:Key="String.Common.Cancel">取消</sys:String>

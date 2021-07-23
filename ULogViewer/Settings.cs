@@ -9,6 +9,10 @@ namespace CarinaStudio.ULogViewer
 	class Settings : BaseSettings
 	{
 		/// <summary>
+		/// Application culture.
+		/// </summary>
+		public static readonly SettingKey<AppCulture> Culture = new SettingKey<AppCulture>(nameof(Culture), AppCulture.System);
+		/// <summary>
 		/// Use dark mode UI or not.
 		/// </summary>
 		public static readonly SettingKey<bool> DarkMode = new SettingKey<bool>(nameof(DarkMode), true);
@@ -24,10 +28,6 @@ namespace CarinaStudio.ULogViewer
 		/// Select log files immediately when they are needed.
 		/// </summary>
 		public static readonly SettingKey<bool> SelectLogFilesWhenNeeded = new SettingKey<bool>(nameof(SelectLogFilesWhenNeeded), false);
-		/// <summary>
-		/// Select language automatically.
-		/// </summary>
-		public static readonly SettingKey<bool> SelectLanguageAutomatically = new SettingKey<bool>(nameof(SelectLanguageAutomatically), true);
 		/// <summary>
 		/// Select working directory immediately when it is needed.
 		/// </summary>
