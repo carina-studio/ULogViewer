@@ -2,6 +2,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+				xmlns:app="using:CarinaStudio.ULogViewer"
+				xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.AppOptionsDialog"
 				Classes="Dialog"
@@ -22,6 +24,22 @@
 		<ScrollViewer MaxHeight="{StaticResource Double.AppOptionsDialog.Content.MaxHeight}">
 			<StackPanel Margin="{StaticResource Thickness.Dialog.Content.Padding}" Orientation="Vertical">
 
+				<!-- User interface -->
+				<TextBlock Classes="Dialog_Label_Header1" Text="{DynamicResource String.AppOptionsDialog.UserInterface}"/>
+				
+				<!-- Culture -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.AppOptionsDialog.Culture}"/>
+				<appControls:EnumComboBox EnumType="{x:Type app:AppCulture}" HorizontalAlignment="Stretch" SelectedItem="{Binding Culture, Mode=TwoWay}"/>
+				<Separator Classes="Dialog_Separator_Horizontal"/>
+
+				<!-- Log displaying -->
+				<TextBlock Classes="Dialog_Label_Header1" Text="{DynamicResource String.AppOptionsDialog.LogDisplaying}"/>
+
+				<!-- Max log count -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.AppOptionsDialog.MaxContinuousLogCount}"/>
+				<NumericUpDown HorizontalAlignment="Stretch" Maximum="10000000" Minimum="10000" Value="{Binding MaxContinuousLogCount, Mode=TwoWay}"/>
+				<Separator Classes="Dialog_Separator_Horizontal"/>
+				
 			</StackPanel>
 		</ScrollViewer>
 

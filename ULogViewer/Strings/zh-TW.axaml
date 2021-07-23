@@ -6,6 +6,10 @@
 	<sys:String x:Key="String.AppCulture.System">自動</sys:String>
 
 	<!-- AppOptionsDialog -->
+	<sys:String x:Key="String.AppOptionsDialog.Culture">語系</sys:String>
+	<sys:String x:Key="String.AppOptionsDialog.LogDisplaying">日誌顯示</sys:String>
+	<sys:String x:Key="String.AppOptionsDialog.MaxContinuousLogCount">連續讀取時的最大日誌個數</sys:String>
+	<sys:String x:Key="String.AppOptionsDialog.UserInterface">使用者介面</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.Title">應用程式選項</sys:String>
 	
 	<!-- Common -->

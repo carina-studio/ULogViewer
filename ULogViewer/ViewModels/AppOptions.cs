@@ -34,6 +34,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		}
 
 
+		/// <summary>
+		/// Get or set maximum number of logs for continuous logs reading.
+		/// </summary>
+		public int MaxContinuousLogCount
+		{
+			get => this.Settings.GetValueOrDefault(ULogViewer.Settings.MaxContinuousLogCount);
+			set => this.Settings.SetValue(ULogViewer.Settings.MaxContinuousLogCount, value);
+		}
+
+
 		// Called when setting changed.
 		protected override void OnSettingChanged(SettingChangedEventArgs e)
 		{
@@ -41,6 +51,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			var key = e.Key;
 			if (key == ULogViewer.Settings.Culture)
 				this.OnPropertyChanged(nameof(Culture));
+			else if (key == ULogViewer.Settings.MaxContinuousLogCount)
+				this.OnPropertyChanged(nameof(MaxContinuousLogCount));
 		}
 	}
 }
