@@ -6,6 +6,8 @@
 						 xmlns:ia="using:Avalonia.Xaml.Interactivity"
 						 xmlns:iaCore="using:Avalonia.Xaml.Interactions.Core"
 						 xmlns:appControls="clr-namespace:CarinaStudio.ULogViewer.Controls;assembly=ULogViewer"
+						 xmlns:appConverters="clr-namespace:CarinaStudio.ULogViewer.Converters;assembly=ULogViewer"
+						 xmlns:appLogs="clr-namespace:CarinaStudio.ULogViewer.Logs;assembly=ULogViewer"
 						 xmlns:appViewModels="clr-namespace:CarinaStudio.ULogViewer.ViewModels;assembly=ULogViewer"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="CarinaStudio.ULogViewer.Controls.SessionView">
@@ -152,37 +154,20 @@
 			<Grid ColumnDefinitions="Auto,Auto,Auto,Auto,*,Auto" Grid.Column="1" HorizontalAlignment="Stretch" Margin="{StaticResource Thickness.SessionView.ToolBar.LogFilters.Padding}" VerticalAlignment="Stretch">
 
 				<!-- Level filter -->
-				<ComboBox Name="logLevelFilterComboBox" Foreground="{DynamicResource Brush.LogLevel.Undefined}" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" Margin="{StaticResource Thickness.SessionView.ToolBar.LogLevelFilter.Margin}" SelectedIndex="0" SelectionChanged="OnLogLevelFilterComboBoxSelectionChanged" VerticalAlignment="Center" Width="{StaticResource Double.SessionView.ToolBar.LogLevelFilter.Width}">
-					<ia:Interaction.Behaviors>
-						<iaCore:DataTriggerBehavior Binding="{Binding $self.SelectedItem.Tag}" ComparisonCondition="Equal" Value="Undefined">
-							<iaCore:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource Brush.LogLevel.Undefined}"/>
-						</iaCore:DataTriggerBehavior>
-						<iaCore:DataTriggerBehavior Binding="{Binding $self.SelectedItem.Tag}" ComparisonCondition="Equal" Value="Info">
-							<iaCore:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource Brush.LogLevel.Info}"/>
-						</iaCore:DataTriggerBehavior>
-						<iaCore:DataTriggerBehavior Binding="{Binding $self.SelectedItem.Tag}" ComparisonCondition="Equal" Value="Verbose">
-							<iaCore:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource Brush.LogLevel.Verbose}"/>
-						</iaCore:DataTriggerBehavior>
-						<iaCore:DataTriggerBehavior Binding="{Binding $self.SelectedItem.Tag}" ComparisonCondition="Equal" Value="Debug">
-							<iaCore:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource Brush.LogLevel.Debug}"/>
-						</iaCore:DataTriggerBehavior>
-						<iaCore:DataTriggerBehavior Binding="{Binding $self.SelectedItem.Tag}" ComparisonCondition="Equal" Value="Warn">
-							<iaCore:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource Brush.LogLevel.Warn}"/>
-						</iaCore:DataTriggerBehavior>
-						<iaCore:DataTriggerBehavior Binding="{Binding $self.SelectedItem.Tag}" ComparisonCondition="Equal" Value="Error">
-							<iaCore:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource Brush.LogLevel.Error}"/>
-						</iaCore:DataTriggerBehavior>
-						<iaCore:DataTriggerBehavior Binding="{Binding $self.SelectedItem.Tag}" ComparisonCondition="Equal" Value="Fatal">
-							<iaCore:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource Brush.LogLevel.Fatal}"/>
-						</iaCore:DataTriggerBehavior>
-					</ia:Interaction.Behaviors>
-					<ComboBoxItem Content="{DynamicResource String.SessionView.AllLogLevels}" Foreground="{DynamicResource Brush.LogLevel.Undefined}" Tag="Undefined"/>
-					<ComboBoxItem Content="{DynamicResource String.LogLevel.Info}" Foreground="{DynamicResource Brush.LogLevel.Info}" Tag="Info"/>
-					<ComboBoxItem Content="{DynamicResource String.LogLevel.Verbose}" Foreground="{DynamicResource Brush.LogLevel.Verbose}" Tag="Verbose"/>
-					<ComboBoxItem Content="{DynamicResource String.LogLevel.Debug}" Foreground="{DynamicResource Brush.LogLevel.Debug}" Tag="Debug"/>
-					<ComboBoxItem Content="{DynamicResource String.LogLevel.Warn}" Foreground="{DynamicResource Brush.LogLevel.Warn}" Tag="Warn"/>
-					<ComboBoxItem Content="{DynamicResource String.LogLevel.Error}" Foreground="{DynamicResource Brush.LogLevel.Error}" Tag="Error"/>
-					<ComboBoxItem Content="{DynamicResource String.LogLevel.Fatal}" Foreground="{DynamicResource Brush.LogLevel.Fatal}" Tag="Fatal"/>
+				<ComboBox Name="logLevelFilterComboBox" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" Margin="{StaticResource Thickness.SessionView.ToolBar.LogLevelFilter.Margin}" SelectionChanged="OnLogLevelFilterComboBoxSelectionChanged" VerticalAlignment="Center" Width="{StaticResource Double.SessionView.ToolBar.LogLevelFilter.Width}">
+					<ComboBox.ItemTemplate>
+						<DataTemplate>
+							<TextBlock Foreground="{Binding Converter={x:Static appConverters:LogLevelBrushConverter.Default}}" Text="{Binding Converter={x:Static appControls:SessionView.LogLevelNameConverter}}">
+							</TextBlock>
+						</DataTemplate>
+					</ComboBox.ItemTemplate>
+					<appLogs:LogLevel>Undefined</appLogs:LogLevel>
+					<appLogs:LogLevel>Info</appLogs:LogLevel>
+					<appLogs:LogLevel>Verbose</appLogs:LogLevel>
+					<appLogs:LogLevel>Debug</appLogs:LogLevel>
+					<appLogs:LogLevel>Warn</appLogs:LogLevel>
+					<appLogs:LogLevel>Error</appLogs:LogLevel>
+					<appLogs:LogLevel>Fatal</appLogs:LogLevel>
 				</ComboBox>
 
 				<!-- PID filter -->

@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Controls.Templates;
 using Avalonia.Data;
+using Avalonia.Data.Converters;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
@@ -13,6 +14,7 @@ using Avalonia.Media;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
+using CarinaStudio.ULogViewer.Converters;
 using CarinaStudio.ULogViewer.Input;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ULogViewer.ViewModels;
@@ -23,6 +25,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -35,6 +38,36 @@ namespace CarinaStudio.ULogViewer.Controls
 	/// </summary>
 	partial class SessionView : BaseView
 	{
+		/// <summary>
+		/// <see cref="IValueConverter"/> to convert log level to readable name.
+		/// </summary>
+		public static readonly IValueConverter LogLevelNameConverter = new LogLevelNameConverterImpl(App.Current);
+
+
+		// Implementation of LogLevelNameConverter.
+		class LogLevelNameConverterImpl : IValueConverter
+		{
+			readonly App app;
+			readonly EnumConverter<Logs.LogLevel> baseConverter;
+			public LogLevelNameConverterImpl(App app)
+			{
+				this.app = app;
+				this.baseConverter = new EnumConverter<Logs.LogLevel>(app);
+			}
+			public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
+			{
+				if (value is Logs.LogLevel level)
+				{
+					if (level == Logs.LogLevel.Undefined)
+						return app.GetString("SessionView.AllLogLevels");
+					return this.baseConverter.Convert(value, targetType, parameter, culture);
+				}
+				return null;
+			}
+			public object? ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => null;
+		}
+
+
 		// Constants.
 		const int ScrollingToLatestLogInterval = 100;
 
@@ -182,7 +215,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					return;
 
 				// set level
-				session.LogLevelFilter = Enum.Parse<Logs.LogLevel>((string)((ComboBoxItem)this.logLevelFilterComboBox.SelectedItem.AsNonNull()).Tag.AsNonNull());
+				session.LogLevelFilter = (Logs.LogLevel)this.logLevelFilterComboBox.SelectedItem.AsNonNull();
 
 				// set PID
 				this.logProcessIdFilterTextBox.Text.Let(it =>
@@ -299,17 +332,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.logProcessIdFilterTextBox.Text = session.LogProcessIdFilter?.ToString() ?? "";
 			this.logTextFilterTextBox.Regex = session.LogTextFilter;
 			this.logThreadIdFilterTextBox.Text = session.LogThreadIdFilter?.ToString() ?? "";
-			session.LogLevelFilter.Let(it =>
-			{
-				foreach (var item in this.logLevelFilterComboBox.Items)
-				{
-					if ((string)((ComboBoxItem)item.AsNonNull()).Tag.AsNonNull() == it.ToString())
-					{
-						this.logLevelFilterComboBox.SelectedItem = item;
-						break;
-					}
-				}
-			});
+			this.logLevelFilterComboBox.SelectedItem = session.LogLevelFilter;
 			this.updateLogFiltersAction.Cancel();
 
 			// update UI
