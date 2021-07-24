@@ -936,6 +936,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (!e.Data.HasFileNames())
 				return;
 
+			// bring window to front
+			this.FindLogicalAncestorOfType<Window>()?.Let(it => it.ActivateAndBringToFront());
+
 			// collect files
 			var dropFilePaths = e.Data.GetFileNames().AsNonNull();
 			var filePaths = await Task.Run(() =>
