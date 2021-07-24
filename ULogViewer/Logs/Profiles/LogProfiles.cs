@@ -24,6 +24,9 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		static readonly string[] builtInProfileIDs = new string[] {
 			"AndroidDeviceLog",
 			"AndroidFileLog",
+#if DEBUG
+			"DummyLog",
+#endif
 			"GitLog",
 #if DEBUG
 			"ULogViewerLog",

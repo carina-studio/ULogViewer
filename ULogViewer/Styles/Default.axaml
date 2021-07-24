@@ -14,8 +14,6 @@
 			<SolidColorBrush x:Key="Brush.Dialog.Background">#ffffff</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.Dialog.ControlButtonsPanel.Background">#ffffff</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.Dialog.Description.Foreground">#000000</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.Dialog.Description.Foreground.Error">#ff0000</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.Dialog.Description.Foreground.Link">#007acc</SolidColorBrush>
 
 			<!-- Icon -->
 			<SolidColorBrush x:Key="Brush.Icon">#000000</SolidColorBrush>
@@ -57,6 +55,11 @@
 			<SolidColorBrush x:Key="Brush.SessionView.StatusBar.Background.Active">#007acc</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.SessionView.StatusBar.Background.Error">#ff3232</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.SessionView.StatusBar.Background.Paused">#ca5100</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.SessionView.StatusBar.Foreground">#ffffff</SolidColorBrush>
+
+			<!-- TextBlock -->
+			<SolidColorBrush x:Key="Brush.TextBlock.Foreground.Error">#ff0000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.TextBlock.Foreground.Link">#007acc</SolidColorBrush>
 
 			<!-- Window -->
 			<SolidColorBrush x:Key="Brush.Window.Background">#ffffff</SolidColorBrush>
@@ -66,12 +69,12 @@
 
 	<!-- Browse -->
 	<Style Selector="Button.Browse">
-		<Setter Property="Content" Value="..."/>
+		<Setter Property="Content" Value="…"/>
 		<Setter Property="Margin" Value="{StaticResource Thickness.Browse.Margin}"/>
 		<Setter Property="VerticalAlignment" Value="Stretch"/>
 	</Style>
 	<Style Selector="ToggleButton.Browse">
-		<Setter Property="Content" Value="..."/>
+		<Setter Property="Content" Value="…"/>
 		<Setter Property="Margin" Value="{StaticResource Thickness.Browse.Margin}"/>
 		<Setter Property="VerticalAlignment" Value="Stretch"/>
 	</Style>
@@ -110,6 +113,11 @@
 		<Setter Property="Height" Value="{StaticResource Double.Dialog.Separator.Size.Large}"/>
 		<Setter Property="HorizontalAlignment" Value="Stretch"/>
 	</Style>
+	<Style Selector="Separator.Dialog_Separator_Small_Horizontal">
+		<Setter Property="Background" Value="{x:Null}"/>
+		<Setter Property="Height" Value="{StaticResource Double.Dialog.Separator.Size.Small}"/>
+		<Setter Property="HorizontalAlignment" Value="Stretch"/>
+	</Style>
 	<Style Selector="Separator.Dialog_Separator_Vertical">
 		<Setter Property="Background" Value="{x:Null}"/>
 		<Setter Property="VerticalAlignment" Value="Stretch"/>
@@ -125,13 +133,13 @@
 		<Setter Property="TextWrapping" Value="WrapWithOverflow"/>
 	</Style>
 	<Style Selector="TextBlock.Dialog_Description_Error">
-		<Setter Property="Foreground" Value="{DynamicResource Brush.Dialog.Description.Foreground.Error}"/>
+		<Setter Property="Foreground" Value="{DynamicResource Brush.TextBlock.Foreground.Error}"/>
 		<Setter Property="Margin" Value="{StaticResource Thickness.Dialog.Description.Margin}"/>
 		<Setter Property="TextWrapping" Value="WrapWithOverflow"/>
 	</Style>
 	<Style Selector="TextBlock.Dialog_Description_Link">
 		<Setter Property="Cursor" Value="Hand"/>
-		<Setter Property="Foreground" Value="{DynamicResource Brush.Dialog.Description.Foreground.Link}"/>
+		<Setter Property="Foreground" Value="{DynamicResource Brush.TextBlock.Foreground.Link}"/>
 		<Setter Property="Margin" Value="{StaticResource Thickness.Dialog.Description.Margin}"/>
 		<Setter Property="TextWrapping" Value="WrapWithOverflow"/>
 	</Style>
@@ -253,6 +261,17 @@
 	</Style>
 	<Style Selector="ToggleButton.SessionView_ToolBar_Button:disabled">
 		<Setter Property="Opacity" Value="0.3"/>
+	</Style>
+
+	<!-- TextBox -->
+	<Style Selector="TextBox">
+		<Setter Property="FontFamily" Value="{DynamicResource FontFamily.TextBox}"/>
+	</Style>
+
+	<!-- ToggleSwitch -->
+	<Style Selector="ToggleSwitch">
+		<Setter Property="OffContent" Value="{x:Null}"/>
+		<Setter Property="OnContent" Value="{x:Null}"/>
 	</Style>
 
 </Styles>

@@ -2,6 +2,36 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 										xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
+	<!-- AppCulture -->
+	<sys:String x:Key="String.AppCulture.EN_US">English (United States)</sys:String>
+	<sys:String x:Key="String.AppCulture.System">Auto</sys:String>
+	<sys:String x:Key="String.AppCulture.ZH_TW">正體中文 (台灣)</sys:String>
+
+	<!-- AppInfoDialog -->
+	<sys:String x:Key="String.AppInfoDialog.Attribution.AppIcon.Section1" xml:space="preserve">Application icon is made by</sys:String>
+	<sys:String x:Key="String.AppInfoDialog.Attribution.AppIcon.Section2" xml:space="preserve">from</sys:String>
+	<sys:String x:Key="String.AppInfoDialog.Attribution.AppIcon.Section3" xml:space="preserve">.</sys:String>
+	<sys:String x:Key="String.AppInfoDialog.Attribution.Framework.Section1" xml:space="preserve">Powered by</sys:String>
+	<sys:String x:Key="String.AppInfoDialog.Attribution.Framework.Section2" xml:space="preserve">and</sys:String>
+	<sys:String x:Key="String.AppInfoDialog.Attribution.Framework.Section3" xml:space="preserve">.</sys:String>
+	<sys:String x:Key="String.AppInfoDialog.SourceCode">Source code on GitHub</sys:String>
+	<sys:String x:Key="String.AppInfoDialog.Title">About ULogViewer</sys:String>
+	<sys:String x:Key="String.AppInfoDialog.Version">Version: {0}</sys:String>
+
+	<!-- AppOptionsDialog -->
+	<sys:String x:Key="String.AppOptionsDialog.ContinuousLogReadingUpdateInterval">Log update interval when continuous reading (milliseconds)</sys:String>
+	<sys:String x:Key="String.AppOptionsDialog.Culture">Language</sys:String>
+	<sys:String x:Key="String.AppOptionsDialog.IgnoreCaseOfLogTextFilter">Ignore case of text filter</sys:String>
+	<sys:String x:Key="String.AppOptionsDialog.LogFiltering">Log Filtering</sys:String>
+	<sys:String x:Key="String.AppOptionsDialog.LogOperations">Log Operations</sys:String>
+	<sys:String x:Key="String.AppOptionsDialog.MaxContinuousLogCount">Maximum number of logs when continuous reading</sys:String>
+	<sys:String x:Key="String.AppOptionsDialog.SelectLogFilesWhenNeeded">Show file selector when log files are needed</sys:String>
+	<sys:String x:Key="String.AppOptionsDialog.SelectWorkingDirectoryWhenNeeded">Show directory selector when working directory is needed</sys:String>
+	<sys:String x:Key="String.AppOptionsDialog.ThemeMode">Theme</sys:String>
+	<sys:String x:Key="String.AppOptionsDialog.Title">Application options</sys:String>
+	<sys:String x:Key="String.AppOptionsDialog.UpdateLogFilterDelay">Delay between changing conditions and start filtering (milliseconds)</sys:String>
+	<sys:String x:Key="String.AppOptionsDialog.UserInterface">User Interface</sys:String>
+	
 	<!-- Common -->
 	<sys:String x:Key="String.Common.Add">Add</sys:String>
 	<sys:String x:Key="String.Common.Cancel">Cancel</sys:String>
@@ -59,6 +89,10 @@
 	<sys:String x:Key="String.LogLevelMapEntryEditor.Text">Text (required)</sys:String>
 	<sys:String x:Key="String.LogLevelMapEntryEditor.Title">Mapping of log level</sys:String>
 
+	<!-- LogMessageDialog -->
+	<sys:String x:Key="String.LogMessageDialog.WrapText">Wrap automatically</sys:String>
+	<sys:String x:Key="String.LogMessageDialog.Title">Message of log</sys:String>
+
 	<!-- LogPatternEditorDialog -->
 	<sys:String x:Key="String.LogPatternEditorDialog.IsSkippable">The line can be skipped</sys:String>
 	<sys:String x:Key="String.LogPatternEditorDialog.IsRepeatable">The line can be repeated continuously</sys:String>
@@ -85,20 +119,20 @@
 	<sys:String x:Key="String.LogProfileEditorDialog.ColorIndicator">Color indicator</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.ColorIndicator.Description">Way of grouping to show color block on the left hand side of each log</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.Common">Common</sys:String>
-	<sys:String x:Key="String.LogProfileEditorDialog.DataSourceOptions">Parameters...</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.DataSourceOptions">Options…</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.DataSourceProvider">Data source</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.DuplicateLogLevelMapEntry">'{0}' is already defined.</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.Icon">Icon</sys:String>
-	<sys:String x:Key="String.LogProfileEditorDialog.InvalidDataSourceOptions">Need to set valid parameters</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.InvalidDataSourceOptions">Need to set valid options</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.IsContinuousReading">Continuous reading</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.IsContinuousReading.Description">Restart reading logs automatically when reaching end of data source</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.IsWorkingDirectoryNeeded">Need to select working directory</sys:String>
-	<sys:String x:Key="String.LogProfileEditorDialog.LogDisplaying">Log displaying</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.LogDisplaying">Log Displaying</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogLevelMap">Mapping of log level</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogLevelMap.Description">Convert specific text in raw log into log level</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogPatterns">Log line patterns (required)</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogPatterns.Description">Pattern to parse each line of raw log</sys:String>
-	<sys:String x:Key="String.LogProfileEditorDialog.LogReading">Log reading</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.LogReading">Log Reading</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.Name">Name (required)</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.SortDirection">Sort direction of log</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.SortKey">Sort key of log</sys:String>
@@ -108,10 +142,10 @@
 	<sys:String x:Key="String.LogProfileEditorDialog.Title.Create">Create new log profile</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.Title.Edit">Edit log profile</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.VisibleLogProperties">Log properties to show (required)</sys:String>
-	<sys:String x:Key="String.LogProfileEditorDialog.VisibleLogProperties.Description">Specify what properties of log can be seen in viewer</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.VisibleLogProperties.Description">Specify which properties of log can be seen in viewer</sys:String>
 
 	<!-- LogProfileSelectionDialog -->
-	<sys:String x:Key="String.LogProfileSelectionDialog.AddLogProfile">Create...</sys:String>
+	<sys:String x:Key="String.LogProfileSelectionDialog.AddLogProfile">Create…</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.AllLogProfiles">All profiles</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.BuiltInLogProfile">Built-in</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.EditLogProfile">Edit profile</sys:String>
@@ -162,11 +196,11 @@
 	<sys:String x:Key="String.SessionView.AddLogFiles">Add log files</sys:String>
 	<sys:String x:Key="String.SessionView.AllLogCount">Total: </sys:String>
 	<sys:String x:Key="String.SessionView.AllLogLevels">All levels</sys:String>
-	<sys:String x:Key="String.SessionView.AppInfo">About ULogViewer...</sys:String>
-	<sys:String x:Key="String.SessionView.AppOptions">Options...</sys:String>
+	<sys:String x:Key="String.SessionView.AppInfo">About ULogViewer…</sys:String>
+	<sys:String x:Key="String.SessionView.AppOptions">Options…</sys:String>
 	<sys:String x:Key="String.SessionView.ClearLogFiles">Clear all added log files</sys:String>
 	<sys:String x:Key="String.SessionView.ClearPredefinedLogTextFiltersSelection">Clear selection</sys:String>
-	<sys:String x:Key="String.SessionView.CreatePredefinedLogTextFilter">Create...</sys:String>
+	<sys:String x:Key="String.SessionView.CreatePredefinedLogTextFilter">Create…</sys:String>
 	<sys:String x:Key="String.SessionView.FilteredLogCount">, Filtered: </sys:String>
 	<sys:String x:Key="String.SessionView.FilterLogsBySelectedProcessId">Filter by selected PID</sys:String>
 	<sys:String x:Key="String.SessionView.FilterLogsBySelectedProcessIdOnly">Filter by selected PID only</sys:String>
@@ -184,13 +218,20 @@
 	<sys:String x:Key="String.SessionView.ReloadLogs">Reload logs (F5)</sys:String>
 	<sys:String x:Key="String.SessionView.ResetLogFilters">Clear all filters</sys:String>
 	<sys:String x:Key="String.SessionView.ScrollToLatestLog">Scroll to latest log</sys:String>
+	<sys:String x:Key="String.SessionView.SelectedLogCount">Selected: </sys:String>
+	<sys:String x:Key="String.SessionView.SelectMarkedLogs">Select marked logs (S)</sys:String>
 	<sys:String x:Key="String.SessionView.SetLogProfile">Select/Change log profile</sys:String>
 	<sys:String x:Key="String.SessionView.SetWorkingDirectory">Select/Change working directory</sys:String>
 	<sys:String x:Key="String.SessionView.OtherActions">Other actions</sys:String>
+	<sys:String x:Key="String.SessionView.ViewFullLogMessage">View more…</sys:String>
 
 	<!-- SortDirection -->
 	<sys:String x:Key="String.SortDirection.Ascending">Ascending</sys:String>
 	<sys:String x:Key="String.SortDirection.Descending">Descending</sys:String>
+
+	<!-- ThemeMode -->
+	<sys:String x:Key="String.ThemeMode.Dark">Dark</sys:String>
+	<sys:String x:Key="String.ThemeMode.Light">Light</sys:String>
 
 	<!-- UnderlyingLogDataSource -->
 	<sys:String x:Key="String.UnderlyingLogDataSource.File">File</sys:String>

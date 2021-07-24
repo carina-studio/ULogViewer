@@ -37,9 +37,9 @@
     <PackageReference Include="Avalonia.Desktop" Version="0.10.6" />
     <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.6" />
     <PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.10.6.10" />
-    <PackageReference Include="CarinaStudio.AppBase.Application" Version="0.19.0.722" />
-    <PackageReference Include="CarinaStudio.AppBase.Configuration" Version="0.19.0.722" />
-    <PackageReference Include="CarinaStudio.AppBase.Core" Version="0.19.0.722" />
+    <PackageReference Include="CarinaStudio.AppBase.Application" Version="0.20.0.723" />
+    <PackageReference Include="CarinaStudio.AppBase.Configuration" Version="0.20.0.723" />
+    <PackageReference Include="CarinaStudio.AppBase.Core" Version="0.20.0.723" />
     <PackageReference Include="Microsoft.Win32.SystemEvents" Version="5.0.0" />
     <PackageReference Include="NLog" Version="4.7.10" />
     <PackageReference Include="NLog.Extensions.Logging" Version="1.7.3" />
@@ -64,8 +64,9 @@
 	<ItemGroup>
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/AndroidDeviceLog.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/AndroidFileLog.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/DummyLog.json" />
 	  <EmbeddedResource Include="Logs/Profiles/BuiltIn/GitLog.json" />
-	  <EmbeddedResource Include="Logs/Profiles/BuiltIn/ULogViewerLog.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/ULogViewerLog.json" />
 	</ItemGroup>
 
 </Project>

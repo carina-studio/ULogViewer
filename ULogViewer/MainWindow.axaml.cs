@@ -10,6 +10,7 @@ using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Controls;
 using CarinaStudio.ULogViewer.ViewModels;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections;
 using System.Collections.Specialized;
@@ -30,11 +31,13 @@ namespace CarinaStudio.ULogViewer
 
 
 		// Constants.
+		const int ReAttachToWorkspaceDelay = 1000;
 		const int SaveWindowSizeDelay = 300;
 
 
 		// Fields.
 		readonly ScheduledAction focusOnTabItemContentAction;
+		readonly ScheduledAction reAttachToWorkspaceAction;
 		readonly ScheduledAction saveWindowSizeAction;
 		readonly DataTemplate sessionTabItemHeaderTemplate;
 		readonly TabControl tabControl;
@@ -64,6 +67,14 @@ namespace CarinaStudio.ULogViewer
 			{
 				((this.tabControl.SelectedItem as TabItem)?.Content as IControl)?.Focus();
 			});
+			this.reAttachToWorkspaceAction = new ScheduledAction(() =>
+			{
+				if (this.DataContext is not Workspace workspace)
+					return;
+				this.Logger.LogWarning("Re-attach to workspace");
+				this.DataContext = null;
+				this.DataContext = workspace;
+			});
 			this.saveWindowSizeAction = new ScheduledAction(() =>
 			{
 				if (this.WindowState == WindowState.Normal)
@@ -80,6 +91,9 @@ namespace CarinaStudio.ULogViewer
 				this.Width = Math.Max(0, it.GetValueOrDefault(WindowWidthSettingKey));
 				this.WindowState = it.GetValueOrDefault(WindowStateSettingKey);
 			});
+
+			// add handlers
+			this.Settings.SettingChanged += this.OnSettingChanged;
 		}
 
 
@@ -159,6 +173,17 @@ namespace CarinaStudio.ULogViewer
 
 		// Initialize Avalonia components.
 		private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
+
+
+		// Called when closed.
+		protected override void OnClosed(EventArgs e)
+		{
+			// remove handlers
+			this.Settings.SettingChanged -= this.OnSettingChanged;
+
+			// call base
+			base.OnClosed(e);
+		}
 
 
 		// Called when key down.
@@ -244,6 +269,17 @@ namespace CarinaStudio.ULogViewer
 					break;
 				default:
 					throw new InvalidOperationException($"Unsupported changed of list of Sessions: {e.Action}.");
+			}
+		}
+
+
+		// Called when setting changed.
+		void OnSettingChanged(object? sender, SettingChangedEventArgs e)
+		{
+			if (e.Key == Settings.ThemeMode)
+			{
+				this.Logger.LogWarning("Theme mode changed");
+				this.reAttachToWorkspaceAction.Reschedule(ReAttachToWorkspaceDelay);
 			}
 		}
 

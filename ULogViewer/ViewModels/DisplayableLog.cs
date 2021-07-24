@@ -13,6 +13,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 	/// </summary>
 	class DisplayableLog : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 	{
+		/// <summary>
+		/// Maximum line count to be displayed on UI.
+		/// </summary>
+		public const int MaxDisplayableLineCount = 5;
+
+
 		// Fields.
 		IBrush? colorIndicatorBrush;
 		bool isColorIndicatorBrushSet;
@@ -97,6 +103,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Check whether number of lines in <see cref="Message"/> is greater than <see cref="MaxDisplayableLineCount"/> or not.
+		/// </summary>
+		public bool HasExtraLinesOfMessage { get => this.Log.MessageLineCount > MaxDisplayableLineCount; }
+
+
+		/// <summary>
 		/// Get or set whether log has been marked or not.
 		/// </summary>
 		public bool IsMarked
@@ -165,6 +177,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Get message of log.
 		/// </summary>
 		public string? Message { get => this.Log.Message; }
+
+
+		/// <summary>
+		/// Get line count of <see cref="Message"/>.
+		/// </summary>
+		public int MessageLineCount { get => this.Log.MessageLineCount; }
 
 
 		/// <summary>

@@ -6,6 +6,8 @@
 						 xmlns:ia="using:Avalonia.Xaml.Interactivity"
 						 xmlns:iaCore="using:Avalonia.Xaml.Interactions.Core"
 						 xmlns:appControls="clr-namespace:CarinaStudio.ULogViewer.Controls;assembly=ULogViewer"
+						 xmlns:appConverters="clr-namespace:CarinaStudio.ULogViewer.Converters;assembly=ULogViewer"
+						 xmlns:appLogs="clr-namespace:CarinaStudio.ULogViewer.Logs;assembly=ULogViewer"
 						 xmlns:appViewModels="clr-namespace:CarinaStudio.ULogViewer.ViewModels;assembly=ULogViewer"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="CarinaStudio.ULogViewer.Controls.SessionView">
@@ -27,6 +29,9 @@
 
 		<!-- Log actions menu -->
 		<ContextMenu x:Key="logActionMenu">
+			<MenuItem Command="{Binding $parent[UserControl].MarkUnmarkSelectedLogsCommand}" Header="{DynamicResource String.SessionView.MarkUnmarkLogs}"/>
+			<MenuItem Command="{Binding $parent[UserControl].SelectMarkedLogsCommand}" Header="{DynamicResource String.SessionView.SelectMarkedLogs}"/>
+			<Separator/>
 			<MenuItem Command="{Binding $parent[UserControl].FilterLogsByProcessIdCommand}" Header="{DynamicResource String.SessionView.FilterLogsBySelectedProcessId}">
 				<MenuItem.CommandParameter>
 					<sys:Boolean>False</sys:Boolean>
@@ -47,14 +52,12 @@
 					<sys:Boolean>True</sys:Boolean>
 				</MenuItem.CommandParameter>
 			</MenuItem>
-			<Separator/>
-			<MenuItem Command="{Binding $parent[UserControl].MarkUnmarkSelectedLogsCommand}" Header="{DynamicResource String.SessionView.MarkUnmarkLogs}"/>
 		</ContextMenu>
 
 		<!-- Other actions menu -->
 		<ContextMenu x:Key="otherActionsMenu" PlacementMode="Bottom">
-			<MenuItem Header="{DynamicResource String.SessionView.AppOptions}"/>
-			<MenuItem Header="{DynamicResource String.SessionView.AppInfo}"/>
+			<MenuItem Command="{Binding $parent[UserControl].ShowAppOptions}" Header="{DynamicResource String.SessionView.AppOptions}"/>
+			<MenuItem Command="{Binding $parent[UserControl].ShowAppInfo}" Header="{DynamicResource String.SessionView.AppInfo}"/>
 		</ContextMenu>
 		
 	</UserControl.Resources>
@@ -151,37 +154,20 @@
 			<Grid ColumnDefinitions="Auto,Auto,Auto,Auto,*,Auto" Grid.Column="1" HorizontalAlignment="Stretch" Margin="{StaticResource Thickness.SessionView.ToolBar.LogFilters.Padding}" VerticalAlignment="Stretch">
 
 				<!-- Level filter -->
-				<ComboBox Name="logLevelFilterComboBox" Foreground="{DynamicResource Brush.LogLevel.Undefined}" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" Margin="{StaticResource Thickness.SessionView.ToolBar.LogLevelFilter.Margin}" SelectedIndex="0" SelectionChanged="OnLogLevelFilterComboBoxSelectionChanged" VerticalAlignment="Center" Width="{StaticResource Double.SessionView.ToolBar.LogLevelFilter.Width}">
-					<ia:Interaction.Behaviors>
-						<iaCore:DataTriggerBehavior Binding="{Binding $self.SelectedItem.Tag}" ComparisonCondition="Equal" Value="Undefined">
-							<iaCore:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource Brush.LogLevel.Undefined}"/>
-						</iaCore:DataTriggerBehavior>
-						<iaCore:DataTriggerBehavior Binding="{Binding $self.SelectedItem.Tag}" ComparisonCondition="Equal" Value="Info">
-							<iaCore:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource Brush.LogLevel.Info}"/>
-						</iaCore:DataTriggerBehavior>
-						<iaCore:DataTriggerBehavior Binding="{Binding $self.SelectedItem.Tag}" ComparisonCondition="Equal" Value="Verbose">
-							<iaCore:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource Brush.LogLevel.Verbose}"/>
-						</iaCore:DataTriggerBehavior>
-						<iaCore:DataTriggerBehavior Binding="{Binding $self.SelectedItem.Tag}" ComparisonCondition="Equal" Value="Debug">
-							<iaCore:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource Brush.LogLevel.Debug}"/>
-						</iaCore:DataTriggerBehavior>
-						<iaCore:DataTriggerBehavior Binding="{Binding $self.SelectedItem.Tag}" ComparisonCondition="Equal" Value="Warn">
-							<iaCore:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource Brush.LogLevel.Warn}"/>
-						</iaCore:DataTriggerBehavior>
-						<iaCore:DataTriggerBehavior Binding="{Binding $self.SelectedItem.Tag}" ComparisonCondition="Equal" Value="Error">
-							<iaCore:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource Brush.LogLevel.Error}"/>
-						</iaCore:DataTriggerBehavior>
-						<iaCore:DataTriggerBehavior Binding="{Binding $self.SelectedItem.Tag}" ComparisonCondition="Equal" Value="Fatal">
-							<iaCore:ChangePropertyAction PropertyName="Foreground" Value="{DynamicResource Brush.LogLevel.Fatal}"/>
-						</iaCore:DataTriggerBehavior>
-					</ia:Interaction.Behaviors>
-					<ComboBoxItem Content="{DynamicResource String.SessionView.AllLogLevels}" Foreground="{DynamicResource Brush.LogLevel.Undefined}" Tag="Undefined"/>
-					<ComboBoxItem Content="{DynamicResource String.LogLevel.Info}" Foreground="{DynamicResource Brush.LogLevel.Info}" Tag="Info"/>
-					<ComboBoxItem Content="{DynamicResource String.LogLevel.Verbose}" Foreground="{DynamicResource Brush.LogLevel.Verbose}" Tag="Verbose"/>
-					<ComboBoxItem Content="{DynamicResource String.LogLevel.Debug}" Foreground="{DynamicResource Brush.LogLevel.Debug}" Tag="Debug"/>
-					<ComboBoxItem Content="{DynamicResource String.LogLevel.Warn}" Foreground="{DynamicResource Brush.LogLevel.Warn}" Tag="Warn"/>
-					<ComboBoxItem Content="{DynamicResource String.LogLevel.Error}" Foreground="{DynamicResource Brush.LogLevel.Error}" Tag="Error"/>
-					<ComboBoxItem Content="{DynamicResource String.LogLevel.Fatal}" Foreground="{DynamicResource Brush.LogLevel.Fatal}" Tag="Fatal"/>
+				<ComboBox Name="logLevelFilterComboBox" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" Margin="{StaticResource Thickness.SessionView.ToolBar.LogLevelFilter.Margin}" SelectionChanged="OnLogLevelFilterComboBoxSelectionChanged" VerticalAlignment="Center" Width="{StaticResource Double.SessionView.ToolBar.LogLevelFilter.Width}">
+					<ComboBox.ItemTemplate>
+						<DataTemplate>
+							<TextBlock Foreground="{Binding Converter={x:Static appConverters:LogLevelBrushConverter.Default}}" Text="{Binding Converter={x:Static appControls:SessionView.LogLevelNameConverter}}">
+							</TextBlock>
+						</DataTemplate>
+					</ComboBox.ItemTemplate>
+					<appLogs:LogLevel>Undefined</appLogs:LogLevel>
+					<appLogs:LogLevel>Info</appLogs:LogLevel>
+					<appLogs:LogLevel>Verbose</appLogs:LogLevel>
+					<appLogs:LogLevel>Debug</appLogs:LogLevel>
+					<appLogs:LogLevel>Warn</appLogs:LogLevel>
+					<appLogs:LogLevel>Error</appLogs:LogLevel>
+					<appLogs:LogLevel>Fatal</appLogs:LogLevel>
 				</ComboBox>
 
 				<!-- PID filter -->
@@ -375,6 +361,13 @@
 			</ia:Interaction.Behaviors>
 			<Grid ColumnDefinitions="Auto,Auto,*">
 
+				<!-- Styles -->
+				<Grid.Styles>
+					<Style Selector="TextBlock">
+						<Setter Property="Foreground" Value="{DynamicResource Brush.SessionView.StatusBar.Foreground}"/>
+					</Style>
+				</Grid.Styles>
+
 				<!-- Empty view to reserve space -->
 				<TextBlock Grid.ColumnSpan="5" Text="{DynamicResource String.SessionView.AllLogCount}" Opacity="0"/>
 
@@ -388,17 +381,30 @@
 					<Separator Classes="SessionView_StatusBar_Separator"/>
 				</StackPanel>
 				<StackPanel IsVisible="{Binding HasLogs}" Orientation="Horizontal">
-					<TextBlock Text="{DynamicResource String.SessionView.AllLogCount}"/>
-					<TextBlock Text="{Binding AllLogCount}"/>
-					<TextBlock IsVisible="{Binding IsFilteringLogsNeeded}" Text="{DynamicResource String.SessionView.FilteredLogCount}"/>
-					<TextBlock IsVisible="{Binding IsFilteringLogsNeeded}" Text="{Binding FilteredLogCount}"/>
+					<TextBlock Text="{DynamicResource String.SessionView.AllLogCount}" VerticalAlignment="Center"/>
+					<TextBlock Text="{Binding AllLogCount}" VerticalAlignment="Center"/>
+					<TextBlock IsVisible="{Binding IsFilteringLogsNeeded}" Text="{DynamicResource String.SessionView.FilteredLogCount}" VerticalAlignment="Center"/>
+					<TextBlock IsVisible="{Binding IsFilteringLogsNeeded}" Text="{Binding FilteredLogCount}" VerticalAlignment="Center"/>
 					<Separator Classes="SessionView_StatusBar_Separator"/>
 				</StackPanel>
 
 				<!-- Filtering progress -->
-				<StackPanel Grid.Column="1" IsVisible="{Binding IsFilteringLogs}" Orientation="Horizontal">
+				<StackPanel Grid.Column="1" Opacity="0" Orientation="Horizontal">
 					<TextBlock Text="{DynamicResource String.SessionView.LogsFilteringProgress}"/>
-					<TextBlock Text="{Binding LogsFilteringProgress, Converter={x:Static appViewModels:Session.LogsFilteringProgressConverter}}"/>
+					<TextBlock Text="00000"/>
+					<Separator Classes="SessionView_StatusBar_Separator"/>
+				</StackPanel>
+				<StackPanel Grid.Column="1" IsVisible="{Binding IsFilteringLogs}" Orientation="Horizontal">
+					<TextBlock Text="{DynamicResource String.SessionView.LogsFilteringProgress}" VerticalAlignment="Center"/>
+					<TextBlock Text="{Binding LogsFilteringProgress, Converter={x:Static appViewModels:Session.LogsFilteringProgressConverter}}" VerticalAlignment="Center"/>
+					<Separator Classes="SessionView_StatusBar_Separator"/>
+				</StackPanel>
+
+				<!-- Selected logs -->
+				<StackPanel Grid.Column="2" IsVisible="{Binding #logListBox.SelectedItems.Count}" Orientation="Horizontal">
+					<TextBlock Text="{DynamicResource String.SessionView.SelectedLogCount}" VerticalAlignment="Center"/>
+					<TextBlock Text="{Binding #logListBox.SelectedItems.Count}" VerticalAlignment="Center"/>
+					<Separator Classes="SessionView_StatusBar_Separator"/>
 				</StackPanel>
 				
 			</Grid>

@@ -2,6 +2,34 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 										xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
+	<!-- AppCulture -->
+	<sys:String x:Key="String.AppCulture.System">自動</sys:String>
+
+	<!-- AppInfoDialog -->
+	<sys:String x:Key="String.AppInfoDialog.Attribution.AppIcon.Section1" xml:space="preserve">應用程式圖示由</sys:String>
+	<sys:String x:Key="String.AppInfoDialog.Attribution.AppIcon.Section2" xml:space="preserve">提供，並發布於</sys:String>
+	<sys:String x:Key="String.AppInfoDialog.Attribution.AppIcon.Section3" xml:space="preserve">。</sys:String>
+	<sys:String x:Key="String.AppInfoDialog.Attribution.Framework.Section1" xml:space="preserve">基於</sys:String>
+	<sys:String x:Key="String.AppInfoDialog.Attribution.Framework.Section2" xml:space="preserve">以及</sys:String>
+	<sys:String x:Key="String.AppInfoDialog.Attribution.Framework.Section3" xml:space="preserve">開發完成。</sys:String>
+	<sys:String x:Key="String.AppInfoDialog.SourceCode">GitHub 上的原始程式碼</sys:String>
+	<sys:String x:Key="String.AppInfoDialog.Title">關於 ULogViewer</sys:String>
+	<sys:String x:Key="String.AppInfoDialog.Version">版本：{0}</sys:String>
+
+	<!-- AppOptionsDialog -->
+	<sys:String x:Key="String.AppOptionsDialog.ContinuousLogReadingUpdateInterval">連續讀取時的日誌更新時距 (毫秒)</sys:String>
+	<sys:String x:Key="String.AppOptionsDialog.Culture">語系</sys:String>
+	<sys:String x:Key="String.AppOptionsDialog.IgnoreCaseOfLogTextFilter">文字篩選忽略大小寫</sys:String>
+	<sys:String x:Key="String.AppOptionsDialog.LogFiltering">日誌篩選</sys:String>
+	<sys:String x:Key="String.AppOptionsDialog.LogOperations">日誌操作</sys:String>
+	<sys:String x:Key="String.AppOptionsDialog.MaxContinuousLogCount">連續讀取時的最大日誌個數</sys:String>
+	<sys:String x:Key="String.AppOptionsDialog.SelectLogFilesWhenNeeded">當需要日誌檔案時立即開啟檔案選取介面</sys:String>
+	<sys:String x:Key="String.AppOptionsDialog.SelectWorkingDirectoryWhenNeeded">當需要工作目錄時立即開啟目錄選取介面</sys:String>
+	<sys:String x:Key="String.AppOptionsDialog.ThemeMode">佈景主題</sys:String>
+	<sys:String x:Key="String.AppOptionsDialog.Title">應用程式選項</sys:String>
+	<sys:String x:Key="String.AppOptionsDialog.UpdateLogFilterDelay">條件改變至開始篩選的延遲時間 (毫秒)</sys:String>
+	<sys:String x:Key="String.AppOptionsDialog.UserInterface">使用者介面</sys:String>
+	
 	<!-- Common -->
 	<sys:String x:Key="String.Common.Add">新增</sys:String>
 	<sys:String x:Key="String.Common.Cancel">取消</sys:String>
@@ -24,6 +52,9 @@
 	<sys:String x:Key="String.BuiltInProfile.AndroidDeviceLog">Android 裝置日誌</sys:String>
 	<sys:String x:Key="String.BuiltInProfile.AndroidFileLog">Android 日誌檔案</sys:String>
 	<sys:String x:Key="String.BuiltInProfile.GitLog">Git 提交紀錄</sys:String>
+
+	<!-- FallbackFontFamilies -->
+	<sys:String x:Key="String.FallbackFontFamilies">Microsoft JhengHei</sys:String>
 
 	<!-- LogColorIndicator -->
 	<sys:String x:Key="String.LogColorIndicator.FileName">檔案</sys:String>
@@ -55,6 +86,10 @@
 	<sys:String x:Key="String.LogLevelMapEntryEditor.Text">文字 (必須)</sys:String>
 	<sys:String x:Key="String.LogLevelMapEntryEditor.Title">日誌等級對照</sys:String>
 
+	<!-- LogMessageDialog -->
+	<sys:String x:Key="String.LogMessageDialog.WrapText">自動換行</sys:String>
+	<sys:String x:Key="String.LogMessageDialog.Title">日誌訊息</sys:String>
+
 	<!-- LogPatternEditorDialog -->
 	<sys:String x:Key="String.LogPatternEditorDialog.IsSkippable">此行可以被忽略</sys:String>
 	<sys:String x:Key="String.LogPatternEditorDialog.IsRepeatable">此行可以連續重複出現</sys:String>
@@ -77,7 +112,7 @@
 	<sys:String x:Key="String.LogProfileEditorDialog.ColorIndicator">色彩指示</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.ColorIndicator.Description">顯示於日誌左側的色塊分組方式</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.Common">一般設定</sys:String>
-	<sys:String x:Key="String.LogProfileEditorDialog.DataSourceOptions">參數...</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.DataSourceOptions">參數…</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.DataSourceProvider">資料來源</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.DuplicateLogLevelMapEntry">已經定義 '{0}'。</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.Icon">圖示</sys:String>
@@ -103,7 +138,7 @@
 	<sys:String x:Key="String.LogProfileEditorDialog.VisibleLogProperties.Description">指定有哪些日誌屬性可以在檢視器中看見</sys:String>
 
 	<!-- LogProfileSelectionDialog -->
-	<sys:String x:Key="String.LogProfileSelectionDialog.AddLogProfile">建立...</sys:String>
+	<sys:String x:Key="String.LogProfileSelectionDialog.AddLogProfile">建立…</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.AllLogProfiles">所有日誌類型</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.BuiltInLogProfile">內建</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.EditLogProfile">編輯日誌類型</sys:String>
@@ -151,11 +186,11 @@
 	<sys:String x:Key="String.SessionView.AddLogFiles">加入日誌檔案</sys:String>
 	<sys:String x:Key="String.SessionView.AllLogCount">總數：</sys:String>
 	<sys:String x:Key="String.SessionView.AllLogLevels">所有等級</sys:String>
-	<sys:String x:Key="String.SessionView.AppInfo">關於 ULogViewer...</sys:String>
-	<sys:String x:Key="String.SessionView.AppOptions">應用程式選項...</sys:String>
+	<sys:String x:Key="String.SessionView.AppInfo">關於 ULogViewer…</sys:String>
+	<sys:String x:Key="String.SessionView.AppOptions">應用程式選項…</sys:String>
 	<sys:String x:Key="String.SessionView.ClearLogFiles">清除所有已加入的日誌檔案</sys:String>
 	<sys:String x:Key="String.SessionView.ClearPredefinedLogTextFiltersSelection">清除選取</sys:String>
-	<sys:String x:Key="String.SessionView.CreatePredefinedLogTextFilter">建立...</sys:String>
+	<sys:String x:Key="String.SessionView.CreatePredefinedLogTextFilter">建立…</sys:String>
 	<sys:String x:Key="String.SessionView.FilteredLogCount">，已篩選：</sys:String>
 	<sys:String x:Key="String.SessionView.FilterLogsBySelectedProcessId">使用選取的 PID 篩選</sys:String>
 	<sys:String x:Key="String.SessionView.FilterLogsBySelectedProcessIdOnly">只使用選取的 PID 篩選</sys:String>
@@ -173,13 +208,20 @@
 	<sys:String x:Key="String.SessionView.ReloadLogs">重新載入日誌 (F5)</sys:String>
 	<sys:String x:Key="String.SessionView.ResetLogFilters">清除所有篩選設定</sys:String>
 	<sys:String x:Key="String.SessionView.ScrollToLatestLog">捲動至最新的日誌</sys:String>
+	<sys:String x:Key="String.SessionView.SelectedLogCount">已選取：</sys:String>
+	<sys:String x:Key="String.SessionView.SelectMarkedLogs">選取已標記的日誌 (S)</sys:String>
 	<sys:String x:Key="String.SessionView.SetLogProfile">選取/變更日誌類型</sys:String>
 	<sys:String x:Key="String.SessionView.SetWorkingDirectory">選取/變更工作目錄</sys:String>
 	<sys:String x:Key="String.SessionView.OtherActions">其他動作</sys:String>
+	<sys:String x:Key="String.SessionView.ViewFullLogMessage">檢視更多…</sys:String>
 
 	<!-- SortDirection -->
 	<sys:String x:Key="String.SortDirection.Ascending">遞增</sys:String>
 	<sys:String x:Key="String.SortDirection.Descending">遞減</sys:String>
+
+	<!-- ThemeMode -->
+	<sys:String x:Key="String.ThemeMode.Dark">深色</sys:String>
+	<sys:String x:Key="String.ThemeMode.Light">淺色</sys:String>
 
 	<!-- UnderlyingLogDataSource -->
 	<sys:String x:Key="String.UnderlyingLogDataSource.File">檔案</sys:String>

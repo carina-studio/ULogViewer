@@ -4,6 +4,7 @@ using Avalonia.ReactiveUI;
 using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.Markup.Xaml.Styling;
+using Avalonia.Media;
 using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.DataSources;
@@ -20,6 +21,7 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading;
 
 namespace CarinaStudio.ULogViewer
@@ -29,6 +31,10 @@ namespace CarinaStudio.ULogViewer
 	/// </summary>
 	class App : Application, IApplication
 	{
+		// Constants.
+		const string TextBoxFontFamilyResourceKey = "FontFamily.TextBox";
+
+
 		// Fields.
 		readonly ILogger logger;
 		MainWindow? mainWindow;
@@ -36,9 +42,10 @@ namespace CarinaStudio.ULogViewer
 		volatile Settings? settings;
 		readonly string settingsFilePath;
 		ResourceInclude? stringResources;
+		CultureInfo? stringResourcesCulture;
 		ResourceInclude? stringResourcesLinux;
-		StyleInclude? stylesDark;
-		StyleInclude? stylesLight;
+		StyleInclude? styles;
+		ThemeMode? stylesThemeMode;
 		volatile SynchronizationContext? synchronizationContext;
 		Workspace? workspace;
 
@@ -147,6 +154,9 @@ namespace CarinaStudio.ULogViewer
 			if (this.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime)
 				desktopLifetime.ShutdownMode = Avalonia.Controls.ShutdownMode.OnExplicitShutdown;
 
+			// setup culture info
+			this.UpdateCultureInfo();
+
 			// load strings
 			if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
 			{
@@ -223,8 +233,10 @@ namespace CarinaStudio.ULogViewer
 		// Called when setting changed.
 		void OnSettingChanged(object? sender, SettingChangedEventArgs e)
 		{
-			if (e.Key == ULogViewer.Settings.SelectLanguageAutomatically)
-				this.UpdateStringResources();
+			if (e.Key == Settings.Culture)
+				this.UpdateCultureInfo();
+			else if (e.Key == Settings.ThemeMode)
+				this.UpdateStyles();
 		}
 
 
@@ -234,22 +246,8 @@ namespace CarinaStudio.ULogViewer
 			this.logger.LogWarning("Culture info of system has been changed");
 
 			// update culture info
-			this.CultureInfo = CultureInfo.CurrentCulture;
-			this.CultureInfo.ClearCachedData();
-			this.propertyChangedHandlers?.Invoke(this, new PropertyChangedEventArgs(nameof(CultureInfo)));
-
-			// update string resources
-			if (this.stringResources != null)
-			{
-				this.Resources.MergedDictionaries.Remove(this.stringResources);
-				this.stringResources = null;
-			}
-			if (this.stringResourcesLinux != null)
-			{
-				this.Resources.MergedDictionaries.Remove(this.stringResourcesLinux);
-				this.stringResourcesLinux = null;
-			}
-			this.UpdateStringResources();
+			if (this.Settings.GetValueOrDefault(Settings.Culture) == AppCulture.System)
+				this.UpdateCultureInfo();
 		}
 
 
@@ -296,29 +294,108 @@ namespace CarinaStudio.ULogViewer
 		}
 
 
+		// Update culture info according to current culture info and settings.
+		void UpdateCultureInfo()
+		{
+			// select culture info
+			var cultureInfo = this.Settings.GetValueOrDefault(Settings.Culture).Let(it =>
+			{
+				if (it == AppCulture.System)
+					return CultureInfo.CurrentCulture;
+				var name = new StringBuilder(it.ToString());
+				for (var i = 0; i < name.Length; ++i)
+				{
+					var c = name[i];
+					if (c == '_')
+					{
+						name[i] = '-';
+						break;
+					}
+					name[i] = char.ToLower(c);
+				}
+				try
+				{
+					return CultureInfo.GetCultureInfo(name.ToString());
+				}
+				catch
+				{
+					logger.LogError($"Unknown culture: {name}");
+					return CultureInfo.CurrentCulture;
+				}
+			});
+			cultureInfo.ClearCachedData();
+
+			// check current culture info
+			if (this.CultureInfo.Equals(cultureInfo))
+				return;
+
+			logger.LogWarning($"Update application culture to {cultureInfo.Name}");
+
+			// change culture info
+			this.CultureInfo = cultureInfo;
+			this.propertyChangedHandlers?.Invoke(this, new PropertyChangedEventArgs(nameof(CultureInfo)));
+
+			// update string resources
+			this.UpdateStringResources();
+		}
+
+
+		// Update dynamic font families according to current culture info and settings.
+		void UpdateDynamicFontFamilies()
+		{
+			var fontFamily = Global.Run(() =>
+			{
+				if (!this.Resources.TryGetResource("String.FallbackFontFamilies", out var res) || res is not string fontFamilies)
+					return null;
+				return $"{fontFamilies}";
+			})?.Let(it => new FontFamily(it));
+			if (fontFamily != null)
+				this.Resources[TextBoxFontFamilyResourceKey] = fontFamily;
+			else
+				this.Resources.Remove(TextBoxFontFamilyResourceKey);
+		}
+
+
 		// Update string resources according to current culture info and settings.
 		void UpdateStringResources()
 		{
 			var updated = false;
-			if (this.Settings.GetValueOrDefault(Settings.SelectLanguageAutomatically))
+			var cultureInfo = this.CultureInfo;
+			if (cultureInfo.Name != "en-US")
 			{
+				// clear resources
+				if (!cultureInfo.Equals(this.stringResourcesCulture))
+				{
+					if (this.stringResources != null)
+					{
+						this.Resources.MergedDictionaries.Remove(this.stringResources);
+						this.stringResources = null;
+						updated = true;
+					}
+					if (this.stringResourcesLinux != null)
+					{
+						this.Resources.MergedDictionaries.Remove(this.stringResourcesLinux);
+						this.stringResourcesLinux = null;
+						updated = true;
+					}
+				}
+
 				// base resources
-				var localeName = this.CultureInfo.Name;
 				if (this.stringResources == null)
 				{
 					try
 					{
 						this.stringResources = new ResourceInclude()
 						{
-							Source = new Uri($"avares://ULogViewer/Strings/{localeName}.axaml")
+							Source = new Uri($"avares://ULogViewer/Strings/{cultureInfo.Name}.axaml")
 						};
 						_ = this.stringResources.Loaded; // trigger error if resource not found
-						this.logger.LogInformation($"Load strings for {localeName}");
+						this.logger.LogInformation($"Load strings for {cultureInfo.Name}");
 					}
 					catch
 					{
 						this.stringResources = null;
-						this.logger.LogWarning($"No strings for {localeName}");
+						this.logger.LogWarning($"No strings for {cultureInfo.Name}");
 						return;
 					}
 					this.Resources.MergedDictionaries.Add(this.stringResources);
@@ -339,15 +416,15 @@ namespace CarinaStudio.ULogViewer
 						{
 							this.stringResourcesLinux = new ResourceInclude()
 							{
-								Source = new Uri($"avares://ULogViewer/Strings/{localeName}-Linux.axaml")
+								Source = new Uri($"avares://ULogViewer/Strings/{cultureInfo.Name}-Linux.axaml")
 							};
 							_ = this.stringResourcesLinux.Loaded; // trigger error if resource not found
-							this.logger.LogInformation($"Load strings (Linux) for {localeName}.");
+							this.logger.LogInformation($"Load strings (Linux) for {cultureInfo.Name}.");
 						}
 						catch
 						{
 							this.stringResourcesLinux = null;
-							this.logger.LogWarning($"No strings (Linux) for {localeName}.");
+							this.logger.LogWarning($"No strings (Linux) for {cultureInfo.Name}.");
 							return;
 						}
 						this.Resources.MergedDictionaries.Add(this.stringResourcesLinux);
@@ -368,39 +445,42 @@ namespace CarinaStudio.ULogViewer
 					updated |= this.Resources.MergedDictionaries.Remove(this.stringResourcesLinux);
 			}
 			if (updated)
+			{
+				this.stringResourcesCulture = cultureInfo;
+				this.UpdateDynamicFontFamilies();
 				this.StringsUpdated?.Invoke(this, EventArgs.Empty);
+			}
 		}
 
 
 		// Update styles according to settings.
 		void UpdateStyles()
 		{
-			// select style
-			var darkMode = this.Settings.GetValueOrDefault(Settings.DarkMode);
-			var addingStyle = darkMode switch
+			// check current styles
+			var themeMode = this.Settings.GetValueOrDefault(Settings.ThemeMode);
+			var stylesToRemove = (StyleInclude?)null;
+			if (this.stylesThemeMode != themeMode && this.styles != null)
 			{
-				true => this.stylesDark ?? new StyleInclude(new Uri("avares://ULogViewer/")).Also((it) =>
-				{
-					it.Source = new Uri("avares://ULogViewer/Styles/Dark.axaml");
-					this.stylesDark = it;
-				}),
-				_ => this.stylesLight ?? new StyleInclude(new Uri("avares://ULogViewer/")).Also((it) =>
-				{
-					it.Source = new Uri("avares://ULogViewer/Styles/Light.axaml");
-					this.stylesLight = it;
-				}),
-			};
-			var removingStyle = darkMode switch
-			{
-				true => this.stylesLight,
-				_ => this.stylesDark,
-			};
+				stylesToRemove = this.styles;
+				this.styles = null;
+			}
 
-			// update style
-			if (removingStyle != null)
-				this.Styles.Remove(removingStyle);
-			if (!this.Styles.Contains(addingStyle))
-				this.Styles.Add(addingStyle);
+			// update styles
+			if (this.styles == null)
+			{
+				this.styles = new StyleInclude(new Uri("avares://ULogViewer/"))
+				{
+					Source = new Uri($"avares://ULogViewer/Styles/{themeMode}.axaml")
+				};
+				this.Styles.Add(this.styles);
+			}
+			else if (!this.Styles.Contains(this.styles))
+				this.Styles.Add(this.styles);
+			this.stylesThemeMode = themeMode;
+
+			// remove styles
+			if (stylesToRemove != null)
+				this.Styles.Remove(stylesToRemove);
 		}
 
 

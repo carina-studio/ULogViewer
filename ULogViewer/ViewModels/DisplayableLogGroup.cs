@@ -192,7 +192,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		// Called when setting changed.
 		void OnSettingChanged(object? sender, SettingChangedEventArgs e)
 		{
-			if (e.Key == Settings.DarkMode)
+			if (e.Key == Settings.ThemeMode)
 			{
 				this.SynchronizationContext.Post(() =>
 				{

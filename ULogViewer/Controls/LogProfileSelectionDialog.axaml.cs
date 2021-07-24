@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using CarinaStudio.Collections;
+using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.Windows.Input;
 using System;
@@ -17,7 +18,12 @@ namespace CarinaStudio.ULogViewer.Controls
 	/// </summary>
 	partial class LogProfileSelectionDialog : BaseDialog
 	{
+		// Static fields.
+		static readonly AvaloniaProperty<Predicate<LogProfile>?> FilterProperty = AvaloniaProperty.Register<LogProfileEditorDialog, Predicate<LogProfile>?>(nameof(Filter));
+
+
 		// Fields.
+		readonly HashSet<LogProfile> attachedLogProfiles = new HashSet<LogProfile>();
 		readonly ListBox otherLogProfileListBox;
 		readonly SortedObservableList<LogProfile> otherLogProfiles = new SortedObservableList<LogProfile>(CompareLogProfiles);
 		readonly ListBox pinnedLogProfileListBox;
@@ -42,14 +48,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// attach to log profiles
 			((INotifyCollectionChanged)LogProfiles.All).CollectionChanged += this.OnAllLogProfilesChanged;
-			foreach(var profile in LogProfiles.All)
-			{
-				if (profile.IsPinned)
-					this.pinnedLogProfiles.Add(profile);
-				else
-					this.otherLogProfiles.Add(profile);
-				profile.PropertyChanged += this.OnLogProdilePropertyChanged;
-			}
+			this.RefreshLogProfiles();
 		}
 
 
@@ -88,6 +87,16 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		/// <summary>
+		/// Get or set <see cref="Predicate{T}"/> to filter log profiles.
+		/// </summary>
+		public Predicate<LogProfile>? Filter
+		{
+			get => this.GetValue<Predicate<LogProfile>?>(FilterProperty);
+			set => this.SetValue<Predicate<LogProfile>?>(FilterProperty, value);
+		}
+
+
 		// Initialize Avalonia components.
 		private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
 
@@ -108,8 +117,13 @@ namespace CarinaStudio.ULogViewer.Controls
 			switch(e.Action)
 			{
 				case NotifyCollectionChangedAction.Add:
+					var filter = this.Filter;
 					foreach (LogProfile logProfile in e.NewItems.AsNonNull())
 					{
+						if (filter != null && !filter(logProfile))
+							continue;
+						if (!this.attachedLogProfiles.Add(logProfile))
+							continue;
 						if (logProfile.IsPinned)
 							this.pinnedLogProfiles.Add(logProfile);
 						else
@@ -120,6 +134,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				case NotifyCollectionChangedAction.Remove:
 					foreach (LogProfile logProfile in e.OldItems.AsNonNull())
 					{
+						if (!this.attachedLogProfiles.Remove(logProfile))
+							continue;
 						logProfile.PropertyChanged -= this.OnLogProdilePropertyChanged;
 						this.otherLogProfiles.Remove(logProfile);
 						this.pinnedLogProfiles.Remove(logProfile);
@@ -134,8 +150,9 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			// detach from log profiles
 			((INotifyCollectionChanged)LogProfiles.All).CollectionChanged -= this.OnAllLogProfilesChanged;
-			foreach (var profile in LogProfiles.All)
+			foreach (var profile in this.attachedLogProfiles)
 				profile.PropertyChanged -= this.OnLogProdilePropertyChanged;
+			this.attachedLogProfiles.Clear();
 
 			// call base
 			base.OnClosed(e);
@@ -183,6 +200,15 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Called when opened.
+		protected override void OnOpened(EventArgs e)
+		{
+			base.OnOpened(e);
+			if (this.otherLogProfiles.IsEmpty() && this.pinnedLogProfiles.IsEmpty())
+				this.SynchronizationContext.Post(this.Close);
+		}
+
+
 		// Called when selection in other log profiles changed.
 		void OnOtherLogProfilesSelectionChanged(object? sender, SelectionChangedEventArgs e)
 		{
@@ -198,6 +224,15 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (this.pinnedLogProfileListBox.SelectedIndex >= 0)
 				this.otherLogProfileListBox.SelectedIndex = -1;
 			this.InvalidateInput();
+		}
+
+
+		// Called when property changed.
+		protected override void OnPropertyChanged<T>(AvaloniaPropertyChangedEventArgs<T> change)
+		{
+			base.OnPropertyChanged(change);
+			if (change.Property == FilterProperty)
+				this.RefreshLogProfiles();
 		}
 
 
@@ -226,6 +261,51 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (logProfile == null)
 				return;
 			logProfile.IsPinned = !logProfile.IsPinned;
+		}
+
+
+		// Refresh log profiles.
+		void RefreshLogProfiles()
+		{
+			if (this.IsClosed)
+				return;
+			var filter = this.Filter;
+			if (filter == null)
+			{
+				foreach (var profile in LogProfiles.All)
+				{
+					if (!this.attachedLogProfiles.Add(profile))
+						continue;
+					if (profile.IsPinned)
+						this.pinnedLogProfiles.Add(profile);
+					else
+						this.otherLogProfiles.Add(profile);
+					profile.PropertyChanged += this.OnLogProdilePropertyChanged;
+				}
+			}
+			else
+			{
+				foreach (var profile in this.attachedLogProfiles)
+				{
+					if (!filter(profile))
+					{
+						this.attachedLogProfiles.Remove(profile);
+						this.otherLogProfiles.Remove(profile);
+						this.pinnedLogProfiles.Remove(profile);
+						profile.PropertyChanged -= this.OnLogProdilePropertyChanged;
+					}
+				}
+				foreach (var profile in LogProfiles.All)
+				{
+					if (!filter(profile) || !this.attachedLogProfiles.Add(profile))
+						continue;
+					if (profile.IsPinned)
+						this.pinnedLogProfiles.Add(profile);
+					else
+						this.otherLogProfiles.Add(profile);
+					profile.PropertyChanged += this.OnLogProdilePropertyChanged;
+				}
+			}
 		}
 
 

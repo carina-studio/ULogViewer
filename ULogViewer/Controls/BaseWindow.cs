@@ -21,6 +21,14 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// Property of <see cref="HasDialogs"/>.
 		/// </summary>
 		public static readonly AvaloniaProperty<bool> HasDialogsProperty = AvaloniaProperty.Register<BaseWindow, bool>(nameof(HasDialogs), false);
+		/// <summary>
+		/// Property of <see cref="IsClosed"/>.
+		/// </summary>
+		public static readonly AvaloniaProperty<bool> IsClosedProperty = AvaloniaProperty.Register<BaseWindow, bool>(nameof(IsClosed), false);
+		/// <summary>
+		/// Property of <see cref="IsOpened"/>.
+		/// </summary>
+		public static readonly AvaloniaProperty<bool> IsOpenedProperty = AvaloniaProperty.Register<BaseWindow, bool>(nameof(IsOpened), false);
 
 
 		// Fields.
@@ -35,6 +43,11 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.Application = App.Current;
 			this.Application.VerifyAccess();
 			this.Logger = this.Application.LoggerFactory.CreateLogger(this.GetType().Name);
+			this.AddHandler(PointerWheelChangedEvent, (_, e) =>
+			{
+				if (this.HasDialogs)
+					e.Handled = true;
+			}, Avalonia.Interactivity.RoutingStrategies.Tunnel);
 		}
 
 
@@ -51,9 +64,30 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		/// <summary>
+		/// Check whether window is closed or not.
+		/// </summary>
+		public bool IsClosed { get => this.GetValue<bool>(IsClosedProperty); }
+
+
+		/// <summary>
+		/// Check whether window is opened or not.
+		/// </summary>
+		public bool IsOpened { get => this.GetValue<bool>(IsOpenedProperty); }
+
+
+		/// <summary>
 		/// Get logger.
 		/// </summary>
 		protected ILogger Logger { get; }
+
+
+		// Called when closed.
+		protected override void OnClosed(EventArgs e)
+		{
+			this.SetValue<bool>(IsOpenedProperty, false);
+			this.SetValue<bool>(IsClosedProperty, true);
+			base.OnClosed(e);
+		}
 
 
 		/// <summary>
@@ -82,6 +116,14 @@ namespace CarinaStudio.ULogViewer.Controls
 				(this.Content as Control)?.Let(it => it.Opacity = 0.2);
 				this.SetValue<bool>(HasDialogsProperty, true);
 			}
+		}
+
+
+		// Called when opened.
+		protected override void OnOpened(EventArgs e)
+		{
+			this.SetValue<bool>(IsOpenedProperty, true);
+			base.OnOpened(e);
 		}
 
 

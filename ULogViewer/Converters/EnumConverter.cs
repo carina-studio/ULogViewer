@@ -9,6 +9,12 @@ namespace CarinaStudio.ULogViewer.Converters
 	/// </summary>
 	class EnumConverter : IValueConverter
 	{
+		/// <summary>
+		/// Default instance to convert <see cref="Logs.LogLevel"/>.
+		/// </summary>
+		public static readonly EnumConverter LogLevel = new EnumConverter<Logs.LogLevel>(App.Current);
+
+
 		// Fields.
 		readonly IApplication app;
 		readonly Type type;

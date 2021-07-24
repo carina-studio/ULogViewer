@@ -1,0 +1,81 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+				xmlns:app="using:CarinaStudio.ULogViewer"
+				xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="CarinaStudio.ULogViewer.Controls.AppOptionsDialog"
+				Classes="Dialog"
+				ShowInTaskbar="True"
+				SizeToContent="Height"
+        Title="{DynamicResource String.AppOptionsDialog.Title}"
+				Width="{StaticResource Double.AppOptionsDialog.Width}">
+
+	<DockPanel>
+
+		<!-- Control buttons -->
+		<Border Classes="Dialog_ControlButtonsPanel" DockPanel.Dock="Bottom">
+			<StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].CancelCommand}" Content="{DynamicResource String.Common.OK}"/>
+			</StackPanel>
+		</Border>
+
+		<!-- Content -->
+		<ScrollViewer MaxHeight="{StaticResource Double.AppOptionsDialog.Content.MaxHeight}">
+			<StackPanel Margin="{StaticResource Thickness.Dialog.Content.Padding}" Orientation="Vertical">
+
+				<!-- User interface -->
+				<TextBlock Classes="Dialog_Label_Header1" Text="{DynamicResource String.AppOptionsDialog.UserInterface}"/>
+
+				<!-- Theme mode -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.AppOptionsDialog.ThemeMode}"/>
+				<appControls:EnumComboBox EnumType="{x:Type app:ThemeMode}" HorizontalAlignment="Stretch" SelectedItem="{Binding ThemeMode, Mode=TwoWay}"/>
+				<Separator Classes="Dialog_Separator_Horizontal"/>
+				
+				<!-- Culture -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.AppOptionsDialog.Culture}"/>
+				<appControls:EnumComboBox EnumType="{x:Type app:AppCulture}" HorizontalAlignment="Stretch" SelectedItem="{Binding Culture, Mode=TwoWay}"/>
+				<Separator Classes="Dialog_Separator_Large_Horizontal"/>
+
+				<!-- Log operations -->
+				<TextBlock Classes="Dialog_Label_Header1" Text="{DynamicResource String.AppOptionsDialog.LogOperations}"/>
+
+				<!-- Select files when needed -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.AppOptionsDialog.SelectLogFilesWhenNeeded}"/>
+				<ToggleSwitch IsChecked="{Binding SelectLogFilesWhenNeeded, Mode=TwoWay}"/>
+				<Separator Classes="Dialog_Separator_Horizontal"/>
+
+				<!-- Select working directory when needed -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.AppOptionsDialog.SelectWorkingDirectoryWhenNeeded}"/>
+				<ToggleSwitch IsChecked="{Binding SelectWorkingDirectoryWhenNeeded, Mode=TwoWay}"/>
+				<Separator Classes="Dialog_Separator_Horizontal"/>
+
+				<!-- Max log count -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.AppOptionsDialog.MaxContinuousLogCount}"/>
+				<NumericUpDown HorizontalAlignment="Stretch" Maximum="10000000" Minimum="10000" Value="{Binding MaxContinuousLogCount, Mode=TwoWay}"/>
+				<Separator Classes="Dialog_Separator_Horizontal"/>
+
+				<!-- Update interval -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.AppOptionsDialog.ContinuousLogReadingUpdateInterval}"/>
+				<NumericUpDown HorizontalAlignment="Stretch" Maximum="1000" Minimum="50" Value="{Binding ContinuousLogReadingUpdateInterval, Mode=TwoWay}"/>
+				<Separator Classes="Dialog_Separator_Large_Horizontal"/>
+
+				<!-- Log filtering -->
+				<TextBlock Classes="Dialog_Label_Header1" Text="{DynamicResource String.AppOptionsDialog.LogFiltering}"/>
+
+				<!-- Ignore case -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.AppOptionsDialog.IgnoreCaseOfLogTextFilter}"/>
+				<ToggleSwitch IsChecked="{Binding IgnoreCaseOfLogTextFilter, Mode=TwoWay}"/>
+				<Separator Classes="Dialog_Separator_Horizontal"/>
+
+				<!-- Max log count -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.AppOptionsDialog.UpdateLogFilterDelay}"/>
+				<NumericUpDown HorizontalAlignment="Stretch" Maximum="1500" Minimum="300" Value="{Binding UpdateLogFilterDelay, Mode=TwoWay}"/>
+				
+			</StackPanel>
+		</ScrollViewer>
+
+	</DockPanel>
+	
+</Window>

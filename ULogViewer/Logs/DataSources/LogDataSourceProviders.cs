@@ -55,6 +55,9 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			// create providers
 			logger.LogDebug("Initialize");
 			empty = new EmptyLogDataSourceProvider(app);
+#if DEBUG
+			providers.Add(new DummyLogDataSourceProvider(app));
+#endif
 			providers.Add(new FileLogDataSourceProvider(app));
 			providers.Add(new StandardOutputLogDataSourceProvider(app));
 		}

@@ -30,6 +30,18 @@ namespace CarinaStudio.ULogViewer.Logs
 			this.Level = builder.GetEnumOrNull<LogLevel>(nameof(Level)) ?? LogLevel.Undefined;
 			this.LineNumber = builder.GetInt32OrNull(nameof(LineNumber));
 			this.Message = builder.GetStringOrNull(nameof(Message));
+			this.MessageLineCount = this.Message.Let(message =>
+			{
+				if (message == null)
+					return 0;
+				var lineCount = 1;
+				for (var i = message.Length - 1; i >= 0; --i)
+				{
+					if (message[i] == '\n')
+						++lineCount;
+				}
+				return lineCount;
+			});
 			this.ProcessId = builder.GetInt32OrNull(nameof(ProcessId));
 			this.ProcessName = builder.GetStringOrNull(nameof(ProcessName));
 			this.SourceName = builder.GetStringOrNull(nameof(SourceName));
@@ -84,6 +96,12 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		/// <summary>
+		/// Get line count of <see cref="Message"/>.
+		/// </summary>
+		public int MessageLineCount { get; }
+
+
+		/// <summary>
 		/// Get ID of process which generates log.
 		/// </summary>
 		public int? ProcessId { get; }
@@ -129,8 +147,9 @@ namespace CarinaStudio.ULogViewer.Logs
 						{
 							switch(propertyInfo.Name)
 							{
-								case "Id":
-								case "PropertyNames":
+								case nameof(Id):
+								case nameof(MessageLineCount):
+								case nameof(PropertyNames):
 									break;
 								default:
 									propertyMap[propertyInfo.Name] = propertyInfo;
