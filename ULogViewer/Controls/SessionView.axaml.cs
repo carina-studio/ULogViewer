@@ -14,8 +14,8 @@ using Avalonia.Media;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
-using CarinaStudio.ULogViewer.Converters;
 using CarinaStudio.ULogViewer.Input;
+using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ULogViewer.ViewModels;
 using CarinaStudio.Windows.Input;
@@ -77,6 +77,8 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Fields.
+		readonly ScheduledAction autoAddLogFilesAction;
+		readonly ScheduledAction autoSetWorkingDirectoryAction;
 		readonly MutableObservableBoolean canAddLogFiles = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canFilterLogsByPid = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canFilterLogsByTid = new MutableObservableBoolean();
@@ -188,6 +190,18 @@ namespace CarinaStudio.ULogViewer.Controls
 #endif
 
 			// create scheduled actions
+			this.autoAddLogFilesAction = new ScheduledAction(() =>
+			{
+				if (this.DataContext is not Session session || session.HasLogReaders)
+					return;
+				this.AddLogFiles();
+			});
+			this.autoSetWorkingDirectoryAction = new ScheduledAction(() =>
+			{
+				if (this.DataContext is not Session session || session.HasLogReaders)
+					return;
+				this.SetWorkingDirectory();
+			});
 			this.scrollToLatestLogAction = new ScheduledAction(() =>
 			{
 				// check state
@@ -270,6 +284,9 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.Logger.LogError("Unable to add log files without attaching to window");
 				return;
 			}
+
+			// cancel scheduled action
+			this.autoAddLogFilesAction.Cancel();
 
 			// select files
 			var fileNames = await new OpenFileDialog()
@@ -913,7 +930,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			e.Handled = true;
 
 			// check session
-			if (this.DataContext is not Session session || !session.AddLogFileCommand.CanExecute(null))
+			if (this.DataContext is not Session)
 			{
 				e.DragEffects = DragDropEffects.None;
 				return;
@@ -937,19 +954,25 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 
 			// bring window to front
-			this.FindLogicalAncestorOfType<Window>()?.Let(it => it.ActivateAndBringToFront());
+			var window = this.FindLogicalAncestorOfType<Window>();
+			if (window == null)
+				return;
+			window.ActivateAndBringToFront();
 
 			// collect files
 			var dropFilePaths = e.Data.GetFileNames().AsNonNull();
-			var filePaths = await Task.Run(() =>
+			var dirPaths = new List<string>();
+			var filePaths = new List<string>();
+			await Task.Run(() =>
 			{
-				var filePaths = new List<string>();
-				foreach (var filePath in dropFilePaths)
+				foreach (var path in dropFilePaths)
 				{
 					try
 					{
-						if (File.Exists(filePath))
-							filePaths.Add(filePath);
+						if (File.Exists(path))
+							filePaths.Add(path);
+						else if (Directory.Exists(path))
+							dirPaths.Add(path);
 					}
 					catch
 					{ }
@@ -957,13 +980,86 @@ namespace CarinaStudio.ULogViewer.Controls
 				return filePaths;
 			});
 			if (filePaths.IsEmpty())
+			{
+				if (dirPaths.IsEmpty())
+				{
+					_ = new MessageDialog()
+					{
+						Icon = MessageDialogIcon.Information,
+						Message = this.Application.GetString("SessionView.NoFilePathDropped")
+					}.ShowDialog(window);
+					return;
+				}
+				if (dirPaths.Count > 1)
+				{
+					_ = new MessageDialog()
+					{
+						Icon = MessageDialogIcon.Information,
+						Message = this.Application.GetString("SessionView.TooManyDirectoryPathsDropped")
+					}.ShowDialog(window);
+					return;
+				}
+			}
+
+			// check state
+			if (this.DataContext is not Session session)
 				return;
 
-			// add files
-			if (this.DataContext is not Session session || !session.AddLogFileCommand.CanExecute(null))
-				return;
-			foreach (var filePath in filePaths)
-				session.AddLogFileCommand.TryExecute(filePath);
+			// select new log profile
+			var currentLogProfile = session.LogProfile;
+			var needNewLogProfile = currentLogProfile == null ? true : currentLogProfile.DataSourceProvider.UnderlyingSource switch
+			{
+				UnderlyingLogDataSource.File => filePaths.IsEmpty(),
+				UnderlyingLogDataSource.StandardOutput => filePaths.IsNotEmpty(),
+				_ => false,
+			};
+			var newLogProfile = !needNewLogProfile ? null : await new LogProfileSelectionDialog().Also(it =>
+			{
+				if (filePaths.IsEmpty())
+				{
+					it.Filter = logProfile =>
+					{
+						return logProfile.DataSourceProvider.UnderlyingSource == UnderlyingLogDataSource.StandardOutput
+							&& logProfile.IsWorkingDirectoryNeeded
+							&& logProfile.DataSourceOptions.WorkingDirectory == null;
+					};
+				}
+				else
+					it.Filter = logProfile => logProfile.DataSourceProvider.UnderlyingSource == UnderlyingLogDataSource.File;
+			}).ShowDialog<LogProfile>(window);
+
+			// set log profile or create new session
+			if (newLogProfile != null)
+			{
+				if (currentLogProfile == null)
+				{
+					if (!session.SetLogProfileCommand.TryExecute(newLogProfile))
+						return;
+				}
+				else if (filePaths.IsNotEmpty())
+				{
+					var workspace = session.Workspace;
+					var newSession = workspace.CreateSessionWithLogFiles(newLogProfile, filePaths);
+					workspace.ActiveSession = newSession;
+					return;
+				}
+				else
+				{
+					var workspace = session.Workspace;
+					var newSession = workspace.CreateSessionWithWorkingDirectory(newLogProfile, dirPaths[0]);
+					workspace.ActiveSession = newSession;
+					return;
+				}
+			}
+
+			// set working directory or add log files
+			if (session.SetWorkingDirectoryCommand.CanExecute(null))
+				session.SetWorkingDirectoryCommand.TryExecute(dirPaths[0]);
+			else if (session.AddLogFileCommand.CanExecute(null))
+			{
+				foreach (var filePath in filePaths)
+					session.AddLogFileCommand.TryExecute(filePath);
+			}
 		}
 
 
@@ -1252,7 +1348,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					if (this.isLogFileNeededAfterLogProfileSet)
 					{
 						this.isLogFileNeededAfterLogProfileSet = false;
-						this.AddLogFiles();
+						this.autoAddLogFilesAction.Reschedule();
 					}
 				}
 				else
@@ -1270,7 +1366,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					if (this.isWorkingDirNeededAfterLogProfileSet)
 					{
 						this.isWorkingDirNeededAfterLogProfileSet = false;
-						this.SetWorkingDirectory();
+						this.autoSetWorkingDirectoryAction.Reschedule();
 					}
 				}
 				else
@@ -1311,7 +1407,17 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.updateStatusBarStateAction.Schedule();
 					break;
 				case nameof(Session.LogProfile):
-					this.SetValue<bool>(HasLogProfileProperty, session.LogProfile != null);
+					session.LogProfile?.Let(profile =>
+					{
+						if (profile != null)
+						{
+							this.SetValue<bool>(HasLogProfileProperty, true);
+							if (!profile.IsContinuousReading)
+								this.IsScrollingToLatestLogNeeded = false;
+						}
+						else
+							this.SetValue<bool>(HasLogProfileProperty, false);
+					});
 					break;
 			}
 		}
@@ -1426,6 +1532,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			// reset log profile
 			this.isLogFileNeededAfterLogProfileSet = false;
 			this.isWorkingDirNeededAfterLogProfileSet = false;
+			this.autoAddLogFilesAction.Cancel();
+			this.autoSetWorkingDirectoryAction.Cancel();
 			if (session.ResetLogProfileCommand.CanExecute(null))
 				session.ResetLogProfileCommand.Execute(null);
 
@@ -1463,6 +1571,9 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.Logger.LogError("Unable to set working directory without attaching to window");
 				return;
 			}
+
+			// cancel scheduled action
+			this.autoSetWorkingDirectoryAction.Cancel();
 
 			// select directory
 			var directory = await new OpenFolderDialog()

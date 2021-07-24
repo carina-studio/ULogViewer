@@ -150,6 +150,76 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		}
 
 
+		/// <summary>
+		/// Create new session and add log files immediately.
+		/// </summary>
+		/// <param name="logProfile">Log profile.</param>
+		/// <param name="filePaths">Log file paths.</param>
+		/// <returns>Created session.</returns>
+		public Session CreateSessionWithLogFiles(LogProfile logProfile, IEnumerable<string> filePaths) => this.CreateSessionWithLogFiles(this.sessions.Count, logProfile, filePaths);
+
+
+		/// <summary>
+		/// Create new session and add log files immediately.
+		/// </summary>
+		/// <param name="index">Position of created session.</param>
+		/// <param name="logProfile">Log profile.</param>
+		/// <param name="filePaths">Log file paths.</param>
+		/// <returns>Created session.</returns>
+		public Session CreateSessionWithLogFiles(int index, LogProfile logProfile, IEnumerable<string> filePaths)
+		{
+			// create session
+			var session = this.CreateSession(index, logProfile);
+			if (session.LogProfile != logProfile)
+				return session;
+
+			// add log files
+			foreach (var filePath in filePaths)
+			{
+				if (!session.AddLogFileCommand.TryExecute(filePath))
+				{
+					this.Logger.LogWarning($"Unable to add log file '{filePath}' to session '{session}'");
+					break;
+				}
+			}
+
+			// complete
+			return session;
+		}
+
+
+		/// <summary>
+		/// Create new session and set working directory immediately.
+		/// </summary>
+		/// <param name="logProfile">Log profile.</param>
+		/// <param name="directory">Working directory path.</param>
+		/// <returns>Created session.</returns>
+		public Session CreateSessionWithWorkingDirectory(LogProfile logProfile, string directory) => this.CreateSessionWithWorkingDirectory(this.sessions.Count, logProfile, directory);
+
+
+		/// <summary>
+		/// Create new session and set working directory immediately.
+		/// </summary>
+		/// <param name="index">Position of created session.</param>
+		/// <param name="logProfile">Log profile.</param>
+		/// <param name="directory">Working directory path.</param>
+		/// <returns>Created session.</returns>
+		public Session CreateSessionWithWorkingDirectory(int index, LogProfile logProfile, string directory)
+		{
+			// create session
+			var session = this.CreateSession(index, logProfile);
+			if (session.LogProfile != logProfile)
+				return session;
+
+			// set working directory
+			if (!session.SetWorkingDirectoryCommand.TryExecute(directory))
+				this.Logger.LogWarning($"Unable to set working directory '{directory}' to session '{session}'");
+
+			// complete
+			return session;
+		}
+
+
 		// Detach from Session.
 		void DetachFromSession(Session session)
 		{
