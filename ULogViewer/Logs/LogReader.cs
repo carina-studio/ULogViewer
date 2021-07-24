@@ -45,6 +45,8 @@ namespace CarinaStudio.ULogViewer.Logs
 		object logsReadingToken = new object();
 		int maxLogCount = -1;
 		readonly List<Log> pendingLogs = new List<Log>();
+		object? pendingLogsReadingToken;
+		readonly SingleThreadSynchronizationContext pendingLogsSyncContext = new SingleThreadSynchronizationContext();
 		readonly IDictionary<string, LogLevel> readOnlyLogLevelMap;
 		LogReaderState state = LogReaderState.Preparing;
 		CultureInfo timestampCultureInfo = defaultTimestampCultureInfo;
@@ -69,16 +71,19 @@ namespace CarinaStudio.ULogViewer.Logs
 			this.readOnlyLogLevelMap = new ReadOnlyDictionary<string, LogLevel>(this.logLevelMap);
 
 			// create scheduled actions
-			this.flushPendingLogsAction = new ScheduledAction(() =>
+			this.flushPendingLogsAction = new ScheduledAction(this.pendingLogsSyncContext, () =>
 			{
 				if (this.pendingLogs.IsEmpty())
 					return;
-				if (!this.CanAddLogs)
+				var token = this.pendingLogsReadingToken;
+				if (token == null)
+				{
+					this.pendingLogs.Clear();
 					return;
-				this.DropLogs(this.pendingLogs.Count);
-				this.logs.AddRange(this.pendingLogs);
+				}
+				var logs = this.pendingLogs.ToArray();
 				this.pendingLogs.Clear();
-				this.DropLogs(0);
+				this.SynchronizationContext.Post(() => this.OnLogsRead(token, logs));
 			});
 
 			// attach to data source
@@ -128,8 +133,11 @@ namespace CarinaStudio.ULogViewer.Logs
 		public void ClearLogs()
 		{
 			this.VerifyAccess();
-			this.flushPendingLogsAction.Cancel();
-			this.pendingLogs.Clear();
+			this.pendingLogsSyncContext.Post(() =>
+			{
+				this.pendingLogs.Clear();
+				this.flushPendingLogsAction.Cancel();
+			});
 			this.logs.Clear();
 		}
 
@@ -167,7 +175,10 @@ namespace CarinaStudio.ULogViewer.Logs
 			if (disposing)
 				this.VerifyAccess();
 			else
+			{
+				this.pendingLogsSyncContext.Dispose();
 				return; // ignore releasing managed resources
+			}
 
 			// change state
 			this.ChangeState(LogReaderState.Disposed);
@@ -183,11 +194,17 @@ namespace CarinaStudio.ULogViewer.Logs
 				it.Dispose();
 				this.logsReadingCancellationTokenSource = null;
 			});
-			this.flushPendingLogsAction.Cancel();
+			this.pendingLogsSyncContext.Post(() =>
+			{
+				this.pendingLogs.Clear();
+				this.flushPendingLogsAction.Cancel();
+			});
 
 			// clear logs
-			this.pendingLogs.Clear();
 			this.logs.Clear();
+
+			// dispose pending logs waiting thread
+			this.pendingLogsSyncContext.Dispose();
 		}
 
 
@@ -405,16 +422,8 @@ namespace CarinaStudio.ULogViewer.Logs
 		{
 			if (!this.CanAddLogs || this.logsReadingToken != readingToken)
 				return;
-			if (this.isContinuousReading)
-			{
-				this.pendingLogs.Add(log);
-				this.flushPendingLogsAction.Schedule(this.continuousReadingUpdateInterval);
-			}
-			else
-			{
-				this.DropLogs(1);
-				this.logs.Add(log);
-			}
+			this.DropLogs(1);
+			this.logs.Add(log);
 		}
 
 
@@ -423,17 +432,9 @@ namespace CarinaStudio.ULogViewer.Logs
 		{
 			if (!this.CanAddLogs || this.logsReadingToken != readingToken)
 				return;
-			if (this.isContinuousReading)
-			{
-				this.pendingLogs.AddRange(readLogs);
-				this.flushPendingLogsAction.Schedule(this.continuousReadingUpdateInterval);
-			}
-			else
-			{
-				this.DropLogs(readLogs.Count);
-				this.logs.AddRange(readLogs);
-				this.DropLogs(0);
-			}
+			this.DropLogs(readLogs.Count);
+			this.logs.AddRange(readLogs);
+			this.DropLogs(0);
 		}
 
 
@@ -462,10 +463,27 @@ namespace CarinaStudio.ULogViewer.Logs
 				this.logsReadingCancellationTokenSource = null;
 			});
 
+			// flush pending logs
+			if (this.IsContinuousReading)
+			{
+				var readingToken = (object?)null;
+				var logs = new Log[0];
+				this.pendingLogsSyncContext.Send(() =>
+				{
+					this.flushPendingLogsAction.Cancel();
+					if (this.pendingLogs.IsEmpty())
+						return;
+					readingToken = this.pendingLogsReadingToken;
+					logs = this.pendingLogs.ToArray();
+					this.pendingLogs.Clear();
+				});
+				if (readingToken != null && logs.IsNotEmpty())
+					this.OnLogsRead(readingToken, logs);
+			}
+
 			// change state
 			if (!this.isContinuousReading)
 			{
-				this.flushPendingLogsAction.ExecuteIfScheduled();
 				if (this.DataSource.IsErrorState())
 				{
 					this.Logger.LogError($"Data source state is {this.DataSource.State} when completing reading logs");
@@ -708,7 +726,16 @@ namespace CarinaStudio.ULogViewer.Logs
 							{
 								var log = readLogs[0];
 								readLogs.Clear();
-								syncContext.Post(() => this.OnLogRead(readingToken, log));
+								this.pendingLogsSyncContext.Post(() =>
+								{
+									if (this.pendingLogsReadingToken != readingToken)
+									{
+										this.pendingLogsReadingToken = readingToken;
+										this.pendingLogs.Clear();
+									}
+									this.pendingLogs.Add(log);
+									this.flushPendingLogsAction.Schedule(this.continuousReadingUpdateInterval);
+								});
 							}
 						}
 						else if (readLogs.Count >= LogsReadingChunkSize)
