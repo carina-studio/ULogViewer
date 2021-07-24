@@ -902,7 +902,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						}
 						else
 						{
-							var removedLogs = new HashSet<Log>((IEnumerable<Log>)oldItems);
+							var removedLogs = new HashSet<Log>(oldItems.Cast<Log>());
 							this.allLogs.RemoveAll(it => removedLogs.Contains(it.Log));
 						}
 					});
@@ -1164,6 +1164,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					else
 					{
 						this.Logger.LogDebug("Start reading logs from standard output");
+						var dataSource = this.CreateLogDataSourceOrNull(dataSourceProvider, dataSourceOptions);
+						if (dataSource != null)
+							this.CreateLogReader(dataSource);
+					}
+					break;
+				case UnderlyingLogDataSource.Undefined:
+					{
+						this.Logger.LogDebug("Start reading logs from undefined source");
 						var dataSource = this.CreateLogDataSourceOrNull(dataSourceProvider, dataSourceOptions);
 						if (dataSource != null)
 							this.CreateLogReader(dataSource);

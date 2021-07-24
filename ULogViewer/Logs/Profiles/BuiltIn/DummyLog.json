@@ -1,0 +1,32 @@
+﻿{
+	"DataSource": {
+		"Name": "Dummy"
+	},
+	"Icon": "Debug",
+	"IsContinuousReading": true,
+	"LogLevelMap": {
+		"D": "Debug",
+		"E": "Error",
+		"F": "Fatal",
+		"I": "Info",
+		"V": "Verbose",
+		"W": "Warn"
+	},
+	"LogPatterns": [
+		{
+			"Regex": "^(?<Timestamp>[^\\s]+[\\s]+[^\\s]+)[\\s]+(?<Level>[\\w]+)[\\s]+(?<Message>.*)$"
+		}
+	],
+	"TimestampCultureInfoForReading": "en-US",
+	"TimestampFormatForDisplaying": "yyyy/MM/dd HH:mm:ss.fff",
+	"TimestampFormatForReading": "yyyy/MM/dd HH:mm:ss.fff",
+	"VisibleLogProperties": [
+		{
+			"Name": "Timestamp",
+			"Width": 200
+		},
+		{
+			"Name": "Message"
+		}
+	]
+}

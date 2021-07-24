@@ -230,10 +230,7 @@ namespace CarinaStudio.ULogViewer.Logs
 
 			// drop logs
 			if (droppingLogCount < logs.Count)
-			{
-				for (var i = droppingLogCount - 1; i >= 0; --i)
-					logs.RemoveAt(i);
-			}
+				logs.RemoveRange(0, droppingLogCount);
 			else
 				logs.Clear();
 		}
