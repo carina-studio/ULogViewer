@@ -194,7 +194,7 @@ namespace CarinaStudio.ULogViewer.Logs
 				it.Dispose();
 				this.logsReadingCancellationTokenSource = null;
 			});
-			this.pendingLogsSyncContext.Post(() =>
+			this.pendingLogsSyncContext.Send(() =>
 			{
 				this.pendingLogs.Clear();
 				this.flushPendingLogsAction.Cancel();
