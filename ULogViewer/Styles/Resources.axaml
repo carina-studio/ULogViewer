@@ -88,6 +88,8 @@
 	<Thickness x:Key="Thickness.LogProfileSelectionDialog.LogProfile.Padding">20,10,20,10</Thickness>
 
 	<!-- MainWindow -->
+	<sys:Double x:Key="Double.MainWindow.MinHeight">300</sys:Double>
+	<sys:Double x:Key="Double.MainWindow.MinWidth">500</sys:Double>
 	<sys:Double x:Key="Double.MainWindow.TabItem.CloseButton.Icon.Size">12</sys:Double>
 	<sys:Double x:Key="Double.MainWindow.TabItem.FontSize">16</sys:Double>
 	<sys:Double x:Key="Double.MainWindow.TabItem.Icon.Size">16</sys:Double>

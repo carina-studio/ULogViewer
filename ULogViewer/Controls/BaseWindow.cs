@@ -35,6 +35,11 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.Application = App.Current;
 			this.Application.VerifyAccess();
 			this.Logger = this.Application.LoggerFactory.CreateLogger(this.GetType().Name);
+			this.AddHandler(PointerWheelChangedEvent, (_, e) =>
+			{
+				if (this.HasDialogs)
+					e.Handled = true;
+			}, Avalonia.Interactivity.RoutingStrategies.Tunnel);
 		}
 
 

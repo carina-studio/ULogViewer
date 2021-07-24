@@ -7,6 +7,8 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.MainWindow"
 				Classes="MainWindow"
+				MinHeight="{StaticResource Double.MainWindow.MinHeight}"
+				MinWidth="{StaticResource Double.MainWindow.MinWidth}"
         Title="{Binding Title}">
 
 	<!-- Data templates -->
