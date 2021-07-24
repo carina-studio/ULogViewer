@@ -202,8 +202,13 @@ namespace CarinaStudio.ULogViewer.Controls
 				var logIndex = session.LogProfile.SortDirection == SortDirection.Ascending ? session.Logs.Count - 1 : 0;
 
 				// scroll to latest log
-				this.logListBox.ScrollIntoView(logIndex);
-				this.scrollToLatestLogAction?.Schedule(ScrollingToLatestLogInterval);
+				try
+				{
+					this.logListBox.ScrollIntoView(logIndex);
+					this.scrollToLatestLogAction?.Schedule(ScrollingToLatestLogInterval);
+				}
+				catch
+				{ }
 			});
 			this.updateLogFiltersAction = new ScheduledAction(() =>
 			{
