@@ -7,6 +7,17 @@
 	<sys:String x:Key="String.AppCulture.System">Auto</sys:String>
 	<sys:String x:Key="String.AppCulture.ZH_TW">正體中文 (台灣)</sys:String>
 
+	<!-- AppInfoDialog -->
+	<sys:String x:Key="String.AppInfoDialog.Attribution.AppIcon.Section1" xml:space="preserve">Application icon is made by</sys:String>
+	<sys:String x:Key="String.AppInfoDialog.Attribution.AppIcon.Section2" xml:space="preserve">from</sys:String>
+	<sys:String x:Key="String.AppInfoDialog.Attribution.AppIcon.Section3" xml:space="preserve">.</sys:String>
+	<sys:String x:Key="String.AppInfoDialog.Attribution.Framework.Section1" xml:space="preserve">Powered by</sys:String>
+	<sys:String x:Key="String.AppInfoDialog.Attribution.Framework.Section2" xml:space="preserve">and</sys:String>
+	<sys:String x:Key="String.AppInfoDialog.Attribution.Framework.Section3" xml:space="preserve">.</sys:String>
+	<sys:String x:Key="String.AppInfoDialog.SourceCode">Source code on GitHub</sys:String>
+	<sys:String x:Key="String.AppInfoDialog.Title">About ULogViewer</sys:String>
+	<sys:String x:Key="String.AppInfoDialog.Version">Version: {0}</sys:String>
+
 	<!-- AppOptionsDialog -->
 	<sys:String x:Key="String.AppOptionsDialog.ContinuousLogReadingUpdateInterval">Log update interval when continuous reading (milliseconds)</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.Culture">Language</sys:String>

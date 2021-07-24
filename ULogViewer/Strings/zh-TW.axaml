@@ -5,6 +5,17 @@
 	<!-- AppCulture -->
 	<sys:String x:Key="String.AppCulture.System">自動</sys:String>
 
+	<!-- AppInfoDialog -->
+	<sys:String x:Key="String.AppInfoDialog.Attribution.AppIcon.Section1" xml:space="preserve">應用程式圖示由</sys:String>
+	<sys:String x:Key="String.AppInfoDialog.Attribution.AppIcon.Section2" xml:space="preserve">提供，並發布於</sys:String>
+	<sys:String x:Key="String.AppInfoDialog.Attribution.AppIcon.Section3" xml:space="preserve">。</sys:String>
+	<sys:String x:Key="String.AppInfoDialog.Attribution.Framework.Section1" xml:space="preserve">基於</sys:String>
+	<sys:String x:Key="String.AppInfoDialog.Attribution.Framework.Section2" xml:space="preserve">以及</sys:String>
+	<sys:String x:Key="String.AppInfoDialog.Attribution.Framework.Section3" xml:space="preserve">開發完成。</sys:String>
+	<sys:String x:Key="String.AppInfoDialog.SourceCode">GitHub 上的原始程式碼</sys:String>
+	<sys:String x:Key="String.AppInfoDialog.Title">關於 ULogViewer</sys:String>
+	<sys:String x:Key="String.AppInfoDialog.Version">版本：{0}</sys:String>
+
 	<!-- AppOptionsDialog -->
 	<sys:String x:Key="String.AppOptionsDialog.ContinuousLogReadingUpdateInterval">連續讀取時的日誌更新時距 (毫秒)</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.Culture">語系</sys:String>

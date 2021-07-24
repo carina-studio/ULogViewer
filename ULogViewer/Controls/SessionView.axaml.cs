@@ -1484,6 +1484,16 @@ namespace CarinaStudio.ULogViewer.Controls
 		ICommand SetWorkingDirectoryCommand { get; }
 
 
+		// Show application info.
+		void ShowAppInfo()
+		{
+			this.FindLogicalAncestorOfType<Window>()?.Let(window =>
+			{
+				new AppInfoDialog().ShowDialog(window);
+			});
+		}
+
+
 		// Show application options.
 		void ShowAppOptions()
 		{
