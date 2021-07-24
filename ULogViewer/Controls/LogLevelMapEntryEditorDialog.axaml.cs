@@ -1,8 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Data.Converters;
 using Avalonia.Markup.Xaml;
-using CarinaStudio.ULogViewer.Converters;
 using CarinaStudio.ULogViewer.Logs;
 using System;
 using System.Collections.Generic;
@@ -14,12 +12,6 @@ namespace CarinaStudio.ULogViewer.Controls
 	/// </summary>
 	partial class LogLevelMapEntryEditorDialog : BaseDialog
 	{
-		/// <summary>
-		/// <see cref="IValueConverter"/> to convert <see cref="LogLevel"/> to readable name.
-		/// </summary>
-		public static readonly IValueConverter LogLevelNameConverter = new EnumConverter<LogLevel>(App.Current);
-
-
 		// Fields.
 		readonly ComboBox logLevelComboBox;
 		readonly TextBox textBox;

@@ -48,11 +48,9 @@ namespace CarinaStudio.ULogViewer.Controls
 		class LogLevelNameConverterImpl : IValueConverter
 		{
 			readonly App app;
-			readonly EnumConverter<Logs.LogLevel> baseConverter;
 			public LogLevelNameConverterImpl(App app)
 			{
 				this.app = app;
-				this.baseConverter = new EnumConverter<Logs.LogLevel>(app);
 			}
 			public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
 			{
@@ -60,7 +58,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				{
 					if (level == Logs.LogLevel.Undefined)
 						return app.GetString("SessionView.AllLogLevels");
-					return this.baseConverter.Convert(value, targetType, parameter, culture);
+					return Converters.EnumConverter.LogLevel.Convert(value, targetType, parameter, culture);
 				}
 				return null;
 			}
@@ -107,7 +105,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ContextMenu otherActionsMenu;
 		readonly ListBox predefinedLogTextFilterListBox;
 		readonly SortedObservableList<PredefinedLogTextFilter> predefinedLogTextFilters;
-		readonly Popup predefinedLogTextFiltersPopup;
 		readonly ScheduledAction scrollToLatestLogAction;
 		readonly HashSet<PredefinedLogTextFilter> selectedPredefinedLogTextFilters = new HashSet<PredefinedLogTextFilter>();
 		readonly ScheduledAction updateLogFiltersAction;
@@ -186,7 +183,6 @@ namespace CarinaStudio.ULogViewer.Controls
 				it.MenuOpened += (_, e) => this.SynchronizationContext.Post(() => this.otherActionsButton.IsChecked = true);
 			});
 			this.predefinedLogTextFilterListBox = this.FindControl<ListBox>("predefinedLogTextFilterListBox").AsNonNull();
-			this.predefinedLogTextFiltersPopup = this.FindControl<Popup>("predefinedLogTextFiltersPopup").AsNonNull();
 #if !DEBUG
 			this.FindControl<Button>("testButton").AsNonNull().IsVisible = false;
 #endif
@@ -410,7 +406,12 @@ namespace CarinaStudio.ULogViewer.Controls
 						_ => (Control)new TextBlock().Also(it =>
 						{
 							it.Bind(TextBlock.ForegroundProperty, new Binding() { Path = nameof(DisplayableLog.LevelBrush) });
-							it.Bind(TextBlock.TextProperty, new Binding() { Path = logProperty.Name });
+							it.Bind(TextBlock.TextProperty, new Binding().Also(binding =>
+							{
+								if (logProperty.Name == nameof(DisplayableLog.Level))
+									binding.Converter = Converters.EnumConverter.LogLevel;
+								binding.Path = logProperty.Name;
+							}));
 							it.MaxLines = DisplayableLog.MaxDisplayableLineCount;
 							it.TextTrimming = TextTrimming.CharacterEllipsis;
 							it.TextWrapping = TextWrapping.NoWrap;

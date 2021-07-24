@@ -43,7 +43,7 @@
 				<appLogs:LogLevel>Fatal</appLogs:LogLevel>
 				<ComboBox.ItemTemplate>
 					<DataTemplate>
-						<TextBlock Foreground="{Binding Converter={x:Static appConverters:LogLevelBrushConverter.Default}}" Text="{Binding Converter={x:Static appControls:LogLevelMapEntryEditorDialog.LogLevelNameConverter}}"/>
+						<TextBlock Foreground="{Binding Converter={x:Static appConverters:LogLevelBrushConverter.Default}}" Text="{Binding Converter={x:Static appConverters:EnumConverter.LogLevel}}"/>
 					</DataTemplate>
 				</ComboBox.ItemTemplate>
 			</ComboBox>
