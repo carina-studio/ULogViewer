@@ -60,6 +60,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<Drawing?> IconProperty = ObservableProperty.Register<Session, Drawing?>(nameof(Icon));
 		/// <summary>
+		/// Property of <see cref="IsActivated"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> IsActivatedProperty = ObservableProperty.Register<Session, bool>(nameof(IsActivated));
+		/// <summary>
 		/// Property of <see cref="IsFilteringLogs"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsFilteringLogsProperty = ObservableProperty.Register<Session, bool>(nameof(IsFilteringLogs));
@@ -123,7 +127,17 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public static readonly IValueConverter LogsFilteringProgressConverter = new RatioToPercentageConverter(1);
 
 
+		// Activation token.
+		class ActivationToken : IDisposable
+		{
+			readonly Session session;
+			public ActivationToken(Session session) => this.session = session;
+			public void Dispose() => this.session.Deactivate(this);
+		}
+
+
 		// Fields.
+		readonly List<IDisposable> activationTokens = new List<IDisposable>();
 		readonly HashSet<string> addedLogFilePaths = new HashSet<string>(PathEqualityComparer.Default);
 		readonly SortedObservableList<DisplayableLog> allLogs;
 		readonly MutableObservableBoolean canAddLogFile = new MutableObservableBoolean();
@@ -299,6 +313,29 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		}
 
 
+		/// <summary>
+		/// Activate session.
+		/// </summary>
+		/// <returns>Token of activation.</returns>
+		public IDisposable Activate()
+		{
+			this.VerifyAccess();
+			return new ActivationToken(this).Also(it =>
+			{
+				// update state
+				this.activationTokens.Add(it);
+				if (this.activationTokens.Count > 1)
+					return;
+				this.Logger.LogWarning("Activate");
+				this.SetValue(IsActivatedProperty, true);
+
+				// update log updating interval
+				if (this.LogProfile?.IsContinuousReading == true && this.logReaders.IsNotEmpty())
+					this.logReaders.First().ContinuousReadingUpdateInterval = this.ContinuousLogReadingUpdateInterval;
+			});
+		}
+
+
 		// Add file.
 		void AddLogFile(string? fileName)
 		{
@@ -427,6 +464,18 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		}
 
 
+		// Interval of updating continuous log reading.
+		int ContinuousLogReadingUpdateInterval
+		{
+			get
+			{
+				if (this.IsActivated)
+					return Math.Max(Math.Min(this.Settings.GetValueOrDefault(ULogViewer.Settings.ContinuousLogReadingUpdateInterval), ULogViewer.Settings.MaxContinuousLogReadingUpdateInterval), ULogViewer.Settings.MinContinuousLogReadingUpdateInterval);
+				return 1000;
+			}
+		}
+
+
 		// Try creating log data source.
 		ILogDataSource? CreateLogDataSourceOrNull(ILogDataSourceProvider provider, LogDataSourceOptions options)
 		{
@@ -450,7 +499,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			var logReader = new LogReader(dataSource).Also(it =>
 			{
 				if (profile.IsContinuousReading)
-					it.ContinuousReadingUpdateInterval = Math.Max(Math.Min(this.Settings.GetValueOrDefault(ULogViewer.Settings.ContinuousLogReadingUpdateInterval), ULogViewer.Settings.MaxContinuousLogReadingUpdateInterval), ULogViewer.Settings.MinContinuousLogReadingUpdateInterval);
+					it.ContinuousReadingUpdateInterval = this.ContinuousLogReadingUpdateInterval;
 				it.IsContinuousReading = profile.IsContinuousReading;
 				it.LogLevelMap = profile.LogLevelMap;
 				it.LogPatterns = profile.LogPatterns;
@@ -487,6 +536,24 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.canPauseResumeLogsReading.Update(profile.IsContinuousReading);
 			this.canReloadLogs.Update(true);
 			this.SetValue(HasLogReadersProperty, true);
+		}
+
+
+		// Deactivate.
+		void Deactivate(IDisposable token)
+		{
+			this.VerifyAccess();
+			this.activationTokens.Remove(token);
+			if (activationTokens.IsEmpty())
+			{
+				// update state
+				this.Logger.LogWarning("Deactivate");
+				this.SetValue(IsActivatedProperty, false);
+
+				// update log updating interval
+				if (this.LogProfile?.IsContinuousReading == true && this.logReaders.IsNotEmpty())
+					this.logReaders.First().ContinuousReadingUpdateInterval = this.ContinuousLogReadingUpdateInterval;
+			}
 		}
 
 
@@ -614,6 +681,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Get icon of session.
 		/// </summary>
 		public Drawing? Icon { get => this.GetValue(IconProperty); }
+
+
+		/// <summary>
+		/// Check whether session has been activated or not.
+		/// </summary>
+		public bool IsActivated { get => this.GetValue(IsActivatedProperty); }
 
 
 		/// <summary>
@@ -955,7 +1028,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			if (e.Key == ULogViewer.Settings.ContinuousLogReadingUpdateInterval)
 			{
 				if (this.LogProfile?.IsContinuousReading == true && this.logReaders.IsNotEmpty())
-					this.logReaders.First().MaxLogCount = Math.Max(Math.Min((int)e.Value, ULogViewer.Settings.MaxContinuousLogReadingUpdateInterval), ULogViewer.Settings.MinContinuousLogReadingUpdateInterval);
+					this.logReaders.First().ContinuousReadingUpdateInterval = this.ContinuousLogReadingUpdateInterval;
 			}
 			else if (e.Key == ULogViewer.Settings.MaxContinuousLogCount)
 			{

@@ -29,6 +29,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		// Fields.
+		IDisposable? sessionActivationToken;
 		readonly ObservableCollection<Session> sessions = new ObservableCollection<Session>();
 		readonly ScheduledAction updateTitleAction;
 
@@ -189,8 +190,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			base.OnPropertyChanged(property, oldValue, newValue);
 			if (property == ActiveSessionProperty)
 			{
-				if (newValue is Session session && !this.sessions.Contains(session))
+				var session = (newValue as Session);
+				if (session != null && !this.sessions.Contains(session))
 					throw new ArgumentException($"Cannot activate {session} which is not belong to this workspace.");
+				this.sessionActivationToken = this.sessionActivationToken.DisposeAndReturnNull();
+				if (session != null)
+					this.sessionActivationToken = session.Activate();
 				this.updateTitleAction.Schedule();
 			}
 		}

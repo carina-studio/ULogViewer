@@ -195,7 +195,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					return;
 				if (this.DataContext is not Session session)
 					return;
-				if (session.Logs.IsEmpty() || session.LogProfile == null)
+				if (session.Logs.IsEmpty() || session.LogProfile == null || !session.IsActivated)
 					return;
 
 				// find log index
@@ -1292,6 +1292,12 @@ namespace CarinaStudio.ULogViewer.Controls
 					break;
 				case nameof(Session.HasMarkedLogs):
 					this.canSelectMarkedLogs.Update(session.HasMarkedLogs);
+					break;
+				case nameof(Session.IsActivated):
+					if (!session.IsActivated)
+						this.scrollToLatestLogAction.Cancel();
+					else if (this.HasLogProfile && session.LogProfile?.IsContinuousReading == true && this.IsScrollingToLatestLogNeeded)
+						this.scrollToLatestLogAction.Schedule(ScrollingToLatestLogInterval);
 					break;
 				case nameof(Session.IsLogsReadingPaused):
 					this.updateStatusBarStateAction.Schedule();
