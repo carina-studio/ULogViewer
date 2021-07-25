@@ -20,41 +20,41 @@ namespace CarinaStudio.ULogViewer.Logs.DataOutputs
 			// Fields.
 			volatile int isClosed;
 			readonly BaseLogDataOutput output;
-			readonly TextWriter writer;
+			public readonly TextWriter WrappedWriter;
 
 			// Constructor.
 			public TextWriterWrapper(BaseLogDataOutput output, TextWriter writer)
 			{
 				this.output = output;
-				this.writer = writer;
+				this.WrappedWriter = writer;
 			}
 
 			// Implementations.
 			protected override void Dispose(bool disposing)
 			{
 				base.Dispose(disposing);
-				this.writer.Dispose();
+				this.WrappedWriter.Dispose();
 				if (Interlocked.Exchange(ref this.isClosed, 1) != 0)
 					return;
 				this.output.SynchronizationContext.Post(() => output.OnWriterClosed(this));
 			}
-			public override Encoding Encoding => this.writer.Encoding;
-			public override void Flush() => this.writer.Flush();
-			public override IFormatProvider FormatProvider => this.writer.FormatProvider;
+			public override Encoding Encoding => this.WrappedWriter.Encoding;
+			public override void Flush() => this.WrappedWriter.Flush();
+			public override IFormatProvider FormatProvider => this.WrappedWriter.FormatProvider;
 #pragma warning disable CS8765
 			public override string NewLine 
 			{ 
-				get => this.writer.NewLine;
-				set => this.writer.NewLine = value;
+				get => this.WrappedWriter.NewLine;
+				set => this.WrappedWriter.NewLine = value;
 			}
 #pragma warning restore CS8765
-			public override void Write(char value) => this.writer.Write(value);
-			public override void Write(char[] buffer, int index, int count) => this.writer.Write(buffer, index, count);
-			public override void Write(ReadOnlySpan<char> buffer) => this.writer.Write(buffer);
-			public override void Write(string? value) => this.writer.Write(value);
-			public override void WriteLine(char[] buffer, int index, int count) => this.writer.WriteLine(buffer, index, count);
-			public override void WriteLine(ReadOnlySpan<char> buffer) => this.writer.WriteLine(buffer);
-			public override void WriteLine(string? value) => this.writer.WriteLine(value);
+			public override void Write(char value) => this.WrappedWriter.Write(value);
+			public override void Write(char[] buffer, int index, int count) => this.WrappedWriter.Write(buffer, index, count);
+			public override void Write(ReadOnlySpan<char> buffer) => this.WrappedWriter.Write(buffer);
+			public override void Write(string? value) => this.WrappedWriter.Write(value);
+			public override void WriteLine(char[] buffer, int index, int count) => this.WrappedWriter.WriteLine(buffer, index, count);
+			public override void WriteLine(ReadOnlySpan<char> buffer) => this.WrappedWriter.WriteLine(buffer);
+			public override void WriteLine(string? value) => this.WrappedWriter.WriteLine(value);
 		}
 
 
@@ -78,6 +78,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataOutputs
 			this.Application = app;
 			this.Id = nextId++;
 			this.Logger = app.LoggerFactory.CreateLogger($"{this.GetType().Name}-{this.Id}");
+			this.SynchronizationContext.Post(this.Prepare);
 		}
 
 
@@ -115,7 +116,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataOutputs
 				this.Logger.LogWarning("Close opened writer because of disposing");
 				this.openedWriter = null;
 				Global.RunWithoutErrorAsync(writer.Close);
-				this.SynchronizationContext.Post(this.OnWriterClosed);
+				this.SynchronizationContext.Post(() => this.OnWriterClosed(writer.WrappedWriter));
 			});
 		}
 
@@ -146,7 +147,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataOutputs
 			{
 				this.Logger.LogDebug("Writer closed");
 				this.openedWriter = null;
-				this.OnWriterClosed();
+				this.OnWriterClosed(writer.WrappedWriter);
 			}
 			else
 				this.Logger.LogWarning("Unknown writer closed");
@@ -156,7 +157,8 @@ namespace CarinaStudio.ULogViewer.Logs.DataOutputs
 		/// <summary>
 		/// Called when opened <see cref="TextWriter"/> has been closed.
 		/// </summary>
-		protected virtual void OnWriterClosed()
+		/// <param name="writer">Closed <see cref="TextWriter"/>.</param>
+		protected virtual void OnWriterClosed(TextWriter writer)
 		{
 			if (this.IsDisposed)
 				return;
