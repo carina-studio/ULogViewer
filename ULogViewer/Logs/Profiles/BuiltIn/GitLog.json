@@ -27,8 +27,8 @@
 			"Regex": "^[\\s]*$"
 		}
 	],
+	"LogWritingFormat": "Author: {UserName}{NewLine}Date:   {Timestamp}{NewLine}{NewLine}{Message}{NewLine}",
 	"SortDirection": "Descending",
-	"TimestampCultureInfoForReading": "en-US",
 	"TimestampFormatForDisplaying": "yyyy/MM/dd HH:mm:ss",
 	"TimestampFormatForReading": "MMM d HH:mm:ss yyyy",
 	"VisibleLogProperties": [

@@ -12,12 +12,20 @@
 		"V": "Verbose",
 		"W": "Warn"
 	},
+	"LogLevelMapForWriting": {
+		"Debug": "D",
+		"Error": "E",
+		"Fatal": "F",
+		"Info": "I",
+		"Verbose": "V",
+		"Warn": "W"
+	},
 	"LogPatterns": [
 		{
 			"Regex": "^(?<Timestamp>[^\\s]+[\\s]+[^\\s]+)[\\s]+(?<ProcessId>[\\d]+)[\\s]+(?<ThreadId>[\\d]+)[\\s]+(?<Level>[\\w]+)[\\s]+(?<SourceName>[^\\s\\:]*([\\s]+[^\\s\\:]*)*)\\:[\\s](?<Message>.*)$"
 		}
 	],
-	"TimestampCultureInfoForReading": "en-US",
+	"LogWritingFormat": "{Timestamp} {ProcessId,5} {ThreadId,5} {Level} {SourceName}: {Message}",
 	"TimestampFormatForDisplaying": "MM/dd HH:mm:ss.fff",
 	"TimestampFormatForReading": "MM-dd HH:mm:ss.fff",
 	"VisibleLogProperties": [

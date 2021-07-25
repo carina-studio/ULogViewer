@@ -10,6 +10,12 @@
 		"INFO": "Info",
 		"WARN": "Warn"
 	},
+	"LogLevelMapForWriting": {
+		"Debug": "DEBUG",
+		"Error": "ERROR",
+		"Info": "INFO",
+		"Warn": "WARN"
+	},
 	"LogPatterns": [
 		{
 			"Regex": "^(?<Timestamp>[^\\s]+[\\s]+[^\\s]+)[\\s]+(?<ProcessId>[\\d]+)[\\s]+(?<ThreadId>[\\d]+)[\\s]+(?<Level>[\\w]+)[\\s]+(?<SourceName>[^\\:]*)\\:[\\s](?<Message>.*)$"
@@ -20,7 +26,7 @@
 			"IsRepeatable": true
 		}
 	],
-	"TimestampCultureInfoForReading": "en-US",
+	"LogWritingFormat": "{Timestamp} {ProcessId,5} {ThreadId,5} {Level,5} {SourceName}: {Message}",
 	"TimestampFormatForDisplaying": "yyyy/MM/dd HH:mm:ss.ffff",
 	"TimestampFormatForReading": "yyyy-MM-dd HH:mm:ss.ffff",
 	"VisibleLogProperties": [
