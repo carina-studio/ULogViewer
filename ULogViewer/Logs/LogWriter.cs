@@ -1,4 +1,5 @@
 ﻿using CarinaStudio.Collections;
+using CarinaStudio.IO;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.DataOutputs;
 using Microsoft.Extensions.Logging;
@@ -36,6 +37,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		LogWriterState state = LogWriterState.Preparing;
 		CultureInfo timestampCultureInfo = CultureInfo.GetCultureInfo("en-US");
 		string? timestampFormat;
+		bool writeFileNames = true;
 		CancellationTokenSource writingLogsCancellationTokenSource = new CancellationTokenSource();
 
 
@@ -377,6 +379,24 @@ namespace CarinaStudio.ULogViewer.Logs
 		}
 
 
+		/// <summary>
+		/// Get or set whether writing file name on top of related logs or not.
+		/// </summary>
+		public bool WriteFileNames
+		{
+			get => this.writeFileNames;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyPreparing();
+				if (this.writeFileNames == value)
+					return;
+				this.writeFileNames = value;
+				this.OnPropertyChanged(nameof(WriteFileNames));
+			}
+		}
+
+
 		// Write logs.
 		void WriteLogs(TextWriter writer, string format, IList<Func<Log, object?>> logPropertyGetters, CancellationToken cancellationToken)
 		{
@@ -384,6 +404,8 @@ namespace CarinaStudio.ULogViewer.Logs
 			var logs = this.logs;
 			var logCount = logs.Count;
 			var logPropertyCount = logPropertyGetters.Count;
+			var writeFileNames = this.writeFileNames;
+			var currentFileName = "";
 			try
 			{
 				var formatArgs = new object?[logPropertyCount];
@@ -394,6 +416,17 @@ namespace CarinaStudio.ULogViewer.Logs
 						formatArgs[j] = logPropertyGetters[j](log);
 					if (i > 0)
 						writer.WriteLine();
+					if (writeFileNames)
+					{
+						log.FileName?.Let(fileName =>
+						{
+							if (!PathEqualityComparer.Default.Equals(currentFileName, fileName))
+							{
+								writer.WriteLine($"[{Path.GetFileName(fileName)}]");
+								currentFileName = fileName;
+							}
+						});
+					}
 					writer.Write(string.Format(format, formatArgs));
 				}
 			}
