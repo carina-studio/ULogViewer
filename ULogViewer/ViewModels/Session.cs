@@ -501,7 +501,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				if (profile.IsContinuousReading)
 					it.ContinuousReadingUpdateInterval = this.ContinuousLogReadingUpdateInterval;
 				it.IsContinuousReading = profile.IsContinuousReading;
-				it.LogLevelMap = profile.LogLevelMap;
+				it.LogLevelMap = profile.LogLevelMapForReading;
 				it.LogPatterns = profile.LogPatterns;
 				if (profile.IsContinuousReading)
 					it.MaxLogCount = this.Settings.GetValueOrDefault(ULogViewer.Settings.MaxContinuousLogCount);
@@ -929,7 +929,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				case nameof(LogProfile.ColorIndicator):
 					this.SynchronizationContext.Post(() => this.ReloadLogs(true));
 					break;
-				case nameof(LogProfile.LogLevelMap):
+				case nameof(LogProfile.LogLevelMapForReading):
 				case nameof(LogProfile.LogPatterns):
 				case nameof(LogProfile.SortDirection):
 				case nameof(LogProfile.SortKey):

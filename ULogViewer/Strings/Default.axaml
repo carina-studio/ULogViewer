@@ -128,8 +128,8 @@
 	<sys:String x:Key="String.LogProfileEditorDialog.IsContinuousReading.Description">Restart reading logs automatically when reaching end of data source</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.IsWorkingDirectoryNeeded">Need to select working directory</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogDisplaying">Log Displaying</sys:String>
-	<sys:String x:Key="String.LogProfileEditorDialog.LogLevelMap">Mapping of log level</sys:String>
-	<sys:String x:Key="String.LogProfileEditorDialog.LogLevelMap.Description">Convert specific text in raw log into log level</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.LogLevelMapForReading">Mapping of log level</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.LogLevelMapForReading.Description">Convert specific text in raw log into log level</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogPatterns">Log line patterns (required)</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogPatterns.Description">Pattern to parse each line of raw log</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogReading">Log Reading</sys:String>

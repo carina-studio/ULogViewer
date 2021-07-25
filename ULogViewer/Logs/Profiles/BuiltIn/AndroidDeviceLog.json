@@ -8,7 +8,7 @@
 	},
 	"Icon": "Android",
 	"IsContinuousReading": true,
-	"LogLevelMap": {
+	"LogLevelMapForReading": {
 		"D": "Debug",
 		"E": "Error",
 		"F": "Fatal",

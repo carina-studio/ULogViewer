@@ -121,8 +121,8 @@
 	<sys:String x:Key="String.LogProfileEditorDialog.IsContinuousReading.Description">讀取至資料末端時將自動重新開始讀取日誌</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.IsWorkingDirectoryNeeded">必須選擇工作目錄</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogDisplaying">日誌顯示設定</sys:String>
-	<sys:String x:Key="String.LogProfileEditorDialog.LogLevelMap">日誌等級對照表</sys:String>
-	<sys:String x:Key="String.LogProfileEditorDialog.LogLevelMap.Description">將原始日誌中的特定文字對應至日誌等級</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.LogLevelMapForReading">日誌等級對照表</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.LogLevelMapForReading.Description">將原始日誌中的特定文字對應至日誌等級</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogPatterns">日誌行格式 (必須)</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogPatterns.Description">分析原始日誌每一行的格式</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogReading">日誌讀取設定</sys:String>

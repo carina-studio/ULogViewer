@@ -42,7 +42,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		LogDataSourceOptions dataSourceOptions;
 		readonly ComboBox dataSourceProviderComboBox;
 		readonly ComboBox iconComboBox;
-		readonly SortedObservableList<KeyValuePair<string, LogLevel>> logLevelMapEntries = new SortedObservableList<KeyValuePair<string, LogLevel>>((x, y) => x.Key.CompareTo(y.Key));
+		readonly SortedObservableList<KeyValuePair<string, LogLevel>> logLevelMapEntriesForReading = new SortedObservableList<KeyValuePair<string, LogLevel>>((x, y) => x.Key.CompareTo(y.Key));
 		readonly ObservableList<LogPattern> logPatterns = new ObservableList<LogPattern>();
 		readonly TextBox nameTextBox;
 		readonly ComboBox sortDirectionComboBox;
@@ -58,7 +58,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// </summary>
 		public LogProfileEditorDialog()
 		{
-			this.LogLevelMapEntries = this.logLevelMapEntries.AsReadOnly();
+			this.LogLevelMapEntriesForReading = this.logLevelMapEntriesForReading.AsReadOnly();
 			this.LogPatterns = this.logPatterns.Also(it =>
 			{
 				it.CollectionChanged += (_, e) => this.InvalidateInput();
@@ -87,13 +87,13 @@ namespace CarinaStudio.ULogViewer.Controls
 			var entry = (KeyValuePair<string, LogLevel>?)null;
 			while (true)
 			{
-				entry = await new LogLevelMapEntryEditorDialog()
+				entry = await new LogLevelMapEntryForReadingEditorDialog()
 				{
 					Entry = entry
 				}.ShowDialog<KeyValuePair<string, LogLevel>?>(this);
 				if (entry == null)
 					return;
-				if (this.logLevelMapEntries.Contains(entry.Value))
+				if (this.logLevelMapEntriesForReading.Contains(entry.Value))
 				{
 					await new MessageDialog()
 					{
@@ -103,7 +103,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					}.ShowDialog(this);
 					continue;
 				}
-				this.logLevelMapEntries.Add(entry.Value);
+				this.logLevelMapEntriesForReading.Add(entry.Value);
 				break;
 			}
 		}
@@ -133,13 +133,13 @@ namespace CarinaStudio.ULogViewer.Controls
 			var newEntry = (KeyValuePair<string, LogLevel>?)entry;
 			while (true)
 			{
-				newEntry = await new LogLevelMapEntryEditorDialog()
+				newEntry = await new LogLevelMapEntryForReadingEditorDialog()
 				{
 					Entry = newEntry
 				}.ShowDialog<KeyValuePair<string, LogLevel>?>(this);
 				if (newEntry == null || newEntry.Value.Equals(entry))
 					return;
-				if (this.logLevelMapEntries.Contains(newEntry.Value))
+				if (this.logLevelMapEntriesForReading.Contains(newEntry.Value))
 				{
 					await new MessageDialog()
 					{
@@ -149,8 +149,8 @@ namespace CarinaStudio.ULogViewer.Controls
 					}.ShowDialog(this);
 					continue;
 				}
-				this.logLevelMapEntries.Remove(entry);
-				this.logLevelMapEntries.Add(newEntry.Value);
+				this.logLevelMapEntriesForReading.Remove(entry);
+				this.logLevelMapEntriesForReading.Add(newEntry.Value);
 				break;
 			}
 		}
@@ -199,7 +199,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Entries of log level map.
-		IList<KeyValuePair<string, LogLevel>> LogLevelMapEntries { get; }
+		IList<KeyValuePair<string, LogLevel>> LogLevelMapEntriesForReading { get; }
 
 
 		// Log patterns.
@@ -288,7 +288,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			logProfile.Icon = (LogProfileIcon)this.iconComboBox.SelectedItem.AsNonNull();
 			logProfile.IsContinuousReading = this.continuousReadingSwitch.IsChecked.GetValueOrDefault();
 			logProfile.IsWorkingDirectoryNeeded = this.workingDirNeededSwitch.IsChecked.GetValueOrDefault();
-			logProfile.LogLevelMap = new Dictionary<string, LogLevel>(this.logLevelMapEntries);
+			logProfile.LogLevelMapForReading = new Dictionary<string, LogLevel>(this.logLevelMapEntriesForReading);
 			logProfile.LogPatterns = this.logPatterns;
 			logProfile.Name = this.nameTextBox.Text.AsNonNull();
 			logProfile.SortDirection = (SortDirection)this.sortDirectionComboBox.SelectedItem.AsNonNull();
@@ -341,7 +341,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.dataSourceProviderComboBox.SelectedItem = profile.DataSourceProvider;
 				this.iconComboBox.SelectedItem = profile.Icon;
 				this.continuousReadingSwitch.IsChecked = profile.IsContinuousReading;
-				this.logLevelMapEntries.AddAll(profile.LogLevelMap);
+				this.logLevelMapEntriesForReading.AddAll(profile.LogLevelMapForReading);
 				this.logPatterns.AddRange(profile.LogPatterns);
 				this.nameTextBox.Text = profile.Name;
 				this.sortDirectionComboBox.SelectedItem = profile.SortDirection;
@@ -394,7 +394,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Remove log level map entry.
-		void RemoveLogLevelMapEntry(KeyValuePair<string, LogLevel> entry) => this.logLevelMapEntries.Remove(entry);
+		void RemoveLogLevelMapEntry(KeyValuePair<string, LogLevel> entry) => this.logLevelMapEntriesForReading.Remove(entry);
 
 
 		// Remove log pattern.

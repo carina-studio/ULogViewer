@@ -128,8 +128,8 @@
 				<Separator Classes="Dialog_Separator_Horizontal"/>
 
 				<!-- Log level map -->
-				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.LogLevelMap}"/>
-				<ListBox Name="logLevelMapListBox" Items="{Binding $parent[Window].LogLevelMapEntries}" SelectionChanged="OnListBoxSelectionChanged">
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.LogLevelMapForReading}"/>
+				<ListBox Items="{Binding $parent[Window].LogLevelMapEntriesForReading}" SelectionChanged="OnListBoxSelectionChanged">
 					<ListBox.ItemTemplate>
 						<DataTemplate>
 							<Grid ColumnDefinitions="*,*">
@@ -155,7 +155,7 @@
 					</ListBox.ItemTemplate>
 				</ListBox>
 				<Grid ColumnDefinitions="*,Auto">
-					<TextBlock Classes="Dialog_Description" Text="{DynamicResource String.LogProfileEditorDialog.LogLevelMap.Description}" VerticalAlignment="Top"/>
+					<TextBlock Classes="Dialog_Description" Text="{DynamicResource String.LogProfileEditorDialog.LogLevelMapForReading.Description}" VerticalAlignment="Top"/>
 					<Button Classes="ListAction" Command="{Binding $parent[Window].AddLogLevelMapEntry}" Content="{DynamicResource String.Common.Add}" Grid.Column="1" VerticalAlignment="Top"/>
 				</Grid>
 				<Separator Classes="Dialog_Separator_Horizontal"/>

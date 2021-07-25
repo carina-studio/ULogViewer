@@ -46,10 +46,10 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		SettingKey<bool>? isPinnedSettingKey;
 		bool isWorkingDirectoryNeeded;
 		readonly ILogger logger;
-		Dictionary<string, LogLevel> logLevelMap = new Dictionary<string, LogLevel>();
+		Dictionary<string, LogLevel> logLevelMapForReading = new Dictionary<string, LogLevel>();
 		IList<LogPattern> logPatterns = new LogPattern[0];
 		string name = "";
-		IDictionary<string, LogLevel> readOnlyLogLevelMap;
+		IDictionary<string, LogLevel> readOnlyLogLevelMapForReading;
 		SortDirection sortDirection = SortDirection.Ascending;
 		LogSortKey sortKey = LogSortKey.Timestamp;
 		CultureInfo timestampCultureInfoForReading = defaultTimestampCultureInfoForReading;
@@ -67,7 +67,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			app.VerifyAccess();
 			this.Application = app;
 			this.logger = app.LoggerFactory.CreateLogger(this.GetType().Name);
-			this.readOnlyLogLevelMap = new ReadOnlyDictionary<string, LogLevel>(this.logLevelMap);
+			this.readOnlyLogLevelMapForReading = new ReadOnlyDictionary<string, LogLevel>(this.logLevelMapForReading);
 		}
 
 
@@ -83,8 +83,8 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			this.icon = template.icon;
 			this.isPinned = template.isPinned;
 			this.isWorkingDirectoryNeeded = template.isWorkingDirectoryNeeded;
-			foreach (var pair in template.logLevelMap)
-				this.logLevelMap[pair.Key] = pair.Value;
+			foreach (var pair in template.logLevelMapForReading)
+				this.logLevelMapForReading[pair.Key] = pair.Value;
 			this.logPatterns = template.logPatterns;
 			this.name = template.name;
 			this.sortDirection = template.sortDirection;
@@ -468,7 +468,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 					case nameof(IsWorkingDirectoryNeeded):
 						this.isWorkingDirectoryNeeded = jsonProperty.Value.GetBoolean();
 						break;
-					case nameof(LogLevelMap):
+					case nameof(LogLevelMapForReading):
 						this.LoadLogLevelMapFromJson(jsonProperty.Value);
 						break;
 					case nameof(LogPatterns):
@@ -506,12 +506,12 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		// Load log level map from JSON.
 		void LoadLogLevelMapFromJson(JsonElement logLevelMapElement)
 		{
-			this.logLevelMap.Clear();
+			this.logLevelMapForReading.Clear();
 			foreach (var jsonProperty in logLevelMapElement.EnumerateObject())
 			{
 				var key = jsonProperty.Name;
 				var logLevel = Enum.Parse<LogLevel>(jsonProperty.Value.GetString() ?? "");
-				this.logLevelMap[key] = logLevel;
+				this.logLevelMapForReading[key] = logLevel;
 			}
 		}
 
@@ -589,17 +589,17 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// <summary>
 		/// Get or set map of conversion from string to <see cref="LogLevel"/>.
 		/// </summary>
-		public IDictionary<string, LogLevel> LogLevelMap
+		public IDictionary<string, LogLevel> LogLevelMapForReading
 		{
-			get => this.readOnlyLogLevelMap;
+			get => this.readOnlyLogLevelMapForReading;
 			set
 			{
 				this.VerifyAccess();
 				this.VerifyBuiltIn();
-				this.logLevelMap.Clear();
+				this.logLevelMapForReading.Clear();
 				foreach (var pair in value)
-					this.logLevelMap[pair.Key] = pair.Value;
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LogLevelMap)));
+					this.logLevelMapForReading[pair.Key] = pair.Value;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LogLevelMapForReading)));
 			}
 		}
 
@@ -687,7 +687,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 					writer.WriteBoolean(nameof(IsPinned), true);
 				if (this.isWorkingDirectoryNeeded)
 					writer.WriteBoolean(nameof(IsWorkingDirectoryNeeded), true);
-				writer.WritePropertyName(nameof(LogLevelMap));
+				writer.WritePropertyName(nameof(LogLevelMapForReading));
 				this.SaveLogLevelMapToJson(writer);
 				writer.WritePropertyName(nameof(LogPatterns));
 				this.SaveLogPatternsToJson(writer);
@@ -751,7 +751,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		// Save log level map in JSON format.
 		void SaveLogLevelMapToJson(Utf8JsonWriter writer)
 		{
-			var map = this.logLevelMap;
+			var map = this.logLevelMapForReading;
 			writer.WriteStartObject();
 			foreach (var kvPair in map)
 				writer.WriteString(kvPair.Key, kvPair.Value.ToString());
