@@ -200,8 +200,8 @@
 	<sys:String x:Key="String.SessionView.AppOptions">Options…</sys:String>
 	<sys:String x:Key="String.SessionView.ClearLogFiles">Clear all added log files</sys:String>
 	<sys:String x:Key="String.SessionView.ClearPredefinedLogTextFiltersSelection">Clear selection</sys:String>
-	<sys:String x:Key="String.SessionView.CopyLogs">Copy logs (Ctrl+C)</sys:String>
-	<sys:String x:Key="String.SessionView.CopyLogsWithoutFileNames">Copy logs without file names (Ctrl+Shift+C)</sys:String>
+	<sys:String x:Key="String.SessionView.CopyLogs">Copy logs</sys:String>
+	<sys:String x:Key="String.SessionView.CopyLogsWithoutFileNames">Copy logs without file names</sys:String>
 	<sys:String x:Key="String.SessionView.CreatePredefinedLogTextFilter">Create…</sys:String>
 	<sys:String x:Key="String.SessionView.FilteredLogCount">, Filtered: </sys:String>
 	<sys:String x:Key="String.SessionView.FilterLogsBySelectedProcessId">Filter by selected PID</sys:String>
@@ -212,7 +212,7 @@
 	<sys:String x:Key="String.SessionView.LogsFilteringProgress">Filtering progress: </sys:String>
 	<sys:String x:Key="String.SessionView.LogTextFilterHint">Text filtering (Regular Expression)</sys:String>
 	<sys:String x:Key="String.SessionView.MarkedLogs">Marked logs</sys:String>
-	<sys:String x:Key="String.SessionView.MarkUnmarkLogs">Mark/Unmark logs (M)</sys:String>
+	<sys:String x:Key="String.SessionView.MarkUnmarkLogs">Mark/Unmark logs</sys:String>
 	<sys:String x:Key="String.SessionView.NoFilePathDropped">Please drag and drop valid files.</sys:String>
 	<sys:String x:Key="String.SessionView.NoLogToShow">No log to show</sys:String>
 	<sys:String x:Key="String.SessionView.NoPredefinedLogTextFilter">No saved text filter</sys:String>
@@ -223,7 +223,7 @@
 	<sys:String x:Key="String.SessionView.ResetLogFilters">Clear all filters</sys:String>
 	<sys:String x:Key="String.SessionView.ScrollToLatestLog">Scroll to latest log</sys:String>
 	<sys:String x:Key="String.SessionView.SelectedLogCount">Selected: </sys:String>
-	<sys:String x:Key="String.SessionView.SelectMarkedLogs">Select marked logs (S)</sys:String>
+	<sys:String x:Key="String.SessionView.SelectMarkedLogs">Select marked logs</sys:String>
 	<sys:String x:Key="String.SessionView.SetLogProfile">Select/Change log profile</sys:String>
 	<sys:String x:Key="String.SessionView.SetWorkingDirectory">Select/Change working directory</sys:String>
 	<sys:String x:Key="String.SessionView.TooManyDirectoryPathsDropped">Please drag and drop single directory.</sys:String>
