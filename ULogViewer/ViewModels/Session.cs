@@ -173,7 +173,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly MutableObservableBoolean canSetLogProfile = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSetWorkingDirectory = new MutableObservableBoolean();
 		Comparison<DisplayableLog?> compareDisplayableLogsDelegate;
-		Comparison<MarkedLogInfo?> compareMarkedLogInfosDelegate;
 		DisplayableLogGroup? displayableLogGroup;
 		readonly DisplayableLogFilter logFilter;
 		readonly HashSet<LogReader> logReaders = new HashSet<LogReader>();
@@ -712,16 +711,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public int FilteredLogCount { get => this.GetValue(FilteredLogCountProperty); }
 
 
-		// Find displayable log.
-		DisplayableLog? FindDisplayableLog(MarkedLogInfo markedLogInfo)
-		{
-			if (!this.allLogsByLogFilePath.TryGetValue(markedLogInfo.FileName, out var logs))
-				return null;
-			var index = logs.BinarySearch(markedLogInfo.LineNumber, it => it.LineNumber.GetValueOrDefault(), (x, y) => x - y);
-			return index >= 0 ? logs[index] : null;
-		}
-
-
 		/// <summary>
 		/// Check whether at least one log reader created or not.
 		/// </summary>
@@ -827,15 +816,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// add as unmatched 
 			this.unmatchedMarkedLogInfos.AddRange(markedLogInfos);
-<<<<<<< HEAD
-=======
-			this.unmatchedMarkedLogInfos.Sort(delegate(MarkedLogInfo a, MarkedLogInfo b)
-			{
-				if (a.Timestamp != null && b.Timestamp != null)
-					return ((DateTime)a.Timestamp).CompareTo((DateTime)b.Timestamp);
-				return a.LineNumber.CompareTo(b.LineNumber);
-			});
->>>>>>> f9c2caedebe3a455c5b8b150bcb7b3d6db37ad74
 
 			// match
 			this.MatchMarkedLogs();
@@ -972,13 +952,23 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		void MatchMarkedLogs()
 		{
 			// match
-<<<<<<< HEAD
+			var logList = (List<DisplayableLog>?)null;
+			var logListFileName = "";
 			for (var i = this.unmatchedMarkedLogInfos.Count - 1 ; i >= 0 ; i--)
 			{
-				var log = this.FindDisplayableLog(this.unmatchedMarkedLogInfos[i]);
-				if (log != null)
+				var markedLogInfo = this.unmatchedMarkedLogInfos[i];
+				if (!PathEqualityComparer.Default.Equals(markedLogInfo.FileName, logListFileName))
 				{
-					if(!log.IsMarked)
+					logListFileName = markedLogInfo.FileName;
+					this.allLogsByLogFilePath.TryGetValue(logListFileName, out logList);
+				}
+				if (logList == null)
+					continue;
+				var index = logList.BinarySearch(markedLogInfo.LineNumber, it => it.LineNumber.GetValueOrDefault(), (x, y) => x - y);
+				if (index >= 0)
+				{
+					var log = logList[index];
+					if (!log.IsMarked)
 					{
 						log.IsMarked = true;
 						this.markedLogs.Add(log);
@@ -986,29 +976,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.unmatchedMarkedLogInfos.RemoveAt(i);
 				}
 			}
-=======
-			var position = 0;
-			var matchedMarkedLogInfos = new List<MarkedLogInfo>();
-			foreach (var info in this.unmatchedMarkedLogInfos)
-			{
-				for (var i = position; i < this.allLogs.Count; i++)
-				{
-					DisplayableLog log = this.allLogs.ElementAt(i);
-					if (log.FileName == info.FileName && log.LineNumber == info.LineNumber && !log.IsMarked)
-					{
-						log.IsMarked = true;
-						this.markedLogs.Add(log);
-						matchedMarkedLogInfos.Add(info);
-						position = i + 1;
-						break;
-					}
-				}
-			}
-
-			// remove matched log infos
-			foreach (var info in matchedMarkedLogInfos)
-				this.unmatchedMarkedLogInfos.Remove(info);
->>>>>>> f9c2caedebe3a455c5b8b150bcb7b3d6db37ad74
 		}
 
 

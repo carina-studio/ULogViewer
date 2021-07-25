@@ -219,11 +219,7 @@ namespace CarinaStudio.ULogViewer
 			await LogProfiles.WaitForIOCompletionAsync();
 
 			// wait for necessary tasks
-<<<<<<< HEAD
 			if (this.workspace != null)
-=======
-			if(this.workspace != null)
->>>>>>> f9c2caedebe3a455c5b8b150bcb7b3d6db37ad74
 				await this.workspace.WaitForNecessaryTasksAsync();
 
 			// restart main window
