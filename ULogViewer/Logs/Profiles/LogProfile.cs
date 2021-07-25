@@ -47,14 +47,19 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		bool isWorkingDirectoryNeeded;
 		readonly ILogger logger;
 		Dictionary<string, LogLevel> logLevelMapForReading = new Dictionary<string, LogLevel>();
+		Dictionary<LogLevel, string> logLevelMapForWriting = new Dictionary<LogLevel, string>();
 		IList<LogPattern> logPatterns = new LogPattern[0];
+		string? logWritingFormat;
 		string name = "";
 		IDictionary<string, LogLevel> readOnlyLogLevelMapForReading;
+		IDictionary<LogLevel, string> readOnlyLogLevelMapForWriting;
 		SortDirection sortDirection = SortDirection.Ascending;
 		LogSortKey sortKey = LogSortKey.Timestamp;
 		CultureInfo timestampCultureInfoForReading = defaultTimestampCultureInfoForReading;
+		CultureInfo timestampCultureInfoForWriting = defaultTimestampCultureInfoForReading;
 		string? timestampFormatForDisplaying;
 		string? timestampFormatForReading;
+		string? timestampFormatForWriting;
 		IList<LogProperty> visibleLogProperties = new LogProperty[0];
 
 
@@ -68,6 +73,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			this.Application = app;
 			this.logger = app.LoggerFactory.CreateLogger(this.GetType().Name);
 			this.readOnlyLogLevelMapForReading = new ReadOnlyDictionary<string, LogLevel>(this.logLevelMapForReading);
+			this.readOnlyLogLevelMapForWriting = new ReadOnlyDictionary<LogLevel, string>(this.logLevelMapForWriting);
 		}
 
 
@@ -469,10 +475,16 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 						this.isWorkingDirectoryNeeded = jsonProperty.Value.GetBoolean();
 						break;
 					case nameof(LogLevelMapForReading):
-						this.LoadLogLevelMapFromJson(jsonProperty.Value);
+						this.LoadLogLevelMapForReadingFromJson(jsonProperty.Value);
+						break;
+					case nameof(LogLevelMapForWriting):
+						this.LoadLogLevelMapForWritingFromJson(jsonProperty.Value);
 						break;
 					case nameof(LogPatterns):
 						this.LoadLogPatternsFromJson(jsonProperty.Value);
+						break;
+					case nameof(LogWritingFormat):
+						this.logWritingFormat = jsonProperty.Value.GetString();
 						break;
 					case nameof(Name):
 						this.name = jsonProperty.Value.GetString() ?? "";
@@ -486,11 +498,17 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 					case nameof(TimestampCultureInfoForReading):
 						this.timestampCultureInfoForReading = CultureInfo.GetCultureInfo(jsonProperty.Value.GetString().AsNonNull());
 						break;
+					case nameof(TimestampCultureInfoForWriting):
+						this.timestampCultureInfoForWriting = CultureInfo.GetCultureInfo(jsonProperty.Value.GetString().AsNonNull());
+						break;
 					case nameof(TimestampFormatForDisplaying):
 						this.timestampFormatForDisplaying = jsonProperty.Value.GetString();
 						break;
 					case nameof(TimestampFormatForReading):
 						this.timestampFormatForReading = jsonProperty.Value.GetString();
+						break;
+					case nameof(TimestampFormatForWriting):
+						this.timestampFormatForWriting = jsonProperty.Value.GetString();
 						break;
 					case nameof(VisibleLogProperties):
 						this.LoadVisibleLogPropertiesFromJson(jsonProperty.Value);
@@ -504,7 +522,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 
 
 		// Load log level map from JSON.
-		void LoadLogLevelMapFromJson(JsonElement logLevelMapElement)
+		void LoadLogLevelMapForReadingFromJson(JsonElement logLevelMapElement)
 		{
 			this.logLevelMapForReading.Clear();
 			foreach (var jsonProperty in logLevelMapElement.EnumerateObject())
@@ -512,6 +530,18 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				var key = jsonProperty.Name;
 				var logLevel = Enum.Parse<LogLevel>(jsonProperty.Value.GetString() ?? "");
 				this.logLevelMapForReading[key] = logLevel;
+			}
+		}
+
+
+		// Load log level map from JSON.
+		void LoadLogLevelMapForWritingFromJson(JsonElement logLevelMapElement)
+		{
+			this.logLevelMapForWriting.Clear();
+			foreach (var jsonProperty in logLevelMapElement.EnumerateObject())
+			{
+				var logLevel = Enum.Parse<LogLevel>(jsonProperty.Name);
+				this.logLevelMapForWriting[logLevel] = jsonProperty.Value.GetString().AsNonNull();
 			}
 		}
 
@@ -597,9 +627,25 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				this.VerifyAccess();
 				this.VerifyBuiltIn();
 				this.logLevelMapForReading.Clear();
-				foreach (var pair in value)
-					this.logLevelMapForReading[pair.Key] = pair.Value;
+				this.logLevelMapForReading.AddAll(value);
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LogLevelMapForReading)));
+			}
+		}
+
+
+		/// <summary>
+		/// Get or set map of conversion from <see cref="LogLevel"/> to string.
+		/// </summary>
+		public IDictionary<LogLevel, string> LogLevelMapForWriting
+		{
+			get => this.readOnlyLogLevelMapForWriting;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				this.logLevelMapForWriting.Clear();
+				this.logLevelMapForWriting.AddAll(value);
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LogLevelMapForWriting)));
 			}
 		}
 
@@ -619,6 +665,24 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				this.logPatterns = new List<LogPattern>(value).AsReadOnly();
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LogPatterns)));
 				this.Validate();
+			}
+		}
+
+
+		/// <summary>
+		/// Get of set format to write log.
+		/// </summary>
+		public string? LogWritingFormat
+		{
+			get => this.logWritingFormat;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (this.logWritingFormat == value)
+					return;
+				this.logWritingFormat = value;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LogWritingFormat)));
 			}
 		}
 
@@ -688,15 +752,20 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				if (this.isWorkingDirectoryNeeded)
 					writer.WriteBoolean(nameof(IsWorkingDirectoryNeeded), true);
 				writer.WritePropertyName(nameof(LogLevelMapForReading));
-				this.SaveLogLevelMapToJson(writer);
+				this.SaveLogLevelMapForReadingToJson(writer);
+				writer.WritePropertyName(nameof(LogLevelMapForWriting));
+				this.SaveLogLevelMapForWritingToJson(writer);
 				writer.WritePropertyName(nameof(LogPatterns));
 				this.SaveLogPatternsToJson(writer);
+				this.logWritingFormat?.Let(it => writer.WriteString(nameof(LogWritingFormat), it));
 				writer.WriteString(nameof(Name), this.name);
 				writer.WriteString(nameof(SortDirection), this.sortDirection.ToString());
 				writer.WriteString(nameof(SortKey), this.sortKey.ToString());
 				writer.WriteString(nameof(TimestampCultureInfoForReading), this.timestampCultureInfoForReading.ToString());
-				writer.WriteString(nameof(TimestampFormatForDisplaying), this.timestampFormatForDisplaying);
-				writer.WriteString(nameof(TimestampFormatForReading), this.timestampFormatForReading);
+				writer.WriteString(nameof(TimestampCultureInfoForWriting), this.timestampCultureInfoForWriting.ToString());
+				this.timestampFormatForDisplaying?.Let(it => writer.WriteString(nameof(TimestampFormatForDisplaying), it));
+				this.timestampFormatForReading?.Let(it => writer.WriteString(nameof(TimestampFormatForReading), it));
+				this.timestampFormatForWriting?.Let(it => writer.WriteString(nameof(TimestampFormatForWriting), it));
 				writer.WritePropertyName(nameof(VisibleLogProperties));
 				this.SaveVisibleLogPropertiesToJson(writer);
 				writer.WriteEndObject();
@@ -749,12 +818,23 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 
 
 		// Save log level map in JSON format.
-		void SaveLogLevelMapToJson(Utf8JsonWriter writer)
+		void SaveLogLevelMapForReadingToJson(Utf8JsonWriter writer)
 		{
 			var map = this.logLevelMapForReading;
 			writer.WriteStartObject();
 			foreach (var kvPair in map)
 				writer.WriteString(kvPair.Key, kvPair.Value.ToString());
+			writer.WriteEndObject();
+		}
+
+
+		// Save log level map in JSON format.
+		void SaveLogLevelMapForWritingToJson(Utf8JsonWriter writer)
+		{
+			var map = this.logLevelMapForWriting;
+			writer.WriteStartObject();
+			foreach (var kvPair in map)
+				writer.WriteString(kvPair.Key.ToString(), kvPair.Value);
 			writer.WriteEndObject();
 		}
 
@@ -851,6 +931,24 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 
 
 		/// <summary>
+		/// Get or set <see cref="CultureInfo"/> of timestamp for writing logs.
+		/// </summary>
+		public CultureInfo TimestampCultureInfoForWriting
+		{
+			get => this.timestampCultureInfoForWriting;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (this.timestampCultureInfoForWriting.Equals(value))
+					return;
+				this.timestampCultureInfoForWriting = value;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TimestampCultureInfoForWriting)));
+			}
+		}
+
+
+		/// <summary>
 		/// Get or set format of timestamp for displaying logs.
 		/// </summary>
 		public string? TimestampFormatForDisplaying
@@ -882,6 +980,24 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 					return;
 				this.timestampFormatForReading = value;
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TimestampFormatForReading)));
+			}
+		}
+
+
+		/// <summary>
+		/// Get or set format of timestamp for writing logs.
+		/// </summary>
+		public string? TimestampFormatForWriting
+		{
+			get => this.timestampFormatForWriting;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (this.timestampFormatForWriting == value)
+					return;
+				this.timestampFormatForWriting = value;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TimestampFormatForWriting)));
 			}
 		}
 
