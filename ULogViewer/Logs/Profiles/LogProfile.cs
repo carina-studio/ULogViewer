@@ -89,15 +89,18 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			this.icon = template.icon;
 			this.isPinned = template.isPinned;
 			this.isWorkingDirectoryNeeded = template.isWorkingDirectoryNeeded;
-			foreach (var pair in template.logLevelMapForReading)
-				this.logLevelMapForReading[pair.Key] = pair.Value;
+			this.logLevelMapForReading.AddAll(template.logLevelMapForReading);
+			this.logLevelMapForWriting.AddAll(template.logLevelMapForWriting);
 			this.logPatterns = template.logPatterns;
+			this.logWritingFormat = template.logWritingFormat;
 			this.name = template.name;
 			this.sortDirection = template.sortDirection;
 			this.sortKey = template.sortKey;
 			this.timestampCultureInfoForReading = template.timestampCultureInfoForReading;
+			this.timestampCultureInfoForWriting = template.timestampCultureInfoForWriting;
 			this.timestampFormatForDisplaying = template.timestampFormatForDisplaying;
 			this.timestampFormatForReading = template.timestampFormatForReading;
+			this.timestampFormatForWriting = template.timestampFormatForWriting;
 			this.visibleLogProperties = template.visibleLogProperties;
 		}
 
