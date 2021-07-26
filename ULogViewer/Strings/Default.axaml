@@ -85,9 +85,11 @@
 	<sys:String x:Key="String.LogLevel.Warn">Warn</sys:String>
 
 	<!-- LogLevelMapEntryEditor -->
-	<sys:String x:Key="String.LogLevelMapEntryEditor.LogLevel">Mapped log level</sys:String>
-	<sys:String x:Key="String.LogLevelMapEntryEditor.Text">Text (required)</sys:String>
+	<sys:String x:Key="String.LogLevelMapEntryEditor.Reading.LogLevel">Mapped log level</sys:String>
+	<sys:String x:Key="String.LogLevelMapEntryEditor.Reading.Text">Text (required)</sys:String>
 	<sys:String x:Key="String.LogLevelMapEntryEditor.Title">Mapping of log level</sys:String>
+	<sys:String x:Key="String.LogLevelMapEntryEditor.Writing.LogLevel">Log level</sys:String>
+	<sys:String x:Key="String.LogLevelMapEntryEditor.Writing.Text">Mapped text (required)</sys:String>
 
 	<!-- LogMessageDialog -->
 	<sys:String x:Key="String.LogMessageDialog.WrapText">Wrap automatically</sys:String>
