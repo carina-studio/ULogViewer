@@ -124,7 +124,7 @@
 	<sys:String x:Key="String.LogProfileEditorDialog.Common">Common</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.DataSourceOptions">Options…</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.DataSourceProvider">Data source</sys:String>
-	<sys:String x:Key="String.LogProfileEditorDialog.DuplicateLogLevelMapEntry">'{0}' is already defined.</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.DuplicateLogLevelMapEntry">Conversion from '{0}' is already defined.</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.FormatDescription">Format description</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.Icon">Icon</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.InvalidDataSourceOptions">Need to set valid options</sys:String>
@@ -134,6 +134,8 @@
 	<sys:String x:Key="String.LogProfileEditorDialog.LogDisplaying">Log Displaying</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogLevelMapForReading">Mapping of log level</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogLevelMapForReading.Description">Convert specific text in raw log into log level</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.LogLevelMapForWriting">Mapping of log level</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.LogLevelMapForWriting.Description">Convert log level into specific text</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogPatterns">Log line patterns (required)</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogPatterns.Description">Pattern to parse each line of raw log</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogReading">Log Reading</sys:String>

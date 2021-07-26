@@ -163,13 +163,13 @@
 												<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Delete}"/>
 											</Border>
 										</Button>
-										<Button Classes="InPlaceAction" Command="{Binding $parent[Window].EditLogLevelMapEntry}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String.Common.Edit}">
+										<Button Classes="InPlaceAction" Command="{Binding $parent[Window].EditLogLevelMapEntryForReading}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String.Common.Edit}">
 											<Border Classes="InPlaceAction">
 												<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Edit}"/>
 											</Border>
 										</Button>
 									</StackPanel>
-									<TextBlock Foreground="{Binding Value, Converter={x:Static appConverters:LogLevelBrushConverter.Default}}" Grid.Column="1" Text="{Binding Value, Converter={x:Static appControls:LogProfileEditorDialog.LogLevelNameConverter}}" TextTrimming="CharacterEllipsis"/>
+									<TextBlock Foreground="{Binding Value, Converter={x:Static appConverters:LogLevelBrushConverter.Default}}" Text="{Binding Value, Converter={x:Static appControls:LogProfileEditorDialog.LogLevelNameConverter}}" TextTrimming="CharacterEllipsis"/>
 								</DockPanel>
 							</Grid>
 						</DataTemplate>
@@ -177,7 +177,7 @@
 				</ListBox>
 				<Grid ColumnDefinitions="*,Auto">
 					<TextBlock Classes="Dialog_Description" Text="{DynamicResource String.LogProfileEditorDialog.LogLevelMapForReading.Description}" VerticalAlignment="Top"/>
-					<Button Classes="ListAction" Command="{Binding $parent[Window].AddLogLevelMapEntry}" Content="{DynamicResource String.Common.Add}" Grid.Column="1" VerticalAlignment="Top"/>
+					<Button Classes="ListAction" Command="{Binding $parent[Window].AddLogLevelMapEntryForReading}" Content="{DynamicResource String.Common.Add}" Grid.Column="1" VerticalAlignment="Top"/>
 				</Grid>
 				<Separator Classes="Dialog_Separator_Horizontal"/>
 
@@ -310,6 +310,40 @@
 				</Grid>
 				<TextBlock Classes="Dialog_Description" Text="{DynamicResource String.LogProfileEditorDialog.LogWritingFormat.Description}"/>
 				<TextBlock Classes="Dialog_Description_Link" PointerReleased="OnLinkDescriptionPointerReleased" Tag="https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/tokens/interpolated#structure-of-an-interpolated-string" Text="{DynamicResource String.LogProfileEditorDialog.FormatDescription}"/>
+				<Separator Classes="Dialog_Separator_Horizontal"/>
+				
+				<!-- Log level map -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.LogLevelMapForWriting}"/>
+				<ListBox Items="{Binding $parent[Window].LogLevelMapEntriesForWriting}" SelectionChanged="OnListBoxSelectionChanged">
+					<ListBox.ItemTemplate>
+						<DataTemplate>
+							<Grid ColumnDefinitions="*,*">
+								<TextBlock Foreground="{Binding Key, Converter={x:Static appConverters:LogLevelBrushConverter.Default}}" Text="{Binding Key, Converter={x:Static appControls:LogProfileEditorDialog.LogLevelNameConverter}}" TextTrimming="CharacterEllipsis"/>
+								<Border Classes="InPlaceAction_Reserved"/>
+								<DockPanel Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+									<StackPanel DockPanel.Dock="Right" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
+										<Button Classes="InPlaceAction" Command="{Binding $parent[Window].RemoveLogLevelMapEntry}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String.Common.Delete}">
+											<Border Classes="InPlaceAction">
+												<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Delete}"/>
+											</Border>
+										</Button>
+										<Button Classes="InPlaceAction" Command="{Binding $parent[Window].EditLogLevelMapEntryForWriting}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String.Common.Edit}">
+											<Border Classes="InPlaceAction">
+												<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Edit}"/>
+											</Border>
+										</Button>
+									</StackPanel>
+									<TextBlock Text="{Binding Value}" TextTrimming="CharacterEllipsis"/>
+								</DockPanel>
+							</Grid>
+						</DataTemplate>
+					</ListBox.ItemTemplate>
+				</ListBox>
+				<Grid ColumnDefinitions="*,Auto">
+					<TextBlock Classes="Dialog_Description" Text="{DynamicResource String.LogProfileEditorDialog.LogLevelMapForWriting.Description}" VerticalAlignment="Top"/>
+					<Button Classes="ListAction" Command="{Binding $parent[Window].AddLogLevelMapEntryForWriting}" Content="{DynamicResource String.Common.Add}" Grid.Column="1" VerticalAlignment="Top"/>
+				</Grid>
+				<Separator Classes="Dialog_Separator_Horizontal"/>
 
 			</StackPanel>
 		</ScrollViewer>
