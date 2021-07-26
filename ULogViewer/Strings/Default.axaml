@@ -201,7 +201,7 @@
 	<sys:String x:Key="String.SessionView.ClearLogFiles">Clear all added log files</sys:String>
 	<sys:String x:Key="String.SessionView.ClearPredefinedLogTextFiltersSelection">Clear selection</sys:String>
 	<sys:String x:Key="String.SessionView.CopyLogs">Copy logs</sys:String>
-	<sys:String x:Key="String.SessionView.CopyLogsWithoutFileNames">Copy logs without file names</sys:String>
+	<sys:String x:Key="String.SessionView.CopyLogsWithFileNames">Copy logs with file names</sys:String>
 	<sys:String x:Key="String.SessionView.CreatePredefinedLogTextFilter">Create…</sys:String>
 	<sys:String x:Key="String.SessionView.FilteredLogCount">, Filtered: </sys:String>
 	<sys:String x:Key="String.SessionView.FilterLogsBySelectedProcessId">Filter by selected PID</sys:String>

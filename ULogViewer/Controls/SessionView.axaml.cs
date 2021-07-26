@@ -80,6 +80,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ScheduledAction autoAddLogFilesAction;
 		readonly ScheduledAction autoSetWorkingDirectoryAction;
 		readonly MutableObservableBoolean canAddLogFiles = new MutableObservableBoolean();
+		readonly MutableObservableBoolean canCopySelectedLogs = new MutableObservableBoolean();
+		readonly MutableObservableBoolean canCopySelectedLogsWithFileNames = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canFilterLogsByPid = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canFilterLogsByTid = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canMarkUnmarkSelectedLogs = new MutableObservableBoolean();
@@ -120,6 +122,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			// create commands
 			this.AddLogFilesCommand = ReactiveCommand.Create(this.AddLogFiles, this.canAddLogFiles);
+			this.CopySelectedLogsCommand = ReactiveCommand.Create(this.CopySelectedLogs, this.canCopySelectedLogs);
+			this.CopySelectedLogsWithFileNamesCommand = ReactiveCommand.Create(this.CopySelectedLogsWithFileNames, this.canCopySelectedLogsWithFileNames);
 			this.FilterLogsByProcessIdCommand = ReactiveCommand.Create<bool>(this.FilterLogsByProcessId, this.canFilterLogsByPid);
 			this.FilterLogsByThreadIdCommand = ReactiveCommand.Create<bool>(this.FilterLogsByThreadId, this.canFilterLogsByTid);
 			this.MarkUnmarkSelectedLogsCommand = ReactiveCommand.Create(this.MarkUnmarkSelectedLogs, this.canMarkUnmarkSelectedLogs);
@@ -376,6 +380,32 @@ namespace CarinaStudio.ULogViewer.Controls
 				return result;
 			return x.GetHashCode() - y.GetHashCode();
 		}
+
+
+		// Copy selected logs.
+		void CopySelectedLogs()
+		{
+			if (this.DataContext is not Session session || !this.canCopySelectedLogs.Value)
+				return;
+			session.CopyLogsCommand.TryExecute(this.logListBox.SelectedItems.Cast<DisplayableLog>().ToArray());
+		}
+
+
+		// Command to copy selected logs.
+		ICommand CopySelectedLogsCommand { get; }
+
+
+		// Copy selected logs with file names.
+		void CopySelectedLogsWithFileNames()
+		{
+			if (this.DataContext is not Session session || !this.canCopySelectedLogsWithFileNames.Value)
+				return;
+			session.CopyLogsWithFileNamesCommand.TryExecute(this.logListBox.SelectedItems.Cast<DisplayableLog>().ToArray());
+		}
+
+
+		// Command to copy selected logs with file names.
+		ICommand CopySelectedLogsWithFileNamesCommand { get; }
 
 
 		// Create item template for item of log list box.
@@ -1130,6 +1160,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				var hasSingleSelectedItem = (selectionCount == 1);
 
 				// update command states
+				this.canCopySelectedLogs.Update(hasSelectedItems && session.CopyLogsCommand.CanExecute(null));
+				this.canCopySelectedLogsWithFileNames.Update(hasSelectedItems && session.CopyLogsWithFileNamesCommand.CanExecute(null));
 				this.canFilterLogsByPid.Update(hasSingleSelectedItem && this.isPidLogPropertyVisible);
 				this.canFilterLogsByTid.Update(hasSingleSelectedItem && this.isTidLogPropertyVisible);
 				this.canMarkUnmarkSelectedLogs.Update(hasSelectedItems && session.MarkUnmarkLogsCommand.CanExecute(null));
@@ -1157,6 +1189,15 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				switch (e.Key)
 				{
+					case Key.C:
+						if (e.Source is not TextBox)
+						{
+							if ((e.KeyModifiers & KeyModifiers.Shift) != 0)
+								this.CopySelectedLogsWithFileNames();
+							else
+								this.CopySelectedLogs();
+						}
+						break;
 					case Key.F:
 						if (e.Source is not TextBox)
 						{

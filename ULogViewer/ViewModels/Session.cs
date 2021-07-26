@@ -6,6 +6,7 @@ using CarinaStudio.IO;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Converters;
 using CarinaStudio.ULogViewer.Logs;
+using CarinaStudio.ULogViewer.Logs.DataOutputs;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ViewModels;
@@ -64,6 +65,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsActivatedProperty = ObservableProperty.Register<Session, bool>(nameof(IsActivated));
 		/// <summary>
+		/// Property of <see cref="IsCopyingLogs"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> IsCopyingLogsProperty = ObservableProperty.Register<Session, bool>(nameof(IsCopyingLogs));
+		/// <summary>
 		/// Property of <see cref="IsFilteringLogs"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsFilteringLogsProperty = ObservableProperty.Register<Session, bool>(nameof(IsFilteringLogs));
@@ -75,6 +80,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Property of <see cref="IsLogsReadingPaused"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsLogsReadingPausedProperty = ObservableProperty.Register<Session, bool>(nameof(IsLogsReadingPaused));
+		/// <summary>
+		/// Property of <see cref="IsLogsWritingAvailable"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> IsLogsWritingAvailableProperty = ObservableProperty.Register<Session, bool>(nameof(IsLogsWritingAvailable));
 		/// <summary>
 		/// Property of <see cref="IsProcessingLogs"/>.
 		/// </summary>
@@ -142,6 +151,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly SortedObservableList<DisplayableLog> allLogs;
 		readonly MutableObservableBoolean canAddLogFile = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canClearLogFiles = new MutableObservableBoolean();
+		readonly MutableObservableBoolean canCopyLogs = new MutableObservableBoolean();
+		readonly MutableObservableBoolean canCopyLogsWithFileNames = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canMarkUnmarkLogs = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canPauseResumeLogsReading = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canReloadLogs = new MutableObservableBoolean();
@@ -169,6 +180,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// create commands
 			this.AddLogFileCommand = ReactiveCommand.Create<string?>(this.AddLogFile, this.canAddLogFile);
 			this.ClearLogFilesCommand = ReactiveCommand.Create(this.ClearLogFiles, this.canClearLogFiles);
+			this.CopyLogsCommand = ReactiveCommand.Create<IList<DisplayableLog>>(it => this.CopyLogs(it, false), this.canCopyLogs);
+			this.CopyLogsWithFileNamesCommand = ReactiveCommand.Create<IList<DisplayableLog>>(it => this.CopyLogs(it, true), this.canCopyLogsWithFileNames);
 			this.MarkUnmarkLogsCommand = ReactiveCommand.Create<IEnumerable<DisplayableLog>>(this.MarkUnmarkLogs, this.canMarkUnmarkLogs);
 			this.PauseResumeLogsReadingCommand = ReactiveCommand.Create(this.PauseResumeLogsReading, this.canPauseResumeLogsReading);
 			this.ReloadLogsCommand = ReactiveCommand.Create(() => this.ReloadLogs(), this.canReloadLogs);
@@ -476,6 +489,84 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		}
 
 
+		// Copy logs.
+		void CopyLogs(IList<DisplayableLog> logs, bool withFileNames)
+		{
+			// check state
+			this.VerifyAccess();
+			this.VerifyDisposed();
+			if (!this.canCopyLogs.Value)
+				return;
+			var profile = this.LogProfile ?? throw new InternalStateCorruptedException("No log profile.");
+			var app = this.Application as App ?? throw new InternalStateCorruptedException("No application.");
+			var writingFormat = profile.LogWritingFormat;
+			if (string.IsNullOrEmpty(writingFormat))
+				throw new InternalStateCorruptedException("No log writing format defined.");
+
+			// collect logs
+			if (logs.IsEmpty())
+				return;
+			var logsToCopy = new Log[logs.Count].Also(it =>
+			{
+				for (var i = it.Length - 1; i >= 0; --i)
+					it[i] = logs[i].Log;
+			});
+
+			// prepare log writer
+			var dataOutput = new StringLogDataOutput(app);
+			var logWriter = new LogWriter(dataOutput);
+			logWriter.LogFormat = writingFormat;
+			logWriter.LogLevelMap = profile.LogLevelMapForWriting;
+			logWriter.Logs = logsToCopy;
+			logWriter.TimestampCultureInfo = profile.TimestampCultureInfoForWriting;
+			logWriter.TimestampFormat = string.IsNullOrEmpty(profile.TimestampFormatForWriting) ? profile.TimestampFormatForReading : profile.TimestampFormatForWriting;
+			logWriter.WriteFileNames = withFileNames;
+			logWriter.PropertyChanged += async (_, e) =>
+			{
+				if (e.PropertyName == nameof(LogWriter.State))
+				{
+					switch(logWriter.State)
+					{
+						case LogWriterState.Stopped:
+							this.Logger.LogDebug("Logs writing completed, start setting to clipboard");
+							await app.Clipboard.SetTextAsync(dataOutput.String ?? "");
+							this.Logger.LogDebug("Logs copying completed");
+							logWriter.Dispose();
+							dataOutput.Dispose();
+							this.SetValue(IsCopyingLogsProperty, false);
+							break;
+						case LogWriterState.DataOutputError:
+						case LogWriterState.UnclassifiedError:
+							this.Logger.LogError("Logs copying failed");
+							logWriter.Dispose();
+							dataOutput.Dispose();
+							this.SetValue(IsCopyingLogsProperty, false);
+							break;
+					}
+				}
+			};
+
+			// start copying
+			this.Logger.LogDebug("Start copying logs");
+			this.SetValue(IsCopyingLogsProperty, true);
+			logWriter.Start();
+		}
+
+
+		/// <summary>
+		/// Command to copy logs.
+		/// </summary>
+		/// <remarks>Type of parameter is <see cref="IList{DisplayableLog}"/>.</remarks>
+		public ICommand CopyLogsCommand { get; }
+
+
+		/// <summary>
+		/// Command to copy logs with file names.
+		/// </summary>
+		/// <remarks>Type of parameter is <see cref="IList{DisplayableLog}"/>.</remarks>
+		public ICommand CopyLogsWithFileNamesCommand { get; }
+
+
 		// Try creating log data source.
 		ILogDataSource? CreateLogDataSourceOrNull(ILogDataSourceProvider provider, LogDataSourceOptions options)
 		{
@@ -690,6 +781,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Check whether logs copying is on-going or not.
+		/// </summary>
+		public bool IsCopyingLogs { get => this.GetValue(IsCopyingLogsProperty); }
+
+
+		/// <summary>
 		/// Check whether logs are being filtered or not.
 		/// </summary>
 		public bool IsFilteringLogs { get => this.GetValue(IsFilteringLogsProperty); }
@@ -702,9 +799,15 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
-		/// CHeck whether logs reading has been paused or not.
+		/// Check whether logs reading has been paused or not.
 		/// </summary>
 		public bool IsLogsReadingPaused { get => this.GetValue(IsLogsReadingPausedProperty); }
+
+
+		/// <summary>
+		/// Check whether logs writing is available for current <see cref="LogProfile"/> or not.
+		/// </summary>
+		public bool IsLogsWritingAvailable { get => this.GetValue(IsLogsWritingAvailableProperty); }
 
 
 		/// <summary>
@@ -1005,12 +1108,17 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		protected override void OnPropertyChanged(ObservableProperty property, object? oldValue, object? newValue)
 		{
 			base.OnPropertyChanged(property, oldValue, newValue);
-			if (property == IsFilteringLogsProperty 
+			if (property == IsCopyingLogsProperty)
+			{
+				this.canCopyLogs.Update(this.IsLogsWritingAvailable && this.Application is App && !this.IsCopyingLogs);
+				this.canCopyLogsWithFileNames.Update(this.canCopyLogs.Value && this.LogProfile?.DataSourceProvider?.UnderlyingSource == UnderlyingLogDataSource.File);
+			}
+			else if (property == IsFilteringLogsProperty
 				|| property == IsReadingLogsProperty)
 			{
 				this.updateIsProcessingLogsAction.Schedule();
 			}
-			else if (property == LogFiltersCombinationModeProperty 
+			else if (property == LogFiltersCombinationModeProperty
 				|| property == LogLevelFilterProperty
 				|| property == LogProcessIdFilterProperty
 				|| property == LogTextFilterProperty
@@ -1140,6 +1248,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// detach from log profile
 			profile.PropertyChanged -= this.OnLogProfilePropertyChanged;
 
+			// update state
+			this.canAddLogFile.Update(false);
+			this.canCopyLogs.Update(false);
+			this.canCopyLogsWithFileNames.Update(false);
+			this.canSetWorkingDirectory.Update(false);
+			this.canResetLogProfile.Update(false);
+			this.SetValue(IsLogsWritingAvailableProperty, false);
+
 			// clear profile
 			this.Logger.LogWarning($"Reset log profile '{profile.Name}'");
 			this.SetValue(LogProfileProperty, null);
@@ -1167,9 +1283,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.updateTitleAndIconAction.Schedule();
 
 			// update state
-			this.canAddLogFile.Update(false);
-			this.canSetWorkingDirectory.Update(false);
-			this.canResetLogProfile.Update(false);
 			this.canSetLogProfile.Update(true);
 		}
 
@@ -1265,6 +1378,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.updateLogFilterAction.Reschedule();
 
 			// update state
+			this.SetValue(IsLogsWritingAvailableProperty, !string.IsNullOrEmpty(profile.LogWritingFormat));
+			this.canCopyLogs.Update(this.IsLogsWritingAvailable && this.Application is App && !this.IsCopyingLogs);
+			this.canCopyLogsWithFileNames.Update(this.canCopyLogs.Value && profile.DataSourceProvider.UnderlyingSource == UnderlyingLogDataSource.File);
 			this.canResetLogProfile.Update(true);
 		}
 

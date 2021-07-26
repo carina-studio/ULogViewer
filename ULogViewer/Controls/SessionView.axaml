@@ -32,8 +32,8 @@
 			<MenuItem Command="{Binding $parent[UserControl].MarkUnmarkSelectedLogsCommand}" Header="{DynamicResource String.SessionView.MarkUnmarkLogs}" HotKey="M" InputGesture="M"/>
 			<MenuItem Command="{Binding $parent[UserControl].SelectMarkedLogsCommand}" Header="{DynamicResource String.SessionView.SelectMarkedLogs}" HotKey="S" InputGesture="S"/>
 			<Separator/>
-			<MenuItem Header="{DynamicResource String.SessionView.CopyLogs}" HotKey="Ctrl+C" InputGesture="Ctrl+C" IsEnabled="False"/>
-			<MenuItem Header="{DynamicResource String.SessionView.CopyLogsWithoutFileNames}" HotKey="Ctrl+Shift+C" InputGesture="Ctrl+Shift+C" IsEnabled="False"/>
+			<MenuItem Command="{Binding $parent[UserControl].CopySelectedLogsCommand}" Header="{DynamicResource String.SessionView.CopyLogs}" HotKey="Ctrl+C" InputGesture="Ctrl+C"/>
+			<MenuItem Command="{Binding $parent[UserControl].CopySelectedLogsWithFileNamesCommand}" Header="{DynamicResource String.SessionView.CopyLogsWithFileNames}" HotKey="Ctrl+Shift+C" InputGesture="Ctrl+Shift+C"/>
 			<Separator/>
 			<MenuItem Command="{Binding $parent[UserControl].FilterLogsByProcessIdCommand}" Header="{DynamicResource String.SessionView.FilterLogsBySelectedProcessId}">
 				<MenuItem.CommandParameter>
