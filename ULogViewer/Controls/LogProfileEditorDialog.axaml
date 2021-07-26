@@ -305,7 +305,7 @@
 				<!-- Log writing format -->
 				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.LogWritingFormat}"/>
 				<Grid ColumnDefinitions="*,Auto">
-					<TextBox Name="logWritingFormatTextBox"/>
+					<TextBox Name="logWritingFormatTextBox" Watermark="{DynamicResource String.LogProfileEditorDialog.LogWritingFormat.Watermark}"/>
 					<ToggleButton Name="insertLogWritingFormatSyntaxButton" Classes="Browse" Command="{Binding $parent[Window].ShowInsertLogWritingFormatSyntaxMenu}" Grid.Column="1"/>
 				</Grid>
 				<TextBlock Classes="Dialog_Description" Text="{DynamicResource String.LogProfileEditorDialog.LogWritingFormat.Description}"/>
@@ -344,6 +344,11 @@
 					<Button Classes="ListAction" Command="{Binding $parent[Window].AddLogLevelMapEntryForWriting}" Content="{DynamicResource String.Common.Add}" Grid.Column="1" VerticalAlignment="Top"/>
 				</Grid>
 				<Separator Classes="Dialog_Separator_Horizontal"/>
+
+				<!-- Timestamp format for writing -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.TimestampFormatForWriting}"/>
+				<TextBox Name="timestampFormatForWritingTextBox" MaxLength="256" Watermark="{DynamicResource String.LogProfileEditorDialog.TimestampFormatForWriting.Watermark}"/>
+				<TextBlock Classes="Dialog_Description_Link" PointerReleased="OnLinkDescriptionPointerReleased" Tag="https://docs.microsoft.com/en-us/dotnet/standard/base-types/standard-date-and-time-format-strings" Text="{DynamicResource String.LogProfileEditorDialog.FormatDescription}"/>
 
 			</StackPanel>
 		</ScrollViewer>

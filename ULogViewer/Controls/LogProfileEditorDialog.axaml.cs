@@ -53,8 +53,9 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly TextBox nameTextBox;
 		readonly ComboBox sortDirectionComboBox;
 		readonly ComboBox sortKeyComboBox;
-		readonly TextBox timestampFormatForReadingTextBox;
 		readonly TextBox timestampFormatForDisplayingTextBox;
+		readonly TextBox timestampFormatForReadingTextBox;
+		readonly TextBox timestampFormatForWritingTextBox;
 		readonly ObservableList<LogProperty> visibleLogProperties = new ObservableList<LogProperty>();
 		readonly ToggleSwitch workingDirNeededSwitch;
 
@@ -114,8 +115,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.nameTextBox = this.FindControl<TextBox>("nameTextBox").AsNonNull();
 			this.sortDirectionComboBox = this.FindControl<ComboBox>("sortDirectionComboBox").AsNonNull();
 			this.sortKeyComboBox = this.FindControl<ComboBox>("sortKeyComboBox").AsNonNull();
-			this.timestampFormatForReadingTextBox = this.FindControl<TextBox>("timestampFormatForReadingTextBox").AsNonNull();
 			this.timestampFormatForDisplayingTextBox = this.FindControl<TextBox>("timestampFormatForDisplayingTextBox").AsNonNull();
+			this.timestampFormatForReadingTextBox = this.FindControl<TextBox>("timestampFormatForReadingTextBox").AsNonNull();
+			this.timestampFormatForWritingTextBox = this.FindControl<TextBox>("timestampFormatForWritingTextBox").AsNonNull();
 			this.workingDirNeededSwitch = this.FindControl<ToggleSwitch>("workingDirNeededSwitch").AsNonNull();
 		}
 
@@ -410,6 +412,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			logProfile.SortKey = (LogSortKey)this.sortKeyComboBox.SelectedItem.AsNonNull();
 			logProfile.TimestampFormatForDisplaying = this.timestampFormatForDisplayingTextBox.Text;
 			logProfile.TimestampFormatForReading = this.timestampFormatForReadingTextBox.Text;
+			logProfile.TimestampFormatForWriting = this.timestampFormatForWritingTextBox.Text;
 			logProfile.VisibleLogProperties = this.visibleLogProperties;
 			return logProfile;
 		}
@@ -465,6 +468,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.sortKeyComboBox.SelectedItem = profile.SortKey;
 				this.timestampFormatForDisplayingTextBox.Text = profile.TimestampFormatForDisplaying;
 				this.timestampFormatForReadingTextBox.Text = profile.TimestampFormatForReading;
+				this.timestampFormatForWritingTextBox.Text = profile.TimestampFormatForWriting;
 				this.visibleLogProperties.AddRange(profile.VisibleLogProperties);
 				this.workingDirNeededSwitch.IsChecked = profile.IsWorkingDirectoryNeeded;
 			}
