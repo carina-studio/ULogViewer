@@ -1,5 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
+using Avalonia.Data;
 using Avalonia.Data.Converters;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
@@ -42,8 +44,11 @@ namespace CarinaStudio.ULogViewer.Controls
 		LogDataSourceOptions dataSourceOptions;
 		readonly ComboBox dataSourceProviderComboBox;
 		readonly ComboBox iconComboBox;
+		readonly ToggleButton insertLogWritingFormatSyntaxButton;
+		readonly ContextMenu insertLogWritingFormatSyntaxMenu;
 		readonly SortedObservableList<KeyValuePair<string, LogLevel>> logLevelMapEntriesForReading = new SortedObservableList<KeyValuePair<string, LogLevel>>((x, y) => x.Key.CompareTo(y.Key));
 		readonly ObservableList<LogPattern> logPatterns = new ObservableList<LogPattern>();
+		readonly TextBox logWritingFormatTextBox;
 		readonly TextBox nameTextBox;
 		readonly ComboBox sortDirectionComboBox;
 		readonly ComboBox sortKeyComboBox;
@@ -72,6 +77,33 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.continuousReadingSwitch = this.FindControl<ToggleSwitch>("continuousReadingSwitch").AsNonNull();
 			this.dataSourceProviderComboBox = this.FindControl<ComboBox>("dataSourceProviderComboBox").AsNonNull();
 			this.iconComboBox = this.FindControl<ComboBox>("iconComboBox").AsNonNull();
+			this.insertLogWritingFormatSyntaxButton = this.FindControl<ToggleButton>("insertLogWritingFormatSyntaxButton").AsNonNull();
+			this.insertLogWritingFormatSyntaxMenu = ((ContextMenu)this.Resources["insertLogWritingFormatSyntaxMenu"].AsNonNull()).Also(it =>
+			{
+				var itemTemplate = it.DataTemplates[0];
+				var items = new List<object>();
+				foreach (var propertyName in Log.PropertyNames)
+				{
+					items.Add(new MenuItem().Also(item =>
+					{
+						item.Bind(MenuItem.CommandProperty, new Binding() { Path = nameof(InsertLogWritingFormatSyntax), Source = this });
+						item.CommandParameter = propertyName;
+						item.DataContext = propertyName;
+						item.Header = itemTemplate.Build(propertyName);
+					}));
+				}
+				items.Add(new Separator());
+				items.Add(new MenuItem().Also(item =>
+				{
+					item.Bind(MenuItem.CommandProperty, new Binding() { Path = nameof(InsertLogWritingFormatSyntax), Source = this });
+					item.CommandParameter = "NewLine";
+					item.Bind(MenuItem.HeaderProperty, item.GetResourceObservable("String.Common.NewLine"));
+				}));
+				it.Items = items;
+				it.ContextMenuClosing += (_, e) => this.SynchronizationContext.Post(() => this.insertLogWritingFormatSyntaxButton.IsChecked = false);
+				it.ContextMenuOpening += (_, e) => this.SynchronizationContext.Post(() => this.insertLogWritingFormatSyntaxButton.IsChecked = true);
+			});
+			this.logWritingFormatTextBox = this.FindControl<TextBox>("logWritingFormatTextBox").AsNonNull();
 			this.nameTextBox = this.FindControl<TextBox>("nameTextBox").AsNonNull();
 			this.sortDirectionComboBox = this.FindControl<ComboBox>("sortDirectionComboBox").AsNonNull();
 			this.sortKeyComboBox = this.FindControl<ComboBox>("sortKeyComboBox").AsNonNull();
@@ -194,6 +226,14 @@ namespace CarinaStudio.ULogViewer.Controls
 		private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
 
 
+		// Insert log writing syntax for given log property.
+		void InsertLogWritingFormatSyntax(string propertyName)
+		{
+			this.logWritingFormatTextBox.SelectedText = $"{{{propertyName}}}";
+			this.logWritingFormatTextBox.Focus();
+		}
+
+
 		// Check whether log data source options is valid or not.
 		bool IsValidDataSourceOptions { get => this.GetValue<bool>(IsValidDataSourceOptionsProperty); }
 
@@ -290,6 +330,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			logProfile.IsWorkingDirectoryNeeded = this.workingDirNeededSwitch.IsChecked.GetValueOrDefault();
 			logProfile.LogLevelMapForReading = new Dictionary<string, LogLevel>(this.logLevelMapEntriesForReading);
 			logProfile.LogPatterns = this.logPatterns;
+			logProfile.LogWritingFormat = this.logWritingFormatTextBox.Text?.Trim();
 			logProfile.Name = this.nameTextBox.Text.AsNonNull();
 			logProfile.SortDirection = (SortDirection)this.sortDirectionComboBox.SelectedItem.AsNonNull();
 			logProfile.SortKey = (LogSortKey)this.sortKeyComboBox.SelectedItem.AsNonNull();
@@ -343,6 +384,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.continuousReadingSwitch.IsChecked = profile.IsContinuousReading;
 				this.logLevelMapEntriesForReading.AddAll(profile.LogLevelMapForReading);
 				this.logPatterns.AddRange(profile.LogPatterns);
+				this.logWritingFormatTextBox.Text = profile.LogWritingFormat;
 				this.nameTextBox.Text = profile.Name;
 				this.sortDirectionComboBox.SelectedItem = profile.SortDirection;
 				this.sortKeyComboBox.SelectedItem = profile.SortKey;
@@ -433,6 +475,15 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.dataSourceOptions = options.Value;
 				this.InvalidateInput();
 			}
+		}
+
+
+		// Show menu to insert log writing format syntax.
+		void ShowInsertLogWritingFormatSyntaxMenu()
+		{
+			if (this.insertLogWritingFormatSyntaxMenu.PlacementTarget == null)
+				this.insertLogWritingFormatSyntaxMenu.PlacementTarget = this.insertLogWritingFormatSyntaxButton;
+			this.insertLogWritingFormatSyntaxMenu.Open(this);
 		}
 
 

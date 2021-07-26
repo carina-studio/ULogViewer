@@ -40,6 +40,7 @@
 	<sys:String x:Key="String.Common.KnowMoreAbout">了解更多</sys:String>
 	<sys:String x:Key="String.Common.MoveDown">下移</sys:String>
 	<sys:String x:Key="String.Common.MoveUp">上移</sys:String>
+	<sys:String x:Key="String.Common.NewLine">換行</sys:String>
 	<sys:String x:Key="String.Common.No">否</sys:String>
 	<sys:String x:Key="String.Common.OK">好</sys:String>
 	<sys:String x:Key="String.Common.Options">選項</sys:String>
@@ -117,6 +118,7 @@
 	<sys:String x:Key="String.LogProfileEditorDialog.DataSourceOptions">參數…</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.DataSourceProvider">資料來源</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.DuplicateLogLevelMapEntry">已經定義 '{0}'。</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.FormatDescription">格式說明</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.Icon">圖示</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.InvalidDataSourceOptions">需要有效的參數</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.IsContinuousReading">連續讀取</sys:String>
@@ -128,10 +130,12 @@
 	<sys:String x:Key="String.LogProfileEditorDialog.LogPatterns">日誌行格式 (必須)</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogPatterns.Description">分析原始日誌每一行的格式</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogReading">日誌讀取設定</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.LogWriting">日誌輸出設定</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.LogWritingFormat">日誌輸出格式 (空白即不支援輸出)</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.LogWritingFormat.Description">您可以使用右側按鈕加入 "插值語法" 以將日誌屬性產生至輸出的日誌文字</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.Name">名稱 (必須)</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.SortDirection">日誌排序方向</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.SortKey">日誌排序依據</sys:String>
-	<sys:String x:Key="String.LogProfileEditorDialog.TimestampFormatDescription">格式說明</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.TimestampFormatForDisplaying">日誌時間顯示格式</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.TimestampFormatForReading">日誌時間讀取格式</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.Title.Create">建立新的日誌類型</sys:String>

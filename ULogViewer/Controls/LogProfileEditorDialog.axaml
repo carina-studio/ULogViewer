@@ -2,6 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+				xmlns:sys="using:System"
 				xmlns:ia="using:Avalonia.Xaml.Interactivity"
 				xmlns:iaCore="using:Avalonia.Xaml.Interactions.Core"
 				xmlns:app="clr-namespace:CarinaStudio.ULogViewer;assembly=ULogViewer"
@@ -15,6 +16,26 @@
 				Classes="Dialog"
 				SizeToContent="Height"
 				Width="{StaticResource Double.LogProfileEditorDialog.Width}">
+
+	<!-- Resources -->
+	<Window.Resources>
+		<ContextMenu x:Key="insertLogWritingFormatSyntaxMenu" PlacementMode="Bottom">
+			<ContextMenu.DataTemplates>
+				<DataTemplate DataType="{x:Type sys:String}">
+					<StackPanel Orientation="Horizontal">
+						<TextBlock Text="{Binding Converter={x:Static appConverters:LogPropertyNameConverter.Default}}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+						<TextBlock Grid.Column="1" Opacity="0.3" TextTrimming="CharacterEllipsis" VerticalAlignment="Center">
+							<TextBlock.Text>
+								<MultiBinding StringFormat="{} ({0})">
+									<Binding/>
+								</MultiBinding>
+							</TextBlock.Text>
+						</TextBlock>
+					</StackPanel>
+				</DataTemplate>
+			</ContextMenu.DataTemplates>
+		</ContextMenu>
+	</Window.Resources>
 
 	<!-- Styles -->
 	<Window.Styles>
@@ -203,7 +224,7 @@
 				<!-- Timestamp format for reading -->
 				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.TimestampFormatForReading}"/>
 				<TextBox Name="timestampFormatForReadingTextBox" MaxLength="256"/>
-				<TextBlock Classes="Dialog_Description_Link" PointerReleased="OnLinkDescriptionPointerReleased" Tag="https://docs.microsoft.com/en-us/dotnet/standard/base-types/standard-date-and-time-format-strings" Text="{DynamicResource String.LogProfileEditorDialog.TimestampFormatDescription}"/>
+				<TextBlock Classes="Dialog_Description_Link" PointerReleased="OnLinkDescriptionPointerReleased" Tag="https://docs.microsoft.com/en-us/dotnet/standard/base-types/standard-date-and-time-format-strings" Text="{DynamicResource String.LogProfileEditorDialog.FormatDescription}"/>
 				<Separator Classes="Dialog_Separator_Large_Horizontal"/>
 
 				<!-- Header -->
@@ -259,7 +280,7 @@
 				<!-- Timestamp format for displaying -->
 				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.TimestampFormatForDisplaying}"/>
 				<TextBox Name="timestampFormatForDisplayingTextBox" MaxLength="256"/>
-				<TextBlock Classes="Dialog_Description_Link" PointerReleased="OnLinkDescriptionPointerReleased" Tag="https://docs.microsoft.com/en-us/dotnet/standard/base-types/standard-date-and-time-format-strings" Text="{DynamicResource String.LogProfileEditorDialog.TimestampFormatDescription}"/>
+				<TextBlock Classes="Dialog_Description_Link" PointerReleased="OnLinkDescriptionPointerReleased" Tag="https://docs.microsoft.com/en-us/dotnet/standard/base-types/standard-date-and-time-format-strings" Text="{DynamicResource String.LogProfileEditorDialog.FormatDescription}"/>
 				<Separator Classes="Dialog_Separator_Horizontal"/>
 
 				<!-- Color indicator -->
@@ -276,6 +297,19 @@
 				<!-- Sort direction -->
 				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.SortDirection}"/>
 				<appControls:EnumComboBox Name="sortDirectionComboBox" EnumType="{x:Type app:SortDirection}" HorizontalAlignment="Stretch"/>
+				<Separator Classes="Dialog_Separator_Large_Horizontal"/>
+
+				<!-- Header -->
+				<TextBlock Classes="Dialog_Label_Header1" Text="{DynamicResource String.LogProfileEditorDialog.LogWriting}"/>
+
+				<!-- Log writing format -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.LogWritingFormat}"/>
+				<Grid ColumnDefinitions="*,Auto">
+					<TextBox Name="logWritingFormatTextBox"/>
+					<ToggleButton Name="insertLogWritingFormatSyntaxButton" Classes="Browse" Command="{Binding $parent[Window].ShowInsertLogWritingFormatSyntaxMenu}" Grid.Column="1"/>
+				</Grid>
+				<TextBlock Classes="Dialog_Description" Text="{DynamicResource String.LogProfileEditorDialog.LogWritingFormat.Description}"/>
+				<TextBlock Classes="Dialog_Description_Link" PointerReleased="OnLinkDescriptionPointerReleased" Tag="https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/tokens/interpolated#structure-of-an-interpolated-string" Text="{DynamicResource String.LogProfileEditorDialog.FormatDescription}"/>
 
 			</StackPanel>
 		</ScrollViewer>

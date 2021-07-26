@@ -21,8 +21,8 @@
 			<ContextMenu.DataTemplates>
 				<DataTemplate DataType="{x:Type sys:String}">
 					<StackPanel Orientation="Horizontal">
-						<TextBlock Text="{Binding Converter={x:Static appConverters:LogPropertyNameConverter.Default}}" TextTrimming="CharacterEllipsis"/>
-						<TextBlock Grid.Column="1" Opacity="0.3" TextTrimming="CharacterEllipsis">
+						<TextBlock Text="{Binding Converter={x:Static appConverters:LogPropertyNameConverter.Default}}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+						<TextBlock Grid.Column="1" Opacity="0.3" TextTrimming="CharacterEllipsis" VerticalAlignment="Center">
 							<TextBlock.Text>
 								<MultiBinding StringFormat="{} ({0})">
 									<Binding/>

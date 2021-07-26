@@ -42,6 +42,7 @@
 	<sys:String x:Key="String.Common.KnowMoreAbout">Know more about</sys:String>
 	<sys:String x:Key="String.Common.MoveDown">Move down</sys:String>
 	<sys:String x:Key="String.Common.MoveUp">Move up</sys:String>
+	<sys:String x:Key="String.Common.NewLine">New line</sys:String>
 	<sys:String x:Key="String.Common.No">No</sys:String>
 	<sys:String x:Key="String.Common.OK">OK</sys:String>
 	<sys:String x:Key="String.Common.Options">Options</sys:String>
@@ -124,6 +125,7 @@
 	<sys:String x:Key="String.LogProfileEditorDialog.DataSourceOptions">Options…</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.DataSourceProvider">Data source</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.DuplicateLogLevelMapEntry">'{0}' is already defined.</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.FormatDescription">Format description</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.Icon">Icon</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.InvalidDataSourceOptions">Need to set valid options</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.IsContinuousReading">Continuous reading</sys:String>
@@ -135,10 +137,12 @@
 	<sys:String x:Key="String.LogProfileEditorDialog.LogPatterns">Log line patterns (required)</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogPatterns.Description">Pattern to parse each line of raw log</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogReading">Log Reading</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.LogWriting">Log Output</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.LogWritingFormat">Log output format (Empty to disable output)</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.LogWritingFormat.Description">You can click button on the right hand side to add "Interpolation Syntax" to produce log property to output log text</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.Name">Name (required)</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.SortDirection">Sort direction of log</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.SortKey">Sort key of log</sys:String>
-	<sys:String x:Key="String.LogProfileEditorDialog.TimestampFormatDescription">Format description</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.TimestampFormatForDisplaying">Format of timestamp for displaying</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.TimestampFormatForReading">Format of timestamp for reading</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.Title.Create">Create new log profile</sys:String>
