@@ -1,5 +1,7 @@
-﻿using CarinaStudio.Configuration;
+﻿using Avalonia.Media;
+using CarinaStudio.Configuration;
 using System;
+using System.Runtime.InteropServices;
 
 namespace CarinaStudio.ULogViewer
 {
@@ -20,6 +22,14 @@ namespace CarinaStudio.ULogViewer
 		/// Ignore case of log text filter.
 		/// </summary>
 		public static readonly SettingKey<bool> IgnoreCaseOfLogTextFilter = new SettingKey<bool>(nameof(IgnoreCaseOfLogTextFilter), true);
+		/// <summary>
+		/// Font family of log.
+		/// </summary>
+		public static readonly SettingKey<string> LogFontFamily = new SettingKey<string>(nameof(LogFontFamily), "");
+		/// <summary>
+		/// Font size of log.
+		/// </summary>
+		public static readonly SettingKey<int> LogFontSize = new SettingKey<int>(nameof(LogFontSize), 14);
 		/// <summary>
 		/// Maximum number of logs for continuous logs reading.
 		/// </summary>
@@ -47,6 +57,10 @@ namespace CarinaStudio.ULogViewer
 		/// </summary>
 		public const int MaxContinuousLogReadingUpdateInterval = 1000;
 		/// <summary>
+		/// Maximum value of <see cref="LogFontSize"/>.
+		/// </summary>
+		public const int MaxLogFontSize = 30;
+		/// <summary>
 		/// Maximum value of <see cref="UpdateLogFilterDelay"/>.
 		/// </summary>
 		public const int MaxUpdateLogFilterDelay = 1500;
@@ -55,9 +69,36 @@ namespace CarinaStudio.ULogViewer
 		/// </summary>
 		public const int MinContinuousLogReadingUpdateInterval = 50;
 		/// <summary>
+		/// Maximum value of <see cref="LogFontSize"/>.
+		/// </summary>
+		public const int MinLogFontSize = 10;
+		/// <summary>
 		/// Minimum value of <see cref="UpdateLogFilterDelay"/>.
 		/// </summary>
 		public const int MinUpdateLogFilterDelay = 300;
+
+
+		/// <summary>
+		/// Default font family of log.
+		/// </summary>
+		public static string DefaultLogFontFamily { get; } = Global.Run(() =>
+		{
+			var targetFontFamily = Global.Run(() =>
+			{
+				if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+					return "";
+				return "Consolas";
+			});
+			if (!string.IsNullOrEmpty(targetFontFamily))
+			{
+				foreach (var name in FontManager.Current.GetInstalledFontFamilyNames())
+				{
+					if (name == targetFontFamily)
+						return targetFontFamily;
+				}
+			}
+			return FontManager.Current.DefaultFontFamilyName;
+		});
 
 
 		/// <summary>
