@@ -415,6 +415,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			var logPropertyCount = logProperties.Count;
 			var colorIndicatorWidth = app.Resources.TryGetResource("Double.SessionView.LogListBox.ColorIndicator.Width", out var rawResource) ? (double)rawResource.AsNonNull() : 0.0;
 			var itemPadding = app.Resources.TryGetResource("Thickness.SessionView.LogListBox.Item.Padding", out rawResource) ? (Thickness)rawResource.AsNonNull() : new Thickness();
+			var propertyPadding = app.Resources.TryGetResource("Thickness.SessionView.LogListBox.Item.Property.Padding", out rawResource) ? (Thickness)rawResource.AsNonNull() : new Thickness();
 			var splitterWidth = app.Resources.TryGetResource("Double.GridSplitter.Thickness", out rawResource) ? (double)rawResource.AsNonNull() : 0.0;
 			if (profile.ColorIndicator != LogColorIndicator.None)
 				itemPadding = new Thickness(itemPadding.Left + colorIndicatorWidth, itemPadding.Top, itemPadding.Right, itemPadding.Bottom);
@@ -465,6 +466,7 @@ namespace CarinaStudio.ULogViewer.Controls
 								binding.Path = logProperty.Name;
 							}));
 							it.MaxLines = DisplayableLog.MaxDisplayableLineCount;
+							it.Padding = propertyPadding;
 							it.TextTrimming = TextTrimming.CharacterEllipsis;
 							it.TextWrapping = TextWrapping.NoWrap;
 							it.VerticalAlignment = VerticalAlignment.Top;
