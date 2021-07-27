@@ -547,13 +547,19 @@ namespace CarinaStudio.ULogViewer.Logs
 		{
 			foreach (Group group in match.Groups)
 			{
+				if (!group.Success)
+					continue;
 				var name = group.Name;
 				switch (name)
 				{
+					case "0":
+						break;
 					case nameof(Log.Level):
 						if (this.logLevelMap.TryGetValue(group.Value, out var level))
 							logBuilder.Set(name, level.ToString());
 						break;
+					case nameof(Log.Extra1):
+					case nameof(Log.Extra2):
 					case nameof(Log.Message):
 						logBuilder.AppendToNextLine(name, group.Value);
 						break;
@@ -566,6 +572,7 @@ namespace CarinaStudio.ULogViewer.Logs
 								logBuilder.Set(name, timestamp.ToBinary().ToString());
 						});
 						break;
+					case nameof(Log.Event):
 					case nameof(Log.ProcessId):
 					case nameof(Log.ProcessName):
 					case nameof(Log.SourceName):
