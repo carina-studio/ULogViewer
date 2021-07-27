@@ -17,6 +17,8 @@ namespace CarinaStudio.ULogViewer.Logs
 		static long nextId = 0;
 		static Dictionary<string, PropertyInfo> propertyMap = new Dictionary<string, PropertyInfo>();
 		static volatile IList<string>? propertyNames;
+		static Dictionary<string, PropertyInfo> stringPropertyMap = new Dictionary<string, PropertyInfo>();
+		static volatile IList<string>? stringPropertyNames;
 
 
 		/// <summary>
@@ -25,6 +27,9 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <param name="builder"><see cref="LogBuilder"/>.</param>
 		internal Log(LogBuilder builder)
 		{
+			this.Event = builder.GetStringOrNull(nameof(Event));
+			this.Extra1 = builder.GetStringOrNull(nameof(Extra1));
+			this.Extra2 = builder.GetStringOrNull(nameof(Extra2));
 			this.FileName = builder.GetStringOrNull(nameof(FileName));
 			this.Id = Interlocked.Increment(ref nextId);
 			this.Level = builder.GetEnumOrNull<LogLevel>(nameof(Level)) ?? LogLevel.Undefined;
@@ -45,12 +50,51 @@ namespace CarinaStudio.ULogViewer.Logs
 			this.ProcessId = builder.GetInt32OrNull(nameof(ProcessId));
 			this.ProcessName = builder.GetStringOrNull(nameof(ProcessName));
 			this.SourceName = builder.GetStringOrNull(nameof(SourceName));
+			this.Tags = builder.GetStringOrNull(nameof(Tags));
 			this.ThreadId = builder.GetInt32OrNull(nameof(ThreadId));
 			this.ThreadName = builder.GetStringOrNull(nameof(ThreadName));
 			this.Timestamp = builder.GetDateTimeOrNull(nameof(Timestamp));
+			this.Title = builder.GetStringOrNull(nameof(Title));
 			this.UserId = builder.GetStringOrNull(nameof(UserId));
 			this.UserName = builder.GetStringOrNull(nameof(UserName));
 		}
+
+
+#pragma warning disable CS8603
+#pragma warning disable CS8600
+		/// <summary>
+		/// Create <see cref="Func{T, TResult}"/> to get value of specific property.
+		/// </summary>
+		/// <typeparam name="T">Type of property value.</typeparam>
+		/// <param name="propertyName">Property name.</param>
+		/// <returns><see cref="Func{T, TResult}"/>.</returns>
+		public static Func<Log, T> CreatePropertyGetter<T>(string propertyName)
+		{
+			SetupPropertyMap();
+			if (propertyMap.TryGetValue(propertyName, out var propertyInfo))
+				return (it => (T)propertyInfo.GetValue(it));
+			return (it => default);
+		}
+#pragma warning restore CS8603
+#pragma warning restore CS8600
+
+
+		/// <summary>
+		/// Get event of log.
+		/// </summary>
+		public string? Event { get; }
+
+
+		/// <summary>
+		/// Get 1st extra data of log.
+		/// </summary>
+		public string? Extra1 { get; }
+
+
+		/// <summary>
+		/// Get 2nd extra data of log.
+		/// </summary>
+		public string? Extra2 { get; }
 
 
 		/// <summary>
@@ -68,6 +112,18 @@ namespace CarinaStudio.ULogViewer.Logs
 		{
 			SetupPropertyMap();
 			return propertyMap.ContainsKey(propertyName);
+		}
+
+
+		/// <summary>
+		/// Check whether given log property is exported by <see cref="Log"/> with <see cref="string"/> value or not.
+		/// </summary>
+		/// <param name="propertyName">Name of property.</param>
+		/// <returns>True if given log property is exported.</returns>
+		public static bool HasStringProperty(string propertyName)
+		{
+			SetupPropertyMap();
+			return stringPropertyMap.ContainsKey(propertyName);
 		}
 
 
@@ -150,9 +206,12 @@ namespace CarinaStudio.ULogViewer.Logs
 								case nameof(Id):
 								case nameof(MessageLineCount):
 								case nameof(PropertyNames):
+								case nameof(StringPropertyNames):
 									break;
 								default:
 									propertyMap[propertyInfo.Name] = propertyInfo;
+									if (propertyInfo.PropertyType == typeof(string))
+										stringPropertyMap[propertyInfo.Name] = propertyInfo;
 									break;
 							}
 						}
@@ -167,6 +226,33 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// Get name of source which generates log.
 		/// </summary>
 		public string? SourceName { get; }
+
+
+		/// <summary>
+		/// Get list of log properties exported by <see cref="Log"/> with <see cref="string"/> value.
+		/// </summary>
+		public static IList<string> StringPropertyNames
+		{
+			get
+			{
+				SetupPropertyMap();
+				if (stringPropertyNames == null)
+				{
+					lock (typeof(Log))
+					{
+						if (stringPropertyNames == null)
+							stringPropertyNames = stringPropertyMap.Keys.ToArray().AsReadOnly();
+					}
+				}
+				return stringPropertyNames;
+			}
+		}
+
+
+		/// <summary>
+		/// Get tags of log.
+		/// </summary>
+		public string? Tags { get; }
 
 
 		/// <summary>
@@ -185,6 +271,12 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// Get timestamp.
 		/// </summary>
 		public DateTime? Timestamp { get; }
+
+
+		/// <summary>
+		/// Get title of log.
+		/// </summary>
+		public string? Title { get; }
 
 
 		/// <summary>

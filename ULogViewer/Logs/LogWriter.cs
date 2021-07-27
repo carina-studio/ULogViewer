@@ -283,10 +283,7 @@ namespace CarinaStudio.ULogViewer.Logs
 								return timestamp.Value.ToString(this.timestampFormat, this.timestampCultureInfo);
 							return timestamp.Value.ToString(this.timestampCultureInfo);
 						},
-						_ => typeof(Log).GetProperty(propertyName).AsNonNull().Let(propertyInfo =>
-						{
-							return new Func<Log, object?>(log => propertyInfo.GetValue(log));
-						}),
+						_ => Log.CreatePropertyGetter<object?>(propertyName),
 					};
 					logPropertyGetters.Add(logPropertyGetter);
 					formatBuilder.Append($"{{{argIndex++}");
