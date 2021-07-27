@@ -31,7 +31,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 	class Session : ViewModel
 	{
 		// Constants.
-		const string markedFileExtension = ".ulvmark";
+		const string MarkedFileExtension = ".ulvmark";
+		const int DelaySaveMarkedLogs = 1000;
 
 
 		/// <summary>
@@ -237,9 +238,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				((INotifyCollectionChanged)it.FilteredLogs).CollectionChanged += this.OnFilteredLogsChanged;
 				it.PropertyChanged += this.OnLogFilterPropertyChanged;
 			});
-
-			// create marked logs
-			this.markedLogs = new SortedObservableList<DisplayableLog>(this.CompareDisplayableLogs);
 
 			// setup properties
 			this.SetValue(LogsProperty, this.allLogs.AsReadOnly());
@@ -785,37 +783,38 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			var markedLogInfos = await ioTaskFactory.StartNew(() =>
 			{
 				var markedLogInfos = new List<MarkedLogInfo>();
-				var markedFileName = fileName + markedFileExtension;
+				var markedFileName = fileName + MarkedFileExtension;
 				if (!File.Exists(markedFileName))
 					return Array.Empty<MarkedLogInfo>();
 				try
 				{
 					using var stream = new FileStream(markedFileName, FileMode.Open, FileAccess.Read);
-					JsonDocument.Parse(stream).Let(jsonDocument =>
+					JsonDocument.Parse(stream).Use(jsonDocument =>
 					{
 						foreach (var jsonProperty in jsonDocument.RootElement.EnumerateObject())
 						{
 							switch (jsonProperty.Name)
 							{
 								case "MarkedLogInfos":
+								{
+									foreach (var jsonObject in jsonProperty.Value.EnumerateArray())
 									{
-										foreach (var jsonObject in jsonProperty.Value.EnumerateArray())
-										{
-											var lineNumber = jsonObject.GetProperty("MarkedLineNumber").GetInt32();
-											var timestamp = (DateTime?)null;
-											if (jsonObject.TryGetProperty("MarkedTimestamp", out var timestampElement))
-												timestamp = DateTime.Parse(timestampElement.GetString().AsNonNull());
-											markedLogInfos.Add(new MarkedLogInfo(fileName, lineNumber, timestamp));
-										}
-										break;
+										var lineNumber = jsonObject.GetProperty("MarkedLineNumber").GetInt32();
+										var timestamp = (DateTime?)null;
+										if (jsonObject.TryGetProperty("MarkedTimestamp", out var timestampElement))
+											timestamp = DateTime.Parse(timestampElement.GetString().AsNonNull());
+										markedLogInfos.Add(new MarkedLogInfo(fileName, lineNumber, timestamp));
 									}
+									break;
+								}
 							}
 						}
+						return 0;
 					});
 				}
 				catch (Exception ex)
 				{
-					this.Logger.LogError(ex, $"Unable to load marked file");
+					this.Logger.LogError(ex, $"Unable to load marked file: {markedFileName}");
 					return Array.Empty<MarkedLogInfo>();
 				}
 				return markedLogInfos.ToArray();
@@ -951,7 +950,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			}
 
 			// schedule save to file action
-			this.saveMarkedLogsAction.Schedule(1000);
+			this.saveMarkedLogsAction.Schedule(DelaySaveMarkedLogs);
 		}
 
 
@@ -1378,25 +1377,32 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// save or delete marked file
 			var task = ioTaskFactory.StartNew(() =>
 			{
-				var markedFileName = fileName + markedFileExtension;
+				var markedFileName = fileName + MarkedFileExtension;
 				if (markedLogInfos.IsEmpty() && File.Exists(markedFileName))
 					File.Delete(markedFileName);
 				else
 				{
-					using var stream = new FileStream(markedFileName, FileMode.Create, FileAccess.ReadWrite);
-					using var writer = new Utf8JsonWriter(stream, new JsonWriterOptions() { Indented = true });
-					writer.WriteStartObject();
-					writer.WritePropertyName("MarkedLogInfos");
-					writer.WriteStartArray();
-					foreach (var markedLog in markedLogInfos)
+					try
 					{
+						using var stream = new FileStream(markedFileName, FileMode.Create, FileAccess.ReadWrite);
+						using var writer = new Utf8JsonWriter(stream, new JsonWriterOptions() { Indented = true });
 						writer.WriteStartObject();
-						writer.WriteNumber("MarkedLineNumber", markedLog.LineNumber);
-						markedLog.Timestamp?.Let(it => writer.WriteString("MarkedTimestamp", it));
+						writer.WritePropertyName("MarkedLogInfos");
+						writer.WriteStartArray();
+						foreach (var markedLog in markedLogInfos)
+						{
+							writer.WriteStartObject();
+							writer.WriteNumber("MarkedLineNumber", markedLog.LineNumber);
+							markedLog.Timestamp?.Let(it => writer.WriteString("MarkedTimestamp", it));
+							writer.WriteEndObject();
+						}
+						writer.WriteEndArray();
 						writer.WriteEndObject();
 					}
-					writer.WriteEndArray();
-					writer.WriteEndObject();
+					catch (Exception ex)
+					{
+						this.Logger.LogError(ex, $"Unable to save marked file: {markedFileName}");
+					}
 				}
 			});
 			_ = this.WaitForNecessaryTaskAsync(task);
@@ -1558,22 +1564,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		// Update comparison for displayable logs.
 		void UpdateDisplayableLogComparison()
 		{
-			var profile = this.LogProfile.AsNonNull();
-			this.compareDisplayableLogsDelegate = profile.SortKey switch
-			{
-				LogSortKey.Timestamp => CompareDisplayableLogsByTimestamp,
-				_ => CompareDisplayableLogsById,
-			};
-			if (profile.SortDirection == SortDirection.Descending)
-				this.compareDisplayableLogsDelegate = this.compareDisplayableLogsDelegate.Invert();
-		}
-
-
-		// Update comparison for marked log info.
-		void UpdateMarkedLogInfoComparison()
-		{
-
-
 			var profile = this.LogProfile.AsNonNull();
 			this.compareDisplayableLogsDelegate = profile.SortKey switch
 			{

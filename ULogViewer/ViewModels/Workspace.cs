@@ -80,7 +80,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Close and dispose given session.
 		/// </summary>
 		/// <param name="session">Session to close.</param>
-		public void CloseSession(Session session)
+		public async void CloseSession(Session session)
 		{
 			// check state
 			this.VerifyAccess();
@@ -107,7 +107,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.DetachFromSession(session);
 
 			// wait for task completion
-			session.WaitForNecessaryTasksAsync();
+			await session.WaitForNecessaryTasksAsync();
 
 			// dispose
 			session.Dispose();
@@ -227,14 +227,5 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Get title.
 		/// </summary>
 		public string? Title { get => this.GetValue(TitleProperty); }
-
-
-		// Wait for necessary task.
-		public override async Task WaitForNecessaryTasksAsync()
-		{
-			await base.WaitForNecessaryTasksAsync();
-			foreach(var session in this.sessions)
-				await session.WaitForNecessaryTasksAsync();
-		}
 	}
 }

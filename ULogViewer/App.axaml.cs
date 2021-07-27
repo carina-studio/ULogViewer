@@ -241,9 +241,6 @@ namespace CarinaStudio.ULogViewer
 				this.UpdateCultureInfo();
 			else if (e.Key == Settings.ThemeMode)
 				this.UpdateStyles();
-			if (this.Settings.GetValueOrDefault(Settings.Culture) == AppCulture.System)
-				this.UpdateCultureInfo();
-
 		}
 
 
