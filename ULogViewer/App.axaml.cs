@@ -218,12 +218,12 @@ namespace CarinaStudio.ULogViewer
 			// wait for IO completion of log profiles
 			await LogProfiles.WaitForIOCompletionAsync();
 
+			// restart main window
+			//
+
 			// wait for necessary tasks
 			if (this.workspace != null)
 				await this.workspace.WaitForNecessaryTasksAsync();
-
-			// restart main window
-			//
 
 			// shutdown application
 			if (this.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime)
@@ -240,7 +240,8 @@ namespace CarinaStudio.ULogViewer
 			if (e.Key == Settings.Culture)
 				this.UpdateCultureInfo();
 			else if (e.Key == Settings.ThemeMode)
-				this.UpdateStyles(); if (this.Settings.GetValueOrDefault(Settings.Culture) == AppCulture.System)
+				this.UpdateStyles();
+			if (this.Settings.GetValueOrDefault(Settings.Culture) == AppCulture.System)
 				this.UpdateCultureInfo();
 
 		}
@@ -397,7 +398,7 @@ namespace CarinaStudio.ULogViewer
 						};
 						_ = this.stringResources.Loaded; // trigger error if resource not found
 						this.logger.LogInformation($"Load strings for {cultureInfo.Name}");
-				}
+					}
 					catch
 					{
 						this.stringResources = null;

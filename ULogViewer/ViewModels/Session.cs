@@ -785,6 +785,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			{
 				var markedLogInfos = new List<MarkedLogInfo>();
 				var markedFileName = fileName + markedFileExtension;
+				if (!File.Exists(markedFileName))
+					return Array.Empty<MarkedLogInfo>();
 				using var stream = new FileStream(markedFileName, FileMode.Open, FileAccess.Read);
 				JsonDocument.Parse(stream).Let(jsonDocument =>
 				{
@@ -811,6 +813,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			});
 
 			// check state
+			if (markedLogInfos.IsEmpty())
+				return;
 			if (!this.addedLogFilePaths.Contains(fileName))
 				return;
 
