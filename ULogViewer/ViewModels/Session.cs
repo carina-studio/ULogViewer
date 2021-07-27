@@ -30,6 +30,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 	/// </summary>
 	class Session : ViewModel
 	{
+		// Constants.
+		const string markedFileExtension = ".ulvmark";
+
+
 		/// <summary>
 		/// Property of <see cref="AllLogCount"/>.
 		/// </summary>
@@ -132,7 +136,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 		// Static fields.
 		static readonly TaskFactory ioTaskFactory = new TaskFactory(new FixedThreadsTaskScheduler(1));
-		static readonly string markedFileExtension = ".ulvmark";
 
 
 		// Activation token.
@@ -178,7 +181,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly HashSet<LogReader> logReaders = new HashSet<LogReader>();
 		readonly SortedObservableList<DisplayableLog> markedLogs;
 		readonly HashSet<string> markedLogsChangedFilePaths = new HashSet<string>(PathEqualityComparer.Default);
-		readonly HashSet<Task> necessaryTasks = new HashSet<Task>();
 		readonly ObservableList<PredefinedLogTextFilter> predefinedLogTextFilters;
 		readonly ScheduledAction saveMarkedLogsAction;
 		readonly List<MarkedLogInfo> unmatchedMarkedLogInfos = new List<MarkedLogInfo>();
@@ -238,7 +240,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// create marked logs
 			this.markedLogs = new SortedObservableList<DisplayableLog>(this.CompareDisplayableLogs);
-			this.MarkedLogs = this.markedLogs.AsReadOnly();
 
 			// setup properties
 			this.SetValue(LogsProperty, this.allLogs.AsReadOnly());
@@ -787,28 +788,36 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				var markedFileName = fileName + markedFileExtension;
 				if (!File.Exists(markedFileName))
 					return Array.Empty<MarkedLogInfo>();
-				using var stream = new FileStream(markedFileName, FileMode.Open, FileAccess.Read);
-				JsonDocument.Parse(stream).Let(jsonDocument =>
+				try
 				{
-					foreach (var jsonProperty in jsonDocument.RootElement.EnumerateObject())
+					using var stream = new FileStream(markedFileName, FileMode.Open, FileAccess.Read);
+					JsonDocument.Parse(stream).Let(jsonDocument =>
 					{
-						switch (jsonProperty.Name)
+						foreach (var jsonProperty in jsonDocument.RootElement.EnumerateObject())
 						{
-							case "MarkedLogInfos":
+							switch (jsonProperty.Name)
 							{
-								foreach (var jsonObject in jsonProperty.Value.EnumerateArray())
-								{
-									var lineNumber = jsonObject.GetProperty("MarkedLineNumber").GetInt32();
-									var timestamp = (DateTime?)null;
-									if (jsonObject.TryGetProperty("MarkedTimestamp", out var timestampElement))
-										timestamp = DateTime.Parse(timestampElement.GetString().AsNonNull());
-									markedLogInfos.Add(new MarkedLogInfo(fileName, lineNumber, timestamp));
-								}
-								break;
+								case "MarkedLogInfos":
+									{
+										foreach (var jsonObject in jsonProperty.Value.EnumerateArray())
+										{
+											var lineNumber = jsonObject.GetProperty("MarkedLineNumber").GetInt32();
+											var timestamp = (DateTime?)null;
+											if (jsonObject.TryGetProperty("MarkedTimestamp", out var timestampElement))
+												timestamp = DateTime.Parse(timestampElement.GetString().AsNonNull());
+											markedLogInfos.Add(new MarkedLogInfo(fileName, lineNumber, timestamp));
+										}
+										break;
+									}
 							}
 						}
-					}
-				});
+					});
+				}
+				catch (Exception ex)
+				{
+					this.Logger.LogError(ex, $"Unable to load marked file");
+					return Array.Empty<MarkedLogInfo>();
+				}
 				return markedLogInfos.ToArray();
 			});
 
