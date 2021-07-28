@@ -23,6 +23,8 @@
 	<sys:String x:Key="String.AppOptionsDialog.Culture">Language</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.IgnoreCaseOfLogTextFilter">Ignore case of text filter</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.LogFiltering">Log Filtering</sys:String>
+	<sys:String x:Key="String.AppOptionsDialog.LogFont">Log font and size</sys:String>
+	<sys:String x:Key="String.AppOptionsDialog.LogFont.Sample">Sample Log Text 123</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.LogOperations">Log Operations</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.MaxContinuousLogCount">Maximum number of logs when continuous reading</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.SelectLogFilesWhenNeeded">Show file selector when log files are needed</sys:String>

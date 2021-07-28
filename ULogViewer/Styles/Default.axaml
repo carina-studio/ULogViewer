@@ -120,6 +120,11 @@
 		<Setter Property="Height" Value="{StaticResource Double.Dialog.Separator.Size.Small}"/>
 		<Setter Property="HorizontalAlignment" Value="Stretch"/>
 	</Style>
+	<Style Selector="Separator.Dialog_Separator_Small_Vertical">
+		<Setter Property="Background" Value="{x:Null}"/>
+		<Setter Property="VerticalAlignment" Value="Stretch"/>
+		<Setter Property="Width" Value="{StaticResource Double.Dialog.Separator.Size.Small}"/>
+	</Style>
 	<Style Selector="Separator.Dialog_Separator_Vertical">
 		<Setter Property="Background" Value="{x:Null}"/>
 		<Setter Property="VerticalAlignment" Value="Stretch"/>

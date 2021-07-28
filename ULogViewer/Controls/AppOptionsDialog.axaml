@@ -36,6 +36,22 @@
 				<!-- Culture -->
 				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.AppOptionsDialog.Culture}"/>
 				<appControls:EnumComboBox EnumType="{x:Type app:AppCulture}" HorizontalAlignment="Stretch" SelectedItem="{Binding Culture, Mode=TwoWay}"/>
+				<Separator Classes="Dialog_Separator_Horizontal"/>
+
+				<!-- Log font -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.AppOptionsDialog.LogFont}"/>
+				<Grid ColumnDefinitions="*,Auto,*">
+					<ComboBox HorizontalAlignment="Stretch" Items="{Binding InstalledFontFamilies}" SelectedItem="{Binding LogFontFamily, Mode=TwoWay}"/>
+					<Separator Classes="Dialog_Separator_Small_Vertical" Grid.Column="1"/>
+					<NumericUpDown Maximum="30" Minimum="10" Value="{Binding LogFontSize, Mode=TwoWay}" Grid.Column="2"/>
+				</Grid>
+				<Separator Classes="Dialog_Separator_Small_Horizontal"/>
+				<Border Background="{DynamicResource TextControlBackground}" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="1" HorizontalAlignment="Stretch">
+					<Grid>
+						<TextBlock FontSize="40" HorizontalAlignment="Center" Opacity="0" Text="{DynamicResource String.AppOptionsDialog.LogFont.Sample}" VerticalAlignment="Center"/>
+						<TextBlock FontFamily="{Binding SampleLogFontFamily}" FontSize="{Binding LogFontSize}" HorizontalAlignment="Center" Text="{DynamicResource String.AppOptionsDialog.LogFont.Sample}" VerticalAlignment="Center"/>
+					</Grid>
+				</Border>
 				<Separator Classes="Dialog_Separator_Large_Horizontal"/>
 
 				<!-- Log operations -->

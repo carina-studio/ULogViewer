@@ -1,8 +1,10 @@
-﻿using CarinaStudio.Collections;
+﻿using Avalonia.Media;
+using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CarinaStudio.ULogViewer.ViewModels
 {
@@ -17,7 +19,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <param name="app">Application.</param>
 		public AppOptions(IApplication app) : base(app)
 		{
-			//
+			this.SampleLogFontFamily = new FontFamily(this.LogFontFamily);
 		}
 
 
@@ -52,6 +54,40 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Get all installed font families.
+		/// </summary>
+		public IList<string> InstalledFontFamilies { get; } = new List<string>(FontManager.Current.GetInstalledFontFamilyNames()).Also(it =>
+		{
+			it.Sort();
+		}).AsReadOnly();
+
+
+		/// <summary>
+		/// Get or set font family of log.
+		/// </summary>
+		public string LogFontFamily
+		{
+			get => this.Settings.GetValueOrDefault(ULogViewer.Settings.LogFontFamily).Let(it =>
+			{
+				if (string.IsNullOrEmpty(it))
+					return ULogViewer.Settings.DefaultLogFontFamily;
+				return it;
+			});
+			set => this.Settings.SetValue(ULogViewer.Settings.LogFontFamily, value);
+		}
+
+
+		/// <summary>
+		/// Get or set font size of log.
+		/// </summary>
+		public int LogFontSize
+		{
+			get => this.Settings.GetValueOrDefault(ULogViewer.Settings.LogFontSize);
+			set => this.Settings.SetValue(ULogViewer.Settings.LogFontSize, value);
+		}
+
+
+		/// <summary>
 		/// Get or set maximum number of logs for continuous logs reading.
 		/// </summary>
 		public int MaxContinuousLogCount
@@ -70,6 +106,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.OnPropertyChanged(nameof(ContinuousLogReadingUpdateInterval));
 			else if (key == ULogViewer.Settings.Culture)
 				this.OnPropertyChanged(nameof(Culture));
+			else if (key == ULogViewer.Settings.LogFontFamily)
+			{
+				this.OnPropertyChanged(nameof(LogFontFamily));
+				this.SampleLogFontFamily = new FontFamily(this.LogFontFamily);
+				this.OnPropertyChanged(nameof(SampleLogFontFamily));
+			}
+			else if (key == ULogViewer.Settings.LogFontSize)
+				this.OnPropertyChanged(nameof(LogFontSize));
 			else if (key == ULogViewer.Settings.MaxContinuousLogCount)
 				this.OnPropertyChanged(nameof(MaxContinuousLogCount));
 			else if (key == ULogViewer.Settings.SelectLogFilesWhenNeeded)
@@ -81,6 +125,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			else if (key == ULogViewer.Settings.UpdateLogFilterDelay)
 				this.OnPropertyChanged(nameof(UpdateLogFilterDelay));
 		}
+
+
+		/// <summary>
+		/// Get <see cref="FontFamily"/> for sample log text.
+		/// </summary>
+		public FontFamily SampleLogFontFamily { get; private set; }
 
 
 		/// <summary>
