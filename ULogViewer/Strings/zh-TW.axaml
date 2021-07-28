@@ -93,7 +93,7 @@
 
 	<!-- LogMessageDialog -->
 	<sys:String x:Key="String.LogMessageDialog.WrapText">自動換行</sys:String>
-	<sys:String x:Key="String.LogMessageDialog.Title">日誌訊息</sys:String>
+	<sys:String x:Key="String.LogMessageDialog.Title">檢視日誌</sys:String>
 
 	<!-- LogPatternEditorDialog -->
 	<sys:String x:Key="String.LogPatternEditorDialog.IsSkippable">此行可以被忽略</sys:String>

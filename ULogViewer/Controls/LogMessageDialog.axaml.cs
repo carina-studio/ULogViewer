@@ -15,6 +15,10 @@ namespace CarinaStudio.ULogViewer.Controls
 	/// </summary>
 	partial class LogMessageDialog : BaseDialog
 	{
+		// Static fields.
+		static readonly AvaloniaProperty<string> LogMessageDisplayNameProperty = AvaloniaProperty.Register<LogMessageDialog, string>(nameof(LogMessageDisplayName), nameof(Logs.Log.Message));
+
+
 		// Fields.
 		readonly TextBox messageTextBox;
 
@@ -45,6 +49,16 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// Get or set log to show message.
 		/// </summary>
 		public Log? Log { get; set; }
+
+
+		/// <summary>
+		/// Get or set display name of <see cref="Log.Message"/>.
+		/// </summary>
+		public string LogMessageDisplayName
+		{
+			get => this.GetValue<string>(LogMessageDisplayNameProperty);
+			set => this.SetValue<string>(LogMessageDisplayNameProperty, value);
+		}
 
 
 		// Generate result.

@@ -96,7 +96,7 @@
 
 	<!-- LogMessageDialog -->
 	<sys:String x:Key="String.LogMessageDialog.WrapText">Wrap automatically</sys:String>
-	<sys:String x:Key="String.LogMessageDialog.Title">Message of log</sys:String>
+	<sys:String x:Key="String.LogMessageDialog.Title">View log</sys:String>
 
 	<!-- LogPatternEditorDialog -->
 	<sys:String x:Key="String.LogPatternEditorDialog.IsSkippable">The line can be skipped</sys:String>

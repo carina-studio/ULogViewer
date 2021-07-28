@@ -5,6 +5,7 @@
 				xmlns:sys="using:System"
 				xmlns:ia="using:Avalonia.Xaml.Interactivity"
 				xmlns:iaCore="using:Avalonia.Xaml.Interactions.Core"
+				xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.LogMessageDialog"
 				CanResize="True"
@@ -28,7 +29,7 @@
 		<Grid Margin="{StaticResource Thickness.Dialog.Content.Padding}" RowDefinitions="Auto,*,Auto,Auto,Auto">
 
 			<!-- Message -->
-			<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProperty.Message}"/>
+			<TextBlock Classes="Dialog_Label" Text="{Binding $parent[Window].LogMessageDisplayName, Converter={x:Static appConverters:LogPropertyNameConverter.Default}}"/>
 			<TextBox Name="messageTextBox" AcceptsReturn="True" Grid.Row="1" IsReadOnly="True" TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto">
 				<ia:Interaction.Behaviors>
 					<iaCore:DataTriggerBehavior Binding="{Binding #wrapTextSwitch.IsChecked}" Value="True">

@@ -496,10 +496,7 @@ namespace CarinaStudio.ULogViewer.Controls
 									if (e.InitialPressMouseButton == MouseButton.Left 
 										&& viewDetails.FindLogicalAncestorOfType<ListBoxItem>()?.DataContext is DisplayableLog log)
 									{
-										this.FindLogicalAncestorOfType<Window>()?.Let(window =>
-										{
-											new LogMessageDialog() { Log = log.Log }.ShowDialog(window);
-										});
+										this.ShowLogMessage(log);
 									}
 								};
 							}));
@@ -1688,6 +1685,31 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (this.logListBox.IsPointerOver && this.HasLogProfile)
 				this.logActionMenu.Open(this);
+		}
+
+
+		// Show full log message.
+		void ShowLogMessage(DisplayableLog log)
+		{
+			// check state
+			var displayLogProperties = (this.DataContext as Session)?.DisplayLogProperties;
+			if (displayLogProperties == null)
+				return;
+
+			// find displayable property of message
+			var logProperty = displayLogProperties.FirstOrDefault(it => it.Name == nameof(DisplayableLog.Message));
+			if (logProperty == null)
+				return;
+
+			// show dialog
+			this.FindLogicalAncestorOfType<Window>()?.Let(window =>
+			{
+				new LogMessageDialog() 
+				{
+					Log = log.Log,
+					LogMessageDisplayName = logProperty.DisplayName
+				}.ShowDialog(window);
+			});
 		}
 
 
