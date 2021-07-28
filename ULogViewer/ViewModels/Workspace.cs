@@ -80,7 +80,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Close and dispose given session.
 		/// </summary>
 		/// <param name="session">Session to close.</param>
-		public void CloseSession(Session session)
+		public async void CloseSession(Session session)
 		{
 			// check state
 			this.VerifyAccess();
@@ -105,6 +105,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// detach
 			this.DetachFromSession(session);
+
+			// wait for task completion
+			await session.WaitForNecessaryTasksAsync();
 
 			// dispose
 			session.Dispose();

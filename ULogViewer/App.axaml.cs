@@ -221,6 +221,10 @@ namespace CarinaStudio.ULogViewer
 			// restart main window
 			//
 
+			// wait for necessary tasks
+			if (this.workspace != null)
+				await this.workspace.WaitForNecessaryTasksAsync();
+
 			// shutdown application
 			if (this.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime)
 			{
