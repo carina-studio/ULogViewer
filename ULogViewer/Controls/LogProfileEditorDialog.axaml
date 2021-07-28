@@ -81,7 +81,16 @@
 						<DataTemplate>
 							<StackPanel Orientation="Horizontal">
 								<Border Height="{StaticResource Double.LogProfileEditorDialog.IconComboBox.Icon.Size}" Margin="{StaticResource Thickness.LogProfileEditorDialog.IconComboBox.Icon.Margin}" VerticalAlignment="Center" Width="{StaticResource Double.LogProfileEditorDialog.IconComboBox.Icon.Size}">
-									<DrawingPresenter Classes="Icon" Drawing="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}}"/>
+									<DrawingPresenter Classes="Icon" Drawing="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}}">
+										<ia:Interaction.Behaviors>
+											<iaCore:DataTriggerBehavior Binding="{Binding $parent[ComboBoxItem].IsSelected}" Value="True">
+												<iaCore:ChangePropertyAction PropertyName="Drawing" Value="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}, ConverterParameter=Light}"/>
+											</iaCore:DataTriggerBehavior>
+											<iaCore:DataTriggerBehavior Binding="{Binding $parent[ComboBoxItem].IsSelected}" Value="False">
+												<iaCore:ChangePropertyAction PropertyName="Drawing" Value="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}}"/>
+											</iaCore:DataTriggerBehavior>
+										</ia:Interaction.Behaviors>
+									</DrawingPresenter>
 								</Border>
 								<TextBlock Text="{Binding Converter={x:Static appControls:LogProfileEditorDialog.LogProfileIconNameConverter}}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
 							</StackPanel>
