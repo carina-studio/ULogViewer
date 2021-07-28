@@ -11,9 +11,11 @@ using Avalonia.LogicalTree;
 using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.Templates;
 using Avalonia.Media;
+using Avalonia.VisualTree;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
+using CarinaStudio.ULogViewer.Converters;
 using CarinaStudio.ULogViewer.Input;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.ULogViewer.Logs.Profiles;
@@ -90,7 +92,9 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly MutableObservableBoolean canSelectMarkedLogs = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSetLogProfile = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSetWorkingDirectory = new MutableObservableBoolean();
+		readonly MutableObservableBoolean canShowLogMessage = new MutableObservableBoolean();
 		bool isLogFileNeededAfterLogProfileSet;
+		bool isMessageLogPropertyVisible;
 		bool isPidLogPropertyVisible;
 		bool isPointerPressedOnLogListBox;
 		bool isTidLogPropertyVisible;
@@ -113,6 +117,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly SortedObservableList<PredefinedLogTextFilter> predefinedLogTextFilters;
 		readonly ScheduledAction scrollToLatestLogAction;
 		readonly HashSet<PredefinedLogTextFilter> selectedPredefinedLogTextFilters = new HashSet<PredefinedLogTextFilter>();
+		readonly MenuItem showLogMessageMenuItem;
 		readonly ScheduledAction updateLogFiltersAction;
 		readonly ScheduledAction updateStatusBarStateAction;
 
@@ -133,6 +138,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.SelectMarkedLogsCommand = ReactiveCommand.Create(this.SelectMarkedLogs, this.canSelectMarkedLogs);
 			this.SetLogProfileCommand = ReactiveCommand.Create(this.SetLogProfile, this.canSetLogProfile);
 			this.SetWorkingDirectoryCommand = ReactiveCommand.Create(this.SetWorkingDirectory, this.canSetWorkingDirectory);
+			this.ShowLogMessageCommand = ReactiveCommand.Create(this.ShowLogMessage, this.canShowLogMessage);
 			this.SwitchLogFiltersCombinationModeCommand = ReactiveCommand.Create(this.SwitchLogFiltersCombinationMode, this.GetObservable<bool>(HasLogProfileProperty));
 
 			// create collections
@@ -195,6 +201,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				it.MenuOpened += (_, e) => this.SynchronizationContext.Post(() => this.otherActionsButton.IsChecked = true);
 			});
 			this.predefinedLogTextFilterListBox = this.FindControl<ListBox>("predefinedLogTextFilterListBox").AsNonNull();
+			this.showLogMessageMenuItem = this.FindControl<MenuItem>("showLogMessageMenuItem").AsNonNull().Also(it => this.UpdateShowLogMessageMenuItem());
 #if !DEBUG
 			this.FindControl<Button>("testButton").AsNonNull().IsVisible = false;
 #endif
@@ -762,6 +769,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.logLevelFilterComboBox.SelectedIndex = selectedIndex;
 			if (!isScheduled)
 				this.updateLogFiltersAction.Cancel();
+
+			// update menu
+			this.UpdateShowLogMessageMenuItem();
 		}
 
 
@@ -937,12 +947,16 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.markedLogListBox.ItemTemplate = this.CreateMarkedLogItemTemplate(profile, logProperties);
 
 			// check visible properties
+			this.isMessageLogPropertyVisible = false;
 			this.isPidLogPropertyVisible = false;
 			this.isTidLogPropertyVisible = false;
 			foreach (var logProperty in logProperties)
 			{
 				switch (logProperty.Name)
 				{
+					case nameof(DisplayableLog.Message):
+						this.isMessageLogPropertyVisible = true;
+						break;
 					case nameof(DisplayableLog.ProcessId):
 						this.isPidLogPropertyVisible = true;
 						break;
@@ -967,6 +981,9 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.logThreadIdFilterTextBox.IsVisible = false;
 				this.logThreadIdFilterTextBox.Text = "";
 			}
+
+			// update menu
+			this.UpdateShowLogMessageMenuItem();
 		}
 
 
@@ -1124,11 +1141,31 @@ namespace CarinaStudio.ULogViewer.Controls
 		void OnLogLevelFilterComboBoxSelectionChanged(object? sender, SelectionChangedEventArgs e) => this.updateLogFiltersAction?.Reschedule();
 
 
+		// Called when double click on log list box.
+		void OnLogListBoxDoubleTapped(object? sender, RoutedEventArgs e)
+		{
+			if (this.ShowLogMessage())
+				e.Handled = true;
+		}
+
+
 		// Called when pointer pressed on log list box.
 		void OnLogListBoxPointerPressed(object? sender, PointerPressedEventArgs e)
 		{
-			if (e.GetCurrentPoint(this.logListBox).Properties.IsLeftButtonPressed)
+			var point = e.GetCurrentPoint(this.logListBox);
+			if (point.Properties.IsLeftButtonPressed)
 				this.isPointerPressedOnLogListBox = true;
+			var hitControl = this.logListBox.InputHitTest(point.Position).Let(it =>
+			{
+				if (it == null)
+					return (IVisual?)null;
+				var listBoxItem = it.FindAncestorOfType<ListBoxItem>(true);
+				if (listBoxItem != null)
+					return listBoxItem;
+				return it.FindAncestorOfType<ScrollBar>(true);
+			});
+			if (hitControl == null)
+				this.SynchronizationContext.Post(() => this.logListBox.SelectedItems.Clear());
 		}
 
 
@@ -1182,6 +1219,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.canFilterLogsByPid.Update(hasSingleSelectedItem && this.isPidLogPropertyVisible);
 				this.canFilterLogsByTid.Update(hasSingleSelectedItem && this.isTidLogPropertyVisible);
 				this.canMarkUnmarkSelectedLogs.Update(hasSelectedItems && session.MarkUnmarkLogsCommand.CanExecute(null));
+				this.canShowLogMessage.Update(hasSingleSelectedItem && this.isMessageLogPropertyVisible);
 			});
 		}
 
@@ -1241,7 +1279,10 @@ namespace CarinaStudio.ULogViewer.Controls
 				{
 					case Key.Apps:
 						if (e.Source is not TextBox)
+						{
 							this.ShowLogActionsMenu();
+							e.Handled = true;
+						}
 						break;
 					case Key.Escape:
 						if (e.Source is TextBox)
@@ -1252,19 +1293,31 @@ namespace CarinaStudio.ULogViewer.Controls
 						break;
 					case Key.F5:
 						if (e.Source is not TextBox)
+						{
 							(this.DataContext as Session)?.ReloadLogsCommand?.TryExecute();
+							e.Handled = true;
+						}
 						break;
 					case Key.M:
 						if (e.Source is not TextBox)
+						{
 							this.MarkUnmarkSelectedLogs();
+							e.Handled = true;
+						}
 						break;
 					case Key.P:
 						if (e.Source is not TextBox)
+						{
 							(this.DataContext as Session)?.PauseResumeLogsReadingCommand?.TryExecute();
+							e.Handled = true;
+						}
 						break;
 					case Key.S:
 						if (e.Source is not TextBox)
+						{
 							this.SelectMarkedLogs();
+							e.Handled = true;
+						}
 						break;
 				}
 			}
@@ -1689,17 +1742,25 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Show full log message.
-		void ShowLogMessage(DisplayableLog log)
+		bool ShowLogMessage()
+		{
+			if (!this.canShowLogMessage.Value)
+				return false;
+			if (this.logListBox.SelectedItems.Count != 1)
+				return false;
+			return this.ShowLogMessage((DisplayableLog)this.logListBox.SelectedItems[0].AsNonNull());
+		}
+		bool ShowLogMessage(DisplayableLog log)
 		{
 			// check state
 			var displayLogProperties = (this.DataContext as Session)?.DisplayLogProperties;
 			if (displayLogProperties == null)
-				return;
+				return false;
 
 			// find displayable property of message
 			var logProperty = displayLogProperties.FirstOrDefault(it => it.Name == nameof(DisplayableLog.Message));
 			if (logProperty == null)
-				return;
+				return false;
 
 			// show dialog
 			this.FindLogicalAncestorOfType<Window>()?.Let(window =>
@@ -1710,7 +1771,12 @@ namespace CarinaStudio.ULogViewer.Controls
 					LogMessageDisplayName = logProperty.DisplayName
 				}.ShowDialog(window);
 			});
+			return true;
 		}
+
+
+		// Command to show message of log.
+		ICommand ShowLogMessageCommand { get; }
 
 
 		// Show UI of other actions.
@@ -1813,5 +1879,16 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Get delay of updating log filter.
 		int UpdateLogFilterParamsDelay { get => Math.Max(Settings.MinUpdateLogFilterDelay, Math.Min(Settings.MaxUpdateLogFilterDelay, this.Settings.GetValueOrDefault(Settings.UpdateLogFilterDelay))); }
+
+
+		// Update menu item of showing log message.
+		void UpdateShowLogMessageMenuItem()
+		{
+			var displayName = (this.DataContext as Session)?.DisplayLogProperties?.FirstOrDefault(it =>
+			{
+				return it.Name == nameof(DisplayableLog.Message);
+			})?.DisplayName ?? LogPropertyNameConverter.Default.Convert(nameof(DisplayableLog.Message));
+			this.showLogMessageMenuItem?.Let(it => it.Header = this.Application.GetFormattedString("SessionView.ShowLogMessage", displayName));
+		}
 	}
 }

@@ -29,7 +29,7 @@
 		<Grid Margin="{StaticResource Thickness.Dialog.Content.Padding}" RowDefinitions="Auto,*,Auto,Auto,Auto">
 
 			<!-- Message -->
-			<TextBlock Classes="Dialog_Label" Text="{Binding $parent[Window].LogMessageDisplayName, Converter={x:Static appConverters:LogPropertyNameConverter.Default}}"/>
+			<TextBlock Classes="Dialog_Label" Text="{Binding $parent[Window].LogMessageDisplayName}"/>
 			<TextBox Name="messageTextBox" AcceptsReturn="True" Grid.Row="1" IsReadOnly="True" TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto">
 				<ia:Interaction.Behaviors>
 					<iaCore:DataTriggerBehavior Binding="{Binding #wrapTextSwitch.IsChecked}" Value="True">

@@ -246,6 +246,7 @@
 	<sys:String x:Key="String.SessionView.SelectMarkedLogs">Select marked logs</sys:String>
 	<sys:String x:Key="String.SessionView.SetLogProfile">Select/Change log profile</sys:String>
 	<sys:String x:Key="String.SessionView.SetWorkingDirectory">Select/Change working directory</sys:String>
+	<sys:String x:Key="String.SessionView.ShowLogMessage">View full {0}…</sys:String>
 	<sys:String x:Key="String.SessionView.TooManyDirectoryPathsDropped">Please drag and drop single directory.</sys:String>
 	<sys:String x:Key="String.SessionView.ViewFullLogMessage">View more…</sys:String>
 

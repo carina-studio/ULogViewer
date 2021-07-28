@@ -2,7 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
-using CarinaStudio.Threading;
+using CarinaStudio.ULogViewer.Converters;
 using CarinaStudio.ULogViewer.Logs;
 using ReactiveUI;
 using System;
@@ -16,7 +16,7 @@ namespace CarinaStudio.ULogViewer.Controls
 	partial class LogMessageDialog : BaseDialog
 	{
 		// Static fields.
-		static readonly AvaloniaProperty<string> LogMessageDisplayNameProperty = AvaloniaProperty.Register<LogMessageDialog, string>(nameof(LogMessageDisplayName), nameof(Logs.Log.Message));
+		static readonly AvaloniaProperty<string> LogMessageDisplayNameProperty = AvaloniaProperty.Register<LogMessageDialog, string>(nameof(LogMessageDisplayName), "");
 
 
 		// Fields.
@@ -38,6 +38,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						this.messageTextBox.Margin = new Thickness(0); // [Workaround] Relayout completed, restore to correct margin.
 				};
 			});
+			this.SetValue<string>(LogMessageDisplayNameProperty, LogPropertyNameConverter.Default.Convert(nameof(Log.Message)));
 		}
 
 

@@ -236,6 +236,7 @@
 	<sys:String x:Key="String.SessionView.SelectMarkedLogs">選取已標記的日誌</sys:String>
 	<sys:String x:Key="String.SessionView.SetLogProfile">選取/變更日誌類型</sys:String>
 	<sys:String x:Key="String.SessionView.SetWorkingDirectory">選取/變更工作目錄</sys:String>
+	<sys:String x:Key="String.SessionView.ShowLogMessage">檢視完整{0}…</sys:String>
 	<sys:String x:Key="String.SessionView.TooManyDirectoryPathsDropped">請拖放單一目錄。</sys:String>
 	<sys:String x:Key="String.SessionView.ViewFullLogMessage">檢視更多…</sys:String>
 
