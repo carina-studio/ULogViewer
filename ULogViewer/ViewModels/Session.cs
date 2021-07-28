@@ -580,6 +580,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						this.allLogsByLogFilePath.Add(fileName, localLogs);
 					}
 					localLogs.AddRange(displayableLogs);
+					this.MatchMarkedLogs();
 				});
 			});
 
@@ -996,9 +997,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			switch (e.Action)
 			{
-				case NotifyCollectionChangedAction.Add:
-					this.MatchMarkedLogs();
-					break;
 				case NotifyCollectionChangedAction.Remove:
 					this.markedLogs.RemoveAll(e.OldItems.AsNonNull().Cast<DisplayableLog>(), true);
 					foreach (DisplayableLog displayableLog in e.OldItems.AsNonNull())
@@ -1122,9 +1120,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 							{
 								localLogs = new List<DisplayableLog>();
 								this.allLogsByLogFilePath.Add(fileName, localLogs);
-								this.MatchMarkedLogs();
 							}
 							localLogs.InsertRange(e.NewStartingIndex, displayableLogs);
+							this.MatchMarkedLogs();
 						});
 					});
 					break;
