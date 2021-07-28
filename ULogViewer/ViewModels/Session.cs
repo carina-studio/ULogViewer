@@ -1191,6 +1191,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				case nameof(LogProfile.TimestampFormatForReading):
 					this.SynchronizationContext.Post(() => this.ReloadLogs());
 					break;
+				case nameof(LogProfile.LogWritingFormat):
+					this.UpdateIsLogsWritingAvailable(this.LogProfile);
+					break;
 				case nameof(LogProfile.Name):
 					this.updateTitleAndIconAction.Schedule();
 					break;
@@ -1276,10 +1279,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			base.OnPropertyChanged(property, oldValue, newValue);
 			if (property == IsCopyingLogsProperty)
-			{
-				this.canCopyLogs.Update(this.IsLogsWritingAvailable && this.Application is App && !this.IsCopyingLogs);
-				this.canCopyLogsWithFileNames.Update(this.canCopyLogs.Value && this.LogProfile?.DataSourceProvider?.UnderlyingSource == UnderlyingLogDataSource.File);
-			}
+				this.UpdateIsLogsWritingAvailable(this.LogProfile);
 			else if (property == IsFilteringLogsProperty
 				|| property == IsReadingLogsProperty)
 			{
@@ -1420,11 +1420,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// update state
 			this.canAddLogFile.Update(false);
-			this.canCopyLogs.Update(false);
-			this.canCopyLogsWithFileNames.Update(false);
 			this.canSetWorkingDirectory.Update(false);
 			this.canResetLogProfile.Update(false);
-			this.SetValue(IsLogsWritingAvailableProperty, false);
+			this.UpdateIsLogsWritingAvailable(null);
 
 			// clear profile
 			this.Logger.LogWarning($"Reset log profile '{profile.Name}'");
@@ -1606,9 +1604,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.updateLogFilterAction.Reschedule();
 
 			// update state
-			this.SetValue(IsLogsWritingAvailableProperty, !string.IsNullOrEmpty(profile.LogWritingFormat));
-			this.canCopyLogs.Update(this.IsLogsWritingAvailable && this.Application is App && !this.IsCopyingLogs);
-			this.canCopyLogsWithFileNames.Update(this.canCopyLogs.Value && profile.DataSourceProvider.UnderlyingSource == UnderlyingLogDataSource.File);
+			this.UpdateIsLogsWritingAvailable(profile);
 			this.canResetLogProfile.Update(true);
 		}
 
@@ -1710,6 +1706,24 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					displayLogProperties.Add(new DisplayableLogProperty(app, nameof(DisplayableLog.Message), null, null));
 				this.SetValue(DisplayLogPropertiesProperty, displayLogProperties.AsReadOnly());
 				this.logFilter.FilteringLogProperties = displayLogProperties;
+			}
+		}
+
+
+		// Update IsLogsWritingAvailable and related state.
+		void UpdateIsLogsWritingAvailable(LogProfile? profile)
+		{
+			if (profile == null || string.IsNullOrEmpty(profile.LogWritingFormat))
+			{
+				this.canCopyLogs.Update(false);
+				this.canCopyLogsWithFileNames.Update(false);
+				this.SetValue(IsLogsWritingAvailableProperty, false);
+			}
+			else
+			{
+				this.SetValue(IsLogsWritingAvailableProperty, true);
+				this.canCopyLogs.Update(this.Application is App && !this.IsCopyingLogs);
+				this.canCopyLogsWithFileNames.Update(this.canCopyLogs.Value && profile.DataSourceProvider.UnderlyingSource == UnderlyingLogDataSource.File);
 			}
 		}
 
