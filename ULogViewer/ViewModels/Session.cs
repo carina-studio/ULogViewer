@@ -1122,6 +1122,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 							{
 								localLogs = new List<DisplayableLog>();
 								this.allLogsByLogFilePath.Add(fileName, localLogs);
+								this.MatchMarkedLogs();
 							}
 							localLogs.InsertRange(e.NewStartingIndex, displayableLogs);
 						});
