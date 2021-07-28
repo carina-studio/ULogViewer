@@ -34,6 +34,7 @@
 					<StackPanel Orientation="Vertical" VerticalAlignment="Center">
 						<TextBlock FontSize="{StaticResource Double.AppInfoDialog.AppTitle.FontSize}" FontWeight="Bold" Margin="{StaticResource Thickness.AppInfoDialog.AppTitle.Margin}" Text="ULogViewer"/>
 						<TextBlock Text="{Binding $parent[Window].VersionString}"/>
+						<TextBlock Text="©2021 Carina Studio"/>
 					</StackPanel>
 				</Border>
 				

@@ -3,11 +3,11 @@
 										xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
 	<!-- AppInfoDialog -->
-	<sys:Double x:Key="Double.AppInfoDialog.AppIcon.Size">64</sys:Double>
-	<sys:Double x:Key="Double.AppInfoDialog.AppTitle.FontSize">30</sys:Double>
+	<sys:Double x:Key="Double.AppInfoDialog.AppIcon.Size">70</sys:Double>
+	<sys:Double x:Key="Double.AppInfoDialog.AppTitle.FontSize">25</sys:Double>
 	<sys:Double x:Key="Double.AppInfoDialog.MinWidth">450</sys:Double>
 	<Thickness x:Key="Thickness.AppInfoDialog.AppIcon.Margin">0,0,15,0</Thickness>
-	<Thickness x:Key="Thickness.AppInfoDialog.AppTitle.Margin">0,0,0,10</Thickness>
+	<Thickness x:Key="Thickness.AppInfoDialog.AppTitle.Margin">0,0,0,5</Thickness>
 	
 	<!-- AppOptionsDialog -->
 	<sys:Double x:Key="Double.AppOptionsDialog.Content.MaxHeight">500</sys:Double>
