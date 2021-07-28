@@ -205,6 +205,10 @@ namespace CarinaStudio.ULogViewer.Controls
 #if !DEBUG
 			this.FindControl<Button>("testButton").AsNonNull().IsVisible = false;
 #endif
+			this.FindControl<Control>("toolBarContainer").AsNonNull().Let(it =>
+			{
+				it.AddHandler(Control.PointerReleasedEvent, this.OnToolBarPointerReleased, RoutingStrategies.Tunnel);
+			});
 
 			// create scheduled actions
 			this.autoAddLogFilesAction = new ScheduledAction(() =>
@@ -1551,6 +1555,14 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when test button clicked.
 		void OnTestButtonClick(object? sender, RoutedEventArgs e)
 		{ }
+
+
+		// Called when pointer released on tool bar.
+		void OnToolBarPointerReleased(object? sender, PointerReleasedEventArgs e)
+		{
+			if (FocusManager.Instance.Current is not TextBox)
+				this.SynchronizationContext.Post(() => this.logListBox.Focus());
+		}
 
 
 		// Sorted predefined log text filters.

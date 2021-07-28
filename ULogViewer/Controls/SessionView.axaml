@@ -78,7 +78,7 @@
 		</Grid.ColumnDefinitions>
 
 		<!-- Toolbar -->
-		<Grid ColumnDefinitions="Auto,*,Auto" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" Margin="{StaticResource Thickness.SessionView.ToolBar.Padding}">
+		<Grid Name="toolBarContainer" ColumnDefinitions="Auto,*,Auto" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" Margin="{StaticResource Thickness.SessionView.ToolBar.Padding}">
 
 			<!-- Resources -->
 			<Grid.Resources>
