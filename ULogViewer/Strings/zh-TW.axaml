@@ -59,6 +59,9 @@
 	<!-- FallbackFontFamilies -->
 	<sys:String x:Key="String.FallbackFontFamilies">Microsoft JhengHei</sys:String>
 
+	<!-- FileFormat -->
+	<sys:String x:Key="String.FileFormat.Json">JSON 檔案</sys:String>
+
 	<!-- LogColorIndicator -->
 	<sys:String x:Key="String.LogColorIndicator.FileName">檔案</sys:String>
 	<sys:String x:Key="String.LogColorIndicator.None">無</sys:String>
@@ -155,6 +158,8 @@
 	<sys:String x:Key="String.LogProfileSelectionDialog.AllLogProfiles">所有日誌類型</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.BuiltInLogProfile">內建</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.EditLogProfile">編輯日誌類型</sys:String>
+	<sys:String x:Key="String.LogProfileSelectionDialog.FailedToImportLogProfile">無法從 '{0}' 匯入日誌類型。</sys:String>
+	<sys:String x:Key="String.LogProfileSelectionDialog.ImportLogProfile">匯入…</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.IsContinuousReading">連續讀取</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.IsWorkingDirectoryNeeded">需要工作目錄</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.OtherLogProfiles">其他日誌類型</sys:String>

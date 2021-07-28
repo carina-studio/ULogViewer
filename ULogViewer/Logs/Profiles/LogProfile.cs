@@ -234,6 +234,16 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 
 
 		/// <summary>
+		/// Detach from the file which instance has been loaded from or saved to.
+		/// </summary>
+		public void DetachFromFile()
+		{
+			this.VerifyAccess();
+			this.FileName = null;
+		}
+
+
+		/// <summary>
 		/// Get name of file which instance loaded from or saved to.
 		/// </summary>
 		public string? FileName { get; private set; }
@@ -589,7 +599,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			// load profile
 			await ioTaskFactory.StartNew(() => profile.LoadFromJson(jsonDocument.RootElement));
 			if (string.IsNullOrEmpty(profile.name))
-				profile.name = Path.GetFileName(fileName);
+				profile.name = Path.GetFileNameWithoutExtension(fileName);
 			profile.FileName = fileName;
 
 			// validate

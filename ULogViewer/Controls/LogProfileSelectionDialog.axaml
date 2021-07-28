@@ -95,9 +95,20 @@
 		<!-- Control buttons -->
 		<Border Classes="Dialog_ControlButtonsPanel" DockPanel.Dock="Bottom">
 			<StackPanel Classes="Dialog_ControlButtonsPanel">
-				<Button Classes="Dialog_ControlButton_WithSeparator" Click="OnAddLogProfileClick" Content="{DynamicResource String.LogProfileSelectionDialog.AddLogProfile}">
+				
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].AddLogProfile}" Content="{DynamicResource String.LogProfileSelectionDialog.AddLogProfile}">
 					<ia:Interaction.Behaviors>
-						<iaCore:DataTriggerBehavior Binding="{Binding $parent[Window].Filter}" ComparisonCondition="Equal" Value="{x:Null}">
+						<iaCore:DataTriggerBehavior Binding="{Binding $parent[Window].Filter}" Value="{x:Null}">
+							<iaCore:ChangePropertyAction PropertyName="IsVisible" Value="True"/>
+						</iaCore:DataTriggerBehavior>
+						<iaCore:DataTriggerBehavior Binding="{Binding $parent[Window].Filter}" ComparisonCondition="NotEqual" Value="{x:Null}">
+							<iaCore:ChangePropertyAction PropertyName="IsVisible" Value="False"/>
+						</iaCore:DataTriggerBehavior>
+					</ia:Interaction.Behaviors>
+				</Button>
+				<Button Classes="Dialog_ControlButton_WithSeparator" Command="{Binding $parent[Window].ImportLogProfile}" Content="{DynamicResource String.LogProfileSelectionDialog.ImportLogProfile}">
+					<ia:Interaction.Behaviors>
+						<iaCore:DataTriggerBehavior Binding="{Binding $parent[Window].Filter}" Value="{x:Null}">
 							<iaCore:ChangePropertyAction PropertyName="IsVisible" Value="True"/>
 						</iaCore:DataTriggerBehavior>
 						<iaCore:DataTriggerBehavior Binding="{Binding $parent[Window].Filter}" ComparisonCondition="NotEqual" Value="{x:Null}">
@@ -111,7 +122,7 @@
 		</Border>
 
 		<!-- Log profiles -->
-		<ScrollViewer MaxHeight="{StaticResource Double.LogProfileSelectionDialog.Content.MaxHeight}">
+		<ScrollViewer Name="scrollViewer" MaxHeight="{StaticResource Double.LogProfileSelectionDialog.Content.MaxHeight}">
 			<StackPanel HorizontalAlignment="Stretch" Orientation="Vertical">
 
 				<!-- Pinned profiles -->
