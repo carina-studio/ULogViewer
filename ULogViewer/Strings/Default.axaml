@@ -165,6 +165,8 @@
 	<sys:String x:Key="String.LogProfileSelectionDialog.AllLogProfiles">All profiles</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.BuiltInLogProfile">Built-in</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.EditLogProfile">Edit profile</sys:String>
+	<sys:String x:Key="String.LogProfileSelectionDialog.ExportLogProfile">Export profile</sys:String>
+	<sys:String x:Key="String.LogProfileSelectionDialog.FailedToExportLogProfile">Unable to export profile to '{0}'.</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.FailedToImportLogProfile">Unable to import profile from '{0}'.</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.ImportLogProfile">Import…</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.IsContinuousReading">Continuous reading</sys:String>

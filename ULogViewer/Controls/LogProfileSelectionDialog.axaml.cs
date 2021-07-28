@@ -106,6 +106,43 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Export log profile.
+		async void ExportLogProfile(LogProfile? logProfile)
+		{
+			// check parameter
+			if (logProfile == null)
+				return;
+
+			// select file
+			var fileName = await new SaveFileDialog().Also(it =>
+			{
+				it.Filters.Add(new FileDialogFilter().Also(filter =>
+				{
+					filter.Extensions.Add("json");
+					filter.Name = this.Application.GetString("FileFormat.Json");
+				}));
+			}).ShowAsync(this);
+			if (string.IsNullOrEmpty(fileName))
+				return;
+
+			// copy profile and save
+			var copiedProfile = new LogProfile(logProfile);
+			try
+			{
+				await copiedProfile.SaveAsync(fileName);
+			}
+			catch (Exception ex)
+			{
+				this.Logger.LogError(ex, $"Unable to export log profile '{copiedProfile.Name}' to '{fileName}'");
+				_ = new MessageDialog()
+				{
+					Icon = MessageDialogIcon.Error,
+					Message = this.Application.GetFormattedString("LogProfileSelectionDialog.FailedToExportLogProfile", fileName),
+				}.ShowDialog(this);
+			}
+		}
+
+
 		/// <summary>
 		/// Get or set <see cref="Predicate{T}"/> to filter log profiles.
 		/// </summary>
