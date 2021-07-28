@@ -629,6 +629,8 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			{
 				this.VerifyAccess();
 				this.VerifyBuiltIn();
+				if (this.logLevelMapForReading.SequenceEqual(value))
+					return;
 				this.logLevelMapForReading.Clear();
 				this.logLevelMapForReading.AddAll(value);
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LogLevelMapForReading)));
@@ -646,6 +648,8 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			{
 				this.VerifyAccess();
 				this.VerifyBuiltIn();
+				if (this.logLevelMapForWriting.SequenceEqual(value))
+					return;
 				this.logLevelMapForWriting.Clear();
 				this.logLevelMapForWriting.AddAll(value);
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LogLevelMapForWriting)));
