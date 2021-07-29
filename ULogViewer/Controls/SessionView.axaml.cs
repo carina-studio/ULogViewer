@@ -451,6 +451,16 @@ namespace CarinaStudio.ULogViewer.Controls
 					it.Margin = itemPadding;
 					itemPanel.Children.Add(it);
 				});
+				new TextBlock().Also(it =>
+				{
+					// empty view to reserve height of item
+					it.Bind(TextBlock.FontFamilyProperty, new Binding() { Path = nameof(LogFontFamily), Source = this });
+					it.Bind(TextBlock.FontSizeProperty, new Binding() { Path = nameof(LogFontSize), Source = this });
+					it.Opacity = 0;
+					it.Padding = propertyPadding;
+					it.Text = " ";
+					itemGrid.Children.Add(it);
+				});
 				for (var i = 0; i < logPropertyCount; ++i)
 				{
 					// define splitter column
@@ -580,6 +590,16 @@ namespace CarinaStudio.ULogViewer.Controls
 			var itemTemplateContent = new Func<IServiceProvider, object>(_ =>
 			{
 				var itemPanel = new Panel();
+				new TextBlock().Also(it =>
+				{
+					// empty view to reserve height of item
+					it.Bind(TextBlock.FontFamilyProperty, new Binding() { Path = nameof(LogFontFamily), Source = this });
+					it.Bind(TextBlock.FontSizeProperty, new Binding() { Path = nameof(LogFontSize), Source = this });
+					it.Margin = itemPadding;
+					it.Opacity = 0;
+					it.Text = " ";
+					itemPanel.Children.Add(it);
+				});
 				var propertyView = new TextBlock().Also(it =>
 				{
 					it.Bind(TextBlock.FontFamilyProperty, new Binding() { Path = nameof(LogFontFamily), Source = this });
