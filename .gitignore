@@ -1,5 +1,5 @@
 .vs
 obj
 bin
-Properties
 ULogViewer.csproj.user
+/ULogViewer/Properties/PublishProfiles/*.user
