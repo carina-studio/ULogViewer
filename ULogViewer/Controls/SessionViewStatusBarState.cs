@@ -16,6 +16,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// </summary>
 		Active,
 		/// <summary>
+		/// Warning.
+		/// </summary>
+		Warning,
+		/// <summary>
 		/// Error occurred.
 		/// </summary>
 		Error,

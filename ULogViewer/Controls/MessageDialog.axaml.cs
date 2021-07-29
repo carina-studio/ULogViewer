@@ -130,7 +130,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			// setup icon
 			var app = (App)this.Application;
-			if (app.Resources.TryGetResource($"Drawing.{this.Icon}", out var res) && res is Drawing drawing)
+			if (app.Resources.TryGetResource($"Drawing.{this.Icon}.Colored", out var res) && res is Drawing drawing)
 				this.SetValue<Drawing?>(IconDrawingProperty, drawing);
 
 			// setup buttons

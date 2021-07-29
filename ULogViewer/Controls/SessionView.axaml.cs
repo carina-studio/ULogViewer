@@ -287,6 +287,10 @@ namespace CarinaStudio.ULogViewer.Controls
 				}
 				if (session.IsLogsReadingPaused)
 					this.SetValue<SessionViewStatusBarState>(StatusBarStateProperty, SessionViewStatusBarState.Paused);
+				else if (session.HasPartialDataSourceErrors)
+					this.SetValue<SessionViewStatusBarState>(StatusBarStateProperty, SessionViewStatusBarState.Warning);
+				else if (session.HasAllDataSourceErrors)
+					this.SetValue<SessionViewStatusBarState>(StatusBarStateProperty, SessionViewStatusBarState.Error);
 				else
 					this.SetValue<SessionViewStatusBarState>(StatusBarStateProperty, SessionViewStatusBarState.Active);
 			});
@@ -1520,7 +1524,9 @@ namespace CarinaStudio.ULogViewer.Controls
 				case nameof(Session.DisplayLogProperties):
 					this.OnDisplayLogPropertiesChanged();
 					break;
+				case nameof(Session.HasAllDataSourceErrors):
 				case nameof(Session.HasLogReaders):
+				case nameof(Session.HasPartialDataSourceErrors):
 					this.updateStatusBarStateAction.Schedule();
 					break;
 				case nameof(Session.HasLogs):
