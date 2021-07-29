@@ -1,7 +1,9 @@
 ﻿using Avalonia;
+using Avalonia.Controls;
 using CarinaStudio.Threading;
 using ReactiveUI;
 using System;
+using System.Runtime.InteropServices;
 using System.Windows.Input;
 
 namespace CarinaStudio.ULogViewer.Controls
@@ -82,9 +84,30 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when opened.
 		protected override void OnOpened(EventArgs e)
 		{
+			// call base
 			base.OnOpened(e);
+
+			// check input later
 			this.InvalidateInput();
+
+			// notify owner window
 			this.ownerWindow = (this.Owner as BaseWindow)?.Also(it => it.OnDialogOpened(this));
+
+			// [workaround] move to center of owner for Linux
+			if (this.WindowStartupLocation == WindowStartupLocation.CenterOwner && RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+			{
+				(this.Owner as Window)?.Let((owner) =>
+				{
+					this.WindowStartupLocation = WindowStartupLocation.Manual;
+					this.Position = owner.Position.Let((position) =>
+					{
+						var screenScale = owner.Screens.Primary.PixelDensity;
+						var offsetX = (int)((owner.Width - this.Width) / 2 * screenScale);
+						var offsetY = (int)((owner.Height - this.Height) / 2 * screenScale);
+						return new Avalonia.PixelPoint(position.X + offsetX, position.Y + offsetY);
+					});
+				});
+			}
 		}
 
 

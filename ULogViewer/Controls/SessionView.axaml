@@ -29,8 +29,13 @@
 
 		<!-- Log actions menu -->
 		<ContextMenu x:Key="logActionMenu">
-			<MenuItem Command="{Binding $parent[UserControl].MarkUnmarkSelectedLogsCommand}" Header="{DynamicResource String.SessionView.MarkUnmarkLogs}"/>
-			<MenuItem Command="{Binding $parent[UserControl].SelectMarkedLogsCommand}" Header="{DynamicResource String.SessionView.SelectMarkedLogs}"/>
+			<MenuItem Name="showLogMessageMenuItem" Command="{Binding $parent[UserControl].ShowLogMessageCommand}"/>
+			<Separator/>
+			<MenuItem Command="{Binding $parent[UserControl].MarkUnmarkSelectedLogsCommand}" Header="{DynamicResource String.SessionView.MarkUnmarkLogs}" HotKey="M" InputGesture="M"/>
+			<MenuItem Command="{Binding $parent[UserControl].SelectMarkedLogsCommand}" Header="{DynamicResource String.SessionView.SelectMarkedLogs}" HotKey="S" InputGesture="S"/>
+			<Separator/>
+			<MenuItem Command="{Binding $parent[UserControl].CopySelectedLogsCommand}" Header="{DynamicResource String.SessionView.CopyLogs}" HotKey="Ctrl+C" InputGesture="Ctrl+C"/>
+			<MenuItem Command="{Binding $parent[UserControl].CopySelectedLogsWithFileNamesCommand}" Header="{DynamicResource String.SessionView.CopyLogsWithFileNames}" HotKey="Ctrl+Shift+C" InputGesture="Ctrl+Shift+C"/>
 			<Separator/>
 			<MenuItem Command="{Binding $parent[UserControl].FilterLogsByProcessIdCommand}" Header="{DynamicResource String.SessionView.FilterLogsBySelectedProcessId}">
 				<MenuItem.CommandParameter>
@@ -73,7 +78,7 @@
 		</Grid.ColumnDefinitions>
 
 		<!-- Toolbar -->
-		<Grid ColumnDefinitions="Auto,*,Auto" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" Margin="{StaticResource Thickness.SessionView.ToolBar.Padding}">
+		<Grid Name="toolBarContainer" ColumnDefinitions="Auto,*,Auto" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" Margin="{StaticResource Thickness.SessionView.ToolBar.Padding}">
 
 			<!-- Resources -->
 			<Grid.Resources>
@@ -124,9 +129,10 @@
 
 				<!-- Scroll to latest log -->
 				<ToggleButton Classes="SessionView_ToolBar_Button" IsChecked="{Binding $parent[UserControl].IsScrollingToLatestLogNeeded, Mode=TwoWay}" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" ToolTip.Tip="{DynamicResource String.SessionView.ScrollToLatestLog}">
-					<Border Classes="SessionView_ToolBar_Button_Icon">
-						<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Scrolling}"/>
-					</Border>
+					<Grid Classes="SessionView_ToolBar_Button_Icon">
+						<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Scrolling}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
+						<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Scrolling.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
+					</Grid>
 				</ToggleButton>
 
 				<!-- Pause/resume -->
@@ -201,18 +207,11 @@
 					<!-- Predefined text filters -->
 					<ToggleButton Classes="SessionView_ToolBar_Button" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" ToolTip.Tip="{DynamicResource String.SessionView.PredefinedLogTextFilters}">
 						<Panel>
-							<Border Classes="SessionView_ToolBar_Button_Icon">
-								<DrawingPresenter Classes="Icon">
-									<ia:Interaction.Behaviors>
-										<iaCore:DataTriggerBehavior Binding="{Binding ElementName=predefinedLogTextFilterListBox, Path=SelectedItems.Count}" ComparisonCondition="GreaterThan" Value="0">
-											<iaCore:ChangePropertyAction PropertyName="Drawing" Value="{StaticResource Drawing.Filter.Active}"/>
-										</iaCore:DataTriggerBehavior>
-										<iaCore:DataTriggerBehavior Binding="{Binding ElementName=predefinedLogTextFilterListBox, Path=SelectedItems.Count}" ComparisonCondition="Equal" Value="0">
-											<iaCore:ChangePropertyAction PropertyName="Drawing" Value="{StaticResource Drawing.Filter}"/>
-										</iaCore:DataTriggerBehavior>
-									</ia:Interaction.Behaviors>
-								</DrawingPresenter>
-							</Border>
+							<Grid Classes="SessionView_ToolBar_Button_Icon">
+								<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Filter}" IsVisible="{Binding ElementName=predefinedLogTextFilterListBox, Path=!SelectedItems.Count}"/>
+								<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Filter.Active}" IsVisible="{Binding ElementName=predefinedLogTextFilterListBox, Path=SelectedItems.Count}"/>
+								<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Filter.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
+							</Grid>
 							<Popup Name="predefinedLogTextFiltersPopup" IsLightDismissEnabled="True" IsOpen="{Binding $parent[ToggleButton].IsChecked, Mode=TwoWay}" MaxHeight="{StaticResource Double.SessionView.PredefinedLogTextFiltersPopup.MaxHeight}" PlacementTarget="{Binding $parent[ToggleButton]}" Width="{StaticResource Double.SessionView.PredefinedLogTextFiltersPopup.Width}" WindowManagerAddShadowHint="True">
 								<Border Background="{DynamicResource ComboBoxDropDownBackground}" BorderBrush="{DynamicResource ComboBoxDropDownBorderBrush}" BorderThickness="{DynamicResource ComboBoxDropdownBorderThickness}" CornerRadius="{DynamicResource OverlayCornerRadius}" Padding="{StaticResource Thickness.SessionView.PredefinedLogTextFiltersPopup.Padding}">
 									<DockPanel>
@@ -252,7 +251,7 @@
 													</Style>
 												</ListBox.Styles>
 											</ListBox>
-											<TextBlock HorizontalAlignment="Center" IsVisible="{Binding !$parent[UserControl].PredefinedLogTextFilters.Count}" Margin="{StaticResource Thickness.SessionView.NoPredefinedLogTextFilterHint.Margin}" Text="{DynamicResource String.SessionView.NoPredefinedLogTextFilter}" TextWrapping="Wrap"/>
+											<TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" HorizontalAlignment="Center" IsVisible="{Binding !$parent[UserControl].PredefinedLogTextFilters.Count}" Margin="{StaticResource Thickness.SessionView.NoPredefinedLogTextFilterHint.Margin}" Text="{DynamicResource String.SessionView.NoPredefinedLogTextFilter}" TextWrapping="Wrap"/>
 										</Panel>
 									</DockPanel>
 								</Border>
@@ -286,9 +285,10 @@
 
 				<!-- Other actions -->
 				<ToggleButton Name="otherActionsButton" Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].ShowOtherActions}" ToolTip.Tip="{DynamicResource String.SessionView.OtherActions}">
-					<Border Classes="SessionView_ToolBar_Button_Icon">
-						<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.OtherActions}"/>
-					</Border>
+					<Grid Classes="SessionView_ToolBar_Button_Icon">
+						<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.OtherActions}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
+						<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.OtherActions.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
+					</Grid>
 				</ToggleButton>
 
 			</StackPanel>
@@ -311,7 +311,7 @@
 			</Border>
 
 			<!-- ListBox -->
-			<ListBox Name="logListBox" AutoScrollToSelectedItem="False" Background="{StaticResource Brush.SessionView.LogListBox.Background}" DragDrop.AllowDrop="True" Grid.Row="1" HorizontalAlignment="Stretch" Items="{Binding Logs}" Padding="{StaticResource Thickness.SessionView.LogListBox.Padding}" ScrollViewer.HorizontalScrollBarVisibility="Visible" SelectionChanged="OnLogListBoxSelectionChanged" SelectionMode="Multiple" VirtualizationMode="Simple">
+			<ListBox Name="logListBox" AutoScrollToSelectedItem="False" Background="{StaticResource Brush.SessionView.LogListBox.Background}" DoubleTapped="OnLogListBoxDoubleTapped" DragDrop.AllowDrop="True" Grid.Row="1" HorizontalAlignment="Stretch" Items="{Binding Logs}" Padding="{StaticResource Thickness.SessionView.LogListBox.Padding}" ScrollViewer.HorizontalScrollBarVisibility="Visible" SelectionChanged="OnLogListBoxSelectionChanged" SelectionMode="Multiple" VirtualizationMode="Simple">
 				<ListBox.Styles>
 					<Style Selector="ListBoxItem">
 						<Setter Property="HorizontalAlignment" Value="Stretch"/>
@@ -329,9 +329,6 @@
 					</Style>
 					<Style Selector="ListBoxItem:selected:pressed /template/ ContentPresenter#PART_ContentPresenter">
 						<Setter Property="Background" Value="{DynamicResource Brush.SessionView.LogListBox.Item.Background.Pressed}"/>
-					</Style>
-					<Style Selector="TextBlock">
-						<Setter Property="FontFamily" Value="Consolas"/>
 					</Style>
 				</ListBox.Styles>
 			</ListBox>
@@ -435,9 +432,6 @@
 							</Style>
 							<Style Selector="ListBoxItem:selected:pressed /template/ ContentPresenter#PART_ContentPresenter">
 								<Setter Property="Background" Value="{DynamicResource Brush.SessionView.LogListBox.Item.Background.Pressed}"/>
-							</Style>
-							<Style Selector="TextBlock">
-								<Setter Property="FontFamily" Value="Consolas"/>
 							</Style>
 						</ListBox.Styles>
 					</ListBox>

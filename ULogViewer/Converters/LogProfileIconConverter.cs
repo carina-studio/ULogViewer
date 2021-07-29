@@ -31,10 +31,24 @@ namespace CarinaStudio.ULogViewer.Converters
 		// Convert.
 		public object? Convert(object value, Type targetType, object? parameter, CultureInfo culture)
 		{
-			if (value is not LogProfileIcon icon || !typeof(Drawing).IsAssignableFrom(targetType))
+			if (value is not LogProfileIcon icon)
 				return null;
-			if (app.Resources.TryGetResource($"Drawing.LogProfile.{icon}", out var res) && res is Drawing)
+			if (!typeof(Drawing).IsAssignableFrom(targetType) && targetType != typeof(object))
+				return null;
+			var mode = parameter as string;
+			var res = (object?)null;
+			if (mode != null)
+			{
+				if (app.Resources.TryGetResource($"Drawing.LogProfile.{icon}.{mode}", out res) && res is Drawing)
+					return res;
+			}
+			if (app.Resources.TryGetResource($"Drawing.LogProfile.{icon}", out res) && res is Drawing)
 				return res;
+			if (mode != null)
+			{
+				if (app.Resources.TryGetResource($"Drawing.LogProfile.File.{mode}", out res) && res is Drawing)
+					return res;
+			}
 			if (app.Resources.TryGetResource($"Drawing.LogProfile.File", out res) && res is Drawing)
 				return res;
 			return null;

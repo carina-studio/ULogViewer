@@ -2,7 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
-using CarinaStudio.Threading;
+using CarinaStudio.ULogViewer.Converters;
 using CarinaStudio.ULogViewer.Logs;
 using ReactiveUI;
 using System;
@@ -15,6 +15,10 @@ namespace CarinaStudio.ULogViewer.Controls
 	/// </summary>
 	partial class LogMessageDialog : BaseDialog
 	{
+		// Static fields.
+		static readonly AvaloniaProperty<string> LogMessageDisplayNameProperty = AvaloniaProperty.Register<LogMessageDialog, string>(nameof(LogMessageDisplayName), "");
+
+
 		// Fields.
 		readonly TextBox messageTextBox;
 
@@ -34,6 +38,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						this.messageTextBox.Margin = new Thickness(0); // [Workaround] Relayout completed, restore to correct margin.
 				};
 			});
+			this.SetValue<string>(LogMessageDisplayNameProperty, LogPropertyNameConverter.Default.Convert(nameof(Log.Message)));
 		}
 
 
@@ -45,6 +50,16 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// Get or set log to show message.
 		/// </summary>
 		public Log? Log { get; set; }
+
+
+		/// <summary>
+		/// Get or set display name of <see cref="Log.Message"/>.
+		/// </summary>
+		public string LogMessageDisplayName
+		{
+			get => this.GetValue<string>(LogMessageDisplayNameProperty);
+			set => this.SetValue<string>(LogMessageDisplayNameProperty, value);
+		}
 
 
 		// Generate result.

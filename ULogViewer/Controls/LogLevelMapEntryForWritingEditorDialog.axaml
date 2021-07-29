@@ -1,0 +1,56 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+				xmlns:ia="using:Avalonia.Xaml.Interactivity"
+				xmlns:iaCore="using:Avalonia.Xaml.Interactions.Core"
+				xmlns:appControls="clr-namespace:CarinaStudio.ULogViewer.Controls;assembly=ULogViewer"
+				xmlns:appConverters="clr-namespace:CarinaStudio.ULogViewer.Converters;assembly=ULogViewer"
+				xmlns:appLogs="clr-namespace:CarinaStudio.ULogViewer.Logs;assembly=ULogViewer"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="CarinaStudio.ULogViewer.Controls.LogLevelMapEntryForWritingEditorDialog"
+        Classes="Dialog"
+				SizeToContent="Height"
+        Title="{DynamicResource String.LogLevelMapEntryEditor.Title}"
+				Width="{StaticResource Double.LogLevelMapEntryEditor.Width}">
+
+	<DockPanel>
+
+		<!-- Control buttons -->
+		<Border Classes="Dialog_ControlButtonsPanel" DockPanel.Dock="Bottom">
+			<StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].GenerateResultCommand}" Content="{DynamicResource String.Common.OK}"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].CancelCommand}" Content="{DynamicResource String.Common.Cancel}"/>
+			</StackPanel>
+		</Border>
+
+		<!-- Content -->
+		<StackPanel Margin="{StaticResource Thickness.Dialog.Content.Padding}" Orientation="Vertical">
+
+			<!-- Log level -->
+			<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogLevelMapEntryEditor.Writing.LogLevel}"/>
+			<ComboBox Name="logLevelComboBox" HorizontalAlignment="Stretch">
+				<appLogs:LogLevel>Undefined</appLogs:LogLevel>
+				<appLogs:LogLevel>Info</appLogs:LogLevel>
+				<appLogs:LogLevel>Verbose</appLogs:LogLevel>
+				<appLogs:LogLevel>Debug</appLogs:LogLevel>
+				<appLogs:LogLevel>Warn</appLogs:LogLevel>
+				<appLogs:LogLevel>Error</appLogs:LogLevel>
+				<appLogs:LogLevel>Fatal</appLogs:LogLevel>
+				<ComboBox.ItemTemplate>
+					<DataTemplate>
+						<TextBlock Foreground="{Binding Converter={x:Static appConverters:LogLevelBrushConverter.Default}}" Text="{Binding Converter={x:Static appConverters:EnumConverter.LogLevel}}"/>
+					</DataTemplate>
+				</ComboBox.ItemTemplate>
+			</ComboBox>
+			<Separator Classes="Dialog_Separator_Horizontal"/>
+			
+			<!-- Text -->
+			<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogLevelMapEntryEditor.Writing.Text}"/>
+			<TextBox Name="textBox" MaxLength="256" PropertyChanged="OnTextBoxPropertyChanged"/>
+
+		</StackPanel>
+
+	</DockPanel>
+	
+</Window>

@@ -11,11 +11,13 @@ using Avalonia.LogicalTree;
 using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.Templates;
 using Avalonia.Media;
+using Avalonia.VisualTree;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Converters;
 using CarinaStudio.ULogViewer.Input;
+using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ULogViewer.ViewModels;
 using CarinaStudio.Windows.Input;
@@ -73,18 +75,26 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Static fields.
 		static readonly AvaloniaProperty<bool> HasLogProfileProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(HasLogProfile), false);
 		static readonly AvaloniaProperty<bool> IsScrollingToLatestLogNeededProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(IsScrollingToLatestLogNeeded), true);
+		static readonly AvaloniaProperty<FontFamily> LogFontFamilyProperty = AvaloniaProperty.Register<SessionView, FontFamily>(nameof(LogFontFamily));
+		static readonly AvaloniaProperty<double> LogFontSizeProperty = AvaloniaProperty.Register<SessionView, double>(nameof(LogFontSize), 10.0);
 		static readonly AvaloniaProperty<SessionViewStatusBarState> StatusBarStateProperty = AvaloniaProperty.Register<SessionView, SessionViewStatusBarState>(nameof(StatusBarState), SessionViewStatusBarState.None);
 
 
 		// Fields.
+		readonly ScheduledAction autoAddLogFilesAction;
+		readonly ScheduledAction autoSetWorkingDirectoryAction;
 		readonly MutableObservableBoolean canAddLogFiles = new MutableObservableBoolean();
+		readonly MutableObservableBoolean canCopySelectedLogs = new MutableObservableBoolean();
+		readonly MutableObservableBoolean canCopySelectedLogsWithFileNames = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canFilterLogsByPid = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canFilterLogsByTid = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canMarkUnmarkSelectedLogs = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSelectMarkedLogs = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSetLogProfile = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSetWorkingDirectory = new MutableObservableBoolean();
+		readonly MutableObservableBoolean canShowLogMessage = new MutableObservableBoolean();
 		bool isLogFileNeededAfterLogProfileSet;
+		bool isMessageLogPropertyVisible;
 		bool isPidLogPropertyVisible;
 		bool isPointerPressedOnLogListBox;
 		bool isTidLogPropertyVisible;
@@ -107,6 +117,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly SortedObservableList<PredefinedLogTextFilter> predefinedLogTextFilters;
 		readonly ScheduledAction scrollToLatestLogAction;
 		readonly HashSet<PredefinedLogTextFilter> selectedPredefinedLogTextFilters = new HashSet<PredefinedLogTextFilter>();
+		readonly MenuItem showLogMessageMenuItem;
 		readonly ScheduledAction updateLogFiltersAction;
 		readonly ScheduledAction updateStatusBarStateAction;
 
@@ -118,6 +129,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			// create commands
 			this.AddLogFilesCommand = ReactiveCommand.Create(this.AddLogFiles, this.canAddLogFiles);
+			this.CopySelectedLogsCommand = ReactiveCommand.Create(this.CopySelectedLogs, this.canCopySelectedLogs);
+			this.CopySelectedLogsWithFileNamesCommand = ReactiveCommand.Create(this.CopySelectedLogsWithFileNames, this.canCopySelectedLogsWithFileNames);
 			this.FilterLogsByProcessIdCommand = ReactiveCommand.Create<bool>(this.FilterLogsByProcessId, this.canFilterLogsByPid);
 			this.FilterLogsByThreadIdCommand = ReactiveCommand.Create<bool>(this.FilterLogsByThreadId, this.canFilterLogsByTid);
 			this.MarkUnmarkSelectedLogsCommand = ReactiveCommand.Create(this.MarkUnmarkSelectedLogs, this.canMarkUnmarkSelectedLogs);
@@ -125,10 +138,15 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.SelectMarkedLogsCommand = ReactiveCommand.Create(this.SelectMarkedLogs, this.canSelectMarkedLogs);
 			this.SetLogProfileCommand = ReactiveCommand.Create(this.SetLogProfile, this.canSetLogProfile);
 			this.SetWorkingDirectoryCommand = ReactiveCommand.Create(this.SetWorkingDirectory, this.canSetWorkingDirectory);
+			this.ShowLogMessageCommand = ReactiveCommand.Create(this.ShowLogMessage, this.canShowLogMessage);
 			this.SwitchLogFiltersCombinationModeCommand = ReactiveCommand.Create(this.SwitchLogFiltersCombinationMode, this.GetObservable<bool>(HasLogProfileProperty));
 
 			// create collections
 			this.predefinedLogTextFilters = new SortedObservableList<PredefinedLogTextFilter>(ComparePredefinedLogTextFilters);
+
+			// setup log font
+			this.UpdateLogFontFamily();
+			this.UpdateLogFontSize();
 
 			// initialize
 			this.InitializeComponent();
@@ -183,11 +201,28 @@ namespace CarinaStudio.ULogViewer.Controls
 				it.MenuOpened += (_, e) => this.SynchronizationContext.Post(() => this.otherActionsButton.IsChecked = true);
 			});
 			this.predefinedLogTextFilterListBox = this.FindControl<ListBox>("predefinedLogTextFilterListBox").AsNonNull();
+			this.showLogMessageMenuItem = this.FindControl<MenuItem>("showLogMessageMenuItem").AsNonNull().Also(it => this.UpdateShowLogMessageMenuItem());
 #if !DEBUG
 			this.FindControl<Button>("testButton").AsNonNull().IsVisible = false;
 #endif
+			this.FindControl<Control>("toolBarContainer").AsNonNull().Let(it =>
+			{
+				it.AddHandler(Control.PointerReleasedEvent, this.OnToolBarPointerReleased, RoutingStrategies.Tunnel);
+			});
 
 			// create scheduled actions
+			this.autoAddLogFilesAction = new ScheduledAction(() =>
+			{
+				if (this.DataContext is not Session session || session.HasLogReaders)
+					return;
+				this.AddLogFiles();
+			});
+			this.autoSetWorkingDirectoryAction = new ScheduledAction(() =>
+			{
+				if (this.DataContext is not Session session || session.HasLogReaders)
+					return;
+				this.SetWorkingDirectory();
+			});
 			this.scrollToLatestLogAction = new ScheduledAction(() =>
 			{
 				// check state
@@ -270,6 +305,9 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.Logger.LogError("Unable to add log files without attaching to window");
 				return;
 			}
+
+			// cancel scheduled action
+			this.autoAddLogFilesAction.Cancel();
 
 			// select files
 			var fileNames = await new OpenFileDialog()
@@ -361,6 +399,32 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Copy selected logs.
+		void CopySelectedLogs()
+		{
+			if (this.DataContext is not Session session || !this.canCopySelectedLogs.Value)
+				return;
+			session.CopyLogsCommand.TryExecute(this.logListBox.SelectedItems.Cast<DisplayableLog>().ToArray());
+		}
+
+
+		// Command to copy selected logs.
+		ICommand CopySelectedLogsCommand { get; }
+
+
+		// Copy selected logs with file names.
+		void CopySelectedLogsWithFileNames()
+		{
+			if (this.DataContext is not Session session || !this.canCopySelectedLogsWithFileNames.Value)
+				return;
+			session.CopyLogsWithFileNamesCommand.TryExecute(this.logListBox.SelectedItems.Cast<DisplayableLog>().ToArray());
+		}
+
+
+		// Command to copy selected logs with file names.
+		ICommand CopySelectedLogsWithFileNamesCommand { get; }
+
+
 		// Create item template for item of log list box.
 		DataTemplate CreateLogItemTemplate(LogProfile profile, IList<DisplayableLogProperty> logProperties)
 		{
@@ -368,6 +432,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			var logPropertyCount = logProperties.Count;
 			var colorIndicatorWidth = app.Resources.TryGetResource("Double.SessionView.LogListBox.ColorIndicator.Width", out var rawResource) ? (double)rawResource.AsNonNull() : 0.0;
 			var itemPadding = app.Resources.TryGetResource("Thickness.SessionView.LogListBox.Item.Padding", out rawResource) ? (Thickness)rawResource.AsNonNull() : new Thickness();
+			var propertyPadding = app.Resources.TryGetResource("Thickness.SessionView.LogListBox.Item.Property.Padding", out rawResource) ? (Thickness)rawResource.AsNonNull() : new Thickness();
 			var splitterWidth = app.Resources.TryGetResource("Double.GridSplitter.Thickness", out rawResource) ? (double)rawResource.AsNonNull() : 0.0;
 			if (profile.ColorIndicator != LogColorIndicator.None)
 				itemPadding = new Thickness(itemPadding.Left + colorIndicatorWidth, itemPadding.Top, itemPadding.Right, itemPadding.Bottom);
@@ -385,6 +450,16 @@ namespace CarinaStudio.ULogViewer.Controls
 				{
 					it.Margin = itemPadding;
 					itemPanel.Children.Add(it);
+				});
+				new TextBlock().Also(it =>
+				{
+					// empty view to reserve height of item
+					it.Bind(TextBlock.FontFamilyProperty, new Binding() { Path = nameof(LogFontFamily), Source = this });
+					it.Bind(TextBlock.FontSizeProperty, new Binding() { Path = nameof(LogFontSize), Source = this });
+					it.Opacity = 0;
+					it.Padding = propertyPadding;
+					it.Text = " ";
+					itemGrid.Children.Add(it);
 				});
 				for (var i = 0; i < logPropertyCount; ++i)
 				{
@@ -410,6 +485,8 @@ namespace CarinaStudio.ULogViewer.Controls
 					{
 						_ => (Control)new TextBlock().Also(it =>
 						{
+							it.Bind(TextBlock.FontFamilyProperty, new Binding() { Path = nameof(LogFontFamily), Source = this });
+							it.Bind(TextBlock.FontSizeProperty, new Binding() { Path = nameof(LogFontSize), Source = this });
 							it.Bind(TextBlock.ForegroundProperty, new Binding() { Path = nameof(DisplayableLog.LevelBrush) });
 							it.Bind(TextBlock.TextProperty, new Binding().Also(binding =>
 							{
@@ -418,6 +495,7 @@ namespace CarinaStudio.ULogViewer.Controls
 								binding.Path = logProperty.Name;
 							}));
 							it.MaxLines = DisplayableLog.MaxDisplayableLineCount;
+							it.Padding = propertyPadding;
 							it.TextTrimming = TextTrimming.CharacterEllipsis;
 							it.TextWrapping = TextWrapping.NoWrap;
 							it.VerticalAlignment = VerticalAlignment.Top;
@@ -439,10 +517,7 @@ namespace CarinaStudio.ULogViewer.Controls
 									if (e.InitialPressMouseButton == MouseButton.Left 
 										&& viewDetails.FindLogicalAncestorOfType<ListBoxItem>()?.DataContext is DisplayableLog log)
 									{
-										this.FindLogicalAncestorOfType<Window>()?.Let(window =>
-										{
-											new LogMessageDialog() { Log = log.Log }.ShowDialog(window);
-										});
+										this.ShowLogMessage(log);
 									}
 								};
 							}));
@@ -515,8 +590,20 @@ namespace CarinaStudio.ULogViewer.Controls
 			var itemTemplateContent = new Func<IServiceProvider, object>(_ =>
 			{
 				var itemPanel = new Panel();
+				new TextBlock().Also(it =>
+				{
+					// empty view to reserve height of item
+					it.Bind(TextBlock.FontFamilyProperty, new Binding() { Path = nameof(LogFontFamily), Source = this });
+					it.Bind(TextBlock.FontSizeProperty, new Binding() { Path = nameof(LogFontSize), Source = this });
+					it.Margin = itemPadding;
+					it.Opacity = 0;
+					it.Text = " ";
+					itemPanel.Children.Add(it);
+				});
 				var propertyView = new TextBlock().Also(it =>
 				{
+					it.Bind(TextBlock.FontFamilyProperty, new Binding() { Path = nameof(LogFontFamily), Source = this });
+					it.Bind(TextBlock.FontSizeProperty, new Binding() { Path = nameof(LogFontSize), Source = this });
 					it.Bind(TextBlock.ForegroundProperty, new Binding() { Path = nameof(DisplayableLog.LevelBrush) });
 					it.Bind(TextBlock.TextProperty, new Binding() { Path = propertyInMarkedItem });
 					it.Margin = itemPadding;
@@ -669,6 +756,14 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Get font family of log.
+		FontFamily LogFontFamily { get => this.GetValue<FontFamily>(LogFontFamilyProperty); }
+
+
+		// Get font size of log.
+		double LogFontSize { get => this.GetValue<double>(LogFontSizeProperty); }
+
+
 		// Mark or unmark selected logs.
 		void MarkUnmarkSelectedLogs()
 		{
@@ -698,6 +793,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.logLevelFilterComboBox.SelectedIndex = selectedIndex;
 			if (!isScheduled)
 				this.updateLogFiltersAction.Cancel();
+
+			// update menu
+			this.UpdateShowLogMessageMenuItem();
 		}
 
 
@@ -873,12 +971,16 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.markedLogListBox.ItemTemplate = this.CreateMarkedLogItemTemplate(profile, logProperties);
 
 			// check visible properties
+			this.isMessageLogPropertyVisible = false;
 			this.isPidLogPropertyVisible = false;
 			this.isTidLogPropertyVisible = false;
 			foreach (var logProperty in logProperties)
 			{
 				switch (logProperty.Name)
 				{
+					case nameof(DisplayableLog.Message):
+						this.isMessageLogPropertyVisible = true;
+						break;
 					case nameof(DisplayableLog.ProcessId):
 						this.isPidLogPropertyVisible = true;
 						break;
@@ -903,6 +1005,9 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.logThreadIdFilterTextBox.IsVisible = false;
 				this.logThreadIdFilterTextBox.Text = "";
 			}
+
+			// update menu
+			this.UpdateShowLogMessageMenuItem();
 		}
 
 
@@ -913,7 +1018,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			e.Handled = true;
 
 			// check session
-			if (this.DataContext is not Session session || !session.AddLogFileCommand.CanExecute(null))
+			if (this.DataContext is not Session)
 			{
 				e.DragEffects = DragDropEffects.None;
 				return;
@@ -937,19 +1042,25 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 
 			// bring window to front
-			this.FindLogicalAncestorOfType<Window>()?.Let(it => it.ActivateAndBringToFront());
+			var window = this.FindLogicalAncestorOfType<Window>();
+			if (window == null)
+				return;
+			window.ActivateAndBringToFront();
 
 			// collect files
 			var dropFilePaths = e.Data.GetFileNames().AsNonNull();
-			var filePaths = await Task.Run(() =>
+			var dirPaths = new List<string>();
+			var filePaths = new List<string>();
+			await Task.Run(() =>
 			{
-				var filePaths = new List<string>();
-				foreach (var filePath in dropFilePaths)
+				foreach (var path in dropFilePaths)
 				{
 					try
 					{
-						if (File.Exists(filePath))
-							filePaths.Add(filePath);
+						if (File.Exists(path))
+							filePaths.Add(path);
+						else if (Directory.Exists(path))
+							dirPaths.Add(path);
 					}
 					catch
 					{ }
@@ -957,13 +1068,86 @@ namespace CarinaStudio.ULogViewer.Controls
 				return filePaths;
 			});
 			if (filePaths.IsEmpty())
+			{
+				if (dirPaths.IsEmpty())
+				{
+					_ = new MessageDialog()
+					{
+						Icon = MessageDialogIcon.Information,
+						Message = this.Application.GetString("SessionView.NoFilePathDropped")
+					}.ShowDialog(window);
+					return;
+				}
+				if (dirPaths.Count > 1)
+				{
+					_ = new MessageDialog()
+					{
+						Icon = MessageDialogIcon.Information,
+						Message = this.Application.GetString("SessionView.TooManyDirectoryPathsDropped")
+					}.ShowDialog(window);
+					return;
+				}
+			}
+
+			// check state
+			if (this.DataContext is not Session session)
 				return;
 
-			// add files
-			if (this.DataContext is not Session session || !session.AddLogFileCommand.CanExecute(null))
-				return;
-			foreach (var filePath in filePaths)
-				session.AddLogFileCommand.TryExecute(filePath);
+			// select new log profile
+			var currentLogProfile = session.LogProfile;
+			var needNewLogProfile = currentLogProfile == null ? true : currentLogProfile.DataSourceProvider.UnderlyingSource switch
+			{
+				UnderlyingLogDataSource.File => filePaths.IsEmpty(),
+				UnderlyingLogDataSource.StandardOutput => filePaths.IsNotEmpty(),
+				_ => false,
+			};
+			var newLogProfile = !needNewLogProfile ? null : await new LogProfileSelectionDialog().Also(it =>
+			{
+				if (filePaths.IsEmpty())
+				{
+					it.Filter = logProfile =>
+					{
+						return logProfile.DataSourceProvider.UnderlyingSource == UnderlyingLogDataSource.StandardOutput
+							&& logProfile.IsWorkingDirectoryNeeded
+							&& logProfile.DataSourceOptions.WorkingDirectory == null;
+					};
+				}
+				else
+					it.Filter = logProfile => logProfile.DataSourceProvider.UnderlyingSource == UnderlyingLogDataSource.File;
+			}).ShowDialog<LogProfile>(window);
+
+			// set log profile or create new session
+			if (newLogProfile != null)
+			{
+				if (currentLogProfile == null)
+				{
+					if (!session.SetLogProfileCommand.TryExecute(newLogProfile))
+						return;
+				}
+				else if (filePaths.IsNotEmpty())
+				{
+					var workspace = session.Workspace;
+					var newSession = workspace.CreateSessionWithLogFiles(newLogProfile, filePaths);
+					workspace.ActiveSession = newSession;
+					return;
+				}
+				else
+				{
+					var workspace = session.Workspace;
+					var newSession = workspace.CreateSessionWithWorkingDirectory(newLogProfile, dirPaths[0]);
+					workspace.ActiveSession = newSession;
+					return;
+				}
+			}
+
+			// set working directory or add log files
+			if (session.SetWorkingDirectoryCommand.CanExecute(null))
+				session.SetWorkingDirectoryCommand.TryExecute(dirPaths[0]);
+			else if (session.AddLogFileCommand.CanExecute(null))
+			{
+				foreach (var filePath in filePaths)
+					session.AddLogFileCommand.TryExecute(filePath);
+			}
 		}
 
 
@@ -981,11 +1165,31 @@ namespace CarinaStudio.ULogViewer.Controls
 		void OnLogLevelFilterComboBoxSelectionChanged(object? sender, SelectionChangedEventArgs e) => this.updateLogFiltersAction?.Reschedule();
 
 
+		// Called when double click on log list box.
+		void OnLogListBoxDoubleTapped(object? sender, RoutedEventArgs e)
+		{
+			if (this.ShowLogMessage())
+				e.Handled = true;
+		}
+
+
 		// Called when pointer pressed on log list box.
 		void OnLogListBoxPointerPressed(object? sender, PointerPressedEventArgs e)
 		{
-			if (e.GetCurrentPoint(this.logListBox).Properties.IsLeftButtonPressed)
+			var point = e.GetCurrentPoint(this.logListBox);
+			if (point.Properties.IsLeftButtonPressed)
 				this.isPointerPressedOnLogListBox = true;
+			var hitControl = this.logListBox.InputHitTest(point.Position).Let(it =>
+			{
+				if (it == null)
+					return (IVisual?)null;
+				var listBoxItem = it.FindAncestorOfType<ListBoxItem>(true);
+				if (listBoxItem != null)
+					return listBoxItem;
+				return it.FindAncestorOfType<ScrollBar>(true);
+			});
+			if (hitControl == null)
+				this.SynchronizationContext.Post(() => this.logListBox.SelectedItems.Clear());
 		}
 
 
@@ -1034,9 +1238,12 @@ namespace CarinaStudio.ULogViewer.Controls
 				var hasSingleSelectedItem = (selectionCount == 1);
 
 				// update command states
+				this.canCopySelectedLogs.Update(hasSelectedItems && session.CopyLogsCommand.CanExecute(null));
+				this.canCopySelectedLogsWithFileNames.Update(hasSelectedItems && session.CopyLogsWithFileNamesCommand.CanExecute(null));
 				this.canFilterLogsByPid.Update(hasSingleSelectedItem && this.isPidLogPropertyVisible);
 				this.canFilterLogsByTid.Update(hasSingleSelectedItem && this.isTidLogPropertyVisible);
 				this.canMarkUnmarkSelectedLogs.Update(hasSelectedItems && session.MarkUnmarkLogsCommand.CanExecute(null));
+				this.canShowLogMessage.Update(hasSingleSelectedItem && this.isMessageLogPropertyVisible);
 			});
 		}
 
@@ -1061,6 +1268,15 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				switch (e.Key)
 				{
+					case Key.C:
+						if (e.Source is not TextBox)
+						{
+							if ((e.KeyModifiers & KeyModifiers.Shift) != 0)
+								this.CopySelectedLogsWithFileNames();
+							else
+								this.CopySelectedLogs();
+						}
+						break;
 					case Key.F:
 						if (e.Source is not TextBox)
 						{
@@ -1087,7 +1303,10 @@ namespace CarinaStudio.ULogViewer.Controls
 				{
 					case Key.Apps:
 						if (e.Source is not TextBox)
+						{
 							this.ShowLogActionsMenu();
+							e.Handled = true;
+						}
 						break;
 					case Key.Escape:
 						if (e.Source is TextBox)
@@ -1098,19 +1317,31 @@ namespace CarinaStudio.ULogViewer.Controls
 						break;
 					case Key.F5:
 						if (e.Source is not TextBox)
+						{
 							(this.DataContext as Session)?.ReloadLogsCommand?.TryExecute();
+							e.Handled = true;
+						}
 						break;
 					case Key.M:
 						if (e.Source is not TextBox)
+						{
 							this.MarkUnmarkSelectedLogs();
+							e.Handled = true;
+						}
 						break;
 					case Key.P:
 						if (e.Source is not TextBox)
+						{
 							(this.DataContext as Session)?.PauseResumeLogsReadingCommand?.TryExecute();
+							e.Handled = true;
+						}
 						break;
 					case Key.S:
 						if (e.Source is not TextBox)
+						{
 							this.SelectMarkedLogs();
+							e.Handled = true;
+						}
 						break;
 				}
 			}
@@ -1252,7 +1483,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					if (this.isLogFileNeededAfterLogProfileSet)
 					{
 						this.isLogFileNeededAfterLogProfileSet = false;
-						this.AddLogFiles();
+						this.autoAddLogFilesAction.Reschedule();
 					}
 				}
 				else
@@ -1270,7 +1501,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					if (this.isWorkingDirNeededAfterLogProfileSet)
 					{
 						this.isWorkingDirNeededAfterLogProfileSet = false;
-						this.SetWorkingDirectory();
+						this.autoSetWorkingDirectoryAction.Reschedule();
 					}
 				}
 				else
@@ -1311,7 +1542,17 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.updateStatusBarStateAction.Schedule();
 					break;
 				case nameof(Session.LogProfile):
-					this.SetValue<bool>(HasLogProfileProperty, session.LogProfile != null);
+					session.LogProfile?.Let(profile =>
+					{
+						if (profile != null)
+						{
+							this.SetValue<bool>(HasLogProfileProperty, true);
+							if (!profile.IsContinuousReading)
+								this.IsScrollingToLatestLogNeeded = false;
+						}
+						else
+							this.SetValue<bool>(HasLogProfileProperty, false);
+					});
 					break;
 			}
 		}
@@ -1322,6 +1563,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (e.Key == Settings.IgnoreCaseOfLogTextFilter)
 				this.logTextFilterTextBox.IgnoreCase = (bool)e.Value;
+			else if (e.Key == Settings.LogFontFamily)
+				this.UpdateLogFontFamily();
+			else if (e.Key == Settings.LogFontSize)
+				this.UpdateLogFontSize();
 			else if (e.Key == Settings.UpdateLogFilterDelay)
 				this.logTextFilterTextBox.ValidationDelay = this.UpdateLogFilterParamsDelay;
 		}
@@ -1330,6 +1575,14 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when test button clicked.
 		void OnTestButtonClick(object? sender, RoutedEventArgs e)
 		{ }
+
+
+		// Called when pointer released on tool bar.
+		void OnToolBarPointerReleased(object? sender, PointerReleasedEventArgs e)
+		{
+			if (FocusManager.Instance.Current is not TextBox)
+				this.SynchronizationContext.Post(() => this.logListBox.Focus());
+		}
 
 
 		// Sorted predefined log text filters.
@@ -1426,6 +1679,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			// reset log profile
 			this.isLogFileNeededAfterLogProfileSet = false;
 			this.isWorkingDirNeededAfterLogProfileSet = false;
+			this.autoAddLogFilesAction.Cancel();
+			this.autoSetWorkingDirectoryAction.Cancel();
 			if (session.ResetLogProfileCommand.CanExecute(null))
 				session.ResetLogProfileCommand.Execute(null);
 
@@ -1463,6 +1718,9 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.Logger.LogError("Unable to set working directory without attaching to window");
 				return;
 			}
+
+			// cancel scheduled action
+			this.autoSetWorkingDirectoryAction.Cancel();
 
 			// select directory
 			var directory = await new OpenFolderDialog()
@@ -1513,6 +1771,44 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (this.logListBox.IsPointerOver && this.HasLogProfile)
 				this.logActionMenu.Open(this);
 		}
+
+
+		// Show full log message.
+		bool ShowLogMessage()
+		{
+			if (!this.canShowLogMessage.Value)
+				return false;
+			if (this.logListBox.SelectedItems.Count != 1)
+				return false;
+			return this.ShowLogMessage((DisplayableLog)this.logListBox.SelectedItems[0].AsNonNull());
+		}
+		bool ShowLogMessage(DisplayableLog log)
+		{
+			// check state
+			var displayLogProperties = (this.DataContext as Session)?.DisplayLogProperties;
+			if (displayLogProperties == null)
+				return false;
+
+			// find displayable property of message
+			var logProperty = displayLogProperties.FirstOrDefault(it => it.Name == nameof(DisplayableLog.Message));
+			if (logProperty == null)
+				return false;
+
+			// show dialog
+			this.FindLogicalAncestorOfType<Window>()?.Let(window =>
+			{
+				new LogMessageDialog() 
+				{
+					Log = log.Log,
+					LogMessageDisplayName = logProperty.DisplayName
+				}.ShowDialog(window);
+			});
+			return true;
+		}
+
+
+		// Command to show message of log.
+		ICommand ShowLogMessageCommand { get; }
 
 
 		// Show UI of other actions.
@@ -1595,7 +1891,36 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Update font family of log.
+		void UpdateLogFontFamily()
+		{
+			var name = this.Settings.GetValueOrDefault(Settings.LogFontFamily);
+			if (string.IsNullOrEmpty(name))
+				name = Settings.DefaultLogFontFamily;
+			this.SetValue<FontFamily>(LogFontFamilyProperty, new FontFamily(name));
+		}
+
+
+		// Update font size of log.
+		void UpdateLogFontSize()
+		{
+			var size = Math.Max(Math.Min(this.Settings.GetValueOrDefault(Settings.LogFontSize), Settings.MaxLogFontSize), Settings.MinLogFontSize);
+			this.SetValue<double>(LogFontSizeProperty, size);
+		}
+
+
 		// Get delay of updating log filter.
 		int UpdateLogFilterParamsDelay { get => Math.Max(Settings.MinUpdateLogFilterDelay, Math.Min(Settings.MaxUpdateLogFilterDelay, this.Settings.GetValueOrDefault(Settings.UpdateLogFilterDelay))); }
+
+
+		// Update menu item of showing log message.
+		void UpdateShowLogMessageMenuItem()
+		{
+			var displayName = (this.DataContext as Session)?.DisplayLogProperties?.FirstOrDefault(it =>
+			{
+				return it.Name == nameof(DisplayableLog.Message);
+			})?.DisplayName ?? LogPropertyNameConverter.Default.Convert(nameof(DisplayableLog.Message));
+			this.showLogMessageMenuItem?.Let(it => it.Header = this.Application.GetFormattedString("SessionView.ShowLogMessage", displayName));
+		}
 	}
 }

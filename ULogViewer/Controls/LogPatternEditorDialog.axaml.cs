@@ -56,7 +56,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					var header = itemTemplate.Build(propertyName);
 					menuItems.Add(new MenuItem().Also(menuItem =>
 					{
-						menuItem.Bind(MenuItem.CommandProperty, new Binding() { Path = "InsertLogPropertyGroup", Source = this });
+						menuItem.Bind(MenuItem.CommandProperty, new Binding() { Path = nameof(InsertLogPropertyGroup), Source = this });
 						menuItem.CommandParameter = propertyName;
 						menuItem.DataContext = propertyName;
 						menuItem.Header = header;

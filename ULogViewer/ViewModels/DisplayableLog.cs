@@ -75,6 +75,25 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		}
 
 
+		/// <summary>
+		/// Create <see cref="Func{T, TResult}"/> to get specific log property from <see cref="DisplayableLog"/>.
+		/// </summary>
+		/// <typeparam name="T">Type of property value.</typeparam>
+		/// <param name="propertyName">Name of property.</param>
+		/// <returns><see cref="Func{T, TResult}"/>.</returns>
+		public static Func<DisplayableLog, T> CreateLogPropertyGetter<T>(string propertyName)
+		{
+			if (propertyName != nameof(LogId))
+			{
+				return Log.CreatePropertyGetter<T>(propertyName).Let(getter =>
+				{
+					return new Func<DisplayableLog, T>(it => getter(it.Log));
+				});
+			}
+			return (it => (T)(object)it.LogId);
+		}
+
+
 		// Dispose.
 		protected override void Dispose(bool disposing)
 		{
@@ -88,6 +107,24 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.colorIndicatorBrush = null;
 			this.levelBrush = null;
 		}
+
+
+		/// <summary>
+		/// Get event of log.
+		/// </summary>
+		public string? Event { get => this.Log.Event; }
+
+
+		/// <summary>
+		/// Get 1st extra data of log.
+		/// </summary>
+		public string? Extra1 { get => this.Log.Extra1; }
+
+
+		/// <summary>
+		/// Get 2nd extra data of log.
+		/// </summary>
+		public string? Extra2 { get => this.Log.Extra2; }
 
 
 		/// <summary>
@@ -106,6 +143,27 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Check whether number of lines in <see cref="Message"/> is greater than <see cref="MaxDisplayableLineCount"/> or not.
 		/// </summary>
 		public bool HasExtraLinesOfMessage { get => this.Log.MessageLineCount > MaxDisplayableLineCount; }
+
+
+		/// <summary>
+		/// Check whether given property of log is existing or not.
+		/// </summary>
+		/// <param name="propertyName">Name of property.</param>
+		/// <returns>True if property of log is existing.</returns>
+		public static bool HasLogProperty(string propertyName)
+		{
+			if (propertyName != nameof(LogId))
+				return Log.HasProperty(propertyName);
+			return true;
+		}
+
+
+		/// <summary>
+		/// Check whether given property of log with string value is existing or not.
+		/// </summary>
+		/// <param name="propertyName">Name of property.</param>
+		/// <returns>True if property of log is existing.</returns>
+		public static bool HasStringLogProperty(string propertyName) => Log.HasStringProperty(propertyName);
 
 
 		/// <summary>
@@ -244,6 +302,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Get tags of log.
+		/// </summary>
+		public string? Tags { get => this.Log.Tags; }
+
+
+		/// <summary>
 		/// Get ID of thread which generates log.
 		/// </summary>
 		public int? ThreadId { get => this.Log.ThreadId; }
@@ -276,6 +340,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				return this.timestampString;
 			}
 		}
+
+
+		/// <summary>
+		/// Get title of log.
+		/// </summary>
+		public string? Title { get => this.Log.Title; }
 
 
 		/// <summary>

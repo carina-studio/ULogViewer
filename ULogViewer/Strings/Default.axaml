@@ -23,6 +23,8 @@
 	<sys:String x:Key="String.AppOptionsDialog.Culture">Language</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.IgnoreCaseOfLogTextFilter">Ignore case of text filter</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.LogFiltering">Log Filtering</sys:String>
+	<sys:String x:Key="String.AppOptionsDialog.LogFont">Log font and size</sys:String>
+	<sys:String x:Key="String.AppOptionsDialog.LogFont.Sample">Sample Log Text 123</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.LogOperations">Log Operations</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.MaxContinuousLogCount">Maximum number of logs when continuous reading</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.SelectLogFilesWhenNeeded">Show file selector when log files are needed</sys:String>
@@ -42,6 +44,7 @@
 	<sys:String x:Key="String.Common.KnowMoreAbout">Know more about</sys:String>
 	<sys:String x:Key="String.Common.MoveDown">Move down</sys:String>
 	<sys:String x:Key="String.Common.MoveUp">Move up</sys:String>
+	<sys:String x:Key="String.Common.NewLine">New line</sys:String>
 	<sys:String x:Key="String.Common.No">No</sys:String>
 	<sys:String x:Key="String.Common.OK">OK</sys:String>
 	<sys:String x:Key="String.Common.Options">Options</sys:String>
@@ -55,6 +58,9 @@
 	<sys:String x:Key="String.BuiltInProfile.AndroidFileLog">Android log files</sys:String>
 	<sys:String x:Key="String.BuiltInProfile.GitLog">Git log</sys:String>
 	<sys:String x:Key="String.BuiltInProfile.ULogViewerLog">ULogViewer log (DEBUG)</sys:String>
+
+	<!-- FileFormat -->
+	<sys:String x:Key="String.FileFormat.Json">JSON File</sys:String>
 
 	<!-- LogColorIndicator -->
 	<sys:String x:Key="String.LogColorIndicator.FileName">File</sys:String>
@@ -85,13 +91,15 @@
 	<sys:String x:Key="String.LogLevel.Warn">Warn</sys:String>
 
 	<!-- LogLevelMapEntryEditor -->
-	<sys:String x:Key="String.LogLevelMapEntryEditor.LogLevel">Mapped log level</sys:String>
-	<sys:String x:Key="String.LogLevelMapEntryEditor.Text">Text (required)</sys:String>
+	<sys:String x:Key="String.LogLevelMapEntryEditor.Reading.LogLevel">Mapped log level</sys:String>
+	<sys:String x:Key="String.LogLevelMapEntryEditor.Reading.Text">Text (required)</sys:String>
 	<sys:String x:Key="String.LogLevelMapEntryEditor.Title">Mapping of log level</sys:String>
+	<sys:String x:Key="String.LogLevelMapEntryEditor.Writing.LogLevel">Log level</sys:String>
+	<sys:String x:Key="String.LogLevelMapEntryEditor.Writing.Text">Mapped text (required)</sys:String>
 
 	<!-- LogMessageDialog -->
 	<sys:String x:Key="String.LogMessageDialog.WrapText">Wrap automatically</sys:String>
-	<sys:String x:Key="String.LogMessageDialog.Title">Message of log</sys:String>
+	<sys:String x:Key="String.LogMessageDialog.Title">View log</sys:String>
 
 	<!-- LogPatternEditorDialog -->
 	<sys:String x:Key="String.LogPatternEditorDialog.IsSkippable">The line can be skipped</sys:String>
@@ -121,24 +129,32 @@
 	<sys:String x:Key="String.LogProfileEditorDialog.Common">Common</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.DataSourceOptions">Options…</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.DataSourceProvider">Data source</sys:String>
-	<sys:String x:Key="String.LogProfileEditorDialog.DuplicateLogLevelMapEntry">'{0}' is already defined.</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.DuplicateLogLevelMapEntry">Conversion from '{0}' is already defined.</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.FormatDescription">Format description</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.Icon">Icon</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.InvalidDataSourceOptions">Need to set valid options</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.IsContinuousReading">Continuous reading</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.IsContinuousReading.Description">Restart reading logs automatically when reaching end of data source</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.IsWorkingDirectoryNeeded">Need to select working directory</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogDisplaying">Log Displaying</sys:String>
-	<sys:String x:Key="String.LogProfileEditorDialog.LogLevelMap">Mapping of log level</sys:String>
-	<sys:String x:Key="String.LogProfileEditorDialog.LogLevelMap.Description">Convert specific text in raw log into log level</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.LogLevelMapForReading">Mapping of log level</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.LogLevelMapForReading.Description">Convert specific text in raw log into log level</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.LogLevelMapForWriting">Mapping of log level</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.LogLevelMapForWriting.Description">Convert log level into specific text</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogPatterns">Log line patterns (required)</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogPatterns.Description">Pattern to parse each line of raw log</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogReading">Log Reading</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.LogWriting">Log Output</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.LogWritingFormat">Log output format</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.LogWritingFormat.Description">You can click button on the right hand side to add "Interpolation Syntax" to produce log property to output log text</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.LogWritingFormat.Watermark">Empty to disable output</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.Name">Name (required)</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.SortDirection">Sort direction of log</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.SortKey">Sort key of log</sys:String>
-	<sys:String x:Key="String.LogProfileEditorDialog.TimestampFormatDescription">Format description</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.TimestampFormatForDisplaying">Format of timestamp for displaying</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.TimestampFormatForReading">Format of timestamp for reading</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.TimestampFormatForWriting">Format of timestamp for output</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.TimestampFormatForWriting.Watermark">Empty to use same format as reading</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.Title.Create">Create new log profile</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.Title.Edit">Edit log profile</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.VisibleLogProperties">Log properties to show (required)</sys:String>
@@ -149,6 +165,10 @@
 	<sys:String x:Key="String.LogProfileSelectionDialog.AllLogProfiles">All profiles</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.BuiltInLogProfile">Built-in</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.EditLogProfile">Edit profile</sys:String>
+	<sys:String x:Key="String.LogProfileSelectionDialog.ExportLogProfile">Export profile</sys:String>
+	<sys:String x:Key="String.LogProfileSelectionDialog.FailedToExportLogProfile">Unable to export profile to '{0}'.</sys:String>
+	<sys:String x:Key="String.LogProfileSelectionDialog.FailedToImportLogProfile">Unable to import profile from '{0}'.</sys:String>
+	<sys:String x:Key="String.LogProfileSelectionDialog.ImportLogProfile">Import…</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.IsContinuousReading">Continuous reading</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.IsWorkingDirectoryNeeded">Working directory needed</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.OtherLogProfiles">Other profiles</sys:String>
@@ -159,6 +179,11 @@
 
 	<!-- LogProperty -->
 	<sys:String x:Key="String.LogProperty.Author">Author</sys:String>
+	<sys:String x:Key="String.LogProperty.Commit">Commit</sys:String>
+	<sys:String x:Key="String.LogProperty.Content">Content</sys:String>
+	<sys:String x:Key="String.LogProperty.Event">Event</sys:String>
+	<sys:String x:Key="String.LogProperty.Extra1">Extra 1</sys:String>
+	<sys:String x:Key="String.LogProperty.Extra2">Extra 2</sys:String>
 	<sys:String x:Key="String.LogProperty.FileName">File</sys:String>
 	<sys:String x:Key="String.LogProperty.Level">Level</sys:String>
 	<sys:String x:Key="String.LogProperty.LineNumber">Line number</sys:String>
@@ -167,10 +192,12 @@
 	<sys:String x:Key="String.LogProperty.ProcessName">Process</sys:String>
 	<sys:String x:Key="String.LogProperty.SourceName">Source</sys:String>
 	<sys:String x:Key="String.LogProperty.Tag">Tag</sys:String>
+	<sys:String x:Key="String.LogProperty.Tags">Tags</sys:String>
 	<sys:String x:Key="String.LogProperty.ThreadId">TID</sys:String>
 	<sys:String x:Key="String.LogProperty.ThreadName">Thread</sys:String>
 	<sys:String x:Key="String.LogProperty.Timestamp">Timestamp</sys:String>
 	<sys:String x:Key="String.LogProperty.TimestampString">Timestamp</sys:String>
+	<sys:String x:Key="String.LogProperty.Title">Title</sys:String>
 	<sys:String x:Key="String.LogProperty.UserId">UID</sys:String>
 	<sys:String x:Key="String.LogProperty.UserName">User</sys:String>
 
@@ -200,6 +227,8 @@
 	<sys:String x:Key="String.SessionView.AppOptions">Options…</sys:String>
 	<sys:String x:Key="String.SessionView.ClearLogFiles">Clear all added log files</sys:String>
 	<sys:String x:Key="String.SessionView.ClearPredefinedLogTextFiltersSelection">Clear selection</sys:String>
+	<sys:String x:Key="String.SessionView.CopyLogs">Copy logs</sys:String>
+	<sys:String x:Key="String.SessionView.CopyLogsWithFileNames">Copy logs with file names</sys:String>
 	<sys:String x:Key="String.SessionView.CreatePredefinedLogTextFilter">Create…</sys:String>
 	<sys:String x:Key="String.SessionView.FilteredLogCount">, Filtered: </sys:String>
 	<sys:String x:Key="String.SessionView.FilterLogsBySelectedProcessId">Filter by selected PID</sys:String>
@@ -210,19 +239,22 @@
 	<sys:String x:Key="String.SessionView.LogsFilteringProgress">Filtering progress: </sys:String>
 	<sys:String x:Key="String.SessionView.LogTextFilterHint">Text filtering (Regular Expression)</sys:String>
 	<sys:String x:Key="String.SessionView.MarkedLogs">Marked logs</sys:String>
-	<sys:String x:Key="String.SessionView.MarkUnmarkLogs">Mark/Unmark logs (M)</sys:String>
+	<sys:String x:Key="String.SessionView.MarkUnmarkLogs">Mark/Unmark logs</sys:String>
+	<sys:String x:Key="String.SessionView.NoFilePathDropped">Please drag and drop valid files.</sys:String>
 	<sys:String x:Key="String.SessionView.NoLogToShow">No log to show</sys:String>
 	<sys:String x:Key="String.SessionView.NoPredefinedLogTextFilter">No saved text filter</sys:String>
+	<sys:String x:Key="String.SessionView.OtherActions">Other actions</sys:String>
 	<sys:String x:Key="String.SessionView.PauseResumeLogsReading">Pause/Resume reading logs (P)</sys:String>
 	<sys:String x:Key="String.SessionView.PredefinedLogTextFilters">Saved text filters</sys:String>
 	<sys:String x:Key="String.SessionView.ReloadLogs">Reload logs (F5)</sys:String>
 	<sys:String x:Key="String.SessionView.ResetLogFilters">Clear all filters</sys:String>
 	<sys:String x:Key="String.SessionView.ScrollToLatestLog">Scroll to latest log</sys:String>
 	<sys:String x:Key="String.SessionView.SelectedLogCount">Selected: </sys:String>
-	<sys:String x:Key="String.SessionView.SelectMarkedLogs">Select marked logs (S)</sys:String>
+	<sys:String x:Key="String.SessionView.SelectMarkedLogs">Select marked logs</sys:String>
 	<sys:String x:Key="String.SessionView.SetLogProfile">Select/Change log profile</sys:String>
 	<sys:String x:Key="String.SessionView.SetWorkingDirectory">Select/Change working directory</sys:String>
-	<sys:String x:Key="String.SessionView.OtherActions">Other actions</sys:String>
+	<sys:String x:Key="String.SessionView.ShowLogMessage">View full {0}…</sys:String>
+	<sys:String x:Key="String.SessionView.TooManyDirectoryPathsDropped">Please drag and drop single directory.</sys:String>
 	<sys:String x:Key="String.SessionView.ViewFullLogMessage">View more…</sys:String>
 
 	<!-- SortDirection -->

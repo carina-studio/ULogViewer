@@ -30,7 +30,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			public bool HasLogThreadId;
 			public bool IncludeMarkedLogs;
 			public Logs.LogLevel Level;
-			public IList<Func<DisplayableLog, string>> LogTextPropertyGetters = new Func<DisplayableLog, string>[0];
+			public IList<Func<DisplayableLog, string?>> LogTextPropertyGetters = new Func<DisplayableLog, string?>[0];
 			public int NextChunkId = 1;
 			public int? ProcessId;
 			public int? ThreadId;
@@ -557,43 +557,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// check log properties
 			var isFilteringNeeded = false;
 			var filteringParams = new FilteringParams();
-			var textPropertyGetters = new List<Func<DisplayableLog, string>>();
+			var textPropertyGetters = new List<Func<DisplayableLog, string?>>();
 			foreach (var logProperty in this.filteringLogProperties)
 			{
-				switch(logProperty.Name)
+				if (DisplayableLog.HasStringLogProperty(logProperty.Name))
 				{
-					case nameof(DisplayableLog.Message):
-						textPropertyGetters.Add(it => it.Message ?? "");
-						isFilteringNeeded = true;
-						break;
-					case nameof(DisplayableLog.ProcessId):
-						filteringParams.HasLogProcessId = true;
-						isFilteringNeeded = true;
-						break;
-					case nameof(DisplayableLog.ProcessName):
-						textPropertyGetters.Add(it => it.ProcessName ?? "");
-						isFilteringNeeded = true;
-						break;
-					case nameof(DisplayableLog.SourceName):
-						textPropertyGetters.Add(it => it.SourceName ?? "");
-						isFilteringNeeded = true;
-						break;
-					case nameof(DisplayableLog.ThreadId):
-						filteringParams.HasLogThreadId = true;
-						isFilteringNeeded = true;
-						break;
-					case nameof(DisplayableLog.ThreadName):
-						textPropertyGetters.Add(it => it.ThreadName ?? "");
-						isFilteringNeeded = true;
-						break;
-					case nameof(DisplayableLog.UserId):
-						textPropertyGetters.Add(it => it.UserId ?? "");
-						isFilteringNeeded = true;
-						break;
-					case nameof(DisplayableLog.UserName):
-						textPropertyGetters.Add(it => it.UserName ?? "");
-						isFilteringNeeded = true;
-						break;
+					textPropertyGetters.Add(DisplayableLog.CreateLogPropertyGetter<string?>(logProperty.Name));
+					isFilteringNeeded = true;
 				}
 			}
 			if (isFilteringNeeded)

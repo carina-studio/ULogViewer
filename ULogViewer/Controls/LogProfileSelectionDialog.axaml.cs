@@ -3,13 +3,16 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using CarinaStudio.Collections;
+using CarinaStudio.IO;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.Windows.Input;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Linq;
 
 namespace CarinaStudio.ULogViewer.Controls
 {
@@ -28,6 +31,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly SortedObservableList<LogProfile> otherLogProfiles = new SortedObservableList<LogProfile>(CompareLogProfiles);
 		readonly ListBox pinnedLogProfileListBox;
 		readonly SortedObservableList<LogProfile> pinnedLogProfiles = new SortedObservableList<LogProfile>(CompareLogProfiles);
+		readonly ScrollViewer scrollViewer;
 
 
 		/// <summary>
@@ -45,10 +49,25 @@ namespace CarinaStudio.ULogViewer.Controls
 			// setup controls
 			this.otherLogProfileListBox = this.FindControl<ListBox>("otherLogProfileListBox").AsNonNull();
 			this.pinnedLogProfileListBox = this.FindControl<ListBox>("pinnedLogProfileListBox").AsNonNull();
+			this.scrollViewer = this.FindControl<ScrollViewer>("scrollViewer").AsNonNull();
 
 			// attach to log profiles
 			((INotifyCollectionChanged)LogProfiles.All).CollectionChanged += this.OnAllLogProfilesChanged;
 			this.RefreshLogProfiles();
+		}
+
+
+		// Add log profile.
+		async void AddLogProfile()
+		{
+			// create new profile
+			var profile = await new LogProfileEditorDialog().ShowDialog<LogProfile>(this);
+			if (profile == null)
+				return;
+
+			// add profile
+			LogProfiles.Add(profile);
+			this.otherLogProfileListBox.SelectedItem = profile;
 		}
 
 
@@ -87,6 +106,43 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Export log profile.
+		async void ExportLogProfile(LogProfile? logProfile)
+		{
+			// check parameter
+			if (logProfile == null)
+				return;
+
+			// select file
+			var fileName = await new SaveFileDialog().Also(it =>
+			{
+				it.Filters.Add(new FileDialogFilter().Also(filter =>
+				{
+					filter.Extensions.Add("json");
+					filter.Name = this.Application.GetString("FileFormat.Json");
+				}));
+			}).ShowAsync(this);
+			if (string.IsNullOrEmpty(fileName))
+				return;
+
+			// copy profile and save
+			var copiedProfile = new LogProfile(logProfile);
+			try
+			{
+				await copiedProfile.SaveAsync(fileName);
+			}
+			catch (Exception ex)
+			{
+				this.Logger.LogError(ex, $"Unable to export log profile '{copiedProfile.Name}' to '{fileName}'");
+				_ = new MessageDialog()
+				{
+					Icon = MessageDialogIcon.Error,
+					Message = this.Application.GetFormattedString("LogProfileSelectionDialog.FailedToExportLogProfile", fileName),
+				}.ShowDialog(this);
+			}
+		}
+
+
 		/// <summary>
 		/// Get or set <see cref="Predicate{T}"/> to filter log profiles.
 		/// </summary>
@@ -97,18 +153,73 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Import log profile.
+		async void ImportLogProfile()
+		{
+			// select file
+			var fileNames = await new OpenFileDialog().Also(it =>
+			{
+				it.Filters.Add(new FileDialogFilter().Also(filter =>
+				{
+					filter.Extensions.Add("json");
+					filter.Name = this.Application.GetString("FileFormat.Json");
+				}));
+			}).ShowAsync(this);
+			if (fileNames == null || fileNames.IsEmpty())
+				return;
+
+			// find current log profile
+			var fileName = fileNames[0];
+			var comparer = PathEqualityComparer.Default;
+			var logProfile = this.pinnedLogProfiles.FirstOrDefault(it => comparer.Equals(it.FileName, fileName));
+			if (logProfile != null)
+			{
+				this.pinnedLogProfileListBox.SelectedItem = logProfile;
+				return;
+			}
+			logProfile = this.otherLogProfiles.FirstOrDefault(it => comparer.Equals(it.FileName, fileName));
+			if (logProfile != null)
+			{
+				this.otherLogProfileListBox.SelectedItem = logProfile;
+				return;
+			}
+
+			// load log profile
+			try
+			{
+				logProfile = await LogProfile.LoadProfileAsync(this.Application, fileName);
+			}
+			catch (Exception ex)
+			{
+				this.Logger.LogError(ex, $"Unable to load log profile from '{fileName}'");
+				_ = new MessageDialog()
+				{
+					Icon = MessageDialogIcon.Error,
+					Message = this.Application.GetFormattedString("LogProfileSelectionDialog.FailedToImportLogProfile", fileName),
+				}.ShowDialog(this);
+				return;
+			}
+			if (this.IsClosed)
+				return;
+
+			// edit log profile
+			logProfile.DetachFromFile();
+			logProfile.IsPinned = false;
+			logProfile = await new LogProfileEditorDialog()
+			{
+				LogProfile = logProfile
+			}.ShowDialog<LogProfile>(this);
+			if (logProfile == null)
+				return;
+
+			// add log profile
+			LogProfiles.Add(logProfile);
+			this.otherLogProfileListBox.SelectedItem = logProfile;
+		}
+
+
 		// Initialize Avalonia components.
 		private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
-
-
-		// Called when clicking add log profile.
-		async void OnAddLogProfileClick(object? sender, RoutedEventArgs e)
-		{
-			// create new profile
-			var profile = await new LogProfileEditorDialog().ShowDialog<LogProfile>(this);
-			if (profile == null)
-				return;
-		}
 
 
 		// Called when list of all log profiles changed.
@@ -215,6 +326,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (this.otherLogProfileListBox.SelectedIndex >= 0)
 				this.pinnedLogProfileListBox.SelectedIndex = -1;
 			this.InvalidateInput();
+			this.ScrollToSelectedLogProfile();
 		}
 
 
@@ -224,6 +336,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (this.pinnedLogProfileListBox.SelectedIndex >= 0)
 				this.otherLogProfileListBox.SelectedIndex = -1;
 			this.InvalidateInput();
+			this.ScrollToSelectedLogProfile();
 		}
 
 
@@ -315,6 +428,31 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (logProfile == null)
 				return;
 			LogProfiles.Remove(logProfile);
+		}
+
+
+		// Scroll to selected log profile.
+		void ScrollToSelectedLogProfile()
+		{
+			this.SynchronizationContext.PostDelayed(() =>
+			{
+				// find list box item
+				var listBoxItem = (ListBoxItem?)null;
+				var logProfile = this.pinnedLogProfileListBox.SelectedItem as LogProfile;
+				if (logProfile != null)
+					listBoxItem = this.pinnedLogProfileListBox.FindListBoxItem(logProfile);
+				else
+				{
+					logProfile = this.otherLogProfileListBox.SelectedItem as LogProfile;
+					if (logProfile != null)
+						listBoxItem = this.otherLogProfileListBox.FindListBoxItem(logProfile);
+				}
+				if (listBoxItem == null)
+					return;
+
+				// scroll to list box item
+				this.scrollViewer.ScrollIntoView(listBoxItem);
+			}, 100);
 		}
 	}
 }

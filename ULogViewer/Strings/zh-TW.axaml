@@ -21,6 +21,8 @@
 	<sys:String x:Key="String.AppOptionsDialog.Culture">語系</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.IgnoreCaseOfLogTextFilter">文字篩選忽略大小寫</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.LogFiltering">日誌篩選</sys:String>
+	<sys:String x:Key="String.AppOptionsDialog.LogFont">日誌字型及大小</sys:String>
+	<sys:String x:Key="String.AppOptionsDialog.LogFont.Sample">日誌文字 ABC abc 123</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.LogOperations">日誌操作</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.MaxContinuousLogCount">連續讀取時的最大日誌個數</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.SelectLogFilesWhenNeeded">當需要日誌檔案時立即開啟檔案選取介面</sys:String>
@@ -40,6 +42,7 @@
 	<sys:String x:Key="String.Common.KnowMoreAbout">了解更多</sys:String>
 	<sys:String x:Key="String.Common.MoveDown">下移</sys:String>
 	<sys:String x:Key="String.Common.MoveUp">上移</sys:String>
+	<sys:String x:Key="String.Common.NewLine">換行</sys:String>
 	<sys:String x:Key="String.Common.No">否</sys:String>
 	<sys:String x:Key="String.Common.OK">好</sys:String>
 	<sys:String x:Key="String.Common.Options">選項</sys:String>
@@ -55,6 +58,9 @@
 
 	<!-- FallbackFontFamilies -->
 	<sys:String x:Key="String.FallbackFontFamilies">Microsoft JhengHei</sys:String>
+
+	<!-- FileFormat -->
+	<sys:String x:Key="String.FileFormat.Json">JSON 檔案</sys:String>
 
 	<!-- LogColorIndicator -->
 	<sys:String x:Key="String.LogColorIndicator.FileName">檔案</sys:String>
@@ -82,13 +88,15 @@
 	<sys:String x:Key="String.LogLevel.Warn">警告</sys:String>
 
 	<!-- LogLevelMapEntryEditor -->
-	<sys:String x:Key="String.LogLevelMapEntryEditor.LogLevel">對應的日誌等級</sys:String>
-	<sys:String x:Key="String.LogLevelMapEntryEditor.Text">文字 (必須)</sys:String>
+	<sys:String x:Key="String.LogLevelMapEntryEditor.Reading.LogLevel">對應的日誌等級</sys:String>
+	<sys:String x:Key="String.LogLevelMapEntryEditor.Reading.Text">文字 (必須)</sys:String>
 	<sys:String x:Key="String.LogLevelMapEntryEditor.Title">日誌等級對照</sys:String>
+	<sys:String x:Key="String.LogLevelMapEntryEditor.Writing.LogLevel">日誌等級</sys:String>
+	<sys:String x:Key="String.LogLevelMapEntryEditor.Writing.Text">對應的文字 (必須)</sys:String>
 
 	<!-- LogMessageDialog -->
 	<sys:String x:Key="String.LogMessageDialog.WrapText">自動換行</sys:String>
-	<sys:String x:Key="String.LogMessageDialog.Title">日誌訊息</sys:String>
+	<sys:String x:Key="String.LogMessageDialog.Title">檢視日誌</sys:String>
 
 	<!-- LogPatternEditorDialog -->
 	<sys:String x:Key="String.LogPatternEditorDialog.IsSkippable">此行可以被忽略</sys:String>
@@ -114,24 +122,32 @@
 	<sys:String x:Key="String.LogProfileEditorDialog.Common">一般設定</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.DataSourceOptions">參數…</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.DataSourceProvider">資料來源</sys:String>
-	<sys:String x:Key="String.LogProfileEditorDialog.DuplicateLogLevelMapEntry">已經定義 '{0}'。</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.DuplicateLogLevelMapEntry">已經定義從 '{0}' 的轉換。</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.FormatDescription">格式說明</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.Icon">圖示</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.InvalidDataSourceOptions">需要有效的參數</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.IsContinuousReading">連續讀取</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.IsContinuousReading.Description">讀取至資料末端時將自動重新開始讀取日誌</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.IsWorkingDirectoryNeeded">必須選擇工作目錄</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogDisplaying">日誌顯示設定</sys:String>
-	<sys:String x:Key="String.LogProfileEditorDialog.LogLevelMap">日誌等級對照表</sys:String>
-	<sys:String x:Key="String.LogProfileEditorDialog.LogLevelMap.Description">將原始日誌中的特定文字對應至日誌等級</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.LogLevelMapForReading">日誌等級對照表</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.LogLevelMapForReading.Description">將原始日誌中的特定文字對應至日誌等級</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.LogLevelMapForWriting">日誌等級對照表</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.LogLevelMapForWriting.Description">將日誌等級轉換為特定的文字</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogPatterns">日誌行格式 (必須)</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogPatterns.Description">分析原始日誌每一行的格式</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogReading">日誌讀取設定</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.LogWriting">日誌輸出設定</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.LogWritingFormat">日誌輸出格式</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.LogWritingFormat.Description">您可以使用右側按鈕加入 "插值語法" 以將日誌屬性產生至輸出的日誌文字</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.LogWritingFormat.Watermark">留白表示不支援輸出</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.Name">名稱 (必須)</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.SortDirection">日誌排序方向</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.SortKey">日誌排序依據</sys:String>
-	<sys:String x:Key="String.LogProfileEditorDialog.TimestampFormatDescription">格式說明</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.TimestampFormatForDisplaying">日誌時間顯示格式</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.TimestampFormatForReading">日誌時間讀取格式</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.TimestampFormatForWriting">日誌時間輸出格式</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.TimestampFormatForWriting.Watermark">留白表示使用與讀取相同的格式</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.Title.Create">建立新的日誌類型</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.Title.Edit">編輯日誌類型</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.VisibleLogProperties">顯示的日誌屬性 (必須)</sys:String>
@@ -142,6 +158,10 @@
 	<sys:String x:Key="String.LogProfileSelectionDialog.AllLogProfiles">所有日誌類型</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.BuiltInLogProfile">內建</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.EditLogProfile">編輯日誌類型</sys:String>
+	<sys:String x:Key="String.LogProfileSelectionDialog.ExportLogProfile">匯出日誌類型</sys:String>
+	<sys:String x:Key="String.LogProfileSelectionDialog.FailedToExportLogProfile">無法匯出日誌類型至 '{0}'。</sys:String>
+	<sys:String x:Key="String.LogProfileSelectionDialog.FailedToImportLogProfile">無法從 '{0}' 匯入日誌類型。</sys:String>
+	<sys:String x:Key="String.LogProfileSelectionDialog.ImportLogProfile">匯入…</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.IsContinuousReading">連續讀取</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.IsWorkingDirectoryNeeded">需要工作目錄</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.OtherLogProfiles">其他日誌類型</sys:String>
@@ -152,6 +172,11 @@
 
 	<!-- LogProperty -->
 	<sys:String x:Key="String.LogProperty.Author">作者</sys:String>
+	<sys:String x:Key="String.LogProperty.Commit">提交</sys:String>
+	<sys:String x:Key="String.LogProperty.Content">內容</sys:String>
+	<sys:String x:Key="String.LogProperty.Event">事件</sys:String>
+	<sys:String x:Key="String.LogProperty.Extra1">附加資料 1</sys:String>
+	<sys:String x:Key="String.LogProperty.Extra2">附加資料 2</sys:String>
 	<sys:String x:Key="String.LogProperty.FileName">檔案</sys:String>
 	<sys:String x:Key="String.LogProperty.Level">等級</sys:String>
 	<sys:String x:Key="String.LogProperty.LineNumber">行號</sys:String>
@@ -159,9 +184,11 @@
 	<sys:String x:Key="String.LogProperty.ProcessName">處理程序</sys:String>
 	<sys:String x:Key="String.LogProperty.SourceName">來源</sys:String>
 	<sys:String x:Key="String.LogProperty.Tag">標籤</sys:String>
+	<sys:String x:Key="String.LogProperty.Tags">標籤組</sys:String>
 	<sys:String x:Key="String.LogProperty.ThreadName">執行緒</sys:String>
 	<sys:String x:Key="String.LogProperty.Timestamp">時間</sys:String>
 	<sys:String x:Key="String.LogProperty.TimestampString">時間</sys:String>
+	<sys:String x:Key="String.LogProperty.Title">標題</sys:String>
 	<sys:String x:Key="String.LogProperty.UserName">使用者</sys:String>
 
 	<!-- LogSortKey -->
@@ -190,6 +217,8 @@
 	<sys:String x:Key="String.SessionView.AppOptions">應用程式選項…</sys:String>
 	<sys:String x:Key="String.SessionView.ClearLogFiles">清除所有已加入的日誌檔案</sys:String>
 	<sys:String x:Key="String.SessionView.ClearPredefinedLogTextFiltersSelection">清除選取</sys:String>
+	<sys:String x:Key="String.SessionView.CopyLogs">複製日誌</sys:String>
+	<sys:String x:Key="String.SessionView.CopyLogsWithFileNames">複製日誌 (包含檔案名稱)</sys:String>
 	<sys:String x:Key="String.SessionView.CreatePredefinedLogTextFilter">建立…</sys:String>
 	<sys:String x:Key="String.SessionView.FilteredLogCount">，已篩選：</sys:String>
 	<sys:String x:Key="String.SessionView.FilterLogsBySelectedProcessId">使用選取的 PID 篩選</sys:String>
@@ -200,19 +229,22 @@
 	<sys:String x:Key="String.SessionView.LogsFilteringProgress">篩選進度：</sys:String>
 	<sys:String x:Key="String.SessionView.LogTextFilterHint">文字篩選 (正規表示式)</sys:String>
 	<sys:String x:Key="String.SessionView.MarkedLogs">已標記日誌</sys:String>
-	<sys:String x:Key="String.SessionView.MarkUnmarkLogs">標記/解除標記日誌 (M)</sys:String>
+	<sys:String x:Key="String.SessionView.MarkUnmarkLogs">標記/解除標記日誌</sys:String>
+	<sys:String x:Key="String.SessionView.NoFilePathDropped">請拖放有效的檔案。</sys:String>
 	<sys:String x:Key="String.SessionView.NoLogToShow">沒有日誌可以顯示</sys:String>
 	<sys:String x:Key="String.SessionView.NoPredefinedLogTextFilter">沒有已儲存的文字篩選</sys:String>
+	<sys:String x:Key="String.SessionView.OtherActions">其他動作</sys:String>
 	<sys:String x:Key="String.SessionView.PauseResumeLogsReading">暫停/繼續讀取日誌 (P)</sys:String>
 	<sys:String x:Key="String.SessionView.PredefinedLogTextFilters">已儲存的文字篩選</sys:String>
 	<sys:String x:Key="String.SessionView.ReloadLogs">重新載入日誌 (F5)</sys:String>
 	<sys:String x:Key="String.SessionView.ResetLogFilters">清除所有篩選設定</sys:String>
 	<sys:String x:Key="String.SessionView.ScrollToLatestLog">捲動至最新的日誌</sys:String>
 	<sys:String x:Key="String.SessionView.SelectedLogCount">已選取：</sys:String>
-	<sys:String x:Key="String.SessionView.SelectMarkedLogs">選取已標記的日誌 (S)</sys:String>
+	<sys:String x:Key="String.SessionView.SelectMarkedLogs">選取已標記的日誌</sys:String>
 	<sys:String x:Key="String.SessionView.SetLogProfile">選取/變更日誌類型</sys:String>
 	<sys:String x:Key="String.SessionView.SetWorkingDirectory">選取/變更工作目錄</sys:String>
-	<sys:String x:Key="String.SessionView.OtherActions">其他動作</sys:String>
+	<sys:String x:Key="String.SessionView.ShowLogMessage">檢視完整{0}…</sys:String>
+	<sys:String x:Key="String.SessionView.TooManyDirectoryPathsDropped">請拖放單一目錄。</sys:String>
 	<sys:String x:Key="String.SessionView.ViewFullLogMessage">檢視更多…</sys:String>
 
 	<!-- SortDirection -->

@@ -1,5 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
+using Avalonia.Data;
 using Avalonia.Data.Converters;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
@@ -42,13 +44,18 @@ namespace CarinaStudio.ULogViewer.Controls
 		LogDataSourceOptions dataSourceOptions;
 		readonly ComboBox dataSourceProviderComboBox;
 		readonly ComboBox iconComboBox;
-		readonly SortedObservableList<KeyValuePair<string, LogLevel>> logLevelMapEntries = new SortedObservableList<KeyValuePair<string, LogLevel>>((x, y) => x.Key.CompareTo(y.Key));
+		readonly ToggleButton insertLogWritingFormatSyntaxButton;
+		readonly ContextMenu insertLogWritingFormatSyntaxMenu;
+		readonly SortedObservableList<KeyValuePair<string, LogLevel>> logLevelMapEntriesForReading = new SortedObservableList<KeyValuePair<string, LogLevel>>((x, y) => x.Key.CompareTo(y.Key));
+		readonly SortedObservableList<KeyValuePair<LogLevel, string>> logLevelMapEntriesForWriting = new SortedObservableList<KeyValuePair<LogLevel, string>>((x, y) => x.Key.CompareTo(y.Key));
 		readonly ObservableList<LogPattern> logPatterns = new ObservableList<LogPattern>();
+		readonly TextBox logWritingFormatTextBox;
 		readonly TextBox nameTextBox;
 		readonly ComboBox sortDirectionComboBox;
 		readonly ComboBox sortKeyComboBox;
-		readonly TextBox timestampFormatForReadingTextBox;
 		readonly TextBox timestampFormatForDisplayingTextBox;
+		readonly TextBox timestampFormatForReadingTextBox;
+		readonly TextBox timestampFormatForWritingTextBox;
 		readonly ObservableList<LogProperty> visibleLogProperties = new ObservableList<LogProperty>();
 		readonly ToggleSwitch workingDirNeededSwitch;
 
@@ -58,7 +65,9 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// </summary>
 		public LogProfileEditorDialog()
 		{
-			this.LogLevelMapEntries = this.logLevelMapEntries.AsReadOnly();
+			// setup properties
+			this.LogLevelMapEntriesForReading = this.logLevelMapEntriesForReading.AsReadOnly();
+			this.LogLevelMapEntriesForWriting = this.logLevelMapEntriesForWriting.AsReadOnly();
 			this.LogPatterns = this.logPatterns.Also(it =>
 			{
 				it.CollectionChanged += (_, e) => this.InvalidateInput();
@@ -67,43 +76,103 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				it.CollectionChanged += (_, e) => this.InvalidateInput();
 			}).AsReadOnly();
+
+			// initialize.
 			InitializeComponent();
+
+			// setup controls
 			this.colorIndicatorComboBox = this.FindControl<ComboBox>("colorIndicatorComboBox").AsNonNull();
 			this.continuousReadingSwitch = this.FindControl<ToggleSwitch>("continuousReadingSwitch").AsNonNull();
 			this.dataSourceProviderComboBox = this.FindControl<ComboBox>("dataSourceProviderComboBox").AsNonNull();
 			this.iconComboBox = this.FindControl<ComboBox>("iconComboBox").AsNonNull();
+			this.insertLogWritingFormatSyntaxButton = this.FindControl<ToggleButton>("insertLogWritingFormatSyntaxButton").AsNonNull();
+			this.insertLogWritingFormatSyntaxMenu = ((ContextMenu)this.Resources["insertLogWritingFormatSyntaxMenu"].AsNonNull()).Also(it =>
+			{
+				var itemTemplate = it.DataTemplates[0];
+				var items = new List<object>();
+				foreach (var propertyName in Log.PropertyNames)
+				{
+					items.Add(new MenuItem().Also(item =>
+					{
+						item.Bind(MenuItem.CommandProperty, new Binding() { Path = nameof(InsertLogWritingFormatSyntax), Source = this });
+						item.CommandParameter = propertyName;
+						item.DataContext = propertyName;
+						item.Header = itemTemplate.Build(propertyName);
+					}));
+				}
+				items.Add(new Separator());
+				items.Add(new MenuItem().Also(item =>
+				{
+					item.Bind(MenuItem.CommandProperty, new Binding() { Path = nameof(InsertLogWritingFormatSyntax), Source = this });
+					item.CommandParameter = "NewLine";
+					item.Bind(MenuItem.HeaderProperty, item.GetResourceObservable("String.Common.NewLine"));
+				}));
+				it.Items = items;
+				it.MenuClosed += (_, e) => this.SynchronizationContext.Post(() => this.insertLogWritingFormatSyntaxButton.IsChecked = false);
+				it.MenuOpened += (_, e) => this.SynchronizationContext.Post(() => this.insertLogWritingFormatSyntaxButton.IsChecked = true);
+			});
+			this.logWritingFormatTextBox = this.FindControl<TextBox>("logWritingFormatTextBox").AsNonNull();
 			this.nameTextBox = this.FindControl<TextBox>("nameTextBox").AsNonNull();
 			this.sortDirectionComboBox = this.FindControl<ComboBox>("sortDirectionComboBox").AsNonNull();
 			this.sortKeyComboBox = this.FindControl<ComboBox>("sortKeyComboBox").AsNonNull();
-			this.timestampFormatForReadingTextBox = this.FindControl<TextBox>("timestampFormatForReadingTextBox").AsNonNull();
 			this.timestampFormatForDisplayingTextBox = this.FindControl<TextBox>("timestampFormatForDisplayingTextBox").AsNonNull();
+			this.timestampFormatForReadingTextBox = this.FindControl<TextBox>("timestampFormatForReadingTextBox").AsNonNull();
+			this.timestampFormatForWritingTextBox = this.FindControl<TextBox>("timestampFormatForWritingTextBox").AsNonNull();
 			this.workingDirNeededSwitch = this.FindControl<ToggleSwitch>("workingDirNeededSwitch").AsNonNull();
 		}
 
 
 		// Add log level map entry.
-		async void AddLogLevelMapEntry()
+		async void AddLogLevelMapEntryForReading()
 		{
 			var entry = (KeyValuePair<string, LogLevel>?)null;
 			while (true)
 			{
-				entry = await new LogLevelMapEntryEditorDialog()
+				entry = await new LogLevelMapEntryForReadingEditorDialog()
 				{
 					Entry = entry
 				}.ShowDialog<KeyValuePair<string, LogLevel>?>(this);
 				if (entry == null)
 					return;
-				if (this.logLevelMapEntries.Contains(entry.Value))
+				if (this.logLevelMapEntriesForReading.Contains(entry.Value))
 				{
 					await new MessageDialog()
 					{
 						Icon = MessageDialogIcon.Warning,
 						Message = this.Application.GetFormattedString("LogProfileEditorDialog.DuplicateLogLevelMapEntry", entry.Value.Key),
-						Title = this.Application.GetString("LogProfileEditorDialog.LogLevelMap"),
+						Title = this.Application.GetString("LogProfileEditorDialog.LogLevelMapForReading"),
 					}.ShowDialog(this);
 					continue;
 				}
-				this.logLevelMapEntries.Add(entry.Value);
+				this.logLevelMapEntriesForReading.Add(entry.Value);
+				break;
+			}
+		}
+
+
+		// Add log level map entry.
+		async void AddLogLevelMapEntryForWriting()
+		{
+			var entry = (KeyValuePair<LogLevel, string>?)null;
+			while (true)
+			{
+				entry = await new LogLevelMapEntryForWritingEditorDialog()
+				{
+					Entry = entry
+				}.ShowDialog<KeyValuePair<LogLevel, string>?>(this);
+				if (entry == null)
+					return;
+				if (this.logLevelMapEntriesForWriting.Contains(entry.Value))
+				{
+					await new MessageDialog()
+					{
+						Icon = MessageDialogIcon.Warning,
+						Message = this.Application.GetFormattedString("LogProfileEditorDialog.DuplicateLogLevelMapEntry", LogLevelNameConverter.Convert(entry.Value.Key, typeof(string), null, this.Application.CultureInfo)),
+						Title = this.Application.GetString("LogProfileEditorDialog.LogLevelMapForReading"),
+					}.ShowDialog(this);
+					continue;
+				}
+				this.logLevelMapEntriesForWriting.Add(entry.Value);
 				break;
 			}
 		}
@@ -128,29 +197,58 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Edit log level map entry.
-		async void EditLogLevelMapEntry(KeyValuePair<string, LogLevel> entry)
+		async void EditLogLevelMapEntryForReading(KeyValuePair<string, LogLevel> entry)
 		{
 			var newEntry = (KeyValuePair<string, LogLevel>?)entry;
 			while (true)
 			{
-				newEntry = await new LogLevelMapEntryEditorDialog()
+				newEntry = await new LogLevelMapEntryForReadingEditorDialog()
 				{
 					Entry = newEntry
 				}.ShowDialog<KeyValuePair<string, LogLevel>?>(this);
 				if (newEntry == null || newEntry.Value.Equals(entry))
 					return;
-				if (this.logLevelMapEntries.Contains(newEntry.Value))
+				if (!entry.Equals(this.logLevelMapEntriesForReading.FirstOrDefault(it => it.Key == newEntry.Value.Key)))
 				{
 					await new MessageDialog()
 					{
 						Icon = MessageDialogIcon.Warning,
 						Message = this.Application.GetFormattedString("LogProfileEditorDialog.DuplicateLogLevelMapEntry", newEntry.Value.Key),
-						Title = this.Application.GetString("LogProfileEditorDialog.LogLevelMap"),
+						Title = this.Application.GetString("LogProfileEditorDialog.LogLevelMapForReading"),
 					}.ShowDialog(this);
 					continue;
 				}
-				this.logLevelMapEntries.Remove(entry);
-				this.logLevelMapEntries.Add(newEntry.Value);
+				this.logLevelMapEntriesForReading.Remove(entry);
+				this.logLevelMapEntriesForReading.Add(newEntry.Value);
+				break;
+			}
+		}
+
+
+		// Edit log level map entry.
+		async void EditLogLevelMapEntryForWriting(KeyValuePair<LogLevel, string> entry)
+		{
+			var newEntry = (KeyValuePair<LogLevel, string>?)entry;
+			while (true)
+			{
+				newEntry = await new LogLevelMapEntryForWritingEditorDialog()
+				{
+					Entry = newEntry
+				}.ShowDialog<KeyValuePair<LogLevel, string>?>(this);
+				if (newEntry == null || newEntry.Value.Equals(entry))
+					return;
+				if (!entry.Equals(this.logLevelMapEntriesForWriting.FirstOrDefault(it => it.Key == newEntry.Value.Key)))
+				{
+					await new MessageDialog()
+					{
+						Icon = MessageDialogIcon.Warning,
+						Message = this.Application.GetFormattedString("LogProfileEditorDialog.DuplicateLogLevelMapEntry", LogLevelNameConverter.Convert(newEntry.Value.Key, typeof(string), null, this.Application.CultureInfo)),
+						Title = this.Application.GetString("LogProfileEditorDialog.LogLevelMapForWriting"),
+					}.ShowDialog(this);
+					continue;
+				}
+				this.logLevelMapEntriesForWriting.Remove(entry);
+				this.logLevelMapEntriesForWriting.Add(newEntry.Value);
 				break;
 			}
 		}
@@ -194,12 +292,24 @@ namespace CarinaStudio.ULogViewer.Controls
 		private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
 
 
+		// Insert log writing syntax for given log property.
+		void InsertLogWritingFormatSyntax(string propertyName)
+		{
+			this.logWritingFormatTextBox.SelectedText = $"{{{propertyName}}}";
+			this.logWritingFormatTextBox.Focus();
+		}
+
+
 		// Check whether log data source options is valid or not.
 		bool IsValidDataSourceOptions { get => this.GetValue<bool>(IsValidDataSourceOptionsProperty); }
 
 
 		// Entries of log level map.
-		IList<KeyValuePair<string, LogLevel>> LogLevelMapEntries { get; }
+		IList<KeyValuePair<string, LogLevel>> LogLevelMapEntriesForReading { get; }
+
+
+		// Entries of log level map.
+		IList<KeyValuePair<LogLevel, string>> LogLevelMapEntriesForWriting { get; }
 
 
 		// Log patterns.
@@ -288,13 +398,21 @@ namespace CarinaStudio.ULogViewer.Controls
 			logProfile.Icon = (LogProfileIcon)this.iconComboBox.SelectedItem.AsNonNull();
 			logProfile.IsContinuousReading = this.continuousReadingSwitch.IsChecked.GetValueOrDefault();
 			logProfile.IsWorkingDirectoryNeeded = this.workingDirNeededSwitch.IsChecked.GetValueOrDefault();
-			logProfile.LogLevelMap = new Dictionary<string, LogLevel>(this.logLevelMapEntries);
+			logProfile.LogLevelMapForReading = new Dictionary<string, LogLevel>(this.logLevelMapEntriesForReading);
+			logProfile.LogLevelMapForWriting = new Dictionary<LogLevel, string>(this.logLevelMapEntriesForWriting);
 			logProfile.LogPatterns = this.logPatterns;
+			logProfile.LogWritingFormat = this.logWritingFormatTextBox.Text?.Let(it =>
+			{
+				if (string.IsNullOrWhiteSpace(it))
+					return null;
+				return it;
+			});
 			logProfile.Name = this.nameTextBox.Text.AsNonNull();
 			logProfile.SortDirection = (SortDirection)this.sortDirectionComboBox.SelectedItem.AsNonNull();
 			logProfile.SortKey = (LogSortKey)this.sortKeyComboBox.SelectedItem.AsNonNull();
 			logProfile.TimestampFormatForDisplaying = this.timestampFormatForDisplayingTextBox.Text;
 			logProfile.TimestampFormatForReading = this.timestampFormatForReadingTextBox.Text;
+			logProfile.TimestampFormatForWriting = this.timestampFormatForWritingTextBox.Text;
 			logProfile.VisibleLogProperties = this.visibleLogProperties;
 			return logProfile;
 		}
@@ -341,13 +459,16 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.dataSourceProviderComboBox.SelectedItem = profile.DataSourceProvider;
 				this.iconComboBox.SelectedItem = profile.Icon;
 				this.continuousReadingSwitch.IsChecked = profile.IsContinuousReading;
-				this.logLevelMapEntries.AddAll(profile.LogLevelMap);
+				this.logLevelMapEntriesForReading.AddAll(profile.LogLevelMapForReading);
+				this.logLevelMapEntriesForWriting.AddAll(profile.LogLevelMapForWriting);
 				this.logPatterns.AddRange(profile.LogPatterns);
+				this.logWritingFormatTextBox.Text = profile.LogWritingFormat;
 				this.nameTextBox.Text = profile.Name;
 				this.sortDirectionComboBox.SelectedItem = profile.SortDirection;
 				this.sortKeyComboBox.SelectedItem = profile.SortKey;
 				this.timestampFormatForDisplayingTextBox.Text = profile.TimestampFormatForDisplaying;
 				this.timestampFormatForReadingTextBox.Text = profile.TimestampFormatForReading;
+				this.timestampFormatForWritingTextBox.Text = profile.TimestampFormatForWriting;
 				this.visibleLogProperties.AddRange(profile.VisibleLogProperties);
 				this.workingDirNeededSwitch.IsChecked = profile.IsWorkingDirectoryNeeded;
 			}
@@ -394,7 +515,13 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Remove log level map entry.
-		void RemoveLogLevelMapEntry(KeyValuePair<string, LogLevel> entry) => this.logLevelMapEntries.Remove(entry);
+		void RemoveLogLevelMapEntry(object entry)
+		{
+			if (entry is KeyValuePair<string, LogLevel> readingEntry)
+				this.logLevelMapEntriesForReading.Remove(readingEntry);
+			else if (entry is KeyValuePair<LogLevel, string> writingEntry)
+				this.logLevelMapEntriesForWriting.Remove(writingEntry);
+		}
 
 
 		// Remove log pattern.
@@ -433,6 +560,15 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.dataSourceOptions = options.Value;
 				this.InvalidateInput();
 			}
+		}
+
+
+		// Show menu to insert log writing format syntax.
+		void ShowInsertLogWritingFormatSyntaxMenu()
+		{
+			if (this.insertLogWritingFormatSyntaxMenu.PlacementTarget == null)
+				this.insertLogWritingFormatSyntaxMenu.PlacementTarget = this.insertLogWritingFormatSyntaxButton;
+			this.insertLogWritingFormatSyntaxMenu.Open(this);
 		}
 
 

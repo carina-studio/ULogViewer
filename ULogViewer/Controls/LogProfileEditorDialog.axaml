@@ -2,6 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+				xmlns:sys="using:System"
 				xmlns:ia="using:Avalonia.Xaml.Interactivity"
 				xmlns:iaCore="using:Avalonia.Xaml.Interactions.Core"
 				xmlns:app="clr-namespace:CarinaStudio.ULogViewer;assembly=ULogViewer"
@@ -15,6 +16,26 @@
 				Classes="Dialog"
 				SizeToContent="Height"
 				Width="{StaticResource Double.LogProfileEditorDialog.Width}">
+
+	<!-- Resources -->
+	<Window.Resources>
+		<ContextMenu x:Key="insertLogWritingFormatSyntaxMenu" PlacementMode="Bottom">
+			<ContextMenu.DataTemplates>
+				<DataTemplate DataType="{x:Type sys:String}">
+					<StackPanel Orientation="Horizontal">
+						<TextBlock Text="{Binding Converter={x:Static appConverters:LogPropertyNameConverter.Default}}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+						<TextBlock Grid.Column="1" Opacity="0.3" TextTrimming="CharacterEllipsis" VerticalAlignment="Center">
+							<TextBlock.Text>
+								<MultiBinding StringFormat="{} ({0})">
+									<Binding/>
+								</MultiBinding>
+							</TextBlock.Text>
+						</TextBlock>
+					</StackPanel>
+				</DataTemplate>
+			</ContextMenu.DataTemplates>
+		</ContextMenu>
+	</Window.Resources>
 
 	<!-- Styles -->
 	<Window.Styles>
@@ -60,7 +81,16 @@
 						<DataTemplate>
 							<StackPanel Orientation="Horizontal">
 								<Border Height="{StaticResource Double.LogProfileEditorDialog.IconComboBox.Icon.Size}" Margin="{StaticResource Thickness.LogProfileEditorDialog.IconComboBox.Icon.Margin}" VerticalAlignment="Center" Width="{StaticResource Double.LogProfileEditorDialog.IconComboBox.Icon.Size}">
-									<DrawingPresenter Classes="Icon" Drawing="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}}"/>
+									<DrawingPresenter Classes="Icon" Drawing="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}}">
+										<ia:Interaction.Behaviors>
+											<iaCore:DataTriggerBehavior Binding="{Binding $parent[ComboBoxItem].IsSelected}" Value="True">
+												<iaCore:ChangePropertyAction PropertyName="Drawing" Value="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}, ConverterParameter=Light}"/>
+											</iaCore:DataTriggerBehavior>
+											<iaCore:DataTriggerBehavior Binding="{Binding $parent[ComboBoxItem].IsSelected}" Value="False">
+												<iaCore:ChangePropertyAction PropertyName="Drawing" Value="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}}"/>
+											</iaCore:DataTriggerBehavior>
+										</ia:Interaction.Behaviors>
+									</DrawingPresenter>
 								</Border>
 								<TextBlock Text="{Binding Converter={x:Static appControls:LogProfileEditorDialog.LogProfileIconNameConverter}}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
 							</StackPanel>
@@ -128,8 +158,8 @@
 				<Separator Classes="Dialog_Separator_Horizontal"/>
 
 				<!-- Log level map -->
-				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.LogLevelMap}"/>
-				<ListBox Name="logLevelMapListBox" Items="{Binding $parent[Window].LogLevelMapEntries}" SelectionChanged="OnListBoxSelectionChanged">
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.LogLevelMapForReading}"/>
+				<ListBox Items="{Binding $parent[Window].LogLevelMapEntriesForReading}" SelectionChanged="OnListBoxSelectionChanged">
 					<ListBox.ItemTemplate>
 						<DataTemplate>
 							<Grid ColumnDefinitions="*,*">
@@ -142,21 +172,21 @@
 												<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Delete}"/>
 											</Border>
 										</Button>
-										<Button Classes="InPlaceAction" Command="{Binding $parent[Window].EditLogLevelMapEntry}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String.Common.Edit}">
+										<Button Classes="InPlaceAction" Command="{Binding $parent[Window].EditLogLevelMapEntryForReading}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String.Common.Edit}">
 											<Border Classes="InPlaceAction">
 												<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Edit}"/>
 											</Border>
 										</Button>
 									</StackPanel>
-									<TextBlock Foreground="{Binding Value, Converter={x:Static appConverters:LogLevelBrushConverter.Default}}" Grid.Column="1" Text="{Binding Value, Converter={x:Static appControls:LogProfileEditorDialog.LogLevelNameConverter}}" TextTrimming="CharacterEllipsis"/>
+									<TextBlock Foreground="{Binding Value, Converter={x:Static appConverters:LogLevelBrushConverter.Default}}" Text="{Binding Value, Converter={x:Static appControls:LogProfileEditorDialog.LogLevelNameConverter}}" TextTrimming="CharacterEllipsis"/>
 								</DockPanel>
 							</Grid>
 						</DataTemplate>
 					</ListBox.ItemTemplate>
 				</ListBox>
 				<Grid ColumnDefinitions="*,Auto">
-					<TextBlock Classes="Dialog_Description" Text="{DynamicResource String.LogProfileEditorDialog.LogLevelMap.Description}" VerticalAlignment="Top"/>
-					<Button Classes="ListAction" Command="{Binding $parent[Window].AddLogLevelMapEntry}" Content="{DynamicResource String.Common.Add}" Grid.Column="1" VerticalAlignment="Top"/>
+					<TextBlock Classes="Dialog_Description" Text="{DynamicResource String.LogProfileEditorDialog.LogLevelMapForReading.Description}" VerticalAlignment="Top"/>
+					<Button Classes="ListAction" Command="{Binding $parent[Window].AddLogLevelMapEntryForReading}" Content="{DynamicResource String.Common.Add}" Grid.Column="1" VerticalAlignment="Top"/>
 				</Grid>
 				<Separator Classes="Dialog_Separator_Horizontal"/>
 
@@ -203,7 +233,7 @@
 				<!-- Timestamp format for reading -->
 				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.TimestampFormatForReading}"/>
 				<TextBox Name="timestampFormatForReadingTextBox" MaxLength="256"/>
-				<TextBlock Classes="Dialog_Description_Link" PointerReleased="OnLinkDescriptionPointerReleased" Tag="https://docs.microsoft.com/en-us/dotnet/standard/base-types/standard-date-and-time-format-strings" Text="{DynamicResource String.LogProfileEditorDialog.TimestampFormatDescription}"/>
+				<TextBlock Classes="Dialog_Description_Link" PointerReleased="OnLinkDescriptionPointerReleased" Tag="https://docs.microsoft.com/en-us/dotnet/standard/base-types/standard-date-and-time-format-strings" Text="{DynamicResource String.LogProfileEditorDialog.FormatDescription}"/>
 				<Separator Classes="Dialog_Separator_Large_Horizontal"/>
 
 				<!-- Header -->
@@ -259,7 +289,7 @@
 				<!-- Timestamp format for displaying -->
 				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.TimestampFormatForDisplaying}"/>
 				<TextBox Name="timestampFormatForDisplayingTextBox" MaxLength="256"/>
-				<TextBlock Classes="Dialog_Description_Link" PointerReleased="OnLinkDescriptionPointerReleased" Tag="https://docs.microsoft.com/en-us/dotnet/standard/base-types/standard-date-and-time-format-strings" Text="{DynamicResource String.LogProfileEditorDialog.TimestampFormatDescription}"/>
+				<TextBlock Classes="Dialog_Description_Link" PointerReleased="OnLinkDescriptionPointerReleased" Tag="https://docs.microsoft.com/en-us/dotnet/standard/base-types/standard-date-and-time-format-strings" Text="{DynamicResource String.LogProfileEditorDialog.FormatDescription}"/>
 				<Separator Classes="Dialog_Separator_Horizontal"/>
 
 				<!-- Color indicator -->
@@ -276,6 +306,58 @@
 				<!-- Sort direction -->
 				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.SortDirection}"/>
 				<appControls:EnumComboBox Name="sortDirectionComboBox" EnumType="{x:Type app:SortDirection}" HorizontalAlignment="Stretch"/>
+				<Separator Classes="Dialog_Separator_Large_Horizontal"/>
+
+				<!-- Header -->
+				<TextBlock Classes="Dialog_Label_Header1" Text="{DynamicResource String.LogProfileEditorDialog.LogWriting}"/>
+
+				<!-- Log writing format -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.LogWritingFormat}"/>
+				<Grid ColumnDefinitions="*,Auto">
+					<TextBox Name="logWritingFormatTextBox" Watermark="{DynamicResource String.LogProfileEditorDialog.LogWritingFormat.Watermark}"/>
+					<ToggleButton Name="insertLogWritingFormatSyntaxButton" Classes="Browse" Command="{Binding $parent[Window].ShowInsertLogWritingFormatSyntaxMenu}" Grid.Column="1"/>
+				</Grid>
+				<TextBlock Classes="Dialog_Description" Text="{DynamicResource String.LogProfileEditorDialog.LogWritingFormat.Description}"/>
+				<TextBlock Classes="Dialog_Description_Link" PointerReleased="OnLinkDescriptionPointerReleased" Tag="https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/tokens/interpolated#structure-of-an-interpolated-string" Text="{DynamicResource String.LogProfileEditorDialog.FormatDescription}"/>
+				<Separator Classes="Dialog_Separator_Horizontal"/>
+				
+				<!-- Log level map -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.LogLevelMapForWriting}"/>
+				<ListBox Items="{Binding $parent[Window].LogLevelMapEntriesForWriting}" SelectionChanged="OnListBoxSelectionChanged">
+					<ListBox.ItemTemplate>
+						<DataTemplate>
+							<Grid ColumnDefinitions="*,*">
+								<TextBlock Foreground="{Binding Key, Converter={x:Static appConverters:LogLevelBrushConverter.Default}}" Text="{Binding Key, Converter={x:Static appControls:LogProfileEditorDialog.LogLevelNameConverter}}" TextTrimming="CharacterEllipsis"/>
+								<Border Classes="InPlaceAction_Reserved"/>
+								<DockPanel Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+									<StackPanel DockPanel.Dock="Right" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
+										<Button Classes="InPlaceAction" Command="{Binding $parent[Window].RemoveLogLevelMapEntry}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String.Common.Delete}">
+											<Border Classes="InPlaceAction">
+												<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Delete}"/>
+											</Border>
+										</Button>
+										<Button Classes="InPlaceAction" Command="{Binding $parent[Window].EditLogLevelMapEntryForWriting}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String.Common.Edit}">
+											<Border Classes="InPlaceAction">
+												<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Edit}"/>
+											</Border>
+										</Button>
+									</StackPanel>
+									<TextBlock Text="{Binding Value}" TextTrimming="CharacterEllipsis"/>
+								</DockPanel>
+							</Grid>
+						</DataTemplate>
+					</ListBox.ItemTemplate>
+				</ListBox>
+				<Grid ColumnDefinitions="*,Auto">
+					<TextBlock Classes="Dialog_Description" Text="{DynamicResource String.LogProfileEditorDialog.LogLevelMapForWriting.Description}" VerticalAlignment="Top"/>
+					<Button Classes="ListAction" Command="{Binding $parent[Window].AddLogLevelMapEntryForWriting}" Content="{DynamicResource String.Common.Add}" Grid.Column="1" VerticalAlignment="Top"/>
+				</Grid>
+				<Separator Classes="Dialog_Separator_Horizontal"/>
+
+				<!-- Timestamp format for writing -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.TimestampFormatForWriting}"/>
+				<TextBox Name="timestampFormatForWritingTextBox" MaxLength="256" Watermark="{DynamicResource String.LogProfileEditorDialog.TimestampFormatForWriting.Watermark}"/>
+				<TextBlock Classes="Dialog_Description_Link" PointerReleased="OnLinkDescriptionPointerReleased" Tag="https://docs.microsoft.com/en-us/dotnet/standard/base-types/standard-date-and-time-format-strings" Text="{DynamicResource String.LogProfileEditorDialog.FormatDescription}"/>
 
 			</StackPanel>
 		</ScrollViewer>

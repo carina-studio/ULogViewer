@@ -25,9 +25,10 @@
 							<Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto">
 
 								<!-- Icon -->
-								<Border Grid.RowSpan="1" Height="{StaticResource Double.LogProfileSelectionDialog.LogProfile.Icon.Size}" Margin="{StaticResource Thickness.LogProfileSelectionDialog.LogProfile.Icon.Margin}" VerticalAlignment="Top" Width="{StaticResource Double.LogProfileSelectionDialog.LogProfile.Icon.Size}">
-									<DrawingPresenter Classes="Icon" Drawing="{Binding Icon, Converter={x:Static appConverters:LogProfileIconConverter.Default}}"/>
-								</Border>
+								<Grid Grid.RowSpan="1" Height="{StaticResource Double.LogProfileSelectionDialog.LogProfile.Icon.Size}" Margin="{StaticResource Thickness.LogProfileSelectionDialog.LogProfile.Icon.Margin}" VerticalAlignment="Top" Width="{StaticResource Double.LogProfileSelectionDialog.LogProfile.Icon.Size}">
+									<DrawingPresenter Name="icon" Classes="Icon" Drawing="{Binding Icon, Converter={x:Static appConverters:LogProfileIconConverter.Default}}" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}"/>
+									<DrawingPresenter Name="iconLight" Classes="Icon" Drawing="{Binding Icon, Converter={x:Static appConverters:LogProfileIconConverter.Default}, ConverterParameter=Light}}" IsVisible="{Binding $parent[ListBoxItem].IsSelected}"/>
+								</Grid>
 								
 								<!-- Name -->
 								<TextBlock Grid.Column="1" FontSize="{StaticResource Double.LogProfileSelectionDialog.LogProfile.Name.FontSize}" Margin="{StaticResource Thickness.LogProfileSelectionDialog.LogProfile.Name.Margin}" Text="{Binding Name}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
@@ -53,6 +54,11 @@
 									<Button Classes="InPlaceAction" Command="{Binding $parent[Window].RemoveLogProfile}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" IsVisible="{Binding !IsBuiltIn}" ToolTip.Tip="{DynamicResource String.LogProfileSelectionDialog.RemoveLogProfile}">
 										<Border Classes="InPlaceAction">
 											<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Delete}"/>
+										</Border>
+									</Button>
+									<Button Classes="InPlaceAction" Command="{Binding $parent[Window].ExportLogProfile}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String.LogProfileSelectionDialog.ExportLogProfile}">
+										<Border Classes="InPlaceAction">
+											<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Export}"/>
 										</Border>
 									</Button>
 									<Button Classes="InPlaceAction" Command="{Binding $parent[Window].CopyLogProfile}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String.Common.Copy}">
@@ -86,9 +92,20 @@
 		<!-- Control buttons -->
 		<Border Classes="Dialog_ControlButtonsPanel" DockPanel.Dock="Bottom">
 			<StackPanel Classes="Dialog_ControlButtonsPanel">
-				<Button Classes="Dialog_ControlButton_WithSeparator" Click="OnAddLogProfileClick" Content="{DynamicResource String.LogProfileSelectionDialog.AddLogProfile}">
+				
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].AddLogProfile}" Content="{DynamicResource String.LogProfileSelectionDialog.AddLogProfile}">
 					<ia:Interaction.Behaviors>
-						<iaCore:DataTriggerBehavior Binding="{Binding $parent[Window].Filter}" ComparisonCondition="Equal" Value="{x:Null}">
+						<iaCore:DataTriggerBehavior Binding="{Binding $parent[Window].Filter}" Value="{x:Null}">
+							<iaCore:ChangePropertyAction PropertyName="IsVisible" Value="True"/>
+						</iaCore:DataTriggerBehavior>
+						<iaCore:DataTriggerBehavior Binding="{Binding $parent[Window].Filter}" ComparisonCondition="NotEqual" Value="{x:Null}">
+							<iaCore:ChangePropertyAction PropertyName="IsVisible" Value="False"/>
+						</iaCore:DataTriggerBehavior>
+					</ia:Interaction.Behaviors>
+				</Button>
+				<Button Classes="Dialog_ControlButton_WithSeparator" Command="{Binding $parent[Window].ImportLogProfile}" Content="{DynamicResource String.LogProfileSelectionDialog.ImportLogProfile}">
+					<ia:Interaction.Behaviors>
+						<iaCore:DataTriggerBehavior Binding="{Binding $parent[Window].Filter}" Value="{x:Null}">
 							<iaCore:ChangePropertyAction PropertyName="IsVisible" Value="True"/>
 						</iaCore:DataTriggerBehavior>
 						<iaCore:DataTriggerBehavior Binding="{Binding $parent[Window].Filter}" ComparisonCondition="NotEqual" Value="{x:Null}">
@@ -102,7 +119,7 @@
 		</Border>
 
 		<!-- Log profiles -->
-		<ScrollViewer MaxHeight="{StaticResource Double.LogProfileSelectionDialog.Content.MaxHeight}">
+		<ScrollViewer Name="scrollViewer" MaxHeight="{StaticResource Double.LogProfileSelectionDialog.Content.MaxHeight}">
 			<StackPanel HorizontalAlignment="Stretch" Orientation="Vertical">
 
 				<!-- Pinned profiles -->
