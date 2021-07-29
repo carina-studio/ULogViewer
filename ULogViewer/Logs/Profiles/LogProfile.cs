@@ -421,6 +421,9 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			{
 				switch (jsonProperty.Name)
 				{
+					case nameof(LogDataSourceOptions.Category):
+						options.Category = jsonProperty.Value.GetString();
+						break;
 					case nameof(LogDataSourceOptions.Command):
 						options.Command = jsonProperty.Value.GetString();
 						break;
@@ -828,6 +831,9 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 						}
 					});
 					options.WorkingDirectory?.Let(it => writer.WriteString(nameof(LogDataSourceOptions.WorkingDirectory), it));
+					break;
+				case UnderlyingLogDataSource.WindowsEventLogs:
+					options.Category?.Let(it => writer.WriteString(nameof(LogDataSourceOptions.Category), it.ToString()));
 					break;
 			}
 			writer.WriteEndObject();

@@ -23,5 +23,9 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// Web request.
 		/// </summary>
 		WebRequest,
+		/// <summary>
+		/// Windows event logs.
+		/// </summary>
+		WindowsEventLogs,
 	}
 }

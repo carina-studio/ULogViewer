@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.Logs.Profiles
@@ -21,7 +22,8 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 
 		// Fields.
 		static volatile IApplication? app;
-		static readonly string[] builtInProfileIDs = new string[] {
+		static readonly IList<string> builtInProfileIDs = new List<string>()
+		{
 			"AndroidDeviceLog",
 			"AndroidFileLog",
 #if DEBUG
@@ -45,6 +47,10 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		{
 			All = profiles.AsReadOnly();
 			Pinned = pinnedProfiles.AsReadOnly();
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+			{
+				builtInProfileIDs.Add("WindowsApplicationEventLogs");
+			}
 		}
 
 

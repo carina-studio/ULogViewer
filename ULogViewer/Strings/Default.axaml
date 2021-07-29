@@ -33,6 +33,13 @@
 	<sys:String x:Key="String.AppOptionsDialog.Title">Application options</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.UpdateLogFilterDelay">Delay between changing conditions and start filtering (milliseconds)</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.UserInterface">User Interface</sys:String>
+
+	<!-- Built-in profile -->
+	<sys:String x:Key="String.BuiltInProfile.AndroidDeviceLog">Android Device Log</sys:String>
+	<sys:String x:Key="String.BuiltInProfile.AndroidFileLog">Android Log Files</sys:String>
+	<sys:String x:Key="String.BuiltInProfile.GitLog">Git Log</sys:String>
+	<sys:String x:Key="String.BuiltInProfile.ULogViewerLog">ULogViewer log (DEBUG)</sys:String>
+	<sys:String x:Key="String.BuiltInProfile.WindowsApplicationEventLogs">Windows Event Logs (Application)</sys:String>
 	
 	<!-- Common -->
 	<sys:String x:Key="String.Common.Add">Add</sys:String>
@@ -52,12 +59,6 @@
 	<sys:String x:Key="String.Common.RegularExpression.Reference">Syntax reference</sys:String>
 	<sys:String x:Key="String.Common.Rename">Rename</sys:String>
 	<sys:String x:Key="String.Common.Yes">Yes</sys:String>
-
-	<!-- Built-in profile -->
-	<sys:String x:Key="String.BuiltInProfile.AndroidDeviceLog">Android device log</sys:String>
-	<sys:String x:Key="String.BuiltInProfile.AndroidFileLog">Android log files</sys:String>
-	<sys:String x:Key="String.BuiltInProfile.GitLog">Git log</sys:String>
-	<sys:String x:Key="String.BuiltInProfile.ULogViewerLog">ULogViewer log (DEBUG)</sys:String>
 
 	<!-- FileFormat -->
 	<sys:String x:Key="String.FileFormat.Json">JSON File</sys:String>
@@ -280,5 +281,8 @@
 	<sys:String x:Key="String.VisibleLogPropertyEditorDialog.SpecifyWidth">Speficy the column width</sys:String>
 	<sys:String x:Key="String.VisibleLogPropertyEditorDialog.Title">Visible log property</sys:String>
 	<sys:String x:Key="String.VisibleLogPropertyEditorDialog.Width">Column width</sys:String>
+
+	<!-- WindowsEventLogDataSourceProvider -->
+	<sys:String x:Key="String.WindowsEventLogDataSourceProvider.DisplayName">Windows event logs</sys:String>
 
 </ResourceDictionary>

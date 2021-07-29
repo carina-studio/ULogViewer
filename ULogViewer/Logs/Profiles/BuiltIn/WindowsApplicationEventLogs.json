@@ -1,0 +1,24 @@
+﻿{
+	"DataSource": {
+		"Name": "WindowsEventLogs",
+		"Category": "Application"
+	},
+	"Icon": "Windows",
+	"LogLevelMapForReading": {
+	},
+	"LogLevelMapForWriting": {
+	},
+	"LogPatterns": [
+		{
+			"Regex": "^(?<Message>.*)$"
+		}
+	],
+	"LogWritingFormat": "",
+	"TimestampFormatForDisplaying": "yyyy/MM/dd HH:mm:ss",
+	"TimestampFormatForReading": "yyyy-MM-dd HH:mm:ss",
+	"VisibleLogProperties": [
+		{
+			"Name": "Message"
+		}
+	]
+}

@@ -81,12 +81,8 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// <param name="encoding">Text encoding.</param>
 		public static LogDataSourceOptions CreateForFile(string fileName, Encoding? encoding = null) => new LogDataSourceOptions()
 		{
-			Command = null,
 			Encoding = encoding,
 			FileName = fileName,
-			Uri = null,
-			WebRequestCredentials = null,
-			WorkingDirectory = null,
 		};
 
 
@@ -100,12 +96,8 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		public static LogDataSourceOptions CreateForStandardOutput(string command, string? workingDirectory = null, IList<string>? setupCommands = null, IList<string>? teardownCommands = null) => new LogDataSourceOptions()
 		{
 			Command = command,
-			Encoding = null,
-			FileName = null,
 			SetupCommands = setupCommands ?? emptyCommands,
 			TeardownCommands = teardownCommands ?? emptyCommands,
-			Uri = null,
-			WebRequestCredentials = null,
 			WorkingDirectory = workingDirectory,
 		};
 
@@ -117,13 +109,26 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// <param name="credentials">Credentials.</param>
 		public static LogDataSourceOptions CreateForWebRequest(Uri uri, ICredentials? credentials = null) => new LogDataSourceOptions()
 		{
-			Command = null,
-			Encoding = null,
-			FileName = null,
 			Uri = uri,
 			WebRequestCredentials = credentials,
-			WorkingDirectory = null,
 		};
+
+
+		/// <summary>
+		/// Create <see cref="LogDataSourceOptions"/> for <see cref="UnderlyingLogDataSource.WindowsEventLogs"/> case.
+		/// </summary>
+		/// <param name="category">Category of windows event logs.</param>
+		public static LogDataSourceOptions CreateForWindowsEventLogs(string category) => new LogDataSourceOptions()
+		{
+			Category = category,
+		};
+
+
+		/// <summary>
+		/// Get or set category to read log data.
+		/// </summary>
+		/// <remarks>Available for <see cref="UnderlyingLogDataSource.WindowsEventLogs"/>.</remarks>
+		public string? Category { get; set; }
 
 
 		/// <summary>
@@ -138,7 +143,8 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		{
 			if (obj is LogDataSourceOptions options)
 			{
-				return this.Command == options.Command
+				return this.Category == options.Category
+					&& this.Command == options.Command
 					&& this.Encoding == options.Encoding
 					&& this.FileName == options.FileName
 					&& this.SetupCommands.SequenceEqual(options.SetupCommands)
@@ -161,6 +167,8 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		// Get hash code.
 		public override int GetHashCode()
 		{
+			if (this.Category != null)
+				return this.Category.GetHashCode();
 			if (this.Command != null)
 				return this.Command.GetHashCode();
 			if (this.FileName != null)

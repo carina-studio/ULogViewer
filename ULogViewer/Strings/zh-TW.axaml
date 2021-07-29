@@ -31,6 +31,12 @@
 	<sys:String x:Key="String.AppOptionsDialog.Title">應用程式選項</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.UpdateLogFilterDelay">條件改變至開始篩選的延遲時間 (毫秒)</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.UserInterface">使用者介面</sys:String>
+
+	<!-- Built-in profile -->
+	<sys:String x:Key="String.BuiltInProfile.AndroidDeviceLog">Android 裝置日誌</sys:String>
+	<sys:String x:Key="String.BuiltInProfile.AndroidFileLog">Android 日誌檔案</sys:String>
+	<sys:String x:Key="String.BuiltInProfile.GitLog">Git 提交紀錄</sys:String>
+	<sys:String x:Key="String.BuiltInProfile.WindowsApplicationEventLogs">Windows 事件紀錄 (應用程式)</sys:String>
 	
 	<!-- Common -->
 	<sys:String x:Key="String.Common.Add">新增</sys:String>
@@ -50,11 +56,6 @@
 	<sys:String x:Key="String.Common.RegularExpression.Reference">語法說明</sys:String>
 	<sys:String x:Key="String.Common.Rename">重新命名</sys:String>
 	<sys:String x:Key="String.Common.Yes">是</sys:String>
-
-	<!-- Built-in profile -->
-	<sys:String x:Key="String.BuiltInProfile.AndroidDeviceLog">Android 裝置日誌</sys:String>
-	<sys:String x:Key="String.BuiltInProfile.AndroidFileLog">Android 日誌檔案</sys:String>
-	<sys:String x:Key="String.BuiltInProfile.GitLog">Git 提交紀錄</sys:String>
 
 	<!-- FallbackFontFamilies -->
 	<sys:String x:Key="String.FallbackFontFamilies">Microsoft JhengHei</sys:String>
@@ -270,5 +271,8 @@
 	<sys:String x:Key="String.VisibleLogPropertyEditorDialog.SpecifyWidth">指定列寬</sys:String>
 	<sys:String x:Key="String.VisibleLogPropertyEditorDialog.Title">顯示的日誌屬性</sys:String>
 	<sys:String x:Key="String.VisibleLogPropertyEditorDialog.Width">列寬</sys:String>
+
+	<!-- WindowsEventLogDataSourceProvider -->
+	<sys:String x:Key="String.WindowsEventLogDataSourceProvider.DisplayName">Windows 事件紀錄</sys:String>
 	
 </ResourceDictionary>
