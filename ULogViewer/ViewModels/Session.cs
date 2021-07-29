@@ -433,6 +433,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				return;
 			if (fileName == null)
 				throw new ArgumentNullException(nameof(fileName));
+			if (PathEqualityComparer.Default.Equals(Path.GetExtension(fileName), MarkedFileExtension))
+			{
+				this.Logger.LogWarning($"Ignore adding marked logs info file '{fileName}'");
+				return;
+			}
 			var profile = this.LogProfile ?? throw new InternalStateCorruptedException("No log profile to add log file.");
 			if (profile.DataSourceProvider.UnderlyingSource != UnderlyingLogDataSource.File)
 				throw new InternalStateCorruptedException($"Cannot add log file because underlying data source type is {profile.DataSourceProvider.UnderlyingSource}.");
