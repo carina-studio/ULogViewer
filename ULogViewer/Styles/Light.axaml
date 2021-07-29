@@ -15,6 +15,8 @@
 
 			<!-- Icon -->
 			<SolidColorBrush x:Key="Brush.Icon">#222222</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.Icon.Active">#5192cc</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.Icon.LogProfile">#5192cc</SolidColorBrush>
 
 			<!-- LogLevel -->
 			<SolidColorBrush x:Key="Brush.LogLevel.Debug">#288dcc</SolidColorBrush>

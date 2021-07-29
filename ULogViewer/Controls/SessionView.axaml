@@ -129,9 +129,10 @@
 
 				<!-- Scroll to latest log -->
 				<ToggleButton Classes="SessionView_ToolBar_Button" IsChecked="{Binding $parent[UserControl].IsScrollingToLatestLogNeeded, Mode=TwoWay}" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" ToolTip.Tip="{DynamicResource String.SessionView.ScrollToLatestLog}">
-					<Border Classes="SessionView_ToolBar_Button_Icon">
-						<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Scrolling}"/>
-					</Border>
+					<Grid Classes="SessionView_ToolBar_Button_Icon">
+						<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Scrolling}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
+						<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Scrolling.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
+					</Grid>
 				</ToggleButton>
 
 				<!-- Pause/resume -->
@@ -206,18 +207,11 @@
 					<!-- Predefined text filters -->
 					<ToggleButton Classes="SessionView_ToolBar_Button" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" ToolTip.Tip="{DynamicResource String.SessionView.PredefinedLogTextFilters}">
 						<Panel>
-							<Border Classes="SessionView_ToolBar_Button_Icon">
-								<DrawingPresenter Classes="Icon">
-									<ia:Interaction.Behaviors>
-										<iaCore:DataTriggerBehavior Binding="{Binding ElementName=predefinedLogTextFilterListBox, Path=SelectedItems.Count}" ComparisonCondition="GreaterThan" Value="0">
-											<iaCore:ChangePropertyAction PropertyName="Drawing" Value="{StaticResource Drawing.Filter.Active}"/>
-										</iaCore:DataTriggerBehavior>
-										<iaCore:DataTriggerBehavior Binding="{Binding ElementName=predefinedLogTextFilterListBox, Path=SelectedItems.Count}" ComparisonCondition="Equal" Value="0">
-											<iaCore:ChangePropertyAction PropertyName="Drawing" Value="{StaticResource Drawing.Filter}"/>
-										</iaCore:DataTriggerBehavior>
-									</ia:Interaction.Behaviors>
-								</DrawingPresenter>
-							</Border>
+							<Grid Classes="SessionView_ToolBar_Button_Icon">
+								<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Filter}" IsVisible="{Binding ElementName=predefinedLogTextFilterListBox, Path=!SelectedItems.Count}"/>
+								<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Filter.Active}" IsVisible="{Binding ElementName=predefinedLogTextFilterListBox, Path=SelectedItems.Count}"/>
+								<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Filter.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
+							</Grid>
 							<Popup Name="predefinedLogTextFiltersPopup" IsLightDismissEnabled="True" IsOpen="{Binding $parent[ToggleButton].IsChecked, Mode=TwoWay}" MaxHeight="{StaticResource Double.SessionView.PredefinedLogTextFiltersPopup.MaxHeight}" PlacementTarget="{Binding $parent[ToggleButton]}" Width="{StaticResource Double.SessionView.PredefinedLogTextFiltersPopup.Width}" WindowManagerAddShadowHint="True">
 								<Border Background="{DynamicResource ComboBoxDropDownBackground}" BorderBrush="{DynamicResource ComboBoxDropDownBorderBrush}" BorderThickness="{DynamicResource ComboBoxDropdownBorderThickness}" CornerRadius="{DynamicResource OverlayCornerRadius}" Padding="{StaticResource Thickness.SessionView.PredefinedLogTextFiltersPopup.Padding}">
 									<DockPanel>
@@ -291,9 +285,10 @@
 
 				<!-- Other actions -->
 				<ToggleButton Name="otherActionsButton" Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].ShowOtherActions}" ToolTip.Tip="{DynamicResource String.SessionView.OtherActions}">
-					<Border Classes="SessionView_ToolBar_Button_Icon">
-						<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.OtherActions}"/>
-					</Border>
+					<Grid Classes="SessionView_ToolBar_Button_Icon">
+						<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.OtherActions}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
+						<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.OtherActions.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
+					</Grid>
 				</ToggleButton>
 
 			</StackPanel>
