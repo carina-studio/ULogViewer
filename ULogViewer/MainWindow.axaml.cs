@@ -37,6 +37,7 @@ namespace CarinaStudio.ULogViewer
 
 		// Fields.
 		readonly ScheduledAction focusOnTabItemContentAction;
+		AppUpdateInfo? notifiedAppUpdateInfo;
 		readonly ScheduledAction reAttachToWorkspaceAction;
 		readonly ScheduledAction saveWindowSizeAction;
 		readonly DataTemplate sessionTabItemHeaderTemplate;
@@ -93,6 +94,7 @@ namespace CarinaStudio.ULogViewer
 			});
 
 			// add handlers
+			this.Application.PropertyChanged += this.OnAppPropertyChanged;
 			this.Settings.SettingChanged += this.OnSettingChanged;
 		}
 
@@ -175,14 +177,60 @@ namespace CarinaStudio.ULogViewer
 		private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
 
 
+		// Notify user that new application update is found.
+		async void NotifyAppUpdate()
+		{
+			// check state
+			if (this.IsClosed || this.HasDialogs)
+				return;
+
+			// check update
+			var updateInfo = this.Application.UpdateInfo;
+			if (updateInfo == null)
+				return;
+			if (updateInfo == this.notifiedAppUpdateInfo)
+				return;
+
+			// notify
+			this.notifiedAppUpdateInfo = updateInfo;
+			var result = await new MessageDialog()
+			{
+				Buttons = MessageDialogButtons.YesNo,
+				Icon = MessageDialogIcon.Question,
+				Message = this.Application.GetFormattedString("MainWindow.AppUpdateFound", updateInfo.Version),
+			}.ShowDialog<MessageDialogResult>(this);
+
+			// open download page
+			if (result == MessageDialogResult.Yes)
+				this.OpenLink(updateInfo.ReleasePageUri);
+		}
+
+
+		// Called when application property changed.
+		void OnAppPropertyChanged(object? sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == nameof(IApplication.UpdateInfo))
+				this.NotifyAppUpdate();
+		}
+
+
 		// Called when closed.
 		protected override void OnClosed(EventArgs e)
 		{
 			// remove handlers
+			this.Application.PropertyChanged -= this.OnAppPropertyChanged;
 			this.Settings.SettingChanged -= this.OnSettingChanged;
 
 			// call base
 			base.OnClosed(e);
+		}
+
+
+		// Called when dialog closed.
+		protected internal override void OnDialogClosed(BaseDialog dialog)
+		{
+			base.OnDialogClosed(dialog);
+			this.NotifyAppUpdate();
 		}
 
 
@@ -219,6 +267,14 @@ namespace CarinaStudio.ULogViewer
 
 			// call base
 			base.OnKeyDown(e);
+		}
+
+
+		// Called when opened.
+		protected override void OnOpened(EventArgs e)
+		{
+			base.OnOpened(e);
+			this.NotifyAppUpdate();
 		}
 
 

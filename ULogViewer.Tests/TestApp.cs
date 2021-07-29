@@ -80,5 +80,6 @@ namespace CarinaStudio.ULogViewer
 		public BaseSettings Settings => new Settings();
 		public event EventHandler? StringsUpdated;
 		public SynchronizationContext SynchronizationContext => syncContext ?? throw new InternalStateCorruptedException();
+		public AppUpdateInfo? UpdateInfo => null;
 	}
 }

@@ -72,8 +72,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		string? Button3Text { get => this.GetValue<string?>(Button3TextProperty); }
 
 
-		// Get or set buttons.
-		MessageDialogButtons Buttons { get; set; } = MessageDialogButtons.OK;
+		/// <summary>
+		/// Get or set buttons.
+		/// </summary>
+		public MessageDialogButtons Buttons { get; set; } = MessageDialogButtons.OK;
 
 
 		/// <summary>

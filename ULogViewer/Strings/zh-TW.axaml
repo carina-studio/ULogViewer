@@ -196,6 +196,7 @@
 	<sys:String x:Key="String.LogSortKey.Timestamp">日誌時間</sys:String>
 
 	<!-- MainWindow -->
+	<sys:String x:Key="String.MainWindow.AppUpdateFound">已經有新的版本 {0}，是否開啟下載頁面？</sys:String>
 	<sys:String x:Key="String.MainWindow.CloseSession">關閉此分頁</sys:String>
 	<sys:String x:Key="String.MainWindow.CreateSession">建立新分頁</sys:String>
 
