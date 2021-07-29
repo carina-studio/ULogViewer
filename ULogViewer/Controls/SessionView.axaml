@@ -251,7 +251,7 @@
 													</Style>
 												</ListBox.Styles>
 											</ListBox>
-											<TextBlock HorizontalAlignment="Center" IsVisible="{Binding !$parent[UserControl].PredefinedLogTextFilters.Count}" Margin="{StaticResource Thickness.SessionView.NoPredefinedLogTextFilterHint.Margin}" Text="{DynamicResource String.SessionView.NoPredefinedLogTextFilter}" TextWrapping="Wrap"/>
+											<TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" HorizontalAlignment="Center" IsVisible="{Binding !$parent[UserControl].PredefinedLogTextFilters.Count}" Margin="{StaticResource Thickness.SessionView.NoPredefinedLogTextFilterHint.Margin}" Text="{DynamicResource String.SessionView.NoPredefinedLogTextFilter}" TextWrapping="Wrap"/>
 										</Panel>
 									</DockPanel>
 								</Border>
