@@ -57,7 +57,7 @@
 	<sys:String x:Key="String.BuiltInProfile.GitLog">Git 提交紀錄</sys:String>
 
 	<!-- FallbackFontFamilies -->
-	<sys:String x:Key="String.FallbackFontFamilies">Microsoft JhengHei</sys:String>
+	<sys:String x:Key="String.FallbackFontFamilies">Microsoft JhengHei,蘋方-繁</sys:String>
 
 	<!-- FileFormat -->
 	<sys:String x:Key="String.FileFormat.Json">JSON 檔案</sys:String>
