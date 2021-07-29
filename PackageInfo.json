@@ -1,0 +1,27 @@
+{
+	"Version": "0.1.0.0",
+	"ReleaseDate": "2021/7/29",
+	"ReleasePageUrl": "https://github.com/carina-studio/ULogViewer",
+	"Packages": [
+		{
+			"OS": "Windows",
+			"Platform": "x64",
+			"Url": ""
+		},
+		{
+			"OS": "Windows",
+			"Platform": "x86",
+			"Url": ""
+		},
+		{
+			"OS": "Linux",
+			"Platform": "x64",
+			"Url": ""
+		},
+		{
+			"OS": "OSX",
+			"Platform": "x64",
+			"Url": ""
+		}
+	]
+}
