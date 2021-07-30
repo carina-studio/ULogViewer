@@ -22,6 +22,7 @@ using System.IO;
 using System.Net;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Security.Principal;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
@@ -43,6 +44,8 @@ namespace CarinaStudio.ULogViewer
 		// Fields.
 		ScheduledAction? checkUpdateInfoAction;
 		bool isCheckingUpdateInfo;
+		bool isRestartRequested;
+		bool isRestartAsAdminRequested;
 		readonly ILogger logger;
 		MainWindow? mainWindow;
 		PropertyChangedEventHandler? propertyChangedHandlers;
@@ -77,6 +80,16 @@ namespace CarinaStudio.ULogViewer
 
 			// prepare file path of settings
 			this.settingsFilePath = Path.Combine(this.RootPrivateDirectoryPath, "Settings.json");
+
+			// check whether process is running as admin or not
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+			{
+				using var identity = WindowsIdentity.GetCurrent();
+				var principal = new WindowsPrincipal(identity);
+				this.IsRunningAsAdministrator = principal.IsInRole(WindowsBuiltInRole.Administrator);
+			}
+			if (this.IsRunningAsAdministrator)
+				this.logger.LogWarning("Application is running as administrator/superuser");
 		}
 
 
@@ -236,7 +249,37 @@ namespace CarinaStudio.ULogViewer
 			BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
 
 			// deinitialize application
-			App.Current?.Deinitialize();
+			var app = App.Current;
+			app?.Deinitialize();
+
+			// restart
+			if (app != null && app.isRestartRequested)
+			{
+				try
+				{
+					if (app.isRestartAsAdminRequested)
+						app.logger.LogWarning("Restart as administrator/superuser");
+					else
+						app.logger.LogWarning("Restart");
+					var process = new Process().Also(process =>
+					{
+						process.StartInfo.Let(it =>
+						{
+							it.FileName = (Process.GetCurrentProcess().MainModule?.FileName).AsNonNull();
+							if (app.isRestartAsAdminRequested && RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+							{
+								it.UseShellExecute = true;
+								it.Verb = "runas";
+							}
+						});
+					});
+					process.Start();
+				}
+				catch (Exception ex)
+				{
+					app.logger.LogError(ex, "Unable to restart");
+				}
+			}
 		}
 
 
@@ -379,6 +422,44 @@ namespace CarinaStudio.ULogViewer
 				this.OnSystemCultureInfoChanged();
 		}
 #pragma warning restore CA1416
+
+
+		// Restart application.
+		public bool Restart(bool asAdministrator)
+		{
+			// check state
+			this.VerifyAccess();
+			if (this.isRestartRequested)
+			{
+				this.isRestartAsAdminRequested |= asAdministrator;
+				if (this.isRestartAsAdminRequested)
+					this.logger.LogWarning("Already restarting as administrator/superuser");
+				else
+					this.logger.LogWarning("Already restarting");
+				return true;
+			}
+
+			// update state
+			this.isRestartRequested = true;
+			this.isRestartAsAdminRequested = asAdministrator;
+			if (asAdministrator)
+				this.logger.LogWarning("Request restarting as administrator/superuser");
+			else
+				this.logger.LogWarning("Request restarting");
+
+			// close main window or shutdown
+			if (this.mainWindow != null)
+			{
+				this.logger.LogWarning("Schedule closing main window to restart");
+				this.SynchronizationContext.Post(() => this.mainWindow?.Close());
+			}
+			else
+			{
+				this.logger.LogWarning("Schedule shutdown to restart");
+				this.SynchronizationContext.Post(() => (this.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.Shutdown());
+			}
+			return true;
+		}
 
 
 		/// <summary>
@@ -607,6 +688,7 @@ namespace CarinaStudio.ULogViewer
 		// Interface implementations.
 		public Assembly Assembly { get; } = Assembly.GetExecutingAssembly();
 		public CultureInfo CultureInfo { get; private set; } = CultureInfo.CurrentCulture;
+		public bool IsRunningAsAdministrator { get; private set; }
 		public bool IsShutdownStarted { get; private set; }
 		public bool IsTesting => false;
 		public ILoggerFactory LoggerFactory => new LoggerFactory(new ILoggerProvider[] { new NLogLoggerProvider() });

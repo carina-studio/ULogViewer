@@ -6,7 +6,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -109,9 +108,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			}
 
 			// check permission
-			using var identity = WindowsIdentity.GetCurrent();
-			var principal = new WindowsPrincipal(identity);
-			if (!principal.IsInRole(WindowsBuiltInRole.Administrator))
+			if (!this.Application.IsRunningAsAdministrator)
 			{
 				this.Logger.LogError("Current user is not administrator");
 				return LogDataSourceState.UnclassifiedError;

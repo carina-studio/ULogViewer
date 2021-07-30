@@ -67,10 +67,12 @@ namespace CarinaStudio.ULogViewer
 		public bool CheckAccess() => Thread.CurrentThread == syncContext?.ExecutionThread;
 		public CultureInfo CultureInfo { get; private set; } = CultureInfo.CurrentCulture;
 		public string? GetString(string key, string? defaultValue = null) => defaultValue;
+		public bool IsRunningAsAdministrator => false;
 		public bool IsShutdownStarted => false;
 		public bool IsTesting => true;
 		public ILoggerFactory LoggerFactory => new LoggerFactory(new ILoggerProvider[] { new NLogLoggerProvider() });
 		public event PropertyChangedEventHandler? PropertyChanged;
+		public bool Restart(bool asAdministrator) => false;
 		public string RootPrivateDirectoryPath => Global.Run(() =>
 		{
 			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
