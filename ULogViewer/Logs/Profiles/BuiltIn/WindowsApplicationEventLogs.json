@@ -6,18 +6,38 @@
 	"Icon": "Windows",
 	"IsAdministratorNeeded": true,
 	"LogLevelMapForReading": {
+		"e": "Error",
+		"i": "Info",
+		"w": "Warn"
 	},
 	"LogLevelMapForWriting": {
+		"Error": "E",
+		"Info": "I",
+		"Undefined": "U",
+		"Warn": "W"
 	},
 	"LogPatterns": [
 		{
-			"Regex": "^(?<Message>.*)$"
+			"Regex": "^(?<Timestamp>[^\\s]+[\\s][^\\s]+)[\\s](?<Event>[^\\s]+)[\\s](?<Level>.)[\\s](?<SourceName>[^\\:]*)\\:(?<Message>.*)$"
 		}
 	],
-	"LogWritingFormat": "",
+	"LogWritingFormat": "[{Level}] {Timestamp} {Event,-5} {SourceName}: {Message}",
+	"SortDirection": "Descending",
 	"TimestampFormatForDisplaying": "yyyy/MM/dd HH:mm:ss",
-	"TimestampFormatForReading": "yyyy-MM-dd HH:mm:ss",
+	"TimestampFormatForReading": "yyyy/MM/dd HH:mm:ss",
 	"VisibleLogProperties": [
+		{
+			"Name": "Timestamp",
+			"Width": 180
+		},
+		{
+			"Name": "SourceName",
+			"Width": 200
+		},
+		{
+			"Name": "Event",
+			"Width": 80
+		},
 		{
 			"Name": "Message"
 		}

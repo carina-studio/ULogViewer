@@ -1,13 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.Logs.DataSources
 {
@@ -20,13 +16,11 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			// Fields.
 			readonly EventLogEntryCollection entries;
 			int entryIndex;
-			readonly EventLog eventLog;
 
 			// Constructor.
 			public ReaderImpl(EventLog eventLog)
 			{
 				this.entries = eventLog.Entries;
-				this.eventLog = eventLog;
 			}
 
 			// Implementations.
@@ -35,20 +29,25 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				if (this.entryIndex >= this.entries.Count)
 					return null;
 				var entry = this.entries[this.entryIndex++];
-				return $"{entry.TimeGenerated}, {entry.Category}, {entry.Source}, {entry.InstanceId}, {entry.Message}";
+#pragma warning disable CS0618
+				var eventId = entry.EventID;
+#pragma warning restore CS0618
+				var level = entry.EntryType switch
+				{
+					EventLogEntryType.Error => "e",
+					EventLogEntryType.FailureAudit => "e",
+					EventLogEntryType.Information => "i",
+					EventLogEntryType.SuccessAudit => "i",
+					EventLogEntryType.Warning => "w",
+					_ => "u",
+				};
+				var message = entry.Message;
+				var sourceName = entry.Source;
+				var timestamp = entry.TimeGenerated;
+				return $"{timestamp.ToString("yyyy/MM/dd HH:mm:ss")} {eventId} {level} {sourceName}:{message}";
 			}
 		}
 #pragma warning restore CA1416
-
-
-		// Static fields.
-		static readonly PropertyInfo[] eventLogPropertyInfos = typeof(EventLog).Let(type =>
-		{
-			return new PropertyInfo[]
-			{
-				//
-			};
-		});
 
 
 		// Fields.
