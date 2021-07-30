@@ -248,6 +248,7 @@
 	<sys:String x:Key="String.SessionView.LogTextFilterHint">Text filtering (Regular Expression)</sys:String>
 	<sys:String x:Key="String.SessionView.MarkedLogs">Marked logs</sys:String>
 	<sys:String x:Key="String.SessionView.MarkUnmarkLogs">Mark/Unmark logs</sys:String>
+	<sys:String x:Key="String.SessionView.NeedToRestartAsAdministrator">Administrator role is needed for '{0}'. Do you want to restart application as Administrator and use this profile? You will lost the logs you currently view.</sys:String>
 	<sys:String x:Key="String.SessionView.NoFilePathDropped">Please drag and drop valid files.</sys:String>
 	<sys:String x:Key="String.SessionView.NoLogToShow">No log to show</sys:String>
 	<sys:String x:Key="String.SessionView.NoPredefinedLogTextFilter">No saved text filter</sys:String>

@@ -1648,8 +1648,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					}
 					break;
 				case UnderlyingLogDataSource.Undefined:
+				case UnderlyingLogDataSource.WindowsEventLogs:
 					{
-						this.Logger.LogDebug("Start reading logs from undefined source");
+						this.Logger.LogDebug("Start reading logs");
 						var dataSource = this.CreateLogDataSourceOrNull(dataSourceProvider, dataSourceOptions);
 						if (dataSource != null)
 							this.CreateLogReader(dataSource);

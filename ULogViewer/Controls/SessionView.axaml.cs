@@ -1740,6 +1740,25 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (this.DataContext is not Session session)
 				return;
 
+			// check administrator role
+			if (logProfile.IsAdministratorNeeded && !this.Application.IsRunningAsAdministrator)
+			{
+				var result = await new MessageDialog()
+				{
+					Buttons = MessageDialogButtons.YesNo,
+					Icon = MessageDialogIcon.Question,
+					Message = this.Application.GetFormattedString("SessionView.NeedToRestartAsAdministrator", logProfile.Name),
+				}.ShowDialog<MessageDialogResult>(window);
+				if (result == MessageDialogResult.Yes)
+				{
+					this.Logger.LogWarning($"Restart application as administrator for profile '{logProfile.Name}'");
+					this.Application.Restart($"-profile {logProfile.Id}", true);
+				}
+				else
+					this.Logger.LogWarning($"Unable to use profile '{logProfile.Name}' because application is not running as administrator");
+				return;
+			}
+
 			// reset log filters
 			this.ResetLogFilters();
 
