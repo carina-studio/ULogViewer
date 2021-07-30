@@ -72,6 +72,7 @@
 	<sys:String x:Key="String.LogColorIndicator.UserName">使用者</sys:String>
 
 	<!-- LogDataSourceOptionsDialog -->
+	<sys:String x:Key="String.LogDataSourceOptionsDialog.Category">日誌分類 (必須)</sys:String>
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.Command">指令 (必須)</sys:String>
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.Encoding">文字編碼</sys:String>
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.FileName">檔案路徑</sys:String>
@@ -128,6 +129,7 @@
 	<sys:String x:Key="String.LogProfileEditorDialog.FormatDescription">格式說明</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.Icon">圖示</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.InvalidDataSourceOptions">需要有效的參數</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.IsAdministratorNeeded">需要系統管理員身分</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.IsContinuousReading">連續讀取</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.IsContinuousReading.Description">讀取至資料末端時將自動重新開始讀取日誌</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.IsWorkingDirectoryNeeded">必須選擇工作目錄</sys:String>
@@ -164,6 +166,7 @@
 	<sys:String x:Key="String.LogProfileSelectionDialog.FailedToExportLogProfile">無法匯出日誌類型至 '{0}'。</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.FailedToImportLogProfile">無法從 '{0}' 匯入日誌類型。</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.ImportLogProfile">匯入…</sys:String>
+	<sys:String x:Key="String.LogProfileSelectionDialog.IsAdministratorNeeded">需要系統管理員身分</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.IsContinuousReading">連續讀取</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.IsWorkingDirectoryNeeded">需要工作目錄</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.OtherLogProfiles">其他日誌類型</sys:String>

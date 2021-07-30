@@ -22,6 +22,6 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		// Implementations.
 		protected override ILogDataSource CreateSourceCore(LogDataSourceOptions options) => new WindowsEventLogDataSource(this, options);
 		public override string Name => "WindowsEventLogs";
-		public override UnderlyingLogDataSource UnderlyingSource => UnderlyingLogDataSource.Undefined;
+		public override UnderlyingLogDataSource UnderlyingSource => UnderlyingLogDataSource.WindowsEventLogs;
 	}
 }

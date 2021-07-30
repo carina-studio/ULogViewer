@@ -4,6 +4,7 @@
 		"Category": "Application"
 	},
 	"Icon": "Windows",
+	"IsAdministratorNeeded": true,
 	"LogLevelMapForReading": {
 	},
 	"LogLevelMapForWriting": {

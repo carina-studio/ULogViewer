@@ -75,6 +75,7 @@
 	<sys:String x:Key="String.LogColorIndicator.UserName">User</sys:String>
 
 	<!-- LogDataSourceOptionsDialog -->
+	<sys:String x:Key="String.LogDataSourceOptionsDialog.Category">Log category (required)</sys:String>
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.Command">Command (required)</sys:String>
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.Encoding">Text encoding</sys:String>
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.FileName">File path</sys:String>
@@ -135,6 +136,7 @@
 	<sys:String x:Key="String.LogProfileEditorDialog.FormatDescription">Format description</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.Icon">Icon</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.InvalidDataSourceOptions">Need to set valid options</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.IsAdministratorNeeded">Administrator role needed</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.IsContinuousReading">Continuous reading</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.IsContinuousReading.Description">Restart reading logs automatically when reaching end of data source</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.IsWorkingDirectoryNeeded">Need to select working directory</sys:String>
@@ -171,6 +173,7 @@
 	<sys:String x:Key="String.LogProfileSelectionDialog.FailedToExportLogProfile">Unable to export profile to '{0}'.</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.FailedToImportLogProfile">Unable to import profile from '{0}'.</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.ImportLogProfile">Import…</sys:String>
+	<sys:String x:Key="String.LogProfileSelectionDialog.IsAdministratorNeeded">Administrator role needed</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.IsContinuousReading">Continuous reading</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.IsWorkingDirectoryNeeded">Working directory needed</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.OtherLogProfiles">Other profiles</sys:String>

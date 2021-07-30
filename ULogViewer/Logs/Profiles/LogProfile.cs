@@ -41,6 +41,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		LogDataSourceOptions dataSourceOptions;
 		ILogDataSourceProvider dataSourceProvider = LogDataSourceProviders.Empty;
 		LogProfileIcon icon = LogProfileIcon.File;
+		bool isAdministratorNeeded;
 		bool isContinuousReading;
 		bool isPinned;
 		SettingKey<bool>? isPinnedSettingKey;
@@ -87,6 +88,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			this.dataSourceOptions = template.dataSourceOptions;
 			this.dataSourceProvider = template.dataSourceProvider;
 			this.icon = template.icon;
+			this.isAdministratorNeeded = template.isAdministratorNeeded;
 			this.isPinned = template.isPinned;
 			this.isWorkingDirectoryNeeded = template.isWorkingDirectoryNeeded;
 			this.logLevelMapForReading.AddAll(template.logLevelMapForReading);
@@ -309,6 +311,24 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 
 
 		/// <summary>
+		/// Get or set whether application should run as administrator/superuser or not.
+		/// </summary>
+		public bool IsAdministratorNeeded
+		{
+			get => this.isAdministratorNeeded;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (this.isAdministratorNeeded == value)
+					return;
+				this.isAdministratorNeeded = value;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsAdministratorNeeded)));
+			}
+		}
+
+
+		/// <summary>
 		/// Check whether instance represents a built-in profile or not.
 		/// </summary>
 		public bool IsBuiltIn { get => this.BuiltInId != null; }
@@ -480,6 +500,9 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 					case nameof(Icon):
 						if (Enum.TryParse<LogProfileIcon>(jsonProperty.Value.GetString(), out var profileIcon))
 							this.icon = profileIcon;
+						break;
+					case nameof(IsAdministratorNeeded):
+						this.isAdministratorNeeded = jsonProperty.Value.GetBoolean();
 						break;
 					case nameof(IsContinuousReading):
 						this.isContinuousReading = jsonProperty.Value.GetBoolean();
@@ -765,6 +788,8 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				this.SaveDataSourceToJson(writer);
 				writer.WriteString(nameof(ColorIndicator), this.colorIndicator.ToString());
 				writer.WriteString(nameof(Icon), this.icon.ToString());
+				if (this.isAdministratorNeeded)
+					writer.WriteBoolean(nameof(IsAdministratorNeeded), true);
 				if (this.isContinuousReading)
 					writer.WriteBoolean(nameof(IsContinuousReading), true);
 				if (this.isPinned)

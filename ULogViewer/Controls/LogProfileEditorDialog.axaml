@@ -157,6 +157,13 @@
 				<TextBlock Classes="Dialog_Description" Text="{DynamicResource String.LogProfileEditorDialog.IsContinuousReading.Description}"/>
 				<Separator Classes="Dialog_Separator_Horizontal"/>
 
+				<!-- Is administrator needed -->
+				<StackPanel Name="isAdminNeededPanel" HorizontalAlignment="Stretch" Orientation="Vertical">
+					<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.IsAdministratorNeeded}"/>
+					<ToggleSwitch Name="adminNeededSwitch"/>
+					<Separator Classes="Dialog_Separator_Horizontal"/>
+				</StackPanel>
+
 				<!-- Log level map -->
 				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.LogLevelMapForReading}"/>
 				<ListBox Items="{Binding $parent[Window].LogLevelMapEntriesForReading}" SelectionChanged="OnListBoxSelectionChanged">

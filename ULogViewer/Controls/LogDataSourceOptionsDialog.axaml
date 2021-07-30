@@ -75,11 +75,14 @@
 
 			<!-- Behaviors -->
 			<ia:Interaction.Behaviors>
-				<iaCore:DataTriggerBehavior Binding="{Binding $parent[Window].UnderlyingLogDataSource}" ComparisonCondition="Equal" Value="File">
+				<iaCore:DataTriggerBehavior Binding="{Binding $parent[Window].UnderlyingLogDataSource}" Value="File">
 					<iaCore:ChangePropertyAction PropertyName="IsVisible" TargetObject="{Binding #fileParamsPanel}" Value="True"/>
 				</iaCore:DataTriggerBehavior>
-				<iaCore:DataTriggerBehavior Binding="{Binding $parent[Window].UnderlyingLogDataSource}" ComparisonCondition="Equal" Value="StandardOutput">
+				<iaCore:DataTriggerBehavior Binding="{Binding $parent[Window].UnderlyingLogDataSource}" Value="StandardOutput">
 					<iaCore:ChangePropertyAction PropertyName="IsVisible" TargetObject="{Binding #stdoutParamsPanel}" Value="True"/>
+				</iaCore:DataTriggerBehavior>
+				<iaCore:DataTriggerBehavior Binding="{Binding $parent[Window].UnderlyingLogDataSource}" Value="WindowsEventLogs">
+					<iaCore:ChangePropertyAction PropertyName="IsVisible" TargetObject="{Binding #windowsEventLogsParamsPanel}" Value="True"/>
 				</iaCore:DataTriggerBehavior>
 			</ia:Interaction.Behaviors>
 
@@ -136,6 +139,15 @@
 				</ListBox>
 				<Button Classes="ListAction" Command="{Binding $parent[Window].AddTeardownCommand}" Content="{DynamicResource String.Common.Add}"/>
 				
+			</StackPanel>
+
+			<!-- Windows event logs -->
+			<StackPanel Name="windowsEventLogsParamsPanel" HorizontalAlignment="Stretch" IsVisible="False" Orientation="Vertical">
+
+				<!-- Category -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogDataSourceOptionsDialog.Category}"/>
+				<TextBox Name="categoryTextBox" PropertyChanged="OnEditorControlPropertyChanged"/>
+
 			</StackPanel>
 			
 		</Panel>
