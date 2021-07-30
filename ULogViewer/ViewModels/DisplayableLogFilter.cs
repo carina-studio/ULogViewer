@@ -246,8 +246,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				}
 
 				// check text regex
-				var isTextRegexMatched = (textRegexCount == 0 || textPropertyCount == 0);
-				if (!isTextRegexMatched)
+				var isTextFilteringNeeded = (textRegexCount > 0 && textPropertyCount > 0);
+				var isTextRegexMatched = false;
+				if (isTextFilteringNeeded)
 				{
 					for (var j = 0; j < textPropertyCount; ++j)
 					{
@@ -265,7 +266,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					}
 					textToMatchBuilder.Remove(0, textToMatchBuilder.Length);
 				}
-				if (isTextRegexMatched && combinationMode == FilterCombinationMode.Union)
+				if (isTextRegexMatched && isTextFilteringNeeded && combinationMode == FilterCombinationMode.Union)
 				{
 					filteredLogs.Add(log);
 					continue;
@@ -283,7 +284,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				// filter
 				if (areOtherConditionsMatched)
 				{
-					if (isTextRegexMatched || combinationMode == FilterCombinationMode.Union)
+					if (!isTextFilteringNeeded || isTextRegexMatched || combinationMode == FilterCombinationMode.Union)
 						filteredLogs.Add(log);
 				}
 			}
@@ -565,6 +566,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					textPropertyGetters.Add(DisplayableLog.CreateLogPropertyGetter<string?>(logProperty.Name));
 					isFilteringNeeded = true;
 				}
+				else if (logProperty.Name == nameof(DisplayableLog.ProcessId))
+					filteringParams.HasLogProcessId = true;
+				else if (logProperty.Name == nameof(DisplayableLog.ThreadId))
+					filteringParams.HasLogThreadId = true;
 			}
 			if (isFilteringNeeded)
 			{

@@ -187,10 +187,10 @@
 					<Border Classes="SessionView_ToolBar_Button_Icon">
 						<DrawingPresenter Classes="Icon">
 							<ia:Interaction.Behaviors>
-								<iaCore:DataTriggerBehavior Binding="{Binding LogFiltersCombinationMode}" ComparisonCondition="Equal" Value="Intersection">
+								<iaCore:DataTriggerBehavior Binding="{Binding LogFiltersCombinationMode}" Value="Intersection">
 									<iaCore:ChangePropertyAction PropertyName="Drawing" Value="{StaticResource Drawing.Intersection}"/>
 								</iaCore:DataTriggerBehavior>
-								<iaCore:DataTriggerBehavior Binding="{Binding LogFiltersCombinationMode}" ComparisonCondition="Equal" Value="Union">
+								<iaCore:DataTriggerBehavior Binding="{Binding LogFiltersCombinationMode}" Value="Union">
 									<iaCore:ChangePropertyAction PropertyName="Drawing" Value="{StaticResource Drawing.Union}"/>
 								</iaCore:DataTriggerBehavior>
 							</ia:Interaction.Behaviors>
