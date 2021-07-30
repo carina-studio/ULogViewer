@@ -66,6 +66,7 @@ namespace CarinaStudio.ULogViewer
 		public App()
 		{
 			// setup logger
+			NLog.LogManager.Configuration = new NLog.Config.XmlLoggingConfiguration(Path.Combine(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule?.FileName) ?? "", "NLog.config"));
 			this.logger = this.LoggerFactory.CreateLogger("App");
 			this.logger.LogWarning("App created");
 

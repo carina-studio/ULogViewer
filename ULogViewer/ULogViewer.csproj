@@ -5,6 +5,7 @@
 		<Version>0.9.0.730</Version>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
+    <DebugType>embedded</DebugType>
     <RootNamespace>CarinaStudio.ULogViewer</RootNamespace>
     <Nullable>enable</Nullable>
     <Authors>Carina Studio</Authors>
@@ -55,9 +56,11 @@
   <ItemGroup>
     <None Update="AppIcon_128px.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </None>
     <None Update="NLog.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </None>
   </ItemGroup>
 
