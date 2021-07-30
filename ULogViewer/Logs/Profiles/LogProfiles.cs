@@ -118,33 +118,6 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 
 
 		/// <summary>
-		/// Find specific log profile by unique ID.
-		/// </summary>
-		/// <param name="id">ID of log profile.</param>
-		/// <param name="profile">Found profile.</param>
-		/// <returns>True if log profile found.</returns>
-		public static bool FindProfileById(string id, out LogProfile? profile)
-		{
-			// check state
-			if (app == null)
-				throw new InvalidOperationException();
-			app?.VerifyAccess();
-
-			// find profile
-			foreach (var candidate in profiles)
-			{
-				if (candidate.Id == id)
-				{
-					profile = candidate;
-					return true;
-				}
-			}
-			profile = null;
-			return false;
-		}
-
-
-		/// <summary>
 		/// Generate a valid ID for <see cref="LogProfile"/>.
 		/// </summary>
 		/// <returns>Generated ID.</returns>
@@ -310,6 +283,33 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				throw new InvalidOperationException("Cannot remove built-in profile.");
 			DetachFromProfile(profile);
 			_ = profile.DeleteFileAsync();
+		}
+
+
+		/// <summary>
+		/// Find specific log profile by unique ID.
+		/// </summary>
+		/// <param name="id">ID of log profile.</param>
+		/// <param name="profile">Found profile.</param>
+		/// <returns>True if log profile found.</returns>
+		public static bool TryFindProfileById(string id, out LogProfile? profile)
+		{
+			// check state
+			if (app == null)
+				throw new InvalidOperationException();
+			app?.VerifyAccess();
+
+			// find profile
+			foreach (var candidate in profiles)
+			{
+				if (candidate.Id == id)
+				{
+					profile = candidate;
+					return true;
+				}
+			}
+			profile = null;
+			return false;
 		}
 
 

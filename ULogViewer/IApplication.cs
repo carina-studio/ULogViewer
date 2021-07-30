@@ -22,9 +22,16 @@ namespace CarinaStudio.ULogViewer
 		/// <summary>
 		/// Try restarting application.
 		/// </summary>
+		/// <param name="args">Arguments to restart application.</param>
 		/// <param name="asAdministrator">True to restart as administrator/superuser.</param>
 		/// <returns>True if restarting has been scheduled.</returns>
-		bool Restart(bool asAdministrator = false);
+		bool Restart(string? args = null, bool asAdministrator = false);
+
+
+		/// <summary>
+		/// Application startup parameters.
+		/// </summary>
+		AppStartupParams StartupParams { get; }
 
 
 		/// <summary>

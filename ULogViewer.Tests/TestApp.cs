@@ -72,7 +72,7 @@ namespace CarinaStudio.ULogViewer
 		public bool IsTesting => true;
 		public ILoggerFactory LoggerFactory => new LoggerFactory(new ILoggerProvider[] { new NLogLoggerProvider() });
 		public event PropertyChangedEventHandler? PropertyChanged;
-		public bool Restart(bool asAdministrator) => false;
+		public bool Restart(string? args, bool asAdministrator) => false;
 		public string RootPrivateDirectoryPath => Global.Run(() =>
 		{
 			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
@@ -80,6 +80,7 @@ namespace CarinaStudio.ULogViewer
 			return Path.GetTempPath();
 		}) ?? throw new ArgumentException("Unable to get directory of application.");
 		public BaseSettings Settings => new Settings();
+		public AppStartupParams StartupParams => new AppStartupParams();
 		public event EventHandler? StringsUpdated;
 		public SynchronizationContext SynchronizationContext => syncContext ?? throw new InternalStateCorruptedException();
 		public AppUpdateInfo? UpdateInfo => null;

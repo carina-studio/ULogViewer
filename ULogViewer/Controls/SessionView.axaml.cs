@@ -93,6 +93,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly MutableObservableBoolean canSetLogProfile = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSetWorkingDirectory = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canShowLogMessage = new MutableObservableBoolean();
+		bool isAttachedToLogicalTree;
 		bool isLogFileNeededAfterLogProfileSet;
 		bool isMessageLogPropertyVisible;
 		bool isPidLogPropertyVisible;
@@ -348,20 +349,54 @@ namespace CarinaStudio.ULogViewer.Controls
 			// add event handler
 			session.PropertyChanged += this.OnSessionPropertyChanged;
 
+			// check profile
+			var profile = session.LogProfile;
+			if (profile != null)
+			{
+				this.SetValue<bool>(HasLogProfileProperty, true);
+				switch(profile.DataSourceProvider.UnderlyingSource)
+				{
+					case UnderlyingLogDataSource.File:
+						this.isLogFileNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(Settings.SelectLogFilesWhenNeeded);
+						break;
+					case UnderlyingLogDataSource.StandardOutput:
+						this.isWorkingDirNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(Settings.SelectWorkingDirectoryWhenNeeded);
+						break;
+				}
+				this.OnLogProfileSet(profile);
+			}
+
 			// attach to command
 			session.AddLogFileCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
 			session.MarkUnmarkLogsCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
 			session.ResetLogProfileCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
 			session.SetLogProfileCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
 			session.SetWorkingDirectoryCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
-			this.canAddLogFiles.Update(session.AddLogFileCommand.CanExecute(null));
+			if (session.AddLogFileCommand.CanExecute(null))
+			{
+				this.canAddLogFiles.Update(true);
+				if (this.isLogFileNeededAfterLogProfileSet && this.isAttachedToLogicalTree)
+				{
+					this.isLogFileNeededAfterLogProfileSet = false;
+					this.autoAddLogFilesAction.Reschedule();
+				}
+			}
+			else
+				this.canAddLogFiles.Update(false);
 			this.canMarkUnmarkSelectedLogs.Update(session.MarkUnmarkLogsCommand.CanExecute(null));
 			this.canSetLogProfile.Update(session.ResetLogProfileCommand.CanExecute(null) || session.SetLogProfileCommand.CanExecute(null));
 			this.canSelectMarkedLogs.Update(session.HasMarkedLogs);
-			this.canSetWorkingDirectory.Update(session.SetWorkingDirectoryCommand.CanExecute(null));
-
-			// update properties
-			this.SetValue<bool>(HasLogProfileProperty, session.LogProfile != null);
+			if (session.SetWorkingDirectoryCommand.CanExecute(null))
+			{
+				this.canSetWorkingDirectory.Update(true);
+				if (this.isWorkingDirNeededAfterLogProfileSet && this.isAttachedToLogicalTree)
+				{
+					this.isWorkingDirNeededAfterLogProfileSet = false;
+					this.autoSetWorkingDirectoryAction.Reschedule();
+				}
+			}
+			else
+				this.canSetWorkingDirectory.Update(false);
 
 			// start auto scrolling
 			session.LogProfile?.Let(profile =>
@@ -806,6 +841,9 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when attaching to view tree.
 		protected override void OnAttachedToLogicalTree(LogicalTreeAttachmentEventArgs e)
 		{
+			// update state
+			this.isAttachedToLogicalTree = true;
+
 			// call base
 			base.OnAttachedToLogicalTree(e);
 
@@ -820,6 +858,18 @@ namespace CarinaStudio.ULogViewer.Controls
 			foreach (var filter in ViewModels.PredefinedLogTextFilters.All)
 				this.AttachToPredefinedLogTextFilter(filter);
 			((INotifyCollectionChanged)ViewModels.PredefinedLogTextFilters.All).CollectionChanged += this.OnPredefinedLogTextFiltersChanged;
+
+			// select log files or working directory
+			if (this.isLogFileNeededAfterLogProfileSet)
+			{
+				this.isLogFileNeededAfterLogProfileSet = false;
+				this.autoAddLogFilesAction.Reschedule();
+			}
+			else if (this.isWorkingDirNeededAfterLogProfileSet)
+			{
+				this.isWorkingDirNeededAfterLogProfileSet = false;
+				this.autoSetWorkingDirectoryAction.Reschedule();
+			}
 		}
 
 
@@ -853,6 +903,9 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when detach from view tree.
 		protected override void OnDetachedFromLogicalTree(LogicalTreeAttachmentEventArgs e)
 		{
+			// update state
+			this.isAttachedToLogicalTree = false;
+
 			// remove event handlers
 			this.Application.StringsUpdated -= this.OnApplicationStringsUpdated;
 			this.Settings.SettingChanged -= this.OnSettingChanged;
@@ -1152,6 +1205,14 @@ namespace CarinaStudio.ULogViewer.Controls
 				foreach (var filePath in filePaths)
 					session.AddLogFileCommand.TryExecute(filePath);
 			}
+		}
+
+
+		// Called when log profile set.
+		void OnLogProfileSet(LogProfile profile)
+		{
+			// reset auto scrolling
+			this.IsScrollingToLatestLogNeeded = profile.IsContinuousReading;
 		}
 
 
@@ -1484,7 +1545,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				if (session.AddLogFileCommand.CanExecute(null))
 				{
 					this.canAddLogFiles.Update(true);
-					if (this.isLogFileNeededAfterLogProfileSet)
+					if (this.isLogFileNeededAfterLogProfileSet && this.isAttachedToLogicalTree)
 					{
 						this.isLogFileNeededAfterLogProfileSet = false;
 						this.autoAddLogFilesAction.Reschedule();
@@ -1502,7 +1563,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				if (session.SetWorkingDirectoryCommand.CanExecute(null))
 				{
 					this.canSetWorkingDirectory.Update(true);
-					if (this.isWorkingDirNeededAfterLogProfileSet)
+					if (this.isWorkingDirNeededAfterLogProfileSet && this.isAttachedToLogicalTree)
 					{
 						this.isWorkingDirNeededAfterLogProfileSet = false;
 						this.autoSetWorkingDirectoryAction.Reschedule();
@@ -1695,16 +1756,21 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 
 			// set log profile
-			this.isLogFileNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(Settings.SelectLogFilesWhenNeeded);
-			this.isWorkingDirNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(Settings.SelectWorkingDirectoryWhenNeeded);
+			switch (logProfile.DataSourceProvider.UnderlyingSource)
+			{
+				case UnderlyingLogDataSource.File:
+					this.isLogFileNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(Settings.SelectLogFilesWhenNeeded);
+					break;
+				case UnderlyingLogDataSource.StandardOutput:
+					this.isWorkingDirNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(Settings.SelectWorkingDirectoryWhenNeeded);
+					break;
+			}
 			if (!session.SetLogProfileCommand.TryExecute(logProfile))
 			{
 				this.Logger.LogError("Unable to set log profile to session");
 				return;
 			}
-
-			// reset auto scrolling
-			this.IsScrollingToLatestLogNeeded = logProfile.IsContinuousReading;
+			this.OnLogProfileSet(logProfile);
 		}
 
 

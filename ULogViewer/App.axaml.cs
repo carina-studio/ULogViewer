@@ -49,6 +49,7 @@ namespace CarinaStudio.ULogViewer
 		readonly ILogger logger;
 		MainWindow? mainWindow;
 		PropertyChangedEventHandler? propertyChangedHandlers;
+		string? restartArgs;
 		volatile Settings? settings;
 		readonly string settingsFilePath;
 		ResourceInclude? stringResources;
@@ -265,6 +266,7 @@ namespace CarinaStudio.ULogViewer
 					{
 						process.StartInfo.Let(it =>
 						{
+							it.Arguments = app.restartArgs ?? "";
 							it.FileName = (Process.GetCurrentProcess().MainModule?.FileName).AsNonNull();
 							if (app.isRestartAsAdminRequested && RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 							{
@@ -295,6 +297,10 @@ namespace CarinaStudio.ULogViewer
 			// create scheduled actions
 			this.checkUpdateInfoAction = new ScheduledAction(this.CheckUpdateInfo);
 
+			// parse startup params
+			var desktopLifetime = (IClassicDesktopStyleApplicationLifetime)this.ApplicationLifetime;
+			this.ParseStartupParams(desktopLifetime.Args);
+
 			// load settings
 			this.settings = new Settings();
 			this.logger.LogDebug("Start loading settings");
@@ -310,8 +316,7 @@ namespace CarinaStudio.ULogViewer
 			this.settings.SettingChanged += this.OnSettingChanged;
 
 			// setup shutdown mode
-			if (this.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime)
-				desktopLifetime.ShutdownMode = Avalonia.Controls.ShutdownMode.OnExplicitShutdown;
+			desktopLifetime.ShutdownMode = Avalonia.Controls.ShutdownMode.OnExplicitShutdown;
 
 			// setup culture info
 			this.UpdateCultureInfo();
@@ -325,6 +330,9 @@ namespace CarinaStudio.ULogViewer
 				});
 			}
 			this.UpdateStringResources();
+
+			// update styles
+			this.UpdateStyles();
 
 			// initialize log data source providers
 			LogDataSourceProviders.Initialize(this);
@@ -341,6 +349,16 @@ namespace CarinaStudio.ULogViewer
 
 			// create workspace
 			this.workspace = new Workspace(this);
+			this.StartupParams.LogProfileId?.Let(it =>
+			{
+				if (LogProfiles.TryFindProfileById(it, out var profile))
+				{
+					this.logger.LogWarning($"Initial log profile is '{profile?.Name}'");
+					workspace.CreateSession(profile);
+				}
+				else
+					this.logger.LogError($"Cannot find initial log profile by ID '{it}'");
+			});
 
 			// start checking update
 			this.CheckUpdateInfo();
@@ -424,14 +442,46 @@ namespace CarinaStudio.ULogViewer
 #pragma warning restore CA1416
 
 
+		// Parse startup parameters.
+		void ParseStartupParams(string[] args)
+		{
+			var logProfileId = (string?)null;
+			for (int i = 0, count = args.Length; i < count; ++i)
+			{
+				switch(args[i])
+				{
+					case "-profile":
+						if (i < count - 1)
+							logProfileId = args[++i];
+						else
+							this.logger.LogError("ID of initial log profile is not specified");
+						break;
+					default:
+						this.logger.LogWarning($"Unknown argument: {args[i]}");
+						break;
+				}
+			}
+			this.StartupParams = new AppStartupParams()
+			{
+				LogProfileId = logProfileId
+			};
+		}
+
+
 		// Restart application.
-		public bool Restart(bool asAdministrator)
+		public bool Restart(string? args, bool asAdministrator)
 		{
 			// check state
 			this.VerifyAccess();
 			if (this.isRestartRequested)
 			{
+				if (!string.IsNullOrEmpty(args) && !string.IsNullOrEmpty(this.restartArgs) && args != this.restartArgs)
+				{
+					this.logger.LogError("Try restarting application with different arguments");
+					return false;
+				}
 				this.isRestartAsAdminRequested |= asAdministrator;
+				this.restartArgs = args;
 				if (this.isRestartAsAdminRequested)
 					this.logger.LogWarning("Already restarting as administrator/superuser");
 				else
@@ -442,6 +492,7 @@ namespace CarinaStudio.ULogViewer
 			// update state
 			this.isRestartRequested = true;
 			this.isRestartAsAdminRequested = asAdministrator;
+			this.restartArgs = args;
 			if (asAdministrator)
 				this.logger.LogWarning("Request restarting as administrator/superuser");
 			else
@@ -477,12 +528,6 @@ namespace CarinaStudio.ULogViewer
 				this.logger.LogError("Already shown main window");
 				return;
 			}
-
-			// check application update
-			//
-
-			// update styles
-			this.UpdateStyles();
 
 			// show main window
 			this.mainWindow = new MainWindow().Also((it) =>
@@ -699,6 +744,7 @@ namespace CarinaStudio.ULogViewer
 		}
 		public string RootPrivateDirectoryPath => Path.GetDirectoryName(Process.GetCurrentProcess().MainModule?.FileName) ?? throw new ArgumentException("Unable to get directory of application.");
 		BaseSettings CarinaStudio.IApplication.Settings { get => this.Settings; }
+		public AppStartupParams StartupParams { get; private set; }
 		public event EventHandler? StringsUpdated;
 		public SynchronizationContext SynchronizationContext { get => this.synchronizationContext ?? throw new InvalidOperationException("Application is not ready."); }
 		public AppUpdateInfo? UpdateInfo { get => this.updateInfo; }
