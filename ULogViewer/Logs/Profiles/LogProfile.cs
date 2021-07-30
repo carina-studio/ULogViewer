@@ -41,6 +41,8 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		LogDataSourceOptions dataSourceOptions;
 		ILogDataSourceProvider dataSourceProvider = LogDataSourceProviders.Empty;
 		LogProfileIcon icon = LogProfileIcon.File;
+		string id;
+		bool isAdministratorNeeded;
 		bool isContinuousReading;
 		bool isPinned;
 		SettingKey<bool>? isPinnedSettingKey;
@@ -71,6 +73,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		{
 			app.VerifyAccess();
 			this.Application = app;
+			this.id = LogProfiles.GenerateId();
 			this.logger = app.LoggerFactory.CreateLogger(this.GetType().Name);
 			this.readOnlyLogLevelMapForReading = new ReadOnlyDictionary<string, LogLevel>(this.logLevelMapForReading);
 			this.readOnlyLogLevelMapForWriting = new ReadOnlyDictionary<LogLevel, string>(this.logLevelMapForWriting);
@@ -87,6 +90,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			this.dataSourceOptions = template.dataSourceOptions;
 			this.dataSourceProvider = template.dataSourceProvider;
 			this.icon = template.icon;
+			this.isAdministratorNeeded = template.isAdministratorNeeded;
 			this.isPinned = template.isPinned;
 			this.isWorkingDirectoryNeeded = template.isWorkingDirectoryNeeded;
 			this.logLevelMapForReading.AddAll(template.logLevelMapForReading);
@@ -109,6 +113,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		LogProfile(IApplication app, string builtInId) : this(app)
 		{
 			this.BuiltInId = builtInId;
+			this.id = builtInId;
 			this.isPinnedSettingKey = new SettingKey<bool>($"BuiltInProfile.{builtInId}.IsPinned");
 			this.UpdateBuiltInName();
 		}
@@ -122,6 +127,18 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 
 		// ID of built-in profile.
 		string? BuiltInId { get; }
+
+
+		/// <summary>
+		/// Change ID of profile.
+		/// </summary>
+		internal void ChangeId()
+		{
+			this.VerifyAccess();
+			this.VerifyBuiltIn();
+			this.id = LogProfiles.GenerateId();
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Id)));
+		}
 
 
 		/// <summary>
@@ -309,6 +326,30 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 
 
 		/// <summary>
+		/// Get unique ID of profile.
+		/// </summary>
+		public string Id { get => this.id; }
+
+
+		/// <summary>
+		/// Get or set whether application should run as administrator/superuser or not.
+		/// </summary>
+		public bool IsAdministratorNeeded
+		{
+			get => this.isAdministratorNeeded;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (this.isAdministratorNeeded == value)
+					return;
+				this.isAdministratorNeeded = value;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsAdministratorNeeded)));
+			}
+		}
+
+
+		/// <summary>
 		/// Check whether instance represents a built-in profile or not.
 		/// </summary>
 		public bool IsBuiltIn { get => this.BuiltInId != null; }
@@ -421,6 +462,9 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			{
 				switch (jsonProperty.Name)
 				{
+					case nameof(LogDataSourceOptions.Category):
+						options.Category = jsonProperty.Value.GetString();
+						break;
 					case nameof(LogDataSourceOptions.Command):
 						options.Command = jsonProperty.Value.GetString();
 						break;
@@ -477,6 +521,13 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 					case nameof(Icon):
 						if (Enum.TryParse<LogProfileIcon>(jsonProperty.Value.GetString(), out var profileIcon))
 							this.icon = profileIcon;
+						break;
+					case nameof(Id):
+						if (!this.IsBuiltIn)
+							this.id = jsonProperty.Value.GetString().AsNonNull();
+						break;
+					case nameof(IsAdministratorNeeded):
+						this.isAdministratorNeeded = jsonProperty.Value.GetBoolean();
 						break;
 					case nameof(IsContinuousReading):
 						this.isContinuousReading = jsonProperty.Value.GetBoolean();
@@ -762,6 +813,10 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				this.SaveDataSourceToJson(writer);
 				writer.WriteString(nameof(ColorIndicator), this.colorIndicator.ToString());
 				writer.WriteString(nameof(Icon), this.icon.ToString());
+				if (!this.IsBuiltIn)
+					writer.WriteString(nameof(Id), this.id);
+				if (this.isAdministratorNeeded)
+					writer.WriteBoolean(nameof(IsAdministratorNeeded), true);
 				if (this.isContinuousReading)
 					writer.WriteBoolean(nameof(IsContinuousReading), true);
 				if (this.isPinned)
@@ -828,6 +883,9 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 						}
 					});
 					options.WorkingDirectory?.Let(it => writer.WriteString(nameof(LogDataSourceOptions.WorkingDirectory), it));
+					break;
+				case UnderlyingLogDataSource.WindowsEventLogs:
+					options.Category?.Let(it => writer.WriteString(nameof(LogDataSourceOptions.Category), it.ToString()));
 					break;
 			}
 			writer.WriteEndObject();

@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Text;
 
 namespace CarinaStudio.ULogViewer.ViewModels
 {
@@ -48,11 +48,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			{
 				if (this.IsDisposed)
 					return;
+				var titleBuilder = new StringBuilder("ULogViewer");
 				var session = this.ActiveSession;
-				if (session == null)
-					this.SetValue(TitleProperty, "ULogViewer");
-				else
-					this.SetValue(TitleProperty, $"ULogViewer - {session.Title}");
+				if (app.IsRunningAsAdministrator)
+					titleBuilder.Append($"({app.GetString("Common.Administrator")})");
+				if (session != null)
+					titleBuilder.Append($" - {session.Title}");
+				this.SetValue(TitleProperty, titleBuilder.ToString());
 			});
 			this.updateTitleAction.Execute();
 		}

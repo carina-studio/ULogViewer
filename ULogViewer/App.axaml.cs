@@ -19,10 +19,14 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Net;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Security.Principal;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer
 {
@@ -32,13 +36,20 @@ namespace CarinaStudio.ULogViewer
 	class App : Application, IApplication
 	{
 		// Constants.
+		const string PackageInfoUri = "https://raw.githubusercontent.com/carina-studio/ULogViewer/master/PackageInfo.json";
 		const string TextBoxFontFamilyResourceKey = "FontFamily.TextBox";
+		const int UpdateCheckingInterval = 3600000; // 1 hr
 
 
 		// Fields.
+		ScheduledAction? checkUpdateInfoAction;
+		bool isCheckingUpdateInfo;
+		bool isRestartRequested;
+		bool isRestartAsAdminRequested;
 		readonly ILogger logger;
 		MainWindow? mainWindow;
 		PropertyChangedEventHandler? propertyChangedHandlers;
+		string? restartArgs;
 		volatile Settings? settings;
 		readonly string settingsFilePath;
 		ResourceInclude? stringResources;
@@ -47,6 +58,7 @@ namespace CarinaStudio.ULogViewer
 		StyleInclude? styles;
 		ThemeMode? stylesThemeMode;
 		volatile SynchronizationContext? synchronizationContext;
+		AppUpdateInfo? updateInfo;
 		Workspace? workspace;
 
 
@@ -69,6 +81,16 @@ namespace CarinaStudio.ULogViewer
 
 			// prepare file path of settings
 			this.settingsFilePath = Path.Combine(this.RootPrivateDirectoryPath, "Settings.json");
+
+			// check whether process is running as admin or not
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+			{
+				using var identity = WindowsIdentity.GetCurrent();
+				var principal = new WindowsPrincipal(identity);
+				this.IsRunningAsAdministrator = principal.IsInRole(WindowsBuiltInRole.Administrator);
+			}
+			if (this.IsRunningAsAdministrator)
+				this.logger.LogWarning("Application is running as administrator/superuser");
 		}
 
 
@@ -77,6 +99,108 @@ namespace CarinaStudio.ULogViewer
 			.UsePlatformDetect()
 			.UseReactiveUI()
 			.LogToTrace();
+
+
+		// Check application update.
+		async void CheckUpdateInfo()
+		{
+			// check state
+			if (this.isCheckingUpdateInfo)
+				return;
+
+			// schedule next check
+			this.checkUpdateInfoAction?.Reschedule(UpdateCheckingInterval);
+
+			// check update
+			this.logger.LogInformation("Start checking update");
+			try
+			{
+				var request = WebRequest.Create(PackageInfoUri);
+				var updateInfo = await Task.Run(() =>
+				{
+					// get response
+					var response = request.GetResponse();
+
+					// get runtime information
+					var targetPlatform = Environment.Is64BitProcess ? "x64" : "x86";
+					var targetOS = Global.Run(() =>
+					{
+						if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+							return "Windows";
+						if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+							return "Linux";
+						if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+							return "OSX";
+						return "";
+					});
+
+					// parse JSON document
+					using var stream = response.GetResponseStream();
+					using var jsonDocument = JsonDocument.Parse(stream);
+					var rootElement = jsonDocument.RootElement;
+
+					// check version
+					var version = new Version(rootElement.GetProperty("Version").GetString().AsNonNull());
+					if (version <= this.Assembly.GetName().Version)
+					{
+						this.logger.LogInformation("This is the latest application");
+						return null;
+					}
+
+					// get release date and page
+					var releaseDate = DateTime.Parse(rootElement.GetProperty("ReleaseDate").GetString().AsNonNull());
+					var releasePageUri = new Uri(rootElement.GetProperty("ReleasePageUrl").GetString().AsNonNull());
+
+					// find proper package URI
+					var packageUri = rootElement.GetProperty("Packages").Let((packageArray) =>
+					{
+						foreach (var packageInfo in packageArray.EnumerateArray())
+						{
+							if (packageInfo.GetProperty("OS").GetString() != targetOS)
+								continue;
+							if (packageInfo.GetProperty("Platform").GetString() != targetPlatform)
+								continue;
+							return packageInfo.GetProperty("Url").GetString().Let(it =>
+							{
+								if (string.IsNullOrEmpty(it))
+									return null;
+								return new Uri(it);
+							});
+						}
+						this.logger.LogWarning($"Cannot find proper package for {targetOS} {targetPlatform}");
+						return null;
+					});
+
+					// complete
+					return new AppUpdateInfo(version, releaseDate, releasePageUri, packageUri);
+				});
+
+				// check with current update info
+				if (this.updateInfo == updateInfo)
+					return;
+
+				// report
+				if (updateInfo != null)
+				{
+					this.logger.LogDebug($"New application version found: {updateInfo.Version}");
+					this.updateInfo = updateInfo;
+				}
+				else
+				{
+					this.logger.LogWarning("No valid application update info");
+					this.updateInfo = null;
+				}
+				this.propertyChangedHandlers?.Invoke(this, new PropertyChangedEventArgs(nameof(UpdateInfo)));
+			}
+			catch (Exception ex)
+			{
+				this.logger.LogError(ex, "Unable to check application update info");
+			}
+			finally
+			{
+				this.isCheckingUpdateInfo = false;
+			}
+		}
 
 
 		/// <summary>
@@ -97,6 +221,9 @@ namespace CarinaStudio.ULogViewer
 			// detach from system events
 			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 				SystemEvents.UserPreferenceChanged -= this.OnWindowsUserPreferenceChanged;
+
+			// cancel update checking
+			this.checkUpdateInfoAction?.Cancel();
 
 			this.logger.LogWarning("Stop");
 		}
@@ -123,7 +250,38 @@ namespace CarinaStudio.ULogViewer
 			BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
 
 			// deinitialize application
-			App.Current?.Deinitialize();
+			var app = App.Current;
+			app?.Deinitialize();
+
+			// restart
+			if (app != null && app.isRestartRequested)
+			{
+				try
+				{
+					if (app.isRestartAsAdminRequested)
+						app.logger.LogWarning("Restart as administrator/superuser");
+					else
+						app.logger.LogWarning("Restart");
+					var process = new Process().Also(process =>
+					{
+						process.StartInfo.Let(it =>
+						{
+							it.Arguments = app.restartArgs ?? "";
+							it.FileName = (Process.GetCurrentProcess().MainModule?.FileName).AsNonNull();
+							if (app.isRestartAsAdminRequested && RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+							{
+								it.UseShellExecute = true;
+								it.Verb = "runas";
+							}
+						});
+					});
+					process.Start();
+				}
+				catch (Exception ex)
+				{
+					app.logger.LogError(ex, "Unable to restart");
+				}
+			}
 		}
 
 
@@ -135,6 +293,13 @@ namespace CarinaStudio.ULogViewer
 
 			// setup synchronization
 			this.synchronizationContext = SynchronizationContext.Current ?? throw new ArgumentException("No SynchronizationContext when Avalonia initialized.");
+
+			// create scheduled actions
+			this.checkUpdateInfoAction = new ScheduledAction(this.CheckUpdateInfo);
+
+			// parse startup params
+			var desktopLifetime = (IClassicDesktopStyleApplicationLifetime)this.ApplicationLifetime;
+			this.ParseStartupParams(desktopLifetime.Args);
 
 			// load settings
 			this.settings = new Settings();
@@ -151,8 +316,7 @@ namespace CarinaStudio.ULogViewer
 			this.settings.SettingChanged += this.OnSettingChanged;
 
 			// setup shutdown mode
-			if (this.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime)
-				desktopLifetime.ShutdownMode = Avalonia.Controls.ShutdownMode.OnExplicitShutdown;
+			desktopLifetime.ShutdownMode = Avalonia.Controls.ShutdownMode.OnExplicitShutdown;
 
 			// setup culture info
 			this.UpdateCultureInfo();
@@ -166,6 +330,9 @@ namespace CarinaStudio.ULogViewer
 				});
 			}
 			this.UpdateStringResources();
+
+			// update styles
+			this.UpdateStyles();
 
 			// initialize log data source providers
 			LogDataSourceProviders.Initialize(this);
@@ -182,6 +349,19 @@ namespace CarinaStudio.ULogViewer
 
 			// create workspace
 			this.workspace = new Workspace(this);
+			this.StartupParams.LogProfileId?.Let(it =>
+			{
+				if (LogProfiles.TryFindProfileById(it, out var profile))
+				{
+					this.logger.LogWarning($"Initial log profile is '{profile?.Name}'");
+					workspace.CreateSession(profile);
+				}
+				else
+					this.logger.LogError($"Cannot find initial log profile by ID '{it}'");
+			});
+
+			// start checking update
+			this.CheckUpdateInfo();
 
 			// show main window
 			this.synchronizationContext.Post(this.ShowMainWindow);
@@ -217,9 +397,6 @@ namespace CarinaStudio.ULogViewer
 
 			// wait for IO completion of log profiles
 			await LogProfiles.WaitForIOCompletionAsync();
-
-			// restart main window
-			//
 
 			// wait for necessary tasks
 			if (this.workspace != null)
@@ -265,6 +442,77 @@ namespace CarinaStudio.ULogViewer
 #pragma warning restore CA1416
 
 
+		// Parse startup parameters.
+		void ParseStartupParams(string[] args)
+		{
+			var logProfileId = (string?)null;
+			for (int i = 0, count = args.Length; i < count; ++i)
+			{
+				switch(args[i])
+				{
+					case "-profile":
+						if (i < count - 1)
+							logProfileId = args[++i];
+						else
+							this.logger.LogError("ID of initial log profile is not specified");
+						break;
+					default:
+						this.logger.LogWarning($"Unknown argument: {args[i]}");
+						break;
+				}
+			}
+			this.StartupParams = new AppStartupParams()
+			{
+				LogProfileId = logProfileId
+			};
+		}
+
+
+		// Restart application.
+		public bool Restart(string? args, bool asAdministrator)
+		{
+			// check state
+			this.VerifyAccess();
+			if (this.isRestartRequested)
+			{
+				if (!string.IsNullOrEmpty(args) && !string.IsNullOrEmpty(this.restartArgs) && args != this.restartArgs)
+				{
+					this.logger.LogError("Try restarting application with different arguments");
+					return false;
+				}
+				this.isRestartAsAdminRequested |= asAdministrator;
+				this.restartArgs = args;
+				if (this.isRestartAsAdminRequested)
+					this.logger.LogWarning("Already restarting as administrator/superuser");
+				else
+					this.logger.LogWarning("Already restarting");
+				return true;
+			}
+
+			// update state
+			this.isRestartRequested = true;
+			this.isRestartAsAdminRequested = asAdministrator;
+			this.restartArgs = args;
+			if (asAdministrator)
+				this.logger.LogWarning("Request restarting as administrator/superuser");
+			else
+				this.logger.LogWarning("Request restarting");
+
+			// close main window or shutdown
+			if (this.mainWindow != null)
+			{
+				this.logger.LogWarning("Schedule closing main window to restart");
+				this.SynchronizationContext.Post(() => this.mainWindow?.Close());
+			}
+			else
+			{
+				this.logger.LogWarning("Schedule shutdown to restart");
+				this.SynchronizationContext.Post(() => (this.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.Shutdown());
+			}
+			return true;
+		}
+
+
 		/// <summary>
 		/// Get application settings.
 		/// </summary>
@@ -280,12 +528,6 @@ namespace CarinaStudio.ULogViewer
 				this.logger.LogError("Already shown main window");
 				return;
 			}
-
-			// check application update
-			//
-
-			// update styles
-			this.UpdateStyles();
 
 			// show main window
 			this.mainWindow = new MainWindow().Also((it) =>
@@ -491,6 +733,7 @@ namespace CarinaStudio.ULogViewer
 		// Interface implementations.
 		public Assembly Assembly { get; } = Assembly.GetExecutingAssembly();
 		public CultureInfo CultureInfo { get; private set; } = CultureInfo.CurrentCulture;
+		public bool IsRunningAsAdministrator { get; private set; }
 		public bool IsShutdownStarted { get; private set; }
 		public bool IsTesting => false;
 		public ILoggerFactory LoggerFactory => new LoggerFactory(new ILoggerProvider[] { new NLogLoggerProvider() });
@@ -501,7 +744,9 @@ namespace CarinaStudio.ULogViewer
 		}
 		public string RootPrivateDirectoryPath => Path.GetDirectoryName(Process.GetCurrentProcess().MainModule?.FileName) ?? throw new ArgumentException("Unable to get directory of application.");
 		BaseSettings CarinaStudio.IApplication.Settings { get => this.Settings; }
+		public AppStartupParams StartupParams { get; private set; }
 		public event EventHandler? StringsUpdated;
 		public SynchronizationContext SynchronizationContext { get => this.synchronizationContext ?? throw new InvalidOperationException("Application is not ready."); }
+		public AppUpdateInfo? UpdateInfo { get => this.updateInfo; }
 	}
 }

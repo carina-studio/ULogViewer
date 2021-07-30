@@ -15,6 +15,10 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		{ }
 
 
+		// Update display name.
+		protected override string OnUpdateDisplayName() => "Dummy";
+
+
 		// Implementations.
 		public override string Name => "Dummy";
 		public override UnderlyingLogDataSource UnderlyingSource => UnderlyingLogDataSource.Undefined;

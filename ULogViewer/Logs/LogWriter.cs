@@ -1,6 +1,7 @@
 ﻿using CarinaStudio.Collections;
 using CarinaStudio.IO;
 using CarinaStudio.Threading;
+using CarinaStudio.ULogViewer.Converters;
 using CarinaStudio.ULogViewer.Logs.DataOutputs;
 using Microsoft.Extensions.Logging;
 using System;
@@ -256,6 +257,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			var formatBuilder = new StringBuilder();
 			var logPropertyGetters = new List<Func<Log, object?>>();
 			var argIndex = 0;
+			var cultureInfo = this.Application.CultureInfo;
 			var match = logPropertyNameRegex.Match(this.logFormat);
 			while (match.Success)
 			{
@@ -272,7 +274,7 @@ namespace CarinaStudio.ULogViewer.Logs
 						{
 							if (this.logLevelMap.TryGetValue(log.Level, out var str))
 								return str;
-							return log.Level.ToString();
+							return Converters.EnumConverter.LogLevel.Convert(log.Level, typeof(string), null, cultureInfo);
 						},
 						nameof(Log.Timestamp) => log =>
 						{

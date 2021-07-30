@@ -187,10 +187,10 @@
 					<Border Classes="SessionView_ToolBar_Button_Icon">
 						<DrawingPresenter Classes="Icon">
 							<ia:Interaction.Behaviors>
-								<iaCore:DataTriggerBehavior Binding="{Binding LogFiltersCombinationMode}" ComparisonCondition="Equal" Value="Intersection">
+								<iaCore:DataTriggerBehavior Binding="{Binding LogFiltersCombinationMode}" Value="Intersection">
 									<iaCore:ChangePropertyAction PropertyName="Drawing" Value="{StaticResource Drawing.Intersection}"/>
 								</iaCore:DataTriggerBehavior>
-								<iaCore:DataTriggerBehavior Binding="{Binding LogFiltersCombinationMode}" ComparisonCondition="Equal" Value="Union">
+								<iaCore:DataTriggerBehavior Binding="{Binding LogFiltersCombinationMode}" Value="Union">
 									<iaCore:ChangePropertyAction PropertyName="Drawing" Value="{StaticResource Drawing.Union}"/>
 								</iaCore:DataTriggerBehavior>
 							</ia:Interaction.Behaviors>
@@ -341,22 +341,25 @@
 		</Grid>
 
 		<!-- Status bar -->
-		<Border Background="{StaticResource Brush.SessionView.StatusBar.Background}" Grid.ColumnSpan="3" Grid.Row="3" Padding="{StaticResource Thickness.SessionView.StatucBar.Padding}">
+		<Border Background="{StaticResource Brush.SessionView.StatusBar.Background}" Grid.ColumnSpan="3" Grid.Row="3" Padding="{StaticResource Thickness.SessionView.StatusBar.Padding}">
 			<ia:Interaction.Behaviors>
-				<iaCore:DataTriggerBehavior Binding="{Binding $parent[UserControl].StatusBarState}" ComparisonCondition="Equal" Value="None">
+				<iaCore:DataTriggerBehavior Binding="{Binding $parent[UserControl].StatusBarState}" Value="None">
 					<iaCore:ChangePropertyAction PropertyName="Background" Value="{StaticResource Brush.SessionView.StatusBar.Background}"/>
 				</iaCore:DataTriggerBehavior>
-				<iaCore:DataTriggerBehavior Binding="{Binding $parent[UserControl].StatusBarState}" ComparisonCondition="Equal" Value="Active">
+				<iaCore:DataTriggerBehavior Binding="{Binding $parent[UserControl].StatusBarState}" Value="Active">
 					<iaCore:ChangePropertyAction PropertyName="Background" Value="{StaticResource Brush.SessionView.StatusBar.Background.Active}"/>
 				</iaCore:DataTriggerBehavior>
-				<iaCore:DataTriggerBehavior Binding="{Binding $parent[UserControl].StatusBarState}" ComparisonCondition="Equal" Value="Error">
+				<iaCore:DataTriggerBehavior Binding="{Binding $parent[UserControl].StatusBarState}" Value="Error">
 					<iaCore:ChangePropertyAction PropertyName="Background" Value="{StaticResource Brush.SessionView.StatusBar.Background.Error}"/>
 				</iaCore:DataTriggerBehavior>
-				<iaCore:DataTriggerBehavior Binding="{Binding $parent[UserControl].StatusBarState}" ComparisonCondition="Equal" Value="Paused">
+				<iaCore:DataTriggerBehavior Binding="{Binding $parent[UserControl].StatusBarState}" Value="Paused">
 					<iaCore:ChangePropertyAction PropertyName="Background" Value="{StaticResource Brush.SessionView.StatusBar.Background.Paused}"/>
 				</iaCore:DataTriggerBehavior>
+				<iaCore:DataTriggerBehavior Binding="{Binding $parent[UserControl].StatusBarState}" Value="Warning">
+					<iaCore:ChangePropertyAction PropertyName="Background" Value="{StaticResource Brush.SessionView.StatusBar.Background.Warning}"/>
+				</iaCore:DataTriggerBehavior>
 			</ia:Interaction.Behaviors>
-			<Grid ColumnDefinitions="Auto,Auto,*">
+			<Grid ColumnDefinitions="Auto,Auto,Auto,*,Auto">
 
 				<!-- Styles -->
 				<Grid.Styles>
@@ -402,6 +405,20 @@
 					<TextBlock Text="{DynamicResource String.SessionView.SelectedLogCount}" VerticalAlignment="Center"/>
 					<TextBlock Text="{Binding #logListBox.SelectedItems.Count}" VerticalAlignment="Center"/>
 					<Separator Classes="SessionView_StatusBar_Separator"/>
+				</StackPanel>
+
+				<!-- Error message -->
+				<StackPanel Grid.Column="4" IsVisible="{Binding HasAllDataSourceErrors}" Orientation="Horizontal">
+					<Border Classes="SessionView_StatusBar_Icon">
+						<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Error}"/>
+					</Border>
+					<TextBlock Text="{DynamicResource String.SessionView.HasAllDataSourceErrors}" VerticalAlignment="Center"/>
+				</StackPanel>
+				<StackPanel Grid.Column="4" IsVisible="{Binding HasPartialDataSourceErrors}" Orientation="Horizontal">
+					<Border Classes="SessionView_StatusBar_Icon">
+						<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Warning}"/>
+					</Border>
+					<TextBlock Text="{DynamicResource String.SessionView.HasPartialDataSourceErrors}" VerticalAlignment="Center"/>
 				</StackPanel>
 				
 			</Grid>

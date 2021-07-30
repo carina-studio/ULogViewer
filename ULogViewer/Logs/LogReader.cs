@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -23,6 +24,7 @@ namespace CarinaStudio.ULogViewer.Logs
 	class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 	{
 		// Constants.
+		const int LogsReadingChunkInterval = 5000;
 		const int LogsReadingChunkSize = 65536;
 
 
@@ -603,12 +605,14 @@ namespace CarinaStudio.ULogViewer.Logs
 			var dataSourceOptions = this.DataSource.CreationOptions;
 			var stringPool = new StringPool();
 			var exception = (Exception?)null;
+			var stopWatch = new Stopwatch().Also(it => it.Start());
 			try
 			{
 				var prevLogPattern = (LogPattern?)null;
 				var logPatternIndex = 0;
 				var lastLogPatternIndex = (logPatterns.Count - 1);
 				var lineNumber = 1;
+				var startReadingTime = stopWatch.ElapsedMilliseconds;
 				var logLine = reader.ReadLine();
 				while (logLine != null && !cancellationToken.IsCancellationRequested)
 				{
@@ -745,10 +749,11 @@ namespace CarinaStudio.ULogViewer.Logs
 								});
 							}
 						}
-						else if (readLogs.Count >= LogsReadingChunkSize)
+						else if (readLogs.Count >= LogsReadingChunkSize || (stopWatch.ElapsedMilliseconds - startReadingTime) >= LogsReadingChunkInterval)
 						{
 							var logArray = readLogs.ToArray();
 							readLogs.Clear();
+							startReadingTime = stopWatch.ElapsedMilliseconds;
 							syncContext.PostDelayed(() => this.OnLogsRead(readingToken, logArray), 100);
 						}
 						prevLogPattern = logPattern;

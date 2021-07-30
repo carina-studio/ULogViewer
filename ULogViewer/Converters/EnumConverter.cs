@@ -37,7 +37,7 @@ namespace CarinaStudio.ULogViewer.Converters
 
 
 		// Convert.
-		public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
+		public object? Convert(object value, Type targetType, object? parameter, CultureInfo culture)
 		{
 			if (this.type.IsAssignableFrom(value.GetType()))
 				return app.GetString($"{this.typeName}.{value}", value.ToString());

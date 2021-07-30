@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.Logs.Profiles
@@ -21,7 +22,8 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 
 		// Fields.
 		static volatile IApplication? app;
-		static readonly string[] builtInProfileIDs = new string[] {
+		static readonly IList<string> builtInProfileIDs = new List<string>()
+		{
 			"AndroidDeviceLog",
 			"AndroidFileLog",
 #if DEBUG
@@ -35,8 +37,10 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		static volatile ILogger? logger;
 		static readonly HashSet<LogProfile> pendingSavingProfiles = new HashSet<LogProfile>();
 		static readonly ObservableList<LogProfile> pinnedProfiles = new ObservableList<LogProfile>();
+		static readonly HashSet<string> profileIdSet = new HashSet<string>();
 		static readonly ObservableList<LogProfile> profiles = new ObservableList<LogProfile>();
 		static string profilesDirectoryPath = "";
+		static readonly Random random = new Random();
 		static ScheduledAction? saveProfilesAction;
 
 
@@ -45,6 +49,10 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		{
 			All = profiles.AsReadOnly();
 			Pinned = pinnedProfiles.AsReadOnly();
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+			{
+				builtInProfileIDs.Add("WindowsApplicationEventLogs");
+			}
 		}
 
 
@@ -78,6 +86,14 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			// add handler
 			profile.PropertyChanged += OnProfilePropertyChanged;
 
+			// check ID
+			if (!profileIdSet.Add(profile.Id))
+			{
+				profile.ChangeId();
+				pendingSavingProfiles.Add(profile);
+				saveProfilesAction?.Schedule();
+			}
+
 			// add to lists
 			profiles.Add(profile);
 			if (profile.IsPinned)
@@ -92,8 +108,36 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			profile.PropertyChanged -= OnProfilePropertyChanged;
 
 			// remove from lists
+			if (!profiles.Remove(profile))
+				return;
 			pinnedProfiles.Remove(profile);
-			profiles.Remove(profile);
+
+			// remove ID
+			profileIdSet.Remove(profile.Id);
+		}
+
+
+		/// <summary>
+		/// Generate a valid ID for <see cref="LogProfile"/>.
+		/// </summary>
+		/// <returns>Generated ID.</returns>
+		internal static string GenerateId()
+		{
+			var id = new char[16];
+			while (true)
+			{
+				for (var i = id.Length - 1; i >= 0; --i)
+				{
+					var n = random.Next(36);
+					if (n < 10)
+						id[i] = (char)('0' + n);
+					else
+						id[i] = (char)('a' + (n - 10));
+				}
+				var candidate = new string(id);
+				if (!profileIdSet.Contains(candidate))
+					return candidate;
+			}
 		}
 
 
@@ -239,6 +283,33 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				throw new InvalidOperationException("Cannot remove built-in profile.");
 			DetachFromProfile(profile);
 			_ = profile.DeleteFileAsync();
+		}
+
+
+		/// <summary>
+		/// Find specific log profile by unique ID.
+		/// </summary>
+		/// <param name="id">ID of log profile.</param>
+		/// <param name="profile">Found profile.</param>
+		/// <returns>True if log profile found.</returns>
+		public static bool TryFindProfileById(string id, out LogProfile? profile)
+		{
+			// check state
+			if (app == null)
+				throw new InvalidOperationException();
+			app?.VerifyAccess();
+
+			// find profile
+			foreach (var candidate in profiles)
+			{
+				if (candidate.Id == id)
+				{
+					profile = candidate;
+					return true;
+				}
+			}
+			profile = null;
+			return false;
 		}
 
 

@@ -5,7 +5,13 @@ VisualStudioVersion = 16.0.31229.75
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ULogViewer", "ULogViewer\ULogViewer.csproj", "{86027AF0-5E0F-470C-A8E0-742FCED672BC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ULogViewer.Tests", "ULogViewer.Tests\ULogViewer.Tests.csproj", "{EA17FC0A-4838-49BB-A5B7-8D8CD957709C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ULogViewer.Tests", "ULogViewer.Tests\ULogViewer.Tests.csproj", "{EA17FC0A-4838-49BB-A5B7-8D8CD957709C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4517EE08-A2A6-470D-B746-14EB9548BBDB}"
+	ProjectSection(SolutionItems) = preProject
+		PackageInfo.json = PackageInfo.json
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

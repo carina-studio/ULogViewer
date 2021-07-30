@@ -56,7 +56,8 @@
 			<SolidColorBrush x:Key="Brush.SessionView.StatusBar.Background">#000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.SessionView.StatusBar.Background.Active">#007acc</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.SessionView.StatusBar.Background.Error">#ff3232</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.SessionView.StatusBar.Background.Paused">#ca5100</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.SessionView.StatusBar.Background.Paused">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.SessionView.StatusBar.Background.Warning">#ca5100</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.SessionView.StatusBar.Foreground">#ffffff</SolidColorBrush>
 
 			<!-- TextBlock -->
@@ -223,6 +224,12 @@
 	</Style>
 
 	<!-- SessionView -->
+	<Style Selector="Border.SessionView_StatusBar_Icon">
+		<Setter Property="Height" Value="{StaticResource Double.SessionView.StatusBar.Icon.Size}"/>
+		<Setter Property="Margin" Value="{StaticResource Thickness.SessionView.StatusBar.Icon.Margin}"/>
+		<Setter Property="VerticalAlignment" Value="Center"/>
+		<Setter Property="Width" Value="{StaticResource Double.SessionView.StatusBar.Icon.Size}"/>
+	</Style>
 	<Style Selector="Border.SessionView_ToolBar_Button_Icon">
 		<Setter Property="Height" Value="{StaticResource Double.SessionView.ToolBar.Button.Icon.Size}"/>
 		<Setter Property="Width" Value="{StaticResource Double.SessionView.ToolBar.Button.Icon.Size}"/>

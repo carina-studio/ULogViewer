@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <AssemblyVersion>0.1.0</AssemblyVersion>
-		<Version>0.1.0</Version>
+    <AssemblyVersion>0.9.0.730</AssemblyVersion>
+		<Version>0.9.0.730</Version>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
     <RootNamespace>CarinaStudio.ULogViewer</RootNamespace>
@@ -18,6 +18,10 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DefineConstants>DEBUG;TRACE</DefineConstants>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Logs\Profiles\BuiltIn\WindowsApplicationEventLogs.json" />
+  </ItemGroup>
 
   <ItemGroup>
     <AvaloniaResource Include="AppIcon.ico" />
@@ -44,6 +48,8 @@
     <PackageReference Include="NLog" Version="4.7.10" />
     <PackageReference Include="NLog.Extensions.Logging" Version="1.7.3" />
     <PackageReference Include="ReactiveUI" Version="14.1.1" />
+    <PackageReference Include="System.Diagnostics.EventLog" Version="5.0.1" />
+    <PackageReference Include="System.Security.Principal.Windows" Version="5.0.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -67,6 +73,7 @@
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/DummyLog.json" />
 	  <EmbeddedResource Include="Logs/Profiles/BuiltIn/GitLog.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/ULogViewerLog.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/WindowsApplicationEventLogs.json" />
 	</ItemGroup>
 
 </Project>

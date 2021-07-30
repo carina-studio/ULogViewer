@@ -24,6 +24,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Fields.
+		readonly TextBox categoryTextBox;
 		readonly TextBox commandTextBox;
 		readonly ComboBox encodingComboBox;
 		readonly TextBox fileNameTextBox;
@@ -40,6 +41,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		public LogDataSourceOptionsDialog()
 		{
 			InitializeComponent();
+			this.categoryTextBox = this.FindControl<TextBox>("categoryTextBox").AsNonNull();
 			this.commandTextBox = this.FindControl<TextBox>("commandTextBox").AsNonNull();
 			this.encodingComboBox = this.FindControl<ComboBox>("encodingComboBox").AsNonNull();
 			this.fileNameTextBox = this.FindControl<TextBox>("fileNameTextBox").AsNonNull();
@@ -167,6 +169,9 @@ namespace CarinaStudio.ULogViewer.Controls
 					options.TeardownCommands = this.teardownCommands;
 					options.WorkingDirectory = this.workingDirectoryTextBox.Text?.Trim();
 					break;
+				case UnderlyingLogDataSource.WindowsEventLogs:
+					options.Category = this.categoryTextBox.Text.AsNonNull().Trim();
+					break;
 			}
 			return options;
 		}
@@ -207,6 +212,10 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.workingDirectoryTextBox.Text = options.WorkingDirectory;
 					this.commandTextBox.Focus();
 					break;
+				case UnderlyingLogDataSource.WindowsEventLogs:
+					this.categoryTextBox.Text = options.Category?.Trim();
+					this.categoryTextBox.Focus();
+					break;
 			}
 			base.OnOpened(e);
 		}
@@ -223,6 +232,8 @@ namespace CarinaStudio.ULogViewer.Controls
 					return true;
 				case UnderlyingLogDataSource.StandardOutput:
 					return !string.IsNullOrEmpty(this.commandTextBox.Text?.Trim());
+				case UnderlyingLogDataSource.WindowsEventLogs:
+					return !string.IsNullOrWhiteSpace(this.categoryTextBox.Text);
 				default:
 					return false;
 			}

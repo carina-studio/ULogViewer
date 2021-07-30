@@ -72,8 +72,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		string? Button3Text { get => this.GetValue<string?>(Button3TextProperty); }
 
 
-		// Get or set buttons.
-		MessageDialogButtons Buttons { get; set; } = MessageDialogButtons.OK;
+		/// <summary>
+		/// Get or set buttons.
+		/// </summary>
+		public MessageDialogButtons Buttons { get; set; } = MessageDialogButtons.OK;
 
 
 		/// <summary>
@@ -130,7 +132,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			// setup icon
 			var app = (App)this.Application;
-			if (app.Resources.TryGetResource($"Drawing.{this.Icon}", out var res) && res is Drawing drawing)
+			if (app.Resources.TryGetResource($"Drawing.{this.Icon}.Colored", out var res) && res is Drawing drawing)
 				this.SetValue<Drawing?>(IconDrawingProperty, drawing);
 
 			// setup buttons

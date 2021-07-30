@@ -31,9 +31,16 @@
 	<sys:String x:Key="String.AppOptionsDialog.Title">應用程式選項</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.UpdateLogFilterDelay">條件改變至開始篩選的延遲時間 (毫秒)</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.UserInterface">使用者介面</sys:String>
+
+	<!-- Built-in profile -->
+	<sys:String x:Key="String.BuiltInProfile.AndroidDeviceLog">Android 裝置日誌</sys:String>
+	<sys:String x:Key="String.BuiltInProfile.AndroidFileLog">Android 日誌檔案</sys:String>
+	<sys:String x:Key="String.BuiltInProfile.GitLog">Git 提交紀錄</sys:String>
+	<sys:String x:Key="String.BuiltInProfile.WindowsApplicationEventLogs">Windows 事件紀錄 (應用程式)</sys:String>
 	
 	<!-- Common -->
 	<sys:String x:Key="String.Common.Add">新增</sys:String>
+	<sys:String x:Key="String.Common.Administrator">系統管理員</sys:String>
 	<sys:String x:Key="String.Common.Cancel">取消</sys:String>
 	<sys:String x:Key="String.Common.Copy">複製</sys:String>
 	<sys:String x:Key="String.Common.Delete">刪除</sys:String>
@@ -51,11 +58,6 @@
 	<sys:String x:Key="String.Common.Rename">重新命名</sys:String>
 	<sys:String x:Key="String.Common.Yes">是</sys:String>
 
-	<!-- Built-in profile -->
-	<sys:String x:Key="String.BuiltInProfile.AndroidDeviceLog">Android 裝置日誌</sys:String>
-	<sys:String x:Key="String.BuiltInProfile.AndroidFileLog">Android 日誌檔案</sys:String>
-	<sys:String x:Key="String.BuiltInProfile.GitLog">Git 提交紀錄</sys:String>
-
 	<!-- FallbackFontFamilies -->
 	<sys:String x:Key="String.FallbackFontFamilies">Microsoft JhengHei,蘋方-繁</sys:String>
 
@@ -70,6 +72,7 @@
 	<sys:String x:Key="String.LogColorIndicator.UserName">使用者</sys:String>
 
 	<!-- LogDataSourceOptionsDialog -->
+	<sys:String x:Key="String.LogDataSourceOptionsDialog.Category">日誌分類 (必須)</sys:String>
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.Command">指令 (必須)</sys:String>
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.Encoding">文字編碼</sys:String>
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.FileName">檔案路徑</sys:String>
@@ -126,6 +129,7 @@
 	<sys:String x:Key="String.LogProfileEditorDialog.FormatDescription">格式說明</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.Icon">圖示</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.InvalidDataSourceOptions">需要有效的參數</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.IsAdministratorNeeded">需要系統管理員身分</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.IsContinuousReading">連續讀取</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.IsContinuousReading.Description">讀取至資料末端時將自動重新開始讀取日誌</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.IsWorkingDirectoryNeeded">必須選擇工作目錄</sys:String>
@@ -162,6 +166,7 @@
 	<sys:String x:Key="String.LogProfileSelectionDialog.FailedToExportLogProfile">無法匯出日誌類型至 '{0}'。</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.FailedToImportLogProfile">無法從 '{0}' 匯入日誌類型。</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.ImportLogProfile">匯入…</sys:String>
+	<sys:String x:Key="String.LogProfileSelectionDialog.IsAdministratorNeeded">需要系統管理員身分</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.IsContinuousReading">連續讀取</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.IsWorkingDirectoryNeeded">需要工作目錄</sys:String>
 	<sys:String x:Key="String.LogProfileSelectionDialog.OtherLogProfiles">其他日誌類型</sys:String>
@@ -196,6 +201,7 @@
 	<sys:String x:Key="String.LogSortKey.Timestamp">日誌時間</sys:String>
 
 	<!-- MainWindow -->
+	<sys:String x:Key="String.MainWindow.AppUpdateFound">已經有新的版本 {0}，是否開啟下載頁面？</sys:String>
 	<sys:String x:Key="String.MainWindow.CloseSession">關閉此分頁</sys:String>
 	<sys:String x:Key="String.MainWindow.CreateSession">建立新分頁</sys:String>
 
@@ -225,11 +231,14 @@
 	<sys:String x:Key="String.SessionView.FilterLogsBySelectedProcessIdOnly">只使用選取的 PID 篩選</sys:String>
 	<sys:String x:Key="String.SessionView.FilterLogsBySelectedThreadId">使用選取的 TID 篩選</sys:String>
 	<sys:String x:Key="String.SessionView.FilterLogsBySelectedThreadIdOnly">只使用選取的 TID 篩選</sys:String>
+	<sys:String x:Key="String.SessionView.HasAllDataSourceErrors">資料來源發生錯誤</sys:String>
+	<sys:String x:Key="String.SessionView.HasPartialDataSourceErrors">部分資料來源發生錯誤</sys:String>
 	<sys:String x:Key="String.SessionView.LogFiltersCombinationMode">篩選條件運算方式</sys:String>
 	<sys:String x:Key="String.SessionView.LogsFilteringProgress">篩選進度：</sys:String>
 	<sys:String x:Key="String.SessionView.LogTextFilterHint">文字篩選 (正規表示式)</sys:String>
 	<sys:String x:Key="String.SessionView.MarkedLogs">已標記日誌</sys:String>
 	<sys:String x:Key="String.SessionView.MarkUnmarkLogs">標記/解除標記日誌</sys:String>
+	<sys:String x:Key="String.SessionView.NeedToRestartAsAdministrator">'{0}' 需要系統管理員身分，是否要以系統管理員身分重新啟動應用程式並使用此日誌類型？正在查看的日誌將被關閉。</sys:String>
 	<sys:String x:Key="String.SessionView.NoFilePathDropped">請拖放有效的檔案。</sys:String>
 	<sys:String x:Key="String.SessionView.NoLogToShow">沒有日誌可以顯示</sys:String>
 	<sys:String x:Key="String.SessionView.NoPredefinedLogTextFilter">沒有已儲存的文字篩選</sys:String>
@@ -267,5 +276,8 @@
 	<sys:String x:Key="String.VisibleLogPropertyEditorDialog.SpecifyWidth">指定列寬</sys:String>
 	<sys:String x:Key="String.VisibleLogPropertyEditorDialog.Title">顯示的日誌屬性</sys:String>
 	<sys:String x:Key="String.VisibleLogPropertyEditorDialog.Width">列寬</sys:String>
+
+	<!-- WindowsEventLogDataSourceProvider -->
+	<sys:String x:Key="String.WindowsEventLogDataSourceProvider.DisplayName">Windows 事件紀錄</sys:String>
 	
 </ResourceDictionary>

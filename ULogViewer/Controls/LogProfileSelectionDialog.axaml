@@ -47,6 +47,9 @@
 									<Border Classes="LogProfileSelectionDialog_LogProfile_Label" IsVisible="{Binding IsWorkingDirectoryNeeded}">
 										<TextBlock Classes="LogProfileSelectionDialog_LogProfile_Label" Text="{DynamicResource String.LogProfileSelectionDialog.IsWorkingDirectoryNeeded}"/>
 									</Border>
+									<Border Classes="LogProfileSelectionDialog_LogProfile_Label" IsVisible="{Binding IsAdministratorNeeded}">
+										<TextBlock Classes="LogProfileSelectionDialog_LogProfile_Label" Text="{DynamicResource String.LogProfileSelectionDialog.IsAdministratorNeeded}"/>
+									</Border>
 								</WrapPanel>
 
 								<!-- Actions -->

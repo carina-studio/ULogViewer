@@ -49,6 +49,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<int> FilteredLogCountProperty = ObservableProperty.Register<Session, int>(nameof(FilteredLogCount));
 		/// <summary>
+		/// Property of <see cref="HasAllDataSourceErrors"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> HasAllDataSourceErrorsProperty = ObservableProperty.Register<Session, bool>(nameof(HasAllDataSourceErrors));
+		/// <summary>
 		/// Property of <see cref="HasLogReaders"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> HasLogReadersProperty = ObservableProperty.Register<Session, bool>(nameof(HasLogReaders));
@@ -60,6 +64,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Property of <see cref="HasMarkedLogs"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> HasMarkedLogsProperty = ObservableProperty.Register<Session, bool>(nameof(HasMarkedLogs));
+		/// <summary>
+		/// Property of <see cref="HasPartialDataSourceErrors"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> HasPartialDataSourceErrorsProperty = ObservableProperty.Register<Session, bool>(nameof(HasPartialDataSourceErrors));
 		/// <summary>
 		/// Property of <see cref="HasPredefinedLogTextFilters"/>.
 		/// </summary>
@@ -187,6 +195,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly MutableObservableBoolean canResetLogProfile = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSetLogProfile = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSetWorkingDirectory = new MutableObservableBoolean();
+		readonly ScheduledAction checkDataSourceErrorsAction;
 		Comparison<DisplayableLog?> compareDisplayableLogsDelegate;
 		DisplayableLogGroup? displayableLogGroup;
 		readonly DisplayableLogFilter logFilter;
@@ -261,6 +270,34 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.compareDisplayableLogsDelegate = CompareDisplayableLogsById;
 
 			// create scheduled actions
+			this.checkDataSourceErrorsAction = new ScheduledAction(() =>
+			{
+				if (this.IsDisposed)
+					return;
+				var dataSourceCount = this.logReaders.Count;
+				var errorCount = 0;
+				if (dataSourceCount == 0)
+				{
+					this.SetValue(HasAllDataSourceErrorsProperty, false);
+					this.SetValue(HasPartialDataSourceErrorsProperty, false);
+					return;
+				}
+				foreach (var logReader in this.logReaders)
+				{
+					if (logReader.DataSource.IsErrorState())
+						++errorCount;
+				}
+				if (errorCount == 0)
+				{
+					this.SetValue(HasAllDataSourceErrorsProperty, false);
+					this.SetValue(HasPartialDataSourceErrorsProperty, false);
+				}
+				else
+				{
+					this.SetValue(HasAllDataSourceErrorsProperty, errorCount >= dataSourceCount);
+					this.SetValue(HasPartialDataSourceErrorsProperty, errorCount < dataSourceCount);
+				}
+			});
 			this.saveMarkedLogsAction = new ScheduledAction(() =>
 			{
 				if (this.IsDisposed)
@@ -396,6 +433,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				return;
 			if (fileName == null)
 				throw new ArgumentNullException(nameof(fileName));
+			if (PathEqualityComparer.Default.Equals(Path.GetExtension(fileName), MarkedFileExtension))
+			{
+				this.Logger.LogWarning($"Ignore adding marked logs info file '{fileName}'");
+				return;
+			}
 			var profile = this.LogProfile ?? throw new InternalStateCorruptedException("No log profile to add log file.");
 			if (profile.DataSourceProvider.UnderlyingSource != UnderlyingLogDataSource.File)
 				throw new InternalStateCorruptedException($"Cannot add log file because underlying data source type is {profile.DataSourceProvider.UnderlyingSource}.");
@@ -675,6 +717,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				});
 			});
 
+			// check data source error
+			this.checkDataSourceErrorsAction.Schedule();
+
 			// update state
 			this.canClearLogFiles.Update(profile.DataSourceProvider.UnderlyingSource == UnderlyingLogDataSource.File);
 			this.canMarkUnmarkLogs.Update(true);
@@ -769,6 +814,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			dataSource.Dispose();
 			this.Logger.LogDebug($"Log reader '{logReader.Id} disposed");
 
+			// check data source error
+			this.checkDataSourceErrorsAction.Schedule();
+
 			// update state
 			if (this.logReaders.IsEmpty())
 			{
@@ -803,6 +851,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Check whether errors are found in all data sources or not.
+		/// </summary>
+		public bool HasAllDataSourceErrors { get => this.GetValue(HasAllDataSourceErrorsProperty); }
+
+
+		/// <summary>
 		/// Check whether at least one log reader created or not.
 		/// </summary>
 		public bool HasLogReaders { get => this.GetValue(HasLogReadersProperty); }
@@ -818,6 +872,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Check whether at least one log has been marked or not.
 		/// </summary>
 		public bool HasMarkedLogs { get => this.GetValue(HasMarkedLogsProperty); }
+
+
+		/// <summary>
+		/// Check whether errors are found in some of data sources or not.
+		/// </summary>
+		public bool HasPartialDataSourceErrors { get => this.GetValue(HasPartialDataSourceErrorsProperty); }
 
 
 		/// <summary>
@@ -1141,7 +1201,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 		// Called when property of log data source changed.
 		void OnLogDataSourcePropertyChanged(object? sender, PropertyChangedEventArgs e)
-		{ }
+		{
+			if (e.PropertyName == nameof(ILogDataSource.State))
+				this.checkDataSourceErrorsAction.Schedule();
+		}
 
 
 		// Called when property of log filter changed.
@@ -1435,6 +1498,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// dispose log readers
 			this.DisposeLogReaders(false);
 
+			// clear data source error
+			this.checkDataSourceErrorsAction.Execute();
+
 			// clear logs
 			foreach (var displayableLog in this.allLogs)
 				displayableLog.Dispose();
@@ -1582,8 +1648,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					}
 					break;
 				case UnderlyingLogDataSource.Undefined:
+				case UnderlyingLogDataSource.WindowsEventLogs:
 					{
-						this.Logger.LogDebug("Start reading logs from undefined source");
+						this.Logger.LogDebug("Start reading logs");
 						var dataSource = this.CreateLogDataSourceOrNull(dataSourceProvider, dataSourceOptions);
 						if (dataSource != null)
 							this.CreateLogReader(dataSource);

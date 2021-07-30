@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace CarinaStudio.ULogViewer.Logs.DataSources
 {
@@ -60,6 +61,8 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 #endif
 			providers.Add(new FileLogDataSourceProvider(app));
 			providers.Add(new StandardOutputLogDataSourceProvider(app));
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+				providers.Add(new WindowsEventLogDataSourceProvider(app));
 		}
 
 

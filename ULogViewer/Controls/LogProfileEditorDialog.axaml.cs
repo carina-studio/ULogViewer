@@ -15,6 +15,7 @@ using CarinaStudio.ULogViewer.Logs.Profiles;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace CarinaStudio.ULogViewer.Controls
 {
@@ -39,6 +40,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Fields.
+		readonly ToggleSwitch adminNeededSwitch;
 		readonly ComboBox colorIndicatorComboBox;
 		readonly ToggleSwitch continuousReadingSwitch;
 		LogDataSourceOptions dataSourceOptions;
@@ -81,6 +83,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			InitializeComponent();
 
 			// setup controls
+			this.adminNeededSwitch = this.FindControl<ToggleSwitch>("adminNeededSwitch").AsNonNull();
 			this.colorIndicatorComboBox = this.FindControl<ComboBox>("colorIndicatorComboBox").AsNonNull();
 			this.continuousReadingSwitch = this.FindControl<ToggleSwitch>("continuousReadingSwitch").AsNonNull();
 			this.dataSourceProviderComboBox = this.FindControl<ComboBox>("dataSourceProviderComboBox").AsNonNull();
@@ -111,6 +114,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				it.MenuClosed += (_, e) => this.SynchronizationContext.Post(() => this.insertLogWritingFormatSyntaxButton.IsChecked = false);
 				it.MenuOpened += (_, e) => this.SynchronizationContext.Post(() => this.insertLogWritingFormatSyntaxButton.IsChecked = true);
 			});
+			if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+				this.FindControl<Control>("isAdminNeededPanel").AsNonNull().IsVisible = false;
 			this.logWritingFormatTextBox = this.FindControl<TextBox>("logWritingFormatTextBox").AsNonNull();
 			this.nameTextBox = this.FindControl<TextBox>("nameTextBox").AsNonNull();
 			this.sortDirectionComboBox = this.FindControl<ComboBox>("sortDirectionComboBox").AsNonNull();
@@ -396,6 +401,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			logProfile.DataSourceOptions = this.dataSourceOptions;
 			logProfile.DataSourceProvider = (ILogDataSourceProvider)this.dataSourceProviderComboBox.SelectedItem.AsNonNull();
 			logProfile.Icon = (LogProfileIcon)this.iconComboBox.SelectedItem.AsNonNull();
+			logProfile.IsAdministratorNeeded = this.adminNeededSwitch.IsChecked.GetValueOrDefault();
 			logProfile.IsContinuousReading = this.continuousReadingSwitch.IsChecked.GetValueOrDefault();
 			logProfile.IsWorkingDirectoryNeeded = this.workingDirNeededSwitch.IsChecked.GetValueOrDefault();
 			logProfile.LogLevelMapForReading = new Dictionary<string, LogLevel>(this.logLevelMapEntriesForReading);
@@ -454,6 +460,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			else if (!profile.IsBuiltIn)
 			{
 				this.Title = this.Application.GetString("LogProfileEditorDialog.Title.Edit");
+				this.adminNeededSwitch.IsChecked = profile.IsAdministratorNeeded;
 				this.colorIndicatorComboBox.SelectedItem = profile.ColorIndicator;
 				this.dataSourceOptions = profile.DataSourceOptions;
 				this.dataSourceProviderComboBox.SelectedItem = profile.DataSourceProvider;
