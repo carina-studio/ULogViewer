@@ -22,10 +22,11 @@ Each log profile defines:
 - What properties of log should be displayed in the list.
 - How to output logs back to text (ex, copying).
 
-Currently there are 3 built-in log profiles:
-- Android device log.
-- Android log from files.
-- Git log.
+Currently there are 4 built-in log profiles:
+- Android Device Log.
+- Android Log Files.
+- Git Log.
+- Windows Event Logs (Application).
 
 You can also create, copy or export your own log profiles according to your requirement.
 
