@@ -2,12 +2,18 @@
 ULogViewer is a [.NET](https://dotnet.microsoft.com/) based cross-platform universal log viewer written by C# which supports reading and parsing various type of logs.
 The project is still under development but most of functions relate to reading/parsing/displaying logs are ready.
 
+## Screenshot (Windows)
+<img src="https://carina-studio.github.io/ULogViewer/Screenshot_Windows_Dark_Thumb.png" width="250"/><img src="https://carina-studio.github.io/ULogViewer/Screenshot_Windows_Light_Thumb.png" width="250"/>
+
+## Screenshot (OSX)
+<img src="https://carina-studio.github.io/ULogViewer/Screenshot_OSX_Dark_Thumb.png" width="250"/><img src="https://carina-studio.github.io/ULogViewer/Screenshot_OSX_Light_Thumb.png" width="250"/>
+
 ## ⭐Log data sources
-- Standard output (stdout)
+- Standard Output (stdout)
 - Files
+- Windows Event Logs (Windows only)
 - HTTP (Not yet supported).
 - SSL (Not yet supported).
-- Windows event log (Not yet supported).
 
 ## ⭐Log profiles
 Each log profile defines:
@@ -38,7 +44,10 @@ When viewing logs, you can mark some logs which are important for you. There is 
 Marked logs will be kept if you are viewing logs from files so that you don't need to mark them again when you open log files next time.
 
 ## 📥Download
-Not released yet.
+The latest version is 0.9.0.730.
+- 📦[Windows (x64)](https://github.com/carina-studio/ULogViewer/releases/download/0.9.0.730/ULogViewer-0.9.0.730-win-x64.zip)
+- 📦[Linux (x64)](https://github.com/carina-studio/ULogViewer/releases/download/0.9.0.730/ULogViewer-0.9.0.730-linux-x64.zip)
+- 📦[OSX (x64)](https://github.com/carina-studio/ULogViewer/releases/download/0.9.0.730/ULogViewer-0.9.0.730-osx-x64.zip)
 
 You can also find and download all releases [HERE](https://github.com/carina-studio/ULogViewer/releases).
 
