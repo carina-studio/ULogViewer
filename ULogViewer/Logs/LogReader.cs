@@ -677,6 +677,10 @@ namespace CarinaStudio.ULogViewer.Logs
 							// drop this log if this pattern never be matched
 							if (prevLogPattern != logPattern)
 							{
+#if DEBUG
+								this.Logger.LogTrace($"'{logLine}' Cannot be matched as 1st line of repeatable pattern '{logPattern.Regex}'");
+#endif
+
 								// drop log
 								logBuilder.Reset();
 
@@ -715,6 +719,10 @@ namespace CarinaStudio.ULogViewer.Logs
 						}
 						else
 						{
+#if DEBUG
+							this.Logger.LogTrace($"'{logLine}' cannot be matched by pattern '{logPattern.Regex}'");
+#endif
+
 							// drop log
 							logBuilder.Reset();
 
