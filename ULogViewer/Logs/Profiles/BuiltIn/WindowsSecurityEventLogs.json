@@ -1,24 +1,18 @@
 ﻿{
 	"DataSource": {
 		"Name": "WindowsEventLogs",
-		"Category": "Application"
+		"Category": "Security"
 	},
 	"Icon": "Windows",
 	"IsAdministratorNeeded": true,
 	"LogLevelMapForReading": {
-		"e": "Error",
 		"f": "Failure",
-		"i": "Info",
-		"s": "Success",
-		"w": "Warn"
+		"s": "Success"
 	},
 	"LogLevelMapForWriting": {
-		"Error": "E",
 		"Failure": "F",
-		"Info": "I",
 		"Success": "S",
-		"Undefined": "U",
-		"Warn": "W"
+		"Undefined": "U"
 	},
 	"LogPatterns": [
 		{

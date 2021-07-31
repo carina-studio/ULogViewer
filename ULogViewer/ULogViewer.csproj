@@ -22,6 +22,9 @@
 
   <ItemGroup>
     <None Remove="Logs\Profiles\BuiltIn\WindowsApplicationEventLogs.json" />
+    <None Remove="Logs\Profiles\BuiltIn\WindowsSecurityEventLogs.json" />
+    <None Remove="Logs\Profiles\BuiltIn\WindowsSetupEventLogs.json" />
+    <None Remove="Logs\Profiles\BuiltIn\WindowsSystemEventLogs.json" />
   </ItemGroup>
 
   <ItemGroup>
@@ -77,6 +80,9 @@
 	  <EmbeddedResource Include="Logs/Profiles/BuiltIn/GitLog.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/ULogViewerLog.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/WindowsApplicationEventLogs.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/WindowsSecurityEventLogs.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/WindowsSetupEventLogs.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/WindowsSystemEventLogs.json" />
 	</ItemGroup>
 
 </Project>

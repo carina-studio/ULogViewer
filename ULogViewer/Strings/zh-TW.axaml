@@ -37,6 +37,9 @@
 	<sys:String x:Key="String.BuiltInProfile.AndroidFileLog">Android 日誌檔案</sys:String>
 	<sys:String x:Key="String.BuiltInProfile.GitLog">Git 提交紀錄</sys:String>
 	<sys:String x:Key="String.BuiltInProfile.WindowsApplicationEventLogs">Windows 事件紀錄 (應用程式)</sys:String>
+	<sys:String x:Key="String.BuiltInProfile.WindowsSecurityEventLogs">Windows 事件紀錄 (安全性)</sys:String>
+	<sys:String x:Key="String.BuiltInProfile.WindowsSetupEventLogs">Windows 事件紀錄 (安裝)</sys:String>
+	<sys:String x:Key="String.BuiltInProfile.WindowsSystemEventLogs">Windows 事件紀錄 (系統)</sys:String>
 	
 	<!-- Common -->
 	<sys:String x:Key="String.Common.Add">新增</sys:String>

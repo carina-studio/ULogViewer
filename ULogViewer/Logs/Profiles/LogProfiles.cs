@@ -52,6 +52,9 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 			{
 				builtInProfileIDs.Add("WindowsApplicationEventLogs");
+				builtInProfileIDs.Add("WindowsSecurityEventLogs");
+				builtInProfileIDs.Add("WindowsSetupEventLogs");
+				builtInProfileIDs.Add("WindowsSystemEventLogs");
 			}
 		}
 

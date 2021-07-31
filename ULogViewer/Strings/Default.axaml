@@ -40,6 +40,9 @@
 	<sys:String x:Key="String.BuiltInProfile.GitLog">Git Log</sys:String>
 	<sys:String x:Key="String.BuiltInProfile.ULogViewerLog">ULogViewer log (DEBUG)</sys:String>
 	<sys:String x:Key="String.BuiltInProfile.WindowsApplicationEventLogs">Windows Event Logs (Application)</sys:String>
+	<sys:String x:Key="String.BuiltInProfile.WindowsSecurityEventLogs">Windows Event Logs (Security)</sys:String>
+	<sys:String x:Key="String.BuiltInProfile.WindowsSetupEventLogs">Windows Event Logs (Setup)</sys:String>
+	<sys:String x:Key="String.BuiltInProfile.WindowsSystemEventLogs">Windows Event Logs (System)</sys:String>
 	
 	<!-- Common -->
 	<sys:String x:Key="String.Common.Add">Add</sys:String>

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -13,36 +14,59 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		class ReaderImpl : TextReader
 		{
 			// Fields.
+			int entryLineIndex = 0;
+			readonly List<string> entryLines = new List<string>();
 			readonly EventLogEntryCollection entries;
-			int entryIndex;
+			int entryIndex = -1;
 
 			// Constructor.
-			public ReaderImpl(EventLog eventLog)
+			public ReaderImpl(WindowsEventLogDataSource source, EventLog eventLog)
 			{
 				this.entries = eventLog.Entries;
+				source.Logger.LogDebug($"{this.entries.Count} entries found in '{eventLog.Log}'");
 			}
 
 			// Implementations.
 			public override string? ReadLine()
 			{
+				// check state
 				if (this.entryIndex >= this.entries.Count)
 					return null;
-				var entry = this.entries[this.entryIndex++];
-#pragma warning disable CS0618
-				var eventId = entry.EventID;
-#pragma warning restore CS0618
-				var level = entry.EntryType switch
+
+				// move to next entry
+				if (this.entryLineIndex >= this.entryLines.Count)
 				{
-					EventLogEntryType.Error => "e",
-					EventLogEntryType.FailureAudit => "f",
-					EventLogEntryType.SuccessAudit => "s",
-					EventLogEntryType.Warning => "w",
-					_ => "i",
-				};
-				var message = entry.Message;
-				var sourceName = entry.Source;
-				var timestamp = entry.TimeGenerated;
-				return $"{timestamp.ToString("yyyy/MM/dd HH:mm:ss")} {eventId} {level} {sourceName}:{message}";
+					++this.entryIndex;
+					if (this.entryIndex >= this.entries.Count)
+						return "<<<<<";
+					var entry = this.entries[this.entryIndex];
+#pragma warning disable CS0618
+					var eventId = entry.EventID;
+#pragma warning restore CS0618
+					var level = entry.EntryType switch
+					{
+						EventLogEntryType.Error => "e",
+						EventLogEntryType.FailureAudit => "f",
+						EventLogEntryType.SuccessAudit => "s",
+						EventLogEntryType.Warning => "w",
+						_ => "i",
+					};
+					var message = entry.Message;
+					var sourceName = entry.Source;
+					var timestamp = entry.TimeGenerated;
+					this.entryLineIndex = 0;
+					this.entryLines.Let(it =>
+					{
+						it.Clear();
+						it.Add($">>>>>{timestamp.ToString("yyyy/MM/dd HH:mm:ss")} {eventId} {level} {sourceName}");
+						foreach (var messageLine in message.Split('\n'))
+							it.Add($"-----{messageLine.TrimEnd()}");
+					});
+					return "<<<<<";
+				}
+
+				// read line of entry
+				return this.entryLines[this.entryLineIndex++];
 			}
 		}
 #pragma warning restore CA1416
@@ -88,7 +112,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				reader = null;
 				return LogDataSourceState.SourceNotFound;
 			}
-			reader = new ReaderImpl(eventLog);
+			reader = new ReaderImpl(this, eventLog);
 			return LogDataSourceState.ReaderOpened;
 		}
 
