@@ -39,6 +39,10 @@ namespace CarinaStudio.ULogViewer
 		/// </summary>
 		public static readonly SettingKey<bool> SelectLogFilesWhenNeeded = new SettingKey<bool>(nameof(SelectLogFilesWhenNeeded), false);
 		/// <summary>
+		/// Select log profile immediately after creating new session.
+		/// </summary>
+		public static readonly SettingKey<bool> SelectLogProfileForNewSession = new SettingKey<bool>(nameof(SelectLogProfileForNewSession), true);
+		/// <summary>
 		/// Select working directory immediately when it is needed.
 		/// </summary>
 		public static readonly SettingKey<bool> SelectWorkingDirectoryWhenNeeded = new SettingKey<bool>(nameof(SelectWorkingDirectoryWhenNeeded), true);

@@ -136,9 +136,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.FilterLogsByThreadIdCommand = ReactiveCommand.Create<bool>(this.FilterLogsByThreadId, this.canFilterLogsByTid);
 			this.MarkUnmarkSelectedLogsCommand = ReactiveCommand.Create(this.MarkUnmarkSelectedLogs, this.canMarkUnmarkSelectedLogs);
 			this.ResetLogFiltersCommand = ReactiveCommand.Create(this.ResetLogFilters, this.GetObservable<bool>(HasLogProfileProperty));
+			this.SelectAndSetLogProfileCommand = ReactiveCommand.Create(this.SelectAndSetLogProfile, this.canSetLogProfile);
+			this.SelectAndSetWorkingDirectoryCommand = ReactiveCommand.Create(this.SelectAndSetWorkingDirectory, this.canSetWorkingDirectory);
 			this.SelectMarkedLogsCommand = ReactiveCommand.Create(this.SelectMarkedLogs, this.canSelectMarkedLogs);
-			this.SetLogProfileCommand = ReactiveCommand.Create(this.SetLogProfile, this.canSetLogProfile);
-			this.SetWorkingDirectoryCommand = ReactiveCommand.Create(this.SetWorkingDirectory, this.canSetWorkingDirectory);
 			this.ShowLogMessageCommand = ReactiveCommand.Create(this.ShowLogMessage, this.canShowLogMessage);
 			this.SwitchLogFiltersCombinationModeCommand = ReactiveCommand.Create(this.SwitchLogFiltersCombinationMode, this.GetObservable<bool>(HasLogProfileProperty));
 
@@ -222,7 +222,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				if (this.DataContext is not Session session || session.HasLogReaders)
 					return;
-				this.SetWorkingDirectory();
+				this.SelectAndSetWorkingDirectory();
 			});
 			this.scrollToLatestLogAction = new ScheduledAction(() =>
 			{
@@ -1697,31 +1697,13 @@ namespace CarinaStudio.ULogViewer.Controls
 		ICommand ResetLogFiltersCommand { get; }
 
 
-		// Select all marked logs.
-		void SelectMarkedLogs()
-		{
-			if (this.DataContext is not Session session)
-				return;
-			if (!this.canSelectMarkedLogs.Value)
-				return;
-			var logs = session.Logs;
-			this.logListBox.SelectedItems.Clear();
-			foreach (var log in session.MarkedLogs)
-			{
-				if (logs.Contains(log))
-					this.logListBox.SelectedItems.Add(log);
-			}
-		}
-
-
-		// Command to select marked logs.
-		ICommand SelectMarkedLogsCommand { get; }
-
-
-		// Set log profile.
-		async void SetLogProfile()
+		/// <summary>
+		/// Select and set log profile.
+		/// </summary>
+		public async void SelectAndSetLogProfile()
 		{
 			// check state
+			this.VerifyAccess();
 			if (!this.canSetLogProfile.Value)
 				return;
 			var window = this.FindLogicalAncestorOfType<Window>();
@@ -1794,11 +1776,28 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Command to set log profile.
-		ICommand SetLogProfileCommand { get; }
+		ICommand SelectAndSetLogProfileCommand { get; }
 
 
-		// Set working directory.
-		async void SetWorkingDirectory()
+		// Select all marked logs.
+		void SelectMarkedLogs()
+		{
+			if (this.DataContext is not Session session)
+				return;
+			if (!this.canSelectMarkedLogs.Value)
+				return;
+			var logs = session.Logs;
+			this.logListBox.SelectedItems.Clear();
+			foreach (var log in session.MarkedLogs)
+			{
+				if (logs.Contains(log))
+					this.logListBox.SelectedItems.Add(log);
+			}
+		}
+
+
+		// Select and set working directory.
+		async void SelectAndSetWorkingDirectory()
 		{
 			// check state
 			if (!this.canSetWorkingDirectory.Value)
@@ -1833,7 +1832,11 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Command to set working directory.
-		ICommand SetWorkingDirectoryCommand { get; }
+		ICommand SelectAndSetWorkingDirectoryCommand { get; }
+
+
+		// Command to select marked logs.
+		ICommand SelectMarkedLogsCommand { get; }
 
 
 		// Show application info.

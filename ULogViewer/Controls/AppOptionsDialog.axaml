@@ -57,6 +57,11 @@
 				<!-- Log operations -->
 				<TextBlock Classes="Dialog_Label_Header1" Text="{DynamicResource String.AppOptionsDialog.LogOperations}"/>
 
+				<!-- Select log profile for new session -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.AppOptionsDialog.SelectLogProfileForNewSession}"/>
+				<ToggleSwitch IsChecked="{Binding SelectLogProfileForNewSession, Mode=TwoWay}"/>
+				<Separator Classes="Dialog_Separator_Horizontal"/>
+
 				<!-- Select files when needed -->
 				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.AppOptionsDialog.SelectLogFilesWhenNeeded}"/>
 				<ToggleSwitch IsChecked="{Binding SelectLogFilesWhenNeeded, Mode=TwoWay}"/>

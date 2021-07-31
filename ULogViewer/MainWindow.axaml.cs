@@ -10,6 +10,7 @@ using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Controls;
 using CarinaStudio.ULogViewer.ViewModels;
+using CarinaStudio.Windows.Input;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections;
@@ -173,6 +174,22 @@ namespace CarinaStudio.ULogViewer
 		}
 
 
+		// Find tab item for specific session.
+		TabItem? FindSessionTabItem(Session session)
+		{
+			foreach (var candidate in this.tabItems)
+			{
+				if (candidate is TabItem tabItem && tabItem.DataContext == session)
+					return tabItem;
+			}
+			return null;
+		}
+
+
+		// Find SessionView for specific session.
+		SessionView? FindSessionView(Session session) => this.FindSessionTabItem(session)?.Content as SessionView;
+
+
 		// Initialize Avalonia components.
 		private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
 
@@ -273,8 +290,21 @@ namespace CarinaStudio.ULogViewer
 		// Called when opened.
 		protected override void OnOpened(EventArgs e)
 		{
+			// call base
 			base.OnOpened(e);
+
+			// notify application update
 			this.NotifyAppUpdate();
+
+			// select log profile
+			if (this.DataContext is Workspace workspace)
+			{
+				workspace.ActiveSession?.Let(it =>
+				{
+					if (it.LogProfile == null && this.Settings.GetValueOrDefault(Settings.SelectLogProfileForNewSession))
+						this.FindSessionView(it)?.SelectAndSetLogProfile();
+				});
+			}
 		}
 
 
@@ -347,7 +377,12 @@ namespace CarinaStudio.ULogViewer
 				return;
 			var index = this.tabControl.SelectedIndex;
 			if (index == this.tabItems.Count - 1)
-				workspace.ActiveSession = workspace.CreateSession();
+			{
+				var session = workspace.CreateSession();
+				workspace.ActiveSession = session;
+				if (this.Settings.GetValueOrDefault(Settings.SelectLogProfileForNewSession))
+					this.FindSessionView(session)?.SelectAndSetLogProfile();
+			}
 			else
 				workspace.ActiveSession = (Session)((TabItem)this.tabItems[index].AsNonNull()).DataContext.AsNonNull();
 			this.focusOnTabItemContentAction.Schedule();
