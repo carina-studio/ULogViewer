@@ -22,6 +22,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 		// Fields.
 		string? fileName;
+		string id = "";
 		string name;
 		Regex regex;
 		int savedVersion;
@@ -47,6 +48,18 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Get application.
 		/// </summary>
 		public IApplication Application { get; }
+
+
+		/// <summary>
+		/// Change ID of filter.
+		/// </summary>
+		internal void ChangeId()
+		{
+			this.VerifyAccess();
+			this.id = PredefinedLogTextFilters.GenerateId();
+			++this.version;
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Id)));
+		}
 
 
 		/// <summary>
@@ -112,6 +125,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Get unique ID of filter.
+		/// </summary>
+		public string Id { get => this.id; }
+
+
+		/// <summary>
 		/// Load <see cref="PredefinedLogTextFilter"/> from file asynchronously.
 		/// </summary>
 		/// <param name="app">Application.</param>
@@ -120,6 +139,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public static async Task<PredefinedLogTextFilter> LoadAsync(IApplication app, string fileName)
 		{
 			var name = "";
+			var id = "";
 			var regex = (Regex?)null;
 			await Task.Run(() =>
 			{
@@ -131,10 +151,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					ignoreCase = jsonValue.GetBoolean();
 				name = jsonObject.GetProperty(nameof(Name)).GetString().AsNonNull();
 				regex = new Regex(jsonObject.GetProperty(nameof(Regex)).GetString().AsNonNull(), ignoreCase ? RegexOptions.IgnoreCase : RegexOptions.None);
+				if (jsonObject.TryGetProperty("Id", out jsonValue))
+					id = jsonValue.GetString().AsNonNull();
 			});
 			return new PredefinedLogTextFilter(app, name, regex.AsNonNull()).Also(it =>
 			{
 				it.fileName = fileName;
+				it.id = id;
 				it.savedVersion = it.version;
 			});
 		}
@@ -191,6 +214,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// save to file
 			var prevFileName = this.fileName;
 			var name = this.name;
+			var id = this.id;
 			var regex = this.regex;
 			var version = this.version;
 			await savingTaskFactory.StartNew(() =>
@@ -207,6 +231,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				using var writer = new Utf8JsonWriter(stream, new JsonWriterOptions() { Indented = true });
 				writer.WriteStartObject();
 				writer.WriteString(nameof(Name), name);
+				writer.WriteString(nameof(Id), id);
 				if ((regex.Options & RegexOptions.IgnoreCase) != 0)
 					writer.WriteBoolean("IgnoreCase", true);
 				writer.WriteString(nameof(Regex), regex.ToString());

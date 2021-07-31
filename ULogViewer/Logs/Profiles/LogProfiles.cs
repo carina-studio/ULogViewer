@@ -90,7 +90,13 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			profile.PropertyChanged += OnProfilePropertyChanged;
 
 			// check ID
-			if (!profileIdSet.Add(profile.Id))
+			if (string.IsNullOrEmpty(profile.Id))
+			{
+				profile.ChangeId();
+				pendingSavingProfiles.Add(profile);
+				saveProfilesAction?.Schedule();
+			}
+			while (!profileIdSet.Add(profile.Id))
 			{
 				profile.ChangeId();
 				pendingSavingProfiles.Add(profile);

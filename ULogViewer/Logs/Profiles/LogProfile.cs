@@ -73,7 +73,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		{
 			app.VerifyAccess();
 			this.Application = app;
-			this.id = LogProfiles.GenerateId();
+			this.id = "";
 			this.logger = app.LoggerFactory.CreateLogger(this.GetType().Name);
 			this.readOnlyLogLevelMapForReading = new ReadOnlyDictionary<string, LogLevel>(this.logLevelMapForReading);
 			this.readOnlyLogLevelMapForWriting = new ReadOnlyDictionary<LogLevel, string>(this.logLevelMapForWriting);
