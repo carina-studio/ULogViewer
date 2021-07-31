@@ -255,6 +255,7 @@
 	<sys:String x:Key="String.SessionView.OtherActions">Other actions</sys:String>
 	<sys:String x:Key="String.SessionView.PauseResumeLogsReading">Pause/Resume reading logs (P)</sys:String>
 	<sys:String x:Key="String.SessionView.PredefinedLogTextFilters">Saved text filters</sys:String>
+	<sys:String x:Key="String.SessionView.PredefinedLogTextFilters.Hint">Select one or more items</sys:String>
 	<sys:String x:Key="String.SessionView.ReloadLogs">Reload logs (F5)</sys:String>
 	<sys:String x:Key="String.SessionView.ResetLogFilters">Clear all filters</sys:String>
 	<sys:String x:Key="String.SessionView.ScrollToLatestLog">Scroll to latest log</sys:String>

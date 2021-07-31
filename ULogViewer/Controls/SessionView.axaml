@@ -221,14 +221,21 @@
 												<Button Classes="Dialog_ControlButton" Click="OnClearPredefinedLogTextFilterSelectionButtonClick" IsEnabled="{Binding ElementName=predefinedLogTextFilterListBox, Path=SelectedItems.Count}" Content="{DynamicResource String.SessionView.ClearPredefinedLogTextFiltersSelection}"/>
 											</StackPanel>
 										</Border>
+										<Border DockPanel.Dock="Top" IsVisible="{Binding $parent[UserControl].PredefinedLogTextFilters.Count}" Padding="{StaticResource Thickness.SessionView.PredefinedLogTextFilterHint.Padding}">
+											<TextBlock HorizontalAlignment="Center" Text="{DynamicResource String.SessionView.PredefinedLogTextFilters.Hint}" TextTrimming="CharacterEllipsis"/>
+										</Border>
 										<Panel>
 											<ListBox Name="predefinedLogTextFilterListBox" Background="{x:Static Brushes.Transparent}" IsVisible="{Binding $parent[UserControl].PredefinedLogTextFilters.Count}" Items="{Binding $parent[UserControl].PredefinedLogTextFilters}" SelectionChanged="OnPredefinedLogTextFilterListBoxSelectionChanged" SelectionMode="Multiple" VirtualizationMode="None">
 												<ListBox.ItemTemplate>
 													<DataTemplate DataType="{x:Type appViewModels:PredefinedLogTextFilter}">
-														<Grid ColumnDefinitions="*,Auto">
-															<TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
-															<Border Classes="InPlaceAction_Reserved"/>
-															<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal" VerticalAlignment="Center">
+														<Grid ColumnDefinitions="Auto,*,Auto">
+															<Grid Height="{StaticResource Double.SessionView.PredefinedLogTextFilterListBox.Icon.Size}" Margin="{StaticResource Thickness.SessionView.PredefinedLogTextFilterListBox.Icon.Margin}" VerticalAlignment="Center" Width="{StaticResource Double.SessionView.PredefinedLogTextFilterListBox.Icon.Size}">
+																<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Filter}" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}"/>
+																<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Filter.Light}" IsVisible="{Binding $parent[ListBoxItem].IsSelected}"/>
+															</Grid>
+															<TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center"/>
+															<Border Classes="InPlaceAction_Reserved" Grid.Column="1"/>
+															<StackPanel Grid.Column="2" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal" VerticalAlignment="Center">
 																<Button Classes="InPlaceAction" Command="{Binding $parent[UserControl].RemovePredefinedLogTextFilter}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String.Common.Delete}">
 																	<Border Classes="InPlaceAction">
 																		<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Delete}"/>

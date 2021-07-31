@@ -245,6 +245,7 @@
 	<sys:String x:Key="String.SessionView.OtherActions">其他動作</sys:String>
 	<sys:String x:Key="String.SessionView.PauseResumeLogsReading">暫停/繼續讀取日誌 (P)</sys:String>
 	<sys:String x:Key="String.SessionView.PredefinedLogTextFilters">已儲存的文字篩選</sys:String>
+	<sys:String x:Key="String.SessionView.PredefinedLogTextFilters.Hint">選取一個或多個項目</sys:String>
 	<sys:String x:Key="String.SessionView.ReloadLogs">重新載入日誌 (F5)</sys:String>
 	<sys:String x:Key="String.SessionView.ResetLogFilters">清除所有篩選設定</sys:String>
 	<sys:String x:Key="String.SessionView.ScrollToLatestLog">捲動至最新的日誌</sys:String>
