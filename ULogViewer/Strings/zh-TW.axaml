@@ -268,6 +268,12 @@
 	<sys:String x:Key="String.SortDirection.Ascending">遞增</sys:String>
 	<sys:String x:Key="String.SortDirection.Descending">遞減</sys:String>
 
+	<!-- SplashWindow -->
+	<sys:String x:Key="String.SplashWindow.InitializeLogProfiles">正在載入日誌類型</sys:String>
+	<sys:String x:Key="String.SplashWindow.InitializePredefinedLogTextFilters">正在載入文字篩選</sys:String>
+	<sys:String x:Key="String.SplashWindow.ShowMainWindow">開啟主視窗</sys:String>
+	<sys:String x:Key="String.SplashWindow.UpdateStyles">正在載入樣式</sys:String>
+
 	<!-- ThemeMode -->
 	<sys:String x:Key="String.ThemeMode.Dark">深色</sys:String>
 	<sys:String x:Key="String.ThemeMode.Light">淺色</sys:String>

@@ -63,6 +63,11 @@
 			<SolidColorBrush x:Key="Brush.SessionView.StatusBar.Background.Warning">#ca5100</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.SessionView.StatusBar.Foreground">#ffffff</SolidColorBrush>
 
+			<!-- SplashWindow -->
+			<SolidColorBrush x:Key="Brush.SplashWindow.Background">#bf000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.SplashWindow.Border">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.SplashWindow.Foreground">#ffffff</SolidColorBrush>
+
 			<!-- TextBlock -->
 			<SolidColorBrush x:Key="Brush.TextBlock.Foreground.Error">#ff0000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.TextBlock.Foreground.Link">#007acc</SolidColorBrush>

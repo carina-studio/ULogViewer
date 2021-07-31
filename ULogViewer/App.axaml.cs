@@ -7,6 +7,7 @@ using Avalonia.Markup.Xaml.Styling;
 using Avalonia.Media;
 using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
+using CarinaStudio.ULogViewer.Controls;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ULogViewer.ViewModels;
@@ -52,6 +53,7 @@ namespace CarinaStudio.ULogViewer
 		string? restartArgs;
 		volatile Settings? settings;
 		readonly string settingsFilePath;
+		SplashWindow? splashWindow;
 		ResourceInclude? stringResources;
 		CultureInfo? stringResourcesCulture;
 		ResourceInclude? stringResourcesLinux;
@@ -302,6 +304,11 @@ namespace CarinaStudio.ULogViewer
 			var desktopLifetime = (IClassicDesktopStyleApplicationLifetime)this.ApplicationLifetime;
 			this.ParseStartupParams(desktopLifetime.Args);
 
+			// show splash window
+			var splashWindow = new SplashWindow();
+			this.splashWindow = splashWindow;
+			splashWindow.Show();
+
 			// load settings
 			this.settings = new Settings();
 			this.logger.LogDebug("Start loading settings");
@@ -333,15 +340,18 @@ namespace CarinaStudio.ULogViewer
 			this.UpdateStringResources();
 
 			// update styles
+			splashWindow.Message = this.GetStringNonNull("SplashWindow.UpdateStyles");
 			this.UpdateStyles();
 
 			// initialize log data source providers
+			splashWindow.Message = this.GetStringNonNull("SplashWindow.InitializeLogProfiles");
 			LogDataSourceProviders.Initialize(this);
 
 			// initialize log profiles
 			await LogProfiles.InitializeAsync(this);
 
 			// initialize predefined log text filters
+			splashWindow.Message = this.GetStringNonNull("SplashWindow.InitializePredefinedLogTextFilters");
 			await PredefinedLogTextFilters.InitializeAsync(this);
 
 			// attach to system events
@@ -349,6 +359,7 @@ namespace CarinaStudio.ULogViewer
 				SystemEvents.UserPreferenceChanged += this.OnWindowsUserPreferenceChanged;
 
 			// create workspace
+			splashWindow.Message = this.GetStringNonNull("SplashWindow.ShowMainWindow");
 			this.workspace = new Workspace(this);
 			this.StartupParams.LogProfileId?.Let(it =>
 			{
@@ -538,6 +549,13 @@ namespace CarinaStudio.ULogViewer
 			});
 			this.logger.LogWarning("Show main window");
 			this.mainWindow.Show();
+
+			// close splash window
+			this.splashWindow = this.splashWindow?.Let(it =>
+			{
+				it.Close();
+				return (SplashWindow?)null;
+			});
 		}
 
 

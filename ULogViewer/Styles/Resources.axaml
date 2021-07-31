@@ -147,6 +147,17 @@
 	<Thickness x:Key="Thickness.SessionView.ToolBar.Padding">5,5,5,2</Thickness>
 	<Thickness x:Key="Thickness.SessionView.ToolBar.Separator.Margin">1,2,1,2</Thickness>
 
+	<!-- SplashWindow -->
+	<CornerRadius x:Key="CornerRadius.SplashWindow">5</CornerRadius>
+	<sys:Double x:Key="Double.SplashWindow.Height">200</sys:Double>
+	<sys:Double x:Key="Double.SplashWindow.Icon.Size">70</sys:Double>
+	<sys:Double x:Key="Double.SplashWindow.Title.FontSize">30</sys:Double>
+	<sys:Double x:Key="Double.SplashWindow.Width">400</sys:Double>
+	<Thickness x:Key="Thickness.SplashWindow.Icon.Margin">0,0,10,0</Thickness>
+	<Thickness x:Key="Thickness.SplashWindow.Message.Margin">0,30,0,0</Thickness>
+	<Thickness x:Key="Thickness.SplashWindow.Padding">30</Thickness>
+	<Thickness x:Key="Thickness.SplashWindow.Title.Margin">0,0,0,5</Thickness>
+
 	<!-- TextInputDialog -->
 	<sys:Double x:Key="Double.TextInputDialog.Width">450</sys:Double>
 
