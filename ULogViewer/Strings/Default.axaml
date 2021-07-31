@@ -87,8 +87,11 @@
 	<!-- LogLevel -->
 	<sys:String x:Key="String.LogLevel.Debug">Debug</sys:String>
 	<sys:String x:Key="String.LogLevel.Error">Error</sys:String>
+	<sys:String x:Key="String.LogLevel.Failure">Failure</sys:String>
 	<sys:String x:Key="String.LogLevel.Fatal">Fatal</sys:String>
 	<sys:String x:Key="String.LogLevel.Info">Info</sys:String>
+	<sys:String x:Key="String.LogLevel.Success">Success</sys:String>
+	<sys:String x:Key="String.LogLevel.Trace">Trace</sys:String>
 	<sys:String x:Key="String.LogLevel.Undefined">Undefined</sys:String>
 	<sys:String x:Key="String.LogLevel.Verbose">Verbose</sys:String>
 	<sys:String x:Key="String.LogLevel.Warn">Warn</sys:String>

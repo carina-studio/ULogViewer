@@ -84,8 +84,11 @@
 	<!-- LogLevel -->
 	<sys:String x:Key="String.LogLevel.Debug">偵錯</sys:String>
 	<sys:String x:Key="String.LogLevel.Error">錯誤</sys:String>
+	<sys:String x:Key="String.LogLevel.Failure">失敗</sys:String>
 	<sys:String x:Key="String.LogLevel.Fatal">嚴重錯誤</sys:String>
 	<sys:String x:Key="String.LogLevel.Info">資訊</sys:String>
+	<sys:String x:Key="String.LogLevel.Success">成功</sys:String>
+	<sys:String x:Key="String.LogLevel.Trace">追蹤</sys:String>
 	<sys:String x:Key="String.LogLevel.Undefined">未定義</sys:String>
 	<sys:String x:Key="String.LogLevel.Verbose">詳細資訊</sys:String>
 	<sys:String x:Key="String.LogLevel.Warn">警告</sys:String>

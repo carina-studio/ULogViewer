@@ -2,7 +2,6 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Reflection;
 using System.Runtime.InteropServices;
 
 namespace CarinaStudio.ULogViewer.Logs.DataSources
@@ -35,11 +34,10 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				var level = entry.EntryType switch
 				{
 					EventLogEntryType.Error => "e",
-					EventLogEntryType.FailureAudit => "e",
-					EventLogEntryType.Information => "i",
-					EventLogEntryType.SuccessAudit => "i",
+					EventLogEntryType.FailureAudit => "f",
+					EventLogEntryType.SuccessAudit => "s",
 					EventLogEntryType.Warning => "w",
-					_ => "u",
+					_ => "i",
 				};
 				var message = entry.Message;
 				var sourceName = entry.Source;

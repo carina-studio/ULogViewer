@@ -28,8 +28,11 @@
 			<!-- LogLevel -->
 			<SolidColorBrush x:Key="Brush.LogLevel.Debug">#000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.LogLevel.Error">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.LogLevel.Failure">#000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.LogLevel.Fatal">#000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.LogLevel.Info">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.LogLevel.Success">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.LogLevel.Trace">#000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.LogLevel.Undefined">#000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.LogLevel.Verbose">#000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.LogLevel.Warn">#000000</SolidColorBrush>
