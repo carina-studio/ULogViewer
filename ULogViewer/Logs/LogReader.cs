@@ -46,6 +46,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		CancellationTokenSource? logsReadingCancellationTokenSource;
 		object logsReadingToken = new object();
 		int maxLogCount = -1;
+		CancellationTokenSource? openingReaderCancellationSource;
 		readonly List<Log> pendingLogs = new List<Log>();
 		object? pendingLogsReadingToken;
 		readonly SingleThreadSynchronizationContext pendingLogsSyncContext = new SingleThreadSynchronizationContext();
@@ -187,6 +188,15 @@ namespace CarinaStudio.ULogViewer.Logs
 
 			// detach from data source
 			this.DataSource.PropertyChanged -= this.OnDataSourcePropertyChanged;
+
+			// cancel opening reader
+			this.openingReaderCancellationSource?.Let(it =>
+			{
+				this.Logger.LogWarning("Cancel opening reader because of disposing");
+				it.Cancel();
+				it.Dispose();
+				this.openingReaderCancellationSource = null;
+			});
 
 			// cancel reading logs
 			this.logsReadingCancellationTokenSource?.Let(it =>
@@ -858,7 +868,6 @@ namespace CarinaStudio.ULogViewer.Logs
 					return;
 			}
 
-
 			// check source state
 			if (this.DataSource.State != LogDataSourceState.ReadyToOpenReader)
 			{
@@ -873,17 +882,19 @@ namespace CarinaStudio.ULogViewer.Logs
 			}
 
 			// open reader
+			this.openingReaderCancellationSource = new CancellationTokenSource();
 			var reader = (TextReader?)null;
 			try
 			{
 				this.Logger.LogDebug("Start opening reader");
-				reader = await this.DataSource.OpenReaderAsync();
+				reader = await this.DataSource.OpenReaderAsync(this.openingReaderCancellationSource.Token);
 				this.Logger.LogDebug("Reader opened");
 			}
 			catch (Exception ex)
 			{
 				this.Logger.LogError(ex, "Unable to open reader");
 			}
+			this.openingReaderCancellationSource = this.openingReaderCancellationSource.DisposeAndReturnNull();
 
 			// change state
 			switch(this.state)

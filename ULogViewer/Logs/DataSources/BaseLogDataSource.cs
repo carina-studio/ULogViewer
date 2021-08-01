@@ -179,7 +179,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		// Open reader asynchronously.
-		public async Task<TextReader> OpenReaderAsync()
+		public async Task<TextReader> OpenReaderAsync(CancellationToken? cancellationToken)
 		{
 			// check state
 			this.VerifyAccess();
@@ -196,13 +196,26 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			var openingResult = LogDataSourceState.UnclassifiedError;
 			try
 			{
-				openingResult = await this.TaskFactory.StartNew(() => this.OpenReaderCore(out reader));
+				openingResult = await this.TaskFactory.StartNew(() => this.OpenReaderCore(cancellationToken ?? new CancellationToken(), out reader));
 			}
-			catch(Exception ex)
+			catch (Exception ex)
 			{
-				this.Logger.LogError(ex, "Unable to open reader");
-				Global.RunWithoutErrorAsync(() => reader?.Close());
-				this.ChangeState(LogDataSourceState.UnclassifiedError);
+				if (cancellationToken.GetValueOrDefault().IsCancellationRequested)
+				{
+					this.Logger.LogWarning("Opening reader has been cancelled");
+					Global.RunWithoutErrorAsync(() => reader?.Close());
+					if (this.state == LogDataSourceState.OpeningReader)
+						this.Prepare();
+					if (ex is not TaskCanceledException)
+						throw new TaskCanceledException();
+				}
+				else
+				{
+					this.Logger.LogError(ex, "Unable to open reader");
+					Global.RunWithoutErrorAsync(() => reader?.Close());
+					if (this.state == LogDataSourceState.OpeningReader)
+						this.ChangeState(LogDataSourceState.UnclassifiedError);
+				}
 				throw;
 			}
 			if (this.state != LogDataSourceState.OpeningReader)
@@ -212,6 +225,13 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				if (this.IsDisposed)
 					throw new InvalidOperationException("Source has been disposed when opening reader.");
 				throw new InternalStateCorruptedException("Internal state has been changed when opening reader.");
+			}
+			if (cancellationToken.GetValueOrDefault().IsCancellationRequested)
+			{
+				this.Logger.LogWarning("Opening reader has been cancelled");
+				Global.RunWithoutErrorAsync(() => reader?.Close());
+				this.Prepare();
+				throw new TaskCanceledException();
 			}
 			switch (openingResult)
 			{
@@ -246,9 +266,10 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// Open <see cref="TextReader"/> to read log data.
 		/// </summary>
 		/// <remarks>The method will be called in background thead.</remarks>
+		/// <param name="cancellationToken"><see cref="CancellationToken"/> to cancel opening task.</param>
 		/// <param name="reader">Opened <see cref="TextReader"/>.</param>
 		/// <returns>One of <see cref="LogDataSourceState.ReaderOpened"/>, <see cref="LogDataSourceState.SourceNotFound"/>, <see cref="LogDataSourceState.UnclassifiedError"/></returns>
-		protected abstract LogDataSourceState OpenReaderCore(out TextReader? reader);
+		protected abstract LogDataSourceState OpenReaderCore(CancellationToken cancellationToken, out TextReader? reader);
 
 
 		/// <summary>
@@ -265,6 +286,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 					return;
 				case LogDataSourceState.Initializing:
 				case LogDataSourceState.ReadyToOpenReader:
+				case LogDataSourceState.OpeningReader:
 				case LogDataSourceState.ClosingReader:
 				case LogDataSourceState.SourceNotFound:
 				case LogDataSourceState.UnclassifiedError:

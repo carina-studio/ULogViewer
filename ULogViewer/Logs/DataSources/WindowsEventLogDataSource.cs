@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace CarinaStudio.ULogViewer.Logs.DataSources
 {
@@ -104,7 +105,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		// Open reader.
-		protected override LogDataSourceState OpenReaderCore(out TextReader? reader)
+		protected override LogDataSourceState OpenReaderCore(CancellationToken cancellationToken, out TextReader? reader)
 		{
 			var eventLog = this.eventLog;
 			if (eventLog == null)

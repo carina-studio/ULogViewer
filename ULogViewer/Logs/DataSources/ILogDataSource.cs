@@ -2,6 +2,7 @@
 using System;
 using System.ComponentModel;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.Logs.DataSources
@@ -26,10 +27,12 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// <summary>
 		/// Open <see cref="TextReader"/> to read log data asynchronously.
 		/// </summary>
+		/// <param name="cancellationToken"><see cref="CancellationToken"/> to cancel opening task.</param>
 		/// <returns>Task of opening <see cref="TextReader"/>.</returns>
 		/// <exception cref="InvalidOperationException">Current state is not <see cref="LogDataSourceState.ReadyToOpenReader"/>.</exception>
 		/// <exception cref="ObjectDisposedException">Instance has been disposed.</exception>
-		Task<TextReader> OpenReaderAsync();
+		/// <exception cref="TaskCanceledException">Opening task has been cancelled.</exception>
+		Task<TextReader> OpenReaderAsync(CancellationToken? cancellationToken = null);
 
 
 		/// <summary>
