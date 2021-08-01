@@ -1625,7 +1625,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					}
 					else
 					{
-						this.Logger.LogDebug("File name specified, start reading logs");
+						this.Logger.LogDebug($"File name specified, start reading logs for source type '{dataSourceProvider.UnderlyingSource}'");
 						var dataSource = this.CreateLogDataSourceOrNull(dataSourceProvider, dataSourceOptions);
 						if (dataSource != null)
 							this.CreateLogReader(dataSource);
@@ -1641,23 +1641,19 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					}
 					else
 					{
-						this.Logger.LogDebug("Start reading logs from standard output");
-						var dataSource = this.CreateLogDataSourceOrNull(dataSourceProvider, dataSourceOptions);
-						if (dataSource != null)
-							this.CreateLogReader(dataSource);
-					}
-					break;
-				case UnderlyingLogDataSource.Undefined:
-				case UnderlyingLogDataSource.WindowsEventLogs:
-					{
-						this.Logger.LogDebug("Start reading logs");
+						this.Logger.LogDebug($"Start reading logs for source type '{dataSourceProvider.UnderlyingSource}'");
 						var dataSource = this.CreateLogDataSourceOrNull(dataSourceProvider, dataSourceOptions);
 						if (dataSource != null)
 							this.CreateLogReader(dataSource);
 					}
 					break;
 				default:
-					this.Logger.LogError($"Unsupported underlying log data source type: {dataSourceProvider.UnderlyingSource}");
+					{
+						this.Logger.LogDebug($"Start reading logs for source type '{dataSourceProvider.UnderlyingSource}'");
+						var dataSource = this.CreateLogDataSourceOrNull(dataSourceProvider, dataSourceOptions);
+						if (dataSource != null)
+							this.CreateLogReader(dataSource);
+					}
 					break;
 			}
 
