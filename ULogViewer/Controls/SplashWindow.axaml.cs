@@ -45,7 +45,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			base.OnOpened(e);
 
 			// move to center of screen
-			var screen = this.Screens.Primary;
+			var screen = this.Screens.ScreenFromVisual(this);
 			var screenBounds = screen.Bounds;
 			var pixelDensity = screen.PixelDensity;
 			var width = this.Width * pixelDensity;
