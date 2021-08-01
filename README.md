@@ -80,7 +80,7 @@ If you want to run ULogViewer on macOS, please do the following steps first:
 1. Grant execution permission to ULogViewer. For ex: run command ```chmod 755 ULogViewer``` in terminal.
 2. Right click on ULogViewer > ```Open``` > Click ```Open``` on the pop-up window.
 
-You may see that system shows message like ```"XXX.dylib" can't be opened because Apple cannot check it for malicious software``` when you trying to launch ULogviewer. Once you encounter such problem, please follow the steps:
+You may see that system shows message like ```"XXX.dylib" can't be opened because Apple cannot check it for malicious software``` when you trying to launch ULogViewer. Once you encounter such problem, please follow the steps:
 1. Open ```System Preference``` of macOS.
 2. Choose ```Security & Privacy``` > ```General``` > Find the blocked library on the bottom and click ```Allow Anyway```.
 3. Try launching ULogViewer again.
