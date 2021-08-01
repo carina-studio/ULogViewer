@@ -225,7 +225,7 @@
 											</StackPanel>
 										</Border>
 										<Border DockPanel.Dock="Top" IsVisible="{Binding $parent[UserControl].PredefinedLogTextFilters.Count}" Padding="{StaticResource Thickness.SessionView.PredefinedLogTextFilterHint.Padding}">
-											<TextBlock HorizontalAlignment="Center" Text="{DynamicResource String.SessionView.PredefinedLogTextFilters.Hint}" TextTrimming="CharacterEllipsis"/>
+											<TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" HorizontalAlignment="Center" Text="{DynamicResource String.SessionView.PredefinedLogTextFilters.Hint}" TextTrimming="CharacterEllipsis"/>
 										</Border>
 										<Panel>
 											<ListBox Name="predefinedLogTextFilterListBox" Background="{x:Static Brushes.Transparent}" IsVisible="{Binding $parent[UserControl].PredefinedLogTextFilters.Count}" Items="{Binding $parent[UserControl].PredefinedLogTextFilters}" SelectionChanged="OnPredefinedLogTextFilterListBoxSelectionChanged" SelectionMode="Multiple" VirtualizationMode="None">
