@@ -36,6 +36,7 @@
     <AvaloniaResource Include="Resources/AppIcon_64px.png" />
     <AvaloniaResource Include="Strings/Default.axaml" />
 		<AvaloniaResource Include="Strings/Default-Linux.axaml" />
+		<AvaloniaResource Include="Strings/Default-OSX.axaml" />
     <AvaloniaResource Include="Strings/zh-TW.axaml" />
   </ItemGroup>
 

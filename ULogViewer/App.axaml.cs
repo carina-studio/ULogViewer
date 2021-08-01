@@ -56,7 +56,7 @@ namespace CarinaStudio.ULogViewer
 		SplashWindow? splashWindow;
 		ResourceInclude? stringResources;
 		CultureInfo? stringResourcesCulture;
-		ResourceInclude? stringResourcesLinux;
+		ResourceInclude? stringResourcesForOS;
 		StyleInclude? styles;
 		ThemeMode? stylesThemeMode;
 		volatile SynchronizationContext? synchronizationContext;
@@ -335,6 +335,13 @@ namespace CarinaStudio.ULogViewer
 				this.Resources.MergedDictionaries.Add(new ResourceInclude()
 				{
 					Source = new Uri($"avares://ULogViewer/Strings/Default-Linux.axaml")
+				});
+			}
+			else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+			{
+				this.Resources.MergedDictionaries.Add(new ResourceInclude()
+				{
+					Source = new Uri($"avares://ULogViewer/Strings/Default-OSX.axaml")
 				});
 			}
 			this.UpdateStringResources();
@@ -637,10 +644,10 @@ namespace CarinaStudio.ULogViewer
 						this.stringResources = null;
 						updated = true;
 					}
-					if (this.stringResourcesLinux != null)
+					if (this.stringResourcesForOS != null)
 					{
-						this.Resources.MergedDictionaries.Remove(this.stringResourcesLinux);
-						this.stringResourcesLinux = null;
+						this.Resources.MergedDictionaries.Remove(this.stringResourcesForOS);
+						this.stringResourcesForOS = null;
 						updated = true;
 					}
 				}
@@ -673,31 +680,41 @@ namespace CarinaStudio.ULogViewer
 				}
 
 				// resources for specific OS
-				if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+				var osName = Global.Run(() =>
 				{
-					if (this.stringResourcesLinux == null)
+					if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+						return "Linux";
+					if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+						return "OSX";
+					return null;
+				});
+				if (osName != null)
+				{
+					if (this.stringResourcesForOS == null)
 					{
 						try
 						{
-							this.stringResourcesLinux = new ResourceInclude()
+							this.stringResourcesForOS = new ResourceInclude()
 							{
-								Source = new Uri($"avares://ULogViewer/Strings/{cultureInfo.Name}-Linux.axaml")
+								Source = new Uri($"avares://ULogViewer/Strings/{cultureInfo.Name}-{osName}.axaml")
 							};
-							_ = this.stringResourcesLinux.Loaded; // trigger error if resource not found
-							this.logger.LogInformation($"Load strings (Linux) for {cultureInfo.Name}.");
+							_ = this.stringResourcesForOS.Loaded; // trigger error if resource not found
+							this.logger.LogInformation($"Load strings ({osName}) for {cultureInfo.Name}.");
 						}
 						catch
 						{
-							this.stringResourcesLinux = null;
-							this.logger.LogWarning($"No strings (Linux) for {cultureInfo.Name}.");
-							return;
+							this.stringResourcesForOS = null;
+							this.logger.LogWarning($"No strings ({osName}) for {cultureInfo.Name}.");
 						}
-						this.Resources.MergedDictionaries.Add(this.stringResourcesLinux);
-						updated = true;
+						if (this.stringResourcesForOS != null)
+						{
+							this.Resources.MergedDictionaries.Add(this.stringResourcesForOS);
+							updated = true;
+						}
 					}
-					else if (!this.Resources.MergedDictionaries.Contains(this.stringResourcesLinux))
+					else if (!this.Resources.MergedDictionaries.Contains(this.stringResourcesForOS))
 					{
-						this.Resources.MergedDictionaries.Add(this.stringResourcesLinux);
+						this.Resources.MergedDictionaries.Add(this.stringResourcesForOS);
 						updated = true;
 					}
 				}
@@ -706,11 +723,12 @@ namespace CarinaStudio.ULogViewer
 			{
 				if (this.stringResources != null)
 					updated |= this.Resources.MergedDictionaries.Remove(this.stringResources);
-				if (this.stringResourcesLinux != null)
-					updated |= this.Resources.MergedDictionaries.Remove(this.stringResourcesLinux);
+				if (this.stringResourcesForOS != null)
+					updated |= this.Resources.MergedDictionaries.Remove(this.stringResourcesForOS);
 			}
 			if (updated)
 			{
+				this.logger.LogWarning("String resources updated");
 				this.stringResourcesCulture = cultureInfo;
 				this.UpdateDynamicFontFamilies();
 				this.StringsUpdated?.Invoke(this, EventArgs.Empty);
