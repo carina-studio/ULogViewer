@@ -293,18 +293,25 @@ namespace CarinaStudio.ULogViewer
 			// call base
 			base.OnOpened(e);
 
-			// notify application update
-			this.NotifyAppUpdate();
-
 			// select log profile
-			if (this.DataContext is Workspace workspace)
+			this.SynchronizationContext.PostDelayed(() =>
 			{
-				workspace.ActiveSession?.Let(it =>
+				if (this.DataContext is Workspace workspace)
 				{
-					if (it.LogProfile == null && this.Settings.GetValueOrDefault(Settings.SelectLogProfileForNewSession))
-						this.FindSessionView(it)?.SelectAndSetLogProfile();
-				});
-			}
+					workspace.ActiveSession?.Let(it =>
+					{
+						if (it.LogProfile == null 
+							&& this.Settings.GetValueOrDefault(Settings.SelectLogProfileForNewSession)
+							&& !this.HasDialogs)
+						{
+							this.FindSessionView(it)?.SelectAndSetLogProfile();
+						}
+					});
+				}
+			}, 1000); // In order to show dialog at correct position on Linux, we need delay to make sure bounds of main window is set.
+
+			// notify application update
+			this.SynchronizationContext.PostDelayed(() => this.NotifyAppUpdate(), 1500);
 		}
 
 
