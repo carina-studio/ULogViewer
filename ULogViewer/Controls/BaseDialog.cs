@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using CarinaStudio.Threading;
 using ReactiveUI;
 using System;
@@ -79,6 +80,15 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// </summary>
 		/// <returns>Result of dialog.</returns>
 		protected abstract object? OnGenerateResult();
+
+
+		// Called when key up.
+		protected override void OnKeyUp(KeyEventArgs e)
+		{
+			base.OnKeyUp(e);
+			if (e.KeyModifiers == 0 && e.Key == Key.Escape)
+				this.Close();
+		}
 
 
 		// Called when opened.
