@@ -45,10 +45,10 @@ When viewing logs, you can mark some logs which are important for you. There is 
 Marked logs will be kept if you are viewing logs from files so that you don't need to mark them again when you open log files next time.
 
 ## 📥Download
-The latest version is 0.10.0.801.
-- 📦[Windows (x64)](https://github.com/carina-studio/ULogViewer/releases/download/0.10.0.801/ULogViewer-0.10.0.801-win-x64.zip)
-- 📦[Linux (x64)](https://github.com/carina-studio/ULogViewer/releases/download/0.10.0.801/ULogViewer-0.10.0.801-linux-x64.zip)
-- 📦[OSX (x64)](https://github.com/carina-studio/ULogViewer/releases/download/0.10.0.801/ULogViewer-0.10.0.801-osx-x64.zip)
+The latest version is 0.11.0.802.
+- 📦[Windows (x64)](https://github.com/carina-studio/ULogViewer/releases/download/0.11.0.802/ULogViewer-0.11.0.802-win-x64.zip)
+- 📦[Linux (x64)](https://github.com/carina-studio/ULogViewer/releases/download/0.11.0.802/ULogViewer-0.11.0.802-linux-x64.zip)
+- 📦[OSX (x64)](https://github.com/carina-studio/ULogViewer/releases/download/0.11.0.802/ULogViewer-0.11.0.802-osx-x64.zip)
 
 You can also find and download all releases [HERE](https://github.com/carina-studio/ULogViewer/releases).
 
