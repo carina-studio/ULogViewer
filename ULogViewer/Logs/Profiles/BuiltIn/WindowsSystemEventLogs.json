@@ -7,16 +7,12 @@
 	"IsAdministratorNeeded": true,
 	"LogLevelMapForReading": {
 		"e": "Error",
-		"f": "Failure",
 		"i": "Info",
-		"s": "Success",
 		"w": "Warn"
 	},
 	"LogLevelMapForWriting": {
 		"Error": "E",
-		"Failure": "F",
 		"Info": "I",
-		"Success": "S",
 		"Undefined": "U",
 		"Warn": "W"
 	},

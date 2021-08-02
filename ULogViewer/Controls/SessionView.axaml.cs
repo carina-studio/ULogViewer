@@ -73,6 +73,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Static fields.
+		static readonly AvaloniaProperty<bool> CanFilterLogsByNonTextFiltersProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(CanFilterLogsByNonTextFilters), false);
 		static readonly AvaloniaProperty<bool> HasLogProfileProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(HasLogProfile), false);
 		static readonly AvaloniaProperty<bool> IsScrollingToLatestLogNeededProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(IsScrollingToLatestLogNeeded), true);
 		static readonly AvaloniaProperty<FontFamily> LogFontFamilyProperty = AvaloniaProperty.Register<SessionView, FontFamily>(nameof(LogFontFamily));
@@ -121,6 +122,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly MenuItem showLogMessageMenuItem;
 		readonly ScheduledAction updateLogFiltersAction;
 		readonly ScheduledAction updateStatusBarStateAction;
+		readonly SortedObservableList<Logs.LogLevel> validLogLevels = new SortedObservableList<Logs.LogLevel>((x, y) => (int)x - (int)y);
 
 
 		/// <summary>
@@ -148,6 +150,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			// setup log font
 			this.UpdateLogFontFamily();
 			this.UpdateLogFontSize();
+
+			// setup properties
+			this.ValidLogLevels = this.validLogLevels.AsReadOnly();
 
 			// initialize
 			this.InitializeComponent();
@@ -252,8 +257,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				if (this.DataContext is not Session session)
 					return;
 
-				// set level
-				session.LogLevelFilter = (Logs.LogLevel)this.logLevelFilterComboBox.SelectedItem.AsNonNull();
+				// set level 
+				session.LogLevelFilter = this.logLevelFilterComboBox.SelectedItem is Logs.LogLevel logLevel ? logLevel : Logs.LogLevel.Undefined;
 
 				// set PID
 				this.logProcessIdFilterTextBox.Text.Let(it =>
@@ -414,10 +419,17 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.logLevelFilterComboBox.SelectedItem = session.LogLevelFilter;
 			this.updateLogFiltersAction.Cancel();
 
+			// update properties
+			this.validLogLevels.AddAll(session.ValidLogLevels);
+
 			// update UI
 			this.OnDisplayLogPropertiesChanged();
 			this.updateStatusBarStateAction.Schedule();
 		}
+
+
+		// Check whether at least one non-text log filter is supported or not.
+		bool CanFilterLogsByNonTextFilters { get => this.GetValue<bool>(CanFilterLogsByNonTextFiltersProperty); }
 
 
 		// Compare predefined log text filters.
@@ -699,6 +711,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// update properties
 			this.SetValue<bool>(HasLogProfileProperty, false);
+			this.validLogLevels.Clear();
 
 			// stop auto scrolling
 			this.scrollToLatestLogAction.Cancel();
@@ -1065,6 +1078,9 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// update menu
 			this.UpdateShowLogMessageMenuItem();
+
+			// update filter availability
+			this.UpdateCanFilterLogsByNonTextFilters();
 		}
 
 
@@ -1621,6 +1637,13 @@ namespace CarinaStudio.ULogViewer.Controls
 							this.SetValue<bool>(HasLogProfileProperty, false);
 					});
 					break;
+				case nameof(Session.ValidLogLevels):
+					this.validLogLevels.Clear();
+					this.validLogLevels.AddAll(session.ValidLogLevels);
+					this.UpdateCanFilterLogsByNonTextFilters();
+					if (this.validLogLevels.IsNotEmpty() && this.logLevelFilterComboBox.SelectedIndex < 0)
+						this.logLevelFilterComboBox.SelectedIndex = 0;
+					break;
 			}
 		}
 
@@ -1935,6 +1958,13 @@ namespace CarinaStudio.ULogViewer.Controls
 		ICommand SwitchLogFiltersCombinationModeCommand { get; }
 
 
+		// Update CanFilterLogsByNonTextFilters property.
+		void UpdateCanFilterLogsByNonTextFilters()
+		{
+			this.SetValue<bool>(CanFilterLogsByNonTextFiltersProperty, this.validLogLevels.Count > 1 || this.isPidLogPropertyVisible || this.isTidLogPropertyVisible);
+		}
+
+
 		// Update auto scrolling state according to user scrolling state.
 		void UpdateIsScrollingToLatestLogNeeded(double userScrollingDelta)
 		{
@@ -2016,5 +2046,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			})?.DisplayName ?? LogPropertyNameConverter.Default.Convert(nameof(DisplayableLog.Message));
 			this.showLogMessageMenuItem?.Let(it => it.Header = this.Application.GetFormattedString("SessionView.ShowLogMessage", displayName));
 		}
+
+
+		// LIst of log levels defined by log profile.
+		IList<Logs.LogLevel> ValidLogLevels { get; }
 	}
 }
