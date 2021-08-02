@@ -253,7 +253,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					for (var j = 0; j < textPropertyCount; ++j)
 					{
 						if (j > 0)
-							textToMatchBuilder.Append('█'); // special separator between text properties
+							textToMatchBuilder.Append("$$"); // special separator between text properties
 						textToMatchBuilder.Append(textPropertyGetters[j](log));
 					}
 					for (var j = textRegexCount - 1; j >= 0; --j)
