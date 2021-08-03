@@ -92,7 +92,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.regexTextBox.Regex = this.Regex ?? filter.Regex;
 				this.ignoreCaseSwitch.IsChecked = ((this.regexTextBox.Regex?.Options ?? RegexOptions.None) & RegexOptions.IgnoreCase) != 0;
 			}
-			this.nameTextBox.Focus();
+			this.SynchronizationContext.Post(_ => this.nameTextBox.Focus(), null); // [Workaround] delay to prevent focus got by popup
 		}
 
 

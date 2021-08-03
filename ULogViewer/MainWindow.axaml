@@ -14,17 +14,19 @@
 	<!-- Data templates -->
 	<Window.DataTemplates>
 		<DataTemplate DataType="{x:Type appViewModels:Session}">
-			<Grid ColumnDefinitions="Auto,Auto,Auto" Margin="{StaticResource Thickness.MainWindow.TabItem.Padding}">
-				<Border Height="{StaticResource Double.MainWindow.TabItem.Icon.Size}" Margin="{StaticResource Thickness.MainWindow.TabItem.Icon.Margin}" VerticalAlignment="Center" Width="{StaticResource Double.MainWindow.TabItem.Icon.Size}">
-					<DrawingPresenter Classes="Icon" Drawing="{Binding Icon}"/>
-				</Border>
-				<TextBlock FontSize="{StaticResource Double.MainWindow.TabItem.FontSize}" Grid.Column="1" MaxWidth="200" Text="{Binding Title}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
-				<Button Background="{x:Static Brushes.Transparent}" Click="OnTabItemCloseButtonClick" Grid.Column="2" Margin="{StaticResource Thickness.MainWindow.TabItem.CloseButton.Margin}" Padding="{StaticResource Thickness.MainWindow.TabItem.CloseButton.Padding}" ToolTip.Tip="{DynamicResource String.MainWindow.CloseSession}" VerticalAlignment="Center">
-					<Border Height="{StaticResource Double.MainWindow.TabItem.CloseButton.Icon.Size}" VerticalAlignment="Center" Width="{StaticResource Double.MainWindow.TabItem.CloseButton.Icon.Size}">
-						<DrawingPresenter Drawing="{DynamicResource Drawing.Close}" HorizontalAlignment="Center" Stretch="Uniform" VerticalAlignment="Center"/>
+			<Border Background="{x:Static Brushes.Transparent}" DragDrop.AllowDrop="True" Padding="{StaticResource Thickness.MainWindow.TabItem.Padding}">
+				<Grid ColumnDefinitions="Auto,Auto,Auto">
+					<Border Height="{StaticResource Double.MainWindow.TabItem.Icon.Size}" Margin="{StaticResource Thickness.MainWindow.TabItem.Icon.Margin}" VerticalAlignment="Center" Width="{StaticResource Double.MainWindow.TabItem.Icon.Size}">
+						<DrawingPresenter Classes="Icon" Drawing="{Binding Icon}"/>
 					</Border>
-				</Button>
-			</Grid>
+					<TextBlock FontSize="{StaticResource Double.MainWindow.TabItem.FontSize}" Grid.Column="1" MaxWidth="200" Text="{Binding Title}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+					<Button Background="{x:Static Brushes.Transparent}" Click="OnTabItemCloseButtonClick" Grid.Column="2" Margin="{StaticResource Thickness.MainWindow.TabItem.CloseButton.Margin}" Padding="{StaticResource Thickness.MainWindow.TabItem.CloseButton.Padding}" ToolTip.Tip="{DynamicResource String.MainWindow.CloseSession}" VerticalAlignment="Center">
+						<Border Height="{StaticResource Double.MainWindow.TabItem.CloseButton.Icon.Size}" VerticalAlignment="Center" Width="{StaticResource Double.MainWindow.TabItem.CloseButton.Icon.Size}">
+							<DrawingPresenter Drawing="{DynamicResource Drawing.Close}" HorizontalAlignment="Center" Stretch="Uniform" VerticalAlignment="Center"/>
+						</Border>
+					</Button>
+				</Grid>
+			</Border>
 		</DataTemplate>
 	</Window.DataTemplates>
 	
@@ -33,6 +35,7 @@
 		<Style Selector="TabItem">
 			<Setter Property="MaxHeight" Value="{StaticResource Double.MainWindow.TabItem.Height}"/>
 			<Setter Property="MinHeight" Value="{StaticResource Double.MainWindow.TabItem.Height}"/>
+			<Setter Property="Padding" Value="0"/>
 		</Style>
 	</Window.Styles>
 
@@ -42,8 +45,8 @@
 		<!-- Add new tab -->
 		<TabItem>
 			<TabItem.Header>
-				<Border Background="{x:Static Brushes.Transparent}" Height="{StaticResource Double.MainWindow.TabItem.Icon.Size}" ToolTip.Tip="{DynamicResource String.MainWindow.CreateSession}" Width="{StaticResource Double.MainWindow.TabItem.Icon.Size}">
-					<DrawingPresenter Drawing="{DynamicResource Drawing.Add}" HorizontalAlignment="Center" Stretch="Uniform" VerticalAlignment="Center"/>
+				<Border Background="{x:Static Brushes.Transparent}" DragDrop.AllowDrop="True" Padding="{StaticResource Thickness.MainWindow.TabItem.Padding}" ToolTip.Tip="{DynamicResource String.MainWindow.CreateSession}">
+					<DrawingPresenter Drawing="{DynamicResource Drawing.Add}" Height="{StaticResource Double.MainWindow.TabItem.Icon.Size}" HorizontalAlignment="Center" Stretch="Uniform" VerticalAlignment="Center" Width="{StaticResource Double.MainWindow.TabItem.Icon.Size}"/>
 				</Border>
 			</TabItem.Header>
 		</TabItem>

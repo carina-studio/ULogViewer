@@ -17,8 +17,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		// Fields.
 		static IApplication? app;
 		static string directoryPath = "";
-		static ILogger? logger;
+		static readonly HashSet<string> filterIdSet = new HashSet<string>();
 		static readonly ObservableList<PredefinedLogTextFilter> filters = new ObservableList<PredefinedLogTextFilter>();
+		static ILogger? logger;
+		static readonly Random random = new Random();
 
 
 		/// <summary>
@@ -39,12 +41,42 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			if (filters.Contains(filter))
 				return;
 
+			// check ID
+			if (string.IsNullOrEmpty(filter.Id))
+				filter.ChangeId();
+			while (!filterIdSet.Add(filter.Id))
+				filter.ChangeId();
+
 			// add filter
 			filters.Add(filter);
 			filter.PropertyChanged += OnPredefinedLogTextFilterPropertyChanged;
 
 			// save filter
 			_ = SaveFilter(filter, true);
+		}
+
+
+		/// <summary>
+		/// Generate a valid ID for <see cref="PredefinedLogTextFilter"/>.
+		/// </summary>
+		/// <returns>Generated ID.</returns>
+		internal static string GenerateId()
+		{
+			var id = new char[16];
+			while (true)
+			{
+				for (var i = id.Length - 1; i >= 0; --i)
+				{
+					var n = random.Next(36);
+					if (n < 10)
+						id[i] = (char)('0' + n);
+					else
+						id[i] = (char)('a' + (n - 10));
+				}
+				var candidate = new string(id);
+				if (!filterIdSet.Contains(candidate))
+					return candidate;
+			}
 		}
 
 
@@ -98,7 +130,20 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				{
 					filters.Add((await PredefinedLogTextFilter.LoadAsync(app, fileName)).Also(it =>
 					{
+						var isIdChanged = false;
+						if (string.IsNullOrEmpty(it.Id))
+						{
+							it.ChangeId();
+							isIdChanged = true;
+						}
+						while (!filterIdSet.Add(it.Id))
+						{
+							it.ChangeId();
+							isIdChanged = true;
+						}
 						it.PropertyChanged += OnPredefinedLogTextFilterPropertyChanged;
+						if (isIdChanged)
+							_ = it.SaveAsync(fileName);
 					}));
 				}
 				catch (Exception ex)
@@ -154,6 +199,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// remove
 			if (!filters.Remove(filter))
 				return;
+			filterIdSet.Remove(filter.Id);
 			filter.PropertyChanged -= OnPredefinedLogTextFilterPropertyChanged;
 			logger?.LogDebug($"Remove filter '{filter.Name}");
 

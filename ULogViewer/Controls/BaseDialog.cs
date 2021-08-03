@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using CarinaStudio.Threading;
 using ReactiveUI;
 using System;
@@ -81,6 +82,15 @@ namespace CarinaStudio.ULogViewer.Controls
 		protected abstract object? OnGenerateResult();
 
 
+		// Called when key up.
+		protected override void OnKeyUp(KeyEventArgs e)
+		{
+			base.OnKeyUp(e);
+			if (e.KeyModifiers == 0 && e.Key == Key.Escape)
+				this.Close();
+		}
+
+
 		// Called when opened.
 		protected override void OnOpened(EventArgs e)
 		{
@@ -101,10 +111,10 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.WindowStartupLocation = WindowStartupLocation.Manual;
 					this.Position = owner.Position.Let((position) =>
 					{
-						var screenScale = owner.Screens.Primary.PixelDensity;
+						var screenScale = owner.Screens.ScreenFromVisual(owner).PixelDensity;
 						var offsetX = (int)((owner.Width - this.Width) / 2 * screenScale);
 						var offsetY = (int)((owner.Height - this.Height) / 2 * screenScale);
-						return new Avalonia.PixelPoint(position.X + offsetX, position.Y + offsetY);
+						return new PixelPoint(position.X + offsetX, position.Y + offsetY);
 					});
 				});
 			}

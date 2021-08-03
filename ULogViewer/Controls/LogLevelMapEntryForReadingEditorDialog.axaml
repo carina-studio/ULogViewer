@@ -36,9 +36,12 @@
 			<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogLevelMapEntryEditor.Reading.LogLevel}"/>
 			<ComboBox Name="logLevelComboBox" HorizontalAlignment="Stretch">
 				<appLogs:LogLevel>Info</appLogs:LogLevel>
+				<appLogs:LogLevel>Success</appLogs:LogLevel>
 				<appLogs:LogLevel>Verbose</appLogs:LogLevel>
 				<appLogs:LogLevel>Debug</appLogs:LogLevel>
+				<appLogs:LogLevel>Trace</appLogs:LogLevel>
 				<appLogs:LogLevel>Warn</appLogs:LogLevel>
+				<appLogs:LogLevel>Failure</appLogs:LogLevel>
 				<appLogs:LogLevel>Error</appLogs:LogLevel>
 				<appLogs:LogLevel>Fatal</appLogs:LogLevel>
 				<ComboBox.ItemTemplate>

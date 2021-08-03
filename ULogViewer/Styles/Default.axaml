@@ -28,8 +28,11 @@
 			<!-- LogLevel -->
 			<SolidColorBrush x:Key="Brush.LogLevel.Debug">#000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.LogLevel.Error">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.LogLevel.Failure">#000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.LogLevel.Fatal">#000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.LogLevel.Info">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.LogLevel.Success">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.LogLevel.Trace">#000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.LogLevel.Undefined">#000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.LogLevel.Verbose">#000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.LogLevel.Warn">#000000</SolidColorBrush>
@@ -37,9 +40,6 @@
 			<!-- LogProfileSelectionDialog -->
 			<SolidColorBrush x:Key="Brush.LogProfileSelectionDialog.Label.Background">#00000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.LogProfileSelectionDialog.Label.Border">#00000000</SolidColorBrush>
-
-			<!-- RegexTextBox -->
-			<SolidColorBrush x:Key="Brush.RegexTextBox.Foreground.Error">#ff0000</SolidColorBrush>
 
 			<!-- Separator -->
 			<SolidColorBrush x:Key="Brush.Separator.Background">#00000000</SolidColorBrush>
@@ -60,9 +60,17 @@
 			<SolidColorBrush x:Key="Brush.SessionView.StatusBar.Background.Warning">#ca5100</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.SessionView.StatusBar.Foreground">#ffffff</SolidColorBrush>
 
+			<!-- SplashWindow -->
+			<SolidColorBrush x:Key="Brush.SplashWindow.Background">#bf000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.SplashWindow.Border">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.SplashWindow.Foreground">#ffffff</SolidColorBrush>
+
 			<!-- TextBlock -->
 			<SolidColorBrush x:Key="Brush.TextBlock.Foreground.Error">#ff0000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.TextBlock.Foreground.Link">#007acc</SolidColorBrush>
+
+			<!-- TextBox -->
+			<SolidColorBrush x:Key="Brush.TextBox.Foreground.Error">#ff0000</SolidColorBrush>
 
 			<!-- Window -->
 			<SolidColorBrush x:Key="Brush.Window.Background">#ffffff</SolidColorBrush>

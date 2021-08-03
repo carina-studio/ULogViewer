@@ -16,6 +16,10 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// </summary>
 		Verbose,
 		/// <summary>
+		/// Tracing.
+		/// </summary>
+		Trace,
+		/// <summary>
 		/// Debug.
 		/// </summary>
 		Debug,
@@ -24,9 +28,17 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// </summary>
 		Info,
 		/// <summary>
+		/// Success.
+		/// </summary>
+		Success,
+		/// <summary>
 		/// Warn.
 		/// </summary>
 		Warn,
+		/// <summary>
+		/// Failure.
+		/// </summary>
+		Failure,
 		/// <summary>
 		/// Error.
 		/// </summary>

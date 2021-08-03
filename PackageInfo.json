@@ -1,22 +1,22 @@
 {
-	"Version": "0.9.0.730",
-	"ReleaseDate": "2021/7/30",
-	"ReleasePageUrl": "https://github.com/carina-studio/ULogViewer/releases/tag/0.9.0.730",
+	"Version": "0.12.0.803",
+	"ReleaseDate": "2021/8/3",
+	"ReleasePageUrl": "https://github.com/carina-studio/ULogViewer/releases/tag/0.12.0.803",
 	"Packages": [
 		{
 			"OS": "Windows",
 			"Platform": "x64",
-			"Url": "https://github.com/carina-studio/ULogViewer/releases/download/0.9.0.730/ULogViewer-0.9.0.730-win-x64.zip"
+			"Url": "https://github.com/carina-studio/ULogViewer/releases/download/0.12.0.803/ULogViewer-0.12.0.803-win-x64.zip"
 		},
 		{
 			"OS": "Linux",
 			"Platform": "x64",
-			"Url": "https://github.com/carina-studio/ULogViewer/releases/download/0.9.0.730/ULogViewer-0.9.0.730-linux-x64.zip"
+			"Url": "https://github.com/carina-studio/ULogViewer/releases/download/0.12.0.803/ULogViewer-0.12.0.803-linux-x64.zip"
 		},
 		{
 			"OS": "OSX",
 			"Platform": "x64",
-			"Url": "https://github.com/carina-studio/ULogViewer/releases/download/0.9.0.730/ULogViewer-0.9.0.730-osx-x64.zip"
+			"Url": "https://github.com/carina-studio/ULogViewer/releases/download/0.12.0.803/ULogViewer-0.12.0.803-osx-x64.zip"
 		}
 	]
 }

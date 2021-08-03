@@ -15,11 +15,39 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 	/// </summary>
 	class StandardOutputLogDataSource : BaseLogDataSource
 	{
+		// TextReader implementations.
+		class ReaderImpl : TextReader
+		{
+			// Fields.
+			readonly Process process;
+			readonly TextReader stdoutReader;
+
+			// Constructor.
+			public ReaderImpl(Process process)
+			{
+				this.process = process;
+				this.stdoutReader = process.StandardOutput;
+			}
+
+			// Dispose.
+			protected override void Dispose(bool disposing)
+			{
+				if (disposing)
+					this.stdoutReader.Dispose();
+				Global.RunWithoutError(() => this.process.Kill());
+				Global.RunWithoutError(() => this.process.WaitForExit(1000));
+				base.Dispose(disposing);
+			}
+
+			// Implementations.
+			public override string? ReadLine() => this.stdoutReader.ReadLine();
+		}
+
+
 		// Fields.
 		volatile string? arguments;
 		volatile string? commandFileOnReady;
 		volatile bool isExecutingTeardownCommands;
-		volatile Process? process;
 		static readonly Regex regex = new Regex("^(?<ExecutableCommand>([^\\s\"]*)|\"([^\\s])*\")[\\s$]");
 		readonly object teardownCommandsLock = new object();
 
@@ -72,12 +100,6 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		protected override void OnReaderClosed()
 		{
 			base.OnReaderClosed();
-			if (this.process != null)
-			{
-				this.process.Kill();
-				this.process.WaitForExit();
-				this.process = null;
-			}
 			var options = this.CreationOptions;
 			if (options.TeardownCommands.IsNotEmpty())
 			{
@@ -102,7 +124,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		// Open reader core.
-		protected override LogDataSourceState OpenReaderCore(out TextReader? reader)
+		protected override LogDataSourceState OpenReaderCore(CancellationToken cancellationToken, out TextReader? reader)
 		{
 			// check state
 			if (commandFileOnReady == null)
@@ -139,17 +161,17 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			}
 
 			// start process
-			this.process = new Process();
-			this.process.StartInfo.FileName = commandFileOnReady;
+			var process = new Process();
+			process.StartInfo.FileName = commandFileOnReady;
 			if (this.CreationOptions.WorkingDirectory != null)
-				this.process.StartInfo.WorkingDirectory = this.CreationOptions.WorkingDirectory;
+				process.StartInfo.WorkingDirectory = this.CreationOptions.WorkingDirectory;
 			if (this.arguments != null)
-				this.process.StartInfo.Arguments = this.arguments;
-			this.process.StartInfo.UseShellExecute = false;
-			this.process.StartInfo.RedirectStandardOutput = true;
-			this.process.StartInfo.CreateNoWindow = true;
-			this.process.Start();
-			reader = this.process.StandardOutput;
+				process.StartInfo.Arguments = this.arguments;
+			process.StartInfo.UseShellExecute = false;
+			process.StartInfo.RedirectStandardOutput = true;
+			process.StartInfo.CreateNoWindow = true;
+			process.Start();
+			reader = new ReaderImpl(process);
 			return LogDataSourceState.ReaderOpened;
 		}
 

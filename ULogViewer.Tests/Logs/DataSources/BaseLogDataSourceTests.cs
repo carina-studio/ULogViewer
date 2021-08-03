@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.Logs.DataSources
@@ -210,6 +211,61 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// <param name="data">Log data.</param>
 		/// <param name="options"><see cref="LogDataSourceOptions"/> to create source.</param>
 		protected abstract void PrepareSource(ILogDataSourceProvider provider, string[] data, out LogDataSourceOptions options);
+
+
+		/// <summary>
+		/// Test for cancellation of <see cref="ILogDataSource.OpenReaderAsync(System.Threading.CancellationToken?)"/>.
+		/// </summary>
+		[Test]
+		public void ReaderOpeningCancellationTest()
+		{
+			this.AsyncTestOnApplicationThread(async () =>
+			{
+				// prepare
+				var provider = this.CreateProvider();
+				var lines = this.GenerateRandomLines();
+				this.PrepareSource(provider, lines, out var options);
+				using var source = provider.CreateSource(options);
+
+				// test
+				for (var i = 0; i < 10; ++i)
+				{
+					// wait for ready to open reader
+					Assert.IsTrue(await source.WaitForPropertyAsync(nameof(ILogDataSource.State), LogDataSourceState.ReadyToOpenReader, 5000));
+
+					// open reader
+					var cancellationTokenSource = new CancellationTokenSource();
+					var openReaderTask = source.OpenReaderAsync(cancellationTokenSource.Token);
+					Assert.AreEqual(LogDataSourceState.OpeningReader, source.State);
+
+					// cancel immediately
+					cancellationTokenSource.Cancel();
+					try
+					{
+						await openReaderTask;
+						throw new AssertionException("Exception should be thrown after cancellation.");
+					}
+					catch (Exception ex)
+					{
+						if (ex is AssertionException)
+							throw;
+					}
+
+					// wait for ready to open reader
+					Assert.IsTrue(await source.WaitForPropertyAsync(nameof(ILogDataSource.State), LogDataSourceState.ReadyToOpenReader, 5000));
+
+					// open reader again
+					cancellationTokenSource = new CancellationTokenSource();
+					openReaderTask = source.OpenReaderAsync(cancellationTokenSource.Token);
+					Assert.AreEqual(LogDataSourceState.OpeningReader, source.State);
+
+					// cancel after opening completed
+					Assert.IsTrue(await source.WaitForPropertyAsync(nameof(ILogDataSource.State), LogDataSourceState.ReaderOpened, 5000));
+					cancellationTokenSource.Cancel();
+					using var reader = await openReaderTask;
+				}
+			});
+		}
 
 
 		/// <summary>

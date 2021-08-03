@@ -90,14 +90,14 @@
 			<StackPanel Orientation="Horizontal">
 
 				<!-- Select log profiles -->
-				<Button Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].SetLogProfileCommand}" ToolTip.Tip="{DynamicResource String.SessionView.SetLogProfile}">
+				<Button Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].SelectAndSetLogProfileCommand}" ToolTip.Tip="{DynamicResource String.SessionView.SetLogProfile}">
 					<Border Classes="SessionView_ToolBar_Button_Icon">
 						<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.LogProfiles}"/>
 					</Border>
 				</Button>
 
 				<!-- Set working directory -->
-				<Button Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].SetWorkingDirectoryCommand}" ToolTip.Tip="{DynamicResource String.SessionView.SetWorkingDirectory}">
+				<Button Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].SelectAndSetWorkingDirectoryCommand}" ToolTip.Tip="{DynamicResource String.SessionView.SetWorkingDirectory}">
 					<Border Classes="SessionView_ToolBar_Button_Icon">
 						<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.AddFolder}"/>
 					</Border>
@@ -160,20 +160,21 @@
 			<Grid ColumnDefinitions="Auto,Auto,Auto,Auto,*,Auto" Grid.Column="1" HorizontalAlignment="Stretch" Margin="{StaticResource Thickness.SessionView.ToolBar.LogFilters.Padding}" VerticalAlignment="Stretch">
 
 				<!-- Level filter -->
-				<ComboBox Name="logLevelFilterComboBox" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" Margin="{StaticResource Thickness.SessionView.ToolBar.LogLevelFilter.Margin}" SelectionChanged="OnLogLevelFilterComboBoxSelectionChanged" VerticalAlignment="Center" Width="{StaticResource Double.SessionView.ToolBar.LogLevelFilter.Width}">
+				<ComboBox Name="logLevelFilterComboBox" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" IsVisible="false" Items="{Binding $parent[UserControl].ValidLogLevels}" Margin="{StaticResource Thickness.SessionView.ToolBar.LogLevelFilter.Margin}" SelectionChanged="OnLogLevelFilterComboBoxSelectionChanged" VerticalAlignment="Center" Width="{StaticResource Double.SessionView.ToolBar.LogLevelFilter.Width}">
+					<ia:Interaction.Behaviors>
+						<iaCore:DataTriggerBehavior Binding="{Binding $parent[UserControl].ValidLogLevels.Count}" ComparisonCondition="GreaterThan" Value="1">
+							<iaCore:ChangePropertyAction PropertyName="IsVisible" Value="True"/>
+						</iaCore:DataTriggerBehavior>
+						<iaCore:DataTriggerBehavior Binding="{Binding $parent[UserControl].ValidLogLevels.Count}" ComparisonCondition="LessThanOrEqual" Value="1">
+							<iaCore:ChangePropertyAction PropertyName="IsVisible" Value="False"/>
+						</iaCore:DataTriggerBehavior>
+					</ia:Interaction.Behaviors>
 					<ComboBox.ItemTemplate>
 						<DataTemplate>
 							<TextBlock Foreground="{Binding Converter={x:Static appConverters:LogLevelBrushConverter.Default}}" Text="{Binding Converter={x:Static appControls:SessionView.LogLevelNameConverter}}">
 							</TextBlock>
 						</DataTemplate>
 					</ComboBox.ItemTemplate>
-					<appLogs:LogLevel>Undefined</appLogs:LogLevel>
-					<appLogs:LogLevel>Info</appLogs:LogLevel>
-					<appLogs:LogLevel>Verbose</appLogs:LogLevel>
-					<appLogs:LogLevel>Debug</appLogs:LogLevel>
-					<appLogs:LogLevel>Warn</appLogs:LogLevel>
-					<appLogs:LogLevel>Error</appLogs:LogLevel>
-					<appLogs:LogLevel>Fatal</appLogs:LogLevel>
 				</ComboBox>
 
 				<!-- PID filter -->
@@ -183,7 +184,7 @@
 				<TextBox Name="logThreadIdFilterTextBox" Grid.Column="2" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" IsVisible="False" PropertyChanged="OnLogFilterTextBoxPropertyChanged" Margin="{StaticResource Thickness.SessionView.ToolBar.LogProcessIdFilter.Margin}" VerticalAlignment="Center" Watermark="{DynamicResource String.LogProperty.ThreadId}" Width="{StaticResource Double.SessionView.ToolBar.LogProcessIdFilter.Width}"/>
 
 				<!-- Filters combinatin mode -->
-				<Button Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].SwitchLogFiltersCombinationModeCommand}" Grid.Column="3" ToolTip.Tip="{DynamicResource String.SessionView.LogFiltersCombinationMode}">
+				<Button Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].SwitchLogFiltersCombinationModeCommand}" Grid.Column="3" IsVisible="{Binding $parent[UserControl].CanFilterLogsByNonTextFilters}" ToolTip.Tip="{DynamicResource String.SessionView.LogFiltersCombinationMode}">
 					<Border Classes="SessionView_ToolBar_Button_Icon">
 						<DrawingPresenter Classes="Icon">
 							<ia:Interaction.Behaviors>
@@ -217,18 +218,25 @@
 									<DockPanel>
 										<Border Background="{DynamicResource Brush.Dialog.ControlButtonsPanel.Background}" DockPanel.Dock="Bottom" Padding="{StaticResource Thickness.Dialog.ControlButtonsPanel.Padding}">
 											<StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-												<Button Classes="Dialog_ControlButton" Click="OnCreatePredefinedLogTextFilterButtonClick" Content="{DynamicResource String.SessionView.CreatePredefinedLogTextFilter}"/>
-												<Button Classes="Dialog_ControlButton" Click="OnClearPredefinedLogTextFilterSelectionButtonClick" IsEnabled="{Binding ElementName=predefinedLogTextFilterListBox, Path=SelectedItems.Count}" Content="{DynamicResource String.SessionView.ClearPredefinedLogTextFiltersSelection}"/>
+												<Button Classes="Dialog_ControlButton" Command="{Binding $parent[UserControl].CreatePredefinedLogTextFilter}" Content="{DynamicResource String.SessionView.CreatePredefinedLogTextFilter}"/>
+												<Button Classes="Dialog_ControlButton" Command="{Binding $parent[UserControl].ClearPredefinedLogTextFilterSelection}" IsEnabled="{Binding ElementName=predefinedLogTextFilterListBox, Path=SelectedItems.Count}" Content="{DynamicResource String.SessionView.ClearPredefinedLogTextFiltersSelection}"/>
 											</StackPanel>
+										</Border>
+										<Border DockPanel.Dock="Top" IsVisible="{Binding $parent[UserControl].PredefinedLogTextFilters.Count}" Padding="{StaticResource Thickness.SessionView.PredefinedLogTextFilterHint.Padding}">
+											<TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" HorizontalAlignment="Center" Text="{DynamicResource String.SessionView.PredefinedLogTextFilters.Hint}" TextTrimming="CharacterEllipsis"/>
 										</Border>
 										<Panel>
 											<ListBox Name="predefinedLogTextFilterListBox" Background="{x:Static Brushes.Transparent}" IsVisible="{Binding $parent[UserControl].PredefinedLogTextFilters.Count}" Items="{Binding $parent[UserControl].PredefinedLogTextFilters}" SelectionChanged="OnPredefinedLogTextFilterListBoxSelectionChanged" SelectionMode="Multiple" VirtualizationMode="None">
 												<ListBox.ItemTemplate>
 													<DataTemplate DataType="{x:Type appViewModels:PredefinedLogTextFilter}">
-														<Grid ColumnDefinitions="*,Auto">
-															<TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
-															<Border Classes="InPlaceAction_Reserved"/>
-															<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal" VerticalAlignment="Center">
+														<Grid ColumnDefinitions="Auto,*,Auto">
+															<Grid Height="{StaticResource Double.SessionView.PredefinedLogTextFilterListBox.Icon.Size}" Margin="{StaticResource Thickness.SessionView.PredefinedLogTextFilterListBox.Icon.Margin}" VerticalAlignment="Center" Width="{StaticResource Double.SessionView.PredefinedLogTextFilterListBox.Icon.Size}">
+																<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Filter}" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}"/>
+																<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Filter.Light}" IsVisible="{Binding $parent[ListBoxItem].IsSelected}"/>
+															</Grid>
+															<TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center"/>
+															<Border Classes="InPlaceAction_Reserved" Grid.Column="1"/>
+															<StackPanel Grid.Column="2" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal" VerticalAlignment="Center">
 																<Button Classes="InPlaceAction" Command="{Binding $parent[UserControl].RemovePredefinedLogTextFilter}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String.Common.Delete}">
 																	<Border Classes="InPlaceAction">
 																		<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Delete}"/>

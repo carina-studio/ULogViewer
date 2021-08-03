@@ -52,6 +52,9 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 			{
 				builtInProfileIDs.Add("WindowsApplicationEventLogs");
+				builtInProfileIDs.Add("WindowsSecurityEventLogs");
+				builtInProfileIDs.Add("WindowsSetupEventLogs");
+				builtInProfileIDs.Add("WindowsSystemEventLogs");
 			}
 		}
 
@@ -87,7 +90,13 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			profile.PropertyChanged += OnProfilePropertyChanged;
 
 			// check ID
-			if (!profileIdSet.Add(profile.Id))
+			if (string.IsNullOrEmpty(profile.Id))
+			{
+				profile.ChangeId();
+				pendingSavingProfiles.Add(profile);
+				saveProfilesAction?.Schedule();
+			}
+			while (!profileIdSet.Add(profile.Id))
 			{
 				profile.ChangeId();
 				pendingSavingProfiles.Add(profile);

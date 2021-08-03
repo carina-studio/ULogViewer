@@ -8,12 +8,14 @@
 		"DEBUG": "Debug",
 		"ERROR": "Error",
 		"INFO": "Info",
+		"TRACE": "Trace",
 		"WARN": "Warn"
 	},
 	"LogLevelMapForWriting": {
 		"Debug": "DEBUG",
 		"Error": "ERROR",
 		"Info": "INFO",
+		"Trace": "TRACE",
 		"Warn": "WARN"
 	},
 	"LogPatterns": [

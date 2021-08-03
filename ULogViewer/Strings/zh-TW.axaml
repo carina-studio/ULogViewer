@@ -26,6 +26,7 @@
 	<sys:String x:Key="String.AppOptionsDialog.LogOperations">日誌操作</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.MaxContinuousLogCount">連續讀取時的最大日誌個數</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.SelectLogFilesWhenNeeded">當需要日誌檔案時立即開啟檔案選取介面</sys:String>
+	<sys:String x:Key="String.AppOptionsDialog.SelectLogProfileForNewSession">建立新分頁後開啟日誌類型選取介面</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.SelectWorkingDirectoryWhenNeeded">當需要工作目錄時立即開啟目錄選取介面</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.ThemeMode">佈景主題</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.Title">應用程式選項</sys:String>
@@ -37,6 +38,9 @@
 	<sys:String x:Key="String.BuiltInProfile.AndroidFileLog">Android 日誌檔案</sys:String>
 	<sys:String x:Key="String.BuiltInProfile.GitLog">Git 提交紀錄</sys:String>
 	<sys:String x:Key="String.BuiltInProfile.WindowsApplicationEventLogs">Windows 事件紀錄 (應用程式)</sys:String>
+	<sys:String x:Key="String.BuiltInProfile.WindowsSecurityEventLogs">Windows 事件紀錄 (安全性)</sys:String>
+	<sys:String x:Key="String.BuiltInProfile.WindowsSetupEventLogs">Windows 事件紀錄 (安裝)</sys:String>
+	<sys:String x:Key="String.BuiltInProfile.WindowsSystemEventLogs">Windows 事件紀錄 (系統)</sys:String>
 	
 	<!-- Common -->
 	<sys:String x:Key="String.Common.Add">新增</sys:String>
@@ -79,13 +83,19 @@
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.SetupCommands">日誌讀取前指令</sys:String>
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.TeardownCommands">日誌讀取後指令</sys:String>
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.Title">資料來源參數</sys:String>
+	<sys:String x:Key="String.LogDataSourceOptionsDialog.Uri">URI (必須)</sys:String>
+	<sys:String x:Key="String.LogDataSourceOptionsDialog.WebRequestCredentials.Password">登入密碼</sys:String>
+	<sys:String x:Key="String.LogDataSourceOptionsDialog.WebRequestCredentials.UserName">登入名稱</sys:String>
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.WorkingDirectory">工作目錄</sys:String>
 
 	<!-- LogLevel -->
 	<sys:String x:Key="String.LogLevel.Debug">偵錯</sys:String>
 	<sys:String x:Key="String.LogLevel.Error">錯誤</sys:String>
+	<sys:String x:Key="String.LogLevel.Failure">失敗</sys:String>
 	<sys:String x:Key="String.LogLevel.Fatal">嚴重錯誤</sys:String>
 	<sys:String x:Key="String.LogLevel.Info">資訊</sys:String>
+	<sys:String x:Key="String.LogLevel.Success">成功</sys:String>
+	<sys:String x:Key="String.LogLevel.Trace">追蹤</sys:String>
 	<sys:String x:Key="String.LogLevel.Undefined">未定義</sys:String>
 	<sys:String x:Key="String.LogLevel.Verbose">詳細資訊</sys:String>
 	<sys:String x:Key="String.LogLevel.Warn">警告</sys:String>
@@ -235,7 +245,7 @@
 	<sys:String x:Key="String.SessionView.HasPartialDataSourceErrors">部分資料來源發生錯誤</sys:String>
 	<sys:String x:Key="String.SessionView.LogFiltersCombinationMode">篩選條件運算方式</sys:String>
 	<sys:String x:Key="String.SessionView.LogsFilteringProgress">篩選進度：</sys:String>
-	<sys:String x:Key="String.SessionView.LogTextFilterHint">文字篩選 (正規表示式)</sys:String>
+	<sys:String x:Key="String.SessionView.LogTextFilterHint">文字篩選 (正規表示式，按 Ctrl+S 以儲存)</sys:String>
 	<sys:String x:Key="String.SessionView.MarkedLogs">已標記日誌</sys:String>
 	<sys:String x:Key="String.SessionView.MarkUnmarkLogs">標記/解除標記日誌</sys:String>
 	<sys:String x:Key="String.SessionView.NeedToRestartAsAdministrator">'{0}' 需要系統管理員身分，是否要以系統管理員身分重新啟動應用程式並使用此日誌類型？正在查看的日誌將被關閉。</sys:String>
@@ -245,6 +255,7 @@
 	<sys:String x:Key="String.SessionView.OtherActions">其他動作</sys:String>
 	<sys:String x:Key="String.SessionView.PauseResumeLogsReading">暫停/繼續讀取日誌 (P)</sys:String>
 	<sys:String x:Key="String.SessionView.PredefinedLogTextFilters">已儲存的文字篩選</sys:String>
+	<sys:String x:Key="String.SessionView.PredefinedLogTextFilters.Hint">選取一個或多個項目</sys:String>
 	<sys:String x:Key="String.SessionView.ReloadLogs">重新載入日誌 (F5)</sys:String>
 	<sys:String x:Key="String.SessionView.ResetLogFilters">清除所有篩選設定</sys:String>
 	<sys:String x:Key="String.SessionView.ScrollToLatestLog">捲動至最新的日誌</sys:String>
@@ -259,6 +270,12 @@
 	<!-- SortDirection -->
 	<sys:String x:Key="String.SortDirection.Ascending">遞增</sys:String>
 	<sys:String x:Key="String.SortDirection.Descending">遞減</sys:String>
+
+	<!-- SplashWindow -->
+	<sys:String x:Key="String.SplashWindow.InitializeLogProfiles">正在載入日誌類型</sys:String>
+	<sys:String x:Key="String.SplashWindow.InitializePredefinedLogTextFilters">正在載入文字篩選</sys:String>
+	<sys:String x:Key="String.SplashWindow.ShowMainWindow">開啟主視窗</sys:String>
+	<sys:String x:Key="String.SplashWindow.UpdateStyles">正在載入樣式</sys:String>
 
 	<!-- ThemeMode -->
 	<sys:String x:Key="String.ThemeMode.Dark">深色</sys:String>

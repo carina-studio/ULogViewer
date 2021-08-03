@@ -315,8 +315,15 @@ namespace CarinaStudio.ULogViewer.Controls
 		protected override void OnOpened(EventArgs e)
 		{
 			base.OnOpened(e);
-			if (this.otherLogProfiles.IsEmpty() && this.pinnedLogProfiles.IsEmpty())
-				this.SynchronizationContext.Post(this.Close);
+			this.SynchronizationContext.Post(() =>
+			{
+				if (pinnedLogProfiles.IsNotEmpty())
+					this.pinnedLogProfileListBox.Focus();
+				else if (this.otherLogProfiles.IsNotEmpty())
+					this.otherLogProfileListBox.Focus();
+				else
+					this.Close();
+			});
 		}
 
 

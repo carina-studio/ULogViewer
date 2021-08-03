@@ -144,6 +144,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Property of <see cref="Title"/>.
 		/// </summary>
 		public static readonly ObservableProperty<string?> TitleProperty = ObservableProperty.Register<Session, string?>(nameof(Title));
+		/// <summary>
+		/// Property of <see cref="ValidLogLevels"/>.
+		/// </summary>
+		public static readonly ObservableProperty<IList<Logs.LogLevel>> ValidLogLevelsProperty = ObservableProperty.Register<Session, IList<Logs.LogLevel>>(nameof(ValidLogLevels), new Logs.LogLevel[0]);
 
 
 		/// <summary>
@@ -1246,6 +1250,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.SynchronizationContext.Post(() => this.ReloadLogs(true));
 					break;
 				case nameof(LogProfile.LogLevelMapForReading):
+					this.UpdateValidLogLevels();
+					goto case nameof(LogProfile.LogPatterns);
 				case nameof(LogProfile.LogPatterns):
 				case nameof(LogProfile.SortDirection):
 				case nameof(LogProfile.SortKey):
@@ -1486,6 +1492,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.canSetWorkingDirectory.Update(false);
 			this.canResetLogProfile.Update(false);
 			this.UpdateIsLogsWritingAvailable(null);
+			this.UpdateValidLogLevels();
 
 			// clear profile
 			this.Logger.LogWarning($"Reset log profile '{profile.Name}'");
@@ -1612,6 +1619,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// setup log comparer
 			this.UpdateDisplayableLogComparison();
 
+			// update valid log levels
+			this.UpdateValidLogLevels();
+
 			// read logs or wait for more actions
 			var dataSourceOptions = profile.DataSourceOptions;
 			var dataSourceProvider = profile.DataSourceProvider;
@@ -1625,7 +1635,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					}
 					else
 					{
-						this.Logger.LogDebug("File name specified, start reading logs");
+						this.Logger.LogDebug($"File name specified, start reading logs for source type '{dataSourceProvider.UnderlyingSource}'");
 						var dataSource = this.CreateLogDataSourceOrNull(dataSourceProvider, dataSourceOptions);
 						if (dataSource != null)
 							this.CreateLogReader(dataSource);
@@ -1641,23 +1651,19 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					}
 					else
 					{
-						this.Logger.LogDebug("Start reading logs from standard output");
-						var dataSource = this.CreateLogDataSourceOrNull(dataSourceProvider, dataSourceOptions);
-						if (dataSource != null)
-							this.CreateLogReader(dataSource);
-					}
-					break;
-				case UnderlyingLogDataSource.Undefined:
-				case UnderlyingLogDataSource.WindowsEventLogs:
-					{
-						this.Logger.LogDebug("Start reading logs");
+						this.Logger.LogDebug($"Start reading logs for source type '{dataSourceProvider.UnderlyingSource}'");
 						var dataSource = this.CreateLogDataSourceOrNull(dataSourceProvider, dataSourceOptions);
 						if (dataSource != null)
 							this.CreateLogReader(dataSource);
 					}
 					break;
 				default:
-					this.Logger.LogError($"Unsupported underlying log data source type: {dataSourceProvider.UnderlyingSource}");
+					{
+						this.Logger.LogDebug($"Start reading logs for source type '{dataSourceProvider.UnderlyingSource}'");
+						var dataSource = this.CreateLogDataSourceOrNull(dataSourceProvider, dataSourceOptions);
+						if (dataSource != null)
+							this.CreateLogReader(dataSource);
+					}
 					break;
 			}
 
@@ -1793,6 +1799,26 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.canCopyLogsWithFileNames.Update(this.canCopyLogs.Value && profile.DataSourceProvider.UnderlyingSource == UnderlyingLogDataSource.File);
 			}
 		}
+
+
+		// Update valid log levels defined by log profile.
+		void UpdateValidLogLevels()
+		{
+			var profile = this.LogProfile;
+			if (profile == null)
+				this.SetValue(ValidLogLevelsProperty, new Logs.LogLevel[0]);
+			else
+			{
+				var logLevels = new HashSet<Logs.LogLevel>(profile.LogLevelMapForReading.Values).Also(it => it.Add(ULogViewer.Logs.LogLevel.Undefined));
+				this.SetValue(ValidLogLevelsProperty, logLevels.ToList().AsReadOnly());
+			}
+		}
+
+
+		/// <summary>
+		/// Get list of valid <see cref="Logs.LogLevel"/> defined by log profile including <see cref="Logs.LogLevel.Undefined"/>.
+		/// </summary>
+		public IList<Logs.LogLevel> ValidLogLevels { get => this.GetValue(ValidLogLevelsProperty); }
 
 
 		/// <summary>

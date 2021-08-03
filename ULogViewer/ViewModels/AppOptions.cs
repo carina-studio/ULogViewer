@@ -118,6 +118,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.OnPropertyChanged(nameof(MaxContinuousLogCount));
 			else if (key == ULogViewer.Settings.SelectLogFilesWhenNeeded)
 				this.OnPropertyChanged(nameof(SelectLogFilesWhenNeeded));
+			else if (key == ULogViewer.Settings.SelectLogProfileForNewSession)
+				this.OnPropertyChanged(nameof(SelectLogProfileForNewSession));
 			else if (key == ULogViewer.Settings.SelectWorkingDirectoryWhenNeeded)
 				this.OnPropertyChanged(nameof(SelectWorkingDirectoryWhenNeeded));
 			else if (key == ULogViewer.Settings.ThemeMode)
@@ -140,6 +142,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			get => this.Settings.GetValueOrDefault(ULogViewer.Settings.SelectLogFilesWhenNeeded);
 			set => this.Settings.SetValue(ULogViewer.Settings.SelectLogFilesWhenNeeded, value);
+		}
+
+
+		/// <summary>
+		/// Get or set to select log profile immediately after creating new session.
+		/// </summary>
+		public bool SelectLogProfileForNewSession
+		{
+			get => this.Settings.GetValueOrDefault(ULogViewer.Settings.SelectLogProfileForNewSession);
+			set => this.Settings.SetValue(ULogViewer.Settings.SelectLogProfileForNewSession, value);
 		}
 
 

@@ -1,10 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <AssemblyVersion>0.9.0.730</AssemblyVersion>
-		<Version>0.9.0.730</Version>
+    <AssemblyVersion>0.12.0.803</AssemblyVersion>
+		<Version>0.12.0.803</Version>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
+    <DebugType>embedded</DebugType>
     <RootNamespace>CarinaStudio.ULogViewer</RootNamespace>
     <Nullable>enable</Nullable>
     <Authors>Carina Studio</Authors>
@@ -21,6 +22,9 @@
 
   <ItemGroup>
     <None Remove="Logs\Profiles\BuiltIn\WindowsApplicationEventLogs.json" />
+    <None Remove="Logs\Profiles\BuiltIn\WindowsSecurityEventLogs.json" />
+    <None Remove="Logs\Profiles\BuiltIn\WindowsSetupEventLogs.json" />
+    <None Remove="Logs\Profiles\BuiltIn\WindowsSystemEventLogs.json" />
   </ItemGroup>
 
   <ItemGroup>
@@ -32,6 +36,7 @@
     <AvaloniaResource Include="Resources/AppIcon_64px.png" />
     <AvaloniaResource Include="Strings/Default.axaml" />
 		<AvaloniaResource Include="Strings/Default-Linux.axaml" />
+		<AvaloniaResource Include="Strings/Default-OSX.axaml" />
     <AvaloniaResource Include="Strings/zh-TW.axaml" />
   </ItemGroup>
 
@@ -41,23 +46,26 @@
     <PackageReference Include="Avalonia.Desktop" Version="0.10.6" />
     <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.6" />
     <PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.10.6.10" />
-    <PackageReference Include="CarinaStudio.AppBase.Application" Version="0.20.2.724" />
-    <PackageReference Include="CarinaStudio.AppBase.Configuration" Version="0.20.2.724" />
-    <PackageReference Include="CarinaStudio.AppBase.Core" Version="0.20.2.724" />
+    <PackageReference Include="CarinaStudio.AppBase.Application" Version="0.20.3.803" />
+    <PackageReference Include="CarinaStudio.AppBase.Configuration" Version="0.20.3.803" />
+    <PackageReference Include="CarinaStudio.AppBase.Core" Version="0.20.3.803" />
     <PackageReference Include="Microsoft.Win32.SystemEvents" Version="5.0.0" />
     <PackageReference Include="NLog" Version="4.7.10" />
     <PackageReference Include="NLog.Extensions.Logging" Version="1.7.3" />
     <PackageReference Include="ReactiveUI" Version="14.1.1" />
     <PackageReference Include="System.Diagnostics.EventLog" Version="5.0.1" />
+    <PackageReference Include="System.Net.Http" Version="4.3.4" />
     <PackageReference Include="System.Security.Principal.Windows" Version="5.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <None Update="AppIcon_128px.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </None>
     <None Update="NLog.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </None>
   </ItemGroup>
 
@@ -74,6 +82,9 @@
 	  <EmbeddedResource Include="Logs/Profiles/BuiltIn/GitLog.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/ULogViewerLog.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/WindowsApplicationEventLogs.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/WindowsSecurityEventLogs.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/WindowsSetupEventLogs.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/WindowsSystemEventLogs.json" />
 	</ItemGroup>
 
 </Project>

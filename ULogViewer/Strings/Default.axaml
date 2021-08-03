@@ -28,6 +28,7 @@
 	<sys:String x:Key="String.AppOptionsDialog.LogOperations">Log Operations</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.MaxContinuousLogCount">Maximum number of logs when continuous reading</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.SelectLogFilesWhenNeeded">Show file selector when log files are needed</sys:String>
+	<sys:String x:Key="String.AppOptionsDialog.SelectLogProfileForNewSession">Show log profile selector after creating new tab</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.SelectWorkingDirectoryWhenNeeded">Show directory selector when working directory is needed</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.ThemeMode">Theme</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.Title">Application options</sys:String>
@@ -40,6 +41,9 @@
 	<sys:String x:Key="String.BuiltInProfile.GitLog">Git Log</sys:String>
 	<sys:String x:Key="String.BuiltInProfile.ULogViewerLog">ULogViewer log (DEBUG)</sys:String>
 	<sys:String x:Key="String.BuiltInProfile.WindowsApplicationEventLogs">Windows Event Logs (Application)</sys:String>
+	<sys:String x:Key="String.BuiltInProfile.WindowsSecurityEventLogs">Windows Event Logs (Security)</sys:String>
+	<sys:String x:Key="String.BuiltInProfile.WindowsSetupEventLogs">Windows Event Logs (Setup)</sys:String>
+	<sys:String x:Key="String.BuiltInProfile.WindowsSystemEventLogs">Windows Event Logs (System)</sys:String>
 	
 	<!-- Common -->
 	<sys:String x:Key="String.Common.Add">Add</sys:String>
@@ -82,13 +86,19 @@
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.SetupCommands">Commands before reading logs</sys:String>
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.TeardownCommands">Commands after reading logs</sys:String>
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.Title">Data source options</sys:String>
+	<sys:String x:Key="String.LogDataSourceOptionsDialog.Uri">URI (required)</sys:String>
+	<sys:String x:Key="String.LogDataSourceOptionsDialog.WebRequestCredentials.Password">Login password</sys:String>
+	<sys:String x:Key="String.LogDataSourceOptionsDialog.WebRequestCredentials.UserName">Login user name</sys:String>
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.WorkingDirectory">Working directory</sys:String>
 
 	<!-- LogLevel -->
 	<sys:String x:Key="String.LogLevel.Debug">Debug</sys:String>
 	<sys:String x:Key="String.LogLevel.Error">Error</sys:String>
+	<sys:String x:Key="String.LogLevel.Failure">Failure</sys:String>
 	<sys:String x:Key="String.LogLevel.Fatal">Fatal</sys:String>
 	<sys:String x:Key="String.LogLevel.Info">Info</sys:String>
+	<sys:String x:Key="String.LogLevel.Success">Success</sys:String>
+	<sys:String x:Key="String.LogLevel.Trace">Trace</sys:String>
 	<sys:String x:Key="String.LogLevel.Undefined">Undefined</sys:String>
 	<sys:String x:Key="String.LogLevel.Verbose">Verbose</sys:String>
 	<sys:String x:Key="String.LogLevel.Warn">Warn</sys:String>
@@ -245,7 +255,7 @@
 	<sys:String x:Key="String.SessionView.HasPartialDataSourceErrors">Error occurred in some of data sources</sys:String>
 	<sys:String x:Key="String.SessionView.LogFiltersCombinationMode">Way to combine conditions</sys:String>
 	<sys:String x:Key="String.SessionView.LogsFilteringProgress">Filtering progress: </sys:String>
-	<sys:String x:Key="String.SessionView.LogTextFilterHint">Text filtering (Regular Expression)</sys:String>
+	<sys:String x:Key="String.SessionView.LogTextFilterHint">Text filtering (Regular Expression, press Ctrl+S to save)</sys:String>
 	<sys:String x:Key="String.SessionView.MarkedLogs">Marked logs</sys:String>
 	<sys:String x:Key="String.SessionView.MarkUnmarkLogs">Mark/Unmark logs</sys:String>
 	<sys:String x:Key="String.SessionView.NeedToRestartAsAdministrator">Administrator role is needed for '{0}'. Do you want to restart application as Administrator and use this profile? You will lost the logs you currently view.</sys:String>
@@ -255,6 +265,7 @@
 	<sys:String x:Key="String.SessionView.OtherActions">Other actions</sys:String>
 	<sys:String x:Key="String.SessionView.PauseResumeLogsReading">Pause/Resume reading logs (P)</sys:String>
 	<sys:String x:Key="String.SessionView.PredefinedLogTextFilters">Saved text filters</sys:String>
+	<sys:String x:Key="String.SessionView.PredefinedLogTextFilters.Hint">Select one or more items</sys:String>
 	<sys:String x:Key="String.SessionView.ReloadLogs">Reload logs (F5)</sys:String>
 	<sys:String x:Key="String.SessionView.ResetLogFilters">Clear all filters</sys:String>
 	<sys:String x:Key="String.SessionView.ScrollToLatestLog">Scroll to latest log</sys:String>
@@ -269,6 +280,12 @@
 	<!-- SortDirection -->
 	<sys:String x:Key="String.SortDirection.Ascending">Ascending</sys:String>
 	<sys:String x:Key="String.SortDirection.Descending">Descending</sys:String>
+
+	<!-- SplashWindow -->
+	<sys:String x:Key="String.SplashWindow.InitializeLogProfiles">Loading log profiles</sys:String>
+	<sys:String x:Key="String.SplashWindow.InitializePredefinedLogTextFilters">Loading text filters</sys:String>
+	<sys:String x:Key="String.SplashWindow.ShowMainWindow">Showing main window</sys:String>
+	<sys:String x:Key="String.SplashWindow.UpdateStyles">Loading styles</sys:String>
 
 	<!-- ThemeMode -->
 	<sys:String x:Key="String.ThemeMode.Dark">Dark</sys:String>
