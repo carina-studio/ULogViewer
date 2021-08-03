@@ -749,6 +749,135 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		/// <summary>
+		/// Drop dragged data to this view asynchronously.
+		/// </summary>
+		/// <param name="e">Dragging event data.</param>
+		/// <returns>True if dragged data is accepted by this view.</returns>
+		public async Task<bool> DropAsync(DragEventArgs e)
+		{
+			// check data
+			if (!e.Data.HasFileNames())
+				return false;
+
+			// bring window to front
+			var window = this.FindLogicalAncestorOfType<Window>();
+			if (window == null)
+				return false;
+			window.ActivateAndBringToFront();
+
+			// collect files
+			var dropFilePaths = e.Data.GetFileNames().AsNonNull();
+			var dirPaths = new List<string>();
+			var filePaths = new List<string>();
+			await Task.Run(() =>
+			{
+				foreach (var path in dropFilePaths)
+				{
+					try
+					{
+						if (File.Exists(path))
+							filePaths.Add(path);
+						else if (Directory.Exists(path))
+							dirPaths.Add(path);
+					}
+					catch
+					{ }
+				}
+				return filePaths;
+			});
+			if (filePaths.IsEmpty())
+			{
+				if (dirPaths.IsEmpty())
+				{
+					_ = new MessageDialog()
+					{
+						Icon = MessageDialogIcon.Information,
+						Message = this.Application.GetString("SessionView.NoFilePathDropped")
+					}.ShowDialog(window);
+					return false;
+				}
+				if (dirPaths.Count > 1)
+				{
+					_ = new MessageDialog()
+					{
+						Icon = MessageDialogIcon.Information,
+						Message = this.Application.GetString("SessionView.TooManyDirectoryPathsDropped")
+					}.ShowDialog(window);
+					return false;
+				}
+			}
+
+			// check state
+			if (this.DataContext is not Session session)
+				return false;
+
+			// select new log profile
+			var currentLogProfile = session.LogProfile;
+			var needNewLogProfile = currentLogProfile == null ? true : currentLogProfile.DataSourceProvider.UnderlyingSource switch
+			{
+				UnderlyingLogDataSource.File => filePaths.IsEmpty(),
+				UnderlyingLogDataSource.StandardOutput => filePaths.IsNotEmpty(),
+				_ => false,
+			};
+			var newLogProfile = !needNewLogProfile ? null : await new LogProfileSelectionDialog().Also(it =>
+			{
+				if (filePaths.IsEmpty())
+				{
+					it.Filter = logProfile =>
+					{
+						return logProfile.DataSourceProvider.UnderlyingSource == UnderlyingLogDataSource.StandardOutput
+							&& logProfile.IsWorkingDirectoryNeeded
+							&& logProfile.DataSourceOptions.WorkingDirectory == null;
+					};
+				}
+				else
+					it.Filter = logProfile => logProfile.DataSourceProvider.UnderlyingSource == UnderlyingLogDataSource.File;
+			}).ShowDialog<LogProfile>(window);
+
+			// set log profile or create new session
+			if (newLogProfile != null)
+			{
+				var workspace = session.Workspace;
+				var newIndex = workspace.Sessions.IndexOf(session).Let(it =>
+				{
+					if (it >= 0)
+						return it + 1;
+					return workspace.Sessions.Count;
+				});
+				if (currentLogProfile == null)
+				{
+					if (!session.SetLogProfileCommand.TryExecute(newLogProfile))
+						return false;
+				}
+				else if (filePaths.IsNotEmpty())
+				{
+					var newSession = workspace.CreateSessionWithLogFiles(newIndex, newLogProfile, filePaths);
+					workspace.ActiveSession = newSession;
+					return true;
+				}
+				else
+				{
+					var newSession = workspace.CreateSessionWithWorkingDirectory(newIndex, newLogProfile, dirPaths[0]);
+					workspace.ActiveSession = newSession;
+					return true;
+				}
+			}
+
+			// set working directory or add log files
+			if (session.SetWorkingDirectoryCommand.CanExecute(null))
+				session.SetWorkingDirectoryCommand.TryExecute(dirPaths[0]);
+			else if (session.AddLogFileCommand.CanExecute(null))
+			{
+				foreach (var filePath in filePaths)
+					session.AddLogFileCommand.TryExecute(filePath);
+			}
+
+			// complete
+			return true;
+		}
+
+
 		// Edit given predefined log text filter.
 		void EditPredefinedLogTextFilter(PredefinedLogTextFilter? filter)
 		{
@@ -1107,120 +1236,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when drop data on view.
 		async void OnDrop(object? sender, DragEventArgs e)
 		{
-			// mark as handled
 			e.Handled = true;
-
-			// check data
-			if (!e.Data.HasFileNames())
-				return;
-
-			// bring window to front
-			var window = this.FindLogicalAncestorOfType<Window>();
-			if (window == null)
-				return;
-			window.ActivateAndBringToFront();
-
-			// collect files
-			var dropFilePaths = e.Data.GetFileNames().AsNonNull();
-			var dirPaths = new List<string>();
-			var filePaths = new List<string>();
-			await Task.Run(() =>
-			{
-				foreach (var path in dropFilePaths)
-				{
-					try
-					{
-						if (File.Exists(path))
-							filePaths.Add(path);
-						else if (Directory.Exists(path))
-							dirPaths.Add(path);
-					}
-					catch
-					{ }
-				}
-				return filePaths;
-			});
-			if (filePaths.IsEmpty())
-			{
-				if (dirPaths.IsEmpty())
-				{
-					_ = new MessageDialog()
-					{
-						Icon = MessageDialogIcon.Information,
-						Message = this.Application.GetString("SessionView.NoFilePathDropped")
-					}.ShowDialog(window);
-					return;
-				}
-				if (dirPaths.Count > 1)
-				{
-					_ = new MessageDialog()
-					{
-						Icon = MessageDialogIcon.Information,
-						Message = this.Application.GetString("SessionView.TooManyDirectoryPathsDropped")
-					}.ShowDialog(window);
-					return;
-				}
-			}
-
-			// check state
-			if (this.DataContext is not Session session)
-				return;
-
-			// select new log profile
-			var currentLogProfile = session.LogProfile;
-			var needNewLogProfile = currentLogProfile == null ? true : currentLogProfile.DataSourceProvider.UnderlyingSource switch
-			{
-				UnderlyingLogDataSource.File => filePaths.IsEmpty(),
-				UnderlyingLogDataSource.StandardOutput => filePaths.IsNotEmpty(),
-				_ => false,
-			};
-			var newLogProfile = !needNewLogProfile ? null : await new LogProfileSelectionDialog().Also(it =>
-			{
-				if (filePaths.IsEmpty())
-				{
-					it.Filter = logProfile =>
-					{
-						return logProfile.DataSourceProvider.UnderlyingSource == UnderlyingLogDataSource.StandardOutput
-							&& logProfile.IsWorkingDirectoryNeeded
-							&& logProfile.DataSourceOptions.WorkingDirectory == null;
-					};
-				}
-				else
-					it.Filter = logProfile => logProfile.DataSourceProvider.UnderlyingSource == UnderlyingLogDataSource.File;
-			}).ShowDialog<LogProfile>(window);
-
-			// set log profile or create new session
-			if (newLogProfile != null)
-			{
-				if (currentLogProfile == null)
-				{
-					if (!session.SetLogProfileCommand.TryExecute(newLogProfile))
-						return;
-				}
-				else if (filePaths.IsNotEmpty())
-				{
-					var workspace = session.Workspace;
-					var newSession = workspace.CreateSessionWithLogFiles(newLogProfile, filePaths);
-					workspace.ActiveSession = newSession;
-					return;
-				}
-				else
-				{
-					var workspace = session.Workspace;
-					var newSession = workspace.CreateSessionWithWorkingDirectory(newLogProfile, dirPaths[0]);
-					workspace.ActiveSession = newSession;
-					return;
-				}
-			}
-
-			// set working directory or add log files
-			if (session.SetWorkingDirectoryCommand.CanExecute(null))
-				session.SetWorkingDirectoryCommand.TryExecute(dirPaths[0]);
-			else if (session.AddLogFileCommand.CanExecute(null))
-			{
-				foreach (var filePath in filePaths)
-					session.AddLogFileCommand.TryExecute(filePath);
-			}
+			await this.DropAsync(e);
 		}
 
 

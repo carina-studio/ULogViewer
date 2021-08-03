@@ -9,6 +9,7 @@ using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Controls;
+using CarinaStudio.ULogViewer.Input;
 using CarinaStudio.ULogViewer.ViewModels;
 using CarinaStudio.Windows.Input;
 using Microsoft.Extensions.Logging;
@@ -97,6 +98,9 @@ namespace CarinaStudio.ULogViewer
 			// add handlers
 			this.Application.PropertyChanged += this.OnAppPropertyChanged;
 			this.Settings.SettingChanged += this.OnSettingChanged;
+			this.AddHandler(DragDrop.DragEnterEvent, this.OnDragEnter);
+			this.AddHandler(DragDrop.DragOverEvent, this.OnDragOver);
+			this.AddHandler(DragDrop.DropEvent, this.OnDrop);
 		}
 
 
@@ -190,6 +194,23 @@ namespace CarinaStudio.ULogViewer
 		SessionView? FindSessionView(Session session) => this.FindSessionTabItem(session)?.Content as SessionView;
 
 
+		// Find index of tab item by dragging position on window.
+		int FindTabItemIndex(DragEventArgs e)
+		{
+			for (var i = this.tabItems.Count - 1; i >= 0; --i)
+			{
+				var header = (this.tabItems[i] as TabItem)?.Header as Control;
+				if (header == null)
+					continue;
+				var position = e.GetPosition(header);
+				var bounds = header.Bounds;
+				if (position.X >= 0 && position.Y >= 0 && position.X <= bounds.Width && position.Y <= bounds.Height)
+					return i;
+			}
+			return -1;
+		}
+
+
 		// Initialize Avalonia components.
 		private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
 
@@ -237,6 +258,9 @@ namespace CarinaStudio.ULogViewer
 			// remove handlers
 			this.Application.PropertyChanged -= this.OnAppPropertyChanged;
 			this.Settings.SettingChanged -= this.OnSettingChanged;
+			this.RemoveHandler(DragDrop.DragEnterEvent, this.OnDragEnter);
+			this.RemoveHandler(DragDrop.DragOverEvent, this.OnDragOver);
+			this.RemoveHandler(DragDrop.DropEvent, this.OnDrop);
 
 			// call base
 			base.OnClosed(e);
@@ -248,6 +272,88 @@ namespace CarinaStudio.ULogViewer
 		{
 			base.OnDialogClosed(dialog);
 			this.NotifyAppUpdate();
+		}
+
+
+		// Called when drag enter.
+		void OnDragEnter(object? sender, DragEventArgs e)
+		{
+			if (e.Handled)
+			{
+				e.Handled = true;
+				this.ActivateAndBringToFront();
+			}
+		}
+
+
+		// Called when drag over.
+		void OnDragOver(object? sender, DragEventArgs e)
+		{
+			// check state
+			if (e.Handled)
+				return;
+
+			// check workspace
+			e.Handled = true;
+			if (this.DataContext is not Workspace)
+			{
+				e.DragEffects = DragDropEffects.None;
+				return;
+			}
+
+			// check file names
+			if (!e.Data.HasFileNames())
+			{
+				e.DragEffects = DragDropEffects.None;
+				return;
+			}
+
+			// find tab
+			var index = this.FindTabItemIndex(e);
+			if (index < 0)
+			{
+				e.DragEffects = DragDropEffects.None;
+				return;
+			}
+
+			// switch to tab
+			if (index < this.tabItems.Count - 1)
+				this.tabControl.SelectedIndex = index;
+
+			// accept dragging
+			e.DragEffects = DragDropEffects.Copy;
+		}
+
+
+		// Called when drop data on view.
+		async void OnDrop(object? sender, DragEventArgs e)
+		{
+			// check state
+			if (e.Handled)
+				return;
+
+			// check workspace
+			e.Handled = true;
+			if (this.DataContext is not Workspace workspace)
+				return;
+
+			// find tab and session view
+			var index = this.FindTabItemIndex(e);
+			if (index < 0)
+				return;
+			var sessionView = Global.Run(() =>
+			{
+				if (index < this.tabItems.Count - 1)
+					return (this.tabItems[index] as TabItem)?.Content as SessionView;
+				var session = workspace.CreateSession();
+				workspace.ActiveSession = session;
+				return this.FindSessionView(session);
+			});
+			if (sessionView == null)
+				return;
+
+			// drop to session view
+			await sessionView.DropAsync(e);
 		}
 
 
