@@ -432,6 +432,14 @@ namespace CarinaStudio.ULogViewer.Controls
 		bool CanFilterLogsByNonTextFilters { get => this.GetValue<bool>(CanFilterLogsByNonTextFiltersProperty); }
 
 
+		// Clear predefined log text fliter selection.
+		void ClearPredefinedLogTextFilterSelection()
+		{
+			this.predefinedLogTextFilterListBox.SelectedItems.Clear();
+			this.updateLogFiltersAction.Reschedule();
+		}
+
+
 		// Compare predefined log text filters.
 		static int ComparePredefinedLogTextFilters(PredefinedLogTextFilter? x, PredefinedLogTextFilter? y)
 		{
@@ -687,6 +695,25 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Create predefined log text fliter.
+		async void CreatePredefinedLogTextFilter()
+		{
+			// check state
+			var window = this.FindLogicalAncestorOfType<Window>();
+			if (window == null)
+				return;
+
+			// create filter
+			var filter = await new PredefinedLogTextFilterEditorDialog()
+			{
+				Regex = this.logTextFilterTextBox.Regex
+			}.ShowDialog<PredefinedLogTextFilter>(window);
+			if (filter == null)
+				return;
+			ViewModels.PredefinedLogTextFilters.Add(filter);
+		}
+
+
 		// Detach from predefined log text filter
 		void DetachFromPredefinedLogTextFilter(PredefinedLogTextFilter filter) => filter.PropertyChanged -= this.OnPredefinedLogTextFilterPropertyChanged;
 
@@ -883,33 +910,6 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.isWorkingDirNeededAfterLogProfileSet = false;
 				this.autoSetWorkingDirectoryAction.Reschedule();
 			}
-		}
-
-
-		// Called when button of clearing predefined log text fliter selection clicked.
-		void OnClearPredefinedLogTextFilterSelectionButtonClick(object? sender, RoutedEventArgs e)
-		{
-			this.predefinedLogTextFilterListBox.SelectedItems.Clear();
-			this.updateLogFiltersAction.Reschedule();
-		}
-
-
-		// Called when button of creating predefined log text fliter clicked.
-		async void OnCreatePredefinedLogTextFilterButtonClick(object? sender, RoutedEventArgs e)
-		{
-			// check state
-			var window = this.FindLogicalAncestorOfType<Window>();
-			if (window == null)
-				return;
-
-			// create filter
-			var filter = await new PredefinedLogTextFilterEditorDialog()
-			{
-				Regex = this.logTextFilterTextBox.Regex
-			}.ShowDialog<PredefinedLogTextFilter>(window);
-			if (filter == null)
-				return;
-			ViewModels.PredefinedLogTextFilters.Add(filter);
 		}
 
 
@@ -1364,6 +1364,14 @@ namespace CarinaStudio.ULogViewer.Controls
 							this.logTextFilterTextBox.Focus();
 							this.logTextFilterTextBox.SelectAll();
 							e.Handled = true;
+						}
+						break;
+					case Key.S:
+						if (e.Source == this.logTextFilterTextBox)
+						{
+							var regexText = this.logTextFilterTextBox.Text;
+							if (!string.IsNullOrEmpty(regexText))
+								this.CreatePredefinedLogTextFilter();
 						}
 						break;
 				}

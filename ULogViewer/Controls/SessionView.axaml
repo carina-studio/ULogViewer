@@ -218,8 +218,8 @@
 									<DockPanel>
 										<Border Background="{DynamicResource Brush.Dialog.ControlButtonsPanel.Background}" DockPanel.Dock="Bottom" Padding="{StaticResource Thickness.Dialog.ControlButtonsPanel.Padding}">
 											<StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-												<Button Classes="Dialog_ControlButton" Click="OnCreatePredefinedLogTextFilterButtonClick" Content="{DynamicResource String.SessionView.CreatePredefinedLogTextFilter}"/>
-												<Button Classes="Dialog_ControlButton" Click="OnClearPredefinedLogTextFilterSelectionButtonClick" IsEnabled="{Binding ElementName=predefinedLogTextFilterListBox, Path=SelectedItems.Count}" Content="{DynamicResource String.SessionView.ClearPredefinedLogTextFiltersSelection}"/>
+												<Button Classes="Dialog_ControlButton" Command="{Binding $parent[UserControl].CreatePredefinedLogTextFilter}" Content="{DynamicResource String.SessionView.CreatePredefinedLogTextFilter}"/>
+												<Button Classes="Dialog_ControlButton" Command="{Binding $parent[UserControl].ClearPredefinedLogTextFilterSelection}" IsEnabled="{Binding ElementName=predefinedLogTextFilterListBox, Path=SelectedItems.Count}" Content="{DynamicResource String.SessionView.ClearPredefinedLogTextFiltersSelection}"/>
 											</StackPanel>
 										</Border>
 										<Border DockPanel.Dock="Top" IsVisible="{Binding $parent[UserControl].PredefinedLogTextFilters.Count}" Padding="{StaticResource Thickness.SessionView.PredefinedLogTextFilterHint.Padding}">
