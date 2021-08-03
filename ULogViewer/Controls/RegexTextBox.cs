@@ -42,7 +42,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// </summary>
 		public RegexTextBox()
 		{
-			this.invalidTextBrush = this.GetResourceObservable("Brush.RegexTextBox.Foreground.Error");
+			this.invalidTextBrush = this.GetResourceObservable("Brush.TextBox.Foreground.Error");
 			this.validateAction = new ScheduledAction(() => this.Validate());
 		}
 
@@ -61,19 +61,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// Get whether input <see cref="TextBox.Text"/> represent a valid <see cref="Regex"/> or not.
 		/// </summary>
 		public bool IsTextValid { get => this.GetValue<bool>(IsTextValidProperty); }
-
-
-		// Called when input text.
-		protected override void OnTextInput(TextInputEventArgs e)
-		{
-			if (string.IsNullOrEmpty(this.Text))
-			{
-				var text = e.Text;
-				if (text != null && text.Length > 0 && char.IsWhiteSpace(text[0]))
-					e.Handled = true;
-			}
-			base.OnTextInput(e);
-		}
 
 
 		// Called when propery changed.
@@ -113,6 +100,19 @@ namespace CarinaStudio.ULogViewer.Controls
 				if (this.validateAction.IsScheduled)
 					this.validateAction.Reschedule(this.ValidationDelay);
 			}
+		}
+
+
+		// Called when input text.
+		protected override void OnTextInput(TextInputEventArgs e)
+		{
+			if (string.IsNullOrEmpty(this.Text))
+			{
+				var text = e.Text;
+				if (text != null && text.Length > 0 && char.IsWhiteSpace(text[0]))
+					e.Handled = true;
+			}
+			base.OnTextInput(e);
 		}
 
 

@@ -33,7 +33,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ListBox setupCommandsListBox;
 		readonly ObservableList<string> teardownCommands = new ObservableList<string>();
 		readonly ListBox teardownCommandsListBox;
-		readonly TextBox uriTextBox;
+		readonly UriTextBox uriTextBox;
 		readonly TextBox workingDirectoryTextBox;
 		readonly TextBox wrcUserNameTextBox;
 		readonly TextBox wrcPasswordTextBox;
@@ -51,7 +51,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.fileNameTextBox = this.FindControl<TextBox>("fileNameTextBox").AsNonNull();
 			this.setupCommandsListBox = this.FindControl<ListBox>("setupCommandsListBox").AsNonNull();
 			this.teardownCommandsListBox = this.FindControl<ListBox>("teardownCommandsListBox").AsNonNull();
-			this.uriTextBox = this.FindControl<TextBox>("uriTextBox").AsNonNull();
+			this.uriTextBox = this.FindControl<UriTextBox>("uriTextBox").AsNonNull();
 			this.workingDirectoryTextBox = this.FindControl<TextBox>("workingDirectoryTextBox").AsNonNull();
 			this.wrcUserNameTextBox = this.FindControl<TextBox>("wrcUserNameTextBox").AsNonNull();
 			this.wrcPasswordTextBox = this.FindControl<TextBox>("wrcPasswordTextBox").AsNonNull();
@@ -152,8 +152,12 @@ namespace CarinaStudio.ULogViewer.Controls
 		void OnEditorControlPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
 		{
 			var property = e.Property;
-			if (property == TextBox.TextProperty)
+			if (property == UriTextBox.IsTextValidProperty
+				|| (property == TextBox.TextProperty && sender is not UriTextBox)
+				|| property == UriTextBox.UriProperty)
+			{
 				this.InvalidateInput();
+			}
 		}
 
 
@@ -177,7 +181,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					options.WorkingDirectory = this.workingDirectoryTextBox.Text?.Trim();
 					break;
 				case UnderlyingLogDataSource.WebRequest:
-					options.Uri = new Uri(this.uriTextBox.Text.AsNonNull());
+					options.Uri = this.uriTextBox.Uri.AsNonNull();
 					{
 						var userName = this.wrcUserNameTextBox.Text?.Trim();
 						var password = this.wrcPasswordTextBox.Text?.Trim();
@@ -231,7 +235,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.commandTextBox.Focus();
 					break;
 				case UnderlyingLogDataSource.WebRequest:
-					this.uriTextBox.Text = options.Uri?.ToString();
+					this.uriTextBox.Uri = options.Uri;
 					if (options.WebRequestCredentials is NetworkCredential networkCredential)
 					{
 						this.wrcUserNameTextBox.Text = networkCredential.UserName;
@@ -260,7 +264,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				case UnderlyingLogDataSource.StandardOutput:
 					return !string.IsNullOrEmpty(this.commandTextBox.Text?.Trim());
 				case UnderlyingLogDataSource.WebRequest:
-					return this.uriTextBox.Text?.Let(it => Uri.TryCreate(it, UriKind.Absolute, out var uri)) ?? false;
+					return this.uriTextBox.Let(it => it.Validate() && it.Uri != null);
 				case UnderlyingLogDataSource.WindowsEventLogs:
 					return !string.IsNullOrWhiteSpace(this.categoryTextBox.Text);
 				default:

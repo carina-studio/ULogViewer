@@ -4,6 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 				xmlns:ia="using:Avalonia.Xaml.Interactivity"
 				xmlns:iaCore="using:Avalonia.Xaml.Interactions.Core"
+				xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.LogDataSourceOptionsDialog"
 				Classes="Dialog"
@@ -149,7 +150,7 @@
 
 				<!-- URI -->
 				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogDataSourceOptionsDialog.Uri}"/>
-				<TextBox Name="uriTextBox" PropertyChanged="OnEditorControlPropertyChanged"/>
+				<appControls:UriTextBox Name="uriTextBox" PropertyChanged="OnEditorControlPropertyChanged"/>
 				<Separator Classes="Dialog_Separator_Horizontal"/>
 
 				<!-- User name -->
