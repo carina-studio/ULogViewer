@@ -1369,8 +1369,8 @@ namespace CarinaStudio.ULogViewer.Controls
 					case Key.S:
 						if (e.Source == this.logTextFilterTextBox)
 						{
-							var regexText = this.logTextFilterTextBox.Text;
-							if (!string.IsNullOrEmpty(regexText))
+							this.logTextFilterTextBox.Validate();
+							if (this.logTextFilterTextBox.IsTextValid && this.logTextFilterTextBox.Regex != null)
 								this.CreatePredefinedLogTextFilter();
 						}
 						break;
