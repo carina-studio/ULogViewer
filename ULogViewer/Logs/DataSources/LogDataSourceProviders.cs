@@ -60,6 +60,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			providers.Add(new DummyLogDataSourceProvider(app));
 #endif
 			providers.Add(new FileLogDataSourceProvider(app));
+			providers.Add(new HttpLogDataSourceProvider(app));
 			providers.Add(new StandardOutputLogDataSourceProvider(app));
 			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 				providers.Add(new WindowsEventLogDataSourceProvider(app));

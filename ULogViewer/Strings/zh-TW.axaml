@@ -83,6 +83,9 @@
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.SetupCommands">日誌讀取前指令</sys:String>
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.TeardownCommands">日誌讀取後指令</sys:String>
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.Title">資料來源參數</sys:String>
+	<sys:String x:Key="String.LogDataSourceOptionsDialog.Uri">URI (必須)</sys:String>
+	<sys:String x:Key="String.LogDataSourceOptionsDialog.WebRequestCredentials.Password">登入密碼</sys:String>
+	<sys:String x:Key="String.LogDataSourceOptionsDialog.WebRequestCredentials.UserName">登入名稱</sys:String>
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.WorkingDirectory">工作目錄</sys:String>
 
 	<!-- LogLevel -->

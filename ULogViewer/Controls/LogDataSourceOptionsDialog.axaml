@@ -81,6 +81,9 @@
 				<iaCore:DataTriggerBehavior Binding="{Binding $parent[Window].UnderlyingLogDataSource}" Value="StandardOutput">
 					<iaCore:ChangePropertyAction PropertyName="IsVisible" TargetObject="{Binding #stdoutParamsPanel}" Value="True"/>
 				</iaCore:DataTriggerBehavior>
+				<iaCore:DataTriggerBehavior Binding="{Binding $parent[Window].UnderlyingLogDataSource}" Value="WebRequest">
+					<iaCore:ChangePropertyAction PropertyName="IsVisible" TargetObject="{Binding #webRequestParamsPanel}" Value="True"/>
+				</iaCore:DataTriggerBehavior>
 				<iaCore:DataTriggerBehavior Binding="{Binding $parent[Window].UnderlyingLogDataSource}" Value="WindowsEventLogs">
 					<iaCore:ChangePropertyAction PropertyName="IsVisible" TargetObject="{Binding #windowsEventLogsParamsPanel}" Value="True"/>
 				</iaCore:DataTriggerBehavior>
@@ -138,6 +141,25 @@
 
 				</ListBox>
 				<Button Classes="ListAction" Command="{Binding $parent[Window].AddTeardownCommand}" Content="{DynamicResource String.Common.Add}"/>
+				
+			</StackPanel>
+
+			<!-- Web request -->
+			<StackPanel Name="webRequestParamsPanel" HorizontalAlignment="Stretch" IsVisible="False" Orientation="Vertical">
+
+				<!-- URI -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogDataSourceOptionsDialog.Uri}"/>
+				<TextBox Name="uriTextBox" PropertyChanged="OnEditorControlPropertyChanged"/>
+				<Separator Classes="Dialog_Separator_Horizontal"/>
+
+				<!-- User name -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogDataSourceOptionsDialog.WebRequestCredentials.UserName}"/>
+				<TextBox Name="wrcUserNameTextBox"/>
+				<Separator Classes="Dialog_Separator_Horizontal"/>
+
+				<!-- Password -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogDataSourceOptionsDialog.WebRequestCredentials.Password}"/>
+				<TextBox Name="wrcPasswordTextBox" PasswordChar="●"/>
 				
 			</StackPanel>
 
