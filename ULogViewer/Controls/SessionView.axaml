@@ -442,13 +442,21 @@
 				<!-- Error message -->
 				<StackPanel Grid.Column="4" IsVisible="{Binding HasAllDataSourceErrors}" Orientation="Horizontal">
 					<Border Classes="SessionView_StatusBar_Icon">
-						<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Error}"/>
+						<DrawingPresenter Classes="Icon">
+							<DrawingPresenter.Drawing>
+								<GeometryDrawing Brush="{DynamicResource Brush.SessionView.StatusBar.Foreground}" Geometry="{StaticResource Geometry.Error}"/>
+							</DrawingPresenter.Drawing>
+						</DrawingPresenter>
 					</Border>
 					<TextBlock Text="{DynamicResource String.SessionView.HasAllDataSourceErrors}" VerticalAlignment="Center"/>
 				</StackPanel>
 				<StackPanel Grid.Column="4" IsVisible="{Binding HasPartialDataSourceErrors}" Orientation="Horizontal">
 					<Border Classes="SessionView_StatusBar_Icon">
-						<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Warning}"/>
+						<DrawingPresenter Classes="Icon">
+							<DrawingPresenter.Drawing>
+								<GeometryDrawing Brush="{DynamicResource Brush.SessionView.StatusBar.Foreground}" Geometry="{StaticResource Geometry.Warning}"/>
+							</DrawingPresenter.Drawing>
+						</DrawingPresenter>
 					</Border>
 					<TextBlock Text="{DynamicResource String.SessionView.HasPartialDataSourceErrors}" VerticalAlignment="Center"/>
 				</StackPanel>
