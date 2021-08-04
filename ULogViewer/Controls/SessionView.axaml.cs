@@ -117,6 +117,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ContextMenu otherActionsMenu;
 		readonly ListBox predefinedLogTextFilterListBox;
 		readonly SortedObservableList<PredefinedLogTextFilter> predefinedLogTextFilters;
+		readonly Popup predefinedLogTextFiltersPopup;
 		readonly ScheduledAction scrollToLatestLogAction;
 		readonly HashSet<PredefinedLogTextFilter> selectedPredefinedLogTextFilters = new HashSet<PredefinedLogTextFilter>();
 		readonly MenuItem showLogMessageMenuItem;
@@ -207,6 +208,11 @@ namespace CarinaStudio.ULogViewer.Controls
 				it.MenuOpened += (_, e) => this.SynchronizationContext.Post(() => this.otherActionsButton.IsChecked = true);
 			});
 			this.predefinedLogTextFilterListBox = this.FindControl<ListBox>("predefinedLogTextFilterListBox").AsNonNull();
+			this.predefinedLogTextFiltersPopup = this.FindControl<Popup>("predefinedLogTextFiltersPopup").AsNonNull().Also(it =>
+			{
+				it.Closed += (_, sender) => this.logListBox.Focus();
+				it.Opened += (_, sender) => this.predefinedLogTextFilterListBox.Focus();
+			});
 			this.showLogMessageMenuItem = this.FindControl<MenuItem>("showLogMessageMenuItem").AsNonNull().Also(it => this.UpdateShowLogMessageMenuItem());
 #if !DEBUG
 			this.FindControl<Button>("testButton").AsNonNull().IsVisible = false;
@@ -1361,40 +1367,69 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when key down.
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
-			// handle key event for combo keys
-			if (!e.Handled && (e.KeyModifiers & KeyModifiers.Control) != 0)
+			if (!e.Handled)
 			{
-				switch (e.Key)
+				if ((e.KeyModifiers & KeyModifiers.Control) != 0)
 				{
-					case Key.C:
-						if (e.Source is not TextBox)
-						{
-							if ((e.KeyModifiers & KeyModifiers.Shift) != 0)
-								this.CopySelectedLogsWithFileNames();
-							else
-								this.CopySelectedLogs();
-						}
-						break;
-					case Key.F:
-						if (e.Source is not TextBox)
-						{
-							this.logTextFilterTextBox.Focus();
-							this.logTextFilterTextBox.SelectAll();
-							e.Handled = true;
-						}
-						break;
-					case Key.S:
-						if (e.Source == this.logTextFilterTextBox)
-						{
-							this.logTextFilterTextBox.Validate();
-							if (this.logTextFilterTextBox.IsTextValid && this.logTextFilterTextBox.Regex != null)
-								this.CreatePredefinedLogTextFilter();
-						}
-						break;
+					switch (e.Key)
+					{
+						case Key.C:
+							if (e.Source is not TextBox)
+							{
+								if ((e.KeyModifiers & KeyModifiers.Shift) != 0)
+									this.CopySelectedLogsWithFileNames();
+								else
+									this.CopySelectedLogs();
+							}
+							break;
+						case Key.F:
+							if (e.Source is not TextBox)
+							{
+								this.logTextFilterTextBox.Focus();
+								this.logTextFilterTextBox.SelectAll();
+								e.Handled = true;
+							}
+							break;
+						case Key.P:
+							predefinedLogTextFiltersPopup.IsOpen = !predefinedLogTextFiltersPopup.IsOpen;
+							break;
+						case Key.S:
+							if (e.Source == this.logTextFilterTextBox)
+							{
+								this.logTextFilterTextBox.Validate();
+								if (this.logTextFilterTextBox.IsTextValid && this.logTextFilterTextBox.Regex != null)
+									this.CreatePredefinedLogTextFilter();
+							}
+							break;
+					}
+				}
+				else
+				{
+					switch (e.Key)
+					{
+						case Key.Down:
+							if (e.Source is not TextBox)
+							{
+								if (this.predefinedLogTextFiltersPopup.IsOpen)
+									this.predefinedLogTextFilterListBox.SelectNextItem();
+								else
+									this.logListBox.SelectNextItem();
+								e.Handled = true;
+							}
+							break;
+						case Key.Up:
+							if (e.Source is not TextBox)
+							{
+								if (this.predefinedLogTextFiltersPopup.IsOpen)
+									this.predefinedLogTextFilterListBox.SelectPreviousItem();
+								else
+									this.logListBox.SelectPreviousItem();
+								e.Handled = true;
+							}
+							break;
+					}
 				}
 			}
-
-			// call base
 			base.OnKeyDown(e);
 		}
 
@@ -1414,10 +1449,25 @@ namespace CarinaStudio.ULogViewer.Controls
 							e.Handled = true;
 						}
 						break;
+					case Key.End:
+						if (e.Source is not TextBox)
+						{
+							if (this.predefinedLogTextFiltersPopup.IsOpen)
+								this.predefinedLogTextFilterListBox.SelectLastItem();
+							else
+								this.logListBox.SelectLastItem();
+							e.Handled = true;
+						}
+						break;
 					case Key.Escape:
 						if (e.Source is TextBox)
 						{
 							this.logListBox.Focus();
+							e.Handled = true;
+						}
+						else if (this.predefinedLogTextFiltersPopup.IsOpen)
+						{
+							this.predefinedLogTextFiltersPopup.IsOpen = false;
 							e.Handled = true;
 						}
 						break;
@@ -1425,6 +1475,16 @@ namespace CarinaStudio.ULogViewer.Controls
 						if (e.Source is not TextBox)
 						{
 							(this.DataContext as Session)?.ReloadLogsCommand?.TryExecute();
+							e.Handled = true;
+						}
+						break;
+					case Key.Home:
+						if (e.Source is not TextBox)
+						{
+							if (this.predefinedLogTextFiltersPopup.IsOpen)
+								this.predefinedLogTextFilterListBox.SelectFirstItem();
+							else
+								this.logListBox.SelectFirstItem();
 							e.Handled = true;
 						}
 						break;

@@ -252,10 +252,10 @@
 	<sys:String x:Key="String.SessionView.NeedToRestartAsAdministrator">'{0}' 需要系統管理員身分，是否要以系統管理員身分重新啟動應用程式並使用此日誌類型？正在查看的日誌將被關閉。</sys:String>
 	<sys:String x:Key="String.SessionView.NoFilePathDropped">請拖放有效的檔案。</sys:String>
 	<sys:String x:Key="String.SessionView.NoLogToShow">沒有日誌可以顯示</sys:String>
-	<sys:String x:Key="String.SessionView.NoPredefinedLogTextFilter">沒有已儲存的文字篩選</sys:String>
+	<sys:String x:Key="String.SessionView.NoPredefinedLogTextFilter">沒有已定義的文字篩選</sys:String>
 	<sys:String x:Key="String.SessionView.OtherActions">其他動作</sys:String>
 	<sys:String x:Key="String.SessionView.PauseResumeLogsReading">暫停/繼續讀取日誌 (P)</sys:String>
-	<sys:String x:Key="String.SessionView.PredefinedLogTextFilters">已儲存的文字篩選</sys:String>
+	<sys:String x:Key="String.SessionView.PredefinedLogTextFilters">已定義的文字篩選 (Ctrl+P)</sys:String>
 	<sys:String x:Key="String.SessionView.PredefinedLogTextFilters.Hint">選取一個或多個項目</sys:String>
 	<sys:String x:Key="String.SessionView.ReloadLogs">重新載入日誌 (F5)</sys:String>
 	<sys:String x:Key="String.SessionView.ResetLogFilters">清除所有篩選設定</sys:String>

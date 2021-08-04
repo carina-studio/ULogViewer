@@ -463,7 +463,7 @@
 				<!-- Marked logs -->
 				<TextBlock Classes="SessionView_SidePanel_Header" Text="{DynamicResource String.SessionView.MarkedLogs}"/>
 				<Panel>
-					<ListBox Name="markedLogListBox" Background="{x:Static Brushes.Transparent}" IsVisible="{Binding HasMarkedLogs}" Items="{Binding MarkedLogs}" SelectionChanged="OnMarkedLogListBoxSelectionChanged" SelectionMode="Single" VirtualizationMode="None">
+					<ListBox Name="markedLogListBox" Background="{x:Static Brushes.Transparent}" Focusable="False" IsVisible="{Binding HasMarkedLogs}" Items="{Binding MarkedLogs}" SelectionChanged="OnMarkedLogListBoxSelectionChanged" SelectionMode="Single" VirtualizationMode="None">
 						<ListBox.Styles>
 							<Style Selector="ListBoxItem">
 								<Setter Property="HorizontalAlignment" Value="Stretch"/>
