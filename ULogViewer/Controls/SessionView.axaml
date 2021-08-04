@@ -233,9 +233,9 @@
 					<ToggleButton Classes="SessionView_ToolBar_Button" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" ToolTip.Tip="{DynamicResource String.SessionView.PredefinedLogTextFilters}">
 						<Panel>
 							<Grid Classes="SessionView_ToolBar_Button_Icon">
-								<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Filter}" IsVisible="{Binding ElementName=predefinedLogTextFilterListBox, Path=!SelectedItems.Count}"/>
-								<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Filter.Active}" IsVisible="{Binding ElementName=predefinedLogTextFilterListBox, Path=SelectedItems.Count}"/>
-								<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Filter.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
+								<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Filters}" IsVisible="{Binding ElementName=predefinedLogTextFilterListBox, Path=!SelectedItems.Count}"/>
+								<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Filters.Active}" IsVisible="{Binding ElementName=predefinedLogTextFilterListBox, Path=SelectedItems.Count}"/>
+								<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Filters.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
 							</Grid>
 							<Popup Name="predefinedLogTextFiltersPopup" IsLightDismissEnabled="True" IsOpen="{Binding $parent[ToggleButton].IsChecked, Mode=TwoWay}" MaxHeight="{StaticResource Double.SessionView.PredefinedLogTextFiltersPopup.MaxHeight}" PlacementTarget="{Binding $parent[ToggleButton]}" Width="{StaticResource Double.SessionView.PredefinedLogTextFiltersPopup.Width}" WindowManagerAddShadowHint="True">
 								<Border Background="{DynamicResource ComboBoxDropDownBackground}" BorderBrush="{DynamicResource ComboBoxDropDownBorderBrush}" BorderThickness="{DynamicResource ComboBoxDropdownBorderThickness}" CornerRadius="{DynamicResource OverlayCornerRadius}" Padding="{StaticResource Thickness.SessionView.PredefinedLogTextFiltersPopup.Padding}">
@@ -294,7 +294,7 @@
 					<!-- Reset log filters -->
 					<Button Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].ResetLogFiltersCommand}" ToolTip.Tip="{DynamicResource String.SessionView.ResetLogFilters}">
 						<Border Classes="SessionView_ToolBar_Button_Icon">
-							<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Reset}"/>
+							<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.ClearFilters}"/>
 						</Border>
 					</Button>
 
