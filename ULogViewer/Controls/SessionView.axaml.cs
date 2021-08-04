@@ -99,6 +99,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		bool isMessageLogPropertyVisible;
 		bool isPidLogPropertyVisible;
 		bool isPointerPressedOnLogListBox;
+		bool isRestartingAsAdminConfirmed;
 		bool isTidLogPropertyVisible;
 		bool isWorkingDirNeededAfterLogProfileSet;
 		readonly ContextMenu logActionMenu;
@@ -461,6 +462,55 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (result != 0)
 				return result;
 			return x.GetHashCode() - y.GetHashCode();
+		}
+
+
+		// Show dialog and let user choose whether to restart as administor for given log profile.
+		void ConfirmRestartingAsAdmin()
+		{
+			if (this.isRestartingAsAdminConfirmed || !this.isAttachedToLogicalTree)
+				return;
+			if (this.DataContext is not Session session)
+				return;
+			var profile = session.LogProfile;
+			if (profile != null && profile.IsAdministratorNeeded && !this.Application.IsRunningAsAdministrator)
+			{
+				this.isRestartingAsAdminConfirmed = true;
+				this.SynchronizationContext.PostDelayed(async () =>
+				{
+					if (this.DataContext == session && session.LogProfile == profile)
+					{
+						if (await this.ConfirmRestartingAsAdmin(profile))
+							this.Application.Restart($"-profile {profile.Id}", true);
+						else
+							this.Logger.LogWarning($"Unable to use profile '{profile.Name}' because application is not running as administrator");
+					}
+				}, 1000); // Delay to make sure that owner window has been shown
+			}
+		}
+		async Task<bool> ConfirmRestartingAsAdmin(LogProfile profile)
+		{
+			// check state
+			if (!profile.IsAdministratorNeeded || this.Application.IsRunningAsAdministrator)
+				return false;
+			var window = this.FindLogicalAncestorOfType<Window>();
+			if (window == null)
+				return false;
+
+			// show dialog
+			var result = await new MessageDialog()
+			{
+				Buttons = MessageDialogButtons.YesNo,
+				Icon = MessageDialogIcon.Question,
+				Message = this.Application.GetFormattedString("SessionView.NeedToRestartAsAdministrator", profile.Name),
+			}.ShowDialog<MessageDialogResult>(window);
+			if (result == MessageDialogResult.Yes)
+			{
+				this.Logger.LogWarning($"User agreed to restart as administrator for '{profile.Name}'");
+				return true;
+			}
+			this.Logger.LogWarning($"User denied to restart as administrator for '{profile.Name}'");
+			return false;
 		}
 
 
@@ -1045,6 +1095,9 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.isWorkingDirNeededAfterLogProfileSet = false;
 				this.autoSetWorkingDirectoryAction.Reschedule();
 			}
+
+			// check administrator role
+			this.ConfirmRestartingAsAdmin();
 		}
 
 
@@ -1252,6 +1305,9 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			// reset auto scrolling
 			this.IsScrollingToLatestLogNeeded = profile.IsContinuousReading;
+
+			// check administrator role
+			this.ConfirmRestartingAsAdmin();
 		}
 
 
@@ -1833,17 +1889,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			// check administrator role
 			if (logProfile.IsAdministratorNeeded && !this.Application.IsRunningAsAdministrator)
 			{
-				var result = await new MessageDialog()
-				{
-					Buttons = MessageDialogButtons.YesNo,
-					Icon = MessageDialogIcon.Question,
-					Message = this.Application.GetFormattedString("SessionView.NeedToRestartAsAdministrator", logProfile.Name),
-				}.ShowDialog<MessageDialogResult>(window);
-				if (result == MessageDialogResult.Yes)
-				{
-					this.Logger.LogWarning($"Restart application as administrator for profile '{logProfile.Name}'");
+				if (await this.ConfirmRestartingAsAdmin(logProfile))
 					this.Application.Restart($"-profile {logProfile.Id}", true);
-				}
 				else
 					this.Logger.LogWarning($"Unable to use profile '{logProfile.Name}' because application is not running as administrator");
 				return;
@@ -1854,6 +1901,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// reset log profile
 			this.isLogFileNeededAfterLogProfileSet = false;
+			this.isRestartingAsAdminConfirmed = false;
 			this.isWorkingDirNeededAfterLogProfileSet = false;
 			this.autoAddLogFilesAction.Cancel();
 			this.autoSetWorkingDirectoryAction.Cancel();
