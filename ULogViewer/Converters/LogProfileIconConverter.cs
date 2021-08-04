@@ -7,7 +7,7 @@ using System.Globalization;
 namespace CarinaStudio.ULogViewer.Converters
 {
 	/// <summary>
-	/// <see cref="IValueConverter"/> to convert from <see cref="LogProfileIcon"/> to <see cref="Drawing"/>.
+	/// <see cref="IValueConverter"/> to convert from <see cref="LogProfileIcon"/> or <see cref="LogProfile"/> to <see cref="Drawing"/>.
 	/// </summary>
 	class LogProfileIconConverter : IValueConverter
 	{
@@ -31,18 +31,33 @@ namespace CarinaStudio.ULogViewer.Converters
 		// Convert.
 		public object? Convert(object value, Type targetType, object? parameter, CultureInfo culture)
 		{
-			if (value is not LogProfileIcon icon)
-				return null;
+			// check target type
 			if (!typeof(Drawing).IsAssignableFrom(targetType) && targetType != typeof(object))
 				return null;
+
+			// select name of icon
+			var iconName = (string?)null;
+			if (value is LogProfile profile)
+			{
+				if (profile == LogProfiles.EmptyProfile)
+					iconName = "Empty";
+				else
+					iconName = profile.Icon.ToString();
+			}
+			else if (value is LogProfileIcon icon)
+				iconName = icon.ToString();
+			else
+				return null;
+
+			// convert to drawing
 			var mode = parameter as string;
 			var res = (object?)null;
 			if (mode != null)
 			{
-				if (app.Resources.TryGetResource($"Drawing.LogProfile.{icon}.{mode}", out res) && res is Drawing)
+				if (app.Resources.TryGetResource($"Drawing.LogProfile.{iconName}.{mode}", out res) && res is Drawing)
 					return res;
 			}
-			if (app.Resources.TryGetResource($"Drawing.LogProfile.{icon}", out res) && res is Drawing)
+			if (app.Resources.TryGetResource($"Drawing.LogProfile.{iconName}", out res) && res is Drawing)
 				return res;
 			if (mode != null)
 			{

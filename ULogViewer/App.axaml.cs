@@ -368,16 +368,29 @@ namespace CarinaStudio.ULogViewer
 			// create workspace
 			splashWindow.Message = this.GetStringNonNull("SplashWindow.ShowMainWindow");
 			this.workspace = new Workspace(this);
-			this.StartupParams.LogProfileId?.Let(it =>
+			var initialProfile = this.StartupParams.LogProfileId?.Let(it =>
 			{
 				if (LogProfiles.TryFindProfileById(it, out var profile))
 				{
 					this.logger.LogWarning($"Initial log profile is '{profile?.Name}'");
-					workspace.CreateSession(profile);
+					return profile;
 				}
-				else
-					this.logger.LogError($"Cannot find initial log profile by ID '{it}'");
+				this.logger.LogError($"Cannot find initial log profile by ID '{it}'");
+				return null;
+			}) ?? this.Settings.GetValueOrDefault(Settings.InitialLogProfile).Let(it =>
+			{
+				if (string.IsNullOrEmpty(it))
+					return null;
+				if (LogProfiles.TryFindProfileById(it, out var profile))
+				{
+					this.logger.LogWarning($"Initial log profile is '{profile?.Name}'");
+					return profile;
+				}
+				this.logger.LogError($"Cannot find initial log profile by ID '{it}'");
+				return null;
 			});
+			if (initialProfile != null)
+				workspace.CreateSession(initialProfile);
 
 			// start checking update
 			this.CheckUpdateInfo();

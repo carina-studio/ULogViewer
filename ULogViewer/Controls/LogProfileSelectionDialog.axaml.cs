@@ -79,6 +79,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			var result = x.Name.CompareTo(y.Name);
 			if (result != 0)
 				return result;
+			result = x.Id.CompareTo(y.Id);
+			if (result != 0)
+				return result;
 			return x.GetHashCode() - y.GetHashCode();
 		}
 

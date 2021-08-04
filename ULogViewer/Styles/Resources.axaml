@@ -11,7 +11,9 @@
 	
 	<!-- AppOptionsDialog -->
 	<sys:Double x:Key="Double.AppOptionsDialog.Content.MaxHeight">500</sys:Double>
+	<sys:Double x:Key="Double.AppOptionsDialog.InitialLogProfile.Icon.Size">18</sys:Double>
 	<sys:Double x:Key="Double.AppOptionsDialog.Width">500</sys:Double>
+	<Thickness x:Key="Thickness.AppOptionsDialog.InitialLogProfile.Icon.Margin">0,0,10,0</Thickness>
 	
 	<!-- Browse -->
 	<Thickness x:Key="Thickness.Browse.Margin">5,0,0,0</Thickness>

@@ -20,6 +20,7 @@
 	<sys:String x:Key="String.AppOptionsDialog.ContinuousLogReadingUpdateInterval">連續讀取時的日誌更新時距 (毫秒)</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.Culture">語系</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.IgnoreCaseOfLogTextFilter">文字篩選忽略大小寫</sys:String>
+	<sys:String x:Key="String.AppOptionsDialog.InitialLogProfile">啟動時的初始日誌類型</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.LogFiltering">日誌篩選</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.LogFont">日誌字型及大小</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.LogFont.Sample">日誌文字 ABC abc 123</sys:String>
@@ -36,6 +37,7 @@
 	<!-- Built-in profile -->
 	<sys:String x:Key="String.BuiltInProfile.AndroidDeviceLog">Android 裝置日誌</sys:String>
 	<sys:String x:Key="String.BuiltInProfile.AndroidFileLog">Android 日誌檔案</sys:String>
+	<sys:String x:Key="String.BuiltInProfile.Empty">無</sys:String>
 	<sys:String x:Key="String.BuiltInProfile.GitLog">Git 提交紀錄</sys:String>
 	<sys:String x:Key="String.BuiltInProfile.WindowsApplicationEventLogs">Windows 事件紀錄 (應用程式)</sys:String>
 	<sys:String x:Key="String.BuiltInProfile.WindowsSecurityEventLogs">Windows 事件紀錄 (安全性)</sys:String>

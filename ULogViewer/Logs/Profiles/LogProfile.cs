@@ -25,10 +25,8 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 	/// </summary>
 	class LogProfile : IApplicationObject, INotifyPropertyChanged
 	{
-		/// <summary>
-		/// Default comparer for <see cref="LogProfile"/>.
-		/// </summary>
-		public static readonly IComparer<LogProfile> Comparer = Comparer<LogProfile>.Create(Compare);
+		// Constants.
+		const string EmptyId = "Empty";
 
 
 		// Static fields.
@@ -159,41 +157,12 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		}
 
 
-		// Compare profiles.
-		static int Compare(LogProfile? x, LogProfile? y)
-		{
-			// check instance
-			if (x == null)
-			{
-				if (y == null)
-					return 0;
-				return -1;
-			}
-			if (y == null)
-				return 1;
-
-			// compare by name of data source provider
-			var result = x.dataSourceProvider.Name.CompareTo(y.dataSourceProvider.Name);
-			if (result != 0)
-				return result;
-
-			// compare by built-in state
-			if (x.IsBuiltIn)
-			{
-				if (!y.IsBuiltIn)
-					return -1;
-			}
-			else if (y.IsBuiltIn)
-				return 1;
-
-			// compare by name
-			result = x.name.CompareTo(y.name);
-			if (result != 0)
-				return result;
-
-			// compare by hash-code
-			return (x.GetHashCode() - y.GetHashCode());
-		}
+		/// <summary>
+		/// Create built-in empty log profile.
+		/// </summary>
+		/// <param name="app">Application.</param>
+		/// <returns>Built-in empty log profile.</returns>
+		internal static LogProfile CreateEmptyBuiltInProfile(IApplication app) => new LogProfile(app, EmptyId);
 
 
 		/// <summary>

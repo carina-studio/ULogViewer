@@ -2,8 +2,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+				xmlns:ia="using:Avalonia.Xaml.Interactivity"
+				xmlns:iaCore="using:Avalonia.Xaml.Interactions.Core"
 				xmlns:app="using:CarinaStudio.ULogViewer"
 				xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
+				xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.AppOptionsDialog"
 				Classes="Dialog"
@@ -56,6 +59,32 @@
 
 				<!-- Log operations -->
 				<TextBlock Classes="Dialog_Label_Header1" Text="{DynamicResource String.AppOptionsDialog.LogOperations}"/>
+
+				<!-- Initial log profile -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.AppOptionsDialog.InitialLogProfile}"/>
+				<ComboBox HorizontalAlignment="Stretch" Items="{Binding LogProfiles}" SelectedItem="{Binding InitialLogProfile, Mode=TwoWay}">
+					<ComboBox.ItemTemplate>
+						<DataTemplate>
+							<Grid ColumnDefinitions="Auto,*">
+								<Grid Height="{StaticResource Double.AppOptionsDialog.InitialLogProfile.Icon.Size}" Margin="{StaticResource Thickness.AppOptionsDialog.InitialLogProfile.Icon.Margin}" VerticalAlignment="Center" Width="{StaticResource Double.AppOptionsDialog.InitialLogProfile.Icon.Size}">
+									<DrawingPresenter Classes="Icon" Drawing="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}}"/>
+									<DrawingPresenter Classes="Icon" Drawing="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}, ConverterParameter=Light}" IsVisible="False">
+										<ia:Interaction.Behaviors>
+											<iaCore:DataTriggerBehavior Binding="{Binding $parent[ComboBoxItem].IsSelected}" Value="True">
+												<iaCore:ChangePropertyAction PropertyName="IsVisible" Value="True"/>
+											</iaCore:DataTriggerBehavior>
+											<iaCore:DataTriggerBehavior Binding="{Binding $parent[ComboBoxItem].IsSelected}" Value="False">
+												<iaCore:ChangePropertyAction PropertyName="IsVisible" Value="False"/>
+											</iaCore:DataTriggerBehavior>
+										</ia:Interaction.Behaviors>
+									</DrawingPresenter>
+								</Grid>
+								<TextBlock Grid.Column="1" Text="{Binding Name}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+							</Grid>
+						</DataTemplate>
+					</ComboBox.ItemTemplate>
+				</ComboBox>
+				<Separator Classes="Dialog_Separator_Horizontal"/>
 
 				<!-- Select log profile for new session -->
 				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.AppOptionsDialog.SelectLogProfileForNewSession}"/>
