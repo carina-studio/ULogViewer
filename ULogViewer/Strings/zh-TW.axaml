@@ -219,6 +219,7 @@
 	<sys:String x:Key="String.PredefinedLogTextFilterEditorDialog.IgnoreCase">忽略大小寫</sys:String>
 	<sys:String x:Key="String.PredefinedLogTextFilterEditorDialog.Name">名稱 (必要)</sys:String>
 	<sys:String x:Key="String.PredefinedLogTextFilterEditorDialog.Regex">文字篩選 (必要)</sys:String>
+	<sys:String x:Key="String.PredefinedLogTextFilterEditorDialog.Regex.Description">您可以使用 \$\$ 表示文字屬性分隔線。例如您想篩選使用者為 "John" 且訊息為 "Hello" 的日誌，就可以使用 "John\$\$Hello" 這個篩選模式。文字屬性的排列順序和日誌類型所定義之可見的日誌屬性相同。</sys:String>
 	<sys:String x:Key="String.PredefinedLogTextFilterEditorDialog.Title.Create">建立文字篩選</sys:String>
 	<sys:String x:Key="String.PredefinedLogTextFilterEditorDialog.Title.Edit">編輯文字篩選</sys:String>
 
@@ -245,7 +246,7 @@
 	<sys:String x:Key="String.SessionView.HasPartialDataSourceErrors">部分資料來源發生錯誤</sys:String>
 	<sys:String x:Key="String.SessionView.LogFiltersCombinationMode">篩選條件運算方式</sys:String>
 	<sys:String x:Key="String.SessionView.LogsFilteringProgress">篩選進度：</sys:String>
-	<sys:String x:Key="String.SessionView.LogTextFilterHint">文字篩選 (正規表示式，按 Ctrl+S 以儲存)</sys:String>
+	<sys:String x:Key="String.SessionView.LogTextFilterHint">文字篩選 (正規表示式，使用 \$\$ 表示文字屬性分隔線)</sys:String>
 	<sys:String x:Key="String.SessionView.MarkedLogs">已標記日誌</sys:String>
 	<sys:String x:Key="String.SessionView.MarkUnmarkLogs">標記/解除標記日誌</sys:String>
 	<sys:String x:Key="String.SessionView.NeedToRestartAsAdministrator">'{0}' 需要系統管理員身分，是否要以系統管理員身分重新啟動應用程式並使用此日誌類型？正在查看的日誌將被關閉。</sys:String>
