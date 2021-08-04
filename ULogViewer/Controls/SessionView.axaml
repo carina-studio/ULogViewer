@@ -97,21 +97,45 @@
 				</Button>
 
 				<!-- Set working directory -->
-				<Button Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].SelectAndSetWorkingDirectoryCommand}" ToolTip.Tip="{DynamicResource String.SessionView.SetWorkingDirectory}">
+				<Button Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].SelectAndSetWorkingDirectoryCommand}" IsVisible="False" ToolTip.Tip="{DynamicResource String.SessionView.SetWorkingDirectory}">
+					<ia:Interaction.Behaviors>
+						<iaCore:DataTriggerBehavior Binding="{Binding UnderlyingLogDataSource}" Value="StandardOutput">
+							<iaCore:ChangePropertyAction PropertyName="IsVisible" Value="True"/>
+						</iaCore:DataTriggerBehavior>
+						<iaCore:DataTriggerBehavior Binding="{Binding UnderlyingLogDataSource}" ComparisonCondition="NotEqual" Value="StandardOutput">
+							<iaCore:ChangePropertyAction PropertyName="IsVisible" Value="False"/>
+						</iaCore:DataTriggerBehavior>
+					</ia:Interaction.Behaviors>
 					<Border Classes="SessionView_ToolBar_Button_Icon">
 						<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.AddFolder}"/>
 					</Border>
 				</Button>
 
 				<!-- Add files -->
-				<Button Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].AddLogFilesCommand}" ToolTip.Tip="{DynamicResource String.SessionView.AddLogFiles}">
+				<Button Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].AddLogFilesCommand}" IsVisible="False" ToolTip.Tip="{DynamicResource String.SessionView.AddLogFiles}">
+					<ia:Interaction.Behaviors>
+						<iaCore:DataTriggerBehavior Binding="{Binding UnderlyingLogDataSource}" Value="File">
+							<iaCore:ChangePropertyAction PropertyName="IsVisible" Value="True"/>
+						</iaCore:DataTriggerBehavior>
+						<iaCore:DataTriggerBehavior Binding="{Binding UnderlyingLogDataSource}" ComparisonCondition="NotEqual" Value="File">
+							<iaCore:ChangePropertyAction PropertyName="IsVisible" Value="False"/>
+						</iaCore:DataTriggerBehavior>
+					</ia:Interaction.Behaviors>
 					<Border Classes="SessionView_ToolBar_Button_Icon">
 						<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.AddFile}"/>
 					</Border>
 				</Button>
 
 				<!-- Clear files -->
-				<Button Classes="SessionView_ToolBar_Button" Command="{Binding ClearLogFilesCommand}" ToolTip.Tip="{DynamicResource String.SessionView.ClearLogFiles}">
+				<Button Classes="SessionView_ToolBar_Button" Command="{Binding ClearLogFilesCommand}" IsVisible="False" ToolTip.Tip="{DynamicResource String.SessionView.ClearLogFiles}">
+					<ia:Interaction.Behaviors>
+						<iaCore:DataTriggerBehavior Binding="{Binding UnderlyingLogDataSource}" Value="File">
+							<iaCore:ChangePropertyAction PropertyName="IsVisible" Value="True"/>
+						</iaCore:DataTriggerBehavior>
+						<iaCore:DataTriggerBehavior Binding="{Binding UnderlyingLogDataSource}" ComparisonCondition="NotEqual" Value="File">
+							<iaCore:ChangePropertyAction PropertyName="IsVisible" Value="False"/>
+						</iaCore:DataTriggerBehavior>
+					</ia:Interaction.Behaviors>
 					<Border Classes="SessionView_ToolBar_Button_Icon">
 						<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Delete}"/>
 					</Border>
@@ -136,7 +160,7 @@
 				</ToggleButton>
 
 				<!-- Pause/resume -->
-				<Button Classes="SessionView_ToolBar_Button" Command="{Binding PauseResumeLogsReadingCommand}" ToolTip.Tip="{DynamicResource String.SessionView.PauseResumeLogsReading}">
+				<Button Classes="SessionView_ToolBar_Button" Command="{Binding PauseResumeLogsReadingCommand}" IsVisible="{Binding IsReadingLogsContinuously}" ToolTip.Tip="{DynamicResource String.SessionView.PauseResumeLogsReading}">
 					<Border Classes="SessionView_ToolBar_Button_Icon">
 						<DrawingPresenter Classes="Icon">
 							<ia:Interaction.Behaviors>

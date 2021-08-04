@@ -109,6 +109,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsReadingLogsProperty = ObservableProperty.Register<Session, bool>(nameof(IsReadingLogs));
 		/// <summary>
+		/// Property of <see cref="IsReadingLogsContinuously"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> IsReadingLogsContinuouslyProperty = ObservableProperty.Register<Session, bool>(nameof(IsReadingLogsContinuously));
+		/// <summary>
 		/// Property of <see cref="LogFiltersCombinationMode"/>.
 		/// </summary>
 		public static readonly ObservableProperty<FilterCombinationMode> LogFiltersCombinationModeProperty = ObservableProperty.Register<Session, FilterCombinationMode>(nameof(LogFiltersCombinationMode), FilterCombinationMode.Intersection);
@@ -144,6 +148,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Property of <see cref="Title"/>.
 		/// </summary>
 		public static readonly ObservableProperty<string?> TitleProperty = ObservableProperty.Register<Session, string?>(nameof(Title));
+		/// <summary>
+		/// Property of <see cref="UnderlyingLogDataSource"/>.
+		/// </summary>
+		public static readonly ObservableProperty<UnderlyingLogDataSource> UnderlyingLogDataSourceProperty = ObservableProperty.Register<Session, UnderlyingLogDataSource>(nameof(UnderlyingLogDataSource), UnderlyingLogDataSource.Undefined);
 		/// <summary>
 		/// Property of <see cref="ValidLogLevels"/>.
 		/// </summary>
@@ -944,6 +952,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public bool IsReadingLogs { get => this.GetValue(IsReadingLogsProperty); }
 
 
+		/// <summary>
+		/// Check whether logs are being read continuously or not.
+		/// </summary>
+		public bool IsReadingLogsContinuously { get => this.GetValue(IsReadingLogsContinuouslyProperty); }
+
+
 		// Load marked logs from file.
 		async void LoadMarkedLogs(string fileName)
 		{
@@ -1249,6 +1263,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				case nameof(LogProfile.ColorIndicator):
 					this.SynchronizationContext.Post(() => this.ReloadLogs(true));
 					break;
+				case nameof(LogProfile.DataSourceProvider):
+					this.SetValue(UnderlyingLogDataSourceProperty, this.LogProfile.AsNonNull().DataSourceProvider.UnderlyingSource);
+					goto case nameof(LogProfile.LogPatterns);
+				case nameof(LogProfile.IsContinuousReading):
+					this.SetValue(IsReadingLogsContinuouslyProperty, this.LogProfile.AsNonNull().IsContinuousReading);
+					goto case nameof(LogProfile.LogPatterns);
 				case nameof(LogProfile.LogLevelMapForReading):
 					this.UpdateValidLogLevels();
 					goto case nameof(LogProfile.LogPatterns);
@@ -1491,7 +1511,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.canAddLogFile.Update(false);
 			this.canSetWorkingDirectory.Update(false);
 			this.canResetLogProfile.Update(false);
+			this.SetValue(IsReadingLogsContinuouslyProperty, false);
 			this.UpdateIsLogsWritingAvailable(null);
+			this.SetValue(UnderlyingLogDataSourceProperty, UnderlyingLogDataSource.Undefined);
 			this.UpdateValidLogLevels();
 
 			// clear profile
@@ -1605,10 +1627,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			if (this.LogProfile != null)
 				throw new InternalStateCorruptedException("Already set another log profile.");
 
-			// select profile
+			// set profile
 			this.Logger.LogWarning($"Set profile '{profile.Name}'");
 			this.canSetLogProfile.Update(false);
+			this.SetValue(IsReadingLogsContinuouslyProperty, profile.IsContinuousReading);
 			this.SetValue(LogProfileProperty, profile);
+			this.SetValue(UnderlyingLogDataSourceProperty, profile.DataSourceProvider.UnderlyingSource);
 
 			// attach to log profile
 			profile.PropertyChanged += this.OnLogProfilePropertyChanged;
@@ -1743,6 +1767,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Get title of session.
 		/// </summary>
 		public string? Title { get => this.GetValue(TitleProperty); }
+
+
+		/// <summary>
+		/// Get <see cref="UnderlyingLogDataSource"/> of <see cref="LogProfile"/>.
+		/// </summary>
+		public UnderlyingLogDataSource UnderlyingLogDataSource { get => this.GetValue(UnderlyingLogDataSourceProperty); }
 
 
 		// Update comparison for displayable logs.
