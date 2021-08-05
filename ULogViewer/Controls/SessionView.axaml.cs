@@ -1328,8 +1328,15 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when double click on log list box.
 		void OnLogListBoxDoubleTapped(object? sender, RoutedEventArgs e)
 		{
-			if (this.ShowLogMessage())
+			var selectedItem = this.logListBox.SelectedItem;
+			if (selectedItem == null)
+				return;
+			var listBoxItem = this.logListBox.FindListBoxItem(selectedItem);
+			if (listBoxItem != null && listBoxItem.IsPointerOver)
+			{
+				this.ShowLogMessage();
 				e.Handled = true;
+			}
 		}
 
 
