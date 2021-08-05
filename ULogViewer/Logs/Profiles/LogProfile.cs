@@ -2,6 +2,7 @@
 using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using CarinaStudio.Threading.Tasks;
+using CarinaStudio.ULogViewer.Cryptography;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using Microsoft.Extensions.Logging;
 using System;
@@ -11,6 +12,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
@@ -459,6 +461,12 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 								it.Add(jsonElement.GetString().AsNonNull());
 						});
 						break;
+					case nameof(LogDataSourceOptions.Uri):
+						options.Uri = new Uri(jsonProperty.Value.GetString().AsNonNull());
+						break;
+					case nameof(LogDataSourceOptions.WebRequestCredentials):
+						options.WebRequestCredentials = this.LoadWebRequestCredentialsFromJson(jsonProperty.Value);
+						break;
 					case nameof(LogDataSourceOptions.WorkingDirectory):
 						options.WorkingDirectory = jsonProperty.Value.GetString();
 						break;
@@ -646,6 +654,26 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				logProperties.Add(new LogProperty(name, displayName, width));
 			}
 			this.visibleLogProperties = logProperties.AsReadOnly();
+		}
+
+
+		// Load network credentials from JSON.
+		ICredentials? LoadWebRequestCredentialsFromJson(JsonElement credentialElement)
+		{
+			if (!credentialElement.TryGetProperty("Type", out var jsonValue))
+				return null;
+			return jsonValue.GetString() switch
+			{
+				nameof(NetworkCredential) => new NetworkCredential().Also(it=>
+				{
+					using var crypto = new Crypto(this.Application);
+					if (credentialElement.TryGetProperty(nameof(NetworkCredential.UserName), out jsonValue))
+						it.UserName = crypto.Decrypt(jsonValue.GetString().AsNonNull());
+					if (credentialElement.TryGetProperty(nameof(NetworkCredential.Password), out jsonValue))
+						it.Password = crypto.Decrypt(jsonValue.GetString().AsNonNull());
+				}),
+				_ => null,
+			};
 		}
 
 
@@ -853,6 +881,14 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 					});
 					options.WorkingDirectory?.Let(it => writer.WriteString(nameof(LogDataSourceOptions.WorkingDirectory), it));
 					break;
+				case UnderlyingLogDataSource.WebRequest:
+					options.Uri?.Let(it => writer.WriteString(nameof(LogDataSourceOptions.Uri), it.ToString()));
+					options.WebRequestCredentials?.Let(it =>
+					{
+						writer.WritePropertyName(nameof(LogDataSourceOptions.WebRequestCredentials));
+						this.SaveWebRequestCredentialsToJson(writer, it);
+					});
+					break;
 				case UnderlyingLogDataSource.WindowsEventLogs:
 					options.Category?.Let(it => writer.WriteString(nameof(LogDataSourceOptions.Category), it.ToString()));
 					break;
@@ -917,6 +953,23 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				writer.WriteEndObject();
 			}
 			writer.WriteEndArray();
+		}
+
+
+		// Save network credential in JSON format.
+		void SaveWebRequestCredentialsToJson(Utf8JsonWriter writer, ICredentials credential)
+		{
+			using var crypto = new Crypto(this.Application);
+			writer.WriteStartObject();
+			if (credential is NetworkCredential networkCredential)
+			{
+				writer.WriteString("Type", nameof(NetworkCredential));
+				networkCredential.UserName?.Let(it => writer.WriteString(nameof(NetworkCredential.UserName), crypto.Encrypt(it)));
+				networkCredential.Password?.Let(it => writer.WriteString(nameof(NetworkCredential.Password), crypto.Encrypt(it)));
+			}
+			else
+				writer.WriteString("Type", credential.GetType().Name);
+			writer.WriteEndObject();
 		}
 
 

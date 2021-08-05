@@ -21,13 +21,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Logs\Profiles\BuiltIn\WindowsApplicationEventLogs.json" />
-    <None Remove="Logs\Profiles\BuiltIn\WindowsSecurityEventLogs.json" />
-    <None Remove="Logs\Profiles\BuiltIn\WindowsSetupEventLogs.json" />
-    <None Remove="Logs\Profiles\BuiltIn\WindowsSystemEventLogs.json" />
-  </ItemGroup>
-
-  <ItemGroup>
     <AvaloniaResource Include="AppIcon.ico" />
     <AvaloniaResource Include="Resources/AppIcon_128px.png" />
     <AvaloniaResource Include="Resources/AppIcon_256px.png" />
@@ -76,6 +69,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<EmbeddedResource Include="Cryptography/AesIV" />
+		<EmbeddedResource Include="Cryptography/AesKey" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/AndroidDeviceLog.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/AndroidFileLog.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/DummyLog.json" />
