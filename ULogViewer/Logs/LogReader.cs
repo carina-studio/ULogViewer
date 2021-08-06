@@ -1,6 +1,7 @@
 ﻿using CarinaStudio.Collections;
 using CarinaStudio.Threading;
 using CarinaStudio.Threading.Tasks;
+using CarinaStudio.ULogViewer.Json;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using Microsoft.Extensions.Logging;
 using System;
@@ -13,8 +14,6 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text;
-using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -594,18 +593,7 @@ namespace CarinaStudio.ULogViewer.Logs
 						return it;
 					return this.logStringEncoding switch
 					{
-						LogStringEncoding.Json => it.Let(_=>
-						{
-							var jsonReader = new Utf8JsonReader(Encoding.UTF8.GetBytes($"\"{it}\"").AsSpan());
-							try
-							{
-								if (jsonReader.Read() && jsonReader.TokenType == JsonTokenType.String)
-									return jsonReader.GetString() ?? "";
-							}
-							catch
-							{ }
-							return it;
-						}),
+						LogStringEncoding.Json => JsonUtility.DecodeFromJsonString(it),
 						LogStringEncoding.Xml => WebUtility.HtmlDecode(it),
 						_ => it,
 					};
