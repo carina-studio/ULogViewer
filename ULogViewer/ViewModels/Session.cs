@@ -615,6 +615,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			logWriter.LogFormat = writingFormat;
 			logWriter.LogLevelMap = profile.LogLevelMapForWriting;
 			logWriter.Logs = logsToCopy;
+			logWriter.LogStringEncoding = profile.LogStringEncodingForWriting;
 			logWriter.TimestampCultureInfo = profile.TimestampCultureInfoForWriting;
 			logWriter.TimestampFormat = string.IsNullOrEmpty(profile.TimestampFormatForWriting) ? profile.TimestampFormatForReading : profile.TimestampFormatForWriting;
 			logWriter.WriteFileNames = withFileNames;
@@ -691,6 +692,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				it.IsContinuousReading = profile.IsContinuousReading;
 				it.LogLevelMap = profile.LogLevelMapForReading;
 				it.LogPatterns = profile.LogPatterns;
+				it.LogStringEncoding = profile.LogStringEncodingForReading;
 				if (profile.IsContinuousReading)
 					it.MaxLogCount = this.Settings.GetValueOrDefault(ULogViewer.Settings.MaxContinuousLogCount);
 				it.TimestampCultureInfo = profile.TimestampCultureInfoForReading;

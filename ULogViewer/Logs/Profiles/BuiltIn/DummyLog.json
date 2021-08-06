@@ -17,6 +17,9 @@
 			"Regex": "^(?<Timestamp>[^\\s]+[\\s]+[^\\s]+)[\\s]+(?<Level>[\\w]+)[\\s]+(?<Message>.*)$"
 		}
 	],
+	"LogStringEncodingForReading": "Json",
+	"LogStringEncodingForWriting": "Xml",
+	"LogWritingFormat": "{Timestamp} {Message}",
 	"TimestampCultureInfoForReading": "en-US",
 	"TimestampFormatForDisplaying": "yyyy/MM/dd HH:mm:ss.fff",
 	"TimestampFormatForReading": "yyyy/MM/dd HH:mm:ss.fff",

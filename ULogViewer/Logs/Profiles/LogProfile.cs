@@ -51,6 +51,8 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		Dictionary<string, LogLevel> logLevelMapForReading = new Dictionary<string, LogLevel>();
 		Dictionary<LogLevel, string> logLevelMapForWriting = new Dictionary<LogLevel, string>();
 		IList<LogPattern> logPatterns = new LogPattern[0];
+		LogStringEncoding logStringEncodingForReading = LogStringEncoding.Plane;
+		LogStringEncoding logStringEncodingForWriting = LogStringEncoding.Plane;
 		string? logWritingFormat;
 		string name = "";
 		IDictionary<string, LogLevel> readOnlyLogLevelMapForReading;
@@ -524,6 +526,14 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 					case nameof(LogPatterns):
 						this.LoadLogPatternsFromJson(jsonProperty.Value);
 						break;
+					case nameof(LogStringEncodingForReading):
+						if (Enum.TryParse<LogStringEncoding>(jsonProperty.Value.GetString(), out var encoding))
+							this.logStringEncodingForReading = encoding;
+						break;
+					case nameof(LogStringEncodingForWriting):
+						if (Enum.TryParse<LogStringEncoding>(jsonProperty.Value.GetString(), out encoding))
+							this.logStringEncodingForWriting = encoding;
+						break;
 					case nameof(LogWritingFormat):
 						this.logWritingFormat = jsonProperty.Value.GetString();
 						break;
@@ -735,6 +745,42 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 
 
 		/// <summary>
+		/// Get of set string encoding of logs for reading.
+		/// </summary>
+		public LogStringEncoding LogStringEncodingForReading
+		{
+			get => this.logStringEncodingForReading;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (this.logStringEncodingForReading == value)
+					return;
+				this.logStringEncodingForReading = value;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LogStringEncodingForReading)));
+			}
+		}
+
+
+		/// <summary>
+		/// Get of set string encoding of logs for writing.
+		/// </summary>
+		public LogStringEncoding LogStringEncodingForWriting
+		{
+			get => this.logStringEncodingForWriting;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (this.logStringEncodingForWriting == value)
+					return;
+				this.logStringEncodingForWriting = value;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LogStringEncodingForWriting)));
+			}
+		}
+
+
+		/// <summary>
 		/// Get of set format to write log.
 		/// </summary>
 		public string? LogWritingFormat
@@ -826,6 +872,8 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				this.SaveLogLevelMapForWritingToJson(writer);
 				writer.WritePropertyName(nameof(LogPatterns));
 				this.SaveLogPatternsToJson(writer);
+				writer.WriteString(nameof(LogStringEncodingForReading), this.logStringEncodingForReading.ToString());
+				writer.WriteString(nameof(LogStringEncodingForWriting), this.logStringEncodingForWriting.ToString());
 				this.logWritingFormat?.Let(it => writer.WriteString(nameof(LogWritingFormat), it));
 				writer.WriteString(nameof(Name), this.name);
 				writer.WriteString(nameof(SortDirection), this.sortDirection.ToString());

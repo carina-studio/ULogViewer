@@ -12,6 +12,9 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Text;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -45,6 +48,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		readonly ObservableList<Log> logs = new ObservableList<Log>();
 		CancellationTokenSource? logsReadingCancellationTokenSource;
 		object logsReadingToken = new object();
+		LogStringEncoding logStringEncoding = LogStringEncoding.Plane;
 		int maxLogCount = -1;
 		CancellationTokenSource? openingReaderCancellationSource;
 		readonly List<Log> pendingLogs = new List<Log>();
@@ -325,6 +329,26 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		/// <summary>
+		/// Get or set string encoding of log.
+		/// </summary>
+		/// <remarks>The property can be set ONLY when state is <see cref="LogReaderState.Preparing"/>.</remarks>
+		public LogStringEncoding LogStringEncoding
+		{
+			get => this.logStringEncoding;
+			set
+			{
+				this.VerifyAccess();
+				if (this.state != LogReaderState.Preparing)
+					throw new InvalidOperationException($"Cannot change {nameof(LogStringEncoding)} when state is {this.state}.");
+				if (this.logStringEncoding == value)
+					return;
+				this.logStringEncoding = value;
+				this.OnPropertyChanged(nameof(LogStringEncoding));
+			}
+		}
+
+
+		/// <summary>
 		/// Get logger.
 		/// </summary>
 		protected ILogger Logger { get; }
@@ -562,25 +586,47 @@ namespace CarinaStudio.ULogViewer.Logs
 				if (!group.Success)
 					continue;
 				var name = group.Name;
+				if (name == "0")
+					continue;
+				var value = group.Value.Let(it =>
+				{
+					if (it.Length == 0)
+						return it;
+					return this.logStringEncoding switch
+					{
+						LogStringEncoding.Json => it.Let(_=>
+						{
+							var jsonReader = new Utf8JsonReader(Encoding.UTF8.GetBytes($"\"{it}\"").AsSpan());
+							try
+							{
+								if (jsonReader.Read() && jsonReader.TokenType == JsonTokenType.String)
+									return jsonReader.GetString() ?? "";
+							}
+							catch
+							{ }
+							return it;
+						}),
+						LogStringEncoding.Xml => WebUtility.HtmlDecode(it),
+						_ => it,
+					};
+				});
 				switch (name)
 				{
-					case "0":
-						break;
 					case nameof(Log.Level):
-						if (this.logLevelMap.TryGetValue(group.Value, out var level))
+						if (this.logLevelMap.TryGetValue(value, out var level))
 							logBuilder.Set(name, level.ToString());
 						break;
 					case nameof(Log.Extra1):
 					case nameof(Log.Extra2):
 					case nameof(Log.Message):
-						logBuilder.AppendToNextLine(name, group.Value);
+						logBuilder.AppendToNextLine(name, value);
 						break;
 					case nameof(Log.Timestamp):
 						this.timestampFormat.Let(format =>
 						{
 							if (format == null)
-								logBuilder.Set(name, group.Value);
-							else if (DateTime.TryParseExact(group.Value, format, this.timestampCultureInfo, DateTimeStyles.None, out var timestamp))
+								logBuilder.Set(name, value);
+							else if (DateTime.TryParseExact(value, format, this.timestampCultureInfo, DateTimeStyles.None, out var timestamp))
 								logBuilder.Set(name, timestamp.ToBinary().ToString());
 						});
 						break;
@@ -592,10 +638,10 @@ namespace CarinaStudio.ULogViewer.Logs
 					case nameof(Log.ThreadName):
 					case nameof(Log.UserId):
 					case nameof(Log.UserName):
-						logBuilder.Set(name, stringPool[group.Value]);
+						logBuilder.Set(name, stringPool[value]);
 						break;
 					default:
-						logBuilder.Set(name, group.Value);
+						logBuilder.Set(name, value);
 						break;
 				}
 			}

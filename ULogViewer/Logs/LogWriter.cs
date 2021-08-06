@@ -11,8 +11,10 @@ using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -34,6 +36,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		string logFormat = "";
 		IList<Log> logs = new Log[0];
 		readonly Dictionary<LogLevel, string> logLevelMap = new Dictionary<LogLevel, string>();
+		LogStringEncoding logStringEncoding = LogStringEncoding.Plane;
 		readonly IDictionary<LogLevel, string> readOnlyLogLevelMap;
 		LogWriterState state = LogWriterState.Preparing;
 		CultureInfo timestampCultureInfo = CultureInfo.GetCultureInfo("en-US");
@@ -168,6 +171,24 @@ namespace CarinaStudio.ULogViewer.Logs
 				this.VerifyPreparing();
 				this.logs = value.IsNotEmpty() ? new List<Log>(value).AsReadOnly() : new Log[0];
 				this.OnPropertyChanged(nameof(Logs));
+			}
+		}
+
+
+		/// <summary>
+		/// Get or set string encoding of log.
+		/// </summary>
+		public LogStringEncoding LogStringEncoding
+		{
+			get => this.logStringEncoding;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyPreparing();
+				if (this.logStringEncoding == value)
+					return;
+				this.logStringEncoding = value;
+				this.OnPropertyChanged(nameof(LogStringEncoding));
 			}
 		}
 
@@ -403,6 +424,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			var logs = this.logs;
 			var logCount = logs.Count;
 			var logPropertyCount = logPropertyGetters.Count;
+			var logStringEncoding = this.logStringEncoding;
 			var writeFileNames = this.writeFileNames;
 			var currentFileName = "";
 			try
@@ -412,7 +434,25 @@ namespace CarinaStudio.ULogViewer.Logs
 				{
 					var log = logs[i];
 					for (var j = logPropertyCount - 1; j >= 0; --j)
-						formatArgs[j] = logPropertyGetters[j](log);
+					{
+						formatArgs[j] = logPropertyGetters[j](log).Let(it =>
+						{
+							if (it is not string str || str.Length == 0)
+								return it;
+							return logStringEncoding switch
+							{
+								LogStringEncoding.Json => Encoding.UTF8.GetString(new MemoryStream().Use(memoryStream =>
+								{
+									using var jsonWriter = new Utf8JsonWriter(memoryStream);
+									jsonWriter.WriteStringValue(str);
+									jsonWriter.Flush();
+									return memoryStream.ToArray();
+								})).Let(str => str.Substring(1, str.Length - 2)),
+								LogStringEncoding.Xml => WebUtility.HtmlEncode(str),
+								_ => it,
+							};
+						});
+					}
 					if (i > 0)
 						writer.WriteLine();
 					if (writeFileNames)

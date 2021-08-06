@@ -41,7 +41,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				});
 
 				// message
-				log.Append($" Message#{this.nextMessageId++}");
+				log.Append($" Message#{this.nextMessageId++} &lt;XML encoded string&gt; \\u003CJSON encoded string\\u003E");
 
 				// complete
 				return log.ToString();
