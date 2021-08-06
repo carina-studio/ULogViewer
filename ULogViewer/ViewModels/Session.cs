@@ -1275,6 +1275,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.UpdateValidLogLevels();
 					goto case nameof(LogProfile.LogPatterns);
 				case nameof(LogProfile.LogPatterns):
+				case nameof(LogProfile.LogStringEncodingForReading):
 				case nameof(LogProfile.SortDirection):
 				case nameof(LogProfile.SortKey):
 				case nameof(LogProfile.TimestampCultureInfoForReading):
