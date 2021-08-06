@@ -1446,12 +1446,9 @@ namespace CarinaStudio.ULogViewer.Controls
 							}
 							break;
 						case Key.F:
-							if (e.Source is not TextBox)
-							{
-								this.logTextFilterTextBox.Focus();
-								this.logTextFilterTextBox.SelectAll();
-								e.Handled = true;
-							}
+							this.logTextFilterTextBox.Focus();
+							this.logTextFilterTextBox.SelectAll();
+							e.Handled = true;
 							break;
 						case Key.P:
 							predefinedLogTextFiltersPopup.IsOpen = !predefinedLogTextFiltersPopup.IsOpen;
