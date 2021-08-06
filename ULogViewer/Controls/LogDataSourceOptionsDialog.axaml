@@ -155,12 +155,12 @@
 
 				<!-- User name -->
 				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogDataSourceOptionsDialog.WebRequestCredentials.UserName}"/>
-				<TextBox Name="wrcUserNameTextBox"/>
+				<TextBox Name="wrUserNameTextBox"/>
 				<Separator Classes="Dialog_Separator_Horizontal"/>
 
 				<!-- Password -->
 				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogDataSourceOptionsDialog.WebRequestCredentials.Password}"/>
-				<TextBox Name="wrcPasswordTextBox" PasswordChar="●"/>
+				<TextBox Name="wrPasswordTextBox" PasswordChar="●"/>
 				
 			</StackPanel>
 

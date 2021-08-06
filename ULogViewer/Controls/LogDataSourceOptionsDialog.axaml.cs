@@ -35,8 +35,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ListBox teardownCommandsListBox;
 		readonly UriTextBox uriTextBox;
 		readonly TextBox workingDirectoryTextBox;
-		readonly TextBox wrcUserNameTextBox;
-		readonly TextBox wrcPasswordTextBox;
+		readonly TextBox wrUserNameTextBox;
+		readonly TextBox wrPasswordTextBox;
 
 
 		/// <summary>
@@ -53,8 +53,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.teardownCommandsListBox = this.FindControl<ListBox>("teardownCommandsListBox").AsNonNull();
 			this.uriTextBox = this.FindControl<UriTextBox>("uriTextBox").AsNonNull();
 			this.workingDirectoryTextBox = this.FindControl<TextBox>("workingDirectoryTextBox").AsNonNull();
-			this.wrcUserNameTextBox = this.FindControl<TextBox>("wrcUserNameTextBox").AsNonNull();
-			this.wrcPasswordTextBox = this.FindControl<TextBox>("wrcPasswordTextBox").AsNonNull();
+			this.wrUserNameTextBox = this.FindControl<TextBox>("wrUserNameTextBox").AsNonNull();
+			this.wrPasswordTextBox = this.FindControl<TextBox>("wrPasswordTextBox").AsNonNull();
 		}
 
 
@@ -181,15 +181,9 @@ namespace CarinaStudio.ULogViewer.Controls
 					options.WorkingDirectory = this.workingDirectoryTextBox.Text?.Trim();
 					break;
 				case UnderlyingLogDataSource.WebRequest:
+					options.Password = this.wrPasswordTextBox.Text?.Trim();
 					options.Uri = this.uriTextBox.Uri.AsNonNull();
-					{
-						var userName = this.wrcUserNameTextBox.Text?.Trim();
-						var password = this.wrcPasswordTextBox.Text?.Trim();
-						if (string.IsNullOrEmpty(userName) && string.IsNullOrEmpty(password))
-							options.WebRequestCredentials = null;
-						else
-							options.WebRequestCredentials = new NetworkCredential(userName, password);
-					}
+					options.UserName = this.wrUserNameTextBox.Text?.Trim();
 					break;
 				case UnderlyingLogDataSource.WindowsEventLogs:
 					options.Category = this.categoryTextBox.Text.AsNonNull().Trim();
@@ -236,11 +230,8 @@ namespace CarinaStudio.ULogViewer.Controls
 					break;
 				case UnderlyingLogDataSource.WebRequest:
 					this.uriTextBox.Uri = options.Uri;
-					if (options.WebRequestCredentials is NetworkCredential networkCredential)
-					{
-						this.wrcUserNameTextBox.Text = networkCredential.UserName;
-						this.wrcPasswordTextBox.Text = networkCredential.Password;
-					}
+					this.wrPasswordTextBox.Text = options.Password?.Trim();
+					this.wrUserNameTextBox.Text = options.UserName?.Trim();
 					this.uriTextBox.Focus();
 					break;
 				case UnderlyingLogDataSource.WindowsEventLogs:

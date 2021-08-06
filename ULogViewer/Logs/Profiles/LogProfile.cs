@@ -434,51 +434,66 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 
 			// get options
 			var options = new LogDataSourceOptions();
-			foreach (var jsonProperty in dataSourceElement.EnumerateObject())
+			var crypto = (Crypto?)null;
+			try
 			{
-				switch (jsonProperty.Name)
+				foreach (var jsonProperty in dataSourceElement.EnumerateObject())
 				{
-					case nameof(LogDataSourceOptions.Category):
-						options.Category = jsonProperty.Value.GetString();
-						break;
-					case nameof(LogDataSourceOptions.Command):
-						options.Command = jsonProperty.Value.GetString();
-						break;
-					case nameof(LogDataSourceOptions.Encoding):
-						options.Encoding = Encoding.GetEncoding(jsonProperty.Value.GetString().AsNonNull());
-						break;
-					case nameof(LogDataSourceOptions.FileName):
-						options.FileName = jsonProperty.Value.GetString();
-						break;
-					case "Name":
-						break;
-					case nameof(LogDataSourceOptions.SetupCommands):
-						options.SetupCommands = new List<string>().Also(it =>
-						{
-							foreach (var jsonElement in jsonProperty.Value.EnumerateArray())
-								it.Add(jsonElement.GetString().AsNonNull());
-						});
-						break;
-					case nameof(LogDataSourceOptions.TeardownCommands):
-						options.TeardownCommands = new List<string>().Also(it =>
-						{
-							foreach (var jsonElement in jsonProperty.Value.EnumerateArray())
-								it.Add(jsonElement.GetString().AsNonNull());
-						});
-						break;
-					case nameof(LogDataSourceOptions.Uri):
-						options.Uri = new Uri(jsonProperty.Value.GetString().AsNonNull());
-						break;
-					case nameof(LogDataSourceOptions.WebRequestCredentials):
-						options.WebRequestCredentials = this.LoadWebRequestCredentialsFromJson(jsonProperty.Value);
-						break;
-					case nameof(LogDataSourceOptions.WorkingDirectory):
-						options.WorkingDirectory = jsonProperty.Value.GetString();
-						break;
-					default:
-						this.logger.LogWarning($"Unknown property of DataSource: {jsonProperty.Name}");
-						break;
+					switch (jsonProperty.Name)
+					{
+						case nameof(LogDataSourceOptions.Category):
+							options.Category = jsonProperty.Value.GetString();
+							break;
+						case nameof(LogDataSourceOptions.Command):
+							options.Command = jsonProperty.Value.GetString();
+							break;
+						case nameof(LogDataSourceOptions.Encoding):
+							options.Encoding = Encoding.GetEncoding(jsonProperty.Value.GetString().AsNonNull());
+							break;
+						case nameof(LogDataSourceOptions.FileName):
+							options.FileName = jsonProperty.Value.GetString();
+							break;
+						case "Name":
+							break;
+						case nameof(LogDataSourceOptions.Password):
+							if (crypto == null)
+								crypto = new Crypto(this.Application);
+							options.Password = crypto.Decrypt(jsonProperty.Value.GetString().AsNonNull());
+							break;
+						case nameof(LogDataSourceOptions.SetupCommands):
+							options.SetupCommands = new List<string>().Also(it =>
+							{
+								foreach (var jsonElement in jsonProperty.Value.EnumerateArray())
+									it.Add(jsonElement.GetString().AsNonNull());
+							});
+							break;
+						case nameof(LogDataSourceOptions.TeardownCommands):
+							options.TeardownCommands = new List<string>().Also(it =>
+							{
+								foreach (var jsonElement in jsonProperty.Value.EnumerateArray())
+									it.Add(jsonElement.GetString().AsNonNull());
+							});
+							break;
+						case nameof(LogDataSourceOptions.Uri):
+							options.Uri = new Uri(jsonProperty.Value.GetString().AsNonNull());
+							break;
+						case nameof(LogDataSourceOptions.UserName):
+							if (crypto == null)
+								crypto = new Crypto(this.Application);
+							options.UserName = crypto.Decrypt(jsonProperty.Value.GetString().AsNonNull());
+							break;
+						case nameof(LogDataSourceOptions.WorkingDirectory):
+							options.WorkingDirectory = jsonProperty.Value.GetString();
+							break;
+						default:
+							this.logger.LogWarning($"Unknown property of DataSource: {jsonProperty.Name}");
+							break;
+					}
 				}
+			}
+			finally
+			{
+				crypto?.Dispose();
 			}
 
 			// complete
@@ -667,26 +682,6 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				logProperties.Add(new LogProperty(name, displayName, width));
 			}
 			this.visibleLogProperties = logProperties.AsReadOnly();
-		}
-
-
-		// Load network credentials from JSON.
-		ICredentials? LoadWebRequestCredentialsFromJson(JsonElement credentialElement)
-		{
-			if (!credentialElement.TryGetProperty("Type", out var jsonValue))
-				return null;
-			return jsonValue.GetString() switch
-			{
-				nameof(NetworkCredential) => new NetworkCredential().Also(it=>
-				{
-					using var crypto = new Crypto(this.Application);
-					if (credentialElement.TryGetProperty(nameof(NetworkCredential.UserName), out jsonValue))
-						it.UserName = crypto.Decrypt(jsonValue.GetString().AsNonNull());
-					if (credentialElement.TryGetProperty(nameof(NetworkCredential.Password), out jsonValue))
-						it.Password = crypto.Decrypt(jsonValue.GetString().AsNonNull());
-				}),
-				_ => null,
-			};
 		}
 
 
@@ -897,54 +892,69 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		// Save data source info in JSON format.
 		void SaveDataSourceToJson(Utf8JsonWriter writer)
 		{
+			var crypto = (Crypto?)null;
 			var options = this.dataSourceOptions;
-			writer.WriteStartObject();
-			writer.WriteString("Name", this.dataSourceProvider.Name);
-			switch (this.dataSourceProvider.UnderlyingSource)
+			try
 			{
-				case UnderlyingLogDataSource.File:
-					options.Encoding?.Let(it => writer.WriteString(nameof(LogDataSourceOptions.Encoding), it.ToString()));
-					options.FileName?.Let(it => writer.WriteString(nameof(LogDataSourceOptions.FileName), it));
-					break;
-				case UnderlyingLogDataSource.StandardOutput:
-					options.Command?.Let(it => writer.WriteString(nameof(LogDataSourceOptions.Command), it));
-					options.SetupCommands.Let(it =>
-					{
-						if (it.IsNotEmpty())
+				writer.WriteStartObject();
+				writer.WriteString("Name", this.dataSourceProvider.Name);
+				switch (this.dataSourceProvider.UnderlyingSource)
+				{
+					case UnderlyingLogDataSource.File:
+						options.Encoding?.Let(it => writer.WriteString(nameof(LogDataSourceOptions.Encoding), it.ToString()));
+						options.FileName?.Let(it => writer.WriteString(nameof(LogDataSourceOptions.FileName), it));
+						break;
+					case UnderlyingLogDataSource.StandardOutput:
+						options.Command?.Let(it => writer.WriteString(nameof(LogDataSourceOptions.Command), it));
+						options.SetupCommands.Let(it =>
 						{
-							writer.WritePropertyName(nameof(LogDataSourceOptions.SetupCommands));
-							writer.WriteStartArray();
-							foreach (var command in it)
-								writer.WriteStringValue(command);
-							writer.WriteEndArray();
-						}
-					});
-					options.TeardownCommands.Let(it =>
-					{
-						if (it.IsNotEmpty())
+							if (it.IsNotEmpty())
+							{
+								writer.WritePropertyName(nameof(LogDataSourceOptions.SetupCommands));
+								writer.WriteStartArray();
+								foreach (var command in it)
+									writer.WriteStringValue(command);
+								writer.WriteEndArray();
+							}
+						});
+						options.TeardownCommands.Let(it =>
 						{
-							writer.WritePropertyName(nameof(LogDataSourceOptions.TeardownCommands));
-							writer.WriteStartArray();
-							foreach (var command in it)
-								writer.WriteStringValue(command);
-							writer.WriteEndArray();
-						}
-					});
-					options.WorkingDirectory?.Let(it => writer.WriteString(nameof(LogDataSourceOptions.WorkingDirectory), it));
-					break;
-				case UnderlyingLogDataSource.WebRequest:
-					options.Uri?.Let(it => writer.WriteString(nameof(LogDataSourceOptions.Uri), it.ToString()));
-					options.WebRequestCredentials?.Let(it =>
-					{
-						writer.WritePropertyName(nameof(LogDataSourceOptions.WebRequestCredentials));
-						this.SaveWebRequestCredentialsToJson(writer, it);
-					});
-					break;
-				case UnderlyingLogDataSource.WindowsEventLogs:
-					options.Category?.Let(it => writer.WriteString(nameof(LogDataSourceOptions.Category), it.ToString()));
-					break;
+							if (it.IsNotEmpty())
+							{
+								writer.WritePropertyName(nameof(LogDataSourceOptions.TeardownCommands));
+								writer.WriteStartArray();
+								foreach (var command in it)
+									writer.WriteStringValue(command);
+								writer.WriteEndArray();
+							}
+						});
+						options.WorkingDirectory?.Let(it => writer.WriteString(nameof(LogDataSourceOptions.WorkingDirectory), it));
+						break;
+					case UnderlyingLogDataSource.WebRequest:
+						options.Uri?.Let(it => writer.WriteString(nameof(LogDataSourceOptions.Uri), it.ToString()));
+						options.UserName?.Let(it =>
+						{
+							if (crypto == null)
+								crypto = new Crypto(this.Application);
+							writer.WriteString(nameof(LogDataSourceOptions.UserName), crypto.Encrypt(it));
+						});
+						options.Password?.Let(it =>
+						{
+							if (crypto == null)
+								crypto = new Crypto(this.Application);
+							writer.WriteString(nameof(LogDataSourceOptions.Password), crypto.Encrypt(it));
+						});
+						break;
+					case UnderlyingLogDataSource.WindowsEventLogs:
+						options.Category?.Let(it => writer.WriteString(nameof(LogDataSourceOptions.Category), it.ToString()));
+						break;
+				}
+				writer.WriteEndObject();
 			}
-			writer.WriteEndObject();
+			finally
+			{
+				crypto?.Dispose();
+			}
 		}
 
 
@@ -1004,23 +1014,6 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				writer.WriteEndObject();
 			}
 			writer.WriteEndArray();
-		}
-
-
-		// Save network credential in JSON format.
-		void SaveWebRequestCredentialsToJson(Utf8JsonWriter writer, ICredentials credential)
-		{
-			using var crypto = new Crypto(this.Application);
-			writer.WriteStartObject();
-			if (credential is NetworkCredential networkCredential)
-			{
-				writer.WriteString("Type", nameof(NetworkCredential));
-				networkCredential.UserName?.Let(it => writer.WriteString(nameof(NetworkCredential.UserName), crypto.Encrypt(it)));
-				networkCredential.Password?.Let(it => writer.WriteString(nameof(NetworkCredential.Password), crypto.Encrypt(it)));
-			}
-			else
-				writer.WriteString("Type", credential.GetType().Name);
-			writer.WriteEndObject();
 		}
 
 

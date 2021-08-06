@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Net;
 using System.Text;
 
 namespace CarinaStudio.ULogViewer.Logs.DataSources
@@ -106,11 +105,13 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// Create <see cref="LogDataSourceOptions"/> for <see cref="UnderlyingLogDataSource.WebRequest"/> case.
 		/// </summary>
 		/// <param name="uri">Uri of request.</param>
-		/// <param name="credentials">Credentials.</param>
-		public static LogDataSourceOptions CreateForWebRequest(Uri uri, ICredentials? credentials = null) => new LogDataSourceOptions()
+		/// <param name="userName">User name.</param>
+		/// <param name="password">Password.</param>
+		public static LogDataSourceOptions CreateForWebRequest(Uri uri, string? userName = null, string? password = null) => new LogDataSourceOptions()
 		{
+			Password = password,
 			Uri = uri,
-			WebRequestCredentials = credentials,
+			UserName = userName,
 		};
 
 
@@ -147,10 +148,11 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 					&& this.Command == options.Command
 					&& this.Encoding == options.Encoding
 					&& this.FileName == options.FileName
+					&& this.Password == options.Password
 					&& this.SetupCommands.SequenceEqual(options.SetupCommands)
 					&& this.TeardownCommands.SequenceEqual(options.TeardownCommands)
 					&& this.Uri == options.Uri
-					&& (this.WebRequestCredentials?.Equals(options.WebRequestCredentials) ?? options.WebRequestCredentials == null)
+					&& this.UserName == options.UserName
 					&& this.WorkingDirectory == options.WorkingDirectory;
 			}
 			return false;
@@ -192,6 +194,13 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		/// <summary>
+		/// Get or set command to start process.
+		/// </summary>
+		/// <remarks>Available for <see cref="UnderlyingLogDataSource.WebRequest"/>.</remarks>
+		public string? Password { get; set; }
+
+
+		/// <summary>
 		/// Get or set commands before executing <see cref="Command"/>.
 		/// </summary>
 		/// <remarks>Available for <see cref="UnderlyingLogDataSource.StandardOutput"/>.</remarks>
@@ -214,17 +223,17 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		/// <summary>
+		/// Get or set user name.
+		/// </summary>
+		/// <remarks>Available for <see cref="UnderlyingLogDataSource.WebRequest"/>.</remarks>
+		public string? UserName { get; set; }
+
+
+		/// <summary>
 		/// Get or set URI to connect.
 		/// </summary>
 		/// <remarks>Available for <see cref="UnderlyingLogDataSource.WebRequest"/>.</remarks>
 		public Uri? Uri { get; set; }
-
-
-		/// <summary>
-		/// Get or set credentials.
-		/// </summary>
-		/// <remarks>Available for <see cref="UnderlyingLogDataSource.WebRequest"/>.</remarks>
-		public ICredentials? WebRequestCredentials { get; set; }
 
 
 		/// <summary>

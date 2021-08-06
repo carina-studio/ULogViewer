@@ -83,15 +83,16 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		protected override LogDataSourceState OpenReaderCore(CancellationToken cancellationToken, out TextReader? reader)
 		{
 			// setup HTTP client
-			var httpClient = this.CreationOptions.WebRequestCredentials.Let(it =>
-			{
-				if (it == null)
-					return new HttpClient();
-				return new HttpClient(new HttpClientHandler() { Credentials = it }, true);
-			});
+			var options = this.CreationOptions;
+			var credential = (options.UserName != null || options.Password != null)
+				? new NetworkCredential(options.UserName, options.Password)
+				: null;
+			var httpClient = credential == null
+				? new HttpClient()
+				: new HttpClient(new HttpClientHandler() { Credentials = credential }, true);
 
 			// get response
-			var uri = this.CreationOptions.Uri.AsNonNull();
+			var uri = options.Uri.AsNonNull();
 			var response = (HttpResponseMessage?)null;
 			try
 			{
