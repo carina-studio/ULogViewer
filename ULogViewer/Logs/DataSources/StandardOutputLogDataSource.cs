@@ -169,6 +169,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				process.StartInfo.Arguments = this.arguments;
 			process.StartInfo.UseShellExecute = false;
 			process.StartInfo.RedirectStandardOutput = true;
+			process.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
 			process.StartInfo.CreateNoWindow = true;
 			process.Start();
 			reader = new ReaderImpl(process);
