@@ -76,6 +76,9 @@
 
 			<!-- Behaviors -->
 			<ia:Interaction.Behaviors>
+				<iaCore:DataTriggerBehavior Binding="{Binding $parent[Window].UnderlyingLogDataSource}" Value="Database">
+					<iaCore:ChangePropertyAction PropertyName="IsVisible" TargetObject="{Binding #databaseParamsPanel}" Value="True"/>
+				</iaCore:DataTriggerBehavior>
 				<iaCore:DataTriggerBehavior Binding="{Binding $parent[Window].UnderlyingLogDataSource}" Value="File">
 					<iaCore:ChangePropertyAction PropertyName="IsVisible" TargetObject="{Binding #fileParamsPanel}" Value="True"/>
 				</iaCore:DataTriggerBehavior>
@@ -90,10 +93,57 @@
 				</iaCore:DataTriggerBehavior>
 			</ia:Interaction.Behaviors>
 
+			<!-- Database -->
+			<StackPanel Name="databaseParamsPanel" HorizontalAlignment="Stretch" IsVisible="False" Orientation="Vertical">
+				<ia:Interaction.Behaviors>
+					<iaCore:DataTriggerBehavior Binding="{Binding #dbSourceTypeComboBox.SelectedItem}" Value="File">
+						<iaCore:ChangePropertyAction PropertyName="IsVisible" TargetObject="{Binding #dbFileNamePanel}" Value="True"/>
+						<iaCore:ChangePropertyAction PropertyName="IsVisible" TargetObject="{Binding #dbUriPanel}" Value="False"/>
+						<iaCore:ChangePropertyAction PropertyName="IsVisible" TargetObject="{Binding #dbUserNamePanel}" Value="False"/>
+					</iaCore:DataTriggerBehavior>
+					<iaCore:DataTriggerBehavior Binding="{Binding #dbSourceTypeComboBox.SelectedItem}" Value="Network">
+						<iaCore:ChangePropertyAction PropertyName="IsVisible" TargetObject="{Binding #dbFileNamePanel}" Value="False"/>
+						<iaCore:ChangePropertyAction PropertyName="IsVisible" TargetObject="{Binding #dbUriPanel}" Value="True"/>
+						<iaCore:ChangePropertyAction PropertyName="IsVisible" TargetObject="{Binding #dbUserNamePanel}" Value="True"/>
+					</iaCore:DataTriggerBehavior>
+				</ia:Interaction.Behaviors>
+
+				<!-- Source type -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogDataSourceOptionsDialog.DatabaseSourceType}"/>
+				<appControls:EnumComboBox Name="dbSourceTypeComboBox" HorizontalAlignment="Stretch" PropertyChanged="OnEditorControlPropertyChanged"/>
+				<Separator Classes="Dialog_Separator_Horizontal"/>
+
+				<!-- File name & URI -->
+				<StackPanel Name="dbFileNamePanel" IsVisible="False" Orientation="Vertical">
+					<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogDataSourceOptionsDialog.FileName.Required}"/>
+					<Grid ColumnDefinitions="*,Auto">
+						<TextBox Name="dbFileNameTextBox" PropertyChanged="OnEditorControlPropertyChanged"/>
+						<Button Classes="Browse" Command="{Binding $parent[Window].SelectFileName}" Grid.Column="1"/>
+					</Grid>
+				</StackPanel>
+				<StackPanel Name="dbUriPanel" IsVisible="False" Orientation="Vertical">
+					<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogDataSourceOptionsDialog.Uri}"/>
+					<appControls:UriTextBox Name="dbUriTextBox" PropertyChanged="OnEditorControlPropertyChanged"/>
+				</StackPanel>
+				<Separator Classes="Dialog_Separator_Horizontal"/>
+
+				<!-- User name -->
+				<StackPanel Name="dbUserNamePanel" IsVisible="False" Orientation="Vertical">
+					<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogDataSourceOptionsDialog.WebRequestCredentials.UserName}"/>
+					<TextBox Name="dbUserNameTextBox"/>
+					<Separator Classes="Dialog_Separator_Horizontal"/>
+				</StackPanel>
+
+				<!-- Password -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogDataSourceOptionsDialog.WebRequestCredentials.Password}"/>
+				<TextBox Name="dbPasswordTextBox" PasswordChar="●"/>
+				
+			</StackPanel>
+
 			<!-- File -->
 			<StackPanel Name="fileParamsPanel" HorizontalAlignment="Stretch" IsVisible="False" Orientation="Vertical">
 
-				<!--File name -->
+				<!-- File name -->
 				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogDataSourceOptionsDialog.FileName}"/>
 				<Grid ColumnDefinitions="*,Auto">
 					<TextBox Name="fileNameTextBox"/>

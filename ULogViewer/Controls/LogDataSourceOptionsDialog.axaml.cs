@@ -19,6 +19,22 @@ namespace CarinaStudio.ULogViewer.Controls
 	partial class LogDataSourceOptionsDialog : BaseDialog
 	{
 		/// <summary>
+		/// Type of database source.
+		/// </summary>
+		public enum DatabaseSourceType
+		{
+			/// <summary>
+			/// File.
+			/// </summary>
+			File,
+			/// <summary>
+			/// Network.
+			/// </summary>
+			Network,
+		}
+
+
+		/// <summary>
 		/// Property of <see cref="UnderlyingLogDataSource"/>.
 		/// </summary>
 		public static readonly AvaloniaProperty<UnderlyingLogDataSource> UnderlyingLogDataSourceProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, UnderlyingLogDataSource>(nameof(UnderlyingLogDataSource), UnderlyingLogDataSource.Undefined);
@@ -27,6 +43,11 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Fields.
 		readonly TextBox categoryTextBox;
 		readonly TextBox commandTextBox;
+		readonly TextBox dbFileNameTextBox;
+		readonly TextBox dbPasswordTextBox;
+		readonly EnumComboBox dbSourceTypeComboBox;
+		readonly UriTextBox dbUriTextBox;
+		readonly TextBox dbUserNameTextBox;
 		readonly ComboBox encodingComboBox;
 		readonly TextBox fileNameTextBox;
 		readonly ObservableList<string> setupCommands = new ObservableList<string>();
@@ -35,8 +56,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ListBox teardownCommandsListBox;
 		readonly UriTextBox uriTextBox;
 		readonly TextBox workingDirectoryTextBox;
-		readonly TextBox wrUserNameTextBox;
 		readonly TextBox wrPasswordTextBox;
+		readonly TextBox wrUserNameTextBox;
 
 
 		/// <summary>
@@ -47,14 +68,22 @@ namespace CarinaStudio.ULogViewer.Controls
 			InitializeComponent();
 			this.categoryTextBox = this.FindControl<TextBox>("categoryTextBox").AsNonNull();
 			this.commandTextBox = this.FindControl<TextBox>("commandTextBox").AsNonNull();
+			this.dbFileNameTextBox = this.FindControl<TextBox>("dbFileNameTextBox").AsNonNull();
+			this.dbPasswordTextBox = this.FindControl<TextBox>("dbPasswordTextBox").AsNonNull();
+			this.dbSourceTypeComboBox = this.FindControl<EnumComboBox>("dbSourceTypeComboBox").AsNonNull().Also(it =>
+			{
+				it.EnumType = typeof(DatabaseSourceType);
+			});
+			this.dbUriTextBox = this.FindControl<UriTextBox>("dbUriTextBox").AsNonNull();
+			this.dbUserNameTextBox = this.FindControl<TextBox>("dbUserNameTextBox").AsNonNull();
 			this.encodingComboBox = this.FindControl<ComboBox>("encodingComboBox").AsNonNull();
 			this.fileNameTextBox = this.FindControl<TextBox>("fileNameTextBox").AsNonNull();
 			this.setupCommandsListBox = this.FindControl<ListBox>("setupCommandsListBox").AsNonNull();
 			this.teardownCommandsListBox = this.FindControl<ListBox>("teardownCommandsListBox").AsNonNull();
 			this.uriTextBox = this.FindControl<UriTextBox>("uriTextBox").AsNonNull();
 			this.workingDirectoryTextBox = this.FindControl<TextBox>("workingDirectoryTextBox").AsNonNull();
-			this.wrUserNameTextBox = this.FindControl<TextBox>("wrUserNameTextBox").AsNonNull();
 			this.wrPasswordTextBox = this.FindControl<TextBox>("wrPasswordTextBox").AsNonNull();
+			this.wrUserNameTextBox = this.FindControl<TextBox>("wrUserNameTextBox").AsNonNull();
 		}
 
 
@@ -153,6 +182,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			var property = e.Property;
 			if (property == UriTextBox.IsTextValidProperty
+				|| property == ComboBox.SelectedItemProperty
 				|| (property == TextBox.TextProperty && sender is not UriTextBox)
 				|| property == UriTextBox.UriProperty)
 			{
@@ -167,6 +197,19 @@ namespace CarinaStudio.ULogViewer.Controls
 			var options = new LogDataSourceOptions();
 			switch (this.UnderlyingLogDataSource)
 			{
+				case UnderlyingLogDataSource.Database:
+					switch ((DatabaseSourceType)this.dbSourceTypeComboBox.SelectedItem.AsNonNull())
+					{
+						case DatabaseSourceType.File:
+							options.FileName = this.dbFileNameTextBox.Text.AsNonNull().Trim();
+							break;
+						case DatabaseSourceType.Network:
+							options.Uri = this.dbUriTextBox.Uri.AsNonNull();
+							break;
+					}
+					options.UserName = this.dbUserNameTextBox.Text?.Trim();
+					options.Password = this.dbPasswordTextBox.Text?.Trim();
+					break;
 				case UnderlyingLogDataSource.File:
 					options.FileName = this.fileNameTextBox.Text?.Trim();
 					options.Encoding = this.encodingComboBox.SelectedItem?.Let(it =>
@@ -209,6 +252,22 @@ namespace CarinaStudio.ULogViewer.Controls
 			var options = this.Options;
 			switch (this.UnderlyingLogDataSource)
 			{
+				case UnderlyingLogDataSource.Database:
+					if (options.Uri != null)
+					{
+						this.dbSourceTypeComboBox.SelectedItem = DatabaseSourceType.Network;
+						this.dbUriTextBox.Uri = options.Uri;
+						this.dbUriTextBox.Focus();
+					}
+					else
+					{
+						this.dbSourceTypeComboBox.SelectedItem = DatabaseSourceType.File;
+						this.dbFileNameTextBox.Text = options.FileName?.Trim();
+						this.dbFileNameTextBox.Focus();
+					}
+					this.dbUserNameTextBox.Text = options.UserName?.Trim();
+					this.dbPasswordTextBox.Text = options.Password?.Trim();
+					break;
 				case UnderlyingLogDataSource.File:
 					this.fileNameTextBox.Text = options.FileName?.Trim();
 					this.encodingComboBox.SelectedItem = options.Encoding?.Let(it =>
@@ -250,6 +309,18 @@ namespace CarinaStudio.ULogViewer.Controls
 				return false;
 			switch (this.UnderlyingLogDataSource)
 			{
+				case UnderlyingLogDataSource.Database:
+					return this.dbSourceTypeComboBox.SelectedItem.Let(type =>
+					{
+						if (type == null)
+							return false;
+						return (DatabaseSourceType)type switch
+						{
+							DatabaseSourceType.File => !string.IsNullOrEmpty(this.dbFileNameTextBox.Text),
+							DatabaseSourceType.Network => this.dbUriTextBox.Let(it => it.Validate() && it.Uri != null),
+							_ => false,
+						};
+					});
 				case UnderlyingLogDataSource.File:
 					return true;
 				case UnderlyingLogDataSource.StandardOutput:
@@ -295,7 +366,15 @@ namespace CarinaStudio.ULogViewer.Controls
 			}.ShowAsync(this);
 			if (fileNames == null || fileNames.IsEmpty())
 				return;
-			this.fileNameTextBox.Text = fileNames[0];
+			switch (this.UnderlyingLogDataSource)
+			{
+				case UnderlyingLogDataSource.Database:
+					this.dbFileNameTextBox.Text = fileNames[0];
+					break;
+				case UnderlyingLogDataSource.File:
+					this.fileNameTextBox.Text = fileNames[0];
+					break;
+			}
 		}
 
 

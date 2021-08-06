@@ -509,6 +509,13 @@ namespace CarinaStudio.ULogViewer.Controls
 				return false;
 			switch(dataSourceProvider.UnderlyingSource)
 			{
+				case UnderlyingLogDataSource.Database:
+					if (string.IsNullOrWhiteSpace(this.dataSourceOptions.FileName) && this.dataSourceOptions.Uri == null)
+					{
+						this.SetValue<bool>(IsValidDataSourceOptionsProperty, false);
+						return false;
+					}
+					break;
 				case UnderlyingLogDataSource.StandardOutput:
 					if (string.IsNullOrWhiteSpace(this.dataSourceOptions.Command))
 					{

@@ -12,6 +12,10 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// </summary>
 		Undefined,
 		/// <summary>
+		/// Database.
+		/// </summary>
+		Database,
+		/// <summary>
 		/// File.
 		/// </summary>
 		File,

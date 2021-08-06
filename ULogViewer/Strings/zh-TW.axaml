@@ -64,6 +64,10 @@
 	<sys:String x:Key="String.Common.Rename">重新命名</sys:String>
 	<sys:String x:Key="String.Common.Yes">是</sys:String>
 
+	<!-- DatabaseSourceType -->
+	<sys:String x:Key="String.DatabaseSourceType.File">檔案</sys:String>
+	<sys:String x:Key="String.DatabaseSourceType.Network">網路</sys:String>
+
 	<!-- FallbackFontFamilies -->
 	<sys:String x:Key="String.FallbackFontFamilies">Microsoft JhengHei,蘋方-繁</sys:String>
 
@@ -80,8 +84,10 @@
 	<!-- LogDataSourceOptionsDialog -->
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.Category">日誌分類 (必須)</sys:String>
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.Command">指令 (必須)</sys:String>
+	<sys:String x:Key="String.LogDataSourceOptionsDialog.DatabaseSourceType">資料庫來源</sys:String>
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.Encoding">文字編碼</sys:String>
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.FileName">檔案路徑</sys:String>
+	<sys:String x:Key="String.LogDataSourceOptionsDialog.FileName.Required">檔案路徑 (必須)</sys:String>
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.SetupCommands">日誌讀取前指令</sys:String>
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.TeardownCommands">日誌讀取後指令</sys:String>
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.Title">資料來源參數</sys:String>
@@ -290,6 +296,7 @@
 	<sys:String x:Key="String.ThemeMode.Light">淺色</sys:String>
 
 	<!-- UnderlyingLogDataSource -->
+	<sys:String x:Key="String.UnderlyingLogDataSource.Database">資料庫</sys:String>
 	<sys:String x:Key="String.UnderlyingLogDataSource.File">檔案</sys:String>
 	<sys:String x:Key="String.UnderlyingLogDataSource.StandardOutput">標準輸出</sys:String>
 	<sys:String x:Key="String.UnderlyingLogDataSource.Undefined">未定義來源</sys:String>

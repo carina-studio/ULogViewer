@@ -74,6 +74,32 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		/// <summary>
+		/// Create <see cref="LogDataSourceOptions"/> for <see cref="UnderlyingLogDataSource.Database"/> case.
+		/// </summary>
+		/// <param name="fileName">File name.</param>
+		/// <param name="password">Password.</param>
+		public static LogDataSourceOptions CreateForDatabase(string fileName, string? password = null) => new LogDataSourceOptions()
+		{
+			FileName = fileName,
+			Password = password,
+		};
+
+
+		/// <summary>
+		/// Create <see cref="LogDataSourceOptions"/> for <see cref="UnderlyingLogDataSource.Database"/> case.
+		/// </summary>
+		/// <param name="uri">URI of database.</param>
+		/// <param name="userName">User name.</param>
+		/// <param name="password">Password.</param>
+		public static LogDataSourceOptions CreateForDatabase(Uri uri, string? userName, string? password = null) => new LogDataSourceOptions()
+		{
+			Password = password,
+			Uri = uri,
+			UserName = userName,
+		};
+
+
+		/// <summary>
 		/// Create <see cref="LogDataSourceOptions"/> for <see cref="UnderlyingLogDataSource.File"/> case.
 		/// </summary>
 		/// <param name="fileName">File name.</param>
@@ -162,7 +188,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// <summary>
 		/// Get or set name of file to open.
 		/// </summary>
-		/// <remarks>Available for <see cref="UnderlyingLogDataSource.File"/>.</remarks>
+		/// <remarks>Available for <see cref="UnderlyingLogDataSource.Database"/> and <see cref="UnderlyingLogDataSource.File"/>.</remarks>
 		public string? FileName { get; set; }
 
 
@@ -196,7 +222,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// <summary>
 		/// Get or set command to start process.
 		/// </summary>
-		/// <remarks>Available for <see cref="UnderlyingLogDataSource.WebRequest"/>.</remarks>
+		/// <remarks>Available for <see cref="UnderlyingLogDataSource.Database"/> and <see cref="UnderlyingLogDataSource.WebRequest"/>.</remarks>
 		public string? Password { get; set; }
 
 
@@ -225,14 +251,14 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// <summary>
 		/// Get or set user name.
 		/// </summary>
-		/// <remarks>Available for <see cref="UnderlyingLogDataSource.WebRequest"/>.</remarks>
+		/// <remarks>Available for <see cref="UnderlyingLogDataSource.Database"/> and <see cref="UnderlyingLogDataSource.WebRequest"/>.</remarks>
 		public string? UserName { get; set; }
 
 
 		/// <summary>
 		/// Get or set URI to connect.
 		/// </summary>
-		/// <remarks>Available for <see cref="UnderlyingLogDataSource.WebRequest"/>.</remarks>
+		/// <remarks>Available for <see cref="UnderlyingLogDataSource.Database"/> and <see cref="UnderlyingLogDataSource.WebRequest"/>.</remarks>
 		public Uri? Uri { get; set; }
 
 

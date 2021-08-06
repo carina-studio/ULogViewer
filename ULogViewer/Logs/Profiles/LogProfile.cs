@@ -900,6 +900,22 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				writer.WriteString("Name", this.dataSourceProvider.Name);
 				switch (this.dataSourceProvider.UnderlyingSource)
 				{
+					case UnderlyingLogDataSource.Database:
+						options.FileName?.Let(it => writer.WriteString(nameof(LogDataSourceOptions.FileName), it));
+						options.Password?.Let(it =>
+						{
+							if (crypto == null)
+								crypto = new Crypto(this.Application);
+							writer.WriteString(nameof(LogDataSourceOptions.Password), crypto.Encrypt(it));
+						});
+						options.Uri?.Let(it => writer.WriteString(nameof(LogDataSourceOptions.Uri), it.ToString()));
+						options.UserName?.Let(it =>
+						{
+							if (crypto == null)
+								crypto = new Crypto(this.Application);
+							writer.WriteString(nameof(LogDataSourceOptions.UserName), crypto.Encrypt(it));
+						});
+						break;
 					case UnderlyingLogDataSource.File:
 						options.Encoding?.Let(it => writer.WriteString(nameof(LogDataSourceOptions.Encoding), it.ToString()));
 						options.FileName?.Let(it => writer.WriteString(nameof(LogDataSourceOptions.FileName), it));
@@ -931,18 +947,18 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 						options.WorkingDirectory?.Let(it => writer.WriteString(nameof(LogDataSourceOptions.WorkingDirectory), it));
 						break;
 					case UnderlyingLogDataSource.WebRequest:
+						options.Password?.Let(it =>
+						{
+							if (crypto == null)
+								crypto = new Crypto(this.Application);
+							writer.WriteString(nameof(LogDataSourceOptions.Password), crypto.Encrypt(it));
+						});
 						options.Uri?.Let(it => writer.WriteString(nameof(LogDataSourceOptions.Uri), it.ToString()));
 						options.UserName?.Let(it =>
 						{
 							if (crypto == null)
 								crypto = new Crypto(this.Application);
 							writer.WriteString(nameof(LogDataSourceOptions.UserName), crypto.Encrypt(it));
-						});
-						options.Password?.Let(it =>
-						{
-							if (crypto == null)
-								crypto = new Crypto(this.Application);
-							writer.WriteString(nameof(LogDataSourceOptions.Password), crypto.Encrypt(it));
 						});
 						break;
 					case UnderlyingLogDataSource.WindowsEventLogs:

@@ -67,6 +67,10 @@
 	<sys:String x:Key="String.Common.Rename">Rename</sys:String>
 	<sys:String x:Key="String.Common.Yes">Yes</sys:String>
 
+	<!-- DatabaseSourceType -->
+	<sys:String x:Key="String.DatabaseSourceType.File">File</sys:String>
+	<sys:String x:Key="String.DatabaseSourceType.Network">Network</sys:String>
+
 	<!-- FileFormat -->
 	<sys:String x:Key="String.FileFormat.Json">JSON File</sys:String>
 
@@ -83,8 +87,10 @@
 	<!-- LogDataSourceOptionsDialog -->
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.Category">Log category (required)</sys:String>
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.Command">Command (required)</sys:String>
+	<sys:String x:Key="String.LogDataSourceOptionsDialog.DatabaseSourceType">Database source</sys:String>
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.Encoding">Text encoding</sys:String>
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.FileName">File path</sys:String>
+	<sys:String x:Key="String.LogDataSourceOptionsDialog.FileName.Required">File path (required)</sys:String>
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.SetupCommands">Commands before reading logs</sys:String>
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.TeardownCommands">Commands after reading logs</sys:String>
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.Title">Data source options</sys:String>
@@ -302,6 +308,7 @@
 	<sys:String x:Key="String.ThemeMode.Light">Light</sys:String>
 
 	<!-- UnderlyingLogDataSource -->
+	<sys:String x:Key="String.UnderlyingLogDataSource.Database">Database</sys:String>
 	<sys:String x:Key="String.UnderlyingLogDataSource.File">File</sys:String>
 	<sys:String x:Key="String.UnderlyingLogDataSource.StandardOutput">Standard output</sys:String>
 	<sys:String x:Key="String.UnderlyingLogDataSource.Undefined">Undefined source</sys:String>
