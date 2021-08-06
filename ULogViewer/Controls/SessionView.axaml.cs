@@ -1594,6 +1594,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				it.ScrollIntoView(log);
 				it.Focus();
 			});
+			this.IsScrollingToLatestLogNeeded = false;
 		}
 
 
