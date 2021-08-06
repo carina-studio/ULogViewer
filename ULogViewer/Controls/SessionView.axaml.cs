@@ -1954,6 +1954,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				if (logs.Contains(log))
 					this.logListBox.SelectedItems.Add(log);
 			}
+			if (this.logListBox.SelectedItems.Count > 0)
+				this.logListBox.ScrollIntoView(this.logListBox.SelectedItems[0].AsNonNull());
 		}
 
 
