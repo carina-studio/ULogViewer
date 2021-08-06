@@ -237,6 +237,11 @@
 				</Grid>
 				<Separator Classes="Dialog_Separator_Horizontal"/>
 
+				<!-- Log string format for reading -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.LogStringEncodingForReading}"/>
+				<appControls:EnumComboBox Name="logStringEncodingForReadingComboBox" EnumType="{x:Type appLogs:LogStringEncoding}" HorizontalAlignment="Stretch"/>
+				<Separator Classes="Dialog_Separator_Horizontal"/>
+
 				<!-- Timestamp format for reading -->
 				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.TimestampFormatForReading}"/>
 				<TextBox Name="timestampFormatForReadingTextBox" MaxLength="256"/>
@@ -359,6 +364,11 @@
 					<TextBlock Classes="Dialog_Description" Text="{DynamicResource String.LogProfileEditorDialog.LogLevelMapForWriting.Description}" VerticalAlignment="Top"/>
 					<Button Classes="ListAction" Command="{Binding $parent[Window].AddLogLevelMapEntryForWriting}" Content="{DynamicResource String.Common.Add}" Grid.Column="1" VerticalAlignment="Top"/>
 				</Grid>
+				<Separator Classes="Dialog_Separator_Horizontal"/>
+
+				<!-- Log string format for writing -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.LogStringEncodingForWriting}"/>
+				<appControls:EnumComboBox Name="logStringEncodingForWritingComboBox" EnumType="{x:Type appLogs:LogStringEncoding}" HorizontalAlignment="Stretch"/>
 				<Separator Classes="Dialog_Separator_Horizontal"/>
 
 				<!-- Timestamp format for writing -->

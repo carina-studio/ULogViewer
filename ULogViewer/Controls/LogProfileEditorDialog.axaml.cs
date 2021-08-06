@@ -51,6 +51,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly SortedObservableList<KeyValuePair<string, LogLevel>> logLevelMapEntriesForReading = new SortedObservableList<KeyValuePair<string, LogLevel>>((x, y) => x.Key.CompareTo(y.Key));
 		readonly SortedObservableList<KeyValuePair<LogLevel, string>> logLevelMapEntriesForWriting = new SortedObservableList<KeyValuePair<LogLevel, string>>((x, y) => x.Key.CompareTo(y.Key));
 		readonly ObservableList<LogPattern> logPatterns = new ObservableList<LogPattern>();
+		readonly ComboBox logStringEncodingForReadingComboBox;
+		readonly ComboBox logStringEncodingForWritingComboBox;
 		readonly TextBox logWritingFormatTextBox;
 		readonly TextBox nameTextBox;
 		readonly ComboBox sortDirectionComboBox;
@@ -116,6 +118,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			});
 			if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 				this.FindControl<Control>("isAdminNeededPanel").AsNonNull().IsVisible = false;
+			this.logStringEncodingForReadingComboBox = this.FindControl<ComboBox>("logStringEncodingForReadingComboBox").AsNonNull();
+			this.logStringEncodingForWritingComboBox = this.FindControl<ComboBox>("logStringEncodingForWritingComboBox").AsNonNull();
 			this.logWritingFormatTextBox = this.FindControl<TextBox>("logWritingFormatTextBox").AsNonNull();
 			this.nameTextBox = this.FindControl<TextBox>("nameTextBox").AsNonNull();
 			this.sortDirectionComboBox = this.FindControl<ComboBox>("sortDirectionComboBox").AsNonNull();
@@ -407,6 +411,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			logProfile.LogLevelMapForReading = new Dictionary<string, LogLevel>(this.logLevelMapEntriesForReading);
 			logProfile.LogLevelMapForWriting = new Dictionary<LogLevel, string>(this.logLevelMapEntriesForWriting);
 			logProfile.LogPatterns = this.logPatterns;
+			logProfile.LogStringEncodingForReading = (LogStringEncoding)this.logStringEncodingForReadingComboBox.SelectedItem.AsNonNull();
+			logProfile.LogStringEncodingForWriting = (LogStringEncoding)this.logStringEncodingForWritingComboBox.SelectedItem.AsNonNull();
 			logProfile.LogWritingFormat = this.logWritingFormatTextBox.Text?.Let(it =>
 			{
 				if (string.IsNullOrWhiteSpace(it))
@@ -454,6 +460,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.colorIndicatorComboBox.SelectedItem = LogColorIndicator.None;
 				this.dataSourceProviderComboBox.SelectedItem = LogDataSourceProviders.All.FirstOrDefault(it => it is FileLogDataSourceProvider);
 				this.iconComboBox.SelectedItem = LogProfileIcon.File;
+				this.logStringEncodingForReadingComboBox.SelectedItem = LogStringEncoding.Plane;
+				this.logStringEncodingForWritingComboBox.SelectedItem = LogStringEncoding.Plane;
 				this.sortDirectionComboBox.SelectedItem = SortDirection.Ascending;
 				this.sortKeyComboBox.SelectedItem = LogSortKey.Timestamp;
 			}
@@ -469,6 +477,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.logLevelMapEntriesForReading.AddAll(profile.LogLevelMapForReading);
 				this.logLevelMapEntriesForWriting.AddAll(profile.LogLevelMapForWriting);
 				this.logPatterns.AddRange(profile.LogPatterns);
+				this.logStringEncodingForReadingComboBox.SelectedItem = profile.LogStringEncodingForReading;
+				this.logStringEncodingForWritingComboBox.SelectedItem = profile.LogStringEncodingForWriting;
 				this.logWritingFormatTextBox.Text = profile.LogWritingFormat;
 				this.nameTextBox.Text = profile.Name;
 				this.sortDirectionComboBox.SelectedItem = profile.SortDirection;

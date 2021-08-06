@@ -153,6 +153,8 @@
 	<sys:String x:Key="String.LogProfileEditorDialog.LogPatterns">日誌行格式 (必須)</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogPatterns.Description">分析原始日誌每一行的格式</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogReading">日誌讀取設定</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.LogStringEncodingForReading">日誌文字讀取編碼方式</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.LogStringEncodingForWriting">日誌文字輸出編碼方式</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogWriting">日誌輸出設定</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogWritingFormat">日誌輸出格式</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogWritingFormat.Description">您可以使用右側按鈕加入 "插值語法" 以將日誌屬性產生至輸出的日誌文字</sys:String>
@@ -211,6 +213,9 @@
 	<!-- LogSortKey -->
 	<sys:String x:Key="String.LogSortKey.Id">日誌流水編號</sys:String>
 	<sys:String x:Key="String.LogSortKey.Timestamp">日誌時間</sys:String>
+
+	<!-- LogStringEncoding -->
+	<sys:String x:Key="String.LogStringEncoding.Plane">純文字</sys:String>
 
 	<!-- MainWindow -->
 	<sys:String x:Key="String.MainWindow.AppUpdateFound">已經有新的版本 {0}，是否開啟下載頁面？</sys:String>
