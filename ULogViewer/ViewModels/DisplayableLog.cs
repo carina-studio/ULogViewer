@@ -94,6 +94,18 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		}
 
 
+		/// <summary>
+		/// Get ID of device which generates log.
+		/// </summary>
+		public string? DeviceId { get => this.Log.DeviceId; }
+
+
+		/// <summary>
+		/// Get name of device which generates log.
+		/// </summary>
+		public string? DeviceName { get => this.Log.DeviceName; }
+
+
 		// Dispose.
 		protected override void Dispose(bool disposing)
 		{
@@ -122,9 +134,57 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Get 10th extra data of log.
+		/// </summary>
+		public string? Extra10 { get => this.Log.Extra10; }
+
+
+		/// <summary>
 		/// Get 2nd extra data of log.
 		/// </summary>
 		public string? Extra2 { get => this.Log.Extra2; }
+
+
+		/// <summary>
+		/// Get 3rd extra data of log.
+		/// </summary>
+		public string? Extra3 { get => this.Log.Extra3; }
+
+
+		/// <summary>
+		/// Get 4th extra data of log.
+		/// </summary>
+		public string? Extra4 { get => this.Log.Extra4; }
+
+
+		/// <summary>
+		/// Get 5th extra data of log.
+		/// </summary>
+		public string? Extra5 { get => this.Log.Extra5; }
+
+
+		/// <summary>
+		/// Get 6th extra data of log.
+		/// </summary>
+		public string? Extra6 { get => this.Log.Extra6; }
+
+
+		/// <summary>
+		/// Get 7th extra data of log.
+		/// </summary>
+		public string? Extra7 { get => this.Log.Extra7; }
+
+
+		/// <summary>
+		/// Get 8th extra data of log.
+		/// </summary>
+		public string? Extra8 { get => this.Log.Extra8; }
+
+
+		/// <summary>
+		/// Get 9th extra data of log.
+		/// </summary>
+		public string? Extra9 { get => this.Log.Extra9; }
 
 
 		/// <summary>
@@ -299,6 +359,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Get name of source which generates log.
 		/// </summary>
 		public string? SourceName { get => this.Log.SourceName; }
+
+
+		/// <summary>
+		/// Get summary of log.
+		/// </summary>
+		public string? Summary { get => this.Log.Summary; }
 
 
 		/// <summary>

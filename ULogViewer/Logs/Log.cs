@@ -27,9 +27,19 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <param name="builder"><see cref="LogBuilder"/>.</param>
 		internal Log(LogBuilder builder)
 		{
+			this.DeviceId = builder.GetStringOrNull(nameof(DeviceId));
+			this.DeviceName = builder.GetStringOrNull(nameof(DeviceName));
 			this.Event = builder.GetStringOrNull(nameof(Event));
 			this.Extra1 = builder.GetStringOrNull(nameof(Extra1));
+			this.Extra10 = builder.GetStringOrNull(nameof(Extra10));
 			this.Extra2 = builder.GetStringOrNull(nameof(Extra2));
+			this.Extra3 = builder.GetStringOrNull(nameof(Extra3));
+			this.Extra4 = builder.GetStringOrNull(nameof(Extra4));
+			this.Extra5 = builder.GetStringOrNull(nameof(Extra5));
+			this.Extra6 = builder.GetStringOrNull(nameof(Extra6));
+			this.Extra7 = builder.GetStringOrNull(nameof(Extra7));
+			this.Extra8 = builder.GetStringOrNull(nameof(Extra8));
+			this.Extra9 = builder.GetStringOrNull(nameof(Extra9));
 			this.FileName = builder.GetStringOrNull(nameof(FileName));
 			this.Id = Interlocked.Increment(ref nextId);
 			this.Level = builder.GetEnumOrNull<LogLevel>(nameof(Level)) ?? LogLevel.Undefined;
@@ -50,6 +60,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			this.ProcessId = builder.GetInt32OrNull(nameof(ProcessId));
 			this.ProcessName = builder.GetStringOrNull(nameof(ProcessName));
 			this.SourceName = builder.GetStringOrNull(nameof(SourceName));
+			this.Summary = builder.GetStringOrNull(nameof(Summary));
 			this.Tags = builder.GetStringOrNull(nameof(Tags));
 			this.ThreadId = builder.GetInt32OrNull(nameof(ThreadId));
 			this.ThreadName = builder.GetStringOrNull(nameof(ThreadName));
@@ -80,6 +91,18 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		/// <summary>
+		/// Get ID of device which generates log.
+		/// </summary>
+		public string? DeviceId { get; }
+
+
+		/// <summary>
+		/// Get name of device which generates log.
+		/// </summary>
+		public string? DeviceName { get; }
+
+
+		/// <summary>
 		/// Get event of log.
 		/// </summary>
 		public string? Event { get; }
@@ -92,9 +115,57 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		/// <summary>
+		/// Get 10th extra data of log.
+		/// </summary>
+		public string? Extra10 { get; }
+
+
+		/// <summary>
 		/// Get 2nd extra data of log.
 		/// </summary>
 		public string? Extra2 { get; }
+
+
+		/// <summary>
+		/// Get 3rd extra data of log.
+		/// </summary>
+		public string? Extra3 { get; }
+
+
+		/// <summary>
+		/// Get 4th extra data of log.
+		/// </summary>
+		public string? Extra4 { get; }
+
+
+		/// <summary>
+		/// Get 5th extra data of log.
+		/// </summary>
+		public string? Extra5 { get; }
+
+
+		/// <summary>
+		/// Get 6th extra data of log.
+		/// </summary>
+		public string? Extra6 { get; }
+
+
+		/// <summary>
+		/// Get 7th extra data of log.
+		/// </summary>
+		public string? Extra7 { get; }
+
+
+		/// <summary>
+		/// Get 8th extra data of log.
+		/// </summary>
+		public string? Extra8 { get; }
+
+
+		/// <summary>
+		/// Get 9th extra data of log.
+		/// </summary>
+		public string? Extra9 { get; }
 
 
 		/// <summary>
@@ -247,6 +318,12 @@ namespace CarinaStudio.ULogViewer.Logs
 				return stringPropertyNames;
 			}
 		}
+
+
+		/// <summary>
+		/// Get summary of log.
+		/// </summary>
+		public string? Summary { get; }
 
 
 		/// <summary>

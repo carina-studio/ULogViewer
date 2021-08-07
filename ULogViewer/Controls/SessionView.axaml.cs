@@ -669,7 +669,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			// check visible properties
 			var hasMessage = false;
 			var hasSourceName = false;
+			var hasSummary = false;
 			var hasTimestamp = false;
+			var hasTitle = false;
 			foreach (var logProperty in logProperties)
 			{
 				switch (logProperty.Name)
@@ -680,8 +682,14 @@ namespace CarinaStudio.ULogViewer.Controls
 					case nameof(DisplayableLog.SourceName):
 						hasSourceName = true;
 						break;
+					case nameof(DisplayableLog.Summary):
+						hasSummary = true;
+						break;
 					case nameof(DisplayableLog.TimestampString):
 						hasTimestamp = true;
+						break;
+					case nameof(DisplayableLog.Title):
+						hasTitle = true;
 						break;
 				}
 			}
@@ -691,6 +699,10 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				if (hasMessage)
 					return nameof(DisplayableLog.Message);
+				if (hasSummary)
+					return nameof(DisplayableLog.Summary);
+				if (hasTitle)
+					return nameof(DisplayableLog.Title);
 				if (hasSourceName)
 					return nameof(DisplayableLog.SourceName);
 				if (hasTimestamp)

@@ -605,8 +605,17 @@ namespace CarinaStudio.ULogViewer.Logs
 							logBuilder.Set(name, level.ToString());
 						break;
 					case nameof(Log.Extra1):
+					case nameof(Log.Extra10):
 					case nameof(Log.Extra2):
+					case nameof(Log.Extra3):
+					case nameof(Log.Extra4):
+					case nameof(Log.Extra5):
+					case nameof(Log.Extra6):
+					case nameof(Log.Extra7):
+					case nameof(Log.Extra8):
+					case nameof(Log.Extra9):
 					case nameof(Log.Message):
+					case nameof(Log.Summary):
 						logBuilder.AppendToNextLine(name, value);
 						break;
 					case nameof(Log.Timestamp):

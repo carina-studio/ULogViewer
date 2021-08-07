@@ -198,13 +198,24 @@
 
 	<!-- LogProperty -->
 	<sys:String x:Key="String.LogProperty.Author">作者</sys:String>
+	<sys:String x:Key="String.LogProperty.Category">分類</sys:String>
 	<sys:String x:Key="String.LogProperty.Code">編碼</sys:String>
 	<sys:String x:Key="String.LogProperty.Commit">提交</sys:String>
 	<sys:String x:Key="String.LogProperty.Content">內容</sys:String>
+	<sys:String x:Key="String.LogProperty.DeviceId">裝置 ID</sys:String>
+	<sys:String x:Key="String.LogProperty.DeviceName">裝置名稱</sys:String>
 	<sys:String x:Key="String.LogProperty.Duration">時距</sys:String>
 	<sys:String x:Key="String.LogProperty.Event">事件</sys:String>
 	<sys:String x:Key="String.LogProperty.Extra1">附加資料 1</sys:String>
+	<sys:String x:Key="String.LogProperty.Extra10">附加資料 10</sys:String>
 	<sys:String x:Key="String.LogProperty.Extra2">附加資料 2</sys:String>
+	<sys:String x:Key="String.LogProperty.Extra3">附加資料 3</sys:String>
+	<sys:String x:Key="String.LogProperty.Extra4">附加資料 4</sys:String>
+	<sys:String x:Key="String.LogProperty.Extra5">附加資料 5</sys:String>
+	<sys:String x:Key="String.LogProperty.Extra6">附加資料 6</sys:String>
+	<sys:String x:Key="String.LogProperty.Extra7">附加資料 7</sys:String>
+	<sys:String x:Key="String.LogProperty.Extra8">附加資料 8</sys:String>
+	<sys:String x:Key="String.LogProperty.Extra9">附加資料 9</sys:String>
 	<sys:String x:Key="String.LogProperty.FileName">檔案</sys:String>
 	<sys:String x:Key="String.LogProperty.Level">等級</sys:String>
 	<sys:String x:Key="String.LogProperty.LineNumber">行號</sys:String>
@@ -215,6 +226,7 @@
 	<sys:String x:Key="String.LogProperty.ProcessName">處理程序</sys:String>
 	<sys:String x:Key="String.LogProperty.ShortName">簡短名稱</sys:String>
 	<sys:String x:Key="String.LogProperty.SourceName">來源</sys:String>
+	<sys:String x:Key="String.LogProperty.Summary">摘要</sys:String>
 	<sys:String x:Key="String.LogProperty.Tag">標籤</sys:String>
 	<sys:String x:Key="String.LogProperty.Tags">標籤組</sys:String>
 	<sys:String x:Key="String.LogProperty.ThreadName">執行緒</sys:String>

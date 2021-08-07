@@ -205,13 +205,24 @@
 
 	<!-- LogProperty -->
 	<sys:String x:Key="String.LogProperty.Author">Author</sys:String>
+	<sys:String x:Key="String.LogProperty.Category">Category</sys:String>
 	<sys:String x:Key="String.LogProperty.Code">Code</sys:String>
 	<sys:String x:Key="String.LogProperty.Commit">Commit</sys:String>
 	<sys:String x:Key="String.LogProperty.Content">Content</sys:String>
+	<sys:String x:Key="String.LogProperty.DeviceId">Device ID</sys:String>
+	<sys:String x:Key="String.LogProperty.DeviceName">Device Name</sys:String>
 	<sys:String x:Key="String.LogProperty.Duration">Duration</sys:String>
 	<sys:String x:Key="String.LogProperty.Event">Event</sys:String>
 	<sys:String x:Key="String.LogProperty.Extra1">Extra 1</sys:String>
+	<sys:String x:Key="String.LogProperty.Extra10">Extra 10</sys:String>
 	<sys:String x:Key="String.LogProperty.Extra2">Extra 2</sys:String>
+	<sys:String x:Key="String.LogProperty.Extra3">Extra 3</sys:String>
+	<sys:String x:Key="String.LogProperty.Extra4">Extra 4</sys:String>
+	<sys:String x:Key="String.LogProperty.Extra5">Extra 5</sys:String>
+	<sys:String x:Key="String.LogProperty.Extra6">Extra 6</sys:String>
+	<sys:String x:Key="String.LogProperty.Extra7">Extra 7</sys:String>
+	<sys:String x:Key="String.LogProperty.Extra8">Extra 8</sys:String>
+	<sys:String x:Key="String.LogProperty.Extra9">Extra 9</sys:String>
 	<sys:String x:Key="String.LogProperty.FileName">File</sys:String>
 	<sys:String x:Key="String.LogProperty.ID">ID</sys:String>
 	<sys:String x:Key="String.LogProperty.Level">Level</sys:String>
@@ -224,6 +235,7 @@
 	<sys:String x:Key="String.LogProperty.ProcessName">Process</sys:String>
 	<sys:String x:Key="String.LogProperty.ShortName">Short Name</sys:String>
 	<sys:String x:Key="String.LogProperty.SourceName">Source</sys:String>
+	<sys:String x:Key="String.LogProperty.Summary">Summary</sys:String>
 	<sys:String x:Key="String.LogProperty.Tag">Tag</sys:String>
 	<sys:String x:Key="String.LogProperty.Tags">Tags</sys:String>
 	<sys:String x:Key="String.LogProperty.ThreadId">TID</sys:String>
