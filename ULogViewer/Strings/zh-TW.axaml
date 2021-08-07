@@ -325,6 +325,7 @@
 	<sys:String x:Key="String.UnderlyingLogDataSource.WebRequest">網路</sys:String>
 
 	<!-- VisibleLogPropertyEditorDialog -->
+	<sys:String x:Key="String.VisibleLogPropertyEditorDialog.CustomDisplayName">手動輸入顯示名稱</sys:String>
 	<sys:String x:Key="String.VisibleLogPropertyEditorDialog.DisplayName">顯示名稱</sys:String>
 	<sys:String x:Key="String.VisibleLogPropertyEditorDialog.Name">屬性</sys:String>
 	<sys:String x:Key="String.VisibleLogPropertyEditorDialog.SpecifyWidth">指定列寬</sys:String>

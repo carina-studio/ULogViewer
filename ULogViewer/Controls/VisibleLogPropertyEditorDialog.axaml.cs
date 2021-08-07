@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using CarinaStudio.ULogViewer.Logs;
 using CarinaStudio.ULogViewer.Logs.Profiles;
+using CarinaStudio.ULogViewer.ViewModels;
 using System;
 
 namespace CarinaStudio.ULogViewer.Controls
@@ -13,6 +14,8 @@ namespace CarinaStudio.ULogViewer.Controls
 	partial class VisibleLogPropertyEditorDialog : BaseDialog
 	{
 		// Fields.
+		readonly ToggleSwitch customDisplayNameSwitch;
+		readonly TextBox customDisplayNameTextBox;
 		readonly ComboBox displayNameComboBox;
 		readonly ComboBox nameComboBox;
 		readonly ToggleSwitch specifyWidthSwitch;
@@ -25,6 +28,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		public VisibleLogPropertyEditorDialog()
 		{
 			InitializeComponent();
+			this.customDisplayNameSwitch = this.FindControl<ToggleSwitch>("customDisplayNameSwitch").AsNonNull();
+			this.customDisplayNameTextBox = this.FindControl<TextBox>("customDisplayNameTextBox").AsNonNull();
 			this.displayNameComboBox = this.FindControl<ComboBox>("displayNameComboBox").AsNonNull();
 			this.nameComboBox = this.FindControl<ComboBox>("nameComboBox").AsNonNull();
 			this.specifyWidthSwitch = this.FindControl<ToggleSwitch>("specifyWidthSwitch").AsNonNull();
@@ -42,11 +47,26 @@ namespace CarinaStudio.ULogViewer.Controls
 		public LogProperty? LogProperty { get; set; }
 
 
+		// Called when property of editor control changed.
+		void OnEditorControlPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
+		{
+			var property = e.Property;
+			if (property == ToggleSwitch.IsCheckedProperty
+				|| property == TextBox.TextProperty)
+			{
+				this.InvalidateInput();
+			}
+		}
+
+
 		// Generate result.
 		protected override object? OnGenerateResult()
 		{
+			var displayName = this.customDisplayNameSwitch.IsChecked.GetValueOrDefault()
+				? this.customDisplayNameTextBox.Text.AsNonNull().Trim()
+				: (string)this.displayNameComboBox.SelectedItem.AsNonNull();
 			var width = this.specifyWidthSwitch.IsChecked.GetValueOrDefault() ? (int?)this.widthUpDown.Value : null;
-			return new LogProperty((string)this.nameComboBox.SelectedItem.AsNonNull(), (string)this.displayNameComboBox.SelectedItem.AsNonNull(), width);
+			return new LogProperty((string)this.nameComboBox.SelectedItem.AsNonNull(), displayName, width);
 		}
 
 
@@ -70,7 +90,13 @@ namespace CarinaStudio.ULogViewer.Controls
 			else
 			{
 				this.nameComboBox.SelectedItem = property.Name;
-				this.displayNameComboBox.SelectedItem = property.DisplayName;
+				if (DisplayableLogProperty.DisplayNames.Contains(property.DisplayName))
+					this.displayNameComboBox.SelectedItem = property.DisplayName;
+				else
+				{
+					this.customDisplayNameSwitch.IsChecked = true;
+					this.customDisplayNameTextBox.Text = property.DisplayName;
+				}
 				property.Width.Let(it =>
 				{
 					this.specifyWidthSwitch.IsChecked = it.HasValue;
@@ -79,6 +105,17 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			this.nameComboBox.Focus();
 			base.OnOpened(e);
+		}
+
+
+		// Validate input.
+		protected override bool OnValidateInput()
+		{
+			if (!base.OnValidateInput())
+				return false;
+			if (this.customDisplayNameSwitch.IsChecked.GetValueOrDefault())
+				return !string.IsNullOrWhiteSpace(this.customDisplayNameTextBox.Text);
+			return true;
 		}
 	}
 }
