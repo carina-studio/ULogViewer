@@ -41,7 +41,7 @@
 			"Regex": "^\\</Message\\>"
 		}
 	],
-	"LogStringFormatForReading": "Xml",
+	"LogStringEncodingForReading": "Xml",
 	"LogWritingFormat": "[{Level}] {Timestamp} {Event,-5} {SourceName}:{NewLine}{Message}{NewLine}",
 	"SortDirection": "Descending",
 	"TimestampFormatForDisplaying": "yyyy/MM/dd HH:mm:ss",
