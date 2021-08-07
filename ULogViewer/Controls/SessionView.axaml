@@ -153,6 +153,19 @@
 						<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Delete}"/>
 					</Border>
 				</Button>
+				<Button Classes="SessionView_ToolBar_Button" Command="{Binding ClearLogFilesCommand}" IsVisible="False" ToolTip.Tip="{DynamicResource String.SessionView.ClearDatabaseFiles}">
+					<ia:Interaction.Behaviors>
+						<iaCore:DataTriggerBehavior Binding="{Binding UnderlyingLogDataSource}" Value="Database">
+							<iaCore:ChangePropertyAction PropertyName="IsVisible" Value="True"/>
+						</iaCore:DataTriggerBehavior>
+						<iaCore:DataTriggerBehavior Binding="{Binding UnderlyingLogDataSource}" ComparisonCondition="NotEqual" Value="Database">
+							<iaCore:ChangePropertyAction PropertyName="IsVisible" Value="False"/>
+						</iaCore:DataTriggerBehavior>
+					</ia:Interaction.Behaviors>
+					<Border Classes="SessionView_ToolBar_Button_Icon">
+						<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Delete}"/>
+					</Border>
+				</Button>
 
 				<!-- Separator -->
 				<Separator Classes="SessionView_ToolBar_Separator"/>

@@ -135,6 +135,7 @@
 	<sys:String x:Key="String.LogProfileIcon.Cloud">Cloud</sys:String>
 	<sys:String x:Key="String.LogProfileIcon.Code">Code</sys:String>
 	<sys:String x:Key="String.LogProfileIcon.Computer">Computer</sys:String>
+	<sys:String x:Key="String.LogProfileIcon.Database">Database</sys:String>
 	<sys:String x:Key="String.LogProfileIcon.Debug">Debug</sys:String>
 	<sys:String x:Key="String.LogProfileIcon.File">File</sys:String>
 	<sys:String x:Key="String.LogProfileIcon.Network">Network</sys:String>
@@ -258,6 +259,7 @@
 	<sys:String x:Key="String.SessionView.AllLogLevels">All levels</sys:String>
 	<sys:String x:Key="String.SessionView.AppInfo">About ULogViewer…</sys:String>
 	<sys:String x:Key="String.SessionView.AppOptions">Options…</sys:String>
+	<sys:String x:Key="String.SessionView.ClearDatabaseFiles">Clear all added database files</sys:String>
 	<sys:String x:Key="String.SessionView.ClearLogFiles">Clear all added log files</sys:String>
 	<sys:String x:Key="String.SessionView.ClearPredefinedLogTextFiltersSelection">Clear selection</sys:String>
 	<sys:String x:Key="String.SessionView.CopyLogs">Copy logs</sys:String>

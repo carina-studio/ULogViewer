@@ -130,6 +130,7 @@
 	<sys:String x:Key="String.LogProfileIcon.Cloud">雲端</sys:String>
 	<sys:String x:Key="String.LogProfileIcon.Code">程式碼</sys:String>
 	<sys:String x:Key="String.LogProfileIcon.Computer">電腦</sys:String>
+	<sys:String x:Key="String.LogProfileIcon.Database">資料庫</sys:String>
 	<sys:String x:Key="String.LogProfileIcon.Debug">偵錯</sys:String>
 	<sys:String x:Key="String.LogProfileIcon.File">檔案</sys:String>
 	<sys:String x:Key="String.LogProfileIcon.Network">網路</sys:String>
@@ -246,6 +247,7 @@
 	<sys:String x:Key="String.SessionView.AllLogLevels">所有等級</sys:String>
 	<sys:String x:Key="String.SessionView.AppInfo">關於 ULogViewer…</sys:String>
 	<sys:String x:Key="String.SessionView.AppOptions">應用程式選項…</sys:String>
+	<sys:String x:Key="String.SessionView.ClearDatabaseFiles">清除所有已加入的資料庫檔案</sys:String>
 	<sys:String x:Key="String.SessionView.ClearLogFiles">清除所有已加入的日誌檔案</sys:String>
 	<sys:String x:Key="String.SessionView.ClearPredefinedLogTextFiltersSelection">清除選取</sys:String>
 	<sys:String x:Key="String.SessionView.CopyLogs">複製日誌</sys:String>

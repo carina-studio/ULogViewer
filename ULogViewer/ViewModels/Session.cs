@@ -451,8 +451,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				return;
 			}
 			var profile = this.LogProfile ?? throw new InternalStateCorruptedException("No log profile to add log file.");
-			if (profile.DataSourceProvider.UnderlyingSource != UnderlyingLogDataSource.File)
-				throw new InternalStateCorruptedException($"Cannot add log file because underlying data source type is {profile.DataSourceProvider.UnderlyingSource}.");
 			var dataSourceOptions = profile.DataSourceOptions;
 			if (dataSourceOptions.FileName != null)
 				throw new InternalStateCorruptedException($"Cannot add log file because file name is already specified.");
@@ -503,8 +501,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			if (!this.canClearLogFiles.Value)
 				return;
 			var profile = this.LogProfile ?? throw new InternalStateCorruptedException("No log profile to cler log files.");
-			if (profile.DataSourceProvider.UnderlyingSource != UnderlyingLogDataSource.File)
-				throw new InternalStateCorruptedException($"Cannot cler log files when underlying data source is {profile.DataSourceProvider.UnderlyingSource}.");
 
 			// save marked logs to file immediately
 			this.saveMarkedLogsAction.ExecuteIfScheduled();
