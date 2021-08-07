@@ -205,17 +205,24 @@
 
 	<!-- LogProperty -->
 	<sys:String x:Key="String.LogProperty.Author">Author</sys:String>
+	<sys:String x:Key="String.LogProperty.Code">Code</sys:String>
 	<sys:String x:Key="String.LogProperty.Commit">Commit</sys:String>
 	<sys:String x:Key="String.LogProperty.Content">Content</sys:String>
+	<sys:String x:Key="String.LogProperty.Duration">Duration</sys:String>
 	<sys:String x:Key="String.LogProperty.Event">Event</sys:String>
 	<sys:String x:Key="String.LogProperty.Extra1">Extra 1</sys:String>
 	<sys:String x:Key="String.LogProperty.Extra2">Extra 2</sys:String>
 	<sys:String x:Key="String.LogProperty.FileName">File</sys:String>
+	<sys:String x:Key="String.LogProperty.ID">ID</sys:String>
 	<sys:String x:Key="String.LogProperty.Level">Level</sys:String>
-	<sys:String x:Key="String.LogProperty.LineNumber">Line number</sys:String>
+	<sys:String x:Key="String.LogProperty.LineNumber">Line Number</sys:String>
 	<sys:String x:Key="String.LogProperty.Message">Message</sys:String>
+	<sys:String x:Key="String.LogProperty.Name">Name</sys:String>
+	<sys:String x:Key="String.LogProperty.Number">Number</sys:String>
+	<sys:String x:Key="String.LogProperty.Path">Path</sys:String>
 	<sys:String x:Key="String.LogProperty.ProcessId">PID</sys:String>
 	<sys:String x:Key="String.LogProperty.ProcessName">Process</sys:String>
+	<sys:String x:Key="String.LogProperty.ShortName">Short Name</sys:String>
 	<sys:String x:Key="String.LogProperty.SourceName">Source</sys:String>
 	<sys:String x:Key="String.LogProperty.Tag">Tag</sys:String>
 	<sys:String x:Key="String.LogProperty.Tags">Tags</sys:String>
@@ -224,6 +231,7 @@
 	<sys:String x:Key="String.LogProperty.Timestamp">Timestamp</sys:String>
 	<sys:String x:Key="String.LogProperty.TimestampString">Timestamp</sys:String>
 	<sys:String x:Key="String.LogProperty.Title">Title</sys:String>
+	<sys:String x:Key="String.LogProperty.Uri">URL</sys:String>
 	<sys:String x:Key="String.LogProperty.UserId">UID</sys:String>
 	<sys:String x:Key="String.LogProperty.UserName">User</sys:String>
 

@@ -77,9 +77,17 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					displayNames = new List<string>(Log.PropertyNames).Also(it =>
 					{
 						it.Add("Author");
+						it.Add("Code");
 						it.Add("Commit");
 						it.Add("Content");
+						it.Add("Duration");
+						it.Add("ID");
+						it.Add("Name");
+						it.Add("Number");
+						it.Add("Path");
+						it.Add("ShortName");
 						it.Add("Tag");
+						it.Add("Uri");
 						it.Sort();
 					}).AsReadOnly();
 				}
