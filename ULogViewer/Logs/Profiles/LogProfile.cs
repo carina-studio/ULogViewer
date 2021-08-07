@@ -460,6 +460,9 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 								crypto = new Crypto(this.Application);
 							options.Password = crypto.Decrypt(jsonProperty.Value.GetString().AsNonNull());
 							break;
+						case nameof(LogDataSourceOptions.QueryString):
+							options.QueryString = jsonProperty.Value.GetString();
+							break;
 						case nameof(LogDataSourceOptions.SetupCommands):
 							options.SetupCommands = new List<string>().Also(it =>
 							{
@@ -902,6 +905,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				{
 					case UnderlyingLogDataSource.Database:
 						options.FileName?.Let(it => writer.WriteString(nameof(LogDataSourceOptions.FileName), it));
+						options.QueryString?.Let(it => writer.WriteString(nameof(LogDataSourceOptions.QueryString), it));
 						options.Password?.Let(it =>
 						{
 							if (crypto == null)

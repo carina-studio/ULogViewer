@@ -77,11 +77,21 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// Create <see cref="LogDataSourceOptions"/> for <see cref="UnderlyingLogDataSource.Database"/> case.
 		/// </summary>
 		/// <param name="fileName">File name.</param>
+		/// <param name="queryString">Query string.</param>
+		public static LogDataSourceOptions CreateForDatabase(string fileName, string queryString) => CreateForDatabase(fileName, queryString, null);
+
+
+		/// <summary>
+		/// Create <see cref="LogDataSourceOptions"/> for <see cref="UnderlyingLogDataSource.Database"/> case.
+		/// </summary>
+		/// <param name="fileName">File name.</param>
+		/// <param name="queryString">Query string.</param>
 		/// <param name="password">Password.</param>
-		public static LogDataSourceOptions CreateForDatabase(string fileName, string? password = null) => new LogDataSourceOptions()
+		public static LogDataSourceOptions CreateForDatabase(string fileName, string queryString, string? password = null) => new LogDataSourceOptions()
 		{
 			FileName = fileName,
 			Password = password,
+			QueryString = queryString,
 		};
 
 
@@ -89,10 +99,20 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// Create <see cref="LogDataSourceOptions"/> for <see cref="UnderlyingLogDataSource.Database"/> case.
 		/// </summary>
 		/// <param name="uri">URI of database.</param>
+		/// <param name="queryString">Query string.</param>
+		public static LogDataSourceOptions CreateForDatabase(Uri uri, string queryString) => CreateForDatabase(uri, queryString, null, null);
+
+
+		/// <summary>
+		/// Create <see cref="LogDataSourceOptions"/> for <see cref="UnderlyingLogDataSource.Database"/> case.
+		/// </summary>
+		/// <param name="uri">URI of database.</param>
+		/// <param name="queryString">Query string.</param>
 		/// <param name="userName">User name.</param>
 		/// <param name="password">Password.</param>
-		public static LogDataSourceOptions CreateForDatabase(Uri uri, string? userName, string? password = null) => new LogDataSourceOptions()
+		public static LogDataSourceOptions CreateForDatabase(Uri uri, string queryString, string? userName = null, string? password = null) => new LogDataSourceOptions()
 		{
+			QueryString = queryString,
 			Password = password,
 			Uri = uri,
 			UserName = userName,
@@ -175,6 +195,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 					&& this.Encoding == options.Encoding
 					&& this.FileName == options.FileName
 					&& this.Password == options.Password
+					&& this.QueryString == options.QueryString
 					&& this.SetupCommands.SequenceEqual(options.SetupCommands)
 					&& this.TeardownCommands.SequenceEqual(options.TeardownCommands)
 					&& this.Uri == options.Uri
@@ -227,6 +248,13 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		/// <summary>
+		/// Get or set query string.
+		/// </summary>
+		/// <remarks>Available for <see cref="UnderlyingLogDataSource.Database"/>.</remarks>
+		public string? QueryString { get; set; }
+
+
+		/// <summary>
 		/// Get or set commands before executing <see cref="Command"/>.
 		/// </summary>
 		/// <remarks>Available for <see cref="UnderlyingLogDataSource.StandardOutput"/>.</remarks>
@@ -260,6 +288,21 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// </summary>
 		/// <remarks>Available for <see cref="UnderlyingLogDataSource.Database"/> and <see cref="UnderlyingLogDataSource.WebRequest"/>.</remarks>
 		public Uri? Uri { get; set; }
+
+
+		/// <summary>
+		/// Validate whether current fields match the minimum requirement for given <see cref="UnderlyingLogDataSource"/> or not.
+		/// </summary>
+		/// <param name="source"><see cref="UnderlyingLogDataSource"/>.</param>
+		/// <returns>True if current fields match the minimum requirement.</returns>
+		public bool Validate(UnderlyingLogDataSource source) => source switch
+		{
+			UnderlyingLogDataSource.Database => !string.IsNullOrWhiteSpace(this.QueryString),
+			UnderlyingLogDataSource.StandardOutput => !string.IsNullOrWhiteSpace(this.Command),
+			UnderlyingLogDataSource.WebRequest => this.Uri != null,
+			UnderlyingLogDataSource.WindowsEventLogs => !string.IsNullOrWhiteSpace(this.Category),
+			_ => true,
+		};
 
 
 		/// <summary>

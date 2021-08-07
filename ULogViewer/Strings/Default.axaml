@@ -90,7 +90,7 @@
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.DatabaseSourceType">Database source</sys:String>
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.Encoding">Text encoding</sys:String>
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.FileName">File path</sys:String>
-	<sys:String x:Key="String.LogDataSourceOptionsDialog.FileName.Required">File path (required)</sys:String>
+	<sys:String x:Key="String.LogDataSourceOptionsDialog.QueryString">Query string (required)</sys:String>
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.SetupCommands">Commands before reading logs</sys:String>
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.TeardownCommands">Commands after reading logs</sys:String>
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.Title">Data source options</sys:String>
@@ -252,6 +252,7 @@
 	<sys:String x:Key="String.Session.Empty">Empty Tab</sys:String>
 
 	<!-- SessionView -->
+	<sys:String x:Key="String.SessionView.AddDatabaseFiles">Add database files</sys:String>
 	<sys:String x:Key="String.SessionView.AddLogFiles">Add log files</sys:String>
 	<sys:String x:Key="String.SessionView.AllLogCount">Total: </sys:String>
 	<sys:String x:Key="String.SessionView.AllLogLevels">All levels</sys:String>

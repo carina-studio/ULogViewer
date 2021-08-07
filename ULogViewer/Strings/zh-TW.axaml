@@ -82,16 +82,16 @@
 	<sys:String x:Key="String.LogColorIndicator.UserName">使用者</sys:String>
 
 	<!-- LogDataSourceOptionsDialog -->
-	<sys:String x:Key="String.LogDataSourceOptionsDialog.Category">日誌分類 (必須)</sys:String>
-	<sys:String x:Key="String.LogDataSourceOptionsDialog.Command">指令 (必須)</sys:String>
+	<sys:String x:Key="String.LogDataSourceOptionsDialog.Category">日誌分類 (必要)</sys:String>
+	<sys:String x:Key="String.LogDataSourceOptionsDialog.Command">指令 (必要)</sys:String>
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.DatabaseSourceType">資料庫來源</sys:String>
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.Encoding">文字編碼</sys:String>
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.FileName">檔案路徑</sys:String>
-	<sys:String x:Key="String.LogDataSourceOptionsDialog.FileName.Required">檔案路徑 (必須)</sys:String>
+	<sys:String x:Key="String.LogDataSourceOptionsDialog.QueryString">查詢字串 (必要)</sys:String>
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.SetupCommands">日誌讀取前指令</sys:String>
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.TeardownCommands">日誌讀取後指令</sys:String>
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.Title">資料來源參數</sys:String>
-	<sys:String x:Key="String.LogDataSourceOptionsDialog.Uri">URI (必須)</sys:String>
+	<sys:String x:Key="String.LogDataSourceOptionsDialog.Uri">URI (必要)</sys:String>
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.WebRequestCredentials.Password">登入密碼</sys:String>
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.WebRequestCredentials.UserName">登入名稱</sys:String>
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.WorkingDirectory">工作目錄</sys:String>
@@ -110,10 +110,10 @@
 
 	<!-- LogLevelMapEntryEditor -->
 	<sys:String x:Key="String.LogLevelMapEntryEditor.Reading.LogLevel">對應的日誌等級</sys:String>
-	<sys:String x:Key="String.LogLevelMapEntryEditor.Reading.Text">文字 (必須)</sys:String>
+	<sys:String x:Key="String.LogLevelMapEntryEditor.Reading.Text">文字 (必要)</sys:String>
 	<sys:String x:Key="String.LogLevelMapEntryEditor.Title">日誌等級對照</sys:String>
 	<sys:String x:Key="String.LogLevelMapEntryEditor.Writing.LogLevel">日誌等級</sys:String>
-	<sys:String x:Key="String.LogLevelMapEntryEditor.Writing.Text">對應的文字 (必須)</sys:String>
+	<sys:String x:Key="String.LogLevelMapEntryEditor.Writing.Text">對應的文字 (必要)</sys:String>
 
 	<!-- LogMessageDialog -->
 	<sys:String x:Key="String.LogMessageDialog.WrapText">自動換行</sys:String>
@@ -122,7 +122,7 @@
 	<!-- LogPatternEditorDialog -->
 	<sys:String x:Key="String.LogPatternEditorDialog.IsSkippable">此行可以被忽略</sys:String>
 	<sys:String x:Key="String.LogPatternEditorDialog.IsRepeatable">此行可以連續重複出現</sys:String>
-	<sys:String x:Key="String.LogPatternEditorDialog.Regex">格式 (必須)</sys:String>
+	<sys:String x:Key="String.LogPatternEditorDialog.Regex">格式 (必要)</sys:String>
 	<sys:String x:Key="String.LogPatternEditorDialog.Regex.Description">您可以使用右側按鈕加入 "分組語法" 以從原始日誌中擷取對應的日誌屬性</sys:String>
 	<sys:String x:Key="String.LogPatternEditorDialog.Title">日誌行格式</sys:String>
 
@@ -156,7 +156,7 @@
 	<sys:String x:Key="String.LogProfileEditorDialog.LogLevelMapForReading.Description">將原始日誌中的特定文字對應至日誌等級</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogLevelMapForWriting">日誌等級對照表</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogLevelMapForWriting.Description">將日誌等級轉換為特定的文字</sys:String>
-	<sys:String x:Key="String.LogProfileEditorDialog.LogPatterns">日誌行格式 (必須)</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.LogPatterns">日誌行格式 (必要)</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogPatterns.Description">分析原始日誌每一行的格式</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogReading">日誌讀取設定</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogStringEncodingForReading">日誌文字讀取編碼方式</sys:String>
@@ -165,7 +165,7 @@
 	<sys:String x:Key="String.LogProfileEditorDialog.LogWritingFormat">日誌輸出格式</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogWritingFormat.Description">您可以使用右側按鈕加入 "插值語法" 以將日誌屬性產生至輸出的日誌文字</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogWritingFormat.Watermark">留白表示不支援輸出</sys:String>
-	<sys:String x:Key="String.LogProfileEditorDialog.Name">名稱 (必須)</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.Name">名稱 (必要)</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.SortDirection">日誌排序方向</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.SortKey">日誌排序依據</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.TimestampFormatForDisplaying">日誌時間顯示格式</sys:String>
@@ -174,7 +174,7 @@
 	<sys:String x:Key="String.LogProfileEditorDialog.TimestampFormatForWriting.Watermark">留白表示使用與讀取相同的格式</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.Title.Create">建立新的日誌類型</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.Title.Edit">編輯日誌類型</sys:String>
-	<sys:String x:Key="String.LogProfileEditorDialog.VisibleLogProperties">顯示的日誌屬性 (必須)</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.VisibleLogProperties">顯示的日誌屬性 (必要)</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.VisibleLogProperties.Description">指定有哪些日誌屬性可以在檢視器中看見</sys:String>
 
 	<!-- LogProfileSelectionDialog -->
@@ -240,6 +240,7 @@
 	<sys:String x:Key="String.Session.Empty">空白分頁</sys:String>
 
 	<!-- SessionView -->
+	<sys:String x:Key="String.SessionView.AddDatabaseFiles">加入資料庫檔案</sys:String>
 	<sys:String x:Key="String.SessionView.AddLogFiles">加入日誌檔案</sys:String>
 	<sys:String x:Key="String.SessionView.AllLogCount">總數：</sys:String>
 	<sys:String x:Key="String.SessionView.AllLogLevels">所有等級</sys:String>

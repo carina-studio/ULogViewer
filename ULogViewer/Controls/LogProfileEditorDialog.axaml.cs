@@ -507,36 +507,10 @@ namespace CarinaStudio.ULogViewer.Controls
 			var dataSourceProvider = (this.dataSourceProviderComboBox.SelectedItem as ILogDataSourceProvider);
 			if (dataSourceProvider == null)
 				return false;
-			switch(dataSourceProvider.UnderlyingSource)
+			if (!this.dataSourceOptions.Validate(dataSourceProvider.UnderlyingSource))
 			{
-				case UnderlyingLogDataSource.Database:
-					if (string.IsNullOrWhiteSpace(this.dataSourceOptions.FileName) && this.dataSourceOptions.Uri == null)
-					{
-						this.SetValue<bool>(IsValidDataSourceOptionsProperty, false);
-						return false;
-					}
-					break;
-				case UnderlyingLogDataSource.StandardOutput:
-					if (string.IsNullOrWhiteSpace(this.dataSourceOptions.Command))
-					{
-						this.SetValue<bool>(IsValidDataSourceOptionsProperty, false);
-						return false;
-					}
-					break;
-				case UnderlyingLogDataSource.WebRequest:
-					if (this.dataSourceOptions.Uri == null)
-					{
-						this.SetValue<bool>(IsValidDataSourceOptionsProperty, false);
-						return false;
-					}
-					break;
-				case UnderlyingLogDataSource.WindowsEventLogs:
-					if (string.IsNullOrWhiteSpace(this.dataSourceOptions.Category))
-					{
-						this.SetValue<bool>(IsValidDataSourceOptionsProperty, false);
-						return false;
-					}
-					break;
+				this.SetValue<bool>(IsValidDataSourceOptionsProperty, false);
+				return false;
 			}
 			this.SetValue<bool>(IsValidDataSourceOptionsProperty, true);
 

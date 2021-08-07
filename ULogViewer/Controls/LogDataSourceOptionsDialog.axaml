@@ -115,9 +115,9 @@
 
 				<!-- File name & URI -->
 				<StackPanel Name="dbFileNamePanel" IsVisible="False" Orientation="Vertical">
-					<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogDataSourceOptionsDialog.FileName.Required}"/>
+					<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogDataSourceOptionsDialog.FileName}"/>
 					<Grid ColumnDefinitions="*,Auto">
-						<TextBox Name="dbFileNameTextBox" PropertyChanged="OnEditorControlPropertyChanged"/>
+						<TextBox Name="dbFileNameTextBox"/>
 						<Button Classes="Browse" Command="{Binding $parent[Window].SelectFileName}" Grid.Column="1"/>
 					</Grid>
 				</StackPanel>
@@ -125,6 +125,11 @@
 					<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogDataSourceOptionsDialog.Uri}"/>
 					<appControls:UriTextBox Name="dbUriTextBox" PropertyChanged="OnEditorControlPropertyChanged"/>
 				</StackPanel>
+				<Separator Classes="Dialog_Separator_Horizontal"/>
+
+				<!-- Query string -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogDataSourceOptionsDialog.QueryString}"/>
+				<TextBox Name="dbQueryStringTextBox" PropertyChanged="OnEditorControlPropertyChanged"/>
 				<Separator Classes="Dialog_Separator_Horizontal"/>
 
 				<!-- User name -->

@@ -514,6 +514,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.addedLogFilePaths.Clear();
 
 			// update title
+			this.canAddLogFile.Update(true);
 			this.updateTitleAndIconAction.Schedule();
 		}
 
@@ -735,7 +736,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.checkDataSourceErrorsAction.Schedule();
 
 			// update state
-			this.canClearLogFiles.Update(profile.DataSourceProvider.UnderlyingSource == UnderlyingLogDataSource.File);
+			this.canClearLogFiles.Update(profile.DataSourceProvider.UnderlyingSource switch
+			{
+				UnderlyingLogDataSource.Database => true,
+				UnderlyingLogDataSource.File => true,
+				_ => false,
+			});
 			this.canMarkUnmarkLogs.Update(true);
 			this.canPauseResumeLogsReading.Update(profile.IsContinuousReading);
 			this.canReloadLogs.Update(true);
@@ -1652,8 +1658,18 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// read logs or wait for more actions
 			var dataSourceOptions = profile.DataSourceOptions;
 			var dataSourceProvider = profile.DataSourceProvider;
+			var startReadingLogs = false;
 			switch (dataSourceProvider.UnderlyingSource)
 			{
+				case UnderlyingLogDataSource.Database:
+					if (dataSourceOptions.Uri == null && dataSourceOptions.FileName == null)
+					{
+						this.Logger.LogDebug("No database file name or URI specified, waiting for opening file");
+						this.canAddLogFile.Update(true);
+					}
+					else
+						startReadingLogs = true;
+					break;
 				case UnderlyingLogDataSource.File:
 					if (dataSourceOptions.FileName == null)
 					{
@@ -1661,12 +1677,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						this.canAddLogFile.Update(true);
 					}
 					else
-					{
-						this.Logger.LogDebug($"File name specified, start reading logs for source type '{dataSourceProvider.UnderlyingSource}'");
-						var dataSource = this.CreateLogDataSourceOrNull(dataSourceProvider, dataSourceOptions);
-						if (dataSource != null)
-							this.CreateLogReader(dataSource);
-					}
+						startReadingLogs = true;
 					break;
 				case UnderlyingLogDataSource.StandardOutput:
 					if (dataSourceOptions.Command == null)
@@ -1677,21 +1688,18 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						this.canSetWorkingDirectory.Update(true);
 					}
 					else
-					{
-						this.Logger.LogDebug($"Start reading logs for source type '{dataSourceProvider.UnderlyingSource}'");
-						var dataSource = this.CreateLogDataSourceOrNull(dataSourceProvider, dataSourceOptions);
-						if (dataSource != null)
-							this.CreateLogReader(dataSource);
-					}
+						startReadingLogs = true;
 					break;
 				default:
-					{
-						this.Logger.LogDebug($"Start reading logs for source type '{dataSourceProvider.UnderlyingSource}'");
-						var dataSource = this.CreateLogDataSourceOrNull(dataSourceProvider, dataSourceOptions);
-						if (dataSource != null)
-							this.CreateLogReader(dataSource);
-					}
+					startReadingLogs = true;
 					break;
+			}
+			if (startReadingLogs)
+			{
+				this.Logger.LogDebug($"Start reading logs for source type '{dataSourceProvider.UnderlyingSource}'");
+				var dataSource = this.CreateLogDataSourceOrNull(dataSourceProvider, dataSourceOptions);
+				if (dataSource != null)
+					this.CreateLogReader(dataSource);
 			}
 
 			// update display log properties

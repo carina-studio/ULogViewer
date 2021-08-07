@@ -338,7 +338,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			// check state
 			if (this.DataContext is not Session session)
 				return;
-			if (!this.canSetLogProfile.Value)
+			if (!this.canAddLogFiles.Value)
 				return;
 
 			// add log files

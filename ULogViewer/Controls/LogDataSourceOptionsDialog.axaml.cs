@@ -45,6 +45,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly TextBox commandTextBox;
 		readonly TextBox dbFileNameTextBox;
 		readonly TextBox dbPasswordTextBox;
+		readonly TextBox dbQueryStringTextBox;
 		readonly EnumComboBox dbSourceTypeComboBox;
 		readonly UriTextBox dbUriTextBox;
 		readonly TextBox dbUserNameTextBox;
@@ -70,6 +71,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.commandTextBox = this.FindControl<TextBox>("commandTextBox").AsNonNull();
 			this.dbFileNameTextBox = this.FindControl<TextBox>("dbFileNameTextBox").AsNonNull();
 			this.dbPasswordTextBox = this.FindControl<TextBox>("dbPasswordTextBox").AsNonNull();
+			this.dbQueryStringTextBox = this.FindControl<TextBox>("dbQueryStringTextBox").AsNonNull();
 			this.dbSourceTypeComboBox = this.FindControl<EnumComboBox>("dbSourceTypeComboBox").AsNonNull().Also(it =>
 			{
 				it.EnumType = typeof(DatabaseSourceType);
@@ -198,10 +200,11 @@ namespace CarinaStudio.ULogViewer.Controls
 			switch (this.UnderlyingLogDataSource)
 			{
 				case UnderlyingLogDataSource.Database:
+					options.QueryString = this.dbQueryStringTextBox.Text.AsNonNull().Trim();
 					switch ((DatabaseSourceType)this.dbSourceTypeComboBox.SelectedItem.AsNonNull())
 					{
 						case DatabaseSourceType.File:
-							options.FileName = this.dbFileNameTextBox.Text.AsNonNull().Trim();
+							options.FileName = this.dbFileNameTextBox.Text?.Trim();
 							break;
 						case DatabaseSourceType.Network:
 							options.Uri = this.dbUriTextBox.Uri.AsNonNull();
@@ -253,6 +256,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			switch (this.UnderlyingLogDataSource)
 			{
 				case UnderlyingLogDataSource.Database:
+					this.dbQueryStringTextBox.Text = options.QueryString?.Trim();
 					if (options.Uri != null)
 					{
 						this.dbSourceTypeComboBox.SelectedItem = DatabaseSourceType.Network;
@@ -310,13 +314,15 @@ namespace CarinaStudio.ULogViewer.Controls
 			switch (this.UnderlyingLogDataSource)
 			{
 				case UnderlyingLogDataSource.Database:
+					if (string.IsNullOrWhiteSpace(this.dbQueryStringTextBox.Text))
+						return false;
 					return this.dbSourceTypeComboBox.SelectedItem.Let(type =>
 					{
 						if (type == null)
 							return false;
 						return (DatabaseSourceType)type switch
 						{
-							DatabaseSourceType.File => !string.IsNullOrEmpty(this.dbFileNameTextBox.Text),
+							DatabaseSourceType.File => true,
 							DatabaseSourceType.Network => this.dbUriTextBox.Let(it => it.Validate() && it.Uri != null),
 							_ => false,
 						};
