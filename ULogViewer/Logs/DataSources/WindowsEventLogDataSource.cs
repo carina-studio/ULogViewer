@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -19,12 +20,13 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			int entryLineIndex = 0;
 			readonly List<string> entryLines = new List<string>();
 			readonly EventLogEntryCollection entries;
-			int entryIndex = -1;
+			int entryIndex;
 
 			// Constructor.
 			public ReaderImpl(WindowsEventLogDataSource source, EventLog eventLog)
 			{
 				this.entries = eventLog.Entries;
+				this.entryIndex = this.entries.Count;
 				source.Logger.LogDebug($"{this.entries.Count} entries found in '{eventLog.Log}'");
 			}
 
@@ -32,14 +34,14 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			public override string? ReadLine()
 			{
 				// check state
-				if (this.entryIndex >= this.entries.Count)
+				if (this.entryIndex < 0)
 					return null;
 
 				// move to next entry
 				if (this.entryLineIndex >= this.entryLines.Count)
 				{
-					++this.entryIndex;
-					if (this.entryIndex >= this.entries.Count)
+					--this.entryIndex;
+					if (this.entryIndex < 0)
 						return "</Message>";
 					var entry = this.entries[this.entryIndex];
 #pragma warning disable CS0618
