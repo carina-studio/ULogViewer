@@ -1,14 +1,14 @@
+[![Download](https://img.shields.io/github/v/release/carina-studio/ULogViewer?include_prereleases&style=for-the-badge&color=blue&logo=Windows&label=Windows)](https://github.com/carina-studio/ULogViewer/releases/download/0.15.0.807/ULogViewer-0.15.0.807-win-x64.zip)
+[![Download](https://img.shields.io/github/v/release/carina-studio/ULogViewer?include_prereleases&style=for-the-badge&color=blueviolet&logo=Apple&label=macOS)](https://github.com/carina-studio/ULogViewer/releases/download/0.15.0.807/ULogViewer-0.15.0.807-osx-x64.zip)
+[![Download](https://img.shields.io/github/v/release/carina-studio/ULogViewer?include_prereleases&style=for-the-badge&color=orange&logo=Linux&logoColor=ffffff&label=Linux)](https://github.com/carina-studio/ULogViewer/releases/download/0.15.0.807/ULogViewer-0.15.0.807-linux-x64.zip)
+
+[![](https://img.shields.io/github/release-date-pre/carina-studio/ULogViewer?style=flat-square)](https://github.com/carina-studio/ULogViewer/releases/tag/0.15.0.807)
+[![](https://img.shields.io/github/last-commit/carina-studio/ULogViewer?style=flat-square)](https://github.com/carina-studio/ULogViewer/commits/master)
+[![](https://img.shields.io/github/license/carina-studio/ULogViewer?style=flat-square)](https://github.com/carina-studio/ULogViewer/blob/master/LICENSE)
+
 # ULogViewer
 ULogViewer is a [.NET](https://dotnet.microsoft.com/) based cross-platform universal log viewer written by C# which supports reading and parsing various type of logs.
 The project is still under development but most of functions relate to reading/parsing/displaying logs are ready.
-
-## 📥Download
-The latest version is [0.15.0.807](https://github.com/carina-studio/ULogViewer/releases/tag/0.15.0.807).
-- 📦[Windows (x64)](https://github.com/carina-studio/ULogViewer/releases/download/0.15.0.807/ULogViewer-0.15.0.807-win-x64.zip)
-- 📦[Linux (x64)](https://github.com/carina-studio/ULogViewer/releases/download/0.15.0.807/ULogViewer-0.15.0.807-linux-x64.zip)
-- 📦[macOS (x64)](https://github.com/carina-studio/ULogViewer/releases/download/0.15.0.807/ULogViewer-0.15.0.807-osx-x64.zip)
-
-You can also find and download all releases [HERE](https://github.com/carina-studio/ULogViewer/releases).
 
 ## 📷Screenshot
 ### Windows
@@ -19,6 +19,17 @@ You can also find and download all releases [HERE](https://github.com/carina-stu
 
 ## 💻Installation
 Currently ULogViewer is built as portable package, you can just unzip the package and run ULogViewer executable directly without installing .NET runtime environment.
+
+### macOS User
+If you want to run ULogViewer on macOS, please do the following steps first:
+1. Grant execution permission to ULogViewer. For ex: run command ```chmod 755 ULogViewer``` in terminal.
+2. Right click on ULogViewer > ```Open``` > Click ```Open``` on the pop-up window.
+
+You may see that system shows message like ```"XXX.dylib" can't be opened because Apple cannot check it for malicious software``` when you trying to launch ULogViewer. Once you encounter such problem, please follow the steps:
+1. Open ```System Preference``` of macOS.
+2. Choose ```Security & Privacy``` > ```General``` > Find the blocked library on the bottom and click ```Allow Anyway```.
+3. Try launching ULogViewer again.
+4. Repeat step 1~3 until all libraries are allowed. 
 
 ### Ubuntu User
 If you want to run ULogViewer on Ubuntu (also for other Linux distributions), please grant execution permission to ULogViewer first. If you want to create an entry on desktop, please follow the steps:
@@ -39,14 +50,3 @@ Type=Application
 
 Reference: [How can I edit/create new launcher items in Unity by hand?
 ](https://askubuntu.com/questions/13758/how-can-i-edit-create-new-launcher-items-in-unity-by-hand)
-
-### macOS User
-If you want to run ULogViewer on macOS, please do the following steps first:
-1. Grant execution permission to ULogViewer. For ex: run command ```chmod 755 ULogViewer``` in terminal.
-2. Right click on ULogViewer > ```Open``` > Click ```Open``` on the pop-up window.
-
-You may see that system shows message like ```"XXX.dylib" can't be opened because Apple cannot check it for malicious software``` when you trying to launch ULogViewer. Once you encounter such problem, please follow the steps:
-1. Open ```System Preference``` of macOS.
-2. Choose ```Security & Privacy``` > ```General``` > Find the blocked library on the bottom and click ```Allow Anyway```.
-3. Try launching ULogViewer again.
-4. Repeat step 1~3 until all libraries are allowed. 
