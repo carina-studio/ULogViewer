@@ -12,7 +12,8 @@ The project is still under development but most of functions relate to reading/p
 - Standard Output (stdout)
 - Files
 - Windows Event Logs (Windows only)
-- HTTP (Not yet supported).
+- HTTP/HTTPS
+- SQLite
 - SSL (Not yet supported).
 
 ## ⭐Log profiles
@@ -45,10 +46,10 @@ When viewing logs, you can mark some logs which are important for you. There is 
 Marked logs will be kept if you are viewing logs from files so that you don't need to mark them again when you open log files next time.
 
 ## 📥Download
-The latest version is 0.14.0.806.
-- 📦[Windows (x64)](https://github.com/carina-studio/ULogViewer/releases/download/0.14.0.806/ULogViewer-0.14.0.806-win-x64.zip)
-- 📦[Linux (x64)](https://github.com/carina-studio/ULogViewer/releases/download/0.14.0.806/ULogViewer-0.14.0.806-linux-x64.zip)
-- 📦[OSX (x64)](https://github.com/carina-studio/ULogViewer/releases/download/0.14.0.806/ULogViewer-0.14.0.806-osx-x64.zip)
+The latest version is 0.15.0.807.
+- 📦[Windows (x64)](https://github.com/carina-studio/ULogViewer/releases/download/0.15.0.807/ULogViewer-0.15.0.807-win-x64.zip)
+- 📦[Linux (x64)](https://github.com/carina-studio/ULogViewer/releases/download/0.15.0.807/ULogViewer-0.15.0.807-linux-x64.zip)
+- 📦[OSX (x64)](https://github.com/carina-studio/ULogViewer/releases/download/0.15.0.807/ULogViewer-0.15.0.807-osx-x64.zip)
 
 You can also find and download all releases [HERE](https://github.com/carina-studio/ULogViewer/releases).
 
