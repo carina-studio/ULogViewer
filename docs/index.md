@@ -6,16 +6,16 @@ The project is still under development but most of functions relate to reading/p
 The latest version is [0.15.0.807](https://github.com/carina-studio/ULogViewer/releases/tag/0.15.0.807).
 - 📦[Windows (x64)](https://github.com/carina-studio/ULogViewer/releases/download/0.15.0.807/ULogViewer-0.15.0.807-win-x64.zip)
 - 📦[Linux (x64)](https://github.com/carina-studio/ULogViewer/releases/download/0.15.0.807/ULogViewer-0.15.0.807-linux-x64.zip)
-- 📦[OSX (x64)](https://github.com/carina-studio/ULogViewer/releases/download/0.15.0.807/ULogViewer-0.15.0.807-osx-x64.zip)
+- 📦[macOS (x64)](https://github.com/carina-studio/ULogViewer/releases/download/0.15.0.807/ULogViewer-0.15.0.807-osx-x64.zip)
 
 You can also find and download all releases [HERE](https://github.com/carina-studio/ULogViewer/releases).
 
 ## 📷Screenshot
 ### Windows
-<img src="https://carina-studio.github.io/ULogViewer/Screenshot_Windows_Dark_Thumb.png" width="250"/><img src="https://carina-studio.github.io/ULogViewer/Screenshot_Windows_Light_Thumb.png" width="250"/>
+<img src="https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_Windows_Dark_Thumb.png" width="250"/><img src="https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_Windows_Light_Thumb.png" width="250"/>
 
 ### macOS
-<img src="https://carina-studio.github.io/ULogViewer/Screenshot_OSX_Dark_Thumb.png" width="250"/><img src="https://carina-studio.github.io/ULogViewer/Screenshot_OSX_Light_Thumb.png" width="250"/>
+<img src="https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_OSX_Dark_Thumb.png" width="250"/><img src="https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_OSX_Light_Thumb.png" width="250"/>
 
 ## 💻Installation
 Currently ULogViewer is built as portable package, you can just unzip the package and run ULogViewer executable directly without installing .NET runtime environment.
