@@ -16,6 +16,9 @@ The project is still under development but most of functions relate to reading/p
 ### macOS
 <img src="https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_OSX_Dark_Thumb.png" width="250"/><img src="https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_OSX_Light_Thumb.png" width="250"/>
 
+## 📔Topics
+- [How does ULogViewer read and parse logs](logs_reading_flow.md)
+
 ## 💻Installation
 Currently ULogViewer is built as portable package, you can just unzip the package and run ULogViewer executable directly without installing .NET runtime environment.
 
