@@ -41,10 +41,10 @@
 			<SolidColorBrush x:Key="Brush.SessionView.LogHeader.Background">#d0d0d0</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.SessionView.LogHeader.Separator">#7f000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.SessionView.LogListBox.Background">#eeeeee</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.SessionView.LogListBox.Item.Background.Marked">#17000000</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.SessionView.LogListBox.Item.Background.Pressed">#2f0073cc</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.SessionView.LogListBox.Item.Background.Selected">#2f004881</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.SessionView.LogListBox.Item.Background.Selected.PointerOver">#2f0073cc</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.SessionView.LogListBox.Item.Background.Marked">#1a000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.SessionView.LogListBox.Item.Background.Pressed">#1f0073cc</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.SessionView.LogListBox.Item.Background.Selected">#1f004881</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.SessionView.LogListBox.Item.Background.Selected.PointerOver">#1f0073cc</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.SessionView.SidePanel.Background">#e0e0e0</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.SessionView.StatusBar.Background">#aaaaaa</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.SessionView.StatusBar.Background.Paused">#aaaaaa</SolidColorBrush>
