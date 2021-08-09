@@ -159,6 +159,8 @@
 	<sys:String x:Key="String.LogProfileEditorDialog.IsContinuousReading">Continuous reading</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.IsContinuousReading.Description">Restart reading logs automatically when reaching end of data source</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.IsWorkingDirectoryNeeded">Need to select working directory</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.LearnAboutLogsReadingAndParsing">Learn about《How does ULogViewer read and parse logs》</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.LearnAboutLogsReadingAndParsingFirst">Do you want to learn about 《How does ULogViewer read and parse logs》 to help you to create log profile?</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogDisplaying">Log Displaying</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogLevelMapForReading">Mapping of log level</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogLevelMapForReading.Description">Convert specific text in raw log into log level</sys:String>

@@ -68,6 +68,10 @@
 
 				<!-- Header -->
 				<TextBlock Classes="Dialog_Label_Header1" Text="{DynamicResource String.LogProfileEditorDialog.Common}"/>
+
+				<!-- How to read and parse logs -->
+				<TextBlock Cursor="Hand" Foreground="{DynamicResource Brush.TextBlock.Foreground.Link}" PointerReleased="OnLinkDescriptionPointerReleased" Tag="{x:Static appControls:LogProfileEditorDialog.LogsReadingAndParsingPageUri}" Text="{DynamicResource String.LogProfileEditorDialog.LearnAboutLogsReadingAndParsing}"/>
+				<Separator Classes="Dialog_Separator_Horizontal"/>
 				
 				<!-- Name -->
 				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.Name}"/>

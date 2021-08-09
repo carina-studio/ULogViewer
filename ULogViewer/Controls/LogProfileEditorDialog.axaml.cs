@@ -7,6 +7,7 @@ using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using Avalonia.VisualTree;
 using CarinaStudio.Collections;
+using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Converters;
 using CarinaStudio.ULogViewer.Logs;
@@ -32,9 +33,14 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// <see cref="IValueConverter"/> to convert <see cref="LogProfileIcon"/> to display name.
 		/// </summary>
 		public static readonly IValueConverter LogProfileIconNameConverter = new EnumConverter<LogProfileIcon>(App.Current);
+		/// <summary>
+		/// URI of 'How ULogViewer read and parse logs' page.
+		/// </summary>
+		public const string LogsReadingAndParsingPageUri = "https://carina-studio.github.io/ULogViewer/logs_reading_flow.html";
 
 
 		// Static fields.
+		static readonly SettingKey<bool> HasLearnAboutLogsReadingAndParsingHintShown = new SettingKey<bool>($"{nameof(LogProfileEditorDialog)}.{nameof(HasLearnAboutLogsReadingAndParsingHintShown)}");
 		static readonly AvaloniaProperty<bool> IsValidDataSourceOptionsProperty = AvaloniaProperty.Register<LogProfileEditorDialog, bool>(nameof(IsValidDataSourceOptions), true);
 		static readonly AvaloniaProperty<UnderlyingLogDataSource> UnderlyingDataSourceProperty = AvaloniaProperty.Register<LogProfileEditorDialog, UnderlyingLogDataSource>(nameof(UnderlyingDataSource), UnderlyingLogDataSource.Undefined);
 
@@ -451,8 +457,9 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Called when opened.
-		protected override void OnOpened(EventArgs e)
+		protected override async void OnOpened(EventArgs e)
 		{
+			// setup initial state and focus
 			var profile = this.LogProfile;
 			if (profile == null)
 			{
@@ -492,7 +499,27 @@ namespace CarinaStudio.ULogViewer.Controls
 			else
 				this.SynchronizationContext.Post(this.Close);
 			this.nameTextBox.Focus();
+
+			// call base
 			base.OnOpened(e);
+
+			// show hint of 'learn about logs reading and parsing'
+			if (!this.Settings.GetValueOrDefault(HasLearnAboutLogsReadingAndParsingHintShown))
+			{
+				var result = await new MessageDialog()
+				{
+					Buttons = MessageDialogButtons.YesNo,
+					Icon = MessageDialogIcon.Question,
+					Message = this.Application.GetString("LogProfileEditorDialog.LearnAboutLogsReadingAndParsingFirst"),
+					Title = this.Title
+				}.ShowDialog<MessageDialogResult>(this);
+				if (this.IsOpened)
+				{
+					this.Settings.SetValue(HasLearnAboutLogsReadingAndParsingHintShown, true);
+					if (result == MessageDialogResult.Yes)
+						this.OpenLink(LogsReadingAndParsingPageUri);
+				}
+			}
 		}
 
 
