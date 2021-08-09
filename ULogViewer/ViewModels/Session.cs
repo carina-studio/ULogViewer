@@ -210,6 +210,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly ScheduledAction checkDataSourceErrorsAction;
 		Comparison<DisplayableLog?> compareDisplayableLogsDelegate;
 		DisplayableLogGroup? displayableLogGroup;
+		bool hasLogDataSourceCreationFailure;
 		readonly DisplayableLogFilter logFilter;
 		readonly HashSet<LogReader> logReaders = new HashSet<LogReader>();
 		readonly SortedObservableList<DisplayableLog> markedLogs;
@@ -290,7 +291,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				var errorCount = 0;
 				if (dataSourceCount == 0)
 				{
-					this.SetValue(HasAllDataSourceErrorsProperty, false);
+					this.SetValue(HasAllDataSourceErrorsProperty, this.hasLogDataSourceCreationFailure);
 					this.SetValue(HasPartialDataSourceErrorsProperty, false);
 					return;
 				}
@@ -509,6 +510,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.DisposeLogReaders(true);
 			this.addedLogFilePaths.Clear();
 
+			// clear data source error
+			this.hasLogDataSourceCreationFailure = false;
+			this.checkDataSourceErrorsAction.Execute();
+
 			// update title
 			this.canAddLogFile.Update(true);
 			this.updateTitleAndIconAction.Schedule();
@@ -672,6 +677,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			catch (Exception ex)
 			{
 				this.Logger.LogError(ex, $"Unable to create data source");
+				if (!this.hasLogDataSourceCreationFailure)
+				{
+					this.hasLogDataSourceCreationFailure = true;
+					this.checkDataSourceErrorsAction.Schedule();
+				}
 				return null;
 			}
 		}
@@ -1533,6 +1543,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.DisposeLogReaders(false);
 
 			// clear data source error
+			this.hasLogDataSourceCreationFailure = false;
 			this.checkDataSourceErrorsAction.Execute();
 
 			// clear logs

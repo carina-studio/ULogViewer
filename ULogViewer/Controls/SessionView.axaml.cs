@@ -293,19 +293,20 @@ namespace CarinaStudio.ULogViewer.Controls
 			});
 			this.updateStatusBarStateAction = new ScheduledAction(() =>
 			{
-				if (this.DataContext is not Session session || !session.HasLogReaders)
+				this.SetValue<SessionViewStatusBarState>(StatusBarStateProperty, Global.Run(() =>
 				{
-					this.SetValue<SessionViewStatusBarState>(StatusBarStateProperty, SessionViewStatusBarState.None);
-					return;
-				}
-				if (session.IsLogsReadingPaused)
-					this.SetValue<SessionViewStatusBarState>(StatusBarStateProperty, SessionViewStatusBarState.Paused);
-				else if (session.HasPartialDataSourceErrors)
-					this.SetValue<SessionViewStatusBarState>(StatusBarStateProperty, SessionViewStatusBarState.Warning);
-				else if (session.HasAllDataSourceErrors)
-					this.SetValue<SessionViewStatusBarState>(StatusBarStateProperty, SessionViewStatusBarState.Error);
-				else
-					this.SetValue<SessionViewStatusBarState>(StatusBarStateProperty, SessionViewStatusBarState.Active);
+					if (this.DataContext is not Session session)
+						return SessionViewStatusBarState.None;
+					if (session.IsLogsReadingPaused)
+						return SessionViewStatusBarState.Paused;
+					if (session.HasPartialDataSourceErrors)
+						return SessionViewStatusBarState.Warning;
+					if (session.HasAllDataSourceErrors)
+						return SessionViewStatusBarState.Error;
+					if (session.HasLogReaders)
+						return SessionViewStatusBarState.Active;
+					return SessionViewStatusBarState.None;
+				}));
 			});
 		}
 
