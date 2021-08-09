@@ -229,6 +229,36 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		/// <summary>
+		/// Check whether <see cref="Category"/> is non-empty or not.
+		/// </summary>
+		public bool HasCategory { get => !string.IsNullOrWhiteSpace(this.Category); }
+
+
+		/// <summary>
+		/// Check whether <see cref="Command"/> is non-empty or not.
+		/// </summary>
+		public bool HasCommand { get => !string.IsNullOrWhiteSpace(this.Command); }
+
+
+		/// <summary>
+		/// Check whether <see cref="FileName"/> is non-empty or not.
+		/// </summary>
+		public bool HasFileName { get => !string.IsNullOrWhiteSpace(this.FileName); }
+
+
+		/// <summary>
+		/// Check whether <see cref="QueryString"/> is non-empty or not.
+		/// </summary>
+		public bool HasQueryString { get => !string.IsNullOrWhiteSpace(this.QueryString); }
+
+
+		/// <summary>
+		/// Check whether <see cref="WorkingDirectory"/> is non-empty or not.
+		/// </summary>
+		public bool HasWorkingDirectory { get => !string.IsNullOrWhiteSpace(this.WorkingDirectory); }
+
+
+		/// <summary>
 		/// Equality operator.
 		/// </summary>
 		public static bool operator ==(LogDataSourceOptions x, LogDataSourceOptions y) => x.Equals(y);
@@ -297,10 +327,10 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// <returns>True if current fields match the minimum requirement.</returns>
 		public bool Validate(UnderlyingLogDataSource source) => source switch
 		{
-			UnderlyingLogDataSource.Database => !string.IsNullOrWhiteSpace(this.QueryString),
-			UnderlyingLogDataSource.StandardOutput => !string.IsNullOrWhiteSpace(this.Command),
+			UnderlyingLogDataSource.Database => this.HasQueryString,
+			UnderlyingLogDataSource.StandardOutput => this.HasCommand,
 			UnderlyingLogDataSource.WebRequest => this.Uri != null,
-			UnderlyingLogDataSource.WindowsEventLogs => !string.IsNullOrWhiteSpace(this.Category),
+			UnderlyingLogDataSource.WindowsEventLogs => this.HasCategory,
 			_ => true,
 		};
 

@@ -453,7 +453,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			}
 			var profile = this.LogProfile ?? throw new InternalStateCorruptedException("No log profile to add log file.");
 			var dataSourceOptions = profile.DataSourceOptions;
-			if (dataSourceOptions.FileName != null)
+			if (dataSourceOptions.HasFileName)
 				throw new InternalStateCorruptedException($"Cannot add log file because file name is already specified.");
 			if (!this.addedLogFilePaths.Add(fileName))
 			{
@@ -1669,7 +1669,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			switch (dataSourceProvider.UnderlyingSource)
 			{
 				case UnderlyingLogDataSource.Database:
-					if (dataSourceOptions.Uri == null && dataSourceOptions.FileName == null)
+					if (dataSourceOptions.Uri == null && !dataSourceOptions.HasFileName)
 					{
 						this.Logger.LogDebug("No database file name or URI specified, waiting for opening file");
 						this.canAddLogFile.Update(true);
@@ -1678,7 +1678,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						startReadingLogs = true;
 					break;
 				case UnderlyingLogDataSource.File:
-					if (dataSourceOptions.FileName == null)
+					if (!dataSourceOptions.HasFileName)
 					{
 						this.Logger.LogDebug("No file name specified, waiting for opening file");
 						this.canAddLogFile.Update(true);
@@ -1687,9 +1687,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						startReadingLogs = true;
 					break;
 				case UnderlyingLogDataSource.StandardOutput:
-					if (dataSourceOptions.Command == null)
+					if (!dataSourceOptions.HasCommand)
+					{
 						this.Logger.LogError("No command to open standard output");
-					else if (dataSourceOptions.WorkingDirectory == null && profile.IsWorkingDirectoryNeeded)
+						this.hasLogDataSourceCreationFailure = true;
+						this.checkDataSourceErrorsAction.Schedule();
+					}
+					else if (!dataSourceOptions.HasWorkingDirectory && profile.IsWorkingDirectoryNeeded)
 					{
 						this.Logger.LogDebug("Need working directory, waiting for setting working directory");
 						this.canSetWorkingDirectory.Update(true);
@@ -1745,7 +1749,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			if (profile.DataSourceProvider.UnderlyingSource != UnderlyingLogDataSource.StandardOutput)
 				throw new InternalStateCorruptedException($"Cannot set working directory because underlying data source type is {profile.DataSourceProvider.UnderlyingSource}.");
 			var dataSourceOptions = profile.DataSourceOptions;
-			if (dataSourceOptions.WorkingDirectory != null)
+			if (dataSourceOptions.HasWorkingDirectory)
 				throw new InternalStateCorruptedException($"Cannot set working directory because working directory is already specified.");
 
 			// check current working directory
