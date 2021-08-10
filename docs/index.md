@@ -11,10 +11,12 @@ The project is still under development but most of functions relate to reading/p
 
 ## 📷Screenshot
 ### Windows
-<img src="https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_Windows_Dark_Thumb.png" width="250"/><img src="https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_Windows_Light_Thumb.png" width="250"/>
+[<img src="https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_Windows_Dark_Thumb.png" width="250"/>](https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_Windows_Dark.png)
+[<img src="https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_Windows_Light_Thumb.png" width="250"/>](https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_Windows_Light.png)
 
 ### macOS
-<img src="https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_OSX_Dark_Thumb.png" width="250"/><img src="https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_OSX_Light_Thumb.png" width="250"/>
+[<img src="https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_OSX_Dark_Thumb.png" width="250"/>](https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_OSX_Dark.png)
+[<img src="https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_OSX_Light_Thumb.png" width="250"/>](https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_OSX_Light.png)
 
 ## 📔Topics
 - [How to Install and Upgrade ULogViewer](installation_and_upgrade.md)
