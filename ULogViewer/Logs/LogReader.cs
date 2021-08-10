@@ -600,6 +600,17 @@ namespace CarinaStudio.ULogViewer.Logs
 				});
 				switch (name)
 				{
+					case nameof(Log.BeginningTimestamp):
+					case nameof(Log.EndingTimestamp):
+					case nameof(Log.Timestamp):
+						this.timestampFormat.Let(format =>
+						{
+							if (format == null)
+								logBuilder.Set(name, value);
+							else if (DateTime.TryParseExact(value, format, this.timestampCultureInfo, DateTimeStyles.None, out var timestamp))
+								logBuilder.Set(name, timestamp.ToBinary().ToString());
+						});
+						break;
 					case nameof(Log.Level):
 						if (this.logLevelMap.TryGetValue(value, out var level))
 							logBuilder.Set(name, level.ToString());
@@ -618,15 +629,9 @@ namespace CarinaStudio.ULogViewer.Logs
 					case nameof(Log.Summary):
 						logBuilder.AppendToNextLine(name, value);
 						break;
-					case nameof(Log.Timestamp):
-						this.timestampFormat.Let(format =>
-						{
-							if (format == null)
-								logBuilder.Set(name, value);
-							else if (DateTime.TryParseExact(value, format, this.timestampCultureInfo, DateTimeStyles.None, out var timestamp))
-								logBuilder.Set(name, timestamp.ToBinary().ToString());
-						});
-						break;
+					case nameof(Log.Category):
+					case nameof(Log.DeviceId):
+					case nameof(Log.DeviceName):
 					case nameof(Log.Event):
 					case nameof(Log.ProcessId):
 					case nameof(Log.ProcessName):

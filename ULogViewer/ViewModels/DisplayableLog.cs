@@ -20,6 +20,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		// Fields.
+		string? beginningTimestampString;
+		string? endingTimestampString;
 		IBrush? colorIndicatorBrush;
 		bool isColorIndicatorBrushSet;
 		bool isLevelBrushSet;
@@ -37,6 +39,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		internal DisplayableLog(DisplayableLogGroup group, LogReader reader, Log log)
 		{
 			this.Application = group.Application;
+			this.BinaryBeginningTimestamp = log.BeginningTimestamp?.ToBinary() ?? 0L;
+			this.BinaryEndingTimestamp = log.EndingTimestamp?.ToBinary() ?? 0L;
 			this.BinaryTimestamp = log.Timestamp?.ToBinary() ?? 0L;
 			this.Group = group;
 			this.Log = log;
@@ -53,9 +57,47 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Get beginning timestamp of log.
+		/// </summary>
+		public DateTime? BeginningTimestamp { get => this.Log.BeginningTimestamp; }
+
+
+		/// <summary>
+		/// Get beginning timestamp of log in string format.
+		/// </summary>
+		public string BeginningTimestampString
+		{
+			get
+			{
+				if (this.beginningTimestampString == null)
+					this.beginningTimestampString = this.FormatTimestamp(this.Log.BeginningTimestamp);
+				return this.beginningTimestampString;
+			}
+		}
+
+
+		/// <summary>
+		/// Get beginning timestamp of log in binary format.
+		/// </summary>
+		public long BinaryBeginningTimestamp { get; }
+
+
+		/// <summary>
+		/// Get ending timestamp of log in binary format.
+		/// </summary>
+		public long BinaryEndingTimestamp { get; }
+
+
+		/// <summary>
 		/// Get timestamp of log in binary format.
 		/// </summary>
 		public long BinaryTimestamp { get; }
+
+
+		/// <summary>
+		/// Get category of log.
+		/// </summary>
+		public string? Category { get => this.Log.Category; }
 
 
 		/// <summary>
@@ -118,6 +160,26 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// release resources
 			this.colorIndicatorBrush = null;
 			this.levelBrush = null;
+		}
+
+
+		/// <summary>
+		/// Get ending timestamp of log.
+		/// </summary>
+		public DateTime? EndingTimestamp { get => this.Log.EndingTimestamp; }
+
+
+		/// <summary>
+		/// Get ending timestamp of log in string format.
+		/// </summary>
+		public string EndingTimestampString
+		{
+			get
+			{
+				if (this.endingTimestampString == null)
+					this.endingTimestampString = this.FormatTimestamp(this.Log.EndingTimestamp);
+				return this.endingTimestampString;
+			}
 		}
 
 
@@ -191,6 +253,18 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Get name of file which read log from.
 		/// </summary>
 		public string? FileName { get => this.Log.FileName; }
+
+
+		// Format timestamp to string.
+		string FormatTimestamp(DateTime? timestamp)
+		{
+			var format = this.Group.LogProfile.TimestampFormatForDisplaying;
+			if (timestamp == null)
+				return "";
+			if (format != null)
+				return timestamp.Value.ToString(format);
+			return timestamp.Value.ToString();
+		}
 
 
 		/// <summary>
@@ -335,6 +409,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		internal void OnTimestampFormatChanged()
 		{
+			if (this.Log.BeginningTimestamp.HasValue)
+			{
+				this.beginningTimestampString = null;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(BeginningTimestampString)));
+			}
+			if (this.Log.EndingTimestamp.HasValue)
+			{
+				this.endingTimestampString = null;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(EndingTimestampString)));
+			}
 			if (this.Log.Timestamp.HasValue)
 			{
 				this.timestampString = null;
@@ -393,16 +477,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			get
 			{
 				if (this.timestampString == null)
-				{
-					var timestamp = this.Log.Timestamp;
-					var format = this.Group.LogProfile.TimestampFormatForDisplaying;
-					if (timestamp == null)
-						this.timestampString = "";
-					else if (format != null)
-						this.timestampString = timestamp.Value.ToString(format);
-					else
-						this.timestampString = timestamp.Value.ToString();
-				}
+					this.timestampString = this.FormatTimestamp(this.Log.Timestamp);
 				return this.timestampString;
 			}
 		}

@@ -200,6 +200,7 @@
 
 	<!-- LogProperty -->
 	<sys:String x:Key="String.LogProperty.Author">作者</sys:String>
+	<sys:String x:Key="String.LogProperty.BeginningTimestamp">起始時間</sys:String>
 	<sys:String x:Key="String.LogProperty.Category">分類</sys:String>
 	<sys:String x:Key="String.LogProperty.Code">編碼</sys:String>
 	<sys:String x:Key="String.LogProperty.Commit">提交</sys:String>
@@ -207,6 +208,7 @@
 	<sys:String x:Key="String.LogProperty.DeviceId">裝置 ID</sys:String>
 	<sys:String x:Key="String.LogProperty.DeviceName">裝置名稱</sys:String>
 	<sys:String x:Key="String.LogProperty.Duration">時距</sys:String>
+	<sys:String x:Key="String.LogProperty.EndingTimestamp">結束時間</sys:String>
 	<sys:String x:Key="String.LogProperty.Event">事件</sys:String>
 	<sys:String x:Key="String.LogProperty.Extra1">附加資料 1</sys:String>
 	<sys:String x:Key="String.LogProperty.Extra10">附加資料 10</sys:String>
@@ -235,10 +237,13 @@
 	<sys:String x:Key="String.LogProperty.Timestamp">時間</sys:String>
 	<sys:String x:Key="String.LogProperty.TimestampString">時間</sys:String>
 	<sys:String x:Key="String.LogProperty.Title">標題</sys:String>
+	<sys:String x:Key="String.LogProperty.Type">類型</sys:String>
 	<sys:String x:Key="String.LogProperty.Uri">網址</sys:String>
 	<sys:String x:Key="String.LogProperty.UserName">使用者</sys:String>
 
 	<!-- LogSortKey -->
+	<sys:String x:Key="String.LogSortKey.BeginningTimestamp">日誌起始時間</sys:String>
+	<sys:String x:Key="String.LogSortKey.EndingTimestamp">日誌結束時間</sys:String>
 	<sys:String x:Key="String.LogSortKey.Id">日誌流水編號</sys:String>
 	<sys:String x:Key="String.LogSortKey.Timestamp">日誌時間</sys:String>
 

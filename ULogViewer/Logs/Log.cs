@@ -27,8 +27,11 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <param name="builder"><see cref="LogBuilder"/>.</param>
 		internal Log(LogBuilder builder)
 		{
+			this.BeginningTimestamp = builder.GetDateTimeOrNull(nameof(BeginningTimestamp));
+			this.Category = builder.GetStringOrNull(nameof(Category));
 			this.DeviceId = builder.GetStringOrNull(nameof(DeviceId));
 			this.DeviceName = builder.GetStringOrNull(nameof(DeviceName));
+			this.EndingTimestamp = builder.GetDateTimeOrNull(nameof(EndingTimestamp));
 			this.Event = builder.GetStringOrNull(nameof(Event));
 			this.Extra1 = builder.GetStringOrNull(nameof(Extra1));
 			this.Extra10 = builder.GetStringOrNull(nameof(Extra10));
@@ -71,6 +74,18 @@ namespace CarinaStudio.ULogViewer.Logs
 		}
 
 
+		/// <summary>
+		/// Get beginning timestamp.
+		/// </summary>
+		public DateTime? BeginningTimestamp { get; }
+
+
+		/// <summary>
+		/// Get category of log.
+		/// </summary>
+		public string? Category { get; }
+
+
 #pragma warning disable CS8603
 #pragma warning disable CS8600
 		/// <summary>
@@ -100,6 +115,12 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// Get name of device which generates log.
 		/// </summary>
 		public string? DeviceName { get; }
+
+
+		/// <summary>
+		/// Get ending timestamp.
+		/// </summary>
+		public DateTime? EndingTimestamp { get; }
 
 
 		/// <summary>

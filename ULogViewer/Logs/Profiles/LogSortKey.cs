@@ -8,6 +8,14 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 	enum LogSortKey
 	{
 		/// <summary>
+		/// Sort by beginning timestamp.
+		/// </summary>
+		BeginningTimestamp,
+		/// <summary>
+		/// Sort by ending timestamp.
+		/// </summary>
+		EndingTimestamp,
+		/// <summary>
 		/// Sort by timestamp.
 		/// </summary>
 		Timestamp,

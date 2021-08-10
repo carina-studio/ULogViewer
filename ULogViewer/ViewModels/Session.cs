@@ -528,6 +528,50 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 		// Compare displayable logs.
 		int CompareDisplayableLogs(DisplayableLog? x, DisplayableLog? y) => this.compareDisplayableLogsDelegate(x, y);
+		static int CompareDisplayableLogsByBeginningTimestamp(DisplayableLog? x, DisplayableLog? y)
+		{
+			// compare by reference
+			if (x == null)
+			{
+				if (y == null)
+					return 0;
+				return -1;
+			}
+			if (y == null)
+				return 1;
+
+			// compare by timestamp
+			var diff = x.BinaryBeginningTimestamp - y.BinaryBeginningTimestamp;
+			if (diff < 0)
+				return -1;
+			if (diff > 0)
+				return 1;
+
+			// compare by ID
+			return CompareDisplayableLogsByIdNonNull(x, y);
+		}
+		static int CompareDisplayableLogsByEndingTimestamp(DisplayableLog? x, DisplayableLog? y)
+		{
+			// compare by reference
+			if (x == null)
+			{
+				if (y == null)
+					return 0;
+				return -1;
+			}
+			if (y == null)
+				return 1;
+
+			// compare by timestamp
+			var diff = x.BinaryEndingTimestamp - y.BinaryEndingTimestamp;
+			if (diff < 0)
+				return -1;
+			if (diff > 0)
+				return 1;
+
+			// compare by ID
+			return CompareDisplayableLogsByIdNonNull(x, y);
+		}
 		static int CompareDisplayableLogsById(DisplayableLog? x, DisplayableLog? y)
 		{
 			// compare by reference
@@ -1803,6 +1847,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			var profile = this.LogProfile.AsNonNull();
 			this.compareDisplayableLogsDelegate = profile.SortKey switch
 			{
+				LogSortKey.BeginningTimestamp => CompareDisplayableLogsByBeginningTimestamp,
+				LogSortKey.EndingTimestamp => CompareDisplayableLogsByEndingTimestamp,
 				LogSortKey.Timestamp => CompareDisplayableLogsByTimestamp,
 				_ => CompareDisplayableLogsById,
 			};
