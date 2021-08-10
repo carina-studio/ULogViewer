@@ -2,7 +2,7 @@
 title: ULogViewer
 ---
 
-# How does ULogViewer read and parse logs
+# How Does ULogViewer Read and Parse Logs
 In order to read and parse various type of logs, there is a special flow of reading and parsing logs in ULogViewer you may need to know before defining your own log profile.
 
 ![Logs reading and parsing flow](https://carina-studio.github.io/ULogViewer/Images/Log_Reading_Flow.png)
