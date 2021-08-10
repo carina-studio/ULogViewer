@@ -28,7 +28,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				{
 					foreach (var panelChild in panel.Children)
 					{
-						if (panelChild is ListBoxItem listBoxItem && listBoxItem.DataContext == item)
+						if (panelChild is ListBoxItem listBoxItem && listBoxItem.DataContext?.Equals(item) == true)
 							return listBoxItem;
 					}
 				}

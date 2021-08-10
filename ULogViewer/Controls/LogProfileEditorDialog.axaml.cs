@@ -4,6 +4,7 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Data;
 using Avalonia.Data.Converters;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.VisualTree;
 using CarinaStudio.Collections;
@@ -56,6 +57,9 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ContextMenu insertLogWritingFormatSyntaxMenu;
 		readonly SortedObservableList<KeyValuePair<string, LogLevel>> logLevelMapEntriesForReading = new SortedObservableList<KeyValuePair<string, LogLevel>>((x, y) => x.Key.CompareTo(y.Key));
 		readonly SortedObservableList<KeyValuePair<LogLevel, string>> logLevelMapEntriesForWriting = new SortedObservableList<KeyValuePair<LogLevel, string>>((x, y) => x.Key.CompareTo(y.Key));
+		readonly ListBox logLevelMapForReadingListBox;
+		readonly ListBox logLevelMapForWritingListBox;
+		readonly ListBox logPatternListBox;
 		readonly ObservableList<LogPattern> logPatterns = new ObservableList<LogPattern>();
 		readonly ComboBox logStringEncodingForReadingComboBox;
 		readonly ComboBox logStringEncodingForWritingComboBox;
@@ -66,6 +70,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly TextBox timestampFormatForDisplayingTextBox;
 		readonly TextBox timestampFormatForReadingTextBox;
 		readonly TextBox timestampFormatForWritingTextBox;
+		readonly ListBox visibleLogPropertyListBox;
 		readonly ObservableList<LogProperty> visibleLogProperties = new ObservableList<LogProperty>();
 		readonly ToggleSwitch workingDirNeededSwitch;
 
@@ -124,6 +129,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			});
 			if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 				this.FindControl<Control>("isAdminNeededPanel").AsNonNull().IsVisible = false;
+			this.logLevelMapForReadingListBox = this.FindControl<ListBox>("logLevelMapForReadingListBox").AsNonNull();
+			this.logLevelMapForWritingListBox = this.FindControl<ListBox>("logLevelMapForWritingListBox").AsNonNull();
+			this.logPatternListBox = this.FindControl<ListBox>("logPatternListBox").AsNonNull();
 			this.logStringEncodingForReadingComboBox = this.FindControl<ComboBox>("logStringEncodingForReadingComboBox").AsNonNull();
 			this.logStringEncodingForWritingComboBox = this.FindControl<ComboBox>("logStringEncodingForWritingComboBox").AsNonNull();
 			this.logWritingFormatTextBox = this.FindControl<TextBox>("logWritingFormatTextBox").AsNonNull();
@@ -133,6 +141,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.timestampFormatForDisplayingTextBox = this.FindControl<TextBox>("timestampFormatForDisplayingTextBox").AsNonNull();
 			this.timestampFormatForReadingTextBox = this.FindControl<TextBox>("timestampFormatForReadingTextBox").AsNonNull();
 			this.timestampFormatForWritingTextBox = this.FindControl<TextBox>("timestampFormatForWritingTextBox").AsNonNull();
+			this.visibleLogPropertyListBox = this.FindControl<ListBox>("visibleLogPropertyListBox").AsNonNull();
 			this.workingDirNeededSwitch = this.FindControl<ToggleSwitch>("workingDirNeededSwitch").AsNonNull();
 		}
 
@@ -159,7 +168,8 @@ namespace CarinaStudio.ULogViewer.Controls
 					}.ShowDialog(this);
 					continue;
 				}
-				this.logLevelMapEntriesForReading.Add(entry.Value);
+				var index = this.logLevelMapEntriesForReading.Add(entry.Value);
+				this.SelectListBoxItem(this.logLevelMapForReadingListBox, index);
 				break;
 			}
 		}
@@ -187,7 +197,8 @@ namespace CarinaStudio.ULogViewer.Controls
 					}.ShowDialog(this);
 					continue;
 				}
-				this.logLevelMapEntriesForWriting.Add(entry.Value);
+				var index = this.logLevelMapEntriesForWriting.Add(entry.Value);
+				this.SelectListBoxItem(this.logLevelMapForWritingListBox, index);
 				break;
 			}
 		}
@@ -198,7 +209,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			var logPattern = await new LogPatternEditorDialog().ShowDialog<LogPattern>(this);
 			if (logPattern != null)
+			{
 				this.logPatterns.Add(logPattern);
+				this.SelectListBoxItem(this.logPatternListBox, this.logPatterns.Count - 1);
+			}
 		}
 
 
@@ -207,7 +221,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			var logProperty = await new VisibleLogPropertyEditorDialog().ShowDialog<LogProperty>(this);
 			if (logProperty != null)
+			{
 				this.visibleLogProperties.Add(logProperty);
+				this.SelectListBoxItem(this.visibleLogPropertyListBox, this.visibleLogProperties.Count - 1);
+			}
 		}
 
 
@@ -223,7 +240,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				}.ShowDialog<KeyValuePair<string, LogLevel>?>(this);
 				if (newEntry == null || newEntry.Value.Equals(entry))
 					return;
-				if (!entry.Equals(this.logLevelMapEntriesForReading.FirstOrDefault(it => it.Key == newEntry.Value.Key)))
+				var checkingEntry = this.logLevelMapEntriesForReading.FirstOrDefault(it => it.Key == newEntry.Value.Key);
+				if (checkingEntry.Key != null && !entry.Equals(checkingEntry))
 				{
 					await new MessageDialog()
 					{
@@ -234,7 +252,8 @@ namespace CarinaStudio.ULogViewer.Controls
 					continue;
 				}
 				this.logLevelMapEntriesForReading.Remove(entry);
-				this.logLevelMapEntriesForReading.Add(newEntry.Value);
+				var index = this.logLevelMapEntriesForReading.Add(newEntry.Value);
+				this.SelectListBoxItem(this.logLevelMapForReadingListBox, index);
 				break;
 			}
 		}
@@ -252,7 +271,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				}.ShowDialog<KeyValuePair<LogLevel, string>?>(this);
 				if (newEntry == null || newEntry.Value.Equals(entry))
 					return;
-				if (!entry.Equals(this.logLevelMapEntriesForWriting.FirstOrDefault(it => it.Key == newEntry.Value.Key)))
+				var checkingEntry = this.logLevelMapEntriesForWriting.FirstOrDefault(it => it.Key == newEntry.Value.Key);
+				if (checkingEntry.Value != null && !entry.Equals(checkingEntry))
 				{
 					await new MessageDialog()
 					{
@@ -263,7 +283,8 @@ namespace CarinaStudio.ULogViewer.Controls
 					continue;
 				}
 				this.logLevelMapEntriesForWriting.Remove(entry);
-				this.logLevelMapEntriesForWriting.Add(newEntry.Value);
+				var index = this.logLevelMapEntriesForWriting.Add(newEntry.Value);
+				this.SelectListBoxItem(this.logLevelMapForWritingListBox, index);
 				break;
 			}
 		}
@@ -272,7 +293,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Edit log pattern.
 		async void EditLogPattern(ListBoxItem item)
 		{
-			var index = (item.GetVisualParent() as Panel)?.Children?.IndexOf(item) ?? -1;
+			var index = this.logPatterns.IndexOf((LogPattern)item.DataContext.AsNonNull());
 			if (index < 0)
 				return;
 			if (item.DataContext is not LogPattern logPattern)
@@ -282,14 +303,17 @@ namespace CarinaStudio.ULogViewer.Controls
 				LogPattern = logPattern
 			}.ShowDialog<LogPattern>(this);
 			if (newLlogPattern != null && newLlogPattern != logPattern)
+			{
 				this.logPatterns[index] = newLlogPattern;
+				this.SelectListBoxItem(this.logPatternListBox, index);
+			}
 		}
 
 
 		// Edit visible log property.
 		async void EditVisibleLogProperty(ListBoxItem item)
 		{
-			var index = (item.GetVisualParent() as Panel)?.Children?.IndexOf(item) ?? -1;
+			var index = this.visibleLogProperties.IndexOf((LogProperty)item.DataContext.AsNonNull());
 			if (index < 0)
 				return;
 			if (item.DataContext is not LogProperty logProperty)
@@ -299,7 +323,10 @@ namespace CarinaStudio.ULogViewer.Controls
 				LogProperty = logProperty
 			}.ShowDialog<LogProperty>(this);
 			if (newLogProperty != null && newLogProperty != logProperty)
+			{
 				this.visibleLogProperties[index] = newLogProperty;
+				this.SelectListBoxItem(this.visibleLogPropertyListBox, index);
+			}
 		}
 
 
@@ -344,42 +371,60 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Move log pattern down.
 		void MoveLogPatternDown(ListBoxItem item)
 		{
-			var index = (item.GetVisualParent() as Panel)?.Children?.IndexOf(item) ?? -1;
+			var index = this.logPatterns.IndexOf((LogPattern)item.DataContext.AsNonNull());
 			if (index < 0)
 				return;
 			if (index < this.logPatterns.Count - 1)
+			{
 				this.logPatterns.Move(index, index + 1);
+				++index;
+			}
+			this.SelectListBoxItem(this.logPatternListBox, index);
 		}
 
 
 		// Move log pattern up.
 		void MoveLogPatternUp(ListBoxItem item)
 		{
-			var index = (item.GetVisualParent() as Panel)?.Children?.IndexOf(item) ?? -1;
-			if (index <= 0)
+			var index = this.logPatterns.IndexOf((LogPattern)item.DataContext.AsNonNull());
+			if (index < 0)
 				return;
-			this.logPatterns.Move(index, index - 1);
+			if (index > 0)
+			{
+				this.logPatterns.Move(index, index - 1);
+				--index;
+			}
+			this.SelectListBoxItem(this.logPatternListBox, index);
 		}
 
 
 		// Move visible log property down.
 		void MoveVisibleLogPropertyDown(ListBoxItem item)
 		{
-			var index = (item.GetVisualParent() as Panel)?.Children?.IndexOf(item) ?? -1;
+			var index = this.visibleLogProperties.IndexOf((LogProperty)item.DataContext.AsNonNull());
 			if (index < 0)
 				return;
 			if (index < this.visibleLogProperties.Count - 1)
+			{
 				this.visibleLogProperties.Move(index, index + 1);
+				++index;
+			}
+			this.SelectListBoxItem(this.visibleLogPropertyListBox, index);
 		}
 
 
 		// Move visible log property up.
 		void MoveVisibleLogPropertyUp(ListBoxItem item)
 		{
-			var index = (item.GetVisualParent() as Panel)?.Children?.IndexOf(item) ?? -1;
-			if (index <= 0)
+			var index = this.visibleLogProperties.IndexOf((LogProperty)item.DataContext.AsNonNull());
+			if (index < 0)
 				return;
-			this.visibleLogProperties.Move(index, index - 1);
+			if (index > 0)
+			{
+				this.visibleLogProperties.Move(index, index - 1);
+				--index;
+			}
+			this.SelectListBoxItem(this.visibleLogPropertyListBox, index);
 		}
 
 
@@ -446,13 +491,42 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Called when double-tapped on list box.
+		void OnListBoxDoubleTapped(object? sender, RoutedEventArgs e)
+		{
+			if (sender is not ListBox listBox)
+				return;
+			var selectedItem = listBox.SelectedItem;
+			var listBoxItem = selectedItem != null ? listBox.FindListBoxItem(selectedItem) : null;
+			if (listBoxItem == null || !listBoxItem.IsPointerOver)
+				return;
+			if (listBox == this.logLevelMapForReadingListBox)
+				this.EditLogLevelMapEntryForReading((KeyValuePair<string, LogLevel>)selectedItem.AsNonNull());
+			else if (listBox == this.logLevelMapForWritingListBox)
+				this.EditLogLevelMapEntryForWriting((KeyValuePair<LogLevel, string>)selectedItem.AsNonNull());
+			else if (listBox == this.logPatternListBox)
+				this.EditLogPattern(listBoxItem);
+			else if (listBox == this.visibleLogPropertyListBox)
+				this.EditVisibleLogProperty(listBoxItem);
+		}
+
+
+		// Called when list box lost focus.
+		void OnListBoxLostFocus(object? sender, RoutedEventArgs e)
+		{
+			if (sender is not ListBox listBox)
+				return;
+			listBox.SelectedItems.Clear();
+		}
+
+
 		// Called when selection in list box changed.
 		void OnListBoxSelectionChanged(object? sender, SelectionChangedEventArgs e)
 		{
 			if (sender is not ListBox listBox)
 				return;
-			if (e.AddedItems.Count > 0)
-				this.SynchronizationContext.Post(() => listBox.SelectedItem = null);
+			if (listBox.SelectedIndex >= 0)
+				listBox.ScrollIntoView(listBox.SelectedIndex);
 		}
 
 
@@ -562,48 +636,52 @@ namespace CarinaStudio.ULogViewer.Controls
 		void RemoveLogLevelMapEntry(object entry)
 		{
 			if (entry is KeyValuePair<string, LogLevel> readingEntry)
+			{
 				this.logLevelMapEntriesForReading.Remove(readingEntry);
+				this.SelectListBoxItem(this.logLevelMapForReadingListBox, -1);
+			}
 			else if (entry is KeyValuePair<LogLevel, string> writingEntry)
+			{
 				this.logLevelMapEntriesForWriting.Remove(writingEntry);
+				this.SelectListBoxItem(this.logLevelMapForWritingListBox, -1);
+			}
 		}
 
 
 		// Remove log pattern.
 		void RemoveLogPattern(ListBoxItem item)
 		{
-			var index = (item.GetVisualParent() as Panel)?.Children?.IndexOf(item) ?? -1;
+			var index = this.logPatterns.IndexOf((LogPattern)item.DataContext.AsNonNull());
 			if (index < 0)
 				return;
 			this.logPatterns.RemoveAt(index);
+			this.SelectListBoxItem(this.logPatternListBox, -1);
 		}
 
 
 		// Remove visible log property.
 		void RemoveVisibleLogProperty(ListBoxItem item)
 		{
-			var index = (item.GetVisualParent() as Panel)?.Children?.IndexOf(item) ?? -1;
+			var index = this.visibleLogProperties.IndexOf((LogProperty)item.DataContext.AsNonNull());
 			if (index < 0)
 				return;
 			this.visibleLogProperties.RemoveAt(index);
+			this.SelectListBoxItem(this.visibleLogPropertyListBox, -1);
 		}
 
 
-		// Set log data source options.
-		async void SetDataSourceOptions()
+		// Select given item in list box.
+		void SelectListBoxItem(ListBox listBox, int index)
 		{
-			var dataSourceProvider = (this.dataSourceProviderComboBox.SelectedItem as ILogDataSourceProvider);
-			if (dataSourceProvider == null)
-				return;
-			var options = await new LogDataSourceOptionsDialog()
+			this.SynchronizationContext.Post(() =>
 			{
-				Options = this.dataSourceOptions,
-				UnderlyingLogDataSource = dataSourceProvider.UnderlyingSource,
-			}.ShowDialog<LogDataSourceOptions?>(this);
-			if (options != null)
-			{
-				this.dataSourceOptions = options.Value;
-				this.InvalidateInput();
-			}
+				listBox.SelectedItems.Clear();
+				if (index < 0 || index >= listBox.GetItemCount())
+					return;
+				listBox.Focus();
+				listBox.SelectedIndex = index;
+				listBox.ScrollIntoView(index);
+			});
 		}
 
 
