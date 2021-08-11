@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.VisualTree;
 using CarinaStudio.Collections;
@@ -113,8 +114,11 @@ namespace CarinaStudio.ULogViewer.Controls
 				Message = this.Application.GetString("LogDataSourceOptionsDialog.Command"),
 				Title = this.Application.GetString("LogDataSourceOptionsDialog.SetupCommands"),
 			}.ShowDialog<string>(this))?.Trim();
-			if (!string.IsNullOrEmpty(command))
+			if (!string.IsNullOrWhiteSpace(command))
+			{
 				this.setupCommands.Add(command);
+				this.SelectListBoxItem(this.setupCommandsListBox, this.setupCommands.Count - 1);
+			}
 		}
 
 
@@ -126,8 +130,11 @@ namespace CarinaStudio.ULogViewer.Controls
 				Message = this.Application.GetString("LogDataSourceOptionsDialog.Command"),
 				Title = this.Application.GetString("LogDataSourceOptionsDialog.TeardownCommands"),
 			}.ShowDialog<string>(this))?.Trim();
-			if (!string.IsNullOrEmpty(command))
+			if (!string.IsNullOrWhiteSpace(command))
+			{
 				this.teardownCommands.Add(command);
+				this.SelectListBoxItem(this.teardownCommandsListBox, this.teardownCommands.Count - 1);
+			}
 		}
 
 
@@ -155,12 +162,13 @@ namespace CarinaStudio.ULogViewer.Controls
 		async void EditSetupTeardownCommand(ListBoxItem item)
 		{
 			// find index of command
-			var index = (item.GetVisualParent() as Panel)?.Children?.IndexOf(item) ?? -1;
+			var listBox = (ListBox)item.Parent.AsNonNull();
+			var isSetupCommand = (listBox == this.setupCommandsListBox);
+			var index = isSetupCommand ? this.setupCommands.IndexOf((string)item.DataContext.AsNonNull()) : this.teardownCommands.IndexOf((string)item.DataContext.AsNonNull());
 			if (index < 0)
 				return;
 
 			// edit
-			var isSetupCommand = (item.Parent == this.setupCommandsListBox);
 			var newCommand = (await new TextInputDialog()
 			{
 				Message = this.Application.GetString("LogDataSourceOptionsDialog.Command"),
@@ -175,6 +183,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.setupCommands[index] = newCommand;
 			else
 				this.teardownCommands[index] = newCommand;
+			this.SelectListBoxItem((ListBox)item.Parent.AsNonNull(), index);
 		}
 
 
@@ -208,14 +217,19 @@ namespace CarinaStudio.ULogViewer.Controls
 		void MoveSetupTeardownCommandDown(ListBoxItem item)
 		{
 			// find index of command
-			var index = (item.GetVisualParent() as Panel)?.Children?.IndexOf(item) ?? -1;
+			var listBox = (ListBox)item.Parent.AsNonNull();
+			var index = listBox == this.setupCommandsListBox ? this.setupCommands.IndexOf((string)item.DataContext.AsNonNull()) : this.teardownCommands.IndexOf((string)item.DataContext.AsNonNull());
 			if (index < 0)
 				return;
 
 			// move command
 			var commands = (item.Parent == this.setupCommandsListBox ? this.setupCommands : this.teardownCommands);
 			if (index < commands.Count - 1)
+			{
 				commands.Move(index, index + 1);
+				++index;
+			}
+			this.SelectListBoxItem(listBox, index);
 		}
 
 
@@ -223,13 +237,19 @@ namespace CarinaStudio.ULogViewer.Controls
 		void MoveSetupTeardownCommandUp(ListBoxItem item)
 		{
 			// find index of command
-			var index = (item.GetVisualParent() as Panel)?.Children?.IndexOf(item) ?? -1;
-			if (index <= 0)
+			var listBox = (ListBox)item.Parent.AsNonNull();
+			var index = listBox == this.setupCommandsListBox ? this.setupCommands.IndexOf((string)item.DataContext.AsNonNull()) : this.teardownCommands.IndexOf((string)item.DataContext.AsNonNull());
+			if (index < 0)
 				return;
 
 			// move command
 			var commands = (item.Parent == this.setupCommandsListBox ? this.setupCommands : this.teardownCommands);
-			commands.Move(index, index - 1);
+			if (index > 0)
+			{
+				commands.Move(index, index - 1);
+				--index;
+			}
+			this.SelectListBoxItem(listBox, index);
 		}
 
 
@@ -277,13 +297,36 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Called when double-tapped on list box.
+		void OnListBoxDoubleTapped(object? sender, RoutedEventArgs e)
+		{
+			if (sender is not ListBox listBox)
+				return;
+			var selectedItem = listBox.SelectedItem;
+			var listBoxItem = selectedItem != null ? listBox.FindListBoxItem(selectedItem) : null;
+			if (listBoxItem == null || !listBoxItem.IsPointerOver)
+				return;
+			if (listBox == this.setupCommandsListBox || listBox == this.teardownCommandsListBox)
+				this.EditSetupTeardownCommand(listBoxItem);
+		}
+
+
+		// Called when list box lost focus.
+		void OnListBoxLostFocus(object? sender, RoutedEventArgs e)
+		{
+			if (sender is not ListBox listBox)
+				return;
+			listBox.SelectedItems.Clear();
+		}
+
+
 		// Called when selection in list box changed.
 		void OnListBoxSelectionChanged(object? sender, SelectionChangedEventArgs e)
 		{
 			if (sender is not ListBox listBox)
 				return;
-			if (e.AddedItems.Count > 0)
-				this.SynchronizationContext.Post(() => listBox.SelectedItem = null);
+			if (listBox.SelectedIndex >= 0)
+				listBox.ScrollIntoView(listBox.SelectedIndex);
 		}
 
 
@@ -450,15 +493,17 @@ namespace CarinaStudio.ULogViewer.Controls
 		void RemoveSetupTeardownCommand(ListBoxItem item)
 		{
 			// find index of command
-			var index = (item.GetVisualParent() as Panel)?.Children?.IndexOf(item) ?? -1;
+			var listBox = (ListBox)item.Parent.AsNonNull();
+			var index = listBox == this.setupCommandsListBox ? this.setupCommands.IndexOf((string)item.DataContext.AsNonNull()) : this.teardownCommands.IndexOf((string)item.DataContext.AsNonNull());
 			if (index < 0)
 				return;
 
 			// remove command
-			if (item.Parent == this.setupCommandsListBox)
+			if (listBox == this.setupCommandsListBox)
 				this.setupCommands.RemoveAt(index);
 			else
 				this.teardownCommands.RemoveAt(index);
+			this.SelectListBoxItem(listBox, -1);
 		}
 
 
@@ -472,6 +517,21 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (fileNames == null || fileNames.IsEmpty())
 				return;
 			this.fileNameTextBox.Text = fileNames[0];
+		}
+
+
+		// Select given item in list box.
+		void SelectListBoxItem(ListBox listBox, int index)
+		{
+			this.SynchronizationContext.Post(() =>
+			{
+				listBox.SelectedItems.Clear();
+				if (index < 0 || index >= listBox.GetItemCount())
+					return;
+				listBox.Focus();
+				listBox.SelectedIndex = index;
+				listBox.ScrollIntoView(index);
+			});
 		}
 
 

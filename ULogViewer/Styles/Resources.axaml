@@ -53,7 +53,7 @@
 	<Thickness x:Key="Thickness.ListAction.Margin">5,5,0,0</Thickness>
 
 	<!-- LogDataSourceOptionsDialog -->
-	<sys:Double x:Key="Double.LogDataSourceOptionsDialog.CommandListBox.Height">70</sys:Double>
+	<sys:Double x:Key="Double.LogDataSourceOptionsDialog.CommandListBox.Height">150</sys:Double>
 	<sys:Double x:Key="Double.LogDataSourceOptionsDialog.Width">500</sys:Double>
 
 	<!-- LogLevelMapEntryEditor -->
