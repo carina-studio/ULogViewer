@@ -239,7 +239,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.CopyLogsWithFileNamesCommand = ReactiveCommand.Create<IList<DisplayableLog>>(it => this.CopyLogs(it, true), this.canCopyLogsWithFileNames);
 			this.MarkUnmarkLogsCommand = ReactiveCommand.Create<IEnumerable<DisplayableLog>>(this.MarkUnmarkLogs, this.canMarkUnmarkLogs);
 			this.PauseResumeLogsReadingCommand = ReactiveCommand.Create(this.PauseResumeLogsReading, this.canPauseResumeLogsReading);
-			this.ReloadLogsCommand = ReactiveCommand.Create(() => this.ReloadLogs(), this.canReloadLogs);
+			this.ReloadLogsCommand = ReactiveCommand.Create(() => this.ReloadLogs(false, false), this.canReloadLogs);
 			this.ResetLogProfileCommand = ReactiveCommand.Create(this.ResetLogProfile, this.canResetLogProfile);
 			this.SetLogProfileCommand = ReactiveCommand.Create<LogProfile?>(this.SetLogProfile, this.canSetLogProfile);
 			this.SetWorkingDirectoryCommand = ReactiveCommand.Create<string?>(this.SetWorkingDirectory, this.GetValueAsObservable(IsWorkingDirectoryNeededProperty));
@@ -1328,9 +1328,20 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			switch (e.PropertyName)
 			{
 				case nameof(LogProfile.ColorIndicator):
-					this.SynchronizationContext.Post(() => this.ReloadLogs(true));
+					this.SynchronizationContext.Post(() => this.ReloadLogs(false, true));
 					break;
 				case nameof(LogProfile.DataSourceProvider):
+					this.SynchronizationContext.Post(() => this.ReloadLogs(true, true));
+					break;
+				case nameof(LogProfile.IsContinuousReading):
+					this.SetValue(IsReadingLogsContinuouslyProperty, this.LogProfile.AsNonNull().IsContinuousReading);
+					goto case nameof(LogProfile.LogPatterns);
+				case nameof(LogProfile.LogLevelMapForReading):
+					this.UpdateValidLogLevels();
+					goto case nameof(LogProfile.LogPatterns);
+				case nameof(LogProfile.LogWritingFormat):
+					this.UpdateIsLogsWritingAvailable(this.LogProfile);
+					break;
 				case nameof(LogProfile.LogPatterns):
 				case nameof(LogProfile.LogStringEncodingForReading):
 				case nameof(LogProfile.SortDirection):
@@ -1338,22 +1349,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				case nameof(LogProfile.TimestampCultureInfoForReading):
 				case nameof(LogProfile.TimestampFormatForDisplaying):
 				case nameof(LogProfile.TimestampFormatForReading):
-					this.SynchronizationContext.Post(() => this.ReloadLogs());
-					break;
-				case nameof(LogProfile.IsContinuousReading):
-					this.SetValue(IsReadingLogsContinuouslyProperty, this.LogProfile.AsNonNull().IsContinuousReading);
-					goto case nameof(LogProfile.DataSourceProvider);
-				case nameof(LogProfile.LogLevelMapForReading):
-					this.UpdateValidLogLevels();
-					goto case nameof(LogProfile.DataSourceProvider);
-				case nameof(LogProfile.LogWritingFormat):
-					this.UpdateIsLogsWritingAvailable(this.LogProfile);
+					this.SynchronizationContext.Post(() => this.ReloadLogs(false, false));
 					break;
 				case nameof(LogProfile.Name):
 					this.updateTitleAndIconAction.Schedule();
 					break;
 				case nameof(LogProfile.VisibleLogProperties):
-					this.SynchronizationContext.Post(() => this.ReloadLogs(true));
+					this.SynchronizationContext.Post(() => this.ReloadLogs(false, true));
 					break;
 			}
 		}
@@ -1508,7 +1510,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		// Reload logs.
-		void ReloadLogs(bool updateDisplayLogProperties = false)
+		void ReloadLogs(bool recreateLogReaders, bool updateDisplayLogProperties)
 		{
 			// check state
 			this.VerifyAccess();
@@ -1519,17 +1521,29 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			if (profile == null)
 				throw new InternalStateCorruptedException("No log profile to reload logs.");
 
-			// collect data source options
-			var dataSourceOptions = new List<LogDataSourceOptions>().Also(it =>
+			// clear logs
+			var isContinuousReading = profile.IsContinuousReading;
+			var dataSourceOptions = new List<LogDataSourceOptions>();
+			if (isContinuousReading && !recreateLogReaders)
 			{
 				foreach (var logReader in this.logReaders)
-					it.Add(logReader.DataSource.CreationOptions);
-			});
+					logReader.ClearLogs();
+				this.Logger.LogWarning($"Clear logs in {this.logReaders.Count} log reader(s)");
+			}
+			else
+			{
+				// collect data source options
+				foreach (var logReader in this.logReaders)
+					dataSourceOptions.Add(logReader.DataSource.CreationOptions);
+				this.Logger.LogWarning($"Reload logs with {dataSourceOptions.Count} log reader(s)");
 
-			this.Logger.LogWarning($"Reload logs with {dataSourceOptions.Count} log reader(s)");
+				// dispose log readers
+				this.DisposeLogReaders(true);
 
-			// dispose log readers
-			this.DisposeLogReaders(true);
+				// clear data source error
+				this.hasLogDataSourceCreationFailure = false;
+				this.checkDataSourceErrorsAction.Execute();
+			}
 
 			// setup log comparer
 			this.UpdateDisplayableLogComparison();
@@ -1539,12 +1553,20 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.UpdateDisplayLogProperties();
 
 			// recreate log readers
-			var dataSourceProvider = profile.DataSourceProvider;
-			foreach (var dataSourceOption in dataSourceOptions)
+			if (dataSourceOptions.IsNotEmpty())
 			{
-				var dataSource = this.CreateLogDataSourceOrNull(dataSourceProvider, dataSourceOption);
-				if (dataSource != null)
-					this.CreateLogReader(dataSource);
+				var dataSourceProvider = profile.DataSourceProvider;
+				foreach (var dataSourceOption in dataSourceOptions)
+				{
+					var dataSource = this.CreateLogDataSourceOrNull(dataSourceProvider, dataSourceOption);
+					if (dataSource != null)
+						this.CreateLogReader(dataSource);
+					else
+					{
+						this.hasLogDataSourceCreationFailure = true;
+						this.checkDataSourceErrorsAction.Schedule();
+					}
+				}
 			}
 		}
 
