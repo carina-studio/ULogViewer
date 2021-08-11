@@ -6,7 +6,6 @@ using Avalonia.Data.Converters;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
-using Avalonia.VisualTree;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
@@ -704,8 +703,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 			var options = await new LogDataSourceOptionsDialog()
 			{
+				DataSourceProvider = dataSourceProvider,
 				Options = this.dataSourceOptions,
-				UnderlyingLogDataSource = dataSourceProvider.UnderlyingSource,
 			}.ShowDialog<LogDataSourceOptions?>(this);
 			if (options != null)
 			{

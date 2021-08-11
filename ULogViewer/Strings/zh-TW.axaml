@@ -82,18 +82,19 @@
 	<sys:String x:Key="String.LogColorIndicator.UserName">使用者</sys:String>
 
 	<!-- LogDataSourceOptionsDialog -->
-	<sys:String x:Key="String.LogDataSourceOptionsDialog.Category">日誌分類 (必要)</sys:String>
-	<sys:String x:Key="String.LogDataSourceOptionsDialog.Command">指令 (必要)</sys:String>
+	<sys:String x:Key="String.LogDataSourceOptionsDialog.Category">日誌分類</sys:String>
+	<sys:String x:Key="String.LogDataSourceOptionsDialog.Command">指令</sys:String>
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.DatabaseSourceType">資料庫來源</sys:String>
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.Encoding">文字編碼</sys:String>
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.FileName">檔案路徑</sys:String>
-	<sys:String x:Key="String.LogDataSourceOptionsDialog.QueryString">查詢字串 (必要)</sys:String>
+	<sys:String x:Key="String.LogDataSourceOptionsDialog.Password">密碼</sys:String>
+	<sys:String x:Key="String.LogDataSourceOptionsDialog.QueryString">查詢字串</sys:String>
+	<sys:String x:Key="String.LogDataSourceOptionsDialog.Required"> (必要)</sys:String>
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.SetupCommands">日誌讀取前指令</sys:String>
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.TeardownCommands">日誌讀取後指令</sys:String>
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.Title">資料來源參數</sys:String>
-	<sys:String x:Key="String.LogDataSourceOptionsDialog.Uri">URI (必要)</sys:String>
-	<sys:String x:Key="String.LogDataSourceOptionsDialog.WebRequestCredentials.Password">登入密碼</sys:String>
-	<sys:String x:Key="String.LogDataSourceOptionsDialog.WebRequestCredentials.UserName">登入名稱</sys:String>
+	<sys:String x:Key="String.LogDataSourceOptionsDialog.Uri">URI</sys:String>
+	<sys:String x:Key="String.LogDataSourceOptionsDialog.UserName">使用者名稱</sys:String>
 	<sys:String x:Key="String.LogDataSourceOptionsDialog.WorkingDirectory">工作目錄</sys:String>
 
 	<!-- LogLevel -->

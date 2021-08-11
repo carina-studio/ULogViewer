@@ -115,16 +115,7 @@
 							</DataTemplate>
 						</ComboBox.ItemTemplate>
 					</ComboBox>
-					<Button Classes="Browse" Command="{Binding $parent[Window].SetDataSourceOptions}" Content="{DynamicResource String.LogProfileEditorDialog.DataSourceOptions}" Grid.Column="1">
-						<ia:Interaction.Behaviors>
-							<iaCore:DataTriggerBehavior Binding="{Binding #dataSourceProviderComboBox.SelectedItem.UnderlyingSource}" ComparisonCondition="Equal" Value="Undefined">
-								<iaCore:ChangePropertyAction PropertyName="IsEnabled" Value="False"/>
-							</iaCore:DataTriggerBehavior>
-							<iaCore:DataTriggerBehavior Binding="{Binding #dataSourceProviderComboBox.SelectedItem.UnderlyingSource}" ComparisonCondition="NotEqual" Value="Undefined">
-								<iaCore:ChangePropertyAction PropertyName="IsEnabled" Value="True"/>
-							</iaCore:DataTriggerBehavior>
-						</ia:Interaction.Behaviors>
-					</Button>
+					<Button Classes="Browse" Command="{Binding $parent[Window].SetDataSourceOptions}" Content="{DynamicResource String.LogProfileEditorDialog.DataSourceOptions}" Grid.Column="1" IsEnabled="{Binding #dataSourceProviderComboBox.SelectedItem.SupportedSourceOptions.Count}"/>
 				</Grid>
 				<TextBlock Classes="Dialog_Description_Error" IsVisible="{Binding !$parent[Window].IsValidDataSourceOptions}" Text="{DynamicResource String.LogProfileEditorDialog.InvalidDataSourceOptions}"/>
 				<Separator Classes="Dialog_Separator_Horizontal"/>

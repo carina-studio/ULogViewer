@@ -90,141 +90,20 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		/// <summary>
-		/// Get or set command to start process.
-		/// </summary>
-		/// <remarks>Available for <see cref="UnderlyingLogDataSource.StandardOutput"/>.</remarks>
-		public string? Command { get; set; }
-
-
-		/// <summary>
-		/// Create <see cref="LogDataSourceOptions"/> for <see cref="UnderlyingLogDataSource.Database"/> case.
-		/// </summary>
-		/// <param name="fileName">File name.</param>
-		/// <param name="queryString">Query string.</param>
-		public static LogDataSourceOptions CreateForDatabase(string fileName, string queryString) => CreateForDatabase(fileName, queryString, null);
-
-
-		/// <summary>
-		/// Create <see cref="LogDataSourceOptions"/> for <see cref="UnderlyingLogDataSource.Database"/> case.
-		/// </summary>
-		/// <param name="fileName">File name.</param>
-		/// <param name="queryString">Query string.</param>
-		/// <param name="password">Password.</param>
-		public static LogDataSourceOptions CreateForDatabase(string fileName, string queryString, string? password = null) => new LogDataSourceOptions()
-		{
-			FileName = fileName,
-			Password = password,
-			QueryString = queryString,
-		};
-
-
-		/// <summary>
-		/// Create <see cref="LogDataSourceOptions"/> for <see cref="UnderlyingLogDataSource.Database"/> case.
-		/// </summary>
-		/// <param name="uri">URI of database.</param>
-		/// <param name="queryString">Query string.</param>
-		public static LogDataSourceOptions CreateForDatabase(Uri uri, string queryString) => CreateForDatabase(uri, queryString, null, null);
-
-
-		/// <summary>
-		/// Create <see cref="LogDataSourceOptions"/> for <see cref="UnderlyingLogDataSource.Database"/> case.
-		/// </summary>
-		/// <param name="uri">URI of database.</param>
-		/// <param name="queryString">Query string.</param>
-		/// <param name="userName">User name.</param>
-		/// <param name="password">Password.</param>
-		public static LogDataSourceOptions CreateForDatabase(Uri uri, string queryString, string? userName = null, string? password = null) => new LogDataSourceOptions()
-		{
-			QueryString = queryString,
-			Password = password,
-			Uri = uri,
-			UserName = userName,
-		};
-
-
-		/// <summary>
-		/// Create <see cref="LogDataSourceOptions"/> for <see cref="UnderlyingLogDataSource.File"/> case.
-		/// </summary>
-		/// <param name="fileName">File name.</param>
-		/// <param name="encoding">Text encoding.</param>
-		public static LogDataSourceOptions CreateForFile(string fileName, Encoding? encoding = null) => new LogDataSourceOptions()
-		{
-			Encoding = encoding,
-			FileName = fileName,
-		};
-
-
-		/// <summary>
-		/// Create <see cref="LogDataSourceOptions"/> for <see cref="UnderlyingLogDataSource.StandardOutput"/> case.
-		/// </summary>
-		/// <param name="command">Command.</param>
-		/// <param name="workingDirectory">Working directory.</param>
-		/// <param name="setupCommands">Commands before executing <paramref name="command"/>.</param>
-		/// <param name="teardownCommands">Commands after executing <paramref name="command"/>.</param>
-		public static LogDataSourceOptions CreateForStandardOutput(string command, string? workingDirectory = null, IList<string>? setupCommands = null, IList<string>? teardownCommands = null) => new LogDataSourceOptions()
-		{
-			Command = command,
-			SetupCommands = setupCommands ?? emptyCommands,
-			TeardownCommands = teardownCommands ?? emptyCommands,
-			WorkingDirectory = workingDirectory,
-		};
-
-
-		/// <summary>
-		/// Create <see cref="LogDataSourceOptions"/> for <see cref="UnderlyingLogDataSource.Tcp"/> case.
-		/// </summary>
-		/// <param name="uri">Uri of TCP server.</param>
-		public static LogDataSourceOptions CreateForTcp(Uri uri) => new LogDataSourceOptions()
-		{
-			Uri = uri,
-		};
-
-
-		/// <summary>
-		/// Create <see cref="LogDataSourceOptions"/> for <see cref="UnderlyingLogDataSource.Udp"/> case.
-		/// </summary>
-		/// <param name="uri">Uri of UDP server.</param>
-		public static LogDataSourceOptions CreateForUdp(Uri uri) => new LogDataSourceOptions()
-		{
-			Uri = uri,
-		};
-
-
-		/// <summary>
-		/// Create <see cref="LogDataSourceOptions"/> for <see cref="UnderlyingLogDataSource.WebRequest"/> case.
-		/// </summary>
-		/// <param name="uri">Uri of request.</param>
-		/// <param name="userName">User name.</param>
-		/// <param name="password">Password.</param>
-		public static LogDataSourceOptions CreateForWebRequest(Uri uri, string? userName = null, string? password = null) => new LogDataSourceOptions()
-		{
-			Password = password,
-			Uri = uri,
-			UserName = userName,
-		};
-
-
-		/// <summary>
-		/// Create <see cref="LogDataSourceOptions"/> for <see cref="UnderlyingLogDataSource.WindowsEventLogs"/> case.
-		/// </summary>
-		/// <param name="category">Category of windows event logs.</param>
-		public static LogDataSourceOptions CreateForWindowsEventLogs(string category) => new LogDataSourceOptions()
-		{
-			Category = category,
-		};
-
-
-		/// <summary>
 		/// Get or set category to read log data.
 		/// </summary>
-		/// <remarks>Available for <see cref="UnderlyingLogDataSource.WindowsEventLogs"/>.</remarks>
 		public string? Category { get; set; }
+
+
+		/// <summary>
+		/// Get or set command to start process.
+		/// </summary>
+		public string? Command { get; set; }
 
 
 		/// <summary>
 		/// Get or set encoding of text.
 		/// </summary>
-		/// <remarks>Available for <see cref="UnderlyingLogDataSource.File"/>.</remarks>
 		public Encoding? Encoding { get; set; }
 
 
@@ -252,7 +131,6 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// <summary>
 		/// Get or set name of file to open.
 		/// </summary>
-		/// <remarks>Available for <see cref="UnderlyingLogDataSource.Database"/> and <see cref="UnderlyingLogDataSource.File"/>.</remarks>
 		public string? FileName { get; set; }
 
 
@@ -319,21 +197,18 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// <summary>
 		/// Get or set command to start process.
 		/// </summary>
-		/// <remarks>Available for <see cref="UnderlyingLogDataSource.Database"/> and <see cref="UnderlyingLogDataSource.WebRequest"/>.</remarks>
 		public string? Password { get; set; }
 
 
 		/// <summary>
 		/// Get or set query string.
 		/// </summary>
-		/// <remarks>Available for <see cref="UnderlyingLogDataSource.Database"/>.</remarks>
 		public string? QueryString { get; set; }
 
 
 		/// <summary>
 		/// Get or set commands before executing <see cref="Command"/>.
 		/// </summary>
-		/// <remarks>Available for <see cref="UnderlyingLogDataSource.StandardOutput"/>.</remarks>
 		public IList<string> SetupCommands
 		{
 			get => this.setupCommands ?? emptyCommands;
@@ -360,7 +235,6 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// <summary>
 		/// Get or set commands after executing <see cref="Command"/>.
 		/// </summary>
-		/// <remarks>Available for <see cref="UnderlyingLogDataSource.StandardOutput"/>.</remarks>
 		public IList<string> TeardownCommands
 		{
 			get => this.teardownCommands ?? emptyCommands;
@@ -371,21 +245,18 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// <summary>
 		/// Get or set user name.
 		/// </summary>
-		/// <remarks>Available for <see cref="UnderlyingLogDataSource.Database"/> and <see cref="UnderlyingLogDataSource.WebRequest"/>.</remarks>
 		public string? UserName { get; set; }
 
 
 		/// <summary>
 		/// Get or set URI to connect.
 		/// </summary>
-		/// <remarks>Available for <see cref="UnderlyingLogDataSource.Database"/>, <see cref="UnderlyingLogDataSource.Tcp"/>, <see cref="UnderlyingLogDataSource.Udp"/> and <see cref="UnderlyingLogDataSource.WebRequest"/>.</remarks>
 		public Uri? Uri { get; set; }
 
 
 		/// <summary>
 		/// Path of working directory.
 		/// </summary>
-		/// <remarks>Available for <see cref="UnderlyingLogDataSource.StandardOutput"/>.</remarks>
 		public string? WorkingDirectory { get; set; }
 	}
 
