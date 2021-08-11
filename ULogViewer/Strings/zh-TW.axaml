@@ -57,7 +57,7 @@
 	<sys:String x:Key="String.Common.MoveUp">上移</sys:String>
 	<sys:String x:Key="String.Common.NewLine">換行</sys:String>
 	<sys:String x:Key="String.Common.No">否</sys:String>
-	<sys:String x:Key="String.Common.OK">好</sys:String>
+	<sys:String x:Key="String.Common.OK">確定</sys:String>
 	<sys:String x:Key="String.Common.Options">選項</sys:String>
 	<sys:String x:Key="String.Common.RegularExpression">正規表示式</sys:String>
 	<sys:String x:Key="String.Common.RegularExpression.Reference">語法說明</sys:String>
