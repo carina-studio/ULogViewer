@@ -120,6 +120,34 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		protected abstract ILogDataSource CreateSourceCore(LogDataSourceOptions options);
 
 
+		/// <summary>
+		/// Get the set of name of options which are required by creating <see cref="ILogDataSource"/>.
+		/// </summary>
+		public abstract ISet<string> RequiredSourceOptions { get; }
+
+
+		/// <summary>
+		/// Get the set of name of options which are supported by this provider and created <see cref="ILogDataSource"/>.
+		/// </summary>
+		public abstract ISet<string> SupportedSourceOptions { get; }
+
+
+		/// <summary>
+		/// Validate whether given options are valid for creating <see cref="ILogDataSource"/> or not.
+		/// </summary>
+		/// <param name="options">Options to check.</param>
+		/// <returns>True if options are valid for creating <see cref="ILogDataSource"/>.</returns>
+		public virtual bool ValidateSourceOptions(LogDataSourceOptions options)
+		{
+			foreach (var optionName in this.RequiredSourceOptions)
+			{
+				if (!options.IsOptionSet(optionName))
+					return false;
+			}
+			return true;
+		}
+
+
 		// Interface implementations.
 		public int ActiveSourceCount { get => this.activeSources.Count; }
 		public virtual bool AllowMultipleSources => true;

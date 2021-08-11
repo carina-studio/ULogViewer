@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CarinaStudio.Collections;
+using System;
+using System.Collections.Generic;
 
 namespace CarinaStudio.ULogViewer.Logs.DataSources
 {
@@ -22,6 +24,16 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		// Implementations.
 		protected override ILogDataSource CreateSourceCore(LogDataSourceOptions options) => new HttpLogDataSource(this, options);
 		public override string Name => "Http";
+		public override ISet<string> RequiredSourceOptions => new HashSet<string>()
+		{
+			nameof(LogDataSourceOptions.Uri),
+		}.AsReadOnly();
+		public override ISet<string> SupportedSourceOptions => new HashSet<string>()
+		{
+			nameof(LogDataSourceOptions.Password),
+			nameof(LogDataSourceOptions.Uri),
+			nameof(LogDataSourceOptions.UserName),
+		}.AsReadOnly();
 		public override UnderlyingLogDataSource UnderlyingSource => UnderlyingLogDataSource.WebRequest;
 	}
 }

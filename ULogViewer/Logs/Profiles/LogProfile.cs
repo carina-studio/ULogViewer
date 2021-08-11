@@ -896,84 +896,50 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		void SaveDataSourceToJson(Utf8JsonWriter writer)
 		{
 			var crypto = (Crypto?)null;
+			var provider = this.dataSourceProvider;
 			var options = this.dataSourceOptions;
 			try
 			{
 				writer.WriteStartObject();
-				writer.WriteString("Name", this.dataSourceProvider.Name);
-				switch (this.dataSourceProvider.UnderlyingSource)
+				writer.WriteString("Name", provider.Name);
+				foreach (var optionName in provider.SupportedSourceOptions)
 				{
-					case UnderlyingLogDataSource.Database:
-						options.FileName?.Let(it => writer.WriteString(nameof(LogDataSourceOptions.FileName), it));
-						options.QueryString?.Let(it => writer.WriteString(nameof(LogDataSourceOptions.QueryString), it));
-						options.Password?.Let(it =>
+					if (!options.IsOptionSet(optionName))
+						continue;
+					var option = options.GetOption(optionName);
+					if (option is string strOption)
+					{
+						switch (optionName)
 						{
-							if (crypto == null)
-								crypto = new Crypto(this.Application);
-							writer.WriteString(nameof(LogDataSourceOptions.Password), crypto.Encrypt(it));
-						});
-						options.Uri?.Let(it => writer.WriteString(nameof(LogDataSourceOptions.Uri), it.ToString()));
-						options.UserName?.Let(it =>
-						{
-							if (crypto == null)
-								crypto = new Crypto(this.Application);
-							writer.WriteString(nameof(LogDataSourceOptions.UserName), crypto.Encrypt(it));
-						});
-						break;
-					case UnderlyingLogDataSource.File:
-						options.Encoding?.Let(it => writer.WriteString(nameof(LogDataSourceOptions.Encoding), it.ToString()));
-						options.FileName?.Let(it => writer.WriteString(nameof(LogDataSourceOptions.FileName), it));
-						break;
-					case UnderlyingLogDataSource.StandardOutput:
-						options.Command?.Let(it => writer.WriteString(nameof(LogDataSourceOptions.Command), it));
-						options.SetupCommands.Let(it =>
-						{
-							if (it.IsNotEmpty())
-							{
-								writer.WritePropertyName(nameof(LogDataSourceOptions.SetupCommands));
-								writer.WriteStartArray();
-								foreach (var command in it)
-									writer.WriteStringValue(command);
-								writer.WriteEndArray();
-							}
-						});
-						options.TeardownCommands.Let(it =>
-						{
-							if (it.IsNotEmpty())
-							{
-								writer.WritePropertyName(nameof(LogDataSourceOptions.TeardownCommands));
-								writer.WriteStartArray();
-								foreach (var command in it)
-									writer.WriteStringValue(command);
-								writer.WriteEndArray();
-							}
-						});
-						options.WorkingDirectory?.Let(it => writer.WriteString(nameof(LogDataSourceOptions.WorkingDirectory), it));
-						break;
-					case UnderlyingLogDataSource.Tcp:
-						options.Uri?.Let(it => writer.WriteString(nameof(LogDataSourceOptions.Uri), it.ToString()));
-						break;
-					case UnderlyingLogDataSource.Udp:
-						options.Uri?.Let(it => writer.WriteString(nameof(LogDataSourceOptions.Uri), it.ToString()));
-						break;
-					case UnderlyingLogDataSource.WebRequest:
-						options.Password?.Let(it =>
-						{
-							if (crypto == null)
-								crypto = new Crypto(this.Application);
-							writer.WriteString(nameof(LogDataSourceOptions.Password), crypto.Encrypt(it));
-						});
-						options.Uri?.Let(it => writer.WriteString(nameof(LogDataSourceOptions.Uri), it.ToString()));
-						options.UserName?.Let(it =>
-						{
-							if (crypto == null)
-								crypto = new Crypto(this.Application);
-							writer.WriteString(nameof(LogDataSourceOptions.UserName), crypto.Encrypt(it));
-						});
-						break;
-					case UnderlyingLogDataSource.WindowsEventLogs:
-						options.Category?.Let(it => writer.WriteString(nameof(LogDataSourceOptions.Category), it.ToString()));
-						break;
+							case nameof(LogDataSourceOptions.Password):
+							case nameof(LogDataSourceOptions.UserName):
+								if (crypto == null)
+									crypto = new Crypto(this.Application);
+								writer.WriteString(optionName, crypto.Encrypt(strOption));
+								break;
+							default:
+								writer.WriteString(optionName, strOption);
+								break;
+						}
+					}
+					else if (option is IList<string> strListOption)
+					{
+						writer.WritePropertyName(optionName);
+						writer.WriteStartArray();
+						foreach (var str in strListOption)
+							writer.WriteStringValue(str);
+						writer.WriteEndArray();
+					}
+					else if (option is bool boolOption)
+						writer.WriteBoolean(optionName, boolOption);
+					else if (option is double doubleOption)
+						writer.WriteNumber(optionName, doubleOption);
+					else if (option is int intOption)
+						writer.WriteNumber(optionName, intOption);
+					else if (option is long longOption)
+						writer.WriteNumber(optionName, longOption);
+					else if (option != null)
+						writer.WriteString(optionName, option.ToString());
 				}
 				writer.WriteEndObject();
 			}

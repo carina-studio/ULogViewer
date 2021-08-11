@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace CarinaStudio.ULogViewer.Logs.DataSources
@@ -46,9 +47,29 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		/// <summary>
+		/// Get the set of name of options which are required by creating <see cref="ILogDataSource"/>.
+		/// </summary>
+		ISet<string> RequiredSourceOptions { get; }
+
+
+		/// <summary>
+		/// Get the set of name of options which are supported by this provider and created <see cref="ILogDataSource"/>.
+		/// </summary>
+		ISet<string> SupportedSourceOptions { get; }
+
+
+		/// <summary>
 		/// Get underlying source of log.
 		/// </summary>
 		UnderlyingLogDataSource UnderlyingSource { get; }
+
+
+		/// <summary>
+		/// Validate whether given options are valid for creating <see cref="ILogDataSource"/> or not.
+		/// </summary>
+		/// <param name="options">Options to check.</param>
+		/// <returns>True if options are valid for creating <see cref="ILogDataSource"/>.</returns>
+		bool ValidateSourceOptions(LogDataSourceOptions options);
 	}
 
 
@@ -59,6 +80,8 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 	{
 		// Static fields.
 		static readonly IList<string> emptyCommands = new string[0];
+		static volatile bool isOptionPropertyInfoMapReady;
+		static readonly Dictionary<string, PropertyInfo> optionPropertyInfoMap = new Dictionary<string, PropertyInfo>();
 
 
 		// Fields.
@@ -249,33 +272,36 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		/// <summary>
-		/// Check whether <see cref="Category"/> is non-empty or not.
+		/// Get specific option.
 		/// </summary>
-		public bool HasCategory { get => !string.IsNullOrWhiteSpace(this.Category); }
+		/// <param name="optionName">Name of option to get.</param>
+		/// <returns>Value of option.</returns>
+		public object? GetOption(string optionName)
+		{
+			SetupOptionPropertyInfoMap();
+			if (optionPropertyInfoMap.TryGetValue(optionName, out var propertyInfo))
+				return propertyInfo?.GetValue(this);
+			return null;
+		}
 
 
 		/// <summary>
-		/// Check whether <see cref="Command"/> is non-empty or not.
+		/// Check whether given option has been set with value or not.
 		/// </summary>
-		public bool HasCommand { get => !string.IsNullOrWhiteSpace(this.Command); }
-
-
-		/// <summary>
-		/// Check whether <see cref="FileName"/> is non-empty or not.
-		/// </summary>
-		public bool HasFileName { get => !string.IsNullOrWhiteSpace(this.FileName); }
-
-
-		/// <summary>
-		/// Check whether <see cref="QueryString"/> is non-empty or not.
-		/// </summary>
-		public bool HasQueryString { get => !string.IsNullOrWhiteSpace(this.QueryString); }
-
-
-		/// <summary>
-		/// Check whether <see cref="WorkingDirectory"/> is non-empty or not.
-		/// </summary>
-		public bool HasWorkingDirectory { get => !string.IsNullOrWhiteSpace(this.WorkingDirectory); }
+		/// <param name="optionName">Name of option.</param>
+		/// <returns>True if option has been set with value.</returns>
+		public bool IsOptionSet(string optionName)
+		{
+			SetupOptionPropertyInfoMap();
+			if (!optionPropertyInfoMap.TryGetValue(optionName, out var propertyInfo) || propertyInfo == null)
+				return false;
+			var type = propertyInfo.PropertyType;
+			if (type == typeof(string))
+				return !string.IsNullOrWhiteSpace(propertyInfo.GetValue(this) as string);
+			if (type == typeof(IList<string>))
+				return (propertyInfo.GetValue(this) as IList<string>)?.Count > 0;
+			return propertyInfo.GetValue(this) != null;
+		}
 
 
 		/// <summary>
@@ -315,6 +341,22 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		}
 
 
+		// Setup table of property info of options.
+		static void SetupOptionPropertyInfoMap()
+		{
+			if (isOptionPropertyInfoMapReady)
+				return;
+			lock (typeof(LogDataSourceOptions))
+			{
+				if (isOptionPropertyInfoMapReady)
+					return;
+				foreach (var propertyInfo in typeof(LogDataSourceOptions).GetProperties())
+					optionPropertyInfoMap[propertyInfo.Name] = propertyInfo;
+				isOptionPropertyInfoMapReady = true;
+			}
+		}
+
+
 		/// <summary>
 		/// Get or set commands after executing <see cref="Command"/>.
 		/// </summary>
@@ -341,26 +383,33 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		/// <summary>
-		/// Validate whether current fields match the minimum requirement for given <see cref="UnderlyingLogDataSource"/> or not.
-		/// </summary>
-		/// <param name="source"><see cref="UnderlyingLogDataSource"/>.</param>
-		/// <returns>True if current fields match the minimum requirement.</returns>
-		public bool Validate(UnderlyingLogDataSource source) => source switch
-		{
-			UnderlyingLogDataSource.Database => this.HasQueryString,
-			UnderlyingLogDataSource.StandardOutput => this.HasCommand,
-			UnderlyingLogDataSource.Tcp => this.Uri != null,
-			UnderlyingLogDataSource.Udp => this.Uri != null,
-			UnderlyingLogDataSource.WebRequest => this.Uri != null,
-			UnderlyingLogDataSource.WindowsEventLogs => this.HasCategory,
-			_ => true,
-		};
-
-
-		/// <summary>
 		/// Path of working directory.
 		/// </summary>
 		/// <remarks>Available for <see cref="UnderlyingLogDataSource.StandardOutput"/>.</remarks>
 		public string? WorkingDirectory { get; set; }
+	}
+
+
+	/// <summary>
+	/// Extensions for <see cref="ILogDataSourceProvider"/>.
+	/// </summary>
+	static class LogDataSourceProviderExtensions
+	{
+		/// <summary>
+		/// Check whether given option is reqired for creating <see cref="ILogDataSource"/> or not.
+		/// </summary>
+		/// <param name="provider"><see cref="ILogDataSourceProvider"/>.</param>
+		/// <param name="optionName">Name of option to check.</param>
+		/// <returns>True if given option is reqired for creating <see cref="ILogDataSource"/>.</returns>
+		public static bool IsSourceOptionRequired(this ILogDataSourceProvider provider, string optionName) => provider.RequiredSourceOptions.Contains(optionName);
+
+
+		/// <summary>
+		/// Check whether given option is supported for creating <see cref="ILogDataSource"/> or not.
+		/// </summary>
+		/// <param name="provider"><see cref="ILogDataSourceProvider"/>.</param>
+		/// <param name="optionName">Name of option to check.</param>
+		/// <returns>True if given option is supported for creating <see cref="ILogDataSource"/>.</returns>
+		public static bool IsSourceOptionSupported(this ILogDataSourceProvider provider, string optionName) => provider.SupportedSourceOptions.Contains(optionName);
 	}
 }

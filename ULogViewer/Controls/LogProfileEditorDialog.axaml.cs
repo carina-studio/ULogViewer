@@ -608,10 +608,21 @@ namespace CarinaStudio.ULogViewer.Controls
 			var dataSourceProvider = (this.dataSourceProviderComboBox.SelectedItem as ILogDataSourceProvider);
 			if (dataSourceProvider == null)
 				return false;
-			if (!this.dataSourceOptions.Validate(dataSourceProvider.UnderlyingSource))
+			foreach (var optionName in dataSourceProvider.RequiredSourceOptions)
 			{
-				this.SetValue<bool>(IsValidDataSourceOptionsProperty, false);
-				return false;
+				switch (optionName)
+				{
+					case nameof(LogDataSourceOptions.Category):
+					case nameof(LogDataSourceOptions.Command):
+					case nameof(LogDataSourceOptions.QueryString):
+					case nameof(LogDataSourceOptions.Uri):
+						if (!this.dataSourceOptions.IsOptionSet(optionName))
+						{
+							this.SetValue<bool>(IsValidDataSourceOptionsProperty, false);
+							return false;
+						}
+						break;
+				}
 			}
 			this.SetValue<bool>(IsValidDataSourceOptionsProperty, true);
 

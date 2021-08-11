@@ -280,13 +280,11 @@
 	<sys:String x:Key="String.Session.Empty">Empty Tab</sys:String>
 
 	<!-- SessionView -->
-	<sys:String x:Key="String.SessionView.AddDatabaseFiles">Add database files</sys:String>
 	<sys:String x:Key="String.SessionView.AddLogFiles">Add log files</sys:String>
 	<sys:String x:Key="String.SessionView.AllLogCount">Total: </sys:String>
 	<sys:String x:Key="String.SessionView.AllLogLevels">All levels</sys:String>
 	<sys:String x:Key="String.SessionView.AppInfo">About ULogViewer…</sys:String>
 	<sys:String x:Key="String.SessionView.AppOptions">Options…</sys:String>
-	<sys:String x:Key="String.SessionView.ClearDatabaseFiles">Clear all added database files</sys:String>
 	<sys:String x:Key="String.SessionView.ClearLogFiles">Clear all added log files</sys:String>
 	<sys:String x:Key="String.SessionView.ClearPredefinedLogTextFiltersSelection">Clear selection</sys:String>
 	<sys:String x:Key="String.SessionView.CopyLogs">Copy logs</sys:String>

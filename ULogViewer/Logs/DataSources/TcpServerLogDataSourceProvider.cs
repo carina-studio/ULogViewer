@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CarinaStudio.Collections;
+using System;
+using System.Collections.Generic;
 
 namespace CarinaStudio.ULogViewer.Logs.DataSources
 {
@@ -18,6 +20,14 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		// Implementations.
 		protected override ILogDataSource CreateSourceCore(LogDataSourceOptions options) => new TcpServerLogDataSource(this, options);
 		public override string Name => "TCP Server";
+		public override ISet<string> RequiredSourceOptions => new HashSet<string>()
+		{
+			nameof(LogDataSourceOptions.Uri),
+		}.AsReadOnly();
+		public override ISet<string> SupportedSourceOptions => new HashSet<string>()
+		{
+			nameof(LogDataSourceOptions.Uri),
+		}.AsReadOnly();
 		public override UnderlyingLogDataSource UnderlyingSource => UnderlyingLogDataSource.Tcp;
 	}
 }
