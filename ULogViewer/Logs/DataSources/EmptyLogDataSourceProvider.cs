@@ -22,6 +22,5 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		public override string Name => "Empty";
 		public override ISet<string> RequiredSourceOptions => new HashSet<string>().AsReadOnly();
 		public override ISet<string> SupportedSourceOptions => new HashSet<string>().AsReadOnly();
-		public override UnderlyingLogDataSource UnderlyingSource => UnderlyingLogDataSource.Undefined;
 	}
 }

@@ -354,6 +354,5 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		public ILogDataSourceProvider Provider { get; }
 		public SynchronizationContext SynchronizationContext => this.Provider.SynchronizationContext;
 		public LogDataSourceState State { get => this.state; }
-		public UnderlyingLogDataSource UnderlyingSource => this.Provider.UnderlyingSource;
 	}
 }

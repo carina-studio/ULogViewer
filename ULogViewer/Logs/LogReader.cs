@@ -659,8 +659,8 @@ namespace CarinaStudio.ULogViewer.Logs
 			var logBuilder = new LogBuilder();
 			var syncContext = this.SynchronizationContext;
 			var isContinuousReading = this.isContinuousReading;
-			var isReadingFromFile = this.DataSource.UnderlyingSource == UnderlyingLogDataSource.File;
 			var dataSourceOptions = this.DataSource.CreationOptions;
+			var isReadingFromFile = dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName));
 			var stringPool = new StringPool();
 			var exception = (Exception?)null;
 			var stopWatch = new Stopwatch().Also(it => it.Start());
@@ -982,11 +982,9 @@ namespace CarinaStudio.ULogViewer.Logs
 			this.logsReadingCancellationTokenSource = new CancellationTokenSource();
 			var readingToken = this.logsReadingToken;
 			var cancellationToken = this.logsReadingCancellationTokenSource.Token;
-			var taskFactory = this.DataSource.UnderlyingSource switch
-			{
-				UnderlyingLogDataSource.File => fileReadingTaskFactory,
-				_ => defaultReadingTaskFactory,
-			};
+			var taskFactory = this.DataSource.CreationOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName))
+				? fileReadingTaskFactory
+				: defaultReadingTaskFactory;
 			_ = taskFactory.StartNew(() => this.ReadLogs(readingToken, reader, cancellationToken));
 		}
 

@@ -74,6 +74,9 @@
 	<!-- FileFormat -->
 	<sys:String x:Key="String.FileFormat.Json">JSON 檔案</sys:String>
 
+	<!-- FileLogDataSourceProvider -->
+	<sys:String x:Key="String.FileLogDataSourceProvider.DisplayName">檔案</sys:String>
+
 	<!-- LogColorIndicator -->
 	<sys:String x:Key="String.LogColorIndicator.FileName">檔案</sys:String>
 	<sys:String x:Key="String.LogColorIndicator.None">無</sys:String>
@@ -319,19 +322,15 @@
 	<sys:String x:Key="String.SplashWindow.ShowMainWindow">開啟主視窗</sys:String>
 	<sys:String x:Key="String.SplashWindow.UpdateStyles">正在載入樣式</sys:String>
 
+	<!-- StandardOutputLogDataSourceProvider -->
+	<sys:String x:Key="String.StandardOutputLogDataSourceProvider.DisplayName">標準輸出 (stdout)</sys:String>
+
 	<!-- TcpServerLogDataSourceProvider -->
 	<sys:String x:Key="String.TcpServerLogDataSourceProvider.DisplayName">TCP 伺服器</sys:String>
 
 	<!-- ThemeMode -->
 	<sys:String x:Key="String.ThemeMode.Dark">深色</sys:String>
 	<sys:String x:Key="String.ThemeMode.Light">淺色</sys:String>
-
-	<!-- UnderlyingLogDataSource -->
-	<sys:String x:Key="String.UnderlyingLogDataSource.Database">資料庫</sys:String>
-	<sys:String x:Key="String.UnderlyingLogDataSource.File">檔案</sys:String>
-	<sys:String x:Key="String.UnderlyingLogDataSource.StandardOutput">標準輸出</sys:String>
-	<sys:String x:Key="String.UnderlyingLogDataSource.Undefined">未定義來源</sys:String>
-	<sys:String x:Key="String.UnderlyingLogDataSource.WebRequest">網路</sys:String>
 
 	<!-- VisibleLogPropertyEditorDialog -->
 	<sys:String x:Key="String.VisibleLogPropertyEditorDialog.CustomDisplayName">手動輸入顯示名稱</sys:String>

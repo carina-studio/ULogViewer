@@ -32,6 +32,5 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			nameof(LogDataSourceOptions.TeardownCommands),
 			nameof(LogDataSourceOptions.WorkingDirectory),
 		}.AsReadOnly();
-		public override UnderlyingLogDataSource UnderlyingSource => UnderlyingLogDataSource.StandardOutput;
 	}
 }

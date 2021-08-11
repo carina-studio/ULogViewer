@@ -28,6 +28,5 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		{
 			nameof(LogDataSourceOptions.Uri),
 		}.AsReadOnly();
-		public override UnderlyingLogDataSource UnderlyingSource => UnderlyingLogDataSource.Tcp;
 	}
 }

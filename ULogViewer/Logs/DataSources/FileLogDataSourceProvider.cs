@@ -29,6 +29,5 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			nameof(LogDataSourceOptions.Encoding),
 			nameof(LogDataSourceOptions.FileName),
 		}.AsReadOnly();
-		public override UnderlyingLogDataSource UnderlyingSource => UnderlyingLogDataSource.File;
 	}
 }

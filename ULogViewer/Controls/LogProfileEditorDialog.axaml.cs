@@ -42,8 +42,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Static fields.
 		static readonly SettingKey<bool> HasLearnAboutLogsReadingAndParsingHintShown = new SettingKey<bool>($"{nameof(LogProfileEditorDialog)}.{nameof(HasLearnAboutLogsReadingAndParsingHintShown)}");
 		static readonly AvaloniaProperty<bool> IsValidDataSourceOptionsProperty = AvaloniaProperty.Register<LogProfileEditorDialog, bool>(nameof(IsValidDataSourceOptions), true);
-		static readonly AvaloniaProperty<UnderlyingLogDataSource> UnderlyingDataSourceProperty = AvaloniaProperty.Register<LogProfileEditorDialog, UnderlyingLogDataSource>(nameof(UnderlyingDataSource), UnderlyingLogDataSource.Undefined);
-
+		
 
 		// Fields.
 		readonly ToggleSwitch adminNeededSwitch;
@@ -430,8 +429,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when selection of data source provider changed.
 		void OnDataSourceProviderComboBoxSelectionChanged(object? sender, SelectionChangedEventArgs e)
 		{
-			var dataSourceProvider = (this.dataSourceProviderComboBox.SelectedItem as ILogDataSourceProvider);
-			this.SetValue<UnderlyingLogDataSource>(UnderlyingDataSourceProperty, dataSourceProvider?.UnderlyingSource ?? UnderlyingLogDataSource.Undefined);
 			this.InvalidateInput();
 		}
 
@@ -721,10 +718,6 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.insertLogWritingFormatSyntaxMenu.PlacementTarget = this.insertLogWritingFormatSyntaxButton;
 			this.insertLogWritingFormatSyntaxMenu.Open(this);
 		}
-
-
-		// Get underlying type of log data source.
-		UnderlyingLogDataSource UnderlyingDataSource { get => this.GetValue<UnderlyingLogDataSource>(UnderlyingDataSourceProperty); }
 
 
 		// List of visible log properties.

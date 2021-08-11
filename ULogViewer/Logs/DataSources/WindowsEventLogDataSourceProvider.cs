@@ -17,10 +17,6 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		{ }
 
 
-		// Update display name.
-		protected override string OnUpdateDisplayName() => this.Application.GetStringNonNull("WindowsEventLogDataSourceProvider.DisplayName");
-
-
 		// Implementations.
 		protected override ILogDataSource CreateSourceCore(LogDataSourceOptions options) => new WindowsEventLogDataSource(this, options);
 		public override string Name => "WindowsEventLogs";
@@ -32,6 +28,5 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		{
 			nameof(LogDataSourceOptions.Category),
 		}.AsReadOnly();
-		public override UnderlyingLogDataSource UnderlyingSource => UnderlyingLogDataSource.WindowsEventLogs;
 	}
 }

@@ -18,7 +18,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		// Update display name.
-		protected override string OnUpdateDisplayName() => "HTTP";
+		protected override string OnUpdateDisplayName() => "HTTP/HTTPS";
 
 
 		// Implementations.
@@ -34,6 +34,5 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			nameof(LogDataSourceOptions.Uri),
 			nameof(LogDataSourceOptions.UserName),
 		}.AsReadOnly();
-		public override UnderlyingLogDataSource UnderlyingSource => UnderlyingLogDataSource.WebRequest;
 	}
 }

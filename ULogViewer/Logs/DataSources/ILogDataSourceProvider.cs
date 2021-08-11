@@ -59,12 +59,6 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		/// <summary>
-		/// Get underlying source of log.
-		/// </summary>
-		UnderlyingLogDataSource UnderlyingSource { get; }
-
-
-		/// <summary>
 		/// Validate whether given options are valid for creating <see cref="ILogDataSource"/> or not.
 		/// </summary>
 		/// <param name="options">Options to check.</param>

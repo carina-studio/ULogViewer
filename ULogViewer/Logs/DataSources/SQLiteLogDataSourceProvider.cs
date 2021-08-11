@@ -35,6 +35,5 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			nameof(LogDataSourceOptions.Password),
 			nameof(LogDataSourceOptions.QueryString),
 		}.AsReadOnly();
-		public override UnderlyingLogDataSource UnderlyingSource => UnderlyingLogDataSource.Database;
 	}
 }

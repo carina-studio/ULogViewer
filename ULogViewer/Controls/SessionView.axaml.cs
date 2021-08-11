@@ -367,15 +367,10 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (profile != null)
 			{
 				this.SetValue<bool>(HasLogProfileProperty, true);
-				switch(profile.DataSourceProvider.UnderlyingSource)
-				{
-					case UnderlyingLogDataSource.File:
-						this.isLogFileNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(Settings.SelectLogFilesWhenNeeded);
-						break;
-					case UnderlyingLogDataSource.StandardOutput:
-						this.isWorkingDirNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(Settings.SelectWorkingDirectoryWhenNeeded);
-						break;
-				}
+				if (session.IsLogFileNeeded)
+					this.isLogFileNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(Settings.SelectLogFilesWhenNeeded);
+				else if (session.IsWorkingDirectoryNeeded)
+					this.isWorkingDirNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(Settings.SelectWorkingDirectoryWhenNeeded);
 				this.OnLogProfileSet(profile);
 			}
 
@@ -883,25 +878,29 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// select new log profile
 			var currentLogProfile = session.LogProfile;
-			var needNewLogProfile = currentLogProfile == null ? true : currentLogProfile.DataSourceProvider.UnderlyingSource switch
+			var needNewLogProfile = Global.Run(() =>
 			{
-				UnderlyingLogDataSource.File => filePaths.IsEmpty(),
-				UnderlyingLogDataSource.StandardOutput => filePaths.IsNotEmpty(),
-				_ => false,
-			};
+				if (currentLogProfile == null)
+					return true;
+				if (session.IsLogFileNeeded)
+					return filePaths.IsEmpty();
+				if (session.IsWorkingDirectoryNeeded)
+					return filePaths.IsNotEmpty();
+				return false;
+			});
 			var newLogProfile = !needNewLogProfile ? null : await new LogProfileSelectionDialog().Also(it =>
 			{
 				if (filePaths.IsEmpty())
 				{
 					it.Filter = logProfile =>
 					{
-						return logProfile.DataSourceProvider.UnderlyingSource == UnderlyingLogDataSource.StandardOutput
-							&& logProfile.IsWorkingDirectoryNeeded
-							&& logProfile.DataSourceOptions.WorkingDirectory == null;
+						return (logProfile.DataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.WorkingDirectory))
+							|| logProfile.IsWorkingDirectoryNeeded)
+							&& !logProfile.DataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.WorkingDirectory));
 					};
 				}
 				else
-					it.Filter = logProfile => logProfile.DataSourceProvider.UnderlyingSource == UnderlyingLogDataSource.File;
+					it.Filter = logProfile => logProfile.DataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.FileName));
 			}).ShowDialog<LogProfile>(window);
 
 			// set log profile or create new session
@@ -1931,19 +1930,22 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 
 			// set log profile
-			switch (logProfile.DataSourceProvider.UnderlyingSource)
-			{
-				case UnderlyingLogDataSource.File:
-					this.isLogFileNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(Settings.SelectLogFilesWhenNeeded);
-					break;
-				case UnderlyingLogDataSource.StandardOutput:
-					this.isWorkingDirNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(Settings.SelectWorkingDirectoryWhenNeeded);
-					break;
-			}
 			if (!session.SetLogProfileCommand.TryExecute(logProfile))
 			{
 				this.Logger.LogError("Unable to set log profile to session");
 				return;
+			}
+			if (session.IsLogFileNeeded)
+			{
+				this.isLogFileNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(Settings.SelectLogFilesWhenNeeded);
+				if (this.isLogFileNeededAfterLogProfileSet)
+					this.autoAddLogFilesAction.Schedule();
+			}
+			else if (session.IsWorkingDirectoryNeeded)
+			{
+				this.isWorkingDirNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(Settings.SelectWorkingDirectoryWhenNeeded);
+				if (this.isWorkingDirNeededAfterLogProfileSet)
+					this.autoSetWorkingDirectoryAction.Schedule();
 			}
 			this.OnLogProfileSet(logProfile);
 		}

@@ -202,7 +202,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				this.VerifyBuiltIn();
 				if (this.dataSourceProvider == value)
 					return;
-				if (value.UnderlyingSource == UnderlyingLogDataSource.File && this.isContinuousReading)
+				if (value.IsSourceOptionRequired(nameof(LogDataSourceOptions.FileName)) && this.isContinuousReading)
 					this.IsContinuousReading = false;
 				this.dataSourceProvider = value;
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(DataSourceProvider)));
@@ -343,7 +343,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				this.VerifyBuiltIn();
 				if (this.isContinuousReading == value)
 					return;
-				if (value && this.dataSourceProvider.UnderlyingSource == UnderlyingLogDataSource.File)
+				if (value && this.dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.FileName)))
 					return;
 				this.isContinuousReading = value;
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsContinuousReading)));

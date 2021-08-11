@@ -93,7 +93,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// <returns>Display name.</returns>
 		protected virtual string OnUpdateDisplayName()
 		{
-			return this.Application.GetString($"{this.GetType().Name}.DisplayName") ?? this.Application.GetStringNonNull($"UnderlyingLogDataSource.{this.UnderlyingSource}", this.GetType().Name);
+			return this.Application.GetStringNonNull($"{this.GetType().Name}.DisplayName", this.GetType().Name);
 		}
 
 
@@ -156,6 +156,5 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		public abstract string Name { get; }
 		public event PropertyChangedEventHandler? PropertyChanged;
 		public SynchronizationContext SynchronizationContext => this.Application.SynchronizationContext;
-		public abstract UnderlyingLogDataSource UnderlyingSource { get; }
 	}
 }
