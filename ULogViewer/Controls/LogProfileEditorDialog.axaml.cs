@@ -685,6 +685,25 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Set log data source options.
+		async void SetDataSourceOptions()
+		{
+			var dataSourceProvider = (this.dataSourceProviderComboBox.SelectedItem as ILogDataSourceProvider);
+			if (dataSourceProvider == null)
+				return;
+			var options = await new LogDataSourceOptionsDialog()
+			{
+				Options = this.dataSourceOptions,
+				UnderlyingLogDataSource = dataSourceProvider.UnderlyingSource,
+			}.ShowDialog<LogDataSourceOptions?>(this);
+			if (options != null)
+			{
+				this.dataSourceOptions = options.Value;
+				this.InvalidateInput();
+			}
+		}
+
+
 		// Show menu to insert log writing format syntax.
 		void ShowInsertLogWritingFormatSyntaxMenu()
 		{

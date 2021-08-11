@@ -53,8 +53,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly TextBox fileNameTextBox;
 		readonly ObservableList<string> setupCommands = new ObservableList<string>();
 		readonly ListBox setupCommandsListBox;
+		readonly UriTextBox tcpUriTextBox;
 		readonly ObservableList<string> teardownCommands = new ObservableList<string>();
 		readonly ListBox teardownCommandsListBox;
+		readonly UriTextBox udpUriTextBox;
 		readonly UriTextBox uriTextBox;
 		readonly TextBox workingDirectoryTextBox;
 		readonly TextBox wrPasswordTextBox;
@@ -81,7 +83,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.encodingComboBox = this.FindControl<ComboBox>("encodingComboBox").AsNonNull();
 			this.fileNameTextBox = this.FindControl<TextBox>("fileNameTextBox").AsNonNull();
 			this.setupCommandsListBox = this.FindControl<ListBox>("setupCommandsListBox").AsNonNull();
+			this.tcpUriTextBox = this.FindControl<UriTextBox>("tcpUriTextBox").AsNonNull();
 			this.teardownCommandsListBox = this.FindControl<ListBox>("teardownCommandsListBox").AsNonNull();
+			this.udpUriTextBox = this.FindControl<UriTextBox>("udpUriTextBox").AsNonNull();
 			this.uriTextBox = this.FindControl<UriTextBox>("uriTextBox").AsNonNull();
 			this.workingDirectoryTextBox = this.FindControl<TextBox>("workingDirectoryTextBox").AsNonNull();
 			this.wrPasswordTextBox = this.FindControl<TextBox>("wrPasswordTextBox").AsNonNull();
@@ -226,6 +230,12 @@ namespace CarinaStudio.ULogViewer.Controls
 					options.TeardownCommands = this.teardownCommands;
 					options.WorkingDirectory = this.workingDirectoryTextBox.Text?.Trim();
 					break;
+				case UnderlyingLogDataSource.Tcp:
+					options.Uri = this.tcpUriTextBox.Uri.AsNonNull();
+					break;
+				case UnderlyingLogDataSource.Udp:
+					options.Uri = this.udpUriTextBox.Uri.AsNonNull();
+					break;
 				case UnderlyingLogDataSource.WebRequest:
 					options.Password = this.wrPasswordTextBox.Text?.Trim();
 					options.Uri = this.uriTextBox.Uri.AsNonNull();
@@ -291,6 +301,14 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.workingDirectoryTextBox.Text = options.WorkingDirectory;
 					this.commandTextBox.Focus();
 					break;
+				case UnderlyingLogDataSource.Tcp:
+					this.tcpUriTextBox.Uri = options.Uri;
+					this.tcpUriTextBox.Focus();
+					break;
+				case UnderlyingLogDataSource.Udp:
+					this.udpUriTextBox.Uri = options.Uri;
+					this.udpUriTextBox.Focus();
+					break;
 				case UnderlyingLogDataSource.WebRequest:
 					this.uriTextBox.Uri = options.Uri;
 					this.wrPasswordTextBox.Text = options.Password?.Trim();
@@ -331,6 +349,10 @@ namespace CarinaStudio.ULogViewer.Controls
 					return true;
 				case UnderlyingLogDataSource.StandardOutput:
 					return !string.IsNullOrEmpty(this.commandTextBox.Text?.Trim());
+				case UnderlyingLogDataSource.Tcp:
+					return this.tcpUriTextBox.Let(it => it.Validate() && it.Uri != null);
+				case UnderlyingLogDataSource.Udp:
+					return this.udpUriTextBox.Let(it => it.Validate() && it.Uri != null);
 				case UnderlyingLogDataSource.WebRequest:
 					return this.uriTextBox.Let(it => it.Validate() && it.Uri != null);
 				case UnderlyingLogDataSource.WindowsEventLogs:

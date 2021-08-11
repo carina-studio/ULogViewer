@@ -950,6 +950,12 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 						});
 						options.WorkingDirectory?.Let(it => writer.WriteString(nameof(LogDataSourceOptions.WorkingDirectory), it));
 						break;
+					case UnderlyingLogDataSource.Tcp:
+						options.Uri?.Let(it => writer.WriteString(nameof(LogDataSourceOptions.Uri), it.ToString()));
+						break;
+					case UnderlyingLogDataSource.Udp:
+						options.Uri?.Let(it => writer.WriteString(nameof(LogDataSourceOptions.Uri), it.ToString()));
+						break;
 					case UnderlyingLogDataSource.WebRequest:
 						options.Password?.Let(it =>
 						{

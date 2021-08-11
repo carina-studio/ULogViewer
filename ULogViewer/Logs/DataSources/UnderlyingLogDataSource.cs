@@ -24,6 +24,14 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// </summary>
 		StandardOutput,
 		/// <summary>
+		/// TCP network.
+		/// </summary>
+		Tcp,
+		/// <summary>
+		/// UDP network.
+		/// </summary>
+		Udp,
+		/// <summary>
 		/// Web request.
 		/// </summary>
 		WebRequest,

@@ -91,7 +91,10 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// Called to update <see cref="DisplayName"/>.
 		/// </summary>
 		/// <returns>Display name.</returns>
-		protected virtual string OnUpdateDisplayName() => this.Application.GetStringNonNull($"UnderlyingLogDataSource.{this.UnderlyingSource}", this.GetType().Name);
+		protected virtual string OnUpdateDisplayName()
+		{
+			return this.Application.GetString($"{this.GetType().Name}.DisplayName") ?? this.Application.GetStringNonNull($"UnderlyingLogDataSource.{this.UnderlyingSource}", this.GetType().Name);
+		}
 
 
 		// Create source.

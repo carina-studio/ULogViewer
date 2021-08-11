@@ -333,6 +333,9 @@
 	<sys:String x:Key="String.SplashWindow.ShowMainWindow">Showing main window</sys:String>
 	<sys:String x:Key="String.SplashWindow.UpdateStyles">Loading styles</sys:String>
 
+	<!-- TcpServerLogDataSourceProvider -->
+	<sys:String x:Key="String.TcpServerLogDataSourceProvider.DisplayName">TCP Server</sys:String>
+
 	<!-- ThemeMode -->
 	<sys:String x:Key="String.ThemeMode.Dark">Dark</sys:String>
 	<sys:String x:Key="String.ThemeMode.Light">Light</sys:String>
@@ -341,6 +344,8 @@
 	<sys:String x:Key="String.UnderlyingLogDataSource.Database">Database</sys:String>
 	<sys:String x:Key="String.UnderlyingLogDataSource.File">File</sys:String>
 	<sys:String x:Key="String.UnderlyingLogDataSource.StandardOutput">Standard output</sys:String>
+	<sys:String x:Key="String.UnderlyingLogDataSource.Tcp">TCP</sys:String>
+	<sys:String x:Key="String.UnderlyingLogDataSource.Udp">UDP</sys:String>
 	<sys:String x:Key="String.UnderlyingLogDataSource.Undefined">Undefined source</sys:String>
 	<sys:String x:Key="String.UnderlyingLogDataSource.WebRequest">Network</sys:String>
 

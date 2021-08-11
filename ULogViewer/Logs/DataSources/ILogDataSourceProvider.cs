@@ -148,6 +148,26 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		/// <summary>
+		/// Create <see cref="LogDataSourceOptions"/> for <see cref="UnderlyingLogDataSource.Tcp"/> case.
+		/// </summary>
+		/// <param name="uri">Uri of TCP server.</param>
+		public static LogDataSourceOptions CreateForTcp(Uri uri) => new LogDataSourceOptions()
+		{
+			Uri = uri,
+		};
+
+
+		/// <summary>
+		/// Create <see cref="LogDataSourceOptions"/> for <see cref="UnderlyingLogDataSource.Udp"/> case.
+		/// </summary>
+		/// <param name="uri">Uri of UDP server.</param>
+		public static LogDataSourceOptions CreateForUdp(Uri uri) => new LogDataSourceOptions()
+		{
+			Uri = uri,
+		};
+
+
+		/// <summary>
 		/// Create <see cref="LogDataSourceOptions"/> for <see cref="UnderlyingLogDataSource.WebRequest"/> case.
 		/// </summary>
 		/// <param name="uri">Uri of request.</param>
@@ -316,7 +336,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// <summary>
 		/// Get or set URI to connect.
 		/// </summary>
-		/// <remarks>Available for <see cref="UnderlyingLogDataSource.Database"/> and <see cref="UnderlyingLogDataSource.WebRequest"/>.</remarks>
+		/// <remarks>Available for <see cref="UnderlyingLogDataSource.Database"/>, <see cref="UnderlyingLogDataSource.Tcp"/>, <see cref="UnderlyingLogDataSource.Udp"/> and <see cref="UnderlyingLogDataSource.WebRequest"/>.</remarks>
 		public Uri? Uri { get; set; }
 
 
@@ -329,6 +349,8 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		{
 			UnderlyingLogDataSource.Database => this.HasQueryString,
 			UnderlyingLogDataSource.StandardOutput => this.HasCommand,
+			UnderlyingLogDataSource.Tcp => this.Uri != null,
+			UnderlyingLogDataSource.Udp => this.Uri != null,
 			UnderlyingLogDataSource.WebRequest => this.Uri != null,
 			UnderlyingLogDataSource.WindowsEventLogs => this.HasCategory,
 			_ => true,

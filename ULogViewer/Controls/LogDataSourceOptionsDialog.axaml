@@ -85,6 +85,12 @@
 				<iaCore:DataTriggerBehavior Binding="{Binding $parent[Window].UnderlyingLogDataSource}" Value="StandardOutput">
 					<iaCore:ChangePropertyAction PropertyName="IsVisible" TargetObject="{Binding #stdoutParamsPanel}" Value="True"/>
 				</iaCore:DataTriggerBehavior>
+				<iaCore:DataTriggerBehavior Binding="{Binding $parent[Window].UnderlyingLogDataSource}" Value="Tcp">
+					<iaCore:ChangePropertyAction PropertyName="IsVisible" TargetObject="{Binding #tcpParamsPanel}" Value="True"/>
+				</iaCore:DataTriggerBehavior>
+				<iaCore:DataTriggerBehavior Binding="{Binding $parent[Window].UnderlyingLogDataSource}" Value="Udp">
+					<iaCore:ChangePropertyAction PropertyName="IsVisible" TargetObject="{Binding #udpParamsPanel}" Value="True"/>
+				</iaCore:DataTriggerBehavior>
 				<iaCore:DataTriggerBehavior Binding="{Binding $parent[Window].UnderlyingLogDataSource}" Value="WebRequest">
 					<iaCore:ChangePropertyAction PropertyName="IsVisible" TargetObject="{Binding #webRequestParamsPanel}" Value="True"/>
 				</iaCore:DataTriggerBehavior>
@@ -198,6 +204,24 @@
 				</ListBox>
 				<Button Classes="ListAction" Command="{Binding $parent[Window].AddTeardownCommand}" Content="{DynamicResource String.Common.Add}"/>
 				
+			</StackPanel>
+
+			<!-- TCP -->
+			<StackPanel Name="tcpParamsPanel" HorizontalAlignment="Stretch" IsVisible="False" Orientation="Vertical">
+
+				<!-- URI -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogDataSourceOptionsDialog.Uri}"/>
+				<appControls:UriTextBox Name="tcpUriTextBox" PropertyChanged="OnEditorControlPropertyChanged"/>
+
+			</StackPanel>
+
+			<!-- UDP -->
+			<StackPanel Name="udpParamsPanel" HorizontalAlignment="Stretch" IsVisible="False" Orientation="Vertical">
+
+				<!-- URI -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogDataSourceOptionsDialog.Uri}"/>
+				<appControls:UriTextBox Name="udpUriTextBox" PropertyChanged="OnEditorControlPropertyChanged"/>
+
 			</StackPanel>
 
 			<!-- Web request -->
