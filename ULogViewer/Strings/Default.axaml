@@ -170,8 +170,9 @@
 	<sys:String x:Key="String.LogProfileEditorDialog.LogLevelMapForReading.Description">Convert specific text in raw log into log level</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogLevelMapForWriting">Mapping of log level</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogLevelMapForWriting.Description">Convert log level into specific text</sys:String>
-	<sys:String x:Key="String.LogProfileEditorDialog.LogPatterns">Log line patterns (required)</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.LogPatterns">Log line patterns</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogPatterns.Description">Pattern to parse each line of raw log</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.LogPatternsWithoutVisibleLogProperties">You defined 'Log line patterns' without defining 'Log properties to show' which may cause logs shown incorrectly. Do you want to define 'Log properties to show'?</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogReading">Log Reading</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogStringEncodingForReading">Encoding of text in log for reading</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogStringEncodingForWriting">Encoding of text in log for output</sys:String>
@@ -188,8 +189,9 @@
 	<sys:String x:Key="String.LogProfileEditorDialog.TimestampFormatForWriting.Watermark">Empty to use same format as reading</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.Title.Create">Create new log profile</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.Title.Edit">Edit log profile</sys:String>
-	<sys:String x:Key="String.LogProfileEditorDialog.VisibleLogProperties">Log properties to show (required)</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.VisibleLogProperties">Log properties to show</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.VisibleLogProperties.Description">Specify which properties of log can be seen in viewer</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.VisibleLogPropertiesWithoutLogPatterns">You defined 'Log properties to show' without defining 'Log line patterns' which may cause logs shown incorrectly. Do you want to define 'Log line patterns'?</sys:String>
 
 	<!-- LogProfileSelectionDialog -->
 	<sys:String x:Key="String.LogProfileSelectionDialog.AddLogProfile">Create…</sys:String>
@@ -241,6 +243,7 @@
 	<sys:String x:Key="String.LogProperty.Path">Path</sys:String>
 	<sys:String x:Key="String.LogProperty.ProcessId">PID</sys:String>
 	<sys:String x:Key="String.LogProperty.ProcessName">Process</sys:String>
+	<sys:String x:Key="String.LogProperty.RawData">Raw Data</sys:String>
 	<sys:String x:Key="String.LogProperty.ShortName">Short Name</sys:String>
 	<sys:String x:Key="String.LogProperty.SourceName">Source</sys:String>
 	<sys:String x:Key="String.LogProperty.Summary">Summary</sys:String>

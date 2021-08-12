@@ -62,7 +62,7 @@
 		</Border>
 
 		<!-- Content -->
-		<ScrollViewer HorizontalScrollBarVisibility="Disabled" MaxHeight="{StaticResource Double.LogProfileEditorDialog.Content.MaxHeight}">
+		<ScrollViewer Name="baseScrollViewer" HorizontalScrollBarVisibility="Disabled" MaxHeight="{StaticResource Double.LogProfileEditorDialog.Content.MaxHeight}">
 			<StackPanel HorizontalAlignment="Stretch" Margin="{StaticResource Thickness.Dialog.Content.Padding}" Orientation="Vertical">
 
 				<!-- Header -->

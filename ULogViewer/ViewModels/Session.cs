@@ -743,7 +743,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					it.ContinuousReadingUpdateInterval = this.ContinuousLogReadingUpdateInterval;
 				it.IsContinuousReading = profile.IsContinuousReading;
 				it.LogLevelMap = profile.LogLevelMapForReading;
-				it.LogPatterns = profile.LogPatterns;
+				if (profile.LogPatterns.IsNotEmpty())
+					it.LogPatterns = profile.LogPatterns;
+				else
+					it.LogPatterns = new LogPattern[] { new LogPattern("^(?<Message>.*)", false, false) };
 				it.LogStringEncoding = profile.LogStringEncodingForReading;
 				if (profile.IsContinuousReading)
 					it.MaxLogCount = this.Settings.GetValueOrDefault(ULogViewer.Settings.MaxContinuousLogCount);
@@ -1878,7 +1881,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				foreach (var logProperty in visibleLogProperties)
 					displayLogProperties.Add(new DisplayableLogProperty(app, logProperty));
 				if (displayLogProperties.IsEmpty())
-					displayLogProperties.Add(new DisplayableLogProperty(app, nameof(DisplayableLog.Message), null, null));
+					displayLogProperties.Add(new DisplayableLogProperty(app, nameof(DisplayableLog.Message), "RawData", null));
 				this.SetValue(DisplayLogPropertiesProperty, displayLogProperties.AsReadOnly());
 				this.logFilter.FilteringLogProperties = displayLogProperties;
 			}

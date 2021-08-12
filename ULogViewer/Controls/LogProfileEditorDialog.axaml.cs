@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.Controls
 {
@@ -46,6 +47,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Fields.
 		readonly ToggleSwitch adminNeededSwitch;
+		readonly ScrollViewer baseScrollViewer;
 		readonly ComboBox colorIndicatorComboBox;
 		readonly ToggleSwitch continuousReadingSwitch;
 		LogDataSourceOptions dataSourceOptions;
@@ -95,6 +97,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// setup controls
 			this.adminNeededSwitch = this.FindControl<ToggleSwitch>("adminNeededSwitch").AsNonNull();
+			this.baseScrollViewer = this.FindControl<ScrollViewer>("baseScrollViewer").AsNonNull();
 			this.colorIndicatorComboBox = this.FindControl<ComboBox>("colorIndicatorComboBox").AsNonNull();
 			this.continuousReadingSwitch = this.FindControl<ToggleSwitch>("continuousReadingSwitch").AsNonNull();
 			this.dataSourceProviderComboBox = this.FindControl<ComboBox>("dataSourceProviderComboBox").AsNonNull();
@@ -445,8 +448,45 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Generate result.
-		protected override object? OnGenerateResult()
+		protected override object? OnGenerateResult() => null;
+		protected override async Task<object?> OnGenerateResultAsync()
 		{
+			// check log patterns and visible log properties
+			if (this.logPatterns.IsEmpty())
+			{
+				if (this.visibleLogProperties.IsNotEmpty())
+				{
+					var result = await new MessageDialog()
+					{
+						Buttons = MessageDialogButtons.YesNo,
+						Icon = MessageDialogIcon.Warning,
+						Message = this.Application.GetString("LogProfileEditorDialog.VisibleLogPropertiesWithoutLogPatterns"),
+					}.ShowDialog<MessageDialogResult>(this);
+					if (result == MessageDialogResult.Yes)
+					{
+						this.baseScrollViewer.ScrollIntoView(this.logPatternListBox);
+						this.logPatternListBox.Focus();
+						return null;
+					}
+				}
+			}
+			else if (this.visibleLogProperties.IsEmpty())
+			{
+				var result = await new MessageDialog()
+				{
+					Buttons = MessageDialogButtons.YesNo,
+					Icon = MessageDialogIcon.Warning,
+					Message = this.Application.GetString("LogProfileEditorDialog.LogPatternsWithoutVisibleLogProperties"),
+				}.ShowDialog<MessageDialogResult>(this);
+				if (result == MessageDialogResult.Yes)
+				{
+					this.baseScrollViewer.ScrollIntoView(this.visibleLogPropertyListBox);
+					this.visibleLogPropertyListBox.Focus();
+					return null;
+				}
+			}
+
+			// update log profile
 			var logProfile = this.LogProfile ?? new LogProfile(this.Application);
 			logProfile.ColorIndicator = (LogColorIndicator)this.colorIndicatorComboBox.SelectedItem.AsNonNull();
 			logProfile.DataSourceOptions = this.dataSourceOptions;
@@ -624,14 +664,6 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// check name
 			if (string.IsNullOrEmpty(this.nameTextBox.Text))
-				return false;
-
-			// check log patterns
-			if (this.logPatterns.IsEmpty())
-				return false;
-
-			// check visible log properties
-			if (this.visibleLogProperties.IsEmpty())
 				return false;
 
 			// ok

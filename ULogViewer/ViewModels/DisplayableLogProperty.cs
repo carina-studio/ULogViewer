@@ -85,6 +85,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						it.Add("Name");
 						it.Add("Number");
 						it.Add("Path");
+						it.Add("RawData");
 						it.Add("ShortName");
 						it.Add("Tag");
 						it.Add("Type");

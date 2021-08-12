@@ -5,6 +5,7 @@ using CarinaStudio.Threading;
 using ReactiveUI;
 using System;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace CarinaStudio.ULogViewer.Controls
@@ -31,12 +32,14 @@ namespace CarinaStudio.ULogViewer.Controls
 		protected BaseDialog()
 		{
 			this.CancelCommand = ReactiveCommand.Create(this.Close);
-			this.GenerateResultCommand = ReactiveCommand.Create(() =>
+			this.GenerateResultCommand = ReactiveCommand.Create(async () =>
 			{
 				this.VerifyAccess();
 				if (!this.ValidateInput())
 					return;
-				this.Close(this.OnGenerateResult());
+				var result = await this.OnGenerateResultAsync();
+				if (result != null)
+					this.Close(result);
 			}, this.GetObservable<bool>(IsValidInputProperty));
 			this.validateInputAction = new ScheduledAction(() => this.ValidateInput());
 		}
@@ -78,8 +81,17 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// <summary>
 		/// Called to generate result with valid input and close dialog.
 		/// </summary>
-		/// <returns>Result of dialog.</returns>
+		/// <returns>Dialog result. Dialog won't close if result is Null.</returns>
 		protected abstract object? OnGenerateResult();
+
+
+#pragma warning disable CS1998
+		/// <summary>
+		/// Called to generate result with valid input asynchronously and close dialog.
+		/// </summary>
+		/// <returns>Task of generating result. Dialog won't close if result is Null.</returns>
+		protected virtual async Task<object?> OnGenerateResultAsync() => this.OnGenerateResult();
+#pragma warning restore CS1998
 
 
 		// Called when key up.

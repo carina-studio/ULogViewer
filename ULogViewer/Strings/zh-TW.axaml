@@ -163,8 +163,9 @@
 	<sys:String x:Key="String.LogProfileEditorDialog.LogLevelMapForReading.Description">將原始日誌中的特定文字對應至日誌等級</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogLevelMapForWriting">日誌等級對照表</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogLevelMapForWriting.Description">將日誌等級轉換為特定的文字</sys:String>
-	<sys:String x:Key="String.LogProfileEditorDialog.LogPatterns">日誌行格式 (必要)</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.LogPatterns">日誌行格式</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogPatterns.Description">分析原始日誌每一行的格式</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.LogPatternsWithoutVisibleLogProperties">您定義了 '日誌行格式' 但沒有定義 '顯示的日誌屬性'，這可能導致日誌顯示錯誤。您是否要定義 '顯示的日誌屬性'？</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogReading">日誌讀取設定</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogStringEncodingForReading">日誌文字讀取編碼方式</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogStringEncodingForWriting">日誌文字輸出編碼方式</sys:String>
@@ -181,8 +182,9 @@
 	<sys:String x:Key="String.LogProfileEditorDialog.TimestampFormatForWriting.Watermark">留白表示使用與讀取相同的格式</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.Title.Create">建立新的日誌類型</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.Title.Edit">編輯日誌類型</sys:String>
-	<sys:String x:Key="String.LogProfileEditorDialog.VisibleLogProperties">顯示的日誌屬性 (必要)</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.VisibleLogProperties">顯示的日誌屬性</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.VisibleLogProperties.Description">指定有哪些日誌屬性可以在檢視器中看見</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.VisibleLogPropertiesWithoutLogPatterns">您定義了 '顯示的日誌屬性' 但沒有定義 '日誌行格式'，這可能導致日誌顯示錯誤。您是否要定義 '日誌行格式'？</sys:String>
 
 	<!-- LogProfileSelectionDialog -->
 	<sys:String x:Key="String.LogProfileSelectionDialog.AddLogProfile">建立…</sys:String>
@@ -232,6 +234,7 @@
 	<sys:String x:Key="String.LogProperty.Number">編號</sys:String>
 	<sys:String x:Key="String.LogProperty.Path">路徑</sys:String>
 	<sys:String x:Key="String.LogProperty.ProcessName">處理程序</sys:String>
+	<sys:String x:Key="String.LogProperty.RawData">原始資料</sys:String>
 	<sys:String x:Key="String.LogProperty.ShortName">簡短名稱</sys:String>
 	<sys:String x:Key="String.LogProperty.SourceName">來源</sys:String>
 	<sys:String x:Key="String.LogProperty.Summary">摘要</sys:String>
