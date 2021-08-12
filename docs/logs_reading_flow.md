@@ -144,6 +144,8 @@ For example:
   - ```Log Pattern 2``` for ```Raw Log Line (Type 2)```
   - ```Log Pattern 3``` for ```Raw Log Line (Type 3)```
 
+> Note: Starting from 0.17.0.812, If there is no ```Log Pattern``` defined then ```Raw Log Line``` will be treat as ```Message``` of log directly. Therefore, you can see ```Raw Log Line``` in viewer by skipping defining ```Log Patterns```.
+
 There are 3 parameters in each ```Log Pattern```:
 #### Pattern
   Decribe the string pattern of ```Raw Log Line``` by [**Regular Expression**](https://en.wikipedia.org/wiki/Regular_expression). Further more, you need to use [**Grouping Syntax/Construct**](https://docs.microsoft.com/en-us/dotnet/standard/base-types/regular-expression-language-quick-reference#grouping-constructs) to extract data from ```Raw Log Line``` for specific property of log. 
@@ -164,7 +166,7 @@ Skippable = False | ```Raw Log Line``` should occur exact 1 time   | ```Raw Log 
 Skippable = True  | ```Raw Log Line``` should occur at most 1 time | ```Raw Log Line``` should not occur or occur continuously
 
 ### Log Level Map
-If information of ```Level``` of log has been extracted from ```Raw Log Line``` by ```Log Pattern```, we need a table to describe how to convert from ```String``` to ```Level``` of log.
+If information of ```Level``` of log has been extracted from ```Raw Log Line``` by ```Log Pattern```, we need a table to describe how to convert from ```String``` to ```Level``` of log. If the table doesn't exist, ```Level``` of log will be ```Undefined```.
 
 For example, if valid set of ```Level``` of log is ```{ Success, Failure }``` and you know that 'S' means ```Success``` and 'F' means ```Failure``` in ``` Raw Log Line```, then you need to provide the following ```Log Level Map```:
 
