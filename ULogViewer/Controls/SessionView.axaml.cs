@@ -69,6 +69,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Constants.
+		const int MaxLogCountForCopying = 65536;
 		const int ScrollingToLatestLogInterval = 100;
 
 
@@ -1430,8 +1431,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				var hasSingleSelectedItem = (selectionCount == 1);
 
 				// update command states
-				this.canCopySelectedLogs.Update(hasSelectedItems && session.CopyLogsCommand.CanExecute(null));
-				this.canCopySelectedLogsWithFileNames.Update(hasSelectedItems && session.CopyLogsWithFileNamesCommand.CanExecute(null));
+				this.canCopySelectedLogs.Update(hasSelectedItems && session.CopyLogsCommand.CanExecute(null) && selectionCount <= MaxLogCountForCopying);
+				this.canCopySelectedLogsWithFileNames.Update(hasSelectedItems && session.CopyLogsWithFileNamesCommand.CanExecute(null) && selectionCount <= MaxLogCountForCopying);
 				this.canFilterLogsByPid.Update(hasSingleSelectedItem && this.isPidLogPropertyVisible);
 				this.canFilterLogsByTid.Update(hasSingleSelectedItem && this.isTidLogPropertyVisible);
 				this.canMarkUnmarkSelectedLogs.Update(hasSelectedItems && session.MarkUnmarkLogsCommand.CanExecute(null));
