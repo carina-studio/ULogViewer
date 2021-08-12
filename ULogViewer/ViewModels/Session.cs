@@ -22,6 +22,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -631,83 +632,40 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		// Copy logs.
-		void CopyLogs(IList<DisplayableLog> logs, bool withFileNames)
+		async void CopyLogs(IList<DisplayableLog> logs, bool withFileNames)
 		{
 			// check state
 			this.VerifyAccess();
 			this.VerifyDisposed();
-			if (!this.canCopyLogs.Value)
+			if (!this.canCopyLogs.Value || logs.IsEmpty())
 				return;
-			var profile = this.LogProfile ?? throw new InternalStateCorruptedException("No log profile.");
 			var app = this.Application as App ?? throw new InternalStateCorruptedException("No application.");
-			var writingFormat = profile.LogWritingFormat ?? "";
 
-			// collect logs
-			if (logs.IsEmpty())
-				return;
-			var logsToCopy = new Log[logs.Count].Also(it =>
+			// prepare log writer
+			using var dataOutput = new StringLogDataOutput(app);
+			using var logWriter = this.CreateLogWriter(dataOutput);
+			var syncLock = new object();
+			var isCopyingCompleted = false;
+			logWriter.Logs = new Log[logs.Count].Also(it =>
 			{
 				for (var i = it.Length - 1; i >= 0; --i)
 					it[i] = logs[i].Log;
-			});
-
-			// prepare log writer
-			var dataOutput = new StringLogDataOutput(app);
-			var logWriter = new LogWriter(dataOutput);
-			logWriter.LogFormat = string.IsNullOrWhiteSpace(writingFormat)
-				? new StringBuilder().Let(it =>
-				{
-					foreach (var property in this.DisplayLogProperties)
-					{
-						if (it.Length > 0)
-							it.Append(' ');
-						var propertyName = property.Name;
-						switch (propertyName)
-						{
-							case nameof(DisplayableLog.BeginningTimestampString):
-							case nameof(DisplayableLog.EndingTimestampString):
-							case nameof(DisplayableLog.TimestampString):
-								it.Append($"{{{propertyName.Substring(0, propertyName.Length - 6)}}}");
-								break;
-							case nameof(DisplayableLog.LineNumber):
-							case nameof(DisplayableLog.ProcessId):
-							case nameof(DisplayableLog.ThreadId):
-								it.Append($"{{{propertyName},-5}}");
-								break;
-							default:
-								it.Append($"{{{propertyName}}}");
-								break;
-						}
-					}
-					return it.ToString();
-				})
-				: writingFormat;
-			logWriter.LogLevelMap = profile.LogLevelMapForWriting;
-			logWriter.Logs = logsToCopy;
-			logWriter.LogStringEncoding = profile.LogStringEncodingForWriting;
-			logWriter.TimestampCultureInfo = profile.TimestampCultureInfoForWriting;
-			logWriter.TimestampFormat = string.IsNullOrEmpty(profile.TimestampFormatForWriting) ? profile.TimestampFormatForReading : profile.TimestampFormatForWriting;
+			}); ;
 			logWriter.WriteFileNames = withFileNames;
-			logWriter.PropertyChanged += async (_, e) =>
+			logWriter.PropertyChanged += (_, e) =>
 			{
 				if (e.PropertyName == nameof(LogWriter.State))
 				{
-					switch(logWriter.State)
+					switch (logWriter.State)
 					{
-						case LogWriterState.Stopped:
-							this.Logger.LogDebug("Logs writing completed, start setting to clipboard");
-							await app.Clipboard.SetTextAsync(dataOutput.String ?? "");
-							this.Logger.LogDebug("Logs copying completed");
-							logWriter.Dispose();
-							dataOutput.Dispose();
-							this.SetValue(IsCopyingLogsProperty, false);
-							break;
 						case LogWriterState.DataOutputError:
+						case LogWriterState.Stopped:
 						case LogWriterState.UnclassifiedError:
-							this.Logger.LogError("Logs copying failed");
-							logWriter.Dispose();
-							dataOutput.Dispose();
-							this.SetValue(IsCopyingLogsProperty, false);
+							lock (syncLock)
+							{
+								isCopyingCompleted = true;
+								Monitor.Pulse(syncLock);
+							}
 							break;
 					}
 				}
@@ -717,6 +675,30 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.Logger.LogDebug("Start copying logs");
 			this.SetValue(IsCopyingLogsProperty, true);
 			logWriter.Start();
+			await this.WaitForNecessaryTaskAsync(Task.Run(() =>
+			{
+				lock (syncLock)
+				{
+					while (!isCopyingCompleted)
+					{
+						if (Monitor.Wait(syncLock, 500))
+							break;
+						Task.Yield();
+					}
+				}
+			}));
+
+			// complete
+			if (logWriter.State == LogWriterState.Stopped)
+			{
+				this.Logger.LogDebug("Logs writing completed, start setting to clipboard");
+				await app.Clipboard.SetTextAsync(dataOutput.String ?? "");
+				this.Logger.LogDebug("Logs copying completed");
+			}
+			else
+				this.Logger.LogError("Logs copying failed");
+			if (!this.IsDisposed)
+				this.SetValue(IsCopyingLogsProperty, false);
 		}
 
 
@@ -818,6 +800,52 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.canPauseResumeLogsReading.Update(profile.IsContinuousReading);
 			this.canReloadLogs.Update(true);
 			this.SetValue(HasLogReadersProperty, true);
+		}
+
+
+		// Create log writer for current log profile.
+		LogWriter CreateLogWriter(ILogDataOutput dataOutput)
+		{
+			// check state
+			var profile = this.LogProfile ?? throw new InternalStateCorruptedException("No log profile.");
+			var app = this.Application as App ?? throw new InternalStateCorruptedException("No application.");
+			var writingFormat = profile.LogWritingFormat ?? "";
+
+			// prepare log writer
+			var logWriter = new LogWriter(dataOutput);
+			logWriter.LogFormat = string.IsNullOrWhiteSpace(writingFormat)
+				? new StringBuilder().Let(it =>
+				{
+					foreach (var property in this.DisplayLogProperties)
+					{
+						if (it.Length > 0)
+							it.Append(' ');
+						var propertyName = property.Name;
+						switch (propertyName)
+						{
+							case nameof(DisplayableLog.BeginningTimestampString):
+							case nameof(DisplayableLog.EndingTimestampString):
+							case nameof(DisplayableLog.TimestampString):
+								it.Append($"{{{propertyName.Substring(0, propertyName.Length - 6)}}}");
+								break;
+							case nameof(DisplayableLog.LineNumber):
+							case nameof(DisplayableLog.ProcessId):
+							case nameof(DisplayableLog.ThreadId):
+								it.Append($"{{{propertyName},-5}}");
+								break;
+							default:
+								it.Append($"{{{propertyName}}}");
+								break;
+						}
+					}
+					return it.ToString();
+				})
+				: writingFormat;
+			logWriter.LogLevelMap = profile.LogLevelMapForWriting;
+			logWriter.LogStringEncoding = profile.LogStringEncodingForWriting;
+			logWriter.TimestampCultureInfo = profile.TimestampCultureInfoForWriting;
+			logWriter.TimestampFormat = string.IsNullOrEmpty(profile.TimestampFormatForWriting) ? profile.TimestampFormatForReading : profile.TimestampFormatForWriting;
+			return logWriter;
 		}
 
 
