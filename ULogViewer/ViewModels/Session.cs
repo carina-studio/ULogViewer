@@ -1733,12 +1733,18 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			using var dataOutput = new FileLogDataOutput(app, fileName);
 			using var logWriter = this.CreateLogWriter(dataOutput);
 			var logs = this.Logs;
+			var markedLogs = this.markedLogs;
 			var syncLock = new object();
 			var isCompleted = false;
 			logWriter.Logs = new Log[logs.Count].Also(it =>
 			{
 				for (var i = it.Length - 1; i >= 0; --i)
 					it[i] = logs[i].Log;
+			});
+			logWriter.LogsToGetLineNumber = new HashSet<Log>().Also(it =>
+			{
+				for (var i = markedLogs.Count - 1; i >= 0; --i)
+					it.Add(markedLogs[i].Log);
 			});
 			logWriter.WriteFileNames = false;
 			logWriter.PropertyChanged += (_, e) =>
@@ -1777,9 +1783,17 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				}
 			}));
 
-			// complete
+			// complete and save marked logs
 			if (logWriter.State == LogWriterState.Stopped)
-				this.Logger.LogDebug("Logs saving completed");
+			{
+				this.Logger.LogDebug("Logs saving completed, save marked logs");
+				var markedLogInfos = new List<MarkedLogInfo>().Also(markedLogInfos =>
+				{
+					foreach (var pair in logWriter.LineNumbers)
+						markedLogInfos.Add(new MarkedLogInfo(fileName, pair.Value, pair.Key.Timestamp));
+				});
+				this.SaveMarkedLogs(fileName, markedLogInfos);
+			}
 			else
 				this.Logger.LogError("Logs saving failed");
 			if (!this.IsDisposed)
@@ -1806,17 +1820,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		// Save marked logs.
 		void SaveMarkedLogs(string logFileName)
 		{
-			this.SaveMarkedLogs(logFileName, this.markedLogs.Where(it => it.FileName == logFileName));
-		}
-		void SaveMarkedLogs(string logFileName, IEnumerable<DisplayableLog> markedLogs)
-		{
-			// create marked logs info
+			var markedLogs = this.markedLogs.Where(it => it.FileName == logFileName);
 			var markedLogInfos = new List<MarkedLogInfo>().Also(markedLogInfos =>
 			{
 				foreach (var markedLog in markedLogs)
 					markedLog.LineNumber?.Let(lineNumber => markedLogInfos.Add(new MarkedLogInfo(logFileName, lineNumber, markedLog.Log.Timestamp)));
 			});
-
+			this.SaveMarkedLogs(logFileName, markedLogInfos);
+		}
+		void SaveMarkedLogs(string logFileName, IList<MarkedLogInfo> markedLogInfos)
+		{
 			// save or delete marked file
 			var task = ioTaskFactory.StartNew(() =>
 			{
