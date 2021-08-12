@@ -90,6 +90,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly MutableObservableBoolean canFilterLogsByPid = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canFilterLogsByTid = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canMarkUnmarkSelectedLogs = new MutableObservableBoolean();
+		readonly MutableObservableBoolean canSaveAllLogs = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSaveLogs = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSelectMarkedLogs = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSetLogProfile = new MutableObservableBoolean();
@@ -142,7 +143,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.FilterLogsByThreadIdCommand = ReactiveCommand.Create<bool>(this.FilterLogsByThreadId, this.canFilterLogsByTid);
 			this.MarkUnmarkSelectedLogsCommand = ReactiveCommand.Create(this.MarkUnmarkSelectedLogs, this.canMarkUnmarkSelectedLogs);
 			this.ResetLogFiltersCommand = ReactiveCommand.Create(this.ResetLogFilters, this.GetObservable<bool>(HasLogProfileProperty));
-			this.SaveLogsCommand = ReactiveCommand.Create(this.SaveLogs, this.canSaveLogs);
+			this.SaveAllLogsCommand = ReactiveCommand.Create(() => this.SaveLogs(true), this.canSaveAllLogs);
+			this.SaveLogsCommand = ReactiveCommand.Create(() => this.SaveLogs(false), this.canSaveLogs);
 			this.SelectAndSetLogProfileCommand = ReactiveCommand.Create(this.SelectAndSetLogProfile, this.canSetLogProfile);
 			this.SelectAndSetWorkingDirectoryCommand = ReactiveCommand.Create(this.SelectAndSetWorkingDirectory, this.canSetWorkingDirectory);
 			this.SelectMarkedLogsCommand = ReactiveCommand.Create(this.SelectMarkedLogs, this.canSelectMarkedLogs);
@@ -381,6 +383,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			session.AddLogFileCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
 			session.MarkUnmarkLogsCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
 			session.ResetLogProfileCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
+			session.SaveAllLogsCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
 			session.SaveLogsCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
 			session.SetLogProfileCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
 			session.SetWorkingDirectoryCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
@@ -396,6 +399,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			else
 				this.canAddLogFiles.Update(false);
 			this.canMarkUnmarkSelectedLogs.Update(session.MarkUnmarkLogsCommand.CanExecute(null));
+			this.canSaveAllLogs.Update(session.SaveAllLogsCommand.CanExecute(null));
 			this.canSaveLogs.Update(session.SaveLogsCommand.CanExecute(null));
 			this.canSetLogProfile.Update(session.ResetLogProfileCommand.CanExecute(null) || session.SetLogProfileCommand.CanExecute(null));
 			this.canSelectMarkedLogs.Update(session.HasMarkedLogs);
@@ -796,12 +800,14 @@ namespace CarinaStudio.ULogViewer.Controls
 			// detach from commands
 			session.AddLogFileCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
 			session.MarkUnmarkLogsCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
+			session.SaveAllLogsCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
 			session.SaveLogsCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
 			session.SetLogProfileCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
 			session.SetLogProfileCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
 			session.SetWorkingDirectoryCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
 			this.canAddLogFiles.Update(false);
 			this.canMarkUnmarkSelectedLogs.Update(false);
+			this.canSaveAllLogs.Update(false);
 			this.canSaveLogs.Update(false);
 			this.canSelectMarkedLogs.Update(false);
 			this.canSetLogProfile.Update(false);
@@ -1483,7 +1489,7 @@ namespace CarinaStudio.ULogViewer.Controls
 									this.CreatePredefinedLogTextFilter();
 							}
 							else
-								this.SaveLogs();
+								this.SaveLogs((e.KeyModifiers & KeyModifiers.Shift) != 0);
 							break;
 					}
 				}
@@ -1744,6 +1750,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.canMarkUnmarkSelectedLogs.Update(this.logListBox.SelectedItems.Count > 0 && session.MarkUnmarkLogsCommand.CanExecute(null));
 			else if (sender == session.ResetLogProfileCommand || sender == session.SetLogProfileCommand)
 				this.canSetLogProfile.Update(session.ResetLogProfileCommand.CanExecute(null) || session.SetLogProfileCommand.CanExecute(null));
+			else if (sender == session.SaveAllLogsCommand)
+				this.canSaveAllLogs.Update(session.SaveAllLogsCommand.CanExecute(null));
 			else if (sender == session.SaveLogsCommand)
 				this.canSaveLogs.Update(session.SaveLogsCommand.CanExecute(null));
 			else if (sender == session.SetWorkingDirectoryCommand)
@@ -1892,13 +1900,27 @@ namespace CarinaStudio.ULogViewer.Controls
 		ICommand ResetLogFiltersCommand { get; }
 
 
+		// Command to save all logs to file.
+		ICommand SaveAllLogsCommand { get; }
+
+
 		// Save logs to file.
-		async void SaveLogs()
+		async void SaveLogs(bool saveAllLogs)
 		{
 			// check state
 			this.VerifyAccess();
-			if (!this.canSaveLogs.Value || this.isSelectingFileToSaveLogs)
+			if (this.isSelectingFileToSaveLogs)
 				return;
+			if (saveAllLogs)
+			{
+				if (!this.canSaveAllLogs.Value)
+					return;
+			}
+			else
+			{
+				if (!this.canSaveLogs.Value)
+					return;
+			}
 			var window = this.FindLogicalAncestorOfType<Window>();
 			if (window == null)
 			{
@@ -1928,14 +1950,19 @@ namespace CarinaStudio.ULogViewer.Controls
 					filter.Extensions.Add("*");
 					filter.Name = app.GetString("FileFormat.All");
 				}));
-				it.Title = app.GetString("SessionView.SaveLogs");
+				it.Title = saveAllLogs
+					? app.GetString("SessionView.SaveAllLogs")
+					: app.GetString("SessionView.SaveLogs");
 			}).ShowAsync(window);
 			this.isSelectingFileToSaveLogs = false;
 			if (fileName == null)
 				return;
 
 			// save logs
-			session.SaveLogsCommand.TryExecute(fileName);
+			if (saveAllLogs)
+				session.SaveAllLogsCommand.TryExecute(fileName);
+			else
+				session.SaveLogsCommand.TryExecute(fileName);
 		}
 
 

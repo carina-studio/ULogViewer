@@ -116,6 +116,11 @@
 						<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Save}"/>
 					</Border>
 				</Button>
+				<Button Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].SaveAllLogsCommand}" IsVisible="{Binding HasLogProfile}" ToolTip.Tip="{DynamicResource String.SessionView.SaveAllLogs.WithShortcut}">
+					<Border Classes="SessionView_ToolBar_Button_Icon">
+						<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.SaveAll}"/>
+					</Border>
+				</Button>
 
 				<!-- Clear files -->
 				<Button Classes="SessionView_ToolBar_Button" Command="{Binding ClearLogFilesCommand}" IsVisible="{Binding IsLogFileNeeded}" ToolTip.Tip="{DynamicResource String.SessionView.ClearLogFiles}">

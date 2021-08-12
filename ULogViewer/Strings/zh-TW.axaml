@@ -310,6 +310,8 @@
 	<sys:String x:Key="String.SessionView.PredefinedLogTextFilters.Hint">選取一個或多個項目</sys:String>
 	<sys:String x:Key="String.SessionView.ReloadLogs">重新載入日誌 (F5)</sys:String>
 	<sys:String x:Key="String.SessionView.ResetLogFilters">清除所有篩選設定</sys:String>
+	<sys:String x:Key="String.SessionView.SaveAllLogs">儲存所有日誌至檔案</sys:String>
+	<sys:String x:Key="String.SessionView.SaveAllLogs.WithShortcut">儲存所有日誌至檔案 (Ctrl+Shift+S)</sys:String>
 	<sys:String x:Key="String.SessionView.SaveLogs">儲存日誌至檔案</sys:String>
 	<sys:String x:Key="String.SessionView.SaveLogs.WithShortcut">儲存日誌至檔案 (Ctrl+S)</sys:String>
 	<sys:String x:Key="String.SessionView.ScrollToLatestLog">捲動至最新的日誌</sys:String>

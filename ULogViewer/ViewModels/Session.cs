@@ -210,6 +210,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly MutableObservableBoolean canPauseResumeLogsReading = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canReloadLogs = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canResetLogProfile = new MutableObservableBoolean();
+		readonly MutableObservableBoolean canSaveAllLogs = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSaveLogs = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSetLogProfile = new MutableObservableBoolean();
 		readonly ScheduledAction checkDataSourceErrorsAction;
@@ -244,6 +245,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.PauseResumeLogsReadingCommand = ReactiveCommand.Create(this.PauseResumeLogsReading, this.canPauseResumeLogsReading);
 			this.ReloadLogsCommand = ReactiveCommand.Create(() => this.ReloadLogs(false, false), this.canReloadLogs);
 			this.ResetLogProfileCommand = ReactiveCommand.Create(this.ResetLogProfile, this.canResetLogProfile);
+			this.SaveAllLogsCommand = ReactiveCommand.Create<string>(this.SaveAllLogs, this.canSaveAllLogs);
 			this.SaveLogsCommand = ReactiveCommand.Create<string>(this.SaveLogs, this.canSaveLogs);
 			this.SetLogProfileCommand = ReactiveCommand.Create<LogProfile?>(this.SetLogProfile, this.canSetLogProfile);
 			this.SetWorkingDirectoryCommand = ReactiveCommand.Create<string?>(this.SetWorkingDirectory, this.GetValueAsObservable(IsWorkingDirectoryNeededProperty));
@@ -1499,7 +1501,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		protected override void OnPropertyChanged(ObservableProperty property, object? oldValue, object? newValue)
 		{
 			base.OnPropertyChanged(property, oldValue, newValue);
-			if (property == HasLogsProperty
+			if (property == AllLogCountProperty)
+				this.UpdateIsLogsWritingAvailable(this.LogProfile);
+			else if (property == HasLogsProperty
 				|| property == IsCopyingLogsProperty)
 			{
 				this.UpdateIsLogsWritingAvailable(this.LogProfile);
@@ -1717,13 +1721,37 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public ICommand ResetLogProfileCommand { get; }
 
 
-		// Save logs to file.
-		async void SaveLogs(string? fileName)
+		// Save all logs to file.
+		void SaveAllLogs(string? fileName)
 		{
-			// check state
 			this.VerifyAccess();
 			this.VerifyDisposed();
-			if (!this.canSaveLogs.Value || this.Logs.IsEmpty())
+			if (!this.canSaveAllLogs.Value)
+				return;
+			this.SaveLogs(fileName, this.allLogs);
+		}
+
+
+		/// <summary>
+		/// Command to save all <see cref="DisplayableLog"/> to file.
+		/// </summary>
+		/// <remarks>Type of parameter is <see cref="string"/>.</remarks>
+		public ICommand SaveAllLogsCommand { get; }
+
+
+		// Save logs to file.
+		void SaveLogs(string? fileName)
+		{
+			this.VerifyAccess();
+			this.VerifyDisposed();
+			if (!this.canSaveLogs.Value)
+				return;
+			this.SaveLogs(fileName, this.Logs);
+		}
+		async void SaveLogs(string? fileName, IList<DisplayableLog> logs)
+		{
+			// check state
+			if (logs.IsEmpty())
 				return;
 			if (fileName == null)
 				throw new ArgumentNullException(nameof(fileName));
@@ -1732,7 +1760,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// prepare log writer
 			using var dataOutput = new FileLogDataOutput(app, fileName);
 			using var logWriter = this.CreateLogWriter(dataOutput);
-			var logs = this.Logs;
 			var markedLogs = this.markedLogs;
 			var syncLock = new object();
 			var isCompleted = false;
@@ -2055,13 +2082,15 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			{
 				this.canCopyLogs.Update(false);
 				this.canCopyLogsWithFileNames.Update(false);
+				this.canSaveAllLogs.Update(false);
 				this.canSaveLogs.Update(false);
 			}
 			else
 			{
 				this.canCopyLogs.Update(this.Application is App && !this.IsCopyingLogs);
 				this.canCopyLogsWithFileNames.Update(this.canCopyLogs.Value && profile.DataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.FileName)));
-				this.canSaveLogs.Update(this.Application is App && !this.IsSavingLogs && this.HasLogs);
+				this.canSaveAllLogs.Update(this.Application is App && !this.IsSavingLogs && this.AllLogCount > 0);
+				this.canSaveLogs.Update(this.canSaveAllLogs.Value && this.HasLogs);
 			}
 		}
 

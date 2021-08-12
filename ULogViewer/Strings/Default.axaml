@@ -323,6 +323,8 @@
 	<sys:String x:Key="String.SessionView.PredefinedLogTextFilters.Hint">Select one or more items</sys:String>
 	<sys:String x:Key="String.SessionView.ReloadLogs">Reload logs (F5)</sys:String>
 	<sys:String x:Key="String.SessionView.ResetLogFilters">Clear all filters</sys:String>
+	<sys:String x:Key="String.SessionView.SaveAllLogs">Save all logs to file</sys:String>
+	<sys:String x:Key="String.SessionView.SaveAllLogs.WithShortcut">Save all logs to file (Ctrl+Shift+S)</sys:String>
 	<sys:String x:Key="String.SessionView.SaveLogs">Save logs to file</sys:String>
 	<sys:String x:Key="String.SessionView.SaveLogs.WithShortcut">Save logs to file (Ctrl+S)</sys:String>
 	<sys:String x:Key="String.SessionView.ScrollToLatestLog">Scroll to latest log</sys:String>
