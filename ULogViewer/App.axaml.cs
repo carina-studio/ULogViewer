@@ -28,6 +28,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace CarinaStudio.ULogViewer
 {
@@ -68,7 +69,11 @@ namespace CarinaStudio.ULogViewer
 		public App()
 		{
 			// setup logger
-			NLog.LogManager.Configuration = new NLog.Config.XmlLoggingConfiguration(Path.Combine(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule?.FileName) ?? "", "NLog.config"));
+			NLog.LogManager.Configuration = this.OpenManifestResourceStream("CarinaStudio.ULogViewer.NLog.config").Use(stream =>
+			{
+				using var xmlReader = XmlReader.Create(stream);
+				return new NLog.Config.XmlLoggingConfiguration(xmlReader);
+			});
 			this.logger = this.LoggerFactory.CreateLogger("App");
 			this.logger.LogWarning("App created");
 

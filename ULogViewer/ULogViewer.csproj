@@ -58,10 +58,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </None>
-    <None Update="NLog.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </None>
   </ItemGroup>
 
 	<ItemGroup>
@@ -82,6 +78,7 @@
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/WindowsSecurityEventLogs.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/WindowsSetupEventLogs.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/WindowsSystemEventLogs.json" />
+		<EmbeddedResource Include="NLog.config"/>
 	</ItemGroup>
 
 </Project>
