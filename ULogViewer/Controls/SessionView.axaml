@@ -104,9 +104,16 @@
 				</Button>
 
 				<!-- Add files -->
-				<Button Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].AddLogFilesCommand}" IsVisible="{Binding IsLogFileNeeded}" ToolTip.Tip="{DynamicResource String.SessionView.AddLogFiles}">
+				<Button Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].AddLogFilesCommand}" IsVisible="{Binding IsLogFileNeeded}" ToolTip.Tip="{DynamicResource String.SessionView.AddLogFiles.WithShortcut}">
 					<Border Classes="SessionView_ToolBar_Button_Icon">
 						<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.AddFile}"/>
+					</Border>
+				</Button>
+
+				<!-- Save logs -->
+				<Button Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].SaveLogsCommand}" IsVisible="{Binding HasLogProfile}" ToolTip.Tip="{DynamicResource String.SessionView.SaveLogs.WithShortcut}">
+					<Border Classes="SessionView_ToolBar_Button_Icon">
+						<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Save}"/>
 					</Border>
 				</Button>
 

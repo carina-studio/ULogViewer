@@ -72,7 +72,10 @@
 	<sys:String x:Key="String.DatabaseSourceType.Network">Network</sys:String>
 
 	<!-- FileFormat -->
+	<sys:String x:Key="String.FileFormat.All">All formats</sys:String>
 	<sys:String x:Key="String.FileFormat.Json">JSON File</sys:String>
+	<sys:String x:Key="String.FileFormat.Log">Log File</sys:String>
+	<sys:String x:Key="String.FileFormat.Text">Text File</sys:String>
 
 	<!-- FileLogDataSourceProvider -->
 	<sys:String x:Key="String.FileLogDataSourceProvider.DisplayName">File</sys:String>
@@ -288,6 +291,7 @@
 
 	<!-- SessionView -->
 	<sys:String x:Key="String.SessionView.AddLogFiles">Add log files</sys:String>
+	<sys:String x:Key="String.SessionView.AddLogFiles.WithShortcut">Add log files (Ctrl+O)</sys:String>
 	<sys:String x:Key="String.SessionView.AllLogCount">Total: </sys:String>
 	<sys:String x:Key="String.SessionView.AllLogLevels">All levels</sys:String>
 	<sys:String x:Key="String.SessionView.AppInfo">About ULogViewer…</sys:String>
@@ -319,6 +323,8 @@
 	<sys:String x:Key="String.SessionView.PredefinedLogTextFilters.Hint">Select one or more items</sys:String>
 	<sys:String x:Key="String.SessionView.ReloadLogs">Reload logs (F5)</sys:String>
 	<sys:String x:Key="String.SessionView.ResetLogFilters">Clear all filters</sys:String>
+	<sys:String x:Key="String.SessionView.SaveLogs">Save logs to file</sys:String>
+	<sys:String x:Key="String.SessionView.SaveLogs.WithShortcut">Save logs to file (Ctrl+S)</sys:String>
 	<sys:String x:Key="String.SessionView.ScrollToLatestLog">Scroll to latest log</sys:String>
 	<sys:String x:Key="String.SessionView.SelectedLogCount">Selected: </sys:String>
 	<sys:String x:Key="String.SessionView.SelectMarkedLogs">Select marked logs</sys:String>
