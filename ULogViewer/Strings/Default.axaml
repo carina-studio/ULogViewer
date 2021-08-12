@@ -178,8 +178,8 @@
 	<sys:String x:Key="String.LogProfileEditorDialog.LogStringEncodingForWriting">Encoding of text in log for output</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogWriting">Log Output</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogWritingFormat">Log output format</sys:String>
-	<sys:String x:Key="String.LogProfileEditorDialog.LogWritingFormat.Description">You can click button on the right hand side to add "Interpolation Syntax" to produce log property to output log text</sys:String>
-	<sys:String x:Key="String.LogProfileEditorDialog.LogWritingFormat.Watermark">Empty to disable output</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.LogWritingFormat.Description">The format will be used for logs copying and saving. You can click button on the right hand side to add "Interpolation Syntax" to produce log property to output log text</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.LogWritingFormat.Watermark">Empty to use default format</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.Name">Name (required)</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.SortDirection">Sort direction of log</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.SortKey">Sort key of log</sys:String>

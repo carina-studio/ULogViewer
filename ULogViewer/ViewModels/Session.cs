@@ -19,6 +19,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -100,10 +101,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Property of <see cref="IsLogsReadingPaused"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsLogsReadingPausedProperty = ObservableProperty.Register<Session, bool>(nameof(IsLogsReadingPaused));
-		/// <summary>
-		/// Property of <see cref="IsLogsWritingAvailable"/>.
-		/// </summary>
-		public static readonly ObservableProperty<bool> IsLogsWritingAvailableProperty = ObservableProperty.Register<Session, bool>(nameof(IsLogsWritingAvailable));
 		/// <summary>
 		/// Property of <see cref="IsProcessingLogs"/>.
 		/// </summary>
@@ -643,9 +640,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				return;
 			var profile = this.LogProfile ?? throw new InternalStateCorruptedException("No log profile.");
 			var app = this.Application as App ?? throw new InternalStateCorruptedException("No application.");
-			var writingFormat = profile.LogWritingFormat;
-			if (string.IsNullOrEmpty(writingFormat))
-				throw new InternalStateCorruptedException("No log writing format defined.");
+			var writingFormat = profile.LogWritingFormat ?? "";
 
 			// collect logs
 			if (logs.IsEmpty())
@@ -659,7 +654,34 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// prepare log writer
 			var dataOutput = new StringLogDataOutput(app);
 			var logWriter = new LogWriter(dataOutput);
-			logWriter.LogFormat = writingFormat;
+			logWriter.LogFormat = string.IsNullOrWhiteSpace(writingFormat)
+				? new StringBuilder().Let(it =>
+				{
+					foreach (var property in this.DisplayLogProperties)
+					{
+						if (it.Length > 0)
+							it.Append(' ');
+						var propertyName = property.Name;
+						switch (propertyName)
+						{
+							case nameof(DisplayableLog.BeginningTimestampString):
+							case nameof(DisplayableLog.EndingTimestampString):
+							case nameof(DisplayableLog.TimestampString):
+								it.Append($"{{{propertyName.Substring(0, propertyName.Length - 6)}}}");
+								break;
+							case nameof(DisplayableLog.LineNumber):
+							case nameof(DisplayableLog.ProcessId):
+							case nameof(DisplayableLog.ThreadId):
+								it.Append($"{{{propertyName},-5}}");
+								break;
+							default:
+								it.Append($"{{{propertyName}}}");
+								break;
+						}
+					}
+					return it.ToString();
+				})
+				: writingFormat;
 			logWriter.LogLevelMap = profile.LogLevelMapForWriting;
 			logWriter.Logs = logsToCopy;
 			logWriter.LogStringEncoding = profile.LogStringEncodingForWriting;
@@ -996,12 +1018,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Check whether logs reading has been paused or not.
 		/// </summary>
 		public bool IsLogsReadingPaused { get => this.GetValue(IsLogsReadingPausedProperty); }
-
-
-		/// <summary>
-		/// Check whether logs writing is available for current <see cref="LogProfile"/> or not.
-		/// </summary>
-		public bool IsLogsWritingAvailable { get => this.GetValue(IsLogsWritingAvailableProperty); }
 
 
 		/// <summary>
@@ -1888,18 +1904,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		}
 
 
-		// Update IsLogsWritingAvailable and related state.
+		// Update logs writing related states.
 		void UpdateIsLogsWritingAvailable(LogProfile? profile)
 		{
-			if (profile == null || string.IsNullOrEmpty(profile.LogWritingFormat))
+			if (profile == null)
 			{
 				this.canCopyLogs.Update(false);
 				this.canCopyLogsWithFileNames.Update(false);
-				this.SetValue(IsLogsWritingAvailableProperty, false);
 			}
 			else
 			{
-				this.SetValue(IsLogsWritingAvailableProperty, true);
 				this.canCopyLogs.Update(this.Application is App && !this.IsCopyingLogs);
 				this.canCopyLogsWithFileNames.Update(this.canCopyLogs.Value && profile.DataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.FileName)));
 			}

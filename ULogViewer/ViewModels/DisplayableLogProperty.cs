@@ -50,6 +50,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.displayNameId = logProperty.DisplayName;
 			this.Name = logProperty.Name switch
 			{
+				nameof(Log.BeginningTimestamp) => nameof(DisplayableLog.BeginningTimestampString),
+				nameof(Log.EndingTimestamp) => nameof(DisplayableLog.EndingTimestampString),
 				nameof(Log.Timestamp) => nameof(DisplayableLog.TimestampString),
 				_ => logProperty.Name,
 			};

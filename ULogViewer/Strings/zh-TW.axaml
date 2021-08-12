@@ -171,8 +171,8 @@
 	<sys:String x:Key="String.LogProfileEditorDialog.LogStringEncodingForWriting">日誌文字輸出編碼方式</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogWriting">日誌輸出設定</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.LogWritingFormat">日誌輸出格式</sys:String>
-	<sys:String x:Key="String.LogProfileEditorDialog.LogWritingFormat.Description">您可以使用右側按鈕加入 "插值語法" 以將日誌屬性產生至輸出的日誌文字</sys:String>
-	<sys:String x:Key="String.LogProfileEditorDialog.LogWritingFormat.Watermark">留白表示不支援輸出</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.LogWritingFormat.Description">此格式將用於日誌複製與儲存。您可以使用右側按鈕加入 "插值語法" 以將日誌屬性產生至輸出的日誌文字</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.LogWritingFormat.Watermark">留白以使用預設格式</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.Name">名稱 (必要)</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.SortDirection">日誌排序方向</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.SortKey">日誌排序依據</sys:String>

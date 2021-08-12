@@ -290,13 +290,9 @@ namespace CarinaStudio.ULogViewer.Logs
 				{
 					var logPropertyGetter = propertyName switch
 					{
-						nameof(Log.Level) => log =>
-						{
-							if (this.logLevelMap.TryGetValue(log.Level, out var str))
-								return str;
-							return Converters.EnumConverter.LogLevel.Convert(log.Level, typeof(string), null, cultureInfo);
-						},
-						nameof(Log.Timestamp) => log =>
+						nameof(Log.BeginningTimestamp) 
+							or nameof(Log.EndingTimestamp) 
+							or nameof(Log.Timestamp) => log =>
 						{
 							var timestamp = log.Timestamp;
 							if (timestamp == null)
@@ -304,6 +300,13 @@ namespace CarinaStudio.ULogViewer.Logs
 							if (this.timestampFormat != null)
 								return timestamp.Value.ToString(this.timestampFormat, this.timestampCultureInfo);
 							return timestamp.Value.ToString(this.timestampCultureInfo);
+						}
+						,
+						nameof(Log.Level) => log =>
+						{
+							if (this.logLevelMap.TryGetValue(log.Level, out var str))
+								return str;
+							return Converters.EnumConverter.LogLevel.Convert(log.Level, typeof(string), null, cultureInfo);
 						},
 						_ => Log.CreatePropertyGetter<object?>(propertyName),
 					};

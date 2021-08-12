@@ -57,12 +57,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
-		/// Get beginning timestamp of log.
-		/// </summary>
-		public DateTime? BeginningTimestamp { get => this.Log.BeginningTimestamp; }
-
-
-		/// <summary>
 		/// Get beginning timestamp of log in string format.
 		/// </summary>
 		public string BeginningTimestampString
@@ -161,12 +155,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.colorIndicatorBrush = null;
 			this.levelBrush = null;
 		}
-
-
-		/// <summary>
-		/// Get ending timestamp of log.
-		/// </summary>
-		public DateTime? EndingTimestamp { get => this.Log.EndingTimestamp; }
 
 
 		/// <summary>
