@@ -309,7 +309,7 @@
 	<sys:String x:Key="String.SessionView.HasAllDataSourceErrors">Error occurred in data sources</sys:String>
 	<sys:String x:Key="String.SessionView.HasPartialDataSourceErrors">Error occurred in some of data sources</sys:String>
 	<sys:String x:Key="String.SessionView.LogFiltersCombinationMode">Way to combine conditions</sys:String>
-	<sys:String x:Key="String.SessionView.LogsFilteringProgress">Filtering progress: </sys:String>
+	<sys:String x:Key="String.SessionView.LogsFilteringProgress">Filtering logs…</sys:String>
 	<sys:String x:Key="String.SessionView.LogTextFilterHint">Text filtering (Regular Expression, use \$\$ as separator between text properties)</sys:String>
 	<sys:String x:Key="String.SessionView.MarkedLogs">Marked logs</sys:String>
 	<sys:String x:Key="String.SessionView.MarkUnmarkLogs">Mark/Unmark logs</sys:String>
@@ -327,6 +327,7 @@
 	<sys:String x:Key="String.SessionView.SaveAllLogs.WithShortcut">Save all logs to file (Ctrl+Shift+S)</sys:String>
 	<sys:String x:Key="String.SessionView.SaveLogs">Save logs to file</sys:String>
 	<sys:String x:Key="String.SessionView.SaveLogs.WithShortcut">Save logs to file (Ctrl+S)</sys:String>
+	<sys:String x:Key="String.SessionView.SavingLogs">Saving logs…</sys:String>
 	<sys:String x:Key="String.SessionView.ScrollToLatestLog">Scroll to latest log</sys:String>
 	<sys:String x:Key="String.SessionView.SelectedLogCount">Selected: </sys:String>
 	<sys:String x:Key="String.SessionView.SelectMarkedLogs">Select marked logs</sys:String>

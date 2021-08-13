@@ -379,12 +379,13 @@
 					<iaCore:ChangePropertyAction PropertyName="Background" Value="{StaticResource Brush.SessionView.StatusBar.Background.Warning}"/>
 				</iaCore:DataTriggerBehavior>
 			</ia:Interaction.Behaviors>
-			<Grid ColumnDefinitions="Auto,Auto,Auto,*,Auto">
+			<Grid ColumnDefinitions="Auto,Auto,*,Auto,Auto,Auto">
 
 				<!-- Styles -->
 				<Grid.Styles>
 					<Style Selector="TextBlock">
 						<Setter Property="Foreground" Value="{DynamicResource Brush.SessionView.StatusBar.Foreground}"/>
+						<Setter Property="VerticalAlignment" Value="Center"/>
 					</Style>
 				</Grid.Styles>
 
@@ -403,32 +404,51 @@
 				<StackPanel IsVisible="{Binding HasLogs}" Orientation="Horizontal">
 					<TextBlock Text="{DynamicResource String.SessionView.AllLogCount}" VerticalAlignment="Center"/>
 					<TextBlock Text="{Binding AllLogCount}" VerticalAlignment="Center"/>
-					<TextBlock IsVisible="{Binding IsFilteringLogsNeeded}" Text="{DynamicResource String.SessionView.FilteredLogCount}" VerticalAlignment="Center"/>
-					<TextBlock IsVisible="{Binding IsFilteringLogsNeeded}" Text="{Binding FilteredLogCount}" VerticalAlignment="Center"/>
-					<Separator Classes="SessionView_StatusBar_Separator"/>
-				</StackPanel>
-
-				<!-- Filtering progress -->
-				<StackPanel Grid.Column="1" Opacity="0" Orientation="Horizontal">
-					<TextBlock Text="{DynamicResource String.SessionView.LogsFilteringProgress}"/>
-					<TextBlock Text="00000"/>
-					<Separator Classes="SessionView_StatusBar_Separator"/>
-				</StackPanel>
-				<StackPanel Grid.Column="1" IsVisible="{Binding IsFilteringLogs}" Orientation="Horizontal">
-					<TextBlock Text="{DynamicResource String.SessionView.LogsFilteringProgress}" VerticalAlignment="Center"/>
-					<TextBlock Text="{Binding LogsFilteringProgress, Converter={x:Static appViewModels:Session.LogsFilteringProgressConverter}}" VerticalAlignment="Center"/>
+					<TextBlock IsVisible="{Binding IsFilteringLogsNeeded}" Text="{DynamicResource String.SessionView.FilteredLogCount}"/>
+					<TextBlock IsVisible="{Binding IsFilteringLogsNeeded}" Text="{Binding FilteredLogCount}"/>
 					<Separator Classes="SessionView_StatusBar_Separator"/>
 				</StackPanel>
 
 				<!-- Selected logs -->
-				<StackPanel Grid.Column="2" IsVisible="{Binding #logListBox.SelectedItems.Count}" Orientation="Horizontal">
-					<TextBlock Text="{DynamicResource String.SessionView.SelectedLogCount}" VerticalAlignment="Center"/>
-					<TextBlock Text="{Binding #logListBox.SelectedItems.Count}" VerticalAlignment="Center"/>
+				<StackPanel Grid.Column="1" IsVisible="{Binding #logListBox.SelectedItems.Count}" Orientation="Horizontal">
+					<TextBlock Text="{DynamicResource String.SessionView.SelectedLogCount}"/>
+					<TextBlock Text="{Binding #logListBox.SelectedItems.Count}"/>
 					<Separator Classes="SessionView_StatusBar_Separator"/>
 				</StackPanel>
 
+				<!-- Filtering progress -->
+				<StackPanel Grid.Column="3" IsVisible="{Binding IsFilteringLogs}" Orientation="Horizontal">
+					<Separator Classes="SessionView_StatusBar_Separator"/>
+					<Border Classes="SessionView_StatusBar_Icon">
+						<DrawingPresenter Classes="Icon">
+							<DrawingPresenter.Drawing>
+								<GeometryDrawing Brush="{DynamicResource Brush.SessionView.StatusBar.Foreground}" Geometry="{StaticResource Geometry.Filter}"/>
+							</DrawingPresenter.Drawing>
+						</DrawingPresenter>
+					</Border>
+					<TextBlock Text="{DynamicResource String.SessionView.LogsFilteringProgress}"/>
+					<Panel VerticalAlignment="Center">
+						<TextBlock Text="00.0%" Opacity="0"/>
+						<TextBlock HorizontalAlignment="Left" Text="{Binding LogsFilteringProgress, Converter={x:Static appViewModels:Session.LogsFilteringProgressConverter}}"/>	
+					</Panel>
+				</StackPanel>
+
+				<!-- Saving logs -->
+				<StackPanel Grid.Column="4" IsVisible="{Binding IsSavingLogs}" Orientation="Horizontal">
+					<Separator Classes="SessionView_StatusBar_Separator"/>
+					<Border Classes="SessionView_StatusBar_Icon">
+						<DrawingPresenter Classes="Icon">
+							<DrawingPresenter.Drawing>
+								<GeometryDrawing Brush="{DynamicResource Brush.SessionView.StatusBar.Foreground}" Geometry="{StaticResource Geometry.Save}"/>
+							</DrawingPresenter.Drawing>
+						</DrawingPresenter>
+					</Border>
+					<TextBlock Text="{DynamicResource String.SessionView.SavingLogs}"/>
+				</StackPanel>
+
 				<!-- Error message -->
-				<StackPanel Grid.Column="4" IsVisible="{Binding HasAllDataSourceErrors}" Orientation="Horizontal">
+				<StackPanel Grid.Column="5" IsVisible="{Binding HasAllDataSourceErrors}" Orientation="Horizontal">
+					<Separator Classes="SessionView_StatusBar_Separator"/>
 					<Border Classes="SessionView_StatusBar_Icon">
 						<DrawingPresenter Classes="Icon">
 							<DrawingPresenter.Drawing>
@@ -436,9 +456,9 @@
 							</DrawingPresenter.Drawing>
 						</DrawingPresenter>
 					</Border>
-					<TextBlock Text="{DynamicResource String.SessionView.HasAllDataSourceErrors}" VerticalAlignment="Center"/>
+					<TextBlock Text="{DynamicResource String.SessionView.HasAllDataSourceErrors}"/>
 				</StackPanel>
-				<StackPanel Grid.Column="4" IsVisible="{Binding HasPartialDataSourceErrors}" Orientation="Horizontal">
+				<StackPanel Grid.Column="5" IsVisible="{Binding HasPartialDataSourceErrors}" Orientation="Horizontal">
 					<Border Classes="SessionView_StatusBar_Icon">
 						<DrawingPresenter Classes="Icon">
 							<DrawingPresenter.Drawing>
@@ -446,7 +466,7 @@
 							</DrawingPresenter.Drawing>
 						</DrawingPresenter>
 					</Border>
-					<TextBlock Text="{DynamicResource String.SessionView.HasPartialDataSourceErrors}" VerticalAlignment="Center"/>
+					<TextBlock Text="{DynamicResource String.SessionView.HasPartialDataSourceErrors}"/>
 				</StackPanel>
 				
 			</Grid>
