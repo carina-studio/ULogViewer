@@ -27,9 +27,11 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -96,7 +98,9 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly MutableObservableBoolean canSelectMarkedLogs = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSetLogProfile = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSetWorkingDirectory = new MutableObservableBoolean();
+		readonly MutableObservableBoolean canShowFileInExplorer = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canShowLogMessage = new MutableObservableBoolean();
+		readonly MutableObservableBoolean canShowWorkingDirectoryInExplorer = new MutableObservableBoolean();
 		bool isAttachedToLogicalTree;
 		bool isLogFileNeededAfterLogProfileSet;
 		bool isMessageLogPropertyVisible;
@@ -149,7 +153,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.SelectAndSetLogProfileCommand = ReactiveCommand.Create(this.SelectAndSetLogProfile, this.canSetLogProfile);
 			this.SelectAndSetWorkingDirectoryCommand = ReactiveCommand.Create(this.SelectAndSetWorkingDirectory, this.canSetWorkingDirectory);
 			this.SelectMarkedLogsCommand = ReactiveCommand.Create(this.SelectMarkedLogs, this.canSelectMarkedLogs);
+			this.ShowFileInExplorerCommand = ReactiveCommand.Create(this.ShowFileInExplorer, this.canShowFileInExplorer);
 			this.ShowLogMessageCommand = ReactiveCommand.Create(this.ShowLogMessage, this.canShowLogMessage);
+			this.ShowWorkingDirectoryInExplorerCommand = ReactiveCommand.Create(this.ShowWorkingDirectoryInExplorer, this.canShowWorkingDirectoryInExplorer);
 			this.SwitchLogFiltersCombinationModeCommand = ReactiveCommand.Create(this.SwitchLogFiltersCombinationMode, this.GetObservable<bool>(HasLogProfileProperty));
 
 			// create collections
@@ -415,6 +421,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			else
 				this.canSetWorkingDirectory.Update(false);
+			this.canShowWorkingDirectoryInExplorer.Update(this.IsOpeningExplorerSupported && session.HasWorkingDirectory);
 
 			// start auto scrolling
 			session.LogProfile?.Let(profile =>
@@ -813,6 +820,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.canSelectMarkedLogs.Update(false);
 			this.canSetLogProfile.Update(false);
 			this.canSetWorkingDirectory.Update(false);
+			this.canShowWorkingDirectoryInExplorer.Update(false);
 
 			// update properties
 			this.SetValue<bool>(HasLogProfileProperty, false);
@@ -1036,6 +1044,11 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Initialize Avalonia components.
 		private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
+
+
+		// Check whether opening system file explorer is supported or not.
+		bool IsOpeningExplorerSupported { get; } = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) 
+			|| RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
 
 
 		// Get or set whether scrolling to latest log is needed or not.
@@ -1436,6 +1449,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.canFilterLogsByPid.Update(hasSingleSelectedItem && this.isPidLogPropertyVisible);
 				this.canFilterLogsByTid.Update(hasSingleSelectedItem && this.isTidLogPropertyVisible);
 				this.canMarkUnmarkSelectedLogs.Update(hasSelectedItems && session.MarkUnmarkLogsCommand.CanExecute(null));
+				this.canShowFileInExplorer.Update(hasSelectedItems && session.IsLogFileNeeded);
 				this.canShowLogMessage.Update(hasSingleSelectedItem && this.isMessageLogPropertyVisible);
 			});
 		}
@@ -1796,6 +1810,9 @@ namespace CarinaStudio.ULogViewer.Controls
 				case nameof(Session.HasMarkedLogs):
 					this.canSelectMarkedLogs.Update(session.HasMarkedLogs);
 					break;
+				case nameof(Session.HasWorkingDirectory):
+					this.canShowWorkingDirectoryInExplorer.Update(this.IsOpeningExplorerSupported && session.HasWorkingDirectory);
+					break;
 				case nameof(Session.IsActivated):
 					if (!session.IsActivated)
 						this.scrollToLatestLogAction.Cancel();
@@ -1840,6 +1857,15 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.UpdateLogFontSize();
 			else if (e.Key == Settings.UpdateLogFilterDelay)
 				this.logTextFilterTextBox.ValidationDelay = this.UpdateLogFilterParamsDelay;
+		}
+
+
+		// Called when pointer released on item of status bar.
+		void OnStatusBarItemPointerReleased(object? sender, PointerReleasedEventArgs e)
+		{
+			if (sender is not Control control || e.InitialPressMouseButton != MouseButton.Left)
+				return;
+			this.SynchronizationContext.Post(() => control.ContextMenu?.Open());
 		}
 
 
@@ -2130,6 +2156,87 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Show file in system file explorer.
+		void ShowFileInExplorer()
+		{
+			// check state
+			this.VerifyAccess();
+			if (!this.canShowFileInExplorer.Value)
+				return;
+
+			// collect paths
+			var comparer = IO.PathEqualityComparer.Default;
+			var filePath = (string?)null;
+			var dirPathSet = new HashSet<string>(comparer);
+			foreach (DisplayableLog log in this.logListBox.SelectedItems)
+			{
+				var fileName = log.FileName;
+				if (string.IsNullOrEmpty(fileName))
+					continue;
+				if (filePath == null && dirPathSet.IsEmpty())
+					filePath = fileName;
+				else if (filePath != null && !comparer.Equals(filePath, fileName))
+				{
+					dirPathSet.Add(Path.GetDirectoryName(filePath) ?? "");
+					dirPathSet.Add(Path.GetDirectoryName(fileName) ?? "");
+					filePath = null;
+				}
+				else
+					dirPathSet.Add(Path.GetDirectoryName(fileName) ?? "");
+			}
+
+			// show in system file explorer
+			if (filePath != null)
+				this.ShowFileSystemItemInExplorer(filePath, false);
+			else if (dirPathSet.IsNotEmpty())
+			{
+				foreach (var path in dirPathSet)
+					this.ShowFileSystemItemInExplorer(path, true);
+			}
+		}
+
+
+		// Command to show file in system file explorer.
+		ICommand ShowFileInExplorerCommand { get; }
+
+
+		// Show file system item in system file explorer.
+		void ShowFileSystemItemInExplorer(string path, bool isDirectory)
+		{
+			using var process = new Process();
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+			{
+				process.StartInfo.Let(it =>
+				{
+					it.FileName = "Explorer";
+					it.Arguments = isDirectory
+						? $"\"{path}\""
+						: $"/select, \"{path}\"";
+				});
+			}
+			else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+			{
+				process.StartInfo.Let(it =>
+				{
+					it.Arguments = isDirectory
+						? $"\"{path}\""
+						: $"-R \"{path}\"";
+					it.Verb = "open";
+				});
+			}
+			else
+				return;
+			try
+			{
+				process.Start();
+			}
+			catch (Exception ex)
+			{
+				this.Logger.LogError(ex, "Unable to open system file explorer");
+			}
+		}
+
+
 		// Show menu of log actions.
 		void ShowLogActionsMenu()
 		{
@@ -2183,6 +2290,28 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.otherActionsMenu.PlacementTarget = this.otherActionsButton;
 			this.otherActionsMenu.Open(this);
 		}
+
+
+		// Show working directory in system file explorer.
+		void ShowWorkingDirectoryInExplorer()
+		{
+			// check state
+			this.VerifyAccess();
+			if (!this.canShowWorkingDirectoryInExplorer.Value)
+				return;
+			if (this.DataContext is not Session session)
+				return;
+			var workingDirectory = session.WorkingDirectoryPath;
+			if (string.IsNullOrEmpty(workingDirectory))
+				return;
+
+			// open system file explorer
+			this.ShowFileSystemItemInExplorer(workingDirectory, true);
+		}
+
+
+		// Command to show working directory in system file explorer.
+		ICommand ShowWorkingDirectoryInExplorerCommand { get; }
 
 
 		// Get current state of status bar.

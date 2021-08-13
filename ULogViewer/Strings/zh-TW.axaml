@@ -140,6 +140,7 @@
 	<sys:String x:Key="String.LogProfileIcon.Database">資料庫</sys:String>
 	<sys:String x:Key="String.LogProfileIcon.Debug">偵錯</sys:String>
 	<sys:String x:Key="String.LogProfileIcon.File">檔案</sys:String>
+	<sys:String x:Key="String.LogProfileIcon.Folder">資料夾</sys:String>
 	<sys:String x:Key="String.LogProfileIcon.Network">網路</sys:String>
 	<sys:String x:Key="String.LogProfileIcon.Phone">手機</sys:String>
 	<sys:String x:Key="String.LogProfileIcon.Terminal">終端機</sys:String>
@@ -320,7 +321,9 @@
 	<sys:String x:Key="String.SessionView.SelectMarkedLogs">選取已標記的日誌</sys:String>
 	<sys:String x:Key="String.SessionView.SetLogProfile">選取/變更日誌類型</sys:String>
 	<sys:String x:Key="String.SessionView.SetWorkingDirectory">選取/變更工作目錄</sys:String>
+	<sys:String x:Key="String.SessionView.ShowFileInExplorer">在檔案總管中顯示檔案</sys:String>
 	<sys:String x:Key="String.SessionView.ShowLogMessage">檢視完整{0}…</sys:String>
+	<sys:String x:Key="String.SessionView.ShowWorkingDirectoryInExplorer">在檔案總管中開啟工作目錄</sys:String>
 	<sys:String x:Key="String.SessionView.TooManyDirectoryPathsDropped">請拖放單一目錄。</sys:String>
 	<sys:String x:Key="String.SessionView.ViewFullLogMessage">檢視更多…</sys:String>
 

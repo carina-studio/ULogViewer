@@ -75,6 +75,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<bool> HasPredefinedLogTextFiltersProperty = ObservableProperty.Register<Session, bool>(nameof(HasPredefinedLogTextFilters));
 		/// <summary>
+		/// Property of <see cref="HasWorkingDirectory"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> HasWorkingDirectoryProperty = ObservableProperty.Register<Session, bool>(nameof(HasWorkingDirectory));
+		/// <summary>
 		/// Property of <see cref="Icon"/>.
 		/// </summary>
 		public static readonly ObservableProperty<Drawing?> IconProperty = ObservableProperty.Register<Session, Drawing?>(nameof(Icon));
@@ -162,6 +166,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Property of <see cref="ValidLogLevels"/>.
 		/// </summary>
 		public static readonly ObservableProperty<IList<Logs.LogLevel>> ValidLogLevelsProperty = ObservableProperty.Register<Session, IList<Logs.LogLevel>>(nameof(ValidLogLevels), new Logs.LogLevel[0]);
+		/// <summary>
+		/// Property of <see cref="WorkingDirectoryName"/>.
+		/// </summary>
+		public static readonly ObservableProperty<string?> WorkingDirectoryNameProperty = ObservableProperty.Register<Session, string?>(nameof(WorkingDirectoryName));
+		/// <summary>
+		/// Property of <see cref="WorkingDirectoryPath"/>.
+		/// </summary>
+		public static readonly ObservableProperty<string?> WorkingDirectoryPathProperty = ObservableProperty.Register<Session, string?>(nameof(WorkingDirectoryPath));
 
 
 		/// <summary>
@@ -1020,6 +1032,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Check whether working directory has been set or not.
+		/// </summary>
+		public bool HasWorkingDirectory { get => this.GetValue(HasWorkingDirectoryProperty); }
+
+
+		/// <summary>
 		/// Get icon of session.
 		/// </summary>
 		public Drawing? Icon { get => this.GetValue(IconProperty); }
@@ -1673,11 +1691,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// update state
 			this.canResetLogProfile.Update(false);
+			this.SetValue(HasWorkingDirectoryProperty, false);
 			this.SetValue(IsLogFileNeededProperty, false);
 			this.SetValue(IsReadingLogsContinuouslyProperty, false);
 			this.SetValue(IsWorkingDirectoryNeededProperty, false);
 			this.UpdateIsLogsWritingAvailable(null);
 			this.UpdateValidLogLevels();
+			this.SetValue(WorkingDirectoryNameProperty, null);
+			this.SetValue(WorkingDirectoryPathProperty, null);
 
 			// clear profile
 			this.Logger.LogWarning($"Reset log profile '{profile.Name}'");
@@ -1991,6 +2012,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				return;
 			if (directory == null)
 				throw new ArgumentNullException(nameof(directory));
+			if (!Path.IsPathRooted(directory))
+				throw new ArgumentException("Cannot set working directory by relative path.");
 			var profile = this.LogProfile ?? throw new InternalStateCorruptedException("No log profile to set working directory.");
 			var dataSourceOptions = profile.DataSourceOptions;
 			if (dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.WorkingDirectory)))
@@ -2011,11 +2034,20 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			this.Logger.LogDebug($"Set working directory to '{directory}'");
 
+			// update state
+			this.SetValue(WorkingDirectoryNameProperty, Path.GetFileName(directory));
+			this.SetValue(WorkingDirectoryPathProperty, directory);
+			this.SetValue(HasWorkingDirectoryProperty, true);
+
 			// create data source
 			dataSourceOptions.WorkingDirectory = directory;
 			var dataSource = this.CreateLogDataSourceOrNull(profile.DataSourceProvider, dataSourceOptions);
 			if (dataSource == null)
+			{
+				this.hasLogDataSourceCreationFailure = true;
+				this.checkDataSourceErrorsAction.Schedule();
 				return;
+			}
 
 			// create log reader
 			this.CreateLogReader(dataSource);
@@ -2113,6 +2145,18 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Get list of valid <see cref="Logs.LogLevel"/> defined by log profile including <see cref="Logs.LogLevel.Undefined"/>.
 		/// </summary>
 		public IList<Logs.LogLevel> ValidLogLevels { get => this.GetValue(ValidLogLevelsProperty); }
+
+
+		/// <summary>
+		/// Get name of current working directory.
+		/// </summary>
+		public string? WorkingDirectoryName { get => this.GetValue(WorkingDirectoryNameProperty); }
+
+
+		/// <summary>
+		/// Get path of current working directory.
+		/// </summary>
+		public string? WorkingDirectoryPath { get => this.GetValue(WorkingDirectoryPathProperty); }
 
 
 		/// <summary>

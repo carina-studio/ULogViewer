@@ -31,6 +31,7 @@
 		<AvaloniaResource Include="Strings/Default-Linux.axaml" />
 		<AvaloniaResource Include="Strings/Default-OSX.axaml" />
     <AvaloniaResource Include="Strings/zh-TW.axaml" />
+    <AvaloniaResource Include="Strings/zh-TW-OSX.axaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -78,7 +79,7 @@
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/WindowsSecurityEventLogs.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/WindowsSetupEventLogs.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/WindowsSystemEventLogs.json" />
-		<EmbeddedResource Include="NLog.config"/>
+		<EmbeddedResource Include="NLog.config" />
 	</ItemGroup>
 
 </Project>

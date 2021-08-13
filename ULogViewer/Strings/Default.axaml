@@ -145,6 +145,7 @@
 	<sys:String x:Key="String.LogProfileIcon.Database">Database</sys:String>
 	<sys:String x:Key="String.LogProfileIcon.Debug">Debug</sys:String>
 	<sys:String x:Key="String.LogProfileIcon.File">File</sys:String>
+	<sys:String x:Key="String.LogProfileIcon.Folder">Folder</sys:String>
 	<sys:String x:Key="String.LogProfileIcon.Network">Network</sys:String>
 	<sys:String x:Key="String.LogProfileIcon.Phone">Mobile phone</sys:String>
 	<sys:String x:Key="String.LogProfileIcon.Terminal">Terminal</sys:String>
@@ -333,7 +334,9 @@
 	<sys:String x:Key="String.SessionView.SelectMarkedLogs">Select marked logs</sys:String>
 	<sys:String x:Key="String.SessionView.SetLogProfile">Select/Change log profile</sys:String>
 	<sys:String x:Key="String.SessionView.SetWorkingDirectory">Select/Change working directory</sys:String>
+	<sys:String x:Key="String.SessionView.ShowFileInExplorer">Show file in Windows File Explorer</sys:String>
 	<sys:String x:Key="String.SessionView.ShowLogMessage">View full {0}…</sys:String>
+	<sys:String x:Key="String.SessionView.ShowWorkingDirectoryInExplorer">Show working directory in Windows File Explorer</sys:String>
 	<sys:String x:Key="String.SessionView.TooManyDirectoryPathsDropped">Please drag and drop single directory.</sys:String>
 	<sys:String x:Key="String.SessionView.ViewFullLogMessage">View more…</sys:String>
 

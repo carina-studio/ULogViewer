@@ -57,6 +57,8 @@
 					<sys:Boolean>True</sys:Boolean>
 				</MenuItem.CommandParameter>
 			</MenuItem>
+			<Separator/>
+			<MenuItem Command="{Binding $parent[UserControl].ShowFileInExplorerCommand}" Header="{DynamicResource String.SessionView.ShowFileInExplorer}"/>
 		</ContextMenu>
 
 		<!-- Other actions menu -->
@@ -379,7 +381,7 @@
 					<iaCore:ChangePropertyAction PropertyName="Background" Value="{StaticResource Brush.SessionView.StatusBar.Background.Warning}"/>
 				</iaCore:DataTriggerBehavior>
 			</ia:Interaction.Behaviors>
-			<Grid ColumnDefinitions="Auto,Auto,*,Auto,Auto,Auto">
+			<Grid ColumnDefinitions="Auto,Auto,*,Auto,Auto,Auto,Auto">
 
 				<!-- Styles -->
 				<Grid.Styles>
@@ -446,8 +448,30 @@
 					<TextBlock Text="{DynamicResource String.SessionView.SavingLogs}"/>
 				</StackPanel>
 
+				<!-- Working directory -->
+				<StackPanel Grid.Column="5" IsVisible="{Binding HasWorkingDirectory}" Orientation="Horizontal">
+					<Separator Classes="SessionView_StatusBar_Separator"/>
+					<Border Classes="SessionView_StatusBar_Icon">
+						<DrawingPresenter Classes="Icon">
+							<DrawingPresenter.Drawing>
+								<GeometryDrawing Brush="{DynamicResource Brush.SessionView.StatusBar.Foreground}" Geometry="{StaticResource Geometry.Folder}"/>
+							</DrawingPresenter.Drawing>
+						</DrawingPresenter>
+					</Border>
+					<TextBlock Cursor="Hand" PointerReleased="OnStatusBarItemPointerReleased" Text="{Binding WorkingDirectoryName}">
+						<TextBlock.ContextMenu>
+							<ContextMenu>
+								<MenuItem Command="{Binding $parent[UserControl].ShowWorkingDirectoryInExplorerCommand}" Header="{DynamicResource String.SessionView.ShowWorkingDirectoryInExplorer}"/>
+							</ContextMenu>
+						</TextBlock.ContextMenu>
+						<ToolTip.Tip>
+							<TextBlock Foreground="{DynamicResource ToolTipForeground}" Text="{Binding WorkingDirectoryPath}"/>
+						</ToolTip.Tip>
+					</TextBlock>
+				</StackPanel>
+
 				<!-- Error message -->
-				<StackPanel Grid.Column="5" IsVisible="{Binding HasAllDataSourceErrors}" Orientation="Horizontal">
+				<StackPanel Grid.Column="6" IsVisible="{Binding HasAllDataSourceErrors}" Orientation="Horizontal">
 					<Separator Classes="SessionView_StatusBar_Separator"/>
 					<Border Classes="SessionView_StatusBar_Icon">
 						<DrawingPresenter Classes="Icon">
@@ -458,7 +482,7 @@
 					</Border>
 					<TextBlock Text="{DynamicResource String.SessionView.HasAllDataSourceErrors}"/>
 				</StackPanel>
-				<StackPanel Grid.Column="5" IsVisible="{Binding HasPartialDataSourceErrors}" Orientation="Horizontal">
+				<StackPanel Grid.Column="6" IsVisible="{Binding HasPartialDataSourceErrors}" Orientation="Horizontal">
 					<Border Classes="SessionView_StatusBar_Icon">
 						<DrawingPresenter Classes="Icon">
 							<DrawingPresenter.Drawing>

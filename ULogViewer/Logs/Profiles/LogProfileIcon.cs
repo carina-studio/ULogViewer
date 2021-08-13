@@ -40,6 +40,10 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// </summary>
 		File,
 		/// <summary>
+		/// Folder.
+		/// </summary>
+		Folder,
+		/// <summary>
 		/// Network.
 		/// </summary>
 		Network,

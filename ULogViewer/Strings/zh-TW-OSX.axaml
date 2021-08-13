@@ -1,0 +1,9 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+										xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+	<!-- SessionView -->
+	<sys:String x:Key="String.SessionView.ShowFileInExplorer">在 Finder 中顯示檔案</sys:String>
+	<sys:String x:Key="String.SessionView.ShowWorkingDirectoryInExplorer">在 Finder 中開啟工作目錄</sys:String>
+	
+</ResourceDictionary>
