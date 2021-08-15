@@ -1966,6 +1966,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.SetValue(IsWorkingDirectoryNeededProperty, true);
 					startReadingLogs = false;
 				}
+				else
+				{
+					this.SetValue(HasWorkingDirectoryProperty, true);
+					this.SetValue(WorkingDirectoryNameProperty, Path.GetFileName(dataSourceOptions.WorkingDirectory));
+					this.SetValue(WorkingDirectoryPathProperty, dataSourceOptions.WorkingDirectory);
+				}
 			}
 			if (startReadingLogs)
 			{

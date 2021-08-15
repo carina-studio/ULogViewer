@@ -451,23 +451,24 @@
 				<!-- Working directory -->
 				<StackPanel Grid.Column="5" IsVisible="{Binding HasWorkingDirectory}" Orientation="Horizontal">
 					<Separator Classes="SessionView_StatusBar_Separator"/>
-					<Border Classes="SessionView_StatusBar_Icon">
-						<DrawingPresenter Classes="Icon">
-							<DrawingPresenter.Drawing>
-								<GeometryDrawing Brush="{DynamicResource Brush.SessionView.StatusBar.Foreground}" Geometry="{StaticResource Geometry.Folder}"/>
-							</DrawingPresenter.Drawing>
-						</DrawingPresenter>
-					</Border>
-					<TextBlock Cursor="Hand" PointerReleased="OnStatusBarItemPointerReleased" Text="{Binding WorkingDirectoryName}">
-						<TextBlock.ContextMenu>
+					<StackPanel Background="{x:Static Brushes.Transparent}" Cursor="Hand" Orientation="Horizontal" PointerReleased="OnStatusBarItemPointerReleased">
+						<StackPanel.ContextMenu>
 							<ContextMenu>
 								<MenuItem Command="{Binding $parent[UserControl].ShowWorkingDirectoryInExplorerCommand}" Header="{DynamicResource String.SessionView.ShowWorkingDirectoryInExplorer}"/>
 							</ContextMenu>
-						</TextBlock.ContextMenu>
+						</StackPanel.ContextMenu>
 						<ToolTip.Tip>
 							<TextBlock Foreground="{DynamicResource ToolTipForeground}" Text="{Binding WorkingDirectoryPath}"/>
 						</ToolTip.Tip>
-					</TextBlock>
+						<Border Classes="SessionView_StatusBar_Icon">
+							<DrawingPresenter Classes="Icon">
+								<DrawingPresenter.Drawing>
+									<GeometryDrawing Brush="{DynamicResource Brush.SessionView.StatusBar.Foreground}" Geometry="{StaticResource Geometry.Folder}"/>
+								</DrawingPresenter.Drawing>
+							</DrawingPresenter>
+						</Border>
+						<TextBlock Text="{Binding WorkingDirectoryName}"/>
+					</StackPanel>
 				</StackPanel>
 
 				<!-- Error message -->
