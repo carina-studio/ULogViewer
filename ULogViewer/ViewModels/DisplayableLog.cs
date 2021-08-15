@@ -13,16 +13,32 @@ namespace CarinaStudio.ULogViewer.ViewModels
 	/// </summary>
 	class DisplayableLog : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 	{
+		// Static fields.
+		static readonly Func<Log, string?>[] extraGetters = new Func<Log, string?>[Log.ExtraCapacity].Also(it =>
+		{
+			for (var i = it.Length - 1; i >= 0; --i)
+				it[i] = Log.CreatePropertyGetter<string?>($"Extra{i + 1}");
+		});
+
+
 		// Fields.
 		string? beginningTimestampString;
 		string? endingTimestampString;
+		int[] extraLineCount = new int[10].Also(it =>
+		{
+			for (var i = it.Length - 1; i >= 0; --i)
+				it[i] = -1;
+		});
 		IBrush? colorIndicatorBrush;
+		bool?[] hasExtraLinesOfExtras = new bool?[10];
 		bool? hasExtraLinesOfMessage;
+		bool? hasExtraLinesOfSummary;
 		bool isColorIndicatorBrushSet;
 		bool isLevelBrushSet;
 		bool isMarked;
 		IBrush? levelBrush;
 		int messageLineCount = -1;
+		int summaryLineCount = -1;
 		string? timestampString;
 
 
@@ -103,6 +119,19 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Get category of log.
 		/// </summary>
 		public string? Category { get => this.Log.Category; }
+
+
+		// Check whether extra line of ExtraX exist or not.
+		bool CheckExtraLinesOfExtra(int index)
+		{
+			var hasExtraLines = this.hasExtraLinesOfExtras[index];
+			if (hasExtraLines == null)
+			{
+				hasExtraLines = this.GetExtraLineCount(index) > this.Group.MaxDisplayLineCount;
+				this.hasExtraLinesOfExtras[index] = hasExtraLines;
+			}
+			return hasExtraLines.Value;
+		}
 
 
 		/// <summary>
@@ -195,9 +224,21 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Get line count of <see cref="Extra1"/>.
+		/// </summary>
+		public int Extra1LineCount { get => this.GetExtraLineCount(0); }
+
+
+		/// <summary>
 		/// Get 10th extra data of log.
 		/// </summary>
 		public string? Extra10 { get => this.Log.Extra10; }
+
+
+		/// <summary>
+		/// Get line count of <see cref="Extra10"/>.
+		/// </summary>
+		public int Extra10LineCount { get => this.GetExtraLineCount(9); }
 
 
 		/// <summary>
@@ -207,9 +248,21 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Get line count of <see cref="Extra2"/>.
+		/// </summary>
+		public int Extra2LineCount { get => this.GetExtraLineCount(1); }
+
+
+		/// <summary>
 		/// Get 3rd extra data of log.
 		/// </summary>
 		public string? Extra3 { get => this.Log.Extra3; }
+
+
+		/// <summary>
+		/// Get line count of <see cref="Extra3"/>.
+		/// </summary>
+		public int Extra3LineCount { get => this.GetExtraLineCount(2); }
 
 
 		/// <summary>
@@ -219,9 +272,21 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Get line count of <see cref="Extra4"/>.
+		/// </summary>
+		public int Extra4LineCount { get => this.GetExtraLineCount(3); }
+
+
+		/// <summary>
 		/// Get 5th extra data of log.
 		/// </summary>
 		public string? Extra5 { get => this.Log.Extra5; }
+
+
+		/// <summary>
+		/// Get line count of <see cref="Extra5"/>.
+		/// </summary>
+		public int Extra5LineCount { get => this.GetExtraLineCount(4); }
 
 
 		/// <summary>
@@ -231,9 +296,21 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Get line count of <see cref="Extra6"/>.
+		/// </summary>
+		public int Extra6LineCount { get => this.GetExtraLineCount(5); }
+
+
+		/// <summary>
 		/// Get 7th extra data of log.
 		/// </summary>
 		public string? Extra7 { get => this.Log.Extra7; }
+
+
+		/// <summary>
+		/// Get line count of <see cref="Extra7"/>.
+		/// </summary>
+		public int Extra7LineCount { get => this.GetExtraLineCount(6); }
 
 
 		/// <summary>
@@ -243,9 +320,21 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Get line count of <see cref="Extra8"/>.
+		/// </summary>
+		public int Extra8LineCount { get => this.GetExtraLineCount(7); }
+
+
+		/// <summary>
 		/// Get 9th extra data of log.
 		/// </summary>
 		public string? Extra9 { get => this.Log.Extra9; }
+
+
+		/// <summary>
+		/// Get line count of <see cref="Extra9"/>.
+		/// </summary>
+		public int Extra9LineCount { get => this.GetExtraLineCount(8); }
 
 
 		/// <summary>
@@ -266,10 +355,79 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		}
 
 
+		// Get number of lines of ExtraX.
+		int GetExtraLineCount(int index)
+		{
+			if (this.extraLineCount[index] < 0)
+				this.extraLineCount[index] = CalculateLineCount(extraGetters[index](this.Log));
+			return this.extraLineCount[index];
+		}
+
+
 		/// <summary>
 		/// Get <see cref="DisplayableLogGroup"/> which the instance belongs to.
 		/// </summary>
 		public DisplayableLogGroup Group { get; }
+
+
+		/// <summary>
+		/// Check whether number of lines in <see cref="Extra1"/> is greater than <see cref="DisplayableLogGroup.MaxDisplayLineCount"/> or not.
+		/// </summary>
+		public bool HasExtraLinesOfExtra1 { get => this.CheckExtraLinesOfExtra(0); }
+
+
+		/// <summary>
+		/// Check whether number of lines in <see cref="Extra10"/> is greater than <see cref="DisplayableLogGroup.MaxDisplayLineCount"/> or not.
+		/// </summary>
+		public bool HasExtraLinesOfExtra10 { get => this.CheckExtraLinesOfExtra(9); }
+
+
+		/// <summary>
+		/// Check whether number of lines in <see cref="Extra2"/> is greater than <see cref="DisplayableLogGroup.MaxDisplayLineCount"/> or not.
+		/// </summary>
+		public bool HasExtraLinesOfExtra2 { get => this.CheckExtraLinesOfExtra(1); }
+
+
+		/// <summary>
+		/// Check whether number of lines in <see cref="Extra3"/> is greater than <see cref="DisplayableLogGroup.MaxDisplayLineCount"/> or not.
+		/// </summary>
+		public bool HasExtraLinesOfExtra3 { get => this.CheckExtraLinesOfExtra(2); }
+
+
+		/// <summary>
+		/// Check whether number of lines in <see cref="Extra4"/> is greater than <see cref="DisplayableLogGroup.MaxDisplayLineCount"/> or not.
+		/// </summary>
+		public bool HasExtraLinesOfExtra4 { get => this.CheckExtraLinesOfExtra(3); }
+
+
+		/// <summary>
+		/// Check whether number of lines in <see cref="Extra5"/> is greater than <see cref="DisplayableLogGroup.MaxDisplayLineCount"/> or not.
+		/// </summary>
+		public bool HasExtraLinesOfExtra5 { get => this.CheckExtraLinesOfExtra(4); }
+
+
+		/// <summary>
+		/// Check whether number of lines in <see cref="Extra6"/> is greater than <see cref="DisplayableLogGroup.MaxDisplayLineCount"/> or not.
+		/// </summary>
+		public bool HasExtraLinesOfExtra6 { get => this.CheckExtraLinesOfExtra(5); }
+
+
+		/// <summary>
+		/// Check whether number of lines in <see cref="Extra7"/> is greater than <see cref="DisplayableLogGroup.MaxDisplayLineCount"/> or not.
+		/// </summary>
+		public bool HasExtraLinesOfExtra7 { get => this.CheckExtraLinesOfExtra(6); }
+
+
+		/// <summary>
+		/// Check whether number of lines in <see cref="Extra8"/> is greater than <see cref="DisplayableLogGroup.MaxDisplayLineCount"/> or not.
+		/// </summary>
+		public bool HasExtraLinesOfExtra8 { get => this.CheckExtraLinesOfExtra(7); }
+
+
+		/// <summary>
+		/// Check whether number of lines in <see cref="Extra9"/> is greater than <see cref="DisplayableLogGroup.MaxDisplayLineCount"/> or not.
+		/// </summary>
+		public bool HasExtraLinesOfExtra9 { get => this.CheckExtraLinesOfExtra(8); }
 
 
 		/// <summary>
@@ -284,6 +442,24 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				{
 					hasExtraLines = this.MessageLineCount > this.Group.MaxDisplayLineCount;
 					this.hasExtraLinesOfMessage = hasExtraLines;
+				}
+				return hasExtraLines.Value;
+			}
+		}
+
+
+		/// <summary>
+		/// Check whether number of lines in <see cref="Summary"/> is greater than <see cref="DisplayableLogGroup.MaxDisplayLineCount"/> or not.
+		/// </summary>
+		public bool HasExtraLinesOfSummary
+		{
+			get
+			{
+				var hasExtraLines = this.hasExtraLinesOfSummary;
+				if (hasExtraLines == null)
+				{
+					hasExtraLines = this.SummaryLineCount > this.Group.MaxDisplayLineCount;
+					this.hasExtraLinesOfSummary = hasExtraLines;
 				}
 				return hasExtraLines.Value;
 			}
@@ -411,13 +587,35 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// check attached property changed handlers
 			var propertyChangedHandlers = this.PropertyChanged;
 
+			// check extra line count
+			var hasExtraLines = (bool?)null;
+			for (var i = Log.ExtraCapacity - 1; i >= 0; --i)
+			{
+				hasExtraLines = this.hasExtraLinesOfExtras[i];
+				if (hasExtraLines.HasValue)
+				{
+					this.hasExtraLinesOfExtras[i] = null;
+					if (propertyChangedHandlers != null && this.CheckExtraLinesOfExtra(i) != hasExtraLines)
+						propertyChangedHandlers(this, new PropertyChangedEventArgs($"HasExtraLinesOfExtra{i + 1}"));
+				}
+			}
+
 			// check message line count
-			var hasExtraLines = this.hasExtraLinesOfMessage;
+			hasExtraLines = this.hasExtraLinesOfMessage;
 			if (hasExtraLines.HasValue)
 			{
 				this.hasExtraLinesOfMessage = null;
 				if (propertyChangedHandlers != null && this.HasExtraLinesOfMessage != hasExtraLines)
 					propertyChangedHandlers(this, new PropertyChangedEventArgs(nameof(HasExtraLinesOfMessage)));
+			}
+
+			// check summary line count
+			hasExtraLines = this.hasExtraLinesOfSummary;
+			if (hasExtraLines.HasValue)
+			{
+				this.hasExtraLinesOfSummary = null;
+				if (propertyChangedHandlers != null && this.HasExtraLinesOfSummary != hasExtraLines)
+					propertyChangedHandlers(this, new PropertyChangedEventArgs(nameof(HasExtraLinesOfSummary)));
 			}
 		}
 
@@ -487,6 +685,20 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Get summary of log.
 		/// </summary>
 		public string? Summary { get => this.Log.Summary; }
+
+
+		/// <summary>
+		/// Get line count of <see cref="Summary"/>.
+		/// </summary>
+		public int SummaryLineCount
+		{
+			get
+			{
+				if (this.summaryLineCount < 0)
+					this.summaryLineCount = CalculateLineCount(this.Log.Summary);
+				return this.summaryLineCount;
+			}
+		}
 
 
 		/// <summary>

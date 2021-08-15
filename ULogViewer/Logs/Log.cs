@@ -12,6 +12,12 @@ namespace CarinaStudio.ULogViewer.Logs
 	/// </summary>
 	class Log
 	{
+		/// <summary>
+		/// Get capacity of extra data.
+		/// </summary>
+		public const int ExtraCapacity = 10;
+
+
 		// Static fields.
 		static Dictionary<string, PropertyInfo> dateTimePropertyMap = new Dictionary<string, PropertyInfo>();
 		static volatile bool isPropertyMapReady;

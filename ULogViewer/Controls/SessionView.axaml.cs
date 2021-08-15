@@ -611,6 +611,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					itemGrid.ColumnDefinitions.Add(propertyColumn);
 
 					// create property view
+					var isMultiLineProperty = Logs.Log.HasMultiLineStringProperty(logProperty.Name);
 					var propertyView = logProperty.Name switch
 					{
 						_ => (Control)new TextBlock().Also(it =>
@@ -624,14 +625,17 @@ namespace CarinaStudio.ULogViewer.Controls
 									binding.Converter = Converters.EnumConverter.LogLevel;
 								binding.Path = logProperty.Name;
 							}));
-							it.Bind(TextBlock.MaxLinesProperty, new Binding() { Path = nameof(MaxDisplayLineCountForEachLog), Source = this });
+							if (isMultiLineProperty)
+								it.Bind(TextBlock.MaxLinesProperty, new Binding() { Path = nameof(MaxDisplayLineCountForEachLog), Source = this });
+							else
+								it.MaxLines = 1;
 							it.Padding = propertyPadding;
 							it.TextTrimming = TextTrimming.CharacterEllipsis;
 							it.TextWrapping = TextWrapping.NoWrap;
 							it.VerticalAlignment = VerticalAlignment.Top;
 						}),
 					};
-					if (logProperty.Name == nameof(DisplayableLog.Message))
+					if (isMultiLineProperty)
 					{
 						propertyView = new StackPanel().Also(it =>
 						{
@@ -640,7 +644,7 @@ namespace CarinaStudio.ULogViewer.Controls
 							{
 								viewDetails.Bind(TextBlock.ForegroundProperty, viewDetails.GetResourceObservable("Brush.TextBlock.Foreground.Link"));
 								viewDetails.Cursor = new Cursor(StandardCursorType.Hand);
-								viewDetails.Bind(TextBlock.IsVisibleProperty, new Binding() { Path = nameof(DisplayableLog.HasExtraLinesOfMessage) });
+								viewDetails.Bind(TextBlock.IsVisibleProperty, new Binding() { Path = $"HasExtraLinesOf{logProperty.Name}" });
 								viewDetails.Bind(TextBlock.TextProperty, viewDetails.GetResourceObservable("String.SessionView.ViewFullLogMessage"));
 								viewDetails.PointerReleased += (_, e) =>
 								{
