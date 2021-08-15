@@ -55,6 +55,11 @@
 						<TextBlock FontFamily="{Binding SampleLogFontFamily}" FontSize="{Binding LogFontSize}" HorizontalAlignment="Center" Text="{DynamicResource String.AppOptionsDialog.LogFont.Sample}" VerticalAlignment="Center"/>
 					</Grid>
 				</Border>
+				<Separator Classes="Dialog_Separator_Horizontal"/>
+				
+				<!-- Max display line count for each log -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.AppOptionsDialog.MaxDisplayLineCountForEachLog}"/>
+				<NumericUpDown HorizontalAlignment="Stretch" Maximum="20" Minimum="1" Value="{Binding MaxDisplayLineCountForEachLog, Mode=TwoWay}"/>
 				<Separator Classes="Dialog_Separator_Large_Horizontal"/>
 
 				<!-- Log operations -->

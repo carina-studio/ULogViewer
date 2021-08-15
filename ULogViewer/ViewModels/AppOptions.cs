@@ -173,6 +173,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		}
 
 
+		/// <summary>
+		/// Get or set maximum number of lines to display for each log.
+		/// </summary>
+		public int MaxDisplayLineCountForEachLog
+		{
+			get => this.Settings.GetValueOrDefault(ULogViewer.Settings.MaxDisplayLineCountForEachLog);
+			set => this.Settings.SetValue(ULogViewer.Settings.MaxDisplayLineCountForEachLog, value);
+		}
+
+
 		// Called when list of log profiles changed.
 		void OnLogProfilesChanged(object? sender, NotifyCollectionChangedEventArgs e)
 		{
@@ -211,6 +221,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.OnPropertyChanged(nameof(LogFontSize));
 			else if (key == ULogViewer.Settings.MaxContinuousLogCount)
 				this.OnPropertyChanged(nameof(MaxContinuousLogCount));
+			else if (key == ULogViewer.Settings.MaxDisplayLineCountForEachLog)
+				this.OnPropertyChanged(nameof(MaxDisplayLineCountForEachLog));
 			else if (key == ULogViewer.Settings.SelectLogFilesWhenNeeded)
 				this.OnPropertyChanged(nameof(SelectLogFilesWhenNeeded));
 			else if (key == ULogViewer.Settings.SelectLogProfileForNewSession)

@@ -13,20 +13,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 	/// </summary>
 	class DisplayableLog : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 	{
-		/// <summary>
-		/// Maximum line count to be displayed on UI.
-		/// </summary>
-		public const int MaxDisplayableLineCount = 5;
-
-
 		// Fields.
 		string? beginningTimestampString;
 		string? endingTimestampString;
 		IBrush? colorIndicatorBrush;
+		bool? hasExtraLinesOfMessage;
 		bool isColorIndicatorBrushSet;
 		bool isLevelBrushSet;
 		bool isMarked;
 		IBrush? levelBrush;
+		int messageLineCount = -1;
 		string? timestampString;
 
 
@@ -86,6 +82,21 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Get timestamp of log in binary format.
 		/// </summary>
 		public long BinaryTimestamp { get; }
+
+
+		// Calculate line count.
+		static int CalculateLineCount(string? text)
+		{
+			if (text == null)
+				return 0;
+			var lineCount = 1;
+			for (var i = text.Length - 1; i >= 0; --i)
+			{
+				if (text[i] == '\n')
+					++lineCount;
+			}
+			return lineCount;
+		}
 
 
 		/// <summary>
@@ -262,9 +273,21 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
-		/// Check whether number of lines in <see cref="Message"/> is greater than <see cref="MaxDisplayableLineCount"/> or not.
+		/// Check whether number of lines in <see cref="Message"/> is greater than <see cref="DisplayableLogGroup.MaxDisplayLineCount"/> or not.
 		/// </summary>
-		public bool HasExtraLinesOfMessage { get => this.Log.MessageLineCount > MaxDisplayableLineCount; }
+		public bool HasExtraLinesOfMessage
+		{
+			get
+			{
+				var hasExtraLines = this.hasExtraLinesOfMessage;
+				if (hasExtraLines == null)
+				{
+					hasExtraLines = this.MessageLineCount > this.Group.MaxDisplayLineCount;
+					this.hasExtraLinesOfMessage = hasExtraLines;
+				}
+				return hasExtraLines.Value;
+			}
+		}
 
 
 		/// <summary>
@@ -362,7 +385,15 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get line count of <see cref="Message"/>.
 		/// </summary>
-		public int MessageLineCount { get => this.Log.MessageLineCount; }
+		public int MessageLineCount
+		{
+			get
+			{
+				if (this.messageLineCount < 0)
+					this.messageLineCount = CalculateLineCount(this.Log.Message);
+				return this.messageLineCount;
+			}
+		}
 
 
 		/// <summary>
@@ -370,6 +401,25 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		internal void OnApplicationStringsUpdated()
 		{ }
+
+
+		/// <summary>
+		/// Called when maximum display line count changed.
+		/// </summary>
+		internal void OnMaxDisplayLineCountChanged()
+		{
+			// check attached property changed handlers
+			var propertyChangedHandlers = this.PropertyChanged;
+
+			// check message line count
+			var hasExtraLines = this.hasExtraLinesOfMessage;
+			if (hasExtraLines.HasValue)
+			{
+				this.hasExtraLinesOfMessage = null;
+				if (propertyChangedHandlers != null && this.HasExtraLinesOfMessage != hasExtraLines)
+					propertyChangedHandlers(this, new PropertyChangedEventArgs(nameof(HasExtraLinesOfMessage)));
+			}
+		}
 
 
 		/// <summary>

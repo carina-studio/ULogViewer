@@ -81,6 +81,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		static readonly AvaloniaProperty<bool> IsScrollingToLatestLogNeededProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(IsScrollingToLatestLogNeeded), true);
 		static readonly AvaloniaProperty<FontFamily> LogFontFamilyProperty = AvaloniaProperty.Register<SessionView, FontFamily>(nameof(LogFontFamily));
 		static readonly AvaloniaProperty<double> LogFontSizeProperty = AvaloniaProperty.Register<SessionView, double>(nameof(LogFontSize), 10.0);
+		static readonly AvaloniaProperty<int> MaxDisplayLineCountForEachLogProperty = AvaloniaProperty.Register<SessionView, int>(nameof(MaxDisplayLineCountForEachLog), 1);
 		static readonly AvaloniaProperty<SessionViewStatusBarState> StatusBarStateProperty = AvaloniaProperty.Register<SessionView, SessionViewStatusBarState>(nameof(StatusBarState), SessionViewStatusBarState.None);
 
 
@@ -166,6 +167,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.UpdateLogFontSize();
 
 			// setup properties
+			this.SetValue<int>(MaxDisplayLineCountForEachLogProperty, Math.Max(1, this.Settings.GetValueOrDefault(Settings.MaxDisplayLineCountForEachLog)));
 			this.ValidLogLevels = this.validLogLevels.AsReadOnly();
 
 			// initialize
@@ -622,7 +624,7 @@ namespace CarinaStudio.ULogViewer.Controls
 									binding.Converter = Converters.EnumConverter.LogLevel;
 								binding.Path = logProperty.Name;
 							}));
-							it.MaxLines = DisplayableLog.MaxDisplayableLineCount;
+							it.Bind(TextBlock.MaxLinesProperty, new Binding() { Path = nameof(MaxDisplayLineCountForEachLog), Source = this });
 							it.Padding = propertyPadding;
 							it.TextTrimming = TextTrimming.CharacterEllipsis;
 							it.TextWrapping = TextWrapping.NoWrap;
@@ -1081,6 +1083,10 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Command to mark or unmark selected logs.
 		ICommand MarkUnmarkSelectedLogsCommand { get; }
+
+
+		// Max line count to display for each log.
+		int MaxDisplayLineCountForEachLog { get => this.GetValue<int>(MaxDisplayLineCountForEachLogProperty); }
 
 
 		// Called when application string resources updated.
@@ -1855,6 +1861,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.UpdateLogFontFamily();
 			else if (e.Key == Settings.LogFontSize)
 				this.UpdateLogFontSize();
+			else if (e.Key == Settings.MaxDisplayLineCountForEachLog)
+				this.SetValue<int>(MaxDisplayLineCountForEachLogProperty, Math.Max(1, (int)e.Value));
 			else if (e.Key == Settings.UpdateLogFilterDelay)
 				this.logTextFilterTextBox.ValidationDelay = this.UpdateLogFilterParamsDelay;
 		}

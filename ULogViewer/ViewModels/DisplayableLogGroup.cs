@@ -21,6 +21,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		Func<DisplayableLog, string>? colorIndicatorKeyGetter;
 		readonly LinkedList<DisplayableLog> displayableLogs = new LinkedList<DisplayableLog>();
 		readonly Dictionary<LogLevel, IBrush> levelBrushes = new Dictionary<LogLevel, IBrush>();
+		int maxDisplayLineCount;
 		readonly Random random = new Random();
 
 
@@ -33,6 +34,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// setup properties
 			this.Application = profile.Application;
 			this.LogProfile = profile;
+			this.maxDisplayLineCount = Math.Max(1, this.Application.Settings.GetValueOrDefault(Settings.MaxDisplayLineCountForEachLog));
 
 			// add event handlers
 			this.Application.Settings.SettingChanged += this.OnSettingChanged;
@@ -127,6 +129,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public LogProfile LogProfile { get; }
 
 
+		/// <summary>
+		/// Get maximum line count to display for each log.
+		/// </summary>
+		public int MaxDisplayLineCount { get => this.maxDisplayLineCount; }
+
+
 		// Called when application string resources updated.
 		void OnApplicationStringsUpdated(object? sender, EventArgs e)
 		{
@@ -192,7 +200,17 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		// Called when setting changed.
 		void OnSettingChanged(object? sender, SettingChangedEventArgs e)
 		{
-			if (e.Key == Settings.ThemeMode)
+			if (e.Key == Settings.MaxDisplayLineCountForEachLog)
+			{
+				this.maxDisplayLineCount = (int)e.Value;
+				var node = this.displayableLogs.First;
+				while (node != null)
+				{
+					node.Value.OnMaxDisplayLineCountChanged();
+					node = node.Next;
+				}
+			}
+			else if (e.Key == Settings.ThemeMode)
 			{
 				this.SynchronizationContext.Post(() =>
 				{

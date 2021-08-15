@@ -39,6 +39,10 @@ namespace CarinaStudio.ULogViewer
 		/// </summary>
 		public static readonly SettingKey<int> MaxContinuousLogCount = new SettingKey<int>(nameof(MaxContinuousLogCount), 1000000);
 		/// <summary>
+		/// Maximum line count to display for each log.
+		/// </summary>
+		public static readonly SettingKey<int> MaxDisplayLineCountForEachLog = new SettingKey<int>(nameof(MaxDisplayLineCountForEachLog), 5);
+		/// <summary>
 		/// Select log files immediately when they are needed.
 		/// </summary>
 		public static readonly SettingKey<bool> SelectLogFilesWhenNeeded = new SettingKey<bool>(nameof(SelectLogFilesWhenNeeded), false);

@@ -26,6 +26,7 @@
 	<sys:String x:Key="String.AppOptionsDialog.LogFont.Sample">日誌文字 ABC abc 123</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.LogOperations">日誌操作</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.MaxContinuousLogCount">連續讀取時的最大日誌個數</sys:String>
+	<sys:String x:Key="String.AppOptionsDialog.MaxDisplayLineCountForEachLog">每筆日誌最大顯示行數</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.SelectLogFilesWhenNeeded">當需要日誌檔案時立即開啟檔案選取介面</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.SelectLogProfileForNewSession">建立新分頁後開啟日誌類型選取介面</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.SelectWorkingDirectoryWhenNeeded">當需要工作目錄時立即開啟目錄選取介面</sys:String>
