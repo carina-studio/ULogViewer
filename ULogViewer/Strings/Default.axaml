@@ -126,6 +126,7 @@
 	<sys:String x:Key="String.LogLevelMapEntryEditor.Writing.Text">Mapped text (required)</sys:String>
 
 	<!-- LogMessageDialog -->
+	<sys:String x:Key="String.LogMessageDialog.FindText">Find text</sys:String>
 	<sys:String x:Key="String.LogMessageDialog.WrapText">Wrap automatically</sys:String>
 	<sys:String x:Key="String.LogMessageDialog.Title">View log</sys:String>
 

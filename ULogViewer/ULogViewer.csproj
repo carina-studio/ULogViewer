@@ -36,6 +36,7 @@
 
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="0.10.6" />
+    <PackageReference Include="Avalonia.AvaloniaEdit" Version="0.10.4" />
     <PackageReference Include="Avalonia.Controls.DataGrid" Version="0.10.6" />
     <PackageReference Include="Avalonia.Desktop" Version="0.10.6" />
     <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.6" />

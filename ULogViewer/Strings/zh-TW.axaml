@@ -123,6 +123,7 @@
 	<sys:String x:Key="String.LogLevelMapEntryEditor.Writing.Text">對應的文字 (必要)</sys:String>
 
 	<!-- LogMessageDialog -->
+	<sys:String x:Key="String.LogMessageDialog.FindText">搜尋文字</sys:String>
 	<sys:String x:Key="String.LogMessageDialog.WrapText">自動換行</sys:String>
 	<sys:String x:Key="String.LogMessageDialog.Title">檢視日誌</sys:String>
 

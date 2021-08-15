@@ -60,7 +60,7 @@
 	<sys:Double x:Key="Double.LogLevelMapEntryEditor.Width">300</sys:Double>
 
 	<!-- LogMessageDialog -->
-	<sys:Double x:Key="Double.LogMessageDialog.Height">400</sys:Double>
+	<sys:Double x:Key="Double.LogMessageDialog.Height">500</sys:Double>
 	<sys:Double x:Key="Double.LogMessageDialog.MinHeight">300</sys:Double>
 	<sys:Double x:Key="Double.LogMessageDialog.MinWidth">300</sys:Double>
 	<sys:Double x:Key="Double.LogMessageDialog.Width">600</sys:Double>
