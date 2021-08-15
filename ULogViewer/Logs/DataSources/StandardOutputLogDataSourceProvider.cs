@@ -1,4 +1,7 @@
-﻿using System;
+﻿using CarinaStudio.Collections;
+using System;
+using System.Collections.Generic;
+
 namespace CarinaStudio.ULogViewer.Logs.DataSources
 {
 	/// <summary>
@@ -18,6 +21,16 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		// Interface implementations.
 		protected override ILogDataSource CreateSourceCore(LogDataSourceOptions options) => new StandardOutputLogDataSource(this, options);
 		public override string Name => "StandardOutput";
-		public override UnderlyingLogDataSource UnderlyingSource => UnderlyingLogDataSource.StandardOutput;
+		public override ISet<string> RequiredSourceOptions => new HashSet<string>()
+		{
+			nameof(LogDataSourceOptions.Command),
+		}.AsReadOnly();
+		public override ISet<string> SupportedSourceOptions => new HashSet<string>()
+		{
+			nameof(LogDataSourceOptions.Command),
+			nameof(LogDataSourceOptions.SetupCommands),
+			nameof(LogDataSourceOptions.TeardownCommands),
+			nameof(LogDataSourceOptions.WorkingDirectory),
+		}.AsReadOnly();
 	}
 }

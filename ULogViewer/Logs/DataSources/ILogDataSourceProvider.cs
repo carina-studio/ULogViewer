@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Net;
+using System.Reflection;
 using System.Text;
 
 namespace CarinaStudio.ULogViewer.Logs.DataSources
@@ -47,9 +47,23 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		/// <summary>
-		/// Get underlying source of log.
+		/// Get the set of name of options which are required by creating <see cref="ILogDataSource"/>.
 		/// </summary>
-		UnderlyingLogDataSource UnderlyingSource { get; }
+		ISet<string> RequiredSourceOptions { get; }
+
+
+		/// <summary>
+		/// Get the set of name of options which are supported by this provider and created <see cref="ILogDataSource"/>.
+		/// </summary>
+		ISet<string> SupportedSourceOptions { get; }
+
+
+		/// <summary>
+		/// Validate whether given options are valid for creating <see cref="ILogDataSource"/> or not.
+		/// </summary>
+		/// <param name="options">Options to check.</param>
+		/// <returns>True if options are valid for creating <see cref="ILogDataSource"/>.</returns>
+		bool ValidateSourceOptions(LogDataSourceOptions options);
 	}
 
 
@@ -60,6 +74,8 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 	{
 		// Static fields.
 		static readonly IList<string> emptyCommands = new string[0];
+		static volatile bool isOptionPropertyInfoMapReady;
+		static readonly Dictionary<string, PropertyInfo> optionPropertyInfoMap = new Dictionary<string, PropertyInfo>();
 
 
 		// Fields.
@@ -68,73 +84,20 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		/// <summary>
-		/// Get or set command to start process.
-		/// </summary>
-		/// <remarks>Available for <see cref="UnderlyingLogDataSource.StandardOutput"/>.</remarks>
-		public string? Command { get; set; }
-
-
-		/// <summary>
-		/// Create <see cref="LogDataSourceOptions"/> for <see cref="UnderlyingLogDataSource.File"/> case.
-		/// </summary>
-		/// <param name="fileName">File name.</param>
-		/// <param name="encoding">Text encoding.</param>
-		public static LogDataSourceOptions CreateForFile(string fileName, Encoding? encoding = null) => new LogDataSourceOptions()
-		{
-			Encoding = encoding,
-			FileName = fileName,
-		};
-
-
-		/// <summary>
-		/// Create <see cref="LogDataSourceOptions"/> for <see cref="UnderlyingLogDataSource.StandardOutput"/> case.
-		/// </summary>
-		/// <param name="command">Command.</param>
-		/// <param name="workingDirectory">Working directory.</param>
-		/// <param name="setupCommands">Commands before executing <paramref name="command"/>.</param>
-		/// <param name="teardownCommands">Commands after executing <paramref name="command"/>.</param>
-		public static LogDataSourceOptions CreateForStandardOutput(string command, string? workingDirectory = null, IList<string>? setupCommands = null, IList<string>? teardownCommands = null) => new LogDataSourceOptions()
-		{
-			Command = command,
-			SetupCommands = setupCommands ?? emptyCommands,
-			TeardownCommands = teardownCommands ?? emptyCommands,
-			WorkingDirectory = workingDirectory,
-		};
-
-
-		/// <summary>
-		/// Create <see cref="LogDataSourceOptions"/> for <see cref="UnderlyingLogDataSource.WebRequest"/> case.
-		/// </summary>
-		/// <param name="uri">Uri of request.</param>
-		/// <param name="credentials">Credentials.</param>
-		public static LogDataSourceOptions CreateForWebRequest(Uri uri, ICredentials? credentials = null) => new LogDataSourceOptions()
-		{
-			Uri = uri,
-			WebRequestCredentials = credentials,
-		};
-
-
-		/// <summary>
-		/// Create <see cref="LogDataSourceOptions"/> for <see cref="UnderlyingLogDataSource.WindowsEventLogs"/> case.
-		/// </summary>
-		/// <param name="category">Category of windows event logs.</param>
-		public static LogDataSourceOptions CreateForWindowsEventLogs(string category) => new LogDataSourceOptions()
-		{
-			Category = category,
-		};
-
-
-		/// <summary>
 		/// Get or set category to read log data.
 		/// </summary>
-		/// <remarks>Available for <see cref="UnderlyingLogDataSource.WindowsEventLogs"/>.</remarks>
 		public string? Category { get; set; }
+
+
+		/// <summary>
+		/// Get or set command to start process.
+		/// </summary>
+		public string? Command { get; set; }
 
 
 		/// <summary>
 		/// Get or set encoding of text.
 		/// </summary>
-		/// <remarks>Available for <see cref="UnderlyingLogDataSource.File"/>.</remarks>
 		public Encoding? Encoding { get; set; }
 
 
@@ -147,10 +110,12 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 					&& this.Command == options.Command
 					&& this.Encoding == options.Encoding
 					&& this.FileName == options.FileName
+					&& this.Password == options.Password
+					&& this.QueryString == options.QueryString
 					&& this.SetupCommands.SequenceEqual(options.SetupCommands)
 					&& this.TeardownCommands.SequenceEqual(options.TeardownCommands)
 					&& this.Uri == options.Uri
-					&& (this.WebRequestCredentials?.Equals(options.WebRequestCredentials) ?? options.WebRequestCredentials == null)
+					&& this.UserName == options.UserName
 					&& this.WorkingDirectory == options.WorkingDirectory;
 			}
 			return false;
@@ -160,7 +125,6 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// <summary>
 		/// Get or set name of file to open.
 		/// </summary>
-		/// <remarks>Available for <see cref="UnderlyingLogDataSource.File"/>.</remarks>
 		public string? FileName { get; set; }
 
 
@@ -180,6 +144,39 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		/// <summary>
+		/// Get specific option.
+		/// </summary>
+		/// <param name="optionName">Name of option to get.</param>
+		/// <returns>Value of option.</returns>
+		public object? GetOption(string optionName)
+		{
+			SetupOptionPropertyInfoMap();
+			if (optionPropertyInfoMap.TryGetValue(optionName, out var propertyInfo))
+				return propertyInfo?.GetValue(this);
+			return null;
+		}
+
+
+		/// <summary>
+		/// Check whether given option has been set with value or not.
+		/// </summary>
+		/// <param name="optionName">Name of option.</param>
+		/// <returns>True if option has been set with value.</returns>
+		public bool IsOptionSet(string optionName)
+		{
+			SetupOptionPropertyInfoMap();
+			if (!optionPropertyInfoMap.TryGetValue(optionName, out var propertyInfo) || propertyInfo == null)
+				return false;
+			var type = propertyInfo.PropertyType;
+			if (type == typeof(string))
+				return !string.IsNullOrWhiteSpace(propertyInfo.GetValue(this) as string);
+			if (type == typeof(IList<string>))
+				return (propertyInfo.GetValue(this) as IList<string>)?.Count > 0;
+			return propertyInfo.GetValue(this) != null;
+		}
+
+
+		/// <summary>
 		/// Equality operator.
 		/// </summary>
 		public static bool operator ==(LogDataSourceOptions x, LogDataSourceOptions y) => x.Equals(y);
@@ -192,9 +189,20 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		/// <summary>
+		/// Get or set command to start process.
+		/// </summary>
+		public string? Password { get; set; }
+
+
+		/// <summary>
+		/// Get or set query string.
+		/// </summary>
+		public string? QueryString { get; set; }
+
+
+		/// <summary>
 		/// Get or set commands before executing <see cref="Command"/>.
 		/// </summary>
-		/// <remarks>Available for <see cref="UnderlyingLogDataSource.StandardOutput"/>.</remarks>
 		public IList<string> SetupCommands
 		{
 			get => this.setupCommands ?? emptyCommands;
@@ -202,10 +210,25 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		}
 
 
+		// Setup table of property info of options.
+		static void SetupOptionPropertyInfoMap()
+		{
+			if (isOptionPropertyInfoMapReady)
+				return;
+			lock (typeof(LogDataSourceOptions))
+			{
+				if (isOptionPropertyInfoMapReady)
+					return;
+				foreach (var propertyInfo in typeof(LogDataSourceOptions).GetProperties())
+					optionPropertyInfoMap[propertyInfo.Name] = propertyInfo;
+				isOptionPropertyInfoMapReady = true;
+			}
+		}
+
+
 		/// <summary>
 		/// Get or set commands after executing <see cref="Command"/>.
 		/// </summary>
-		/// <remarks>Available for <see cref="UnderlyingLogDataSource.StandardOutput"/>.</remarks>
 		public IList<string> TeardownCommands
 		{
 			get => this.teardownCommands ?? emptyCommands;
@@ -214,23 +237,44 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		/// <summary>
-		/// Get or set URI to connect.
+		/// Get or set user name.
 		/// </summary>
-		/// <remarks>Available for <see cref="UnderlyingLogDataSource.WebRequest"/>.</remarks>
-		public Uri? Uri { get; set; }
+		public string? UserName { get; set; }
 
 
 		/// <summary>
-		/// Get or set credentials.
+		/// Get or set URI to connect.
 		/// </summary>
-		/// <remarks>Available for <see cref="UnderlyingLogDataSource.WebRequest"/>.</remarks>
-		public ICredentials? WebRequestCredentials { get; set; }
+		public Uri? Uri { get; set; }
 
 
 		/// <summary>
 		/// Path of working directory.
 		/// </summary>
-		/// <remarks>Available for <see cref="UnderlyingLogDataSource.StandardOutput"/>.</remarks>
 		public string? WorkingDirectory { get; set; }
+	}
+
+
+	/// <summary>
+	/// Extensions for <see cref="ILogDataSourceProvider"/>.
+	/// </summary>
+	static class LogDataSourceProviderExtensions
+	{
+		/// <summary>
+		/// Check whether given option is reqired for creating <see cref="ILogDataSource"/> or not.
+		/// </summary>
+		/// <param name="provider"><see cref="ILogDataSourceProvider"/>.</param>
+		/// <param name="optionName">Name of option to check.</param>
+		/// <returns>True if given option is reqired for creating <see cref="ILogDataSource"/>.</returns>
+		public static bool IsSourceOptionRequired(this ILogDataSourceProvider provider, string optionName) => provider.RequiredSourceOptions.Contains(optionName);
+
+
+		/// <summary>
+		/// Check whether given option is supported for creating <see cref="ILogDataSource"/> or not.
+		/// </summary>
+		/// <param name="provider"><see cref="ILogDataSourceProvider"/>.</param>
+		/// <param name="optionName">Name of option to check.</param>
+		/// <returns>True if given option is supported for creating <see cref="ILogDataSource"/>.</returns>
+		public static bool IsSourceOptionSupported(this ILogDataSourceProvider provider, string optionName) => provider.SupportedSourceOptions.Contains(optionName);
 	}
 }

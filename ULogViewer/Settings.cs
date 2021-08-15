@@ -23,6 +23,10 @@ namespace CarinaStudio.ULogViewer
 		/// </summary>
 		public static readonly SettingKey<bool> IgnoreCaseOfLogTextFilter = new SettingKey<bool>(nameof(IgnoreCaseOfLogTextFilter), true);
 		/// <summary>
+		/// ID of initial log profile.
+		/// </summary>
+		public static readonly SettingKey<string> InitialLogProfile = new SettingKey<string>(nameof(InitialLogProfile), "");
+		/// <summary>
 		/// Font family of log.
 		/// </summary>
 		public static readonly SettingKey<string> LogFontFamily = new SettingKey<string>(nameof(LogFontFamily), "");

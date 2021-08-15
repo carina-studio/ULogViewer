@@ -1,7 +1,7 @@
 ﻿using CarinaStudio.Collections;
 using CarinaStudio.IO;
 using CarinaStudio.Threading;
-using CarinaStudio.ULogViewer.Converters;
+using CarinaStudio.ULogViewer.Json;
 using CarinaStudio.ULogViewer.Logs.DataOutputs;
 using Microsoft.Extensions.Logging;
 using System;
@@ -11,6 +11,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -32,9 +33,13 @@ namespace CarinaStudio.ULogViewer.Logs
 
 		// Fields.
 		string logFormat = "";
+		readonly Dictionary<Log, int> lineNumbers = new Dictionary<Log, int>();
 		IList<Log> logs = new Log[0];
+		readonly HashSet<Log> logsToGetLineNumber = new HashSet<Log>();
 		readonly Dictionary<LogLevel, string> logLevelMap = new Dictionary<LogLevel, string>();
+		LogStringEncoding logStringEncoding = LogStringEncoding.Plane;
 		readonly IDictionary<LogLevel, string> readOnlyLogLevelMap;
+		readonly ISet<Log> readOnlyLogsToGetLineNumbers;
 		LogWriterState state = LogWriterState.Preparing;
 		CultureInfo timestampCultureInfo = CultureInfo.GetCultureInfo("en-US");
 		string? timestampFormat;
@@ -58,8 +63,10 @@ namespace CarinaStudio.ULogViewer.Logs
 			this.Application = (IApplication)output.Application;
 			this.DataOutput = output;
 			this.Id = nextId++;
+			this.LineNumbers = this.lineNumbers.AsReadOnly();
 			this.Logger = output.Application.LoggerFactory.CreateLogger($"{this.GetType().Name}-{this.Id}");
-			this.readOnlyLogLevelMap = new ReadOnlyDictionary<LogLevel, string>(this.logLevelMap);
+			this.readOnlyLogLevelMap = this.logLevelMap.AsReadOnly();
+			this.readOnlyLogsToGetLineNumbers = this.logsToGetLineNumber.AsReadOnly();
 
 			// attach to output
 			output.PropertyChanged += this.OnDataOutputPropertyChanged;
@@ -111,6 +118,12 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// Get unique ID of this <see cref="LogReader"/> instance.
 		/// </summary>
 		public int Id { get; }
+
+
+		/// <summary>
+		/// Get line numbers of <see cref="Log"/> in <see cref="LogsToGetLineNumber"/>.
+		/// </summary>
+		public IDictionary<Log, int> LineNumbers { get; }
 
 
 		/// <summary>
@@ -172,6 +185,43 @@ namespace CarinaStudio.ULogViewer.Logs
 		}
 
 
+		/// <summary>
+		/// Get or set the set of <see cref="Log"/> to get line number after writing completed.
+		/// </summary>
+		public ISet<Log> LogsToGetLineNumber
+		{
+			get => this.readOnlyLogsToGetLineNumbers;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyPreparing();
+				if (this.logsToGetLineNumber.SetEquals(value))
+					return;
+				this.logsToGetLineNumber.Clear();
+				this.logsToGetLineNumber.AddAll(value);
+				this.OnPropertyChanged(nameof(LogsToGetLineNumber));
+			}
+		}
+
+
+		/// <summary>
+		/// Get or set string encoding of log.
+		/// </summary>
+		public LogStringEncoding LogStringEncoding
+		{
+			get => this.logStringEncoding;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyPreparing();
+				if (this.logStringEncoding == value)
+					return;
+				this.logStringEncoding = value;
+				this.OnPropertyChanged(nameof(LogStringEncoding));
+			}
+		}
+
+
 		// Property of data output changed.
 		void OnDataOutputPropertyChanged(object? sender, PropertyChangedEventArgs e)
 		{
@@ -181,11 +231,14 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		// Called when logs writing completed.
-		void OnLogsWritingCompleted(Exception? ex)
+		void OnLogsWritingCompleted(IDictionary<Log, int> lineNumbers, Exception? ex)
 		{
 			// check state
 			if (this.state != LogWriterState.WritingLogs)
 				return;
+
+			// save result
+			this.lineNumbers.AddAll(lineNumbers);
 
 			// change state
 			if (ex == null)
@@ -270,13 +323,9 @@ namespace CarinaStudio.ULogViewer.Logs
 				{
 					var logPropertyGetter = propertyName switch
 					{
-						nameof(Log.Level) => log =>
-						{
-							if (this.logLevelMap.TryGetValue(log.Level, out var str))
-								return str;
-							return Converters.EnumConverter.LogLevel.Convert(log.Level, typeof(string), null, cultureInfo);
-						},
-						nameof(Log.Timestamp) => log =>
+						nameof(Log.BeginningTimestamp) 
+							or nameof(Log.EndingTimestamp) 
+							or nameof(Log.Timestamp) => log =>
 						{
 							var timestamp = log.Timestamp;
 							if (timestamp == null)
@@ -284,6 +333,13 @@ namespace CarinaStudio.ULogViewer.Logs
 							if (this.timestampFormat != null)
 								return timestamp.Value.ToString(this.timestampFormat, this.timestampCultureInfo);
 							return timestamp.Value.ToString(this.timestampCultureInfo);
+						}
+						,
+						nameof(Log.Level) => log =>
+						{
+							if (this.logLevelMap.TryGetValue(log.Level, out var str))
+								return str;
+							return Converters.EnumConverter.LogLevel.Convert(log.Level, typeof(string), null, cultureInfo);
 						},
 						_ => Log.CreatePropertyGetter<object?>(propertyName),
 					};
@@ -402,31 +458,72 @@ namespace CarinaStudio.ULogViewer.Logs
 			var exception = (Exception?)null;
 			var logs = this.logs;
 			var logCount = logs.Count;
+			var logsToGetLineNumber = this.logsToGetLineNumber;
 			var logPropertyCount = logPropertyGetters.Count;
+			var logStringEncoding = this.logStringEncoding;
+			var logStringBuilder = new StringBuilder();
+			using var logStringWriter = new StringWriter(logStringBuilder);
 			var writeFileNames = this.writeFileNames;
 			var currentFileName = "";
+			var writtenLineCount = 0;
+			var lineNumbers = new Dictionary<Log, int>();
 			try
 			{
 				var formatArgs = new object?[logPropertyCount];
 				for (var i = 0; i < logCount && !cancellationToken.IsCancellationRequested; ++i)
 				{
+					// get property values
 					var log = logs[i];
 					for (var j = logPropertyCount - 1; j >= 0; --j)
-						formatArgs[j] = logPropertyGetters[j](log);
+					{
+						formatArgs[j] = logPropertyGetters[j](log).Let(it =>
+						{
+							if (it is not string str || str.Length == 0)
+								return it;
+							return logStringEncoding switch
+							{
+								LogStringEncoding.Json => JsonUtility.EncodeToJsonString(str),
+								LogStringEncoding.Xml => WebUtility.HtmlEncode(str),
+								_ => it,
+							};
+						});
+					}
+
+					// move to next line
 					if (i > 0)
 						writer.WriteLine();
+
+					// write to memory
 					if (writeFileNames)
 					{
 						log.FileName?.Let(fileName =>
 						{
 							if (!PathEqualityComparer.Default.Equals(currentFileName, fileName))
 							{
-								writer.WriteLine($"[{Path.GetFileName(fileName)}]");
+								logStringWriter.WriteLine($"[{Path.GetFileName(fileName)}]");
 								currentFileName = fileName;
 							}
 						});
 					}
-					writer.Write(string.Format(format, formatArgs));
+					logStringWriter.Write(string.Format(format, formatArgs));
+
+					// check line count
+					if (logsToGetLineNumber.IsNotEmpty())
+					{
+						var lineCount = 1;
+						for (var cIndex = logStringBuilder.Length - 1; cIndex >= 0; --cIndex)
+						{
+							if (logStringBuilder[cIndex] == '\n')
+								++lineCount;
+						}
+						if (logsToGetLineNumber.Contains(log))
+							lineNumbers[log] = (writtenLineCount + 1);
+						writtenLineCount += lineCount;
+					}
+
+					// write to output
+					writer.Write(logStringBuilder.ToString());
+					logStringBuilder.Remove(0, logStringBuilder.Length);
 				}
 			}
 			catch (Exception ex)
@@ -438,7 +535,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			finally
 			{
 				Global.RunWithoutError(() => writer.Dispose());
-				this.SynchronizationContext.Post(() => this.OnLogsWritingCompleted(exception));
+				this.SynchronizationContext.Post(() => this.OnLogsWritingCompleted(lineNumbers, exception));
 			}
 		}
 

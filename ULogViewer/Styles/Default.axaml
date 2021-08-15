@@ -1,5 +1,7 @@
 ﻿<Styles xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+				xmlns:ae="using:AvaloniaEdit"
+				xmlns:aee="using:AvaloniaEdit.Editing">
 
 	<!-- Resources -->
 	<Styles.Resources>
@@ -37,6 +39,9 @@
 			<SolidColorBrush x:Key="Brush.LogLevel.Verbose">#000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.LogLevel.Warn">#000000</SolidColorBrush>
 
+			<!-- LogMessageDialog -->
+			<SolidColorBrush x:Key="Brush.LogMessageDialog.FoundText.Background">#3fff0000</SolidColorBrush>
+
 			<!-- LogProfileSelectionDialog -->
 			<SolidColorBrush x:Key="Brush.LogProfileSelectionDialog.Label.Background">#00000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.LogProfileSelectionDialog.Label.Border">#00000000</SolidColorBrush>
@@ -65,6 +70,9 @@
 			<SolidColorBrush x:Key="Brush.SplashWindow.Border">#000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.SplashWindow.Foreground">#ffffff</SolidColorBrush>
 
+			<!-- TextArea -->
+			<SolidColorBrush x:Key="Brush.TextArea.Selection.Background">#3f0078d7</SolidColorBrush>
+
 			<!-- TextBlock -->
 			<SolidColorBrush x:Key="Brush.TextBlock.Foreground.Error">#ff0000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.TextBlock.Foreground.Link">#007acc</SolidColorBrush>
@@ -77,6 +85,9 @@
 
 		</ResourceDictionary>
 	</Styles.Resources>
+
+	<!-- External controls -->
+	<StyleInclude Source="avares://AvaloniaEdit/AvaloniaEdit.xaml" />
 
 	<!-- Browse -->
 	<Style Selector="Button.Browse">
@@ -289,9 +300,24 @@
 		<Setter Property="Opacity" Value="0.3"/>
 	</Style>
 
+	<!-- TextArea -->
+	<Style Selector="aee|TextArea">
+		<Setter Property="SelectionBrush" Value="{DynamicResource Brush.TextArea.Selection.Background}"/>
+		<Setter Property="SelectionCornerRadius" Value="0"/>
+	</Style>
+
 	<!-- TextBox -->
 	<Style Selector="TextBox">
 		<Setter Property="FontFamily" Value="{DynamicResource FontFamily.TextBox}"/>
+	</Style>
+
+	<!-- TextEditor -->
+	<Style Selector="ae|TextEditor">
+		<Setter Property="Background" Value="{DynamicResource TextControlBackgroundBrush}"/>
+		<Setter Property="BorderBrush" Value="{DynamicResource TextControlBorderBrush}"/>
+		<Setter Property="BorderThickness" Value="1"/>
+		<Setter Property="FontFamily" Value="{DynamicResource FontFamily.TextBox}"/>
+		<Setter Property="Padding" Value="{DynamicResource TextControlThemePadding}"/>
 	</Style>
 
 	<!-- ToggleSwitch -->

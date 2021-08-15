@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <AssemblyVersion>0.12.0.803</AssemblyVersion>
-		<Version>0.12.0.803</Version>
+    <AssemblyVersion>0.17.0.812</AssemblyVersion>
+		<Version>0.17.0.812</Version>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
     <DebugType>embedded</DebugType>
@@ -21,13 +21,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Logs\Profiles\BuiltIn\WindowsApplicationEventLogs.json" />
-    <None Remove="Logs\Profiles\BuiltIn\WindowsSecurityEventLogs.json" />
-    <None Remove="Logs\Profiles\BuiltIn\WindowsSetupEventLogs.json" />
-    <None Remove="Logs\Profiles\BuiltIn\WindowsSystemEventLogs.json" />
-  </ItemGroup>
-
-  <ItemGroup>
     <AvaloniaResource Include="AppIcon.ico" />
     <AvaloniaResource Include="Resources/AppIcon_128px.png" />
     <AvaloniaResource Include="Resources/AppIcon_256px.png" />
@@ -38,10 +31,12 @@
 		<AvaloniaResource Include="Strings/Default-Linux.axaml" />
 		<AvaloniaResource Include="Strings/Default-OSX.axaml" />
     <AvaloniaResource Include="Strings/zh-TW.axaml" />
+    <AvaloniaResource Include="Strings/zh-TW-OSX.axaml" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="0.10.6" />
+    <PackageReference Include="Avalonia.AvaloniaEdit" Version="0.10.4" />
     <PackageReference Include="Avalonia.Controls.DataGrid" Version="0.10.6" />
     <PackageReference Include="Avalonia.Desktop" Version="0.10.6" />
     <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.6" />
@@ -53,6 +48,8 @@
     <PackageReference Include="NLog" Version="4.7.10" />
     <PackageReference Include="NLog.Extensions.Logging" Version="1.7.3" />
     <PackageReference Include="ReactiveUI" Version="14.1.1" />
+    <PackageReference Include="System.Data.Common" Version="4.3.0" />
+    <PackageReference Include="System.Data.SQLite" Version="1.0.114.4" />
     <PackageReference Include="System.Diagnostics.EventLog" Version="5.0.1" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
     <PackageReference Include="System.Security.Principal.Windows" Version="5.0.0" />
@@ -60,10 +57,6 @@
 
   <ItemGroup>
     <None Update="AppIcon_128px.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </None>
-    <None Update="NLog.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </None>
@@ -76,6 +69,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<EmbeddedResource Include="Cryptography/AesIV" />
+		<EmbeddedResource Include="Cryptography/AesKey" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/AndroidDeviceLog.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/AndroidFileLog.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/DummyLog.json" />
@@ -85,6 +80,7 @@
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/WindowsSecurityEventLogs.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/WindowsSetupEventLogs.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/WindowsSystemEventLogs.json" />
+		<EmbeddedResource Include="NLog.config" />
 	</ItemGroup>
 
 </Project>

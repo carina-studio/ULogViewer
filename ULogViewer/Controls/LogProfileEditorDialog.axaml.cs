@@ -4,9 +4,10 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Data;
 using Avalonia.Data.Converters;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
-using Avalonia.VisualTree;
 using CarinaStudio.Collections;
+using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Converters;
 using CarinaStudio.ULogViewer.Logs;
@@ -16,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.Controls
 {
@@ -32,15 +34,20 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// <see cref="IValueConverter"/> to convert <see cref="LogProfileIcon"/> to display name.
 		/// </summary>
 		public static readonly IValueConverter LogProfileIconNameConverter = new EnumConverter<LogProfileIcon>(App.Current);
+		/// <summary>
+		/// URI of 'How ULogViewer read and parse logs' page.
+		/// </summary>
+		public const string LogsReadingAndParsingPageUri = "https://carina-studio.github.io/ULogViewer/logs_reading_flow.html";
 
 
 		// Static fields.
+		static readonly SettingKey<bool> HasLearnAboutLogsReadingAndParsingHintShown = new SettingKey<bool>($"{nameof(LogProfileEditorDialog)}.{nameof(HasLearnAboutLogsReadingAndParsingHintShown)}");
 		static readonly AvaloniaProperty<bool> IsValidDataSourceOptionsProperty = AvaloniaProperty.Register<LogProfileEditorDialog, bool>(nameof(IsValidDataSourceOptions), true);
-		static readonly AvaloniaProperty<UnderlyingLogDataSource> UnderlyingDataSourceProperty = AvaloniaProperty.Register<LogProfileEditorDialog, UnderlyingLogDataSource>(nameof(UnderlyingDataSource), UnderlyingLogDataSource.Undefined);
-
+		
 
 		// Fields.
 		readonly ToggleSwitch adminNeededSwitch;
+		readonly ScrollViewer baseScrollViewer;
 		readonly ComboBox colorIndicatorComboBox;
 		readonly ToggleSwitch continuousReadingSwitch;
 		LogDataSourceOptions dataSourceOptions;
@@ -50,7 +57,12 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ContextMenu insertLogWritingFormatSyntaxMenu;
 		readonly SortedObservableList<KeyValuePair<string, LogLevel>> logLevelMapEntriesForReading = new SortedObservableList<KeyValuePair<string, LogLevel>>((x, y) => x.Key.CompareTo(y.Key));
 		readonly SortedObservableList<KeyValuePair<LogLevel, string>> logLevelMapEntriesForWriting = new SortedObservableList<KeyValuePair<LogLevel, string>>((x, y) => x.Key.CompareTo(y.Key));
+		readonly ListBox logLevelMapForReadingListBox;
+		readonly ListBox logLevelMapForWritingListBox;
+		readonly ListBox logPatternListBox;
 		readonly ObservableList<LogPattern> logPatterns = new ObservableList<LogPattern>();
+		readonly ComboBox logStringEncodingForReadingComboBox;
+		readonly ComboBox logStringEncodingForWritingComboBox;
 		readonly TextBox logWritingFormatTextBox;
 		readonly TextBox nameTextBox;
 		readonly ComboBox sortDirectionComboBox;
@@ -58,6 +70,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly TextBox timestampFormatForDisplayingTextBox;
 		readonly TextBox timestampFormatForReadingTextBox;
 		readonly TextBox timestampFormatForWritingTextBox;
+		readonly ListBox visibleLogPropertyListBox;
 		readonly ObservableList<LogProperty> visibleLogProperties = new ObservableList<LogProperty>();
 		readonly ToggleSwitch workingDirNeededSwitch;
 
@@ -84,6 +97,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// setup controls
 			this.adminNeededSwitch = this.FindControl<ToggleSwitch>("adminNeededSwitch").AsNonNull();
+			this.baseScrollViewer = this.FindControl<ScrollViewer>("baseScrollViewer").AsNonNull();
 			this.colorIndicatorComboBox = this.FindControl<ComboBox>("colorIndicatorComboBox").AsNonNull();
 			this.continuousReadingSwitch = this.FindControl<ToggleSwitch>("continuousReadingSwitch").AsNonNull();
 			this.dataSourceProviderComboBox = this.FindControl<ComboBox>("dataSourceProviderComboBox").AsNonNull();
@@ -116,6 +130,11 @@ namespace CarinaStudio.ULogViewer.Controls
 			});
 			if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 				this.FindControl<Control>("isAdminNeededPanel").AsNonNull().IsVisible = false;
+			this.logLevelMapForReadingListBox = this.FindControl<ListBox>("logLevelMapForReadingListBox").AsNonNull();
+			this.logLevelMapForWritingListBox = this.FindControl<ListBox>("logLevelMapForWritingListBox").AsNonNull();
+			this.logPatternListBox = this.FindControl<ListBox>("logPatternListBox").AsNonNull();
+			this.logStringEncodingForReadingComboBox = this.FindControl<ComboBox>("logStringEncodingForReadingComboBox").AsNonNull();
+			this.logStringEncodingForWritingComboBox = this.FindControl<ComboBox>("logStringEncodingForWritingComboBox").AsNonNull();
 			this.logWritingFormatTextBox = this.FindControl<TextBox>("logWritingFormatTextBox").AsNonNull();
 			this.nameTextBox = this.FindControl<TextBox>("nameTextBox").AsNonNull();
 			this.sortDirectionComboBox = this.FindControl<ComboBox>("sortDirectionComboBox").AsNonNull();
@@ -123,6 +142,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.timestampFormatForDisplayingTextBox = this.FindControl<TextBox>("timestampFormatForDisplayingTextBox").AsNonNull();
 			this.timestampFormatForReadingTextBox = this.FindControl<TextBox>("timestampFormatForReadingTextBox").AsNonNull();
 			this.timestampFormatForWritingTextBox = this.FindControl<TextBox>("timestampFormatForWritingTextBox").AsNonNull();
+			this.visibleLogPropertyListBox = this.FindControl<ListBox>("visibleLogPropertyListBox").AsNonNull();
 			this.workingDirNeededSwitch = this.FindControl<ToggleSwitch>("workingDirNeededSwitch").AsNonNull();
 		}
 
@@ -149,7 +169,8 @@ namespace CarinaStudio.ULogViewer.Controls
 					}.ShowDialog(this);
 					continue;
 				}
-				this.logLevelMapEntriesForReading.Add(entry.Value);
+				var index = this.logLevelMapEntriesForReading.Add(entry.Value);
+				this.SelectListBoxItem(this.logLevelMapForReadingListBox, index);
 				break;
 			}
 		}
@@ -177,7 +198,8 @@ namespace CarinaStudio.ULogViewer.Controls
 					}.ShowDialog(this);
 					continue;
 				}
-				this.logLevelMapEntriesForWriting.Add(entry.Value);
+				var index = this.logLevelMapEntriesForWriting.Add(entry.Value);
+				this.SelectListBoxItem(this.logLevelMapForWritingListBox, index);
 				break;
 			}
 		}
@@ -188,7 +210,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			var logPattern = await new LogPatternEditorDialog().ShowDialog<LogPattern>(this);
 			if (logPattern != null)
+			{
 				this.logPatterns.Add(logPattern);
+				this.SelectListBoxItem(this.logPatternListBox, this.logPatterns.Count - 1);
+			}
 		}
 
 
@@ -197,7 +222,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			var logProperty = await new VisibleLogPropertyEditorDialog().ShowDialog<LogProperty>(this);
 			if (logProperty != null)
+			{
 				this.visibleLogProperties.Add(logProperty);
+				this.SelectListBoxItem(this.visibleLogPropertyListBox, this.visibleLogProperties.Count - 1);
+			}
 		}
 
 
@@ -213,7 +241,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				}.ShowDialog<KeyValuePair<string, LogLevel>?>(this);
 				if (newEntry == null || newEntry.Value.Equals(entry))
 					return;
-				if (!entry.Equals(this.logLevelMapEntriesForReading.FirstOrDefault(it => it.Key == newEntry.Value.Key)))
+				var checkingEntry = this.logLevelMapEntriesForReading.FirstOrDefault(it => it.Key == newEntry.Value.Key);
+				if (checkingEntry.Key != null && !entry.Equals(checkingEntry))
 				{
 					await new MessageDialog()
 					{
@@ -224,7 +253,8 @@ namespace CarinaStudio.ULogViewer.Controls
 					continue;
 				}
 				this.logLevelMapEntriesForReading.Remove(entry);
-				this.logLevelMapEntriesForReading.Add(newEntry.Value);
+				var index = this.logLevelMapEntriesForReading.Add(newEntry.Value);
+				this.SelectListBoxItem(this.logLevelMapForReadingListBox, index);
 				break;
 			}
 		}
@@ -242,7 +272,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				}.ShowDialog<KeyValuePair<LogLevel, string>?>(this);
 				if (newEntry == null || newEntry.Value.Equals(entry))
 					return;
-				if (!entry.Equals(this.logLevelMapEntriesForWriting.FirstOrDefault(it => it.Key == newEntry.Value.Key)))
+				var checkingEntry = this.logLevelMapEntriesForWriting.FirstOrDefault(it => it.Key == newEntry.Value.Key);
+				if (checkingEntry.Value != null && !entry.Equals(checkingEntry))
 				{
 					await new MessageDialog()
 					{
@@ -253,7 +284,8 @@ namespace CarinaStudio.ULogViewer.Controls
 					continue;
 				}
 				this.logLevelMapEntriesForWriting.Remove(entry);
-				this.logLevelMapEntriesForWriting.Add(newEntry.Value);
+				var index = this.logLevelMapEntriesForWriting.Add(newEntry.Value);
+				this.SelectListBoxItem(this.logLevelMapForWritingListBox, index);
 				break;
 			}
 		}
@@ -262,7 +294,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Edit log pattern.
 		async void EditLogPattern(ListBoxItem item)
 		{
-			var index = (item.GetVisualParent() as Panel)?.Children?.IndexOf(item) ?? -1;
+			var index = this.logPatterns.IndexOf((LogPattern)item.DataContext.AsNonNull());
 			if (index < 0)
 				return;
 			if (item.DataContext is not LogPattern logPattern)
@@ -272,14 +304,17 @@ namespace CarinaStudio.ULogViewer.Controls
 				LogPattern = logPattern
 			}.ShowDialog<LogPattern>(this);
 			if (newLlogPattern != null && newLlogPattern != logPattern)
+			{
 				this.logPatterns[index] = newLlogPattern;
+				this.SelectListBoxItem(this.logPatternListBox, index);
+			}
 		}
 
 
 		// Edit visible log property.
 		async void EditVisibleLogProperty(ListBoxItem item)
 		{
-			var index = (item.GetVisualParent() as Panel)?.Children?.IndexOf(item) ?? -1;
+			var index = this.visibleLogProperties.IndexOf((LogProperty)item.DataContext.AsNonNull());
 			if (index < 0)
 				return;
 			if (item.DataContext is not LogProperty logProperty)
@@ -289,7 +324,10 @@ namespace CarinaStudio.ULogViewer.Controls
 				LogProperty = logProperty
 			}.ShowDialog<LogProperty>(this);
 			if (newLogProperty != null && newLogProperty != logProperty)
+			{
 				this.visibleLogProperties[index] = newLogProperty;
+				this.SelectListBoxItem(this.visibleLogPropertyListBox, index);
+			}
 		}
 
 
@@ -334,50 +372,66 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Move log pattern down.
 		void MoveLogPatternDown(ListBoxItem item)
 		{
-			var index = (item.GetVisualParent() as Panel)?.Children?.IndexOf(item) ?? -1;
+			var index = this.logPatterns.IndexOf((LogPattern)item.DataContext.AsNonNull());
 			if (index < 0)
 				return;
 			if (index < this.logPatterns.Count - 1)
+			{
 				this.logPatterns.Move(index, index + 1);
+				++index;
+			}
+			this.SelectListBoxItem(this.logPatternListBox, index);
 		}
 
 
 		// Move log pattern up.
 		void MoveLogPatternUp(ListBoxItem item)
 		{
-			var index = (item.GetVisualParent() as Panel)?.Children?.IndexOf(item) ?? -1;
-			if (index <= 0)
+			var index = this.logPatterns.IndexOf((LogPattern)item.DataContext.AsNonNull());
+			if (index < 0)
 				return;
-			this.logPatterns.Move(index, index - 1);
+			if (index > 0)
+			{
+				this.logPatterns.Move(index, index - 1);
+				--index;
+			}
+			this.SelectListBoxItem(this.logPatternListBox, index);
 		}
 
 
 		// Move visible log property down.
 		void MoveVisibleLogPropertyDown(ListBoxItem item)
 		{
-			var index = (item.GetVisualParent() as Panel)?.Children?.IndexOf(item) ?? -1;
+			var index = this.visibleLogProperties.IndexOf((LogProperty)item.DataContext.AsNonNull());
 			if (index < 0)
 				return;
 			if (index < this.visibleLogProperties.Count - 1)
+			{
 				this.visibleLogProperties.Move(index, index + 1);
+				++index;
+			}
+			this.SelectListBoxItem(this.visibleLogPropertyListBox, index);
 		}
 
 
 		// Move visible log property up.
 		void MoveVisibleLogPropertyUp(ListBoxItem item)
 		{
-			var index = (item.GetVisualParent() as Panel)?.Children?.IndexOf(item) ?? -1;
-			if (index <= 0)
+			var index = this.visibleLogProperties.IndexOf((LogProperty)item.DataContext.AsNonNull());
+			if (index < 0)
 				return;
-			this.visibleLogProperties.Move(index, index - 1);
+			if (index > 0)
+			{
+				this.visibleLogProperties.Move(index, index - 1);
+				--index;
+			}
+			this.SelectListBoxItem(this.visibleLogPropertyListBox, index);
 		}
 
 
 		// Called when selection of data source provider changed.
 		void OnDataSourceProviderComboBoxSelectionChanged(object? sender, SelectionChangedEventArgs e)
 		{
-			var dataSourceProvider = (this.dataSourceProviderComboBox.SelectedItem as ILogDataSourceProvider);
-			this.SetValue<UnderlyingLogDataSource>(UnderlyingDataSourceProperty, dataSourceProvider?.UnderlyingSource ?? UnderlyingLogDataSource.Undefined);
 			this.InvalidateInput();
 		}
 
@@ -394,8 +448,45 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Generate result.
-		protected override object? OnGenerateResult()
+		protected override object? OnGenerateResult() => null;
+		protected override async Task<object?> OnGenerateResultAsync()
 		{
+			// check log patterns and visible log properties
+			if (this.logPatterns.IsEmpty())
+			{
+				if (this.visibleLogProperties.IsNotEmpty())
+				{
+					var result = await new MessageDialog()
+					{
+						Buttons = MessageDialogButtons.YesNo,
+						Icon = MessageDialogIcon.Warning,
+						Message = this.Application.GetString("LogProfileEditorDialog.VisibleLogPropertiesWithoutLogPatterns"),
+					}.ShowDialog<MessageDialogResult>(this);
+					if (result == MessageDialogResult.Yes)
+					{
+						this.baseScrollViewer.ScrollIntoView(this.logPatternListBox);
+						this.logPatternListBox.Focus();
+						return null;
+					}
+				}
+			}
+			else if (this.visibleLogProperties.IsEmpty())
+			{
+				var result = await new MessageDialog()
+				{
+					Buttons = MessageDialogButtons.YesNo,
+					Icon = MessageDialogIcon.Warning,
+					Message = this.Application.GetString("LogProfileEditorDialog.LogPatternsWithoutVisibleLogProperties"),
+				}.ShowDialog<MessageDialogResult>(this);
+				if (result == MessageDialogResult.Yes)
+				{
+					this.baseScrollViewer.ScrollIntoView(this.visibleLogPropertyListBox);
+					this.visibleLogPropertyListBox.Focus();
+					return null;
+				}
+			}
+
+			// update log profile
 			var logProfile = this.LogProfile ?? new LogProfile(this.Application);
 			logProfile.ColorIndicator = (LogColorIndicator)this.colorIndicatorComboBox.SelectedItem.AsNonNull();
 			logProfile.DataSourceOptions = this.dataSourceOptions;
@@ -407,6 +498,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			logProfile.LogLevelMapForReading = new Dictionary<string, LogLevel>(this.logLevelMapEntriesForReading);
 			logProfile.LogLevelMapForWriting = new Dictionary<LogLevel, string>(this.logLevelMapEntriesForWriting);
 			logProfile.LogPatterns = this.logPatterns;
+			logProfile.LogStringEncodingForReading = (LogStringEncoding)this.logStringEncodingForReadingComboBox.SelectedItem.AsNonNull();
+			logProfile.LogStringEncodingForWriting = (LogStringEncoding)this.logStringEncodingForWritingComboBox.SelectedItem.AsNonNull();
 			logProfile.LogWritingFormat = this.logWritingFormatTextBox.Text?.Let(it =>
 			{
 				if (string.IsNullOrWhiteSpace(it))
@@ -434,19 +527,49 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Called when double-tapped on list box.
+		void OnListBoxDoubleTapped(object? sender, RoutedEventArgs e)
+		{
+			if (sender is not ListBox listBox)
+				return;
+			var selectedItem = listBox.SelectedItem;
+			var listBoxItem = selectedItem != null ? listBox.FindListBoxItem(selectedItem) : null;
+			if (listBoxItem == null || !listBoxItem.IsPointerOver)
+				return;
+			if (listBox == this.logLevelMapForReadingListBox)
+				this.EditLogLevelMapEntryForReading((KeyValuePair<string, LogLevel>)selectedItem.AsNonNull());
+			else if (listBox == this.logLevelMapForWritingListBox)
+				this.EditLogLevelMapEntryForWriting((KeyValuePair<LogLevel, string>)selectedItem.AsNonNull());
+			else if (listBox == this.logPatternListBox)
+				this.EditLogPattern(listBoxItem);
+			else if (listBox == this.visibleLogPropertyListBox)
+				this.EditVisibleLogProperty(listBoxItem);
+		}
+
+
+		// Called when list box lost focus.
+		void OnListBoxLostFocus(object? sender, RoutedEventArgs e)
+		{
+			if (sender is not ListBox listBox)
+				return;
+			listBox.SelectedItems.Clear();
+		}
+
+
 		// Called when selection in list box changed.
 		void OnListBoxSelectionChanged(object? sender, SelectionChangedEventArgs e)
 		{
 			if (sender is not ListBox listBox)
 				return;
-			if (e.AddedItems.Count > 0)
-				this.SynchronizationContext.Post(() => listBox.SelectedItem = null);
+			if (listBox.SelectedIndex >= 0)
+				listBox.ScrollIntoView(listBox.SelectedIndex);
 		}
 
 
 		// Called when opened.
-		protected override void OnOpened(EventArgs e)
+		protected override async void OnOpened(EventArgs e)
 		{
+			// setup initial state and focus
 			var profile = this.LogProfile;
 			if (profile == null)
 			{
@@ -454,6 +577,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.colorIndicatorComboBox.SelectedItem = LogColorIndicator.None;
 				this.dataSourceProviderComboBox.SelectedItem = LogDataSourceProviders.All.FirstOrDefault(it => it is FileLogDataSourceProvider);
 				this.iconComboBox.SelectedItem = LogProfileIcon.File;
+				this.logStringEncodingForReadingComboBox.SelectedItem = LogStringEncoding.Plane;
+				this.logStringEncodingForWritingComboBox.SelectedItem = LogStringEncoding.Plane;
 				this.sortDirectionComboBox.SelectedItem = SortDirection.Ascending;
 				this.sortKeyComboBox.SelectedItem = LogSortKey.Timestamp;
 			}
@@ -469,6 +594,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.logLevelMapEntriesForReading.AddAll(profile.LogLevelMapForReading);
 				this.logLevelMapEntriesForWriting.AddAll(profile.LogLevelMapForWriting);
 				this.logPatterns.AddRange(profile.LogPatterns);
+				this.logStringEncodingForReadingComboBox.SelectedItem = profile.LogStringEncodingForReading;
+				this.logStringEncodingForWritingComboBox.SelectedItem = profile.LogStringEncodingForWriting;
 				this.logWritingFormatTextBox.Text = profile.LogWritingFormat;
 				this.nameTextBox.Text = profile.Name;
 				this.sortDirectionComboBox.SelectedItem = profile.SortDirection;
@@ -482,7 +609,27 @@ namespace CarinaStudio.ULogViewer.Controls
 			else
 				this.SynchronizationContext.Post(this.Close);
 			this.nameTextBox.Focus();
+
+			// call base
 			base.OnOpened(e);
+
+			// show hint of 'learn about logs reading and parsing'
+			if (!this.Settings.GetValueOrDefault(HasLearnAboutLogsReadingAndParsingHintShown))
+			{
+				var result = await new MessageDialog()
+				{
+					Buttons = MessageDialogButtons.YesNo,
+					Icon = MessageDialogIcon.Question,
+					Message = this.Application.GetString("LogProfileEditorDialog.LearnAboutLogsReadingAndParsingFirst"),
+					Title = this.Title
+				}.ShowDialog<MessageDialogResult>(this);
+				if (this.IsOpened)
+				{
+					this.Settings.SetValue(HasLearnAboutLogsReadingAndParsingHintShown, true);
+					if (result == MessageDialogResult.Yes)
+						this.OpenLink(LogsReadingAndParsingPageUri);
+				}
+			}
 		}
 
 
@@ -497,42 +644,26 @@ namespace CarinaStudio.ULogViewer.Controls
 			var dataSourceProvider = (this.dataSourceProviderComboBox.SelectedItem as ILogDataSourceProvider);
 			if (dataSourceProvider == null)
 				return false;
-			switch(dataSourceProvider.UnderlyingSource)
+			foreach (var optionName in dataSourceProvider.RequiredSourceOptions)
 			{
-				case UnderlyingLogDataSource.StandardOutput:
-					if (string.IsNullOrWhiteSpace(this.dataSourceOptions.Command))
-					{
-						this.SetValue<bool>(IsValidDataSourceOptionsProperty, false);
-						return false;
-					}
-					break;
-				case UnderlyingLogDataSource.WebRequest:
-					if (this.dataSourceOptions.Uri == null)
-					{
-						this.SetValue<bool>(IsValidDataSourceOptionsProperty, false);
-						return false;
-					}
-					break;
-				case UnderlyingLogDataSource.WindowsEventLogs:
-					if (string.IsNullOrWhiteSpace(this.dataSourceOptions.Category))
-					{
-						this.SetValue<bool>(IsValidDataSourceOptionsProperty, false);
-						return false;
-					}
-					break;
+				switch (optionName)
+				{
+					case nameof(LogDataSourceOptions.Category):
+					case nameof(LogDataSourceOptions.Command):
+					case nameof(LogDataSourceOptions.QueryString):
+					case nameof(LogDataSourceOptions.Uri):
+						if (!this.dataSourceOptions.IsOptionSet(optionName))
+						{
+							this.SetValue<bool>(IsValidDataSourceOptionsProperty, false);
+							return false;
+						}
+						break;
+				}
 			}
 			this.SetValue<bool>(IsValidDataSourceOptionsProperty, true);
 
 			// check name
 			if (string.IsNullOrEmpty(this.nameTextBox.Text))
-				return false;
-
-			// check log patterns
-			if (this.logPatterns.IsEmpty())
-				return false;
-
-			// check visible log properties
-			if (this.visibleLogProperties.IsEmpty())
 				return false;
 
 			// ok
@@ -544,29 +675,52 @@ namespace CarinaStudio.ULogViewer.Controls
 		void RemoveLogLevelMapEntry(object entry)
 		{
 			if (entry is KeyValuePair<string, LogLevel> readingEntry)
+			{
 				this.logLevelMapEntriesForReading.Remove(readingEntry);
+				this.SelectListBoxItem(this.logLevelMapForReadingListBox, -1);
+			}
 			else if (entry is KeyValuePair<LogLevel, string> writingEntry)
+			{
 				this.logLevelMapEntriesForWriting.Remove(writingEntry);
+				this.SelectListBoxItem(this.logLevelMapForWritingListBox, -1);
+			}
 		}
 
 
 		// Remove log pattern.
 		void RemoveLogPattern(ListBoxItem item)
 		{
-			var index = (item.GetVisualParent() as Panel)?.Children?.IndexOf(item) ?? -1;
+			var index = this.logPatterns.IndexOf((LogPattern)item.DataContext.AsNonNull());
 			if (index < 0)
 				return;
 			this.logPatterns.RemoveAt(index);
+			this.SelectListBoxItem(this.logPatternListBox, -1);
 		}
 
 
 		// Remove visible log property.
 		void RemoveVisibleLogProperty(ListBoxItem item)
 		{
-			var index = (item.GetVisualParent() as Panel)?.Children?.IndexOf(item) ?? -1;
+			var index = this.visibleLogProperties.IndexOf((LogProperty)item.DataContext.AsNonNull());
 			if (index < 0)
 				return;
 			this.visibleLogProperties.RemoveAt(index);
+			this.SelectListBoxItem(this.visibleLogPropertyListBox, -1);
+		}
+
+
+		// Select given item in list box.
+		void SelectListBoxItem(ListBox listBox, int index)
+		{
+			this.SynchronizationContext.Post(() =>
+			{
+				listBox.SelectedItems.Clear();
+				if (index < 0 || index >= listBox.GetItemCount())
+					return;
+				listBox.Focus();
+				listBox.SelectedIndex = index;
+				listBox.ScrollIntoView(index);
+			});
 		}
 
 
@@ -578,8 +732,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 			var options = await new LogDataSourceOptionsDialog()
 			{
+				DataSourceProvider = dataSourceProvider,
 				Options = this.dataSourceOptions,
-				UnderlyingLogDataSource = dataSourceProvider.UnderlyingSource,
 			}.ShowDialog<LogDataSourceOptions?>(this);
 			if (options != null)
 			{
@@ -596,10 +750,6 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.insertLogWritingFormatSyntaxMenu.PlacementTarget = this.insertLogWritingFormatSyntaxButton;
 			this.insertLogWritingFormatSyntaxMenu.Open(this);
 		}
-
-
-		// Get underlying type of log data source.
-		UnderlyingLogDataSource UnderlyingDataSource { get => this.GetValue<UnderlyingLogDataSource>(UnderlyingDataSourceProperty); }
 
 
 		// List of visible log properties.

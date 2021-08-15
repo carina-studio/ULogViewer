@@ -34,6 +34,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			"ULogViewerLog",
 #endif
 		};
+		static volatile LogProfile? emptyProfile;
 		static volatile ILogger? logger;
 		static readonly HashSet<LogProfile> pendingSavingProfiles = new HashSet<LogProfile>();
 		static readonly ObservableList<LogProfile> pinnedProfiles = new ObservableList<LogProfile>();
@@ -90,7 +91,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			profile.PropertyChanged += OnProfilePropertyChanged;
 
 			// check ID
-			if (string.IsNullOrEmpty(profile.Id))
+			if (string.IsNullOrEmpty(profile.Id) || profile.Id == emptyProfile?.Id)
 			{
 				profile.ChangeId();
 				pendingSavingProfiles.Add(profile);
@@ -124,6 +125,12 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			// remove ID
 			profileIdSet.Remove(profile.Id);
 		}
+
+
+		/// <summary>
+		/// Get instance of <see cref="LogProfile"/> represents empty log profile.
+		/// </summary>
+		public static LogProfile EmptyProfile { get => emptyProfile ?? throw new InvalidOperationException(); }
 
 
 		/// <summary>
@@ -192,6 +199,9 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				}
 				logger?.LogDebug($"Complete saving {profiles.Length} profile(s)");
 			});
+
+			// create empty profile
+			emptyProfile = LogProfile.CreateEmptyBuiltInProfile(app);
 
 			// load build-in profiles
 			logger.LogDebug("Start loading built-in profiles");

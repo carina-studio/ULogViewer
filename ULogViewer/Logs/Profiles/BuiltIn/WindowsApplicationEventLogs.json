@@ -18,16 +18,30 @@
 	},
 	"LogPatterns": [
 		{
-			"Regex": "^\\>\\>\\>\\>\\>(?<Timestamp>[^\\s]+[\\s][^\\s]+)[\\s](?<Event>[^\\s]+)[\\s](?<Level>.)[\\s](?<SourceName>.*)$"
+			"Regex": "^\\<Timestamp\\>(?<Timestamp>[^\\<]+)\\</Timestamp\\>"
 		},
 		{
-			"Regex": "^\\-\\-\\-\\-\\-(?<Message>.*)$",
-			"IsRepeatable": true
+			"Regex": "^\\<EventId\\>(?<Event>[^\\<]*)\\</EventId\\>"
 		},
 		{
-			"Regex": "^\\<\\<\\<\\<\\<.*$"
+			"Regex": "^\\<Level\\>(?<Level>[^\\<]+)\\</Level\\>"
+		},
+		{
+			"Regex": "^\\<Source\\>(?<SourceName>[^\\<]*)\\</Source\\>"
+		},
+		{
+			"Regex": "^\\<Message\\>"
+		},
+		{
+			"Regex": "^(?<Message>($|[^\\<]+))",
+			"IsRepeatable": true,
+			"IsSkippable": true
+		},
+		{
+			"Regex": "^\\</Message\\>"
 		}
 	],
+	"LogStringEncodingForReading": "Xml",
 	"LogWritingFormat": "[{Level}] {Timestamp} {Event,-5} {SourceName}:{NewLine}{Message}{NewLine}",
 	"SortDirection": "Descending",
 	"TimestampFormatForDisplaying": "yyyy/MM/dd HH:mm:ss",

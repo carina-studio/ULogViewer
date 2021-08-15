@@ -113,6 +113,8 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		// Dispose.
 		protected override void Dispose(bool disposing)
 		{
+			if (!disposing)
+				return; // In case of exception occurred in constructor
 			this.VerifyAccess();
 			this.ChangeState(LogDataSourceState.Disposed);
 			this.openedReader?.Let(reader =>
@@ -352,6 +354,5 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		public ILogDataSourceProvider Provider { get; }
 		public SynchronizationContext SynchronizationContext => this.Provider.SynchronizationContext;
 		public LogDataSourceState State { get => this.state; }
-		public UnderlyingLogDataSource UnderlyingSource => this.Provider.UnderlyingSource;
 	}
 }

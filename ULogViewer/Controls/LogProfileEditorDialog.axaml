@@ -43,7 +43,6 @@
 			<Setter Property="Background" Value="{DynamicResource TextControlBackground}"/>
 			<Setter Property="BorderThickness" Value="1"/>
 			<Setter Property="Height" Value="{StaticResource Double.LogProfileEditorDialog.ListBox.Height}"/>
-			<Setter Property="VirtualizationMode" Value="None"/>
 		</Style>
 		<Style Selector="ListBoxItem">
 			<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
@@ -63,11 +62,15 @@
 		</Border>
 
 		<!-- Content -->
-		<ScrollViewer HorizontalScrollBarVisibility="Disabled" MaxHeight="{StaticResource Double.LogProfileEditorDialog.Content.MaxHeight}">
+		<ScrollViewer Name="baseScrollViewer" HorizontalScrollBarVisibility="Disabled" MaxHeight="{StaticResource Double.LogProfileEditorDialog.Content.MaxHeight}">
 			<StackPanel HorizontalAlignment="Stretch" Margin="{StaticResource Thickness.Dialog.Content.Padding}" Orientation="Vertical">
 
 				<!-- Header -->
 				<TextBlock Classes="Dialog_Label_Header1" Text="{DynamicResource String.LogProfileEditorDialog.Common}"/>
+
+				<!-- How to read and parse logs -->
+				<TextBlock Cursor="Hand" Foreground="{DynamicResource Brush.TextBlock.Foreground.Link}" PointerReleased="OnLinkDescriptionPointerReleased" Tag="{x:Static appControls:LogProfileEditorDialog.LogsReadingAndParsingPageUri}" Text="{DynamicResource String.LogProfileEditorDialog.LearnAboutLogsReadingAndParsing}"/>
+				<Separator Classes="Dialog_Separator_Horizontal"/>
 				
 				<!-- Name -->
 				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.Name}"/>
@@ -112,16 +115,7 @@
 							</DataTemplate>
 						</ComboBox.ItemTemplate>
 					</ComboBox>
-					<Button Classes="Browse" Command="{Binding $parent[Window].SetDataSourceOptions}" Content="{DynamicResource String.LogProfileEditorDialog.DataSourceOptions}" Grid.Column="1">
-						<ia:Interaction.Behaviors>
-							<iaCore:DataTriggerBehavior Binding="{Binding #dataSourceProviderComboBox.SelectedItem.UnderlyingSource}" ComparisonCondition="Equal" Value="Undefined">
-								<iaCore:ChangePropertyAction PropertyName="IsEnabled" Value="False"/>
-							</iaCore:DataTriggerBehavior>
-							<iaCore:DataTriggerBehavior Binding="{Binding #dataSourceProviderComboBox.SelectedItem.UnderlyingSource}" ComparisonCondition="NotEqual" Value="Undefined">
-								<iaCore:ChangePropertyAction PropertyName="IsEnabled" Value="True"/>
-							</iaCore:DataTriggerBehavior>
-						</ia:Interaction.Behaviors>
-					</Button>
+					<Button Classes="Browse" Command="{Binding $parent[Window].SetDataSourceOptions}" Content="{DynamicResource String.LogProfileEditorDialog.DataSourceOptions}" Grid.Column="1" IsEnabled="{Binding #dataSourceProviderComboBox.SelectedItem.SupportedSourceOptions.Count}"/>
 				</Grid>
 				<TextBlock Classes="Dialog_Description_Error" IsVisible="{Binding !$parent[Window].IsValidDataSourceOptions}" Text="{DynamicResource String.LogProfileEditorDialog.InvalidDataSourceOptions}"/>
 				<Separator Classes="Dialog_Separator_Horizontal"/>
@@ -166,7 +160,7 @@
 
 				<!-- Log level map -->
 				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.LogLevelMapForReading}"/>
-				<ListBox Items="{Binding $parent[Window].LogLevelMapEntriesForReading}" SelectionChanged="OnListBoxSelectionChanged">
+				<ListBox Name="logLevelMapForReadingListBox" DoubleTapped="OnListBoxDoubleTapped" Items="{Binding $parent[Window].LogLevelMapEntriesForReading}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
 					<ListBox.ItemTemplate>
 						<DataTemplate>
 							<Grid ColumnDefinitions="*,*">
@@ -199,7 +193,7 @@
 
 				<!-- Log patterns -->
 				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.LogPatterns}"/>
-				<ListBox Name="logPatternListBox" Items="{Binding $parent[Window].LogPatterns}" SelectionChanged="OnListBoxSelectionChanged">
+				<ListBox Name="logPatternListBox" DoubleTapped="OnListBoxDoubleTapped" Items="{Binding $parent[Window].LogPatterns}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
 					<ListBox.ItemTemplate>
 						<DataTemplate DataType="{x:Type appLogs:LogPattern}">
 							<Grid ColumnDefinitions="*,Auto">
@@ -237,6 +231,11 @@
 				</Grid>
 				<Separator Classes="Dialog_Separator_Horizontal"/>
 
+				<!-- Log string format for reading -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.LogStringEncodingForReading}"/>
+				<appControls:EnumComboBox Name="logStringEncodingForReadingComboBox" EnumType="{x:Type appLogs:LogStringEncoding}" HorizontalAlignment="Stretch"/>
+				<Separator Classes="Dialog_Separator_Horizontal"/>
+
 				<!-- Timestamp format for reading -->
 				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.TimestampFormatForReading}"/>
 				<TextBox Name="timestampFormatForReadingTextBox" MaxLength="256"/>
@@ -248,7 +247,7 @@
 
 				<!-- Visible log properties -->
 				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.VisibleLogProperties}"/>
-				<ListBox Name="visibleLogPropertyListBox" Items="{Binding $parent[Window].VisibleLogProperties}" SelectionChanged="OnListBoxSelectionChanged">
+				<ListBox Name="visibleLogPropertyListBox" DoubleTapped="OnListBoxDoubleTapped" Items="{Binding $parent[Window].VisibleLogProperties}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
 					<ListBox.ItemTemplate>
 						<DataTemplate DataType="{x:Type appLogProfiles:LogProperty}">
 							<Grid ColumnDefinitions="Auto,*,Auto">
@@ -330,7 +329,7 @@
 				
 				<!-- Log level map -->
 				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.LogLevelMapForWriting}"/>
-				<ListBox Items="{Binding $parent[Window].LogLevelMapEntriesForWriting}" SelectionChanged="OnListBoxSelectionChanged">
+				<ListBox Name="logLevelMapForWritingListBox" DoubleTapped="OnListBoxDoubleTapped" Items="{Binding $parent[Window].LogLevelMapEntriesForWriting}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
 					<ListBox.ItemTemplate>
 						<DataTemplate>
 							<Grid ColumnDefinitions="*,*">
@@ -359,6 +358,11 @@
 					<TextBlock Classes="Dialog_Description" Text="{DynamicResource String.LogProfileEditorDialog.LogLevelMapForWriting.Description}" VerticalAlignment="Top"/>
 					<Button Classes="ListAction" Command="{Binding $parent[Window].AddLogLevelMapEntryForWriting}" Content="{DynamicResource String.Common.Add}" Grid.Column="1" VerticalAlignment="Top"/>
 				</Grid>
+				<Separator Classes="Dialog_Separator_Horizontal"/>
+
+				<!-- Log string format for writing -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.LogStringEncodingForWriting}"/>
+				<appControls:EnumComboBox Name="logStringEncodingForWritingComboBox" EnumType="{x:Type appLogs:LogStringEncoding}" HorizontalAlignment="Stretch"/>
 				<Separator Classes="Dialog_Separator_Horizontal"/>
 
 				<!-- Timestamp format for writing -->

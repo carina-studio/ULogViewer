@@ -31,8 +31,13 @@ namespace CarinaStudio.ULogViewer.Controls
 		public static readonly AvaloniaProperty<bool> IsOpenedProperty = AvaloniaProperty.Register<BaseWindow, bool>(nameof(IsOpened), false);
 
 
+		// Constants.
+		const int FadeInContentDelay = 300;
+
+
 		// Fields.
 		readonly List<BaseDialog> dialogs = new List<BaseDialog>();
+		readonly ScheduledAction fadeInContentAction;
 
 
 		/// <summary>
@@ -48,6 +53,10 @@ namespace CarinaStudio.ULogViewer.Controls
 				if (this.HasDialogs)
 					e.Handled = true;
 			}, Avalonia.Interactivity.RoutingStrategies.Tunnel);
+			this.fadeInContentAction = new ScheduledAction(() =>
+			{
+				(this.Content as Control)?.Let(it => it.Opacity = 1);
+			});
 		}
 
 
@@ -98,7 +107,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (this.dialogs.Remove(dialog) && this.dialogs.IsEmpty())
 			{
-				(this.Content as Control)?.Let(it => it.Opacity = 1);
+				this.fadeInContentAction.Schedule(FadeInContentDelay);
 				this.SetValue<bool>(HasDialogsProperty, false);
 			}
 		}
@@ -115,6 +124,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				(this.Content as Control)?.Let(it => it.Opacity = 0.2);
 				this.SetValue<bool>(HasDialogsProperty, true);
+				this.fadeInContentAction.Cancel();
 			}
 		}
 

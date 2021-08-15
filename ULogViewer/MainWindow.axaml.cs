@@ -44,6 +44,7 @@ namespace CarinaStudio.ULogViewer
 		readonly ScheduledAction saveWindowSizeAction;
 		readonly DataTemplate sessionTabItemHeaderTemplate;
 		readonly TabControl tabControl;
+		readonly ScheduledAction tabControlSelectionChangedAction;
 		readonly IList tabItems;
 
 
@@ -61,7 +62,12 @@ namespace CarinaStudio.ULogViewer
 			// setup controls
 			this.tabControl = this.FindControl<TabControl>("tabControl").AsNonNull().Also(it =>
 			{
-				it.SelectionChanged += this.OnTabControlSelectionChanged;
+				it.PropertyChanged += (_, e) =>
+				{
+					// [Workaround] TabControl.SelectionChanged will be raised unexpectedly when selection change in log list box in SessionView
+					if (e.Property == TabControl.SelectedIndexProperty)
+						this.tabControlSelectionChangedAction?.Schedule(); // Should not call OnTabControlSelectionChanged() directly because of timing issue that SelectedIndex will be changed temporarily when attaching to Workspace
+				};
 			});
 			this.tabItems = (IList)this.tabControl.Items;
 
@@ -86,6 +92,7 @@ namespace CarinaStudio.ULogViewer
 					this.Settings.SetValue(WindowHeightSettingKey, (int)(this.Height + 0.5));
 				}
 			});
+			this.tabControlSelectionChangedAction = new ScheduledAction(this.OnTabControlSelectionChanged);
 
 			// restore window state
 			this.Settings.Let(it =>
@@ -261,6 +268,9 @@ namespace CarinaStudio.ULogViewer
 			this.RemoveHandler(DragDrop.DragEnterEvent, this.OnDragEnter);
 			this.RemoveHandler(DragDrop.DragOverEvent, this.OnDragOver);
 			this.RemoveHandler(DragDrop.DropEvent, this.OnDrop);
+
+			// cancel scheduled actions
+			this.tabControlSelectionChangedAction.Cancel();
 
 			// call base
 			base.OnClosed(e);
@@ -484,7 +494,7 @@ namespace CarinaStudio.ULogViewer
 
 
 		// Called when selection of tab control has been changed.
-		void OnTabControlSelectionChanged(object? sender, RoutedEventArgs e)
+		void OnTabControlSelectionChanged()
 		{
 			if (this.DataContext is not Workspace workspace)
 				return;

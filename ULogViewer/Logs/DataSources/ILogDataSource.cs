@@ -45,12 +45,6 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// Get current state.
 		/// </summary>
 		LogDataSourceState State { get; }
-
-
-		/// <summary>
-		/// Get underlying source of log.
-		/// </summary>
-		UnderlyingLogDataSource UnderlyingSource { get; }
 	}
 
 

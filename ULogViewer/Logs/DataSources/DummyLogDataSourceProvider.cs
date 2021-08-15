@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CarinaStudio.Collections;
+using System;
+using System.Collections.Generic;
 
 namespace CarinaStudio.ULogViewer.Logs.DataSources
 {
@@ -20,8 +22,10 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		// Implementations.
-		public override string Name => "Dummy";
-		public override UnderlyingLogDataSource UnderlyingSource => UnderlyingLogDataSource.Undefined;
 		protected override ILogDataSource CreateSourceCore(LogDataSourceOptions options) => new DummyLogDataSource(this);
+		public override string Name => "Dummy";
+		public override ISet<string> RequiredSourceOptions => new HashSet<string>().AsReadOnly();
+		public override ISet<string> SupportedSourceOptions => new HashSet<string>().AsReadOnly();
+		
 	}
 }

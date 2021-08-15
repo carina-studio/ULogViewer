@@ -2,6 +2,7 @@
 using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using CarinaStudio.Threading.Tasks;
+using CarinaStudio.ULogViewer.Cryptography;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using Microsoft.Extensions.Logging;
 using System;
@@ -11,6 +12,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
@@ -25,10 +27,8 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 	/// </summary>
 	class LogProfile : IApplicationObject, INotifyPropertyChanged
 	{
-		/// <summary>
-		/// Default comparer for <see cref="LogProfile"/>.
-		/// </summary>
-		public static readonly IComparer<LogProfile> Comparer = Comparer<LogProfile>.Create(Compare);
+		// Constants.
+		const string EmptyId = "Empty";
 
 
 		// Static fields.
@@ -51,6 +51,8 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		Dictionary<string, LogLevel> logLevelMapForReading = new Dictionary<string, LogLevel>();
 		Dictionary<LogLevel, string> logLevelMapForWriting = new Dictionary<LogLevel, string>();
 		IList<LogPattern> logPatterns = new LogPattern[0];
+		LogStringEncoding logStringEncodingForReading = LogStringEncoding.Plane;
+		LogStringEncoding logStringEncodingForWriting = LogStringEncoding.Plane;
 		string? logWritingFormat;
 		string name = "";
 		IDictionary<string, LogLevel> readOnlyLogLevelMapForReading;
@@ -91,11 +93,14 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			this.dataSourceProvider = template.dataSourceProvider;
 			this.icon = template.icon;
 			this.isAdministratorNeeded = template.isAdministratorNeeded;
+			this.isContinuousReading = template.isContinuousReading;
 			this.isPinned = template.isPinned;
 			this.isWorkingDirectoryNeeded = template.isWorkingDirectoryNeeded;
 			this.logLevelMapForReading.AddAll(template.logLevelMapForReading);
 			this.logLevelMapForWriting.AddAll(template.logLevelMapForWriting);
 			this.logPatterns = template.logPatterns;
+			this.logStringEncodingForReading = template.logStringEncodingForReading;
+			this.logStringEncodingForWriting = template.logStringEncodingForWriting;
 			this.logWritingFormat = template.logWritingFormat;
 			this.name = template.name;
 			this.sortDirection = template.sortDirection;
@@ -159,41 +164,12 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		}
 
 
-		// Compare profiles.
-		static int Compare(LogProfile? x, LogProfile? y)
-		{
-			// check instance
-			if (x == null)
-			{
-				if (y == null)
-					return 0;
-				return -1;
-			}
-			if (y == null)
-				return 1;
-
-			// compare by name of data source provider
-			var result = x.dataSourceProvider.Name.CompareTo(y.dataSourceProvider.Name);
-			if (result != 0)
-				return result;
-
-			// compare by built-in state
-			if (x.IsBuiltIn)
-			{
-				if (!y.IsBuiltIn)
-					return -1;
-			}
-			else if (y.IsBuiltIn)
-				return 1;
-
-			// compare by name
-			result = x.name.CompareTo(y.name);
-			if (result != 0)
-				return result;
-
-			// compare by hash-code
-			return (x.GetHashCode() - y.GetHashCode());
-		}
+		/// <summary>
+		/// Create built-in empty log profile.
+		/// </summary>
+		/// <param name="app">Application.</param>
+		/// <returns>Built-in empty log profile.</returns>
+		internal static LogProfile CreateEmptyBuiltInProfile(IApplication app) => new LogProfile(app, EmptyId);
 
 
 		/// <summary>
@@ -226,7 +202,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				this.VerifyBuiltIn();
 				if (this.dataSourceProvider == value)
 					return;
-				if (value.UnderlyingSource == UnderlyingLogDataSource.File && this.isContinuousReading)
+				if (value.IsSourceOptionRequired(nameof(LogDataSourceOptions.FileName)) && this.isContinuousReading)
 					this.IsContinuousReading = false;
 				this.dataSourceProvider = value;
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(DataSourceProvider)));
@@ -367,7 +343,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				this.VerifyBuiltIn();
 				if (this.isContinuousReading == value)
 					return;
-				if (value && this.dataSourceProvider.UnderlyingSource == UnderlyingLogDataSource.File)
+				if (value && this.dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.FileName)))
 					return;
 				this.isContinuousReading = value;
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsContinuousReading)));
@@ -458,45 +434,69 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 
 			// get options
 			var options = new LogDataSourceOptions();
-			foreach (var jsonProperty in dataSourceElement.EnumerateObject())
+			var crypto = (Crypto?)null;
+			try
 			{
-				switch (jsonProperty.Name)
+				foreach (var jsonProperty in dataSourceElement.EnumerateObject())
 				{
-					case nameof(LogDataSourceOptions.Category):
-						options.Category = jsonProperty.Value.GetString();
-						break;
-					case nameof(LogDataSourceOptions.Command):
-						options.Command = jsonProperty.Value.GetString();
-						break;
-					case nameof(LogDataSourceOptions.Encoding):
-						options.Encoding = Encoding.GetEncoding(jsonProperty.Value.GetString().AsNonNull());
-						break;
-					case nameof(LogDataSourceOptions.FileName):
-						options.FileName = jsonProperty.Value.GetString();
-						break;
-					case "Name":
-						break;
-					case nameof(LogDataSourceOptions.SetupCommands):
-						options.SetupCommands = new List<string>().Also(it =>
-						{
-							foreach (var jsonElement in jsonProperty.Value.EnumerateArray())
-								it.Add(jsonElement.GetString().AsNonNull());
-						});
-						break;
-					case nameof(LogDataSourceOptions.TeardownCommands):
-						options.TeardownCommands = new List<string>().Also(it =>
-						{
-							foreach (var jsonElement in jsonProperty.Value.EnumerateArray())
-								it.Add(jsonElement.GetString().AsNonNull());
-						});
-						break;
-					case nameof(LogDataSourceOptions.WorkingDirectory):
-						options.WorkingDirectory = jsonProperty.Value.GetString();
-						break;
-					default:
-						this.logger.LogWarning($"Unknown property of DataSource: {jsonProperty.Name}");
-						break;
+					switch (jsonProperty.Name)
+					{
+						case nameof(LogDataSourceOptions.Category):
+							options.Category = jsonProperty.Value.GetString();
+							break;
+						case nameof(LogDataSourceOptions.Command):
+							options.Command = jsonProperty.Value.GetString();
+							break;
+						case nameof(LogDataSourceOptions.Encoding):
+							options.Encoding = Encoding.GetEncoding(jsonProperty.Value.GetString().AsNonNull());
+							break;
+						case nameof(LogDataSourceOptions.FileName):
+							options.FileName = jsonProperty.Value.GetString();
+							break;
+						case "Name":
+							break;
+						case nameof(LogDataSourceOptions.Password):
+							if (crypto == null)
+								crypto = new Crypto(this.Application);
+							options.Password = crypto.Decrypt(jsonProperty.Value.GetString().AsNonNull());
+							break;
+						case nameof(LogDataSourceOptions.QueryString):
+							options.QueryString = jsonProperty.Value.GetString();
+							break;
+						case nameof(LogDataSourceOptions.SetupCommands):
+							options.SetupCommands = new List<string>().Also(it =>
+							{
+								foreach (var jsonElement in jsonProperty.Value.EnumerateArray())
+									it.Add(jsonElement.GetString().AsNonNull());
+							});
+							break;
+						case nameof(LogDataSourceOptions.TeardownCommands):
+							options.TeardownCommands = new List<string>().Also(it =>
+							{
+								foreach (var jsonElement in jsonProperty.Value.EnumerateArray())
+									it.Add(jsonElement.GetString().AsNonNull());
+							});
+							break;
+						case nameof(LogDataSourceOptions.Uri):
+							options.Uri = new Uri(jsonProperty.Value.GetString().AsNonNull());
+							break;
+						case nameof(LogDataSourceOptions.UserName):
+							if (crypto == null)
+								crypto = new Crypto(this.Application);
+							options.UserName = crypto.Decrypt(jsonProperty.Value.GetString().AsNonNull());
+							break;
+						case nameof(LogDataSourceOptions.WorkingDirectory):
+							options.WorkingDirectory = jsonProperty.Value.GetString();
+							break;
+						default:
+							this.logger.LogWarning($"Unknown property of DataSource: {jsonProperty.Name}");
+							break;
+					}
 				}
+			}
+			finally
+			{
+				crypto?.Dispose();
 			}
 
 			// complete
@@ -546,6 +546,14 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 						break;
 					case nameof(LogPatterns):
 						this.LoadLogPatternsFromJson(jsonProperty.Value);
+						break;
+					case nameof(LogStringEncodingForReading):
+						if (Enum.TryParse<LogStringEncoding>(jsonProperty.Value.GetString(), out var encoding))
+							this.logStringEncodingForReading = encoding;
+						break;
+					case nameof(LogStringEncodingForWriting):
+						if (Enum.TryParse<LogStringEncoding>(jsonProperty.Value.GetString(), out encoding))
+							this.logStringEncodingForWriting = encoding;
 						break;
 					case nameof(LogWritingFormat):
 						this.logWritingFormat = jsonProperty.Value.GetString();
@@ -738,6 +746,42 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 
 
 		/// <summary>
+		/// Get of set string encoding of logs for reading.
+		/// </summary>
+		public LogStringEncoding LogStringEncodingForReading
+		{
+			get => this.logStringEncodingForReading;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (this.logStringEncodingForReading == value)
+					return;
+				this.logStringEncodingForReading = value;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LogStringEncodingForReading)));
+			}
+		}
+
+
+		/// <summary>
+		/// Get of set string encoding of logs for writing.
+		/// </summary>
+		public LogStringEncoding LogStringEncodingForWriting
+		{
+			get => this.logStringEncodingForWriting;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (this.logStringEncodingForWriting == value)
+					return;
+				this.logStringEncodingForWriting = value;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LogStringEncodingForWriting)));
+			}
+		}
+
+
+		/// <summary>
 		/// Get of set format to write log.
 		/// </summary>
 		public string? LogWritingFormat
@@ -829,6 +873,8 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				this.SaveLogLevelMapForWritingToJson(writer);
 				writer.WritePropertyName(nameof(LogPatterns));
 				this.SaveLogPatternsToJson(writer);
+				writer.WriteString(nameof(LogStringEncodingForReading), this.logStringEncodingForReading.ToString());
+				writer.WriteString(nameof(LogStringEncodingForWriting), this.logStringEncodingForWriting.ToString());
 				this.logWritingFormat?.Let(it => writer.WriteString(nameof(LogWritingFormat), it));
 				writer.WriteString(nameof(Name), this.name);
 				writer.WriteString(nameof(SortDirection), this.sortDirection.ToString());
@@ -849,46 +895,58 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		// Save data source info in JSON format.
 		void SaveDataSourceToJson(Utf8JsonWriter writer)
 		{
+			var crypto = (Crypto?)null;
+			var provider = this.dataSourceProvider;
 			var options = this.dataSourceOptions;
-			writer.WriteStartObject();
-			writer.WriteString("Name", this.dataSourceProvider.Name);
-			switch (this.dataSourceProvider.UnderlyingSource)
+			try
 			{
-				case UnderlyingLogDataSource.File:
-					options.Encoding?.Let(it => writer.WriteString(nameof(LogDataSourceOptions.Encoding), it.ToString()));
-					options.FileName?.Let(it => writer.WriteString(nameof(LogDataSourceOptions.FileName), it));
-					break;
-				case UnderlyingLogDataSource.StandardOutput:
-					options.Command?.Let(it => writer.WriteString(nameof(LogDataSourceOptions.Command), it));
-					options.SetupCommands.Let(it =>
+				writer.WriteStartObject();
+				writer.WriteString("Name", provider.Name);
+				foreach (var optionName in provider.SupportedSourceOptions)
+				{
+					if (!options.IsOptionSet(optionName))
+						continue;
+					var option = options.GetOption(optionName);
+					if (option is string strOption)
 					{
-						if (it.IsNotEmpty())
+						switch (optionName)
 						{
-							writer.WritePropertyName(nameof(LogDataSourceOptions.SetupCommands));
-							writer.WriteStartArray();
-							foreach (var command in it)
-								writer.WriteStringValue(command);
-							writer.WriteEndArray();
+							case nameof(LogDataSourceOptions.Password):
+							case nameof(LogDataSourceOptions.UserName):
+								if (crypto == null)
+									crypto = new Crypto(this.Application);
+								writer.WriteString(optionName, crypto.Encrypt(strOption));
+								break;
+							default:
+								writer.WriteString(optionName, strOption);
+								break;
 						}
-					});
-					options.TeardownCommands.Let(it =>
+					}
+					else if (option is IList<string> strListOption)
 					{
-						if (it.IsNotEmpty())
-						{
-							writer.WritePropertyName(nameof(LogDataSourceOptions.TeardownCommands));
-							writer.WriteStartArray();
-							foreach (var command in it)
-								writer.WriteStringValue(command);
-							writer.WriteEndArray();
-						}
-					});
-					options.WorkingDirectory?.Let(it => writer.WriteString(nameof(LogDataSourceOptions.WorkingDirectory), it));
-					break;
-				case UnderlyingLogDataSource.WindowsEventLogs:
-					options.Category?.Let(it => writer.WriteString(nameof(LogDataSourceOptions.Category), it.ToString()));
-					break;
+						writer.WritePropertyName(optionName);
+						writer.WriteStartArray();
+						foreach (var str in strListOption)
+							writer.WriteStringValue(str);
+						writer.WriteEndArray();
+					}
+					else if (option is bool boolOption)
+						writer.WriteBoolean(optionName, boolOption);
+					else if (option is double doubleOption)
+						writer.WriteNumber(optionName, doubleOption);
+					else if (option is int intOption)
+						writer.WriteNumber(optionName, intOption);
+					else if (option is long longOption)
+						writer.WriteNumber(optionName, longOption);
+					else if (option != null)
+						writer.WriteString(optionName, option.ToString());
+				}
+				writer.WriteEndObject();
 			}
-			writer.WriteEndObject();
+			finally
+			{
+				crypto?.Dispose();
+			}
 		}
 
 

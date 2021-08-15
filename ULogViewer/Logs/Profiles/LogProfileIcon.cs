@@ -28,6 +28,10 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// </summary>
 		Computer,
 		/// <summary>
+		/// Database.
+		/// </summary>
+		Database,
+		/// <summary>
 		/// Debug.
 		/// </summary>
 		Debug,
@@ -35,6 +39,10 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// File.
 		/// </summary>
 		File,
+		/// <summary>
+		/// Folder.
+		/// </summary>
+		Folder,
 		/// <summary>
 		/// Network.
 		/// </summary>

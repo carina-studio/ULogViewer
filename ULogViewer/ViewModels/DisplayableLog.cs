@@ -20,6 +20,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		// Fields.
+		string? beginningTimestampString;
+		string? endingTimestampString;
 		IBrush? colorIndicatorBrush;
 		bool isColorIndicatorBrushSet;
 		bool isLevelBrushSet;
@@ -37,6 +39,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		internal DisplayableLog(DisplayableLogGroup group, LogReader reader, Log log)
 		{
 			this.Application = group.Application;
+			this.BinaryBeginningTimestamp = log.BeginningTimestamp?.ToBinary() ?? 0L;
+			this.BinaryEndingTimestamp = log.EndingTimestamp?.ToBinary() ?? 0L;
 			this.BinaryTimestamp = log.Timestamp?.ToBinary() ?? 0L;
 			this.Group = group;
 			this.Log = log;
@@ -53,9 +57,41 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Get beginning timestamp of log in string format.
+		/// </summary>
+		public string BeginningTimestampString
+		{
+			get
+			{
+				if (this.beginningTimestampString == null)
+					this.beginningTimestampString = this.FormatTimestamp(this.Log.BeginningTimestamp);
+				return this.beginningTimestampString;
+			}
+		}
+
+
+		/// <summary>
+		/// Get beginning timestamp of log in binary format.
+		/// </summary>
+		public long BinaryBeginningTimestamp { get; }
+
+
+		/// <summary>
+		/// Get ending timestamp of log in binary format.
+		/// </summary>
+		public long BinaryEndingTimestamp { get; }
+
+
+		/// <summary>
 		/// Get timestamp of log in binary format.
 		/// </summary>
 		public long BinaryTimestamp { get; }
+
+
+		/// <summary>
+		/// Get category of log.
+		/// </summary>
+		public string? Category { get => this.Log.Category; }
 
 
 		/// <summary>
@@ -94,6 +130,18 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		}
 
 
+		/// <summary>
+		/// Get ID of device which generates log.
+		/// </summary>
+		public string? DeviceId { get => this.Log.DeviceId; }
+
+
+		/// <summary>
+		/// Get name of device which generates log.
+		/// </summary>
+		public string? DeviceName { get => this.Log.DeviceName; }
+
+
 		// Dispose.
 		protected override void Dispose(bool disposing)
 		{
@@ -110,6 +158,20 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Get ending timestamp of log in string format.
+		/// </summary>
+		public string EndingTimestampString
+		{
+			get
+			{
+				if (this.endingTimestampString == null)
+					this.endingTimestampString = this.FormatTimestamp(this.Log.EndingTimestamp);
+				return this.endingTimestampString;
+			}
+		}
+
+
+		/// <summary>
 		/// Get event of log.
 		/// </summary>
 		public string? Event { get => this.Log.Event; }
@@ -122,15 +184,75 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Get 10th extra data of log.
+		/// </summary>
+		public string? Extra10 { get => this.Log.Extra10; }
+
+
+		/// <summary>
 		/// Get 2nd extra data of log.
 		/// </summary>
 		public string? Extra2 { get => this.Log.Extra2; }
 
 
 		/// <summary>
+		/// Get 3rd extra data of log.
+		/// </summary>
+		public string? Extra3 { get => this.Log.Extra3; }
+
+
+		/// <summary>
+		/// Get 4th extra data of log.
+		/// </summary>
+		public string? Extra4 { get => this.Log.Extra4; }
+
+
+		/// <summary>
+		/// Get 5th extra data of log.
+		/// </summary>
+		public string? Extra5 { get => this.Log.Extra5; }
+
+
+		/// <summary>
+		/// Get 6th extra data of log.
+		/// </summary>
+		public string? Extra6 { get => this.Log.Extra6; }
+
+
+		/// <summary>
+		/// Get 7th extra data of log.
+		/// </summary>
+		public string? Extra7 { get => this.Log.Extra7; }
+
+
+		/// <summary>
+		/// Get 8th extra data of log.
+		/// </summary>
+		public string? Extra8 { get => this.Log.Extra8; }
+
+
+		/// <summary>
+		/// Get 9th extra data of log.
+		/// </summary>
+		public string? Extra9 { get => this.Log.Extra9; }
+
+
+		/// <summary>
 		/// Get name of file which read log from.
 		/// </summary>
 		public string? FileName { get => this.Log.FileName; }
+
+
+		// Format timestamp to string.
+		string FormatTimestamp(DateTime? timestamp)
+		{
+			var format = this.Group.LogProfile.TimestampFormatForDisplaying;
+			if (timestamp == null)
+				return "";
+			if (format != null)
+				return timestamp.Value.ToString(format);
+			return timestamp.Value.ToString();
+		}
 
 
 		/// <summary>
@@ -275,6 +397,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		internal void OnTimestampFormatChanged()
 		{
+			if (this.Log.BeginningTimestamp.HasValue)
+			{
+				this.beginningTimestampString = null;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(BeginningTimestampString)));
+			}
+			if (this.Log.EndingTimestamp.HasValue)
+			{
+				this.endingTimestampString = null;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(EndingTimestampString)));
+			}
 			if (this.Log.Timestamp.HasValue)
 			{
 				this.timestampString = null;
@@ -299,6 +431,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Get name of source which generates log.
 		/// </summary>
 		public string? SourceName { get => this.Log.SourceName; }
+
+
+		/// <summary>
+		/// Get summary of log.
+		/// </summary>
+		public string? Summary { get => this.Log.Summary; }
 
 
 		/// <summary>
@@ -327,16 +465,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			get
 			{
 				if (this.timestampString == null)
-				{
-					var timestamp = this.Log.Timestamp;
-					var format = this.Group.LogProfile.TimestampFormatForDisplaying;
-					if (timestamp == null)
-						this.timestampString = "";
-					else if (format != null)
-						this.timestampString = timestamp.Value.ToString(format);
-					else
-						this.timestampString = timestamp.Value.ToString();
-				}
+					this.timestampString = this.FormatTimestamp(this.Log.Timestamp);
 				return this.timestampString;
 			}
 		}

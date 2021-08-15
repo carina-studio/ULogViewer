@@ -1,9 +1,11 @@
 ﻿using Avalonia.Media;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
+using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 
 namespace CarinaStudio.ULogViewer.ViewModels
@@ -13,13 +15,47 @@ namespace CarinaStudio.ULogViewer.ViewModels
 	/// </summary>
 	class AppOptions : ViewModel
 	{
+		// Fields.
+		readonly SortedObservableList<LogProfile> logProfiles = new SortedObservableList<LogProfile>(CompareLogProfiles);
+
+
 		/// <summary>
 		/// Initialize new <see cref="AppOptions"/> instance.
 		/// </summary>
 		/// <param name="app">Application.</param>
 		public AppOptions(IApplication app) : base(app)
 		{
+			// setup properties
+			this.logProfiles.Add(Logs.Profiles.LogProfiles.EmptyProfile);
+			this.logProfiles.AddAll(Logs.Profiles.LogProfiles.All);
+			this.LogProfiles = this.logProfiles.AsReadOnly();
 			this.SampleLogFontFamily = new FontFamily(this.LogFontFamily);
+
+			// add event handlers
+			((INotifyCollectionChanged)Logs.Profiles.LogProfiles.All).CollectionChanged += this.OnLogProfilesChanged;
+		}
+
+
+		// Compare log profiles.
+		static int CompareLogProfiles(LogProfile? x, LogProfile? y)
+		{
+			if (object.ReferenceEquals(x, y))
+				return 0;
+			if (x == null)
+				return -1;
+			if (y == null)
+				return 1;
+			if (x == Logs.Profiles.LogProfiles.EmptyProfile)
+				return -1;
+			if (y == Logs.Profiles.LogProfiles.EmptyProfile)
+				return 1;
+			var result = x.Name.CompareTo(y.Name);
+			if (result != 0)
+				return result;
+			result = x.Id.CompareTo(y.Id);
+			if (result != 0)
+				return result;
+			return x.GetHashCode() - y.GetHashCode();
 		}
 
 
@@ -43,6 +79,17 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		}
 
 
+		// Dispose.
+		protected override void Dispose(bool disposing)
+		{
+			// remove event handlers
+			((INotifyCollectionChanged)Logs.Profiles.LogProfiles.All).CollectionChanged -= this.OnLogProfilesChanged;
+
+			// call base.
+			base.Dispose(disposing);
+		}
+
+
 		/// <summary>
 		/// Get or set whether case of text filter can be ignored or not.
 		/// </summary>
@@ -50,6 +97,29 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			get => this.Settings.GetValueOrDefault(ULogViewer.Settings.IgnoreCaseOfLogTextFilter);
 			set => this.Settings.SetValue(ULogViewer.Settings.IgnoreCaseOfLogTextFilter, value);
+		}
+
+
+		/// <summary>
+		/// Get or set initial log profile.
+		/// </summary>
+		public LogProfile InitialLogProfile
+		{
+			get => this.Settings.GetValueOrDefault(ULogViewer.Settings.InitialLogProfile).Let(it =>
+			{
+				if (string.IsNullOrEmpty(it))
+					return Logs.Profiles.LogProfiles.EmptyProfile;
+				if (Logs.Profiles.LogProfiles.TryFindProfileById(it, out var profile))
+					return profile.AsNonNull();
+				return Logs.Profiles.LogProfiles.EmptyProfile;
+			});
+			set => value.Let(it =>
+			{
+				if (it == Logs.Profiles.LogProfiles.EmptyProfile)
+					this.Settings.ResetValue(ULogViewer.Settings.InitialLogProfile);
+				else
+					this.Settings.SetValue(ULogViewer.Settings.InitialLogProfile, it.Id);
+			});
 		}
 
 
@@ -88,12 +158,33 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Get all <see cref="LogProfile"/>s including <see cref="Logs.Profiles.LogProfiles.EmptyProfile"/>.
+		/// </summary>
+		public IList<LogProfile> LogProfiles { get; }
+
+
+		/// <summary>
 		/// Get or set maximum number of logs for continuous logs reading.
 		/// </summary>
 		public int MaxContinuousLogCount
 		{
 			get => this.Settings.GetValueOrDefault(ULogViewer.Settings.MaxContinuousLogCount);
 			set => this.Settings.SetValue(ULogViewer.Settings.MaxContinuousLogCount, value);
+		}
+
+
+		// Called when list of log profiles changed.
+		void OnLogProfilesChanged(object? sender, NotifyCollectionChangedEventArgs e)
+		{
+			switch(e.Action)
+			{
+				case NotifyCollectionChangedAction.Add:
+					this.logProfiles.AddAll(e.NewItems.AsNonNull().Cast<LogProfile>());
+					break;
+				case NotifyCollectionChangedAction.Remove:
+					this.logProfiles.RemoveAll(e.OldItems.AsNonNull().Cast<LogProfile>());
+					break;
+			}
 		}
 
 
@@ -106,6 +197,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.OnPropertyChanged(nameof(ContinuousLogReadingUpdateInterval));
 			else if (key == ULogViewer.Settings.Culture)
 				this.OnPropertyChanged(nameof(Culture));
+			else if (key == ULogViewer.Settings.IgnoreCaseOfLogTextFilter)
+				this.OnPropertyChanged(nameof(IgnoreCaseOfLogTextFilter));
+			else if (key == ULogViewer.Settings.InitialLogProfile)
+				this.OnPropertyChanged(nameof(InitialLogProfile));
 			else if (key == ULogViewer.Settings.LogFontFamily)
 			{
 				this.OnPropertyChanged(nameof(LogFontFamily));

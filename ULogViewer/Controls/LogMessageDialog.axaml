@@ -3,8 +3,11 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 				xmlns:sys="using:System"
+				xmlns:ae="using:AvaloniaEdit"
 				xmlns:ia="using:Avalonia.Xaml.Interactivity"
 				xmlns:iaCore="using:Avalonia.Xaml.Interactions.Core"
+				xmlns:ma="using:Markdown.Avalonia"
+				xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
 				xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.LogMessageDialog"
@@ -26,33 +29,43 @@
 		</Border>
 
 		<!-- Content -->
-		<Grid Margin="{StaticResource Thickness.Dialog.Content.Padding}" RowDefinitions="Auto,*,Auto,Auto,Auto">
+		<Grid Margin="{StaticResource Thickness.Dialog.Content.Padding}" RowDefinitions="Auto,Auto,*,Auto,Auto">
+
+			<!-- Find text -->
+			<StackPanel Orientation="Vertical">
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogMessageDialog.FindText}"/>
+				<appControls:RegexTextBox Name="findTextTextBox" PropertyChanged="OnFindTextTextBoxPropertyChanged" Watermark="{DynamicResource String.Common.RegularExpression}"/>
+				<TextBlock Classes="Dialog_Description_Link" PointerReleased="OnLinkDescriptionPointerReleased" Tag="https://docs.microsoft.com/en-us/dotnet/standard/base-types/regular-expression-language-quick-reference" Text="{DynamicResource String.Common.RegularExpression.Reference}"/>
+				<Separator Classes="Dialog_Separator_Horizontal"/>
+			</StackPanel>
 
 			<!-- Message -->
-			<TextBlock Classes="Dialog_Label" Text="{Binding $parent[Window].LogMessageDisplayName}"/>
-			<TextBox Name="messageTextBox" AcceptsReturn="True" Grid.Row="1" IsReadOnly="True" TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto">
-				<ia:Interaction.Behaviors>
-					<iaCore:DataTriggerBehavior Binding="{Binding #wrapTextSwitch.IsChecked}" Value="True">
-						<iaCore:InvokeCommandAction Command="{Binding $parent[Window].SetTextWrappingCommand}">
-							<iaCore:InvokeCommandAction.CommandParameter>
-								<sys:Boolean>True</sys:Boolean>
-							</iaCore:InvokeCommandAction.CommandParameter>
-						</iaCore:InvokeCommandAction>
-					</iaCore:DataTriggerBehavior>
-					<iaCore:DataTriggerBehavior Binding="{Binding #wrapTextSwitch.IsChecked}" Value="False">
-						<iaCore:InvokeCommandAction Command="{Binding $parent[Window].SetTextWrappingCommand}">
-							<iaCore:InvokeCommandAction.CommandParameter>
-								<sys:Boolean>False</sys:Boolean>
-							</iaCore:InvokeCommandAction.CommandParameter>
-						</iaCore:InvokeCommandAction>
-					</iaCore:DataTriggerBehavior>
-				</ia:Interaction.Behaviors>
-			</TextBox>
-			<Separator Classes="Dialog_Separator_Horizontal" Grid.Row="2"/>
+			<TextBlock Classes="Dialog_Label" Grid.Row="1" Text="{Binding $parent[Window].LogMessageDisplayName}"/>
+			<ae:TextEditor Name="messageTextBox" HorizontalAlignment="Stretch" IsReadOnly="True" HorizontalScrollBarVisibility="Disabled" Grid.Row="2" VerticalAlignment="Stretch"/>
+			<Separator Classes="Dialog_Separator_Horizontal" Grid.Row="3"/>
 
 			<!-- Wrap text -->
-			<TextBlock Classes="Dialog_Label" Grid.Row="3" Text="{DynamicResource String.LogMessageDialog.WrapText}"/>
-			<ToggleSwitch Name="wrapTextSwitch" Grid.Row="4" IsChecked="True"/>
+			<StackPanel Grid.Row="4" Orientation="Vertical">
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogMessageDialog.WrapText}"/>
+				<ToggleSwitch Name="wrapTextSwitch" IsChecked="True">
+					<ia:Interaction.Behaviors>
+						<iaCore:DataTriggerBehavior Binding="{Binding $self.IsChecked}" Value="True">
+							<iaCore:InvokeCommandAction Command="{Binding $parent[Window].SetTextWrappingCommand}">
+								<iaCore:InvokeCommandAction.CommandParameter>
+									<sys:Boolean>True</sys:Boolean>
+								</iaCore:InvokeCommandAction.CommandParameter>
+							</iaCore:InvokeCommandAction>
+						</iaCore:DataTriggerBehavior>
+						<iaCore:DataTriggerBehavior Binding="{Binding $self.IsChecked}" Value="False">
+							<iaCore:InvokeCommandAction Command="{Binding $parent[Window].SetTextWrappingCommand}">
+								<iaCore:InvokeCommandAction.CommandParameter>
+									<sys:Boolean>False</sys:Boolean>
+								</iaCore:InvokeCommandAction.CommandParameter>
+							</iaCore:InvokeCommandAction>
+						</iaCore:DataTriggerBehavior>
+					</ia:Interaction.Behaviors>
+				</ToggleSwitch>
+			</StackPanel>
 			
 		</Grid>
 		

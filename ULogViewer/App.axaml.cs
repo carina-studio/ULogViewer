@@ -28,6 +28,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace CarinaStudio.ULogViewer
 {
@@ -68,7 +69,11 @@ namespace CarinaStudio.ULogViewer
 		public App()
 		{
 			// setup logger
-			NLog.LogManager.Configuration = new NLog.Config.XmlLoggingConfiguration(Path.Combine(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule?.FileName) ?? "", "NLog.config"));
+			NLog.LogManager.Configuration = this.OpenManifestResourceStream("CarinaStudio.ULogViewer.NLog.config").Use(stream =>
+			{
+				using var xmlReader = XmlReader.Create(stream);
+				return new NLog.Config.XmlLoggingConfiguration(xmlReader);
+			});
 			this.logger = this.LoggerFactory.CreateLogger("App");
 			this.logger.LogWarning("App created");
 
@@ -368,16 +373,29 @@ namespace CarinaStudio.ULogViewer
 			// create workspace
 			splashWindow.Message = this.GetStringNonNull("SplashWindow.ShowMainWindow");
 			this.workspace = new Workspace(this);
-			this.StartupParams.LogProfileId?.Let(it =>
+			var initialProfile = this.StartupParams.LogProfileId?.Let(it =>
 			{
 				if (LogProfiles.TryFindProfileById(it, out var profile))
 				{
 					this.logger.LogWarning($"Initial log profile is '{profile?.Name}'");
-					workspace.CreateSession(profile);
+					return profile;
 				}
-				else
-					this.logger.LogError($"Cannot find initial log profile by ID '{it}'");
+				this.logger.LogError($"Cannot find initial log profile by ID '{it}'");
+				return null;
+			}) ?? this.Settings.GetValueOrDefault(Settings.InitialLogProfile).Let(it =>
+			{
+				if (string.IsNullOrEmpty(it))
+					return null;
+				if (LogProfiles.TryFindProfileById(it, out var profile))
+				{
+					this.logger.LogWarning($"Initial log profile is '{profile?.Name}'");
+					return profile;
+				}
+				this.logger.LogError($"Cannot find initial log profile by ID '{it}'");
+				return null;
 			});
+			if (initialProfile != null)
+				workspace.CreateSession(initialProfile);
 
 			// start checking update
 			this.CheckUpdateInfo();

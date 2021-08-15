@@ -27,9 +27,11 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -69,6 +71,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Constants.
+		const int MaxLogCountForCopying = 65536;
 		const int ScrollingToLatestLogInterval = 100;
 
 
@@ -90,15 +93,21 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly MutableObservableBoolean canFilterLogsByPid = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canFilterLogsByTid = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canMarkUnmarkSelectedLogs = new MutableObservableBoolean();
+		readonly MutableObservableBoolean canSaveAllLogs = new MutableObservableBoolean();
+		readonly MutableObservableBoolean canSaveLogs = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSelectMarkedLogs = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSetLogProfile = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSetWorkingDirectory = new MutableObservableBoolean();
+		readonly MutableObservableBoolean canShowFileInExplorer = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canShowLogMessage = new MutableObservableBoolean();
+		readonly MutableObservableBoolean canShowWorkingDirectoryInExplorer = new MutableObservableBoolean();
 		bool isAttachedToLogicalTree;
 		bool isLogFileNeededAfterLogProfileSet;
 		bool isMessageLogPropertyVisible;
 		bool isPidLogPropertyVisible;
 		bool isPointerPressedOnLogListBox;
+		bool isRestartingAsAdminConfirmed;
+		bool isSelectingFileToSaveLogs;
 		bool isTidLogPropertyVisible;
 		bool isWorkingDirNeededAfterLogProfileSet;
 		readonly ContextMenu logActionMenu;
@@ -117,6 +126,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ContextMenu otherActionsMenu;
 		readonly ListBox predefinedLogTextFilterListBox;
 		readonly SortedObservableList<PredefinedLogTextFilter> predefinedLogTextFilters;
+		readonly Popup predefinedLogTextFiltersPopup;
 		readonly ScheduledAction scrollToLatestLogAction;
 		readonly HashSet<PredefinedLogTextFilter> selectedPredefinedLogTextFilters = new HashSet<PredefinedLogTextFilter>();
 		readonly MenuItem showLogMessageMenuItem;
@@ -138,10 +148,14 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.FilterLogsByThreadIdCommand = ReactiveCommand.Create<bool>(this.FilterLogsByThreadId, this.canFilterLogsByTid);
 			this.MarkUnmarkSelectedLogsCommand = ReactiveCommand.Create(this.MarkUnmarkSelectedLogs, this.canMarkUnmarkSelectedLogs);
 			this.ResetLogFiltersCommand = ReactiveCommand.Create(this.ResetLogFilters, this.GetObservable<bool>(HasLogProfileProperty));
+			this.SaveAllLogsCommand = ReactiveCommand.Create(() => this.SaveLogs(true), this.canSaveAllLogs);
+			this.SaveLogsCommand = ReactiveCommand.Create(() => this.SaveLogs(false), this.canSaveLogs);
 			this.SelectAndSetLogProfileCommand = ReactiveCommand.Create(this.SelectAndSetLogProfile, this.canSetLogProfile);
 			this.SelectAndSetWorkingDirectoryCommand = ReactiveCommand.Create(this.SelectAndSetWorkingDirectory, this.canSetWorkingDirectory);
 			this.SelectMarkedLogsCommand = ReactiveCommand.Create(this.SelectMarkedLogs, this.canSelectMarkedLogs);
+			this.ShowFileInExplorerCommand = ReactiveCommand.Create(this.ShowFileInExplorer, this.canShowFileInExplorer);
 			this.ShowLogMessageCommand = ReactiveCommand.Create(this.ShowLogMessage, this.canShowLogMessage);
+			this.ShowWorkingDirectoryInExplorerCommand = ReactiveCommand.Create(this.ShowWorkingDirectoryInExplorer, this.canShowWorkingDirectoryInExplorer);
 			this.SwitchLogFiltersCombinationModeCommand = ReactiveCommand.Create(this.SwitchLogFiltersCombinationMode, this.GetObservable<bool>(HasLogProfileProperty));
 
 			// create collections
@@ -207,6 +221,11 @@ namespace CarinaStudio.ULogViewer.Controls
 				it.MenuOpened += (_, e) => this.SynchronizationContext.Post(() => this.otherActionsButton.IsChecked = true);
 			});
 			this.predefinedLogTextFilterListBox = this.FindControl<ListBox>("predefinedLogTextFilterListBox").AsNonNull();
+			this.predefinedLogTextFiltersPopup = this.FindControl<Popup>("predefinedLogTextFiltersPopup").AsNonNull().Also(it =>
+			{
+				it.Closed += (_, sender) => this.logListBox.Focus();
+				it.Opened += (_, sender) => this.predefinedLogTextFilterListBox.Focus();
+			});
 			this.showLogMessageMenuItem = this.FindControl<MenuItem>("showLogMessageMenuItem").AsNonNull().Also(it => this.UpdateShowLogMessageMenuItem());
 #if !DEBUG
 			this.FindControl<Button>("testButton").AsNonNull().IsVisible = false;
@@ -286,19 +305,20 @@ namespace CarinaStudio.ULogViewer.Controls
 			});
 			this.updateStatusBarStateAction = new ScheduledAction(() =>
 			{
-				if (this.DataContext is not Session session || !session.HasLogReaders)
+				this.SetValue<SessionViewStatusBarState>(StatusBarStateProperty, Global.Run(() =>
 				{
-					this.SetValue<SessionViewStatusBarState>(StatusBarStateProperty, SessionViewStatusBarState.None);
-					return;
-				}
-				if (session.IsLogsReadingPaused)
-					this.SetValue<SessionViewStatusBarState>(StatusBarStateProperty, SessionViewStatusBarState.Paused);
-				else if (session.HasPartialDataSourceErrors)
-					this.SetValue<SessionViewStatusBarState>(StatusBarStateProperty, SessionViewStatusBarState.Warning);
-				else if (session.HasAllDataSourceErrors)
-					this.SetValue<SessionViewStatusBarState>(StatusBarStateProperty, SessionViewStatusBarState.Error);
-				else
-					this.SetValue<SessionViewStatusBarState>(StatusBarStateProperty, SessionViewStatusBarState.Active);
+					if (this.DataContext is not Session session)
+						return SessionViewStatusBarState.None;
+					if (session.IsLogsReadingPaused)
+						return SessionViewStatusBarState.Paused;
+					if (session.HasPartialDataSourceErrors)
+						return SessionViewStatusBarState.Warning;
+					if (session.HasAllDataSourceErrors)
+						return SessionViewStatusBarState.Error;
+					if (session.HasLogReaders)
+						return SessionViewStatusBarState.Active;
+					return SessionViewStatusBarState.None;
+				}));
 			});
 		}
 
@@ -331,7 +351,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			// check state
 			if (this.DataContext is not Session session)
 				return;
-			if (!this.canSetLogProfile.Value)
+			if (!this.canAddLogFiles.Value)
 				return;
 
 			// add log files
@@ -359,15 +379,10 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (profile != null)
 			{
 				this.SetValue<bool>(HasLogProfileProperty, true);
-				switch(profile.DataSourceProvider.UnderlyingSource)
-				{
-					case UnderlyingLogDataSource.File:
-						this.isLogFileNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(Settings.SelectLogFilesWhenNeeded);
-						break;
-					case UnderlyingLogDataSource.StandardOutput:
-						this.isWorkingDirNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(Settings.SelectWorkingDirectoryWhenNeeded);
-						break;
-				}
+				if (session.IsLogFileNeeded)
+					this.isLogFileNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(Settings.SelectLogFilesWhenNeeded);
+				else if (session.IsWorkingDirectoryNeeded)
+					this.isWorkingDirNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(Settings.SelectWorkingDirectoryWhenNeeded);
 				this.OnLogProfileSet(profile);
 			}
 
@@ -375,6 +390,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			session.AddLogFileCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
 			session.MarkUnmarkLogsCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
 			session.ResetLogProfileCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
+			session.SaveAllLogsCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
+			session.SaveLogsCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
 			session.SetLogProfileCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
 			session.SetWorkingDirectoryCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
 			if (session.AddLogFileCommand.CanExecute(null))
@@ -389,6 +406,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			else
 				this.canAddLogFiles.Update(false);
 			this.canMarkUnmarkSelectedLogs.Update(session.MarkUnmarkLogsCommand.CanExecute(null));
+			this.canSaveAllLogs.Update(session.SaveAllLogsCommand.CanExecute(null));
+			this.canSaveLogs.Update(session.SaveLogsCommand.CanExecute(null));
 			this.canSetLogProfile.Update(session.ResetLogProfileCommand.CanExecute(null) || session.SetLogProfileCommand.CanExecute(null));
 			this.canSelectMarkedLogs.Update(session.HasMarkedLogs);
 			if (session.SetWorkingDirectoryCommand.CanExecute(null))
@@ -402,6 +421,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			else
 				this.canSetWorkingDirectory.Update(false);
+			this.canShowWorkingDirectoryInExplorer.Update(this.IsOpeningExplorerSupported && session.HasWorkingDirectory);
 
 			// start auto scrolling
 			session.LogProfile?.Let(profile =>
@@ -455,6 +475,55 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (result != 0)
 				return result;
 			return x.GetHashCode() - y.GetHashCode();
+		}
+
+
+		// Show dialog and let user choose whether to restart as administor for given log profile.
+		void ConfirmRestartingAsAdmin()
+		{
+			if (this.isRestartingAsAdminConfirmed || !this.isAttachedToLogicalTree)
+				return;
+			if (this.DataContext is not Session session)
+				return;
+			var profile = session.LogProfile;
+			if (profile != null && profile.IsAdministratorNeeded && !this.Application.IsRunningAsAdministrator)
+			{
+				this.isRestartingAsAdminConfirmed = true;
+				this.SynchronizationContext.PostDelayed(async () =>
+				{
+					if (this.DataContext == session && session.LogProfile == profile)
+					{
+						if (await this.ConfirmRestartingAsAdmin(profile))
+							this.Application.Restart($"-profile {profile.Id}", true);
+						else
+							this.Logger.LogWarning($"Unable to use profile '{profile.Name}' because application is not running as administrator");
+					}
+				}, 1000); // Delay to make sure that owner window has been shown
+			}
+		}
+		async Task<bool> ConfirmRestartingAsAdmin(LogProfile profile)
+		{
+			// check state
+			if (!profile.IsAdministratorNeeded || this.Application.IsRunningAsAdministrator)
+				return false;
+			var window = this.FindLogicalAncestorOfType<Window>();
+			if (window == null)
+				return false;
+
+			// show dialog
+			var result = await new MessageDialog()
+			{
+				Buttons = MessageDialogButtons.YesNo,
+				Icon = MessageDialogIcon.Question,
+				Message = this.Application.GetFormattedString("SessionView.NeedToRestartAsAdministrator", profile.Name),
+			}.ShowDialog<MessageDialogResult>(window);
+			if (result == MessageDialogResult.Yes)
+			{
+				this.Logger.LogWarning($"User agreed to restart as administrator for '{profile.Name}'");
+				return true;
+			}
+			this.Logger.LogWarning($"User denied to restart as administrator for '{profile.Name}'");
+			return false;
 		}
 
 
@@ -613,7 +682,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			// check visible properties
 			var hasMessage = false;
 			var hasSourceName = false;
+			var hasSummary = false;
 			var hasTimestamp = false;
+			var hasTitle = false;
 			foreach (var logProperty in logProperties)
 			{
 				switch (logProperty.Name)
@@ -624,8 +695,14 @@ namespace CarinaStudio.ULogViewer.Controls
 					case nameof(DisplayableLog.SourceName):
 						hasSourceName = true;
 						break;
+					case nameof(DisplayableLog.Summary):
+						hasSummary = true;
+						break;
 					case nameof(DisplayableLog.TimestampString):
 						hasTimestamp = true;
+						break;
+					case nameof(DisplayableLog.Title):
+						hasTitle = true;
 						break;
 				}
 			}
@@ -635,6 +712,10 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				if (hasMessage)
 					return nameof(DisplayableLog.Message);
+				if (hasSummary)
+					return nameof(DisplayableLog.Summary);
+				if (hasTitle)
+					return nameof(DisplayableLog.Title);
 				if (hasSourceName)
 					return nameof(DisplayableLog.SourceName);
 				if (hasTimestamp)
@@ -727,14 +808,19 @@ namespace CarinaStudio.ULogViewer.Controls
 			// detach from commands
 			session.AddLogFileCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
 			session.MarkUnmarkLogsCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
+			session.SaveAllLogsCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
+			session.SaveLogsCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
 			session.SetLogProfileCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
 			session.SetLogProfileCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
 			session.SetWorkingDirectoryCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
 			this.canAddLogFiles.Update(false);
 			this.canMarkUnmarkSelectedLogs.Update(false);
+			this.canSaveAllLogs.Update(false);
+			this.canSaveLogs.Update(false);
 			this.canSelectMarkedLogs.Update(false);
 			this.canSetLogProfile.Update(false);
 			this.canSetWorkingDirectory.Update(false);
+			this.canShowWorkingDirectoryInExplorer.Update(false);
 
 			// update properties
 			this.SetValue<bool>(HasLogProfileProperty, false);
@@ -814,25 +900,29 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// select new log profile
 			var currentLogProfile = session.LogProfile;
-			var needNewLogProfile = currentLogProfile == null ? true : currentLogProfile.DataSourceProvider.UnderlyingSource switch
+			var needNewLogProfile = Global.Run(() =>
 			{
-				UnderlyingLogDataSource.File => filePaths.IsEmpty(),
-				UnderlyingLogDataSource.StandardOutput => filePaths.IsNotEmpty(),
-				_ => false,
-			};
+				if (currentLogProfile == null)
+					return true;
+				if (session.IsLogFileNeeded)
+					return filePaths.IsEmpty();
+				if (session.IsWorkingDirectoryNeeded)
+					return filePaths.IsNotEmpty();
+				return false;
+			});
 			var newLogProfile = !needNewLogProfile ? null : await new LogProfileSelectionDialog().Also(it =>
 			{
 				if (filePaths.IsEmpty())
 				{
 					it.Filter = logProfile =>
 					{
-						return logProfile.DataSourceProvider.UnderlyingSource == UnderlyingLogDataSource.StandardOutput
-							&& logProfile.IsWorkingDirectoryNeeded
-							&& logProfile.DataSourceOptions.WorkingDirectory == null;
+						return (logProfile.DataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.WorkingDirectory))
+							|| logProfile.IsWorkingDirectoryNeeded)
+							&& !logProfile.DataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.WorkingDirectory));
 					};
 				}
 				else
-					it.Filter = logProfile => logProfile.DataSourceProvider.UnderlyingSource == UnderlyingLogDataSource.File;
+					it.Filter = logProfile => logProfile.DataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.FileName));
 			}).ShowDialog<LogProfile>(window);
 
 			// set log profile or create new session
@@ -956,6 +1046,11 @@ namespace CarinaStudio.ULogViewer.Controls
 		private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
 
 
+		// Check whether opening system file explorer is supported or not.
+		bool IsOpeningExplorerSupported { get; } = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) 
+			|| RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
+
+
 		// Get or set whether scrolling to latest log is needed or not.
 		bool IsScrollingToLatestLogNeeded
 		{
@@ -1039,6 +1134,9 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.isWorkingDirNeededAfterLogProfileSet = false;
 				this.autoSetWorkingDirectoryAction.Reschedule();
 			}
+
+			// check administrator role
+			this.ConfirmRestartingAsAdmin();
 		}
 
 
@@ -1246,6 +1344,9 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			// reset auto scrolling
 			this.IsScrollingToLatestLogNeeded = profile.IsContinuousReading;
+
+			// check administrator role
+			this.ConfirmRestartingAsAdmin();
 		}
 
 
@@ -1266,8 +1367,15 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when double click on log list box.
 		void OnLogListBoxDoubleTapped(object? sender, RoutedEventArgs e)
 		{
-			if (this.ShowLogMessage())
+			var selectedItem = this.logListBox.SelectedItem;
+			if (selectedItem == null)
+				return;
+			var listBoxItem = this.logListBox.FindListBoxItem(selectedItem);
+			if (listBoxItem != null && listBoxItem.IsPointerOver)
+			{
+				this.ShowLogMessage();
 				e.Handled = true;
+			}
 		}
 
 
@@ -1336,11 +1444,12 @@ namespace CarinaStudio.ULogViewer.Controls
 				var hasSingleSelectedItem = (selectionCount == 1);
 
 				// update command states
-				this.canCopySelectedLogs.Update(hasSelectedItems && session.CopyLogsCommand.CanExecute(null));
-				this.canCopySelectedLogsWithFileNames.Update(hasSelectedItems && session.CopyLogsWithFileNamesCommand.CanExecute(null));
+				this.canCopySelectedLogs.Update(hasSelectedItems && session.CopyLogsCommand.CanExecute(null) && selectionCount <= MaxLogCountForCopying);
+				this.canCopySelectedLogsWithFileNames.Update(hasSelectedItems && session.CopyLogsWithFileNamesCommand.CanExecute(null) && selectionCount <= MaxLogCountForCopying);
 				this.canFilterLogsByPid.Update(hasSingleSelectedItem && this.isPidLogPropertyVisible);
 				this.canFilterLogsByTid.Update(hasSingleSelectedItem && this.isTidLogPropertyVisible);
 				this.canMarkUnmarkSelectedLogs.Update(hasSelectedItems && session.MarkUnmarkLogsCommand.CanExecute(null));
+				this.canShowFileInExplorer.Update(hasSelectedItems && session.IsLogFileNeeded);
 				this.canShowLogMessage.Update(hasSingleSelectedItem && this.isMessageLogPropertyVisible);
 			});
 		}
@@ -1361,40 +1470,71 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when key down.
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
-			// handle key event for combo keys
-			if (!e.Handled && (e.KeyModifiers & KeyModifiers.Control) != 0)
+			if (!e.Handled)
 			{
-				switch (e.Key)
+				if ((e.KeyModifiers & KeyModifiers.Control) != 0)
 				{
-					case Key.C:
-						if (e.Source is not TextBox)
-						{
-							if ((e.KeyModifiers & KeyModifiers.Shift) != 0)
-								this.CopySelectedLogsWithFileNames();
-							else
-								this.CopySelectedLogs();
-						}
-						break;
-					case Key.F:
-						if (e.Source is not TextBox)
-						{
+					switch (e.Key)
+					{
+						case Key.C:
+							if (e.Source is not TextBox)
+							{
+								if ((e.KeyModifiers & KeyModifiers.Shift) != 0)
+									this.CopySelectedLogsWithFileNames();
+								else
+									this.CopySelectedLogs();
+							}
+							break;
+						case Key.F:
 							this.logTextFilterTextBox.Focus();
 							this.logTextFilterTextBox.SelectAll();
 							e.Handled = true;
-						}
-						break;
-					case Key.S:
-						if (e.Source == this.logTextFilterTextBox)
-						{
-							this.logTextFilterTextBox.Validate();
-							if (this.logTextFilterTextBox.IsTextValid && this.logTextFilterTextBox.Regex != null)
-								this.CreatePredefinedLogTextFilter();
-						}
-						break;
+							break;
+						case Key.O:
+							this.AddLogFiles();
+							break;
+						case Key.P:
+							predefinedLogTextFiltersPopup.IsOpen = !predefinedLogTextFiltersPopup.IsOpen;
+							break;
+						case Key.S:
+							if (e.Source == this.logTextFilterTextBox)
+							{
+								this.logTextFilterTextBox.Validate();
+								if (this.logTextFilterTextBox.IsTextValid && this.logTextFilterTextBox.Regex != null)
+									this.CreatePredefinedLogTextFilter();
+							}
+							else
+								this.SaveLogs((e.KeyModifiers & KeyModifiers.Shift) != 0);
+							break;
+					}
+				}
+				else
+				{
+					switch (e.Key)
+					{
+						case Key.Down:
+							if (e.Source is not TextBox)
+							{
+								if (this.predefinedLogTextFiltersPopup.IsOpen)
+									this.predefinedLogTextFilterListBox.SelectNextItem();
+								else
+									this.logListBox.SelectNextItem();
+								e.Handled = true;
+							}
+							break;
+						case Key.Up:
+							if (e.Source is not TextBox)
+							{
+								if (this.predefinedLogTextFiltersPopup.IsOpen)
+									this.predefinedLogTextFilterListBox.SelectPreviousItem();
+								else
+									this.logListBox.SelectPreviousItem();
+								e.Handled = true;
+							}
+							break;
+					}
 				}
 			}
-
-			// call base
 			base.OnKeyDown(e);
 		}
 
@@ -1414,10 +1554,25 @@ namespace CarinaStudio.ULogViewer.Controls
 							e.Handled = true;
 						}
 						break;
+					case Key.End:
+						if (e.Source is not TextBox)
+						{
+							if (this.predefinedLogTextFiltersPopup.IsOpen)
+								this.predefinedLogTextFilterListBox.SelectLastItem();
+							else
+								this.logListBox.SelectLastItem();
+							e.Handled = true;
+						}
+						break;
 					case Key.Escape:
 						if (e.Source is TextBox)
 						{
 							this.logListBox.Focus();
+							e.Handled = true;
+						}
+						else if (this.predefinedLogTextFiltersPopup.IsOpen)
+						{
+							this.predefinedLogTextFiltersPopup.IsOpen = false;
 							e.Handled = true;
 						}
 						break;
@@ -1425,6 +1580,16 @@ namespace CarinaStudio.ULogViewer.Controls
 						if (e.Source is not TextBox)
 						{
 							(this.DataContext as Session)?.ReloadLogsCommand?.TryExecute();
+							e.Handled = true;
+						}
+						break;
+					case Key.Home:
+						if (e.Source is not TextBox)
+						{
+							if (this.predefinedLogTextFiltersPopup.IsOpen)
+								this.predefinedLogTextFilterListBox.SelectFirstItem();
+							else
+								this.logListBox.SelectFirstItem();
 							e.Handled = true;
 						}
 						break;
@@ -1443,7 +1608,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						}
 						break;
 					case Key.S:
-						if (e.Source is not TextBox)
+						if (e.Source is not TextBox && !this.isSelectingFileToSaveLogs)
 						{
 							this.SelectMarkedLogs();
 							e.Handled = true;
@@ -1471,6 +1636,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				it.ScrollIntoView(log);
 				it.Focus();
 			});
+			this.IsScrollingToLatestLogNeeded = false;
 		}
 
 
@@ -1599,6 +1765,10 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.canMarkUnmarkSelectedLogs.Update(this.logListBox.SelectedItems.Count > 0 && session.MarkUnmarkLogsCommand.CanExecute(null));
 			else if (sender == session.ResetLogProfileCommand || sender == session.SetLogProfileCommand)
 				this.canSetLogProfile.Update(session.ResetLogProfileCommand.CanExecute(null) || session.SetLogProfileCommand.CanExecute(null));
+			else if (sender == session.SaveAllLogsCommand)
+				this.canSaveAllLogs.Update(session.SaveAllLogsCommand.CanExecute(null));
+			else if (sender == session.SaveLogsCommand)
+				this.canSaveLogs.Update(session.SaveLogsCommand.CanExecute(null));
 			else if (sender == session.SetWorkingDirectoryCommand)
 			{
 				if (session.SetWorkingDirectoryCommand.CanExecute(null))
@@ -1639,6 +1809,9 @@ namespace CarinaStudio.ULogViewer.Controls
 					break;
 				case nameof(Session.HasMarkedLogs):
 					this.canSelectMarkedLogs.Update(session.HasMarkedLogs);
+					break;
+				case nameof(Session.HasWorkingDirectory):
+					this.canShowWorkingDirectoryInExplorer.Update(this.IsOpeningExplorerSupported && session.HasWorkingDirectory);
 					break;
 				case nameof(Session.IsActivated):
 					if (!session.IsActivated)
@@ -1684,6 +1857,15 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.UpdateLogFontSize();
 			else if (e.Key == Settings.UpdateLogFilterDelay)
 				this.logTextFilterTextBox.ValidationDelay = this.UpdateLogFilterParamsDelay;
+		}
+
+
+		// Called when pointer released on item of status bar.
+		void OnStatusBarItemPointerReleased(object? sender, PointerReleasedEventArgs e)
+		{
+			if (sender is not Control control || e.InitialPressMouseButton != MouseButton.Left)
+				return;
+			this.SynchronizationContext.Post(() => control.ContextMenu?.Open());
 		}
 
 
@@ -1745,6 +1927,76 @@ namespace CarinaStudio.ULogViewer.Controls
 		ICommand ResetLogFiltersCommand { get; }
 
 
+		// Command to save all logs to file.
+		ICommand SaveAllLogsCommand { get; }
+
+
+		// Save logs to file.
+		async void SaveLogs(bool saveAllLogs)
+		{
+			// check state
+			this.VerifyAccess();
+			if (this.isSelectingFileToSaveLogs)
+				return;
+			if (saveAllLogs)
+			{
+				if (!this.canSaveAllLogs.Value)
+					return;
+			}
+			else
+			{
+				if (!this.canSaveLogs.Value)
+					return;
+			}
+			var window = this.FindLogicalAncestorOfType<Window>();
+			if (window == null)
+			{
+				this.Logger.LogError("Unable to save logs without attaching to window");
+				return;
+			}
+			if (this.DataContext is not Session session)
+				return;
+
+			// select target file
+			this.isSelectingFileToSaveLogs = true;
+			var app = this.Application;
+			var fileName = await new SaveFileDialog().Also(it =>
+			{
+				it.Filters.Add(new FileDialogFilter().Also(filter =>
+				{
+					filter.Extensions.Add("txt");
+					filter.Name = app.GetString("FileFormat.Text");
+				}));
+				it.Filters.Add(new FileDialogFilter().Also(filter =>
+				{
+					filter.Extensions.Add("log");
+					filter.Name = app.GetString("FileFormat.Log");
+				}));
+				it.Filters.Add(new FileDialogFilter().Also(filter =>
+				{
+					filter.Extensions.Add("*");
+					filter.Name = app.GetString("FileFormat.All");
+				}));
+				it.Title = saveAllLogs
+					? app.GetString("SessionView.SaveAllLogs")
+					: app.GetString("SessionView.SaveLogs");
+			}).ShowAsync(window);
+			this.isSelectingFileToSaveLogs = false;
+			if (fileName == null)
+				return;
+
+			// save logs
+			if (saveAllLogs)
+				session.SaveAllLogsCommand.TryExecute(fileName);
+			else
+				session.SaveLogsCommand.TryExecute(fileName);
+		}
+
+
+		// Command to save logs to file.
+		ICommand SaveLogsCommand { get; }
+
+
 		/// <summary>
 		/// Select and set log profile.
 		/// </summary>
@@ -1773,17 +2025,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			// check administrator role
 			if (logProfile.IsAdministratorNeeded && !this.Application.IsRunningAsAdministrator)
 			{
-				var result = await new MessageDialog()
-				{
-					Buttons = MessageDialogButtons.YesNo,
-					Icon = MessageDialogIcon.Question,
-					Message = this.Application.GetFormattedString("SessionView.NeedToRestartAsAdministrator", logProfile.Name),
-				}.ShowDialog<MessageDialogResult>(window);
-				if (result == MessageDialogResult.Yes)
-				{
-					this.Logger.LogWarning($"Restart application as administrator for profile '{logProfile.Name}'");
+				if (await this.ConfirmRestartingAsAdmin(logProfile))
 					this.Application.Restart($"-profile {logProfile.Id}", true);
-				}
 				else
 					this.Logger.LogWarning($"Unable to use profile '{logProfile.Name}' because application is not running as administrator");
 				return;
@@ -1794,6 +2037,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// reset log profile
 			this.isLogFileNeededAfterLogProfileSet = false;
+			this.isRestartingAsAdminConfirmed = false;
 			this.isWorkingDirNeededAfterLogProfileSet = false;
 			this.autoAddLogFilesAction.Cancel();
 			this.autoSetWorkingDirectoryAction.Cancel();
@@ -1805,19 +2049,22 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 
 			// set log profile
-			switch (logProfile.DataSourceProvider.UnderlyingSource)
-			{
-				case UnderlyingLogDataSource.File:
-					this.isLogFileNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(Settings.SelectLogFilesWhenNeeded);
-					break;
-				case UnderlyingLogDataSource.StandardOutput:
-					this.isWorkingDirNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(Settings.SelectWorkingDirectoryWhenNeeded);
-					break;
-			}
 			if (!session.SetLogProfileCommand.TryExecute(logProfile))
 			{
 				this.Logger.LogError("Unable to set log profile to session");
 				return;
+			}
+			if (session.IsLogFileNeeded)
+			{
+				this.isLogFileNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(Settings.SelectLogFilesWhenNeeded);
+				if (this.isLogFileNeededAfterLogProfileSet)
+					this.autoAddLogFilesAction.Schedule();
+			}
+			else if (session.IsWorkingDirectoryNeeded)
+			{
+				this.isWorkingDirNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(Settings.SelectWorkingDirectoryWhenNeeded);
+				if (this.isWorkingDirNeededAfterLogProfileSet)
+					this.autoSetWorkingDirectoryAction.Schedule();
 			}
 			this.OnLogProfileSet(logProfile);
 		}
@@ -1841,6 +2088,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				if (logs.Contains(log))
 					this.logListBox.SelectedItems.Add(log);
 			}
+			if (this.logListBox.SelectedItems.Count > 0)
+				this.logListBox.ScrollIntoView(this.logListBox.SelectedItems[0].AsNonNull());
 		}
 
 
@@ -1907,6 +2156,87 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Show file in system file explorer.
+		void ShowFileInExplorer()
+		{
+			// check state
+			this.VerifyAccess();
+			if (!this.canShowFileInExplorer.Value)
+				return;
+
+			// collect paths
+			var comparer = IO.PathEqualityComparer.Default;
+			var filePath = (string?)null;
+			var dirPathSet = new HashSet<string>(comparer);
+			foreach (DisplayableLog log in this.logListBox.SelectedItems)
+			{
+				var fileName = log.FileName;
+				if (string.IsNullOrEmpty(fileName))
+					continue;
+				if (filePath == null && dirPathSet.IsEmpty())
+					filePath = fileName;
+				else if (filePath != null && !comparer.Equals(filePath, fileName))
+				{
+					dirPathSet.Add(Path.GetDirectoryName(filePath) ?? "");
+					dirPathSet.Add(Path.GetDirectoryName(fileName) ?? "");
+					filePath = null;
+				}
+				else
+					dirPathSet.Add(Path.GetDirectoryName(fileName) ?? "");
+			}
+
+			// show in system file explorer
+			if (filePath != null)
+				this.ShowFileSystemItemInExplorer(filePath, false);
+			else if (dirPathSet.IsNotEmpty())
+			{
+				foreach (var path in dirPathSet)
+					this.ShowFileSystemItemInExplorer(path, true);
+			}
+		}
+
+
+		// Command to show file in system file explorer.
+		ICommand ShowFileInExplorerCommand { get; }
+
+
+		// Show file system item in system file explorer.
+		void ShowFileSystemItemInExplorer(string path, bool isDirectory)
+		{
+			using var process = new Process();
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+			{
+				process.StartInfo.Let(it =>
+				{
+					it.FileName = "Explorer";
+					it.Arguments = isDirectory
+						? $"\"{path}\""
+						: $"/select, \"{path}\"";
+				});
+			}
+			else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+			{
+				process.StartInfo.Let(it =>
+				{
+					it.Arguments = isDirectory
+						? $"\"{path}\""
+						: $"-R \"{path}\"";
+					it.Verb = "open";
+				});
+			}
+			else
+				return;
+			try
+			{
+				process.Start();
+			}
+			catch (Exception ex)
+			{
+				this.Logger.LogError(ex, "Unable to open system file explorer");
+			}
+		}
+
+
 		// Show menu of log actions.
 		void ShowLogActionsMenu()
 		{
@@ -1960,6 +2290,28 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.otherActionsMenu.PlacementTarget = this.otherActionsButton;
 			this.otherActionsMenu.Open(this);
 		}
+
+
+		// Show working directory in system file explorer.
+		void ShowWorkingDirectoryInExplorer()
+		{
+			// check state
+			this.VerifyAccess();
+			if (!this.canShowWorkingDirectoryInExplorer.Value)
+				return;
+			if (this.DataContext is not Session session)
+				return;
+			var workingDirectory = session.WorkingDirectoryPath;
+			if (string.IsNullOrEmpty(workingDirectory))
+				return;
+
+			// open system file explorer
+			this.ShowFileSystemItemInExplorer(workingDirectory, true);
+		}
+
+
+		// Command to show working directory in system file explorer.
+		ICommand ShowWorkingDirectoryInExplorerCommand { get; }
 
 
 		// Get current state of status bar.
