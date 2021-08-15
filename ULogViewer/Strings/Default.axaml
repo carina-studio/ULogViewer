@@ -126,11 +126,6 @@
 	<sys:String x:Key="String.LogLevelMapEntryEditor.Writing.LogLevel">Log level</sys:String>
 	<sys:String x:Key="String.LogLevelMapEntryEditor.Writing.Text">Mapped text (required)</sys:String>
 
-	<!-- LogMessageDialog -->
-	<sys:String x:Key="String.LogMessageDialog.FindText">Find text</sys:String>
-	<sys:String x:Key="String.LogMessageDialog.WrapText">Wrap automatically</sys:String>
-	<sys:String x:Key="String.LogMessageDialog.Title">View log</sys:String>
-
 	<!-- LogPatternEditorDialog -->
 	<sys:String x:Key="String.LogPatternEditorDialog.IsSkippable">The line can be skipped</sys:String>
 	<sys:String x:Key="String.LogPatternEditorDialog.IsRepeatable">The line can be repeated continuously</sys:String>
@@ -275,6 +270,11 @@
 	<sys:String x:Key="String.LogStringEncoding.Json">JSON</sys:String>
 	<sys:String x:Key="String.LogStringEncoding.Plane">Plane text</sys:String>
 	<sys:String x:Key="String.LogStringEncoding.Xml">XML/HTML</sys:String>
+
+	<!-- LogStringPropertyDialog -->
+	<sys:String x:Key="String.LogStringPropertyDialog.FindText">Find text</sys:String>
+	<sys:String x:Key="String.LogStringPropertyDialog.WrapText">Wrap automatically</sys:String>
+	<sys:String x:Key="String.LogStringPropertyDialog.Title">View log property</sys:String>
 
 	<!-- MainWindow -->
 	<sys:String x:Key="String.MainWindow.AppUpdateFound">New version {0} found, do you want to open the download page?</sys:String>

@@ -29,8 +29,6 @@
 
 		<!-- Log actions menu -->
 		<ContextMenu x:Key="logActionMenu">
-			<MenuItem Name="showLogMessageMenuItem" Command="{Binding $parent[UserControl].ShowLogMessageCommand}"/>
-			<Separator/>
 			<MenuItem Command="{Binding $parent[UserControl].MarkUnmarkSelectedLogsCommand}" Header="{DynamicResource String.SessionView.MarkUnmarkLogs}" HotKey="M" InputGesture="M"/>
 			<MenuItem Command="{Binding $parent[UserControl].SelectMarkedLogsCommand}" Header="{DynamicResource String.SessionView.SelectMarkedLogs}" HotKey="S" InputGesture="S"/>
 			<Separator/>

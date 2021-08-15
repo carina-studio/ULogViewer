@@ -123,11 +123,6 @@
 	<sys:String x:Key="String.LogLevelMapEntryEditor.Writing.LogLevel">日誌等級</sys:String>
 	<sys:String x:Key="String.LogLevelMapEntryEditor.Writing.Text">對應的文字 (必要)</sys:String>
 
-	<!-- LogMessageDialog -->
-	<sys:String x:Key="String.LogMessageDialog.FindText">搜尋文字</sys:String>
-	<sys:String x:Key="String.LogMessageDialog.WrapText">自動換行</sys:String>
-	<sys:String x:Key="String.LogMessageDialog.Title">檢視日誌</sys:String>
-
 	<!-- LogPatternEditorDialog -->
 	<sys:String x:Key="String.LogPatternEditorDialog.IsSkippable">此行可以被忽略</sys:String>
 	<sys:String x:Key="String.LogPatternEditorDialog.IsRepeatable">此行可以連續重複出現</sys:String>
@@ -262,6 +257,11 @@
 
 	<!-- LogStringEncoding -->
 	<sys:String x:Key="String.LogStringEncoding.Plane">純文字</sys:String>
+
+	<!-- LogStringPropertyDialog -->
+	<sys:String x:Key="String.LogStringPropertyDialog.FindText">搜尋文字</sys:String>
+	<sys:String x:Key="String.LogStringPropertyDialog.WrapText">自動換行</sys:String>
+	<sys:String x:Key="String.LogStringPropertyDialog.Title">檢視日誌屬性</sys:String>
 
 	<!-- MainWindow -->
 	<sys:String x:Key="String.MainWindow.AppUpdateFound">已經有新的版本 {0}，是否開啟下載頁面？</sys:String>

@@ -39,12 +39,12 @@
 			<SolidColorBrush x:Key="Brush.LogLevel.Verbose">#000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.LogLevel.Warn">#000000</SolidColorBrush>
 
-			<!-- LogMessageDialog -->
-			<SolidColorBrush x:Key="Brush.LogMessageDialog.FoundText.Background">#3fff0000</SolidColorBrush>
-
 			<!-- LogProfileSelectionDialog -->
 			<SolidColorBrush x:Key="Brush.LogProfileSelectionDialog.Label.Background">#00000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.LogProfileSelectionDialog.Label.Border">#00000000</SolidColorBrush>
+
+			<!-- LogStringPropertyDialog -->
+			<SolidColorBrush x:Key="Brush.LogStringPropertyDialog.FoundText.Background">#3fff0000</SolidColorBrush>
 
 			<!-- Separator -->
 			<SolidColorBrush x:Key="Brush.Separator.Background">#00000000</SolidColorBrush>

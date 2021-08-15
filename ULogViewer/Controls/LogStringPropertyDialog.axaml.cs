@@ -22,7 +22,7 @@ namespace CarinaStudio.ULogViewer.Controls
 	/// <summary>
 	/// Dialog to show message of log.
 	/// </summary>
-	partial class LogMessageDialog : BaseDialog
+	partial class LogStringPropertyDialog : BaseDialog
 	{
 		// Definition of syntax highlighting.
 		class HighlightingDefinitionImpl : IHighlightingDefinition
@@ -39,7 +39,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.highlightingColor = new HighlightingColor().Also(it => 
 				{
 					var res = (object?)null;
-					if ((app as App)?.TryFindResource("Brush.LogMessageDialog.FoundText.Background", out res) == true && res is SolidColorBrush solidColorBrush)
+					if ((app as App)?.TryFindResource("Brush.LogStringPropertyDialog.FoundText.Background", out res) == true && res is SolidColorBrush solidColorBrush)
 						it.Background = new SimpleHighlightingBrush(solidColorBrush.Color);
 				});
 				this.mainRuleSet.Let(mainRuleSet =>
@@ -137,17 +137,11 @@ namespace CarinaStudio.ULogViewer.Controls
 				// find position to break line
 				var lineLength = documentLine.Length;
 				if (lineLength <= 0)
-				{
-					this.charWidths = new double[0];
 					return -1;
-				}
 				var viewWidth = this.viewWidth;
 				var offset = (startOffset - documentLine.Offset);
 				if (offset >= lineLength)
-				{
-					this.charWidths = new double[0];
 					return -1;
-				}
 				var textWidth = this.charWidths[offset++];
 				while (offset < lineLength)
 				{
@@ -157,50 +151,51 @@ namespace CarinaStudio.ULogViewer.Controls
 					textWidth += charWidth;
 					++offset;
 				}
-				this.charWidths = new double[0];
 				return -1;
 			}
 		}
 
 
 		// Static fields.
-		static readonly AvaloniaProperty<string> LogMessageDisplayNameProperty = AvaloniaProperty.Register<LogMessageDialog, string>(nameof(LogMessageDisplayName), "");
+		static readonly AvaloniaProperty<string> LogPropertyDisplayNameProperty = AvaloniaProperty.Register<LogStringPropertyDialog, string>(nameof(LogPropertyDisplayName), "");
 
 
 		// Fields.
 		readonly RegexTextBox findTextTextBox;
 		readonly HighlightingDefinitionImpl highlightingDefinition;
-		readonly TextEditor messageTextBox;
+		readonly TextEditor propertyValueTextEditor;
 		readonly VisualLineElementGeneratorImpl visualLineElementGenerator;
 
 
 		/// <summary>
-		/// Initialize new <see cref="LogMessageDialog"/> instance.
+		/// Initialize new <see cref="LogStringPropertyDialog"/> instance.
 		/// </summary>
-		public LogMessageDialog()
+		public LogStringPropertyDialog()
 		{
 			this.SetTextWrappingCommand = ReactiveCommand.Create<bool>(this.SetTextWrapping);
 			InitializeComponent();
 			this.findTextTextBox = this.FindControl<RegexTextBox>("findTextTextBox").AsNonNull();
 			this.highlightingDefinition = new HighlightingDefinitionImpl(this.Application);
-			this.messageTextBox = this.FindControl<TextEditor>("messageTextBox").AsNonNull().Also(it =>
+			this.propertyValueTextEditor = this.FindControl<TextEditor>("propertyValueTextEditor").AsNonNull().Also(it =>
 			{
 				it.PropertyChanged += (_, e) =>
 				{
-					if (e.Property == TextBox.BoundsProperty && this.messageTextBox != null)
+					if (e.Property == TextBox.BoundsProperty && this.propertyValueTextEditor != null)
 					{
-						this.SynchronizationContext.Post(_ => this.messageTextBox.TextArea.TextView.Redraw(), null); // [Workaround] Force redraw to apply text wrapping.
-						this.messageTextBox.Margin = new Thickness(0); // [Workaround] Relayout completed, restore to correct margin.
+						this.SynchronizationContext.Post(_ => this.propertyValueTextEditor.TextArea.TextView.Redraw(), null); // [Workaround] Force redraw to apply text wrapping.
+						this.propertyValueTextEditor.Margin = new Thickness(0); // [Workaround] Relayout completed, restore to correct margin.
 					}
 				};
 				it.SyntaxHighlighting = this.highlightingDefinition;
 				it.TextArea.Let(textArea =>
 				{
+					textArea.Options.EnableEmailHyperlinks = false;
+					textArea.Options.EnableHyperlinks = false;
 					textArea.TextView.ElementGenerators.Add(new VisualLineElementGeneratorImpl(it));
 				});
 			});
-			this.visualLineElementGenerator = (VisualLineElementGeneratorImpl)this.messageTextBox.TextArea.TextView.ElementGenerators.First(it => it is VisualLineElementGeneratorImpl);
-			this.SetValue<string>(LogMessageDisplayNameProperty, LogPropertyNameConverter.Default.Convert(nameof(Log.Message)));
+			this.visualLineElementGenerator = (VisualLineElementGeneratorImpl)this.propertyValueTextEditor.TextArea.TextView.ElementGenerators.First(it => it is VisualLineElementGeneratorImpl);
+			this.SetValue<string>(LogPropertyDisplayNameProperty, LogPropertyNameConverter.Default.Convert(nameof(Log.Message)));
 		}
 
 
@@ -215,13 +210,19 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		/// <summary>
-		/// Get or set display name of <see cref="Log.Message"/>.
+		/// Get or set display name of log property.
 		/// </summary>
-		public string LogMessageDisplayName
+		public string LogPropertyDisplayName
 		{
-			get => this.GetValue<string>(LogMessageDisplayNameProperty);
-			set => this.SetValue<string>(LogMessageDisplayNameProperty, value);
+			get => this.GetValue<string>(LogPropertyDisplayNameProperty);
+			set => this.SetValue<string>(LogPropertyDisplayNameProperty, value);
 		}
+
+
+		/// <summary>
+		/// Get or set name of log property.
+		/// </summary>
+		public string LogPropertyName { get; set; } = nameof(Logs.Log.Message);
 
 
 		// Called when property of find text text box changed.
@@ -230,7 +231,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (e.Property == RegexTextBox.RegexProperty)
 			{
 				this.highlightingDefinition.Filter = this.findTextTextBox.Regex;
-				this.messageTextBox.TextArea.TextView.Redraw();
+				this.propertyValueTextEditor.TextArea.TextView.Redraw();
 			}
 		}
 
@@ -252,8 +253,13 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when opened.
 		protected override void OnOpened(EventArgs e)
 		{
-			this.messageTextBox.Text = this.Log?.Message;
-			this.messageTextBox.HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Hidden; // [Workaround] Use 'Hidden' for text wrapping to prevent unexpected text aligmnent.
+			this.propertyValueTextEditor.Text = this.LogPropertyName.Let(propertyName =>
+			{
+				var value = "";
+				this.Log?.TryGetProperty(this.LogPropertyName, out value);
+				return value;
+			});
+			this.propertyValueTextEditor.HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Hidden; // [Workaround] Use 'Hidden' for text wrapping to prevent unexpected text aligmnent.
 			this.findTextTextBox.Focus();
 			base.OnOpened(e);
 		}
@@ -262,11 +268,11 @@ namespace CarinaStudio.ULogViewer.Controls
 		// set text wrapping.
 		void SetTextWrapping(bool wrap)
 		{
-			if (this.messageTextBox == null)
+			if (this.propertyValueTextEditor == null)
 				return;
 			this.visualLineElementGenerator.WrapText = wrap;
-			this.messageTextBox.HorizontalScrollBarVisibility = wrap ? Avalonia.Controls.Primitives.ScrollBarVisibility.Hidden : Avalonia.Controls.Primitives.ScrollBarVisibility.Auto; // [Workaround] Use 'Hidden' for text wrapping to prevent unexpected text aligmnent.
-			this.messageTextBox.Margin = new Thickness(1); // [Workaround] Force relayout to apply text wrapping.
+			this.propertyValueTextEditor.HorizontalScrollBarVisibility = wrap ? Avalonia.Controls.Primitives.ScrollBarVisibility.Hidden : Avalonia.Controls.Primitives.ScrollBarVisibility.Auto; // [Workaround] Use 'Hidden' for text wrapping to prevent unexpected text aligmnent.
+			this.propertyValueTextEditor.Margin = new Thickness(1); // [Workaround] Force relayout to apply text wrapping.
 		}
 
 

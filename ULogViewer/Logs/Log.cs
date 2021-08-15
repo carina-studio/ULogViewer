@@ -402,6 +402,32 @@ namespace CarinaStudio.ULogViewer.Logs
 		public string? Title { get; }
 
 
+#pragma warning disable CS8600
+#pragma warning disable CS8601
+		/// <summary>
+		/// Get get property of log by name.
+		/// </summary>
+		/// <typeparam name="T">Type of property.</typeparam>
+		/// <param name="propertyName">Name of property.</param>
+		/// <param name="value">Property value.</param>
+		/// <returns>True if value of property get successfully.</returns>
+		public bool TryGetProperty<T>(string propertyName, out T value)
+		{
+			SetupPropertyMap();
+			if (propertyMap.TryGetValue(propertyName, out var propertyInfo) 
+				&& propertyInfo != null 
+				&& propertyInfo.PropertyType == typeof(T))
+			{
+				value = (T)propertyInfo.GetValue(this);
+				return true;
+			}
+			value = default;
+			return false;
+		}
+#pragma warning restore CS8600
+#pragma warning restore CS8601
+
+
 		/// <summary>
 		/// Get ID of user which generates log.
 		/// </summary>

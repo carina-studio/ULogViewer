@@ -59,12 +59,6 @@
 	<!-- LogLevelMapEntryEditor -->
 	<sys:Double x:Key="Double.LogLevelMapEntryEditor.Width">300</sys:Double>
 
-	<!-- LogMessageDialog -->
-	<sys:Double x:Key="Double.LogMessageDialog.Height">500</sys:Double>
-	<sys:Double x:Key="Double.LogMessageDialog.MinHeight">300</sys:Double>
-	<sys:Double x:Key="Double.LogMessageDialog.MinWidth">300</sys:Double>
-	<sys:Double x:Key="Double.LogMessageDialog.Width">600</sys:Double>
-
 	<!-- LogPatternEditorDialog -->
 	<sys:Double x:Key="Double.LogPatternEditorDialog.Width">600</sys:Double>
 	
@@ -88,6 +82,12 @@
 	<Thickness x:Key="Thickness.LogProfileSelectionDialog.LogProfile.Label.Padding">3</Thickness>
 	<Thickness x:Key="Thickness.LogProfileSelectionDialog.LogProfile.Name.Margin">0,0,5,5</Thickness>
 	<Thickness x:Key="Thickness.LogProfileSelectionDialog.LogProfile.Padding">20,10,20,10</Thickness>
+
+	<!-- LogStringPropertyDialog -->
+	<sys:Double x:Key="Double.LogStringPropertyDialog.Height">500</sys:Double>
+	<sys:Double x:Key="Double.LogStringPropertyDialog.MinHeight">300</sys:Double>
+	<sys:Double x:Key="Double.LogStringPropertyDialog.MinWidth">300</sys:Double>
+	<sys:Double x:Key="Double.LogStringPropertyDialog.Width">600</sys:Double>
 
 	<!-- MainWindow -->
 	<sys:Double x:Key="Double.MainWindow.MinHeight">300</sys:Double>

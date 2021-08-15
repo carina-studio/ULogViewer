@@ -10,14 +10,14 @@
 				xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
 				xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="CarinaStudio.ULogViewer.Controls.LogMessageDialog"
+        x:Class="CarinaStudio.ULogViewer.Controls.LogStringPropertyDialog"
 				CanResize="True"
 				Classes="Dialog"
-				Height="{StaticResource Double.LogMessageDialog.Height}"
-				MinHeight="{DynamicResource Double.LogMessageDialog.MinHeight}"
-				MinWidth="{DynamicResource Double.LogMessageDialog.MinWidth}"
-        Title="{DynamicResource String.LogMessageDialog.Title}"
-				Width="{DynamicResource Double.LogMessageDialog.Width}">
+				Height="{StaticResource Double.LogStringPropertyDialog.Height}"
+				MinHeight="{DynamicResource Double.LogStringPropertyDialog.MinHeight}"
+				MinWidth="{DynamicResource Double.LogStringPropertyDialog.MinWidth}"
+        Title="{DynamicResource String.LogStringPropertyDialog.Title}"
+				Width="{DynamicResource Double.LogStringPropertyDialog.Width}">
 
 	<DockPanel>
 
@@ -33,20 +33,20 @@
 
 			<!-- Find text -->
 			<StackPanel Orientation="Vertical">
-				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogMessageDialog.FindText}"/>
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogStringPropertyDialog.FindText}"/>
 				<appControls:RegexTextBox Name="findTextTextBox" PropertyChanged="OnFindTextTextBoxPropertyChanged" Watermark="{DynamicResource String.Common.RegularExpression}"/>
 				<TextBlock Classes="Dialog_Description_Link" PointerReleased="OnLinkDescriptionPointerReleased" Tag="https://docs.microsoft.com/en-us/dotnet/standard/base-types/regular-expression-language-quick-reference" Text="{DynamicResource String.Common.RegularExpression.Reference}"/>
 				<Separator Classes="Dialog_Separator_Horizontal"/>
 			</StackPanel>
 
-			<!-- Message -->
-			<TextBlock Classes="Dialog_Label" Grid.Row="1" Text="{Binding $parent[Window].LogMessageDisplayName}"/>
-			<ae:TextEditor Name="messageTextBox" HorizontalAlignment="Stretch" IsReadOnly="True" HorizontalScrollBarVisibility="Disabled" Grid.Row="2" VerticalAlignment="Stretch"/>
+			<!-- Property value -->
+			<TextBlock Classes="Dialog_Label" Grid.Row="1" Text="{Binding $parent[Window].LogPropertyDisplayName}"/>
+			<ae:TextEditor Name="propertyValueTextEditor" HorizontalAlignment="Stretch" IsReadOnly="True" HorizontalScrollBarVisibility="Disabled" Grid.Row="2" VerticalAlignment="Stretch"/>
 			<Separator Classes="Dialog_Separator_Horizontal" Grid.Row="3"/>
 
 			<!-- Wrap text -->
 			<StackPanel Grid.Row="4" Orientation="Vertical">
-				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogMessageDialog.WrapText}"/>
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogStringPropertyDialog.WrapText}"/>
 				<ToggleSwitch Name="wrapTextSwitch" IsChecked="True">
 					<ia:Interaction.Behaviors>
 						<iaCore:DataTriggerBehavior Binding="{Binding $self.IsChecked}" Value="True">
