@@ -598,53 +598,44 @@ namespace CarinaStudio.ULogViewer.Logs
 						_ => it,
 					};
 				});
-				switch (name)
+				if (Log.HasMultiLineStringProperty(name))
+					logBuilder.AppendToNextLine(name, value);
+				else if (Log.HasStringProperty(name))
 				{
-					case nameof(Log.BeginningTimestamp):
-					case nameof(Log.EndingTimestamp):
-					case nameof(Log.Timestamp):
-						this.timestampFormat.Let(format =>
-						{
-							if (format == null)
-								logBuilder.Set(name, value);
-							else if (DateTime.TryParseExact(value, format, this.timestampCultureInfo, DateTimeStyles.None, out var timestamp))
-								logBuilder.Set(name, timestamp.ToBinary().ToString());
-						});
-						break;
-					case nameof(Log.Level):
-						if (this.logLevelMap.TryGetValue(value, out var level))
-							logBuilder.Set(name, level.ToString());
-						break;
-					case nameof(Log.Extra1):
-					case nameof(Log.Extra10):
-					case nameof(Log.Extra2):
-					case nameof(Log.Extra3):
-					case nameof(Log.Extra4):
-					case nameof(Log.Extra5):
-					case nameof(Log.Extra6):
-					case nameof(Log.Extra7):
-					case nameof(Log.Extra8):
-					case nameof(Log.Extra9):
-					case nameof(Log.Message):
-					case nameof(Log.Summary):
-						logBuilder.AppendToNextLine(name, value);
-						break;
-					case nameof(Log.Category):
-					case nameof(Log.DeviceId):
-					case nameof(Log.DeviceName):
-					case nameof(Log.Event):
-					case nameof(Log.ProcessId):
-					case nameof(Log.ProcessName):
-					case nameof(Log.SourceName):
-					case nameof(Log.ThreadId):
-					case nameof(Log.ThreadName):
-					case nameof(Log.UserId):
-					case nameof(Log.UserName):
-						logBuilder.Set(name, stringPool[value]);
-						break;
-					default:
-						logBuilder.Set(name, value);
-						break;
+					switch (name)
+					{
+						case nameof(Log.Category):
+						case nameof(Log.DeviceId):
+						case nameof(Log.DeviceName):
+						case nameof(Log.Event):
+						case nameof(Log.ProcessId):
+						case nameof(Log.ProcessName):
+						case nameof(Log.SourceName):
+						case nameof(Log.ThreadId):
+						case nameof(Log.ThreadName):
+						case nameof(Log.UserId):
+						case nameof(Log.UserName):
+							logBuilder.Set(name, stringPool[value]);
+							break;
+						default:
+							logBuilder.Set(name, value);
+							break;
+					}
+				}
+				else if (Log.HasDateTimeProperty(name))
+				{
+					this.timestampFormat.Let(format =>
+					{
+						if (format == null)
+							logBuilder.Set(name, value);
+						else if (DateTime.TryParseExact(value, format, this.timestampCultureInfo, DateTimeStyles.None, out var timestamp))
+							logBuilder.Set(name, timestamp.ToBinary().ToString());
+					});
+				}
+				else if (name == nameof(Log.Level))
+				{
+					if (this.logLevelMap.TryGetValue(value, out var level))
+						logBuilder.Set(name, level.ToString());
 				}
 			}
 		}

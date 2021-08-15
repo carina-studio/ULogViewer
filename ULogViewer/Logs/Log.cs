@@ -13,6 +13,7 @@ namespace CarinaStudio.ULogViewer.Logs
 	class Log
 	{
 		// Static fields.
+		static Dictionary<string, PropertyInfo> dateTimePropertyMap = new Dictionary<string, PropertyInfo>();
 		static volatile bool isPropertyMapReady;
 		static long nextId = 0;
 		static Dictionary<string, PropertyInfo> propertyMap = new Dictionary<string, PropertyInfo>();
@@ -184,6 +185,41 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		/// <summary>
+		/// Check whether given log property is exported by <see cref="Log"/> with <see cref="DateTime"/> value or not.
+		/// </summary>
+		/// <param name="propertyName">Name of property.</param>
+		/// <returns>True if given log property is exported.</returns>
+		public static bool HasDateTimeProperty(string propertyName)
+		{
+			SetupPropertyMap();
+			return dateTimePropertyMap.ContainsKey(propertyName);
+		}
+
+
+		/// <summary>
+		/// Check whether given log property is exported by <see cref="Log"/> with multi-line <see cref="string"/> value or not.
+		/// </summary>
+		/// <param name="propertyName">Name of property.</param>
+		/// <returns>True if given log property is exported.</returns>
+		public static bool HasMultiLineStringProperty(string propertyName) => propertyName switch
+		{
+			nameof(Message)
+			or nameof(Summary)
+			or nameof(Extra1)
+			or nameof(Extra2)
+			or nameof(Extra3)
+			or nameof(Extra4)
+			or nameof(Extra5)
+			or nameof(Extra6)
+			or nameof(Extra7)
+			or nameof(Extra8)
+			or nameof(Extra9)
+			or nameof(Extra10) => true,
+			_ => false,
+		};
+
+
+		/// <summary>
 		/// Check whether given log property is exported by <see cref="Log"/> or not.
 		/// </summary>
 		/// <param name="propertyName">Name of property.</param>
@@ -285,6 +321,8 @@ namespace CarinaStudio.ULogViewer.Logs
 									propertyMap[propertyInfo.Name] = propertyInfo;
 									if (propertyInfo.PropertyType == typeof(string))
 										stringPropertyMap[propertyInfo.Name] = propertyInfo;
+									else if (propertyInfo.PropertyType == typeof(DateTime?) || propertyInfo.PropertyType == typeof(DateTime))
+										dateTimePropertyMap[propertyInfo.Name] = propertyInfo;
 									break;
 							}
 						}
