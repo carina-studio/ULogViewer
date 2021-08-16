@@ -68,7 +68,7 @@ namespace CarinaStudio.ULogViewer.Logs
 					// prepare source
 					var logCount = 256;
 					var filePath = this.GenerateLogFile(logCount);
-					var options = LogDataSourceOptions.CreateForFile(filePath);
+					var options = new LogDataSourceOptions() { FileName = filePath };
 
 					// create source
 					using var source = provider.CreateSource(options);
@@ -191,7 +191,7 @@ namespace CarinaStudio.ULogViewer.Logs
 				// prepare source
 				var logCount = 256;
 				var filePath = this.GenerateLogFile(logCount);
-				var options = LogDataSourceOptions.CreateForFile(filePath);
+				var options = new LogDataSourceOptions() { FileName = filePath };
 
 				// create source
 				if (!LogDataSourceProviders.TryFindProviderByName("File", out var provider) || provider == null)
@@ -271,7 +271,7 @@ namespace CarinaStudio.ULogViewer.Logs
 				// prepare source
 				var logCount = 256;
 				var filePath = this.GenerateLogFile(logCount);
-				var options = LogDataSourceOptions.CreateForFile(filePath);
+				var options = new LogDataSourceOptions() { FileName = filePath };
 
 				// create source
 				if (!LogDataSourceProviders.TryFindProviderByName("File", out var provider) || provider == null)
@@ -330,7 +330,7 @@ namespace CarinaStudio.ULogViewer.Logs
 					// prepare source
 					var logCount = 256;
 					var filePath = this.GenerateLogFile(logCount);
-					var options = LogDataSourceOptions.CreateForFile(filePath);
+					var options = new LogDataSourceOptions() { FileName = filePath };
 
 					// create source
 					using var source = provider.CreateSource(options);
@@ -396,7 +396,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			this.AsyncTestOnApplicationThread(async () =>
 			{
 				// prepare source
-				var options = LogDataSourceOptions.CreateForFile("Invalid");
+				var options = new LogDataSourceOptions() { FileName = "Invalid" };
 
 				// create source
 				if (!LogDataSourceProviders.TryFindProviderByName("File", out var provider) || provider == null)
