@@ -88,6 +88,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ScheduledAction autoAddLogFilesAction;
 		readonly ScheduledAction autoSetWorkingDirectoryAction;
 		readonly MutableObservableBoolean canAddLogFiles = new MutableObservableBoolean();
+		readonly MutableObservableBoolean canCopyLogProperty = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canCopySelectedLogs = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canCopySelectedLogsWithFileNames = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canFilterLogsByPid = new MutableObservableBoolean();
@@ -101,6 +102,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly MutableObservableBoolean canShowFileInExplorer = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canShowLogProperty = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canShowWorkingDirectoryInExplorer = new MutableObservableBoolean();
+		readonly MenuItem copyLogPropertyMenuItem;
 		bool isAttachedToLogicalTree;
 		bool isLogFileNeededAfterLogProfileSet;
 		bool isPidLogPropertyVisible;
@@ -142,6 +144,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			// create commands
 			this.AddLogFilesCommand = ReactiveCommand.Create(this.AddLogFiles, this.canAddLogFiles);
+			this.CopyLogPropertyCommand = ReactiveCommand.Create(this.CopyLogProperty, this.canCopyLogProperty);
 			this.CopySelectedLogsCommand = ReactiveCommand.Create(this.CopySelectedLogs, this.canCopySelectedLogs);
 			this.CopySelectedLogsWithFileNamesCommand = ReactiveCommand.Create(this.CopySelectedLogsWithFileNames, this.canCopySelectedLogsWithFileNames);
 			this.FilterLogsByProcessIdCommand = ReactiveCommand.Create<bool>(this.FilterLogsByProcessId, this.canFilterLogsByPid);
@@ -173,6 +176,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.InitializeComponent();
 
 			// setup controls
+			this.copyLogPropertyMenuItem = this.FindControl<MenuItem>(nameof(copyLogPropertyMenuItem)).AsNonNull();
 			this.logActionMenu = ((ContextMenu)this.Resources["logActionMenu"].AsNonNull()).Also(it =>
 			{
 				it.MenuOpened += (_, e) =>
@@ -180,9 +184,15 @@ namespace CarinaStudio.ULogViewer.Controls
 					if (this.showLogPropertyMenuItem == null)
 						return;
 					if (this.lastClickedLogPropertyView?.Tag is DisplayableLogProperty property)
+					{
+						this.copyLogPropertyMenuItem.Header = this.Application.GetFormattedString("SessionView.CopyLogProperty", property.DisplayName);
 						this.showLogPropertyMenuItem.Header = this.Application.GetFormattedString("SessionView.ShowLogProperty", property.DisplayName);
+					}
 					else
+					{
+						this.copyLogPropertyMenuItem.Header = this.Application.GetString("SessionView.CopyLogProperty.Disabled");
 						this.showLogPropertyMenuItem.Header = this.Application.GetString("SessionView.ShowLogProperty.Disabled");
+					}
 				};
 			});
 			this.logHeaderContainer = this.FindControl<Control>("logHeaderContainer").AsNonNull();
@@ -539,6 +549,59 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Copy property of log.
+		void CopyLogProperty()
+		{
+			// check state
+			if (!this.canCopyLogProperty.Value)
+				return;
+			if (this.logListBox.SelectedItems.Count != 1)
+				return;
+
+			// find property and log
+			var clickedPropertyView = this.lastClickedLogPropertyView;
+			if (clickedPropertyView == null || clickedPropertyView.Tag is not DisplayableLogProperty property)
+				return;
+			var listBoxItem = clickedPropertyView.FindLogicalAncestorOfType<ListBoxItem>();
+			if (listBoxItem == null)
+				return;
+			var log = (listBoxItem.DataContext as DisplayableLog);
+			if (log == null || this.logListBox.SelectedItems[0] != log)
+				return;
+
+			// copy
+			this.CopyLogProperty(log, property);
+		}
+		void CopyLogProperty(DisplayableLog log, DisplayableLogProperty property)
+		{
+			// check state
+			if (this.Application is not App app)
+				return;
+
+			// get property value
+			var value = Global.Run(() =>
+			{
+				try
+				{
+					return log.GetType().GetProperty(property.Name)?.GetValue(log);
+				}
+				catch
+				{
+					return null;
+				}
+			});
+			if (value == null)
+				return;
+
+			// copy value
+			app.Clipboard.SetTextAsync(value.ToString() ?? "");
+		}
+
+
+		// Command to copy property of log.
+		ICommand CopyLogPropertyCommand { get; }
+
+
 		// Copy selected logs.
 		void CopySelectedLogs()
 		{
@@ -649,23 +712,24 @@ namespace CarinaStudio.ULogViewer.Controls
 							it.PointerPressed += (_, e) =>
 							{
 								this.lastClickedLogPropertyView = it;
-								if (isStringProperty && this.logListBox.SelectedItems.Count == 1)
-									this.canShowLogProperty.Update(true);
+								if (this.logListBox.SelectedItems.Count == 1)
+								{
+									this.canCopyLogProperty.Update(true);
+									if (isStringProperty)
+										this.canShowLogProperty.Update(true);
+								}
 							};
 						}),
 					};
 					propertyView = new Border().Also(it =>
 					{
-						if (isStringProperty)
+						propertyView.GetObservable(Control.IsPointerOverProperty).Subscribe(new Observer<bool>(isPointerOver =>
 						{
-							propertyView.GetObservable(Control.IsPointerOverProperty).Subscribe(new Observer<bool>(isPointerOver =>
-							{
-								if (isPointerOver)
-									it.BorderBrush = this.TryFindResource("Brush.SessionView.LogListBox.Item.Column.Border.PointerOver", out var res).Let(_ => res as IBrush);
-								else
-									it.BorderBrush = null;
-							}));
-						}
+							if (isPointerOver)
+								it.BorderBrush = this.TryFindResource("Brush.SessionView.LogListBox.Item.Column.Border.PointerOver", out var res).Let(_ => res as IBrush);
+							else
+								it.BorderBrush = null;
+						}));
 						it.BorderThickness = new Thickness(1);
 						it.Child = propertyView;
 						it.VerticalAlignment = VerticalAlignment.Top;
@@ -1446,6 +1510,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// reset clicked log property
 			this.lastClickedLogPropertyView = null;
+			this.canCopyLogProperty.Update(false);
 			this.canShowLogProperty.Update(false);
 		}
 
@@ -1493,20 +1558,19 @@ namespace CarinaStudio.ULogViewer.Controls
 				var selectionCount = this.logListBox.SelectedItems.Count;
 				var hasSelectedItems = (selectionCount > 0);
 				var hasSingleSelectedItem = (selectionCount == 1);
+				var logProperty = hasSingleSelectedItem
+					? this.lastClickedLogPropertyView?.Tag as DisplayableLogProperty
+					: null;
 
 				// update command states
+				this.canCopyLogProperty.Update(hasSingleSelectedItem && logProperty != null);
 				this.canCopySelectedLogs.Update(hasSelectedItems && session.CopyLogsCommand.CanExecute(null) && selectionCount <= MaxLogCountForCopying);
 				this.canCopySelectedLogsWithFileNames.Update(hasSelectedItems && session.CopyLogsWithFileNamesCommand.CanExecute(null) && selectionCount <= MaxLogCountForCopying);
 				this.canFilterLogsByPid.Update(hasSingleSelectedItem && this.isPidLogPropertyVisible);
 				this.canFilterLogsByTid.Update(hasSingleSelectedItem && this.isTidLogPropertyVisible);
 				this.canMarkUnmarkSelectedLogs.Update(hasSelectedItems && session.MarkUnmarkLogsCommand.CanExecute(null));
 				this.canShowFileInExplorer.Update(hasSelectedItems && session.IsLogFileNeeded);
-				this.canShowLogProperty.Update(hasSingleSelectedItem && this.lastClickedLogPropertyView.Let(it =>
-				{
-					if (it?.Tag is DisplayableLogProperty property)
-						return Logs.Log.HasStringProperty(property.Name);
-					return false;
-				}));
+				this.canShowLogProperty.Update(hasSingleSelectedItem && logProperty != null && Logs.Log.HasStringProperty(logProperty.Name));
 			});
 		}
 

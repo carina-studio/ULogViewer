@@ -288,6 +288,8 @@
 	<sys:String x:Key="String.SessionView.AppOptions">應用程式選項…</sys:String>
 	<sys:String x:Key="String.SessionView.ClearLogFiles">清除所有已加入的日誌檔案</sys:String>
 	<sys:String x:Key="String.SessionView.ClearPredefinedLogTextFiltersSelection">清除選取</sys:String>
+	<sys:String x:Key="String.SessionView.CopyLogProperty">複製日誌屬性 '{0}'</sys:String>
+	<sys:String x:Key="String.SessionView.CopyLogProperty.Disabled">複製日誌屬性</sys:String>
 	<sys:String x:Key="String.SessionView.CopyLogs">複製日誌</sys:String>
 	<sys:String x:Key="String.SessionView.CopyLogsWithFileNames">複製日誌 (包含檔案名稱)</sys:String>
 	<sys:String x:Key="String.SessionView.CreatePredefinedLogTextFilter">建立…</sys:String>
