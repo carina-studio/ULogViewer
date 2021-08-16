@@ -1349,6 +1349,13 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when drag over.
 		void OnDragOver(object? sender, DragEventArgs e)
 		{
+			// check state
+			if ((this.FindLogicalAncestorOfType<Window>() as BaseWindow)?.HasDialogs == true)
+			{
+				e.DragEffects = DragDropEffects.None;
+				return;
+			}
+
 			// mark as handled
 			e.Handled = true;
 
@@ -1369,6 +1376,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when drop data on view.
 		async void OnDrop(object? sender, DragEventArgs e)
 		{
+			if ((this.FindLogicalAncestorOfType<Window>() as BaseWindow)?.HasDialogs == true)
+				return;
 			e.Handled = true;
 			await this.DropAsync(e);
 		}

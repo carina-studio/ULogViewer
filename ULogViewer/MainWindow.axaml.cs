@@ -288,7 +288,7 @@ namespace CarinaStudio.ULogViewer
 		// Called when drag enter.
 		void OnDragEnter(object? sender, DragEventArgs e)
 		{
-			if (e.Handled)
+			if (!e.Handled)
 			{
 				e.Handled = true;
 				this.ActivateAndBringToFront();
@@ -302,6 +302,11 @@ namespace CarinaStudio.ULogViewer
 			// check state
 			if (e.Handled)
 				return;
+			if (this.HasDialogs)
+			{
+				e.DragEffects = DragDropEffects.None;
+				return;
+			}
 
 			// check workspace
 			e.Handled = true;
@@ -339,7 +344,7 @@ namespace CarinaStudio.ULogViewer
 		async void OnDrop(object? sender, DragEventArgs e)
 		{
 			// check state
-			if (e.Handled)
+			if (this.HasDialogs || e.Handled)
 				return;
 
 			// check workspace
