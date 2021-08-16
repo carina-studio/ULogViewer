@@ -637,6 +637,8 @@ namespace CarinaStudio.ULogViewer.Logs
 					if (this.logLevelMap.TryGetValue(value, out var level))
 						logBuilder.Set(name, level.ToString());
 				}
+				else
+					logBuilder.Set(name, value);
 			}
 		}
 
