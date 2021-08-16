@@ -216,9 +216,12 @@
 	<sys:String x:Key="String.LogProperty.Author">Author</sys:String>
 	<sys:String x:Key="String.LogProperty.BeginningTimestamp">Beginning Timestamp</sys:String>
 	<sys:String x:Key="String.LogProperty.Category">Category</sys:String>
+	<sys:String x:Key="String.LogProperty.Child">Child</sys:String>
+	<sys:String x:Key="String.LogProperty.Children">Children</sys:String>
 	<sys:String x:Key="String.LogProperty.Code">Code</sys:String>
 	<sys:String x:Key="String.LogProperty.Commit">Commit</sys:String>
 	<sys:String x:Key="String.LogProperty.Content">Content</sys:String>
+	<sys:String x:Key="String.LogProperty.Count">Count</sys:String>
 	<sys:String x:Key="String.LogProperty.DeviceId">Device ID</sys:String>
 	<sys:String x:Key="String.LogProperty.DeviceName">Device Name</sys:String>
 	<sys:String x:Key="String.LogProperty.Duration">Duration</sys:String>
@@ -241,6 +244,7 @@
 	<sys:String x:Key="String.LogProperty.Message">Message</sys:String>
 	<sys:String x:Key="String.LogProperty.Name">Name</sys:String>
 	<sys:String x:Key="String.LogProperty.Number">Number</sys:String>
+	<sys:String x:Key="String.LogProperty.Parent">Parent</sys:String>
 	<sys:String x:Key="String.LogProperty.Path">Path</sys:String>
 	<sys:String x:Key="String.LogProperty.ProcessId">PID</sys:String>
 	<sys:String x:Key="String.LogProperty.ProcessName">Process</sys:String>

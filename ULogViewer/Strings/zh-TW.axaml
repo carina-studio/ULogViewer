@@ -209,9 +209,12 @@
 	<sys:String x:Key="String.LogProperty.Author">作者</sys:String>
 	<sys:String x:Key="String.LogProperty.BeginningTimestamp">起始時間</sys:String>
 	<sys:String x:Key="String.LogProperty.Category">分類</sys:String>
+	<sys:String x:Key="String.LogProperty.Child">子代</sys:String>
+	<sys:String x:Key="String.LogProperty.Children">子代</sys:String>
 	<sys:String x:Key="String.LogProperty.Code">編碼</sys:String>
 	<sys:String x:Key="String.LogProperty.Commit">提交</sys:String>
 	<sys:String x:Key="String.LogProperty.Content">內容</sys:String>
+	<sys:String x:Key="String.LogProperty.Count">個數</sys:String>
 	<sys:String x:Key="String.LogProperty.DeviceId">裝置 ID</sys:String>
 	<sys:String x:Key="String.LogProperty.DeviceName">裝置名稱</sys:String>
 	<sys:String x:Key="String.LogProperty.Duration">時距</sys:String>
@@ -233,6 +236,7 @@
 	<sys:String x:Key="String.LogProperty.Message">訊息</sys:String>
 	<sys:String x:Key="String.LogProperty.Name">名稱</sys:String>
 	<sys:String x:Key="String.LogProperty.Number">編號</sys:String>
+	<sys:String x:Key="String.LogProperty.Parent">父代</sys:String>
 	<sys:String x:Key="String.LogProperty.Path">路徑</sys:String>
 	<sys:String x:Key="String.LogProperty.ProcessName">處理程序</sys:String>
 	<sys:String x:Key="String.LogProperty.RawData">原始資料</sys:String>
