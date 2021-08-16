@@ -337,7 +337,8 @@
 	<sys:String x:Key="String.SessionView.SetLogProfile">Select/Change log profile</sys:String>
 	<sys:String x:Key="String.SessionView.SetWorkingDirectory">Select/Change working directory</sys:String>
 	<sys:String x:Key="String.SessionView.ShowFileInExplorer">Show file in Windows File Explorer</sys:String>
-	<sys:String x:Key="String.SessionView.ShowLogMessage">View full {0}…</sys:String>
+	<sys:String x:Key="String.SessionView.ShowLogProperty">View log property '{0}'…</sys:String>
+	<sys:String x:Key="String.SessionView.ShowLogProperty.Disabled">View log property…</sys:String>
 	<sys:String x:Key="String.SessionView.ShowWorkingDirectoryInExplorer">Show working directory in Windows File Explorer</sys:String>
 	<sys:String x:Key="String.SessionView.TooManyDirectoryPathsDropped">Please drag and drop single directory.</sys:String>
 	<sys:String x:Key="String.SessionView.ViewFullLogMessage">View more…</sys:String>

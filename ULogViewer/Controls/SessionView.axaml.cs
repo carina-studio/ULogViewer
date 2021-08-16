@@ -99,6 +99,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly MutableObservableBoolean canSetLogProfile = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSetWorkingDirectory = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canShowFileInExplorer = new MutableObservableBoolean();
+		readonly MutableObservableBoolean canShowLogProperty = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canShowWorkingDirectoryInExplorer = new MutableObservableBoolean();
 		bool isAttachedToLogicalTree;
 		bool isLogFileNeededAfterLogProfileSet;
@@ -128,6 +129,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly Popup predefinedLogTextFiltersPopup;
 		readonly ScheduledAction scrollToLatestLogAction;
 		readonly HashSet<PredefinedLogTextFilter> selectedPredefinedLogTextFilters = new HashSet<PredefinedLogTextFilter>();
+		readonly MenuItem showLogPropertyMenuItem;
 		readonly ScheduledAction updateLogFiltersAction;
 		readonly ScheduledAction updateStatusBarStateAction;
 		readonly SortedObservableList<Logs.LogLevel> validLogLevels = new SortedObservableList<Logs.LogLevel>((x, y) => (int)x - (int)y);
@@ -152,6 +154,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.SelectAndSetWorkingDirectoryCommand = ReactiveCommand.Create(this.SelectAndSetWorkingDirectory, this.canSetWorkingDirectory);
 			this.SelectMarkedLogsCommand = ReactiveCommand.Create(this.SelectMarkedLogs, this.canSelectMarkedLogs);
 			this.ShowFileInExplorerCommand = ReactiveCommand.Create(this.ShowFileInExplorer, this.canShowFileInExplorer);
+			this.ShowLogStringPropertyCommand = ReactiveCommand.Create(this.ShowLogStringProperty, this.canShowLogProperty);
 			this.ShowWorkingDirectoryInExplorerCommand = ReactiveCommand.Create(this.ShowWorkingDirectoryInExplorer, this.canShowWorkingDirectoryInExplorer);
 			this.SwitchLogFiltersCombinationModeCommand = ReactiveCommand.Create(this.SwitchLogFiltersCombinationMode, this.GetObservable<bool>(HasLogProfileProperty));
 
@@ -170,7 +173,18 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.InitializeComponent();
 
 			// setup controls
-			this.logActionMenu = (ContextMenu)this.Resources["logActionMenu"].AsNonNull();
+			this.logActionMenu = ((ContextMenu)this.Resources["logActionMenu"].AsNonNull()).Also(it =>
+			{
+				it.MenuOpened += (_, e) =>
+				{
+					if (this.showLogPropertyMenuItem == null)
+						return;
+					if (this.lastClickedLogPropertyView?.Tag is DisplayableLogProperty property)
+						this.showLogPropertyMenuItem.Header = this.Application.GetFormattedString("SessionView.ShowLogProperty", property.DisplayName);
+					else
+						this.showLogPropertyMenuItem.Header = this.Application.GetString("SessionView.ShowLogProperty.Disabled");
+				};
+			});
 			this.logHeaderContainer = this.FindControl<Control>("logHeaderContainer").AsNonNull();
 			this.logHeaderGrid = this.FindControl<Grid>("logHeaderGrid").AsNonNull().Also(it =>
 			{
@@ -224,6 +238,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				it.Closed += (_, sender) => this.logListBox.Focus();
 				it.Opened += (_, sender) => this.predefinedLogTextFilterListBox.Focus();
 			});
+			this.showLogPropertyMenuItem = this.FindControl<MenuItem>("showLogPropertyMenuItem").AsNonNull();
 #if !DEBUG
 			this.FindControl<Button>("testButton").AsNonNull().IsVisible = false;
 #endif
@@ -606,6 +621,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					itemGrid.ColumnDefinitions.Add(propertyColumn);
 
 					// create property view
+					var isStringProperty = Logs.Log.HasStringProperty(logProperty.Name);
 					var isMultiLineProperty = Logs.Log.HasMultiLineStringProperty(logProperty.Name);
 					var propertyView = logProperty.Name switch
 					{
@@ -632,15 +648,15 @@ namespace CarinaStudio.ULogViewer.Controls
 							it.VerticalAlignment = VerticalAlignment.Top;
 							it.PointerPressed += (_, e) =>
 							{
-								if (e.GetCurrentPoint(it).Properties.IsLeftButtonPressed)
-									this.lastClickedLogPropertyView = it;
+								this.lastClickedLogPropertyView = it;
+								if (isStringProperty && this.logListBox.SelectedItems.Count == 1)
+									this.canShowLogProperty.Update(true);
 							};
 						}),
 					};
 					propertyView = new Border().Also(it =>
 					{
-						//it.Bind(Border.BorderBrushProperty, new Binding { Source = propertyView, Path = nameof(Control.IsPointerOver) });
-						if (Logs.Log.HasStringProperty(logProperty.Name))
+						if (isStringProperty)
 						{
 							propertyView.GetObservable(Control.IsPointerOverProperty).Subscribe(new Observer<bool>(isPointerOver =>
 							{
@@ -1401,9 +1417,12 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when pointer pressed on log list box.
 		void OnLogListBoxPointerPressed(object? sender, PointerPressedEventArgs e)
 		{
+			// check pointer state
 			var point = e.GetCurrentPoint(this.logListBox);
 			if (point.Properties.IsLeftButtonPressed)
 				this.isPointerPressedOnLogListBox = true;
+
+			// clear selection
 			var hitControl = this.logListBox.InputHitTest(point.Position).Let(it =>
 			{
 				if (it == null)
@@ -1415,7 +1434,10 @@ namespace CarinaStudio.ULogViewer.Controls
 			});
 			if (hitControl == null)
 				this.SynchronizationContext.Post(() => this.logListBox.SelectedItems.Clear());
+
+			// reset clicked log property
 			this.lastClickedLogPropertyView = null;
+			this.canShowLogProperty.Update(false);
 		}
 
 
@@ -1470,6 +1492,12 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.canFilterLogsByTid.Update(hasSingleSelectedItem && this.isTidLogPropertyVisible);
 				this.canMarkUnmarkSelectedLogs.Update(hasSelectedItems && session.MarkUnmarkLogsCommand.CanExecute(null));
 				this.canShowFileInExplorer.Update(hasSelectedItems && session.IsLogFileNeeded);
+				this.canShowLogProperty.Update(hasSingleSelectedItem && this.lastClickedLogPropertyView.Let(it =>
+				{
+					if (it?.Tag is DisplayableLogProperty property)
+						return Logs.Log.HasStringProperty(property.Name);
+					return false;
+				}));
 			});
 		}
 
@@ -2302,6 +2330,10 @@ namespace CarinaStudio.ULogViewer.Controls
 			});
 			return true;
 		}
+
+
+		// Command to show string log property.
+		ICommand ShowLogStringPropertyCommand { get; }
 
 
 		// Show UI of other actions.
