@@ -615,18 +615,18 @@ namespace CarinaStudio.ULogViewer.Controls
 							it.Bind(TextBlock.FontFamilyProperty, new Binding() { Path = nameof(LogFontFamily), Source = this });
 							it.Bind(TextBlock.FontSizeProperty, new Binding() { Path = nameof(LogFontSize), Source = this });
 							it.Bind(TextBlock.ForegroundProperty, new Binding() { Path = nameof(DisplayableLog.LevelBrush) });
-							it.Bind(TextBlock.TextProperty, new Binding().Also(binding =>
-							{
-								if (logProperty.Name == nameof(DisplayableLog.Level))
-									binding.Converter = Converters.EnumConverter.LogLevel;
-								binding.Path = logProperty.Name;
-							}));
 							if (isMultiLineProperty)
 								it.Bind(TextBlock.MaxLinesProperty, new Binding() { Path = nameof(MaxDisplayLineCountForEachLog), Source = this });
 							else
 								it.MaxLines = 1;
 							it.Padding = propertyPadding;
 							it.Tag = logProperty;
+							it.Bind(TextBlock.TextProperty, new Binding().Also(binding =>
+							{
+								if (logProperty.Name == nameof(DisplayableLog.Level))
+									binding.Converter = Converters.EnumConverter.LogLevel;
+								binding.Path = logProperty.Name;
+							}));
 							it.TextTrimming = TextTrimming.CharacterEllipsis;
 							it.TextWrapping = TextWrapping.NoWrap;
 							it.VerticalAlignment = VerticalAlignment.Top;
@@ -637,6 +637,23 @@ namespace CarinaStudio.ULogViewer.Controls
 							};
 						}),
 					};
+					propertyView = new Border().Also(it =>
+					{
+						//it.Bind(Border.BorderBrushProperty, new Binding { Source = propertyView, Path = nameof(Control.IsPointerOver) });
+						if (Logs.Log.HasStringProperty(logProperty.Name))
+						{
+							propertyView.GetObservable(Control.IsPointerOverProperty).Subscribe(new Observer<bool>(isPointerOver =>
+							{
+								if (isPointerOver)
+									it.BorderBrush = this.TryFindResource("Brush.SessionView.LogListBox.Item.Column.Border.PointerOver", out var res).Let(_ => res as IBrush);
+								else
+									it.BorderBrush = null;
+							}));
+						}
+						it.BorderThickness = new Thickness(1);
+						it.Child = propertyView;
+						it.VerticalAlignment = VerticalAlignment.Top;
+					});
 					if (isMultiLineProperty)
 					{
 						propertyView = new StackPanel().Also(it =>
