@@ -456,7 +456,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 				// update log updating interval
 				if (this.LogProfile?.IsContinuousReading == true && this.logReaders.IsNotEmpty())
-					this.logReaders.First().ContinuousReadingUpdateInterval = this.ContinuousLogReadingUpdateInterval;
+					this.logReaders.First().UpdateInterval = this.ContinuousLogReadingUpdateInterval;
 			});
 		}
 
@@ -769,7 +769,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			var logReader = new LogReader(dataSource).Also(it =>
 			{
 				if (profile.IsContinuousReading)
-					it.ContinuousReadingUpdateInterval = this.ContinuousLogReadingUpdateInterval;
+					it.UpdateInterval = this.ContinuousLogReadingUpdateInterval;
 				it.IsContinuousReading = profile.IsContinuousReading;
 				it.LogLevelMap = profile.LogLevelMapForReading;
 				if (profile.LogPatterns.IsNotEmpty())
@@ -887,7 +887,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 				// update log updating interval
 				if (this.LogProfile?.IsContinuousReading == true && this.logReaders.IsNotEmpty())
-					this.logReaders.First().ContinuousReadingUpdateInterval = this.ContinuousLogReadingUpdateInterval;
+					this.logReaders.First().UpdateInterval = this.ContinuousLogReadingUpdateInterval;
 			}
 		}
 
@@ -1554,7 +1554,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			if (e.Key == ULogViewer.Settings.ContinuousLogReadingUpdateInterval)
 			{
 				if (this.LogProfile?.IsContinuousReading == true && this.logReaders.IsNotEmpty())
-					this.logReaders.First().ContinuousReadingUpdateInterval = this.ContinuousLogReadingUpdateInterval;
+					this.logReaders.First().UpdateInterval = this.ContinuousLogReadingUpdateInterval;
 			}
 			else if (e.Key == ULogViewer.Settings.MaxContinuousLogCount)
 			{
