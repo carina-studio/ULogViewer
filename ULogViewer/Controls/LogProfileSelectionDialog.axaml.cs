@@ -87,13 +87,23 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Copy log profile.
-		void CopyLogProfile(LogProfile? logProfile)
+		async void CopyLogProfile(LogProfile? logProfile)
 		{
+			// check state
 			if (logProfile == null)
 				return;
-			var newProfile = new LogProfile(logProfile);
-			newProfile.Name = $"{logProfile.Name} (2)";
+
+			// copy and edit log profile
+			var newProfile = await new LogProfileEditorDialog()
+			{
+				LogProfile = new LogProfile(logProfile).Also(it => it.Name = $"{logProfile.Name} (2)"),
+			}.ShowDialog<LogProfile>(this);
+			if (newProfile == null)
+				return;
+
+			// add log profile
 			LogProfiles.Add(newProfile);
+			this.SelectLogProfile(newProfile);
 		}
 
 
@@ -102,10 +112,13 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (logProfile == null)
 				return;
-			await new LogProfileEditorDialog()
+			logProfile = await new LogProfileEditorDialog()
 			{
 				LogProfile = logProfile
-			}.ShowDialog(this);
+			}.ShowDialog<LogProfile>(this);
+			if (logProfile == null)
+				return;
+			this.SelectLogProfile(logProfile);
 		}
 
 
@@ -384,6 +397,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (logProfile == null)
 				return;
 			logProfile.IsPinned = !logProfile.IsPinned;
+			this.SelectLogProfile(logProfile);
 		}
 
 
@@ -463,6 +477,17 @@ namespace CarinaStudio.ULogViewer.Controls
 				// scroll to list box item
 				this.scrollViewer.ScrollIntoView(listBoxItem);
 			}, 100);
+		}
+
+
+		// Select given log profile.
+		void SelectLogProfile(LogProfile profile)
+		{
+			if (profile.IsPinned)
+				this.pinnedLogProfileListBox.SelectedItem = profile;
+			else
+				this.otherLogProfileListBox.SelectedItem = profile;
+			this.ScrollToSelectedLogProfile();
 		}
 	}
 }
