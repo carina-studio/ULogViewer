@@ -4,6 +4,7 @@ using CarinaStudio.ULogViewer.Logs;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Reflection;
 using System.Threading;
 
 namespace CarinaStudio.ULogViewer.ViewModels
@@ -19,6 +20,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			for (var i = it.Length - 1; i >= 0; --i)
 				it[i] = Log.CreatePropertyGetter<string?>($"Extra{i + 1}");
 		});
+		static volatile bool isPropertyMapReady;
+		static Dictionary<string, PropertyInfo> propertyMap = new Dictionary<string, PropertyInfo>();
 
 
 		// Fields.
@@ -467,15 +470,22 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Check whether given log property is exported by <see cref="DisplayableLog"/> with multi-line <see cref="string"/> value or not.
+		/// </summary>
+		/// <param name="propertyName">Name of property.</param>
+		/// <returns>True if given log property is exported.</returns>
+		public static bool HasMultiLineStringProperty(string propertyName) => Log.HasMultiLineStringProperty(propertyName);
+
+
+		/// <summary>
 		/// Check whether given property of log is existing or not.
 		/// </summary>
 		/// <param name="propertyName">Name of property.</param>
 		/// <returns>True if property of log is existing.</returns>
-		public static bool HasLogProperty(string propertyName)
+		public static bool HasProperty(string propertyName)
 		{
-			if (propertyName != nameof(LogId))
-				return Log.HasProperty(propertyName);
-			return true;
+			SetupPropertyMap();
+			return propertyMap.ContainsKey(propertyName);
 		}
 
 
@@ -484,7 +494,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		/// <param name="propertyName">Name of property.</param>
 		/// <returns>True if property of log is existing.</returns>
-		public static bool HasStringLogProperty(string propertyName) => Log.HasStringProperty(propertyName);
+		public static bool HasStringProperty(string propertyName) => propertyName switch
+		{
+			nameof(BeginningTimestampString)
+			or nameof(EndingTimestampString)
+			or nameof(TimestampString) => true,
+			_ => Log.HasStringProperty(propertyName),
+		};
 
 
 		/// <summary>
@@ -675,6 +691,42 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public string? ProcessName { get => this.Log.ProcessName; }
 
 
+		// Setup property map.
+		static void SetupPropertyMap()
+		{
+			if (!isPropertyMapReady)
+			{
+				lock (typeof(DisplayableLog))
+				{
+					if (!isPropertyMapReady)
+					{
+						foreach (var propertyName in Log.PropertyNames)
+						{
+							var convertedName = propertyName switch
+							{
+								nameof(Logs.Log.BeginningTimestamp) => nameof(BeginningTimestampString),
+								nameof(Logs.Log.EndingTimestamp) => nameof(EndingTimestampString),
+								nameof(Logs.Log.Id) => nameof(LogId),
+								nameof(Logs.Log.Timestamp) => nameof(TimestampString),
+								_ => propertyName,
+							};
+							try
+							{
+								typeof(DisplayableLog).GetProperty(convertedName)?.Let(it =>
+								{
+									propertyMap[convertedName] = it;
+								});
+							}
+							catch
+							{ }
+						}
+						isPropertyMapReady = true;
+					}
+				}
+			}
+		}
+
+
 		/// <summary>
 		/// Get name of source which generates log.
 		/// </summary>
@@ -743,6 +795,32 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Node for tracking instance.
 		/// </summary>
 		public LinkedListNode<DisplayableLog> TrackingNode { get; }
+
+
+#pragma warning disable CS8600
+#pragma warning disable CS8601
+		/// <summary>
+		/// Get get property of log by name.
+		/// </summary>
+		/// <typeparam name="T">Type of property.</typeparam>
+		/// <param name="propertyName">Name of property.</param>
+		/// <param name="value">Property value.</param>
+		/// <returns>True if value of property get successfully.</returns>
+		public bool TryGetProperty<T>(string propertyName, out T value)
+		{
+			SetupPropertyMap();
+			if (propertyMap.TryGetValue(propertyName, out var propertyInfo)
+				&& propertyInfo != null
+				&& typeof(T).IsAssignableFrom(propertyInfo.PropertyType))
+			{
+				value = (T)propertyInfo.GetValue(this);
+				return true;
+			}
+			value = default;
+			return false;
+		}
+#pragma warning restore CS8600
+#pragma warning restore CS8601
 
 
 		/// <summary>

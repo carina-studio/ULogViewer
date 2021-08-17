@@ -579,18 +579,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 
 			// get property value
-			var value = Global.Run(() =>
-			{
-				try
-				{
-					return log.GetType().GetProperty(property.Name)?.GetValue(log);
-				}
-				catch
-				{
-					return null;
-				}
-			});
-			if (value == null)
+			if (!log.TryGetProperty<object?>(property.Name, out var value) || value == null)
 				return;
 
 			// copy value
@@ -684,8 +673,8 @@ namespace CarinaStudio.ULogViewer.Controls
 					itemGrid.ColumnDefinitions.Add(propertyColumn);
 
 					// create property view
-					var isStringProperty = Logs.Log.HasStringProperty(logProperty.Name);
-					var isMultiLineProperty = Logs.Log.HasMultiLineStringProperty(logProperty.Name);
+					var isStringProperty = DisplayableLog.HasStringProperty(logProperty.Name);
+					var isMultiLineProperty = DisplayableLog.HasMultiLineStringProperty(logProperty.Name);
 					var propertyView = logProperty.Name switch
 					{
 						_ => (Control)new TextBlock().Also(it =>
@@ -1570,7 +1559,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.canFilterLogsByTid.Update(hasSingleSelectedItem && this.isTidLogPropertyVisible);
 				this.canMarkUnmarkSelectedLogs.Update(hasSelectedItems && session.MarkUnmarkLogsCommand.CanExecute(null));
 				this.canShowFileInExplorer.Update(hasSelectedItems && session.IsLogFileNeeded);
-				this.canShowLogProperty.Update(hasSingleSelectedItem && logProperty != null && Logs.Log.HasStringProperty(logProperty.Name));
+				this.canShowLogProperty.Update(hasSingleSelectedItem && logProperty != null && DisplayableLog.HasStringProperty(logProperty.Name));
 			});
 		}
 
@@ -2384,7 +2373,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			var log = (listBoxItem.DataContext as DisplayableLog);
 			if (log == null || this.logListBox.SelectedItems[0] != log)
 				return false;
-			if (!Logs.Log.HasStringProperty(property.Name))
+			if (!DisplayableLog.HasStringProperty(property.Name))
 				return false;
 
 			// show property
@@ -2396,7 +2385,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				new LogStringPropertyDialog()
 				{
-					Log = log.Log,
+					Log = log,
 					LogPropertyDisplayName = property.DisplayName,
 					LogPropertyName = property.Name,
 				}.ShowDialog(window);

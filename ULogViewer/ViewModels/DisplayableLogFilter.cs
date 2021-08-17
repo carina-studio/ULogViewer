@@ -561,7 +561,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			var textPropertyGetters = new List<Func<DisplayableLog, string?>>();
 			foreach (var logProperty in this.filteringLogProperties)
 			{
-				if (DisplayableLog.HasStringLogProperty(logProperty.Name))
+				if (DisplayableLog.HasStringProperty(logProperty.Name))
 				{
 					textPropertyGetters.Add(DisplayableLog.CreateLogPropertyGetter<string?>(logProperty.Name));
 					isFilteringNeeded = true;

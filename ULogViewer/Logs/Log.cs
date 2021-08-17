@@ -416,7 +416,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			SetupPropertyMap();
 			if (propertyMap.TryGetValue(propertyName, out var propertyInfo) 
 				&& propertyInfo != null 
-				&& propertyInfo.PropertyType == typeof(T))
+				&& typeof(T).IsAssignableFrom(propertyInfo.PropertyType))
 			{
 				value = (T)propertyInfo.GetValue(this);
 				return true;

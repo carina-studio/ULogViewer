@@ -9,7 +9,7 @@ using AvaloniaEdit.Rendering;
 using AvaloniaEdit.Text;
 using CarinaStudio.Collections;
 using CarinaStudio.ULogViewer.Converters;
-using CarinaStudio.ULogViewer.Logs;
+using CarinaStudio.ULogViewer.ViewModels;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
@@ -206,7 +206,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// <summary>
 		/// Get or set log to show message.
 		/// </summary>
-		public Log? Log { get; set; }
+		public DisplayableLog? Log { get; set; }
 
 
 		/// <summary>
