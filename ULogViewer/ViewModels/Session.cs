@@ -780,6 +780,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				if (profile.IsContinuousReading)
 					it.MaxLogCount = this.Settings.GetValueOrDefault(ULogViewer.Settings.MaxContinuousLogCount);
 				it.TimestampCultureInfo = profile.TimestampCultureInfoForReading;
+				it.TimestampEncoding = profile.TimestampEncodingForReading;
 				it.TimestampFormat = profile.TimestampFormatForReading;
 			});
 			this.logReaders.Add(logReader);
@@ -1432,8 +1433,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				case nameof(LogProfile.SortKey):
 				case nameof(LogProfile.TimestampCultureInfoForReading):
 				case nameof(LogProfile.TimestampFormatForDisplaying):
+				case nameof(LogProfile.TimestampEncodingForReading):
 				case nameof(LogProfile.TimestampFormatForReading):
-					this.SynchronizationContext.Post(() => this.ReloadLogs(false, false));
+					this.SynchronizationContext.Post(() => this.ReloadLogs(true, false));
 					break;
 				case nameof(LogProfile.Name):
 					this.updateTitleAndIconAction.Schedule();

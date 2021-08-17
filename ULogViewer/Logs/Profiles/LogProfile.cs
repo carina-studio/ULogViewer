@@ -61,6 +61,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		LogSortKey sortKey = LogSortKey.Timestamp;
 		CultureInfo timestampCultureInfoForReading = defaultTimestampCultureInfoForReading;
 		CultureInfo timestampCultureInfoForWriting = defaultTimestampCultureInfoForReading;
+		LogTimestampEncoding timestampEncodingForReading = LogTimestampEncoding.Custom;
 		string? timestampFormatForDisplaying;
 		string? timestampFormatForReading;
 		string? timestampFormatForWriting;
@@ -107,6 +108,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			this.sortKey = template.sortKey;
 			this.timestampCultureInfoForReading = template.timestampCultureInfoForReading;
 			this.timestampCultureInfoForWriting = template.timestampCultureInfoForWriting;
+			this.timestampEncodingForReading = template.timestampEncodingForReading;
 			this.timestampFormatForDisplaying = template.timestampFormatForDisplaying;
 			this.timestampFormatForReading = template.timestampFormatForReading;
 			this.timestampFormatForWriting = template.timestampFormatForWriting;
@@ -573,6 +575,10 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 					case nameof(TimestampCultureInfoForWriting):
 						this.timestampCultureInfoForWriting = CultureInfo.GetCultureInfo(jsonProperty.Value.GetString().AsNonNull());
 						break;
+					case nameof(TimestampEncodingForReading):
+						if (Enum.TryParse<LogTimestampEncoding>(jsonProperty.Value.GetString(), out var timestampEncoding))
+							this.timestampEncodingForReading = timestampEncoding;
+						break;
 					case nameof(TimestampFormatForDisplaying):
 						this.timestampFormatForDisplaying = jsonProperty.Value.GetString();
 						break;
@@ -881,6 +887,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				writer.WriteString(nameof(SortKey), this.sortKey.ToString());
 				writer.WriteString(nameof(TimestampCultureInfoForReading), this.timestampCultureInfoForReading.ToString());
 				writer.WriteString(nameof(TimestampCultureInfoForWriting), this.timestampCultureInfoForWriting.ToString());
+				writer.WriteString(nameof(TimestampEncodingForReading), this.timestampEncodingForReading.ToString());
 				this.timestampFormatForDisplaying?.Let(it => writer.WriteString(nameof(TimestampFormatForDisplaying), it));
 				this.timestampFormatForReading?.Let(it => writer.WriteString(nameof(TimestampFormatForReading), it));
 				this.timestampFormatForWriting?.Let(it => writer.WriteString(nameof(TimestampFormatForWriting), it));
@@ -1082,6 +1089,24 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 
 
 		/// <summary>
+		/// Get or set encoding of timestamp for reading logs.
+		/// </summary>
+		public LogTimestampEncoding TimestampEncodingForReading
+		{
+			get => this.timestampEncodingForReading;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (this.timestampEncodingForReading == value)
+					return;
+				this.timestampEncodingForReading = value;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TimestampEncodingForReading)));
+			}
+		}
+
+
+		/// <summary>
 		/// Get or set format of timestamp for displaying logs.
 		/// </summary>
 		public string? TimestampFormatForDisplaying
@@ -1100,7 +1125,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 
 
 		/// <summary>
-		/// Get or set format of timestamp for reading logs.
+		/// Get or set format of timestamp for reading logs if <see cref="TimestampEncodingForReading"/> is <see cref="LogTimestampEncoding.Custom"/>.
 		/// </summary>
 		public string? TimestampFormatForReading
 		{

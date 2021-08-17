@@ -64,6 +64,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		readonly IDictionary<string, LogLevel> readOnlyLogLevelMap;
 		LogReaderState state = LogReaderState.Preparing;
 		CultureInfo timestampCultureInfo = defaultTimestampCultureInfo;
+		LogTimestampEncoding timestampEncoding = LogTimestampEncoding.Custom;
 		string? timestampFormat;
 		int? updateInterval;
 
@@ -613,13 +614,30 @@ namespace CarinaStudio.ULogViewer.Logs
 				}
 				else if (Log.HasDateTimeProperty(name))
 				{
-					this.timestampFormat.Let(format =>
+					switch (this.timestampEncoding)
 					{
-						if (format == null)
-							logBuilder.Set(name, value);
-						else if (DateTime.TryParseExact(value, format, this.timestampCultureInfo, DateTimeStyles.None, out var timestamp))
-							logBuilder.Set(name, timestamp.ToBinary().ToString());
-					});
+						case LogTimestampEncoding.Custom:
+							this.timestampFormat.Let(format =>
+							{
+								if (format == null)
+									logBuilder.Set(name, value);
+								else if (DateTime.TryParseExact(value, format, this.timestampCultureInfo, DateTimeStyles.None, out var timestamp))
+									logBuilder.Set(name, timestamp.ToBinary().ToString());
+							});
+							break;
+						case LogTimestampEncoding.Unix:
+							if (long.TryParse(value, out var sec))
+								logBuilder.Set(name, (new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds(sec).ToLocalTime()).ToBinary().ToString());
+							break;
+						case LogTimestampEncoding.UnixMicroseconds:
+							if (long.TryParse(value, out var us))
+								logBuilder.Set(name, (new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(us / 1000).ToLocalTime()).ToBinary().ToString());
+							break;
+						case LogTimestampEncoding.UnixMilliseconds:
+							if (long.TryParse(value, out var ms))
+								logBuilder.Set(name, (new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(ms).ToLocalTime()).ToBinary().ToString());
+							break;
+					}
 				}
 				else if (name == nameof(Log.Level))
 				{
@@ -1012,7 +1030,26 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		/// <summary>
-		/// Get or set format to parse timestamp of log.
+		/// Get or set encoding to parse timestamp of log.
+		/// </summary>
+		public LogTimestampEncoding TimestampEncoding
+		{
+			get => this.timestampEncoding;
+			set
+			{
+				this.VerifyAccess();
+				if (this.state != LogReaderState.Preparing)
+					throw new InvalidOperationException($"Cannot change {nameof(TimestampEncoding)} when state is {this.state}.");
+				if (this.timestampEncoding == value)
+					return;
+				this.timestampEncoding = value;
+				this.OnPropertyChanged(nameof(TimestampEncoding));
+			}
+		}
+
+
+		/// <summary>
+		/// Get or set format to parse timestamp of log when <see cref="TimestampEncoding"/> is <see cref="LogTimestampEncoding.Custom"/>.
 		/// </summary>
 		public string? TimestampFormat
 		{
