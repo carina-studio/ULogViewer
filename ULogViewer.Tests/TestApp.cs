@@ -34,6 +34,27 @@ namespace CarinaStudio.ULogViewer
 
 
 		/// <summary>
+		/// Entry.
+		/// </summary>
+		/// <param name="args">Arguments.</param>
+		public static void Main(string[] args)
+		{
+			// build application
+			Setup();
+			var app = Current;
+
+			// print logs
+			Console.WriteLine("Start writing logs...");
+			var logger = app.LoggerFactory.CreateLogger(nameof(TestApp));
+			for (var i = 1; i < int.MaxValue; ++i)
+			{
+				logger.LogTrace($"Log #{i}");
+				Thread.Sleep(1000);
+			}
+		}
+
+
+		/// <summary>
 		/// Setup <see cref="TestApp"/> instance.
 		/// </summary>
 		[MethodImpl(MethodImplOptions.Synchronized)]

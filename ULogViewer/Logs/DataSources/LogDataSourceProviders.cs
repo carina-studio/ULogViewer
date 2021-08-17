@@ -63,7 +63,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			providers.Add(new HttpLogDataSourceProvider(app));
 			providers.Add(new SQLiteLogDataSourceProvider(app));
 			providers.Add(new StandardOutputLogDataSourceProvider(app));
-			//providers.Add(new TcpServerLogDataSourceProvider(app));
+			providers.Add(new TcpServerLogDataSourceProvider(app));
 			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 				providers.Add(new WindowsEventLogDataSourceProvider(app));
 		}
