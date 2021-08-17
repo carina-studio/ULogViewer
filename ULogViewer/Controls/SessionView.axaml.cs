@@ -679,7 +679,6 @@ namespace CarinaStudio.ULogViewer.Controls
 					{
 						_ => (Control)new TextBlock().Also(it =>
 						{
-							it.Background = Brushes.Transparent;
 							it.Bind(TextBlock.FontFamilyProperty, new Binding() { Path = nameof(LogFontFamily), Source = this });
 							it.Bind(TextBlock.FontSizeProperty, new Binding() { Path = nameof(LogFontSize), Source = this });
 							it.Bind(TextBlock.ForegroundProperty, new Binding() { Path = nameof(DisplayableLog.LevelBrush) });
@@ -688,7 +687,6 @@ namespace CarinaStudio.ULogViewer.Controls
 							else
 								it.MaxLines = 1;
 							it.Padding = propertyPadding;
-							it.Tag = logProperty;
 							it.Bind(TextBlock.TextProperty, new Binding().Also(binding =>
 							{
 								if (logProperty.Name == nameof(DisplayableLog.Level))
@@ -698,31 +696,8 @@ namespace CarinaStudio.ULogViewer.Controls
 							it.TextTrimming = TextTrimming.CharacterEllipsis;
 							it.TextWrapping = TextWrapping.NoWrap;
 							it.VerticalAlignment = VerticalAlignment.Top;
-							it.PointerPressed += (_, e) =>
-							{
-								this.lastClickedLogPropertyView = it;
-								if (this.logListBox.SelectedItems.Count == 1)
-								{
-									this.canCopyLogProperty.Update(true);
-									if (isStringProperty)
-										this.canShowLogProperty.Update(true);
-								}
-							};
 						}),
 					};
-					propertyView = new Border().Also(it =>
-					{
-						propertyView.GetObservable(Control.IsPointerOverProperty).Subscribe(new Observer<bool>(isPointerOver =>
-						{
-							if (isPointerOver)
-								it.BorderBrush = this.TryFindResource("Brush.SessionView.LogListBox.Item.Column.Border.PointerOver", out var res).Let(_ => res as IBrush);
-							else
-								it.BorderBrush = null;
-						}));
-						it.BorderThickness = new Thickness(1);
-						it.Child = propertyView;
-						it.VerticalAlignment = VerticalAlignment.Top;
-					});
 					if (isMultiLineProperty)
 					{
 						propertyView = new StackPanel().Also(it =>
@@ -746,6 +721,30 @@ namespace CarinaStudio.ULogViewer.Controls
 							it.Orientation = Orientation.Vertical;
 						});
 					}
+					propertyView = new Border().Also(it =>
+					{
+						it.Background = Brushes.Transparent;
+						it.Child = propertyView;
+						it.Tag = logProperty;
+						it.VerticalAlignment = VerticalAlignment.Stretch;
+						it.GetObservable(Control.IsPointerOverProperty).Subscribe(new Observer<bool>(isPointerOver =>
+						{
+							if (isPointerOver)
+								it.Background = this.TryFindResource("Brush.SessionView.LogListBox.Item.Column.Background.PointerOver", out var res).Let(_ => res as IBrush);
+							else
+								it.Background = Brushes.Transparent;
+						}));
+						it.PointerPressed += (_, e) =>
+						{
+							this.lastClickedLogPropertyView = it;
+							if (this.logListBox.SelectedItems.Count == 1)
+							{
+								this.canCopyLogProperty.Update(true);
+								if (isStringProperty)
+									this.canShowLogProperty.Update(true);
+							}
+						};
+					});
 					Grid.SetColumn(propertyView, logPropertyIndex * 2);
 					itemGrid.Children.Add(propertyView);
 				}

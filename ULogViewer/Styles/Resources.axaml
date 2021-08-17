@@ -127,8 +127,8 @@
 	<sys:Double x:Key="Double.SessionView.ToolBar.Separator.Size">1</sys:Double>
 	<Thickness x:Key="Thickness.SessionView.LogHeader.Margin">3,10,3,10</Thickness>
 	<Thickness x:Key="Thickness.SessionView.LogHeader.Padding">5,0,5,0</Thickness>
-	<Thickness x:Key="Thickness.SessionView.LogListBox.Item.Padding">8,3,8,3</Thickness>
-	<Thickness x:Key="Thickness.SessionView.LogListBox.Item.Property.Padding">2,0,2,0</Thickness>
+	<Thickness x:Key="Thickness.SessionView.LogListBox.Item.Padding">8,0,8,0</Thickness>
+	<Thickness x:Key="Thickness.SessionView.LogListBox.Item.Property.Padding">2,3,2,3</Thickness>
 	<Thickness x:Key="Thickness.SessionView.LogListBox.Padding">0,0,0,20</Thickness>
 	<Thickness x:Key="Thickness.SessionView.MarkedLogListBox.Item.Padding">3</Thickness>
 	<Thickness x:Key="Thickness.SessionView.NoPredefinedLogTextFilterHint.Margin">15,12,15,15</Thickness>
