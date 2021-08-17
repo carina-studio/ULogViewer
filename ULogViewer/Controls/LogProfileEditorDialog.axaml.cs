@@ -67,6 +67,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly TextBox nameTextBox;
 		readonly ComboBox sortDirectionComboBox;
 		readonly ComboBox sortKeyComboBox;
+		readonly ComboBox timestampEncodingForReadingComboBox;
 		readonly TextBox timestampFormatForDisplayingTextBox;
 		readonly TextBox timestampFormatForReadingTextBox;
 		readonly TextBox timestampFormatForWritingTextBox;
@@ -139,6 +140,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.nameTextBox = this.FindControl<TextBox>("nameTextBox").AsNonNull();
 			this.sortDirectionComboBox = this.FindControl<ComboBox>("sortDirectionComboBox").AsNonNull();
 			this.sortKeyComboBox = this.FindControl<ComboBox>("sortKeyComboBox").AsNonNull();
+			this.timestampEncodingForReadingComboBox = this.FindControl<ComboBox>(nameof(timestampEncodingForReadingComboBox)).AsNonNull();
 			this.timestampFormatForDisplayingTextBox = this.FindControl<TextBox>("timestampFormatForDisplayingTextBox").AsNonNull();
 			this.timestampFormatForReadingTextBox = this.FindControl<TextBox>("timestampFormatForReadingTextBox").AsNonNull();
 			this.timestampFormatForWritingTextBox = this.FindControl<TextBox>("timestampFormatForWritingTextBox").AsNonNull();
@@ -509,6 +511,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			logProfile.Name = this.nameTextBox.Text.AsNonNull();
 			logProfile.SortDirection = (SortDirection)this.sortDirectionComboBox.SelectedItem.AsNonNull();
 			logProfile.SortKey = (LogSortKey)this.sortKeyComboBox.SelectedItem.AsNonNull();
+			logProfile.TimestampEncodingForReading = (LogTimestampEncoding)this.timestampEncodingForReadingComboBox.SelectedItem.AsNonNull();
 			logProfile.TimestampFormatForDisplaying = this.timestampFormatForDisplayingTextBox.Text;
 			logProfile.TimestampFormatForReading = this.timestampFormatForReadingTextBox.Text;
 			logProfile.TimestampFormatForWriting = this.timestampFormatForWritingTextBox.Text;
@@ -581,6 +584,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.logStringEncodingForWritingComboBox.SelectedItem = LogStringEncoding.Plane;
 				this.sortDirectionComboBox.SelectedItem = SortDirection.Ascending;
 				this.sortKeyComboBox.SelectedItem = LogSortKey.Timestamp;
+				this.timestampEncodingForReadingComboBox.SelectedItem = LogTimestampEncoding.Custom;
 			}
 			else if (!profile.IsBuiltIn)
 			{
@@ -600,6 +604,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.nameTextBox.Text = profile.Name;
 				this.sortDirectionComboBox.SelectedItem = profile.SortDirection;
 				this.sortKeyComboBox.SelectedItem = profile.SortKey;
+				this.timestampEncodingForReadingComboBox.SelectedItem = profile.TimestampEncodingForReading;
 				this.timestampFormatForDisplayingTextBox.Text = profile.TimestampFormatForDisplaying;
 				this.timestampFormatForReadingTextBox.Text = profile.TimestampFormatForReading;
 				this.timestampFormatForWritingTextBox.Text = profile.TimestampFormatForWriting;

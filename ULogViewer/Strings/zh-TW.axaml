@@ -177,6 +177,7 @@
 	<sys:String x:Key="String.LogProfileEditorDialog.Name">名稱 (必要)</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.SortDirection">日誌排序方向</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.SortKey">日誌排序依據</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.TimestampEncodingForReading">日誌時間讀取類型</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.TimestampFormatForDisplaying">日誌時間顯示格式</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.TimestampFormatForReading">日誌時間讀取格式</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.TimestampFormatForWriting">日誌時間輸出格式</sys:String>

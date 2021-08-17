@@ -236,9 +236,23 @@
 				<appControls:EnumComboBox Name="logStringEncodingForReadingComboBox" EnumType="{x:Type appLogs:LogStringEncoding}" HorizontalAlignment="Stretch"/>
 				<Separator Classes="Dialog_Separator_Horizontal"/>
 
+				<!-- Timestamp encoding for reading -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.TimestampEncodingForReading}"/>
+				<appControls:EnumComboBox Name="timestampEncodingForReadingComboBox" EnumType="{x:Type appLogs:LogTimestampEncoding}" HorizontalAlignment="Stretch"/>
+				<Separator Classes="Dialog_Separator_Horizontal"/>
+
 				<!-- Timestamp format for reading -->
 				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.TimestampFormatForReading}"/>
-				<TextBox Name="timestampFormatForReadingTextBox" MaxLength="256"/>
+				<TextBox Name="timestampFormatForReadingTextBox" MaxLength="256">
+					<ia:Interaction.Behaviors>
+						<iaCore:DataTriggerBehavior Binding="{Binding #timestampEncodingForReadingComboBox.SelectedItem}" Value="Custom">
+							<iaCore:ChangePropertyAction PropertyName="IsEnabled" Value="True"/>
+						</iaCore:DataTriggerBehavior>
+						<iaCore:DataTriggerBehavior Binding="{Binding #timestampEncodingForReadingComboBox.SelectedItem}" ComparisonCondition="NotEqual" Value="Custom">
+							<iaCore:ChangePropertyAction PropertyName="IsEnabled" Value="False"/>
+						</iaCore:DataTriggerBehavior>
+					</ia:Interaction.Behaviors>
+				</TextBox>
 				<TextBlock Classes="Dialog_Description_Link" PointerReleased="OnLinkDescriptionPointerReleased" Tag="https://docs.microsoft.com/en-us/dotnet/standard/base-types/standard-date-and-time-format-strings" Text="{DynamicResource String.LogProfileEditorDialog.FormatDescription}"/>
 				<Separator Classes="Dialog_Separator_Large_Horizontal"/>
 

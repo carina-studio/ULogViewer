@@ -184,6 +184,7 @@
 	<sys:String x:Key="String.LogProfileEditorDialog.Name">Name (required)</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.SortDirection">Sort direction of log</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.SortKey">Sort key of log</sys:String>
+	<sys:String x:Key="String.LogProfileEditorDialog.TimestampEncodingForReading">Type of timestamp for reading</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.TimestampFormatForDisplaying">Format of timestamp for displaying</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.TimestampFormatForReading">Format of timestamp for reading</sys:String>
 	<sys:String x:Key="String.LogProfileEditorDialog.TimestampFormatForWriting">Format of timestamp for output</sys:String>
