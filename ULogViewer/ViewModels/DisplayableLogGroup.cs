@@ -20,7 +20,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly Dictionary<string, IBrush> colorIndicatorBrushes = new Dictionary<string, IBrush>();
 		Func<DisplayableLog, string>? colorIndicatorKeyGetter;
 		readonly LinkedList<DisplayableLog> displayableLogs = new LinkedList<DisplayableLog>();
-		readonly Dictionary<LogLevel, IBrush> levelBrushes = new Dictionary<LogLevel, IBrush>();
+		readonly Dictionary<string, IBrush> levelBrushes = new Dictionary<string, IBrush>();
 		int maxDisplayLineCount;
 		readonly Random random = new Random();
 
@@ -112,12 +112,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		/// <param name="log"><see cref="DisplayableLog"/>.</param>
 		/// <returns><see cref="IBrush"/> for given log.</returns>
-		internal IBrush GetLevelBrush(DisplayableLog log)
+		internal IBrush GetLevelBrush(DisplayableLog log, string? state = null)
 		{
 			this.VerifyDisposed();
-			if (this.levelBrushes.TryGetValue(log.Level, out var brush))
+			if(!string.IsNullOrEmpty(state) && this.levelBrushes.TryGetValue($"{log.Level}.{state}", out var brush))
 				return brush.AsNonNull();
-			if (this.levelBrushes.TryGetValue(LogLevel.Undefined, out brush))
+			if (this.levelBrushes.TryGetValue(log.Level.ToString(), out brush))
+				return brush.AsNonNull();
+			if (this.levelBrushes.TryGetValue(nameof(LogLevel.Undefined), out brush))
 				return brush.AsNonNull();
 			throw new ArgumentException($"Cannot get brush for log level {log.Level}.");
 		}
@@ -251,11 +253,15 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		void UpdateLevelBrushes()
 		{
 			this.levelBrushes.Clear();
+			var converter = LogLevelBrushConverter.Default;
 			foreach (var level in (LogLevel[])Enum.GetValues(typeof(LogLevel)))
 			{
-				var brush = LogLevelBrushConverter.Default.Convert(level, typeof(IBrush), null, this.Application.CultureInfo) as IBrush;
+				var brush = converter.Convert(level, typeof(IBrush), null, this.Application.CultureInfo) as IBrush;
 				if (brush != null)
-					this.levelBrushes[level] = brush;
+					this.levelBrushes[level.ToString()] = brush;
+				brush = converter.Convert(level, typeof(IBrush), "PointerOver", this.Application.CultureInfo) as IBrush;
+				if (brush != null)
+					this.levelBrushes[$"{level}.PointerOver"] = brush;
 			}
 		}
 

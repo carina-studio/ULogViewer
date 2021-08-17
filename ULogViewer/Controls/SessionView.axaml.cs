@@ -623,6 +623,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			var app = (App)this.Application;
 			var logPropertyCount = logProperties.Count;
 			var colorIndicatorWidth = app.Resources.TryGetResource("Double.SessionView.LogListBox.ColorIndicator.Width", out var rawResource) ? (double)rawResource.AsNonNull() : 0.0;
+			var itemBorderThickness = app.Resources.TryGetResource("Thickness.SessionView.LogListBox.Item.Column.Border", out rawResource) ? (Thickness)rawResource.AsNonNull() : new Thickness(1);
+			var itemCornerRadius = app.Resources.TryGetResource("CornerRadius.SessionView.LogListBox.Item.Column.Border", out rawResource) ? (CornerRadius)rawResource.AsNonNull() : new CornerRadius(0);
 			var itemPadding = app.Resources.TryGetResource("Thickness.SessionView.LogListBox.Item.Padding", out rawResource) ? (Thickness)rawResource.AsNonNull() : new Thickness();
 			var propertyPadding = app.Resources.TryGetResource("Thickness.SessionView.LogListBox.Item.Property.Padding", out rawResource) ? (Thickness)rawResource.AsNonNull() : new Thickness();
 			var splitterWidth = app.Resources.TryGetResource("Double.GridSplitter.Thickness", out rawResource) ? (double)rawResource.AsNonNull() : 0.0;
@@ -681,7 +683,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						{
 							it.Bind(TextBlock.FontFamilyProperty, new Binding() { Path = nameof(LogFontFamily), Source = this });
 							it.Bind(TextBlock.FontSizeProperty, new Binding() { Path = nameof(LogFontSize), Source = this });
-							it.Bind(TextBlock.ForegroundProperty, new Binding() { Path = nameof(DisplayableLog.LevelBrush) });
+							//it.Bind(TextBlock.ForegroundProperty, new Binding() { Path = nameof(DisplayableLog.LevelBrush) });
 							if (isMultiLineProperty)
 								it.Bind(TextBlock.MaxLinesProperty, new Binding() { Path = nameof(MaxDisplayLineCountForEachLog), Source = this });
 							else
@@ -724,15 +726,23 @@ namespace CarinaStudio.ULogViewer.Controls
 					propertyView = new Border().Also(it =>
 					{
 						it.Background = Brushes.Transparent;
+						it.BorderThickness = itemBorderThickness;
 						it.Child = propertyView;
+						it.CornerRadius = itemCornerRadius;
 						it.Tag = logProperty;
 						it.VerticalAlignment = VerticalAlignment.Stretch;
 						it.GetObservable(Control.IsPointerOverProperty).Subscribe(new Observer<bool>(isPointerOver =>
 						{
 							if (isPointerOver)
-								it.Background = this.TryFindResource("Brush.SessionView.LogListBox.Item.Column.Background.PointerOver", out var res).Let(_ => res as IBrush);
+							{
+								it.BorderBrush = this.TryFindResource("Brush.SessionView.LogListBox.Item.Column.Border.PointerOver", out var res).Let(_ => res as IBrush);
+								it.Bind(TextBlock.ForegroundProperty, new Binding() { Path = nameof(DisplayableLog.LevelBrushForPointerOver) });
+							}
 							else
-								it.Background = Brushes.Transparent;
+							{
+								it.BorderBrush = null;
+								it.Bind(TextBlock.ForegroundProperty, new Binding() { Path = nameof(DisplayableLog.LevelBrush) });
+							}
 						}));
 						it.PointerPressed += (_, e) =>
 						{

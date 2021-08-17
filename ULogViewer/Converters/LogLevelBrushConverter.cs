@@ -33,7 +33,12 @@ namespace CarinaStudio.ULogViewer.Converters
 		{
 			if (value is LogLevel level && targetType == typeof(IBrush))
 			{
-				this.app.Styles.TryGetResource($"Brush.LogLevel.{level}", out var brush);
+				var state = parameter as string;
+				var brush = (object?)null;
+				if (string.IsNullOrEmpty(state))
+					this.app.Styles.TryGetResource($"Brush.LogLevel.{level}", out brush);
+				else
+					this.app.Styles.TryGetResource($"Brush.LogLevel.{level}.{state}", out brush);
 				return brush as IBrush;
 			}
 			return null;

@@ -40,6 +40,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		bool isLevelBrushSet;
 		bool isMarked;
 		IBrush? levelBrush;
+		IBrush? levelBrushForPointerOver;
 		int messageLineCount = -1;
 		int summaryLineCount = -1;
 		string? timestampString;
@@ -537,9 +538,28 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				if (!this.isLevelBrushSet)
 				{
 					this.levelBrush = this.Group.GetLevelBrush(this);
+					this.levelBrushForPointerOver = this.Group.GetLevelBrush(this, "PointerOver");
 					this.isLevelBrushSet = true;
 				}
 				return this.levelBrush.AsNonNull();
+			}
+		}
+
+
+		/// <summary>
+		/// Get <see cref="IBrush"/> for pointer-over according to level of log.
+		/// </summary>
+		public IBrush LevelBrushForPointerOver
+		{
+			get
+			{
+				if (!this.isLevelBrushSet)
+				{
+					this.levelBrush = this.Group.GetLevelBrush(this);
+					this.levelBrushForPointerOver = this.Group.GetLevelBrush(this, "PointerOver");
+					this.isLevelBrushSet = true;
+				}
+				return this.levelBrushForPointerOver.AsNonNull();
 			}
 		}
 
@@ -641,17 +661,20 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		internal void OnStyleResourcesUpdated()
 		{
+			var propertyChangedHandlers = this.PropertyChanged;
 			if (this.isColorIndicatorBrushSet)
 			{
 				this.isColorIndicatorBrushSet = false;
 				this.colorIndicatorBrush = null;
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ColorIndicatorBrush)));
+				propertyChangedHandlers?.Invoke(this, new PropertyChangedEventArgs(nameof(ColorIndicatorBrush)));
 			}
 			if (this.isLevelBrushSet)
 			{
 				this.isLevelBrushSet = false;
 				this.levelBrush = null;
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LevelBrush)));
+				this.levelBrushForPointerOver = null;
+				propertyChangedHandlers?.Invoke(this, new PropertyChangedEventArgs(nameof(LevelBrush)));
+				propertyChangedHandlers?.Invoke(this, new PropertyChangedEventArgs(nameof(LevelBrushForPointerOver)));
 			}
 		}
 
