@@ -32,6 +32,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			"GitLog",
 #if DEBUG
 			"ULogViewerLog",
+			"ULogViewerMemoryLog",
 #endif
 		};
 		static volatile LogProfile? emptyProfile;

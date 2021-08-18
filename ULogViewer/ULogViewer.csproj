@@ -76,6 +76,7 @@
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/DummyLog.json" />
 	  <EmbeddedResource Include="Logs/Profiles/BuiltIn/GitLog.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/ULogViewerLog.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/ULogViewerMemoryLog.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/WindowsApplicationEventLogs.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/WindowsSecurityEventLogs.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/WindowsSetupEventLogs.json" />

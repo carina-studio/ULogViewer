@@ -42,7 +42,8 @@
 	<sys:String x:Key="String.BuiltInProfile.AndroidFileLog">Android Log Files</sys:String>
 	<sys:String x:Key="String.BuiltInProfile.Empty">None</sys:String>
 	<sys:String x:Key="String.BuiltInProfile.GitLog">Git Log</sys:String>
-	<sys:String x:Key="String.BuiltInProfile.ULogViewerLog">ULogViewer log (DEBUG)</sys:String>
+	<sys:String x:Key="String.BuiltInProfile.ULogViewerLog">ULogViewer log file (DEBUG)</sys:String>
+	<sys:String x:Key="String.BuiltInProfile.ULogViewerMemoryLog">ULogViewer realtime log (DEBUG)</sys:String>
 	<sys:String x:Key="String.BuiltInProfile.WindowsApplicationEventLogs">Windows Event Logs (Application)</sys:String>
 	<sys:String x:Key="String.BuiltInProfile.WindowsSecurityEventLogs">Windows Event Logs (Security)</sys:String>
 	<sys:String x:Key="String.BuiltInProfile.WindowsSetupEventLogs">Windows Event Logs (Setup)</sys:String>

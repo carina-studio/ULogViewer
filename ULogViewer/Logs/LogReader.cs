@@ -818,6 +818,7 @@ namespace CarinaStudio.ULogViewer.Logs
 							var log = readLog;
 							if (log != null)
 							{
+								readLog = null;
 								this.pendingLogsSyncContext.Post(() =>
 								{
 									if (this.pendingLogsReadingToken != readingToken)

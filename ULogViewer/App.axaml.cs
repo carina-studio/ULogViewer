@@ -74,6 +74,9 @@ namespace CarinaStudio.ULogViewer
 				using var xmlReader = XmlReader.Create(stream);
 				return new NLog.Config.XmlLoggingConfiguration(xmlReader);
 			});
+#if DEBUG
+			NLog.LogManager.Configuration.AddRuleForAllLevels("methodCall");
+#endif
 			this.logger = this.LoggerFactory.CreateLogger("App");
 			this.logger.LogWarning("App created");
 
