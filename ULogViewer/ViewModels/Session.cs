@@ -1927,8 +1927,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			var task = ioTaskFactory.StartNew(() =>
 			{
 				var markedFileName = logFileName + MarkedFileExtension;
-				if (markedLogInfos.IsEmpty() && File.Exists(markedFileName))
-					File.Delete(markedFileName);
+				if (markedLogInfos.IsEmpty())
+					Global.RunWithoutError(() => File.Delete(markedFileName));
 				else
 				{
 					try
