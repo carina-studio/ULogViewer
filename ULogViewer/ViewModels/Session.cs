@@ -1697,6 +1697,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				var dataSourceProvider = profile.DataSourceProvider;
 				foreach (var dataSourceOption in dataSourceOptions)
 				{
+					// create data source and reader
 					var dataSource = this.CreateLogDataSourceOrNull(dataSourceProvider, dataSourceOption);
 					if (dataSource != null)
 						this.CreateLogReader(dataSource);
@@ -1705,6 +1706,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						this.hasLogDataSourceCreationFailure = true;
 						this.checkDataSourceErrorsAction.Schedule();
 					}
+
+					// load marked logs
+					if (dataSourceOption.IsOptionSet(nameof(LogDataSourceOptions.FileName)))
+						this.LoadMarkedLogs(dataSourceOption.FileName.AsNonNull());
 				}
 			}
 		}
