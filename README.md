@@ -22,8 +22,8 @@ The project is still under development but most of functions relate to reading/p
 - Files
 - Windows Event Logs (Windows only)
 - HTTP/HTTPS
+- TCP (without SSL)
 - SQLite
-- SSL (Not yet supported).
 
 ## ⭐Log profiles
 Each log profile defines:
@@ -62,6 +62,7 @@ Marked logs will be kept if you are viewing logs from files so that you don't ne
 - [.NET](https://dotnet.microsoft.com/)
 - [AppBase](https://github.com/carina-studio/AppBase)
 - [Avalonia](https://github.com/AvaloniaUI/Avalonia)
+- [AvaloniaEdit](https://github.com/AvaloniaUI/AvaloniaEdit)
 - [Avalonia XAML Behaviors](https://github.com/wieslawsoltes/AvaloniaBehaviors)
 - [NLog](https://github.com/NLog/NLog)
 - [NUnit](https://github.com/nunit/nunit)
