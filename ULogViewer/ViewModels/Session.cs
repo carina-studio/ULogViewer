@@ -123,6 +123,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsSavingLogsProperty = ObservableProperty.Register<Session, bool>(nameof(IsSavingLogs));
 		/// <summary>
+		/// Property of <see cref="IsWaitingForDataSources"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> IsWaitingForDataSourcesProperty = ObservableProperty.Register<Session, bool>(nameof(IsWaitingForDataSources));
+		/// <summary>
 		/// Property of <see cref="IsWorkingDirectoryNeeded"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsWorkingDirectoryNeededProperty = ObservableProperty.Register<Session, bool>(nameof(IsWorkingDirectoryNeeded));
@@ -226,6 +230,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly MutableObservableBoolean canSaveLogs = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSetLogProfile = new MutableObservableBoolean();
 		readonly ScheduledAction checkDataSourceErrorsAction;
+		readonly ScheduledAction checkIsWaitingForDataSourcesAction;
 		Comparison<DisplayableLog?> compareDisplayableLogsDelegate;
 		DisplayableLogGroup? displayableLogGroup;
 		bool hasLogDataSourceCreationFailure;
@@ -313,6 +318,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				{
 					this.SetValue(HasAllDataSourceErrorsProperty, this.hasLogDataSourceCreationFailure);
 					this.SetValue(HasPartialDataSourceErrorsProperty, false);
+					this.checkIsWaitingForDataSourcesAction?.Schedule();
 					return;
 				}
 				foreach (var logReader in this.logReaders)
@@ -329,6 +335,28 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				{
 					this.SetValue(HasAllDataSourceErrorsProperty, errorCount >= dataSourceCount);
 					this.SetValue(HasPartialDataSourceErrorsProperty, errorCount < dataSourceCount);
+				}
+				this.checkIsWaitingForDataSourcesAction?.Schedule();
+			});
+			this.checkIsWaitingForDataSourcesAction = new ScheduledAction(() =>
+			{
+				if (this.IsDisposed)
+					return;
+				var profile = this.LogProfile;
+				if (profile == null || this.logReaders.IsEmpty() || this.HasAllDataSourceErrors)
+					this.SetValue(IsWaitingForDataSourcesProperty, false);
+				else
+				{
+					var isWaiting = false;
+					foreach (var logReader in this.logReaders)
+					{
+						if (logReader.IsWaitingForDataSource)
+						{
+							isWaiting = true;
+							break;
+						}
+					}
+					this.SetValue(IsWaitingForDataSourcesProperty, isWaiting);
 				}
 			});
 			this.saveMarkedLogsAction = new ScheduledAction(() =>
@@ -819,6 +847,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// check data source error
 			this.checkDataSourceErrorsAction.Schedule();
 
+			// check data source waiting state
+			this.checkIsWaitingForDataSourcesAction.Schedule();
+
 			// update state
 			if (this.addedLogFilePaths.IsNotEmpty())
 				this.canClearLogFiles.Update(true);
@@ -963,6 +994,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// check data source error
 			this.checkDataSourceErrorsAction.Schedule();
 
+			// check data source waiting state
+			this.checkIsWaitingForDataSourcesAction.Schedule();
+
 			// update state
 			if (this.logReaders.IsEmpty())
 			{
@@ -1102,6 +1136,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Check whether logs saving is on-going or not.
 		/// </summary>
 		public bool IsSavingLogs { get => this.GetValue(IsSavingLogsProperty); }
+
+
+		/// <summary>
+		/// Check data sources are not ready for reading logs.
+		/// </summary>
+		public bool IsWaitingForDataSources { get => this.GetValue(IsWaitingForDataSourcesProperty); }
 
 
 		/// <summary>
@@ -1510,6 +1550,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			switch (e.PropertyName)
 			{
+				case nameof(LogReader.IsWaitingForDataSource):
+					this.checkIsWaitingForDataSourcesAction.Schedule();
+					break;
 				case nameof(LogReader.State):
 					this.updateIsReadingLogsAction.Schedule();
 					break;

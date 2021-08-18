@@ -50,6 +50,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		int dropLogCount = -1;
 		readonly ScheduledAction flushPendingLogsAction;
 		bool isContinuousReading;
+		bool isWaitingForDataSource;
 		readonly Dictionary<string, LogLevel> logLevelMap = new Dictionary<string, LogLevel>();
 		IList<LogPattern> logPatterns = new LogPattern[0];
 		readonly ObservableList<Log> logs = new ObservableList<Log>();
@@ -133,12 +134,30 @@ namespace CarinaStudio.ULogViewer.Logs
 		// Change state.
 		bool ChangeState(LogReaderState state)
 		{
+			// check state
 			var prevState = this.state;
 			if (prevState == state)
 				return true;
+
+			// change state
 			this.state = state;
 			this.Logger.LogDebug($"Change state from {prevState} to {state}");
 			this.OnPropertyChanged(nameof(State));
+
+			// update data source waiting state
+			switch (this.state)
+			{
+				case LogReaderState.Starting:
+				case LogReaderState.StartingWhenPaused:
+					this.IsWaitingForDataSource = true;
+					break;
+				case LogReaderState.DataSourceError:
+				case LogReaderState.UnclassifiedError:
+					this.IsWaitingForDataSource = false;
+					break;
+			}
+
+			// check final state
 			return (this.state == state);
 		}
 
@@ -280,6 +299,22 @@ namespace CarinaStudio.ULogViewer.Logs
 					return;
 				this.isContinuousReading = value;
 				this.OnPropertyChanged(nameof(IsContinuousReading));
+			}
+		}
+
+
+		/// <summary>
+		/// Check whether instance is waiting for <see cref="DataSource"/> to get first log data or not.
+		/// </summary>
+		public bool IsWaitingForDataSource 
+		{
+			get => this.isWaitingForDataSource;
+			private set
+			{
+				if (this.isWaitingForDataSource == value)
+					return;
+				this.isWaitingForDataSource = value;
+				this.OnPropertyChanged(nameof(IsWaitingForDataSource));
 			}
 		}
 
@@ -442,13 +477,12 @@ namespace CarinaStudio.ULogViewer.Logs
 		}
 
 
-		// Called when logs read.
-		void OnLogRead(object readingToken, Log log)
+		// Called when first raw log data read.
+		void OnFirstRawLogDataRead(object readingToken)
 		{
-			if (!this.CanAddLogs || this.logsReadingToken != readingToken)
+			if (this.logsReadingToken != readingToken)
 				return;
-			this.DropLogs(1);
-			this.logs.Add(log);
+			this.IsWaitingForDataSource = false;
 		}
 
 
@@ -479,6 +513,9 @@ namespace CarinaStudio.ULogViewer.Logs
 			}
 
 			this.Logger.LogWarning("Complete reading logs");
+
+			// update data source waiting state
+			this.IsWaitingForDataSource = false;
 
 			// release cancellation token
 			this.logsReadingCancellationTokenSource?.Let(it =>
@@ -660,6 +697,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			var logBuilder = new LogBuilder();
 			var syncContext = this.SynchronizationContext;
 			var isContinuousReading = this.isContinuousReading;
+			var isFirstMatchedLine = true;
 			var dataSourceOptions = this.DataSource.CreationOptions;
 			var isReadingFromFile = dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName));
 			var stringPool = new StringPool();
@@ -681,6 +719,13 @@ namespace CarinaStudio.ULogViewer.Logs
 						var match = logPattern.Regex.Match(logLine);
 						if (match.Success)
 						{
+							// notify that first raw log has been read
+							if (isFirstMatchedLine)
+							{
+								isFirstMatchedLine = false;
+								this.SynchronizationContext.Post(() => this.OnFirstRawLogDataRead(readingToken));
+							}
+
 							// read log
 							this.ReadLog(logBuilder, match, stringPool);
 
