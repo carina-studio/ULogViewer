@@ -3,6 +3,7 @@ using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ViewModels;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -16,6 +17,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 	class AppOptions : ViewModel
 	{
 		// Fields.
+		bool isSettingsModified;
 		readonly SortedObservableList<LogProfile> logProfiles = new SortedObservableList<LogProfile>(CompareLogProfiles);
 
 
@@ -84,6 +86,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			// remove event handlers
 			((INotifyCollectionChanged)Logs.Profiles.LogProfiles.All).CollectionChanged -= this.OnLogProfilesChanged;
+
+			// save settings
+			if (this.isSettingsModified)
+			{
+				this.Logger.LogDebug("Settings has been modified, save settings");
+				_ = (this.Application as App)?.SaveSettingsAsync();
+			}
 
 			// call base.
 			base.Dispose(disposing);
@@ -233,6 +242,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.OnPropertyChanged(nameof(ThemeMode));
 			else if (key == ULogViewer.Settings.UpdateLogFilterDelay)
 				this.OnPropertyChanged(nameof(UpdateLogFilterDelay));
+			else
+				return;
+			this.isSettingsModified = true;
 		}
 
 

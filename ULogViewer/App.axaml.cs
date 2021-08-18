@@ -7,6 +7,7 @@ using Avalonia.Markup.Xaml.Styling;
 using Avalonia.Media;
 using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
+using CarinaStudio.Threading.Tasks;
 using CarinaStudio.ULogViewer.Controls;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.ULogViewer.Logs.Profiles;
@@ -53,6 +54,7 @@ namespace CarinaStudio.ULogViewer
 		PropertyChangedEventHandler? propertyChangedHandlers;
 		string? restartArgs;
 		volatile Settings? settings;
+		readonly TaskFactory settingsFileAccessTaskFactory = new TaskFactory(new FixedThreadsTaskScheduler(1));
 		readonly string settingsFilePath;
 		SplashWindow? splashWindow;
 		ResourceInclude? stringResources;
@@ -253,6 +255,37 @@ namespace CarinaStudio.ULogViewer
 		public override void Initialize() => AvaloniaXamlLoader.Load(this);
 
 
+		/// <summary>
+		/// Load settings from file asynchronously.
+		/// </summary>
+		/// <returns>True if settings has been loaded successfully.</returns>
+		public async Task<bool> LoadSettingsAsync()
+		{
+			// check state
+			this.VerifyAccess();
+			var setting = this.settings;
+			if (setting == null)
+			{
+				this.logger.LogError("No settings to load");
+				return false;
+			}
+
+			// load settings
+			try
+			{
+				this.logger.LogDebug("Start loading settings");
+				await this.settingsFileAccessTaskFactory.StartNew(() => setting.Load(this.settingsFilePath));
+				this.logger.LogDebug("Settings loaded");
+				return true;
+			}
+			catch (Exception ex)
+			{
+				this.logger.LogError(ex, "Error occurred while loading settings");
+				return false;
+			}
+		}
+
+
 		// Program entry.
 		[STAThread]
 		static void Main(string[] args)
@@ -319,16 +352,7 @@ namespace CarinaStudio.ULogViewer
 
 			// load settings
 			this.settings = new Settings();
-			this.logger.LogDebug("Start loading settings");
-			try
-			{
-				await this.settings.LoadAsync(this.settingsFilePath);
-				this.logger.LogDebug("Settings loaded");
-			}
-			catch (Exception ex)
-			{
-				this.logger.LogWarning(ex, "Unable to load settings");
-			}
+			await this.LoadSettingsAsync();
 			this.settings.SettingChanged += this.OnSettingChanged;
 
 			// setup shutdown mode
@@ -421,16 +445,7 @@ namespace CarinaStudio.ULogViewer
 			});
 
 			// save settings
-			this.logger.LogDebug("Start saving settings");
-			try
-			{
-				await this.Settings.SaveAsync(this.settingsFilePath);
-				this.logger.LogDebug("Settings saved");
-			}
-			catch (Exception ex)
-			{
-				this.logger.LogError(ex, "Unable to save settings");
-			}
+			await this.SaveSettingsAsync();
 
 			// save predefined log text filters
 			await PredefinedLogTextFilters.SaveAllAsync();
@@ -550,6 +565,37 @@ namespace CarinaStudio.ULogViewer
 				this.SynchronizationContext.Post(() => (this.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.Shutdown());
 			}
 			return true;
+		}
+
+
+		/// <summary>
+		/// Start saving settings asynchronously.
+		/// </summary>
+		/// <returns>True if settings saved successfully.</returns>
+		public async Task<bool> SaveSettingsAsync()
+		{
+			// check state
+			this.VerifyAccess();
+			var setting = this.settings;
+			if (setting == null)
+			{
+				this.logger.LogError("No settings to save");
+				return false;
+			}
+
+			// save settings
+			try
+			{
+				this.logger.LogDebug("Start saving settings");
+				await this.settingsFileAccessTaskFactory.StartNew(() => setting.Save(this.settingsFilePath));
+				this.logger.LogDebug("Settings saved");
+				return true;
+			}
+			catch (Exception ex)
+			{
+				this.logger.LogError(ex, "Error occurred while saving settings");
+				return false;
+			}
 		}
 
 
