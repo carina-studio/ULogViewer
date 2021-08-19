@@ -214,6 +214,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		}
 
 
+		// Constants.
+		const int DefaultFileOpeningTimeout = 10000;
+
+
 		// Fields.
 		readonly List<IDisposable> activationTokens = new List<IDisposable>();
 		readonly HashSet<string> addedLogFilePaths = new HashSet<string>(PathEqualityComparer.Default);
@@ -1162,29 +1166,36 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					return Array.Empty<MarkedLogInfo>();
 				try
 				{
-					using var stream = new FileStream(markedFileName, FileMode.Open, FileAccess.Read);
-					JsonDocument.Parse(stream).Use(jsonDocument =>
+					if (!IO.File.TryOpenRead(markedFileName, DefaultFileOpeningTimeout, out var stream) || stream == null)
 					{
-						foreach (var jsonProperty in jsonDocument.RootElement.EnumerateObject())
+						this.Logger.LogError($"Unable to open marked file to load: {markedFileName}");
+						return Array.Empty<MarkedLogInfo>();
+					}
+					using (stream)
+					{
+						JsonDocument.Parse(stream).Use(jsonDocument =>
 						{
-							switch (jsonProperty.Name)
+							foreach (var jsonProperty in jsonDocument.RootElement.EnumerateObject())
 							{
-								case "MarkedLogInfos":
+								switch (jsonProperty.Name)
 								{
-									foreach (var jsonObject in jsonProperty.Value.EnumerateArray())
-									{
-										var lineNumber = jsonObject.GetProperty("MarkedLineNumber").GetInt32();
-										var timestamp = (DateTime?)null;
-										if (jsonObject.TryGetProperty("MarkedTimestamp", out var timestampElement))
-											timestamp = DateTime.Parse(timestampElement.GetString().AsNonNull());
-										markedLogInfos.Add(new MarkedLogInfo(fileName, lineNumber, timestamp));
-									}
-									break;
+									case "MarkedLogInfos":
+										{
+											foreach (var jsonObject in jsonProperty.Value.EnumerateArray())
+											{
+												var lineNumber = jsonObject.GetProperty("MarkedLineNumber").GetInt32();
+												var timestamp = (DateTime?)null;
+												if (jsonObject.TryGetProperty("MarkedTimestamp", out var timestampElement))
+													timestamp = DateTime.Parse(timestampElement.GetString().AsNonNull());
+												markedLogInfos.Add(new MarkedLogInfo(fileName, lineNumber, timestamp));
+											}
+											break;
+										}
 								}
 							}
-						}
-						return 0;
-					});
+							return 0;
+						});
+					}
 				}
 				catch (Exception ex)
 				{
@@ -1938,20 +1949,27 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				{
 					try
 					{
-						using var stream = new FileStream(markedFileName, FileMode.Create, FileAccess.ReadWrite);
-						using var writer = new Utf8JsonWriter(stream, new JsonWriterOptions() { Indented = true });
-						writer.WriteStartObject();
-						writer.WritePropertyName("MarkedLogInfos");
-						writer.WriteStartArray();
-						foreach (var markedLog in markedLogInfos)
+						if (!IO.File.TryOpenReadWrite(markedFileName, DefaultFileOpeningTimeout, out var stream) || stream == null)
 						{
+							this.Logger.LogError($"Unable to open marked file to save: {markedFileName}");
+							return;
+						}
+						using (stream)
+						{
+							using var writer = new Utf8JsonWriter(stream, new JsonWriterOptions() { Indented = true });
 							writer.WriteStartObject();
-							writer.WriteNumber("MarkedLineNumber", markedLog.LineNumber);
-							markedLog.Timestamp?.Let(it => writer.WriteString("MarkedTimestamp", it));
+							writer.WritePropertyName("MarkedLogInfos");
+							writer.WriteStartArray();
+							foreach (var markedLog in markedLogInfos)
+							{
+								writer.WriteStartObject();
+								writer.WriteNumber("MarkedLineNumber", markedLog.LineNumber);
+								markedLog.Timestamp?.Let(it => writer.WriteString("MarkedTimestamp", it));
+								writer.WriteEndObject();
+							}
+							writer.WriteEndArray();
 							writer.WriteEndObject();
 						}
-						writer.WriteEndArray();
-						writer.WriteEndObject();
 					}
 					catch (Exception ex)
 					{
