@@ -88,8 +88,8 @@ namespace CarinaStudio.ULogViewer
 			{
 				if (this.WindowState == WindowState.Normal)
 				{
-					this.Settings.SetValue(WindowWidthSettingKey, (int)(this.Width + 0.5));
-					this.Settings.SetValue(WindowHeightSettingKey, (int)(this.Height + 0.5));
+					this.Settings.SetValue<int>(WindowWidthSettingKey, (int)(this.Width + 0.5));
+					this.Settings.SetValue<int>(WindowHeightSettingKey, (int)(this.Height + 0.5));
 				}
 			});
 			this.tabControlSelectionChangedAction = new ScheduledAction(this.OnTabControlSelectionChanged);
@@ -451,7 +451,7 @@ namespace CarinaStudio.ULogViewer
 			else if (property == WindowStateProperty)
 			{
 				if (this.WindowState != WindowState.Minimized)
-					this.Settings.SetValue(WindowStateSettingKey, this.WindowState);
+					this.Settings.SetValue<WindowState>(WindowStateSettingKey, this.WindowState);
 			}
 		}
 

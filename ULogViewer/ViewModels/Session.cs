@@ -1158,7 +1158,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			{
 				var markedLogInfos = new List<MarkedLogInfo>();
 				var markedFileName = fileName + MarkedFileExtension;
-				if (!File.Exists(markedFileName))
+				if (!System.IO.File.Exists(markedFileName))
 					return Array.Empty<MarkedLogInfo>();
 				try
 				{
@@ -1933,7 +1933,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			{
 				var markedFileName = logFileName + MarkedFileExtension;
 				if (markedLogInfos.IsEmpty())
-					Global.RunWithoutError(() => File.Delete(markedFileName));
+					Global.RunWithoutError(() => System.IO.File.Delete(markedFileName));
 				else
 				{
 					try

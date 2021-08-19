@@ -366,7 +366,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 					return;
 				this.isPinned = value;
 				if (this.IsBuiltIn)
-					this.Application.Settings.SetValue(this.isPinnedSettingKey.AsNonNull(), value);
+					this.Application.Settings.SetValue<bool>(this.isPinnedSettingKey.AsNonNull(), value);
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsPinned)));
 			}
 		}

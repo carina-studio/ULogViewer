@@ -630,7 +630,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				}.ShowDialog<MessageDialogResult>(this);
 				if (this.IsOpened)
 				{
-					this.Settings.SetValue(HasLearnAboutLogsReadingAndParsingHintShown, true);
+					this.Settings.SetValue<bool>(HasLearnAboutLogsReadingAndParsingHintShown, true);
 					if (result == MessageDialogResult.Yes)
 						this.OpenLink(LogsReadingAndParsingPageUri);
 				}

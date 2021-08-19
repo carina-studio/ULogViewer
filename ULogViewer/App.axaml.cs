@@ -51,6 +51,8 @@ namespace CarinaStudio.ULogViewer
 		bool isRestartAsAdminRequested;
 		readonly ILogger logger;
 		MainWindow? mainWindow;
+		volatile Settings? persistentState;
+		readonly string persistentStateFilePath;
 		PropertyChangedEventHandler? propertyChangedHandlers;
 		string? restartArgs;
 		volatile Settings? settings;
@@ -93,6 +95,7 @@ namespace CarinaStudio.ULogViewer
 			};
 
 			// prepare file path of settings
+			this.persistentStateFilePath = Path.Combine(this.RootPrivateDirectoryPath, "PersistentState.json");
 			this.settingsFilePath = Path.Combine(this.RootPrivateDirectoryPath, "Settings.json");
 
 			// check whether process is running as admin or not
@@ -355,6 +358,19 @@ namespace CarinaStudio.ULogViewer
 			await this.LoadSettingsAsync();
 			this.settings.SettingChanged += this.OnSettingChanged;
 
+			// load persistent state
+			this.persistentState = new Settings();
+			this.logger.LogDebug("Start loading persistent state");
+			try
+			{
+				await this.persistentState.LoadAsync(this.persistentStateFilePath);
+				this.logger.LogDebug("Persistent state loaded");
+			}
+			catch (Exception ex)
+			{
+				this.logger.LogError(ex, "Failed to load persistent state");
+			}
+
 			// setup shutdown mode
 			desktopLifetime.ShutdownMode = Avalonia.Controls.ShutdownMode.OnExplicitShutdown;
 
@@ -446,6 +462,18 @@ namespace CarinaStudio.ULogViewer
 
 			// save settings
 			await this.SaveSettingsAsync();
+
+			// save persistent state
+			this.logger.LogDebug("Start saving persistent state");
+			try
+			{
+				await this.persistentState.AsNonNull().SaveAsync(this.persistentStateFilePath);
+				this.logger.LogDebug("Persistent state saved");
+			}
+			catch (Exception ex)
+			{
+				this.logger.LogError(ex, "Failed to save persistent state");
+			}
 
 			// save predefined log text filters
 			await PredefinedLogTextFilters.SaveAllAsync();
@@ -841,13 +869,14 @@ namespace CarinaStudio.ULogViewer
 		public bool IsShutdownStarted { get; private set; }
 		public bool IsTesting => false;
 		public ILoggerFactory LoggerFactory => new LoggerFactory(new ILoggerProvider[] { new NLogLoggerProvider() });
+		public ISettings PersistentState { get => this.persistentState ?? throw new InvalidOperationException("Application is not ready."); }
 		event PropertyChangedEventHandler? INotifyPropertyChanged.PropertyChanged
 		{
 			add => this.propertyChangedHandlers += value;
 			remove => this.propertyChangedHandlers -= value;
 		}
 		public string RootPrivateDirectoryPath => Path.GetDirectoryName(Process.GetCurrentProcess().MainModule?.FileName) ?? throw new ArgumentException("Unable to get directory of application.");
-		BaseSettings CarinaStudio.IApplication.Settings { get => this.Settings; }
+		ISettings CarinaStudio.IApplication.Settings { get => this.Settings; }
 		public AppStartupParams StartupParams { get; private set; }
 		public event EventHandler? StringsUpdated;
 		public SynchronizationContext SynchronizationContext { get => this.synchronizationContext ?? throw new InvalidOperationException("Application is not ready."); }

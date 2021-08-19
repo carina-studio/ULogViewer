@@ -8,7 +8,7 @@ namespace CarinaStudio.ULogViewer
 	/// <summary>
 	/// Application settings.
 	/// </summary>
-	class Settings : BaseSettings
+	class Settings : PersistentSettings
 	{
 		/// <summary>
 		/// Interval of updating logs for continuous reading.
@@ -126,6 +126,6 @@ namespace CarinaStudio.ULogViewer
 
 
 		// Version.
-		protected override int Version => 1;
+		public override int Version => 1;
 	}
 }

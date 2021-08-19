@@ -67,7 +67,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public int ContinuousLogReadingUpdateInterval
 		{
 			get => this.Settings.GetValueOrDefault(ULogViewer.Settings.ContinuousLogReadingUpdateInterval);
-			set => this.Settings.SetValue(ULogViewer.Settings.ContinuousLogReadingUpdateInterval, value);
+			set => this.Settings.SetValue<int>(ULogViewer.Settings.ContinuousLogReadingUpdateInterval, value);
 		}
 
 
@@ -77,7 +77,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public AppCulture Culture
 		{
 			get => this.Settings.GetValueOrDefault(ULogViewer.Settings.Culture);
-			set => this.Settings.SetValue(ULogViewer.Settings.Culture, value);
+			set => this.Settings.SetValue<AppCulture>(ULogViewer.Settings.Culture, value);
 		}
 
 
@@ -105,7 +105,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public bool IgnoreCaseOfLogTextFilter
 		{
 			get => this.Settings.GetValueOrDefault(ULogViewer.Settings.IgnoreCaseOfLogTextFilter);
-			set => this.Settings.SetValue(ULogViewer.Settings.IgnoreCaseOfLogTextFilter, value);
+			set => this.Settings.SetValue<bool>(ULogViewer.Settings.IgnoreCaseOfLogTextFilter, value);
 		}
 
 
@@ -127,7 +127,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				if (it == Logs.Profiles.LogProfiles.EmptyProfile)
 					this.Settings.ResetValue(ULogViewer.Settings.InitialLogProfile);
 				else
-					this.Settings.SetValue(ULogViewer.Settings.InitialLogProfile, it.Id);
+					this.Settings.SetValue<string>(ULogViewer.Settings.InitialLogProfile, it.Id);
 			});
 		}
 
@@ -152,7 +152,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					return ULogViewer.Settings.DefaultLogFontFamily;
 				return it;
 			});
-			set => this.Settings.SetValue(ULogViewer.Settings.LogFontFamily, value);
+			set => this.Settings.SetValue<string>(ULogViewer.Settings.LogFontFamily, value);
 		}
 
 
@@ -162,7 +162,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public int LogFontSize
 		{
 			get => this.Settings.GetValueOrDefault(ULogViewer.Settings.LogFontSize);
-			set => this.Settings.SetValue(ULogViewer.Settings.LogFontSize, value);
+			set => this.Settings.SetValue<int>(ULogViewer.Settings.LogFontSize, value);
 		}
 
 
@@ -178,7 +178,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public int MaxContinuousLogCount
 		{
 			get => this.Settings.GetValueOrDefault(ULogViewer.Settings.MaxContinuousLogCount);
-			set => this.Settings.SetValue(ULogViewer.Settings.MaxContinuousLogCount, value);
+			set => this.Settings.SetValue<int>(ULogViewer.Settings.MaxContinuousLogCount, value);
 		}
 
 
@@ -188,7 +188,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public int MaxDisplayLineCountForEachLog
 		{
 			get => this.Settings.GetValueOrDefault(ULogViewer.Settings.MaxDisplayLineCountForEachLog);
-			set => this.Settings.SetValue(ULogViewer.Settings.MaxDisplayLineCountForEachLog, value);
+			set => this.Settings.SetValue<int>(ULogViewer.Settings.MaxDisplayLineCountForEachLog, value);
 		}
 
 
@@ -260,7 +260,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public bool SelectLogFilesWhenNeeded
 		{
 			get => this.Settings.GetValueOrDefault(ULogViewer.Settings.SelectLogFilesWhenNeeded);
-			set => this.Settings.SetValue(ULogViewer.Settings.SelectLogFilesWhenNeeded, value);
+			set => this.Settings.SetValue<bool>(ULogViewer.Settings.SelectLogFilesWhenNeeded, value);
 		}
 
 
@@ -270,7 +270,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public bool SelectLogProfileForNewSession
 		{
 			get => this.Settings.GetValueOrDefault(ULogViewer.Settings.SelectLogProfileForNewSession);
-			set => this.Settings.SetValue(ULogViewer.Settings.SelectLogProfileForNewSession, value);
+			set => this.Settings.SetValue<bool>(ULogViewer.Settings.SelectLogProfileForNewSession, value);
 		}
 
 
@@ -280,7 +280,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public bool SelectWorkingDirectoryWhenNeeded
 		{
 			get => this.Settings.GetValueOrDefault(ULogViewer.Settings.SelectWorkingDirectoryWhenNeeded);
-			set => this.Settings.SetValue(ULogViewer.Settings.SelectWorkingDirectoryWhenNeeded, value);
+			set => this.Settings.SetValue<bool>(ULogViewer.Settings.SelectWorkingDirectoryWhenNeeded, value);
 		}
 
 
@@ -290,7 +290,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public ThemeMode ThemeMode
 		{
 			get => this.Settings.GetValueOrDefault(ULogViewer.Settings.ThemeMode);
-			set => this.Settings.SetValue(ULogViewer.Settings.ThemeMode, value);
+			set => this.Settings.SetValue<ThemeMode>(ULogViewer.Settings.ThemeMode, value);
 		}
 
 
@@ -300,7 +300,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public int UpdateLogFilterDelay
 		{
 			get => this.Settings.GetValueOrDefault(ULogViewer.Settings.UpdateLogFilterDelay);
-			set => this.Settings.SetValue(ULogViewer.Settings.UpdateLogFilterDelay, value);
+			set => this.Settings.SetValue<int>(ULogViewer.Settings.UpdateLogFilterDelay, value);
 		}
 	}
 }
