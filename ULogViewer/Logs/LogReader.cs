@@ -620,9 +620,9 @@ namespace CarinaStudio.ULogViewer.Logs
 						return it;
 					return this.logStringEncoding switch
 					{
-						LogStringEncoding.Json => JsonUtility.DecodeFromJsonString(it),
-						LogStringEncoding.Xml => WebUtility.HtmlDecode(it),
-						_ => it,
+						LogStringEncoding.Json => JsonUtility.DecodeFromJsonString(it.TrimEnd()),
+						LogStringEncoding.Xml => WebUtility.HtmlDecode(it.TrimEnd()),
+						_ => it.TrimEnd(),
 					};
 				});
 				if (Log.HasMultiLineStringProperty(name))
