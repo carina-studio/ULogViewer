@@ -2224,6 +2224,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public IList<Logs.LogLevel> ValidLogLevels { get => this.GetValue(ValidLogLevelsProperty); }
 
 
+		// Wait for all necessary tasks.
+		public override Task WaitForNecessaryTasksAsync()
+		{
+			this.saveMarkedLogsAction.ExecuteIfScheduled();
+			return base.WaitForNecessaryTasksAsync();
+		}
+
+
 		/// <summary>
 		/// Get name of current working directory.
 		/// </summary>
