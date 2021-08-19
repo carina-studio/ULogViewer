@@ -1671,6 +1671,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			if (profile == null)
 				throw new InternalStateCorruptedException("No log profile to reload logs.");
 
+			// save marked logs
+			this.saveMarkedLogsAction.ExecuteIfScheduled();
+
 			// clear logs
 			var isContinuousReading = profile.IsContinuousReading;
 			var dataSourceOptions = new List<LogDataSourceOptions>();
