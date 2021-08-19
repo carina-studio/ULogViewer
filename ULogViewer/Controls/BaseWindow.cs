@@ -2,6 +2,7 @@
 using Avalonia.Animation;
 using Avalonia.Controls;
 using CarinaStudio.Collections;
+using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using Microsoft.Extensions.Logging;
 using System;
@@ -185,6 +186,12 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.Logger.LogError(ex, $"Unable to open link: {uri}");
 			}
 		}
+
+
+		/// <summary>
+		/// Get persistent state.
+		/// </summary>
+		protected ISettings PersistentState { get => this.Application.PersistentState; }
 
 
 		/// <summary>

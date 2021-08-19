@@ -619,7 +619,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			base.OnOpened(e);
 
 			// show hint of 'learn about logs reading and parsing'
-			if (!this.Settings.GetValueOrDefault(HasLearnAboutLogsReadingAndParsingHintShown))
+			if (!this.PersistentState.GetValueOrDefault(HasLearnAboutLogsReadingAndParsingHintShown))
 			{
 				var result = await new MessageDialog()
 				{
@@ -630,7 +630,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				}.ShowDialog<MessageDialogResult>(this);
 				if (this.IsOpened)
 				{
-					this.Settings.SetValue<bool>(HasLearnAboutLogsReadingAndParsingHintShown, true);
+					this.PersistentState.SetValue<bool>(HasLearnAboutLogsReadingAndParsingHintShown, true);
 					if (result == MessageDialogResult.Yes)
 						this.OpenLink(LogsReadingAndParsingPageUri);
 				}

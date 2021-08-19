@@ -366,7 +366,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 					return;
 				this.isPinned = value;
 				if (this.IsBuiltIn)
-					this.Application.Settings.SetValue<bool>(this.isPinnedSettingKey.AsNonNull(), value);
+					this.Application.PersistentState.SetValue<bool>(this.isPinnedSettingKey.AsNonNull(), value);
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsPinned)));
 			}
 		}
@@ -416,7 +416,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 
 			// load profile
 			await ioTaskFactory.StartNew(() => profile.LoadFromJson(jsonDocument.RootElement));
-			profile.isPinned = app.Settings.GetValueOrDefault(profile.isPinnedSettingKey.AsNonNull());
+			profile.isPinned = app.PersistentState.GetValueOrDefault(profile.isPinnedSettingKey.AsNonNull());
 
 			// validate
 			profile.Validate();
