@@ -131,6 +131,7 @@
 	<sys:String x:Key="String.LogPatternEditorDialog.Title">日誌行格式</sys:String>
 
 	<!-- LogProfileIcon -->
+	<sys:String x:Key="String.LogProfileIcon.Book">書籍</sys:String>
 	<sys:String x:Key="String.LogProfileIcon.Cloud">雲端</sys:String>
 	<sys:String x:Key="String.LogProfileIcon.Code">程式碼</sys:String>
 	<sys:String x:Key="String.LogProfileIcon.Computer">電腦</sys:String>

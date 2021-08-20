@@ -137,6 +137,7 @@
 	<!-- LogProfileIcon -->
 	<sys:String x:Key="String.LogProfileIcon.Android">Android</sys:String>
 	<sys:String x:Key="String.LogProfileIcon.Apple">Apple</sys:String>
+	<sys:String x:Key="String.LogProfileIcon.Book">Book</sys:String>
 	<sys:String x:Key="String.LogProfileIcon.Cloud">Cloud</sys:String>
 	<sys:String x:Key="String.LogProfileIcon.Code">Code</sys:String>
 	<sys:String x:Key="String.LogProfileIcon.Computer">Computer</sys:String>

@@ -16,6 +16,10 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// </summary>
 		Apple,
 		/// <summary>
+		/// Book.
+		/// </summary>
+		Book,
+		/// <summary>
 		/// Cloud data.
 		/// </summary>
 		Cloud,
