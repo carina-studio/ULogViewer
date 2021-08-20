@@ -112,7 +112,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		bool isTidLogPropertyVisible;
 		bool isWorkingDirNeededAfterLogProfileSet;
 		Control? lastClickedLogPropertyView;
-		readonly ContextMenu logActionMenu;
 		readonly List<ColumnDefinition> logHeaderColumns = new List<ColumnDefinition>();
 		readonly Control logHeaderContainer;
 		readonly Grid logHeaderGrid;
@@ -177,7 +176,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// setup controls
 			this.copyLogPropertyMenuItem = this.FindControl<MenuItem>(nameof(copyLogPropertyMenuItem)).AsNonNull();
-			this.logActionMenu = ((ContextMenu)this.Resources["logActionMenu"].AsNonNull()).Also(it =>
+			((ContextMenu)this.Resources["logActionMenu"].AsNonNull()).Also(it =>
 			{
 				it.MenuOpened += (_, e) =>
 				{
@@ -1533,8 +1532,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (e.InitialPressMouseButton == MouseButton.Left)
 				this.isPointerPressedOnLogListBox = false;
-			if (e.InitialPressMouseButton == MouseButton.Right)
-				this.ShowLogActionsMenu();
 		}
 
 
@@ -1680,13 +1677,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				switch (e.Key)
 				{
-					case Key.Apps:
-						if (e.Source is not TextBox)
-						{
-							this.ShowLogActionsMenu();
-							e.Handled = true;
-						}
-						break;
 					case Key.End:
 						if (e.Source is not TextBox)
 						{
@@ -2385,14 +2375,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				this.Logger.LogError(ex, "Unable to open system file explorer");
 			}
-		}
-
-
-		// Show menu of log actions.
-		void ShowLogActionsMenu()
-		{
-			if (this.logListBox.IsPointerOver && this.HasLogProfile)
-				this.logActionMenu.Open(this);
 		}
 
 

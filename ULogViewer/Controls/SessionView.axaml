@@ -323,7 +323,7 @@
 		<ProgressBar Grid.ColumnSpan="3" Grid.Row="1" IsIndeterminate="True" IsVisible="{Binding IsProcessingLogs}"/>
 
 		<!-- Logs -->
-		<Grid Grid.Row="2" RowDefinitions="Auto,*">
+		<Grid Background="{x:Static Brushes.Transparent}" DragDrop.AllowDrop="True" Grid.Row="2" RowDefinitions="Auto,*">
 
 			<!-- Header -->
 			<Border Background="{StaticResource Brush.SessionView.LogHeader.Background}">
@@ -334,7 +334,7 @@
 			</Border>
 
 			<!-- ListBox -->
-			<ListBox Name="logListBox" AutoScrollToSelectedItem="False" Background="{StaticResource Brush.SessionView.LogListBox.Background}" DoubleTapped="OnLogListBoxDoubleTapped" DragDrop.AllowDrop="True" Grid.Row="1" HorizontalAlignment="Stretch" Items="{Binding Logs}" Padding="{StaticResource Thickness.SessionView.LogListBox.Padding}" ScrollViewer.HorizontalScrollBarVisibility="Visible" SelectionChanged="OnLogListBoxSelectionChanged" SelectionMode="Multiple" VirtualizationMode="Simple">
+			<ListBox Name="logListBox" AutoScrollToSelectedItem="False" Background="{StaticResource Brush.SessionView.LogListBox.Background}" ContextMenu="{StaticResource logActionMenu}" DoubleTapped="OnLogListBoxDoubleTapped" Grid.Row="1" HorizontalAlignment="Stretch" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" Items="{Binding Logs}" Padding="{StaticResource Thickness.SessionView.LogListBox.Padding}" ScrollViewer.HorizontalScrollBarVisibility="Visible" SelectionChanged="OnLogListBoxSelectionChanged" SelectionMode="Multiple" VirtualizationMode="Simple">
 				<ListBox.Styles>
 					<Style Selector="ListBoxItem">
 						<Setter Property="HorizontalAlignment" Value="Stretch"/>
