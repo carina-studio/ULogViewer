@@ -39,7 +39,6 @@ namespace CarinaStudio.ULogViewer
 	class App : Application, IApplication
 	{
 		// Constants.
-		const string PackageInfoUri = "https://raw.githubusercontent.com/carina-studio/ULogViewer/master/PackageInfo.json";
 		const string TextBoxFontFamilyResourceKey = "FontFamily.TextBox";
 		const int UpdateCheckingInterval = 3600000; // 1 hr
 
@@ -165,7 +164,7 @@ namespace CarinaStudio.ULogViewer
 			this.logger.LogInformation("Start checking update");
 			try
 			{
-				var request = WebRequest.Create(PackageInfoUri);
+				var request = WebRequest.Create(Uris.AppPackageInfo);
 				var updateInfo = await Task.Run(() =>
 				{
 					// get response

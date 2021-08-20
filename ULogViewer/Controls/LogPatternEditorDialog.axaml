@@ -3,6 +3,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 				xmlns:sys="clr-namespace:System;assembly=mscorlib"
+				xmlns:app="using:CarinaStudio.ULogViewer"
 				xmlns:appControls="clr-namespace:CarinaStudio.ULogViewer.Controls;assembly=ULogViewer"
 				xmlns:appConverters="clr-namespace:CarinaStudio.ULogViewer.Converters;assembly=ULogViewer"
 				xmlns:appLogs="clr-namespace:CarinaStudio.ULogViewer.Logs;assembly=ULogViewer"
@@ -57,7 +58,7 @@
 				<ToggleButton Name="addLogPropertyGroupButton" Classes="Browse" Command="{Binding $parent[Window].ShowAddLogPropertyGroupMenu}" Grid.Column="1"/>
 			</Grid>
 			<TextBlock Classes="Dialog_Description" Text="{DynamicResource String.LogPatternEditorDialog.Regex.Description}"/>
-			<TextBlock Classes="Dialog_Description_Link" PointerReleased="OnLinkDescriptionPointerReleased" Tag="https://docs.microsoft.com/en-us/dotnet/standard/base-types/regular-expression-language-quick-reference" Text="{DynamicResource String.Common.RegularExpression.Reference}"/>
+			<TextBlock Classes="Dialog_Description_Link" PointerReleased="OnLinkDescriptionPointerReleased" Tag="{x:Static app:Uris.RegexReference}" Text="{DynamicResource String.Common.RegularExpression.Reference}"/>
 			<Separator Classes="Dialog_Separator_Horizontal"/>
 
 			<!-- Repeatable -->

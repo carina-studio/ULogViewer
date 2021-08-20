@@ -7,6 +7,7 @@
 				xmlns:ia="using:Avalonia.Xaml.Interactivity"
 				xmlns:iaCore="using:Avalonia.Xaml.Interactions.Core"
 				xmlns:ma="using:Markdown.Avalonia"
+				xmlns:app="using:CarinaStudio.ULogViewer"
 				xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
 				xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
@@ -35,7 +36,7 @@
 			<StackPanel Orientation="Vertical">
 				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogStringPropertyDialog.FindText}"/>
 				<appControls:RegexTextBox Name="findTextTextBox" PropertyChanged="OnFindTextTextBoxPropertyChanged" Watermark="{DynamicResource String.Common.RegularExpression}"/>
-				<TextBlock Classes="Dialog_Description_Link" PointerReleased="OnLinkDescriptionPointerReleased" Tag="https://docs.microsoft.com/en-us/dotnet/standard/base-types/regular-expression-language-quick-reference" Text="{DynamicResource String.Common.RegularExpression.Reference}"/>
+				<TextBlock Classes="Dialog_Description_Link" PointerReleased="OnLinkDescriptionPointerReleased" Tag="{x:Static app:Uris.RegexReference}" Text="{DynamicResource String.Common.RegularExpression.Reference}"/>
 				<Separator Classes="Dialog_Separator_Horizontal"/>
 			</StackPanel>
 

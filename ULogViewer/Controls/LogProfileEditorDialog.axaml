@@ -253,7 +253,7 @@
 						</iaCore:DataTriggerBehavior>
 					</ia:Interaction.Behaviors>
 				</TextBox>
-				<TextBlock Classes="Dialog_Description_Link" PointerReleased="OnLinkDescriptionPointerReleased" Tag="https://docs.microsoft.com/en-us/dotnet/standard/base-types/standard-date-and-time-format-strings" Text="{DynamicResource String.LogProfileEditorDialog.FormatDescription}"/>
+				<TextBlock Classes="Dialog_Description_Link" PointerReleased="OnLinkDescriptionPointerReleased" Tag="{x:Static app:Uris.DateTimeFormatReference}" Text="{DynamicResource String.LogProfileEditorDialog.FormatDescription}"/>
 				<Separator Classes="Dialog_Separator_Large_Horizontal"/>
 
 				<!-- Header -->
@@ -309,7 +309,7 @@
 				<!-- Timestamp format for displaying -->
 				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.TimestampFormatForDisplaying}"/>
 				<TextBox Name="timestampFormatForDisplayingTextBox" MaxLength="256"/>
-				<TextBlock Classes="Dialog_Description_Link" PointerReleased="OnLinkDescriptionPointerReleased" Tag="https://docs.microsoft.com/en-us/dotnet/standard/base-types/standard-date-and-time-format-strings" Text="{DynamicResource String.LogProfileEditorDialog.FormatDescription}"/>
+				<TextBlock Classes="Dialog_Description_Link" PointerReleased="OnLinkDescriptionPointerReleased" Tag="{x:Static app:Uris.DateTimeFormatReference}" Text="{DynamicResource String.LogProfileEditorDialog.FormatDescription}"/>
 				<Separator Classes="Dialog_Separator_Horizontal"/>
 
 				<!-- Color indicator -->
@@ -338,7 +338,7 @@
 					<ToggleButton Name="insertLogWritingFormatSyntaxButton" Classes="Browse" Command="{Binding $parent[Window].ShowInsertLogWritingFormatSyntaxMenu}" Grid.Column="1"/>
 				</Grid>
 				<TextBlock Classes="Dialog_Description" Text="{DynamicResource String.LogProfileEditorDialog.LogWritingFormat.Description}"/>
-				<TextBlock Classes="Dialog_Description_Link" PointerReleased="OnLinkDescriptionPointerReleased" Tag="https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/tokens/interpolated#structure-of-an-interpolated-string" Text="{DynamicResource String.LogProfileEditorDialog.FormatDescription}"/>
+				<TextBlock Classes="Dialog_Description_Link" PointerReleased="OnLinkDescriptionPointerReleased" Tag="{x:Static app:Uris.StringInterpolationReference}" Text="{DynamicResource String.LogProfileEditorDialog.FormatDescription}"/>
 				<Separator Classes="Dialog_Separator_Horizontal"/>
 				
 				<!-- Log level map -->
@@ -382,7 +382,7 @@
 				<!-- Timestamp format for writing -->
 				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.TimestampFormatForWriting}"/>
 				<TextBox Name="timestampFormatForWritingTextBox" MaxLength="256" Watermark="{DynamicResource String.LogProfileEditorDialog.TimestampFormatForWriting.Watermark}"/>
-				<TextBlock Classes="Dialog_Description_Link" PointerReleased="OnLinkDescriptionPointerReleased" Tag="https://docs.microsoft.com/en-us/dotnet/standard/base-types/standard-date-and-time-format-strings" Text="{DynamicResource String.LogProfileEditorDialog.FormatDescription}"/>
+				<TextBlock Classes="Dialog_Description_Link" PointerReleased="OnLinkDescriptionPointerReleased" Tag="{x:Static app:Uris.DateTimeFormatReference}" Text="{DynamicResource String.LogProfileEditorDialog.FormatDescription}"/>
 
 			</StackPanel>
 		</ScrollViewer>

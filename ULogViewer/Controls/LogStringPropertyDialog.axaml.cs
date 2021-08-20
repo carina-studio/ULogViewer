@@ -245,7 +245,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (e.InitialPressMouseButton != MouseButton.Left)
 				return;
-			if ((sender as Control)?.Tag is string uri)
+			if ((sender as Control)?.Tag is Uri uri)
 				this.OpenLink(uri);
 		}
 

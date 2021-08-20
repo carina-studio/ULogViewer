@@ -37,7 +37,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// <summary>
 		/// URI of 'How ULogViewer read and parse logs' page.
 		/// </summary>
-		public const string LogsReadingAndParsingPageUri = "https://carina-studio.github.io/ULogViewer/logs_reading_flow.html";
+		public static readonly Uri LogsReadingAndParsingPageUri = new Uri("https://carina-studio.github.io/ULogViewer/logs_reading_flow.html");
 
 
 		// Static fields.
@@ -525,7 +525,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (e.InitialPressMouseButton != MouseButton.Left)
 				return;
-			if (sender is Control control && control.Tag is string uri)
+			if (sender is Control control && control.Tag is Uri uri)
 				this.OpenLink(uri);
 		}
 
