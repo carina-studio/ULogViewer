@@ -4,5 +4,9 @@
 
 	<!-- Common -->
 	<sys:String x:Key="String.Common.Administrator">Superuser</sys:String>
+
+	<!-- SessionView -->
+	<sys:String x:Key="String.SessionView.ShowFileInExplorer">Show file in File Manager</sys:String>
+	<sys:String x:Key="String.SessionView.ShowWorkingDirectoryInExplorer">Show working directory in File Manager</sys:String>
 	
 </ResourceDictionary>

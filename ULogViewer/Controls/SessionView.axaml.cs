@@ -1150,8 +1150,23 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Check whether opening system file explorer is supported or not.
-		bool IsOpeningExplorerSupported { get; } = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) 
-			|| RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
+		bool IsOpeningExplorerSupported { get; } = Global.Run(() =>
+		{
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+				return true;
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+				return true;
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+			{
+				return App.Current.LinuxDistribution switch
+				{
+					LinuxDistribution.Fedora
+					or LinuxDistribution.Ubuntu => true,
+					_ => false,
+				};
+			}
+			return false;
+		});
 
 
 		// Get or set whether scrolling to latest log is needed or not.
@@ -2343,6 +2358,22 @@ namespace CarinaStudio.ULogViewer.Controls
 						: $"-R \"{path}\"";
 					it.Verb = "open";
 				});
+			}
+			else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+			{
+				switch (App.Current.LinuxDistribution)
+				{
+					case LinuxDistribution.Fedora:
+					case LinuxDistribution.Ubuntu:
+						process.StartInfo.Let(it =>
+						{
+							it.FileName = "nautilus";
+							it.Arguments = $"--browser \"{path}\"";
+						});
+						break;
+					default:
+						return;
+				}
 			}
 			else
 				return;
