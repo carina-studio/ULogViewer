@@ -95,9 +95,15 @@
 				<!-- Select log profiles -->
 				<Button Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].SelectAndSetLogProfileCommand}" ToolTip.Tip="{DynamicResource String.SessionView.SetLogProfile}">
 					<Grid Classes="SessionView_ToolBar_Button_Icon">
-						<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.CreateLogProfile}" IsVisible="{Binding !$parent[UserControl].HasLogProfile}"/>
-						<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.LogProfile}" IsVisible="{Binding $parent[UserControl].HasLogProfile}"/>
+						<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.LogProfile}"/>
 					</Grid>
+				</Button>
+
+				<!-- Edit log profile -->
+				<Button Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].EditLogProfileCommand}" IsVisible="{Binding $parent[UserControl].HasLogProfile}" ToolTip.Tip="{DynamicResource String.LogProfileSelectionDialog.EditLogProfile}">
+					<Border Classes="SessionView_ToolBar_Button_Icon">
+						<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.EditLogProfile}"/>
+					</Border>
 				</Button>
 
 				<!-- Set working directory -->

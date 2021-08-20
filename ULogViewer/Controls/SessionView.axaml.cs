@@ -91,6 +91,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly MutableObservableBoolean canCopyLogProperty = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canCopySelectedLogs = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canCopySelectedLogsWithFileNames = new MutableObservableBoolean();
+		readonly MutableObservableBoolean canEditLogProfile = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canFilterLogsByPid = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canFilterLogsByTid = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canMarkUnmarkSelectedLogs = new MutableObservableBoolean();
@@ -146,6 +147,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.CopyLogPropertyCommand = ReactiveCommand.Create(this.CopyLogProperty, this.canCopyLogProperty);
 			this.CopySelectedLogsCommand = ReactiveCommand.Create(this.CopySelectedLogs, this.canCopySelectedLogs);
 			this.CopySelectedLogsWithFileNamesCommand = ReactiveCommand.Create(this.CopySelectedLogsWithFileNames, this.canCopySelectedLogsWithFileNames);
+			this.EditLogProfileCommand = ReactiveCommand.Create(this.EditLogProfile, this.canEditLogProfile);
 			this.FilterLogsByProcessIdCommand = ReactiveCommand.Create<bool>(this.FilterLogsByProcessId, this.canFilterLogsByPid);
 			this.FilterLogsByThreadIdCommand = ReactiveCommand.Create<bool>(this.FilterLogsByThreadId, this.canFilterLogsByTid);
 			this.MarkUnmarkSelectedLogsCommand = ReactiveCommand.Create(this.MarkUnmarkSelectedLogs, this.canMarkUnmarkSelectedLogs);
@@ -399,6 +401,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			var profile = session.LogProfile;
 			if (profile != null)
 			{
+				this.canEditLogProfile.Update(!profile.IsBuiltIn);
 				this.SetValue<bool>(HasLogProfileProperty, true);
 				if (session.IsLogFileNeeded)
 					this.isLogFileNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(Settings.SelectLogFilesWhenNeeded);
@@ -925,6 +928,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.canShowWorkingDirectoryInExplorer.Update(false);
 
 			// update properties
+			this.canEditLogProfile.Update(false);
 			this.SetValue<bool>(HasLogProfileProperty, false);
 			this.validLogLevels.Clear();
 
@@ -1068,6 +1072,35 @@ namespace CarinaStudio.ULogViewer.Controls
 			// complete
 			return true;
 		}
+
+
+		// Edit current log profile.
+		void EditLogProfile()
+		{
+			// check state
+			if (!this.canEditLogProfile.Value)
+				return;
+			var window = this.FindLogicalAncestorOfType<Window>();
+			if (window == null)
+				return;
+
+			// get profile
+			if (this.DataContext is not Session session)
+				return;
+			var profile = session.LogProfile;
+			if (profile == null)
+				return;
+
+			// edit log profile
+			_ = new LogProfileEditorDialog()
+			{
+				LogProfile = profile,
+			}.ShowDialog(window);
+		}
+
+
+		// Command of editing current log profile.
+		ICommand EditLogProfileCommand { get; }
 
 
 		// Edit given predefined log text filter.
@@ -1950,12 +1983,16 @@ namespace CarinaStudio.ULogViewer.Controls
 					{
 						if (profile != null)
 						{
+							this.canEditLogProfile.Update(!profile.IsBuiltIn);
 							this.SetValue<bool>(HasLogProfileProperty, true);
 							if (!profile.IsContinuousReading)
 								this.IsScrollingToLatestLogNeeded = false;
 						}
 						else
+						{
+							this.canEditLogProfile.Update(false);
 							this.SetValue<bool>(HasLogProfileProperty, false);
+						}
 					});
 					break;
 				case nameof(Session.ValidLogLevels):
