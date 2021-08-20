@@ -114,7 +114,11 @@ namespace CarinaStudio.ULogViewer
 		static AppBuilder BuildAvaloniaApp() => AppBuilder.Configure<App>()
 			.UsePlatformDetect()
 			.UseReactiveUI()
-			.LogToTrace();
+			.LogToTrace().Also(it =>
+			{
+				if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+					it.With(new X11PlatformOptions());
+			});
 
 
 		// Check application update.
