@@ -30,6 +30,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			"DummyLog",
 #endif
 			"GitLog",
+			"GitLogSimple",
 #if DEBUG
 			"ULogViewerLog",
 			"ULogViewerMemoryLog",

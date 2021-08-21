@@ -78,6 +78,7 @@
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/AndroidFileLog.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/DummyLog.json" />
 	  <EmbeddedResource Include="Logs/Profiles/BuiltIn/GitLog.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/GitLogSimple.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/ULogViewerLog.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/ULogViewerMemoryLog.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/WindowsApplicationEventLogs.json" />
