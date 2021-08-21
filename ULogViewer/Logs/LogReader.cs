@@ -698,6 +698,24 @@ namespace CarinaStudio.ULogViewer.Logs
 			var syncContext = this.SynchronizationContext;
 			var isContinuousReading = this.isContinuousReading;
 			var isFirstMatchedLine = true;
+			var flushContinuousReadingLog = new Action<int>(updateInterval =>
+			{
+				var log = readLog;
+				if (log != null)
+				{
+					readLog = null;
+					this.pendingLogsSyncContext.Post(() =>
+					{
+						if (this.pendingLogsReadingToken != readingToken)
+						{
+							this.pendingLogsReadingToken = readingToken;
+							this.pendingLogs.Clear();
+						}
+						this.pendingLogs.Add(log);
+						this.flushPendingLogsAction.Schedule(updateInterval);
+					});
+				}
+			});
 			var dataSourceOptions = this.DataSource.CreationOptions;
 			var isReadingFromFile = dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName));
 			var stringPool = new StringPool();
@@ -714,6 +732,9 @@ namespace CarinaStudio.ULogViewer.Logs
 				while (logLine != null && !cancellationToken.IsCancellationRequested)
 				{
 					var logPattern = logPatterns[logPatternIndex];
+					var updateInterval = this.updateInterval.HasValue
+							? this.updateInterval.Value
+							: (isContinuousReading ? DefaultContinuousUpdateInterval : DefaultUpdateInterval);
 					try
 					{
 						var match = logPattern.Regex.Match(logLine);
@@ -744,7 +765,9 @@ namespace CarinaStudio.ULogViewer.Logs
 									if (logBuilder.IsNotEmpty())
 									{
 										readLog = logBuilder.BuildAndReset();
-										if (!isContinuousReading)
+										if (isContinuousReading)
+											flushContinuousReadingLog(updateInterval);
+										else
 											readLogs.Add(readLog);
 									}
 									logPatternIndex = 0;
@@ -770,7 +793,9 @@ namespace CarinaStudio.ULogViewer.Logs
 							if (logBuilder.IsNotEmpty())
 							{
 								readLog = logBuilder.BuildAndReset();
-								if (!isContinuousReading)
+								if (isContinuousReading)
+									flushContinuousReadingLog(updateInterval);
+								else
 									readLogs.Add(readLog);
 							}
 
@@ -819,7 +844,9 @@ namespace CarinaStudio.ULogViewer.Logs
 							if (logBuilder.IsNotEmpty())
 							{
 								readLog = logBuilder.BuildAndReset();
-								if (!isContinuousReading)
+								if (isContinuousReading)
+									flushContinuousReadingLog(updateInterval);
+								else
 									readLogs.Add(readLog);
 							}
 
@@ -855,27 +882,8 @@ namespace CarinaStudio.ULogViewer.Logs
 					}
 					finally
 					{
-						var updateInterval = this.updateInterval.HasValue
-							? this.updateInterval.Value
-							: (isContinuousReading ? DefaultContinuousUpdateInterval : DefaultUpdateInterval);
 						if (isContinuousReading)
-						{
-							var log = readLog;
-							if (log != null)
-							{
-								readLog = null;
-								this.pendingLogsSyncContext.Post(() =>
-								{
-									if (this.pendingLogsReadingToken != readingToken)
-									{
-										this.pendingLogsReadingToken = readingToken;
-										this.pendingLogs.Clear();
-									}
-									this.pendingLogs.Add(log);
-									this.flushPendingLogsAction.Schedule(updateInterval);
-								});
-							}
-						}
+							flushContinuousReadingLog(updateInterval);
 						else if (readLogs.Count >= LogsReadingChunkSize || (stopWatch.ElapsedMilliseconds - startReadingTime) >= updateInterval)
 						{
 							var logArray = readLogs.ToArray();

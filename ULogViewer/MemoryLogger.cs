@@ -150,16 +150,18 @@ namespace CarinaStudio.ULogViewer
 		/// </summary>
 		public static void Log(string timestamp, string pid, string tid, string level, string logger, string message, string exception)
 		{
-			var logs = new string[] { $"{timestamp} {pid} {tid} {level} {logger}: {message}" };
-			if (!string.IsNullOrEmpty(exception))
-				logs = (logs[0] + " " + exception).Split("\n");
+			var messages = Global.Run(() =>
+			{
+				if (string.IsNullOrEmpty(exception))
+					return new string[] { message };
+				message = $"{message} {exception}";
+				return message.Split('\n');
+			});
 			lock (logHolderLock)
 			{
-				for (int i = 0, lineCount = logs.Length; i < lineCount; ++i)
+				for (int i = 0, lineCount = messages.Length; i < lineCount; ++i)
 				{
-					var log = i > 0
-						? " " + logs[i]
-						: logs[i];
+					var log = $"{timestamp} {pid} {tid} {level} {logger}: {messages[i]}";
 					var logHolder = new LogHolder(nextLogHolderIndex++, log);
 					if (logHolderListHead == null)
 						logHolderListHead = logHolder;

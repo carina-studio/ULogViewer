@@ -22,11 +22,6 @@
 	"LogPatterns": [
 		{
 			"Regex": "^(?<Timestamp>[^\\s]+[\\s]+[^\\s]+)[\\s]+(?<ProcessId>[\\d]+)[\\s]+(?<ThreadId>[\\d]+)[\\s]+(?<Level>[\\w]+)[\\s]+(?<SourceName>[^\\:]*)\\:[\\s](?<Message>.*)$"
-		},
-		{
-			"Regex": "^[\\s](?<Message>.*)$",
-			"IsSkippable": true,
-			"IsRepeatable": true
 		}
 	],
 	"LogWritingFormat": "{Timestamp} {ProcessId,5} {ThreadId,5} {Level,5} {SourceName}: {Message}",
