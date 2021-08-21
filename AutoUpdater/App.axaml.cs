@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
+using System.Net;
 using System.Runtime.InteropServices;
 using System.Threading;
 
@@ -80,7 +82,7 @@ namespace CarinaStudio.AutoUpdater
 				{
 					foreach (var path in Directory.EnumerateDirectories(srcSubDirectory))
 					{
-						if (path != destDirectory)
+						if (path != destDirectory && !Path.GetFileName(path).StartsWith("AutoUpdte-"))
 							srcDirectories.Enqueue(path);
 					}
 				}
@@ -325,17 +327,42 @@ namespace CarinaStudio.AutoUpdater
 				var tempDirectory = Directory.CreateDirectory(tempDirectoryPath);
 
 				// backup current application files
-				this.UpdateMessage("Backup application...");
+				this.UpdateMessage($"Backup {this.ApplicationName}...");
 				appBackupDirectoryPath = Path.Combine(appDirectoryPath, $"AutoUpdte-Backup-{DateTime.Now.ToBinary()}");
 				var appBackupDirectory = Directory.CreateDirectory(appBackupDirectoryPath);
 				this.CopyFiles(appDirectoryPath, appBackupDirectoryPath, true, true);
 
-				Thread.Sleep(5000);
-
 				// cancellation check
 				if (this.isCancellationRequested)
 					return;
-				
+
+				// download update package
+				this.UpdateMessage("Downloading update package...");
+				using var webResponse = WebRequest.Create(this.UpdatePackageUri.AsNonNull()).GetResponse();
+				using var webStream = webResponse.GetResponseStream();
+				var updatePackagePath = Path.Combine(tempDirectoryPath, Path.GetFileName(webResponse.ResponseUri.LocalPath));
+				var updatePackageSize = webResponse.ContentLength;
+				var downloadedSize = 0L;
+				if (updatePackageSize > 0)
+					this.UpdateProgressPercentage(0);
+				using (var fileStream = new FileStream(updatePackagePath, FileMode.Create, FileAccess.Write))
+				{
+					var buffer = new byte[4096];
+					var readCount = webStream.Read(buffer, 0, buffer.Length);
+					while (readCount > 0)
+					{
+						downloadedSize += readCount;
+						if (updatePackageSize > 0)
+							this.UpdateProgressPercentage((downloadedSize * 100.0) / updatePackageSize);
+						fileStream.Write(buffer, 0, readCount);
+						readCount = webStream.Read(buffer, 0, buffer.Length);
+					}
+				}
+
+				// extract and update application files
+				this.UpdateMessage($"Updating {this.ApplicationName}...");
+				this.UpdateProgressPercentage(double.NaN);
+				ZipFile.ExtractToDirectory(updatePackagePath, appDirectoryPath, true);
 			}
 			catch (Exception ex)
 			{
@@ -348,7 +375,7 @@ namespace CarinaStudio.AutoUpdater
 				{
 					if (!string.IsNullOrWhiteSpace(appBackupDirectoryPath))
 					{
-						this.UpdateMessage("Restoring application...");
+						this.UpdateMessage($"Restoring {this.ApplicationName}...");
 						this.UpdateProgressPercentage(double.NaN);
 						this.CopyFiles(appBackupDirectoryPath, appDirectoryPath, false, false);
 					}
