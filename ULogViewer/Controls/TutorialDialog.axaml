@@ -23,9 +23,10 @@
 
 			<!-- Message -->
 			<TextBlock Classes="Dialog_Label" Text="{Binding $parent[Window].Message}" TextWrapping="Wrap"/>
-			<Separator Classes="Dialog_Separator_Small_Horizontal"/>
+			<Separator Classes="Dialog_Separator_Horizontal"/>
 
 			<!-- Screenshot -->
+			<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.TutorialDialog.Screenshot}"/>
 			<Border BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="1" Height="{StaticResource Double.TutorialDialog.Screenshot.Height}" HorizontalAlignment="Stretch">
 				<Image HorizontalAlignment="Stretch" Source="{Binding $parent[Window].Screenshot}" Stretch="Fill" StretchDirection="Both" VerticalAlignment="Stretch"/>
 			</Border>

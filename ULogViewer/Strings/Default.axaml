@@ -382,6 +382,7 @@
 	<!-- TutorialDialog -->
 	<sys:String x:Key="String.TutorialDialog.LogProfileSelection">Click the button on the left hand side of toolbar to select log profile and start viewing logs.</sys:String>
 	<sys:String x:Key="String.TutorialDialog.OtherActions">Click the button on the right hand side of toolbar to open options menu.</sys:String>
+	<sys:String x:Key="String.TutorialDialog.Screenshot">Sample screen</sys:String>
 	<sys:String x:Key="String.TutorialDialog.Title">Tutorial</sys:String>
 
 	<!-- VisibleLogPropertyEditorDialog -->
