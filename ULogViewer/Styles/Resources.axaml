@@ -165,6 +165,10 @@
 	<!-- TextInputDialog -->
 	<sys:Double x:Key="Double.TextInputDialog.Width">450</sys:Double>
 
+	<!-- TutorialDialog -->
+	<sys:Double x:Key="Double.TutorialDialog.Screenshot.Height">200</sys:Double>
+	<sys:Double x:Key="Double.TutorialDialog.Width">440</sys:Double>
+
 	<!-- VisibleLogPropertyEditorDialog -->
 	<sys:Double x:Key="Double.VisibleLogPropertyEditorDialog.Width">400</sys:Double>
 	

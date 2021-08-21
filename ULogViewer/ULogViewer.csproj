@@ -27,6 +27,8 @@
     <AvaloniaResource Include="Resources/AppIcon_32px.png" />
     <AvaloniaResource Include="Resources/AppIcon_512px.png" />
     <AvaloniaResource Include="Resources/AppIcon_64px.png" />
+    <AvaloniaResource Include="Resources/Tutorial_OtherActions.png" />
+    <AvaloniaResource Include="Resources/Tutorial_SelectLogProfile.png" />
     <AvaloniaResource Include="Strings/Default.axaml" />
 		<AvaloniaResource Include="Strings/Default-Linux.axaml" />
 		<AvaloniaResource Include="Strings/Default-OSX.axaml" />

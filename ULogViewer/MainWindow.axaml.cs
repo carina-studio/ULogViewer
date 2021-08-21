@@ -4,6 +4,8 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.Templates;
+using Avalonia.Media.Imaging;
+using Avalonia.Platform;
 using Avalonia.VisualTree;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
@@ -11,7 +13,6 @@ using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Controls;
 using CarinaStudio.ULogViewer.Input;
 using CarinaStudio.ULogViewer.ViewModels;
-using CarinaStudio.Windows.Input;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections;
@@ -27,6 +28,8 @@ namespace CarinaStudio.ULogViewer
 	partial class MainWindow : BaseWindow
 	{
 		// Static fields.
+		static readonly SettingKey<bool> HadLogProfileSelectionTutorialShownSettingKey = new SettingKey<bool>("Tutorial.LogProfileSelection.HadShown");
+		static readonly SettingKey<bool> HadOtherActionsTutorialShownSettingKey = new SettingKey<bool>("Tutorial.OtherActions.HadShown");
 		static readonly SettingKey<int> WindowHeightSettingKey = new SettingKey<int>("MainWindow.Height", 600);
 		static readonly SettingKey<WindowState> WindowStateSettingKey = new SettingKey<WindowState>("MainWindow.State", WindowState.Maximized);
 		static readonly SettingKey<int> WindowWidthSettingKey = new SettingKey<int>("MainWindow.Width", 800);
@@ -39,6 +42,7 @@ namespace CarinaStudio.ULogViewer
 
 		// Fields.
 		readonly ScheduledAction focusOnTabItemContentAction;
+		bool isShowingInitialTutorials;
 		AppUpdateInfo? notifiedAppUpdateInfo;
 		readonly ScheduledAction reAttachToWorkspaceAction;
 		readonly ScheduledAction saveWindowSizeAction;
@@ -417,18 +421,9 @@ namespace CarinaStudio.ULogViewer
 			// select log profile
 			this.SynchronizationContext.PostDelayed(() =>
 			{
-				if (this.DataContext is Workspace workspace)
-				{
-					workspace.ActiveSession?.Let(it =>
-					{
-						if (it.LogProfile == null 
-							&& this.Settings.GetValueOrDefault(Settings.SelectLogProfileForNewSession)
-							&& !this.HasDialogs)
-						{
-							this.FindSessionView(it)?.SelectAndSetLogProfile();
-						}
-					});
-				}
+				this.ShowInitTutorials();
+				if (!this.isShowingInitialTutorials)
+					this.SelectAndSetLogProfile();
 			}, 1000); // In order to show dialog at correct position on Linux, we need delay to make sure bounds of main window is set.
 
 			// notify application update
@@ -573,6 +568,82 @@ namespace CarinaStudio.ULogViewer
 				workspace.ActiveSession = workspace.Sessions[0];
 			else
 				workspace.ActiveSession = workspace.CreateSession();
+		}
+
+
+		// Select log profile and set if current session has no log profile.
+		void SelectAndSetLogProfile()
+		{
+			// check state
+			if (this.isShowingInitialTutorials || this.IsClosed)
+				return;
+			if (this.DataContext is not Workspace workspace)
+				return;
+
+			// select and set log profile
+			workspace.ActiveSession?.Let(it =>
+			{
+				if (it.LogProfile == null
+					&& this.Settings.GetValueOrDefault(Settings.SelectLogProfileForNewSession)
+					&& !this.HasDialogs)
+				{
+					this.FindSessionView(it)?.SelectAndSetLogProfile();
+				}
+			});
+		}
+
+
+		// Show initial tutorials.
+		async void ShowInitTutorials()
+		{
+			// check state
+			if (this.isShowingInitialTutorials || this.IsClosed)
+				return;
+
+			// show log profile selection tutorial
+			if (!this.PersistentState.GetValueOrDefault(HadLogProfileSelectionTutorialShownSettingKey))
+			{
+				// prepare tutorial
+				var assets = AvaloniaLocator.Current.GetService<IAssetLoader>();
+				using var stream = assets.Open(new Uri("avares://ULogViewer/Resources/Tutorial_SelectLogProfile.png"));
+				var screenshot = new Bitmap(stream);
+
+				// show tutorial
+				this.PersistentState.SetValue<bool>(HadLogProfileSelectionTutorialShownSettingKey, true);
+				this.isShowingInitialTutorials = true;
+				await new TutorialDialog()
+				{
+					Message = this.Application.GetString("TutorialDialog.LogProfileSelection"),
+					Screenshot = screenshot,
+				}.ShowDialog(this);
+				this.isShowingInitialTutorials = false;
+				this.SynchronizationContext.Post(this.ShowInitTutorials);
+				return;
+			}
+
+			// show other actions tutorial
+			if (!this.PersistentState.GetValueOrDefault(HadOtherActionsTutorialShownSettingKey))
+			{
+				// prepare tutorial
+				var assets = AvaloniaLocator.Current.GetService<IAssetLoader>();
+				using var stream = assets.Open(new Uri("avares://ULogViewer/Resources/Tutorial_OtherActions.png"));
+				var screenshot = new Bitmap(stream);
+
+				// show tutorial
+				this.PersistentState.SetValue<bool>(HadOtherActionsTutorialShownSettingKey, true);
+				this.isShowingInitialTutorials = true;
+				await new TutorialDialog()
+				{
+					Message = this.Application.GetString("TutorialDialog.OtherActions"),
+					Screenshot = screenshot,
+				}.ShowDialog(this);
+				this.isShowingInitialTutorials = false;
+				this.SynchronizationContext.Post(this.ShowInitTutorials);
+				return;
+			}
+
+			// select and set log profile after all initial tutorials had shown
+			this.SynchronizationContext.Post(this.SelectAndSetLogProfile);
 		}
 	}
 }

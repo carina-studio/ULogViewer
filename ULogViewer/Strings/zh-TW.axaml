@@ -365,6 +365,11 @@
 	<sys:String x:Key="String.ThemeMode.Dark">深色</sys:String>
 	<sys:String x:Key="String.ThemeMode.Light">淺色</sys:String>
 
+	<!-- TutorialDialog -->
+	<sys:String x:Key="String.TutorialDialog.LogProfileSelection">按一下工具列左邊的按鈕以選取日誌類型，然後開始檢視日誌。</sys:String>
+	<sys:String x:Key="String.TutorialDialog.OtherActions">按一下工具列右邊的按鈕以開啟功能選單。</sys:String>
+	<sys:String x:Key="String.TutorialDialog.Title">使用教學</sys:String>
+
 	<!-- VisibleLogPropertyEditorDialog -->
 	<sys:String x:Key="String.VisibleLogPropertyEditorDialog.CustomDisplayName">手動輸入顯示名稱</sys:String>
 	<sys:String x:Key="String.VisibleLogPropertyEditorDialog.DisplayName">顯示名稱</sys:String>

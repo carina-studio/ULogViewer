@@ -379,6 +379,11 @@
 	<sys:String x:Key="String.ThemeMode.Dark">Dark</sys:String>
 	<sys:String x:Key="String.ThemeMode.Light">Light</sys:String>
 
+	<!-- TutorialDialog -->
+	<sys:String x:Key="String.TutorialDialog.LogProfileSelection">Click the button on the left hand side of toolbar to select log profile and start viewing logs.</sys:String>
+	<sys:String x:Key="String.TutorialDialog.OtherActions">Click the button on the right hand side of toolbar to open options menu.</sys:String>
+	<sys:String x:Key="String.TutorialDialog.Title">Tutorial</sys:String>
+
 	<!-- VisibleLogPropertyEditorDialog -->
 	<sys:String x:Key="String.VisibleLogPropertyEditorDialog.CustomDisplayName">Custom display name</sys:String>
 	<sys:String x:Key="String.VisibleLogPropertyEditorDialog.DisplayName">Display name</sys:String>
