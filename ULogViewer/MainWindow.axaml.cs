@@ -41,6 +41,7 @@ namespace CarinaStudio.ULogViewer
 
 
 		// Fields.
+		bool canShowDialogs;
 		readonly ScheduledAction focusOnTabItemContentAction;
 		bool isShowingInitialTutorials;
 		AppUpdateInfo? notifiedAppUpdateInfo;
@@ -230,7 +231,7 @@ namespace CarinaStudio.ULogViewer
 		async void NotifyAppUpdate()
 		{
 			// check state
-			if (this.IsClosed || this.HasDialogs)
+			if (this.IsClosed || this.HasDialogs || !this.canShowDialogs)
 				return;
 
 			// check update
@@ -418,16 +419,17 @@ namespace CarinaStudio.ULogViewer
 			// call base
 			base.OnOpened(e);
 
-			// select log profile
+			// show dialogs
 			this.SynchronizationContext.PostDelayed(() =>
 			{
+				this.canShowDialogs = true;
 				this.ShowInitTutorials();
 				if (!this.isShowingInitialTutorials)
+				{
+					this.NotifyAppUpdate();
 					this.SelectAndSetLogProfile();
+				}
 			}, 1000); // In order to show dialog at correct position on Linux, we need delay to make sure bounds of main window is set.
-
-			// notify application update
-			this.SynchronizationContext.PostDelayed(() => this.NotifyAppUpdate(), 1500);
 		}
 
 
@@ -575,7 +577,7 @@ namespace CarinaStudio.ULogViewer
 		void SelectAndSetLogProfile()
 		{
 			// check state
-			if (this.isShowingInitialTutorials || this.IsClosed)
+			if (this.IsClosed || this.HasDialogs || !this.canShowDialogs)
 				return;
 			if (this.DataContext is not Workspace workspace)
 				return;
@@ -597,7 +599,7 @@ namespace CarinaStudio.ULogViewer
 		async void ShowInitTutorials()
 		{
 			// check state
-			if (this.isShowingInitialTutorials || this.IsClosed)
+			if (this.IsClosed || this.isShowingInitialTutorials || !this.canShowDialogs)
 				return;
 
 			// show log profile selection tutorial
@@ -641,6 +643,9 @@ namespace CarinaStudio.ULogViewer
 				this.SynchronizationContext.Post(this.ShowInitTutorials);
 				return;
 			}
+
+			// nptify application update
+			this.SynchronizationContext.Post(this.NotifyAppUpdate);
 
 			// select and set log profile after all initial tutorials had shown
 			this.SynchronizationContext.Post(this.SelectAndSetLogProfile);
