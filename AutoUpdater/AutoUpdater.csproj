@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <PackageReference Include="Avalonia.Desktop" Version="0.10.7" />
+    <PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.10.7" />
     <PackageReference Include="CarinaStudio.AppBase.Core" Version="0.21.0.819" />
   </ItemGroup>
 
