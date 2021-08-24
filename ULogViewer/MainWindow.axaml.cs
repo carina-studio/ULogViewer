@@ -603,6 +603,7 @@ namespace CarinaStudio.ULogViewer
 				return;
 
 			// show log profile selection tutorial
+			/*
 			if (!this.PersistentState.GetValueOrDefault(HadLogProfileSelectionTutorialShownSettingKey))
 			{
 				// prepare tutorial
@@ -622,8 +623,10 @@ namespace CarinaStudio.ULogViewer
 				this.SynchronizationContext.Post(this.ShowInitTutorials);
 				return;
 			}
+			*/
 
 			// show other actions tutorial
+			/*
 			if (!this.PersistentState.GetValueOrDefault(HadOtherActionsTutorialShownSettingKey))
 			{
 				// prepare tutorial
@@ -643,6 +646,7 @@ namespace CarinaStudio.ULogViewer
 				this.SynchronizationContext.Post(this.ShowInitTutorials);
 				return;
 			}
+			*/
 
 			// nptify application update
 			this.SynchronizationContext.Post(this.NotifyAppUpdate);
