@@ -1,0 +1,22 @@
+{
+	"Name": "ULogViewer",
+	"Version": "0.20.1.824",
+	"PageUri": "https://github.com/carina-studio/ULogViewer/releases/tag/0.20.1.824",
+	"Packages": [
+		{
+			"Architecture": "X64",
+			"OperatingSystem": "Windows",
+			"Uri": "https://github.com/carina-studio/ULogViewer/releases/download/0.20.1.824/ULogViewer-0.20.1.824-win-x64.zip"
+		},
+		{
+			"Architecture": "X64",
+			"OperatingSystem": "Linux",
+			"Uri": "https://github.com/carina-studio/ULogViewer/releases/download/0.20.1.824/ULogViewer-0.20.1.824-linux-x64.zip"
+		},
+		{
+			"Architecture": "X64",
+			"OperatingSystem": "OSX",
+			"Uri": "https://github.com/carina-studio/ULogViewer/releases/download/0.20.1.824/ULogViewer-0.20.1.824-osx-x64.zip"
+		}
+	]
+}
