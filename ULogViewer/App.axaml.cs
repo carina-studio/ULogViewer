@@ -5,7 +5,10 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.Markup.Xaml.Styling;
 using Avalonia.Media;
+using CarinaStudio.AutoUpdate;
+using CarinaStudio.AutoUpdate.Resolvers;
 using CarinaStudio.Configuration;
+using CarinaStudio.Net;
 using CarinaStudio.Threading;
 using CarinaStudio.Threading.Tasks;
 using CarinaStudio.ULogViewer.Controls;
@@ -21,12 +24,10 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Net;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Text;
-using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
@@ -45,7 +46,6 @@ namespace CarinaStudio.ULogViewer
 
 		// Fields.
 		ScheduledAction? checkUpdateInfoAction;
-		bool isCheckingUpdateInfo;
 		bool isRestartRequested;
 		bool isRestartAsAdminRequested;
 		readonly ILogger logger;
@@ -150,104 +150,49 @@ namespace CarinaStudio.ULogViewer
 		}
 
 
-		// Check application update.
-		async void CheckUpdateInfo()
+		/// <summary>
+		/// Check application update asynchronously.
+		/// </summary>
+		public async void CheckUpdateInfo()
 		{
-			// check state
-			if (this.isCheckingUpdateInfo)
-				return;
-
-			// schedule next check
-			this.checkUpdateInfoAction?.Reschedule(UpdateCheckingInterval);
-
-			// check update
+			// check update by package manifest
+			var packageResolver = new JsonPackageResolver() { Source = new WebRequestStreamProvider(Uris.AppPackageManifest) };
 			this.logger.LogInformation("Start checking update");
 			try
 			{
-				var request = WebRequest.Create(Uris.AppPackageInfo);
-				var updateInfo = await Task.Run(() =>
+				await packageResolver.StartAndWaitAsync();
+			}
+			catch(Exception ex)
+			{
+				this.logger.LogError(ex, "Failed to check update");
+				return;
+			}
+
+			// check version
+			var packageVersion = packageResolver.PackageVersion;
+			if (packageVersion == null)
+			{
+				this.logger.LogError("No application version gotten from package manifest");
+				return;
+			}
+			if (packageVersion <= this.Assembly.GetName().Version)
+			{
+				this.logger.LogInformation("This is the latest application");
+				if (this.updateInfo != null)
 				{
-					// get response
-					var response = request.GetResponse();
-
-					// get runtime information
-					var targetPlatform = Environment.Is64BitProcess ? "x64" : "x86";
-					var targetOS = Global.Run(() =>
-					{
-						if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-							return "Windows";
-						if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-							return "Linux";
-						if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-							return "OSX";
-						return "";
-					});
-
-					// parse JSON document
-					using var stream = response.GetResponseStream();
-					using var jsonDocument = JsonDocument.Parse(stream);
-					var rootElement = jsonDocument.RootElement;
-
-					// check version
-					var version = new Version(rootElement.GetProperty("Version").GetString().AsNonNull());
-					if (version <= this.Assembly.GetName().Version)
-					{
-						this.logger.LogInformation("This is the latest application");
-						return null;
-					}
-
-					// get release date and page
-					var releaseDate = DateTime.Parse(rootElement.GetProperty("ReleaseDate").GetString().AsNonNull());
-					var releasePageUri = new Uri(rootElement.GetProperty("ReleasePageUrl").GetString().AsNonNull());
-
-					// find proper package URI
-					var packageUri = rootElement.GetProperty("Packages").Let((packageArray) =>
-					{
-						foreach (var packageInfo in packageArray.EnumerateArray())
-						{
-							if (packageInfo.GetProperty("OS").GetString() != targetOS)
-								continue;
-							if (packageInfo.GetProperty("Platform").GetString() != targetPlatform)
-								continue;
-							return packageInfo.GetProperty("Url").GetString().Let(it =>
-							{
-								if (string.IsNullOrEmpty(it))
-									return null;
-								return new Uri(it);
-							});
-						}
-						this.logger.LogWarning($"Cannot find proper package for {targetOS} {targetPlatform}");
-						return null;
-					});
-
-					// complete
-					return new AppUpdateInfo(version, releaseDate, releasePageUri, packageUri);
-				});
-
-				// check with current update info
-				if (this.updateInfo == updateInfo)
-					return;
-
-				// report
-				if (updateInfo != null)
-				{
-					this.logger.LogDebug($"New application version found: {updateInfo.Version}");
-					this.updateInfo = updateInfo;
-				}
-				else
-				{
-					this.logger.LogWarning("No valid application update info");
 					this.updateInfo = null;
+					this.propertyChangedHandlers?.Invoke(this, new PropertyChangedEventArgs(nameof(UpdateInfo)));
 				}
+				return;
+			}
+
+			// create update info
+			this.logger.LogDebug($"New application version found: {packageVersion}");
+			var updateInfo = new AppUpdateInfo(packageVersion, packageResolver.PageUri, packageResolver.PackageUri);
+			if (updateInfo != this.updateInfo)
+			{
+				this.updateInfo = updateInfo;
 				this.propertyChangedHandlers?.Invoke(this, new PropertyChangedEventArgs(nameof(UpdateInfo)));
-			}
-			catch (Exception ex)
-			{
-				this.logger.LogError(ex, "Unable to check application update info");
-			}
-			finally
-			{
-				this.isCheckingUpdateInfo = false;
 			}
 		}
 
@@ -380,7 +325,11 @@ namespace CarinaStudio.ULogViewer
 			this.synchronizationContext = SynchronizationContext.Current ?? throw new ArgumentException("No SynchronizationContext when Avalonia initialized.");
 
 			// create scheduled actions
-			this.checkUpdateInfoAction = new ScheduledAction(this.CheckUpdateInfo);
+			this.checkUpdateInfoAction = new ScheduledAction(() =>
+			{
+				this.checkUpdateInfoAction?.Reschedule(UpdateCheckingInterval);
+				this.CheckUpdateInfo();
+			});
 
 			// parse startup params
 			var desktopLifetime = (IClassicDesktopStyleApplicationLifetime)this.ApplicationLifetime;

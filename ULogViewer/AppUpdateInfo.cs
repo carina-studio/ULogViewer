@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace CarinaStudio.ULogViewer
 {
@@ -12,13 +11,11 @@ namespace CarinaStudio.ULogViewer
 		/// Initialize <see cref="AppUpdateInfo"/> instance.
 		/// </summary>
 		/// <param name="version">Version of updated application.</param>
-		/// <param name="releaseDate">Date of release of update.</param>
 		/// <param name="releasePageUri">Uri of page of release.</param>
 		/// <param name="packageUri">URI of update package.</param>
-		public AppUpdateInfo(Version version, DateTime releaseDate, Uri releasePageUri, Uri? packageUri)
+		public AppUpdateInfo(Version version, Uri? releasePageUri, Uri? packageUri)
 		{
 			this.PackageUri = packageUri;
-			this.ReleaseDate = releaseDate;
 			this.ReleasePageUri = releasePageUri;
 			this.Version = version;
 		}
@@ -30,7 +27,6 @@ namespace CarinaStudio.ULogViewer
 			if (!(obj is AppUpdateInfo updateInfo))
 				return false;
 			return this.Version == updateInfo.Version
-				&& this.ReleaseDate == updateInfo.ReleaseDate
 				&& this.ReleasePageUri == updateInfo.ReleasePageUri
 				&& this.PackageUri == updateInfo.PackageUri;
 		}
@@ -59,15 +55,9 @@ namespace CarinaStudio.ULogViewer
 
 
 		/// <summary>
-		/// Date of release of update.
-		/// </summary>
-		public DateTime ReleaseDate { get; }
-
-
-		/// <summary>
 		/// Uri of page of release.
 		/// </summary>
-		public Uri ReleasePageUri { get; }
+		public Uri? ReleasePageUri { get; }
 
 
 		/// <summary>

@@ -8,9 +8,9 @@ namespace CarinaStudio.ULogViewer
 	static class Uris
 	{
 		/// <summary>
-		/// Application package info.
+		/// Application package manifest.
 		/// </summary>
-		public static readonly Uri AppPackageInfo = new Uri("https://raw.githubusercontent.com/carina-studio/ULogViewer/master/PackageInfo.json");
+		public static readonly Uri AppPackageManifest = new Uri("https://raw.githubusercontent.com/carina-studio/ULogViewer/master/PackageManifest.json");
 		/// <summary>
 		/// Reference of date time format.
 		/// </summary>
