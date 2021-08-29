@@ -29,14 +29,30 @@
 
 		<!-- Log actions menu -->
 		<ContextMenu x:Key="logActionMenu">
-			<MenuItem Name="showLogPropertyMenuItem" Command="{Binding $parent[UserControl].ShowLogStringPropertyCommand}" Header="{DynamicResource String.SessionView.ShowLogProperty.Disabled}"/>
+			<MenuItem Name="showLogPropertyMenuItem" Command="{Binding $parent[UserControl].ShowLogStringPropertyCommand}" Header="{DynamicResource String.SessionView.ShowLogProperty.Disabled}">
+				<MenuItem.Icon>
+					<DrawingPresenter Classes="MenuItem_Icon" Drawing="{DynamicResource Drawing.Details}"/>
+				</MenuItem.Icon>
+			</MenuItem>
 			<Separator/>
-			<MenuItem Command="{Binding $parent[UserControl].MarkUnmarkSelectedLogsCommand}" Header="{DynamicResource String.SessionView.MarkUnmarkLogs}" HotKey="M" InputGesture="M"/>
+			<MenuItem Command="{Binding $parent[UserControl].MarkUnmarkSelectedLogsCommand}" Header="{DynamicResource String.SessionView.MarkUnmarkLogs}" HotKey="M" InputGesture="M">
+				<MenuItem.Icon>
+					<DrawingPresenter Classes="MenuItem_Icon" Drawing="{DynamicResource Drawing.Pin}"/>
+				</MenuItem.Icon>
+			</MenuItem>
 			<MenuItem Command="{Binding $parent[UserControl].SelectMarkedLogsCommand}" Header="{DynamicResource String.SessionView.SelectMarkedLogs}" HotKey="S" InputGesture="S"/>
 			<Separator/>
 			<MenuItem Name="copyLogPropertyMenuItem" Command="{Binding $parent[UserControl].CopyLogPropertyCommand}" Header="{DynamicResource String.SessionView.CopyLogProperty.Disabled}"/>
-			<MenuItem Command="{Binding $parent[UserControl].CopySelectedLogsCommand}" Header="{DynamicResource String.SessionView.CopyLogs}" HotKey="Ctrl+C" InputGesture="Ctrl+C"/>
-			<MenuItem Command="{Binding $parent[UserControl].CopySelectedLogsWithFileNamesCommand}" Header="{DynamicResource String.SessionView.CopyLogsWithFileNames}" HotKey="Ctrl+Shift+C" InputGesture="Ctrl+Shift+C"/>
+			<MenuItem Command="{Binding $parent[UserControl].CopySelectedLogsCommand}" Header="{DynamicResource String.SessionView.CopyLogs}" HotKey="Ctrl+C" InputGesture="Ctrl+C">
+				<MenuItem.Icon>
+					<DrawingPresenter Classes="MenuItem_Icon" Drawing="{DynamicResource Drawing.Copy}"/>
+				</MenuItem.Icon>
+			</MenuItem>
+			<MenuItem Command="{Binding $parent[UserControl].CopySelectedLogsWithFileNamesCommand}" Header="{DynamicResource String.SessionView.CopyLogsWithFileNames}" HotKey="Ctrl+Shift+C" InputGesture="Ctrl+Shift+C">
+				<MenuItem.Icon>
+					<DrawingPresenter Classes="MenuItem_Icon" Drawing="{DynamicResource Drawing.Copy}"/>
+				</MenuItem.Icon>
+			</MenuItem>
 			<Separator/>
 			<MenuItem Command="{Binding $parent[UserControl].FilterLogsByProcessIdCommand}" Header="{DynamicResource String.SessionView.FilterLogsBySelectedProcessId}">
 				<MenuItem.CommandParameter>
@@ -59,13 +75,25 @@
 				</MenuItem.CommandParameter>
 			</MenuItem>
 			<Separator/>
-			<MenuItem Command="{Binding $parent[UserControl].ShowFileInExplorerCommand}" Header="{DynamicResource String.SessionView.ShowFileInExplorer}"/>
+			<MenuItem Command="{Binding $parent[UserControl].ShowFileInExplorerCommand}" Header="{DynamicResource String.SessionView.ShowFileInExplorer}">
+				<MenuItem.Icon>
+					<DrawingPresenter Classes="MenuItem_Icon" Drawing="{DynamicResource Drawing.FileManager}"/>
+				</MenuItem.Icon>
+			</MenuItem>
 		</ContextMenu>
 
 		<!-- Other actions menu -->
 		<ContextMenu x:Key="otherActionsMenu" PlacementMode="Bottom">
-			<MenuItem Command="{Binding $parent[UserControl].ShowAppOptions}" Header="{DynamicResource String.SessionView.AppOptions}"/>
-			<MenuItem Command="{Binding $parent[UserControl].CheckForAppUpdate}" Header="{DynamicResource String.SessionView.CheckForAppUpdate}"/>
+			<MenuItem Command="{Binding $parent[UserControl].ShowAppOptions}" Header="{DynamicResource String.SessionView.AppOptions}">
+				<MenuItem.Icon>
+					<DrawingPresenter Classes="MenuItem_Icon" Drawing="{DynamicResource Drawing.Settings}"/>
+				</MenuItem.Icon>
+			</MenuItem>
+			<MenuItem Command="{Binding $parent[UserControl].CheckForAppUpdate}" Header="{DynamicResource String.SessionView.CheckForAppUpdate}">
+				<MenuItem.Icon>
+					<DrawingPresenter Classes="MenuItem_Icon" Drawing="{DynamicResource Drawing.Update}"/>
+				</MenuItem.Icon>
+			</MenuItem>
 			<MenuItem Command="{Binding $parent[UserControl].ShowAppInfo}" Header="{DynamicResource String.SessionView.AppInfo}"/>
 		</ContextMenu>
 		

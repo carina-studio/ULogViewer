@@ -104,6 +104,9 @@
 	<Thickness x:Key="Thickness.MainWindow.TabItem.CloseButton.Padding">3</Thickness>
 	<Thickness x:Key="Thickness.MainWindow.TabItem.Icon.Margin">0,0,10,0</Thickness>
 
+	<!-- MenuItem -->
+	<sys:Double x:Key="Double.MenuItem.Icon.Size">16</sys:Double>
+
 	<!-- MessageDialog -->
 	<sys:Double x:Key="Double.MessageDialog.Icon.Size">45</sys:Double>
 	<sys:Double x:Key="Double.MessageDialog.MinWidth">200</sys:Double>
