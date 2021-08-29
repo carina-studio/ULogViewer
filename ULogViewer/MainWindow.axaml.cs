@@ -44,7 +44,6 @@ namespace CarinaStudio.ULogViewer
 		bool canShowDialogs;
 		readonly ScheduledAction focusOnTabItemContentAction;
 		bool isShowingInitialTutorials;
-		AppUpdateInfo? notifiedAppUpdateInfo;
 		readonly ScheduledAction reAttachToWorkspaceAction;
 		readonly ScheduledAction saveWindowSizeAction;
 		readonly DataTemplate sessionTabItemHeaderTemplate;
@@ -113,6 +112,9 @@ namespace CarinaStudio.ULogViewer
 			this.AddHandler(DragDrop.DragEnterEvent, this.OnDragEnter);
 			this.AddHandler(DragDrop.DragOverEvent, this.OnDragOver);
 			this.AddHandler(DragDrop.DropEvent, this.OnDrop);
+
+			// reset latest version notified to user
+			this.PersistentState.ResetValue(AppUpdateDialog.LatestNotifiedVersionKey);
 		}
 
 
@@ -238,11 +240,11 @@ namespace CarinaStudio.ULogViewer
 			var updateInfo = this.Application.UpdateInfo;
 			if (updateInfo == null)
 				return;
-			if (updateInfo == this.notifiedAppUpdateInfo)
+			var latestNotifiedVersionString = this.PersistentState.GetValueOrDefault(AppUpdateDialog.LatestNotifiedVersionKey);
+			if (Version.TryParse(latestNotifiedVersionString, out var version) && version == updateInfo.Version)
 				return;
 
 			// notify
-			this.notifiedAppUpdateInfo = updateInfo;
 			new AppUpdateDialog().ShowDialog(this);
 		}
 

@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
+using CarinaStudio.Configuration;
 using CarinaStudio.ULogViewer.ViewModels;
 using CarinaStudio.Windows.Input;
 using System;
@@ -13,6 +14,12 @@ namespace CarinaStudio.ULogViewer.Controls
 	/// </summary>
 	partial class AppUpdateDialog : BaseDialog
 	{
+		/// <summary>
+		/// Key of persistent state of the latest version notified user.
+		/// </summary>
+		public static readonly SettingKey<string> LatestNotifiedVersionKey = new SettingKey<string>("LatestNotifiedVersion", "");
+
+
 		// Fields.
 		bool isClosingRequested;
 
@@ -40,7 +47,10 @@ namespace CarinaStudio.ULogViewer.Controls
 					{
 						this.Close();
 					}
+					else if (e.PropertyName == nameof(AppUpdater.UpdateVersion))
+						this.Application.PersistentState.SetValue<string>(LatestNotifiedVersionKey, it.UpdateVersion?.ToString() ?? "");
 				};
+				this.Application.PersistentState.SetValue<string>(LatestNotifiedVersionKey, it.UpdateVersion?.ToString() ?? "");
 			});
 			InitializeComponent();
 		}
