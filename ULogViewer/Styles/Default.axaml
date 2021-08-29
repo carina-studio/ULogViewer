@@ -25,6 +25,7 @@
 			<SolidColorBrush x:Key="Brush.Icon.Info">#007acc</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.Icon.Light">#ffffff</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.Icon.LogProfile">#7ac0ff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.Icon.OK">#329932</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.Icon.Warning">#ff8432</SolidColorBrush>
 
 			<!-- LogLevel -->

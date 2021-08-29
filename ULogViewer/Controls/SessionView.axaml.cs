@@ -2033,7 +2033,12 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Called when test button clicked.
 		void OnTestButtonClick(object? sender, RoutedEventArgs e)
-		{ }
+		{
+			new AppUpdateDialog()
+			{
+
+			}.ShowDialog(this.FindLogicalAncestorOfType<Window>().AsNonNull());
+		}
 
 
 		// Called when pointer released on tool bar.

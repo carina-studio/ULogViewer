@@ -228,7 +228,7 @@ namespace CarinaStudio.ULogViewer
 
 
 		// Notify user that new application update is found.
-		async void NotifyAppUpdate()
+		void NotifyAppUpdate()
 		{
 			// check state
 			if (this.IsClosed || this.HasDialogs || !this.canShowDialogs)
@@ -243,16 +243,7 @@ namespace CarinaStudio.ULogViewer
 
 			// notify
 			this.notifiedAppUpdateInfo = updateInfo;
-			var result = await new MessageDialog()
-			{
-				Buttons = MessageDialogButtons.YesNo,
-				Icon = MessageDialogIcon.Question,
-				Message = this.Application.GetFormattedString("MainWindow.AppUpdateFound", updateInfo.Version),
-			}.ShowDialog<MessageDialogResult>(this);
-
-			// open download page
-			if (result == MessageDialogResult.Yes)
-				this.OpenLink(updateInfo.ReleasePageUri);
+			new AppUpdateDialog().ShowDialog(this);
 		}
 
 

@@ -14,6 +14,9 @@
 	<sys:Double x:Key="Double.AppOptionsDialog.InitialLogProfile.Icon.Size">18</sys:Double>
 	<sys:Double x:Key="Double.AppOptionsDialog.Width">500</sys:Double>
 	<Thickness x:Key="Thickness.AppOptionsDialog.InitialLogProfile.Icon.Margin">0,0,10,0</Thickness>
+
+	<!-- AppUpdateDialog -->
+	<sys:Double x:Key="Double.AppUpdateDialog.Width">500</sys:Double>
 	
 	<!-- Browse -->
 	<Thickness x:Key="Thickness.Browse.Margin">5,0,0,0</Thickness>
@@ -102,7 +105,7 @@
 	<Thickness x:Key="Thickness.MainWindow.TabItem.Icon.Margin">0,0,10,0</Thickness>
 
 	<!-- MessageDialog -->
-	<sys:Double x:Key="Double.MessageDialog.Icon.Size">36</sys:Double>
+	<sys:Double x:Key="Double.MessageDialog.Icon.Size">45</sys:Double>
 	<sys:Double x:Key="Double.MessageDialog.MinWidth">200</sys:Double>
 	<Thickness x:Key="Thickness.MessageDialog.Icon.Margin">0,0,15,0</Thickness>
 

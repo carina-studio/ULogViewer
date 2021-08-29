@@ -177,6 +177,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				return;
 			switch (e.PropertyName)
 			{
+				case nameof(Updater.DownloadedPackageSize):
+				case nameof(Updater.PackageSize):
+					this.RefreshMessages();
+					break;
 				case nameof(Updater.Progress):
 					if (this.IsPreparingForUpdate)
 						this.SetValue(UpdatePreparationProgressPercentageProperty, updater.Progress * 100);
@@ -218,6 +222,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// update state
 			this.SetValue(IsPreparingForUpdateProperty, false);
+			this.canStartUpdating.Update(true);
 			this.RefreshMessages();
 
 			// check state
@@ -268,7 +273,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.Logger.LogWarning("Start auto updater");
 				using var process = Process.Start(new ProcessStartInfo()
 				{
-					Arguments = $"-directory \"{Path.GetDirectoryName(mainModule.FileName)}\" -executable \"{mainModule.FileName}\" -package-manifest {Uris.AppPackageManifest} -wait-for-process {currentProcess.Id} {(useDarkMode ? "-dark-mode" : "")}",
+					Arguments = $"-directory \"{Path.GetDirectoryName(mainModule.FileName)}\" -executable \"{mainModule.FileName}\" -package-manifest {Uris.AppPackageManifest} -name ULogViewer -wait-for-process {currentProcess.Id} {(useDarkMode ? "-dark-mode" : "")}",
 					FileName = autoUpdaterPath,
 				});
 			}
@@ -281,7 +286,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// shutdown
 			this.Logger.LogWarning("Shutdown for updating");
-			//((App)this.Application).Shutdown();
+			((App)this.Application).Shutdown();
 		}
 
 
@@ -353,6 +358,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// update state
 			this.canStartUpdating.Update(false);
+			this.SetValue(UpdatePreparationProgressPercentageProperty, double.NaN);
 			this.SetValue(IsPreparingForUpdateProperty, true);
 
 			// update message
@@ -379,43 +385,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				return;
 			}
 
-			// check current auto updater version
-			var autoUpdaterDirectory = await Task.Run(() =>
+			// delete current auto updater version
+			await Task.Run(() =>
 			{
-				// get current version
-				var currentVersion = (Version?)null;
-				var selectedDirectory = (string?)null;
 				try
 				{
 					foreach (var path in Directory.EnumerateDirectories(this.Application.RootPrivateDirectoryPath))
 					{
-						var match = AutoUpdaterDirNameRegex.Match(Path.GetFileName(path));
-						if (match.Success && Version.TryParse(match.Groups["Version"].Value, out var version))
-						{
-							if (version > currentVersion)
-							{
-								currentVersion = version;
-								selectedDirectory = path;
-							}
-						}
-					}
-				}
-				catch (Exception ex)
-				{
-					this.Logger.LogError(ex, "Failed to check current version of auto updater");
-					currentVersion = null;
-					selectedDirectory = null;
-				}
-
-				// delete current auto updater if needed
-				var needToUpdate = (currentVersion != auPackageResolver.PackageVersion);
-				if (needToUpdate)
-					selectedDirectory = null;
-				try
-				{
-					foreach (var path in Directory.EnumerateDirectories(this.Application.RootPrivateDirectoryPath))
-					{
-						if (AutoUpdaterDirNameRegex.IsMatch(Path.GetFileName(path)) && !PathEqualityComparer.Default.Equals(path, selectedDirectory))
+						if (AutoUpdaterDirNameRegex.IsMatch(Path.GetFileName(path)))
 						{
 							try
 							{
@@ -433,9 +410,27 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				{
 					this.Logger.LogError(ex, "Error occurred while deleting auto updater");
 				}
+			});
+			if (this.IsDisposed)
+				return;
+			if (this.updatePreparationCancellationTokenSource.IsCancellationRequested)
+			{
+				this.OnUpdatePreparationCompleted(UpdaterState.Cancelled, "");
+				return;
+			}
 
-				// complete
-				return selectedDirectory;
+			// create directory for auto updater
+			var autoUpdaterDirectory = Path.Combine(this.Application.RootPrivateDirectoryPath, $"AutoUpdater-{auPackageResolver.PackageVersion}");
+			await Task.Run(() =>
+			{
+				try
+				{
+					Directory.CreateDirectory(autoUpdaterDirectory);
+				}
+				catch (Exception ex)
+				{
+					this.Logger.LogError(ex, $"Fail to create '{autoUpdaterDirectory}'");
+				}
 			});
 			if (this.IsDisposed)
 				return;
@@ -446,26 +441,18 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			}
 
 			// download auto updater
-			if (autoUpdaterDirectory == null)
+			this.auUpdater = new Updater()
 			{
-				this.auUpdater = new Updater()
-				{
-					ApplicationDirectoryPath = Path.Combine(this.Application.RootPrivateDirectoryPath, $"AutoUpdater-{auPackageResolver.PackageVersion}"),
-					PackageInstaller = new ZipPackageInstaller(),
-					PackageResolver = new JsonPackageResolver() { Source = new WebRequestStreamProvider(Uris.AutoUpdaterPackageManifest) },
-				};
-				this.Logger.LogWarning($"Start downloading auto updater to '{this.auUpdater.ApplicationDirectoryPath}'");
-				this.auUpdater.PropertyChanged += this.OnAuUpdaterPropertyChanged;
-				if (!this.auUpdater.Start())
-				{
-					this.Logger.LogError("Failed to start downloading auto updater");
-					this.OnUpdatePreparationCompleted(UpdaterState.Failed, "");
-				}
-			}
-			else
+				ApplicationDirectoryPath = autoUpdaterDirectory,
+				PackageInstaller = new ZipPackageInstaller(),
+				PackageResolver = new JsonPackageResolver() { Source = new WebRequestStreamProvider(Uris.AutoUpdaterPackageManifest) },
+			};
+			this.Logger.LogWarning($"Start downloading auto updater to '{autoUpdaterDirectory}'");
+			this.auUpdater.PropertyChanged += this.OnAuUpdaterPropertyChanged;
+			if (!this.auUpdater.Start())
 			{
-				this.Logger.LogDebug($"Use current auto updater '{autoUpdaterDirectory}' directly");
-				this.OnUpdatePreparationCompleted(UpdaterState.Succeeded, autoUpdaterDirectory);
+				this.Logger.LogError("Failed to start downloading auto updater");
+				this.OnUpdatePreparationCompleted(UpdaterState.Failed, "");
 			}
 		}
 
