@@ -476,6 +476,19 @@ namespace CarinaStudio.ULogViewer.Controls
 		bool CanFilterLogsByNonTextFilters { get => this.GetValue<bool>(CanFilterLogsByNonTextFiltersProperty); }
 
 
+		// Check for application update.
+		void CheckForAppUpdate()
+		{
+			var window = this.FindLogicalAncestorOfType<Window>();
+			if (window == null)
+				return;
+			new AppUpdateDialog()
+			{
+				CheckForUpdateWhenOpening = true,
+			}.ShowDialog(window);
+		}
+
+
 		// Clear predefined log text fliter selection.
 		void ClearPredefinedLogTextFilterSelection()
 		{
@@ -2033,12 +2046,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Called when test button clicked.
 		void OnTestButtonClick(object? sender, RoutedEventArgs e)
-		{
-			new AppUpdateDialog()
-			{
-
-			}.ShowDialog(this.FindLogicalAncestorOfType<Window>().AsNonNull());
-		}
+		{ }
 
 
 		// Called when pointer released on tool bar.

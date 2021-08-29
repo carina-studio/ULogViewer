@@ -328,6 +328,7 @@
 	<sys:String x:Key="String.SessionView.AllLogLevels">All levels</sys:String>
 	<sys:String x:Key="String.SessionView.AppInfo">About ULogViewer…</sys:String>
 	<sys:String x:Key="String.SessionView.AppOptions">Options…</sys:String>
+	<sys:String x:Key="String.SessionView.CheckForAppUpdate">Check for update…</sys:String>
 	<sys:String x:Key="String.SessionView.ClearLogFiles">Clear all added log files</sys:String>
 	<sys:String x:Key="String.SessionView.ClearPredefinedLogTextFiltersSelection">Clear selection</sys:String>
 	<sys:String x:Key="String.SessionView.CopyLogProperty">Copy log property '{0}'</sys:String>

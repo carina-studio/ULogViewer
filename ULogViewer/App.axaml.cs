@@ -155,7 +155,11 @@ namespace CarinaStudio.ULogViewer
 		/// </summary>
 		public async Task CheckUpdateInfo()
 		{
+			// schedule next checking
+			this.checkUpdateInfoAction?.Reschedule(UpdateCheckingInterval);
+
 			// check update by package manifest
+			var stopWatch = new Stopwatch().Also(it => it.Start());
 			var packageResolver = new JsonPackageResolver() { Source = new WebRequestStreamProvider(Uris.AppPackageManifest) };
 			this.logger.LogInformation("Start checking update");
 			try
@@ -167,6 +171,11 @@ namespace CarinaStudio.ULogViewer
 				this.logger.LogError(ex, "Failed to check update");
 				return;
 			}
+
+			// delay to make UX better
+			var delay = (1000 - stopWatch.ElapsedMilliseconds);
+			if (delay > 0)
+				await Task.Delay((int)delay);
 
 			// check version
 			var packageVersion = packageResolver.PackageVersion;
@@ -327,7 +336,6 @@ namespace CarinaStudio.ULogViewer
 			// create scheduled actions
 			this.checkUpdateInfoAction = new ScheduledAction(() =>
 			{
-				this.checkUpdateInfoAction?.Reschedule(UpdateCheckingInterval);
 				_ = this.CheckUpdateInfo();
 			});
 

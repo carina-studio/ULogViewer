@@ -314,6 +314,7 @@
 	<sys:String x:Key="String.SessionView.AllLogLevels">所有等級</sys:String>
 	<sys:String x:Key="String.SessionView.AppInfo">關於 ULogViewer…</sys:String>
 	<sys:String x:Key="String.SessionView.AppOptions">應用程式選項…</sys:String>
+	<sys:String x:Key="String.SessionView.CheckForAppUpdate">檢查更新…</sys:String>
 	<sys:String x:Key="String.SessionView.ClearLogFiles">清除所有已加入的日誌檔案</sys:String>
 	<sys:String x:Key="String.SessionView.ClearPredefinedLogTextFiltersSelection">清除選取</sys:String>
 	<sys:String x:Key="String.SessionView.CopyLogProperty">複製日誌屬性 '{0}'</sys:String>

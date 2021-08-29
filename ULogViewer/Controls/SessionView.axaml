@@ -65,6 +65,7 @@
 		<!-- Other actions menu -->
 		<ContextMenu x:Key="otherActionsMenu" PlacementMode="Bottom">
 			<MenuItem Command="{Binding $parent[UserControl].ShowAppOptions}" Header="{DynamicResource String.SessionView.AppOptions}"/>
+			<MenuItem Command="{Binding $parent[UserControl].CheckForAppUpdate}" Header="{DynamicResource String.SessionView.CheckForAppUpdate}"/>
 			<MenuItem Command="{Binding $parent[UserControl].ShowAppInfo}" Header="{DynamicResource String.SessionView.AppInfo}"/>
 		</ContextMenu>
 		

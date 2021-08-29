@@ -46,6 +46,12 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		/// <summary>
+		/// Get or set whether performing update checking when opening dialog or not.
+		/// </summary>
+		public bool CheckForUpdateWhenOpening { get; set; }
+
+
 		// Download update package.
 		void DownloadUpdatePackage()
 		{
@@ -97,5 +103,14 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Generate result.
 		protected override object? OnGenerateResult() => null;
+
+
+		// Called when opened.
+		protected override void OnOpened(EventArgs e)
+		{
+			if (this.CheckForUpdateWhenOpening && this.DataContext is AppUpdater updater)
+				updater.CheckForUpdateCommand.TryExecute();
+			base.OnOpened(e);
+		}
 	}
 }
