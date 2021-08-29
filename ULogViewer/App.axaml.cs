@@ -153,7 +153,7 @@ namespace CarinaStudio.ULogViewer
 		/// <summary>
 		/// Check application update asynchronously.
 		/// </summary>
-		public async void CheckUpdateInfo()
+		public async Task CheckUpdateInfo()
 		{
 			// check update by package manifest
 			var packageResolver = new JsonPackageResolver() { Source = new WebRequestStreamProvider(Uris.AppPackageManifest) };
@@ -328,7 +328,7 @@ namespace CarinaStudio.ULogViewer
 			this.checkUpdateInfoAction = new ScheduledAction(() =>
 			{
 				this.checkUpdateInfoAction?.Reschedule(UpdateCheckingInterval);
-				this.CheckUpdateInfo();
+				_ = this.CheckUpdateInfo();
 			});
 
 			// parse startup params
@@ -428,7 +428,7 @@ namespace CarinaStudio.ULogViewer
 				workspace.CreateSession(initialProfile);
 
 			// start checking update
-			this.CheckUpdateInfo();
+			_ = this.CheckUpdateInfo();
 
 			// show main window
 			this.synchronizationContext.Post(this.ShowMainWindow);
@@ -473,11 +473,7 @@ namespace CarinaStudio.ULogViewer
 				await this.workspace.WaitForNecessaryTasksAsync();
 
 			// shutdown application
-			if (this.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime)
-			{
-				this.logger.LogWarning("Shutdown");
-				desktopLifetime.Shutdown();
-			}
+			this.Shutdown();
 		}
 
 
@@ -577,7 +573,7 @@ namespace CarinaStudio.ULogViewer
 			else
 			{
 				this.logger.LogWarning("Schedule shutdown to restart");
-				this.SynchronizationContext.Post(() => (this.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.Shutdown());
+				this.SynchronizationContext.Post(this.Shutdown);
 			}
 			return true;
 		}
@@ -645,6 +641,17 @@ namespace CarinaStudio.ULogViewer
 				it.Close();
 				return (SplashWindow?)null;
 			});
+		}
+
+
+		/// <summary>
+		/// Shutdown application.
+		/// </summary>
+		public void Shutdown()
+		{
+			this.logger.LogWarning("Shutdown");
+			this.VerifyAccess();
+			(this.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.Shutdown();
 		}
 
 

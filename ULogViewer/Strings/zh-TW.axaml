@@ -35,6 +35,12 @@
 	<sys:String x:Key="String.AppOptionsDialog.UpdateLogFilterDelay">條件改變至開始篩選的延遲時間 (毫秒)</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.UserInterface">使用者介面</sys:String>
 
+	<!-- AppUpdater -->
+	<sys:String x:Key="String.AppUpdater.DownloadingAutoUpdater">正在下載自動更新元件 ({0})…</sys:String>
+	<sys:String x:Key="String.AppUpdater.FailedToPrepareForUpdate">自動升級準備失敗。</sys:String>
+	<sys:String x:Key="String.AppUpdater.FailedToStartAutoUpdater">無法啟動自動更新元件。</sys:String>
+	<sys:String x:Key="String.AppUpdater.PreparingForUpdate">正在準備更新…</sys:String>
+
 	<!-- Built-in profile -->
 	<sys:String x:Key="String.BuiltInProfile.AndroidDeviceLog">Android 裝置日誌</sys:String>
 	<sys:String x:Key="String.BuiltInProfile.AndroidFileLog">Android 日誌檔案</sys:String>

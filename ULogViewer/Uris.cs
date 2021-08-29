@@ -12,6 +12,10 @@ namespace CarinaStudio.ULogViewer
 		/// </summary>
 		public static readonly Uri AppPackageManifest = new Uri("https://raw.githubusercontent.com/carina-studio/ULogViewer/master/PackageManifest.json");
 		/// <summary>
+		/// Auto updater package manifest.
+		/// </summary>
+		public static readonly Uri AutoUpdaterPackageManifest = new Uri("https://raw.githubusercontent.com/carina-studio/AutoUpdater/master/PackageManifest-Avalonia.json");
+		/// <summary>
 		/// Reference of date time format.
 		/// </summary>
 		public static readonly Uri DateTimeFormatReference = new Uri("https://docs.microsoft.com/en-us/dotnet/standard/base-types/standard-date-and-time-format-strings");

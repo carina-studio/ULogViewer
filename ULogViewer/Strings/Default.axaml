@@ -37,6 +37,12 @@
 	<sys:String x:Key="String.AppOptionsDialog.UpdateLogFilterDelay">Delay between changing conditions and start filtering (milliseconds)</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.UserInterface">User Interface</sys:String>
 
+	<!-- AppUpdater -->
+	<sys:String x:Key="String.AppUpdater.DownloadingAutoUpdater">Downloading auto updating component ({0})…</sys:String>
+	<sys:String x:Key="String.AppUpdater.FailedToPrepareForUpdate">Failed to prepare for update.</sys:String>
+	<sys:String x:Key="String.AppUpdater.FailedToStartAutoUpdater">Failed to start auto updater.</sys:String>
+	<sys:String x:Key="String.AppUpdater.PreparingForUpdate">Preparing for update…</sys:String>
+
 	<!-- Built-in profile -->
 	<sys:String x:Key="String.BuiltInProfile.AndroidDeviceLog">Android Device Log</sys:String>
 	<sys:String x:Key="String.BuiltInProfile.AndroidFileLog">Android Log Files</sys:String>
