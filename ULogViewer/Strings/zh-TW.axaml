@@ -57,6 +57,8 @@
 	<sys:String x:Key="String.BuiltInProfile.Empty">無</sys:String>
 	<sys:String x:Key="String.BuiltInProfile.GitLog">Git 提交紀錄</sys:String>
 	<sys:String x:Key="String.BuiltInProfile.GitLogSimple">Git 提交紀錄 (精簡)</sys:String>
+	<sys:String x:Key="String.BuiltInProfile.ULogViewerLog">ULogViewer 日誌檔案 (偵錯)</sys:String>
+	<sys:String x:Key="String.BuiltInProfile.ULogViewerMemoryLog">ULogViewer 即時日誌 (偵錯)</sys:String>
 	<sys:String x:Key="String.BuiltInProfile.WindowsApplicationEventLogs">Windows 事件紀錄 (應用程式)</sys:String>
 	<sys:String x:Key="String.BuiltInProfile.WindowsSecurityEventLogs">Windows 事件紀錄 (安全性)</sys:String>
 	<sys:String x:Key="String.BuiltInProfile.WindowsSetupEventLogs">Windows 事件紀錄 (安裝)</sys:String>
@@ -67,6 +69,7 @@
 	<sys:String x:Key="String.Common.Administrator">系統管理員</sys:String>
 	<sys:String x:Key="String.Common.Cancel">取消</sys:String>
 	<sys:String x:Key="String.Common.Copy">複製</sys:String>
+	<sys:String x:Key="String.Common.DebugMode">偵錯模式</sys:String>
 	<sys:String x:Key="String.Common.Delete">刪除</sys:String>
 	<sys:String x:Key="String.Common.Edit">編輯</sys:String>
 	<sys:String x:Key="String.Common.Empty">空</sys:String>

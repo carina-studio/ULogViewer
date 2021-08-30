@@ -49,9 +49,22 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				if (this.IsDisposed)
 					return;
 				var titleBuilder = new StringBuilder("ULogViewer");
+				var postfixBuilder = new StringBuilder();
 				var session = this.ActiveSession;
 				if (app.IsRunningAsAdministrator)
-					titleBuilder.Append($"({app.GetString("Common.Administrator")})");
+					postfixBuilder.Append(app.GetString("Common.Administrator"));
+				if (app.IsDebugMode)
+				{
+					if (postfixBuilder.Length > 0)
+						postfixBuilder.Append('|');
+					postfixBuilder.Append(app.GetString("Common.DebugMode"));
+				}
+				if (postfixBuilder.Length > 0)
+				{
+					titleBuilder.Append(" (");
+					titleBuilder.Append(postfixBuilder);
+					titleBuilder.Append(')');
+				}
 				if (session != null)
 					titleBuilder.Append($" - {session.Title}");
 				this.SetValue(TitleProperty, titleBuilder.ToString());

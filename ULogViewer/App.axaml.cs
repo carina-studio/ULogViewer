@@ -343,6 +343,21 @@ namespace CarinaStudio.ULogViewer
 			var desktopLifetime = (IClassicDesktopStyleApplicationLifetime)this.ApplicationLifetime;
 			this.ParseStartupParams(desktopLifetime.Args);
 
+			// enter debug mode
+			if (this.StartupParams.LaunchInDebugMode)
+			{
+				this.logger.LogWarning("Enter debug mode");
+				this.IsDebugMode = true;
+#if !DEBUG
+				NLog.LogManager.Configuration.AddRuleForAllLevels("methodCall");
+#endif
+			}
+			else
+			{
+				NLog.LogManager.Configuration.RemoveRuleByName("logAllToFile");
+				NLog.LogManager.Configuration.AddRule(NLog.LogLevel.Debug, NLog.LogLevel.Fatal, "file");
+			}
+
 			// show splash window
 			var splashWindow = new SplashWindow();
 			this.splashWindow = splashWindow;
@@ -519,11 +534,19 @@ namespace CarinaStudio.ULogViewer
 		// Parse startup parameters.
 		void ParseStartupParams(string[] args)
 		{
+#if DEBUG
+			var isDebugMode = true;
+#else
+			var isDebugMode = false;
+#endif
 			var logProfileId = (string?)null;
 			for (int i = 0, count = args.Length; i < count; ++i)
 			{
 				switch(args[i])
 				{
+					case "-debug":
+						isDebugMode = true;
+						break;
 					case "-profile":
 						if (i < count - 1)
 							logProfileId = args[++i];
@@ -537,6 +560,7 @@ namespace CarinaStudio.ULogViewer
 			}
 			this.StartupParams = new AppStartupParams()
 			{
+				LaunchInDebugMode = isDebugMode,
 				LogProfileId = logProfileId
 			};
 		}
@@ -867,6 +891,7 @@ namespace CarinaStudio.ULogViewer
 		// Interface implementations.
 		public Assembly Assembly { get; } = Assembly.GetExecutingAssembly();
 		public CultureInfo CultureInfo { get; private set; } = CultureInfo.CurrentCulture;
+		public bool IsDebugMode { get; private set; }
 		public bool IsRunningAsAdministrator { get; private set; }
 		public bool IsShutdownStarted { get; private set; }
 		public bool IsTesting => false;

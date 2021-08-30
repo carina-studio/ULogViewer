@@ -71,6 +71,7 @@
 	<sys:String x:Key="String.Common.Administrator">Administrator</sys:String>
 	<sys:String x:Key="String.Common.Cancel">Cancel</sys:String>
 	<sys:String x:Key="String.Common.Copy">Copy</sys:String>
+	<sys:String x:Key="String.Common.DebugMode">Debug Mode</sys:String>
 	<sys:String x:Key="String.Common.Delete">Delete</sys:String>
 	<sys:String x:Key="String.Common.Edit">Edit</sys:String>
 	<sys:String x:Key="String.Common.Empty">Empty</sys:String>

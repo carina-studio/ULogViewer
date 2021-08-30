@@ -31,10 +31,6 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 #endif
 			"GitLog",
 			"GitLogSimple",
-#if DEBUG
-			"ULogViewerLog",
-			"ULogViewerMemoryLog",
-#endif
 		};
 		static volatile LogProfile? emptyProfile;
 		static volatile ILogger? logger;
@@ -177,6 +173,13 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 
 			// create logger
 			logger = app.LoggerFactory.CreateLogger(nameof(LogProfiles));
+
+			// load more built-in profiles in debug mode
+			if (app.IsDebugMode)
+			{
+				builtInProfileIDs.Add("ULogViewerLog");
+				builtInProfileIDs.Add("ULogViewerMemoryLog");
+			}
 
 			// create scheduled action
 			saveProfilesAction = new ScheduledAction(async () =>

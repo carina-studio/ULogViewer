@@ -8,6 +8,12 @@ namespace CarinaStudio.ULogViewer
 	interface IApplication : CarinaStudio.IApplication
 	{
 		/// <summary>
+		/// Check whether application is running as debug mode or not.
+		/// </summary>
+		bool IsDebugMode { get; }
+
+
+		/// <summary>
 		/// Is application running as administrator/superuser or not.
 		/// </summary>
 		bool IsRunningAsAdministrator { get; }

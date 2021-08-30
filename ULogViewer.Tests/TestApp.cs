@@ -88,6 +88,7 @@ namespace CarinaStudio.ULogViewer
 		public bool CheckAccess() => Thread.CurrentThread == syncContext?.ExecutionThread;
 		public CultureInfo CultureInfo { get; private set; } = CultureInfo.CurrentCulture;
 		public string? GetString(string key, string? defaultValue = null) => defaultValue;
+		public bool IsDebugMode => true;
 		public bool IsRunningAsAdministrator => false;
 		public bool IsShutdownStarted => false;
 		public bool IsTesting => true;
