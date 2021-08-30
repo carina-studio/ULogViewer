@@ -61,9 +61,8 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 #endif
 			providers.Add(new FileLogDataSourceProvider(app));
 			providers.Add(new HttpLogDataSourceProvider(app));
-#if DEBUG
-			providers.Add(new MemoryLoggerLogDataSourceProvider(app));
-#endif
+			if (app.IsDebugMode)
+				providers.Add(new MemoryLoggerLogDataSourceProvider(app));
 			providers.Add(new SQLiteLogDataSourceProvider(app));
 			providers.Add(new StandardOutputLogDataSourceProvider(app));
 			providers.Add(new TcpServerLogDataSourceProvider(app));
