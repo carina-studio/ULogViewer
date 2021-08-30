@@ -85,7 +85,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					if (regex.ToString() != this.Text)
 						this.Text = regex.ToString();
 				}
-				else if (this.Text.Length > 0)
+				else if (this.Text != null)
 					this.Text = "";
 			}
 			else if (property == TextProperty)

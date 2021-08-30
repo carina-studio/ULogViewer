@@ -80,7 +80,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					if (text.Length == 0 || !Uri.TryCreate(text, this.UriKind, out var currentUri) || uri != currentUri)
 						this.Text = uri.ToString();
 				}
-				else if (this.Text.Length > 0)
+				else if (this.Text != null)
 					this.Text = "";
 			}
 			else if (property == UriKindProperty)
