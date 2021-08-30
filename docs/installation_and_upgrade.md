@@ -39,7 +39,9 @@ Reference: [How can I edit/create new launcher items in Unity by hand?
 ](https://askubuntu.com/questions/13758/how-can-i-edit-create-new-launcher-items-in-unity-by-hand)
 
 ## 📦Upgrade
-Currently ULogViewer has no installation package nor auto updater. To upgrade ULogViewer, you just need to extract new package and override all existing files.
+ULogViewer checks for update periodically when you are using. It will notify you to upgrade once the update found. Alternatively you can click "Check for update" item in the "Other actions" menu on the right hand side of toolbar to check whether the update is available or not.
+
+ULogViewer supports self updating on Windows and Linux, so you just need to click "Update" button and wait for updating completed. For macOS user, you just need to download and extract new package, override all existing files to upgrade.
 
 
 <br/>📔[Back to Home](index.md)
