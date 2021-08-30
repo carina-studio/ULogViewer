@@ -129,6 +129,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ListBox predefinedLogTextFilterListBox;
 		readonly SortedObservableList<PredefinedLogTextFilter> predefinedLogTextFilters;
 		readonly Popup predefinedLogTextFiltersPopup;
+		readonly HashSet<Key> pressedKeys = new HashSet<Key>();
 		readonly ScheduledAction scrollToLatestLogAction;
 		readonly HashSet<PredefinedLogTextFilter> selectedPredefinedLogTextFilters = new HashSet<PredefinedLogTextFilter>();
 		readonly MenuItem showLogPropertyMenuItem;
@@ -1646,6 +1647,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when key down.
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
+			this.pressedKeys.Add(e.Key);
 			if (!e.Handled)
 			{
 				if (this.Application.IsDebugMode && e.Source is not TextBox)
@@ -1722,6 +1724,14 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when key up.
 		protected override void OnKeyUp(KeyEventArgs e)
 		{
+			// [Workaround] skip handling key event if it was handled by context menu
+			// check whether key down was received or not
+			if (!this.pressedKeys.Remove(e.Key))
+			{
+				this.Logger.LogTrace($"[KeyUp] Key down of {e.Key} was not received");
+				return;
+			}
+
 			// handle key event for single key
 			if (!e.Handled)
 			{
