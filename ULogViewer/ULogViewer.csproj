@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <AssemblyVersion>0.21.0.830</AssemblyVersion>
-		<Version>0.21.0.830</Version>
+    <AssemblyVersion>0.21.1.830</AssemblyVersion>
+		<Version>0.21.1.830</Version>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
     <DebugType>embedded</DebugType>
