@@ -1157,15 +1157,21 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		// Load marked logs from file.
 		async void LoadMarkedLogs(string fileName)
 		{
+			this.Logger.LogTrace($"Request loading marked log(s) of '{fileName}'");
+
 			// load marked logs from file
 			var markedLogInfos = await ioTaskFactory.StartNew(() =>
 			{
 				var markedLogInfos = new List<MarkedLogInfo>();
 				var markedFileName = fileName + MarkedFileExtension;
 				if (!System.IO.File.Exists(markedFileName))
+				{
+					this.Logger.LogTrace($"Marked log file '{markedFileName}' not found");
 					return Array.Empty<MarkedLogInfo>();
+				}
 				try
 				{
+					this.Logger.LogTrace($"Start loading marked log file '{markedFileName}'");
 					if (!IO.File.TryOpenRead(markedFileName, DefaultFileOpeningTimeout, out var stream) || stream == null)
 					{
 						this.Logger.LogError($"Unable to open marked file to load: {markedFileName}");
@@ -1196,10 +1202,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 							return 0;
 						});
 					}
+					this.Logger.LogTrace($"Complete loading marked log file '{markedFileName}', {markedLogInfos.Count} marked log(s) found");
 				}
 				catch (Exception ex)
 				{
-					this.Logger.LogError(ex, $"Unable to load marked file: {markedFileName}");
+					this.Logger.LogError(ex, $"Unable to load marked log file: {markedFileName}");
 					return Array.Empty<MarkedLogInfo>();
 				}
 				return markedLogInfos.ToArray();
@@ -1311,6 +1318,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			}
 			if (allLogsAreMarked)
 			{
+				this.Logger.LogTrace("Unmark log(s)");
 				foreach (var log in logs)
 				{
 					if (log.IsMarked)
@@ -1323,6 +1331,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			}
 			else
 			{
+				this.Logger.LogTrace("Mark log(s)");
 				foreach (var log in logs)
 				{
 					if(!log.IsMarked)
@@ -1349,6 +1358,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		void MatchMarkedLogs()
 		{
 			// match
+			if (this.unmatchedMarkedLogInfos.IsEmpty())
+			{
+				this.Logger.LogTrace("All marked logs were matched");
+				return;
+			}
 			var logList = (List<DisplayableLog>?)null;
 			var logListFileName = "";
 			for (var i = this.unmatchedMarkedLogInfos.Count - 1 ; i >= 0 ; i--)
@@ -1373,6 +1387,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.unmatchedMarkedLogInfos.RemoveAt(i);
 				}
 			}
+			if (this.unmatchedMarkedLogInfos.IsEmpty())
+				this.Logger.LogTrace("All marked logs are matched");
+			else
+				this.Logger.LogTrace($"{this.unmatchedMarkedLogInfos.Count} marked log(s) are unmatched");
 		}
 
 
@@ -1942,14 +1960,20 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		}
 		void SaveMarkedLogs(string logFileName, IList<MarkedLogInfo> markedLogInfos)
 		{
+			this.Logger.LogTrace($"Request saving {markedLogInfos.Count} marked log(s) of '{logFileName}'");
+
 			// save or delete marked file
 			var task = ioTaskFactory.StartNew(() =>
 			{
 				var markedFileName = logFileName + MarkedFileExtension;
 				if (markedLogInfos.IsEmpty())
+				{
+					this.Logger.LogTrace($"Delete marked log file '{markedFileName}'");
 					Global.RunWithoutError(() => System.IO.File.Delete(markedFileName));
+				}
 				else
 				{
+					this.Logger.LogTrace($"Start saving {markedLogInfos.Count} marked log(s) to '{markedFileName}'");
 					try
 					{
 						if (!IO.File.TryOpenReadWrite(markedFileName, DefaultFileOpeningTimeout, out var stream) || stream == null)
@@ -1978,6 +2002,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					{
 						this.Logger.LogError(ex, $"Unable to save marked file: {markedFileName}");
 					}
+					this.Logger.LogTrace($"Complete saving {markedLogInfos.Count} marked log(s) to '{markedFileName}'");
 				}
 			});
 			_ = this.WaitForNecessaryTaskAsync(task);

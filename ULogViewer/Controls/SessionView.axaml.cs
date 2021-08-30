@@ -1648,6 +1648,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (!e.Handled)
 			{
+				if (this.Application.IsDebugMode && e.Source is not TextBox)
+					this.Logger.LogTrace($"[KeyDown] {e.Key}, Ctrl: {(e.KeyModifiers & KeyModifiers.Control) != 0}, Alt: {(e.KeyModifiers & KeyModifiers.Alt) != 0}");
 				if ((e.KeyModifiers & KeyModifiers.Control) != 0)
 				{
 					switch (e.Key)
@@ -1711,6 +1713,8 @@ namespace CarinaStudio.ULogViewer.Controls
 					}
 				}
 			}
+			else if (this.Application.IsDebugMode && e.Source is not TextBox)
+				this.Logger.LogTrace($"[KeyDown] {e.Key} was handled by another component");
 			base.OnKeyDown(e);
 		}
 
@@ -1719,72 +1723,81 @@ namespace CarinaStudio.ULogViewer.Controls
 		protected override void OnKeyUp(KeyEventArgs e)
 		{
 			// handle key event for single key
-			if (!e.Handled && e.KeyModifiers == KeyModifiers.None)
+			if (!e.Handled)
 			{
-				switch (e.Key)
+				if (this.Application.IsDebugMode && e.Source is not TextBox)
+					this.Logger.LogTrace($"[KeyUp] {e.Key}, Ctrl: {(e.KeyModifiers & KeyModifiers.Control) != 0}, Alt: {(e.KeyModifiers & KeyModifiers.Alt) != 0}");
+				if (e.KeyModifiers == KeyModifiers.None)
 				{
-					case Key.End:
-						if (e.Source is not TextBox)
-						{
-							if (this.predefinedLogTextFiltersPopup.IsOpen)
-								this.predefinedLogTextFilterListBox.SelectLastItem();
-							else
-								this.logListBox.SelectLastItem();
-							e.Handled = true;
-						}
-						break;
-					case Key.Escape:
-						if (e.Source is TextBox)
-						{
-							this.logListBox.Focus();
-							e.Handled = true;
-						}
-						else if (this.predefinedLogTextFiltersPopup.IsOpen)
-						{
-							this.predefinedLogTextFiltersPopup.IsOpen = false;
-							e.Handled = true;
-						}
-						break;
-					case Key.F5:
-						if (e.Source is not TextBox)
-						{
-							(this.DataContext as Session)?.ReloadLogsCommand?.TryExecute();
-							e.Handled = true;
-						}
-						break;
-					case Key.Home:
-						if (e.Source is not TextBox)
-						{
-							if (this.predefinedLogTextFiltersPopup.IsOpen)
-								this.predefinedLogTextFilterListBox.SelectFirstItem();
-							else
-								this.logListBox.SelectFirstItem();
-							e.Handled = true;
-						}
-						break;
-					case Key.M:
-						if (e.Source is not TextBox)
-						{
-							this.MarkUnmarkSelectedLogs();
-							e.Handled = true;
-						}
-						break;
-					case Key.P:
-						if (e.Source is not TextBox)
-						{
-							(this.DataContext as Session)?.PauseResumeLogsReadingCommand?.TryExecute();
-							e.Handled = true;
-						}
-						break;
-					case Key.S:
-						if (e.Source is not TextBox && !this.isSelectingFileToSaveLogs)
-						{
-							this.SelectMarkedLogs();
-							e.Handled = true;
-						}
-						break;
+					switch (e.Key)
+					{
+						case Key.End:
+							if (e.Source is not TextBox)
+							{
+								if (this.predefinedLogTextFiltersPopup.IsOpen)
+									this.predefinedLogTextFilterListBox.SelectLastItem();
+								else
+									this.logListBox.SelectLastItem();
+								e.Handled = true;
+							}
+							break;
+						case Key.Escape:
+							if (e.Source is TextBox)
+							{
+								if (this.Application.IsDebugMode)
+									this.Logger.LogTrace($"[KeyUp] {e.Key} on text box");
+								this.logListBox.Focus();
+								e.Handled = true;
+							}
+							else if (this.predefinedLogTextFiltersPopup.IsOpen)
+							{
+								this.predefinedLogTextFiltersPopup.IsOpen = false;
+								e.Handled = true;
+							}
+							break;
+						case Key.F5:
+							if (e.Source is not TextBox)
+							{
+								(this.DataContext as Session)?.ReloadLogsCommand?.TryExecute();
+								e.Handled = true;
+							}
+							break;
+						case Key.Home:
+							if (e.Source is not TextBox)
+							{
+								if (this.predefinedLogTextFiltersPopup.IsOpen)
+									this.predefinedLogTextFilterListBox.SelectFirstItem();
+								else
+									this.logListBox.SelectFirstItem();
+								e.Handled = true;
+							}
+							break;
+						case Key.M:
+							if (e.Source is not TextBox)
+							{
+								this.MarkUnmarkSelectedLogs();
+								e.Handled = true;
+							}
+							break;
+						case Key.P:
+							if (e.Source is not TextBox)
+							{
+								(this.DataContext as Session)?.PauseResumeLogsReadingCommand?.TryExecute();
+								e.Handled = true;
+							}
+							break;
+						case Key.S:
+							if (e.Source is not TextBox && !this.isSelectingFileToSaveLogs)
+							{
+								this.SelectMarkedLogs();
+								e.Handled = true;
+							}
+							break;
+					}
 				}
 			}
+			else if (this.Application.IsDebugMode && e.Source is not TextBox)
+				this.Logger.LogTrace($"[KeyUp] {e.Key} was handled by another component");
 
 			// call base
 			base.OnKeyUp(e);
