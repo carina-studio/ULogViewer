@@ -552,7 +552,10 @@
 			<StackPanel HorizontalAlignment="Stretch" Orientation="Vertical">
 
 				<!-- Marked logs -->
-				<TextBlock Classes="SessionView_SidePanel_Header" Text="{DynamicResource String.SessionView.MarkedLogs}"/>
+				<StackPanel Classes="SessionView_SidePanel_Header">
+					<DrawingPresenter Classes="SessionView_SidePanel_Header" Drawing="{DynamicResource Drawing.Pin}"/>
+					<TextBlock Classes="SessionView_SidePanel_Header" Text="{DynamicResource String.SessionView.MarkedLogs}"/>
+				</StackPanel>
 				<Panel>
 					<ListBox Name="markedLogListBox" Background="{x:Static Brushes.Transparent}" Focusable="False" IsVisible="{Binding HasMarkedLogs}" Items="{Binding MarkedLogs}" SelectionChanged="OnMarkedLogListBoxSelectionChanged" SelectionMode="Single" VirtualizationMode="None">
 						<ListBox.Styles>

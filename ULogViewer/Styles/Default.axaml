@@ -281,6 +281,12 @@
 	<Style Selector="Button.SessionView_ToolBar_Button:disabled">
 		<Setter Property="Opacity" Value="0.3"/>
 	</Style>
+	<Style Selector="DrawingPresenter.SessionView_SidePanel_Header">
+		<Setter Property="Height" Value="{StaticResource Double.SessionView.SidePanel.Header.Icon.Size}"/>
+		<Setter Property="Margin" Value="{StaticResource Thickness.SessionView.SidePanel.Header.Icon.Margin}"/>
+		<Setter Property="VerticalAlignment" Value="Center"/>
+		<Setter Property="Width" Value="{StaticResource Double.SessionView.SidePanel.Header.Icon.Size}"/>
+	</Style>
 	<Style Selector="Grid.SessionView_ToolBar_Button_Icon">
 		<Setter Property="Height" Value="{StaticResource Double.SessionView.ToolBar.Button.Icon.Size}"/>
 		<Setter Property="Width" Value="{StaticResource Double.SessionView.ToolBar.Button.Icon.Size}"/>
@@ -294,6 +300,10 @@
 		<Setter Property="Margin" Value="{StaticResource Thickness.SessionView.ToolBar.Separator.Margin}"/>
 		<Setter Property="Width" Value="{StaticResource Double.SessionView.ToolBar.Separator.Size}"/>
 	</Style>
+	<Style Selector="StackPanel.SessionView_SidePanel_Header">
+		<Setter Property="Margin" Value="{StaticResource Thickness.SessionView.SidePanel.Header.Margin}"/>
+		<Setter Property="Orientation" Value="Horizontal"/>
+	</Style>
 	<Style Selector="TextBlock.SessionView_SidePanel_EmptyHint">
 		<Setter Property="Margin" Value="{StaticResource Thickness.SessionView.SidePanel.EmptyHint.Margin}"/>
 		<Setter Property="Opacity" Value="0.3"/>
@@ -302,9 +312,10 @@
 	</Style>
 	<Style Selector="TextBlock.SessionView_SidePanel_Header">
 		<Setter Property="FontSize" Value="{StaticResource Double.SessionView.SidePanel.Header.FontSize}"/>
-		<Setter Property="Margin" Value="{StaticResource Thickness.SessionView.SidePanel.Header.Margin}"/>
+		<Setter Property="Margin" Value="{StaticResource Thickness.SessionView.SidePanel.Header.Text.Margin}"/>
 		<Setter Property="TextTrimming" Value="CharacterEllipsis"/>
 		<Setter Property="TextWrapping" Value="NoWrap"/>
+		<Setter Property="VerticalAlignment" Value="Center"/>
 	</Style>
 	<Style Selector="ToggleButton.SessionView_ToolBar_Button">
 		<Setter Property="Background" Value="{x:Static Brushes.Transparent}"/>
