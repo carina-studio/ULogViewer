@@ -12,6 +12,7 @@
 			<SolidColorBrush x:Key="Brush.Dialog.Background">#eeeeee</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.Dialog.ControlButtonsPanel.Background">#e0e0e0</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.Dialog.Description.Foreground">#7f000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.Dialog.Label.Header.Separator">#7f000000</SolidColorBrush>
 
 			<!-- Icon -->
 			<SolidColorBrush x:Key="Brush.Icon">#222222</SolidColorBrush>

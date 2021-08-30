@@ -29,8 +29,10 @@
 			<StackPanel Margin="{StaticResource Thickness.Dialog.Content.Padding}" Orientation="Vertical">
 
 				<!-- User interface -->
-				<TextBlock Classes="Dialog_Label_Header1" Text="{DynamicResource String.AppOptionsDialog.UserInterface}"/>
-
+				<Border Classes="Dialog_Label_Header1">
+					<TextBlock Classes="Dialog_Label_Header1" Text="{DynamicResource String.AppOptionsDialog.UserInterface}"/>
+				</Border>
+				
 				<!-- Theme mode -->
 				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.AppOptionsDialog.ThemeMode}"/>
 				<appControls:EnumComboBox EnumType="{x:Type app:ThemeMode}" HorizontalAlignment="Stretch" SelectedItem="{Binding ThemeMode, Mode=TwoWay}"/>
@@ -63,7 +65,9 @@
 				<Separator Classes="Dialog_Separator_Large_Horizontal"/>
 
 				<!-- Log operations -->
-				<TextBlock Classes="Dialog_Label_Header1" Text="{DynamicResource String.AppOptionsDialog.LogOperations}"/>
+				<Border Classes="Dialog_Label_Header1">
+					<TextBlock Classes="Dialog_Label_Header1" Text="{DynamicResource String.AppOptionsDialog.LogOperations}"/>
+				</Border>
 
 				<!-- Initial log profile -->
 				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.AppOptionsDialog.InitialLogProfile}"/>
@@ -117,7 +121,9 @@
 				<Separator Classes="Dialog_Separator_Large_Horizontal"/>
 
 				<!-- Log filtering -->
-				<TextBlock Classes="Dialog_Label_Header1" Text="{DynamicResource String.AppOptionsDialog.LogFiltering}"/>
+				<Border Classes="Dialog_Label_Header1">
+					<TextBlock Classes="Dialog_Label_Header1" Text="{DynamicResource String.AppOptionsDialog.LogFiltering}"/>
+				</Border>
 
 				<!-- Ignore case -->
 				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.AppOptionsDialog.IgnoreCaseOfLogTextFilter}"/>

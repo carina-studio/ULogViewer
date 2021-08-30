@@ -27,7 +27,7 @@
 	<sys:Double x:Key="Double.Dialog.Label.Header1.FontSize">24</sys:Double>
 	<sys:Double x:Key="Double.Dialog.Label.Header2.FontSize">20</sys:Double>
 	<sys:Double x:Key="Double.Dialog.Separator.Size">15</sys:Double>
-	<sys:Double x:Key="Double.Dialog.Separator.Size.Large">30</sys:Double>
+	<sys:Double x:Key="Double.Dialog.Separator.Size.Large">40</sys:Double>
 	<sys:Double x:Key="Double.Dialog.Separator.Size.Small">5</sys:Double>
 	<Thickness x:Key="Thickness.Dialog.Content.Padding">20,15,20,15</Thickness>
 	<Thickness x:Key="Thickness.Dialog.ControlButton.Margin">3,0,3,0</Thickness>
@@ -35,6 +35,7 @@
 	<Thickness x:Key="Thickness.Dialog.ControlButton.Padding">10,5,10,5</Thickness>
 	<Thickness x:Key="Thickness.Dialog.ControlButtonsPanel.Padding">20,15,20,15</Thickness>
 	<Thickness x:Key="Thickness.Dialog.Description.Margin">0,5,0,0</Thickness>
+	<Thickness x:Key="Thickness.Dialog.Label.Header1.Border.Margin">0,0,0,5</Thickness>
 	<Thickness x:Key="Thickness.Dialog.Label.Header1.Margin">0,0,0,5</Thickness>
 	<Thickness x:Key="Thickness.Dialog.Label.Header2.Margin">0,0,0,5</Thickness>
 	<Thickness x:Key="Thickness.Dialog.Label.Margin">0,0,0,5</Thickness>

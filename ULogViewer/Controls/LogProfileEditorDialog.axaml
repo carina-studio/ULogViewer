@@ -66,7 +66,9 @@
 			<StackPanel HorizontalAlignment="Stretch" Margin="{StaticResource Thickness.Dialog.Content.Padding}" Orientation="Vertical">
 
 				<!-- Header -->
-				<TextBlock Classes="Dialog_Label_Header1" Text="{DynamicResource String.LogProfileEditorDialog.Common}"/>
+				<Border Classes="Dialog_Label_Header1">
+					<TextBlock Classes="Dialog_Label_Header1" Text="{DynamicResource String.LogProfileEditorDialog.Common}"/>
+				</Border>
 
 				<!-- How to read and parse logs -->
 				<TextBlock Cursor="Hand" Foreground="{DynamicResource Brush.TextBlock.Foreground.Link}" PointerReleased="OnLinkDescriptionPointerReleased" Tag="{x:Static appControls:LogProfileEditorDialog.LogsReadingAndParsingPageUri}" Text="{DynamicResource String.LogProfileEditorDialog.LearnAboutLogsReadingAndParsing}"/>
@@ -103,7 +105,9 @@
 				<Separator Classes="Dialog_Separator_Large_Horizontal"/>
 
 				<!-- Header -->
-				<TextBlock Classes="Dialog_Label_Header1" Text="{DynamicResource String.LogProfileEditorDialog.LogReading}"/>
+				<Border Classes="Dialog_Label_Header1">
+					<TextBlock Classes="Dialog_Label_Header1" Text="{DynamicResource String.LogProfileEditorDialog.LogReading}"/>
+				</Border>
 
 				<!-- DataSource -->
 				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.DataSourceProvider}"/>
@@ -257,8 +261,10 @@
 				<Separator Classes="Dialog_Separator_Large_Horizontal"/>
 
 				<!-- Header -->
-				<TextBlock Classes="Dialog_Label_Header1" Text="{DynamicResource String.LogProfileEditorDialog.LogDisplaying}"/>
-
+				<Border Classes="Dialog_Label_Header1">
+					<TextBlock Classes="Dialog_Label_Header1" Text="{DynamicResource String.LogProfileEditorDialog.LogDisplaying}"/>
+				</Border>
+				
 				<!-- Visible log properties -->
 				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.VisibleLogProperties}"/>
 				<ListBox Name="visibleLogPropertyListBox" DoubleTapped="OnListBoxDoubleTapped" Items="{Binding $parent[Window].VisibleLogProperties}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
@@ -329,8 +335,10 @@
 				<Separator Classes="Dialog_Separator_Large_Horizontal"/>
 
 				<!-- Header -->
-				<TextBlock Classes="Dialog_Label_Header1" Text="{DynamicResource String.LogProfileEditorDialog.LogWriting}"/>
-
+				<Border Classes="Dialog_Label_Header1">
+					<TextBlock Classes="Dialog_Label_Header1" Text="{DynamicResource String.LogProfileEditorDialog.LogWriting}"/>
+				</Border>
+				
 				<!-- Log writing format -->
 				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogProfileEditorDialog.LogWritingFormat}"/>
 				<Grid ColumnDefinitions="*,Auto">
