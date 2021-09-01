@@ -32,17 +32,15 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <summary>
 		/// Default interval of updating read logs.
 		/// </summary>
-		public const int DefaultUpdateInterval = 5000;
+		public const int DefaultUpdateInterval = 1000;
 
 
 		// Constants.
-		const int LogsReadingChunkSize = 65536;
+		const int LogsReadingChunkSize = 4096;
 
 
 		// Static fields.
-		static readonly TaskFactory defaultReadingTaskFactory = new TaskFactory(TaskScheduler.Default);
 		static readonly CultureInfo defaultTimestampCultureInfo = CultureInfo.GetCultureInfo("en-US");
-		static readonly TaskFactory fileReadingTaskFactory = new TaskFactory(new FixedThreadsTaskScheduler(2));
 		static int nextId = 1;
 
 
@@ -63,6 +61,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		object? pendingLogsReadingToken;
 		readonly SingleThreadSynchronizationContext pendingLogsSyncContext = new SingleThreadSynchronizationContext();
 		readonly IDictionary<string, LogLevel> readOnlyLogLevelMap;
+		readonly TaskFactory readingTaskFactory;
 		LogReaderState state = LogReaderState.Preparing;
 		CultureInfo timestampCultureInfo = defaultTimestampCultureInfo;
 		LogTimestampEncoding timestampEncoding = LogTimestampEncoding.Custom;
@@ -74,7 +73,8 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// Initialize new <see cref="LogReader"/> instance.
 		/// </summary>
 		/// <param name="dataSource"><see cref="ILogDataSource"/> to read log data from.</param>
-		public LogReader(ILogDataSource dataSource)
+		/// <param name="readingTaskFactory"><see cref="TaskFactory"/> to perform logs reading tasks.</param>
+		public LogReader(ILogDataSource dataSource, TaskFactory readingTaskFactory)
 		{
 			// check thread
 			dataSource.VerifyAccess();
@@ -85,6 +85,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			this.Id = nextId++;
 			this.Logger = dataSource.Application.LoggerFactory.CreateLogger($"{this.GetType().Name}-{this.Id}");
 			this.Logs = new ReadOnlyObservableList<Log>(this.logs);
+			this.readingTaskFactory = readingTaskFactory;
 			this.readOnlyLogLevelMap = new ReadOnlyDictionary<string, LogLevel>(this.logLevelMap);
 
 			// create scheduled actions
@@ -1051,10 +1052,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			this.logsReadingCancellationTokenSource = new CancellationTokenSource();
 			var readingToken = this.logsReadingToken;
 			var cancellationToken = this.logsReadingCancellationTokenSource.Token;
-			var taskFactory = this.DataSource.CreationOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName))
-				? fileReadingTaskFactory
-				: defaultReadingTaskFactory;
-			_ = taskFactory.StartNew(() => this.ReadLogs(readingToken, reader, cancellationToken));
+			_ = this.readingTaskFactory.StartNew(() => this.ReadLogs(readingToken, reader, cancellationToken));
 		}
 
 

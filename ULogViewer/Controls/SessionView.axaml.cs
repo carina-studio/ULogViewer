@@ -379,7 +379,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 
 			// sort file names
-			//Array.Sort(fileNames);
+			Array.Sort(fileNames);
 
 			// add log files
 			foreach (var fileName in fileNames)

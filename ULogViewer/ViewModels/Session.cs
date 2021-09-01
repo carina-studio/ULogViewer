@@ -196,6 +196,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		// Static fields.
+		static readonly TaskFactory defaultLogsReadingTaskFactory = new TaskFactory(TaskScheduler.Default);
 		static readonly TaskFactory ioTaskFactory = new TaskFactory(new FixedThreadsTaskScheduler(1));
 
 
@@ -246,6 +247,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly ScheduledAction checkIsWaitingForDataSourcesAction;
 		Comparison<DisplayableLog?> compareDisplayableLogsDelegate;
 		DisplayableLogGroup? displayableLogGroup;
+		TaskFactory? fileLogsReadingTaskFactory;
 		bool hasLogDataSourceCreationFailure;
 		readonly DisplayableLogFilter logFilter;
 		readonly Stopwatch logsReadingWatch = new Stopwatch();
@@ -817,9 +819,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		// Create log reader.
 		void CreateLogReader(ILogDataSource dataSource)
 		{
+			// select logs reading task factory
+			var readingTaskFactory = dataSource.CreationOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName))
+				? (fileLogsReadingTaskFactory ?? new TaskFactory(new FixedThreadsTaskScheduler(1)).Also(it => this.fileLogsReadingTaskFactory = it))
+				: defaultLogsReadingTaskFactory;
+
 			// create log reader
 			var profile = this.LogProfile ?? throw new InternalStateCorruptedException("No log profile to create log reader.");
-			var logReader = new LogReader(dataSource).Also(it =>
+			var logReader = new LogReader(dataSource, readingTaskFactory).Also(it =>
 			{
 				if (profile.IsContinuousReading)
 					it.UpdateInterval = this.ContinuousLogReadingUpdateInterval;
@@ -988,6 +995,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// stop watch
 			this.logsReadingWatch.Stop();
+
+			// dispose task factories
+			(this.fileLogsReadingTaskFactory?.Scheduler as IDisposable)?.Dispose();
 
 			// call base
 			base.Dispose(disposing);
