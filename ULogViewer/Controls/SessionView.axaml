@@ -418,7 +418,7 @@
 					<iaCore:ChangePropertyAction PropertyName="Background" Value="{StaticResource Brush.SessionView.StatusBar.Background.Warning}"/>
 				</iaCore:DataTriggerBehavior>
 			</ia:Interaction.Behaviors>
-			<Grid ColumnDefinitions="Auto,Auto,*,Auto,Auto,Auto,Auto,Auto">
+			<Grid ColumnDefinitions="Auto,Auto,Auto,*,Auto,Auto,Auto,Auto,Auto">
 
 				<!-- Styles -->
 				<Grid.Styles>
@@ -441,22 +441,29 @@
 					<Separator Classes="SessionView_StatusBar_Separator"/>
 				</StackPanel>
 				<StackPanel IsVisible="{Binding HasLogs}" Orientation="Horizontal">
-					<TextBlock Text="{DynamicResource String.SessionView.AllLogCount}" VerticalAlignment="Center"/>
+					<TextBlock Text="{DynamicResource String.SessionView.AllLogCount}"/>
 					<TextBlock Text="{Binding AllLogCount}" VerticalAlignment="Center"/>
 					<TextBlock IsVisible="{Binding IsFilteringLogsNeeded}" Text="{DynamicResource String.SessionView.FilteredLogCount}"/>
 					<TextBlock IsVisible="{Binding IsFilteringLogsNeeded}" Text="{Binding FilteredLogCount}"/>
 					<Separator Classes="SessionView_StatusBar_Separator"/>
 				</StackPanel>
 
+				<!-- Last logs reading duration -->
+				<StackPanel Grid.Column="1" IsVisible="{Binding HasLastLogsReadingDuration}" Orientation="Horizontal">
+					<TextBlock Text="{DynamicResource String.SessionView.LastLogsReadingDuration}"/>
+					<TextBlock Text="{Binding LastLogsReadingDuration, Converter={x:Static appConverters:TimeSpanConverter.Default}}"/>
+					<Separator Classes="SessionView_StatusBar_Separator"/>
+				</StackPanel>
+
 				<!-- Selected logs -->
-				<StackPanel Grid.Column="1" IsVisible="{Binding #logListBox.SelectedItems.Count}" Orientation="Horizontal">
+				<StackPanel Grid.Column="2" IsVisible="{Binding #logListBox.SelectedItems.Count}" Orientation="Horizontal">
 					<TextBlock Text="{DynamicResource String.SessionView.SelectedLogCount}"/>
 					<TextBlock Text="{Binding #logListBox.SelectedItems.Count}"/>
 					<Separator Classes="SessionView_StatusBar_Separator"/>
 				</StackPanel>
 
 				<!-- Filtering progress -->
-				<StackPanel Grid.Column="3" IsVisible="{Binding IsFilteringLogs}" Orientation="Horizontal">
+				<StackPanel Grid.Column="4" IsVisible="{Binding IsFilteringLogs}" Orientation="Horizontal">
 					<Separator Classes="SessionView_StatusBar_Separator"/>
 					<Border Classes="SessionView_StatusBar_Icon">
 						<DrawingPresenter Classes="Icon">
@@ -473,7 +480,7 @@
 				</StackPanel>
 
 				<!-- Saving logs -->
-				<StackPanel Grid.Column="4" IsVisible="{Binding IsSavingLogs}" Orientation="Horizontal">
+				<StackPanel Grid.Column="5" IsVisible="{Binding IsSavingLogs}" Orientation="Horizontal">
 					<Separator Classes="SessionView_StatusBar_Separator"/>
 					<Border Classes="SessionView_StatusBar_Icon">
 						<DrawingPresenter Classes="Icon">
@@ -486,7 +493,7 @@
 				</StackPanel>
 
 				<!-- Waiting for data sources -->
-				<StackPanel Grid.Column="5" IsVisible="{Binding IsWaitingForDataSources}" Orientation="Horizontal">
+				<StackPanel Grid.Column="6" IsVisible="{Binding IsWaitingForDataSources}" Orientation="Horizontal">
 					<Separator Classes="SessionView_StatusBar_Separator"/>
 					<Border Classes="SessionView_StatusBar_Icon">
 						<DrawingPresenter Classes="Icon">
@@ -499,7 +506,7 @@
 				</StackPanel>
 
 				<!-- Working directory -->
-				<StackPanel Grid.Column="6" IsVisible="{Binding HasWorkingDirectory}" Orientation="Horizontal">
+				<StackPanel Grid.Column="7" IsVisible="{Binding HasWorkingDirectory}" Orientation="Horizontal">
 					<Separator Classes="SessionView_StatusBar_Separator"/>
 					<StackPanel Background="{x:Static Brushes.Transparent}" Cursor="Hand" Orientation="Horizontal" PointerReleased="OnStatusBarItemPointerReleased">
 						<StackPanel.ContextMenu>
@@ -522,7 +529,7 @@
 				</StackPanel>
 
 				<!-- Error message -->
-				<StackPanel Grid.Column="7" IsVisible="{Binding HasAllDataSourceErrors}" Orientation="Horizontal">
+				<StackPanel Grid.Column="8" IsVisible="{Binding HasAllDataSourceErrors}" Orientation="Horizontal">
 					<Separator Classes="SessionView_StatusBar_Separator"/>
 					<Border Classes="SessionView_StatusBar_Icon">
 						<DrawingPresenter Classes="Icon">
@@ -533,7 +540,7 @@
 					</Border>
 					<TextBlock Text="{DynamicResource String.SessionView.HasAllDataSourceErrors}"/>
 				</StackPanel>
-				<StackPanel Grid.Column="6" IsVisible="{Binding HasPartialDataSourceErrors}" Orientation="Horizontal">
+				<StackPanel Grid.Column="8" IsVisible="{Binding HasPartialDataSourceErrors}" Orientation="Horizontal">
 					<Border Classes="SessionView_StatusBar_Icon">
 						<DrawingPresenter Classes="Icon">
 							<DrawingPresenter.Drawing>

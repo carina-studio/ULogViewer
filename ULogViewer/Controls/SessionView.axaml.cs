@@ -378,6 +378,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (!this.canAddLogFiles.Value)
 				return;
 
+			// sort file names
+			//Array.Sort(fileNames);
+
 			// add log files
 			foreach (var fileName in fileNames)
 				session.AddLogFileCommand.Execute(fileName);

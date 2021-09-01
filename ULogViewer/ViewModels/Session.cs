@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -54,6 +55,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Property of <see cref="HasAllDataSourceErrors"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> HasAllDataSourceErrorsProperty = ObservableProperty.Register<Session, bool>(nameof(HasAllDataSourceErrors));
+		/// <summary>
+		/// Property of <see cref="HasLastLogsReadingDuration"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> HasLastLogsReadingDurationProperty = ObservableProperty.Register<Session, bool>(nameof(HasLastLogsReadingDuration));
 		/// <summary>
 		/// Property of <see cref="HasLogReaders"/>.
 		/// </summary>
@@ -130,6 +135,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Property of <see cref="IsWorkingDirectoryNeeded"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsWorkingDirectoryNeededProperty = ObservableProperty.Register<Session, bool>(nameof(IsWorkingDirectoryNeeded));
+		/// <summary>
+		/// Property of <see cref="LastLogsReadingDuration"/>.
+		/// </summary>
+		public static readonly ObservableProperty<TimeSpan?> LastLogsReadingDurationProperty = ObservableProperty.Register<Session, TimeSpan?>(nameof(LastLogsReadingDuration));
 		/// <summary>
 		/// Property of <see cref="LogFiltersCombinationMode"/>.
 		/// </summary>
@@ -239,6 +248,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		DisplayableLogGroup? displayableLogGroup;
 		bool hasLogDataSourceCreationFailure;
 		readonly DisplayableLogFilter logFilter;
+		readonly Stopwatch logsReadingWatch = new Stopwatch();
 		readonly HashSet<LogReader> logReaders = new HashSet<LogReader>();
 		readonly SortedObservableList<DisplayableLog> markedLogs;
 		readonly HashSet<string> markedLogsChangedFilePaths = new HashSet<string>(PathEqualityComparer.Default);
@@ -374,7 +384,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				if (this.IsDisposed)
 					return;
 				if (this.logReaders.IsEmpty())
+				{
 					this.SetValue(IsReadingLogsProperty, false);
+					this.SetValue(LastLogsReadingDurationProperty, null);
+					this.logsReadingWatch.Reset();
+				}
 				else
 				{
 					foreach (var logReader in this.logReaders)
@@ -383,11 +397,18 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						{
 							case LogReaderState.Starting:
 							case LogReaderState.ReadingLogs:
+								if (!this.logsReadingWatch.IsRunning)
+									this.logsReadingWatch.Restart();
 								this.SetValue(IsReadingLogsProperty, true);
 								return;
 						}
 					}
 					this.SetValue(IsReadingLogsProperty, false);
+					if(this.logsReadingWatch.IsRunning)
+					{
+						this.logsReadingWatch.Stop();
+						this.SetValue(LastLogsReadingDurationProperty, TimeSpan.FromMilliseconds(this.logsReadingWatch.ElapsedMilliseconds));
+					}
 				}
 			});
 			this.updateIsProcessingLogsAction = new ScheduledAction(() =>
@@ -965,6 +986,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// detach from log profile
 			this.LogProfile?.Let(it => it.PropertyChanged -= this.OnLogProfilePropertyChanged);
 
+			// stop watch
+			this.logsReadingWatch.Stop();
+
 			// call base
 			base.Dispose(disposing);
 		}
@@ -1002,6 +1026,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.checkIsWaitingForDataSourcesAction.Schedule();
 
 			// update state
+			this.updateIsReadingLogsAction.Execute();
+			this.updateIsProcessingLogsAction.Execute();
 			if (this.logReaders.IsEmpty())
 			{
 				this.Logger.LogDebug($"The last log reader disposed");
@@ -1013,8 +1039,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.canReloadLogs.Update(false);
 					this.SetValue(HasLogReadersProperty, false);
 					this.SetValue(IsLogsReadingPausedProperty, false);
-					this.updateIsReadingLogsAction.Execute();
-					this.updateIsProcessingLogsAction.Execute();
 				}
 			}
 		}
@@ -1038,6 +1062,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Check whether errors are found in all data sources or not.
 		/// </summary>
 		public bool HasAllDataSourceErrors { get => this.GetValue(HasAllDataSourceErrorsProperty); }
+
+
+		/// <summary>
+		/// Check whether <see cref="LastLogsReadingDuration"/> is valid or not.
+		/// </summary>
+		public bool HasLastLogsReadingDuration { get => this.GetValue(HasLastLogsReadingDurationProperty); }
 
 
 		/// <summary>
@@ -1152,6 +1182,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Check whether working directory is needed or not.
 		/// </summary>
 		public bool IsWorkingDirectoryNeeded { get => this.GetValue(IsWorkingDirectoryNeededProperty); }
+
+
+		/// <summary>
+		/// Get the duration of last logs reading.
+		/// </summary>
+		public TimeSpan? LastLogsReadingDuration { get => this.GetValue(LastLogsReadingDurationProperty); }
 
 
 		// Load marked logs from file.
@@ -1610,6 +1646,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.UpdateIsLogsWritingAvailable(this.LogProfile);
 				this.updateIsProcessingLogsAction.Schedule();
 			}
+			else if (property == LastLogsReadingDurationProperty)
+				this.SetValue(HasLastLogsReadingDurationProperty, this.LastLogsReadingDuration != null);
 			else if (property == LogFiltersCombinationModeProperty
 				|| property == LogLevelFilterProperty
 				|| property == LogProcessIdFilterProperty
