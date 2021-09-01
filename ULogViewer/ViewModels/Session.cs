@@ -36,7 +36,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 	{
 		// Constants.
 		const string MarkedFileExtension = ".ulvmark";
+		const int DisplayableLogDisposingChunkSize = 65536;
 		const int DelaySaveMarkedLogs = 1000;
+		const int DisposeDisplayableLogsInterval = 100;
 
 
 		/// <summary>
@@ -197,7 +199,32 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 		// Static fields.
 		static readonly TaskFactory defaultLogsReadingTaskFactory = new TaskFactory(TaskScheduler.Default);
+		static readonly List<DisplayableLog> displayableLogsToDispose = new List<DisplayableLog>();
+		static readonly ScheduledAction disposeDisplayableLogsAction = new ScheduledAction(App.Current, () =>
+		{
+			if (displayableLogsToDispose.IsEmpty())
+				return;
+			var logCount = displayableLogsToDispose.Count;
+			if (logCount <= DisplayableLogDisposingChunkSize)
+			{
+				foreach (var log in displayableLogsToDispose)
+					log.Dispose();
+				displayableLogsToDispose.Clear();
+				staticLogger?.LogTrace($"Disposed {logCount} displayable logs");
+				staticLogger?.LogTrace($"All displayable logs were disposed, trigger GC");
+				GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced, false);
+			}
+			else
+			{
+				for (var i = logCount - DisplayableLogDisposingChunkSize; i < logCount; ++i)
+					displayableLogsToDispose[i].Dispose();
+				displayableLogsToDispose.RemoveRange(logCount - DisplayableLogDisposingChunkSize, DisplayableLogDisposingChunkSize);
+				disposeDisplayableLogsAction?.Schedule(DisposeDisplayableLogsInterval);
+				staticLogger?.LogTrace($"Disposed {DisplayableLogDisposingChunkSize} displayable logs, {displayableLogsToDispose.Count} remains");
+			}
+		});
 		static readonly TaskFactory ioTaskFactory = new TaskFactory(new FixedThreadsTaskScheduler(1));
+		static ILogger? staticLogger;
 
 
 		// Activation token.
@@ -269,6 +296,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <param name="workspace"><see cref="Workspace"/>.</param>
 		public Session(Workspace workspace) : base(workspace)
 		{
+			// create static logger
+			if (staticLogger == null)
+				staticLogger = workspace.Application.LoggerFactory.CreateLogger(nameof(Session));
+
 			// create commands
 			this.AddLogFileCommand = ReactiveCommand.Create<string?>(this.AddLogFile, this.GetValueAsObservable(IsLogFileNeededProperty));
 			this.ClearLogFilesCommand = ReactiveCommand.Create(this.ClearLogFiles, this.canClearLogFiles);
@@ -984,8 +1015,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.DisposeLogReaders(false);
 
 			// clear logs
-			foreach (var displayableLog in this.allLogs)
-				displayableLog.Dispose();
+			DisposeDisplayableLogs(this.allLogs);
 			this.allLogs.Clear();
 			this.allLogsByLogFilePath.Clear();
 			this.displayableLogGroup = this.displayableLogGroup.DisposeAndReturnNull();
@@ -1001,6 +1031,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// call base
 			base.Dispose(disposing);
+		}
+
+
+		// Dispose displayable logs.
+		static void DisposeDisplayableLogs(IEnumerable<DisplayableLog> logs)
+		{
+			if (logs is ICollection<DisplayableLog> collection && collection.IsEmpty())
+				return;
+			displayableLogsToDispose.AddRange(logs);
+			disposeDisplayableLogsAction.Schedule(DisposeDisplayableLogsInterval);
 		}
 
 
@@ -1447,8 +1487,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			{
 				case NotifyCollectionChangedAction.Remove:
 					this.markedLogs.RemoveAll(e.OldItems.AsNonNull().Cast<DisplayableLog>(), true);
-					foreach (DisplayableLog displayableLog in e.OldItems.AsNonNull())
-						displayableLog.Dispose();
+					DisposeDisplayableLogs(e.OldItems.AsNonNull().Cast<DisplayableLog>());
 					break;
 				case NotifyCollectionChangedAction.Reset:
 					this.markedLogs.Clear();
@@ -1846,8 +1885,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.checkDataSourceErrorsAction.Execute();
 
 			// clear logs
-			foreach (var displayableLog in this.allLogs)
-				displayableLog.Dispose();
+			DisposeDisplayableLogs(this.allLogs);
 			this.allLogs.Clear();
 			this.allLogsByLogFilePath.Clear();
 			this.displayableLogGroup = this.displayableLogGroup.DisposeAndReturnNull();
