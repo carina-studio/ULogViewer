@@ -366,7 +366,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					var isWaiting = false;
 					foreach (var logReader in this.logReaders)
 					{
-						if (logReader.IsWaitingForDataSource)
+						if (logReader.IsWaitingForDataSource && !logReader.DataSource.CreationOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName)))
 						{
 							isWaiting = true;
 							break;
