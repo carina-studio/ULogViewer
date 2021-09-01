@@ -39,7 +39,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		// Constants.
-		const int ChunkSize = 40960;
+		const int ChunkSize = 8192;
 
 
 		// Static fields.
