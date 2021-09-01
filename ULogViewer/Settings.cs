@@ -43,6 +43,10 @@ namespace CarinaStudio.ULogViewer
 		/// </summary>
 		public static readonly SettingKey<int> MaxDisplayLineCountForEachLog = new SettingKey<int>(nameof(MaxDisplayLineCountForEachLog), 5);
 		/// <summary>
+		/// Keep memory usage as low as possible.
+		/// </summary>
+		public static readonly SettingKey<bool> SaveMemoryAggressively = new SettingKey<bool>(nameof(SaveMemoryAggressively), false);
+		/// <summary>
 		/// Select log files immediately when they are needed.
 		/// </summary>
 		public static readonly SettingKey<bool> SelectLogFilesWhenNeeded = new SettingKey<bool>(nameof(SelectLogFilesWhenNeeded), false);

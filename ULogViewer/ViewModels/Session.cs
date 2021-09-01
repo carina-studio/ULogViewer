@@ -212,7 +212,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				displayableLogsToDispose.Clear();
 				staticLogger?.LogTrace($"Disposed {logCount} displayable logs");
 				staticLogger?.LogTrace($"All displayable logs were disposed, trigger GC");
-				GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced, false);
+				if (App.Current.Settings.GetValueOrDefault(ULogViewer.Settings.SaveMemoryAggressively))
+					GC.Collect();
+				else
+					GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced, false);
 			}
 			else
 			{

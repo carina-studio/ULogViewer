@@ -232,6 +232,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.OnPropertyChanged(nameof(MaxContinuousLogCount));
 			else if (key == ULogViewer.Settings.MaxDisplayLineCountForEachLog)
 				this.OnPropertyChanged(nameof(MaxDisplayLineCountForEachLog));
+			else if (key == ULogViewer.Settings.SaveMemoryAggressively)
+				this.OnPropertyChanged(nameof(SaveMemoryAggressively));
 			else if (key == ULogViewer.Settings.SelectLogFilesWhenNeeded)
 				this.OnPropertyChanged(nameof(SelectLogFilesWhenNeeded));
 			else if (key == ULogViewer.Settings.SelectLogProfileForNewSession)
@@ -252,6 +254,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Get <see cref="FontFamily"/> for sample log text.
 		/// </summary>
 		public FontFamily SampleLogFontFamily { get; private set; }
+
+
+		/// <summary>
+		/// Get or set whether application need to keep memory usage as low as possible.
+		/// </summary>
+		public bool SaveMemoryAggressively
+		{
+			get => this.Settings.GetValueOrDefault(ULogViewer.Settings.SaveMemoryAggressively);
+			set => this.Settings.SetValue<bool>(ULogViewer.Settings.SaveMemoryAggressively, value);
+		}
 
 
 		/// <summary>

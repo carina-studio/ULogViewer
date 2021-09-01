@@ -133,6 +133,16 @@
 				<!-- Max log count -->
 				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.AppOptionsDialog.UpdateLogFilterDelay}"/>
 				<NumericUpDown HorizontalAlignment="Stretch" Maximum="1500" Minimum="300" Value="{Binding UpdateLogFilterDelay, Mode=TwoWay}"/>
+				<Separator Classes="Dialog_Separator_Large_Horizontal"/>
+
+				<!-- Others -->
+				<Border Classes="Dialog_Label_Header1">
+					<TextBlock Classes="Dialog_Label_Header1" Text="{DynamicResource String.AppOptionsDialog.Others}"/>
+				</Border>
+
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.AppOptionsDialog.SaveMemoryAggressively}"/>
+				<ToggleSwitch IsChecked="{Binding SaveMemoryAggressively, Mode=TwoWay}"/>
+				<TextBlock Classes="Dialog_Description" Text="{DynamicResource String.AppOptionsDialog.SaveMemoryAggressively.Description}"/>
 				
 			</StackPanel>
 		</ScrollViewer>
