@@ -1031,7 +1031,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					return filePaths.IsEmpty();
 				if (session.IsWorkingDirectoryNeeded)
 					return filePaths.IsNotEmpty();
-				return false;
+				return true;
 			});
 			var newLogProfile = !needNewLogProfile ? null : await new LogProfileSelectionDialog().Also(it =>
 			{
