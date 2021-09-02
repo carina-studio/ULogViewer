@@ -163,14 +163,17 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <returns><see cref="Func{T, TResult}"/>.</returns>
 		public static Func<DisplayableLog, T> CreateLogPropertyGetter<T>(string propertyName)
 		{
-			if (propertyName != nameof(LogId))
+			return propertyName switch
 			{
-				return Log.CreatePropertyGetter<T>(propertyName).Let(getter =>
+				nameof(BeginningTimestampString) => (it => (T)(object)it.BeginningTimestampString),
+				nameof(EndingTimestampString) => (it => (T)(object)it.EndingTimestampString),
+				nameof(LogId) => (it => (T)(object)it.LogId),
+				nameof(TimestampString) => (it => (T)(object)it.TimestampString),
+				_ => Log.CreatePropertyGetter<T>(propertyName).Let(getter =>
 				{
 					return new Func<DisplayableLog, T>(it => getter(it.Log));
-				});
-			}
-			return (it => (T)(object)it.LogId);
+				}),
+			};
 		}
 
 
