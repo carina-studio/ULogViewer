@@ -9,6 +9,7 @@ namespace CarinaStudio.ULogViewer.Logs
 	class LogBuilder
 	{
 		// Fields.
+		int maxExtraNumber = 0;
 		readonly Dictionary<string, string> properties = new Dictionary<string, string>();
 
 
@@ -40,6 +41,12 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <param name="value">Value to append.</param>
 		public void AppendToNextLine(string propertyName, string value)
 		{
+			if (propertyName.StartsWith("Extra")
+				&& int.TryParse(propertyName.Substring(5), out var number)
+				&& number > this.maxExtraNumber)
+			{
+				this.maxExtraNumber = number;
+			}
 			if (this.properties.TryGetValue(propertyName, out var str))
 				properties[propertyName] = str + "\n" + value;
 			else
@@ -58,7 +65,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// Build new <see cref="Log"/> instance and reset all log properties.
 		/// </summary>
 		/// <returns><see cref="Log"/>.</returns>
-		public Log BuildAndReset() => new Log(this).Also(_ => this.properties.Clear());
+		public Log BuildAndReset() => new Log(this).Also(_ => this.Reset());
 
 
 		/// <summary>
@@ -158,6 +165,12 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		/// <summary>
+		/// Get maximum extra number had been set to this builder.
+		/// </summary>
+		public int MaxExtraNumber { get => this.maxExtraNumber; }
+
+
+		/// <summary>
 		/// Get <see cref="LogReader"/> which owns this builder.
 		/// </summary>
 		public LogReader? Reader { get; }
@@ -166,7 +179,11 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <summary>
 		/// Clear all log properties.
 		/// </summary>
-		public void Reset() => this.properties.Clear();
+		public void Reset()
+		{
+			this.maxExtraNumber = 0;
+			this.properties.Clear();
+		}
 
 
 		/// <summary>
@@ -174,7 +191,16 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// </summary>
 		/// <param name="propertyName">Name of property of log.</param>
 		/// <param name="value">Value to set.</param>
-		public void Set(string propertyName, string value) => properties[propertyName] = value;
+		public void Set(string propertyName, string value)
+		{
+			if(propertyName.StartsWith("Extra") 
+				&& int.TryParse(propertyName.Substring(5), out var number)
+				&& number > this.maxExtraNumber)
+			{
+				this.maxExtraNumber = number;
+			}
+			properties[propertyName] = value;
+		}
 
 
 		/// <summary>

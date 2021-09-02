@@ -20,6 +20,7 @@ namespace CarinaStudio.ULogViewer.Logs
 
 		// Static fields.
 		static Dictionary<string, PropertyInfo> dateTimePropertyMap = new Dictionary<string, PropertyInfo>();
+		static readonly CompressedString?[] emptyCompressedStringArray = new CompressedString[0];
 		static volatile bool isPropertyMapReady;
 		static long nextId = 0;
 		static Dictionary<string, PropertyInfo> propertyMap = new Dictionary<string, PropertyInfo>();
@@ -33,16 +34,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		readonly CompressedString? deviceId;
 		readonly CompressedString? deviceName;
 		readonly CompressedString? eventString;
-		readonly CompressedString? extra1;
-		readonly CompressedString? extra10;
-		readonly CompressedString? extra2;
-		readonly CompressedString? extra3;
-		readonly CompressedString? extra4;
-		readonly CompressedString? extra5;
-		readonly CompressedString? extra6;
-		readonly CompressedString? extra7;
-		readonly CompressedString? extra8;
-		readonly CompressedString? extra9;
+		readonly CompressedString?[] extras;
 		readonly CompressedString? message;
 		readonly CompressedString? processName;
 		readonly CompressedString? sourceName;
@@ -66,16 +58,15 @@ namespace CarinaStudio.ULogViewer.Logs
 			this.deviceName = builder.GetCompressedStringOrNull(nameof(DeviceName));
 			this.EndingTimestamp = builder.GetDateTimeOrNull(nameof(EndingTimestamp));
 			this.eventString = builder.GetCompressedStringOrNull(nameof(Event));
-			this.extra1 = builder.GetCompressedStringOrNull(nameof(Extra1));
-			this.extra10 = builder.GetCompressedStringOrNull(nameof(Extra10));
-			this.extra2 = builder.GetCompressedStringOrNull(nameof(Extra2));
-			this.extra3 = builder.GetCompressedStringOrNull(nameof(Extra3));
-			this.extra4 = builder.GetCompressedStringOrNull(nameof(Extra4));
-			this.extra5 = builder.GetCompressedStringOrNull(nameof(Extra5));
-			this.extra6 = builder.GetCompressedStringOrNull(nameof(Extra6));
-			this.extra7 = builder.GetCompressedStringOrNull(nameof(Extra7));
-			this.extra8 = builder.GetCompressedStringOrNull(nameof(Extra8));
-			this.extra9 = builder.GetCompressedStringOrNull(nameof(Extra9));
+			var extraCount = builder.MaxExtraNumber;
+			if (extraCount > 0)
+			{
+				this.extras = new CompressedString?[extraCount];
+				for (var i = extraCount; i > 0; --i)
+					this.extras[i - 1] = builder.GetCompressedStringOrNull($"Extra{i}");
+			}
+			else
+				this.extras = emptyCompressedStringArray;
 			this.FileName = builder.GetStringOrNull(nameof(FileName));
 			this.Id = Interlocked.Increment(ref nextId);
 			this.Level = builder.GetEnumOrNull<LogLevel>(nameof(Level)) ?? LogLevel.Undefined;
@@ -153,61 +144,61 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <summary>
 		/// Get 1st extra data of log.
 		/// </summary>
-		public string? Extra1 { get => this.extra1?.ToString(); }
+		public string? Extra1 { get => this.extras.Length > 0 ? this.extras[0]?.ToString() : null; }
 
 
 		/// <summary>
 		/// Get 10th extra data of log.
 		/// </summary>
-		public string? Extra10 { get => this.extra10?.ToString(); }
+		public string? Extra10 { get => this.extras.Length > 9 ? this.extras[9]?.ToString() : null; }
 
 
 		/// <summary>
 		/// Get 2nd extra data of log.
 		/// </summary>
-		public string? Extra2 { get => this.extra2?.ToString(); }
+		public string? Extra2 { get => this.extras.Length > 1 ? this.extras[1]?.ToString() : null; }
 
 
 		/// <summary>
 		/// Get 3rd extra data of log.
 		/// </summary>
-		public string? Extra3 { get => this.extra3?.ToString(); }
+		public string? Extra3 { get => this.extras.Length > 2 ? this.extras[2]?.ToString() : null; }
 
 
 		/// <summary>
 		/// Get 4th extra data of log.
 		/// </summary>
-		public string? Extra4 { get => this.extra4?.ToString(); }
+		public string? Extra4 { get => this.extras.Length > 3 ? this.extras[3]?.ToString() : null; }
 
 
 		/// <summary>
 		/// Get 5th extra data of log.
 		/// </summary>
-		public string? Extra5 { get => this.extra5?.ToString(); }
+		public string? Extra5 { get => this.extras.Length > 4 ? this.extras[4]?.ToString() : null; }
 
 
 		/// <summary>
 		/// Get 6th extra data of log.
 		/// </summary>
-		public string? Extra6 { get => this.extra6?.ToString(); }
+		public string? Extra6 { get => this.extras.Length > 5 ? this.extras[5]?.ToString() : null; }
 
 
 		/// <summary>
 		/// Get 7th extra data of log.
 		/// </summary>
-		public string? Extra7 { get => this.extra7?.ToString(); }
+		public string? Extra7 { get => this.extras.Length > 6 ? this.extras[6]?.ToString() : null; }
 
 
 		/// <summary>
 		/// Get 8th extra data of log.
 		/// </summary>
-		public string? Extra8 { get => this.extra8?.ToString(); }
+		public string? Extra8 { get => this.extras.Length > 7 ? this.extras[7]?.ToString() : null; }
 
 
 		/// <summary>
 		/// Get 9th extra data of log.
 		/// </summary>
-		public string? Extra9 { get => this.extra9?.ToString(); }
+		public string? Extra9 { get => this.extras.Length > 8 ? this.extras[8]?.ToString() : null; }
 
 
 		/// <summary>
