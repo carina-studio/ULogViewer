@@ -153,7 +153,7 @@ namespace CarinaStudio.ULogViewer
 		/// <summary>
 		/// Check application update asynchronously.
 		/// </summary>
-		public async Task CheckUpdateInfo()
+		public async Task CheckUpdateInfoAsync()
 		{
 			// schedule next checking
 			this.checkUpdateInfoAction?.Reschedule(UpdateCheckingInterval);
@@ -336,7 +336,7 @@ namespace CarinaStudio.ULogViewer
 			// create scheduled actions
 			this.checkUpdateInfoAction = new ScheduledAction(() =>
 			{
-				_ = this.CheckUpdateInfo();
+				_ = this.CheckUpdateInfoAsync();
 			});
 
 			// parse startup params
@@ -451,7 +451,7 @@ namespace CarinaStudio.ULogViewer
 				workspace.CreateSession(initialProfile);
 
 			// start checking update
-			_ = this.CheckUpdateInfo();
+			_ = this.CheckUpdateInfoAsync();
 
 			// show main window
 			this.synchronizationContext.Post(this.ShowMainWindow);

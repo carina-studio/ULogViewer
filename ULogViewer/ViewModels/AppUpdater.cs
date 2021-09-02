@@ -95,7 +95,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// check for update
 			this.canCheckForUpdate.Update(false);
 			this.SetValue(IsCheckingForUpdateProperty, true);
-			await ((App)this.Application).CheckUpdateInfo();
+			await ((App)this.Application).CheckUpdateInfoAsync();
 			if (!this.IsDisposed)
 			{
 				this.SetValue(IsCheckingForUpdateProperty, false);
@@ -273,7 +273,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.Logger.LogWarning("Start auto updater");
 				using var process = Process.Start(new ProcessStartInfo()
 				{
-					Arguments = $"-directory \"{Path.GetDirectoryName(mainModule.FileName)}\" -executable \"{mainModule.FileName}\" -package-manifest {Uris.AppPackageManifest} -name ULogViewer -wait-for-process {currentProcess.Id} {(useDarkMode ? "-dark-mode" : "")}",
+					Arguments = $"-culture {this.Application.CultureInfo}" + 
+						$" {(useDarkMode ? "-dark-mode" : "")}" +
+						$" -directory \"{Path.GetDirectoryName(mainModule.FileName)}\"" +
+						$" -executable \"{mainModule.FileName}\"" +
+						$" -name ULogViewer" +
+						$" -package-manifest {Uris.AppPackageManifest}" +
+						$" -wait-for-process {currentProcess.Id}",
 					FileName = autoUpdaterPath,
 				});
 			}
