@@ -338,7 +338,8 @@
 	<sys:String x:Key="String.SessionView.FilterLogsBySelectedThreadIdOnly">只使用選取的 TID 篩選</sys:String>
 	<sys:String x:Key="String.SessionView.HasAllDataSourceErrors">資料來源發生錯誤</sys:String>
 	<sys:String x:Key="String.SessionView.HasPartialDataSourceErrors">部分資料來源發生錯誤</sys:String>
-	<sys:String x:Key="String.SessionView.LastLogsReadingDuration">上次讀取耗時：</sys:String>
+	<sys:String x:Key="String.SessionView.LastLogsFilteringDuration">篩選耗時：</sys:String>
+	<sys:String x:Key="String.SessionView.LastLogsReadingDuration">讀取耗時：</sys:String>
 	<sys:String x:Key="String.SessionView.LogFiltersCombinationMode">篩選條件運算方式</sys:String>
 	<sys:String x:Key="String.SessionView.LogsFilteringProgress">篩選日誌中…</sys:String>
 	<sys:String x:Key="String.SessionView.LogTextFilterHint">文字篩選 (正規表示式，使用 \$\$ 表示文字屬性分隔線)</sys:String>

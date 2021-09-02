@@ -350,7 +350,8 @@
 	<sys:String x:Key="String.SessionView.FilterLogsBySelectedThreadIdOnly">Filter by selected TID only</sys:String>
 	<sys:String x:Key="String.SessionView.HasAllDataSourceErrors">Error occurred in data sources</sys:String>
 	<sys:String x:Key="String.SessionView.HasPartialDataSourceErrors">Error occurred in some of data sources</sys:String>
-	<sys:String x:Key="String.SessionView.LastLogsReadingDuration">Last reading cost: </sys:String>
+	<sys:String x:Key="String.SessionView.LastLogsFilteringDuration">Filtering cost: </sys:String>
+	<sys:String x:Key="String.SessionView.LastLogsReadingDuration">Reading cost: </sys:String>
 	<sys:String x:Key="String.SessionView.LogFiltersCombinationMode">Way to combine conditions</sys:String>
 	<sys:String x:Key="String.SessionView.LogsFilteringProgress">Filtering logs…</sys:String>
 	<sys:String x:Key="String.SessionView.LogTextFilterHint">Text filtering (Regular Expression, use \$\$ as separator between text properties)</sys:String>
