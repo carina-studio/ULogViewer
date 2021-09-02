@@ -454,6 +454,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						this.logsReadingWatch.Stop();
 						this.SetValue(LastLogsReadingDurationProperty, TimeSpan.FromMilliseconds(this.logsReadingWatch.ElapsedMilliseconds));
 					}
+					if (this.Settings.GetValueOrDefault(ULogViewer.Settings.SaveMemoryAggressively))
+					{
+						this.Logger.LogDebug("Trigger GC after reading logs");
+						GC.Collect();
+					}
 				}
 			});
 			this.updateIsProcessingLogsAction = new ScheduledAction(() =>
@@ -1577,6 +1582,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						this.logsFilteringWatch.Stop();
 						this.SetValue(IsFilteringLogsProperty, false);
 						this.SetValue(LastLogsFilteringDurationProperty, TimeSpan.FromMilliseconds(this.logsFilteringWatch.ElapsedMilliseconds));
+						if (this.Settings.GetValueOrDefault(ULogViewer.Settings.SaveMemoryAggressively))
+						{
+							this.Logger.LogDebug("Trigger GC after filtering logs");
+							GC.Collect();
+						}
 					}
 					break;
 				case nameof(DisplayableLogFilter.IsFilteringNeeded):
@@ -1590,6 +1600,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						this.SetValue(LogsProperty, this.allLogs.AsReadOnly());
 						this.SetValue(HasLogsProperty, this.allLogs.IsNotEmpty());
 						this.SetValue(LastLogsFilteringDurationProperty, null);
+						if (this.Settings.GetValueOrDefault(ULogViewer.Settings.SaveMemoryAggressively))
+						{
+							this.Logger.LogDebug("Trigger GC after clearing log filters");
+							GC.Collect();
+						}
 					}
 					this.SetValue(IsFilteringLogsNeededProperty, this.logFilter.IsFilteringNeeded);
 					break;

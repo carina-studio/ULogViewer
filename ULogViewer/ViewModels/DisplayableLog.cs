@@ -15,6 +15,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 	class DisplayableLog : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 	{
 		// Static fields.
+		static readonly bool?[] emptyNullableBoolArray = new bool?[0];
+		static readonly int[] emptyInt32Array = new int[0];
 		static readonly Func<Log, string?>[] extraGetters = new Func<Log, string?>[Log.ExtraCapacity].Also(it =>
 		{
 			for (var i = it.Length - 1; i >= 0; --i)
@@ -25,15 +27,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		// Fields.
-		string? beginningTimestampString;
-		string? endingTimestampString;
-		int[] extraLineCount = new int[10].Also(it =>
-		{
-			for (var i = it.Length - 1; i >= 0; --i)
-				it[i] = -1;
-		});
+		CompressedString? beginningTimestampString;
+		CompressedString? endingTimestampString;
+		readonly int[] extraLineCount;
 		IBrush? colorIndicatorBrush;
-		bool?[] hasExtraLinesOfExtras = new bool?[10];
+		readonly bool?[] hasExtraLinesOfExtras;
 		bool? hasExtraLinesOfMessage;
 		bool? hasExtraLinesOfSummary;
 		bool isColorIndicatorBrushSet;
@@ -43,7 +41,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		IBrush? levelBrushForPointerOver;
 		int messageLineCount = -1;
 		int summaryLineCount = -1;
-		string? timestampString;
+		CompressedString? timestampString;
 
 
 		/// <summary>
@@ -54,6 +52,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <param name="log">Log.</param>
 		internal DisplayableLog(DisplayableLogGroup group, LogReader reader, Log log)
 		{
+			// setup properties
 			this.Application = group.Application;
 			this.BinaryBeginningTimestamp = log.BeginningTimestamp?.ToBinary() ?? 0L;
 			this.BinaryEndingTimestamp = log.EndingTimestamp?.ToBinary() ?? 0L;
@@ -62,6 +61,25 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.Log = log;
 			this.LogReader = reader;
 			this.TrackingNode = new LinkedListNode<DisplayableLog>(this);
+
+			// check extras
+			var extraCount = group.MaxLogExtraNumber;
+			if (extraCount > 0)
+			{
+				this.extraLineCount = new int[extraCount].Also(it =>
+				{
+					for (var i = it.Length - 1; i >= 0; --i)
+						it[i] = -1;
+				});
+				this.hasExtraLinesOfExtras = new bool?[extraCount];
+			}
+			else
+			{
+				this.extraLineCount = emptyInt32Array;
+				this.hasExtraLinesOfExtras = emptyNullableBoolArray;
+			}
+
+			// notify group
 			group.OnDisplayableLogCreated(this);
 		}
 
@@ -81,7 +99,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			{
 				if (this.beginningTimestampString == null)
 					this.beginningTimestampString = this.FormatTimestamp(this.Log.BeginningTimestamp);
-				return this.beginningTimestampString;
+				return this.beginningTimestampString.ToString();
 			}
 		}
 
@@ -128,6 +146,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		// Check whether extra line of ExtraX exist or not.
 		bool CheckExtraLinesOfExtra(int index)
 		{
+			if (index >= this.hasExtraLinesOfExtras.Length)
+				return false;
 			var hasExtraLines = this.hasExtraLinesOfExtras[index];
 			if (hasExtraLines == null)
 			{
@@ -213,7 +233,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			{
 				if (this.endingTimestampString == null)
 					this.endingTimestampString = this.FormatTimestamp(this.Log.EndingTimestamp);
-				return this.endingTimestampString;
+				return this.endingTimestampString.ToString();
 			}
 		}
 
@@ -351,20 +371,23 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		// Format timestamp to string.
-		string FormatTimestamp(DateTime? timestamp)
+		CompressedString FormatTimestamp(DateTime? timestamp)
 		{
+			var level = this.Group.SaveMemoryAgressively ? CompressedString.Level.Fast : CompressedString.Level.None;
 			var format = this.Group.LogProfile.TimestampFormatForDisplaying;
 			if (timestamp == null)
-				return "";
+				return CompressedString.Empty;
 			if (format != null)
-				return timestamp.Value.ToString(format);
-			return timestamp.Value.ToString();
+				return CompressedString.Create(timestamp.Value.ToString(format), level).AsNonNull();
+			return CompressedString.Create(timestamp.Value.ToString(), level).AsNonNull();
 		}
 
 
 		// Get number of lines of ExtraX.
 		int GetExtraLineCount(int index)
 		{
+			if (index >= this.extraLineCount.Length)
+				return 0;
 			if (this.extraLineCount[index] < 0)
 				this.extraLineCount[index] = CalculateLineCount(extraGetters[index](this.Log));
 			return this.extraLineCount[index];
@@ -806,7 +829,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			{
 				if (this.timestampString == null)
 					this.timestampString = this.FormatTimestamp(this.Log.Timestamp);
-				return this.timestampString;
+				return this.timestampString.ToString();
 			}
 		}
 

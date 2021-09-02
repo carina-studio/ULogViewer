@@ -7,6 +7,7 @@ using CarinaStudio.ULogViewer.Logs.Profiles;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Text.RegularExpressions;
 using System.Threading;
 
 namespace CarinaStudio.ULogViewer.ViewModels
@@ -16,6 +17,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 	/// </summary>
 	class DisplayableLogGroup : BaseDisposable, IApplicationObject
 	{
+		// Static fields.
+		static readonly Regex ExtraCaptureRegex = new Regex(@"\(\?\<Extra(?<Number>[\d]+)\>");
+
+
 		// Fields.
 		readonly Dictionary<string, IBrush> colorIndicatorBrushes = new Dictionary<string, IBrush>();
 		Func<DisplayableLog, string>? colorIndicatorKeyGetter;
@@ -35,6 +40,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.Application = profile.Application;
 			this.LogProfile = profile;
 			this.maxDisplayLineCount = Math.Max(1, this.Application.Settings.GetValueOrDefault(Settings.MaxDisplayLineCountForEachLog));
+			this.SaveMemoryAgressively = this.Application.Settings.GetValueOrDefault(Settings.SaveMemoryAggressively);
+			this.CheckMaxLogExtraNumber();
 
 			// add event handlers
 			this.Application.Settings.SettingChanged += this.OnSettingChanged;
@@ -51,6 +58,24 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Get <see cref="IApplication"/> instance.
 		/// </summary>
 		public IApplication Application { get; }
+
+
+		// Check maximum log extra number.
+		void CheckMaxLogExtraNumber()
+		{
+			var maxNumber = 0;
+			foreach (var pattern in this.LogProfile.LogPatterns)
+			{
+				var match = ExtraCaptureRegex.Match(pattern.Regex.ToString());
+				while (match.Success)
+				{
+					if (int.TryParse(match.Groups["Number"].Value, out var number) && number > maxNumber)
+						maxNumber = number;
+					match = match.NextMatch();
+				}
+			}
+			this.MaxLogExtraNumber = Math.Min(Log.ExtraCapacity, maxNumber);
+		}
 
 
 		/// <summary>
@@ -137,6 +162,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public int MaxDisplayLineCount { get => this.maxDisplayLineCount; }
 
 
+		/// <summary>
+		/// Get maximum number of extras provided by each <see cref="Log"/> by <see cref="LogProfile"/>.
+		/// </summary>
+		public int MaxLogExtraNumber { get; private set; }
+
+
 		// Called when application string resources updated.
 		void OnApplicationStringsUpdated(object? sender, EventArgs e)
 		{
@@ -185,6 +216,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						}
 					}
 					break;
+				case nameof(LogProfile.LogPatterns):
+					this.CheckMaxLogExtraNumber();
+					break;
 				case nameof(LogProfile.TimestampFormatForDisplaying):
 					{
 						var node = this.displayableLogs.First;
@@ -212,6 +246,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					node = node.Next;
 				}
 			}
+			else if (e.Key == Settings.SaveMemoryAggressively)
+				this.SaveMemoryAgressively = (bool)e.Value;
 			else if (e.Key == Settings.ThemeMode)
 			{
 				this.SynchronizationContext.Post(() =>
@@ -226,6 +262,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				});
 			}
 		}
+
+
+		/// <summary>
+		/// Check whether <see cref="DisplayableLog"/> need to keep memory usage as low as possible or not.
+		/// </summary>
+		public bool SaveMemoryAgressively { get; private set; }
 
 
 		// Update color indicator brushes.

@@ -62,6 +62,19 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		/// <summary>
+		/// Get log property as <see cref="CompressedString"/> or return null if unable to get the property.
+		/// </summary>
+		/// <param name="propertyName">Name of property of log.</param>
+		/// <returns>Value or null.</returns>
+		public CompressedString? GetCompressedStringOrNull(string propertyName)
+		{
+			if (this.properties.TryGetValue(propertyName, out var str))
+				return CompressedString.Create(str, this.StringCompressionLevel);
+			return null;
+		}
+
+
+		/// <summary>
 		/// Get log property as <see cref="DateTime"/> or return null if unable to get the property.
 		/// </summary>
 		/// <param name="propertyName">Name of property of log.</param>
@@ -162,5 +175,11 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <param name="propertyName">Name of property of log.</param>
 		/// <param name="value">Value to set.</param>
 		public void Set(string propertyName, string value) => properties[propertyName] = value;
+
+
+		/// <summary>
+		/// Get or set string compression level.
+		/// </summary>
+		public CompressedString.Level StringCompressionLevel { get; set; } = CompressedString.Level.None;
 	}
 }

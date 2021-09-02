@@ -11,6 +11,12 @@ namespace CarinaStudio.ULogViewer
 	class CompressedString
 	{
 		/// <summary>
+		/// <see cref="CompressedString"/> represent empty string.
+		/// </summary>
+		public static readonly CompressedString Empty = new CompressedString("", Level.None);
+
+
+		/// <summary>
 		/// Compression level.
 		/// </summary>
 		public enum Level
@@ -42,14 +48,13 @@ namespace CarinaStudio.ULogViewer
 		readonly byte[] data;
 		readonly bool isCompressed;
 		readonly string? originalString;
-		volatile WeakReference<string>? stringRef;
 		readonly int utf8EncodingSize;
 
 
 		// Constructor.
 		CompressedString(string value, Level level)
 		{
-			if (level == Level.None)
+			if (level == Level.None || value.Length < 4)
 			{
 				this.data = EmptyData;
 				this.originalString = value;
@@ -72,7 +77,6 @@ namespace CarinaStudio.ULogViewer
 					CompressionMemoryStream.SetLength(0);
 				}
 				this.originalString = null;
-				this.stringRef = new WeakReference<string>(value);
 			}
 		}
 
@@ -87,6 +91,8 @@ namespace CarinaStudio.ULogViewer
 		{
 			if (value == null)
 				return null;
+			if (value.Length == 0)
+				return CompressedString.Empty;
 			return new CompressedString(value, level);
 		}
 
@@ -102,9 +108,6 @@ namespace CarinaStudio.ULogViewer
 		{
 			if (this.originalString != null)
 				return this.originalString;
-			var value = (string?)null;
-			if (this.stringRef?.TryGetTarget(out value) == true)
-				return value.AsNonNull();
 			var data = this.data;
 			if (this.isCompressed)
 			{
@@ -118,8 +121,7 @@ namespace CarinaStudio.ULogViewer
 					stream.Read(data, 0, data.Length);
 				DecompressionMemoryStream.SetLength(0);
 			}
-			value = Encoding.UTF8.GetString(data);
-			this.stringRef = new WeakReference<string>(value);
+			var value = Encoding.UTF8.GetString(data);
 			return value;
 		}
 	}

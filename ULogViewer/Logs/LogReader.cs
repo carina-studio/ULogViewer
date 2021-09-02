@@ -1,6 +1,6 @@
 ﻿using CarinaStudio.Collections;
+using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
-using CarinaStudio.Threading.Tasks;
 using CarinaStudio.ULogViewer.Json;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using Microsoft.Extensions.Logging;
@@ -695,7 +695,12 @@ namespace CarinaStudio.ULogViewer.Logs
 			var readLogs = new List<Log>();
 			var readLog = (Log?)null;
 			var logPatterns = this.logPatterns;
-			var logBuilder = new LogBuilder();
+			var logBuilder = new LogBuilder()
+			{
+				StringCompressionLevel = this.Application.Settings.GetValueOrDefault(Settings.SaveMemoryAggressively)
+					? CompressedString.Level.Optimal
+					: CompressedString.Level.None,
+			};
 			var syncContext = this.SynchronizationContext;
 			var isContinuousReading = this.isContinuousReading;
 			var isFirstMatchedLine = true;

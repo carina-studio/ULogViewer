@@ -28,6 +28,32 @@ namespace CarinaStudio.ULogViewer.Logs
 		static volatile IList<string>? stringPropertyNames;
 
 
+		// Fields.
+		readonly CompressedString? category;
+		readonly CompressedString? deviceId;
+		readonly CompressedString? deviceName;
+		readonly CompressedString? eventString;
+		readonly CompressedString? extra1;
+		readonly CompressedString? extra10;
+		readonly CompressedString? extra2;
+		readonly CompressedString? extra3;
+		readonly CompressedString? extra4;
+		readonly CompressedString? extra5;
+		readonly CompressedString? extra6;
+		readonly CompressedString? extra7;
+		readonly CompressedString? extra8;
+		readonly CompressedString? extra9;
+		readonly CompressedString? message;
+		readonly CompressedString? processName;
+		readonly CompressedString? sourceName;
+		readonly CompressedString? summary;
+		readonly CompressedString? tags;
+		readonly CompressedString? threadName;
+		readonly CompressedString? title;
+		readonly CompressedString? userId;
+		readonly CompressedString? userName;
+
+
 		/// <summary>
 		/// Initialize new <see cref="Log"/> instance.
 		/// </summary>
@@ -35,37 +61,37 @@ namespace CarinaStudio.ULogViewer.Logs
 		internal Log(LogBuilder builder)
 		{
 			this.BeginningTimestamp = builder.GetDateTimeOrNull(nameof(BeginningTimestamp));
-			this.Category = builder.GetStringOrNull(nameof(Category));
-			this.DeviceId = builder.GetStringOrNull(nameof(DeviceId));
-			this.DeviceName = builder.GetStringOrNull(nameof(DeviceName));
+			this.category = builder.GetCompressedStringOrNull(nameof(Category));
+			this.deviceId = builder.GetCompressedStringOrNull(nameof(DeviceId));
+			this.deviceName = builder.GetCompressedStringOrNull(nameof(DeviceName));
 			this.EndingTimestamp = builder.GetDateTimeOrNull(nameof(EndingTimestamp));
-			this.Event = builder.GetStringOrNull(nameof(Event));
-			this.Extra1 = builder.GetStringOrNull(nameof(Extra1));
-			this.Extra10 = builder.GetStringOrNull(nameof(Extra10));
-			this.Extra2 = builder.GetStringOrNull(nameof(Extra2));
-			this.Extra3 = builder.GetStringOrNull(nameof(Extra3));
-			this.Extra4 = builder.GetStringOrNull(nameof(Extra4));
-			this.Extra5 = builder.GetStringOrNull(nameof(Extra5));
-			this.Extra6 = builder.GetStringOrNull(nameof(Extra6));
-			this.Extra7 = builder.GetStringOrNull(nameof(Extra7));
-			this.Extra8 = builder.GetStringOrNull(nameof(Extra8));
-			this.Extra9 = builder.GetStringOrNull(nameof(Extra9));
+			this.eventString = builder.GetCompressedStringOrNull(nameof(Event));
+			this.extra1 = builder.GetCompressedStringOrNull(nameof(Extra1));
+			this.extra10 = builder.GetCompressedStringOrNull(nameof(Extra10));
+			this.extra2 = builder.GetCompressedStringOrNull(nameof(Extra2));
+			this.extra3 = builder.GetCompressedStringOrNull(nameof(Extra3));
+			this.extra4 = builder.GetCompressedStringOrNull(nameof(Extra4));
+			this.extra5 = builder.GetCompressedStringOrNull(nameof(Extra5));
+			this.extra6 = builder.GetCompressedStringOrNull(nameof(Extra6));
+			this.extra7 = builder.GetCompressedStringOrNull(nameof(Extra7));
+			this.extra8 = builder.GetCompressedStringOrNull(nameof(Extra8));
+			this.extra9 = builder.GetCompressedStringOrNull(nameof(Extra9));
 			this.FileName = builder.GetStringOrNull(nameof(FileName));
 			this.Id = Interlocked.Increment(ref nextId);
 			this.Level = builder.GetEnumOrNull<LogLevel>(nameof(Level)) ?? LogLevel.Undefined;
 			this.LineNumber = builder.GetInt32OrNull(nameof(LineNumber));
-			this.Message = builder.GetStringOrNull(nameof(Message));
+			this.message = builder.GetCompressedStringOrNull(nameof(Message));
 			this.ProcessId = builder.GetInt32OrNull(nameof(ProcessId));
-			this.ProcessName = builder.GetStringOrNull(nameof(ProcessName));
-			this.SourceName = builder.GetStringOrNull(nameof(SourceName));
-			this.Summary = builder.GetStringOrNull(nameof(Summary));
-			this.Tags = builder.GetStringOrNull(nameof(Tags));
+			this.processName = builder.GetCompressedStringOrNull(nameof(ProcessName));
+			this.sourceName = builder.GetCompressedStringOrNull(nameof(SourceName));
+			this.summary = builder.GetCompressedStringOrNull(nameof(Summary));
+			this.tags = builder.GetCompressedStringOrNull(nameof(Tags));
 			this.ThreadId = builder.GetInt32OrNull(nameof(ThreadId));
-			this.ThreadName = builder.GetStringOrNull(nameof(ThreadName));
+			this.threadName = builder.GetCompressedStringOrNull(nameof(ThreadName));
 			this.Timestamp = builder.GetDateTimeOrNull(nameof(Timestamp));
-			this.Title = builder.GetStringOrNull(nameof(Title));
-			this.UserId = builder.GetStringOrNull(nameof(UserId));
-			this.UserName = builder.GetStringOrNull(nameof(UserName));
+			this.title = builder.GetCompressedStringOrNull(nameof(Title));
+			this.userId = builder.GetCompressedStringOrNull(nameof(UserId));
+			this.userName = builder.GetCompressedStringOrNull(nameof(UserName));
 		}
 
 
@@ -78,7 +104,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <summary>
 		/// Get category of log.
 		/// </summary>
-		public string? Category { get; }
+		public string? Category { get => this.category?.ToString(); }
 
 
 #pragma warning disable CS8603
@@ -103,13 +129,13 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <summary>
 		/// Get ID of device which generates log.
 		/// </summary>
-		public string? DeviceId { get; }
+		public string? DeviceId { get => this.deviceId?.ToString(); }
 
 
 		/// <summary>
 		/// Get name of device which generates log.
 		/// </summary>
-		public string? DeviceName { get; }
+		public string? DeviceName { get => this.deviceName?.ToString(); }
 
 
 		/// <summary>
@@ -121,67 +147,67 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <summary>
 		/// Get event of log.
 		/// </summary>
-		public string? Event { get; }
+		public string? Event { get => this.eventString?.ToString(); }
 
 
 		/// <summary>
 		/// Get 1st extra data of log.
 		/// </summary>
-		public string? Extra1 { get; }
+		public string? Extra1 { get => this.extra1?.ToString(); }
 
 
 		/// <summary>
 		/// Get 10th extra data of log.
 		/// </summary>
-		public string? Extra10 { get; }
+		public string? Extra10 { get => this.extra10?.ToString(); }
 
 
 		/// <summary>
 		/// Get 2nd extra data of log.
 		/// </summary>
-		public string? Extra2 { get; }
+		public string? Extra2 { get => this.extra2?.ToString(); }
 
 
 		/// <summary>
 		/// Get 3rd extra data of log.
 		/// </summary>
-		public string? Extra3 { get; }
+		public string? Extra3 { get => this.extra3?.ToString(); }
 
 
 		/// <summary>
 		/// Get 4th extra data of log.
 		/// </summary>
-		public string? Extra4 { get; }
+		public string? Extra4 { get => this.extra4?.ToString(); }
 
 
 		/// <summary>
 		/// Get 5th extra data of log.
 		/// </summary>
-		public string? Extra5 { get; }
+		public string? Extra5 { get => this.extra5?.ToString(); }
 
 
 		/// <summary>
 		/// Get 6th extra data of log.
 		/// </summary>
-		public string? Extra6 { get; }
+		public string? Extra6 { get => this.extra6?.ToString(); }
 
 
 		/// <summary>
 		/// Get 7th extra data of log.
 		/// </summary>
-		public string? Extra7 { get; }
+		public string? Extra7 { get => this.extra7?.ToString(); }
 
 
 		/// <summary>
 		/// Get 8th extra data of log.
 		/// </summary>
-		public string? Extra8 { get; }
+		public string? Extra8 { get => this.extra8?.ToString(); }
 
 
 		/// <summary>
 		/// Get 9th extra data of log.
 		/// </summary>
-		public string? Extra9 { get; }
+		public string? Extra9 { get => this.extra9?.ToString(); }
 
 
 		/// <summary>
@@ -270,7 +296,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <summary>
 		/// Get message.
 		/// </summary>
-		public string? Message { get; }
+		public string? Message { get => this.message?.ToString(); }
 
 
 		/// <summary>
@@ -282,7 +308,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <summary>
 		/// Get name of process which generates log.
 		/// </summary>
-		public string? ProcessName { get; }
+		public string? ProcessName { get => this.processName?.ToString(); }
 
 
 		/// <summary>
@@ -342,7 +368,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <summary>
 		/// Get name of source which generates log.
 		/// </summary>
-		public string? SourceName { get; }
+		public string? SourceName { get => this.sourceName?.ToString(); }
 
 
 		/// <summary>
@@ -369,13 +395,13 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <summary>
 		/// Get summary of log.
 		/// </summary>
-		public string? Summary { get; }
+		public string? Summary { get => this.summary?.ToString(); }
 
 
 		/// <summary>
 		/// Get tags of log.
 		/// </summary>
-		public string? Tags { get; }
+		public string? Tags { get => this.tags?.ToString(); }
 
 
 		/// <summary>
@@ -387,7 +413,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <summary>
 		/// Get name of thread which generates log.
 		/// </summary>
-		public string? ThreadName { get; }
+		public string? ThreadName { get => this.threadName?.ToString(); }
 
 
 		/// <summary>
@@ -399,7 +425,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <summary>
 		/// Get title of log.
 		/// </summary>
-		public string? Title { get; }
+		public string? Title { get => this.title?.ToString(); }
 
 
 #pragma warning disable CS8600
@@ -431,12 +457,12 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <summary>
 		/// Get ID of user which generates log.
 		/// </summary>
-		public string? UserId { get; }
+		public string? UserId { get => this.userId?.ToString(); }
 
 
 		/// <summary>
 		/// Get name of user which generates log.
 		/// </summary>
-		public string? UserName { get; }
+		public string? UserName { get => this.userName?.ToString(); }
 	}
 }
