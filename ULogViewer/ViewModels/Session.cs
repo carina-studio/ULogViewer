@@ -39,6 +39,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		const int DisplayableLogDisposingChunkSize = 65536;
 		const int DelaySaveMarkedLogs = 1000;
 		const int DisposeDisplayableLogsInterval = 100;
+		const int FileLogsReadingConcurrencyLevel = 1;
 
 
 		/// <summary>
@@ -869,7 +870,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			// select logs reading task factory
 			var readingTaskFactory = dataSource.CreationOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName))
-				? (fileLogsReadingTaskFactory ?? new TaskFactory(new FixedThreadsTaskScheduler(1)).Also(it => this.fileLogsReadingTaskFactory = it))
+				? (fileLogsReadingTaskFactory ?? new TaskFactory(new FixedThreadsTaskScheduler(FileLogsReadingConcurrencyLevel)).Also(it => this.fileLogsReadingTaskFactory = it))
 				: defaultLogsReadingTaskFactory;
 
 			// create log reader

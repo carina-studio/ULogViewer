@@ -9,7 +9,6 @@ namespace CarinaStudio.ULogViewer.Logs
 	class LogBuilder
 	{
 		// Fields.
-		int maxExtraNumber = 0;
 		readonly Dictionary<string, string> properties = new Dictionary<string, string>();
 
 
@@ -41,12 +40,6 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <param name="value">Value to append.</param>
 		public void AppendToNextLine(string propertyName, string value)
 		{
-			if (propertyName.StartsWith("Extra")
-				&& int.TryParse(propertyName.Substring(5), out var number)
-				&& number > this.maxExtraNumber)
-			{
-				this.maxExtraNumber = number;
-			}
 			if (this.properties.TryGetValue(propertyName, out var str))
 				properties[propertyName] = str + "\n" + value;
 			else
@@ -165,9 +158,15 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		/// <summary>
-		/// Get maximum extra number had been set to this builder.
+		/// Get number of properties has been set to builder.
 		/// </summary>
-		public int MaxExtraNumber { get => this.maxExtraNumber; }
+		public int PropertyCount { get => this.properties.Count; }
+
+
+		/// <summary>
+		/// Get all property names in the builder.
+		/// </summary>
+		public ICollection<string> PropertyNames { get => this.properties.Keys; }
 
 
 		/// <summary>
@@ -181,7 +180,6 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// </summary>
 		public void Reset()
 		{
-			this.maxExtraNumber = 0;
 			this.properties.Clear();
 		}
 
@@ -193,12 +191,6 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <param name="value">Value to set.</param>
 		public void Set(string propertyName, string value)
 		{
-			if(propertyName.StartsWith("Extra") 
-				&& int.TryParse(propertyName.Substring(5), out var number)
-				&& number > this.maxExtraNumber)
-			{
-				this.maxExtraNumber = number;
-			}
 			properties[propertyName] = value;
 		}
 
