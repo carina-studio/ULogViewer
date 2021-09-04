@@ -449,13 +449,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 								return;
 						}
 					}
+					bool wasReadingLogs = this.IsReadingLogs;
 					this.SetValue(IsReadingLogsProperty, false);
 					if(this.logsReadingWatch.IsRunning)
 					{
 						this.logsReadingWatch.Stop();
 						this.SetValue(LastLogsReadingDurationProperty, TimeSpan.FromMilliseconds(this.logsReadingWatch.ElapsedMilliseconds));
 					}
-					if (this.Settings.GetValueOrDefault(ULogViewer.Settings.SaveMemoryAggressively))
+					if (wasReadingLogs && this.Settings.GetValueOrDefault(ULogViewer.Settings.SaveMemoryAggressively))
 					{
 						this.Logger.LogDebug("Trigger GC after reading logs");
 						GC.Collect();
