@@ -15,7 +15,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 	class DisplayableLog : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 	{
 		// Static fields.
-		static readonly bool?[] emptyNullableBoolArray = new bool?[0];
 		static readonly int[] emptyInt32Array = new int[0];
 		static readonly Func<Log, string?>[] extraGetters = new Func<Log, string?>[Log.ExtraCapacity].Also(it =>
 		{
@@ -30,15 +29,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		CompressedString? beginningTimestampString;
 		CompressedString? endingTimestampString;
 		readonly int[] extraLineCount;
-		IBrush? colorIndicatorBrush;
-		readonly bool?[] hasExtraLinesOfExtras;
-		bool? hasExtraLinesOfMessage;
-		bool? hasExtraLinesOfSummary;
-		bool isColorIndicatorBrushSet;
-		bool isLevelBrushSet;
 		bool isMarked;
-		IBrush? levelBrush;
-		IBrush? levelBrushForPointerOver;
 		int messageLineCount = -1;
 		int summaryLineCount = -1;
 		CompressedString? timestampString;
@@ -71,13 +62,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					for (var i = it.Length - 1; i >= 0; --i)
 						it[i] = -1;
 				});
-				this.hasExtraLinesOfExtras = new bool?[extraCount];
 			}
 			else
-			{
 				this.extraLineCount = emptyInt32Array;
-				this.hasExtraLinesOfExtras = emptyNullableBoolArray;
-			}
 
 			// notify group
 			group.OnDisplayableLogCreated(this);
@@ -144,35 +131,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		// Check whether extra line of ExtraX exist or not.
-		bool CheckExtraLinesOfExtra(int index)
-		{
-			if (index >= this.hasExtraLinesOfExtras.Length)
-				return false;
-			var hasExtraLines = this.hasExtraLinesOfExtras[index];
-			if (hasExtraLines == null)
-			{
-				hasExtraLines = this.GetExtraLineCount(index) > this.Group.MaxDisplayLineCount;
-				this.hasExtraLinesOfExtras[index] = hasExtraLines;
-			}
-			return hasExtraLines.Value;
-		}
+		bool CheckExtraLinesOfExtra(int index) => this.GetExtraLineCount(index) > this.Group.MaxDisplayLineCount;
 
 
 		/// <summary>
 		/// Get <see cref="IBrush"/> of color indicator.
 		/// </summary>
-		public IBrush? ColorIndicatorBrush
-		{
-			get
-			{
-				if (!this.isColorIndicatorBrushSet)
-				{
-					this.colorIndicatorBrush = this.Group.GetColorIndicatorBrush(this);
-					this.isColorIndicatorBrushSet = true;
-				}
-				return this.colorIndicatorBrush;
-			}
-		}
+		public IBrush? ColorIndicatorBrush { get => this.Group.GetColorIndicatorBrush(this); }
 
 
 		/// <summary>
@@ -217,10 +182,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// notify
 			this.Group.OnDisplayableLogDisposed(this);
-
-			// release resources
-			this.colorIndicatorBrush = null;
-			this.levelBrush = null;
 		}
 
 
@@ -463,37 +424,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Check whether number of lines in <see cref="Message"/> is greater than <see cref="DisplayableLogGroup.MaxDisplayLineCount"/> or not.
 		/// </summary>
-		public bool HasExtraLinesOfMessage
-		{
-			get
-			{
-				var hasExtraLines = this.hasExtraLinesOfMessage;
-				if (hasExtraLines == null)
-				{
-					hasExtraLines = this.MessageLineCount > this.Group.MaxDisplayLineCount;
-					this.hasExtraLinesOfMessage = hasExtraLines;
-				}
-				return hasExtraLines.Value;
-			}
-		}
+		public bool HasExtraLinesOfMessage { get=> this.MessageLineCount > this.Group.MaxDisplayLineCount; }
 
 
 		/// <summary>
 		/// Check whether number of lines in <see cref="Summary"/> is greater than <see cref="DisplayableLogGroup.MaxDisplayLineCount"/> or not.
 		/// </summary>
-		public bool HasExtraLinesOfSummary
-		{
-			get
-			{
-				var hasExtraLines = this.hasExtraLinesOfSummary;
-				if (hasExtraLines == null)
-				{
-					hasExtraLines = this.SummaryLineCount > this.Group.MaxDisplayLineCount;
-					this.hasExtraLinesOfSummary = hasExtraLines;
-				}
-				return hasExtraLines.Value;
-			}
-		}
+		public bool HasExtraLinesOfSummary { get => this.SummaryLineCount > this.Group.MaxDisplayLineCount; }
 
 
 		/// <summary>
@@ -557,37 +494,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get <see cref="IBrush"/> according to level of log.
 		/// </summary>
-		public IBrush LevelBrush
-		{
-			get
-			{
-				if (!this.isLevelBrushSet)
-				{
-					this.levelBrush = this.Group.GetLevelBrush(this);
-					this.levelBrushForPointerOver = this.Group.GetLevelBrush(this, "PointerOver");
-					this.isLevelBrushSet = true;
-				}
-				return this.levelBrush.AsNonNull();
-			}
-		}
+		public IBrush LevelBrush { get => this.Group.GetLevelBrush(this); }
 
 
 		/// <summary>
 		/// Get <see cref="IBrush"/> for pointer-over according to level of log.
 		/// </summary>
-		public IBrush LevelBrushForPointerOver
-		{
-			get
-			{
-				if (!this.isLevelBrushSet)
-				{
-					this.levelBrush = this.Group.GetLevelBrush(this);
-					this.levelBrushForPointerOver = this.Group.GetLevelBrush(this, "PointerOver");
-					this.isLevelBrushSet = true;
-				}
-				return this.levelBrushForPointerOver.AsNonNull();
-			}
-		}
+		public IBrush LevelBrushForPointerOver { get => this.Group.GetLevelBrush(this, "PointerOver"); }
 
 
 		/// <summary>
@@ -648,37 +561,23 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			// check attached property changed handlers
 			var propertyChangedHandlers = this.PropertyChanged;
+			if (propertyChangedHandlers == null)
+				return;
 
 			// check extra line count
-			var hasExtraLines = (bool?)null;
 			for (var i = Log.ExtraCapacity - 1; i >= 0; --i)
 			{
-				hasExtraLines = this.hasExtraLinesOfExtras[i];
-				if (hasExtraLines.HasValue)
-				{
-					this.hasExtraLinesOfExtras[i] = null;
-					if (propertyChangedHandlers != null && this.CheckExtraLinesOfExtra(i) != hasExtraLines)
-						propertyChangedHandlers(this, new PropertyChangedEventArgs($"HasExtraLinesOfExtra{i + 1}"));
-				}
+				if (this.extraLineCount[i] >= 0)
+					propertyChangedHandlers(this, new PropertyChangedEventArgs($"HasExtraLinesOfExtra{i + 1}"));
 			}
 
 			// check message line count
-			hasExtraLines = this.hasExtraLinesOfMessage;
-			if (hasExtraLines.HasValue)
-			{
-				this.hasExtraLinesOfMessage = null;
-				if (propertyChangedHandlers != null && this.HasExtraLinesOfMessage != hasExtraLines)
-					propertyChangedHandlers(this, new PropertyChangedEventArgs(nameof(HasExtraLinesOfMessage)));
-			}
+			if (this.messageLineCount >= 0)
+				propertyChangedHandlers(this, new PropertyChangedEventArgs(nameof(HasExtraLinesOfMessage)));
 
 			// check summary line count
-			hasExtraLines = this.hasExtraLinesOfSummary;
-			if (hasExtraLines.HasValue)
-			{
-				this.hasExtraLinesOfSummary = null;
-				if (propertyChangedHandlers != null && this.HasExtraLinesOfSummary != hasExtraLines)
-					propertyChangedHandlers(this, new PropertyChangedEventArgs(nameof(HasExtraLinesOfSummary)));
-			}
+			if (this.summaryLineCount >= 0)
+				propertyChangedHandlers(this, new PropertyChangedEventArgs(nameof(HasExtraLinesOfSummary)));
 		}
 
 
@@ -688,20 +587,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		internal void OnStyleResourcesUpdated()
 		{
 			var propertyChangedHandlers = this.PropertyChanged;
-			if (this.isColorIndicatorBrushSet)
-			{
-				this.isColorIndicatorBrushSet = false;
-				this.colorIndicatorBrush = null;
-				propertyChangedHandlers?.Invoke(this, new PropertyChangedEventArgs(nameof(ColorIndicatorBrush)));
-			}
-			if (this.isLevelBrushSet)
-			{
-				this.isLevelBrushSet = false;
-				this.levelBrush = null;
-				this.levelBrushForPointerOver = null;
-				propertyChangedHandlers?.Invoke(this, new PropertyChangedEventArgs(nameof(LevelBrush)));
-				propertyChangedHandlers?.Invoke(this, new PropertyChangedEventArgs(nameof(LevelBrushForPointerOver)));
-			}
+			if (propertyChangedHandlers == null)
+				return;
+			propertyChangedHandlers?.Invoke(this, new PropertyChangedEventArgs(nameof(ColorIndicatorBrush)));
+			propertyChangedHandlers?.Invoke(this, new PropertyChangedEventArgs(nameof(LevelBrush)));
+			propertyChangedHandlers?.Invoke(this, new PropertyChangedEventArgs(nameof(LevelBrushForPointerOver)));
 		}
 
 
