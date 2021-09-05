@@ -32,11 +32,11 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <summary>
 		/// Default interval of updating read logs.
 		/// </summary>
-		public const int DefaultUpdateInterval = 1000;
+		public const int DefaultUpdateInterval = 2000;
 
 
 		// Constants.
-		const int LogsReadingChunkSize = 4096;
+		const int LogsReadingChunkSize = 8192;
 
 
 		// Static fields.
