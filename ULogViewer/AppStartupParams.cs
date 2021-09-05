@@ -8,6 +8,12 @@ namespace CarinaStudio.ULogViewer
 	struct AppStartupParams
 	{
 		/// <summary>
+		/// Whether instance state should be restored or not/
+		/// </summary>
+		public bool IsRestoringStateRequested { get; set; }
+
+
+		/// <summary>
 		/// Launch in debug mode.
 		/// </summary>
 		public bool LaunchInDebugMode { get; set; }

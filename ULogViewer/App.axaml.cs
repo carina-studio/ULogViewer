@@ -423,32 +423,39 @@ namespace CarinaStudio.ULogViewer
 			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 				SystemEvents.UserPreferenceChanged += this.OnWindowsUserPreferenceChanged;
 
-			// create workspace
+			// create workspace and restore state if needed
 			splashWindow.Message = this.GetStringNonNull("SplashWindow.ShowMainWindow");
 			this.workspace = new Workspace(this);
-			var initialProfile = this.StartupParams.LogProfileId?.Let(it =>
+			var isWorkspaceStateRestored = this.StartupParams.IsRestoringStateRequested
+				? this.workspace.RestoreState()
+				: false;
+			if (!isWorkspaceStateRestored)
 			{
-				if (LogProfiles.TryFindProfileById(it, out var profile))
+				var initialProfile = this.StartupParams.LogProfileId?.Let(it =>
 				{
-					this.logger.LogWarning($"Initial log profile is '{profile?.Name}'");
-					return profile;
-				}
-				this.logger.LogError($"Cannot find initial log profile by ID '{it}'");
-				return null;
-			}) ?? this.Settings.GetValueOrDefault(Settings.InitialLogProfile).Let(it =>
-			{
-				if (string.IsNullOrEmpty(it))
+					if (LogProfiles.TryFindProfileById(it, out var profile))
+					{
+						this.logger.LogWarning($"Initial log profile is '{profile?.Name}'");
+						return profile;
+					}
+					this.logger.LogError($"Cannot find initial log profile by ID '{it}'");
 					return null;
-				if (LogProfiles.TryFindProfileById(it, out var profile))
+				}) ?? this.Settings.GetValueOrDefault(Settings.InitialLogProfile).Let(it =>
 				{
-					this.logger.LogWarning($"Initial log profile is '{profile?.Name}'");
-					return profile;
-				}
-				this.logger.LogError($"Cannot find initial log profile by ID '{it}'");
-				return null;
-			});
-			if (initialProfile != null)
-				workspace.CreateSession(initialProfile);
+					if (string.IsNullOrEmpty(it))
+						return null;
+					if (LogProfiles.TryFindProfileById(it, out var profile))
+					{
+						this.logger.LogWarning($"Initial log profile is '{profile?.Name}'");
+						return profile;
+					}
+					this.logger.LogError($"Cannot find initial log profile by ID '{it}'");
+					return null;
+				});
+				if (initialProfile != null)
+					this.workspace.CreateSession(initialProfile);
+				this.workspace.ClearSavedState();
+			}
 
 			// start checking update
 			_ = this.CheckUpdateInfoAsync();
@@ -472,6 +479,9 @@ namespace CarinaStudio.ULogViewer
 
 			// save settings
 			await this.SaveSettingsAsync();
+
+			// save instance state
+			this.workspace?.SaveState();
 
 			// save persistent state
 			this.logger.LogDebug("Start saving persistent state");
@@ -539,6 +549,7 @@ namespace CarinaStudio.ULogViewer
 #else
 			var isDebugMode = false;
 #endif
+			var isRestoringStateRequested = false;
 			var logProfileId = (string?)null;
 			for (int i = 0, count = args.Length; i < count; ++i)
 			{
@@ -553,6 +564,9 @@ namespace CarinaStudio.ULogViewer
 						else
 							this.logger.LogError("ID of initial log profile is not specified");
 						break;
+					case "-restore-state":
+						isRestoringStateRequested = true;
+						break;
 					default:
 						this.logger.LogWarning($"Unknown argument: {args[i]}");
 						break;
@@ -560,6 +574,7 @@ namespace CarinaStudio.ULogViewer
 			}
 			this.StartupParams = new AppStartupParams()
 			{
+				IsRestoringStateRequested = isRestoringStateRequested,
 				LaunchInDebugMode = isDebugMode,
 				LogProfileId = logProfileId
 			};

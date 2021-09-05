@@ -601,12 +601,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// create log reader
 			this.CreateLogReader(dataSource);
-
-			// update title
-			this.updateTitleAndIconAction.Schedule();
-
-			// load marked logs
-			this.LoadMarkedLogs(fileName);
 		}
 
 
@@ -931,6 +925,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// check data source waiting state
 			this.checkIsWaitingForDataSourcesAction.Schedule();
+
+			// update title
+			this.updateTitleAndIconAction.Schedule();
+
+			// load marked logs
+			if (dataSource.CreationOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName)))
+				this.LoadMarkedLogs(dataSource.CreationOptions.FileName.AsNonNull());
 
 			// update state
 			if (this.addedLogFilePaths.IsNotEmpty())
@@ -1882,10 +1883,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						this.hasLogDataSourceCreationFailure = true;
 						this.checkDataSourceErrorsAction.Schedule();
 					}
-
-					// load marked logs
-					if (dataSourceOption.IsOptionSet(nameof(LogDataSourceOptions.FileName)))
-						this.LoadMarkedLogs(dataSourceOption.FileName.AsNonNull());
 				}
 			}
 		}
@@ -1965,6 +1962,123 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Command to reset log profile.
 		/// </summary>
 		public ICommand ResetLogProfileCommand { get; }
+
+
+		/// <summary>
+		/// Restore state from JSON value.
+		/// </summary>
+		/// <param name="jsonState">State in JSON format.</param>
+		public void RestoreState(JsonElement jsonState)
+		{
+			// check state
+			this.VerifyAccess();
+			this.VerifyDisposed();
+
+			this.Logger.LogTrace("Start restoring state");
+
+			// reset log profile
+			this.ResetLogProfile();
+
+			// set log profile
+			if (!jsonState.TryGetProperty(nameof(LogProfile), out var jsonValue) || jsonValue.ValueKind != JsonValueKind.String)
+			{
+				this.Logger.LogTrace("No state to restore");
+				return;
+			}
+			if (!LogProfiles.TryFindProfileById(jsonValue.GetString().AsNonNull(), out var profile) || profile == null)
+			{
+				this.Logger.LogWarning($"Unable to find log profile '{jsonValue.GetString()}' to restore state");
+				return;
+			}
+			this.SetLogProfile(profile, false);
+
+			// create log readers
+			if (jsonState.TryGetProperty("LogReaders", out jsonValue) && jsonValue.ValueKind == JsonValueKind.Array)
+			{
+				var dataSourceProvider = profile.DataSourceProvider;
+				foreach (var jsonLogReader in jsonValue.EnumerateArray())
+				{
+					// get data source options
+					if (!jsonLogReader.TryGetProperty("Options", out jsonValue) || jsonValue.ValueKind != JsonValueKind.Object)
+						continue;
+					var options = new LogDataSourceOptions();
+					try
+					{
+						options = LogDataSourceOptions.Load(jsonValue);
+					}
+					catch (Exception ex)
+					{
+						this.Logger.LogError(ex, "Failed to restore data source options");
+						continue;
+					}
+
+					// check file paths
+					if (options.IsOptionSet(nameof(LogDataSourceOptions.FileName))
+						&& !this.addedLogFilePaths.Add(options.FileName.AsNonNull()))
+					{
+						continue;
+					}
+
+					// create data source
+					var dataSource = this.CreateLogDataSourceOrNull(dataSourceProvider, options);
+					if (dataSource != null)
+						this.CreateLogReader(dataSource);
+					else
+					{
+						this.Logger.LogError("Unable to create data source");
+						this.hasLogDataSourceCreationFailure = true;
+						this.checkDataSourceErrorsAction.Schedule();
+					}
+				}
+				this.Logger.LogTrace($"{this.logReaders.Count} log reader(s) restored");
+			}
+			else
+				this.Logger.LogTrace("No log readers to restore");
+
+			// restore filtering parameters
+			if (jsonState.TryGetProperty(nameof(LogFiltersCombinationMode), out jsonValue)
+				&& jsonValue.ValueKind == JsonValueKind.String
+				&& Enum.TryParse<FilterCombinationMode>(jsonValue.GetString(), out var combinationMode))
+			{
+				this.LogFiltersCombinationMode = combinationMode;
+			}
+			if (jsonState.TryGetProperty(nameof(LogLevelFilter), out jsonValue)
+				&& jsonValue.ValueKind == JsonValueKind.String
+				&& Enum.TryParse<Logs.LogLevel>(jsonValue.GetString(), out var level))
+			{
+				this.LogLevelFilter = level;
+			}
+			if (jsonState.TryGetProperty(nameof(LogProcessIdFilter), out jsonValue)
+				&& jsonValue.TryGetInt32(out var pid))
+			{
+				this.LogProcessIdFilter = pid;
+			}
+			if (jsonState.TryGetProperty(nameof(LogTextFilter), out jsonValue)
+				&& jsonValue.ValueKind == JsonValueKind.Object
+				&& jsonValue.TryGetProperty("Pattern", out var jsonPattern)
+				&& jsonPattern.ValueKind == JsonValueKind.String)
+			{
+				var options = RegexOptions.None;
+				jsonValue.TryGetProperty("Options", out var jsonOptions);
+				if (jsonOptions.TryGetInt32(out var optionsValue))
+					options = (RegexOptions)optionsValue;
+				try
+				{
+					this.LogTextFilter = new Regex(jsonPattern.GetString().AsNonNull(), options);
+				}
+				catch (Exception ex)
+				{
+					this.Logger.LogError(ex, "Unable to restore log text filter");
+				}
+			}
+			if (jsonState.TryGetProperty(nameof(LogThreadIdFilter), out jsonValue)
+				&& jsonValue.TryGetInt32(out var tid))
+			{
+				this.LogThreadIdFilter = tid;
+			}
+
+			this.Logger.LogTrace("Complete restoring state");
+		}
 
 
 		// Save all logs to file.
@@ -2153,7 +2267,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		// Set log profile.
-		void SetLogProfile(LogProfile? profile)
+		void SetLogProfile(LogProfile? profile) => this.SetLogProfile(profile, true);
+		void SetLogProfile(LogProfile? profile, bool startReadingLogs)
 		{
 			// check parameter and state
 			this.VerifyAccess();
@@ -2186,7 +2301,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// read logs or wait for more actions
 			var dataSourceOptions = profile.DataSourceOptions;
 			var dataSourceProvider = profile.DataSourceProvider;
-			var startReadingLogs = true;
 			if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.FileName)))
 			{
 				if (!dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName)))
@@ -2237,6 +2351,61 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// update state
 			this.UpdateIsLogsWritingAvailable(profile);
 			this.canResetLogProfile.Update(true);
+		}
+
+
+		/// <summary>
+		/// Save current state to JSON data.
+		/// </summary>
+		/// <param name="jsonWriter"><see cref="Utf8JsonWriter"/> to write JSON data.</param>
+		public void SaveState(Utf8JsonWriter jsonWriter)
+		{
+			// check state
+			this.VerifyAccess();
+			this.VerifyDisposed();
+
+			// save state
+			jsonWriter.WriteStartObject();
+			this.LogProfile?.Let(profile =>
+			{
+				// save log profile
+				jsonWriter.WriteString(nameof(LogProfile), profile.Id);
+
+				// save log readers
+				jsonWriter.WritePropertyName("LogReaders");
+				jsonWriter.WriteStartArray();
+				foreach (var logReader in this.logReaders)
+				{
+					jsonWriter.WriteStartObject();
+					jsonWriter.WritePropertyName("Options");
+					logReader.DataSource.CreationOptions.Save(jsonWriter);
+					jsonWriter.WriteEndObject();
+				}
+				jsonWriter.WriteEndArray();
+
+				// save filtering parameters
+				jsonWriter.WriteString(nameof(LogFiltersCombinationMode), this.LogFiltersCombinationMode.ToString());
+				jsonWriter.WriteString(nameof(LogLevelFilter), this.LogLevelFilter.ToString());
+				this.LogProcessIdFilter?.Let(it => jsonWriter.WriteNumber(nameof(LogProcessIdFilter), it));
+				this.LogTextFilter?.Let(it =>
+				{
+					jsonWriter.WritePropertyName(nameof(LogTextFilter));
+					jsonWriter.WriteStartObject();
+					jsonWriter.WriteString("Pattern", it.ToString());
+					jsonWriter.WriteNumber("Options", (int)it.Options);
+					jsonWriter.WriteEndObject();
+				});
+				this.LogThreadIdFilter?.Let(it => jsonWriter.WriteNumber(nameof(LogThreadIdFilter), it));
+				if (this.predefinedLogTextFilters.IsNotEmpty())
+				{
+					jsonWriter.WritePropertyName(nameof(PredefinedLogTextFilters));
+					jsonWriter.WriteStartArray();
+					foreach (var filter in this.predefinedLogTextFilters)
+						jsonWriter.WriteStringValue(filter.Id);
+					jsonWriter.WriteEndArray();
+				}
+			});
+			jsonWriter.WriteEndObject();
 		}
 
 
