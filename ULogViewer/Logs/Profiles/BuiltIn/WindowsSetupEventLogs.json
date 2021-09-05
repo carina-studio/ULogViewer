@@ -1,7 +1,9 @@
 ﻿{
 	"DataSource": {
 		"Name": "WindowsEventLogs",
-		"Category": "Setup"
+		"Options": {
+			"Category": "Setup"
+		}
 	},
 	"Icon": "Windows",
 	"IsAdministratorNeeded": true,

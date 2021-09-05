@@ -1,7 +1,9 @@
 ﻿{
 	"DataSource": {
 		"Name": "StandardOutput",
-		"Command": "git --no-pager log --parents --stat"
+		"Options": {
+			"Command": "git --no-pager log --parents --stat"
+		}
 	},
 	"Icon": "VersionControl",
 	"IsWorkingDirectoryNeeded": true,

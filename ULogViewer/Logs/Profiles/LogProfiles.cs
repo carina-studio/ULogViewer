@@ -95,6 +95,11 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				pendingSavingProfiles.Add(profile);
 				saveProfilesAction?.Schedule();
 			}
+			else if (profile.IsDataUpgraded)
+			{
+				pendingSavingProfiles.Add(profile);
+				saveProfilesAction?.Schedule();
+			}
 			while (!profileIdSet.Add(profile.Id))
 			{
 				profile.ChangeId();

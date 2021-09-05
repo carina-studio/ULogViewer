@@ -1,7 +1,9 @@
 ﻿{
 	"DataSource": {
 		"Name": "WindowsEventLogs",
-		"Category": "Security"
+		"Options": {
+			"Category": "Security"
+		}
 	},
 	"Icon": "Windows",
 	"IsAdministratorNeeded": true,

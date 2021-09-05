@@ -354,6 +354,12 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 
 
 		/// <summary>
+		/// Check whether internal data has been just upgraded or not.
+		/// </summary>
+		public bool IsDataUpgraded { get; private set; }
+
+
+		/// <summary>
 		/// Get or set whether profile should be pinned at quick access area or not.
 		/// </summary>
 		public bool IsPinned
@@ -434,71 +440,78 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			if (!LogDataSourceProviders.TryFindProviderByName(providerName, out var provider) || provider == null)
 				throw new ArgumentException($"Cannot find data source '{providerName}'.");
 
-			// get options
+			// get opetions
 			var options = new LogDataSourceOptions();
-			var crypto = (Crypto?)null;
-			try
+			if (dataSourceElement.TryGetProperty("Options", out var jsonValue))
+				options = LogDataSourceOptions.Load(jsonValue);
+			else
 			{
-				foreach (var jsonProperty in dataSourceElement.EnumerateObject())
+				// get options by old way
+				var crypto = (Crypto?)null;
+				try
 				{
-					switch (jsonProperty.Name)
+					foreach (var jsonProperty in dataSourceElement.EnumerateObject())
 					{
-						case nameof(LogDataSourceOptions.Category):
-							options.Category = jsonProperty.Value.GetString();
-							break;
-						case nameof(LogDataSourceOptions.Command):
-							options.Command = jsonProperty.Value.GetString();
-							break;
-						case nameof(LogDataSourceOptions.Encoding):
-							options.Encoding = Encoding.GetEncoding(jsonProperty.Value.GetString().AsNonNull());
-							break;
-						case nameof(LogDataSourceOptions.FileName):
-							options.FileName = jsonProperty.Value.GetString();
-							break;
-						case "Name":
-							break;
-						case nameof(LogDataSourceOptions.Password):
-							if (crypto == null)
-								crypto = new Crypto(this.Application);
-							options.Password = crypto.Decrypt(jsonProperty.Value.GetString().AsNonNull());
-							break;
-						case nameof(LogDataSourceOptions.QueryString):
-							options.QueryString = jsonProperty.Value.GetString();
-							break;
-						case nameof(LogDataSourceOptions.SetupCommands):
-							options.SetupCommands = new List<string>().Also(it =>
-							{
-								foreach (var jsonElement in jsonProperty.Value.EnumerateArray())
-									it.Add(jsonElement.GetString().AsNonNull());
-							});
-							break;
-						case nameof(LogDataSourceOptions.TeardownCommands):
-							options.TeardownCommands = new List<string>().Also(it =>
-							{
-								foreach (var jsonElement in jsonProperty.Value.EnumerateArray())
-									it.Add(jsonElement.GetString().AsNonNull());
-							});
-							break;
-						case nameof(LogDataSourceOptions.Uri):
-							options.Uri = new Uri(jsonProperty.Value.GetString().AsNonNull());
-							break;
-						case nameof(LogDataSourceOptions.UserName):
-							if (crypto == null)
-								crypto = new Crypto(this.Application);
-							options.UserName = crypto.Decrypt(jsonProperty.Value.GetString().AsNonNull());
-							break;
-						case nameof(LogDataSourceOptions.WorkingDirectory):
-							options.WorkingDirectory = jsonProperty.Value.GetString();
-							break;
-						default:
-							this.logger.LogWarning($"Unknown property of DataSource: {jsonProperty.Name}");
-							break;
+						switch (jsonProperty.Name)
+						{
+							case nameof(LogDataSourceOptions.Category):
+								options.Category = jsonProperty.Value.GetString();
+								break;
+							case nameof(LogDataSourceOptions.Command):
+								options.Command = jsonProperty.Value.GetString();
+								break;
+							case nameof(LogDataSourceOptions.Encoding):
+								options.Encoding = Encoding.GetEncoding(jsonProperty.Value.GetString().AsNonNull());
+								break;
+							case nameof(LogDataSourceOptions.FileName):
+								options.FileName = jsonProperty.Value.GetString();
+								break;
+							case "Name":
+								continue;
+							case nameof(LogDataSourceOptions.Password):
+								if (crypto == null)
+									crypto = new Crypto(this.Application);
+								options.Password = crypto.Decrypt(jsonProperty.Value.GetString().AsNonNull());
+								break;
+							case nameof(LogDataSourceOptions.QueryString):
+								options.QueryString = jsonProperty.Value.GetString();
+								break;
+							case nameof(LogDataSourceOptions.SetupCommands):
+								options.SetupCommands = new List<string>().Also(it =>
+								{
+									foreach (var jsonElement in jsonProperty.Value.EnumerateArray())
+										it.Add(jsonElement.GetString().AsNonNull());
+								});
+								break;
+							case nameof(LogDataSourceOptions.TeardownCommands):
+								options.TeardownCommands = new List<string>().Also(it =>
+								{
+									foreach (var jsonElement in jsonProperty.Value.EnumerateArray())
+										it.Add(jsonElement.GetString().AsNonNull());
+								});
+								break;
+							case nameof(LogDataSourceOptions.Uri):
+								options.Uri = new Uri(jsonProperty.Value.GetString().AsNonNull());
+								break;
+							case nameof(LogDataSourceOptions.UserName):
+								if (crypto == null)
+									crypto = new Crypto(this.Application);
+								options.UserName = crypto.Decrypt(jsonProperty.Value.GetString().AsNonNull());
+								break;
+							case nameof(LogDataSourceOptions.WorkingDirectory):
+								options.WorkingDirectory = jsonProperty.Value.GetString();
+								break;
+							default:
+								this.logger.LogWarning($"Unknown property of DataSource: {jsonProperty.Name}");
+								continue;
+						}
+						this.IsDataUpgraded = true;
 					}
 				}
-			}
-			finally
-			{
-				crypto?.Dispose();
+				finally
+				{
+					crypto?.Dispose();
+				}
 			}
 
 			// complete
@@ -844,6 +857,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		{
 			this.VerifyAccess();
 			this.VerifyBuiltIn();
+			this.IsDataUpgraded = false;
 			var prevFileName = this.FileName;
 			await ioTaskFactory.StartNew(() =>
 			{
@@ -902,58 +916,13 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		// Save data source info in JSON format.
 		void SaveDataSourceToJson(Utf8JsonWriter writer)
 		{
-			var crypto = (Crypto?)null;
 			var provider = this.dataSourceProvider;
 			var options = this.dataSourceOptions;
-			try
-			{
-				writer.WriteStartObject();
-				writer.WriteString("Name", provider.Name);
-				foreach (var optionName in provider.SupportedSourceOptions)
-				{
-					if (!options.IsOptionSet(optionName))
-						continue;
-					var option = options.GetOption(optionName);
-					if (option is string strOption)
-					{
-						switch (optionName)
-						{
-							case nameof(LogDataSourceOptions.Password):
-							case nameof(LogDataSourceOptions.UserName):
-								if (crypto == null)
-									crypto = new Crypto(this.Application);
-								writer.WriteString(optionName, crypto.Encrypt(strOption));
-								break;
-							default:
-								writer.WriteString(optionName, strOption);
-								break;
-						}
-					}
-					else if (option is IList<string> strListOption)
-					{
-						writer.WritePropertyName(optionName);
-						writer.WriteStartArray();
-						foreach (var str in strListOption)
-							writer.WriteStringValue(str);
-						writer.WriteEndArray();
-					}
-					else if (option is bool boolOption)
-						writer.WriteBoolean(optionName, boolOption);
-					else if (option is double doubleOption)
-						writer.WriteNumber(optionName, doubleOption);
-					else if (option is int intOption)
-						writer.WriteNumber(optionName, intOption);
-					else if (option is long longOption)
-						writer.WriteNumber(optionName, longOption);
-					else if (option != null)
-						writer.WriteString(optionName, option.ToString());
-				}
-				writer.WriteEndObject();
-			}
-			finally
-			{
-				crypto?.Dispose();
-			}
+			writer.WriteStartObject();
+			writer.WriteString("Name", provider.Name);
+			writer.WritePropertyName("Options");
+			options.Save(writer);
+			writer.WriteEndObject();
 		}
 
 

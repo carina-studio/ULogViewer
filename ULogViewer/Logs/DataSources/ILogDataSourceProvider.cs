@@ -1,11 +1,15 @@
 ﻿using CarinaStudio.Collections;
 using CarinaStudio.Threading;
+using CarinaStudio.ULogViewer.Cryptography;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.Logs.DataSources
 {
@@ -189,6 +193,87 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		/// <summary>
+		/// Load <see cref="LogDataSourceOptions"/> from object in JSON document.
+		/// </summary>
+		/// <param name="jsonObject">JSON object.</param>
+		/// <returns><see cref="LogDataSourceOptions"/>.</returns>
+		public static LogDataSourceOptions Load(JsonElement jsonObject)
+		{
+			var crypto = (Crypto?)null;
+			try
+			{
+				if (jsonObject.ValueKind != JsonValueKind.Object)
+					throw new JsonException("Given JSON element is not an object.");
+				var options = new LogDataSourceOptions();
+				foreach (var jsonProperty in jsonObject.EnumerateObject())
+				{
+					switch (jsonProperty.Name)
+					{
+						case nameof(Category):
+							options.Category = jsonProperty.Value.GetString();
+							break;
+						case nameof(Command):
+							options.Command = jsonProperty.Value.GetString();
+							break;
+						case nameof(Encoding):
+							options.Encoding = Encoding.GetEncoding(jsonProperty.Value.GetString().AsNonNull());
+							break;
+						case nameof(FileName):
+							options.FileName = jsonProperty.Value.GetString();
+							break;
+						case nameof(Password):
+							if (crypto == null)
+								crypto = new Crypto(App.Current);
+							options.Password = crypto.Decrypt(jsonProperty.Value.GetString().AsNonNull());
+							break;
+						case nameof(QueryString):
+							options.QueryString = jsonProperty.Value.GetString();
+							break;
+						case nameof(SetupCommands):
+							if (jsonProperty.Value.ValueKind == JsonValueKind.Array)
+							{
+								List<string> commands = new List<string>();
+								foreach (var jsonValue in jsonProperty.Value.EnumerateArray())
+									commands.Add(jsonValue.GetString().AsNonNull());
+								options.setupCommands = commands.AsReadOnly();
+							}
+							else
+								throw new JsonException($"JSON element of {nameof(SetupCommands)} is not an array.");
+							break;
+						case nameof(TeardownCommands):
+							if (jsonProperty.Value.ValueKind == JsonValueKind.Array)
+							{
+								List<string> commands = new List<string>();
+								foreach (var jsonValue in jsonProperty.Value.EnumerateArray())
+									commands.Add(jsonValue.GetString().AsNonNull());
+								options.teardownCommands = commands.AsReadOnly();
+							}
+							else
+								throw new JsonException($"JSON element of {nameof(TeardownCommands)} is not an array.");
+							break;
+						case nameof(Uri):
+							options.Uri = new Uri(jsonProperty.Value.GetString().AsNonNull());
+							break;
+						case nameof(UserName):
+							if (crypto == null)
+								crypto = new Crypto(App.Current);
+							options.UserName = crypto.Decrypt(jsonProperty.Value.GetString().AsNonNull());
+							break;
+						case nameof(WorkingDirectory):
+							options.WorkingDirectory = jsonProperty.Value.GetString();
+							break;
+					}
+				}
+				return options;
+			}
+			finally
+			{
+				crypto?.Dispose();
+			}
+		}
+
+
+		/// <summary>
 		/// Get or set command to start process.
 		/// </summary>
 		public string? Password { get; set; }
@@ -198,6 +283,65 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// Get or set query string.
 		/// </summary>
 		public string? QueryString { get; set; }
+
+
+		/// <summary>
+		/// Save options as JSON data.
+		/// </summary>
+		/// <param name="jsonWriter"><see cref="Utf8JsonWriter"/> to write JSON data.</param>
+		public void Save(Utf8JsonWriter jsonWriter)
+		{
+			var crypto = (Crypto?)null;
+			try
+			{
+				jsonWriter.WriteStartObject();
+				this.Category?.Let(it => jsonWriter.WriteString(nameof(Category), it));
+				this.Command?.Let(it => jsonWriter.WriteString(nameof(Command), it));
+				this.Encoding?.Let(it => jsonWriter.WriteString(nameof(Encoding), it.ToString()));
+				this.FileName?.Let(it => jsonWriter.WriteString(nameof(FileName), it));
+				this.Password?.Let(it =>
+				{
+					crypto = new Crypto(App.Current);
+					jsonWriter.WriteString(nameof(Password), crypto.Encrypt(it));
+				});
+				this.QueryString?.Let(it => jsonWriter.WriteString(nameof(QueryString), it));
+				this.setupCommands?.Let(it =>
+				{
+					if (it.IsNotEmpty())
+					{
+						jsonWriter.WritePropertyName(nameof(SetupCommands));
+						jsonWriter.WriteStartArray();
+						foreach (var command in it)
+							jsonWriter.WriteStringValue(command);
+						jsonWriter.WriteEndArray();
+					}
+				});
+				this.teardownCommands?.Let(it =>
+				{
+					if (it.IsNotEmpty())
+					{
+						jsonWriter.WritePropertyName(nameof(TeardownCommands));
+						jsonWriter.WriteStartArray();
+						foreach (var command in it)
+							jsonWriter.WriteStringValue(command);
+						jsonWriter.WriteEndArray();
+					}
+				});
+				this.Uri?.Let(it => jsonWriter.WriteString(nameof(Uri), it.ToString()));
+				this.UserName?.Let(it =>
+				{
+					if (crypto == null)
+						crypto = new Crypto(App.Current);
+					jsonWriter.WriteString(nameof(UserName), crypto.Encrypt(it));
+				});
+				this.WorkingDirectory?.Let(it => jsonWriter.WriteString(nameof(WorkingDirectory), it));
+				jsonWriter.WriteEndObject();
+			}
+			finally
+			{
+				crypto?.Dispose();
+			}
+		}
 
 
 		/// <summary>
