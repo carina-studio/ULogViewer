@@ -3,6 +3,7 @@
 										xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
 	<!-- SessionView -->
+	<sys:String x:Key="String.SessionView.RestartAsAdministrator">以 Superuser 身分重新啟動</sys:String>
 	<sys:String x:Key="String.SessionView.ShowFileInExplorer">在檔案管理器中顯示檔案</sys:String>
 	<sys:String x:Key="String.SessionView.ShowWorkingDirectoryInExplorer">在檔案管理器中開啟工作目錄</sys:String>
 	

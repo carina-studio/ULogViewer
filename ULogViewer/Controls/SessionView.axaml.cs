@@ -95,6 +95,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly MutableObservableBoolean canFilterLogsByPid = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canFilterLogsByTid = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canMarkUnmarkSelectedLogs = new MutableObservableBoolean();
+		readonly MutableObservableBoolean canRestartAsAdmin = new MutableObservableBoolean(RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && !App.Current.IsRunningAsAdministrator);
 		readonly MutableObservableBoolean canSaveAllLogs = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSaveLogs = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSelectMarkedLogs = new MutableObservableBoolean();
@@ -153,6 +154,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.FilterLogsByThreadIdCommand = ReactiveCommand.Create<bool>(this.FilterLogsByThreadId, this.canFilterLogsByTid);
 			this.MarkUnmarkSelectedLogsCommand = ReactiveCommand.Create(this.MarkUnmarkSelectedLogs, this.canMarkUnmarkSelectedLogs);
 			this.ResetLogFiltersCommand = ReactiveCommand.Create(this.ResetLogFilters, this.GetObservable<bool>(HasLogProfileProperty));
+			this.RestartAsAdministratorCommand = ReactiveCommand.Create(this.RestartAsAdministrator, this.canRestartAsAdmin);
 			this.SaveAllLogsCommand = ReactiveCommand.Create(() => this.SaveLogs(true), this.canSaveAllLogs);
 			this.SaveLogsCommand = ReactiveCommand.Create(() => this.SaveLogs(false), this.canSaveLogs);
 			this.SelectAndSetLogProfileCommand = ReactiveCommand.Create(this.SelectAndSetLogProfile, this.canSetLogProfile);
@@ -535,7 +537,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					if (this.DataContext == session && session.LogProfile == profile)
 					{
 						if (await this.ConfirmRestartingAsAdmin(profile))
-							this.Application.Restart($"-profile {profile.Id}", true);
+							this.RestartAsAdministrator();
 						else
 							this.Logger.LogWarning($"Unable to use profile '{profile.Name}' because application is not running as administrator");
 					}
@@ -2128,6 +2130,18 @@ namespace CarinaStudio.ULogViewer.Controls
 		ICommand ResetLogFiltersCommand { get; }
 
 
+		// Restart application as administrator role.
+		void RestartAsAdministrator()
+		{
+			if (this.canRestartAsAdmin.Value)
+				this.Application.Restart($"-restore-state", true);
+		}
+
+
+		// Command to restart application as administrator role.
+		ICommand RestartAsAdministratorCommand { get; }
+
+
 		// Command to save all logs to file.
 		ICommand SaveAllLogsCommand { get; }
 
@@ -2224,13 +2238,16 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 
 			// check administrator role
+			var isRestartingAsAdminNeeded = false;
 			if (logProfile.IsAdministratorNeeded && !this.Application.IsRunningAsAdministrator)
 			{
 				if (await this.ConfirmRestartingAsAdmin(logProfile))
-					this.Application.Restart($"-profile {logProfile.Id}", true);
+					isRestartingAsAdminNeeded = true;
 				else
+				{
 					this.Logger.LogWarning($"Unable to use profile '{logProfile.Name}' because application is not running as administrator");
-				return;
+					return;
+				}
 			}
 
 			// reset log filters
@@ -2268,6 +2285,10 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.autoSetWorkingDirectoryAction.Schedule();
 			}
 			this.OnLogProfileSet(logProfile);
+
+			// restart as administrator role
+			if (isRestartingAsAdminNeeded)
+				this.RestartAsAdministrator();
 		}
 
 

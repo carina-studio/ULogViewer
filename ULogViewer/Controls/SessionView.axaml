@@ -94,6 +94,12 @@
 					<DrawingPresenter Classes="MenuItem_Icon" Drawing="{DynamicResource Drawing.Update}"/>
 				</MenuItem.Icon>
 			</MenuItem>
+			<MenuItem Command="{Binding $parent[UserControl].RestartAsAdministratorCommand}" Header="{DynamicResource String.SessionView.RestartAsAdministrator}">
+				<MenuItem.Icon>
+					<DrawingPresenter Classes="MenuItem_Icon" Drawing="{DynamicResource Drawing.Administrator}"/>
+				</MenuItem.Icon>
+			</MenuItem>
+			<Separator/>
 			<MenuItem Command="{Binding $parent[UserControl].ShowAppInfo}" Header="{DynamicResource String.SessionView.AppInfo}"/>
 		</ContextMenu>
 		

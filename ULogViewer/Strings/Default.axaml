@@ -357,7 +357,7 @@
 	<sys:String x:Key="String.SessionView.LogTextFilterHint">Text filtering (Regular Expression, use \$\$ as separator between text properties)</sys:String>
 	<sys:String x:Key="String.SessionView.MarkedLogs">Marked logs</sys:String>
 	<sys:String x:Key="String.SessionView.MarkUnmarkLogs">Mark/Unmark logs</sys:String>
-	<sys:String x:Key="String.SessionView.NeedToRestartAsAdministrator">Administrator role is needed for '{0}'. Do you want to restart application as Administrator and use this profile? You will lost the logs you currently view.</sys:String>
+	<sys:String x:Key="String.SessionView.NeedToRestartAsAdministrator">Administrator role is needed for '{0}'. Do you want to restart application as Administrator and use this profile?</sys:String>
 	<sys:String x:Key="String.SessionView.NoFilePathDropped">Please drag and drop valid files.</sys:String>
 	<sys:String x:Key="String.SessionView.NoLogToShow">No log to show</sys:String>
 	<sys:String x:Key="String.SessionView.NoPredefinedLogTextFilter">No defined text filter</sys:String>
@@ -367,6 +367,7 @@
 	<sys:String x:Key="String.SessionView.PredefinedLogTextFilters.Hint">Select one or more items</sys:String>
 	<sys:String x:Key="String.SessionView.ReloadLogs">Reload logs (F5)</sys:String>
 	<sys:String x:Key="String.SessionView.ResetLogFilters">Clear all filters</sys:String>
+	<sys:String x:Key="String.SessionView.RestartAsAdministrator">restart as Administrator</sys:String>
 	<sys:String x:Key="String.SessionView.SaveAllLogs">Save all logs to file</sys:String>
 	<sys:String x:Key="String.SessionView.SaveAllLogs.WithShortcut">Save all logs to file (Ctrl+Shift+S)</sys:String>
 	<sys:String x:Key="String.SessionView.SaveLogs">Save logs to file</sys:String>
