@@ -58,21 +58,33 @@
 				<MenuItem.CommandParameter>
 					<sys:Boolean>False</sys:Boolean>
 				</MenuItem.CommandParameter>
+				<MenuItem.Icon>
+					<DrawingPresenter Classes="MenuItem_Icon" Drawing="{DynamicResource Drawing.Filter}"/>
+				</MenuItem.Icon>
 			</MenuItem>
 			<MenuItem Command="{Binding $parent[UserControl].FilterLogsByProcessIdCommand}" Header="{DynamicResource String.SessionView.FilterLogsBySelectedProcessIdOnly}">
 				<MenuItem.CommandParameter>
 					<sys:Boolean>True</sys:Boolean>
 				</MenuItem.CommandParameter>
+				<MenuItem.Icon>
+					<DrawingPresenter Classes="MenuItem_Icon" Drawing="{DynamicResource Drawing.Filter}"/>
+				</MenuItem.Icon>
 			</MenuItem>
 			<MenuItem Command="{Binding $parent[UserControl].FilterLogsByThreadIdCommand}" Header="{DynamicResource String.SessionView.FilterLogsBySelectedThreadId}">
 				<MenuItem.CommandParameter>
 					<sys:Boolean>False</sys:Boolean>
 				</MenuItem.CommandParameter>
+				<MenuItem.Icon>
+					<DrawingPresenter Classes="MenuItem_Icon" Drawing="{DynamicResource Drawing.Filter}"/>
+				</MenuItem.Icon>
 			</MenuItem>
 			<MenuItem Command="{Binding $parent[UserControl].FilterLogsByThreadIdCommand}" Header="{DynamicResource String.SessionView.FilterLogsBySelectedThreadIdOnly}">
 				<MenuItem.CommandParameter>
 					<sys:Boolean>True</sys:Boolean>
 				</MenuItem.CommandParameter>
+				<MenuItem.Icon>
+					<DrawingPresenter Classes="MenuItem_Icon" Drawing="{DynamicResource Drawing.Filter}"/>
+				</MenuItem.Icon>
 			</MenuItem>
 			<Separator/>
 			<MenuItem Command="{Binding $parent[UserControl].ShowFileInExplorerCommand}" Header="{DynamicResource String.SessionView.ShowFileInExplorer}">
