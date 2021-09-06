@@ -277,6 +277,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						$" {(useDarkMode ? "-dark-mode" : "")}" +
 						$" -directory \"{Path.GetDirectoryName(mainModule.FileName)}\"" +
 						$" -executable \"{mainModule.FileName}\"" +
+						$" -executable-args \"-restore-state\"" +
 						$" -name ULogViewer" +
 						$" -package-manifest {Uris.AppPackageManifest}" +
 						$" -wait-for-process {currentProcess.Id}",
