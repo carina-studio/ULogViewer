@@ -412,8 +412,17 @@
 
 			<!-- Hint: no log to show -->
 			<Border Grid.Row="1" IsVisible="{Binding !HasLogs}">
-				<TextBlock FontSize="{StaticResource Double.SessionView.Hint.NoLogToShow.FontSize}" HorizontalAlignment="Center" Text="{DynamicResource String.SessionView.NoLogToShow}" TextWrapping="Wrap" VerticalAlignment="Center"/>
+				<TextBlock FontSize="{StaticResource Double.SessionView.Hint.NoLogToShow.FontSize}" HorizontalAlignment="Center" IsVisible="{Binding $parent[UserControl].HasLogProfile}" Text="{DynamicResource String.SessionView.Hint.NoLogToShow}" TextWrapping="Wrap" VerticalAlignment="Center"/>
 			</Border>
+
+			<!-- Hint: select log profile -->
+			<StackPanel Grid.Row="1" HorizontalAlignment="Center" IsVisible="{Binding !$parent[UserControl].HasLogProfile}" Orientation="Horizontal">
+				<TextBlock FontSize="{StaticResource Double.SessionView.Hint.SelectLogProfile.FontSize}" Text="{DynamicResource String.SessionView.Hint.SelectLogProfile.Section1}" TextWrapping="NoWrap" VerticalAlignment="Center"/>
+				<Border Height="{StaticResource Double.SessionView.Hint.SelectLogProfile.FontSize}" Margin="{StaticResource Thickness.SessionView.Hint.SelectLogProfile.Icon.Margin}" VerticalAlignment="Center" Width="{StaticResource Double.SessionView.Hint.SelectLogProfile.FontSize}">
+					<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.LogProfile}"/>
+				</Border>
+				<TextBlock FontSize="{StaticResource Double.SessionView.Hint.SelectLogProfile.FontSize}" Text="{DynamicResource String.SessionView.Hint.SelectLogProfile.Section2}" TextWrapping="NoWrap" VerticalAlignment="Center"/>
+			</StackPanel>
 
 		</Grid>
 

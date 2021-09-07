@@ -338,6 +338,9 @@
 	<sys:String x:Key="String.SessionView.FilterLogsBySelectedThreadIdOnly">只使用選取的 TID 篩選</sys:String>
 	<sys:String x:Key="String.SessionView.HasAllDataSourceErrors">資料來源發生錯誤</sys:String>
 	<sys:String x:Key="String.SessionView.HasPartialDataSourceErrors">部分資料來源發生錯誤</sys:String>
+	<sys:String x:Key="String.SessionView.Hint.NoLogToShow">沒有日誌可以顯示</sys:String>
+	<sys:String x:Key="String.SessionView.Hint.SelectLogProfile.Section1">點一下工具列的</sys:String>
+	<sys:String x:Key="String.SessionView.Hint.SelectLogProfile.Section2">來選取日誌類型以開始使用</sys:String>
 	<sys:String x:Key="String.SessionView.LastLogsFilteringDuration">篩選耗時：</sys:String>
 	<sys:String x:Key="String.SessionView.LastLogsReadingDuration">讀取耗時：</sys:String>
 	<sys:String x:Key="String.SessionView.LogFiltersCombinationMode">篩選條件運算方式</sys:String>
@@ -347,7 +350,6 @@
 	<sys:String x:Key="String.SessionView.MarkUnmarkLogs">標記/解除標記日誌</sys:String>
 	<sys:String x:Key="String.SessionView.NeedToRestartAsAdministrator">'{0}' 需要系統管理員身分，是否要以系統管理員身分重新啟動應用程式並使用此日誌類型？</sys:String>
 	<sys:String x:Key="String.SessionView.NoFilePathDropped">請拖放有效的檔案。</sys:String>
-	<sys:String x:Key="String.SessionView.NoLogToShow">沒有日誌可以顯示</sys:String>
 	<sys:String x:Key="String.SessionView.NoPredefinedLogTextFilter">沒有已定義的文字篩選</sys:String>
 	<sys:String x:Key="String.SessionView.OtherActions">其他動作</sys:String>
 	<sys:String x:Key="String.SessionView.PauseResumeLogsReading">暫停/繼續讀取日誌 (P)</sys:String>

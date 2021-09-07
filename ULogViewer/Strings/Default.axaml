@@ -350,6 +350,9 @@
 	<sys:String x:Key="String.SessionView.FilterLogsBySelectedThreadIdOnly">Filter by selected TID only</sys:String>
 	<sys:String x:Key="String.SessionView.HasAllDataSourceErrors">Error occurred in data sources</sys:String>
 	<sys:String x:Key="String.SessionView.HasPartialDataSourceErrors">Error occurred in some of data sources</sys:String>
+	<sys:String x:Key="String.SessionView.Hint.NoLogToShow">No log to show</sys:String>
+	<sys:String x:Key="String.SessionView.Hint.SelectLogProfile.Section1">Click</sys:String>
+	<sys:String x:Key="String.SessionView.Hint.SelectLogProfile.Section2">on toolbar to select log profile to start</sys:String>
 	<sys:String x:Key="String.SessionView.LastLogsFilteringDuration">Filtering cost: </sys:String>
 	<sys:String x:Key="String.SessionView.LastLogsReadingDuration">Reading cost: </sys:String>
 	<sys:String x:Key="String.SessionView.LogFiltersCombinationMode">Way to combine conditions</sys:String>
@@ -359,7 +362,6 @@
 	<sys:String x:Key="String.SessionView.MarkUnmarkLogs">Mark/Unmark logs</sys:String>
 	<sys:String x:Key="String.SessionView.NeedToRestartAsAdministrator">Administrator role is needed for '{0}'. Do you want to restart application as Administrator and use this profile?</sys:String>
 	<sys:String x:Key="String.SessionView.NoFilePathDropped">Please drag and drop valid files.</sys:String>
-	<sys:String x:Key="String.SessionView.NoLogToShow">No log to show</sys:String>
 	<sys:String x:Key="String.SessionView.NoPredefinedLogTextFilter">No defined text filter</sys:String>
 	<sys:String x:Key="String.SessionView.OtherActions">Other actions</sys:String>
 	<sys:String x:Key="String.SessionView.PauseResumeLogsReading">Pause/Resume reading logs (P)</sys:String>
