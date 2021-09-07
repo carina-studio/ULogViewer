@@ -63,6 +63,10 @@
 
 			<!-- Source code -->
 			<TextBlock Cursor="Hand" Foreground="{DynamicResource Brush.TextBlock.Foreground.Link}" PointerReleased="OnLinkTextPointerReleased" Tag="https://github.com/carina-studio/ULogViewer" Text="{DynamicResource String.AppInfoDialog.SourceCode}"/>
+			<Separator Classes="Dialog_Separator_Horizontal"/>
+
+			<!-- Export logs -->
+			<TextBlock Cursor="Hand" Foreground="{DynamicResource Brush.TextBlock.Foreground.Link}" PointerReleased="OnExportAppLogsTextBlockPointerReleased" Text="{DynamicResource String.AppInfoDialog.ExportAppLogs}"/>
 			
 		</StackPanel>
 

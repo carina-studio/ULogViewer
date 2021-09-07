@@ -14,7 +14,10 @@
 	<sys:String x:Key="String.AppInfoDialog.Attribution.Framework.Section1" xml:space="preserve">Powered by</sys:String>
 	<sys:String x:Key="String.AppInfoDialog.Attribution.Framework.Section2" xml:space="preserve">and</sys:String>
 	<sys:String x:Key="String.AppInfoDialog.Attribution.Framework.Section3" xml:space="preserve">.</sys:String>
+	<sys:String x:Key="String.AppInfoDialog.ExportAppLogs">Export application logs…</sys:String>
+	<sys:String x:Key="String.AppInfoDialog.FailedToExportAppLogs">Failed to export application logs.</sys:String>
 	<sys:String x:Key="String.AppInfoDialog.SourceCode">Source code on GitHub</sys:String>
+	<sys:String x:Key="String.AppInfoDialog.SucceededToExportAppLogs">Application logs exported.</sys:String>
 	<sys:String x:Key="String.AppInfoDialog.Title">About ULogViewer</sys:String>
 	<sys:String x:Key="String.AppInfoDialog.Version">Version: {0}</sys:String>
 

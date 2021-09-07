@@ -12,7 +12,10 @@
 	<sys:String x:Key="String.AppInfoDialog.Attribution.Framework.Section1" xml:space="preserve">基於</sys:String>
 	<sys:String x:Key="String.AppInfoDialog.Attribution.Framework.Section2" xml:space="preserve">以及</sys:String>
 	<sys:String x:Key="String.AppInfoDialog.Attribution.Framework.Section3" xml:space="preserve">開發完成。</sys:String>
+	<sys:String x:Key="String.AppInfoDialog.ExportAppLogs">匯出應用程式日誌…</sys:String>
+	<sys:String x:Key="String.AppInfoDialog.FailedToExportAppLogs">無法匯出應用程式日誌。</sys:String>
 	<sys:String x:Key="String.AppInfoDialog.SourceCode">GitHub 上的原始程式碼</sys:String>
+	<sys:String x:Key="String.AppInfoDialog.SucceededToExportAppLogs">應用程式日誌匯出完成。</sys:String>
 	<sys:String x:Key="String.AppInfoDialog.Title">關於 ULogViewer</sys:String>
 	<sys:String x:Key="String.AppInfoDialog.Version">版本：{0}</sys:String>
 
