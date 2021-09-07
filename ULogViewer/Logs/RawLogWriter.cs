@@ -1,0 +1,336 @@
+﻿using CarinaStudio.Collections;
+using CarinaStudio.IO;
+using CarinaStudio.Threading;
+using CarinaStudio.ULogViewer.Json;
+using CarinaStudio.ULogViewer.Logs.DataOutputs;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace CarinaStudio.ULogViewer.Logs
+{
+	/// <summary>
+	/// <see cref="ILogWriter"/> to write <see cref="Log"/>s as raw log data.
+	/// </summary>
+	class RawLogWriter : BaseLogWriter
+	{
+		// Static fields.
+		static readonly Regex logPropertyNameRegex = new Regex("\\{(?<PropertyName>[\\w\\d]+)(\\,(?<Alignment>[\\+\\-]?[\\d]+))?(\\:(?<Format>[^\\}]+))?\\}");
+		static readonly string newLineString = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "\r\n" : "\n";
+
+
+		// Fields.
+		string logFormat = "";
+		readonly Dictionary<Log, int> lineNumbers = new Dictionary<Log, int>();
+		readonly HashSet<Log> logsToGetLineNumber = new HashSet<Log>();
+		readonly Dictionary<LogLevel, string> logLevelMap = new Dictionary<LogLevel, string>();
+		LogStringEncoding logStringEncoding = LogStringEncoding.Plane;
+		readonly IDictionary<LogLevel, string> readOnlyLogLevelMap;
+		readonly ISet<Log> readOnlyLogsToGetLineNumbers;
+		CultureInfo timestampCultureInfo = CultureInfo.GetCultureInfo("en-US");
+		string? timestampFormat;
+		bool writeFileNames = true;
+
+
+
+		/// <summary>
+		/// Initialize new <see cref="RawLogWriter"/> instance.
+		/// </summary>
+		/// <param name="output"><see cref="ILogDataOutput"/> to output raw log data.</param>
+		public RawLogWriter(ILogDataOutput output) : base(output)
+		{
+			// setup properties.
+			this.LineNumbers = this.lineNumbers.AsReadOnly();
+			this.readOnlyLogLevelMap = this.logLevelMap.AsReadOnly();
+			this.readOnlyLogsToGetLineNumbers = this.logsToGetLineNumber.AsReadOnly();
+		}
+
+
+		/// <summary>
+		/// Get line numbers of <see cref="Log"/> in <see cref="LogsToGetLineNumber"/>.
+		/// </summary>
+		public IDictionary<Log, int> LineNumbers { get; }
+
+
+		/// <summary>
+		/// Get or set string format to output raw log data.
+		/// </summary>
+		public string LogFormat
+		{
+			get => this.logFormat;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyPreparing();
+				if (this.logFormat == value)
+					return;
+				this.logFormat = value;
+				this.OnPropertyChanged(nameof(LogFormat));
+			}
+		}
+
+
+		/// <summary>
+		/// Get or set map from <see cref="LogLevel"/> to <see cref="string"/>.
+		/// </summary>
+		public IDictionary<LogLevel, string> LogLevelMap
+		{
+			get => this.readOnlyLogLevelMap;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyPreparing();
+				if (this.logLevelMap.SequenceEqual(value))
+					return;
+				this.logLevelMap.Clear();
+				this.logLevelMap.AddAll(value);
+				this.OnPropertyChanged(nameof(LogLevelMap));
+			}
+		}
+
+
+		/// <summary>
+		/// Get or set the set of <see cref="Log"/> to get line number after writing completed.
+		/// </summary>
+		public ISet<Log> LogsToGetLineNumber
+		{
+			get => this.readOnlyLogsToGetLineNumbers;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyPreparing();
+				if (this.logsToGetLineNumber.SetEquals(value))
+					return;
+				this.logsToGetLineNumber.Clear();
+				this.logsToGetLineNumber.AddAll(value);
+				this.OnPropertyChanged(nameof(LogsToGetLineNumber));
+			}
+		}
+
+
+		/// <summary>
+		/// Get or set string encoding of log.
+		/// </summary>
+		public LogStringEncoding LogStringEncoding
+		{
+			get => this.logStringEncoding;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyPreparing();
+				if (this.logStringEncoding == value)
+					return;
+				this.logStringEncoding = value;
+				this.OnPropertyChanged(nameof(LogStringEncoding));
+			}
+		}
+
+
+		/// <summary>
+		/// Get or set <see cref="CultureInfo"/> for <see cref="TimestampFormat"/> to format timestamp of log.
+		/// </summary>
+		public CultureInfo TimestampCultureInfo
+		{
+			get => this.timestampCultureInfo;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyPreparing();
+				if (this.timestampCultureInfo.Equals(value))
+					return;
+				this.timestampCultureInfo = value;
+				this.OnPropertyChanged(nameof(TimestampCultureInfo));
+			}
+		}
+
+
+		/// <summary>
+		/// Get or set format of <see cref="Log.Timestamp"/> to output to raw log data.
+		/// </summary>
+		public string? TimestampFormat
+		{
+			get => this.timestampFormat;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyPreparing();
+				if (this.timestampFormat == value)
+					return;
+				this.timestampFormat = value;
+				this.OnPropertyChanged(nameof(TimestampFormat));
+			}
+		}
+
+
+		/// <summary>
+		/// Get or set whether writing file name on top of related logs or not.
+		/// </summary>
+		public bool WriteFileNames
+		{
+			get => this.writeFileNames;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyPreparing();
+				if (this.writeFileNames == value)
+					return;
+				this.writeFileNames = value;
+				this.OnPropertyChanged(nameof(WriteFileNames));
+			}
+		}
+
+
+		// Write logs.
+		void WriteLogs(TextWriter writer, string format, IList<Func<Log, object?>> logPropertyGetters, CancellationToken cancellationToken)
+		{
+			var logs = this.Logs;
+			var logCount = logs.Count;
+			var logsToGetLineNumber = this.logsToGetLineNumber;
+			var logPropertyCount = logPropertyGetters.Count;
+			var logStringEncoding = this.logStringEncoding;
+			var logStringBuilder = new StringBuilder();
+			using var logStringWriter = new StringWriter(logStringBuilder);
+			var writeFileNames = this.writeFileNames;
+			var currentFileName = "";
+			var writtenLineCount = 0;
+			var lineNumbers = new Dictionary<Log, int>();
+			try
+			{
+				var formatArgs = new object?[logPropertyCount];
+				for (var i = 0; i < logCount && !cancellationToken.IsCancellationRequested; ++i)
+				{
+					// get property values
+					var log = logs[i];
+					for (var j = logPropertyCount - 1; j >= 0; --j)
+					{
+						formatArgs[j] = logPropertyGetters[j](log).Let(it =>
+						{
+							if (it is not string str || str.Length == 0)
+								return it;
+							return logStringEncoding switch
+							{
+								LogStringEncoding.Json => JsonUtility.EncodeToJsonString(str),
+								LogStringEncoding.Xml => WebUtility.HtmlEncode(str),
+								_ => it,
+							};
+						});
+					}
+
+					// move to next line
+					if (i > 0)
+						writer.WriteLine();
+
+					// write to memory
+					if (writeFileNames)
+					{
+						log.FileName?.Let(fileName =>
+						{
+							if (!PathEqualityComparer.Default.Equals(currentFileName, fileName))
+							{
+								logStringWriter.WriteLine($"[{Path.GetFileName(fileName)}]");
+								currentFileName = fileName;
+							}
+						});
+					}
+					logStringWriter.Write(string.Format(format, formatArgs));
+
+					// check line count
+					if (logsToGetLineNumber.IsNotEmpty())
+					{
+						var lineCount = 1;
+						for (var cIndex = logStringBuilder.Length - 1; cIndex >= 0; --cIndex)
+						{
+							if (logStringBuilder[cIndex] == '\n')
+								++lineCount;
+						}
+						if (logsToGetLineNumber.Contains(log))
+							lineNumbers[log] = (writtenLineCount + 1);
+						writtenLineCount += lineCount;
+					}
+
+					// write to output
+					writer.Write(logStringBuilder.ToString());
+					logStringBuilder.Remove(0, logStringBuilder.Length);
+				}
+			}
+			finally
+			{
+				this.SynchronizationContext.Post(() => this.lineNumbers.AddAll(lineNumbers));
+			}
+		}
+
+
+		// Write logs.
+		protected override async Task WriteLogsAsync(TextWriter writer, CancellationToken cancellationToken)
+		{
+			// prepare output format and log property getters
+			var logFormatStart = 0;
+			var formatBuilder = new StringBuilder();
+			var logPropertyGetters = new List<Func<Log, object?>>();
+			var argIndex = 0;
+			var cultureInfo = this.Application.CultureInfo;
+			var match = logPropertyNameRegex.Match(this.logFormat);
+			while (match.Success)
+			{
+				formatBuilder.Append(this.logFormat.Substring(logFormatStart, match.Index - logFormatStart));
+				logFormatStart = match.Index + match.Length;
+				var propertyName = match.Groups["PropertyName"].Value;
+				if (propertyName == "NewLine")
+					formatBuilder.Append(newLineString);
+				else if (Log.HasProperty(propertyName))
+				{
+					var logPropertyGetter = propertyName switch
+					{
+						nameof(Log.BeginningTimestamp)
+							or nameof(Log.EndingTimestamp)
+							or nameof(Log.Timestamp) => log =>
+							{
+								var timestamp = log.Timestamp;
+								if (timestamp == null)
+									return "";
+								if (this.timestampFormat != null)
+									return timestamp.Value.ToString(this.timestampFormat, this.timestampCultureInfo);
+								return timestamp.Value.ToString(this.timestampCultureInfo);
+							}
+						,
+						nameof(Log.Level) => log =>
+						{
+							if (this.logLevelMap.TryGetValue(log.Level, out var str))
+								return str;
+							return Converters.EnumConverter.LogLevel.Convert(log.Level, typeof(string), null, cultureInfo);
+						}
+						,
+						_ => Log.CreatePropertyGetter<object?>(propertyName),
+					};
+					logPropertyGetters.Add(logPropertyGetter);
+					formatBuilder.Append($"{{{argIndex++}");
+					match.Groups["Alignment"].Let(it =>
+					{
+						if (it.Success)
+							formatBuilder.Append($",{it.Value}");
+					});
+					match.Groups["Format"].Let(it =>
+					{
+						if (it.Success)
+							formatBuilder.Append($":{it.Value}");
+					});
+					formatBuilder.Append('}');
+				}
+				match = match.NextMatch();
+			}
+			formatBuilder.Append(this.logFormat.Substring(logFormatStart));
+
+			// start writing
+			var format = formatBuilder.ToString();
+			await Task.Run(() => this.WriteLogs(writer, format, logPropertyGetters, cancellationToken));
+		}
+	}
+}
