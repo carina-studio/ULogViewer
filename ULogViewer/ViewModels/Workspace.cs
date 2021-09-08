@@ -19,7 +19,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 	/// <summary>
 	/// Workspace contains <see cref="Session"/>(s).
 	/// </summary>
-	class Workspace : ViewModel
+	class Workspace : ViewModel<IApplication>
 	{
 		/// <summary>
 		/// Property of <see cref="ActiveSession"/>.
@@ -32,7 +32,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		// Static fields.
-		static readonly SettingKey<byte[]> StateKey = new SettingKey<byte[]?>("Workspace.State", new byte[0]);
+		static readonly SettingKey<byte[]> StateKey = new SettingKey<byte[]>("Workspace.State", new byte[0]);
 
 
 		// Fields.

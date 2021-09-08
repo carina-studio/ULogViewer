@@ -2115,12 +2115,41 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				return;
 			if (fileName == null)
 				throw new ArgumentNullException(nameof(fileName));
-			var app = this.Application as App ?? throw new InternalStateCorruptedException("No application.");
 
 			// prepare log writer
-			using var dataOutput = new FileLogDataOutput(app, fileName);
-			using var logWriter = (ILogWriter)this.CreateRawLogWriter(dataOutput);
+			using var dataOutput = new FileLogDataOutput((IApplication)this.Application, fileName);
+			using var logWriter = this.CreateRawLogWriter(dataOutput);
 			var markedLogs = this.markedLogs;
+			logWriter.LogsToGetLineNumber = new HashSet<Log>().Also(it =>
+			{
+				for (var i = markedLogs.Count - 1; i >= 0; --i)
+					it.Add(markedLogs[i].Log);
+			});
+			logWriter.WriteFileNames = false;
+
+			// start saving
+			await this.SaveLogsAsync(logWriter, logs);
+
+			// complete and save marked logs
+			if (logWriter.State == LogWriterState.Stopped)
+			{
+				this.Logger.LogDebug("Logs saving completed, save marked logs");
+				var markedLogInfos = new List<MarkedLogInfo>().Also(markedLogInfos =>
+				{
+					foreach (var pair in (logWriter).LineNumbers)
+						markedLogInfos.Add(new MarkedLogInfo(fileName, pair.Value, pair.Key.Timestamp));
+				});
+				this.SaveMarkedLogs(fileName, markedLogInfos);
+			}
+			else
+				this.Logger.LogError("Logs saving failed");
+		}
+
+		
+		// Save logs asynchronously.
+		async Task SaveLogsAsync(ILogWriter logWriter, IList<DisplayableLog> logs)
+		{
+			// prepare log writer
 			var syncLock = new object();
 			var isCompleted = false;
 			logWriter.Logs = new Log[logs.Count].Also(it =>
@@ -2128,15 +2157,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				for (var i = it.Length - 1; i >= 0; --i)
 					it[i] = logs[i].Log;
 			});
-			if (logWriter is RawLogWriter rawLogWriter)
-			{
-				rawLogWriter.LogsToGetLineNumber = new HashSet<Log>().Also(it =>
-				{
-					for (var i = markedLogs.Count - 1; i >= 0; --i)
-						it.Add(markedLogs[i].Log);
-				});
-				rawLogWriter.WriteFileNames = false;
-			}
 			logWriter.PropertyChanged += (_, e) =>
 			{
 				if (e.PropertyName == nameof(RawLogWriter.State))
@@ -2157,7 +2177,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			};
 
 			// start saving
-			this.Logger.LogDebug($"Start saving logs to '{fileName}'");
+			this.Logger.LogDebug($"Start saving logs");
 			this.SetValue(IsSavingLogsProperty, true);
 			logWriter.Start();
 			await this.WaitForNecessaryTaskAsync(Task.Run(() =>
@@ -2173,24 +2193,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				}
 			}));
 
-			// complete and save marked logs
-			if (logWriter.State == LogWriterState.Stopped)
-			{
-				if (logWriter is RawLogWriter)
-				{
-					this.Logger.LogDebug("Logs saving completed, save marked logs");
-					var markedLogInfos = new List<MarkedLogInfo>().Also(markedLogInfos =>
-					{
-						foreach (var pair in ((RawLogWriter)logWriter).LineNumbers)
-							markedLogInfos.Add(new MarkedLogInfo(fileName, pair.Value, pair.Key.Timestamp));
-					});
-					this.SaveMarkedLogs(fileName, markedLogInfos);
-				}
-				else
-					this.Logger.LogDebug("Logs saving completed");
-			}
-			else
-				this.Logger.LogError("Logs saving failed");
+			// complete
 			if (!this.IsDisposed)
 				this.SetValue(IsSavingLogsProperty, false);
 		}

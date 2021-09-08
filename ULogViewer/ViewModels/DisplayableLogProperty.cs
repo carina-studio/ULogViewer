@@ -135,6 +135,24 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Convert to <see cref="LogProperty"/>.
+		/// </summary>
+		/// <param name="resolveDisplayName">True to resolve display name to readable value.</param>
+		/// <returns><see cref="LogProperty"/>.</returns>
+		public LogProperty ToLogProperty(bool resolveDisplayName = true)
+		{
+			var name = this.Name switch
+			{
+				nameof(DisplayableLog.BeginningTimestampString) => nameof(Log.BeginningTimestamp),
+				nameof(DisplayableLog.EndingTimestampString) => nameof(Log.EndingTimestamp),
+				nameof(DisplayableLog.TimestampString) => nameof(Log.Timestamp),
+				_ => this.Name,
+			};
+			return new LogProperty(name, resolveDisplayName ? this.DisplayName : this.displayNameId, this.Width);
+		}
+
+
+		/// <summary>
 		/// Width of UI field to show property in pixels.
 		/// </summary>
 		public int? Width { get; }
