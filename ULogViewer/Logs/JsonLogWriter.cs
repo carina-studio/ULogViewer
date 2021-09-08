@@ -148,6 +148,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			await Task.Run(() =>
 			{
 				var tempFilePath = "";
+				var tempFileStream = (Stream?)null;
 				var logLevelMap = this.logLevelMap;
 				var timestampCultureInfo = this.timestampCultureInfo;
 				var timestampFormat = this.timestampFormat;
@@ -158,8 +159,8 @@ namespace CarinaStudio.ULogViewer.Logs
 					tempFilePath = Path.GetTempFileName();
 
 					// create JSON writer
-					using var tempStream = new FileStream(tempFilePath, FileMode.Open, FileAccess.ReadWrite);
-					using var jsonWriter = new Utf8JsonWriter(tempStream, new JsonWriterOptions() { Indented = true });
+					tempFileStream = new FileStream(tempFilePath, FileMode.Open, FileAccess.ReadWrite);
+					using var jsonWriter = new Utf8JsonWriter(tempFileStream, new JsonWriterOptions() { Indented = true });
 
 					// write logs
 					jsonWriter.WriteStartArray();
@@ -200,9 +201,9 @@ namespace CarinaStudio.ULogViewer.Logs
 						throw new TaskCanceledException();
 
 					// copy data to output writer
-					jsonWriter.Flush();
-					tempStream.Position = 0;
-					using (var reader = new StreamReader(tempStream, Encoding.UTF8))
+					jsonWriter.Dispose();
+					tempFileStream.Position = 0;
+					using (var reader = new StreamReader(tempFileStream, Encoding.UTF8))
 					{
 						var line = reader.ReadLine();
 						while (line != null && !cancellationToken.IsCancellationRequested)
@@ -214,6 +215,7 @@ namespace CarinaStudio.ULogViewer.Logs
 				}
 				finally
 				{
+					Global.RunWithoutError(() => tempFileStream?.Close());
 					if (!string.IsNullOrEmpty(tempFilePath))
 						File.Delete(tempFilePath);
 				}

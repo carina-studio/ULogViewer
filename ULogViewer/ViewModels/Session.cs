@@ -322,7 +322,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.PauseResumeLogsReadingCommand = ReactiveCommand.Create(this.PauseResumeLogsReading, this.canPauseResumeLogsReading);
 			this.ReloadLogsCommand = ReactiveCommand.Create(() => this.ReloadLogs(false, false), this.canReloadLogs);
 			this.ResetLogProfileCommand = ReactiveCommand.Create(this.ResetLogProfile, this.canResetLogProfile);
+			this.SaveAllLogsAsJsonCommand = ReactiveCommand.Create<string>(this.SaveAllLogsAsJson, this.canSaveAllLogs);
 			this.SaveAllLogsCommand = ReactiveCommand.Create<string>(this.SaveAllLogs, this.canSaveAllLogs);
+			this.SaveLogsAsJsonCommand = ReactiveCommand.Create<string>(this.SaveLogsAsJson, this.canSaveLogs);
 			this.SaveLogsCommand = ReactiveCommand.Create<string>(this.SaveLogs, this.canSaveLogs);
 			this.SetLogProfileCommand = ReactiveCommand.Create<LogProfile?>(this.SetLogProfile, this.canSetLogProfile);
 			this.SetWorkingDirectoryCommand = ReactiveCommand.Create<string?>(this.SetWorkingDirectory, this.GetValueAsObservable(IsWorkingDirectoryNeededProperty));
@@ -940,6 +942,26 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.canPauseResumeLogsReading.Update(profile.IsContinuousReading);
 			this.canReloadLogs.Update(true);
 			this.SetValue(HasLogReadersProperty, true);
+		}
+
+
+		// Create JSON log writer for current log profile.
+		JsonLogWriter CreateJsonLogWriter(ILogDataOutput dataOutput)
+		{
+			// check state
+			var profile = this.LogProfile ?? throw new InternalStateCorruptedException("No log profile.");
+
+			// prepare log writer
+			var logWriter = new JsonLogWriter(dataOutput);
+			logWriter.LogLevelMap = profile.LogLevelMapForWriting;
+			logWriter.LogProperties = this.DisplayLogProperties.Let(it => new LogProperty[it.Count].Also(logProperties =>
+			{
+				for (var i = it.Count - 1; i >= 0; --i)
+					logProperties[i] = it[i].ToLogProperty();
+			}));
+			logWriter.TimestampCultureInfo = profile.TimestampCultureInfoForWriting;
+			logWriter.TimestampFormat = string.IsNullOrEmpty(profile.TimestampFormatForWriting) ? profile.TimestampFormatForReading : profile.TimestampFormatForWriting;
+			return logWriter;
 		}
 
 
@@ -2092,6 +2114,24 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		}
 
 
+		// Save all logs to file in JSON format.
+		void SaveAllLogsAsJson(string? fileName)
+		{
+			this.VerifyAccess();
+			this.VerifyDisposed();
+			if (!this.canSaveAllLogs.Value)
+				return;
+			this.SaveLogsAsJson(fileName, this.allLogs);
+		}
+
+
+		/// <summary>
+		/// Command to save all <see cref="DisplayableLog"/> to file in JSON format.
+		/// </summary>
+		/// <remarks>Type of parameter is <see cref="string"/>.</remarks>
+		public ICommand SaveAllLogsAsJsonCommand { get; }
+
+
 		/// <summary>
 		/// Command to save all <see cref="DisplayableLog"/> to file.
 		/// </summary>
@@ -2145,7 +2185,46 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.Logger.LogError("Logs saving failed");
 		}
 
-		
+
+		// Save logs in JSON format.
+		void SaveLogsAsJson(string? fileName)
+		{
+			this.VerifyAccess();
+			this.VerifyDisposed();
+			if (!this.canSaveLogs.Value)
+				return;
+			this.SaveLogsAsJson(fileName, this.Logs);
+		}
+		async void SaveLogsAsJson(string? fileName, IList<DisplayableLog> logs)
+		{
+			// check state
+			if (logs.IsEmpty())
+				return;
+			if (fileName == null)
+				throw new ArgumentNullException(nameof(fileName));
+
+			// prepare log writer
+			using var dataOutput = new FileLogDataOutput((IApplication)this.Application, fileName);
+			using var logWriter = this.CreateJsonLogWriter(dataOutput);
+
+			// start saving
+			await this.SaveLogsAsync(logWriter, logs);
+
+			// complete and save marked logs
+			if (logWriter.State == LogWriterState.Stopped)
+				this.Logger.LogDebug("Logs saving completed");
+			else
+				this.Logger.LogError("Logs saving failed");
+		}
+
+
+		/// <summary>
+		/// Command to save <see cref="Logs"/> to file in JSON format.
+		/// </summary>
+		/// <remarks>Type of parameter is <see cref="string"/>.</remarks>
+		public ICommand SaveLogsAsJsonCommand { get; }
+
+
 		// Save logs asynchronously.
 		async Task SaveLogsAsync(ILogWriter logWriter, IList<DisplayableLog> logs)
 		{

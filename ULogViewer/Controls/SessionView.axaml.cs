@@ -2189,6 +2189,11 @@ namespace CarinaStudio.ULogViewer.Controls
 				}));
 				it.Filters.Add(new FileDialogFilter().Also(filter =>
 				{
+					filter.Extensions.Add("json");
+					filter.Name = app.GetString("FileFormat.Json");
+				}));
+				it.Filters.Add(new FileDialogFilter().Also(filter =>
+				{
 					filter.Extensions.Add("*");
 					filter.Name = app.GetString("FileFormat.All");
 				}));
@@ -2201,10 +2206,21 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 
 			// save logs
+			var isJsonFormat = Path.GetExtension(fileName).ToLower() == ".json";
 			if (saveAllLogs)
-				session.SaveAllLogsCommand.TryExecute(fileName);
+			{
+				if (isJsonFormat)
+					session.SaveAllLogsAsJsonCommand.TryExecute(fileName);
+				else
+					session.SaveAllLogsCommand.TryExecute(fileName);
+			}
 			else
-				session.SaveLogsCommand.TryExecute(fileName);
+			{
+				if (isJsonFormat)
+					session.SaveLogsAsJsonCommand.TryExecute(fileName);
+				else
+					session.SaveLogsCommand.TryExecute(fileName);
+			}
 		}
 
 
