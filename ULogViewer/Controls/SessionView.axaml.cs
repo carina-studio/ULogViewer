@@ -96,7 +96,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly MutableObservableBoolean canFilterLogsByTid = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canMarkUnmarkSelectedLogs = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canRestartAsAdmin = new MutableObservableBoolean(RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && !App.Current.IsRunningAsAdministrator);
-		readonly MutableObservableBoolean canSaveAllLogs = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSaveLogs = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSelectMarkedLogs = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSetLogProfile = new MutableObservableBoolean();
@@ -155,7 +154,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.MarkUnmarkSelectedLogsCommand = ReactiveCommand.Create(this.MarkUnmarkSelectedLogs, this.canMarkUnmarkSelectedLogs);
 			this.ResetLogFiltersCommand = ReactiveCommand.Create(this.ResetLogFilters, this.GetObservable<bool>(HasLogProfileProperty));
 			this.RestartAsAdministratorCommand = ReactiveCommand.Create(this.RestartAsAdministrator, this.canRestartAsAdmin);
-			this.SaveAllLogsCommand = ReactiveCommand.Create(() => this.SaveLogs(true), this.canSaveAllLogs);
+			this.SaveAllLogsCommand = ReactiveCommand.Create(() => this.SaveLogs(true), this.canSaveLogs);
 			this.SaveLogsCommand = ReactiveCommand.Create(() => this.SaveLogs(false), this.canSaveLogs);
 			this.SelectAndSetLogProfileCommand = ReactiveCommand.Create(this.SelectAndSetLogProfile, this.canSetLogProfile);
 			this.SelectAndSetWorkingDirectoryCommand = ReactiveCommand.Create(this.SelectAndSetWorkingDirectory, this.canSetWorkingDirectory);
@@ -420,7 +419,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			session.AddLogFileCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
 			session.MarkUnmarkLogsCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
 			session.ResetLogProfileCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
-			session.SaveAllLogsCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
 			session.SaveLogsCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
 			session.SetLogProfileCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
 			session.SetWorkingDirectoryCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
@@ -436,7 +434,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			else
 				this.canAddLogFiles.Update(false);
 			this.canMarkUnmarkSelectedLogs.Update(session.MarkUnmarkLogsCommand.CanExecute(null));
-			this.canSaveAllLogs.Update(session.SaveAllLogsCommand.CanExecute(null));
 			this.canSaveLogs.Update(session.SaveLogsCommand.CanExecute(null));
 			this.canSetLogProfile.Update(session.ResetLogProfileCommand.CanExecute(null) || session.SetLogProfileCommand.CanExecute(null));
 			this.canSelectMarkedLogs.Update(session.HasMarkedLogs);
@@ -932,14 +929,12 @@ namespace CarinaStudio.ULogViewer.Controls
 			// detach from commands
 			session.AddLogFileCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
 			session.MarkUnmarkLogsCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
-			session.SaveAllLogsCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
 			session.SaveLogsCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
 			session.SetLogProfileCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
 			session.SetLogProfileCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
 			session.SetWorkingDirectoryCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
 			this.canAddLogFiles.Update(false);
 			this.canMarkUnmarkSelectedLogs.Update(false);
-			this.canSaveAllLogs.Update(false);
 			this.canSaveLogs.Update(false);
 			this.canSelectMarkedLogs.Update(false);
 			this.canSetLogProfile.Update(false);
@@ -1962,8 +1957,6 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.canMarkUnmarkSelectedLogs.Update(this.logListBox.SelectedItems.Count > 0 && session.MarkUnmarkLogsCommand.CanExecute(null));
 			else if (sender == session.ResetLogProfileCommand || sender == session.SetLogProfileCommand)
 				this.canSetLogProfile.Update(session.ResetLogProfileCommand.CanExecute(null) || session.SetLogProfileCommand.CanExecute(null));
-			else if (sender == session.SaveAllLogsCommand)
-				this.canSaveAllLogs.Update(session.SaveAllLogsCommand.CanExecute(null));
 			else if (sender == session.SaveLogsCommand)
 				this.canSaveLogs.Update(session.SaveLogsCommand.CanExecute(null));
 			else if (sender == session.SetWorkingDirectoryCommand)
@@ -2153,16 +2146,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.VerifyAccess();
 			if (this.isSelectingFileToSaveLogs)
 				return;
-			if (saveAllLogs)
-			{
-				if (!this.canSaveAllLogs.Value)
-					return;
-			}
-			else
-			{
-				if (!this.canSaveLogs.Value)
-					return;
-			}
+			if (!this.canSaveLogs.Value)
+				return;
 			var window = this.FindLogicalAncestorOfType<Window>();
 			if (window == null)
 			{
@@ -2205,22 +2190,22 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (fileName == null)
 				return;
 
+			// prepare options
+			var logs = saveAllLogs ? session.AllLogs : session.Logs;
+			var options = Path.GetExtension(fileName).ToLower() == ".json"
+				? new JsonLogsSavingOptions(logs).Also(it =>
+				{
+					it.LogPropertyMap = new Dictionary<string, string>().Also(map =>
+					{
+						foreach (var logProperty in session.DisplayLogProperties)
+							map[logProperty.ToLogProperty().Name] = logProperty.DisplayName;
+					});
+				})
+				: new LogsSavingOptions(logs);
+			options.FileName = fileName;
+
 			// save logs
-			var isJsonFormat = Path.GetExtension(fileName).ToLower() == ".json";
-			if (saveAllLogs)
-			{
-				if (isJsonFormat)
-					session.SaveAllLogsAsJsonCommand.TryExecute(fileName);
-				else
-					session.SaveAllLogsCommand.TryExecute(fileName);
-			}
-			else
-			{
-				if (isJsonFormat)
-					session.SaveLogsAsJsonCommand.TryExecute(fileName);
-				else
-					session.SaveLogsCommand.TryExecute(fileName);
-			}
+			session.SaveLogsCommand.TryExecute(options);
 		}
 
 

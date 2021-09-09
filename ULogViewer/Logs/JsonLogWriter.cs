@@ -1,6 +1,5 @@
 ﻿using CarinaStudio.Collections;
 using CarinaStudio.ULogViewer.Logs.DataOutputs;
-using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.Threading;
 using System;
 using System.Collections.Generic;
@@ -21,11 +20,11 @@ namespace CarinaStudio.ULogViewer.Logs
 	{
 		// Fields.
 		readonly Dictionary<LogLevel, string> logLevelMap = new Dictionary<LogLevel, string>();
-		IList<LogProperty> logProperties = new LogProperty[0];
+		readonly Dictionary<string, string> logPropertyMap = new Dictionary<string, string>();
 		readonly IDictionary<LogLevel, string> readOnlyLogLevelMap;
+		readonly IDictionary<string, string> readOnlyLogPropertyMap;
 		CultureInfo timestampCultureInfo = CultureInfo.GetCultureInfo("en-US");
 		string? timestampFormat;
-		bool useLogPropertyDisplayNames = true;
 
 
 		/// <summary>
@@ -35,6 +34,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		public JsonLogWriter(ILogDataOutput dataOutput) : base(dataOutput)
 		{
 			this.readOnlyLogLevelMap = this.logLevelMap.AsReadOnly();
+			this.readOnlyLogPropertyMap = this.logPropertyMap.AsReadOnly();
 		}
 
 
@@ -58,20 +58,19 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		/// <summary>
-		/// Get or set properties of <see cref="Log"/> to be written.
+		/// Get or set map of name of property of <see cref="Log"/> to be written and its name in JSON object.
 		/// </summary>
-		public IList<LogProperty> LogProperties
+		public IDictionary<string, string> LogPropertyMap
 		{
-			get => this.logProperties;
+			get => this.readOnlyLogPropertyMap;
 			set
 			{
 				this.VerifyAccess();
 				this.VerifyDisposed();
 				this.VerifyPreparing();
-				if (this.logProperties.SequenceEqual(value))
-					return;
-				this.logProperties = new List<LogProperty>(value).AsReadOnly();
-				this.OnPropertyChanged(nameof(LogProperties));
+				this.logPropertyMap.Clear();
+				this.logPropertyMap.AddAll(value);
+				this.OnPropertyChanged(nameof(LogPropertyMap));
 			}
 		}
 
@@ -112,34 +111,15 @@ namespace CarinaStudio.ULogViewer.Logs
 		}
 
 
-		/// <summary>
-		/// Get or set whether use <see cref="LogProperty.DisplayName"/> as name of JSON property or not.
-		/// </summary>
-		public bool UseLogPropertyDisplayNames
-		{
-			get => this.useLogPropertyDisplayNames;
-			set
-			{
-				this.VerifyAccess();
-				this.VerifyDisposed();
-				this.VerifyPreparing();
-				if (this.useLogPropertyDisplayNames == value)
-					return;
-				this.useLogPropertyDisplayNames = value;
-				this.OnPropertyChanged(nameof(UseLogPropertyDisplayNames));
-			}
-		}
-
-
 		// Write logs.
 		protected override async Task WriteLogsAsync(TextWriter writer, CancellationToken cancellationToken)
 		{
 			// prepare property getters
 			var propertyGetters = new SortedList<string, Func<Log, object?>>();
-			foreach (var logProperty in this.logProperties)
+			foreach (var pair in this.logPropertyMap)
 			{
-				if (Log.HasProperty(logProperty.Name))
-					propertyGetters.Add(this.useLogPropertyDisplayNames ? logProperty.DisplayName : logProperty.Name, Log.CreatePropertyGetter<object?>(logProperty.Name));
+				if (Log.HasProperty(pair.Key))
+					propertyGetters.Add(pair.Value, Log.CreatePropertyGetter<object?>(pair.Key));
 			}
 			if (propertyGetters.IsEmpty())
 				throw new ArgumentException("No log property to write.");

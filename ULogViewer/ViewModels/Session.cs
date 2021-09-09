@@ -34,14 +34,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 	/// </summary>
 	class Session : ViewModel
 	{
-		// Constants.
-		const string MarkedFileExtension = ".ulvmark";
-		const int DisplayableLogDisposingChunkSize = 65536;
-		const int DelaySaveMarkedLogs = 1000;
-		const int DisposeDisplayableLogsInterval = 100;
-		const int FileLogsReadingConcurrencyLevel = 2;
-
-
 		/// <summary>
 		/// Property of <see cref="AllLogCount"/>.
 		/// </summary>
@@ -206,6 +198,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public static readonly IValueConverter LogsFilteringProgressConverter = new RatioToPercentageConverter(1);
 
 
+		// Constants.
+		const string MarkedFileExtension = ".ulvmark";
+		const int DisplayableLogDisposingChunkSize = 65536;
+		const int DelaySaveMarkedLogs = 1000;
+		const int DisposeDisplayableLogsInterval = 100;
+		const int FileLogsReadingConcurrencyLevel = 2;
+
+
 		// Static fields.
 		static readonly TaskFactory defaultLogsReadingTaskFactory = new TaskFactory(TaskScheduler.Default);
 		static readonly List<DisplayableLog> displayableLogsToDispose = new List<DisplayableLog>();
@@ -279,7 +279,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly MutableObservableBoolean canPauseResumeLogsReading = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canReloadLogs = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canResetLogProfile = new MutableObservableBoolean();
-		readonly MutableObservableBoolean canSaveAllLogs = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSaveLogs = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSetLogProfile = new MutableObservableBoolean();
 		readonly ScheduledAction checkDataSourceErrorsAction;
@@ -322,10 +321,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.PauseResumeLogsReadingCommand = ReactiveCommand.Create(this.PauseResumeLogsReading, this.canPauseResumeLogsReading);
 			this.ReloadLogsCommand = ReactiveCommand.Create(() => this.ReloadLogs(false, false), this.canReloadLogs);
 			this.ResetLogProfileCommand = ReactiveCommand.Create(this.ResetLogProfile, this.canResetLogProfile);
-			this.SaveAllLogsAsJsonCommand = ReactiveCommand.Create<string>(this.SaveAllLogsAsJson, this.canSaveAllLogs);
-			this.SaveAllLogsCommand = ReactiveCommand.Create<string>(this.SaveAllLogs, this.canSaveAllLogs);
-			this.SaveLogsAsJsonCommand = ReactiveCommand.Create<string>(this.SaveLogsAsJson, this.canSaveLogs);
-			this.SaveLogsCommand = ReactiveCommand.Create<string>(this.SaveLogs, this.canSaveLogs);
+			this.SaveLogsCommand = ReactiveCommand.Create<LogsSavingOptions>(this.SaveLogs, this.canSaveLogs);
 			this.SetLogProfileCommand = ReactiveCommand.Create<LogProfile?>(this.SetLogProfile, this.canSetLogProfile);
 			this.SetWorkingDirectoryCommand = ReactiveCommand.Create<string?>(this.SetWorkingDirectory, this.GetValueAsObservable(IsWorkingDirectoryNeededProperty));
 			this.canSetLogProfile.Update(true);
@@ -362,6 +358,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			});
 
 			// setup properties
+			this.AllLogs = this.allLogs.AsReadOnly();
 			this.SetValue(LogsProperty, this.allLogs.AsReadOnly());
 			this.MarkedLogs = this.markedLogs.AsReadOnly();
 			this.Workspace = workspace;
@@ -617,6 +614,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Get number of all read logs.
 		/// </summary>
 		public int AllLogCount { get => this.GetValue(AllLogCountProperty); }
+
+
+		/// <summary>
+		/// Get all logs without filtering.
+		/// </summary>
+		public IList<DisplayableLog> AllLogs { get; }
 
 
 		// Clear all log files.
@@ -942,26 +945,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.canPauseResumeLogsReading.Update(profile.IsContinuousReading);
 			this.canReloadLogs.Update(true);
 			this.SetValue(HasLogReadersProperty, true);
-		}
-
-
-		// Create JSON log writer for current log profile.
-		JsonLogWriter CreateJsonLogWriter(ILogDataOutput dataOutput)
-		{
-			// check state
-			var profile = this.LogProfile ?? throw new InternalStateCorruptedException("No log profile.");
-
-			// prepare log writer
-			var logWriter = new JsonLogWriter(dataOutput);
-			logWriter.LogLevelMap = profile.LogLevelMapForWriting;
-			logWriter.LogProperties = this.DisplayLogProperties.Let(it => new LogProperty[it.Count].Also(logProperties =>
-			{
-				for (var i = it.Count - 1; i >= 0; --i)
-					logProperties[i] = it[i].ToLogProperty();
-			}));
-			logWriter.TimestampCultureInfo = profile.TimestampCultureInfoForWriting;
-			logWriter.TimestampFormat = string.IsNullOrEmpty(profile.TimestampFormatForWriting) ? profile.TimestampFormatForReading : profile.TimestampFormatForWriting;
-			return logWriter;
 		}
 
 
@@ -2103,139 +2086,54 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		}
 
 
-		// Save all logs to file.
-		void SaveAllLogs(string? fileName)
-		{
-			this.VerifyAccess();
-			this.VerifyDisposed();
-			if (!this.canSaveAllLogs.Value)
-				return;
-			this.SaveLogs(fileName, this.allLogs);
-		}
-
-
-		// Save all logs to file in JSON format.
-		void SaveAllLogsAsJson(string? fileName)
-		{
-			this.VerifyAccess();
-			this.VerifyDisposed();
-			if (!this.canSaveAllLogs.Value)
-				return;
-			this.SaveLogsAsJson(fileName, this.allLogs);
-		}
-
-
-		/// <summary>
-		/// Command to save all <see cref="DisplayableLog"/> to file in JSON format.
-		/// </summary>
-		/// <remarks>Type of parameter is <see cref="string"/>.</remarks>
-		public ICommand SaveAllLogsAsJsonCommand { get; }
-
-
-		/// <summary>
-		/// Command to save all <see cref="DisplayableLog"/> to file.
-		/// </summary>
-		/// <remarks>Type of parameter is <see cref="string"/>.</remarks>
-		public ICommand SaveAllLogsCommand { get; }
-
-
-		// Save logs to file.
-		void SaveLogs(string? fileName)
-		{
-			this.VerifyAccess();
-			this.VerifyDisposed();
-			if (!this.canSaveLogs.Value)
-				return;
-			this.SaveLogs(fileName, this.Logs);
-		}
-		async void SaveLogs(string? fileName, IList<DisplayableLog> logs)
+		// Save logs.
+		async void SaveLogs(LogsSavingOptions? options)
 		{
 			// check state
-			if (logs.IsEmpty())
+			if (options == null)
+				throw new ArgumentNullException(nameof(options));
+			if (!options.HasFileName)
 				return;
-			if (fileName == null)
-				throw new ArgumentNullException(nameof(fileName));
+			if (!this.canSaveLogs.Value)
+				return;
 
-			// prepare log writer
-			using var dataOutput = new FileLogDataOutput((IApplication)this.Application, fileName);
-			using var logWriter = this.CreateRawLogWriter(dataOutput);
-			var markedLogs = this.markedLogs;
-			logWriter.LogsToGetLineNumber = new HashSet<Log>().Also(it =>
+			// get log profile
+			var profile = this.LogProfile;
+			if (profile == null)
+				return;
+
+			// create log writer
+			var logs = options.Logs;
+			using var dataOutput = new FileLogDataOutput((IApplication)this.Application, options.FileName.AsNonNull());
+			using var logWriter = options switch
 			{
-				for (var i = markedLogs.Count - 1; i >= 0; --i)
-					it.Add(markedLogs[i].Log);
-			});
-			logWriter.WriteFileNames = false;
-
-			// start saving
-			await this.SaveLogsAsync(logWriter, logs);
-
-			// complete and save marked logs
-			if (logWriter.State == LogWriterState.Stopped)
-			{
-				this.Logger.LogDebug("Logs saving completed, save marked logs");
-				var markedLogInfos = new List<MarkedLogInfo>().Also(markedLogInfos =>
+				JsonLogsSavingOptions jsonSavingOptions => new JsonLogWriter(dataOutput).Also(it =>
 				{
-					foreach (var pair in (logWriter).LineNumbers)
-						markedLogInfos.Add(new MarkedLogInfo(fileName, pair.Value, pair.Key.Timestamp));
-				});
-				this.SaveMarkedLogs(fileName, markedLogInfos);
-			}
-			else
-				this.Logger.LogError("Logs saving failed");
-		}
-
-
-		// Save logs in JSON format.
-		void SaveLogsAsJson(string? fileName)
-		{
-			this.VerifyAccess();
-			this.VerifyDisposed();
-			if (!this.canSaveLogs.Value)
-				return;
-			this.SaveLogsAsJson(fileName, this.Logs);
-		}
-		async void SaveLogsAsJson(string? fileName, IList<DisplayableLog> logs)
-		{
-			// check state
-			if (logs.IsEmpty())
-				return;
-			if (fileName == null)
-				throw new ArgumentNullException(nameof(fileName));
-
-			// prepare log writer
-			using var dataOutput = new FileLogDataOutput((IApplication)this.Application, fileName);
-			using var logWriter = this.CreateJsonLogWriter(dataOutput);
-
-			// start saving
-			await this.SaveLogsAsync(logWriter, logs);
-
-			// complete and save marked logs
-			if (logWriter.State == LogWriterState.Stopped)
-				this.Logger.LogDebug("Logs saving completed");
-			else
-				this.Logger.LogError("Logs saving failed");
-		}
-
-
-		/// <summary>
-		/// Command to save <see cref="Logs"/> to file in JSON format.
-		/// </summary>
-		/// <remarks>Type of parameter is <see cref="string"/>.</remarks>
-		public ICommand SaveLogsAsJsonCommand { get; }
-
-
-		// Save logs asynchronously.
-		async Task SaveLogsAsync(ILogWriter logWriter, IList<DisplayableLog> logs)
-		{
-			// prepare log writer
-			var syncLock = new object();
-			var isCompleted = false;
+					it.LogLevelMap = profile.LogLevelMapForWriting;
+					it.LogPropertyMap = jsonSavingOptions.LogPropertyMap;
+					it.TimestampCultureInfo = profile.TimestampCultureInfoForWriting;
+					it.TimestampFormat = string.IsNullOrEmpty(profile.TimestampFormatForWriting) ? profile.TimestampFormatForReading : profile.TimestampFormatForWriting;
+				}),
+				_ => (ILogWriter)(this.CreateRawLogWriter(dataOutput).Also(it =>
+				{
+					var markedLogs = this.markedLogs;
+					it.LogsToGetLineNumber = new HashSet<Log>().Also(it =>
+					{
+						for (var i = markedLogs.Count - 1; i >= 0; --i)
+							it.Add(markedLogs[i].Log);
+					});
+					it.WriteFileNames = false;
+				})),
+			};
 			logWriter.Logs = new Log[logs.Count].Also(it =>
 			{
 				for (var i = it.Length - 1; i >= 0; --i)
 					it[i] = logs[i].Log;
 			});
+
+			// prepare saving
+			var syncLock = new object();
+			var isCompleted = false;
 			logWriter.PropertyChanged += (_, e) =>
 			{
 				if (e.PropertyName == nameof(RawLogWriter.State))
@@ -2273,15 +2171,34 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			}));
 
 			// complete
-			if (!this.IsDisposed)
-				this.SetValue(IsSavingLogsProperty, false);
+			if (this.IsDisposed)
+				return;
+			this.SetValue(IsSavingLogsProperty, false);
+			if (logWriter.State == LogWriterState.Stopped)
+			{
+				if (logWriter is RawLogWriter rawLogWriter && options.HasFileName)
+				{
+					this.Logger.LogDebug("Logs saving completed, save marked logs");
+					var fileName = options.FileName.AsNonNull();
+					var markedLogInfos = new List<MarkedLogInfo>().Also(markedLogInfos =>
+					{
+						foreach (var pair in rawLogWriter.LineNumbers)
+							markedLogInfos.Add(new MarkedLogInfo(fileName, pair.Value, pair.Key.Timestamp));
+					});
+					this.SaveMarkedLogs(fileName, markedLogInfos);
+				}
+				else
+					this.Logger.LogDebug("Logs saving completed");
+			}
+			else
+				this.Logger.LogError("Logs saving failed");
 		}
 
 
 		/// <summary>
 		/// Command to save <see cref="Logs"/> to file.
 		/// </summary>
-		/// <remarks>Type of parameter is <see cref="string"/>.</remarks>
+		/// <remarks>Type of parameter is <see cref="LogsSavingOptions"/>.</remarks>
 		public ICommand SaveLogsCommand { get; }
 
 
@@ -2618,15 +2535,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			{
 				this.canCopyLogs.Update(false);
 				this.canCopyLogsWithFileNames.Update(false);
-				this.canSaveAllLogs.Update(false);
 				this.canSaveLogs.Update(false);
 			}
 			else
 			{
 				this.canCopyLogs.Update(this.Application is App && !this.IsCopyingLogs);
 				this.canCopyLogsWithFileNames.Update(this.canCopyLogs.Value && profile.DataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.FileName)));
-				this.canSaveAllLogs.Update(this.Application is App && !this.IsSavingLogs && this.AllLogCount > 0);
-				this.canSaveLogs.Update(this.canSaveAllLogs.Value && this.HasLogs);
+				this.canSaveLogs.Update(this.Application is App && !this.IsSavingLogs && this.AllLogCount > 0);
 			}
 		}
 
