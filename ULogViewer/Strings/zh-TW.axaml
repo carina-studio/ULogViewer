@@ -107,6 +107,11 @@
 	<!-- FileLogDataSourceProvider -->
 	<sys:String x:Key="String.FileLogDataSourceProvider.DisplayName">檔案</sys:String>
 
+	<!-- JsonLogsSavingOptionsDialog -->
+	<sys:String x:Key="String.JsonLogsSavingOptionsDialog.LogProperties">輸出的日誌屬性</sys:String>
+	<sys:String x:Key="String.JsonLogsSavingOptionsDialog.LogProperties.Description">日誌屬性將根據名稱自動排序。</sys:String>
+	<sys:String x:Key="String.JsonLogsSavingOptionsDialog.Title">JSON 選項</sys:String>
+
 	<!-- LogColorIndicator -->
 	<sys:String x:Key="String.LogColorIndicator.FileName">檔案</sys:String>
 	<sys:String x:Key="String.LogColorIndicator.None">無</sys:String>
@@ -391,6 +396,11 @@
 
 	<!-- StandardOutputLogDataSourceProvider -->
 	<sys:String x:Key="String.StandardOutputLogDataSourceProvider.DisplayName">標準輸出 (stdout)</sys:String>
+
+	<!-- StringLogPropertyMapEntryEditorDialog -->
+	<sys:String x:Key="String.StringLogPropertyMapEntryEditorDialog.MappedName">對應的名稱</sys:String>
+	<sys:String x:Key="String.StringLogPropertyMapEntryEditorDialog.Name">屬性</sys:String>
+	<sys:String x:Key="String.StringLogPropertyMapEntryEditorDialog.Title">日誌屬性</sys:String>
 
 	<!-- TcpServerLogDataSourceProvider -->
 	<sys:String x:Key="String.TcpServerLogDataSourceProvider.DisplayName">TCP 伺服器</sys:String>

@@ -51,6 +51,10 @@
 	<Thickness x:Key="Thickness.InPlaceAction.Margin">3,0,0,0</Thickness>
 	<Thickness x:Key="Thickness.InPlaceAction.Padding">3</Thickness>
 
+	<!-- JsonLogsSavingOptionsDialog -->
+	<sys:Double x:Key="Double.JsonLogsSavingOptionsDialog.ListBox.Height">200</sys:Double>
+	<sys:Double x:Key="Double.JsonLogsSavingOptionsDialog.Width">450</sys:Double>
+
 	<!-- ListAction -->
 	<sys:Double x:Key="Double.ListAction.MinWidth">80</sys:Double>
 	<Thickness x:Key="Thickness.ListAction.Padding">10,5,10,5</Thickness>
@@ -173,6 +177,9 @@
 	<Thickness x:Key="Thickness.SplashWindow.Message.Margin">0,30,0,0</Thickness>
 	<Thickness x:Key="Thickness.SplashWindow.Padding">30</Thickness>
 	<Thickness x:Key="Thickness.SplashWindow.Title.Margin">0,0,0,5</Thickness>
+	
+	<!-- StringLogPropertyMapEntryEditorDialog -->
+	<sys:Double x:Key="Double.StringLogPropertyMapEntryEditorDialog.Width">400</sys:Double>
 
 	<!-- TextInputDialog -->
 	<sys:Double x:Key="Double.TextInputDialog.Width">450</sys:Double>

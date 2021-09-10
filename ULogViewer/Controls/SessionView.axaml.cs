@@ -2204,6 +2204,18 @@ namespace CarinaStudio.ULogViewer.Controls
 				: new LogsSavingOptions(logs);
 			options.FileName = fileName;
 
+			// setup options by user
+			if (options is JsonLogsSavingOptions jsonLogsSavingOptions)
+			{
+				if (await new JsonLogsSavingOptionsDialog()
+				{
+					LogsSavingOptions = jsonLogsSavingOptions,
+				}.ShowDialog<JsonLogsSavingOptions?>(window) == null)
+				{
+					return;
+				}
+			}
+
 			// save logs
 			session.SaveLogsCommand.TryExecute(options);
 		}

@@ -106,6 +106,11 @@
 	<!-- FileLogDataSourceProvider -->
 	<sys:String x:Key="String.FileLogDataSourceProvider.DisplayName">File</sys:String>
 
+	<!-- JsonLogsSavingOptionsDialog -->
+	<sys:String x:Key="String.JsonLogsSavingOptionsDialog.LogProperties">Properties of log to output</sys:String>
+	<sys:String x:Key="String.JsonLogsSavingOptionsDialog.LogProperties.Description">Properties will be sorted by name automatically.</sys:String>
+	<sys:String x:Key="String.JsonLogsSavingOptionsDialog.Title">JSON options</sys:String>
+
 	<!-- LogColorIndicator -->
 	<sys:String x:Key="String.LogColorIndicator.FileName">File</sys:String>
 	<sys:String x:Key="String.LogColorIndicator.None">None</sys:String>
@@ -403,6 +408,11 @@
 
 	<!-- StandardOutputLogDataSourceProvider -->
 	<sys:String x:Key="String.StandardOutputLogDataSourceProvider.DisplayName">Standard output (stdout)</sys:String>
+
+	<!-- StringLogPropertyMapEntryEditorDialog -->
+	<sys:String x:Key="String.StringLogPropertyMapEntryEditorDialog.MappedName">Mapped name</sys:String>
+	<sys:String x:Key="String.StringLogPropertyMapEntryEditorDialog.Name">Property</sys:String>
+	<sys:String x:Key="String.StringLogPropertyMapEntryEditorDialog.Title">Log property</sys:String>
 
 	<!-- TcpServerLogDataSourceProvider -->
 	<sys:String x:Key="String.TcpServerLogDataSourceProvider.DisplayName">TCP Server</sys:String>

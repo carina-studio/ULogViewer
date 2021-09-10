@@ -1,0 +1,55 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+				xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
+				xmlns:appLogs="using:CarinaStudio.ULogViewer.Logs"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="CarinaStudio.ULogViewer.Controls.StringLogPropertyMapEntryEditorDialog"
+				Classes="Dialog"
+				SizeToContent="Height"
+        Title="{DynamicResource String.StringLogPropertyMapEntryEditorDialog.Title}"
+				Width="{StaticResource Double.StringLogPropertyMapEntryEditorDialog.Width}">
+
+	<DockPanel>
+
+		<!-- Control buttons -->
+		<Border Classes="Dialog_ControlButtonsPanel" DockPanel.Dock="Bottom">
+			<StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].GenerateResultCommand}" Content="{DynamicResource String.Common.OK}"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].CancelCommand}" Content="{DynamicResource String.Common.Cancel}"/>
+			</StackPanel>
+		</Border>
+
+		<!-- Content -->
+		<StackPanel Margin="{StaticResource Thickness.Dialog.Content.Padding}" Orientation="Vertical">
+
+			<!-- Name -->
+			<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.StringLogPropertyMapEntryEditorDialog.Name}"/>
+			<ComboBox Name="nameComboBox" HorizontalAlignment="Stretch" Items="{x:Static appLogs:Log.PropertyNames}" PropertyChanged="OnEditorControlPropertyChanged">
+				<ComboBox.ItemTemplate>
+					<DataTemplate>
+						<StackPanel Orientation="Horizontal">
+							<TextBlock Text="{Binding Converter={x:Static appConverters:LogPropertyNameConverter.Default}}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+							<TextBlock Opacity="0.3" TextTrimming="CharacterEllipsis" VerticalAlignment="Center">
+								<TextBlock.Text>
+									<MultiBinding StringFormat="{} ({0})">
+										<Binding/>
+									</MultiBinding>
+								</TextBlock.Text>
+							</TextBlock>
+						</StackPanel>
+					</DataTemplate>
+				</ComboBox.ItemTemplate>
+			</ComboBox>
+			<Separator Classes="Dialog_Separator_Horizontal"/>
+
+			<!-- Mapped name -->
+			<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.StringLogPropertyMapEntryEditorDialog.MappedName}"/>
+			<TextBox Name="mappedNameTextBox" PropertyChanged="OnEditorControlPropertyChanged"/>
+
+		</StackPanel>
+		
+	</DockPanel>
+	
+</Window>
