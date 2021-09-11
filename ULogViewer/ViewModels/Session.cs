@@ -1605,7 +1605,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					}
 					else
 					{
-						this.SetValue(LogsProperty, this.allLogs.AsReadOnly());
+						this.SetValue(LogsProperty, this.AllLogs);
 						this.SetValue(HasLogsProperty, this.allLogs.IsNotEmpty());
 						this.SetValue(LastLogsFilteringDurationProperty, null);
 						if (this.Settings.GetValueOrDefault(ULogViewer.Settings.SaveMemoryAggressively))
