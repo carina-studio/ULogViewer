@@ -140,6 +140,12 @@
 					<TextBlock Classes="Dialog_Label_Header1" Text="{DynamicResource String.AppOptionsDialog.Others}"/>
 				</Border>
 
+				<!-- Show process info -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.AppOptionsDialog.ShowProcessInfo}"/>
+				<ToggleSwitch IsChecked="{Binding ShowProcessInfo, Mode=TwoWay}"/>
+				<Separator Classes="Dialog_Separator_Horizontal"/>
+
+				<!-- Save memory agressively -->
 				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.AppOptionsDialog.SaveMemoryAggressively}"/>
 				<ToggleSwitch IsChecked="{Binding SaveMemoryAggressively, Mode=TwoWay}"/>
 				<TextBlock Classes="Dialog_Description" Text="{DynamicResource String.AppOptionsDialog.SaveMemoryAggressively.Description}"/>

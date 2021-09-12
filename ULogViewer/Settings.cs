@@ -59,6 +59,10 @@ namespace CarinaStudio.ULogViewer
 		/// </summary>
 		public static readonly SettingKey<bool> SelectWorkingDirectoryWhenNeeded = new SettingKey<bool>(nameof(SelectWorkingDirectoryWhenNeeded), true);
 		/// <summary>
+		/// Show process info on UI or not.
+		/// </summary>
+		public static readonly SettingKey<bool> ShowProcessInfo = new SettingKey<bool>(nameof(ShowProcessInfo), false);
+		/// <summary>
 		/// Application theme mode.
 		/// </summary>
 		public static readonly SettingKey<ThemeMode> ThemeMode = new SettingKey<ThemeMode>(nameof(ThemeMode), ULogViewer.ThemeMode.Dark);

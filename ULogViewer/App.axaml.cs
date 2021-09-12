@@ -8,6 +8,7 @@ using Avalonia.Media;
 using CarinaStudio.AutoUpdate;
 using CarinaStudio.AutoUpdate.Resolvers;
 using CarinaStudio.Configuration;
+using CarinaStudio.IO;
 using CarinaStudio.Net;
 using CarinaStudio.Threading;
 using CarinaStudio.Threading.Tasks;
@@ -40,6 +41,7 @@ namespace CarinaStudio.ULogViewer
 	class App : Application, IApplication
 	{
 		// Constants.
+		const int ProcessInfoUpdateInterval = 1000;
 		const string TextBoxFontFamilyResourceKey = "FontFamily.TextBox";
 		const int UpdateCheckingInterval = 3600000; // 1 hr
 
@@ -52,11 +54,15 @@ namespace CarinaStudio.ULogViewer
 		MainWindow? mainWindow;
 		volatile Settings? persistentState;
 		readonly string persistentStateFilePath;
+		long previousProcessInfoUpdateTime;
+		TimeSpan previousTotalProcessorTime;
+		readonly Process process = Process.GetCurrentProcess();
 		PropertyChangedEventHandler? propertyChangedHandlers;
 		string? restartArgs;
 		volatile Settings? settings;
 		readonly TaskFactory settingsFileAccessTaskFactory = new TaskFactory(new FixedThreadsTaskScheduler(1));
 		readonly string settingsFilePath;
+		readonly Stopwatch stopWatch = new Stopwatch().Also(it => it.Start());
 		SplashWindow? splashWindow;
 		ResourceInclude? stringResources;
 		CultureInfo? stringResourcesCulture;
@@ -65,6 +71,7 @@ namespace CarinaStudio.ULogViewer
 		ThemeMode? stylesThemeMode;
 		volatile SynchronizationContext? synchronizationContext;
 		AppUpdateInfo? updateInfo;
+		ScheduledAction? updateProcessInfoAction;
 		Workspace? workspace;
 
 
@@ -92,6 +99,9 @@ namespace CarinaStudio.ULogViewer
 				else
 					this.logger.LogError($"***** Unhandled application exception ***** {exceptionObj}");
 			};
+
+			// select private directory
+			this.RootPrivateDirectoryPath = Path.GetDirectoryName(this.process.MainModule?.FileName) ?? throw new ArgumentException("Unable to get directory of application.");
 
 			// prepare file path of settings
 			this.persistentStateFilePath = Path.Combine(this.RootPrivateDirectoryPath, "PersistentState.json");
@@ -204,6 +214,12 @@ namespace CarinaStudio.ULogViewer
 				this.propertyChangedHandlers?.Invoke(this, new PropertyChangedEventArgs(nameof(UpdateInfo)));
 			}
 		}
+
+
+		/// <summary>
+		/// Get CPU usage of application in percentage.
+		/// </summary>
+		public double CpuUsagePercentage { get; private set; }
 
 
 		/// <summary>
@@ -338,6 +354,49 @@ namespace CarinaStudio.ULogViewer
 			{
 				_ = this.CheckUpdateInfoAsync();
 			});
+			this.updateProcessInfoAction = new ScheduledAction(async () =>
+			{
+				long privateMemoryUsage = 0;
+				double cpuUsagePercentage = double.NaN;
+				await Task.Run(() =>
+				{
+					var updateTime = this.stopWatch.ElapsedMilliseconds;
+					try
+					{
+						this.process.Refresh();
+						var totalProcessorTime = this.process.TotalProcessorTime;
+						privateMemoryUsage = this.process.PrivateMemorySize64;
+						if (this.previousProcessInfoUpdateTime > 0)
+						{
+							var processorTime = (totalProcessorTime - this.previousTotalProcessorTime);
+							var updateInterval = (updateTime - this.previousProcessInfoUpdateTime);
+							cpuUsagePercentage = (processorTime.TotalMilliseconds * 100.0 / updateInterval / Environment.ProcessorCount);
+						}
+						this.previousTotalProcessorTime = totalProcessorTime;
+					}
+					catch (Exception ex)
+					{
+						this.logger.LogError(ex, "Unable to get process info");
+					}
+					finally
+					{
+						this.previousProcessInfoUpdateTime = updateTime;
+					}
+				});
+				if (!double.IsNaN(cpuUsagePercentage))
+				{
+					this.logger.LogTrace($"CPU usage: {cpuUsagePercentage:0.0}%");
+					this.CpuUsagePercentage = cpuUsagePercentage;
+					this.propertyChangedHandlers?.Invoke(this, new PropertyChangedEventArgs(nameof(CpuUsagePercentage)));
+				}
+				if (privateMemoryUsage > 0)
+				{
+					this.logger.LogTrace($"Private memory usage: {privateMemoryUsage.ToFileSizeString()}");
+					this.PrivateMemoryUsage = privateMemoryUsage;
+					this.propertyChangedHandlers?.Invoke(this, new PropertyChangedEventArgs(nameof(PrivateMemoryUsage)));
+				}
+				this.updateProcessInfoAction?.Schedule(ProcessInfoUpdateInterval);
+			});
 
 			// parse startup params
 			var desktopLifetime = (IClassicDesktopStyleApplicationLifetime)this.ApplicationLifetime;
@@ -362,6 +421,9 @@ namespace CarinaStudio.ULogViewer
 			var splashWindow = new SplashWindow();
 			this.splashWindow = splashWindow;
 			splashWindow.Show();
+
+			// get initial process info
+			this.updateProcessInfoAction.Execute();
 
 			// load settings
 			this.settings = new Settings();
@@ -579,6 +641,12 @@ namespace CarinaStudio.ULogViewer
 				LogProfileId = logProfileId
 			};
 		}
+
+
+		/// <summary>
+		/// Get private memory usage by application in bytes.
+		/// </summary>
+		public long PrivateMemoryUsage { get; private set; }
 
 
 		// Restart application.
@@ -917,7 +985,7 @@ namespace CarinaStudio.ULogViewer
 			add => this.propertyChangedHandlers += value;
 			remove => this.propertyChangedHandlers -= value;
 		}
-		public string RootPrivateDirectoryPath => Path.GetDirectoryName(Process.GetCurrentProcess().MainModule?.FileName) ?? throw new ArgumentException("Unable to get directory of application.");
+		public string RootPrivateDirectoryPath { get; }
 		ISettings CarinaStudio.IApplication.Settings { get => this.Settings; }
 		public AppStartupParams StartupParams { get; private set; }
 		public event EventHandler? StringsUpdated;

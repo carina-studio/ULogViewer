@@ -36,6 +36,7 @@
 	<sys:String x:Key="String.AppOptionsDialog.SelectLogFilesWhenNeeded">當需要日誌檔案時立即開啟檔案選取介面</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.SelectLogProfileForNewSession">建立新分頁後開啟日誌類型選取介面</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.SelectWorkingDirectoryWhenNeeded">當需要工作目錄時立即開啟目錄選取介面</sys:String>
+	<sys:String x:Key="String.AppOptionsDialog.ShowProcessInfo">在狀態列上顯示 CPU 及記憶體使用量</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.ThemeMode">佈景主題</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.Title">應用程式選項</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.UpdateLogFilterDelay">條件改變至開始篩選的延遲時間 (毫秒)</sys:String>
@@ -338,6 +339,7 @@
 	<sys:String x:Key="String.SessionView.CopyLogProperty.Disabled">複製日誌屬性</sys:String>
 	<sys:String x:Key="String.SessionView.CopyLogs">複製日誌</sys:String>
 	<sys:String x:Key="String.SessionView.CopyLogsWithFileNames">複製日誌 (包含檔案名稱)</sys:String>
+	<sys:String x:Key="String.SessionView.CpuUsage">CPU 使用率</sys:String>
 	<sys:String x:Key="String.SessionView.CreatePredefinedLogTextFilter">建立…</sys:String>
 	<sys:String x:Key="String.SessionView.FilteredLogCount">，已篩選：</sys:String>
 	<sys:String x:Key="String.SessionView.FilterLogsBySelectedProcessId">使用選取的 PID 篩選</sys:String>
@@ -356,6 +358,7 @@
 	<sys:String x:Key="String.SessionView.LogTextFilterHint">文字篩選 (正規表示式，使用 \$\$ 表示文字屬性分隔線)</sys:String>
 	<sys:String x:Key="String.SessionView.MarkedLogs">已標記日誌</sys:String>
 	<sys:String x:Key="String.SessionView.MarkUnmarkLogs">標記/解除標記日誌</sys:String>
+	<sys:String x:Key="String.SessionView.MemoryUsage">私有記憶體使用量</sys:String>
 	<sys:String x:Key="String.SessionView.NeedToRestartAsAdministrator">'{0}' 需要系統管理員身分，是否要以系統管理員身分重新啟動應用程式並使用此日誌類型？</sys:String>
 	<sys:String x:Key="String.SessionView.NoFilePathDropped">請拖放有效的檔案。</sys:String>
 	<sys:String x:Key="String.SessionView.NoPredefinedLogTextFilter">沒有已定義的文字篩選</sys:String>

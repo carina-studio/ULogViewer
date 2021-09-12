@@ -240,6 +240,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.OnPropertyChanged(nameof(SelectLogProfileForNewSession));
 			else if (key == ULogViewer.Settings.SelectWorkingDirectoryWhenNeeded)
 				this.OnPropertyChanged(nameof(SelectWorkingDirectoryWhenNeeded));
+			else if (key == ULogViewer.Settings.ShowProcessInfo)
+				this.OnPropertyChanged(nameof(ShowProcessInfo));
 			else if (key == ULogViewer.Settings.ThemeMode)
 				this.OnPropertyChanged(nameof(ThemeMode));
 			else if (key == ULogViewer.Settings.UpdateLogFilterDelay)
@@ -293,6 +295,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			get => this.Settings.GetValueOrDefault(ULogViewer.Settings.SelectWorkingDirectoryWhenNeeded);
 			set => this.Settings.SetValue<bool>(ULogViewer.Settings.SelectWorkingDirectoryWhenNeeded, value);
+		}
+
+
+		/// <summary>
+		/// Get or set whether process info should be shown on UI or not.
+		/// </summary>
+		public bool ShowProcessInfo
+		{
+			get => this.Settings.GetValueOrDefault(ULogViewer.Settings.ShowProcessInfo);
+			set => this.Settings.SetValue<bool>(ULogViewer.Settings.ShowProcessInfo, value);
 		}
 
 

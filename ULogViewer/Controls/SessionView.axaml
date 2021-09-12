@@ -445,7 +445,7 @@
 					<iaCore:ChangePropertyAction PropertyName="Background" Value="{StaticResource Brush.SessionView.StatusBar.Background.Warning}"/>
 				</iaCore:DataTriggerBehavior>
 			</ia:Interaction.Behaviors>
-			<Grid ColumnDefinitions="Auto,Auto,Auto,Auto,*,Auto,Auto,Auto,Auto,Auto">
+			<Grid ColumnDefinitions="Auto,Auto,Auto,Auto,*,Auto,Auto,Auto,Auto,Auto,Auto">
 
 				<!-- Styles -->
 				<Grid.Styles>
@@ -583,6 +583,30 @@
 						</DrawingPresenter>
 					</Border>
 					<TextBlock Text="{DynamicResource String.SessionView.HasPartialDataSourceErrors}"/>
+				</StackPanel>
+
+				<!-- Process info -->
+				<StackPanel Grid.Column="10" IsVisible="{Binding $parent[UserControl].IsProcessInfoVisible}" Orientation="Horizontal">
+					<Separator Classes="SessionView_StatusBar_Separator"/>
+					<Border Classes="SessionView_StatusBar_Icon" ToolTip.Tip="{DynamicResource String.SessionView.CpuUsage}">
+						<DrawingPresenter Classes="Icon">
+							<DrawingPresenter.Drawing>
+								<GeometryDrawing Brush="{DynamicResource Brush.SessionView.StatusBar.Foreground}" Geometry="{StaticResource Geometry.Cpu}"/>
+							</DrawingPresenter.Drawing>
+						</DrawingPresenter>
+					</Border>
+					<Panel VerticalAlignment="Center">
+						<TextBlock Text="00.0 % " Opacity="0"/>
+						<TextBlock Background="{x:Static Brushes.Transparent}" HorizontalAlignment="Left" Text="{Binding $parent[UserControl].Application.CpuUsagePercentage, StringFormat={}{0:F1} %}" ToolTip.Tip="{DynamicResource String.SessionView.CpuUsage}"/>
+					</Panel>
+					<Border Classes="SessionView_StatusBar_Icon" ToolTip.Tip="{DynamicResource String.SessionView.MemoryUsage}">
+						<DrawingPresenter Classes="Icon">
+							<DrawingPresenter.Drawing>
+								<GeometryDrawing Brush="{DynamicResource Brush.SessionView.StatusBar.Foreground}" Geometry="{StaticResource Geometry.Memory}"/>
+							</DrawingPresenter.Drawing>
+						</DrawingPresenter>
+					</Border>
+					<TextBlock Background="{x:Static Brushes.Transparent}" Text="{Binding $parent[UserControl].Application.PrivateMemoryUsage, Converter={x:Static appConverters:FileSizeConverter.Default}}" ToolTip.Tip="{DynamicResource String.SessionView.MemoryUsage}"/>
 				</StackPanel>
 				
 			</Grid>

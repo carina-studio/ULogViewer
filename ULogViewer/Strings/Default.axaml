@@ -38,6 +38,7 @@
 	<sys:String x:Key="String.AppOptionsDialog.SelectLogFilesWhenNeeded">Show file selector when log files are needed</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.SelectLogProfileForNewSession">Show log profile selector after creating new tab</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.SelectWorkingDirectoryWhenNeeded">Show directory selector when working directory is needed</sys:String>
+	<sys:String x:Key="String.AppOptionsDialog.ShowProcessInfo">Show CPU/memoey usage on status bar</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.ThemeMode">Theme</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.Title">Application options</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.UpdateLogFilterDelay">Delay between changing conditions and start filtering (milliseconds)</sys:String>
@@ -350,6 +351,7 @@
 	<sys:String x:Key="String.SessionView.CopyLogProperty.Disabled">Copy log property</sys:String>
 	<sys:String x:Key="String.SessionView.CopyLogs">Copy logs</sys:String>
 	<sys:String x:Key="String.SessionView.CopyLogsWithFileNames">Copy logs with file names</sys:String>
+	<sys:String x:Key="String.SessionView.CpuUsage">CPU usage</sys:String>
 	<sys:String x:Key="String.SessionView.CreatePredefinedLogTextFilter">Create…</sys:String>
 	<sys:String x:Key="String.SessionView.FilteredLogCount">, Filtered: </sys:String>
 	<sys:String x:Key="String.SessionView.FilterLogsBySelectedProcessId">Filter by selected PID</sys:String>
@@ -368,6 +370,7 @@
 	<sys:String x:Key="String.SessionView.LogTextFilterHint">Text filtering (Regular Expression, use \$\$ as separator between text properties)</sys:String>
 	<sys:String x:Key="String.SessionView.MarkedLogs">Marked logs</sys:String>
 	<sys:String x:Key="String.SessionView.MarkUnmarkLogs">Mark/Unmark logs</sys:String>
+	<sys:String x:Key="String.SessionView.MemoryUsage">Private memory usage</sys:String>
 	<sys:String x:Key="String.SessionView.NeedToRestartAsAdministrator">Administrator role is needed for '{0}'. Do you want to restart application as Administrator and use this profile?</sys:String>
 	<sys:String x:Key="String.SessionView.NoFilePathDropped">Please drag and drop valid files.</sys:String>
 	<sys:String x:Key="String.SessionView.NoPredefinedLogTextFilter">No defined text filter</sys:String>

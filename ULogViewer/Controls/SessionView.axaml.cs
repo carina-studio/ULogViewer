@@ -77,6 +77,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Static fields.
 		static readonly AvaloniaProperty<bool> CanFilterLogsByNonTextFiltersProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(CanFilterLogsByNonTextFilters), false);
 		static readonly AvaloniaProperty<bool> HasLogProfileProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(HasLogProfile), false);
+		static readonly AvaloniaProperty<bool> IsProcessInfoVisibleProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(IsProcessInfoVisible), false);
 		static readonly AvaloniaProperty<bool> IsScrollingToLatestLogNeededProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(IsScrollingToLatestLogNeeded), true);
 		static readonly AvaloniaProperty<FontFamily> LogFontFamilyProperty = AvaloniaProperty.Register<SessionView, FontFamily>(nameof(LogFontFamily));
 		static readonly AvaloniaProperty<double> LogFontSizeProperty = AvaloniaProperty.Register<SessionView, double>(nameof(LogFontSize), 10.0);
@@ -172,6 +173,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.UpdateLogFontSize();
 
 			// setup properties
+			this.SetValue<bool>(IsProcessInfoVisibleProperty, this.Settings.GetValueOrDefault(Settings.ShowProcessInfo));
 			this.SetValue<int>(MaxDisplayLineCountForEachLogProperty, Math.Max(1, this.Settings.GetValueOrDefault(Settings.MaxDisplayLineCountForEachLog)));
 			this.ValidLogLevels = this.validLogLevels.AsReadOnly();
 
@@ -1215,6 +1217,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		});
 
 
+		// Check whether process info should be shown or not.
+		bool IsProcessInfoVisible { get => this.GetValue<bool>(IsProcessInfoVisibleProperty); }
+
+
 		// Get or set whether scrolling to latest log is needed or not.
 		bool IsScrollingToLatestLogNeeded
 		{
@@ -2051,6 +2057,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.UpdateLogFontSize();
 			else if (e.Key == Settings.MaxDisplayLineCountForEachLog)
 				this.SetValue<int>(MaxDisplayLineCountForEachLogProperty, Math.Max(1, (int)e.Value));
+			else if (e.Key == Settings.ShowProcessInfo)
+				this.SetValue<bool>(IsProcessInfoVisibleProperty, (bool)e.Value);
 			else if (e.Key == Settings.UpdateLogFilterDelay)
 				this.logTextFilterTextBox.ValidationDelay = this.UpdateLogFilterParamsDelay;
 		}
