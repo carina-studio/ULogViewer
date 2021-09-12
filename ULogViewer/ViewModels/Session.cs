@@ -630,18 +630,24 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.VerifyDisposed();
 			if (!this.canClearLogFiles.Value)
 				return;
-			var profile = this.LogProfile ?? throw new InternalStateCorruptedException("No log profile to cler log files.");
 
 			// save marked logs to file immediately
 			this.saveMarkedLogsAction.ExecuteIfScheduled();
 
-			// clear
-			this.DisposeLogReaders(true);
-			this.addedLogFilePaths.Clear();
+			// dispose log readers
+			this.DisposeLogReaders(false);
 
 			// clear data source error
 			this.hasLogDataSourceCreationFailure = false;
 			this.checkDataSourceErrorsAction.Execute();
+
+			// clear logs
+			DisposeDisplayableLogs(this.allLogs);
+			this.allLogs.Clear();
+			this.allLogsByLogFilePath.Clear();
+
+			// clear file name table
+			this.addedLogFilePaths.Clear();
 
 			// update title
 			this.updateTitleAndIconAction.Schedule();
