@@ -1865,11 +1865,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.Logger.LogWarning($"Reload logs with {dataSourceOptions.Count} log reader(s)");
 
 				// dispose log readers
-				this.DisposeLogReaders(true);
+				this.DisposeLogReaders(false);
 
 				// clear data source error
 				this.hasLogDataSourceCreationFailure = false;
 				this.checkDataSourceErrorsAction.Execute();
+
+				// clear logs
+				DisposeDisplayableLogs(this.allLogs);
+				this.allLogs.Clear();
+				this.allLogsByLogFilePath.Clear();
 			}
 
 			// setup log comparer
