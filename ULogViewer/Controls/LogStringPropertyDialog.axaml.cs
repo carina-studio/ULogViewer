@@ -10,7 +10,7 @@ using AvaloniaEdit.Text;
 using CarinaStudio.Collections;
 using CarinaStudio.ULogViewer.Converters;
 using CarinaStudio.ULogViewer.ViewModels;
-using ReactiveUI;
+using CarinaStudio.Windows.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -172,7 +172,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// </summary>
 		public LogStringPropertyDialog()
 		{
-			this.SetTextWrappingCommand = ReactiveCommand.Create<bool>(this.SetTextWrapping);
+			this.SetTextWrappingCommand = new Command<bool>(this.SetTextWrapping);
 			InitializeComponent();
 			this.findTextTextBox = this.FindControl<RegexTextBox>("findTextTextBox").AsNonNull();
 			this.highlightingDefinition = new HighlightingDefinitionImpl(this.Application);

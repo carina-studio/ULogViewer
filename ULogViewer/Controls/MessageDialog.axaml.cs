@@ -1,13 +1,8 @@
 using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Data.Converters;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
-using CarinaStudio.ULogViewer.Converters;
-using ReactiveUI;
 using System;
 using System.ComponentModel;
-using System.Windows.Input;
 
 namespace CarinaStudio.ULogViewer.Controls
 {

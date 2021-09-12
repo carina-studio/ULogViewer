@@ -21,7 +21,6 @@ using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ULogViewer.ViewModels;
 using CarinaStudio.Windows.Input;
 using Microsoft.Extensions.Logging;
-using ReactiveUI;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -145,25 +144,25 @@ namespace CarinaStudio.ULogViewer.Controls
 		public SessionView()
 		{
 			// create commands
-			this.AddLogFilesCommand = ReactiveCommand.Create(this.AddLogFiles, this.canAddLogFiles);
-			this.CopyLogPropertyCommand = ReactiveCommand.Create(this.CopyLogProperty, this.canCopyLogProperty);
-			this.CopySelectedLogsCommand = ReactiveCommand.Create(this.CopySelectedLogs, this.canCopySelectedLogs);
-			this.CopySelectedLogsWithFileNamesCommand = ReactiveCommand.Create(this.CopySelectedLogsWithFileNames, this.canCopySelectedLogsWithFileNames);
-			this.EditLogProfileCommand = ReactiveCommand.Create(this.EditLogProfile, this.canEditLogProfile);
-			this.FilterLogsByProcessIdCommand = ReactiveCommand.Create<bool>(this.FilterLogsByProcessId, this.canFilterLogsByPid);
-			this.FilterLogsByThreadIdCommand = ReactiveCommand.Create<bool>(this.FilterLogsByThreadId, this.canFilterLogsByTid);
-			this.MarkUnmarkSelectedLogsCommand = ReactiveCommand.Create(this.MarkUnmarkSelectedLogs, this.canMarkUnmarkSelectedLogs);
-			this.ResetLogFiltersCommand = ReactiveCommand.Create(this.ResetLogFilters, this.GetObservable<bool>(HasLogProfileProperty));
-			this.RestartAsAdministratorCommand = ReactiveCommand.Create(this.RestartAsAdministrator, this.canRestartAsAdmin);
-			this.SaveAllLogsCommand = ReactiveCommand.Create(() => this.SaveLogs(true), this.canSaveLogs);
-			this.SaveLogsCommand = ReactiveCommand.Create(() => this.SaveLogs(false), this.canSaveLogs);
-			this.SelectAndSetLogProfileCommand = ReactiveCommand.Create(this.SelectAndSetLogProfile, this.canSetLogProfile);
-			this.SelectAndSetWorkingDirectoryCommand = ReactiveCommand.Create(this.SelectAndSetWorkingDirectory, this.canSetWorkingDirectory);
-			this.SelectMarkedLogsCommand = ReactiveCommand.Create(this.SelectMarkedLogs, this.canSelectMarkedLogs);
-			this.ShowFileInExplorerCommand = ReactiveCommand.Create(this.ShowFileInExplorer, this.canShowFileInExplorer);
-			this.ShowLogStringPropertyCommand = ReactiveCommand.Create(this.ShowLogStringProperty, this.canShowLogProperty);
-			this.ShowWorkingDirectoryInExplorerCommand = ReactiveCommand.Create(this.ShowWorkingDirectoryInExplorer, this.canShowWorkingDirectoryInExplorer);
-			this.SwitchLogFiltersCombinationModeCommand = ReactiveCommand.Create(this.SwitchLogFiltersCombinationMode, this.GetObservable<bool>(HasLogProfileProperty));
+			this.AddLogFilesCommand = new Command(this.AddLogFiles, this.canAddLogFiles);
+			this.CopyLogPropertyCommand = new Command(this.CopyLogProperty, this.canCopyLogProperty);
+			this.CopySelectedLogsCommand = new Command(this.CopySelectedLogs, this.canCopySelectedLogs);
+			this.CopySelectedLogsWithFileNamesCommand = new Command(this.CopySelectedLogsWithFileNames, this.canCopySelectedLogsWithFileNames);
+			this.EditLogProfileCommand = new Command(this.EditLogProfile, this.canEditLogProfile);
+			this.FilterLogsByProcessIdCommand = new Command<bool>(this.FilterLogsByProcessId, this.canFilterLogsByPid);
+			this.FilterLogsByThreadIdCommand = new Command<bool>(this.FilterLogsByThreadId, this.canFilterLogsByTid);
+			this.MarkUnmarkSelectedLogsCommand = new Command(this.MarkUnmarkSelectedLogs, this.canMarkUnmarkSelectedLogs);
+			this.ResetLogFiltersCommand = new Command(this.ResetLogFilters, this.GetObservable<bool>(HasLogProfileProperty));
+			this.RestartAsAdministratorCommand = new Command(this.RestartAsAdministrator, this.canRestartAsAdmin);
+			this.SaveAllLogsCommand = new Command(() => this.SaveLogs(true), this.canSaveLogs);
+			this.SaveLogsCommand = new Command(() => this.SaveLogs(false), this.canSaveLogs);
+			this.SelectAndSetLogProfileCommand = new Command(this.SelectAndSetLogProfile, this.canSetLogProfile);
+			this.SelectAndSetWorkingDirectoryCommand = new Command(this.SelectAndSetWorkingDirectory, this.canSetWorkingDirectory);
+			this.SelectMarkedLogsCommand = new Command(this.SelectMarkedLogs, this.canSelectMarkedLogs);
+			this.ShowFileInExplorerCommand = new Command(this.ShowFileInExplorer, this.canShowFileInExplorer);
+			this.ShowLogStringPropertyCommand = new Command(() => this.ShowLogStringProperty(), this.canShowLogProperty);
+			this.ShowWorkingDirectoryInExplorerCommand = new Command(this.ShowWorkingDirectoryInExplorer, this.canShowWorkingDirectoryInExplorer);
+			this.SwitchLogFiltersCombinationModeCommand = new Command(this.SwitchLogFiltersCombinationMode, this.GetObservable<bool>(HasLogProfileProperty));
 
 			// create collections
 			this.predefinedLogTextFilters = new SortedObservableList<PredefinedLogTextFilter>(ComparePredefinedLogTextFilters);

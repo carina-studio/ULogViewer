@@ -2,7 +2,7 @@
 using Avalonia.Controls;
 using Avalonia.Input;
 using CarinaStudio.Threading;
-using ReactiveUI;
+using CarinaStudio.Windows.Input;
 using System;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
@@ -31,8 +31,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// </summary>
 		protected BaseDialog()
 		{
-			this.CancelCommand = ReactiveCommand.Create(this.Close);
-			this.GenerateResultCommand = ReactiveCommand.Create(async () =>
+			this.CancelCommand = new Command(this.Close);
+			this.GenerateResultCommand = new Command(async () =>
 			{
 				this.VerifyAccess();
 				if (!this.ValidateInput())

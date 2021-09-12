@@ -1,6 +1,5 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.ReactiveUI;
 using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.Markup.Xaml.Styling;
@@ -125,7 +124,6 @@ namespace CarinaStudio.ULogViewer
 		// Avalonia configuration, don't remove; also used by visual designer.
 		static AppBuilder BuildAvaloniaApp() => AppBuilder.Configure<App>()
 			.UsePlatformDetect()
-			.UseReactiveUI()
 			.LogToTrace().Also(it =>
 			{
 				if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))

@@ -11,8 +11,8 @@ using CarinaStudio.ULogViewer.Logs.DataOutputs;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ViewModels;
+using CarinaStudio.Windows.Input;
 using Microsoft.Extensions.Logging;
-using ReactiveUI;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -313,17 +313,17 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				staticLogger = workspace.Application.LoggerFactory.CreateLogger(nameof(Session));
 
 			// create commands
-			this.AddLogFileCommand = ReactiveCommand.Create<string?>(this.AddLogFile, this.GetValueAsObservable(IsLogFileNeededProperty));
-			this.ClearLogFilesCommand = ReactiveCommand.Create(this.ClearLogFiles, this.canClearLogFiles);
-			this.CopyLogsCommand = ReactiveCommand.Create<IList<DisplayableLog>>(it => this.CopyLogs(it, false), this.canCopyLogs);
-			this.CopyLogsWithFileNamesCommand = ReactiveCommand.Create<IList<DisplayableLog>>(it => this.CopyLogs(it, true), this.canCopyLogsWithFileNames);
-			this.MarkUnmarkLogsCommand = ReactiveCommand.Create<IEnumerable<DisplayableLog>>(this.MarkUnmarkLogs, this.canMarkUnmarkLogs);
-			this.PauseResumeLogsReadingCommand = ReactiveCommand.Create(this.PauseResumeLogsReading, this.canPauseResumeLogsReading);
-			this.ReloadLogsCommand = ReactiveCommand.Create(() => this.ReloadLogs(false, false), this.canReloadLogs);
-			this.ResetLogProfileCommand = ReactiveCommand.Create(this.ResetLogProfile, this.canResetLogProfile);
-			this.SaveLogsCommand = ReactiveCommand.Create<LogsSavingOptions>(this.SaveLogs, this.canSaveLogs);
-			this.SetLogProfileCommand = ReactiveCommand.Create<LogProfile?>(this.SetLogProfile, this.canSetLogProfile);
-			this.SetWorkingDirectoryCommand = ReactiveCommand.Create<string?>(this.SetWorkingDirectory, this.GetValueAsObservable(IsWorkingDirectoryNeededProperty));
+			this.AddLogFileCommand = new Command<string?>(this.AddLogFile, this.GetValueAsObservable(IsLogFileNeededProperty));
+			this.ClearLogFilesCommand = new Command(this.ClearLogFiles, this.canClearLogFiles);
+			this.CopyLogsCommand = new Command<IList<DisplayableLog>>(it => this.CopyLogs(it, false), this.canCopyLogs);
+			this.CopyLogsWithFileNamesCommand = new Command<IList<DisplayableLog>>(it => this.CopyLogs(it, true), this.canCopyLogsWithFileNames);
+			this.MarkUnmarkLogsCommand = new Command<IEnumerable<DisplayableLog>>(this.MarkUnmarkLogs, this.canMarkUnmarkLogs);
+			this.PauseResumeLogsReadingCommand = new Command(this.PauseResumeLogsReading, this.canPauseResumeLogsReading);
+			this.ReloadLogsCommand = new Command(() => this.ReloadLogs(false, false), this.canReloadLogs);
+			this.ResetLogProfileCommand = new Command(this.ResetLogProfile, this.canResetLogProfile);
+			this.SaveLogsCommand = new Command<LogsSavingOptions>(this.SaveLogs, this.canSaveLogs);
+			this.SetLogProfileCommand = new Command<LogProfile?>(this.SetLogProfile, this.canSetLogProfile);
+			this.SetWorkingDirectoryCommand = new Command<string?>(this.SetWorkingDirectory, this.GetValueAsObservable(IsWorkingDirectoryNeededProperty));
 			this.canSetLogProfile.Update(true);
 
 			// create collections
