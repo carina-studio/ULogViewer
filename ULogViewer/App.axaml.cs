@@ -1027,13 +1027,20 @@ namespace CarinaStudio.ULogViewer
 					this.systemAccentColorResources = new ResourceDictionary();
 				this.GetSystemAccentColor()?.Let(sysAccentColor =>
 				{
+					var sysAccentColorDark1 = GammaTransform(sysAccentColor, 2.8);
+					var sysAccentColorLight1 = GammaTransform(sysAccentColor, 0.682);
 					this.systemAccentColorResources["SystemAccentColor"] = sysAccentColor;
-					this.systemAccentColorResources["SystemAccentColorDark1"] = GammaTransform(sysAccentColor, 2.8);
+					this.systemAccentColorResources["SystemAccentColorDark1"] = sysAccentColorDark1;
 					this.systemAccentColorResources["SystemAccentColorDark2"] = GammaTransform(sysAccentColor, 4.56);
 					this.systemAccentColorResources["SystemAccentColorDark3"] = GammaTransform(sysAccentColor, 5.365);
-					this.systemAccentColorResources["SystemAccentColorLight1"] = GammaTransform(sysAccentColor, 0.682);
+					this.systemAccentColorResources["SystemAccentColorLight1"] = sysAccentColorLight1;
 					this.systemAccentColorResources["SystemAccentColorLight2"] = GammaTransform(sysAccentColor, 0.431);
 					this.systemAccentColorResources["SystemAccentColorLight3"] = GammaTransform(sysAccentColor, 0.006);
+					// [Workaround] Brushes of ToggleSwitch
+					this.systemAccentColorResources["ToggleSwitchFillOnPointerOver"] = new SolidColorBrush(sysAccentColorLight1);
+					this.systemAccentColorResources["ToggleSwitchFillOnPressed"] = new SolidColorBrush(sysAccentColorDark1);
+					this.systemAccentColorResources["ToggleSwitchStrokeOnPointerOver"] = new SolidColorBrush(sysAccentColorLight1);
+					this.systemAccentColorResources["ToggleSwitchStrokeOnPressed"] = new SolidColorBrush(sysAccentColorDark1);
 				});
 				if (!this.Resources.MergedDictionaries.Contains(this.systemAccentColorResources))
 					this.Resources.MergedDictionaries.Add(this.systemAccentColorResources);
