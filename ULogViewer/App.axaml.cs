@@ -632,7 +632,11 @@ namespace CarinaStudio.ULogViewer
 
 
 		// Called when system accent color changed.
-		void OnSystemAccentColorChanged() => this.UpdateStyles();
+		void OnSystemAccentColorChanged()
+        {
+			this.UpdateStyles();
+			this.SystemAccentColorChanged?.Invoke(this, EventArgs.Empty);
+		}
 
 
 		// Called when system culture info has been changed.
@@ -823,6 +827,12 @@ namespace CarinaStudio.ULogViewer
 			this.VerifyAccess();
 			(this.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.Shutdown();
 		}
+
+
+		/// <summary>
+		/// Raised when system accent color changed.
+		/// </summary>
+		public event EventHandler? SystemAccentColorChanged;
 
 
 		// Update culture info according to current culture info and settings.
@@ -1027,6 +1037,7 @@ namespace CarinaStudio.ULogViewer
 					this.systemAccentColorResources = new ResourceDictionary();
 				this.GetSystemAccentColor()?.Let(sysAccentColor =>
 				{
+					// accent colors
 					var sysAccentColorDark1 = GammaTransform(sysAccentColor, 2.8);
 					var sysAccentColorLight1 = GammaTransform(sysAccentColor, 0.682);
 					this.systemAccentColorResources["SystemAccentColor"] = sysAccentColor;
@@ -1036,6 +1047,11 @@ namespace CarinaStudio.ULogViewer
 					this.systemAccentColorResources["SystemAccentColorLight1"] = sysAccentColorLight1;
 					this.systemAccentColorResources["SystemAccentColorLight2"] = GammaTransform(sysAccentColor, 0.431);
 					this.systemAccentColorResources["SystemAccentColorLight3"] = GammaTransform(sysAccentColor, 0.006);
+
+					// icon colors
+					this.systemAccentColorResources["Brush.Icon.Active"] = new SolidColorBrush(sysAccentColorLight1);
+					this.systemAccentColorResources["Brush.Icon.LogProfile"] = new SolidColorBrush(sysAccentColorLight1);
+
 					// [Workaround] Brushes of ToggleSwitch
 					this.systemAccentColorResources["ToggleSwitchFillOnPointerOver"] = new SolidColorBrush(sysAccentColorLight1);
 					this.systemAccentColorResources["ToggleSwitchFillOnPressed"] = new SolidColorBrush(sysAccentColorDark1);
