@@ -183,7 +183,10 @@
 											</Border>
 										</Button>
 									</StackPanel>
-									<TextBlock Foreground="{Binding Value, Converter={x:Static appConverters:LogLevelBrushConverter.Default}}" Text="{Binding Value, Converter={x:Static appControls:LogProfileEditorDialog.LogLevelNameConverter}}" TextTrimming="CharacterEllipsis"/>
+									<StackPanel Orientation="Horizontal">
+										<Border Background="{Binding Value, Converter={x:Static appConverters:LogLevelBrushConverter.Default}}" BorderBrush="{DynamicResource ComboBoxItemForeground}" BorderThickness="1" Height="{StaticResource Double.LogLevelComboBox.Item.Indicator.Size}" Margin="{StaticResource Thickness.LogLevelComboBox.Item.Indicator.Margin}" VerticalAlignment="Center" Width="{StaticResource Double.LogLevelComboBox.Item.Indicator.Size}"/>
+										<TextBlock Text="{Binding Value, Converter={x:Static appControls:SessionView.LogLevelNameConverter}}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+									</StackPanel>
 								</DockPanel>
 							</Grid>
 						</DataTemplate>
@@ -355,7 +358,10 @@
 					<ListBox.ItemTemplate>
 						<DataTemplate>
 							<Grid ColumnDefinitions="*,*">
-								<TextBlock Foreground="{Binding Key, Converter={x:Static appConverters:LogLevelBrushConverter.Default}}" Text="{Binding Key, Converter={x:Static appControls:LogProfileEditorDialog.LogLevelNameConverter}}" TextTrimming="CharacterEllipsis"/>
+								<StackPanel Orientation="Horizontal">
+									<Border Background="{Binding Key, Converter={x:Static appConverters:LogLevelBrushConverter.Default}}" BorderBrush="{DynamicResource ComboBoxItemForeground}" BorderThickness="1" Height="{StaticResource Double.LogLevelComboBox.Item.Indicator.Size}" Margin="{StaticResource Thickness.LogLevelComboBox.Item.Indicator.Margin}" VerticalAlignment="Center" Width="{StaticResource Double.LogLevelComboBox.Item.Indicator.Size}"/>
+									<TextBlock Text="{Binding Key, Converter={x:Static appControls:SessionView.LogLevelNameConverter}}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+								</StackPanel>
 								<Border Classes="InPlaceAction_Reserved"/>
 								<DockPanel Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 									<StackPanel DockPanel.Dock="Right" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">

@@ -63,6 +63,10 @@
 	<!-- LogDataSourceOptionsDialog -->
 	<sys:Double x:Key="Double.LogDataSourceOptionsDialog.CommandListBox.Height">150</sys:Double>
 	<sys:Double x:Key="Double.LogDataSourceOptionsDialog.Width">500</sys:Double>
+	
+	<!-- LogLevelComboBox -->
+	<sys:Double x:Key="Double.LogLevelComboBox.Item.Indicator.Size">14</sys:Double>
+	<Thickness x:Key="Thickness.LogLevelComboBox.Item.Indicator.Margin">0,0,10,0</Thickness>
 
 	<!-- LogLevelMapEntryEditor -->
 	<sys:Double x:Key="Double.LogLevelMapEntryEditor.Width">300</sys:Double>
@@ -136,7 +140,7 @@
 	<sys:Double x:Key="Double.SessionView.StatusBar.Icon.Size">14</sys:Double>
 	<sys:Double x:Key="Double.SessionView.StatusBar.Separator.Size">20</sys:Double>
 	<sys:Double x:Key="Double.SessionView.ToolBar.Button.Icon.Size">24</sys:Double>
-	<sys:Double x:Key="Double.SessionView.ToolBar.LogLevelFilter.Width">120</sys:Double>
+	<sys:Double x:Key="Double.SessionView.ToolBar.LogLevelFilter.Width">150</sys:Double>
 	<sys:Double x:Key="Double.SessionView.ToolBar.LogProcessIdFilter.Width">80</sys:Double>
 	<sys:Double x:Key="Double.SessionView.ToolBar.Separator.Size">1</sys:Double>
 	<Thickness x:Key="Thickness.SessionView.Hint.SelectLogProfile.Icon.Margin">15,0,15,0</Thickness>
