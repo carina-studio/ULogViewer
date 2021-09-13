@@ -40,7 +40,6 @@
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="0.10.7" />
     <PackageReference Include="Avalonia.AvaloniaEdit" Version="0.10.4" />
-    <PackageReference Include="Avalonia.Controls.DataGrid" Version="0.10.7" />
     <PackageReference Include="Avalonia.Desktop" Version="0.10.7" />
     <PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.10.7.1" />
     <PackageReference Include="CarinaStudio.AppBase.Application" Version="0.24.1.912" />
