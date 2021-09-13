@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Animation;
 using Avalonia.Controls;
+using Avalonia.VisualTree;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
@@ -49,6 +50,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.Application = App.Current;
 			this.Application.VerifyAccess();
 			this.Logger = this.Application.LoggerFactory.CreateLogger(this.GetType().Name);
+			((App)this.Application).SystemAccentColorChanged += this.OnSystemAccentColorChanged;
 			this.AddHandler(PointerWheelChangedEvent, (_, e) =>
 			{
 				if (this.HasDialogs)
@@ -96,6 +98,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			this.SetValue<bool>(IsOpenedProperty, false);
 			this.SetValue<bool>(IsClosedProperty, true);
+			((App)this.Application).SystemAccentColorChanged -= this.OnSystemAccentColorChanged;
 			base.OnClosed(e);
 		}
 
@@ -150,6 +153,29 @@ namespace CarinaStudio.ULogViewer.Controls
 					Duration = TimeSpan.FromMilliseconds(500),
 					Property = OpacityProperty
 				});
+			}
+		}
+
+
+		// Called when system accent color changed.
+		void OnSystemAccentColorChanged(object? sender, EventArgs e) => this.OnSystemAccentColorChanged();
+
+
+		/// <summary>
+		/// Called when system accent color changed.
+		/// </summary>
+		protected virtual void OnSystemAccentColorChanged()
+        {
+			// [Workaround] Need to force redraw of tab control to make sure that color of icon will be correct
+			var content = (this.Content as IVisual);
+			if (content != null && content.IsVisible)
+			{
+				content.IsVisible = false;
+				this.SynchronizationContext.PostDelayed(() =>
+				{
+					if (this.Content == content)
+						content.IsVisible = true;
+				}, 100);
 			}
 		}
 

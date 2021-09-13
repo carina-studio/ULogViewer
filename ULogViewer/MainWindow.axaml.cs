@@ -110,7 +110,6 @@ namespace CarinaStudio.ULogViewer
 
 			// add handlers
 			this.Application.PropertyChanged += this.OnAppPropertyChanged;
-			((App)this.Application).SystemAccentColorChanged += this.OnSystemAccentColorChanged;
 			this.Settings.SettingChanged += this.OnSettingChanged;
 			this.AddHandler(DragDrop.DragEnterEvent, this.OnDragEnter);
 			this.AddHandler(DragDrop.DragOverEvent, this.OnDragOver);
@@ -265,7 +264,6 @@ namespace CarinaStudio.ULogViewer
 		{
 			// remove handlers
 			this.Application.PropertyChanged -= this.OnAppPropertyChanged;
-			((App)this.Application).SystemAccentColorChanged -= this.OnSystemAccentColorChanged;
 			this.Settings.SettingChanged -= this.OnSettingChanged;
 			this.RemoveHandler(DragDrop.DragEnterEvent, this.OnDragEnter);
 			this.RemoveHandler(DragDrop.DragOverEvent, this.OnDragOver);
@@ -489,15 +487,6 @@ namespace CarinaStudio.ULogViewer
 				this.Logger.LogWarning("Theme mode changed");
 				this.reAttachToWorkspaceAction.Reschedule(ReAttachToWorkspaceDelay);
 			}
-		}
-
-
-		// Called when system accent color changed.
-		void OnSystemAccentColorChanged(object? sender, EventArgs e)
-		{
-			// [Workaround] Need to force redraw of tab control to make sure that color of icon will be correct
-			this.tabControl.IsVisible = false;
-			this.SynchronizationContext.PostDelayed(() => this.tabControl.IsVisible = true, 100);
 		}
 
 
