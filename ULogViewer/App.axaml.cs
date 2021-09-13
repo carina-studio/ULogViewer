@@ -646,18 +646,16 @@ namespace CarinaStudio.ULogViewer
 		}
 
 
-#pragma warning disable CA1416
 		// Called when Windows UI color changed.
-		void OnWindowsUIColorValueChanged(UISettings sender, object result) => this.OnSystemAccentColorChanged();
+		void OnWindowsUIColorValueChanged(UISettings sender, object result) => this.SynchronizationContext.Post(this.OnSystemAccentColorChanged);
 
 
 		// Called when user preference changed on Windows
 		void OnWindowsUserPreferenceChanged(object? sender, UserPreferenceChangedEventArgs e)
 		{
 			if (e.Category == UserPreferenceCategory.Locale)
-				this.OnSystemCultureInfoChanged();
+				this.SynchronizationContext.Post(this.OnSystemCultureInfoChanged);
 		}
-#pragma warning restore CA1416
 
 
 		// Parse startup parameters.
