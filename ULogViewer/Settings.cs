@@ -70,6 +70,10 @@ namespace CarinaStudio.ULogViewer
 		/// Delay of updating log filter after changing related parameters in milliseconds.
 		/// </summary>
 		public static readonly SettingKey<int> UpdateLogFilterDelay = new SettingKey<int>(nameof(UpdateLogFilterDelay), 500);
+		/// <summary>
+		/// Use system accent color or not.
+		/// </summary>
+		public static readonly SettingKey<bool> UseSystemAccentColor = new SettingKey<bool>(nameof(UseSystemAccentColor), true);
 
 
 		/// <summary>

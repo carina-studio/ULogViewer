@@ -4,7 +4,7 @@
     <AssemblyVersion>0.23.0.913</AssemblyVersion>
     <Version>0.23.0.913</Version>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net5.0-windows10.0.17763.0</TargetFramework>
     <DebugType>embedded</DebugType>
     <RootNamespace>CarinaStudio.ULogViewer</RootNamespace>
     <Nullable>enable</Nullable>
@@ -14,6 +14,10 @@
     <StartupObject>CarinaStudio.ULogViewer.App</StartupObject>
     <ApplicationIcon>AppIcon.ico</ApplicationIcon>
     <NoWin32Manifest>true</NoWin32Manifest>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <CsWinRTIncludes>Windows</CsWinRTIncludes>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -54,6 +58,7 @@
     <PackageReference Include="System.Data.SQLite" Version="1.0.115" />
     <PackageReference Include="System.Diagnostics.EventLog" Version="5.0.1" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
+    <PackageReference Include="System.Runtime.InteropServices.WindowsRuntime" Version="4.3.0" />
     <PackageReference Include="System.Security.Principal.Windows" Version="5.0.0" />
   </ItemGroup>
 

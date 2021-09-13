@@ -1,6 +1,5 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Input;
 using CarinaStudio.Threading;
 using CarinaStudio.Windows.Input;
 using System;
@@ -95,10 +94,10 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Called when key up.
-		protected override void OnKeyUp(KeyEventArgs e)
+		protected override void OnKeyUp(Avalonia.Input.KeyEventArgs e)
 		{
 			base.OnKeyUp(e);
-			if (e.KeyModifiers == 0 && e.Key == Key.Escape)
+			if (e.KeyModifiers == 0 && e.Key == Avalonia.Input.Key.Escape)
 				this.Close();
 		}
 

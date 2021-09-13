@@ -43,6 +43,7 @@
 	<sys:String x:Key="String.AppOptionsDialog.Title">Application options</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.UpdateLogFilterDelay">Delay between changing conditions and start filtering (milliseconds)</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.UserInterface">User Interface</sys:String>
+	<sys:String x:Key="String.AppOptionsDialog.UseSystemAccentColor">Apply system accent color</sys:String>
 
 	<!-- AppUpdateDialog -->
 	<sys:String x:Key="String.AppUpdateDialog.CheckForUpdate">Check for update</sys:String>

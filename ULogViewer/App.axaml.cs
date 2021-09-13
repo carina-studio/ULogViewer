@@ -1,4 +1,5 @@
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.MarkupExtensions;
@@ -31,6 +32,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
+using Windows.UI.ViewManagement;
 
 namespace CarinaStudio.ULogViewer
 {
@@ -69,8 +71,10 @@ namespace CarinaStudio.ULogViewer
 		StyleInclude? styles;
 		ThemeMode? stylesThemeMode;
 		volatile SynchronizationContext? synchronizationContext;
+		ResourceDictionary? systemAccentColorResources;
 		AppUpdateInfo? updateInfo;
 		ScheduledAction? updateProcessInfoAction;
+		UISettings? windowsUISettings;
 		Workspace? workspace;
 
 
@@ -246,6 +250,16 @@ namespace CarinaStudio.ULogViewer
 		}
 
 
+		// Transform RGB color values.
+		static Color GammaTransform(Color color, double gamma)
+		{
+			double r = (color.R / 255.0);
+			double g = (color.G / 255.0);
+			double b = (color.B / 255.0);
+			return Color.FromArgb(color.A, (byte)(Math.Pow(r, gamma) * 255 + 0.5), (byte)(Math.Pow(g, gamma) * 255 + 0.5), (byte)(Math.Pow(b, gamma) * 255 + 0.5));
+		}
+
+
 		// Get string.
 		public string? GetString(string key, string? defaultValue = null)
 		{
@@ -255,8 +269,32 @@ namespace CarinaStudio.ULogViewer
 		}
 
 
+		// Get system accent color.
+		Color? GetSystemAccentColor()
+		{
+			if (this.windowsUISettings != null)
+			{
+				var color = this.windowsUISettings.GetColorValue(UIColorType.Accent);
+				return Color.FromArgb(color.A, color.R, color.G, color.B);
+			}
+			return null;
+		}
+
+
 		// Initialize.
 		public override void Initialize() => AvaloniaXamlLoader.Load(this);
+
+
+		/// <summary>
+		/// Check whether using system accent color is supported on current platform or not.
+		/// </summary>
+		public bool IsSystemAccentColorSupported { get; } = Global.Run(() =>
+		{
+			if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+				return false;
+			return Environment.OSVersion.Version >= new Version(10, 0, 17763);
+		});
+
 
 		/// <summary>
 		/// Get Linux distribution on current running environment.
@@ -464,6 +502,16 @@ namespace CarinaStudio.ULogViewer
 			}
 			this.UpdateStringResources();
 
+			// attach to system UI settings
+			if (this.IsSystemAccentColorSupported)
+			{
+				if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+				{
+					this.windowsUISettings = new UISettings();
+					this.windowsUISettings.ColorValuesChanged += this.OnWindowsUIColorValueChanged;
+				}
+			}
+
 			// update styles
 			splashWindow.Message = this.GetStringNonNull("SplashWindow.UpdateStyles");
 			this.UpdateStyles();
@@ -575,9 +623,16 @@ namespace CarinaStudio.ULogViewer
 		{
 			if (e.Key == Settings.Culture)
 				this.UpdateCultureInfo();
-			else if (e.Key == Settings.ThemeMode)
+			else if (e.Key == Settings.ThemeMode
+				|| e.Key == Settings.UseSystemAccentColor)
+			{
 				this.UpdateStyles();
+			}
 		}
+
+
+		// Called when system accent color changed.
+		void OnSystemAccentColorChanged() => this.UpdateStyles();
 
 
 		// Called when system culture info has been changed.
@@ -592,6 +647,10 @@ namespace CarinaStudio.ULogViewer
 
 
 #pragma warning disable CA1416
+		// Called when Windows UI color changed.
+		void OnWindowsUIColorValueChanged(UISettings sender, object result) => this.OnSystemAccentColorChanged();
+
+
 		// Called when user preference changed on Windows
 		void OnWindowsUserPreferenceChanged(object? sender, UserPreferenceChangedEventArgs e)
 		{
@@ -962,6 +1021,27 @@ namespace CarinaStudio.ULogViewer
 			else if (!this.Styles.Contains(this.styles))
 				this.Styles.Add(this.styles);
 			this.stylesThemeMode = themeMode;
+
+			// update system accent color
+			if (this.Settings.GetValueOrDefault(Settings.UseSystemAccentColor))
+			{
+				if (this.systemAccentColorResources == null)
+					this.systemAccentColorResources = new ResourceDictionary();
+				this.GetSystemAccentColor()?.Let(sysAccentColor =>
+				{
+					this.systemAccentColorResources["SystemAccentColor"] = sysAccentColor;
+					this.systemAccentColorResources["SystemAccentColorDark1"] = GammaTransform(sysAccentColor, 2.8);
+					this.systemAccentColorResources["SystemAccentColorDark2"] = GammaTransform(sysAccentColor, 4.56);
+					this.systemAccentColorResources["SystemAccentColorDark3"] = GammaTransform(sysAccentColor, 5.365);
+					this.systemAccentColorResources["SystemAccentColorLight1"] = GammaTransform(sysAccentColor, 0.682);
+					this.systemAccentColorResources["SystemAccentColorLight2"] = GammaTransform(sysAccentColor, 0.431);
+					this.systemAccentColorResources["SystemAccentColorLight3"] = GammaTransform(sysAccentColor, 0.006);
+				});
+				if (!this.Resources.MergedDictionaries.Contains(this.systemAccentColorResources))
+					this.Resources.MergedDictionaries.Add(this.systemAccentColorResources);
+			}
+			else if (this.systemAccentColorResources != null)
+				this.Resources.MergedDictionaries.Remove(this.systemAccentColorResources);
 
 			// remove styles
 			if (stylesToRemove != null)

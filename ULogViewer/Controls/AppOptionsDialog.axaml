@@ -2,18 +2,18 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-				xmlns:ia="using:Avalonia.Xaml.Interactivity"
-				xmlns:iaCore="using:Avalonia.Xaml.Interactions.Core"
-				xmlns:app="using:CarinaStudio.ULogViewer"
-				xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
-				xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
+        xmlns:ia="using:Avalonia.Xaml.Interactivity"
+        xmlns:iaCore="using:Avalonia.Xaml.Interactions.Core"
+        xmlns:app="using:CarinaStudio.ULogViewer"
+        xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
+        xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.AppOptionsDialog"
-				Classes="Dialog"
-				ShowInTaskbar="True"
-				SizeToContent="Height"
+        Classes="Dialog"
+        ShowInTaskbar="True"
+        SizeToContent="Height"
         Title="{DynamicResource String.AppOptionsDialog.Title}"
-				Width="{StaticResource Double.AppOptionsDialog.Width}">
+        Width="{StaticResource Double.AppOptionsDialog.Width}">
 
 	<DockPanel>
 
@@ -37,6 +37,13 @@
 				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.AppOptionsDialog.ThemeMode}"/>
 				<appControls:EnumComboBox EnumType="{x:Type app:ThemeMode}" HorizontalAlignment="Stretch" SelectedItem="{Binding ThemeMode, Mode=TwoWay}"/>
 				<Separator Classes="Dialog_Separator_Horizontal"/>
+
+				<!-- Use system accent color -->
+				<StackPanel IsVisible="{Binding $parent[Window].Application.IsSystemAccentColorSupported}" Orientation="Vertical">
+					<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.AppOptionsDialog.UseSystemAccentColor}"/>
+					<ToggleSwitch IsChecked="{Binding UseSystemAccentColor, Mode=TwoWay}"/>
+					<Separator Classes="Dialog_Separator_Horizontal"/>
+				</StackPanel>
 				
 				<!-- Culture -->
 				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.AppOptionsDialog.Culture}"/>

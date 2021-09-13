@@ -246,6 +246,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.OnPropertyChanged(nameof(ThemeMode));
 			else if (key == ULogViewer.Settings.UpdateLogFilterDelay)
 				this.OnPropertyChanged(nameof(UpdateLogFilterDelay));
+			else if (key == ULogViewer.Settings.UseSystemAccentColor)
+				this.OnPropertyChanged(nameof(UseSystemAccentColor));
 			else
 				return;
 			this.isSettingsModified = true;
@@ -325,6 +327,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			get => this.Settings.GetValueOrDefault(ULogViewer.Settings.UpdateLogFilterDelay);
 			set => this.Settings.SetValue<int>(ULogViewer.Settings.UpdateLogFilterDelay, value);
+		}
+
+
+		/// <summary>
+		/// Get or set whether to use system accent color if possible or not.
+		/// </summary>
+		public bool UseSystemAccentColor
+		{
+			get => this.Settings.GetValueOrDefault(ULogViewer.Settings.UseSystemAccentColor);
+			set => this.Settings.SetValue<bool>(ULogViewer.Settings.UseSystemAccentColor, value);
 		}
 	}
 }

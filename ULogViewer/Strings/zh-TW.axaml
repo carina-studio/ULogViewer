@@ -41,6 +41,7 @@
 	<sys:String x:Key="String.AppOptionsDialog.Title">應用程式選項</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.UpdateLogFilterDelay">條件改變至開始篩選的延遲時間 (毫秒)</sys:String>
 	<sys:String x:Key="String.AppOptionsDialog.UserInterface">使用者介面</sys:String>
+	<sys:String x:Key="String.AppOptionsDialog.UseSystemAccentColor">套用系統強調色彩</sys:String>
 
 	<!-- AppUpdateDialog -->
 	<sys:String x:Key="String.AppUpdateDialog.CheckForUpdate">檢查更新</sys:String>

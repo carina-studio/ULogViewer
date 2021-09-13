@@ -129,7 +129,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ListBox predefinedLogTextFilterListBox;
 		readonly SortedObservableList<PredefinedLogTextFilter> predefinedLogTextFilters;
 		readonly Popup predefinedLogTextFiltersPopup;
-		readonly HashSet<Key> pressedKeys = new HashSet<Key>();
+		readonly HashSet<Avalonia.Input.Key> pressedKeys = new HashSet<Avalonia.Input.Key>();
 		readonly ScheduledAction scrollToLatestLogAction;
 		readonly HashSet<PredefinedLogTextFilter> selectedPredefinedLogTextFilters = new HashSet<PredefinedLogTextFilter>();
 		readonly MenuItem showLogPropertyMenuItem;
@@ -727,12 +727,12 @@ namespace CarinaStudio.ULogViewer.Controls
 							it.Children.Add(new TextBlock().Also(viewDetails =>
 							{
 								viewDetails.Bind(TextBlock.ForegroundProperty, viewDetails.GetResourceObservable("Brush.TextBlock.Foreground.Link"));
-								viewDetails.Cursor = new Cursor(StandardCursorType.Hand);
+								viewDetails.Cursor = new Avalonia.Input.Cursor(StandardCursorType.Hand);
 								viewDetails.Bind(TextBlock.IsVisibleProperty, new Binding() { Path = $"HasExtraLinesOf{logProperty.Name}" });
 								viewDetails.Bind(TextBlock.TextProperty, viewDetails.GetResourceObservable("String.SessionView.ViewFullLogMessage"));
 								viewDetails.PointerReleased += (_, e) =>
 								{
-									if (e.InitialPressMouseButton == MouseButton.Left 
+									if (e.InitialPressMouseButton == Avalonia.Input.MouseButton.Left 
 										&& viewDetails.FindLogicalAncestorOfType<ListBoxItem>()?.DataContext is DisplayableLog log)
 									{
 										this.ShowLogStringProperty(log, logProperty);
@@ -1582,7 +1582,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when pointer released on log list box.
 		void OnLogListBoxPointerReleased(object? sender, PointerReleasedEventArgs e)
 		{
-			if (e.InitialPressMouseButton == MouseButton.Left)
+			if (e.InitialPressMouseButton == Avalonia.Input.MouseButton.Left)
 				this.isPointerPressedOnLogListBox = false;
 		}
 
@@ -1650,7 +1650,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Called when key down.
-		protected override void OnKeyDown(KeyEventArgs e)
+		protected override void OnKeyDown(Avalonia.Input.KeyEventArgs e)
 		{
 			this.pressedKeys.Add(e.Key);
 			if (!e.Handled)
@@ -1661,7 +1661,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				{
 					switch (e.Key)
 					{
-						case Key.C:
+						case Avalonia.Input.Key.C:
 							if (e.Source is not TextBox)
 							{
 								if ((e.KeyModifiers & KeyModifiers.Shift) != 0)
@@ -1670,18 +1670,18 @@ namespace CarinaStudio.ULogViewer.Controls
 									this.CopySelectedLogs();
 							}
 							break;
-						case Key.F:
+						case Avalonia.Input.Key.F:
 							this.logTextFilterTextBox.Focus();
 							this.logTextFilterTextBox.SelectAll();
 							e.Handled = true;
 							break;
-						case Key.O:
+						case Avalonia.Input.Key.O:
 							this.AddLogFiles();
 							break;
-						case Key.P:
+						case Avalonia.Input.Key.P:
 							predefinedLogTextFiltersPopup.IsOpen = !predefinedLogTextFiltersPopup.IsOpen;
 							break;
-						case Key.S:
+						case Avalonia.Input.Key.S:
 							if (e.Source == this.logTextFilterTextBox)
 							{
 								this.logTextFilterTextBox.Validate();
@@ -1697,7 +1697,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				{
 					switch (e.Key)
 					{
-						case Key.Down:
+						case Avalonia.Input.Key.Down:
 							if (e.Source is not TextBox)
 							{
 								if (this.predefinedLogTextFiltersPopup.IsOpen)
@@ -1707,7 +1707,7 @@ namespace CarinaStudio.ULogViewer.Controls
 								e.Handled = true;
 							}
 							break;
-						case Key.Up:
+						case Avalonia.Input.Key.Up:
 							if (e.Source is not TextBox)
 							{
 								if (this.predefinedLogTextFiltersPopup.IsOpen)
@@ -1727,7 +1727,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Called when key up.
-		protected override void OnKeyUp(KeyEventArgs e)
+		protected override void OnKeyUp(Avalonia.Input.KeyEventArgs e)
 		{
 			// [Workaround] skip handling key event if it was handled by context menu
 			// check whether key down was received or not
@@ -1746,7 +1746,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				{
 					switch (e.Key)
 					{
-						case Key.End:
+						case Avalonia.Input.Key.End:
 							if (e.Source is not TextBox)
 							{
 								if (this.predefinedLogTextFiltersPopup.IsOpen)
@@ -1756,7 +1756,7 @@ namespace CarinaStudio.ULogViewer.Controls
 								e.Handled = true;
 							}
 							break;
-						case Key.Escape:
+						case Avalonia.Input.Key.Escape:
 							if (e.Source is TextBox)
 							{
 								if (this.Application.IsDebugMode)
@@ -1770,14 +1770,14 @@ namespace CarinaStudio.ULogViewer.Controls
 								e.Handled = true;
 							}
 							break;
-						case Key.F5:
+						case Avalonia.Input.Key.F5:
 							if (e.Source is not TextBox)
 							{
 								(this.DataContext as Session)?.ReloadLogsCommand?.TryExecute();
 								e.Handled = true;
 							}
 							break;
-						case Key.Home:
+						case Avalonia.Input.Key.Home:
 							if (e.Source is not TextBox)
 							{
 								if (this.predefinedLogTextFiltersPopup.IsOpen)
@@ -1787,21 +1787,21 @@ namespace CarinaStudio.ULogViewer.Controls
 								e.Handled = true;
 							}
 							break;
-						case Key.M:
+						case Avalonia.Input.Key.M:
 							if (e.Source is not TextBox)
 							{
 								this.MarkUnmarkSelectedLogs();
 								e.Handled = true;
 							}
 							break;
-						case Key.P:
+						case Avalonia.Input.Key.P:
 							if (e.Source is not TextBox)
 							{
 								(this.DataContext as Session)?.PauseResumeLogsReadingCommand?.TryExecute();
 								e.Handled = true;
 							}
 							break;
-						case Key.S:
+						case Avalonia.Input.Key.S:
 							if (e.Source is not TextBox && !this.isSelectingFileToSaveLogs)
 							{
 								this.SelectMarkedLogs();
@@ -2066,7 +2066,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when pointer released on item of status bar.
 		void OnStatusBarItemPointerReleased(object? sender, PointerReleasedEventArgs e)
 		{
-			if (sender is not Control control || e.InitialPressMouseButton != MouseButton.Left)
+			if (sender is not Control control || e.InitialPressMouseButton != Avalonia.Input.MouseButton.Left)
 				return;
 			this.SynchronizationContext.Post(() => control.ContextMenu?.Open());
 		}
@@ -2080,7 +2080,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when pointer released on tool bar.
 		void OnToolBarPointerReleased(object? sender, PointerReleasedEventArgs e)
 		{
-			if (FocusManager.Instance.Current is not TextBox)
+			if (Avalonia.Input.FocusManager.Instance.Current is not TextBox)
 				this.SynchronizationContext.Post(() => this.logListBox.Focus());
 		}
 
