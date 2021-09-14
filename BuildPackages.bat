@@ -7,6 +7,10 @@ IF [%1] == [] (
 
 echo ***** Start building packages %1 *****
 
+IF not exist Packages (
+	mkdir Packages
+)
+
 echo ***** Windows (x64) *****
 dotnet publish ULogViewer -c Release -p:PublishProfile=win-x64
 IF %ERRORLEVEL% NEQ 0 ( 
