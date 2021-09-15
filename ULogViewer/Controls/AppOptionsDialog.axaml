@@ -58,7 +58,7 @@
 					<NumericUpDown Maximum="30" Minimum="10" Value="{Binding LogFontSize, Mode=TwoWay}" Grid.Column="2"/>
 				</Grid>
 				<Separator Classes="Dialog_Separator_Small_Horizontal"/>
-				<Border Background="{DynamicResource TextControlBackground}" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="1" HorizontalAlignment="Stretch">
+				<Border Background="{DynamicResource TextControlBackground}" HorizontalAlignment="Stretch">
 					<Grid>
 						<TextBlock FontSize="40" HorizontalAlignment="Center" Opacity="0" Text="{DynamicResource String.AppOptionsDialog.LogFont.Sample}" VerticalAlignment="Center"/>
 						<TextBlock FontFamily="{Binding SampleLogFontFamily}" FontSize="{Binding LogFontSize}" HorizontalAlignment="Center" Text="{DynamicResource String.AppOptionsDialog.LogFont.Sample}" VerticalAlignment="Center"/>

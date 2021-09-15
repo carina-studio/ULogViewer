@@ -2,20 +2,20 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-				xmlns:sys="using:System"
-				xmlns:ia="using:Avalonia.Xaml.Interactivity"
-				xmlns:iaCore="using:Avalonia.Xaml.Interactions.Core"
-				xmlns:app="clr-namespace:CarinaStudio.ULogViewer;assembly=ULogViewer"
-				xmlns:appControls="clr-namespace:CarinaStudio.ULogViewer.Controls;assembly=ULogViewer"
-				xmlns:appConverters="clr-namespace:CarinaStudio.ULogViewer.Converters;assembly=ULogViewer"
-				xmlns:appDataSources="clr-namespace:CarinaStudio.ULogViewer.Logs.DataSources;assembly=ULogViewer"
-				xmlns:appLogProfiles="clr-namespace:CarinaStudio.ULogViewer.Logs.Profiles;assembly=ULogViewer"
-				xmlns:appLogs="clr-namespace:CarinaStudio.ULogViewer.Logs;assembly=ULogViewer"
+        xmlns:sys="using:System"
+        xmlns:ia="using:Avalonia.Xaml.Interactivity"
+        xmlns:iaCore="using:Avalonia.Xaml.Interactions.Core"
+        xmlns:app="clr-namespace:CarinaStudio.ULogViewer;assembly=ULogViewer"
+        xmlns:appControls="clr-namespace:CarinaStudio.ULogViewer.Controls;assembly=ULogViewer"
+        xmlns:appConverters="clr-namespace:CarinaStudio.ULogViewer.Converters;assembly=ULogViewer"
+        xmlns:appDataSources="clr-namespace:CarinaStudio.ULogViewer.Logs.DataSources;assembly=ULogViewer"
+        xmlns:appLogProfiles="clr-namespace:CarinaStudio.ULogViewer.Logs.Profiles;assembly=ULogViewer"
+        xmlns:appLogs="clr-namespace:CarinaStudio.ULogViewer.Logs;assembly=ULogViewer"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.LogProfileEditorDialog"
-				Classes="Dialog"
-				SizeToContent="Height"
-				Width="{StaticResource Double.LogProfileEditorDialog.Width}">
+        Classes="Dialog"
+        SizeToContent="Height"
+        Width="{StaticResource Double.LogProfileEditorDialog.Width}">
 
 	<!-- Resources -->
 	<Window.Resources>
@@ -41,7 +41,6 @@
 	<Window.Styles>
 		<Style Selector="ListBox">
 			<Setter Property="Background" Value="{DynamicResource TextControlBackground}"/>
-			<Setter Property="BorderThickness" Value="1"/>
 			<Setter Property="Height" Value="{StaticResource Double.LogProfileEditorDialog.ListBox.Height}"/>
 		</Style>
 		<Style Selector="ListBoxItem">

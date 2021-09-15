@@ -1,0 +1,19 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+	<!-- ComboBox -->
+	<Style Selector="ComboBox">
+		<Setter Property="BorderThickness" Value="0"/>
+	</Style>
+
+	<!-- NumericUpDown -->
+	<Style Selector="NumericUpDown">
+		<Setter Property="BorderThickness" Value="0"/>
+	</Style>
+	
+	<!-- TextBox -->
+	<Style Selector="TextBox">
+		<Setter Property="BorderThickness" Value="0"/>
+	</Style>
+
+</Styles>

@@ -3,6 +3,7 @@
 
 	<!-- Base style -->
 	<FluentTheme Mode="Dark"/>
+	<StyleInclude Source="/Styles/Default-Override.axaml"/>
 
 	<!-- Resources -->
 	<Styles.Resources>
@@ -34,11 +35,11 @@
 			<SolidColorBrush x:Key="Brush.LogProfileSelectionDialog.Label.Border">#000000</SolidColorBrush>
 
 			<!-- Separator -->
-			<SolidColorBrush x:Key="Brush.Separator.Background">#7fffffff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.Separator.Background">#4fffffff</SolidColorBrush>
 
 			<!-- SessionView -->
 			<SolidColorBrush x:Key="Brush.SessionView.LogHeader.Background">#0e0e0e</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.SessionView.LogHeader.Separator">#7fffffff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.SessionView.LogHeader.Separator">#4fffffff</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.SessionView.LogListBox.Item.Background.Marked">#2fffffff</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.SessionView.LogListBox.Item.Background.Pressed">#7f0073cc</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.SessionView.LogListBox.Item.Background.Selected">#7f004881</SolidColorBrush>

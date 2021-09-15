@@ -3,10 +3,17 @@
 
 	<!-- Base style -->
 	<FluentTheme Mode="Light"/>
+	<StyleInclude Source="/Styles/Default-Override.axaml"/>
 
 	<!-- Resources -->
 	<Styles.Resources>
 		<ResourceDictionary>
+
+			<!-- ComboBox -->
+			<SolidColorBrush x:Key="ComboBoxBackground">#d0d0d0</SolidColorBrush>
+			<SolidColorBrush x:Key="ComboBoxBackgroundPointerOver">#dddddd</SolidColorBrush>
+			<SolidColorBrush x:Key="ComboBoxBackgroundPressed">#dddddd</SolidColorBrush>
+			<SolidColorBrush x:Key="ComboBoxBackgroundUnfocused">#d0d0d0</SolidColorBrush>
 
 			<!-- Dialog -->
 			<SolidColorBrush x:Key="Brush.Dialog.Background">#eeeeee</SolidColorBrush>
@@ -36,11 +43,11 @@
 			<SolidColorBrush x:Key="Brush.LogProfileSelectionDialog.Label.Border">#808080</SolidColorBrush>
 
 			<!-- Separator -->
-			<SolidColorBrush x:Key="Brush.Separator.Background">#7f000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.Separator.Background">#4f000000</SolidColorBrush>
 
 			<!-- SessionView -->
 			<SolidColorBrush x:Key="Brush.SessionView.LogHeader.Background">#d0d0d0</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.SessionView.LogHeader.Separator">#7f000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.SessionView.LogHeader.Separator">#4f000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.SessionView.LogListBox.Background">#eeeeee</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.SessionView.LogListBox.Item.Background.Marked">#1a000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.SessionView.LogListBox.Item.Background.Pressed">#1f0073cc</SolidColorBrush>
@@ -50,6 +57,11 @@
 			<SolidColorBrush x:Key="Brush.SessionView.SidePanel.Background">#e0e0e0</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.SessionView.StatusBar.Background">#aaaaaa</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.SessionView.StatusBar.Background.Paused">#aaaaaa</SolidColorBrush>
+
+			<!-- TextBox -->
+			<SolidColorBrush x:Key="TextControlBackground">#d0d0d0</SolidColorBrush>
+			<SolidColorBrush x:Key="TextControlBackgroundFocused">#dddddd</SolidColorBrush>
+			<SolidColorBrush x:Key="TextControlBackgroundPointerOver">#dddddd</SolidColorBrush>
 
 			<!-- Window -->
 			<SolidColorBrush x:Key="Brush.Window.Background">#eeeeee</SolidColorBrush>

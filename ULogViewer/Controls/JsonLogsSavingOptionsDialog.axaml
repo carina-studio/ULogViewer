@@ -25,7 +25,7 @@
 
 			<!-- Log properties -->
 			<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.JsonLogsSavingOptionsDialog.LogProperties}"/>
-			<ListBox Name="logPropertyMapListBox" Background="{DynamicResource TextControlBackground}" BorderThickness="1" DoubleTapped="OnListBoxDoubleTapped" Height="{StaticResource Double.JsonLogsSavingOptionsDialog.ListBox.Height}" Items="{Binding $parent[Window].LogPropertyMap}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
+			<ListBox Name="logPropertyMapListBox" Background="{DynamicResource TextControlBackground}" DoubleTapped="OnListBoxDoubleTapped" Height="{StaticResource Double.JsonLogsSavingOptionsDialog.ListBox.Height}" Items="{Binding $parent[Window].LogPropertyMap}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
 				<ListBox.ItemTemplate>
 					<DataTemplate>
 						<Grid ColumnDefinitions="Auto,*,Auto">
