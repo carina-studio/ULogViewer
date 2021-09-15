@@ -4,7 +4,7 @@
     <AssemblyVersion>0.23.0.913</AssemblyVersion>
     <Version>0.23.0.913</Version>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net5.0-windows10.0.17763.0</TargetFramework>
+    <TargetFramework>net5.0-windows10.0.17763.0</TargetFramework> <!-- You need to change to 'net5.0' if you want to build on Linux or macOS -->
     <DebugType>embedded</DebugType>
     <RootNamespace>CarinaStudio.ULogViewer</RootNamespace>
     <Nullable>enable</Nullable>
@@ -14,14 +14,21 @@
     <StartupObject>CarinaStudio.ULogViewer.App</StartupObject>
     <ApplicationIcon>AppIcon.ico</ApplicationIcon>
     <NoWin32Manifest>true</NoWin32Manifest>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <CsWinRTIncludes>Windows</CsWinRTIncludes>
+    <Configurations>Debug;Release;Debug-WinRT;Release-WinRT</Configurations>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DefineConstants>DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug-WinRT|AnyCPU'">
+    <CsWinRTIncludes>Windows</CsWinRTIncludes>
+    <DefineConstants>DEBUG;TRACE;WINRT</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release-WinRT|AnyCPU'">
+    <CsWinRTIncludes>Windows</CsWinRTIncludes>
+    <DefineConstants>WINRT</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>

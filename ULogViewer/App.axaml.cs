@@ -32,7 +32,9 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
+#if WINRT
 using Windows.UI.ViewManagement;
+#endif
 
 namespace CarinaStudio.ULogViewer
 {
@@ -74,7 +76,9 @@ namespace CarinaStudio.ULogViewer
 		ResourceDictionary? systemAccentColorResources;
 		AppUpdateInfo? updateInfo;
 		ScheduledAction? updateProcessInfoAction;
+#if WINRT
 		UISettings? windowsUISettings;
+#endif
 		Workspace? workspace;
 
 
@@ -272,11 +276,13 @@ namespace CarinaStudio.ULogViewer
 		// Get system accent color.
 		Color? GetSystemAccentColor()
 		{
+#if WINRT
 			if (this.windowsUISettings != null)
 			{
 				var color = this.windowsUISettings.GetColorValue(UIColorType.Accent);
 				return Color.FromArgb(color.A, color.R, color.G, color.B);
 			}
+#endif
 			return null;
 		}
 
@@ -290,9 +296,11 @@ namespace CarinaStudio.ULogViewer
 		/// </summary>
 		public bool IsSystemAccentColorSupported { get; } = Global.Run(() =>
 		{
-			if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-				return false;
-			return Environment.OSVersion.Version >= new Version(10, 0, 17763);
+#if WINRT
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+				return Environment.OSVersion.Version >= new Version(10, 0, 17763);
+#endif
+			return false;
 		});
 
 
@@ -505,11 +513,13 @@ namespace CarinaStudio.ULogViewer
 			// attach to system UI settings
 			if (this.IsSystemAccentColorSupported)
 			{
+#if WINRT
 				if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 				{
 					this.windowsUISettings = new UISettings();
 					this.windowsUISettings.ColorValuesChanged += this.OnWindowsUIColorValueChanged;
 				}
+#endif
 			}
 
 			// update styles
@@ -650,16 +660,20 @@ namespace CarinaStudio.ULogViewer
 		}
 
 
+#if WINRT
 		// Called when Windows UI color changed.
 		void OnWindowsUIColorValueChanged(UISettings sender, object result) => this.SynchronizationContext.Post(this.OnSystemAccentColorChanged);
+#endif
 
 
+#pragma warning disable CA1416
 		// Called when user preference changed on Windows
 		void OnWindowsUserPreferenceChanged(object? sender, UserPreferenceChangedEventArgs e)
 		{
-			if (e.Category == UserPreferenceCategory.Locale)
-				this.SynchronizationContext.Post(this.OnSystemCultureInfoChanged);
+            if (e.Category == UserPreferenceCategory.Locale)
+                this.SynchronizationContext.Post(this.OnSystemCultureInfoChanged);
 		}
+#pragma warning restore CA1416
 
 
 		// Parse startup parameters.
