@@ -1,6 +1,6 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-										xmlns:sys="clr-namespace:System;assembly=mscorlib">
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
 	<!-- AppCulture -->
 	<sys:String x:Key="String.AppCulture.System">自動</sys:String>
@@ -418,12 +418,6 @@
 	<sys:String x:Key="String.TimeSpanConverter.Hours">{0} 小時 {1} 分 {2}.{3:000} 秒</sys:String>
 	<sys:String x:Key="String.TimeSpanConverter.Minutes">{0} 分 {1}.{2:000} 秒</sys:String>
 	<sys:String x:Key="String.TimeSpanConverter.Seconds">{0}.{1:000} 秒</sys:String>
-
-	<!-- TutorialDialog -->
-	<sys:String x:Key="String.TutorialDialog.LogProfileSelection">按一下工具列左邊的按鈕以選取日誌類型，然後開始檢視日誌。</sys:String>
-	<sys:String x:Key="String.TutorialDialog.OtherActions">按一下工具列右邊的按鈕以開啟功能選單。</sys:String>
-	<sys:String x:Key="String.TutorialDialog.Screenshot">示意畫面</sys:String>
-	<sys:String x:Key="String.TutorialDialog.Title">使用教學</sys:String>
 
 	<!-- VisibleLogPropertyEditorDialog -->
 	<sys:String x:Key="String.VisibleLogPropertyEditorDialog.CustomDisplayName">手動輸入顯示名稱</sys:String>

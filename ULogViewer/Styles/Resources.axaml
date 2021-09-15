@@ -1,6 +1,6 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-										xmlns:sys="clr-namespace:System;assembly=mscorlib">
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
 	<!-- AppInfoDialog -->
 	<sys:Double x:Key="Double.AppInfoDialog.AppIcon.Size">70</sys:Double>
@@ -187,10 +187,6 @@
 
 	<!-- TextInputDialog -->
 	<sys:Double x:Key="Double.TextInputDialog.Width">450</sys:Double>
-
-	<!-- TutorialDialog -->
-	<sys:Double x:Key="Double.TutorialDialog.Screenshot.Height">200</sys:Double>
-	<sys:Double x:Key="Double.TutorialDialog.Width">440</sys:Double>
 
 	<!-- VisibleLogPropertyEditorDialog -->
 	<sys:Double x:Key="Double.VisibleLogPropertyEditorDialog.Width">400</sys:Double>

@@ -28,8 +28,6 @@ namespace CarinaStudio.ULogViewer
 	partial class MainWindow : BaseWindow
 	{
 		// Static fields.
-		static readonly SettingKey<bool> HadLogProfileSelectionTutorialShownSettingKey = new SettingKey<bool>("Tutorial.LogProfileSelection.HadShown");
-		static readonly SettingKey<bool> HadOtherActionsTutorialShownSettingKey = new SettingKey<bool>("Tutorial.OtherActions.HadShown");
 		static readonly SettingKey<int> WindowHeightSettingKey = new SettingKey<int>("MainWindow.Height", 600);
 		static readonly SettingKey<WindowState> WindowStateSettingKey = new SettingKey<WindowState>("MainWindow.State", WindowState.Maximized);
 		static readonly SettingKey<int> WindowWidthSettingKey = new SettingKey<int>("MainWindow.Width", 800);
@@ -43,7 +41,6 @@ namespace CarinaStudio.ULogViewer
 		// Fields.
 		bool canShowDialogs;
 		readonly ScheduledAction focusOnTabItemContentAction;
-		bool isShowingInitialTutorials;
 		readonly ScheduledAction reAttachToWorkspaceAction;
 		readonly ScheduledAction saveWindowSizeAction;
 		readonly DataTemplate sessionTabItemHeaderTemplate;
@@ -418,12 +415,8 @@ namespace CarinaStudio.ULogViewer
 			this.SynchronizationContext.PostDelayed(() =>
 			{
 				this.canShowDialogs = true;
-				this.ShowInitTutorials();
-				if (!this.isShowingInitialTutorials)
-				{
-					this.NotifyAppUpdate();
-					this.SelectAndSetLogProfile();
-				}
+				this.NotifyAppUpdate();
+				this.SelectAndSetLogProfile();
 			}, 1000); // In order to show dialog at correct position on Linux, we need delay to make sure bounds of main window is set.
 		}
 
@@ -587,67 +580,6 @@ namespace CarinaStudio.ULogViewer
 					this.FindSessionView(it)?.SelectAndSetLogProfile();
 				}
 			});
-		}
-
-
-		// Show initial tutorials.
-		async void ShowInitTutorials()
-		{
-			// check state
-			if (this.IsClosed || this.isShowingInitialTutorials || !this.canShowDialogs)
-				return;
-
-			// show log profile selection tutorial
-			/*
-			if (!this.PersistentState.GetValueOrDefault(HadLogProfileSelectionTutorialShownSettingKey))
-			{
-				// prepare tutorial
-				var assets = AvaloniaLocator.Current.GetService<IAssetLoader>();
-				using var stream = assets.Open(new Uri("avares://ULogViewer/Resources/Tutorial_SelectLogProfile.png"));
-				var screenshot = new Bitmap(stream);
-
-				// show tutorial
-				this.PersistentState.SetValue<bool>(HadLogProfileSelectionTutorialShownSettingKey, true);
-				this.isShowingInitialTutorials = true;
-				await new TutorialDialog()
-				{
-					Message = this.Application.GetString("TutorialDialog.LogProfileSelection"),
-					Screenshot = screenshot,
-				}.ShowDialog(this);
-				this.isShowingInitialTutorials = false;
-				this.SynchronizationContext.Post(this.ShowInitTutorials);
-				return;
-			}
-			*/
-
-			// show other actions tutorial
-			/*
-			if (!this.PersistentState.GetValueOrDefault(HadOtherActionsTutorialShownSettingKey))
-			{
-				// prepare tutorial
-				var assets = AvaloniaLocator.Current.GetService<IAssetLoader>();
-				using var stream = assets.Open(new Uri("avares://ULogViewer/Resources/Tutorial_OtherActions.png"));
-				var screenshot = new Bitmap(stream);
-
-				// show tutorial
-				this.PersistentState.SetValue<bool>(HadOtherActionsTutorialShownSettingKey, true);
-				this.isShowingInitialTutorials = true;
-				await new TutorialDialog()
-				{
-					Message = this.Application.GetString("TutorialDialog.OtherActions"),
-					Screenshot = screenshot,
-				}.ShowDialog(this);
-				this.isShowingInitialTutorials = false;
-				this.SynchronizationContext.Post(this.ShowInitTutorials);
-				return;
-			}
-			*/
-
-			// nptify application update
-			this.SynchronizationContext.Post(this.NotifyAppUpdate);
-
-			// select and set log profile after all initial tutorials had shown
-			this.SynchronizationContext.Post(this.SelectAndSetLogProfile);
 		}
 	}
 }
