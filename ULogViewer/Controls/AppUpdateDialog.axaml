@@ -2,14 +2,14 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-				xmlns:ia="using:Avalonia.Xaml.Interactivity"
-				xmlns:iaCore="using:Avalonia.Xaml.Interactions.Core"
+        xmlns:ia="using:Avalonia.Xaml.Interactivity"
+        xmlns:iaCore="using:Avalonia.Xaml.Interactions.Core"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.AppUpdateDialog"
-				Classes="Dialog"
-				SizeToContent="Height"
+        Classes="Dialog"
+        SizeToContent="Height"
         Title="{DynamicResource String.AppUpdateDialog.Title}"
-				Width="{StaticResource Double.AppUpdateDialog.Width}">
+        Width="{StaticResource Double.AppUpdateDialog.Width}">
 
 	<DockPanel>
 
