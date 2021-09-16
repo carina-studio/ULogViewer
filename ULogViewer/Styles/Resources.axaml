@@ -130,6 +130,7 @@
 	<sys:Double x:Key="Double.SessionView.Hint.SelectLogProfile.FontSize">30</sys:Double>
 	<sys:Double x:Key="Double.SessionView.LogHeader.MinWidth">50</sys:Double>
 	<sys:Double x:Key="Double.SessionView.LogListBox.ColorIndicator.Width">8</sys:Double>
+	<sys:Double x:Key="Double.SessionView.LogsProgessingBar.Height">2</sys:Double>
 	<sys:Double x:Key="Double.SessionView.PredefinedLogTextFilterListBox.Icon.Size">12</sys:Double>
 	<sys:Double x:Key="Double.SessionView.PredefinedLogTextFiltersPopup.MaxHeight">500</sys:Double>
 	<sys:Double x:Key="Double.SessionView.PredefinedLogTextFiltersPopup.Width">300</sys:Double>

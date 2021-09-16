@@ -378,8 +378,8 @@
 		</Grid>
 
 		<!-- Progress bar -->
-		<ProgressBar Grid.Row="1" Opacity="0"/>
-		<ProgressBar CornerRadius="0" Grid.ColumnSpan="3" Grid.Row="1" IsIndeterminate="True" IsVisible="{Binding IsProcessingLogs}"/>
+		<ProgressBar Grid.Row="1" MaxHeight="{StaticResource Double.SessionView.LogsProgessingBar.Height}" MinHeight="{StaticResource Double.SessionView.LogsProgessingBar.Height}" Opacity="0"/>
+		<ProgressBar Background="{x:Null}" CornerRadius="0" Grid.ColumnSpan="3" Grid.Row="1" IsIndeterminate="True" IsVisible="{Binding IsProcessingLogs}" MaxHeight="{StaticResource Double.SessionView.LogsProgessingBar.Height}" MinHeight="{StaticResource Double.SessionView.LogsProgessingBar.Height}"/>
 
 		<!-- Logs -->
 		<Grid Background="{x:Static Brushes.Transparent}" DragDrop.AllowDrop="True" Grid.Row="2" RowDefinitions="Auto,*">
