@@ -16,27 +16,27 @@ EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
-		Debug-WinRT|Any CPU = Debug-WinRT|Any CPU
+		Debug-Windows|Any CPU = Debug-Windows|Any CPU
 		Release|Any CPU = Release|Any CPU
-		Release-WinRT|Any CPU = Release-WinRT|Any CPU
+		Release-Windows|Any CPU = Release-Windows|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{86027AF0-5E0F-470C-A8E0-742FCED672BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{86027AF0-5E0F-470C-A8E0-742FCED672BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{86027AF0-5E0F-470C-A8E0-742FCED672BC}.Debug-WinRT|Any CPU.ActiveCfg = Debug-WinRT|Any CPU
-		{86027AF0-5E0F-470C-A8E0-742FCED672BC}.Debug-WinRT|Any CPU.Build.0 = Debug-WinRT|Any CPU
+		{86027AF0-5E0F-470C-A8E0-742FCED672BC}.Debug-Windows|Any CPU.ActiveCfg = Debug-Windows|Any CPU
+		{86027AF0-5E0F-470C-A8E0-742FCED672BC}.Debug-Windows|Any CPU.Build.0 = Debug-Windows|Any CPU
 		{86027AF0-5E0F-470C-A8E0-742FCED672BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{86027AF0-5E0F-470C-A8E0-742FCED672BC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{86027AF0-5E0F-470C-A8E0-742FCED672BC}.Release-WinRT|Any CPU.ActiveCfg = Release-WinRT|Any CPU
-		{86027AF0-5E0F-470C-A8E0-742FCED672BC}.Release-WinRT|Any CPU.Build.0 = Release-WinRT|Any CPU
+		{86027AF0-5E0F-470C-A8E0-742FCED672BC}.Release-Windows|Any CPU.ActiveCfg = Release-Windows|Any CPU
+		{86027AF0-5E0F-470C-A8E0-742FCED672BC}.Release-Windows|Any CPU.Build.0 = Release-Windows|Any CPU
 		{EA17FC0A-4838-49BB-A5B7-8D8CD957709C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EA17FC0A-4838-49BB-A5B7-8D8CD957709C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EA17FC0A-4838-49BB-A5B7-8D8CD957709C}.Debug-WinRT|Any CPU.ActiveCfg = Debug-WinRT|Any CPU
-		{EA17FC0A-4838-49BB-A5B7-8D8CD957709C}.Debug-WinRT|Any CPU.Build.0 = Debug-WinRT|Any CPU
+		{EA17FC0A-4838-49BB-A5B7-8D8CD957709C}.Debug-Windows|Any CPU.ActiveCfg = Debug-Windows|Any CPU
+		{EA17FC0A-4838-49BB-A5B7-8D8CD957709C}.Debug-Windows|Any CPU.Build.0 = Debug-Windows|Any CPU
 		{EA17FC0A-4838-49BB-A5B7-8D8CD957709C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EA17FC0A-4838-49BB-A5B7-8D8CD957709C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EA17FC0A-4838-49BB-A5B7-8D8CD957709C}.Release-WinRT|Any CPU.ActiveCfg = Release-WinRT|Any CPU
-		{EA17FC0A-4838-49BB-A5B7-8D8CD957709C}.Release-WinRT|Any CPU.Build.0 = Release-WinRT|Any CPU
+		{EA17FC0A-4838-49BB-A5B7-8D8CD957709C}.Release-Windows|Any CPU.ActiveCfg = Release-Windows|Any CPU
+		{EA17FC0A-4838-49BB-A5B7-8D8CD957709C}.Release-Windows|Any CPU.Build.0 = Release-Windows|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -13,28 +13,28 @@
     <StartupObject>CarinaStudio.ULogViewer.App</StartupObject>
     <ApplicationIcon>AppIcon.ico</ApplicationIcon>
     <NoWin32Manifest>true</NoWin32Manifest>
-    <Configurations>Debug;Release;Debug-WinRT;Release-WinRT</Configurations>
+    <Configurations>Debug;Release;Debug-Windows;Release-Windows</Configurations>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
     <TargetFramework>net5.0</TargetFramework>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug-WinRT|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)'=='Debug-Windows'">
     <TargetFramework>net5.0-windows10.0.17763.0</TargetFramework>
     <CsWinRTIncludes>Windows</CsWinRTIncludes>
-    <DefineConstants>DEBUG;TRACE;WINRT</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;WINDOWS_ONLY</DefineConstants>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release-WinRT|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)'=='Release-Windows'">
     <TargetFramework>net5.0-windows10.0.17763.0</TargetFramework>
     <CsWinRTIncludes>Windows</CsWinRTIncludes>
-    <DefineConstants>WINRT</DefineConstants>
+    <DefineConstants>WINDOWS_ONLY</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
@@ -61,7 +61,8 @@
     <PackageReference Include="CarinaStudio.AppBase.AutoUpdate" Version="0.25.0.914" />
     <PackageReference Include="CarinaStudio.AppBase.Configuration" Version="0.25.0.914" />
     <PackageReference Include="CarinaStudio.AppBase.Core" Version="0.25.0.914" />
-    <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
+    <PackageReference Condition="'$(Configuration)'=='Debug-Windows'" Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
+    <PackageReference Condition="'$(Configuration)'=='Release-Windows'" Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
     <PackageReference Include="Microsoft.Win32.SystemEvents" Version="5.0.0" />
     <PackageReference Include="Mono.Posix" Version="7.1.0-final.1.21458.1" />
     <PackageReference Include="NLog" Version="4.7.11" />

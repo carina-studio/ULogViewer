@@ -14,7 +14,7 @@ IF not exist Packages (
 SET APP_NAME=ULogViewer
 
 echo ***** Windows (x64) *****
-dotnet publish %APP_NAME% -c Release-WinRT -p:PublishProfile=win-x64
+dotnet publish %APP_NAME% -c Release-Windows -p:PublishProfile=win-x64
 IF %ERRORLEVEL% NEQ 0 ( 
    exit
 )

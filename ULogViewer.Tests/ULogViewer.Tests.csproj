@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <RootNamespace>CarinaStudio.ULogViewer</RootNamespace>
     <StartupObject>CarinaStudio.ULogViewer.TestApp</StartupObject>
-    <Configurations>Debug;Release;Debug-WinRT;Release-WinRT</Configurations>
+    <Configurations>Debug;Release;Debug-Windows;Release-Windows</Configurations>
   </PropertyGroup>
 
   <ItemGroup>

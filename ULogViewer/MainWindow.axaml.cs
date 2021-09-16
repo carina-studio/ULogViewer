@@ -14,13 +14,14 @@ using CarinaStudio.ULogViewer.Controls;
 using CarinaStudio.ULogViewer.Input;
 using CarinaStudio.ULogViewer.ViewModels;
 using Microsoft.Extensions.Logging;
+#if WINDOWS_ONLY
 using Microsoft.WindowsAPICodePack.Taskbar;
+#endif
 using System;
 using System.Collections;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
-using System.Runtime.InteropServices;
 
 namespace CarinaStudio.ULogViewer
 {
@@ -102,7 +103,12 @@ namespace CarinaStudio.ULogViewer
 			this.updateSysTaskBarAction = new ScheduledAction(() =>
 			{
 				// check state
-				if (this.IsClosed || !TaskbarManager.IsPlatformSupported)
+				if (this.IsClosed)
+					return;
+
+#if WINDOWS_ONLY
+				// check platform
+				if (!TaskbarManager.IsPlatformSupported)
 					return;
 
 				// get session
@@ -136,6 +142,7 @@ namespace CarinaStudio.ULogViewer
 				}
 				else
 					TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.NoProgress);
+#endif
 			});
 			this.tabControlSelectionChangedAction = new ScheduledAction(this.OnTabControlSelectionChanged);
 

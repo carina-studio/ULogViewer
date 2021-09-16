@@ -32,7 +32,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
-#if WINRT
+#if WINDOWS_ONLY
 using Windows.UI.ViewManagement;
 #endif
 
@@ -76,7 +76,7 @@ namespace CarinaStudio.ULogViewer
 		ResourceDictionary? systemAccentColorResources;
 		AppUpdateInfo? updateInfo;
 		ScheduledAction? updateProcessInfoAction;
-#if WINRT
+#if WINDOWS_ONLY
 		UISettings? windowsUISettings;
 #endif
 		Workspace? workspace;
@@ -276,7 +276,7 @@ namespace CarinaStudio.ULogViewer
 		// Get system accent color.
 		Color? GetSystemAccentColor()
 		{
-#if WINRT
+#if WINDOWS_ONLY
 			if (this.windowsUISettings != null)
 			{
 				var color = this.windowsUISettings.GetColorValue(UIColorType.Accent);
@@ -296,7 +296,7 @@ namespace CarinaStudio.ULogViewer
 		/// </summary>
 		public bool IsSystemAccentColorSupported { get; } = Global.Run(() =>
 		{
-#if WINRT
+#if WINDOWS_ONLY
 			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 				return Environment.OSVersion.Version >= new Version(10, 0, 17763);
 #endif
@@ -513,7 +513,7 @@ namespace CarinaStudio.ULogViewer
 			// attach to system UI settings
 			if (this.IsSystemAccentColorSupported)
 			{
-#if WINRT
+#if WINDOWS_ONLY
 				if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 				{
 					this.windowsUISettings = new UISettings();
@@ -660,7 +660,7 @@ namespace CarinaStudio.ULogViewer
 		}
 
 
-#if WINRT
+#if WINDOWS_ONLY
 		// Called when Windows UI color changed.
 		void OnWindowsUIColorValueChanged(UISettings sender, object result) => this.SynchronizationContext.Post(this.OnSystemAccentColorChanged);
 #endif
