@@ -1066,6 +1066,9 @@ namespace CarinaStudio.ULogViewer
 					this.systemAccentColorResources["Brush.Icon.Active"] = new SolidColorBrush(sysAccentColorLight1);
 					this.systemAccentColorResources["Brush.Icon.LogProfile"] = new SolidColorBrush(sysAccentColorLight1);
 
+					// [Workaround] Brushes of ToggleButton
+					this.systemAccentColorResources["ToggleButtonBackgroundCheckedPointerOver"] = new SolidColorBrush(sysAccentColorDark1);
+
 					// [Workaround] Brushes of ToggleSwitch
 					this.systemAccentColorResources["ToggleSwitchFillOnPointerOver"] = new SolidColorBrush(sysAccentColorLight1);
 					this.systemAccentColorResources["ToggleSwitchFillOnPressed"] = new SolidColorBrush(sysAccentColorDark1);
