@@ -752,17 +752,8 @@ namespace CarinaStudio.ULogViewer
 			else
 				this.logger.LogWarning("Request restarting");
 
-			// close main window or shutdown
-			if (this.mainWindow != null)
-			{
-				this.logger.LogWarning("Schedule closing main window to restart");
-				this.SynchronizationContext.Post(() => this.mainWindow?.Close());
-			}
-			else
-			{
-				this.logger.LogWarning("Schedule shutdown to restart");
-				this.SynchronizationContext.Post(this.Shutdown);
-			}
+			// shutdown
+			this.Shutdown();
 			return true;
 		}
 
@@ -837,9 +828,21 @@ namespace CarinaStudio.ULogViewer
 		/// </summary>
 		public void Shutdown()
 		{
-			this.logger.LogWarning("Shutdown");
+			this.logger.LogWarning("Shutdown requested");
 			this.VerifyAccess();
-			(this.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.Shutdown();
+			this.SynchronizationContext.Post(() =>
+			{
+				if (this.mainWindow != null)
+				{
+					this.logger.LogWarning("Close main window to shutdown");
+					this.mainWindow.Close();
+				}
+				else
+				{
+					this.logger.LogWarning("Shutdown directly");
+					(this.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.Shutdown();
+				}
+			});
 		}
 
 
