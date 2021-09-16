@@ -4,7 +4,6 @@
     <AssemblyVersion>0.24.0.916</AssemblyVersion>
     <Version>0.24.0.916</Version>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net5.0-windows10.0.17763.0</TargetFramework> <!-- You need to change to 'net5.0' if you want to build on Linux or macOS -->
     <DebugType>embedded</DebugType>
     <RootNamespace>CarinaStudio.ULogViewer</RootNamespace>
     <Nullable>enable</Nullable>
@@ -18,15 +17,22 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <TargetFramework>net5.0</TargetFramework>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug-WinRT|AnyCPU'">
+    <TargetFramework>net5.0-windows10.0.17763.0</TargetFramework>
     <CsWinRTIncludes>Windows</CsWinRTIncludes>
     <DefineConstants>DEBUG;TRACE;WINRT</DefineConstants>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release-WinRT|AnyCPU'">
+    <TargetFramework>net5.0-windows10.0.17763.0</TargetFramework>
     <CsWinRTIncludes>Windows</CsWinRTIncludes>
     <DefineConstants>WINRT</DefineConstants>
   </PropertyGroup>
