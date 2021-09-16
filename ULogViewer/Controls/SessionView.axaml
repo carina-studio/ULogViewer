@@ -368,8 +368,8 @@
 				<!-- Other actions -->
 				<ToggleButton Name="otherActionsButton" Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].ShowOtherActions}" ToolTip.Tip="{DynamicResource String.SessionView.OtherActions}">
 					<Grid Classes="SessionView_ToolBar_Button_Icon">
-						<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.OtherActions}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
-						<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.OtherActions.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
+						<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.More}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
+						<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.More.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
 					</Grid>
 				</ToggleButton>
 
