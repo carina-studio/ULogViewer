@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <AssemblyVersion>0.23.0.913</AssemblyVersion>
-    <Version>0.23.0.913</Version>
+    <AssemblyVersion>0.24.0.916</AssemblyVersion>
+    <Version>0.24.0.916</Version>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net5.0-windows10.0.17763.0</TargetFramework> <!-- You need to change to 'net5.0' if you want to build on Linux or macOS -->
     <DebugType>embedded</DebugType>
