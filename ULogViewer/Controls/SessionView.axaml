@@ -127,6 +127,9 @@
 			<ColumnDefinition MaxWidth="{StaticResource Double.SessionView.SidePanel.MaxWidth}" MinWidth="{StaticResource Double.SessionView.SidePanel.MinWidth}" Width="0"/>
 		</Grid.ColumnDefinitions>
 
+		<!-- Toolbar background -->
+		<Border Background="{StaticResource Brush.SessionView.ToolBar.Background}" Grid.ColumnSpan="3" Grid.RowSpan="2"/>
+
 		<!-- Toolbar -->
 		<Grid Name="toolBarContainer" ColumnDefinitions="Auto,*,Auto" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" Margin="{StaticResource Thickness.SessionView.ToolBar.Padding}">
 

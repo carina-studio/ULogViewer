@@ -34,6 +34,9 @@
 			<SolidColorBrush x:Key="Brush.LogProfileSelectionDialog.Label.Background">#000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.LogProfileSelectionDialog.Label.Border">#000000</SolidColorBrush>
 
+			<!-- MainWindow -->
+			<SolidColorBrush x:Key="Brush.MainWindow.TabControl.Background">#0e0e0e</SolidColorBrush>
+
 			<!-- Separator -->
 			<SolidColorBrush x:Key="Brush.Separator.Background">#4fffffff</SolidColorBrush>
 
@@ -48,6 +51,7 @@
 			<SolidColorBrush x:Key="Brush.SessionView.SidePanel.Background">#161616</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.SessionView.StatusBar.Background">#606060</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.SessionView.StatusBar.Background.Paused">#606060</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.SessionView.ToolBar.Background">#1e1e1e</SolidColorBrush>
 
 			<!-- TextBlock -->
 			<SolidColorBrush x:Key="Brush.TextBlock.Foreground.Link">#288acc</SolidColorBrush>

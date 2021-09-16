@@ -16,8 +16,10 @@
 	<!-- Data templates -->
 	<Window.DataTemplates>
 		<DataTemplate DataType="{x:Type appViewModels:Session}">
-			<Border Background="{x:Static Brushes.Transparent}" DragDrop.AllowDrop="True" Padding="{StaticResource Thickness.MainWindow.TabItem.Padding}">
-				<Grid ColumnDefinitions="Auto,Auto,Auto">
+			<Panel Background="{x:Static Brushes.Transparent}" DragDrop.AllowDrop="True">
+				<Border Background="{DynamicResource Brush.SessionView.ToolBar.Background}" IsVisible="{Binding $parent[TabItem].IsPointerOver}" Opacity="0.5"/>
+				<Border Background="{DynamicResource Brush.SessionView.ToolBar.Background}" IsVisible="{Binding $parent[TabItem].IsSelected}"/>
+				<Grid ColumnDefinitions="Auto,Auto,Auto" Margin="{StaticResource Thickness.MainWindow.TabItem.Padding}">
 					<Border Height="{StaticResource Double.MainWindow.TabItem.Icon.Size}" Margin="{StaticResource Thickness.MainWindow.TabItem.Icon.Margin}" VerticalAlignment="Center" Width="{StaticResource Double.MainWindow.TabItem.Icon.Size}">
 						<DrawingPresenter Classes="Icon" Drawing="{Binding Icon}"/>
 					</Border>
@@ -37,7 +39,7 @@
 						</Border>
 					</Button>
 				</Grid>
-			</Border>
+			</Panel>
 		</DataTemplate>
 	</Window.DataTemplates>
 	
@@ -51,7 +53,7 @@
 	</Window.Styles>
 
 	<!-- Content -->
-	<TabControl Name="tabControl" Padding="0">
+	<TabControl Name="tabControl" Background="{DynamicResource Brush.MainWindow.TabControl.Background}" Padding="0,-2,0,0">
 
 		<!-- Add new tab -->
 		<TabItem>
