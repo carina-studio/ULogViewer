@@ -14,11 +14,13 @@ using CarinaStudio.ULogViewer.Controls;
 using CarinaStudio.ULogViewer.Input;
 using CarinaStudio.ULogViewer.ViewModels;
 using Microsoft.Extensions.Logging;
+using Microsoft.WindowsAPICodePack.Taskbar;
 using System;
 using System.Collections;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace CarinaStudio.ULogViewer
 {
@@ -39,11 +41,13 @@ namespace CarinaStudio.ULogViewer
 
 
 		// Fields.
+		Session? attachedActiveSession;
 		bool canShowDialogs;
 		readonly ScheduledAction focusOnTabItemContentAction;
 		readonly ScheduledAction reAttachToWorkspaceAction;
 		readonly ScheduledAction saveWindowSizeAction;
 		readonly DataTemplate sessionTabItemHeaderTemplate;
+		readonly ScheduledAction updateSysTaskBarAction;
 		readonly TabControl tabControl;
 		readonly ScheduledAction tabControlSelectionChangedAction;
 		readonly IList tabItems;
@@ -95,6 +99,44 @@ namespace CarinaStudio.ULogViewer
 					this.PersistentState.SetValue<int>(WindowHeightSettingKey, (int)(this.Height + 0.5));
 				}
 			});
+			this.updateSysTaskBarAction = new ScheduledAction(() =>
+			{
+				// check state
+				if (this.IsClosed || !TaskbarManager.IsPlatformSupported)
+					return;
+
+				// get session
+				var session = (this.DataContext as Workspace)?.ActiveSession;
+				if (session == null)
+				{
+					TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.NoProgress);
+					return;
+				}
+
+				// update task bar
+				if (session.HasAllDataSourceErrors)
+				{
+					TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Error);
+					TaskbarManager.Instance.SetProgressValue(1, 1);
+				}
+				else if (session.IsProcessingLogs)
+				{
+					if (session.IsReadingLogs)
+						TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Indeterminate);
+					else
+					{
+						TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Normal);
+						TaskbarManager.Instance.SetProgressValue((int)(session.LogsFilteringProgress * 100 + 0.5), 100);
+					}
+				}
+				else if (session.IsLogsReadingPaused || session.IsWaitingForDataSources)
+				{
+					TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Paused);
+					TaskbarManager.Instance.SetProgressValue(1, 1);
+				}
+				else
+					TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.NoProgress);
+			});
 			this.tabControlSelectionChangedAction = new ScheduledAction(this.OnTabControlSelectionChanged);
 
 			// restore window state
@@ -114,6 +156,18 @@ namespace CarinaStudio.ULogViewer
 
 			// reset latest version notified to user
 			this.PersistentState.ResetValue(AppUpdateDialog.LatestNotifiedVersionKey);
+		}
+
+
+		// Attach to active session.
+		void AttachToActiveSession(Session session)
+		{
+			if (this.attachedActiveSession == session)
+				return;
+			this.DetachFromActiveSession();
+			session.PropertyChanged += this.OnActiveSessionPropertyChanged;
+			this.attachedActiveSession = session;
+			this.updateSysTaskBarAction.Schedule();
 		}
 
 
@@ -137,6 +191,12 @@ namespace CarinaStudio.ULogViewer
 				this.tabControl.SelectedIndex = selectedIndex;
 			else
 				this.SelectActiveSessionIfNeeded();
+
+			// attach to active session
+			workspace.ActiveSession?.Let(it => this.AttachToActiveSession(it));
+
+			// update system taskbar
+			this.updateSysTaskBarAction.Schedule();
 		}
 
 
@@ -164,9 +224,23 @@ namespace CarinaStudio.ULogViewer
 		}
 
 
+		// Detach from active session
+		void DetachFromActiveSession()
+        {
+			if (this.attachedActiveSession == null)
+				return;
+			this.attachedActiveSession.PropertyChanged -= this.OnActiveSessionPropertyChanged;
+			this.attachedActiveSession = null;
+			this.updateSysTaskBarAction.Reschedule();
+        }
+
+
 		// Detach from workspace.
 		void DetachFronWorkspace(Workspace workspace)
 		{
+			// detach from active session
+			this.DetachFromActiveSession();
+
 			// remove event handlers
 			workspace.PropertyChanged -= this.OnWorkspacePropertyChanged;
 			((INotifyCollectionChanged)workspace.Sessions).CollectionChanged -= this.OnSessionsChanged;
@@ -177,6 +251,9 @@ namespace CarinaStudio.ULogViewer
 				this.DisposeSessionTabItem((TabItem)this.tabItems[i].AsNonNull());
 				this.tabItems.RemoveAt(i);
 			}
+
+			// update system taskbar
+			this.updateSysTaskBarAction.Execute();
 		}
 
 
@@ -245,6 +322,25 @@ namespace CarinaStudio.ULogViewer
 
 			// notify
 			new AppUpdateDialog().ShowDialog(this);
+		}
+
+
+		// Called when property of active session changed.
+		void OnActiveSessionPropertyChanged(object? sender, PropertyChangedEventArgs e)
+		{
+			switch (e.PropertyName)
+			{
+				case nameof(Session.LogsFilteringProgress):
+					this.updateSysTaskBarAction.Schedule(100);
+					break;
+				case nameof(Session.HasAllDataSourceErrors):
+				case nameof(Session.IsLogsReadingPaused):
+				case nameof(Session.IsProcessingLogs):
+				case nameof(Session.IsReadingLogs):
+				case nameof(Session.IsWaitingForDataSources):
+					this.updateSysTaskBarAction.Schedule();
+					break;
+			}
 		}
 
 
@@ -538,11 +634,18 @@ namespace CarinaStudio.ULogViewer
 				return;
 			if (e.PropertyName == nameof(Workspace.ActiveSession))
 			{
-				var index = (workspace.ActiveSession != null ? workspace.Sessions.IndexOf(workspace.ActiveSession) : -1);
+				var activeSession = workspace.ActiveSession;
+				var index = (activeSession != null ? workspace.Sessions.IndexOf(activeSession) : -1);
 				if (index >= 0)
+				{
 					this.tabControl.SelectedIndex = index;
+					this.AttachToActiveSession(activeSession.AsNonNull());
+				}
 				else
+				{
 					this.SynchronizationContext.Post(this.SelectActiveSessionIfNeeded);
+					this.DetachFromActiveSession();
+				}
 			}
 		}
 
