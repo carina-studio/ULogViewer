@@ -346,8 +346,6 @@
 	<!-- TextEditor -->
 	<Style Selector="ae|TextEditor">
 		<Setter Property="Background" Value="{DynamicResource TextControlBackgroundBrush}"/>
-		<Setter Property="BorderBrush" Value="{DynamicResource TextControlBorderBrush}"/>
-		<Setter Property="BorderThickness" Value="1"/>
 		<Setter Property="FontFamily" Value="{DynamicResource FontFamily.TextBox}"/>
 		<Setter Property="Padding" Value="{DynamicResource TextControlThemePadding}"/>
 	</Style>

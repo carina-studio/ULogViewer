@@ -157,6 +157,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Static fields.
+		static readonly AvaloniaProperty<bool> IsPropertyValueTextEditorFocusedProperty = AvaloniaProperty.Register<LogStringPropertyDialog, bool>(nameof(IsPropertyValueTextEditorFocused), false);
 		static readonly AvaloniaProperty<string> LogPropertyDisplayNameProperty = AvaloniaProperty.Register<LogStringPropertyDialog, string>(nameof(LogPropertyDisplayName), "");
 
 
@@ -189,6 +190,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				it.SyntaxHighlighting = this.highlightingDefinition;
 				it.TextArea.Let(textArea =>
 				{
+					textArea.GotFocus += (sender, e) => this.SetValue<bool>(IsPropertyValueTextEditorFocusedProperty, true);
+					textArea.LostFocus += (sender, e) => this.SetValue<bool>(IsPropertyValueTextEditorFocusedProperty, false);
 					textArea.Options.EnableEmailHyperlinks = false;
 					textArea.Options.EnableHyperlinks = false;
 					textArea.TextView.ElementGenerators.Add(new VisualLineElementGeneratorImpl(it));
@@ -196,11 +199,28 @@ namespace CarinaStudio.ULogViewer.Controls
 			});
 			this.visualLineElementGenerator = (VisualLineElementGeneratorImpl)this.propertyValueTextEditor.TextArea.TextView.ElementGenerators.First(it => it is VisualLineElementGeneratorImpl);
 			this.SetValue<string>(LogPropertyDisplayNameProperty, LogPropertyNameConverter.Default.Convert(nameof(Log.Message)));
+			this.ApplySystemAccentColor();
 		}
+
+
+		// Apply system accent color.
+		void ApplySystemAccentColor()
+        {
+			var app = (App)this.Application;
+			if (!app.IsSystemAccentColorSupported)
+				return;
+			if (!app.TryFindResource("SystemAccentColor", out var res) || res is not Color accentColor)
+				return;
+			this.Resources["Brush.TextArea.Selection.Background"] = new SolidColorBrush(Color.FromArgb(0x3f, accentColor.R, accentColor.G, accentColor.B));
+        }
 
 
 		// Initialize.
 		private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
+
+
+		// Check whether propertyValueTextEditor is focused or not.
+		bool IsPropertyValueTextEditorFocused { get => this.GetValue<bool>(IsPropertyValueTextEditorFocusedProperty); }
 
 
 		/// <summary>
@@ -265,8 +285,16 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// set text wrapping.
-		void SetTextWrapping(bool wrap)
+		// System accent color changed.
+        protected override void OnSystemAccentColorChanged()
+        {
+            base.OnSystemAccentColorChanged();
+			this.ApplySystemAccentColor();
+        }
+
+
+        // set text wrapping.
+        void SetTextWrapping(bool wrap)
 		{
 			if (this.propertyValueTextEditor == null)
 				return;

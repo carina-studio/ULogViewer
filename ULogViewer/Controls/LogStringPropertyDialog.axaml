@@ -2,23 +2,23 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-				xmlns:sys="using:System"
-				xmlns:ae="using:AvaloniaEdit"
-				xmlns:ia="using:Avalonia.Xaml.Interactivity"
-				xmlns:iaCore="using:Avalonia.Xaml.Interactions.Core"
-				xmlns:ma="using:Markdown.Avalonia"
-				xmlns:app="using:CarinaStudio.ULogViewer"
-				xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
-				xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
+        xmlns:sys="using:System"
+        xmlns:ae="using:AvaloniaEdit"
+        xmlns:ia="using:Avalonia.Xaml.Interactivity"
+        xmlns:iaCore="using:Avalonia.Xaml.Interactions.Core"
+        xmlns:ma="using:Markdown.Avalonia"
+        xmlns:app="using:CarinaStudio.ULogViewer"
+        xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
+        xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.LogStringPropertyDialog"
-				CanResize="True"
-				Classes="Dialog"
-				Height="{StaticResource Double.LogStringPropertyDialog.Height}"
-				MinHeight="{DynamicResource Double.LogStringPropertyDialog.MinHeight}"
-				MinWidth="{DynamicResource Double.LogStringPropertyDialog.MinWidth}"
+        CanResize="True"
+        Classes="Dialog"
+        Height="{StaticResource Double.LogStringPropertyDialog.Height}"
+        MinHeight="{DynamicResource Double.LogStringPropertyDialog.MinHeight}"
+        MinWidth="{DynamicResource Double.LogStringPropertyDialog.MinWidth}"
         Title="{DynamicResource String.LogStringPropertyDialog.Title}"
-				Width="{DynamicResource Double.LogStringPropertyDialog.Width}">
+        Width="{DynamicResource Double.LogStringPropertyDialog.Width}">
 
 	<DockPanel>
 
@@ -42,7 +42,12 @@
 
 			<!-- Property value -->
 			<TextBlock Classes="Dialog_Label" Grid.Row="1" Text="{Binding $parent[Window].LogPropertyDisplayName}"/>
-			<ae:TextEditor Name="propertyValueTextEditor" HorizontalAlignment="Stretch" IsReadOnly="True" HorizontalScrollBarVisibility="Disabled" Grid.Row="2" VerticalAlignment="Stretch"/>
+			<Panel Grid.Row="2" VerticalAlignment="Stretch">
+				<Border Background="{DynamicResource TextControlBackground}" BorderBrush="{DynamicResource TextControlBackground}" BorderThickness="{DynamicResource TextControlBorderThemeThicknessFocused}" CornerRadius="{DynamicResource ControlCornerRadius}" IsVisible="{Binding !#propertyValueTextEditor.IsPointerOver}"/>
+				<Border Background="{DynamicResource TextControlBackgroundPointerOver}" BorderBrush="{DynamicResource TextControlBackgroundPointerOver}" BorderThickness="{DynamicResource TextControlBorderThemeThicknessFocused}" CornerRadius="{DynamicResource ControlCornerRadius}" IsVisible="{Binding #propertyValueTextEditor.IsPointerOver}"/>
+				<Border Background="{DynamicResource TextControlBackgroundFocused}" BorderBrush="{DynamicResource TextControlBorderBrushFocused}" BorderThickness="{DynamicResource TextControlBorderThemeThicknessFocused}" CornerRadius="{DynamicResource ControlCornerRadius}" IsVisible="{Binding $parent[Window].IsPropertyValueTextEditorFocused}"/>
+				<ae:TextEditor Name="propertyValueTextEditor" HorizontalAlignment="Stretch" IsReadOnly="True" HorizontalScrollBarVisibility="Disabled"/>
+			</Panel>
 			<Separator Classes="Dialog_Separator_Horizontal" Grid.Row="3"/>
 
 			<!-- Wrap text -->
