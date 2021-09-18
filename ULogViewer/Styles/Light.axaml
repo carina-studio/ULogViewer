@@ -43,7 +43,10 @@
 			<SolidColorBrush x:Key="Brush.LogProfileSelectionDialog.Label.Border">#808080</SolidColorBrush>
 
 			<!-- MainWindow -->
-			<SolidColorBrush x:Key="Brush.MainWindow.TabControl.Background">#d0d0d0</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.MainWindow.Background">#7fd0d0d0</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.MainWindow.TabItem.Background">#d8d8d8</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.MainWindow.TabItem.Background.PointerOver">#e0e0e0</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.MainWindow.TabItem.Background.Selected">#eeeeee</SolidColorBrush>
 
 			<!-- Separator -->
 			<SolidColorBrush x:Key="Brush.Separator.Background">#4f000000</SolidColorBrush>

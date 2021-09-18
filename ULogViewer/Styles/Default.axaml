@@ -49,7 +49,10 @@
 			<SolidColorBrush x:Key="Brush.LogStringPropertyDialog.FoundText.Background">#3fff0000</SolidColorBrush>
 
 			<!-- MainWindow -->
-			<SolidColorBrush x:Key="Brush.MainWindow.TabControl.Background">#ffffff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.MainWindow.Background">#ffffff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.MainWindow.TabItem.Background">#ffffff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.MainWindow.TabItem.Background.PointerOver">#ffffff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.MainWindow.TabItem.Background.Selected">#ffffff</SolidColorBrush>
 
 			<!-- Separator -->
 			<SolidColorBrush x:Key="Brush.Separator.Background">#00000000</SolidColorBrush>
@@ -250,8 +253,10 @@
 
 	<!-- MainWindow -->
 	<Style Selector="Window.MainWindow">
-		<Setter Property="Background" Value="{DynamicResource Brush.Window.Background}"/>
+		<Setter Property="Background" Value="{DynamicResource Brush.MainWindow.Background}"/>
 		<Setter Property="Icon" Value="/AppIcon.ico"/>
+		<Setter Property="MinHeight" Value="{DynamicResource Double.MainWindow.MinHeight}"/>
+		<Setter Property="MinWidth" Value="{DynamicResource Double.MainWindow.MinWidth}"/>
 	</Style>
 
 	<!-- MenuItem -->

@@ -124,7 +124,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		internal protected virtual void OnDialogOpened(BaseDialog dialog)
 		{
 			this.dialogs.Add(dialog);
-			if (this.dialogs.Count == 1)
+			if (this.dialogs.Count == 1 && this.TransparencyLevelHint == WindowTransparencyLevel.None)
 			{
 				(this.Content as Control)?.Let(it => it.Opacity = 0.2);
 				this.SetValue<bool>(HasDialogsProperty, true);

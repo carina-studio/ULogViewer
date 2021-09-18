@@ -4,7 +4,6 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.Templates;
-using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.VisualTree;
 using CarinaStudio.Collections;
@@ -22,6 +21,7 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace CarinaStudio.ULogViewer
 {
@@ -31,6 +31,8 @@ namespace CarinaStudio.ULogViewer
 	partial class MainWindow : BaseWindow
 	{
 		// Static fields.
+		static readonly AvaloniaProperty<PlacementMode> SystemChromePlacementProperty = AvaloniaProperty.Register<MainWindow, PlacementMode>(nameof(SystemChromePlacement), PlacementMode.Right);
+		static readonly AvaloniaProperty<double> SystemChromeWidthProperty = AvaloniaProperty.Register<MainWindow, double>(nameof(SystemChromeWidth), 0);
 		static readonly SettingKey<int> WindowHeightSettingKey = new SettingKey<int>("MainWindow.Height", 600);
 		static readonly SettingKey<WindowState> WindowStateSettingKey = new SettingKey<WindowState>("MainWindow.State", WindowState.Maximized);
 		static readonly SettingKey<int> WindowWidthSettingKey = new SettingKey<int>("MainWindow.Width", 800);
@@ -39,6 +41,8 @@ namespace CarinaStudio.ULogViewer
 		// Constants.
 		const int ReAttachToWorkspaceDelay = 1000;
 		const int SaveWindowSizeDelay = 300;
+		const int SystemChromeWidthWindows10 = 315;
+		const int WindowEdgeSizeWindows10 = 12;
 
 
 		// Fields.
@@ -48,7 +52,9 @@ namespace CarinaStudio.ULogViewer
 		readonly ScheduledAction reAttachToWorkspaceAction;
 		readonly ScheduledAction saveWindowSizeAction;
 		readonly DataTemplate sessionTabItemHeaderTemplate;
+		readonly ScheduledAction updateContentPaddingAction;
 		readonly ScheduledAction updateSysTaskBarAction;
+		readonly ScheduledAction updateSysChromeSizeAction;
 		readonly TabControl tabControl;
 		readonly ScheduledAction tabControlSelectionChangedAction;
 		readonly IList tabItems;
@@ -59,6 +65,22 @@ namespace CarinaStudio.ULogViewer
 		/// </summary>
 		public MainWindow()
 		{
+			// extend to non-client area
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+				/*|| RuntimeInformation.IsOSPlatform(OSPlatform.OSX)*/)
+			{
+				this.ExtendClientAreaToDecorationsHint = true;
+				this.ExtendClientAreaTitleBarHeightHint = -1;
+				this.ExtendClientAreaChromeHints = ExtendClientAreaChromeHints.OSXThickTitleBar | ExtendClientAreaChromeHints.PreferSystemChrome;
+				this.TransparencyLevelHint = WindowTransparencyLevel.AcrylicBlur;
+				this.SetValue<PlacementMode>(SystemChromePlacementProperty, Global.Run(() =>
+				{
+					if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+						return PlacementMode.Left;
+					return PlacementMode.Right;
+				}));
+			}
+
 			// initialize.
 			InitializeComponent();
 
@@ -98,6 +120,33 @@ namespace CarinaStudio.ULogViewer
 				{
 					this.PersistentState.SetValue<int>(WindowWidthSettingKey, (int)(this.Width + 0.5));
 					this.PersistentState.SetValue<int>(WindowHeightSettingKey, (int)(this.Height + 0.5));
+				}
+			});
+			this.updateContentPaddingAction = new ScheduledAction(() =>
+			{
+				// check state
+				if (!this.IsOpened || !this.ExtendClientAreaToDecorationsHint)
+					return;
+
+				// update content padding
+				if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+				{
+					// [Workaround] Reserve edge for maximized case on Windows (https://github.com/AvaloniaUI/Avalonia/issues/5581)
+					var screen = this.Screens.ScreenFromVisual(this);
+					if (screen == null)
+						return;
+					var scale = screen.PixelDensity;
+					this.Padding = this.WindowState == WindowState.Maximized
+						? new Thickness(Math.Round(WindowEdgeSizeWindows10 / scale))
+						: new Thickness(0);
+				}
+
+				// update tab control margin
+				if (((App)this.Application).TryFindResource("Thickness.MainWindow.TabControl.Margin", out var res) && res is Thickness margin)
+				{
+					this.tabControl.Margin = this.WindowState == WindowState.Maximized
+						? new Thickness(margin.Left, 0, margin.Right, margin.Bottom)
+						: margin;
 				}
 			});
 			this.updateSysTaskBarAction = new ScheduledAction(() =>
@@ -144,6 +193,20 @@ namespace CarinaStudio.ULogViewer
 					TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.NoProgress);
 #endif
 			});
+			this.updateSysChromeSizeAction = new ScheduledAction(() =>
+			{
+				if (this.IsClosed || !this.ExtendClientAreaToDecorationsHint)
+					return;
+				this.SetValue<double>(SystemChromeWidthProperty, Global.Run(() =>
+				{
+					var screen = this.Screens.ScreenFromVisual(this);
+					if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+						return SystemChromeWidthWindows10 / screen.PixelDensity;
+					if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+						return 0.0;
+					return 0.0;
+				}));
+			});
 			this.tabControlSelectionChangedAction = new ScheduledAction(this.OnTabControlSelectionChanged);
 
 			// restore window state
@@ -163,6 +226,9 @@ namespace CarinaStudio.ULogViewer
 
 			// reset latest version notified to user
 			this.PersistentState.ResetValue(AppUpdateDialog.LatestNotifiedVersionKey);
+
+			// setup system chrome size
+			this.updateSysChromeSizeAction.Schedule();
 		}
 
 
@@ -385,8 +451,8 @@ namespace CarinaStudio.ULogViewer
 		}
 
 
-		// Called when drag enter.
-		void OnDragEnter(object? sender, DragEventArgs e)
+        // Called when drag enter.
+        void OnDragEnter(object? sender, DragEventArgs e)
 		{
 			if (!e.Handled)
 			{
@@ -521,6 +587,9 @@ namespace CarinaStudio.ULogViewer
 				this.NotifyAppUpdate();
 				this.SelectAndSetLogProfile();
 			}, 1000); // In order to show dialog at correct position on Linux, we need delay to make sure bounds of main window is set.
+
+			// update content padding
+			this.updateContentPaddingAction.Schedule();
 		}
 
 
@@ -540,6 +609,7 @@ namespace CarinaStudio.ULogViewer
 			{
 				if (this.WindowState != WindowState.Minimized)
 					this.PersistentState.SetValue<WindowState>(WindowStateSettingKey, this.WindowState);
+				this.updateContentPaddingAction.Schedule();
 			}
 		}
 
@@ -691,5 +761,13 @@ namespace CarinaStudio.ULogViewer
 				}
 			});
 		}
+
+
+		// Get placement of system chrome.
+		PlacementMode SystemChromePlacement { get => this.GetValue<PlacementMode>(SystemChromePlacementProperty); }
+
+
+		// Get width of system chrome on title bar.
+		double SystemChromeWidth { get => this.GetValue<double>(SystemChromeWidthProperty); }
 	}
 }
