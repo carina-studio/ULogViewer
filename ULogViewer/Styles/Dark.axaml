@@ -35,7 +35,7 @@
 			<SolidColorBrush x:Key="Brush.LogProfileSelectionDialog.Label.Border">#000000</SolidColorBrush>
 
 			<!-- MainWindow -->
-			<SolidColorBrush x:Key="Brush.MainWindow.Background">#7f0e0e0e</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.MainWindow.Background">#bf0e0e0e</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.MainWindow.TabItem.Background">#101010</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.MainWindow.TabItem.Background.PointerOver">#171717</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.MainWindow.TabItem.Background.Selected">#1e1e1e</SolidColorBrush>

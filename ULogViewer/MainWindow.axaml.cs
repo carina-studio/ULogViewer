@@ -41,8 +41,6 @@ namespace CarinaStudio.ULogViewer
 		// Constants.
 		const int ReAttachToWorkspaceDelay = 1000;
 		const int SaveWindowSizeDelay = 300;
-		const int SystemChromeWidthWindows10 = 315;
-		const int WindowEdgeSizeWindows10 = 12;
 
 
 		// Fields.
@@ -54,7 +52,6 @@ namespace CarinaStudio.ULogViewer
 		readonly DataTemplate sessionTabItemHeaderTemplate;
 		readonly ScheduledAction updateContentPaddingAction;
 		readonly ScheduledAction updateSysTaskBarAction;
-		readonly ScheduledAction updateSysChromeSizeAction;
 		readonly TabControl tabControl;
 		readonly ScheduledAction tabControlSelectionChangedAction;
 		readonly IList tabItems;
@@ -78,6 +75,16 @@ namespace CarinaStudio.ULogViewer
 					if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
 						return PlacementMode.Left;
 					return PlacementMode.Right;
+				}));
+				this.SetValue<double>(SystemChromeWidthProperty, Global.Run(() =>
+				{
+					App app = (App)this.Application;
+					if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+					{
+						if (app.TryFindResource("Double.MainWindow.SystemChromeWidth.Windows10", out var res) && res is double width)
+							return width;
+					}
+					return 0.0;
 				}));
 			}
 
@@ -132,13 +139,18 @@ namespace CarinaStudio.ULogViewer
 				if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 				{
 					// [Workaround] Reserve edge for maximized case on Windows (https://github.com/AvaloniaUI/Avalonia/issues/5581)
-					var screen = this.Screens.ScreenFromVisual(this);
-					if (screen == null)
-						return;
-					var scale = screen.PixelDensity;
-					this.Padding = this.WindowState == WindowState.Maximized
-						? new Thickness(Math.Round(WindowEdgeSizeWindows10 / scale))
-						: new Thickness(0);
+					this.Padding = Global.Run(() =>
+					{
+						if (this.WindowState != WindowState.Maximized)
+							return new Thickness(0);
+						App app = (App)this.Application;
+						if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+						{
+							if (app.TryFindResource("Thickness.MainWindow.Content.Padding.Maximized.Windows10", out var res) && res is Thickness padding)
+								return padding;
+						}
+						return new Thickness(0);
+					});
 				}
 
 				// update tab control margin
@@ -193,20 +205,6 @@ namespace CarinaStudio.ULogViewer
 					TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.NoProgress);
 #endif
 			});
-			this.updateSysChromeSizeAction = new ScheduledAction(() =>
-			{
-				if (this.IsClosed || !this.ExtendClientAreaToDecorationsHint)
-					return;
-				this.SetValue<double>(SystemChromeWidthProperty, Global.Run(() =>
-				{
-					var screen = this.Screens.ScreenFromVisual(this);
-					if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-						return SystemChromeWidthWindows10 / screen.PixelDensity;
-					if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-						return 0.0;
-					return 0.0;
-				}));
-			});
 			this.tabControlSelectionChangedAction = new ScheduledAction(this.OnTabControlSelectionChanged);
 
 			// restore window state
@@ -226,9 +224,6 @@ namespace CarinaStudio.ULogViewer
 
 			// reset latest version notified to user
 			this.PersistentState.ResetValue(AppUpdateDialog.LatestNotifiedVersionKey);
-
-			// setup system chrome size
-			this.updateSysChromeSizeAction.Schedule();
 		}
 
 

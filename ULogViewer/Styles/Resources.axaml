@@ -105,18 +105,21 @@
 	<CornerRadius x:Key="CornerRadius.MainWindow.TabItem">6,6,0,0</CornerRadius>
 	<sys:Double x:Key="Double.MainWindow.MinHeight">300</sys:Double>
 	<sys:Double x:Key="Double.MainWindow.MinWidth">500</sys:Double>
+	<sys:Double x:Key="Double.MainWindow.SystemChromeWidth.Windows10">140</sys:Double>
 	<sys:Double x:Key="Double.MainWindow.TabItem.AddButton.Size">30</sys:Double>
 	<sys:Double x:Key="Double.MainWindow.TabItem.CloseButton.Icon.Size">12</sys:Double>
+	<sys:Double x:Key="Double.MainWindow.TabItem.ColorIndicator.Size">3</sys:Double>
 	<sys:Double x:Key="Double.MainWindow.TabItem.FontSize">16</sys:Double>
 	<sys:Double x:Key="Double.MainWindow.TabItem.Icon.Size">16</sys:Double>
 	<sys:Double x:Key="Double.MainWindow.TabItem.Height">40</sys:Double>
 	<sys:Double x:Key="Double.MainWindow.TitleBar.ReservedSpace">20</sys:Double>
+	<Thickness x:Key="Thickness.MainWindow.Content.Padding.Maximized.Windows10">6</Thickness>
 	<Thickness x:Key="Thickness.MainWindow.TabControl.Margin">0,5,0,0</Thickness>
 	<Thickness x:Key="Thickness.MainWindow.TabControl.TabStrip.Margin">5,0,5,0</Thickness>
 	<Thickness x:Key="Thickness.MainWindow.TabItem.CloseButton.Margin">10,0,0,0</Thickness>
 	<Thickness x:Key="Thickness.MainWindow.TabItem.CloseButton.Padding">3</Thickness>
 	<Thickness x:Key="Thickness.MainWindow.TabItem.Icon.Margin">0,0,10,0</Thickness>
-	<Thickness x:Key="Thickness.MainWindow.TabItem.Margin">0,0,2,0</Thickness>
+	<Thickness x:Key="Thickness.MainWindow.TabItem.Margin">0,0,3,0</Thickness>
 	<Thickness x:Key="Thickness.MainWindow.TabItem.Padding">15,10,15,10</Thickness>
 
 	<!-- MenuItem -->

@@ -18,6 +18,8 @@
 				<Border Background="{DynamicResource Brush.MainWindow.TabItem.Background}" CornerRadius="{StaticResource CornerRadius.MainWindow.TabItem}"/>
 				<Border Background="{DynamicResource Brush.MainWindow.TabItem.Background.PointerOver}" CornerRadius="{StaticResource CornerRadius.MainWindow.TabItem}" IsVisible="{Binding $parent[TabItem].IsPointerOver}" Opacity="0.75"/>
 				<Border Background="{DynamicResource Brush.MainWindow.TabItem.Background.Selected}" CornerRadius="{StaticResource CornerRadius.MainWindow.TabItem}" IsVisible="{Binding $parent[TabItem].IsSelected}"/>
+				<Border Background="{DynamicResource SystemControlHighlightAltListAccentLowBrush}" CornerRadius="{StaticResource CornerRadius.MainWindow.TabItem}" Height="{StaticResource Double.MainWindow.TabItem.ColorIndicator.Size}" IsVisible="{Binding $parent[TabItem].IsPointerOver}" VerticalAlignment="Top"/>
+				<Border Background="{DynamicResource SystemControlBackgroundAccentBrush}" CornerRadius="{StaticResource CornerRadius.MainWindow.TabItem}" Height="{StaticResource Double.MainWindow.TabItem.ColorIndicator.Size}" IsVisible="{Binding $parent[TabItem].IsSelected}" VerticalAlignment="Top"/>
 				<Grid ColumnDefinitions="Auto,Auto,Auto" Margin="{StaticResource Thickness.MainWindow.TabItem.Padding}">
 					<Border Height="{StaticResource Double.MainWindow.TabItem.Icon.Size}" Margin="{StaticResource Thickness.MainWindow.TabItem.Icon.Margin}" VerticalAlignment="Center" Width="{StaticResource Double.MainWindow.TabItem.Icon.Size}">
 						<DrawingPresenter Classes="Icon" Drawing="{Binding Icon}"/>
@@ -54,6 +56,11 @@
 	<!-- Content -->
 	<TabControl Name="tabControl" Background="{x:Null}" Margin="{StaticResource Thickness.MainWindow.TabControl.Margin}" Padding="0,-2,0,0">
 
+		<!-- Resources -->
+		<TabControl.Resources>
+			<SolidColorBrush x:Key="TabItemHeaderSelectedPipeFill">#00000000</SolidColorBrush>
+		</TabControl.Resources>
+		
 		<!-- Template -->
 		<TabControl.Template>
 			<ControlTemplate>
@@ -106,7 +113,7 @@
 			<TabItem.Header>
 				<Panel Margin="{StaticResource Thickness.MainWindow.TabItem.Padding}">
 					<Border Name="background" Background="{DynamicResource Brush.MainWindow.TabItem.Background}" CornerRadius="{DynamicResource ControlCornerRadius}" DragDrop.AllowDrop="True" Height="{StaticResource Double.MainWindow.TabItem.AddButton.Size}" HorizontalAlignment="Center" ToolTip.Tip="{DynamicResource String.MainWindow.CreateSession}" VerticalAlignment="Center" Width="{StaticResource Double.MainWindow.TabItem.AddButton.Size}"/>
-					<DrawingPresenter Drawing="{DynamicResource Drawing.Add}" Height="{StaticResource Double.MainWindow.TabItem.Icon.Size}" HorizontalAlignment="Center" Opacity="0.7" Stretch="Uniform" VerticalAlignment="Center" Width="{StaticResource Double.MainWindow.TabItem.Icon.Size}">
+					<DrawingPresenter DragDrop.AllowDrop="True" Drawing="{DynamicResource Drawing.Add}" Height="{StaticResource Double.MainWindow.TabItem.Icon.Size}" HorizontalAlignment="Center" Opacity="0.7" Stretch="Uniform" VerticalAlignment="Center" Width="{StaticResource Double.MainWindow.TabItem.Icon.Size}">
 						<ia:Interaction.Behaviors>
 							<iaCore:DataTriggerBehavior Binding="{Binding #background.IsPointerOver}" Value="True">
 								<iaCore:ChangePropertyAction PropertyName="Opacity" Value="1"/>
