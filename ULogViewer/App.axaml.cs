@@ -297,8 +297,10 @@ namespace CarinaStudio.ULogViewer
 		public bool IsSystemAccentColorSupported { get; } = Global.Run(() =>
 		{
 #if WINDOWS_ONLY
+			/*
 			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 				return Environment.OSVersion.Version >= new Version(10, 0, 17763);
+			*/
 #endif
 			return false;
 		});
@@ -1047,42 +1049,41 @@ namespace CarinaStudio.ULogViewer
 				this.Styles.Add(this.styles);
 			this.stylesThemeMode = themeMode;
 
-			// update system accent color
-			if (this.Settings.GetValueOrDefault(Settings.UseSystemAccentColor))
+			// update accent color
+			if (this.Styles.TryGetResource("Color.Accent", out var res) && res is Color accentColor)
 			{
+				// create resource dictionary
 				if (this.systemAccentColorResources == null)
 					this.systemAccentColorResources = new ResourceDictionary();
-				this.GetSystemAccentColor()?.Let(sysAccentColor =>
-				{
-					// accent colors
-					var sysAccentColorDark1 = GammaTransform(sysAccentColor, 2.8);
-					var sysAccentColorLight1 = GammaTransform(sysAccentColor, 0.682);
-					this.systemAccentColorResources["SystemAccentColor"] = sysAccentColor;
-					this.systemAccentColorResources["SystemAccentColorDark1"] = sysAccentColorDark1;
-					this.systemAccentColorResources["SystemAccentColorDark2"] = GammaTransform(sysAccentColor, 4.56);
-					this.systemAccentColorResources["SystemAccentColorDark3"] = GammaTransform(sysAccentColor, 5.365);
-					this.systemAccentColorResources["SystemAccentColorLight1"] = sysAccentColorLight1;
-					this.systemAccentColorResources["SystemAccentColorLight2"] = GammaTransform(sysAccentColor, 0.431);
-					this.systemAccentColorResources["SystemAccentColorLight3"] = GammaTransform(sysAccentColor, 0.006);
 
-					// icon colors
-					this.systemAccentColorResources["Brush.Icon.Active"] = new SolidColorBrush(sysAccentColorLight1);
-					this.systemAccentColorResources["Brush.Icon.LogProfile"] = new SolidColorBrush(sysAccentColorLight1);
+				// accent colors
+				var sysAccentColorDark1 = GammaTransform(accentColor, 2.8);
+				var sysAccentColorLight1 = GammaTransform(accentColor, 0.682);
+				this.systemAccentColorResources["SystemAccentColor"] = accentColor;
+				this.systemAccentColorResources["SystemAccentColorDark1"] = sysAccentColorDark1;
+				this.systemAccentColorResources["SystemAccentColorDark2"] = GammaTransform(accentColor, 4.56);
+				this.systemAccentColorResources["SystemAccentColorDark3"] = GammaTransform(accentColor, 5.365);
+				this.systemAccentColorResources["SystemAccentColorLight1"] = sysAccentColorLight1;
+				this.systemAccentColorResources["SystemAccentColorLight2"] = GammaTransform(accentColor, 0.431);
+				this.systemAccentColorResources["SystemAccentColorLight3"] = GammaTransform(accentColor, 0.006);
 
-					// [Workaround] Brushes of ToggleButton
-					this.systemAccentColorResources["ToggleButtonBackgroundCheckedPointerOver"] = new SolidColorBrush(sysAccentColorDark1);
+				// icon colors
+				this.systemAccentColorResources["Brush.Icon.Active"] = new SolidColorBrush(sysAccentColorLight1);
+				this.systemAccentColorResources["Brush.Icon.LogProfile"] = new SolidColorBrush(sysAccentColorLight1);
 
-					// [Workaround] Brushes of ToggleSwitch
-					this.systemAccentColorResources["ToggleSwitchFillOnPointerOver"] = new SolidColorBrush(sysAccentColorLight1);
-					this.systemAccentColorResources["ToggleSwitchFillOnPressed"] = new SolidColorBrush(sysAccentColorDark1);
-					this.systemAccentColorResources["ToggleSwitchStrokeOnPointerOver"] = new SolidColorBrush(sysAccentColorLight1);
-					this.systemAccentColorResources["ToggleSwitchStrokeOnPressed"] = new SolidColorBrush(sysAccentColorDark1);
-				});
+				// [Workaround] Brushes of ToggleButton
+				this.systemAccentColorResources["ToggleButtonBackgroundCheckedPointerOver"] = new SolidColorBrush(sysAccentColorDark1);
+
+				// [Workaround] Brushes of ToggleSwitch
+				this.systemAccentColorResources["ToggleSwitchFillOnPointerOver"] = new SolidColorBrush(sysAccentColorLight1);
+				this.systemAccentColorResources["ToggleSwitchFillOnPressed"] = new SolidColorBrush(sysAccentColorDark1);
+				this.systemAccentColorResources["ToggleSwitchStrokeOnPointerOver"] = new SolidColorBrush(sysAccentColorLight1);
+				this.systemAccentColorResources["ToggleSwitchStrokeOnPressed"] = new SolidColorBrush(sysAccentColorDark1);
+
+				// add resources
 				if (!this.Resources.MergedDictionaries.Contains(this.systemAccentColorResources))
 					this.Resources.MergedDictionaries.Add(this.systemAccentColorResources);
 			}
-			else if (this.systemAccentColorResources != null)
-				this.Resources.MergedDictionaries.Remove(this.systemAccentColorResources);
 
 			// remove styles
 			if (stylesToRemove != null)

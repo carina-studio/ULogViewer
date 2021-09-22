@@ -12,6 +12,9 @@
 				<ResourceInclude Source="/Styles/Resources.axaml"/>
 			</ResourceDictionary.MergedDictionaries>
 
+			<!-- Accent -->
+			<Color x:Key="Color.Accent">#912fbf</Color>
+
 			<!-- Dialog -->
 			<SolidColorBrush x:Key="Brush.Dialog.Background">#ffffff</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.Dialog.ControlButtonsPanel.Background">#ffffff</SolidColorBrush>
@@ -68,7 +71,7 @@
 			<SolidColorBrush x:Key="Brush.SessionView.LogListBox.Item.Column.Border.PointerOver">#000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.SessionView.SidePanel.Background">#000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.SessionView.StatusBar.Background">#000000</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.SessionView.StatusBar.Background.Active">#007acc</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush.SessionView.StatusBar.Background.Active">#912fbf</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.SessionView.StatusBar.Background.Error">#ff3232</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.SessionView.StatusBar.Background.Paused">#000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush.SessionView.StatusBar.Background.Warning">#ca5100</SolidColorBrush>
