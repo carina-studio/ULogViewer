@@ -69,7 +69,6 @@ namespace CarinaStudio.ULogViewer
 				this.ExtendClientAreaToDecorationsHint = true;
 				this.ExtendClientAreaTitleBarHeightHint = -1;
 				this.ExtendClientAreaChromeHints = ExtendClientAreaChromeHints.OSXThickTitleBar | ExtendClientAreaChromeHints.PreferSystemChrome;
-				this.TransparencyLevelHint = WindowTransparencyLevel.AcrylicBlur;
 				this.SetValue<PlacementMode>(SystemChromePlacementProperty, Global.Run(() =>
 				{
 					if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
