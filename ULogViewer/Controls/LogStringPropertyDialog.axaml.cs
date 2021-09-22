@@ -207,8 +207,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		void ApplySystemAccentColor()
         {
 			var app = (App)this.Application;
-			if (!app.IsSystemAccentColorSupported)
-				return;
 			if (!app.TryFindResource("SystemAccentColor", out var res) || res is not Color accentColor)
 				return;
 			this.Resources["Brush.TextArea.Selection.Background"] = new SolidColorBrush(Color.FromArgb(0x3f, accentColor.R, accentColor.G, accentColor.B));
