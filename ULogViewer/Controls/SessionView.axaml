@@ -232,7 +232,7 @@
 			<Grid ColumnDefinitions="Auto,Auto,Auto,Auto,*,Auto" Grid.Column="1" HorizontalAlignment="Stretch" Margin="{StaticResource Thickness.SessionView.ToolBar.LogFilters.Padding}" VerticalAlignment="Stretch">
 
 				<!-- Level filter -->
-				<ComboBox Name="logLevelFilterComboBox" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" IsVisible="false" Items="{Binding $parent[UserControl].ValidLogLevels}" Margin="{StaticResource Thickness.SessionView.ToolBar.LogLevelFilter.Margin}" SelectionChanged="OnLogLevelFilterComboBoxSelectionChanged" VerticalAlignment="Center" Width="{StaticResource Double.SessionView.ToolBar.LogLevelFilter.Width}">
+				<ComboBox Name="logLevelFilterComboBox" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" IsVisible="false" Items="{Binding $parent[UserControl].ValidLogLevels}" Margin="{StaticResource Thickness.SessionView.ToolBar.LogLevelFilter.Margin}" SelectionChanged="OnLogLevelFilterComboBoxSelectionChanged" ToolTip.Tip="{DynamicResource String.SessionView.LogLevelFilter.Description}" VerticalAlignment="Center" Width="{StaticResource Double.SessionView.ToolBar.LogLevelFilter.Width}">
 					<ia:Interaction.Behaviors>
 						<iaCore:DataTriggerBehavior Binding="{Binding $parent[UserControl].ValidLogLevels.Count}" ComparisonCondition="GreaterThan" Value="1">
 							<iaCore:ChangePropertyAction PropertyName="IsVisible" Value="True"/>
@@ -252,10 +252,10 @@
 				</ComboBox>
 
 				<!-- PID filter -->
-				<TextBox Name="logProcessIdFilterTextBox" Grid.Column="1" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" IsVisible="False" PropertyChanged="OnLogFilterTextBoxPropertyChanged" Margin="{StaticResource Thickness.SessionView.ToolBar.LogProcessIdFilter.Margin}" VerticalAlignment="Center" Watermark="{DynamicResource String.LogProperty.ProcessId}" Width="{StaticResource Double.SessionView.ToolBar.LogProcessIdFilter.Width}"/>
+				<TextBox Name="logProcessIdFilterTextBox" Grid.Column="1" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" IsVisible="False" PropertyChanged="OnLogFilterTextBoxPropertyChanged" Margin="{StaticResource Thickness.SessionView.ToolBar.LogProcessIdFilter.Margin}" ToolTip.Tip="{DynamicResource String.SessionView.LogProcessIdFilter.Description}" VerticalAlignment="Center" Watermark="{DynamicResource String.LogProperty.ProcessId}" Width="{StaticResource Double.SessionView.ToolBar.LogProcessIdFilter.Width}"/>
 
 				<!-- TID filter -->
-				<TextBox Name="logThreadIdFilterTextBox" Grid.Column="2" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" IsVisible="False" PropertyChanged="OnLogFilterTextBoxPropertyChanged" Margin="{StaticResource Thickness.SessionView.ToolBar.LogProcessIdFilter.Margin}" VerticalAlignment="Center" Watermark="{DynamicResource String.LogProperty.ThreadId}" Width="{StaticResource Double.SessionView.ToolBar.LogProcessIdFilter.Width}"/>
+				<TextBox Name="logThreadIdFilterTextBox" Grid.Column="2" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" IsVisible="False" PropertyChanged="OnLogFilterTextBoxPropertyChanged" Margin="{StaticResource Thickness.SessionView.ToolBar.LogProcessIdFilter.Margin}" ToolTip.Tip="{DynamicResource String.SessionView.LogThreadIdFilter.Description}" VerticalAlignment="Center" Watermark="{DynamicResource String.LogProperty.ThreadId}" Width="{StaticResource Double.SessionView.ToolBar.LogProcessIdFilter.Width}"/>
 
 				<!-- Filters combinatin mode -->
 				<Button Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].SwitchLogFiltersCombinationModeCommand}" Grid.Column="3" IsVisible="{Binding $parent[UserControl].CanFilterLogsByNonTextFilters}" ToolTip.Tip="{DynamicResource String.SessionView.LogFiltersCombinationMode}">
@@ -274,7 +274,7 @@
 				</Button>
 				
 				<!-- Text filter -->
-				<appControls:RegexTextBox Name="logTextFilterTextBox" Classes="RegexTextBox_InvalidText" Grid.Column="4" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" Margin="{StaticResource Thickness.SessionView.ToolBar.LogTextFilter.Margin}" PropertyChanged="OnLogFilterTextBoxPropertyChanged" VerticalAlignment="Center" Watermark="{DynamicResource String.SessionView.LogTextFilterHint}"/>
+				<appControls:RegexTextBox Name="logTextFilterTextBox" Classes="RegexTextBox_InvalidText" Grid.Column="4" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" Margin="{StaticResource Thickness.SessionView.ToolBar.LogTextFilter.Margin}" PropertyChanged="OnLogFilterTextBoxPropertyChanged" ToolTip.Tip="{DynamicResource String.SessionView.LogTextFilter.ToolTip}" VerticalAlignment="Center" Watermark="{DynamicResource String.SessionView.LogTextFilter.Watermark}"/>
 
 				<!-- Filter actions -->
 				<StackPanel Grid.Column="5" Orientation="Horizontal">

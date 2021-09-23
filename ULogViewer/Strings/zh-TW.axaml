@@ -355,8 +355,12 @@
 	<sys:String x:Key="String.SessionView.LastLogsFilteringDuration">篩選耗時：</sys:String>
 	<sys:String x:Key="String.SessionView.LastLogsReadingDuration">讀取耗時：</sys:String>
 	<sys:String x:Key="String.SessionView.LogFiltersCombinationMode">篩選條件運算方式</sys:String>
+	<sys:String x:Key="String.SessionView.LogLevelFilter.Description">使用等級篩選日誌</sys:String>
+	<sys:String x:Key="String.SessionView.LogProcessIdFilter.Description">使用處理程序 (Process ID) 篩選日誌</sys:String>
 	<sys:String x:Key="String.SessionView.LogsFilteringProgress">篩選日誌中…</sys:String>
-	<sys:String x:Key="String.SessionView.LogTextFilterHint">文字篩選 (正規表示式，使用 \$\$ 表示文字屬性分隔線)</sys:String>
+	<StaticResource x:Key="String.SessionView.LogTextFilter.ToolTip" ResourceKey="String.PredefinedLogTextFilterEditorDialog.Regex.Description"/>
+	<sys:String x:Key="String.SessionView.LogTextFilter.Watermark">文字篩選 (正規表示式，使用 \$\$ 表示文字屬性分隔線)</sys:String>
+	<sys:String x:Key="String.SessionView.LogThreadIdFilter.Description">使用執行緒 (Thread ID) 篩選日誌</sys:String>
 	<sys:String x:Key="String.SessionView.MarkedLogs">已標記日誌</sys:String>
 	<sys:String x:Key="String.SessionView.MarkUnmarkLogs">標記/解除標記日誌</sys:String>
 	<sys:String x:Key="String.SessionView.MemoryUsage">私有記憶體使用量</sys:String>
