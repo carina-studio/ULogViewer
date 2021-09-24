@@ -465,6 +465,18 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.logTextFilterTextBox.Regex = session.LogTextFilter;
 			this.logThreadIdFilterTextBox.Text = session.LogThreadIdFilter?.ToString() ?? "";
 			this.logLevelFilterComboBox.SelectedItem = session.LogLevelFilter;
+			if (session.PredefinedLogTextFilters.IsNotEmpty())
+			{
+				this.SynchronizationContext.Post(() =>
+				{
+					foreach (var textFilter in session.PredefinedLogTextFilters)
+					{
+						this.predefinedLogTextFilterListBox.SelectedItems.Add(textFilter);
+						this.selectedPredefinedLogTextFilters.Add(textFilter);
+					}
+					this.updateLogFiltersAction.Cancel();
+				});
+			}
 			this.updateLogFiltersAction.Cancel();
 
 			// update properties
