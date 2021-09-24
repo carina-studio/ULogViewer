@@ -366,7 +366,7 @@
 	<sys:String x:Key="String.SessionView.Hint.SelectLogProfile.Section2">on toolbar to select log profile to start</sys:String>
 	<sys:String x:Key="String.SessionView.LastLogsFilteringDuration">Filtering cost: </sys:String>
 	<sys:String x:Key="String.SessionView.LastLogsReadingDuration">Reading cost: </sys:String>
-	<sys:String x:Key="String.SessionView.LogFiltersCombinationMode">Way to combine conditions</sys:String>
+	<sys:String x:Key="String.SessionView.LogFiltersCombinationMode">Way to combine conditions (Intersect/Union)</sys:String>
 	<sys:String x:Key="String.SessionView.LogLevelFilter.Description">Use level filter logs</sys:String>
 	<sys:String x:Key="String.SessionView.LogProcessIdFilter.Description">Use Process ID to filter logs</sys:String>
 	<sys:String x:Key="String.SessionView.LogsFilteringProgress">Filtering logs…</sys:String>

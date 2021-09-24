@@ -354,7 +354,7 @@
 	<sys:String x:Key="String.SessionView.Hint.SelectLogProfile.Section2">來選取日誌類型以開始使用</sys:String>
 	<sys:String x:Key="String.SessionView.LastLogsFilteringDuration">篩選耗時：</sys:String>
 	<sys:String x:Key="String.SessionView.LastLogsReadingDuration">讀取耗時：</sys:String>
-	<sys:String x:Key="String.SessionView.LogFiltersCombinationMode">篩選條件運算方式</sys:String>
+	<sys:String x:Key="String.SessionView.LogFiltersCombinationMode">篩選條件運算方式 (交集/聯集)</sys:String>
 	<sys:String x:Key="String.SessionView.LogLevelFilter.Description">使用等級篩選日誌</sys:String>
 	<sys:String x:Key="String.SessionView.LogProcessIdFilter.Description">使用處理程序 (Process ID) 篩選日誌</sys:String>
 	<sys:String x:Key="String.SessionView.LogsFilteringProgress">篩選日誌中…</sys:String>
