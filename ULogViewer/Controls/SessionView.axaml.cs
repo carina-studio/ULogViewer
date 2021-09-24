@@ -1771,11 +1771,8 @@ namespace CarinaStudio.ULogViewer.Controls
 							}
 							break;
 						case Avalonia.Input.Key.F5:
-							if (e.Source is not TextBox)
-							{
-								(this.DataContext as Session)?.ReloadLogsCommand?.TryExecute();
-								e.Handled = true;
-							}
+							(this.DataContext as Session)?.ReloadLogsCommand?.TryExecute();
+							e.Handled = true;
 							break;
 						case Avalonia.Input.Key.Home:
 							if (e.Source is not TextBox)
