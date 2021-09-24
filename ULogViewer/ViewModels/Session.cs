@@ -450,10 +450,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					}
 					bool wasReadingLogs = this.IsReadingLogs;
 					this.SetValue(IsReadingLogsProperty, false);
-					if(this.logsReadingWatch.IsRunning)
+					if (this.logsReadingWatch.IsRunning)
 					{
 						this.logsReadingWatch.Stop();
-						this.SetValue(LastLogsReadingDurationProperty, TimeSpan.FromMilliseconds(this.logsReadingWatch.ElapsedMilliseconds));
+						if (this.LogProfile?.IsContinuousReading != true)
+							this.SetValue(LastLogsReadingDurationProperty, TimeSpan.FromMilliseconds(this.logsReadingWatch.ElapsedMilliseconds));
 					}
 					if (wasReadingLogs && this.Settings.GetValueOrDefault(ULogViewer.Settings.SaveMemoryAggressively))
 					{
