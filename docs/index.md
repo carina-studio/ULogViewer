@@ -1,8 +1,8 @@
-[![Download](https://img.shields.io/github/v/release/carina-studio/ULogViewer?include_prereleases&style=for-the-badge&color=blue&logo=Windows&label=Windows)](https://github.com/carina-studio/ULogViewer/releases/download/0.25.1.923/ULogViewer-0.25.1.923-win-x64.zip)
-[![Download](https://img.shields.io/github/v/release/carina-studio/ULogViewer?include_prereleases&style=for-the-badge&color=blueviolet&logo=Apple&label=macOS)](https://github.com/carina-studio/ULogViewer/releases/download/0.25.1.923/ULogViewer-0.25.1.923-osx-x64.zip)
-[![Download](https://img.shields.io/github/v/release/carina-studio/ULogViewer?include_prereleases&style=for-the-badge&color=orange&logo=Linux&logoColor=ffffff&label=Linux)](https://github.com/carina-studio/ULogViewer/releases/download/0.25.1.923/ULogViewer-0.25.1.923-linux-x64.zip)
+[![Download](https://img.shields.io/github/v/release/carina-studio/ULogViewer?include_prereleases&style=for-the-badge&color=blue&logo=Windows&label=Windows)](https://github.com/carina-studio/ULogViewer/releases/download/0.25.2.925/ULogViewer-0.25.2.925-win-x64.zip)
+[![Download](https://img.shields.io/github/v/release/carina-studio/ULogViewer?include_prereleases&style=for-the-badge&color=blueviolet&logo=Apple&label=macOS)](https://github.com/carina-studio/ULogViewer/releases/download/0.25.2.925/ULogViewer-0.25.2.925-osx-x64.zip)
+[![Download](https://img.shields.io/github/v/release/carina-studio/ULogViewer?include_prereleases&style=for-the-badge&color=orange&logo=Linux&logoColor=ffffff&label=Linux)](https://github.com/carina-studio/ULogViewer/releases/download/0.25.2.925/ULogViewer-0.25.2.925-linux-x64.zip)
 
-[![](https://img.shields.io/github/release-date-pre/carina-studio/ULogViewer?style=flat-square)](https://github.com/carina-studio/ULogViewer/releases/tag/0.25.1.923)
+[![](https://img.shields.io/github/release-date-pre/carina-studio/ULogViewer?style=flat-square)](https://github.com/carina-studio/ULogViewer/releases/tag/0.25.2.925)
 [![](https://img.shields.io/github/last-commit/carina-studio/ULogViewer?style=flat-square)](https://github.com/carina-studio/ULogViewer/commits/master)
 [![](https://img.shields.io/github/license/carina-studio/ULogViewer?style=flat-square)](https://github.com/carina-studio/ULogViewer/blob/master/LICENSE)
 
