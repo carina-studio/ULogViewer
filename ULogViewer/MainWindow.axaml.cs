@@ -189,11 +189,13 @@ namespace CarinaStudio.ULogViewer
 				{
 					if (session.IsReadingLogs)
 						TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Indeterminate);
-					else
+					else if (double.IsFinite(session.LogsFilteringProgress))
 					{
 						TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Normal);
 						TaskbarManager.Instance.SetProgressValue((int)(session.LogsFilteringProgress * 100 + 0.5), 100);
 					}
+					else
+						TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.NoProgress);
 				}
 				else if (session.IsLogsReadingPaused || session.IsWaitingForDataSources)
 				{

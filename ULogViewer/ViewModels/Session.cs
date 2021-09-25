@@ -1515,6 +1515,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					{
 						log.IsMarked = true;
 						this.markedLogs.Add(log);
+						this.logFilter.InvalidateLog(log);
 					}
 					this.unmatchedMarkedLogInfos.RemoveAt(i);
 				}

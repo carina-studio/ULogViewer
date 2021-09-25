@@ -57,6 +57,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		Logs.LogLevel level = Logs.LogLevel.Undefined;
 		readonly int maxFilteringConcurrencyLevel = Math.Min(4, Environment.ProcessorCount);
 		int? processId;
+		readonly List<byte> sourceLogVersions;
 		readonly ScheduledAction startFilteringLogsAction;
 		IList<Regex> textRegexList = new Regex[0];
 		int? threadId;
@@ -83,6 +84,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			// create lists
 			this.filteredLogs = new SortedObservableList<DisplayableLog>(comparison);
+			this.sourceLogVersions = sourceLogs.Count.Let(it =>
+			{
+				return new List<byte>(new byte[it]);
+			});
 			this.unfilteredLogs = new SortedObservableList<DisplayableLog>(comparison.Invert());
 
 			// setup properties
@@ -214,7 +219,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		// Filter chunk of logs.
-		void FilterChunk(FilteringParams filteringParams, int chunkId, IList<DisplayableLog> logs)
+		void FilterChunk(FilteringParams filteringParams, int chunkId, IList<DisplayableLog> logs, IList<byte> logVersions)
 		{
 			// check state
 			if (this.currentFilterParams != filteringParams)
@@ -222,6 +227,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// filter logs
 			var filteredLogs = new List<DisplayableLog>();
+			var filteredLogVersions = new List<byte>();
 			var combinationMode = filteringParams.CombinationMode;
 			var includeMarkLogs = filteringParams.IncludeMarkedLogs;
 			var level = filteringParams.Level;
@@ -236,9 +242,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			{
 				// check marking state
 				var log = logs[i];
+				var logVersion = logVersions[i];
 				if (includeMarkLogs && log.IsMarked)
 				{
 					filteredLogs.Add(log);
+					filteredLogVersions.Add(logVersion);
 					continue;
 				}
 
@@ -266,6 +274,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				if (isTextRegexMatched && isTextFilteringNeeded && combinationMode == FilterCombinationMode.Union)
 				{
 					filteredLogs.Add(log);
+					filteredLogVersions.Add(logVersion);
 					continue;
 				}
 
@@ -282,7 +291,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				if (areOtherConditionsMatched)
 				{
 					if (!isTextFilteringNeeded || isTextRegexMatched || combinationMode == FilterCombinationMode.Union)
+					{
 						filteredLogs.Add(log);
+						filteredLogVersions.Add(logVersion);
+					}
 				}
 			}
 
@@ -295,7 +307,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						return;
 					if (filteringParams.CompletedChunkId == chunkId - 1)
 					{
-						this.SynchronizationContext.Post(() => this.OnChunkFiltered(filteringParams, chunkId, filteredLogs));
+						this.SynchronizationContext.Post(() => this.OnChunkFiltered(filteringParams, chunkId, filteredLogs, filteredLogVersions));
 						return;
 					}
 					Monitor.Wait(filteringParams.FilteringChunkLock);
@@ -351,8 +363,43 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					return array;
 				}
 			});
+			var logVersions = new byte[logs.Length].Also(it =>
+			{
+				var sourceLogs = this.SourceLogs;
+				var sourceLogVersions = this.sourceLogVersions;
+				var comparer = this.unfilteredLogs.Comparer;
+				var logCount = it.Length;
+				var unfilteredIndex = 0;
+				var sourceIndex = sourceLogs.IndexOf(logs[0]);
+				while (sourceIndex < 0 && unfilteredIndex < logCount - 1)
+					sourceIndex = sourceLogs.IndexOf(logs[++unfilteredIndex]);
+				if (unfilteredIndex < logCount && sourceIndex >= 0)
+				{
+					while (true)
+					{
+						it[unfilteredIndex++] = sourceLogVersions[sourceIndex--];
+						if (unfilteredIndex >= logCount || sourceIndex < 0)
+							break;
+						var comparisonResult = comparer.Compare(logs[unfilteredIndex], sourceLogs[sourceIndex]);
+						if (comparisonResult == 0)
+							continue;
+						if (comparisonResult < 0)
+                        {
+							++unfilteredIndex;
+							if (unfilteredIndex >= logCount)
+								break;
+                        }
+						else
+                        {
+							--sourceIndex;
+							if (sourceIndex < 0)
+								break;
+                        }
+					}
+				}
+			});
 			++filteringParams.ConcurrencyLevel;
-			this.filteringTaskFactory.StartNew(() => this.FilterChunk(filteringParams, chunkId, logs));
+			this.filteringTaskFactory.StartNew(() => this.FilterChunk(filteringParams, chunkId, logs, logVersions));
 		}
 
 
@@ -371,6 +418,75 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.includeMarkedLogs = value;
 				this.startFilteringLogsAction.Schedule();
 				this.OnPropertyChanged(nameof(IncludeMarkedLogs));
+			}
+		}
+
+
+		/// <summary>
+		/// Notify that given log was updated and should be filtered again.
+		/// </summary>
+		/// <param name="log">Log to be filtered again.</param>
+		public void InvalidateLog(DisplayableLog log)
+		{
+			// check state
+			this.VerifyAccess();
+			this.VerifyDisposed();
+			if (this.currentFilterParams == null)
+				return;
+			if (this.unfilteredLogs.Contains(log))
+				return;
+
+			// check source version
+			var sourceIndex = this.SourceLogs.IndexOf(log);
+			if (sourceIndex < 0)
+				return;
+
+			// enqueue logs to unfiltered logs
+			++this.sourceLogVersions[sourceIndex];
+			this.unfilteredLogs.Add(log);
+			this.filteredLogs.Remove(log);
+
+			// start filtering
+			this.FilterNextChunk(this.currentFilterParams);
+		}
+
+
+		/// <summary>
+		/// Notify that given logs were updated and should be filtered again.
+		/// </summary>
+		/// <param name="logs">Logs to be filtered again.</param>
+		public void InvalidateLogs(IEnumerable<DisplayableLog> logs)
+		{
+			// check state
+			this.VerifyAccess();
+			this.VerifyDisposed();
+			if (this.currentFilterParams == null)
+				return;
+
+			// enqueue logs to unfiltered logs
+			var needToFilter = false;
+			var sourceLogs = this.SourceLogs;
+			var sourceLogVersions = this.sourceLogVersions;
+			foreach (var log in logs)
+			{
+				if (!this.unfilteredLogs.Contains(log))
+				{
+					var sourceIndex = sourceLogs.IndexOf(log);
+					if (sourceIndex >= 0)
+					{
+						++sourceLogVersions[sourceIndex];
+						this.unfilteredLogs.Add(log);
+						this.filteredLogs.Remove(log);
+						needToFilter = true;
+					}
+				}
+			}
+
+			// start filtering
+			if (needToFilter)
+			{
+				for (var i = this.maxFilteringConcurrencyLevel; i > 0; --i)
+					this.FilterNextChunk(this.currentFilterParams);
 			}
 		}
 
@@ -423,7 +539,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		// Called when chunk of logs filtered.
-		void OnChunkFiltered(FilteringParams filteringParams, int chunkId, IList<DisplayableLog> filteredLogs)
+		void OnChunkFiltered(FilteringParams filteringParams, int chunkId, IList<DisplayableLog> filteredLogs, IList<byte> logVersions)
 		{
 			// unlock next chunk
 			lock (filteringParams.FilteringChunkLock)
@@ -444,15 +560,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// add filtered logs
 			if (filteredLogs.IsNotEmpty())
 			{
-				// remove logs which are not contained in source log list
+				// remove logs which are not contained in source log list or out dated
 				var sourceIndex = -1;
 				var sourceLogs = this.SourceLogs;
+				var sourceLogVersions = this.sourceLogVersions;
 				var filteredIndex = filteredLogs.Count - 1;
 				var comparer = this.filteredLogs.Comparer;
 				while (filteredIndex >= 0)
 				{
 					sourceIndex = sourceLogs.IndexOf(filteredLogs[filteredIndex]);
-					if (sourceIndex >= 0)
+					if (sourceIndex >= 0 && sourceLogVersions[sourceIndex] == logVersions[filteredIndex])
 					{
 						--sourceIndex;
 						--filteredIndex;
@@ -465,8 +582,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					var result = comparer.Compare(sourceLogs[sourceIndex], filteredLogs[filteredIndex]);
 					if (result == 0)
 					{
+						if (sourceLogVersions[sourceIndex] == logVersions[filteredIndex])
+							--filteredIndex;
+						else
+							filteredLogs.RemoveAt(filteredIndex--);
 						--sourceIndex;
-						--filteredIndex;
 					}
 					else if (result > 0)
 						--sourceIndex;
@@ -492,9 +612,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		// Called when source logs changed.
 		void OnSourceLogsChanged(object? sender, NotifyCollectionChangedEventArgs e)
 		{
-			switch(e.Action)
+			switch (e.Action)
 			{
 				case NotifyCollectionChangedAction.Add:
+					this.sourceLogVersions.InsertRange(e.NewStartingIndex, new byte[e.NewItems?.Count ?? 0]);
 					if (this.currentFilterParams != null)
 					{
 						this.unfilteredLogs.AddAll(e.NewItems.AsNonNull().Cast<DisplayableLog>().Reverse(), true);
@@ -505,11 +626,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				case NotifyCollectionChangedAction.Remove:
 					{
 						var removedLogs = e.OldItems.AsNonNull().Cast<DisplayableLog>();
+						this.sourceLogVersions.RemoveRange(e.OldStartingIndex, e.OldItems?.Count ?? 0);
 						this.unfilteredLogs.RemoveAll(removedLogs.Reverse(), true);
 						this.filteredLogs.RemoveAll(removedLogs, true);
 					}
 					break;
 				case NotifyCollectionChangedAction.Reset:
+					this.sourceLogVersions.Clear();
+					this.sourceLogVersions.AddRange(new byte[this.SourceLogs.Count]);
 					this.startFilteringLogsAction.Schedule();
 					break;
 				default:
