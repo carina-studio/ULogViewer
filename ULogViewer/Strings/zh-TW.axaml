@@ -389,6 +389,7 @@
 	<sys:String x:Key="String.SessionView.ShowLogProperty.Disabled">檢視日誌屬性…</sys:String>
 	<sys:String x:Key="String.SessionView.ShowWorkingDirectoryInExplorer">在檔案總管中開啟工作目錄</sys:String>
 	<sys:String x:Key="String.SessionView.TooManyDirectoryPathsDropped">請拖放單一目錄。</sys:String>
+	<sys:String x:Key="String.SessionView.UIResponseDuration">使用者介面回應時間</sys:String>
 	<sys:String x:Key="String.SessionView.ViewFullLogMessage">檢視更多…</sys:String>
 	<sys:String x:Key="String.SessionView.WaitingForDataSources">正在等待資料來源…</sys:String>
 
@@ -420,6 +421,7 @@
 	<!-- TimeSpanConverter -->
 	<sys:String x:Key="String.TimeSpanConverter.Days">{0} 天 {1} 小時 {2} 分 {3}.{4:000} 秒</sys:String>
 	<sys:String x:Key="String.TimeSpanConverter.Hours">{0} 小時 {1} 分 {2}.{3:000} 秒</sys:String>
+	<sys:String x:Key="String.TimeSpanConverter.Milliseconds">{0} 毫秒</sys:String>
 	<sys:String x:Key="String.TimeSpanConverter.Minutes">{0} 分 {1}.{2:000} 秒</sys:String>
 	<sys:String x:Key="String.TimeSpanConverter.Seconds">{0}.{1:000} 秒</sys:String>
 

@@ -74,6 +74,7 @@ namespace CarinaStudio.ULogViewer
 		ThemeMode? stylesThemeMode;
 		volatile SynchronizationContext? synchronizationContext;
 		ResourceDictionary? systemAccentColorResources;
+		Thread? uiResponseCheckingThread;
 		AppUpdateInfo? updateInfo;
 		ScheduledAction? updateProcessInfoAction;
 #if WINDOWS_ONLY
@@ -580,6 +581,18 @@ namespace CarinaStudio.ULogViewer
 			// start checking update
 			_ = this.CheckUpdateInfoAsync();
 
+			// start check UI response
+			if (this.IsDebugMode)
+			{
+				this.uiResponseCheckingThread = new Thread(this.UIResponseCheckingThreadEntry).Also(it =>
+				{
+					it.IsBackground = true;
+					it.Name = "UI response checking thread";
+					it.Start();
+				});
+				this.UIResponseDuration = TimeSpan.Zero;
+			}
+
 			// show main window
 			this.synchronizationContext.Post(this.ShowMainWindow);
 		}
@@ -852,6 +865,71 @@ namespace CarinaStudio.ULogViewer
 		/// Raised when system accent color changed.
 		/// </summary>
 		public event EventHandler? SystemAccentColorChanged;
+
+
+		// Entry of UI response checking thread.
+		void UIResponseCheckingThreadEntry()
+        {
+			var stopWatch = new Stopwatch().Also(it => it.Start());
+			var checkingId = 1L;
+			var totalDuration = 0L;
+			var checkingCount = 0;
+			var lastReportTime = 0L;
+			var syncLock = new object();
+			while (true)
+			{
+				// check response duration
+				var pingTime = stopWatch.ElapsedMilliseconds;
+				var duration = 0L;
+				lock (syncLock)
+				{
+					var localCheckingId = checkingId;
+					this.SynchronizationContext.Post(() =>
+					{
+						duration = stopWatch.ElapsedMilliseconds - pingTime;
+						lock (syncLock)
+						{
+							if (localCheckingId == checkingId)
+								Monitor.Pulse(syncLock);
+						}
+					});
+					if (!Monitor.Wait(syncLock, 1000))
+					{
+						this.logger.LogError("UI is not responding");
+						totalDuration = 0;
+						checkingCount = 0;
+						++checkingId;
+						continue;
+					}
+					totalDuration += duration;
+					++checkingCount;
+					++checkingId;
+				}
+				Thread.Sleep(200);
+
+				// report later
+				if ((stopWatch.ElapsedMilliseconds - lastReportTime) < 1000)
+					continue;
+
+				// report respone duration
+				var responseDuration = (totalDuration / checkingCount);
+				totalDuration = 0;
+				checkingCount = 0;
+				lastReportTime = stopWatch.ElapsedMilliseconds;
+				this.logger.LogTrace($"UI response duration: {responseDuration} ms");
+				this.SynchronizationContext.Post(() =>
+				{
+					this.UIResponseDuration = TimeSpan.FromMilliseconds(responseDuration);
+					this.propertyChangedHandlers?.Invoke(this, new PropertyChangedEventArgs(nameof(UIResponseDuration)));
+				});
+			}
+        }
+
+
+		/// <summary>
+		/// Get current duration of UI response.
+		/// </summary>
+		public TimeSpan? UIResponseDuration { get; private set; }
 
 
 		// Update culture info according to current culture info and settings.

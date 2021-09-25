@@ -593,6 +593,19 @@
 				<!-- Process info -->
 				<StackPanel Grid.Column="10" IsVisible="{Binding $parent[UserControl].IsProcessInfoVisible}" Orientation="Horizontal">
 					<Separator Classes="SessionView_StatusBar_Separator"/>
+					<StackPanel IsVisible="{Binding $parent[UserControl].Application.IsDebugMode, Mode=OneTime}" Orientation="Horizontal">
+						<Border Classes="SessionView_StatusBar_Icon" ToolTip.Tip="{DynamicResource String.SessionView.CpuUsage}">
+							<DrawingPresenter Classes="Icon">
+								<DrawingPresenter.Drawing>
+									<GeometryDrawing Brush="{DynamicResource Brush.SessionView.StatusBar.Foreground}" Geometry="{StaticResource Geometry.Speed}"/>
+								</DrawingPresenter.Drawing>
+							</DrawingPresenter>
+						</Border>
+						<Panel VerticalAlignment="Center">
+							<TextBlock Text="000 ms   " Opacity="0" VerticalAlignment="Center"/>
+							<TextBlock Background="{x:Static Brushes.Transparent}" HorizontalAlignment="Left" VerticalAlignment="Center" Text="{Binding $parent[UserControl].Application.UIResponseDuration, Converter={x:Static appConverters:TimeSpanConverter.Default}}" ToolTip.Tip="{DynamicResource String.SessionView.UIResponseDuration}"/>
+						</Panel>
+					</StackPanel>
 					<Border Classes="SessionView_StatusBar_Icon" ToolTip.Tip="{DynamicResource String.SessionView.CpuUsage}">
 						<DrawingPresenter Classes="Icon">
 							<DrawingPresenter.Drawing>

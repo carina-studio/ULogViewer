@@ -401,6 +401,7 @@
 	<sys:String x:Key="String.SessionView.ShowLogProperty.Disabled">View log property…</sys:String>
 	<sys:String x:Key="String.SessionView.ShowWorkingDirectoryInExplorer">Show working directory in Windows File Explorer</sys:String>
 	<sys:String x:Key="String.SessionView.TooManyDirectoryPathsDropped">Please drag and drop single directory.</sys:String>
+	<sys:String x:Key="String.SessionView.UIResponseDuration">User interface response time</sys:String>
 	<sys:String x:Key="String.SessionView.ViewFullLogMessage">View more…</sys:String>
 	<sys:String x:Key="String.SessionView.WaitingForDataSources">Waiting for data source…</sys:String>
 
@@ -430,10 +431,11 @@
 	<sys:String x:Key="String.ThemeMode.Light">Light</sys:String>
 
 	<!-- TimeSpanConverter -->
-	<sys:String x:Key="String.TimeSpanConverter.Days">{0} d. {1} hr. {2} min. {3}.{4} sec.</sys:String>
-	<sys:String x:Key="String.TimeSpanConverter.Hours">{0} hr. {1} min. {2}.{3} sec.</sys:String>
-	<sys:String x:Key="String.TimeSpanConverter.Minutes">{0} min. {1}.{2} sec.</sys:String>
-	<sys:String x:Key="String.TimeSpanConverter.Seconds">{0}.{1} sec.</sys:String>
+	<sys:String x:Key="String.TimeSpanConverter.Days">{0} d {1} hr {2} min {3}.{4} sec</sys:String>
+	<sys:String x:Key="String.TimeSpanConverter.Hours">{0} hr {1} min {2}.{3} sec</sys:String>
+	<sys:String x:Key="String.TimeSpanConverter.Milliseconds">{0} ms</sys:String>
+	<sys:String x:Key="String.TimeSpanConverter.Minutes">{0} min {1}.{2} sec</sys:String>
+	<sys:String x:Key="String.TimeSpanConverter.Seconds">{0}.{1} sec</sys:String>
 
 	<!-- VisibleLogPropertyEditorDialog -->
 	<sys:String x:Key="String.VisibleLogPropertyEditorDialog.CustomDisplayName">Custom display name</sys:String>

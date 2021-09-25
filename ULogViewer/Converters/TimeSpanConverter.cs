@@ -34,7 +34,9 @@ namespace CarinaStudio.ULogViewer.Converters
 					return this.app.GetFormattedString("TimeSpanConverter.Hours", timeSpan.Hours, timeSpan.Minutes, timeSpan.Seconds, timeSpan.Milliseconds);
 				if (timeSpan.Minutes > 0)
 					return this.app.GetFormattedString("TimeSpanConverter.Minutes", timeSpan.Minutes, timeSpan.Seconds, timeSpan.Milliseconds);
-				return this.app.GetFormattedString("TimeSpanConverter.Seconds", timeSpan.Seconds, timeSpan.Milliseconds);
+				if (timeSpan.Seconds > 0)
+					return this.app.GetFormattedString("TimeSpanConverter.Seconds", timeSpan.Seconds, timeSpan.Milliseconds);
+				return this.app.GetFormattedString("TimeSpanConverter.Milliseconds", timeSpan.Milliseconds);
 			}
 			return null;
 		}
