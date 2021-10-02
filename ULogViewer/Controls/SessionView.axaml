@@ -217,7 +217,7 @@
 				<Separator Classes="SessionView_ToolBar_Separator"/>
 
 				<!-- Reload logs -->
-				<Button Classes="SessionView_ToolBar_Button" Command="{Binding ReloadLogsCommand}" ToolTip.Tip="{DynamicResource String.SessionView.ReloadLogs}">
+				<Button Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].ReloadLogsCommand}" ToolTip.Tip="{DynamicResource String.SessionView.ReloadLogs}">
 					<Border Classes="SessionView_ToolBar_Button_Icon">
 						<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Refresh}"/>
 					</Border>

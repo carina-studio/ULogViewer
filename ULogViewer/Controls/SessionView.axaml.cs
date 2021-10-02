@@ -94,6 +94,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly MutableObservableBoolean canFilterLogsByPid = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canFilterLogsByTid = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canMarkUnmarkSelectedLogs = new MutableObservableBoolean();
+		readonly MutableObservableBoolean canReloadLogs = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canRestartAsAdmin = new MutableObservableBoolean(RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && !App.Current.IsRunningAsAdministrator);
 		readonly MutableObservableBoolean canSaveLogs = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSelectMarkedLogs = new MutableObservableBoolean();
@@ -151,6 +152,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.FilterLogsByProcessIdCommand = new Command<bool>(this.FilterLogsByProcessId, this.canFilterLogsByPid);
 			this.FilterLogsByThreadIdCommand = new Command<bool>(this.FilterLogsByThreadId, this.canFilterLogsByTid);
 			this.MarkUnmarkSelectedLogsCommand = new Command(this.MarkUnmarkSelectedLogs, this.canMarkUnmarkSelectedLogs);
+			this.ReloadLogsCommand = new Command(this.ReloadLogs, this.canReloadLogs);
 			this.ResetLogFiltersCommand = new Command(this.ResetLogFilters, this.GetObservable<bool>(HasLogProfileProperty));
 			this.RestartAsAdministratorCommand = new Command(this.RestartAsAdministrator, this.canRestartAsAdmin);
 			this.SaveAllLogsCommand = new Command(() => this.SaveLogs(true), this.canSaveLogs);
@@ -418,6 +420,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			// attach to command
 			session.AddLogFileCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
 			session.MarkUnmarkLogsCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
+			session.ReloadLogsCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
 			session.ResetLogProfileCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
 			session.SaveLogsCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
 			session.SetLogProfileCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
@@ -434,6 +437,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			else
 				this.canAddLogFiles.Update(false);
 			this.canMarkUnmarkSelectedLogs.Update(session.MarkUnmarkLogsCommand.CanExecute(null));
+			this.canReloadLogs.Update(session.ReloadLogsCommand.CanExecute(null));
 			this.canSaveLogs.Update(session.SaveLogsCommand.CanExecute(null));
 			this.canSetLogProfile.Update(session.ResetLogProfileCommand.CanExecute(null) || session.SetLogProfileCommand.CanExecute(null));
 			this.canSelectMarkedLogs.Update(session.HasMarkedLogs);
@@ -941,12 +945,14 @@ namespace CarinaStudio.ULogViewer.Controls
 			// detach from commands
 			session.AddLogFileCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
 			session.MarkUnmarkLogsCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
+			session.ReloadLogsCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
 			session.SaveLogsCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
 			session.SetLogProfileCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
 			session.SetLogProfileCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
 			session.SetWorkingDirectoryCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
 			this.canAddLogFiles.Update(false);
 			this.canMarkUnmarkSelectedLogs.Update(false);
+			this.canReloadLogs.Update(false);
 			this.canSaveLogs.Update(false);
 			this.canSelectMarkedLogs.Update(false);
 			this.canSetLogProfile.Update(false);
@@ -1948,6 +1954,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			else if (sender == session.MarkUnmarkLogsCommand)
 				this.canMarkUnmarkSelectedLogs.Update(this.logListBox.SelectedItems.Count > 0 && session.MarkUnmarkLogsCommand.CanExecute(null));
+			else if (sender == session.ReloadLogsCommand)
+				this.canReloadLogs.Update(session.ReloadLogsCommand.CanExecute(null));
 			else if (sender == session.ResetLogProfileCommand || sender == session.SetLogProfileCommand)
 				this.canSetLogProfile.Update(session.ResetLogProfileCommand.CanExecute(null) || session.SetLogProfileCommand.CanExecute(null));
 			else if (sender == session.SaveLogsCommand)
@@ -2075,6 +2083,35 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Sorted predefined log text filters.
 		IList<PredefinedLogTextFilter> PredefinedLogTextFilters { get => this.predefinedLogTextFilters; }
+
+
+		// Reload logs.
+		void ReloadLogs()
+        {
+			// check state
+			this.VerifyAccess();
+			if (!this.canReloadLogs.Value)
+				return;
+			if (this.DataContext is not Session session)
+				return;
+
+			// reload logs
+			if (!session.ReloadLogsCommand.TryExecute())
+				return;
+
+			// scroll to latest log
+			if (session.LogProfile?.IsContinuousReading == true
+				&& !this.IsScrollingToLatestLogNeeded
+				&& this.Settings.GetValueOrDefault(Settings.EnableScrollingToLatestLogAfterReloadingLogs))
+			{
+				this.Logger.LogDebug("Enable scrolling to latest log after reloading logs");
+				this.IsScrollingToLatestLogNeeded = true;
+			}
+        }
+
+
+		// Command to reload logs.
+		ICommand ReloadLogsCommand { get; }
 
 
 		// Remove given predefined log text filter.

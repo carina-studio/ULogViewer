@@ -100,6 +100,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Enable scrolling to latest log automatically after reloading logs.
+		/// </summary>
+		public bool EnableScrollingToLatestLogAfterReloadingLogs
+		{
+			get => this.Settings.GetValueOrDefault(ULogViewer.Settings.EnableScrollingToLatestLogAfterReloadingLogs);
+			set => this.Settings.SetValue<bool>(ULogViewer.Settings.EnableScrollingToLatestLogAfterReloadingLogs, value);
+		}
+
+
+		/// <summary>
 		/// Get or set whether case of text filter can be ignored or not.
 		/// </summary>
 		public bool IgnoreCaseOfLogTextFilter
@@ -216,6 +226,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.OnPropertyChanged(nameof(ContinuousLogReadingUpdateInterval));
 			else if (key == ULogViewer.Settings.Culture)
 				this.OnPropertyChanged(nameof(Culture));
+			else if (key == ULogViewer.Settings.EnableScrollingToLatestLogAfterReloadingLogs)
+				this.OnPropertyChanged(nameof(EnableScrollingToLatestLogAfterReloadingLogs));
 			else if (key == ULogViewer.Settings.IgnoreCaseOfLogTextFilter)
 				this.OnPropertyChanged(nameof(IgnoreCaseOfLogTextFilter));
 			else if (key == ULogViewer.Settings.InitialLogProfile)

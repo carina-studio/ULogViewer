@@ -117,6 +117,12 @@
 				<ToggleSwitch IsChecked="{Binding SelectWorkingDirectoryWhenNeeded, Mode=TwoWay}"/>
 				<Separator Classes="Dialog_Separator_Horizontal"/>
 
+				<!-- Enable scrolling to latest logs automatically -->
+				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs}"/>
+				<ToggleSwitch IsChecked="{Binding EnableScrollingToLatestLogAfterReloadingLogs, Mode=TwoWay}"/>
+				<TextBlock Classes="Dialog_Description" Text="{DynamicResource String.AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs.Description}"/>
+				<Separator Classes="Dialog_Separator_Horizontal"/>
+
 				<!-- Max log count -->
 				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.AppOptionsDialog.MaxContinuousLogCount}"/>
 				<NumericUpDown HorizontalAlignment="Stretch" Maximum="10000000" Minimum="10000" Value="{Binding MaxContinuousLogCount, Mode=TwoWay}"/>

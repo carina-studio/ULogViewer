@@ -19,6 +19,10 @@ namespace CarinaStudio.ULogViewer
 		/// </summary>
 		public static readonly SettingKey<AppCulture> Culture = new SettingKey<AppCulture>(nameof(Culture), AppCulture.System);
 		/// <summary>
+		/// Enable scrolling to latest log automatically after reloading logs.
+		/// </summary>
+		public static readonly SettingKey<bool> EnableScrollingToLatestLogAfterReloadingLogs = new SettingKey<bool>(nameof(EnableScrollingToLatestLogAfterReloadingLogs), true);
+		/// <summary>
 		/// Ignore case of log text filter.
 		/// </summary>
 		public static readonly SettingKey<bool> IgnoreCaseOfLogTextFilter = new SettingKey<bool>(nameof(IgnoreCaseOfLogTextFilter), true);
