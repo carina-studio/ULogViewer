@@ -461,7 +461,7 @@ namespace CarinaStudio.ULogViewer
 			desktopLifetime.ShutdownMode = Avalonia.Controls.ShutdownMode.OnExplicitShutdown;
 
 			// setup culture info
-			this.UpdateCultureInfo();
+			this.UpdateCultureInfo(false);
 
 			// load strings
 			if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
@@ -614,7 +614,7 @@ namespace CarinaStudio.ULogViewer
 		void OnSettingChanged(object? sender, SettingChangedEventArgs e)
 		{
 			if (e.Key == Settings.Culture)
-				this.UpdateCultureInfo();
+				this.UpdateCultureInfo(true);
 			else if (e.Key == Settings.ThemeMode
 				|| e.Key == Settings.UseSystemAccentColor)
 			{
@@ -638,7 +638,7 @@ namespace CarinaStudio.ULogViewer
 
 			// update culture info
 			if (this.Settings.GetValueOrDefault(Settings.Culture) == AppCulture.System)
-				this.UpdateCultureInfo();
+				this.UpdateCultureInfo(true);
 		}
 
 
@@ -900,7 +900,7 @@ namespace CarinaStudio.ULogViewer
 
 
 		// Update culture info according to current culture info and settings.
-		void UpdateCultureInfo()
+		void UpdateCultureInfo(bool updateStringResources)
 		{
 			// select culture info
 			var cultureInfo = this.Settings.GetValueOrDefault(Settings.Culture).Let(it =>
@@ -941,7 +941,8 @@ namespace CarinaStudio.ULogViewer
 			this.propertyChangedHandlers?.Invoke(this, new PropertyChangedEventArgs(nameof(CultureInfo)));
 
 			// update string resources
-			this.UpdateStringResources();
+			if (updateStringResources)
+				this.UpdateStringResources();
 		}
 
 
