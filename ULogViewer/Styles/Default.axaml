@@ -263,11 +263,11 @@
 	</Style>
 
 	<!-- MenuItem -->
-	<Style Selector="DrawingPresenter.MenuItem_Icon">
+	<Style Selector="Border.MenuItem_Icon">
 		<Setter Property="Height" Value="{DynamicResource Double.MenuItem.Icon.Size}"/>
 		<Setter Property="Width" Value="{DynamicResource Double.MenuItem.Icon.Size}"/>
 	</Style>
-	<Style Selector="DrawingPresenter.MenuItem_Icon:disabled">
+	<Style Selector="Border.MenuItem_Icon:disabled">
 		<Setter Property="Opacity" Value="0.3"/>
 	</Style>
 

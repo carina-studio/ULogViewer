@@ -31,13 +31,17 @@
 		<ContextMenu x:Key="logActionMenu">
 			<MenuItem Name="showLogPropertyMenuItem" Command="{Binding $parent[UserControl].ShowLogStringPropertyCommand}" Header="{DynamicResource String.SessionView.ShowLogProperty.Disabled}">
 				<MenuItem.Icon>
-					<DrawingPresenter Classes="MenuItem_Icon" Drawing="{DynamicResource Drawing.Details}"/>
+					<Border Classes="MenuItem_Icon">
+						<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing.Details}"/>
+					</Border>
 				</MenuItem.Icon>
 			</MenuItem>
 			<Separator/>
 			<MenuItem Command="{Binding $parent[UserControl].MarkUnmarkSelectedLogsCommand}" Header="{DynamicResource String.SessionView.MarkUnmarkLogs}" InputGesture="M">
 				<MenuItem.Icon>
-					<DrawingPresenter Classes="MenuItem_Icon" Drawing="{DynamicResource Drawing.Pin}"/>
+					<Border Classes="MenuItem_Icon">
+						<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing.Pin}"/>
+					</Border>
 				</MenuItem.Icon>
 			</MenuItem>
 			<MenuItem Command="{Binding $parent[UserControl].SelectMarkedLogsCommand}" Header="{DynamicResource String.SessionView.SelectMarkedLogs}" InputGesture="S"/>
@@ -45,12 +49,16 @@
 			<MenuItem Name="copyLogPropertyMenuItem" Command="{Binding $parent[UserControl].CopyLogPropertyCommand}" Header="{DynamicResource String.SessionView.CopyLogProperty.Disabled}"/>
 			<MenuItem Command="{Binding $parent[UserControl].CopySelectedLogsCommand}" Header="{DynamicResource String.SessionView.CopyLogs}" InputGesture="Ctrl+C">
 				<MenuItem.Icon>
-					<DrawingPresenter Classes="MenuItem_Icon" Drawing="{DynamicResource Drawing.Copy}"/>
+					<Border Classes="MenuItem_Icon">
+						<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing.Copy}"/>
+					</Border>
 				</MenuItem.Icon>
 			</MenuItem>
 			<MenuItem Command="{Binding $parent[UserControl].CopySelectedLogsWithFileNamesCommand}" Header="{DynamicResource String.SessionView.CopyLogsWithFileNames}" InputGesture="Ctrl+Shift+C">
 				<MenuItem.Icon>
-					<DrawingPresenter Classes="MenuItem_Icon" Drawing="{DynamicResource Drawing.Copy}"/>
+					<Border Classes="MenuItem_Icon">
+						<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing.Copy}"/>
+					</Border>
 				</MenuItem.Icon>
 			</MenuItem>
 			<Separator/>
@@ -59,7 +67,9 @@
 					<sys:Boolean>False</sys:Boolean>
 				</MenuItem.CommandParameter>
 				<MenuItem.Icon>
-					<DrawingPresenter Classes="MenuItem_Icon" Drawing="{DynamicResource Drawing.Filter}"/>
+					<Border Classes="MenuItem_Icon">
+						<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing.Filter}"/>
+					</Border>
 				</MenuItem.Icon>
 			</MenuItem>
 			<MenuItem Command="{Binding $parent[UserControl].FilterLogsByProcessIdCommand}" Header="{DynamicResource String.SessionView.FilterLogsBySelectedProcessIdOnly}">
@@ -67,7 +77,9 @@
 					<sys:Boolean>True</sys:Boolean>
 				</MenuItem.CommandParameter>
 				<MenuItem.Icon>
-					<DrawingPresenter Classes="MenuItem_Icon" Drawing="{DynamicResource Drawing.Filter}"/>
+					<Border Classes="MenuItem_Icon">
+						<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing.Filter}"/>
+					</Border>
 				</MenuItem.Icon>
 			</MenuItem>
 			<MenuItem Command="{Binding $parent[UserControl].FilterLogsByThreadIdCommand}" Header="{DynamicResource String.SessionView.FilterLogsBySelectedThreadId}">
@@ -75,7 +87,9 @@
 					<sys:Boolean>False</sys:Boolean>
 				</MenuItem.CommandParameter>
 				<MenuItem.Icon>
-					<DrawingPresenter Classes="MenuItem_Icon" Drawing="{DynamicResource Drawing.Filter}"/>
+					<Border Classes="MenuItem_Icon">
+						<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing.Filter}"/>
+					</Border>
 				</MenuItem.Icon>
 			</MenuItem>
 			<MenuItem Command="{Binding $parent[UserControl].FilterLogsByThreadIdCommand}" Header="{DynamicResource String.SessionView.FilterLogsBySelectedThreadIdOnly}">
@@ -83,13 +97,17 @@
 					<sys:Boolean>True</sys:Boolean>
 				</MenuItem.CommandParameter>
 				<MenuItem.Icon>
-					<DrawingPresenter Classes="MenuItem_Icon" Drawing="{DynamicResource Drawing.Filter}"/>
+					<Border Classes="MenuItem_Icon">
+						<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing.Filter}"/>
+					</Border>
 				</MenuItem.Icon>
 			</MenuItem>
 			<Separator/>
 			<MenuItem Command="{Binding $parent[UserControl].ShowFileInExplorerCommand}" Header="{DynamicResource String.SessionView.ShowFileInExplorer}">
 				<MenuItem.Icon>
-					<DrawingPresenter Classes="MenuItem_Icon" Drawing="{DynamicResource Drawing.FileManager}"/>
+					<Border Classes="MenuItem_Icon">
+						<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing.FileManager}"/>
+					</Border>
 				</MenuItem.Icon>
 			</MenuItem>
 		</ContextMenu>
@@ -98,17 +116,23 @@
 		<ContextMenu x:Key="otherActionsMenu" PlacementMode="Bottom">
 			<MenuItem Command="{Binding $parent[UserControl].ShowAppOptions}" Header="{DynamicResource String.SessionView.AppOptions}">
 				<MenuItem.Icon>
-					<DrawingPresenter Classes="MenuItem_Icon" Drawing="{DynamicResource Drawing.Settings}"/>
+					<Border Classes="MenuItem_Icon">
+						<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing.Settings}"/>
+					</Border>
 				</MenuItem.Icon>
 			</MenuItem>
 			<MenuItem Command="{Binding $parent[UserControl].CheckForAppUpdate}" Header="{DynamicResource String.SessionView.CheckForAppUpdate}">
 				<MenuItem.Icon>
-					<DrawingPresenter Classes="MenuItem_Icon" Drawing="{DynamicResource Drawing.Update}"/>
+					<Border Classes="MenuItem_Icon">
+						<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing.Update}"/>
+					</Border>
 				</MenuItem.Icon>
 			</MenuItem>
 			<MenuItem Command="{Binding $parent[UserControl].RestartAsAdministratorCommand}" Header="{DynamicResource String.SessionView.RestartAsAdministrator}">
 				<MenuItem.Icon>
-					<DrawingPresenter Classes="MenuItem_Icon" Drawing="{DynamicResource Drawing.Administrator}"/>
+					<Border Classes="MenuItem_Icon">
+						<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing.Administrator}"/>
+					</Border>
 				</MenuItem.Icon>
 			</MenuItem>
 			<Separator/>
