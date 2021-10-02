@@ -25,7 +25,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -449,7 +448,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			else
 				this.canSetWorkingDirectory.Update(false);
-			this.canShowWorkingDirectoryInExplorer.Update(this.IsOpeningExplorerSupported && session.HasWorkingDirectory);
+			this.canShowWorkingDirectoryInExplorer.Update(Platform.IsOpeningFileManagerSupported && session.HasWorkingDirectory);
 
 			// start auto scrolling
 			session.LogProfile?.Let(profile =>
@@ -1206,26 +1205,6 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Initialize Avalonia components.
 		private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
-
-
-		// Check whether opening system file explorer is supported or not.
-		bool IsOpeningExplorerSupported { get; } = Global.Run(() =>
-		{
-			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-				return true;
-			if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-				return true;
-			if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-			{
-				return App.Current.LinuxDistribution switch
-				{
-					LinuxDistribution.Fedora
-					or LinuxDistribution.Ubuntu => true,
-					_ => false,
-				};
-			}
-			return false;
-		});
 
 
 		// Check whether process info should be shown or not.
@@ -2015,7 +1994,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.canSelectMarkedLogs.Update(session.HasMarkedLogs);
 					break;
 				case nameof(Session.HasWorkingDirectory):
-					this.canShowWorkingDirectoryInExplorer.Update(this.IsOpeningExplorerSupported && session.HasWorkingDirectory);
+					this.canShowWorkingDirectoryInExplorer.Update(Platform.IsOpeningFileManagerSupported && session.HasWorkingDirectory);
 					break;
 				case nameof(Session.IsActivated):
 					if (!session.IsActivated)
@@ -2438,70 +2417,17 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// show in system file explorer
 			if (filePath != null)
-				this.ShowFileSystemItemInExplorer(filePath, false);
+				Platform.OpenFileManager(filePath);
 			else if (dirPathSet.IsNotEmpty())
 			{
 				foreach (var path in dirPathSet)
-					this.ShowFileSystemItemInExplorer(path, true);
+					Platform.OpenFileManager(path);
 			}
 		}
 
 
 		// Command to show file in system file explorer.
 		ICommand ShowFileInExplorerCommand { get; }
-
-
-		// Show file system item in system file explorer.
-		void ShowFileSystemItemInExplorer(string path, bool isDirectory)
-		{
-			using var process = new Process();
-			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-			{
-				process.StartInfo.Let(it =>
-				{
-					it.FileName = "Explorer";
-					it.Arguments = isDirectory
-						? $"\"{path}\""
-						: $"/select, \"{path}\"";
-				});
-			}
-			else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-			{
-				process.StartInfo.Let(it =>
-				{
-					it.Arguments = isDirectory
-						? $"\"{path}\""
-						: $"-R \"{path}\"";
-					it.Verb = "open";
-				});
-			}
-			else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-			{
-				switch (App.Current.LinuxDistribution)
-				{
-					case LinuxDistribution.Fedora:
-					case LinuxDistribution.Ubuntu:
-						process.StartInfo.Let(it =>
-						{
-							it.FileName = "nautilus";
-							it.Arguments = $"--browser \"{path}\"";
-						});
-						break;
-					default:
-						return;
-				}
-			}
-			else
-				return;
-			try
-			{
-				process.Start();
-			}
-			catch (Exception ex)
-			{
-				this.Logger.LogError(ex, "Unable to open system file explorer");
-			}
-		}
 
 
 		// Show full log string property.
@@ -2569,7 +2495,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 
 			// open system file explorer
-			this.ShowFileSystemItemInExplorer(workingDirectory, true);
+			Platform.OpenFileManager(workingDirectory);
 		}
 
 

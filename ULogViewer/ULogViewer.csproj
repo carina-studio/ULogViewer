@@ -57,10 +57,10 @@
     <PackageReference Include="Avalonia.AvaloniaEdit" Version="0.10.4" />
     <PackageReference Include="Avalonia.Desktop" Version="0.10.7" />
     <PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.10.7.1" />
-    <PackageReference Include="CarinaStudio.AppBase.Application" Version="0.25.0.914" />
-    <PackageReference Include="CarinaStudio.AppBase.AutoUpdate" Version="0.25.0.914" />
-    <PackageReference Include="CarinaStudio.AppBase.Configuration" Version="0.25.0.914" />
-    <PackageReference Include="CarinaStudio.AppBase.Core" Version="0.25.0.914" />
+    <PackageReference Include="CarinaStudio.AppBase.Application" Version="0.27.1.930" />
+    <PackageReference Include="CarinaStudio.AppBase.AutoUpdate" Version="0.27.1.930" />
+    <PackageReference Include="CarinaStudio.AppBase.Configuration" Version="0.27.1.930" />
+    <PackageReference Include="CarinaStudio.AppBase.Core" Version="0.27.1.930" />
     <PackageReference Condition="'$(Configuration)'=='Debug-Windows'" Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
     <PackageReference Condition="'$(Configuration)'=='Release-Windows'" Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
     <PackageReference Include="Microsoft.Win32.SystemEvents" Version="5.0.0" />

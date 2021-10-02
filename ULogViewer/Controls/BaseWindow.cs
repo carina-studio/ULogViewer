@@ -8,8 +8,6 @@ using CarinaStudio.Threading;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
 using System.Threading;
 
 namespace CarinaStudio.ULogViewer.Controls
@@ -191,27 +189,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// Open given <see cref="Uri"/> by default browser.
 		/// </summary>
 		/// <param name="uri"><see cref="Uri"/> to open.</param>
-		protected void OpenLink(Uri uri)
-		{
-			try
-			{
-				if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-				{
-					Process.Start(new ProcessStartInfo("cmd", $"/c start {uri}")
-					{
-						CreateNoWindow = true
-					});
-				}
-				else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-					Process.Start("xdg-open", uri.ToString());
-				else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-					Process.Start("open", uri.ToString());
-			}
-			catch (Exception ex)
-			{
-				this.Logger.LogError(ex, $"Unable to open link: {uri}");
-			}
-		}
+		protected void OpenLink(Uri uri) => Platform.OpenLink(uri);
 
 
 		/// <summary>

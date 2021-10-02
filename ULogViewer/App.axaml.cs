@@ -124,9 +124,9 @@ namespace CarinaStudio.ULogViewer
 			}
 			if (this.IsRunningAsAdministrator)
 				this.logger.LogWarning("Application is running as administrator/superuser");
-			
+
 			// check Linux distribution
-			this.CheckLinuxDistribution();
+			this.logger.LogDebug($"Linux distribution: {Platform.LinuxDistribution}");
 		}
 
 
@@ -138,33 +138,6 @@ namespace CarinaStudio.ULogViewer
 				if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
 					it.With(new X11PlatformOptions());
 			});
-		
-
-		// Check Linux distribution.
-		void CheckLinuxDistribution()
-		{
-			if (!RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-				return;
-			try
-			{
-				using var reader = new StreamReader("/proc/version", Encoding.UTF8);
-				this.LinuxDistribution = reader.ReadLine()?.Let(data =>
-				{
-					if (data.Contains("(Debian"))
-						return LinuxDistribution.Debian;
-					if (data.Contains("(Fedora"))
-						return LinuxDistribution.Fedora;
-					if (data.Contains("(Ubuntu"))
-						return LinuxDistribution.Ubuntu;
-					return LinuxDistribution.Unknown;
-				}) ?? LinuxDistribution.Unknown;
-				this.logger.LogDebug($"Linux distribution: {this.LinuxDistribution}");
-			}
-			catch (Exception ex)
-			{
-				this.logger.LogError(ex, "Failed to check Linux distribution");
-			}
-		}
 
 
 		/// <summary>
@@ -305,12 +278,6 @@ namespace CarinaStudio.ULogViewer
 #endif
 			return false;
 		});
-
-
-		/// <summary>
-		/// Get Linux distribution on current running environment.
-		/// </summary>
-		public LinuxDistribution LinuxDistribution { get; private set; }
 
 
 		/// <summary>
