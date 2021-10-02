@@ -662,8 +662,11 @@ namespace CarinaStudio.ULogViewer
 			{
 				var session = workspace.CreateSession();
 				workspace.ActiveSession = session;
-				if (this.Settings.GetValueOrDefault(Settings.SelectLogProfileForNewSession))
-					this.FindSessionView(session)?.SelectAndSetLogProfile();
+				this.SynchronizationContext.PostDelayed(() =>
+				{
+					if (session.LogProfile == null && this.Settings.GetValueOrDefault(Settings.SelectLogProfileForNewSession))
+						this.FindSessionView(session)?.SelectAndSetLogProfile();
+				}, 500);
 			}
 			else
 				workspace.ActiveSession = (Session)((TabItem)this.tabItems[index].AsNonNull()).DataContext.AsNonNull();
