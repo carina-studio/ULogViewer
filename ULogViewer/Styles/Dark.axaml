@@ -36,6 +36,7 @@
 			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Background.Selected.PointerOver">#7f0073cc</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Column.Border.PointerOver">#7fffffff</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.SidePanel.Background">#161616</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.StatusBar.Background.Inactive">#606060</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.StatusBar.Background.Paused">#606060</SolidColorBrush>
 			
 		</ResourceDictionary>
