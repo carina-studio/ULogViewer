@@ -8,6 +8,7 @@
         xmlns:appViewModels="clr-namespace:CarinaStudio.ULogViewer.ViewModels;assembly=ULogViewer"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.MainWindow"
+		Background="{DynamicResource Brush/TabItem.Header.Background}"
 		Icon="/AppIcon.ico"
 		MinHeight="{DynamicResource Double/MainWindow.MinHeight}"
 		MinWidth="{DynamicResource Double/MainWindow.MinWidth}">
@@ -20,8 +21,8 @@
 					<DrawingPresenter Classes="Icon" Drawing="{Binding Icon}"/>
 				</Border>
 				<TextBlock Grid.Column="1" MaxWidth="200" Text="{Binding Title}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
-				<Button Classes="TabItem_Button" Click="OnTabItemCloseButtonClick" Grid.Column="2" ToolTip.Tip="{DynamicResource String.MainWindow.CloseSession}" VerticalAlignment="Center">
-					<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Icon.Close}"/>
+				<Button Classes="TabItem_Button" Click="OnTabItemCloseButtonClick" Grid.Column="2" ToolTip.Tip="{DynamicResource String/MainWindow.CloseSession}" VerticalAlignment="Center">
+					<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing/Icon.Close}"/>
 				</Button>
 			</Grid>
 		</DataTemplate>
@@ -33,9 +34,9 @@
 		<!-- Add new tab -->
 		<TabItem Classes="Empty">
 			<TabItem.Header>
-				<Panel Margin="{DynamicResource Thickness.MainWindow.TabItem.Padding}">
-					<Border Name="background" Background="{DynamicResource Brush/MainWindow.TabItem.Background.Selected}" CornerRadius="{DynamicResource ControlCornerRadius}" DragDrop.AllowDrop="True" Height="{DynamicResource Double/MainWindow.TabItem.AddButton.Size}" HorizontalAlignment="Center" ToolTip.Tip="{DynamicResource String.MainWindow.CreateSession}" VerticalAlignment="Center" Width="{DynamicResource Double/MainWindow.TabItem.AddButton.Size}"/>
-					<DrawingPresenter DragDrop.AllowDrop="True" Drawing="{DynamicResource Drawing.Add}" Height="{DynamicResource Double/MainWindow.TabItem.Icon.Size}" HorizontalAlignment="Center" IsHitTestVisible="False" Opacity="0.7" Stretch="Uniform" VerticalAlignment="Center" Width="{DynamicResource Double/MainWindow.TabItem.Icon.Size}">
+				<Panel>
+					<Border Name="background" Background="{DynamicResource Brush/TabItem.Header.Background.Selected}" CornerRadius="{DynamicResource ControlCornerRadius}" DragDrop.AllowDrop="True" Height="{DynamicResource Double/MainWindow.TabItem.AddButton.Size}" HorizontalAlignment="Center" ToolTip.Tip="{DynamicResource String/MainWindow.CreateSession}" VerticalAlignment="Center" Width="{DynamicResource Double/MainWindow.TabItem.AddButton.Size}"/>
+					<DrawingPresenter DragDrop.AllowDrop="True" Drawing="{StaticResource Drawing/Icon.Add}" Height="{DynamicResource Double/MainWindow.TabItem.Icon.Size}" HorizontalAlignment="Center" IsHitTestVisible="False" Opacity="0.7" Stretch="Uniform" VerticalAlignment="Center" Width="{DynamicResource Double/MainWindow.TabItem.Icon.Size}">
 						<ia:Interaction.Behaviors>
 							<iaCore:DataTriggerBehavior Binding="{Binding #background.IsPointerOver}" Value="True">
 								<iaCore:ChangePropertyAction PropertyName="Opacity" Value="1"/>

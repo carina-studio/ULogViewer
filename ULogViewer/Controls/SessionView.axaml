@@ -143,271 +143,240 @@
 	</UserControl.Resources>
 	
 	<!-- Content -->
-	<Grid RowDefinitions="Auto,Auto,*,Auto">
+	<Grid RowDefinitions="Auto,*,Auto">
 
 		<!-- Columns -->
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="*"/>
 			<ColumnDefinition Width="Auto"/>
-			<ColumnDefinition MaxWidth="{DynamicResource Double.SessionView.SidePanel.MaxWidth}" MinWidth="{DynamicResource Double.SessionView.SidePanel.MinWidth}" Width="0"/>
+			<ColumnDefinition MaxWidth="{DynamicResource Double/SessionView.SidePanel.MaxWidth}" MinWidth="{DynamicResource Double/SessionView.SidePanel.MinWidth}" Width="0"/>
 		</Grid.ColumnDefinitions>
 
-		<!-- Toolbar background -->
-		<Border Background="{DynamicResource Brush/SessionView.ToolBar.Background}" Grid.ColumnSpan="3" Grid.RowSpan="2"/>
-
 		<!-- Toolbar -->
-		<Grid Name="toolBarContainer" ColumnDefinitions="Auto,*,Auto" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" Margin="{DynamicResource Thickness/SessionView.ToolBar.Padding}">
+		<Border Classes="ToolBar" Grid.ColumnSpan="3">
+			<Grid Name="toolBarContainer" ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto">
 
-			<!-- Resources -->
-			<Grid.Resources>
-				<SolidColorBrush x:Key="ButtonBackgroundDisabled">#00000000</SolidColorBrush>
-				<SolidColorBrush x:Key="ToggleButtonBackgroundDisabled">#00000000</SolidColorBrush>
-			</Grid.Resources>
-			
-			<!-- Log actions -->
-			<StackPanel Orientation="Horizontal">
+				<!-- Log actions -->
+				<StackPanel Grid.RowSpan="2" Orientation="Horizontal">
 
-				<!-- Select log profiles -->
-				<Button Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].SelectAndSetLogProfileCommand}" ToolTip.Tip="{DynamicResource String/SessionView.SetLogProfile}">
-					<Grid Classes="SessionView_ToolBar_Button_Icon">
-						<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/LogProfile}"/>
-					</Grid>
-				</Button>
+					<!-- Select log profiles -->
+					<Button Classes="ToolBar_Button" Command="{Binding $parent[UserControl].SelectAndSetLogProfileCommand}" ToolTip.Tip="{DynamicResource String/SessionView.SetLogProfile}">
+						<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing/LogProfile}"/>
+					</Button>
 
-				<!-- Edit log profile -->
-				<Button Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].EditLogProfileCommand}" IsVisible="{Binding $parent[UserControl].HasLogProfile}" ToolTip.Tip="{DynamicResource String/LogProfileSelectionDialog.EditLogProfile}">
-					<Border Classes="SessionView_ToolBar_Button_Icon">
-						<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/EditLogProfile}"/>
-					</Border>
-				</Button>
+					<!-- Edit log profile -->
+					<Button Classes="ToolBar_Button" Command="{Binding $parent[UserControl].EditLogProfileCommand}" IsVisible="{Binding $parent[UserControl].HasLogProfile}" ToolTip.Tip="{DynamicResource String/LogProfileSelectionDialog.EditLogProfile}">
+						<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing/EditLogProfile}"/>
+					</Button>
 
-				<!-- Set working directory -->
-				<Button Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].SelectAndSetWorkingDirectoryCommand}" IsVisible="{Binding IsWorkingDirectoryNeeded}" ToolTip.Tip="{DynamicResource String/SessionView.SetWorkingDirectory}">
-					<Border Classes="SessionView_ToolBar_Button_Icon">
-						<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/AddFolder}"/>
-					</Border>
-				</Button>
+					<!-- Set working directory -->
+					<Button Classes="ToolBar_Button" Command="{Binding $parent[UserControl].SelectAndSetWorkingDirectoryCommand}" IsVisible="{Binding IsWorkingDirectoryNeeded}" ToolTip.Tip="{DynamicResource String/SessionView.SetWorkingDirectory}">
+						<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing/Icon.Folder}"/>
+					</Button>
 
-				<!-- Add files -->
-				<Button Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].AddLogFilesCommand}" IsVisible="{Binding IsLogFileNeeded}" ToolTip.Tip="{DynamicResource String/SessionView.AddLogFiles.WithShortcut}">
-					<Border Classes="SessionView_ToolBar_Button_Icon">
-						<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/AddFile}"/>
-					</Border>
-				</Button>
+					<!-- Add files -->
+					<Button Classes="ToolBar_Button" Command="{Binding $parent[UserControl].AddLogFilesCommand}" IsVisible="{Binding IsLogFileNeeded}" ToolTip.Tip="{DynamicResource String/SessionView.AddLogFiles.WithShortcut}">
+						<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing/Icon.AddFile}"/>
+					</Button>
 
-				<!-- Save logs -->
-				<Button Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].SaveLogsCommand}" IsVisible="{Binding HasLogProfile}" ToolTip.Tip="{DynamicResource String/SessionView.SaveLogs.WithShortcut}">
-					<Border Classes="SessionView_ToolBar_Button_Icon">
-						<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Save}"/>
-					</Border>
-				</Button>
-				<Button Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].SaveAllLogsCommand}" IsVisible="{Binding HasLogProfile}" ToolTip.Tip="{DynamicResource String/SessionView.SaveAllLogs.WithShortcut}">
-					<Border Classes="SessionView_ToolBar_Button_Icon">
-						<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/SaveAll}"/>
-					</Border>
-				</Button>
+					<!-- Save logs -->
+					<Button Classes="ToolBar_Button" Command="{Binding $parent[UserControl].SaveLogsCommand}" IsVisible="{Binding HasLogProfile}" ToolTip.Tip="{DynamicResource String/SessionView.SaveLogs.WithShortcut}">
+						<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing/Icon.Save}"/>
+					</Button>
+					<Button Classes="ToolBar_Button" Command="{Binding $parent[UserControl].SaveAllLogsCommand}" IsVisible="{Binding HasLogProfile}" ToolTip.Tip="{DynamicResource String/SessionView.SaveAllLogs.WithShortcut}">
+						<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing/Icon.SaveAll}"/>
+					</Button>
 
-				<!-- Clear files -->
-				<Button Classes="SessionView_ToolBar_Button" Command="{Binding ClearLogFilesCommand}" IsVisible="{Binding IsLogFileNeeded}" ToolTip.Tip="{DynamicResource String/SessionView.ClearLogFiles}">
-					<Border Classes="SessionView_ToolBar_Button_Icon">
-						<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Delete}"/>
-					</Border>
-				</Button>
+					<!-- Clear files -->
+					<Button Classes="ToolBar_Button" Command="{Binding ClearLogFilesCommand}" IsVisible="{Binding IsLogFileNeeded}" ToolTip.Tip="{DynamicResource String/SessionView.ClearLogFiles}">
+						<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing/Icon.Delete}"/>
+					</Button>
 
-				<!-- Separator -->
-				<Separator Classes="SessionView_ToolBar_Separator"/>
+					<!-- Separator -->
+					<Separator Classes="ToolBar_Separator"/>
 
-				<!-- Reload logs -->
-				<Button Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].ReloadLogsCommand}" ToolTip.Tip="{DynamicResource String/SessionView.ReloadLogs}">
-					<Border Classes="SessionView_ToolBar_Button_Icon">
-						<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Refresh}"/>
-					</Border>
-				</Button>
+					<!-- Reload logs -->
+					<Button Classes="ToolBar_Button" Command="{Binding $parent[UserControl].ReloadLogsCommand}" ToolTip.Tip="{DynamicResource String/SessionView.ReloadLogs}">
+						<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing/Icon.Refresh}"/>
+					</Button>
 
-				<!-- Scroll to latest log -->
-				<ToggleButton Classes="SessionView_ToolBar_Button" IsChecked="{Binding $parent[UserControl].IsScrollingToLatestLogNeeded, Mode=TwoWay}" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" ToolTip.Tip="{DynamicResource String/SessionView.ScrollToLatestLog}">
-					<Grid Classes="SessionView_ToolBar_Button_Icon">
-						<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Scrolling}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
-						<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Scrolling.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
-					</Grid>
-				</ToggleButton>
-
-				<!-- Pause/resume -->
-				<Button Classes="SessionView_ToolBar_Button" Command="{Binding PauseResumeLogsReadingCommand}" IsVisible="{Binding IsReadingLogsContinuously}" ToolTip.Tip="{DynamicResource String/SessionView.PauseResumeLogsReading}">
-					<Border Classes="SessionView_ToolBar_Button_Icon">
-						<DrawingPresenter Classes="Icon">
-							<ia:Interaction.Behaviors>
-								<iaCore:DataTriggerBehavior Binding="{Binding IsLogsReadingPaused}" ComparisonCondition="Equal" Value="True">
-									<iaCore:ChangePropertyAction PropertyName="Drawing" Value="{DynamicResource Drawing/Play}"/>
-								</iaCore:DataTriggerBehavior>
-								<iaCore:DataTriggerBehavior Binding="{Binding IsLogsReadingPaused}" ComparisonCondition="Equal" Value="False">
-									<iaCore:ChangePropertyAction PropertyName="Drawing" Value="{DynamicResource Drawing/Pause}"/>
-								</iaCore:DataTriggerBehavior>
-							</ia:Interaction.Behaviors>
-						</DrawingPresenter>
-					</Border>
-				</Button>
-
-				<!-- Separator -->
-				<Separator Classes="SessionView_ToolBar_Separator"/>
-				
-			</StackPanel>
-
-			<!-- Log filters -->
-			<Grid ColumnDefinitions="Auto,Auto,Auto,Auto,*,Auto" Grid.Column="1" HorizontalAlignment="Stretch" Margin="{DynamicResource Thickness/SessionView.ToolBar.LogFilters.Padding}" VerticalAlignment="Stretch">
-
-				<!-- Level filter -->
-				<ComboBox Name="logLevelFilterComboBox" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" IsVisible="false" Items="{Binding $parent[UserControl].ValidLogLevels}" Margin="{DynamicResource Thickness/SessionView.ToolBar.LogLevelFilter.Margin}" SelectionChanged="OnLogLevelFilterComboBoxSelectionChanged" ToolTip.Tip="{DynamicResource String/SessionView.LogLevelFilter.Description}" VerticalAlignment="Center" Width="{DynamicResource Double.SessionView.ToolBar.LogLevelFilter.Width}">
-					<ia:Interaction.Behaviors>
-						<iaCore:DataTriggerBehavior Binding="{Binding $parent[UserControl].ValidLogLevels.Count}" ComparisonCondition="GreaterThan" Value="1">
-							<iaCore:ChangePropertyAction PropertyName="IsVisible" Value="True"/>
-						</iaCore:DataTriggerBehavior>
-						<iaCore:DataTriggerBehavior Binding="{Binding $parent[UserControl].ValidLogLevels.Count}" ComparisonCondition="LessThanOrEqual" Value="1">
-							<iaCore:ChangePropertyAction PropertyName="IsVisible" Value="False"/>
-						</iaCore:DataTriggerBehavior>
-					</ia:Interaction.Behaviors>
-					<ComboBox.ItemTemplate>
-						<DataTemplate>
-							<StackPanel Orientation="Horizontal">
-								<Border Background="{Binding Converter={x:Static appConverters:LogLevelBrushConverter.Default}}" BorderBrush="{DynamicResource ComboBoxItemForeground}" BorderThickness="1" Height="{DynamicResource Double.LogLevelComboBox.Item.Indicator.Size}" Margin="{DynamicResource Thickness/LogLevelComboBox.Item.Indicator.Margin}" VerticalAlignment="Center" Width="{DynamicResource Double.LogLevelComboBox.Item.Indicator.Size}"/>
-								<TextBlock Text="{Binding Converter={x:Static appControls:SessionView.LogLevelNameConverter}}" VerticalAlignment="Center"/>
-							</StackPanel>
-						</DataTemplate>
-					</ComboBox.ItemTemplate>
-				</ComboBox>
-
-				<!-- PID filter -->
-				<TextBox Name="logProcessIdFilterTextBox" Grid.Column="1" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" IsVisible="False" PropertyChanged="OnLogFilterTextBoxPropertyChanged" Margin="{DynamicResource Thickness/SessionView.ToolBar.LogProcessIdFilter.Margin}" ToolTip.Tip="{DynamicResource String/SessionView.LogProcessIdFilter.Description}" VerticalAlignment="Center" Watermark="{DynamicResource String/LogProperty.ProcessId}" Width="{DynamicResource Double.SessionView.ToolBar.LogProcessIdFilter.Width}"/>
-
-				<!-- TID filter -->
-				<TextBox Name="logThreadIdFilterTextBox" Grid.Column="2" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" IsVisible="False" PropertyChanged="OnLogFilterTextBoxPropertyChanged" Margin="{DynamicResource Thickness/SessionView.ToolBar.LogProcessIdFilter.Margin}" ToolTip.Tip="{DynamicResource String/SessionView.LogThreadIdFilter.Description}" VerticalAlignment="Center" Watermark="{DynamicResource String/LogProperty.ThreadId}" Width="{DynamicResource Double.SessionView.ToolBar.LogProcessIdFilter.Width}"/>
-
-				<!-- Filters combinatin mode -->
-				<Button Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].SwitchLogFiltersCombinationModeCommand}" Grid.Column="3" IsVisible="{Binding $parent[UserControl].CanFilterLogsByNonTextFilters}" ToolTip.Tip="{DynamicResource String/SessionView.LogFiltersCombinationMode}">
-					<Border Classes="SessionView_ToolBar_Button_Icon">
-						<DrawingPresenter Classes="Icon">
-							<ia:Interaction.Behaviors>
-								<iaCore:DataTriggerBehavior Binding="{Binding LogFiltersCombinationMode}" Value="Intersection">
-									<iaCore:ChangePropertyAction PropertyName="Drawing" Value="{DynamicResource Drawing/Intersection}"/>
-								</iaCore:DataTriggerBehavior>
-								<iaCore:DataTriggerBehavior Binding="{Binding LogFiltersCombinationMode}" Value="Union">
-									<iaCore:ChangePropertyAction PropertyName="Drawing" Value="{DynamicResource Drawing/Union}"/>
-								</iaCore:DataTriggerBehavior>
-							</ia:Interaction.Behaviors>
-						</DrawingPresenter>
-					</Border>
-				</Button>
-				
-				<!-- Text filter -->
-				<appControls:RegexTextBox Name="logTextFilterTextBox" Classes="RegexTextBox_InvalidText" Grid.Column="4" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" Margin="{DynamicResource Thickness/SessionView.ToolBar.LogTextFilter.Margin}" PropertyChanged="OnLogFilterTextBoxPropertyChanged" ToolTip.Tip="{DynamicResource String/SessionView.LogTextFilter.ToolTip}" VerticalAlignment="Center" Watermark="{DynamicResource String/SessionView.LogTextFilter.Watermark}"/>
-
-				<!-- Filter actions -->
-				<StackPanel Grid.Column="5" Orientation="Horizontal">
-
-					<!-- Predefined text filters -->
-					<ToggleButton Classes="SessionView_ToolBar_Button" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" ToolTip.Tip="{DynamicResource String/SessionView.PredefinedLogTextFilters}">
+					<!-- Scroll to latest log -->
+					<ToggleButton Classes="ToolBar_Button" IsChecked="{Binding $parent[UserControl].IsScrollingToLatestLogNeeded, Mode=TwoWay}" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" ToolTip.Tip="{DynamicResource String/SessionView.ScrollToLatestLog}">
 						<Panel>
-							<Grid Classes="SessionView_ToolBar_Button_Icon">
-								<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Filters}" IsVisible="{Binding ElementName=predefinedLogTextFilterListBox, Path=!SelectedItems.Count}"/>
-								<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Filters.Active}" IsVisible="{Binding ElementName=predefinedLogTextFilterListBox, Path=SelectedItems.Count}"/>
-								<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Filters.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
-							</Grid>
-							<Popup Name="predefinedLogTextFiltersPopup" IsLightDismissEnabled="True" IsOpen="{Binding $parent[ToggleButton].IsChecked, Mode=TwoWay}" MaxHeight="{DynamicResource Double.SessionView.PredefinedLogTextFiltersPopup.MaxHeight}" PlacementTarget="{Binding $parent[ToggleButton]}" Width="{DynamicResource Double.SessionView.PredefinedLogTextFiltersPopup.Width}" WindowManagerAddShadowHint="True">
-								<Border Background="{DynamicResource ComboBoxDropDownBackground}" BorderBrush="{DynamicResource ComboBoxDropDownBorderBrush}" BorderThickness="{DynamicResource ComboBoxDropdownBorderThickness}" CornerRadius="{DynamicResource OverlayCornerRadius}" Padding="{DynamicResource Thickness/SessionView.PredefinedLogTextFiltersPopup.Padding}">
-									<DockPanel>
-										<Border Background="{DynamicResource Brush/Dialog.ControlButtonsPanel.Background}" DockPanel.Dock="Bottom" Padding="{DynamicResource Thickness/Dialog.ControlButtonsPanel.Padding}">
-											<StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-												<Button Classes="Dialog_ControlButton" Command="{Binding $parent[UserControl].CreatePredefinedLogTextFilter}" Content="{DynamicResource String/SessionView.CreatePredefinedLogTextFilter}"/>
-												<Button Classes="Dialog_ControlButton" Command="{Binding $parent[UserControl].ClearPredefinedLogTextFilterSelection}" IsEnabled="{Binding ElementName=predefinedLogTextFilterListBox, Path=SelectedItems.Count}" Content="{DynamicResource String/SessionView.ClearPredefinedLogTextFiltersSelection}"/>
-											</StackPanel>
-										</Border>
-										<Border DockPanel.Dock="Top" IsVisible="{Binding $parent[UserControl].PredefinedLogTextFilters.Count}" Padding="{DynamicResource Thickness/SessionView.PredefinedLogTextFilterHint.Padding}">
-											<TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" HorizontalAlignment="Center" Text="{DynamicResource String/SessionView.PredefinedLogTextFilters.Hint}" TextTrimming="CharacterEllipsis"/>
-										</Border>
-										<Panel>
-											<ListBox Name="predefinedLogTextFilterListBox" Background="{x:Static Brushes.Transparent}" IsVisible="{Binding $parent[UserControl].PredefinedLogTextFilters.Count}" Items="{Binding $parent[UserControl].PredefinedLogTextFilters}" SelectionChanged="OnPredefinedLogTextFilterListBoxSelectionChanged" SelectionMode="Multiple" VirtualizationMode="None">
-												<ListBox.ItemTemplate>
-													<DataTemplate DataType="{x:Type appViewModels:PredefinedLogTextFilter}">
-														<Grid ColumnDefinitions="Auto,*,Auto">
-															<Grid Height="{DynamicResource Double.SessionView.PredefinedLogTextFilterListBox.Icon.Size}" Margin="{DynamicResource Thickness/SessionView.PredefinedLogTextFilterListBox.Icon.Margin}" VerticalAlignment="Center" Width="{DynamicResource Double.SessionView.PredefinedLogTextFilterListBox.Icon.Size}">
-																<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Filter}" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}"/>
-																<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Filter.Light}" IsVisible="{Binding $parent[ListBoxItem].IsSelected}"/>
-															</Grid>
-															<TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center"/>
-															<Border Classes="InPlaceAction_Reserved" Grid.Column="1"/>
-															<StackPanel Grid.Column="2" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal" VerticalAlignment="Center">
-																<Button Classes="InPlaceAction" Command="{Binding $parent[UserControl].RemovePredefinedLogTextFilter}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
-																	<Border Classes="InPlaceAction">
-																		<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Delete}"/>
-																	</Border>
-																</Button>
-																<Button Classes="InPlaceAction" Command="{Binding $parent[UserControl].EditPredefinedLogTextFilter}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
-																	<Border Classes="InPlaceAction">
-																		<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Edit}"/>
-																	</Border>
-																</Button>
-															</StackPanel>
-														</Grid>
-													</DataTemplate>
-												</ListBox.ItemTemplate>
-												<ListBox.Styles>
-													<Style Selector="ListBoxItem">
-														<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-														<Setter Property="Padding" Value="{DynamicResource Thickness/SessionView.PredefinedLogTextFilterListBox.Item.Padding}"/>
-														<Setter Property="ToolTip.Tip" Value="{Binding Regex}"/>
-													</Style>
-												</ListBox.Styles>
-											</ListBox>
-											<TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" HorizontalAlignment="Center" IsVisible="{Binding !$parent[UserControl].PredefinedLogTextFilters.Count}" Margin="{DynamicResource Thickness/SessionView.NoPredefinedLogTextFilterHint.Margin}" Text="{DynamicResource String/SessionView.NoPredefinedLogTextFilter}" TextWrapping="Wrap"/>
-										</Panel>
-									</DockPanel>
-								</Border>
-							</Popup>
+							<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing/Scrolling}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
+							<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing/Scrolling.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
 						</Panel>
 					</ToggleButton>
 
-					<!-- Reset log filters -->
-					<Button Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].ResetLogFiltersCommand}" ToolTip.Tip="{DynamicResource String/SessionView.ResetLogFilters}">
-						<Border Classes="SessionView_ToolBar_Button_Icon">
-							<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/ClearFilters}"/>
-						</Border>
+					<!-- Pause/resume -->
+					<Button Classes="ToolBar_Button" Command="{Binding PauseResumeLogsReadingCommand}" IsVisible="{Binding IsReadingLogsContinuously}" ToolTip.Tip="{DynamicResource String/SessionView.PauseResumeLogsReading}">
+						<DrawingPresenter Classes="Icon">
+							<ia:Interaction.Behaviors>
+								<iaCore:DataTriggerBehavior Binding="{Binding IsLogsReadingPaused}" Value="True">
+									<iaCore:ChangePropertyAction PropertyName="Drawing" Value="{StaticResource Drawing/Play}"/>
+								</iaCore:DataTriggerBehavior>
+								<iaCore:DataTriggerBehavior Binding="{Binding IsLogsReadingPaused}" Value="False">
+									<iaCore:ChangePropertyAction PropertyName="Drawing" Value="{StaticResource Drawing/Pause}"/>
+								</iaCore:DataTriggerBehavior>
+							</ia:Interaction.Behaviors>
+						</DrawingPresenter>
 					</Button>
 
+					<!-- Separator -->
+					<Separator Classes="ToolBar_Separator"/>
+
 				</StackPanel>
-				
-			</Grid>
 
-			<!-- Other actions -->
-			<StackPanel Grid.Column="2" Orientation="Horizontal">
+				<!-- Log filters -->
+				<Grid ColumnDefinitions="Auto,Auto,Auto,Auto,*,Auto" Grid.Column="1" Grid.RowSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 
-				<!-- Separator -->
-				<Separator Classes="SessionView_ToolBar_Separator"/>
+					<!-- Level filter -->
+					<ComboBox Name="logLevelFilterComboBox" Classes="ToolBar_ComboBox" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" IsVisible="false" Items="{Binding $parent[UserControl].ValidLogLevels}" SelectionChanged="OnLogLevelFilterComboBoxSelectionChanged" ToolTip.Tip="{DynamicResource String/SessionView.LogLevelFilter.Description}" VerticalAlignment="Center" Width="{DynamicResource Double/SessionView.ToolBar.LogLevelFilter.Width}">
+						<ia:Interaction.Behaviors>
+							<iaCore:DataTriggerBehavior Binding="{Binding $parent[UserControl].ValidLogLevels.Count}" ComparisonCondition="GreaterThan" Value="1">
+								<iaCore:ChangePropertyAction PropertyName="IsVisible" Value="True"/>
+							</iaCore:DataTriggerBehavior>
+							<iaCore:DataTriggerBehavior Binding="{Binding $parent[UserControl].ValidLogLevels.Count}" ComparisonCondition="LessThanOrEqual" Value="1">
+								<iaCore:ChangePropertyAction PropertyName="IsVisible" Value="False"/>
+							</iaCore:DataTriggerBehavior>
+						</ia:Interaction.Behaviors>
+						<ComboBox.ItemTemplate>
+							<DataTemplate>
+								<StackPanel Orientation="Horizontal">
+									<Border Background="{Binding Converter={x:Static appConverters:LogLevelBrushConverter.Default}}" BorderBrush="{DynamicResource ComboBoxItemForeground}" BorderThickness="1" Height="{DynamicResource Double/LogLevelComboBox.Item.Indicator.Size}" Margin="{DynamicResource Thickness/LogLevelComboBox.Item.Indicator.Margin}" VerticalAlignment="Center" Width="{DynamicResource Double/LogLevelComboBox.Item.Indicator.Size}"/>
+									<TextBlock Text="{Binding Converter={x:Static appControls:SessionView.LogLevelNameConverter}}" VerticalAlignment="Center"/>
+								</StackPanel>
+							</DataTemplate>
+						</ComboBox.ItemTemplate>
+					</ComboBox>
 
-				<!-- Test -->
-				<Button Name="testButton" Classes="SessionView_ToolBar_Button" Click="OnTestButtonClick" ToolTip.Tip="Test">
-					<Border Classes="SessionView_ToolBar_Button_Icon">
-						<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Test}"/>
-					</Border>
-				</Button>
+					<!-- PID filter -->
+					<TextBox Name="logProcessIdFilterTextBox" Classes="ToolBar_TextBox" Grid.Column="1" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" IsVisible="False" PropertyChanged="OnLogFilterTextBoxPropertyChanged" ToolTip.Tip="{DynamicResource String/SessionView.LogProcessIdFilter.Description}" VerticalAlignment="Center" Watermark="{DynamicResource String/LogProperty.ProcessId}" Width="{DynamicResource Double/SessionView.ToolBar.LogProcessIdFilter.Width}"/>
+
+					<!-- TID filter -->
+					<TextBox Name="logThreadIdFilterTextBox" Classes="ToolBar_TextBox" Grid.Column="2" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" IsVisible="False" PropertyChanged="OnLogFilterTextBoxPropertyChanged" ToolTip.Tip="{DynamicResource String/SessionView.LogThreadIdFilter.Description}" VerticalAlignment="Center" Watermark="{DynamicResource String/LogProperty.ThreadId}" Width="{DynamicResource Double/SessionView.ToolBar.LogProcessIdFilter.Width}"/>
+
+					<!-- Filters combinatin mode -->
+					<Button Classes="ToolBar_Button" Command="{Binding $parent[UserControl].SwitchLogFiltersCombinationModeCommand}" Grid.Column="3" IsVisible="{Binding $parent[UserControl].CanFilterLogsByNonTextFilters}" ToolTip.Tip="{DynamicResource String/SessionView.LogFiltersCombinationMode}">
+						<DrawingPresenter Classes="Icon">
+							<ia:Interaction.Behaviors>
+								<iaCore:DataTriggerBehavior Binding="{Binding LogFiltersCombinationMode}" Value="Intersection">
+									<iaCore:ChangePropertyAction PropertyName="Drawing" Value="{StaticResource Drawing/Intersection}"/>
+								</iaCore:DataTriggerBehavior>
+								<iaCore:DataTriggerBehavior Binding="{Binding LogFiltersCombinationMode}" Value="Union">
+									<iaCore:ChangePropertyAction PropertyName="Drawing" Value="{StaticResource Drawing/Union}"/>
+								</iaCore:DataTriggerBehavior>
+							</ia:Interaction.Behaviors>
+						</DrawingPresenter>
+					</Button>
+
+					<!-- Text filter -->
+					<appControls:RegexTextBox Name="logTextFilterTextBox" Classes="RegexTextBox_InvalidText" Grid.Column="4" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" Margin="{DynamicResource Thickness/ToolBar.Item.Margin}" PropertyChanged="OnLogFilterTextBoxPropertyChanged" ToolTip.Tip="{DynamicResource String/SessionView.LogTextFilter.ToolTip}" VerticalAlignment="Center" Watermark="{DynamicResource String/SessionView.LogTextFilter.Watermark}"/>
+
+					<!-- Filter actions -->
+					<StackPanel Grid.Column="5" Orientation="Horizontal">
+
+						<!-- Predefined text filters -->
+						<ToggleButton Classes="ToolBar_Button" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" ToolTip.Tip="{DynamicResource String/SessionView.PredefinedLogTextFilters}">
+							<Panel>
+								<Panel>
+									<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Filters}" IsVisible="{Binding ElementName=predefinedLogTextFilterListBox, Path=!SelectedItems.Count}"/>
+									<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Filters.Active}" IsVisible="{Binding ElementName=predefinedLogTextFilterListBox, Path=SelectedItems.Count}"/>
+									<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Filters.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
+								</Panel>
+								<Popup Name="predefinedLogTextFiltersPopup" IsLightDismissEnabled="True" IsOpen="{Binding $parent[ToggleButton].IsChecked, Mode=TwoWay}" MaxHeight="{DynamicResource Double/SessionView.PredefinedLogTextFiltersPopup.MaxHeight}" PlacementTarget="{Binding $parent[ToggleButton]}" Width="{DynamicResource Double/SessionView.PredefinedLogTextFiltersPopup.Width}" WindowManagerAddShadowHint="True">
+									<Border Background="{DynamicResource ComboBoxDropDownBackground}" BorderBrush="{DynamicResource ComboBoxDropDownBorderBrush}" BorderThickness="{DynamicResource ComboBoxDropdownBorderThickness}" CornerRadius="{DynamicResource OverlayCornerRadius}" Padding="{DynamicResource Thickness/SessionView.PredefinedLogTextFiltersPopup.Padding}">
+										<DockPanel>
+											<Border Background="{DynamicResource Brush/Dialog.ControlButtonsPanel.Background}" DockPanel.Dock="Bottom" Padding="{DynamicResource Thickness/Dialog.ControlButtonsPanel.Padding}">
+												<StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+													<Button Classes="Dialog_ControlButton" Command="{Binding $parent[UserControl].CreatePredefinedLogTextFilter}" Content="{DynamicResource String/SessionView.CreatePredefinedLogTextFilter}"/>
+													<Button Classes="Dialog_ControlButton" Command="{Binding $parent[UserControl].ClearPredefinedLogTextFilterSelection}" IsEnabled="{Binding ElementName=predefinedLogTextFilterListBox, Path=SelectedItems.Count}" Content="{DynamicResource String/SessionView.ClearPredefinedLogTextFiltersSelection}"/>
+												</StackPanel>
+											</Border>
+											<Border DockPanel.Dock="Top" IsVisible="{Binding $parent[UserControl].PredefinedLogTextFilters.Count}" Padding="{DynamicResource Thickness/SessionView.PredefinedLogTextFilterHint.Padding}">
+												<TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" HorizontalAlignment="Center" Text="{DynamicResource String/SessionView.PredefinedLogTextFilters.Hint}" TextTrimming="CharacterEllipsis"/>
+											</Border>
+											<Panel>
+												<ListBox Name="predefinedLogTextFilterListBox" Background="{x:Static Brushes.Transparent}" IsVisible="{Binding $parent[UserControl].PredefinedLogTextFilters.Count}" Items="{Binding $parent[UserControl].PredefinedLogTextFilters}" SelectionChanged="OnPredefinedLogTextFilterListBoxSelectionChanged" SelectionMode="Multiple" VirtualizationMode="None">
+													<ListBox.ItemTemplate>
+														<DataTemplate DataType="{x:Type appViewModels:PredefinedLogTextFilter}">
+															<Grid ColumnDefinitions="Auto,*,Auto">
+																<Grid Height="{DynamicResource Double/SessionView.PredefinedLogTextFilterListBox.Icon.Size}" Margin="{DynamicResource Thickness/SessionView.PredefinedLogTextFilterListBox.Icon.Margin}" VerticalAlignment="Center" Width="{DynamicResource Double/SessionView.PredefinedLogTextFilterListBox.Icon.Size}">
+																	<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Filter}" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}"/>
+																	<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Filter.Light}" IsVisible="{Binding $parent[ListBoxItem].IsSelected}"/>
+																</Grid>
+																<TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center"/>
+																<Border Classes="InPlaceAction_Reserved" Grid.Column="1"/>
+																<StackPanel Grid.Column="2" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal" VerticalAlignment="Center">
+																	<Button Classes="InPlaceAction" Command="{Binding $parent[UserControl].RemovePredefinedLogTextFilter}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
+																		<Border Classes="InPlaceAction">
+																			<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Delete}"/>
+																		</Border>
+																	</Button>
+																	<Button Classes="InPlaceAction" Command="{Binding $parent[UserControl].EditPredefinedLogTextFilter}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
+																		<Border Classes="InPlaceAction">
+																			<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Edit}"/>
+																		</Border>
+																	</Button>
+																</StackPanel>
+															</Grid>
+														</DataTemplate>
+													</ListBox.ItemTemplate>
+													<ListBox.Styles>
+														<Style Selector="ListBoxItem">
+															<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+															<Setter Property="Padding" Value="{DynamicResource Thickness/SessionView.PredefinedLogTextFilterListBox.Item.Padding}"/>
+															<Setter Property="ToolTip.Tip" Value="{Binding Regex}"/>
+														</Style>
+													</ListBox.Styles>
+												</ListBox>
+												<TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" HorizontalAlignment="Center" IsVisible="{Binding !$parent[UserControl].PredefinedLogTextFilters.Count}" Margin="{DynamicResource Thickness/SessionView.NoPredefinedLogTextFilterHint.Margin}" Text="{DynamicResource String/SessionView.NoPredefinedLogTextFilter}" TextWrapping="Wrap"/>
+											</Panel>
+										</DockPanel>
+									</Border>
+								</Popup>
+							</Panel>
+						</ToggleButton>
+
+						<!-- Reset log filters -->
+						<Button Classes="ToolBar_Button" Command="{Binding $parent[UserControl].ResetLogFiltersCommand}" ToolTip.Tip="{DynamicResource String/SessionView.ResetLogFilters}">
+							<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing/ClearFilters}"/>
+						</Button>
+
+					</StackPanel>
+
+				</Grid>
 
 				<!-- Other actions -->
-				<ToggleButton Name="otherActionsButton" Classes="SessionView_ToolBar_Button" Command="{Binding $parent[UserControl].ShowOtherActions}" ToolTip.Tip="{DynamicResource String/SessionView.OtherActions}">
-					<Grid Classes="SessionView_ToolBar_Button_Icon">
-						<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/More}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
-						<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/More.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
-					</Grid>
-				</ToggleButton>
+				<StackPanel Grid.Column="2" Grid.RowSpan="2" Orientation="Horizontal">
 
-			</StackPanel>
-			
-		</Grid>
+					<!-- Separator -->
+					<Separator Classes="ToolBar_Separator"/>
 
-		<!-- Progress bar -->
-		<ProgressBar Grid.Row="1" MaxHeight="{DynamicResource Double.SessionView.LogsProgessingBar.Height}" MinHeight="{DynamicResource Double.SessionView.LogsProgessingBar.Height}" Opacity="0"/>
-		<ProgressBar Background="{x:Null}" CornerRadius="0" Grid.ColumnSpan="3" Grid.Row="1" IsIndeterminate="True" IsVisible="{Binding IsProcessingLogs}" MaxHeight="{DynamicResource Double.SessionView.LogsProgessingBar.Height}" MinHeight="{DynamicResource Double.SessionView.LogsProgessingBar.Height}"/>
+					<!-- Test -->
+					<Button Name="testButton" Classes="ToolBar_Button" Click="OnTestButtonClick" ToolTip.Tip="Test">
+						<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing/Test}"/>
+					</Button>
+
+					<!-- Other actions -->
+					<ToggleButton Name="otherActionsButton" Classes="ToolBar_Button" Command="{Binding $parent[UserControl].ShowOtherActions}" ToolTip.Tip="{DynamicResource String/SessionView.OtherActions}">
+						<Panel>
+							<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing/More}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
+							<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing/More.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
+						</Panel>
+					</ToggleButton>
+
+				</StackPanel>
+
+				<!-- Progress bar -->
+				<ProgressBar Grid.Row="1" MaxHeight="{DynamicResource Double/SessionView.LogsProgessingBar.Height}" MinHeight="{DynamicResource Double/SessionView.LogsProgessingBar.Height}" Opacity="0"/>
+				<ProgressBar Background="{x:Null}" CornerRadius="0" Grid.Row="1" IsIndeterminate="True" IsVisible="{Binding IsProcessingLogs}" MaxHeight="{DynamicResource Double/SessionView.LogsProgessingBar.Height}" MinHeight="{DynamicResource Double/SessionView.LogsProgessingBar.Height}"/>
+
+			</Grid>
+		</Border>
 
 		<!-- Logs -->
-		<Grid Background="{x:Static Brushes.Transparent}" DragDrop.AllowDrop="True" Grid.Row="2" RowDefinitions="Auto,*">
+		<Grid Background="{x:Static Brushes.Transparent}" DragDrop.AllowDrop="True" Grid.Row="1" RowDefinitions="Auto,*">
 
 			<!-- Header -->
 			<Border Background="{DynamicResource Brush/SessionView.LogHeader.Background}">
@@ -442,28 +411,28 @@
 
 			<!-- Hint: no log to show -->
 			<Border Grid.Row="1" IsVisible="{Binding !HasLogs}">
-				<TextBlock FontSize="{DynamicResource Double.SessionView.Hint.NoLogToShow.FontSize}" HorizontalAlignment="Center" IsVisible="{Binding $parent[UserControl].HasLogProfile}" Text="{DynamicResource String/SessionView.Hint.NoLogToShow}" TextWrapping="Wrap" VerticalAlignment="Center"/>
+				<TextBlock FontSize="{DynamicResource Double/SessionView.Hint.NoLogToShow.FontSize}" HorizontalAlignment="Center" IsVisible="{Binding $parent[UserControl].HasLogProfile}" Text="{DynamicResource String/SessionView.Hint.NoLogToShow}" TextWrapping="Wrap" VerticalAlignment="Center"/>
 			</Border>
 
 			<!-- Hint: select log profile -->
 			<StackPanel Grid.Row="1" HorizontalAlignment="Center" IsVisible="{Binding !$parent[UserControl].HasLogProfile}" Orientation="Horizontal">
-				<TextBlock FontSize="{DynamicResource Double.SessionView.Hint.SelectLogProfile.FontSize}" Text="{DynamicResource String/SessionView.Hint.SelectLogProfile.Section1}" TextWrapping="NoWrap" VerticalAlignment="Center"/>
-				<Border Height="{DynamicResource Double.SessionView.Hint.SelectLogProfile.FontSize}" Margin="{DynamicResource Thickness/SessionView.Hint.SelectLogProfile.Icon.Margin}" VerticalAlignment="Center" Width="{DynamicResource Double.SessionView.Hint.SelectLogProfile.FontSize}">
+				<TextBlock FontSize="{DynamicResource Double/SessionView.Hint.SelectLogProfile.FontSize}" Text="{DynamicResource String/SessionView.Hint.SelectLogProfile.Section1}" TextWrapping="NoWrap" VerticalAlignment="Center"/>
+				<Border Height="{DynamicResource Double/SessionView.Hint.SelectLogProfile.FontSize}" Margin="{DynamicResource Thickness/SessionView.Hint.SelectLogProfile.Icon.Margin}" VerticalAlignment="Center" Width="{DynamicResource Double/SessionView.Hint.SelectLogProfile.FontSize}">
 					<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/LogProfile}"/>
 				</Border>
-				<TextBlock FontSize="{DynamicResource Double.SessionView.Hint.SelectLogProfile.FontSize}" Text="{DynamicResource String/SessionView.Hint.SelectLogProfile.Section2}" TextWrapping="NoWrap" VerticalAlignment="Center"/>
+				<TextBlock FontSize="{DynamicResource Double/SessionView.Hint.SelectLogProfile.FontSize}" Text="{DynamicResource String/SessionView.Hint.SelectLogProfile.Section2}" TextWrapping="NoWrap" VerticalAlignment="Center"/>
 			</StackPanel>
 
 		</Grid>
 
 		<!-- Status bar -->
-		<Border Background="{DynamicResource Brush/SessionView.StatusBar.Background}" Grid.ColumnSpan="3" Grid.Row="3" Padding="{DynamicResource Thickness/SessionView.StatusBar.Padding}">
+		<Border Classes="StatusBar" Grid.ColumnSpan="3" Grid.Row="2">
 			<ia:Interaction.Behaviors>
 				<iaCore:DataTriggerBehavior Binding="{Binding $parent[UserControl].StatusBarState}" Value="None">
 					<iaCore:ChangePropertyAction PropertyName="Background" Value="{DynamicResource Brush/SessionView.StatusBar.Background}"/>
 				</iaCore:DataTriggerBehavior>
 				<iaCore:DataTriggerBehavior Binding="{Binding $parent[UserControl].StatusBarState}" Value="Active">
-					<iaCore:ChangePropertyAction PropertyName="Background" Value="{DynamicResource Brush/SessionView.StatusBar.Background.Active}"/>
+					<iaCore:ChangePropertyAction PropertyName="Background" Value="{DynamicResource Brush/StatusBar.Background}"/>
 				</iaCore:DataTriggerBehavior>
 				<iaCore:DataTriggerBehavior Binding="{Binding $parent[UserControl].StatusBarState}" Value="Error">
 					<iaCore:ChangePropertyAction PropertyName="Background" Value="{DynamicResource Brush/SessionView.StatusBar.Background.Error}"/>
@@ -477,101 +446,93 @@
 			</ia:Interaction.Behaviors>
 			<Grid ColumnDefinitions="Auto,Auto,Auto,Auto,*,Auto,Auto,Auto,Auto,Auto,Auto">
 
-				<!-- Styles -->
-				<Grid.Styles>
-					<Style Selector="TextBlock">
-						<Setter Property="Foreground" Value="{DynamicResource Brush/SessionView.StatusBar.Foreground}"/>
-						<Setter Property="VerticalAlignment" Value="Center"/>
-					</Style>
-				</Grid.Styles>
-
 				<!-- Empty view to reserve space -->
-				<TextBlock Grid.ColumnSpan="5" Text="{DynamicResource String/SessionView.AllLogCount}" Opacity="0"/>
+				<TextBlock Classes="StatusBar_TextBlock" Text="{DynamicResource String/SessionView.AllLogCount}" Opacity="0"/>
 
 				<!-- Number of logs -->
 				<StackPanel IsVisible="{Binding HasLogs}" Opacity="0" Orientation="Horizontal">
 					<!-- Empty view to reserve space -->
-					<TextBlock Text="{DynamicResource String/SessionView.AllLogCount}"/>
-					<TextBlock Text="00000000"/>
-					<TextBlock IsVisible="{Binding IsFilteringLogsNeeded}" Text="{DynamicResource String/SessionView.FilteredLogCount}"/>
-					<TextBlock IsVisible="{Binding IsFilteringLogsNeeded}" Text="00000000"/>
-					<Separator Classes="SessionView_StatusBar_Separator"/>
+					<TextBlock Classes="StatusBar_TextBlock" Text="{DynamicResource String/SessionView.AllLogCount}"/>
+					<TextBlock Classes="StatusBar_TextBlock" Text="00000000"/>
+					<TextBlock Classes="StatusBar_TextBlock" IsVisible="{Binding IsFilteringLogsNeeded}" Text="{DynamicResource String/SessionView.FilteredLogCount}"/>
+					<TextBlock Classes="StatusBar_TextBlock" IsVisible="{Binding IsFilteringLogsNeeded}" Text="00000000"/>
+					<Separator Classes="StatusBar_Separator"/>
 				</StackPanel>
 				<StackPanel IsVisible="{Binding HasLogs}" Orientation="Horizontal">
-					<TextBlock Text="{DynamicResource String/SessionView.AllLogCount}"/>
-					<TextBlock Text="{Binding AllLogCount}" VerticalAlignment="Center"/>
-					<TextBlock IsVisible="{Binding IsFilteringLogsNeeded}" Text="{DynamicResource String/SessionView.FilteredLogCount}"/>
-					<TextBlock IsVisible="{Binding IsFilteringLogsNeeded}" Text="{Binding FilteredLogCount}"/>
-					<Separator Classes="SessionView_StatusBar_Separator"/>
+					<TextBlock Classes="StatusBar_TextBlock" Text="{DynamicResource String/SessionView.AllLogCount}"/>
+					<TextBlock Classes="StatusBar_TextBlock" Text="{Binding AllLogCount}" VerticalAlignment="Center"/>
+					<TextBlock Classes="StatusBar_TextBlock" IsVisible="{Binding IsFilteringLogsNeeded}" Text="{DynamicResource String/SessionView.FilteredLogCount}"/>
+					<TextBlock Classes="StatusBar_TextBlock" IsVisible="{Binding IsFilteringLogsNeeded}" Text="{Binding FilteredLogCount}"/>
+					<Separator Classes="StatusBar_Separator"/>
 				</StackPanel>
 
 				<!-- Last logs reading duration -->
 				<StackPanel Grid.Column="1" IsVisible="{Binding HasLastLogsReadingDuration}" Orientation="Horizontal">
-					<TextBlock Text="{DynamicResource String/SessionView.LastLogsReadingDuration}"/>
-					<TextBlock Text="{Binding LastLogsReadingDuration, Converter={x:Static asConverters:TimeSpanConverter.Default}}"/>
-					<Separator Classes="SessionView_StatusBar_Separator"/>
+					<TextBlock Classes="StatusBar_TextBlock" Text="{DynamicResource String/SessionView.LastLogsReadingDuration}"/>
+					<TextBlock Classes="StatusBar_TextBlock" Text="{Binding LastLogsReadingDuration, Converter={x:Static asConverters:TimeSpanConverter.Default}}"/>
+					<Separator Classes="StatusBar_Separator"/>
 				</StackPanel>
 
 				<!-- Last logs filtering duration -->
 				<StackPanel Grid.Column="2" IsVisible="{Binding HasLastLogsFilteringDuration}" Orientation="Horizontal">
-					<TextBlock Text="{DynamicResource String/SessionView.LastLogsFilteringDuration}"/>
-					<TextBlock Text="{Binding LastLogsFilteringDuration, Converter={x:Static asConverters:TimeSpanConverter.Default}}"/>
-					<Separator Classes="SessionView_StatusBar_Separator"/>
+					<TextBlock Classes="StatusBar_TextBlock" Text="{DynamicResource String/SessionView.LastLogsFilteringDuration}"/>
+					<TextBlock Classes="StatusBar_TextBlock" Text="{Binding LastLogsFilteringDuration, Converter={x:Static asConverters:TimeSpanConverter.Default}}"/>
+					<Separator Classes="StatusBar_Separator"/>
 				</StackPanel>
 
 				<!-- Selected logs -->
 				<StackPanel Grid.Column="3" IsVisible="{Binding #logListBox.SelectedItems.Count}" Orientation="Horizontal">
-					<TextBlock Text="{DynamicResource String/SessionView.SelectedLogCount}"/>
-					<TextBlock Text="{Binding #logListBox.SelectedItems.Count}"/>
-					<Separator Classes="SessionView_StatusBar_Separator"/>
+					<TextBlock Classes="StatusBar_TextBlock" Text="{DynamicResource String/SessionView.SelectedLogCount}"/>
+					<TextBlock Classes="StatusBar_TextBlock" Text="{Binding #logListBox.SelectedItems.Count}"/>
+					<Separator Classes="StatusBar_Separator"/>
 				</StackPanel>
 
 				<!-- Filtering progress -->
 				<StackPanel Grid.Column="5" IsVisible="{Binding IsFilteringLogs}" Orientation="Horizontal">
-					<Separator Classes="SessionView_StatusBar_Separator"/>
+					<Separator Classes="StatusBar_Separator"/>
 					<Border Classes="SessionView_StatusBar_Icon">
 						<DrawingPresenter Classes="Icon">
 							<DrawingPresenter.Drawing>
-								<GeometryDrawing Brush="{DynamicResource Brush/SessionView.StatusBar.Foreground}" Geometry="{DynamicResource Geometry.Filter}"/>
+								<GeometryDrawing Brush="{DynamicResource Brush/SessionView.StatusBar.Foreground}" Geometry="{StaticResource Geometry/Filter}"/>
 							</DrawingPresenter.Drawing>
 						</DrawingPresenter>
 					</Border>
-					<TextBlock Text="{DynamicResource String/SessionView.LogsFilteringProgress}"/>
+					<TextBlock Classes="StatusBar_TextBlock" Text="{DynamicResource String/SessionView.LogsFilteringProgress}"/>
 					<Panel VerticalAlignment="Center">
-						<TextBlock Text="00.0%" Opacity="0"/>
-						<TextBlock HorizontalAlignment="Left" Text="{Binding LogsFilteringProgress, Converter={x:Static appViewModels:Session.LogsFilteringProgressConverter}}"/>	
+						<TextBlock Classes="StatusBar_TextBlock" Text="00.0%" Opacity="0"/>
+						<TextBlock Classes="StatusBar_TextBlock" HorizontalAlignment="Left" Text="{Binding LogsFilteringProgress, Converter={x:Static appViewModels:Session.LogsFilteringProgressConverter}}"/>	
 					</Panel>
 				</StackPanel>
 
 				<!-- Saving logs -->
 				<StackPanel Grid.Column="6" IsVisible="{Binding IsSavingLogs}" Orientation="Horizontal">
-					<Separator Classes="SessionView_StatusBar_Separator"/>
-					<Border Classes="SessionView_StatusBar_Icon">
+					<Separator Classes="StatusBar_Separator"/>
+					<Border Classes="StatusBar_Icon">
 						<DrawingPresenter Classes="Icon">
 							<DrawingPresenter.Drawing>
-								<GeometryDrawing Brush="{DynamicResource Brush/SessionView.StatusBar.Foreground}" Geometry="{DynamicResource Geometry.Save}"/>
+								<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Save}"/>
 							</DrawingPresenter.Drawing>
 						</DrawingPresenter>
 					</Border>
-					<TextBlock Text="{DynamicResource String/SessionView.SavingLogs}"/>
+					<TextBlock Classes="StatusBar_TextBlock" Text="{DynamicResource String/SessionView.SavingLogs}"/>
 				</StackPanel>
 
 				<!-- Waiting for data sources -->
 				<StackPanel Grid.Column="7" IsVisible="{Binding IsWaitingForDataSources}" Orientation="Horizontal">
-					<Separator Classes="SessionView_StatusBar_Separator"/>
-					<Border Classes="SessionView_StatusBar_Icon">
+					<Separator Classes="StatusBar_Separator"/>
+					<Border Classes="StatusBar_Icon">
 						<DrawingPresenter Classes="Icon">
 							<DrawingPresenter.Drawing>
-								<GeometryDrawing Brush="{DynamicResource Brush/SessionView.StatusBar.Foreground}" Geometry="{DynamicResource Geometry.Waiting}"/>
+								<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Waiting}"/>
 							</DrawingPresenter.Drawing>
 						</DrawingPresenter>
 					</Border>
-					<TextBlock Text="{DynamicResource String/SessionView.WaitingForDataSources}"/>
+					<TextBlock Classes="StatusBar_TextBlock" Text="{DynamicResource String/SessionView.WaitingForDataSources}"/>
 				</StackPanel>
 
 				<!-- Working directory -->
 				<StackPanel Grid.Column="8" IsVisible="{Binding HasWorkingDirectory}" Orientation="Horizontal">
-					<Separator Classes="SessionView_StatusBar_Separator"/>
+					<Separator Classes="StatusBar_Separator"/>
 					<StackPanel Background="{x:Static Brushes.Transparent}" Cursor="Hand" Orientation="Horizontal" PointerReleased="OnStatusBarItemPointerReleased">
 						<StackPanel.ContextMenu>
 							<ContextMenu>
@@ -581,87 +542,87 @@
 						<ToolTip.Tip>
 							<TextBlock Foreground="{DynamicResource ToolTipForeground}" Text="{Binding WorkingDirectoryPath}"/>
 						</ToolTip.Tip>
-						<Border Classes="SessionView_StatusBar_Icon">
+						<Border Classes="StatusBar_Icon">
 							<DrawingPresenter Classes="Icon">
 								<DrawingPresenter.Drawing>
-									<GeometryDrawing Brush="{DynamicResource Brush/SessionView.StatusBar.Foreground}" Geometry="{DynamicResource Geometry.Folder}"/>
+									<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Folder}"/>
 								</DrawingPresenter.Drawing>
 							</DrawingPresenter>
 						</Border>
-						<TextBlock Text="{Binding WorkingDirectoryName}"/>
+						<TextBlock Classes="StatusBar_TextBlock" Text="{Binding WorkingDirectoryName}"/>
 					</StackPanel>
 				</StackPanel>
 
 				<!-- Error message -->
 				<StackPanel Grid.Column="9" IsVisible="{Binding HasAllDataSourceErrors}" Orientation="Horizontal">
-					<Separator Classes="SessionView_StatusBar_Separator"/>
-					<Border Classes="SessionView_StatusBar_Icon">
+					<Separator Classes="StatusBar_Separator"/>
+					<Border Classes="StatusBar_Icon">
 						<DrawingPresenter Classes="Icon">
 							<DrawingPresenter.Drawing>
-								<GeometryDrawing Brush="{DynamicResource Brush/SessionView.StatusBar.Foreground}" Geometry="{DynamicResource Geometry.Error}"/>
+								<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Error}"/>
 							</DrawingPresenter.Drawing>
 						</DrawingPresenter>
 					</Border>
-					<TextBlock Text="{DynamicResource String/SessionView.HasAllDataSourceErrors}"/>
+					<TextBlock Classes="StatusBar_TextBlock" Text="{DynamicResource String/SessionView.HasAllDataSourceErrors}"/>
 				</StackPanel>
 				<StackPanel Grid.Column="9" IsVisible="{Binding HasPartialDataSourceErrors}" Orientation="Horizontal">
-					<Border Classes="SessionView_StatusBar_Icon">
+					<Border Classes="StatusBar_Icon">
 						<DrawingPresenter Classes="Icon">
 							<DrawingPresenter.Drawing>
-								<GeometryDrawing Brush="{DynamicResource Brush/SessionView.StatusBar.Foreground}" Geometry="{DynamicResource Geometry.Warning}"/>
+								<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Warning}"/>
 							</DrawingPresenter.Drawing>
 						</DrawingPresenter>
 					</Border>
-					<TextBlock Text="{DynamicResource String/SessionView.HasPartialDataSourceErrors}"/>
+					<TextBlock Classes="StatusBar_TextBlock" Text="{DynamicResource String/SessionView.HasPartialDataSourceErrors}"/>
 				</StackPanel>
 
 				<!-- Process info -->
 				<StackPanel Grid.Column="10" IsVisible="{Binding $parent[UserControl].IsProcessInfoVisible}" Orientation="Horizontal">
-					<Separator Classes="SessionView_StatusBar_Separator"/>
+					<Separator Classes="StatusBar_Separator"/>
 					<StackPanel IsVisible="{Binding $parent[UserControl].Application.IsDebugMode, Mode=OneTime}" Orientation="Horizontal">
-						<Border Classes="SessionView_StatusBar_Icon" ToolTip.Tip="{DynamicResource String/SessionView.CpuUsage}">
+						<Border Classes="StatusBar_Icon" ToolTip.Tip="{DynamicResource String/SessionView.CpuUsage}">
 							<DrawingPresenter Classes="Icon">
 								<DrawingPresenter.Drawing>
-									<GeometryDrawing Brush="{DynamicResource Brush/SessionView.StatusBar.Foreground}" Geometry="{DynamicResource Geometry.Speed}"/>
+									<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Speed}"/>
 								</DrawingPresenter.Drawing>
 							</DrawingPresenter>
 						</Border>
 						<Panel VerticalAlignment="Center">
-							<TextBlock Text="000 ms   " Opacity="0" VerticalAlignment="Center"/>
-							<TextBlock Background="{x:Static Brushes.Transparent}" HorizontalAlignment="Left" VerticalAlignment="Center" Text="{Binding $parent[UserControl].Application.UIResponseDuration, Converter={x:Static asConverters:TimeSpanConverter.Default}}" ToolTip.Tip="{DynamicResource String/SessionView.UIResponseDuration}"/>
+							<TextBlock Classes="StatusBar_TextBlock" Text="000 ms   " Opacity="0" VerticalAlignment="Center"/>
+							<TextBlock Classes="StatusBar_TextBlock" Background="{x:Static Brushes.Transparent}" HorizontalAlignment="Left" VerticalAlignment="Center" Text="{Binding $parent[UserControl].Application.ProcessInfo.UIResponseDuration, Converter={x:Static asConverters:TimeSpanConverter.Default}}" ToolTip.Tip="{DynamicResource String/SessionView.UIResponseDuration}"/>
 						</Panel>
 					</StackPanel>
-					<Border Classes="SessionView_StatusBar_Icon" ToolTip.Tip="{DynamicResource String/SessionView.CpuUsage}">
+					<Border Classes="StatusBar_Icon" ToolTip.Tip="{DynamicResource String/SessionView.CpuUsage}">
 						<DrawingPresenter Classes="Icon">
 							<DrawingPresenter.Drawing>
-								<GeometryDrawing Brush="{DynamicResource Brush/SessionView.StatusBar.Foreground}" Geometry="{DynamicResource Geometry.Cpu}"/>
+								<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Cpu}"/>
 							</DrawingPresenter.Drawing>
 						</DrawingPresenter>
 					</Border>
 					<Panel VerticalAlignment="Center">
-						<TextBlock Text="00.0 % " Opacity="0"/>
-						<TextBlock Background="{x:Static Brushes.Transparent}" HorizontalAlignment="Left" Text="{Binding $parent[UserControl].Application.CpuUsagePercentage, StringFormat={}{0:F1} %}" ToolTip.Tip="{DynamicResource String/SessionView.CpuUsage}"/>
+						<TextBlock Classes="StatusBar_TextBlock" Text="00.0 % " Opacity="0"/>
+						<TextBlock Classes="StatusBar_TextBlock" Background="{x:Static Brushes.Transparent}" HorizontalAlignment="Left" Text="{Binding $parent[UserControl].Application.ProcessInfo.CpuUsagePercentage, StringFormat={}{0:F1} %}" ToolTip.Tip="{DynamicResource String/SessionView.CpuUsage}"/>
 					</Panel>
-					<Border Classes="SessionView_StatusBar_Icon" ToolTip.Tip="{DynamicResource String/SessionView.MemoryUsage}">
+					<Border Classes="StatusBar_Icon" ToolTip.Tip="{DynamicResource String/SessionView.MemoryUsage}">
 						<DrawingPresenter Classes="Icon">
 							<DrawingPresenter.Drawing>
-								<GeometryDrawing Brush="{DynamicResource Brush/SessionView.StatusBar.Foreground}" Geometry="{DynamicResource Geometry.Memory}"/>
+								<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Memory}"/>
 							</DrawingPresenter.Drawing>
 						</DrawingPresenter>
 					</Border>
-					<TextBlock Background="{x:Static Brushes.Transparent}" Text="{Binding $parent[UserControl].Application.PrivateMemoryUsage, Converter={x:Static asConverters:FileSizeConverter.Default}}" ToolTip.Tip="{DynamicResource String/SessionView.MemoryUsage}"/>
+					<TextBlock Classes="StatusBar_TextBlock" Background="{x:Static Brushes.Transparent}" Text="{Binding $parent[UserControl].Application.ProcessInfo.PrivateMemoryUsage, Converter={x:Static asConverters:FileSizeConverter.Default}}" ToolTip.Tip="{DynamicResource String/SessionView.MemoryUsage}"/>
 				</StackPanel>
 				
 			</Grid>
 		</Border>
 
 		<!-- Side panel -->
-		<ScrollViewer Background="{DynamicResource Brush/SessionView.SidePanel.Background}" Grid.Column="2" Grid.ColumnSpan="1" Grid.Row="2" HorizontalAlignment="Stretch" HorizontalScrollBarVisibility="Disabled" IsEnabled="{Binding $parent[UserControl].HasProfile}">
+		<ScrollViewer Background="{DynamicResource Brush/SessionView.SidePanel.Background}" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Stretch" HorizontalScrollBarVisibility="Disabled" IsEnabled="{Binding $parent[UserControl].HasProfile}">
 			<StackPanel HorizontalAlignment="Stretch" Orientation="Vertical">
 
 				<!-- Marked logs -->
 				<StackPanel Classes="SessionView_SidePanel_Header">
-					<DrawingPresenter Classes="SessionView_SidePanel_Header" Drawing="{DynamicResource Drawing/Pin}"/>
+					<DrawingPresenter Classes="SessionView_SidePanel_Header" Drawing="{StaticResource Drawing/Icon.Pin}"/>
 					<TextBlock Classes="SessionView_SidePanel_Header" Text="{DynamicResource String/SessionView.MarkedLogs}"/>
 				</StackPanel>
 				<Panel>
@@ -691,7 +652,7 @@
 				
 			</StackPanel>
 		</ScrollViewer>
-		<GridSplitter Background="{DynamicResource Brush/SessionView.SidePanel.Background}" Grid.Column="1" Grid.Row="2" Width="{DynamicResource Double.GridSplitter.Thickness}"/>
+		<GridSplitter Background="{DynamicResource Brush/SessionView.SidePanel.Background}" Grid.Column="1" Grid.Row="1" Width="{DynamicResource Double/GridSplitter.Thickness}"/>
 
 	</Grid>
 

@@ -2,12 +2,14 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
 	<!-- Base style -->
-	<FluentTheme Mode="Light"/>
 	<StyleInclude Source="/Styles/Default.axaml"/>
 
 	<!-- Resources -->
 	<Styles.Resources>
 		<ResourceDictionary>
+
+			<!-- Icon -->
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile" Color="{DynamicResource SystemAccentColorDark1}"/>
 
 			<!-- LogLevel -->
 			<SolidColorBrush x:Key="Brush/LogLevel.Debug">#288dcc</SolidColorBrush>

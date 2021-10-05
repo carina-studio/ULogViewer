@@ -54,17 +54,17 @@ namespace CarinaStudio.ULogViewer.Converters
 			var res = (object?)null;
 			if (mode != null)
 			{
-				if (app.Resources.TryGetResource($"Drawing.LogProfile.{iconName}.{mode}", out res) && res is Drawing)
+				if (app.Resources.TryGetResource($"Drawing/LogProfile.{iconName}.{mode}", out res) && res is Drawing)
 					return res;
 			}
-			if (app.Resources.TryGetResource($"Drawing.LogProfile.{iconName}", out res) && res is Drawing)
+			if (app.Resources.TryGetResource($"Drawing/LogProfile.{iconName}", out res) && res is Drawing)
 				return res;
 			if (mode != null)
 			{
-				if (app.Resources.TryGetResource($"Drawing.LogProfile.File.{mode}", out res) && res is Drawing)
+				if (app.Resources.TryGetResource($"Drawing/LogProfile.File.{mode}", out res) && res is Drawing)
 					return res;
 			}
-			if (app.Resources.TryGetResource($"Drawing.LogProfile.File", out res) && res is Drawing)
+			if (app.Resources.TryGetResource($"Drawing/LogProfile.File", out res) && res is Drawing)
 				return res;
 			return null;
 		}
