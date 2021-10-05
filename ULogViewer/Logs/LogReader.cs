@@ -80,7 +80,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			dataSource.VerifyAccess();
 
 			// setup properties
-			this.Application = (IApplication)dataSource.Application;
+			this.Application = (IULogViewerApplication)dataSource.Application;
 			this.DataSource = dataSource;
 			this.Id = nextId++;
 			this.Logger = dataSource.Application.LoggerFactory.CreateLogger($"{this.GetType().Name}-{this.Id}");
@@ -115,9 +115,9 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		/// <summary>
-		/// Get <see cref="IApplication"/> instance.
+		/// Get <see cref="IULogViewerApplication"/> instance.
 		/// </summary>
-		public IApplication Application { get; }
+		public IULogViewerApplication Application { get; }
 
 
 		// Whether read logs can be added or not.

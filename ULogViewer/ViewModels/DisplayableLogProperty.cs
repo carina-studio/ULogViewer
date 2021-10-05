@@ -17,7 +17,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		// Fields.
-		readonly IApplication app;
+		readonly IULogViewerApplication app;
 		readonly string displayNameId;
 
 
@@ -28,7 +28,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <param name="name">Name of property.</param>
 		/// <param name="displayName">Name for displaying.</param>
 		/// <param name="width">Width of UI field to show property in pixels.</param>
-		public DisplayableLogProperty(IApplication app, string name, string? displayName, int? width)
+		public DisplayableLogProperty(IULogViewerApplication app, string name, string? displayName, int? width)
 		{
 			this.app = app;
 			this.displayNameId = displayName ?? name;
@@ -44,7 +44,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		/// <param name="app">Application.</param>
 		/// <param name="logProperty"><see cref="LogProperty"/> defined in <see cref="LogProfile"/>.</param>
-		public DisplayableLogProperty(IApplication app, LogProperty logProperty)
+		public DisplayableLogProperty(IULogViewerApplication app, LogProperty logProperty)
 		{
 			this.app = app;
 			this.displayNameId = logProperty.DisplayName;

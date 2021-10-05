@@ -4,7 +4,6 @@ using Avalonia.Controls.Templates;
 using Avalonia.Data;
 using Avalonia.Markup.Xaml.Templates;
 using Avalonia.Styling;
-using CarinaStudio.ULogViewer.Converters;
 using System;
 
 namespace CarinaStudio.ULogViewer.Controls
@@ -21,7 +20,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Fields.
-		EnumConverter? enumConverter;
+		AppSuite.Converters.EnumConverter? enumConverter;
 		Array? enumValues;
 
 
@@ -47,7 +46,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.ItemTemplate = null;
 				if (change.NewValue.Value is Type type)
 				{
-					this.enumConverter = new EnumConverter(App.Current, type);
+					this.enumConverter = new AppSuite.Converters.EnumConverter(App.Current, type);
 					this.enumValues = Enum.GetValues(type);
 					this.Items = this.enumValues;
 					this.ItemTemplate = new DataTemplate()

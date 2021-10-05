@@ -3,13 +3,11 @@ using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Data;
 using Avalonia.Data.Converters;
-using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
-using CarinaStudio.ULogViewer.Converters;
 using CarinaStudio.ULogViewer.Logs;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.ULogViewer.Logs.Profiles;
@@ -17,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.Controls
@@ -24,16 +23,16 @@ namespace CarinaStudio.ULogViewer.Controls
 	/// <summary>
 	/// Dialog to edit <see cref="LogProfile"/>.
 	/// </summary>
-	partial class LogProfileEditorDialog : BaseDialog
+	partial class LogProfileEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
 	{
 		/// <summary>
 		/// <see cref="IValueConverter"/> to convert <see cref="LogLevel"/> to readable name.
 		/// </summary>
-		public static readonly IValueConverter LogLevelNameConverter = new EnumConverter<LogLevel>(App.Current);
+		public static readonly IValueConverter LogLevelNameConverter = Converters.EnumConverters.LogLevel;
 		/// <summary>
 		/// <see cref="IValueConverter"/> to convert <see cref="LogProfileIcon"/> to display name.
 		/// </summary>
-		public static readonly IValueConverter LogProfileIconNameConverter = new EnumConverter<LogProfileIcon>(App.Current);
+		public static readonly IValueConverter LogProfileIconNameConverter = new AppSuite.Converters.EnumConverter(App.Current, typeof(LogProfileIcon));
 		/// <summary>
 		/// URI of 'How ULogViewer read and parse logs' page.
 		/// </summary>
@@ -163,9 +162,9 @@ namespace CarinaStudio.ULogViewer.Controls
 					return;
 				if (this.logLevelMapEntriesForReading.Contains(entry.Value))
 				{
-					await new MessageDialog()
+					await new AppSuite.Controls.MessageDialog()
 					{
-						Icon = MessageDialogIcon.Warning,
+						Icon = AppSuite.Controls.MessageDialogIcon.Warning,
 						Message = this.Application.GetFormattedString("LogProfileEditorDialog.DuplicateLogLevelMapEntry", entry.Value.Key),
 						Title = this.Application.GetString("LogProfileEditorDialog.LogLevelMapForReading"),
 					}.ShowDialog(this);
@@ -192,9 +191,9 @@ namespace CarinaStudio.ULogViewer.Controls
 					return;
 				if (this.logLevelMapEntriesForWriting.Contains(entry.Value))
 				{
-					await new MessageDialog()
+					await new AppSuite.Controls.MessageDialog()
 					{
-						Icon = MessageDialogIcon.Warning,
+						Icon = AppSuite.Controls.MessageDialogIcon.Warning,
 						Message = this.Application.GetFormattedString("LogProfileEditorDialog.DuplicateLogLevelMapEntry", LogLevelNameConverter.Convert(entry.Value.Key, typeof(string), null, this.Application.CultureInfo)),
 						Title = this.Application.GetString("LogProfileEditorDialog.LogLevelMapForReading"),
 					}.ShowDialog(this);
@@ -246,9 +245,9 @@ namespace CarinaStudio.ULogViewer.Controls
 				var checkingEntry = this.logLevelMapEntriesForReading.FirstOrDefault(it => it.Key == newEntry.Value.Key);
 				if (checkingEntry.Key != null && !entry.Equals(checkingEntry))
 				{
-					await new MessageDialog()
+					await new AppSuite.Controls.MessageDialog()
 					{
-						Icon = MessageDialogIcon.Warning,
+						Icon = AppSuite.Controls.MessageDialogIcon.Warning,
 						Message = this.Application.GetFormattedString("LogProfileEditorDialog.DuplicateLogLevelMapEntry", newEntry.Value.Key),
 						Title = this.Application.GetString("LogProfileEditorDialog.LogLevelMapForReading"),
 					}.ShowDialog(this);
@@ -277,9 +276,9 @@ namespace CarinaStudio.ULogViewer.Controls
 				var checkingEntry = this.logLevelMapEntriesForWriting.FirstOrDefault(it => it.Key == newEntry.Value.Key);
 				if (checkingEntry.Value != null && !entry.Equals(checkingEntry))
 				{
-					await new MessageDialog()
+					await new AppSuite.Controls.MessageDialog()
 					{
-						Icon = MessageDialogIcon.Warning,
+						Icon = AppSuite.Controls.MessageDialogIcon.Warning,
 						Message = this.Application.GetFormattedString("LogProfileEditorDialog.DuplicateLogLevelMapEntry", LogLevelNameConverter.Convert(newEntry.Value.Key, typeof(string), null, this.Application.CultureInfo)),
 						Title = this.Application.GetString("LogProfileEditorDialog.LogLevelMapForWriting"),
 					}.ShowDialog(this);
@@ -330,6 +329,76 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.visibleLogProperties[index] = newLogProperty;
 				this.SelectListBoxItem(this.visibleLogPropertyListBox, index);
 			}
+		}
+
+
+		// Generate result.
+		protected override async Task<object?> GenerateResultAsync(CancellationToken cancellationToken)
+		{
+			// check log patterns and visible log properties
+			if (this.logPatterns.IsEmpty())
+			{
+				if (this.visibleLogProperties.IsNotEmpty())
+				{
+					var result = await new AppSuite.Controls.MessageDialog()
+					{
+						Buttons = AppSuite.Controls.MessageDialogButtons.YesNo,
+						Icon = AppSuite.Controls.MessageDialogIcon.Warning,
+						Message = this.Application.GetString("LogProfileEditorDialog.VisibleLogPropertiesWithoutLogPatterns"),
+					}.ShowDialog(this);
+					if (result == AppSuite.Controls.MessageDialogResult.Yes)
+					{
+						this.baseScrollViewer.ScrollIntoView(this.logPatternListBox);
+						this.logPatternListBox.Focus();
+						return null;
+					}
+				}
+			}
+			else if (this.visibleLogProperties.IsEmpty())
+			{
+				var result = await new AppSuite.Controls.MessageDialog()
+				{
+					Buttons = AppSuite.Controls.MessageDialogButtons.YesNo,
+					Icon = AppSuite.Controls.MessageDialogIcon.Warning,
+					Message = this.Application.GetString("LogProfileEditorDialog.LogPatternsWithoutVisibleLogProperties"),
+				}.ShowDialog(this);
+				if (result == AppSuite.Controls.MessageDialogResult.Yes)
+				{
+					this.baseScrollViewer.ScrollIntoView(this.visibleLogPropertyListBox);
+					this.visibleLogPropertyListBox.Focus();
+					return null;
+				}
+			}
+
+			// update log profile
+			var logProfile = this.LogProfile ?? new LogProfile(this.Application);
+			logProfile.ColorIndicator = (LogColorIndicator)this.colorIndicatorComboBox.SelectedItem.AsNonNull();
+			logProfile.DataSourceOptions = this.dataSourceOptions;
+			logProfile.DataSourceProvider = (ILogDataSourceProvider)this.dataSourceProviderComboBox.SelectedItem.AsNonNull();
+			logProfile.Icon = (LogProfileIcon)this.iconComboBox.SelectedItem.AsNonNull();
+			logProfile.IsAdministratorNeeded = this.adminNeededSwitch.IsChecked.GetValueOrDefault();
+			logProfile.IsContinuousReading = this.continuousReadingSwitch.IsChecked.GetValueOrDefault();
+			logProfile.IsWorkingDirectoryNeeded = this.workingDirNeededSwitch.IsChecked.GetValueOrDefault();
+			logProfile.LogLevelMapForReading = new Dictionary<string, LogLevel>(this.logLevelMapEntriesForReading);
+			logProfile.LogLevelMapForWriting = new Dictionary<LogLevel, string>(this.logLevelMapEntriesForWriting);
+			logProfile.LogPatterns = this.logPatterns;
+			logProfile.LogStringEncodingForReading = (LogStringEncoding)this.logStringEncodingForReadingComboBox.SelectedItem.AsNonNull();
+			logProfile.LogStringEncodingForWriting = (LogStringEncoding)this.logStringEncodingForWritingComboBox.SelectedItem.AsNonNull();
+			logProfile.LogWritingFormat = this.logWritingFormatTextBox.Text?.Let(it =>
+			{
+				if (string.IsNullOrWhiteSpace(it))
+					return null;
+				return it;
+			});
+			logProfile.Name = this.nameTextBox.Text.AsNonNull();
+			logProfile.SortDirection = (SortDirection)this.sortDirectionComboBox.SelectedItem.AsNonNull();
+			logProfile.SortKey = (LogSortKey)this.sortKeyComboBox.SelectedItem.AsNonNull();
+			logProfile.TimestampEncodingForReading = (LogTimestampEncoding)this.timestampEncodingForReadingComboBox.SelectedItem.AsNonNull();
+			logProfile.TimestampFormatForDisplaying = this.timestampFormatForDisplayingTextBox.Text;
+			logProfile.TimestampFormatForReading = this.timestampFormatForReadingTextBox.Text;
+			logProfile.TimestampFormatForWriting = this.timestampFormatForWritingTextBox.Text;
+			logProfile.VisibleLogProperties = this.visibleLogProperties;
+			return logProfile;
 		}
 
 
@@ -449,87 +518,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Generate result.
-		protected override object? OnGenerateResult() => null;
-		protected override async Task<object?> OnGenerateResultAsync()
-		{
-			// check log patterns and visible log properties
-			if (this.logPatterns.IsEmpty())
-			{
-				if (this.visibleLogProperties.IsNotEmpty())
-				{
-					var result = await new MessageDialog()
-					{
-						Buttons = MessageDialogButtons.YesNo,
-						Icon = MessageDialogIcon.Warning,
-						Message = this.Application.GetString("LogProfileEditorDialog.VisibleLogPropertiesWithoutLogPatterns"),
-					}.ShowDialog<MessageDialogResult>(this);
-					if (result == MessageDialogResult.Yes)
-					{
-						this.baseScrollViewer.ScrollIntoView(this.logPatternListBox);
-						this.logPatternListBox.Focus();
-						return null;
-					}
-				}
-			}
-			else if (this.visibleLogProperties.IsEmpty())
-			{
-				var result = await new MessageDialog()
-				{
-					Buttons = MessageDialogButtons.YesNo,
-					Icon = MessageDialogIcon.Warning,
-					Message = this.Application.GetString("LogProfileEditorDialog.LogPatternsWithoutVisibleLogProperties"),
-				}.ShowDialog<MessageDialogResult>(this);
-				if (result == MessageDialogResult.Yes)
-				{
-					this.baseScrollViewer.ScrollIntoView(this.visibleLogPropertyListBox);
-					this.visibleLogPropertyListBox.Focus();
-					return null;
-				}
-			}
-
-			// update log profile
-			var logProfile = this.LogProfile ?? new LogProfile(this.Application);
-			logProfile.ColorIndicator = (LogColorIndicator)this.colorIndicatorComboBox.SelectedItem.AsNonNull();
-			logProfile.DataSourceOptions = this.dataSourceOptions;
-			logProfile.DataSourceProvider = (ILogDataSourceProvider)this.dataSourceProviderComboBox.SelectedItem.AsNonNull();
-			logProfile.Icon = (LogProfileIcon)this.iconComboBox.SelectedItem.AsNonNull();
-			logProfile.IsAdministratorNeeded = this.adminNeededSwitch.IsChecked.GetValueOrDefault();
-			logProfile.IsContinuousReading = this.continuousReadingSwitch.IsChecked.GetValueOrDefault();
-			logProfile.IsWorkingDirectoryNeeded = this.workingDirNeededSwitch.IsChecked.GetValueOrDefault();
-			logProfile.LogLevelMapForReading = new Dictionary<string, LogLevel>(this.logLevelMapEntriesForReading);
-			logProfile.LogLevelMapForWriting = new Dictionary<LogLevel, string>(this.logLevelMapEntriesForWriting);
-			logProfile.LogPatterns = this.logPatterns;
-			logProfile.LogStringEncodingForReading = (LogStringEncoding)this.logStringEncodingForReadingComboBox.SelectedItem.AsNonNull();
-			logProfile.LogStringEncodingForWriting = (LogStringEncoding)this.logStringEncodingForWritingComboBox.SelectedItem.AsNonNull();
-			logProfile.LogWritingFormat = this.logWritingFormatTextBox.Text?.Let(it =>
-			{
-				if (string.IsNullOrWhiteSpace(it))
-					return null;
-				return it;
-			});
-			logProfile.Name = this.nameTextBox.Text.AsNonNull();
-			logProfile.SortDirection = (SortDirection)this.sortDirectionComboBox.SelectedItem.AsNonNull();
-			logProfile.SortKey = (LogSortKey)this.sortKeyComboBox.SelectedItem.AsNonNull();
-			logProfile.TimestampEncodingForReading = (LogTimestampEncoding)this.timestampEncodingForReadingComboBox.SelectedItem.AsNonNull();
-			logProfile.TimestampFormatForDisplaying = this.timestampFormatForDisplayingTextBox.Text;
-			logProfile.TimestampFormatForReading = this.timestampFormatForReadingTextBox.Text;
-			logProfile.TimestampFormatForWriting = this.timestampFormatForWritingTextBox.Text;
-			logProfile.VisibleLogProperties = this.visibleLogProperties;
-			return logProfile;
-		}
-
-
-		// Called when pointer released on description text.
-		void OnLinkDescriptionPointerReleased(object? sender, PointerReleasedEventArgs e)
-		{
-			if (e.InitialPressMouseButton != MouseButton.Left)
-				return;
-			if (sender is Control control && control.Tag is Uri uri)
-				this.OpenLink(uri);
-		}
-
-
 		// Called when double-tapped on list box.
 		void OnListBoxDoubleTapped(object? sender, RoutedEventArgs e)
 		{
@@ -621,18 +609,18 @@ namespace CarinaStudio.ULogViewer.Controls
 			// show hint of 'learn about logs reading and parsing'
 			if (!this.PersistentState.GetValueOrDefault(HasLearnAboutLogsReadingAndParsingHintShown))
 			{
-				var result = await new MessageDialog()
+				var result = await new AppSuite.Controls.MessageDialog()
 				{
-					Buttons = MessageDialogButtons.YesNo,
-					Icon = MessageDialogIcon.Question,
+					Buttons = AppSuite.Controls.MessageDialogButtons.YesNo,
+					Icon = AppSuite.Controls.MessageDialogIcon.Question,
 					Message = this.Application.GetString("LogProfileEditorDialog.LearnAboutLogsReadingAndParsingFirst"),
 					Title = this.Title
-				}.ShowDialog<MessageDialogResult>(this);
+				}.ShowDialog(this);
 				if (this.IsOpened)
 				{
 					this.PersistentState.SetValue<bool>(HasLearnAboutLogsReadingAndParsingHintShown, true);
-					if (result == MessageDialogResult.Yes)
-						this.OpenLink(LogsReadingAndParsingPageUri);
+					if (result == AppSuite.Controls.MessageDialogResult.Yes)
+						Platform.OpenLink(LogsReadingAndParsingPageUri);
 				}
 			}
 		}

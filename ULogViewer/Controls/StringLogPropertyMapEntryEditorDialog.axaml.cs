@@ -3,13 +3,15 @@ using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.Controls
 {
 	/// <summary>
 	/// Dialog to edit entry of log property (<see cref="KeyValuePair{String, String}"/>).
 	/// </summary>
-	partial class StringLogPropertyMapEntryEditorDialog : BaseDialog
+	partial class StringLogPropertyMapEntryEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
 	{
 		// Fields.
 		readonly TextBox mappedNameTextBox;
@@ -33,6 +35,11 @@ namespace CarinaStudio.ULogViewer.Controls
 		public KeyValuePair<string,string> Entry { get; set; }
 
 
+		// Generate result.
+		protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken) =>
+			Task.FromResult((object?)new KeyValuePair<string, string>((string)this.nameComboBox.SelectedItem.AsNonNull(), this.mappedNameTextBox.Text.AsNonNull()));
+
+
 		// Initialize.
 		private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
 
@@ -42,13 +49,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (e.Property == ComboBox.SelectedIndexProperty || e.Property == TextBox.TextProperty)
 				this.InvalidateInput();
-		}
-
-
-		// Generate result.
-		protected override object? OnGenerateResult()
-		{
-			return new KeyValuePair<string, string>((string)this.nameComboBox.SelectedItem.AsNonNull(), this.mappedNameTextBox.Text.AsNonNull());
 		}
 
 

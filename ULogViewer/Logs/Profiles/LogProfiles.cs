@@ -21,7 +21,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 
 
 		// Fields.
-		static volatile IApplication? app;
+		static volatile IULogViewerApplication? app;
 		static readonly IList<string> builtInProfileIDs = new List<string>()
 		{
 			"AndroidDeviceLog",
@@ -165,7 +165,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// </summary>
 		/// <param name="app">Application.</param>
 		/// <returns>Task of initialization.</returns>
-		public static async Task InitializeAsync(IApplication app)
+		public static async Task InitializeAsync(IULogViewerApplication app)
 		{
 			// check state
 			app.VerifyAccess();

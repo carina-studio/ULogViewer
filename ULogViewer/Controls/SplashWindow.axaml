@@ -4,39 +4,39 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.SplashWindow"
-				Background="{x:Null}"
-				CanResize="False"
-				HasSystemDecorations="False"
-				Height="{StaticResource Double.SplashWindow.Height}"
-				ShowInTaskbar="False"
+        Background="{x:Null}"
+        CanResize="False"
+        HasSystemDecorations="False"
+        Height="{DynamicResource Double/SplashWindow.Height}"
+        ShowInTaskbar="False"
         Title="ULogViewer"
-				TransparencyLevelHint="Transparent"
-				Width="{StaticResource Double.SplashWindow.Width}"
-				WindowStartupLocation="CenterScreen">
+        TransparencyLevelHint="Transparent"
+        Width="{DynamicResource Double/SplashWindow.Width}"
+        WindowStartupLocation="CenterScreen">
 
 	<!-- Styles -->
 	<Window.Styles>
 		<Style Selector="TextBlock">
-			<Setter Property="Foreground" Value="{StaticResource Brush.SplashWindow.Foreground}"/>
+			<Setter Property="Foreground" Value="{DynamicResource Brush/SplashWindow.Foreground}"/>
 		</Style>
 	</Window.Styles>
 
 	<!-- Content -->
-	<Border Background="{StaticResource Brush.SplashWindow.Background}" BorderBrush="{StaticResource Brush.SplashWindow.Border}" BorderThickness="1" CornerRadius="{StaticResource CornerRadius.SplashWindow}" Opacity="0" Padding="{StaticResource Thickness.SplashWindow.Padding}">
+	<Border Background="{DynamicResource Brush/SplashWindow.Background}" BorderBrush="{DynamicResource Brush/SplashWindow.Border}" BorderThickness="1" CornerRadius="{DynamicResource CornerRadius/SplashWindow}" Opacity="0" Padding="{DynamicResource Thickness/SplashWindow.Padding}">
 		<Grid ColumnDefinitions="Auto,Auto" HorizontalAlignment="Center" RowDefinitions="Auto,Auto" VerticalAlignment="Center">
 
 			<!-- Icon -->
-			<Image Height="{StaticResource Double.SplashWindow.Icon.Size}" Margin="{StaticResource Thickness.SplashWindow.Icon.Margin}" Source="/AppIcon.ico" Width="{StaticResource Double.SplashWindow.Icon.Size}" VerticalAlignment="Center"/>
+			<Image Height="{DynamicResource Double/SplashWindow.Icon.Size}" Margin="{DynamicResource Thickness/SplashWindow.Icon.Margin}" Source="/AppIcon.ico" Width="{DynamicResource Double/SplashWindow.Icon.Size}" VerticalAlignment="Center"/>
 
 			<!-- Title and version -->
 			<StackPanel Grid.Column="1" Orientation="Vertical" VerticalAlignment="Center">
-				<TextBlock FontSize="{StaticResource Double.SplashWindow.Title.FontSize}" FontWeight="Bold" Margin="{StaticResource Thickness.SplashWindow.Title.Margin}" Text="ULogViewer"/>
+				<TextBlock FontSize="{DynamicResource Double/SplashWindow.Title.FontSize}" FontWeight="Bold" Margin="{DynamicResource Thickness/SplashWindow.Title.Margin}" Text="ULogViewer"/>
 				<TextBlock Text="{Binding $parent[Window].Version}"/>
 				<TextBlock Text="©2021 Carina Studio"/>
 			</StackPanel>
 
 			<!-- Message -->
-			<TextBlock Grid.ColumnSpan="2" Grid.Row="1" HorizontalAlignment="Center" Margin="{StaticResource Thickness.SplashWindow.Message.Margin}" Text="{Binding $parent[Window].Message}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"/>
+			<TextBlock Grid.ColumnSpan="2" Grid.Row="1" HorizontalAlignment="Center" Margin="{DynamicResource Thickness/SplashWindow.Message.Margin}" Text="{Binding $parent[Window].Message}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"/>
 
 		</Grid>
 

@@ -10,7 +10,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 	class MemoryLoggerLogDataSourceProvider : BaseLogDataSourceProvider
 	{
 		// Constructor.
-		public MemoryLoggerLogDataSourceProvider(IApplication app) : base(app)
+		public MemoryLoggerLogDataSourceProvider(IULogViewerApplication app) : base(app)
 		{ }
 
 

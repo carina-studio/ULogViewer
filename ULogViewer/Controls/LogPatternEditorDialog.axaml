@@ -2,17 +2,18 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-				xmlns:sys="clr-namespace:System;assembly=mscorlib"
-				xmlns:app="using:CarinaStudio.ULogViewer"
-				xmlns:appControls="clr-namespace:CarinaStudio.ULogViewer.Controls;assembly=ULogViewer"
-				xmlns:appConverters="clr-namespace:CarinaStudio.ULogViewer.Converters;assembly=ULogViewer"
-				xmlns:appLogs="clr-namespace:CarinaStudio.ULogViewer.Logs;assembly=ULogViewer"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
+        xmlns:app="using:CarinaStudio.ULogViewer"
+        xmlns:appControls="clr-namespace:CarinaStudio.ULogViewer.Controls;assembly=ULogViewer"
+        xmlns:appConverters="clr-namespace:CarinaStudio.ULogViewer.Converters;assembly=ULogViewer"
+        xmlns:appLogs="clr-namespace:CarinaStudio.ULogViewer.Logs;assembly=ULogViewer"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.LogPatternEditorDialog"
-				Classes="Dialog"
-				SizeToContent="Height"
+        Classes="Dialog"
+        SizeToContent="Height"
         Title="{DynamicResource String.LogPatternEditorDialog.Title}"
-				Width="{StaticResource Double.LogPatternEditorDialog.Width}">
+        Width="{StaticResource Double.LogPatternEditorDialog.Width}">
 
 	<!-- Resources -->
 	<Window.Resources>
@@ -58,7 +59,7 @@
 				<ToggleButton Name="addLogPropertyGroupButton" Classes="Browse" Command="{Binding $parent[Window].ShowAddLogPropertyGroupMenu}" Grid.Column="1"/>
 			</Grid>
 			<TextBlock Classes="Dialog_Description" Text="{DynamicResource String.LogPatternEditorDialog.Regex.Description}"/>
-			<TextBlock Classes="Dialog_Description_Link" PointerReleased="OnLinkDescriptionPointerReleased" Tag="{x:Static app:Uris.RegexReference}" Text="{DynamicResource String.Common.RegularExpression.Reference}"/>
+			<asControls:LinkTextBlock Classes="Dialog_Description" Text="{DynamicResource String.Common.RegularExpression.Reference}" Uri="{x:Static app:Uris.RegexReference}"/>
 			<Separator Classes="Dialog_Separator_Horizontal"/>
 
 			<!-- Repeatable -->

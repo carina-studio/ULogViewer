@@ -1,22 +1,22 @@
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using CarinaStudio.Collections;
 using CarinaStudio.ULogViewer.Converters;
-using CarinaStudio.ULogViewer.Logs;
 using CarinaStudio.ULogViewer.ViewModels;
 using CarinaStudio.Threading;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace CarinaStudio.ULogViewer.Controls
 {
 	/// <summary>
 	/// Dialog to edit <see cref="JsonLogsSavingOptions"/>.
 	/// </summary>
-	partial class JsonLogsSavingOptionsDialog : BaseDialog
+	partial class JsonLogsSavingOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
 	{
 		// Fields.
 		readonly ObservableList<KeyValuePair<string, string>> logPropertyMap = new ObservableList<KeyValuePair<string, string>>();
@@ -59,9 +59,9 @@ namespace CarinaStudio.ULogViewer.Controls
 				var newKey = newEntry.Value.Key;
 				if (newKey != entry.Key && this.logPropertyMap.FirstOrDefault(it => it.Key == newKey).Key == newKey)
 				{
-					await new MessageDialog()
+					await new AppSuite.Controls.MessageDialog()
 					{
-						Icon = MessageDialogIcon.Warning,
+						Icon = AppSuite.Controls.MessageDialogIcon.Warning,
 						Message = this.Application.GetFormattedString("LogProfileEditorDialog.DuplicateLogLevelMapEntry", LogPropertyNameConverter.Default.Convert(newKey)),
 						Title = this.Title,
 					}.ShowDialog(this);
@@ -83,6 +83,22 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Generate result.
+		protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken)
+		{
+			// get log writer
+			var options = this.LogsSavingOptions;
+			if (options == null)
+				return Task.FromResult((object?)null);
+
+			// setup log writer
+			options.LogPropertyMap = new Dictionary<string, string>(this.logPropertyMap);
+
+			// complete
+			return Task.FromResult((object?)options);
+		}
+
+
 		// Initialize.
 		private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
 
@@ -95,22 +111,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// Get or set <see cref="JsonLogsSavingOptions"/> to be edited.
 		/// </summary>
 		public JsonLogsSavingOptions? LogsSavingOptions { get; set; }
-
-
-		// Generate result.
-		protected override object? OnGenerateResult()
-		{
-			// get log writer
-			var options = this.LogsSavingOptions;
-			if (options == null)
-				return null;
-
-			// setup log writer
-			options.LogPropertyMap = new Dictionary<string, string>(this.logPropertyMap);
-
-			// complete
-			return options;
-		}
 
 
 		// Called when double-tapped on list box.

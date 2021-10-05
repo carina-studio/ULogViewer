@@ -8,18 +8,18 @@ using System.Threading.Tasks;
 namespace CarinaStudio.ULogViewer
 {
 	/// <summary>
-	/// Base implementations of <see cref="IApplication"/> based tests.
+	/// Base implementations of <see cref="IULogViewerApplication"/> based tests.
 	/// </summary>
 	abstract class AppBasedTests
 	{
 		// Fields.
-		volatile IApplication? app;
+		volatile IULogViewerApplication? app;
 
 
 		/// <summary>
-		/// Get <see cref="IApplication"/> instance.
+		/// Get <see cref="IULogViewerApplication"/> instance.
 		/// </summary>
-		protected IApplication Application { get => this.app ?? throw new InvalidOperationException("Application is not ready."); }
+		protected IULogViewerApplication Application { get => this.app ?? throw new InvalidOperationException("Application is not ready."); }
 
 
 		/// <summary>
@@ -56,7 +56,7 @@ namespace CarinaStudio.ULogViewer
 
 
 		/// <summary>
-		/// Setup <see cref="IApplication"/> for testing.
+		/// Setup <see cref="IULogViewerApplication"/> for testing.
 		/// </summary>
 		[OneTimeSetUp]
 		public void SetupApp()
@@ -67,13 +67,13 @@ namespace CarinaStudio.ULogViewer
 
 
 		/// <summary>
-		/// Get <see cref="SynchronizationContext"/> provided by <see cref="IApplication"/>.
+		/// Get <see cref="SynchronizationContext"/> provided by <see cref="IULogViewerApplication"/>.
 		/// </summary>
 		protected SynchronizationContext SynchronizationContext { get => this.app?.SynchronizationContext ?? throw new InvalidOperationException("Application is not ready."); }
 
 
 		/// <summary>
-		/// Run testing on thread of <see cref="IApplication"/>.
+		/// Run testing on thread of <see cref="IULogViewerApplication"/>.
 		/// </summary>
 		/// <param name="test">Test action.</param>
 		protected void TestOnApplicationThread(Action test)

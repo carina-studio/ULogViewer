@@ -13,7 +13,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// Initialize new <see cref="HttpLogDataSourceProvider"/> instance.
 		/// </summary>
 		/// <param name="app">Application.</param>
-		public HttpLogDataSourceProvider(IApplication app) : base(app)
+		public HttpLogDataSourceProvider(IULogViewerApplication app) : base(app)
 		{ }
 
 

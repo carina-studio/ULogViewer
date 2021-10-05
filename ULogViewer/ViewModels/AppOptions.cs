@@ -2,9 +2,7 @@
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.ULogViewer.Logs.Profiles;
-using CarinaStudio.ViewModels;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
@@ -14,7 +12,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 	/// <summary>
 	/// Application options.
 	/// </summary>
-	class AppOptions : ViewModel
+	class AppOptions : AppSuite.ViewModels.ApplicationOptions
 	{
 		// Fields.
 		bool isSettingsModified;
@@ -24,8 +22,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Initialize new <see cref="AppOptions"/> instance.
 		/// </summary>
-		/// <param name="app">Application.</param>
-		public AppOptions(IApplication app) : base(app)
+		public AppOptions() : base()
 		{
 			// setup properties
 			this.logProfiles.Add(Logs.Profiles.LogProfiles.EmptyProfile);
@@ -68,16 +65,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			get => this.Settings.GetValueOrDefault(ULogViewer.Settings.ContinuousLogReadingUpdateInterval);
 			set => this.Settings.SetValue<int>(ULogViewer.Settings.ContinuousLogReadingUpdateInterval, value);
-		}
-
-
-		/// <summary>
-		/// Get or set application culture.
-		/// </summary>
-		public AppCulture Culture
-		{
-			get => this.Settings.GetValueOrDefault(ULogViewer.Settings.Culture);
-			set => this.Settings.SetValue<AppCulture>(ULogViewer.Settings.Culture, value);
 		}
 
 
@@ -224,8 +211,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			var key = e.Key;
 			if (key == ULogViewer.Settings.ContinuousLogReadingUpdateInterval)
 				this.OnPropertyChanged(nameof(ContinuousLogReadingUpdateInterval));
-			else if (key == ULogViewer.Settings.Culture)
-				this.OnPropertyChanged(nameof(Culture));
 			else if (key == ULogViewer.Settings.EnableScrollingToLatestLogAfterReloadingLogs)
 				this.OnPropertyChanged(nameof(EnableScrollingToLatestLogAfterReloadingLogs));
 			else if (key == ULogViewer.Settings.IgnoreCaseOfLogTextFilter)
@@ -254,8 +239,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.OnPropertyChanged(nameof(SelectWorkingDirectoryWhenNeeded));
 			else if (key == ULogViewer.Settings.ShowProcessInfo)
 				this.OnPropertyChanged(nameof(ShowProcessInfo));
-			else if (key == ULogViewer.Settings.ThemeMode)
-				this.OnPropertyChanged(nameof(ThemeMode));
 			else if (key == ULogViewer.Settings.UpdateLogFilterDelay)
 				this.OnPropertyChanged(nameof(UpdateLogFilterDelay));
 			else if (key == ULogViewer.Settings.UseSystemAccentColor)
@@ -319,16 +302,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			get => this.Settings.GetValueOrDefault(ULogViewer.Settings.ShowProcessInfo);
 			set => this.Settings.SetValue<bool>(ULogViewer.Settings.ShowProcessInfo, value);
-		}
-
-
-		/// <summary>
-		/// Get or set application theme mode.
-		/// </summary>
-		public ThemeMode ThemeMode
-		{
-			get => this.Settings.GetValueOrDefault(ULogViewer.Settings.ThemeMode);
-			set => this.Settings.SetValue<ThemeMode>(ULogViewer.Settings.ThemeMode, value);
 		}
 
 

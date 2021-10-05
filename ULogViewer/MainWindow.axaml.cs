@@ -8,6 +8,7 @@ using Avalonia.Platform;
 using Avalonia.VisualTree;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
+using CarinaStudio.Controls;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Controls;
 using CarinaStudio.ULogViewer.Input;
@@ -28,19 +29,10 @@ namespace CarinaStudio.ULogViewer
 	/// <summary>
 	/// Main window.
 	/// </summary>
-	partial class MainWindow : BaseWindow
+	partial class MainWindow : AppSuite.Controls.MainWindow<IULogViewerApplication, Workspace>
 	{
-		// Static fields.
-		static readonly AvaloniaProperty<PlacementMode> SystemChromePlacementProperty = AvaloniaProperty.Register<MainWindow, PlacementMode>(nameof(SystemChromePlacement), PlacementMode.Right);
-		static readonly AvaloniaProperty<double> SystemChromeWidthProperty = AvaloniaProperty.Register<MainWindow, double>(nameof(SystemChromeWidth), 0);
-		static readonly SettingKey<int> WindowHeightSettingKey = new SettingKey<int>("MainWindow.Height", 600);
-		static readonly SettingKey<WindowState> WindowStateSettingKey = new SettingKey<WindowState>("MainWindow.State", WindowState.Maximized);
-		static readonly SettingKey<int> WindowWidthSettingKey = new SettingKey<int>("MainWindow.Width", 800);
-
-
 		// Constants.
 		const int ReAttachToWorkspaceDelay = 1000;
-		const int SaveWindowSizeDelay = 300;
 
 
 		// Fields.
@@ -48,9 +40,7 @@ namespace CarinaStudio.ULogViewer
 		bool canShowDialogs;
 		readonly ScheduledAction focusOnTabItemContentAction;
 		readonly ScheduledAction reAttachToWorkspaceAction;
-		readonly ScheduledAction saveWindowSizeAction;
 		readonly DataTemplate sessionTabItemHeaderTemplate;
-		readonly ScheduledAction updateContentPaddingAction;
 		readonly ScheduledAction updateSysTaskBarAction;
 		readonly TabControl tabControl;
 		readonly ScheduledAction tabControlSelectionChangedAction;
@@ -62,31 +52,6 @@ namespace CarinaStudio.ULogViewer
 		/// </summary>
 		public MainWindow()
 		{
-			// extend to non-client area
-			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
-				/*|| RuntimeInformation.IsOSPlatform(OSPlatform.OSX)*/)
-			{
-				this.ExtendClientAreaToDecorationsHint = true;
-				this.ExtendClientAreaTitleBarHeightHint = -1;
-				this.ExtendClientAreaChromeHints = ExtendClientAreaChromeHints.OSXThickTitleBar | ExtendClientAreaChromeHints.PreferSystemChrome;
-				this.SetValue<PlacementMode>(SystemChromePlacementProperty, Global.Run(() =>
-				{
-					if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-						return PlacementMode.Left;
-					return PlacementMode.Right;
-				}));
-				this.SetValue<double>(SystemChromeWidthProperty, Global.Run(() =>
-				{
-					App app = (App)this.Application;
-					if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-					{
-						if (app.TryFindResource("Double.MainWindow.SystemChromeWidth.Windows10", out var res) && res is double width)
-							return width;
-					}
-					return 0.0;
-				}));
-			}
-
 			// initialize.
 			InitializeComponent();
 
@@ -119,46 +84,6 @@ namespace CarinaStudio.ULogViewer
 				this.Logger.LogWarning("Re-attach to workspace");
 				this.DataContext = null;
 				this.DataContext = workspace;
-			});
-			this.saveWindowSizeAction = new ScheduledAction(() =>
-			{
-				if (this.WindowState == WindowState.Normal)
-				{
-					this.PersistentState.SetValue<int>(WindowWidthSettingKey, (int)(this.Width + 0.5));
-					this.PersistentState.SetValue<int>(WindowHeightSettingKey, (int)(this.Height + 0.5));
-				}
-			});
-			this.updateContentPaddingAction = new ScheduledAction(() =>
-			{
-				// check state
-				if (!this.IsOpened || !this.ExtendClientAreaToDecorationsHint)
-					return;
-
-				// update content padding
-				if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-				{
-					// [Workaround] Reserve edge for maximized case on Windows (https://github.com/AvaloniaUI/Avalonia/issues/5581)
-					this.Padding = Global.Run(() =>
-					{
-						if (this.WindowState != WindowState.Maximized)
-							return new Thickness(0);
-						App app = (App)this.Application;
-						if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-						{
-							if (app.TryFindResource("Thickness.MainWindow.Content.Padding.Maximized.Windows10", out var res) && res is Thickness padding)
-								return padding;
-						}
-						return new Thickness(0);
-					});
-				}
-
-				// update tab control margin
-				if (((App)this.Application).TryFindResource("Thickness.MainWindow.TabControl.Margin", out var res) && res is Thickness margin)
-				{
-					this.tabControl.Margin = this.WindowState == WindowState.Maximized
-						? new Thickness(margin.Left, 0, margin.Right, margin.Bottom)
-						: margin;
-				}
 			});
 			this.updateSysTaskBarAction = new ScheduledAction(() =>
 			{
@@ -208,23 +133,10 @@ namespace CarinaStudio.ULogViewer
 			});
 			this.tabControlSelectionChangedAction = new ScheduledAction(this.OnTabControlSelectionChanged);
 
-			// restore window state
-			this.PersistentState.Let(it =>
-			{
-				this.Height = Math.Max(0, it.GetValueOrDefault(WindowHeightSettingKey));
-				this.Width = Math.Max(0, it.GetValueOrDefault(WindowWidthSettingKey));
-				this.WindowState = it.GetValueOrDefault(WindowStateSettingKey);
-			});
-
 			// add handlers
-			this.Application.PropertyChanged += this.OnAppPropertyChanged;
-			this.Settings.SettingChanged += this.OnSettingChanged;
 			this.AddHandler(DragDrop.DragEnterEvent, this.OnDragEnter);
 			this.AddHandler(DragDrop.DragOverEvent, this.OnDragOver);
 			this.AddHandler(DragDrop.DropEvent, this.OnDrop);
-
-			// reset latest version notified to user
-			this.PersistentState.ResetValue(AppUpdateDialog.LatestNotifiedVersionKey);
 		}
 
 
@@ -236,35 +148,6 @@ namespace CarinaStudio.ULogViewer
 			this.DetachFromActiveSession();
 			session.PropertyChanged += this.OnActiveSessionPropertyChanged;
 			this.attachedActiveSession = session;
-			this.updateSysTaskBarAction.Schedule();
-		}
-
-
-		// Attach to workspace.
-		void AttachToWorkspace(Workspace workspace)
-		{
-			// add event handlers
-			workspace.PropertyChanged += this.OnWorkspacePropertyChanged;
-			((INotifyCollectionChanged)workspace.Sessions).CollectionChanged += this.OnSessionsChanged;
-
-			// create session tabs
-			for (int i = 0, count = workspace.Sessions.Count; i < count; ++i)
-			{
-				var tabItem = this.CreateSessionTabItem(workspace.Sessions[i]);
-				this.tabItems.Insert(i, tabItem);
-			}
-
-			// select tab item of active session
-			var selectedIndex = (workspace.ActiveSession != null ? workspace.Sessions.IndexOf(workspace.ActiveSession) : -1);
-			if (selectedIndex >= 0)
-				this.tabControl.SelectedIndex = selectedIndex;
-			else
-				this.SelectActiveSessionIfNeeded();
-
-			// attach to active session
-			workspace.ActiveSession?.Let(it => this.AttachToActiveSession(it));
-
-			// update system taskbar
 			this.updateSysTaskBarAction.Schedule();
 		}
 
@@ -302,28 +185,6 @@ namespace CarinaStudio.ULogViewer
 			this.attachedActiveSession = null;
 			this.updateSysTaskBarAction.Reschedule();
         }
-
-
-		// Detach from workspace.
-		void DetachFronWorkspace(Workspace workspace)
-		{
-			// detach from active session
-			this.DetachFromActiveSession();
-
-			// remove event handlers
-			workspace.PropertyChanged -= this.OnWorkspacePropertyChanged;
-			((INotifyCollectionChanged)workspace.Sessions).CollectionChanged -= this.OnSessionsChanged;
-
-			// remove session tab items
-			for (var i = this.tabItems.Count - 2; i >= 0; --i)
-			{
-				this.DisposeSessionTabItem((TabItem)this.tabItems[i].AsNonNull());
-				this.tabItems.RemoveAt(i);
-			}
-
-			// update system taskbar
-			this.updateSysTaskBarAction.Execute();
-		}
 
 
 		// Dispose tab item for session.
@@ -374,26 +235,6 @@ namespace CarinaStudio.ULogViewer
 		private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
 
 
-		// Notify user that new application update is found.
-		void NotifyAppUpdate()
-		{
-			// check state
-			if (this.IsClosed || this.HasDialogs || !this.canShowDialogs)
-				return;
-
-			// check update
-			var updateInfo = this.Application.UpdateInfo;
-			if (updateInfo == null)
-				return;
-			var latestNotifiedVersionString = this.PersistentState.GetValueOrDefault(AppUpdateDialog.LatestNotifiedVersionKey);
-			if (Version.TryParse(latestNotifiedVersionString, out var version) && version == updateInfo.Version)
-				return;
-
-			// notify
-			new AppUpdateDialog().ShowDialog(this);
-		}
-
-
 		// Called when property of active session changed.
 		void OnActiveSessionPropertyChanged(object? sender, PropertyChangedEventArgs e)
 		{
@@ -413,11 +254,47 @@ namespace CarinaStudio.ULogViewer
 		}
 
 
-		// Called when application property changed.
-		void OnAppPropertyChanged(object? sender, PropertyChangedEventArgs e)
+		// Application property changed. 
+        protected override void OnApplicationPropertyChanged(PropertyChangedEventArgs e)
+        {
+            base.OnApplicationPropertyChanged(e);
+			if (e.PropertyName == nameof(IULogViewerApplication.EffectiveThemeMode))
+			{
+				this.Logger.LogWarning("Theme mode changed");
+				this.reAttachToWorkspaceAction.Reschedule(ReAttachToWorkspaceDelay);
+			}
+        }
+
+
+        // Attach to view-model.
+        protected override void OnAttachToViewModel(Workspace workspace)
 		{
-			if (e.PropertyName == nameof(IApplication.UpdateInfo))
-				this.NotifyAppUpdate();
+			// call base
+			base.OnAttachToViewModel(workspace);
+
+			// add event handlers
+			workspace.PropertyChanged += this.OnWorkspacePropertyChanged;
+			((INotifyCollectionChanged)workspace.Sessions).CollectionChanged += this.OnSessionsChanged;
+
+			// create session tabs
+			for (int i = 0, count = workspace.Sessions.Count; i < count; ++i)
+			{
+				var tabItem = this.CreateSessionTabItem(workspace.Sessions[i]);
+				this.tabItems.Insert(i, tabItem);
+			}
+
+			// select tab item of active session
+			var selectedIndex = (workspace.ActiveSession != null ? workspace.Sessions.IndexOf(workspace.ActiveSession) : -1);
+			if (selectedIndex >= 0)
+				this.tabControl.SelectedIndex = selectedIndex;
+			else
+				this.SelectActiveSessionIfNeeded();
+
+			// attach to active session
+			workspace.ActiveSession?.Let(it => this.AttachToActiveSession(it));
+
+			// update system taskbar
+			this.updateSysTaskBarAction.Schedule();
 		}
 
 
@@ -425,8 +302,6 @@ namespace CarinaStudio.ULogViewer
 		protected override void OnClosed(EventArgs e)
 		{
 			// remove handlers
-			this.Application.PropertyChanged -= this.OnAppPropertyChanged;
-			this.Settings.SettingChanged -= this.OnSettingChanged;
 			this.RemoveHandler(DragDrop.DragEnterEvent, this.OnDragEnter);
 			this.RemoveHandler(DragDrop.DragOverEvent, this.OnDragOver);
 			this.RemoveHandler(DragDrop.DropEvent, this.OnDrop);
@@ -439,11 +314,28 @@ namespace CarinaStudio.ULogViewer
 		}
 
 
-		// Called when dialog closed.
-		protected internal override void OnDialogClosed(BaseDialog dialog)
+		// Detach from view-model.
+		protected override void OnDetachFromViewModel(Workspace workspace)
 		{
-			base.OnDialogClosed(dialog);
-			this.NotifyAppUpdate();
+			// detach from active session
+			this.DetachFromActiveSession();
+
+			// remove event handlers
+			workspace.PropertyChanged -= this.OnWorkspacePropertyChanged;
+			((INotifyCollectionChanged)workspace.Sessions).CollectionChanged -= this.OnSessionsChanged;
+
+			// remove session tab items
+			for (var i = this.tabItems.Count - 2; i >= 0; --i)
+			{
+				this.DisposeSessionTabItem((TabItem)this.tabItems[i].AsNonNull());
+				this.tabItems.RemoveAt(i);
+			}
+
+			// update system taskbar
+			this.updateSysTaskBarAction.Execute();
+
+			// call base
+			base.OnDetachFromViewModel(workspace);
 		}
 
 
@@ -580,33 +472,8 @@ namespace CarinaStudio.ULogViewer
 			this.SynchronizationContext.PostDelayed(() =>
 			{
 				this.canShowDialogs = true;
-				this.NotifyAppUpdate();
 				this.SelectAndSetLogProfile();
 			}, 1000); // In order to show dialog at correct position on Linux, we need delay to make sure bounds of main window is set.
-
-			// update content padding
-			this.updateContentPaddingAction.Schedule();
-		}
-
-
-		// Called when property changed.
-		protected override void OnPropertyChanged<T>(AvaloniaPropertyChangedEventArgs<T> change)
-		{
-			base.OnPropertyChanged(change);
-			var property = change.Property;
-			if (property == DataContextProperty)
-			{
-				(change.OldValue.Value as Workspace)?.Let(it => this.DetachFronWorkspace(it));
-				(change.NewValue.Value as Workspace)?.Let(it => this.AttachToWorkspace(it));
-			}
-			else if (property == HeightProperty || property == WidthProperty)
-				this.saveWindowSizeAction.Reschedule(SaveWindowSizeDelay);
-			else if (property == WindowStateProperty)
-			{
-				if (this.WindowState != WindowState.Minimized)
-					this.PersistentState.SetValue<WindowState>(WindowStateSettingKey, this.WindowState);
-				this.updateContentPaddingAction.Schedule();
-			}
 		}
 
 
@@ -641,17 +508,6 @@ namespace CarinaStudio.ULogViewer
 		}
 
 
-		// Called when setting changed.
-		void OnSettingChanged(object? sender, SettingChangedEventArgs e)
-		{
-			if (e.Key == Settings.ThemeMode)
-			{
-				this.Logger.LogWarning("Theme mode changed");
-				this.reAttachToWorkspaceAction.Reschedule(ReAttachToWorkspaceDelay);
-			}
-		}
-
-
 		// Called when selection of tab control has been changed.
 		void OnTabControlSelectionChanged()
 		{
@@ -664,7 +520,7 @@ namespace CarinaStudio.ULogViewer
 				workspace.ActiveSession = session;
 				this.SynchronizationContext.PostDelayed(() =>
 				{
-					if (session.LogProfile == null && this.Settings.GetValueOrDefault(Settings.SelectLogProfileForNewSession))
+					if (session.LogProfile == null && this.Settings.GetValueOrDefault(ULogViewer.Settings.SelectLogProfileForNewSession))
 						this.FindSessionView(session)?.SelectAndSetLogProfile();
 				}, 500);
 			}
@@ -753,20 +609,12 @@ namespace CarinaStudio.ULogViewer
 			workspace.ActiveSession?.Let(it =>
 			{
 				if (it.LogProfile == null
-					&& this.Settings.GetValueOrDefault(Settings.SelectLogProfileForNewSession)
+					&& this.Settings.GetValueOrDefault(ULogViewer.Settings.SelectLogProfileForNewSession)
 					&& !this.HasDialogs)
 				{
 					this.FindSessionView(it)?.SelectAndSetLogProfile();
 				}
 			});
 		}
-
-
-		// Get placement of system chrome.
-		PlacementMode SystemChromePlacement { get => this.GetValue<PlacementMode>(SystemChromePlacementProperty); }
-
-
-		// Get width of system chrome on title bar.
-		double SystemChromeWidth { get => this.GetValue<double>(SystemChromeWidthProperty); }
 	}
 }

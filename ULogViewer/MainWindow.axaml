@@ -8,112 +8,34 @@
         xmlns:appViewModels="clr-namespace:CarinaStudio.ULogViewer.ViewModels;assembly=ULogViewer"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.MainWindow"
-        Classes="MainWindow"
-        Title="{Binding Title}">
+		Icon="/AppIcon.ico"
+		MinHeight="{DynamicResource Double/MainWindow.MinHeight}"
+		MinWidth="{DynamicResource Double/MainWindow.MinWidth}">
 
 	<!-- Data templates -->
 	<Window.DataTemplates>
 		<DataTemplate DataType="{x:Type appViewModels:Session}">
-			<Panel Background="{x:Static Brushes.Transparent}" DragDrop.AllowDrop="True" Margin="{StaticResource Thickness.MainWindow.TabItem.Margin}">
-				<Border Background="{DynamicResource Brush.MainWindow.TabItem.Background}" CornerRadius="{StaticResource CornerRadius.MainWindow.TabItem}"/>
-				<Border Background="{DynamicResource Brush.MainWindow.TabItem.Background.PointerOver}" CornerRadius="{StaticResource CornerRadius.MainWindow.TabItem}" IsVisible="{Binding $parent[TabItem].IsPointerOver}" Opacity="0.75"/>
-				<Border Background="{DynamicResource Brush.MainWindow.TabItem.Background.Selected}" CornerRadius="{StaticResource CornerRadius.MainWindow.TabItem}" IsVisible="{Binding $parent[TabItem].IsSelected}"/>
-				<Border Background="{DynamicResource SystemControlHighlightAltListAccentLowBrush}" CornerRadius="{StaticResource CornerRadius.MainWindow.TabItem}" Height="{StaticResource Double.MainWindow.TabItem.ColorIndicator.Size}" IsVisible="{Binding $parent[TabItem].IsPointerOver}" VerticalAlignment="Top"/>
-				<Border Background="{DynamicResource SystemControlBackgroundAccentBrush}" CornerRadius="{StaticResource CornerRadius.MainWindow.TabItem}" Height="{StaticResource Double.MainWindow.TabItem.ColorIndicator.Size}" IsVisible="{Binding $parent[TabItem].IsSelected}" VerticalAlignment="Top"/>
-				<Grid ColumnDefinitions="Auto,Auto,Auto" Margin="{StaticResource Thickness.MainWindow.TabItem.Padding}">
-					<Border Height="{StaticResource Double.MainWindow.TabItem.Icon.Size}" Margin="{StaticResource Thickness.MainWindow.TabItem.Icon.Margin}" VerticalAlignment="Center" Width="{StaticResource Double.MainWindow.TabItem.Icon.Size}">
-						<DrawingPresenter Classes="Icon" Drawing="{Binding Icon}"/>
-					</Border>
-					<TextBlock FontSize="{StaticResource Double.MainWindow.TabItem.FontSize}" Grid.Column="1" MaxWidth="200" Text="{Binding Title}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
-					<Button Background="{x:Static Brushes.Transparent}" Click="OnTabItemCloseButtonClick" Grid.Column="2" Margin="{StaticResource Thickness.MainWindow.TabItem.CloseButton.Margin}" Padding="{StaticResource Thickness.MainWindow.TabItem.CloseButton.Padding}" ToolTip.Tip="{DynamicResource String.MainWindow.CloseSession}" VerticalAlignment="Center">
-						<Border Height="{StaticResource Double.MainWindow.TabItem.CloseButton.Icon.Size}" VerticalAlignment="Center" Width="{StaticResource Double.MainWindow.TabItem.CloseButton.Icon.Size}">
-							<DrawingPresenter Drawing="{DynamicResource Drawing.Close}" HorizontalAlignment="Center" Opacity="0.3" Stretch="Uniform" VerticalAlignment="Center">
-								<ia:Interaction.Behaviors>
-									<iaCore:DataTriggerBehavior Binding="{Binding $parent[Button].IsPointerOver}" Value="True">
-										<iaCore:ChangePropertyAction PropertyName="Opacity" Value="1"/>
-									</iaCore:DataTriggerBehavior>
-									<iaCore:DataTriggerBehavior Binding="{Binding $parent[Button].IsPointerOver}" Value="False">
-										<iaCore:ChangePropertyAction PropertyName="Opacity" Value="0.3"/>
-									</iaCore:DataTriggerBehavior>
-								</ia:Interaction.Behaviors>
-							</DrawingPresenter>
-						</Border>
-					</Button>
-				</Grid>
-			</Panel>
+			<Grid ColumnDefinitions="Auto,Auto,Auto" DragDrop.AllowDrop="True">
+				<Border Height="{DynamicResource Double/MainWindow.TabItem.Icon.Size}" Margin="{DynamicResource Thickness/MainWindow.TabItem.Icon.Margin}" VerticalAlignment="Center" Width="{DynamicResource Double/MainWindow.TabItem.Icon.Size}">
+					<DrawingPresenter Classes="Icon" Drawing="{Binding Icon}"/>
+				</Border>
+				<TextBlock Grid.Column="1" MaxWidth="200" Text="{Binding Title}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+				<Button Classes="TabItem_Button" Click="OnTabItemCloseButtonClick" Grid.Column="2" ToolTip.Tip="{DynamicResource String.MainWindow.CloseSession}" VerticalAlignment="Center">
+					<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Icon.Close}"/>
+				</Button>
+			</Grid>
 		</DataTemplate>
 	</Window.DataTemplates>
-	
-	<!-- Styles -->
-	<Window.Styles>
-		<Style Selector="TabItem">
-			<Setter Property="MaxHeight" Value="{StaticResource Double.MainWindow.TabItem.Height}"/>
-			<Setter Property="MinHeight" Value="{StaticResource Double.MainWindow.TabItem.Height}"/>
-			<Setter Property="Padding" Value="0"/>
-		</Style>
-	</Window.Styles>
 
 	<!-- Content -->
-	<TabControl Name="tabControl" Background="{x:Null}" Margin="{StaticResource Thickness.MainWindow.TabControl.Margin}" Padding="0,-2,0,0">
-
-		<!-- Resources -->
-		<TabControl.Resources>
-			<SolidColorBrush x:Key="TabItemHeaderSelectedPipeFill">#00000000</SolidColorBrush>
-		</TabControl.Resources>
-		
-		<!-- Template -->
-		<TabControl.Template>
-			<ControlTemplate>
-				<Border BorderBrush="{TemplateBinding BorderBrush}"
-						BorderThickness="{TemplateBinding BorderThickness}"
-						CornerRadius="{TemplateBinding CornerRadius}"
-						Background="{TemplateBinding Background}"
-						HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
-						VerticalAlignment="{TemplateBinding VerticalAlignment}">
-					<DockPanel>
-						<Grid ColumnDefinitions="Auto,*,Auto" DockPanel.Dock="Top" Margin="{StaticResource Thickness.MainWindow.TabControl.TabStrip.Margin}">
-							<StackPanel Grid.Column="0" IsVisible="{Binding $parent[Window].ExtendClientAreaToDecorationsHint}" Orientation="Horizontal">
-								<ia:Interaction.Behaviors>
-									<iaCore:DataTriggerBehavior Binding="{Binding $parent[Window].SystemChromePlacement, Mode=OneTime}" ComparisonCondition="NotEqual" Value="Left">
-										<iaCore:ChangePropertyAction PropertyName="IsVisible" Value="False"/>
-									</iaCore:DataTriggerBehavior>
-								</ia:Interaction.Behaviors>
-								<Border Width="{Binding $parent[Window].SystemChromeWidth}"/>
-								<Border Width="{StaticResource Double.MainWindow.TitleBar.ReservedSpace}"/>
-							</StackPanel>
-							<ScrollViewer Grid.Column="1" HorizontalAlignment="Left" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
-								<ItemsPresenter Name="PART_ItemsPresenter"
-												Items="{TemplateBinding Items}"
-												ItemsPanel="{TemplateBinding ItemsPanel}"
-												ItemTemplate="{TemplateBinding ItemTemplate}"/>
-							</ScrollViewer>
-							<StackPanel Grid.Column="2" IsVisible="{Binding $parent[Window].ExtendClientAreaToDecorationsHint}" Orientation="Horizontal">
-								<ia:Interaction.Behaviors>
-									<iaCore:DataTriggerBehavior Binding="{Binding $parent[Window].SystemChromePlacement, Mode=OneTime}" ComparisonCondition="NotEqual" Value="Right">
-										<iaCore:ChangePropertyAction PropertyName="IsVisible" Value="False"/>
-									</iaCore:DataTriggerBehavior>
-								</ia:Interaction.Behaviors>
-								<Border Width="{StaticResource Double.MainWindow.TitleBar.ReservedSpace}"/>
-								<Border Width="{Binding $parent[Window].SystemChromeWidth}"/>
-							</StackPanel>
-						</Grid>
-						<ContentPresenter Name="PART_SelectedContentHost"
-										  Margin="{TemplateBinding Padding}"
-										  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-										  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-										  Content="{TemplateBinding SelectedContent}"
-										  ContentTemplate="{TemplateBinding SelectedContentTemplate}" />
-					</DockPanel>
-				</Border>
-			</ControlTemplate>
-		</TabControl.Template>
+	<TabControl Name="tabControl" Background="{x:Null}">
 
 		<!-- Add new tab -->
-		<TabItem>
+		<TabItem Classes="Empty">
 			<TabItem.Header>
-				<Panel Margin="{StaticResource Thickness.MainWindow.TabItem.Padding}">
-					<Border Name="background" Background="{DynamicResource Brush.MainWindow.TabItem.Background.Selected}" CornerRadius="{DynamicResource ControlCornerRadius}" DragDrop.AllowDrop="True" Height="{StaticResource Double.MainWindow.TabItem.AddButton.Size}" HorizontalAlignment="Center" ToolTip.Tip="{DynamicResource String.MainWindow.CreateSession}" VerticalAlignment="Center" Width="{StaticResource Double.MainWindow.TabItem.AddButton.Size}"/>
-					<DrawingPresenter DragDrop.AllowDrop="True" Drawing="{DynamicResource Drawing.Add}" Height="{StaticResource Double.MainWindow.TabItem.Icon.Size}" HorizontalAlignment="Center" IsHitTestVisible="False" Opacity="0.7" Stretch="Uniform" VerticalAlignment="Center" Width="{StaticResource Double.MainWindow.TabItem.Icon.Size}">
+				<Panel Margin="{DynamicResource Thickness.MainWindow.TabItem.Padding}">
+					<Border Name="background" Background="{DynamicResource Brush/MainWindow.TabItem.Background.Selected}" CornerRadius="{DynamicResource ControlCornerRadius}" DragDrop.AllowDrop="True" Height="{DynamicResource Double/MainWindow.TabItem.AddButton.Size}" HorizontalAlignment="Center" ToolTip.Tip="{DynamicResource String.MainWindow.CreateSession}" VerticalAlignment="Center" Width="{DynamicResource Double/MainWindow.TabItem.AddButton.Size}"/>
+					<DrawingPresenter DragDrop.AllowDrop="True" Drawing="{DynamicResource Drawing.Add}" Height="{DynamicResource Double/MainWindow.TabItem.Icon.Size}" HorizontalAlignment="Center" IsHitTestVisible="False" Opacity="0.7" Stretch="Uniform" VerticalAlignment="Center" Width="{DynamicResource Double/MainWindow.TabItem.Icon.Size}">
 						<ia:Interaction.Behaviors>
 							<iaCore:DataTriggerBehavior Binding="{Binding #background.IsPointerOver}" Value="True">
 								<iaCore:ChangePropertyAction PropertyName="Opacity" Value="1"/>

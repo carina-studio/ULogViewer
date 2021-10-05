@@ -1,6 +1,5 @@
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using AvaloniaEdit;
@@ -22,7 +21,7 @@ namespace CarinaStudio.ULogViewer.Controls
 	/// <summary>
 	/// Dialog to show message of log.
 	/// </summary>
-	partial class LogStringPropertyDialog : BaseDialog
+	partial class LogStringPropertyDialog : AppSuite.Controls.Dialog<IULogViewerApplication>
 	{
 		// Definition of syntax highlighting.
 		class HighlightingDefinitionImpl : IHighlightingDefinition
@@ -34,7 +33,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			readonly Dictionary<string, string> properties = new Dictionary<string, string>();
 
 			// Constructor.
-			public HighlightingDefinitionImpl(IApplication app)
+			public HighlightingDefinitionImpl(IULogViewerApplication app)
 			{
 				this.highlightingColor = new HighlightingColor().Also(it => 
 				{
@@ -254,20 +253,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Generate result.
-		protected override object? OnGenerateResult() => null;
-
-
-		// Called when pointer released on link text block.
-		void OnLinkDescriptionPointerReleased(object? sender, PointerReleasedEventArgs e)
-		{
-			if (e.InitialPressMouseButton != Avalonia.Input.MouseButton.Left)
-				return;
-			if ((sender as Control)?.Tag is Uri uri)
-				this.OpenLink(uri);
-		}
-
-
 		// Called when opened.
 		protected override void OnOpened(EventArgs e)
 		{
@@ -281,14 +266,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.findTextTextBox.Focus();
 			base.OnOpened(e);
 		}
-
-
-		// System accent color changed.
-        protected override void OnSystemAccentColorChanged()
-        {
-            base.OnSystemAccentColorChanged();
-			this.ApplySystemAccentColor();
-        }
 
 
         // set text wrapping.

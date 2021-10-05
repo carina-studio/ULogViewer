@@ -15,10 +15,6 @@ namespace CarinaStudio.ULogViewer
 		/// </summary>
 		public static readonly SettingKey<int> ContinuousLogReadingUpdateInterval = new SettingKey<int>(nameof(ContinuousLogReadingUpdateInterval), 100);
 		/// <summary>
-		/// Application culture.
-		/// </summary>
-		public static readonly SettingKey<AppCulture> Culture = new SettingKey<AppCulture>(nameof(Culture), AppCulture.System);
-		/// <summary>
 		/// Enable scrolling to latest log automatically after reloading logs.
 		/// </summary>
 		public static readonly SettingKey<bool> EnableScrollingToLatestLogAfterReloadingLogs = new SettingKey<bool>(nameof(EnableScrollingToLatestLogAfterReloadingLogs), true);
@@ -66,10 +62,6 @@ namespace CarinaStudio.ULogViewer
 		/// Show process info on UI or not.
 		/// </summary>
 		public static readonly SettingKey<bool> ShowProcessInfo = new SettingKey<bool>(nameof(ShowProcessInfo), false);
-		/// <summary>
-		/// Application theme mode.
-		/// </summary>
-		public static readonly SettingKey<ThemeMode> ThemeMode = new SettingKey<ThemeMode>(nameof(ThemeMode), ULogViewer.ThemeMode.Dark);
 		/// <summary>
 		/// Delay of updating log filter after changing related parameters in milliseconds.
 		/// </summary>

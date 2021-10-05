@@ -5,14 +5,8 @@ namespace CarinaStudio.ULogViewer
 	/// <summary>
 	/// Interface of ULogViewer application.
 	/// </summary>
-	interface IApplication : CarinaStudio.IApplication
+	interface IULogViewerApplication : AppSuite.IAppSuiteApplication
 	{
-		/// <summary>
-		/// Check whether application is running as debug mode or not.
-		/// </summary>
-		bool IsDebugMode { get; }
-
-
 		/// <summary>
 		/// Is application running as administrator/superuser or not.
 		/// </summary>
@@ -32,17 +26,5 @@ namespace CarinaStudio.ULogViewer
 		/// <param name="asAdministrator">True to restart as administrator/superuser.</param>
 		/// <returns>True if restarting has been scheduled.</returns>
 		bool Restart(string? args = null, bool asAdministrator = false);
-
-
-		/// <summary>
-		/// Application startup parameters.
-		/// </summary>
-		AppStartupParams StartupParams { get; }
-
-
-		/// <summary>
-		/// Get application update info.
-		/// </summary>
-		AppUpdateInfo? UpdateInfo { get; }
 	}
 }

@@ -70,7 +70,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <param name="app">Application.</param>
 		/// <param name="sourceLogs">Source list of logs.</param>
 		/// <param name="comparer"><see cref="IComparer{T}"/> which used on <paramref name="sourceLogs"/>.</param>
-		public DisplayableLogFilter(IApplication app, IList<DisplayableLog> sourceLogs, IComparer<DisplayableLog> comparer) : this(app, sourceLogs, comparer.Compare)
+		public DisplayableLogFilter(IULogViewerApplication app, IList<DisplayableLog> sourceLogs, IComparer<DisplayableLog> comparer) : this(app, sourceLogs, comparer.Compare)
 		{ }
 
 
@@ -80,7 +80,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <param name="app">Application.</param>
 		/// <param name="sourceLogs">Source list of logs.</param>
 		/// <param name="comparison"><see cref="Comparison{T}"/> which used on <paramref name="sourceLogs"/>.</param>
-		public DisplayableLogFilter(IApplication app, IList<DisplayableLog> sourceLogs, Comparison<DisplayableLog> comparison)
+		public DisplayableLogFilter(IULogViewerApplication app, IList<DisplayableLog> sourceLogs, Comparison<DisplayableLog> comparison)
 		{
 			// create lists
 			this.filteredLogs = new SortedObservableList<DisplayableLog>(comparison);
@@ -110,7 +110,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get application.
 		/// </summary>
-		public IApplication Application { get; }
+		public IULogViewerApplication Application { get; }
 
 
 		// Cancel current filtering.

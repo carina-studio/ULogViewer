@@ -351,7 +351,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			});
 
 			// create log filter
-			this.logFilter = new DisplayableLogFilter((IApplication)this.Application, this.allLogs, this.CompareDisplayableLogs).Also(it =>
+			this.logFilter = new DisplayableLogFilter((IULogViewerApplication)this.Application, this.allLogs, this.CompareDisplayableLogs).Also(it =>
 			{
 				((INotifyCollectionChanged)it.FilteredLogs).CollectionChanged += this.OnFilteredLogsChanged;
 				it.PropertyChanged += this.OnLogFilterPropertyChanged;
@@ -2117,7 +2117,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// create log writer
 			var logs = options.Logs;
-			using var dataOutput = new FileLogDataOutput((IApplication)this.Application, options.FileName.AsNonNull());
+			using var dataOutput = new FileLogDataOutput((IULogViewerApplication)this.Application, options.FileName.AsNonNull());
 			using var logWriter = options switch
 			{
 				JsonLogsSavingOptions jsonSavingOptions => new JsonLogWriter(dataOutput).Also(it =>
@@ -2528,7 +2528,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			}
 			else
 			{
-				var app = (IApplication)this.Application;
+				var app = (IULogViewerApplication)this.Application;
 				var visibleLogProperties = profile.VisibleLogProperties;
 				var displayLogProperties = new List<DisplayableLogProperty>();
 				foreach (var logProperty in visibleLogProperties)

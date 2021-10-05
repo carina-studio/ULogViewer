@@ -4,13 +4,15 @@ using Avalonia.Markup.Xaml;
 using CarinaStudio.ULogViewer.Logs;
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.Controls
 {
 	/// <summary>
 	/// Dialog to edit <see cref="KeyValuePair{LogLevel, String}"/>.
 	/// </summary>
-	partial class LogLevelMapEntryForWritingEditorDialog : BaseDialog
+	partial class LogLevelMapEntryForWritingEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
 	{
 		// Fields.
 		readonly ComboBox logLevelComboBox;
@@ -34,12 +36,13 @@ namespace CarinaStudio.ULogViewer.Controls
 		public KeyValuePair<LogLevel, string>? Entry { get; set; }
 
 
+		// Generate result.
+		protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken) =>
+			Task.FromResult((object?)new KeyValuePair<LogLevel, string>((LogLevel)this.logLevelComboBox.SelectedItem.AsNonNull(), this.textBox.Text.AsNonNull()));
+
+
 		// Initialize.
 		private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
-
-
-		// Generate result.
-		protected override object? OnGenerateResult() => new KeyValuePair<LogLevel, string>((LogLevel)this.logLevelComboBox.SelectedItem.AsNonNull(), this.textBox.Text.AsNonNull());
 
 
 		// Called when opened.

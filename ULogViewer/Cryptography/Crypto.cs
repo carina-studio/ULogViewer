@@ -21,7 +21,7 @@ namespace CarinaStudio.ULogViewer.Cryptography
 		/// Initialize new <see cref="Crypto"/> instance.
 		/// </summary>
 		/// <param name="app">Application.</param>
-		public Crypto(IApplication app)
+		public Crypto(IULogViewerApplication app)
 		{
 			this.aes = Aes.Create().Also(it =>
 			{

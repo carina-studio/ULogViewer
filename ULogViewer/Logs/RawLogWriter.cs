@@ -305,7 +305,7 @@ namespace CarinaStudio.ULogViewer.Logs
 						{
 							if (this.logLevelMap.TryGetValue(log.Level, out var str))
 								return str;
-							return Converters.EnumConverter.LogLevel.Convert(log.Level, typeof(string), null, cultureInfo);
+							return Converters.EnumConverters.LogLevel.Convert(log.Level, typeof(string), null, cultureInfo);
 						}
 						,
 						_ => Log.CreatePropertyGetter<object?>(propertyName),

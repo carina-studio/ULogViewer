@@ -9,13 +9,15 @@ using CarinaStudio.ULogViewer.Logs.DataSources;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.Controls
 {
 	/// <summary>
 	/// Dialog to edit <see cref="LogDataSourceOptions"/>.
 	/// </summary>
-	partial class LogDataSourceOptionsDialog : BaseDialog
+	partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
 	{
 		/// <summary>
 		/// Type of database source.
@@ -109,11 +111,11 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Add setup command.
 		async void AddSetupCommand()
 		{
-			var command = (await new TextInputDialog()
+			var command = (await new AppSuite.Controls.TextInputDialog()
 			{
 				Message = this.Application.GetString("LogDataSourceOptionsDialog.Command"),
 				Title = this.Application.GetString("LogDataSourceOptionsDialog.SetupCommands"),
-			}.ShowDialog<string>(this))?.Trim();
+			}.ShowDialog(this))?.Trim();
 			if (!string.IsNullOrWhiteSpace(command))
 			{
 				this.setupCommands.Add(command);
@@ -125,11 +127,11 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Add teardown command.
 		async void AddTeardownCommand()
 		{
-			var command = (await new TextInputDialog()
+			var command = (await new AppSuite.Controls.TextInputDialog()
 			{
 				Message = this.Application.GetString("LogDataSourceOptionsDialog.Command"),
 				Title = this.Application.GetString("LogDataSourceOptionsDialog.TeardownCommands"),
-			}.ShowDialog<string>(this))?.Trim();
+			}.ShowDialog(this))?.Trim();
 			if (!string.IsNullOrWhiteSpace(command))
 			{
 				this.teardownCommands.Add(command);
@@ -169,12 +171,12 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 
 			// edit
-			var newCommand = (await new TextInputDialog()
+			var newCommand = (await new AppSuite.Controls.TextInputDialog()
 			{
+				InitialText = (item.DataContext as string),
 				Message = this.Application.GetString("LogDataSourceOptionsDialog.Command"),
-				Text = (item.DataContext as string),
 				Title = this.Application.GetString(isSetupCommand ? "LogDataSourceOptionsDialog.SetupCommands" : "LogDataSourceOptionsDialog.TeardownCommands"),
-			}.ShowDialog<string>(this))?.Trim();
+			}.ShowDialog(this))?.Trim();
 			if (string.IsNullOrEmpty(newCommand))
 				return;
 
@@ -184,6 +186,36 @@ namespace CarinaStudio.ULogViewer.Controls
 			else
 				this.teardownCommands[index] = newCommand;
 			this.SelectListBoxItem((ListBox)item.Parent.AsNonNull(), index);
+		}
+
+
+		// Generate valid result.
+		protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken)
+		{
+			var options = new LogDataSourceOptions();
+			if (this.IsCategorySupported)
+				options.Category = this.categoryTextBox.Text?.Trim();
+			if (this.IsCommandSupported)
+				options.Command = this.commandTextBox.Text?.Trim();
+			if (this.IsEncodingSupported)
+				options.Encoding = this.encodingComboBox.SelectedItem as Encoding;
+			if (this.IsFileNameSupported)
+				options.FileName = this.fileNameTextBox.Text?.Trim();
+			if (this.IsQueryStringSupported)
+				options.QueryString = this.queryStringTextBox.Text?.Trim();
+			if (this.IsPasswordSupported)
+				options.Password = this.passwordTextBox.Text?.Trim();
+			if (this.IsSetupCommandsSupported)
+				options.SetupCommands = this.setupCommands;
+			if (this.IsTeardownCommandsSupported)
+				options.TeardownCommands = this.teardownCommands;
+			if (this.IsUriSupported)
+				options.Uri = this.uriTextBox.Uri;
+			if (this.IsUserNameSupported)
+				options.UserName = this.userNameTextBox.Text?.Trim();
+			if (this.IsWorkingDirectorySupported)
+				options.WorkingDirectory = this.workingDirectoryTextBox.Text?.Trim();
+			return Task.FromResult((object?)options);
 		}
 
 
@@ -264,36 +296,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				this.InvalidateInput();
 			}
-		}
-
-
-		// Generate valid result.
-		protected override object? OnGenerateResult()
-		{
-			var options = new LogDataSourceOptions();
-			if (this.IsCategorySupported)
-				options.Category = this.categoryTextBox.Text?.Trim();
-			if (this.IsCommandSupported)
-				options.Command = this.commandTextBox.Text?.Trim();
-			if (this.IsEncodingSupported)
-				options.Encoding = this.encodingComboBox.SelectedItem as Encoding;
-			if (this.IsFileNameSupported)
-				options.FileName = this.fileNameTextBox.Text?.Trim();
-			if (this.IsQueryStringSupported)
-				options.QueryString = this.queryStringTextBox.Text?.Trim();
-			if (this.IsPasswordSupported)
-				options.Password = this.passwordTextBox.Text?.Trim();
-			if (this.IsSetupCommandsSupported)
-				options.SetupCommands = this.setupCommands;
-			if (this.IsTeardownCommandsSupported)
-				options.TeardownCommands = this.teardownCommands;
-			if (this.IsUriSupported)
-				options.Uri = this.uriTextBox.Uri;
-			if (this.IsUserNameSupported)
-				options.UserName = this.userNameTextBox.Text?.Trim();
-			if (this.IsWorkingDirectorySupported)
-				options.WorkingDirectory = this.workingDirectoryTextBox.Text?.Trim();
-			return options;
 		}
 
 

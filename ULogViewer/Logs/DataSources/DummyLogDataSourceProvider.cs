@@ -13,7 +13,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// Initialize new <see cref="DummyLogDataSourceProvider"/> instance.
 		/// </summary>
 		/// <param name="app">Application.</param>
-		public DummyLogDataSourceProvider(IApplication app) : base(app)
+		public DummyLogDataSourceProvider(IULogViewerApplication app) : base(app)
 		{ }
 
 

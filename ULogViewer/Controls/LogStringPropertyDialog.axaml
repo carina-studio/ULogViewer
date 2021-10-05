@@ -7,6 +7,7 @@
         xmlns:ia="using:Avalonia.Xaml.Interactivity"
         xmlns:iaCore="using:Avalonia.Xaml.Interactions.Core"
         xmlns:ma="using:Markdown.Avalonia"
+		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
         xmlns:app="using:CarinaStudio.ULogViewer"
         xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
         xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
@@ -36,7 +37,7 @@
 			<StackPanel Orientation="Vertical">
 				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogStringPropertyDialog.FindText}"/>
 				<appControls:RegexTextBox Name="findTextTextBox" PropertyChanged="OnFindTextTextBoxPropertyChanged" Watermark="{DynamicResource String.Common.RegularExpression}"/>
-				<TextBlock Classes="Dialog_Description_Link" PointerReleased="OnLinkDescriptionPointerReleased" Tag="{x:Static app:Uris.RegexReference}" Text="{DynamicResource String.Common.RegularExpression.Reference}"/>
+				<asControls:LinkTextBlock Classes="Dialog_Description" Text="{DynamicResource String.Common.RegularExpression.Reference}" Uri="{x:Static app:Uris.RegexReference}"/>
 				<Separator Classes="Dialog_Separator_Horizontal"/>
 			</StackPanel>
 

@@ -20,7 +20,7 @@ namespace CarinaStudio.ULogViewer
 	/// <summary>
 	/// <see cref="App"/> for testing.
 	/// </summary>
-	class TestApp : IApplication
+	class TestApp : IULogViewerApplication
 	{
 		// Fields.
 		static volatile TestApp? current;

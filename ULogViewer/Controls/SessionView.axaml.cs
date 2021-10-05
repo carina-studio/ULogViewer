@@ -59,7 +59,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				{
 					if (level == Logs.LogLevel.Undefined)
 						return app.GetString("SessionView.AllLogLevels");
-					return Converters.EnumConverter.LogLevel.Convert(value, targetType, parameter, culture);
+					return Converters.EnumConverters.LogLevel.Convert(value, targetType, parameter, culture);
 				}
 				return null;
 			}
@@ -173,8 +173,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.UpdateLogFontSize();
 
 			// setup properties
-			this.SetValue<bool>(IsProcessInfoVisibleProperty, this.Settings.GetValueOrDefault(Settings.ShowProcessInfo));
-			this.SetValue<int>(MaxDisplayLineCountForEachLogProperty, Math.Max(1, this.Settings.GetValueOrDefault(Settings.MaxDisplayLineCountForEachLog)));
+			this.SetValue<bool>(IsProcessInfoVisibleProperty, this.Settings.GetValueOrDefault(ULogViewer.Settings.ShowProcessInfo));
+			this.SetValue<int>(MaxDisplayLineCountForEachLogProperty, Math.Max(1, this.Settings.GetValueOrDefault(ULogViewer.Settings.MaxDisplayLineCountForEachLog)));
 			this.ValidLogLevels = this.validLogLevels.AsReadOnly();
 
 			// initialize
@@ -233,7 +233,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			});
 			this.logTextFilterTextBox = this.FindControl<RegexTextBox>("logTextFilterTextBox").AsNonNull().Also(it =>
 			{
-				it.IgnoreCase = this.Settings.GetValueOrDefault(Settings.IgnoreCaseOfLogTextFilter);
+				it.IgnoreCase = this.Settings.GetValueOrDefault(ULogViewer.Settings.IgnoreCaseOfLogTextFilter);
 				it.ValidationDelay = this.UpdateLogFilterParamsDelay;
 			});
 			this.logThreadIdFilterTextBox = this.FindControl<TextBox>("logThreadIdFilterTextBox").AsNonNull().Also(it =>
@@ -411,9 +411,9 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.canEditLogProfile.Update(!profile.IsBuiltIn);
 				this.SetValue<bool>(HasLogProfileProperty, true);
 				if (session.IsLogFileNeeded)
-					this.isLogFileNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(Settings.SelectLogFilesWhenNeeded);
+					this.isLogFileNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(ULogViewer.Settings.SelectLogFilesWhenNeeded);
 				else if (session.IsWorkingDirectoryNeeded)
-					this.isWorkingDirNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(Settings.SelectWorkingDirectoryWhenNeeded);
+					this.isWorkingDirNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(ULogViewer.Settings.SelectWorkingDirectoryWhenNeeded);
 				this.OnLogProfileSet(profile);
 			}
 
@@ -496,15 +496,26 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Check for application update.
-		void CheckForAppUpdate()
+		async void CheckForAppUpdate()
 		{
+			// find window
 			var window = this.FindLogicalAncestorOfType<Window>();
 			if (window == null)
 				return;
-			new AppUpdateDialog()
+
+			// check for update
+			using var appUpdater = new AppSuite.ViewModels.ApplicationUpdater();
+			var result = await new AppSuite.Controls.ApplicationUpdateDialog(appUpdater)
 			{
-				CheckForUpdateWhenOpening = true,
+				CheckForUpdateWhenShowing = true
 			}.ShowDialog(window);
+
+			// shutdown to update
+			if (result == AppSuite.Controls.ApplicationUpdateDialogResult.ShutdownNeeded)
+			{
+				this.Logger.LogWarning("Shutdown to update application");
+				this.Application.Shutdown();
+			}
 		}
 
 
@@ -567,13 +578,13 @@ namespace CarinaStudio.ULogViewer.Controls
 				return false;
 
 			// show dialog
-			var result = await new MessageDialog()
+			var result = await new AppSuite.Controls.MessageDialog()
 			{
-				Buttons = MessageDialogButtons.YesNo,
-				Icon = MessageDialogIcon.Question,
+				Buttons = AppSuite.Controls.MessageDialogButtons.YesNo,
+				Icon = AppSuite.Controls.MessageDialogIcon.Question,
 				Message = this.Application.GetFormattedString("SessionView.NeedToRestartAsAdministrator", profile.Name),
-			}.ShowDialog<MessageDialogResult>(window);
-			if (result == MessageDialogResult.Yes)
+			}.ShowDialog(window);
+			if (result == AppSuite.Controls.MessageDialogResult.Yes)
 			{
 				this.Logger.LogWarning($"User agreed to restart as administrator for '{profile.Name}'");
 				return true;
@@ -656,12 +667,12 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			var app = (App)this.Application;
 			var logPropertyCount = logProperties.Count;
-			var colorIndicatorWidth = app.Resources.TryGetResource("Double.SessionView.LogListBox.ColorIndicator.Width", out var rawResource) ? (double)rawResource.AsNonNull() : 0.0;
-			var itemBorderThickness = app.Resources.TryGetResource("Thickness.SessionView.LogListBox.Item.Column.Border", out rawResource) ? (Thickness)rawResource.AsNonNull() : new Thickness(1);
-			var itemCornerRadius = app.Resources.TryGetResource("CornerRadius.SessionView.LogListBox.Item.Column.Border", out rawResource) ? (CornerRadius)rawResource.AsNonNull() : new CornerRadius(0);
-			var itemPadding = app.Resources.TryGetResource("Thickness.SessionView.LogListBox.Item.Padding", out rawResource) ? (Thickness)rawResource.AsNonNull() : new Thickness();
-			var propertyPadding = app.Resources.TryGetResource("Thickness.SessionView.LogListBox.Item.Property.Padding", out rawResource) ? (Thickness)rawResource.AsNonNull() : new Thickness();
-			var splitterWidth = app.Resources.TryGetResource("Double.GridSplitter.Thickness", out rawResource) ? (double)rawResource.AsNonNull() : 0.0;
+			var colorIndicatorWidth = app.Resources.TryGetResource("Double/SessionView.LogListBox.ColorIndicator.Width", out var rawResource) ? (double)rawResource.AsNonNull() : 0.0;
+			var itemBorderThickness = app.Resources.TryGetResource("Thickness/SessionView.LogListBox.Item.Column.Border", out rawResource) ? (Thickness)rawResource.AsNonNull() : new Thickness(1);
+			var itemCornerRadius = app.Resources.TryGetResource("CornerRadius/SessionView.LogListBox.Item.Column.Border", out rawResource) ? (CornerRadius)rawResource.AsNonNull() : new CornerRadius(0);
+			var itemPadding = app.Resources.TryGetResource("Thickness/SessionView.LogListBox.Item.Padding", out rawResource) ? (Thickness)rawResource.AsNonNull() : new Thickness();
+			var propertyPadding = app.Resources.TryGetResource("Thickness/SessionView.LogListBox.Item.Property.Padding", out rawResource) ? (Thickness)rawResource.AsNonNull() : new Thickness();
+			var splitterWidth = app.Resources.TryGetResource("Double/GridSplitter.Thickness", out rawResource) ? (double)rawResource.AsNonNull() : 0.0;
 			if (profile.ColorIndicator != LogColorIndicator.None)
 				itemPadding = new Thickness(itemPadding.Left + colorIndicatorWidth, itemPadding.Top, itemPadding.Right, itemPadding.Bottom);
 			var itemTemplateContent = new Func<IServiceProvider, object>(_ =>
@@ -670,7 +681,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				{
 					it.Children.Add(new Border().Also(border =>
 					{
-						border.Bind(Border.BackgroundProperty, border.GetResourceObservable("Brush.SessionView.LogListBox.Item.Background.Marked"));
+						border.Bind(Border.BackgroundProperty, border.GetResourceObservable("Brush/SessionView.LogListBox.Item.Background.Marked"));
 						border.Bind(Border.IsVisibleProperty, new Binding() { Path = nameof(DisplayableLog.IsMarked) });
 					}));
 				});
@@ -726,7 +737,7 @@ namespace CarinaStudio.ULogViewer.Controls
 							it.Bind(TextBlock.TextProperty, new Binding().Also(binding =>
 							{
 								if (logProperty.Name == nameof(DisplayableLog.Level))
-									binding.Converter = Converters.EnumConverter.LogLevel;
+									binding.Converter = Converters.EnumConverters.LogLevel;
 								binding.Path = logProperty.Name;
 							}));
 							it.TextTrimming = TextTrimming.CharacterEllipsis;
@@ -739,12 +750,10 @@ namespace CarinaStudio.ULogViewer.Controls
 						propertyView = new StackPanel().Also(it =>
 						{
 							it.Children.Add(propertyView);
-							it.Children.Add(new TextBlock().Also(viewDetails =>
+							it.Children.Add(new AppSuite.Controls.LinkTextBlock().Also(viewDetails =>
 							{
-								viewDetails.Bind(TextBlock.ForegroundProperty, viewDetails.GetResourceObservable("Brush.TextBlock.Foreground.Link"));
-								viewDetails.Cursor = new Avalonia.Input.Cursor(StandardCursorType.Hand);
 								viewDetails.Bind(TextBlock.IsVisibleProperty, new Binding() { Path = $"HasExtraLinesOf{logProperty.Name}" });
-								viewDetails.Bind(TextBlock.TextProperty, viewDetails.GetResourceObservable("String.SessionView.ViewFullLogMessage"));
+								viewDetails.Bind(TextBlock.TextProperty, viewDetails.GetResourceObservable("String/SessionView.ViewFullLogMessage"));
 								viewDetails.PointerReleased += (_, e) =>
 								{
 									if (e.InitialPressMouseButton == Avalonia.Input.MouseButton.Left 
@@ -769,7 +778,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						{
 							if (isPointerOver)
 							{
-								it.BorderBrush = this.TryFindResource("Brush.SessionView.LogListBox.Item.Column.Border.PointerOver", out var res).Let(_ => res as IBrush);
+								it.BorderBrush = this.TryFindResource("Brush/SessionView.LogListBox.Item.Column.Border.PointerOver", out var res).Let(_ => res as IBrush);
 								it.Bind(TextBlock.ForegroundProperty, new Binding() { Path = nameof(DisplayableLog.LevelBrushForPointerOver) });
 							}
 							else
@@ -860,8 +869,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				return nameof(DisplayableLog.LogId);
 			});
 			var app = (App)this.Application;
-			var colorIndicatorWidth = app.Resources.TryGetResource("Double.SessionView.LogListBox.ColorIndicator.Width", out var rawResource) ? (double)rawResource.AsNonNull() : 0.0;
-			var itemPadding = app.Resources.TryGetResource("Thickness.SessionView.MarkedLogListBox.Item.Padding", out rawResource) ? (Thickness)rawResource.AsNonNull() : new Thickness();
+			var colorIndicatorWidth = app.Resources.TryGetResource("Double/SessionView.LogListBox.ColorIndicator.Width", out var rawResource) ? (double)rawResource.AsNonNull() : 0.0;
+			var itemPadding = app.Resources.TryGetResource("Thickness/SessionView.MarkedLogListBox.Item.Padding", out rawResource) ? (Thickness)rawResource.AsNonNull() : new Thickness();
 			if (profile.ColorIndicator != LogColorIndicator.None)
 				itemPadding = new Thickness(itemPadding.Left + colorIndicatorWidth, itemPadding.Top, itemPadding.Right, itemPadding.Bottom);
 			var itemTemplateContent = new Func<IServiceProvider, object>(_ =>
@@ -1014,18 +1023,18 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				if (dirPaths.IsEmpty())
 				{
-					_ = new MessageDialog()
+					_ = new AppSuite.Controls.MessageDialog()
 					{
-						Icon = MessageDialogIcon.Information,
+						Icon = AppSuite.Controls.MessageDialogIcon.Information,
 						Message = this.Application.GetString("SessionView.NoFilePathDropped")
 					}.ShowDialog(window);
 					return false;
 				}
 				if (dirPaths.Count > 1)
 				{
-					_ = new MessageDialog()
+					_ = new AppSuite.Controls.MessageDialog()
 					{
-						Icon = MessageDialogIcon.Information,
+						Icon = AppSuite.Controls.MessageDialogIcon.Information,
 						Message = this.Application.GetString("SessionView.TooManyDirectoryPathsDropped")
 					}.ShowDialog(window);
 					return false;
@@ -1361,9 +1370,9 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// build headers
 			var app = (App)this.Application;
-			var splitterWidth = app.Resources.TryGetResource("Double.GridSplitter.Thickness", out var rawResource) ? (double)rawResource.AsNonNull() : 0.0;
-			var minHeaderWidth = app.Resources.TryGetResource("Double.SessionView.LogHeader.MinWidth", out rawResource) ? (double)rawResource.AsNonNull() : 0.0;
-			var colorIndicatorWidth = app.Resources.TryGetResource("Double.SessionView.LogListBox.ColorIndicator.Width", out rawResource) ? (double)rawResource.AsNonNull() : 0.0;
+			var splitterWidth = app.Resources.TryGetResource("Double/GridSplitter.Thickness", out var rawResource) ? (double)rawResource.AsNonNull() : 0.0;
+			var minHeaderWidth = app.Resources.TryGetResource("Double/SessionView.LogHeader.MinWidth", out rawResource) ? (double)rawResource.AsNonNull() : 0.0;
+			var colorIndicatorWidth = app.Resources.TryGetResource("Double/SessionView.LogListBox.ColorIndicator.Width", out rawResource) ? (double)rawResource.AsNonNull() : 0.0;
 			var headerTemplate = (DataTemplate)this.DataTemplates.First(it => it is DataTemplate dt && dt.DataType == typeof(DisplayableLogProperty));
 			var columIndexOffset = 0;
 			if (profile.ColorIndicator != LogColorIndicator.None)
@@ -1475,7 +1484,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		void OnDragOver(object? sender, DragEventArgs e)
 		{
 			// check state
-			if ((this.FindLogicalAncestorOfType<Window>() as BaseWindow)?.HasDialogs == true)
+			if ((this.FindLogicalAncestorOfType<Window>() as AppSuite.Controls.Window)?.HasDialogs == true)
 			{
 				e.DragEffects = DragDropEffects.None;
 				return;
@@ -1501,7 +1510,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when drop data on view.
 		async void OnDrop(object? sender, DragEventArgs e)
 		{
-			if ((this.FindLogicalAncestorOfType<Window>() as BaseWindow)?.HasDialogs == true)
+			if ((this.FindLogicalAncestorOfType<Window>() as AppSuite.Controls.Window)?.HasDialogs == true)
 				return;
 			e.Handled = true;
 			await this.DropAsync(e);
@@ -2044,17 +2053,17 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when setting changed.
 		void OnSettingChanged(object? sender, SettingChangedEventArgs e)
 		{
-			if (e.Key == Settings.IgnoreCaseOfLogTextFilter)
+			if (e.Key == ULogViewer.Settings.IgnoreCaseOfLogTextFilter)
 				this.logTextFilterTextBox.IgnoreCase = (bool)e.Value;
-			else if (e.Key == Settings.LogFontFamily)
+			else if (e.Key == ULogViewer.Settings.LogFontFamily)
 				this.UpdateLogFontFamily();
-			else if (e.Key == Settings.LogFontSize)
+			else if (e.Key == ULogViewer.Settings.LogFontSize)
 				this.UpdateLogFontSize();
-			else if (e.Key == Settings.MaxDisplayLineCountForEachLog)
+			else if (e.Key == ULogViewer.Settings.MaxDisplayLineCountForEachLog)
 				this.SetValue<int>(MaxDisplayLineCountForEachLogProperty, Math.Max(1, (int)e.Value));
-			else if (e.Key == Settings.ShowProcessInfo)
+			else if (e.Key == ULogViewer.Settings.ShowProcessInfo)
 				this.SetValue<bool>(IsProcessInfoVisibleProperty, (bool)e.Value);
-			else if (e.Key == Settings.UpdateLogFilterDelay)
+			else if (e.Key == ULogViewer.Settings.UpdateLogFilterDelay)
 				this.logTextFilterTextBox.ValidationDelay = this.UpdateLogFilterParamsDelay;
 		}
 
@@ -2102,7 +2111,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			// scroll to latest log
 			if (session.LogProfile?.IsContinuousReading == true
 				&& !this.IsScrollingToLatestLogNeeded
-				&& this.Settings.GetValueOrDefault(Settings.EnableScrollingToLatestLogAfterReloadingLogs))
+				&& this.Settings.GetValueOrDefault(ULogViewer.Settings.EnableScrollingToLatestLogAfterReloadingLogs))
 			{
 				this.Logger.LogDebug("Enable scrolling to latest log after reloading logs");
 				this.IsScrollingToLatestLogNeeded = true;
@@ -2319,13 +2328,13 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			if (session.IsLogFileNeeded)
 			{
-				this.isLogFileNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(Settings.SelectLogFilesWhenNeeded);
+				this.isLogFileNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(ULogViewer.Settings.SelectLogFilesWhenNeeded);
 				if (this.isLogFileNeededAfterLogProfileSet)
 					this.autoAddLogFilesAction.Schedule();
 			}
 			else if (session.IsWorkingDirectoryNeeded)
 			{
-				this.isWorkingDirNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(Settings.SelectWorkingDirectoryWhenNeeded);
+				this.isWorkingDirNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(ULogViewer.Settings.SelectWorkingDirectoryWhenNeeded);
 				if (this.isWorkingDirNeededAfterLogProfileSet)
 					this.autoSetWorkingDirectoryAction.Schedule();
 			}
@@ -2406,9 +2415,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Show application info.
 		void ShowAppInfo()
 		{
-			this.FindLogicalAncestorOfType<Window>()?.Let(window =>
+			this.FindLogicalAncestorOfType<Window>()?.Let(async (window) =>
 			{
-				new AppInfoDialog().ShowDialog(window);
+				using var appInfo = new AppInfo();
+				await new AppSuite.Controls.ApplicationInfoDialog(appInfo).ShowDialog(window);
 			});
 		}
 
@@ -2621,9 +2631,9 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Update font family of log.
 		void UpdateLogFontFamily()
 		{
-			var name = this.Settings.GetValueOrDefault(Settings.LogFontFamily);
+			var name = this.Settings.GetValueOrDefault(ULogViewer.Settings.LogFontFamily);
 			if (string.IsNullOrEmpty(name))
-				name = Settings.DefaultLogFontFamily;
+				name = ULogViewer.Settings.DefaultLogFontFamily;
 			this.SetValue<FontFamily>(LogFontFamilyProperty, new FontFamily(name));
 		}
 
@@ -2631,13 +2641,13 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Update font size of log.
 		void UpdateLogFontSize()
 		{
-			var size = Math.Max(Math.Min(this.Settings.GetValueOrDefault(Settings.LogFontSize), Settings.MaxLogFontSize), Settings.MinLogFontSize);
+			var size = Math.Max(Math.Min(this.Settings.GetValueOrDefault(ULogViewer.Settings.LogFontSize), ULogViewer.Settings.MaxLogFontSize), ULogViewer.Settings.MinLogFontSize);
 			this.SetValue<double>(LogFontSizeProperty, size);
 		}
 
 
 		// Get delay of updating log filter.
-		int UpdateLogFilterParamsDelay { get => Math.Max(Settings.MinUpdateLogFilterDelay, Math.Min(Settings.MaxUpdateLogFilterDelay, this.Settings.GetValueOrDefault(Settings.UpdateLogFilterDelay))); }
+		int UpdateLogFilterParamsDelay { get => Math.Max(ULogViewer.Settings.MinUpdateLogFilterDelay, Math.Min(ULogViewer.Settings.MaxUpdateLogFilterDelay, this.Settings.GetValueOrDefault(ULogViewer.Settings.UpdateLogFilterDelay))); }
 
 
 		// LIst of log levels defined by log profile.

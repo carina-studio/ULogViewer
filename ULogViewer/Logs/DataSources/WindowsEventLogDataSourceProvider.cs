@@ -13,7 +13,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// Initialize new <see cref="WindowsEventLogDataSourceProvider"/> instance.
 		/// </summary>
 		/// <param name="app">Application.</param>
-		public WindowsEventLogDataSourceProvider(IApplication app) : base(app)
+		public WindowsEventLogDataSourceProvider(IULogViewerApplication app) : base(app)
 		{ }
 
 

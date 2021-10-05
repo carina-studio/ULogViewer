@@ -1,4 +1,5 @@
 ﻿using Avalonia.Controls;
+using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using Microsoft.Extensions.Logging;
 using System;
@@ -30,7 +31,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// <summary>
 		/// Get application instance.
 		/// </summary>
-		protected IApplication Application { get; }
+		protected IULogViewerApplication Application { get; }
 
 
 		/// <summary>
@@ -48,7 +49,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// <summary>
 		/// Get application settings.
 		/// </summary>
-		protected Settings Settings { get => (Settings)this.Application.Settings; }
+		protected ISettings Settings { get => this.Application.Settings; }
 
 
 		// Interface implementation.

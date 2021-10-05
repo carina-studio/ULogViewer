@@ -45,6 +45,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// add event handlers
 			this.Application.Settings.SettingChanged += this.OnSettingChanged;
+			this.Application.PropertyChanged += this.OnApplicationPropertyChanged;
 			this.Application.StringsUpdated += this.OnApplicationStringsUpdated;
 			profile.PropertyChanged += this.OnLogProfilePropertyChanged;
 
@@ -55,9 +56,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
-		/// Get <see cref="IApplication"/> instance.
+		/// Get <see cref="IULogViewerApplication"/> instance.
 		/// </summary>
-		public IApplication Application { get; }
+		public IULogViewerApplication Application { get; }
 
 
 		// Check maximum log extra number.
@@ -104,6 +105,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// remove event handlers
 			this.Application.Settings.SettingChanged -= this.OnSettingChanged;
+			this.Application.PropertyChanged -= this.OnApplicationPropertyChanged;
 			this.Application.StringsUpdated -= this.OnApplicationStringsUpdated;
 			this.LogProfile.PropertyChanged -= this.OnLogProfilePropertyChanged;
 
@@ -166,6 +168,25 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Get maximum number of extras provided by each <see cref="Log"/> by <see cref="LogProfile"/>.
 		/// </summary>
 		public int MaxLogExtraNumber { get; private set; }
+
+
+		// Called when application property changed.
+		void OnApplicationPropertyChanged(object? sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == nameof(IULogViewerApplication.EffectiveThemeMode))
+			{
+				this.SynchronizationContext.Post(() =>
+				{
+					this.UpdateLevelBrushes();
+					var node = this.displayableLogs.First;
+					while (node != null)
+					{
+						node.Value.OnStyleResourcesUpdated();
+						node = node.Next;
+					}
+				});
+			}
+		}
 
 
 		// Called when application string resources updated.
@@ -248,19 +269,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			}
 			else if (e.Key == Settings.SaveMemoryAggressively)
 				this.SaveMemoryAgressively = (bool)e.Value;
-			else if (e.Key == Settings.ThemeMode)
-			{
-				this.SynchronizationContext.Post(() =>
-				{
-					this.UpdateLevelBrushes();
-					var node = this.displayableLogs.First;
-					while (node != null)
-					{
-						node.Value.OnStyleResourcesUpdated();
-						node = node.Next;
-					}
-				});
-			}
 		}
 
 

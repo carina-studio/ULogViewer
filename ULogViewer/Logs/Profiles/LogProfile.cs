@@ -72,7 +72,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// Initialize new <see cref="LogProfile"/> instance.
 		/// </summary>
 		/// <param name="app">Application.</param>
-		public LogProfile(IApplication app)
+		public LogProfile(IULogViewerApplication app)
 		{
 			app.VerifyAccess();
 			this.Application = app;
@@ -117,7 +117,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 
 
 		// Constructor for built-in profile.
-		LogProfile(IApplication app, string builtInId) : this(app)
+		LogProfile(IULogViewerApplication app, string builtInId) : this(app)
 		{
 			this.BuiltInId = builtInId;
 			this.id = builtInId;
@@ -129,7 +129,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// <summary>
 		/// Get application instance.
 		/// </summary>
-		public IApplication Application { get; }
+		public IULogViewerApplication Application { get; }
 
 
 		// ID of built-in profile.
@@ -171,7 +171,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// </summary>
 		/// <param name="app">Application.</param>
 		/// <returns>Built-in empty log profile.</returns>
-		internal static LogProfile CreateEmptyBuiltInProfile(IApplication app) => new LogProfile(app, EmptyId);
+		internal static LogProfile CreateEmptyBuiltInProfile(IULogViewerApplication app) => new LogProfile(app, EmptyId);
 
 
 		/// <summary>
@@ -408,7 +408,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// <param name="app">Application.</param>
 		/// <param name="id">ID of built-in profile.</param>
 		/// <returns>Task of loading operation.</returns>
-		public static async Task<LogProfile> LoadBuiltInProfileAsync(IApplication app, string id)
+		public static async Task<LogProfile> LoadBuiltInProfileAsync(IULogViewerApplication app, string id)
 		{
 			// load JSON document
 			var jsonDocument = await ioTaskFactory.StartNew(() =>
@@ -662,7 +662,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// <param name="app">Application.</param>
 		/// <param name="fileName">Name of profile file.</param>
 		/// <returns>Task of loading operation.</returns>
-		public static async Task<LogProfile> LoadProfileAsync(IApplication app, string fileName)
+		public static async Task<LogProfile> LoadProfileAsync(IULogViewerApplication app, string fileName)
 		{
 			// load JSON document
 			var jsonDocument = await ioTaskFactory.StartNew(() =>

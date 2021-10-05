@@ -12,8 +12,8 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// <summary>
 		/// Initialize new <see cref="StandardOutputLogDataSourceProvider"/> instance.
 		/// </summary>
-		/// <param name="app"><see cref="IApplication"/>.</param>
-		public StandardOutputLogDataSourceProvider(IApplication app) : base(app)
+		/// <param name="app"><see cref="IULogViewerApplication"/>.</param>
+		public StandardOutputLogDataSourceProvider(IULogViewerApplication app) : base(app)
 		{
 		}
 

@@ -19,16 +19,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 	/// <summary>
 	/// Workspace contains <see cref="Session"/>(s).
 	/// </summary>
-	class Workspace : ViewModel<IApplication>
+	class Workspace : AppSuite.ViewModels.MainWindowViewModel<IULogViewerApplication>
 	{
 		/// <summary>
 		/// Property of <see cref="ActiveSession"/>.
 		/// </summary>
 		public static readonly ObservableProperty<Session?> ActiveSessionProperty = ObservableProperty.Register<Workspace, Session?>(nameof(ActiveSession));
-		/// <summary>
-		/// Property of <see cref="Title"/>.
-		/// </summary>
-		public static readonly ObservableProperty<string?> TitleProperty = ObservableProperty.Register<Workspace, string?>(nameof(Title));
 
 
 		// Static fields.
@@ -38,45 +34,15 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		// Fields.
 		IDisposable? sessionActivationToken;
 		readonly ObservableCollection<Session> sessions = new ObservableCollection<Session>();
-		readonly ScheduledAction updateTitleAction;
 
 
 		/// <summary>
 		/// Initialize new <see cref="Workspace"/> instance.
 		/// </summary>
-		/// <param name="app">Application.</param>
-		public Workspace(IApplication app) : base(app)
+		public Workspace() : base()
 		{
 			// setup properties
 			this.Sessions = this.sessions.AsReadOnly();
-
-			// create scheduled actions
-			this.updateTitleAction = new ScheduledAction(() =>
-			{
-				if (this.IsDisposed)
-					return;
-				var titleBuilder = new StringBuilder("ULogViewer");
-				var postfixBuilder = new StringBuilder();
-				var session = this.ActiveSession;
-				if (app.IsRunningAsAdministrator)
-					postfixBuilder.Append(app.GetString("Common.Administrator"));
-				if (app.IsDebugMode)
-				{
-					if (postfixBuilder.Length > 0)
-						postfixBuilder.Append('|');
-					postfixBuilder.Append(app.GetString("Common.DebugMode"));
-				}
-				if (postfixBuilder.Length > 0)
-				{
-					titleBuilder.Append(" (");
-					titleBuilder.Append(postfixBuilder);
-					titleBuilder.Append(')');
-				}
-				if (session != null)
-					titleBuilder.Append($" - {session.Title}");
-				this.SetValue(TitleProperty, titleBuilder.ToString());
-			});
-			this.updateTitleAction.Execute();
 		}
 
 
@@ -301,7 +267,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.sessionActivationToken = this.sessionActivationToken.DisposeAndReturnNull();
 				if (session != null)
 					this.sessionActivationToken = session.Activate();
-				this.updateTitleAction.Schedule();
+				this.InvalidateTitle();
 			}
 		}
 
@@ -313,17 +279,43 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			{
 				case nameof(Session.Title):
 					if (sender == this.ActiveSession)
-						this.updateTitleAction.Schedule();
+						this.InvalidateTitle();
 					break;
 			}
 		}
 
 
-		/// <summary>
-		/// Restore instance state from persistent state.
-		/// </summary>
-		/// <returns>True if instance state has been restored successfully.</returns>
-		public bool RestoreState()
+		// Update title.
+        protected override string? OnUpdateTitle()
+        {
+			var titleBuilder = new StringBuilder("ULogViewer");
+			var postfixBuilder = new StringBuilder();
+			var session = this.ActiveSession;
+			if (this.Application.IsRunningAsAdministrator)
+				postfixBuilder.Append(this.Application.GetString("Common.Administrator"));
+			if (this.Application.IsDebugMode)
+			{
+				if (postfixBuilder.Length > 0)
+					postfixBuilder.Append('|');
+				postfixBuilder.Append(this.Application.GetString("Common.DebugMode"));
+			}
+			if (postfixBuilder.Length > 0)
+			{
+				titleBuilder.Append(" (");
+				titleBuilder.Append(postfixBuilder);
+				titleBuilder.Append(')');
+			}
+			if (session != null)
+				titleBuilder.Append($" - {session.Title}");
+			return titleBuilder.ToString();
+		}
+
+
+        /// <summary>
+        /// Restore instance state from persistent state.
+        /// </summary>
+        /// <returns>True if instance state has been restored successfully.</returns>
+        public bool RestoreState()
 		{
 			// get state
 			var stateBytes = this.Application.PersistentState.GetValueOrDefault(StateKey);
@@ -432,11 +424,5 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Get list of <see cref="Session"/>s.
 		/// </summary>
 		public IList<Session> Sessions { get; }
-
-
-		/// <summary>
-		/// Get title.
-		/// </summary>
-		public string? Title { get => this.GetValue(TitleProperty); }
 	}
 }

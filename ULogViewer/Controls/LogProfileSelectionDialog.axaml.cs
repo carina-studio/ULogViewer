@@ -13,13 +13,15 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.Controls
 {
 	/// <summary>
 	/// Dialog to select <see cref="LogProfile"/>.
 	/// </summary>
-	partial class LogProfileSelectionDialog : BaseDialog
+	partial class LogProfileSelectionDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
 	{
 		// Static fields.
 		static readonly AvaloniaProperty<Predicate<LogProfile>?> FilterProperty = AvaloniaProperty.Register<LogProfileEditorDialog, Predicate<LogProfile>?>(nameof(Filter));
@@ -150,9 +152,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			catch (Exception ex)
 			{
 				this.Logger.LogError(ex, $"Unable to export log profile '{copiedProfile.Name}' to '{fileName}'");
-				_ = new MessageDialog()
+				_ = new AppSuite.Controls.MessageDialog()
 				{
-					Icon = MessageDialogIcon.Error,
+					Icon = AppSuite.Controls.MessageDialogIcon.Error,
 					Message = this.Application.GetFormattedString("LogProfileSelectionDialog.FailedToExportLogProfile", fileName),
 				}.ShowDialog(this);
 			}
@@ -166,6 +168,16 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			get => this.GetValue<Predicate<LogProfile>?>(FilterProperty);
 			set => this.SetValue<Predicate<LogProfile>?>(FilterProperty, value);
+		}
+
+
+		// Generate result.
+		protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken)
+		{
+			var logProfile = this.otherLogProfileListBox.SelectedItem as LogProfile;
+			if (logProfile == null)
+				logProfile = this.pinnedLogProfileListBox.SelectedItem as LogProfile;
+			return Task.FromResult((object?)logProfile);
 		}
 
 
@@ -208,9 +220,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			catch (Exception ex)
 			{
 				this.Logger.LogError(ex, $"Unable to load log profile from '{fileName}'");
-				_ = new MessageDialog()
+				_ = new AppSuite.Controls.MessageDialog()
 				{
-					Icon = MessageDialogIcon.Error,
+					Icon = AppSuite.Controls.MessageDialogIcon.Error,
 					Message = this.Application.GetFormattedString("LogProfileSelectionDialog.FailedToImportLogProfile", fileName),
 				}.ShowDialog(this);
 				return;
@@ -283,16 +295,6 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// call base
 			base.OnClosed(e);
-		}
-
-
-		// Generate result.
-		protected override object? OnGenerateResult()
-		{
-			var logProfile = this.otherLogProfileListBox.SelectedItem as LogProfile;
-			if (logProfile == null)
-				logProfile = this.pinnedLogProfileListBox.SelectedItem as LogProfile;
-			return logProfile;
 		}
 
 

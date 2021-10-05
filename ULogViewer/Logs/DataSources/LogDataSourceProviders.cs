@@ -13,7 +13,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 	static class LogDataSourceProviders
 	{
 		// Fields.
-		static volatile IApplication? app;
+		static volatile IULogViewerApplication? app;
 		static volatile EmptyLogDataSourceProvider? empty;
 		static volatile ILogger? logger;
 		static readonly List<ILogDataSourceProvider> providers = new List<ILogDataSourceProvider>();
@@ -36,7 +36,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// </summary>
 		/// <param name="app">Application.</param>
 		[MethodImpl(MethodImplOptions.Synchronized)]
-		public static void Initialize(IApplication app)
+		public static void Initialize(IULogViewerApplication app)
 		{
 			// check state
 			app.VerifyAccess();

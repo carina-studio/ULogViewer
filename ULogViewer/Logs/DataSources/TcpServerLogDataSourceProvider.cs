@@ -13,7 +13,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// Initialize new <see cref="TcpServerLogDataSourceProvider"/> instance.
 		/// </summary>
 		/// <param name="app">Application.</param>
-		public TcpServerLogDataSourceProvider(IApplication app) : base(app)
+		public TcpServerLogDataSourceProvider(IULogViewerApplication app) : base(app)
 		{ }
 
 
