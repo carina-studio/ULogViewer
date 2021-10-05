@@ -497,7 +497,7 @@
 					<Border Classes="SessionView_StatusBar_Icon">
 						<DrawingPresenter Classes="Icon">
 							<DrawingPresenter.Drawing>
-								<GeometryDrawing Brush="{DynamicResource Brush/SessionView.StatusBar.Foreground}" Geometry="{StaticResource Geometry/Filter}"/>
+								<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Filter}"/>
 							</DrawingPresenter.Drawing>
 						</DrawingPresenter>
 					</Border>

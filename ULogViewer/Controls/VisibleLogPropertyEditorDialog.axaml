@@ -2,32 +2,31 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-				xmlns:appConverters="clr-namespace:CarinaStudio.ULogViewer.Converters;assembly=ULogViewer"
-				xmlns:appLogs="clr-namespace:CarinaStudio.ULogViewer.Logs;assembly=ULogViewer"
-				xmlns:appViewModels="clr-namespace:CarinaStudio.ULogViewer.ViewModels;assembly=ULogViewer"
+        xmlns:appConverters="clr-namespace:CarinaStudio.ULogViewer.Converters;assembly=ULogViewer"
+        xmlns:appLogs="clr-namespace:CarinaStudio.ULogViewer.Logs;assembly=ULogViewer"
+        xmlns:appViewModels="clr-namespace:CarinaStudio.ULogViewer.ViewModels;assembly=ULogViewer"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.VisibleLogPropertyEditorDialog"
-				Classes="Dialog"
-				SizeToContent="Height"
-        Title="{DynamicResource String.VisibleLogPropertyEditorDialog.Title}"
-				Width="{StaticResource Double.VisibleLogPropertyEditorDialog.Width}">
+        Classes="Dialog"
+        Title="{DynamicResource String/VisibleLogPropertyEditorDialog.Title}"
+        Width="{DynamicResource Double/VisibleLogPropertyEditorDialog.Width}">
 
 	<DockPanel>
 
 		<!-- Control buttons -->
-		<Border Classes="Dialog_ControlButtonsPanel" DockPanel.Dock="Bottom">
-			<StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].GenerateResultCommand}" Content="{DynamicResource String.Common.OK}"/>
-				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].CancelCommand}" Content="{DynamicResource String.Common.Cancel}"/>
+		<Border Classes="Dialog_ControlButtonsPanel">
+			<StackPanel Classes="Dialog_ControlButtonsPanel">
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].GenerateResultCommand}" Content="{DynamicResource String/Common.OK}"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].Close}" Content="{DynamicResource String/Common.Cancel}"/>
 			</StackPanel>
 		</Border>
 
 		<!-- Content -->
-		<StackPanel Margin="{StaticResource Thickness.Dialog.Content.Padding}" Orientation="Vertical">
+		<StackPanel Classes="Dialog_ContentPanel">
 
 			<!-- Name -->
-			<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.VisibleLogPropertyEditorDialog.Name}"/>
-			<ComboBox Name="nameComboBox" HorizontalAlignment="Stretch" Items="{x:Static appLogs:Log.PropertyNames}" SelectionChanged="OnNameComboBoxSelectionChanged">
+			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/VisibleLogPropertyEditorDialog.Name}"/>
+			<ComboBox Name="nameComboBox" Classes="Dialog_ComboBox" Items="{x:Static appLogs:Log.PropertyNames}" SelectionChanged="OnNameComboBoxSelectionChanged">
 				<ComboBox.ItemTemplate>
 					<DataTemplate>
 						<StackPanel Orientation="Horizontal">
@@ -43,11 +42,11 @@
 					</DataTemplate>
 				</ComboBox.ItemTemplate>
 			</ComboBox>
-			<Separator Classes="Dialog_Separator_Horizontal"/>
+			<Separator Classes="Dialog_Separator"/>
 
 			<!-- Display name -->
-			<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.VisibleLogPropertyEditorDialog.DisplayName}"/>
-			<ComboBox Name="displayNameComboBox" HorizontalAlignment="Stretch" IsVisible="{Binding !#customDisplayNameSwitch.IsChecked}" Items="{x:Static appViewModels:DisplayableLogProperty.DisplayNames}">
+			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/VisibleLogPropertyEditorDialog.DisplayName}"/>
+			<ComboBox Name="displayNameComboBox" Classes="Dialog_ComboBox" IsVisible="{Binding !#customDisplayNameSwitch.IsChecked}" Items="{x:Static appViewModels:DisplayableLogProperty.DisplayNames}">
 				<ComboBox.ItemTemplate>
 					<DataTemplate>
 						<StackPanel Orientation="Horizontal">
@@ -64,19 +63,19 @@
 				</ComboBox.ItemTemplate>
 			</ComboBox>
 			<TextBox Name="customDisplayNameTextBox" IsVisible="{Binding #customDisplayNameSwitch.IsChecked}" PropertyChanged="OnEditorControlPropertyChanged"/>
-			<Separator Classes="Dialog_Separator_Horizontal"/>
+			<Separator Classes="Dialog_Separator"/>
 
 			<!-- Custom display name -->
-			<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.VisibleLogPropertyEditorDialog.CustomDisplayName}"/>
-			<ToggleSwitch Name="customDisplayNameSwitch" PropertyChanged="OnEditorControlPropertyChanged"/>
-			<Separator Classes="Dialog_Separator_Horizontal"/>
+			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/VisibleLogPropertyEditorDialog.CustomDisplayName}"/>
+			<ToggleSwitch Name="customDisplayNameSwitch" Classes="Dialog_ToggleSwitch" PropertyChanged="OnEditorControlPropertyChanged"/>
+			<Separator Classes="Dialog_Separator"/>
 
 			<!-- Width -->
-			<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.VisibleLogPropertyEditorDialog.SpecifyWidth}"/>
+			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/VisibleLogPropertyEditorDialog.SpecifyWidth}"/>
 			<ToggleSwitch Name="specifyWidthSwitch"/>
-			<Separator Classes="Dialog_Separator_Horizontal"/>
-			<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.VisibleLogPropertyEditorDialog.Width}"/>
-			<NumericUpDown Name="widthUpDown" HorizontalAlignment="Stretch" IsEnabled="{Binding #specifyWidthSwitch.IsChecked}" Minimum="10"/>
+			<Separator Classes="Dialog_Separator"/>
+			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/VisibleLogPropertyEditorDialog.Width}"/>
+			<NumericUpDown Name="widthUpDown" Classes="Dialog_NumericUpDown" IsEnabled="{Binding #specifyWidthSwitch.IsChecked}" Minimum="10"/>
 			
 		</StackPanel>
 		

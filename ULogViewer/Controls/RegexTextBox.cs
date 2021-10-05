@@ -42,7 +42,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// </summary>
 		public RegexTextBox()
 		{
-			this.invalidTextBrush = this.GetResourceObservable("Brush.TextBox.Foreground.Error");
+			this.invalidTextBrush = this.GetResourceObservable("Brush/TextBox.Foreground.Error");
 			this.validateAction = new ScheduledAction(() => this.Validate());
 		}
 

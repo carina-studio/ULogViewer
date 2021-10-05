@@ -101,12 +101,8 @@
 	<sys:Double x:Key="Double/SessionView.SidePanel.Header.Icon.Size">16</sys:Double>
 	<sys:Double x:Key="Double/SessionView.SidePanel.MaxWidth">400</sys:Double>
 	<sys:Double x:Key="Double/SessionView.SidePanel.MinWidth">200</sys:Double>
-	<sys:Double x:Key="Double/SessionView.StatusBar.Icon.Size">14</sys:Double>
-	<sys:Double x:Key="Double/SessionView.StatusBar.Separator.Size">20</sys:Double>
-	<sys:Double x:Key="Double/SessionView.ToolBar.Button.Icon.Size">20</sys:Double>
 	<sys:Double x:Key="Double/SessionView.ToolBar.LogLevelFilter.Width">150</sys:Double>
 	<sys:Double x:Key="Double/SessionView.ToolBar.LogProcessIdFilter.Width">80</sys:Double>
-	<sys:Double x:Key="Double/SessionView.ToolBar.Separator.Size">1</sys:Double>
 	<Thickness x:Key="Thickness/SessionView.Hint.SelectLogProfile.Icon.Margin">15,0,15,0</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogHeader.Margin">3,8,3,8</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogHeader.Padding">5,0,5,0</Thickness>
@@ -124,14 +120,6 @@
 	<Thickness x:Key="Thickness/SessionView.SidePanel.Header.Icon.Margin">0,0,5,0</Thickness>
 	<Thickness x:Key="Thickness/SessionView.SidePanel.Header.Margin">10,10,10,5</Thickness>
 	<Thickness x:Key="Thickness/SessionView.SidePanel.Header.Text.Margin">0</Thickness>
-	<Thickness x:Key="Thickness/SessionView.StatusBar.Icon.Margin">3,0,3,0</Thickness>
-	<Thickness x:Key="Thickness/SessionView.StatusBar.Padding">5,3,5,3</Thickness>
-	<Thickness x:Key="Thickness/SessionView.ToolBar.Button.Margin">1,0,1,0</Thickness>
-	<Thickness x:Key="Thickness/SessionView.ToolBar.Button.Padding">5</Thickness>
-	<Thickness x:Key="Thickness/SessionView.ToolBar.LogLevelFilter.Margin">2,0,2,0</Thickness>
-	<Thickness x:Key="Thickness/SessionView.ToolBar.LogProcessIdFilter.Margin">2,0,2,0</Thickness>
-	<Thickness x:Key="Thickness/SessionView.ToolBar.LogTextFilter.Margin">2,0,2,0</Thickness>
-	<Thickness x:Key="Thickness/SessionView.ToolBar.Separator.Margin">2</Thickness>
 
 	<!-- SplashWindow -->
 	<CornerRadius x:Key="CornerRadius/SplashWindow">5</CornerRadius>

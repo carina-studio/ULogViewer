@@ -1,16 +1,12 @@
 ﻿<Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:ae="using:AvaloniaEdit"
-        xmlns:aee="using:AvaloniaEdit.Editing">
+        xmlns:aee="using:AvaloniaEdit.Editing"
+		xmlns:appControls="using:CarinaStudio.ULogViewer.Controls">
 
 	<!-- Resources -->
 	<Styles.Resources>
 		<ResourceDictionary>
-
-			<!-- Base resources -->
-			<ResourceDictionary.MergedDictionaries>
-				<ResourceInclude Source="/Styles/Resources.axaml"/>
-			</ResourceDictionary.MergedDictionaries>
 
 			<!-- Accent -->
 			<Color x:Key="Color/Accent">#912fbf</Color>
@@ -51,7 +47,6 @@
 			<SolidColorBrush x:Key="Brush/SessionView.StatusBar.Background.Inactive">#000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.StatusBar.Background.Paused">#000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.StatusBar.Background.Warning">#ca5100</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/SessionView.StatusBar.Foreground">#ffffff</SolidColorBrush>
 
 			<!-- SplashWindow -->
 			<SolidColorBrush x:Key="Brush/SplashWindow.Background">#bf000000</SolidColorBrush>
@@ -64,8 +59,19 @@
 			<!-- TextBlock -->
 			<SolidColorBrush x:Key="Brush/TextBlock.Foreground.Error">#ff0000</SolidColorBrush>
 
+			<!-- TextBox -->
+			<SolidColorBrush x:Key="Brush/TextBox.Foreground.Error">#ff0000</SolidColorBrush>
+
 		</ResourceDictionary>
 	</Styles.Resources>
+
+	<!-- Dialog -->
+	<Style Selector="TextBlock.Dialog_TextBlock_Description_Error">
+		<Setter Property="FontSize" Value="{DynamicResource Double/Dialog.TextBlock.FontSize.Description}"/>
+		<Setter Property="Foreground" Value="{DynamicResource Brush/TextBlock.Foreground.Error}"/>
+		<Setter Property="Margin" Value="{DynamicResource Thickness/Dialog.TextBlock.Margin.Description}"/>
+		<Setter Property="TextWrapping" Value="Wrap"/>
+	</Style>
 
 	<!-- External controls -->
 	<StyleInclude Source="avares://AvaloniaEdit/AvaloniaEdit.xaml" />
@@ -126,45 +132,11 @@
 	</Style>
 
 	<!-- SessionView -->
-	<Style Selector="Border.SessionView_StatusBar_Icon">
-		<Setter Property="Height" Value="{DynamicResource Double/SessionView.StatusBar.Icon.Size}"/>
-		<Setter Property="Margin" Value="{DynamicResource Thickness/SessionView.StatusBar.Icon.Margin}"/>
-		<Setter Property="VerticalAlignment" Value="Center"/>
-		<Setter Property="Width" Value="{DynamicResource Double/SessionView.StatusBar.Icon.Size}"/>
-	</Style>
-	<Style Selector="Border.SessionView_ToolBar_Button_Icon">
-		<Setter Property="Height" Value="{DynamicResource Double/SessionView.ToolBar.Button.Icon.Size}"/>
-		<Setter Property="Width" Value="{DynamicResource Double/SessionView.ToolBar.Button.Icon.Size}"/>
-	</Style>
-	<Style Selector="Button.SessionView_ToolBar_Button">
-		<Setter Property="Background" Value="{x:Static Brushes.Transparent}"/>
-		<Setter Property="BorderThickness" Value="0"/>
-		<Setter Property="HorizontalContentAlignment" Value="Center"/>
-		<Setter Property="Margin" Value="{DynamicResource Thickness/SessionView.ToolBar.Button.Margin}"/>
-		<Setter Property="Padding" Value="{DynamicResource Thickness/SessionView.ToolBar.Button.Padding}"/>
-		<Setter Property="VerticalContentAlignment" Value="Center"/>
-	</Style>
-	<Style Selector="Button.SessionView_ToolBar_Button:disabled">
-		<Setter Property="Opacity" Value="0.3"/>
-	</Style>
 	<Style Selector="DrawingPresenter.SessionView_SidePanel_Header">
 		<Setter Property="Height" Value="{DynamicResource Double/SessionView.SidePanel.Header.Icon.Size}"/>
 		<Setter Property="Margin" Value="{DynamicResource Thickness/SessionView.SidePanel.Header.Icon.Margin}"/>
 		<Setter Property="VerticalAlignment" Value="Center"/>
 		<Setter Property="Width" Value="{DynamicResource Double/SessionView.SidePanel.Header.Icon.Size}"/>
-	</Style>
-	<Style Selector="Grid.SessionView_ToolBar_Button_Icon">
-		<Setter Property="Height" Value="{DynamicResource Double/SessionView.ToolBar.Button.Icon.Size}"/>
-		<Setter Property="Width" Value="{DynamicResource Double/SessionView.ToolBar.Button.Icon.Size}"/>
-	</Style>
-	<Style Selector="Separator.SessionView_StatusBar_Separator">
-		<Setter Property="Background" Value="{x:Null}"/>
-		<Setter Property="Width" Value="{DynamicResource Double/SessionView.StatusBar.Separator.Size}"/>
-	</Style>
-	<Style Selector="Separator.SessionView_ToolBar_Separator">
-		<Setter Property="Background" Value="{DynamicResource Brush.Separator.Background}"/>
-		<Setter Property="Margin" Value="{DynamicResource Thickness/SessionView.ToolBar.Separator.Margin}"/>
-		<Setter Property="Width" Value="{DynamicResource Double/SessionView.ToolBar.Separator.Size}"/>
 	</Style>
 	<Style Selector="StackPanel.SessionView_SidePanel_Header">
 		<Setter Property="Margin" Value="{DynamicResource Thickness/SessionView.SidePanel.Header.Margin}"/>
@@ -182,16 +154,6 @@
 		<Setter Property="TextTrimming" Value="CharacterEllipsis"/>
 		<Setter Property="TextWrapping" Value="NoWrap"/>
 		<Setter Property="VerticalAlignment" Value="Center"/>
-	</Style>
-	<Style Selector="ToggleButton.SessionView_ToolBar_Button">
-		<Setter Property="Background" Value="{x:Static Brushes.Transparent}"/>
-		<Setter Property="HorizontalContentAlignment" Value="Center"/>
-		<Setter Property="Margin" Value="{DynamicResource Thickness/SessionView.ToolBar.Button.Margin}"/>
-		<Setter Property="Padding" Value="{DynamicResource Thickness/SessionView.ToolBar.Button.Padding}"/>
-		<Setter Property="VerticalContentAlignment" Value="Center"/>
-	</Style>
-	<Style Selector="ToggleButton.SessionView_ToolBar_Button:disabled">
-		<Setter Property="Opacity" Value="0.3"/>
 	</Style>
 
 	<!-- TextArea -->

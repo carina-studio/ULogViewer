@@ -43,6 +43,9 @@ namespace CarinaStudio.ULogViewer
 		// Constructor.
 		public App()
 		{
+			// setup name
+			this.Name = "ULogViewer";
+
 			// check whether process is running as admin or not
 			if (Platform.IsWindows)
 			{
