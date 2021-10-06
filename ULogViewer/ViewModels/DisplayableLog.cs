@@ -565,7 +565,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				return;
 
 			// check extra line count
-			for (var i = Log.ExtraCapacity - 1; i >= 0; --i)
+			for (var i = this.extraLineCount.Length - 1; i >= 0; --i)
 			{
 				if (this.extraLineCount[i] >= 0)
 					propertyChangedHandlers(this, new PropertyChangedEventArgs($"HasExtraLinesOfExtra{i + 1}"));
