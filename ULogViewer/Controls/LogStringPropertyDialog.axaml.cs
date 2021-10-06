@@ -38,7 +38,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.highlightingColor = new HighlightingColor().Also(it => 
 				{
 					var res = (object?)null;
-					if ((app as App)?.TryFindResource("Brush.LogStringPropertyDialog.FoundText.Background", out res) == true && res is SolidColorBrush solidColorBrush)
+					if ((app as App)?.TryFindResource("Brush/LogStringPropertyDialog.FoundText.Background", out res) == true && res is SolidColorBrush solidColorBrush)
 						it.Background = new SimpleHighlightingBrush(solidColorBrush.Color);
 				});
 				this.mainRuleSet.Let(mainRuleSet =>
@@ -208,7 +208,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			var app = (App)this.Application;
 			if (!app.TryFindResource("SystemAccentColor", out var res) || res is not Color accentColor)
 				return;
-			this.Resources["Brush.TextArea.Selection.Background"] = new SolidColorBrush(Color.FromArgb(0x3f, accentColor.R, accentColor.G, accentColor.B));
+			this.Resources["Brush/TextArea.Selection.Background"] = new SolidColorBrush(Color.FromArgb(0x3f, accentColor.R, accentColor.G, accentColor.B));
         }
 
 

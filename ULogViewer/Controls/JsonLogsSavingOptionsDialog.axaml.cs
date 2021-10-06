@@ -2,6 +2,7 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using CarinaStudio.Collections;
+using CarinaStudio.Controls;
 using CarinaStudio.ULogViewer.Converters;
 using CarinaStudio.ULogViewer.ViewModels;
 using CarinaStudio.Threading;
@@ -119,9 +120,13 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (sender is not ListBox listBox)
 				return;
 			var selectedItem = listBox.SelectedItem;
-			var listBoxItem = selectedItem != null ? listBox.FindListBoxItem(selectedItem) : null;
-			if (listBoxItem == null || !listBoxItem.IsPointerOver)
+			if (selectedItem == null 
+				|| !listBox.TryFindListBoxItem(selectedItem, out var listBoxItem)
+				|| listBoxItem == null
+				|| !listBoxItem.IsPointerOver)
+			{
 				return;
+			}
 			if (listBox == this.logPropertyMapListBox)
 				this.EditLogPropertyMapEntry(listBoxItem);
 		}

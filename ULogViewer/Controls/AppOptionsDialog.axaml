@@ -12,78 +12,84 @@
         x:Class="CarinaStudio.ULogViewer.Controls.AppOptionsDialog"
         Classes="Dialog"
         ShowInTaskbar="True"
-        SizeToContent="Height"
-        Title="{DynamicResource String.AppOptionsDialog.Title}"
-        Width="{StaticResource Double.AppOptionsDialog.Width}">
+        Title="{DynamicResource String/AppOptionsDialog.Title}"
+        Width="{DynamicResource Double/AppOptionsDialog.Width}">
 
 	<DockPanel>
 
 		<!-- Control buttons -->
 		<Border Classes="Dialog_ControlButtonsPanel" DockPanel.Dock="Bottom">
-			<StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].CancelCommand}" Content="{DynamicResource String.Common.OK}"/>
+			<StackPanel Classes="Dialog_ControlButtonsPanel">
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].Close}" Content="{DynamicResource String/Common.OK}"/>
 			</StackPanel>
 		</Border>
 
 		<!-- Content -->
-		<ScrollViewer MaxHeight="{StaticResource Double.AppOptionsDialog.Content.MaxHeight}">
-			<StackPanel Margin="{StaticResource Thickness.Dialog.Content.Padding}" Orientation="Vertical">
+		<ScrollViewer MaxHeight="{DynamicResource Double/AppOptionsDialog.Content.MaxHeight}">
+			<StackPanel Classes="Dialog_ContentPanel">
 
 				<!-- User interface -->
-				<Border Classes="Dialog_Label_Header1">
-					<TextBlock Classes="Dialog_Label_Header1" Text="{DynamicResource String.AppOptionsDialog.UserInterface}"/>
+				<Border Classes="Dialog_TextBlock_Header1">
+					<TextBlock Classes="Dialog_TextBlock_Header1" Text="{DynamicResource String/AppOptionsDialog.UserInterface}"/>
 				</Border>
 				
 				<!-- Theme mode -->
-				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.AppOptionsDialog.ThemeMode}"/>
-				<ComboBox HorizontalAlignment="Stretch" Items="{Binding ThemeModes, Mode=OneTime}" SelectedItem="{Binding ThemeMode, Mode=TwoWay}"/>
-				<Separator Classes="Dialog_Separator_Horizontal"/>
+				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/AppOptionsDialog.ThemeMode}"/>
+				<ComboBox Classes="Dialog_ComboBox" Items="{Binding ThemeModes, Mode=OneTime}" SelectedItem="{Binding ThemeMode, Mode=TwoWay}">
+					<ComboBox.ItemTemplate>
+						<DataTemplate>
+							<TextBlock Text="{Binding Converter={x:Static appControls:AppOptionsDialog.ThemeModeConverter}}"/>
+						</DataTemplate>
+					</ComboBox.ItemTemplate>
+				</ComboBox>
+				<TextBlock Classes="Dialog_TextBlock_Description_Error" IsVisible="{Binding IsRestartingMainWindowsNeeded}" Text="{DynamicResource String/AppOptionsDialog.RestartingMainWindowsNeeded}"/>
+				<Separator Classes="Dialog_Separator"/>
 
 				<!-- Use system accent color -->
 				<StackPanel IsVisible="{Binding $parent[Window].Application.IsSystemAccentColorSupported}" Orientation="Vertical">
-					<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.AppOptionsDialog.UseSystemAccentColor}"/>
-					<ToggleSwitch IsChecked="{Binding UseSystemAccentColor, Mode=TwoWay}"/>
-					<Separator Classes="Dialog_Separator_Horizontal"/>
+					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/AppOptionsDialog.UseSystemAccentColor}"/>
+					<ToggleSwitch Classes="Dialog_ToggleSwitch" IsChecked="{Binding UseSystemAccentColor, Mode=TwoWay}"/>
+					<Separator Classes="Dialog_Separator"/>
 				</StackPanel>
 				
 				<!-- Culture -->
-				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.AppOptionsDialog.Culture}"/>
-				<appControls:EnumComboBox EnumType="{x:Type app:AppCulture}" HorizontalAlignment="Stretch" SelectedItem="{Binding Culture, Mode=TwoWay}"/>
-				<Separator Classes="Dialog_Separator_Horizontal"/>
+				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/AppOptionsDialog.Culture}"/>
+				<appControls:EnumComboBox Classes="Dialog_ComboBox" EnumType="{x:Type as:ApplicationCulture}" SelectedItem="{Binding Culture, Mode=TwoWay}"/>
+				<Separator Classes="Dialog_Separator"/>
 
 				<!-- Log font -->
-				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.AppOptionsDialog.LogFont}"/>
+				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/AppOptionsDialog.LogFont}"/>
 				<Grid ColumnDefinitions="*,Auto,*">
-					<ComboBox HorizontalAlignment="Stretch" Items="{Binding InstalledFontFamilies}" SelectedItem="{Binding LogFontFamily, Mode=TwoWay}"/>
-					<Separator Classes="Dialog_Separator_Small_Vertical" Grid.Column="1"/>
-					<NumericUpDown Maximum="30" Minimum="10" Value="{Binding LogFontSize, Mode=TwoWay}" Grid.Column="2"/>
+					<ComboBox Classes="Dialog_ComboBox" Items="{Binding InstalledFontFamilies}" SelectedItem="{Binding LogFontFamily, Mode=TwoWay}"/>
+					<Separator Background="{x:Null}" Grid.Column="1" Width="{DynamicResource Double/Dialog.Separator.Height.Small}"/>
+					<NumericUpDown Classes="Dialog_NumericUpDown" Maximum="30" Minimum="10" Value="{Binding LogFontSize, Mode=TwoWay}" Grid.Column="2"/>
 				</Grid>
-				<Separator Classes="Dialog_Separator_Small_Horizontal"/>
+				<Separator Classes="Dialog_Separator_Small"/>
 				<Border Background="{DynamicResource TextControlBackground}" HorizontalAlignment="Stretch">
 					<Grid>
-						<TextBlock FontSize="40" HorizontalAlignment="Center" Opacity="0" Text="{DynamicResource String.AppOptionsDialog.LogFont.Sample}" VerticalAlignment="Center"/>
-						<TextBlock FontFamily="{Binding SampleLogFontFamily}" FontSize="{Binding LogFontSize}" HorizontalAlignment="Center" Text="{DynamicResource String.AppOptionsDialog.LogFont.Sample}" VerticalAlignment="Center"/>
+						<TextBlock FontSize="40" HorizontalAlignment="Center" Opacity="0" Text="{DynamicResource String/AppOptionsDialog.LogFont.Sample}" VerticalAlignment="Center"/>
+						<TextBlock FontFamily="{Binding SampleLogFontFamily}" FontSize="{Binding LogFontSize}" HorizontalAlignment="Center" Text="{DynamicResource String/AppOptionsDialog.LogFont.Sample}" VerticalAlignment="Center"/>
 					</Grid>
 				</Border>
-				<Separator Classes="Dialog_Separator_Horizontal"/>
+				<Separator Classes="Dialog_Separator"/>
 				
 				<!-- Max display line count for each log -->
-				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.AppOptionsDialog.MaxDisplayLineCountForEachLog}"/>
-				<NumericUpDown HorizontalAlignment="Stretch" Maximum="20" Minimum="1" Value="{Binding MaxDisplayLineCountForEachLog, Mode=TwoWay}"/>
-				<Separator Classes="Dialog_Separator_Large_Horizontal"/>
+				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/AppOptionsDialog.MaxDisplayLineCountForEachLog}"/>
+				<NumericUpDown Classes="Dialog_NumericUpDown" Maximum="20" Minimum="1" Value="{Binding MaxDisplayLineCountForEachLog, Mode=TwoWay}"/>
+				<Separator Classes="Dialog_Separator_Large"/>
 
 				<!-- Log operations -->
-				<Border Classes="Dialog_Label_Header1">
-					<TextBlock Classes="Dialog_Label_Header1" Text="{DynamicResource String.AppOptionsDialog.LogOperations}"/>
+				<Border Classes="Dialog_TextBlock_Header1">
+					<TextBlock Classes="Dialog_TextBlock_Header1" Text="{DynamicResource String/AppOptionsDialog.LogOperations}"/>
 				</Border>
 
 				<!-- Initial log profile -->
-				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.AppOptionsDialog.InitialLogProfile}"/>
-				<ComboBox HorizontalAlignment="Stretch" Items="{Binding LogProfiles}" SelectedItem="{Binding InitialLogProfile, Mode=TwoWay}">
+				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/AppOptionsDialog.InitialLogProfile}"/>
+				<ComboBox Classes="Dialog_ComboBox" Items="{Binding LogProfiles}" SelectedItem="{Binding InitialLogProfile, Mode=TwoWay}">
 					<ComboBox.ItemTemplate>
 						<DataTemplate>
 							<Grid ColumnDefinitions="Auto,*">
-								<Grid Height="{StaticResource Double.AppOptionsDialog.InitialLogProfile.Icon.Size}" Margin="{StaticResource Thickness.AppOptionsDialog.InitialLogProfile.Icon.Margin}" VerticalAlignment="Center" Width="{StaticResource Double.AppOptionsDialog.InitialLogProfile.Icon.Size}">
+								<Grid Height="{DynamicResource Double/AppOptionsDialog.InitialLogProfile.Icon.Size}" Margin="{DynamicResource Thickness/AppOptionsDialog.InitialLogProfile.Icon.Margin}" VerticalAlignment="Center" Width="{DynamicResource Double/AppOptionsDialog.InitialLogProfile.Icon.Size}">
 									<DrawingPresenter Classes="Icon" Drawing="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}}"/>
 									<DrawingPresenter Classes="Icon" Drawing="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}, ConverterParameter=Light}" IsVisible="False">
 										<ia:Interaction.Behaviors>
@@ -101,68 +107,68 @@
 						</DataTemplate>
 					</ComboBox.ItemTemplate>
 				</ComboBox>
-				<Separator Classes="Dialog_Separator_Horizontal"/>
+				<Separator Classes="Dialog_Separator"/>
 
 				<!-- Select log profile for new session -->
-				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.AppOptionsDialog.SelectLogProfileForNewSession}"/>
-				<ToggleSwitch IsChecked="{Binding SelectLogProfileForNewSession, Mode=TwoWay}"/>
-				<Separator Classes="Dialog_Separator_Horizontal"/>
+				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/AppOptionsDialog.SelectLogProfileForNewSession}"/>
+				<ToggleSwitch Classes="Dialog_ToggleSwitch" IsChecked="{Binding SelectLogProfileForNewSession, Mode=TwoWay}"/>
+				<Separator Classes="Dialog_Separator"/>
 
 				<!-- Select files when needed -->
-				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.AppOptionsDialog.SelectLogFilesWhenNeeded}"/>
-				<ToggleSwitch IsChecked="{Binding SelectLogFilesWhenNeeded, Mode=TwoWay}"/>
-				<Separator Classes="Dialog_Separator_Horizontal"/>
+				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/AppOptionsDialog.SelectLogFilesWhenNeeded}"/>
+				<ToggleSwitch Classes="Dialog_ToggleSwitch" IsChecked="{Binding SelectLogFilesWhenNeeded, Mode=TwoWay}"/>
+				<Separator Classes="Dialog_Separator"/>
 
 				<!-- Select working directory when needed -->
-				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.AppOptionsDialog.SelectWorkingDirectoryWhenNeeded}"/>
-				<ToggleSwitch IsChecked="{Binding SelectWorkingDirectoryWhenNeeded, Mode=TwoWay}"/>
-				<Separator Classes="Dialog_Separator_Horizontal"/>
+				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/AppOptionsDialog.SelectWorkingDirectoryWhenNeeded}"/>
+				<ToggleSwitch Classes="Dialog_ToggleSwitch" IsChecked="{Binding SelectWorkingDirectoryWhenNeeded, Mode=TwoWay}"/>
+				<Separator Classes="Dialog_Separator"/>
 
 				<!-- Enable scrolling to latest logs automatically -->
-				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs}"/>
-				<ToggleSwitch IsChecked="{Binding EnableScrollingToLatestLogAfterReloadingLogs, Mode=TwoWay}"/>
-				<TextBlock Classes="Dialog_Description" Text="{DynamicResource String.AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs.Description}"/>
-				<Separator Classes="Dialog_Separator_Horizontal"/>
+				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs}"/>
+				<ToggleSwitch Classes="Dialog_ToggleSwitch" IsChecked="{Binding EnableScrollingToLatestLogAfterReloadingLogs, Mode=TwoWay}"/>
+				<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs.Description}"/>
+				<Separator Classes="Dialog_Separator"/>
 
 				<!-- Max log count -->
-				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.AppOptionsDialog.MaxContinuousLogCount}"/>
-				<NumericUpDown HorizontalAlignment="Stretch" Maximum="10000000" Minimum="10000" Value="{Binding MaxContinuousLogCount, Mode=TwoWay}"/>
-				<Separator Classes="Dialog_Separator_Horizontal"/>
+				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/AppOptionsDialog.MaxContinuousLogCount}"/>
+				<NumericUpDown Classes="Dialog_NumericUpDown" Maximum="10000000" Minimum="10000" Value="{Binding MaxContinuousLogCount, Mode=TwoWay}"/>
+				<Separator Classes="Dialog_Separator"/>
 
 				<!-- Update interval -->
-				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.AppOptionsDialog.ContinuousLogReadingUpdateInterval}"/>
-				<NumericUpDown HorizontalAlignment="Stretch" Maximum="1000" Minimum="50" Value="{Binding ContinuousLogReadingUpdateInterval, Mode=TwoWay}"/>
-				<Separator Classes="Dialog_Separator_Large_Horizontal"/>
+				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/AppOptionsDialog.ContinuousLogReadingUpdateInterval}"/>
+				<NumericUpDown Classes="Dialog_NumericUpDown" Maximum="1000" Minimum="50" Value="{Binding ContinuousLogReadingUpdateInterval, Mode=TwoWay}"/>
+				<Separator Classes="Dialog_Separator_Large"/>
 
 				<!-- Log filtering -->
-				<Border Classes="Dialog_Label_Header1">
-					<TextBlock Classes="Dialog_Label_Header1" Text="{DynamicResource String.AppOptionsDialog.LogFiltering}"/>
+				<Border Classes="Dialog_TextBlock_Header1">
+					<TextBlock Classes="Dialog_TextBlock_Header1" Text="{DynamicResource String/AppOptionsDialog.LogFiltering}"/>
 				</Border>
 
 				<!-- Ignore case -->
-				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.AppOptionsDialog.IgnoreCaseOfLogTextFilter}"/>
-				<ToggleSwitch IsChecked="{Binding IgnoreCaseOfLogTextFilter, Mode=TwoWay}"/>
-				<Separator Classes="Dialog_Separator_Horizontal"/>
+				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/AppOptionsDialog.IgnoreCaseOfLogTextFilter}"/>
+				<ToggleSwitch Classes="Dialog_ToggleSwitch" IsChecked="{Binding IgnoreCaseOfLogTextFilter, Mode=TwoWay}"/>
+				<Separator Classes="Dialog_Separator"/>
 
 				<!-- Max log count -->
-				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.AppOptionsDialog.UpdateLogFilterDelay}"/>
-				<NumericUpDown HorizontalAlignment="Stretch" Maximum="1500" Minimum="300" Value="{Binding UpdateLogFilterDelay, Mode=TwoWay}"/>
-				<Separator Classes="Dialog_Separator_Large_Horizontal"/>
+				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/AppOptionsDialog.UpdateLogFilterDelay}"/>
+				<NumericUpDown Classes="Dialog_NumericUpDown" Maximum="1500" Minimum="300" Value="{Binding UpdateLogFilterDelay, Mode=TwoWay}"/>
+				<Separator Classes="Dialog_Separator_Large"/>
 
 				<!-- Others -->
-				<Border Classes="Dialog_Label_Header1">
-					<TextBlock Classes="Dialog_Label_Header1" Text="{DynamicResource String.AppOptionsDialog.Others}"/>
+				<Border Classes="Dialog_TextBlock_Header1">
+					<TextBlock Classes="Dialog_TextBlock_Header1" Text="{DynamicResource String/AppOptionsDialog.Others}"/>
 				</Border>
 
 				<!-- Show process info -->
-				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.AppOptionsDialog.ShowProcessInfo}"/>
-				<ToggleSwitch IsChecked="{Binding ShowProcessInfo, Mode=TwoWay}"/>
-				<Separator Classes="Dialog_Separator_Horizontal"/>
+				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/AppOptionsDialog.ShowProcessInfo}"/>
+				<ToggleSwitch Classes="Dialog_ToggleSwitch" IsChecked="{Binding ShowProcessInfo, Mode=TwoWay}"/>
+				<Separator Classes="Dialog_Separator"/>
 
 				<!-- Save memory agressively -->
-				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.AppOptionsDialog.SaveMemoryAggressively}"/>
-				<ToggleSwitch IsChecked="{Binding SaveMemoryAggressively, Mode=TwoWay}"/>
-				<TextBlock Classes="Dialog_Description" Text="{DynamicResource String.AppOptionsDialog.SaveMemoryAggressively.Description}"/>
+				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/AppOptionsDialog.SaveMemoryAggressively}"/>
+				<ToggleSwitch Classes="Dialog_ToggleSwitch" IsChecked="{Binding SaveMemoryAggressively, Mode=TwoWay}"/>
+				<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/AppOptionsDialog.SaveMemoryAggressively.Description}"/>
 				
 			</StackPanel>
 		</ScrollViewer>

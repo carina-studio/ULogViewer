@@ -15,46 +15,47 @@
         x:Class="CarinaStudio.ULogViewer.Controls.LogStringPropertyDialog"
         CanResize="True"
         Classes="Dialog"
-        Height="{StaticResource Double.LogStringPropertyDialog.Height}"
-        MinHeight="{DynamicResource Double.LogStringPropertyDialog.MinHeight}"
-        MinWidth="{DynamicResource Double.LogStringPropertyDialog.MinWidth}"
-        Title="{DynamicResource String.LogStringPropertyDialog.Title}"
-        Width="{DynamicResource Double.LogStringPropertyDialog.Width}">
+        Height="{DynamicResource Double/LogStringPropertyDialog.Height}"
+        MinHeight="{DynamicResource Double/LogStringPropertyDialog.MinHeight}"
+        MinWidth="{DynamicResource Double/LogStringPropertyDialog.MinWidth}"
+		SizeToContent="Manual"
+        Title="{DynamicResource String/LogStringPropertyDialog.Title}"
+        Width="{DynamicResource Double/LogStringPropertyDialog.Width}">
 
 	<DockPanel>
 
 		<!-- Control buttons -->
 		<Border Classes="Dialog_ControlButtonsPanel" DockPanel.Dock="Bottom">
-			<StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].CancelCommand}" Content="{DynamicResource String.Common.OK}"/>
+			<StackPanel Classes="Dialog_ControlButtonsPanel">
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].Close}" Content="{DynamicResource String/Common.OK}"/>
 			</StackPanel>
 		</Border>
 
 		<!-- Content -->
-		<Grid Margin="{StaticResource Thickness.Dialog.Content.Padding}" RowDefinitions="Auto,Auto,*,Auto,Auto">
+		<Grid Classes="Dialog_ContentPanel" RowDefinitions="Auto,Auto,*,Auto,Auto">
 
 			<!-- Find text -->
 			<StackPanel Orientation="Vertical">
-				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogStringPropertyDialog.FindText}"/>
-				<appControls:RegexTextBox Name="findTextTextBox" PropertyChanged="OnFindTextTextBoxPropertyChanged" Watermark="{DynamicResource String.Common.RegularExpression}"/>
-				<asControls:LinkTextBlock Classes="Dialog_Description" Text="{DynamicResource String.Common.RegularExpression.Reference}" Uri="{x:Static app:Uris.RegexReference}"/>
-				<Separator Classes="Dialog_Separator_Horizontal"/>
+				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogStringPropertyDialog.FindText}"/>
+				<appControls:RegexTextBox Name="findTextTextBox" Classes="Dialog_TextBox" PropertyChanged="OnFindTextTextBoxPropertyChanged" Watermark="{DynamicResource String/Common.RegularExpression}"/>
+				<asControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/Common.RegularExpression.Reference}" Uri="{x:Static app:Uris.RegexReference}"/>
+				<Separator Classes="Dialog_Separator"/>
 			</StackPanel>
 
 			<!-- Property value -->
-			<TextBlock Classes="Dialog_Label" Grid.Row="1" Text="{Binding $parent[Window].LogPropertyDisplayName}"/>
+			<TextBlock Classes="Dialog_TextBlock" Grid.Row="1" Text="{Binding $parent[Window].LogPropertyDisplayName}"/>
 			<Panel Grid.Row="2" VerticalAlignment="Stretch">
 				<Border Background="{DynamicResource TextControlBackground}" BorderBrush="{DynamicResource TextControlBackground}" BorderThickness="{DynamicResource TextControlBorderThemeThicknessFocused}" CornerRadius="{DynamicResource ControlCornerRadius}" IsVisible="{Binding !#propertyValueTextEditor.IsPointerOver}"/>
 				<Border Background="{DynamicResource TextControlBackgroundPointerOver}" BorderBrush="{DynamicResource TextControlBackgroundPointerOver}" BorderThickness="{DynamicResource TextControlBorderThemeThicknessFocused}" CornerRadius="{DynamicResource ControlCornerRadius}" IsVisible="{Binding #propertyValueTextEditor.IsPointerOver}"/>
 				<Border Background="{DynamicResource TextControlBackgroundFocused}" BorderBrush="{DynamicResource TextControlBorderBrushFocused}" BorderThickness="{DynamicResource TextControlBorderThemeThicknessFocused}" CornerRadius="{DynamicResource ControlCornerRadius}" IsVisible="{Binding $parent[Window].IsPropertyValueTextEditorFocused}"/>
 				<ae:TextEditor Name="propertyValueTextEditor" HorizontalAlignment="Stretch" IsReadOnly="True" HorizontalScrollBarVisibility="Disabled"/>
 			</Panel>
-			<Separator Classes="Dialog_Separator_Horizontal" Grid.Row="3"/>
+			<Separator Classes="Dialog_Separator" Grid.Row="3"/>
 
 			<!-- Wrap text -->
 			<StackPanel Grid.Row="4" Orientation="Vertical">
-				<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogStringPropertyDialog.WrapText}"/>
-				<ToggleSwitch Name="wrapTextSwitch" IsChecked="True">
+				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogStringPropertyDialog.WrapText}"/>
+				<ToggleSwitch Name="wrapTextSwitch" Classes="Dialog_ToggleSwitch" IsChecked="True">
 					<ia:Interaction.Behaviors>
 						<iaCore:DataTriggerBehavior Binding="{Binding $self.IsChecked}" Value="True">
 							<iaCore:InvokeCommandAction Command="{Binding $parent[Window].SetTextWrappingCommand}">

@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using CarinaStudio.Collections;
+using CarinaStudio.Controls;
 using CarinaStudio.IO;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.Profiles;
@@ -466,12 +467,12 @@ namespace CarinaStudio.ULogViewer.Controls
 				var listBoxItem = (ListBoxItem?)null;
 				var logProfile = this.pinnedLogProfileListBox.SelectedItem as LogProfile;
 				if (logProfile != null)
-					listBoxItem = this.pinnedLogProfileListBox.FindListBoxItem(logProfile);
+					this.pinnedLogProfileListBox.TryFindListBoxItem(logProfile, out listBoxItem);
 				else
 				{
 					logProfile = this.otherLogProfileListBox.SelectedItem as LogProfile;
 					if (logProfile != null)
-						listBoxItem = this.otherLogProfileListBox.FindListBoxItem(logProfile);
+						this.otherLogProfileListBox.TryFindListBoxItem(logProfile, out listBoxItem);
 				}
 				if (listBoxItem == null)
 					return;

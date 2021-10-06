@@ -1,3 +1,4 @@
+using Avalonia.Data.Converters;
 using Avalonia.Markup.Xaml;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.ViewModels;
@@ -11,6 +12,10 @@ namespace CarinaStudio.ULogViewer.Controls
 	/// </summary>
 	partial class AppOptionsDialog : AppSuite.Controls.Dialog<IULogViewerApplication>
 	{
+		// Static fields.
+		public static readonly IValueConverter ThemeModeConverter = new AppSuite.Converters.EnumConverter(App.Current, typeof(AppSuite.ThemeMode));
+
+
 		// Fields.
 		readonly ScheduledAction refreshDataContextAction;
 

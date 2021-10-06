@@ -2,8 +2,8 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
-using Avalonia.VisualTree;
 using CarinaStudio.Collections;
+using CarinaStudio.Controls;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using System;
@@ -90,7 +90,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.FindControl<Panel>("editorsPanel").AsNonNull().Let(it =>
 			{
 				// remove empty space created by last separator
-				var separatorHeight = this.TryFindResource("Double.Dialog.Separator.Size", out var res) && res is double height ? height : 0.0;
+				var separatorHeight = this.TryFindResource("Double/Dialog.Separator.Height", out var res) && res is double height ? height : 0.0;
 				var margin = it.Margin;
 				it.Margin = new Thickness(margin.Left, margin.Top, margin.Right, margin.Bottom - separatorHeight);
 			});
@@ -305,9 +305,13 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (sender is not ListBox listBox)
 				return;
 			var selectedItem = listBox.SelectedItem;
-			var listBoxItem = selectedItem != null ? listBox.FindListBoxItem(selectedItem) : null;
-			if (listBoxItem == null || !listBoxItem.IsPointerOver)
+			if (selectedItem == null
+				|| !listBox.TryFindListBoxItem(selectedItem, out var listBoxItem)
+				|| listBoxItem == null
+				|| !listBoxItem.IsPointerOver)
+			{
 				return;
+			}
 			if (listBox == this.setupCommandsListBox || listBox == this.teardownCommandsListBox)
 				this.EditSetupTeardownCommand(listBoxItem);
 		}

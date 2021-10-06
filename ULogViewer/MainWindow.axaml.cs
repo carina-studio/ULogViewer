@@ -4,11 +4,9 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.Templates;
-using Avalonia.Platform;
 using Avalonia.VisualTree;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
-using CarinaStudio.Controls;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Controls;
 using CarinaStudio.ULogViewer.Input;
@@ -22,7 +20,6 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
-using System.Runtime.InteropServices;
 
 namespace CarinaStudio.ULogViewer
 {
@@ -32,14 +29,14 @@ namespace CarinaStudio.ULogViewer
 	partial class MainWindow : AppSuite.Controls.MainWindow<IULogViewerApplication, Workspace>
 	{
 		// Constants.
-		const int ReAttachToWorkspaceDelay = 1000;
+		const int RestartingMainWindowsDelay = 1000;
 
 
 		// Fields.
 		Session? attachedActiveSession;
 		bool canShowDialogs;
 		readonly ScheduledAction focusOnTabItemContentAction;
-		readonly ScheduledAction reAttachToWorkspaceAction;
+		readonly ScheduledAction restartingMainWindowsAction;
 		readonly DataTemplate sessionTabItemHeaderTemplate;
 		readonly ScheduledAction updateSysTaskBarAction;
 		readonly TabControl tabControl;
@@ -77,13 +74,12 @@ namespace CarinaStudio.ULogViewer
 			{
 				((this.tabControl.SelectedItem as TabItem)?.Content as IControl)?.Focus();
 			});
-			this.reAttachToWorkspaceAction = new ScheduledAction(() =>
+			this.restartingMainWindowsAction = new ScheduledAction(() =>
 			{
-				if (this.DataContext is not Workspace workspace)
+				if (this.IsClosed || !this.Application.IsRestartingMainWindowsNeeded || this.HasDialogs)
 					return;
-				this.Logger.LogWarning("Re-attach to workspace");
-				this.DataContext = null;
-				this.DataContext = workspace;
+				this.Logger.LogWarning("Restart main windows");
+				this.Application.RestartMainWindows();
 			});
 			this.updateSysTaskBarAction = new ScheduledAction(() =>
 			{
@@ -258,10 +254,12 @@ namespace CarinaStudio.ULogViewer
         protected override void OnApplicationPropertyChanged(PropertyChangedEventArgs e)
         {
             base.OnApplicationPropertyChanged(e);
-			if (e.PropertyName == nameof(IULogViewerApplication.EffectiveThemeMode))
+			if (e.PropertyName == nameof(IULogViewerApplication.IsRestartingMainWindowsNeeded))
 			{
-				this.Logger.LogWarning("Theme mode changed");
-				this.reAttachToWorkspaceAction.Reschedule(ReAttachToWorkspaceDelay);
+				if (this.Application.IsRestartingMainWindowsNeeded)
+					this.restartingMainWindowsAction.Reschedule(RestartingMainWindowsDelay);
+				else
+					this.restartingMainWindowsAction.Cancel();
 			}
         }
 
@@ -477,8 +475,20 @@ namespace CarinaStudio.ULogViewer
 		}
 
 
-		// Called when list of session changed.
-		void OnSessionsChanged(object? sender, NotifyCollectionChangedEventArgs e)
+		// Called when property changed.
+        protected override void OnPropertyChanged<T>(AvaloniaPropertyChangedEventArgs<T> change)
+        {
+            base.OnPropertyChanged(change);
+			if (change.Property == HasDialogsProperty)
+			{
+				if (!this.HasDialogs && this.Application.IsRestartingMainWindowsNeeded)
+					this.restartingMainWindowsAction.Reschedule(RestartingMainWindowsDelay);
+			}
+        }
+
+
+        // Called when list of session changed.
+        void OnSessionsChanged(object? sender, NotifyCollectionChangedEventArgs e)
 		{
 			switch(e.Action)
 			{

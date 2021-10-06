@@ -14,6 +14,7 @@ using Avalonia.Media;
 using Avalonia.VisualTree;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
+using CarinaStudio.Controls;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Input;
 using CarinaStudio.ULogViewer.Logs.DataSources;
@@ -356,7 +357,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			// check state
 			if (!this.canAddLogFiles.Value)
 				return;
-			var window = this.FindLogicalAncestorOfType<Window>();
+			var window = this.FindLogicalAncestorOfType<Avalonia.Controls.Window>();
 			if (window == null)
 			{
 				this.Logger.LogError("Unable to add log files without attaching to window");
@@ -499,7 +500,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		async void CheckForAppUpdate()
 		{
 			// find window
-			var window = this.FindLogicalAncestorOfType<Window>();
+			var window = this.FindLogicalAncestorOfType<Avalonia.Controls.Window>();
 			if (window == null)
 				return;
 
@@ -573,7 +574,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			// check state
 			if (!profile.IsAdministratorNeeded || this.Application.IsRunningAsAdministrator)
 				return false;
-			var window = this.FindLogicalAncestorOfType<Window>();
+			var window = this.FindLogicalAncestorOfType<Avalonia.Controls.Window>();
 			if (window == null)
 				return false;
 
@@ -926,7 +927,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		async void CreatePredefinedLogTextFilter()
 		{
 			// check state
-			var window = this.FindLogicalAncestorOfType<Window>();
+			var window = this.FindLogicalAncestorOfType<Avalonia.Controls.Window>();
 			if (window == null)
 				return;
 
@@ -994,7 +995,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				return false;
 
 			// bring window to front
-			var window = this.FindLogicalAncestorOfType<Window>();
+			var window = this.FindLogicalAncestorOfType<Avalonia.Controls.Window>();
 			if (window == null)
 				return false;
 			window.ActivateAndBringToFront();
@@ -1121,7 +1122,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			// check state
 			if (!this.canEditLogProfile.Value)
 				return;
-			var window = this.FindLogicalAncestorOfType<Window>();
+			var window = this.FindLogicalAncestorOfType<Avalonia.Controls.Window>();
 			if (window == null)
 				return;
 
@@ -1150,7 +1151,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			// check state
 			if (filter == null)
 				return;
-			var window = this.FindLogicalAncestorOfType<Window>();
+			var window = this.FindLogicalAncestorOfType<Avalonia.Controls.Window>();
 			if (window == null)
 				return;
 
@@ -1484,7 +1485,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		void OnDragOver(object? sender, DragEventArgs e)
 		{
 			// check state
-			if ((this.FindLogicalAncestorOfType<Window>() as AppSuite.Controls.Window)?.HasDialogs == true)
+			if ((this.FindLogicalAncestorOfType<Avalonia.Controls.Window>() as AppSuite.Controls.Window)?.HasDialogs == true)
 			{
 				e.DragEffects = DragDropEffects.None;
 				return;
@@ -1510,7 +1511,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when drop data on view.
 		async void OnDrop(object? sender, DragEventArgs e)
 		{
-			if ((this.FindLogicalAncestorOfType<Window>() as AppSuite.Controls.Window)?.HasDialogs == true)
+			if ((this.FindLogicalAncestorOfType<Avalonia.Controls.Window>() as AppSuite.Controls.Window)?.HasDialogs == true)
 				return;
 			e.Handled = true;
 			await this.DropAsync(e);
@@ -1546,14 +1547,15 @@ namespace CarinaStudio.ULogViewer.Controls
 		void OnLogListBoxDoubleTapped(object? sender, RoutedEventArgs e)
 		{
 			var selectedItem = this.logListBox.SelectedItem;
-			if (selectedItem == null)
-				return;
-			var listBoxItem = this.logListBox.FindListBoxItem(selectedItem);
-			if (listBoxItem != null && listBoxItem.IsPointerOver)
+			if (selectedItem == null
+				|| !this.logListBox.TryFindListBoxItem(selectedItem, out var listBoxItem)
+				|| listBoxItem == null
+				|| !listBoxItem.IsPointerOver)
 			{
-				this.ShowLogStringProperty();
-				e.Handled = true;
+				return;
 			}
+			this.ShowLogStringProperty();
+			e.Handled = true;
 		}
 
 
@@ -2189,7 +2191,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 			if (!this.canSaveLogs.Value)
 				return;
-			var window = this.FindLogicalAncestorOfType<Window>();
+			var window = this.FindLogicalAncestorOfType<Avalonia.Controls.Window>();
 			if (window == null)
 			{
 				this.Logger.LogError("Unable to save logs without attaching to window");
@@ -2275,7 +2277,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.VerifyAccess();
 			if (!this.canSetLogProfile.Value)
 				return;
-			var window = this.FindLogicalAncestorOfType<Window>();
+			var window = this.FindLogicalAncestorOfType<Avalonia.Controls.Window>();
 			if (window == null)
 			{
 				this.Logger.LogError("Unable to set log profile without attaching to window");
@@ -2375,7 +2377,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			// check state
 			if (!this.canSetWorkingDirectory.Value)
 				return;
-			var window = this.FindLogicalAncestorOfType<Window>();
+			var window = this.FindLogicalAncestorOfType<Avalonia.Controls.Window>();
 			if (window == null)
 			{
 				this.Logger.LogError("Unable to set working directory without attaching to window");
@@ -2415,7 +2417,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Show application info.
 		void ShowAppInfo()
 		{
-			this.FindLogicalAncestorOfType<Window>()?.Let(async (window) =>
+			this.FindLogicalAncestorOfType<Avalonia.Controls.Window>()?.Let(async (window) =>
 			{
 				using var appInfo = new AppInfo();
 				await new AppSuite.Controls.ApplicationInfoDialog(appInfo).ShowDialog(window);
@@ -2426,9 +2428,14 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Show application options.
 		void ShowAppOptions()
 		{
-			this.FindLogicalAncestorOfType<Window>()?.Let(window =>
+			this.FindLogicalAncestorOfType<Avalonia.Controls.Window>()?.Let(async (window) =>
 			{
-				new AppOptionsDialog().ShowDialog(window);
+				await new AppOptionsDialog().ShowDialog(window);
+				if (this.Application.IsRestartingMainWindowsNeeded)
+				{
+					this.Logger.LogWarning("Restart main windows");
+					this.Application.RestartMainWindows();
+				}
 			});
 		}
 
@@ -2502,7 +2509,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 		bool ShowLogStringProperty(DisplayableLog log, DisplayableLogProperty property)
 		{
-			this.FindLogicalAncestorOfType<Window>()?.Let(window =>
+			this.FindLogicalAncestorOfType<Avalonia.Controls.Window>()?.Let(window =>
 			{
 				new LogStringPropertyDialog()
 				{

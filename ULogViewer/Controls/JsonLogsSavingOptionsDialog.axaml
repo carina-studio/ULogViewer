@@ -2,30 +2,29 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-				xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
+        xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.JsonLogsSavingOptionsDialog"
-				Classes="Dialog"
-				SizeToContent="Height"
-        Title="{DynamicResource String.JsonLogsSavingOptionsDialog.Title}"
-				Width="{StaticResource Double.JsonLogsSavingOptionsDialog.Width}">
+        Classes="Dialog"
+        Title="{DynamicResource String/JsonLogsSavingOptionsDialog.Title}"
+        Width="{DynamicResource Double/JsonLogsSavingOptionsDialog.Width}">
 
 	<DockPanel>
 
 		<!-- Control buttons -->
-		<Border Classes="Dialog_ControlButtonsPanel" DockPanel.Dock="Bottom">
-			<StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].GenerateResultCommand}" Content="{DynamicResource String.Common.OK}"/>
-				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].CancelCommand}" Content="{DynamicResource String.Common.Cancel}"/>
+		<Border Classes="Dialog_ControlButtonsPanel">
+			<StackPanel Classes="Dialog_ControlButtonsPanel">
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].GenerateResultCommand}" Content="{DynamicResource String/Common.OK}"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].Close}" Content="{DynamicResource String/Common.Cancel}"/>
 			</StackPanel>
 		</Border>
 
 		<!-- Content -->
-		<StackPanel Margin="{StaticResource Thickness.Dialog.Content.Padding}" Orientation="Vertical">
+		<StackPanel Classes="Dialog_ContentPanel">
 
 			<!-- Log properties -->
-			<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.JsonLogsSavingOptionsDialog.LogProperties}"/>
-			<ListBox Name="logPropertyMapListBox" Background="{DynamicResource TextControlBackground}" DoubleTapped="OnListBoxDoubleTapped" Height="{StaticResource Double.JsonLogsSavingOptionsDialog.ListBox.Height}" Items="{Binding $parent[Window].LogPropertyMap}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
+			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/JsonLogsSavingOptionsDialog.LogProperties}"/>
+			<ListBox Name="logPropertyMapListBox" Background="{DynamicResource TextControlBackground}" DoubleTapped="OnListBoxDoubleTapped" Height="{DynamicResource Double/JsonLogsSavingOptionsDialog.ListBox.Height}" Items="{Binding $parent[Window].LogPropertyMap}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
 				<ListBox.ItemTemplate>
 					<DataTemplate>
 						<Grid ColumnDefinitions="Auto,*,Auto">
@@ -39,14 +38,14 @@
 								</TextBlock.Text>
 							</TextBlock>
 							<StackPanel Grid.Column="2" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
-								<Button Classes="InPlaceAction" Command="{Binding $parent[Window].RemoveLogPropertyMapEntry}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String.Common.Delete}">
+								<Button Classes="InPlaceAction" Command="{Binding $parent[Window].RemoveLogPropertyMapEntry}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
 									<Border Classes="InPlaceAction">
-										<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Delete}"/>
+										<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Icon.Delete}"/>
 									</Border>
 								</Button>
-								<Button Classes="InPlaceAction" Command="{Binding $parent[Window].EditLogPropertyMapEntry}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String.Common.Edit}">
+								<Button Classes="InPlaceAction" Command="{Binding $parent[Window].EditLogPropertyMapEntry}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
 									<Border Classes="InPlaceAction">
-										<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing.Edit}"/>
+										<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Icon.Edit}"/>
 									</Border>
 								</Button>
 							</StackPanel>
@@ -56,13 +55,13 @@
 				<ListBox.Styles>
 					<Style Selector="ListBoxItem">
 						<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-						<Setter Property="Padding" Value="{StaticResource Thickness.Dialog.ListBox.Item.WithInPlaceActions.Padding}"/>
+						<Setter Property="Padding" Value="{DynamicResource Thickness/Dialog.ListBox.Item.WithInPlaceActions.Padding}"/>
 					</Style>
 				</ListBox.Styles>
 			</ListBox>
 			<Grid ColumnDefinitions="*,Auto">
-				<TextBlock Classes="Dialog_Description" Text="{DynamicResource String.JsonLogsSavingOptionsDialog.LogProperties.Description}" VerticalAlignment="Top"/>
-				<Button Classes="ListAction" Command="{Binding $parent[Window].AddLogPropertyMapEntry}" Content="{DynamicResource String.Common.Add}" Grid.Column="1" VerticalAlignment="Top"/>
+				<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/JsonLogsSavingOptionsDialog.LogProperties.Description}" VerticalAlignment="Top"/>
+				<Button Classes="ListAction" Command="{Binding $parent[Window].AddLogPropertyMapEntry}" Content="{DynamicResource String/Common.Add}" Grid.Column="1" VerticalAlignment="Top"/>
 			</Grid>
 			
 		</StackPanel>

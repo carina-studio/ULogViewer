@@ -8,37 +8,36 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.PredefinedLogTextFilterEditorDialog"
         Classes="Dialog"
-        SizeToContent="Height"
-        Width="{StaticResource Double.PredefinedLogTextFilterEditorDialog.Width}">
+        Width="{DynamicResource Double/PredefinedLogTextFilterEditorDialog.Width}">
 	
 	<Grid RowDefinitions="*,Auto">
 
 		<!-- Content -->
-		<StackPanel HorizontalAlignment="Stretch" Margin="{StaticResource Thickness.Dialog.Content.Padding}" Orientation="Vertical">
+		<StackPanel Classes="Dialog_ContentPanel">
 
 			<!-- Name -->
-			<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.PredefinedLogTextFilterEditorDialog.Name}"/>
-			<TextBox Name="nameTextBox" HorizontalAlignment="Stretch" MaxLength="256" PropertyChanged="OnNameTextBoxPropertyChanged"/>
-			<Separator Classes="Dialog_Separator_Horizontal"/>
+			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/PredefinedLogTextFilterEditorDialog.Name}"/>
+			<TextBox Name="nameTextBox" Classes="Dialog_TextBox" MaxLength="256" PropertyChanged="OnNameTextBoxPropertyChanged"/>
+			<Separator Classes="Dialog_Separator"/>
 
 			<!-- Regex -->
-			<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.PredefinedLogTextFilterEditorDialog.Regex}"/>
-			<appControls:RegexTextBox Name="regexTextBox" HorizontalAlignment="Stretch" PropertyChanged="OnRegexTextBoxPropertyChanged" Watermark="{DynamicResource String.Common.RegularExpression}"/>
-			<TextBlock Classes="Dialog_Description" Text="{DynamicResource String.PredefinedLogTextFilterEditorDialog.Regex.Description}"/>
-			<asControls:LinkTextBlock Classes="Dialog_Description" Text="{DynamicResource String/Common.RegularExpression.Reference}" Uri="{x:Static app:Uris.RegexReference}"/>
-			<Separator Classes="Dialog_Separator_Horizontal"/>
+			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/PredefinedLogTextFilterEditorDialog.Regex}"/>
+			<appControls:RegexTextBox Name="regexTextBox" Classes="Dialog_TextBox" PropertyChanged="OnRegexTextBoxPropertyChanged" Watermark="{DynamicResource String/Common.RegularExpression}"/>
+			<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/PredefinedLogTextFilterEditorDialog.Regex.Description}"/>
+			<asControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/Common.RegularExpression.Reference}" Uri="{x:Static app:Uris.RegexReference}"/>
+			<Separator Classes="Dialog_Separator"/>
 
 			<!-- Ignore case -->
-			<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.PredefinedLogTextFilterEditorDialog.IgnoreCase}"/>
-			<ToggleSwitch Name="ignoreCaseSwitch" IsChecked="{Binding ElementName=regexTextBox, Path=IgnoreCase, Mode=OneWayToSource}"/>
+			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/PredefinedLogTextFilterEditorDialog.IgnoreCase}"/>
+			<ToggleSwitch Name="ignoreCaseSwitch" Classes="Dialog_ToggleSwitch" IsChecked="{Binding ElementName=regexTextBox, Path=IgnoreCase, Mode=OneWayToSource}"/>
 			
 		</StackPanel>
 
 		<!-- Control buttons -->
 		<Border Classes="Dialog_ControlButtonsPanel" Grid.Row="1">
-			<StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].GenerateResultCommand}" Content="{DynamicResource String.Common.OK}"/>
-				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].CancelCommand}" Content="{DynamicResource String.Common.Cancel}"/>
+			<StackPanel Classes="Dialog_ControlButtonsPanel">
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].GenerateResultCommand}" Content="{DynamicResource String/Common.OK}"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].Close}" Content="{DynamicResource String/Common.Cancel}"/>
 			</StackPanel>
 		</Border>
 		

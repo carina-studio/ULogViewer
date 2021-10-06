@@ -390,7 +390,7 @@ namespace CarinaStudio.ULogViewer
 					it.Close();
 					return (SplashWindow?)null;
 				});
-			}, 500);
+			}, 1000);
 		}
 
 
