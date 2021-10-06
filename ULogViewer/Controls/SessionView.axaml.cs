@@ -753,6 +753,7 @@ namespace CarinaStudio.ULogViewer.Controls
 							it.Children.Add(propertyView);
 							it.Children.Add(new AppSuite.Controls.LinkTextBlock().Also(viewDetails =>
 							{
+								viewDetails.HorizontalAlignment = HorizontalAlignment.Left;
 								viewDetails.Bind(TextBlock.IsVisibleProperty, new Binding() { Path = $"HasExtraLinesOf{logProperty.Name}" });
 								viewDetails.Bind(TextBlock.TextProperty, viewDetails.GetResourceObservable("String/SessionView.ViewFullLogMessage"));
 								viewDetails.PointerReleased += (_, e) =>
