@@ -2,31 +2,30 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-				xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
-				xmlns:appLogs="using:CarinaStudio.ULogViewer.Logs"
+        xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
+        xmlns:appLogs="using:CarinaStudio.ULogViewer.Logs"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.StringLogPropertyMapEntryEditorDialog"
-				Classes="Dialog"
-				SizeToContent="Height"
-        Title="{DynamicResource String.StringLogPropertyMapEntryEditorDialog.Title}"
-				Width="{StaticResource Double.StringLogPropertyMapEntryEditorDialog.Width}">
+        Classes="Dialog"
+        Title="{DynamicResource String/StringLogPropertyMapEntryEditorDialog.Title}"
+        Width="{DynamicResource Double/StringLogPropertyMapEntryEditorDialog.Width}">
 
 	<DockPanel>
 
 		<!-- Control buttons -->
-		<Border Classes="Dialog_ControlButtonsPanel" DockPanel.Dock="Bottom">
-			<StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].GenerateResultCommand}" Content="{DynamicResource String.Common.OK}"/>
-				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].CancelCommand}" Content="{DynamicResource String.Common.Cancel}"/>
+		<Border Classes="Dialog_ControlButtonsPanel">
+			<StackPanel Classes="Dialog_ControlButtonsPanel">
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].GenerateResultCommand}" Content="{DynamicResource String/Common.OK}"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].Close}" Content="{DynamicResource String/Common.Cancel}"/>
 			</StackPanel>
 		</Border>
 
 		<!-- Content -->
-		<StackPanel Margin="{StaticResource Thickness.Dialog.Content.Padding}" Orientation="Vertical">
+		<StackPanel Classes="Dialog_ContentPanel">
 
 			<!-- Name -->
-			<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.StringLogPropertyMapEntryEditorDialog.Name}"/>
-			<ComboBox Name="nameComboBox" HorizontalAlignment="Stretch" Items="{x:Static appLogs:Log.PropertyNames}" PropertyChanged="OnEditorControlPropertyChanged">
+			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/StringLogPropertyMapEntryEditorDialog.Name}"/>
+			<ComboBox Name="nameComboBox" Classes="Dialog_ComboBox" Items="{x:Static appLogs:Log.PropertyNames}" PropertyChanged="OnEditorControlPropertyChanged">
 				<ComboBox.ItemTemplate>
 					<DataTemplate>
 						<StackPanel Orientation="Horizontal">
@@ -42,11 +41,11 @@
 					</DataTemplate>
 				</ComboBox.ItemTemplate>
 			</ComboBox>
-			<Separator Classes="Dialog_Separator_Horizontal"/>
+			<Separator Classes="Dialog_Separator"/>
 
 			<!-- Mapped name -->
-			<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.StringLogPropertyMapEntryEditorDialog.MappedName}"/>
-			<TextBox Name="mappedNameTextBox" PropertyChanged="OnEditorControlPropertyChanged"/>
+			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/StringLogPropertyMapEntryEditorDialog.MappedName}"/>
+			<TextBox Name="mappedNameTextBox" Classes="Dialog_TextBox" PropertyChanged="OnEditorControlPropertyChanged"/>
 
 		</StackPanel>
 		

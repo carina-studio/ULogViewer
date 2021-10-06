@@ -11,9 +11,8 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.LogPatternEditorDialog"
         Classes="Dialog"
-        SizeToContent="Height"
-        Title="{DynamicResource String.LogPatternEditorDialog.Title}"
-        Width="{StaticResource Double.LogPatternEditorDialog.Width}">
+        Title="{DynamicResource String/LogPatternEditorDialog.Title}"
+        Width="{DynamicResource Double/LogPatternEditorDialog.Width}">
 
 	<!-- Resources -->
 	<Window.Resources>
@@ -42,34 +41,34 @@
 	<DockPanel>
 
 		<!-- Control buttons -->
-		<Border Classes="Dialog_ControlButtonsPanel" DockPanel.Dock="Bottom">
-			<StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].GenerateResultCommand}" Content="{DynamicResource String.Common.OK}"/>
-				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].CancelCommand}" Content="{DynamicResource String.Common.Cancel}"/>
+		<Border Classes="Dialog_ControlButtonsPanel">
+			<StackPanel Classes="Dialog_ControlButtonsPanel">
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].GenerateResultCommand}" Content="{DynamicResource String/Common.OK}"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].Close}" Content="{DynamicResource String/Common.Cancel}"/>
 			</StackPanel>
 		</Border>
 
 		<!-- Content -->
-		<StackPanel Margin="{StaticResource Thickness.Dialog.Content.Padding}" Orientation="Vertical">
+		<StackPanel Classes="Dialog_ContentPanel">
 
 			<!-- Regex -->
-			<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogPatternEditorDialog.Regex}"/>
+			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogPatternEditorDialog.Regex}"/>
 			<Grid ColumnDefinitions="*,Auto">
-				<appControls:RegexTextBox Name="regexTextBox" IgnoreCase="False" PropertyChanged="OnRegexTextBoxPropertyChanged" Watermark="{DynamicResource String.Common.RegularExpression}"/>
+				<appControls:RegexTextBox Name="regexTextBox" IgnoreCase="False" PropertyChanged="OnRegexTextBoxPropertyChanged" Watermark="{DynamicResource String/Common.RegularExpression}"/>
 				<ToggleButton Name="addLogPropertyGroupButton" Classes="Browse" Command="{Binding $parent[Window].ShowAddLogPropertyGroupMenu}" Grid.Column="1"/>
 			</Grid>
-			<TextBlock Classes="Dialog_Description" Text="{DynamicResource String.LogPatternEditorDialog.Regex.Description}"/>
-			<asControls:LinkTextBlock Classes="Dialog_Description" Text="{DynamicResource String.Common.RegularExpression.Reference}" Uri="{x:Static app:Uris.RegexReference}"/>
-			<Separator Classes="Dialog_Separator_Horizontal"/>
+			<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogPatternEditorDialog.Regex.Description}"/>
+			<asControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/Common.RegularExpression.Reference}" Uri="{x:Static app:Uris.RegexReference}"/>
+			<Separator Classes="Dialog_Separator"/>
 
 			<!-- Repeatable -->
-			<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogPatternEditorDialog.IsRepeatable}"/>
-			<ToggleSwitch Name="repeatableSwitch"/>
-			<Separator Classes="Dialog_Separator_Horizontal"/>
+			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogPatternEditorDialog.IsRepeatable}"/>
+			<ToggleSwitch Name="repeatableSwitch" Classes="Dialog_ToggleSwitch"/>
+			<Separator Classes="Dialog_Separator"/>
 
 			<!-- Skippable -->
-			<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogPatternEditorDialog.IsSkippable}"/>
-			<ToggleSwitch Name="skippableSwitch"/>
+			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogPatternEditorDialog.IsSkippable}"/>
+			<ToggleSwitch Name="skippableSwitch" Classes="Dialog_ToggleSwitch"/>
 			
 		</StackPanel>
 		

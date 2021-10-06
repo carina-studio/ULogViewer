@@ -12,7 +12,8 @@
 			<Color x:Key="Color/Accent">#912fbf</Color>
 
 			<!-- Icon -->
-			<SolidColorBrush x:Key="Brush/Icon.LogProfile" Color="{DynamicResource Color/Accent}"/>
+			<SolidColorBrush x:Key="Brush/Icon.Active" Color="{DynamicResource SystemAccentColor}"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile" Color="{DynamicResource SystemAccentColorLight1}"/>
 
 			<!-- LogLevel -->
 			<SolidColorBrush x:Key="Brush/LogLevel.Debug">#000000</SolidColorBrush>

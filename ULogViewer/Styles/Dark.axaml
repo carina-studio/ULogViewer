@@ -8,9 +8,6 @@
 	<Styles.Resources>
 		<ResourceDictionary>
 
-			<!-- Icon -->
-			<SolidColorBrush x:Key="Brush/Icon.LogProfile" Color="{DynamicResource SystemAccentColorLight1}"/>
-
 			<!-- LogLevel -->
 			<SolidColorBrush x:Key="Brush/LogLevel.Debug">#32aaff</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/LogLevel.Error">#ff3232</SolidColorBrush>

@@ -33,7 +33,7 @@
 			<MenuItem Name="showLogPropertyMenuItem" Command="{Binding $parent[UserControl].ShowLogStringPropertyCommand}" Header="{DynamicResource String/SessionView.ShowLogProperty.Disabled}">
 				<MenuItem.Icon>
 					<Border Classes="MenuItem_Icon">
-						<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Details}"/>
+						<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Icon.Details}"/>
 					</Border>
 				</MenuItem.Icon>
 			</MenuItem>
@@ -41,7 +41,7 @@
 			<MenuItem Command="{Binding $parent[UserControl].MarkUnmarkSelectedLogsCommand}" Header="{DynamicResource String/SessionView.MarkUnmarkLogs}" InputGesture="M">
 				<MenuItem.Icon>
 					<Border Classes="MenuItem_Icon">
-						<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Pin}"/>
+						<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Icon.Pin}"/>
 					</Border>
 				</MenuItem.Icon>
 			</MenuItem>
@@ -51,14 +51,14 @@
 			<MenuItem Command="{Binding $parent[UserControl].CopySelectedLogsCommand}" Header="{DynamicResource String/SessionView.CopyLogs}" InputGesture="Ctrl+C">
 				<MenuItem.Icon>
 					<Border Classes="MenuItem_Icon">
-						<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Copy}"/>
+						<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Icon.Copy}"/>
 					</Border>
 				</MenuItem.Icon>
 			</MenuItem>
 			<MenuItem Command="{Binding $parent[UserControl].CopySelectedLogsWithFileNamesCommand}" Header="{DynamicResource String/SessionView.CopyLogsWithFileNames}" InputGesture="Ctrl+Shift+C">
 				<MenuItem.Icon>
 					<Border Classes="MenuItem_Icon">
-						<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Copy}"/>
+						<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Icon.Copy}"/>
 					</Border>
 				</MenuItem.Icon>
 			</MenuItem>
@@ -118,14 +118,14 @@
 			<MenuItem Command="{Binding $parent[UserControl].ShowAppOptions}" Header="{DynamicResource String/SessionView.AppOptions}">
 				<MenuItem.Icon>
 					<Border Classes="MenuItem_Icon">
-						<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Settings}"/>
+						<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Icon.Settings}"/>
 					</Border>
 				</MenuItem.Icon>
 			</MenuItem>
 			<MenuItem Command="{Binding $parent[UserControl].CheckForAppUpdate}" Header="{DynamicResource String/SessionView.CheckForAppUpdate}">
 				<MenuItem.Icon>
 					<Border Classes="MenuItem_Icon">
-						<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Update}"/>
+						<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Icon.Update}"/>
 					</Border>
 				</MenuItem.Icon>
 			</MenuItem>
@@ -313,12 +313,12 @@
 																	<StackPanel Grid.Column="2" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal" VerticalAlignment="Center">
 																		<Button Classes="InPlaceAction" Command="{Binding $parent[UserControl].RemovePredefinedLogTextFilter}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
 																			<Border Classes="InPlaceAction">
-																				<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Delete}"/>
+																				<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Icon.Delete}"/>
 																			</Border>
 																		</Button>
 																		<Button Classes="InPlaceAction" Command="{Binding $parent[UserControl].EditPredefinedLogTextFilter}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
 																			<Border Classes="InPlaceAction">
-																				<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Edit}"/>
+																				<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Icon.Edit}"/>
 																			</Border>
 																		</Button>
 																	</StackPanel>
@@ -364,8 +364,8 @@
 						<!-- Other actions -->
 						<ToggleButton Name="otherActionsButton" Classes="ToolBar_Button" Command="{Binding $parent[UserControl].ShowOtherActions}" ToolTip.Tip="{DynamicResource String/SessionView.OtherActions}">
 							<Panel>
-								<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing/More}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
-								<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing/More.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
+								<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing/Icon.More}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
+								<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing/Icon.More.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
 							</Panel>
 						</ToggleButton>
 
