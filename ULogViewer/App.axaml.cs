@@ -48,9 +48,11 @@ namespace CarinaStudio.ULogViewer
 			// check whether process is running as admin or not
 			if (Platform.IsWindows)
 			{
+#pragma warning disable CA1416
 				using var identity = WindowsIdentity.GetCurrent();
 				var principal = new WindowsPrincipal(identity);
 				this.IsRunningAsAdministrator = principal.IsInRole(WindowsBuiltInRole.Administrator);
+#pragma warning restore CA1416
 			}
 			if (this.IsRunningAsAdministrator)
 				this.Logger.LogWarning("Application is running as administrator/superuser");
