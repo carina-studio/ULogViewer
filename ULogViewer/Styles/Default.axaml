@@ -56,9 +56,6 @@
 			<!-- TextArea -->
 			<SolidColorBrush x:Key="Brush/TextArea.Selection.Background">#3f0078d7</SolidColorBrush>
 
-			<!-- TextBlock -->
-			<SolidColorBrush x:Key="Brush/TextBlock.Foreground.Error">#ff0000</SolidColorBrush>
-
 			<!-- TextBox -->
 			<SolidColorBrush x:Key="Brush/TextBox.Foreground.Error">#ff0000</SolidColorBrush>
 
