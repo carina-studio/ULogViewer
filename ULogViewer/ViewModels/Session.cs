@@ -951,6 +951,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.canMarkUnmarkLogs.Update(true);
 			this.canPauseResumeLogsReading.Update(profile.IsContinuousReading);
 			this.canReloadLogs.Update(true);
+			if (dataSource.CreationOptions.IsOptionSet(nameof(LogDataSourceOptions.WorkingDirectory)))
+			{
+				var directory = dataSource.CreationOptions.WorkingDirectory;
+				this.SetValue(WorkingDirectoryNameProperty, Path.GetFileName(directory));
+				this.SetValue(WorkingDirectoryPathProperty, directory);
+				this.SetValue(HasWorkingDirectoryProperty, true);
+			}
 			this.SetValue(HasLogReadersProperty, true);
 		}
 
@@ -2339,12 +2346,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.SetValue(IsWorkingDirectoryNeededProperty, true);
 					startReadingLogs = false;
 				}
-				else
-				{
-					this.SetValue(HasWorkingDirectoryProperty, true);
-					this.SetValue(WorkingDirectoryNameProperty, Path.GetFileName(dataSourceOptions.WorkingDirectory));
-					this.SetValue(WorkingDirectoryPathProperty, dataSourceOptions.WorkingDirectory);
-				}
 			}
 			if (startReadingLogs)
 			{
@@ -2467,11 +2468,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.DisposeLogReaders(true);
 
 			this.Logger.LogDebug($"Set working directory to '{directory}'");
-
-			// update state
-			this.SetValue(WorkingDirectoryNameProperty, Path.GetFileName(directory));
-			this.SetValue(WorkingDirectoryPathProperty, directory);
-			this.SetValue(HasWorkingDirectoryProperty, true);
 
 			// create data source
 			dataSourceOptions.WorkingDirectory = directory;
