@@ -2,8 +2,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-		xmlns:ia="using:Avalonia.Xaml.Interactivity"
-        xmlns:iaCore="using:Avalonia.Xaml.Interactions.Core"
         xmlns:appControls="clr-namespace:CarinaStudio.ULogViewer.Controls;assembly=ULogViewer"
         xmlns:appViewModels="clr-namespace:CarinaStudio.ULogViewer.ViewModels;assembly=ULogViewer"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
@@ -34,19 +32,9 @@
 		<!-- Add new tab -->
 		<TabItem Classes="Empty">
 			<TabItem.Header>
-				<Panel>
-					<Border Name="background" Background="{DynamicResource Brush/TabItem.Header.Background.Selected}" CornerRadius="{DynamicResource ControlCornerRadius}" DragDrop.AllowDrop="True" Height="{DynamicResource Double/MainWindow.TabItem.AddButton.Size}" HorizontalAlignment="Center" ToolTip.Tip="{DynamicResource String/MainWindow.CreateSession}" VerticalAlignment="Center" Width="{DynamicResource Double/MainWindow.TabItem.AddButton.Size}"/>
-					<DrawingPresenter DragDrop.AllowDrop="True" Drawing="{StaticResource Drawing/Icon.Add}" Height="{DynamicResource Double/MainWindow.TabItem.Icon.Size}" HorizontalAlignment="Center" IsHitTestVisible="False" Opacity="0.7" Stretch="Uniform" VerticalAlignment="Center" Width="{DynamicResource Double/MainWindow.TabItem.Icon.Size}">
-						<ia:Interaction.Behaviors>
-							<iaCore:DataTriggerBehavior Binding="{Binding #background.IsPointerOver}" Value="True">
-								<iaCore:ChangePropertyAction PropertyName="Opacity" Value="1"/>
-							</iaCore:DataTriggerBehavior>
-							<iaCore:DataTriggerBehavior Binding="{Binding #background.IsPointerOver}" Value="False">
-								<iaCore:ChangePropertyAction PropertyName="Opacity" Value="0.7"/>
-							</iaCore:DataTriggerBehavior>
-						</ia:Interaction.Behaviors>
-					</DrawingPresenter>
-				</Panel>
+				<Border Classes="AddTabItemButton" DragDrop.AllowDrop="True" ToolTip.Tip="{DynamicResource String/MainWindow.CreateSession}">
+					<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Icon.Add}"/>
+				</Border>
 			</TabItem.Header>
 		</TabItem>
 

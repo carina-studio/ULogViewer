@@ -107,7 +107,7 @@
 			<MenuItem Command="{Binding $parent[UserControl].ShowFileInExplorerCommand}" Header="{DynamicResource String/SessionView.ShowFileInExplorer}">
 				<MenuItem.Icon>
 					<Border Classes="MenuItem_Icon">
-						<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/FileManager}"/>
+						<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Icon.FileManager}"/>
 					</Border>
 				</MenuItem.Icon>
 			</MenuItem>
@@ -311,13 +311,13 @@
 																	<TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center"/>
 																	<Border Classes="InPlaceAction_Reserved" Grid.Column="1"/>
 																	<StackPanel Grid.Column="2" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal" VerticalAlignment="Center">
-																		<Button Classes="InPlaceAction" Command="{Binding $parent[UserControl].RemovePredefinedLogTextFilter}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
-																			<Border Classes="InPlaceAction">
+																		<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].RemovePredefinedLogTextFilter}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
+																			<Border Classes="InPlaceAction_Icon">
 																				<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Icon.Delete}"/>
 																			</Border>
 																		</Button>
-																		<Button Classes="InPlaceAction" Command="{Binding $parent[UserControl].EditPredefinedLogTextFilter}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
-																			<Border Classes="InPlaceAction">
+																		<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].EditPredefinedLogTextFilter}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
+																			<Border Classes="InPlaceAction_Icon">
 																				<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Icon.Edit}"/>
 																			</Border>
 																		</Button>
@@ -358,7 +358,7 @@
 
 						<!-- Test -->
 						<Button Name="testButton" Classes="ToolBar_Button" Click="OnTestButtonClick" ToolTip.Tip="Test">
-							<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing/Test}"/>
+							<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing/Icon.Lab}"/>
 						</Button>
 
 						<!-- Other actions -->
@@ -527,7 +527,7 @@
 					<Border Classes="StatusBar_Icon">
 						<DrawingPresenter Classes="Icon">
 							<DrawingPresenter.Drawing>
-								<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Waiting}"/>
+								<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Waiting}"/>
 							</DrawingPresenter.Drawing>
 						</DrawingPresenter>
 					</Border>
@@ -587,7 +587,7 @@
 						<Border Classes="StatusBar_Icon" ToolTip.Tip="{DynamicResource String/SessionView.CpuUsage}">
 							<DrawingPresenter Classes="Icon">
 								<DrawingPresenter.Drawing>
-									<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Speed}"/>
+									<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Speed}"/>
 								</DrawingPresenter.Drawing>
 							</DrawingPresenter>
 						</Border>
@@ -599,7 +599,7 @@
 					<Border Classes="StatusBar_Icon" ToolTip.Tip="{DynamicResource String/SessionView.CpuUsage}">
 						<DrawingPresenter Classes="Icon">
 							<DrawingPresenter.Drawing>
-								<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Cpu}"/>
+								<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Cpu}"/>
 							</DrawingPresenter.Drawing>
 						</DrawingPresenter>
 					</Border>
@@ -610,7 +610,7 @@
 					<Border Classes="StatusBar_Icon" ToolTip.Tip="{DynamicResource String/SessionView.MemoryUsage}">
 						<DrawingPresenter Classes="Icon">
 							<DrawingPresenter.Drawing>
-								<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Memory}"/>
+								<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Memory}"/>
 							</DrawingPresenter.Drawing>
 						</DrawingPresenter>
 					</Border>
@@ -656,7 +656,7 @@
 				
 			</StackPanel>
 		</ScrollViewer>
-		<GridSplitter Background="{DynamicResource Brush/SessionView.SidePanel.Background}" Grid.Column="1" Grid.Row="1" Width="{DynamicResource Double/GridSplitter.Thickness}"/>
+		<GridSplitter Background="{DynamicResource Brush/SessionView.SidePanel.Background}" Classes="GridSplitter_Vertical" Grid.Column="1" Grid.Row="1"/>
 
 	</Grid>
 

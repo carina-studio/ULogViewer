@@ -22,23 +22,23 @@
 							<TextBlock Text="{Binding}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"/>
 							<Border Classes="InPlaceAction_Reserved"/>
 							<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
-								<Button Classes="InPlaceAction" Command="{Binding $parent[Window].RemoveSetupTeardownCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
-									<Border Classes="InPlaceAction">
+								<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveSetupTeardownCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
+									<Border Classes="InPlaceAction_Icon">
 										<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Icon.Delete}"/>
 									</Border>
 								</Button>
-								<Button Classes="InPlaceAction" Command="{Binding $parent[Window].EditSetupTeardownCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
-									<Border Classes="InPlaceAction">
+								<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditSetupTeardownCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
+									<Border Classes="InPlaceAction_Icon">
 										<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Icon.Edit}"/>
 									</Border>
 								</Button>
-								<Button Classes="InPlaceAction" Command="{Binding $parent[Window].MoveSetupTeardownCommandUp}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.MoveUp}">
-									<Border Classes="InPlaceAction">
+								<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].MoveSetupTeardownCommandUp}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.MoveUp}">
+									<Border Classes="InPlaceAction_Icon">
 										<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Icon.MoveUp}"/>
 									</Border>
 								</Button>
-								<Button Classes="InPlaceAction" Command="{Binding $parent[Window].MoveSetupTeardownCommandDown}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.MoveDown}">
-									<Border Classes="InPlaceAction">
+								<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].MoveSetupTeardownCommandDown}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.MoveDown}">
+									<Border Classes="InPlaceAction_Icon">
 										<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Icon.MoveDown}"/>
 									</Border>
 								</Button>
@@ -94,7 +94,7 @@
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogDataSourceOptionsDialog.FileName}"/>
 				<Grid ColumnDefinitions="*,Auto">
 					<TextBox Name="fileNameTextBox" Classes="Dialog_TextBox"/>
-					<Button Classes="Browse" Command="{Binding $parent[Window].SelectFileName}" Grid.Column="1"/>
+					<Button Classes="BrowseButton" Command="{Binding $parent[Window].SelectFileName}" Grid.Column="1"/>
 				</Grid>
 				<Separator Classes="Dialog_Separator"/>
 			</StackPanel>
@@ -104,7 +104,7 @@
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogDataSourceOptionsDialog.WorkingDirectory}"/>
 				<Grid ColumnDefinitions="*,Auto">
 					<TextBox Name="workingDirectoryTextBox" Classes="Dialog_TextBox"/>
-					<Button Classes="Browse" Command="{Binding $parent[Window].SelectWorkingDirectory}" Grid.Column="1"/>
+					<Button Classes="BrowseButton" Command="{Binding $parent[Window].SelectWorkingDirectory}" Grid.Column="1"/>
 				</Grid>
 				<Separator Classes="Dialog_Separator"/>
 			</StackPanel>

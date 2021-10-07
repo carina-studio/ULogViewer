@@ -55,7 +55,7 @@
 			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogPatternEditorDialog.Regex}"/>
 			<Grid ColumnDefinitions="*,Auto">
 				<appControls:RegexTextBox Name="regexTextBox" IgnoreCase="False" PropertyChanged="OnRegexTextBoxPropertyChanged" Watermark="{DynamicResource String/Common.RegularExpression}"/>
-				<ToggleButton Name="addLogPropertyGroupButton" Classes="Browse" Command="{Binding $parent[Window].ShowAddLogPropertyGroupMenu}" Grid.Column="1"/>
+				<ToggleButton Name="addLogPropertyGroupButton" Classes="BrowseButton" Command="{Binding $parent[Window].ShowAddLogPropertyGroupMenu}" Grid.Column="1"/>
 			</Grid>
 			<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogPatternEditorDialog.Regex.Description}"/>
 			<asControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/Common.RegularExpression.Reference}" Uri="{x:Static app:Uris.RegexReference}"/>

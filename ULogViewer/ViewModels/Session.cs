@@ -517,7 +517,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					if (logProfile == null)
 					{
 						var res = (object?)null;
-						app?.Resources?.TryGetResource("Drawing/EmptySession", out res);
+						app?.Resources?.TryGetResource("Drawing/Icon.Tab", out res);
 						return res as Drawing;
 					}
 					else if (app != null)
