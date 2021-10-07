@@ -12,7 +12,6 @@
 			<Color x:Key="Color/Accent">#912fbf</Color>
 
 			<!-- Icon -->
-			<SolidColorBrush x:Key="Brush/Icon.Active" Color="{DynamicResource SystemAccentColor}"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile" Color="{DynamicResource SystemAccentColorLight1}"/>
 
 			<!-- LogLevel -->
@@ -65,14 +64,6 @@
 
 		</ResourceDictionary>
 	</Styles.Resources>
-
-	<!-- Dialog -->
-	<Style Selector="TextBlock.Dialog_TextBlock_Description_Error">
-		<Setter Property="FontSize" Value="{DynamicResource Double/Dialog.TextBlock.FontSize.Description}"/>
-		<Setter Property="Foreground" Value="{DynamicResource Brush/TextBlock.Foreground.Error}"/>
-		<Setter Property="Margin" Value="{DynamicResource Thickness/Dialog.TextBlock.Margin.Description}"/>
-		<Setter Property="TextWrapping" Value="Wrap"/>
-	</Style>
 
 	<!-- External controls -->
 	<StyleInclude Source="avares://AvaloniaEdit/AvaloniaEdit.xaml" />
