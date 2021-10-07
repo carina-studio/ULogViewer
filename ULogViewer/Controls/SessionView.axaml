@@ -627,7 +627,10 @@
 				<!-- Marked logs -->
 				<StackPanel Classes="SessionView_SidePanel_Header">
 					<DrawingPresenter Classes="SessionView_SidePanel_Header" Drawing="{StaticResource Drawing/Icon.Pin}"/>
-					<TextBlock Classes="SessionView_SidePanel_Header" Text="{DynamicResource String/SessionView.MarkedLogs}"/>
+					<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+						<TextBlock Classes="SessionView_SidePanel_Header" Text="{DynamicResource String/SessionView.MarkedLogs}"/>
+						<TextBlock Classes="SessionView_SidePanel_Header" Text="{Binding MarkedLogs.Count, StringFormat={} ({0})}"/>
+					</StackPanel>
 				</StackPanel>
 				<Panel>
 					<ListBox Name="markedLogListBox" Background="{x:Static Brushes.Transparent}" Focusable="False" IsVisible="{Binding HasMarkedLogs}" Items="{Binding MarkedLogs}" SelectionChanged="OnMarkedLogListBoxSelectionChanged" SelectionMode="Single" VirtualizationMode="None">
