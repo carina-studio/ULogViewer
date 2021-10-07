@@ -14,11 +14,11 @@
 	<!-- Data templates -->
 	<Window.DataTemplates>
 		<DataTemplate DataType="{x:Type appViewModels:Session}">
-			<Grid ColumnDefinitions="Auto,Auto,Auto" DragDrop.AllowDrop="True">
+			<Grid ColumnDefinitions="Auto,*,Auto" DragDrop.AllowDrop="True">
 				<Border Height="{DynamicResource Double/MainWindow.TabItem.Icon.Size}" Margin="{DynamicResource Thickness/MainWindow.TabItem.Icon.Margin}" VerticalAlignment="Center" Width="{DynamicResource Double/MainWindow.TabItem.Icon.Size}">
 					<DrawingPresenter Classes="Icon" Drawing="{Binding Icon}"/>
 				</Border>
-				<TextBlock Grid.Column="1" MaxWidth="200" Text="{Binding Title}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+				<TextBlock Grid.Column="1" Text="{Binding Title}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
 				<Button Classes="TabItem_Button" Click="OnTabItemCloseButtonClick" Grid.Column="2" ToolTip.Tip="{DynamicResource String/MainWindow.CloseSession}" VerticalAlignment="Center">
 					<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing/Icon.Close}"/>
 				</Button>

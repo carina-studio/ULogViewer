@@ -123,7 +123,7 @@
 	<!-- TextEditor -->
 	<Style Selector="ae|TextEditor">
 		<Setter Property="Background" Value="{DynamicResource TextControlBackgroundBrush}"/>
-		<Setter Property="FontFamily" Value="{DynamicResource FontFamily.TextBox}"/>
+		<Setter Property="FontFamily" Value="{DynamicResource FontFamily/TextBox.FallbackFontFamilies}"/>
 		<Setter Property="Padding" Value="{DynamicResource TextControlThemePadding}"/>
 	</Style>
 
