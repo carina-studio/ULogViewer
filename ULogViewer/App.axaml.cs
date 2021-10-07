@@ -5,8 +5,6 @@ using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.Markup.Xaml.Styling;
 using Avalonia.Styling;
 using CarinaStudio.Configuration;
-using CarinaStudio.Threading;
-using CarinaStudio.ULogViewer.Controls;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ULogViewer.ViewModels;
@@ -31,6 +29,11 @@ namespace CarinaStudio.ULogViewer
 		// Constants.
 		const string InitialLogProfileKey = "InitialLogProfile";
 		const string RestoreStateRequestedKey = "RestoreStateRequested";
+
+
+		// Static fields.
+		static readonly SettingKey<string> LegacyCultureSettingKey = new SettingKey<string>("Culture", "");
+		static readonly SettingKey<string> LegacyThemeModeSettingKey = new SettingKey<string>("ThemeMode", "");
 
 
 		// Fields.
@@ -364,6 +367,10 @@ namespace CarinaStudio.ULogViewer
 			// call base
 			await base.OnPrepareStartingAsync();
 
+			// [Workaround] Set theme mode to 'Dark' if 'System' is unsupported
+			if (this.Settings.GetValueOrDefault(this.ThemeModeSettingKey) == AppSuite.ThemeMode.System && !this.IsSystemThemeModeSupported)
+				this.Settings.SetValue<AppSuite.ThemeMode>(this.ThemeModeSettingKey, AppSuite.ThemeMode.Dark);
+
 			// initialize log data source providers
 			this.UpdateSplashWindowMessage(this.GetStringNonNull("SplashWindow.InitializeLogProfiles"));
 			LogDataSourceProviders.Initialize(this);
@@ -391,8 +398,40 @@ namespace CarinaStudio.ULogViewer
         }
 
 
-		// URI of package manifest.
-		public override Uri? PackageManifestUri => Uris.AppPackageManifest;
+		// Upgrade settings.
+        protected override void OnUpgradeSettings(ISettings settings, int oldVersion, int newVersion)
+        {
+			// call base
+            base.OnUpgradeSettings(settings, oldVersion, newVersion);
+
+			// upgrade culture
+			if (oldVersion < 2)
+			{
+				settings.GetValueOrDefault(LegacyCultureSettingKey).Let(oldValue =>
+				{
+					if (Enum.TryParse<AppSuite.ApplicationCulture>(oldValue, out var culture))
+						settings.SetValue<AppSuite.ApplicationCulture>(this.CultureSettingKey, culture);
+					else
+						settings.ResetValue(this.CultureSettingKey);
+				});
+			}
+
+			// upgrade theme mode
+			if (oldVersion < 2)
+			{
+				settings.GetValueOrDefault(LegacyThemeModeSettingKey).Let(oldValue =>
+				{
+					if (Enum.TryParse<AppSuite.ThemeMode>(oldValue, out var themeMode))
+						settings.SetValue<AppSuite.ThemeMode>(this.ThemeModeSettingKey, themeMode);
+					else
+						settings.ResetValue(this.CultureSettingKey);
+				});
+			}
+		}
+
+
+        // URI of package manifest.
+        public override Uri? PackageManifestUri => Uris.AppPackageManifest;
 
 
         /// <summary>
@@ -437,10 +476,8 @@ namespace CarinaStudio.ULogViewer
 		}
 
 
-		/// <summary>
-		/// Raised when system accent color changed.
-		/// </summary>
-		public event EventHandler? SystemAccentColorChanged;
+		// Version of settings.
+		protected override int SettingsVersion => 2;
 
 
 		// Interface implementations.
