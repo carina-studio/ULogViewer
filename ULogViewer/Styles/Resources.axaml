@@ -120,17 +120,6 @@
 	<Thickness x:Key="Thickness/SessionView.SidePanel.Header.Icon.Margin">0,0,5,0</Thickness>
 	<Thickness x:Key="Thickness/SessionView.SidePanel.Header.Margin">10,10,10,5</Thickness>
 	<Thickness x:Key="Thickness/SessionView.SidePanel.Header.Text.Margin">0</Thickness>
-
-	<!-- SplashWindow -->
-	<CornerRadius x:Key="CornerRadius/SplashWindow">5</CornerRadius>
-	<sys:Double x:Key="Double/SplashWindow.Height">200</sys:Double>
-	<sys:Double x:Key="Double/SplashWindow.Icon.Size">70</sys:Double>
-	<sys:Double x:Key="Double/SplashWindow.Title.FontSize">30</sys:Double>
-	<sys:Double x:Key="Double/SplashWindow.Width">400</sys:Double>
-	<Thickness x:Key="Thickness/SplashWindow.Icon.Margin">0,0,10,0</Thickness>
-	<Thickness x:Key="Thickness/SplashWindow.Message.Margin">0,30,0,0</Thickness>
-	<Thickness x:Key="Thickness/SplashWindow.Padding">30</Thickness>
-	<Thickness x:Key="Thickness/SplashWindow.Title.Margin">0,0,0,5</Thickness>
 	
 	<!-- StringLogPropertyMapEntryEditorDialog -->
 	<sys:Double x:Key="Double/StringLogPropertyMapEntryEditorDialog.Width">400</sys:Double>

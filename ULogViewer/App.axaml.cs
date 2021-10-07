@@ -37,7 +37,6 @@ namespace CarinaStudio.ULogViewer
 		bool isRestartRequested;
 		bool isRestartAsAdminRequested;
 		string? restartArgs;
-		SplashWindow? splashWindow;
 
 
 		// Constructor.
@@ -360,37 +359,22 @@ namespace CarinaStudio.ULogViewer
 				NLog.LogManager.Configuration.AddRule(NLog.LogLevel.Debug, NLog.LogLevel.Fatal, "file");
 			}
 
-			// show splash window
-			var splashWindow = new SplashWindow();
-			this.splashWindow = splashWindow;
-			splashWindow.Show();
-
 			// call base
 			await base.OnPrepareStartingAsync();
 
 			// initialize log data source providers
-			splashWindow.Message = this.GetStringNonNull("SplashWindow.InitializeLogProfiles");
+			this.UpdateSplashWindowMessage(this.GetStringNonNull("SplashWindow.InitializeLogProfiles"));
 			LogDataSourceProviders.Initialize(this);
 
 			// initialize log profiles
 			await LogProfiles.InitializeAsync(this);
 
 			// initialize predefined log text filters
-			splashWindow.Message = this.GetStringNonNull("SplashWindow.InitializePredefinedLogTextFilters");
+			this.UpdateSplashWindowMessage(this.GetStringNonNull("SplashWindow.InitializePredefinedLogTextFilters"));
 			await PredefinedLogTextFilters.InitializeAsync(this);
 
 			// show main window
 			this.ShowMainWindow();
-
-			// close splash window
-			this.SynchronizationContext.PostDelayed(() =>
-			{
-				this.splashWindow = this.splashWindow?.Let(it =>
-				{
-					it.Close();
-					return (SplashWindow?)null;
-				});
-			}, 1000);
 		}
 
 
