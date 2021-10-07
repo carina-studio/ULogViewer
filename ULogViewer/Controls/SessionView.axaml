@@ -494,7 +494,7 @@
 				<!-- Filtering progress -->
 				<StackPanel Grid.Column="5" IsVisible="{Binding IsFilteringLogs}" Orientation="Horizontal">
 					<Separator Classes="StatusBar_Separator"/>
-					<Border Classes="SessionView_StatusBar_Icon">
+					<Border Classes="StatusBar_Icon">
 						<DrawingPresenter Classes="Icon">
 							<DrawingPresenter.Drawing>
 								<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Filter}"/>
