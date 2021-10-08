@@ -405,10 +405,9 @@ namespace CarinaStudio.ULogViewer
 			{
 				settings.GetValueOrDefault(LegacyCultureSettingKey).Let(oldValue =>
 				{
+					settings.ResetValue(this.CultureSettingKey);
 					if (Enum.TryParse<AppSuite.ApplicationCulture>(oldValue, out var culture))
 						settings.SetValue<AppSuite.ApplicationCulture>(this.CultureSettingKey, culture);
-					else
-						settings.ResetValue(this.CultureSettingKey);
 				});
 			}
 
@@ -417,10 +416,9 @@ namespace CarinaStudio.ULogViewer
 			{
 				settings.GetValueOrDefault(LegacyThemeModeSettingKey).Let(oldValue =>
 				{
+					settings.ResetValue(this.ThemeModeSettingKey);
 					if (Enum.TryParse<AppSuite.ThemeMode>(oldValue, out var themeMode))
 						settings.SetValue<AppSuite.ThemeMode>(this.ThemeModeSettingKey, themeMode);
-					else
-						settings.ResetValue(this.CultureSettingKey);
 				});
 			}
 		}
