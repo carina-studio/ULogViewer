@@ -238,12 +238,12 @@
 
 				<!-- Log string format for reading -->
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogProfileEditorDialog.LogStringEncodingForReading}"/>
-				<appControls:EnumComboBox Name="logStringEncodingForReadingComboBox" Classes="Dialog_ComboBox" EnumType="{x:Type appLogs:LogStringEncoding}"/>
+				<asControls:EnumComboBox Name="logStringEncodingForReadingComboBox" Classes="Dialog_ComboBox" EnumType="{x:Type appLogs:LogStringEncoding}"/>
 				<Separator Classes="Dialog_Separator"/>
 
 				<!-- Timestamp encoding for reading -->
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogProfileEditorDialog.TimestampEncodingForReading}"/>
-				<appControls:EnumComboBox Name="timestampEncodingForReadingComboBox" Classes="Dialog_ComboBox" EnumType="{x:Type appLogs:LogTimestampEncoding}"/>
+				<asControls:EnumComboBox Name="timestampEncodingForReadingComboBox" Classes="Dialog_ComboBox" EnumType="{x:Type appLogs:LogTimestampEncoding}"/>
 				<Separator Classes="Dialog_Separator"/>
 
 				<!-- Timestamp format for reading -->
@@ -321,18 +321,18 @@
 
 				<!-- Color indicator -->
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogProfileEditorDialog.ColorIndicator}"/>
-				<appControls:EnumComboBox Name="colorIndicatorComboBox" Classes="Dialog_ComboBox" EnumType="{x:Type appLogProfiles:LogColorIndicator}"/>
+				<asControls:EnumComboBox Name="colorIndicatorComboBox" Classes="Dialog_ComboBox" EnumType="{x:Type appLogProfiles:LogColorIndicator}"/>
 				<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.ColorIndicator.Description}"/>
 				<Separator Classes="Dialog_Separator"/>
 
 				<!-- Sort key -->
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogProfileEditorDialog.SortKey}"/>
-				<appControls:EnumComboBox Name="sortKeyComboBox" Classes="Dialog_ComboBox" EnumType="{x:Type appLogProfiles:LogSortKey}"/>
+				<asControls:EnumComboBox Name="sortKeyComboBox" Classes="Dialog_ComboBox" EnumType="{x:Type appLogProfiles:LogSortKey}"/>
 				<Separator Classes="Dialog_Separator"/>
 
 				<!-- Sort direction -->
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogProfileEditorDialog.SortDirection}"/>
-				<appControls:EnumComboBox Name="sortDirectionComboBox" Classes="Dialog_ComboBox" EnumType="{x:Type app:SortDirection}"/>
+				<asControls:EnumComboBox Name="sortDirectionComboBox" Classes="Dialog_ComboBox" EnumType="{x:Type app:SortDirection}"/>
 				<Separator Classes="Dialog_Separator_Large"/>
 
 				<!-- Header -->
@@ -388,7 +388,7 @@
 
 				<!-- Log string format for writing -->
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogProfileEditorDialog.LogStringEncodingForWriting}"/>
-				<appControls:EnumComboBox Name="logStringEncodingForWritingComboBox" Classes="Dialog_ComboBox" EnumType="{x:Type appLogs:LogStringEncoding}"/>
+				<asControls:EnumComboBox Name="logStringEncodingForWritingComboBox" Classes="Dialog_ComboBox" EnumType="{x:Type appLogs:LogStringEncoding}"/>
 				<Separator Classes="Dialog_Separator"/>
 
 				<!-- Timestamp format for writing -->
