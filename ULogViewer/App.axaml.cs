@@ -367,10 +367,6 @@ namespace CarinaStudio.ULogViewer
 			// call base
 			await base.OnPrepareStartingAsync();
 
-			// [Workaround] Set theme mode to 'Dark' if 'System' is unsupported
-			if (this.Settings.GetValueOrDefault(this.ThemeModeSettingKey) == AppSuite.ThemeMode.System && !this.IsSystemThemeModeSupported)
-				this.Settings.SetValue<AppSuite.ThemeMode>(this.ThemeModeSettingKey, AppSuite.ThemeMode.Dark);
-
 			// initialize log data source providers
 			this.UpdateSplashWindowMessage(this.GetStringNonNull("SplashWindow.InitializeLogProfiles"));
 			LogDataSourceProviders.Initialize(this);
