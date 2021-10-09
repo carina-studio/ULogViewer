@@ -71,8 +71,8 @@
 	
 	<!-- SessionView -->
 	<CornerRadius x:Key="CornerRadius/SessionView.LogListBox.Item.Column.Border">2</CornerRadius>
-	<sys:Double x:Key="Double/SessionView.Hint.NoLogToShow.FontSize">30</sys:Double>
-	<sys:Double x:Key="Double/SessionView.Hint.SelectLogProfile.FontSize">30</sys:Double>
+	<sys:Double x:Key="Double/SessionView.Hint.NoLogToShow.FontSize">20</sys:Double>
+	<sys:Double x:Key="Double/SessionView.Hint.SelectLogProfile.FontSize">20</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogHeader.MinWidth">50</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogListBox.ColorIndicator.Width">8</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogsProgessingBar.Height">2</sys:Double>
@@ -85,7 +85,7 @@
 	<sys:Double x:Key="Double/SessionView.SidePanel.MinWidth">200</sys:Double>
 	<sys:Double x:Key="Double/SessionView.ToolBar.LogLevelFilter.Width">150</sys:Double>
 	<sys:Double x:Key="Double/SessionView.ToolBar.LogProcessIdFilter.Width">80</sys:Double>
-	<Thickness x:Key="Thickness/SessionView.Hint.SelectLogProfile.Icon.Margin">15,0,15,0</Thickness>
+	<Thickness x:Key="Thickness/SessionView.Hint.SelectLogProfile.Icon.Margin">8,0,8,0</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogHeader.Margin">3,8,3,8</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogHeader.Padding">5,0,5,0</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogListBox.Item.Column.Border">1</Thickness>
