@@ -65,8 +65,6 @@
 	<!-- MainWindow -->
 	<sys:Double x:Key="Double/MainWindow.MinHeight">300</sys:Double>
 	<sys:Double x:Key="Double/MainWindow.MinWidth">500</sys:Double>
-	<sys:Double x:Key="Double/MainWindow.TabItem.Icon.Size">16</sys:Double>
-	<Thickness x:Key="Thickness/MainWindow.TabItem.Icon.Margin">0,0,10,0</Thickness>
 
 	<!-- PredefinedLogTextFilterEditorDialog -->
 	<sys:Double x:Key="Double/PredefinedLogTextFilterEditorDialog.Width">400</sys:Double>

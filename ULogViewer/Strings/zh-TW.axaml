@@ -7,7 +7,6 @@
 
 	<!-- AppOptionsDialog -->
 	<sys:String x:Key="String/AppOptionsDialog.ContinuousLogReadingUpdateInterval">連續讀取時的日誌更新時距 (毫秒)</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.Culture">語系</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs">在重新載入日誌後捲動至最新的日誌</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs.Description">僅適用於連續讀取日誌</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.IgnoreCaseOfLogTextFilter">文字篩選忽略大小寫</sys:String>
@@ -18,7 +17,6 @@
 	<sys:String x:Key="String/AppOptionsDialog.LogOperations">日誌操作</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.MaxContinuousLogCount">連續讀取時的最大日誌個數</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.MaxDisplayLineCountForEachLog">每筆日誌最大顯示行數</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.Others">其他設定</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.RestartingMainWindowsNeeded">將會自動重新啟動以套用</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SaveMemoryAggressively">節省記憶體使用</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SaveMemoryAggressively.Description">盡量使用較少的記憶體，這將會使日誌載入及篩選速度下降，也會影響使用者介面的順暢度。</sys:String>
@@ -26,10 +24,7 @@
 	<sys:String x:Key="String/AppOptionsDialog.SelectLogProfileForNewSession">建立新分頁後開啟日誌類型選取介面</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectWorkingDirectoryWhenNeeded">當需要工作目錄時立即開啟目錄選取介面</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ShowProcessInfo">在狀態列上顯示 CPU 及記憶體使用量</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.ThemeMode">佈景主題</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.Title">應用程式選項</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.UpdateLogFilterDelay">條件改變至開始篩選的延遲時間 (毫秒)</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.UserInterface">使用者介面</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.UseSystemAccentColor">套用系統強調色彩</sys:String>
 
 	<!-- Built-in profile -->

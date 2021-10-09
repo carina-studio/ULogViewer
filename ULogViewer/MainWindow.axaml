@@ -6,7 +6,6 @@
         xmlns:appViewModels="clr-namespace:CarinaStudio.ULogViewer.ViewModels;assembly=ULogViewer"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.MainWindow"
-		Background="{DynamicResource Brush/TabItem.Header.Background}"
 		Icon="/AppIcon.ico"
 		MinHeight="{DynamicResource Double/MainWindow.MinHeight}"
 		MinWidth="{DynamicResource Double/MainWindow.MinWidth}">
@@ -15,16 +14,21 @@
 	<Window.DataTemplates>
 		<DataTemplate DataType="{x:Type appViewModels:Session}">
 			<Grid ColumnDefinitions="Auto,*,Auto" DragDrop.AllowDrop="True">
-				<Border Height="{DynamicResource Double/MainWindow.TabItem.Icon.Size}" Margin="{DynamicResource Thickness/MainWindow.TabItem.Icon.Margin}" VerticalAlignment="Center" Width="{DynamicResource Double/MainWindow.TabItem.Icon.Size}">
+				<Border Classes="TabItem_Icon">
 					<DrawingPresenter Classes="Icon" Drawing="{Binding Icon}"/>
 				</Border>
-				<TextBlock Grid.Column="1" Text="{Binding Title}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
-				<Button Classes="TabItem_Button" Click="OnTabItemCloseButtonClick" Grid.Column="2" ToolTip.Tip="{DynamicResource String/MainWindow.CloseSession}" VerticalAlignment="Center">
+				<TextBlock Classes="TabItem_TextBlock" Grid.Column="1" Text="{Binding Title}"/>
+				<Button Classes="TabItem_Button" Click="OnTabItemCloseButtonClick" Grid.Column="2" ToolTip.Tip="{DynamicResource String/MainWindow.CloseSession}">
 					<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing/Icon.Close}"/>
 				</Button>
 			</Grid>
 		</DataTemplate>
 	</Window.DataTemplates>
+
+	<!-- Background -->
+	<Window.Background>
+		<SolidColorBrush Color="{DynamicResource Color/TabItem.Header.Background}" Opacity="{DynamicResource Double/MainWindow.Background.Opacity.SemiTransparent}"/>
+	</Window.Background>
 
 	<!-- Content -->
 	<TabControl Name="tabControl" Background="{x:Null}">

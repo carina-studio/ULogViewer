@@ -17,6 +17,7 @@
 	<Window.Styles>
 		<Style Selector="ListBox.LogProfiles">
 			<Setter Property="Background" Value="{x:Static Brushes.Transparent}"/>
+			<Setter Property="BorderThickness" Value="0"/>
 			<Setter Property="ItemTemplate">
 				<Setter.Value>
 					<DataTemplate DataType="{x:Type appProfiles:LogProfile}">

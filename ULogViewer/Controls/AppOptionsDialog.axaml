@@ -13,7 +13,7 @@
         x:Class="CarinaStudio.ULogViewer.Controls.AppOptionsDialog"
         Classes="Dialog"
         ShowInTaskbar="True"
-        Title="{DynamicResource String/AppOptionsDialog.Title}"
+        Title="{DynamicResource String/ApplicationOptions}"
         Width="{DynamicResource Double/AppOptionsDialog.Width}">
 
 	<DockPanel>
@@ -31,11 +31,11 @@
 
 				<!-- User interface -->
 				<Border Classes="Dialog_TextBlock_Header1">
-					<TextBlock Classes="Dialog_TextBlock_Header1" Text="{DynamicResource String/AppOptionsDialog.UserInterface}"/>
+					<TextBlock Classes="Dialog_TextBlock_Header1" Text="{DynamicResource String/ApplicationOptions.UserInterface}"/>
 				</Border>
 				
 				<!-- Theme mode -->
-				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/AppOptionsDialog.ThemeMode}"/>
+				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/ApplicationOptions.ThemeMode}"/>
 				<ComboBox Classes="Dialog_ComboBox" Items="{Binding ThemeModes, Mode=OneTime}" SelectedItem="{Binding ThemeMode, Mode=TwoWay}">
 					<ComboBox.ItemTemplate>
 						<DataTemplate>
@@ -52,9 +52,14 @@
 					<ToggleSwitch Classes="Dialog_ToggleSwitch" IsChecked="{Binding UseSystemAccentColor, Mode=TwoWay}"/>
 					<Separator Classes="Dialog_Separator"/>
 				</StackPanel>
+
+				<!-- Enable blurry background -->
+				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/ApplicationOptions.EnableBlurryBackground}"/>
+				<ToggleSwitch Classes="Dialog_ToggleSwitch" IsChecked="{Binding EnableBlurryBackground, Mode=TwoWay}"/>
+				<Separator Classes="Dialog_Separator"/>
 				
 				<!-- Culture -->
-				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/AppOptionsDialog.Culture}"/>
+				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/ApplicationOptions.Culture}"/>
 				<asControls:EnumComboBox Classes="Dialog_ComboBox" EnumType="{x:Type as:ApplicationCulture}" SelectedItem="{Binding Culture, Mode=TwoWay}"/>
 				<Separator Classes="Dialog_Separator"/>
 
@@ -158,7 +163,7 @@
 
 				<!-- Others -->
 				<Border Classes="Dialog_TextBlock_Header1">
-					<TextBlock Classes="Dialog_TextBlock_Header1" Text="{DynamicResource String/AppOptionsDialog.Others}"/>
+					<TextBlock Classes="Dialog_TextBlock_Header1" Text="{DynamicResource String/ApplicationOptions.Others}"/>
 				</Border>
 
 				<!-- Show process info -->
