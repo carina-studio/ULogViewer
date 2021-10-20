@@ -171,6 +171,11 @@
 				<ToggleSwitch Classes="Dialog_ToggleSwitch" IsChecked="{Binding ShowProcessInfo, Mode=TwoWay}"/>
 				<Separator Classes="Dialog_Separator"/>
 
+				<!-- Accept non-stable update -->
+				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/ApplicationOptions.AcceptNonStableApplicationUpdate}"/>
+				<ToggleSwitch Classes="Dialog_ToggleSwitch" IsChecked="{Binding AcceptNonStableApplicationUpdate, Mode=TwoWay}"/>
+				<Separator Classes="Dialog_Separator"/>
+
 				<!-- Save memory agressively -->
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/AppOptionsDialog.SaveMemoryAggressively}"/>
 				<ToggleSwitch Classes="Dialog_ToggleSwitch" IsChecked="{Binding SaveMemoryAggressively, Mode=TwoWay}"/>

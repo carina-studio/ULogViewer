@@ -20,6 +20,10 @@ namespace CarinaStudio.ULogViewer
 		/// </summary>
 		public static readonly Uri DateTimeFormatReference = new Uri("https://docs.microsoft.com/en-us/dotnet/standard/base-types/standard-date-and-time-format-strings");
 		/// <summary>
+		/// Application package manifest (Preview).
+		/// </summary>
+		public static readonly Uri PreviewAppPackageManifest = new Uri("https://raw.githubusercontent.com/carina-studio/ULogViewer/master/PackageManifest-Preview.json");
+		/// <summary>
 		/// Reference of regular expression.
 		/// </summary>
 		public static readonly Uri RegexReference = new Uri("https://docs.microsoft.com/en-us/dotnet/standard/base-types/regular-expression-language-quick-reference");

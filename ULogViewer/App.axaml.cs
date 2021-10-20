@@ -424,14 +424,20 @@ namespace CarinaStudio.ULogViewer
 		}
 
 
-        // URI of package manifest.
-        public override Uri? PackageManifestUri => Uris.AppPackageManifest;
+		// URI of package manifest.
+		public override Uri? PackageManifestUri => this.Settings.GetValueOrDefault(AppSuite.SettingKeys.AcceptNonStableApplicationUpdate)
+			? Uris.PreviewAppPackageManifest
+			: Uris.AppPackageManifest;
 
 
         /// <summary>
         /// Get private memory usage by application in bytes.
         /// </summary>
         public long PrivateMemoryUsage { get; private set; }
+
+
+		// Releasing type.
+		public override AppSuite.ApplicationReleasingType ReleasingType => AppSuite.ApplicationReleasingType.Preview;
 
 
 		// Restart application.
