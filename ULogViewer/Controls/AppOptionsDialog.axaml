@@ -43,7 +43,7 @@
 						</DataTemplate>
 					</ComboBox.ItemTemplate>
 				</ComboBox>
-				<TextBlock Classes="Dialog_TextBlock_Description_Error" IsVisible="{Binding IsRestartingMainWindowsNeeded}" Text="{DynamicResource String/AppOptionsDialog.RestartingMainWindowsNeeded}"/>
+				<TextBlock Classes="Dialog_TextBlock_Description_Warning" IsVisible="{Binding IsRestartingMainWindowsNeeded}" Text="{DynamicResource String/AppOptionsDialog.RestartingMainWindowsNeeded}"/>
 				<Separator Classes="Dialog_Separator"/>
 
 				<!-- Use system accent color -->

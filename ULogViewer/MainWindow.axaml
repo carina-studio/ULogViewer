@@ -6,6 +6,7 @@
         xmlns:appViewModels="clr-namespace:CarinaStudio.ULogViewer.ViewModels;assembly=ULogViewer"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.MainWindow"
+		Classes="Tabbed"
 		Icon="/AppIcon.ico"
 		MinHeight="{DynamicResource Double/MainWindow.MinHeight}"
 		MinWidth="{DynamicResource Double/MainWindow.MinWidth}">
@@ -24,11 +25,6 @@
 			</Grid>
 		</DataTemplate>
 	</Window.DataTemplates>
-
-	<!-- Background -->
-	<Window.Background>
-		<SolidColorBrush Color="{DynamicResource Color/TabItem.Header.Background}" Opacity="{DynamicResource Double/MainWindow.Background.Opacity.SemiTransparent}"/>
-	</Window.Background>
 
 	<!-- Content -->
 	<TabControl Name="tabControl" Background="{x:Null}">

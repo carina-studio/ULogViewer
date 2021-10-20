@@ -204,7 +204,7 @@
 						</Button>
 
 						<!-- Scroll to latest log -->
-						<ToggleButton Classes="ToolBar_Button" IsChecked="{Binding $parent[UserControl].IsScrollingToLatestLogNeeded, Mode=TwoWay}" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" ToolTip.Tip="{DynamicResource String/SessionView.ScrollToLatestLog}">
+						<ToggleButton Classes="ToolBar_ToggleButton" IsChecked="{Binding $parent[UserControl].IsScrollingToLatestLogNeeded, Mode=TwoWay}" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" ToolTip.Tip="{DynamicResource String/SessionView.ScrollToLatestLog}">
 							<Panel>
 								<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing/Scrolling}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
 								<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing/Scrolling.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
@@ -216,10 +216,10 @@
 							<DrawingPresenter Classes="Icon">
 								<ia:Interaction.Behaviors>
 									<iaCore:DataTriggerBehavior Binding="{Binding IsLogsReadingPaused}" Value="True">
-										<iaCore:ChangePropertyAction PropertyName="Drawing" Value="{StaticResource Drawing/Play}"/>
+										<iaCore:ChangePropertyAction PropertyName="Drawing" Value="{StaticResource Drawing/Icon.PlayMedia}"/>
 									</iaCore:DataTriggerBehavior>
 									<iaCore:DataTriggerBehavior Binding="{Binding IsLogsReadingPaused}" Value="False">
-										<iaCore:ChangePropertyAction PropertyName="Drawing" Value="{StaticResource Drawing/Pause}"/>
+										<iaCore:ChangePropertyAction PropertyName="Drawing" Value="{StaticResource Drawing/Icon.PauseMedia}"/>
 									</iaCore:DataTriggerBehavior>
 								</ia:Interaction.Behaviors>
 							</DrawingPresenter>
@@ -280,7 +280,7 @@
 						<StackPanel Grid.Column="5" Orientation="Horizontal">
 
 							<!-- Predefined text filters -->
-							<ToggleButton Classes="ToolBar_Button" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" ToolTip.Tip="{DynamicResource String/SessionView.PredefinedLogTextFilters}">
+							<ToggleButton Classes="ToolBar_ToggleButton" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" ToolTip.Tip="{DynamicResource String/SessionView.PredefinedLogTextFilters}">
 								<Panel>
 									<Panel>
 										<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Filters}" IsVisible="{Binding ElementName=predefinedLogTextFilterListBox, Path=!SelectedItems.Count}"/>
@@ -362,7 +362,7 @@
 						</Button>
 
 						<!-- Other actions -->
-						<ToggleButton Name="otherActionsButton" Classes="ToolBar_Button" Command="{Binding $parent[UserControl].ShowOtherActions}" ToolTip.Tip="{DynamicResource String/SessionView.OtherActions}">
+						<ToggleButton Name="otherActionsButton" Classes="ToolBar_ToggleButton" Command="{Binding $parent[UserControl].ShowOtherActions}" ToolTip.Tip="{DynamicResource String/SessionView.OtherActions}">
 							<Panel>
 								<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing/Icon.More}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
 								<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing/Icon.More.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
@@ -391,7 +391,7 @@
 			</Border>
 
 			<!-- ListBox -->
-			<ListBox Name="logListBox" AutoScrollToSelectedItem="False" Background="{DynamicResource Brush/SessionView.LogListBox.Background}" BorderThickness="0" ContextMenu="{DynamicResource logActionMenu}" DoubleTapped="OnLogListBoxDoubleTapped" Grid.Row="1" HorizontalAlignment="Stretch" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" Items="{Binding Logs}" Padding="{DynamicResource Thickness/SessionView.LogListBox.Padding}" ScrollViewer.HorizontalScrollBarVisibility="Visible" SelectionChanged="OnLogListBoxSelectionChanged" SelectionMode="Multiple" VirtualizationMode="Simple">
+			<ListBox Name="logListBox" AutoScrollToSelectedItem="False" Background="{DynamicResource Brush/WorkingArea.Background}" BorderThickness="0" ContextMenu="{DynamicResource logActionMenu}" DoubleTapped="OnLogListBoxDoubleTapped" Grid.Row="1" HorizontalAlignment="Stretch" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" Items="{Binding Logs}" Padding="{DynamicResource Thickness/SessionView.LogListBox.Padding}" ScrollViewer.HorizontalScrollBarVisibility="Visible" SelectionChanged="OnLogListBoxSelectionChanged" SelectionMode="Multiple" VirtualizationMode="Simple">
 				<ListBox.Styles>
 					<Style Selector="ListBoxItem">
 						<Setter Property="HorizontalAlignment" Value="Stretch"/>
@@ -621,7 +621,7 @@
 		</Border>
 
 		<!-- Side panel -->
-		<ScrollViewer Background="{DynamicResource Brush/SessionView.SidePanel.Background}" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Stretch" HorizontalScrollBarVisibility="Disabled" IsEnabled="{Binding $parent[UserControl].HasProfile}">
+		<ScrollViewer Background="{DynamicResource Brush/WorkingArea.Panel.Background}" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Stretch" HorizontalScrollBarVisibility="Disabled" IsEnabled="{Binding $parent[UserControl].HasProfile}">
 			<StackPanel HorizontalAlignment="Stretch" Orientation="Vertical">
 
 				<!-- Marked logs -->
@@ -659,7 +659,7 @@
 				
 			</StackPanel>
 		</ScrollViewer>
-		<GridSplitter Background="{DynamicResource Brush/SessionView.SidePanel.Background}" Classes="GridSplitter_Vertical" Grid.Column="1" Grid.Row="1"/>
+		<GridSplitter Background="{DynamicResource Brush/WorkingArea.Panel.Background}" Classes="GridSplitter_Vertical" Grid.Column="1" Grid.Row="1"/>
 
 	</Grid>
 

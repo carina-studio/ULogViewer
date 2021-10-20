@@ -36,13 +36,11 @@
 			<!-- SessionView -->
 			<SolidColorBrush x:Key="Brush/SessionView.LogHeader.Background">#0e0e0e</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.LogHeader.Separator">#000000</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Background">#000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Background.Marked">#000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Background.Pressed">#000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Background.Selected">#000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Background.Selected.PointerOver">#000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Column.Border.PointerOver">#000000</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/SessionView.SidePanel.Background">#000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.StatusBar.Background.Error">#ff3232</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.StatusBar.Background.Inactive">#000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.StatusBar.Background.Paused">#000000</SolidColorBrush>
