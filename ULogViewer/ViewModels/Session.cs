@@ -221,7 +221,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				displayableLogsToDispose.Clear();
 				staticLogger?.LogTrace($"Disposed {logCount} displayable logs");
 				staticLogger?.LogTrace($"All displayable logs were disposed, trigger GC");
-				if (App.Current.Settings.GetValueOrDefault(ULogViewer.Settings.SaveMemoryAggressively))
+				if (App.Current.Settings.GetValueOrDefault(SettingKeys.SaveMemoryAggressively))
 					GC.Collect();
 				else
 					GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced, false);
@@ -456,7 +456,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						if (this.LogProfile?.IsContinuousReading != true)
 							this.SetValue(LastLogsReadingDurationProperty, TimeSpan.FromMilliseconds(this.logsReadingWatch.ElapsedMilliseconds));
 					}
-					if (wasReadingLogs && this.Settings.GetValueOrDefault(ULogViewer.Settings.SaveMemoryAggressively))
+					if (wasReadingLogs && this.Settings.GetValueOrDefault(SettingKeys.SaveMemoryAggressively))
 					{
 						this.Logger.LogDebug("Trigger GC after reading logs");
 						GC.Collect();
@@ -761,7 +761,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			get
 			{
 				if (this.IsActivated)
-					return Math.Max(Math.Min(this.Settings.GetValueOrDefault(ULogViewer.Settings.ContinuousLogReadingUpdateInterval), ULogViewer.Settings.MaxContinuousLogReadingUpdateInterval), ULogViewer.Settings.MinContinuousLogReadingUpdateInterval);
+					return Math.Max(Math.Min(this.Settings.GetValueOrDefault(SettingKeys.ContinuousLogReadingUpdateInterval), SettingKeys.MaxContinuousLogReadingUpdateInterval), SettingKeys.MinContinuousLogReadingUpdateInterval);
 				return 1000;
 			}
 		}
@@ -894,7 +894,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					it.LogPatterns = new LogPattern[] { new LogPattern("^(?<Message>.*)", false, false) };
 				it.LogStringEncoding = profile.LogStringEncodingForReading;
 				if (profile.IsContinuousReading)
-					it.MaxLogCount = this.Settings.GetValueOrDefault(ULogViewer.Settings.MaxContinuousLogCount);
+					it.MaxLogCount = this.Settings.GetValueOrDefault(SettingKeys.MaxContinuousLogCount);
 				it.TimestampCultureInfo = profile.TimestampCultureInfoForReading;
 				it.TimestampEncoding = profile.TimestampEncodingForReading;
 				it.TimestampFormat = profile.TimestampFormatForReading;
@@ -1605,7 +1605,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						this.logsFilteringWatch.Stop();
 						this.SetValue(IsFilteringLogsProperty, false);
 						this.SetValue(LastLogsFilteringDurationProperty, TimeSpan.FromMilliseconds(this.logsFilteringWatch.ElapsedMilliseconds));
-						if (this.Settings.GetValueOrDefault(ULogViewer.Settings.SaveMemoryAggressively))
+						if (this.Settings.GetValueOrDefault(SettingKeys.SaveMemoryAggressively))
 						{
 							this.Logger.LogDebug("Trigger GC after filtering logs");
 							GC.Collect();
@@ -1623,7 +1623,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						this.SetValue(LogsProperty, this.AllLogs);
 						this.SetValue(HasLogsProperty, this.allLogs.IsNotEmpty());
 						this.SetValue(LastLogsFilteringDurationProperty, null);
-						if (this.Settings.GetValueOrDefault(ULogViewer.Settings.SaveMemoryAggressively))
+						if (this.Settings.GetValueOrDefault(SettingKeys.SaveMemoryAggressively))
 						{
 							this.Logger.LogDebug("Trigger GC after clearing log filters");
 							GC.Collect();
@@ -1790,12 +1790,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		protected override void OnSettingChanged(SettingChangedEventArgs e)
 		{
 			base.OnSettingChanged(e);
-			if (e.Key == ULogViewer.Settings.ContinuousLogReadingUpdateInterval)
+			if (e.Key == SettingKeys.ContinuousLogReadingUpdateInterval)
 			{
 				if (this.LogProfile?.IsContinuousReading == true && this.logReaders.IsNotEmpty())
 					this.logReaders.First().UpdateInterval = this.ContinuousLogReadingUpdateInterval;
 			}
-			else if (e.Key == ULogViewer.Settings.MaxContinuousLogCount)
+			else if (e.Key == SettingKeys.MaxContinuousLogCount)
 			{
 				if (this.LogProfile?.IsContinuousReading == true && this.logReaders.IsNotEmpty())
 					this.logReaders.First().MaxLogCount = (int)e.Value;

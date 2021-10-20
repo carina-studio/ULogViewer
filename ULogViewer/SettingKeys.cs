@@ -6,9 +6,9 @@ using System.Runtime.InteropServices;
 namespace CarinaStudio.ULogViewer
 {
 	/// <summary>
-	/// Application settings.
+	/// Setting keys.
 	/// </summary>
-	class Settings : PersistentSettings
+	static class SettingKeys
 	{
 		/// <summary>
 		/// Interval of updating logs for continuous reading.
@@ -119,21 +119,5 @@ namespace CarinaStudio.ULogViewer
 			}
 			return FontManager.Current.DefaultFontFamilyName;
 		});
-
-
-		/// <summary>
-		/// Initialize new <see cref="Settings"/> instance.
-		/// </summary>
-		public Settings() : base(JsonSettingsSerializer.Default)
-		{ }
-
-
-		// Upgrade.
-		protected override void OnUpgrade(int oldVersion)
-		{ }
-
-
-		// Version.
-		public override int Version => 1;
 	}
 }

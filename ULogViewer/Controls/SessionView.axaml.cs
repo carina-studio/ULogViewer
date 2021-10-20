@@ -174,8 +174,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.UpdateLogFontSize();
 
 			// setup properties
-			this.SetValue<bool>(IsProcessInfoVisibleProperty, this.Settings.GetValueOrDefault(ULogViewer.Settings.ShowProcessInfo));
-			this.SetValue<int>(MaxDisplayLineCountForEachLogProperty, Math.Max(1, this.Settings.GetValueOrDefault(ULogViewer.Settings.MaxDisplayLineCountForEachLog)));
+			this.SetValue<bool>(IsProcessInfoVisibleProperty, this.Settings.GetValueOrDefault(SettingKeys.ShowProcessInfo));
+			this.SetValue<int>(MaxDisplayLineCountForEachLogProperty, Math.Max(1, this.Settings.GetValueOrDefault(SettingKeys.MaxDisplayLineCountForEachLog)));
 			this.ValidLogLevels = this.validLogLevels.AsReadOnly();
 
 			// initialize
@@ -234,7 +234,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			});
 			this.logTextFilterTextBox = this.FindControl<RegexTextBox>("logTextFilterTextBox").AsNonNull().Also(it =>
 			{
-				it.IgnoreCase = this.Settings.GetValueOrDefault(ULogViewer.Settings.IgnoreCaseOfLogTextFilter);
+				it.IgnoreCase = this.Settings.GetValueOrDefault(SettingKeys.IgnoreCaseOfLogTextFilter);
 				it.ValidationDelay = this.UpdateLogFilterParamsDelay;
 			});
 			this.logThreadIdFilterTextBox = this.FindControl<TextBox>("logThreadIdFilterTextBox").AsNonNull().Also(it =>
@@ -412,9 +412,9 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.canEditLogProfile.Update(!profile.IsBuiltIn);
 				this.SetValue<bool>(HasLogProfileProperty, true);
 				if (session.IsLogFileNeeded)
-					this.isLogFileNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(ULogViewer.Settings.SelectLogFilesWhenNeeded);
+					this.isLogFileNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(SettingKeys.SelectLogFilesWhenNeeded);
 				else if (session.IsWorkingDirectoryNeeded)
-					this.isWorkingDirNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(ULogViewer.Settings.SelectWorkingDirectoryWhenNeeded);
+					this.isWorkingDirNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(SettingKeys.SelectWorkingDirectoryWhenNeeded);
 				this.OnLogProfileSet(profile);
 			}
 
@@ -2056,17 +2056,17 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when setting changed.
 		void OnSettingChanged(object? sender, SettingChangedEventArgs e)
 		{
-			if (e.Key == ULogViewer.Settings.IgnoreCaseOfLogTextFilter)
+			if (e.Key == SettingKeys.IgnoreCaseOfLogTextFilter)
 				this.logTextFilterTextBox.IgnoreCase = (bool)e.Value;
-			else if (e.Key == ULogViewer.Settings.LogFontFamily)
+			else if (e.Key == SettingKeys.LogFontFamily)
 				this.UpdateLogFontFamily();
-			else if (e.Key == ULogViewer.Settings.LogFontSize)
+			else if (e.Key == SettingKeys.LogFontSize)
 				this.UpdateLogFontSize();
-			else if (e.Key == ULogViewer.Settings.MaxDisplayLineCountForEachLog)
+			else if (e.Key == SettingKeys.MaxDisplayLineCountForEachLog)
 				this.SetValue<int>(MaxDisplayLineCountForEachLogProperty, Math.Max(1, (int)e.Value));
-			else if (e.Key == ULogViewer.Settings.ShowProcessInfo)
+			else if (e.Key == SettingKeys.ShowProcessInfo)
 				this.SetValue<bool>(IsProcessInfoVisibleProperty, (bool)e.Value);
-			else if (e.Key == ULogViewer.Settings.UpdateLogFilterDelay)
+			else if (e.Key == SettingKeys.UpdateLogFilterDelay)
 				this.logTextFilterTextBox.ValidationDelay = this.UpdateLogFilterParamsDelay;
 		}
 
@@ -2114,7 +2114,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			// scroll to latest log
 			if (session.LogProfile?.IsContinuousReading == true
 				&& !this.IsScrollingToLatestLogNeeded
-				&& this.Settings.GetValueOrDefault(ULogViewer.Settings.EnableScrollingToLatestLogAfterReloadingLogs))
+				&& this.Settings.GetValueOrDefault(SettingKeys.EnableScrollingToLatestLogAfterReloadingLogs))
 			{
 				this.Logger.LogDebug("Enable scrolling to latest log after reloading logs");
 				this.IsScrollingToLatestLogNeeded = true;
@@ -2331,13 +2331,13 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			if (session.IsLogFileNeeded)
 			{
-				this.isLogFileNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(ULogViewer.Settings.SelectLogFilesWhenNeeded);
+				this.isLogFileNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(SettingKeys.SelectLogFilesWhenNeeded);
 				if (this.isLogFileNeededAfterLogProfileSet)
 					this.autoAddLogFilesAction.Schedule();
 			}
 			else if (session.IsWorkingDirectoryNeeded)
 			{
-				this.isWorkingDirNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(ULogViewer.Settings.SelectWorkingDirectoryWhenNeeded);
+				this.isWorkingDirNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(SettingKeys.SelectWorkingDirectoryWhenNeeded);
 				if (this.isWorkingDirNeededAfterLogProfileSet)
 					this.autoSetWorkingDirectoryAction.Schedule();
 			}
@@ -2639,9 +2639,9 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Update font family of log.
 		void UpdateLogFontFamily()
 		{
-			var name = this.Settings.GetValueOrDefault(ULogViewer.Settings.LogFontFamily);
+			var name = this.Settings.GetValueOrDefault(SettingKeys.LogFontFamily);
 			if (string.IsNullOrEmpty(name))
-				name = ULogViewer.Settings.DefaultLogFontFamily;
+				name = SettingKeys.DefaultLogFontFamily;
 			this.SetValue<FontFamily>(LogFontFamilyProperty, new FontFamily(name));
 		}
 
@@ -2649,13 +2649,13 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Update font size of log.
 		void UpdateLogFontSize()
 		{
-			var size = Math.Max(Math.Min(this.Settings.GetValueOrDefault(ULogViewer.Settings.LogFontSize), ULogViewer.Settings.MaxLogFontSize), ULogViewer.Settings.MinLogFontSize);
+			var size = Math.Max(Math.Min(this.Settings.GetValueOrDefault(SettingKeys.LogFontSize), SettingKeys.MaxLogFontSize), SettingKeys.MinLogFontSize);
 			this.SetValue<double>(LogFontSizeProperty, size);
 		}
 
 
 		// Get delay of updating log filter.
-		int UpdateLogFilterParamsDelay { get => Math.Max(ULogViewer.Settings.MinUpdateLogFilterDelay, Math.Min(ULogViewer.Settings.MaxUpdateLogFilterDelay, this.Settings.GetValueOrDefault(ULogViewer.Settings.UpdateLogFilterDelay))); }
+		int UpdateLogFilterParamsDelay { get => Math.Max(SettingKeys.MinUpdateLogFilterDelay, Math.Min(SettingKeys.MaxUpdateLogFilterDelay, this.Settings.GetValueOrDefault(SettingKeys.UpdateLogFilterDelay))); }
 
 
 		// LIst of log levels defined by log profile.

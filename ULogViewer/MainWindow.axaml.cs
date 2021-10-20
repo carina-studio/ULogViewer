@@ -530,7 +530,7 @@ namespace CarinaStudio.ULogViewer
 				workspace.ActiveSession = session;
 				this.SynchronizationContext.PostDelayed(() =>
 				{
-					if (session.LogProfile == null && this.Settings.GetValueOrDefault(ULogViewer.Settings.SelectLogProfileForNewSession))
+					if (session.LogProfile == null && this.Settings.GetValueOrDefault(SettingKeys.SelectLogProfileForNewSession))
 						this.FindSessionView(session)?.SelectAndSetLogProfile();
 				}, 500);
 			}
@@ -619,7 +619,7 @@ namespace CarinaStudio.ULogViewer
 			workspace.ActiveSession?.Let(it =>
 			{
 				if (it.LogProfile == null
-					&& this.Settings.GetValueOrDefault(ULogViewer.Settings.SelectLogProfileForNewSession)
+					&& this.Settings.GetValueOrDefault(SettingKeys.SelectLogProfileForNewSession)
 					&& !this.HasDialogs)
 				{
 					this.FindSessionView(it)?.SelectAndSetLogProfile();

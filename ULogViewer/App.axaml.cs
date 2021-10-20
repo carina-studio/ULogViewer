@@ -195,7 +195,7 @@ namespace CarinaStudio.ULogViewer
 					}
 					this.Logger.LogError($"Cannot find initial log profile by ID '{it}'");
 					return null;
-				}) ?? this.Settings.GetValueOrDefault(ULogViewer.Settings.InitialLogProfile).Let(it =>
+				}) ?? this.Settings.GetValueOrDefault(SettingKeys.InitialLogProfile).Let(it =>
 				{
 					if (string.IsNullOrEmpty(it))
 						return null;

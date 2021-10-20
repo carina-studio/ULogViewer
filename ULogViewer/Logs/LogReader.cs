@@ -697,7 +697,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			var logPatterns = this.logPatterns;
 			var logBuilder = new LogBuilder()
 			{
-				StringCompressionLevel = this.Application.Settings.GetValueOrDefault(Settings.SaveMemoryAggressively)
+				StringCompressionLevel = this.Application.Settings.GetValueOrDefault(SettingKeys.SaveMemoryAggressively)
 					? CompressedString.Level.Optimal
 					: CompressedString.Level.None,
 			};

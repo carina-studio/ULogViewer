@@ -39,8 +39,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// setup properties
 			this.Application = profile.Application;
 			this.LogProfile = profile;
-			this.maxDisplayLineCount = Math.Max(1, this.Application.Settings.GetValueOrDefault(Settings.MaxDisplayLineCountForEachLog));
-			this.SaveMemoryAgressively = this.Application.Settings.GetValueOrDefault(Settings.SaveMemoryAggressively);
+			this.maxDisplayLineCount = Math.Max(1, this.Application.Settings.GetValueOrDefault(SettingKeys.MaxDisplayLineCountForEachLog));
+			this.SaveMemoryAgressively = this.Application.Settings.GetValueOrDefault(SettingKeys.SaveMemoryAggressively);
 			this.CheckMaxLogExtraNumber();
 
 			// add event handlers
@@ -257,7 +257,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		// Called when setting changed.
 		void OnSettingChanged(object? sender, SettingChangedEventArgs e)
 		{
-			if (e.Key == Settings.MaxDisplayLineCountForEachLog)
+			if (e.Key == SettingKeys.MaxDisplayLineCountForEachLog)
 			{
 				this.maxDisplayLineCount = (int)e.Value;
 				var node = this.displayableLogs.First;
@@ -267,7 +267,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					node = node.Next;
 				}
 			}
-			else if (e.Key == Settings.SaveMemoryAggressively)
+			else if (e.Key == SettingKeys.SaveMemoryAggressively)
 				this.SaveMemoryAgressively = (bool)e.Value;
 		}
 
