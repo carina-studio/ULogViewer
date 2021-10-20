@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CarinaStudio.AppBase.Tests" Version="0.27.2.1002" />
+    <PackageReference Include="CarinaStudio.AppBase.Tests" Version="0.28.0.1020" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
     <PackageReference Include="NUnit" Version="3.13.2" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.0.0" />
