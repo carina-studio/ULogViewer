@@ -61,10 +61,10 @@ Marked logs will be kept if you are viewing logs from files so that you don't ne
 ## 🤝Dependencies
 - [.NET](https://dotnet.microsoft.com/)
 - [AppBase](https://github.com/carina-studio/AppBase)
+- [AppSuiteBase](https://github.com/carina-studio/AppSuiteBase)
 - [Avalonia](https://github.com/AvaloniaUI/Avalonia)
 - [AvaloniaEdit](https://github.com/AvaloniaUI/AvaloniaEdit)
 - [Avalonia XAML Behaviors](https://github.com/wieslawsoltes/AvaloniaBehaviors)
 - [NLog](https://github.com/NLog/NLog)
 - [NUnit](https://github.com/nunit/nunit)
-- [ReactiveUI](https://github.com/reactiveui/ReactiveUI)
 - [System.Data.SQLite](https://system.data.sqlite.org/)
