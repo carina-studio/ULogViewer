@@ -17,7 +17,7 @@
 	<sys:String x:Key="String/AppOptionsDialog.LogOperations">日誌操作</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.MaxContinuousLogCount">連續讀取時的最大日誌個數</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.MaxDisplayLineCountForEachLog">每筆日誌最大顯示行數</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.RestartingMainWindowsNeeded">將會自動重新啟動以套用</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.RestartingMainWindowsNeeded">將會重新啟動視窗以套用</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SaveMemoryAggressively">節省記憶體使用</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SaveMemoryAggressively.Description">盡量使用較少的記憶體，這將會使日誌載入及篩選速度下降，也會影響使用者介面的順暢度。</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectLogFilesWhenNeeded">當需要日誌檔案時立即開啟檔案選取介面</sys:String>
@@ -26,6 +26,7 @@
 	<sys:String x:Key="String/AppOptionsDialog.ShowProcessInfo">在狀態列上顯示 CPU 及記憶體使用量</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.UpdateLogFilterDelay">條件改變至開始篩選的延遲時間 (毫秒)</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.UseSystemAccentColor">套用系統強調色彩</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.WillRestartToTakeEffect">將會重新啟動應用程式以套用</sys:String>
 
 	<!-- Built-in profile -->
 	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceLog">Android 裝置日誌</sys:String>

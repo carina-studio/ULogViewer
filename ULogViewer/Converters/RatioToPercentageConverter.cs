@@ -10,6 +10,12 @@ namespace CarinaStudio.ULogViewer.Converters
 	/// </summary>
 	class RatioToPercentageConverter : IValueConverter
 	{
+		/// <summary>
+		/// Default instance without decimal place.
+		/// </summary>
+		public static readonly RatioToPercentageConverter Default = new RatioToPercentageConverter(0);
+
+
 		// Fields.
 		readonly int decimalPlaces;
 		readonly string? stringFormat;
@@ -74,6 +80,33 @@ namespace CarinaStudio.ULogViewer.Converters
 
 
 		// Convert back.
-		public object? ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => null;
+		public object? ConvertBack(object value, Type targetType, object? parameter, CultureInfo culture)
+		{
+			if (value is string str && str.Length > 1 && str[str.Length - 1] == '%')
+				value = str.Substring(0, str.Length - 1);
+			var ratio = value.Let(it =>
+			{
+				if (it is IConvertible convertible)
+				{
+					try
+					{
+						return convertible.ToDouble(null);
+					}
+					catch
+					{ }
+				}
+				return double.NaN;
+			});
+			if (double.IsNaN(ratio))
+				return null;
+			return targetType.Let(_ =>
+			{
+				if (targetType == typeof(double))
+					return ratio / 100;
+				if (targetType == typeof(float))
+					return (float)(ratio / 100);
+				return (object?)null;
+			});
+		}
 	}
 }

@@ -14,7 +14,7 @@
 	<sys:String x:Key="String/AppOptionsDialog.LogOperations">Log Operations</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.MaxContinuousLogCount">Maximum number of logs when continuous reading</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.MaxDisplayLineCountForEachLog">Maximum number of lines to display for each log</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.RestartingMainWindowsNeeded">Will restart automatically to take effect</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.RestartingMainWindowsNeeded">Will restart windows to take effect</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SaveMemoryAggressively">Save memory usage aggressively</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SaveMemoryAggressively.Description">Keep memory usage as low as possible. It will reduce speed of logs reading/filtering and UI smoothness.</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectLogFilesWhenNeeded">Show file selector when log files are needed</sys:String>
@@ -23,6 +23,7 @@
 	<sys:String x:Key="String/AppOptionsDialog.ShowProcessInfo">Show CPU/memoey usage on status bar</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.UpdateLogFilterDelay">Delay between changing conditions and start filtering (milliseconds)</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.UseSystemAccentColor">Apply system accent color</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.WillRestartToTakeEffect">Will restart application to take effect</sys:String>
 
 	<!-- Built-in profile -->
 	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceLog">Android Device Log</sys:String>

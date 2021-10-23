@@ -4,13 +4,15 @@ using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.ViewModels;
 using System;
 using System.ComponentModel;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.Controls
 {
 	/// <summary>
 	/// Dialog for application options.
 	/// </summary>
-	partial class AppOptionsDialog : AppSuite.Controls.Dialog<IULogViewerApplication>
+	partial class AppOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
 	{
 		// Static fields.
 		public static readonly IValueConverter ThemeModeConverter = new AppSuite.Converters.EnumConverter(App.Current, typeof(AppSuite.ThemeMode));
@@ -35,6 +37,19 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.DataContext = null;
 				this.DataContext = dataContext;
 			});
+		}
+
+
+		// Generate result.
+		protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken)
+		{
+			if (this.DataContext is not AppOptions options)
+				return Task.FromResult((object?)AppOptionsDialogResult.None);
+			if (options.IsCustomScreenScaleFactorAdjusted)
+				return Task.FromResult((object?)AppOptionsDialogResult.RestarApplicationtNeeded);
+			if (this.Application.IsRestartingMainWindowsNeeded)
+				return Task.FromResult((object?)AppOptionsDialogResult.RestartMainWindowsNeeded);
+			return Task.FromResult((object?)AppOptionsDialogResult.None);
 		}
 
 		
@@ -67,5 +82,16 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.DataContext = null;
 			base.OnClosed(e);
 		}
+	}
+
+
+	/// <summary>
+	/// Result of <see cref="AppOptionsDialog"/>.
+	/// </summary>
+	enum AppOptionsDialogResult
+	{
+		None,
+		RestarApplicationtNeeded,
+		RestartMainWindowsNeeded,
 	}
 }

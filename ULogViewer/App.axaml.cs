@@ -65,16 +65,6 @@ namespace CarinaStudio.ULogViewer
 		}
 
 
-		// Avalonia configuration, don't remove; also used by visual designer.
-		static AppBuilder BuildAvaloniaApp() => AppBuilder.Configure<App>()
-			.UsePlatformDetect()
-			.LogToTrace().Also(it =>
-			{
-				if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-					it.With(new X11PlatformOptions());
-			});
-
-
 		/// <summary>
 		/// Get <see cref="App"/> instance for current process.
 		/// </summary>
@@ -112,7 +102,7 @@ namespace CarinaStudio.ULogViewer
 		static void Main(string[] args)
 		{
 			// start application
-			BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
+			BuildApplication<App>().StartWithClassicDesktopLifetime(args);
 
 			// restart
 			var app = App.Current;
