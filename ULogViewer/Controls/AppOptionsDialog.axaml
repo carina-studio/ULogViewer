@@ -66,7 +66,7 @@
 				<!-- Custom screen scale factor -->
 				<StackPanel IsVisible="{Binding IsCustomScreenScaleFactorSupported}">
 					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/ApplicationOptions.CustomScreenScaleFactor}"/>
-					<NumericUpDown Classes="Dialog_NumericUpDown" FormatString="{}{0:F0}%" Increment="25" Maximum="200" Minimum="100" Value="{Binding CustomScreenScaleFactor, Converter={x:Static appConverters:RatioToPercentageConverter.Default}, Mode=TwoWay}"/>
+					<NumericUpDown Classes="Dialog_NumericUpDown" FormatString="{}{0:F0}%" Increment="25" Maximum="300" Minimum="100" Value="{Binding CustomScreenScaleFactor, Converter={x:Static appConverters:RatioToPercentageConverter.Default}, Mode=TwoWay}"/>
 					<TextBlock Classes="Dialog_TextBlock_Description_Warning" IsVisible="{Binding IsCustomScreenScaleFactorAdjusted}" Text="{DynamicResource String/AppOptionsDialog.WillRestartToTakeEffect}"/>
 					<Separator Classes="Dialog_Separator"/>
 				</StackPanel>
