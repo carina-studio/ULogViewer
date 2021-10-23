@@ -2,6 +2,9 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
+	<!-- AppOptionsDialog -->
+	<sys:String x:Key="String/AppOptionsDialog.ShowProcessInfo">Show CPU usage on status bar</sys:String>
+	
 	<!-- Common -->
 	<sys:String x:Key="String/Common.Administrator">Superuser</sys:String>
 
