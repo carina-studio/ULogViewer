@@ -140,6 +140,17 @@
 			<Separator/>
 			<MenuItem Command="{Binding $parent[UserControl].ShowAppInfo}" Header="{DynamicResource String/SessionView.AppInfo}"/>
 		</ContextMenu>
+
+		<!-- Working directory menu -->
+		<ContextMenu x:Key="workingDirectoryActionsMenu" PlacementMode="Top">
+			<MenuItem Command="{Binding $parent[UserControl].ShowWorkingDirectoryInExplorerCommand}" Header="{DynamicResource String/SessionView.ShowWorkingDirectoryInExplorer}">
+				<MenuItem.Icon>
+					<Border Classes="MenuItem_Icon">
+						<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Icon.FileManager}"/>
+					</Border>
+				</MenuItem.Icon>
+			</MenuItem>
+		</ContextMenu>
 		
 	</UserControl.Resources>
 	
@@ -538,24 +549,25 @@
 				<!-- Working directory -->
 				<StackPanel Grid.Column="8" IsVisible="{Binding HasWorkingDirectory}" Orientation="Horizontal">
 					<Separator Classes="StatusBar_Separator"/>
-					<StackPanel Background="{x:Static Brushes.Transparent}" Cursor="Hand" Orientation="Horizontal" PointerReleased="OnStatusBarItemPointerReleased">
-						<StackPanel.ContextMenu>
-							<ContextMenu>
-								<MenuItem Command="{Binding $parent[UserControl].ShowWorkingDirectoryInExplorerCommand}" Header="{DynamicResource String/SessionView.ShowWorkingDirectoryInExplorer}"/>
-							</ContextMenu>
-						</StackPanel.ContextMenu>
-						<ToolTip.Tip>
-							<TextBlock Foreground="{DynamicResource ToolTipForeground}" Text="{Binding WorkingDirectoryPath}"/>
-						</ToolTip.Tip>
-						<Border Classes="StatusBar_Icon">
-							<DrawingPresenter Classes="Icon">
-								<DrawingPresenter.Drawing>
-									<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Folder}"/>
-								</DrawingPresenter.Drawing>
-							</DrawingPresenter>
-						</Border>
-						<TextBlock Classes="StatusBar_TextBlock" Text="{Binding WorkingDirectoryName}"/>
-					</StackPanel>
+					<ToggleButton Name="workingDirectoryActionsButton" Classes="StatusBar_ToggleButton" Command="{Binding $parent[UserControl].ShowWorkingDirectoryActions}" ToolTip.Placement="Left" ToolTip.Tip="{Binding WorkingDirectoryPath}">
+						<StackPanel Orientation="Horizontal">
+							<Border Classes="StatusBar_Icon">
+								<DrawingPresenter Classes="Icon">
+									<DrawingPresenter.Drawing>
+										<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Folder}"/>
+									</DrawingPresenter.Drawing>
+								</DrawingPresenter>
+							</Border>
+							<TextBlock Classes="StatusBar_TextBlock" Text="{Binding WorkingDirectoryName}"/>
+							<Border Classes="StatusBar_DropDownIcon">
+								<DrawingPresenter Classes="Icon">
+									<DrawingPresenter.Drawing>
+										<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.MoveUp}"/>
+									</DrawingPresenter.Drawing>
+								</DrawingPresenter>
+							</Border>
+						</StackPanel>
+					</ToggleButton>
 				</StackPanel>
 
 				<!-- Error message -->

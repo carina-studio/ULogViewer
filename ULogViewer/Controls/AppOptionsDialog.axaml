@@ -6,6 +6,7 @@
         xmlns:iaCore="using:Avalonia.Xaml.Interactions.Core"
 		xmlns:as="using:CarinaStudio.AppSuite"
 		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
+		xmlns:asConverters="using:CarinaStudio.AppSuite.Converters"
         xmlns:app="using:CarinaStudio.ULogViewer"
         xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
         xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
@@ -43,7 +44,7 @@
 						</DataTemplate>
 					</ComboBox.ItemTemplate>
 				</ComboBox>
-				<TextBlock Classes="Dialog_TextBlock_Description_Warning" IsVisible="{Binding IsRestartingMainWindowsNeeded}" Text="{DynamicResource String/AppOptionsDialog.RestartingMainWindowsNeeded}"/>
+				<TextBlock Classes="Dialog_TextBlock_Description_Warning" IsVisible="{Binding IsRestartingMainWindowsNeeded}" Text="{DynamicResource String/ApplicationOptions.WillRestartMainWindowsToTakeEffect}"/>
 				<Separator Classes="Dialog_Separator"/>
 
 				<!-- Use system accent color -->
@@ -66,8 +67,8 @@
 				<!-- Custom screen scale factor -->
 				<StackPanel IsVisible="{Binding IsCustomScreenScaleFactorSupported}">
 					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/ApplicationOptions.CustomScreenScaleFactor}"/>
-					<NumericUpDown Classes="Dialog_NumericUpDown" FormatString="{}{0:F0}%" Increment="25" Maximum="300" Minimum="100" Value="{Binding CustomScreenScaleFactor, Converter={x:Static appConverters:RatioToPercentageConverter.Default}, Mode=TwoWay}"/>
-					<TextBlock Classes="Dialog_TextBlock_Description_Warning" IsVisible="{Binding IsCustomScreenScaleFactorAdjusted}" Text="{DynamicResource String/AppOptionsDialog.WillRestartToTakeEffect}"/>
+					<NumericUpDown Classes="Dialog_NumericUpDown" FormatString="{}{0:F0}%" Increment="25" Maximum="300" Minimum="100" Value="{Binding CustomScreenScaleFactor, Converter={x:Static asConverters:RatioToPercentageConverter.Default}, Mode=TwoWay}"/>
+					<TextBlock Classes="Dialog_TextBlock_Description_Warning" IsVisible="{Binding IsCustomScreenScaleFactorAdjusted}" Text="{DynamicResource String/ApplicationOptions.WillRestartApplicationToTakeEffect}"/>
 					<Separator Classes="Dialog_Separator"/>
 				</StackPanel>
 

@@ -137,6 +137,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ScheduledAction updateLogFiltersAction;
 		readonly ScheduledAction updateStatusBarStateAction;
 		readonly SortedObservableList<Logs.LogLevel> validLogLevels = new SortedObservableList<Logs.LogLevel>((x, y) => (int)x - (int)y);
+		readonly ToggleButton workingDirectoryActionsButton;
+		readonly ContextMenu workingDirectoryActionsMenu;
 
 
 		/// <summary>
@@ -201,8 +203,8 @@ namespace CarinaStudio.ULogViewer.Controls
 					}
 				};
 			});
-			this.logHeaderContainer = this.FindControl<Control>("logHeaderContainer").AsNonNull();
-			this.logHeaderGrid = this.FindControl<Grid>("logHeaderGrid").AsNonNull().Also(it =>
+			this.logHeaderContainer = this.FindControl<Control>(nameof(logHeaderContainer)).AsNonNull();
+			this.logHeaderGrid = this.FindControl<Grid>(nameof(logHeaderGrid)).AsNonNull().Also(it =>
 			{
 				it.PropertyChanged += (_, e) =>
 				{
@@ -210,8 +212,8 @@ namespace CarinaStudio.ULogViewer.Controls
 						this.ReportLogHeaderColumnWidths();
 				};
 			});
-			this.logLevelFilterComboBox = this.FindControl<ComboBox>("logLevelFilterComboBox").AsNonNull();
-			this.logListBox = this.FindControl<ListBox>("logListBox").AsNonNull().Also(it =>
+			this.logLevelFilterComboBox = this.FindControl<ComboBox>(nameof(logLevelFilterComboBox)).AsNonNull();
+			this.logListBox = this.FindControl<ListBox>(nameof(logListBox)).AsNonNull().Also(it =>
 			{
 				it.AddHandler(ListBox.PointerPressedEvent, this.OnLogListBoxPointerPressed, RoutingStrategies.Tunnel);
 				it.AddHandler(ListBox.PointerReleasedEvent, this.OnLogListBoxPointerReleased, RoutingStrategies.Tunnel);
@@ -228,39 +230,45 @@ namespace CarinaStudio.ULogViewer.Controls
 					}
 				};
 			});
-			this.logProcessIdFilterTextBox = this.FindControl<TextBox>("logProcessIdFilterTextBox").AsNonNull().Also(it =>
+			this.logProcessIdFilterTextBox = this.FindControl<TextBox>(nameof(logProcessIdFilterTextBox)).AsNonNull().Also(it =>
 			{
 				it.AddHandler(TextBox.TextInputEvent, this.OnLogProcessIdTextBoxTextInput, RoutingStrategies.Tunnel);
 			});
-			this.logTextFilterTextBox = this.FindControl<RegexTextBox>("logTextFilterTextBox").AsNonNull().Also(it =>
+			this.logTextFilterTextBox = this.FindControl<RegexTextBox>(nameof(logTextFilterTextBox)).AsNonNull().Also(it =>
 			{
 				it.IgnoreCase = this.Settings.GetValueOrDefault(SettingKeys.IgnoreCaseOfLogTextFilter);
 				it.ValidationDelay = this.UpdateLogFilterParamsDelay;
 			});
-			this.logThreadIdFilterTextBox = this.FindControl<TextBox>("logThreadIdFilterTextBox").AsNonNull().Also(it =>
+			this.logThreadIdFilterTextBox = this.FindControl<TextBox>(nameof(logThreadIdFilterTextBox)).AsNonNull().Also(it =>
 			{
 				it.AddHandler(TextBox.TextInputEvent, this.OnLogProcessIdTextBoxTextInput, RoutingStrategies.Tunnel);
 			});
-			this.markedLogListBox = this.FindControl<ListBox>("markedLogListBox").AsNonNull();
-			this.otherActionsButton = this.FindControl<ToggleButton>("otherActionsButton").AsNonNull();
-			this.otherActionsMenu = ((ContextMenu)this.Resources["otherActionsMenu"].AsNonNull()).Also(it =>
+			this.markedLogListBox = this.FindControl<ListBox>(nameof(markedLogListBox)).AsNonNull();
+			this.otherActionsButton = this.FindControl<ToggleButton>(nameof(otherActionsButton)).AsNonNull();
+			this.otherActionsMenu = ((ContextMenu)this.Resources[nameof(otherActionsMenu)].AsNonNull()).Also(it =>
 			{
 				it.MenuClosed += (_, e) => this.SynchronizationContext.Post(() => this.otherActionsButton.IsChecked = false);
 				it.MenuOpened += (_, e) => this.SynchronizationContext.Post(() => this.otherActionsButton.IsChecked = true);
 			});
-			this.predefinedLogTextFilterListBox = this.FindControl<ListBox>("predefinedLogTextFilterListBox").AsNonNull();
-			this.predefinedLogTextFiltersPopup = this.FindControl<Popup>("predefinedLogTextFiltersPopup").AsNonNull().Also(it =>
+			this.predefinedLogTextFilterListBox = this.FindControl<ListBox>(nameof(predefinedLogTextFilterListBox)).AsNonNull();
+			this.predefinedLogTextFiltersPopup = this.FindControl<Popup>(nameof(predefinedLogTextFiltersPopup)).AsNonNull().Also(it =>
 			{
 				it.Closed += (_, sender) => this.logListBox.Focus();
 				it.Opened += (_, sender) => this.predefinedLogTextFilterListBox.Focus();
 			});
-			this.showLogPropertyMenuItem = this.FindControl<MenuItem>("showLogPropertyMenuItem").AsNonNull();
+			this.showLogPropertyMenuItem = this.FindControl<MenuItem>(nameof(showLogPropertyMenuItem)).AsNonNull();
 #if !DEBUG
 			this.FindControl<Button>("testButton").AsNonNull().IsVisible = false;
 #endif
 			this.FindControl<Control>("toolBarContainer").AsNonNull().Let(it =>
 			{
 				it.AddHandler(Control.PointerReleasedEvent, this.OnToolBarPointerReleased, RoutingStrategies.Tunnel);
+			});
+			this.workingDirectoryActionsButton = this.FindControl<ToggleButton>(nameof(workingDirectoryActionsButton)).AsNonNull();
+			this.workingDirectoryActionsMenu = ((ContextMenu)this.Resources[nameof(workingDirectoryActionsMenu)].AsNonNull()).Also(it =>
+			{
+				it.MenuClosed += (_, e) => this.SynchronizationContext.Post(() => this.workingDirectoryActionsButton.IsChecked = false);
+				it.MenuOpened += (_, e) => this.SynchronizationContext.Post(() => this.workingDirectoryActionsButton.IsChecked = true);
 			});
 
 			// create scheduled actions
@@ -2546,6 +2554,15 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.otherActionsMenu.PlacementTarget = this.otherActionsButton;
 			this.otherActionsMenu.Open(this);
 		}
+
+
+		// Show working directory actions menu.
+		void ShowWorkingDirectoryActions()
+        {
+			if (this.workingDirectoryActionsMenu.PlacementTarget == null)
+				this.workingDirectoryActionsMenu.PlacementTarget = this.workingDirectoryActionsButton;
+			this.workingDirectoryActionsMenu.Open(this.workingDirectoryActionsButton);
+        }
 
 
 		// Show working directory in system file explorer.

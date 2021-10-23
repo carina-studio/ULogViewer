@@ -195,7 +195,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// <see cref="IValueConverter"/> to convert from logs filtering progress to readable string.
 		/// </summary>
-		public static readonly IValueConverter LogsFilteringProgressConverter = new RatioToPercentageConverter(1);
+		public static readonly IValueConverter LogsFilteringProgressConverter = new AppSuite.Converters.RatioToPercentageConverter(1);
 
 
 		// Constants.
