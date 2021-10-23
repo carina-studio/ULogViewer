@@ -38,6 +38,8 @@ Type=Application
 Reference: [How can I edit/create new launcher items in Unity by hand?
 ](https://askubuntu.com/questions/13758/how-can-i-edit-create-new-launcher-items-in-unity-by-hand)
 
+Currently ULogViewer lacks of ability to detect screen DPI on Linux, so you may find that UI displays too small on Hi-DPI screen. In this case you can open ```Application Options``` of ULogViewer, find ```User interface scale factor``` and change the scale factor to proper value.
+
 ## 📦Upgrade
 ULogViewer checks for update periodically when you are using. It will notify you to upgrade once the update found. Alternatively you can click "Check for update" item in the "Other actions" menu on the right hand side of toolbar to check whether the update is available or not.
 
