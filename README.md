@@ -11,11 +11,9 @@ ULogViewer is a [.NET](https://dotnet.microsoft.com/) based cross-platform unive
 The project is still under development but most of functions relate to reading/parsing/displaying logs are ready.
 
 ## 📷Screenshot
-### Windows
-<img src="https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_Windows_Dark_Thumb.png" width="250"/><img src="https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_Windows_Light_Thumb.png" width="250"/>
-
-### macOS
-<img src="https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_OSX_Dark_Thumb.png" width="250"/><img src="https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_OSX_Light_Thumb.png" width="250"/>
+[<img src="https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_Windows_Thumb.png" width="250"/>](https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_Windows.png)
+[<img src="https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_macOS_Thumb.png" width="250"/>](https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_macOS.png)
+[<img src="https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_Ubuntu_Thumb.png" width="250"/>](https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_Ubuntu.png)
 
 ## ⭐Log data sources
 - Standard Output (stdout)
