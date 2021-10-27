@@ -397,6 +397,10 @@
 	<sys:String x:Key="String/TimeSpanConverter.Minutes">{0} min {1}.{2} sec</sys:String>
 	<sys:String x:Key="String/TimeSpanConverter.Seconds">{0}.{1} sec</sys:String>
 
+	<!-- UriInputDialog -->
+	<sys:String x:Key="String/UriInputDialog.Message">Please enter an valid URI:</sys:String>
+	<sys:String x:Key="String/UriInputDialog.Title">URI</sys:String>
+
 	<!-- VisibleLogPropertyEditorDialog -->
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.CustomDisplayName">Custom display name</sys:String>
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.DisplayName">Display name</sys:String>

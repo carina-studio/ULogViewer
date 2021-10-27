@@ -387,6 +387,10 @@
 	<sys:String x:Key="String/TimeSpanConverter.Minutes">{0} 分 {1}.{2:000} 秒</sys:String>
 	<sys:String x:Key="String/TimeSpanConverter.Seconds">{0}.{1:000} 秒</sys:String>
 
+	<!-- UriInputDialog -->
+	<sys:String x:Key="String/UriInputDialog.Message">請輸入有效的網址：</sys:String>
+	<sys:String x:Key="String/UriInputDialog.Title">網址</sys:String>
+
 	<!-- VisibleLogPropertyEditorDialog -->
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.CustomDisplayName">手動輸入顯示名稱</sys:String>
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.DisplayName">顯示名稱</sys:String>
