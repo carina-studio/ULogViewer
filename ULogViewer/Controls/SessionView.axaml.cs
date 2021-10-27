@@ -2722,6 +2722,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			var logProfile = (this.HasLogProfile ? (this.DataContext as Session)?.LogProfile : null);
 			if (logProfile == null)
 				return;
+			var offset = logScrollViewer.Offset;
+			if (Math.Abs(offset.Y) < 0.5 && offset.Y + logScrollViewer.Viewport.Height >= logScrollViewer.Extent.Height)
+				return;
 			if (this.IsScrollingToLatestLogNeeded)
 			{
 				if (logProfile.SortDirection == SortDirection.Ascending)
