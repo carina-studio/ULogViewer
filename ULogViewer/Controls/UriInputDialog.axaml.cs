@@ -45,7 +45,10 @@ namespace CarinaStudio.ULogViewer.Controls
         {
             base.OnKeyDown(e);
             if (!e.Handled && e.Source == this.uriTextBox && e.Key == Key.Enter)
+            {
+                this.uriTextBox.Validate();
                 this.GenerateResultCommand.TryExecute();
+            }
         }
 
 
