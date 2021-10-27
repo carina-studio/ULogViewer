@@ -37,7 +37,7 @@
 			<!-- Find text -->
 			<StackPanel Orientation="Vertical">
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogStringPropertyDialog.FindText}"/>
-				<appControls:RegexTextBox Name="findTextTextBox" Classes="Dialog_TextBox" PropertyChanged="OnFindTextTextBoxPropertyChanged" Watermark="{DynamicResource String/Common.RegularExpression}"/>
+				<asControls:RegexTextBox Name="findTextTextBox" Classes="Dialog_TextBox" PropertyChanged="OnFindTextTextBoxPropertyChanged" Watermark="{DynamicResource String/Common.RegularExpression}"/>
 				<asControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/Common.RegularExpression.Reference}" Uri="{x:Static app:Uris.RegexReference}"/>
 				<Separator Classes="Dialog_Separator"/>
 			</StackPanel>
