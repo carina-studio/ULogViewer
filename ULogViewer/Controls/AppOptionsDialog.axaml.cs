@@ -1,23 +1,19 @@
 using Avalonia.Data.Converters;
 using Avalonia.Markup.Xaml;
+using CarinaStudio.AppSuite.Controls;
+using CarinaStudio.AppSuite.ViewModels;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.ViewModels;
 using System;
 using System.ComponentModel;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.Controls
 {
 	/// <summary>
 	/// Dialog for application options.
 	/// </summary>
-	partial class AppOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
+	partial class AppOptionsDialog : BaseApplicationOptionsDialog
 	{
-		// Static fields.
-		public static readonly IValueConverter ThemeModeConverter = new AppSuite.Converters.EnumConverter(App.Current, typeof(AppSuite.ThemeMode));
-
-
 		// Fields.
 		readonly ScheduledAction refreshDataContextAction;
 
@@ -27,7 +23,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// </summary>
 		public AppOptionsDialog()
 		{
-			this.DataContext = new AppOptions();
 			InitializeComponent();
 			this.Application.PropertyChanged += this.OnApplicationPropertyChanged;
 			this.Application.StringsUpdated += this.OnApplicationStringsUpdated;
@@ -37,19 +32,6 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.DataContext = null;
 				this.DataContext = dataContext;
 			});
-		}
-
-
-		// Generate result.
-		protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken)
-		{
-			if (this.DataContext is not AppOptions options)
-				return Task.FromResult((object?)AppOptionsDialogResult.None);
-			if (options.IsCustomScreenScaleFactorAdjusted)
-				return Task.FromResult((object?)AppOptionsDialogResult.RestarApplicationtNeeded);
-			if (this.Application.IsRestartingMainWindowsNeeded)
-				return Task.FromResult((object?)AppOptionsDialogResult.RestartMainWindowsNeeded);
-			return Task.FromResult((object?)AppOptionsDialogResult.None);
 		}
 
 		
@@ -78,20 +60,11 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.Application.PropertyChanged -= this.OnApplicationPropertyChanged;
 			this.Application.StringsUpdated -= this.OnApplicationStringsUpdated;
 			this.refreshDataContextAction.Cancel();
-			(this.DataContext as AppOptions)?.Dispose();
-			this.DataContext = null;
 			base.OnClosed(e);
 		}
-	}
 
 
-	/// <summary>
-	/// Result of <see cref="AppOptionsDialog"/>.
-	/// </summary>
-	enum AppOptionsDialogResult
-	{
-		None,
-		RestarApplicationtNeeded,
-		RestartMainWindowsNeeded,
-	}
+		// Create view-model.
+		protected override ApplicationOptions OnCreateViewModel() => new AppOptions();
+    }
 }

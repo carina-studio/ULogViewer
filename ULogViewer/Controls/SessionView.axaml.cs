@@ -2448,16 +2448,16 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			this.FindLogicalAncestorOfType<Avalonia.Controls.Window>()?.Let(async (window) =>
 			{
-				switch (await new AppOptionsDialog().ShowDialog<AppOptionsDialogResult>(window))
+				switch (await new AppOptionsDialog().ShowDialog<AppSuite.Controls.ApplicationOptionsDialogResult>(window))
 				{
-					case AppOptionsDialogResult.RestarApplicationtNeeded:
+					case AppSuite.Controls.ApplicationOptionsDialogResult.RestartApplicationNeeded:
 						this.Logger.LogWarning("Restart application");
 						if (this.Application.IsDebugMode)
 							this.Application.Restart($"{App.DebugArgument} {App.RestoreMainWindowsArgument}", this.Application.IsRunningAsAdministrator);
 						else
 							this.Application.Restart(App.RestoreMainWindowsArgument, this.Application.IsRunningAsAdministrator);
 						break;
-					case AppOptionsDialogResult.RestartMainWindowsNeeded:
+					case AppSuite.Controls.ApplicationOptionsDialogResult.RestartMainWindowsNeeded:
 						this.Logger.LogWarning("Restart main windows");
 						this.Application.RestartMainWindows();
 						break;
