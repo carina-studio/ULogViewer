@@ -1018,7 +1018,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			logWriter.LogLevelMap = profile.LogLevelMapForWriting;
 			logWriter.LogStringEncoding = profile.LogStringEncodingForWriting;
 			logWriter.TimestampCultureInfo = profile.TimestampCultureInfoForWriting;
-			logWriter.TimestampFormat = string.IsNullOrEmpty(profile.TimestampFormatForWriting) ? profile.TimestampFormatForReading : profile.TimestampFormatForWriting;
+			logWriter.TimestampFormat = string.IsNullOrEmpty(profile.TimestampFormatForWriting)
+				? string.IsNullOrEmpty(profile.TimestampFormatForReading) ? profile.TimestampFormatForDisplaying : profile.TimestampFormatForReading
+				: profile.TimestampFormatForWriting;
 			return logWriter;
 		}
 

@@ -1,0 +1,58 @@
+﻿{
+	"DataSource": {
+		"Name": "TCP Server"
+	},
+	"Icon": "Code",
+	"IsContinuousReading": true,
+	"LogLevelMapForReading": {
+		"DEBUG": "Debug",
+		"ERROR": "Error",
+		"FATAL": "Fatal",
+		"INFO": "Info",
+		"TRACE": "Trace",
+		"WARN": "Warn"
+	},
+	"LogLevelMapForWriting": {
+		"Debug": "DEBUG",
+		"Error": "ERROR",
+		"Fatal": "FATAL",
+		"Info": "INFO",
+		"Trace": "TRACE",
+		"Undefined": "",
+		"Warn": "WARN"
+	},
+	"LogPatterns": [
+		{
+			"Regex": "^\\<log4j\\:event[\\s]+logger=\"(?<SourceName>[^\"]*)\"[\\s]+level=\"(?<Level>[^\"]+)\"[\\s]+timestamp=\"(?<Timestamp>[^\"]+)\"[\\s]+thread=\"(?<ThreadId>[^\"]+)\"\\>.*\\<log4j\\:message\\>(?<Message>[^\\<]*)\\<.*\\<log4j\\:data[\\s]+name=\"log4japp\"[\\s]+value=\".*\\((?<ProcessId>[\\d]+)\\)\".*\\<log4j\\:data[\\s]+name=\"log4jmachinename\"[\\s]+value=\"(?<DeviceName>[^\"]*)\""
+		}
+	],
+	"LogWritingFormat": "{Timestamp} {DeviceName} {ProcessId,5} {ThreadId,5} {Level,5} {SourceName}: {Message}",
+	"SortKey": "Id",
+	"TimestampEncodingForReading": "UnixMilliseconds",
+	"TimestampFormatForDisplaying": "yyyy/MM/dd HH:mm:ss.fff",
+	"VisibleLogProperties": [
+		{
+			"Name": "Timestamp",
+			"Width": 200
+		},
+		{
+			"Name": "DeviceName",
+			"Width": 150
+		},
+		{
+			"Name": "ProcessId",
+			"Width": 80
+		},
+		{
+			"Name": "ThreadId",
+			"Width": 80
+		},
+		{
+			"Name": "SourceName",
+			"Width": 100
+		},
+		{
+			"Name": "Message"
+		}
+	]
+}

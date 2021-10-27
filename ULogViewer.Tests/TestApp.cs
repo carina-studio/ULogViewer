@@ -1,8 +1,10 @@
 ﻿using CarinaStudio.AppSuite;
+using CarinaStudio.Collections;
 using CarinaStudio.Threading;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using System;
+using System.Linq;
 using System.Threading;
 
 namespace CarinaStudio.ULogViewer
@@ -62,10 +64,11 @@ namespace CarinaStudio.ULogViewer
 
 			// print logs
 			Console.WriteLine("Start writing logs...");
-			var logger = app.LoggerFactory.CreateLogger(nameof(TestApp));
+			var logLevels = NLog.LogLevel.AllLoggingLevels.ToArray();
+			var logger = NLog.LogManager.GetLogger(nameof(TestApp));
 			for (var i = 1; i < int.MaxValue; ++i)
 			{
-				logger.LogDebug($"Log #{i}");
+				logger.Log(logLevels.SelectRandomElement(), $"Log #{i}");
 				Thread.Sleep(1000);
 			}
 		}

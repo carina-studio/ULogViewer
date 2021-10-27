@@ -31,6 +31,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 #endif
 			"GitLog",
 			"GitLogSimple",
+			"TcpNLog",
 		};
 		static volatile LogProfile? emptyProfile;
 		static volatile ILogger? logger;
