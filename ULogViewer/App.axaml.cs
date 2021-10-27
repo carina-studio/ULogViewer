@@ -4,6 +4,7 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.Markup.Xaml.Styling;
 using Avalonia.Styling;
+using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.ULogViewer.Logs.Profiles;
@@ -12,10 +13,8 @@ using CarinaStudio.ViewModels;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
-using System.Runtime.InteropServices;
-using System.Security.Principal;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Xml;
 
@@ -28,7 +27,6 @@ namespace CarinaStudio.ULogViewer
 	{
 		// Constants.
 		const string InitialLogProfileKey = "InitialLogProfile";
-		const string RestoreStateRequestedKey = "RestoreStateRequested";
 
 
 		// Static fields.
@@ -37,9 +35,7 @@ namespace CarinaStudio.ULogViewer
 
 
 		// Fields.
-		bool isRestartRequested;
-		bool isRestartAsAdminRequested;
-		string? restartArgs;
+		bool isInitBeforeShowingMainWindowsCompleted;
 
 
 		// Constructor.
@@ -47,18 +43,6 @@ namespace CarinaStudio.ULogViewer
 		{
 			// setup name
 			this.Name = "ULogViewer";
-
-			// check whether process is running as admin or not
-			if (Platform.IsWindows)
-			{
-#pragma warning disable CA1416
-				using var identity = WindowsIdentity.GetCurrent();
-				var principal = new WindowsPrincipal(identity);
-				this.IsRunningAsAdministrator = principal.IsInRole(WindowsBuiltInRole.Administrator);
-#pragma warning restore CA1416
-			}
-			if (this.IsRunningAsAdministrator)
-				this.Logger.LogWarning("Application is running as administrator/superuser");
 
 			// check Linux distribution
 			this.Logger.LogDebug($"Linux distribution: {Platform.LinuxDistribution}");
@@ -76,6 +60,27 @@ namespace CarinaStudio.ULogViewer
 
 		// Initialize.
 		public override void Initialize() => AvaloniaXamlLoader.Load(this);
+
+
+		// Initialize before showing/restoring main windows.
+		async Task InitializeBeforeShowingMainWindows()
+        {
+			// check state
+			if (this.isInitBeforeShowingMainWindowsCompleted)
+				return;
+			this.isInitBeforeShowingMainWindowsCompleted = true;
+
+			// initialize log data source providers
+			this.UpdateSplashWindowMessage(this.GetStringNonNull("SplashWindow.InitializeLogProfiles"));
+			LogDataSourceProviders.Initialize(this);
+
+			// initialize log profiles
+			await LogProfiles.InitializeAsync(this);
+
+			// initialize predefined log text filters
+			this.UpdateSplashWindowMessage(this.GetStringNonNull("SplashWindow.InitializePredefinedLogTextFilters"));
+			await PredefinedLogTextFilters.InitializeAsync(this);
+		}
 
 
 		// Support multi-instances.
@@ -99,46 +104,11 @@ namespace CarinaStudio.ULogViewer
 
 		// Program entry.
 		[STAThread]
-		static void Main(string[] args)
-		{
-			// start application
-			BuildApplication<App>().StartWithClassicDesktopLifetime(args);
-
-			// restart
-			var app = App.Current;
-			if (app != null && app.isRestartRequested)
-			{
-				try
-				{
-					if (app.isRestartAsAdminRequested)
-						app.Logger.LogWarning("Restart as administrator/superuser");
-					else
-						app.Logger.LogWarning("Restart");
-					var process = new Process().Also(process =>
-					{
-						process.StartInfo.Let(it =>
-						{
-							it.Arguments = app.restartArgs ?? "";
-							it.FileName = (Process.GetCurrentProcess().MainModule?.FileName).AsNonNull();
-							if (app.isRestartAsAdminRequested && RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-							{
-								it.UseShellExecute = true;
-								it.Verb = "runas";
-							}
-						});
-					});
-					process.Start();
-				}
-				catch (Exception ex)
-				{
-					app.Logger.LogError(ex, "Unable to restart");
-				}
-			}
-		}
+		static void Main(string[] args) => BuildApplication<App>().StartWithClassicDesktopLifetime(args);
 
 
 		// Create log provider.
-        protected override ILoggerProvider OnCreateLoggerProvider()
+		protected override ILoggerProvider OnCreateLoggerProvider()
         {
 			NLog.LogManager.Configuration = this.OpenManifestResourceStream("CarinaStudio.ULogViewer.NLog.config").Use(stream =>
 			{
@@ -153,23 +123,14 @@ namespace CarinaStudio.ULogViewer
 
 
 		// Create main window.
-        protected override CarinaStudio.Controls.Window OnCreateMainWindow(object? param) => new MainWindow();
+        protected override CarinaStudio.Controls.Window OnCreateMainWindow() => new MainWindow();
 
 
 		// Create view-model for main window.
-		protected override ViewModel OnCreateMainWindowViewModel(object? param) => new Workspace().Also(it =>
+		protected override ViewModel OnCreateMainWindowViewModel(JsonElement? savedState) => new Workspace(savedState).Also(it =>
 		{
 			var value = (object?)null;
-			var isWorkspaceStateRestored = Global.Run(() =>
-			{
-				if (this.LaunchOptions.TryGetValue(RestoreStateRequestedKey, out value) && value is bool boolValue && boolValue)
-				{
-					it.RestoreState();
-					return true;
-				}
-				return false;
-			});
-			if (!isWorkspaceStateRestored)
+			if (!savedState.HasValue)
 			{
 				var initialProfile = Global.Run(() =>
 				{
@@ -199,7 +160,6 @@ namespace CarinaStudio.ULogViewer
 				});
 				if (initialProfile != null)
 					it.CreateSession(initialProfile);
-				it.ClearSavedState();
 			}
 		});
 
@@ -310,9 +270,6 @@ namespace CarinaStudio.ULogViewer
         // Called when main window closed.
         protected override async Task OnMainWindowClosedAsync(CarinaStudio.Controls.Window mainWindow, ViewModel viewModel)
         {
-			// save instance state
-			(viewModel as Workspace)?.SaveState();
-
 			// save predefined log text filters
 			await PredefinedLogTextFilters.SaveAllAsync();
 
@@ -335,9 +292,6 @@ namespace CarinaStudio.ULogViewer
 					else
 						this.Logger.LogError("ID of initial log profile is not specified");
 					return ++index;
-				case "-restore-state":
-					launchOptions[RestoreStateRequestedKey] = true;
-					return ++index;
 				default:
 					return base.OnParseArguments(args, index, launchOptions);
 			}
@@ -345,8 +299,8 @@ namespace CarinaStudio.ULogViewer
 
 
 		// Prepare starting.
-        protected override async Task OnPrepareStartingAsync()
-        {
+		protected override async Task OnPrepareStartingAsync()
+		{
 			// output less logs
 			if (!this.IsDebugMode)
 			{
@@ -357,19 +311,12 @@ namespace CarinaStudio.ULogViewer
 			// call base
 			await base.OnPrepareStartingAsync();
 
-			// initialize log data source providers
-			this.UpdateSplashWindowMessage(this.GetStringNonNull("SplashWindow.InitializeLogProfiles"));
-			LogDataSourceProviders.Initialize(this);
-
-			// initialize log profiles
-			await LogProfiles.InitializeAsync(this);
-
-			// initialize predefined log text filters
-			this.UpdateSplashWindowMessage(this.GetStringNonNull("SplashWindow.InitializePredefinedLogTextFilters"));
-			await PredefinedLogTextFilters.InitializeAsync(this);
+			// initialize
+			await this.InitializeBeforeShowingMainWindows();
 
 			// show main window
-			this.ShowMainWindow();
+			if (!this.IsRestoringMainWindowsRequested)
+				this.ShowMainWindow();
 		}
 
 
@@ -384,7 +331,22 @@ namespace CarinaStudio.ULogViewer
         }
 
 
-		// Upgrade settings.
+		/// <inheritdoc/>.
+        protected override async void OnRestoreMainWindows()
+        {
+			// initialize
+			await this.InitializeBeforeShowingMainWindows();
+
+			// call base
+			base.OnRestoreMainWindows();
+
+			// make sure at least one windows is shown
+			if (this.MainWindows.IsEmpty())
+				this.ShowMainWindow();
+        }
+
+
+        // Upgrade settings.
         protected override void OnUpgradeSettings(ISettings settings, int oldVersion, int newVersion)
         {
 			// call base
@@ -430,48 +392,11 @@ namespace CarinaStudio.ULogViewer
 		public override AppSuite.ApplicationReleasingType ReleasingType => AppSuite.ApplicationReleasingType.Preview;
 
 
-		// Restart application.
-		public bool Restart(string? args, bool asAdministrator)
-		{
-			// check state
-			this.VerifyAccess();
-			if (this.isRestartRequested)
-			{
-				if (!string.IsNullOrEmpty(args) && !string.IsNullOrEmpty(this.restartArgs) && args != this.restartArgs)
-				{
-					this.Logger.LogError("Try restarting application with different arguments");
-					return false;
-				}
-				this.isRestartAsAdminRequested |= asAdministrator;
-				this.restartArgs = args;
-				if (this.isRestartAsAdminRequested)
-					this.Logger.LogWarning("Already restarting as administrator/superuser");
-				else
-					this.Logger.LogWarning("Already restarting");
-				return true;
-			}
-
-			// update state
-			this.isRestartRequested = true;
-			this.isRestartAsAdminRequested = asAdministrator;
-			this.restartArgs = args;
-			if (asAdministrator)
-				this.Logger.LogWarning("Request restarting as administrator/superuser");
-			else
-				this.Logger.LogWarning("Request restarting");
-
-			// shutdown
-			this.Shutdown();
-			return true;
-		}
-
-
 		// Version of settings.
 		protected override int SettingsVersion => 2;
 
 
 		// Interface implementations.
-		public bool IsRunningAsAdministrator { get; private set; }
 		public bool IsTesting => false;
 	}
 }

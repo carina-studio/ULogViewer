@@ -2183,7 +2183,12 @@ namespace CarinaStudio.ULogViewer.Controls
 		void RestartAsAdministrator()
 		{
 			if (this.canRestartAsAdmin.Value)
-				this.Application.Restart($"-restore-state", true);
+			{
+				if (this.Application.IsDebugMode)
+					this.Application.Restart($"{App.DebugArgument} {App.RestoreMainWindowsArgument}", true);
+				else
+					this.Application.Restart(App.RestoreMainWindowsArgument, true);
+			}
 		}
 
 
@@ -2448,9 +2453,9 @@ namespace CarinaStudio.ULogViewer.Controls
 					case AppOptionsDialogResult.RestarApplicationtNeeded:
 						this.Logger.LogWarning("Restart application");
 						if (this.Application.IsDebugMode)
-							this.Application.Restart("-restore-state -debug", this.Application.IsRunningAsAdministrator);
+							this.Application.Restart($"{App.DebugArgument} {App.RestoreMainWindowsArgument}", this.Application.IsRunningAsAdministrator);
 						else
-							this.Application.Restart("-restore-state", this.Application.IsRunningAsAdministrator);
+							this.Application.Restart(App.RestoreMainWindowsArgument, this.Application.IsRunningAsAdministrator);
 						break;
 					case AppOptionsDialogResult.RestartMainWindowsNeeded:
 						this.Logger.LogWarning("Restart main windows");

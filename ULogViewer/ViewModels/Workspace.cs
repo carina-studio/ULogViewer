@@ -1,5 +1,4 @@
 ﻿using CarinaStudio.Collections;
-using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ViewModels;
@@ -9,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
@@ -27,10 +25,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public static readonly ObservableProperty<Session?> ActiveSessionProperty = ObservableProperty.Register<Workspace, Session?>(nameof(ActiveSession));
 
 
-		// Static fields.
-		static readonly SettingKey<byte[]> StateKey = new SettingKey<byte[]>("Workspace.State", new byte[0]);
-
-
 		// Fields.
 		IDisposable? sessionActivationToken;
 		readonly ObservableCollection<Session> sessions = new ObservableCollection<Session>();
@@ -39,10 +33,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Initialize new <see cref="Workspace"/> instance.
 		/// </summary>
-		public Workspace() : base()
+		/// <param name="savedState">Saved state in JSON format.</param>
+		public Workspace(JsonElement? savedState) : base()
 		{
 			// setup properties
 			this.Sessions = this.sessions.AsReadOnly();
+
+			// restore
+			savedState?.Let(savedState => this.RestoreState(savedState));
 		}
 
 
@@ -61,16 +59,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			// add event handler
 			session.PropertyChanged += this.OnSessionPropertyChanged;
-		}
-
-
-		/// <summary>
-		/// Clear saved instance state from persistent state.
-		/// </summary>
-		public void ClearSavedState()
-		{
-			this.Logger.LogTrace("Clear saved state");
-			this.Application.PersistentState.ResetValue(StateKey);
 		}
 
 
@@ -315,35 +303,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
         /// Restore instance state from persistent state.
         /// </summary>
         /// <returns>True if instance state has been restored successfully.</returns>
-        public bool RestoreState()
+        bool RestoreState(JsonElement jsonState)
 		{
-			// get state
-			var stateBytes = this.Application.PersistentState.GetValueOrDefault(StateKey);
-			if (stateBytes == null || stateBytes.IsEmpty())
-			{
-				this.Logger.LogTrace("No saved state to restore");
-				return false;
-			}
-
-			// parse state
-			using var jsonDocument = Global.Run(() =>
-			{
-				try
-				{
-					using var stream = new MemoryStream(stateBytes);
-					return JsonDocument.Parse(stream);
-				}
-				catch(Exception ex)
-				{
-					this.Logger.LogError(ex, "Failed to parse saved state");
-					return null;
-				}
-			});
-			if (jsonDocument == null)
-				return false;
-
 			// check state
-			var jsonState = jsonDocument.RootElement;
 			if (jsonState.ValueKind != JsonValueKind.Object)
 			{
 				this.Logger.LogError("Root element of saved state is not a JSON object");
@@ -385,37 +347,29 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		}
 
 
-		/// <summary>
-		/// Save instance state to persistent state.
-		/// </summary>
-		public void SaveState()
+		/// <inheritdoc/>
+		public override void SaveState(Utf8JsonWriter jsonWriter)
 		{
 			this.Logger.LogTrace("Start saving state");
-			var stateBytes = new MemoryStream().Use(stream =>
-			{
-				using (var jsonWriter = new Utf8JsonWriter(stream))
-				{
-					// start object
-					jsonWriter.WriteStartObject();
 
-					// save active session
-					int activeSessionIndex = this.ActiveSession != null ? this.sessions.IndexOf(this.ActiveSession) : -1;
-					if (activeSessionIndex >= 0)
-						jsonWriter.WriteNumber(nameof(ActiveSession), activeSessionIndex);
+			// start object
+			jsonWriter.WriteStartObject();
 
-					// save sessions state
-					jsonWriter.WritePropertyName("Sessions");
-					jsonWriter.WriteStartArray();
-					foreach (var session in this.sessions)
-						session.SaveState(jsonWriter);
-					jsonWriter.WriteEndArray();
+			// save active session
+			int activeSessionIndex = this.ActiveSession != null ? this.sessions.IndexOf(this.ActiveSession) : -1;
+			if (activeSessionIndex >= 0)
+				jsonWriter.WriteNumber(nameof(ActiveSession), activeSessionIndex);
 
-					// complete
-					jsonWriter.WriteEndObject();
-				}
-				return stream.ToArray();
-			});
-			this.Application.PersistentState.SetValue<byte[]>(StateKey, stateBytes);
+			// save sessions state
+			jsonWriter.WritePropertyName("Sessions");
+			jsonWriter.WriteStartArray();
+			foreach (var session in this.sessions)
+				session.SaveState(jsonWriter);
+			jsonWriter.WriteEndArray();
+
+			// complete
+			jsonWriter.WriteEndObject();
+
 			this.Logger.LogTrace("Complete saving state");
 		}
 
