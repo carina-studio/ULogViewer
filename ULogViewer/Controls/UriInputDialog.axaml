@@ -22,7 +22,7 @@
 		<!-- Content -->
 		<StackPanel Classes="Dialog_ContentPanel">
 			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/UriInputDialog.Message}"/>
-			<asControls:UriTextBox Name="uriTextBox" MaxLength="65535" PropertyChanged="OnUriTextBoxPropertyChanged"/>
+			<asControls:UriTextBox Name="uriTextBox" MaxLength="65535" PropertyChanged="OnUriTextBoxPropertyChanged" UriKind="Absolute"/>
 		</StackPanel>
 
 	</DockPanel>

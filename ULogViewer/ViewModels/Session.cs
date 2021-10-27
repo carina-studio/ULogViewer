@@ -79,6 +79,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<bool> HasPredefinedLogTextFiltersProperty = ObservableProperty.Register<Session, bool>(nameof(HasPredefinedLogTextFilters));
 		/// <summary>
+		/// Property of <see cref="HasUri"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> HasUriProperty = ObservableProperty.Register<Session, bool>(nameof(HasUri));
+		/// <summary>
 		/// Property of <see cref="HasWorkingDirectory"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> HasWorkingDirectoryProperty = ObservableProperty.Register<Session, bool>(nameof(HasWorkingDirectory));
@@ -126,6 +130,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Property of <see cref="IsSavingLogs"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsSavingLogsProperty = ObservableProperty.Register<Session, bool>(nameof(IsSavingLogs));
+		/// <summary>
+		/// Property of <see cref="IsUriNeeded"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> IsUriNeededProperty = ObservableProperty.Register<Session, bool>(nameof(IsUriNeeded));
 		/// <summary>
 		/// Property of <see cref="IsWaitingForDataSources"/>.
 		/// </summary>
@@ -178,6 +186,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Property of <see cref="Title"/>.
 		/// </summary>
 		public static readonly ObservableProperty<string?> TitleProperty = ObservableProperty.Register<Session, string?>(nameof(Title));
+		/// <summary>
+		/// Property of <see cref="Uri"/>.
+		/// </summary>
+		public static readonly ObservableProperty<Uri?> UriProperty = ObservableProperty.Register<Session, Uri?>(nameof(Uri));
 		/// <summary>
 		/// Property of <see cref="ValidLogLevels"/>.
 		/// </summary>
@@ -323,6 +335,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.ResetLogProfileCommand = new Command(this.ResetLogProfile, this.canResetLogProfile);
 			this.SaveLogsCommand = new Command<LogsSavingOptions>(this.SaveLogs, this.canSaveLogs);
 			this.SetLogProfileCommand = new Command<LogProfile?>(this.SetLogProfile, this.canSetLogProfile);
+			this.SetUriCommand = new Command<Uri?>(this.SetUri, this.GetValueAsObservable(IsUriNeededProperty));
 			this.SetWorkingDirectoryCommand = new Command<string?>(this.SetWorkingDirectory, this.GetValueAsObservable(IsWorkingDirectoryNeededProperty));
 			this.canSetLogProfile.Update(true);
 
@@ -942,8 +955,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.updateTitleAndIconAction.Schedule();
 
 			// load marked logs
-			if (dataSource.CreationOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName)))
-				this.LoadMarkedLogs(dataSource.CreationOptions.FileName.AsNonNull());
+			var creationOptions = dataSource.CreationOptions;
+			if (creationOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName)))
+				this.LoadMarkedLogs(creationOptions.FileName.AsNonNull());
 
 			// update state
 			if (this.addedLogFilePaths.IsNotEmpty())
@@ -951,9 +965,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.canMarkUnmarkLogs.Update(true);
 			this.canPauseResumeLogsReading.Update(profile.IsContinuousReading);
 			this.canReloadLogs.Update(true);
-			if (dataSource.CreationOptions.IsOptionSet(nameof(LogDataSourceOptions.WorkingDirectory)))
+			this.SetValue(UriProperty, creationOptions.Uri);
+			if (creationOptions.IsOptionSet(nameof(LogDataSourceOptions.WorkingDirectory)))
 			{
-				var directory = dataSource.CreationOptions.WorkingDirectory;
+				var directory = creationOptions.WorkingDirectory;
 				this.SetValue(WorkingDirectoryNameProperty, Path.GetFileName(directory));
 				this.SetValue(WorkingDirectoryPathProperty, directory);
 				this.SetValue(HasWorkingDirectoryProperty, true);
@@ -1128,8 +1143,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.canPauseResumeLogsReading.Update(false);
 					this.canReloadLogs.Update(false);
 					this.SetValue(HasLogReadersProperty, false);
+					this.SetValue(HasWorkingDirectoryProperty, false);
 					this.SetValue(IsLogsReadingPausedProperty, false);
 					this.SetValue(LastLogsFilteringDurationProperty, null);
+					this.SetValue(UriProperty, null);
+					this.SetValue(WorkingDirectoryNameProperty, null);
+					this.SetValue(WorkingDirectoryPathProperty, null);
 				}
 			}
 		}
@@ -1195,6 +1214,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Check whether at least one <see cref="PredefinedLogTextFilters"/> has been added to <see cref="PredefinedLogTextFilters"/> or not.
 		/// </summary>
 		public bool HasPredefinedLogTextFilters { get => this.GetValue(HasPredefinedLogTextFiltersProperty); }
+
+
+		/// <summary>
+		/// Check whether URI has been set or not.
+		/// </summary>
+		public bool HasUri { get => this.GetValue(HasUriProperty); }
 
 
 		/// <summary>
@@ -1267,6 +1292,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Check whether logs saving is on-going or not.
 		/// </summary>
 		public bool IsSavingLogs { get => this.GetValue(IsSavingLogsProperty); }
+
+
+		/// <summary>
+		/// Check whether URI is needed or not.
+		/// </summary>
+		public bool IsUriNeeded { get => this.GetValue(IsUriNeededProperty); }
 
 
 		/// <summary>
@@ -1783,6 +1814,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			{
 				this.updateLogFilterAction.Schedule();
 			}
+			else if (property == UriProperty)
+				this.SetValue(HasUriProperty, newValue != null);
 		}
 
 
@@ -1939,14 +1972,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// update state
 			this.canResetLogProfile.Update(false);
-			this.SetValue(HasWorkingDirectoryProperty, false);
 			this.SetValue(IsLogFileNeededProperty, false);
 			this.SetValue(IsReadingLogsContinuouslyProperty, false);
+			this.SetValue(IsUriNeededProperty, false);
 			this.SetValue(IsWorkingDirectoryNeededProperty, false);
 			this.UpdateIsLogsWritingAvailable(null);
 			this.UpdateValidLogLevels();
-			this.SetValue(WorkingDirectoryNameProperty, null);
-			this.SetValue(WorkingDirectoryPathProperty, null);
 
 			// clear profile
 			this.Logger.LogWarning($"Reset log profile '{profile.Name}'");
@@ -2337,6 +2368,15 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					startReadingLogs = false;
 				}
 			}
+			if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.Uri)))
+			{
+				if (!dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.Uri)))
+				{
+					this.Logger.LogDebug("Need URI, waiting for setting URI");
+					this.SetValue(IsUriNeededProperty, true);
+					startReadingLogs = false;
+				}
+			}
 			if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.WorkingDirectory))
 				|| profile.IsWorkingDirectoryNeeded)
 			{
@@ -2435,6 +2475,59 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		/// <remarks>Type of command parameter is <see cref="LogProfile"/>.</remarks>
 		public ICommand SetLogProfileCommand { get; }
+
+
+		// Set URI.
+		void SetUri(Uri? uri)
+		{
+			// check parameter and state
+			this.VerifyAccess();
+			this.VerifyDisposed();
+			if (!this.IsUriNeeded)
+				return;
+			if (uri == null)
+				throw new ArgumentNullException(nameof(uri));
+			if (!uri.IsAbsoluteUri)
+				throw new ArgumentException("Cannot set relative URI.");
+			var profile = this.LogProfile ?? throw new InternalStateCorruptedException("No log profile to set URI.");
+			var dataSourceOptions = profile.DataSourceOptions;
+			if (dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.Uri)))
+				throw new InternalStateCorruptedException($"Cannot set URI because URI is already specified.");
+
+			// check current URI
+			if (this.logReaders.IsNotEmpty())
+			{
+				if (this.logReaders.First().DataSource.CreationOptions.Uri == uri)
+				{
+					this.Logger.LogDebug("Set to same URI");
+					return;
+				}
+			}
+
+			// dispose current log readers
+			this.DisposeLogReaders(true);
+
+			this.Logger.LogDebug($"Set URI to '{uri}'");
+
+			// create data source
+			dataSourceOptions.Uri = uri;
+			var dataSource = this.CreateLogDataSourceOrNull(profile.DataSourceProvider, dataSourceOptions);
+			if (dataSource == null)
+			{
+				this.hasLogDataSourceCreationFailure = true;
+				this.checkDataSourceErrorsAction.Schedule();
+				return;
+			}
+
+			// create log reader
+			this.CreateLogReader(dataSource);
+		}
+
+
+		/// <summary>
+		/// Command to set URI.
+		/// </summary>
+		public ICommand SetUriCommand { get; }
 
 
 		// Set working directory.
@@ -2567,6 +2660,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.SetValue(ValidLogLevelsProperty, logLevels.ToList().AsReadOnly());
 			}
 		}
+
+
+		/// <summary>
+		/// Get current URI to read logs from.
+		/// </summary>
+		public Uri? Uri { get => this.GetValue(UriProperty); }
 
 
 		/// <summary>

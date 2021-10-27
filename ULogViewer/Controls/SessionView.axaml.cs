@@ -101,6 +101,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly MutableObservableBoolean canSaveLogs = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSelectMarkedLogs = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSetLogProfile = new MutableObservableBoolean();
+		readonly MutableObservableBoolean canSetUri = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSetWorkingDirectory = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canShowFileInExplorer = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canShowLogProperty = new MutableObservableBoolean();
@@ -162,6 +163,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.SaveAllLogsCommand = new Command(() => this.SaveLogs(true), this.canSaveLogs);
 			this.SaveLogsCommand = new Command(() => this.SaveLogs(false), this.canSaveLogs);
 			this.SelectAndSetLogProfileCommand = new Command(this.SelectAndSetLogProfile, this.canSetLogProfile);
+			this.SelectAndSetUriCommand = new Command(this.SelectAndSetUri, this.canSetUri);
 			this.SelectAndSetWorkingDirectoryCommand = new Command(this.SelectAndSetWorkingDirectory, this.canSetWorkingDirectory);
 			this.SelectMarkedLogsCommand = new Command(this.SelectMarkedLogs, this.canSelectMarkedLogs);
 			this.ShowFileInExplorerCommand = new Command(this.ShowFileInExplorer, this.canShowFileInExplorer);
@@ -434,6 +436,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			session.ResetLogProfileCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
 			session.SaveLogsCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
 			session.SetLogProfileCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
+			session.SetUriCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
 			session.SetWorkingDirectoryCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
 			if (session.AddLogFileCommand.CanExecute(null))
 			{
@@ -451,6 +454,19 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.canSaveLogs.Update(session.SaveLogsCommand.CanExecute(null));
 			this.canSetLogProfile.Update(session.ResetLogProfileCommand.CanExecute(null) || session.SetLogProfileCommand.CanExecute(null));
 			this.canSelectMarkedLogs.Update(session.HasMarkedLogs);
+			if (session.SetUriCommand.CanExecute(null))
+			{
+				this.canSetUri.Update(true);
+				/*
+				if (this.isWorkingDirNeededAfterLogProfileSet && this.isAttachedToLogicalTree)
+				{
+					this.isWorkingDirNeededAfterLogProfileSet = false;
+					this.autoSetWorkingDirectoryAction.Reschedule();
+				}
+				*/
+			}
+			else
+				this.canSetUri.Update(false);
 			if (session.SetWorkingDirectoryCommand.CanExecute(null))
 			{
 				this.canSetWorkingDirectory.Update(true);
@@ -976,6 +992,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.canSaveLogs.Update(false);
 			this.canSelectMarkedLogs.Update(false);
 			this.canSetLogProfile.Update(false);
+			this.canSetUri.Update(false);
 			this.canSetWorkingDirectory.Update(false);
 			this.canShowWorkingDirectoryInExplorer.Update(false);
 
@@ -1985,6 +2002,22 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.canSetLogProfile.Update(session.ResetLogProfileCommand.CanExecute(null) || session.SetLogProfileCommand.CanExecute(null));
 			else if (sender == session.SaveLogsCommand)
 				this.canSaveLogs.Update(session.SaveLogsCommand.CanExecute(null));
+			else if (sender == session.SetUriCommand)
+			{
+				if (session.SetUriCommand.CanExecute(null))
+				{
+					this.canSetUri.Update(true);
+					/*
+					if (this.isWorkingDirNeededAfterLogProfileSet && this.isAttachedToLogicalTree)
+					{
+						this.isWorkingDirNeededAfterLogProfileSet = false;
+						this.autoSetWorkingDirectoryAction.Reschedule();
+					}
+					*/
+				}
+				else
+					this.canSetUri.Update(false);
+			}
 			else if (sender == session.SetWorkingDirectoryCommand)
 			{
 				if (session.SetWorkingDirectoryCommand.CanExecute(null))
@@ -2371,23 +2404,44 @@ namespace CarinaStudio.ULogViewer.Controls
 		ICommand SelectAndSetLogProfileCommand { get; }
 
 
-		// Select all marked logs.
-		void SelectMarkedLogs()
-		{
+		// Select and set URI.
+		async void SelectAndSetUri()
+        {
+			// check state
+			if (!this.canSetUri.Value)
+				return;
+			var window = this.FindLogicalAncestorOfType<Avalonia.Controls.Window>();
+			if (window == null)
+			{
+				this.Logger.LogError("Unable to set URI without attaching to window");
+				return;
+			}
 			if (this.DataContext is not Session session)
 				return;
-			if (!this.canSelectMarkedLogs.Value)
-				return;
-			var logs = session.Logs;
-			this.logListBox.SelectedItems.Clear();
-			foreach (var log in session.MarkedLogs)
+
+			// cancel scheduled action
+			//this.autoSetWorkingDirectoryAction.Cancel();
+
+			// select URI
+			var uri = await new UriInputDialog()
 			{
-				if (logs.Contains(log))
-					this.logListBox.SelectedItems.Add(log);
-			}
-			if (this.logListBox.SelectedItems.Count > 0)
-				this.logListBox.ScrollIntoView(this.logListBox.SelectedItems[0].AsNonNull());
+				InitialUri = session.Uri,
+				Title = this.Application.GetString("SessionView.SetUri"),
+			}.ShowDialog<Uri>(window);
+			if (uri == null)
+				return;
+
+			// check state
+			if (!this.canSetUri.Value)
+				return;
+
+			// set working directory
+			session.SetUriCommand.TryExecute(uri);
 		}
+
+
+		// Commandto select and set URI.
+		ICommand SelectAndSetUriCommand { get; }
 
 
 		// Select and set working directory.
@@ -2421,12 +2475,31 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 
 			// set working directory
-			session.SetWorkingDirectoryCommand.Execute(directory);
+			session.SetWorkingDirectoryCommand.TryExecute(directory);
 		}
 
 
 		// Command to set working directory.
 		ICommand SelectAndSetWorkingDirectoryCommand { get; }
+
+
+		// Select all marked logs.
+		void SelectMarkedLogs()
+		{
+			if (this.DataContext is not Session session)
+				return;
+			if (!this.canSelectMarkedLogs.Value)
+				return;
+			var logs = session.Logs;
+			this.logListBox.SelectedItems.Clear();
+			foreach (var log in session.MarkedLogs)
+			{
+				if (logs.Contains(log))
+					this.logListBox.SelectedItems.Add(log);
+			}
+			if (this.logListBox.SelectedItems.Count > 0)
+				this.logListBox.ScrollIntoView(this.logListBox.SelectedItems[0].AsNonNull());
+		}
 
 
 		// Command to select marked logs.

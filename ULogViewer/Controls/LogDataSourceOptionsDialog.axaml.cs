@@ -57,7 +57,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		static readonly AvaloniaProperty<bool> IsSetupCommandsSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsSetupCommandsSupported));
 		static readonly AvaloniaProperty<bool> IsTeardownCommandsRequiredProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsTeardownCommandsRequired));
 		static readonly AvaloniaProperty<bool> IsTeardownCommandsSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsTeardownCommandsSupported));
-		static readonly AvaloniaProperty<bool> IsUriRequiredProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsUriRequired));
 		static readonly AvaloniaProperty<bool> IsUriSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsUriSupported));
 		static readonly AvaloniaProperty<bool> IsUserNameRequiredProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsUserNameRequired));
 		static readonly AvaloniaProperty<bool> IsUserNameSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsUserNameSupported));
@@ -241,7 +240,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		bool IsTeardownCommandsSupported { get => this.GetValue<bool>(IsTeardownCommandsSupportedProperty); }
 		bool IsUserNameRequired { get => this.GetValue<bool>(IsUserNameRequiredProperty); }
 		bool IsUserNameSupported { get => this.GetValue<bool>(IsUserNameSupportedProperty); }
-		bool IsUriRequired { get => this.GetValue<bool>(IsUriRequiredProperty); }
 		bool IsUriSupported { get => this.GetValue<bool>(IsUriSupportedProperty); }
 		bool IsWorkingDirectorySupported { get => this.GetValue<bool>(IsWorkingDirectorySupportedProperty); }
 
@@ -433,7 +431,6 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.SetValue<bool>(IsSetupCommandsSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.SetupCommands)));
 					this.SetValue<bool>(IsTeardownCommandsRequiredProperty, provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.TeardownCommands)));
 					this.SetValue<bool>(IsTeardownCommandsSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.TeardownCommands)));
-					this.SetValue<bool>(IsUriRequiredProperty, provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.Uri)));
 					this.SetValue<bool>(IsUriSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.Uri)));
 					this.SetValue<bool>(IsUserNameRequiredProperty, provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.UserName)));
 					this.SetValue<bool>(IsUserNameSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.UserName)));
@@ -455,7 +452,6 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.SetValue<bool>(IsSetupCommandsSupportedProperty, false);
 					this.SetValue<bool>(IsTeardownCommandsRequiredProperty, false);
 					this.SetValue<bool>(IsTeardownCommandsSupportedProperty, false);
-					this.SetValue<bool>(IsUriRequiredProperty, false);
 					this.SetValue<bool>(IsUriSupportedProperty, false);
 					this.SetValue<bool>(IsUserNameRequiredProperty, false);
 					this.SetValue<bool>(IsUserNameSupportedProperty, false);
@@ -481,8 +477,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (this.IsSetupCommandsRequired && this.setupCommands.IsEmpty())
 				return false;
 			if (this.IsTeardownCommandsRequired && this.teardownCommands.IsEmpty())
-				return false;
-			if (this.IsUriRequired && (this.uriTextBox.Uri == null || !this.uriTextBox.IsTextValid))
 				return false;
 			if (this.IsUserNameRequired && string.IsNullOrWhiteSpace(this.userNameTextBox.Text))
 				return false;

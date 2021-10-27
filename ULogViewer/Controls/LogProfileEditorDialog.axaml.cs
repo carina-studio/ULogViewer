@@ -649,7 +649,6 @@ namespace CarinaStudio.ULogViewer.Controls
 					case nameof(LogDataSourceOptions.Category):
 					case nameof(LogDataSourceOptions.Command):
 					case nameof(LogDataSourceOptions.QueryString):
-					case nameof(LogDataSourceOptions.Uri):
 						if (!this.dataSourceOptions.IsOptionSet(optionName))
 						{
 							this.SetValue<bool>(IsValidDataSourceOptionsProperty, false);

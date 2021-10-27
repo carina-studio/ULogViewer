@@ -112,10 +112,7 @@
 
 			<!-- URI -->
 			<StackPanel IsVisible="{Binding $parent[Window].IsUriSupported}" Orientation="Vertical">
-				<StackPanel Orientation="Horizontal">
-					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogDataSourceOptionsDialog.Uri}" VerticalAlignment="Center"/>
-					<TextBlock Classes="Dialog_TextBlock" IsVisible="{Binding $parent[Window].IsUriRequired}" Text="{DynamicResource String/LogDataSourceOptionsDialog.Required}" VerticalAlignment="Center"/>
-				</StackPanel>
+				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogDataSourceOptionsDialog.Uri}"/>
 				<asControls:UriTextBox Name="uriTextBox" Classes="Dialog_TextBox" PropertyChanged="OnEditorControlPropertyChanged"/>
 				<Separator Classes="Dialog_Separator"/>
 			</StackPanel>

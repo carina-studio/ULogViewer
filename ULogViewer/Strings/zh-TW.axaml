@@ -345,6 +345,7 @@
 	<sys:String x:Key="String/SessionView.SelectedLogCount">已選取：</sys:String>
 	<sys:String x:Key="String/SessionView.SelectMarkedLogs">選取已標記的日誌</sys:String>
 	<sys:String x:Key="String/SessionView.SetLogProfile">選取/變更日誌類型</sys:String>
+	<sys:String x:Key="String/SessionView.SetUri">選取/變更 URI</sys:String>
 	<sys:String x:Key="String/SessionView.SetWorkingDirectory">選取/變更工作目錄</sys:String>
 	<sys:String x:Key="String/SessionView.ShowFileInExplorer">在檔案總管中顯示檔案</sys:String>
 	<sys:String x:Key="String/SessionView.ShowLogProperty">檢視日誌屬性 '{0}'…</sys:String>
@@ -388,8 +389,8 @@
 	<sys:String x:Key="String/TimeSpanConverter.Seconds">{0}.{1:000} 秒</sys:String>
 
 	<!-- UriInputDialog -->
-	<sys:String x:Key="String/UriInputDialog.Message">請輸入有效的網址：</sys:String>
-	<sys:String x:Key="String/UriInputDialog.Title">網址</sys:String>
+	<sys:String x:Key="String/UriInputDialog.Message">請輸入有效的 URI：</sys:String>
+	<sys:String x:Key="String/UriInputDialog.Title">URI</sys:String>
 
 	<!-- VisibleLogPropertyEditorDialog -->
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.CustomDisplayName">手動輸入顯示名稱</sys:String>

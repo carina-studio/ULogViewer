@@ -1,7 +1,9 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using CarinaStudio.AppSuite.Controls;
+using CarinaStudio.Windows.Input;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -36,6 +38,15 @@ namespace CarinaStudio.ULogViewer.Controls
 
         // Initial URI to show,
         public Uri? InitialUri { get; set; }
+
+
+        // Key down.
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            base.OnKeyDown(e);
+            if (!e.Handled && e.Source == this.uriTextBox && e.Key == Key.Enter)
+                this.GenerateResultCommand.TryExecute();
+        }
 
 
         // Window opened

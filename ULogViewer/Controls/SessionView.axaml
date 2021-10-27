@@ -195,6 +195,11 @@
 							<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing/Icon.AddFile}"/>
 						</Button>
 
+						<!-- Set URI -->
+						<Button Classes="ToolBar_Button" Command="{Binding $parent[UserControl].SelectAndSetUriCommand}" IsVisible="{Binding IsUriNeeded}" ToolTip.Tip="{DynamicResource String/SessionView.SetUri}">
+							<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing/Icon.Link}"/>
+						</Button>
+
 						<!-- Save logs -->
 						<Button Classes="ToolBar_Button" Command="{Binding $parent[UserControl].SaveLogsCommand}" IsVisible="{Binding HasLogProfile}" ToolTip.Tip="{DynamicResource String/SessionView.SaveLogs.WithShortcut}">
 							<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing/Icon.Save}"/>
