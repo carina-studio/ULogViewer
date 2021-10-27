@@ -134,7 +134,7 @@
 			<MenuItem Command="{Binding $parent[UserControl].RestartAsAdministratorCommand}" Header="{DynamicResource String/SessionView.RestartAsAdministrator}">
 				<MenuItem.Icon>
 					<Border Classes="MenuItem_Icon">
-						<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Administrator}"/>
+						<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Icon.Administrator}"/>
 					</Border>
 				</MenuItem.Icon>
 			</MenuItem>
