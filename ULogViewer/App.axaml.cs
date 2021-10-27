@@ -91,9 +91,6 @@ namespace CarinaStudio.ULogViewer
 				using var xmlReader = XmlReader.Create(stream);
 				return new NLog.Config.XmlLoggingConfiguration(xmlReader);
 			});
-#if DEBUG
-			NLog.LogManager.Configuration.AddRuleForAllLevels("methodCall");
-#endif
 			return base.OnCreateLoggerProvider();
         }
 
@@ -277,8 +274,10 @@ namespace CarinaStudio.ULogViewer
 		// Prepare starting.
 		protected override async Task OnPrepareStartingAsync()
 		{
-			// output less logs
-			if (!this.IsDebugMode)
+			// setup log output rules
+			if (this.IsDebugMode)
+				NLog.LogManager.Configuration.AddRuleForAllLevels("methodCall");
+			else
 			{
 				NLog.LogManager.Configuration.RemoveRuleByName("logAllToFile");
 				NLog.LogManager.Configuration.AddRule(NLog.LogLevel.Debug, NLog.LogLevel.Fatal, "file");
