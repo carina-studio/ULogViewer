@@ -197,7 +197,11 @@
 
 						<!-- Set URI -->
 						<Button Classes="ToolBar_Button" Command="{Binding $parent[UserControl].SelectAndSetUriCommand}" IsVisible="{Binding IsUriNeeded}" ToolTip.Tip="{DynamicResource String/SessionView.SetUri}">
-							<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing/Icon.Link}"/>
+							<DrawingPresenter Classes="Icon">
+								<DrawingPresenter.Drawing>
+									<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/LogProfile.Network}"/>
+								</DrawingPresenter.Drawing>
+							</DrawingPresenter>
 						</Button>
 
 						<!-- Save logs -->
@@ -466,7 +470,7 @@
 					<iaCore:ChangePropertyAction PropertyName="Background" Value="{StaticResource Brush/SessionView.StatusBar.Background.Warning}"/>
 				</iaCore:DataTriggerBehavior>
 			</ia:Interaction.Behaviors>
-			<Grid ColumnDefinitions="Auto,Auto,Auto,Auto,*,Auto,Auto,Auto,Auto,Auto,Auto">
+			<Grid ColumnDefinitions="Auto,Auto,Auto,Auto,*,Auto,Auto,Auto,Auto,Auto,Auto,Auto">
 
 				<!-- Empty view to reserve space -->
 				<TextBlock Classes="StatusBar_TextBlock" Grid.ColumnSpan="5" Text="{DynamicResource String/SessionView.AllLogCount}" Opacity="0"/>
@@ -552,8 +556,29 @@
 					<TextBlock Classes="StatusBar_TextBlock" Text="{DynamicResource String/SessionView.WaitingForDataSources}"/>
 				</StackPanel>
 
+				<!-- URI -->
+				<StackPanel Grid.Column="8" IsVisible="{Binding HasUri}" Orientation="Horizontal">
+					<Separator Classes="StatusBar_Separator"/>
+					<Border Classes="StatusBar_Icon">
+						<DrawingPresenter Classes="Icon">
+							<DrawingPresenter.Drawing>
+								<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/LogProfile.Network}"/>
+							</DrawingPresenter.Drawing>
+						</DrawingPresenter>
+					</Border>
+					<TextBlock Classes="StatusBar_TextBlock" ToolTip.Placement="Left" ToolTip.Tip="{Binding Uri}">
+						<TextBlock.Text>
+							<MultiBinding StringFormat="{}{0}://{1}:{2}">
+								<Binding Path="Uri.Scheme"/>
+								<Binding Path="Uri.Host"/>
+								<Binding Path="Uri.Port"/>
+							</MultiBinding>
+						</TextBlock.Text>
+					</TextBlock>
+				</StackPanel>
+
 				<!-- Working directory -->
-				<StackPanel Grid.Column="8" IsVisible="{Binding HasWorkingDirectory}" Orientation="Horizontal">
+				<StackPanel Grid.Column="9" IsVisible="{Binding HasWorkingDirectory}" Orientation="Horizontal">
 					<Separator Classes="StatusBar_Separator"/>
 					<ToggleButton Name="workingDirectoryActionsButton" Classes="StatusBar_ToggleButton" Command="{Binding $parent[UserControl].ShowWorkingDirectoryActions}" ToolTip.Placement="Left" ToolTip.Tip="{Binding WorkingDirectoryPath}">
 						<StackPanel Orientation="Horizontal">
@@ -577,7 +602,7 @@
 				</StackPanel>
 
 				<!-- Error message -->
-				<StackPanel Grid.Column="9" IsVisible="{Binding HasAllDataSourceErrors}" Orientation="Horizontal">
+				<StackPanel Grid.Column="10" IsVisible="{Binding HasAllDataSourceErrors}" Orientation="Horizontal">
 					<Separator Classes="StatusBar_Separator"/>
 					<Border Classes="StatusBar_Icon">
 						<DrawingPresenter Classes="Icon">
@@ -588,7 +613,7 @@
 					</Border>
 					<TextBlock Classes="StatusBar_TextBlock" Text="{DynamicResource String/SessionView.HasAllDataSourceErrors}"/>
 				</StackPanel>
-				<StackPanel Grid.Column="9" IsVisible="{Binding HasPartialDataSourceErrors}" Orientation="Horizontal">
+				<StackPanel Grid.Column="10" IsVisible="{Binding HasPartialDataSourceErrors}" Orientation="Horizontal">
 					<Border Classes="StatusBar_Icon">
 						<DrawingPresenter Classes="Icon">
 							<DrawingPresenter.Drawing>
@@ -600,7 +625,7 @@
 				</StackPanel>
 
 				<!-- Process info -->
-				<StackPanel Grid.Column="10" IsVisible="{Binding $parent[UserControl].IsProcessInfoVisible}" Orientation="Horizontal">
+				<StackPanel Grid.Column="11" IsVisible="{Binding $parent[UserControl].IsProcessInfoVisible}" Orientation="Horizontal">
 					<Separator Classes="StatusBar_Separator"/>
 					<StackPanel IsVisible="{Binding $parent[UserControl].Application.IsDebugMode, Mode=OneTime}" Orientation="Horizontal">
 						<Border Classes="StatusBar_Icon" ToolTip.Tip="{DynamicResource String/SessionView.CpuUsage}">
