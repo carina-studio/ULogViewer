@@ -1,5 +1,7 @@
 ﻿using CarinaStudio.AppSuite;
+using CarinaStudio.Threading;
 using Microsoft.Extensions.Logging;
+using NLog.Extensions.Logging;
 using System;
 using System.Threading;
 
@@ -16,21 +18,43 @@ namespace CarinaStudio.ULogViewer
 		public static new TestApp Current { get => (TestApp)MockAppSuiteApplication.Current; }
 
 
-        /// <summary>
-        /// Initialize instance.
-        /// </summary>
-        public static new void Initialize() => MockAppSuiteApplication.Initialize(() => new TestApp());
+		/// <summary>
+		/// Initialize instance.
+		/// </summary>
+		public static new void Initialize()
+		{
+			// create instance
+			MockAppSuiteApplication.Initialize(() => new TestApp());
+			var app = Current;
+
+			// initialize
+			var syncLock = new object();
+			lock (syncLock)
+			{
+				Current.SynchronizationContext.Post(() =>
+				{
+					Logs.DataSources.LogDataSourceProviders.Initialize(app);
+					lock (syncLock)
+						Monitor.Pulse(syncLock);
+				});
+				Monitor.Wait(syncLock);
+			}
+		}
 
 
 		/// <inheritdoc/>
 		public bool IsTesting => true;
 
 
-		/// <summary>
-		/// Entry.
-		/// </summary>
-		/// <param name="args">Arguments.</param>
-		public static void Main(string[] args)
+		/// <inheritdoc/>
+		public override ILoggerFactory LoggerFactory { get; } = new NLogLoggerFactory();
+
+
+        /// <summary>
+        /// Entry.
+        /// </summary>
+        /// <param name="args">Arguments.</param>
+        public static void Main(string[] args)
 		{
 			// build application
 			Initialize();
@@ -41,7 +65,7 @@ namespace CarinaStudio.ULogViewer
 			var logger = app.LoggerFactory.CreateLogger(nameof(TestApp));
 			for (var i = 1; i < int.MaxValue; ++i)
 			{
-				logger.LogTrace($"Log #{i}");
+				logger.LogDebug($"Log #{i}");
 				Thread.Sleep(1000);
 			}
 		}
