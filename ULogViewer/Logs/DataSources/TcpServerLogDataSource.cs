@@ -85,13 +85,20 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// </summary>
 		/// <param name="provider">Application.</param>
 		/// <param name="options">Options.</param>
-		public TcpServerLogDataSource(TcpServerLogDataSourceProvider provider, LogDataSourceOptions options) : base(provider, options)
+		public TcpServerLogDataSource(TcpServerLogDataSourceProvider provider, LogDataSourceOptions options) : base(provider, CheckCreationOptions(options))
 		{
 			var uri = options.Uri;
 			if (uri == null)
 				throw new ArgumentException("No URI specified.");
-			if (uri.Scheme != "tcp")
-				throw new ArgumentException($"Invalid URI scheme: {uri.Scheme}.");
+		}
+
+
+		// Check and correct creation options.
+		static LogDataSourceOptions CheckCreationOptions(LogDataSourceOptions options)
+		{
+			if (options.Uri != null && options.Uri.Scheme != "tcp")
+				options.Uri = new UriBuilder(options.Uri) { Scheme = "tcp" }.Uri;
+			return options;
 		}
 
 
