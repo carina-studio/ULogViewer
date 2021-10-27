@@ -235,6 +235,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.OnPropertyChanged(nameof(SelectLogFilesWhenNeeded));
 			else if (key == SettingKeys.SelectLogProfileForNewSession)
 				this.OnPropertyChanged(nameof(SelectLogProfileForNewSession));
+			else if (key == SettingKeys.SelectUriWhenNeeded)
+				this.OnPropertyChanged(nameof(SelectUriWhenNeeded));
 			else if (key == SettingKeys.SelectWorkingDirectoryWhenNeeded)
 				this.OnPropertyChanged(nameof(SelectWorkingDirectoryWhenNeeded));
 			else if (key == SettingKeys.ShowProcessInfo)
@@ -282,6 +284,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			get => this.Settings.GetValueOrDefault(SettingKeys.SelectLogProfileForNewSession);
 			set => this.Settings.SetValue<bool>(SettingKeys.SelectLogProfileForNewSession, value);
+		}
+
+
+		/// <summary>
+		/// Get or set whether to select URI immediately when they are needed or not.
+		/// </summary>
+		public bool SelectUriWhenNeeded
+		{
+			get => this.Settings.GetValueOrDefault(SettingKeys.SelectUriWhenNeeded);
+			set => this.Settings.SetValue<bool>(SettingKeys.SelectUriWhenNeeded, value);
 		}
 
 

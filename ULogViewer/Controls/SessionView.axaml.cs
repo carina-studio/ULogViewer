@@ -87,6 +87,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Fields.
 		readonly ScheduledAction autoAddLogFilesAction;
+		readonly ScheduledAction autoSetUriAction;
 		readonly ScheduledAction autoSetWorkingDirectoryAction;
 		readonly MutableObservableBoolean canAddLogFiles = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canCopyLogProperty = new MutableObservableBoolean();
@@ -114,6 +115,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		bool isRestartingAsAdminConfirmed;
 		bool isSelectingFileToSaveLogs;
 		bool isTidLogPropertyVisible;
+		bool isUriNeededAfterLogProfileSet;
 		bool isWorkingDirNeededAfterLogProfileSet;
 		Control? lastClickedLogPropertyView;
 		readonly List<ColumnDefinition> logHeaderColumns = new List<ColumnDefinition>();
@@ -281,6 +283,12 @@ namespace CarinaStudio.ULogViewer.Controls
 					return;
 				this.AddLogFiles();
 			});
+			this.autoSetUriAction = new ScheduledAction(() =>
+			{
+				if (this.DataContext is not Session session || session.HasLogReaders)
+					return;
+				this.SelectAndSetUri();
+			});
 			this.autoSetWorkingDirectoryAction = new ScheduledAction(() =>
 			{
 				if (this.DataContext is not Session session || session.HasLogReaders)
@@ -424,6 +432,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.SetValue<bool>(HasLogProfileProperty, true);
 				if (session.IsLogFileNeeded)
 					this.isLogFileNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(SettingKeys.SelectLogFilesWhenNeeded);
+				else if (session.IsUriNeeded)
+					this.isUriNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(SettingKeys.SelectUriWhenNeeded);
 				else if (session.IsWorkingDirectoryNeeded)
 					this.isWorkingDirNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(SettingKeys.SelectWorkingDirectoryWhenNeeded);
 				this.OnLogProfileSet(profile);
@@ -457,13 +467,11 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (session.SetUriCommand.CanExecute(null))
 			{
 				this.canSetUri.Update(true);
-				/*
-				if (this.isWorkingDirNeededAfterLogProfileSet && this.isAttachedToLogicalTree)
+				if (this.isUriNeededAfterLogProfileSet && this.isAttachedToLogicalTree)
 				{
-					this.isWorkingDirNeededAfterLogProfileSet = false;
-					this.autoSetWorkingDirectoryAction.Reschedule();
+					this.isUriNeededAfterLogProfileSet = false;
+					this.autoSetUriAction.Reschedule();
 				}
-				*/
 			}
 			else
 				this.canSetUri.Update(false);
@@ -1337,6 +1345,11 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.isLogFileNeededAfterLogProfileSet = false;
 				this.autoAddLogFilesAction.Reschedule();
 			}
+			else if (this.isUriNeededAfterLogProfileSet)
+			{
+				this.isUriNeededAfterLogProfileSet = false;
+				this.autoSetUriAction.Reschedule();
+			}
 			else if (this.isWorkingDirNeededAfterLogProfileSet)
 			{
 				this.isWorkingDirNeededAfterLogProfileSet = false;
@@ -2007,13 +2020,11 @@ namespace CarinaStudio.ULogViewer.Controls
 				if (session.SetUriCommand.CanExecute(null))
 				{
 					this.canSetUri.Update(true);
-					/*
-					if (this.isWorkingDirNeededAfterLogProfileSet && this.isAttachedToLogicalTree)
+					if (this.isUriNeededAfterLogProfileSet && this.isAttachedToLogicalTree)
 					{
-						this.isWorkingDirNeededAfterLogProfileSet = false;
-						this.autoSetWorkingDirectoryAction.Reschedule();
+						this.isUriNeededAfterLogProfileSet = false;
+						this.autoSetUriAction.Reschedule();
 					}
-					*/
 				}
 				else
 					this.canSetUri.Update(false);
@@ -2364,8 +2375,10 @@ namespace CarinaStudio.ULogViewer.Controls
 			// reset log profile
 			this.isLogFileNeededAfterLogProfileSet = false;
 			this.isRestartingAsAdminConfirmed = false;
+			this.isUriNeededAfterLogProfileSet = false;
 			this.isWorkingDirNeededAfterLogProfileSet = false;
 			this.autoAddLogFilesAction.Cancel();
+			this.autoSetUriAction.Cancel();
 			this.autoSetWorkingDirectoryAction.Cancel();
 			if (session.ResetLogProfileCommand.CanExecute(null))
 				session.ResetLogProfileCommand.Execute(null);
@@ -2385,6 +2398,12 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.isLogFileNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(SettingKeys.SelectLogFilesWhenNeeded);
 				if (this.isLogFileNeededAfterLogProfileSet)
 					this.autoAddLogFilesAction.Schedule();
+			}
+			else if (session.IsUriNeeded)
+			{
+				this.isUriNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(SettingKeys.SelectUriWhenNeeded);
+				if (this.isUriNeededAfterLogProfileSet)
+					this.autoSetUriAction.Schedule();
 			}
 			else if (session.IsWorkingDirectoryNeeded)
 			{
