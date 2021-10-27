@@ -34,10 +34,6 @@ namespace CarinaStudio.ULogViewer
 		static readonly SettingKey<string> LegacyThemeModeSettingKey = new SettingKey<string>("ThemeMode", "");
 
 
-		// Fields.
-		bool isInitBeforeShowingMainWindowsCompleted;
-
-
 		// Constructor.
 		public App()
 		{
@@ -45,7 +41,8 @@ namespace CarinaStudio.ULogViewer
 			this.Name = "ULogViewer";
 
 			// check Linux distribution
-			this.Logger.LogDebug($"Linux distribution: {Platform.LinuxDistribution}");
+			if (Platform.IsLinux)
+				this.Logger.LogDebug($"Linux distribution: {Platform.LinuxDistribution}");
 		}
 
 
@@ -60,27 +57,6 @@ namespace CarinaStudio.ULogViewer
 
 		// Initialize.
 		public override void Initialize() => AvaloniaXamlLoader.Load(this);
-
-
-		// Initialize before showing/restoring main windows.
-		async Task InitializeBeforeShowingMainWindows()
-        {
-			// check state
-			if (this.isInitBeforeShowingMainWindowsCompleted)
-				return;
-			this.isInitBeforeShowingMainWindowsCompleted = true;
-
-			// initialize log data source providers
-			this.UpdateSplashWindowMessage(this.GetStringNonNull("SplashWindow.InitializeLogProfiles"));
-			LogDataSourceProviders.Initialize(this);
-
-			// initialize log profiles
-			await LogProfiles.InitializeAsync(this);
-
-			// initialize predefined log text filters
-			this.UpdateSplashWindowMessage(this.GetStringNonNull("SplashWindow.InitializePredefinedLogTextFilters"));
-			await PredefinedLogTextFilters.InitializeAsync(this);
-		}
 
 
 		// Support multi-instances.
@@ -311,8 +287,16 @@ namespace CarinaStudio.ULogViewer
 			// call base
 			await base.OnPrepareStartingAsync();
 
-			// initialize
-			await this.InitializeBeforeShowingMainWindows();
+			// initialize log data source providers
+			this.UpdateSplashWindowMessage(this.GetStringNonNull("SplashWindow.InitializeLogProfiles"));
+			LogDataSourceProviders.Initialize(this);
+
+			// initialize log profiles
+			await LogProfiles.InitializeAsync(this);
+
+			// initialize predefined log text filters
+			this.UpdateSplashWindowMessage(this.GetStringNonNull("SplashWindow.InitializePredefinedLogTextFilters"));
+			await PredefinedLogTextFilters.InitializeAsync(this);
 
 			// show main window
 			if (!this.IsRestoringMainWindowsRequested)
@@ -328,21 +312,6 @@ namespace CarinaStudio.ULogViewer
 #else
 			return base.OnSelectEnteringDebugMode();
 #endif
-        }
-
-
-		/// <inheritdoc/>.
-        protected override async void OnRestoreMainWindows()
-        {
-			// initialize
-			await this.InitializeBeforeShowingMainWindows();
-
-			// call base
-			base.OnRestoreMainWindows();
-
-			// make sure at least one windows is shown
-			if (this.MainWindows.IsEmpty())
-				this.ShowMainWindow();
         }
 
 
