@@ -1,4 +1,5 @@
-﻿using CarinaStudio.Collections;
+﻿using CarinaStudio.AppSuite;
+using CarinaStudio.Collections;
 using CarinaStudio.Tests;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using NUnit.Framework;
@@ -16,7 +17,7 @@ namespace CarinaStudio.ULogViewer.Logs
 	/// Tests of <see cref="LogReader"/>.
 	/// </summary>
 	[TestFixture]
-	class LogReaderTests : AppBasedTests
+	class LogReaderTests : ApplicationBasedTests
 	{
 		// Constants.
 		const string TimestampFormat = "yyyy-MM-dd HH-mm-ss.SSS";
@@ -59,7 +60,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		[Test]
 		public void ContinuousReadingLogsFromFileTest()
 		{
-			this.AsyncTestOnApplicationThread(async () =>
+			this.TestOnApplicationThread(async () =>
 			{
 				if (!LogDataSourceProviders.TryFindProviderByName("File", out var provider) || provider == null)
 					throw new AssertionException("Cannot find file log data source provider.");
@@ -74,7 +75,7 @@ namespace CarinaStudio.ULogViewer.Logs
 					using var source = provider.CreateSource(options);
 
 					// create log reader
-					using var logReader = new LogReader(source)
+					using var logReader = new LogReader(source, Task.Factory)
 					{
 						IsContinuousReading = true,
 						LogLevelMap = LogLevelMap,
@@ -186,7 +187,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		[Test]
 		public void MaxLogCountTest()
 		{
-			this.AsyncTestOnApplicationThread(async () =>
+			this.TestOnApplicationThread(async () =>
 			{
 				// prepare source
 				var logCount = 256;
@@ -199,7 +200,7 @@ namespace CarinaStudio.ULogViewer.Logs
 				using var source = provider.CreateSource(options);
 
 				// create log reader
-				using var logReader1 = new LogReader(source)
+				using var logReader1 = new LogReader(source, Task.Factory)
 				{
 					DropLogCount = 1024,
 					IsContinuousReading = true,
@@ -219,7 +220,7 @@ namespace CarinaStudio.ULogViewer.Logs
 				logReader1.Dispose();
 
 				// create log reader
-				using var logReader2 = new LogReader(source)
+				using var logReader2 = new LogReader(source, Task.Factory)
 				{
 					IsContinuousReading = true,
 					LogLevelMap = LogLevelMap,
@@ -238,7 +239,7 @@ namespace CarinaStudio.ULogViewer.Logs
 				logReader2.Dispose();
 
 				// create log reader
-				using var logReader3 = new LogReader(source)
+				using var logReader3 = new LogReader(source, Task.Factory)
 				{
 					DropLogCount = 4096,
 					IsContinuousReading = true,
@@ -266,7 +267,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		[Test]
 		public void PauseReadingLogsTest()
 		{
-			this.AsyncTestOnApplicationThread(async () =>
+			this.TestOnApplicationThread(async () =>
 			{
 				// prepare source
 				var logCount = 256;
@@ -279,7 +280,7 @@ namespace CarinaStudio.ULogViewer.Logs
 				using var source = provider.CreateSource(options);
 
 				// create log reader
-				using var logReader = new LogReader(source)
+				using var logReader = new LogReader(source, Task.Factory)
 				{
 					IsContinuousReading = true,
 					LogLevelMap = LogLevelMap,
@@ -321,7 +322,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		[Test]
 		public void ReadingLogsFromFileTest()
 		{
-			this.AsyncTestOnApplicationThread(async () =>
+			this.TestOnApplicationThread(async () =>
 			{
 				if (!LogDataSourceProviders.TryFindProviderByName("File", out var provider) || provider == null)
 					throw new AssertionException("Cannot find file log data source provider.");
@@ -336,7 +337,7 @@ namespace CarinaStudio.ULogViewer.Logs
 					using var source = provider.CreateSource(options);
 
 					// create log reader
-					using var logReader1 = new LogReader(source)
+					using var logReader1 = new LogReader(source, Task.Factory)
 					{
 						LogLevelMap = LogLevelMap,
 						LogPatterns = LogPatterns,
@@ -367,7 +368,7 @@ namespace CarinaStudio.ULogViewer.Logs
 					Assert.AreEqual(LogReaderState.Disposed, logReader1.State);
 
 					// create log reader
-					using var logReader2 = new LogReader(source)
+					using var logReader2 = new LogReader(source, Task.Factory)
 					{
 						LogLevelMap = LogLevelMap,
 						LogPatterns = new LogPattern[] { 
@@ -393,7 +394,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		[Test]
 		public void ReadingLogsFromInvalidFileTest()
 		{
-			this.AsyncTestOnApplicationThread(async () =>
+			this.TestOnApplicationThread(async () =>
 			{
 				// prepare source
 				var options = new LogDataSourceOptions() { FileName = "Invalid" };
@@ -404,7 +405,7 @@ namespace CarinaStudio.ULogViewer.Logs
 				using var source = provider.CreateSource(options);
 
 				// create log reader
-				using var logReader1 = new LogReader(source)
+				using var logReader1 = new LogReader(source, Task.Factory)
 				{
 					LogLevelMap = LogLevelMap,
 					LogPatterns = LogPatterns,
@@ -419,7 +420,7 @@ namespace CarinaStudio.ULogViewer.Logs
 				logReader1.Dispose();
 
 				// create another log reader
-				using var logReader2 = new LogReader(source)
+				using var logReader2 = new LogReader(source, Task.Factory)
 				{
 					LogLevelMap = LogLevelMap,
 					LogPatterns = LogPatterns,
