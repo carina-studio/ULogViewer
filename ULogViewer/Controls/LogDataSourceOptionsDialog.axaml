@@ -110,6 +110,16 @@
 				<Separator Classes="Dialog_Separator"/>
 			</StackPanel>
 
+			<!-- IP endpoint -->
+			<StackPanel IsVisible="{Binding $parent[Window].IsIPEndPointSupported}">
+				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/IPEndPointInputDialog.Address}"/>
+				<asControls:IPAddressTextBox Name="ipAddressTextBox" Classes="Dialog_TextBox" PropertyChanged="OnEditorControlPropertyChanged" Watermark="{DynamicResource String/Common.IPv4OrIPv6}"/>
+				<Separator Classes="Dialog_Separator"/>
+				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/IPEndPointInputDialog.Port}"/>
+				<NumericUpDown Name="portUpDown" Classes="Dialog_NumericUpDown" Maximum="65535" Minimum="1" Value="32678"/>
+				<Separator Classes="Dialog_Separator"/>
+			</StackPanel>
+
 			<!-- URI -->
 			<StackPanel IsVisible="{Binding $parent[Window].IsUriSupported}" Orientation="Vertical">
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogDataSourceOptionsDialog.Uri}"/>
