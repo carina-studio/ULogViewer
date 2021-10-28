@@ -316,7 +316,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				jsonWriter.WriteStartObject();
 				this.Category?.Let(it => jsonWriter.WriteString(nameof(Category), it));
 				this.Command?.Let(it => jsonWriter.WriteString(nameof(Command), it));
-				this.Encoding?.Let(it => jsonWriter.WriteString(nameof(Encoding), it.ToString()));
+				this.Encoding?.Let(it => jsonWriter.WriteString(nameof(Encoding), it.WebName));
 				this.FileName?.Let(it => jsonWriter.WriteString(nameof(FileName), it));
 				this.IPEndPoint?.Let(it =>
 				{
