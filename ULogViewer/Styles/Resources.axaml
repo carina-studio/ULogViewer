@@ -10,6 +10,9 @@
 	<Thickness x:Key="Thickness/Dialog.ListBox.Item.Padding">10,5,10,5</Thickness>
 	<Thickness x:Key="Thickness/Dialog.ListBox.Item.WithInPlaceActions.Padding">10,5,20,5</Thickness>
 
+	<!-- IPEndPointInputDialog -->
+	<sys:Double x:Key="Double/IPEndPointInputDialog.Width">300</sys:Double>
+
 	<!-- JsonLogsSavingOptionsDialog -->
 	<sys:Double x:Key="Double/JsonLogsSavingOptionsDialog.ListBox.Height">200</sys:Double>
 	<sys:Double x:Key="Double/JsonLogsSavingOptionsDialog.Width">450</sys:Double>

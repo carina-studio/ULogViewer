@@ -47,6 +47,7 @@
 	<sys:String x:Key="String/Common.Delete">Delete</sys:String>
 	<sys:String x:Key="String/Common.Edit">Edit</sys:String>
 	<sys:String x:Key="String/Common.Empty">Empty</sys:String>
+	<sys:String x:Key="String/Common.IPv4OrIPv6">IPv4 or IPv6</sys:String>
 	<sys:String x:Key="String/Common.KnowMoreAbout">Know more about</sys:String>
 	<sys:String x:Key="String/Common.MoveDown">Move down</sys:String>
 	<sys:String x:Key="String/Common.MoveUp">Move up</sys:String>
@@ -69,6 +70,11 @@
 
 	<!-- FileLogDataSourceProvider -->
 	<sys:String x:Key="String/FileLogDataSourceProvider.DisplayName">File</sys:String>
+
+	<!-- IPEndPointInputDialog -->
+	<sys:String x:Key="String/IPEndPointInputDialog.Address">IP address</sys:String>
+	<sys:String x:Key="String/IPEndPointInputDialog.Port">Port</sys:String>
+	<sys:String x:Key="String/IPEndPointInputDialog.Title">IP endpoint</sys:String>
 
 	<!-- JsonLogsSavingOptionsDialog -->
 	<sys:String x:Key="String/JsonLogsSavingOptionsDialog.LogProperties">Properties of log to output</sys:String>
