@@ -20,6 +20,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -50,6 +51,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Property of <see cref="HasAllDataSourceErrors"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> HasAllDataSourceErrorsProperty = ObservableProperty.Register<Session, bool>(nameof(HasAllDataSourceErrors));
+		/// <summary>
+		/// Property of <see cref="HasIPEndPoint"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> HasIPEndPointProperty = ObservableProperty.Register<Session, bool>(nameof(HasIPEndPoint));
 		/// <summary>
 		/// Property of <see cref="HasLastLogsFilteringDuration"/>.
 		/// </summary>
@@ -91,6 +96,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<Drawing?> IconProperty = ObservableProperty.Register<Session, Drawing?>(nameof(Icon));
 		/// <summary>
+		/// Property of <see cref="IPEndPoint"/>.
+		/// </summary>
+		public static readonly ObservableProperty<IPEndPoint?> IPEndPointProperty = ObservableProperty.Register<Session, IPEndPoint?>(nameof(IPEndPoint));
+		/// <summary>
 		/// Property of <see cref="IsActivated"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsActivatedProperty = ObservableProperty.Register<Session, bool>(nameof(IsActivated));
@@ -106,6 +115,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Property of <see cref="IsFilteringLogsNeeded"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsFilteringLogsNeededProperty = ObservableProperty.Register<Session, bool>(nameof(IsFilteringLogsNeeded));
+		/// <summary>
+		/// Property of <see cref="IsIPEndPointNeeded"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> IsIPEndPointNeededProperty = ObservableProperty.Register<Session, bool>(nameof(IsIPEndPointNeeded));
 		/// <summary>
 		/// Property of <see cref="IsLogFileNeeded"/>.
 		/// </summary>
@@ -334,6 +347,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.ReloadLogsCommand = new Command(() => this.ReloadLogs(false, false), this.canReloadLogs);
 			this.ResetLogProfileCommand = new Command(this.ResetLogProfile, this.canResetLogProfile);
 			this.SaveLogsCommand = new Command<LogsSavingOptions>(this.SaveLogs, this.canSaveLogs);
+			this.SetIPEndPointCommand = new Command<IPEndPoint?>(this.SetIPEndPoint, this.GetValueAsObservable(IsIPEndPointNeededProperty));
 			this.SetLogProfileCommand = new Command<LogProfile?>(this.SetLogProfile, this.canSetLogProfile);
 			this.SetUriCommand = new Command<Uri?>(this.SetUri, this.GetValueAsObservable(IsUriNeededProperty));
 			this.SetWorkingDirectoryCommand = new Command<string?>(this.SetWorkingDirectory, this.GetValueAsObservable(IsWorkingDirectoryNeededProperty));
@@ -966,6 +980,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.canPauseResumeLogsReading.Update(profile.IsContinuousReading);
 			this.canReloadLogs.Update(true);
 			this.SetValue(UriProperty, creationOptions.Uri);
+			if (creationOptions.IsOptionSet(nameof(LogDataSourceOptions.IPEndPoint)))
+				this.SetValue(IPEndPointProperty, creationOptions.IPEndPoint);
 			if (creationOptions.IsOptionSet(nameof(LogDataSourceOptions.WorkingDirectory)))
 			{
 				var directory = creationOptions.WorkingDirectory;
@@ -1146,6 +1162,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.canReloadLogs.Update(false);
 					this.SetValue(HasLogReadersProperty, false);
 					this.SetValue(HasWorkingDirectoryProperty, false);
+					this.SetValue(IPEndPointProperty, null);
 					this.SetValue(IsLogsReadingPausedProperty, false);
 					this.SetValue(LastLogsFilteringDurationProperty, null);
 					this.SetValue(UriProperty, null);
@@ -1174,6 +1191,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Check whether errors are found in all data sources or not.
 		/// </summary>
 		public bool HasAllDataSourceErrors { get => this.GetValue(HasAllDataSourceErrorsProperty); }
+
+
+		/// <summary>
+		/// Check whether <see cref="IPEndPoint"/> is non-null or not.
+		/// </summary>
+		public bool HasIPEndPoint { get => this.GetValue(HasIPEndPointProperty); }
 
 
 		/// <summary>
@@ -1237,6 +1260,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Get current <see cref="IPEndPoint"/> to read logs from.
+		/// </summary>
+		public IPEndPoint? IPEndPoint { get => this.GetValue(IPEndPointProperty); }
+
+
+		/// <summary>
 		/// Check whether session has been activated or not.
 		/// </summary>
 		public bool IsActivated { get => this.GetValue(IsActivatedProperty); }
@@ -1258,6 +1287,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Check whether logs filtering is needed or not.
 		/// </summary>
 		public bool IsFilteringLogsNeeded { get => this.GetValue(IsFilteringLogsNeededProperty); }
+
+
+		/// <summary>
+		/// Check whether IP endpoint is needed or not.
+		/// </summary>
+		public bool IsIPEndPointNeeded { get => this.GetValue(IsIPEndPointNeededProperty); }
 
 
 		/// <summary>
@@ -1794,6 +1829,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			{
 				this.UpdateIsLogsWritingAvailable(this.LogProfile);
 			}
+			else if (property == IPEndPointProperty)
+				this.SetValue(HasIPEndPointProperty, newValue != null);
 			else if (property == IsFilteringLogsProperty
 				|| property == IsReadingLogsProperty)
 			{
@@ -1974,6 +2011,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// update state
 			this.canResetLogProfile.Update(false);
+			this.SetValue(IsIPEndPointNeededProperty, false);
 			this.SetValue(IsLogFileNeededProperty, false);
 			this.SetValue(IsReadingLogsContinuouslyProperty, false);
 			this.SetValue(IsUriNeededProperty, false);
@@ -2326,6 +2364,57 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		}
 
 
+		// Set IP endpoint.
+		void SetIPEndPoint(IPEndPoint? endPoint)
+		{
+			// check parameter and state
+			this.VerifyAccess();
+			this.VerifyDisposed();
+			if (!this.IsIPEndPointNeeded)
+				return;
+			if (endPoint == null)
+				throw new ArgumentNullException(nameof(endPoint));
+			var profile = this.LogProfile ?? throw new InternalStateCorruptedException("No log profile to set IP endpoint.");
+			var dataSourceOptions = profile.DataSourceOptions;
+			if (dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.IPEndPoint)))
+				throw new InternalStateCorruptedException($"Cannot set IP endpoint because URI is already specified.");
+
+			// check current IP endpoint
+			if (this.logReaders.IsNotEmpty())
+			{
+				if (object.Equals(this.logReaders.First().DataSource.CreationOptions.IPEndPoint, endPoint))
+				{
+					this.Logger.LogDebug("Set to same IP endpoint");
+					return;
+				}
+			}
+
+			// dispose current log readers
+			this.DisposeLogReaders(true);
+
+			this.Logger.LogDebug($"Set IP endpoint to {endPoint.Address} ({endPoint.Port})");
+
+			// create data source
+			dataSourceOptions.IPEndPoint = endPoint;
+			var dataSource = this.CreateLogDataSourceOrNull(profile.DataSourceProvider, dataSourceOptions);
+			if (dataSource == null)
+			{
+				this.hasLogDataSourceCreationFailure = true;
+				this.checkDataSourceErrorsAction.Schedule();
+				return;
+			}
+
+			// create log reader
+			this.CreateLogReader(dataSource);
+		}
+
+
+		/// <summary>
+		/// Command to set IP endpoint.
+		/// </summary>
+		public ICommand SetIPEndPointCommand { get; }
+
+
 		// Set log profile.
 		void SetLogProfile(LogProfile? profile) => this.SetLogProfile(profile, true);
 		void SetLogProfile(LogProfile? profile, bool startReadingLogs)
@@ -2367,6 +2456,15 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				{
 					this.Logger.LogDebug("No file name specified, waiting for adding file");
 					this.SetValue(IsLogFileNeededProperty, true);
+					startReadingLogs = false;
+				}
+			}
+			if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.IPEndPoint)))
+			{
+				if (!dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.IPEndPoint)))
+				{
+					this.Logger.LogDebug("No IP endpoint specified, waiting for setting IP endpoint");
+					this.SetValue(IsIPEndPointNeededProperty, true);
 					startReadingLogs = false;
 				}
 			}

@@ -22,11 +22,11 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		public override string Name => "TCP Server";
 		public override ISet<string> RequiredSourceOptions => new HashSet<string>()
 		{
-			nameof(LogDataSourceOptions.Uri),
+			nameof(LogDataSourceOptions.IPEndPoint),
 		}.AsReadOnly();
 		public override ISet<string> SupportedSourceOptions => new HashSet<string>()
 		{
-			nameof(LogDataSourceOptions.Uri),
+			nameof(LogDataSourceOptions.IPEndPoint),
 		}.AsReadOnly();
 	}
 }

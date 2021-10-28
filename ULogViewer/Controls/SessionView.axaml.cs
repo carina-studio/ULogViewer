@@ -30,6 +30,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -101,6 +102,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly MutableObservableBoolean canRestartAsAdmin = new MutableObservableBoolean(RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && !App.Current.IsRunningAsAdministrator);
 		readonly MutableObservableBoolean canSaveLogs = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSelectMarkedLogs = new MutableObservableBoolean();
+		readonly MutableObservableBoolean canSetIPEndPoint = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSetLogProfile = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSetUri = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSetWorkingDirectory = new MutableObservableBoolean();
@@ -164,6 +166,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.RestartAsAdministratorCommand = new Command(this.RestartAsAdministrator, this.canRestartAsAdmin);
 			this.SaveAllLogsCommand = new Command(() => this.SaveLogs(true), this.canSaveLogs);
 			this.SaveLogsCommand = new Command(() => this.SaveLogs(false), this.canSaveLogs);
+			this.SelectAndSetIPEndPointCommand = new Command(this.SelectAndSetIPEndPoint, this.canSetIPEndPoint);
 			this.SelectAndSetLogProfileCommand = new Command(this.SelectAndSetLogProfile, this.canSetLogProfile);
 			this.SelectAndSetUriCommand = new Command(this.SelectAndSetUri, this.canSetUri);
 			this.SelectAndSetWorkingDirectoryCommand = new Command(this.SelectAndSetWorkingDirectory, this.canSetWorkingDirectory);
@@ -445,6 +448,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			session.ReloadLogsCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
 			session.ResetLogProfileCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
 			session.SaveLogsCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
+			session.SetIPEndPointCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
 			session.SetLogProfileCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
 			session.SetUriCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
 			session.SetWorkingDirectoryCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
@@ -464,6 +468,19 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.canSaveLogs.Update(session.SaveLogsCommand.CanExecute(null));
 			this.canSetLogProfile.Update(session.ResetLogProfileCommand.CanExecute(null) || session.SetLogProfileCommand.CanExecute(null));
 			this.canSelectMarkedLogs.Update(session.HasMarkedLogs);
+			if (session.SetIPEndPointCommand.CanExecute(null))
+			{
+				this.canSetIPEndPoint.Update(true);
+				/*
+				if (this.isUriNeededAfterLogProfileSet && this.isAttachedToLogicalTree)
+				{
+					this.isUriNeededAfterLogProfileSet = false;
+					this.autoSetUriAction.Reschedule();
+				}
+				*/
+			}
+			else
+				this.canSetIPEndPoint.Update(false);
 			if (session.SetUriCommand.CanExecute(null))
 			{
 				this.canSetUri.Update(true);
@@ -991,6 +1008,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			session.MarkUnmarkLogsCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
 			session.ReloadLogsCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
 			session.SaveLogsCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
+			session.SetIPEndPointCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
 			session.SetLogProfileCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
 			session.SetLogProfileCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
 			session.SetWorkingDirectoryCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
@@ -999,6 +1017,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.canReloadLogs.Update(false);
 			this.canSaveLogs.Update(false);
 			this.canSelectMarkedLogs.Update(false);
+			this.canSetIPEndPoint.Update(false);
 			this.canSetLogProfile.Update(false);
 			this.canSetUri.Update(false);
 			this.canSetWorkingDirectory.Update(false);
@@ -2015,6 +2034,22 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.canSetLogProfile.Update(session.ResetLogProfileCommand.CanExecute(null) || session.SetLogProfileCommand.CanExecute(null));
 			else if (sender == session.SaveLogsCommand)
 				this.canSaveLogs.Update(session.SaveLogsCommand.CanExecute(null));
+			else if (sender == session.SetIPEndPointCommand)
+			{
+				if (session.SetIPEndPointCommand.CanExecute(null))
+				{
+					this.canSetIPEndPoint.Update(true);
+					/*
+					if (this.isUriNeededAfterLogProfileSet && this.isAttachedToLogicalTree)
+					{
+						this.isUriNeededAfterLogProfileSet = false;
+						this.autoSetUriAction.Reschedule();
+					}
+					*/
+				}
+				else
+					this.canSetIPEndPoint.Update(false);
+			}
 			else if (sender == session.SetUriCommand)
 			{
 				if (session.SetUriCommand.CanExecute(null))
@@ -2331,6 +2366,46 @@ namespace CarinaStudio.ULogViewer.Controls
 		ICommand SaveLogsCommand { get; }
 
 
+		// Select and set IP endpoint.
+		async void SelectAndSetIPEndPoint()
+		{
+			// check state
+			if (!this.canSetIPEndPoint.Value)
+				return;
+			var window = this.FindLogicalAncestorOfType<Avalonia.Controls.Window>();
+			if (window == null)
+			{
+				this.Logger.LogError("Unable to set IP endpoint without attaching to window");
+				return;
+			}
+			if (this.DataContext is not Session session)
+				return;
+
+			// cancel scheduled action
+			//this.autoSetWorkingDirectoryAction.Cancel();
+
+			// select IP endpoint
+			var endPoint = await new IPEndPointInputDialog()
+			{
+				InitialIPEndPoint = session.IPEndPoint,
+				Title = this.Application.GetString("SessionView.SetIPEndPoint"),
+			}.ShowDialog<IPEndPoint>(window);
+			if (endPoint == null)
+				return;
+
+			// check state
+			if (!this.canSetIPEndPoint.Value)
+				return;
+
+			// set end point
+			session.SetIPEndPointCommand.TryExecute(endPoint);
+		}
+
+
+		// Commandto select and set IP endpoint.
+		ICommand SelectAndSetIPEndPointCommand { get; }
+
+
 		/// <summary>
 		/// Select and set log profile.
 		/// </summary>
@@ -2439,7 +2514,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 
 			// cancel scheduled action
-			//this.autoSetWorkingDirectoryAction.Cancel();
+			this.autoSetUriAction.Cancel();
 
 			// select URI
 			var uri = await new UriInputDialog()
@@ -2454,7 +2529,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (!this.canSetUri.Value)
 				return;
 
-			// set working directory
+			// set URI
 			session.SetUriCommand.TryExecute(uri);
 		}
 

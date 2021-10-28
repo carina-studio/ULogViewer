@@ -362,6 +362,7 @@
 	<sys:String x:Key="String/SessionView.ScrollToLatestLog">Scroll to latest log</sys:String>
 	<sys:String x:Key="String/SessionView.SelectedLogCount">Selected: </sys:String>
 	<sys:String x:Key="String/SessionView.SelectMarkedLogs">Select marked logs</sys:String>
+	<sys:String x:Key="String/SessionView.SetIPEndPoint">Select/Change IP endpoint</sys:String>
 	<sys:String x:Key="String/SessionView.SetLogProfile">Select/Change log profile</sys:String>
 	<sys:String x:Key="String/SessionView.SetUri">Select/Change URI</sys:String>
 	<sys:String x:Key="String/SessionView.SetWorkingDirectory">Select/Change working directory</sys:String>

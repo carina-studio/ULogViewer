@@ -85,29 +85,18 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// </summary>
 		/// <param name="provider">Provider.</param>
 		/// <param name="options">Options.</param>
-		public TcpServerLogDataSource(TcpServerLogDataSourceProvider provider, LogDataSourceOptions options) : base(provider, CheckCreationOptions(options))
+		public TcpServerLogDataSource(TcpServerLogDataSourceProvider provider, LogDataSourceOptions options) : base(provider, options)
 		{
-			var uri = options.Uri;
-			if (uri == null)
-				throw new ArgumentException("No URI specified.");
-		}
-
-
-		// Check and correct creation options.
-		static LogDataSourceOptions CheckCreationOptions(LogDataSourceOptions options)
-		{
-			if (options.Uri != null && options.Uri.Scheme != "tcp")
-				options.Uri = new UriBuilder(options.Uri) { Scheme = "tcp" }.Uri;
-			return options;
+			if (options.IPEndPoint == null)
+				throw new ArgumentException("No IP endpoint specified.");
 		}
 
 
 		// Open reader.
 		protected override LogDataSourceState OpenReaderCore(CancellationToken cancellationToken, out TextReader? reader)
 		{
-			var uri = this.CreationOptions.Uri.AsNonNull();
-			var address = IPAddress.Loopback;
-			var listener = new TcpListener(address, uri.Port);
+			var endPoint = this.CreationOptions.IPEndPoint.AsNonNull();
+			var listener = new TcpListener(endPoint);
 			reader = new ReaderImpl(this, listener);
 			return LogDataSourceState.ReaderOpened;
 		}
