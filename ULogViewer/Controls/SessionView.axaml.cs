@@ -40,7 +40,7 @@ namespace CarinaStudio.ULogViewer.Controls
 	/// <summary>
 	/// View of <see cref="Session"/>.
 	/// </summary>
-	partial class SessionView : BaseView
+	partial class SessionView : UserControl<IULogViewerApplication>
 	{
 		/// <summary>
 		/// <see cref="IValueConverter"/> to convert log level to readable name.
