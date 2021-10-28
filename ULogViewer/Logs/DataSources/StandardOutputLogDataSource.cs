@@ -44,6 +44,11 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		}
 
 
+		// Constants.
+		const uint SCS_32BIT_BINARY = 0; // 32-bit Windows application
+		const uint SCS_64BIT_BINARY = 6; // 64-bit Windows application
+
+
 		// Fields.
 		volatile string? arguments;
 		volatile string? commandFileOnReady;
@@ -70,11 +75,36 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			{
 				var process = new Process().Also(process =>
 				{
+					var isSameArchExecutable = Global.Run(() =>
+					{
+						if (Platform.IsWindows)
+						{
+							try
+							{
+								if (GetBinaryType(executablePath, out var binaryType))
+								{
+									var is64BitExe = binaryType == SCS_64BIT_BINARY;
+									return Environment.Is64BitProcess == is64BitExe;
+								}
+							}
+							catch
+							{ }
+						}
+						return (bool?)null;
+					});
 					process.StartInfo.Let(it =>
 					{
-						it.Arguments = args ?? "";
+						if (isSameArchExecutable == false && Platform.IsWindows)
+						{
+							it.Arguments = $"/c \"{executablePath}\" {args}";
+							it.FileName = "cmd";
+						}
+						else
+						{
+							it.Arguments = args ?? "";
+							it.FileName = executablePath.AsNonNull();
+						}
 						it.CreateNoWindow = true;
-						it.FileName = executablePath.AsNonNull();
 						it.UseShellExecute = false;
 						it.WorkingDirectory = workingDirectory ?? "";
 					});
@@ -94,6 +124,11 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				return false;
 			}
 		}
+
+
+		// Get type of executable (Windows).
+		[DllImport("Kernel32")]
+		static extern bool GetBinaryType(string? applicationName, out uint binaryType);
 
 
 		// Reader closed.
@@ -160,13 +195,42 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				this.Logger.LogWarning("Complete executing setup commands");
 			}
 
+			// check executable type
+			var isSameArchExecutable = Global.Run(() =>
+			{
+				if (Platform.IsWindows)
+				{
+					try
+					{
+						if (GetBinaryType(this.commandFileOnReady, out var binaryType))
+						{
+							var is64BitExe = binaryType == SCS_64BIT_BINARY;
+							return Environment.Is64BitProcess == is64BitExe;
+						}
+					}
+					catch
+					{ }
+				}
+				return (bool?)null;
+			});
+
 			// start process
 			var process = new Process();
-			process.StartInfo.FileName = commandFileOnReady;
-			if (this.CreationOptions.WorkingDirectory != null)
-				process.StartInfo.WorkingDirectory = this.CreationOptions.WorkingDirectory;
-			if (this.arguments != null)
-				process.StartInfo.Arguments = this.arguments;
+			if (isSameArchExecutable == false && Platform.IsWindows)
+			{
+				process.StartInfo.FileName = "cmd";
+				if (this.CreationOptions.WorkingDirectory != null)
+					process.StartInfo.WorkingDirectory = this.CreationOptions.WorkingDirectory;
+				process.StartInfo.Arguments = $"/c \"{this.commandFileOnReady}\" {this.arguments}";
+			}
+			else
+			{
+				process.StartInfo.FileName = commandFileOnReady;
+				if (this.CreationOptions.WorkingDirectory != null)
+					process.StartInfo.WorkingDirectory = this.CreationOptions.WorkingDirectory;
+				if (this.arguments != null)
+					process.StartInfo.Arguments = this.arguments;
+			}
 			process.StartInfo.UseShellExecute = false;
 			process.StartInfo.RedirectStandardOutput = true;
 			process.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
