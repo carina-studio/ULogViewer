@@ -83,7 +83,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// <summary>
 		/// Initialize new <see cref="TcpServerLogDataSource"/> instance.
 		/// </summary>
-		/// <param name="provider">Application.</param>
+		/// <param name="provider">Provider.</param>
 		/// <param name="options">Options.</param>
 		public TcpServerLogDataSource(TcpServerLogDataSourceProvider provider, LogDataSourceOptions options) : base(provider, CheckCreationOptions(options))
 		{

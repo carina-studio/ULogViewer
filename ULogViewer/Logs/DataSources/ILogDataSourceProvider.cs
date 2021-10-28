@@ -4,12 +4,11 @@ using CarinaStudio.ULogViewer.Cryptography;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.Logs.DataSources
 {
@@ -114,6 +113,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 					&& this.Command == options.Command
 					&& this.Encoding == options.Encoding
 					&& this.FileName == options.FileName
+					&& object.Equals(this.IPEndPoint, options.IPEndPoint)
 					&& this.Password == options.Password
 					&& this.QueryString == options.QueryString
 					&& this.SetupCommands.SequenceEqual(options.SetupCommands)
@@ -141,6 +141,8 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				return this.Command.GetHashCode();
 			if (this.FileName != null)
 				return this.FileName.GetHashCode();
+			if (this.IPEndPoint != null)
+				return this.IPEndPoint.GetHashCode();
 			if (this.Uri != null)
 				return this.Uri.GetHashCode();
 			return 0;
@@ -159,6 +161,12 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				return propertyInfo?.GetValue(this);
 			return null;
 		}
+
+
+		/// <summary>
+		/// Get or set IP end point.
+		/// </summary>
+		public IPEndPoint? IPEndPoint { get; set; }
 
 
 		/// <summary>
@@ -220,6 +228,17 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 							break;
 						case nameof(FileName):
 							options.FileName = jsonProperty.Value.GetString();
+							break;
+						case nameof(IPEndPoint):
+							if (jsonProperty.Value.ValueKind == JsonValueKind.Object)
+							{
+								var jsonIPEndPoint = jsonProperty.Value;
+								var address = IPAddress.Parse(jsonIPEndPoint.GetProperty(nameof(System.Net.IPEndPoint.Address)).GetString().AsNonNull());
+								var port = jsonIPEndPoint.GetProperty(nameof(System.Net.IPEndPoint.Port)).GetInt32();
+								options.IPEndPoint = new IPEndPoint(address, port);
+							}
+							else
+								throw new JsonException($"JSON element of {nameof(IPEndPoint)} is not an object.");
 							break;
 						case nameof(Password):
 							if (crypto == null)
@@ -299,6 +318,14 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				this.Command?.Let(it => jsonWriter.WriteString(nameof(Command), it));
 				this.Encoding?.Let(it => jsonWriter.WriteString(nameof(Encoding), it.ToString()));
 				this.FileName?.Let(it => jsonWriter.WriteString(nameof(FileName), it));
+				this.IPEndPoint?.Let(it =>
+				{
+					jsonWriter.WritePropertyName(nameof(IPEndPoint));
+					jsonWriter.WriteStartObject();
+					jsonWriter.WriteString(nameof(System.Net.IPEndPoint.Address), it.Address.ToString());
+					jsonWriter.WriteNumber(nameof(System.Net.IPEndPoint.Port), it.Port);
+					jsonWriter.WriteEndObject();
+				});
 				this.Password?.Let(it =>
 				{
 					crypto = new Crypto(App.Current);
