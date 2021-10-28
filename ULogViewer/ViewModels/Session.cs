@@ -1723,6 +1723,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				case nameof(LogProfile.DataSourceProvider):
 					this.SynchronizationContext.Post(() => this.ReloadLogs(true, true));
 					break;
+				case nameof(LogProfile.Icon):
+				case nameof(LogProfile.Name):
+					this.updateTitleAndIconAction.Schedule();
+					break;
 				case nameof(LogProfile.IsContinuousReading):
 					this.SetValue(IsReadingLogsContinuouslyProperty, this.LogProfile.AsNonNull().IsContinuousReading);
 					goto case nameof(LogProfile.LogPatterns);
@@ -1741,9 +1745,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				case nameof(LogProfile.TimestampEncodingForReading):
 				case nameof(LogProfile.TimestampFormatForReading):
 					this.SynchronizationContext.Post(() => this.ReloadLogs(true, false));
-					break;
-				case nameof(LogProfile.Name):
-					this.updateTitleAndIconAction.Schedule();
 					break;
 				case nameof(LogProfile.VisibleLogProperties):
 					this.SynchronizationContext.Post(() => this.ReloadLogs(false, true));
