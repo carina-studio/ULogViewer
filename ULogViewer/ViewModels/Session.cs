@@ -804,6 +804,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				return;
 			var app = this.Application as App ?? throw new InternalStateCorruptedException("No application.");
 
+			// sort logs
+			if (!logs.IsSorted(this.compareDisplayableLogsDelegate))
+				logs = logs.ToArray().Also(it => Array.Sort(it, this.compareDisplayableLogsDelegate));
+
 			// prepare log writer
 			using var dataOutput = new StringLogDataOutput(app);
 			using var logWriter = this.CreateRawLogWriter(dataOutput);
