@@ -131,6 +131,11 @@
 				<ToggleSwitch Classes="Dialog_ToggleSwitch" IsChecked="{Binding SelectLogFilesWhenNeeded, Mode=TwoWay}"/>
 				<Separator Classes="Dialog_Separator"/>
 
+				<!-- Select IP endpoint when needed -->
+				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/AppOptionsDialog.SelectIPEndPointWhenNeeded}"/>
+				<ToggleSwitch Classes="Dialog_ToggleSwitch" IsChecked="{Binding SelectIPEndPointWhenNeeded, Mode=TwoWay}"/>
+				<Separator Classes="Dialog_Separator"/>
+
 				<!-- Set URI when needed -->
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/AppOptionsDialog.SelectUriWhenNeeded}"/>
 				<ToggleSwitch Classes="Dialog_ToggleSwitch" IsChecked="{Binding SelectUriWhenNeeded, Mode=TwoWay}"/>

@@ -231,6 +231,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.OnPropertyChanged(nameof(MaxDisplayLineCountForEachLog));
 			else if (key == SettingKeys.SaveMemoryAggressively)
 				this.OnPropertyChanged(nameof(SaveMemoryAggressively));
+			else if (key == SettingKeys.SelectIPEndPointWhenNeeded)
+				this.OnPropertyChanged(nameof(SelectIPEndPointWhenNeeded));
 			else if (key == SettingKeys.SelectLogFilesWhenNeeded)
 				this.OnPropertyChanged(nameof(SelectLogFilesWhenNeeded));
 			else if (key == SettingKeys.SelectLogProfileForNewSession)
@@ -264,6 +266,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			get => this.Settings.GetValueOrDefault(SettingKeys.SaveMemoryAggressively);
 			set => this.Settings.SetValue<bool>(SettingKeys.SaveMemoryAggressively, value);
+		}
+
+
+		/// <summary>
+		/// Get or set whether to select IP endpoint immediately when they are needed or not.
+		/// </summary>
+		public bool SelectIPEndPointWhenNeeded
+		{
+			get => this.Settings.GetValueOrDefault(SettingKeys.SelectIPEndPointWhenNeeded);
+			set => this.Settings.SetValue<bool>(SettingKeys.SelectIPEndPointWhenNeeded, value);
 		}
 
 

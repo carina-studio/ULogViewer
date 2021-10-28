@@ -47,6 +47,10 @@ namespace CarinaStudio.ULogViewer
 		/// </summary>
 		public static readonly SettingKey<bool> SaveMemoryAggressively = new SettingKey<bool>(nameof(SaveMemoryAggressively), false);
 		/// <summary>
+		/// Select IP endpoint immediately when they are needed.
+		/// </summary>
+		public static readonly SettingKey<bool> SelectIPEndPointWhenNeeded = new SettingKey<bool>(nameof(SelectIPEndPointWhenNeeded), true);
+		/// <summary>
 		/// Select log files immediately when they are needed.
 		/// </summary>
 		public static readonly SettingKey<bool> SelectLogFilesWhenNeeded = new SettingKey<bool>(nameof(SelectLogFilesWhenNeeded), false);

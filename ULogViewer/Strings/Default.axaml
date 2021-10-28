@@ -16,6 +16,7 @@
 	<sys:String x:Key="String/AppOptionsDialog.MaxDisplayLineCountForEachLog">Maximum number of lines to display for each log</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SaveMemoryAggressively">Save memory usage aggressively</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SaveMemoryAggressively.Description">Keep memory usage as low as possible. It will reduce speed of logs reading/filtering and UI smoothness.</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.SelectIPEndPointWhenNeeded">Show IP endpoint input when IP endpoint is needed</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectLogFilesWhenNeeded">Show file selector when log files are needed</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectLogProfileForNewSession">Show log profile selector after creating new tab</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectUriWhenNeeded">Show URI input when URI is needed</sys:String>

@@ -88,6 +88,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Fields.
 		readonly ScheduledAction autoAddLogFilesAction;
+		readonly ScheduledAction autoSetIPEndPointAction;
 		readonly ScheduledAction autoSetUriAction;
 		readonly ScheduledAction autoSetWorkingDirectoryAction;
 		readonly MutableObservableBoolean canAddLogFiles = new MutableObservableBoolean();
@@ -111,6 +112,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly MutableObservableBoolean canShowWorkingDirectoryInExplorer = new MutableObservableBoolean();
 		readonly MenuItem copyLogPropertyMenuItem;
 		bool isAttachedToLogicalTree;
+		bool isIPEndPointNeededAfterLogProfileSet;
 		bool isLogFileNeededAfterLogProfileSet;
 		bool isPidLogPropertyVisible;
 		bool isPointerPressedOnLogListBox;
@@ -286,6 +288,12 @@ namespace CarinaStudio.ULogViewer.Controls
 					return;
 				this.AddLogFiles();
 			});
+			this.autoSetIPEndPointAction = new ScheduledAction(() =>
+			{
+				if (this.DataContext is not Session session || session.HasLogReaders)
+					return;
+				this.SelectAndSetIPEndPoint();
+			});
 			this.autoSetUriAction = new ScheduledAction(() =>
 			{
 				if (this.DataContext is not Session session || session.HasLogReaders)
@@ -433,7 +441,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				this.canEditLogProfile.Update(!profile.IsBuiltIn);
 				this.SetValue<bool>(HasLogProfileProperty, true);
-				if (session.IsLogFileNeeded)
+				if (session.IsIPEndPointNeeded)
+					this.isIPEndPointNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(SettingKeys.SelectIPEndPointWhenNeeded);
+				else if (session.IsLogFileNeeded)
 					this.isLogFileNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(SettingKeys.SelectLogFilesWhenNeeded);
 				else if (session.IsUriNeeded)
 					this.isUriNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(SettingKeys.SelectUriWhenNeeded);
@@ -471,13 +481,11 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (session.SetIPEndPointCommand.CanExecute(null))
 			{
 				this.canSetIPEndPoint.Update(true);
-				/*
-				if (this.isUriNeededAfterLogProfileSet && this.isAttachedToLogicalTree)
+				if (this.isIPEndPointNeededAfterLogProfileSet && this.isAttachedToLogicalTree)
 				{
-					this.isUriNeededAfterLogProfileSet = false;
-					this.autoSetUriAction.Reschedule();
+					this.isIPEndPointNeededAfterLogProfileSet = false;
+					this.autoSetIPEndPointAction.Reschedule();
 				}
-				*/
 			}
 			else
 				this.canSetIPEndPoint.Update(false);
@@ -1359,7 +1367,12 @@ namespace CarinaStudio.ULogViewer.Controls
 			((INotifyCollectionChanged)ViewModels.PredefinedLogTextFilters.All).CollectionChanged += this.OnPredefinedLogTextFiltersChanged;
 
 			// select log files or working directory
-			if (this.isLogFileNeededAfterLogProfileSet)
+			if (this.isIPEndPointNeededAfterLogProfileSet)
+			{
+				this.isIPEndPointNeededAfterLogProfileSet = false;
+				this.autoSetIPEndPointAction.Reschedule();
+			}
+			else if (this.isLogFileNeededAfterLogProfileSet)
 			{
 				this.isLogFileNeededAfterLogProfileSet = false;
 				this.autoAddLogFilesAction.Reschedule();
@@ -2039,13 +2052,11 @@ namespace CarinaStudio.ULogViewer.Controls
 				if (session.SetIPEndPointCommand.CanExecute(null))
 				{
 					this.canSetIPEndPoint.Update(true);
-					/*
-					if (this.isUriNeededAfterLogProfileSet && this.isAttachedToLogicalTree)
+					if (this.isIPEndPointNeededAfterLogProfileSet && this.isAttachedToLogicalTree)
 					{
-						this.isUriNeededAfterLogProfileSet = false;
-						this.autoSetUriAction.Reschedule();
+						this.isIPEndPointNeededAfterLogProfileSet = false;
+						this.autoSetIPEndPointAction.Reschedule();
 					}
-					*/
 				}
 				else
 					this.canSetIPEndPoint.Update(false);
@@ -2382,7 +2393,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 
 			// cancel scheduled action
-			//this.autoSetWorkingDirectoryAction.Cancel();
+			this.autoSetIPEndPointAction.Cancel();
 
 			// select IP endpoint
 			var endPoint = await new IPEndPointInputDialog()
@@ -2448,6 +2459,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.ResetLogFilters();
 
 			// reset log profile
+			this.isIPEndPointNeededAfterLogProfileSet = false;
 			this.isLogFileNeededAfterLogProfileSet = false;
 			this.isRestartingAsAdminConfirmed = false;
 			this.isUriNeededAfterLogProfileSet = false;
@@ -2468,7 +2480,13 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.Logger.LogError("Unable to set log profile to session");
 				return;
 			}
-			if (session.IsLogFileNeeded)
+			if (session.IsIPEndPointNeeded)
+			{
+				this.isIPEndPointNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(SettingKeys.SelectIPEndPointWhenNeeded);
+				if (this.isIPEndPointNeededAfterLogProfileSet)
+					this.autoSetIPEndPointAction.Schedule();
+			}
+			else if (session.IsLogFileNeeded)
 			{
 				this.isLogFileNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(SettingKeys.SelectLogFilesWhenNeeded);
 				if (this.isLogFileNeededAfterLogProfileSet)

@@ -586,6 +586,19 @@
 					</TextBlock>
 				</StackPanel>
 
+				<!-- IP endpoint -->
+				<StackPanel Grid.Column="8" IsVisible="{Binding HasIPEndPoint}" Orientation="Horizontal">
+					<Separator Classes="StatusBar_Separator"/>
+					<Border Classes="StatusBar_Icon">
+						<DrawingPresenter Classes="Icon">
+							<DrawingPresenter.Drawing>
+								<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/LogProfile.Network}"/>
+							</DrawingPresenter.Drawing>
+						</DrawingPresenter>
+					</Border>
+					<TextBlock Classes="StatusBar_TextBlock" Text="{Binding IPEndPoint}"/>
+				</StackPanel>
+
 				<!-- Working directory -->
 				<StackPanel Grid.Column="9" IsVisible="{Binding HasWorkingDirectory}" Orientation="Horizontal">
 					<Separator Classes="StatusBar_Separator"/>
