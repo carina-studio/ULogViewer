@@ -77,7 +77,16 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 					return null;
 
 				// read line
-				return this.reader.ReadLine();
+				try
+				{
+					return this.reader.ReadLine();
+				}
+				catch
+				{
+					if (this.reader == null)
+						return null;
+					throw;
+				}
 			}
 		}
 
