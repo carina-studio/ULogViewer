@@ -26,6 +26,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		}.AsReadOnly();
 		public override ISet<string> SupportedSourceOptions => new HashSet<string>()
 		{
+			nameof(LogDataSourceOptions.Encoding),
 			nameof(LogDataSourceOptions.IPEndPoint),
 		}.AsReadOnly();
 	}

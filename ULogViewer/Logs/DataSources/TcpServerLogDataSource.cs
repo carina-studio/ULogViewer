@@ -17,6 +17,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		class ReaderImpl : TextReader
 		{
 			// Fields.
+			readonly Encoding encoding;
 			bool isListenerStarted;
 			readonly TcpListener listener;
 			TextReader? reader;
@@ -24,8 +25,9 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			readonly TcpServerLogDataSource source;
 
 			// Constructor.
-			public ReaderImpl(TcpServerLogDataSource source, TcpListener listener)
+			public ReaderImpl(TcpServerLogDataSource source, TcpListener listener, Encoding encoding)
 			{
+				this.encoding = encoding;
 				this.listener = listener;
 				this.source = source;
 			}
@@ -61,7 +63,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 						this.listener.Start();
 						this.socket = this.listener.AcceptSocket();
 						this.source.Logger.LogWarning("Socket accepted");
-						this.reader = new StreamReader(new NetworkStream(this.socket, false), Encoding.UTF8);
+						this.reader = new StreamReader(new NetworkStream(this.socket, false), this.encoding);
 					}
 					catch (Exception ex)
 					{
@@ -95,9 +97,10 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		// Open reader.
 		protected override LogDataSourceState OpenReaderCore(CancellationToken cancellationToken, out TextReader? reader)
 		{
-			var endPoint = this.CreationOptions.IPEndPoint.AsNonNull();
+			var options = this.CreationOptions;
+			var endPoint = options.IPEndPoint.AsNonNull();
 			var listener = new TcpListener(endPoint);
-			reader = new ReaderImpl(this, listener);
+			reader = new ReaderImpl(this, listener, options.Encoding ?? Encoding.UTF8);
 			return LogDataSourceState.ReaderOpened;
 		}
 
