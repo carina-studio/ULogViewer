@@ -1713,6 +1713,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				case nameof(LogProfile.ColorIndicator):
 					this.SynchronizationContext.Post(() => this.ReloadLogs(false, true));
 					break;
+				case nameof(LogProfile.DataSourceOptions):
+					this.SynchronizationContext.Post(() => this.ReloadLogs(true, false));
+					break;
 				case nameof(LogProfile.DataSourceProvider):
 					this.SynchronizationContext.Post(() => this.ReloadLogs(true, true));
 					break;
@@ -1969,10 +1972,15 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			if (dataSourceOptions.IsNotEmpty())
 			{
 				var dataSourceProvider = profile.DataSourceProvider;
+				var defaultDataSourceOptions = profile.DataSourceOptions;
 				foreach (var dataSourceOption in dataSourceOptions)
 				{
+					// apply default options
+					var newDataSourceOptions = dataSourceOption;
+					newDataSourceOptions.Encoding = defaultDataSourceOptions.Encoding;
+
 					// create data source and reader
-					var dataSource = this.CreateLogDataSourceOrNull(dataSourceProvider, dataSourceOption);
+					var dataSource = this.CreateLogDataSourceOrNull(dataSourceProvider, newDataSourceOptions);
 					if (dataSource != null)
 						this.CreateLogReader(dataSource);
 					else
