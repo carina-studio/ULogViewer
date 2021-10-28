@@ -1,8 +1,8 @@
-[![Download](https://img.shields.io/github/v/release/carina-studio/ULogViewer?include_prereleases&style=for-the-badge&color=blue&logo=Windows&label=Windows(Preview))](https://github.com/carina-studio/ULogViewer/releases/download/0.27.0.1023/ULogViewer-0.27.0.1023-win-x64.zip)
-[![Download](https://img.shields.io/github/v/release/carina-studio/ULogViewer?include_prereleases&style=for-the-badge&color=blueviolet&logo=Apple&label=macOS(Preview))](https://github.com/carina-studio/ULogViewer/releases/download/0.27.0.1023/ULogViewer-0.27.0.1023-osx-x64.zip)
-[![Download](https://img.shields.io/github/v/release/carina-studio/ULogViewer?include_prereleases&style=for-the-badge&color=orange&logo=Linux&logoColor=ffffff&label=Linux(Preview))](https://github.com/carina-studio/ULogViewer/releases/download/0.27.0.1023/ULogViewer-0.27.0.1023-linux-x64.zip)
+[![Download](https://img.shields.io/github/v/release/carina-studio/ULogViewer?include_prereleases&style=for-the-badge&color=blue&logo=Windows&label=Windows(Preview))](https://github.com/carina-studio/ULogViewer/releases/download/0.28.0.1028/ULogViewer-0.28.0.1028-win-x64.zip)
+[![Download](https://img.shields.io/github/v/release/carina-studio/ULogViewer?include_prereleases&style=for-the-badge&color=blueviolet&logo=Apple&label=macOS(Preview))](https://github.com/carina-studio/ULogViewer/releases/download/0.28.0.1028/ULogViewer-0.28.0.1028-osx-x64.zip)
+[![Download](https://img.shields.io/github/v/release/carina-studio/ULogViewer?include_prereleases&style=for-the-badge&color=orange&logo=Linux&logoColor=ffffff&label=Linux(Preview))](https://github.com/carina-studio/ULogViewer/releases/download/0.28.0.1028/ULogViewer-0.28.0.1028-linux-x64.zip)
 
-[![](https://img.shields.io/github/release-date-pre/carina-studio/ULogViewer?style=flat-square)](https://github.com/carina-studio/ULogViewer/releases/tag/0.27.0.1023)
+[![](https://img.shields.io/github/release-date-pre/carina-studio/ULogViewer?style=flat-square)](https://github.com/carina-studio/ULogViewer/releases/tag/0.28.0.1028)
 [![](https://img.shields.io/github/last-commit/carina-studio/ULogViewer?style=flat-square)](https://github.com/carina-studio/ULogViewer/commits/master)
 [![](https://img.shields.io/github/license/carina-studio/ULogViewer?style=flat-square)](https://github.com/carina-studio/ULogViewer/blob/master/LICENSE)
 
@@ -21,6 +21,7 @@ The project is still under development but most of functions relate to reading/p
 - Windows Event Logs (Windows only)
 - HTTP/HTTPS
 - TCP (without SSL)
+- UDP
 - SQLite
 
 ## ⭐Log profiles
@@ -30,10 +31,12 @@ Each log profile defines:
 - What properties of log should be displayed in the list.
 - How to output logs back to text (ex, copying).
 
-Currently there are 7 built-in log profiles:
+Currently there are 9 built-in log profiles:
 - Android Device Log.
 - Android Log Files.
 - Git Log.
+- Git Log (Simple).
+- NLog (TCP).
 - Windows Event Logs (Application/System/Secutiry/Setup).
 
 You can also create, copy or export your own log profiles according to your requirement.
