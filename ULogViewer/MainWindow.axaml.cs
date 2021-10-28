@@ -7,9 +7,9 @@ using Avalonia.Markup.Xaml.Templates;
 using Avalonia.VisualTree;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
+using CarinaStudio.Input;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Controls;
-using CarinaStudio.ULogViewer.Input;
 using CarinaStudio.ULogViewer.ViewModels;
 using Microsoft.Extensions.Logging;
 #if WINDOWS_ONLY
