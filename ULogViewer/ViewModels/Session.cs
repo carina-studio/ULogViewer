@@ -144,6 +144,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsSavingLogsProperty = ObservableProperty.Register<Session, bool>(nameof(IsSavingLogs));
 		/// <summary>
+		/// Property of <see cref="IsShowingAllLogsTemporarily"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> IsShowingAllLogsTemporarilyProperty = ObservableProperty.Register<Session, bool>(nameof(IsShowingAllLogsTemporarily));
+		/// <summary>
 		/// Property of <see cref="IsUriNeeded"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsUriNeededProperty = ObservableProperty.Register<Session, bool>(nameof(IsUriNeeded));
@@ -306,6 +310,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly MutableObservableBoolean canResetLogProfile = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSaveLogs = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canSetLogProfile = new MutableObservableBoolean();
+		readonly MutableObservableBoolean canShowAllLogsTemporarily = new MutableObservableBoolean();
 		readonly ScheduledAction checkDataSourceErrorsAction;
 		readonly ScheduledAction checkIsWaitingForDataSourcesAction;
 		Comparison<DisplayableLog?> compareDisplayableLogsDelegate;
@@ -320,6 +325,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly HashSet<string> markedLogsChangedFilePaths = new HashSet<string>(PathEqualityComparer.Default);
 		readonly ObservableList<PredefinedLogTextFilter> predefinedLogTextFilters;
 		readonly ScheduledAction saveMarkedLogsAction;
+		readonly ScheduledAction selectLogsToReportActions;
 		readonly List<MarkedLogInfo> unmatchedMarkedLogInfos = new List<MarkedLogInfo>();
 		readonly ScheduledAction updateIsReadingLogsAction;
 		readonly ScheduledAction updateIsProcessingLogsAction;
@@ -351,6 +357,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.SetLogProfileCommand = new Command<LogProfile?>(this.SetLogProfile, this.canSetLogProfile);
 			this.SetUriCommand = new Command<Uri?>(this.SetUri, this.GetValueAsObservable(IsUriNeededProperty));
 			this.SetWorkingDirectoryCommand = new Command<string?>(this.SetWorkingDirectory, this.GetValueAsObservable(IsWorkingDirectoryNeededProperty));
+			this.ToggleShowingAllLogsTemporarilyCommand = new Command(this.ToggleShowingAllLogsTemporarily, this.canShowAllLogsTemporarily);
 			this.canSetLogProfile.Update(true);
 
 			// create collections
@@ -451,6 +458,27 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					return;
 				this.SaveMarkedLogs();
 			});
+			this.selectLogsToReportActions = new ScheduledAction(() =>
+			{
+				if (this.IsDisposed)
+					return;
+				if (this.logFilter.IsFilteringNeeded && !this.IsShowingAllLogsTemporarily)
+				{
+					this.SetValue(LogsProperty, logFilter.FilteredLogs);
+					this.SetValue(HasLogsProperty, logFilter.FilteredLogs.IsNotEmpty());
+				}
+				else
+				{
+					this.SetValue(LogsProperty, this.AllLogs);
+					this.SetValue(HasLogsProperty, this.allLogs.IsNotEmpty());
+					this.SetValue(LastLogsFilteringDurationProperty, null);
+					if (!this.logFilter.IsFilteringNeeded && this.Settings.GetValueOrDefault(SettingKeys.SaveMemoryAggressively))
+					{
+						this.Logger.LogDebug("Trigger GC after clearing log filters");
+						GC.Collect();
+					}
+				}
+			});
 			this.updateIsReadingLogsAction = new ScheduledAction(() =>
 			{
 				if (this.IsDisposed)
@@ -529,6 +557,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				foreach (var filter in this.predefinedLogTextFilters)
 					textRegexList.Add(filter.Regex);
 				this.logFilter.TextRegexList = textRegexList;
+
+				// cancel showing all logs
+				this.SetValue(IsShowingAllLogsTemporarilyProperty, false);
 			});
 			this.updateTitleAndIconAction = new ScheduledAction(() =>
 			{
@@ -1336,6 +1367,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Check whether all logs are shown temporarily.
+		/// </summary>
+		public bool IsShowingAllLogsTemporarily { get => this.GetValue(IsShowingAllLogsTemporarilyProperty); }
+
+
+		/// <summary>
 		/// Check whether URI is needed or not.
 		/// </summary>
 		public bool IsUriNeeded { get => this.GetValue(IsUriNeededProperty); }
@@ -1685,22 +1722,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					}
 					break;
 				case nameof(DisplayableLogFilter.IsFilteringNeeded):
-					if (this.logFilter.IsFilteringNeeded)
-					{
-						this.SetValue(LogsProperty, logFilter.FilteredLogs);
-						this.SetValue(HasLogsProperty, logFilter.FilteredLogs.IsNotEmpty());
-					}
-					else
-					{
-						this.SetValue(LogsProperty, this.AllLogs);
-						this.SetValue(HasLogsProperty, this.allLogs.IsNotEmpty());
-						this.SetValue(LastLogsFilteringDurationProperty, null);
-						if (this.Settings.GetValueOrDefault(SettingKeys.SaveMemoryAggressively))
-						{
-							this.Logger.LogDebug("Trigger GC after clearing log filters");
-							GC.Collect();
-						}
-					}
+					this.canShowAllLogsTemporarily.Update(this.LogProfile != null && this.logFilter.IsFilteringNeeded);
+					this.selectLogsToReportActions.Schedule();
 					this.SetValue(IsFilteringLogsNeededProperty, this.logFilter.IsFilteringNeeded);
 					break;
 			}
@@ -1849,6 +1872,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.UpdateIsLogsWritingAvailable(this.LogProfile);
 				this.updateIsProcessingLogsAction.Schedule();
 			}
+			else if (property == IsShowingAllLogsTemporarilyProperty)
+				this.selectLogsToReportActions.Schedule();
 			else if (property == LastLogsReadingDurationProperty)
 				this.SetValue(HasLastLogsReadingDurationProperty, this.LastLogsReadingDuration != null);
 			else if (property == LastLogsFilteringDurationProperty)
@@ -2024,6 +2049,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// update state
 			this.canResetLogProfile.Update(false);
+			this.canShowAllLogsTemporarily.Update(false);
 			this.SetValue(IsIPEndPointNeededProperty, false);
 			this.SetValue(IsLogFileNeededProperty, false);
 			this.SetValue(IsReadingLogsContinuouslyProperty, false);
@@ -2525,6 +2551,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// update state
 			this.UpdateIsLogsWritingAvailable(profile);
 			this.canResetLogProfile.Update(true);
+			this.canShowAllLogsTemporarily.Update(this.logFilter.IsFilteringNeeded);
 		}
 
 
@@ -2701,6 +2728,26 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Get title of session.
 		/// </summary>
 		public string? Title { get => this.GetValue(TitleProperty); }
+
+
+		// Enable or disable showing all logs temporarily.
+		void ToggleShowingAllLogsTemporarily()
+        {
+			// check state
+			this.VerifyAccess();
+			this.VerifyDisposed();
+			if (!this.canShowAllLogsTemporarily.Value)
+				return;
+
+			// toggle
+			this.SetValue(IsShowingAllLogsTemporarilyProperty, !this.GetValue(IsShowingAllLogsTemporarilyProperty));
+        }
+
+
+		/// <summary>
+		/// Command to enable or disable showing all logs temporarily.
+		/// </summary>
+		public ICommand ToggleShowingAllLogsTemporarilyCommand { get; }
 
 
 		// Update comparison for displayable logs.

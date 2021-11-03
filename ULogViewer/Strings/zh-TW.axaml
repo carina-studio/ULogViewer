@@ -356,6 +356,7 @@
 	<sys:String x:Key="String/SessionView.SetLogProfile">選取/變更日誌類型</sys:String>
 	<sys:String x:Key="String/SessionView.SetUri">選取/變更 URI</sys:String>
 	<sys:String x:Key="String/SessionView.SetWorkingDirectory">選取/變更工作目錄</sys:String>
+	<sys:String x:Key="String/SessionView.ShowAllLogsTemporarily">暫時顯示所有日誌 (Alt+A)</sys:String>
 	<sys:String x:Key="String/SessionView.ShowFileInExplorer">在檔案總管中顯示檔案</sys:String>
 	<sys:String x:Key="String/SessionView.ShowLogProperty">檢視日誌屬性 '{0}'…</sys:String>
 	<sys:String x:Key="String/SessionView.ShowLogProperty.Disabled">檢視日誌屬性…</sys:String>

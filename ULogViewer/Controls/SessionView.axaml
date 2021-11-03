@@ -377,6 +377,14 @@
 								<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing/ClearFilters}"/>
 							</Button>
 
+							<!-- Show all logs temporarily -->
+							<ToggleButton Classes="ToolBar_ToggleButton" Command="{Binding ToggleShowingAllLogsTemporarilyCommand}" IsChecked="{Binding IsShowingAllLogsTemporarily}" ToolTip.Tip="{DynamicResource String/SessionView.ShowAllLogsTemporarily}">
+								<Panel>
+									<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing/Visibility}" IsVisible="{Binding !IsShowingAllLogsTemporarily}"/>
+									<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing/Visibility.Light}" IsVisible="{Binding IsShowingAllLogsTemporarily}"/>
+								</Panel>
+							</ToggleButton>
+
 						</StackPanel>
 
 					</Grid>

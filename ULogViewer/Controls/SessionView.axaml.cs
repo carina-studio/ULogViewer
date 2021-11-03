@@ -1777,6 +1777,16 @@ namespace CarinaStudio.ULogViewer.Controls
 							break;
 					}
 				}
+				if ((e.KeyModifiers & KeyModifiers.Alt) != 0)
+				{
+					switch (e.Key)
+                    {
+						case Avalonia.Input.Key.A:
+							if (this.DataContext is Session session)
+								session.ToggleShowingAllLogsTemporarilyCommand.TryExecute();
+							break;
+                    }
+				}
 				else
 				{
 					switch (e.Key)
