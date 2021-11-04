@@ -317,6 +317,7 @@
 	<sys:String x:Key="String/SessionView.CheckForAppUpdate">Check for update…</sys:String>
 	<sys:String x:Key="String/SessionView.ClearLogFiles">Clear all added log files</sys:String>
 	<sys:String x:Key="String/SessionView.ClearPredefinedLogTextFiltersSelection">Clear selection</sys:String>
+	<sys:String x:Key="String/SessionView.ConfirmSelectingAllLogs">It will take some time to select large amount of logs. Do you want to continue selection?</sys:String>
 	<sys:String x:Key="String/SessionView.CopyLogProperty">Copy log property '{0}'</sys:String>
 	<sys:String x:Key="String/SessionView.CopyLogProperty.Disabled">Copy log property</sys:String>
 	<sys:String x:Key="String/SessionView.CopyLogs">Copy logs</sys:String>

@@ -1,4 +1,5 @@
 using Avalonia;
+using Avalonia.Collections;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Controls.Templates;
@@ -116,6 +117,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly MutableObservableBoolean canShowWorkingDirectoryInExplorer = new MutableObservableBoolean();
 		readonly MenuItem copyLogPropertyMenuItem;
 		bool isAttachedToLogicalTree;
+		bool isControlKeyPressed;
 		bool isIPEndPointNeededAfterLogProfileSet;
 		bool isLogFileNeededAfterLogProfileSet;
 		bool isPidLogPropertyVisible;
@@ -1042,6 +1044,9 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Detach from session.
 		void DetachFromSession(Session session)
 		{
+			// [Workaround] clear selection to prevent performance issue of de-select multiple items
+			this.logListBox.SelectedItems.Clear();
+
 			// remove event handler
 			session.PropertyChanged -= this.OnSessionPropertyChanged;
 
@@ -1401,6 +1406,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.Settings.SettingChanged += this.OnSettingChanged;
 			this.AddHandler(DragDrop.DragOverEvent, this.OnDragOver);
 			this.AddHandler(DragDrop.DropEvent, this.OnDrop);
+			this.AddHandler(KeyDownEvent, this.OnPreviewKeyDown, RoutingStrategies.Tunnel);
 
 			// setup predefined log text filter list
 			this.predefinedLogTextFilters.AddAll(ViewModels.PredefinedLogTextFilters.All);
@@ -1446,6 +1452,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.Settings.SettingChanged -= this.OnSettingChanged;
 			this.RemoveHandler(DragDrop.DragOverEvent, this.OnDragOver);
 			this.RemoveHandler(DragDrop.DropEvent, this.OnDrop);
+			this.RemoveHandler(KeyDownEvent, this.OnPreviewKeyDown);
 
 			// release predefined log text filter list
 			((INotifyCollectionChanged)ViewModels.PredefinedLogTextFilters.All).CollectionChanged -= this.OnPredefinedLogTextFiltersChanged;
@@ -1697,6 +1704,11 @@ namespace CarinaStudio.ULogViewer.Controls
 			});
 			if (hitControl == null)
 				this.SynchronizationContext.Post(() => this.logListBox.SelectedItems.Clear());
+			else if (hitControl is ListBoxItem && (e.KeyModifiers & KeyModifiers.Control) == 0)
+			{
+				// [Workaround] Clear selection first to prevent performance issue of changing selection from multiple items
+				this.logListBox.SelectedItems.Clear();
+			}
 
 			// reset clicked log property
 			this.lastClickedLogPropertyView = null;
@@ -1790,6 +1802,9 @@ namespace CarinaStudio.ULogViewer.Controls
 				{
 					switch (e.Key)
 					{
+						case Avalonia.Input.Key.A:
+							e.Handled = true;
+							break;
 						case Avalonia.Input.Key.C:
 							if (e.Source is not TextBox)
 							{
@@ -1842,7 +1857,20 @@ namespace CarinaStudio.ULogViewer.Controls
 								if (this.predefinedLogTextFiltersPopup.IsOpen)
 									this.predefinedLogTextFilterListBox.SelectNextItem();
 								else
+								{
+									var selectedItems = this.logListBox.SelectedItems;
+									if (selectedItems.Count > 1)
+									{
+										var latestSelectedItem = selectedItems[selectedItems.Count - 1];
+										selectedItems.Clear(); // [Workaround] clear selection first to prevent performance issue of de-selecting multiple items
+										if (latestSelectedItem != null)
+										{
+											selectedItems.Add(latestSelectedItem);
+											this.logListBox.ScrollIntoView(latestSelectedItem);
+										}
+									}
 									this.logListBox.SelectNextItem();
+								}
 								e.Handled = true;
 							}
 							break;
@@ -1852,7 +1880,20 @@ namespace CarinaStudio.ULogViewer.Controls
 								if (this.predefinedLogTextFiltersPopup.IsOpen)
 									this.predefinedLogTextFilterListBox.SelectPreviousItem();
 								else
+								{
+									var selectedItems = this.logListBox.SelectedItems;
+									if (selectedItems.Count > 1)
+									{
+										var latestSelectedItem = selectedItems[selectedItems.Count - 1];
+										selectedItems.Clear(); // [Workaround] clear selection first to prevent performance issue of de-selecting multiple items
+										if (latestSelectedItem != null)
+										{
+											selectedItems.Add(latestSelectedItem);
+											this.logListBox.ScrollIntoView(latestSelectedItem);
+										}
+									}
 									this.logListBox.SelectPreviousItem();
+								}
 								e.Handled = true;
 							}
 							break;
@@ -2042,6 +2083,52 @@ namespace CarinaStudio.ULogViewer.Controls
 						this.selectedPredefinedLogTextFilters.Remove(filter);
 					}
 					break;
+			}
+		}
+
+
+		// Called to handle key-down before all children.
+		async void OnPreviewKeyDown(object? sender, Avalonia.Input.KeyEventArgs e)
+		{
+			// [Workaround] It will take long time to select all items by list box itself
+			if (!e.Handled 
+				&& e.Source is not TextBox
+				&& (e.KeyModifiers & KeyModifiers.Control) != 0 
+				&& e.Key == Avalonia.Input.Key.A
+				&& this.DataContext is Session session)
+			{
+				// intercept
+				this.Logger.LogTrace("Intercept Ctrl+A");
+				e.Handled = true;
+
+				// confirm selection
+				if (session.Logs.Count >= 500000)
+				{
+					var window = this.FindLogicalAncestorOfType<Avalonia.Controls.Window>();
+					if (window != null)
+					{
+						var result = await new MessageDialog()
+						{
+							Buttons = MessageDialogButtons.YesNo,
+							Icon = MessageDialogIcon.Question,
+							Message = this.Application.GetString("SessionView.ConfirmSelectingAllLogs"),
+						}.ShowDialog(window);
+						if (result == MessageDialogResult.No)
+							return;
+					}
+				}
+
+				// select all logs
+				var selectedItems = this.logListBox.SelectedItems;
+				selectedItems.Clear();
+				if (selectedItems is AvaloniaList<object> avaliniaList)
+					avaliniaList.AddRange(session.Logs);
+				else
+				{
+					foreach (var log in session.Logs)
+						selectedItems.Add(log);
+				}
+				
 			}
 		}
 
@@ -2242,7 +2329,9 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Called when test button clicked.
 		void OnTestButtonClick(object? sender, RoutedEventArgs e)
-		{ }
+		{
+			this.logListBox.SelectedItems.Clear();
+		}
 
 
 		// Called when pointer released on tool bar.
