@@ -40,6 +40,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<int> AllLogCountProperty = ObservableProperty.Register<Session, int>(nameof(AllLogCount));
 		/// <summary>
+		/// Property of <see cref="AreLogsSortedByTimestamp"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> AreLogsSortedByTimestampProperty = ObservableProperty.Register<Session, bool>(nameof(AreLogsSortedByTimestamp));
+		/// <summary>
 		/// Property of <see cref="DisplayLogProperties"/>.
 		/// </summary>
 		public static readonly ObservableProperty<IList<DisplayableLogProperty>> DisplayLogPropertiesProperty = ObservableProperty.Register<Session, IList<DisplayableLogProperty>>(nameof(DisplayLogProperties), new DisplayableLogProperty[0]);
@@ -728,6 +732,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Check whether logs are sorted by one of <see cref="Log.BeginningTimestamp"/>, <see cref="Log.EndingTimestamp"/>, <see cref="Log.Timestamp"/> or not.
+		/// </summary>
+		public bool AreLogsSortedByTimestamp { get => this.GetValue(AreLogsSortedByTimestampProperty); }
+
+
+		/// <summary>
 		/// Calculate duration between given logs.
 		/// </summary>
 		/// <param name="x">First log.</param>
@@ -1352,6 +1362,47 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				}
 			}
 		}
+
+
+		/// <summary>
+		/// Find log which is the nearest one to the given timestamp.
+		/// </summary>
+		/// <param name="timestamp">Timestamp.</param>
+		/// <returns>Found log.</returns>
+		public DisplayableLog? FindNearestLog(DateTime timestamp)
+        {
+			// check state
+			this.VerifyAccess();
+			var profile = this.LogProfile;
+			if (profile == null)
+				return null;
+			var logs = this.Logs;
+			if (logs.IsEmpty())
+				return null;
+
+			// prepare comparison
+			var timestampGetter = profile.SortKey switch
+			{
+				LogSortKey.BeginningTimestamp => 
+					new Func<DisplayableLog, long>(log => log.BinaryBeginningTimestamp),
+				LogSortKey.EndingTimestamp =>
+					new Func<DisplayableLog, long>(log => log.BinaryEndingTimestamp),
+				LogSortKey.Timestamp =>
+					new Func<DisplayableLog, long>(log => log.BinaryTimestamp),
+				_ => null,
+			};
+			if (timestampGetter == null)
+				return null;
+			var comparison = new Comparison<long>((x, y) => x.CompareTo(y));
+			if (profile.SortDirection == SortDirection.Descending)
+				comparison = comparison.Invert();
+
+			// find log
+			var index = logs.BinarySearch(timestamp.ToBinary(), timestampGetter, comparison);
+			if (index >= 0)
+				return logs[index];
+			return logs[~index];
+        }
 
 
 		/// <summary>
@@ -2208,6 +2259,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			profile.PropertyChanged -= this.OnLogProfilePropertyChanged;
 
 			// update state
+			this.SetValue(AreLogsSortedByTimestampProperty, false);
 			this.canResetLogProfile.Update(false);
 			this.canShowAllLogsTemporarily.Update(false);
 			this.SetValue(IsIPEndPointNeededProperty, false);
@@ -2914,15 +2966,17 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		void UpdateDisplayableLogComparison()
 		{
 			var profile = this.LogProfile.AsNonNull();
+			var sortedByTimestamp = true;
 			this.compareDisplayableLogsDelegate = profile.SortKey switch
 			{
 				LogSortKey.BeginningTimestamp => CompareDisplayableLogsByBeginningTimestamp,
 				LogSortKey.EndingTimestamp => CompareDisplayableLogsByEndingTimestamp,
 				LogSortKey.Timestamp => CompareDisplayableLogsByTimestamp,
-				_ => CompareDisplayableLogsById,
+				_ => ((Comparison<DisplayableLog?>)CompareDisplayableLogsById).Also(_ => sortedByTimestamp = false),
 			};
 			if (profile.SortDirection == SortDirection.Descending)
 				this.compareDisplayableLogsDelegate = this.compareDisplayableLogsDelegate.Invert();
+			this.SetValue(AreLogsSortedByTimestampProperty, sortedByTimestamp);
 		}
 
 
