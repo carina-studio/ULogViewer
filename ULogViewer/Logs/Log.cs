@@ -356,6 +356,76 @@ namespace CarinaStudio.ULogViewer.Logs
 		public static IList<string> PropertyNames { get => propertyNames; }
 
 
+		/// <summary>
+		/// Select timestamp which is the earliest one.
+		/// </summary>
+		/// <returns>Selected timestamp.</returns>
+		public DateTime? SelectEarliestTimestamp()
+		{
+			var timestamp = this.Timestamp;
+			var beginningTimestamp = this.BeginningTimestamp;
+			if (timestamp != null && beginningTimestamp != null)
+			{
+				if (timestamp.Value <= beginningTimestamp.Value)
+					return timestamp;
+				return beginningTimestamp;
+			}
+			var endingTimestamp = this.EndingTimestamp;
+			if (endingTimestamp != null)
+			{
+				if (beginningTimestamp != null)
+				{
+					if (beginningTimestamp.Value <= endingTimestamp.Value)
+						return beginningTimestamp;
+				}
+				else
+				{
+					if (timestamp.GetValueOrDefault() <= endingTimestamp.Value)
+						return timestamp;
+				}
+				return endingTimestamp;
+			}
+			else if (beginningTimestamp != null)
+				return beginningTimestamp;
+			return timestamp;
+		}
+
+
+		/// <summary>
+		/// Select timestamp which is the latest one.
+		/// </summary>
+		/// <returns>Selected timestamp.</returns>
+		public DateTime? SelectLatestTimestamp()
+		{
+			var timestamp = this.Timestamp;
+			var endingTimestamp = this.EndingTimestamp;
+			if (timestamp != null && endingTimestamp != null)
+			{
+				if (timestamp.Value >= endingTimestamp.Value)
+					return timestamp;
+				return endingTimestamp;
+			}
+			var beginningTimestamp = this.BeginningTimestamp;
+			if (beginningTimestamp != null)
+			{
+				if (endingTimestamp != null)
+				{
+					if (endingTimestamp.Value >= beginningTimestamp.Value)
+						return endingTimestamp;
+				}
+				else
+				{
+					if (timestamp.GetValueOrDefault() >= beginningTimestamp.Value)
+						return timestamp;
+				}
+				return beginningTimestamp;
+			}
+			else if (endingTimestamp != null)
+				return endingTimestamp;
+			return timestamp;
+		}
+
+
 		// Setup property map.
 		static void SetupPropertyMap()
 		{

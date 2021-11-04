@@ -44,6 +44,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<IList<DisplayableLogProperty>> DisplayLogPropertiesProperty = ObservableProperty.Register<Session, IList<DisplayableLogProperty>>(nameof(DisplayLogProperties), new DisplayableLogProperty[0]);
 		/// <summary>
+		/// Property of <see cref="EarliestLogTimestamp"/>.
+		/// </summary>
+		public static readonly ObservableProperty<DateTime?> EarliestLogTimestampProperty = ObservableProperty.Register<Session, DateTime?>(nameof(EarliestLogTimestamp));
+		/// <summary>
 		/// Property of <see cref="FilteredLogCount"/>.
 		/// </summary>
 		public static readonly ObservableProperty<int> FilteredLogCountProperty = ObservableProperty.Register<Session, int>(nameof(FilteredLogCount));
@@ -71,6 +75,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Property of <see cref="HasLogs"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> HasLogsProperty = ObservableProperty.Register<Session, bool>(nameof(HasLogs));
+		/// <summary>
+		/// Property of <see cref="HasLogsDuration"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> HasLogsDurationProperty = ObservableProperty.Register<Session, bool>(nameof(HasLogsDuration));
 		/// <summary>
 		/// Property of <see cref="HasMarkedLogs"/>.
 		/// </summary>
@@ -168,6 +176,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<TimeSpan?> LastLogsReadingDurationProperty = ObservableProperty.Register<Session, TimeSpan?>(nameof(LastLogsReadingDuration));
 		/// <summary>
+		/// Property of <see cref="LatestLogTimestamp"/>.
+		/// </summary>
+		public static readonly ObservableProperty<DateTime?> LatestLogTimestampProperty = ObservableProperty.Register<Session, DateTime?>(nameof(LatestLogTimestamp));
+		/// <summary>
 		/// Property of <see cref="LogFiltersCombinationMode"/>.
 		/// </summary>
 		public static readonly ObservableProperty<FilterCombinationMode> LogFiltersCombinationModeProperty = ObservableProperty.Register<Session, FilterCombinationMode>(nameof(LogFiltersCombinationMode), FilterCombinationMode.Intersection);
@@ -187,6 +199,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Property of <see cref="Logs"/>.
 		/// </summary>
 		public static readonly ObservableProperty<IList<DisplayableLog>> LogsProperty = ObservableProperty.Register<Session, IList<DisplayableLog>>(nameof(Logs), new DisplayableLog[0]);
+		/// <summary>
+		/// Property of <see cref="LogsDuration"/>.
+		/// </summary>
+		public static readonly ObservableProperty<TimeSpan?> LogsDurationProperty = ObservableProperty.Register<Session, TimeSpan?>(nameof(LogsDuration));
 		/// <summary>
 		/// Property of <see cref="LogsFilteringProgress"/>.
 		/// </summary>
@@ -233,6 +249,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		const int DelaySaveMarkedLogs = 1000;
 		const int DisposeDisplayableLogsInterval = 100;
 		const int FileLogsReadingConcurrencyLevel = 2;
+		const int LogsTimeInfoReportingInterval = 500;
 
 
 		// Static fields.
@@ -324,6 +341,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly SortedObservableList<DisplayableLog> markedLogs;
 		readonly HashSet<string> markedLogsChangedFilePaths = new HashSet<string>(PathEqualityComparer.Default);
 		readonly ObservableList<PredefinedLogTextFilter> predefinedLogTextFilters;
+		readonly ScheduledAction reportLogsTimeInfoAction;
 		readonly ScheduledAction saveMarkedLogsAction;
 		readonly ScheduledAction selectLogsToReportActions;
 		readonly List<MarkedLogInfo> unmatchedMarkedLogInfos = new List<MarkedLogInfo>();
@@ -450,6 +468,34 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						}
 					}
 					this.SetValue(IsWaitingForDataSourcesProperty, isWaiting);
+				}
+			});
+			this.reportLogsTimeInfoAction = new ScheduledAction(() =>
+			{
+				if (this.IsDisposed)
+					return;
+				var logs = this.Logs;
+				var profile = this.LogProfile;
+				if (logs.IsNotEmpty() && profile != null && this.logReaders.IsNotEmpty())
+				{
+					var firstLog = logs[0];
+					var lastLog = logs.Last();
+					var duration = (TimeSpan?)null;
+					var earliestTimestamp = (DateTime?)null;
+					var latestTimestamp = (DateTime?)null;
+					if (profile.SortDirection == SortDirection.Ascending)
+						duration = this.CalculateDurationBetweenLogs(firstLog.Log, lastLog.Log, out earliestTimestamp, out latestTimestamp);
+					else
+						duration = this.CalculateDurationBetweenLogs(lastLog.Log, firstLog.Log, out earliestTimestamp, out latestTimestamp);
+					this.SetValue(LogsDurationProperty, duration);
+					this.SetValue(EarliestLogTimestampProperty, earliestTimestamp);
+					this.SetValue(LatestLogTimestampProperty, latestTimestamp);
+				}
+				else
+				{
+					this.SetValue(LogsDurationProperty, null);
+					this.SetValue(EarliestLogTimestampProperty, null);
+					this.SetValue(LatestLogTimestampProperty, null);
 				}
 			});
 			this.saveMarkedLogsAction = new ScheduledAction(() =>
@@ -679,6 +725,36 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Get all logs without filtering.
 		/// </summary>
 		public IList<DisplayableLog> AllLogs { get; }
+
+
+		// Calculate duration between two logs.
+		TimeSpan? CalculateDurationBetweenLogs(Log x, Log y, out DateTime? earliestTimestamp, out DateTime? latestTimestamp)
+		{
+			// get timestamps
+			earliestTimestamp = x.SelectEarliestTimestamp();
+			latestTimestamp = y.SelectLatestTimestamp();
+
+			// calculate duration
+			if (earliestTimestamp != null && latestTimestamp != null
+				&& earliestTimestamp.Value <= latestTimestamp.Value)
+			{
+				return latestTimestamp.Value - earliestTimestamp.Value;
+			}
+
+			// get inverse timestamps
+			earliestTimestamp = y.SelectEarliestTimestamp();
+			latestTimestamp = x.SelectLatestTimestamp();
+
+			// calculate duration
+			if (earliestTimestamp != null && latestTimestamp != null
+				&& earliestTimestamp.Value <= latestTimestamp.Value)
+			{
+				return latestTimestamp.Value - earliestTimestamp.Value;
+			}
+			earliestTimestamp = null;
+			latestTimestamp = null;
+			return null;
+		}
 
 
 		// Clear all log files.
@@ -1191,6 +1267,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.Logger.LogDebug($"The last log reader disposed");
 				if (!this.IsDisposed)
 				{
+					this.reportLogsTimeInfoAction.Execute();
 					this.canClearLogFiles.Update(false);
 					this.canMarkUnmarkLogs.Update(false);
 					this.canPauseResumeLogsReading.Update(false);
@@ -1220,6 +1297,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Get number of filtered logs.
 		/// </summary>
 		public int FilteredLogCount { get => this.GetValue(FilteredLogCountProperty); }
+
+
+		/// <summary>
+		/// Get earliest timestamp of log in <see cref="Logs"/>.
+		/// </summary>
+		public DateTime? EarliestLogTimestamp { get => this.GetValue(EarliestLogTimestampProperty); }
 
 
 		/// <summary>
@@ -1256,6 +1339,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Check whether at least one log is read or not.
 		/// </summary>
 		public bool HasLogs { get => this.GetValue(HasLogsProperty); }
+
+
+		/// <summary>
+		/// Check whether <see cref="LogsDuration"/> is valid or not.
+		/// </summary>
+		public bool HasLogsDuration { get => this.GetValue(HasLogsDurationProperty); }
 
 
 		/// <summary>
@@ -1402,6 +1491,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public TimeSpan? LastLogsReadingDuration { get => this.GetValue(LastLogsReadingDurationProperty); }
 
 
+		/// <summary>
+		/// Get latest timestamp of log in <see cref="Logs"/>.
+		/// </summary>
+		public DateTime? LatestLogTimestamp { get => this.GetValue(LatestLogTimestampProperty); }
+
+
 		// Load marked logs from file.
 		async void LoadMarkedLogs(string fileName)
 		{
@@ -1514,6 +1609,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Get list of <see cref="DisplayableLog"/>s to display.
 		/// </summary>
 		public IList<DisplayableLog> Logs { get => this.GetValue(LogsProperty); }
+
+
+		/// <summary>
+		/// Get duration of <see cref="Logs"/>.
+		/// </summary>
+		public TimeSpan? LogsDuration { get => this.GetValue(LogsDurationProperty); }
 
 
 		/// <summary>
@@ -1659,8 +1760,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			}
 			if (!this.IsDisposed)
 			{
-				if (!this.logFilter.IsFilteringNeeded)
+				if (!this.logFilter.IsFilteringNeeded || this.IsShowingAllLogsTemporarily)
+				{
 					this.SetValue(HasLogsProperty, this.allLogs.IsNotEmpty());
+					this.reportLogsTimeInfoAction.Schedule(LogsTimeInfoReportingInterval);
+				}
 				this.SetValue(AllLogCountProperty, this.allLogs.Count);
 			}
 		}
@@ -1679,8 +1783,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			if (!this.IsDisposed)
 			{
-				if (this.logFilter.IsFilteringNeeded)
+				if (this.logFilter.IsFilteringNeeded && !this.IsShowingAllLogsTemporarily)
+				{
 					this.SetValue(HasLogsProperty, this.logFilter.FilteredLogs.IsNotEmpty());
+					this.reportLogsTimeInfoAction.Schedule(LogsTimeInfoReportingInterval);
+				}
 				this.SetValue(FilteredLogCountProperty, this.logFilter.FilteredLogs.Count);
 			}
 		}
@@ -1886,6 +1993,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			{
 				this.updateLogFilterAction.Schedule();
 			}
+			else if (property == LogsDurationProperty)
+				this.SetValue(HasLogsDurationProperty, newValue != null);
+			else if (property == LogsProperty)
+				this.reportLogsTimeInfoAction?.Reschedule();
 			else if (property == UriProperty)
 				this.SetValue(HasUriProperty, newValue != null);
 		}
