@@ -77,12 +77,16 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Static fields.
 		static readonly AvaloniaProperty<bool> CanFilterLogsByNonTextFiltersProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(CanFilterLogsByNonTextFilters), false);
+		static readonly AvaloniaProperty<DateTime?> EarliestSelectedLogTimestampProperty = AvaloniaProperty.Register<SessionView, DateTime?>(nameof(EarliestSelectedLogTimestamp));
 		static readonly AvaloniaProperty<bool> HasLogProfileProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(HasLogProfile), false);
+		static readonly AvaloniaProperty<bool> HasSelectedLogsDurationProperty = AvaloniaProperty.Register<SessionView, bool>("HasSelectedLogsDuration", false);
 		static readonly AvaloniaProperty<bool> IsProcessInfoVisibleProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(IsProcessInfoVisible), false);
 		static readonly AvaloniaProperty<bool> IsScrollingToLatestLogNeededProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(IsScrollingToLatestLogNeeded), true);
+		static readonly AvaloniaProperty<DateTime?> LatestSelectedLogTimestampProperty = AvaloniaProperty.Register<SessionView, DateTime?>(nameof(LatestSelectedLogTimestamp));
 		static readonly AvaloniaProperty<FontFamily> LogFontFamilyProperty = AvaloniaProperty.Register<SessionView, FontFamily>(nameof(LogFontFamily));
 		static readonly AvaloniaProperty<double> LogFontSizeProperty = AvaloniaProperty.Register<SessionView, double>(nameof(LogFontSize), 10.0);
 		static readonly AvaloniaProperty<int> MaxDisplayLineCountForEachLogProperty = AvaloniaProperty.Register<SessionView, int>(nameof(MaxDisplayLineCountForEachLog), 1);
+		static readonly AvaloniaProperty<TimeSpan?> SelectedLogsDurationProperty = AvaloniaProperty.Register<SessionView, TimeSpan?>(nameof(SelectedLogsDuration));
 		static readonly AvaloniaProperty<SessionViewStatusBarState> StatusBarStateProperty = AvaloniaProperty.Register<SessionView, SessionViewStatusBarState>(nameof(StatusBarState), SessionViewStatusBarState.None);
 
 
@@ -139,6 +143,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly SortedObservableList<PredefinedLogTextFilter> predefinedLogTextFilters;
 		readonly Popup predefinedLogTextFiltersPopup;
 		readonly HashSet<Avalonia.Input.Key> pressedKeys = new HashSet<Avalonia.Input.Key>();
+		readonly ScheduledAction reportSelectedLogsTimeInfoAction;
 		readonly ScheduledAction scrollToLatestLogAction;
 		readonly HashSet<PredefinedLogTextFilter> selectedPredefinedLogTextFilters = new HashSet<PredefinedLogTextFilter>();
 		readonly MenuItem showLogPropertyMenuItem;
@@ -305,6 +310,35 @@ namespace CarinaStudio.ULogViewer.Controls
 				if (this.DataContext is not Session session || session.HasLogReaders)
 					return;
 				this.SelectAndSetWorkingDirectory();
+			});
+			this.reportSelectedLogsTimeInfoAction = new ScheduledAction(() =>
+			{
+				var session = (this.DataContext as Session);
+				var firstLog = (DisplayableLog?)null;
+				var lastLog = (DisplayableLog?)null;
+				session?.FindFirstAndLastLog(this.logListBox.SelectedItems.Cast<DisplayableLog>(), out firstLog, out lastLog);
+				if (firstLog == null || lastLog == null)
+				{
+					this.SetValue<TimeSpan?>(SelectedLogsDurationProperty, null);
+					this.SetValue<DateTime?>(EarliestSelectedLogTimestampProperty, null);
+					this.SetValue<DateTime?>(LatestSelectedLogTimestampProperty, null);
+					return;
+				}
+				var earliestTimestamp = (DateTime?)null;
+				var latestTimestamp = (DateTime?)null;
+				var duration = session?.CalculateDurationBetweenLogs(firstLog, lastLog, out earliestTimestamp, out latestTimestamp);
+				if (duration != null)
+				{
+					this.SetValue<TimeSpan?>(SelectedLogsDurationProperty, duration);
+					this.SetValue<DateTime?>(EarliestSelectedLogTimestampProperty, earliestTimestamp);
+					this.SetValue<DateTime?>(LatestSelectedLogTimestampProperty, latestTimestamp);
+				}
+				else
+				{
+					this.SetValue<TimeSpan?>(SelectedLogsDurationProperty, null);
+					this.SetValue<DateTime?>(EarliestSelectedLogTimestampProperty, null);
+					this.SetValue<DateTime?>(LatestSelectedLogTimestampProperty, null);
+				}
 			});
 			this.scrollToLatestLogAction = new ScheduledAction(() =>
 			{
@@ -637,13 +671,13 @@ namespace CarinaStudio.ULogViewer.Controls
 				return false;
 
 			// show dialog
-			var result = await new AppSuite.Controls.MessageDialog()
+			var result = await new MessageDialog()
 			{
-				Buttons = AppSuite.Controls.MessageDialogButtons.YesNo,
-				Icon = AppSuite.Controls.MessageDialogIcon.Question,
+				Buttons = MessageDialogButtons.YesNo,
+				Icon = MessageDialogIcon.Question,
 				Message = this.Application.GetFormattedString("SessionView.NeedToRestartAsAdministrator", profile.Name),
 			}.ShowDialog(window);
-			if (result == AppSuite.Controls.MessageDialogResult.Yes)
+			if (result == MessageDialogResult.Yes)
 			{
 				this.Logger.LogWarning($"User agreed to restart as administrator for '{profile.Name}'");
 				return true;
@@ -1086,18 +1120,18 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				if (dirPaths.IsEmpty())
 				{
-					_ = new AppSuite.Controls.MessageDialog()
+					_ = new MessageDialog()
 					{
-						Icon = AppSuite.Controls.MessageDialogIcon.Information,
+						Icon = MessageDialogIcon.Information,
 						Message = this.Application.GetString("SessionView.NoFilePathDropped")
 					}.ShowDialog(window);
 					return false;
 				}
 				if (dirPaths.Count > 1)
 				{
-					_ = new AppSuite.Controls.MessageDialog()
+					_ = new MessageDialog()
 					{
-						Icon = AppSuite.Controls.MessageDialogIcon.Information,
+						Icon = MessageDialogIcon.Information,
 						Message = this.Application.GetString("SessionView.TooManyDirectoryPathsDropped")
 					}.ShowDialog(window);
 					return false;
@@ -1176,6 +1210,10 @@ namespace CarinaStudio.ULogViewer.Controls
 			// complete
 			return true;
 		}
+
+
+		// Earliest timestamp of selected log.
+		DateTime? EarliestSelectedLogTimestamp { get => this.GetValue<DateTime?>(EarliestSelectedLogTimestampProperty); }
 
 
 		// Edit current log profile.
@@ -1299,6 +1337,10 @@ namespace CarinaStudio.ULogViewer.Controls
 			get => this.GetValue<bool>(IsScrollingToLatestLogNeededProperty);
 			set => this.SetValue<bool>(IsScrollingToLatestLogNeededProperty, value);
 		}
+
+
+		// Latest timestamp of selected log.
+		DateTime? LatestSelectedLogTimestamp { get => this.GetValue<DateTime?>(LatestSelectedLogTimestampProperty); }
 
 
 		// Get font family of log.
@@ -1717,6 +1759,9 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.canMarkUnmarkSelectedLogs.Update(hasSelectedItems && session.MarkUnmarkLogsCommand.CanExecute(null));
 				this.canShowFileInExplorer.Update(hasSelectedItems && session.IsLogFileNeeded);
 				this.canShowLogProperty.Update(hasSingleSelectedItem && logProperty != null && DisplayableLog.HasStringProperty(logProperty.Name));
+
+				// report time information
+				this.reportSelectedLogsTimeInfoAction.Schedule();
 			});
 		}
 
@@ -2027,6 +2072,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				else
 					this.scrollToLatestLogAction.Cancel();
 			}
+			else if (property == SelectedLogsDurationProperty)
+				this.SetValue<bool>(HasSelectedLogsDurationProperty, change.NewValue.Value != null);
 		}
 
 
@@ -2603,6 +2650,10 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Command to set working directory.
 		ICommand SelectAndSetWorkingDirectoryCommand { get; }
+
+
+		// Duration of selected logs.
+		TimeSpan? SelectedLogsDuration { get => this.GetValue<TimeSpan?>(SelectedLogsDurationProperty); }
 
 
 		// Select all marked logs.

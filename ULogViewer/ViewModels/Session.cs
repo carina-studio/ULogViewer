@@ -484,9 +484,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					var earliestTimestamp = (DateTime?)null;
 					var latestTimestamp = (DateTime?)null;
 					if (profile.SortDirection == SortDirection.Ascending)
-						duration = this.CalculateDurationBetweenLogs(firstLog.Log, lastLog.Log, out earliestTimestamp, out latestTimestamp);
+						duration = this.CalculateDurationBetweenLogs(firstLog, lastLog, out earliestTimestamp, out latestTimestamp);
 					else
-						duration = this.CalculateDurationBetweenLogs(lastLog.Log, firstLog.Log, out earliestTimestamp, out latestTimestamp);
+						duration = this.CalculateDurationBetweenLogs(lastLog, firstLog, out earliestTimestamp, out latestTimestamp);
 					this.SetValue(LogsDurationProperty, duration);
 					this.SetValue(EarliestLogTimestampProperty, earliestTimestamp);
 					this.SetValue(LatestLogTimestampProperty, latestTimestamp);
@@ -725,6 +725,18 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Get all logs without filtering.
 		/// </summary>
 		public IList<DisplayableLog> AllLogs { get; }
+
+
+		/// <summary>
+		/// Calculate duration between given logs.
+		/// </summary>
+		/// <param name="x">First log.</param>
+		/// <param name="y">Second log.</param>
+		/// <param name="earliestTimestamp">Earliest timestamp of <paramref name="x"/> and <paramref name="y"/>.</param>
+		/// <param name="latestTimestamp">Latest timestamp of <paramref name="x"/> and <paramref name="y"/>.</param>
+		/// <returns>Duration between these logs.</returns>
+		public TimeSpan? CalculateDurationBetweenLogs(DisplayableLog x, DisplayableLog y, out DateTime? earliestTimestamp, out DateTime? latestTimestamp) =>
+			this.CalculateDurationBetweenLogs(x.Log, y.Log, out earliestTimestamp, out latestTimestamp);
 
 
 		// Calculate duration between two logs.
@@ -1303,6 +1315,43 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Get earliest timestamp of log in <see cref="Logs"/>.
 		/// </summary>
 		public DateTime? EarliestLogTimestamp { get => this.GetValue(EarliestLogTimestampProperty); }
+
+
+		/// <summary>
+		/// Find first and last log from given logs according to sorting parameters defined in <see cref="LogProfile"/>.
+		/// </summary>
+		/// <param name="logs">Logs to find from.</param>
+		/// <param name="firstLog">Found first log.</param>
+		/// <param name="lastLog">Found last log.</param>
+		public void FindFirstAndLastLog(IEnumerable<DisplayableLog> logs, out DisplayableLog? firstLog, out DisplayableLog? lastLog)
+		{
+			firstLog = null;
+			lastLog = null;
+			var profile = this.LogProfile;
+			if (profile == null)
+				return;
+			var compare = this.compareDisplayableLogsDelegate;
+			if (profile.SortDirection == SortDirection.Ascending)
+			{
+				foreach (var log in logs)
+				{
+					if (firstLog == null || compare(log, firstLog) < 0)
+						firstLog = log;
+					if (lastLog == null || compare(log, lastLog) > 0)
+						lastLog = log;
+				}
+			}
+			else
+			{
+				foreach (var log in logs)
+				{
+					if (firstLog == null || compare(log, firstLog) > 0)
+						firstLog = log;
+					if (lastLog == null || compare(log, lastLog) < 0)
+						lastLog = log;
+				}
+			}
+		}
 
 
 		/// <summary>
