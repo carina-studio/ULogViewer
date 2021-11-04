@@ -468,29 +468,40 @@
 
 			<!-- Logs time information -->
 			<Border Background="{DynamicResource Brush/SessionView.LogHeader.Background}" Classes="StatusBar" Grid.Row="2" IsVisible="{Binding HasLogsDuration}">
-				<StackPanel Orientation="Horizontal">
+				<Grid ColumnDefinitions="*,Auto">
 
-					<!-- Icon -->
-					<Border Classes="StatusBar_Icon">
-						<DrawingPresenter Drawing="{DynamicResource Drawing/Calendar}"/>
-					</Border>
+					<!-- Logs -->
+					<StackPanel Orientation="Horizontal">
 
-					<!-- Earliest timestamp -->
-					<TextBlock Classes="StatusBar_TextBlock" Text="{Binding EarliestLogTimestamp, StringFormat={}{0:yyyy/MM/dd HH:mm:ss.fff}}" ToolTip.Placement="Right" ToolTip.Tip="{DynamicResource String/SessionView.EarliestLogTimestamp}"/>
+						<!-- Icon -->
+						<Border Classes="StatusBar_Icon">
+							<DrawingPresenter Drawing="{DynamicResource Drawing/Calendar}"/>
+						</Border>
 
-					<!-- Duration -->
-					<Border Classes="StatusBar_Icon" Margin="{DynamicResource Thickness/SessionView.LogsTimeInfoPanel.Arrow.Margin}">
-						<DrawingPresenter Drawing="{DynamicResource Drawing/Icon.Forward}"/>
-					</Border>
-					<TextBlock Classes="StatusBar_TextBlock" Text="{Binding LogsDuration, Converter={x:Static asConverters:TimeSpanConverter.Default}}" ToolTip.Placement="Left" ToolTip.Tip="{DynamicResource String/SessionView.LogsDuration}"/>
-					<Border Classes="StatusBar_Icon" Margin="{DynamicResource Thickness/SessionView.LogsTimeInfoPanel.Arrow.Margin}">
-						<DrawingPresenter Drawing="{DynamicResource Drawing/Icon.Forward}"/>
-					</Border>
+						<!-- Earliest timestamp -->
+						<TextBlock Classes="StatusBar_TextBlock" Text="{Binding EarliestLogTimestamp, StringFormat={}{0:yyyy/MM/dd HH:mm:ss.fff}}" ToolTip.Placement="Right" ToolTip.Tip="{DynamicResource String/SessionView.EarliestLogTimestamp}"/>
 
-					<!-- Latest timestamp -->
-					<TextBlock Classes="StatusBar_TextBlock" Text="{Binding LatestLogTimestamp, StringFormat={}{0:yyyy/MM/dd HH:mm:ss.fff}}" ToolTip.Placement="Left" ToolTip.Tip="{DynamicResource String/SessionView.LatestLogTimestamp}"/>
+						<!-- Duration -->
+						<Border Classes="StatusBar_Icon" Margin="{DynamicResource Thickness/SessionView.LogsTimeInfoPanel.Arrow.Margin}">
+							<DrawingPresenter Drawing="{DynamicResource Drawing/Icon.Forward}"/>
+						</Border>
+						<TextBlock Classes="StatusBar_TextBlock" Text="{Binding LogsDuration, Converter={x:Static asConverters:TimeSpanConverter.Default}}" ToolTip.Placement="Left" ToolTip.Tip="{DynamicResource String/SessionView.LogsDuration}"/>
+						<Border Classes="StatusBar_Icon" Margin="{DynamicResource Thickness/SessionView.LogsTimeInfoPanel.Arrow.Margin}">
+							<DrawingPresenter Drawing="{DynamicResource Drawing/Icon.Forward}"/>
+						</Border>
+
+						<!-- Latest timestamp -->
+						<TextBlock Classes="StatusBar_TextBlock" Text="{Binding LatestLogTimestamp, StringFormat={}{0:yyyy/MM/dd HH:mm:ss.fff}}" ToolTip.Placement="Left" ToolTip.Tip="{DynamicResource String/SessionView.LatestLogTimestamp}"/>
+
+					</StackPanel>
+
+					<!-- Selected logs -->
+					<StackPanel Grid.Column="1" IsVisible="{Binding $parent[UserControl].HasSelectedLogsDuration}" Orientation="Horizontal">
+						<TextBlock Classes="StatusBar_TextBlock" Text="{DynamicResource String/SessionView.SelectedLogsDuration}"/>
+						<TextBlock Classes="StatusBar_TextBlock" Text="{Binding $parent[UserControl].SelectedLogsDuration, Converter={x:Static asConverters:TimeSpanConverter.Default}}"/>
+					</StackPanel>
 					
-				</StackPanel>
+				</Grid>
 			</Border>
 
 		</Grid>
