@@ -2788,6 +2788,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				InitialDateTime = this.EarliestSelectedLogTimestamp ?? session.EarliestLogTimestamp,
 				Message = this.Application.GetString("SessionView.SelectNearestLogByTimestamp.Message"),
+				Title = this.Application.GetString("SessionView.SelectNearestLogByTimestamp.Title"),
 			}.ShowDialog<DateTime?>(window);
 			if (timestamp == null)
 				return;

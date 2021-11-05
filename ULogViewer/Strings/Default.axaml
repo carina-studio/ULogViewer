@@ -304,7 +304,7 @@
 	<sys:String x:Key="String/MainWindow.ClearCustomSessionTitle">Reset title of this tab</sys:String>
 	<sys:String x:Key="String/MainWindow.CloseSession">Close this tab</sys:String>
 	<sys:String x:Key="String/MainWindow.CreateSession">Create new tab</sys:String>
-	<sys:String x:Key="String/MainWindow.SetCustomSessionTitle">Set title of this tab</sys:String>
+	<sys:String x:Key="String/MainWindow.SetCustomSessionTitle">Set title of this tab…</sys:String>
 	<sys:String x:Key="String/MainWindow.SetCustomSessionTitle.Message">Title of tab:</sys:String>
 
 	<!-- MemoryLoggerLogDataSourceProvider -->
@@ -382,8 +382,9 @@
 	<sys:String x:Key="String/SessionView.SelectedLogCount">Selected: </sys:String>
 	<sys:String x:Key="String/SessionView.SelectedLogsDuration">Duration of selection:</sys:String>
 	<sys:String x:Key="String/SessionView.SelectMarkedLogs">Select marked logs</sys:String>
-	<sys:String x:Key="String/SessionView.SelectNearestLogByTimestamp">Select log nearest to specific timestamp (Ctrl+T)</sys:String>
+	<sys:String x:Key="String/SessionView.SelectNearestLogByTimestamp">Select log nearest to specified timestamp (Ctrl+T)</sys:String>
 	<sys:String x:Key="String/SessionView.SelectNearestLogByTimestamp.Message">Specified timestamp:</sys:String>
+	<sys:String x:Key="String/SessionView.SelectNearestLogByTimestamp.Title">Select log nearest to specified timestamp</sys:String>
 	<sys:String x:Key="String/SessionView.SetIPEndPoint">Select/Change IP endpoint</sys:String>
 	<sys:String x:Key="String/SessionView.SetLogProfile">Select/Change log profile</sys:String>
 	<sys:String x:Key="String/SessionView.SetUri">Select/Change URI</sys:String>
