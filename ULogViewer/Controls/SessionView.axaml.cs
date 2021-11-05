@@ -1835,6 +1835,9 @@ namespace CarinaStudio.ULogViewer.Controls
 							else
 								this.SaveLogs((e.KeyModifiers & KeyModifiers.Shift) != 0);
 							break;
+						case Avalonia.Input.Key.T:
+							this.SelectNearestLogByTimestamp();
+							break;
 					}
 				}
 				if ((e.KeyModifiers & KeyModifiers.Alt) != 0)
@@ -2764,6 +2767,44 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Command to select marked logs.
 		ICommand SelectMarkedLogsCommand { get; }
+
+
+		// Select log by timestamp.
+		async void SelectNearestLogByTimestamp()
+        {
+			// check state
+			if (this.DataContext is not Session session)
+				return;
+			if (!session.AreLogsSortedByTimestamp)
+				return;
+
+			// get window
+			var window = this.FindLogicalAncestorOfType<Avalonia.Controls.Window>();
+			if (window == null)
+				return;
+
+			// select timestamp
+			var timestamp = await new DateTimeSelectionDialog()
+			{
+				InitialDateTime = this.EarliestSelectedLogTimestamp ?? session.EarliestLogTimestamp,
+				Message = this.Application.GetString("SessionView.SelectNearestLogByTimestamp.Message"),
+			}.ShowDialog<DateTime?>(window);
+			if (timestamp == null)
+				return;
+
+			// clear selection
+			this.logListBox.SelectedItems.Clear();
+
+			// find and select log
+			var log = session.FindNearestLog(timestamp.Value);
+			if (log != null)
+			{
+				this.logListBox.SelectedItems.Add(log);
+				this.logListBox.ScrollIntoView(log);
+				this.logListBox.Focus();
+				this.IsScrollingToLatestLogNeeded = false;
+			}
+        }
 
 
 		// Show application info.

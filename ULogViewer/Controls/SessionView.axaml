@@ -242,6 +242,11 @@
 							</Panel>
 						</ToggleButton>
 
+						<!-- Select log by timestamp -->
+						<Button Classes="ToolBar_Button" Command="{Binding $parent[UserControl].SelectNearestLogByTimestamp}" IsEnabled="{Binding HasLogs}" IsVisible="{Binding AreLogsSortedByTimestamp}" ToolTip.Tip="{DynamicResource String/SessionView.SelectNearestLogByTimestamp}">
+							<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing/FindDate}"/>
+						</Button>
+
 						<!-- Pause/resume -->
 						<Button Classes="ToolBar_Button" Command="{Binding PauseResumeLogsReadingCommand}" IsVisible="{Binding IsReadingLogsContinuously}" ToolTip.Tip="{DynamicResource String/SessionView.PauseResumeLogsReading}">
 							<DrawingPresenter Classes="Icon">

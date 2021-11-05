@@ -1399,10 +1399,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// find log
 			var index = logs.BinarySearch(timestamp.ToBinary(), timestampGetter, comparison);
-			if (index >= 0)
-				return logs[index];
-			return logs[~index];
-        }
+			if (index < 0)
+				index = Math.Min(logs.Count - 1, ~index);
+			return logs[index];
+		}
 
 
 		/// <summary>

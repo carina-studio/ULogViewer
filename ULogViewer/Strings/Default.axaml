@@ -379,6 +379,8 @@
 	<sys:String x:Key="String/SessionView.SelectedLogCount">Selected: </sys:String>
 	<sys:String x:Key="String/SessionView.SelectedLogsDuration">Duration of selection:</sys:String>
 	<sys:String x:Key="String/SessionView.SelectMarkedLogs">Select marked logs</sys:String>
+	<sys:String x:Key="String/SessionView.SelectNearestLogByTimestamp">Select log nearest to specific timestamp (Ctrl+T)</sys:String>
+	<sys:String x:Key="String/SessionView.SelectNearestLogByTimestamp.Message">Specified timestamp:</sys:String>
 	<sys:String x:Key="String/SessionView.SetIPEndPoint">Select/Change IP endpoint</sys:String>
 	<sys:String x:Key="String/SessionView.SetLogProfile">Select/Change log profile</sys:String>
 	<sys:String x:Key="String/SessionView.SetUri">Select/Change URI</sys:String>
