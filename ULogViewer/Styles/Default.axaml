@@ -58,6 +58,14 @@
 	<!-- External controls -->
 	<StyleInclude Source="avares://AvaloniaEdit/AvaloniaEdit.xaml" />
 
+	<!-- DatePicker -->
+	<Style Selector="DatePicker">
+		<Setter Property="BorderThickness" Value="0,0,0,1"/>
+		<Setter Property="DayFormat" Value="{DynamicResource String/DatePicker.DayFormat}"/>
+		<Setter Property="MonthFormat" Value="{DynamicResource String/DatePicker.MonthFormat}"/>
+		<Setter Property="YearFormat" Value="{DynamicResource String/DatePicker.YearFormat}"/>
+	</Style>
+
 	<!-- ListAction -->
 	<Style Selector="Button.ListAction">
 		<Setter Property="HorizontalAlignment" Value="Right"/>
@@ -118,6 +126,11 @@
 		<Setter Property="Background" Value="{DynamicResource TextControlBackgroundBrush}"/>
 		<Setter Property="FontFamily" Value="{DynamicResource FontFamily/TextBox.FallbackFontFamilies}"/>
 		<Setter Property="Padding" Value="{DynamicResource TextControlThemePadding}"/>
+	</Style>
+
+	<!-- TimePicker -->
+	<Style Selector="TimePicker">
+		<Setter Property="BorderThickness" Value="0,0,0,1"/>
 	</Style>
 
 </Styles>

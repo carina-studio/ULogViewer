@@ -1,0 +1,36 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="CarinaStudio.ULogViewer.Controls.DateTimeSelectionDialog"
+		Classes="Dialog"
+        Title="{DynamicResource String/DateTimeSelectionDialog.Title}"
+		Width="{DynamicResource Double/DateTimeSelectionDialog.Width}">
+
+	<DockPanel>
+
+		<!-- Control buttons -->
+		<Border Classes="Dialog_ControlButtonsPanel" DockPanel.Dock="Bottom">
+			<StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].GenerateResultCommand}" Content="{DynamicResource String/Common.OK}"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].Close}" Content="{DynamicResource String/Common.Cancel}"/>
+			</StackPanel>
+		</Border>
+
+		<!-- Content -->
+		<StackPanel Classes="Dialog_ContentPanel">
+
+			<!-- Message -->
+			<TextBlock Name="messageTextBlock" Classes="Dialog_TextBox" Text=" "/>
+
+			<!-- Date time -->
+			<appControls:DatePicker Name="datePicker" HorizontalAlignment="Stretch" SelectedDateChanged="OnDatePickerSelectedDateChanged"/>
+			<appControls:TimePicker Name="timePicker" ClockIdentifier="24HourClock" HorizontalAlignment="Stretch" MinuteIncrement="1" SelectedTimeChanged="OnTimePickerSelectedTimeChanged"/>
+			
+		</StackPanel>
+
+	</DockPanel>
+	
+</Window>

@@ -2329,9 +2329,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Called when test button clicked.
 		void OnTestButtonClick(object? sender, RoutedEventArgs e)
-		{
-			this.logListBox.SelectedItems.Clear();
-		}
+		{ }
 
 
 		// Called when pointer released on tool bar.

@@ -5,6 +5,9 @@
 	<!-- AppOptionsDialog -->
 	<sys:Double x:Key="Double/AppOptionsDialog.InitialLogProfile.Icon.Size">18</sys:Double>
 	<Thickness x:Key="Thickness/AppOptionsDialog.InitialLogProfile.Icon.Margin">0,0,10,0</Thickness>
+
+	<!-- DateTimeSelectionDialog -->
+	<sys:Double x:Key="Double/DateTimeSelectionDialog.Width">400</sys:Double>
 	
 	<!-- Dialog -->
 	<Thickness x:Key="Thickness/Dialog.ListBox.Item.Padding">10,5,10,5</Thickness>
