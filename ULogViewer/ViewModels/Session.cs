@@ -44,6 +44,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<bool> AreLogsSortedByTimestampProperty = ObservableProperty.Register<Session, bool>(nameof(AreLogsSortedByTimestamp));
 		/// <summary>
+		/// Property of <see cref="CustomTitle"/>.
+		/// </summary>
+		public static readonly ObservableProperty<string?> CustomTitleProperty = ObservableProperty.Register<Session, string?>(nameof(CustomTitle), coerce: it => string.IsNullOrWhiteSpace(it) ? null : it);
+		/// <summary>
 		/// Property of <see cref="DisplayLogProperties"/>.
 		/// </summary>
 		public static readonly ObservableProperty<IList<DisplayableLogProperty>> DisplayLogPropertiesProperty = ObservableProperty.Register<Session, IList<DisplayableLogProperty>>(nameof(DisplayLogProperties), new DisplayableLogProperty[0]);
@@ -60,6 +64,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<bool> HasAllDataSourceErrorsProperty = ObservableProperty.Register<Session, bool>(nameof(HasAllDataSourceErrors));
 		/// <summary>
+		/// Property of <see cref="HasCustomTitle"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> HasCustomTitleProperty = ObservableProperty.Register<Session, bool>(nameof(HasCustomTitle));
+		/// <summary>
 		/// Property of <see cref="HasIPEndPoint"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> HasIPEndPointProperty = ObservableProperty.Register<Session, bool>(nameof(HasIPEndPoint));
@@ -71,6 +79,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Property of <see cref="HasLastLogsReadingDuration"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> HasLastLogsReadingDurationProperty = ObservableProperty.Register<Session, bool>(nameof(HasLastLogsReadingDuration));
+		/// <summary>
+		/// Property of <see cref="HasLogProfile"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> HasLogProfileProperty = ObservableProperty.Register<Session, bool>(nameof(HasLogProfile));
 		/// <summary>
 		/// Property of <see cref="HasLogReaders"/>.
 		/// </summary>
@@ -636,11 +648,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				// select title
 				var title = Global.Run(() =>
 				{
+					var customTitle = this.CustomTitle;
 					if (logProfile == null)
-						return app?.GetString("Session.Empty");
+						return customTitle ?? app?.GetString("Session.Empty");
 					if (this.addedLogFilePaths.IsEmpty())
-						return logProfile.Name;
-					return $"{logProfile.Name} ({this.addedLogFilePaths.Count})";
+						return customTitle ?? logProfile.Name;
+					return $"{customTitle ?? logProfile.Name} ({this.addedLogFilePaths.Count})";
 				});
 
 				// update properties
@@ -1174,6 +1187,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		}
 
 
+		/// <summary>
+		/// Get or set custom title.
+		/// </summary>
+		public string? CustomTitle
+        {
+			get => this.GetValue(CustomTitleProperty);
+			set => this.SetValue(CustomTitleProperty, value);
+        }
+
+
 		// Deactivate.
 		void Deactivate(IDisposable token)
 		{
@@ -1412,6 +1435,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Check whether <see cref="CustomTitle"/> has been set or not.
+		/// </summary>
+		public bool HasCustomTitle { get => this.GetValue(HasCustomTitleProperty); }
+
+
+		/// <summary>
 		/// Check whether <see cref="IPEndPoint"/> is non-null or not.
 		/// </summary>
 		public bool HasIPEndPoint { get => this.GetValue(HasIPEndPointProperty); }
@@ -1427,6 +1456,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Check whether <see cref="LastLogsReadingDuration"/> is valid or not.
 		/// </summary>
 		public bool HasLastLogsReadingDuration { get => this.GetValue(HasLastLogsReadingDurationProperty); }
+
+
+		/// <summary>
+		/// Check whether <see cref="LogProfile"/> is valid or not.
+		/// </summary>
+		public bool HasLogProfile { get => this.GetValue(HasLogProfileProperty); }
 
 
 		/// <summary>
@@ -2062,6 +2097,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			base.OnPropertyChanged(property, oldValue, newValue);
 			if (property == AllLogCountProperty)
 				this.UpdateIsLogsWritingAvailable(this.LogProfile);
+			else if (property == CustomTitleProperty)
+			{
+				this.SetValue(HasCustomTitleProperty, newValue != null);
+				this.updateTitleAndIconAction.Schedule();
+			}
 			else if (property == HasLogsProperty
 				|| property == IsCopyingLogsProperty)
 			{
@@ -2095,6 +2135,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			}
 			else if (property == LogsDurationProperty)
 				this.SetValue(HasLogsDurationProperty, newValue != null);
+			else if (property == LogProfileProperty)
+				this.SetValue(HasLogProfileProperty, newValue != null);
 			else if (property == LogsProperty)
 				this.reportLogsTimeInfoAction?.Reschedule();
 			else if (property == UriProperty)

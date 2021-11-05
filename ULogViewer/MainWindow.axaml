@@ -14,12 +14,20 @@
 	<!-- Data templates -->
 	<Window.DataTemplates>
 		<DataTemplate DataType="{x:Type appViewModels:Session}">
-			<Grid ColumnDefinitions="Auto,*,Auto" DragDrop.AllowDrop="True">
+			<Grid Background="{x:Static Brushes.Transparent}" ColumnDefinitions="Auto,*,Auto" DragDrop.AllowDrop="True">
+				<Grid.ContextMenu>
+					<ContextMenu>
+						<MenuItem Command="{Binding $parent[Window].SetCustomSessionTitle}" CommandParameter="{Binding $parent[TabItem]}" Header="{DynamicResource String/MainWindow.SetCustomSessionTitle}"/>
+						<MenuItem Command="{Binding $parent[Window].ClearCustomSessionTitle}" CommandParameter="{Binding $parent[TabItem]}" Header="{DynamicResource String/MainWindow.ClearCustomSessionTitle}" IsEnabled="{Binding HasCustomTitle}"/>
+						<Separator/>
+						<MenuItem Command="{Binding $parent[Window].CloseSessionTabItem}" CommandParameter="{Binding $parent[TabItem]}" Header="{DynamicResource String/MainWindow.CloseSession}"/>
+					</ContextMenu>
+				</Grid.ContextMenu>
 				<Border Classes="TabItem_Icon">
 					<DrawingPresenter Classes="Icon" Drawing="{Binding Icon}"/>
 				</Border>
 				<TextBlock Classes="TabItem_TextBlock" Grid.Column="1" Text="{Binding Title}"/>
-				<Button Classes="TabItem_Button" Click="OnTabItemCloseButtonClick" Grid.Column="2" ToolTip.Tip="{DynamicResource String/MainWindow.CloseSession}">
+				<Button Classes="TabItem_Button" Command="{Binding $parent[Window].CloseSessionTabItem}" CommandParameter="{Binding $parent[TabItem]}" Grid.Column="2" ToolTip.Tip="{DynamicResource String/MainWindow.CloseSession}">
 					<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing/Icon.Close}"/>
 				</Button>
 			</Grid>

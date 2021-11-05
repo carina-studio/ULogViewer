@@ -290,8 +290,11 @@
 	<sys:String x:Key="String/LogTimestampEncoding.UnixMilliseconds">Unix 時間戳記 (毫秒)</sys:String>
 
 	<!-- MainWindow -->
+	<sys:String x:Key="String/MainWindow.ClearCustomSessionTitle">重設分頁標題</sys:String>
 	<sys:String x:Key="String/MainWindow.CloseSession">關閉此分頁</sys:String>
 	<sys:String x:Key="String/MainWindow.CreateSession">建立新分頁</sys:String>
+	<sys:String x:Key="String/MainWindow.SetCustomSessionTitle">自訂分頁標題</sys:String>
+	<sys:String x:Key="String/MainWindow.SetCustomSessionTitle.Message">分頁標題：</sys:String>
 
 	<!-- MemoryLoggerLogDataSourceProvider -->
 	<sys:String x:Key="String/MemoryLoggerLogDataSourceProvider.DisplayName">ULogViewer 即時日誌</sys:String>

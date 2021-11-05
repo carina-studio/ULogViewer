@@ -148,6 +148,42 @@ namespace CarinaStudio.ULogViewer
 		}
 
 
+		// Reset title of session.
+		void ClearCustomSessionTitle(TabItem tabItem)
+		{
+			if (tabItem.DataContext is Session session)
+				session.CustomTitle = null;
+		}
+
+
+		// Close session tab.
+		void CloseSessionTabItem(TabItem tabItem)
+        {
+			// find index and session
+			if (this.DataContext is not Workspace workspace)
+				return;
+			if (tabItem.DataContext is not Session session)
+				return;
+			var index = this.tabItems.IndexOf(tabItem);
+			if (index < 0)
+				return;
+
+			// select neighbor tab item
+			if (this.tabControl.SelectedIndex == index)
+			{
+				if (index < this.tabItems.Count - 2)
+					this.tabControl.SelectedIndex = (index + 1);
+				else if (index > 0)
+					this.tabControl.SelectedIndex = (index - 1);
+				else
+					workspace.ActiveSession = workspace.CreateSession();
+			}
+
+			// close session
+			workspace.CloseSession(session);
+		}
+
+
 		// Create new TabItem for given session.
 		TabItem CreateSessionTabItem(Session session)
 		{
@@ -625,6 +661,28 @@ namespace CarinaStudio.ULogViewer
 					this.FindSessionView(it)?.SelectAndSetLogProfile();
 				}
 			});
+		}
+
+
+		// Set title of session.
+		async void SetCustomSessionTitle(TabItem tabItem)
+		{
+			// find index and session
+			if (tabItem.DataContext is not Session session)
+				return;
+
+			// select name
+			var title = await new AppSuite.Controls.TextInputDialog()
+			{
+				InitialText = session.CustomTitle,
+				MaxTextLength = 128,
+				Message = this.Application.GetString("MainWindow.SetCustomSessionTitle.Message"),
+			}.ShowDialog(this);
+			if (string.IsNullOrWhiteSpace(title))
+				return;
+
+			// set title
+			session.CustomTitle = title;
 		}
 	}
 }
