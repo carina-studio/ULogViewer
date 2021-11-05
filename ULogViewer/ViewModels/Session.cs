@@ -1070,7 +1070,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					it.MaxLogCount = this.Settings.GetValueOrDefault(SettingKeys.MaxContinuousLogCount);
 				it.TimestampCultureInfo = profile.TimestampCultureInfoForReading;
 				it.TimestampEncoding = profile.TimestampEncodingForReading;
-				it.TimestampFormat = profile.TimestampFormatForReading;
+				profile.TimestampFormatForReading?.Let(format =>
+				{
+					it.TimestampFormats = new string[] { format };
+				});
 			});
 			this.logReaders.Add(logReader);
 			this.Logger.LogDebug($"Log reader '{logReader.Id} created");

@@ -65,7 +65,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		LogReaderState state = LogReaderState.Preparing;
 		CultureInfo timestampCultureInfo = defaultTimestampCultureInfo;
 		LogTimestampEncoding timestampEncoding = LogTimestampEncoding.Custom;
-		string? timestampFormat;
+		IList<string> timestampFormats = new string[0];
 		int? updateInterval;
 
 
@@ -606,7 +606,7 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		// Read single line of log.
-		void ReadLog(LogBuilder logBuilder, Match match, StringPool stringPool)
+		void ReadLog(LogBuilder logBuilder, Match match, StringPool stringPool, string[]? timestampFormats)
 		{
 			foreach (Group group in match.Groups)
 			{
@@ -655,13 +655,19 @@ namespace CarinaStudio.ULogViewer.Logs
 					switch (this.timestampEncoding)
 					{
 						case LogTimestampEncoding.Custom:
-							this.timestampFormat.Let(format =>
+							if (timestampFormats != null)
 							{
-								if (format == null)
-									logBuilder.Set(name, value);
-								else if (DateTime.TryParseExact(value, format, this.timestampCultureInfo, DateTimeStyles.None, out var timestamp))
-									logBuilder.Set(name, timestamp.ToBinary().ToString());
-							});
+								for (var i = timestampFormats.Length - 1; i >= 0; --i)
+								{
+									if (DateTime.TryParseExact(value, timestampFormats[i], this.timestampCultureInfo, DateTimeStyles.None, out var timestamp))
+									{
+										logBuilder.Set(name, timestamp.ToBinary().ToString());
+										break;
+									}
+								}
+							}
+							else
+								logBuilder.Set(name, value);
 							break;
 						case LogTimestampEncoding.Unix:
 							if (long.TryParse(value, out var sec))
@@ -725,6 +731,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			var dataSourceOptions = this.DataSource.CreationOptions;
 			var isReadingFromFile = dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName));
 			var stringPool = new StringPool();
+			var timestampFormats = this.timestampFormats.IsNotEmpty() ? this.timestampFormats.ToArray() : null;
 			var exception = (Exception?)null;
 			var stopWatch = new Stopwatch().Also(it => it.Start());
 			try
@@ -754,7 +761,7 @@ namespace CarinaStudio.ULogViewer.Logs
 							}
 
 							// read log
-							this.ReadLog(logBuilder, match, stringPool);
+							this.ReadLog(logBuilder, match, stringPool, timestampFormats);
 
 							// set file name and line number
 							if (logPatternIndex == 0 && isReadingFromFile)
@@ -1106,20 +1113,20 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		/// <summary>
-		/// Get or set format to parse timestamp of log when <see cref="TimestampEncoding"/> is <see cref="LogTimestampEncoding.Custom"/>.
+		/// Get or set list of format to parse timestamp of log when <see cref="TimestampEncoding"/> is <see cref="LogTimestampEncoding.Custom"/>.
 		/// </summary>
-		public string? TimestampFormat
+		public IList<string> TimestampFormats
 		{
-			get => this.timestampFormat;
+			get => this.timestampFormats;
 			set
 			{
 				this.VerifyAccess();
 				if (this.state != LogReaderState.Preparing)
-					throw new InvalidOperationException($"Cannot change {nameof(TimestampFormat)} when state is {this.state}.");
-				if (this.timestampFormat == value)
+					throw new InvalidOperationException($"Cannot change {nameof(TimestampFormats)} when state is {this.state}.");
+				if (this.timestampFormats.SequenceEqual(value))
 					return;
-				this.timestampFormat = value;
-				this.OnPropertyChanged(nameof(TimestampFormat));
+				this.timestampFormats = value.ToArray().AsReadOnly();
+				this.OnPropertyChanged(nameof(TimestampFormats));
 			}
 		}
 
