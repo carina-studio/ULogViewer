@@ -117,7 +117,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly MutableObservableBoolean canShowWorkingDirectoryInExplorer = new MutableObservableBoolean();
 		readonly MenuItem copyLogPropertyMenuItem;
 		bool isAttachedToLogicalTree;
-		bool isControlKeyPressed;
 		bool isIPEndPointNeededAfterLogProfileSet;
 		bool isLogFileNeededAfterLogProfileSet;
 		bool isPidLogPropertyVisible;
