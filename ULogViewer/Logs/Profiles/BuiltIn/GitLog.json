@@ -49,7 +49,9 @@
 	"LogWritingFormat": "commit: {Extra1} {Extra2}{NewLine}Author: {UserName}{NewLine}Date:   {Timestamp}{NewLine}{NewLine}{Message}{NewLine}",
 	"SortDirection": "Descending",
 	"TimestampFormatForDisplaying": "yyyy/MM/dd HH:mm:ss",
-	"TimestampFormatForReading": "MMM d HH:mm:ss yyyy",
+	"TimestampFormatsForReading": [
+		"MMM d HH:mm:ss yyyy"
+	],
 	"VisibleLogProperties": [
 		{
 			"Name": "Timestamp",

@@ -75,6 +75,9 @@
 	<sys:String x:Key="String/DatePicker.Year">年份</sys:String>
 	<sys:String x:Key="String/DatePicker.YearFormat">yyyy 年</sys:String>
 
+	<!-- DateTimeFormatInputDialog -->
+	<sys:String x:Key="String/DateTimeFormatInputDialog.Message">時間戳格式</sys:String>
+
 	<!-- DateTimeSelectionDialog -->
 	<sys:String x:Key="String/DateTimeSelectionDialog.Title">選擇日期與時間</sys:String>
 
@@ -194,9 +197,9 @@
 	<sys:String x:Key="String/LogProfileEditorDialog.SortKey">日誌排序依據</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.TimestampEncodingForReading">日誌時間讀取類型</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.TimestampFormatForDisplaying">日誌時間顯示格式</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.TimestampFormatForReading">日誌時間讀取格式</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.TimestampFormatForWriting">日誌時間輸出格式</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.TimestampFormatForWriting.Watermark">留白表示使用與讀取相同的格式</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.TimestampFormatsForReading">日誌時間讀取格式</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Title.Create">建立新的日誌類型</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Title.Edit">編輯日誌類型</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.VisibleLogProperties">顯示的日誌屬性</sys:String>
@@ -294,7 +297,7 @@
 	<sys:String x:Key="String/MainWindow.CloseSession">關閉此分頁</sys:String>
 	<sys:String x:Key="String/MainWindow.CreateSession">建立新分頁</sys:String>
 	<sys:String x:Key="String/MainWindow.SetCustomSessionTitle">自訂分頁標題…</sys:String>
-	<sys:String x:Key="String/MainWindow.SetCustomSessionTitle.Message">分頁標題：</sys:String>
+	<sys:String x:Key="String/MainWindow.SetCustomSessionTitle.Message">分頁標題</sys:String>
 
 	<!-- MemoryLoggerLogDataSourceProvider -->
 	<sys:String x:Key="String/MemoryLoggerLogDataSourceProvider.DisplayName">ULogViewer 即時日誌</sys:String>
@@ -372,7 +375,7 @@
 	<sys:String x:Key="String/SessionView.SelectedLogsDuration">選取的時長：</sys:String>
 	<sys:String x:Key="String/SessionView.SelectMarkedLogs">選取已標記的日誌</sys:String>
 	<sys:String x:Key="String/SessionView.SelectNearestLogByTimestamp">選取最接近指定時間戳的日誌 (Ctrl+T)</sys:String>
-	<sys:String x:Key="String/SessionView.SelectNearestLogByTimestamp.Message">指定的時間戳：</sys:String>
+	<sys:String x:Key="String/SessionView.SelectNearestLogByTimestamp.Message">指定的時間戳</sys:String>
 	<sys:String x:Key="String/SessionView.SelectNearestLogByTimestamp.Title">選取最接近指定時間戳的日誌</sys:String>
 	<sys:String x:Key="String/SessionView.SetIPEndPoint">選取/變更 IP 端點</sys:String>
 	<sys:String x:Key="String/SessionView.SetLogProfile">選取/變更日誌類型</sys:String>

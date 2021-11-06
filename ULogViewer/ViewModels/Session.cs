@@ -1070,10 +1070,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					it.MaxLogCount = this.Settings.GetValueOrDefault(SettingKeys.MaxContinuousLogCount);
 				it.TimestampCultureInfo = profile.TimestampCultureInfoForReading;
 				it.TimestampEncoding = profile.TimestampEncodingForReading;
-				profile.TimestampFormatForReading?.Let(format =>
-				{
-					it.TimestampFormats = new string[] { format };
-				});
+				it.TimestampFormats = profile.TimestampFormatsForReading;
 			});
 			this.logReaders.Add(logReader);
 			this.Logger.LogDebug($"Log reader '{logReader.Id} created");
@@ -1184,7 +1181,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			logWriter.LogStringEncoding = profile.LogStringEncodingForWriting;
 			logWriter.TimestampCultureInfo = profile.TimestampCultureInfoForWriting;
 			logWriter.TimestampFormat = string.IsNullOrEmpty(profile.TimestampFormatForWriting)
-				? string.IsNullOrEmpty(profile.TimestampFormatForReading) ? profile.TimestampFormatForDisplaying : profile.TimestampFormatForReading
+				? profile.TimestampFormatsForReading.IsEmpty() ? profile.TimestampFormatForDisplaying : profile.TimestampFormatsForReading[0]
 				: profile.TimestampFormatForWriting;
 			return logWriter;
 		}
@@ -2011,7 +2008,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				case nameof(LogProfile.TimestampCultureInfoForReading):
 				case nameof(LogProfile.TimestampFormatForDisplaying):
 				case nameof(LogProfile.TimestampEncodingForReading):
-				case nameof(LogProfile.TimestampFormatForReading):
+				case nameof(LogProfile.TimestampFormatsForReading):
 					this.SynchronizationContext.Post(() => this.ReloadLogs(true, false));
 					break;
 				case nameof(LogProfile.VisibleLogProperties):
@@ -2499,7 +2496,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					it.LogLevelMap = profile.LogLevelMapForWriting;
 					it.LogPropertyMap = jsonSavingOptions.LogPropertyMap;
 					it.TimestampCultureInfo = profile.TimestampCultureInfoForWriting;
-					it.TimestampFormat = string.IsNullOrEmpty(profile.TimestampFormatForWriting) ? profile.TimestampFormatForReading : profile.TimestampFormatForWriting;
+					it.TimestampFormat = string.IsNullOrEmpty(profile.TimestampFormatForWriting) 
+						? profile.TimestampFormatsForReading.IsEmpty() ? profile.TimestampFormatForDisplaying : profile.TimestampFormatsForReading[0]
+						: profile.TimestampFormatForWriting;
 				}),
 				_ => (ILogWriter)(this.CreateRawLogWriter(dataOutput).Also(it =>
 				{

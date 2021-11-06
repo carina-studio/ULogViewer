@@ -73,6 +73,9 @@
 	<sys:String x:Key="String/DatePicker.Year">Year</sys:String>
 	<sys:String x:Key="String/DatePicker.YearFormat">yyyy</sys:String>
 
+	<!-- DateTimeFormatInputDialog -->
+	<sys:String x:Key="String/DateTimeFormatInputDialog.Message">Timestamp format</sys:String>
+
 	<!-- DateTimeSelectionDialog -->
 	<sys:String x:Key="String/DateTimeSelectionDialog.Title">Select date and time</sys:String>
 	
@@ -199,9 +202,9 @@
 	<sys:String x:Key="String/LogProfileEditorDialog.SortKey">Sort key of log</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.TimestampEncodingForReading">Type of timestamp for reading</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.TimestampFormatForDisplaying">Format of timestamp for displaying</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.TimestampFormatForReading">Format of timestamp for reading</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.TimestampFormatForWriting">Format of timestamp for output</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.TimestampFormatForWriting.Watermark">Empty to use same format as reading</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.TimestampFormatsForReading">Format of timestamp for reading</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Title.Create">Create new log profile</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Title.Edit">Edit log profile</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.VisibleLogProperties">Log properties to show</sys:String>
@@ -305,7 +308,7 @@
 	<sys:String x:Key="String/MainWindow.CloseSession">Close this tab</sys:String>
 	<sys:String x:Key="String/MainWindow.CreateSession">Create new tab</sys:String>
 	<sys:String x:Key="String/MainWindow.SetCustomSessionTitle">Set title of this tab…</sys:String>
-	<sys:String x:Key="String/MainWindow.SetCustomSessionTitle.Message">Title of tab:</sys:String>
+	<sys:String x:Key="String/MainWindow.SetCustomSessionTitle.Message">Title of tab</sys:String>
 
 	<!-- MemoryLoggerLogDataSourceProvider -->
 	<sys:String x:Key="String/MemoryLoggerLogDataSourceProvider.DisplayName">ULogViewer realtime log</sys:String>
@@ -383,7 +386,7 @@
 	<sys:String x:Key="String/SessionView.SelectedLogsDuration">Duration of selection:</sys:String>
 	<sys:String x:Key="String/SessionView.SelectMarkedLogs">Select marked logs</sys:String>
 	<sys:String x:Key="String/SessionView.SelectNearestLogByTimestamp">Select log nearest to specified timestamp (Ctrl+T)</sys:String>
-	<sys:String x:Key="String/SessionView.SelectNearestLogByTimestamp.Message">Specified timestamp:</sys:String>
+	<sys:String x:Key="String/SessionView.SelectNearestLogByTimestamp.Message">Specified timestamp</sys:String>
 	<sys:String x:Key="String/SessionView.SelectNearestLogByTimestamp.Title">Select log nearest to specified timestamp</sys:String>
 	<sys:String x:Key="String/SessionView.SetIPEndPoint">Select/Change IP endpoint</sys:String>
 	<sys:String x:Key="String/SessionView.SetLogProfile">Select/Change log profile</sys:String>

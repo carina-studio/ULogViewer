@@ -236,7 +236,7 @@
 				</Grid>
 				<Separator Classes="Dialog_Separator"/>
 
-				<!-- Log string format for reading -->
+				<!-- Log string encoding for reading -->
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogProfileEditorDialog.LogStringEncodingForReading}"/>
 				<asControls:EnumComboBox Name="logStringEncodingForReadingComboBox" Classes="Dialog_ComboBox" EnumType="{x:Type appLogs:LogStringEncoding}"/>
 				<Separator Classes="Dialog_Separator"/>
@@ -247,8 +247,8 @@
 				<Separator Classes="Dialog_Separator"/>
 
 				<!-- Timestamp format for reading -->
-				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogProfileEditorDialog.TimestampFormatForReading}"/>
-				<TextBox Name="timestampFormatForReadingTextBox" Classes="Dialog_TextBox" MaxLength="256">
+				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogProfileEditorDialog.TimestampFormatsForReading}"/>
+				<StackPanel>
 					<ia:Interaction.Behaviors>
 						<iaCore:DataTriggerBehavior Binding="{Binding #timestampEncodingForReadingComboBox.SelectedItem}" Value="Custom">
 							<iaCore:ChangePropertyAction PropertyName="IsEnabled" Value="True"/>
@@ -257,8 +257,30 @@
 							<iaCore:ChangePropertyAction PropertyName="IsEnabled" Value="False"/>
 						</iaCore:DataTriggerBehavior>
 					</ia:Interaction.Behaviors>
-				</TextBox>
-				<asControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.FormatDescription}" Uri="{x:Static app:Uris.DateTimeFormatReference}"/>
+					<ListBox Name="timestampFormatsForReadingListBox" DoubleTapped="OnListBoxDoubleTapped" Items="{Binding $parent[Window].TimestampFormatsForReading}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
+						<ListBox.ItemTemplate>
+							<DataTemplate>
+								<Grid ColumnDefinitions="*,Auto">
+									<TextBlock Text="{Binding}" TextTrimming="CharacterEllipsis"/>
+									<Border Classes="InPlaceAction_Reserved"/>
+									<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
+										<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveTimestampFormatForReading}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
+											<Border Classes="InPlaceAction_Icon">
+												<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Icon.Delete}"/>
+											</Border>
+										</Button>
+										<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditTimestampFormatForReading}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
+											<Border Classes="InPlaceAction_Icon">
+												<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Icon.Edit}"/>
+											</Border>
+										</Button>
+									</StackPanel>
+								</Grid>
+							</DataTemplate>
+						</ListBox.ItemTemplate>
+					</ListBox>
+					<Button Classes="ListAction" Command="{Binding $parent[Window].AddTimestampFormatForReading}" Content="{DynamicResource String/Common.Add}"/>
+				</StackPanel>
 				<Separator Classes="Dialog_Separator_Large"/>
 
 				<!-- Header -->

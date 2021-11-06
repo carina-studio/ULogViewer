@@ -27,7 +27,10 @@
 	],
 	"LogWritingFormat": "{Timestamp} {ProcessId,5} {ThreadId,5} {Level} {SourceName}: {Message}",
 	"TimestampFormatForDisplaying": "MM/dd HH:mm:ss.fff",
-	"TimestampFormatForReading": "MM-dd HH:mm:ss.fff",
+	"TimestampFormatsForReading": [
+		"MM-dd HH:mm:ss.fff",
+		"MM-dd HH:mm:ss.ffffff"
+	],
 	"VisibleLogProperties": [
 		{
 			"Name": "Timestamp",

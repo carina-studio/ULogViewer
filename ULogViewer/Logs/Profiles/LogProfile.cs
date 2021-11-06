@@ -12,7 +12,6 @@ using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
@@ -63,8 +62,8 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		CultureInfo timestampCultureInfoForWriting = defaultTimestampCultureInfoForReading;
 		LogTimestampEncoding timestampEncodingForReading = LogTimestampEncoding.Custom;
 		string? timestampFormatForDisplaying;
-		string? timestampFormatForReading;
 		string? timestampFormatForWriting;
+		IList<string> timestampFormatsForReading = new string[0];
 		IList<LogProperty> visibleLogProperties = new LogProperty[0];
 
 
@@ -110,8 +109,8 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			this.timestampCultureInfoForWriting = template.timestampCultureInfoForWriting;
 			this.timestampEncodingForReading = template.timestampEncodingForReading;
 			this.timestampFormatForDisplaying = template.timestampFormatForDisplaying;
-			this.timestampFormatForReading = template.timestampFormatForReading;
 			this.timestampFormatForWriting = template.timestampFormatForWriting;
+			this.timestampFormatsForReading = template.timestampFormatsForReading;
 			this.visibleLogProperties = template.visibleLogProperties;
 		}
 
@@ -595,11 +594,19 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 					case nameof(TimestampFormatForDisplaying):
 						this.timestampFormatForDisplaying = jsonProperty.Value.GetString();
 						break;
-					case nameof(TimestampFormatForReading):
-						this.timestampFormatForReading = jsonProperty.Value.GetString();
+					case "TimestampFormatForReading":
+						this.timestampFormatsForReading = new string[] { jsonProperty.Value.GetString().AsNonNull() };
+						this.IsDataUpgraded = true;
 						break;
 					case nameof(TimestampFormatForWriting):
 						this.timestampFormatForWriting = jsonProperty.Value.GetString();
+						break;
+					case nameof(TimestampFormatsForReading):
+						this.timestampFormatsForReading = new List<string>().Also(list =>
+						{
+							foreach (var jsonValue in jsonProperty.Value.EnumerateArray())
+								list.Add(jsonValue.GetString().AsNonNull());
+						}).AsReadOnly();
 						break;
 					case nameof(VisibleLogProperties):
 						this.LoadVisibleLogPropertiesFromJson(jsonProperty.Value);
@@ -859,6 +866,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			this.VerifyBuiltIn();
 			this.IsDataUpgraded = false;
 			var prevFileName = this.FileName;
+			var timestampFormatsForReading = this.timestampFormatsForReading.ToArray();
 			await ioTaskFactory.StartNew(() =>
 			{
 				// delete previous file
@@ -903,7 +911,14 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				writer.WriteString(nameof(TimestampCultureInfoForWriting), this.timestampCultureInfoForWriting.ToString());
 				writer.WriteString(nameof(TimestampEncodingForReading), this.timestampEncodingForReading.ToString());
 				this.timestampFormatForDisplaying?.Let(it => writer.WriteString(nameof(TimestampFormatForDisplaying), it));
-				this.timestampFormatForReading?.Let(it => writer.WriteString(nameof(TimestampFormatForReading), it));
+				if (timestampFormatsForReading.IsNotEmpty())
+				{
+					writer.WritePropertyName(nameof(TimestampFormatsForReading));
+					writer.WriteStartArray();
+					foreach (var format in timestampFormatsForReading)
+						writer.WriteStringValue(format);
+					writer.WriteEndArray();
+				}
 				this.timestampFormatForWriting?.Let(it => writer.WriteString(nameof(TimestampFormatForWriting), it));
 				writer.WritePropertyName(nameof(VisibleLogProperties));
 				this.SaveVisibleLogPropertiesToJson(writer);
@@ -1094,24 +1109,6 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 
 
 		/// <summary>
-		/// Get or set format of timestamp for reading logs if <see cref="TimestampEncodingForReading"/> is <see cref="LogTimestampEncoding.Custom"/>.
-		/// </summary>
-		public string? TimestampFormatForReading
-		{
-			get => this.timestampFormatForReading;
-			set
-			{
-				this.VerifyAccess();
-				this.VerifyBuiltIn();
-				if (this.timestampFormatForReading == value)
-					return;
-				this.timestampFormatForReading = value;
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TimestampFormatForReading)));
-			}
-		}
-
-
-		/// <summary>
 		/// Get or set format of timestamp for writing logs.
 		/// </summary>
 		public string? TimestampFormatForWriting
@@ -1125,6 +1122,24 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 					return;
 				this.timestampFormatForWriting = value;
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TimestampFormatForWriting)));
+			}
+		}
+
+
+		/// <summary>
+		/// Get or set list of format of timestamp for reading logs if <see cref="TimestampEncodingForReading"/> is <see cref="LogTimestampEncoding.Custom"/>.
+		/// </summary>
+		public IList<string> TimestampFormatsForReading
+		{
+			get => this.timestampFormatsForReading;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (this.timestampFormatsForReading.SequenceEqual(value))
+					return;
+				this.timestampFormatsForReading = value.ToArray().AsReadOnly();
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TimestampFormatsForReading)));
 			}
 		}
 
