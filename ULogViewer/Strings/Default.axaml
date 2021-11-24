@@ -65,14 +65,6 @@
 	<sys:String x:Key="String/DatabaseSourceType.File">File</sys:String>
 	<sys:String x:Key="String/DatabaseSourceType.Network">Network</sys:String>
 
-	<!-- DatePicker -->
-	<sys:String x:Key="String/DatePicker.Day">Day</sys:String>
-	<sys:String x:Key="String/DatePicker.DayFormat">d (ddd)</sys:String>
-	<sys:String x:Key="String/DatePicker.Month">Month</sys:String>
-	<sys:String x:Key="String/DatePicker.MonthFormat">MMM</sys:String>
-	<sys:String x:Key="String/DatePicker.Year">Year</sys:String>
-	<sys:String x:Key="String/DatePicker.YearFormat">yyyy</sys:String>
-
 	<!-- DateTimeFormatInputDialog -->
 	<sys:String x:Key="String/DateTimeFormatInputDialog.Message">Timestamp format</sys:String>
 
@@ -422,12 +414,6 @@
 
 	<!-- TcpServerLogDataSourceProvider -->
 	<sys:String x:Key="String/TcpServerLogDataSourceProvider.DisplayName">TCP Server</sys:String>
-
-	<!-- TimePicker -->
-	<sys:String x:Key="String/TimePicker.Hour">Hour</sys:String>
-	<sys:String x:Key="String/TimePicker.HourFormat">{0:D2}</sys:String>
-	<sys:String x:Key="String/TimePicker.Minute">Minute</sys:String>
-	<sys:String x:Key="String/TimePicker.MinuteFormat">{0:D2}</sys:String>
 
 	<!-- TimeSpanConverter -->
 	<sys:String x:Key="String/TimeSpanConverter.Days">{0} d {1} hr {2} min {3}.{4} sec</sys:String>

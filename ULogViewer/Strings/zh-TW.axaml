@@ -67,14 +67,6 @@
 	<sys:String x:Key="String/DatabaseSourceType.File">檔案</sys:String>
 	<sys:String x:Key="String/DatabaseSourceType.Network">網路</sys:String>
 
-	<!-- DatePicker -->
-	<sys:String x:Key="String/DatePicker.Day">日</sys:String>
-	<sys:String x:Key="String/DatePicker.DayFormat">d 日 (ddd)</sys:String>
-	<sys:String x:Key="String/DatePicker.Month">月份</sys:String>
-	<sys:String x:Key="String/DatePicker.MonthFormat">M 月</sys:String>
-	<sys:String x:Key="String/DatePicker.Year">年份</sys:String>
-	<sys:String x:Key="String/DatePicker.YearFormat">yyyy 年</sys:String>
-
 	<!-- DateTimeFormatInputDialog -->
 	<sys:String x:Key="String/DateTimeFormatInputDialog.Message">時間戳格式</sys:String>
 
@@ -411,12 +403,6 @@
 
 	<!-- TcpServerLogDataSourceProvider -->
 	<sys:String x:Key="String/TcpServerLogDataSourceProvider.DisplayName">TCP 伺服器</sys:String>
-
-	<!-- TimePicker -->
-	<sys:String x:Key="String/TimePicker.Hour">小時</sys:String>
-	<sys:String x:Key="String/TimePicker.HourFormat">{0:D2} 時</sys:String>
-	<sys:String x:Key="String/TimePicker.Minute">分鐘</sys:String>
-	<sys:String x:Key="String/TimePicker.MinuteFormat">{0:D2} 分 </sys:String>
 
 	<!-- TimeSpanConverter -->
 	<sys:String x:Key="String/TimeSpanConverter.Days">{0} 天 {1} 小時 {2} 分 {3}.{4:000} 秒</sys:String>

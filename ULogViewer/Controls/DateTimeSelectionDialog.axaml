@@ -2,7 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-		xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
+		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.DateTimeSelectionDialog"
 		Classes="Dialog"
@@ -26,8 +26,8 @@
 			<TextBlock Name="messageTextBlock" Classes="Dialog_TextBlock" Text=" "/>
 
 			<!-- Date time -->
-			<appControls:DatePicker Name="datePicker" HorizontalAlignment="Stretch" SelectedDateChanged="OnDatePickerSelectedDateChanged"/>
-			<appControls:TimePicker Name="timePicker" ClockIdentifier="24HourClock" HorizontalAlignment="Stretch" MinuteIncrement="1" SelectedTimeChanged="OnTimePickerSelectedTimeChanged"/>
+			<asControls:DatePicker Name="datePicker" Classes="Dialog_DatePicker" SelectedDateChanged="OnDatePickerSelectedDateChanged"/>
+			<asControls:TimePicker Name="timePicker" Classes="Dialog_TimePicker" ClockIdentifier="24HourClock" MinuteIncrement="1" SelectedTimeChanged="OnTimePickerSelectedTimeChanged"/>
 			
 		</StackPanel>
 

@@ -13,8 +13,8 @@ namespace CarinaStudio.ULogViewer.Controls
     partial class DateTimeSelectionDialog : InputDialog
     {
         // Fields.
-        readonly DatePicker datePicker;
-        readonly TimePicker timePicker;
+        readonly AppSuite.Controls.DatePicker datePicker;
+        readonly AppSuite.Controls.TimePicker timePicker;
 
 
         /// <summary>
@@ -23,8 +23,8 @@ namespace CarinaStudio.ULogViewer.Controls
         public DateTimeSelectionDialog()
         {
             InitializeComponent();
-            this.datePicker = this.FindControl<DatePicker>(nameof(datePicker));
-            this.timePicker = this.FindControl<TimePicker>(nameof(timePicker));
+            this.datePicker = this.FindControl<AppSuite.Controls.DatePicker>(nameof(datePicker));
+            this.timePicker = this.FindControl<AppSuite.Controls.TimePicker>(nameof(timePicker));
         }
 
 
