@@ -26,8 +26,8 @@
 
 								<!-- Icon -->
 								<Grid Grid.RowSpan="1" Height="{DynamicResource Double/LogProfileSelectionDialog.LogProfile.Icon.Size}" Margin="{DynamicResource Thickness/LogProfileSelectionDialog.LogProfile.Icon.Margin}" VerticalAlignment="Top" Width="{DynamicResource Double/LogProfileSelectionDialog.LogProfile.Icon.Size}">
-									<DrawingPresenter Classes="Icon" Drawing="{Binding Icon, Converter={x:Static appConverters:LogProfileIconConverter.Default}}" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}"/>
-									<DrawingPresenter Classes="Icon" Drawing="{Binding Icon, Converter={x:Static appConverters:LogProfileIconConverter.Default}, ConverterParameter=Light}}" IsVisible="{Binding $parent[ListBoxItem].IsSelected}"/>
+									<Image Classes="Icon" Source="{Binding Icon, Converter={x:Static appConverters:LogProfileIconConverter.Default}}" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}"/>
+									<Image Classes="Icon" Source="{Binding Icon, Converter={x:Static appConverters:LogProfileIconConverter.Default}, ConverterParameter=Light}}" IsVisible="{Binding $parent[ListBoxItem].IsSelected}"/>
 								</Grid>
 								
 								<!-- Name -->
@@ -56,27 +56,27 @@
 								<StackPanel Grid.Column="2" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
 									<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveLogProfile}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" IsVisible="{Binding !IsBuiltIn}" ToolTip.Tip="{DynamicResource String/LogProfileSelectionDialog.RemoveLogProfile}">
 										<Border Classes="InPlaceAction_Icon">
-											<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Icon.Delete}"/>
+											<Image Classes="Icon" Source="{DynamicResource Image/Icon.Delete}"/>
 										</Border>
 									</Button>
 									<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].ExportLogProfile}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/LogProfileSelectionDialog.ExportLogProfile}">
 										<Border Classes="InPlaceAction_Icon">
-											<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Icon.Export}"/>
+											<Image Classes="Icon" Source="{DynamicResource Image/Icon.Export}"/>
 										</Border>
 									</Button>
 									<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].CopyLogProfile}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Copy}">
 										<Border Classes="InPlaceAction_Icon">
-											<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Icon.Copy}"/>
+											<Image Classes="Icon" Source="{DynamicResource Image/Icon.Copy}"/>
 										</Border>
 									</Button>
 									<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditLogProfile}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" IsVisible="{Binding !IsBuiltIn}" ToolTip.Tip="{DynamicResource String/LogProfileSelectionDialog.EditLogProfile}">
 										<Border Classes="InPlaceAction_Icon">
-											<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Icon.Edit}"/>
+											<Image Classes="Icon" Source="{DynamicResource Image/Icon.Edit}"/>
 										</Border>
 									</Button>
 									<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].PinUnpinLogProfile}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/LogProfileSelectionDialog.PinUnpinLogProfile}">
 										<Border Classes="InPlaceAction_Icon">
-											<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Icon.Pin}"/>
+											<Image Classes="Icon" Source="{DynamicResource Image/Icon.Pin}"/>
 										</Border>
 									</Button>
 								</StackPanel>

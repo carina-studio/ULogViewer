@@ -118,7 +118,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Property of <see cref="Icon"/>.
 		/// </summary>
-		public static readonly ObservableProperty<Drawing?> IconProperty = ObservableProperty.Register<Session, Drawing?>(nameof(Icon));
+		public static readonly ObservableProperty<IImage?> IconProperty = ObservableProperty.Register<Session, IImage?>(nameof(Icon));
 		/// <summary>
 		/// Property of <see cref="IPEndPoint"/>.
 		/// </summary>
@@ -637,11 +637,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					if (logProfile == null)
 					{
 						var res = (object?)null;
-						app?.Resources?.TryGetResource("Drawing/Icon.Tab", out res);
-						return res as Drawing;
+						app?.Resources?.TryGetResource("Image/Icon.Tab", out res);
+						return res as IImage;
 					}
 					else if (app != null)
-						return LogProfileIconConverter.Default.Convert(logProfile.Icon, typeof(Drawing), null, app.CultureInfo) as Drawing;
+						return LogProfileIconConverter.Default.Convert(logProfile.Icon, typeof(IImage), null, app.CultureInfo) as IImage;
 					return null;
 				});
 
@@ -1515,7 +1515,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get icon of session.
 		/// </summary>
-		public Drawing? Icon { get => this.GetValue(IconProperty); }
+		public IImage? Icon { get => this.GetValue(IconProperty); }
 
 
 		/// <summary>

@@ -25,22 +25,22 @@
 							<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
 								<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveSetupTeardownCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
 									<Border Classes="InPlaceAction_Icon">
-										<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Icon.Delete}"/>
+										<Image Classes="Icon" Source="{DynamicResource Image/Icon.Delete}"/>
 									</Border>
 								</Button>
 								<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditSetupTeardownCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
 									<Border Classes="InPlaceAction_Icon">
-										<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Icon.Edit}"/>
+										<Image Classes="Icon" Source="{DynamicResource Image/Icon.Edit}"/>
 									</Border>
 								</Button>
 								<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].MoveSetupTeardownCommandUp}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.MoveUp}">
 									<Border Classes="InPlaceAction_Icon">
-										<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Icon.MoveUp}"/>
+										<Image Classes="Icon" Source="{DynamicResource Image/Icon.MoveUp}"/>
 									</Border>
 								</Button>
 								<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].MoveSetupTeardownCommandDown}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.MoveDown}">
 									<Border Classes="InPlaceAction_Icon">
-										<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Icon.MoveDown}"/>
+										<Image Classes="Icon" Source="{DynamicResource Image/Icon.MoveDown}"/>
 									</Border>
 								</Button>
 							</StackPanel>

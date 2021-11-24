@@ -20,7 +20,7 @@
 						<MenuItem Command="{Binding $parent[Window].SetCustomSessionTitle}" CommandParameter="{Binding $parent[TabItem]}" Header="{DynamicResource String/MainWindow.SetCustomSessionTitle}">
 							<MenuItem.Icon>
 								<Border Classes="MenuItem_Icon">
-									<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Rename}"/>
+									<Image Classes="Icon" Source="{DynamicResource Image/Rename}"/>
 								</Border>
 							</MenuItem.Icon>
 						</MenuItem>
@@ -29,18 +29,18 @@
 						<MenuItem Command="{Binding $parent[Window].CloseSessionTabItem}" CommandParameter="{Binding $parent[TabItem]}" Header="{DynamicResource String/MainWindow.CloseSession}">
 							<MenuItem.Icon>
 								<Border Classes="MenuItem_Icon">
-									<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Icon.Close}"/>
+									<Image Classes="Icon" Source="{DynamicResource Image/Icon.Close}"/>
 								</Border>
 							</MenuItem.Icon>
 						</MenuItem>
 					</ContextMenu>
 				</Grid.ContextMenu>
 				<Border Classes="TabItem_Icon">
-					<DrawingPresenter Classes="Icon" Drawing="{Binding Icon}"/>
+					<Image Classes="Icon" Source="{Binding Icon}"/>
 				</Border>
 				<TextBlock Classes="TabItem_TextBlock" Grid.Column="1" Text="{Binding Title}"/>
 				<Button Classes="TabItem_Button" Command="{Binding $parent[Window].CloseSessionTabItem}" CommandParameter="{Binding $parent[TabItem]}" Grid.Column="2" ToolTip.Tip="{DynamicResource String/MainWindow.CloseSession}">
-					<DrawingPresenter Classes="Icon" Drawing="{StaticResource Drawing/Icon.Close}"/>
+					<Image Classes="Icon" Source="{StaticResource Image/Icon.Close}"/>
 				</Button>
 			</Grid>
 		</DataTemplate>
@@ -53,7 +53,7 @@
 		<TabItem Classes="Empty">
 			<TabItem.Header>
 				<Border Classes="AddTabItemButton" DragDrop.AllowDrop="True" ToolTip.Tip="{DynamicResource String/MainWindow.CreateSession}">
-					<DrawingPresenter Classes="Icon" Drawing="{DynamicResource Drawing/Icon.Add}"/>
+					<Image Classes="Icon" Source="{DynamicResource Image/Icon.Add}"/>
 				</Border>
 			</TabItem.Header>
 		</TabItem>

@@ -102,8 +102,8 @@
 						<DataTemplate>
 							<Grid ColumnDefinitions="Auto,*">
 								<Grid Height="{DynamicResource Double/AppOptionsDialog.InitialLogProfile.Icon.Size}" Margin="{DynamicResource Thickness/AppOptionsDialog.InitialLogProfile.Icon.Margin}" VerticalAlignment="Center" Width="{DynamicResource Double/AppOptionsDialog.InitialLogProfile.Icon.Size}">
-									<DrawingPresenter Classes="Icon" Drawing="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}}"/>
-									<DrawingPresenter Classes="Icon" Drawing="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}, ConverterParameter=Light}" IsVisible="False">
+									<Image Classes="Icon" Source="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}}"/>
+									<Image Classes="Icon" Source="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}, ConverterParameter=Light}" IsVisible="False">
 										<ia:Interaction.Behaviors>
 											<iaCore:DataTriggerBehavior Binding="{Binding $parent[ComboBoxItem].IsSelected}" Value="True">
 												<iaCore:ChangePropertyAction PropertyName="IsVisible" Value="True"/>
@@ -112,7 +112,7 @@
 												<iaCore:ChangePropertyAction PropertyName="IsVisible" Value="False"/>
 											</iaCore:DataTriggerBehavior>
 										</ia:Interaction.Behaviors>
-									</DrawingPresenter>
+									</Image>
 								</Grid>
 								<TextBlock Grid.Column="1" Text="{Binding Name}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
 							</Grid>
