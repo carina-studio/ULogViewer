@@ -91,7 +91,7 @@
 	</Style>
 
 	<!-- SessionView -->
-	<Style Selector="DrawingPresenter.SessionView_SidePanel_Header">
+	<Style Selector="Image.SessionView_SidePanel_Header">
 		<Setter Property="Height" Value="{DynamicResource Double/SessionView.SidePanel.Header.Icon.Size}"/>
 		<Setter Property="Margin" Value="{DynamicResource Thickness/SessionView.SidePanel.Header.Icon.Margin}"/>
 		<Setter Property="VerticalAlignment" Value="Center"/>
