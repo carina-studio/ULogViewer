@@ -39,8 +39,10 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.highlightingColor = new HighlightingColor().Also(it => 
 				{
 					var res = (object?)null;
-					if ((app as App)?.TryFindResource("Brush/LogStringPropertyDialog.FoundText.Background", out res) == true && res is SolidColorBrush solidColorBrush)
-						it.Background = new SimpleHighlightingBrush(solidColorBrush.Color);
+					if ((app as App)?.TryFindResource("Brush/LogStringPropertyDialog.FoundText.Background", out res) == true && res is SolidColorBrush background)
+						it.Background = new SimpleHighlightingBrush(background.Color);
+					if ((app as App)?.TryFindResource("Brush/LogStringPropertyDialog.FoundText.Foreground", out res) == true && res is SolidColorBrush foreground)
+						it.Foreground = new SimpleHighlightingBrush(foreground.Color);
 				});
 				this.mainRuleSet.Let(mainRuleSet =>
 				{
