@@ -201,6 +201,15 @@ namespace CarinaStudio.ULogViewer.Controls
 			});
 			this.visualLineElementGenerator = (VisualLineElementGeneratorImpl)this.propertyValueTextEditor.TextArea.TextView.ElementGenerators.First(it => it is VisualLineElementGeneratorImpl);
 			this.SetValue<string>(LogPropertyDisplayNameProperty, LogPropertyNameConverter.Default.Convert(nameof(Log.Message)));
+			this.AddHandler(KeyDownEvent, (_, e) =>
+			{
+				if (e.Key == Avalonia.Input.Key.F && (e.KeyModifiers & Avalonia.Input.KeyModifiers.Control) != 0)
+				{
+					this.findTextTextBox.Focus();
+					this.findTextTextBox.SelectAll();
+					e.Handled = true;
+				}
+			}, Avalonia.Interactivity.RoutingStrategies.Tunnel);
 			this.ApplySystemAccentColor();
 		}
 
