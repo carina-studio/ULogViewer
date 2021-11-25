@@ -780,7 +780,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					{
 						border.Bind(Border.BackgroundProperty, new Binding()
 						{
-							Converter = Converters.MarkColorConverter.Default,
+							Converter = Converters.MarkColorToBackgroundConverter.Default,
 							Path = nameof(DisplayableLog.MarkedColor)
 						});
 					}));

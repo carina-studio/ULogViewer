@@ -10,12 +10,12 @@ namespace CarinaStudio.ULogViewer.Converters
     /// <summary>
     /// Convert from <see cref="MarkColor"/> to <see cref="IBrush"/>.
     /// </summary>
-    class MarkColorConverter : IValueConverter
+    class MarkColorToBackgroundConverter : IValueConverter
     {
         /// <summary>
         /// Default instance.
         /// </summary>
-        public static readonly MarkColorConverter Default = new MarkColorConverter();
+        public static readonly MarkColorToBackgroundConverter Default = new MarkColorToBackgroundConverter();
 
 
         // Fields.
