@@ -259,6 +259,23 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public static readonly IValueConverter LogsFilteringProgressConverter = new AppSuite.Converters.RatioToPercentageConverter(1);
 
 
+		/// <summary>
+		/// Parameters of marking logs.
+		/// </summary>
+		public class MarkingLogsParams
+        {
+			/// <summary>
+			/// Color to mark logs.
+			/// </summary>
+			public MarkColor Color { get; set; } = MarkColor.None;
+
+			/// <summary>
+			/// Get or set logs to be marked.
+			/// </summary>
+			public IEnumerable<DisplayableLog> Logs { get; set; } = new DisplayableLog[0];
+        }
+
+
 		// Constants.
 		const string MarkedFileExtension = ".ulvmark";
 		const int DisplayableLogDisposingChunkSize = 65536;
@@ -313,11 +330,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		// Class for marked log info.
 		class MarkedLogInfo
 		{
+			public MarkColor Color = MarkColor.None;
 			public string FileName;
 			public int LineNumber;
 			public DateTime? Timestamp;
-			public MarkedLogInfo(string fileName, int lineNumber, DateTime? timestamp)
+			public MarkedLogInfo(string fileName, int lineNumber, DateTime? timestamp, MarkColor color)
 			{
+				this.Color = color;
 				this.FileName = fileName;
 				this.LineNumber = lineNumber;
 				this.Timestamp = timestamp;
@@ -382,6 +401,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.ClearLogFilesCommand = new Command(this.ClearLogFiles, this.canClearLogFiles);
 			this.CopyLogsCommand = new Command<IList<DisplayableLog>>(it => this.CopyLogs(it, false), this.canCopyLogs);
 			this.CopyLogsWithFileNamesCommand = new Command<IList<DisplayableLog>>(it => this.CopyLogs(it, true), this.canCopyLogsWithFileNames);
+			this.MarkLogsCommand = new Command<MarkingLogsParams>(this.MarkLogs, this.canMarkUnmarkLogs);
 			this.MarkUnmarkLogsCommand = new Command<IEnumerable<DisplayableLog>>(this.MarkUnmarkLogs, this.canMarkUnmarkLogs);
 			this.PauseResumeLogsReadingCommand = new Command(this.PauseResumeLogsReading, this.canPauseResumeLogsReading);
 			this.ReloadLogsCommand = new Command(() => this.ReloadLogs(false, false), this.canReloadLogs);
@@ -392,6 +412,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.SetUriCommand = new Command<Uri?>(this.SetUri, this.GetValueAsObservable(IsUriNeededProperty));
 			this.SetWorkingDirectoryCommand = new Command<string?>(this.SetWorkingDirectory, this.GetValueAsObservable(IsWorkingDirectoryNeededProperty));
 			this.ToggleShowingAllLogsTemporarilyCommand = new Command(this.ToggleShowingAllLogsTemporarily, this.canShowAllLogsTemporarily);
+			this.UnmarkLogsCommand = new Command<IEnumerable<DisplayableLog>>(this.UnmarkLogs, this.canMarkUnmarkLogs);
 			this.canSetLogProfile.Update(true);
 
 			// create collections
@@ -1667,11 +1688,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 										{
 											foreach (var jsonObject in jsonProperty.Value.EnumerateArray())
 											{
+												var color = MarkColor.None;
+												if (jsonObject.TryGetProperty("MarkedColor", out var colorProperty) && colorProperty.ValueKind == JsonValueKind.String)
+													Enum.TryParse(colorProperty.GetString(), out color);
 												var lineNumber = jsonObject.GetProperty("MarkedLineNumber").GetInt32();
 												var timestamp = (DateTime?)null;
 												if (jsonObject.TryGetProperty("MarkedTimestamp", out var timestampElement))
 													timestamp = DateTime.Parse(timestampElement.GetString().AsNonNull());
-												markedLogInfos.Add(new MarkedLogInfo(fileName, lineNumber, timestamp));
+												markedLogInfos.Add(new MarkedLogInfo(fileName, lineNumber, timestamp, color));
 											}
 											break;
 										}
@@ -1784,6 +1808,41 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public IList<DisplayableLog> MarkedLogs { get; }
 
 
+		// Mark logs.
+		void MarkLogs(MarkingLogsParams parameters)
+		{
+			this.VerifyAccess();
+			this.VerifyDisposed();
+			if (!this.canMarkUnmarkLogs.Value)
+				return;
+			var color = parameters.Color;
+			foreach (var log in parameters.Logs)
+			{
+				if (!log.IsMarked)
+				{
+					log.IsMarked = true;
+					this.markedLogs.Add(log);
+					log.FileName?.Let(it => this.markedLogsChangedFilePaths.Add(it));
+				}
+				if (log.MarkColor != color)
+				{
+					log.MarkColor = color;
+					log.FileName?.Let(it => this.markedLogsChangedFilePaths.Add(it));
+				}
+			}
+
+			// schedule save to file action
+			this.saveMarkedLogsAction.Schedule(DelaySaveMarkedLogs);
+		}
+
+
+		/// <summary>
+		/// Command to mark logs.
+		/// </summary>
+		/// <remarks>Type of parmeter is <see cref="MarkingLogsParams"/>.</remarks>
+		public ICommand MarkLogsCommand { get; }
+
+
 		// Mark or unmark logs.
 		void MarkUnmarkLogs(IEnumerable<DisplayableLog> logs)
 		{
@@ -1821,6 +1880,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					if(!log.IsMarked)
 					{
 						log.IsMarked = true;
+						log.MarkColor = MarkColor.None;
 						this.markedLogs.Add(log);
 						log.FileName?.Let(it => this.markedLogsChangedFilePaths.Add(it));
 					}
@@ -1835,6 +1895,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Command to mark or ummark logs.
 		/// </summary>
+		/// <remarks>Type of parameter is <see cref="IEnumerable{DisplayableLog}"/></remarks>
 		public ICommand MarkUnmarkLogsCommand { get; }
 
 
@@ -2488,6 +2549,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// create log writer
 			var logs = options.Logs;
+			var markColorMap = new Dictionary<Log, MarkColor>();
 			using var dataOutput = new FileLogDataOutput((IULogViewerApplication)this.Application, options.FileName.AsNonNull());
 			using var logWriter = options switch
 			{
@@ -2506,7 +2568,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					it.LogsToGetLineNumber = new HashSet<Log>().Also(it =>
 					{
 						for (var i = markedLogs.Count - 1; i >= 0; --i)
-							it.Add(markedLogs[i].Log);
+						{
+							var markedLog = markedLogs[i];
+							it.Add(markedLog.Log);
+							markColorMap[markedLog.Log] = markedLog.MarkColor;
+						}
 					});
 					it.WriteFileNames = false;
 				})),
@@ -2569,7 +2635,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					var markedLogInfos = new List<MarkedLogInfo>().Also(markedLogInfos =>
 					{
 						foreach (var pair in rawLogWriter.LineNumbers)
-							markedLogInfos.Add(new MarkedLogInfo(fileName, pair.Value, pair.Key.Timestamp));
+						{
+							var color = MarkColor.None;
+							markColorMap.TryGetValue(pair.Key, out color);
+							markedLogInfos.Add(new MarkedLogInfo(fileName, pair.Value, pair.Key.Timestamp, color));
+						}
 					});
 					this.SaveMarkedLogs(fileName, markedLogInfos);
 				}
@@ -2604,7 +2674,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			var markedLogInfos = new List<MarkedLogInfo>().Also(markedLogInfos =>
 			{
 				foreach (var markedLog in markedLogs)
-					markedLog.LineNumber?.Let(lineNumber => markedLogInfos.Add(new MarkedLogInfo(logFileName, lineNumber, markedLog.Log.Timestamp)));
+					markedLog.LineNumber?.Let(lineNumber => markedLogInfos.Add(new MarkedLogInfo(logFileName, lineNumber, markedLog.Log.Timestamp, markedLog.MarkColor)));
 			});
 			this.SaveMarkedLogs(logFileName, markedLogInfos);
 		}
@@ -2640,6 +2710,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 							foreach (var markedLog in markedLogInfos)
 							{
 								writer.WriteStartObject();
+								if (markedLog.Color != MarkColor.None)
+									writer.WriteString("MarkedColor", markedLog.Color.ToString());
 								writer.WriteNumber("MarkedLineNumber", markedLog.LineNumber);
 								markedLog.Timestamp?.Let(it => writer.WriteString("MarkedTimestamp", it));
 								writer.WriteEndObject();
@@ -3004,6 +3076,35 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Command to enable or disable showing all logs temporarily.
 		/// </summary>
 		public ICommand ToggleShowingAllLogsTemporarilyCommand { get; }
+
+
+		// Unmark logs.
+		void UnmarkLogs(IEnumerable<DisplayableLog> logs)
+		{
+			this.VerifyAccess();
+			this.VerifyDisposed();
+			if (!this.canMarkUnmarkLogs.Value)
+				return;
+			foreach (var log in logs)
+			{
+				if (log.IsMarked)
+				{
+					log.IsMarked = false;
+					this.markedLogs.Remove(log);
+					log.FileName?.Let(it => this.markedLogsChangedFilePaths.Add(it));
+				}
+			}
+
+			// schedule save to file action
+			this.saveMarkedLogsAction.Schedule(DelaySaveMarkedLogs);
+		}
+
+
+		/// <summary>
+		/// Command to unmark logs.
+		/// </summary>
+		/// <remarks>Type of parmeter is <see cref="IEnumerable{DisplayableLog}"/>.</remarks>
+		public ICommand UnmarkLogsCommand { get; }
 
 
 		// Update comparison for displayable logs.

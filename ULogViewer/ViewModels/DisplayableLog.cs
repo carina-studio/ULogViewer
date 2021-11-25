@@ -30,6 +30,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		CompressedString? endingTimestampString;
 		readonly int[] extraLineCount;
 		bool isMarked;
+		MarkColor markColor;
 		int messageLineCount = -1;
 		int summaryLineCount = -1;
 		CompressedString? timestampString;
@@ -528,6 +529,23 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Get or set color of marking.
+		/// </summary>
+		public MarkColor MarkColor
+		{
+			get => this.markColor;
+			set
+			{
+				this.VerifyAccess();
+				if (this.markColor == value)
+					return;
+				this.markColor = value;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MarkColor)));
+			}
+		}
+
+
+		/// <summary>
 		/// Get message of log.
 		/// </summary>
 		public string? Message { get => this.Log.Message; }
@@ -779,5 +797,49 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		CarinaStudio.IApplication IApplicationObject.Application { get => this.Application; }
 		public event PropertyChangedEventHandler? PropertyChanged;
 		public SynchronizationContext SynchronizationContext { get => this.Application.SynchronizationContext; }
+	}
+
+
+	/// <summary>
+	/// Color of marking of <see cref="DisplayableLog"/>.
+	/// </summary>
+	enum MarkColor
+    {
+		/// <summary>
+		/// None.
+		/// </summary>
+		None,
+		/// <summary>
+		/// Red.
+		/// </summary>
+		Red,
+		/// <summary>
+		/// Orange.
+		/// </summary>
+		Orange,
+		/// <summary>
+		/// Yellow.
+		/// </summary>
+		Yellow,
+		/// <summary>
+		/// Green.
+		/// </summary>
+		Green,
+		/// <summary>
+		/// Blue.
+		/// </summary>
+		Blue,
+		/// <summary>
+		/// Indigo.
+		/// </summary>
+		Indigo,
+		/// <summary>
+		/// Purple.
+		/// </summary>
+		Purple,
+		/// <summary>
+		/// Magenta.
+		/// </summary>
+		Magenta,
 	}
 }
