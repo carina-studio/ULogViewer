@@ -1977,7 +1977,7 @@ namespace CarinaStudio.ULogViewer.Controls
 							}
 							break;
 						case Avalonia.Input.Key.F5:
-							(this.DataContext as Session)?.ReloadLogsCommand?.TryExecute();
+							this.ReloadLogs();
 							e.Handled = true;
 							break;
 						case Avalonia.Input.Key.Home:
