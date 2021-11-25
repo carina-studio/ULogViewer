@@ -1770,7 +1770,9 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Called when log list box selection changed.
-		void OnLogListBoxSelectionChanged(object? sender, SelectionChangedEventArgs e)
+		void OnLogListBoxSelectionChanged(object? sender, SelectionChangedEventArgs e) =>
+			this.OnLogListBoxSelectionChanged();
+		void OnLogListBoxSelectionChanged()
 		{
 			// [Workaround] ListBox.SelectedItems is not update yet when calling this method
 			this.SynchronizationContext.Post(() =>
@@ -2314,6 +2316,10 @@ namespace CarinaStudio.ULogViewer.Controls
 							this.SetValue<bool>(HasLogProfileProperty, false);
 						}
 					});
+					break;
+				case nameof(Session.Logs):
+					// [Workaround] SelectionChange may not be fired after changing items
+					this.SynchronizationContext.Post(this.OnLogListBoxSelectionChanged);
 					break;
 				case nameof(Session.ValidLogLevels):
 					this.validLogLevels.Clear();
