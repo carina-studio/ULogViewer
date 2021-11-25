@@ -751,8 +751,8 @@
 		</Border>
 
 		<!-- Side panel -->
-		<ScrollViewer Background="{DynamicResource Brush/WorkingArea.Panel.Background}" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Stretch" HorizontalScrollBarVisibility="Disabled" IsEnabled="{Binding $parent[UserControl].HasProfile}">
-			<StackPanel HorizontalAlignment="Stretch" Orientation="Vertical">
+		<Border Background="{DynamicResource Brush/WorkingArea.Panel.Background}" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Stretch" IsEnabled="{Binding $parent[UserControl].HasProfile}">
+			<Grid HorizontalAlignment="Stretch" RowDefinitions="Auto,*" VerticalAlignment="Stretch">
 
 				<!-- Marked logs -->
 				<StackPanel Classes="SessionView_SidePanel_Header">
@@ -762,8 +762,8 @@
 						<TextBlock Classes="SessionView_SidePanel_Header" Text="{Binding MarkedLogs.Count, StringFormat={} ({0})}"/>
 					</StackPanel>
 				</StackPanel>
-				<Panel>
-					<ListBox Name="markedLogListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" Focusable="False" IsVisible="{Binding HasMarkedLogs}" Items="{Binding MarkedLogs}" SelectionChanged="OnMarkedLogListBoxSelectionChanged" SelectionMode="Single" VirtualizationMode="None">
+				<Panel Grid.Row="1">
+					<ListBox Name="markedLogListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" Focusable="False" IsVisible="{Binding HasMarkedLogs}" Items="{Binding MarkedLogs}" SelectionChanged="OnMarkedLogListBoxSelectionChanged" SelectionMode="Single">
 						<ListBox.Styles>
 							<Style Selector="ListBoxItem">
 								<Setter Property="HorizontalAlignment" Value="Stretch"/>
@@ -787,8 +787,8 @@
 					<TextBlock Classes="SessionView_SidePanel_EmptyHint" IsVisible="{Binding !HasMarkedLogs}" Text="{DynamicResource String/Common.Empty}"/>
 				</Panel>
 				
-			</StackPanel>
-		</ScrollViewer>
+			</Grid>
+		</Border>
 		<GridSplitter Background="{DynamicResource Brush/WorkingArea.Panel.Background}" Classes="GridSplitter_Vertical" Grid.Column="1" Grid.Row="1"/>
 
 	</Grid>
