@@ -267,7 +267,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			/// <summary>
 			/// Color to mark logs.
 			/// </summary>
-			public MarkColor Color { get; set; } = MarkColor.None;
+			public MarkColor Color { get; set; } = MarkColor.Default;
 
 			/// <summary>
 			/// Get or set logs to be marked.
@@ -1688,7 +1688,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 										{
 											foreach (var jsonObject in jsonProperty.Value.EnumerateArray())
 											{
-												var color = MarkColor.None;
+												var color = MarkColor.Default;
 												if (jsonObject.TryGetProperty("MarkedColor", out var colorProperty) && colorProperty.ValueKind == JsonValueKind.String)
 													Enum.TryParse(colorProperty.GetString(), out color);
 												var lineNumber = jsonObject.GetProperty("MarkedLineNumber").GetInt32();
@@ -1816,17 +1816,15 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			if (!this.canMarkUnmarkLogs.Value)
 				return;
 			var color = parameters.Color;
+			if (color == MarkColor.None)
+				color = MarkColor.Default;
 			foreach (var log in parameters.Logs)
 			{
-				if (!log.IsMarked)
+				if (log.MarkedColor != color)
 				{
-					log.IsMarked = true;
-					this.markedLogs.Add(log);
-					log.FileName?.Let(it => this.markedLogsChangedFilePaths.Add(it));
-				}
-				if (log.MarkColor != color)
-				{
-					log.MarkColor = color;
+					if (log.MarkedColor == MarkColor.None)
+						this.markedLogs.Add(log);
+					log.MarkedColor = color;
 					log.FileName?.Let(it => this.markedLogsChangedFilePaths.Add(it));
 				}
 			}
@@ -1853,7 +1851,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			var allLogsAreMarked = true;
 			foreach (var log in logs)
 			{
-				if (!log.IsMarked)
+				if (log.MarkedColor == MarkColor.None)
 				{
 					allLogsAreMarked = false;
 					break;
@@ -1864,10 +1862,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.Logger.LogTrace("Unmark log(s)");
 				foreach (var log in logs)
 				{
-					if (log.IsMarked)
+					if (log.MarkedColor != MarkColor.None)
 					{
-						log.IsMarked = false;
 						this.markedLogs.Remove(log);
+						log.MarkedColor = MarkColor.None;
 						log.FileName?.Let(it => this.markedLogsChangedFilePaths.Add(it));
 					}
 				}
@@ -1877,11 +1875,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.Logger.LogTrace("Mark log(s)");
 				foreach (var log in logs)
 				{
-					if(!log.IsMarked)
+					if(log.MarkedColor == MarkColor.None)
 					{
-						log.IsMarked = true;
-						log.MarkColor = MarkColor.None;
 						this.markedLogs.Add(log);
+						log.MarkedColor = MarkColor.Default;
 						log.FileName?.Let(it => this.markedLogsChangedFilePaths.Add(it));
 					}
 				}
@@ -1924,9 +1921,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				if (index >= 0)
 				{
 					var log = logList[index];
-					if (!log.IsMarked)
+					if (log.MarkedColor == MarkColor.None)
 					{
-						log.IsMarked = true;
+						log.MarkedColor = markedLogInfo.Color;
 						this.markedLogs.Add(log);
 						this.logFilter.InvalidateLog(log);
 					}
@@ -1951,7 +1948,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					break;
 				case NotifyCollectionChangedAction.Reset:
 					this.markedLogs.Clear();
-					this.markedLogs.AddAll(this.allLogs.TakeWhile(it => it.IsMarked));
+					this.markedLogs.AddAll(this.allLogs.TakeWhile(it => it.MarkedColor != MarkColor.None));
 					break;
 			}
 			if (!this.IsDisposed)
@@ -2549,7 +2546,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// create log writer
 			var logs = options.Logs;
-			var markColorMap = new Dictionary<Log, MarkColor>();
+			var markedColorMap = new Dictionary<Log, MarkColor>();
 			using var dataOutput = new FileLogDataOutput((IULogViewerApplication)this.Application, options.FileName.AsNonNull());
 			using var logWriter = options switch
 			{
@@ -2571,7 +2568,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						{
 							var markedLog = markedLogs[i];
 							it.Add(markedLog.Log);
-							markColorMap[markedLog.Log] = markedLog.MarkColor;
+							markedColorMap[markedLog.Log] = markedLog.MarkedColor;
 						}
 					});
 					it.WriteFileNames = false;
@@ -2637,7 +2634,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						foreach (var pair in rawLogWriter.LineNumbers)
 						{
 							var color = MarkColor.None;
-							markColorMap.TryGetValue(pair.Key, out color);
+							markedColorMap.TryGetValue(pair.Key, out color);
 							markedLogInfos.Add(new MarkedLogInfo(fileName, pair.Value, pair.Key.Timestamp, color));
 						}
 					});
@@ -2674,7 +2671,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			var markedLogInfos = new List<MarkedLogInfo>().Also(markedLogInfos =>
 			{
 				foreach (var markedLog in markedLogs)
-					markedLog.LineNumber?.Let(lineNumber => markedLogInfos.Add(new MarkedLogInfo(logFileName, lineNumber, markedLog.Log.Timestamp, markedLog.MarkColor)));
+					markedLog.LineNumber?.Let(lineNumber => markedLogInfos.Add(new MarkedLogInfo(logFileName, lineNumber, markedLog.Log.Timestamp, markedLog.MarkedColor)));
 			});
 			this.SaveMarkedLogs(logFileName, markedLogInfos);
 		}
@@ -2710,7 +2707,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 							foreach (var markedLog in markedLogInfos)
 							{
 								writer.WriteStartObject();
-								if (markedLog.Color != MarkColor.None)
+								if (markedLog.Color != MarkColor.None && markedLog.Color != MarkColor.Default)
 									writer.WriteString("MarkedColor", markedLog.Color.ToString());
 								writer.WriteNumber("MarkedLineNumber", markedLog.LineNumber);
 								markedLog.Timestamp?.Let(it => writer.WriteString("MarkedTimestamp", it));
@@ -3087,10 +3084,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				return;
 			foreach (var log in logs)
 			{
-				if (log.IsMarked)
+				if (log.MarkedColor != MarkColor.None)
 				{
-					log.IsMarked = false;
 					this.markedLogs.Remove(log);
+					log.MarkedColor = MarkColor.None;
 					log.FileName?.Let(it => this.markedLogsChangedFilePaths.Add(it));
 				}
 			}

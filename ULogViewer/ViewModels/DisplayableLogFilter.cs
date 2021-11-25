@@ -243,7 +243,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				// check marking state
 				var log = logs[i];
 				var logVersion = logVersions[i];
-				if (includeMarkLogs && log.IsMarked)
+				if (includeMarkLogs && log.MarkedColor != MarkColor.None)
 				{
 					filteredLogs.Add(log);
 					filteredLogVersions.Add(logVersion);

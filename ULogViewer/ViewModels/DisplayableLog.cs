@@ -29,8 +29,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		CompressedString? beginningTimestampString;
 		CompressedString? endingTimestampString;
 		readonly int[] extraLineCount;
-		bool isMarked;
-		MarkColor markColor;
+		MarkColor markedColor;
 		int messageLineCount = -1;
 		int summaryLineCount = -1;
 		CompressedString? timestampString;
@@ -469,24 +468,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
-		/// Get or set whether log has been marked or not.
-		/// </summary>
-		public bool IsMarked
-		{
-			get => this.isMarked;
-			set
-			{
-				this.VerifyAccess();
-				this.VerifyDisposed();
-				if (this.isMarked == value)
-					return;
-				this.isMarked = value;
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsMarked)));
-			}
-		}
-
-
-		/// <summary>
 		/// Get level of log.
 		/// </summary>
 		public LogLevel Level { get => this.Log.Level; }
@@ -531,16 +512,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get or set color of marking.
 		/// </summary>
-		public MarkColor MarkColor
+		public MarkColor MarkedColor
 		{
-			get => this.markColor;
+			get => this.markedColor;
 			set
 			{
 				this.VerifyAccess();
-				if (this.markColor == value)
+				if (this.markedColor == value)
 					return;
-				this.markColor = value;
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MarkColor)));
+				this.markedColor = value;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MarkedColor)));
 			}
 		}
 
@@ -806,9 +787,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 	enum MarkColor
     {
 		/// <summary>
-		/// None.
+		/// Not marked.
 		/// </summary>
 		None,
+		/// <summary>
+		/// Default.
+		/// </summary>
+		Default,
 		/// <summary>
 		/// Red.
 		/// </summary>

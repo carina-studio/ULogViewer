@@ -138,6 +138,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly RegexTextBox logTextFilterTextBox;
 		readonly TextBox logThreadIdFilterTextBox;
 		readonly ListBox markedLogListBox;
+		bool markedLogsWhenKeyDown;
 		readonly ToggleButton otherActionsButton;
 		readonly ContextMenu otherActionsMenu;
 		readonly ListBox predefinedLogTextFilterListBox;
@@ -777,8 +778,11 @@ namespace CarinaStudio.ULogViewer.Controls
 				{
 					it.Children.Add(new Border().Also(border =>
 					{
-						border.Bind(Border.BackgroundProperty, border.GetResourceObservable("Brush/SessionView.LogListBox.Item.Background.Marked"));
-						border.Bind(Border.IsVisibleProperty, new Binding() { Path = nameof(DisplayableLog.IsMarked) });
+						border.Bind(Border.BackgroundProperty, new Binding()
+						{
+							Converter = Converters.MarkColorConverter.Default,
+							Path = nameof(DisplayableLog.MarkedColor)
+						});
 					}));
 				});
 				var itemGrid = new Grid().Also(it =>
@@ -1379,6 +1383,21 @@ namespace CarinaStudio.ULogViewer.Controls
 		double LogFontSize { get => this.GetValue<double>(LogFontSizeProperty); }
 
 
+		// Mark logs with color.
+		void MarkLogs(MarkColor color)
+        {
+			if (!this.canMarkUnmarkSelectedLogs.Value)
+				return;
+			if (this.DataContext is not Session session)
+				return;
+			session.MarkLogsCommand.TryExecute(new Session.MarkingLogsParams()
+			{
+				Color = color,
+				Logs = this.logListBox.SelectedItems.Cast<DisplayableLog>(),
+			});
+		}
+
+
 		// Mark or unmark selected logs.
 		void MarkUnmarkSelectedLogs()
 		{
@@ -1818,6 +1837,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when key down.
 		protected override void OnKeyDown(Avalonia.Input.KeyEventArgs e)
 		{
+			if (this.pressedKeys.IsEmpty())
+				this.markedLogsWhenKeyDown = false;
 			this.pressedKeys.Add(e.Key);
 			if (!e.Handled)
 			{
@@ -1825,6 +1846,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.Logger.LogTrace($"[KeyDown] {e.Key}, Ctrl: {(e.KeyModifiers & KeyModifiers.Control) != 0}, Alt: {(e.KeyModifiers & KeyModifiers.Alt) != 0}");
 				if ((e.KeyModifiers & KeyModifiers.Control) != 0)
 				{
+					var key = e.Key;
 					switch (e.Key)
 					{
 						case Avalonia.Input.Key.A:
@@ -1839,10 +1861,92 @@ namespace CarinaStudio.ULogViewer.Controls
 									this.CopySelectedLogs();
 							}
 							break;
+						case Avalonia.Input.Key.D1:
+							if (this.pressedKeys.Contains(Avalonia.Input.Key.M))
+							{
+								this.MarkLogs(MarkColor.Red);
+								this.markedLogsWhenKeyDown = true;
+								e.Handled = true;
+							}
+							break;
+						case Avalonia.Input.Key.D2:
+							if (this.pressedKeys.Contains(Avalonia.Input.Key.M))
+							{
+								this.MarkLogs(MarkColor.Orange);
+								this.markedLogsWhenKeyDown = true;
+								e.Handled = true;
+							}
+							break;
+						case Avalonia.Input.Key.D3:
+							if (this.pressedKeys.Contains(Avalonia.Input.Key.M))
+							{
+								this.MarkLogs(MarkColor.Yellow);
+								this.markedLogsWhenKeyDown = true;
+								e.Handled = true;
+							}
+							break;
+						case Avalonia.Input.Key.D4:
+							if (this.pressedKeys.Contains(Avalonia.Input.Key.M))
+							{
+								this.MarkLogs(MarkColor.Green);
+								this.markedLogsWhenKeyDown = true;
+								e.Handled = true;
+							}
+							break;
+						case Avalonia.Input.Key.D5:
+							if (this.pressedKeys.Contains(Avalonia.Input.Key.M))
+							{
+								this.MarkLogs(MarkColor.Blue);
+								this.markedLogsWhenKeyDown = true;
+								e.Handled = true;
+							}
+							break;
+						case Avalonia.Input.Key.D6:
+							if (this.pressedKeys.Contains(Avalonia.Input.Key.M))
+							{
+								this.MarkLogs(MarkColor.Indigo);
+								this.markedLogsWhenKeyDown = true;
+								e.Handled = true;
+							}
+							break;
+						case Avalonia.Input.Key.D7:
+							if (this.pressedKeys.Contains(Avalonia.Input.Key.M))
+							{
+								this.MarkLogs(MarkColor.Purple);
+								this.markedLogsWhenKeyDown = true;
+								e.Handled = true;
+							}
+							break;
+						case Avalonia.Input.Key.D8:
+							if (this.pressedKeys.Contains(Avalonia.Input.Key.M))
+							{
+								this.MarkLogs(MarkColor.Magenta);
+								this.markedLogsWhenKeyDown = true;
+								e.Handled = true;
+							}
+							break;
 						case Avalonia.Input.Key.F:
 							this.logTextFilterTextBox.Focus();
 							this.logTextFilterTextBox.SelectAll();
 							e.Handled = true;
+							break;
+						case Avalonia.Input.Key.M:
+							if(this.pressedKeys.Contains(Avalonia.Input.Key.D1))
+								goto case Avalonia.Input.Key.D1;
+							if (this.pressedKeys.Contains(Avalonia.Input.Key.D2))
+								goto case Avalonia.Input.Key.D2;
+							if (this.pressedKeys.Contains(Avalonia.Input.Key.D3))
+								goto case Avalonia.Input.Key.D3;
+							if (this.pressedKeys.Contains(Avalonia.Input.Key.D4))
+								goto case Avalonia.Input.Key.D4;
+							if (this.pressedKeys.Contains(Avalonia.Input.Key.D5))
+								goto case Avalonia.Input.Key.D5;
+							if (this.pressedKeys.Contains(Avalonia.Input.Key.D6))
+								goto case Avalonia.Input.Key.D6;
+							if (this.pressedKeys.Contains(Avalonia.Input.Key.D7))
+								goto case Avalonia.Input.Key.D7;
+							if (this.pressedKeys.Contains(Avalonia.Input.Key.D8))
+								goto case Avalonia.Input.Key.D8;
 							break;
 						case Avalonia.Input.Key.O:
 							this.AddLogFiles();
@@ -1993,7 +2097,7 @@ namespace CarinaStudio.ULogViewer.Controls
 							}
 							break;
 						case Avalonia.Input.Key.M:
-							if (e.Source is not TextBox)
+							if (e.Source is not TextBox && !markedLogsWhenKeyDown)
 							{
 								this.MarkUnmarkSelectedLogs();
 								e.Handled = true;
