@@ -93,6 +93,7 @@
 	<Thickness x:Key="Thickness/SessionView.Hint.SelectLogProfile.Icon.Margin">8,0,8,0</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogHeader.Margin">3,8,3,8</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogHeader.Padding">5,0,5,0</Thickness>
+	<Thickness x:Key="Thickness/SessionView.LogListBox.ColorIndicator.Border">0,0,2,0</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogListBox.Item.Column.Border">1</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogListBox.Item.Padding">8,0,8,0</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogListBox.Item.Property.Padding">2,3,2,3</Thickness>

@@ -761,12 +761,14 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			var app = (App)this.Application;
 			var logPropertyCount = logProperties.Count;
-			var colorIndicatorWidth = app.Resources.TryGetResource("Double/SessionView.LogListBox.ColorIndicator.Width", out var rawResource) ? (double)rawResource.AsNonNull() : 0.0;
-			var itemBorderThickness = app.Resources.TryGetResource("Thickness/SessionView.LogListBox.Item.Column.Border", out rawResource) ? (Thickness)rawResource.AsNonNull() : new Thickness(1);
-			var itemCornerRadius = app.Resources.TryGetResource("CornerRadius/SessionView.LogListBox.Item.Column.Border", out rawResource) ? (CornerRadius)rawResource.AsNonNull() : new CornerRadius(0);
-			var itemPadding = app.Resources.TryGetResource("Thickness/SessionView.LogListBox.Item.Padding", out rawResource) ? (Thickness)rawResource.AsNonNull() : new Thickness();
-			var propertyPadding = app.Resources.TryGetResource("Thickness/SessionView.LogListBox.Item.Property.Padding", out rawResource) ? (Thickness)rawResource.AsNonNull() : new Thickness();
-			var splitterWidth = app.Resources.TryGetResource("Double/GridSplitter.Thickness", out rawResource) ? (double)rawResource.AsNonNull() : 0.0;
+			var colorIndicatorBorderBrush = app.TryFindResource("Brush/WorkingArea.Background", out var rawResource) ? (IBrush)rawResource.AsNonNull() : null;
+			var colorIndicatorBorderThickness = app.TryFindResource("Thickness/SessionView.LogListBox.ColorIndicator.Border", out rawResource) ? (Thickness)rawResource.AsNonNull() : new Thickness();
+			var colorIndicatorWidth = app.TryFindResource("Double/SessionView.LogListBox.ColorIndicator.Width", out rawResource) ? (double)rawResource.AsNonNull() : 0.0;
+			var itemBorderThickness = app.TryFindResource("Thickness/SessionView.LogListBox.Item.Column.Border", out rawResource) ? (Thickness)rawResource.AsNonNull() : new Thickness(1);
+			var itemCornerRadius = app.TryFindResource("CornerRadius/SessionView.LogListBox.Item.Column.Border", out rawResource) ? (CornerRadius)rawResource.AsNonNull() : new CornerRadius(0);
+			var itemPadding = app.TryFindResource("Thickness/SessionView.LogListBox.Item.Padding", out rawResource) ? (Thickness)rawResource.AsNonNull() : new Thickness();
+			var propertyPadding = app.TryFindResource("Thickness/SessionView.LogListBox.Item.Property.Padding", out rawResource) ? (Thickness)rawResource.AsNonNull() : new Thickness();
+			var splitterWidth = app.TryFindResource("Double/GridSplitter.Thickness", out rawResource) ? (double)rawResource.AsNonNull() : 0.0;
 			if (profile.ColorIndicator != LogColorIndicator.None)
 				itemPadding = new Thickness(itemPadding.Left + colorIndicatorWidth, itemPadding.Top, itemPadding.Right, itemPadding.Bottom);
 			var itemTemplateContent = new Func<IServiceProvider, object>(_ =>
@@ -917,6 +919,8 @@ namespace CarinaStudio.ULogViewer.Controls
 					new Border().Also(it =>
 					{
 						it.Bind(Border.BackgroundProperty, new Binding() { Path = nameof(DisplayableLog.ColorIndicatorBrush) });
+						it.BorderBrush = colorIndicatorBorderBrush;
+						it.BorderThickness = colorIndicatorBorderThickness;
 						it.HorizontalAlignment = HorizontalAlignment.Left;
 						it.Bind(ToolTip.TipProperty, new Binding() { Path = profile.ColorIndicator.ToString() });
 						it.Width = colorIndicatorWidth;
@@ -980,8 +984,10 @@ namespace CarinaStudio.ULogViewer.Controls
 				return nameof(DisplayableLog.LogId);
 			});
 			var app = (App)this.Application;
-			var colorIndicatorWidth = app.Resources.TryGetResource("Double/SessionView.LogListBox.ColorIndicator.Width", out var rawResource) ? (double)rawResource.AsNonNull() : 0.0;
-			var itemPadding = app.Resources.TryGetResource("Thickness/SessionView.MarkedLogListBox.Item.Padding", out rawResource) ? (Thickness)rawResource.AsNonNull() : new Thickness();
+			var colorIndicatorBorderBrush = app.TryFindResource("Brush/WorkingArea.Panel.Background", out var rawResource) ? (IBrush)rawResource.AsNonNull() : null;
+			var colorIndicatorBorderThickness = app.TryFindResource("Thickness/SessionView.LogListBox.ColorIndicator.Border", out rawResource) ? (Thickness)rawResource.AsNonNull() : new Thickness();
+			var colorIndicatorWidth = app.TryFindResource("Double/SessionView.LogListBox.ColorIndicator.Width", out rawResource) ? (double)rawResource.AsNonNull() : 0.0;
+			var itemPadding = app.TryFindResource("Thickness/SessionView.MarkedLogListBox.Item.Padding", out rawResource) ? (Thickness)rawResource.AsNonNull() : new Thickness();
 			if (profile.ColorIndicator != LogColorIndicator.None)
 				itemPadding = new Thickness(itemPadding.Left + colorIndicatorWidth, itemPadding.Top, itemPadding.Right, itemPadding.Bottom);
 			var itemTemplateContent = new Func<IServiceProvider, object>(_ =>
@@ -1017,6 +1023,8 @@ namespace CarinaStudio.ULogViewer.Controls
 					new Border().Also(it =>
 					{
 						it.Bind(Border.BackgroundProperty, new Binding() { Path = nameof(DisplayableLog.ColorIndicatorBrush) });
+						it.BorderBrush = colorIndicatorBorderBrush;
+						it.BorderThickness = colorIndicatorBorderThickness;
 						it.HorizontalAlignment = HorizontalAlignment.Left;
 						it.Bind(ToolTip.TipProperty, new Binding() { Path = profile.ColorIndicator.ToString() });
 						it.Width = colorIndicatorWidth;
