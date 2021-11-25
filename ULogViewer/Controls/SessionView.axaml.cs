@@ -844,7 +844,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						propertyView = new StackPanel().Also(it =>
 						{
 							it.Children.Add(propertyView);
-							it.Children.Add(new AppSuite.Controls.LinkTextBlock().Also(viewDetails =>
+							it.Children.Add(new LinkTextBlock().Also(viewDetails =>
 							{
 								viewDetails.HorizontalAlignment = HorizontalAlignment.Left;
 								viewDetails.Bind(TextBlock.IsVisibleProperty, new Binding() { Path = $"HasExtraLinesOf{logProperty.Name}" });
@@ -892,6 +892,22 @@ namespace CarinaStudio.ULogViewer.Controls
 									this.canShowLogProperty.Update(true);
 							}
 						};
+						if (propertyView is TextBlock textBlock 
+							&& !isMultiLineProperty 
+							&& width != null)
+						{
+							var tipBinding = (IDisposable?)null;
+							textBlock.PropertyChanged += (_, e) =>
+							{
+								if (e.Property == TextBlock.IsTextTrimmedProperty)
+								{
+									if (textBlock.IsTextTrimmed)
+										tipBinding = it.Bind(ToolTip.TipProperty, new Binding() { Source = textBlock, Path = nameof(TextBlock.Text) });
+									else
+										tipBinding?.Dispose();
+								}
+							};
+						}
 					});
 					Grid.SetColumn(propertyView, logPropertyIndex * 2);
 					itemGrid.Children.Add(propertyView);

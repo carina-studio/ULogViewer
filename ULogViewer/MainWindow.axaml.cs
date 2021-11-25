@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
@@ -189,6 +190,20 @@ namespace CarinaStudio.ULogViewer
 		{
 			// create header
 			var header = this.sessionTabItemHeaderTemplate.Build(session);
+			header.FindChildControl<Controls.TextBlock>("titleTextBlock")?.Let(it =>
+			{
+				var toolTipBinding = (IDisposable?)null;
+				it.PropertyChanged += (_, e) =>
+				{
+					if (e.Property == Controls.TextBlock.IsTextTrimmedProperty)
+					{
+						if (!it.IsTextTrimmed)
+							toolTipBinding?.Dispose();
+						else
+							toolTipBinding = it.Bind(ToolTip.TipProperty, new Binding() { Path = "Title" });
+					}
+				};
+			});
 
 			// create session view
 			var sessionView = new SessionView()

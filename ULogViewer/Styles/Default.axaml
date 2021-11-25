@@ -108,6 +108,13 @@
 		<Setter Property="VerticalAlignment" Value="Center"/>
 	</Style>
 
+	<!-- TabItem -->
+	<Style Selector="appControls|TextBlock.TabItem_TextBlock">
+		<Setter Property="TextWrapping" Value="NoWrap"/>
+		<Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+		<Setter Property="VerticalAlignment" Value="Center"/>
+	</Style>
+
 	<!-- TextArea -->
 	<Style Selector="aee|TextArea">
 		<Setter Property="SelectionBrush" Value="{DynamicResource Brush/TextArea.Selection.Background}"/>
