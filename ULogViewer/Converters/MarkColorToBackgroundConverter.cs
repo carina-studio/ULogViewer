@@ -15,11 +15,23 @@ namespace CarinaStudio.ULogViewer.Converters
         /// <summary>
         /// Default instance.
         /// </summary>
-        public static readonly MarkColorToBackgroundConverter Default = new MarkColorToBackgroundConverter();
+        public static readonly MarkColorToBackgroundConverter Default = new MarkColorToBackgroundConverter(true);
+        /// <summary>
+        /// Default instance without color for <see cref="MarkColor.Default"/>.
+        /// </summary>
+        public static readonly MarkColorToBackgroundConverter DefaultWithoutDefaultColor = new MarkColorToBackgroundConverter(false);
+
+
+        // Static fields.
+        static readonly App App = App.Current;
 
 
         // Fields.
-        static readonly App App = App.Current;
+        readonly bool hasDefaultColor;
+
+
+        // Constructor.
+        MarkColorToBackgroundConverter(bool hasDefaultColor) => this.hasDefaultColor = hasDefaultColor;
 
 
         /// <inheritdoc/>
@@ -35,7 +47,8 @@ namespace CarinaStudio.ULogViewer.Converters
                 case MarkColor.None:
                     break;
                 case MarkColor.Default:
-                    App.TryFindResource($"Brush/SessionView.LogListBox.Item.Background.Marked", out brush);
+                    if (this.hasDefaultColor)
+                        App.TryFindResource($"Brush/SessionView.LogListBox.Item.Background.Marked", out brush);
                     break;
                 default:
                     App.TryFindResource($"Brush/SessionView.LogListBox.Item.Background.Marked.{color}", out brush);
