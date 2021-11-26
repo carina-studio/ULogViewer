@@ -103,6 +103,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly MutableObservableBoolean canEditLogProfile = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canFilterLogsByPid = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canFilterLogsByTid = new MutableObservableBoolean();
+		readonly MutableObservableBoolean canMarkSelectedLogs = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canMarkUnmarkSelectedLogs = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canReloadLogs = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canRestartAsAdmin = new MutableObservableBoolean(RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && !App.Current.IsRunningAsAdministrator);
@@ -115,6 +116,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly MutableObservableBoolean canShowFileInExplorer = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canShowLogProperty = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canShowWorkingDirectoryInExplorer = new MutableObservableBoolean();
+		readonly MutableObservableBoolean canUnmarkSelectedLogs = new MutableObservableBoolean();
 		readonly MenuItem copyLogPropertyMenuItem;
 		bool isAttachedToLogicalTree;
 		bool isIPEndPointNeededAfterLogProfileSet;
@@ -138,7 +140,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly RegexTextBox logTextFilterTextBox;
 		readonly TextBox logThreadIdFilterTextBox;
 		readonly ListBox markedLogListBox;
-		bool markedLogsWhenKeyDown;
 		readonly ToggleButton otherActionsButton;
 		readonly ContextMenu otherActionsMenu;
 		readonly ListBox predefinedLogTextFilterListBox;
@@ -169,6 +170,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.EditLogProfileCommand = new Command(this.EditLogProfile, this.canEditLogProfile);
 			this.FilterLogsByProcessIdCommand = new Command<bool>(this.FilterLogsByProcessId, this.canFilterLogsByPid);
 			this.FilterLogsByThreadIdCommand = new Command<bool>(this.FilterLogsByThreadId, this.canFilterLogsByTid);
+			this.MarkSelectedLogsCommand = new Command<MarkColor>(this.MarkSelectedLogs, this.canMarkSelectedLogs);
 			this.MarkUnmarkSelectedLogsCommand = new Command(this.MarkUnmarkSelectedLogs, this.canMarkUnmarkSelectedLogs);
 			this.ReloadLogsCommand = new Command(this.ReloadLogs, this.canReloadLogs);
 			this.ResetLogFiltersCommand = new Command(this.ResetLogFilters, this.GetObservable<bool>(HasLogProfileProperty));
@@ -184,6 +186,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.ShowLogStringPropertyCommand = new Command(() => this.ShowLogStringProperty(), this.canShowLogProperty);
 			this.ShowWorkingDirectoryInExplorerCommand = new Command(this.ShowWorkingDirectoryInExplorer, this.canShowWorkingDirectoryInExplorer);
 			this.SwitchLogFiltersCombinationModeCommand = new Command(this.SwitchLogFiltersCombinationMode, this.GetObservable<bool>(HasLogProfileProperty));
+			this.UnmarkSelectedLogsCommand = new Command(this.UnmarkSelectedLogs, this.canUnmarkSelectedLogs);
 
 			// create collections
 			this.predefinedLogTextFilters = new SortedObservableList<PredefinedLogTextFilter>(ComparePredefinedLogTextFilters);
@@ -490,7 +493,6 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// attach to command
 			session.AddLogFileCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
-			session.MarkUnmarkLogsCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
 			session.ReloadLogsCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
 			session.ResetLogProfileCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
 			session.SaveLogsCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
@@ -509,7 +511,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			else
 				this.canAddLogFiles.Update(false);
-			this.canMarkUnmarkSelectedLogs.Update(session.MarkUnmarkLogsCommand.CanExecute(null));
 			this.canReloadLogs.Update(session.ReloadLogsCommand.CanExecute(null));
 			this.canSaveLogs.Update(session.SaveLogsCommand.CanExecute(null));
 			this.canSetLogProfile.Update(session.ResetLogProfileCommand.CanExecute(null) || session.SetLogProfileCommand.CanExecute(null));
@@ -1088,7 +1089,6 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// detach from commands
 			session.AddLogFileCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
-			session.MarkUnmarkLogsCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
 			session.ReloadLogsCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
 			session.SaveLogsCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
 			session.SetIPEndPointCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
@@ -1096,7 +1096,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			session.SetLogProfileCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
 			session.SetWorkingDirectoryCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
 			this.canAddLogFiles.Update(false);
-			this.canMarkUnmarkSelectedLogs.Update(false);
 			this.canReloadLogs.Update(false);
 			this.canSaveLogs.Update(false);
 			this.canSelectMarkedLogs.Update(false);
@@ -1393,9 +1392,9 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Mark logs with color.
-		void MarkLogs(MarkColor color)
+		void MarkSelectedLogs(MarkColor color)
         {
-			if (!this.canMarkUnmarkSelectedLogs.Value)
+			if (!this.canMarkSelectedLogs.Value)
 				return;
 			if (this.DataContext is not Session session)
 				return;
@@ -1405,6 +1404,10 @@ namespace CarinaStudio.ULogViewer.Controls
 				Logs = this.logListBox.SelectedItems.Cast<DisplayableLog>(),
 			});
 		}
+
+
+		// Command to mark selected logs with given color.
+		ICommand MarkSelectedLogsCommand { get; }
 
 
 		// Mark or unmark selected logs.
@@ -1821,9 +1824,11 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.canCopySelectedLogsWithFileNames.Update(hasSelectedItems && session.CopyLogsWithFileNamesCommand.CanExecute(null) && selectionCount <= MaxLogCountForCopying);
 				this.canFilterLogsByPid.Update(hasSingleSelectedItem && this.isPidLogPropertyVisible);
 				this.canFilterLogsByTid.Update(hasSingleSelectedItem && this.isTidLogPropertyVisible);
+				this.canMarkSelectedLogs.Update(hasSelectedItems && session.MarkLogsCommand.CanExecute(null));
 				this.canMarkUnmarkSelectedLogs.Update(hasSelectedItems && session.MarkUnmarkLogsCommand.CanExecute(null));
 				this.canShowFileInExplorer.Update(hasSelectedItems && session.IsLogFileNeeded);
 				this.canShowLogProperty.Update(hasSingleSelectedItem && logProperty != null && DisplayableLog.HasStringProperty(logProperty.Name));
+				this.canUnmarkSelectedLogs.Update(hasSelectedItems && session.UnmarkLogsCommand.CanExecute(null));
 
 				// report time information
 				this.reportSelectedLogsTimeInfoAction.Schedule();
@@ -1846,16 +1851,14 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when key down.
 		protected override void OnKeyDown(Avalonia.Input.KeyEventArgs e)
 		{
-			if (this.pressedKeys.IsEmpty())
-				this.markedLogsWhenKeyDown = false;
 			this.pressedKeys.Add(e.Key);
 			if (!e.Handled)
 			{
 				if (this.Application.IsDebugMode && e.Source is not TextBox)
-					this.Logger.LogTrace($"[KeyDown] {e.Key}, Ctrl: {(e.KeyModifiers & KeyModifiers.Control) != 0}, Alt: {(e.KeyModifiers & KeyModifiers.Alt) != 0}");
+					this.Logger.LogTrace($"[KeyDown] {e.Key}, Ctrl: {(e.KeyModifiers & KeyModifiers.Control) != 0}, Shift: {(e.KeyModifiers & KeyModifiers.Shift) != 0}, Alt: {(e.KeyModifiers & KeyModifiers.Alt) != 0}");
 				if ((e.KeyModifiers & KeyModifiers.Control) != 0)
 				{
-					var key = e.Key;
+					var isAltPressed = ((e.KeyModifiers & KeyModifiers.Alt) != 0);
 					switch (e.Key)
 					{
 						case Avalonia.Input.Key.A:
@@ -1870,67 +1873,66 @@ namespace CarinaStudio.ULogViewer.Controls
 									this.CopySelectedLogs();
 							}
 							break;
-						case Avalonia.Input.Key.D1:
-							if (this.pressedKeys.Contains(Avalonia.Input.Key.M))
+						case Avalonia.Input.Key.D0:
+							if (isAltPressed)
 							{
-								this.MarkLogs(MarkColor.Red);
-								this.markedLogsWhenKeyDown = true;
+								this.UnmarkSelectedLogs();
+								e.Handled = true;
+							}
+							break;
+						case Avalonia.Input.Key.D1:
+							if (isAltPressed)
+							{
+								this.MarkSelectedLogs(MarkColor.Red);
 								e.Handled = true;
 							}
 							break;
 						case Avalonia.Input.Key.D2:
-							if (this.pressedKeys.Contains(Avalonia.Input.Key.M))
+							if (isAltPressed)
 							{
-								this.MarkLogs(MarkColor.Orange);
-								this.markedLogsWhenKeyDown = true;
+								this.MarkSelectedLogs(MarkColor.Orange);
 								e.Handled = true;
 							}
 							break;
 						case Avalonia.Input.Key.D3:
-							if (this.pressedKeys.Contains(Avalonia.Input.Key.M))
+							if (isAltPressed)
 							{
-								this.MarkLogs(MarkColor.Yellow);
-								this.markedLogsWhenKeyDown = true;
+								this.MarkSelectedLogs(MarkColor.Yellow);
 								e.Handled = true;
 							}
 							break;
 						case Avalonia.Input.Key.D4:
-							if (this.pressedKeys.Contains(Avalonia.Input.Key.M))
+							if (isAltPressed)
 							{
-								this.MarkLogs(MarkColor.Green);
-								this.markedLogsWhenKeyDown = true;
+								this.MarkSelectedLogs(MarkColor.Green);
 								e.Handled = true;
 							}
 							break;
 						case Avalonia.Input.Key.D5:
-							if (this.pressedKeys.Contains(Avalonia.Input.Key.M))
+							if (isAltPressed)
 							{
-								this.MarkLogs(MarkColor.Blue);
-								this.markedLogsWhenKeyDown = true;
+								this.MarkSelectedLogs(MarkColor.Blue);
 								e.Handled = true;
 							}
 							break;
 						case Avalonia.Input.Key.D6:
-							if (this.pressedKeys.Contains(Avalonia.Input.Key.M))
+							if (isAltPressed)
 							{
-								this.MarkLogs(MarkColor.Indigo);
-								this.markedLogsWhenKeyDown = true;
+								this.MarkSelectedLogs(MarkColor.Indigo);
 								e.Handled = true;
 							}
 							break;
 						case Avalonia.Input.Key.D7:
-							if (this.pressedKeys.Contains(Avalonia.Input.Key.M))
+							if (isAltPressed)
 							{
-								this.MarkLogs(MarkColor.Purple);
-								this.markedLogsWhenKeyDown = true;
+								this.MarkSelectedLogs(MarkColor.Purple);
 								e.Handled = true;
 							}
 							break;
 						case Avalonia.Input.Key.D8:
-							if (this.pressedKeys.Contains(Avalonia.Input.Key.M))
+							if (isAltPressed)
 							{
-								this.MarkLogs(MarkColor.Magenta);
-								this.markedLogsWhenKeyDown = true;
+								this.MarkSelectedLogs(MarkColor.Magenta);
 								e.Handled = true;
 							}
 							break;
@@ -1940,22 +1942,8 @@ namespace CarinaStudio.ULogViewer.Controls
 							e.Handled = true;
 							break;
 						case Avalonia.Input.Key.M:
-							if(this.pressedKeys.Contains(Avalonia.Input.Key.D1))
-								goto case Avalonia.Input.Key.D1;
-							if (this.pressedKeys.Contains(Avalonia.Input.Key.D2))
-								goto case Avalonia.Input.Key.D2;
-							if (this.pressedKeys.Contains(Avalonia.Input.Key.D3))
-								goto case Avalonia.Input.Key.D3;
-							if (this.pressedKeys.Contains(Avalonia.Input.Key.D4))
-								goto case Avalonia.Input.Key.D4;
-							if (this.pressedKeys.Contains(Avalonia.Input.Key.D5))
-								goto case Avalonia.Input.Key.D5;
-							if (this.pressedKeys.Contains(Avalonia.Input.Key.D6))
-								goto case Avalonia.Input.Key.D6;
-							if (this.pressedKeys.Contains(Avalonia.Input.Key.D7))
-								goto case Avalonia.Input.Key.D7;
-							if (this.pressedKeys.Contains(Avalonia.Input.Key.D8))
-								goto case Avalonia.Input.Key.D8;
+							this.MarkSelectedLogs(MarkColor.Default);
+							e.Handled = true;
 							break;
 						case Avalonia.Input.Key.O:
 							this.AddLogFiles();
@@ -2062,7 +2050,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (!e.Handled)
 			{
 				if (this.Application.IsDebugMode && e.Source is not TextBox)
-					this.Logger.LogTrace($"[KeyUp] {e.Key}, Ctrl: {(e.KeyModifiers & KeyModifiers.Control) != 0}, Alt: {(e.KeyModifiers & KeyModifiers.Alt) != 0}");
+					this.Logger.LogTrace($"[KeyUp] {e.Key}, Ctrl: {(e.KeyModifiers & KeyModifiers.Control) != 0}, Shift: {(e.KeyModifiers & KeyModifiers.Shift) != 0}, Alt: {(e.KeyModifiers & KeyModifiers.Alt) != 0}");
 				if (e.KeyModifiers == KeyModifiers.None)
 				{
 					switch (e.Key)
@@ -2106,7 +2094,7 @@ namespace CarinaStudio.ULogViewer.Controls
 							}
 							break;
 						case Avalonia.Input.Key.M:
-							if (e.Source is not TextBox && !markedLogsWhenKeyDown)
+							if (e.Source is not TextBox)
 							{
 								this.MarkUnmarkSelectedLogs();
 								e.Handled = true;
@@ -2324,8 +2312,6 @@ namespace CarinaStudio.ULogViewer.Controls
 				else
 					this.canAddLogFiles.Update(false);
 			}
-			else if (sender == session.MarkUnmarkLogsCommand)
-				this.canMarkUnmarkSelectedLogs.Update(this.logListBox.SelectedItems.Count > 0 && session.MarkUnmarkLogsCommand.CanExecute(null));
 			else if (sender == session.ReloadLogsCommand)
 				this.canReloadLogs.Update(session.ReloadLogsCommand.CanExecute(null));
 			else if (sender == session.ResetLogProfileCommand || sender == session.SetLogProfileCommand)
@@ -3129,6 +3115,21 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Command to switch combination mode of log filters.
 		ICommand SwitchLogFiltersCombinationModeCommand { get; }
+
+
+		// Unmark logs.
+		void UnmarkSelectedLogs()
+		{
+			if (!this.canUnmarkSelectedLogs.Value)
+				return;
+			if (this.DataContext is not Session session)
+				return;
+			session.UnmarkLogsCommand.TryExecute(this.logListBox.SelectedItems.Cast<DisplayableLog>());
+		}
+
+
+		// Command to unmark selected logs.
+		ICommand UnmarkSelectedLogsCommand { get; }
 
 
 		// Update CanFilterLogsByNonTextFilters property.

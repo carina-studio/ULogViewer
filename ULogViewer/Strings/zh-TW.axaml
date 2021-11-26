@@ -291,6 +291,17 @@
 	<sys:String x:Key="String/MainWindow.SetCustomSessionTitle">自訂分頁標題…</sys:String>
 	<sys:String x:Key="String/MainWindow.SetCustomSessionTitle.Message">分頁標題</sys:String>
 
+	<!-- MarkColor -->
+	<sys:String x:Key="String/MarkColor.Blue">藍色</sys:String>
+	<sys:String x:Key="String/MarkColor.Default">無色彩</sys:String>
+	<sys:String x:Key="String/MarkColor.Green">綠色</sys:String>
+	<sys:String x:Key="String/MarkColor.Indigo">深藍色</sys:String>
+	<sys:String x:Key="String/MarkColor.Magenta">洋紅色</sys:String>
+	<sys:String x:Key="String/MarkColor.Orange">橘色</sys:String>
+	<sys:String x:Key="String/MarkColor.Purple">紫色</sys:String>
+	<sys:String x:Key="String/MarkColor.Red">紅色</sys:String>
+	<sys:String x:Key="String/MarkColor.Yellow">黃色</sys:String>
+
 	<!-- MemoryLoggerLogDataSourceProvider -->
 	<sys:String x:Key="String/MemoryLoggerLogDataSourceProvider.DisplayName">ULogViewer 即時日誌</sys:String>
 
@@ -345,6 +356,7 @@
 	<sys:String x:Key="String/SessionView.LogTextFilter.Watermark">文字篩選 (正規表示式，使用 \$\$ 表示文字屬性分隔線)</sys:String>
 	<sys:String x:Key="String/SessionView.LogThreadIdFilter.Description">使用執行緒 (Thread ID) 篩選日誌</sys:String>
 	<sys:String x:Key="String/SessionView.MarkedLogs">已標記日誌</sys:String>
+	<sys:String x:Key="String/SessionView.MarkLogs">標記日誌</sys:String>
 	<sys:String x:Key="String/SessionView.MarkUnmarkLogs">標記/解除標記日誌</sys:String>
 	<sys:String x:Key="String/SessionView.MemoryUsage">私有記憶體使用量</sys:String>
 	<sys:String x:Key="String/SessionView.NeedToRestartAsAdministrator">'{0}' 需要系統管理員身分，是否要以系統管理員身分重新啟動應用程式並使用此日誌類型？</sys:String>
@@ -380,6 +392,7 @@
 	<sys:String x:Key="String/SessionView.ShowWorkingDirectoryInExplorer">在檔案總管中開啟工作目錄</sys:String>
 	<sys:String x:Key="String/SessionView.TooManyDirectoryPathsDropped">請拖放單一目錄。</sys:String>
 	<sys:String x:Key="String/SessionView.UIResponseDuration">使用者介面回應時間</sys:String>
+	<sys:String x:Key="String/SessionView.UnmarkLogs">解除標記日誌</sys:String>
 	<sys:String x:Key="String/SessionView.ViewFullLogMessage">檢視更多…</sys:String>
 	<sys:String x:Key="String/SessionView.WaitingForDataSources">正在等待資料來源…</sys:String>
 
