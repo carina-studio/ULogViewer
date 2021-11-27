@@ -178,6 +178,13 @@ namespace CarinaStudio.ULogViewer.Logs
 		}
 
 
+		// Create date time from unix timestamp.
+		static DateTime CreateDateTimeFromUnixTimestamp(long timestamp) =>
+			new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds(timestamp).ToLocalTime();
+		static DateTime CreateDateTimeFromUnixTimestampMillis(long timestampMillis) =>
+			new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(timestampMillis).ToLocalTime();
+
+
 		/// <summary>
 		/// Get <see cref="ILogDataSource"/> to read log data from.
 		/// </summary>
@@ -671,15 +678,21 @@ namespace CarinaStudio.ULogViewer.Logs
 							break;
 						case LogTimestampEncoding.Unix:
 							if (long.TryParse(value, out var sec))
-								logBuilder.Set(name, (new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds(sec).ToLocalTime()).ToBinary().ToString());
+								logBuilder.Set(name, CreateDateTimeFromUnixTimestamp(sec).ToBinary().ToString());
+							else if (double.TryParse(value, out var doubleSec))
+								logBuilder.Set(name, CreateDateTimeFromUnixTimestampMillis((long)(doubleSec * 1000 + 0.5)).ToBinary().ToString());
 							break;
 						case LogTimestampEncoding.UnixMicroseconds:
 							if (long.TryParse(value, out var us))
-								logBuilder.Set(name, (new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(us / 1000).ToLocalTime()).ToBinary().ToString());
+								logBuilder.Set(name, CreateDateTimeFromUnixTimestampMillis(us / 1000).ToBinary().ToString());
+							else if (double.TryParse(value, out var doubleUs))
+								logBuilder.Set(name, CreateDateTimeFromUnixTimestampMillis((long)(doubleUs / 1000 + 0.5)).ToBinary().ToString());
 							break;
 						case LogTimestampEncoding.UnixMilliseconds:
 							if (long.TryParse(value, out var ms))
-								logBuilder.Set(name, (new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(ms).ToLocalTime()).ToBinary().ToString());
+								logBuilder.Set(name, CreateDateTimeFromUnixTimestampMillis(ms).ToBinary().ToString());
+							else if (double.TryParse(value, out var doubleMs))
+								logBuilder.Set(name, CreateDateTimeFromUnixTimestampMillis((long)(doubleMs + 0.5)).ToBinary().ToString());
 							break;
 					}
 				}
