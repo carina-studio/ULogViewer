@@ -144,12 +144,16 @@
 	<sys:String x:Key="String/LogProfileIcon.Cloud">雲端</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Code">程式碼</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Computer">電腦</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Configuration">組態</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Database">資料庫</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Debug">偵錯</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Experiment">實驗</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.File">檔案</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Folder">資料夾</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Network">網路</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Performance">效能</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Phone">手機</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Security">安全性</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Terminal">終端機</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.VersionControl">版本控制</sys:String>
 

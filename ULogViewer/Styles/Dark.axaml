@@ -8,6 +8,14 @@
 	<Styles.Resources>
 		<ResourceDictionary>
 
+			<!-- Icon -->
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Apple" Color="#aaaaaa"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Book" Color="#b24700"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Code" Color="#909090"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Experiment" Color="#00990f"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Phone" Color="#909090"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Terminal" Color="#909090"/>
+
 			<!-- LogLevel -->
 			<SolidColorBrush x:Key="Brush/LogLevel.Debug">#32aaff</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/LogLevel.Error">#ff3232</SolidColorBrush>

@@ -32,6 +32,10 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// </summary>
 		Computer,
 		/// <summary>
+		/// Configuration.
+		/// </summary>
+		Configuration,
+		/// <summary>
 		/// Database.
 		/// </summary>
 		Database,
@@ -39,6 +43,10 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// Debug.
 		/// </summary>
 		Debug,
+		/// <summary>
+		/// Experiment.
+		/// </summary>
+		Experiment,
 		/// <summary>
 		/// File.
 		/// </summary>
@@ -52,9 +60,17 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// </summary>
 		Network,
 		/// <summary>
+		/// Performance.
+		/// </summary>
+		Performance,
+		/// <summary>
 		/// Smart phone.
 		/// </summary>
 		Phone,
+		/// <summary>
+		/// Security.
+		/// </summary>
+		Security,
 		/// <summary>
 		/// Terminal.
 		/// </summary>

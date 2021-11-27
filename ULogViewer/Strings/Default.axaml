@@ -147,12 +147,16 @@
 	<sys:String x:Key="String/LogProfileIcon.Cloud">Cloud</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Code">Code</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Computer">Computer</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Configuration">Configuration</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Database">Database</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Debug">Debug</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Experiment">Experiment</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.File">File</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Folder">Folder</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Network">Network</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Performance">Performance</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Phone">Mobile phone</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Security">Security</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Terminal">Terminal</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Usb">USB</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.VersionControl">Version control</sys:String>

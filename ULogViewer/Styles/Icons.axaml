@@ -41,39 +41,39 @@
 	<GeometryDrawing x:Key="Drawing/FindDate" Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/FindDate}"/>
 	<GeometryDrawing x:Key="Drawing/Intersection" Brush="{DynamicResource Brush/Icon}" Geometry="M87.5 0C39.175084375 0 0 39.175085 0 87.5C0 135.824915625 39.175084375 175 87.5 175C100.919966125 175 113.63430775 171.9788619375 125 166.57961045C136.3656925 171.978861925 149.08003375 175 162.5 175C210.824915 175 250 135.824915625 250 87.5C250 39.175085 210.824915 0 162.5 0C149.08003375 0 136.3656925 3.0211375 125 8.42039C113.63430775 3.0211375 100.919966125 0 87.5 0zM87.5 150C52.982203125 150 25 122.017796875 25 87.5C25 52.982203125 52.982203125 25 87.5 25C91.784429875 25 95.96817 25.43110375 100.01020875 26.2523C84.539358625 42.03491875 75 63.653440875 75 87.5C75 111.346559125 84.539358625 132.965081625 100.01020875 148.747700375C95.96817 149.56889625 91.784429875 150 87.5 150zM175.01020875 87.5C175.01020875 63.653440875 165.47085 42.03491875 150 26.2523C154.04203875 25.43110375 158.22577875 25 162.51020875 25C197.028005 25 225.01020875 52.982203125 225.01020875 87.5C225.01020875 122.017796875 197.028005 150 162.51020875 150C158.22577875 150 154.04203875 149.56889625 150 148.747700375C165.47085 132.965081625 175.01020875 111.346559125 175.01020875 87.5z"/>
 	<GeometryDrawing x:Key="Drawing/LogProfile" Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/LogProfile}"/>
-	<GeometryDrawing x:Key="Drawing/LogProfile.Android" Brush="{DynamicResource Brush/Icon.LogProfile}" Geometry="{StaticResource Geometry/LogProfile.Android}"/>
+	<GeometryDrawing x:Key="Drawing/LogProfile.Android" Brush="{DynamicResource Brush/Icon.LogProfile.Android}" Geometry="{StaticResource Geometry/LogProfile.Android}"/>
 	<GeometryDrawing x:Key="Drawing/LogProfile.Android.Light" Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/LogProfile.Android}"/>
-	<GeometryDrawing x:Key="Drawing/LogProfile.Apple" Brush="{DynamicResource Brush/Icon.LogProfile}" Geometry="{StaticResource Geometry/LogProfile.Apple}"/>
+	<GeometryDrawing x:Key="Drawing/LogProfile.Apple" Brush="{DynamicResource Brush/Icon.LogProfile.Apple}" Geometry="{StaticResource Geometry/LogProfile.Apple}"/>
 	<GeometryDrawing x:Key="Drawing/LogProfile.Apple.Light" Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/LogProfile.Apple}"/>
-	<GeometryDrawing x:Key="Drawing/LogProfile.Book" Brush="{DynamicResource Brush/Icon.LogProfile}" Geometry="{StaticResource Geometry/LogProfile}"/>
+	<GeometryDrawing x:Key="Drawing/LogProfile.Book" Brush="{DynamicResource Brush/Icon.LogProfile.Book}" Geometry="{StaticResource Geometry/LogProfile}"/>
 	<GeometryDrawing x:Key="Drawing/LogProfile.Book.Light" Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/LogProfile}"/>
-	<GeometryDrawing x:Key="Drawing/LogProfile.Cloud" Brush="{DynamicResource Brush/Icon.LogProfile}" Geometry="{StaticResource Geometry/LogProfile.Cloud}"/>
+	<GeometryDrawing x:Key="Drawing/LogProfile.Cloud" Brush="{DynamicResource Brush/Icon.LogProfile.Cloud}" Geometry="{StaticResource Geometry/LogProfile.Cloud}"/>
 	<GeometryDrawing x:Key="Drawing/LogProfile.Cloud.Light" Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/LogProfile.Cloud}"/>
-	<GeometryDrawing x:Key="Drawing/LogProfile.Code" Brush="{DynamicResource Brush/Icon.LogProfile}" Geometry="{StaticResource Geometry/LogProfile.Code}"/>
+	<GeometryDrawing x:Key="Drawing/LogProfile.Code" Brush="{DynamicResource Brush/Icon.LogProfile.Code}" Geometry="{StaticResource Geometry/LogProfile.Code}"/>
 	<GeometryDrawing x:Key="Drawing/LogProfile.Code.Light" Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/LogProfile.Code}"/>
-	<GeometryDrawing x:Key="Drawing/LogProfile.Computer" Brush="{DynamicResource Brush/Icon.LogProfile}" Geometry="{StaticResource Geometry/LogProfile.Computer}"/>
+	<GeometryDrawing x:Key="Drawing/LogProfile.Computer" Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/LogProfile.Computer}"/>
 	<GeometryDrawing x:Key="Drawing/LogProfile.Computer.Light" Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/LogProfile.Computer}"/>
-	<GeometryDrawing x:Key="Drawing/LogProfile.Database" Brush="{DynamicResource Brush/Icon.LogProfile}" Geometry="{StaticResource Geometry/LogProfile.Database}"/>
+	<GeometryDrawing x:Key="Drawing/LogProfile.Database" Brush="{DynamicResource Brush/Icon.LogProfile.Database}" Geometry="{StaticResource Geometry/LogProfile.Database}"/>
 	<GeometryDrawing x:Key="Drawing/LogProfile.Database.Light" Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/LogProfile.Database}"/>
-	<GeometryDrawing x:Key="Drawing/LogProfile.Debug" Brush="{DynamicResource Brush/Icon.LogProfile}" Geometry="{DynamicResource Geometry/Icon.Debug}"/>
+	<GeometryDrawing x:Key="Drawing/LogProfile.Debug" Brush="{DynamicResource Brush/Icon.LogProfile.Debug}" Geometry="{DynamicResource Geometry/Icon.Debug}"/>
 	<GeometryDrawing x:Key="Drawing/LogProfile.Debug.Light" Brush="{DynamicResource Brush/Icon.Light}" Geometry="{DynamicResource Geometry/Icon.Debug}"/>
-	<GeometryDrawing x:Key="Drawing/LogProfile.Empty" Brush="{DynamicResource Brush/Icon.LogProfile}" Geometry="{StaticResource Geometry/LogProfile.Empty}"/>
+	<GeometryDrawing x:Key="Drawing/LogProfile.Empty" Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/LogProfile.Empty}"/>
 	<GeometryDrawing x:Key="Drawing/LogProfile.Empty.Light" Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/LogProfile.Empty}"/>
-	<GeometryDrawing x:Key="Drawing/LogProfile.File" Brush="{DynamicResource Brush/Icon.LogProfile}" Geometry="{DynamicResource Geometry/Icon.File}"/>
+	<GeometryDrawing x:Key="Drawing/LogProfile.File" Brush="{DynamicResource Brush/Icon}" Geometry="{DynamicResource Geometry/Icon.File}"/>
 	<GeometryDrawing x:Key="Drawing/LogProfile.File.Light" Brush="{DynamicResource Brush/Icon.Light}" Geometry="{DynamicResource Geometry/Icon.File}"/>
-	<GeometryDrawing x:Key="Drawing/LogProfile.Folder" Brush="{DynamicResource Brush/Icon.LogProfile}" Geometry="{DynamicResource Geometry/Icon.Folder}"/>
+	<GeometryDrawing x:Key="Drawing/LogProfile.Folder" Brush="{DynamicResource Brush/Icon.LogProfile.Folder}" Geometry="{DynamicResource Geometry/Icon.Folder}"/>
 	<GeometryDrawing x:Key="Drawing/LogProfile.Folder.Light" Brush="{DynamicResource Brush/Icon.Light}" Geometry="{DynamicResource Geometry/Icon.Folder}"/>
-	<GeometryDrawing x:Key="Drawing/LogProfile.Network" Brush="{DynamicResource Brush/Icon.LogProfile}" Geometry="{StaticResource Geometry/LogProfile.Network}"/>
+	<GeometryDrawing x:Key="Drawing/LogProfile.Network" Brush="{DynamicResource Brush/Icon.LogProfile.Network}" Geometry="{StaticResource Geometry/LogProfile.Network}"/>
 	<GeometryDrawing x:Key="Drawing/LogProfile.Network.Light" Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/LogProfile.Network}"/>
-	<GeometryDrawing x:Key="Drawing/LogProfile.Phone" Brush="{DynamicResource Brush/Icon.LogProfile}" Geometry="{StaticResource Geometry/LogProfile.Phone}"/>
+	<GeometryDrawing x:Key="Drawing/LogProfile.Phone" Brush="{DynamicResource Brush/Icon.LogProfile.Phone}" Geometry="{StaticResource Geometry/LogProfile.Phone}"/>
 	<GeometryDrawing x:Key="Drawing/LogProfile.Phone.Light" Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/LogProfile.Phone}"/>
-	<GeometryDrawing x:Key="Drawing/LogProfile.Terminal" Brush="{DynamicResource Brush/Icon.LogProfile}" Geometry="{StaticResource Geometry/LogProfile.Terminal}"/>
+	<GeometryDrawing x:Key="Drawing/LogProfile.Terminal" Brush="{DynamicResource Brush/Icon.LogProfile.Terminal}" Geometry="{StaticResource Geometry/LogProfile.Terminal}"/>
 	<GeometryDrawing x:Key="Drawing/LogProfile.Terminal.Light" Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/LogProfile.Terminal}"/>
-	<GeometryDrawing x:Key="Drawing/LogProfile.Usb" Brush="{DynamicResource Brush/Icon.LogProfile}" Geometry="{StaticResource Geometry/LogProfile.Usb}"/>
+	<GeometryDrawing x:Key="Drawing/LogProfile.Usb" Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/LogProfile.Usb}"/>
 	<GeometryDrawing x:Key="Drawing/LogProfile.Usb.Light" Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/LogProfile.Usb}"/>
-	<GeometryDrawing x:Key="Drawing/LogProfile.VersionControl" Brush="{DynamicResource Brush/Icon.LogProfile}" Geometry="{StaticResource Geometry/LogProfile.VersionControl}"/>
+	<GeometryDrawing x:Key="Drawing/LogProfile.VersionControl" Brush="{DynamicResource Brush/Icon.LogProfile.VersionControl}" Geometry="{StaticResource Geometry/LogProfile.VersionControl}"/>
 	<GeometryDrawing x:Key="Drawing/LogProfile.VersionControl.Light" Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/LogProfile.VersionControl}"/>
-	<GeometryDrawing x:Key="Drawing/LogProfile.Windows" Brush="{DynamicResource Brush/Icon.LogProfile}" Geometry="{StaticResource Geometry/LogProfile.Windows}"/>
+	<GeometryDrawing x:Key="Drawing/LogProfile.Windows" Brush="{DynamicResource Brush/Icon.LogProfile.Windows}" Geometry="{StaticResource Geometry/LogProfile.Windows}"/>
 	<GeometryDrawing x:Key="Drawing/LogProfile.Windows.Light" Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/LogProfile.Windows}"/>
 	<GeometryDrawing x:Key="Drawing/LogProfiles" Brush="{DynamicResource Brush/Icon}" Geometry="M19,18H9A2,2 0 0,1 7,16V4A2,2 0 0,1 9,2H10V7L12,5.5L14,7V2H19A2,2 0 0,1 21,4V16A2,2 0 0,1 19,18M17,20V22H5A2,2 0 0,1 3,20V6H5V20H17Z" />
 	<GeometryDrawing x:Key="Drawing/Rename" Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/Rename}"/>
@@ -109,33 +109,57 @@
 	<DrawingImage x:Key="Image/LogProfile.Code" Drawing="{StaticResource Drawing/LogProfile.Code}"/>
 	<DrawingImage x:Key="Image/LogProfile.Code.Light" Drawing="{StaticResource Drawing/LogProfile.Code.Light}"/>
 	<DrawingImage x:Key="Image/LogProfile.Computer" Drawing="{StaticResource Drawing/LogProfile.Computer}"/>
+	<DrawingImage x:Key="Image/LogProfile.Configuration">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{DynamicResource Geometry/Icon.Settings}"/>
+	</DrawingImage>
+	<DrawingImage x:Key="Image/LogProfile.Configuration.Light">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{DynamicResource Geometry/Icon.Settings}"/>
+	</DrawingImage>
 	<DrawingImage x:Key="Image/LogProfile.Computer.Light" Drawing="{StaticResource Drawing/LogProfile.Computer.Light}"/>
 	<DrawingImage x:Key="Image/LogProfile.Database" Drawing="{StaticResource Drawing/LogProfile.Database}"/>
 	<DrawingImage x:Key="Image/LogProfile.Database.Light" Drawing="{StaticResource Drawing/LogProfile.Database.Light}"/>
 	<DrawingImage x:Key="Image/LogProfile.Debug">
-		<GeometryDrawing Brush="{DynamicResource Brush/Icon.LogProfile}" Geometry="{DynamicResource Geometry/Icon.Debug}"/>
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.LogProfile.Debug}" Geometry="{DynamicResource Geometry/Icon.Debug}"/>
 	</DrawingImage>
 	<DrawingImage x:Key="Image/LogProfile.Debug.Light">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{DynamicResource Geometry/Icon.Debug}"/>
 	</DrawingImage>
 	<DrawingImage x:Key="Image/LogProfile.Empty" Drawing="{StaticResource Drawing/LogProfile.Empty}"/>
 	<DrawingImage x:Key="Image/LogProfile.Empty.Light" Drawing="{StaticResource Drawing/LogProfile.Empty.Light}"/>
+	<DrawingImage x:Key="Image/LogProfile.Experiment">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.LogProfile.Experiment}" Geometry="{DynamicResource Geometry/Icon.Lab}"/>
+	</DrawingImage>
+	<DrawingImage x:Key="Image/LogProfile.Experiment.Light">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{DynamicResource Geometry/Icon.Lab}"/>
+	</DrawingImage>
 	<DrawingImage x:Key="Image/LogProfile.File">
-		<GeometryDrawing Brush="{DynamicResource Brush/Icon.LogProfile}" Geometry="{DynamicResource Geometry/Icon.File}"/>
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{DynamicResource Geometry/Icon.File}"/>
 	</DrawingImage>
 	<DrawingImage x:Key="Image/LogProfile.File.Light">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{DynamicResource Geometry/Icon.File}"/>
 	</DrawingImage>
 	<DrawingImage x:Key="Image/LogProfile.Folder">
-		<GeometryDrawing Brush="{DynamicResource Brush/Icon.LogProfile}" Geometry="{DynamicResource Geometry/Icon.Folder}"/>
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.LogProfile.Folder}" Geometry="{DynamicResource Geometry/Icon.Folder}"/>
 	</DrawingImage>
 	<DrawingImage x:Key="Image/LogProfile.Folder.Light">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{DynamicResource Geometry/Icon.Folder}"/>
 	</DrawingImage>
 	<DrawingImage x:Key="Image/LogProfile.Network" Drawing="{StaticResource Drawing/LogProfile.Network}"/>
 	<DrawingImage x:Key="Image/LogProfile.Network.Light" Drawing="{StaticResource Drawing/LogProfile.Network.Light}"/>
+	<DrawingImage x:Key="Image/LogProfile.Performance">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.LogProfile.Performance}" Geometry="{DynamicResource Geometry/Icon.Speed}"/>
+	</DrawingImage>
+	<DrawingImage x:Key="Image/LogProfile.Performance.Light">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{DynamicResource Geometry/Icon.Speed}"/>
+	</DrawingImage>
 	<DrawingImage x:Key="Image/LogProfile.Phone" Drawing="{StaticResource Drawing/LogProfile.Phone}"/>
 	<DrawingImage x:Key="Image/LogProfile.Phone.Light" Drawing="{StaticResource Drawing/LogProfile.Phone.Light}"/>
+	<DrawingImage x:Key="Image/LogProfile.Security">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.LogProfile.Security}" Geometry="{DynamicResource Geometry/Icon.Administrator}"/>
+	</DrawingImage>
+	<DrawingImage x:Key="Image/LogProfile.Security.Light">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{DynamicResource Geometry/Icon.Administrator}"/>
+	</DrawingImage>
 	<DrawingImage x:Key="Image/LogProfile.Terminal" Drawing="{StaticResource Drawing/LogProfile.Terminal}"/>
 	<DrawingImage x:Key="Image/LogProfile.Terminal.Light" Drawing="{StaticResource Drawing/LogProfile.Terminal.Light}"/>
 	<DrawingImage x:Key="Image/LogProfile.Usb" Drawing="{StaticResource Drawing/LogProfile.Usb}"/>
