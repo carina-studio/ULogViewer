@@ -377,13 +377,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				{
 					while (true)
 					{
-						it[unfilteredIndex++] = sourceLogVersions[sourceIndex--];
-						if (unfilteredIndex >= logCount || sourceIndex < 0)
-							break;
 						var comparisonResult = comparer.Compare(logs[unfilteredIndex], sourceLogs[sourceIndex]);
 						if (comparisonResult == 0)
-							continue;
-						if (comparisonResult < 0)
+						{
+							it[unfilteredIndex++] = sourceLogVersions[sourceIndex--];
+							if (unfilteredIndex >= logCount || sourceIndex < 0)
+								break;
+						}
+						else if (comparisonResult < 0)
                         {
 							++unfilteredIndex;
 							if (unfilteredIndex >= logCount)
