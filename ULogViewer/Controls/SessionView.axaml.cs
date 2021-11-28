@@ -846,6 +846,7 @@ namespace CarinaStudio.ULogViewer.Controls
 							it.VerticalAlignment = VerticalAlignment.Top;
 						}),
 					};
+					var actualPropertyView = propertyView;
 					if (isMultiLineProperty)
 					{
 						propertyView = new StackPanel().Also(it =>
@@ -899,9 +900,7 @@ namespace CarinaStudio.ULogViewer.Controls
 									this.canShowLogProperty.Update(true);
 							}
 						};
-						if (propertyView is TextBlock textBlock 
-							&& !isMultiLineProperty 
-							&& width != null)
+						if (actualPropertyView is TextBlock textBlock && width != null)
 						{
 							var tipBinding = (IDisposable?)null;
 							textBlock.PropertyChanged += (_, e) =>
@@ -1550,14 +1549,20 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// build headers
 			var app = (App)this.Application;
-			var splitterWidth = app.Resources.TryGetResource("Double/GridSplitter.Thickness", out var rawResource) ? (double)rawResource.AsNonNull() : 0.0;
-			var minHeaderWidth = app.Resources.TryGetResource("Double/SessionView.LogHeader.MinWidth", out rawResource) ? (double)rawResource.AsNonNull() : 0.0;
-			var colorIndicatorWidth = app.Resources.TryGetResource("Double/SessionView.LogListBox.ColorIndicator.Width", out rawResource) ? (double)rawResource.AsNonNull() : 0.0;
+			var splitterWidth = app.TryFindResource("Double/GridSplitter.Thickness", out var rawResource) ? (double)rawResource.AsNonNull() : 0.0;
+			var minHeaderWidth = app.TryFindResource("Double/SessionView.LogHeader.MinWidth", out rawResource) ? (double)rawResource.AsNonNull() : 0.0;
+			var itemPadding = app.TryFindResource("Thickness/SessionView.LogListBox.Item.Padding", out rawResource) ? (Thickness)rawResource.AsNonNull() : new Thickness();
+			var colorIndicatorWidth = app.TryFindResource("Double/SessionView.LogListBox.ColorIndicator.Width", out rawResource) ? (double)rawResource.AsNonNull() : 0.0;
 			var headerTemplate = (DataTemplate)this.DataTemplates.First(it => it is DataTemplate dt && dt.DataType == typeof(DisplayableLogProperty));
 			var columIndexOffset = 0;
 			if (profile.ColorIndicator != LogColorIndicator.None)
 			{
 				this.logHeaderGrid.ColumnDefinitions.Add(new ColumnDefinition(colorIndicatorWidth, GridUnitType.Pixel));
+				++columIndexOffset;
+			}
+			if (itemPadding.Left > 0)
+			{
+				this.logHeaderGrid.ColumnDefinitions.Add(new ColumnDefinition(itemPadding.Left, GridUnitType.Pixel));
 				++columIndexOffset;
 			}
 			this.logHeaderGrid.Children.Add(new Border().Also(it => // Empty control in order to get first layout event of log header grid
