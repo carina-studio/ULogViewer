@@ -28,8 +28,10 @@
 	<!-- Built-in profile -->
 	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceLog">Android Device Log</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceLog.Description">Real-time logs from Android device through ADB.</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AndroidFileKernelLog">Android Kernel Log Files</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AndroidFileKernelLog.Description">Android kernel logs stored in one or more files.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidFileLog">Android Log Files</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.AndroidFileLog.Description">Android Logs stored in one or more files.</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AndroidFileLog.Description">Android logs stored in one or more files. Event logs are also supported by this profile.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.Empty">None</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.GitLog">Git Log</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.GitLog.Description">List of git commits of specified repository.</sys:String>
