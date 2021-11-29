@@ -18,7 +18,7 @@ namespace CarinaStudio.ULogViewer
 		/// <summary>
 		/// Reference of date time format.
 		/// </summary>
-		public static readonly Uri DateTimeFormatReference = new Uri("https://docs.microsoft.com/en-us/dotnet/standard/base-types/standard-date-and-time-format-strings");
+		public static readonly Uri DateTimeFormatReference = new Uri("https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings");
 		/// <summary>
 		/// Application package manifest (Preview).
 		/// </summary>

@@ -3,5 +3,6 @@
 		"Name": "TCP Server"
 	},
 	"Icon": "Experiment",
-	"IsContinuousReading": true
+	"IsContinuousReading": true,
+	"SortKey": "Id"
 }
