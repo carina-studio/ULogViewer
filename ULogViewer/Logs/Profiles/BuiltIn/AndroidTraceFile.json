@@ -1,0 +1,47 @@
+﻿{
+	"DataSource": {
+		"Name": "File"
+	},
+	"Icon": "Performance",
+	"LogPatterns": [
+		{
+			"Regex": "^[\\s]*(?<ThreadName>.*)\\-(?<ThreadId>[\\d]+)[\\s]+\\([\\s]*(?<ProcessId>[\\d\\-]+)\\)[\\s]+\\[(?<Extra1>[\\d]+)]*\\][\\s]+[\\d\\w\\.]+[\\s]+(?<Timestamp>[\\d]+\\.[\\d]+)[\\s]*\\:[\\s]*(?<SourceName>[^\\:]*)\\:[\\s](?<Message>.*)$"
+		}
+	],
+	"LogWritingFormat": "{ThreadName,16}-{ThreadId,-5} ({ProcessId,5}) [{Extra1}] {Timestamp} {SourceName}: {Message}",
+	"TimestampEncodingForReading": "Unix",
+	"TimestampFormatForDisplaying": "dd HH:mm:ss.ffffff",
+	"TimestampFormatForWriting": "dd_HH:mm:ss.ffffff",
+	"VisibleLogProperties": [
+		{
+			"DisplayName": "RelativeTimestamp",
+			"Name": "Timestamp",
+			"Width": 180
+		},
+		{
+			"DisplayName": "Cpu",
+			"Name": "Extra1",
+			"Width": 80
+		},
+		{
+			"Name": "ProcessId",
+			"Width": 80
+		},
+		{
+			"Name": "ThreadId",
+			"Width": 80
+		},
+		{
+			"Name": "ThreadName",
+			"Width": 100
+		},
+		{
+			"DisplayName": "Tag",
+			"Name": "SourceName",
+			"Width": 100
+		},
+		{
+			"Name": "Message"
+		}
+	]
+}

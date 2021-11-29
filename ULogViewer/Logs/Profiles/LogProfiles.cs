@@ -25,8 +25,9 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		static readonly IList<string> builtInProfileIDs = new List<string>()
 		{
 			"AndroidDeviceLog",
-			"AndroidFileKernelLog",
 			"AndroidFileLog",
+			"AndroidKernelLogFile",
+			"AndroidTraceFile",
 #if DEBUG
 			"DummyLog",
 #endif

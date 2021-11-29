@@ -85,6 +85,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						it.Add("Commit");
 						it.Add("Content");
 						it.Add("Count");
+						it.Add("Cpu");
 						it.Add("Duration");
 						it.Add("ID");
 						it.Add("Name");
@@ -92,6 +93,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						it.Add("Parent");
 						it.Add("Path");
 						it.Add("RawData");
+						it.Add("RelativeBeginningTimestamp");
+						it.Add("RelativeEndingTimestamp");
+						it.Add("RelativeTimestamp");
 						it.Add("ShortName");
 						it.Add("Tag");
 						it.Add("Type");

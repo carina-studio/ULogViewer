@@ -28,10 +28,12 @@
 	<!-- Built-in profile -->
 	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceLog">Android Device Log</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceLog.Description">Real-time logs from Android device through ADB.</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.AndroidFileKernelLog">Android Kernel Log Files</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.AndroidFileKernelLog.Description">Android kernel logs stored in one or more files.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidFileLog">Android Log Files</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidFileLog.Description">Android logs stored in one or more files. Event logs are also supported by this profile.</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AndroidKernelLogFile">Android Kernel Log Files</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AndroidKernelLogFile.Description">Android kernel logs stored in one or more files.</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AndroidTraceFile">Android System Trace File</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AndroidTraceFile.Description">Parse System Trace file to analyze system and application performance on Android device.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.Empty">None</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.GitLog">Git Log</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.GitLog.Description">List of git commits of specified repository.</sys:String>
@@ -256,6 +258,7 @@
 	<sys:String x:Key="String/LogProperty.Commit">Commit</sys:String>
 	<sys:String x:Key="String/LogProperty.Content">Content</sys:String>
 	<sys:String x:Key="String/LogProperty.Count">Count</sys:String>
+	<sys:String x:Key="String/LogProperty.Cpu">CPU</sys:String>
 	<sys:String x:Key="String/LogProperty.DeviceId">Device ID</sys:String>
 	<sys:String x:Key="String/LogProperty.DeviceName">Device Name</sys:String>
 	<sys:String x:Key="String/LogProperty.Duration">Duration</sys:String>
@@ -283,6 +286,9 @@
 	<sys:String x:Key="String/LogProperty.ProcessId">PID</sys:String>
 	<sys:String x:Key="String/LogProperty.ProcessName">Process</sys:String>
 	<sys:String x:Key="String/LogProperty.RawData">Raw Data</sys:String>
+	<sys:String x:Key="String/LogProperty.RelativeBeginningTimestamp">Relative Beginning Timestamp</sys:String>
+	<sys:String x:Key="String/LogProperty.RelativeEndingTimestamp">Relative Ending Timestamp</sys:String>
+	<sys:String x:Key="String/LogProperty.RelativeTimestamp">Relative Timestamp</sys:String>
 	<sys:String x:Key="String/LogProperty.ShortName">Short Name</sys:String>
 	<sys:String x:Key="String/LogProperty.SourceName">Source</sys:String>
 	<sys:String x:Key="String/LogProperty.Summary">Summary</sys:String>
