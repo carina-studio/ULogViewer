@@ -30,16 +30,27 @@
 
 	<!-- Built-in profile -->
 	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceLog">Android 裝置日誌</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceLog.Description">透過 ADB 取得的 Android 裝置即時日誌。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidFileLog">Android 日誌檔案</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AndroidFileLog.Description">在一個或多個檔案中的 Android 日誌。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.Empty">無</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.GitLog">Git 提交紀錄</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.GitLog.Description">顯示指定存放庫中的 Git 提交列表。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.GitLogSimple">Git 提交紀錄 (精簡)</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.ULogViewerLog">ULogViewer 日誌檔案 (偵錯)</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.ULogViewerMemoryLog">ULogViewer 即時日誌 (偵錯)</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.GitLogSimple.Description">以較少資訊顯示指定存放庫中的 Git 提交列表。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.TcpNLog.Description">使用 NLog 以 'NLogViewer' 格式輸出，並透過 TCP 傳輸的即時日誌。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.ULogViewerLog">ULogViewer 日誌檔案</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.ULogViewerLog.Description">由 ULogViewer 或其他 Carina Studio 應用程式輸出的日誌檔案。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.ULogViewerMemoryLog">ULogViewer 即時日誌</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.ULogViewerMemoryLog.Description">來自 ULogViewer 位於記憶體中的即時日誌。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.WindowsApplicationEventLogs">Windows 事件紀錄 (應用程式)</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.WindowsApplicationEventLogs.Description">位於本機上分類為 'Application' 的 Windows 事件紀錄。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.WindowsSecurityEventLogs">Windows 事件紀錄 (安全性)</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.WindowsSecurityEventLogs.Description">位於本機上分類為 'Security' 的 Windows 事件紀錄。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.WindowsSetupEventLogs">Windows 事件紀錄 (安裝)</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.WindowsSetupEventLogs.Description">位於本機上分類為 'Setup' 的 Windows 事件紀錄。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.WindowsSystemEventLogs">Windows 事件紀錄 (系統)</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.WindowsSystemEventLogs.Description">位於本機上分類為 'System' 的 Windows 事件紀錄。</sys:String>
 	
 	<!-- Common -->
 	<sys:String x:Key="String/Common.Add">新增</sys:String>
@@ -163,6 +174,7 @@
 	<sys:String x:Key="String/LogProfileEditorDialog.Common">一般設定</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.DataSourceOptions">參數…</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.DataSourceProvider">資料來源</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.Description">描述</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.DuplicateLogLevelMapEntry">已經定義從 '{0}' 的轉換。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.FormatDescription">格式說明</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Icon">圖示</sys:String>
@@ -214,6 +226,7 @@
 	<sys:String x:Key="String/LogProfileSelectionDialog.IsAdministratorNeeded">需要系統管理員身分</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.IsContinuousReading">連續讀取</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.IsWorkingDirectoryNeeded">需要工作目錄</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionDialog.NoDescription">沒有描述的自訂日誌類型。</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.OtherLogProfiles">其他日誌類型</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.PinnedLogProfiles">已釘選</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.PinUnpinLogProfile">釘選/移除釘選日誌類型</sys:String>

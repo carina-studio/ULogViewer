@@ -22,10 +22,10 @@
 				<Setter.Value>
 					<DataTemplate DataType="{x:Type appProfiles:LogProfile}">
 						<Border Background="{x:Static Brushes.Transparent}" DoubleTapped="OnLogProfileItemDoubleTapped" Padding="{DynamicResource Thickness/LogProfileSelectionDialog.LogProfile.Padding}">
-							<Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto">
+							<Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto,Auto">
 
 								<!-- Icon -->
-								<Grid Grid.RowSpan="2" Height="{DynamicResource Double/LogProfileSelectionDialog.LogProfile.Icon.Size}" Margin="{DynamicResource Thickness/LogProfileSelectionDialog.LogProfile.Icon.Margin}" VerticalAlignment="Top" Width="{DynamicResource Double/LogProfileSelectionDialog.LogProfile.Icon.Size}">
+								<Grid Grid.RowSpan="3" Height="{DynamicResource Double/LogProfileSelectionDialog.LogProfile.Icon.Size}" Margin="{DynamicResource Thickness/LogProfileSelectionDialog.LogProfile.Icon.Margin}" VerticalAlignment="Top" Width="{DynamicResource Double/LogProfileSelectionDialog.LogProfile.Icon.Size}">
 									<Image Classes="Icon" Source="{Binding Icon, Converter={x:Static appConverters:LogProfileIconConverter.Default}}" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}"/>
 									<Image Classes="Icon" Source="{Binding Icon, Converter={x:Static appConverters:LogProfileIconConverter.Default}, ConverterParameter=Light}}" IsVisible="{Binding $parent[ListBoxItem].IsSelected}"/>
 								</Grid>
@@ -33,8 +33,12 @@
 								<!-- Name -->
 								<TextBlock Grid.Column="1" FontSize="{DynamicResource Double/LogProfileSelectionDialog.LogProfile.Name.FontSize}" Margin="{DynamicResource Thickness/LogProfileSelectionDialog.LogProfile.Name.Margin}" Text="{Binding Name}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
 
+								<!-- Description -->
+								<TextBlock Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="1" FontSize="{DynamicResource Double/LogProfileSelectionDialog.LogProfile.Description.FontSize}" IsVisible="{Binding HasDescription}" Margin="{DynamicResource Thickness/LogProfileSelectionDialog.LogProfile.Description.Margin}" MaxLines="5" Opacity="{DynamicResource Double/LogProfileSelectionDialog.LogProfile.Description.Opacity}" Text="{Binding Description}" TextTrimming="CharacterEllipsis" TextWrapping="Wrap"/>
+								<TextBlock Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="1" FontSize="{DynamicResource Double/LogProfileSelectionDialog.LogProfile.Description.FontSize}" IsVisible="{Binding !HasDescription}" Margin="{DynamicResource Thickness/LogProfileSelectionDialog.LogProfile.Description.Margin}" Opacity="{DynamicResource Double/LogProfileSelectionDialog.LogProfile.Description.Opacity}" Text="{DynamicResource String/LogProfileSelectionDialog.NoDescription}" TextTrimming="CharacterEllipsis"/>
+
 								<!-- Labels -->
-								<WrapPanel Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="1" Orientation="Horizontal">
+								<WrapPanel Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="2" Orientation="Horizontal">
 									<Border Classes="LogProfileSelectionDialog_LogProfile_Label">
 										<TextBlock Classes="LogProfileSelectionDialog_LogProfile_Label" Text="{Binding DataSourceProvider.DisplayName}"/>
 									</Border>
@@ -53,7 +57,7 @@
 								</WrapPanel>
 
 								<!-- Actions -->
-								<StackPanel Grid.Column="2" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
+								<StackPanel Grid.Column="2" Grid.RowSpan="3" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal" VerticalAlignment="Top">
 									<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveLogProfile}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" IsVisible="{Binding !IsBuiltIn}" ToolTip.Tip="{DynamicResource String/LogProfileSelectionDialog.RemoveLogProfile}">
 										<Border Classes="InPlaceAction_Icon">
 											<Image Classes="Icon" Source="{DynamicResource Image/Icon.Delete}"/>

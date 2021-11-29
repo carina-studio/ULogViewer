@@ -39,6 +39,8 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		LogColorIndicator colorIndicator = LogColorIndicator.None;
 		LogDataSourceOptions dataSourceOptions;
 		ILogDataSourceProvider dataSourceProvider = LogDataSourceProviders.Empty;
+		string? description;
+		bool hasDescription;
 		LogProfileIcon icon = LogProfileIcon.File;
 		string id;
 		bool isAdministratorNeeded;
@@ -91,6 +93,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			this.colorIndicator = template.colorIndicator;
 			this.dataSourceOptions = template.dataSourceOptions;
 			this.dataSourceProvider = template.dataSourceProvider;
+			this.description = template.description;
 			this.icon = template.icon;
 			this.isAdministratorNeeded = template.isAdministratorNeeded;
 			this.isContinuousReading = template.isContinuousReading;
@@ -121,7 +124,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			this.BuiltInId = builtInId;
 			this.id = builtInId;
 			this.isPinnedSettingKey = new SettingKey<bool>($"BuiltInProfile.{builtInId}.IsPinned");
-			this.UpdateBuiltInName();
+			this.UpdateBuiltInNameAndDescription();
 		}
 
 
@@ -228,6 +231,27 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 
 
 		/// <summary>
+		/// Get or set description of profile.
+		/// </summary>
+		public string? Description
+		{
+			get => this.description;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (string.IsNullOrWhiteSpace(value))
+					value = null;
+				if (this.description == value)
+					return;
+				this.description = value;
+				this.HasDescription = (value != null);
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Description)));
+			}
+		}
+
+
+		/// <summary>
 		/// Detach from the file which instance has been loaded from or saved to.
 		/// </summary>
 		public void DetachFromFile()
@@ -281,6 +305,22 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				}
 				throw new ArgumentException($"Unable to find proper file name for '{this.name}' in directory '{directoryName}'.");
 			});
+		}
+
+
+		/// <summary>
+		/// Get whether <see cref="Description"/> contains non-whitespace content or not.
+		/// </summary>
+		public bool HasDescription 
+		{
+			get => this.hasDescription;
+			private set
+            {
+				if (this.hasDescription == value)
+					return;
+				this.hasDescription = value;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasDescription)));
+            }
 		}
 
 
@@ -531,6 +571,12 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 						break;
 					case nameof(ColorIndicator):
 						this.colorIndicator = Enum.Parse<LogColorIndicator>(jsonProperty.Value.GetString().AsNonNull());
+						break;
+					case nameof(Description):
+						this.description = jsonProperty.Value.GetString();
+						if (string.IsNullOrWhiteSpace(this.description))
+							this.description = null;
+						this.hasDescription = (this.description != null);
 						break;
 					case nameof(Icon):
 						if (Enum.TryParse<LogProfileIcon>(jsonProperty.Value.GetString(), out var profileIcon))
@@ -846,7 +892,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// <summary>
 		/// Called when application string resources updated.
 		/// </summary>
-		public void OnApplicationStringsUpdated() => this.UpdateBuiltInName();
+		public void OnApplicationStringsUpdated() => this.UpdateBuiltInNameAndDescription();
 
 
 		/// <summary>
@@ -884,6 +930,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				writer.WritePropertyName("DataSource");
 				this.SaveDataSourceToJson(writer);
 				writer.WriteString(nameof(ColorIndicator), this.colorIndicator.ToString());
+				writer.WriteString(nameof(Description), this.description);
 				writer.WriteString(nameof(Icon), this.icon.ToString());
 				if (!this.IsBuiltIn)
 					writer.WriteString(nameof(Id), this.id);
@@ -1144,16 +1191,24 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		}
 
 
-		// Update name of built-in profile.
-		void UpdateBuiltInName()
+		// Update name and description of built-in profile.
+		void UpdateBuiltInNameAndDescription()
 		{
 			if (this.BuiltInId == null)
 				return;
 			var name = this.Application.GetStringNonNull($"BuiltInProfile.{this.BuiltInId}", this.BuiltInId);
-			if (this.name == name)
-				return;
-			this.name = name;
-			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Name)));
+			if (this.name != name)
+			{
+				this.name = name;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Name)));
+			}
+			var description = this.Application.GetString($"BuiltInProfile.{this.BuiltInId}.Description");
+			if (this.description != description)
+			{
+				this.description = description;
+				this.HasDescription = (description != null);
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Description)));
+			}
 		}
 
 

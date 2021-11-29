@@ -52,6 +52,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ToggleSwitch continuousReadingSwitch;
 		LogDataSourceOptions dataSourceOptions;
 		readonly ComboBox dataSourceProviderComboBox;
+		readonly TextBox descriptionTextBox;
 		readonly ComboBox iconComboBox;
 		readonly ToggleButton insertLogWritingFormatSyntaxButton;
 		readonly ContextMenu insertLogWritingFormatSyntaxMenu;
@@ -104,6 +105,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.colorIndicatorComboBox = this.FindControl<ComboBox>("colorIndicatorComboBox").AsNonNull();
 			this.continuousReadingSwitch = this.FindControl<ToggleSwitch>("continuousReadingSwitch").AsNonNull();
 			this.dataSourceProviderComboBox = this.FindControl<ComboBox>("dataSourceProviderComboBox").AsNonNull();
+			this.descriptionTextBox = this.FindControl<TextBox>(nameof(descriptionTextBox));
 			this.iconComboBox = this.FindControl<ComboBox>("iconComboBox").AsNonNull();
 			this.insertLogWritingFormatSyntaxButton = this.FindControl<ToggleButton>("insertLogWritingFormatSyntaxButton").AsNonNull();
 			this.insertLogWritingFormatSyntaxMenu = ((ContextMenu)this.Resources["insertLogWritingFormatSyntaxMenu"].AsNonNull()).Also(it =>
@@ -413,6 +415,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			logProfile.ColorIndicator = (LogColorIndicator)this.colorIndicatorComboBox.SelectedItem.AsNonNull();
 			logProfile.DataSourceOptions = this.dataSourceOptions;
 			logProfile.DataSourceProvider = (ILogDataSourceProvider)this.dataSourceProviderComboBox.SelectedItem.AsNonNull();
+			logProfile.Description = this.descriptionTextBox.Text;
 			logProfile.Icon = (LogProfileIcon)this.iconComboBox.SelectedItem.AsNonNull();
 			logProfile.IsAdministratorNeeded = this.adminNeededSwitch.IsChecked.GetValueOrDefault();
 			logProfile.IsContinuousReading = this.continuousReadingSwitch.IsChecked.GetValueOrDefault();
@@ -625,6 +628,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.colorIndicatorComboBox.SelectedItem = profile.ColorIndicator;
 				this.dataSourceOptions = profile.DataSourceOptions;
 				this.dataSourceProviderComboBox.SelectedItem = profile.DataSourceProvider;
+				this.descriptionTextBox.Text = profile.Description;
 				this.iconComboBox.SelectedItem = profile.Icon;
 				this.continuousReadingSwitch.IsChecked = profile.IsContinuousReading;
 				this.logLevelMapEntriesForReading.AddAll(profile.LogLevelMapForReading);
