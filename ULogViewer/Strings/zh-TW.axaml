@@ -38,6 +38,12 @@
 	<sys:String x:Key="String/BuiltInProfile.GitLog.Description">顯示指定存放庫中的 Git 提交列表。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.GitLogSimple">Git 提交紀錄 (精簡)</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.GitLogSimple.Description">以較少資訊顯示指定存放庫中的 Git 提交列表。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.RawFile">檔案中的原始文字</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.RawFile.Description">從一個或多個檔案中讀取未分析的原始文字內容。通常於測試及偵錯時使用。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.RawHttp">HTTP/HTTPS 的原始回應內容</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.RawHttp.Description">送出 HTTP/HTTPS 請求並讀取未分析的回應內容。通常於測試及偵錯時使用。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.RawTcpServer">TCP 客戶端的原始文字</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.RawTcpServer.Description">建立 TCP 伺服器並讀取來自 TCP 客戶端傳輸的原始文字內容。通常於測試及偵錯時使用。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.TcpNLog.Description">使用 NLog 以 'NLogViewer' 格式輸出，並透過 TCP 傳輸的即時日誌。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.ULogViewerLog">ULogViewer 日誌檔案</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.ULogViewerLog.Description">由 ULogViewer 或其他 Carina Studio 應用程式輸出的日誌檔案。</sys:String>

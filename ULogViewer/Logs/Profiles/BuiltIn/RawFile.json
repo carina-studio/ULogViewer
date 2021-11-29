@@ -1,0 +1,7 @@
+﻿{
+	"DataSource": {
+		"Name": "File"
+	},
+	"ColorIndicator": "FileName",
+	"Icon": "Experiment"
+}

@@ -31,6 +31,9 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 #endif
 			"GitLog",
 			"GitLogSimple",
+			"RawFile",
+			"RawHttp",
+			"RawTcpServer",
 			"TcpNLog",
 		};
 		static volatile LogProfile? emptyProfile;
