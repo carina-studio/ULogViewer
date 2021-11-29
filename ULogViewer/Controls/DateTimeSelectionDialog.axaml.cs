@@ -14,7 +14,9 @@ namespace CarinaStudio.ULogViewer.Controls
     {
         // Fields.
         readonly AppSuite.Controls.DatePicker datePicker;
-        readonly AppSuite.Controls.TimePicker timePicker;
+        readonly NumericUpDown hoursUpDown;
+        readonly NumericUpDown minutesUpDown;
+        readonly NumericUpDown secondsUpDown;
 
 
         /// <summary>
@@ -24,7 +26,9 @@ namespace CarinaStudio.ULogViewer.Controls
         {
             InitializeComponent();
             this.datePicker = this.FindControl<AppSuite.Controls.DatePicker>(nameof(datePicker));
-            this.timePicker = this.FindControl<AppSuite.Controls.TimePicker>(nameof(timePicker));
+            this.hoursUpDown = this.FindControl<NumericUpDown>(nameof(hoursUpDown));
+            this.minutesUpDown = this.FindControl<NumericUpDown>(nameof(minutesUpDown));
+            this.secondsUpDown = this.FindControl<NumericUpDown>(nameof(secondsUpDown));
         }
 
 
@@ -32,8 +36,7 @@ namespace CarinaStudio.ULogViewer.Controls
         protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken)
         {
             var date = this.datePicker.SelectedDate.GetValueOrDefault().Date;
-            var time = this.timePicker.SelectedTime.GetValueOrDefault();
-            return Task.FromResult((object?)new DateTime(date.Year, date.Month, date.Day, time.Hours, time.Minutes, 0));
+            return Task.FromResult((object?)new DateTime(date.Year, date.Month, date.Day, (int)this.hoursUpDown.Value, (int)this.minutesUpDown.Value, (int)this.secondsUpDown.Value));
         }
 
 
@@ -58,11 +61,13 @@ namespace CarinaStudio.ULogViewer.Controls
         protected override void OnOpened(EventArgs e)
         {
             base.OnOpened(e);
-            this.FindControl<TextBlock>("messageTextBlock").AsNonNull().Text = this.Message ?? " ";
+            this.FindControl<Avalonia.Controls.TextBlock>("messageTextBlock").AsNonNull().Text = this.Message ?? " ";
             this.InitialDateTime?.Let(it =>
             {
                 this.datePicker.SelectedDate = new DateTimeOffset(it.Date);
-                this.timePicker.SelectedTime = new TimeSpan(it.Hour, it.Minute, 0);
+                this.hoursUpDown.Value = it.Hour;
+                this.minutesUpDown.Value = it.Minute;
+                this.secondsUpDown.Value = it.Second;
             });
         }
 
@@ -74,6 +79,6 @@ namespace CarinaStudio.ULogViewer.Controls
 
         // Validate input.
         protected override bool OnValidateInput() =>
-            base.OnValidateInput() && this.datePicker.SelectedDate != null && this.timePicker.SelectedTime != null;
+            base.OnValidateInput() && this.datePicker.SelectedDate != null;
     }
 }

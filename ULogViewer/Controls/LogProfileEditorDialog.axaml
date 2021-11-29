@@ -69,7 +69,7 @@
 				</Border>
 
 				<!-- How to read and parse logs -->
-				<asControls:LinkTextBlock Text="{DynamicResource String/LogProfileEditorDialog.LearnAboutLogsReadingAndParsing}" Uri="{x:Static appControls:LogProfileEditorDialog.LogsReadingAndParsingPageUri}"/>
+				<asControls:LinkTextBlock HorizontalAlignment="Left" Text="{DynamicResource String/LogProfileEditorDialog.LearnAboutLogsReadingAndParsing}" Uri="{x:Static appControls:LogProfileEditorDialog.LogsReadingAndParsingPageUri}"/>
 				<Separator Classes="Dialog_Separator"/>
 				
 				<!-- Name -->
