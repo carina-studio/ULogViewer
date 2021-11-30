@@ -31,5 +31,9 @@ namespace CarinaStudio.ULogViewer
 		/// Reference of string interpolation.
 		/// </summary>
 		public static readonly Uri StringInterpolationReference = new Uri("https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/tokens/interpolated#structure-of-an-interpolated-string");
+		/// <summary>
+		/// Reference of time span format.
+		/// </summary>
+		public static readonly Uri TimeSpanFormatReference = new Uri("https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-timespan-format-strings");
 	}
 }

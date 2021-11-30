@@ -68,6 +68,11 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly TextBox nameTextBox;
 		readonly ComboBox sortDirectionComboBox;
 		readonly ComboBox sortKeyComboBox;
+		readonly ComboBox timeSpanEncodingForReadingComboBox;
+		readonly TextBox timeSpanFormatForDisplayingTextBox;
+		readonly TextBox timeSpanFormatForWritingTextBox;
+		readonly ObservableList<string> timeSpanFormatsForReading = new ObservableList<string>();
+		readonly ListBox timeSpanFormatsForReadingListBox;
 		readonly ComboBox timestampEncodingForReadingComboBox;
 		readonly TextBox timestampFormatForDisplayingTextBox;
 		readonly TextBox timestampFormatForWritingTextBox;
@@ -90,6 +95,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				it.CollectionChanged += (_, e) => this.InvalidateInput();
 			}).AsReadOnly();
+			this.TimeSpanFormatsForReading = this.timeSpanFormatsForReading.AsReadOnly();
 			this.TimestampFormatsForReading = this.timestampFormatsForReading.AsReadOnly();
 			this.VisibleLogProperties = this.visibleLogProperties.Also(it =>
 			{
@@ -144,6 +150,10 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.nameTextBox = this.FindControl<TextBox>("nameTextBox").AsNonNull();
 			this.sortDirectionComboBox = this.FindControl<ComboBox>("sortDirectionComboBox").AsNonNull();
 			this.sortKeyComboBox = this.FindControl<ComboBox>("sortKeyComboBox").AsNonNull();
+			this.timeSpanEncodingForReadingComboBox = this.FindControl<ComboBox>(nameof(timeSpanEncodingForReadingComboBox));
+			this.timeSpanFormatForDisplayingTextBox = this.FindControl<TextBox>(nameof(timeSpanFormatForDisplayingTextBox));
+			this.timeSpanFormatForWritingTextBox = this.FindControl<TextBox>(nameof(timeSpanFormatForWritingTextBox));
+			this.timeSpanFormatsForReadingListBox = this.FindControl<ListBox>(nameof(timeSpanFormatsForReadingListBox));
 			this.timestampEncodingForReadingComboBox = this.FindControl<ComboBox>(nameof(timestampEncodingForReadingComboBox)).AsNonNull();
 			this.timestampFormatForDisplayingTextBox = this.FindControl<TextBox>("timestampFormatForDisplayingTextBox").AsNonNull();
 			this.timestampFormatForWritingTextBox = this.FindControl<TextBox>("timestampFormatForWritingTextBox").AsNonNull();
@@ -219,6 +229,21 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				this.logPatterns.Add(logPattern);
 				this.SelectListBoxItem(this.logPatternListBox, this.logPatterns.Count - 1);
+			}
+		}
+
+
+		// Add time span format for reading log.
+		async void AddTimeSpanFormatForReading()
+		{
+			var format = await new TimeSpanFormatInputDialog()
+			{
+				Title = this.Application.GetString("LogProfileEditorDialog.TimeSpanFormatsForReading")
+			}.ShowDialog<string>(this);
+			if (!string.IsNullOrWhiteSpace(format))
+			{
+				this.timeSpanFormatsForReading.Add(format);
+				this.SelectListBoxItem(this.timeSpanFormatsForReadingListBox, this.timeSpanFormatsForReading.Count - 1);
 			}
 		}
 
@@ -332,8 +357,28 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Edit time span format for reading logs.
+		async void EditTimeSpanFormatForReading(ListBoxItem item)
+		{
+			var format = (string)item.DataContext.AsNonNull();
+			var index = this.timeSpanFormatsForReading.IndexOf(format);
+			if (index < 0)
+				return;
+			var newFormat = await new TimeSpanFormatInputDialog()
+			{
+				InitialFormat = format,
+				Title = this.Application.GetString("LogProfileEditorDialog.TimeSpanFormatsForReading")
+			}.ShowDialog<string>(this);
+			if (!string.IsNullOrWhiteSpace(newFormat) && newFormat != format)
+			{
+				this.timeSpanFormatsForReading[index] = newFormat;
+				this.SelectListBoxItem(this.timeSpanFormatsForReadingListBox, index);
+			}
+		}
+
+
 		// Edit timestamp format for reading logs.
-		async void EditTimestampForReading(ListBoxItem item)
+		async void EditTimestampFormatForReading(ListBoxItem item)
 		{
 			var format = (string)item.DataContext.AsNonNull();
 			var index = this.timestampFormatsForReading.IndexOf(format);
@@ -434,6 +479,10 @@ namespace CarinaStudio.ULogViewer.Controls
 			logProfile.Name = this.nameTextBox.Text.AsNonNull();
 			logProfile.SortDirection = (SortDirection)this.sortDirectionComboBox.SelectedItem.AsNonNull();
 			logProfile.SortKey = (LogSortKey)this.sortKeyComboBox.SelectedItem.AsNonNull();
+			logProfile.TimeSpanEncodingForReading = (LogTimeSpanEncoding)this.timeSpanEncodingForReadingComboBox.SelectedItem.AsNonNull();
+			logProfile.TimeSpanFormatForDisplaying = this.timeSpanFormatForDisplayingTextBox.Text;
+			logProfile.TimeSpanFormatForWriting = this.timeSpanFormatForWritingTextBox.Text;
+			logProfile.TimeSpanFormatsForReading = this.timeSpanFormatsForReading;
 			logProfile.TimestampEncodingForReading = (LogTimestampEncoding)this.timestampEncodingForReadingComboBox.SelectedItem.AsNonNull();
 			logProfile.TimestampFormatForDisplaying = this.timestampFormatForDisplayingTextBox.Text;
 			logProfile.TimestampFormatForWriting = this.timestampFormatForWritingTextBox.Text;
@@ -578,8 +627,10 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.EditLogLevelMapEntryForWriting((KeyValuePair<LogLevel, string>)selectedItem.AsNonNull());
 			else if (listBox == this.logPatternListBox)
 				this.EditLogPattern(listBoxItem);
+			else if (listBox == this.timeSpanFormatsForReadingListBox)
+				this.EditTimeSpanFormatForReading(listBoxItem);
 			else if (listBox == this.timestampFormatsForReadingListBox)
-				this.EditTimestampForReading(listBoxItem);
+				this.EditTimestampFormatForReading(listBoxItem);
 			else if (listBox == this.visibleLogPropertyListBox)
 				this.EditVisibleLogProperty(listBoxItem);
 		}
@@ -640,6 +691,10 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.nameTextBox.Text = profile.Name;
 				this.sortDirectionComboBox.SelectedItem = profile.SortDirection;
 				this.sortKeyComboBox.SelectedItem = profile.SortKey;
+				this.timeSpanEncodingForReadingComboBox.SelectedItem = profile.TimeSpanEncodingForReading;
+				this.timeSpanFormatForDisplayingTextBox.Text = profile.TimeSpanFormatForDisplaying;
+				this.timeSpanFormatForWritingTextBox.Text = profile.TimeSpanFormatForWriting;
+				this.timeSpanFormatsForReading.AddRange(profile.TimeSpanFormatsForReading);
 				this.timestampEncodingForReadingComboBox.SelectedItem = profile.TimestampEncodingForReading;
 				this.timestampFormatForDisplayingTextBox.Text = profile.TimestampFormatForDisplaying;
 				this.timestampFormatForWritingTextBox.Text = profile.TimestampFormatForWriting;
@@ -738,6 +793,17 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Remove time span format for reading.
+		void RemoveTimeSpanFormatForReading(ListBoxItem item)
+		{
+			var index = this.TimeSpanFormatsForReading.IndexOf((string)item.DataContext.AsNonNull());
+			if (index < 0)
+				return;
+			this.timeSpanFormatsForReading.RemoveAt(index);
+			this.SelectListBoxItem(this.timeSpanFormatsForReadingListBox, -1);
+		}
+
+
 		// Remove timestamp format for reading.
 		void RemoveTimestampFormatForReading(ListBoxItem item)
 		{
@@ -801,6 +867,10 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.insertLogWritingFormatSyntaxMenu.PlacementTarget = this.insertLogWritingFormatSyntaxButton;
 			this.insertLogWritingFormatSyntaxMenu.Open(this);
 		}
+
+
+		// List of time span format to read logs.
+		IList<string> TimeSpanFormatsForReading { get; }
 
 
 		// List of timestamp format to read logs.

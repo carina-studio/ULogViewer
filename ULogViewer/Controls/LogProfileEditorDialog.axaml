@@ -286,6 +286,49 @@
 					</ListBox>
 					<Button Classes="ListAction" Command="{Binding $parent[Window].AddTimestampFormatForReading}" Content="{DynamicResource String/Common.Add}"/>
 				</StackPanel>
+				<Separator Classes="Dialog_Separator"/>
+
+				<!-- Time span encoding for reading -->
+				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogProfileEditorDialog.TimeSpanEncodingForReading}"/>
+				<asControls:EnumComboBox Name="timeSpanEncodingForReadingComboBox" Classes="Dialog_ComboBox" EnumType="{x:Type appLogs:LogTimeSpanEncoding}"/>
+				<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.TimeSpanEncodingForReading.Description}"/>
+				<Separator Classes="Dialog_Separator"/>
+
+				<!-- Time span format for reading -->
+				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogProfileEditorDialog.TimeSpanFormatsForReading}"/>
+				<StackPanel>
+					<ia:Interaction.Behaviors>
+						<iaCore:DataTriggerBehavior Binding="{Binding #timeSpanEncodingForReadingComboBox.SelectedItem}" Value="Custom">
+							<iaCore:ChangePropertyAction PropertyName="IsEnabled" Value="True"/>
+						</iaCore:DataTriggerBehavior>
+						<iaCore:DataTriggerBehavior Binding="{Binding #timeSpanEncodingForReadingComboBox.SelectedItem}" ComparisonCondition="NotEqual" Value="Custom">
+							<iaCore:ChangePropertyAction PropertyName="IsEnabled" Value="False"/>
+						</iaCore:DataTriggerBehavior>
+					</ia:Interaction.Behaviors>
+					<ListBox Name="timeSpanFormatsForReadingListBox" DoubleTapped="OnListBoxDoubleTapped" Items="{Binding $parent[Window].TimeSpanFormatsForReading}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
+						<ListBox.ItemTemplate>
+							<DataTemplate>
+								<Grid ColumnDefinitions="*,Auto">
+									<TextBlock Text="{Binding}" TextTrimming="CharacterEllipsis"/>
+									<Border Classes="InPlaceAction_Reserved"/>
+									<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
+										<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveTimeSpanFormatForReading}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
+											<Border Classes="InPlaceAction_Icon">
+												<Image Classes="Icon" Source="{DynamicResource Image/Icon.Delete}"/>
+											</Border>
+										</Button>
+										<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditTimeSpanFormatForReading}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
+											<Border Classes="InPlaceAction_Icon">
+												<Image Classes="Icon" Source="{DynamicResource Image/Icon.Edit}"/>
+											</Border>
+										</Button>
+									</StackPanel>
+								</Grid>
+							</DataTemplate>
+						</ListBox.ItemTemplate>
+					</ListBox>
+					<Button Classes="ListAction" Command="{Binding $parent[Window].AddTimeSpanFormatForReading}" Content="{DynamicResource String/Common.Add}"/>
+				</StackPanel>
 				<Separator Classes="Dialog_Separator_Large"/>
 
 				<!-- Header -->
@@ -344,6 +387,12 @@
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogProfileEditorDialog.TimestampFormatForDisplaying}"/>
 				<TextBox Name="timestampFormatForDisplayingTextBox" Classes="Dialog_TextBox" MaxLength="256"/>
 				<asControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.FormatDescription}" Uri="{x:Static app:Uris.DateTimeFormatReference}"/>
+				<Separator Classes="Dialog_Separator"/>
+
+				<!-- Time span format for displaying -->
+				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogProfileEditorDialog.TimeSpanFormatForDisplaying}"/>
+				<TextBox Name="timeSpanFormatForDisplayingTextBox" Classes="Dialog_TextBox" MaxLength="256"/>
+				<asControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.FormatDescription}" Uri="{x:Static app:Uris.TimeSpanFormatReference}"/>
 				<Separator Classes="Dialog_Separator"/>
 
 				<!-- Color indicator -->
@@ -422,6 +471,12 @@
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogProfileEditorDialog.TimestampFormatForWriting}"/>
 				<TextBox Name="timestampFormatForWritingTextBox" Classes="Dialog_TextBox" MaxLength="256" Watermark="{DynamicResource String/LogProfileEditorDialog.TimestampFormatForWriting.Watermark}"/>
 				<asControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.FormatDescription}" Uri="{x:Static app:Uris.DateTimeFormatReference}"/>
+				<Separator Classes="Dialog_Separator"/>
+
+				<!-- Time span format for writing -->
+				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogProfileEditorDialog.TimeSpanFormatForWriting}"/>
+				<TextBox Name="timeSpanFormatForWritingTextBox" Classes="Dialog_TextBox" MaxLength="256" Watermark="{DynamicResource String/LogProfileEditorDialog.TimeSpanFormatForWriting.Watermark}"/>
+				<asControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.FormatDescription}" Uri="{x:Static app:Uris.TimeSpanFormatReference}"/>
 
 			</StackPanel>
 		</ScrollViewer>

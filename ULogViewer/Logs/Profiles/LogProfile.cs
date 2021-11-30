@@ -115,6 +115,8 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			this.sortKey = template.sortKey;
 			this.timeSpanCultureInfoForReading = template.timeSpanCultureInfoForReading;
 			this.timeSpanEncodingForReading = template.timeSpanEncodingForReading;
+			this.timeSpanFormatForDisplaying = template.timeSpanFormatForDisplaying;
+			this.timeSpanFormatForWriting = template.timeSpanFormatForWriting;
 			this.timeSpanFormatsForReading = template.timeSpanFormatsForReading;
 			this.timestampCultureInfoForReading = template.timestampCultureInfoForReading;
 			this.timestampCultureInfoForWriting = template.timestampCultureInfoForWriting;
