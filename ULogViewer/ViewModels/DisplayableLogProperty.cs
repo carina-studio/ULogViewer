@@ -150,8 +150,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			var name = this.Name switch
 			{
+				nameof(DisplayableLog.BeginningTimeSpanString) => nameof(Log.BeginningTimeSpan),
 				nameof(DisplayableLog.BeginningTimestampString) => nameof(Log.BeginningTimestamp),
+				nameof(DisplayableLog.EndingTimeSpanString) => nameof(Log.EndingTimeSpan),
 				nameof(DisplayableLog.EndingTimestampString) => nameof(Log.EndingTimestamp),
+				nameof(DisplayableLog.TimeSpanString) => nameof(Log.TimeSpan),
 				nameof(DisplayableLog.TimestampString) => nameof(Log.Timestamp),
 				_ => this.Name,
 			};

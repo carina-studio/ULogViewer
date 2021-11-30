@@ -2719,6 +2719,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				{
 					it.LogLevelMap = profile.LogLevelMapForWriting;
 					it.LogPropertyMap = jsonSavingOptions.LogPropertyMap;
+					it.TimeSpanCultureInfo = profile.TimeSpanCultureInfoForWriting;
+					it.TimeSpanFormat = string.IsNullOrEmpty(profile.TimeSpanFormatForWriting)
+						? profile.TimeSpanFormatsForReading.IsEmpty() ? profile.TimeSpanFormatForDisplaying : profile.TimeSpanFormatsForReading[0]
+						: profile.TimeSpanFormatForWriting;
 					it.TimestampCultureInfo = profile.TimestampCultureInfoForWriting;
 					it.TimestampFormat = string.IsNullOrEmpty(profile.TimestampFormatForWriting) 
 						? profile.TimestampFormatsForReading.IsEmpty() ? profile.TimestampFormatForDisplaying : profile.TimestampFormatsForReading[0]

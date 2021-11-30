@@ -23,7 +23,9 @@ namespace CarinaStudio.ULogViewer.Logs
 		readonly Dictionary<string, string> logPropertyMap = new Dictionary<string, string>();
 		readonly IDictionary<LogLevel, string> readOnlyLogLevelMap;
 		readonly IDictionary<string, string> readOnlyLogPropertyMap;
+		CultureInfo timeSpanCultureInfo = CultureInfo.GetCultureInfo("en-US");
 		CultureInfo timestampCultureInfo = CultureInfo.GetCultureInfo("en-US");
+		string? timeSpanFormat;
 		string? timestampFormat;
 
 
@@ -76,6 +78,42 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		/// <summary>
+		/// Get or set <see cref="CultureInfo"/> for <see cref="TimeSpanFormat"/> to format timestamp of log.
+		/// </summary>
+		public CultureInfo TimeSpanCultureInfo
+		{
+			get => this.timeSpanCultureInfo;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyPreparing();
+				if (this.timeSpanCultureInfo.Equals(value))
+					return;
+				this.timeSpanCultureInfo = value;
+				this.OnPropertyChanged(nameof(TimeSpanCultureInfo));
+			}
+		}
+
+
+		/// <summary>
+		/// Get or set format of <see cref="Log.BeginningTimeSpan"/>, <see cref="Log.EndingTimeSpan"/> and <see cref="Log.TimeSpan"/> to output to raw log data.
+		/// </summary>
+		public string? TimeSpanFormat
+		{
+			get => this.timeSpanFormat;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyPreparing();
+				if (this.timeSpanFormat == value)
+					return;
+				this.timeSpanFormat = value;
+				this.OnPropertyChanged(nameof(TimeSpanFormat));
+			}
+		}
+
+
+		/// <summary>
 		/// Get or set <see cref="CultureInfo"/> for <see cref="TimestampFormat"/> to format timestamp of log.
 		/// </summary>
 		public CultureInfo TimestampCultureInfo
@@ -94,7 +132,7 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		/// <summary>
-		/// Get or set format of <see cref="Log.Timestamp"/> to output to raw log data.
+		/// Get or set format of <see cref="Log.BeginningTimestamp"/>, <see cref="Log.EndingTimestamp"/> and <see cref="Log.Timestamp"/> to output to raw log data.
 		/// </summary>
 		public string? TimestampFormat
 		{
@@ -130,8 +168,11 @@ namespace CarinaStudio.ULogViewer.Logs
 				var tempFilePath = "";
 				var tempFileStream = (Stream?)null;
 				var logLevelMap = this.logLevelMap;
+				var timeSpanCultureInfo = this.timeSpanCultureInfo;
 				var timestampCultureInfo = this.timestampCultureInfo;
+				var timeSpanFormat = this.timeSpanFormat;
 				var timestampFormat = this.timestampFormat;
+				var hasTimeSpanFormat = !string.IsNullOrWhiteSpace(timeSpanFormat);
 				var hasTimestampFormat = !string.IsNullOrWhiteSpace(timestampFormat);
 				try
 				{
@@ -159,6 +200,13 @@ namespace CarinaStudio.ULogViewer.Logs
 									jsonWriter.WriteStringValue(dateTimeValue.ToString(timestampFormat, timestampCultureInfo));
 								else
 									jsonWriter.WriteStringValue(dateTimeValue.ToString(timestampCultureInfo));
+							}
+							else if (value is TimeSpan timeSpanValue)
+							{
+								if (hasTimeSpanFormat)
+									jsonWriter.WriteStringValue(timeSpanValue.ToString(timeSpanFormat, timeSpanCultureInfo));
+								else
+									jsonWriter.WriteStringValue(timeSpanValue.ToString());
 							}
 							else if (value is int intValue)
 								jsonWriter.WriteNumberValue(intValue);
