@@ -2290,7 +2290,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					});
 					break;
 				case NotifyCollectionChangedAction.Reset:
-					this.allLogs.RemoveAll(it => it.LogReader == logReader);
+					if (this.logReaders.Count == 1 && this.logReaders.First() == logReader)
+						this.allLogs.Clear();
+					else
+						this.allLogs.RemoveAll(it => it.LogReader == logReader);
 					logReader.DataSource.CreationOptions.FileName?.Let(fileName => this.allLogsByLogFilePath.Remove(fileName));
 					break;
 				default:

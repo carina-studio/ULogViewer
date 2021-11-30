@@ -32,6 +32,10 @@
 		"Type": "Improvement"
 	},
 	{
+		"Description": "提升重新載入日誌的效能。",
+		"Type": "Improvement"
+	},
+	{
 		"Description": "改善使用者體驗。",
 		"Type": "Improvement"
 	},

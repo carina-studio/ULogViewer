@@ -32,6 +32,10 @@
 		"Type": "Improvement"
 	},
 	{
+		"Description": "Improve performance of reloading logs.",
+		"Type": "Improvement"
+	},
+	{
 		"Description": "UX improvement.",
 		"Type": "Improvement"
 	},
