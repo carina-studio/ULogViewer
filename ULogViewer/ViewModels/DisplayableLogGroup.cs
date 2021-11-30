@@ -240,6 +240,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				case nameof(LogProfile.LogPatterns):
 					this.CheckMaxLogExtraNumber();
 					break;
+				case nameof(LogProfile.TimeSpanFormatForDisplaying):
+					{
+						var node = this.displayableLogs.First;
+						while (node != null)
+						{
+							node.Value.OnTimeSpanFormatChanged();
+							node = node.Next;
+						}
+					}
+					break;
 				case nameof(LogProfile.TimestampFormatForDisplaying):
 					{
 						var node = this.displayableLogs.First;

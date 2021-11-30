@@ -853,6 +853,28 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 		// Compare displayable logs.
 		int CompareDisplayableLogs(DisplayableLog? x, DisplayableLog? y) => this.compareDisplayableLogsDelegate(x, y);
+		static int CompareDisplayableLogsByBeginningTimeSpan(DisplayableLog? x, DisplayableLog? y)
+		{
+			// compare by reference
+			if (x == null)
+			{
+				if (y == null)
+					return 0;
+				return -1;
+			}
+			if (y == null)
+				return 1;
+
+			// compare by time span
+			var diff = x.BinaryBeginningTimeSpan - y.BinaryBeginningTimeSpan;
+			if (diff < 0)
+				return -1;
+			if (diff > 0)
+				return 1;
+
+			// compare by ID
+			return CompareDisplayableLogsByIdNonNull(x, y);
+		}
 		static int CompareDisplayableLogsByBeginningTimestamp(DisplayableLog? x, DisplayableLog? y)
 		{
 			// compare by reference
@@ -867,6 +889,28 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// compare by timestamp
 			var diff = x.BinaryBeginningTimestamp - y.BinaryBeginningTimestamp;
+			if (diff < 0)
+				return -1;
+			if (diff > 0)
+				return 1;
+
+			// compare by ID
+			return CompareDisplayableLogsByIdNonNull(x, y);
+		}
+		static int CompareDisplayableLogsByEndingTimeSpan(DisplayableLog? x, DisplayableLog? y)
+		{
+			// compare by reference
+			if (x == null)
+			{
+				if (y == null)
+					return 0;
+				return -1;
+			}
+			if (y == null)
+				return 1;
+
+			// compare by time span
+			var diff = x.BinaryEndingTimeSpan - y.BinaryEndingTimeSpan;
 			if (diff < 0)
 				return -1;
 			if (diff > 0)
@@ -920,6 +964,28 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			if (diff > 0)
 				return 1;
 			return 0;
+		}
+		static int CompareDisplayableLogsByTimeSpan(DisplayableLog? x, DisplayableLog? y)
+		{
+			// compare by reference
+			if (x == null)
+			{
+				if (y == null)
+					return 0;
+				return -1;
+			}
+			if (y == null)
+				return 1;
+
+			// compare by time span
+			var diff = x.BinaryTimeSpan - y.BinaryTimeSpan;
+			if (diff < 0)
+				return -1;
+			if (diff > 0)
+				return 1;
+
+			// compare by ID
+			return CompareDisplayableLogsByIdNonNull(x, y);
 		}
 		static int CompareDisplayableLogsByTimestamp(DisplayableLog? x, DisplayableLog? y)
 		{
@@ -1089,6 +1155,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				it.LogStringEncoding = profile.LogStringEncodingForReading;
 				if (profile.IsContinuousReading)
 					it.MaxLogCount = this.Settings.GetValueOrDefault(SettingKeys.MaxContinuousLogCount);
+				it.TimeSpanCultureInfo = profile.TimeSpanCultureInfoForReading;
+				it.TimeSpanEncoding = profile.TimeSpanEncodingForReading;
+				it.TimeSpanFormats = profile.TimeSpanFormatsForReading;
 				it.TimestampCultureInfo = profile.TimestampCultureInfoForReading;
 				it.TimestampEncoding = profile.TimestampEncodingForReading;
 				it.TimestampFormats = profile.TimestampFormatsForReading;
@@ -3111,8 +3180,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			var sortedByTimestamp = true;
 			this.compareDisplayableLogsDelegate = profile.SortKey switch
 			{
+				LogSortKey.BeginningTimeSpan => CompareDisplayableLogsByBeginningTimeSpan,
 				LogSortKey.BeginningTimestamp => CompareDisplayableLogsByBeginningTimestamp,
+				LogSortKey.EndingTImeSpan => CompareDisplayableLogsByEndingTimeSpan,
 				LogSortKey.EndingTimestamp => CompareDisplayableLogsByEndingTimestamp,
+				LogSortKey.TimeSpan => CompareDisplayableLogsByTimeSpan,
 				LogSortKey.Timestamp => CompareDisplayableLogsByTimestamp,
 				_ => ((Comparison<DisplayableLog?>)CompareDisplayableLogsById).Also(_ => sortedByTimestamp = false),
 			};

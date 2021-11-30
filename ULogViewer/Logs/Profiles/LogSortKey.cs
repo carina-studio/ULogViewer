@@ -20,6 +20,18 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// </summary>
 		Timestamp,
 		/// <summary>
+		/// Sort by beginning time span.
+		/// </summary>
+		BeginningTimeSpan,
+		/// <summary>
+		/// Sort by ending time span.
+		/// </summary>
+		EndingTImeSpan,
+		/// <summary>
+		/// Sort by time span.
+		/// </summary>
+		TimeSpan,
+		/// <summary>
 		/// Sort by instance ID.
 		/// </summary>
 		Id,

@@ -60,6 +60,11 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		IDictionary<LogLevel, string> readOnlyLogLevelMapForWriting;
 		SortDirection sortDirection = SortDirection.Ascending;
 		LogSortKey sortKey = LogSortKey.Timestamp;
+		CultureInfo timeSpanCultureInfoForReading = defaultTimestampCultureInfoForReading;
+		LogTimeSpanEncoding timeSpanEncodingForReading = LogTimeSpanEncoding.Custom;
+		IList<string> timeSpanFormatsForReading = new string[0];
+		string? timeSpanFormatForDisplaying;
+		string? timeSpanFormatForWriting;
 		CultureInfo timestampCultureInfoForReading = defaultTimestampCultureInfoForReading;
 		CultureInfo timestampCultureInfoForWriting = defaultTimestampCultureInfoForReading;
 		LogTimestampEncoding timestampEncodingForReading = LogTimestampEncoding.Custom;
@@ -108,6 +113,9 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			this.name = template.name;
 			this.sortDirection = template.sortDirection;
 			this.sortKey = template.sortKey;
+			this.timeSpanCultureInfoForReading = template.timeSpanCultureInfoForReading;
+			this.timeSpanEncodingForReading = template.timeSpanEncodingForReading;
+			this.timeSpanFormatsForReading = template.timeSpanFormatsForReading;
 			this.timestampCultureInfoForReading = template.timestampCultureInfoForReading;
 			this.timestampCultureInfoForWriting = template.timestampCultureInfoForWriting;
 			this.timestampEncodingForReading = template.timestampEncodingForReading;
@@ -627,6 +635,26 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 					case nameof(SortKey):
 						this.sortKey = Enum.Parse<LogSortKey>(jsonProperty.Value.GetString().AsNonNull());
 						break;
+					case nameof(TimeSpanCultureInfoForReading):
+						this.timeSpanCultureInfoForReading = CultureInfo.GetCultureInfo(jsonProperty.Value.GetString().AsNonNull());
+						break;
+					case nameof(TimeSpanEncodingForReading):
+						if (Enum.TryParse<LogTimeSpanEncoding>(jsonProperty.Value.GetString(), out var timeSpanEncoding))
+							this.timeSpanEncodingForReading = timeSpanEncoding;
+						break;
+					case nameof(TimeSpanFormatForDisplaying):
+						this.timeSpanFormatForDisplaying = jsonProperty.Value.GetString();
+						break;
+					case nameof(TimeSpanFormatForWriting):
+						this.timeSpanFormatForWriting = jsonProperty.Value.GetString();
+						break;
+					case nameof(TimeSpanFormatsForReading):
+						this.timeSpanFormatsForReading = new List<string>().Also(list =>
+						{
+							foreach (var jsonValue in jsonProperty.Value.EnumerateArray())
+								list.Add(jsonValue.GetString().AsNonNull());
+						}).AsReadOnly();
+						break;
 					case nameof(TimestampCultureInfoForReading):
 						this.timestampCultureInfoForReading = CultureInfo.GetCultureInfo(jsonProperty.Value.GetString().AsNonNull());
 						break;
@@ -912,6 +940,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			this.VerifyBuiltIn();
 			this.IsDataUpgraded = false;
 			var prevFileName = this.FileName;
+			var timeSpanFormatsForReading = this.timeSpanFormatsForReading.ToArray();
 			var timestampFormatsForReading = this.timestampFormatsForReading.ToArray();
 			await ioTaskFactory.StartNew(() =>
 			{
@@ -954,10 +983,23 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				writer.WriteString(nameof(Name), this.name);
 				writer.WriteString(nameof(SortDirection), this.sortDirection.ToString());
 				writer.WriteString(nameof(SortKey), this.sortKey.ToString());
+				writer.WriteString(nameof(TimeSpanCultureInfoForReading), this.timeSpanCultureInfoForReading.ToString());
+				writer.WriteString(nameof(TimeSpanEncodingForReading), this.timestampEncodingForReading.ToString());
+				this.timeSpanFormatForDisplaying?.Let(it => writer.WriteString(nameof(TimeSpanFormatForDisplaying), it));
+				this.timeSpanFormatForWriting?.Let(it => writer.WriteString(nameof(TimeSpanFormatForWriting), it));
+				if (timeSpanFormatsForReading.IsNotEmpty())
+				{
+					writer.WritePropertyName(nameof(TimeSpanFormatsForReading));
+					writer.WriteStartArray();
+					foreach (var format in timeSpanFormatsForReading)
+						writer.WriteStringValue(format);
+					writer.WriteEndArray();
+				}
 				writer.WriteString(nameof(TimestampCultureInfoForReading), this.timestampCultureInfoForReading.ToString());
 				writer.WriteString(nameof(TimestampCultureInfoForWriting), this.timestampCultureInfoForWriting.ToString());
 				writer.WriteString(nameof(TimestampEncodingForReading), this.timestampEncodingForReading.ToString());
 				this.timestampFormatForDisplaying?.Let(it => writer.WriteString(nameof(TimestampFormatForDisplaying), it));
+				this.timestampFormatForWriting?.Let(it => writer.WriteString(nameof(TimestampFormatForWriting), it));
 				if (timestampFormatsForReading.IsNotEmpty())
 				{
 					writer.WritePropertyName(nameof(TimestampFormatsForReading));
@@ -966,7 +1008,6 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 						writer.WriteStringValue(format);
 					writer.WriteEndArray();
 				}
-				this.timestampFormatForWriting?.Let(it => writer.WriteString(nameof(TimestampFormatForWriting), it));
 				writer.WritePropertyName(nameof(VisibleLogProperties));
 				this.SaveVisibleLogPropertiesToJson(writer);
 				writer.WriteEndObject();
@@ -1079,6 +1120,96 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 					return;
 				this.sortKey = value;
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SortKey)));
+			}
+		}
+
+
+		/// <summary>
+		/// Get or set <see cref="CultureInfo"/> of time span for reading logs.
+		/// </summary>
+		public CultureInfo TimeSpanCultureInfoForReading
+		{
+			get => this.timeSpanCultureInfoForReading;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (this.timeSpanCultureInfoForReading.Equals(value))
+					return;
+				this.timeSpanCultureInfoForReading = value;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TimeSpanCultureInfoForReading)));
+			}
+		}
+
+
+		/// <summary>
+		/// Get or set encoding of time span for reading logs.
+		/// </summary>
+		public LogTimeSpanEncoding TimeSpanEncodingForReading
+		{
+			get => this.timeSpanEncodingForReading;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (this.timeSpanEncodingForReading == value)
+					return;
+				this.timeSpanEncodingForReading = value;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TimeSpanEncodingForReading)));
+			}
+		}
+
+
+		/// <summary>
+		/// Get or set format of time span for displaying logs.
+		/// </summary>
+		public string? TimeSpanFormatForDisplaying
+		{
+			get => this.timeSpanFormatForDisplaying;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (this.timeSpanFormatForDisplaying == value)
+					return;
+				this.timeSpanFormatForDisplaying = value;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TimeSpanFormatForDisplaying)));
+			}
+		}
+
+
+		/// <summary>
+		/// Get or set format of time span for writing logs.
+		/// </summary>
+		public string? TimeSpanFormatForWriting
+		{
+			get => this.timeSpanFormatForWriting;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (this.timeSpanFormatForWriting == value)
+					return;
+				this.timeSpanFormatForWriting = value;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TimeSpanFormatForWriting)));
+			}
+		}
+
+
+		/// <summary>
+		/// Get or set list of format of time span for reading logs if <see cref="TimeSpanEncodingForReading"/> is <see cref="LogTimeSpanEncoding.Custom"/>.
+		/// </summary>
+		public IList<string> TimeSpanFormatsForReading
+		{
+			get => this.timeSpanFormatsForReading;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (this.timeSpanFormatsForReading.SequenceEqual(value))
+					return;
+				this.timeSpanFormatsForReading = value.ToArray().AsReadOnly();
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TimeSpanFormatsForReading)));
 			}
 		}
 

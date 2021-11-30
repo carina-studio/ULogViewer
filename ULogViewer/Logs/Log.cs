@@ -20,10 +20,12 @@ namespace CarinaStudio.ULogViewer.Logs
 		// Property definitions.
 		enum PropertyName
 		{
+			BeginningTimeSpan,
 			BeginningTimestamp,
 			Category,
 			DeviceId,
 			DeviceName,
+			EndingTimeSpan,
 			EndingTimestamp,
 			Event,
 			Extra1,
@@ -47,6 +49,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			Tags,
 			ThreadId,
 			ThreadName,
+			TimeSpan,
 			Timestamp,
 			Title,
 			UserId,
@@ -70,6 +73,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			}).AsReadOnly();
 		});
 		static readonly HashSet<string> stringPropertyNameSet = new HashSet<string>();
+		static readonly HashSet<string> timeSpanPropertyNameSet = new HashSet<string>();
 
 
 		// Fields.
@@ -114,6 +118,12 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		/// <summary>
+		/// Get beginning time span.
+		/// </summary>
+		public TimeSpan? BeginningTimeSpan { get => (TimeSpan?)this.GetProperty(PropertyName.BeginningTimeSpan); }
+
+
+		/// <summary>
 		/// Get beginning timestamp.
 		/// </summary>
 		public DateTime? BeginningTimestamp { get => (DateTime?)this.GetProperty(PropertyName.BeginningTimestamp); }
@@ -154,6 +164,12 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// Get name of device which generates log.
 		/// </summary>
 		public string? DeviceName { get => this.GetProperty(PropertyName.DeviceName)?.ToString(); }
+
+
+		/// <summary>
+		/// Get ending time span.
+		/// </summary>
+		public TimeSpan? EndingTimeSpan { get => (TimeSpan?)this.GetProperty(PropertyName.EndingTimeSpan); }
 
 
 		/// <summary>
@@ -247,6 +263,9 @@ namespace CarinaStudio.ULogViewer.Logs
 		// Get property from log builder.
 		static object? GetPropertyFromBuilder(LogBuilder builder, string propertyName) => propertyName switch
 		{
+			nameof(BeginningTimeSpan)
+			or nameof(EndingTimeSpan)
+			or nameof(TimeSpan) => builder.GetTimeSpanOrNull(propertyName),
 			nameof(BeginningTimestamp)
 			or nameof(EndingTimestamp)
 			or nameof(Timestamp) => builder.GetDateTimeOrNull(propertyName),
@@ -311,6 +330,18 @@ namespace CarinaStudio.ULogViewer.Logs
 		{
 			SetupPropertyMap();
 			return stringPropertyNameSet.Contains(propertyName);
+		}
+
+
+		/// <summary>
+		/// Check whether given log property is exported by <see cref="Log"/> with <see cref="TimeSpan"/> value or not.
+		/// </summary>
+		/// <param name="propertyName">Name of property.</param>
+		/// <returns>True if given log property is exported.</returns>
+		public static bool HasTimeSpanProperty(string propertyName)
+		{
+			SetupPropertyMap();
+			return timeSpanPropertyNameSet.Contains(propertyName);
 		}
 
 
@@ -446,6 +477,8 @@ namespace CarinaStudio.ULogViewer.Logs
 								stringPropertyNameSet.Add(propertyName);
 							else if (propertyInfo.PropertyType == typeof(DateTime?) || propertyInfo.PropertyType == typeof(DateTime))
 								dateTimePropertyNameSet.Add(propertyName);
+							else if (propertyInfo.PropertyType == typeof(TimeSpan?) || propertyInfo.PropertyType == typeof(TimeSpan))
+								timeSpanPropertyNameSet.Add(propertyName);
 						}
 						isPropertyMapReady = true;
 					}
@@ -482,6 +515,12 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// Get name of thread which generates log.
 		/// </summary>
 		public string? ThreadName { get => this.GetProperty(PropertyName.ThreadName)?.ToString(); }
+
+
+		/// <summary>
+		/// Get time span.
+		/// </summary>
+		public TimeSpan? TimeSpan { get => (TimeSpan?)this.GetProperty(PropertyName.TimeSpan); }
 
 
 		/// <summary>

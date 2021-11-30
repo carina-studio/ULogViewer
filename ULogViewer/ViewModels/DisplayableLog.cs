@@ -26,12 +26,15 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		// Fields.
+		CompressedString? beginningTimeSpanString;
 		CompressedString? beginningTimestampString;
+		CompressedString? endingTimeSpanString;
 		CompressedString? endingTimestampString;
 		readonly int[] extraLineCount;
 		MarkColor markedColor;
 		int messageLineCount = -1;
 		int summaryLineCount = -1;
+		CompressedString? timeSpanString;
 		CompressedString? timestampString;
 
 
@@ -45,8 +48,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			// setup properties
 			this.Application = group.Application;
+			this.BinaryBeginningTimeSpan = (long)(log.BeginningTimeSpan?.TotalMilliseconds ?? 0);
 			this.BinaryBeginningTimestamp = log.BeginningTimestamp?.ToBinary() ?? 0L;
+			this.BinaryEndingTimeSpan = (long)(log.EndingTimeSpan?.TotalMilliseconds ?? 0);
 			this.BinaryEndingTimestamp = log.EndingTimestamp?.ToBinary() ?? 0L;
+			this.BinaryTimeSpan = (long)(log.TimeSpan?.TotalMilliseconds ?? 0);
 			this.BinaryTimestamp = log.Timestamp?.ToBinary() ?? 0L;
 			this.Group = group;
 			this.Log = log;
@@ -78,6 +84,20 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Get beginning time span of log in string format.
+		/// </summary>
+		public string BeginningTimeSpanString
+		{
+			get
+			{
+				if (this.beginningTimeSpanString == null)
+					this.beginningTimeSpanString = this.FormatTimeSpan(this.Log.BeginningTimeSpan);
+				return this.beginningTimeSpanString.ToString();
+			}
+		}
+
+
+		/// <summary>
 		/// Get beginning timestamp of log in string format.
 		/// </summary>
 		public string BeginningTimestampString
@@ -92,15 +112,33 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Get beginning time span of log in binary format.
+		/// </summary>
+		public long BinaryBeginningTimeSpan { get; }
+
+
+		/// <summary>
 		/// Get beginning timestamp of log in binary format.
 		/// </summary>
 		public long BinaryBeginningTimestamp { get; }
 
 
 		/// <summary>
+		/// Get ending time span of log in binary format.
+		/// </summary>
+		public long BinaryEndingTimeSpan { get; }
+
+
+		/// <summary>
 		/// Get ending timestamp of log in binary format.
 		/// </summary>
 		public long BinaryEndingTimestamp { get; }
+
+
+		/// <summary>
+		/// Get time span of log in binary format.
+		/// </summary>
+		public long BinaryTimeSpan { get; }
 
 
 		/// <summary>
@@ -182,6 +220,20 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// notify
 			this.Group.OnDisplayableLogDisposed(this);
+		}
+
+
+		/// <summary>
+		/// Get ending time span of log in string format.
+		/// </summary>
+		public string EndingTimeSpanString
+		{
+			get
+			{
+				if (this.endingTimeSpanString == null)
+					this.endingTimeSpanString = this.FormatTimeSpan(this.Log.EndingTimeSpan);
+				return this.endingTimeSpanString.ToString();
+			}
 		}
 
 
@@ -332,15 +384,42 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		// Format timestamp to string.
+		CompressedString FormatTimeSpan(TimeSpan? timeSpan)
+		{
+			var level = this.Group.SaveMemoryAgressively ? CompressedString.Level.Fast : CompressedString.Level.None;
+			var format = this.Group.LogProfile.TimeSpanFormatForDisplaying;
+			if (timeSpan == null)
+				return CompressedString.Empty;
+			try
+			{
+				if (format != null)
+					return CompressedString.Create(timeSpan.Value.ToString(format), level).AsNonNull();
+				return CompressedString.Create(timeSpan.Value.ToString(), level).AsNonNull();
+			}
+			catch
+			{
+				return CompressedString.Empty;
+			}
+		}
+
+
+		// Format timestamp to string.
 		CompressedString FormatTimestamp(DateTime? timestamp)
 		{
 			var level = this.Group.SaveMemoryAgressively ? CompressedString.Level.Fast : CompressedString.Level.None;
 			var format = this.Group.LogProfile.TimestampFormatForDisplaying;
 			if (timestamp == null)
 				return CompressedString.Empty;
-			if (format != null)
-				return CompressedString.Create(timestamp.Value.ToString(format), level).AsNonNull();
-			return CompressedString.Create(timestamp.Value.ToString(), level).AsNonNull();
+			try
+			{
+				if (format != null)
+					return CompressedString.Create(timestamp.Value.ToString(format), level).AsNonNull();
+				return CompressedString.Create(timestamp.Value.ToString(), level).AsNonNull();
+			}
+			catch
+			{
+				return CompressedString.Empty;
+			}
 		}
 
 
@@ -460,8 +539,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <returns>True if property of log is existing.</returns>
 		public static bool HasStringProperty(string propertyName) => propertyName switch
 		{
-			nameof(BeginningTimestampString)
+			nameof(BeginningTimeSpanString) 
+			or nameof(BeginningTimestampString)
+			or nameof(EndingTimeSpanString)
 			or nameof(EndingTimestampString)
+			or nameof(TimeSpanString)
 			or nameof(TimestampString) => true,
 			_ => Log.HasStringProperty(propertyName),
 		};
@@ -595,6 +677,29 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Called when format of displaying time span has been changed.
+		/// </summary>
+		internal void OnTimeSpanFormatChanged()
+		{
+			if (this.Log.BeginningTimeSpan.HasValue)
+			{
+				this.beginningTimeSpanString = null;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(BeginningTimeSpanString)));
+			}
+			if (this.Log.EndingTimeSpan.HasValue)
+			{
+				this.endingTimeSpanString = null;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(EndingTimeSpanString)));
+			}
+			if (this.Log.TimeSpan.HasValue)
+			{
+				this.timeSpanString = null;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TimeSpanString)));
+			}
+		}
+
+
+		/// <summary>
 		/// Called when format of displaying timestamp has been changed.
 		/// </summary>
 		internal void OnTimestampFormatChanged()
@@ -707,6 +812,20 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Get name of thread which generates log.
 		/// </summary>
 		public string? ThreadName { get => this.Log.ThreadName; }
+
+
+		/// <summary>
+		/// Get time span of log in string format.
+		/// </summary>
+		public string TimeSpanString
+		{
+			get
+			{
+				if (this.timeSpanString == null)
+					this.timeSpanString = this.FormatTimeSpan(this.Log.TimeSpan);
+				return this.timeSpanString.ToString();
+			}
+		}
 
 
 		/// <summary>

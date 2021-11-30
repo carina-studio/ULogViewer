@@ -144,6 +144,23 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		/// <summary>
+		/// Get log property as <see cref="TimeSpan"/> or return null if unable to get the property.
+		/// </summary>
+		/// <param name="propertyName">Name of property of log.</param>
+		/// <returns>Value or null.</returns>
+		public TimeSpan? GetTimeSpanOrNull(string propertyName)
+		{
+			if (!this.properties.TryGetValue(propertyName, out var str))
+				return null;
+			if (double.TryParse(str, out var ms))
+				return TimeSpan.FromMilliseconds(ms);
+			if (TimeSpan.TryParse(str, out var value))
+				return value;
+			return null;
+		}
+
+
+		/// <summary>
 		/// Check whether no log property has been set or not.
 		/// </summary>
 		/// <returns></returns>

@@ -63,6 +63,9 @@ namespace CarinaStudio.ULogViewer.Logs
 		readonly IDictionary<string, LogLevel> readOnlyLogLevelMap;
 		readonly TaskFactory readingTaskFactory;
 		LogReaderState state = LogReaderState.Preparing;
+		CultureInfo timeSpanCultureInfo = defaultTimestampCultureInfo;
+		LogTimeSpanEncoding timeSpanEncoding = LogTimeSpanEncoding.Custom;
+		IList<string> timeSpanFormats = new string[0];
 		CultureInfo timestampCultureInfo = defaultTimestampCultureInfo;
 		LogTimestampEncoding timestampEncoding = LogTimestampEncoding.Custom;
 		IList<string> timestampFormats = new string[0];
@@ -179,9 +182,9 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		// Create date time from unix timestamp.
-		static DateTime CreateDateTimeFromUnixTimestamp(long timestamp) =>
+		static DateTime CreateDateTimeFromUnixTimestamp(double timestamp) =>
 			new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds(timestamp).ToLocalTime();
-		static DateTime CreateDateTimeFromUnixTimestampMillis(long timestampMillis) =>
+		static DateTime CreateDateTimeFromUnixTimestampMillis(double timestampMillis) =>
 			new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(timestampMillis).ToLocalTime();
 
 
@@ -613,7 +616,7 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		// Read single line of log.
-		void ReadLog(LogBuilder logBuilder, Match match, StringPool stringPool, string[]? timestampFormats)
+		void ReadLog(LogBuilder logBuilder, Match match, StringPool stringPool, string[]? timeSpanFormats, string[]? timestampFormats)
 		{
 			foreach (Group group in match.Groups)
 			{
@@ -677,22 +680,81 @@ namespace CarinaStudio.ULogViewer.Logs
 								logBuilder.Set(name, value);
 							break;
 						case LogTimestampEncoding.Unix:
-							if (long.TryParse(value, out var sec))
+							if (double.TryParse(value, out var sec))
 								logBuilder.Set(name, CreateDateTimeFromUnixTimestamp(sec).ToBinary().ToString());
-							else if (double.TryParse(value, out var doubleSec))
-								logBuilder.Set(name, CreateDateTimeFromUnixTimestampMillis((long)(doubleSec * 1000 + 0.5)).ToBinary().ToString());
 							break;
 						case LogTimestampEncoding.UnixMicroseconds:
-							if (long.TryParse(value, out var us))
+							if (double.TryParse(value, out var us))
 								logBuilder.Set(name, CreateDateTimeFromUnixTimestampMillis(us / 1000).ToBinary().ToString());
-							else if (double.TryParse(value, out var doubleUs))
-								logBuilder.Set(name, CreateDateTimeFromUnixTimestampMillis((long)(doubleUs / 1000 + 0.5)).ToBinary().ToString());
 							break;
 						case LogTimestampEncoding.UnixMilliseconds:
-							if (long.TryParse(value, out var ms))
+							if (double.TryParse(value, out var ms))
 								logBuilder.Set(name, CreateDateTimeFromUnixTimestampMillis(ms).ToBinary().ToString());
-							else if (double.TryParse(value, out var doubleMs))
-								logBuilder.Set(name, CreateDateTimeFromUnixTimestampMillis((long)(doubleMs + 0.5)).ToBinary().ToString());
+							break;
+					}
+				}
+				else if (Log.HasTimeSpanProperty(name))
+				{
+					switch (this.timeSpanEncoding)
+					{
+						case LogTimeSpanEncoding.Custom:
+							{
+								if (timeSpanFormats != null)
+								{
+									for (var i = timeSpanFormats.Length - 1; i >= 0; --i)
+									{
+										if (TimeSpan.TryParseExact(value, timeSpanFormats[i], this.timeSpanCultureInfo, TimeSpanStyles.None, out var timeSpan))
+										{
+											logBuilder.Set(name, timeSpan.TotalMilliseconds.ToString());
+											break;
+										}
+									}
+								}
+								else if (TimeSpan.TryParse(value, out var timeSpan))
+									logBuilder.Set(name, timeSpan.TotalMilliseconds.ToString());
+							}
+							break;
+						case LogTimeSpanEncoding.TotalDays:
+							{
+								if (double.TryParse(value, out var days) && double.IsFinite(days))
+									logBuilder.Set(name, TimeSpan.FromDays(days).TotalMilliseconds.ToString());
+								break;
+							}
+						case LogTimeSpanEncoding.TotalHours:
+							{
+								if (double.TryParse(value, out var hours) && double.IsFinite(hours))
+									logBuilder.Set(name, TimeSpan.FromHours(hours).TotalMilliseconds.ToString());
+								break;
+							}
+						case LogTimeSpanEncoding.TotalMicroseconds:
+							{
+								if (double.TryParse(value, out var us))
+									logBuilder.Set(name, TimeSpan.FromMilliseconds(us / 1000).TotalMilliseconds.ToString());
+								break;
+							}
+						case LogTimeSpanEncoding.TotalMilliseconds:
+							{
+								if (double.TryParse(value, out var ms))
+									logBuilder.Set(name, TimeSpan.FromMilliseconds(ms).TotalMilliseconds.ToString());
+								break;
+							}
+						case LogTimeSpanEncoding.TotalMinutes:
+							{
+								if (double.TryParse(value, out var mins) && double.IsFinite(mins))
+									logBuilder.Set(name, TimeSpan.FromMinutes(mins).TotalMilliseconds.ToString());
+								break;
+							}
+						case LogTimeSpanEncoding.TotalSeconds:
+							{
+								if (double.TryParse(value, out var sec) && double.IsFinite(sec))
+									logBuilder.Set(name, TimeSpan.FromSeconds(sec).TotalMilliseconds.ToString());
+								break;
+							}
+						default:
+							{
+								if (TimeSpan.TryParse(value, out var timeSpan))
+									logBuilder.Set(name, timeSpan.TotalMilliseconds.ToString());
+							}
 							break;
 					}
 				}
@@ -744,6 +806,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			var dataSourceOptions = this.DataSource.CreationOptions;
 			var isReadingFromFile = dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName));
 			var stringPool = new StringPool();
+			var timeSpanFormats = this.timeSpanFormats.IsNotEmpty() ? this.timeSpanFormats.ToArray() : null;
 			var timestampFormats = this.timestampFormats.IsNotEmpty() ? this.timestampFormats.ToArray() : null;
 			var exception = (Exception?)null;
 			var stopWatch = new Stopwatch().Also(it => it.Start());
@@ -774,7 +837,7 @@ namespace CarinaStudio.ULogViewer.Logs
 							}
 
 							// read log
-							this.ReadLog(logBuilder, match, stringPool, timestampFormats);
+							this.ReadLog(logBuilder, match, stringPool, timeSpanFormats, timestampFormats);
 
 							// set file name and line number
 							if (logPatternIndex == 0 && isReadingFromFile)
@@ -1085,6 +1148,63 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// Get current state of <see cref="LogReader"/>.
 		/// </summary>
 		public LogReaderState State { get => this.state; }
+
+
+		/// <summary>
+		/// Get or set <see cref="CultureInfo"/> to parse time span of log.
+		/// </summary>
+		public CultureInfo TimeSpanCultureInfo
+		{
+			get => this.timeSpanCultureInfo;
+			set
+			{
+				this.VerifyAccess();
+				if (this.state != LogReaderState.Preparing)
+					throw new InvalidOperationException($"Cannot change {nameof(TimeSpanCultureInfo)} when state is {this.state}.");
+				if (this.timeSpanCultureInfo.Equals(value))
+					return;
+				this.timeSpanCultureInfo = value;
+				this.OnPropertyChanged(nameof(TimeSpanCultureInfo));
+			}
+		}
+
+
+		/// <summary>
+		/// Get or set encoding to parse time span of log.
+		/// </summary>
+		public LogTimeSpanEncoding TimeSpanEncoding
+		{
+			get => this.timeSpanEncoding;
+			set
+			{
+				this.VerifyAccess();
+				if (this.state != LogReaderState.Preparing)
+					throw new InvalidOperationException($"Cannot change {nameof(TimeSpanEncoding)} when state is {this.state}.");
+				if (this.timeSpanEncoding == value)
+					return;
+				this.timeSpanEncoding = value;
+				this.OnPropertyChanged(nameof(TimeSpanEncoding));
+			}
+		}
+
+
+		/// <summary>
+		/// Get or set list of format to parse time span of log when <see cref="TimeSpanEncoding"/> is <see cref="LogTimeSpanEncoding.Custom"/>.
+		/// </summary>
+		public IList<string> TimeSpanFormats
+		{
+			get => this.timeSpanFormats;
+			set
+			{
+				this.VerifyAccess();
+				if (this.state != LogReaderState.Preparing)
+					throw new InvalidOperationException($"Cannot change {nameof(TimeSpanFormats)} when state is {this.state}.");
+				if (this.timeSpanFormats.SequenceEqual(value))
+					return;
+				this.timeSpanFormats = value.ToArray().AsReadOnly();
+				this.OnPropertyChanged(nameof(TimeSpanFormats));
+			}
+		}
 
 
 		/// <summary>
