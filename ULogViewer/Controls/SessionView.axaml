@@ -541,7 +541,7 @@
 						</Border>
 
 						<!-- Starting point -->
-						<TextBlock Classes="StatusBar_TextBlock" Foreground="{DynamicResource TextControlForeground}" Text="{Binding LogsDurationStartingString}" ToolTip.Placement="Right" ToolTip.Tip="{DynamicResource String/SessionView.EarliestLogTimestamp}"/>
+						<TextBlock Classes="StatusBar_TextBlock" Foreground="{DynamicResource TextControlForeground}" Text="{Binding LogsDurationStartingString}" ToolTip.Placement="Right" ToolTip.Tip="{DynamicResource String/SessionView.LogsDurationStartingPoint}"/>
 
 						<!-- Duration -->
 						<Border Classes="StatusBar_Icon" Margin="{DynamicResource Thickness/SessionView.LogsTimeInfoPanel.Arrow.Margin}">
@@ -553,7 +553,7 @@
 						</Border>
 
 						<!-- Ending point -->
-						<TextBlock Classes="StatusBar_TextBlock" Foreground="{DynamicResource TextControlForeground}" Text="{Binding LogsDurationEndingString}" ToolTip.Placement="Left" ToolTip.Tip="{DynamicResource String/SessionView.LatestLogTimestamp}"/>
+						<TextBlock Classes="StatusBar_TextBlock" Foreground="{DynamicResource TextControlForeground}" Text="{Binding LogsDurationEndingString}" ToolTip.Placement="Left" ToolTip.Tip="{DynamicResource String/SessionView.LogsDurationEndingPoint}"/>
 
 					</StackPanel>
 

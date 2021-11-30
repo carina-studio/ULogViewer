@@ -397,7 +397,6 @@
 	<sys:String x:Key="String/SessionView.CopyLogsWithFileNames">Copy logs with file names</sys:String>
 	<sys:String x:Key="String/SessionView.CpuUsage">CPU usage</sys:String>
 	<sys:String x:Key="String/SessionView.CreatePredefinedLogTextFilter">Create…</sys:String>
-	<sys:String x:Key="String/SessionView.EarliestLogTimestamp">Earliest timestamp of log</sys:String>
 	<sys:String x:Key="String/SessionView.FilteredLogCount">, Filtered: </sys:String>
 	<sys:String x:Key="String/SessionView.FilterLogsBySelectedProcessId">Filter by selected PID</sys:String>
 	<sys:String x:Key="String/SessionView.FilterLogsBySelectedProcessIdOnly">Filter by selected PID only</sys:String>
@@ -410,11 +409,12 @@
 	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.Section2">on toolbar to select log profile to start</sys:String>
 	<sys:String x:Key="String/SessionView.LastLogsFilteringDuration">Filtering cost: </sys:String>
 	<sys:String x:Key="String/SessionView.LastLogsReadingDuration">Reading cost: </sys:String>
-	<sys:String x:Key="String/SessionView.LatestLogTimestamp">Latest timestamp of log</sys:String>
 	<sys:String x:Key="String/SessionView.LogFiltersCombinationMode">Way to combine conditions (Intersect/Union)</sys:String>
 	<sys:String x:Key="String/SessionView.LogLevelFilter.Description">Use level filter logs</sys:String>
 	<sys:String x:Key="String/SessionView.LogProcessIdFilter.Description">Use Process ID to filter logs</sys:String>
 	<sys:String x:Key="String/SessionView.LogsDuration">Duration of logs</sys:String>
+	<sys:String x:Key="String/SessionView.LogsDurationEndingPoint">Latest timestamp of log/Maximum time span of log</sys:String>
+	<sys:String x:Key="String/SessionView.LogsDurationStartingPoint">Earliest timestamp of log/Minimum time span of log</sys:String>
 	<sys:String x:Key="String/SessionView.LogsFilteringProgress">Filtering logs…</sys:String>
 	<StaticResource x:Key="String/SessionView.LogTextFilter.ToolTip" ResourceKey="String/PredefinedLogTextFilterEditorDialog.Regex.Description"/>
 	<sys:String x:Key="String/SessionView.LogTextFilter.Watermark">Text filtering (Regular Expression, use \$\$ as separator between text properties)</sys:String>
