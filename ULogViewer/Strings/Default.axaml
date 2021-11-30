@@ -481,13 +481,6 @@
 	<!-- TcpServerLogDataSourceProvider -->
 	<sys:String x:Key="String/TcpServerLogDataSourceProvider.DisplayName">TCP Server</sys:String>
 
-	<!-- TimeSpanConverter -->
-	<sys:String x:Key="String/TimeSpanConverter.Days">{0} d {1} hr {2} min {3}.{4} sec</sys:String>
-	<sys:String x:Key="String/TimeSpanConverter.Hours">{0} hr {1} min {2}.{3} sec</sys:String>
-	<sys:String x:Key="String/TimeSpanConverter.Milliseconds">{0} ms</sys:String>
-	<sys:String x:Key="String/TimeSpanConverter.Minutes">{0} min {1}.{2} sec</sys:String>
-	<sys:String x:Key="String/TimeSpanConverter.Seconds">{0}.{1} sec</sys:String>
-
 	<!-- TimeSpanFormatInputDialog -->
 	<sys:String x:Key="String/TimeSpanFormatInputDialog.Message">Time span format</sys:String>
 
