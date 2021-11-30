@@ -35,10 +35,11 @@ namespace CarinaStudio.ULogViewer.Logs
 		LogStringEncoding logStringEncoding = LogStringEncoding.Plane;
 		readonly IDictionary<LogLevel, string> readOnlyLogLevelMap;
 		readonly ISet<Log> readOnlyLogsToGetLineNumbers;
+		CultureInfo timeSpanCultureInfo = CultureInfo.GetCultureInfo("en-US");
+		string? timeSpanFormat;
 		CultureInfo timestampCultureInfo = CultureInfo.GetCultureInfo("en-US");
 		string? timestampFormat;
 		bool writeFileNames = true;
-
 
 
 		/// <summary>
@@ -135,6 +136,42 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		/// <summary>
+		/// Get or set <see cref="CultureInfo"/> for <see cref="TimeSpanFormat"/> to format time span of log.
+		/// </summary>
+		public CultureInfo TimeSpanCultureInfo
+		{
+			get => this.timeSpanCultureInfo;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyPreparing();
+				if (this.timeSpanCultureInfo.Equals(value))
+					return;
+				this.timeSpanCultureInfo = value;
+				this.OnPropertyChanged(nameof(TimeSpanCultureInfo));
+			}
+		}
+
+
+		/// <summary>
+		/// Get or set format of <see cref="Log.BeginningTimeSpan"/>, <see cref="Log.EndingTimeSpan"/> and <see cref="Log.TimeSpan"/> to output to raw log data.
+		/// </summary>
+		public string? TimeSpanFormat
+		{
+			get => this.timeSpanFormat;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyPreparing();
+				if (this.timeSpanFormat == value)
+					return;
+				this.timeSpanFormat = value;
+				this.OnPropertyChanged(nameof(TimeSpanFormat));
+			}
+		}
+
+
+		/// <summary>
 		/// Get or set <see cref="CultureInfo"/> for <see cref="TimestampFormat"/> to format timestamp of log.
 		/// </summary>
 		public CultureInfo TimestampCultureInfo
@@ -153,7 +190,7 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		/// <summary>
-		/// Get or set format of <see cref="Log.Timestamp"/> to output to raw log data.
+		/// Get or set format of <see cref="Log.BeginningTimestamp"/>, <see cref="Log.EndingTimestamp"/> and <see cref="Log.Timestamp"/> to output to raw log data.
 		/// </summary>
 		public string? TimestampFormat
 		{
@@ -289,25 +326,54 @@ namespace CarinaStudio.ULogViewer.Logs
 				{
 					var logPropertyGetter = propertyName switch
 					{
-						nameof(Log.BeginningTimestamp)
-							or nameof(Log.EndingTimestamp)
-							or nameof(Log.Timestamp) => log =>
+						nameof(Log.BeginningTimeSpan)
+						or nameof(Log.EndingTimeSpan)
+						or nameof(Log.TimeSpan) => Log.CreatePropertyGetter<TimeSpan?>(propertyName).Let(getter =>
+                        {
+							return (Func<Log, string?>)(log =>
 							{
-								var timestamp = log.Timestamp;
+								var timeSpan = getter(log);
+								if (timeSpan == null)
+									return "";
+								if (this.timeSpanFormat != null)
+                                {
+									try
+									{
+										return timeSpan.Value.ToString(this.timeSpanFormat, this.timeSpanCultureInfo);
+									}
+									catch
+									{ }
+                                }
+								return timeSpan.Value.ToString();
+							});
+                        }),
+						nameof(Log.BeginningTimestamp)
+						or nameof(Log.EndingTimestamp)
+						or nameof(Log.Timestamp) => Log.CreatePropertyGetter<DateTime?>(propertyName).Let(getter =>
+						{
+							return (Func<Log, string?>)(log =>
+							{
+								var timestamp = getter(log);
 								if (timestamp == null)
 									return "";
 								if (this.timestampFormat != null)
-									return timestamp.Value.ToString(this.timestampFormat, this.timestampCultureInfo);
+								{
+									try
+									{
+										return timestamp.Value.ToString(this.timestampFormat, this.timestampCultureInfo);
+									}
+									catch
+									{ }
+								}
 								return timestamp.Value.ToString(this.timestampCultureInfo);
-							}
-						,
+							});
+						}),
 						nameof(Log.Level) => log =>
 						{
 							if (this.logLevelMap.TryGetValue(log.Level, out var str))
 								return str;
 							return Converters.EnumConverters.LogLevel.Convert(log.Level, typeof(string), null, cultureInfo);
-						}
-						,
+						},
 						_ => Log.CreatePropertyGetter<object?>(propertyName),
 					};
 					logPropertyGetters.Add(logPropertyGetter);

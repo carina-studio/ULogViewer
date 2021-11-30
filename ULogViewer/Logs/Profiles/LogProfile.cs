@@ -61,6 +61,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		SortDirection sortDirection = SortDirection.Ascending;
 		LogSortKey sortKey = LogSortKey.Timestamp;
 		CultureInfo timeSpanCultureInfoForReading = defaultTimestampCultureInfoForReading;
+		CultureInfo timeSpanCultureInfoForWriting = defaultTimestampCultureInfoForReading;
 		LogTimeSpanEncoding timeSpanEncodingForReading = LogTimeSpanEncoding.Custom;
 		IList<string> timeSpanFormatsForReading = new string[0];
 		string? timeSpanFormatForDisplaying;
@@ -640,6 +641,9 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 					case nameof(TimeSpanCultureInfoForReading):
 						this.timeSpanCultureInfoForReading = CultureInfo.GetCultureInfo(jsonProperty.Value.GetString().AsNonNull());
 						break;
+					case nameof(TimeSpanCultureInfoForWriting):
+						this.timeSpanCultureInfoForWriting = CultureInfo.GetCultureInfo(jsonProperty.Value.GetString().AsNonNull());
+						break;
 					case nameof(TimeSpanEncodingForReading):
 						if (Enum.TryParse<LogTimeSpanEncoding>(jsonProperty.Value.GetString(), out var timeSpanEncoding))
 							this.timeSpanEncodingForReading = timeSpanEncoding;
@@ -986,6 +990,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				writer.WriteString(nameof(SortDirection), this.sortDirection.ToString());
 				writer.WriteString(nameof(SortKey), this.sortKey.ToString());
 				writer.WriteString(nameof(TimeSpanCultureInfoForReading), this.timeSpanCultureInfoForReading.ToString());
+				writer.WriteString(nameof(TimeSpanCultureInfoForWriting), this.timeSpanCultureInfoForWriting.ToString());
 				writer.WriteString(nameof(TimeSpanEncodingForReading), this.timestampEncodingForReading.ToString());
 				this.timeSpanFormatForDisplaying?.Let(it => writer.WriteString(nameof(TimeSpanFormatForDisplaying), it));
 				this.timeSpanFormatForWriting?.Let(it => writer.WriteString(nameof(TimeSpanFormatForWriting), it));
@@ -1140,6 +1145,24 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 					return;
 				this.timeSpanCultureInfoForReading = value;
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TimeSpanCultureInfoForReading)));
+			}
+		}
+
+
+		/// <summary>
+		/// Get or set <see cref="CultureInfo"/> of time span for writing logs.
+		/// </summary>
+		public CultureInfo TimeSpanCultureInfoForWriting
+		{
+			get => this.timeSpanCultureInfoForWriting;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (this.timeSpanCultureInfoForWriting.Equals(value))
+					return;
+				this.timeSpanCultureInfoForWriting = value;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TimeSpanCultureInfoForWriting)));
 			}
 		}
 

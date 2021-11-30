@@ -1324,6 +1324,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						var propertyName = property.Name;
 						switch (propertyName)
 						{
+							case nameof(DisplayableLog.BeginningTimeSpanString):
+							case nameof(DisplayableLog.EndingTimeSpanString):
+							case nameof(DisplayableLog.TimeSpanString):
+								it.Append($"{{{propertyName.Substring(0, propertyName.Length - 6)}}}");
+								break;
 							case nameof(DisplayableLog.BeginningTimestampString):
 							case nameof(DisplayableLog.EndingTimestampString):
 							case nameof(DisplayableLog.TimestampString):
@@ -1344,6 +1349,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				: writingFormat;
 			logWriter.LogLevelMap = profile.LogLevelMapForWriting;
 			logWriter.LogStringEncoding = profile.LogStringEncodingForWriting;
+			logWriter.TimeSpanCultureInfo = profile.TimeSpanCultureInfoForWriting;
+			logWriter.TimeSpanFormat = string.IsNullOrEmpty(profile.TimeSpanFormatForWriting)
+				? profile.TimeSpanFormatsForReading.IsEmpty() ? profile.TimeSpanFormatForDisplaying : profile.TimeSpanFormatsForReading[0]
+				: profile.TimeSpanFormatForWriting;
 			logWriter.TimestampCultureInfo = profile.TimestampCultureInfoForWriting;
 			logWriter.TimestampFormat = string.IsNullOrEmpty(profile.TimestampFormatForWriting)
 				? profile.TimestampFormatsForReading.IsEmpty() ? profile.TimestampFormatForDisplaying : profile.TimestampFormatsForReading[0]
