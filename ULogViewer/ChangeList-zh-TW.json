@@ -1,0 +1,45 @@
+﻿[
+	{
+		"Description": "支援以 8 種不同顏色標記日誌。",
+		"Type": "NewFeature"
+	},
+	{
+		"Description": "新的內建日誌類型：「Android 系統追蹤檔案」及「Android 核心日誌檔案」。",
+		"Type": "NewFeature"
+	},
+	{
+		"Description": "新的內建日誌類型讓您直接檢視來自檔案、HTTP/HTTPS 回應以及 TCP 客戶端的原始文字內容。現在您也可以將 ULogViewer 作為大型文字檔案的檢視器。",
+		"Type": "NewFeature"
+	},
+	{
+		"Description": "新增「時距」、「起始時距」及「結束時距」日誌屬性。您可以使用它們來表示相對時間，甚至據此以排序日誌。",
+		"Type": "NewFeature"
+	},
+	{
+		"Description": "支援在所有內建及自訂日誌類型顯示描述文字。",
+		"Type": "NewFeature"
+	},
+	{
+		"Description": "支援在使用「選取最接近指定時間戳的日誌」時指定秒數。",
+		"Type": "NewFeature"
+	},
+	{
+		"Description": "當文字在日誌檢視區或分頁標題被裁切時，顯示提示文字以檢視完整內容。",
+		"Type": "NewFeature"
+	},
+	{
+		"Description": "提供更多日誌類型圖示。",
+		"Type": "Improvement"
+	},
+	{
+		"Description": "改善使用者體驗。",
+		"Type": "Improvement"
+	},
+	{
+		"Description": "更新相依程式庫。"
+	},
+	{
+		"Description": "錯誤修正。",
+		"Type": "BugFixing"
+	}
+]

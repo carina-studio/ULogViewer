@@ -90,6 +90,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<EmbeddedResource Include="ChangeList.json" />
+		<EmbeddedResource Include="ChangeList-zh-TW.json" />
 		<EmbeddedResource Include="Cryptography/AesIV" />
 		<EmbeddedResource Include="Cryptography/AesKey" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/AndroidDeviceLog.json" />
