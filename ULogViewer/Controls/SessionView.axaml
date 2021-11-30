@@ -540,8 +540,8 @@
 							<Image Source="{DynamicResource Image/Calendar}"/>
 						</Border>
 
-						<!-- Earliest timestamp -->
-						<TextBlock Classes="StatusBar_TextBlock" Foreground="{DynamicResource TextControlForeground}" Text="{Binding EarliestLogTimestamp, StringFormat={}{0:yyyy/MM/dd HH:mm:ss.fff}}" ToolTip.Placement="Right" ToolTip.Tip="{DynamicResource String/SessionView.EarliestLogTimestamp}"/>
+						<!-- Starting point -->
+						<TextBlock Classes="StatusBar_TextBlock" Foreground="{DynamicResource TextControlForeground}" Text="{Binding LogsDurationStartingString}" ToolTip.Placement="Right" ToolTip.Tip="{DynamicResource String/SessionView.EarliestLogTimestamp}"/>
 
 						<!-- Duration -->
 						<Border Classes="StatusBar_Icon" Margin="{DynamicResource Thickness/SessionView.LogsTimeInfoPanel.Arrow.Margin}">
@@ -552,8 +552,8 @@
 							<Image Source="{DynamicResource Image/Icon.Forward}"/>
 						</Border>
 
-						<!-- Latest timestamp -->
-						<TextBlock Classes="StatusBar_TextBlock" Foreground="{DynamicResource TextControlForeground}" Text="{Binding LatestLogTimestamp, StringFormat={}{0:yyyy/MM/dd HH:mm:ss.fff}}" ToolTip.Placement="Left" ToolTip.Tip="{DynamicResource String/SessionView.LatestLogTimestamp}"/>
+						<!-- Ending point -->
+						<TextBlock Classes="StatusBar_TextBlock" Foreground="{DynamicResource TextControlForeground}" Text="{Binding LogsDurationEndingString}" ToolTip.Placement="Left" ToolTip.Tip="{DynamicResource String/SessionView.LatestLogTimestamp}"/>
 
 					</StackPanel>
 

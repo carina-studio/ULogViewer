@@ -747,9 +747,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						{
 							var convertedName = propertyName switch
 							{
+								nameof(Logs.Log.BeginningTimeSpan) => nameof(BeginningTimeSpanString),
 								nameof(Logs.Log.BeginningTimestamp) => nameof(BeginningTimestampString),
+								nameof(Logs.Log.EndingTimeSpan) => nameof(EndingTimeSpanString),
 								nameof(Logs.Log.EndingTimestamp) => nameof(EndingTimestampString),
 								nameof(Logs.Log.Id) => nameof(LogId),
+								nameof(Logs.Log.TimeSpan) => nameof(TimeSpanString),
 								nameof(Logs.Log.Timestamp) => nameof(TimestampString),
 								_ => propertyName,
 							};

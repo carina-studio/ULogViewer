@@ -457,6 +457,76 @@ namespace CarinaStudio.ULogViewer.Logs
 		}
 
 
+		/// <summary>
+		/// Select time span which is the maximum one.
+		/// </summary>
+		/// <returns>Selected time span.</returns>
+		public TimeSpan? SelectMaxTimeSpan()
+		{
+			var timeSpan = this.TimeSpan;
+			var endingTimeSpan = this.EndingTimeSpan;
+			if (timeSpan != null && endingTimeSpan != null)
+			{
+				if (timeSpan.Value >= endingTimeSpan.Value)
+					return timeSpan;
+				return endingTimeSpan;
+			}
+			var beginningTimeSpan = this.BeginningTimeSpan;
+			if (beginningTimeSpan != null)
+			{
+				if (endingTimeSpan != null)
+				{
+					if (endingTimeSpan.Value >= beginningTimeSpan.Value)
+						return endingTimeSpan;
+				}
+				else
+				{
+					if (timeSpan.GetValueOrDefault() >= beginningTimeSpan.Value)
+						return timeSpan;
+				}
+				return beginningTimeSpan;
+			}
+			else if (endingTimeSpan != null)
+				return endingTimeSpan;
+			return timeSpan;
+		}
+
+
+		/// <summary>
+		/// Select time span which is the minimum one.
+		/// </summary>
+		/// <returns>Selected time span.</returns>
+		public TimeSpan? SelectMinTimeSpan()
+		{
+			var timeSpan = this.TimeSpan;
+			var beginningTimeSpan = this.BeginningTimeSpan;
+			if (timeSpan != null && beginningTimeSpan != null)
+			{
+				if (timeSpan.Value <= beginningTimeSpan.Value)
+					return timeSpan;
+				return beginningTimeSpan;
+			}
+			var endingTimeSpan = this.EndingTimeSpan;
+			if (endingTimeSpan != null)
+			{
+				if (beginningTimeSpan != null)
+				{
+					if (beginningTimeSpan.Value <= endingTimeSpan.Value)
+						return beginningTimeSpan;
+				}
+				else
+				{
+					if (timeSpan.GetValueOrDefault() <= endingTimeSpan.Value)
+						return timeSpan;
+				}
+				return endingTimeSpan;
+			}
+			else if (beginningTimeSpan != null)
+				return beginningTimeSpan;
+			return timeSpan;
+		}
+
+
 		// Setup property map.
 		static void SetupPropertyMap()
 		{

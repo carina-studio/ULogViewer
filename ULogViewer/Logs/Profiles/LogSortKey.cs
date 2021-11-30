@@ -26,7 +26,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// <summary>
 		/// Sort by ending time span.
 		/// </summary>
-		EndingTImeSpan,
+		EndingTimeSpan,
 		/// <summary>
 		/// Sort by time span.
 		/// </summary>

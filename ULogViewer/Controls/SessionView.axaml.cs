@@ -331,7 +331,9 @@ namespace CarinaStudio.ULogViewer.Controls
 				}
 				var earliestTimestamp = (DateTime?)null;
 				var latestTimestamp = (DateTime?)null;
-				var duration = session?.CalculateDurationBetweenLogs(firstLog, lastLog, out earliestTimestamp, out latestTimestamp);
+				var minTimeSpan = (TimeSpan?)null;
+				var maxTimeSpan = (TimeSpan?)null;
+				var duration = session?.CalculateDurationBetweenLogs(firstLog, lastLog, out minTimeSpan, out maxTimeSpan, out earliestTimestamp, out latestTimestamp);
 				if (duration != null)
 				{
 					this.SetValue<TimeSpan?>(SelectedLogsDurationProperty, duration);

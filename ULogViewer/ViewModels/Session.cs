@@ -220,6 +220,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<TimeSpan?> LogsDurationProperty = ObservableProperty.Register<Session, TimeSpan?>(nameof(LogsDuration));
 		/// <summary>
+		/// Property of <see cref="LogsDurationEndingString"/>.
+		/// </summary>
+		public static readonly ObservableProperty<string?> LogsDurationEndingStringProperty = ObservableProperty.Register<Session, string?>(nameof(LogsDurationEndingString));
+		/// <summary>
+		/// Property of <see cref="LogsDurationStartingString"/>.
+		/// </summary>
+		public static readonly ObservableProperty<string?> LogsDurationStartingStringProperty = ObservableProperty.Register<Session, string?>(nameof(LogsDurationStartingString));
+		/// <summary>
 		/// Property of <see cref="LogsFilteringProgress"/>.
 		/// </summary>
 		public static readonly ObservableProperty<double> LogsFilteringProgressProperty = ObservableProperty.Register<Session, double>(nameof(LogsFilteringProgress));
@@ -520,19 +528,64 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					var duration = (TimeSpan?)null;
 					var earliestTimestamp = (DateTime?)null;
 					var latestTimestamp = (DateTime?)null;
+					var minTimeSpan = (TimeSpan?)null;
+					var maxTimeSpan = (TimeSpan?)null;
 					if (profile.SortDirection == SortDirection.Ascending)
-						duration = this.CalculateDurationBetweenLogs(firstLog, lastLog, out earliestTimestamp, out latestTimestamp);
+						duration = this.CalculateDurationBetweenLogs(firstLog, lastLog, out minTimeSpan, out maxTimeSpan, out earliestTimestamp, out latestTimestamp);
 					else
-						duration = this.CalculateDurationBetweenLogs(lastLog, firstLog, out earliestTimestamp, out latestTimestamp);
+						duration = this.CalculateDurationBetweenLogs(lastLog, firstLog, out minTimeSpan, out maxTimeSpan, out earliestTimestamp, out latestTimestamp);
 					this.SetValue(LogsDurationProperty, duration);
 					this.SetValue(EarliestLogTimestampProperty, earliestTimestamp);
 					this.SetValue(LatestLogTimestampProperty, latestTimestamp);
+					try
+					{
+						if (earliestTimestamp != null && latestTimestamp != null)
+						{
+							var format = profile.TimestampFormatForDisplaying;
+							if (format != null)
+							{
+								this.SetValue(LogsDurationStartingStringProperty, earliestTimestamp.Value.ToString(format));
+								this.SetValue(LogsDurationEndingStringProperty, latestTimestamp.Value.ToString(format));
+							}
+							else
+							{
+								this.SetValue(LogsDurationStartingStringProperty, earliestTimestamp.Value.ToString());
+								this.SetValue(LogsDurationEndingStringProperty, latestTimestamp.Value.ToString());
+							}
+						}
+						else if (minTimeSpan != null && maxTimeSpan != null)
+						{
+							var format = profile.TimeSpanFormatForDisplaying;
+							if (format != null)
+							{
+								this.SetValue(LogsDurationStartingStringProperty, minTimeSpan.Value.ToString(format));
+								this.SetValue(LogsDurationEndingStringProperty, maxTimeSpan.Value.ToString(format));
+							}
+							else
+							{
+								this.SetValue(LogsDurationStartingStringProperty, minTimeSpan.Value.ToString());
+								this.SetValue(LogsDurationEndingStringProperty, maxTimeSpan.Value.ToString());
+							}
+						}
+						else
+						{
+							this.SetValue(LogsDurationStartingStringProperty, null);
+							this.SetValue(LogsDurationEndingStringProperty, null);
+						}
+					}
+					catch
+					{
+						this.SetValue(LogsDurationStartingStringProperty, null);
+						this.SetValue(LogsDurationEndingStringProperty, null);
+					}
 				}
 				else
 				{
 					this.SetValue(LogsDurationProperty, null);
 					this.SetValue(EarliestLogTimestampProperty, null);
 					this.SetValue(LatestLogTimestampProperty, null);
+					this.SetValue(LogsDurationStartingStringProperty, null);
+					this.SetValue(LogsDurationEndingStringProperty, null);
 				}
 			});
 			this.saveMarkedLogsAction = new ScheduledAction(() =>
@@ -776,39 +829,61 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		/// <param name="x">First log.</param>
 		/// <param name="y">Second log.</param>
+		/// <param name="minTimeSpan">Minimum time span of <paramref name="x"/> and <paramref name="y"/>.</param>
+		/// <param name="maxTimeSpan">Maximum time span of <paramref name="x"/> and <paramref name="y"/>.</param>
 		/// <param name="earliestTimestamp">Earliest timestamp of <paramref name="x"/> and <paramref name="y"/>.</param>
 		/// <param name="latestTimestamp">Latest timestamp of <paramref name="x"/> and <paramref name="y"/>.</param>
 		/// <returns>Duration between these logs.</returns>
-		public TimeSpan? CalculateDurationBetweenLogs(DisplayableLog x, DisplayableLog y, out DateTime? earliestTimestamp, out DateTime? latestTimestamp) =>
-			this.CalculateDurationBetweenLogs(x.Log, y.Log, out earliestTimestamp, out latestTimestamp);
+		public TimeSpan? CalculateDurationBetweenLogs(DisplayableLog x, DisplayableLog y, out TimeSpan? minTimeSpan, out TimeSpan? maxTimeSpan, out DateTime? earliestTimestamp, out DateTime? latestTimestamp) =>
+			this.CalculateDurationBetweenLogs(x.Log, y.Log, out minTimeSpan, out maxTimeSpan, out earliestTimestamp, out latestTimestamp);
 
 
 		// Calculate duration between two logs.
-		TimeSpan? CalculateDurationBetweenLogs(Log x, Log y, out DateTime? earliestTimestamp, out DateTime? latestTimestamp)
+		TimeSpan? CalculateDurationBetweenLogs(Log x, Log y, out TimeSpan? minTimeSpan, out TimeSpan? maxTimeSpan, out DateTime? earliestTimestamp, out DateTime? latestTimestamp)
 		{
 			// get timestamps
 			earliestTimestamp = x.SelectEarliestTimestamp();
 			latestTimestamp = y.SelectLatestTimestamp();
+
+			// get time spans
+			minTimeSpan = x.SelectMinTimeSpan();
+			maxTimeSpan = y.SelectMaxTimeSpan();
 
 			// calculate duration
 			if (earliestTimestamp != null && latestTimestamp != null
 				&& earliestTimestamp.Value <= latestTimestamp.Value)
 			{
 				return latestTimestamp.Value - earliestTimestamp.Value;
+			}
+			if (minTimeSpan != null && maxTimeSpan != null
+				&& minTimeSpan.Value <= maxTimeSpan.Value)
+			{
+				return (maxTimeSpan.Value - minTimeSpan.Value);
 			}
 
 			// get inverse timestamps
 			earliestTimestamp = y.SelectEarliestTimestamp();
 			latestTimestamp = x.SelectLatestTimestamp();
 
+			// get inverse time spans
+			minTimeSpan = y.SelectMinTimeSpan();
+			maxTimeSpan = x.SelectMaxTimeSpan();
+
 			// calculate duration
 			if (earliestTimestamp != null && latestTimestamp != null
 				&& earliestTimestamp.Value <= latestTimestamp.Value)
 			{
 				return latestTimestamp.Value - earliestTimestamp.Value;
 			}
+			if (minTimeSpan != null && maxTimeSpan != null
+				&& minTimeSpan.Value <= maxTimeSpan.Value)
+			{
+				return (maxTimeSpan.Value - minTimeSpan.Value);
+			}
 			earliestTimestamp = null;
 			latestTimestamp = null;
+			minTimeSpan = null;
+			maxTimeSpan = null;
 			return null;
 		}
 
@@ -1843,6 +1918,18 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Get duration of <see cref="Logs"/>.
 		/// </summary>
 		public TimeSpan? LogsDuration { get => this.GetValue(LogsDurationProperty); }
+
+
+		/// <summary>
+		/// Get string to describe ending point of <see cref="LogsDuration"/>.
+		/// </summary>
+		public string? LogsDurationEndingString { get => this.GetValue(LogsDurationEndingStringProperty); }
+
+
+		/// <summary>
+		/// Get string to describe starting point of <see cref="LogsDuration"/>.
+		/// </summary>
+		public string? LogsDurationStartingString { get => this.GetValue(LogsDurationStartingStringProperty); }
 
 
 		/// <summary>
@@ -3180,11 +3267,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			var sortedByTimestamp = true;
 			this.compareDisplayableLogsDelegate = profile.SortKey switch
 			{
-				LogSortKey.BeginningTimeSpan => CompareDisplayableLogsByBeginningTimeSpan,
+				LogSortKey.BeginningTimeSpan => ((Comparison<DisplayableLog?>)CompareDisplayableLogsByBeginningTimeSpan).Also(_ => sortedByTimestamp = false),
 				LogSortKey.BeginningTimestamp => CompareDisplayableLogsByBeginningTimestamp,
-				LogSortKey.EndingTImeSpan => CompareDisplayableLogsByEndingTimeSpan,
+				LogSortKey.EndingTimeSpan => ((Comparison<DisplayableLog?>)CompareDisplayableLogsByEndingTimeSpan).Also(_ => sortedByTimestamp = false),
 				LogSortKey.EndingTimestamp => CompareDisplayableLogsByEndingTimestamp,
-				LogSortKey.TimeSpan => CompareDisplayableLogsByTimeSpan,
+				LogSortKey.TimeSpan => ((Comparison<DisplayableLog?>)CompareDisplayableLogsByTimeSpan).Also(_ => sortedByTimestamp = false),
 				LogSortKey.Timestamp => CompareDisplayableLogsByTimestamp,
 				_ => ((Comparison<DisplayableLog?>)CompareDisplayableLogsById).Also(_ => sortedByTimestamp = false),
 			};
