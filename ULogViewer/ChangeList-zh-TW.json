@@ -28,6 +28,10 @@
 		"Type": "NewFeature"
 	},
 	{
+		"Description": "支援以微秒顯示日誌時間長度。",
+		"Type": "Improvement"
+	},
+	{
 		"Description": "提供更多日誌類型圖示。",
 		"Type": "Improvement"
 	},

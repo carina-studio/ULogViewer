@@ -28,6 +28,10 @@
 		"Type": "NewFeature"
 	},
 	{
+		"Description": "Support showing duration of logs in microseconds.",
+		"Type": "Improvement"
+	},
+	{
 		"Description": "More icons for log profiles.",
 		"Type": "Improvement"
 	},
