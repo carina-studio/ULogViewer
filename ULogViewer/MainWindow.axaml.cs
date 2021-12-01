@@ -35,7 +35,6 @@ namespace CarinaStudio.ULogViewer
 
 		// Fields.
 		Session? attachedActiveSession;
-		bool canShowDialogs;
 		readonly ScheduledAction focusOnTabItemContentAction;
 		readonly ScheduledAction restartingMainWindowsAction;
 		readonly DataTemplate sessionTabItemHeaderTemplate;
@@ -475,8 +474,16 @@ namespace CarinaStudio.ULogViewer
 		}
 
 
-		// Called when key down.
-		protected override void OnKeyDown(KeyEventArgs e)
+		// Called when all initial dialogs of AppSuite closed.
+        protected override void OnInitialDialogsClosed()
+        {
+            base.OnInitialDialogsClosed();
+			this.SelectAndSetLogProfile();
+        }
+
+
+        // Called when key down.
+        protected override void OnKeyDown(KeyEventArgs e)
 		{
 			// handle key event for combo keys
 			if (!e.Handled && (e.KeyModifiers & KeyModifiers.Control) != 0)
@@ -508,21 +515,6 @@ namespace CarinaStudio.ULogViewer
 
 			// call base
 			base.OnKeyDown(e);
-		}
-
-
-		// Called when opened.
-		protected override void OnOpened(EventArgs e)
-		{
-			// call base
-			base.OnOpened(e);
-
-			// show dialogs
-			this.SynchronizationContext.PostDelayed(() =>
-			{
-				this.canShowDialogs = true;
-				this.SelectAndSetLogProfile();
-			}, 1000); // In order to show dialog at correct position on Linux, we need delay to make sure bounds of main window is set.
 		}
 
 
@@ -577,13 +569,8 @@ namespace CarinaStudio.ULogViewer
 			var index = this.tabControl.SelectedIndex;
 			if (index == this.tabItems.Count - 1)
 			{
-				var session = workspace.CreateSession();
-				workspace.ActiveSession = session;
-				this.SynchronizationContext.PostDelayed(() =>
-				{
-					if (session.LogProfile == null && this.Settings.GetValueOrDefault(SettingKeys.SelectLogProfileForNewSession))
-						this.FindSessionView(session)?.SelectAndSetLogProfile();
-				}, 500);
+				workspace.ActiveSession = workspace.CreateSession();
+				this.SelectAndSetLogProfile();
 			}
 			else
 				workspace.ActiveSession = (Session)((TabItem)this.tabItems[index].AsNonNull()).DataContext.AsNonNull();
@@ -661,7 +648,7 @@ namespace CarinaStudio.ULogViewer
 		void SelectAndSetLogProfile()
 		{
 			// check state
-			if (this.IsClosed || this.HasDialogs || !this.canShowDialogs)
+			if (this.IsClosed || this.HasDialogs || !this.AreInitialDialogsClosed)
 				return;
 			if (this.DataContext is not Workspace workspace)
 				return;
