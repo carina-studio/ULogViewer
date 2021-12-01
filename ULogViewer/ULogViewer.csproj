@@ -111,7 +111,6 @@
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/WindowsSecurityEventLogs.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/WindowsSetupEventLogs.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/WindowsSystemEventLogs.json" />
-		<EmbeddedResource Include="NLog.config" />
 	</ItemGroup>
 
 </Project>

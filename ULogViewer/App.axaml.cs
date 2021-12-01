@@ -4,7 +4,6 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.Markup.Xaml.Styling;
 using Avalonia.Styling;
-using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.ULogViewer.Logs.Profiles;
@@ -55,8 +54,8 @@ namespace CarinaStudio.ULogViewer
 		}
 
 
-		// Initialize.
-		public override void Initialize() => AvaloniaXamlLoader.Load(this);
+        // Initialize.
+        public override void Initialize() => AvaloniaXamlLoader.Load(this);
 
 
 		// Support multi-instances.
@@ -81,18 +80,6 @@ namespace CarinaStudio.ULogViewer
 		// Program entry.
 		[STAThread]
 		static void Main(string[] args) => BuildApplication<App>().StartWithClassicDesktopLifetime(args);
-
-
-		// Create log provider.
-		protected override ILoggerProvider OnCreateLoggerProvider()
-        {
-			NLog.LogManager.Configuration = this.OpenManifestResourceStream("CarinaStudio.ULogViewer.NLog.config").Use(stream =>
-			{
-				using var xmlReader = XmlReader.Create(stream);
-				return new NLog.Config.XmlLoggingConfiguration(xmlReader);
-			});
-			return base.OnCreateLoggerProvider();
-        }
 
 
 		// Create main window.
@@ -276,11 +263,21 @@ namespace CarinaStudio.ULogViewer
 		{
 			// setup log output rules
 			if (this.IsDebugMode)
-				NLog.LogManager.Configuration.AddRuleForAllLevels("methodCall");
-			else
 			{
-				NLog.LogManager.Configuration.RemoveRuleByName("logAllToFile");
-				NLog.LogManager.Configuration.AddRule(NLog.LogLevel.Debug, NLog.LogLevel.Fatal, "file");
+				NLog.LogManager.Configuration.AddTarget(new NLog.Targets.MethodCallTarget("methodCall").Also(it =>
+				{
+					it.ClassName = "CarinaStudio.ULogViewer.MemoryLogger, ULogViewer";
+					it.MethodName = "Log";
+					it.Parameters.Add(new NLog.Targets.MethodCallParameter(new NLog.Layouts.SimpleLayout("${longdate}")));
+					it.Parameters.Add(new NLog.Targets.MethodCallParameter(new NLog.Layouts.SimpleLayout("${processid}")));
+					it.Parameters.Add(new NLog.Targets.MethodCallParameter(new NLog.Layouts.SimpleLayout("${threadid}")));
+					it.Parameters.Add(new NLog.Targets.MethodCallParameter(new NLog.Layouts.SimpleLayout("${level:uppercase=true}")));
+					it.Parameters.Add(new NLog.Targets.MethodCallParameter(new NLog.Layouts.SimpleLayout("${logger:shortName=true}")));
+					it.Parameters.Add(new NLog.Targets.MethodCallParameter(new NLog.Layouts.SimpleLayout("${message}")));
+					it.Parameters.Add(new NLog.Targets.MethodCallParameter(new NLog.Layouts.SimpleLayout("${exception:format=tostring}")));
+				}));
+				NLog.LogManager.Configuration.AddRuleForAllLevels("methodCall");
+				NLog.LogManager.ReconfigExistingLoggers();
 			}
 
 			// call base
