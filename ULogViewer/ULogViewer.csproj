@@ -62,7 +62,7 @@
     <PackageReference Include="CarinaStudio.AppBase.AutoUpdate" Version="0.31.0.1121" />
     <PackageReference Include="CarinaStudio.AppBase.Configuration" Version="0.31.0.1121" />
     <PackageReference Include="CarinaStudio.AppBase.Core" Version="0.31.0.1121" />
-    <PackageReference Include="CarinaStudio.AppSuite.Core" Version="0.25.1.1201" />
+    <PackageReference Include="CarinaStudio.AppSuite.Core" Version="0.25.2.1201" />
     <PackageReference Condition="'$(Configuration)'=='Debug-Windows'" Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
     <PackageReference Condition="'$(Configuration)'=='Release-Windows'" Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
     <PackageReference Include="Microsoft.Win32.SystemEvents" Version="5.0.0" />
