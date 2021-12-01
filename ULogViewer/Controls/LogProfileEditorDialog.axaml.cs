@@ -670,6 +670,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.logStringEncodingForWritingComboBox.SelectedItem = LogStringEncoding.Plane;
 				this.sortDirectionComboBox.SelectedItem = SortDirection.Ascending;
 				this.sortKeyComboBox.SelectedItem = LogSortKey.Timestamp;
+				this.timeSpanEncodingForReadingComboBox.SelectedItem = LogTimeSpanEncoding.Custom;
 				this.timestampEncodingForReadingComboBox.SelectedItem = LogTimestampEncoding.Custom;
 			}
 			else if (!profile.IsBuiltIn)

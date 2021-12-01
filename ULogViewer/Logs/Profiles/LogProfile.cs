@@ -100,6 +100,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			this.dataSourceOptions = template.dataSourceOptions;
 			this.dataSourceProvider = template.dataSourceProvider;
 			this.description = template.description;
+			this.hasDescription = template.hasDescription;
 			this.icon = template.icon;
 			this.isAdministratorNeeded = template.isAdministratorNeeded;
 			this.isContinuousReading = template.isContinuousReading;
