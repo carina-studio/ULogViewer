@@ -1,0 +1,42 @@
+﻿{
+	"DataSource": {
+		"Name": "File"
+	},
+	"ColorIndicator": "FileName",
+	"Icon": "Linux",
+	"LogPatterns": [
+		{
+			"Regex": "^(?<Timestamp>[\\w]+[\\s]+[\\d]+[\\s]+[\\d\\:\\.]+)[\\s]+(?<DeviceName>[^\\s]*)[\\s]+((?<ProcessName>[^\\[]*)(\\[(?<ProcessId>[\\d]+)\\])|(?<ProcessName>[^\\:]*))\\:[\\s](?<Message>.*)$"
+		}
+	],
+	"LogWritingFormat": "{Timestamp} {DeviceName} {ProcessName}{ProcessId:'['#####']'}: {Message}",
+	"SortKey": "Timestamp",
+	"TimestampFormatForDisplaying": "MM/dd HH:mm:ss",
+	"TimestampFormatsForReading": [
+		"MMM dd HH:mm:ss",
+		"MMM  d HH:mm:ss",
+		"MMM d HH:mm:ss"
+	],
+	"TimestampFormatForWriting": "MMM d HH:mm:ss",
+	"VisibleLogProperties": [
+		{
+			"Name": "Timestamp",
+			"Width": 150
+		},
+		{
+			"Name": "DeviceName",
+			"Width": 150
+		},
+		{
+			"Name": "ProcessName",
+			"Width": 100
+		},
+		{
+			"Name": "ProcessId",
+			"Width": 80
+		},
+		{
+			"Name": "Message"
+		}
+	]
+}

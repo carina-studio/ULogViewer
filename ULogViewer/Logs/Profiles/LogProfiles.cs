@@ -33,6 +33,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 #endif
 			"GitLog",
 			"GitLogSimple",
+			"LinuxSystemLogFile",
 			"RawFile",
 			"RawHttp",
 			"RawTcpServer",
@@ -54,12 +55,16 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		{
 			All = profiles.AsReadOnly();
 			Pinned = pinnedProfiles.AsReadOnly();
-			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+			if (Platform.IsWindows)
 			{
 				builtInProfileIDs.Add("WindowsApplicationEventLogs");
 				builtInProfileIDs.Add("WindowsSecurityEventLogs");
 				builtInProfileIDs.Add("WindowsSetupEventLogs");
 				builtInProfileIDs.Add("WindowsSystemEventLogs");
+			}
+			else if (Platform.IsLinux)
+			{
+				builtInProfileIDs.Add("LinuxSystemLog");
 			}
 		}
 

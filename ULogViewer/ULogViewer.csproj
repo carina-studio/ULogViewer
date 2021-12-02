@@ -101,6 +101,8 @@
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/DummyLog.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/GitLog.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/GitLogSimple.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/LinuxSystemLog.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/LinuxSystemLogFile.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/RawFile.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/RawHttp.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/RawTcpServer.json" />

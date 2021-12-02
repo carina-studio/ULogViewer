@@ -56,6 +56,10 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// </summary>
 		Folder,
 		/// <summary>
+		/// Linux.
+		/// </summary>
+		Linux,
+		/// <summary>
 		/// Network.
 		/// </summary>
 		Network,
