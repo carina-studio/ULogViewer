@@ -21,7 +21,7 @@
 	"VisibleLogProperties": [
 		{
 			"Name": "Timestamp",
-			"Width": 150
+			"Width": 130
 		},
 		{
 			"Name": "DeviceName",

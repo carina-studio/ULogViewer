@@ -1,17 +1,15 @@
 ﻿{
 	"DataSource": {
-		"Name": "File",
-		"Options": {
-			"FileName": "/var/log/syslog"
-		}
+		"Name": "File"
 	},
+	"ColorIndicator": "FileName",
 	"Icon": "Linux",
 	"LogPatterns": [
 		{
-			"Regex": "^(?<Timestamp>[\\w]+[\\s]+[\\d]+[\\s]+[\\d\\:\\.]+)[\\s]+(?<DeviceName>[^\\s]*)[\\s]+((?<ProcessName>[^\\[]*)(\\[(?<ProcessId>[\\d]+)\\])|(?<ProcessName>[^\\:]*))\\:[\\s](?<Message>.*)$"
+			"Regex": "^(?<Timestamp>[\\w]+[\\s]+[\\d]+[\\s]+[\\d\\:\\.]+)[\\s]+(?<DeviceName>[^\\s]*)[\\s]+(?<SourceName>[^\\[\\:]*)\\:[\\s](\\[[\\s]*(?<Extra1>[\\d\\.]+)[\\s]*\\][\\s]?)?(?<Message>.*)$"
 		}
 	],
-	"LogWritingFormat": "{Timestamp} {DeviceName} {ProcessName}{ProcessId:'['#####']'}: {Message}",
+	"LogWritingFormat": "{Timestamp} {DeviceName} {SourceName}: [{Extra1,12}] {Message}",
 	"SortKey": "Timestamp",
 	"TimestampFormatForDisplaying": "MM/dd HH:mm:ss",
 	"TimestampFormatsForReading": [
@@ -26,16 +24,17 @@
 			"Width": 130
 		},
 		{
+			"DisplayName": "RelativeTimestamp",
+			"Name": "Extra1",
+			"Width": 130
+		},
+		{
 			"Name": "DeviceName",
 			"Width": 150
 		},
 		{
-			"Name": "ProcessName",
+			"Name": "SourceName",
 			"Width": 100
-		},
-		{
-			"Name": "ProcessId",
-			"Width": 80
 		},
 		{
 			"Name": "Message"

@@ -33,6 +33,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 #endif
 			"GitLog",
 			"GitLogSimple",
+			"LinuxKernelLogFile",
 			"LinuxSystemLogFile",
 			"RawFile",
 			"RawHttp",
@@ -64,6 +65,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			}
 			else if (Platform.IsLinux)
 			{
+				builtInProfileIDs.Add("LinuxKernelLog");
 				builtInProfileIDs.Add("LinuxSystemLog");
 			}
 		}

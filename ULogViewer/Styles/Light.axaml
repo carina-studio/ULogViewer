@@ -13,6 +13,8 @@
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Cloud" Color="#a0a0a0"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Database" Color="#cca600"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Debug" Color="#007f7f"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Linux_Fedora" Color="#294072"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Linux_Mint" Color="#7ec539"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Network" Color="#0077cc"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Security" Color="#007f7f"/>
 

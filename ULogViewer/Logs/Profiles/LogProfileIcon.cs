@@ -60,6 +60,30 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// </summary>
 		Linux,
 		/// <summary>
+		/// Linux (Debian).
+		/// </summary>
+		Linux_Debian,
+		/// <summary>
+		/// Linux (Fedora).
+		/// </summary>
+		Linux_Fedora,
+		/// <summary>
+		/// Linux (Open SUSE).
+		/// </summary>
+		Linux_OpenSuse,
+		/// <summary>
+		/// Linux (Mint).
+		/// </summary>
+		Linux_Mint,
+		/// <summary>
+		/// Linux (MX Linux).
+		/// </summary>
+		Linux_MX,
+		/// <summary>
+		/// Linux (Ubuntu).
+		/// </summary>
+		Linux_Ubuntu,
+		/// <summary>
 		/// Network.
 		/// </summary>
 		Network,
