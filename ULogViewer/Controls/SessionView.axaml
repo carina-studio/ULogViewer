@@ -766,7 +766,7 @@
 					<TextBlock Classes="StatusBar_TextBlock" Grid.ColumnSpan="5" Text="{DynamicResource String/SessionView.AllLogCount}" Opacity="0"/>
 
 					<!-- Number of logs -->
-					<StackPanel IsVisible="{Binding HasLogs}" Opacity="0" Orientation="Horizontal">
+					<StackPanel IsVisible="{Binding AllLogCount}" Opacity="0" Orientation="Horizontal">
 						<!-- Empty view to reserve space -->
 						<TextBlock Classes="StatusBar_TextBlock" Text="{DynamicResource String/SessionView.AllLogCount}"/>
 						<TextBlock Classes="StatusBar_TextBlock" Text="00000000"/>
@@ -774,7 +774,7 @@
 						<TextBlock Classes="StatusBar_TextBlock" IsVisible="{Binding IsFilteringLogsNeeded}" Text="00000000"/>
 						<Separator Classes="StatusBar_Separator"/>
 					</StackPanel>
-					<StackPanel IsVisible="{Binding HasLogs}" Orientation="Horizontal">
+					<StackPanel IsVisible="{Binding AllLogCount}" Orientation="Horizontal">
 						<TextBlock Classes="StatusBar_TextBlock" Text="{DynamicResource String/SessionView.AllLogCount}"/>
 						<TextBlock Classes="StatusBar_TextBlock" Text="{Binding AllLogCount}" VerticalAlignment="Center"/>
 						<TextBlock Classes="StatusBar_TextBlock" IsVisible="{Binding IsFilteringLogsNeeded}" Text="{DynamicResource String/SessionView.FilteredLogCount}"/>
