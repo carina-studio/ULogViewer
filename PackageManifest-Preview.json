@@ -1,33 +1,33 @@
 {
 	"Name": "ULogViewer",
-	"Version": "0.30.1.1201",
-	"PageUri": "https://github.com/carina-studio/ULogViewer/releases/tag/0.30.1.1201",
+	"Version": "0.30.2.1203",
+	"PageUri": "https://github.com/carina-studio/ULogViewer/releases/tag/0.30.2.1203",
 	"Packages": [
 		{
 			"Architecture": "X64",
 			"OperatingSystem": "Windows",
-			"SHA256": "1C9126092339B47C7BFBEF246C417392FADE2FD31069BA2EB6CB2D9B46435BDA",
-			"Uri": "https://github.com/carina-studio/ULogViewer/releases/download/0.30.1.1201/ULogViewer-0.30.1.1201-win-x64.zip"
+			"SHA256": "94FDFC2E4BDC7863F066A9D264999CB2ED4F1DC59DA95428447DEB8B9A12785C",
+			"Uri": "https://github.com/carina-studio/ULogViewer/releases/download/0.30.2.1203/ULogViewer-0.30.2.1203-win-x64.zip"
 		},
 		{
 			"Architecture": "X64",
 			"FrameworkVersion": "5.0",
 			"OperatingSystem": "Windows",
-			"SHA256": "2541F77029D84489451901C8D985958259549D7D2A645C7A05C51BBE059A87A7",
-			"Uri": "https://github.com/carina-studio/ULogViewer/releases/download/0.30.1.1201/ULogViewer-0.30.1.1201-win-x64-fx-dependent.zip"
+			"SHA256": "6A7497C1CD73A597B7D57B55CA82846DE785DA272B5BBC0B4FF97BE103E919C2",
+			"Uri": "https://github.com/carina-studio/ULogViewer/releases/download/0.30.2.1203/ULogViewer-0.30.2.1203-win-x64-fx-dependent.zip"
 		},
 		{
 			"Architecture": "X64",
 			"OperatingSystem": "Linux",
-			"SHA256": "ACE71A0EB22FB33C72285190AEA71BF0FF0D5747E79A6EC6C02AE347130C7D5C",
-			"Uri": "https://github.com/carina-studio/ULogViewer/releases/download/0.30.1.1201/ULogViewer-0.30.1.1201-linux-x64.zip"
+			"SHA256": "A2853381106989B8C631BF655E29C833D9F4F2CB7300333C1D2F20B1083E58B4",
+			"Uri": "https://github.com/carina-studio/ULogViewer/releases/download/0.30.2.1203/ULogViewer-0.30.2.1203-linux-x64.zip"
 		},
 		{
 			"Architecture": "X64",
 			"FrameworkVersion": "5.0",
 			"OperatingSystem": "Linux",
-			"SHA256": "9754E7A3211B06F295FE806933DC0E8D4810FB465EC901C9178DC84CF382A19C",
-			"Uri": "https://github.com/carina-studio/ULogViewer/releases/download/0.30.1.1201/ULogViewer-0.30.1.1201-linux-x64-fx-dependent.zip"
+			"SHA256": "4F897E22F5171D81740B7F685AAA9B8A035F0A675C64461DA5829202E3EB641C",
+			"Uri": "https://github.com/carina-studio/ULogViewer/releases/download/0.30.2.1203/ULogViewer-0.30.2.1203-linux-x64-fx-dependent.zip"
 		}
 	]
 }
