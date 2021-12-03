@@ -550,6 +550,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Check whether the value of <see cref="MarkedColor"/> is not <see cref="MarkColor.None"/> or not.
+		/// </summary>
+		public bool IsMarked { get => this.markedColor != MarkColor.None; }
+
+
+		/// <summary>
 		/// Get level of log.
 		/// </summary>
 		public LogLevel Level { get => this.Log.Level; }
@@ -602,8 +608,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.VerifyAccess();
 				if (this.markedColor == value)
 					return;
+				var isPrevMarked = this.IsMarked;
 				this.markedColor = value;
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MarkedColor)));
+				if (this.IsMarked != isPrevMarked)
+					this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsMarked)));
 			}
 		}
 

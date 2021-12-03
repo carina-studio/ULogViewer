@@ -135,6 +135,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly List<MutableObservableValue<GridLength>> logHeaderWidths = new List<MutableObservableValue<GridLength>>();
 		readonly ComboBox logLevelFilterComboBox;
 		readonly ListBox logListBox;
+		readonly ContextMenu logMarkingMenu;
 		readonly TextBox logProcessIdFilterTextBox;
 		ScrollViewer? logScrollViewer;
 		readonly RegexTextBox logTextFilterTextBox;
@@ -250,6 +251,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					}
 				};
 			});
+			this.logMarkingMenu = (ContextMenu)this.Resources[nameof(logMarkingMenu)].AsNonNull();
 			this.logProcessIdFilterTextBox = this.FindControl<TextBox>(nameof(logProcessIdFilterTextBox)).AsNonNull().Also(it =>
 			{
 				it.AddHandler(TextBox.TextInputEvent, this.OnLogProcessIdTextBoxTextInput, RoutingStrategies.Tunnel);
@@ -768,13 +770,20 @@ namespace CarinaStudio.ULogViewer.Controls
 			var colorIndicatorBorderBrush = app.TryFindResource("Brush/WorkingArea.Background", out var rawResource) ? (IBrush)rawResource.AsNonNull() : null;
 			var colorIndicatorBorderThickness = app.TryFindResource("Thickness/SessionView.LogListBox.ColorIndicator.Border", out rawResource) ? (Thickness)rawResource.AsNonNull() : new Thickness();
 			var colorIndicatorWidth = app.TryFindResource("Double/SessionView.LogListBox.ColorIndicator.Width", out rawResource) ? (double)rawResource.AsNonNull() : 0.0;
+			var markIndicatorSize = app.TryFindResource("Double/SessionView.LogListBox.MarkIndicator.Size", out rawResource) ? (double)rawResource.AsNonNull() : 0.0;
+			var markIndicatorBorderThickness = app.TryFindResource("Thickness/SessionView.LogListBox.MarkIndicator.Border", out rawResource) ? (Thickness)rawResource.AsNonNull() : new Thickness();
+			var markIndicatorCornerRadius = app.TryFindResource("CornerRadius/SessionView.LogListBox.MarkIndicator.Border", out rawResource) ? (CornerRadius)rawResource.AsNonNull() : new CornerRadius(0);
+			var markIndicatorMargin = app.TryFindResource("Thickness/SessionView.LogListBox.MarkIndicator.Margin", out rawResource) ? (Thickness)rawResource.AsNonNull() : new Thickness(1);
+			var markIndicatorWidth = (markIndicatorSize + markIndicatorMargin.Left + markIndicatorMargin.Right);
 			var itemBorderThickness = app.TryFindResource("Thickness/SessionView.LogListBox.Item.Column.Border", out rawResource) ? (Thickness)rawResource.AsNonNull() : new Thickness(1);
 			var itemCornerRadius = app.TryFindResource("CornerRadius/SessionView.LogListBox.Item.Column.Border", out rawResource) ? (CornerRadius)rawResource.AsNonNull() : new CornerRadius(0);
 			var itemPadding = app.TryFindResource("Thickness/SessionView.LogListBox.Item.Padding", out rawResource) ? (Thickness)rawResource.AsNonNull() : new Thickness();
 			var propertyPadding = app.TryFindResource("Thickness/SessionView.LogListBox.Item.Property.Padding", out rawResource) ? (Thickness)rawResource.AsNonNull() : new Thickness();
 			var splitterWidth = app.TryFindResource("Double/GridSplitter.Thickness", out rawResource) ? (double)rawResource.AsNonNull() : 0.0;
 			if (profile.ColorIndicator != LogColorIndicator.None)
-				itemPadding = new Thickness(itemPadding.Left + colorIndicatorWidth, itemPadding.Top, itemPadding.Right, itemPadding.Bottom);
+				itemPadding = new Thickness(itemPadding.Left + markIndicatorWidth + colorIndicatorWidth, itemPadding.Top, itemPadding.Right, itemPadding.Bottom);
+			else
+				itemPadding = new Thickness(itemPadding.Left + markIndicatorWidth, itemPadding.Top, itemPadding.Right, itemPadding.Bottom);
 			var itemTemplateContent = new Func<IServiceProvider, object>(_ =>
 			{
 				var itemPanel = new Panel().Also(it =>
@@ -793,6 +802,8 @@ namespace CarinaStudio.ULogViewer.Controls
 					it.Margin = itemPadding;
 					itemPanel.Children.Add(it);
 				});
+
+				// property views
 				new Avalonia.Controls.TextBlock().Let(it =>
 				{
 					// empty view to reserve height of item
@@ -920,6 +931,8 @@ namespace CarinaStudio.ULogViewer.Controls
 					Grid.SetColumn(propertyView, logPropertyIndex * 2);
 					itemGrid.Children.Add(propertyView);
 				}
+
+				// color indicator
 				if (profile.ColorIndicator != LogColorIndicator.None)
 				{
 					new Border().Also(it =>
@@ -933,6 +946,91 @@ namespace CarinaStudio.ULogViewer.Controls
 						itemPanel.Children.Add(it);
 					});
 				}
+
+				// mark indicator
+				itemPanel.Children.Add(new Panel().Also(panel =>
+				{
+					var isLeftPointerDown = false;
+					var isRightPointerDown = false;
+					var isMenuOpen = false;
+					var emptyMarker = new Border().Also(border =>
+					{
+						border.Bind(Border.BorderBrushProperty, this.GetResourceObservable("Brush/Icon"));
+						border.BorderThickness = markIndicatorBorderThickness;
+						border.CornerRadius = markIndicatorCornerRadius;
+						border.Height = markIndicatorSize;
+						border.IsVisible = false;
+						border.Margin = markIndicatorMargin;
+						border.Opacity = 0.5;
+						border.VerticalAlignment = VerticalAlignment.Center;
+						border.Width = markIndicatorSize;
+					});
+					panel.Background = Brushes.Transparent;
+					panel.Children.Add(emptyMarker);
+					panel.Children.Add(new Border().Also(border =>
+					{
+						border.Bind(Border.BackgroundProperty, new Binding() { Path = nameof(DisplayableLog.MarkedColor), Converter = Converters.MarkColorToIndicatorConverter.Default });
+						border.Bind(Border.BorderBrushProperty, this.GetResourceObservable("Brush/Icon"));
+						border.BorderThickness = markIndicatorBorderThickness;
+						border.CornerRadius = markIndicatorCornerRadius;
+						border.Height = markIndicatorSize;
+						border.Bind(Image.IsVisibleProperty, new Binding() { Path = nameof(DisplayableLog.IsMarked) });
+						border.Margin = markIndicatorMargin;
+						border.VerticalAlignment = VerticalAlignment.Center;
+						border.Width = markIndicatorSize;
+					}));
+					panel.Cursor = new Avalonia.Input.Cursor(StandardCursorType.Hand);
+					panel.HorizontalAlignment = HorizontalAlignment.Left;
+					panel.Margin = new Thickness((profile.ColorIndicator != LogColorIndicator.None ? colorIndicatorWidth : 0), 0, 0, 0);
+					panel.PointerEnter += (_, e) => emptyMarker.IsVisible = true;
+					panel.PointerLeave += (_, e) => emptyMarker.IsVisible = isMenuOpen;
+					panel.PointerPressed += (_, e) =>
+					{
+						var properties = e.GetCurrentPoint(panel).Properties;
+						isLeftPointerDown = properties.IsLeftButtonPressed;
+						isRightPointerDown = properties.IsRightButtonPressed;
+					};
+					panel.AddHandler(Panel.PointerReleasedEvent, (_, e) =>
+					{
+						if (isLeftPointerDown)
+						{
+							if (this.DataContext is Session session && itemPanel.DataContext is DisplayableLog log)
+							{
+								if (log.IsMarked)
+									session.UnmarkLogsCommand.TryExecute(new DisplayableLog[] { log });
+								else
+								{
+									session.MarkLogsCommand.TryExecute(new Session.MarkingLogsParams()
+									{
+										Color = MarkColor.Default,
+										Logs = new DisplayableLog[] { log },
+									});
+								}
+							}
+						}
+						else if (isRightPointerDown)
+						{
+							e.Handled = true;
+							var closedHandler = (EventHandler<RoutedEventArgs>?)null;
+							closedHandler = (sender, e2) =>
+							{
+								this.logMarkingMenu.MenuClosed -= closedHandler;
+								isMenuOpen = false;
+								emptyMarker.IsVisible = panel.IsPointerOver;
+							};
+							isMenuOpen = true;
+							emptyMarker.IsVisible = true;
+							this.logMarkingMenu.MenuClosed += closedHandler;
+							this.logMarkingMenu.PlacementTarget = panel;
+							this.logMarkingMenu.Open(panel);
+						}
+						isLeftPointerDown = false;
+						isRightPointerDown = false;
+					}, RoutingStrategies.Tunnel);
+					panel.Bind(ToolTip.TipProperty, this.GetResourceObservable("String/SessionView.MarkUnmarkLog"));
+					panel.VerticalAlignment = VerticalAlignment.Stretch;
+					panel.Width = markIndicatorWidth;
+				}));
 				return new ControlTemplateResult(itemPanel, null);
 			});
 			return new DataTemplate()
@@ -1551,7 +1649,9 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// build headers
 			var app = (App)this.Application;
-			var splitterWidth = app.TryFindResource("Double/GridSplitter.Thickness", out var rawResource) ? (double)rawResource.AsNonNull() : 0.0;
+			var markIndicatorSize = app.TryFindResource("Double/SessionView.LogListBox.MarkIndicator.Size", out var rawResource) ? (double)rawResource.AsNonNull() : 0.0;
+			var markIndicatorMargin = app.TryFindResource("Thickness/SessionView.LogListBox.MarkIndicator.Margin", out rawResource) ? (Thickness)rawResource.AsNonNull() : new Thickness();
+			var splitterWidth = app.TryFindResource("Double/GridSplitter.Thickness", out rawResource) ? (double)rawResource.AsNonNull() : 0.0;
 			var minHeaderWidth = app.TryFindResource("Double/SessionView.LogHeader.MinWidth", out rawResource) ? (double)rawResource.AsNonNull() : 0.0;
 			var itemPadding = app.TryFindResource("Thickness/SessionView.LogListBox.Item.Padding", out rawResource) ? (Thickness)rawResource.AsNonNull() : new Thickness();
 			var colorIndicatorWidth = app.TryFindResource("Double/SessionView.LogListBox.ColorIndicator.Width", out rawResource) ? (double)rawResource.AsNonNull() : 0.0;
@@ -1560,6 +1660,26 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (profile.ColorIndicator != LogColorIndicator.None)
 			{
 				this.logHeaderGrid.ColumnDefinitions.Add(new ColumnDefinition(colorIndicatorWidth, GridUnitType.Pixel));
+				++columIndexOffset;
+			}
+			if (markIndicatorSize > 0)
+			{
+				this.logHeaderGrid.ColumnDefinitions.Add(new ColumnDefinition(markIndicatorSize + markIndicatorMargin.Left + markIndicatorMargin.Right, GridUnitType.Pixel));
+				this.logHeaderGrid.Children.Add(new Border().Also(border =>
+				{
+					Grid.SetColumn(border, columIndexOffset);
+					border.Classes.Add("Icon");
+					border.Child = new Image().Also(image =>
+					{
+						image.Classes.Add("Icon");
+						if (app.TryFindResource("Image/Marked", out rawResource))
+							image.Source = (rawResource as IImage);
+					});
+					border.Height = markIndicatorSize;
+					border.Margin = markIndicatorMargin;
+					border.Width = markIndicatorSize;
+					border.VerticalAlignment = VerticalAlignment.Center;
+				}));
 				++columIndexOffset;
 			}
 			if (itemPadding.Left > 0)

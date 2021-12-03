@@ -48,7 +48,7 @@ namespace CarinaStudio.ULogViewer.Converters
                     break;
                 case MarkColor.Default:
                     if (this.hasDefaultColor)
-                        App.TryFindResource($"Brush/SessionView.LogListBox.Item.Background.Marked", out brush);
+                        App.TryFindResource($"Brush/SessionView.LogListBox.Item.Background.Marked.Default", out brush);
                     break;
                 default:
                     App.TryFindResource($"Brush/SessionView.LogListBox.Item.Background.Marked.{color}", out brush);

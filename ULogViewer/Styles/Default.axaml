@@ -58,8 +58,8 @@
 			<!-- SessionView -->
 			<SolidColorBrush x:Key="Brush/SessionView.LogHeader.Background">#0e0e0e</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.LogHeader.Separator">#000000</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Background.Marked">#000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Background.Marked.Blue">#0000ff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Background.Marked.Default">#000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Background.Marked.Green">#00ff00</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Background.Marked.Indigo">#00137f</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Background.Marked.Magenta">#ff00ff</SolidColorBrush>
@@ -71,6 +71,15 @@
 			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Background.Selected">#000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Background.Selected.PointerOver">#000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Column.Border.PointerOver">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.MarkIndicator.Default" Color="{DynamicResource Color/Icon}"/>
+			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.MarkIndicator.Blue">#0094ff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.MarkIndicator.Green">#00b214</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.MarkIndicator.Indigo">#001ecc</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.MarkIndicator.Magenta">#ff00ff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.MarkIndicator.Orange">#ff6a00</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.MarkIndicator.Purple">#7f00ff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.MarkIndicator.Red">#ff0000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.MarkIndicator.Yellow">#ffff00</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.StatusBar.Background.Error">#ff3232</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.StatusBar.Background.Inactive">#000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.StatusBar.Background.Paused">#000000</SolidColorBrush>

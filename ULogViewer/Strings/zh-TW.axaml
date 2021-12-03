@@ -418,6 +418,7 @@
 	<sys:String x:Key="String/SessionView.LogThreadIdFilter.Description">使用執行緒 (Thread ID) 篩選日誌</sys:String>
 	<sys:String x:Key="String/SessionView.MarkedLogs">已標記日誌</sys:String>
 	<sys:String x:Key="String/SessionView.MarkLogs">標記日誌</sys:String>
+	<sys:String x:Key="String/SessionView.MarkUnmarkLog">標記/解除標記</sys:String>
 	<sys:String x:Key="String/SessionView.MarkUnmarkLogs">標記/解除標記日誌</sys:String>
 	<sys:String x:Key="String/SessionView.MemoryUsage">私有記憶體使用量</sys:String>
 	<sys:String x:Key="String/SessionView.NeedToRestartAsAdministrator">'{0}' 需要系統管理員身分，是否要以系統管理員身分重新啟動應用程式並使用此日誌類型？</sys:String>
