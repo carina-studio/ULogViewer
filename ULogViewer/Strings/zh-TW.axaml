@@ -79,7 +79,6 @@
 	<sys:String x:Key="String/Common.Delete">刪除</sys:String>
 	<sys:String x:Key="String/Common.Edit">編輯</sys:String>
 	<sys:String x:Key="String/Common.Empty">空</sys:String>
-	<sys:String x:Key="String/Common.IPv4OrIPv6">IPv4 或 IPv6</sys:String>
 	<sys:String x:Key="String/Common.KnowMoreAbout">了解更多</sys:String>
 	<sys:String x:Key="String/Common.MoveDown">下移</sys:String>
 	<sys:String x:Key="String/Common.MoveUp">上移</sys:String>
@@ -87,7 +86,6 @@
 	<sys:String x:Key="String/Common.No">否</sys:String>
 	<sys:String x:Key="String/Common.OK">確定</sys:String>
 	<sys:String x:Key="String/Common.Options">選項</sys:String>
-	<sys:String x:Key="String/Common.RegularExpression">正規表示式</sys:String>
 	<sys:String x:Key="String/Common.RegularExpression.Reference">語法說明</sys:String>
 	<sys:String x:Key="String/Common.Rename">重新命名</sys:String>
 	<sys:String x:Key="String/Common.Yes">是</sys:String>

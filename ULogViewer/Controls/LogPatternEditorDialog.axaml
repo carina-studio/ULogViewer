@@ -54,7 +54,7 @@
 			<!-- Regex -->
 			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogPatternEditorDialog.Regex}"/>
 			<Grid ColumnDefinitions="*,Auto">
-				<asControls:RegexTextBox Name="regexTextBox" Height="{DynamicResource Double/LogPatternEditorDialog.RegexInput.Height}" IgnoreCase="False" PropertyChanged="OnRegexTextBoxPropertyChanged" ScrollViewer.HorizontalScrollBarVisibility="Disabled" TextWrapping="Wrap" Watermark="{DynamicResource String/Common.RegularExpression}"/>
+				<asControls:RegexTextBox Name="regexTextBox" Height="{DynamicResource Double/LogPatternEditorDialog.RegexInput.Height}" IgnoreCase="False" PropertyChanged="OnRegexTextBoxPropertyChanged" ScrollViewer.HorizontalScrollBarVisibility="Disabled" TextWrapping="Wrap"/>
 				<ToggleButton Name="addLogPropertyGroupButton" Classes="BrowseButton" Command="{Binding $parent[Window].ShowAddLogPropertyGroupMenu}" Grid.Column="1" VerticalAlignment="Top"/>
 			</Grid>
 			<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogPatternEditorDialog.Regex.Description}"/>

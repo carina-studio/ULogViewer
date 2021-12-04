@@ -24,7 +24,7 @@
 
 			<!-- Address -->
 			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/IPEndPointInputDialog.Address}"/>
-			<asControls:IPAddressTextBox Name="ipAddressTextBox" Classes="Dialog_TextBox" MaxLength="1024" PropertyChanged="OnIPAddressTextBoxPropertyChanged" Watermark="{DynamicResource String/Common.IPv4OrIPv6}"/>
+			<asControls:IPAddressTextBox Name="ipAddressTextBox" Classes="Dialog_TextBox" MaxLength="1024" PropertyChanged="OnIPAddressTextBoxPropertyChanged"/>
 			<Separator Classes="Dialog_Separator"/>
 
 			<!-- Port -->

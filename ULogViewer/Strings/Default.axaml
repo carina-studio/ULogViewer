@@ -77,7 +77,6 @@
 	<sys:String x:Key="String/Common.Delete">Delete</sys:String>
 	<sys:String x:Key="String/Common.Edit">Edit</sys:String>
 	<sys:String x:Key="String/Common.Empty">Empty</sys:String>
-	<sys:String x:Key="String/Common.IPv4OrIPv6">IPv4 or IPv6</sys:String>
 	<sys:String x:Key="String/Common.KnowMoreAbout">Know more about</sys:String>
 	<sys:String x:Key="String/Common.MoveDown">Move down</sys:String>
 	<sys:String x:Key="String/Common.MoveUp">Move up</sys:String>
@@ -85,7 +84,6 @@
 	<sys:String x:Key="String/Common.No">No</sys:String>
 	<sys:String x:Key="String/Common.OK">OK</sys:String>
 	<sys:String x:Key="String/Common.Options">Options</sys:String>
-	<sys:String x:Key="String/Common.RegularExpression">Regular expression</sys:String>
 	<sys:String x:Key="String/Common.RegularExpression.Reference">Syntax reference</sys:String>
 	<sys:String x:Key="String/Common.Rename">Rename</sys:String>
 	<sys:String x:Key="String/Common.Yes">Yes</sys:String>

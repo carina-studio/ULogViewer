@@ -22,7 +22,7 @@
 
 			<!-- Regex -->
 			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/PredefinedLogTextFilterEditorDialog.Regex}"/>
-			<asControls:RegexTextBox Name="regexTextBox" Classes="Dialog_TextBox" Height="{DynamicResource Double/PredefinedLogTextFilterEditorDialog.RegexInput.Height}" PropertyChanged="OnRegexTextBoxPropertyChanged" ScrollViewer.HorizontalScrollBarVisibility="Disabled" TextWrapping="Wrap" Watermark="{DynamicResource String/Common.RegularExpression}"/>
+			<asControls:RegexTextBox Name="regexTextBox" Classes="Dialog_TextBox" Height="{DynamicResource Double/PredefinedLogTextFilterEditorDialog.RegexInput.Height}" PropertyChanged="OnRegexTextBoxPropertyChanged" ScrollViewer.HorizontalScrollBarVisibility="Disabled" TextWrapping="Wrap"/>
 			<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/PredefinedLogTextFilterEditorDialog.Regex.Description}"/>
 			<asControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/Common.RegularExpression.Reference}" Uri="{x:Static app:Uris.RegexReference}"/>
 			<Separator Classes="Dialog_Separator"/>
