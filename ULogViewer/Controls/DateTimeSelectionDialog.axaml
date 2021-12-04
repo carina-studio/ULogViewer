@@ -26,15 +26,8 @@
 			<TextBlock Name="messageTextBlock" Classes="Dialog_TextBlock" Text=" "/>
 
 			<!-- Date time -->
-			<asControls:DatePicker Name="datePicker" Classes="Dialog_DatePicker" SelectedDateChanged="OnDatePickerSelectedDateChanged"/>
-			<Separator Classes="Dialog_Separator_Small"/>
-			<Grid ColumnDefinitions="*,Auto,*,Auto,*" HorizontalAlignment="Stretch">
-				<NumericUpDown Name="hoursUpDown" Classes="Dialog_NumericUpDown" Maximum="23" Value="0"/>
-				<TextBlock Grid.Column="1" Text=" : " VerticalAlignment="Center"/>
-				<NumericUpDown Name="minutesUpDown" Classes="Dialog_NumericUpDown" Grid.Column="2" Maximum="59" Value="0"/>
-				<TextBlock Grid.Column="3" Text=" : " VerticalAlignment="Center"/>
-				<NumericUpDown Name="secondsUpDown" Classes="Dialog_NumericUpDown" Grid.Column="4" Maximum="59" Value="0"/>
-			</Grid>
+			<asControls:DateTimeTextBox Name="dateTimeTextBox" Classes="Dialog_TextBox" PropertyChanged="OnDateTimeTextBoxPropertyChanged"/>
+			<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/DateTimeSelectionDialog.DateTimeFormatDescription}"/>
 			
 		</StackPanel>
 
