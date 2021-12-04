@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -40,6 +41,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 		// Constants.
 		const int ChunkSize = 8192;
+		const int MinChunkFilteringDuration = 100;
 
 
 		// Static fields.
@@ -55,10 +57,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly FixedThreadsTaskScheduler filteringTaskScheduler;
 		bool includeMarkedLogs = true;
 		Logs.LogLevel level = Logs.LogLevel.Undefined;
-		readonly int maxFilteringConcurrencyLevel = Math.Min(4, Environment.ProcessorCount);
+		readonly int maxFilteringConcurrencyLevel = Math.Min(4, Environment.ProcessorCount / 2);
 		int? processId;
 		readonly List<byte> sourceLogVersions;
 		readonly ScheduledAction startFilteringLogsAction;
+		readonly Stopwatch stopWatch = new Stopwatch().Also(it => it.Start());
 		IList<Regex> textRegexList = new Regex[0];
 		int? threadId;
 		readonly SortedObservableList<DisplayableLog> unfilteredLogs;
@@ -183,6 +186,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// dispose task scheduler
 			this.filteringTaskScheduler.Dispose();
+
+			// stop watch
+			this.stopWatch.Stop();
 		}
 
 
@@ -238,6 +244,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			var textPropertyGetters = filteringParams.LogTextPropertyGetters;
 			var textPropertyCount = textPropertyGetters.Count;
 			var textToMatchBuilder = new StringBuilder();
+			var startTime = this.stopWatch.ElapsedMilliseconds;
 			for (int i = logs.Count - 1; i >= 0; --i)
 			{
 				// check marking state
@@ -307,6 +314,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						return;
 					if (filteringParams.CompletedChunkId == chunkId - 1)
 					{
+						var delay = MinChunkFilteringDuration - (this.stopWatch.ElapsedMilliseconds - startTime);
+						if (delay > 0)
+							Thread.Sleep((int)delay);
 						this.SynchronizationContext.Post(() => this.OnChunkFiltered(filteringParams, chunkId, filteredLogs, filteredLogVersions));
 						return;
 					}
