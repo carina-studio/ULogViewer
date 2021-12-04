@@ -289,7 +289,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		const int DisplayableLogDisposingChunkSize = 65536;
 		const int DelaySaveMarkedLogs = 1000;
 		const int DisposeDisplayableLogsInterval = 100;
-		const int FileLogsReadingConcurrencyLevel = 2;
+		const int FileLogsReadingConcurrencyLevel = 1;
 		const int LogsTimeInfoReportingInterval = 500;
 
 

@@ -36,7 +36,8 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		// Constants.
-		const int LogsReadingChunkSize = 8192;
+		const int LogsReadingChunkSize = 4096;
+		const int MinLogsReadingDuration = 50;
 
 
 		// Static fields.
@@ -973,12 +974,25 @@ namespace CarinaStudio.ULogViewer.Logs
 					{
 						if (isContinuousReading)
 							flushContinuousReadingLog(updateInterval);
-						else if (readLogs.Count >= LogsReadingChunkSize || (stopWatch.ElapsedMilliseconds - startReadingTime) >= updateInterval)
+						else
 						{
-							var logArray = readLogs.ToArray();
-							readLogs.Clear();
-							startReadingTime = stopWatch.ElapsedMilliseconds;
-							syncContext.PostDelayed(() => this.OnLogsRead(readingToken, logArray), 100);
+							var delay = MinLogsReadingDuration - (stopWatch.ElapsedMilliseconds - startReadingTime);
+							var flushLogs = false;
+							if (readLogs.Count >= LogsReadingChunkSize)
+							{
+								if (delay > 0)
+									Thread.Sleep((int)delay);
+								flushLogs = true;
+							}
+							else if (delay <= 0)
+								flushLogs = true;
+							if (flushLogs)
+							{
+								var logArray = readLogs.ToArray();
+								readLogs.Clear();
+								startReadingTime = stopWatch.ElapsedMilliseconds;
+								syncContext.Post(() => this.OnLogsRead(readingToken, logArray));
+							}
 						}
 						prevLogPattern = logPattern;
 					}
@@ -997,14 +1011,14 @@ namespace CarinaStudio.ULogViewer.Logs
 
 				// send last chunk of logs
 				if (readLogs.IsNotEmpty())
-					syncContext.PostDelayed(() => this.OnLogsRead(readingToken, readLogs), 100);
+					syncContext.Post(() => this.OnLogsRead(readingToken, readLogs));
 
 				// close reader
 				Global.RunWithoutError(reader.Close);
 
 				// complete reading
 				if (readLogs.IsNotEmpty())
-					syncContext.PostDelayed(() => this.OnLogsReadingCompleted(exception), 100);
+					syncContext.Post(() => this.OnLogsReadingCompleted(exception));
 				else
 					syncContext.Post(() => this.OnLogsReadingCompleted(exception));
 			}
