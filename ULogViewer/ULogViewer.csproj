@@ -57,7 +57,7 @@
     <PackageReference Include="Avalonia" Version="0.10.10" />
     <PackageReference Include="Avalonia.AvaloniaEdit" Version="0.10.9" />
     <PackageReference Include="Avalonia.Desktop" Version="0.10.10" />
-    <PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.10.10.3" />
+    <PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.10.10.4" />
     <PackageReference Include="CarinaStudio.AppBase.Application" Version="0.31.0.1121" />
     <PackageReference Include="CarinaStudio.AppBase.AutoUpdate" Version="0.31.0.1121" />
     <PackageReference Include="CarinaStudio.AppBase.Configuration" Version="0.31.0.1121" />
@@ -65,13 +65,13 @@
     <PackageReference Include="CarinaStudio.AppSuite.Core" Version="0.26.0.1204" />
     <PackageReference Condition="'$(Configuration)'=='Debug-Windows'" Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
     <PackageReference Condition="'$(Configuration)'=='Release-Windows'" Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
-    <PackageReference Include="Microsoft.Win32.SystemEvents" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Win32.SystemEvents" Version="6.0.0" />
     <PackageReference Include="Mono.Posix" Version="7.1.0-final.1.21458.1" />
     <PackageReference Include="NLog" Version="4.7.12" />
     <PackageReference Include="NLog.Extensions.Logging" Version="1.7.4" />
     <PackageReference Include="System.Data.Common" Version="4.3.0" />
     <PackageReference Include="System.Data.SQLite" Version="1.0.115.5" />
-    <PackageReference Include="System.Diagnostics.EventLog" Version="5.0.1" />
+    <PackageReference Include="System.Diagnostics.EventLog" Version="6.0.0" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
     <PackageReference Include="System.Runtime.InteropServices.WindowsRuntime" Version="4.3.0" />
   </ItemGroup>
