@@ -27,6 +27,11 @@
 
 			<!-- Date time -->
 			<asControls:DateTimeTextBox Name="dateTimeTextBox" Classes="Dialog_TextBox" PropertyChanged="OnDateTimeTextBoxPropertyChanged"/>
+			<StackPanel Orientation="Horizontal">
+				<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/DateTimeSelectionDialog.DateTime}" VerticalAlignment="Center"/>
+				<TextBlock Classes="Dialog_TextBlock_Description" Text="{Binding #dateTimeTextBox.Value}" VerticalAlignment="Center"/>
+			</StackPanel>
+			<Separator Classes="Dialog_Separator"/>
 			<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/DateTimeSelectionDialog.DateTimeFormatDescription}"/>
 			
 		</StackPanel>

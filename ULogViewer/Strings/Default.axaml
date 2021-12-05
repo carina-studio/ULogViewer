@@ -96,6 +96,7 @@
 	<sys:String x:Key="String/DateTimeFormatInputDialog.Message">Timestamp format</sys:String>
 
 	<!-- DateTimeSelectionDialog -->
+	<sys:String x:Key="String/DateTimeSelectionDialog.DateTime">Date and time:</sys:String>
 	<sys:String x:Key="String/DateTimeSelectionDialog.DateTimeFormatDescription">Supported formats:
 1.Common date and time format in English.
 2.Common date and time format in current language.
