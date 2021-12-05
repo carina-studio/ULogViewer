@@ -38,7 +38,7 @@ title: ULogViewer
 在提供這些資訊之前，您可以檢視它們甚至拒絕提供這些資訊。
 
 ## 聯絡我們
-如果您對於本隱私權政策有任何疑問，可以至 [GitHub](https://github.com/carina-studio/ULogViewer/issues) 提出，或是寄信至 [carina.software.studio@gmail.com](mailto:carina.software.studio@gmail.com)。
+如果您對於本隱私權政策有任何疑問，可以至 [GitHub](https://github.com/carina-studio/ULogViewer/issues) 提出或寄信至 [carina.software.studio@gmail.com](mailto:carina.software.studio@gmail.com)。
 
 
 <br/>📔[回到首頁](index.md)
