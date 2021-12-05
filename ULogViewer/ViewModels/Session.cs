@@ -40,6 +40,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<int> AllLogCountProperty = ObservableProperty.Register<Session, int>(nameof(AllLogCount));
 		/// <summary>
+		/// Property of <see cref="AreFileBasedLogs"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> AreFileBasedLogsProperty = ObservableProperty.Register<Session, bool>(nameof(AreFileBasedLogs));
+		/// <summary>
 		/// Property of <see cref="AreLogsSortedByTimestamp"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> AreLogsSortedByTimestampProperty = ObservableProperty.Register<Session, bool>(nameof(AreLogsSortedByTimestamp));
@@ -79,6 +83,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Property of <see cref="HasLastLogsReadingDuration"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> HasLastLogsReadingDurationProperty = ObservableProperty.Register<Session, bool>(nameof(HasLastLogsReadingDuration));
+		/// <summary>
+		/// Property of <see cref="HasLogFiles"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> HasLogFilesProperty = ObservableProperty.Register<Session, bool>(nameof(HasLogFiles));
 		/// <summary>
 		/// Property of <see cref="HasLogProfile"/>.
 		/// </summary>
@@ -725,7 +733,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					var customTitle = this.CustomTitle;
 					if (logProfile == null)
 						return customTitle ?? app?.GetString("Session.Empty");
-					if (this.addedLogFilePaths.IsEmpty())
+					if (this.addedLogFilePaths.IsEmpty() || !logProfile.AllowMultipleFiles)
 						return customTitle ?? logProfile.Name;
 					return $"{customTitle ?? logProfile.Name} ({this.addedLogFilePaths.Count})";
 				});
@@ -816,6 +824,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Get all logs without filtering.
 		/// </summary>
 		public IList<DisplayableLog> AllLogs { get; }
+
+
+		/// <summary>
+		/// Check whether logs are based-on one or more files or not.
+		/// </summary>
+		public bool AreFileBasedLogs { get => this.GetValue(AreFileBasedLogsProperty); }
 
 
 		/// <summary>
@@ -1291,6 +1305,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.canPauseResumeLogsReading.Update(profile.IsContinuousReading);
 			this.canReloadLogs.Update(true);
 			this.SetValue(UriProperty, creationOptions.Uri);
+			if (creationOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName)))
+			{
+				this.SetValue(HasLogFilesProperty, true);
+				if (!profile.AllowMultipleFiles)
+					this.SetValue(IsLogFileNeededProperty, false);
+			}
 			if (creationOptions.IsOptionSet(nameof(LogDataSourceOptions.IPEndPoint)))
 				this.SetValue(IPEndPointProperty, creationOptions.IPEndPoint);
 			if (creationOptions.IsOptionSet(nameof(LogDataSourceOptions.WorkingDirectory)))
@@ -1486,13 +1506,18 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.Logger.LogDebug($"The last log reader disposed");
 				if (!this.IsDisposed)
 				{
+					var profile = this.LogProfile;
 					this.reportLogsTimeInfoAction.Execute();
 					this.canClearLogFiles.Update(false);
 					this.canMarkUnmarkLogs.Update(false);
 					this.canPauseResumeLogsReading.Update(false);
 					this.canReloadLogs.Update(false);
+					this.SetValue(HasLogFilesProperty, false);
 					this.SetValue(HasLogReadersProperty, false);
 					this.SetValue(HasWorkingDirectoryProperty, false);
+					this.SetValue(IsLogFileNeededProperty, profile != null 
+						&& profile.DataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.FileName))
+						&& !profile.DataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName)));
 					this.SetValue(IPEndPointProperty, null);
 					this.SetValue(IsLogsReadingPausedProperty, false);
 					this.SetValue(LastLogsFilteringDurationProperty, null);
@@ -1630,6 +1655,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Check whether <see cref="LastLogsReadingDuration"/> is valid or not.
 		/// </summary>
 		public bool HasLastLogsReadingDuration { get => this.GetValue(HasLastLogsReadingDurationProperty); }
+
+
+		/// <summary>
+		/// Check whether at least one log file was added to session or not.
+		/// </summary>
+		public bool HasLogFiles { get => this.GetValue(HasLogFilesProperty); }
 
 
 		/// <summary>
@@ -2202,6 +2233,23 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				return;
 			switch (e.PropertyName)
 			{
+				case nameof(LogProfile.AllowMultipleFiles):
+					(sender as LogProfile)?.Let(profile =>
+					{
+						if (this.AreFileBasedLogs)
+						{
+							if (profile.AllowMultipleFiles)
+								this.ReloadLogs(true, false);
+							else
+							{
+								if (this.addedLogFilePaths.Count > 1)
+									this.ClearLogFiles();
+								else
+									this.ReloadLogs(true, false);
+							}
+						}
+					});
+					break;
 				case nameof(LogProfile.ColorIndicator):
 					this.SynchronizationContext.Post(() => this.ReloadLogs(false, true));
 					break;
@@ -2530,6 +2578,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			profile.PropertyChanged -= this.OnLogProfilePropertyChanged;
 
 			// update state
+			this.SetValue(AreFileBasedLogsProperty, false);
 			this.SetValue(AreLogsSortedByTimestampProperty, false);
 			this.canResetLogProfile.Update(false);
 			this.canShowAllLogsTemporarily.Update(false);
@@ -2991,6 +3040,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			var dataSourceProvider = profile.DataSourceProvider;
 			if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.FileName)))
 			{
+				this.SetValue(AreFileBasedLogsProperty, true);
 				if (!dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName)))
 				{
 					this.Logger.LogDebug("No file name specified, waiting for adding file");

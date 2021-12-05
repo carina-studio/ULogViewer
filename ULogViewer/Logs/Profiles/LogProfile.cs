@@ -36,6 +36,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 
 
 		// Fields.
+		bool allowMultipleFiles = true;
 		LogColorIndicator colorIndicator = LogColorIndicator.None;
 		LogDataSourceOptions dataSourceOptions;
 		ILogDataSourceProvider dataSourceProvider = LogDataSourceProviders.Empty;
@@ -96,6 +97,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// <param name="template">Template profile.</param>
 		public LogProfile(LogProfile template) : this(template.Application)
 		{
+			this.allowMultipleFiles = template.allowMultipleFiles;
 			this.colorIndicator = template.colorIndicator;
 			this.dataSourceOptions = template.dataSourceOptions;
 			this.dataSourceProvider = template.dataSourceProvider;
@@ -137,6 +139,24 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			this.id = builtInId;
 			this.isPinnedSettingKey = new SettingKey<bool>($"BuiltInProfile.{builtInId}.IsPinned");
 			this.UpdateBuiltInNameAndDescription();
+		}
+
+
+		/// <summary>
+		/// Get or set whether multiple files are allowed or not.
+		/// </summary>
+		public bool AllowMultipleFiles
+		{
+			get => this.allowMultipleFiles;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (this.allowMultipleFiles == value)
+					return;
+				this.allowMultipleFiles = value;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AllowMultipleFiles)));
+			}
 		}
 
 
@@ -578,6 +598,9 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			{
 				switch (jsonProperty.Name)
 				{
+					case nameof(AllowMultipleFiles):
+						this.allowMultipleFiles = jsonProperty.Value.ValueKind != JsonValueKind.False;
+						break;
 					case "DataSource":
 						this.LoadDataSourceFromJson(jsonProperty.Value);
 						break;
@@ -963,6 +986,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				using var stream = new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite);
 				using var writer = new Utf8JsonWriter(stream, new JsonWriterOptions() { Indented = true });
 				writer.WriteStartObject();
+				writer.WriteBoolean(nameof(AllowMultipleFiles), this.allowMultipleFiles);
 				writer.WritePropertyName("DataSource");
 				this.SaveDataSourceToJson(writer);
 				writer.WriteString(nameof(ColorIndicator), this.colorIndicator.ToString());

@@ -127,6 +127,13 @@
 				<TextBlock Classes="Dialog_TextBlock_Description_Error" IsVisible="{Binding !$parent[Window].IsValidDataSourceOptions}" Text="{DynamicResource String/LogProfileEditorDialog.InvalidDataSourceOptions}"/>
 				<Separator Classes="Dialog_Separator"/>
 
+				<!-- Allow multiple files -->
+				<StackPanel Name="allowMultipleFilesPanel" HorizontalAlignment="Stretch" Orientation="Vertical">
+					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogProfileEditorDialog.AllowMultipleFiles}"/>
+					<ToggleSwitch Name="allowMultipleFilesSwitch" Classes="Dialog_ToggleSwitch"/>
+					<Separator Classes="Dialog_Separator"/>
+				</StackPanel>
+
 				<!-- Is working directory needed -->
 				<StackPanel HorizontalAlignment="Stretch" Orientation="Vertical">
 					<ia:Interaction.Behaviors>

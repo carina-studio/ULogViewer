@@ -1281,18 +1281,43 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (this.DataContext is not Session session)
 				return false;
 
-			// select new log profile
+			// check whether new log profile is needed or not
+			var warningMessage = "";
 			var currentLogProfile = session.LogProfile;
 			var needNewLogProfile = Global.Run(() =>
 			{
 				if (currentLogProfile == null)
 					return true;
-				if (session.IsLogFileNeeded)
-					return filePaths.IsEmpty();
+				if (session.AreFileBasedLogs)
+				{
+					if (filePaths.IsEmpty())
+						return true;
+					if (!currentLogProfile.AllowMultipleFiles)
+					{
+						if (!session.IsLogFileNeeded || filePaths.Count > 1)
+						{
+							warningMessage = this.Application.GetString("SessionView.MultipleFilesAreNotAllowed");
+							return true;
+						}
+					}
+					return false;
+				}
 				if (session.IsWorkingDirectoryNeeded)
 					return filePaths.IsNotEmpty();
 				return true;
 			});
+
+			// show warning message
+			if (!string.IsNullOrEmpty(warningMessage))
+			{
+				await new MessageDialog()
+				{
+					Icon = MessageDialogIcon.Warning,
+					Message = warningMessage,
+				}.ShowDialog(window);
+			}
+
+			// select new log profile
 			var newLogProfile = !needNewLogProfile ? null : await new LogProfileSelectionDialog().Also(it =>
 			{
 				if (filePaths.IsEmpty())
@@ -1303,6 +1328,11 @@ namespace CarinaStudio.ULogViewer.Controls
 							|| logProfile.IsWorkingDirectoryNeeded)
 							&& !logProfile.DataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.WorkingDirectory));
 					};
+				}
+				else if (filePaths.Count > 1)
+				{
+					it.Filter = logProfile => logProfile.DataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.FileName))
+						&& logProfile.AllowMultipleFiles;
 				}
 				else
 					it.Filter = logProfile => logProfile.DataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.FileName));
@@ -1336,6 +1366,8 @@ namespace CarinaStudio.ULogViewer.Controls
 					return true;
 				}
 			}
+			else if (needNewLogProfile)
+				return false;
 
 			// set working directory or add log files
 			if (session.SetWorkingDirectoryCommand.CanExecute(null))

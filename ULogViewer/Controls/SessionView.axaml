@@ -310,7 +310,7 @@
 						</Button>
 
 						<!-- Add files -->
-						<Button Classes="ToolBar_Button" Command="{Binding $parent[UserControl].AddLogFilesCommand}" IsVisible="{Binding IsLogFileNeeded}" ToolTip.Tip="{DynamicResource String/SessionView.AddLogFiles.WithShortcut}">
+						<Button Classes="ToolBar_Button" Command="{Binding $parent[UserControl].AddLogFilesCommand}" IsVisible="{Binding AreFileBasedLogs}" ToolTip.Tip="{DynamicResource String/SessionView.AddLogFiles.WithShortcut}">
 							<Image Classes="Icon" Source="{StaticResource Image/Icon.AddFile}"/>
 						</Button>
 
@@ -341,7 +341,7 @@
 						</Button>
 
 						<!-- Clear files -->
-						<Button Classes="ToolBar_Button" Command="{Binding ClearLogFilesCommand}" IsVisible="{Binding IsLogFileNeeded}" ToolTip.Tip="{DynamicResource String/SessionView.ClearLogFiles}">
+						<Button Classes="ToolBar_Button" Command="{Binding ClearLogFilesCommand}" IsVisible="{Binding AreFileBasedLogs}" ToolTip.Tip="{DynamicResource String/SessionView.ClearLogFiles}">
 							<Image Classes="Icon" Source="{StaticResource Image/Icon.Delete}"/>
 						</Button>
 

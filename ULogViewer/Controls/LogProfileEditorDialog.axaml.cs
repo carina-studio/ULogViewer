@@ -47,6 +47,8 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Fields.
 		readonly ToggleSwitch adminNeededSwitch;
+		readonly Panel allowMultipleFilesPanel;
+		readonly ToggleSwitch allowMultipleFilesSwitch;
 		readonly ScrollViewer baseScrollViewer;
 		readonly ComboBox colorIndicatorComboBox;
 		readonly ToggleSwitch continuousReadingSwitch;
@@ -107,6 +109,8 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// setup controls
 			this.adminNeededSwitch = this.FindControl<ToggleSwitch>("adminNeededSwitch").AsNonNull();
+			this.allowMultipleFilesPanel = this.FindControl<Panel>(nameof(allowMultipleFilesPanel));
+			this.allowMultipleFilesSwitch = this.allowMultipleFilesPanel.FindControl<ToggleSwitch>(nameof(allowMultipleFilesSwitch));
 			this.baseScrollViewer = this.FindControl<ScrollViewer>("baseScrollViewer").AsNonNull();
 			this.colorIndicatorComboBox = this.FindControl<ComboBox>("colorIndicatorComboBox").AsNonNull();
 			this.continuousReadingSwitch = this.FindControl<ToggleSwitch>("continuousReadingSwitch").AsNonNull();
@@ -457,6 +461,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// update log profile
 			var logProfile = this.LogProfile ?? new LogProfile(this.Application);
+			logProfile.AllowMultipleFiles = this.allowMultipleFilesSwitch.IsChecked.GetValueOrDefault();
 			logProfile.ColorIndicator = (LogColorIndicator)this.colorIndicatorComboBox.SelectedItem.AsNonNull();
 			logProfile.DataSourceOptions = this.dataSourceOptions;
 			logProfile.DataSourceProvider = (ILogDataSourceProvider)this.dataSourceProviderComboBox.SelectedItem.AsNonNull();
@@ -663,6 +668,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (profile == null)
 			{
 				this.Title = this.Application.GetString("LogProfileEditorDialog.Title.Create");
+				this.allowMultipleFilesSwitch.IsChecked = true;
 				this.colorIndicatorComboBox.SelectedItem = LogColorIndicator.None;
 				this.dataSourceProviderComboBox.SelectedItem = LogDataSourceProviders.All.FirstOrDefault(it => it is FileLogDataSourceProvider);
 				this.iconComboBox.SelectedItem = LogProfileIcon.File;
@@ -677,6 +683,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				this.Title = this.Application.GetString("LogProfileEditorDialog.Title.Edit");
 				this.adminNeededSwitch.IsChecked = profile.IsAdministratorNeeded;
+				this.allowMultipleFilesSwitch.IsChecked = profile.AllowMultipleFiles;
 				this.colorIndicatorComboBox.SelectedItem = profile.ColorIndicator;
 				this.dataSourceOptions = profile.DataSourceOptions;
 				this.dataSourceProviderComboBox.SelectedItem = profile.DataSourceProvider;
@@ -741,6 +748,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			var dataSourceProvider = (this.dataSourceProviderComboBox.SelectedItem as ILogDataSourceProvider);
 			if (dataSourceProvider == null)
 				return false;
+			this.allowMultipleFilesPanel.IsVisible = dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.FileName));
 			foreach (var optionName in dataSourceProvider.RequiredSourceOptions)
 			{
 				switch (optionName)
