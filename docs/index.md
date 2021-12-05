@@ -17,3 +17,7 @@ The project is still under development but most of functions relate to reading/p
 ## 📔Topics
 - [How to Install and Upgrade ULogViewer](installation_and_upgrade.md)
 - [How Does ULogViewer Read and Parse Logs](logs_reading_flow.md)
+
+## 📜Privacy Policy
+- [English](privacy_policy.md)
+- [正體中文 (台灣)](privacy_policy_zh-TW.md)
