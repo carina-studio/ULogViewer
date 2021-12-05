@@ -1,47 +1,27 @@
 ﻿[
 	{
-		"Description": "Support marking logs with 8 different colors.",
+		"Description": "Support marking logs by clicking on the left hand side of logs. Marking with color is also supported.",
 		"Type": "NewFeature"
 	},
 	{
-		"Description": "New built-in log profiles 'Android System Trace File' and 'Android Kernel Log Files'.",
+		"Description": "Support single file mode on log profile.",
 		"Type": "NewFeature"
 	},
 	{
-		"Description": "New built-in log profiles to help you view the raw text from files, HTTP/HTTPS response and TCP client. Now you can also use ULogViewer as plane text viewer for large file.",
-		"Type": "NewFeature"
-	},
-	{
-		"Description": "Add 'Time Span', 'Beginning Time Span' and 'Ending Time Span' properties for log. You can use these properties to represent relative time even sort logs by these properties.",
-		"Type": "NewFeature"
-	},
-	{
-		"Description": "Support description for all built-in and custom log profiles.",
-		"Type": "NewFeature"
-	},
-	{
-		"Description": "Support specifying the second of timestamp when selecting nearest log by timestamp.",
-		"Type": "NewFeature"
-	},
-	{
-		"Description": "Show tips with full text if text is trimmed in log viewer and title of tab.",
-		"Type": "NewFeature"
-	},
-	{
-		"Description": "Support showing duration of logs in microseconds.",
+		"Description": "Use text box to input date and time to select log. Multiple date and time formats are supported.",
 		"Type": "Improvement"
 	},
 	{
-		"Description": "More icons for log profiles.",
-		"Type": "Improvement"
-	},
-	{
-		"Description": "Improve performance of reloading logs.",
+		"Description": "Improve UI smoothness when loading and filtering logs.",
 		"Type": "Improvement"
 	},
 	{
 		"Description": "UX improvement.",
 		"Type": "Improvement"
+	},
+	{
+		"Description": "Use single file mode on 'Android System Trace File' and 'Raw Text In Files' log profiles.",
+		"Type": "BehaviorChange"
 	},
 	{
 		"Description": "Update dependent libraries."
