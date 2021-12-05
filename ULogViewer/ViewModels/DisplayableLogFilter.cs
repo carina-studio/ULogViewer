@@ -57,7 +57,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly FixedThreadsTaskScheduler filteringTaskScheduler;
 		bool includeMarkedLogs = true;
 		Logs.LogLevel level = Logs.LogLevel.Undefined;
-		readonly int maxFilteringConcurrencyLevel = Math.Min(4, Environment.ProcessorCount / 2);
+		readonly int maxFilteringConcurrencyLevel = Math.Min(4, Math.Max(1, Environment.ProcessorCount / 2));
 		int? processId;
 		readonly List<byte> sourceLogVersions;
 		readonly ScheduledAction startFilteringLogsAction;
