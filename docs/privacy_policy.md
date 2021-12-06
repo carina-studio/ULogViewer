@@ -3,14 +3,18 @@ title: ULogViewer
 ---
 
 # Privacy Policy
-- Version: 1.0.
-- Update: 2021/12/5.
+- Version: 1.1.
+- Update: 2021/12/6.
 
 This is the privacy policy of ```ULogViewer``` which you need to read before you using ```ULogViewer```. 
 The privacy policy may be updated in the future and you can check it on the website of ```ULogViewer```. 
-We assume that you have agreed this privacy policy once you start using ```ULogViewer```.
+It means that you have agreed this privacy policy once you start using ```ULogViewer```.
 
 ## Scope of Privacy Policy
+```ULogViewer``` is an Open Source Project. The ```ULogViewer``` mentioned after includes **ONLY** the executable files or zipped files which are exact same as the files provided by the following pages:
+* [Website of ULogViewer](https://carina-studio.github.io/ULogViewer/)
+* [Project and release pages of ULogViewer on GitHub](https://github.com/carina-studio/ULogViewer)
+
 This privacy policy will be applied when you use ```ULogViewer```.
 
 ## Collecting Your Personal Data
