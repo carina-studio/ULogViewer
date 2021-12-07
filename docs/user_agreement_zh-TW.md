@@ -2,20 +2,20 @@
 title: ULogViewer
 ---
 
-# 使用協議
+# 使用者協議
 - 版本：1.0。
-- 更新時間：2021/12/6。
+- 更新時間：2021/12/7。
 
-這是 ```ULogViewer``` 的使用協議，您應該要在使用 ```ULogViewer``` 之前詳細閱讀本協議。
-使用協議可能會在未來有所更新，您可以在 ```ULogViewer``` 網站中查看。
-當您開始使用 ```ULogViewer``` 表示您同意本使用協議。
+這是 ```ULogViewer``` 的使用者協議，您應該要在使用 ```ULogViewer``` 之前詳細閱讀本協議。
+使用者協議可能會在未來有所更新，您可以在 ```ULogViewer``` 網站中查看。
+當您開始使用 ```ULogViewer``` 表示您同意本使用者協議。
 
 ## 適用範圍
 ```ULogViewer``` 為開放原始碼專案，以下所指 ```ULogViewer``` **僅包括** 與下列頁面所提供之可執行檔或壓縮檔內容完全相同之版本：
 * [ULogViewer 網站](https://carina-studio.github.io/ULogViewer/)
 * [GitHub 上之 ULogViewer 專案頁面及各版本釋出頁面](https://github.com/carina-studio/ULogViewer)
 
-本使用協議適用於您使用 ```ULogViewer``` 時。
+本使用者協議適用於您使用 ```ULogViewer``` 時。
 
 ## 檔案存取
 所有 ```ULogViewer``` 所需之檔案皆存放於 ```ULogViewer``` 目錄內（若您有安裝 ```.NET``` 則亦包含 ```.NET 執行期間``` 之目錄）。當執行 ```ULogViewer``` 且未載入任何日誌時不需要額外的檔案存取。
@@ -76,7 +76,7 @@ title: ULogViewer
 載入至 ```ULogViewer``` 或由 ```ULogViewer``` 儲存之日誌的授權與著作權不受本協議之約束。您必須自行注意及負責日誌的授權與著作權。
 
 ## 聯絡我們
-如果您對於本使用協議有任何疑問，可以至 [GitHub](https://github.com/carina-studio/ULogViewer/issues) 提出或寄信至 [carina.software.studio@gmail.com](mailto:carina.software.studio@gmail.com)。
+如果您對於本使用者協議有任何疑問，可以至 [GitHub](https://github.com/carina-studio/ULogViewer/issues) 提出或寄信至 [carina.software.studio@gmail.com](mailto:carina.software.studio@gmail.com)。
 
 
 <br/>📔[回到首頁](index.md)
