@@ -19,5 +19,21 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
         // URI of GitHub project.
         public override Uri? GitHubProjectUri => new Uri("https://github.com/carina-studio/ULogViewer");
+
+
+        // URI of privacy policy.
+        public override Uri? PrivacyPolicyUri => this.Application.CultureInfo.ToString() switch
+        {
+            "zh-TW" => new Uri("https://carina-studio.github.io/ULogViewer/privacy_policy_zh-TW.html"),
+            _ => new Uri("https://carina-studio.github.io/ULogViewer/privacy_policy.html"),
+        };
+
+
+        // URI of user agreement.
+        public override Uri? UserAgreementUri => this.Application.CultureInfo.ToString() switch
+        {
+            "zh-TW" => new Uri("https://carina-studio.github.io/ULogViewer/user_agreement_zh-TW.html"),
+            _ => new Uri("https://carina-studio.github.io/ULogViewer/user_agreement.html"),
+        };
     }
 }

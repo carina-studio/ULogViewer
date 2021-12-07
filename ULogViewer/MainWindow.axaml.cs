@@ -6,6 +6,7 @@ using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.Templates;
 using Avalonia.VisualTree;
+using CarinaStudio.AppSuite.ViewModels;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Input;
@@ -362,8 +363,12 @@ namespace CarinaStudio.ULogViewer
 		}
 
 
-		// Detach from view-model.
-		protected override void OnDetachFromViewModel(Workspace workspace)
+		/// <inheritdoc/>
+		protected override ApplicationInfo OnCreateApplicationInfo() => new AppInfo();
+
+
+        // Detach from view-model.
+        protected override void OnDetachFromViewModel(Workspace workspace)
 		{
 			// detach from active session
 			this.DetachFromActiveSession();

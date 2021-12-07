@@ -77,6 +77,10 @@ namespace CarinaStudio.ULogViewer
 		});
 
 
+		/// <inheritdoc/>
+		public bool IsTesting => false;
+
+
 		// Program entry.
 		[STAThread]
 		static void Main(string[] args) => BuildApplication<App>().StartWithClassicDesktopLifetime(args);
@@ -353,15 +357,19 @@ namespace CarinaStudio.ULogViewer
         public long PrivateMemoryUsage { get; private set; }
 
 
-		// Releasing type.
-		public override AppSuite.ApplicationReleasingType ReleasingType => AppSuite.ApplicationReleasingType.Preview;
+		/// <inheritdoc/>
+		public override Version? PrivacyPolicyVersion => new Version(1, 1);
+
+
+        // Releasing type.
+        public override AppSuite.ApplicationReleasingType ReleasingType => AppSuite.ApplicationReleasingType.Preview;
 
 
 		// Version of settings.
 		protected override int SettingsVersion => 2;
 
 
-		// Interface implementations.
-		public bool IsTesting => false;
-	}
+		/// <inheritdoc/>
+		public override Version? UserAgreementVersion => new Version(1, 0);
+    }
 }
