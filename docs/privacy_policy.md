@@ -4,18 +4,18 @@ title: ULogViewer
 
 # Privacy Policy
 - Version: 1.1.
-- Update: 2021/12/6.
+- Update: 2021/12/7.
 
-This is the privacy policy of ```ULogViewer``` which you need to read before you using ```ULogViewer```. 
-The privacy policy may be updated in the future and you can check it on the website of ```ULogViewer```. 
-It means that you have agreed this privacy policy once you start using ```ULogViewer```.
+This is the Privacy Policy of ```ULogViewer``` which you need to read before you using ```ULogViewer```. 
+The Privacy Policy may be updated in the future and you can check it on the website of ```ULogViewer```. 
+It means that you have agreed this Privacy Policy once you start using ```ULogViewer```.
 
 ## Scope of Privacy Policy
 ```ULogViewer``` is an Open Source Project. The ```ULogViewer``` mentioned after includes **ONLY** the executable files or zipped files which are exact same as the files provided by the following pages:
 * [Website of ULogViewer](https://carina-studio.github.io/ULogViewer/)
 * [Project and release pages of ULogViewer on GitHub](https://github.com/carina-studio/ULogViewer)
 
-This privacy policy will be applied when you use ```ULogViewer```.
+This Privacy Policy will be applied when you use ```ULogViewer```.
 
 ## Collecting Your Personal Data
 We **DON'T** collect the following personal data:
@@ -42,7 +42,7 @@ We may ask your help to send these data to us by yourself **ONLY** for debugging
 You can check these data before you sending to us or you can also reject to send these data.
 
 ## Contact Us
-If you have any concern of this privacy policy, please create an issue on [GitHub](https://github.com/carina-studio/ULogViewer/issues) or send e-mail to [carina.software.studio@gmail.com](mailto:carina.software.studio@gmail.com).
+If you have any concern of this Privacy Policy, please create an issue on [GitHub](https://github.com/carina-studio/ULogViewer/issues) or send e-mail to [carina.software.studio@gmail.com](mailto:carina.software.studio@gmail.com).
 
 
 <br/>📔[Back to Home](index.md)
