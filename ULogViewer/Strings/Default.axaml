@@ -372,6 +372,10 @@
 	<sys:String x:Key="String/MainWindow.ClearCustomSessionTitle">Reset title of this tab</sys:String>
 	<sys:String x:Key="String/MainWindow.CloseSession">Close this tab</sys:String>
 	<sys:String x:Key="String/MainWindow.CreateSession">Create new tab</sys:String>
+	<sys:String x:Key="String/MainWindow.Session.AllLogCount">Total logs:</sys:String>
+	<sys:String x:Key="String/MainWindow.Session.Hibernated">Hibernated to save resources</sys:String>
+	<sys:String x:Key="String/MainWindow.Session.Paused">Paused</sys:String>
+	<sys:String x:Key="String/MainWindow.Session.WaitingForDataSources">Waiting for data source</sys:String>
 	<sys:String x:Key="String/MainWindow.SetCustomSessionTitle">Set title of this tab…</sys:String>
 	<sys:String x:Key="String/MainWindow.SetCustomSessionTitle.Message">Title of tab</sys:String>
 

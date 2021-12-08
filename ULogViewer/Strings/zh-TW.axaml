@@ -354,6 +354,10 @@
 	<sys:String x:Key="String/MainWindow.ClearCustomSessionTitle">重設分頁標題</sys:String>
 	<sys:String x:Key="String/MainWindow.CloseSession">關閉此分頁</sys:String>
 	<sys:String x:Key="String/MainWindow.CreateSession">建立新分頁</sys:String>
+	<sys:String x:Key="String/MainWindow.Session.AllLogCount">總日誌數：</sys:String>
+	<sys:String x:Key="String/MainWindow.Session.Hibernated">已休眠以節省資源</sys:String>
+	<sys:String x:Key="String/MainWindow.Session.Paused">已暫停</sys:String>
+	<sys:String x:Key="String/MainWindow.Session.WaitingForDataSources">正在等待資料來源</sys:String>
 	<sys:String x:Key="String/MainWindow.SetCustomSessionTitle">自訂分頁標題…</sys:String>
 	<sys:String x:Key="String/MainWindow.SetCustomSessionTitle.Message">分頁標題</sys:String>
 

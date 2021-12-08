@@ -148,6 +148,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsFilteringLogsNeededProperty = ObservableProperty.Register<Session, bool>(nameof(IsFilteringLogsNeeded));
 		/// <summary>
+		/// Property of <see cref="IsHibernated"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> IsHibernatedProperty = ObservableProperty.Register<Session, bool>(nameof(IsHibernated));
+		/// <summary>
 		/// Property of <see cref="IsIPEndPointNeeded"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsIPEndPointNeededProperty = ObservableProperty.Register<Session, bool>(nameof(IsIPEndPointNeeded));
@@ -386,13 +390,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		TaskFactory? fileLogsReadingTaskFactory;
 		bool hasLogDataSourceCreationFailure;
 		readonly DisplayableLogFilter logFilter;
-		readonly HashSet<LogReader> logReaders = new HashSet<LogReader>();
+		readonly List<LogReader> logReaders = new List<LogReader>();
 		readonly Stopwatch logsFilteringWatch = new Stopwatch();
 		readonly Stopwatch logsReadingWatch = new Stopwatch();
 		readonly SortedObservableList<DisplayableLog> markedLogs;
 		readonly HashSet<string> markedLogsChangedFilePaths = new HashSet<string>(PathEqualityComparer.Default);
 		readonly ObservableList<PredefinedLogTextFilter> predefinedLogTextFilters;
 		readonly ScheduledAction reportLogsTimeInfoAction;
+		readonly List<LogDataSourceOptions> savedDataSourceOptions = new List<LogDataSourceOptions>();
 		readonly ScheduledAction saveMarkedLogsAction;
 		readonly ScheduledAction selectLogsToReportActions;
 		readonly List<MarkedLogInfo> unmatchedMarkedLogInfos = new List<MarkedLogInfo>();
@@ -765,6 +770,18 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				// update log updating interval
 				if (this.LogProfile?.IsContinuousReading == true && this.logReaders.IsNotEmpty())
 					this.logReaders.First().UpdateInterval = this.ContinuousLogReadingUpdateInterval;
+
+				// restore from hibernation
+				if (this.IsHibernated)
+				{
+					this.Logger.LogWarning($"Leave hibernation with {this.savedDataSourceOptions.Count} log reader(s)");
+
+					// restore log readers
+					this.RestoreLogReaders();
+
+					// update state
+					this.SetValue(IsHibernatedProperty, false);
+				}
 			});
 		}
 
@@ -915,16 +932,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.saveMarkedLogsAction.ExecuteIfScheduled();
 
 			// dispose log readers
-			this.DisposeLogReaders(false);
-
-			// clear data source error
-			this.hasLogDataSourceCreationFailure = false;
-			this.checkDataSourceErrorsAction.Execute();
-
-			// clear logs
-			DisposeDisplayableLogs(this.allLogs);
-			this.allLogs.Clear();
-			this.allLogsByLogFilePath.Clear();
+			this.DisposeLogReaders();
 
 			// clear file name table
 			this.addedLogFilePaths.Clear();
@@ -1405,6 +1413,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				// update log updating interval
 				if (this.LogProfile?.IsContinuousReading == true && this.logReaders.IsNotEmpty())
 					this.logReaders.First().UpdateInterval = this.ContinuousLogReadingUpdateInterval;
+
+				// hibernate
+				if (this.Settings.GetValueOrDefault(SettingKeys.SaveMemoryAggressively))
+					this.Hibernate();
 			}
 		}
 
@@ -1434,12 +1446,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.logFilter.Dispose();
 
 			// dispose log readers
-			this.DisposeLogReaders(false);
+			this.DisposeLogReaders();
 
-			// clear logs
-			DisposeDisplayableLogs(this.allLogs);
-			this.allLogs.Clear();
-			this.allLogsByLogFilePath.Clear();
+			// release log group
 			this.displayableLogGroup = this.displayableLogGroup.DisposeAndReturnNull();
 
 			// detach from log profile
@@ -1530,10 +1539,20 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		// Dispose all log readers.
-		void DisposeLogReaders(bool removeLogs)
+		void DisposeLogReaders()
 		{
+			// dispose log readers
 			foreach (var logReader in this.logReaders.ToArray())
-				this.DisposeLogReader(logReader, removeLogs);
+				this.DisposeLogReader(logReader, false);
+
+			// clear data source error
+			this.hasLogDataSourceCreationFailure = false;
+			this.checkDataSourceErrorsAction.Execute();
+
+			// clear logs
+			DisposeDisplayableLogs(this.allLogs);
+			this.allLogs.Clear();
+			this.allLogsByLogFilePath.Clear();
 		}
 
 
@@ -1717,6 +1736,36 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public bool HasWorkingDirectory { get => this.GetValue(HasWorkingDirectoryProperty); }
 
 
+		// Hibernate the session.
+		bool Hibernate()
+        {
+			// check state
+			if (this.IsActivated)
+				return false;
+			if (this.IsHibernated)
+				return true;
+
+			// check log profile
+			var profile = this.LogProfile;
+			if (profile == null || profile.IsContinuousReading)
+				return false;
+
+			this.Logger.LogWarning($"Hibernate with {this.logReaders.Count} log reader(s) and {this.AllLogCount} log(s)");
+
+			// update state
+			this.SetValue(IsHibernatedProperty, true);
+
+			// save log readers
+			this.SaveLogReaders();
+
+			// dispose log readers
+			this.DisposeLogReaders();
+
+			// complete
+			return true;
+        }
+
+
 		/// <summary>
 		/// Get icon of session.
 		/// </summary>
@@ -1751,6 +1800,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Check whether logs filtering is needed or not.
 		/// </summary>
 		public bool IsFilteringLogsNeeded { get => this.GetValue(IsFilteringLogsNeededProperty); }
+
+
+		/// <summary>
+		/// Check whether session is hibernated or not.
+		/// </summary>
+		public bool IsHibernated { get => this.GetValue(IsHibernatedProperty); }
 
 
 		/// <summary>
@@ -2499,12 +2554,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			if (profile == null)
 				throw new InternalStateCorruptedException("No log profile to reload logs.");
 
-			// save marked logs
-			this.saveMarkedLogsAction.ExecuteIfScheduled();
-
 			// clear logs
 			var isContinuousReading = profile.IsContinuousReading;
-			var dataSourceOptions = new List<LogDataSourceOptions>();
 			if (isContinuousReading && !recreateLogReaders)
 			{
 				foreach (var logReader in this.logReaders)
@@ -2513,22 +2564,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			}
 			else
 			{
-				// collect data source options
-				foreach (var logReader in this.logReaders)
-					dataSourceOptions.Add(logReader.DataSource.CreationOptions);
-				this.Logger.LogWarning($"Reload logs with {dataSourceOptions.Count} log reader(s)");
+				// save log readers
+				this.SaveLogReaders();
+
+				this.Logger.LogWarning($"Reload logs with {this.savedDataSourceOptions.Count} log reader(s)");
 
 				// dispose log readers
-				this.DisposeLogReaders(false);
-
-				// clear data source error
-				this.hasLogDataSourceCreationFailure = false;
-				this.checkDataSourceErrorsAction.Execute();
-
-				// clear logs
-				DisposeDisplayableLogs(this.allLogs);
-				this.allLogs.Clear();
-				this.allLogsByLogFilePath.Clear();
+				this.DisposeLogReaders();
 			}
 
 			// setup log comparer
@@ -2539,27 +2581,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.UpdateDisplayLogProperties();
 
 			// recreate log readers
-			if (dataSourceOptions.IsNotEmpty())
-			{
-				var dataSourceProvider = profile.DataSourceProvider;
-				var defaultDataSourceOptions = profile.DataSourceOptions;
-				foreach (var dataSourceOption in dataSourceOptions)
-				{
-					// apply default options
-					var newDataSourceOptions = dataSourceOption;
-					newDataSourceOptions.Encoding = defaultDataSourceOptions.Encoding;
-
-					// create data source and reader
-					var dataSource = this.CreateLogDataSourceOrNull(dataSourceProvider, newDataSourceOptions);
-					if (dataSource != null)
-						this.CreateLogReader(dataSource);
-					else
-					{
-						this.hasLogDataSourceCreationFailure = true;
-						this.checkDataSourceErrorsAction.Schedule();
-					}
-				}
-			}
+			this.RestoreLogReaders();
 		}
 
 
@@ -2609,16 +2631,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.updateLogFilterAction.Cancel();
 
 			// dispose log readers
-			this.DisposeLogReaders(false);
+			this.DisposeLogReaders();
 
-			// clear data source error
-			this.hasLogDataSourceCreationFailure = false;
-			this.checkDataSourceErrorsAction.Execute();
-
-			// clear logs
-			DisposeDisplayableLogs(this.allLogs);
-			this.allLogs.Clear();
-			this.allLogsByLogFilePath.Clear();
+			// release log group
 			this.displayableLogGroup = this.displayableLogGroup.DisposeAndReturnNull();
 
 			// clear file name table
@@ -2639,6 +2654,55 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Command to reset log profile.
 		/// </summary>
 		public ICommand ResetLogProfileCommand { get; }
+
+
+		// Restore log readers from saved state.
+		void RestoreLogReaders()
+		{
+			// check state
+			if (this.savedDataSourceOptions.IsEmpty())
+			{
+				this.Logger.LogDebug("No log reader to restore");
+				return;
+			}
+
+			// check profile
+			var profile = this.LogProfile;
+			if (profile == null)
+			{
+				this.Logger.LogError($"No log profile to restore {this.savedDataSourceOptions.Count} log reader(s)");
+				this.savedDataSourceOptions.Clear();
+				return;
+			}
+
+			this.Logger.LogWarning($"Start restoring {this.savedDataSourceOptions.Count} log reader(s)");
+
+			// dispose current log readers
+			this.DisposeLogReaders();
+
+			// restore
+			var dataSourceProvider = profile.DataSourceProvider;
+			var defaultDataSourceOptions = profile.DataSourceOptions;
+			foreach (var dataSourceOption in this.savedDataSourceOptions)
+			{
+				// apply default options
+				var newDataSourceOptions = dataSourceOption;
+				newDataSourceOptions.Encoding = defaultDataSourceOptions.Encoding;
+
+				// create data source and reader
+				var dataSource = this.CreateLogDataSourceOrNull(dataSourceProvider, newDataSourceOptions);
+				if (dataSource != null)
+					this.CreateLogReader(dataSource);
+				else
+				{
+					this.hasLogDataSourceCreationFailure = true;
+					this.checkDataSourceErrorsAction.Schedule();
+				}
+			}
+			this.savedDataSourceOptions.Clear();
+
+			this.Logger.LogWarning($"Complete restoring {this.logReaders.Count} log reader(s)");
+		}
 
 
 		/// <summary>
@@ -2755,6 +2819,32 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			}
 
 			this.Logger.LogTrace("Complete restoring state");
+		}
+
+
+		// Save state of log readers in memory.
+		void SaveLogReaders()
+        {
+			// prepare
+			this.savedDataSourceOptions.Clear();
+
+			// check log reader
+			if (this.logReaders.IsEmpty())
+			{
+				this.Logger.LogDebug("No log reader to save");
+				return;
+			}
+
+			this.Logger.LogWarning($"Start saving {this.logReaders.Count} log reader(s)");
+
+			// save marked logs
+			this.saveMarkedLogsAction.ExecuteIfScheduled();
+
+			// save data source options
+			foreach (var logReader in this.logReaders)
+				this.savedDataSourceOptions.Add(logReader.DataSource.CreationOptions);
+
+			this.Logger.LogWarning($"Complete saving {this.savedDataSourceOptions.Count} log reader(s)");
 		}
 
 
@@ -2988,7 +3078,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			}
 
 			// dispose current log readers
-			this.DisposeLogReaders(true);
+			this.DisposeLogReaders();
 
 			this.Logger.LogDebug($"Set IP endpoint to {endPoint.Address} ({endPoint.Port})");
 
@@ -3205,7 +3295,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			}
 
 			// dispose current log readers
-			this.DisposeLogReaders(true);
+			this.DisposeLogReaders();
 
 			this.Logger.LogDebug($"Set URI to '{uri}'");
 
@@ -3258,7 +3348,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			}
 
 			// dispose current log readers
-			this.DisposeLogReaders(true);
+			this.DisposeLogReaders();
 
 			this.Logger.LogDebug($"Set working directory to '{directory}'");
 

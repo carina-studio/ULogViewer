@@ -14,32 +14,77 @@
 	<!-- Data templates -->
 	<Window.DataTemplates>
 		<DataTemplate DataType="{x:Type appViewModels:Session}">
-			<Grid Background="{x:Static Brushes.Transparent}" ColumnDefinitions="Auto,*,Auto" DragDrop.AllowDrop="True">
-				<Grid.ContextMenu>
-					<ContextMenu>
-						<MenuItem Command="{Binding $parent[Window].SetCustomSessionTitle}" CommandParameter="{Binding $parent[TabItem]}" Header="{DynamicResource String/MainWindow.SetCustomSessionTitle}">
-							<MenuItem.Icon>
-								<Border Classes="MenuItem_Icon">
-									<Image Classes="Icon" Source="{DynamicResource Image/Rename}"/>
-								</Border>
-							</MenuItem.Icon>
-						</MenuItem>
-						<MenuItem Command="{Binding $parent[Window].ClearCustomSessionTitle}" CommandParameter="{Binding $parent[TabItem]}" Header="{DynamicResource String/MainWindow.ClearCustomSessionTitle}" IsEnabled="{Binding HasCustomTitle}"/>
-						<Separator/>
-						<MenuItem Command="{Binding $parent[Window].CloseSessionTabItem}" CommandParameter="{Binding $parent[TabItem]}" Header="{DynamicResource String/MainWindow.CloseSession}">
-							<MenuItem.Icon>
-								<Border Classes="MenuItem_Icon">
-									<Image Classes="Icon" Source="{DynamicResource Image/Icon.Close}"/>
-								</Border>
-							</MenuItem.Icon>
-						</MenuItem>
-					</ContextMenu>
-				</Grid.ContextMenu>
-				<Border Classes="TabItem_Icon">
-					<Image Classes="Icon" Source="{Binding Icon}"/>
-				</Border>
-				<appControls:TextBlock Name="titleTextBlock" Classes="TabItem_TextBlock" Grid.Column="1" Text="{Binding Title}"/>
-				<Button Classes="TabItem_Button" Command="{Binding $parent[Window].CloseSessionTabItem}" CommandParameter="{Binding $parent[TabItem]}" Grid.Column="2" ToolTip.Tip="{DynamicResource String/MainWindow.CloseSession}">
+			<Grid ColumnDefinitions="*,Auto">
+				<Grid Background="{x:Static Brushes.Transparent}" ColumnDefinitions="Auto,*" DragDrop.AllowDrop="True" HorizontalAlignment="Stretch">
+					<Grid.ContextMenu>
+						<ContextMenu>
+							<MenuItem Command="{Binding $parent[Window].SetCustomSessionTitle}" CommandParameter="{Binding $parent[TabItem]}" Header="{DynamicResource String/MainWindow.SetCustomSessionTitle}">
+								<MenuItem.Icon>
+									<Border Classes="MenuItem_Icon">
+										<Image Classes="Icon" Source="{DynamicResource Image/Rename}"/>
+									</Border>
+								</MenuItem.Icon>
+							</MenuItem>
+							<MenuItem Command="{Binding $parent[Window].ClearCustomSessionTitle}" CommandParameter="{Binding $parent[TabItem]}" Header="{DynamicResource String/MainWindow.ClearCustomSessionTitle}" IsEnabled="{Binding HasCustomTitle}"/>
+							<Separator/>
+							<MenuItem Command="{Binding $parent[Window].CloseSessionTabItem}" CommandParameter="{Binding $parent[TabItem]}" Header="{DynamicResource String/MainWindow.CloseSession}">
+								<MenuItem.Icon>
+									<Border Classes="MenuItem_Icon">
+										<Image Classes="Icon" Source="{DynamicResource Image/Icon.Close}"/>
+									</Border>
+								</MenuItem.Icon>
+							</MenuItem>
+						</ContextMenu>
+					</Grid.ContextMenu>
+					<ToolTip.Tip>
+						<StackPanel Margin="{DynamicResource Thickness/MainWindow.TabItem.ToolTip.Padding}">
+							<StackPanel.Styles>
+								<Style Selector="Image.ToolTipIcon">
+									<Setter Property="Height" Value="{DynamicResource Double/MainWindow.TabItem.ToolTip.Icon.Size}"/>
+									<Setter Property="Margin" Value="{DynamicResource Thickness/MainWindow.TabItem.ToolTip.Icon.Margin}"/>
+									<Setter Property="Stretch" Value="Uniform"/>
+									<Setter Property="VerticalAlignment" Value="Center"/>
+									<Setter Property="Width" Value="{DynamicResource Double/MainWindow.TabItem.ToolTip.Icon.Size}"/>
+								</Style>
+								<Style Selector="TextBlock.ToolTipText">
+									<Setter Property="VerticalAlignment" Value="Center"/>
+								</Style>
+							</StackPanel.Styles>
+							<TextBlock FontSize="{DynamicResource Double/MainWindow.TabItem.ToolTip.Title.FontSize}" FontWeight="Bold" Text="{Binding Title}"/>
+							<Separator Classes="Dialog_Separator_Small"/>
+							<StackPanel IsVisible="{Binding !IsHibernated}">
+								<StackPanel IsVisible="{Binding IsLogsReadingPaused}">
+									<StackPanel Orientation="Horizontal">
+										<Image Classes="ToolTipIcon" Source="{DynamicResource Image/Icon.PauseMedia}"/>
+										<TextBlock Classes="ToolTipText" Text="{DynamicResource String/MainWindow.Session.Paused}"/>
+									</StackPanel>
+									<Separator Classes="Dialog_Separator_Small"/>
+								</StackPanel>
+								<StackPanel IsVisible="{Binding IsWaitingForDataSources}">
+									<StackPanel Orientation="Horizontal">
+										<Image Classes="ToolTipIcon" Source="{DynamicResource Image/Icon.Waiting}"/>
+										<TextBlock Classes="ToolTipText" Text="{DynamicResource String/MainWindow.Session.WaitingForDataSources}"/>
+									</StackPanel>
+									<Separator Classes="Dialog_Separator_Small"/>
+								</StackPanel>
+								<StackPanel Orientation="Horizontal">
+									<TextBlock Classes="ToolTipText" Text="{DynamicResource String/MainWindow.Session.AllLogCount}"/>
+									<TextBlock Classes="ToolTipText" Text="{Binding AllLogCount}"/>
+								</StackPanel>
+							</StackPanel>
+							<StackPanel IsVisible="{Binding IsHibernated}" Orientation="Horizontal">
+								<Image Classes="ToolTipIcon" Source="{DynamicResource Image/Leaf}"/>
+								<TextBlock Classes="ToolTipText" Text="{DynamicResource String/MainWindow.Session.Hibernated}"/>
+							</StackPanel>
+						</StackPanel>
+					</ToolTip.Tip>
+					<Panel Classes="TabItem_Icon">
+						<Image Classes="Icon" IsVisible="{Binding !IsHibernated}" Source="{Binding Icon}"/>
+						<Image Classes="Icon" IsVisible="{Binding IsHibernated}" Opacity="{DynamicResource Double/MainWindow.TabItem.Icon.Hibernated.Opacity}" Source="{Binding Icon}"/>
+					</Panel>
+					<TextBlock Name="titleTextBlock" Classes="TabItem_TextBlock" Grid.Column="1" Text="{Binding Title}"/>
+				</Grid>
+				<Button Classes="TabItem_Button" Command="{Binding $parent[Window].CloseSessionTabItem}" CommandParameter="{Binding $parent[TabItem]}" Grid.Column="1" ToolTip.Tip="{DynamicResource String/MainWindow.CloseSession}">
 					<Image Classes="Icon" Source="{StaticResource Image/Icon.Close}"/>
 				</Button>
 			</Grid>
