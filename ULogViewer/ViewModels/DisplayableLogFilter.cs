@@ -55,6 +55,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		IList<DisplayableLogProperty> filteringLogProperties = new DisplayableLogProperty[0];
 		readonly TaskFactory filteringTaskFactory;
 		readonly FixedThreadsTaskScheduler filteringTaskScheduler;
+		readonly ScheduledAction filterNextChunkAction;
 		bool includeMarkedLogs = true;
 		Logs.LogLevel level = Logs.LogLevel.Undefined;
 		readonly int maxFilteringConcurrencyLevel = Math.Min(4, Math.Max(1, Environment.ProcessorCount / 2));
@@ -99,6 +100,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.SourceLogs = sourceLogs;
 
 			// create schedule actions
+			this.filterNextChunkAction = new ScheduledAction(() =>
+			{
+				if (this.currentFilterParams != null)
+					this.FilterNextChunk(this.currentFilterParams);
+			});
 			this.startFilteringLogsAction = new ScheduledAction(this.StartFilteringLogs);
 
 			// setup task scheduler
@@ -130,6 +136,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.currentFilterParams = null;
 				Monitor.PulseAll(filteringParams.FilteringChunkLock);
 			}
+			this.filterNextChunkAction.Cancel();
 
 			// clear logs
 			this.unfilteredLogs.Clear();
@@ -452,13 +459,21 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			if (sourceIndex < 0)
 				return;
 
+			// pass filter directly for marked log
+			if (this.includeMarkedLogs && log.IsMarked)
+			{
+				if (!this.filteredLogs.Contains(log))
+					this.filteredLogs.Add(log);
+				return;
+			}
+
 			// enqueue logs to unfiltered logs
 			++this.sourceLogVersions[sourceIndex];
 			this.unfilteredLogs.Add(log);
 			this.filteredLogs.Remove(log);
 
 			// start filtering
-			this.FilterNextChunk(this.currentFilterParams);
+			this.filterNextChunkAction.Schedule();
 		}
 
 
@@ -478,6 +493,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			var needToFilter = false;
 			var sourceLogs = this.SourceLogs;
 			var sourceLogVersions = this.sourceLogVersions;
+			var includeMarkedLogs = this.includeMarkedLogs;
+			var logsFilteredDirectly = new List<DisplayableLog>();
 			foreach (var log in logs)
 			{
 				if (!this.unfilteredLogs.Contains(log))
@@ -485,6 +502,15 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					var sourceIndex = sourceLogs.IndexOf(log);
 					if (sourceIndex >= 0)
 					{
+						// pass filter directly for marked log
+						if (includeMarkedLogs && log.IsMarked)
+						{
+							if (!this.filteredLogs.Contains(log))
+								logsFilteredDirectly.Add(log);
+							continue;
+						}
+
+						// schedule filtering
 						++sourceLogVersions[sourceIndex];
 						this.unfilteredLogs.Add(log);
 						this.filteredLogs.Remove(log);
@@ -493,9 +519,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				}
 			}
 
+			// add filtered logs directly
+			if (logsFilteredDirectly.IsNotEmpty())
+				this.filteredLogs.AddAll(logsFilteredDirectly);
+
 			// start filtering
 			if (needToFilter)
 			{
+				this.filterNextChunkAction.Cancel();
 				for (var i = this.maxFilteringConcurrencyLevel; i > 0; --i)
 					this.FilterNextChunk(this.currentFilterParams);
 			}
@@ -630,6 +661,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					if (this.currentFilterParams != null)
 					{
 						this.unfilteredLogs.AddAll(e.NewItems.AsNonNull().Cast<DisplayableLog>().Reverse(), true);
+						this.filterNextChunkAction.Cancel();
 						for (var i = this.maxFilteringConcurrencyLevel; i > 0; --i)
 							this.FilterNextChunk(this.currentFilterParams);
 					}

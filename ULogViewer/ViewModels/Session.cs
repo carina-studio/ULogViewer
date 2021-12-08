@@ -2019,8 +2019,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				if (log.MarkedColor != color)
 				{
 					if (log.MarkedColor == MarkColor.None)
+					{
+						log.MarkedColor = color;
 						this.markedLogs.Add(log);
-					log.MarkedColor = color;
+						this.logFilter.InvalidateLog(log);
+					}
+					else
+						log.MarkedColor = color;
 					log.FileName?.Let(it => this.markedLogsChangedFilePaths.Add(it));
 				}
 			}
@@ -2045,6 +2050,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			if (!this.canMarkUnmarkLogs.Value)
 				return;
 			var allLogsAreMarked = true;
+			var isShowingAllLogsTemporarily = this.IsShowingAllLogsTemporarily;
 			foreach (var log in logs)
 			{
 				if (log.MarkedColor == MarkColor.None)
@@ -2056,12 +2062,15 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			if (allLogsAreMarked)
 			{
 				this.Logger.LogTrace("Unmark log(s)");
+
 				foreach (var log in logs)
 				{
 					if (log.MarkedColor != MarkColor.None)
 					{
-						this.markedLogs.Remove(log);
 						log.MarkedColor = MarkColor.None;
+						this.markedLogs.Remove(log);
+						if (isShowingAllLogsTemporarily)
+							this.logFilter.InvalidateLog(log);
 						log.FileName?.Let(it => this.markedLogsChangedFilePaths.Add(it));
 					}
 				}
@@ -2073,8 +2082,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				{
 					if(log.MarkedColor == MarkColor.None)
 					{
-						this.markedLogs.Add(log);
 						log.MarkedColor = MarkColor.Default;
+						this.markedLogs.Add(log);
+						this.logFilter.InvalidateLog(log);
 						log.FileName?.Let(it => this.markedLogsChangedFilePaths.Add(it));
 					}
 				}
@@ -3307,12 +3317,15 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.VerifyDisposed();
 			if (!this.canMarkUnmarkLogs.Value)
 				return;
+			var isShowingAllLogsTemporarily = this.IsShowingAllLogsTemporarily;
 			foreach (var log in logs)
 			{
 				if (log.MarkedColor != MarkColor.None)
 				{
-					this.markedLogs.Remove(log);
 					log.MarkedColor = MarkColor.None;
+					this.markedLogs.Remove(log);
+					if (isShowingAllLogsTemporarily)
+						this.logFilter.InvalidateLog(log);
 					log.FileName?.Let(it => this.markedLogsChangedFilePaths.Add(it));
 				}
 			}
