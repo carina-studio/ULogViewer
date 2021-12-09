@@ -75,7 +75,6 @@
 	<sys:Double x:Key="Double/MainWindow.MinWidth">500</sys:Double>
 	<sys:Double x:Key="Double/MainWindow.TabItem.Icon.Hibernated.Opacity">0.3</sys:Double>
 	<sys:Double x:Key="Double/MainWindow.TabItem.ToolTip.Icon.Size">12</sys:Double>
-	<sys:Double x:Key="Double/MainWindow.TabItem.ToolTip.Title.FontSize">14</sys:Double>
 	<Thickness x:Key="Thickness/MainWindow.TabItem.ToolTip.Icon.Margin">0,0,3,0</Thickness>
 	<Thickness x:Key="Thickness/MainWindow.TabItem.ToolTip.Padding">5</Thickness>
 

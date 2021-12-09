@@ -50,7 +50,7 @@
 									<Setter Property="VerticalAlignment" Value="Center"/>
 								</Style>
 							</StackPanel.Styles>
-							<TextBlock FontSize="{DynamicResource Double/MainWindow.TabItem.ToolTip.Title.FontSize}" FontWeight="Bold" Text="{Binding Title}"/>
+							<TextBlock FontWeight="Bold" Text="{Binding Title}"/>
 							<Separator Classes="Dialog_Separator_Small"/>
 							<StackPanel IsVisible="{Binding !IsHibernated}">
 								<StackPanel IsVisible="{Binding IsLogsReadingPaused}">
