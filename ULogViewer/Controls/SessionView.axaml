@@ -523,6 +523,9 @@
 						<Setter Property="Margin" Value="0"/>
 						<Setter Property="Padding" Value="0"/>
 					</Style>
+					<Style Selector="ListBoxItem /template/ ContentPresenter#PART_ContentPresenter">
+						<Setter Property="Transitions" Value="{x:Null}"/>
+					</Style>
 					<Style Selector="ListBoxItem:pressed /template/ ContentPresenter#PART_ContentPresenter">
 						<Setter Property="Background" Value="{DynamicResource Brush/SessionView.LogListBox.Item.Background.Pressed}"/>
 					</Style>
