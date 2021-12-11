@@ -11,7 +11,7 @@
 
   <ItemGroup>
     <PackageReference Include="CarinaStudio.AppBase.Tests" Version="0.31.0.1121" />
-    <PackageReference Include="CarinaStudio.AppSuite.Core.Tests" Version="0.27.0.1207" />
+    <PackageReference Include="CarinaStudio.AppSuite.Core.Tests" Version="0.28.0.1211" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
     <PackageReference Include="NUnit" Version="3.13.2" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.1.0" />
