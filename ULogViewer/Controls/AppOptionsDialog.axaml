@@ -101,7 +101,7 @@
 					<ComboBox.ItemTemplate>
 						<DataTemplate>
 							<Grid ColumnDefinitions="Auto,*">
-								<Grid Height="{DynamicResource Double/AppOptionsDialog.InitialLogProfile.Icon.Size}" Margin="{DynamicResource Thickness/AppOptionsDialog.InitialLogProfile.Icon.Margin}" VerticalAlignment="Center" Width="{DynamicResource Double/AppOptionsDialog.InitialLogProfile.Icon.Size}">
+								<Panel Height="{DynamicResource Double/AppOptionsDialog.InitialLogProfile.Icon.Size}" Margin="{DynamicResource Thickness/AppOptionsDialog.InitialLogProfile.Icon.Margin}" VerticalAlignment="Center" Width="{DynamicResource Double/AppOptionsDialog.InitialLogProfile.Icon.Size}">
 									<Image Classes="Icon" Source="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}}"/>
 									<Image Classes="Icon" Source="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}, ConverterParameter=Light}" IsVisible="False">
 										<ia:Interaction.Behaviors>
@@ -113,7 +113,7 @@
 											</iaCore:DataTriggerBehavior>
 										</ia:Interaction.Behaviors>
 									</Image>
-								</Grid>
+								</Panel>
 								<TextBlock Grid.Column="1" Text="{Binding Name}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
 							</Grid>
 						</DataTemplate>

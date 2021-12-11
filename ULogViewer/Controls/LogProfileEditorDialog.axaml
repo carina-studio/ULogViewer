@@ -88,18 +88,16 @@
 					<ComboBox.ItemTemplate>
 						<DataTemplate>
 							<StackPanel Orientation="Horizontal">
-								<Border Height="{DynamicResource Double/LogProfileEditorDialog.IconComboBox.Icon.Size}" Margin="{DynamicResource Thickness/LogProfileEditorDialog.IconComboBox.Icon.Margin}" VerticalAlignment="Center" Width="{DynamicResource Double/LogProfileEditorDialog.IconComboBox.Icon.Size}">
-									<Image Classes="Icon" Source="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}}">
-										<ia:Interaction.Behaviors>
-											<iaCore:DataTriggerBehavior Binding="{Binding $parent[ComboBoxItem].IsSelected}" Value="True">
-												<iaCore:ChangePropertyAction PropertyName="Source" Value="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}, ConverterParameter=Light}"/>
-											</iaCore:DataTriggerBehavior>
-											<iaCore:DataTriggerBehavior Binding="{Binding $parent[ComboBoxItem].IsSelected}" Value="False">
-												<iaCore:ChangePropertyAction PropertyName="Source" Value="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}}"/>
-											</iaCore:DataTriggerBehavior>
-										</ia:Interaction.Behaviors>
-									</Image>
-								</Border>
+								<Image Classes="Icon" Height="{DynamicResource Double/LogProfileEditorDialog.IconComboBox.Icon.Size}" Margin="{DynamicResource Thickness/LogProfileEditorDialog.IconComboBox.Icon.Margin}" Source="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}}" Width="{DynamicResource Double/LogProfileEditorDialog.IconComboBox.Icon.Size}">
+									<ia:Interaction.Behaviors>
+										<iaCore:DataTriggerBehavior Binding="{Binding $parent[ComboBoxItem].IsSelected}" Value="True">
+											<iaCore:ChangePropertyAction PropertyName="Source" Value="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}, ConverterParameter=Light}"/>
+										</iaCore:DataTriggerBehavior>
+										<iaCore:DataTriggerBehavior Binding="{Binding $parent[ComboBoxItem].IsSelected}" Value="False">
+											<iaCore:ChangePropertyAction PropertyName="Source" Value="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}}"/>
+										</iaCore:DataTriggerBehavior>
+									</ia:Interaction.Behaviors>
+								</Image>
 								<TextBlock Text="{Binding Converter={x:Static appControls:LogProfileEditorDialog.LogProfileIconNameConverter}}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
 							</StackPanel>
 						</DataTemplate>
@@ -183,14 +181,10 @@
 								<DockPanel Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 									<StackPanel DockPanel.Dock="Right" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
 										<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveLogLevelMapEntry}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
-											<Border Classes="InPlaceAction_Icon">
-												<Image Classes="Icon" Source="{DynamicResource Image/Icon.Delete}"/>
-											</Border>
+											<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Delete}"/>
 										</Button>
 										<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditLogLevelMapEntryForReading}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
-											<Border Classes="InPlaceAction_Icon">
-												<Image Classes="Icon" Source="{DynamicResource Image/Icon.Edit}"/>
-											</Border>
+											<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Edit}"/>
 										</Button>
 									</StackPanel>
 									<StackPanel Orientation="Horizontal">
@@ -218,24 +212,16 @@
 								<Border Classes="InPlaceAction_Reserved"/>
 								<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
 									<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveLogPattern}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
-										<Border Classes="InPlaceAction_Icon">
-											<Image Classes="Icon" Source="{DynamicResource Image/Icon.Delete}"/>
-										</Border>
+										<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Delete}"/>
 									</Button>
 									<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditLogPattern}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
-										<Border Classes="InPlaceAction_Icon">
-											<Image Classes="Icon" Source="{DynamicResource Image/Icon.Edit}"/>
-										</Border>
+										<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Edit}"/>
 									</Button>
 									<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].MoveLogPatternUp}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.MoveUp}">
-										<Border Classes="InPlaceAction_Icon">
-											<Image Classes="Icon" Source="{DynamicResource Image/Icon.MoveUp}"/>
-										</Border>
+										<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.MoveUp}"/>
 									</Button>
 									<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].MoveLogPatternDown}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.MoveDown}">
-										<Border Classes="InPlaceAction_Icon">
-											<Image Classes="Icon" Source="{DynamicResource Image/Icon.MoveDown}"/>
-										</Border>
+										<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.MoveDown}"/>
 									</Button>
 								</StackPanel>
 							</Grid>
@@ -277,14 +263,10 @@
 									<Border Classes="InPlaceAction_Reserved"/>
 									<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
 										<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveTimestampFormatForReading}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
-											<Border Classes="InPlaceAction_Icon">
-												<Image Classes="Icon" Source="{DynamicResource Image/Icon.Delete}"/>
-											</Border>
+											<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Delete}"/>
 										</Button>
 										<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditTimestampFormatForReading}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
-											<Border Classes="InPlaceAction_Icon">
-												<Image Classes="Icon" Source="{DynamicResource Image/Icon.Edit}"/>
-											</Border>
+											<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Edit}"/>
 										</Button>
 									</StackPanel>
 								</Grid>
@@ -320,14 +302,10 @@
 									<Border Classes="InPlaceAction_Reserved"/>
 									<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
 										<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveTimeSpanFormatForReading}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
-											<Border Classes="InPlaceAction_Icon">
-												<Image Classes="Icon" Source="{DynamicResource Image/Icon.Delete}"/>
-											</Border>
+											<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Delete}"/>
 										</Button>
 										<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditTimeSpanFormatForReading}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
-											<Border Classes="InPlaceAction_Icon">
-												<Image Classes="Icon" Source="{DynamicResource Image/Icon.Edit}"/>
-											</Border>
+											<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Edit}"/>
 										</Button>
 									</StackPanel>
 								</Grid>
@@ -360,24 +338,16 @@
 								</TextBlock>
 								<StackPanel Grid.Column="2" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
 									<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveVisibleLogProperty}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
-										<Border Classes="InPlaceAction_Icon">
-											<Image Classes="Icon" Source="{DynamicResource Image/Icon.Delete}"/>
-										</Border>
+										<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Delete}"/>
 									</Button>
 									<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditVisibleLogProperty}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
-										<Border Classes="InPlaceAction_Icon">
-											<Image Classes="Icon" Source="{DynamicResource Image/Icon.Edit}"/>
-										</Border>
+										<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Edit}"/>
 									</Button>
 									<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].MoveVisibleLogPropertyUp}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.MoveUp}">
-										<Border Classes="InPlaceAction_Icon">
-											<Image Classes="Icon" Source="{DynamicResource Image/Icon.MoveUp}"/>
-										</Border>
+										<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.MoveUp}"/>
 									</Button>
 									<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].MoveVisibleLogPropertyDown}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.MoveDown}">
-										<Border Classes="InPlaceAction_Icon">
-											<Image Classes="Icon" Source="{DynamicResource Image/Icon.MoveDown}"/>
-										</Border>
+										<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.MoveDown}"/>
 									</Button>
 								</StackPanel>
 							</Grid>
@@ -447,14 +417,10 @@
 								<DockPanel Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 									<StackPanel DockPanel.Dock="Right" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
 										<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveLogLevelMapEntry}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
-											<Border Classes="InPlaceAction_Icon">
-												<Image Classes="Icon" Source="{DynamicResource Image/Icon.Delete}"/>
-											</Border>
+											<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Delete}"/>
 										</Button>
 										<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditLogLevelMapEntryForWriting}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
-											<Border Classes="InPlaceAction_Icon">
-												<Image Classes="Icon" Source="{DynamicResource Image/Icon.Edit}"/>
-											</Border>
+											<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Edit}"/>
 										</Button>
 									</StackPanel>
 									<TextBlock Text="{Binding Value}" TextTrimming="CharacterEllipsis"/>

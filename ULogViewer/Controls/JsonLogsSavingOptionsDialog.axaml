@@ -39,14 +39,10 @@
 							</TextBlock>
 							<StackPanel Grid.Column="2" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
 								<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveLogPropertyMapEntry}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
-									<Border Classes="InPlaceAction_Icon">
-										<Image Classes="Icon" Source="{DynamicResource Image/Icon.Delete}"/>
-									</Border>
+									<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Delete}"/>
 								</Button>
 								<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditLogPropertyMapEntry}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
-									<Border Classes="InPlaceAction_Icon">
-										<Image Classes="Icon" Source="{DynamicResource Image/Icon.Edit}"/>
-									</Border>
+									<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Edit}"/>
 								</Button>
 							</StackPanel>
 						</Grid>

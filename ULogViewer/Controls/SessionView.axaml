@@ -34,17 +34,13 @@
 		<ContextMenu x:Key="logActionMenu">
 			<MenuItem Name="showLogPropertyMenuItem" Command="{Binding $parent[UserControl].ShowLogStringPropertyCommand}" Header="{DynamicResource String/SessionView.ShowLogProperty.Disabled}">
 				<MenuItem.Icon>
-					<Border Classes="MenuItem_Icon">
-						<Image Classes="Icon" Source="{DynamicResource Image/Icon.Details}"/>
-					</Border>
+					<Image Classes="MenuItem_Icon" Source="{DynamicResource Image/Icon.Details}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 			<Separator/>
 			<MenuItem Header="{DynamicResource String/SessionView.MarkLogs}">
 				<MenuItem.Icon>
-					<Border Classes="MenuItem_Icon">
-						<Image Classes="Icon" Source="{DynamicResource Image/Mark}"/>
-					</Border>
+					<Image Classes="MenuItem_Icon" Source="{DynamicResource Image/Mark}"/>
 				</MenuItem.Icon>
 				<MenuItem.Styles>
 					<Style Selector="Border.MarkIcon">
@@ -99,9 +95,7 @@
 			</MenuItem>
 			<MenuItem Command="{Binding $parent[UserControl].UnmarkSelectedLogsCommand}" Header="{DynamicResource String/SessionView.UnmarkLogs}" InputGesture="Ctrl+Alt+D0">
 				<MenuItem.Icon>
-					<Border Classes="MenuItem_Icon">
-						<Image Classes="Icon" Source="{DynamicResource Image/Unmark}"/>
-					</Border>
+					<Image Classes="Icon" Source="{DynamicResource Image/Unmark}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 			<MenuItem Command="{Binding $parent[UserControl].SelectMarkedLogsCommand}" Header="{DynamicResource String/SessionView.SelectMarkedLogs}" InputGesture="S"/>
@@ -109,16 +103,12 @@
 			<MenuItem Name="copyLogPropertyMenuItem" Command="{Binding $parent[UserControl].CopyLogPropertyCommand}" Header="{DynamicResource String/SessionView.CopyLogProperty.Disabled}"/>
 			<MenuItem Command="{Binding $parent[UserControl].CopySelectedLogsCommand}" Header="{DynamicResource String/SessionView.CopyLogs}" InputGesture="Ctrl+C">
 				<MenuItem.Icon>
-					<Border Classes="MenuItem_Icon">
-						<Image Classes="Icon" Source="{DynamicResource Image/Icon.Copy}"/>
-					</Border>
+					<Image Classes="MenuItem_Icon" Source="{DynamicResource Image/Icon.Copy}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 			<MenuItem Command="{Binding $parent[UserControl].CopySelectedLogsWithFileNamesCommand}" Header="{DynamicResource String/SessionView.CopyLogsWithFileNames}" InputGesture="Ctrl+Shift+C">
 				<MenuItem.Icon>
-					<Border Classes="MenuItem_Icon">
-						<Image Classes="Icon" Source="{DynamicResource Image/Icon.Copy}"/>
-					</Border>
+					<Image Classes="MenuItem_Icon" Source="{DynamicResource Image/Icon.Copy}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 			<Separator/>
@@ -127,9 +117,7 @@
 					<sys:Boolean>False</sys:Boolean>
 				</MenuItem.CommandParameter>
 				<MenuItem.Icon>
-					<Border Classes="MenuItem_Icon">
-						<Image Classes="Icon" Source="{DynamicResource Image/Filter}"/>
-					</Border>
+					<Image Classes="MenuItem_Icon" Source="{DynamicResource Image/Filter}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 			<MenuItem Command="{Binding $parent[UserControl].FilterLogsByProcessIdCommand}" Header="{DynamicResource String/SessionView.FilterLogsBySelectedProcessIdOnly}">
@@ -137,9 +125,7 @@
 					<sys:Boolean>True</sys:Boolean>
 				</MenuItem.CommandParameter>
 				<MenuItem.Icon>
-					<Border Classes="MenuItem_Icon">
-						<Image Classes="Icon" Source="{DynamicResource Image/Filter}"/>
-					</Border>
+					<Image Classes="MenuItem_Icon" Source="{DynamicResource Image/Filter}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 			<MenuItem Command="{Binding $parent[UserControl].FilterLogsByThreadIdCommand}" Header="{DynamicResource String/SessionView.FilterLogsBySelectedThreadId}">
@@ -147,9 +133,7 @@
 					<sys:Boolean>False</sys:Boolean>
 				</MenuItem.CommandParameter>
 				<MenuItem.Icon>
-					<Border Classes="MenuItem_Icon">
-						<Image Classes="Icon" Source="{DynamicResource Image/Filter}"/>
-					</Border>
+					<Image Classes="MenuItem_Icon" Source="{DynamicResource Image/Filter}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 			<MenuItem Command="{Binding $parent[UserControl].FilterLogsByThreadIdCommand}" Header="{DynamicResource String/SessionView.FilterLogsBySelectedThreadIdOnly}">
@@ -157,17 +141,13 @@
 					<sys:Boolean>True</sys:Boolean>
 				</MenuItem.CommandParameter>
 				<MenuItem.Icon>
-					<Border Classes="MenuItem_Icon">
-						<Image Classes="Icon" Source="{DynamicResource Image/Filter}"/>
-					</Border>
+					<Image Classes="MenuItem_Icon" Source="{DynamicResource Image/Filter}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 			<Separator/>
 			<MenuItem Command="{Binding $parent[UserControl].ShowFileInExplorerCommand}" Header="{DynamicResource String/SessionView.ShowFileInExplorer}">
 				<MenuItem.Icon>
-					<Border Classes="MenuItem_Icon">
-						<Image Classes="Icon" Source="{DynamicResource Image/Icon.FileManager}"/>
-					</Border>
+					<Image Classes="MenuItem_Icon" Source="{DynamicResource Image/Icon.FileManager}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 		</ContextMenu>
@@ -227,9 +207,7 @@
 			<Separator/>
 			<MenuItem Command="{Binding $parent[UserControl].UnmarkSelectedLogsCommand}" Header="{DynamicResource String/SessionView.UnmarkLogs}" InputGesture="Ctrl+Alt+D0">
 				<MenuItem.Icon>
-					<Border Classes="MenuItem_Icon">
-						<Image Classes="Icon" Source="{DynamicResource Image/Unmark}"/>
-					</Border>
+					<Image Classes="MenuItem_Icon" Source="{DynamicResource Image/Unmark}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 		</ContextMenu>
@@ -238,23 +216,17 @@
 		<ContextMenu x:Key="otherActionsMenu" PlacementMode="Bottom">
 			<MenuItem Command="{Binding $parent[UserControl].ShowAppOptions}" Header="{DynamicResource String/SessionView.AppOptions}">
 				<MenuItem.Icon>
-					<Border Classes="MenuItem_Icon">
-						<Image Classes="Icon" Source="{DynamicResource Image/Icon.Settings}"/>
-					</Border>
+					<Image Classes="MenuItem_Icon" Source="{DynamicResource Image/Icon.Settings}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 			<MenuItem Command="{Binding $parent[UserControl].CheckForAppUpdate}" Header="{DynamicResource String/SessionView.CheckForAppUpdate}">
 				<MenuItem.Icon>
-					<Border Classes="MenuItem_Icon">
-						<Image Classes="Icon" Source="{DynamicResource Image/Icon.Update}"/>
-					</Border>
+					<Image Classes="MenuItem_Icon" Source="{DynamicResource Image/Icon.Update}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 			<MenuItem Command="{Binding $parent[UserControl].RestartAsAdministratorCommand}" Header="{DynamicResource String/SessionView.RestartAsAdministrator}">
 				<MenuItem.Icon>
-					<Border Classes="MenuItem_Icon">
-						<Image Classes="Icon" Source="{DynamicResource Image/Icon.Administrator}"/>
-					</Border>
+					<Image Classes="MenuItem_Icon" Source="{DynamicResource Image/Icon.Administrator}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 			<Separator/>
@@ -458,22 +430,18 @@
 													<ListBox.ItemTemplate>
 														<DataTemplate DataType="{x:Type appViewModels:PredefinedLogTextFilter}">
 															<Grid ColumnDefinitions="Auto,*,Auto">
-																<Grid Height="{DynamicResource Double/SessionView.PredefinedLogTextFilterListBox.Icon.Size}" Margin="{DynamicResource Thickness/SessionView.PredefinedLogTextFilterListBox.Icon.Margin}" VerticalAlignment="Center" Width="{DynamicResource Double/SessionView.PredefinedLogTextFilterListBox.Icon.Size}">
+																<Panel Height="{DynamicResource Double/SessionView.PredefinedLogTextFilterListBox.Icon.Size}" Margin="{DynamicResource Thickness/SessionView.PredefinedLogTextFilterListBox.Icon.Margin}" VerticalAlignment="Center" Width="{DynamicResource Double/SessionView.PredefinedLogTextFilterListBox.Icon.Size}">
 																	<Image Classes="Icon" Source="{DynamicResource Image/Filter}" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}"/>
 																	<Image Classes="Icon" Source="{DynamicResource Image/Filter.Light}" IsVisible="{Binding $parent[ListBoxItem].IsSelected}"/>
-																</Grid>
+																</Panel>
 																<TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center"/>
 																<Border Classes="InPlaceAction_Reserved" Grid.Column="1"/>
 																<StackPanel Grid.Column="2" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal" VerticalAlignment="Center">
 																	<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].RemovePredefinedLogTextFilter}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
-																		<Border Classes="InPlaceAction_Icon">
-																			<Image Classes="Icon" Source="{DynamicResource Image/Icon.Delete}"/>
-																		</Border>
+																		<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Delete}"/>
 																	</Button>
 																	<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].EditPredefinedLogTextFilter}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
-																		<Border Classes="InPlaceAction_Icon">
-																			<Image Classes="Icon" Source="{DynamicResource Image/Icon.Edit}"/>
-																		</Border>
+																		<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Edit}"/>
 																	</Button>
 																</StackPanel>
 															</Grid>
@@ -599,21 +567,15 @@
 					<StackPanel ClipToBounds="True" Orientation="Horizontal">
 
 						<!-- Icon -->
-						<Border Classes="StatusBar_Icon">
-							<Image Source="{DynamicResource Image/Calendar}"/>
-						</Border>
+						<Image Classes="StatusBar_Icon" Source="{DynamicResource Image/Calendar}"/>
 
 						<!-- Starting point -->
 						<TextBlock Classes="StatusBar_TextBlock" Foreground="{DynamicResource TextControlForeground}" Text="{Binding LogsDurationStartingString}" ToolTip.Placement="Right" ToolTip.Tip="{DynamicResource String/SessionView.LogsDurationStartingPoint}"/>
 
 						<!-- Duration -->
-						<Border Classes="StatusBar_Icon" Margin="{DynamicResource Thickness/SessionView.LogsTimeInfoPanel.Arrow.Margin}">
-							<Image Source="{DynamicResource Image/Icon.Forward}"/>
-						</Border>
+						<Image Classes="StatusBar_Icon" Margin="{DynamicResource Thickness/SessionView.LogsTimeInfoPanel.Arrow.Margin}" Source="{DynamicResource Image/Icon.Forward}"/>
 						<TextBlock Classes="StatusBar_TextBlock" Foreground="{DynamicResource TextControlForeground}" Text="{Binding LogsDuration, Converter={x:Static asConverters:TimeSpanConverter.Default}}" ToolTip.Placement="Left" ToolTip.Tip="{DynamicResource String/SessionView.LogsDuration}"/>
-						<Border Classes="StatusBar_Icon" Margin="{DynamicResource Thickness/SessionView.LogsTimeInfoPanel.Arrow.Margin}">
-							<Image Source="{DynamicResource Image/Icon.Forward}"/>
-						</Border>
+						<Image Classes="StatusBar_Icon" Margin="{DynamicResource Thickness/SessionView.LogsTimeInfoPanel.Arrow.Margin}" Source="{DynamicResource Image/Icon.Forward}"/>
 
 						<!-- Ending point -->
 						<TextBlock Classes="StatusBar_TextBlock" Foreground="{DynamicResource TextControlForeground}" Text="{Binding LogsDurationEndingString}" ToolTip.Placement="Left" ToolTip.Tip="{DynamicResource String/SessionView.LogsDurationEndingPoint}"/>
@@ -660,13 +622,11 @@
 					<!-- Filtering progress -->
 					<StackPanel Grid.Column="0" IsVisible="{Binding IsFilteringLogs}" Orientation="Horizontal">
 						<Separator Classes="StatusBar_Separator"/>
-						<Border Classes="StatusBar_Icon">
-							<Image Classes="Icon">
-								<DrawingImage>
-									<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Filter}"/>
-								</DrawingImage>
-							</Image>
-						</Border>
+						<Image Classes="StatusBar_Icon">
+							<DrawingImage>
+								<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Filter}"/>
+							</DrawingImage>
+						</Image>
 						<TextBlock Classes="StatusBar_TextBlock" Text="{DynamicResource String/SessionView.LogsFilteringProgress}"/>
 						<Panel VerticalAlignment="Center">
 							<TextBlock Classes="StatusBar_TextBlock" Text="00.0%" Opacity="0"/>
@@ -677,39 +637,33 @@
 					<!-- Saving logs -->
 					<StackPanel Grid.Column="1" IsVisible="{Binding IsSavingLogs}" Orientation="Horizontal">
 						<Separator Classes="StatusBar_Separator"/>
-						<Border Classes="StatusBar_Icon">
-							<Image Classes="Icon">
-								<DrawingImage>
-									<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Save}"/>
-								</DrawingImage>
-							</Image>
-						</Border>
+						<Image Classes="StatusBar_Icon">
+							<DrawingImage>
+								<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Save}"/>
+							</DrawingImage>
+						</Image>
 						<TextBlock Classes="StatusBar_TextBlock" Text="{DynamicResource String/SessionView.SavingLogs}"/>
 					</StackPanel>
 
 					<!-- Waiting for data sources -->
 					<StackPanel Grid.Column="2" IsVisible="{Binding IsWaitingForDataSources}" Orientation="Horizontal">
 						<Separator Classes="StatusBar_Separator"/>
-						<Border Classes="StatusBar_Icon">
-							<Image Classes="Icon">
-								<DrawingImage>
-									<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Waiting}"/>
-								</DrawingImage>
-							</Image>
-						</Border>
+						<Image Classes="StatusBar_Icon">
+							<DrawingImage>
+								<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Waiting}"/>
+							</DrawingImage>
+						</Image>
 						<TextBlock Classes="StatusBar_TextBlock" Text="{DynamicResource String/SessionView.WaitingForDataSources}"/>
 					</StackPanel>
 
 					<!-- URI -->
 					<StackPanel Grid.Column="3" IsVisible="{Binding HasUri}" Orientation="Horizontal">
 						<Separator Classes="StatusBar_Separator"/>
-						<Border Classes="StatusBar_Icon">
-							<Image Classes="Icon">
-								<DrawingImage>
-									<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/LogProfile.Network}"/>
-								</DrawingImage>
-							</Image>
-						</Border>
+						<Image Classes="StatusBar_Icon">
+							<DrawingImage>
+								<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/LogProfile.Network}"/>
+							</DrawingImage>
+						</Image>
 						<TextBlock Classes="StatusBar_TextBlock" ToolTip.Placement="Left" ToolTip.Tip="{Binding Uri}">
 							<TextBlock.Text>
 								<MultiBinding StringFormat="{}{0}://{1}:{2}">
@@ -724,13 +678,11 @@
 					<!-- IP endpoint -->
 					<StackPanel Grid.Column="3" IsVisible="{Binding HasIPEndPoint}" Orientation="Horizontal">
 						<Separator Classes="StatusBar_Separator"/>
-						<Border Classes="StatusBar_Icon">
-							<Image Classes="Icon">
-								<DrawingImage>
-									<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/LogProfile.Network}"/>
-								</DrawingImage>
-							</Image>
-						</Border>
+						<Image Classes="StatusBar_Icon">
+							<DrawingImage>
+								<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/LogProfile.Network}"/>
+							</DrawingImage>
+						</Image>
 						<TextBlock Classes="StatusBar_TextBlock" Text="{Binding IPEndPoint}"/>
 					</StackPanel>
 
@@ -739,21 +691,17 @@
 						<Separator Classes="StatusBar_Separator"/>
 						<ToggleButton Name="workingDirectoryActionsButton" Classes="StatusBar_ToggleButton" Command="{Binding $parent[UserControl].ShowWorkingDirectoryActions}" ToolTip.Placement="Left" ToolTip.Tip="{Binding WorkingDirectoryPath}">
 							<StackPanel Orientation="Horizontal">
-								<Border Classes="StatusBar_Icon">
-									<Image Classes="Icon">
-										<DrawingImage>
-											<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Folder}"/>
-										</DrawingImage>
-									</Image>
-								</Border>
+								<Image Classes="StatusBar_Icon">
+									<DrawingImage>
+										<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Folder}"/>
+									</DrawingImage>
+								</Image>
 								<TextBlock Classes="StatusBar_TextBlock" Text="{Binding WorkingDirectoryName}"/>
-								<Border Classes="StatusBar_DropDownIcon">
-									<Image Classes="Icon">
-										<DrawingImage>
-											<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.MoveUp}"/>
-										</DrawingImage>
-									</Image>
-								</Border>
+								<Image Classes="StatusBar_DropDownIcon">
+									<DrawingImage>
+										<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.MoveUp}"/>
+									</DrawingImage>
+								</Image>
 							</StackPanel>
 						</ToggleButton>
 					</StackPanel>
@@ -761,23 +709,19 @@
 					<!-- Error message -->
 					<StackPanel Grid.Column="5" IsVisible="{Binding HasAllDataSourceErrors}" Orientation="Horizontal">
 						<Separator Classes="StatusBar_Separator"/>
-						<Border Classes="StatusBar_Icon">
-							<Image Classes="Icon">
-								<DrawingImage>
-									<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Error}"/>
-								</DrawingImage>
-							</Image>
-						</Border>
+						<Image Classes="StatusBar_Icon">
+							<DrawingImage>
+								<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Error}"/>
+							</DrawingImage>
+						</Image>
 						<TextBlock Classes="StatusBar_TextBlock" Text="{DynamicResource String/SessionView.HasAllDataSourceErrors}"/>
 					</StackPanel>
 					<StackPanel Grid.Column="5" IsVisible="{Binding HasPartialDataSourceErrors}" Orientation="Horizontal">
-						<Border Classes="StatusBar_Icon">
-							<Image Classes="Icon">
-								<DrawingImage>
-									<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Warning}"/>
-								</DrawingImage>
-							</Image>
-						</Border>
+						<Image Classes="StatusBar_Icon">
+							<DrawingImage>
+								<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Warning}"/>
+							</DrawingImage>
+						</Image>
 						<TextBlock Classes="StatusBar_TextBlock" Text="{DynamicResource String/SessionView.HasPartialDataSourceErrors}"/>
 					</StackPanel>
 
@@ -785,37 +729,31 @@
 					<StackPanel Grid.Column="6" IsVisible="{Binding $parent[UserControl].IsProcessInfoVisible}" Orientation="Horizontal">
 						<Separator Classes="StatusBar_Separator"/>
 						<StackPanel IsVisible="{Binding $parent[UserControl].Application.IsDebugMode, Mode=OneTime}" Orientation="Horizontal">
-							<Border Classes="StatusBar_Icon" ToolTip.Tip="{DynamicResource String/SessionView.CpuUsage}">
-								<Image Classes="Icon">
-									<DrawingImage>
-										<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Speed}"/>
-									</DrawingImage>
-								</Image>
-							</Border>
+							<Image Classes="StatusBar_Icon" ToolTip.Tip="{DynamicResource String/SessionView.CpuUsage}">
+								<DrawingImage>
+									<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Speed}"/>
+								</DrawingImage>
+							</Image>
 							<Panel VerticalAlignment="Center">
 								<TextBlock Classes="StatusBar_TextBlock" Text="000 ms   " Opacity="0" VerticalAlignment="Center"/>
 								<TextBlock Classes="StatusBar_TextBlock" Background="{x:Static Brushes.Transparent}" HorizontalAlignment="Left" VerticalAlignment="Center" Text="{Binding $parent[UserControl].Application.ProcessInfo.UIResponseDuration, Converter={x:Static asConverters:TimeSpanConverter.Default}}" ToolTip.Placement="Left" ToolTip.Tip="{DynamicResource String/SessionView.UIResponseDuration}"/>
 							</Panel>
 						</StackPanel>
-						<Border Classes="StatusBar_Icon" ToolTip.Tip="{DynamicResource String/SessionView.CpuUsage}">
-							<Image Classes="Icon">
-								<DrawingImage>
-									<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Cpu}"/>
-								</DrawingImage>
-							</Image>
-						</Border>
+						<Image Classes="StatusBar_Icon" ToolTip.Tip="{DynamicResource String/SessionView.CpuUsage}">
+							<DrawingImage>
+								<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Cpu}"/>
+							</DrawingImage>
+						</Image>
 						<Panel VerticalAlignment="Center">
 							<TextBlock Classes="StatusBar_TextBlock" Text="00.0 % " Opacity="0"/>
 							<TextBlock Classes="StatusBar_TextBlock" Background="{x:Static Brushes.Transparent}" HorizontalAlignment="Left" Text="{Binding $parent[UserControl].Application.ProcessInfo.CpuUsagePercentage, StringFormat={}{0:F1} %}" ToolTip.Placement="Left" ToolTip.Tip="{DynamicResource String/SessionView.CpuUsage}"/>
 						</Panel>
 						<StackPanel IsVisible="{Binding $parent[UserControl].IsNotMacOS, Mode=OneTime}" Orientation="Horizontal">
-							<Border Classes="StatusBar_Icon" ToolTip.Tip="{DynamicResource String/SessionView.MemoryUsage}">
-								<Image Classes="Icon">
-									<DrawingImage>
-										<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Memory}"/>
-									</DrawingImage>
-								</Image>
-							</Border>
+							<Image Classes="StatusBar_Icon" ToolTip.Tip="{DynamicResource String/SessionView.MemoryUsage}">
+								<DrawingImage>
+									<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Memory}"/>
+								</DrawingImage>
+							</Image>
 							<TextBlock Classes="StatusBar_TextBlock" Background="{x:Static Brushes.Transparent}" Text="{Binding $parent[UserControl].Application.ProcessInfo.PrivateMemoryUsage, Converter={x:Static asConverters:FileSizeConverter.Default}}" ToolTip.Placement="Left" ToolTip.Tip="{DynamicResource String/SessionView.MemoryUsage}"/>
 						</StackPanel>
 					</StackPanel>

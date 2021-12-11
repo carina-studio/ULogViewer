@@ -25,10 +25,10 @@
 							<Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto,Auto">
 
 								<!-- Icon -->
-								<Grid Grid.RowSpan="3" Height="{DynamicResource Double/LogProfileSelectionDialog.LogProfile.Icon.Size}" Margin="{DynamicResource Thickness/LogProfileSelectionDialog.LogProfile.Icon.Margin}" VerticalAlignment="Top" Width="{DynamicResource Double/LogProfileSelectionDialog.LogProfile.Icon.Size}">
+								<Panel Grid.RowSpan="3" Height="{DynamicResource Double/LogProfileSelectionDialog.LogProfile.Icon.Size}" Margin="{DynamicResource Thickness/LogProfileSelectionDialog.LogProfile.Icon.Margin}" VerticalAlignment="Top" Width="{DynamicResource Double/LogProfileSelectionDialog.LogProfile.Icon.Size}">
 									<Image Classes="Icon" Source="{Binding Icon, Converter={x:Static appConverters:LogProfileIconConverter.Default}}" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}"/>
 									<Image Classes="Icon" Source="{Binding Icon, Converter={x:Static appConverters:LogProfileIconConverter.Default}, ConverterParameter=Light}}" IsVisible="{Binding $parent[ListBoxItem].IsSelected}"/>
-								</Grid>
+								</Panel>
 								
 								<!-- Name -->
 								<TextBlock Grid.Column="1" FontSize="{DynamicResource Double/LogProfileSelectionDialog.LogProfile.Name.FontSize}" Margin="{DynamicResource Thickness/LogProfileSelectionDialog.LogProfile.Name.Margin}" Text="{Binding Name}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
@@ -59,29 +59,19 @@
 								<!-- Actions -->
 								<StackPanel Grid.Column="2" Grid.RowSpan="3" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal" VerticalAlignment="Top">
 									<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveLogProfile}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" IsVisible="{Binding !IsBuiltIn}" ToolTip.Tip="{DynamicResource String/LogProfileSelectionDialog.RemoveLogProfile}">
-										<Border Classes="InPlaceAction_Icon">
-											<Image Classes="Icon" Source="{DynamicResource Image/Icon.Delete}"/>
-										</Border>
+										<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Delete}"/>
 									</Button>
 									<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].ExportLogProfile}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/LogProfileSelectionDialog.ExportLogProfile}">
-										<Border Classes="InPlaceAction_Icon">
-											<Image Classes="Icon" Source="{DynamicResource Image/Icon.Export}"/>
-										</Border>
+										<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Export}"/>
 									</Button>
 									<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].CopyLogProfile}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Copy}">
-										<Border Classes="InPlaceAction_Icon">
-											<Image Classes="Icon" Source="{DynamicResource Image/Icon.Copy}"/>
-										</Border>
+										<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Copy}"/>
 									</Button>
 									<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditLogProfile}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" IsVisible="{Binding !IsBuiltIn}" ToolTip.Tip="{DynamicResource String/LogProfileSelectionDialog.EditLogProfile}">
-										<Border Classes="InPlaceAction_Icon">
-											<Image Classes="Icon" Source="{DynamicResource Image/Icon.Edit}"/>
-										</Border>
+										<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Edit}"/>
 									</Button>
 									<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].PinUnpinLogProfile}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/LogProfileSelectionDialog.PinUnpinLogProfile}">
-										<Border Classes="InPlaceAction_Icon">
-											<Image Classes="Icon" Source="{DynamicResource Image/Icon.Pin}"/>
-										</Border>
+										<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Pin}"/>
 									</Button>
 								</StackPanel>
 

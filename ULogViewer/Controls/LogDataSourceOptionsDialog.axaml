@@ -24,24 +24,16 @@
 							<Border Classes="InPlaceAction_Reserved"/>
 							<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
 								<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveSetupTeardownCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
-									<Border Classes="InPlaceAction_Icon">
-										<Image Classes="Icon" Source="{DynamicResource Image/Icon.Delete}"/>
-									</Border>
+									<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Delete}"/>
 								</Button>
 								<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditSetupTeardownCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
-									<Border Classes="InPlaceAction_Icon">
-										<Image Classes="Icon" Source="{DynamicResource Image/Icon.Edit}"/>
-									</Border>
+									<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Edit}"/>
 								</Button>
 								<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].MoveSetupTeardownCommandUp}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.MoveUp}">
-									<Border Classes="InPlaceAction_Icon">
-										<Image Classes="Icon" Source="{DynamicResource Image/Icon.MoveUp}"/>
-									</Border>
+									<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.MoveUp}"/>
 								</Button>
 								<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].MoveSetupTeardownCommandDown}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.MoveDown}">
-									<Border Classes="InPlaceAction_Icon">
-										<Image Classes="Icon" Source="{DynamicResource Image/Icon.MoveDown}"/>
-									</Border>
+									<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.MoveDown}"/>
 								</Button>
 							</StackPanel>
 						</Grid>
