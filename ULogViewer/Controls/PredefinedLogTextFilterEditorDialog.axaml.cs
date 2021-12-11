@@ -81,8 +81,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				this.Bind(TitleProperty, this.GetResourceObservable("String/PredefinedLogTextFilterEditorDialog.Title.Edit"));
 				this.nameTextBox.Text = filter.Name;
-				this.regexTextBox.Regex = this.Regex ?? filter.Regex;
-				this.ignoreCaseSwitch.IsChecked = ((this.regexTextBox.Regex?.Options ?? RegexOptions.None) & RegexOptions.IgnoreCase) != 0;
+				this.regexTextBox.Regex = filter.Regex;
+				this.ignoreCaseSwitch.IsChecked = (filter.Regex.Options & RegexOptions.IgnoreCase) != 0;
 			}
 			this.SynchronizationContext.Post(_ => this.nameTextBox.Focus(), null); // [Workaround] delay to prevent focus got by popup
 		}
