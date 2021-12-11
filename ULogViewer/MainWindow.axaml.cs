@@ -38,6 +38,7 @@ namespace CarinaStudio.ULogViewer
 		Session? attachedActiveSession;
 		readonly ScheduledAction focusOnTabItemContentAction;
 		readonly ScheduledAction restartingMainWindowsAction;
+		readonly ScheduledAction selectAndSetLogProfileAction;
 		readonly DataTemplate sessionTabItemHeaderTemplate;
 		readonly ScheduledAction updateSysTaskBarAction;
 		readonly TabControl tabControl;
@@ -82,6 +83,7 @@ namespace CarinaStudio.ULogViewer
 				this.Logger.LogWarning("Restart main windows");
 				this.Application.RestartMainWindows();
 			});
+			this.selectAndSetLogProfileAction = new ScheduledAction(this.SelectAndSetLogProfile);
 			this.updateSysTaskBarAction = new ScheduledAction(() =>
 			{
 				// check state
@@ -469,7 +471,7 @@ namespace CarinaStudio.ULogViewer
         protected override void OnInitialDialogsClosed()
         {
             base.OnInitialDialogsClosed();
-			this.SelectAndSetLogProfile();
+			this.selectAndSetLogProfileAction.Schedule();
         }
 
 
@@ -561,7 +563,7 @@ namespace CarinaStudio.ULogViewer
 			if (index == this.tabItems.Count - 1)
 			{
 				workspace.ActiveSession = workspace.CreateSession();
-				this.SelectAndSetLogProfile();
+				this.selectAndSetLogProfileAction.Reschedule(300);
 			}
 			else
 				workspace.ActiveSession = (Session)((TabItem)this.tabItems[index].AsNonNull()).DataContext.AsNonNull();
