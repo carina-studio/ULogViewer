@@ -61,8 +61,9 @@
 	<Thickness x:Key="Thickness/LogProfileSelectionDialog.LogProfile.Icon.Margin">0,5,15,0</Thickness>
 	<Thickness x:Key="Thickness/LogProfileSelectionDialog.LogProfile.Label.Margin">0,2,5,0</Thickness>
 	<Thickness x:Key="Thickness/LogProfileSelectionDialog.LogProfile.Label.Padding">3</Thickness>
+	<Thickness x:Key="Thickness/LogProfileSelectionDialog.LogProfile.Margin">5,1,5,1</Thickness>
 	<Thickness x:Key="Thickness/LogProfileSelectionDialog.LogProfile.Name.Margin">0,0,5,5</Thickness>
-	<Thickness x:Key="Thickness/LogProfileSelectionDialog.LogProfile.Padding">20,13,20,13</Thickness>
+	<Thickness x:Key="Thickness/LogProfileSelectionDialog.LogProfile.Padding">15,13,15,13</Thickness>
 
 	<!-- LogStringPropertyDialog -->
 	<sys:Double x:Key="Double/LogStringPropertyDialog.Height">500</sys:Double>

@@ -140,6 +140,7 @@
 						<ListBox.Styles>
 							<Style Selector="ListBoxItem">
 								<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+								<Setter Property="Margin" Value="{DynamicResource Thickness/LogProfileSelectionDialog.LogProfile.Margin}"/>
 								<Setter Property="Padding" Value="0"/>
 							</Style>
 						</ListBox.Styles>
@@ -155,6 +156,7 @@
 						<ListBox.Styles>
 							<Style Selector="ListBoxItem">
 								<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+								<Setter Property="Margin" Value="{DynamicResource Thickness/LogProfileSelectionDialog.LogProfile.Margin}"/>
 								<Setter Property="Padding" Value="0"/>
 							</Style>
 						</ListBox.Styles>

@@ -549,8 +549,10 @@
 			<ListBox Name="logListBox" AutoScrollToSelectedItem="False" Background="{DynamicResource Brush/WorkingArea.Background}" BorderThickness="0" ContextMenu="{DynamicResource logActionMenu}" CornerRadius="0" DoubleTapped="OnLogListBoxDoubleTapped" Grid.Row="1" HorizontalAlignment="Stretch" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" Items="{Binding Logs}" Padding="{DynamicResource Thickness/SessionView.LogListBox.Padding}" ScrollViewer.HorizontalScrollBarVisibility="Visible" SelectionChanged="OnLogListBoxSelectionChanged" SelectionMode="Multiple" VirtualizationMode="Simple">
 				<ListBox.Styles>
 					<Style Selector="ListBoxItem">
+						<Setter Property="CornerRadius" Value="0"/>
 						<Setter Property="HorizontalAlignment" Value="Stretch"/>
 						<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+						<Setter Property="Margin" Value="0"/>
 						<Setter Property="Padding" Value="0"/>
 					</Style>
 					<Style Selector="ListBoxItem:pressed /template/ ContentPresenter#PART_ContentPresenter">
@@ -885,8 +887,10 @@
 					<ListBox Name="markedLogListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" Focusable="False" IsVisible="{Binding HasMarkedLogs}" Items="{Binding MarkedLogs}" SelectionChanged="OnMarkedLogListBoxSelectionChanged" SelectionMode="Single">
 						<ListBox.Styles>
 							<Style Selector="ListBoxItem">
+								<Setter Property="CornerRadius" Value="0"/>
 								<Setter Property="HorizontalAlignment" Value="Stretch"/>
 								<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+								<Setter Property="Margin" Value="0"/>
 								<Setter Property="Padding" Value="0"/>
 							</Style>
 							<Style Selector="ListBoxItem:pressed /template/ ContentPresenter#PART_ContentPresenter">
