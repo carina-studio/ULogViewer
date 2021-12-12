@@ -2,6 +2,7 @@
 using Avalonia.Media;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
+using CarinaStudio.Data.Converters;
 using CarinaStudio.IO;
 using CarinaStudio.Threading;
 using CarinaStudio.Threading.Tasks;
@@ -314,6 +315,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		// Static fields.
+		static readonly LinkedList<Session> activationHistoryList = new LinkedList<Session>();
 		static readonly TaskFactory defaultLogsReadingTaskFactory = new TaskFactory(TaskScheduler.Default);
 		static readonly List<DisplayableLog> displayableLogsToDispose = new List<DisplayableLog>();
 		static readonly ScheduledAction disposeDisplayableLogsAction = new ScheduledAction(App.Current, () =>
@@ -342,7 +344,45 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				staticLogger?.LogTrace($"Disposed {DisplayableLogDisposingChunkSize} displayable logs, {displayableLogsToDispose.Count} remains");
 			}
 		});
+		static readonly ScheduledAction hibernateSessionsAction = new ScheduledAction(() =>
+		{
+			// setup threshold
+			if (memoryThresholdToStartHibernation <= 0)
+			{
+				memoryThresholdToStartHibernation = App.Current.HardwareInfo.TotalPhysicalMemory.GetValueOrDefault() >> 2;
+				if (memoryThresholdToStartHibernation <= 0)
+				{
+					staticLogger?.LogWarning("Unable to get total physical memory to setup threshold for hibernation");
+					return;
+				}
+			}
+
+			// check logs memory usage
+			var logsMemoryUsage = totalLogsMemoryUsage;
+			staticLogger.LogTrace($"Total logs memory usage: {AppSuite.Converters.FileSizeConverter.Default.Convert<string>(logsMemoryUsage)}, threshold: {AppSuite.Converters.FileSizeConverter.Default.Convert<string>(memoryThresholdToStartHibernation)}");
+			if (logsMemoryUsage <= memoryThresholdToStartHibernation)
+				return;
+
+			// hibernate sessions
+			var releasedMemory = 0L;
+			var hibernatedSessionCount = 0;
+			var node = activationHistoryList.Last;
+			while (node != null && logsMemoryUsage > memoryThresholdToStartHibernation)
+			{
+				var session = node.Value;
+				var sessionLogsMemoryUsage = session.LogsMemoryUsage;
+				if (session.Hibernate())
+				{
+					releasedMemory += sessionLogsMemoryUsage;
+					logsMemoryUsage -= sessionLogsMemoryUsage;
+					++hibernatedSessionCount;
+				}
+				node = node.Previous;
+			}
+			staticLogger?.LogWarning($"Hibernate {hibernatedSessionCount} session(s) to release {AppSuite.Converters.FileSizeConverter.Default.Convert<string>(releasedMemory)} memory");
+		});
 		static readonly TaskFactory ioTaskFactory = new TaskFactory(new FixedThreadsTaskScheduler(1));
+		static long memoryThresholdToStartHibernation;
 		static ILogger? staticLogger;
 		static long totalLogsMemoryUsage;
 
@@ -379,6 +419,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		// Fields.
+		readonly LinkedListNode<Session> activationHistoryListNode;
 		readonly List<IDisposable> activationTokens = new List<IDisposable>();
 		readonly HashSet<string> addedLogFilePaths = new HashSet<string>(PathEqualityComparer.Default);
 		readonly SortedObservableList<DisplayableLog> allLogs;
@@ -427,6 +468,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// create static logger
 			if (staticLogger == null)
 				staticLogger = workspace.Application.LoggerFactory.CreateLogger(nameof(Session));
+
+			// create node for activation history
+			this.activationHistoryListNode = new LinkedListNode<Session>(this);
 
 			// create commands
 			this.AddLogFileCommand = new Command<string?>(this.AddLogFile, this.GetValueAsObservable(IsLogFileNeededProperty));
@@ -541,9 +585,20 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			});
 			this.checkLogsMemoryUsageAction = new ScheduledAction(() =>
 			{
+				// check state
 				if (this.IsDisposed)
 					return;
+
+				// report memory usage
+				var prevLogsMemoryUsage = this.LogsMemoryUsage;
 				this.SetValue(LogsMemoryUsageProperty, this.displayableLogGroup?.MemorySize ?? 0L);
+				totalLogsMemoryUsage += (this.LogsMemoryUsage - prevLogsMemoryUsage);
+				this.SetValue(TotalLogsMemoryUsageProperty, totalLogsMemoryUsage);
+
+				// hibernate sessions if needed
+				hibernateSessionsAction.Schedule();
+
+				// schedule next checking
 				this.checkLogsMemoryUsageAction?.Schedule(LogsMemoryUsageCheckInterval);
 			});
 			this.reportLogsTimeInfoAction = new ScheduledAction(() =>
@@ -765,6 +820,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.SetValue(IconProperty, icon);
 				this.SetValue(TitleProperty, title);
 			});
+			this.checkLogsMemoryUsageAction.Schedule();
 			this.updateTitleAndIconAction.Execute();
 		}
 
@@ -778,6 +834,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.VerifyAccess();
 			return new ActivationToken(this).Also(it =>
 			{
+				// update activation list
+				if (this.activationHistoryListNode.List != null)
+					activationHistoryList.Remove(this.activationHistoryListNode);
+				activationHistoryList.AddFirst(this.activationHistoryListNode);
+
 				// update state
 				this.activationTokens.Add(it);
 				if (this.activationTokens.Count > 1)
@@ -791,6 +852,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 				// check logs memory usage
 				this.checkLogsMemoryUsageAction.ExecuteIfScheduled();
+				hibernateSessionsAction.Schedule();
 
 				// restore from hibernation
 				if (this.IsHibernated)
@@ -1483,6 +1545,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// dispose task factories
 			(this.fileLogsReadingTaskFactory?.Scheduler as IDisposable)?.Dispose();
+
+			// remove from activation history
+			if (this.activationHistoryListNode.List != null)
+				activationHistoryList.Remove(this.activationHistoryListNode);
 
 			// call base
 			base.Dispose(disposing);
@@ -2506,11 +2572,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			}
 			else if (property == LogsDurationProperty)
 				this.SetValue(HasLogsDurationProperty, newValue != null);
-			else if (property == LogsMemoryUsageProperty)
-            {
-				totalLogsMemoryUsage += ((long)newValue.AsNonNull() - (long)oldValue.AsNonNull());
-				this.SetValue(TotalLogsMemoryUsageProperty, totalLogsMemoryUsage);
-            }
 			else if (property == LogProfileProperty)
 				this.SetValue(HasLogProfileProperty, newValue != null);
 			else if (property == LogsProperty)
@@ -2757,8 +2818,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// reset log profile
 			this.ResetLogProfile();
 
+			// restore hibernation state
+			if (jsonState.TryGetProperty(nameof(IsHibernated), out var jsonValue) && jsonValue.ValueKind == JsonValueKind.True)
+				this.SetValue(IsHibernatedProperty, true);
+
 			// set log profile
-			if (!jsonState.TryGetProperty(nameof(LogProfile), out var jsonValue) || jsonValue.ValueKind != JsonValueKind.String)
+			if (!jsonState.TryGetProperty(nameof(LogProfile), out jsonValue) || jsonValue.ValueKind != JsonValueKind.String)
 			{
 				this.Logger.LogTrace("No state to restore");
 				return;
@@ -2773,7 +2838,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// create log readers
 			if (jsonState.TryGetProperty("LogReaders", out jsonValue) && jsonValue.ValueKind == JsonValueKind.Array)
 			{
-				var dataSourceProvider = profile.DataSourceProvider;
+				// restore data source options
+				this.savedDataSourceOptions.Clear();
 				foreach (var jsonLogReader in jsonValue.EnumerateArray())
 				{
 					// get data source options
@@ -2783,6 +2849,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					try
 					{
 						options = LogDataSourceOptions.Load(jsonValue);
+						this.savedDataSourceOptions.Add(options);
 					}
 					catch (Exception ex)
 					{
@@ -2791,24 +2858,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					}
 
 					// check file paths
-					if (options.IsOptionSet(nameof(LogDataSourceOptions.FileName))
-						&& !this.addedLogFilePaths.Add(options.FileName.AsNonNull()))
-					{
-						continue;
-					}
-
-					// create data source
-					var dataSource = this.CreateLogDataSourceOrNull(dataSourceProvider, options);
-					if (dataSource != null)
-						this.CreateLogReader(dataSource);
-					else
-					{
-						this.Logger.LogError("Unable to create data source");
-						this.hasLogDataSourceCreationFailure = true;
-						this.checkDataSourceErrorsAction.Schedule();
-					}
+					if (options.IsOptionSet(nameof(LogDataSourceOptions.FileName)))
+						this.addedLogFilePaths.Add(options.FileName.AsNonNull());
 				}
-				this.Logger.LogTrace($"{this.logReaders.Count} log reader(s) restored");
+				this.Logger.LogTrace($"{this.savedDataSourceOptions.Count} log reader(s) can be restored");
+
+				// restore log readers
+				if (!this.IsHibernated)
+					this.RestoreLogReaders();
+				else
+					this.Logger.LogWarning("No need to restore log reader(s) because session is hibernated");
 			}
 			else
 				this.Logger.LogTrace("No log readers to restore");
@@ -3165,7 +3224,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// prepare displayable log group
 			this.displayableLogGroup = new DisplayableLogGroup(profile);
-			this.checkLogsMemoryUsageAction.Schedule();
 
 			// setup log comparer
 			this.UpdateDisplayableLogComparison();
@@ -3257,17 +3315,23 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			jsonWriter.WriteStartObject();
 			this.LogProfile?.Let(profile =>
 			{
+				// save hibernation state
+				if (this.IsHibernated)
+					jsonWriter.WriteBoolean(nameof(IsHibernated), true);
+
 				// save log profile
 				jsonWriter.WriteString(nameof(LogProfile), profile.Id);
 
 				// save log readers
+				if (this.savedDataSourceOptions.IsEmpty())
+					this.SaveLogReaders();
 				jsonWriter.WritePropertyName("LogReaders");
 				jsonWriter.WriteStartArray();
-				foreach (var logReader in this.logReaders)
+				foreach (var dataSourceOptions in this.savedDataSourceOptions)
 				{
 					jsonWriter.WriteStartObject();
 					jsonWriter.WritePropertyName("Options");
-					logReader.DataSource.CreationOptions.Save(jsonWriter);
+					dataSourceOptions.Save(jsonWriter);
 					jsonWriter.WriteEndObject();
 				}
 				jsonWriter.WriteEndArray();

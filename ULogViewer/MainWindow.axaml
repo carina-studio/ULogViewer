@@ -78,10 +78,7 @@
 							</StackPanel>
 						</StackPanel>
 					</ToolTip.Tip>
-					<Panel Classes="TabItem_Icon">
-						<Image Classes="Icon" IsVisible="{Binding !IsHibernated}" Source="{Binding Icon}"/>
-						<Image Classes="Icon" IsVisible="{Binding IsHibernated}" Opacity="{DynamicResource Double/MainWindow.TabItem.Icon.Hibernated.Opacity}" Source="{Binding Icon}"/>
-					</Panel>
+					<Image Classes="TabItem_Icon" IsEnabled="{Binding !IsHibernated}" Source="{Binding Icon}"/>
 					<TextBlock Name="titleTextBlock" Classes="TabItem_TextBlock" Grid.Column="1" Text="{Binding Title}"/>
 				</Grid>
 				<Button Classes="TabItem_Button" Command="{Binding $parent[Window].CloseSessionTabItem}" CommandParameter="{Binding $parent[TabItem]}" Grid.Column="1" ToolTip.Tip="{DynamicResource String/MainWindow.CloseSession}">

@@ -2619,7 +2619,9 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Called when test button clicked.
 		void OnTestButtonClick(object? sender, RoutedEventArgs e)
-		{ }
+		{
+			this.Application.Restart(AppSuite.AppSuiteApplication.RestoreMainWindowsArgument);
+		}
 
 
 		// Called when pointer released on tool bar.
