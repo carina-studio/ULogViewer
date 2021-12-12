@@ -440,6 +440,7 @@
 	<sys:String x:Key="String/SessionView.LogsDurationEndingPoint">Latest timestamp of log/Maximum time span of log</sys:String>
 	<sys:String x:Key="String/SessionView.LogsDurationStartingPoint">Earliest timestamp of log/Minimum time span of log</sys:String>
 	<sys:String x:Key="String/SessionView.LogsFilteringProgress">Filtering logs…</sys:String>
+	<sys:String x:Key="String/SessionView.LogsMemoryUsage">Logs memory usage of this tab</sys:String>
 	<StaticResource x:Key="String/SessionView.LogTextFilter.ToolTip" ResourceKey="String/PredefinedLogTextFilterEditorDialog.Regex.Description"/>
 	<sys:String x:Key="String/SessionView.LogTextFilter.Watermark">Text filtering (Regular Expression, use \$\$ as separator between text properties)</sys:String>
 	<sys:String x:Key="String/SessionView.LogThreadIdFilter.Description">Use Thread ID to filter logs</sys:String>
@@ -481,6 +482,7 @@
 	<sys:String x:Key="String/SessionView.ShowLogProperty.Disabled">View log property…</sys:String>
 	<sys:String x:Key="String/SessionView.ShowWorkingDirectoryInExplorer">Show working directory in Windows File Explorer</sys:String>
 	<sys:String x:Key="String/SessionView.TooManyDirectoryPathsDropped">Please drag and drop single directory.</sys:String>
+	<sys:String x:Key="String/SessionView.TotalLogsMemoryUsage">Total memory usage of logs</sys:String>
 	<sys:String x:Key="String/SessionView.UIResponseDuration">User interface response time</sys:String>
 	<sys:String x:Key="String/SessionView.UnmarkLogs">Unmark logs</sys:String>
 	<sys:String x:Key="String/SessionView.ViewFullLogMessage">View more…</sys:String>

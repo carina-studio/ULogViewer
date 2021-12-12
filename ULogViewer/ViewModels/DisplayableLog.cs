@@ -16,11 +16,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 	{
 		// Static fields.
 		static readonly int[] emptyInt32Array = new int[0];
+		static readonly long estimatedTimeSpanSize = TimeSpan.FromDays(1.23456).ToString().Length << 1;
+		static readonly long estimatedTimestampSize = DateTime.Now.ToString().Length << 1;
 		static readonly Func<Log, string?>[] extraGetters = new Func<Log, string?>[Log.ExtraCapacity].Also(it =>
 		{
 			for (var i = it.Length - 1; i >= 0; --i)
 				it[i] = Log.CreatePropertyGetter<string?>($"Extra{i + 1}");
 		});
+		static readonly long instanceFieldMemorySize;
 		static volatile bool isPropertyMapReady;
 		static Dictionary<string, PropertyInfo> propertyMap = new Dictionary<string, PropertyInfo>();
 
@@ -36,6 +39,28 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		int summaryLineCount = -1;
 		CompressedString? timeSpanString;
 		CompressedString? timestampString;
+
+
+		// Statc initializer.
+		static DisplayableLog()
+        {
+			foreach (var field in typeof(DisplayableLog).GetFields(BindingFlags.Instance | BindingFlags.NonPublic))
+			{
+				var type = field.FieldType;
+				if (!type.IsValueType)
+					instanceFieldMemorySize += IntPtr.Size;
+				else if (type == typeof(byte))
+					instanceFieldMemorySize += 1;
+				else if (type == typeof(short))
+					instanceFieldMemorySize += 2;
+				else if (type == typeof(int) || type.IsEnum)
+					instanceFieldMemorySize += 4;
+				else if (type == typeof(long))
+					instanceFieldMemorySize += 8;
+				else
+					throw new NotSupportedException();
+			}
+		}
 
 
 		/// <summary>
@@ -71,6 +96,23 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			}
 			else
 				this.extraLineCount = emptyInt32Array;
+
+			// estimate memory usage
+			long memorySize = log.MemorySize + instanceFieldMemorySize;
+			memorySize += this.extraLineCount.Length * sizeof(int);
+			if (log.BeginningTimeSpan.HasValue)
+				memorySize += estimatedTimeSpanSize;
+			if (log.EndingTimeSpan.HasValue)
+				memorySize += estimatedTimeSpanSize;
+			if (log.TimeSpan.HasValue)
+				memorySize += estimatedTimeSpanSize;
+			if (log.BeginningTimestamp.HasValue)
+				memorySize += estimatedTimestampSize;
+			if (log.EndingTimestamp.HasValue)
+				memorySize += estimatedTimestampSize;
+			if (log.Timestamp.HasValue)
+				memorySize += estimatedTimestampSize;
+			this.MemorySize = memorySize;
 
 			// notify group
 			group.OnDisplayableLogCreated(this);
@@ -615,6 +657,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsMarked)));
 			}
 		}
+
+
+		/// <summary>
+		/// Get size of memory usage by the instance in bytes.
+		/// </summary>
+		public long MemorySize { get; }
 
 
 		/// <summary>

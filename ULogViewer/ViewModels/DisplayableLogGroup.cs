@@ -170,6 +170,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public int MaxLogExtraNumber { get; private set; }
 
 
+		/// <summary>
+		/// Get size of memory usage by the group in bytes.
+		/// </summary>
+		public long MemorySize { get; private set; }
+
+
 		// Called when application property changed.
 		void OnApplicationPropertyChanged(object? sender, PropertyChangedEventArgs e)
 		{
@@ -208,6 +214,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		internal void OnDisplayableLogCreated(DisplayableLog log)
 		{
 			this.displayableLogs.AddLast(log.TrackingNode);
+			this.MemorySize += log.MemorySize;
 		}
 
 
@@ -218,6 +225,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		internal void OnDisplayableLogDisposed(DisplayableLog log)
 		{
 			this.displayableLogs.Remove(log.TrackingNode);
+			this.MemorySize -= log.MemorySize;
 		}
 
 

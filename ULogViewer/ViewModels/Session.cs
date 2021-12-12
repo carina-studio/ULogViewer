@@ -224,6 +224,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<LogProfile?> LogProfileProperty = ObservableProperty.Register<Session, LogProfile?>(nameof(LogProfile));
 		/// <summary>
+		/// Property of <see cref="LogsMemoryUsage"/>.
+		/// </summary>
+		public static readonly ObservableProperty<long> LogsMemoryUsageProperty = ObservableProperty.Register<Session, long>(nameof(LogsMemoryUsage));
+		/// <summary>
 		/// Property of <see cref="Logs"/>.
 		/// </summary>
 		public static readonly ObservableProperty<IList<DisplayableLog>> LogsProperty = ObservableProperty.Register<Session, IList<DisplayableLog>>(nameof(Logs), new DisplayableLog[0]);
@@ -255,6 +259,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Property of <see cref="Title"/>.
 		/// </summary>
 		public static readonly ObservableProperty<string?> TitleProperty = ObservableProperty.Register<Session, string?>(nameof(Title));
+		/// <summary>
+		/// Property of <see cref="TotalLogsMemoryUsage"/>.
+		/// </summary>
+		public static readonly ObservableProperty<long> TotalLogsMemoryUsageProperty = ObservableProperty.Register<Session, long>(nameof(TotalLogsMemoryUsage));
 		/// <summary>
 		/// Property of <see cref="Uri"/>.
 		/// </summary>
@@ -336,6 +344,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		});
 		static readonly TaskFactory ioTaskFactory = new TaskFactory(new FixedThreadsTaskScheduler(1));
 		static ILogger? staticLogger;
+		static long totalLogsMemoryUsage;
 
 
 		// Activation token.
@@ -366,6 +375,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 		// Constants.
 		const int DefaultFileOpeningTimeout = 10000;
+		const int LogsMemoryUsageCheckInterval = 1000;
 
 
 		// Fields.
@@ -385,6 +395,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly MutableObservableBoolean canShowAllLogsTemporarily = new MutableObservableBoolean();
 		readonly ScheduledAction checkDataSourceErrorsAction;
 		readonly ScheduledAction checkIsWaitingForDataSourcesAction;
+		readonly ScheduledAction checkLogsMemoryUsageAction;
 		Comparison<DisplayableLog?> compareDisplayableLogsDelegate;
 		DisplayableLogGroup? displayableLogGroup;
 		TaskFactory? fileLogsReadingTaskFactory;
@@ -527,6 +538,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					}
 					this.SetValue(IsWaitingForDataSourcesProperty, isWaiting);
 				}
+			});
+			this.checkLogsMemoryUsageAction = new ScheduledAction(() =>
+			{
+				if (this.IsDisposed)
+					return;
+				this.SetValue(LogsMemoryUsageProperty, this.displayableLogGroup?.MemorySize ?? 0L);
+				this.checkLogsMemoryUsageAction?.Schedule(LogsMemoryUsageCheckInterval);
 			});
 			this.reportLogsTimeInfoAction = new ScheduledAction(() =>
 			{
@@ -770,6 +788,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				// update log updating interval
 				if (this.LogProfile?.IsContinuousReading == true && this.logReaders.IsNotEmpty())
 					this.logReaders.First().UpdateInterval = this.ContinuousLogReadingUpdateInterval;
+
+				// check logs memory usage
+				this.checkLogsMemoryUsageAction.ExecuteIfScheduled();
 
 				// restore from hibernation
 				if (this.IsHibernated)
@@ -1449,7 +1470,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.DisposeLogReaders();
 
 			// release log group
+			totalLogsMemoryUsage -= this.displayableLogGroup?.MemorySize ?? 0L;
 			this.displayableLogGroup = this.displayableLogGroup.DisposeAndReturnNull();
+			this.checkLogsMemoryUsageAction.Cancel();
 
 			// detach from log profile
 			this.LogProfile?.Let(it => it.PropertyChanged -= this.OnLogProfilePropertyChanged);
@@ -2034,6 +2057,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Get size of memory usage of logs by the <see cref="Session"/> instance in bytes.
+		/// </summary>
+		public long LogsMemoryUsage { get => this.GetValue(LogsMemoryUsageProperty); }
+
+
+		/// <summary>
 		/// Get or set <see cref="Regex"/> for log text filtering.
 		/// </summary>
 		public Regex? LogTextFilter
@@ -2477,6 +2506,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			}
 			else if (property == LogsDurationProperty)
 				this.SetValue(HasLogsDurationProperty, newValue != null);
+			else if (property == LogsMemoryUsageProperty)
+            {
+				totalLogsMemoryUsage += ((long)newValue.AsNonNull() - (long)oldValue.AsNonNull());
+				this.SetValue(TotalLogsMemoryUsageProperty, totalLogsMemoryUsage);
+            }
 			else if (property == LogProfileProperty)
 				this.SetValue(HasLogProfileProperty, newValue != null);
 			else if (property == LogsProperty)
@@ -2634,6 +2668,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.DisposeLogReaders();
 
 			// release log group
+			totalLogsMemoryUsage -= this.displayableLogGroup?.MemorySize ?? 0L;
+			this.SetValue(LogsMemoryUsageProperty, 0);
+			this.SetValue(TotalLogsMemoryUsageProperty, totalLogsMemoryUsage);
 			this.displayableLogGroup = this.displayableLogGroup.DisposeAndReturnNull();
 
 			// clear file name table
@@ -3128,6 +3165,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// prepare displayable log group
 			this.displayableLogGroup = new DisplayableLogGroup(profile);
+			this.checkLogsMemoryUsageAction.Schedule();
 
 			// setup log comparer
 			this.UpdateDisplayableLogComparison();
@@ -3398,6 +3436,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Command to enable or disable showing all logs temporarily.
 		/// </summary>
 		public ICommand ToggleShowingAllLogsTemporarilyCommand { get; }
+
+
+		/// <summary>
+		/// Get size of total memory usage of logs by all <see cref="Session"/> instances in bytes.
+		/// </summary>
+		public long TotalLogsMemoryUsage { get => this.GetValue(TotalLogsMemoryUsageProperty); }
 
 
 		// Unmark logs.

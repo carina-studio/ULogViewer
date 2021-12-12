@@ -59,6 +59,7 @@ namespace CarinaStudio.ULogViewer.Logs
 
 		// Static fields.
 		static readonly HashSet<string> dateTimePropertyNameSet = new HashSet<string>();
+		static readonly int instanceFieldMemorySize;
 		static volatile bool isPropertyMapReady;
 		static long nextId = 0;
 		static readonly Dictionary<string, int> propertyIndices = new Dictionary<string, int>();
@@ -86,6 +87,22 @@ namespace CarinaStudio.ULogViewer.Logs
 		{
 			for (var i = propertyNames.Count - 1; i >= 0; --i)
 				propertyIndices[propertyNames[i]] = i;
+			foreach (var field in typeof(Log).GetFields(BindingFlags.Instance | BindingFlags.NonPublic))
+			{
+				var type = field.FieldType;
+				if (!type.IsValueType)
+					instanceFieldMemorySize += IntPtr.Size;
+				else if (type == typeof(byte))
+					instanceFieldMemorySize += 1;
+				else if (type == typeof(short))
+					instanceFieldMemorySize += 2;
+				else if (type == typeof(int))
+					instanceFieldMemorySize += 4;
+				else if (type == typeof(long))
+					instanceFieldMemorySize += 8;
+				else
+					throw new NotSupportedException();
+			}
 		}
 
 
@@ -100,20 +117,34 @@ namespace CarinaStudio.ULogViewer.Logs
 			var propertyValueIndices = this.propertyValueIndices;
 			var propertyValues = new object?[propertyCount];
 			var index = 0;
+			long propertyMemorySize = 0;
 			foreach (var propertyName in builder.PropertyNames)
 			{
-				object? value = GetPropertyFromBuilder(builder, propertyName);
+				var value = GetPropertyFromBuilder(builder, propertyName);
 				if (value == null)
 					continue;
 				if (!propertyIndices.TryGetValue(propertyName, out var propertyIndex))
 					continue;
 				propertyValueIndices[propertyIndex] = (byte)(index + 1);
 				propertyValues[index++] = value;
+				if (value is CompressedString compressedString)
+					propertyMemorySize += compressedString.Size;
+				else if (value is string str)
+					propertyMemorySize += (str.Length << 1);
+				else if (value is int || value is Enum)
+					propertyMemorySize += 4;
+				else if (value is DateTime || value is TimeSpan)
+					propertyMemorySize += 8;
+				else
+					throw new NotSupportedException();
 			}
 			this.propertyValues = propertyValues;
 
 			// get ID
 			this.Id = Interlocked.Increment(ref nextId);
+
+			// calculate memory size
+			this.MemorySize = instanceFieldMemorySize + propertyMemorySize + this.propertyValueIndices.Length + (this.propertyValues.Length * IntPtr.Size);
 		}
 
 
@@ -361,6 +392,12 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// Get line number.
 		/// </summary>
 		public int? LineNumber { get => (int?)this.GetProperty(PropertyName.LineNumber); }
+
+
+		/// <summary>
+		/// Get size of memory usage by the instance in bytes.
+		/// </summary>
+		public long MemorySize { get; }
 
 
 		/// <summary>
