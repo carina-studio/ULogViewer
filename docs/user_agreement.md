@@ -3,8 +3,8 @@ title: ULogViewer
 ---
 
 # User Agreement
-- Version: 1.0.
-- Update: 2021/12/6.
+- Version: 1.1.
+- Update: 2021/12/12.
 
 This is the User Agreement of ```ULogViewer``` which you need to read before you using ```ULogViewer```. 
 The User Agreement may be updated in the future and you can check it on the website of ```ULogViewer```. 
@@ -18,7 +18,11 @@ It means that you have agreed this User Agreement once you start using ```ULogVi
 This User Agreement will be applied when you use ```ULogViewer```.
 
 ## File Access
-All necessary files of ```ULogViewer``` are placed inside the directory of ```ULogViewer``` (include directory of ```.NET Runtime``` if you installed ```.NET``` on your computer). No other file access needed when running ```ULogViewer``` without loading logs.
+Except for system files, all necessary files of ```ULogViewer``` are placed inside the directory of ```ULogViewer``` (include directory of ```.NET Runtime``` if you installed ```.NET``` on your computer). No other file access needed when running ```ULogViewer``` without loading logs except for the followings:
+
+* Read ```/proc/meminfo``` to get physical memory information on Linux.
+* Read/Write ```Temporary``` directory of system for placing runtime resources.
+* Other necessary file access by ```.NET``` or ```3rd-Party Libraries```.
 
 ### File Access When Loading Logs
 * The file which contains raw logs will be opened in ```Read``` mode.
