@@ -1,27 +1,15 @@
 ﻿[
 	{
-		"Description": "Support marking logs by clicking on the left hand side of logs. Marking with color is also supported.",
+		"Description": "Support showing memory usage by logs on status bar.",
 		"Type": "NewFeature"
 	},
 	{
-		"Description": "Support single file mode on log profile.",
+		"Description": "Will hibernate tabs with file-based logs to save memory when high memory usage by logs.",
 		"Type": "NewFeature"
-	},
-	{
-		"Description": "Use text box to input date and time to select log. Multiple date and time formats are supported.",
-		"Type": "Improvement"
-	},
-	{
-		"Description": "Improve UI smoothness when loading and filtering logs.",
-		"Type": "Improvement"
 	},
 	{
 		"Description": "UX improvement.",
 		"Type": "Improvement"
-	},
-	{
-		"Description": "Use single file mode on 'Android System Trace File' and 'Raw Text In Files' log profiles.",
-		"Type": "BehaviorChange"
 	},
 	{
 		"Description": "Update dependent libraries."

@@ -1,27 +1,15 @@
 ﻿[
 	{
-		"Description": "支援點一下日誌左側以標記日誌，亦支援色彩標記。",
+		"Description": "支援在狀態列上顯示日誌的記憶體使用量。",
 		"Type": "NewFeature"
 	},
 	{
-		"Description": "日誌類型支援單一檔案模式。",
+		"Description": "當日誌記憶體使用量較多時，將基於檔案的日誌分頁休眠以節省記憶體。",
 		"Type": "NewFeature"
-	},
-	{
-		"Description": "使用文字方塊輸入時間以選取日誌，並支援多種日期及時間格式。",
-		"Type": "Improvement"
-	},
-	{
-		"Description": "提升載入及篩選日誌時的使用者介面順暢度。",
-		"Type": "Improvement"
 	},
 	{
 		"Description": "改善使用者體驗。",
 		"Type": "Improvement"
-	},
-	{
-		"Description": "「Android 系統追蹤檔案」及「檔案原始文字」日誌類型使用單一檔案模式。",
-		"Type": "BehaviorChange"
 	},
 	{
 		"Description": "更新相依程式庫。"
