@@ -335,7 +335,7 @@
 
 						<!-- Select log by timestamp -->
 						<Button Classes="ToolBar_Button" Command="{Binding $parent[UserControl].SelectNearestLogByTimestamp}" IsEnabled="{Binding HasLogs}" IsVisible="{Binding AreLogsSortedByTimestamp}" ToolTip.Tip="{DynamicResource String/SessionView.SelectNearestLogByTimestamp}">
-							<Image Classes="Icon" Source="{StaticResource Image/FindDate}" Transitions="{x:Null}"/> <!-- [Workaround] Remove opacity transition to prevent flickering when changing IsEnabled quickly -->
+							<Image Classes="Icon" Source="{StaticResource Image/FindDate}"/>
 						</Button>
 
 						<!-- Pause/resume -->
