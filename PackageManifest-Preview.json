@@ -11,8 +11,9 @@
 		},
 		{
 			"Architecture": "X64",
-			"FrameworkVersion": "5.0",
+			"FrameworkVersion": "99",
 			"OperatingSystem": "Windows",
+			"RuntimeVersion": "5.0",
 			"SHA256": "1BD601C0EA1618F1AE64D9ACBDF48E6BE815ECB7DF390326375434499A165151",
 			"Uri": "https://github.com/carina-studio/ULogViewer/releases/download/0.32.1.1213/ULogViewer-0.32.1.1213-win-x64-fx-dependent.zip"
 		},
@@ -24,8 +25,9 @@
 		},
 		{
 			"Architecture": "X64",
-			"FrameworkVersion": "5.0",
+			"FrameworkVersion": "99",
 			"OperatingSystem": "Linux",
+			"RuntimeVersion": "5.0",
 			"SHA256": "F3E6A984FD54C3DBF5708A3FD63014D48AA4283D8C42BD197C6525CFB1DDF4F3",
 			"Uri": "https://github.com/carina-studio/ULogViewer/releases/download/0.32.1.1213/ULogViewer-0.32.1.1213-linux-x64-fx-dependent.zip"
 		}
