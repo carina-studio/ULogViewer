@@ -187,6 +187,11 @@
 				<ToggleSwitch Classes="Dialog_ToggleSwitch" IsChecked="{Binding ShowProcessInfo, Mode=TwoWay}"/>
 				<Separator Classes="Dialog_Separator"/>
 
+				<!-- Notify application update -->
+				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/ApplicationOptions.NotifyApplicationUpdate}"/>
+				<ToggleSwitch Classes="Dialog_ToggleSwitch" IsChecked="{Binding NotifyApplicationUpdate, Mode=TwoWay}"/>
+				<Separator Classes="Dialog_Separator"/>
+
 				<!-- Accept non-stable update -->
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/ApplicationOptions.AcceptNonStableApplicationUpdate}"/>
 				<ToggleSwitch Classes="Dialog_ToggleSwitch" IsChecked="{Binding AcceptNonStableApplicationUpdate, Mode=TwoWay}"/>
