@@ -796,10 +796,10 @@ namespace CarinaStudio.ULogViewer.Controls
 			var itemPadding = app.TryFindResource("Thickness/SessionView.LogListBox.Item.Padding", out rawResource) ? (Thickness)rawResource.AsNonNull() : new Thickness();
 			var propertyPadding = app.TryFindResource("Thickness/SessionView.LogListBox.Item.Property.Padding", out rawResource) ? (Thickness)rawResource.AsNonNull() : new Thickness();
 			var splitterWidth = app.TryFindResource("Double/GridSplitter.Thickness", out rawResource) ? (double)rawResource.AsNonNull() : 0.0;
+			var itemStartingContentWidth = markIndicatorWidth;
 			if (profile.ColorIndicator != LogColorIndicator.None)
-				itemPadding = new Thickness(itemPadding.Left + markIndicatorWidth + colorIndicatorWidth, itemPadding.Top, itemPadding.Right, itemPadding.Bottom);
-			else
-				itemPadding = new Thickness(itemPadding.Left + markIndicatorWidth, itemPadding.Top, itemPadding.Right, itemPadding.Bottom);
+				itemStartingContentWidth += colorIndicatorWidth + colorIndicatorBorderThickness.Left + colorIndicatorBorderThickness.Right;
+			itemPadding = new Thickness(itemPadding.Left + itemStartingContentWidth, itemPadding.Top, itemPadding.Right, itemPadding.Bottom);
 			var itemTemplateContent = new Func<IServiceProvider, object>(_ =>
 			{
 				var itemPanel = new Panel().Also(it =>
@@ -969,6 +969,15 @@ namespace CarinaStudio.ULogViewer.Controls
 					var isLeftPointerDown = false;
 					var isRightPointerDown = false;
 					var isMenuOpen = false;
+					panel.Children.Add(new Border().Also(selectionBackgroundBorder =>
+					{
+						selectionBackgroundBorder.Bind(Border.BackgroundProperty, this.GetResourceObservable("Brush/SessionView.LogListBox.Item.SelectionIndicator.Background"));
+						selectionBackgroundBorder.Bind(Border.IsVisibleProperty, new Binding()
+						{
+							RelativeSource = new RelativeSource(RelativeSourceMode.FindAncestor) { AncestorType = typeof(ListBoxItem) },
+							Path = nameof(ListBoxItem.IsSelected)
+						});
+					}));
 					var emptyMarker = new Border().Also(border =>
 					{
 						border.Bind(Border.BorderBrushProperty, this.GetResourceObservable("Brush/Icon"));
