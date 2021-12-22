@@ -1999,6 +1999,12 @@ namespace CarinaStudio.ULogViewer.Controls
 
 				// report time information
 				this.reportSelectedLogsTimeInfoAction.Schedule();
+
+				// select single marked log
+				if (hasSingleSelectedItem && this.logListBox.SelectedItem is DisplayableLog log && log.IsMarked)
+					this.SynchronizationContext.Post(() => this.markedLogListBox.SelectedItem = log);
+				else
+					this.SynchronizationContext.Post(() => this.markedLogListBox.SelectedItems.Clear());
 			});
 		}
 
@@ -2307,10 +2313,8 @@ namespace CarinaStudio.ULogViewer.Controls
         // Called when selection in marked log list box has been changed.
         void OnMarkedLogListBoxSelectionChanged(object? sender, SelectionChangedEventArgs e)
 		{
-			var log = this.markedLogListBox.SelectedItem as DisplayableLog;
-			if (log == null)
+			if (this.markedLogListBox.SelectedItem is not DisplayableLog log)
 				return;
-			this.SynchronizationContext.Post(() => this.markedLogListBox.SelectedItem = null);
 			this.logListBox.Let(it =>
 			{
 				it.SelectedItems.Clear();
