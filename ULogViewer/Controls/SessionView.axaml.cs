@@ -1532,7 +1532,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			session.MarkLogsCommand.TryExecute(new Session.MarkingLogsParams()
 			{
 				Color = color,
-				Logs = this.logListBox.SelectedItems.Cast<DisplayableLog>(),
+				Logs = this.logListBox.SelectedItems.Cast<DisplayableLog>().ToArray(),
 			});
 		}
 
@@ -1548,7 +1548,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 			if (this.DataContext is not Session session)
 				return;
-			var logs = this.logListBox.SelectedItems.Cast<DisplayableLog>();
+			var logs = this.logListBox.SelectedItems.Cast<DisplayableLog>().ToArray();
 			session.MarkUnmarkLogsCommand.TryExecute(logs);
 		}
 
@@ -2130,10 +2130,12 @@ namespace CarinaStudio.ULogViewer.Controls
 					switch (e.Key)
                     {
 						case Avalonia.Input.Key.A:
-							if (this.DataContext is Session session)
-								session.ToggleShowingAllLogsTemporarilyCommand.TryExecute();
+							(this.DataContext as Session)?.ToggleShowingAllLogsTemporarilyCommand?.TryExecute();
 							break;
-                    }
+						case Avalonia.Input.Key.M:
+							(this.DataContext as Session)?.ToggleShowingMarkedLogsTemporarilyCommand?.TryExecute();
+							break;
+					}
 				}
 				else
 				{
@@ -3285,7 +3287,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 			if (this.DataContext is not Session session)
 				return;
-			session.UnmarkLogsCommand.TryExecute(this.logListBox.SelectedItems.Cast<DisplayableLog>());
+			session.UnmarkLogsCommand.TryExecute(this.logListBox.SelectedItems.Cast<DisplayableLog>().ToArray());
 		}
 
 

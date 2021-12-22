@@ -462,6 +462,7 @@
 	<sys:String x:Key="String/SessionView.ShowFileInExplorer">在檔案總管中顯示檔案</sys:String>
 	<sys:String x:Key="String/SessionView.ShowLogProperty">檢視日誌屬性 '{0}'…</sys:String>
 	<sys:String x:Key="String/SessionView.ShowLogProperty.Disabled">檢視日誌屬性…</sys:String>
+	<sys:String x:Key="String/SessionView.ShowMarkedLogsTemporarily">暫時只顯示已標記的日誌 (Alt+M)</sys:String>
 	<sys:String x:Key="String/SessionView.ShowWorkingDirectoryInExplorer">在檔案總管中開啟工作目錄</sys:String>
 	<sys:String x:Key="String/SessionView.TooManyDirectoryPathsDropped">請拖放單一目錄。</sys:String>
 	<sys:String x:Key="String/SessionView.TotalLogsMemoryUsage">總日誌記憶體使用量</sys:String>

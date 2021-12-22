@@ -185,6 +185,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsShowingAllLogsTemporarilyProperty = ObservableProperty.Register<Session, bool>(nameof(IsShowingAllLogsTemporarily));
 		/// <summary>
+		/// Property of <see cref="IsShowingMarkedLogsTemporarily"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> IsShowingMarkedLogsTemporarilyProperty = ObservableProperty.Register<Session, bool>(nameof(IsShowingMarkedLogsTemporarily));
+		/// <summary>
 		/// Property of <see cref="IsUriNeeded"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsUriNeededProperty = ObservableProperty.Register<Session, bool>(nameof(IsUriNeeded));
@@ -488,6 +492,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.SetUriCommand = new Command<Uri?>(this.SetUri, this.GetValueAsObservable(IsUriNeededProperty));
 			this.SetWorkingDirectoryCommand = new Command<string?>(this.SetWorkingDirectory, this.GetValueAsObservable(IsWorkingDirectoryNeededProperty));
 			this.ToggleShowingAllLogsTemporarilyCommand = new Command(this.ToggleShowingAllLogsTemporarily, this.canShowAllLogsTemporarily);
+			this.ToggleShowingMarkedLogsTemporarilyCommand = new Command(this.ToggleShowingMarkedLogsTemporarily, this.GetValueAsObservable(HasMarkedLogsProperty));
 			this.UnmarkLogsCommand = new Command<IEnumerable<DisplayableLog>>(this.UnmarkLogs, this.canMarkUnmarkLogs);
 			this.canSetLogProfile.Update(true);
 
@@ -498,11 +503,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			});
 			this.markedLogs = new SortedObservableList<DisplayableLog>(this.CompareDisplayableLogs).Also(it =>
 			{
-				it.CollectionChanged += (_, e) =>
-				{
-					if (!this.IsDisposed)
-						this.SetValue(HasMarkedLogsProperty, it.IsNotEmpty());
-				};
+				it.CollectionChanged += this.OnMarkedLogsChanged;
 			});
 			this.predefinedLogTextFilters = new ObservableList<PredefinedLogTextFilter>().Also(it =>
 			{
@@ -684,21 +685,28 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			{
 				if (this.IsDisposed)
 					return;
-				if (this.logFilter.IsFilteringNeeded && !this.IsShowingAllLogsTemporarily)
+				if (!this.IsShowingAllLogsTemporarily)
 				{
-					this.SetValue(LogsProperty, logFilter.FilteredLogs);
-					this.SetValue(HasLogsProperty, logFilter.FilteredLogs.IsNotEmpty());
-				}
-				else
-				{
-					this.SetValue(LogsProperty, this.AllLogs);
-					this.SetValue(HasLogsProperty, this.allLogs.IsNotEmpty());
-					this.SetValue(LastLogsFilteringDurationProperty, null);
-					if (!this.logFilter.IsFilteringNeeded && this.Settings.GetValueOrDefault(SettingKeys.SaveMemoryAggressively))
+					if (this.IsShowingMarkedLogsTemporarily)
 					{
-						this.Logger.LogDebug("Trigger GC after clearing log filters");
-						GC.Collect();
+						this.SetValue(LogsProperty, this.MarkedLogs);
+						this.SetValue(HasLogsProperty, this.markedLogs.IsNotEmpty());
+						return;
 					}
+					if (this.logFilter.IsFilteringNeeded)
+					{
+						this.SetValue(LogsProperty, logFilter.FilteredLogs);
+						this.SetValue(HasLogsProperty, logFilter.FilteredLogs.IsNotEmpty());
+						return;
+					}
+				}
+				this.SetValue(LogsProperty, this.AllLogs);
+				this.SetValue(HasLogsProperty, this.allLogs.IsNotEmpty());
+				this.SetValue(LastLogsFilteringDurationProperty, null);
+				if (!this.logFilter.IsFilteringNeeded && this.Settings.GetValueOrDefault(SettingKeys.SaveMemoryAggressively))
+				{
+					this.Logger.LogDebug("Trigger GC after clearing log filters");
+					GC.Collect();
 				}
 			});
 			this.updateIsReadingLogsAction = new ScheduledAction(() =>
@@ -780,8 +788,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					textRegexList.Add(filter.Regex);
 				this.logFilter.TextRegexList = textRegexList;
 
-				// cancel showing all logs
+				// cancel showing all.marked logs
 				this.SetValue(IsShowingAllLogsTemporarilyProperty, false);
+				this.SetValue(IsShowingMarkedLogsTemporarilyProperty, false);
 			});
 			this.updateTitleAndIconAction = new ScheduledAction(() =>
 			{
@@ -1946,6 +1955,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Check whether showing marked logs temporarily or not.
+		/// </summary>
+		public bool IsShowingMarkedLogsTemporarily { get => this.GetValue(IsShowingMarkedLogsTemporarilyProperty); }
+
+
+		/// <summary>
 		/// Check whether URI is needed or not.
 		/// </summary>
 		public bool IsUriNeeded { get => this.GetValue(IsUriNeededProperty); }
@@ -2309,7 +2324,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			}
 			if (!this.IsDisposed)
 			{
-				if (!this.logFilter.IsFilteringNeeded || this.IsShowingAllLogsTemporarily)
+				if ((!this.logFilter.IsFilteringNeeded && !this.IsShowingMarkedLogsTemporarily) || this.IsShowingAllLogsTemporarily)
 				{
 					this.SetValue(HasLogsProperty, this.allLogs.IsNotEmpty());
 					this.reportLogsTimeInfoAction.Schedule(LogsTimeInfoReportingInterval);
@@ -2332,7 +2347,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			if (!this.IsDisposed)
 			{
-				if (this.logFilter.IsFilteringNeeded && !this.IsShowingAllLogsTemporarily)
+				if (this.logFilter.IsFilteringNeeded && !this.IsShowingAllLogsTemporarily && !this.IsShowingMarkedLogsTemporarily)
 				{
 					this.SetValue(HasLogsProperty, this.logFilter.FilteredLogs.IsNotEmpty());
 					this.reportLogsTimeInfoAction.Schedule(LogsTimeInfoReportingInterval);
@@ -2528,6 +2543,23 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		}
 
 
+		// Called when marked logs has been changed.
+		void OnMarkedLogsChanged(object? sender, NotifyCollectionChangedEventArgs e)
+		{
+			if (!this.IsDisposed)
+			{
+				var hasLogs = this.markedLogs.IsNotEmpty();
+				this.SetValue(HasMarkedLogsProperty, hasLogs);
+				if (this.IsShowingMarkedLogsTemporarily)
+				{
+					this.SetValue(HasLogsProperty, hasLogs);
+					if (!hasLogs)
+						this.SetValue(IsShowingMarkedLogsTemporarilyProperty, false);
+				}
+			}
+		}
+
+
 		// Called when property changed.
 		protected override void OnPropertyChanged(ObservableProperty property, object? oldValue, object? newValue)
 		{
@@ -2556,8 +2588,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.UpdateIsLogsWritingAvailable(this.LogProfile);
 				this.updateIsProcessingLogsAction.Schedule();
 			}
-			else if (property == IsShowingAllLogsTemporarilyProperty)
+			else if (property == IsShowingAllLogsTemporarilyProperty
+				|| property == IsShowingMarkedLogsTemporarilyProperty)
+			{
 				this.selectLogsToReportActions.Schedule();
+			}
 			else if (property == LastLogsReadingDurationProperty)
 				this.SetValue(HasLastLogsReadingDurationProperty, this.LastLogsReadingDuration != null);
 			else if (property == LastLogsFilteringDurationProperty)
@@ -3493,6 +3528,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// toggle
 			this.SetValue(IsShowingAllLogsTemporarilyProperty, !this.GetValue(IsShowingAllLogsTemporarilyProperty));
+			if (this.IsShowingAllLogsTemporarily)
+				this.SetValue(IsShowingMarkedLogsTemporarilyProperty, false);
         }
 
 
@@ -3500,6 +3537,28 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Command to enable or disable showing all logs temporarily.
 		/// </summary>
 		public ICommand ToggleShowingAllLogsTemporarilyCommand { get; }
+
+
+		// Enable or disable showing all logs temporarily.
+		void ToggleShowingMarkedLogsTemporarily()
+		{
+			// check state
+			this.VerifyAccess();
+			this.VerifyDisposed();
+			if (!this.HasMarkedLogs)
+				return;
+
+			// toggle
+			this.SetValue(IsShowingMarkedLogsTemporarilyProperty, !this.GetValue(IsShowingMarkedLogsTemporarilyProperty));
+			if (this.IsShowingMarkedLogsTemporarily)
+				this.SetValue(IsShowingAllLogsTemporarilyProperty, false);
+		}
+
+
+		/// <summary>
+		/// Command to toggle <see cref="IsShowingMarkedLogsTemporarily"/>.
+		/// </summary>
+		public ICommand ToggleShowingMarkedLogsTemporarilyCommand { get; }
 
 
 		/// <summary>

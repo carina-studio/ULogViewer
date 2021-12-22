@@ -468,6 +468,14 @@
 							<Image Classes="Icon" Source="{StaticResource Image/ClearFilters}"/>
 						</Button>
 
+						<!-- Show marked logs only -->
+						<ToggleButton Classes="ToolBar_ToggleButton" Command="{Binding ToggleShowingMarkedLogsTemporarilyCommand}" IsChecked="{Binding IsShowingMarkedLogsTemporarily}" ToolTip.Tip="{DynamicResource String/SessionView.ShowMarkedLogsTemporarily}">
+							<Panel>
+								<Image Classes="Icon" Source="{StaticResource Image/MarkedOnly}" IsVisible="{Binding !IsShowingMarkedLogsTemporarily}"/>
+								<Image Classes="Icon" Source="{StaticResource Image/MarkedOnly.Light}" IsVisible="{Binding IsShowingMarkedLogsTemporarily}"/>
+							</Panel>
+						</ToggleButton>
+
 						<!-- Show all logs temporarily -->
 						<ToggleButton Classes="ToolBar_ToggleButton" Command="{Binding ToggleShowingAllLogsTemporarilyCommand}" IsChecked="{Binding IsShowingAllLogsTemporarily}" ToolTip.Tip="{DynamicResource String/SessionView.ShowAllLogsTemporarily}">
 							<Panel>
