@@ -1856,8 +1856,16 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Called when log profile set.
-		void OnLogProfileSet(LogProfile profile)
+		// Called when got focus.
+        protected override void OnGotFocus(GotFocusEventArgs e)
+        {
+            base.OnGotFocus(e);
+			this.Logger.LogTrace("Got focus");
+        }
+
+
+        // Called when log profile set.
+        void OnLogProfileSet(LogProfile profile)
 		{
 			// reset auto scrolling
 			this.IsScrollingToLatestLogNeeded = profile.IsContinuousReading;
@@ -2131,9 +2139,11 @@ namespace CarinaStudio.ULogViewer.Controls
                     {
 						case Avalonia.Input.Key.A:
 							(this.DataContext as Session)?.ToggleShowingAllLogsTemporarilyCommand?.TryExecute();
+							this.SynchronizationContext.Post(this.Focus); // [Workaround] Get focus back to prevent unexpected focus lost.
 							break;
 						case Avalonia.Input.Key.M:
 							(this.DataContext as Session)?.ToggleShowingMarkedLogsTemporarilyCommand?.TryExecute();
+							this.SynchronizationContext.Post(this.Focus); // [Workaround] Get focus back to prevent unexpected focus lost.
 							break;
 					}
 				}
@@ -2286,8 +2296,16 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Called when selection in marked log list box has been changed.
-		void OnMarkedLogListBoxSelectionChanged(object? sender, SelectionChangedEventArgs e)
+		// Called when lost focus.
+        protected override void OnLostFocus(RoutedEventArgs e)
+        {
+			this.Logger.LogTrace("Lost focus");
+            base.OnLostFocus(e);
+        }
+
+
+        // Called when selection in marked log list box has been changed.
+        void OnMarkedLogListBoxSelectionChanged(object? sender, SelectionChangedEventArgs e)
 		{
 			var log = this.markedLogListBox.SelectedItem as DisplayableLog;
 			if (log == null)
