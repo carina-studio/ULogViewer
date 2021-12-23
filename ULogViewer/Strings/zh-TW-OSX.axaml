@@ -4,7 +4,9 @@
 	
 	<!-- SessionView -->
 	<sys:String x:Key="String/SessionView.RestartAsAdministrator">以 Superuser 身分重新啟動</sys:String>
+	<sys:String x:Key="String/SessionView.ShowAllLogsTemporarily">暫時顯示所有日誌 (Option+A)</sys:String>
 	<sys:String x:Key="String/SessionView.ShowFileInExplorer">在 Finder 中顯示檔案</sys:String>
+	<sys:String x:Key="String/SessionView.ShowMarkedLogsTemporarily">暫時只顯示已標記的日誌 (Option+M)</sys:String>
 	<sys:String x:Key="String/SessionView.ShowWorkingDirectoryInExplorer">在 Finder 中開啟工作目錄</sys:String>
 	
 </ResourceDictionary>
