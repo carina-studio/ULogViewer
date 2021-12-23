@@ -81,6 +81,7 @@
 			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.MarkIndicator.Purple">#7f00ff</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.MarkIndicator.Red">#ff0000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.MarkIndicator.Yellow">#ffff00</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.MarkedLogListBox.Item.Border.Selected">#000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.StatusBar.Background.Error">#ff3232</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.StatusBar.Background.Inactive">#000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.StatusBar.Background.Paused">#000000</SolidColorBrush>

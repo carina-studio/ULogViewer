@@ -1171,6 +1171,19 @@ namespace CarinaStudio.ULogViewer.Controls
 						it.Bind(ToolTip.TipProperty, new Binding() { Path = nameof(DisplayableLog.TimestampString) });
 				});
 				itemPanel.Children.Add(propertyView);
+				itemPanel.Children.Add(new Border().Also(border =>
+				{
+					border.Bind(Border.BorderBrushProperty, this.GetResourceObservable("Brush/SessionView.MarkedLogListBox.Item.Border.Selected"));
+					border.Bind(Border.BorderThicknessProperty, this.GetResourceObservable("Thickness/SessionView.MarkedLogListBox.Item.Border.Selected"));
+					border.Bind(Border.CornerRadiusProperty, this.GetResourceObservable("CornerRadius/SessionView.MarkedLogListBox.Item.Border"));
+					border.Bind(Border.IsVisibleProperty, new Binding()
+					{
+						RelativeSource = new RelativeSource(RelativeSourceMode.FindAncestor) { AncestorType = typeof(ListBoxItem) },
+						Path = nameof(ListBoxItem.IsSelected)
+					});
+					if (profile.ColorIndicator != LogColorIndicator.None)
+						border.Margin = new Thickness(colorIndicatorWidth + colorIndicatorBorderThickness.Left + colorIndicatorBorderThickness.Right, 0, 0, 0);
+				}));
 				if (profile.ColorIndicator != LogColorIndicator.None)
 				{
 					new Border().Also(it =>
