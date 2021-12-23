@@ -164,52 +164,39 @@ namespace CarinaStudio.ULogViewer
 		// Load strings for specific culture.
         protected override IResourceProvider? OnLoadStringResource(CultureInfo cultureInfo)
         {
-			var resources = (IResourceProvider?)null;
-			try
-			{
-				resources = new ResourceInclude().Also(it =>
-				{
-					it.Source = new Uri($"avares://ULogViewer/Strings/{cultureInfo}.axaml");
-					_ = it.Loaded;
-				});
-			}
-			catch
+			var resources = this.LoadStringResource(new Uri($"avares://ULogViewer/Strings/{cultureInfo}.axaml"));
+			if (resources == null)
 			{
 				this.Logger.LogWarning($"No string resources for {cultureInfo}");
 				return null;
 			}
-			try
+			if (Platform.IsLinux)
 			{
-				if (Platform.IsLinux)
+				var platformResources = this.LoadStringResource(new Uri($"avares://ULogViewer/Strings/{cultureInfo}-Linux.axaml"));
+				if (platformResources != null)
 				{
-					var platformResources = new ResourceInclude().Also(it =>
-					{
-						it.Source = new Uri($"avares://ULogViewer/Strings/{cultureInfo}-Linux.axaml");
-						_ = it.Loaded;
-					});
 					resources = new ResourceDictionary().Also(it =>
 					{
 						it.MergedDictionaries.Add(resources);
 						it.MergedDictionaries.Add(platformResources);
 					});
 				}
-				else if (Platform.IsMacOS)
-				{
-					var platformResources = new ResourceInclude().Also(it =>
-					{
-						it.Source = new Uri($"avares://ULogViewer/Strings/{cultureInfo}-OSX.axaml");
-						_ = it.Loaded;
-					});
-					resources = new ResourceDictionary().Also(it =>
-					{
-						it.MergedDictionaries.Add(resources);
-						it.MergedDictionaries.Add(platformResources);
-					});
-				}
+				else
+					this.Logger.LogWarning($"No platform-specific string resources for {cultureInfo}");
 			}
-			catch
+			else if (Platform.IsMacOS)
 			{
-				this.Logger.LogWarning($"No platform-specific string resources for {cultureInfo}");
+				var platformResources = this.LoadStringResource(new Uri($"avares://ULogViewer/Strings/{cultureInfo}-OSX.axaml"));
+				if (platformResources != null)
+				{
+					resources = new ResourceDictionary().Also(it =>
+					{
+						it.MergedDictionaries.Add(resources);
+						it.MergedDictionaries.Add(platformResources);
+					});
+				}
+				else
+					this.Logger.LogWarning($"No platform-specific string resources for {cultureInfo}");
 			}
 			return resources;
 		}
