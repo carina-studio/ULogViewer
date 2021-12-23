@@ -49,22 +49,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		public static readonly IValueConverter LogLevelNameConverter = new LogLevelNameConverterImpl(App.Current);
 
 
-		// Converter for font weight of log item.
-		class LogItemFontWeightConverter : IValueConverter
-        {
-			public static readonly LogItemFontWeightConverter Default = new LogItemFontWeightConverter();
-            public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
-            {
-				if (targetType != typeof(object) && targetType != typeof(FontWeight))
-					return null;
-				if (value is bool boolValue)
-					return boolValue ? FontWeight.Bold : FontWeight.Normal;
-				return null;
-            }
-			public object? ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => null;
-        }
-
-
         // Implementation of LogLevelNameConverter.
         class LogLevelNameConverterImpl : IValueConverter
 		{
@@ -1057,14 +1041,6 @@ namespace CarinaStudio.ULogViewer.Controls
 					panel.Width = markIndicatorWidth;
 				}));
 
-				// dynmic font style
-				itemPanel.Bind(TextBlock.FontWeightProperty, new Binding()
-				{
-					RelativeSource = new RelativeSource(RelativeSourceMode.FindAncestor) { AncestorType = typeof(ListBoxItem) },
-					Path = nameof(ListBoxItem.IsSelected),
-					Converter = LogItemFontWeightConverter.Default
-				});
-
 				// complete
 				return new ControlTemplateResult(itemPanel, null);
 			});
@@ -1155,11 +1131,6 @@ namespace CarinaStudio.ULogViewer.Controls
 				{
 					it.Bind(TextBlock.FontFamilyProperty, new Binding() { Path = nameof(LogFontFamily), Source = this });
 					it.Bind(TextBlock.FontSizeProperty, new Binding() { Path = nameof(LogFontSize), Source = this });
-					it.Bind(TextBlock.FontWeightProperty, new Binding() { 
-						RelativeSource = new RelativeSource(RelativeSourceMode.FindAncestor) { AncestorType = typeof(ListBoxItem) }, 
-						Path = nameof(ListBoxItem.IsSelected), 
-						Converter = LogItemFontWeightConverter.Default 
-					});
 					it.Bind(TextBlock.ForegroundProperty, new Binding() { Path = nameof(DisplayableLog.LevelBrush) });
 					it.Bind(TextBlock.TextProperty, new Binding() { Path = propertyInMarkedItem });
 					it.Margin = itemPadding;
