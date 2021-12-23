@@ -137,7 +137,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				{
 					item.Bind(MenuItem.CommandProperty, new Binding() { Path = nameof(InsertLogWritingFormatSyntax), Source = this });
 					item.CommandParameter = "NewLine";
-					item.Bind(MenuItem.HeaderProperty, item.GetResourceObservable("String.Common.NewLine"));
+					item.Bind(MenuItem.HeaderProperty, item.GetResourceObservable("String/Common.NewLine"));
 				}));
 				it.Items = items;
 				it.MenuClosed += (_, e) => this.SynchronizationContext.Post(() => this.insertLogWritingFormatSyntaxButton.IsChecked = false);
