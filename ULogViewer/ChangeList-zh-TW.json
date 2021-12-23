@@ -1,11 +1,28 @@
 ﻿[
 	{
-		"Description": "支援在狀態列上顯示日誌的記憶體使用量。",
+		"Description": "支援暫時在主畫面顯示已標記日誌，可透過工具列按鈕或按下 Alt+M (macOS 上使用 Option+M)。",
 		"Type": "NewFeature"
 	},
 	{
-		"Description": "當日誌記憶體使用量較多時，將基於檔案的日誌分頁休眠以節省記憶體。",
+		"Description": "在主畫面與側面版同步單一選取的已標記日誌，以明確指出目前所選取的已標記日誌所在之相對位置。",
 		"Type": "NewFeature"
+	},
+	{
+		"Description": "升級至 .NET 6。",
+		"DetailsPageUri": "https://docs.microsoft.com/en-us/dotnet/core/whats-new/dotnet-6",
+		"Type": "Improvement"
+	},
+	{
+		"Description": "更新使用者介面以更清晰地顯示出已選取之日誌。",
+		"Type": "Improvement"
+	},
+	{
+		"Description": "支援在 Windows 7 及 Windows 8 上執行。",
+		"Type": "Improvement"
+	},
+	{
+		"Description": "支援在 ARM64 平台之電腦上執行。",
+		"Type": "Improvement"
 	},
 	{
 		"Description": "改善使用者體驗。",
