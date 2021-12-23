@@ -1978,7 +1978,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			});
 			if (hitControl == null)
 				this.SynchronizationContext.Post(() => this.logListBox.SelectedItems.Clear());
-			else if (hitControl is ListBoxItem && (e.KeyModifiers & KeyModifiers.Control) == 0)
+			else if (hitControl is ListBoxItem && (e.KeyModifiers & KeyModifiers.Control) == 0 && point.Properties.IsLeftButtonPressed)
 			{
 				// [Workaround] Clear selection first to prevent performance issue of changing selection from multiple items
 				this.logListBox.SelectedItems.Clear();
