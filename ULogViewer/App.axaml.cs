@@ -258,6 +258,17 @@ namespace CarinaStudio.ULogViewer
 		}
 
 
+		/// <inheritdoc/>
+        protected override void OnNewInstanceLaunched(IDictionary<string, object> launchOptions)
+        {
+			// call base
+            base.OnNewInstanceLaunched(launchOptions);
+
+			// show main window
+			this.ShowMainWindow();
+		}
+
+
 		// Parse arguments.
         protected override int OnParseArguments(string[] args, int index, IDictionary<string, object> launchOptions)
         {
