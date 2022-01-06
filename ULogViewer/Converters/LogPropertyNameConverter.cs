@@ -38,9 +38,11 @@ namespace CarinaStudio.ULogViewer.Converters
 		// Convert.
 		public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
 		{
-			if (value is not string name || targetType != typeof(string))
+			if (targetType != typeof(object) && targetType != typeof(string))
 				return null;
-			return this.app.GetString($"LogProperty.{name}", name);
+			if (value is not string name)
+				return null;
+			return this.app.GetStringNonNull($"LogProperty.{name}", name);
 		}
 
 
