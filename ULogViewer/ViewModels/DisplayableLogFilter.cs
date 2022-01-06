@@ -580,6 +580,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		}
 
 
+		/// <summary>
+		/// Get size of memory currently used by the instance directly in bytes.
+		/// </summary>
+		public long MemorySize { get => (this.filteredLogs.Count + this.unfilteredLogs.Count) * IntPtr.Size + this.sourceLogVersions.Capacity; }
+
+
 		// Called when chunk of logs filtered.
 		void OnChunkFiltered(FilteringParams filteringParams, int chunkId, IList<DisplayableLog> filteredLogs, IList<byte> logVersions)
 		{

@@ -592,14 +592,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 				// report memory usage
 				var prevLogsMemoryUsage = this.LogsMemoryUsage;
-				this.SetValue(LogsMemoryUsageProperty, this.displayableLogGroup?.MemorySize ?? 0L);
-				totalLogsMemoryUsage += (this.LogsMemoryUsage - prevLogsMemoryUsage);
+				var logsMemoryUsage = (this.displayableLogGroup?.MemorySize ?? 0L) + ((this.allLogs.Count + this.markedLogs.Count) * IntPtr.Size + this.logFilter.MemorySize);
+				this.SetValue(LogsMemoryUsageProperty, logsMemoryUsage);
+				totalLogsMemoryUsage += (logsMemoryUsage - prevLogsMemoryUsage);
 				this.SetValue(TotalLogsMemoryUsageProperty, totalLogsMemoryUsage);
 
 				// hibernate sessions if needed
 				hibernateSessionsAction.Schedule();
 
 				// schedule next checking
+
 				this.checkLogsMemoryUsageAction?.Schedule(LogsMemoryUsageCheckInterval);
 			});
 			this.reportLogsTimeInfoAction = new ScheduledAction(() =>
@@ -1330,13 +1332,17 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		// Create log reader.
 		void CreateLogReader(ILogDataSource dataSource)
 		{
+			// prepare displayable log group
+			var profile = this.LogProfile ?? throw new InternalStateCorruptedException("No log profile to create log reader.");
+			if (this.displayableLogGroup == null)
+				this.displayableLogGroup = new DisplayableLogGroup(profile);
+
 			// select logs reading task factory
 			var readingTaskFactory = dataSource.CreationOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName))
 				? (fileLogsReadingTaskFactory ?? new TaskFactory(new FixedThreadsTaskScheduler(FileLogsReadingConcurrencyLevel)).Also(it => this.fileLogsReadingTaskFactory = it))
 				: defaultLogsReadingTaskFactory;
 
 			// create log reader
-			var profile = this.LogProfile ?? throw new InternalStateCorruptedException("No log profile to create log reader.");
 			var logReader = new LogReader(dataSource, readingTaskFactory).Also(it =>
 			{
 				if (profile.IsContinuousReading)
@@ -1657,6 +1663,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			DisposeDisplayableLogs(this.allLogs);
 			this.allLogs.Clear();
 			this.allLogsByLogFilePath.Clear();
+
+			// release log group
+			if (this.IsDisposed)
+			{
+				var logsMemoryUsage = this.LogsMemoryUsage;
+				totalLogsMemoryUsage -= logsMemoryUsage;
+			}
+			else
+				this.checkLogsMemoryUsageAction.Execute();
+			this.displayableLogGroup = this.displayableLogGroup.DisposeAndReturnNull();
 		}
 
 
@@ -2769,12 +2785,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// dispose log readers
 			this.DisposeLogReaders();
 
-			// release log group
-			totalLogsMemoryUsage -= this.displayableLogGroup?.MemorySize ?? 0L;
-			this.SetValue(LogsMemoryUsageProperty, 0);
-			this.SetValue(TotalLogsMemoryUsageProperty, totalLogsMemoryUsage);
-			this.displayableLogGroup = this.displayableLogGroup.DisposeAndReturnNull();
-
 			// clear file name table
 			this.addedLogFilePaths.Clear();
 
@@ -3262,9 +3272,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// attach to log profile
 			profile.PropertyChanged += this.OnLogProfilePropertyChanged;
-
-			// prepare displayable log group
-			this.displayableLogGroup = new DisplayableLogGroup(profile);
 
 			// setup log comparer
 			this.UpdateDisplayableLogComparison();
