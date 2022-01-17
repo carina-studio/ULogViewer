@@ -320,7 +320,12 @@ namespace CarinaStudio.ULogViewer
 			}
 
 			// upgrade theme mode
-			if (oldVersion < 2)
+			if (oldVersion < 3)
+			{
+				if (Platform.IsMacOS && settings.GetValueOrDefault(AppSuite.SettingKeys.ThemeMode) == AppSuite.ThemeMode.Light)
+					settings.SetValue<AppSuite.ThemeMode>(AppSuite.SettingKeys.ThemeMode, AppSuite.ThemeMode.System);
+			}
+			else if (oldVersion < 2)
 			{
 				settings.GetValueOrDefault(LegacyThemeModeSettingKey).Let(oldValue =>
 				{
@@ -353,7 +358,7 @@ namespace CarinaStudio.ULogViewer
 
 
 		// Version of settings.
-		protected override int SettingsVersion => 2;
+		protected override int SettingsVersion => 3;
 
 
 		/// <inheritdoc/>
