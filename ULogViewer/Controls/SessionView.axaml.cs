@@ -1245,12 +1245,13 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// <summary>
 		/// Drop dragged data to this view asynchronously.
 		/// </summary>
-		/// <param name="e">Dragging event data.</param>
+		/// <param name="keyModifiers">Key modifiers.</param>
+		/// <param name="data">Data to be dropped.</param>
 		/// <returns>True if dragged data is accepted by this view.</returns>
-		public async Task<bool> DropAsync(DragEventArgs e)
+		public async Task<bool> DropAsync(KeyModifiers keyModifiers, IDataObject data)
 		{
 			// check data
-			if (!e.Data.HasFileNames())
+			if (!data.HasFileNames())
 				return false;
 
 			// bring window to front
@@ -1260,7 +1261,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			window.ActivateAndBringToFront();
 
 			// collect files
-			var dropFilePaths = e.Data.GetFileNames().AsNonNull();
+			var dropFilePaths = data.GetFileNames().AsNonNull();
 			var dirPaths = new List<string>();
 			var filePaths = new List<string>();
 			await Task.Run(() =>
@@ -1876,7 +1877,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			if ((this.FindLogicalAncestorOfType<Avalonia.Controls.Window>() as AppSuite.Controls.Window)?.HasDialogs == true)
 				return;
 			e.Handled = true;
-			await this.DropAsync(e);
+			await this.DropAsync(e.KeyModifiers, e.Data);
 		}
 
 

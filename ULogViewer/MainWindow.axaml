@@ -4,6 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
         xmlns:appViewModels="using:CarinaStudio.ULogViewer.ViewModels"
+		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.MainWindow"
 		Classes="Tabbed"
@@ -89,7 +90,7 @@
 	</Window.DataTemplates>
 
 	<!-- Content -->
-	<TabControl Name="tabControl" Background="{x:Null}">
+	<asControls:TabControl Name="tabControl" DragDrop.AllowDrop="True" DragLeaveItem="OnDragLeaveTabItem" DragOverItem="OnDragOverTabItem" DropOnItem="OnDropOnTabItem">
 
 		<!-- Add new tab -->
 		<TabItem Classes="Empty">
@@ -100,6 +101,6 @@
 			</TabItem.Header>
 		</TabItem>
 
-	</TabControl>
+	</asControls:TabControl>
 
 </Window>

@@ -6,6 +6,7 @@ using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.Templates;
 using Avalonia.VisualTree;
+using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.AppSuite.ViewModels;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
@@ -41,9 +42,9 @@ namespace CarinaStudio.ULogViewer
 		readonly ScheduledAction selectAndSetLogProfileAction;
 		readonly DataTemplate sessionTabItemHeaderTemplate;
 		readonly ScheduledAction updateSysTaskBarAction;
-		readonly TabControl tabControl;
+		readonly AppSuite.Controls.TabControl tabControl;
 		readonly ScheduledAction tabControlSelectionChangedAction;
-		readonly IList tabItems;
+		readonly ObservableList<TabItem> tabItems = new ObservableList<TabItem>();
 
 
 		/// <summary>
@@ -58,18 +59,16 @@ namespace CarinaStudio.ULogViewer
 			this.sessionTabItemHeaderTemplate = (DataTemplate)this.DataTemplates.First(it => it is DataTemplate dt && dt.DataType == typeof(Session));
 
 			// setup controls
-			this.tabControl = this.FindControl<TabControl>(nameof(tabControl)).AsNonNull().Also(it =>
+			this.tabControl = this.FindControl<AppSuite.Controls.TabControl>(nameof(tabControl)).AsNonNull().Also(it =>
 			{
-				it.PropertyChanged += (_, e) =>
+				it.GetObservable(Avalonia.Controls.TabControl.SelectedIndexProperty).Subscribe(_ =>
 				{
-					if (e.Property == TabControl.SelectedIndexProperty)
-					{
-						// [Workaround] TabControl.SelectionChanged will be raised unexpectedly when selection change in log list box in SessionView
-						this.tabControlSelectionChangedAction?.Schedule(); // Should not call OnTabControlSelectionChanged() directly because of timing issue that SelectedIndex will be changed temporarily when attaching to Workspace
-					}
-				};
+					// [Workaround] TabControl.SelectionChanged will be raised unexpectedly when selection change in log list box in SessionView
+					this.tabControlSelectionChangedAction?.Schedule(); // Should not call OnTabControlSelectionChanged() directly because of timing issue that SelectedIndex will be changed temporarily when attaching to Workspace
+				});
 			});
-			this.tabItems = (IList)this.tabControl.Items;
+			this.tabItems.AddRange(this.tabControl.Items.Cast<TabItem>());
+			this.tabControl.Items = this.tabItems;
 
 			// create scheduled actions
 			this.focusOnTabItemContentAction = new ScheduledAction(() =>
@@ -131,11 +130,6 @@ namespace CarinaStudio.ULogViewer
 #endif
 			});
 			this.tabControlSelectionChangedAction = new ScheduledAction(this.OnTabControlSelectionChanged);
-
-			// add handlers
-			this.AddHandler(DragDrop.DragEnterEvent, this.OnDragEnter);
-			this.AddHandler(DragDrop.DragOverEvent, this.OnDragOver);
-			this.AddHandler(DragDrop.DropEvent, this.OnDrop);
 		}
 
 
@@ -254,7 +248,7 @@ namespace CarinaStudio.ULogViewer
 		{
 			for (var i = this.tabItems.Count - 1; i >= 0; --i)
 			{
-				var header = (this.tabItems[i] as TabItem)?.Header as Control;
+				var header = this.tabItems[i].Header as Control;
 				if (header == null)
 					continue;
 				var position = e.GetPosition(header);
@@ -338,11 +332,6 @@ namespace CarinaStudio.ULogViewer
 		// Called when closed.
 		protected override void OnClosed(EventArgs e)
 		{
-			// remove handlers
-			this.RemoveHandler(DragDrop.DragEnterEvent, this.OnDragEnter);
-			this.RemoveHandler(DragDrop.DragOverEvent, this.OnDragOver);
-			this.RemoveHandler(DragDrop.DropEvent, this.OnDrop);
-
 			// cancel scheduled actions
 			this.tabControlSelectionChangedAction.Cancel();
 
@@ -380,90 +369,87 @@ namespace CarinaStudio.ULogViewer
 		}
 
 
-        // Called when drag enter.
-        void OnDragEnter(object? sender, DragEventArgs e)
+		// Called when drag leave tab item.
+		void OnDragLeaveTabItem(object? sender, TabItemEventArgs e)
 		{
-			if (!e.Handled)
-			{
-				e.Handled = true;
-				this.ActivateAndBringToFront();
-			}
+			if (e.Item is not TabItem tabItem)
+				return;
+			ItemInsertionIndicator.SetInsertingItemAfter(tabItem, false);
+			ItemInsertionIndicator.SetInsertingItemBefore(tabItem, false);
 		}
 
 
 		// Called when drag over.
-		void OnDragOver(object? sender, DragEventArgs e)
+		void OnDragOverTabItem(object? sender, DragOnTabItemEventArgs e)
 		{
 			// check state
-			if (e.Handled)
+			if (e.Handled || e.Item is not TabItem tabItem)
 				return;
 			if (this.HasDialogs)
 			{
 				e.DragEffects = DragDropEffects.None;
 				return;
 			}
-
-			// check workspace
+			
+			// setup
+			e.DragEffects = DragDropEffects.None;
 			e.Handled = true;
-			if (this.DataContext is not Workspace)
+
+			// handle file dragging
+			if(e.Data.HasFileNames())
 			{
-				e.DragEffects = DragDropEffects.None;
+				// select tab item
+				if (e.ItemIndex < this.tabItems.Count - 1)
+					this.tabControl.SelectedIndex = e.ItemIndex;
+
+				// complete
+				e.DragEffects = DragDropEffects.Copy;
 				return;
 			}
 
-			// check file names
-			if (!e.Data.HasFileNames())
-			{
-				e.DragEffects = DragDropEffects.None;
-				return;
-			}
-
-			// find tab
-			var index = this.FindTabItemIndex(e);
-			if (index < 0)
-			{
-				e.DragEffects = DragDropEffects.None;
-				return;
-			}
-
-			// switch to tab
-			if (index < this.tabItems.Count - 1)
-				this.tabControl.SelectedIndex = index;
-
-			// accept dragging
-			e.DragEffects = DragDropEffects.Copy;
+			// handle session dragging
+			//
 		}
 
 
-		// Called when drop data on view.
-		async void OnDrop(object? sender, DragEventArgs e)
+		// Called when drop.
+		async void OnDropOnTabItem(object? sender, DragOnTabItemEventArgs e)
 		{
 			// check state
-			if (this.HasDialogs || e.Handled)
+			if (e.Handled || e.Item is not TabItem tabItem)
 				return;
-
-			// check workspace
-			e.Handled = true;
-			if (this.DataContext is not Workspace workspace)
-				return;
-
-			// find tab and session view
-			var index = this.FindTabItemIndex(e);
-			if (index < 0)
-				return;
-			var sessionView = Global.Run(() =>
+			
+			// clear insertion indicators
+			ItemInsertionIndicator.SetInsertingItemAfter(tabItem, false);
+			ItemInsertionIndicator.SetInsertingItemBefore(tabItem, false);
+			
+			// drop files
+			if (e.Data.HasFileNames())
 			{
-				if (index < this.tabItems.Count - 1)
-					return (this.tabItems[index] as TabItem)?.Content as SessionView;
-				var session = workspace.CreateSession();
-				workspace.ActiveSession = session;
-				return this.FindSessionView(session);
-			});
-			if (sessionView == null)
-				return;
+				// find tab and session view
+				var sessionView = Global.Run(() =>
+				{
+					if (e.ItemIndex < this.tabItems.Count - 1)
+						return this.tabItems[e.ItemIndex].Content as SessionView;
+					if (this.DataContext is not Workspace workspace)
+						return null;
+					var session = workspace.CreateSession();
+					workspace.ActiveSession = session;
+					return this.FindSessionView(session);
+				});
+				if (sessionView == null)
+					return;
 
-			// drop to session view
-			await sessionView.DropAsync(e);
+				// drop to session view
+				await sessionView.DropAsync(e.KeyModifiers, e.Data);
+
+				// complete
+				e.Handled = true;
+				return;
+			}
+
+			// drop session
+			//
 		}
 
 
