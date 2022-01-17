@@ -36,7 +36,7 @@ namespace CarinaStudio.ULogViewer.Converters
 
 
 		// Convert.
-		public object? Convert(object value, Type targetType, object? parameter, CultureInfo culture)
+		public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
 		{
 			if (value is not string name || targetType != typeof(string))
 				return null;
@@ -45,6 +45,6 @@ namespace CarinaStudio.ULogViewer.Converters
 
 
 		// Convert back.
-		public object? ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => null;
+		public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) => null;
 	}
 }

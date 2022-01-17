@@ -1,5 +1,6 @@
 ﻿using Avalonia.Data.Converters;
 using Avalonia.Media;
+using CarinaStudio.AppSuite;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Data.Converters;
@@ -466,12 +467,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Initialize new <see cref="Session"/> instance.
 		/// </summary>
-		/// <param name="workspace"><see cref="Workspace"/>.</param>
-		public Session(Workspace workspace) : base(workspace)
+		/// <param name="app">Application.</param>
+		public Session(IAppSuiteApplication app) : base(app)
 		{
 			// create static logger
 			if (staticLogger == null)
-				staticLogger = workspace.Application.LoggerFactory.CreateLogger(nameof(Session));
+				staticLogger = app.LoggerFactory.CreateLogger(nameof(Session));
 
 			// create node for activation history
 			this.activationHistoryListNode = new LinkedListNode<Session>(this);
@@ -527,7 +528,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.AllLogs = this.allLogs.AsReadOnly();
 			this.SetValue(LogsProperty, this.allLogs.AsReadOnly());
 			this.MarkedLogs = this.markedLogs.AsReadOnly();
-			this.Workspace = workspace;
 
 			// setup delegates
 			this.compareDisplayableLogsDelegate = CompareDisplayableLogsById;
@@ -1277,8 +1277,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			if (logWriter.State == LogWriterState.Stopped)
 			{
 				this.Logger.LogDebug("Logs writing completed, start setting to clipboard");
-				await app.Clipboard.SetTextAsync(dataOutput.String ?? "");
-				this.Logger.LogDebug("Logs copying completed");
+				var clipboard = app.Clipboard;
+				if (clipboard != null)
+				{
+					await clipboard.SetTextAsync(dataOutput.String ?? "");
+					this.Logger.LogDebug("Logs copying completed");
+				}
+				else
+					this.Logger.LogError("Unable to get clipboard");
 			}
 			else
 				this.Logger.LogError("Logs copying failed");
@@ -3706,11 +3712,5 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Get path of current working directory.
 		/// </summary>
 		public string? WorkingDirectoryPath { get => this.GetValue(WorkingDirectoryPathProperty); }
-
-
-		/// <summary>
-		/// Get <see cref="Workspace"/> which session belongs to.
-		/// </summary>
-		public Workspace Workspace { get; }
 	}
 }

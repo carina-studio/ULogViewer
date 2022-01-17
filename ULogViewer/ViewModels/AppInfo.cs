@@ -13,7 +13,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
         // Icon.
         public override IBitmap Icon => AvaloniaLocator.Current.GetService<IAssetLoader>().Let(it =>
         {
-            return it.Open(new Uri("avares://ULogViewer/AppIcon.ico")).Use(stream => new Bitmap(stream));
+            return it.AsNonNull().Open(new Uri("avares://ULogViewer/AppIcon.ico")).Use(stream => new Bitmap(stream));
         });
 
 

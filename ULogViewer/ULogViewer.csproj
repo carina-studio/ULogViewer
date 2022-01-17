@@ -3,7 +3,7 @@
   <PropertyGroup>
     <AssemblyVersion>0.33.0.1223</AssemblyVersion>
     <Version>0.33.0.1223</Version>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <DebugType>embedded</DebugType>
     <RootNamespace>CarinaStudio.ULogViewer</RootNamespace>
     <Nullable>enable</Nullable>
@@ -19,24 +19,40 @@
 
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
     <TargetFramework>net6.0</TargetFramework>
+    <RuntimeIdentifiers>win-x86;win-x64;win-arm64;linux-x64;linux-arm64;osx-x64;osx.11.0-arm64</RuntimeIdentifiers>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Debug-Windows'">
     <TargetFramework>net6.0-windows10.0.17763.0</TargetFramework>
+    <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
     <CsWinRTIncludes>Windows</CsWinRTIncludes>
     <DefineConstants>DEBUG;TRACE;WINDOWS_ONLY</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
     <TargetFramework>net6.0</TargetFramework>
+    <RuntimeIdentifiers>win-x86;win-x64;win-arm64;linux-x64;linux-arm64;osx-x64;osx.11.0-arm64</RuntimeIdentifiers>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Release-Windows'">
     <TargetFramework>net6.0-windows10.0.17763.0</TargetFramework>
+    <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
     <CsWinRTIncludes>Windows</CsWinRTIncludes>
     <DefineConstants>WINDOWS_ONLY</DefineConstants>
   </PropertyGroup>
+
+  <PropertyGroup>
+		<CFBundleName>ULogViewer</CFBundleName>
+		<CFBundleExecutable>ULogViewer</CFBundleExecutable>
+		<CFBundleIdentifier>com.carina-studio.ulogviewer</CFBundleIdentifier>
+		<CFBundleShortVersionString>$(Version)</CFBundleShortVersionString>
+		<CFBundleIconFile>ULogViewer.icns</CFBundleIconFile>
+		<CFBundlePackageType>APPL</CFBundlePackageType>
+		<NSPrincipalClass>NSApplication</NSPrincipalClass>
+    	<NSHighResolutionCapable>True</NSHighResolutionCapable>
+		<NSHumanReadableCopyright>©2022 Carina Studio</NSHumanReadableCopyright>
+	</PropertyGroup>
 
   <ItemGroup>
     <AvaloniaResource Include="AppIcon.ico" />
@@ -54,27 +70,19 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.10.10" />
     <PackageReference Include="Avalonia.AvaloniaEdit" Version="0.10.9" />
-    <PackageReference Include="Avalonia.Desktop" Version="0.10.10" />
-    <PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.10.10.4" />
-    <PackageReference Include="CarinaStudio.AppBase.Application" Version="0.32.0.1221" />
-    <PackageReference Include="CarinaStudio.AppBase.AutoUpdate" Version="0.32.0.1221" />
-    <PackageReference Include="CarinaStudio.AppBase.Configuration" Version="0.32.0.1221" />
-    <PackageReference Include="CarinaStudio.AppBase.Core" Version="0.32.0.1221" />
-    <PackageReference Include="CarinaStudio.AppSuite.Core" Version="0.28.7.1222" />
-    <PackageReference Condition="'$(Configuration)'=='Debug-Windows'" Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
-    <PackageReference Condition="'$(Configuration)'=='Release-Windows'" Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
+    <PackageReference Include="CarinaStudio.AppSuite.Core" Version="0.34.0.113" />
     <PackageReference Include="Microsoft.Win32.SystemEvents" Version="6.0.0" />
-    <PackageReference Include="Mono.Posix" Version="7.1.0-final.1.21458.1" />
-    <PackageReference Include="NLog" Version="5.0.0-rc1" />
-    <PackageReference Include="NLog.Extensions.Logging" Version="5.0.0-rc1" />
     <PackageReference Include="System.Data.Common" Version="4.3.0" />
     <PackageReference Include="System.Data.SQLite" Version="1.0.115.5" />
     <PackageReference Include="System.Diagnostics.EventLog" Version="6.0.0" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
     <PackageReference Include="System.Runtime.InteropServices.WindowsRuntime" Version="4.3.0" />
   </ItemGroup>
+
+  <ItemGroup Condition="$(TargetFramework.Contains('windows'))">
+		<PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<None Update="AppIcon_128px.png">

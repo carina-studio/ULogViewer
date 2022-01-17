@@ -125,7 +125,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				throw new ArgumentOutOfRangeException();
 
 			// create session
-			var session = new Session(this);
+			var session = new Session(this.Application) { Owner = this };
 			this.sessions.Insert(index, session);
 			this.AttachToSession(session);
 			this.Logger.LogDebug($"Session '{session}' created at position {index}");
@@ -348,7 +348,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <inheritdoc/>
-		public override void SaveState(Utf8JsonWriter jsonWriter)
+		public override bool SaveState(Utf8JsonWriter jsonWriter)
 		{
 			this.Logger.LogTrace("Start saving state");
 
@@ -369,8 +369,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// complete
 			jsonWriter.WriteEndObject();
-
 			this.Logger.LogTrace("Complete saving state");
+			return true;
 		}
 
 

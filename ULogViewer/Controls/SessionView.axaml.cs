@@ -57,7 +57,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				this.app = app;
 			}
-			public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
+			public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
 			{
 				if (value is Logs.LogLevel level)
 				{
@@ -67,7 +67,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				}
 				return null;
 			}
-			public object? ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => null;
+			public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) => null;
 		}
 
 
@@ -728,7 +728,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 
 			// copy value
-			app.Clipboard.SetTextAsync(value.ToString() ?? "");
+			app.Clipboard?.SetTextAsync(value.ToString() ?? "");
 		}
 
 
@@ -1365,7 +1365,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			// set log profile or create new session
 			if (newLogProfile != null)
 			{
-				var workspace = session.Workspace;
+				var workspace = (Workspace)session.Owner.AsNonNull();
 				var newIndex = workspace.Sessions.IndexOf(session).Let(it =>
 				{
 					if (it >= 0)
@@ -2675,7 +2675,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when pointer released on tool bar.
 		void OnToolBarPointerReleased(object? sender, PointerReleasedEventArgs e)
 		{
-			if (Avalonia.Input.FocusManager.Instance.Current is not TextBox)
+			if (Avalonia.Input.FocusManager.Instance?.Current is not TextBox)
 				this.SynchronizationContext.Post(() => this.logListBox.Focus());
 		}
 
