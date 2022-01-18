@@ -71,7 +71,7 @@
 
   <ItemGroup>
     <PackageReference Include="Avalonia.AvaloniaEdit" Version="0.10.9" />
-    <PackageReference Include="CarinaStudio.AppSuite.Core" Version="0.34.0.113" />
+    <PackageReference Include="CarinaStudio.AppSuite.Core" Version="0.34.1.117" />
     <PackageReference Include="Microsoft.Win32.SystemEvents" Version="6.0.0" />
     <PackageReference Include="System.Data.Common" Version="4.3.0" />
     <PackageReference Include="System.Data.SQLite" Version="1.0.115.5" />

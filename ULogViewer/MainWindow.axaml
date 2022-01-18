@@ -95,9 +95,9 @@
 		<!-- Add new tab -->
 		<TabItem Classes="Empty">
 			<TabItem.Header>
-				<Border Classes="AddTabItemButton" DragDrop.AllowDrop="True" ToolTip.Tip="{DynamicResource String/MainWindow.CreateSession}">
+				<Button Classes="AddTabItem" Command="{Binding $parent[Window].CreateSessionTabItem}">
 					<Image Classes="Icon" Source="{DynamicResource Image/Icon.Add}"/>
-				</Border>
+				</Button>
 			</TabItem.Header>
 		</TabItem>
 

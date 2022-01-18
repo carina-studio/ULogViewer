@@ -181,7 +181,21 @@ namespace CarinaStudio.ULogViewer
 		}
 
 
+		/// <summary>
+		/// Show new main window.
+		/// </summary>
+		public void CreateMainWindow() =>
+			this.Application.ShowMainWindow();
+
+
 		// Create new TabItem for given session.
+		void CreateSessionTabItem()
+		{
+			if (this.DataContext is not Workspace workspace)
+				return;
+			workspace.ActiveSession = workspace.CreateSession();
+			this.selectAndSetLogProfileAction.Reschedule(300);
+		}
 		TabItem CreateSessionTabItem(Session session)
 		{
 			// create header
@@ -547,10 +561,7 @@ namespace CarinaStudio.ULogViewer
 				return;
 			var index = this.tabControl.SelectedIndex;
 			if (index == this.tabItems.Count - 1)
-			{
-				workspace.ActiveSession = workspace.CreateSession();
-				this.selectAndSetLogProfileAction.Reschedule(300);
-			}
+				this.CreateSessionTabItem();
 			else
 				workspace.ActiveSession = (Session)((TabItem)this.tabItems[index].AsNonNull()).DataContext.AsNonNull();
 			this.focusOnTabItemContentAction.Schedule();
