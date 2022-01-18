@@ -2,6 +2,9 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
+	<!-- App -->
+	<sys:String x:Key="String/App.Shutdown">結束</sys:String>
+
 	<!-- AppCulture -->
 	<sys:String x:Key="String/AppCulture.System">自動</sys:String>
 

@@ -182,6 +182,27 @@ namespace CarinaStudio.ULogViewer
 
 
 		/// <summary>
+		/// Check for application update.
+		/// </summary>
+		public async void CheckForAppUpdate()
+		{
+			// check for update
+			using var appUpdater = new AppSuite.ViewModels.ApplicationUpdater();
+			var result = await new AppSuite.Controls.ApplicationUpdateDialog(appUpdater)
+			{
+				CheckForUpdateWhenShowing = true
+			}.ShowDialog(this);
+
+			// shutdown to update
+			if (result == AppSuite.Controls.ApplicationUpdateDialogResult.ShutdownNeeded)
+			{
+				this.Logger.LogWarning("Shutdown to update application");
+				this.Application.Shutdown();
+			}
+		}
+
+
+		/// <summary>
 		/// Show new main window.
 		/// </summary>
 		public void CreateMainWindow() =>
@@ -675,6 +696,38 @@ namespace CarinaStudio.ULogViewer
 
 			// set title
 			session.CustomTitle = title;
+		}
+
+
+		/// <summary>
+		/// Show application info dialog.
+		/// </summary>
+		public async void ShowAppInfo()
+		{
+			using var appInfo = new AppInfo();
+			await new AppSuite.Controls.ApplicationInfoDialog(appInfo).ShowDialog(this);
+		}
+
+
+		/// <summary>
+		/// Show application options.
+		/// </summary>
+		public async void ShowAppOptions()
+		{
+			switch (await new AppOptionsDialog().ShowDialog<AppSuite.Controls.ApplicationOptionsDialogResult>(this))
+			{
+				case AppSuite.Controls.ApplicationOptionsDialogResult.RestartApplicationNeeded:
+					this.Logger.LogWarning("Restart application");
+					if (this.Application.IsDebugMode)
+						this.Application.Restart($"{App.DebugArgument} {App.RestoreMainWindowsArgument}", this.Application.IsRunningAsAdministrator);
+					else
+						this.Application.Restart(App.RestoreMainWindowsArgument, this.Application.IsRunningAsAdministrator);
+					break;
+				case AppSuite.Controls.ApplicationOptionsDialogResult.RestartMainWindowsNeeded:
+					this.Logger.LogWarning("Restart main windows");
+					this.Application.RestartMainWindows();
+					break;
+			}
 		}
 	}
 }

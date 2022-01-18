@@ -214,12 +214,12 @@
 
 		<!-- Other actions menu -->
 		<ContextMenu x:Key="otherActionsMenu" PlacementMode="Bottom">
-			<MenuItem Command="{Binding $parent[UserControl].ShowAppOptions}" Header="{DynamicResource String/SessionView.AppOptions}">
+			<MenuItem Command="{Binding $parent[Window].ShowAppOptions}" Header="{DynamicResource String/SessionView.AppOptions}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{DynamicResource Image/Icon.Settings}"/>
 				</MenuItem.Icon>
 			</MenuItem>
-			<MenuItem Command="{Binding $parent[UserControl].CheckForAppUpdate}" Header="{DynamicResource String/SessionView.CheckForAppUpdate}">
+			<MenuItem Command="{Binding $parent[Window].CheckForAppUpdate}" Header="{DynamicResource String/SessionView.CheckForAppUpdate}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{DynamicResource Image/Icon.Update}"/>
 				</MenuItem.Icon>
@@ -230,7 +230,7 @@
 				</MenuItem.Icon>
 			</MenuItem>
 			<Separator/>
-			<MenuItem Command="{Binding $parent[UserControl].ShowAppInfo}" Header="{DynamicResource String/SessionView.AppInfo}"/>
+			<MenuItem Command="{Binding $parent[Window].ShowAppInfo}" Header="{DynamicResource String/SessionView.AppInfo}"/>
 		</ContextMenu>
 
 		<!-- Working directory menu -->

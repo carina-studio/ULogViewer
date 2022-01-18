@@ -232,6 +232,27 @@ namespace CarinaStudio.ULogViewer
 		}
 
 
+		// Called when user click the native menu item.
+		void OnNativeMenuItemClick(object? sender, EventArgs e)
+		{
+			switch ((sender as NativeMenuItem)?.CommandParameter as string)
+			{
+				case "AppInfo":
+					(this.LatestActiveMainWindow as MainWindow)?.ShowAppInfo();
+					break;
+				case "AppOptions":
+					(this.LatestActiveMainWindow as MainWindow)?.ShowAppOptions();
+					break;
+				case "CheckForUpdate":
+					(this.LatestActiveMainWindow as MainWindow)?.CheckForAppUpdate();
+					break;
+				case "Shutdown":
+					this.Shutdown();
+					break;
+			}
+		}
+
+
 		// Parse arguments.
         protected override int OnParseArguments(string[] args, int index, IDictionary<string, object> launchOptions)
         {

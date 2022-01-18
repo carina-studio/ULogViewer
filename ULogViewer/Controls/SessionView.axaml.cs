@@ -595,30 +595,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		bool CanFilterLogsByNonTextFilters { get => this.GetValue<bool>(CanFilterLogsByNonTextFiltersProperty); }
 
 
-		// Check for application update.
-		async void CheckForAppUpdate()
-		{
-			// find window
-			var window = this.FindLogicalAncestorOfType<Avalonia.Controls.Window>();
-			if (window == null)
-				return;
-
-			// check for update
-			using var appUpdater = new AppSuite.ViewModels.ApplicationUpdater();
-			var result = await new AppSuite.Controls.ApplicationUpdateDialog(appUpdater)
-			{
-				CheckForUpdateWhenShowing = true
-			}.ShowDialog(window);
-
-			// shutdown to update
-			if (result == AppSuite.Controls.ApplicationUpdateDialogResult.ShutdownNeeded)
-			{
-				this.Logger.LogWarning("Shutdown to update application");
-				this.Application.Shutdown();
-			}
-		}
-
-
 		// Clear predefined log text fliter selection.
 		void ClearPredefinedLogTextFilterSelection()
 		{
@@ -3144,40 +3120,6 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.IsScrollingToLatestLogNeeded = false;
 			}
         }
-
-
-		// Show application info.
-		void ShowAppInfo()
-		{
-			this.FindLogicalAncestorOfType<Avalonia.Controls.Window>()?.Let(async (window) =>
-			{
-				using var appInfo = new AppInfo();
-				await new AppSuite.Controls.ApplicationInfoDialog(appInfo).ShowDialog(window);
-			});
-		}
-
-
-		// Show application options.
-		void ShowAppOptions()
-		{
-			this.FindLogicalAncestorOfType<Avalonia.Controls.Window>()?.Let(async (window) =>
-			{
-				switch (await new AppOptionsDialog().ShowDialog<AppSuite.Controls.ApplicationOptionsDialogResult>(window))
-				{
-					case AppSuite.Controls.ApplicationOptionsDialogResult.RestartApplicationNeeded:
-						this.Logger.LogWarning("Restart application");
-						if (this.Application.IsDebugMode)
-							this.Application.Restart($"{App.DebugArgument} {App.RestoreMainWindowsArgument}", this.Application.IsRunningAsAdministrator);
-						else
-							this.Application.Restart(App.RestoreMainWindowsArgument, this.Application.IsRunningAsAdministrator);
-						break;
-					case AppSuite.Controls.ApplicationOptionsDialogResult.RestartMainWindowsNeeded:
-						this.Logger.LogWarning("Restart main windows");
-						this.Application.RestartMainWindows();
-						break;
-				}
-			});
-		}
 
 
 		// Show file in system file explorer.
