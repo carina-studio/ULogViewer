@@ -147,12 +147,22 @@ namespace CarinaStudio.ULogViewer
 		}
 
 
+		// Reset title of current session.
+		void ClearCurrentCustomSessionTitle() =>
+			(this.tabControl.SelectedItem as TabItem)?.Let(it => this.ClearCustomSessionTitle(it));
+
+
 		// Reset title of session.
 		void ClearCustomSessionTitle(TabItem tabItem)
 		{
 			if (tabItem.DataContext is Session session)
 				session.CustomTitle = null;
 		}
+
+
+		// Close current session tab item.
+		void CloseCurrentSessionTabItem() =>
+			(this.tabControl.SelectedItem as TabItem)?.Let(it => this.CloseSessionTabItem(it));
 
 
 		// Close session tab.
@@ -223,6 +233,8 @@ namespace CarinaStudio.ULogViewer
 		{
 			// create header
 			var header = this.sessionTabItemHeaderTemplate.Build(session);
+			if (Platform.IsMacOS)
+				((Control)header).ContextMenu = null;
 
 			// create session view
 			var sessionView = new SessionView()
@@ -513,6 +525,13 @@ namespace CarinaStudio.ULogViewer
 							e.Handled = true;
 						}
 						break;
+					case Key.T:
+						if (!Platform.IsMacOS)
+						{
+							this.CreateSessionTabItem();
+							e.Handled = true;
+						}
+						break;
 					case Key.Tab:
 						if (this.tabItems.Count > 2)
 						{
@@ -532,6 +551,13 @@ namespace CarinaStudio.ULogViewer
 							this.tabControl.SelectedIndex = index;
 						}
 						e.Handled = true;
+						break;
+					case Key.W:
+						if (!Platform.IsMacOS)
+						{
+							this.CloseCurrentSessionTabItem();
+							e.Handled = true;
+						}
 						break;
 				}
 			}
@@ -684,6 +710,11 @@ namespace CarinaStudio.ULogViewer
 				}
 			});
 		}
+
+
+		// Set title of current session.
+		void SetCurrentCustomSessionTitle() =>
+			(this.tabControl.SelectedItem as TabItem)?.Let(it => this.SetCustomSessionTitle(it));
 
 
 		// Set title of session.

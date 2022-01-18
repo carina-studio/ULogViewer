@@ -5,6 +5,7 @@
         xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
         xmlns:appViewModels="using:CarinaStudio.ULogViewer.ViewModels"
 		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
+		xmlns:asConverters="using:CarinaStudio.AppSuite.Converters"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.MainWindow"
 		Classes="Tabbed"
@@ -15,28 +16,28 @@
 	<!-- Data templates -->
 	<Window.DataTemplates>
 		<DataTemplate DataType="{x:Type appViewModels:Session}">
-			<Grid ColumnDefinitions="*,Auto">
-				<Grid Background="{x:Static Brushes.Transparent}" ColumnDefinitions="Auto,*" DragDrop.AllowDrop="True" HorizontalAlignment="Stretch">
-					<Grid.ContextMenu>
-						<ContextMenu>
-							<MenuItem Command="{Binding $parent[Window].SetCustomSessionTitle}" CommandParameter="{Binding $parent[TabItem]}" Header="{DynamicResource String/MainWindow.SetCustomSessionTitle}">
-								<MenuItem.Icon>
-									<Border Classes="MenuItem_Icon">
-										<Image Classes="Icon" Source="{DynamicResource Image/Rename}"/>
-									</Border>
-								</MenuItem.Icon>
-							</MenuItem>
-							<MenuItem Command="{Binding $parent[Window].ClearCustomSessionTitle}" CommandParameter="{Binding $parent[TabItem]}" Header="{DynamicResource String/MainWindow.ClearCustomSessionTitle}" IsEnabled="{Binding HasCustomTitle}"/>
-							<Separator/>
-							<MenuItem Command="{Binding $parent[Window].CloseSessionTabItem}" CommandParameter="{Binding $parent[TabItem]}" Header="{DynamicResource String/MainWindow.CloseSession}">
-								<MenuItem.Icon>
-									<Border Classes="MenuItem_Icon">
-										<Image Classes="Icon" Source="{DynamicResource Image/Icon.Close}"/>
-									</Border>
-								</MenuItem.Icon>
-							</MenuItem>
-						</ContextMenu>
-					</Grid.ContextMenu>
+			<Grid ColumnDefinitions="*,Auto" Background="{x:Static Brushes.Transparent}">
+				<Grid.ContextMenu>
+					<ContextMenu PlacementMode="Bottom">
+						<MenuItem Command="{Binding $parent[Window].SetCustomSessionTitle}" CommandParameter="{Binding $parent[TabItem]}" Header="{DynamicResource String/MainWindow.SetCustomSessionTitle}">
+							<MenuItem.Icon>
+								<Border Classes="MenuItem_Icon">
+									<Image Classes="Icon" Source="{DynamicResource Image/Icon.Edit}"/>
+								</Border>
+							</MenuItem.Icon>
+						</MenuItem>
+						<MenuItem Command="{Binding $parent[Window].ClearCustomSessionTitle}" CommandParameter="{Binding $parent[TabItem]}" Header="{DynamicResource String/MainWindow.ClearCustomSessionTitle}" IsEnabled="{Binding HasCustomTitle}"/>
+						<Separator/>
+						<MenuItem Command="{Binding $parent[Window].CloseSessionTabItem}" CommandParameter="{Binding $parent[TabItem]}" Header="{DynamicResource String/Common.CloseTab}" InputGesture="Ctrl+W">
+							<MenuItem.Icon>
+								<Border Classes="MenuItem_Icon">
+									<Image Classes="Icon" Source="{DynamicResource Image/Icon.Close}"/>
+								</Border>
+							</MenuItem.Icon>
+						</MenuItem>
+					</ContextMenu>
+				</Grid.ContextMenu>
+				<Grid ColumnDefinitions="Auto,*" HorizontalAlignment="Stretch">
 					<ToolTip.Tip>
 						<StackPanel Margin="{DynamicResource Thickness/MainWindow.TabItem.ToolTip.Padding}">
 							<StackPanel.Styles>
@@ -82,7 +83,7 @@
 					<Image Classes="TabItem_Icon" IsEnabled="{Binding !IsHibernated}" Source="{Binding Icon}"/>
 					<TextBlock Name="titleTextBlock" Classes="TabItem_TextBlock" Grid.Column="1" Text="{Binding Title}"/>
 				</Grid>
-				<Button Classes="TabItem_Button" Command="{Binding $parent[Window].CloseSessionTabItem}" CommandParameter="{Binding $parent[TabItem]}" Grid.Column="1" ToolTip.Tip="{DynamicResource String/MainWindow.CloseSession}">
+				<Button Classes="TabItem_Button" Command="{Binding $parent[Window].CloseSessionTabItem}" CommandParameter="{Binding $parent[TabItem]}" Grid.Column="1" ToolTip.Tip="{DynamicResource String/Common.CloseTab.WithGesture}">
 					<Image Classes="Icon" Source="{StaticResource Image/Icon.Close}"/>
 				</Button>
 			</Grid>
@@ -105,20 +106,20 @@
 					</NativeMenu>
 				</NativeMenuItem.Menu>
 			</NativeMenuItem>
-			<!--NativeMenuItem Header="{DynamicResource String/MainWindow.Tabs}">
+			<NativeMenuItem Header="{DynamicResource String/MainWindow.Tabs}">
 				<NativeMenuItem.Menu>
 					<NativeMenu>
-						<NativeMenuItem Command="{Binding $self.CreateMainTabItem}" Header="{DynamicResource String/Common.CreateTab}"  Gesture="Cmd+T"/>
+						<NativeMenuItem Command="{Binding $self.CreateSessionTabItem}" Header="{DynamicResource String/Common.CreateTab}"  Gesture="Cmd+T"/>
 						<NativeMenuItemSeparator/>
 						<NativeMenuItem Command="{Binding $self.SetCurrentCustomSessionTitle}" Header="{DynamicResource String/MainWindow.SetCustomSessionTitle}"/>
-						<NativeMenuItem Command="{Binding $self.ResetCurrentSessionTitle}" Header="{DynamicResource String/MainWindow.ResetSessionTitle}" IsEnabled="{Binding ActivatedSession.CustomTitle, Converter={x:Static asConverters:ValueToBooleanConverters.NonNullToTrue}}"/>
+						<NativeMenuItem Command="{Binding $self.ClearCurrentCustomSessionTitle}" Header="{DynamicResource String/MainWindow.ClearCustomSessionTitle}" IsEnabled="{Binding ActivatedSession.CustomTitle, Converter={x:Static asConverters:ValueToBooleanConverters.NonNullToTrue}}"/>
+						<!--NativeMenuItemSeparator/>
+						<NativeMenuItem Command="{Binding $self.MoveCurrentSessionToNewWorkspace}" Header="{DynamicResource String/Common.OpenInNewWindow}" IsEnabled="{Binding $self.HasMultipleSessions}"/-->
 						<NativeMenuItemSeparator/>
-						<NativeMenuItem Command="{Binding $self.MoveCurrentSessionToNewWorkspace}" Header="{DynamicResource String/Common.OpenInNewWindow}" IsEnabled="{Binding $self.HasMultipleSessions}"/>
-						<NativeMenuItemSeparator/>
-						<NativeMenuItem Command="{Binding $self.CloseCurrentMainTabItem}" Header="{DynamicResource String/Common.CloseTab}" Gesture="Cmd+W"/>
+						<NativeMenuItem Command="{Binding $self.CloseCurrentSessionTabItem}" Header="{DynamicResource String/Common.CloseTab}" Gesture="Cmd+W"/>
 					</NativeMenu>
 				</NativeMenuItem.Menu>
-			</NativeMenuItem-->
+			</NativeMenuItem>
 		</NativeMenu>
 
 	</Window.Resources>
