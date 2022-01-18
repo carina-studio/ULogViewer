@@ -112,7 +112,7 @@
 						<NativeMenuItem Command="{Binding $self.CreateSessionTabItem}" Header="{DynamicResource String/Common.CreateTab}"  Gesture="Cmd+T"/>
 						<NativeMenuItemSeparator/>
 						<NativeMenuItem Command="{Binding $self.SetCurrentCustomSessionTitle}" Header="{DynamicResource String/MainWindow.SetCustomSessionTitle}"/>
-						<NativeMenuItem Command="{Binding $self.ClearCurrentCustomSessionTitle}" Header="{DynamicResource String/MainWindow.ClearCustomSessionTitle}" IsEnabled="{Binding ActivatedSession.CustomTitle, Converter={x:Static asConverters:ValueToBooleanConverters.NonNullToTrue}}"/>
+						<NativeMenuItem Command="{Binding $self.ClearCurrentCustomSessionTitle}" Header="{DynamicResource String/MainWindow.ClearCustomSessionTitle}" IsEnabled="{Binding ActiveSession.CustomTitle, Converter={x:Static asConverters:ValueToBooleanConverters.NonNullToTrue}}"/>
 						<!--NativeMenuItemSeparator/>
 						<NativeMenuItem Command="{Binding $self.MoveCurrentSessionToNewWorkspace}" Header="{DynamicResource String/Common.OpenInNewWindow}" IsEnabled="{Binding $self.HasMultipleSessions}"/-->
 						<NativeMenuItemSeparator/>

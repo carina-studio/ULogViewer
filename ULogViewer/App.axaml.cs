@@ -128,7 +128,7 @@ namespace CarinaStudio.ULogViewer
 					return null;
 				});
 				if (initialProfile != null)
-					it.CreateSession(initialProfile);
+					it.CreateAndAttachSession(initialProfile);
 			}
 		});
 

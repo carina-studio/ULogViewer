@@ -54,49 +54,29 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		}
 
 
-		// Attach to Session.
-		void AttachToSession(Session session)
-		{
-			// add event handler
-			session.PropertyChanged += this.OnSessionPropertyChanged;
-		}
-
-
 		/// <summary>
-		/// Close and dispose given session.
+		/// Attach given session to this workspace.
 		/// </summary>
-		/// <param name="session">Session to close.</param>
-		public async void CloseSession(Session session)
+		/// <param name="index">Index of position to place sessopn in <see cref="Sessions"/>.</param>
+		/// <param name="session">Session to attach.</param>
+		public void AttachSession(int index, Session session)
 		{
-			// check state
+			// check state and parameter
 			this.VerifyAccess();
 			this.VerifyDisposed();
-
-			// check parameter
-			var index = this.sessions.IndexOf(session);
-			if (index < 0)
-			{
-				this.Logger.LogError($"Unknown session '{session}' to close");
+			if (index < 0 || index > this.sessions.Count)
+				throw new ArgumentOutOfRangeException();
+			if (session.Owner == this)
 				return;
-			}
+			
+			// detach from current session
+			(session.Owner as Workspace)?.DetachSession(session);
 
-			this.Logger.LogDebug($"Close session '{session}' at position {index}");
-
-			// remove from list
-			this.sessions.RemoveAt(index);
-
-			// deactivate
-			if (this.ActiveSession == session)
-				this.ActiveSession = null;
-
-			// detach
-			this.DetachFromSession(session);
-
-			// wait for task completion
-			await session.WaitForNecessaryTasksAsync();
-
-			// dispose
-			session.Dispose();
+			// attach
+			this.Logger.LogDebug($"Attach {session} at position {index}, count: {this.sessions.Count + 1}");
+			session.Owner = this;
+			session.PropertyChanged += this.OnSessionPropertyChanged;
+			this.sessions.Insert(index, session);
 		}
 
 
@@ -105,7 +85,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		/// <param name="logProfile">Initial log profile.</param>
 		/// <returns>Created session.</returns>
-		public Session CreateSession(LogProfile? logProfile = null) => this.CreateSession(this.sessions.Count, logProfile);
+		public Session CreateAndAttachSession(LogProfile? logProfile = null) => this.CreateAndAttachSession(this.sessions.Count, logProfile);
 
 
 		/// <summary>
@@ -114,7 +94,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <param name="index">Position of created session.</param>
 		/// <param name="logProfile">Initial log profile.</param>
 		/// <returns>Created session.</returns>
-		public Session CreateSession(int index, LogProfile? logProfile = null)
+		public Session CreateAndAttachSession(int index, LogProfile? logProfile = null)
 		{
 			// check state
 			this.VerifyAccess();
@@ -125,10 +105,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				throw new ArgumentOutOfRangeException();
 
 			// create session
-			var session = new Session(this.Application) { Owner = this };
-			this.sessions.Insert(index, session);
-			this.AttachToSession(session);
-			this.Logger.LogDebug($"Session '{session}' created at position {index}");
+			var session = new Session(this.Application);
+			this.AttachSession(index, session);
 
 			// set log profile
 			if (logProfile != null && !session.SetLogProfileCommand.TryExecute(logProfile))
@@ -145,7 +123,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <param name="logProfile">Log profile.</param>
 		/// <param name="filePaths">Log file paths.</param>
 		/// <returns>Created session.</returns>
-		public Session CreateSessionWithLogFiles(LogProfile logProfile, IEnumerable<string> filePaths) => this.CreateSessionWithLogFiles(this.sessions.Count, logProfile, filePaths);
+		public Session CreateAndAttachSessionWithLogFiles(LogProfile logProfile, IEnumerable<string> filePaths) => this.CreateAndAttachSessionWithLogFiles(this.sessions.Count, logProfile, filePaths);
 
 
 		/// <summary>
@@ -155,10 +133,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <param name="logProfile">Log profile.</param>
 		/// <param name="filePaths">Log file paths.</param>
 		/// <returns>Created session.</returns>
-		public Session CreateSessionWithLogFiles(int index, LogProfile logProfile, IEnumerable<string> filePaths)
+		public Session CreateAndAttachSessionWithLogFiles(int index, LogProfile logProfile, IEnumerable<string> filePaths)
 		{
 			// create session
-			var session = this.CreateSession(index, logProfile);
+			var session = this.CreateAndAttachSession(index, logProfile);
 			if (session.LogProfile != logProfile)
 				return session;
 
@@ -183,7 +161,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <param name="logProfile">Log profile.</param>
 		/// <param name="directory">Working directory path.</param>
 		/// <returns>Created session.</returns>
-		public Session CreateSessionWithWorkingDirectory(LogProfile logProfile, string directory) => this.CreateSessionWithWorkingDirectory(this.sessions.Count, logProfile, directory);
+		public Session CreateAndAttachSessionWithWorkingDirectory(LogProfile logProfile, string directory) => this.CreateAndAttachSessionWithWorkingDirectory(this.sessions.Count, logProfile, directory);
 
 
 		/// <summary>
@@ -193,10 +171,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <param name="logProfile">Log profile.</param>
 		/// <param name="directory">Working directory path.</param>
 		/// <returns>Created session.</returns>
-		public Session CreateSessionWithWorkingDirectory(int index, LogProfile logProfile, string directory)
+		public Session CreateAndAttachSessionWithWorkingDirectory(int index, LogProfile logProfile, string directory)
 		{
 			// create session
-			var session = this.CreateSession(index, logProfile);
+			var session = this.CreateAndAttachSession(index, logProfile);
 			if (session.LogProfile != logProfile)
 				return session;
 
@@ -209,11 +187,56 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		}
 
 
-		// Detach from Session.
-		void DetachFromSession(Session session)
+		/// <summary>
+		/// Detach, close and dispose given session.
+		/// </summary>
+		/// <param name="session">Session to close.</param>
+		public async void DetachAndCloseSession(Session session)
 		{
-			// remove event handler
+			// check state
+			this.VerifyAccess();
+			this.VerifyDisposed();
+			if (session.Owner != this)
+				return;
+
+			// detach
+			this.DetachSession(session);
+
+			this.Logger.LogDebug($"Close {session}");
+
+			// wait for task completion
+			await session.WaitForNecessaryTasksAsync();
+
+			// dispose
+			session.Dispose();
+		}
+
+
+		/// <summary>
+		/// Detach given session from this workspace.
+		/// </summary>
+		/// <param name="session">Session to detach.</param>
+		public void DetachSession(Session session)
+		{
+			// check state
+			this.VerifyAccess();
+			if (session.Owner != this)
+				return;
+			
+			// find session
+			var index = this.sessions.IndexOf(session);
+			if (index < 0)
+				return;
+			
+			// detach
+			this.Logger.LogDebug($"Detach {session} at position {index}, count: {this.sessions.Count - 1}");
+			this.sessions.RemoveAt(index);
 			session.PropertyChanged -= this.OnSessionPropertyChanged;
+			session.Owner = null;
+
+			// update active session
+			if (this.ActiveSession == session && !this.IsDisposed)
+				this.ActiveSession = null;
 		}
 
 
@@ -233,7 +256,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// dispose sessions
 			foreach (var session in this.sessions.ToArray())
 			{
-				this.DetachFromSession(session);
+				this.DetachSession(session);
 				session.Dispose();
 			}
 			this.sessions.Clear();
@@ -314,14 +337,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// close current sessions
 			foreach (var session in this.sessions.ToArray())
-				this.CloseSession(session);
+				this.DetachAndCloseSession(session);
 
 			// restore sessions
 			if (jsonState.TryGetProperty("Sessions", out var jsonSessions) && jsonSessions.ValueKind == JsonValueKind.Array)
 			{
 				foreach (var jsonSession in jsonSessions.EnumerateArray())
 				{
-					var session = this.CreateSession();
+					var session = this.CreateAndAttachSession();
 					try
 					{
 						session.RestoreState(jsonSession);

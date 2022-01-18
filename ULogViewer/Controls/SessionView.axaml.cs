@@ -1360,13 +1360,13 @@ namespace CarinaStudio.ULogViewer.Controls
 				}
 				else if (filePaths.IsNotEmpty())
 				{
-					var newSession = workspace.CreateSessionWithLogFiles(newIndex, newLogProfile, filePaths);
+					var newSession = workspace.CreateAndAttachSessionWithLogFiles(newIndex, newLogProfile, filePaths);
 					workspace.ActiveSession = newSession;
 					return true;
 				}
 				else
 				{
-					var newSession = workspace.CreateSessionWithWorkingDirectory(newIndex, newLogProfile, dirPaths[0]);
+					var newSession = workspace.CreateAndAttachSessionWithWorkingDirectory(newIndex, newLogProfile, dirPaths[0]);
 					workspace.ActiveSession = newSession;
 					return true;
 				}

@@ -185,11 +185,11 @@ namespace CarinaStudio.ULogViewer
 				else if (index > 0)
 					this.tabControl.SelectedIndex = (index - 1);
 				else
-					workspace.ActiveSession = workspace.CreateSession();
+					workspace.ActiveSession = workspace.CreateAndAttachSession();
 			}
 
 			// close session
-			workspace.CloseSession(session);
+			workspace.DetachAndCloseSession(session);
 		}
 
 
@@ -226,7 +226,7 @@ namespace CarinaStudio.ULogViewer
 		{
 			if (this.DataContext is not Workspace workspace)
 				return;
-			workspace.ActiveSession = workspace.CreateSession();
+			workspace.ActiveSession = workspace.CreateAndAttachSession();
 			this.selectAndSetLogProfileAction.Reschedule(300);
 		}
 		TabItem CreateSessionTabItem(Session session)
@@ -482,7 +482,7 @@ namespace CarinaStudio.ULogViewer
 						return this.tabItems[e.ItemIndex].Content as SessionView;
 					if (this.DataContext is not Workspace workspace)
 						return null;
-					var session = workspace.CreateSession();
+					var session = workspace.CreateAndAttachSession();
 					workspace.ActiveSession = session;
 					return this.FindSessionView(session);
 				});
@@ -645,11 +645,11 @@ namespace CarinaStudio.ULogViewer
 				else if (index > 0)
 					this.tabControl.SelectedIndex = (index - 1);
 				else
-					workspace.ActiveSession = workspace.CreateSession();
+					workspace.ActiveSession = workspace.CreateAndAttachSession();
 			}
 
 			// close session
-			workspace.CloseSession((Session)tabItem.DataContext.AsNonNull());
+			workspace.DetachAndCloseSession((Session)tabItem.DataContext.AsNonNull());
 		}
 
 
@@ -686,7 +686,7 @@ namespace CarinaStudio.ULogViewer
 			if (workspace.Sessions.IsNotEmpty())
 				workspace.ActiveSession = workspace.Sessions[0];
 			else
-				workspace.ActiveSession = workspace.CreateSession();
+				workspace.ActiveSession = workspace.CreateAndAttachSession();
 		}
 
 
