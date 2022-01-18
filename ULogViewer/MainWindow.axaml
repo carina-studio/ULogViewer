@@ -89,6 +89,40 @@
 		</DataTemplate>
 	</Window.DataTemplates>
 
+	<!-- Resources -->
+	<Window.Resources>
+
+		<!-- Native menu -->
+		<NativeMenu x:Key="nativeMenu">
+			<NativeMenuItem Header="{DynamicResource String/MainWindow.Windows}">
+				<NativeMenuItem.Menu>
+					<NativeMenu>
+						<NativeMenuItem Command="{Binding $self.CreateMainWindow}" Header="{DynamicResource String/Common.CreateWindow}" Gesture="Cmd+N"/>
+						<NativeMenuItemSeparator/>
+						<NativeMenuItem Command="{Binding $self.LayoutMainWindowsCommand}" CommandParameter="{x:Static asControls:MultiWindowLayout.Horizontal}" Header="{DynamicResource String/MainWindow.LayoutMainWindows.Horizontal}"/>
+						<NativeMenuItem Command="{Binding $self.LayoutMainWindowsCommand}" CommandParameter="{x:Static asControls:MultiWindowLayout.Vertical}" Header="{DynamicResource String/MainWindow.LayoutMainWindows.Vertical}"/>
+						<NativeMenuItem Command="{Binding $self.LayoutMainWindowsCommand}" CommandParameter="{x:Static asControls:MultiWindowLayout.Tile}" Header="{DynamicResource String/MainWindow.LayoutMainWindows.Tile}"/>
+					</NativeMenu>
+				</NativeMenuItem.Menu>
+			</NativeMenuItem>
+			<!--NativeMenuItem Header="{DynamicResource String/MainWindow.Tabs}">
+				<NativeMenuItem.Menu>
+					<NativeMenu>
+						<NativeMenuItem Command="{Binding $self.CreateMainTabItem}" Header="{DynamicResource String/Common.CreateTab}"  Gesture="Cmd+T"/>
+						<NativeMenuItemSeparator/>
+						<NativeMenuItem Command="{Binding $self.SetCurrentCustomSessionTitle}" Header="{DynamicResource String/MainWindow.SetCustomSessionTitle}"/>
+						<NativeMenuItem Command="{Binding $self.ResetCurrentSessionTitle}" Header="{DynamicResource String/MainWindow.ResetSessionTitle}" IsEnabled="{Binding ActivatedSession.CustomTitle, Converter={x:Static asConverters:ValueToBooleanConverters.NonNullToTrue}}"/>
+						<NativeMenuItemSeparator/>
+						<NativeMenuItem Command="{Binding $self.MoveCurrentSessionToNewWorkspace}" Header="{DynamicResource String/Common.OpenInNewWindow}" IsEnabled="{Binding $self.HasMultipleSessions}"/>
+						<NativeMenuItemSeparator/>
+						<NativeMenuItem Command="{Binding $self.CloseCurrentMainTabItem}" Header="{DynamicResource String/Common.CloseTab}" Gesture="Cmd+W"/>
+					</NativeMenu>
+				</NativeMenuItem.Menu>
+			</NativeMenuItem-->
+		</NativeMenu>
+
+	</Window.Resources>
+
 	<!-- Content -->
 	<asControls:TabControl Name="tabControl" DragDrop.AllowDrop="True" DragLeaveItem="OnDragLeaveTabItem" DragOverItem="OnDragOverTabItem" DropOnItem="OnDropOnTabItem">
 

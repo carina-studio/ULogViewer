@@ -54,6 +54,8 @@ namespace CarinaStudio.ULogViewer
 		{
 			// initialize.
 			InitializeComponent();
+			if (Platform.IsMacOS)
+				NativeMenu.SetMenu(this, this.Resources["nativeMenu"] as NativeMenu);
 
 			// find templates
 			this.sessionTabItemHeaderTemplate = (DataTemplate)this.DataTemplates.First(it => it is DataTemplate dt && dt.DataType == typeof(Session));
@@ -504,6 +506,13 @@ namespace CarinaStudio.ULogViewer
 			{
 				switch (e.Key)
 				{
+					case Key.N:
+						if (!Platform.IsMacOS)
+						{
+							this.CreateMainWindow();
+							e.Handled = true;
+						}
+						break;
 					case Key.Tab:
 						if (this.tabItems.Count > 2)
 						{

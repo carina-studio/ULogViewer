@@ -363,6 +363,8 @@
 	<sys:String x:Key="String/MainWindow.Session.WaitingForDataSources">正在等待資料來源</sys:String>
 	<sys:String x:Key="String/MainWindow.SetCustomSessionTitle">自訂分頁標題…</sys:String>
 	<sys:String x:Key="String/MainWindow.SetCustomSessionTitle.Message">分頁標題</sys:String>
+	<sys:String x:Key="String/MainWindow.Tabs">分頁</sys:String>
+	<sys:String x:Key="String/MainWindow.Windows">視窗</sys:String>
 
 	<!-- MarkColor -->
 	<sys:String x:Key="String/MarkColor.Blue">藍色</sys:String>

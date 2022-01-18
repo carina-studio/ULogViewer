@@ -381,6 +381,8 @@
 	<sys:String x:Key="String/MainWindow.Session.WaitingForDataSources">Waiting for data source</sys:String>
 	<sys:String x:Key="String/MainWindow.SetCustomSessionTitle">Set title of this tab…</sys:String>
 	<sys:String x:Key="String/MainWindow.SetCustomSessionTitle.Message">Title of tab</sys:String>
+	<sys:String x:Key="String/MainWindow.Tabs">Tabs</sys:String>
+	<sys:String x:Key="String/MainWindow.Windows">Windows</sys:String>
 
 	<!-- MarkColor -->
 	<sys:String x:Key="String/MarkColor.Blue">Blue</sys:String>

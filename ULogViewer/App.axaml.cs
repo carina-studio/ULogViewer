@@ -45,6 +45,11 @@ namespace CarinaStudio.ULogViewer
 		}
 
 
+		/// <inheritdoc/>
+		protected override bool AllowMultipleMainWindows => true;
+
+
+
 		/// <summary>
 		/// Get <see cref="App"/> instance for current process.
 		/// </summary>
@@ -59,7 +64,7 @@ namespace CarinaStudio.ULogViewer
 
 
 		// Support multi-instances.
-		protected override bool IsMultipleProcessesSupported => true;
+		protected override bool IsMultipleProcessesSupported => false;
 
 
         /// <summary>
