@@ -32,10 +32,6 @@ namespace CarinaStudio.ULogViewer
 	/// </summary>
 	partial class MainWindow : AppSuite.Controls.MainWindow<IULogViewerApplication, Workspace>
 	{
-		// Constants.
-		const int RestartingMainWindowsDelay = 1000;
-
-
 		// Static fields.
 		static readonly AvaloniaProperty<bool> HasMultipleSessionsProperty = AvaloniaProperty.Register<MainWindow, bool>("HasMultipleSessions");
 
@@ -43,7 +39,6 @@ namespace CarinaStudio.ULogViewer
 		// Fields.
 		Session? attachedActiveSession;
 		readonly ScheduledAction focusOnTabItemContentAction;
-		readonly ScheduledAction restartingMainWindowsAction;
 		readonly ScheduledAction selectAndSetLogProfileAction;
 		readonly DataTemplate sessionTabItemHeaderTemplate;
 		readonly ScheduledAction updateSysTaskBarAction;
@@ -81,13 +76,6 @@ namespace CarinaStudio.ULogViewer
 			this.focusOnTabItemContentAction = new ScheduledAction(() =>
 			{
 				((this.tabControl.SelectedItem as TabItem)?.Content as IControl)?.Focus();
-			});
-			this.restartingMainWindowsAction = new ScheduledAction(() =>
-			{
-				if (this.IsClosed || !this.Application.IsRestartingMainWindowsNeeded || this.HasDialogs)
-					return;
-				this.Logger.LogWarning("Restart main windows");
-				this.Application.RestartMainWindows();
 			});
 			this.selectAndSetLogProfileAction = new ScheduledAction(this.SelectAndSetLogProfile);
 			this.updateSysTaskBarAction = new ScheduledAction(() =>
@@ -384,20 +372,6 @@ namespace CarinaStudio.ULogViewer
 		}
 
 
-		// Application property changed. 
-        protected override void OnApplicationPropertyChanged(PropertyChangedEventArgs e)
-        {
-            base.OnApplicationPropertyChanged(e);
-			if (e.PropertyName == nameof(IULogViewerApplication.IsRestartingMainWindowsNeeded))
-			{
-				if (this.Application.IsRestartingMainWindowsNeeded)
-					this.restartingMainWindowsAction.Reschedule(RestartingMainWindowsDelay);
-				else
-					this.restartingMainWindowsAction.Cancel();
-			}
-        }
-
-
         // Attach to view-model.
         protected override void OnAttachToViewModel(Workspace workspace)
 		{
@@ -619,18 +593,6 @@ namespace CarinaStudio.ULogViewer
 			// call base
 			base.OnKeyDown(e);
 		}
-
-
-		// Called when property changed.
-        protected override void OnPropertyChanged<T>(AvaloniaPropertyChangedEventArgs<T> change)
-        {
-            base.OnPropertyChanged(change);
-			if (change.Property == HasDialogsProperty)
-			{
-				if (!this.HasDialogs && this.Application.IsRestartingMainWindowsNeeded)
-					this.restartingMainWindowsAction.Reschedule(RestartingMainWindowsDelay);
-			}
-        }
 
 
         // Called when list of session changed.
