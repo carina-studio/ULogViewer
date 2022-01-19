@@ -12,6 +12,7 @@ using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Input;
 using CarinaStudio.Threading;
+using CarinaStudio.VisualTree;
 using CarinaStudio.ULogViewer.Controls;
 using CarinaStudio.ULogViewer.ViewModels;
 using Microsoft.Extensions.Logging;
@@ -234,7 +235,16 @@ namespace CarinaStudio.ULogViewer
 			// create header
 			var header = this.sessionTabItemHeaderTemplate.Build(session);
 			if (Platform.IsMacOS)
+			{
 				((Control)header).ContextMenu = null;
+				(this.Application as App)?.Let(app => 
+				{
+					header.FindDescendantOfTypeAndName<Panel>("Content")?.Let(content =>
+					{
+						app.EnsureClosingToolTipIfWindowIsInactive(content);
+					});
+				});
+			}
 
 			// create session view
 			var sessionView = new SessionView()

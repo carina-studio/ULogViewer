@@ -38,7 +38,7 @@
 						</MenuItem>
 					</ContextMenu>
 				</Grid.ContextMenu>
-				<Grid ColumnDefinitions="Auto,*" HorizontalAlignment="Stretch">
+				<Grid Name="Content" ColumnDefinitions="Auto,*" HorizontalAlignment="Stretch">
 					<ToolTip.Tip>
 						<StackPanel Margin="{DynamicResource Thickness/MainWindow.TabItem.ToolTip.Padding}">
 							<StackPanel.Styles>
