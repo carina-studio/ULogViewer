@@ -82,6 +82,10 @@
 									<TextBlock Classes="ToolTipText" Text="{DynamicResource String/MainWindow.Session.AllLogCount}"/>
 									<TextBlock Classes="ToolTipText" Text="{Binding AllLogCount}"/>
 								</StackPanel>
+								<StackPanel Orientation="Horizontal">
+									<TextBlock Classes="ToolTipText" Text="{DynamicResource String/MainWindow.Session.LogsMemoryUsage}"/>
+									<TextBlock Classes="ToolTipText" Text="{Binding LogsMemoryUsage, Converter={x:Static asConverters:FileSizeConverter.Default}}"/>
+								</StackPanel>
 							</StackPanel>
 							<StackPanel IsVisible="{Binding IsHibernated}" Orientation="Horizontal">
 								<Image Classes="ToolTipIcon" Source="{DynamicResource Image/Leaf}"/>
