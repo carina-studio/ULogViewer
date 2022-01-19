@@ -2333,13 +2333,22 @@ namespace CarinaStudio.ULogViewer.Controls
         // Called when selection in marked log list box has been changed.
         void OnMarkedLogListBoxSelectionChanged(object? sender, SelectionChangedEventArgs e)
 		{
-			if (this.markedLogListBox.SelectedItem is not DisplayableLog log)
+			if (this.DataContext is not Session session 
+				|| this.markedLogListBox.SelectedItem is not DisplayableLog log)
+			{
 				return;
+			}
+			var index = session.Logs.IndexOf(log);
 			this.logListBox.Let(it =>
 			{
 				it.SelectedItems.Clear();
-				it.SelectedItem = log;
-				it.ScrollIntoView(log);
+				if (index >= 0)
+				{
+					it.SelectedIndex = index;
+					it.ScrollIntoView(index);
+				}
+				else
+					this.SynchronizationContext.Post(() => this.markedLogListBox.SelectedItems.Clear());
 				it.Focus();
 			});
 			this.IsScrollingToLatestLogNeeded = false;
