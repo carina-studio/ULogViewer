@@ -137,10 +137,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ComboBox logLevelFilterComboBox;
 		readonly ListBox logListBox;
 		readonly ContextMenu logMarkingMenu;
-		readonly TextBox logProcessIdFilterTextBox;
+		readonly IntegerTextBox logProcessIdFilterTextBox;
 		ScrollViewer? logScrollViewer;
 		readonly RegexTextBox logTextFilterTextBox;
-		readonly TextBox logThreadIdFilterTextBox;
+		readonly IntegerTextBox logThreadIdFilterTextBox;
 		readonly ListBox markedLogListBox;
 		readonly ToggleButton otherActionsButton;
 		readonly ContextMenu otherActionsMenu;
@@ -253,19 +253,13 @@ namespace CarinaStudio.ULogViewer.Controls
 				};
 			});
 			this.logMarkingMenu = (ContextMenu)this.Resources[nameof(logMarkingMenu)].AsNonNull();
-			this.logProcessIdFilterTextBox = this.FindControl<TextBox>(nameof(logProcessIdFilterTextBox)).AsNonNull().Also(it =>
-			{
-				it.AddHandler(TextBox.TextInputEvent, this.OnLogProcessIdTextBoxTextInput, RoutingStrategies.Tunnel);
-			});
+			this.logProcessIdFilterTextBox = this.FindControl<IntegerTextBox>(nameof(logProcessIdFilterTextBox)).AsNonNull();
 			this.logTextFilterTextBox = this.FindControl<RegexTextBox>(nameof(logTextFilterTextBox)).AsNonNull().Also(it =>
 			{
 				it.IgnoreCase = this.Settings.GetValueOrDefault(SettingKeys.IgnoreCaseOfLogTextFilter);
 				it.ValidationDelay = this.UpdateLogFilterParamsDelay;
 			});
-			this.logThreadIdFilterTextBox = this.FindControl<TextBox>(nameof(logThreadIdFilterTextBox)).AsNonNull().Also(it =>
-			{
-				it.AddHandler(TextBox.TextInputEvent, this.OnLogProcessIdTextBoxTextInput, RoutingStrategies.Tunnel);
-			});
+			this.logThreadIdFilterTextBox = this.FindControl<IntegerTextBox>(nameof(logThreadIdFilterTextBox)).AsNonNull();
 			this.markedLogListBox = this.FindControl<ListBox>(nameof(markedLogListBox)).AsNonNull();
 			this.otherActionsButton = this.FindControl<ToggleButton>(nameof(otherActionsButton)).AsNonNull().Also(it =>
 			{
@@ -386,22 +380,10 @@ namespace CarinaStudio.ULogViewer.Controls
 				session.LogLevelFilter = this.logLevelFilterComboBox.SelectedItem is Logs.LogLevel logLevel ? logLevel : Logs.LogLevel.Undefined;
 
 				// set PID
-				this.logProcessIdFilterTextBox.Text.Let(it =>
-				{
-					if (it.Length > 0 && int.TryParse(it, out var pid))
-						session.LogProcessIdFilter = pid;
-					else
-						session.LogProcessIdFilter = null;
-				});
+				session.LogProcessIdFilter = (int?)this.logProcessIdFilterTextBox.Value;
 
 				// set TID
-				this.logThreadIdFilterTextBox.Text.Let(it =>
-				{
-					if (it.Length > 0 && int.TryParse(it, out var tid))
-						session.LogThreadIdFilter = tid;
-					else
-						session.LogThreadIdFilter = null;
-				});
+				session.LogThreadIdFilter = (int?)this.logThreadIdFilterTextBox.Value;
 
 				// update text filters
 				session.LogTextFilter = this.logTextFilterTextBox.Regex;
@@ -569,9 +551,9 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.scrollToLatestLogAction.Schedule(ScrollingToLatestLogInterval);
 
 			// sync log filters to UI
-			this.logProcessIdFilterTextBox.Text = session.LogProcessIdFilter?.ToString() ?? "";
+			this.logProcessIdFilterTextBox.Value = session.LogProcessIdFilter;
 			this.logTextFilterTextBox.Regex = session.LogTextFilter;
-			this.logThreadIdFilterTextBox.Text = session.LogThreadIdFilter?.ToString() ?? "";
+			this.logThreadIdFilterTextBox.Value = session.LogThreadIdFilter;
 			this.logLevelFilterComboBox.SelectedItem = session.LogLevelFilter;
 			if (session.PredefinedLogTextFilters.IsNotEmpty())
 			{
@@ -1884,9 +1866,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when property of log filter text box changed.
 		void OnLogFilterTextBoxPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
 		{
-			if (e.Property == TextBlock.TextProperty && sender != this.logTextFilterTextBox)
-				this.updateLogFiltersAction.Reschedule(this.UpdateLogFilterParamsDelay);
-			else if (e.Property == RegexTextBox.RegexProperty)
+			if (e.Property == IntegerTextBox.ValueProperty || e.Property == RegexTextBox.RegexProperty)
 				this.updateLogFiltersAction.Reschedule();
 		}
 
@@ -2026,18 +2006,6 @@ namespace CarinaStudio.ULogViewer.Controls
 				else
 					this.SynchronizationContext.Post(() => this.markedLogListBox.SelectedItems.Clear());
 			});
-		}
-
-
-		// Called when PID/TID text box input.
-		void OnLogProcessIdTextBoxTextInput(object? sender, TextInputEventArgs e)
-		{
-			if (!char.IsDigit(e.Text?[0] ?? '\0'))
-			{
-				e.Handled = true;
-				return;
-			}
-			this.updateLogFiltersAction.Reschedule(this.UpdateLogFilterParamsDelay);
 		}
 
 

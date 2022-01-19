@@ -376,10 +376,10 @@
 						</ComboBox>
 
 						<!-- PID filter -->
-						<TextBox Name="logProcessIdFilterTextBox" Classes="ToolBar_TextBox" Grid.Column="1" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" IsVisible="False" PropertyChanged="OnLogFilterTextBoxPropertyChanged" ToolTip.Tip="{DynamicResource String/SessionView.LogProcessIdFilter.Description}" VerticalAlignment="Center" Watermark="{DynamicResource String/LogProperty.ProcessId}" Width="{DynamicResource Double/SessionView.ToolBar.LogProcessIdFilter.Width}"/>
+						<asControls:IntegerTextBox Name="logProcessIdFilterTextBox" Classes="ToolBar_TextBox" Grid.Column="1" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" IsVisible="False" Maximum="65535" Minimum="0" PropertyChanged="OnLogFilterTextBoxPropertyChanged" ToolTip.Tip="{DynamicResource String/SessionView.LogProcessIdFilter.Description}" VerticalAlignment="Center" Watermark="{DynamicResource String/LogProperty.ProcessId}" Width="{DynamicResource Double/SessionView.ToolBar.LogProcessIdFilter.Width}"/>
 
 						<!-- TID filter -->
-						<TextBox Name="logThreadIdFilterTextBox" Classes="ToolBar_TextBox" Grid.Column="2" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" IsVisible="False" PropertyChanged="OnLogFilterTextBoxPropertyChanged" ToolTip.Tip="{DynamicResource String/SessionView.LogThreadIdFilter.Description}" VerticalAlignment="Center" Watermark="{DynamicResource String/LogProperty.ThreadId}" Width="{DynamicResource Double/SessionView.ToolBar.LogProcessIdFilter.Width}"/>
+						<asControls:IntegerTextBox Name="logThreadIdFilterTextBox" Classes="ToolBar_TextBox" Grid.Column="2" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" IsVisible="False" Maximum="65535" Minimum="0" PropertyChanged="OnLogFilterTextBoxPropertyChanged" ToolTip.Tip="{DynamicResource String/SessionView.LogThreadIdFilter.Description}" VerticalAlignment="Center" Watermark="{DynamicResource String/LogProperty.ThreadId}" Width="{DynamicResource Double/SessionView.ToolBar.LogProcessIdFilter.Width}"/>
 
 						<!-- Filters combinatin mode -->
 						<Button Classes="ToolBar_Button" Command="{Binding $parent[UserControl].SwitchLogFiltersCombinationModeCommand}" Grid.Column="3" IsVisible="{Binding $parent[UserControl].CanFilterLogsByNonTextFilters}" ToolTip.Tip="{DynamicResource String/SessionView.LogFiltersCombinationMode}">
