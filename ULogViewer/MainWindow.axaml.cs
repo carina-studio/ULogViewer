@@ -36,6 +36,10 @@ namespace CarinaStudio.ULogViewer
 		const int RestartingMainWindowsDelay = 1000;
 
 
+		// Static fields.
+		static readonly AvaloniaProperty<bool> HasMultipleSessionsProperty = AvaloniaProperty.Register<MainWindow, bool>("HasMultipleSessions");
+
+
 		// Fields.
 		Session? attachedActiveSession;
 		readonly ScheduledAction focusOnTabItemContentAction;
@@ -185,7 +189,7 @@ namespace CarinaStudio.ULogViewer
 					this.tabControl.SelectedIndex = (index + 1);
 				else if (index > 0)
 					this.tabControl.SelectedIndex = (index - 1);
-				else
+				else if (!this.HasMultipleMainWindows)
 					workspace.ActiveSession = workspace.CreateAndAttachSession();
 			}
 
@@ -236,7 +240,7 @@ namespace CarinaStudio.ULogViewer
 			var header = this.sessionTabItemHeaderTemplate.Build(session);
 			if (Platform.IsMacOS)
 			{
-				((Control)header).ContextMenu = null;
+				//((Control)header).ContextMenu = null;
 				(this.Application as App)?.Let(app => 
 				{
 					header.FindDescendantOfTypeAndName<Panel>("Content")?.Let(content =>
@@ -323,6 +327,44 @@ namespace CarinaStudio.ULogViewer
 		private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
 
 
+		// Move current session to new workspace.
+		void MoveCurrentSessionToNewWorkspace() =>
+			(this.tabControl.SelectedItem as TabItem)?.Let(it => this.MoveSessionToNewWorkspace(it));
+
+
+		// Move given session to new workspace.
+		void MoveSessionToNewWorkspace(TabItem tabItem)
+        {
+			// check state
+			if (tabItem.DataContext is not Session session)
+				return;
+
+			// create new window
+			if (!this.Application.ShowMainWindow(newWindow =>
+            {
+				if (newWindow.DataContext is Workspace newWorkspace)
+					this.MoveSessionToNewWorkspace(session, newWorkspace);
+			}))
+			{
+				this.Logger.LogError("Unable to create new main window for session to be moved");
+				return;
+			}
+        }
+		void MoveSessionToNewWorkspace(Session session, Workspace newWorkspace)
+		{
+			// find empty session
+			var emptySession = newWorkspace.Sessions.FirstOrDefault();
+
+			// transfer session
+			newWorkspace.AttachSession(0, session);
+			newWorkspace.ActiveSession = session;
+
+			// close empty session
+			if (emptySession != null)
+				newWorkspace.DetachAndCloseSession(emptySession);
+		}
+
+
 		// Called when property of active session changed.
 		void OnActiveSessionPropertyChanged(object? sender, PropertyChangedEventArgs e)
 		{
@@ -379,6 +421,7 @@ namespace CarinaStudio.ULogViewer
 				this.tabControl.SelectedIndex = selectedIndex;
 			else
 				this.SelectActiveSessionIfNeeded();
+			this.SetValue(HasMultipleSessionsProperty, workspace.Sessions.Count > 1);
 
 			// attach to active session
 			workspace.ActiveSession?.Let(it => this.AttachToActiveSession(it));
@@ -419,6 +462,7 @@ namespace CarinaStudio.ULogViewer
 				this.DisposeSessionTabItem((TabItem)this.tabItems[i].AsNonNull());
 				this.tabItems.RemoveAt(i);
 			}
+			this.SetValue(HasMultipleSessionsProperty, false);
 
 			// update system taskbar
 			this.updateSysTaskBarAction.Execute();
@@ -592,6 +636,8 @@ namespace CarinaStudio.ULogViewer
         // Called when list of session changed.
         void OnSessionsChanged(object? sender, NotifyCollectionChangedEventArgs e)
 		{
+			if (this.DataContext is not Workspace workspace)
+				return;
 			switch(e.Action)
 			{
 				case NotifyCollectionChangedAction.Add:
@@ -611,12 +657,19 @@ namespace CarinaStudio.ULogViewer
 							this.DisposeSessionTabItem((TabItem)this.tabItems[startIndex + i].AsNonNull());
 							this.tabItems.RemoveAt(startIndex + i);
 						}
-						this.SynchronizationContext.Post(this.SelectActiveSessionIfNeeded);
+						if (workspace.Sessions.IsEmpty() && this.HasMultipleMainWindows)
+						{
+							this.Logger.LogWarning("Close window because all sessions were closed");
+							this.Close();
+						}
+						else
+							this.SynchronizationContext.Post(this.SelectActiveSessionIfNeeded);
 					}
 					break;
 				default:
 					throw new InvalidOperationException($"Unsupported changed of list of Sessions: {e.Action}.");
 			}
+			this.SetValue(HasMultipleSessionsProperty, workspace.Sessions.Count > 1);
 		}
 
 

@@ -29,6 +29,14 @@
 						</MenuItem>
 						<MenuItem Command="{Binding $parent[Window].ClearCustomSessionTitle}" CommandParameter="{Binding $parent[TabItem]}" Header="{DynamicResource String/MainWindow.ClearCustomSessionTitle}" IsEnabled="{Binding HasCustomTitle}"/>
 						<Separator/>
+						<MenuItem Command="{Binding $parent[Window].MoveSessionToNewWorkspace}" CommandParameter="{Binding $parent[TabItem]}" Header="{DynamicResource String/Common.OpenInNewWindow}" IsEnabled="{Binding $parent[Window].HasMultipleSessions}">
+							<MenuItem.Icon>
+								<Border Classes="MenuItem_Icon">
+									<Image Classes="Icon" Source="{DynamicResource Image/Icon.AddWindow}"/>
+								</Border>
+							</MenuItem.Icon>
+						</MenuItem>
+						<Separator/>
 						<MenuItem Command="{Binding $parent[Window].CloseSessionTabItem}" CommandParameter="{Binding $parent[TabItem]}" Header="{DynamicResource String/Common.CloseTab}" InputGesture="Ctrl+W">
 							<MenuItem.Icon>
 								<Border Classes="MenuItem_Icon">
@@ -114,8 +122,8 @@
 						<NativeMenuItemSeparator/>
 						<NativeMenuItem Command="{Binding $self.SetCurrentCustomSessionTitle}" Header="{DynamicResource String/MainWindow.SetCustomSessionTitle}"/>
 						<NativeMenuItem Command="{Binding $self.ClearCurrentCustomSessionTitle}" Header="{DynamicResource String/MainWindow.ClearCustomSessionTitle}" IsEnabled="{Binding ActiveSession.CustomTitle, Converter={x:Static asConverters:ValueToBooleanConverters.NonNullToTrue}}"/>
-						<!--NativeMenuItemSeparator/>
-						<NativeMenuItem Command="{Binding $self.MoveCurrentSessionToNewWorkspace}" Header="{DynamicResource String/Common.OpenInNewWindow}" IsEnabled="{Binding $self.HasMultipleSessions}"/-->
+						<NativeMenuItemSeparator/>
+						<NativeMenuItem Command="{Binding $self.MoveCurrentSessionToNewWorkspace}" Header="{DynamicResource String/Common.OpenInNewWindow}" IsEnabled="{Binding $self.HasMultipleSessions}"/>
 						<NativeMenuItemSeparator/>
 						<NativeMenuItem Command="{Binding $self.CloseCurrentSessionTabItem}" Header="{DynamicResource String/Common.CloseTab}" Gesture="Cmd+W"/>
 					</NativeMenu>
