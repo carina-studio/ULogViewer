@@ -129,6 +129,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		bool isUriNeededAfterLogProfileSet;
 		bool isWorkingDirNeededAfterLogProfileSet;
 		Control? lastClickedLogPropertyView;
+		readonly ContextMenu logActionMenu;
 		readonly List<ColumnDefinition> logHeaderColumns = new List<ColumnDefinition>();
 		readonly Control logHeaderContainer;
 		readonly Grid logHeaderGrid;
@@ -206,7 +207,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// setup controls
 			this.copyLogPropertyMenuItem = this.FindControl<MenuItem>(nameof(copyLogPropertyMenuItem)).AsNonNull();
-			((ContextMenu)this.Resources["logActionMenu"].AsNonNull()).Also(it =>
+			this.logActionMenu = ((ContextMenu)this.Resources[nameof(logActionMenu)].AsNonNull()).Also(it =>
 			{
 				it.MenuOpened += (_, e) =>
 				{
@@ -1948,6 +1949,20 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (e.InitialPressMouseButton == Avalonia.Input.MouseButton.Left)
 				this.isPointerPressedOnLogListBox = false;
+			else if (e.InitialPressMouseButton == Avalonia.Input.MouseButton.Right)
+			{
+				// [Workaround] Show context menu manually to prevent menu position keep changing in Avalonia 0.10.11.
+				this.SynchronizationContext.PostDelayed(() =>
+				{
+					if (!this.isPointerPressedOnLogListBox && !logMarkingMenu.IsOpen && this.logListBox.IsEffectivelyEnabled)
+					{
+						var position = e.GetPosition(this.logListBox);
+						this.logActionMenu.HorizontalOffset = position.X;
+						this.logActionMenu.VerticalOffset = position.Y;
+						this.logActionMenu.Open(this.logListBox);
+					}
+				}, 100);
+			}
 		}
 
 
