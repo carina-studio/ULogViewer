@@ -2106,6 +2106,13 @@ namespace CarinaStudio.ULogViewer.Controls
 							this.MarkSelectedLogs(MarkColor.Default);
 							e.Handled = true;
 							break;
+						case Avalonia.Input.Key.N:
+							if (!Platform.IsMacOS)
+							{
+								this.FindAncestorOfType<MainWindow>()?.CreateMainWindow();
+								e.Handled = true;
+							}
+							break;
 						case Avalonia.Input.Key.O:
 							this.AddLogFiles();
 							break;
