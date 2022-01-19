@@ -32,6 +32,10 @@ namespace CarinaStudio.ULogViewer
 	/// </summary>
 	partial class MainWindow : AppSuite.Controls.MainWindow<IULogViewerApplication, Workspace>
 	{
+		// Constants.
+		const string DraggingSessionKey = "DraggingSettion";
+
+
 		// Static fields.
 		static readonly AvaloniaProperty<bool> HasMultipleSessionsProperty = AvaloniaProperty.Register<MainWindow, bool>("HasMultipleSessions");
 
@@ -228,7 +232,7 @@ namespace CarinaStudio.ULogViewer
 			var header = this.sessionTabItemHeaderTemplate.Build(session);
 			if (Platform.IsMacOS)
 			{
-				//((Control)header).ContextMenu = null;
+				((Control)header).ContextMenu = null;
 				(this.Application as App)?.Let(app => 
 				{
 					header.FindDescendantOfTypeAndName<Panel>("Content")?.Let(content =>
@@ -485,7 +489,40 @@ namespace CarinaStudio.ULogViewer
 			}
 
 			// handle session dragging
-			//
+			if (e.Data.TryGetData<Session>(DraggingSessionKey, out var session) 
+				&& session != null 
+				&& e.ItemIndex < this.tabItems.Count - 1)
+			{
+				// find source position
+				var workspace = (Workspace)session.Owner.AsNonNull();
+				var srcIndex = workspace.Sessions.IndexOf(session);
+				if (srcIndex < 0)
+					return;
+				
+				// select target position
+				var targetIndex = e.PointerPosition.X <= e.HeaderVisual.Bounds.Width / 2
+					? e.ItemIndex
+					: e.ItemIndex + 1;
+				
+				// update insertion indicator
+				if (workspace != this.DataContext
+					|| (srcIndex != targetIndex && srcIndex + 1 != targetIndex))
+				{
+					var insertAfter = (targetIndex != e.ItemIndex);
+					ItemInsertionIndicator.SetInsertingItemAfter(tabItem, insertAfter);
+					ItemInsertionIndicator.SetInsertingItemBefore(tabItem, !insertAfter);
+				}
+				else
+				{
+					ItemInsertionIndicator.SetInsertingItemAfter(tabItem, false);
+					ItemInsertionIndicator.SetInsertingItemBefore(tabItem, false);
+				}
+				
+				// complete
+				this.tabControl.ScrollHeaderIntoView(e.ItemIndex);
+				e.DragEffects = DragDropEffects.Move;
+				return;
+			}
 		}
 
 
@@ -526,7 +563,41 @@ namespace CarinaStudio.ULogViewer
 			}
 
 			// drop session
-			//
+			if (e.Data.TryGetData<Session>(DraggingSessionKey, out var session) 
+				&& session != null 
+				&& e.ItemIndex < this.tabItems.Count - 1)
+			{
+				// find source position
+				var srcWorkspace = (Workspace)session.Owner.AsNonNull();
+				var srcIndex = srcWorkspace.Sessions.IndexOf(session);
+				if (srcIndex < 0)
+					return;
+				
+				// select target position
+				var targetIndex = e.PointerPosition.X <= e.HeaderVisual.Bounds.Width / 2
+					? e.ItemIndex
+					: e.ItemIndex + 1;
+				
+				// move session
+				if (srcWorkspace == this.DataContext)
+				{
+					if (srcIndex != targetIndex && srcIndex + 1 != targetIndex)
+					{
+						if (srcIndex < targetIndex)
+							srcWorkspace.MoveSession(srcIndex, targetIndex - 1);
+						else
+							srcWorkspace.MoveSession(srcIndex, targetIndex);
+					}
+				}
+				else if (this.DataContext is Workspace targetWorkspace)
+				{
+					// attach to target workspace
+					targetWorkspace.AttachSession(targetIndex, session);
+					targetWorkspace.ActiveSession = session;
+				}
+				e.Handled = true;
+				return;
+			}
 		}
 
 
@@ -610,6 +681,9 @@ namespace CarinaStudio.ULogViewer
 							this.tabItems.Insert(startIndex + i, this.CreateSessionTabItem((Session)newSessions[i].AsNonNull()));
 					}
 					break;
+				case NotifyCollectionChangedAction.Move:
+					this.tabItems.Move(e.OldStartingIndex, e.NewStartingIndex);
+					break;
 				case NotifyCollectionChangedAction.Remove:
 					{
 						var startIndex = e.OldStartingIndex;
@@ -675,6 +749,23 @@ namespace CarinaStudio.ULogViewer
 
 			// close session
 			workspace.DetachAndCloseSession((Session)tabItem.DataContext.AsNonNull());
+		}
+
+
+		// Called when tab item dragged.
+		void OnTabItemDragged(object? sender, TabItemDraggedEventArgs e)
+		{
+			// get session
+			var session = (e.Item as TabItem)?.DataContext as Session;
+			if (session == null)
+				return;
+			
+			// prepare dragging data
+			var data = new DataObject();
+			data.Set(DraggingSessionKey, session);
+
+			// start dragging session
+			DragDrop.DoDragDrop(e.PointerEventArgs, data, DragDropEffects.Move);
 		}
 
 

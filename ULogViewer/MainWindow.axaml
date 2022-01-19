@@ -134,7 +134,7 @@
 	</Window.Resources>
 
 	<!-- Content -->
-	<asControls:TabControl Name="tabControl" DragDrop.AllowDrop="True" DragLeaveItem="OnDragLeaveTabItem" DragOverItem="OnDragOverTabItem" DropOnItem="OnDropOnTabItem">
+	<asControls:TabControl Name="tabControl" DragDrop.AllowDrop="True" DragLeaveItem="OnDragLeaveTabItem" DragOverItem="OnDragOverTabItem" DropOnItem="OnDropOnTabItem" ItemDragged="OnTabItemDragged">
 
 		<!-- Add new tab -->
 		<TabItem Classes="Empty">
