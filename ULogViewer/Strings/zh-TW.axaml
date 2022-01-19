@@ -428,7 +428,7 @@
 	<sys:String x:Key="String/SessionView.LogsFilteringProgress">篩選日誌中…</sys:String>
 	<sys:String x:Key="String/SessionView.LogsMemoryUsage">此分頁日誌記憶體使用量</sys:String>
 	<StaticResource x:Key="String/SessionView.LogTextFilter.ToolTip" ResourceKey="String/PredefinedLogTextFilterEditorDialog.Regex.Description"/>
-	<sys:String x:Key="String/SessionView.LogTextFilter.Watermark">文字篩選 (正規表示式，使用 \$\$ 表示文字屬性分隔線)</sys:String>
+	<sys:String x:Key="String/SessionView.LogTextFilter.Watermark">文字篩選 (正規表示式)</sys:String>
 	<sys:String x:Key="String/SessionView.LogThreadIdFilter.Description">使用執行緒 (Thread ID) 篩選日誌</sys:String>
 	<sys:String x:Key="String/SessionView.MarkedLogs">已標記日誌</sys:String>
 	<sys:String x:Key="String/SessionView.MarkLogs">標記日誌</sys:String>

@@ -446,7 +446,7 @@
 	<sys:String x:Key="String/SessionView.LogsFilteringProgress">Filtering logs…</sys:String>
 	<sys:String x:Key="String/SessionView.LogsMemoryUsage">Logs memory usage of this tab</sys:String>
 	<StaticResource x:Key="String/SessionView.LogTextFilter.ToolTip" ResourceKey="String/PredefinedLogTextFilterEditorDialog.Regex.Description"/>
-	<sys:String x:Key="String/SessionView.LogTextFilter.Watermark">Text filtering (Regular Expression, use \$\$ as separator between text properties)</sys:String>
+	<sys:String x:Key="String/SessionView.LogTextFilter.Watermark">Text filter (Regular Expression)</sys:String>
 	<sys:String x:Key="String/SessionView.LogThreadIdFilter.Description">Use Thread ID to filter logs</sys:String>
 	<sys:String x:Key="String/SessionView.MarkedLogs">Marked logs</sys:String>
 	<sys:String x:Key="String/SessionView.MarkLogs">Mark logs</sys:String>

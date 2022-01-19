@@ -102,6 +102,7 @@
 	<sys:Double x:Key="Double/SessionView.SidePanel.MinWidth">200</sys:Double>
 	<sys:Double x:Key="Double/SessionView.ToolBar.LogLevelFilter.Width">150</sys:Double>
 	<sys:Double x:Key="Double/SessionView.ToolBar.LogProcessIdFilter.Width">80</sys:Double>
+	<sys:Double x:Key="Double/SessionView.ToolBar.LogTextFilter.MinWidth">200</sys:Double>
 	<Thickness x:Key="Thickness/SessionView.Hint.Margin">20</Thickness>
 	<Thickness x:Key="Thickness/SessionView.Hint.SelectLogProfile.Icon.Margin">8,0,8,0</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogHeader.Margin">3,8,3,8</Thickness>
