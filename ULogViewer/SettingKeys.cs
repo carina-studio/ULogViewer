@@ -1,4 +1,5 @@
-﻿using Avalonia.Media;
+﻿using System.Collections.Generic;
+using Avalonia.Media;
 using CarinaStudio.Configuration;
 using System;
 using System.Runtime.InteropServices;
@@ -33,7 +34,7 @@ namespace CarinaStudio.ULogViewer
 		/// <summary>
 		/// Font size of log.
 		/// </summary>
-		public static readonly SettingKey<int> LogFontSize = new SettingKey<int>(nameof(LogFontSize), 14);
+		public static readonly SettingKey<int> LogFontSize = new SettingKey<int>(nameof(LogFontSize), Platform.IsMacOS ? 13 : 14);
 		/// <summary>
 		/// Maximum number of logs for continuous logs reading.
 		/// </summary>
@@ -111,19 +112,17 @@ namespace CarinaStudio.ULogViewer
 		/// </summary>
 		public static string DefaultLogFontFamily { get; } = Global.Run(() =>
 		{
-			var targetFontFamily = Global.Run(() =>
+			var targetFontFamilies = Global.Run(() =>
 			{
-				if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-					return "";
-				return "Consolas";
+				if (Platform.IsMacOS)
+					return new string[] { "Menlo", "Monaco", "Courier New" };
+				return new string[] { "Consolas", "Courier New" };
 			});
-			if (!string.IsNullOrEmpty(targetFontFamily))
+			var installedFontFamilyNames = new HashSet<string>(FontManager.Current.GetInstalledFontFamilyNames());
+			foreach (var targetFontFamily in targetFontFamilies)
 			{
-				foreach (var name in FontManager.Current.GetInstalledFontFamilyNames())
-				{
-					if (name == targetFontFamily)
-						return targetFontFamily;
-				}
+				if (installedFontFamilyNames.Contains(targetFontFamily))
+					return targetFontFamily;
 			}
 			return FontManager.Current.DefaultFontFamilyName;
 		});

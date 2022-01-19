@@ -136,19 +136,13 @@ namespace CarinaStudio.ULogViewer
 		// Load default string resource.
         protected override IResourceProvider? OnLoadDefaultStringResource()
         {
-			var resources = (IResourceProvider)new ResourceInclude()
-			{
-				Source = new Uri("avares://ULogViewer/Strings/Default.axaml")
-			};
+			var resources = this.LoadStringResource(new Uri("avares://ULogViewer/Strings/Default.axaml")).AsNonNull();
 			if (Platform.IsLinux)
 			{
 				resources = new ResourceDictionary().Also(it =>
 				{
 					it.MergedDictionaries.Add(resources);
-					it.MergedDictionaries.Add(new ResourceInclude()
-					{
-						Source = new Uri("avares://ULogViewer/Strings/Default-Linux.axaml")
-					});
+					it.MergedDictionaries.Add(this.LoadStringResource(new Uri("avares://ULogViewer/Strings/Default-Linux.axaml")).AsNonNull());
 				});
 			}
 			else if (Platform.IsMacOS)
@@ -156,10 +150,7 @@ namespace CarinaStudio.ULogViewer
 				resources = new ResourceDictionary().Also(it =>
 				{
 					it.MergedDictionaries.Add(resources);
-					it.MergedDictionaries.Add(new ResourceInclude()
-					{
-						Source = new Uri("avares://ULogViewer/Strings/Default-OSX.axaml")
-					});
+					it.MergedDictionaries.Add(this.LoadStringResource(new Uri("avares://ULogViewer/Strings/Default-OSX.axaml")).AsNonNull());
 				});
 			}
 			return resources;
