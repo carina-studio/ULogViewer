@@ -1,7 +1,9 @@
 ﻿{
 	"DataSource": {
 		"Name": "WindowsEventLogs",
-		"Category": "Application"
+		"Options": {
+			"Category": "Application"
+		}
 	},
 	"Icon": "Windows",
 	"IsAdministratorNeeded": true,
@@ -45,7 +47,9 @@
 	"LogWritingFormat": "[{Level}] {Timestamp} {Event,-5} {SourceName}:{NewLine}{Message}{NewLine}",
 	"SortDirection": "Descending",
 	"TimestampFormatForDisplaying": "yyyy/MM/dd HH:mm:ss",
-	"TimestampFormatForReading": "yyyy/MM/dd HH:mm:ss",
+	"TimestampFormatsForReading": [
+		"yyyy/MM/dd HH:mm:ss"
+	],
 	"VisibleLogProperties": [
 		{
 			"Name": "Timestamp",

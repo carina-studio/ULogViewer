@@ -7,6 +7,7 @@ using CarinaStudio.ULogViewer.Logs.Profiles;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Text.RegularExpressions;
 using System.Threading;
 
 namespace CarinaStudio.ULogViewer.ViewModels
@@ -16,11 +17,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 	/// </summary>
 	class DisplayableLogGroup : BaseDisposable, IApplicationObject
 	{
+		// Static fields.
+		static readonly Regex ExtraCaptureRegex = new Regex(@"\(\?\<Extra(?<Number>[\d]+)\>");
+
+
 		// Fields.
 		readonly Dictionary<string, IBrush> colorIndicatorBrushes = new Dictionary<string, IBrush>();
 		Func<DisplayableLog, string>? colorIndicatorKeyGetter;
 		readonly LinkedList<DisplayableLog> displayableLogs = new LinkedList<DisplayableLog>();
-		readonly Dictionary<LogLevel, IBrush> levelBrushes = new Dictionary<LogLevel, IBrush>();
+		readonly Dictionary<string, IBrush> levelBrushes = new Dictionary<string, IBrush>();
+		int maxDisplayLineCount;
 		readonly Random random = new Random();
 
 
@@ -33,9 +39,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// setup properties
 			this.Application = profile.Application;
 			this.LogProfile = profile;
+			this.maxDisplayLineCount = Math.Max(1, this.Application.Settings.GetValueOrDefault(SettingKeys.MaxDisplayLineCountForEachLog));
+			this.SaveMemoryAgressively = this.Application.Settings.GetValueOrDefault(SettingKeys.SaveMemoryAggressively);
+			this.CheckMaxLogExtraNumber();
 
 			// add event handlers
 			this.Application.Settings.SettingChanged += this.OnSettingChanged;
+			this.Application.PropertyChanged += this.OnApplicationPropertyChanged;
 			this.Application.StringsUpdated += this.OnApplicationStringsUpdated;
 			profile.PropertyChanged += this.OnLogProfilePropertyChanged;
 
@@ -46,9 +56,27 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
-		/// Get <see cref="IApplication"/> instance.
+		/// Get <see cref="IULogViewerApplication"/> instance.
 		/// </summary>
-		public IApplication Application { get; }
+		public IULogViewerApplication Application { get; }
+
+
+		// Check maximum log extra number.
+		void CheckMaxLogExtraNumber()
+		{
+			var maxNumber = 0;
+			foreach (var pattern in this.LogProfile.LogPatterns)
+			{
+				var match = ExtraCaptureRegex.Match(pattern.Regex.ToString());
+				while (match.Success)
+				{
+					if (int.TryParse(match.Groups["Number"].Value, out var number) && number > maxNumber)
+						maxNumber = number;
+					match = match.NextMatch();
+				}
+			}
+			this.MaxLogExtraNumber = Math.Min(Log.ExtraCapacity, maxNumber);
+		}
 
 
 		/// <summary>
@@ -77,6 +105,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// remove event handlers
 			this.Application.Settings.SettingChanged -= this.OnSettingChanged;
+			this.Application.PropertyChanged -= this.OnApplicationPropertyChanged;
 			this.Application.StringsUpdated -= this.OnApplicationStringsUpdated;
 			this.LogProfile.PropertyChanged -= this.OnLogProfilePropertyChanged;
 
@@ -110,12 +139,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		/// <param name="log"><see cref="DisplayableLog"/>.</param>
 		/// <returns><see cref="IBrush"/> for given log.</returns>
-		internal IBrush GetLevelBrush(DisplayableLog log)
+		internal IBrush GetLevelBrush(DisplayableLog log, string? state = null)
 		{
 			this.VerifyDisposed();
-			if (this.levelBrushes.TryGetValue(log.Level, out var brush))
+			if(!string.IsNullOrEmpty(state) && this.levelBrushes.TryGetValue($"{log.Level}.{state}", out var brush))
 				return brush.AsNonNull();
-			if (this.levelBrushes.TryGetValue(LogLevel.Undefined, out brush))
+			if (this.levelBrushes.TryGetValue(log.Level.ToString(), out brush))
+				return brush.AsNonNull();
+			if (this.levelBrushes.TryGetValue(nameof(LogLevel.Undefined), out brush))
 				return brush.AsNonNull();
 			throw new ArgumentException($"Cannot get brush for log level {log.Level}.");
 		}
@@ -125,6 +156,43 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Get related log profile.
 		/// </summary>
 		public LogProfile LogProfile { get; }
+
+
+		/// <summary>
+		/// Get maximum line count to display for each log.
+		/// </summary>
+		public int MaxDisplayLineCount { get => this.maxDisplayLineCount; }
+
+
+		/// <summary>
+		/// Get maximum number of extras provided by each <see cref="Log"/> by <see cref="LogProfile"/>.
+		/// </summary>
+		public int MaxLogExtraNumber { get; private set; }
+
+
+		/// <summary>
+		/// Get size of memory usage by the group in bytes.
+		/// </summary>
+		public long MemorySize { get; private set; }
+
+
+		// Called when application property changed.
+		void OnApplicationPropertyChanged(object? sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == nameof(IULogViewerApplication.EffectiveThemeMode))
+			{
+				this.SynchronizationContext.Post(() =>
+				{
+					this.UpdateLevelBrushes();
+					var node = this.displayableLogs.First;
+					while (node != null)
+					{
+						node.Value.OnStyleResourcesUpdated();
+						node = node.Next;
+					}
+				});
+			}
+		}
 
 
 		// Called when application string resources updated.
@@ -146,6 +214,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		internal void OnDisplayableLogCreated(DisplayableLog log)
 		{
 			this.displayableLogs.AddLast(log.TrackingNode);
+			this.MemorySize += log.MemorySize;
 		}
 
 
@@ -156,6 +225,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		internal void OnDisplayableLogDisposed(DisplayableLog log)
 		{
 			this.displayableLogs.Remove(log.TrackingNode);
+			this.MemorySize -= log.MemorySize;
 		}
 
 
@@ -171,6 +241,19 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						while (node != null)
 						{
 							node.Value.OnStyleResourcesUpdated();
+							node = node.Next;
+						}
+					}
+					break;
+				case nameof(LogProfile.LogPatterns):
+					this.CheckMaxLogExtraNumber();
+					break;
+				case nameof(LogProfile.TimeSpanFormatForDisplaying):
+					{
+						var node = this.displayableLogs.First;
+						while (node != null)
+						{
+							node.Value.OnTimeSpanFormatChanged();
 							node = node.Next;
 						}
 					}
@@ -192,20 +275,25 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		// Called when setting changed.
 		void OnSettingChanged(object? sender, SettingChangedEventArgs e)
 		{
-			if (e.Key == Settings.ThemeMode)
+			if (e.Key == SettingKeys.MaxDisplayLineCountForEachLog)
 			{
-				this.SynchronizationContext.Post(() =>
+				this.maxDisplayLineCount = (int)e.Value;
+				var node = this.displayableLogs.First;
+				while (node != null)
 				{
-					this.UpdateLevelBrushes();
-					var node = this.displayableLogs.First;
-					while (node != null)
-					{
-						node.Value.OnStyleResourcesUpdated();
-						node = node.Next;
-					}
-				});
+					node.Value.OnMaxDisplayLineCountChanged();
+					node = node.Next;
+				}
 			}
+			else if (e.Key == SettingKeys.SaveMemoryAggressively)
+				this.SaveMemoryAgressively = (bool)e.Value;
 		}
+
+
+		/// <summary>
+		/// Check whether <see cref="DisplayableLog"/> need to keep memory usage as low as possible or not.
+		/// </summary>
+		public bool SaveMemoryAgressively { get; private set; }
 
 
 		// Update color indicator brushes.
@@ -233,11 +321,15 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		void UpdateLevelBrushes()
 		{
 			this.levelBrushes.Clear();
+			var converter = LogLevelBrushConverter.Default;
 			foreach (var level in (LogLevel[])Enum.GetValues(typeof(LogLevel)))
 			{
-				var brush = LogLevelBrushConverter.Default.Convert(level, typeof(IBrush), null, this.Application.CultureInfo) as IBrush;
+				var brush = converter.Convert(level, typeof(IBrush), null, this.Application.CultureInfo) as IBrush;
 				if (brush != null)
-					this.levelBrushes[level] = brush;
+					this.levelBrushes[level.ToString()] = brush;
+				brush = converter.Convert(level, typeof(IBrush), "PointerOver", this.Application.CultureInfo) as IBrush;
+				if (brush != null)
+					this.levelBrushes[$"{level}.PointerOver"] = brush;
 			}
 		}
 

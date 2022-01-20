@@ -1,0 +1,82 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:sys="using:System"
+        xmlns:ae="using:AvaloniaEdit"
+        xmlns:ia="using:Avalonia.Xaml.Interactivity"
+        xmlns:iaCore="using:Avalonia.Xaml.Interactions.Core"
+        xmlns:ma="using:Markdown.Avalonia"
+		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
+        xmlns:app="using:CarinaStudio.ULogViewer"
+        xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
+        xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="CarinaStudio.ULogViewer.Controls.LogStringPropertyDialog"
+        CanResize="True"
+        Classes="Dialog"
+        Height="{DynamicResource Double/LogStringPropertyDialog.Height}"
+        MinHeight="{DynamicResource Double/LogStringPropertyDialog.MinHeight}"
+        MinWidth="{DynamicResource Double/LogStringPropertyDialog.MinWidth}"
+		SizeToContent="Manual"
+        Title="{DynamicResource String/LogStringPropertyDialog.Title}"
+        Width="{DynamicResource Double/LogStringPropertyDialog.Width}">
+
+	<DockPanel>
+
+		<!-- Control buttons -->
+		<Border Classes="Dialog_ControlButtonsPanel" DockPanel.Dock="Bottom">
+			<StackPanel Classes="Dialog_ControlButtonsPanel">
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].Close}" Content="{DynamicResource String/Common.OK}"/>
+			</StackPanel>
+		</Border>
+
+		<!-- Content -->
+		<Grid Classes="Dialog_ContentPanel" RowDefinitions="Auto,Auto,*,Auto,Auto">
+
+			<!-- Find text -->
+			<StackPanel Orientation="Vertical">
+				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogStringPropertyDialog.FindText}"/>
+				<asControls:RegexTextBox Name="findTextTextBox" Classes="Dialog_TextBox" PropertyChanged="OnFindTextTextBoxPropertyChanged"/>
+				<asControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/Common.RegularExpression.Reference}" Uri="{x:Static app:Uris.RegexReference}"/>
+				<Separator Classes="Dialog_Separator"/>
+			</StackPanel>
+
+			<!-- Property value -->
+			<TextBlock Classes="Dialog_TextBlock" Grid.Row="1" Text="{Binding $parent[Window].LogPropertyDisplayName}"/>
+			<Panel Grid.Row="2" VerticalAlignment="Stretch">
+				<Border Background="{DynamicResource TextControlBackground}" BorderBrush="{DynamicResource TextControlBackground}" BorderThickness="{DynamicResource TextControlBorderThemeThicknessFocused}" CornerRadius="{DynamicResource ControlCornerRadius}" IsVisible="{Binding !#propertyValueTextEditor.IsPointerOver}"/>
+				<Border Background="{DynamicResource TextControlBackgroundPointerOver}" BorderBrush="{DynamicResource TextControlBackgroundPointerOver}" BorderThickness="{DynamicResource TextControlBorderThemeThicknessFocused}" CornerRadius="{DynamicResource ControlCornerRadius}" IsVisible="{Binding #propertyValueTextEditor.IsPointerOver}"/>
+				<Border Background="{DynamicResource TextControlBackgroundFocused}" BorderBrush="{DynamicResource TextControlBorderBrushFocused}" BorderThickness="{DynamicResource TextControlBorderThemeThicknessFocused}" CornerRadius="{DynamicResource ControlCornerRadius}" IsVisible="{Binding $parent[Window].IsPropertyValueTextEditorFocused}"/>
+				<ae:TextEditor Name="propertyValueTextEditor" HorizontalAlignment="Stretch" IsReadOnly="True" HorizontalScrollBarVisibility="Disabled"/>
+			</Panel>
+			<Separator Classes="Dialog_Separator" Grid.Row="3"/>
+
+			<!-- Wrap text -->
+			<StackPanel Grid.Row="4" Orientation="Vertical">
+				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogStringPropertyDialog.WrapText}"/>
+				<ToggleSwitch Name="wrapTextSwitch" Classes="Dialog_ToggleSwitch" IsChecked="True">
+					<ia:Interaction.Behaviors>
+						<iaCore:DataTriggerBehavior Binding="{Binding $self.IsChecked}" Value="True">
+							<iaCore:InvokeCommandAction Command="{Binding $parent[Window].SetTextWrappingCommand}">
+								<iaCore:InvokeCommandAction.CommandParameter>
+									<sys:Boolean>True</sys:Boolean>
+								</iaCore:InvokeCommandAction.CommandParameter>
+							</iaCore:InvokeCommandAction>
+						</iaCore:DataTriggerBehavior>
+						<iaCore:DataTriggerBehavior Binding="{Binding $self.IsChecked}" Value="False">
+							<iaCore:InvokeCommandAction Command="{Binding $parent[Window].SetTextWrappingCommand}">
+								<iaCore:InvokeCommandAction.CommandParameter>
+									<sys:Boolean>False</sys:Boolean>
+								</iaCore:InvokeCommandAction.CommandParameter>
+							</iaCore:InvokeCommandAction>
+						</iaCore:DataTriggerBehavior>
+					</ia:Interaction.Behaviors>
+				</ToggleSwitch>
+			</StackPanel>
+			
+		</Grid>
+		
+	</DockPanel>
+  
+</Window>

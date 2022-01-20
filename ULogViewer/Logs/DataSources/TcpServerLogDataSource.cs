@@ -1,13 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.Logs.DataSources
 {
@@ -20,6 +17,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		class ReaderImpl : TextReader
 		{
 			// Fields.
+			readonly Encoding encoding;
 			bool isListenerStarted;
 			readonly TcpListener listener;
 			TextReader? reader;
@@ -27,8 +25,9 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			readonly TcpServerLogDataSource source;
 
 			// Constructor.
-			public ReaderImpl(TcpServerLogDataSource source, TcpListener listener)
+			public ReaderImpl(TcpServerLogDataSource source, TcpListener listener, Encoding encoding)
 			{
+				this.encoding = encoding;
 				this.listener = listener;
 				this.source = source;
 			}
@@ -64,7 +63,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 						this.listener.Start();
 						this.socket = this.listener.AcceptSocket();
 						this.source.Logger.LogWarning("Socket accepted");
-						this.reader = new StreamReader(new NetworkStream(this.socket, false), Encoding.UTF8);
+						this.reader = new StreamReader(new NetworkStream(this.socket, false), this.encoding);
 					}
 					catch (Exception ex)
 					{
@@ -78,7 +77,16 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 					return null;
 
 				// read line
-				return this.reader.ReadLine();
+				try
+				{
+					return this.reader.ReadLine();
+				}
+				catch
+				{
+					if (this.reader == null)
+						return null;
+					throw;
+				}
 			}
 		}
 
@@ -86,25 +94,22 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// <summary>
 		/// Initialize new <see cref="TcpServerLogDataSource"/> instance.
 		/// </summary>
-		/// <param name="provider">Application.</param>
+		/// <param name="provider">Provider.</param>
 		/// <param name="options">Options.</param>
 		public TcpServerLogDataSource(TcpServerLogDataSourceProvider provider, LogDataSourceOptions options) : base(provider, options)
 		{
-			var uri = options.Uri;
-			if (uri == null)
-				throw new ArgumentException("No URI specified.");
-			if (uri.Scheme != "tcp")
-				throw new ArgumentException($"Invalid URI scheme: {uri.Scheme}.");
+			if (options.IPEndPoint == null)
+				throw new ArgumentException("No IP endpoint specified.");
 		}
 
 
 		// Open reader.
 		protected override LogDataSourceState OpenReaderCore(CancellationToken cancellationToken, out TextReader? reader)
 		{
-			var uri = this.CreationOptions.Uri.AsNonNull();
-			var address = IPAddress.Loopback;
-			var listener = new TcpListener(address, uri.Port);
-			reader = new ReaderImpl(this, listener);
+			var options = this.CreationOptions;
+			var endPoint = options.IPEndPoint.AsNonNull();
+			var listener = new TcpListener(endPoint);
+			reader = new ReaderImpl(this, listener, options.Encoding ?? Encoding.UTF8);
 			return LogDataSourceState.ReaderOpened;
 		}
 

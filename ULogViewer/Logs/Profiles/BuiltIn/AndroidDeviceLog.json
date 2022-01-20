@@ -1,10 +1,12 @@
 ﻿{
 	"DataSource": {
 		"Name": "StandardOutput",
-		"Command": "adb logcat -v threadtime",
-		"SetupCommands": [
-			"adb logcat -c"
-		]
+		"Options": {
+			"Command": "adb logcat -v threadtime",
+			"SetupCommands": [
+				"adb logcat -c"
+			]
+		}
 	},
 	"Icon": "Phone",
 	"IsContinuousReading": true,
@@ -26,13 +28,16 @@
 	},
 	"LogPatterns": [
 		{
-			"Regex": "^(?<Timestamp>[^\\s]+[\\s]+[^\\s]+)[\\s]+(?<ProcessId>[\\d]+)[\\s]+(?<ThreadId>[\\d]+)[\\s]+(?<Level>[\\w]+)[\\s]+(?<SourceName>[^\\s\\:]*([\\s]+[^\\s\\:]+)*)[\\s]*\\:[\\s](?<Message>.*)$"
+			"Regex": "^(?<Timestamp>[^\\s]+[\\s]+[^\\s]+)[\\s]+(?<ProcessId>[\\d]+)[\\s]+(?<ThreadId>[\\d]+)[\\s]+(?<Level>[\\w]+)[\\s]+(?<SourceName>([^\\s\\:]|([\\s]+[^\\s\\:])|([\\:]+[^\\s\\:]))*[\\:]*[\\s]*)\\:[\\s](?<Message>.*)$"
 		}
 	],
 	"LogWritingFormat": "{Timestamp} {ProcessId,5} {ThreadId,5} {Level} {SourceName}: {Message}",
 	"SortKey": "Id",
 	"TimestampFormatForDisplaying": "MM/dd HH:mm:ss.fff",
-	"TimestampFormatForReading": "MM-dd HH:mm:ss.fff",
+	"TimestampFormatsForReading": [
+		"MM-dd HH:mm:ss.fff",
+		"MM-dd HH:mm:ss.ffffff"
+	],
 	"VisibleLogProperties": [
 		{
 			"Name": "Timestamp",

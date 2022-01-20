@@ -20,8 +20,8 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// <summary>
 		/// Initialize new <see cref="BaseLogDataSourceProvider"/> instance.
 		/// </summary>
-		/// <param name="app"><see cref="IApplication"/>.</param>
-		protected BaseLogDataSourceProvider(IApplication app)
+		/// <param name="app"><see cref="IULogViewerApplication"/>.</param>
+		protected BaseLogDataSourceProvider(IULogViewerApplication app)
 		{
 			app.VerifyAccess();
 			this.Application = app;
@@ -32,9 +32,9 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		/// <summary>
-		/// Get <see cref="IApplication"/> instance.
+		/// Get <see cref="IULogViewerApplication"/> instance.
 		/// </summary>
-		public IApplication Application { get; }
+		public IULogViewerApplication Application { get; }
 
 
 		/// <summary>

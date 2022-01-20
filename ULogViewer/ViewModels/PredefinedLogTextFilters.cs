@@ -15,7 +15,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 	static class PredefinedLogTextFilters
 	{
 		// Fields.
-		static IApplication? app;
+		static IULogViewerApplication? app;
 		static string directoryPath = "";
 		static readonly HashSet<string> filterIdSet = new HashSet<string>();
 		static readonly ObservableList<PredefinedLogTextFilter> filters = new ObservableList<PredefinedLogTextFilter>();
@@ -85,7 +85,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		/// <param name="app">Application.</param>
 		/// <returns>Task of initialization.</returns>
-		public static async Task InitializeAsync(IApplication app)
+		public static async Task InitializeAsync(IULogViewerApplication app)
 		{
 			// check state
 			app.VerifyAccess();

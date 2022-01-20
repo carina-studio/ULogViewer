@@ -14,7 +14,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataOutputs
 		/// </summary>
 		/// <param name="app">Application.</param>
 		/// <param name="fileName">Name of file.</param>
-		public FileLogDataOutput(IApplication app, string fileName) : this(app, fileName, Encoding.UTF8)
+		public FileLogDataOutput(IULogViewerApplication app, string fileName) : this(app, fileName, Encoding.UTF8)
 		{ }
 
 
@@ -24,7 +24,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataOutputs
 		/// <param name="app">Application.</param>
 		/// <param name="fileName">Name of file.</param>
 		/// <param name="encoding">Encoding.</param>
-		public FileLogDataOutput(IApplication app, string fileName, Encoding encoding) : base(app)
+		public FileLogDataOutput(IULogViewerApplication app, string fileName, Encoding encoding) : base(app)
 		{
 			this.Encoding = encoding;
 			this.FileName = fileName;

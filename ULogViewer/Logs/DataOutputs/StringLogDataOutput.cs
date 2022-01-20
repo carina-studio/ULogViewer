@@ -12,7 +12,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataOutputs
 		/// Initialize new <see cref="StringLogDataOutput"/> instance.
 		/// </summary>
 		/// <param name="app">Application.</param>
-		public StringLogDataOutput(IApplication app) : base(app)
+		public StringLogDataOutput(IULogViewerApplication app) : base(app)
 		{ }
 
 

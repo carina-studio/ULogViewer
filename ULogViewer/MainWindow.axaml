@@ -2,55 +2,153 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-				xmlns:appControls="clr-namespace:CarinaStudio.ULogViewer.Controls;assembly=ULogViewer"
-				xmlns:appViewModels="clr-namespace:CarinaStudio.ULogViewer.ViewModels;assembly=ULogViewer"
+        xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
+        xmlns:appViewModels="using:CarinaStudio.ULogViewer.ViewModels"
+		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
+		xmlns:asConverters="using:CarinaStudio.AppSuite.Converters"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.MainWindow"
-				Classes="MainWindow"
-				MinHeight="{StaticResource Double.MainWindow.MinHeight}"
-				MinWidth="{StaticResource Double.MainWindow.MinWidth}"
-        Title="{Binding Title}">
+		Classes="Tabbed"
+		ExtendClientAreaTitleBarHeightHint="{Binding #tabControl.TabStripSize}"
+		Icon="/AppIcon.ico"
+		MinHeight="{DynamicResource Double/MainWindow.MinHeight}"
+		MinWidth="{DynamicResource Double/MainWindow.MinWidth}">
 
 	<!-- Data templates -->
 	<Window.DataTemplates>
 		<DataTemplate DataType="{x:Type appViewModels:Session}">
-			<Border Background="{x:Static Brushes.Transparent}" DragDrop.AllowDrop="True" Padding="{StaticResource Thickness.MainWindow.TabItem.Padding}">
-				<Grid ColumnDefinitions="Auto,Auto,Auto">
-					<Border Height="{StaticResource Double.MainWindow.TabItem.Icon.Size}" Margin="{StaticResource Thickness.MainWindow.TabItem.Icon.Margin}" VerticalAlignment="Center" Width="{StaticResource Double.MainWindow.TabItem.Icon.Size}">
-						<DrawingPresenter Classes="Icon" Drawing="{Binding Icon}"/>
-					</Border>
-					<TextBlock FontSize="{StaticResource Double.MainWindow.TabItem.FontSize}" Grid.Column="1" MaxWidth="200" Text="{Binding Title}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
-					<Button Background="{x:Static Brushes.Transparent}" Click="OnTabItemCloseButtonClick" Grid.Column="2" Margin="{StaticResource Thickness.MainWindow.TabItem.CloseButton.Margin}" Padding="{StaticResource Thickness.MainWindow.TabItem.CloseButton.Padding}" ToolTip.Tip="{DynamicResource String.MainWindow.CloseSession}" VerticalAlignment="Center">
-						<Border Height="{StaticResource Double.MainWindow.TabItem.CloseButton.Icon.Size}" VerticalAlignment="Center" Width="{StaticResource Double.MainWindow.TabItem.CloseButton.Icon.Size}">
-							<DrawingPresenter Drawing="{DynamicResource Drawing.Close}" HorizontalAlignment="Center" Stretch="Uniform" VerticalAlignment="Center"/>
-						</Border>
-					</Button>
+			<Grid ColumnDefinitions="*,Auto" Background="{x:Static Brushes.Transparent}">
+				<Grid.ContextMenu>
+					<ContextMenu PlacementMode="Bottom">
+						<MenuItem Command="{Binding $parent[Window].SetCustomSessionTitle}" CommandParameter="{Binding $parent[TabItem]}" Header="{DynamicResource String/MainWindow.SetCustomSessionTitle}">
+							<MenuItem.Icon>
+								<Border Classes="MenuItem_Icon">
+									<Image Classes="Icon" Source="{DynamicResource Image/Icon.Edit}"/>
+								</Border>
+							</MenuItem.Icon>
+						</MenuItem>
+						<MenuItem Command="{Binding $parent[Window].ClearCustomSessionTitle}" CommandParameter="{Binding $parent[TabItem]}" Header="{DynamicResource String/MainWindow.ClearCustomSessionTitle}" IsEnabled="{Binding HasCustomTitle}"/>
+						<Separator/>
+						<MenuItem Command="{Binding $parent[Window].MoveSessionToNewWorkspace}" CommandParameter="{Binding $parent[TabItem]}" Header="{DynamicResource String/Common.OpenInNewWindow}" IsEnabled="{Binding $parent[Window].HasMultipleSessions}">
+							<MenuItem.Icon>
+								<Border Classes="MenuItem_Icon">
+									<Image Classes="Icon" Source="{DynamicResource Image/Icon.AddWindow}"/>
+								</Border>
+							</MenuItem.Icon>
+						</MenuItem>
+						<Separator/>
+						<MenuItem Command="{Binding $parent[Window].CloseSessionTabItem}" CommandParameter="{Binding $parent[TabItem]}" Header="{DynamicResource String/Common.CloseTab}" InputGesture="Ctrl+W">
+							<MenuItem.Icon>
+								<Border Classes="MenuItem_Icon">
+									<Image Classes="Icon" Source="{DynamicResource Image/Icon.Close}"/>
+								</Border>
+							</MenuItem.Icon>
+						</MenuItem>
+					</ContextMenu>
+				</Grid.ContextMenu>
+				<Grid Name="Content" ColumnDefinitions="Auto,*" HorizontalAlignment="Stretch">
+					<ToolTip.Tip>
+						<StackPanel Margin="{DynamicResource Thickness/MainWindow.TabItem.ToolTip.Padding}">
+							<StackPanel.Styles>
+								<Style Selector="Image.ToolTipIcon">
+									<Setter Property="Height" Value="{DynamicResource Double/MainWindow.TabItem.ToolTip.Icon.Size}"/>
+									<Setter Property="Margin" Value="{DynamicResource Thickness/MainWindow.TabItem.ToolTip.Icon.Margin}"/>
+									<Setter Property="Stretch" Value="Uniform"/>
+									<Setter Property="VerticalAlignment" Value="Center"/>
+									<Setter Property="Width" Value="{DynamicResource Double/MainWindow.TabItem.ToolTip.Icon.Size}"/>
+								</Style>
+								<Style Selector="TextBlock.ToolTipText">
+									<Setter Property="VerticalAlignment" Value="Center"/>
+								</Style>
+							</StackPanel.Styles>
+							<TextBlock FontWeight="Bold" Text="{Binding Title}"/>
+							<Separator Classes="Dialog_Separator_Small"/>
+							<StackPanel IsVisible="{Binding !IsHibernated}">
+								<StackPanel IsVisible="{Binding IsLogsReadingPaused}">
+									<StackPanel Orientation="Horizontal">
+										<Image Classes="ToolTipIcon" Source="{DynamicResource Image/Icon.PauseMedia}"/>
+										<TextBlock Classes="ToolTipText" Text="{DynamicResource String/MainWindow.Session.Paused}"/>
+									</StackPanel>
+									<Separator Classes="Dialog_Separator_Small"/>
+								</StackPanel>
+								<StackPanel IsVisible="{Binding IsWaitingForDataSources}">
+									<StackPanel Orientation="Horizontal">
+										<Image Classes="ToolTipIcon" Source="{DynamicResource Image/Icon.Waiting}"/>
+										<TextBlock Classes="ToolTipText" Text="{DynamicResource String/MainWindow.Session.WaitingForDataSources}"/>
+									</StackPanel>
+									<Separator Classes="Dialog_Separator_Small"/>
+								</StackPanel>
+								<StackPanel Orientation="Horizontal">
+									<TextBlock Classes="ToolTipText" Text="{DynamicResource String/MainWindow.Session.AllLogCount}"/>
+									<TextBlock Classes="ToolTipText" Text="{Binding AllLogCount}"/>
+								</StackPanel>
+								<StackPanel Orientation="Horizontal">
+									<TextBlock Classes="ToolTipText" Text="{DynamicResource String/MainWindow.Session.LogsMemoryUsage}"/>
+									<TextBlock Classes="ToolTipText" Text="{Binding LogsMemoryUsage, Converter={x:Static asConverters:FileSizeConverter.Default}}"/>
+								</StackPanel>
+							</StackPanel>
+							<StackPanel IsVisible="{Binding IsHibernated}" Orientation="Horizontal">
+								<Image Classes="ToolTipIcon" Source="{DynamicResource Image/Leaf}"/>
+								<TextBlock Classes="ToolTipText" Text="{DynamicResource String/MainWindow.Session.Hibernated}"/>
+							</StackPanel>
+						</StackPanel>
+					</ToolTip.Tip>
+					<Image Classes="TabItem_Icon" IsEnabled="{Binding !IsHibernated}" Source="{Binding Icon}"/>
+					<TextBlock Name="titleTextBlock" Classes="TabItem_TextBlock" Grid.Column="1" Text="{Binding Title}"/>
 				</Grid>
-			</Border>
+				<Button Classes="TabItem_Button" Command="{Binding $parent[Window].CloseSessionTabItem}" CommandParameter="{Binding $parent[TabItem]}" Grid.Column="1" ToolTip.Tip="{DynamicResource String/Common.CloseTab.WithGesture}">
+					<Image Classes="Icon" Source="{StaticResource Image/Icon.Close}"/>
+				</Button>
+			</Grid>
 		</DataTemplate>
 	</Window.DataTemplates>
-	
-	<!-- Styles -->
-	<Window.Styles>
-		<Style Selector="TabItem">
-			<Setter Property="MaxHeight" Value="{StaticResource Double.MainWindow.TabItem.Height}"/>
-			<Setter Property="MinHeight" Value="{StaticResource Double.MainWindow.TabItem.Height}"/>
-			<Setter Property="Padding" Value="0"/>
-		</Style>
-	</Window.Styles>
+
+	<!-- Resources -->
+	<Window.Resources>
+
+		<!-- Native menu -->
+		<NativeMenu x:Key="nativeMenu">
+			<NativeMenuItem Header="{DynamicResource String/MainWindow.Windows}">
+				<NativeMenuItem.Menu>
+					<NativeMenu>
+						<NativeMenuItem Command="{Binding $self.CreateMainWindow}" Header="{DynamicResource String/Common.CreateWindow}" Gesture="Cmd+N"/>
+						<NativeMenuItemSeparator/>
+						<NativeMenuItem Command="{Binding $self.LayoutMainWindowsCommand}" CommandParameter="{x:Static asControls:MultiWindowLayout.Horizontal}" Header="{DynamicResource String/MainWindow.LayoutMainWindows.Horizontal}"/>
+						<NativeMenuItem Command="{Binding $self.LayoutMainWindowsCommand}" CommandParameter="{x:Static asControls:MultiWindowLayout.Vertical}" Header="{DynamicResource String/MainWindow.LayoutMainWindows.Vertical}"/>
+						<NativeMenuItem Command="{Binding $self.LayoutMainWindowsCommand}" CommandParameter="{x:Static asControls:MultiWindowLayout.Tile}" Header="{DynamicResource String/MainWindow.LayoutMainWindows.Tile}"/>
+					</NativeMenu>
+				</NativeMenuItem.Menu>
+			</NativeMenuItem>
+			<NativeMenuItem Header="{DynamicResource String/MainWindow.Tabs}">
+				<NativeMenuItem.Menu>
+					<NativeMenu>
+						<NativeMenuItem Command="{Binding $self.CreateSessionTabItem}" Header="{DynamicResource String/Common.CreateTab}"  Gesture="Cmd+T"/>
+						<NativeMenuItemSeparator/>
+						<NativeMenuItem Command="{Binding $self.SetCurrentCustomSessionTitle}" Header="{DynamicResource String/MainWindow.SetCustomSessionTitle}"/>
+						<NativeMenuItem Command="{Binding $self.ClearCurrentCustomSessionTitle}" Header="{DynamicResource String/MainWindow.ClearCustomSessionTitle}" IsEnabled="{Binding ActiveSession.CustomTitle, Converter={x:Static asConverters:ValueToBooleanConverters.NonNullToTrue}}"/>
+						<NativeMenuItemSeparator/>
+						<NativeMenuItem Command="{Binding $self.MoveCurrentSessionToNewWorkspace}" Header="{DynamicResource String/Common.OpenInNewWindow}" IsEnabled="{Binding $self.HasMultipleSessions}"/>
+						<NativeMenuItemSeparator/>
+						<NativeMenuItem Command="{Binding $self.CloseCurrentSessionTabItem}" Header="{DynamicResource String/Common.CloseTab}" Gesture="Cmd+W"/>
+					</NativeMenu>
+				</NativeMenuItem.Menu>
+			</NativeMenuItem>
+		</NativeMenu>
+
+	</Window.Resources>
 
 	<!-- Content -->
-	<TabControl Name="tabControl" Padding="0">
+	<asControls:TabControl Name="tabControl" DragDrop.AllowDrop="True" DragLeaveItem="OnDragLeaveTabItem" DragOverItem="OnDragOverTabItem" DropOnItem="OnDropOnTabItem" ItemDragged="OnTabItemDragged">
 
 		<!-- Add new tab -->
-		<TabItem>
+		<TabItem Classes="Empty">
 			<TabItem.Header>
-				<Border Background="{x:Static Brushes.Transparent}" DragDrop.AllowDrop="True" Padding="{StaticResource Thickness.MainWindow.TabItem.Padding}" ToolTip.Tip="{DynamicResource String.MainWindow.CreateSession}">
-					<DrawingPresenter Drawing="{DynamicResource Drawing.Add}" Height="{StaticResource Double.MainWindow.TabItem.Icon.Size}" HorizontalAlignment="Center" Stretch="Uniform" VerticalAlignment="Center" Width="{StaticResource Double.MainWindow.TabItem.Icon.Size}"/>
-				</Border>
+				<Button Classes="AddTabItem" Command="{Binding $parent[Window].CreateSessionTabItem}">
+					<Image Classes="Icon" Source="{DynamicResource Image/Icon.Add}"/>
+				</Button>
 			</TabItem.Header>
 		</TabItem>
 
-	</TabControl>
+	</asControls:TabControl>
 
 </Window>

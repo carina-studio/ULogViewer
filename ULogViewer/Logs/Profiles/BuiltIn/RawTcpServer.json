@@ -1,0 +1,8 @@
+﻿{
+	"DataSource": {
+		"Name": "TCP Server"
+	},
+	"Icon": "Experiment",
+	"IsContinuousReading": true,
+	"SortKey": "Id"
+}

@@ -75,9 +75,9 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		/// <summary>
-		/// Get <see cref="IApplication"/> instance.
+		/// Get <see cref="IULogViewerApplication"/> instance.
 		/// </summary>
-		public IApplication Application { get => (IApplication)this.Provider.Application; }
+		public IULogViewerApplication Application { get => (IULogViewerApplication)this.Provider.Application; }
 
 
 		// change state.

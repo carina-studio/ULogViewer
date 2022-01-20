@@ -13,7 +13,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 	static class LogDataSourceProviders
 	{
 		// Fields.
-		static volatile IApplication? app;
+		static volatile IULogViewerApplication? app;
 		static volatile EmptyLogDataSourceProvider? empty;
 		static volatile ILogger? logger;
 		static readonly List<ILogDataSourceProvider> providers = new List<ILogDataSourceProvider>();
@@ -36,7 +36,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// </summary>
 		/// <param name="app">Application.</param>
 		[MethodImpl(MethodImplOptions.Synchronized)]
-		public static void Initialize(IApplication app)
+		public static void Initialize(IULogViewerApplication app)
 		{
 			// check state
 			app.VerifyAccess();
@@ -61,9 +61,12 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 #endif
 			providers.Add(new FileLogDataSourceProvider(app));
 			providers.Add(new HttpLogDataSourceProvider(app));
+			if (app.IsDebugMode)
+				providers.Add(new MemoryLoggerLogDataSourceProvider(app));
 			providers.Add(new SQLiteLogDataSourceProvider(app));
 			providers.Add(new StandardOutputLogDataSourceProvider(app));
-			//providers.Add(new TcpServerLogDataSourceProvider(app));
+			providers.Add(new TcpServerLogDataSourceProvider(app));
+			providers.Add(new UdpServerLogDataSourceProvider(app));
 			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 				providers.Add(new WindowsEventLogDataSourceProvider(app));
 		}

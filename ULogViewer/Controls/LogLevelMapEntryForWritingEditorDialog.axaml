@@ -2,34 +2,33 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-				xmlns:ia="using:Avalonia.Xaml.Interactivity"
-				xmlns:iaCore="using:Avalonia.Xaml.Interactions.Core"
-				xmlns:appControls="clr-namespace:CarinaStudio.ULogViewer.Controls;assembly=ULogViewer"
-				xmlns:appConverters="clr-namespace:CarinaStudio.ULogViewer.Converters;assembly=ULogViewer"
-				xmlns:appLogs="clr-namespace:CarinaStudio.ULogViewer.Logs;assembly=ULogViewer"
+        xmlns:ia="using:Avalonia.Xaml.Interactivity"
+        xmlns:iaCore="using:Avalonia.Xaml.Interactions.Core"
+        xmlns:appControls="clr-namespace:CarinaStudio.ULogViewer.Controls;assembly=ULogViewer"
+        xmlns:appConverters="clr-namespace:CarinaStudio.ULogViewer.Converters;assembly=ULogViewer"
+        xmlns:appLogs="clr-namespace:CarinaStudio.ULogViewer.Logs;assembly=ULogViewer"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.LogLevelMapEntryForWritingEditorDialog"
         Classes="Dialog"
-				SizeToContent="Height"
-        Title="{DynamicResource String.LogLevelMapEntryEditor.Title}"
-				Width="{StaticResource Double.LogLevelMapEntryEditor.Width}">
+        Title="{DynamicResource String/LogLevelMapEntryEditor.Title}"
+        Width="{DynamicResource Double/LogLevelMapEntryEditor.Width}">
 
 	<DockPanel>
 
 		<!-- Control buttons -->
-		<Border Classes="Dialog_ControlButtonsPanel" DockPanel.Dock="Bottom">
-			<StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].GenerateResultCommand}" Content="{DynamicResource String.Common.OK}"/>
-				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].CancelCommand}" Content="{DynamicResource String.Common.Cancel}"/>
+		<Border Classes="Dialog_ControlButtonsPanel">
+			<StackPanel Classes="Dialog_ControlButtonsPanel">
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].GenerateResultCommand}" Content="{DynamicResource String/Common.OK}"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].Close}" Content="{DynamicResource String/Common.Cancel}"/>
 			</StackPanel>
 		</Border>
 
 		<!-- Content -->
-		<StackPanel Margin="{StaticResource Thickness.Dialog.Content.Padding}" Orientation="Vertical">
+		<StackPanel Classes="Dialog_ContentPanel">
 
 			<!-- Log level -->
-			<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogLevelMapEntryEditor.Writing.LogLevel}"/>
-			<ComboBox Name="logLevelComboBox" HorizontalAlignment="Stretch">
+			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogLevelMapEntryEditor.Writing.LogLevel}"/>
+			<ComboBox Name="logLevelComboBox" Classes="Dialog_ComboBox">
 				<appLogs:LogLevel>Undefined</appLogs:LogLevel>
 				<appLogs:LogLevel>Info</appLogs:LogLevel>
 				<appLogs:LogLevel>Success</appLogs:LogLevel>
@@ -42,15 +41,18 @@
 				<appLogs:LogLevel>Fatal</appLogs:LogLevel>
 				<ComboBox.ItemTemplate>
 					<DataTemplate>
-						<TextBlock Foreground="{Binding Converter={x:Static appConverters:LogLevelBrushConverter.Default}}" Text="{Binding Converter={x:Static appConverters:EnumConverter.LogLevel}}"/>
+						<StackPanel Orientation="Horizontal">
+							<Border Background="{Binding Converter={x:Static appConverters:LogLevelBrushConverter.Default}}" BorderBrush="{DynamicResource ComboBoxItemForeground}" BorderThickness="1" Height="{DynamicResource Double/LogLevelComboBox.Item.Indicator.Size}" Margin="{DynamicResource Thickness/LogLevelComboBox.Item.Indicator.Margin}" VerticalAlignment="Center" Width="{DynamicResource Double/LogLevelComboBox.Item.Indicator.Size}"/>
+							<TextBlock Text="{Binding Converter={x:Static appControls:SessionView.LogLevelNameConverter}}" VerticalAlignment="Center"/>
+						</StackPanel>
 					</DataTemplate>
 				</ComboBox.ItemTemplate>
 			</ComboBox>
-			<Separator Classes="Dialog_Separator_Horizontal"/>
+			<Separator Classes="Dialog_Separator"/>
 			
 			<!-- Text -->
-			<TextBlock Classes="Dialog_Label" Text="{DynamicResource String.LogLevelMapEntryEditor.Writing.Text}"/>
-			<TextBox Name="textBox" MaxLength="256" PropertyChanged="OnTextBoxPropertyChanged"/>
+			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogLevelMapEntryEditor.Writing.Text}"/>
+			<TextBox Name="textBox" Classes="Dialog_TextBox" MaxLength="256" PropertyChanged="OnTextBoxPropertyChanged"/>
 
 		</StackPanel>
 

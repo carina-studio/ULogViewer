@@ -5,13 +5,15 @@ using CarinaStudio.ULogViewer.Logs;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ULogViewer.ViewModels;
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.Controls
 {
 	/// <summary>
 	/// Dialog to edit visible <see cref="LogProperty"/>.
 	/// </summary>
-	partial class VisibleLogPropertyEditorDialog : BaseDialog
+	partial class VisibleLogPropertyEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
 	{
 		// Fields.
 		readonly ToggleSwitch customDisplayNameSwitch;
@@ -37,6 +39,17 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Generate result.
+		protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken)
+		{
+			var displayName = this.customDisplayNameSwitch.IsChecked.GetValueOrDefault()
+				 ? this.customDisplayNameTextBox.Text.AsNonNull().Trim()
+				 : (string)this.displayNameComboBox.SelectedItem.AsNonNull();
+			var width = this.specifyWidthSwitch.IsChecked.GetValueOrDefault() ? (int?)this.widthUpDown.Value : null;
+			return Task.FromResult((object?)new LogProperty((string)this.nameComboBox.SelectedItem.AsNonNull(), displayName, width));
+		}
+
+
 		// Initialize.
 		private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
 
@@ -56,17 +69,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				this.InvalidateInput();
 			}
-		}
-
-
-		// Generate result.
-		protected override object? OnGenerateResult()
-		{
-			var displayName = this.customDisplayNameSwitch.IsChecked.GetValueOrDefault()
-				? this.customDisplayNameTextBox.Text.AsNonNull().Trim()
-				: (string)this.displayNameComboBox.SelectedItem.AsNonNull();
-			var width = this.specifyWidthSwitch.IsChecked.GetValueOrDefault() ? (int?)this.widthUpDown.Value : null;
-			return new LogProperty((string)this.nameComboBox.SelectedItem.AsNonNull(), displayName, width);
 		}
 
 

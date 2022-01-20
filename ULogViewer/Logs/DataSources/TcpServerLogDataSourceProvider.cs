@@ -13,7 +13,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// Initialize new <see cref="TcpServerLogDataSourceProvider"/> instance.
 		/// </summary>
 		/// <param name="app">Application.</param>
-		public TcpServerLogDataSourceProvider(IApplication app) : base(app)
+		public TcpServerLogDataSourceProvider(IULogViewerApplication app) : base(app)
 		{ }
 
 
@@ -22,11 +22,12 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		public override string Name => "TCP Server";
 		public override ISet<string> RequiredSourceOptions => new HashSet<string>()
 		{
-			nameof(LogDataSourceOptions.Uri),
+			nameof(LogDataSourceOptions.IPEndPoint),
 		}.AsReadOnly();
 		public override ISet<string> SupportedSourceOptions => new HashSet<string>()
 		{
-			nameof(LogDataSourceOptions.Uri),
+			nameof(LogDataSourceOptions.Encoding),
+			nameof(LogDataSourceOptions.IPEndPoint),
 		}.AsReadOnly();
 	}
 }

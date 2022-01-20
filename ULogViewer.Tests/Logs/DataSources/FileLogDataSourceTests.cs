@@ -31,7 +31,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 					writer.WriteLine();
 				writer.Write(data[i]);
 			}
-			options = LogDataSourceOptions.CreateForFile(filePath);
+			options = new LogDataSourceOptions() { FileName = filePath };
 		}
 	}
 }

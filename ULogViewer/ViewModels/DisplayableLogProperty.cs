@@ -17,7 +17,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		// Fields.
-		readonly IApplication app;
+		readonly IULogViewerApplication app;
 		readonly string displayNameId;
 
 
@@ -28,7 +28,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <param name="name">Name of property.</param>
 		/// <param name="displayName">Name for displaying.</param>
 		/// <param name="width">Width of UI field to show property in pixels.</param>
-		public DisplayableLogProperty(IApplication app, string name, string? displayName, int? width)
+		public DisplayableLogProperty(IULogViewerApplication app, string name, string? displayName, int? width)
 		{
 			this.app = app;
 			this.displayNameId = displayName ?? name;
@@ -44,14 +44,17 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		/// <param name="app">Application.</param>
 		/// <param name="logProperty"><see cref="LogProperty"/> defined in <see cref="LogProfile"/>.</param>
-		public DisplayableLogProperty(IApplication app, LogProperty logProperty)
+		public DisplayableLogProperty(IULogViewerApplication app, LogProperty logProperty)
 		{
 			this.app = app;
 			this.displayNameId = logProperty.DisplayName;
 			this.Name = logProperty.Name switch
 			{
+				nameof(Log.BeginningTimeSpan) => nameof(DisplayableLog.BeginningTimeSpanString),
 				nameof(Log.BeginningTimestamp) => nameof(DisplayableLog.BeginningTimestampString),
+				nameof(Log.EndingTimeSpan) => nameof(DisplayableLog.EndingTimeSpanString),
 				nameof(Log.EndingTimestamp) => nameof(DisplayableLog.EndingTimestampString),
+				nameof(Log.TimeSpan) => nameof(DisplayableLog.TimeSpanString),
 				nameof(Log.Timestamp) => nameof(DisplayableLog.TimestampString),
 				_ => logProperty.Name,
 			};
@@ -79,15 +82,23 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					displayNames = new List<string>(Log.PropertyNames).Also(it =>
 					{
 						it.Add("Author");
+						it.Add("Child");
+						it.Add("Children");
 						it.Add("Code");
 						it.Add("Commit");
 						it.Add("Content");
+						it.Add("Count");
+						it.Add("Cpu");
 						it.Add("Duration");
 						it.Add("ID");
 						it.Add("Name");
 						it.Add("Number");
+						it.Add("Parent");
 						it.Add("Path");
 						it.Add("RawData");
+						it.Add("RelativeBeginningTimestamp");
+						it.Add("RelativeEndingTimestamp");
+						it.Add("RelativeTimestamp");
 						it.Add("ShortName");
 						it.Add("Tag");
 						it.Add("Type");
@@ -128,6 +139,27 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Raised when property changed.
 		/// </summary>
 		public event PropertyChangedEventHandler? PropertyChanged;
+
+
+		/// <summary>
+		/// Convert to <see cref="LogProperty"/>.
+		/// </summary>
+		/// <param name="resolveDisplayName">True to resolve display name to readable value.</param>
+		/// <returns><see cref="LogProperty"/>.</returns>
+		public LogProperty ToLogProperty(bool resolveDisplayName = true)
+		{
+			var name = this.Name switch
+			{
+				nameof(DisplayableLog.BeginningTimeSpanString) => nameof(Log.BeginningTimeSpan),
+				nameof(DisplayableLog.BeginningTimestampString) => nameof(Log.BeginningTimestamp),
+				nameof(DisplayableLog.EndingTimeSpanString) => nameof(Log.EndingTimeSpan),
+				nameof(DisplayableLog.EndingTimestampString) => nameof(Log.EndingTimestamp),
+				nameof(DisplayableLog.TimeSpanString) => nameof(Log.TimeSpan),
+				nameof(DisplayableLog.TimestampString) => nameof(Log.Timestamp),
+				_ => this.Name,
+			};
+			return new LogProperty(name, resolveDisplayName ? this.DisplayName : this.displayNameId, this.Width);
+		}
 
 
 		/// <summary>

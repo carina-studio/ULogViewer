@@ -13,7 +13,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// Initialize new <see cref="EmptyLogDataSourceProvider"/> instance.
 		/// </summary>
 		/// <param name="app">Application.</param>
-		public EmptyLogDataSourceProvider(IApplication app) : base(app)
+		public EmptyLogDataSourceProvider(IULogViewerApplication app) : base(app)
 		{ }
 
 

@@ -72,7 +72,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataOutputs
 		/// Initialize new <see cref="BaseLogDataOutput"/> instance.
 		/// </summary>
 		/// <param name="app">Application.</param>
-		protected BaseLogDataOutput(IApplication app)
+		protected BaseLogDataOutput(IULogViewerApplication app)
 		{
 			app.VerifyAccess();
 			this.Application = app;
@@ -83,9 +83,9 @@ namespace CarinaStudio.ULogViewer.Logs.DataOutputs
 
 
 		/// <summary>
-		/// Get <see cref="IApplication"/> instance.
+		/// Get <see cref="IULogViewerApplication"/> instance.
 		/// </summary>
-		public IApplication Application { get; }
+		public IULogViewerApplication Application { get; }
 
 
 		// change state.

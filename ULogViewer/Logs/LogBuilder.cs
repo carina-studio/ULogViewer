@@ -58,7 +58,20 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// Build new <see cref="Log"/> instance and reset all log properties.
 		/// </summary>
 		/// <returns><see cref="Log"/>.</returns>
-		public Log BuildAndReset() => new Log(this).Also(_ => this.properties.Clear());
+		public Log BuildAndReset() => new Log(this).Also(_ => this.Reset());
+
+
+		/// <summary>
+		/// Get log property as <see cref="CompressedString"/> or return null if unable to get the property.
+		/// </summary>
+		/// <param name="propertyName">Name of property of log.</param>
+		/// <returns>Value or null.</returns>
+		public CompressedString? GetCompressedStringOrNull(string propertyName)
+		{
+			if (this.properties.TryGetValue(propertyName, out var str))
+				return CompressedString.Create(str, this.StringCompressionLevel);
+			return null;
+		}
 
 
 		/// <summary>
@@ -131,6 +144,23 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		/// <summary>
+		/// Get log property as <see cref="TimeSpan"/> or return null if unable to get the property.
+		/// </summary>
+		/// <param name="propertyName">Name of property of log.</param>
+		/// <returns>Value or null.</returns>
+		public TimeSpan? GetTimeSpanOrNull(string propertyName)
+		{
+			if (!this.properties.TryGetValue(propertyName, out var str))
+				return null;
+			if (double.TryParse(str, out var ms))
+				return TimeSpan.FromMilliseconds(ms);
+			if (TimeSpan.TryParse(str, out var value))
+				return value;
+			return null;
+		}
+
+
+		/// <summary>
 		/// Check whether no log property has been set or not.
 		/// </summary>
 		/// <returns></returns>
@@ -145,6 +175,18 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		/// <summary>
+		/// Get number of properties has been set to builder.
+		/// </summary>
+		public int PropertyCount { get => this.properties.Count; }
+
+
+		/// <summary>
+		/// Get all property names in the builder.
+		/// </summary>
+		public ICollection<string> PropertyNames { get => this.properties.Keys; }
+
+
+		/// <summary>
 		/// Get <see cref="LogReader"/> which owns this builder.
 		/// </summary>
 		public LogReader? Reader { get; }
@@ -153,7 +195,10 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <summary>
 		/// Clear all log properties.
 		/// </summary>
-		public void Reset() => this.properties.Clear();
+		public void Reset()
+		{
+			this.properties.Clear();
+		}
 
 
 		/// <summary>
@@ -161,6 +206,15 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// </summary>
 		/// <param name="propertyName">Name of property of log.</param>
 		/// <param name="value">Value to set.</param>
-		public void Set(string propertyName, string value) => properties[propertyName] = value;
+		public void Set(string propertyName, string value)
+		{
+			properties[propertyName] = value;
+		}
+
+
+		/// <summary>
+		/// Get or set string compression level.
+		/// </summary>
+		public CompressedString.Level StringCompressionLevel { get; set; } = CompressedString.Level.None;
 	}
 }

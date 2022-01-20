@@ -8,7 +8,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataOutputs
 	/// <summary>
 	/// Output of raw log data.
 	/// </summary>
-	interface ILogDataOutput : IApplicationObject, IDisposable, INotifyPropertyChanged
+	interface ILogDataOutput : IApplicationObject<IULogViewerApplication>, IDisposable, INotifyPropertyChanged
 	{
 		/// <summary>
 		/// Open <see cref="TextWriter"/> asynchronously to write raw log data.

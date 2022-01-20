@@ -1,6 +1,6 @@
 ﻿using CarinaStudio.Collections;
+using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
-using CarinaStudio.Threading.Tasks;
 using CarinaStudio.ULogViewer.Json;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using Microsoft.Extensions.Logging;
@@ -25,23 +25,31 @@ namespace CarinaStudio.ULogViewer.Logs
 	/// </summary>
 	class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 	{
+		/// <summary>
+		/// Default interval of updating read logs for continuous reading.
+		/// </summary>
+		public const int DefaultContinuousUpdateInterval = 100;
+		/// <summary>
+		/// Default interval of updating read logs.
+		/// </summary>
+		public const int DefaultUpdateInterval = 2000;
+
+
 		// Constants.
-		const int LogsReadingChunkInterval = 5000;
-		const int LogsReadingChunkSize = 65536;
+		const int LogsReadingChunkSize = 4096;
+		const int MinLogsReadingDuration = 50;
 
 
 		// Static fields.
-		static readonly TaskFactory defaultReadingTaskFactory = new TaskFactory(TaskScheduler.Default);
 		static readonly CultureInfo defaultTimestampCultureInfo = CultureInfo.GetCultureInfo("en-US");
-		static readonly TaskFactory fileReadingTaskFactory = new TaskFactory(new FixedThreadsTaskScheduler(2));
 		static int nextId = 1;
 
 
 		// Fields.
-		int continuousReadingUpdateInterval = 100;
 		int dropLogCount = -1;
 		readonly ScheduledAction flushPendingLogsAction;
 		bool isContinuousReading;
+		bool isWaitingForDataSource;
 		readonly Dictionary<string, LogLevel> logLevelMap = new Dictionary<string, LogLevel>();
 		IList<LogPattern> logPatterns = new LogPattern[0];
 		readonly ObservableList<Log> logs = new ObservableList<Log>();
@@ -54,26 +62,34 @@ namespace CarinaStudio.ULogViewer.Logs
 		object? pendingLogsReadingToken;
 		readonly SingleThreadSynchronizationContext pendingLogsSyncContext = new SingleThreadSynchronizationContext();
 		readonly IDictionary<string, LogLevel> readOnlyLogLevelMap;
+		readonly TaskFactory readingTaskFactory;
 		LogReaderState state = LogReaderState.Preparing;
+		CultureInfo timeSpanCultureInfo = defaultTimestampCultureInfo;
+		LogTimeSpanEncoding timeSpanEncoding = LogTimeSpanEncoding.Custom;
+		IList<string> timeSpanFormats = new string[0];
 		CultureInfo timestampCultureInfo = defaultTimestampCultureInfo;
-		string? timestampFormat;
+		LogTimestampEncoding timestampEncoding = LogTimestampEncoding.Custom;
+		IList<string> timestampFormats = new string[0];
+		int? updateInterval;
 
 
 		/// <summary>
 		/// Initialize new <see cref="LogReader"/> instance.
 		/// </summary>
 		/// <param name="dataSource"><see cref="ILogDataSource"/> to read log data from.</param>
-		public LogReader(ILogDataSource dataSource)
+		/// <param name="readingTaskFactory"><see cref="TaskFactory"/> to perform logs reading tasks.</param>
+		public LogReader(ILogDataSource dataSource, TaskFactory readingTaskFactory)
 		{
 			// check thread
 			dataSource.VerifyAccess();
 
 			// setup properties
-			this.Application = (IApplication)dataSource.Application;
+			this.Application = (IULogViewerApplication)dataSource.Application;
 			this.DataSource = dataSource;
 			this.Id = nextId++;
 			this.Logger = dataSource.Application.LoggerFactory.CreateLogger($"{this.GetType().Name}-{this.Id}");
 			this.Logs = new ReadOnlyObservableList<Log>(this.logs);
+			this.readingTaskFactory = readingTaskFactory;
 			this.readOnlyLogLevelMap = new ReadOnlyDictionary<string, LogLevel>(this.logLevelMap);
 
 			// create scheduled actions
@@ -103,9 +119,9 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		/// <summary>
-		/// Get <see cref="IApplication"/> instance.
+		/// Get <see cref="IULogViewerApplication"/> instance.
 		/// </summary>
-		public IApplication Application { get; }
+		public IULogViewerApplication Application { get; }
 
 
 		// Whether read logs can be added or not.
@@ -123,12 +139,30 @@ namespace CarinaStudio.ULogViewer.Logs
 		// Change state.
 		bool ChangeState(LogReaderState state)
 		{
+			// check state
 			var prevState = this.state;
 			if (prevState == state)
 				return true;
+
+			// change state
 			this.state = state;
 			this.Logger.LogDebug($"Change state from {prevState} to {state}");
 			this.OnPropertyChanged(nameof(State));
+
+			// update data source waiting state
+			switch (this.state)
+			{
+				case LogReaderState.Starting:
+				case LogReaderState.StartingWhenPaused:
+					this.IsWaitingForDataSource = true;
+					break;
+				case LogReaderState.DataSourceError:
+				case LogReaderState.UnclassifiedError:
+					this.IsWaitingForDataSource = false;
+					break;
+			}
+
+			// check final state
 			return (this.state == state);
 		}
 
@@ -148,24 +182,11 @@ namespace CarinaStudio.ULogViewer.Logs
 		}
 
 
-		/// <summary>
-		/// Update interval of <see cref="Logs"/> in milliseconds when <see cref="IsContinuousReading"/> is true.
-		/// </summary>
-		public int ContinuousReadingUpdateInterval
-		{
-			get => this.continuousReadingUpdateInterval;
-			set
-			{
-				this.VerifyAccess();
-				this.VerifyDisposed();
-				if (value < 0)
-					throw new ArgumentOutOfRangeException();
-				if (this.continuousReadingUpdateInterval == value)
-					return;
-				this.continuousReadingUpdateInterval = value;
-				this.OnPropertyChanged(nameof(ContinuousReadingUpdateInterval));
-			}
-		}
+		// Create date time from unix timestamp.
+		static DateTime CreateDateTimeFromUnixTimestamp(double timestamp) =>
+			new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds(timestamp).ToLocalTime();
+		static DateTime CreateDateTimeFromUnixTimestampMillis(double timestampMillis) =>
+			new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(timestampMillis).ToLocalTime();
 
 
 		/// <summary>
@@ -290,6 +311,22 @@ namespace CarinaStudio.ULogViewer.Logs
 					return;
 				this.isContinuousReading = value;
 				this.OnPropertyChanged(nameof(IsContinuousReading));
+			}
+		}
+
+
+		/// <summary>
+		/// Check whether instance is waiting for <see cref="DataSource"/> to get first log data or not.
+		/// </summary>
+		public bool IsWaitingForDataSource 
+		{
+			get => this.isWaitingForDataSource;
+			private set
+			{
+				if (this.isWaitingForDataSource == value)
+					return;
+				this.isWaitingForDataSource = value;
+				this.OnPropertyChanged(nameof(IsWaitingForDataSource));
 			}
 		}
 
@@ -452,13 +489,12 @@ namespace CarinaStudio.ULogViewer.Logs
 		}
 
 
-		// Called when logs read.
-		void OnLogRead(object readingToken, Log log)
+		// Called when first raw log data read.
+		void OnFirstRawLogDataRead(object readingToken)
 		{
-			if (!this.CanAddLogs || this.logsReadingToken != readingToken)
+			if (this.logsReadingToken != readingToken)
 				return;
-			this.DropLogs(1);
-			this.logs.Add(log);
+			this.IsWaitingForDataSource = false;
 		}
 
 
@@ -489,6 +525,9 @@ namespace CarinaStudio.ULogViewer.Logs
 			}
 
 			this.Logger.LogWarning("Complete reading logs");
+
+			// update data source waiting state
+			this.IsWaitingForDataSource = false;
 
 			// release cancellation token
 			this.logsReadingCancellationTokenSource?.Let(it =>
@@ -578,7 +617,7 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		// Read single line of log.
-		void ReadLog(LogBuilder logBuilder, Match match, StringPool stringPool)
+		void ReadLog(LogBuilder logBuilder, Match match, StringPool stringPool, string[]? timeSpanFormats, string[]? timestampFormats)
 		{
 			foreach (Group group in match.Groups)
 			{
@@ -593,59 +632,140 @@ namespace CarinaStudio.ULogViewer.Logs
 						return it;
 					return this.logStringEncoding switch
 					{
-						LogStringEncoding.Json => JsonUtility.DecodeFromJsonString(it),
-						LogStringEncoding.Xml => WebUtility.HtmlDecode(it),
-						_ => it,
+						LogStringEncoding.Json => JsonUtility.DecodeFromJsonString(it.TrimEnd()),
+						LogStringEncoding.Xml => WebUtility.HtmlDecode(it.TrimEnd()),
+						_ => it.TrimEnd(),
 					};
 				});
-				switch (name)
+				if (Log.HasMultiLineStringProperty(name))
+					logBuilder.AppendToNextLine(name, value);
+				else if (Log.HasStringProperty(name))
 				{
-					case nameof(Log.BeginningTimestamp):
-					case nameof(Log.EndingTimestamp):
-					case nameof(Log.Timestamp):
-						this.timestampFormat.Let(format =>
-						{
-							if (format == null)
-								logBuilder.Set(name, value);
-							else if (DateTime.TryParseExact(value, format, this.timestampCultureInfo, DateTimeStyles.None, out var timestamp))
-								logBuilder.Set(name, timestamp.ToBinary().ToString());
-						});
-						break;
-					case nameof(Log.Level):
-						if (this.logLevelMap.TryGetValue(value, out var level))
-							logBuilder.Set(name, level.ToString());
-						break;
-					case nameof(Log.Extra1):
-					case nameof(Log.Extra10):
-					case nameof(Log.Extra2):
-					case nameof(Log.Extra3):
-					case nameof(Log.Extra4):
-					case nameof(Log.Extra5):
-					case nameof(Log.Extra6):
-					case nameof(Log.Extra7):
-					case nameof(Log.Extra8):
-					case nameof(Log.Extra9):
-					case nameof(Log.Message):
-					case nameof(Log.Summary):
-						logBuilder.AppendToNextLine(name, value);
-						break;
-					case nameof(Log.Category):
-					case nameof(Log.DeviceId):
-					case nameof(Log.DeviceName):
-					case nameof(Log.Event):
-					case nameof(Log.ProcessId):
-					case nameof(Log.ProcessName):
-					case nameof(Log.SourceName):
-					case nameof(Log.ThreadId):
-					case nameof(Log.ThreadName):
-					case nameof(Log.UserId):
-					case nameof(Log.UserName):
-						logBuilder.Set(name, stringPool[value]);
-						break;
-					default:
-						logBuilder.Set(name, value);
-						break;
+					switch (name)
+					{
+						case nameof(Log.Category):
+						case nameof(Log.DeviceId):
+						case nameof(Log.DeviceName):
+						case nameof(Log.Event):
+						case nameof(Log.ProcessId):
+						case nameof(Log.ProcessName):
+						case nameof(Log.SourceName):
+						case nameof(Log.ThreadId):
+						case nameof(Log.ThreadName):
+						case nameof(Log.UserId):
+						case nameof(Log.UserName):
+							logBuilder.Set(name, stringPool[value]);
+							break;
+						default:
+							logBuilder.Set(name, value);
+							break;
+					}
 				}
+				else if (Log.HasDateTimeProperty(name))
+				{
+					switch (this.timestampEncoding)
+					{
+						case LogTimestampEncoding.Custom:
+							if (timestampFormats != null)
+							{
+								for (var i = timestampFormats.Length - 1; i >= 0; --i)
+								{
+									if (DateTime.TryParseExact(value, timestampFormats[i], this.timestampCultureInfo, DateTimeStyles.None, out var timestamp))
+									{
+										logBuilder.Set(name, timestamp.ToBinary().ToString());
+										break;
+									}
+								}
+							}
+							else
+								logBuilder.Set(name, value);
+							break;
+						case LogTimestampEncoding.Unix:
+							if (double.TryParse(value, out var sec))
+								logBuilder.Set(name, CreateDateTimeFromUnixTimestamp(sec).ToBinary().ToString());
+							break;
+						case LogTimestampEncoding.UnixMicroseconds:
+							if (double.TryParse(value, out var us))
+								logBuilder.Set(name, CreateDateTimeFromUnixTimestampMillis(us / 1000).ToBinary().ToString());
+							break;
+						case LogTimestampEncoding.UnixMilliseconds:
+							if (double.TryParse(value, out var ms))
+								logBuilder.Set(name, CreateDateTimeFromUnixTimestampMillis(ms).ToBinary().ToString());
+							break;
+					}
+				}
+				else if (Log.HasTimeSpanProperty(name))
+				{
+					switch (this.timeSpanEncoding)
+					{
+						case LogTimeSpanEncoding.Custom:
+							{
+								if (timeSpanFormats != null)
+								{
+									for (var i = timeSpanFormats.Length - 1; i >= 0; --i)
+									{
+										if (TimeSpan.TryParseExact(value, timeSpanFormats[i], this.timeSpanCultureInfo, TimeSpanStyles.None, out var timeSpan))
+										{
+											logBuilder.Set(name, timeSpan.TotalMilliseconds.ToString());
+											break;
+										}
+									}
+								}
+								else if (TimeSpan.TryParse(value, out var timeSpan))
+									logBuilder.Set(name, timeSpan.TotalMilliseconds.ToString());
+							}
+							break;
+						case LogTimeSpanEncoding.TotalDays:
+							{
+								if (double.TryParse(value, out var days) && double.IsFinite(days))
+									logBuilder.Set(name, TimeSpan.FromDays(days).TotalMilliseconds.ToString());
+								break;
+							}
+						case LogTimeSpanEncoding.TotalHours:
+							{
+								if (double.TryParse(value, out var hours) && double.IsFinite(hours))
+									logBuilder.Set(name, TimeSpan.FromHours(hours).TotalMilliseconds.ToString());
+								break;
+							}
+						case LogTimeSpanEncoding.TotalMicroseconds:
+							{
+								if (double.TryParse(value, out var us))
+									logBuilder.Set(name, TimeSpan.FromMilliseconds(us / 1000).TotalMilliseconds.ToString());
+								break;
+							}
+						case LogTimeSpanEncoding.TotalMilliseconds:
+							{
+								if (double.TryParse(value, out var ms))
+									logBuilder.Set(name, TimeSpan.FromMilliseconds(ms).TotalMilliseconds.ToString());
+								break;
+							}
+						case LogTimeSpanEncoding.TotalMinutes:
+							{
+								if (double.TryParse(value, out var mins) && double.IsFinite(mins))
+									logBuilder.Set(name, TimeSpan.FromMinutes(mins).TotalMilliseconds.ToString());
+								break;
+							}
+						case LogTimeSpanEncoding.TotalSeconds:
+							{
+								if (double.TryParse(value, out var sec) && double.IsFinite(sec))
+									logBuilder.Set(name, TimeSpan.FromSeconds(sec).TotalMilliseconds.ToString());
+								break;
+							}
+						default:
+							{
+								if (TimeSpan.TryParse(value, out var timeSpan))
+									logBuilder.Set(name, timeSpan.TotalMilliseconds.ToString());
+							}
+							break;
+					}
+				}
+				else if (name == nameof(Log.Level))
+				{
+					if (this.logLevelMap.TryGetValue(value, out var level))
+						logBuilder.Set(name, level.ToString());
+				}
+				else
+					logBuilder.Set(name, value);
 			}
 		}
 
@@ -655,13 +775,40 @@ namespace CarinaStudio.ULogViewer.Logs
 		{
 			this.Logger.LogDebug("Start reading logs in background");
 			var readLogs = new List<Log>();
+			var readLog = (Log?)null;
 			var logPatterns = this.logPatterns;
-			var logBuilder = new LogBuilder();
+			var logBuilder = new LogBuilder()
+			{
+				StringCompressionLevel = this.Application.Settings.GetValueOrDefault(SettingKeys.SaveMemoryAggressively)
+					? CompressedString.Level.Optimal
+					: CompressedString.Level.None,
+			};
 			var syncContext = this.SynchronizationContext;
 			var isContinuousReading = this.isContinuousReading;
+			var isFirstMatchedLine = true;
+			var flushContinuousReadingLog = new Action<int>(updateInterval =>
+			{
+				var log = readLog;
+				if (log != null)
+				{
+					readLog = null;
+					this.pendingLogsSyncContext.Post(() =>
+					{
+						if (this.pendingLogsReadingToken != readingToken)
+						{
+							this.pendingLogsReadingToken = readingToken;
+							this.pendingLogs.Clear();
+						}
+						this.pendingLogs.Add(log);
+						this.flushPendingLogsAction.Schedule(updateInterval);
+					});
+				}
+			});
 			var dataSourceOptions = this.DataSource.CreationOptions;
 			var isReadingFromFile = dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName));
 			var stringPool = new StringPool();
+			var timeSpanFormats = this.timeSpanFormats.IsNotEmpty() ? this.timeSpanFormats.ToArray() : null;
+			var timestampFormats = this.timestampFormats.IsNotEmpty() ? this.timestampFormats.ToArray() : null;
 			var exception = (Exception?)null;
 			var stopWatch = new Stopwatch().Also(it => it.Start());
 			try
@@ -675,13 +822,23 @@ namespace CarinaStudio.ULogViewer.Logs
 				while (logLine != null && !cancellationToken.IsCancellationRequested)
 				{
 					var logPattern = logPatterns[logPatternIndex];
+					var updateInterval = this.updateInterval.HasValue
+							? this.updateInterval.Value
+							: (isContinuousReading ? DefaultContinuousUpdateInterval : DefaultUpdateInterval);
 					try
 					{
 						var match = logPattern.Regex.Match(logLine);
 						if (match.Success)
 						{
+							// notify that first raw log has been read
+							if (isFirstMatchedLine)
+							{
+								isFirstMatchedLine = false;
+								this.SynchronizationContext.Post(() => this.OnFirstRawLogDataRead(readingToken));
+							}
+
 							// read log
-							this.ReadLog(logBuilder, match, stringPool);
+							this.ReadLog(logBuilder, match, stringPool, timeSpanFormats, timestampFormats);
 
 							// set file name and line number
 							if (logPatternIndex == 0 && isReadingFromFile)
@@ -696,7 +853,13 @@ namespace CarinaStudio.ULogViewer.Logs
 								if (logPatternIndex == lastLogPatternIndex)
 								{
 									if (logBuilder.IsNotEmpty())
-										readLogs.Add(logBuilder.BuildAndReset());
+									{
+										readLog = logBuilder.BuildAndReset();
+										if (isContinuousReading)
+											flushContinuousReadingLog(updateInterval);
+										else
+											readLogs.Add(readLog);
+									}
 									logPatternIndex = 0;
 								}
 								else
@@ -718,7 +881,13 @@ namespace CarinaStudio.ULogViewer.Logs
 
 							// build log if this is the last pattern
 							if (logBuilder.IsNotEmpty())
-								readLogs.Add(logBuilder.BuildAndReset());
+							{
+								readLog = logBuilder.BuildAndReset();
+								if (isContinuousReading)
+									flushContinuousReadingLog(updateInterval);
+								else
+									readLogs.Add(readLog);
+							}
 
 							// need to move to next line if there is only one pattern or this is the first pattern
 							if (logPatternIndex == 0 || lastLogPatternIndex == 0)
@@ -763,7 +932,13 @@ namespace CarinaStudio.ULogViewer.Logs
 
 							// build log if this is the last pattern
 							if (logBuilder.IsNotEmpty())
-								readLogs.Add(logBuilder.BuildAndReset());
+							{
+								readLog = logBuilder.BuildAndReset();
+								if (isContinuousReading)
+									flushContinuousReadingLog(updateInterval);
+								else
+									readLogs.Add(readLog);
+							}
 
 							// need to move to next line if there is only one pattern or this is the first pattern
 							if (logPatternIndex == 0 || lastLogPatternIndex == 0)
@@ -798,29 +973,26 @@ namespace CarinaStudio.ULogViewer.Logs
 					finally
 					{
 						if (isContinuousReading)
+							flushContinuousReadingLog(updateInterval);
+						else
 						{
-							if (readLogs.IsNotEmpty())
+							var delay = MinLogsReadingDuration - (stopWatch.ElapsedMilliseconds - startReadingTime);
+							var flushLogs = false;
+							if (readLogs.Count >= LogsReadingChunkSize)
 							{
-								var log = readLogs[0];
-								readLogs.Clear();
-								this.pendingLogsSyncContext.Post(() =>
-								{
-									if (this.pendingLogsReadingToken != readingToken)
-									{
-										this.pendingLogsReadingToken = readingToken;
-										this.pendingLogs.Clear();
-									}
-									this.pendingLogs.Add(log);
-									this.flushPendingLogsAction.Schedule(this.continuousReadingUpdateInterval);
-								});
+								if (delay > 0)
+									Thread.Sleep((int)delay);
+								flushLogs = true;
 							}
-						}
-						else if (readLogs.Count >= LogsReadingChunkSize || (stopWatch.ElapsedMilliseconds - startReadingTime) >= LogsReadingChunkInterval)
-						{
-							var logArray = readLogs.ToArray();
-							readLogs.Clear();
-							startReadingTime = stopWatch.ElapsedMilliseconds;
-							syncContext.PostDelayed(() => this.OnLogsRead(readingToken, logArray), 100);
+							else if (delay <= 0)
+								flushLogs = true;
+							if (flushLogs)
+							{
+								var logArray = readLogs.ToArray();
+								readLogs.Clear();
+								startReadingTime = stopWatch.ElapsedMilliseconds;
+								syncContext.Post(() => this.OnLogsRead(readingToken, logArray));
+							}
 						}
 						prevLogPattern = logPattern;
 					}
@@ -839,14 +1011,14 @@ namespace CarinaStudio.ULogViewer.Logs
 
 				// send last chunk of logs
 				if (readLogs.IsNotEmpty())
-					syncContext.PostDelayed(() => this.OnLogsRead(readingToken, readLogs), 100);
+					syncContext.Post(() => this.OnLogsRead(readingToken, readLogs));
 
 				// close reader
 				Global.RunWithoutError(reader.Close);
 
 				// complete reading
 				if (readLogs.IsNotEmpty())
-					syncContext.PostDelayed(() => this.OnLogsReadingCompleted(exception), 100);
+					syncContext.Post(() => this.OnLogsReadingCompleted(exception));
 				else
 					syncContext.Post(() => this.OnLogsReadingCompleted(exception));
 			}
@@ -982,10 +1154,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			this.logsReadingCancellationTokenSource = new CancellationTokenSource();
 			var readingToken = this.logsReadingToken;
 			var cancellationToken = this.logsReadingCancellationTokenSource.Token;
-			var taskFactory = this.DataSource.CreationOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName))
-				? fileReadingTaskFactory
-				: defaultReadingTaskFactory;
-			_ = taskFactory.StartNew(() => this.ReadLogs(readingToken, reader, cancellationToken));
+			_ = this.readingTaskFactory.StartNew(() => this.ReadLogs(readingToken, reader, cancellationToken));
 		}
 
 
@@ -993,6 +1162,63 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// Get current state of <see cref="LogReader"/>.
 		/// </summary>
 		public LogReaderState State { get => this.state; }
+
+
+		/// <summary>
+		/// Get or set <see cref="CultureInfo"/> to parse time span of log.
+		/// </summary>
+		public CultureInfo TimeSpanCultureInfo
+		{
+			get => this.timeSpanCultureInfo;
+			set
+			{
+				this.VerifyAccess();
+				if (this.state != LogReaderState.Preparing)
+					throw new InvalidOperationException($"Cannot change {nameof(TimeSpanCultureInfo)} when state is {this.state}.");
+				if (this.timeSpanCultureInfo.Equals(value))
+					return;
+				this.timeSpanCultureInfo = value;
+				this.OnPropertyChanged(nameof(TimeSpanCultureInfo));
+			}
+		}
+
+
+		/// <summary>
+		/// Get or set encoding to parse time span of log.
+		/// </summary>
+		public LogTimeSpanEncoding TimeSpanEncoding
+		{
+			get => this.timeSpanEncoding;
+			set
+			{
+				this.VerifyAccess();
+				if (this.state != LogReaderState.Preparing)
+					throw new InvalidOperationException($"Cannot change {nameof(TimeSpanEncoding)} when state is {this.state}.");
+				if (this.timeSpanEncoding == value)
+					return;
+				this.timeSpanEncoding = value;
+				this.OnPropertyChanged(nameof(TimeSpanEncoding));
+			}
+		}
+
+
+		/// <summary>
+		/// Get or set list of format to parse time span of log when <see cref="TimeSpanEncoding"/> is <see cref="LogTimeSpanEncoding.Custom"/>.
+		/// </summary>
+		public IList<string> TimeSpanFormats
+		{
+			get => this.timeSpanFormats;
+			set
+			{
+				this.VerifyAccess();
+				if (this.state != LogReaderState.Preparing)
+					throw new InvalidOperationException($"Cannot change {nameof(TimeSpanFormats)} when state is {this.state}.");
+				if (this.timeSpanFormats.SequenceEqual(value))
+					return;
+				this.timeSpanFormats = value.ToArray().AsReadOnly();
+				this.OnPropertyChanged(nameof(TimeSpanFormats));
+			}
+		}
 
 
 		/// <summary>
@@ -1015,20 +1241,59 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		/// <summary>
-		/// Get or set format to parse timestamp of log.
+		/// Get or set encoding to parse timestamp of log.
 		/// </summary>
-		public string? TimestampFormat
+		public LogTimestampEncoding TimestampEncoding
 		{
-			get => this.timestampFormat;
+			get => this.timestampEncoding;
 			set
 			{
 				this.VerifyAccess();
 				if (this.state != LogReaderState.Preparing)
-					throw new InvalidOperationException($"Cannot change {nameof(TimestampFormat)} when state is {this.state}.");
-				if (this.timestampFormat == value)
+					throw new InvalidOperationException($"Cannot change {nameof(TimestampEncoding)} when state is {this.state}.");
+				if (this.timestampEncoding == value)
 					return;
-				this.timestampFormat = value;
-				this.OnPropertyChanged(nameof(TimestampFormat));
+				this.timestampEncoding = value;
+				this.OnPropertyChanged(nameof(TimestampEncoding));
+			}
+		}
+
+
+		/// <summary>
+		/// Get or set list of format to parse timestamp of log when <see cref="TimestampEncoding"/> is <see cref="LogTimestampEncoding.Custom"/>.
+		/// </summary>
+		public IList<string> TimestampFormats
+		{
+			get => this.timestampFormats;
+			set
+			{
+				this.VerifyAccess();
+				if (this.state != LogReaderState.Preparing)
+					throw new InvalidOperationException($"Cannot change {nameof(TimestampFormats)} when state is {this.state}.");
+				if (this.timestampFormats.SequenceEqual(value))
+					return;
+				this.timestampFormats = value.ToArray().AsReadOnly();
+				this.OnPropertyChanged(nameof(TimestampFormats));
+			}
+		}
+
+
+		/// <summary>
+		/// Get or set interval of updating read log in milliseconds.
+		/// </summary>
+		public int? UpdateInterval
+		{
+			get => this.updateInterval;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyDisposed();
+				if (value.GetValueOrDefault() < 0)
+					throw new ArgumentOutOfRangeException();
+				if (this.updateInterval == value)
+					return;
+				this.updateInterval = value;
+				this.OnPropertyChanged(nameof(UpdateInterval));
 			}
 		}
 

@@ -107,7 +107,9 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		protected override void OnReaderClosed()
 		{
 			base.OnReaderClosed();
+#pragma warning disable CA1416
 			this.eventLog = this.eventLog.DisposeAndReturnNull();
+#pragma warning restore CA1416
 		}
 
 

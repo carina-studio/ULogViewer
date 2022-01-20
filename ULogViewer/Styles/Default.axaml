@@ -1,87 +1,97 @@
 ﻿<Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-				xmlns:ae="using:AvaloniaEdit"
-				xmlns:aee="using:AvaloniaEdit.Editing">
+        xmlns:ae="using:AvaloniaEdit"
+        xmlns:aee="using:AvaloniaEdit.Editing"
+		xmlns:appControls="using:CarinaStudio.ULogViewer.Controls">
 
 	<!-- Resources -->
 	<Styles.Resources>
 		<ResourceDictionary>
 
-			<!-- Base resources -->
-			<ResourceDictionary.MergedDictionaries>
-				<ResourceInclude Source="/Styles/Resources.axaml"/>
-			</ResourceDictionary.MergedDictionaries>
-
-			<!-- Dialog -->
-			<SolidColorBrush x:Key="Brush.Dialog.Background">#ffffff</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.Dialog.ControlButtonsPanel.Background">#ffffff</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.Dialog.Description.Foreground">#000000</SolidColorBrush>
+			<!-- Accent -->
+			<Color x:Key="Color/Accent">#912fbf</Color>
 
 			<!-- Icon -->
-			<SolidColorBrush x:Key="Brush.Icon">#000000</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.Icon.Active">#7ac0ff</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.Icon.Dark">#222222</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.Icon.Error">#ff3232</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.Icon.Info">#007acc</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.Icon.Light">#ffffff</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.Icon.LogProfile">#7ac0ff</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.Icon.Warning">#ff8432</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile" Color="{DynamicResource SystemAccentColorLight1}"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Android" Color="#9fc037"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Apple" Color="#ffffff"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Book" Color="#7f3300"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Cloud" Color="#ffffff"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Code" Color="#404040"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Database" Color="#ffd400"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Debug" Color="#00bfbf"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Experiment" Color="#007f0e"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Folder" Color="#d8b400"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Linux_Debian" Color="#d40a4e"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Linux_Fedora" Color="#376cbc"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Linux_OpenSuse" Color="#72ba27"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Linux_Mint" Color="#a9e768"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Linux_Ubuntu" Color="#ff620c"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Network" Color="#0094ff"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Performance" Color="#ff3f00"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Phone" Color="#000000"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Security" Color="#00bfbf"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Terminal" Color="#000000"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.VersionControl" Color="#ff6600"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Windows" Color="#00a8e9"/>
 
 			<!-- LogLevel -->
-			<SolidColorBrush x:Key="Brush.LogLevel.Debug">#000000</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.LogLevel.Error">#000000</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.LogLevel.Failure">#000000</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.LogLevel.Fatal">#000000</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.LogLevel.Info">#000000</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.LogLevel.Success">#000000</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.LogLevel.Trace">#000000</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.LogLevel.Undefined">#000000</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.LogLevel.Verbose">#000000</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.LogLevel.Warn">#000000</SolidColorBrush>
-
-			<!-- LogMessageDialog -->
-			<SolidColorBrush x:Key="Brush.LogMessageDialog.FoundText.Background">#3fff0000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/LogLevel.Debug">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/LogLevel.Error">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/LogLevel.Failure">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/LogLevel.Fatal">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/LogLevel.Info">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/LogLevel.Success">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/LogLevel.Trace">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/LogLevel.Undefined">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/LogLevel.Verbose">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/LogLevel.Warn">#000000</SolidColorBrush>
 
 			<!-- LogProfileSelectionDialog -->
-			<SolidColorBrush x:Key="Brush.LogProfileSelectionDialog.Label.Background">#00000000</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.LogProfileSelectionDialog.Label.Border">#00000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/LogProfileSelectionDialog.Label.Background">#00000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/LogProfileSelectionDialog.Label.Border">#00000000</SolidColorBrush>
 
-			<!-- Separator -->
-			<SolidColorBrush x:Key="Brush.Separator.Background">#00000000</SolidColorBrush>
+			<!-- LogStringPropertyDialog -->
+			<SolidColorBrush x:Key="Brush/LogStringPropertyDialog.FoundText.Background">#ffffff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/LogStringPropertyDialog.FoundText.Foreground">#000000</SolidColorBrush>
 
 			<!-- SessionView -->
-			<SolidColorBrush x:Key="Brush.SessionView.LogHeader.Background">#0e0e0e</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.SessionView.LogHeader.Separator">#000000</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.SessionView.LogListBox.Background">#000000</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.SessionView.LogListBox.Item.Background.Marked">#000000</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.SessionView.LogListBox.Item.Background.Pressed">#000000</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.SessionView.LogListBox.Item.Background.Selected">#000000</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.SessionView.LogListBox.Item.Background.Selected.PointerOver">#000000</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.SessionView.SidePanel.Background">#000000</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.SessionView.StatusBar.Background">#000000</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.SessionView.StatusBar.Background.Active">#007acc</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.SessionView.StatusBar.Background.Error">#ff3232</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.SessionView.StatusBar.Background.Paused">#000000</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.SessionView.StatusBar.Background.Warning">#ca5100</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.SessionView.StatusBar.Foreground">#ffffff</SolidColorBrush>
-
-			<!-- SplashWindow -->
-			<SolidColorBrush x:Key="Brush.SplashWindow.Background">#bf000000</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.SplashWindow.Border">#000000</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.SplashWindow.Foreground">#ffffff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.LogHeader.Background">#0e0e0e</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.LogHeader.Separator">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Background.Marked.Blue">#0000ff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Background.Marked.Default">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Background.Marked.Green">#00ff00</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Background.Marked.Indigo">#00137f</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Background.Marked.Magenta">#ff00ff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Background.Marked.Orange">#ff6a00</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Background.Marked.Purple">#7f00ff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Background.Marked.Red">#ff0000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Background.Marked.Yellow">#ffff00</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Background.Pressed">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Background.Selected">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Background.Selected.PointerOver">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Column.Border.PointerOver">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.SelectionIndicator.Background">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.MarkIndicator.Default" Color="{DynamicResource Color/Icon}"/>
+			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.MarkIndicator.Blue">#0094ff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.MarkIndicator.Green">#00b214</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.MarkIndicator.Indigo">#001ecc</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.MarkIndicator.Magenta">#ff00ff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.MarkIndicator.Orange">#ff6a00</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.MarkIndicator.Purple">#7f00ff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.MarkIndicator.Red">#ff0000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.MarkIndicator.Yellow">#ffff00</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.MarkedLogListBox.Item.Border.Selected">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.StatusBar.Background.Error">#ff3232</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.StatusBar.Background.Inactive">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.StatusBar.Background.Paused">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.StatusBar.Background.Warning">#ca5100</SolidColorBrush>
 
 			<!-- TextArea -->
-			<SolidColorBrush x:Key="Brush.TextArea.Selection.Background">#3f0078d7</SolidColorBrush>
-
-			<!-- TextBlock -->
-			<SolidColorBrush x:Key="Brush.TextBlock.Foreground.Error">#ff0000</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.TextBlock.Foreground.Link">#007acc</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/TextArea.Selection.Background">#3f0078d7</SolidColorBrush>
 
 			<!-- TextBox -->
-			<SolidColorBrush x:Key="Brush.TextBox.Foreground.Error">#ff0000</SolidColorBrush>
-
-			<!-- Window -->
-			<SolidColorBrush x:Key="Brush.Window.Background">#ffffff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/TextBox.Foreground.Error">#ff0000</SolidColorBrush>
 
 		</ResourceDictionary>
 	</Styles.Resources>
@@ -89,241 +99,73 @@
 	<!-- External controls -->
 	<StyleInclude Source="avares://AvaloniaEdit/AvaloniaEdit.xaml" />
 
-	<!-- Browse -->
-	<Style Selector="Button.Browse">
-		<Setter Property="Content" Value="…"/>
-		<Setter Property="Margin" Value="{StaticResource Thickness.Browse.Margin}"/>
-		<Setter Property="VerticalAlignment" Value="Stretch"/>
-	</Style>
-	<Style Selector="ToggleButton.Browse">
-		<Setter Property="Content" Value="…"/>
-		<Setter Property="Margin" Value="{StaticResource Thickness.Browse.Margin}"/>
-		<Setter Property="VerticalAlignment" Value="Stretch"/>
-	</Style>
-
-	<!-- Common -->
-	<Style Selector="DrawingPresenter.Icon">
-		<Setter Property="HorizontalAlignment" Value="Center"/>
-		<Setter Property="Stretch" Value="Uniform"/>
-		<Setter Property="VerticalAlignment" Value="Center"/>
-	</Style>
-
-	<!-- Dialog -->
-	<Style Selector="Border.Dialog_ControlButtonsPanel">
-		<Setter Property="Background" Value="{DynamicResource Brush.Dialog.ControlButtonsPanel.Background}"/>
-		<Setter Property="Padding" Value="{StaticResource Thickness.Dialog.ControlButtonsPanel.Padding}"/>
-	</Style>
-	<Style Selector="Button.Dialog_ControlButton">
-		<Setter Property="HorizontalContentAlignment" Value="Center"/>
-		<Setter Property="Margin" Value="{StaticResource Thickness.Dialog.ControlButton.Margin}"/>
-		<Setter Property="MinWidth" Value="{StaticResource Double.Dialog.ControlButton.MinWidth}"/>
-		<Setter Property="Padding" Value="{StaticResource Thickness.Dialog.ControlButton.Padding}"/>
-	</Style>
-	<Style Selector="Button.Dialog_ControlButton_WithSeparator">
-		<Setter Property="HorizontalContentAlignment" Value="Center"/>
-		<Setter Property="Margin" Value="{StaticResource Thickness.Dialog.ControlButton.Margin.WithSeparator}"/>
-		<Setter Property="MinWidth" Value="{StaticResource Double.Dialog.ControlButton.MinWidth}"/>
-		<Setter Property="Padding" Value="{StaticResource Thickness.Dialog.ControlButton.Padding}"/>
-	</Style>
-	<Style Selector="Separator.Dialog_Separator_Horizontal">
-		<Setter Property="Background" Value="{x:Null}"/>
-		<Setter Property="Height" Value="{StaticResource Double.Dialog.Separator.Size}"/>
-		<Setter Property="HorizontalAlignment" Value="Stretch"/>
-	</Style>
-	<Style Selector="Separator.Dialog_Separator_Large_Horizontal">
-		<Setter Property="Background" Value="{x:Null}"/>
-		<Setter Property="Height" Value="{StaticResource Double.Dialog.Separator.Size.Large}"/>
-		<Setter Property="HorizontalAlignment" Value="Stretch"/>
-	</Style>
-	<Style Selector="Separator.Dialog_Separator_Small_Horizontal">
-		<Setter Property="Background" Value="{x:Null}"/>
-		<Setter Property="Height" Value="{StaticResource Double.Dialog.Separator.Size.Small}"/>
-		<Setter Property="HorizontalAlignment" Value="Stretch"/>
-	</Style>
-	<Style Selector="Separator.Dialog_Separator_Small_Vertical">
-		<Setter Property="Background" Value="{x:Null}"/>
-		<Setter Property="VerticalAlignment" Value="Stretch"/>
-		<Setter Property="Width" Value="{StaticResource Double.Dialog.Separator.Size.Small}"/>
-	</Style>
-	<Style Selector="Separator.Dialog_Separator_Vertical">
-		<Setter Property="Background" Value="{x:Null}"/>
-		<Setter Property="VerticalAlignment" Value="Stretch"/>
-		<Setter Property="Width" Value="{StaticResource Double.Dialog.Separator.Size}"/>
-	</Style>
-	<Style Selector="StackPanel.Dialog_ControlButtonsPanel">
-		<Setter Property="HorizontalAlignment" Value="Center"/>
-		<Setter Property="Orientation" Value="Horizontal"/>
-	</Style>
-	<Style Selector="TextBlock.Dialog_Description">
-		<Setter Property="Foreground" Value="{DynamicResource Brush.Dialog.Description.Foreground}"/>
-		<Setter Property="Margin" Value="{StaticResource Thickness.Dialog.Description.Margin}"/>
-		<Setter Property="TextWrapping" Value="WrapWithOverflow"/>
-	</Style>
-	<Style Selector="TextBlock.Dialog_Description_Error">
-		<Setter Property="Foreground" Value="{DynamicResource Brush.TextBlock.Foreground.Error}"/>
-		<Setter Property="Margin" Value="{StaticResource Thickness.Dialog.Description.Margin}"/>
-		<Setter Property="TextWrapping" Value="WrapWithOverflow"/>
-	</Style>
-	<Style Selector="TextBlock.Dialog_Description_Link">
-		<Setter Property="Cursor" Value="Hand"/>
-		<Setter Property="Foreground" Value="{DynamicResource Brush.TextBlock.Foreground.Link}"/>
-		<Setter Property="Margin" Value="{StaticResource Thickness.Dialog.Description.Margin}"/>
-		<Setter Property="TextWrapping" Value="WrapWithOverflow"/>
-	</Style>
-	<Style Selector="TextBlock.Dialog_Label">
-		<Setter Property="FontSize" Value="{StaticResource Double.Dialog.Label.FontSize}"/>
-		<Setter Property="Margin" Value="{StaticResource Thickness.Dialog.Label.Margin}"/>
-		<Setter Property="TextTrimming" Value="CharacterEllipsis"/>
-	</Style>
-	<Style Selector="TextBlock.Dialog_Label_Header1">
-		<Setter Property="FontSize" Value="{StaticResource Double.Dialog.Label.Header1.FontSize}"/>
-		<Setter Property="Margin" Value="{StaticResource Thickness.Dialog.Label.Header1.Margin}"/>
-		<Setter Property="TextTrimming" Value="CharacterEllipsis"/>
-	</Style>
-	<Style Selector="TextBlock.Dialog_Label_Header2">
-		<Setter Property="FontSize" Value="{StaticResource Double.Dialog.Label.Header2.FontSize}"/>
-		<Setter Property="Margin" Value="{StaticResource Thickness.Dialog.Label.Header2.Margin}"/>
-		<Setter Property="TextTrimming" Value="CharacterEllipsis"/>
-	</Style>
-	<Style Selector="Window.Dialog">
-		<Setter Property="Background" Value="{DynamicResource Brush.Dialog.Background}"/>
-		<Setter Property="CanResize" Value="False"/>
-		<Setter Property="Icon" Value="/AppIcon.ico"/>
-		<Setter Property="ShowInTaskbar" Value="False"/>
-		<Setter Property="WindowStartupLocation" Value="CenterOwner"/>
-	</Style>
-
-	<!-- InPlaceAction -->
-	<Style Selector="Border.InPlaceAction">
-		<Setter Property="Height" Value="{StaticResource Double.InPlaceAction.IconSize}"/>
-		<Setter Property="Width" Value="{StaticResource Double.InPlaceAction.IconSize}"/>
-	</Style>
-	<Style Selector="Border.InPlaceAction_Reserved">
-		<Setter Property="Height" Value="{StaticResource Double.InPlaceAction.ReservedHeight}"/>
-		<Setter Property="Opacity" Value="0"/>
-		<Setter Property="Width" Value="1"/>
-	</Style>
-	<Style Selector="Button.InPlaceAction">
-		<Setter Property="Background" Value="{x:Static Brushes.Transparent}"/>
-		<Setter Property="HorizontalContentAlignment" Value="Center"/>
-		<Setter Property="Margin" Value="{StaticResource Thickness.InPlaceAction.Margin}"/>
-		<Setter Property="Padding" Value="{StaticResource Thickness.InPlaceAction.Padding}"/>
-		<Setter Property="VerticalAlignment" Value="Center"/>
-		<Setter Property="VerticalContentAlignment" Value="Center"/>
-	</Style>
-
 	<!-- ListAction -->
 	<Style Selector="Button.ListAction">
 		<Setter Property="HorizontalAlignment" Value="Right"/>
 		<Setter Property="HorizontalContentAlignment" Value="Center"/>
-		<Setter Property="Margin" Value="{StaticResource Thickness.ListAction.Margin}"/>
-		<Setter Property="MinWidth" Value="{StaticResource Double.ListAction.MinWidth}"/>
-		<Setter Property="Padding" Value="{StaticResource Thickness.ListAction.Padding}"/>
+		<Setter Property="Margin" Value="{DynamicResource Thickness/ListAction.Margin}"/>
+		<Setter Property="MinWidth" Value="{DynamicResource Double/ListAction.MinWidth}"/>
+		<Setter Property="Padding" Value="{DynamicResource Thickness/ListAction.Padding}"/>
 		<Setter Property="VerticalContentAlignment" Value="Center"/>
 	</Style>
 
 	<!-- LogProfileSelectionDialog -->
 	<Style Selector="Border.LogProfileSelectionDialog_LogProfile_Label">
-		<Setter Property="Background" Value="{DynamicResource Brush.LogProfileSelectionDialog.Label.Background}"/>
-		<Setter Property="BorderBrush" Value="{DynamicResource Brush.LogProfileSelectionDialog.Label.Border}"/>
+		<Setter Property="Background" Value="{DynamicResource Brush/LogProfileSelectionDialog.Label.Background}"/>
+		<Setter Property="BorderBrush" Value="{DynamicResource Brush/LogProfileSelectionDialog.Label.Border}"/>
 		<Setter Property="BorderThickness" Value="1"/>
-		<Setter Property="CornerRadius" Value="{StaticResource CornerRadius.LogProfileSelectionDialog.Label}"/>
-		<Setter Property="Margin" Value="{StaticResource Thickness.LogProfileSelectionDialog.LogProfile.Label.Margin}"/>
-		<Setter Property="Padding" Value="{StaticResource Thickness.LogProfileSelectionDialog.LogProfile.Label.Padding}"/>
+		<Setter Property="CornerRadius" Value="{DynamicResource CornerRadius/LogProfileSelectionDialog.Label}"/>
+		<Setter Property="Margin" Value="{DynamicResource Thickness/LogProfileSelectionDialog.LogProfile.Label.Margin}"/>
+		<Setter Property="Padding" Value="{DynamicResource Thickness/LogProfileSelectionDialog.LogProfile.Label.Padding}"/>
 	</Style>
 	<Style Selector="TextBlock.LogProfileSelectionDialog_LogProfile_Label">
-		<Setter Property="FontSize" Value="{StaticResource Double.LogProfileSelectionDialog.LogProfile.Label.FontSize}"/>
+		<Setter Property="FontSize" Value="{DynamicResource Double/LogProfileSelectionDialog.LogProfile.Label.FontSize}"/>
 		<Setter Property="Opacity" Value="0.75"/>
 	</Style>
 
-	<!-- MainWindow -->
-	<Style Selector="Window.MainWindow">
-		<Setter Property="Background" Value="{DynamicResource Brush.Window.Background}"/>
-		<Setter Property="Icon" Value="/AppIcon.ico"/>
-	</Style>
-
 	<!-- SessionView -->
-	<Style Selector="Border.SessionView_StatusBar_Icon">
-		<Setter Property="Height" Value="{StaticResource Double.SessionView.StatusBar.Icon.Size}"/>
-		<Setter Property="Margin" Value="{StaticResource Thickness.SessionView.StatusBar.Icon.Margin}"/>
+	<Style Selector="Image.SessionView_SidePanel_Header">
+		<Setter Property="Height" Value="{DynamicResource Double/SessionView.SidePanel.Header.Icon.Size}"/>
+		<Setter Property="Margin" Value="{DynamicResource Thickness/SessionView.SidePanel.Header.Icon.Margin}"/>
 		<Setter Property="VerticalAlignment" Value="Center"/>
-		<Setter Property="Width" Value="{StaticResource Double.SessionView.StatusBar.Icon.Size}"/>
+		<Setter Property="Width" Value="{DynamicResource Double/SessionView.SidePanel.Header.Icon.Size}"/>
 	</Style>
-	<Style Selector="Border.SessionView_ToolBar_Button_Icon">
-		<Setter Property="Height" Value="{StaticResource Double.SessionView.ToolBar.Button.Icon.Size}"/>
-		<Setter Property="Width" Value="{StaticResource Double.SessionView.ToolBar.Button.Icon.Size}"/>
-	</Style>
-	<Style Selector="Button.SessionView_ToolBar_Button">
-		<Setter Property="Background" Value="{x:Static Brushes.Transparent}"/>
-		<Setter Property="BorderThickness" Value="0"/>
-		<Setter Property="HorizontalContentAlignment" Value="Center"/>
-		<Setter Property="Margin" Value="{StaticResource Thickness.SessionView.ToolBar.Button.Margin}"/>
-		<Setter Property="Padding" Value="{StaticResource Thickness.SessionView.ToolBar.Button.Padding}"/>
-		<Setter Property="VerticalContentAlignment" Value="Center"/>
-	</Style>
-	<Style Selector="Button.SessionView_ToolBar_Button:disabled">
-		<Setter Property="Opacity" Value="0.3"/>
-	</Style>
-	<Style Selector="Grid.SessionView_ToolBar_Button_Icon">
-		<Setter Property="Height" Value="{StaticResource Double.SessionView.ToolBar.Button.Icon.Size}"/>
-		<Setter Property="Width" Value="{StaticResource Double.SessionView.ToolBar.Button.Icon.Size}"/>
-	</Style>
-	<Style Selector="Separator.SessionView_StatusBar_Separator">
-		<Setter Property="Background" Value="{x:Null}"/>
-		<Setter Property="Width" Value="{StaticResource Double.SessionView.StatusBar.Separator.Size}"/>
-	</Style>
-	<Style Selector="Separator.SessionView_ToolBar_Separator">
-		<Setter Property="Background" Value="{DynamicResource Brush.Separator.Background}"/>
-		<Setter Property="Margin" Value="{StaticResource Thickness.SessionView.ToolBar.Separator.Margin}"/>
-		<Setter Property="Width" Value="{StaticResource Double.SessionView.ToolBar.Separator.Size}"/>
+	<Style Selector="StackPanel.SessionView_SidePanel_Header">
+		<Setter Property="Margin" Value="{DynamicResource Thickness/SessionView.SidePanel.Header.Margin}"/>
+		<Setter Property="Orientation" Value="Horizontal"/>
 	</Style>
 	<Style Selector="TextBlock.SessionView_SidePanel_EmptyHint">
-		<Setter Property="Margin" Value="{StaticResource Thickness.SessionView.SidePanel.EmptyHint.Margin}"/>
+		<Setter Property="Margin" Value="{DynamicResource Thickness/SessionView.SidePanel.EmptyHint.Margin}"/>
 		<Setter Property="Opacity" Value="0.3"/>
 		<Setter Property="TextTrimming" Value="CharacterEllipsis"/>
 		<Setter Property="TextWrapping" Value="NoWrap"/>
 	</Style>
 	<Style Selector="TextBlock.SessionView_SidePanel_Header">
-		<Setter Property="FontSize" Value="{StaticResource Double.SessionView.SidePanel.Header.FontSize}"/>
-		<Setter Property="Margin" Value="{StaticResource Thickness.SessionView.SidePanel.Header.Margin}"/>
+		<Setter Property="FontSize" Value="{DynamicResource Double/SessionView.SidePanel.Header.FontSize}"/>
+		<Setter Property="Margin" Value="{DynamicResource Thickness/SessionView.SidePanel.Header.Text.Margin}"/>
 		<Setter Property="TextTrimming" Value="CharacterEllipsis"/>
 		<Setter Property="TextWrapping" Value="NoWrap"/>
+		<Setter Property="VerticalAlignment" Value="Center"/>
 	</Style>
-	<Style Selector="ToggleButton.SessionView_ToolBar_Button">
-		<Setter Property="Background" Value="{x:Static Brushes.Transparent}"/>
-		<Setter Property="HorizontalContentAlignment" Value="Center"/>
-		<Setter Property="Margin" Value="{StaticResource Thickness.SessionView.ToolBar.Button.Margin}"/>
-		<Setter Property="Padding" Value="{StaticResource Thickness.SessionView.ToolBar.Button.Padding}"/>
-		<Setter Property="VerticalContentAlignment" Value="Center"/>
-	</Style>
-	<Style Selector="ToggleButton.SessionView_ToolBar_Button:disabled">
-		<Setter Property="Opacity" Value="0.3"/>
+
+	<!-- TabItem -->
+	<Style Selector="appControls|TextBlock.TabItem_TextBlock">
+		<Setter Property="TextWrapping" Value="NoWrap"/>
+		<Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+		<Setter Property="VerticalAlignment" Value="Center"/>
 	</Style>
 
 	<!-- TextArea -->
 	<Style Selector="aee|TextArea">
-		<Setter Property="SelectionBrush" Value="{DynamicResource Brush.TextArea.Selection.Background}"/>
+		<Setter Property="SelectionBrush" Value="{DynamicResource Brush/TextArea.Selection.Background}"/>
 		<Setter Property="SelectionCornerRadius" Value="0"/>
-	</Style>
-
-	<!-- TextBox -->
-	<Style Selector="TextBox">
-		<Setter Property="FontFamily" Value="{DynamicResource FontFamily.TextBox}"/>
 	</Style>
 
 	<!-- TextEditor -->
 	<Style Selector="ae|TextEditor">
 		<Setter Property="Background" Value="{DynamicResource TextControlBackgroundBrush}"/>
-		<Setter Property="BorderBrush" Value="{DynamicResource TextControlBorderBrush}"/>
-		<Setter Property="BorderThickness" Value="1"/>
-		<Setter Property="FontFamily" Value="{DynamicResource FontFamily.TextBox}"/>
+		<Setter Property="FontFamily" Value="{DynamicResource FontFamily/TextBox.FallbackFontFamilies}"/>
 		<Setter Property="Padding" Value="{DynamicResource TextControlThemePadding}"/>
-	</Style>
-
-	<!-- ToggleSwitch -->
-	<Style Selector="ToggleSwitch">
-		<Setter Property="OffContent" Value="{x:Null}"/>
-		<Setter Property="OnContent" Value="{x:Null}"/>
 	</Style>
 
 </Styles>

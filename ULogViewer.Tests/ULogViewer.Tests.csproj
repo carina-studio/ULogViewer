@@ -1,17 +1,20 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+	<TargetFramework>net6.0-windows10.0.17763.0</TargetFramework>
     <IsPackable>false</IsPackable>
     <Nullable>enable</Nullable>
     <RootNamespace>CarinaStudio.ULogViewer</RootNamespace>
+    <StartupObject>CarinaStudio.ULogViewer.TestApp</StartupObject>
+    <Configurations>Debug;Release;Debug-Windows;Release-Windows</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CarinaStudio.AppBase.Tests" Version="0.20.3.803" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.10.0" />
+    <PackageReference Include="CarinaStudio.AppBase.Tests" Version="0.34.1.112" />
+    <PackageReference Include="CarinaStudio.AppSuite.Core.Tests" Version="0.34.2.118" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
     <PackageReference Include="NUnit" Version="3.13.2" />
-    <PackageReference Include="NUnit3TestAdapter" Version="4.0.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.2.0" />
     <PackageReference Include="coverlet.collector" Version="3.1.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

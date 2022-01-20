@@ -2,20 +2,24 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
-using Avalonia.VisualTree;
+using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.Collections;
+using CarinaStudio.Controls;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.Controls
 {
 	/// <summary>
 	/// Dialog to edit <see cref="LogDataSourceOptions"/>.
 	/// </summary>
-	partial class LogDataSourceOptionsDialog : BaseDialog
+	partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
 	{
 		/// <summary>
 		/// Type of database source.
@@ -46,6 +50,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		static readonly AvaloniaProperty<bool> IsCommandSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsCommandSupported));
 		static readonly AvaloniaProperty<bool> IsEncodingSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsEncodingSupported));
 		static readonly AvaloniaProperty<bool> IsFileNameSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsFileNameSupported));
+		static readonly AvaloniaProperty<bool> IsIPEndPointSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsIPEndPointSupported));
 		static readonly AvaloniaProperty<bool> IsPasswordRequiredProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsPasswordRequired));
 		static readonly AvaloniaProperty<bool> IsPasswordSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsPasswordSupported));
 		static readonly AvaloniaProperty<bool> IsQueryStringRequiredProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsQueryStringRequired));
@@ -54,7 +59,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		static readonly AvaloniaProperty<bool> IsSetupCommandsSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsSetupCommandsSupported));
 		static readonly AvaloniaProperty<bool> IsTeardownCommandsRequiredProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsTeardownCommandsRequired));
 		static readonly AvaloniaProperty<bool> IsTeardownCommandsSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsTeardownCommandsSupported));
-		static readonly AvaloniaProperty<bool> IsUriRequiredProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsUriRequired));
 		static readonly AvaloniaProperty<bool> IsUriSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsUriSupported));
 		static readonly AvaloniaProperty<bool> IsUserNameRequiredProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsUserNameRequired));
 		static readonly AvaloniaProperty<bool> IsUserNameSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsUserNameSupported));
@@ -66,7 +70,9 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly TextBox commandTextBox;
 		readonly ComboBox encodingComboBox;
 		readonly TextBox fileNameTextBox;
+		readonly IPAddressTextBox ipAddressTextBox;
 		readonly TextBox passwordTextBox;
+		readonly NumericUpDown portUpDown;
 		readonly TextBox queryStringTextBox;
 		readonly ObservableList<string> setupCommands = new ObservableList<string>();
 		readonly ListBox setupCommandsListBox;
@@ -88,13 +94,15 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.FindControl<Panel>("editorsPanel").AsNonNull().Let(it =>
 			{
 				// remove empty space created by last separator
-				var separatorHeight = this.TryFindResource("Double.Dialog.Separator.Size", out var res) && res is double height ? height : 0.0;
+				var separatorHeight = this.TryFindResource("Double/Dialog.Separator.Height", out var res) && res is double height ? height : 0.0;
 				var margin = it.Margin;
 				it.Margin = new Thickness(margin.Left, margin.Top, margin.Right, margin.Bottom - separatorHeight);
 			});
 			this.encodingComboBox = this.FindControl<ComboBox>("encodingComboBox").AsNonNull();
 			this.fileNameTextBox = this.FindControl<TextBox>("fileNameTextBox").AsNonNull();
+			this.ipAddressTextBox = this.FindControl<IPAddressTextBox>(nameof(ipAddressTextBox)).AsNonNull();
 			this.passwordTextBox = this.FindControl<TextBox>("passwordTextBox").AsNonNull();
+			this.portUpDown = this.FindControl<NumericUpDown>(nameof(portUpDown)).AsNonNull();
 			this.queryStringTextBox = this.FindControl<TextBox>("queryStringTextBox").AsNonNull();
 			this.setupCommands.CollectionChanged += (_, e) => this.InvalidateInput();
 			this.setupCommandsListBox = this.FindControl<ListBox>("setupCommandsListBox").AsNonNull();
@@ -109,11 +117,11 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Add setup command.
 		async void AddSetupCommand()
 		{
-			var command = (await new TextInputDialog()
+			var command = (await new AppSuite.Controls.TextInputDialog()
 			{
 				Message = this.Application.GetString("LogDataSourceOptionsDialog.Command"),
 				Title = this.Application.GetString("LogDataSourceOptionsDialog.SetupCommands"),
-			}.ShowDialog<string>(this))?.Trim();
+			}.ShowDialog(this))?.Trim();
 			if (!string.IsNullOrWhiteSpace(command))
 			{
 				this.setupCommands.Add(command);
@@ -125,11 +133,11 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Add teardown command.
 		async void AddTeardownCommand()
 		{
-			var command = (await new TextInputDialog()
+			var command = (await new AppSuite.Controls.TextInputDialog()
 			{
 				Message = this.Application.GetString("LogDataSourceOptionsDialog.Command"),
 				Title = this.Application.GetString("LogDataSourceOptionsDialog.TeardownCommands"),
-			}.ShowDialog<string>(this))?.Trim();
+			}.ShowDialog(this))?.Trim();
 			if (!string.IsNullOrWhiteSpace(command))
 			{
 				this.teardownCommands.Add(command);
@@ -169,12 +177,12 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 
 			// edit
-			var newCommand = (await new TextInputDialog()
+			var newCommand = (await new AppSuite.Controls.TextInputDialog()
 			{
+				InitialText = (item.DataContext as string),
 				Message = this.Application.GetString("LogDataSourceOptionsDialog.Command"),
-				Text = (item.DataContext as string),
 				Title = this.Application.GetString(isSetupCommand ? "LogDataSourceOptionsDialog.SetupCommands" : "LogDataSourceOptionsDialog.TeardownCommands"),
-			}.ShowDialog<string>(this))?.Trim();
+			}.ShowDialog(this))?.Trim();
 			if (string.IsNullOrEmpty(newCommand))
 				return;
 
@@ -184,6 +192,43 @@ namespace CarinaStudio.ULogViewer.Controls
 			else
 				this.teardownCommands[index] = newCommand;
 			this.SelectListBoxItem((ListBox)item.Parent.AsNonNull(), index);
+		}
+
+
+		// Generate valid result.
+		protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken)
+		{
+			var options = new LogDataSourceOptions();
+			if (this.IsCategorySupported)
+				options.Category = this.categoryTextBox.Text?.Trim();
+			if (this.IsCommandSupported)
+				options.Command = this.commandTextBox.Text?.Trim();
+			if (this.IsEncodingSupported)
+				options.Encoding = this.encodingComboBox.SelectedItem as Encoding;
+			if (this.IsFileNameSupported)
+				options.FileName = this.fileNameTextBox.Text?.Trim();
+			if (this.IsIPEndPointSupported)
+            {
+				this.ipAddressTextBox.IPAddress?.Let(address =>
+				{
+					options.IPEndPoint = new IPEndPoint(address, (int)this.portUpDown.Value);
+				});
+            }
+			if (this.IsQueryStringSupported)
+				options.QueryString = this.queryStringTextBox.Text?.Trim();
+			if (this.IsPasswordSupported)
+				options.Password = this.passwordTextBox.Text?.Trim();
+			if (this.IsSetupCommandsSupported)
+				options.SetupCommands = this.setupCommands;
+			if (this.IsTeardownCommandsSupported)
+				options.TeardownCommands = this.teardownCommands;
+			if (this.IsUriSupported)
+				options.Uri = this.uriTextBox.Uri;
+			if (this.IsUserNameSupported)
+				options.UserName = this.userNameTextBox.Text?.Trim();
+			if (this.IsWorkingDirectorySupported)
+				options.WorkingDirectory = this.workingDirectoryTextBox.Text?.Trim();
+			return Task.FromResult((object?)options);
 		}
 
 
@@ -198,6 +243,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		bool IsCommandSupported { get => this.GetValue<bool>(IsCommandSupportedProperty); }
 		bool IsFileNameSupported { get => this.GetValue<bool>(IsFileNameSupportedProperty); }
 		bool IsEncodingSupported { get => this.GetValue<bool>(IsEncodingSupportedProperty); }
+		bool IsIPEndPointSupported { get => this.GetValue<bool>(IsIPEndPointSupportedProperty); }
 		bool IsPasswordRequired { get => this.GetValue<bool>(IsPasswordRequiredProperty); }
 		bool IsPasswordSupported { get => this.GetValue<bool>(IsPasswordSupportedProperty); }
 		bool IsQueryStringRequired { get => this.GetValue<bool>(IsQueryStringRequiredProperty); }
@@ -208,7 +254,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		bool IsTeardownCommandsSupported { get => this.GetValue<bool>(IsTeardownCommandsSupportedProperty); }
 		bool IsUserNameRequired { get => this.GetValue<bool>(IsUserNameRequiredProperty); }
 		bool IsUserNameSupported { get => this.GetValue<bool>(IsUserNameSupportedProperty); }
-		bool IsUriRequired { get => this.GetValue<bool>(IsUriRequiredProperty); }
 		bool IsUriSupported { get => this.GetValue<bool>(IsUriSupportedProperty); }
 		bool IsWorkingDirectorySupported { get => this.GetValue<bool>(IsWorkingDirectorySupportedProperty); }
 
@@ -258,6 +303,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			var property = e.Property;
 			if (property == UriTextBox.IsTextValidProperty
+				|| property == IPAddressTextBox.IsTextValidProperty
 				|| property == ComboBox.SelectedItemProperty
 				|| (property == TextBox.TextProperty && sender is not UriTextBox)
 				|| property == UriTextBox.UriProperty)
@@ -267,45 +313,19 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Generate valid result.
-		protected override object? OnGenerateResult()
-		{
-			var options = new LogDataSourceOptions();
-			if (this.IsCategorySupported)
-				options.Category = this.categoryTextBox.Text?.Trim();
-			if (this.IsCommandSupported)
-				options.Command = this.commandTextBox.Text?.Trim();
-			if (this.IsEncodingSupported)
-				options.Encoding = this.encodingComboBox.SelectedItem as Encoding;
-			if (this.IsFileNameSupported)
-				options.FileName = this.fileNameTextBox.Text?.Trim();
-			if (this.IsQueryStringSupported)
-				options.QueryString = this.queryStringTextBox.Text?.Trim();
-			if (this.IsPasswordSupported)
-				options.Password = this.passwordTextBox.Text?.Trim();
-			if (this.IsSetupCommandsSupported)
-				options.SetupCommands = this.setupCommands;
-			if (this.IsTeardownCommandsSupported)
-				options.TeardownCommands = this.teardownCommands;
-			if (this.IsUriSupported)
-				options.Uri = this.uriTextBox.Uri;
-			if (this.IsUserNameSupported)
-				options.UserName = this.userNameTextBox.Text?.Trim();
-			if (this.IsWorkingDirectorySupported)
-				options.WorkingDirectory = this.workingDirectoryTextBox.Text?.Trim();
-			return options;
-		}
-
-
 		// Called when double-tapped on list box.
 		void OnListBoxDoubleTapped(object? sender, RoutedEventArgs e)
 		{
 			if (sender is not ListBox listBox)
 				return;
 			var selectedItem = listBox.SelectedItem;
-			var listBoxItem = selectedItem != null ? listBox.FindListBoxItem(selectedItem) : null;
-			if (listBoxItem == null || !listBoxItem.IsPointerOver)
+			if (selectedItem == null
+				|| !listBox.TryFindListBoxItem(selectedItem, out var listBoxItem)
+				|| listBoxItem == null
+				|| !listBoxItem.IsPointerOver)
+			{
 				return;
+			}
 			if (listBox == this.setupCommandsListBox || listBox == this.teardownCommandsListBox)
 				this.EditSetupTeardownCommand(listBoxItem);
 		}
@@ -356,6 +376,15 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.workingDirectoryTextBox.Text = options.WorkingDirectory;
 				firstEditor = firstEditor ?? this.workingDirectoryTextBox;
 			}
+			if (this.IsIPEndPointSupported)
+			{
+				options.IPEndPoint?.Let(it =>
+				{
+					this.ipAddressTextBox.IPAddress = it.Address;
+					this.portUpDown.Value = it.Port;
+				});
+				firstEditor = firstEditor ?? this.ipAddressTextBox;
+			}
 			if (this.IsUriSupported)
 			{
 				this.uriTextBox.Uri = options.Uri;
@@ -394,7 +423,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// move focus to first editor
 			if (firstEditor != null)
-				firstEditor.Focus();
+				this.SynchronizationContext.Post(firstEditor.Focus);
 			else
 				this.SynchronizationContext.Post(this.Close);
 
@@ -418,6 +447,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.SetValue<bool>(IsCommandSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.Command)));
 					this.SetValue<bool>(IsEncodingSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.Encoding)));
 					this.SetValue<bool>(IsFileNameSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.FileName)));
+					this.SetValue<bool>(IsIPEndPointSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.IPEndPoint)));
 					this.SetValue<bool>(IsPasswordRequiredProperty, provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.Password)));
 					this.SetValue<bool>(IsPasswordSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.Password)));
 					this.SetValue<bool>(IsQueryStringRequiredProperty, provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.QueryString)));
@@ -426,7 +456,6 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.SetValue<bool>(IsSetupCommandsSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.SetupCommands)));
 					this.SetValue<bool>(IsTeardownCommandsRequiredProperty, provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.TeardownCommands)));
 					this.SetValue<bool>(IsTeardownCommandsSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.TeardownCommands)));
-					this.SetValue<bool>(IsUriRequiredProperty, provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.Uri)));
 					this.SetValue<bool>(IsUriSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.Uri)));
 					this.SetValue<bool>(IsUserNameRequiredProperty, provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.UserName)));
 					this.SetValue<bool>(IsUserNameSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.UserName)));
@@ -440,6 +469,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.SetValue<bool>(IsCommandSupportedProperty, false);
 					this.SetValue<bool>(IsEncodingSupportedProperty, false);
 					this.SetValue<bool>(IsFileNameSupportedProperty, false);
+					this.SetValue<bool>(IsIPEndPointSupportedProperty, false);
 					this.SetValue<bool>(IsPasswordRequiredProperty, false);
 					this.SetValue<bool>(IsPasswordSupportedProperty, false);
 					this.SetValue<bool>(IsQueryStringRequiredProperty, false);
@@ -448,7 +478,6 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.SetValue<bool>(IsSetupCommandsSupportedProperty, false);
 					this.SetValue<bool>(IsTeardownCommandsRequiredProperty, false);
 					this.SetValue<bool>(IsTeardownCommandsSupportedProperty, false);
-					this.SetValue<bool>(IsUriRequiredProperty, false);
 					this.SetValue<bool>(IsUriSupportedProperty, false);
 					this.SetValue<bool>(IsUserNameRequiredProperty, false);
 					this.SetValue<bool>(IsUserNameSupportedProperty, false);
@@ -467,6 +496,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				return false;
 			if (this.IsCommandRequired && string.IsNullOrWhiteSpace(this.commandTextBox.Text))
 				return false;
+			if (this.IsIPEndPointSupported && !this.ipAddressTextBox.IsTextValid)
+				return false;
 			if (this.IsQueryStringRequired && string.IsNullOrWhiteSpace(this.queryStringTextBox.Text))
 				return false;
 			if (this.IsPasswordRequired && string.IsNullOrWhiteSpace(this.passwordTextBox.Text))
@@ -474,8 +505,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (this.IsSetupCommandsRequired && this.setupCommands.IsEmpty())
 				return false;
 			if (this.IsTeardownCommandsRequired && this.teardownCommands.IsEmpty())
-				return false;
-			if (this.IsUriRequired && (this.uriTextBox.Uri == null || !this.uriTextBox.IsTextValid))
 				return false;
 			if (this.IsUserNameRequired && string.IsNullOrWhiteSpace(this.userNameTextBox.Text))
 				return false;

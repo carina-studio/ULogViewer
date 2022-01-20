@@ -1,5 +1,5 @@
-﻿using CarinaStudio.Tests;
-using CarinaStudio.Threading;
+﻿using CarinaStudio.AppSuite;
+using CarinaStudio.Tests;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -13,7 +13,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 	/// <summary>
 	/// Base implementation of tests of <see cref="ILogDataSource"/> and <see cref="ILogDataSourceProvider"/>.
 	/// </summary>
-	abstract class BaseLogDataSourceTests : AppBasedTests
+	abstract class BaseLogDataSourceTests : ApplicationBasedTests
 	{
 		// Fields.
 		string? testDirectoryPath;
@@ -105,7 +105,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		[Test]
 		public void DisposingSourceWhenUsingTest()
 		{
-			this.AsyncTestOnApplicationThread(async () =>
+			this.TestOnApplicationThread(async () =>
 			{
 				// prepare
 				var provider = this.CreateProvider();
@@ -219,7 +219,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		[Test]
 		public void ReaderOpeningCancellationTest()
 		{
-			this.AsyncTestOnApplicationThread(async () =>
+			this.TestOnApplicationThread(async () =>
 			{
 				// prepare
 				var provider = this.CreateProvider();
@@ -274,7 +274,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		[Test]
 		public void ReadingFromSourceTest()
 		{
-			this.AsyncTestOnApplicationThread(async () =>
+			this.TestOnApplicationThread(async () =>
 			{
 				var provider = this.CreateProvider();
 				for (var i = 0; i < 5; ++i)

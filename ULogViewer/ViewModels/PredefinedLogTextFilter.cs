@@ -35,7 +35,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <param name="app">Application.</param>
 		/// <param name="name">Name.</param>
 		/// <param name="regex"><see cref="Regex"/> to filter log text.</param>
-		public PredefinedLogTextFilter(IApplication app, string name, Regex regex)
+		public PredefinedLogTextFilter(IULogViewerApplication app, string name, Regex regex)
 		{
 			this.Application = app;
 			this.name = name;
@@ -47,7 +47,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get application.
 		/// </summary>
-		public IApplication Application { get; }
+		public IULogViewerApplication Application { get; }
 
 
 		/// <summary>
@@ -136,7 +136,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <param name="app">Application.</param>
 		/// <param name="fileName">File name.</param>
 		/// <returns><see cref="PredefinedLogTextFilter"/>.</returns>
-		public static async Task<PredefinedLogTextFilter> LoadAsync(IApplication app, string fileName)
+		public static async Task<PredefinedLogTextFilter> LoadAsync(IULogViewerApplication app, string fileName)
 		{
 			var name = "";
 			var id = "";

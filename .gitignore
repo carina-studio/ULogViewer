@@ -4,3 +4,7 @@ bin
 ULogViewer.csproj.user
 /ULogViewer/Properties/PublishProfiles/*.user
 /ULogViewer/Properties/launchSettings.json
+/AutoUpdater/AutoUpdater.csproj.user
+/AutoUpdater/Properties/PublishProfiles/*.user
+/AutoUpdater/Properties/launchSettings.json
+/Packages

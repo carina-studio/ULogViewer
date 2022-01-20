@@ -21,18 +21,24 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 
 
 		// Fields.
-		static volatile IApplication? app;
+		static volatile IULogViewerApplication? app;
 		static readonly IList<string> builtInProfileIDs = new List<string>()
 		{
 			"AndroidDeviceLog",
 			"AndroidFileLog",
+			"AndroidKernelLogFile",
+			"AndroidTraceFile",
 #if DEBUG
 			"DummyLog",
 #endif
 			"GitLog",
-#if DEBUG
-			"ULogViewerLog",
-#endif
+			"GitLogSimple",
+			"LinuxKernelLogFile",
+			"LinuxSystemLogFile",
+			"RawFile",
+			"RawHttp",
+			"RawTcpServer",
+			"TcpNLog",
 		};
 		static volatile LogProfile? emptyProfile;
 		static volatile ILogger? logger;
@@ -50,12 +56,17 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		{
 			All = profiles.AsReadOnly();
 			Pinned = pinnedProfiles.AsReadOnly();
-			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+			if (Platform.IsWindows)
 			{
 				builtInProfileIDs.Add("WindowsApplicationEventLogs");
 				builtInProfileIDs.Add("WindowsSecurityEventLogs");
 				builtInProfileIDs.Add("WindowsSetupEventLogs");
 				builtInProfileIDs.Add("WindowsSystemEventLogs");
+			}
+			else if (Platform.IsLinux)
+			{
+				builtInProfileIDs.Add("LinuxKernelLog");
+				builtInProfileIDs.Add("LinuxSystemLog");
 			}
 		}
 
@@ -94,6 +105,11 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			if (string.IsNullOrEmpty(profile.Id) || profile.Id == emptyProfile?.Id)
 			{
 				profile.ChangeId();
+				pendingSavingProfiles.Add(profile);
+				saveProfilesAction?.Schedule();
+			}
+			else if (profile.IsDataUpgraded)
+			{
 				pendingSavingProfiles.Add(profile);
 				saveProfilesAction?.Schedule();
 			}
@@ -162,7 +178,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// </summary>
 		/// <param name="app">Application.</param>
 		/// <returns>Task of initialization.</returns>
-		public static async Task InitializeAsync(IApplication app)
+		public static async Task InitializeAsync(IULogViewerApplication app)
 		{
 			// check state
 			app.VerifyAccess();
@@ -175,6 +191,13 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 
 			// create logger
 			logger = app.LoggerFactory.CreateLogger(nameof(LogProfiles));
+
+			// load more built-in profiles in debug mode
+			if (app.IsDebugMode)
+			{
+				builtInProfileIDs.Add("ULogViewerLog");
+				builtInProfileIDs.Add("ULogViewerMemoryLog");
+			}
 
 			// create scheduled action
 			saveProfilesAction = new ScheduledAction(async () =>

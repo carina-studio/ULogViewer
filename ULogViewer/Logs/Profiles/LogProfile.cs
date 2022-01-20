@@ -12,7 +12,6 @@ using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
@@ -37,9 +36,12 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 
 
 		// Fields.
+		bool allowMultipleFiles = true;
 		LogColorIndicator colorIndicator = LogColorIndicator.None;
 		LogDataSourceOptions dataSourceOptions;
 		ILogDataSourceProvider dataSourceProvider = LogDataSourceProviders.Empty;
+		string? description;
+		bool hasDescription;
 		LogProfileIcon icon = LogProfileIcon.File;
 		string id;
 		bool isAdministratorNeeded;
@@ -59,11 +61,18 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		IDictionary<LogLevel, string> readOnlyLogLevelMapForWriting;
 		SortDirection sortDirection = SortDirection.Ascending;
 		LogSortKey sortKey = LogSortKey.Timestamp;
+		CultureInfo timeSpanCultureInfoForReading = defaultTimestampCultureInfoForReading;
+		CultureInfo timeSpanCultureInfoForWriting = defaultTimestampCultureInfoForReading;
+		LogTimeSpanEncoding timeSpanEncodingForReading = LogTimeSpanEncoding.Custom;
+		IList<string> timeSpanFormatsForReading = new string[0];
+		string? timeSpanFormatForDisplaying;
+		string? timeSpanFormatForWriting;
 		CultureInfo timestampCultureInfoForReading = defaultTimestampCultureInfoForReading;
 		CultureInfo timestampCultureInfoForWriting = defaultTimestampCultureInfoForReading;
+		LogTimestampEncoding timestampEncodingForReading = LogTimestampEncoding.Custom;
 		string? timestampFormatForDisplaying;
-		string? timestampFormatForReading;
 		string? timestampFormatForWriting;
+		IList<string> timestampFormatsForReading = new string[0];
 		IList<LogProperty> visibleLogProperties = new LogProperty[0];
 
 
@@ -71,7 +80,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// Initialize new <see cref="LogProfile"/> instance.
 		/// </summary>
 		/// <param name="app">Application.</param>
-		public LogProfile(IApplication app)
+		public LogProfile(IULogViewerApplication app)
 		{
 			app.VerifyAccess();
 			this.Application = app;
@@ -88,9 +97,12 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// <param name="template">Template profile.</param>
 		public LogProfile(LogProfile template) : this(template.Application)
 		{
+			this.allowMultipleFiles = template.allowMultipleFiles;
 			this.colorIndicator = template.colorIndicator;
 			this.dataSourceOptions = template.dataSourceOptions;
 			this.dataSourceProvider = template.dataSourceProvider;
+			this.description = template.description;
+			this.hasDescription = template.hasDescription;
 			this.icon = template.icon;
 			this.isAdministratorNeeded = template.isAdministratorNeeded;
 			this.isContinuousReading = template.isContinuousReading;
@@ -105,29 +117,53 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			this.name = template.name;
 			this.sortDirection = template.sortDirection;
 			this.sortKey = template.sortKey;
+			this.timeSpanCultureInfoForReading = template.timeSpanCultureInfoForReading;
+			this.timeSpanEncodingForReading = template.timeSpanEncodingForReading;
+			this.timeSpanFormatForDisplaying = template.timeSpanFormatForDisplaying;
+			this.timeSpanFormatForWriting = template.timeSpanFormatForWriting;
+			this.timeSpanFormatsForReading = template.timeSpanFormatsForReading;
 			this.timestampCultureInfoForReading = template.timestampCultureInfoForReading;
 			this.timestampCultureInfoForWriting = template.timestampCultureInfoForWriting;
+			this.timestampEncodingForReading = template.timestampEncodingForReading;
 			this.timestampFormatForDisplaying = template.timestampFormatForDisplaying;
-			this.timestampFormatForReading = template.timestampFormatForReading;
 			this.timestampFormatForWriting = template.timestampFormatForWriting;
+			this.timestampFormatsForReading = template.timestampFormatsForReading;
 			this.visibleLogProperties = template.visibleLogProperties;
 		}
 
 
 		// Constructor for built-in profile.
-		LogProfile(IApplication app, string builtInId) : this(app)
+		LogProfile(IULogViewerApplication app, string builtInId) : this(app)
 		{
 			this.BuiltInId = builtInId;
 			this.id = builtInId;
 			this.isPinnedSettingKey = new SettingKey<bool>($"BuiltInProfile.{builtInId}.IsPinned");
-			this.UpdateBuiltInName();
+			this.UpdateBuiltInNameAndDescription();
+		}
+
+
+		/// <summary>
+		/// Get or set whether multiple files are allowed or not.
+		/// </summary>
+		public bool AllowMultipleFiles
+		{
+			get => this.allowMultipleFiles;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (this.allowMultipleFiles == value)
+					return;
+				this.allowMultipleFiles = value;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AllowMultipleFiles)));
+			}
 		}
 
 
 		/// <summary>
 		/// Get application instance.
 		/// </summary>
-		public IApplication Application { get; }
+		public IULogViewerApplication Application { get; }
 
 
 		// ID of built-in profile.
@@ -169,7 +205,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// </summary>
 		/// <param name="app">Application.</param>
 		/// <returns>Built-in empty log profile.</returns>
-		internal static LogProfile CreateEmptyBuiltInProfile(IApplication app) => new LogProfile(app, EmptyId);
+		internal static LogProfile CreateEmptyBuiltInProfile(IULogViewerApplication app) => new LogProfile(app, EmptyId);
 
 
 		/// <summary>
@@ -227,6 +263,27 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 
 
 		/// <summary>
+		/// Get or set description of profile.
+		/// </summary>
+		public string? Description
+		{
+			get => this.description;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (string.IsNullOrWhiteSpace(value))
+					value = null;
+				if (this.description == value)
+					return;
+				this.description = value;
+				this.HasDescription = (value != null);
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Description)));
+			}
+		}
+
+
+		/// <summary>
 		/// Detach from the file which instance has been loaded from or saved to.
 		/// </summary>
 		public void DetachFromFile()
@@ -280,6 +337,22 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				}
 				throw new ArgumentException($"Unable to find proper file name for '{this.name}' in directory '{directoryName}'.");
 			});
+		}
+
+
+		/// <summary>
+		/// Get whether <see cref="Description"/> contains non-whitespace content or not.
+		/// </summary>
+		public bool HasDescription 
+		{
+			get => this.hasDescription;
+			private set
+            {
+				if (this.hasDescription == value)
+					return;
+				this.hasDescription = value;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasDescription)));
+            }
 		}
 
 
@@ -352,6 +425,12 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 
 
 		/// <summary>
+		/// Check whether internal data has been just upgraded or not.
+		/// </summary>
+		public bool IsDataUpgraded { get; private set; }
+
+
+		/// <summary>
 		/// Get or set whether profile should be pinned at quick access area or not.
 		/// </summary>
 		public bool IsPinned
@@ -364,7 +443,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 					return;
 				this.isPinned = value;
 				if (this.IsBuiltIn)
-					this.Application.Settings.SetValue(this.isPinnedSettingKey.AsNonNull(), value);
+					this.Application.PersistentState.SetValue<bool>(this.isPinnedSettingKey.AsNonNull(), value);
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsPinned)));
 			}
 		}
@@ -400,7 +479,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// <param name="app">Application.</param>
 		/// <param name="id">ID of built-in profile.</param>
 		/// <returns>Task of loading operation.</returns>
-		public static async Task<LogProfile> LoadBuiltInProfileAsync(IApplication app, string id)
+		public static async Task<LogProfile> LoadBuiltInProfileAsync(IULogViewerApplication app, string id)
 		{
 			// load JSON document
 			var jsonDocument = await ioTaskFactory.StartNew(() =>
@@ -414,7 +493,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 
 			// load profile
 			await ioTaskFactory.StartNew(() => profile.LoadFromJson(jsonDocument.RootElement));
-			profile.isPinned = app.Settings.GetValueOrDefault(profile.isPinnedSettingKey.AsNonNull());
+			profile.isPinned = app.PersistentState.GetValueOrDefault(profile.isPinnedSettingKey.AsNonNull());
 
 			// validate
 			profile.Validate();
@@ -432,71 +511,78 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			if (!LogDataSourceProviders.TryFindProviderByName(providerName, out var provider) || provider == null)
 				throw new ArgumentException($"Cannot find data source '{providerName}'.");
 
-			// get options
+			// get opetions
 			var options = new LogDataSourceOptions();
-			var crypto = (Crypto?)null;
-			try
+			if (dataSourceElement.TryGetProperty("Options", out var jsonValue))
+				options = LogDataSourceOptions.Load(jsonValue);
+			else
 			{
-				foreach (var jsonProperty in dataSourceElement.EnumerateObject())
+				// get options by old way
+				var crypto = (Crypto?)null;
+				try
 				{
-					switch (jsonProperty.Name)
+					foreach (var jsonProperty in dataSourceElement.EnumerateObject())
 					{
-						case nameof(LogDataSourceOptions.Category):
-							options.Category = jsonProperty.Value.GetString();
-							break;
-						case nameof(LogDataSourceOptions.Command):
-							options.Command = jsonProperty.Value.GetString();
-							break;
-						case nameof(LogDataSourceOptions.Encoding):
-							options.Encoding = Encoding.GetEncoding(jsonProperty.Value.GetString().AsNonNull());
-							break;
-						case nameof(LogDataSourceOptions.FileName):
-							options.FileName = jsonProperty.Value.GetString();
-							break;
-						case "Name":
-							break;
-						case nameof(LogDataSourceOptions.Password):
-							if (crypto == null)
-								crypto = new Crypto(this.Application);
-							options.Password = crypto.Decrypt(jsonProperty.Value.GetString().AsNonNull());
-							break;
-						case nameof(LogDataSourceOptions.QueryString):
-							options.QueryString = jsonProperty.Value.GetString();
-							break;
-						case nameof(LogDataSourceOptions.SetupCommands):
-							options.SetupCommands = new List<string>().Also(it =>
-							{
-								foreach (var jsonElement in jsonProperty.Value.EnumerateArray())
-									it.Add(jsonElement.GetString().AsNonNull());
-							});
-							break;
-						case nameof(LogDataSourceOptions.TeardownCommands):
-							options.TeardownCommands = new List<string>().Also(it =>
-							{
-								foreach (var jsonElement in jsonProperty.Value.EnumerateArray())
-									it.Add(jsonElement.GetString().AsNonNull());
-							});
-							break;
-						case nameof(LogDataSourceOptions.Uri):
-							options.Uri = new Uri(jsonProperty.Value.GetString().AsNonNull());
-							break;
-						case nameof(LogDataSourceOptions.UserName):
-							if (crypto == null)
-								crypto = new Crypto(this.Application);
-							options.UserName = crypto.Decrypt(jsonProperty.Value.GetString().AsNonNull());
-							break;
-						case nameof(LogDataSourceOptions.WorkingDirectory):
-							options.WorkingDirectory = jsonProperty.Value.GetString();
-							break;
-						default:
-							this.logger.LogWarning($"Unknown property of DataSource: {jsonProperty.Name}");
-							break;
+						switch (jsonProperty.Name)
+						{
+							case nameof(LogDataSourceOptions.Category):
+								options.Category = jsonProperty.Value.GetString();
+								break;
+							case nameof(LogDataSourceOptions.Command):
+								options.Command = jsonProperty.Value.GetString();
+								break;
+							case nameof(LogDataSourceOptions.Encoding):
+								options.Encoding = Encoding.GetEncoding(jsonProperty.Value.GetString().AsNonNull());
+								break;
+							case nameof(LogDataSourceOptions.FileName):
+								options.FileName = jsonProperty.Value.GetString();
+								break;
+							case "Name":
+								continue;
+							case nameof(LogDataSourceOptions.Password):
+								if (crypto == null)
+									crypto = new Crypto(this.Application);
+								options.Password = crypto.Decrypt(jsonProperty.Value.GetString().AsNonNull());
+								break;
+							case nameof(LogDataSourceOptions.QueryString):
+								options.QueryString = jsonProperty.Value.GetString();
+								break;
+							case nameof(LogDataSourceOptions.SetupCommands):
+								options.SetupCommands = new List<string>().Also(it =>
+								{
+									foreach (var jsonElement in jsonProperty.Value.EnumerateArray())
+										it.Add(jsonElement.GetString().AsNonNull());
+								});
+								break;
+							case nameof(LogDataSourceOptions.TeardownCommands):
+								options.TeardownCommands = new List<string>().Also(it =>
+								{
+									foreach (var jsonElement in jsonProperty.Value.EnumerateArray())
+										it.Add(jsonElement.GetString().AsNonNull());
+								});
+								break;
+							case nameof(LogDataSourceOptions.Uri):
+								options.Uri = new Uri(jsonProperty.Value.GetString().AsNonNull());
+								break;
+							case nameof(LogDataSourceOptions.UserName):
+								if (crypto == null)
+									crypto = new Crypto(this.Application);
+								options.UserName = crypto.Decrypt(jsonProperty.Value.GetString().AsNonNull());
+								break;
+							case nameof(LogDataSourceOptions.WorkingDirectory):
+								options.WorkingDirectory = jsonProperty.Value.GetString();
+								break;
+							default:
+								this.logger.LogWarning($"Unknown property of DataSource: {jsonProperty.Name}");
+								continue;
+						}
+						this.IsDataUpgraded = true;
 					}
 				}
-			}
-			finally
-			{
-				crypto?.Dispose();
+				finally
+				{
+					crypto?.Dispose();
+				}
 			}
 
 			// complete
@@ -512,11 +598,20 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			{
 				switch (jsonProperty.Name)
 				{
+					case nameof(AllowMultipleFiles):
+						this.allowMultipleFiles = jsonProperty.Value.ValueKind != JsonValueKind.False;
+						break;
 					case "DataSource":
 						this.LoadDataSourceFromJson(jsonProperty.Value);
 						break;
 					case nameof(ColorIndicator):
 						this.colorIndicator = Enum.Parse<LogColorIndicator>(jsonProperty.Value.GetString().AsNonNull());
+						break;
+					case nameof(Description):
+						this.description = jsonProperty.Value.GetString();
+						if (string.IsNullOrWhiteSpace(this.description))
+							this.description = null;
+						this.hasDescription = (this.description != null);
 						break;
 					case nameof(Icon):
 						if (Enum.TryParse<LogProfileIcon>(jsonProperty.Value.GetString(), out var profileIcon))
@@ -567,20 +662,55 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 					case nameof(SortKey):
 						this.sortKey = Enum.Parse<LogSortKey>(jsonProperty.Value.GetString().AsNonNull());
 						break;
+					case nameof(TimeSpanCultureInfoForReading):
+						this.timeSpanCultureInfoForReading = CultureInfo.GetCultureInfo(jsonProperty.Value.GetString().AsNonNull());
+						break;
+					case nameof(TimeSpanCultureInfoForWriting):
+						this.timeSpanCultureInfoForWriting = CultureInfo.GetCultureInfo(jsonProperty.Value.GetString().AsNonNull());
+						break;
+					case nameof(TimeSpanEncodingForReading):
+						if (Enum.TryParse<LogTimeSpanEncoding>(jsonProperty.Value.GetString(), out var timeSpanEncoding))
+							this.timeSpanEncodingForReading = timeSpanEncoding;
+						break;
+					case nameof(TimeSpanFormatForDisplaying):
+						this.timeSpanFormatForDisplaying = jsonProperty.Value.GetString();
+						break;
+					case nameof(TimeSpanFormatForWriting):
+						this.timeSpanFormatForWriting = jsonProperty.Value.GetString();
+						break;
+					case nameof(TimeSpanFormatsForReading):
+						this.timeSpanFormatsForReading = new List<string>().Also(list =>
+						{
+							foreach (var jsonValue in jsonProperty.Value.EnumerateArray())
+								list.Add(jsonValue.GetString().AsNonNull());
+						}).AsReadOnly();
+						break;
 					case nameof(TimestampCultureInfoForReading):
 						this.timestampCultureInfoForReading = CultureInfo.GetCultureInfo(jsonProperty.Value.GetString().AsNonNull());
 						break;
 					case nameof(TimestampCultureInfoForWriting):
 						this.timestampCultureInfoForWriting = CultureInfo.GetCultureInfo(jsonProperty.Value.GetString().AsNonNull());
 						break;
+					case nameof(TimestampEncodingForReading):
+						if (Enum.TryParse<LogTimestampEncoding>(jsonProperty.Value.GetString(), out var timestampEncoding))
+							this.timestampEncodingForReading = timestampEncoding;
+						break;
 					case nameof(TimestampFormatForDisplaying):
 						this.timestampFormatForDisplaying = jsonProperty.Value.GetString();
 						break;
-					case nameof(TimestampFormatForReading):
-						this.timestampFormatForReading = jsonProperty.Value.GetString();
+					case "TimestampFormatForReading":
+						this.timestampFormatsForReading = new string[] { jsonProperty.Value.GetString().AsNonNull() };
+						this.IsDataUpgraded = true;
 						break;
 					case nameof(TimestampFormatForWriting):
 						this.timestampFormatForWriting = jsonProperty.Value.GetString();
+						break;
+					case nameof(TimestampFormatsForReading):
+						this.timestampFormatsForReading = new List<string>().Also(list =>
+						{
+							foreach (var jsonValue in jsonProperty.Value.EnumerateArray())
+								list.Add(jsonValue.GetString().AsNonNull());
+						}).AsReadOnly();
 						break;
 					case nameof(VisibleLogProperties):
 						this.LoadVisibleLogPropertiesFromJson(jsonProperty.Value);
@@ -643,7 +773,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// <param name="app">Application.</param>
 		/// <param name="fileName">Name of profile file.</param>
 		/// <returns>Task of loading operation.</returns>
-		public static async Task<LogProfile> LoadProfileAsync(IApplication app, string fileName)
+		public static async Task<LogProfile> LoadProfileAsync(IULogViewerApplication app, string fileName)
 		{
 			// load JSON document
 			var jsonDocument = await ioTaskFactory.StartNew(() =>
@@ -820,7 +950,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// <summary>
 		/// Called when application string resources updated.
 		/// </summary>
-		public void OnApplicationStringsUpdated() => this.UpdateBuiltInName();
+		public void OnApplicationStringsUpdated() => this.UpdateBuiltInNameAndDescription();
 
 
 		/// <summary>
@@ -838,7 +968,10 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		{
 			this.VerifyAccess();
 			this.VerifyBuiltIn();
+			this.IsDataUpgraded = false;
 			var prevFileName = this.FileName;
+			var timeSpanFormatsForReading = this.timeSpanFormatsForReading.ToArray();
+			var timestampFormatsForReading = this.timestampFormatsForReading.ToArray();
 			await ioTaskFactory.StartNew(() =>
 			{
 				// delete previous file
@@ -853,9 +986,11 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				using var stream = new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite);
 				using var writer = new Utf8JsonWriter(stream, new JsonWriterOptions() { Indented = true });
 				writer.WriteStartObject();
+				writer.WriteBoolean(nameof(AllowMultipleFiles), this.allowMultipleFiles);
 				writer.WritePropertyName("DataSource");
 				this.SaveDataSourceToJson(writer);
 				writer.WriteString(nameof(ColorIndicator), this.colorIndicator.ToString());
+				writer.WriteString(nameof(Description), this.description);
 				writer.WriteString(nameof(Icon), this.icon.ToString());
 				if (!this.IsBuiltIn)
 					writer.WriteString(nameof(Id), this.id);
@@ -879,11 +1014,32 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				writer.WriteString(nameof(Name), this.name);
 				writer.WriteString(nameof(SortDirection), this.sortDirection.ToString());
 				writer.WriteString(nameof(SortKey), this.sortKey.ToString());
+				writer.WriteString(nameof(TimeSpanCultureInfoForReading), this.timeSpanCultureInfoForReading.ToString());
+				writer.WriteString(nameof(TimeSpanCultureInfoForWriting), this.timeSpanCultureInfoForWriting.ToString());
+				writer.WriteString(nameof(TimeSpanEncodingForReading), this.timestampEncodingForReading.ToString());
+				this.timeSpanFormatForDisplaying?.Let(it => writer.WriteString(nameof(TimeSpanFormatForDisplaying), it));
+				this.timeSpanFormatForWriting?.Let(it => writer.WriteString(nameof(TimeSpanFormatForWriting), it));
+				if (timeSpanFormatsForReading.IsNotEmpty())
+				{
+					writer.WritePropertyName(nameof(TimeSpanFormatsForReading));
+					writer.WriteStartArray();
+					foreach (var format in timeSpanFormatsForReading)
+						writer.WriteStringValue(format);
+					writer.WriteEndArray();
+				}
 				writer.WriteString(nameof(TimestampCultureInfoForReading), this.timestampCultureInfoForReading.ToString());
 				writer.WriteString(nameof(TimestampCultureInfoForWriting), this.timestampCultureInfoForWriting.ToString());
+				writer.WriteString(nameof(TimestampEncodingForReading), this.timestampEncodingForReading.ToString());
 				this.timestampFormatForDisplaying?.Let(it => writer.WriteString(nameof(TimestampFormatForDisplaying), it));
-				this.timestampFormatForReading?.Let(it => writer.WriteString(nameof(TimestampFormatForReading), it));
 				this.timestampFormatForWriting?.Let(it => writer.WriteString(nameof(TimestampFormatForWriting), it));
+				if (timestampFormatsForReading.IsNotEmpty())
+				{
+					writer.WritePropertyName(nameof(TimestampFormatsForReading));
+					writer.WriteStartArray();
+					foreach (var format in timestampFormatsForReading)
+						writer.WriteStringValue(format);
+					writer.WriteEndArray();
+				}
 				writer.WritePropertyName(nameof(VisibleLogProperties));
 				this.SaveVisibleLogPropertiesToJson(writer);
 				writer.WriteEndObject();
@@ -895,58 +1051,13 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		// Save data source info in JSON format.
 		void SaveDataSourceToJson(Utf8JsonWriter writer)
 		{
-			var crypto = (Crypto?)null;
 			var provider = this.dataSourceProvider;
 			var options = this.dataSourceOptions;
-			try
-			{
-				writer.WriteStartObject();
-				writer.WriteString("Name", provider.Name);
-				foreach (var optionName in provider.SupportedSourceOptions)
-				{
-					if (!options.IsOptionSet(optionName))
-						continue;
-					var option = options.GetOption(optionName);
-					if (option is string strOption)
-					{
-						switch (optionName)
-						{
-							case nameof(LogDataSourceOptions.Password):
-							case nameof(LogDataSourceOptions.UserName):
-								if (crypto == null)
-									crypto = new Crypto(this.Application);
-								writer.WriteString(optionName, crypto.Encrypt(strOption));
-								break;
-							default:
-								writer.WriteString(optionName, strOption);
-								break;
-						}
-					}
-					else if (option is IList<string> strListOption)
-					{
-						writer.WritePropertyName(optionName);
-						writer.WriteStartArray();
-						foreach (var str in strListOption)
-							writer.WriteStringValue(str);
-						writer.WriteEndArray();
-					}
-					else if (option is bool boolOption)
-						writer.WriteBoolean(optionName, boolOption);
-					else if (option is double doubleOption)
-						writer.WriteNumber(optionName, doubleOption);
-					else if (option is int intOption)
-						writer.WriteNumber(optionName, intOption);
-					else if (option is long longOption)
-						writer.WriteNumber(optionName, longOption);
-					else if (option != null)
-						writer.WriteString(optionName, option.ToString());
-				}
-				writer.WriteEndObject();
-			}
-			finally
-			{
-				crypto?.Dispose();
-			}
+			writer.WriteStartObject();
+			writer.WriteString("Name", provider.Name);
+			writer.WritePropertyName("Options");
+			options.Save(writer);
+			writer.WriteEndObject();
 		}
 
 
@@ -1046,6 +1157,114 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 
 
 		/// <summary>
+		/// Get or set <see cref="CultureInfo"/> of time span for reading logs.
+		/// </summary>
+		public CultureInfo TimeSpanCultureInfoForReading
+		{
+			get => this.timeSpanCultureInfoForReading;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (this.timeSpanCultureInfoForReading.Equals(value))
+					return;
+				this.timeSpanCultureInfoForReading = value;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TimeSpanCultureInfoForReading)));
+			}
+		}
+
+
+		/// <summary>
+		/// Get or set <see cref="CultureInfo"/> of time span for writing logs.
+		/// </summary>
+		public CultureInfo TimeSpanCultureInfoForWriting
+		{
+			get => this.timeSpanCultureInfoForWriting;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (this.timeSpanCultureInfoForWriting.Equals(value))
+					return;
+				this.timeSpanCultureInfoForWriting = value;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TimeSpanCultureInfoForWriting)));
+			}
+		}
+
+
+		/// <summary>
+		/// Get or set encoding of time span for reading logs.
+		/// </summary>
+		public LogTimeSpanEncoding TimeSpanEncodingForReading
+		{
+			get => this.timeSpanEncodingForReading;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (this.timeSpanEncodingForReading == value)
+					return;
+				this.timeSpanEncodingForReading = value;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TimeSpanEncodingForReading)));
+			}
+		}
+
+
+		/// <summary>
+		/// Get or set format of time span for displaying logs.
+		/// </summary>
+		public string? TimeSpanFormatForDisplaying
+		{
+			get => this.timeSpanFormatForDisplaying;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (this.timeSpanFormatForDisplaying == value)
+					return;
+				this.timeSpanFormatForDisplaying = value;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TimeSpanFormatForDisplaying)));
+			}
+		}
+
+
+		/// <summary>
+		/// Get or set format of time span for writing logs.
+		/// </summary>
+		public string? TimeSpanFormatForWriting
+		{
+			get => this.timeSpanFormatForWriting;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (this.timeSpanFormatForWriting == value)
+					return;
+				this.timeSpanFormatForWriting = value;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TimeSpanFormatForWriting)));
+			}
+		}
+
+
+		/// <summary>
+		/// Get or set list of format of time span for reading logs if <see cref="TimeSpanEncodingForReading"/> is <see cref="LogTimeSpanEncoding.Custom"/>.
+		/// </summary>
+		public IList<string> TimeSpanFormatsForReading
+		{
+			get => this.timeSpanFormatsForReading;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (this.timeSpanFormatsForReading.SequenceEqual(value))
+					return;
+				this.timeSpanFormatsForReading = value.ToArray().AsReadOnly();
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TimeSpanFormatsForReading)));
+			}
+		}
+
+
+		/// <summary>
 		/// Get or set <see cref="CultureInfo"/> of timestamp for reading logs.
 		/// </summary>
 		public CultureInfo TimestampCultureInfoForReading
@@ -1082,6 +1301,24 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 
 
 		/// <summary>
+		/// Get or set encoding of timestamp for reading logs.
+		/// </summary>
+		public LogTimestampEncoding TimestampEncodingForReading
+		{
+			get => this.timestampEncodingForReading;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (this.timestampEncodingForReading == value)
+					return;
+				this.timestampEncodingForReading = value;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TimestampEncodingForReading)));
+			}
+		}
+
+
+		/// <summary>
 		/// Get or set format of timestamp for displaying logs.
 		/// </summary>
 		public string? TimestampFormatForDisplaying
@@ -1095,24 +1332,6 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 					return;
 				this.timestampFormatForDisplaying = value;
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TimestampFormatForDisplaying)));
-			}
-		}
-
-
-		/// <summary>
-		/// Get or set format of timestamp for reading logs.
-		/// </summary>
-		public string? TimestampFormatForReading
-		{
-			get => this.timestampFormatForReading;
-			set
-			{
-				this.VerifyAccess();
-				this.VerifyBuiltIn();
-				if (this.timestampFormatForReading == value)
-					return;
-				this.timestampFormatForReading = value;
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TimestampFormatForReading)));
 			}
 		}
 
@@ -1135,16 +1354,42 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		}
 
 
-		// Update name of built-in profile.
-		void UpdateBuiltInName()
+		/// <summary>
+		/// Get or set list of format of timestamp for reading logs if <see cref="TimestampEncodingForReading"/> is <see cref="LogTimestampEncoding.Custom"/>.
+		/// </summary>
+		public IList<string> TimestampFormatsForReading
+		{
+			get => this.timestampFormatsForReading;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (this.timestampFormatsForReading.SequenceEqual(value))
+					return;
+				this.timestampFormatsForReading = value.ToArray().AsReadOnly();
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TimestampFormatsForReading)));
+			}
+		}
+
+
+		// Update name and description of built-in profile.
+		void UpdateBuiltInNameAndDescription()
 		{
 			if (this.BuiltInId == null)
 				return;
 			var name = this.Application.GetStringNonNull($"BuiltInProfile.{this.BuiltInId}", this.BuiltInId);
-			if (this.name == name)
-				return;
-			this.name = name;
-			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Name)));
+			if (this.name != name)
+			{
+				this.name = name;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Name)));
+			}
+			var description = this.Application.GetString($"BuiltInProfile.{this.BuiltInId}.Description");
+			if (this.description != description)
+			{
+				this.description = description;
+				this.HasDescription = (description != null);
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Description)));
+			}
 		}
 
 

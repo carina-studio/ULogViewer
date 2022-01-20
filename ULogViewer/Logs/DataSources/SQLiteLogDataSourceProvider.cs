@@ -13,7 +13,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// Initialize new <see cref="SQLiteLogDataSourceProvider"/> instance.
 		/// </summary>
 		/// <param name="app">Application.</param>
-		public SQLiteLogDataSourceProvider(IApplication app) : base(app)
+		public SQLiteLogDataSourceProvider(IULogViewerApplication app) : base(app)
 		{ }
 
 

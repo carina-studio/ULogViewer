@@ -8,14 +8,20 @@
 			<ResourceDictionary.MergedDictionaries>
 				<ResourceInclude Source="/Styles/Resources.axaml"/>
 				<ResourceInclude Source="/Styles/Icons.axaml"/>
-				<ResourceInclude Source="/Strings/Default.axaml"/>
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</Application.Resources>
 
-	<!-- Styles -->
-	<Application.Styles>
-		<StyleInclude Source="/Styles/Default.axaml"/>
-	</Application.Styles>
+	<!-- Native menu -->
+	<NativeMenu.Menu>
+		<NativeMenu>
+			<NativeMenuItem Click="OnNativeMenuItemClick" CommandParameter="AppOptions" Header="{DynamicResource String/SessionView.AppOptions}"/>
+			<NativeMenuItem Click="OnNativeMenuItemClick" CommandParameter="CheckForUpdate" Header="{DynamicResource String/SessionView.CheckForAppUpdate}"/>
+			<NativeMenuItemSeparator/>
+			<NativeMenuItem Click="OnNativeMenuItemClick" CommandParameter="AppInfo" Header="{DynamicResource String/SessionView.AppInfo}"/>
+			<NativeMenuItemSeparator/>
+			<NativeMenuItem Click="OnNativeMenuItemClick" CommandParameter="Shutdown" Header="{DynamicResource String/App.Shutdown}"/>
+		</NativeMenu>
+	</NativeMenu.Menu>
 	
 </Application>

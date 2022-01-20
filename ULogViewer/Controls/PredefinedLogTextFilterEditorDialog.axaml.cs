@@ -1,17 +1,19 @@
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Input;
 using Avalonia.Markup.Xaml;
+using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.ULogViewer.ViewModels;
 using System;
 using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.Controls
 {
 	/// <summary>
 	/// Dialog to edit or create <see cref="PredefinedLogTextFilter"/>.
 	/// </summary>
-	partial class PredefinedLogTextFilterEditorDialog : BaseDialog
+	partial class PredefinedLogTextFilterEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
 	{
 		// Fields.
 		readonly ToggleSwitch ignoreCaseSwitch;
@@ -35,12 +37,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		public PredefinedLogTextFilter? Filter { get; set; }
 
 
-		// Initialize Avalonia components.
-		private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
-
-
 		// Generate result.
-		protected override object? OnGenerateResult()
+		protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken)
 		{
 			var name = this.nameTextBox.Text;
 			var regex = this.regexTextBox.Regex.AsNonNull();
@@ -52,18 +50,12 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			else
 				filter = new PredefinedLogTextFilter(this.Application, name, regex);
-			return filter;
+			return Task.FromResult((object?)filter);
 		}
 
 
-		// Called when pointer released on link text block.
-		void OnLinkDescriptionPointerReleased(object? sender, PointerReleasedEventArgs e)
-		{
-			if (e.InitialPressMouseButton != MouseButton.Left)
-				return;
-			if ((sender as Control)?.Tag is string uri)
-				this.OpenLink(uri);
-		}
+		// Initialize Avalonia components.
+		private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
 
 
 		// Called when property of name text box changed.
@@ -81,16 +73,16 @@ namespace CarinaStudio.ULogViewer.Controls
 			var filter = this.Filter;
 			if (filter == null)
 			{
-				this.Bind(TitleProperty, this.GetResourceObservable("String.PredefinedLogTextFilterEditorDialog.Title.Create"));
+				this.Bind(TitleProperty, this.GetResourceObservable("String/PredefinedLogTextFilterEditorDialog.Title.Create"));
 				this.regexTextBox.Regex = this.Regex;
 				this.ignoreCaseSwitch.IsChecked = true;
 			}
 			else
 			{
-				this.Bind(TitleProperty, this.GetResourceObservable("String.PredefinedLogTextFilterEditorDialog.Title.Edit"));
+				this.Bind(TitleProperty, this.GetResourceObservable("String/PredefinedLogTextFilterEditorDialog.Title.Edit"));
 				this.nameTextBox.Text = filter.Name;
-				this.regexTextBox.Regex = this.Regex ?? filter.Regex;
-				this.ignoreCaseSwitch.IsChecked = ((this.regexTextBox.Regex?.Options ?? RegexOptions.None) & RegexOptions.IgnoreCase) != 0;
+				this.regexTextBox.Regex = filter.Regex;
+				this.ignoreCaseSwitch.IsChecked = (filter.Regex.Options & RegexOptions.IgnoreCase) != 0;
 			}
 			this.SynchronizationContext.Post(_ => this.nameTextBox.Focus(), null); // [Workaround] delay to prevent focus got by popup
 		}

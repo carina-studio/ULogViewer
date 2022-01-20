@@ -2,21 +2,23 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Data;
-using Avalonia.Input;
 using Avalonia.Markup.Xaml;
+using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.Controls
 {
 	/// <summary>
 	/// Editor of <see cref="LogPattern"/>.
 	/// </summary>
-	partial class LogPatternEditorDialog : BaseDialog
+	partial class LogPatternEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
 	{
 		/// <summary>
 		/// List of property names of log.
@@ -72,6 +74,17 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Generate result.
+		protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken)
+		{
+			var editingLogPattern = this.LogPattern;
+			var newLogPattern = new LogPattern(this.regexTextBox.Regex.AsNonNull(), this.repeatableSwitch.IsChecked.GetValueOrDefault(), this.skippableSwitch.IsChecked.GetValueOrDefault());
+			if (editingLogPattern != null && editingLogPattern == newLogPattern)
+				return Task.FromResult((object?)editingLogPattern);
+			return Task.FromResult((object?)newLogPattern);
+		}
+
+
 		// Initialize.
 		private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
 
@@ -101,28 +114,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// Get or set <see cref="LogPattern"/> to be edited.
 		/// </summary>
 		public LogPattern? LogPattern { get; set; }
-
-
-		// Generate result.
-		protected override object? OnGenerateResult()
-		{
-			// create pattern
-			var editingLogPattern = this.LogPattern;
-			var newLogPattern = new LogPattern(this.regexTextBox.Regex.AsNonNull(), this.repeatableSwitch.IsChecked.GetValueOrDefault(), this.skippableSwitch.IsChecked.GetValueOrDefault());
-			if (editingLogPattern != null && editingLogPattern == newLogPattern)
-				return editingLogPattern;
-			return newLogPattern;
-		}
-
-
-		// Called when pointer released on link text block.
-		void OnLinkDescriptionPointerReleased(object? sender, PointerReleasedEventArgs e)
-		{
-			if (e.InitialPressMouseButton != MouseButton.Left)
-				return;
-			if ((sender as Control)?.Tag is string uri)
-				this.OpenLink(uri);
-		}
 
 
 		// Called when opened.

@@ -1,0 +1,38 @@
+﻿[
+	{
+		"Description": "Support temporarily showing marked logs in main view by clicking toolbar button or pressing Alt+M (Option+M on macOS).",
+		"Type": "NewFeature"
+	},
+	{
+		"Description": "Synchronize single selection of marked log between main view and side panel to make it clear which marked log is selected.",
+		"Type": "NewFeature"
+	},
+	{
+		"Description": "Upgrade to .NET 6.",
+		"DetailsPageUri": "https://docs.microsoft.com/en-us/dotnet/core/whats-new/dotnet-6",
+		"Type": "Improvement"
+	},
+	{
+		"Description": "Improve UI to make selected logs more clear.",
+		"Type": "Improvement"
+	},
+	{
+		"Description": "Support running on Windows 7 and Windows 8.",
+		"Type": "Improvement"
+	},
+	{
+		"Description": "Support running on ARM64 PC.",
+		"Type": "Improvement"
+	},
+	{
+		"Description": "UX improvement.",
+		"Type": "Improvement"
+	},
+	{
+		"Description": "Update dependent libraries."
+	},
+	{
+		"Description": "Bug fixing.",
+		"Type": "BugFixing"
+	}
+]

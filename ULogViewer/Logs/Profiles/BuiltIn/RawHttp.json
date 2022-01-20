@@ -1,0 +1,7 @@
+﻿{
+	"DataSource": {
+		"Name": "Http"
+	},
+	"Icon": "Experiment",
+	"SortKey": "Id"
+}

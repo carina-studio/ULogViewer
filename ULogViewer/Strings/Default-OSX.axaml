@@ -1,12 +1,15 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-										xmlns:sys="clr-namespace:System;assembly=mscorlib">
-
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+	
 	<!-- Common -->
-	<sys:String x:Key="String.Common.Administrator">Superuser</sys:String>
+	<sys:String x:Key="String/Common.Administrator">Superuser</sys:String>
 
 	<!-- SessionView -->
-	<sys:String x:Key="String.SessionView.ShowFileInExplorer">Show file in Finder</sys:String>
-	<sys:String x:Key="String.SessionView.ShowWorkingDirectoryInExplorer">Show working directory in Finder</sys:String>
+	<sys:String x:Key="String/SessionView.RestartAsAdministrator">Restart as Superuser</sys:String>
+	<sys:String x:Key="String/SessionView.ShowAllLogsTemporarily">Show all logs temporarily (Option+A)</sys:String>
+	<sys:String x:Key="String/SessionView.ShowFileInExplorer">Show file in Finder</sys:String>
+	<sys:String x:Key="String/SessionView.ShowMarkedLogsTemporarily">Show marked logs temporarily (Option+M)</sys:String>
+	<sys:String x:Key="String/SessionView.ShowWorkingDirectoryInExplorer">Show working directory in Finder</sys:String>
 	
 </ResourceDictionary>

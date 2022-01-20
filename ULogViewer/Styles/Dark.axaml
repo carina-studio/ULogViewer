@@ -2,52 +2,60 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
 	<!-- Base style -->
-	<FluentTheme Mode="Dark"/>
+	<StyleInclude Source="/Styles/Default.axaml"/>
 
 	<!-- Resources -->
 	<Styles.Resources>
 		<ResourceDictionary>
 
-			<!-- Dialog -->
-			<SolidColorBrush x:Key="Brush.Dialog.Background">#1e1e1e</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.Dialog.ControlButtonsPanel.Background">#141414</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.Dialog.Description.Foreground">#7fffffff</SolidColorBrush>
-
 			<!-- Icon -->
-			<SolidColorBrush x:Key="Brush.Icon">#ffffff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Apple" Color="#aaaaaa"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Book" Color="#b24700"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Code" Color="#909090"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Experiment" Color="#00990f"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Phone" Color="#909090"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Terminal" Color="#909090"/>
 
 			<!-- LogLevel -->
-			<SolidColorBrush x:Key="Brush.LogLevel.Debug">#32aaff</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.LogLevel.Error">#ff3232</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.LogLevel.Failure">#ff3f3f</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.LogLevel.Fatal">#ff3f3f</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.LogLevel.Info">#4cff00</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.LogLevel.Success">#4cff00</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.LogLevel.Trace">#32aaff</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.LogLevel.Undefined">#ffffff</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.LogLevel.Verbose">#ffffff</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.LogLevel.Warn">#ff8432</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/LogLevel.Debug">#32aaff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/LogLevel.Error">#ff3232</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/LogLevel.Failure">#ff3f3f</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/LogLevel.Fatal">#ff3f3f</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/LogLevel.Info">#4cff00</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/LogLevel.Success">#4cff00</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/LogLevel.Trace">#32aaff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/LogLevel.Undefined">#ffffff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/LogLevel.Verbose">#ffffff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/LogLevel.Warn">#ff8432</SolidColorBrush>
 
 			<!-- LogProfileSelectionDialog -->
-			<SolidColorBrush x:Key="Brush.LogProfileSelectionDialog.Label.Background">#000000</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.LogProfileSelectionDialog.Label.Border">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/LogProfileSelectionDialog.Label.Background">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/LogProfileSelectionDialog.Label.Border">#000000</SolidColorBrush>
 
-			<!-- Separator -->
-			<SolidColorBrush x:Key="Brush.Separator.Background">#7fffffff</SolidColorBrush>
+			<!-- LogStringPropertyDialog -->
+			<SolidColorBrush x:Key="Brush/LogStringPropertyDialog.FoundText.Background">#a0a0a0</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/LogStringPropertyDialog.FoundText.Foreground">#000000</SolidColorBrush>
 
 			<!-- SessionView -->
-			<SolidColorBrush x:Key="Brush.SessionView.LogHeader.Background">#0e0e0e</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.SessionView.LogHeader.Separator">#7fffffff</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.SessionView.LogListBox.Item.Background.Marked">#2fffffff</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.SessionView.LogListBox.Item.Background.Pressed">#7f0073cc</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.SessionView.LogListBox.Item.Background.Selected">#7f004881</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.SessionView.LogListBox.Item.Background.Selected.PointerOver">#7f0073cc</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.SessionView.SidePanel.Background">#161616</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.SessionView.StatusBar.Background">#606060</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush.SessionView.StatusBar.Background.Paused">#606060</SolidColorBrush>
-
-			<!-- Window -->
-			<SolidColorBrush x:Key="Brush.Window.Background">#1e1e1e</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.LogHeader.Background">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.LogHeader.Separator">#4fffffff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Background.Marked.Blue">#2f0094ff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Background.Marked.Default">#2fffffff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Background.Marked.Green">#2f4fcc00</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Background.Marked.Indigo">#2f0026ff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Background.Marked.Magenta">#2fff0072</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Background.Marked.Orange">#2fff6a00</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Background.Marked.Purple">#2fb200ff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Background.Marked.Red">#2fff0000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Background.Marked.Yellow">#2fffff00</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Background.Pressed">#7f0073cc</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Background.Selected">#7f004881</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Background.Selected.PointerOver">#7f0073cc</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Column.Border.PointerOver">#7fffffff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.SelectionIndicator.Background">#40ffffff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.MarkedLogListBox.Item.Border.Selected">#7fffffff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.StatusBar.Background.Inactive">#606060</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.StatusBar.Background.Paused">#606060</SolidColorBrush>
 			
 		</ResourceDictionary>
 	</Styles.Resources>
