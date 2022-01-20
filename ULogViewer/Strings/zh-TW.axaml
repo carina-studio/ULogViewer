@@ -32,6 +32,8 @@
 	<sys:String x:Key="String/AppOptionsDialog.UseSystemAccentColor">套用系統強調色彩</sys:String>
 
 	<!-- Built-in profile -->
+	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceEventLog">Android 裝置事件日誌</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceEventLog.Description">透過 ADB 取得的 Android 裝置即時事件日誌。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceLog">Android 裝置日誌</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceLog.Description">透過 ADB 取得的 Android 裝置即時日誌。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidFileLog">Android 日誌檔案</sys:String>
