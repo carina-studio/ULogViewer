@@ -161,6 +161,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly HashSet<PredefinedLogTextFilter> selectedPredefinedLogTextFilters = new HashSet<PredefinedLogTextFilter>();
 		readonly MenuItem showLogPropertyMenuItem;
 		readonly ColumnDefinition sidePanelColumn;
+		readonly ToolBarScrollViewer toolBarScrollViewer;
 		readonly ScheduledAction updateLogFiltersAction;
 		readonly ScheduledAction updateStatusBarStateAction;
 		readonly SortedObservableList<Logs.LogLevel> validLogLevels = new SortedObservableList<Logs.LogLevel>((x, y) => (int)x - (int)y);
@@ -314,6 +315,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				it.AddHandler(Control.PointerReleasedEvent, this.OnToolBarPointerReleased, RoutingStrategies.Tunnel);
 			});
+			this.toolBarScrollViewer = this.FindControl<ToolBarScrollViewer>(nameof(toolBarScrollViewer)).AsNonNull();
 			this.workingDirectoryActionsButton = this.FindControl<ToggleButton>(nameof(workingDirectoryActionsButton)).AsNonNull();
 			this.workingDirectoryActionsMenu = ((ContextMenu)this.Resources[nameof(workingDirectoryActionsMenu)].AsNonNull()).Also(it =>
 			{
@@ -1910,6 +1912,14 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// check administrator role
 			this.ConfirmRestartingAsAdmin();
+		}
+
+
+		// Called when log filter text box got focus.
+		void OnLogFilterTextBoxGotFocus(object? sender, GotFocusEventArgs e)
+		{
+			if (sender is IVisual textBox)
+				this.toolBarScrollViewer.ScrollIntoView(textBox);
 		}
 
 
