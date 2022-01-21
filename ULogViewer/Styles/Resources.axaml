@@ -72,8 +72,8 @@
 	<sys:Double x:Key="Double/LogStringPropertyDialog.Width">600</sys:Double>
 
 	<!-- MainWindow -->
-	<sys:Double x:Key="Double/MainWindow.MinHeight">300</sys:Double>
-	<sys:Double x:Key="Double/MainWindow.MinWidth">500</sys:Double>
+	<sys:Double x:Key="Double/MainWindow.MinHeight">150</sys:Double>
+	<sys:Double x:Key="Double/MainWindow.MinWidth">300</sys:Double>
 	<sys:Double x:Key="Double/MainWindow.TabItem.ToolTip.Icon.Size">12</sys:Double>
 	<Thickness x:Key="Thickness/MainWindow.TabItem.ToolTip.Icon.Margin">0,0,3,0</Thickness>
 	<Thickness x:Key="Thickness/MainWindow.TabItem.ToolTip.Padding">5</Thickness>
@@ -92,6 +92,7 @@
 	<sys:Double x:Key="Double/SessionView.LogHeader.MinWidth">50</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogListBox.ColorIndicator.Width">8</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogListBox.MarkIndicator.Size">12</sys:Double>
+	<sys:Double x:Key="Double/SessionView.LogListBox.MinSizeToCloseSidePanel">100</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogsProgessingBar.Height">2</sys:Double>
 	<sys:Double x:Key="Double/SessionView.PredefinedLogTextFilterListBox.Icon.Size">12</sys:Double>
 	<sys:Double x:Key="Double/SessionView.PredefinedLogTextFiltersPopup.MaxHeight">500</sys:Double>

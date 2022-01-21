@@ -93,6 +93,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Fields.
 		readonly ScheduledAction autoAddLogFilesAction;
+		readonly ScheduledAction autoCloseSidePanelAction;
 		readonly ScheduledAction autoSetIPEndPointAction;
 		readonly ScheduledAction autoSetUriAction;
 		readonly ScheduledAction autoSetWorkingDirectoryAction;
@@ -128,6 +129,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		bool isTidLogPropertyVisible;
 		bool isUriNeededAfterLogProfileSet;
 		bool isWorkingDirNeededAfterLogProfileSet;
+		bool keepSidePanelVisible;
 		Control? lastClickedLogPropertyView;
 		readonly ContextMenu logActionMenu;
 		readonly List<ColumnDefinition> logHeaderColumns = new List<ColumnDefinition>();
@@ -147,6 +149,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly IntegerTextBox logThreadIdFilterTextBox;
 		readonly Panel logThreadIdFilterTextBoxPanel;
 		readonly ListBox markedLogListBox;
+		readonly double minLogListBoxSizeToCloseSidePanel;
 		readonly ToggleButton otherActionsButton;
 		readonly ContextMenu otherActionsMenu;
 		readonly ListBox predefinedLogTextFilterListBox;
@@ -211,6 +214,10 @@ namespace CarinaStudio.ULogViewer.Controls
 			// initialize
 			this.InitializeComponent();
 
+			// load resources
+			if (this.Application.TryGetResource<double>("Double/SessionView.LogListBox.MinSizeToCloseSidePanel", out var doubleRes))
+				this.minLogListBoxSizeToCloseSidePanel = doubleRes.GetValueOrDefault();
+
 			// setup controls
 			this.copyLogPropertyMenuItem = this.FindControl<MenuItem>(nameof(copyLogPropertyMenuItem)).AsNonNull();
 			this.logActionMenu = ((ContextMenu)this.Resources[nameof(logActionMenu)].AsNonNull()).Also(it =>
@@ -234,30 +241,26 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.logHeaderContainer = this.FindControl<Control>(nameof(logHeaderContainer)).AsNonNull();
 			this.logHeaderGrid = this.FindControl<Grid>(nameof(logHeaderGrid)).AsNonNull().Also(it =>
 			{
-				it.PropertyChanged += (_, e) =>
-				{
-					if (e.Property == Grid.BoundsProperty)
-						this.ReportLogHeaderColumnWidths();
-				};
+				it.GetObservable(BoundsProperty).Subscribe(_ => this.ReportLogHeaderColumnWidths());
 			});
 			this.logLevelFilterComboBox = this.FindControl<ComboBox>(nameof(logLevelFilterComboBox)).AsNonNull();
-			this.logListBoxContainer = this.FindControl<Panel>(nameof(logListBoxContainer)).AsNonNull();
+			this.logListBoxContainer = this.FindControl<Panel>(nameof(logListBoxContainer)).AsNonNull().Also(it =>
+			{
+				it.GetObservable(BoundsProperty).Subscribe(_ => this.autoCloseSidePanelAction?.Schedule());
+			});
 			this.logListBox = this.logListBoxContainer.FindControl<ListBox>(nameof(logListBox)).AsNonNull().Also(it =>
 			{
 				it.AddHandler(ListBox.PointerPressedEvent, this.OnLogListBoxPointerPressed, RoutingStrategies.Tunnel);
 				it.AddHandler(ListBox.PointerReleasedEvent, this.OnLogListBoxPointerReleased, RoutingStrategies.Tunnel);
 				it.AddHandler(ListBox.PointerWheelChangedEvent, this.OnLogListBoxPointerWheelChanged, RoutingStrategies.Tunnel);
-				it.PropertyChanged += (_, e) =>
+				it.GetObservable(ListBox.ScrollProperty).Subscribe(_ =>
 				{
-					if (e.Property == ListBox.ScrollProperty)
+					this.logScrollViewer = (it.Scroll as ScrollViewer)?.Also(scrollViewer =>
 					{
-						this.logScrollViewer = (it.Scroll as ScrollViewer)?.Also(scrollViewer =>
-						{
-							scrollViewer.AllowAutoHide = false;
-							scrollViewer.ScrollChanged += this.OnLogListBoxScrollChanged;
-						});
-					}
-				};
+						scrollViewer.AllowAutoHide = false;
+						scrollViewer.ScrollChanged += this.OnLogListBoxScrollChanged;
+					});
+				});
 			});
 			this.logMarkingMenu = (ContextMenu)this.Resources[nameof(logMarkingMenu)].AsNonNull();
 			this.logProcessIdFilterTextBoxPanel = this.FindControl<Panel>(nameof(logProcessIdFilterTextBoxPanel)).AsNonNull();
@@ -299,7 +302,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				{
 					it.GetObservable(ColumnDefinition.WidthProperty).Subscribe(length =>
 					{
-						if (this.DataContext is Session session)
+						if (this.DataContext is Session session && session.IsSidePanelVisible)
 							session.SidePanelSize = length.Value;
 					});
 				});
@@ -324,6 +327,15 @@ namespace CarinaStudio.ULogViewer.Controls
 				if (this.DataContext is not Session session || session.HasLogReaders)
 					return;
 				this.AddLogFiles();
+			});
+			this.autoCloseSidePanelAction = new ScheduledAction(() =>
+			{
+				if (this.DataContext is not Session session)
+					return;
+				if (this.keepSidePanelVisible)
+					this.keepSidePanelVisible = false;
+				else if (this.logListBoxContainer.Bounds.Width <= this.minLogListBoxSizeToCloseSidePanel)
+					session.IsSidePanelVisible = false;
 			});
 			this.autoSetIPEndPointAction = new ScheduledAction(() =>
 			{
@@ -596,8 +608,16 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.updateLogFiltersAction.Cancel();
 
 			// sync side panel state
-			Grid.SetColumnSpan(this.logListBoxContainer, session.IsSidePanelVisible ? 1 : 3);
-			this.sidePanelColumn.Width = new GridLength(session.SidePanelSize);
+			if (session.IsSidePanelVisible)
+			{
+				sidePanelColumn.Width = new GridLength(session.SidePanelSize);
+				Grid.SetColumnSpan(this.logListBoxContainer, 1);
+			}
+			else
+			{
+				sidePanelColumn.Width = new GridLength(0);
+				Grid.SetColumnSpan(this.logListBoxContainer, 3);
+			}
 
 			// update properties
 			this.validLogLevels.AddAll(session.ValidLogLevels);
@@ -2618,7 +2638,18 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.updateStatusBarStateAction.Schedule();
 					break;
 				case nameof(Session.IsSidePanelVisible):
-					Grid.SetColumnSpan(this.logListBoxContainer, session.IsSidePanelVisible ? 1 : 3);
+					if (session.IsSidePanelVisible)
+					{
+						this.keepSidePanelVisible = true;
+						sidePanelColumn.Width = new GridLength(session.SidePanelSize);
+						Grid.SetColumnSpan(this.logListBoxContainer, 1);
+					}
+					else
+					{
+						this.keepSidePanelVisible = false;
+						sidePanelColumn.Width = new GridLength(0);
+						Grid.SetColumnSpan(this.logListBoxContainer, 3);
+					}
 					break;
 				case nameof(Session.LogProfile):
 					session.LogProfile?.Let(profile =>
