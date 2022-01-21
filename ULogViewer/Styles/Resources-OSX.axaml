@@ -1,0 +1,21 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+	
+	<!-- SessionView -->
+	<KeyGesture x:Key="KeyGesture/SessionView.CopyLogs">Cmd+C</KeyGesture>
+	<KeyGesture x:Key="KeyGesture/SessionView.CopyLogsWithFileNames">Cmd+Shift+C</KeyGesture>
+	<KeyGesture x:Key="KeyGesture/SessionView.MarkLogs.Blue">Cmd+Alt+D5</KeyGesture>
+	<KeyGesture x:Key="KeyGesture/SessionView.MarkLogs.Default">Cmd+M</KeyGesture>
+	<KeyGesture x:Key="KeyGesture/SessionView.MarkLogs.Green">Cmd+Alt+D4</KeyGesture>
+	<KeyGesture x:Key="KeyGesture/SessionView.MarkLogs.Indigo">Cmd+Alt+D6</KeyGesture>
+	<KeyGesture x:Key="KeyGesture/SessionView.MarkLogs.Magenta">Cmd+Alt+D8</KeyGesture>
+	<KeyGesture x:Key="KeyGesture/SessionView.MarkLogs.Orange">Cmd+Alt+D2</KeyGesture>
+	<KeyGesture x:Key="KeyGesture/SessionView.MarkLogs.Purple">Cmd+Alt+D7</KeyGesture>
+	<KeyGesture x:Key="KeyGesture/SessionView.MarkLogs.Red">Cmd+Alt+D1</KeyGesture>
+	<KeyGesture x:Key="KeyGesture/SessionView.MarkLogs.Yellow">Cmd+Alt+D3</KeyGesture>
+	<KeyGesture x:Key="KeyGesture/SessionView.SaveAllLogs">Cmd+Shift+S</KeyGesture>
+	<KeyGesture x:Key="KeyGesture/SessionView.SaveLogs">Cmd+S</KeyGesture>
+	<KeyGesture x:Key="KeyGesture/SessionView.UnmarkLogs">Cmd+Alt+D0</KeyGesture>
+	
+</ResourceDictionary>

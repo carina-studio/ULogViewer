@@ -6,10 +6,12 @@
 	<sys:String x:Key="String/Common.Administrator">Superuser</sys:String>
 
 	<!-- SessionView -->
+	<sys:String x:Key="String/SessionView.AddLogFiles.WithShortcut">Add log files (⌘O)</sys:String>
+	<sys:String x:Key="String/SessionView.PredefinedLogTextFilters">Defined text filters (⌘P)</sys:String>
 	<sys:String x:Key="String/SessionView.RestartAsAdministrator">Restart as Superuser</sys:String>
-	<sys:String x:Key="String/SessionView.ShowAllLogsTemporarily">Show all logs temporarily (Option+A)</sys:String>
+	<sys:String x:Key="String/SessionView.ShowAllLogsTemporarily">Show all logs temporarily (⌥A)</sys:String>
 	<sys:String x:Key="String/SessionView.ShowFileInExplorer">Show file in Finder</sys:String>
-	<sys:String x:Key="String/SessionView.ShowMarkedLogsTemporarily">Show marked logs temporarily (Option+M)</sys:String>
+	<sys:String x:Key="String/SessionView.ShowMarkedLogsTemporarily">Show marked logs temporarily (⌥M)</sys:String>
 	<sys:String x:Key="String/SessionView.ShowWorkingDirectoryInExplorer">Show working directory in Finder</sys:String>
 	
 </ResourceDictionary>

@@ -299,6 +299,15 @@ namespace CarinaStudio.ULogViewer
 				NLog.LogManager.ReconfigExistingLoggers();
 			}
 
+			// prepare platform specific resources
+			if (Platform.IsMacOS)
+			{
+				this.Resources.MergedDictionaries.Add(new ResourceInclude()
+				{
+					Source = new Uri("avares://ULogViewer/Styles/Resources-OSX.axaml")
+				});
+			}
+
 			// call base
 			await base.OnPrepareStartingAsync();
 

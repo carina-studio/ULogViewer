@@ -260,7 +260,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.logProcessIdFilterTextBoxPanel = this.FindControl<Panel>(nameof(logProcessIdFilterTextBoxPanel)).AsNonNull();
 			this.logProcessIdFilterTextBox = this.logProcessIdFilterTextBoxPanel.FindControl<IntegerTextBox>(nameof(logProcessIdFilterTextBox)).AsNonNull();
 			this.logsSavingButton = this.FindControl<ToggleButton>(nameof(logsSavingButton)).AsNonNull();
-			this.logsSavingMenu = ((ContextMenu)this.Resources[Platform.IsMacOS ? $"{nameof(logsSavingMenu)}OSX" : nameof(logsSavingMenu)].AsNonNull()).Also(it =>
+			this.logsSavingMenu = ((ContextMenu)this.Resources[nameof(logsSavingMenu)].AsNonNull()).Also(it =>
 			{
 				it.MenuClosed += (_, e) => this.SynchronizationContext.Post(() => this.logsSavingButton.IsChecked = false);
 				it.MenuOpened += (_, e) => this.SynchronizationContext.Post(() => this.logsSavingButton.IsChecked = true);
@@ -2142,9 +2142,6 @@ namespace CarinaStudio.ULogViewer.Controls
 							}
 							else
 								this.SaveLogs((e.KeyModifiers & KeyModifiers.Shift) != 0);
-							break;
-						case Avalonia.Input.Key.T:
-							this.SelectNearestLogByTimestamp();
 							break;
 					}
 				}

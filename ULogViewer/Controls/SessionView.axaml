@@ -51,49 +51,49 @@
 						<Setter Property="Width" Value="{DynamicResource Double/MenuItem.Icon.Size}"/>
 					</Style>
 				</MenuItem.Styles>
-				<MenuItem Command="{Binding $parent[UserControl].MarkSelectedLogsCommand}" CommandParameter="{x:Static appViewModels:MarkColor.Default}" Header="{DynamicResource String/MarkColor.Default}" InputGesture="Ctrl+M"/>
-				<MenuItem Command="{Binding $parent[UserControl].MarkSelectedLogsCommand}" CommandParameter="{x:Static appViewModels:MarkColor.Red}" Header="{DynamicResource String/MarkColor.Red}" InputGesture="Ctrl+Alt+D1">
+				<MenuItem Command="{Binding $parent[UserControl].MarkSelectedLogsCommand}" CommandParameter="{x:Static appViewModels:MarkColor.Default}" Header="{DynamicResource String/MarkColor.Default}" InputGesture="{StaticResource KeyGesture/SessionView.MarkLogs.Default}"/>
+				<MenuItem Command="{Binding $parent[UserControl].MarkSelectedLogsCommand}" CommandParameter="{x:Static appViewModels:MarkColor.Red}" Header="{DynamicResource String/MarkColor.Red}" InputGesture="{StaticResource KeyGesture/SessionView.MarkLogs.Red}">
 					<MenuItem.Icon>
 						<Border Classes="MarkIcon" Background="{DynamicResource Brush/SessionView.LogListBox.MarkIndicator.Red}"/>
 					</MenuItem.Icon>
 				</MenuItem>
-				<MenuItem Command="{Binding $parent[UserControl].MarkSelectedLogsCommand}" CommandParameter="{x:Static appViewModels:MarkColor.Orange}" Header="{DynamicResource String/MarkColor.Orange}" InputGesture="Ctrl+Alt+D2">
+				<MenuItem Command="{Binding $parent[UserControl].MarkSelectedLogsCommand}" CommandParameter="{x:Static appViewModels:MarkColor.Orange}" Header="{DynamicResource String/MarkColor.Orange}" InputGesture="{StaticResource KeyGesture/SessionView.MarkLogs.Orange}">
 					<MenuItem.Icon>
 						<Border Classes="MarkIcon" Background="{DynamicResource Brush/SessionView.LogListBox.MarkIndicator.Orange}"/>
 					</MenuItem.Icon>
 				</MenuItem>
-				<MenuItem Command="{Binding $parent[UserControl].MarkSelectedLogsCommand}" CommandParameter="{x:Static appViewModels:MarkColor.Yellow}" Header="{DynamicResource String/MarkColor.Yellow}" InputGesture="Ctrl+Alt+D3">
+				<MenuItem Command="{Binding $parent[UserControl].MarkSelectedLogsCommand}" CommandParameter="{x:Static appViewModels:MarkColor.Yellow}" Header="{DynamicResource String/MarkColor.Yellow}" InputGesture="{StaticResource KeyGesture/SessionView.MarkLogs.Yellow}">
 					<MenuItem.Icon>
 						<Border Classes="MarkIcon" Background="{DynamicResource Brush/SessionView.LogListBox.MarkIndicator.Yellow}"/>
 					</MenuItem.Icon>
 				</MenuItem>
-				<MenuItem Command="{Binding $parent[UserControl].MarkSelectedLogsCommand}" CommandParameter="{x:Static appViewModels:MarkColor.Green}" Header="{DynamicResource String/MarkColor.Green}" InputGesture="Ctrl+Alt+D4">
+				<MenuItem Command="{Binding $parent[UserControl].MarkSelectedLogsCommand}" CommandParameter="{x:Static appViewModels:MarkColor.Green}" Header="{DynamicResource String/MarkColor.Green}" InputGesture="{StaticResource KeyGesture/SessionView.MarkLogs.Green}">
 					<MenuItem.Icon>
 						<Border Classes="MarkIcon" Background="{DynamicResource Brush/SessionView.LogListBox.MarkIndicator.Green}"/>
 					</MenuItem.Icon>
 				</MenuItem>
-				<MenuItem Command="{Binding $parent[UserControl].MarkSelectedLogsCommand}" CommandParameter="{x:Static appViewModels:MarkColor.Blue}" Header="{DynamicResource String/MarkColor.Blue}" InputGesture="Ctrl+Alt+D5">
+				<MenuItem Command="{Binding $parent[UserControl].MarkSelectedLogsCommand}" CommandParameter="{x:Static appViewModels:MarkColor.Blue}" Header="{DynamicResource String/MarkColor.Blue}" InputGesture="{StaticResource KeyGesture/SessionView.MarkLogs.Blue}">
 					<MenuItem.Icon>
 						<Border Classes="MarkIcon" Background="{DynamicResource Brush/SessionView.LogListBox.MarkIndicator.Blue}"/>
 					</MenuItem.Icon>
 				</MenuItem>
-				<MenuItem Command="{Binding $parent[UserControl].MarkSelectedLogsCommand}" CommandParameter="{x:Static appViewModels:MarkColor.Indigo}" Header="{DynamicResource String/MarkColor.Indigo}" InputGesture="Ctrl+Alt+D6">
+				<MenuItem Command="{Binding $parent[UserControl].MarkSelectedLogsCommand}" CommandParameter="{x:Static appViewModels:MarkColor.Indigo}" Header="{DynamicResource String/MarkColor.Indigo}" InputGesture="{StaticResource KeyGesture/SessionView.MarkLogs.Indigo}">
 					<MenuItem.Icon>
 						<Border Classes="MarkIcon" Background="{DynamicResource Brush/SessionView.LogListBox.MarkIndicator.Indigo}"/>
 					</MenuItem.Icon>
 				</MenuItem>
-				<MenuItem Command="{Binding $parent[UserControl].MarkSelectedLogsCommand}" CommandParameter="{x:Static appViewModels:MarkColor.Purple}" Header="{DynamicResource String/MarkColor.Purple}" InputGesture="Ctrl+Alt+D7">
+				<MenuItem Command="{Binding $parent[UserControl].MarkSelectedLogsCommand}" CommandParameter="{x:Static appViewModels:MarkColor.Purple}" Header="{DynamicResource String/MarkColor.Purple}" InputGesture="{StaticResource KeyGesture/SessionView.MarkLogs.Purple}">
 					<MenuItem.Icon>
 						<Border Classes="MarkIcon" Background="{DynamicResource Brush/SessionView.LogListBox.MarkIndicator.Purple}"/>
 					</MenuItem.Icon>
 				</MenuItem>
-				<MenuItem Command="{Binding $parent[UserControl].MarkSelectedLogsCommand}" CommandParameter="{x:Static appViewModels:MarkColor.Magenta}" Header="{DynamicResource String/MarkColor.Magenta}" InputGesture="Ctrl+Alt+D8">
+				<MenuItem Command="{Binding $parent[UserControl].MarkSelectedLogsCommand}" CommandParameter="{x:Static appViewModels:MarkColor.Magenta}" Header="{DynamicResource String/MarkColor.Magenta}" InputGesture="{StaticResource KeyGesture/SessionView.MarkLogs.Magenta}">
 					<MenuItem.Icon>
 						<Border Classes="MarkIcon" Background="{DynamicResource Brush/SessionView.LogListBox.MarkIndicator.Magenta}"/>
 					</MenuItem.Icon>
 				</MenuItem>
 			</MenuItem>
-			<MenuItem Command="{Binding $parent[UserControl].UnmarkSelectedLogsCommand}" Header="{DynamicResource String/SessionView.UnmarkLogs}" InputGesture="Ctrl+Alt+D0">
+			<MenuItem Command="{Binding $parent[UserControl].UnmarkSelectedLogsCommand}" Header="{DynamicResource String/SessionView.UnmarkLogs}" InputGesture="{StaticResource KeyGesture/SessionView.UnmarkLogs}">
 				<MenuItem.Icon>
 					<Image Classes="Icon" Source="{DynamicResource Image/Unmark}"/>
 				</MenuItem.Icon>
@@ -101,12 +101,12 @@
 			<MenuItem Command="{Binding $parent[UserControl].SelectMarkedLogsCommand}" Header="{DynamicResource String/SessionView.SelectMarkedLogs}" InputGesture="S"/>
 			<Separator/>
 			<MenuItem Name="copyLogPropertyMenuItem" Command="{Binding $parent[UserControl].CopyLogPropertyCommand}" Header="{DynamicResource String/SessionView.CopyLogProperty.Disabled}"/>
-			<MenuItem Command="{Binding $parent[UserControl].CopySelectedLogsCommand}" Header="{DynamicResource String/SessionView.CopyLogs}" InputGesture="Ctrl+C">
+			<MenuItem Command="{Binding $parent[UserControl].CopySelectedLogsCommand}" Header="{DynamicResource String/SessionView.CopyLogs}" InputGesture="{StaticResource KeyGesture/SessionView.CopyLogs}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{DynamicResource Image/Icon.Copy}"/>
 				</MenuItem.Icon>
 			</MenuItem>
-			<MenuItem Command="{Binding $parent[UserControl].CopySelectedLogsWithFileNamesCommand}" Header="{DynamicResource String/SessionView.CopyLogsWithFileNames}" InputGesture="Ctrl+Shift+C">
+			<MenuItem Command="{Binding $parent[UserControl].CopySelectedLogsWithFileNamesCommand}" Header="{DynamicResource String/SessionView.CopyLogsWithFileNames}" InputGesture="{StaticResource KeyGesture/SessionView.CopyLogsWithFileNames}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{DynamicResource Image/Icon.Copy}"/>
 				</MenuItem.Icon>
@@ -163,49 +163,49 @@
 					<Setter Property="Width" Value="{DynamicResource Double/MenuItem.Icon.Size}"/>
 				</Style>
 			</ContextMenu.Styles>
-			<MenuItem Command="{Binding $parent[UserControl].MarkSelectedLogsCommand}" CommandParameter="{x:Static appViewModels:MarkColor.Default}" Header="{DynamicResource String/MarkColor.Default}" InputGesture="Ctrl+M"/>
-			<MenuItem Command="{Binding $parent[UserControl].MarkSelectedLogsCommand}" CommandParameter="{x:Static appViewModels:MarkColor.Red}" Header="{DynamicResource String/MarkColor.Red}" InputGesture="Ctrl+Alt+D1">
+			<MenuItem Command="{Binding $parent[UserControl].MarkSelectedLogsCommand}" CommandParameter="{x:Static appViewModels:MarkColor.Default}" Header="{DynamicResource String/MarkColor.Default}" InputGesture="{StaticResource KeyGesture/SessionView.MarkLogs.Default}"/>
+			<MenuItem Command="{Binding $parent[UserControl].MarkSelectedLogsCommand}" CommandParameter="{x:Static appViewModels:MarkColor.Red}" Header="{DynamicResource String/MarkColor.Red}" InputGesture="{StaticResource KeyGesture/SessionView.MarkLogs.Red}">
 				<MenuItem.Icon>
 					<Border Classes="MarkIcon" Background="{DynamicResource Brush/SessionView.LogListBox.MarkIndicator.Red}"/>
 				</MenuItem.Icon>
 			</MenuItem>
-			<MenuItem Command="{Binding $parent[UserControl].MarkSelectedLogsCommand}" CommandParameter="{x:Static appViewModels:MarkColor.Orange}" Header="{DynamicResource String/MarkColor.Orange}" InputGesture="Ctrl+Alt+D2">
+			<MenuItem Command="{Binding $parent[UserControl].MarkSelectedLogsCommand}" CommandParameter="{x:Static appViewModels:MarkColor.Orange}" Header="{DynamicResource String/MarkColor.Orange}" InputGesture="{StaticResource KeyGesture/SessionView.MarkLogs.Orange}">
 				<MenuItem.Icon>
 					<Border Classes="MarkIcon" Background="{DynamicResource Brush/SessionView.LogListBox.MarkIndicator.Orange}"/>
 				</MenuItem.Icon>
 			</MenuItem>
-			<MenuItem Command="{Binding $parent[UserControl].MarkSelectedLogsCommand}" CommandParameter="{x:Static appViewModels:MarkColor.Yellow}" Header="{DynamicResource String/MarkColor.Yellow}" InputGesture="Ctrl+Alt+D3">
+			<MenuItem Command="{Binding $parent[UserControl].MarkSelectedLogsCommand}" CommandParameter="{x:Static appViewModels:MarkColor.Yellow}" Header="{DynamicResource String/MarkColor.Yellow}" InputGesture="{StaticResource KeyGesture/SessionView.MarkLogs.Yellow}">
 				<MenuItem.Icon>
 					<Border Classes="MarkIcon" Background="{DynamicResource Brush/SessionView.LogListBox.MarkIndicator.Yellow}"/>
 				</MenuItem.Icon>
 			</MenuItem>
-			<MenuItem Command="{Binding $parent[UserControl].MarkSelectedLogsCommand}" CommandParameter="{x:Static appViewModels:MarkColor.Green}" Header="{DynamicResource String/MarkColor.Green}" InputGesture="Ctrl+Alt+D4">
+			<MenuItem Command="{Binding $parent[UserControl].MarkSelectedLogsCommand}" CommandParameter="{x:Static appViewModels:MarkColor.Green}" Header="{DynamicResource String/MarkColor.Green}" InputGesture="{StaticResource KeyGesture/SessionView.MarkLogs.Green}">
 				<MenuItem.Icon>
 					<Border Classes="MarkIcon" Background="{DynamicResource Brush/SessionView.LogListBox.MarkIndicator.Green}"/>
 				</MenuItem.Icon>
 			</MenuItem>
-			<MenuItem Command="{Binding $parent[UserControl].MarkSelectedLogsCommand}" CommandParameter="{x:Static appViewModels:MarkColor.Blue}" Header="{DynamicResource String/MarkColor.Blue}" InputGesture="Ctrl+Alt+D5">
+			<MenuItem Command="{Binding $parent[UserControl].MarkSelectedLogsCommand}" CommandParameter="{x:Static appViewModels:MarkColor.Blue}" Header="{DynamicResource String/MarkColor.Blue}" InputGesture="{StaticResource KeyGesture/SessionView.MarkLogs.Blue}">
 				<MenuItem.Icon>
 					<Border Classes="MarkIcon" Background="{DynamicResource Brush/SessionView.LogListBox.MarkIndicator.Blue}"/>
 				</MenuItem.Icon>
 			</MenuItem>
-			<MenuItem Command="{Binding $parent[UserControl].MarkSelectedLogsCommand}" CommandParameter="{x:Static appViewModels:MarkColor.Indigo}" Header="{DynamicResource String/MarkColor.Indigo}" InputGesture="Ctrl+Alt+D6">
+			<MenuItem Command="{Binding $parent[UserControl].MarkSelectedLogsCommand}" CommandParameter="{x:Static appViewModels:MarkColor.Indigo}" Header="{DynamicResource String/MarkColor.Indigo}" InputGesture="{StaticResource KeyGesture/SessionView.MarkLogs.Indigo}">
 				<MenuItem.Icon>
 					<Border Classes="MarkIcon" Background="{DynamicResource Brush/SessionView.LogListBox.MarkIndicator.Indigo}"/>
 				</MenuItem.Icon>
 			</MenuItem>
-			<MenuItem Command="{Binding $parent[UserControl].MarkSelectedLogsCommand}" CommandParameter="{x:Static appViewModels:MarkColor.Purple}" Header="{DynamicResource String/MarkColor.Purple}" InputGesture="Ctrl+Alt+D7">
+			<MenuItem Command="{Binding $parent[UserControl].MarkSelectedLogsCommand}" CommandParameter="{x:Static appViewModels:MarkColor.Purple}" Header="{DynamicResource String/MarkColor.Purple}" InputGesture="{StaticResource KeyGesture/SessionView.MarkLogs.Purple}">
 				<MenuItem.Icon>
 					<Border Classes="MarkIcon" Background="{DynamicResource Brush/SessionView.LogListBox.MarkIndicator.Purple}"/>
 				</MenuItem.Icon>
 			</MenuItem>
-			<MenuItem Command="{Binding $parent[UserControl].MarkSelectedLogsCommand}" CommandParameter="{x:Static appViewModels:MarkColor.Magenta}" Header="{DynamicResource String/MarkColor.Magenta}" InputGesture="Ctrl+Alt+D8">
+			<MenuItem Command="{Binding $parent[UserControl].MarkSelectedLogsCommand}" CommandParameter="{x:Static appViewModels:MarkColor.Magenta}" Header="{DynamicResource String/MarkColor.Magenta}" InputGesture="{StaticResource KeyGesture/SessionView.MarkLogs.Magenta}">
 				<MenuItem.Icon>
 					<Border Classes="MarkIcon" Background="{DynamicResource Brush/SessionView.LogListBox.MarkIndicator.Magenta}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 			<Separator/>
-			<MenuItem Command="{Binding $parent[UserControl].UnmarkSelectedLogsCommand}" Header="{DynamicResource String/SessionView.UnmarkLogs}" InputGesture="Ctrl+Alt+D0">
+			<MenuItem Command="{Binding $parent[UserControl].UnmarkSelectedLogsCommand}" Header="{DynamicResource String/SessionView.UnmarkLogs}" InputGesture="{StaticResource KeyGesture/SessionView.UnmarkLogs}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{DynamicResource Image/Unmark}"/>
 				</MenuItem.Icon>
@@ -214,12 +214,8 @@
 
 		<!-- Logs saving menu -->
 		<ContextMenu x:Key="logsSavingMenu" PlacementMode="Bottom">
-			<MenuItem Command="{Binding $parent[UserControl].SaveLogsCommand}" Header="{DynamicResource String/SessionView.SaveLogs}" InputGesture="Ctrl+S"/>
-			<MenuItem Command="{Binding $parent[UserControl].SaveAllLogsCommand}" Header="{DynamicResource String/SessionView.SaveAllLogs}" InputGesture="Ctrl+Shift+S"/>
-		</ContextMenu>
-		<ContextMenu x:Key="logsSavingMenuOSX" PlacementMode="Bottom">
-			<MenuItem Command="{Binding $parent[UserControl].SaveLogsCommand}" Header="{DynamicResource String/SessionView.SaveLogs}" InputGesture="Cmd+S"/>
-			<MenuItem Command="{Binding $parent[UserControl].SaveAllLogsCommand}" Header="{DynamicResource String/SessionView.SaveAllLogs}" InputGesture="Cmd+Shift+S"/>
+			<MenuItem Command="{Binding $parent[UserControl].SaveLogsCommand}" Header="{DynamicResource String/SessionView.SaveLogs}" InputGesture="{StaticResource KeyGesture/SessionView.SaveLogs}"/>
+			<MenuItem Command="{Binding $parent[UserControl].SaveAllLogsCommand}" Header="{DynamicResource String/SessionView.SaveAllLogs}" InputGesture="{StaticResource KeyGesture/SessionView.SaveAllLogs}"/>
 		</ContextMenu>
 
 		<!-- Other actions menu -->

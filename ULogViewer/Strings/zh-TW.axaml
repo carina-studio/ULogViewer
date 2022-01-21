@@ -391,7 +391,7 @@
 	<sys:String x:Key="String/Session.Empty">空白分頁</sys:String>
 
 	<!-- SessionView -->
-	<sys:String x:Key="String/SessionView.AddLogFiles">加入日誌檔案</sys:String>
+<sys:String x:Key="String/SessionView.AddLogFiles">加入日誌檔案</sys:String>
 	<sys:String x:Key="String/SessionView.AddLogFiles.WithShortcut">加入日誌檔案 (Ctrl+O)</sys:String>
 	<sys:String x:Key="String/SessionView.AllLogCount">總數：</sys:String>
 	<sys:String x:Key="String/SessionView.AllLogLevels">所有等級</sys:String>
@@ -455,7 +455,7 @@
 	<sys:String x:Key="String/SessionView.SelectedLogCount">已選取：</sys:String>
 	<sys:String x:Key="String/SessionView.SelectedLogsDuration">選取的時長：</sys:String>
 	<sys:String x:Key="String/SessionView.SelectMarkedLogs">選取已標記的日誌</sys:String>
-	<sys:String x:Key="String/SessionView.SelectNearestLogByTimestamp">選取最接近指定時間戳的日誌 (Ctrl+T)</sys:String>
+	<sys:String x:Key="String/SessionView.SelectNearestLogByTimestamp">選取最接近指定時間戳的日誌</sys:String>
 	<sys:String x:Key="String/SessionView.SelectNearestLogByTimestamp.Message">指定的時間戳</sys:String>
 	<sys:String x:Key="String/SessionView.SelectNearestLogByTimestamp.Title">選取最接近指定時間戳的日誌</sys:String>
 	<sys:String x:Key="String/SessionView.SetIPEndPoint">選取/變更 IP 端點</sys:String>
