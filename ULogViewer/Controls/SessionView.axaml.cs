@@ -2065,7 +2065,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.pressedKeys.Add(e.Key);
 			if (!e.Handled)
 			{
-				var isCmdPressed = Platform.IsMacOS && (this.pressedKeys.Contains(Key.LWin) || this.pressedKeys.Contains(Key.RWin));
+				var isCmdPressed = Platform.IsMacOS && (this.pressedKeys.Contains(Avalonia.Input.Key.LWin) || this.pressedKeys.Contains(Avalonia.Input.Key.RWin));
 				var isCtrlPressed = Platform.IsMacOS ? isCmdPressed : (e.KeyModifiers & KeyModifiers.Control) != 0;
 				if (this.Application.IsDebugMode && e.Source is not TextBox)
 					this.Logger.LogTrace($"[KeyDown] {e.Key}, Ctrl/Cmd: {isCtrlPressed}, Shift: {(e.KeyModifiers & KeyModifiers.Shift) != 0}, Alt: {(e.KeyModifiers & KeyModifiers.Alt) != 0}");
@@ -2270,7 +2270,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			// handle key event for single key
 			if (!e.Handled)
 			{
-				var isCmdPressed = Platform.IsMacOS && (this.pressedKeys.Contains(Key.LWin) || this.pressedKeys.Contains(Key.RWin));
+				var isCmdPressed = Platform.IsMacOS && (this.pressedKeys.Contains(Avalonia.Input.Key.LWin) || this.pressedKeys.Contains(Avalonia.Input.Key.RWin));
 				var isCtrlPressed = Platform.IsMacOS ? isCmdPressed : (e.KeyModifiers & KeyModifiers.Control) != 0;
 				if (this.Application.IsDebugMode && e.Source is not TextBox)
 					this.Logger.LogTrace($"[KeyUp] {e.Key}, Ctrl/Cmd: {isCmdPressed}, Shift: {(e.KeyModifiers & KeyModifiers.Shift) != 0}, Alt: {(e.KeyModifiers & KeyModifiers.Alt) != 0}");
