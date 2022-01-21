@@ -138,9 +138,11 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ListBox logListBox;
 		readonly ContextMenu logMarkingMenu;
 		readonly IntegerTextBox logProcessIdFilterTextBox;
+		readonly Panel logProcessIdFilterTextBoxPanel;
 		ScrollViewer? logScrollViewer;
 		readonly RegexTextBox logTextFilterTextBox;
 		readonly IntegerTextBox logThreadIdFilterTextBox;
+		readonly Panel logThreadIdFilterTextBoxPanel;
 		readonly ListBox markedLogListBox;
 		readonly ToggleButton otherActionsButton;
 		readonly ContextMenu otherActionsMenu;
@@ -253,13 +255,15 @@ namespace CarinaStudio.ULogViewer.Controls
 				};
 			});
 			this.logMarkingMenu = (ContextMenu)this.Resources[nameof(logMarkingMenu)].AsNonNull();
-			this.logProcessIdFilterTextBox = this.FindControl<IntegerTextBox>(nameof(logProcessIdFilterTextBox)).AsNonNull();
+			this.logProcessIdFilterTextBoxPanel = this.FindControl<Panel>(nameof(logProcessIdFilterTextBoxPanel)).AsNonNull();
+			this.logProcessIdFilterTextBox = this.logProcessIdFilterTextBoxPanel.FindControl<IntegerTextBox>(nameof(logProcessIdFilterTextBox)).AsNonNull();
 			this.logTextFilterTextBox = this.FindControl<RegexTextBox>(nameof(logTextFilterTextBox)).AsNonNull().Also(it =>
 			{
 				it.IgnoreCase = this.Settings.GetValueOrDefault(SettingKeys.IgnoreCaseOfLogTextFilter);
 				it.ValidationDelay = this.UpdateLogFilterParamsDelay;
 			});
-			this.logThreadIdFilterTextBox = this.FindControl<IntegerTextBox>(nameof(logThreadIdFilterTextBox)).AsNonNull();
+			this.logThreadIdFilterTextBoxPanel = this.FindControl<Panel>(nameof(logThreadIdFilterTextBoxPanel)).AsNonNull();
+			this.logThreadIdFilterTextBox = this.logThreadIdFilterTextBoxPanel.FindControl<IntegerTextBox>(nameof(logThreadIdFilterTextBox)).AsNonNull();
 			this.markedLogListBox = this.FindControl<ListBox>(nameof(markedLogListBox)).AsNonNull();
 			this.otherActionsButton = this.FindControl<ToggleButton>(nameof(otherActionsButton)).AsNonNull().Also(it =>
 			{
@@ -1439,7 +1443,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			// filter
 			if (resetOtherFilters)
 				this.ResetLogFilters();
-			this.logProcessIdFilterTextBox.Text = pid.Value.ToString();
+			this.logProcessIdFilterTextBox.Value = pid;
 			this.updateLogFiltersAction.Reschedule();
 		}
 
@@ -1465,7 +1469,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			// filter
 			if (resetOtherFilters)
 				this.ResetLogFilters();
-			this.logThreadIdFilterTextBox.Text = tid.Value.ToString();
+			this.logThreadIdFilterTextBox.Value = tid;
 			this.updateLogFiltersAction.Reschedule();
 		}
 
@@ -1788,18 +1792,18 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// show/hide log filters UI
 			if (this.isPidLogPropertyVisible)
-				this.logProcessIdFilterTextBox.IsVisible = true;
+				this.logProcessIdFilterTextBoxPanel.IsVisible = true;
 			else
 			{
-				this.logProcessIdFilterTextBox.IsVisible = false;
-				this.logProcessIdFilterTextBox.Text = "";
+				this.logProcessIdFilterTextBoxPanel.IsVisible = false;
+				this.logProcessIdFilterTextBox.Value = null;
 			}
 			if (this.isTidLogPropertyVisible)
-				this.logThreadIdFilterTextBox.IsVisible = true;
+				this.logThreadIdFilterTextBoxPanel.IsVisible = true;
 			else
 			{
-				this.logThreadIdFilterTextBox.IsVisible = false;
-				this.logThreadIdFilterTextBox.Text = "";
+				this.logThreadIdFilterTextBoxPanel.IsVisible = false;
+				this.logThreadIdFilterTextBox.Value = null;
 			}
 
 			// update filter availability
@@ -2722,9 +2726,9 @@ namespace CarinaStudio.ULogViewer.Controls
 		void ResetLogFilters()
 		{
 			this.logLevelFilterComboBox.SelectedIndex = 0;
-			this.logProcessIdFilterTextBox.Text = "";
+			this.logProcessIdFilterTextBox.Value = null;
 			this.logTextFilterTextBox.Regex = null;
-			this.logThreadIdFilterTextBox.Text = "";
+			this.logThreadIdFilterTextBox.Value = null;
 			this.predefinedLogTextFilterListBox.SelectedItems.Clear();
 			this.updateLogFiltersAction.Execute();
 		}
