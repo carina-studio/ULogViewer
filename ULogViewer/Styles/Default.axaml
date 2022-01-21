@@ -124,15 +124,14 @@
 	</Style>
 
 	<!-- SessionView -->
+	<Style Selector="Grid.SessionView_SidePanel_Header">
+		<Setter Property="Margin" Value="{DynamicResource Thickness/SessionView.SidePanel.Header.Margin}"/>
+	</Style>
 	<Style Selector="Image.SessionView_SidePanel_Header">
 		<Setter Property="Height" Value="{DynamicResource Double/SessionView.SidePanel.Header.Icon.Size}"/>
 		<Setter Property="Margin" Value="{DynamicResource Thickness/SessionView.SidePanel.Header.Icon.Margin}"/>
 		<Setter Property="VerticalAlignment" Value="Center"/>
 		<Setter Property="Width" Value="{DynamicResource Double/SessionView.SidePanel.Header.Icon.Size}"/>
-	</Style>
-	<Style Selector="StackPanel.SessionView_SidePanel_Header">
-		<Setter Property="Margin" Value="{DynamicResource Thickness/SessionView.SidePanel.Header.Margin}"/>
-		<Setter Property="Orientation" Value="Horizontal"/>
 	</Style>
 	<Style Selector="TextBlock.SessionView_SidePanel_EmptyHint">
 		<Setter Property="Margin" Value="{DynamicResource Thickness/SessionView.SidePanel.EmptyHint.Margin}"/>

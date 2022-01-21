@@ -275,13 +275,13 @@
 	</UserControl.Resources>
 	
 	<!-- Content -->
-	<Grid RowDefinitions="Auto,*,Auto">
+	<Grid Name="RootGrid" RowDefinitions="Auto,*,Auto">
 
 		<!-- Columns -->
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="*"/>
 			<ColumnDefinition Width="Auto"/>
-			<ColumnDefinition MaxWidth="{DynamicResource Double/SessionView.SidePanel.MaxWidth}" MinWidth="{DynamicResource Double/SessionView.SidePanel.MinWidth}" Width="0"/>
+			<ColumnDefinition MaxWidth="{x:Static appViewModels:Session.MaxSidePanelSize}" MinWidth="{x:Static appViewModels:Session.MinSidePanelSize}" Width="0"/>
 		</Grid.ColumnDefinitions>
 
 		<!-- Toolbar -->
@@ -559,6 +559,14 @@
 							<Image Classes="Icon" Source="{StaticResource Image/Icon.Lab}"/>
 						</Button>
 
+						<!-- Side panel -->
+						<ToggleButton Classes="ToolBar_ToggleButton" IsChecked="{Binding IsSidePanelVisible, Mode=TwoWay}" ToolTip.Tip="{DynamicResource String/SessionView.SidePanel}">
+							<Panel>
+								<Image Classes="Icon" Source="{StaticResource Image/Icon.SidePanel}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
+								<Image Classes="Icon" Source="{StaticResource Image/Icon.SidePanel.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
+							</Panel>
+						</ToggleButton>
+
 						<!-- Other actions -->
 						<ToggleButton Name="otherActionsButton" Classes="ToolBar_ToggleButton" Command="{Binding $parent[UserControl].ShowOtherActions}" ToolTip.Tip="{DynamicResource String/SessionView.OtherActions}">
 							<Panel>
@@ -578,7 +586,7 @@
 		</Panel>
 
 		<!-- Logs -->
-		<Grid Background="{x:Static Brushes.Transparent}" DragDrop.AllowDrop="True" Grid.Row="1" RowDefinitions="Auto,*,Auto">
+		<Grid Name="logListBoxContainer" Background="{x:Static Brushes.Transparent}" DragDrop.AllowDrop="True" Grid.Row="1" RowDefinitions="Auto,*,Auto">
 
 			<!-- Header -->
 			<Border Background="{DynamicResource Brush/SessionView.LogHeader.Background}">
@@ -894,17 +902,17 @@
 		</Border>
 
 		<!-- Side panel -->
-		<Border Background="{DynamicResource Brush/WorkingArea.Panel.Background}" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Stretch" IsEnabled="{Binding $parent[UserControl].HasProfile}">
+		<Border Background="{DynamicResource Brush/WorkingArea.Panel.Background}" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Stretch" IsEnabled="{Binding $parent[UserControl].HasProfile}" IsVisible="{Binding IsSidePanelVisible}">
 			<Grid HorizontalAlignment="Stretch" RowDefinitions="Auto,*" VerticalAlignment="Stretch">
 
 				<!-- Marked logs -->
-				<StackPanel Classes="SessionView_SidePanel_Header">
+				<Grid Classes="SessionView_SidePanel_Header" ColumnDefinitions="Auto,*" HorizontalAlignment="Stretch">
 					<Image Classes="SessionView_SidePanel_Header" Source="{StaticResource Image/Marked}"/>
-					<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+					<StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
 						<TextBlock Classes="SessionView_SidePanel_Header" Text="{DynamicResource String/SessionView.MarkedLogs}"/>
 						<TextBlock Classes="SessionView_SidePanel_Header" Text="{Binding MarkedLogs.Count, StringFormat={} ({0})}"/>
 					</StackPanel>
-				</StackPanel>
+				</Grid>
 				<Panel Grid.Row="1">
 					<ListBox Name="markedLogListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" Focusable="False" IsVisible="{Binding HasMarkedLogs}" Items="{Binding MarkedLogs}" SelectionChanged="OnMarkedLogListBoxSelectionChanged" SelectionMode="Single">
 						<ListBox.Styles>
@@ -934,7 +942,7 @@
 				
 			</Grid>
 		</Border>
-		<GridSplitter Background="{DynamicResource Brush/WorkingArea.Panel.Background}" Classes="GridSplitter_Vertical" Grid.Column="1" Grid.Row="1"/>
+		<GridSplitter Background="{DynamicResource Brush/WorkingArea.Panel.Background}" Classes="GridSplitter_Vertical" Grid.Column="1" Grid.Row="1" IsVisible="{Binding IsSidePanelVisible}"/>
 
 	</Grid>
 

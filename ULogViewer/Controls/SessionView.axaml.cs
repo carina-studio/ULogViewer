@@ -136,6 +136,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly List<MutableObservableValue<GridLength>> logHeaderWidths = new List<MutableObservableValue<GridLength>>();
 		readonly ComboBox logLevelFilterComboBox;
 		readonly ListBox logListBox;
+		readonly Panel logListBoxContainer;
 		readonly ContextMenu logMarkingMenu;
 		readonly IntegerTextBox logProcessIdFilterTextBox;
 		readonly Panel logProcessIdFilterTextBoxPanel;
@@ -156,6 +157,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ScheduledAction scrollToLatestLogAction;
 		readonly HashSet<PredefinedLogTextFilter> selectedPredefinedLogTextFilters = new HashSet<PredefinedLogTextFilter>();
 		readonly MenuItem showLogPropertyMenuItem;
+		readonly ColumnDefinition sidePanelColumn;
 		readonly ScheduledAction updateLogFiltersAction;
 		readonly ScheduledAction updateStatusBarStateAction;
 		readonly SortedObservableList<Logs.LogLevel> validLogLevels = new SortedObservableList<Logs.LogLevel>((x, y) => (int)x - (int)y);
@@ -239,7 +241,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				};
 			});
 			this.logLevelFilterComboBox = this.FindControl<ComboBox>(nameof(logLevelFilterComboBox)).AsNonNull();
-			this.logListBox = this.FindControl<ListBox>(nameof(logListBox)).AsNonNull().Also(it =>
+			this.logListBoxContainer = this.FindControl<Panel>(nameof(logListBoxContainer)).AsNonNull();
+			this.logListBox = this.logListBoxContainer.FindControl<ListBox>(nameof(logListBox)).AsNonNull().Also(it =>
 			{
 				it.AddHandler(ListBox.PointerPressedEvent, this.OnLogListBoxPointerPressed, RoutingStrategies.Tunnel);
 				it.AddHandler(ListBox.PointerReleasedEvent, this.OnLogListBoxPointerReleased, RoutingStrategies.Tunnel);
@@ -290,6 +293,17 @@ namespace CarinaStudio.ULogViewer.Controls
 				it.Opened += (_, sender) => this.predefinedLogTextFilterListBox.Focus();
 			});
 			this.showLogPropertyMenuItem = this.FindControl<MenuItem>(nameof(showLogPropertyMenuItem)).AsNonNull();
+			this.sidePanelColumn = this.FindControl<Grid>("RootGrid").AsNonNull().Let(grid =>
+			{
+				return grid.ColumnDefinitions[2].Also(it =>
+				{
+					it.GetObservable(ColumnDefinition.WidthProperty).Subscribe(length =>
+					{
+						if (this.DataContext is Session session)
+							session.SidePanelSize = length.Value;
+					});
+				});
+			});
 #if !DEBUG
 			this.FindControl<Button>("testButton").AsNonNull().IsVisible = false;
 #endif
@@ -580,6 +594,10 @@ namespace CarinaStudio.ULogViewer.Controls
 				});
 			}
 			this.updateLogFiltersAction.Cancel();
+
+			// sync side panel state
+			Grid.SetColumnSpan(this.logListBoxContainer, session.IsSidePanelVisible ? 1 : 3);
+			this.sidePanelColumn.Width = new GridLength(session.SidePanelSize);
 
 			// update properties
 			this.validLogLevels.AddAll(session.ValidLogLevels);
@@ -2598,6 +2616,9 @@ namespace CarinaStudio.ULogViewer.Controls
 					break;
 				case nameof(Session.IsLogsReadingPaused):
 					this.updateStatusBarStateAction.Schedule();
+					break;
+				case nameof(Session.IsSidePanelVisible):
+					Grid.SetColumnSpan(this.logListBoxContainer, session.IsSidePanelVisible ? 1 : 3);
 					break;
 				case nameof(Session.LogProfile):
 					session.LogProfile?.Let(profile =>

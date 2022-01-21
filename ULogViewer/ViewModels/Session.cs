@@ -38,6 +38,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 	class Session : ViewModel
 	{
 		/// <summary>
+		/// Maximum size of side panel.
+		/// </summary>
+		public const double MaxSidePanelSize = 400;
+		/// <summary>
+		/// Minimum size of side panel.
+		/// </summary>
+		public const double MinSidePanelSize = 100;
+
+
+		/// <summary>
 		/// Property of <see cref="AllLogCount"/>.
 		/// </summary>
 		public static readonly ObservableProperty<int> AllLogCountProperty = ObservableProperty.Register<Session, int>(nameof(AllLogCount));
@@ -190,6 +200,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsShowingMarkedLogsTemporarilyProperty = ObservableProperty.Register<Session, bool>(nameof(IsShowingMarkedLogsTemporarily));
 		/// <summary>
+		/// Property of <see cref="IsSidePanelVisible"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> IsSidePanelVisibleProperty = ObservableProperty.Register<Session, bool>(nameof(IsSidePanelVisible), true);
+		/// <summary>
 		/// Property of <see cref="IsUriNeeded"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsUriNeededProperty = ObservableProperty.Register<Session, bool>(nameof(IsUriNeeded));
@@ -261,6 +275,17 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Property of <see cref="LogThreadIdFilter"/>.
 		/// </summary>
 		public static readonly ObservableProperty<int?> LogThreadIdFilterProperty = ObservableProperty.Register<Session, int?>(nameof(LogThreadIdFilter));
+		/// <summary>
+		/// Property of <see cref="SidePanelSize"/>.
+		/// </summary>
+		public static readonly ObservableProperty<double> SidePanelSizeProperty = ObservableProperty.Register<Session, double>(nameof(SidePanelSize), (MinSidePanelSize + MaxSidePanelSize) / 2, coerce: it =>
+		{
+			if (it >= MaxSidePanelSize)
+				return MaxSidePanelSize;
+			if (it < MinSidePanelSize)
+				return MinSidePanelSize;
+			return it;
+		}, validate: it => double.IsFinite(it));
 		/// <summary>
 		/// Property of <see cref="Title"/>.
 		/// </summary>
@@ -387,6 +412,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			staticLogger?.LogWarning($"Hibernate {hibernatedSessionCount} session(s) to release {AppSuite.Converters.FileSizeConverter.Default.Convert<string>(releasedMemory)} memory");
 		});
 		static readonly TaskFactory ioTaskFactory = new TaskFactory(new FixedThreadsTaskScheduler(1));
+		static readonly SettingKey<double> latestSidePanelSizeKey = new SettingKey<double>("Session.LatestSidePanelSize", SidePanelSizeProperty.DefaultValue);
 		static long memoryThresholdToStartHibernation;
 		static ILogger? staticLogger;
 		static long totalLogsMemoryUsage;
@@ -446,6 +472,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		DisplayableLogGroup? displayableLogGroup;
 		TaskFactory? fileLogsReadingTaskFactory;
 		bool hasLogDataSourceCreationFailure;
+		bool isRestoringState;
 		readonly DisplayableLogFilter logFilter;
 		readonly List<LogReader> logReaders = new List<LogReader>();
 		readonly Stopwatch logsFilteringWatch = new Stopwatch();
@@ -833,6 +860,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			});
 			this.checkLogsMemoryUsageAction.Schedule();
 			this.updateTitleAndIconAction.Execute();
+
+			// restore state
+			this.SetValue(SidePanelSizeProperty, this.PersistentState.GetValueOrDefault(latestSidePanelSizeKey));
 		}
 
 
@@ -1983,6 +2013,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Get or set whether side panel is visible or not.
+		/// </summary>
+		public bool IsSidePanelVisible 
+		{
+			 get => this.GetValue(IsSidePanelVisibleProperty);
+			 set => this.SetValue(IsSidePanelVisibleProperty, value);
+		}
+
+
+		/// <summary>
 		/// Check whether URI is needed or not.
 		/// </summary>
 		public bool IsUriNeeded { get => this.GetValue(IsUriNeededProperty); }
@@ -2633,6 +2673,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.SetValue(HasLogProfileProperty, newValue != null);
 			else if (property == LogsProperty)
 				this.reportLogsTimeInfoAction?.Reschedule();
+			else if (property == SidePanelSizeProperty)
+			{
+				if (!this.isRestoringState)
+					this.PersistentState.SetValue<double>(latestSidePanelSizeKey, (double)newValue.AsNonNull());
+			}
 			else if (property == UriProperty)
 				this.SetValue(HasUriProperty, newValue != null);
 		}
@@ -2863,109 +2908,130 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// check state
 			this.VerifyAccess();
 			this.VerifyDisposed();
+			if (this.isRestoringState)
+				throw new InvalidOperationException();
 
 			this.Logger.LogTrace("Start restoring state");
 
-			// reset log profile
-			this.ResetLogProfile();
-
-			// restore hibernation state
-			if (jsonState.TryGetProperty(nameof(IsHibernated), out var jsonValue) && jsonValue.ValueKind == JsonValueKind.True)
-				this.SetValue(IsHibernatedProperty, true);
-
-			// set log profile
-			if (!jsonState.TryGetProperty(nameof(LogProfile), out jsonValue) || jsonValue.ValueKind != JsonValueKind.String)
+			// restore
+			this.isRestoringState = true;
+			try
 			{
-				this.Logger.LogTrace("No state to restore");
-				return;
-			}
-			if (!LogProfiles.TryFindProfileById(jsonValue.GetString().AsNonNull(), out var profile) || profile == null)
-			{
-				this.Logger.LogWarning($"Unable to find log profile '{jsonValue.GetString()}' to restore state");
-				return;
-			}
-			this.SetLogProfile(profile, false);
+				// reset log profile
+				this.ResetLogProfile();
 
-			// create log readers
-			if (jsonState.TryGetProperty("LogReaders", out jsonValue) && jsonValue.ValueKind == JsonValueKind.Array)
-			{
-				// restore data source options
-				this.savedDataSourceOptions.Clear();
-				foreach (var jsonLogReader in jsonValue.EnumerateArray())
+				// restore hibernation state
+				if (jsonState.TryGetProperty(nameof(IsHibernated), out var jsonValue) && jsonValue.ValueKind == JsonValueKind.True)
+					this.SetValue(IsHibernatedProperty, true);
+
+				// set log profile
+				if (!jsonState.TryGetProperty(nameof(LogProfile), out jsonValue) || jsonValue.ValueKind != JsonValueKind.String)
 				{
-					// get data source options
-					if (!jsonLogReader.TryGetProperty("Options", out jsonValue) || jsonValue.ValueKind != JsonValueKind.Object)
-						continue;
-					var options = new LogDataSourceOptions();
+					this.Logger.LogTrace("No state to restore");
+					return;
+				}
+				if (!LogProfiles.TryFindProfileById(jsonValue.GetString().AsNonNull(), out var profile) || profile == null)
+				{
+					this.Logger.LogWarning($"Unable to find log profile '{jsonValue.GetString()}' to restore state");
+					return;
+				}
+				this.SetLogProfile(profile, false);
+
+				// create log readers
+				if (jsonState.TryGetProperty("LogReaders", out jsonValue) && jsonValue.ValueKind == JsonValueKind.Array)
+				{
+					// restore data source options
+					this.savedDataSourceOptions.Clear();
+					foreach (var jsonLogReader in jsonValue.EnumerateArray())
+					{
+						// get data source options
+						if (!jsonLogReader.TryGetProperty("Options", out jsonValue) || jsonValue.ValueKind != JsonValueKind.Object)
+							continue;
+						var options = new LogDataSourceOptions();
+						try
+						{
+							options = LogDataSourceOptions.Load(jsonValue);
+							this.savedDataSourceOptions.Add(options);
+						}
+						catch (Exception ex)
+						{
+							this.Logger.LogError(ex, "Failed to restore data source options");
+							continue;
+						}
+
+						// check file paths
+						if (options.IsOptionSet(nameof(LogDataSourceOptions.FileName)))
+							this.addedLogFilePaths.Add(options.FileName.AsNonNull());
+					}
+					this.Logger.LogTrace($"{this.savedDataSourceOptions.Count} log reader(s) can be restored");
+
+					// restore log readers
+					if (!this.IsHibernated)
+						this.RestoreLogReaders();
+					else
+						this.Logger.LogWarning("No need to restore log reader(s) because session is hibernated");
+				}
+				else
+					this.Logger.LogTrace("No log readers to restore");
+
+				// restore filtering parameters
+				if (jsonState.TryGetProperty(nameof(LogFiltersCombinationMode), out jsonValue)
+					&& jsonValue.ValueKind == JsonValueKind.String
+					&& Enum.TryParse<FilterCombinationMode>(jsonValue.GetString(), out var combinationMode))
+				{
+					this.LogFiltersCombinationMode = combinationMode;
+				}
+				if (jsonState.TryGetProperty(nameof(LogLevelFilter), out jsonValue)
+					&& jsonValue.ValueKind == JsonValueKind.String
+					&& Enum.TryParse<Logs.LogLevel>(jsonValue.GetString(), out var level))
+				{
+					this.LogLevelFilter = level;
+				}
+				if (jsonState.TryGetProperty(nameof(LogProcessIdFilter), out jsonValue)
+					&& jsonValue.TryGetInt32(out var pid))
+				{
+					this.LogProcessIdFilter = pid;
+				}
+				if (jsonState.TryGetProperty(nameof(LogTextFilter), out jsonValue)
+					&& jsonValue.ValueKind == JsonValueKind.Object
+					&& jsonValue.TryGetProperty("Pattern", out var jsonPattern)
+					&& jsonPattern.ValueKind == JsonValueKind.String)
+				{
+					var options = RegexOptions.None;
+					jsonValue.TryGetProperty("Options", out var jsonOptions);
+					if (jsonOptions.TryGetInt32(out var optionsValue))
+						options = (RegexOptions)optionsValue;
 					try
 					{
-						options = LogDataSourceOptions.Load(jsonValue);
-						this.savedDataSourceOptions.Add(options);
+						this.LogTextFilter = new Regex(jsonPattern.GetString().AsNonNull(), options);
 					}
 					catch (Exception ex)
 					{
-						this.Logger.LogError(ex, "Failed to restore data source options");
-						continue;
+						this.Logger.LogError(ex, "Unable to restore log text filter");
 					}
-
-					// check file paths
-					if (options.IsOptionSet(nameof(LogDataSourceOptions.FileName)))
-						this.addedLogFilePaths.Add(options.FileName.AsNonNull());
 				}
-				this.Logger.LogTrace($"{this.savedDataSourceOptions.Count} log reader(s) can be restored");
-
-				// restore log readers
-				if (!this.IsHibernated)
-					this.RestoreLogReaders();
-				else
-					this.Logger.LogWarning("No need to restore log reader(s) because session is hibernated");
-			}
-			else
-				this.Logger.LogTrace("No log readers to restore");
-
-			// restore filtering parameters
-			if (jsonState.TryGetProperty(nameof(LogFiltersCombinationMode), out jsonValue)
-				&& jsonValue.ValueKind == JsonValueKind.String
-				&& Enum.TryParse<FilterCombinationMode>(jsonValue.GetString(), out var combinationMode))
-			{
-				this.LogFiltersCombinationMode = combinationMode;
-			}
-			if (jsonState.TryGetProperty(nameof(LogLevelFilter), out jsonValue)
-				&& jsonValue.ValueKind == JsonValueKind.String
-				&& Enum.TryParse<Logs.LogLevel>(jsonValue.GetString(), out var level))
-			{
-				this.LogLevelFilter = level;
-			}
-			if (jsonState.TryGetProperty(nameof(LogProcessIdFilter), out jsonValue)
-				&& jsonValue.TryGetInt32(out var pid))
-			{
-				this.LogProcessIdFilter = pid;
-			}
-			if (jsonState.TryGetProperty(nameof(LogTextFilter), out jsonValue)
-				&& jsonValue.ValueKind == JsonValueKind.Object
-				&& jsonValue.TryGetProperty("Pattern", out var jsonPattern)
-				&& jsonPattern.ValueKind == JsonValueKind.String)
-			{
-				var options = RegexOptions.None;
-				jsonValue.TryGetProperty("Options", out var jsonOptions);
-				if (jsonOptions.TryGetInt32(out var optionsValue))
-					options = (RegexOptions)optionsValue;
-				try
+				if (jsonState.TryGetProperty(nameof(LogThreadIdFilter), out jsonValue)
+					&& jsonValue.TryGetInt32(out var tid))
 				{
-					this.LogTextFilter = new Regex(jsonPattern.GetString().AsNonNull(), options);
+					this.LogThreadIdFilter = tid;
 				}
-				catch (Exception ex)
-				{
-					this.Logger.LogError(ex, "Unable to restore log text filter");
-				}
-			}
-			if (jsonState.TryGetProperty(nameof(LogThreadIdFilter), out jsonValue)
-				&& jsonValue.TryGetInt32(out var tid))
-			{
-				this.LogThreadIdFilter = tid;
-			}
 
-			this.Logger.LogTrace("Complete restoring state");
+				// restore side panel state
+				if (jsonState.TryGetProperty(nameof(IsSidePanelVisible), out jsonValue))
+					this.SetValue(IsSidePanelVisibleProperty, jsonValue.ValueKind != JsonValueKind.False);
+				if (jsonState.TryGetProperty(nameof(SidePanelSize), out jsonValue) 
+					&& jsonValue.TryGetDouble(out var doubleValue)
+					&& SidePanelSizeProperty.ValidationFunction?.Invoke(doubleValue) == true)
+				{
+					this.SetValue(SidePanelSizeProperty, doubleValue);
+				}
+
+				this.Logger.LogTrace("Complete restoring state");
+			}
+			finally
+			{
+				this.isRestoringState = false;
+			}
 		}
 
 
@@ -3405,6 +3471,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						jsonWriter.WriteStringValue(filter.Id);
 					jsonWriter.WriteEndArray();
 				}
+
+				// save side panel state
+				jsonWriter.WriteBoolean(nameof(IsSidePanelVisible), this.IsSidePanelVisible);
+				jsonWriter.WriteNumber(nameof(SidePanelSize), this.SidePanelSize);
 			});
 			jsonWriter.WriteEndObject();
 		}
@@ -3522,6 +3592,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		/// <remarks>Type of command parameter is <see cref="string"/>.</remarks>
 		public ICommand SetWorkingDirectoryCommand { get; }
+
+
+		/// <summary>
+		/// Get or set size of side panel.
+		/// </summary>
+		public double SidePanelSize
+		{
+			 get => this.GetValue(SidePanelSizeProperty);
+			 set => this.SetValue(SidePanelSizeProperty, value);
+		}
 
 
 		/// <summary>
