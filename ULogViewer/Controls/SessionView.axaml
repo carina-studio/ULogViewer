@@ -212,6 +212,16 @@
 			</MenuItem>
 		</ContextMenu>
 
+		<!-- Logs saving menu -->
+		<ContextMenu x:Key="logsSavingMenu" PlacementMode="Bottom">
+			<MenuItem Command="{Binding $parent[UserControl].SaveLogsCommand}" Header="{DynamicResource String/SessionView.SaveLogs}" InputGesture="Ctrl+S"/>
+			<MenuItem Command="{Binding $parent[UserControl].SaveAllLogsCommand}" Header="{DynamicResource String/SessionView.SaveAllLogs}" InputGesture="Ctrl+Shift+S"/>
+		</ContextMenu>
+		<ContextMenu x:Key="logsSavingMenuOSX" PlacementMode="Bottom">
+			<MenuItem Command="{Binding $parent[UserControl].SaveLogsCommand}" Header="{DynamicResource String/SessionView.SaveLogs}" InputGesture="Cmd+S"/>
+			<MenuItem Command="{Binding $parent[UserControl].SaveAllLogsCommand}" Header="{DynamicResource String/SessionView.SaveAllLogs}" InputGesture="Cmd+Shift+S"/>
+		</ContextMenu>
+
 		<!-- Other actions menu -->
 		<ContextMenu x:Key="otherActionsMenu" PlacementMode="Bottom">
 			<MenuItem Command="{Binding $parent[Window].ShowAppOptions}" Header="{DynamicResource String/SessionView.AppOptions}">
@@ -331,12 +341,21 @@
 								</Button>
 
 								<!-- Save logs -->
-								<Button Classes="ToolBar_Button" Command="{Binding $parent[UserControl].SaveLogsCommand}" IsVisible="{Binding HasLogProfile}" ToolTip.Tip="{DynamicResource String/SessionView.SaveLogs.WithShortcut}">
-									<Image Classes="Icon" Source="{StaticResource Image/Icon.Save}"/>
-								</Button>
-								<Button Classes="ToolBar_Button" Command="{Binding $parent[UserControl].SaveAllLogsCommand}" IsVisible="{Binding HasLogProfile}" ToolTip.Tip="{DynamicResource String/SessionView.SaveAllLogs.WithShortcut}">
-									<Image Classes="Icon" Source="{StaticResource Image/Icon.SaveAll}"/>
-								</Button>
+								<ToggleButton Name="logsSavingButton" Classes="ToolBar_ToggleButton" Command="{Binding $parent[UserControl].ShowLogsSavingMenu}" IsVisible="{Binding HasLogProfile}" ToolTip.Tip="{DynamicResource String/SessionView.SaveLogs}">
+									<ia:Interaction.Behaviors>
+										<iaCore:DataTriggerBehavior Binding="{Binding $self.IsChecked}" Value="True">
+											<iaCore:ChangePropertyAction PropertyName="ToolTip.Tip" Value="{x:Null}"/>
+										</iaCore:DataTriggerBehavior>
+									</ia:Interaction.Behaviors>
+									<Panel>
+										<Image Classes="Icon" Source="{StaticResource Image/Icon.Save}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
+										<Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}">
+											<DrawingImage>
+												<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/Icon.Save}"/>
+											</DrawingImage>
+										</Image>
+									</Panel>
+								</ToggleButton>
 
 								<!-- Clear files -->
 								<Button Classes="ToolBar_Button" Command="{Binding ClearLogFilesCommand}" IsVisible="{Binding AreFileBasedLogs}" ToolTip.Tip="{DynamicResource String/SessionView.ClearLogFiles}">
@@ -449,6 +468,11 @@
 
 						<!-- Predefined text filters -->
 						<ToggleButton Classes="ToolBar_ToggleButton" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" ToolTip.Tip="{DynamicResource String/SessionView.PredefinedLogTextFilters}">
+							<ia:Interaction.Behaviors>
+								<iaCore:DataTriggerBehavior Binding="{Binding $self.IsChecked}" Value="True">
+									<iaCore:ChangePropertyAction PropertyName="ToolTip.Tip" Value="{x:Null}"/>
+								</iaCore:DataTriggerBehavior>
+							</ia:Interaction.Behaviors>
 							<Panel>
 								<Panel>
 									<Image Classes="Icon" Source="{DynamicResource Image/Filters}" IsVisible="{Binding ElementName=predefinedLogTextFilterListBox, Path=!SelectedItems.Count}"/>

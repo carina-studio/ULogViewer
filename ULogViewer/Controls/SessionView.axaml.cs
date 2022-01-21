@@ -139,6 +139,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ContextMenu logMarkingMenu;
 		readonly IntegerTextBox logProcessIdFilterTextBox;
 		readonly Panel logProcessIdFilterTextBoxPanel;
+		readonly ToggleButton logsSavingButton;
+		readonly ContextMenu logsSavingMenu;
 		ScrollViewer? logScrollViewer;
 		readonly RegexTextBox logTextFilterTextBox;
 		readonly IntegerTextBox logThreadIdFilterTextBox;
@@ -257,6 +259,12 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.logMarkingMenu = (ContextMenu)this.Resources[nameof(logMarkingMenu)].AsNonNull();
 			this.logProcessIdFilterTextBoxPanel = this.FindControl<Panel>(nameof(logProcessIdFilterTextBoxPanel)).AsNonNull();
 			this.logProcessIdFilterTextBox = this.logProcessIdFilterTextBoxPanel.FindControl<IntegerTextBox>(nameof(logProcessIdFilterTextBox)).AsNonNull();
+			this.logsSavingButton = this.FindControl<ToggleButton>(nameof(logsSavingButton)).AsNonNull();
+			this.logsSavingMenu = ((ContextMenu)this.Resources[Platform.IsMacOS ? $"{nameof(logsSavingMenu)}OSX" : nameof(logsSavingMenu)].AsNonNull()).Also(it =>
+			{
+				it.MenuClosed += (_, e) => this.SynchronizationContext.Post(() => this.logsSavingButton.IsChecked = false);
+				it.MenuOpened += (_, e) => this.SynchronizationContext.Post(() => this.logsSavingButton.IsChecked = true);
+			});
 			this.logTextFilterTextBox = this.FindControl<RegexTextBox>(nameof(logTextFilterTextBox)).AsNonNull().Also(it =>
 			{
 				it.IgnoreCase = this.Settings.GetValueOrDefault(SettingKeys.IgnoreCaseOfLogTextFilter);
@@ -2019,9 +2027,11 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.pressedKeys.Add(e.Key);
 			if (!e.Handled)
 			{
+				var isCmdPressed = Platform.IsMacOS && (this.pressedKeys.Contains(Key.LWin) || this.pressedKeys.Contains(Key.RWin));
+				var isCtrlPressed = Platform.IsMacOS ? isCmdPressed : (e.KeyModifiers & KeyModifiers.Control) != 0;
 				if (this.Application.IsDebugMode && e.Source is not TextBox)
-					this.Logger.LogTrace($"[KeyDown] {e.Key}, Ctrl: {(e.KeyModifiers & KeyModifiers.Control) != 0}, Shift: {(e.KeyModifiers & KeyModifiers.Shift) != 0}, Alt: {(e.KeyModifiers & KeyModifiers.Alt) != 0}");
-				if ((e.KeyModifiers & KeyModifiers.Control) != 0)
+					this.Logger.LogTrace($"[KeyDown] {e.Key}, Ctrl/Cmd: {isCtrlPressed}, Shift: {(e.KeyModifiers & KeyModifiers.Shift) != 0}, Alt: {(e.KeyModifiers & KeyModifiers.Alt) != 0}");
+				if (isCtrlPressed || isCmdPressed)
 				{
 					var isAltPressed = ((e.KeyModifiers & KeyModifiers.Alt) != 0);
 					switch (e.Key)
@@ -2225,9 +2235,11 @@ namespace CarinaStudio.ULogViewer.Controls
 			// handle key event for single key
 			if (!e.Handled)
 			{
+				var isCmdPressed = Platform.IsMacOS && (this.pressedKeys.Contains(Key.LWin) || this.pressedKeys.Contains(Key.RWin));
+				var isCtrlPressed = Platform.IsMacOS ? isCmdPressed : (e.KeyModifiers & KeyModifiers.Control) != 0;
 				if (this.Application.IsDebugMode && e.Source is not TextBox)
-					this.Logger.LogTrace($"[KeyUp] {e.Key}, Ctrl: {(e.KeyModifiers & KeyModifiers.Control) != 0}, Shift: {(e.KeyModifiers & KeyModifiers.Shift) != 0}, Alt: {(e.KeyModifiers & KeyModifiers.Alt) != 0}");
-				if (e.KeyModifiers == KeyModifiers.None)
+					this.Logger.LogTrace($"[KeyUp] {e.Key}, Ctrl/Cmd: {isCmdPressed}, Shift: {(e.KeyModifiers & KeyModifiers.Shift) != 0}, Alt: {(e.KeyModifiers & KeyModifiers.Alt) != 0}");
+				if (!isCmdPressed && e.KeyModifiers == 0)
 				{
 					switch (e.Key)
 					{
@@ -3171,6 +3183,11 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Command to show file in system file explorer.
 		ICommand ShowFileInExplorerCommand { get; }
+
+
+		// Show menu for saving logs.
+		void ShowLogsSavingMenu() =>
+			this.logsSavingMenu.Open(this.logsSavingButton);
 
 
 		// Show full log string property.
