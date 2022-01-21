@@ -2062,7 +2062,13 @@ namespace CarinaStudio.ULogViewer.Controls
 
 				// select single marked log
 				if (hasSingleSelectedItem && this.logListBox.SelectedItem is DisplayableLog log && log.IsMarked)
-					this.SynchronizationContext.Post(() => this.markedLogListBox.SelectedItem = log);
+				{
+					this.SynchronizationContext.Post(() => 
+					{
+						this.markedLogListBox.SelectedItem = log;
+						this.markedLogListBox.ScrollIntoView(log);
+					});
+				}
 				else
 					this.SynchronizationContext.Post(() => this.markedLogListBox.SelectedItems.Clear());
 			});

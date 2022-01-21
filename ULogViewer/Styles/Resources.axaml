@@ -97,7 +97,7 @@
 	<sys:Double x:Key="Double/SessionView.PredefinedLogTextFilterListBox.Icon.Size">12</sys:Double>
 	<sys:Double x:Key="Double/SessionView.PredefinedLogTextFiltersPopup.MaxHeight">500</sys:Double>
 	<sys:Double x:Key="Double/SessionView.PredefinedLogTextFiltersPopup.Width">300</sys:Double>
-	<sys:Double x:Key="Double/SessionView.SidePanel.Header.FontSize">16</sys:Double>
+	<sys:Double x:Key="Double/SessionView.SidePanel.Header.FontSize">14</sys:Double>
 	<sys:Double x:Key="Double/SessionView.SidePanel.Header.Icon.Size">16</sys:Double>
 	<sys:Double x:Key="Double/SessionView.ToolBar.LogLevelFilter.Width">150</sys:Double>
 	<sys:Double x:Key="Double/SessionView.ToolBar.LogProcessIdFilter.Width">85</sys:Double>
