@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
+using System.IO.Compression;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -35,7 +36,17 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			var options = this.CreationOptions;
 			try
 			{
-				reader = new StreamReader(options.FileName.AsNonNull(), options.Encoding ?? Encoding.UTF8);
+				var fileName = options.FileName.AsNonNull();
+				var encoding = options.Encoding ?? Encoding.UTF8;
+				reader = new FileStream(fileName, FileMode.Open, FileAccess.Read).Let(stream =>
+				{
+					return Path.GetExtension(options.FileName)?.ToLower() switch
+					{
+						".gz" => new GZipStream(stream, CompressionMode.Decompress).Let(gzipStream =>
+							new StreamReader(gzipStream, encoding)),
+						_ => new StreamReader(stream, encoding),
+					};
+				});
 				return LogDataSourceState.ReaderOpened;
 			}
 			catch (FileNotFoundException)
