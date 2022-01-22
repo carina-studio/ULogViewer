@@ -35,6 +35,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			"GitLogSimple",
 			"LinuxKernelLogFile",
 			"LinuxSystemLogFile",
+			"MacOSSystemLogFile",
 			"RawFile",
 			"RawHttp",
 			"RawTcpServer",
