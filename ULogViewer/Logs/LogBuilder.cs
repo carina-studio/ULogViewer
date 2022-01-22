@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace CarinaStudio.ULogViewer.Logs
 {
@@ -111,8 +112,17 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <returns>Value or null.</returns>
 		public int? GetInt32OrNull(string propertyName)
 		{
-			if (this.properties.TryGetValue(propertyName, out var str) && int.TryParse(str, out var value))
-				return value;
+			if (this.properties.TryGetValue(propertyName, out var str))
+			{
+				var value = 0;
+				if (str.StartsWith("0x"))
+				{
+					if (int.TryParse(str.Substring(2), NumberStyles.AllowHexSpecifier, null, out value))
+						return value;
+				}
+				else if (int.TryParse(str, out value))
+					return value;
+			}
 			return null;
 		}
 
@@ -124,8 +134,18 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <returns>Value or null.</returns>
 		public long? GetInt64OrNull(string propertyName)
 		{
-			if (this.properties.TryGetValue(propertyName, out var str) && long.TryParse(str, out var value))
-				return value;
+			if (this.properties.TryGetValue(propertyName, out var str))
+			{
+				var value = 0L;
+				if (str.StartsWith("0x"))
+				{
+					str = str.EndsWith("L") ? str.Substring(2, str.Length - 3) : str.Substring(2);
+					if (long.TryParse(str, NumberStyles.AllowHexSpecifier, null, out value))
+						return value;
+				}
+				else if (long.TryParse(str, out value))
+					return value;
+			}
 			return null;
 		}
 

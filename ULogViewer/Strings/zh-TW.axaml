@@ -55,8 +55,8 @@
 	<sys:String x:Key="String/BuiltInProfile.LinuxSystemLogFile.Description">由 Linux 產生的系統日誌檔案。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.MacOSInstallationLog">macOS 安裝日誌</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.MacOSInstallationLog.Description">由 macOS 產生的安裝日誌。</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.MacOSSystemLog">macOS 系統日誌</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.MacOSSystemLog.Description">由 macOS 產生的系統日誌之最新部分。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.MacOSRealtimeLog">macOS 全域系統日誌</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.MacOSRealtimeLog.Description">由 macOS 產生的全域系統日誌。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.MacOSSystemLogFile">macOS 系統日誌檔案</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.MacOSSystemLogFile.Description">由 macOS 產生的系統日誌檔案。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.RawFile">檔案原始文字</sys:String>

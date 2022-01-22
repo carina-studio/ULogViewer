@@ -72,7 +72,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			else if (Platform.IsMacOS)
 			{
 				builtInProfileIDs.Add("MacOSInstallationLog");
-				builtInProfileIDs.Add("MacOSSystemLog");
+				builtInProfileIDs.Add("MacOSRealtimeLog");
 			}
 		}
 

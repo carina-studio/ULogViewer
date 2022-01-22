@@ -114,7 +114,7 @@
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/LinuxSystemLog.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/LinuxSystemLogFile.json" />
     <EmbeddedResource Include="Logs/Profiles/BuiltIn/MacOSInstallationLog.json" />
-    <EmbeddedResource Include="Logs/Profiles/BuiltIn/MacOSSystemLog.json" />
+    <EmbeddedResource Include="Logs/Profiles/BuiltIn/MacOSRealtimeLog.json" />
     <EmbeddedResource Include="Logs/Profiles/BuiltIn/MacOSSystemLogFile.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/RawFile.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/RawHttp.json" />
