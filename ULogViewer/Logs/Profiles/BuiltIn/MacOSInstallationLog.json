@@ -1,0 +1,47 @@
+﻿{
+	"DataSource": {
+		"Name": "File",
+		"Options": {
+			"FileName": "/var/log/install.log"
+		}
+	},
+	"Icon": "Apple",
+	"LogPatterns": [
+		{
+			"Regex": "^(?<Timestamp>[\\d\\-]+[\\s]+[\\d\\:\\+\\-]+)[\\s]+(?<DeviceName>[^\\s]*)[\\s]+((?<ProcessName>[^\\[]*)(\\[(?<ProcessId>[\\d]+)\\])|(?<ProcessName>[^\\:]*))\\:[\\s](?<Message>.*)$"
+		},
+		{
+			"Regex": "^[\\t](?<Message>.*)$",
+			"IsRepeatable": true,
+			"IsSkippable": true
+		}
+	],
+	"LogWritingFormat": "{Timestamp} {DeviceName} {ProcessName}{ProcessId:'['#####']'}: {Message}",
+	"SortKey": "Timestamp",
+	"TimestampFormatForDisplaying": "yyyy-MM-dd HH:mm:ssz",
+	"TimestampFormatsForReading": [
+		"yyyy-MM-dd HH:mm:ssz"
+	],
+	"TimestampFormatForWriting": "yyyy-MM-dd HH:mm:ssz",
+	"VisibleLogProperties": [
+		{
+			"Name": "Timestamp",
+			"Width": 180
+		},
+		{
+			"Name": "DeviceName",
+			"Width": 150
+		},
+		{
+			"Name": "ProcessName",
+			"Width": 100
+		},
+		{
+			"Name": "ProcessId",
+			"Width": 80
+		},
+		{
+			"Name": "Message"
+		}
+	]
+}
