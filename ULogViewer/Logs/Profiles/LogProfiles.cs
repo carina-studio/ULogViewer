@@ -68,6 +68,10 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				builtInProfileIDs.Add("LinuxKernelLog");
 				builtInProfileIDs.Add("LinuxSystemLog");
 			}
+			else if (Platform.IsMacOS)
+			{
+				builtInProfileIDs.Add("MacOSSystemLog");
+			}
 		}
 
 
