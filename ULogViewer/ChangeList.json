@@ -1,38 +1,65 @@
 ﻿[
 	{
-		"Description": "Support temporarily showing marked logs in main view by clicking toolbar button or pressing Alt+M (Option+M on macOS).",
+		"Description": "Support arranging tabs by dragging.",
 		"Type": "NewFeature"
 	},
 	{
-		"Description": "Synchronize single selection of marked log between main view and side panel to make it clear which marked log is selected.",
+		"Description": "Support opening tab in new window.",
 		"Type": "NewFeature"
 	},
 	{
-		"Description": "Upgrade to .NET 6.",
-		"DetailsPageUri": "https://docs.microsoft.com/en-us/dotnet/core/whats-new/dotnet-6",
+		"Description": "Support layouting windows in horizontal, vertical or tile mode.",
+		"Type": "NewFeature"
+	},
+	{
+		"Description": "Support using system theme mode on macOS.",
+		"Type": "NewFeature"
+	},
+	{
+		"Description": "Add \"Android Device Event Log\", \"macOS Installation Log\", \"macOS System Wide Log\", \"macOS System Log Files\" built-in log profiles.",
+		"Type": "NewFeature"
+	},
+	{
+		"Description": "Support hiding side panel to get more space for viewing logs.",
+		"Type": "NewFeature"
+	},
+	{
+		"Description": "Support decompression while reading logs from .gz file.",
+		"Type": "NewFeature"
+	},
+	{
+		"Description": "Improve tab scrolling UX.",
 		"Type": "Improvement"
 	},
 	{
-		"Description": "Improve UI to make selected logs more clear.",
+		"Description": "Improve toolbar scrolling UX.",
 		"Type": "Improvement"
 	},
 	{
-		"Description": "Support running on Windows 7 and Windows 8.",
+		"Description": "Reduce size of update packages for auto updating.",
 		"Type": "Improvement"
 	},
 	{
-		"Description": "Support running on ARM64 PC.",
+		"Description": "Other UX improvement.",
 		"Type": "Improvement"
 	},
 	{
-		"Description": "UX improvement.",
-		"Type": "Improvement"
+		"Description": "Use system menu bar on macOS.",
+		"Type": "BehaviorChange"
+	},
+	{
+		"Description": "Use single process to manage all windows.",
+		"Type": "BehaviorChange"
 	},
 	{
 		"Description": "Update dependent libraries."
 	},
 	{
-		"Description": "Bug fixing.",
+		"Description": "Fix issue of unable to launch on ARM64 PC.",
+		"Type": "BugFixing"
+	},
+	{
+		"Description": "Other bug fixing.",
 		"Type": "BugFixing"
 	}
 ]

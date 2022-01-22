@@ -1,38 +1,65 @@
 ﻿[
 	{
-		"Description": "支援暫時在主畫面顯示已標記日誌，可透過工具列按鈕或按下 Alt+M (macOS 上使用 Option+M)。",
+		"Description": "支援使用拖動方式來排列分頁。",
 		"Type": "NewFeature"
 	},
 	{
-		"Description": "在主畫面與側面版同步單一選取的已標記日誌，以明確指出目前所選取的已標記日誌所在之相對位置。",
+		"Description": "支援在新的視窗開啟分頁。",
 		"Type": "NewFeature"
 	},
 	{
-		"Description": "升級至 .NET 6。",
-		"DetailsPageUri": "https://docs.microsoft.com/en-us/dotnet/core/whats-new/dotnet-6",
+		"Description": "支援以水平、垂直或網格方式排列視窗。",
+		"Type": "NewFeature"
+	},
+	{
+		"Description": "支援在 macOS 上使用系統佈景。",
+		"Type": "NewFeature"
+	},
+	{
+		"Description": "新增「Android 裝置事件日誌」、「macOS 安裝日誌」、「macOS 全域系統日誌」、「macOS 系統日誌檔案」內建日誌類型。",
+		"Type": "NewFeature"
+	},
+	{
+		"Description": "支援隱藏側邊面板以提升日誌檢視空間。",
+		"Type": "NewFeature"
+	},
+	{
+		"Description": "支援從 .gz 檔案讀取日誌時進行解壓縮。",
+		"Type": "NewFeature"
+	},
+	{
+		"Description": "改善分頁捲動的使用體驗。",
 		"Type": "Improvement"
 	},
 	{
-		"Description": "更新使用者介面以更清晰地顯示出已選取之日誌。",
+		"Description": "改善工具列捲動的使用體驗。",
 		"Type": "Improvement"
 	},
 	{
-		"Description": "支援在 Windows 7 及 Windows 8 上執行。",
+		"Description": "減少自動更新時的升級封裝大小。",
 		"Type": "Improvement"
 	},
 	{
-		"Description": "支援在 ARM64 平台之電腦上執行。",
+		"Description": "其他使用者體驗改善。",
 		"Type": "Improvement"
 	},
 	{
-		"Description": "改善使用者體驗。",
-		"Type": "Improvement"
+		"Description": "在 macOS 上使用系統選單列。",
+		"Type": "BehaviorChange"
+	},
+	{
+		"Description": "使用單一處理程序來管理所有使窗。",
+		"Type": "BehaviorChange"
 	},
 	{
 		"Description": "更新相依程式庫。"
 	},
 	{
-		"Description": "錯誤修正。",
+		"Description": "修正在 ARM64 平台之電腦無法啟動的問題。",
+		"Type": "BugFixing"
+	},
+	{
+		"Description": "其他錯誤修正。",
 		"Type": "BugFixing"
 	}
 ]
