@@ -50,7 +50,7 @@
 		<CFBundleIconFile>ULogViewer.icns</CFBundleIconFile>
 		<CFBundlePackageType>APPL</CFBundlePackageType>
 		<NSPrincipalClass>NSApplication</NSPrincipalClass>
-    	<NSHighResolutionCapable>True</NSHighResolutionCapable>
+		<NSHighResolutionCapable>True</NSHighResolutionCapable>
 		<NSHumanReadableCopyright>©2022 Carina Studio</NSHumanReadableCopyright>
 	</PropertyGroup>
 
@@ -72,6 +72,7 @@
   <ItemGroup>
     <PackageReference Include="Avalonia.AvaloniaEdit" Version="0.10.9" />
     <PackageReference Include="CarinaStudio.AppSuite.Core" Version="0.35.1.121" />
+    <PackageReference Include="Dotnet.Bundle" Version="0.9.13" />
     <PackageReference Include="Microsoft.Win32.SystemEvents" Version="6.0.0" />
     <PackageReference Include="System.Data.Common" Version="4.3.0" />
     <PackageReference Include="System.Data.SQLite" Version="1.0.115.5" />
