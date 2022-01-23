@@ -1,16 +1,27 @@
 # ULogViewer [![](https://img.shields.io/github/release-date-pre/carina-studio/ULogViewer?style=flat-square)](https://github.com/carina-studio/ULogViewer/releases/tag/0.33.0.1223) [![](https://img.shields.io/github/last-commit/carina-studio/ULogViewer?style=flat-square)](https://github.com/carina-studio/ULogViewer/commits/master) [![](https://img.shields.io/github/license/carina-studio/ULogViewer?style=flat-square)](https://github.com/carina-studio/ULogViewer/blob/master/LICENSE)
 
 ULogViewer is a [.NET](https://dotnet.microsoft.com/) based cross-platform universal log viewer written by C# which supports reading and parsing various type of logs.
-The project is still under development but most of functions relate to reading/parsing/displaying logs are ready.
 
-[![Release](https://img.shields.io/github/v/release/carina-studio/ULogViewer?include_prereleases&style=for-the-badge&color=blue&label=Preview)](https://github.com/carina-studio/ULogViewer/releases/0.33.0.1223)
+## 📥Download
 
-&nbsp;    | Windows 7<br/>*(.NET Runtime needed)* | Windows 8/10/11 | Linux | macOS 10.12+/11/12
-:--------:|:-------------------------------------:|:---------------:|:-----:|:-----:
-Download  |[x86](https://github.com/carina-studio/ULogViewer/releases/download/0.33.0.1223/ULogViewer-0.33.0.1223-win-x86-fx-dependent.zip) &#124; [x64](https://github.com/carina-studio/ULogViewer/releases/download/0.33.0.1223/ULogViewer-0.33.0.1223-win-x64-fx-dependent.zip)|[x86](https://github.com/carina-studio/ULogViewer/releases/download/0.33.0.1223/ULogViewer-0.33.0.1223-win-x86.zip) &#124; [x64](https://github.com/carina-studio/ULogViewer/releases/download/0.33.0.1223/ULogViewer-0.33.0.1223-win-x64.zip) &#124; [arm64](https://github.com/carina-studio/ULogViewer/releases/download/0.33.0.1223/ULogViewer-0.33.0.1223-win-arm64.zip)|[x64](https://github.com/carina-studio/ULogViewer/releases/download/0.33.0.1223/ULogViewer-0.33.0.1223-linux-x64.zip) &#124; [arm64](https://github.com/carina-studio/ULogViewer/releases/download/0.33.0.1223/ULogViewer-0.33.0.1223-linux-arm64.zip)|[x64](https://github.com/carina-studio/ULogViewer/releases/download/0.33.0.1223/ULogViewer-0.33.0.1223-osx-x64.zip) &#124; [arm64](https://github.com/carina-studio/ULogViewer/releases/download/0.33.0.1223/ULogViewer-0.33.0.1223-osx-arm64.zip)
-Screenshot| |[<img src="https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_Windows_Thumb.png" width="200"/>](https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_Windows.png)|[<img src="https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_Ubuntu_Thumb.png" width="200"/>](https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_Ubuntu.png)|[<img src="https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_macOS_Thumb.png" width="200"/>](https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_macOS.png)
+Operating System                      | Download | Version | Screenshot
+:------------------------------------:|:--------:|:-------:|:----------:
+Windows 8/10/11                       |[x86](https://github.com/carina-studio/ULogViewer/releases/download/0.33.0.1223/ULogViewer-0.33.0.1223-win-x86.zip) &#124; [x64](https://github.com/carina-studio/ULogViewer/releases/download/0.33.0.1223/ULogViewer-0.33.0.1223-win-x64.zip)|0.33.0.1223|[<img src="https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_Windows_Thumb.png" width="150"/>](https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_Windows.png)
+Windows 7<br/>*(.NET Runtime needed)* |[x86](https://github.com/carina-studio/ULogViewer/releases/download/0.33.0.1223/ULogViewer-0.33.0.1223-win-x86-fx-dependent.zip) &#124; [x64](https://github.com/carina-studio/ULogViewer/releases/download/0.33.0.1223/ULogViewer-0.33.0.1223-win-x64-fx-dependent.zip)|0.33.0.1223|
+macOS 11/12                           |[x64](https://github.com/carina-studio/ULogViewer/releases/download/0.33.0.1223/ULogViewer-0.33.0.1223-osx-x64.zip)|0.33.0.1223|[<img src="https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_macOS_Thumb.png" width="150"/>](https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_macOS.png)
+Linux                                 |[x64](https://github.com/carina-studio/ULogViewer/releases/download/0.33.0.1223/ULogViewer-0.33.0.1223-linux-x64.zip)|0.33.0.1223|[<img src="https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_Ubuntu_Thumb.png" width="150"/>](https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_Ubuntu.png)
 
 - [How to Install and Upgrade ULogViewer](https://carina-studio.github.io/ULogViewer/installation_and_upgrade.html)
+
+## 📣What's Change in 0.33.0.1223
+- Support temporarily showing marked logs in main view by clicking toolbar button or pressing ```Alt+M``` (```Option+M``` on macOS).
+- Synchronize single selection of marked log between main view and side panel to make it clear which marked log is selected.
+- Upgrade to [.NET 6](https://docs.microsoft.com/en-us/dotnet/core/whats-new/dotnet-6).
+- Improve UI to make selected logs more clear.
+- Support running on ```Windows 7``` and ```Windows 8```.
+- UX improvement.
+- Update dependent libraries.
+- Bug fixing.
 
 ## ⭐Log data sources
 - Standard Output (stdout)
