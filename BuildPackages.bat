@@ -21,6 +21,7 @@ IF %ERRORLEVEL% NEQ 0 (
    exit
 )
 
+del .\%APP_NAME%\bin\Release\net6.0\publish\win-x86\AppIcon_128px.png
 PowerShell -NoLogo -Command Compress-Archive -Force -Path .\%APP_NAME%\bin\Release\net6.0\publish\win-x86\* -DestinationPath .\Packages\%APP_NAME%-%1-win-x86.zip
 PowerShell -NoLogo -Command Get-FileHash .\Packages\%APP_NAME%-%1-win-x86.zip > .\Packages\%APP_NAME%-%1-win-x86.txt
 
@@ -31,6 +32,7 @@ IF %ERRORLEVEL% NEQ 0 (
    exit
 )
 
+del .\%APP_NAME%\bin\Release\net6.0\publish\win-x64\AppIcon_128px.png
 PowerShell -NoLogo -Command Compress-Archive -Force -Path .\%APP_NAME%\bin\Release\net6.0\publish\win-x64\* -DestinationPath .\Packages\%APP_NAME%-%1-win-x64.zip
 PowerShell -NoLogo -Command Get-FileHash .\Packages\%APP_NAME%-%1-win-x64.zip > .\Packages\%APP_NAME%-%1-win-x64.txt
 
@@ -41,6 +43,7 @@ IF %ERRORLEVEL% NEQ 0 (
    exit
 )
 
+del .\%APP_NAME%\bin\Release\net6.0\publish\win-arm64\AppIcon_128px.png
 PowerShell -NoLogo -Command Compress-Archive -Force -Path .\%APP_NAME%\bin\Release\net6.0\publish\win-arm64\* -DestinationPath .\Packages\%APP_NAME%-%1-win-arm64.zip
 PowerShell -NoLogo -Command Get-FileHash .\Packages\%APP_NAME%-%1-win-arm64.zip > .\Packages\%APP_NAME%-%1-win-arm64.txt
 
@@ -51,6 +54,7 @@ IF %ERRORLEVEL% NEQ 0 (
    exit
 )
 
+del .\%APP_NAME%\bin\Release\net6.0\publish\win-x86\AppIcon_128px.png
 PowerShell -NoLogo -Command Compress-Archive -Force -Path .\%APP_NAME%\bin\Release\net6.0\publish\win-x86-fx-dependent\* -DestinationPath .\Packages\%APP_NAME%-%1-win-x86-fx-dependent.zip
 PowerShell -NoLogo -Command Get-FileHash .\Packages\%APP_NAME%-%1-win-x86-fx-dependent.zip > .\Packages\%APP_NAME%-%1-win-x86-fx-dependent.txt
 
@@ -61,6 +65,7 @@ IF %ERRORLEVEL% NEQ 0 (
    exit
 )
 
+del .\%APP_NAME%\bin\Release\net6.0\publish\win-x64\AppIcon_128px.png
 PowerShell -NoLogo -Command Compress-Archive -Force -Path .\%APP_NAME%\bin\Release\net6.0\publish\win-x64-fx-dependent\* -DestinationPath .\Packages\%APP_NAME%-%1-win-x64-fx-dependent.zip
 PowerShell -NoLogo -Command Get-FileHash .\Packages\%APP_NAME%-%1-win-x64-fx-dependent.zip > .\Packages\%APP_NAME%-%1-win-x64-fx-dependent.txt
 
@@ -71,6 +76,7 @@ IF %ERRORLEVEL% NEQ 0 (
    exit
 )
 
+del .\%APP_NAME%\bin\Release\net6.0\publish\win-arm64\AppIcon_128px.png
 PowerShell -NoLogo -Command Compress-Archive -Force -Path .\%APP_NAME%\bin\Release\net6.0\publish\win-arm64-fx-dependent\* -DestinationPath .\Packages\%APP_NAME%-%1-win-arm64-fx-dependent.zip
 PowerShell -NoLogo -Command Get-FileHash .\Packages\%APP_NAME%-%1-win-arm64-fx-dependent.zip > .\Packages\%APP_NAME%-%1-win-arm64-fx-dependent.txt
 
@@ -117,46 +123,3 @@ IF %ERRORLEVEL% NEQ 0 (
 
 PowerShell -NoLogo -Command Compress-Archive -Force -Path .\%APP_NAME%\bin\Release\net6.0\publish\linux-arm64-fx-dependent\* -DestinationPath .\Packages\%APP_NAME%-%1-linux-arm64-fx-dependent.zip
 PowerShell -NoLogo -Command Get-FileHash .\Packages\%APP_NAME%-%1-linux-arm64-fx-dependent.zip > .\Packages\%APP_NAME%-%1-linux-arm64-fx-dependent.txt
-
-
-REM ********** OSX **********
-
-echo .
-echo ***** OSX (x64) *****
-dotnet publish %APP_NAME% -c Release -p:PublishProfile=osx-x64
-IF %ERRORLEVEL% NEQ 0 ( 
-   exit
-)
-
-PowerShell -NoLogo -Command Compress-Archive -Force -Path .\%APP_NAME%\bin\Release\net6.0\publish\osx-x64\* -DestinationPath .\Packages\%APP_NAME%-%1-osx-x64.zip
-PowerShell -NoLogo -Command Get-FileHash .\Packages\%APP_NAME%-%1-osx-x64.zip > .\Packages\%APP_NAME%-%1-osx-x64.txt
-
-echo .
-echo ***** OSX (arm64) *****
-dotnet publish %APP_NAME% -c Release -p:PublishProfile=osx-arm64
-IF %ERRORLEVEL% NEQ 0 ( 
-   exit
-)
-
-PowerShell -NoLogo -Command Compress-Archive -Force -Path .\%APP_NAME%\bin\Release\net6.0\publish\osx-arm64\* -DestinationPath .\Packages\%APP_NAME%-%1-osx-arm64.zip
-PowerShell -NoLogo -Command Get-FileHash .\Packages\%APP_NAME%-%1-osx-arm64.zip > .\Packages\%APP_NAME%-%1-osx-arm64.txt
-
-echo .
-echo ***** OSX (x64, Framework Dependent) *****
-dotnet publish %APP_NAME% -c Release -p:PublishProfile=osx-x64-fx-dependent
-IF %ERRORLEVEL% NEQ 0 ( 
-   exit
-)
-
-PowerShell -NoLogo -Command Compress-Archive -Force -Path .\%APP_NAME%\bin\Release\net6.0\publish\osx-x64-fx-dependent\* -DestinationPath .\Packages\%APP_NAME%-%1-osx-x64-fx-dependent.zip
-PowerShell -NoLogo -Command Get-FileHash .\Packages\%APP_NAME%-%1-osx-x64-fx-dependent.zip > .\Packages\%APP_NAME%-%1-osx-x64-fx-dependent.txt
-
-echo .
-echo ***** OSX (arm64, Framework Dependent) *****
-dotnet publish %APP_NAME% -c Release -p:PublishProfile=osx-arm64-fx-dependent
-IF %ERRORLEVEL% NEQ 0 ( 
-   exit
-)
-
-PowerShell -NoLogo -Command Compress-Archive -Force -Path .\%APP_NAME%\bin\Release\net6.0\publish\osx-arm64-fx-dependent\* -DestinationPath .\Packages\%APP_NAME%-%1-osx-arm64-fx-dependent.zip
-PowerShell -NoLogo -Command Get-FileHash .\Packages\%APP_NAME%-%1-osx-arm64-fx-dependent.zip > .\Packages\%APP_NAME%-%1-osx-arm64-fx-dependent.txt
