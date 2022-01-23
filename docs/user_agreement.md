@@ -3,8 +3,8 @@ title: ULogViewer
 ---
 
 # User Agreement
-- Version: 1.1.
-- Update: 2021/12/12.
+- Version: 1.2.
+- Update: 2022/1/23.
 
 This is the User Agreement of ```ULogViewer``` which you need to read before you using ```ULogViewer```. 
 The User Agreement may be updated in the future and you can check it on the website of ```ULogViewer```. 
@@ -16,6 +16,12 @@ It means that you have agreed this User Agreement once you start using ```ULogVi
 * [Project and release pages of ULogViewer on GitHub](https://github.com/carina-studio/ULogViewer)
 
 This User Agreement will be applied when you use ```ULogViewer```.
+
+## Debug Mode
+```ULogViewer``` has built-in Debug Mode which is disabled by default. You can enable Debug Mode manually by launching ```ULogViewer``` with ```-debug``` argument.
+
+## External Dependencies
+In order to use ```Android Device Log``` or ```Android Device Event Log``` log profiles, you need to install [Android SDK or Android Studio](https://developer.android.com/studio) on your device first.
 
 ## File Access
 Except for system files, all necessary files of ```ULogViewer``` are placed inside the directory of ```ULogViewer``` (include directory of ```.NET Runtime``` if you installed ```.NET``` on your computer). No other file access needed when running ```ULogViewer``` without loading logs except for the followings:
@@ -63,7 +69,14 @@ There are 4 type of data will be downloaded when updating ```ULogViewer```:
 Other network access outside from executable of ```ULogViewer``` are not dominated by this User Agreement.
 
 ## External Command Execution
-External command execution will happen when the source of logs is ```Standard Output (stdout)```. You can check the list of commands and arguments in the ```Data source options``` dialog when editing ```Data Source``` of log profile.
+There are some necessary external command execution when running ```ULogViewer```:
+* Run ```dotnet``` to check the version of .NET installed on device.
+* Run ```explorer``` to open File Explorer on Windows.
+* Run ```open``` to open Finder on mscOS.
+* Run ```defaults``` to check system language and theme mode on macOS.
+* Run ```nautilus``` or ```xdg-open``` to open File Manager on Linux.
+
+Except for necessary cases above, external command execution will happen when the source of logs is ```Standard Output (stdout)```. You can check the list of commands and arguments in the ```Data source options``` dialog when editing ```Data Source``` of log profile.
 
 Please noticed that we **DON'T** guarantee the result of external command execution. It all depends on the behavior of external command and executable which you should take care of.
 
