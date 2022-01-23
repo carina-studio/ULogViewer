@@ -29,6 +29,8 @@
 	<sys:String x:Key="String/AppOptionsDialog.UseSystemAccentColor">Apply system accent color</sys:String>
 
 	<!-- Built-in profile -->
+	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceEventLog">Android Device Event Log</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceEventLog.Description">Real-time event logs from Android device through ADB.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceLog">Android Device Log</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceLog.Description">Real-time logs from Android device through ADB.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidFileLog">Android Log Files</sys:String>
