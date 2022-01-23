@@ -44,6 +44,16 @@
 			"RuntimeVersion": "6.0.1",
 			"SHA256": "B097CD14F91B0F79722BD5C701160494CCBBFE7F8A5474FD6011C69ABBFB42FB",
 			"Uri": "https://github.com/carina-studio/ULogViewer/releases/download/0.34.0.123/ULogViewer-0.34.0.123-win-arm64-fx-dependent.zip"
+		},
+		{
+			"Architecture": "X64",
+			"OperatingSystem": "OSX",
+			"Uri": "https://github.com/carina-studio/ULogViewer/releases/download/0.34.0.123/ULogViewer-0.34.0.123-osx-x64.zip"
+		},
+		{
+			"Architecture": "Arm64",
+			"OperatingSystem": "OSX",
+			"Uri": "https://github.com/carina-studio/ULogViewer/releases/download/0.34.0.123/ULogViewer-0.34.0.123-osx-arm64.zip"
 		}
 	]
 }
