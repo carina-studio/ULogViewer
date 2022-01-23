@@ -3,8 +3,8 @@ title: ULogViewer
 ---
 
 # Privacy Policy
-- Version: 1.1.
-- Update: 2021/12/7.
+- Version: 1.2.
+- Update: 2022/1/23.
 
 This is the Privacy Policy of ```ULogViewer``` which you need to read before you using ```ULogViewer```. 
 The Privacy Policy may be updated in the future and you can check it on the website of ```ULogViewer```. 
@@ -28,6 +28,8 @@ We **DO** collect the following data which may relate to your personal data:
 - IP addresses of specific devices you set in ```ULogViewer``` for reading logs.
 - URI of specific resources you set in ```ULogViewer``` for reading logs.
 - User name and password you set in ```ULogViewer``` for authentication before reading logs.
+- The keyboard key you pressed in main window of ```ULogViewer``` when ```Debug Mode``` is enabled.
+- The ```Raw Log Line``` which cannot be matched by any pattern defined in current log profile when ```Debug Mode``` is enabled.
 - Detailed information of application crashing.
 
 ## Storing Your Personal Data
