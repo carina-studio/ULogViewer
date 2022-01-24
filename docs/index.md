@@ -50,7 +50,8 @@ Each log profile defines:
 - What properties of log should be displayed in the list.
 - How to output logs back to text (ex, copying).
 
-Currently there are 18 built-in log profiles:
+Currently there are 22 built-in log profiles:
+- Android Device Event Log.
 - Android Device Log.
 - Android Log Files.
 - Android Kernel Log Files.
@@ -61,6 +62,9 @@ Currently there are 18 built-in log profiles:
 - Linux Kernel Log Files.
 - Linux System Log.
 - Linux System Log Files.
+- macOS Installation Log.
+- macOS System Log Files.
+- macOS System Wide Log.
 - NLog (TCP).
 - Raw Text In Files.
 - Raw HTTP/HTTPS Response.
@@ -80,7 +84,7 @@ You can filter logs by:
 For text filter, you can also predefine some filters you may use frequently and filter logs by cobination of these text filters.
 
 ## ⭐ Log marking
-When viewing logs, you can mark some logs with different colors which are important for you. There is a separated view to list all marked logs to help you to jump to marked log quickly.
+When viewing logs, you can mark some logs with different colors which are important for you. There is a separated side panel to list all marked logs to help you to jump to marked log quickly.
 Marked logs will be kept if you are viewing logs from files so that you don't need to mark them again when you open log files next time.
 
 ## 📔 Other Topics
