@@ -1710,15 +1710,21 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
-		/// Get number of filtered logs.
-		/// </summary>
-		public int FilteredLogCount { get => this.GetValue(FilteredLogCountProperty); }
-
-
-		/// <summary>
 		/// Get earliest timestamp of log in <see cref="Logs"/>.
 		/// </summary>
 		public DateTime? EarliestLogTimestamp { get => this.GetValue(EarliestLogTimestampProperty); }
+
+
+		/// <summary>
+		/// Raised when error message generated.
+		/// </summary>
+		public event EventHandler<MessageEventArgs>? ErrorMessageGenerated;
+
+
+		/// <summary>
+		/// Get number of filtered logs.
+		/// </summary>
+		public int FilteredLogCount { get => this.GetValue(FilteredLogCountProperty); }
 
 
 		/// <summary>
@@ -2609,6 +2615,23 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.checkIsWaitingForDataSourcesAction.Schedule();
 					break;
 				case nameof(LogReader.State):
+					(sender as LogReader)?.Let(reader =>
+					{
+						if (reader.State == LogReaderState.DataSourceError)
+						{
+							var source = reader.DataSource;
+							if (source.State == LogDataSourceState.SourceNotFound
+								&& source is StandardOutputLogDataSource)
+							{
+								var match = new Regex("^((?<Command>[^\"\\s]+)|\"(?<Command>[^\"]+)\"|'(?<Command>[^']+)')").Match(source.CreationOptions.Command ?? "");
+								if (match.Success)
+								{
+									var message = this.Application.GetFormattedString("Session.Message.SourceNotFound.StandardOutput", match.Groups["Command"].Value);
+									this.ErrorMessageGenerated?.Invoke(this, new MessageEventArgs(message));
+								}
+							}
+						}
+					});
 					this.updateIsReadingLogsAction.Schedule();
 					break;
 			}

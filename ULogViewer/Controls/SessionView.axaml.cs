@@ -503,6 +503,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		void AttachToSession(Session session)
 		{
 			// add event handler
+			session.ErrorMessageGenerated += this.OnErrorMessageGeneratedBySession;
 			session.PropertyChanged += this.OnSessionPropertyChanged;
 
 			// check profile
@@ -1223,6 +1224,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.logListBox.SelectedItems.Clear();
 
 			// remove event handler
+			session.ErrorMessageGenerated -= this.OnErrorMessageGeneratedBySession;
 			session.PropertyChanged -= this.OnSessionPropertyChanged;
 
 			// detach from commands
@@ -1889,6 +1891,21 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 			e.Handled = true;
 			await this.DropAsync(e.KeyModifiers, e.Data);
+		}
+
+
+		// Called when error message generated.
+		void OnErrorMessageGeneratedBySession(object? sender, MessageEventArgs e)
+		{
+			this.FindAncestorOfType<Avalonia.Controls.Window>()?.Let(window =>
+			{
+				_ = new MessageDialog()
+				{
+					Buttons = MessageDialogButtons.OK,
+					Icon = MessageDialogIcon.Error,
+					Message = e.Message,
+				}.ShowDialog(window);
+			});
 		}
 
 

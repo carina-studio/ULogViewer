@@ -416,6 +416,7 @@
 
 	<!-- Session -->
 	<sys:String x:Key="String/Session.Empty">Empty Tab</sys:String>
+	<sys:String x:Key="String/Session.Message.SourceNotFound.StandardOutput">Cannot find '{0}' to read logs. Please make sure the command or executable has been installed and its path has been added to 'PATH' environment variable.</sys:String>
 
 	<!-- SessionView -->
 	<sys:String x:Key="String/SessionView.AddLogFiles">Add log files</sys:String>
