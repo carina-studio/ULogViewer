@@ -843,10 +843,8 @@
 							<TextBlock Classes="StatusBar_TextBlock" Background="{x:Static Brushes.Transparent}" Text="{Binding LogsMemoryUsage, Converter={x:Static asConverters:FileSizeConverter.Default}}" ToolTip.Placement="Left" ToolTip.Tip="{DynamicResource String/SessionView.LogsMemoryUsage}" VerticalAlignment="Center"/>
 							<TextBlock Classes="StatusBar_TextBlock" Text="/" VerticalAlignment="Center"/>
 							<TextBlock Classes="StatusBar_TextBlock" Background="{x:Static Brushes.Transparent}" Text="{Binding TotalLogsMemoryUsage, Converter={x:Static asConverters:FileSizeConverter.Default}}" ToolTip.Placement="Left" ToolTip.Tip="{DynamicResource String/SessionView.TotalLogsMemoryUsage}" VerticalAlignment="Center"/>
-							<StackPanel IsVisible="{Binding $parent[UserControl].IsNotMacOS, Mode=OneTime}" Orientation="Horizontal">
-								<TextBlock Classes="StatusBar_TextBlock" Text="/" VerticalAlignment="Center"/>
+							<TextBlock Classes="StatusBar_TextBlock" Text="/" VerticalAlignment="Center"/>
 							<TextBlock Classes="StatusBar_TextBlock" Background="{x:Static Brushes.Transparent}" Text="{Binding $parent[UserControl].Application.ProcessInfo.PrivateMemoryUsage, Converter={x:Static asConverters:FileSizeConverter.Default}}" ToolTip.Placement="Left" ToolTip.Tip="{DynamicResource String/SessionView.MemoryUsage}" VerticalAlignment="Center"/>
-							</StackPanel>
 						</StackPanel>
 					</StackPanel>
 

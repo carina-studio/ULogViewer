@@ -4,6 +4,7 @@
 	
 	<!-- SessionView -->
 	<sys:String x:Key="String/SessionView.AddLogFiles.WithShortcut">加入日誌檔案 (⌘O)</sys:String>
+	<sys:String x:Key="String/SessionView.MemoryUsage">總記憶體使用量</sys:String>
 	<sys:String x:Key="String/SessionView.PredefinedLogTextFilters">已定義的文字篩選 (⌘P)</sys:String>
 	<sys:String x:Key="String/SessionView.RestartAsAdministrator">以 Superuser 身分重新啟動</sys:String>
 	<sys:String x:Key="String/SessionView.ShowAllLogsTemporarily">暫時顯示所有日誌 (⌥A)</sys:String>

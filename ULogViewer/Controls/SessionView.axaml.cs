@@ -1534,10 +1534,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
 
 
-		// PLatform type.
-		bool IsNotMacOS { get; } = !Platform.IsMacOS;
-
-
 		// Check whether process info should be shown or not.
 		bool IsProcessInfoVisible { get => this.GetValue<bool>(IsProcessInfoVisibleProperty); }
 
