@@ -1385,7 +1385,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					it.LogPatterns = new LogPattern[] { new LogPattern("^(?<Message>.*)", false, false) };
 				it.LogStringEncoding = profile.LogStringEncodingForReading;
 				if (profile.IsContinuousReading)
+				{
 					it.MaxLogCount = this.Settings.GetValueOrDefault(SettingKeys.MaxContinuousLogCount);
+					it.RestartReadingDelay = TimeSpan.FromMilliseconds(profile.RestartReadingDelay);
+				}
 				it.TimeSpanCultureInfo = profile.TimeSpanCultureInfoForReading;
 				it.TimeSpanEncoding = profile.TimeSpanEncodingForReading;
 				it.TimeSpanFormats = profile.TimeSpanFormatsForReading;
@@ -2518,6 +2521,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				case nameof(LogProfile.TimestampEncodingForReading):
 				case nameof(LogProfile.TimestampFormatsForReading):
 					this.SynchronizationContext.Post(() => this.ReloadLogs(true, false));
+					break;
+				case nameof(LogProfile.RestartReadingDelay):
+					(sender as LogProfile)?.Let(profile =>
+					{
+						if (profile.IsContinuousReading && this.logReaders.IsNotEmpty())
+							this.logReaders[0].RestartReadingDelay = TimeSpan.FromMilliseconds(profile.RestartReadingDelay);
+					});
 					break;
 				case nameof(LogProfile.VisibleLogProperties):
 					this.SynchronizationContext.Post(() => this.ReloadLogs(false, true));

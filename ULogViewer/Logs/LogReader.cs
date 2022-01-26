@@ -63,6 +63,8 @@ namespace CarinaStudio.ULogViewer.Logs
 		readonly SingleThreadSynchronizationContext pendingLogsSyncContext = new SingleThreadSynchronizationContext();
 		readonly IDictionary<string, LogLevel> readOnlyLogLevelMap;
 		readonly TaskFactory readingTaskFactory;
+		TimeSpan restartReadingDelay;
+		readonly ScheduledAction startReadingLogsAction;
 		LogReaderState state = LogReaderState.Preparing;
 		CultureInfo timeSpanCultureInfo = defaultTimestampCultureInfo;
 		LogTimeSpanEncoding timeSpanEncoding = LogTimeSpanEncoding.Custom;
@@ -107,6 +109,7 @@ namespace CarinaStudio.ULogViewer.Logs
 				this.pendingLogs.Clear();
 				this.SynchronizationContext.Post(() => this.OnLogsRead(token, logs));
 			});
+			this.startReadingLogsAction = new ScheduledAction(this.StartReadingLogs);
 
 			// attach to data source
 			dataSource.PropertyChanged += this.OnDataSourcePropertyChanged;
@@ -462,7 +465,7 @@ namespace CarinaStudio.ULogViewer.Logs
 						case LogReaderState.Starting:
 						case LogReaderState.StartingWhenPaused:
 							this.Logger.LogWarning("Data source is ready to open reader, start reading logs");
-							this.StartReadingLogs();
+							this.startReadingLogsAction.Schedule();
 							break;
 					}
 					break;
@@ -571,8 +574,17 @@ namespace CarinaStudio.ULogViewer.Logs
 			}
 
 			// restart reading
-			this.Logger.LogWarning("Restart reading logs");
-			this.StartReadingLogs();
+			var delay = this.restartReadingDelay;
+			if (delay.TotalMilliseconds > 0)
+			{
+				this.Logger.LogWarning($"Restart reading logs {(int)delay.TotalMilliseconds} ms later");
+				this.startReadingLogsAction.Reschedule(delay);
+			}
+			else
+			{
+				this.Logger.LogWarning("Restart reading logs");
+				this.startReadingLogsAction.Reschedule();
+			}
 		}
 
 
@@ -1026,6 +1038,27 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		/// <summary>
+		/// Get or set delay before restarting logs reading when <see cref="IsContinuousReading"/> is True.
+		/// </summary>
+		public TimeSpan RestartReadingDelay
+		{
+			get => this.restartReadingDelay;
+			set
+			{
+				this.VerifyAccess();
+				if (this.restartReadingDelay == value)
+					return;
+				if (value.TotalMilliseconds < 0)
+					throw new ArgumentOutOfRangeException();
+				this.restartReadingDelay = value;
+				if (this.startReadingLogsAction.IsScheduled)
+					this.startReadingLogsAction.Reschedule(value);
+				this.OnPropertyChanged(nameof(RestartReadingDelay));
+			}
+		}
+
+
+		/// <summary>
 		/// Resume reading logs.
 		/// </summary>
 		/// <returns>True if logs reading has been resumed successfully.</returns>
@@ -1061,7 +1094,7 @@ namespace CarinaStudio.ULogViewer.Logs
 				throw new InvalidOperationException("No log pattern specified.");
 
 			// start
-			this.StartReadingLogs();
+			this.startReadingLogsAction.Reschedule();
 		}
 
 

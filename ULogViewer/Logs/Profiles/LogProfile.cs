@@ -59,6 +59,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		string name = "";
 		IDictionary<string, LogLevel> readOnlyLogLevelMapForReading;
 		IDictionary<LogLevel, string> readOnlyLogLevelMapForWriting;
+		long restartReadingDelay;
 		SortDirection sortDirection = SortDirection.Ascending;
 		LogSortKey sortKey = LogSortKey.Timestamp;
 		CultureInfo timeSpanCultureInfoForReading = defaultTimestampCultureInfoForReading;
@@ -656,6 +657,9 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 					case nameof(Name):
 						this.name = jsonProperty.Value.GetString() ?? "";
 						break;
+					case nameof(RestartReadingDelay):
+						this.restartReadingDelay = Math.Max(0, jsonProperty.Value.GetInt64());
+						break;
 					case nameof(SortDirection):
 						this.sortDirection = Enum.Parse<SortDirection>(jsonProperty.Value.GetString().AsNonNull());
 						break;
@@ -960,6 +964,28 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 
 
 		/// <summary>
+		/// Get or set delay before restarting logs reading for continuous reading case in milliseconds.
+		/// </summary>
+		public long RestartReadingDelay
+		{
+			get => this.restartReadingDelay;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (this.restartReadingDelay == value)
+					return;
+				if (!this.isContinuousReading)
+					return;
+				if (value < 0)
+					throw new ArgumentOutOfRangeException();
+				this.restartReadingDelay = value;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(RestartReadingDelay)));
+			}
+		}
+
+
+		/// <summary>
 		/// Save profile to file asynchronously.
 		/// </summary>
 		/// <param name="fileName">Name of file.</param>
@@ -1012,6 +1038,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				writer.WriteString(nameof(LogStringEncodingForWriting), this.logStringEncodingForWriting.ToString());
 				this.logWritingFormat?.Let(it => writer.WriteString(nameof(LogWritingFormat), it));
 				writer.WriteString(nameof(Name), this.name);
+				writer.WriteNumber(nameof(RestartReadingDelay), this.restartReadingDelay);
 				writer.WriteString(nameof(SortDirection), this.sortDirection.ToString());
 				writer.WriteString(nameof(SortKey), this.sortKey.ToString());
 				writer.WriteString(nameof(TimeSpanCultureInfoForReading), this.timeSpanCultureInfoForReading.ToString());

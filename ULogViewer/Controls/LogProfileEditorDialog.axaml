@@ -147,6 +147,13 @@
 					<Separator Classes="Dialog_Separator"/>
 				</StackPanel>
 
+				<!-- Is administrator needed -->
+				<StackPanel Name="isAdminNeededPanel" HorizontalAlignment="Stretch" Orientation="Vertical">
+					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogProfileEditorDialog.IsAdministratorNeeded}"/>
+					<ToggleSwitch Name="adminNeededSwitch" Classes="Dialog_ToggleSwitch"/>
+					<Separator Classes="Dialog_Separator"/>
+				</StackPanel>
+
 				<!-- Is continuous reading -->
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogProfileEditorDialog.IsContinuousReading}"/>
 				<ToggleSwitch Name="continuousReadingSwitch" Classes="Dialog_ToggleSwitch">
@@ -163,12 +170,10 @@
 				<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.IsContinuousReading.Description}"/>
 				<Separator Classes="Dialog_Separator"/>
 
-				<!-- Is administrator needed -->
-				<StackPanel Name="isAdminNeededPanel" HorizontalAlignment="Stretch" Orientation="Vertical">
-					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogProfileEditorDialog.IsAdministratorNeeded}"/>
-					<ToggleSwitch Name="adminNeededSwitch" Classes="Dialog_ToggleSwitch"/>
-					<Separator Classes="Dialog_Separator"/>
-				</StackPanel>
+				<!-- Restart reading delay -->
+				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogProfileEditorDialog.RestartReadingDelay}"/>
+				<NumericUpDown Name="restartReadingDelayUpDown" Classes="Dialog_NumericUpDown" IsEnabled="{Binding #continuousReadingSwitch.IsChecked}" Maximum="3600000" Minimum="0"/>
+				<Separator Classes="Dialog_Separator"/>
 
 				<!-- Log level map -->
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogProfileEditorDialog.LogLevelMapForReading}"/>
