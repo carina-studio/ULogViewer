@@ -512,7 +512,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.MarkLogsCommand = new Command<MarkingLogsParams>(this.MarkLogs, this.canMarkUnmarkLogs);
 			this.MarkUnmarkLogsCommand = new Command<IEnumerable<DisplayableLog>>(this.MarkUnmarkLogs, this.canMarkUnmarkLogs);
 			this.PauseResumeLogsReadingCommand = new Command(this.PauseResumeLogsReading, this.canPauseResumeLogsReading);
-			this.ReloadLogsCommand = new Command(() => this.ReloadLogs(false, false), this.canReloadLogs);
+			this.ReloadLogsCommand = new Command(() => 
+			{
+				if (this.canReloadLogs.Value)
+					this.ReloadLogs(false, false);
+			}, this.canReloadLogs);
 			this.ResetLogProfileCommand = new Command(this.ResetLogProfile, this.canResetLogProfile);
 			this.SaveLogsCommand = new Command<LogsSavingOptions>(this.SaveLogs, this.canSaveLogs);
 			this.SetIPEndPointCommand = new Command<IPEndPoint?>(this.SetIPEndPoint, this.GetValueAsObservable(IsIPEndPointNeededProperty));
@@ -1444,8 +1448,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.LoadMarkedLogs(creationOptions.FileName.AsNonNull());
 
 			// update state
-			if (this.addedLogFilePaths.IsNotEmpty())
+			if (this.addedLogFilePaths.IsNotEmpty() 
+				&& !profile.DataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName)))
+			{
 				this.canClearLogFiles.Update(true);
+			}
 			this.canMarkUnmarkLogs.Update(true);
 			this.canPauseResumeLogsReading.Update(profile.IsContinuousReading);
 			this.canReloadLogs.Update(true);
@@ -2778,8 +2785,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// check state
 			this.VerifyAccess();
 			this.VerifyDisposed();
-			if (!this.canReloadLogs.Value || this.logReaders.IsEmpty())
-				return;
 			var profile = this.LogProfile;
 			if (profile == null)
 				throw new InternalStateCorruptedException("No log profile to reload logs.");
@@ -2886,13 +2891,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		// Restore log readers from saved state.
 		void RestoreLogReaders()
 		{
-			// check state
-			if (this.savedDataSourceOptions.IsEmpty())
-			{
-				this.Logger.LogDebug("No log reader to restore");
-				return;
-			}
-
 			// check profile
 			var profile = this.LogProfile;
 			if (profile == null)
@@ -2907,14 +2905,83 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// dispose current log readers
 			this.DisposeLogReaders();
 
-			// restore
+			// restore to default source options
 			var dataSourceProvider = profile.DataSourceProvider;
 			var defaultDataSourceOptions = profile.DataSourceOptions;
+			var useDefaultDataSourceOptions = false;
+			if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.FileName)))
+			{
+				this.SetValue(AreFileBasedLogsProperty, true);
+				if (defaultDataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName)))
+				{
+					useDefaultDataSourceOptions = true;
+					this.addedLogFilePaths.Clear();
+					this.addedLogFilePaths.Add(defaultDataSourceOptions.FileName.AsNonNull());
+					this.canClearLogFiles.Update(false);
+					this.SetValue(IsLogFileNeededProperty, false);
+				}
+				else
+					this.SetValue(IsLogFileNeededProperty, true);
+			}
+			else
+			{
+				this.canClearLogFiles.Update(false);
+				this.SetValue(AreFileBasedLogsProperty, false);
+				this.SetValue(IsLogFileNeededProperty, false);
+			}
+			if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.IPEndPoint)))
+			{
+				if (defaultDataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.IPEndPoint)))
+				{
+					useDefaultDataSourceOptions = true;
+					this.SetValue(IsIPEndPointNeededProperty, false);
+				}
+				else
+					this.SetValue(IsIPEndPointNeededProperty, true);
+			}
+			else
+				this.SetValue(IsIPEndPointNeededProperty, false);
+			if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.Uri)))
+			{
+				if (defaultDataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.Uri)))
+				{
+					useDefaultDataSourceOptions = true;
+					this.SetValue(IsUriNeededProperty, false);
+				}
+				else
+					this.SetValue(IsUriNeededProperty, true);
+			}
+			else
+				this.SetValue(IsUriNeededProperty, false);
+			if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.WorkingDirectory))
+				|| profile.IsWorkingDirectoryNeeded)
+			{
+				if (defaultDataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.WorkingDirectory)))
+				{
+					useDefaultDataSourceOptions = true;
+					this.SetValue(IsWorkingDirectoryNeededProperty, false);
+				}
+				else
+					this.SetValue(IsWorkingDirectoryNeededProperty, true);
+			}
+			else
+				this.SetValue(IsWorkingDirectoryNeededProperty, false);
+
+			// restore
+			if (useDefaultDataSourceOptions)
+			{
+				this.Logger.LogWarning("Restore log reader(s) using default data source options");
+				this.savedDataSourceOptions.Clear();
+				this.savedDataSourceOptions.Add(defaultDataSourceOptions);
+			}
 			foreach (var dataSourceOption in this.savedDataSourceOptions)
 			{
 				// apply default options
 				var newDataSourceOptions = dataSourceOption;
+				newDataSourceOptions.Command = defaultDataSourceOptions.Command;
 				newDataSourceOptions.Encoding = defaultDataSourceOptions.Encoding;
+				newDataSourceOptions.SetupCommands = defaultDataSourceOptions.SetupCommands;
+				newDataSourceOptions.TeardownCommands = defaultDataSourceOptions.TeardownCommands;
 
 				// create data source and reader
 				var dataSource = this.CreateLogDataSourceOrNull(dataSourceProvider, newDataSourceOptions);
@@ -3384,7 +3451,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.FileName)))
 			{
 				this.SetValue(AreFileBasedLogsProperty, true);
-				if (!dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName)))
+				if (dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName)))
+					this.addedLogFilePaths.Add(dataSourceOptions.FileName.AsNonNull());
+				else
 				{
 					this.Logger.LogDebug("No file name specified, waiting for adding file");
 					this.SetValue(IsLogFileNeededProperty, true);
