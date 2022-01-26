@@ -2013,8 +2013,14 @@ namespace CarinaStudio.ULogViewer.Controls
 		void OnLogListBoxScrollChanged(object? sender, ScrollChangedEventArgs e)
 		{
 			// update auto scrolling state
-			if (this.isPointerPressedOnLogListBox)
+			if (this.isPointerPressedOnLogListBox 
+				|| this.pressedKeys.Contains(Avalonia.Input.Key.Down)
+				|| this.pressedKeys.Contains(Avalonia.Input.Key.Up)
+				|| this.pressedKeys.Contains(Avalonia.Input.Key.Home)
+				|| this.pressedKeys.Contains(Avalonia.Input.Key.End))
+			{
 				this.UpdateIsScrollingToLatestLogNeeded(e.OffsetDelta.Y);
+			}
 
 			// sync log header offset
 			var logScrollViewer = this.logScrollViewer;
@@ -2273,7 +2279,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			// [Workaround] skip handling key event if it was handled by context menu
 			// check whether key down was received or not
-			if (!this.pressedKeys.Remove(e.Key))
+			if (!this.pressedKeys.Contains(e.Key))
 			{
 				this.Logger.LogTrace($"[KeyUp] Key down of {e.Key} was not received");
 				return;
@@ -2354,6 +2360,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			else if (this.Application.IsDebugMode && e.Source is not TextBox)
 				this.Logger.LogTrace($"[KeyUp] {e.Key} was handled by another component");
+
+			// stop tracking key
+			this.pressedKeys.Remove(e.Key);
 
 			// call base
 			base.OnKeyUp(e);

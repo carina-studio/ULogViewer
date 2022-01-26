@@ -666,6 +666,18 @@ namespace CarinaStudio.ULogViewer
 		}
 
 
+		// Property changed.
+		protected override void OnPropertyChanged<T>(AvaloniaPropertyChangedEventArgs<T> change)
+		{
+			base.OnPropertyChanged(change);
+			if (change.Property == IsActiveProperty)
+			{
+				if (this.IsActive && FocusManager.Instance?.Current is not TextBox)
+					((this.tabControl.SelectedItem as TabItem)?.Content as Control)?.Focus();
+			}
+		}
+
+
         // Called when list of session changed.
         void OnSessionsChanged(object? sender, NotifyCollectionChangedEventArgs e)
 		{
