@@ -2002,20 +2002,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (e.InitialPressMouseButton == Avalonia.Input.MouseButton.Left)
 				this.isPointerPressedOnLogListBox = false;
-			else if (e.InitialPressMouseButton == Avalonia.Input.MouseButton.Right)
-			{
-				// [Workaround] Show context menu manually to prevent menu position keep changing in Avalonia 0.10.11.
-				this.SynchronizationContext.PostDelayed(() =>
-				{
-					if (!this.isPointerPressedOnLogListBox && !logMarkingMenu.IsOpen && this.logListBox.IsEffectivelyEnabled)
-					{
-						var position = e.GetPosition(this.logListBox);
-						this.logActionMenu.HorizontalOffset = position.X;
-						this.logActionMenu.VerticalOffset = position.Y;
-						this.logActionMenu.Open(this.logListBox);
-					}
-				}, 100);
-			}
 		}
 
 
