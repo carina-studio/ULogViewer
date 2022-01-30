@@ -5,7 +5,7 @@
             // Use IntelliSense to find out which attributes exist for C# debugging
             // Use hover for the description of the existing attributes
             // For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md
-            "name": ".NET Core Launch (console)",
+            "name": "ULogViewer",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
@@ -14,6 +14,17 @@
             "args": [],
             "cwd": "${workspaceFolder}/ULogViewer",
             // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
+            "console": "internalConsole",
+            "stopAtEntry": false
+        },
+        {
+            "name": "ULogViewer-Windows",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/ULogViewer/bin/Debug-Windows/net6.0-windows10.0.17763.0/ULogViewer.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/ULogViewer",
             "console": "internalConsole",
             "stopAtEntry": false
         },
