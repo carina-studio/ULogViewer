@@ -227,6 +227,11 @@ namespace CarinaStudio.ULogViewer.Controls
 				{
 					if (this.showLogPropertyMenuItem == null)
 						return;
+					this.logScrollViewer?.Let(scrollViewer =>
+					{
+						if (scrollViewer.Viewport.Height < scrollViewer.Extent.Height)
+							this.IsScrollingToLatestLogNeeded = false;
+					});
 					if (this.lastClickedLogPropertyView?.Tag is DisplayableLogProperty property)
 					{
 						this.copyLogPropertyMenuItem.Header = this.Application.GetFormattedString("SessionView.CopyLogProperty", property.DisplayName);
@@ -263,7 +268,17 @@ namespace CarinaStudio.ULogViewer.Controls
 					});
 				});
 			});
-			this.logMarkingMenu = (ContextMenu)this.Resources[nameof(logMarkingMenu)].AsNonNull();
+			this.logMarkingMenu = ((ContextMenu)this.Resources[nameof(logMarkingMenu)].AsNonNull()).Also(it =>
+			{
+				it.MenuOpened += (_, e) =>
+				{
+					this.logScrollViewer?.Let(scrollViewer =>
+					{
+						if (scrollViewer.Viewport.Height < scrollViewer.Extent.Height)
+							this.IsScrollingToLatestLogNeeded = false;
+					});
+				};
+			});
 			this.logProcessIdFilterTextBoxPanel = this.FindControl<Panel>(nameof(logProcessIdFilterTextBoxPanel)).AsNonNull();
 			this.logProcessIdFilterTextBox = this.logProcessIdFilterTextBoxPanel.FindControl<IntegerTextBox>(nameof(logProcessIdFilterTextBox)).AsNonNull();
 			this.logsSavingButton = this.FindControl<ToggleButton>(nameof(logsSavingButton)).AsNonNull();
