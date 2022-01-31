@@ -2816,7 +2816,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.UpdateDisplayLogProperties();
 
 			// recreate log readers
-			this.RestoreLogReaders();
+			if (this.logReaders.IsEmpty())
+				this.RestoreLogReaders();
 		}
 
 
