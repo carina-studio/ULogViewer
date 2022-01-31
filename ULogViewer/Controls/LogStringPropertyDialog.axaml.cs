@@ -220,7 +220,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			var app = (App)this.Application;
 			if (!app.TryFindResource("SystemAccentColor", out var res) || res is not Color accentColor)
 				return;
-			this.Resources["Brush/TextArea.Selection.Background"] = new SolidColorBrush(Color.FromArgb(0x3f, accentColor.R, accentColor.G, accentColor.B));
+			this.Resources["Brush/TextArea.Selection.Background"] = new SolidColorBrush(Color.FromArgb(0x70, accentColor.R, accentColor.G, accentColor.B));
         }
 
 
