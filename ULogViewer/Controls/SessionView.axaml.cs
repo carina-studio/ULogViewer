@@ -225,13 +225,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				it.MenuOpened += (_, e) =>
 				{
+					this.IsScrollingToLatestLogNeeded = false;
 					if (this.showLogPropertyMenuItem == null)
 						return;
-					this.logScrollViewer?.Let(scrollViewer =>
-					{
-						if (scrollViewer.Viewport.Height < scrollViewer.Extent.Height)
-							this.IsScrollingToLatestLogNeeded = false;
-					});
 					if (this.lastClickedLogPropertyView?.Tag is DisplayableLogProperty property)
 					{
 						this.copyLogPropertyMenuItem.Header = this.Application.GetFormattedString("SessionView.CopyLogProperty", property.DisplayName);
@@ -272,11 +268,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				it.MenuOpened += (_, e) =>
 				{
-					this.logScrollViewer?.Let(scrollViewer =>
-					{
-						if (scrollViewer.Viewport.Height < scrollViewer.Extent.Height)
-							this.IsScrollingToLatestLogNeeded = false;
-					});
+					this.IsScrollingToLatestLogNeeded = false;
 				};
 			});
 			this.logProcessIdFilterTextBoxPanel = this.FindControl<Panel>(nameof(logProcessIdFilterTextBoxPanel)).AsNonNull();
@@ -412,6 +404,13 @@ namespace CarinaStudio.ULogViewer.Controls
 					return;
 				if (session.Logs.IsEmpty() || session.LogProfile == null || !session.IsActivated)
 					return;
+				
+				// cancel scrolling
+				if (this.logActionMenu.IsOpen || this.logMarkingMenu.IsOpen)
+				{
+					this.IsScrollingToLatestLogNeeded = false;
+					return;
+				}
 
 				// find log index
 				var logIndex = session.LogProfile.SortDirection == SortDirection.Ascending ? session.Logs.Count - 1 : 0;
