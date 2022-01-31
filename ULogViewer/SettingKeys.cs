@@ -68,10 +68,6 @@ namespace CarinaStudio.ULogViewer
 		/// </summary>
 		public static readonly SettingKey<bool> SelectWorkingDirectoryWhenNeeded = new SettingKey<bool>(nameof(SelectWorkingDirectoryWhenNeeded), true);
 		/// <summary>
-		/// Show process info on UI or not.
-		/// </summary>
-		public static readonly SettingKey<bool> ShowProcessInfo = new SettingKey<bool>(nameof(ShowProcessInfo), false);
-		/// <summary>
 		/// Delay of updating log filter after changing related parameters in milliseconds.
 		/// </summary>
 		public static readonly SettingKey<int> UpdateLogFilterDelay = new SettingKey<int>(nameof(UpdateLogFilterDelay), 500);

@@ -208,7 +208,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.UpdateLogFontSize();
 
 			// setup properties
-			this.SetValue<bool>(IsProcessInfoVisibleProperty, this.Settings.GetValueOrDefault(SettingKeys.ShowProcessInfo));
+			this.SetValue<bool>(IsProcessInfoVisibleProperty, this.Settings.GetValueOrDefault(AppSuite.SettingKeys.ShowProcessInfo));
 			this.SetValue<int>(MaxDisplayLineCountForEachLogProperty, Math.Max(1, this.Settings.GetValueOrDefault(SettingKeys.MaxDisplayLineCountForEachLog)));
 			this.ValidLogLevels = this.validLogLevels.AsReadOnly();
 
@@ -2718,7 +2718,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.UpdateLogFontSize();
 			else if (e.Key == SettingKeys.MaxDisplayLineCountForEachLog)
 				this.SetValue<int>(MaxDisplayLineCountForEachLogProperty, Math.Max(1, (int)e.Value));
-			else if (e.Key == SettingKeys.ShowProcessInfo)
+			else if (e.Key == AppSuite.SettingKeys.ShowProcessInfo)
 				this.SetValue<bool>(IsProcessInfoVisibleProperty, (bool)e.Value);
 			else if (e.Key == SettingKeys.UpdateLogFilterDelay)
 				this.logTextFilterTextBox.ValidationDelay = this.UpdateLogFilterParamsDelay;

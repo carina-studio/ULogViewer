@@ -88,7 +88,16 @@ namespace CarinaStudio.ULogViewer
 
 		// Program entry.
 		[STAThread]
-		static void Main(string[] args) => BuildApplication<App>().StartWithClassicDesktopLifetime(args);
+		static void Main(string[] args) => BuildApplication<App>(builder =>
+		{
+			if (Platform.IsMacOS)
+			{
+				builder.With(new MacOSPlatformOptions()
+				{
+					DisableDefaultApplicationMenuItems = true,
+				});
+			}
+		}).StartWithClassicDesktopLifetime(args);
 
 
 		// Create main window.

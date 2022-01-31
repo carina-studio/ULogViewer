@@ -241,7 +241,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.OnPropertyChanged(nameof(SelectUriWhenNeeded));
 			else if (key == SettingKeys.SelectWorkingDirectoryWhenNeeded)
 				this.OnPropertyChanged(nameof(SelectWorkingDirectoryWhenNeeded));
-			else if (key == SettingKeys.ShowProcessInfo)
+			else if (key == AppSuite.SettingKeys.ShowProcessInfo)
 				this.OnPropertyChanged(nameof(ShowProcessInfo));
 			else if (key == SettingKeys.UpdateLogFilterDelay)
 				this.OnPropertyChanged(nameof(UpdateLogFilterDelay));
@@ -324,8 +324,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public bool ShowProcessInfo
 		{
-			get => this.Settings.GetValueOrDefault(SettingKeys.ShowProcessInfo);
-			set => this.Settings.SetValue<bool>(SettingKeys.ShowProcessInfo, value);
+			get => this.Settings.GetValueOrDefault(AppSuite.SettingKeys.ShowProcessInfo);
+			set => this.Settings.SetValue<bool>(AppSuite.SettingKeys.ShowProcessInfo, value);
 		}
 
 
