@@ -380,7 +380,7 @@
 				
 				<!-- Log writing format -->
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogProfileEditorDialog.LogWritingFormat}"/>
-				<asControls:StringInterpolationFormatTextBox Name="logWritingFormatTextBox" Watermark="{DynamicResource String/LogProfileEditorDialog.LogWritingFormat.Watermark}"/>
+				<asControls:StringInterpolationFormatTextBox Name="logWritingFormatTextBox" Height="{DynamicResource Double/LogProfileEditorDialog.LogWritingFormatTextBox.Height}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" TextWrapping="Wrap" Watermark="{DynamicResource String/LogProfileEditorDialog.LogWritingFormat.Watermark}"/>
 				<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.LogWritingFormat.Description}"/>
 				<asControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.FormatDescription}" Uri="{x:Static app:Uris.StringInterpolationReference}"/>
 				<Separator Classes="Dialog_Separator"/>

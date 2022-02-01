@@ -46,6 +46,7 @@
 	<sys:Double x:Key="Double/LogProfileEditorDialog.Content.MaxHeight">600</sys:Double>
 	<sys:Double x:Key="Double/LogProfileEditorDialog.IconComboBox.Icon.Size">18</sys:Double>
 	<sys:Double x:Key="Double/LogProfileEditorDialog.ListBox.Height">150</sys:Double>
+	<sys:Double x:Key="Double/LogProfileEditorDialog.LogWritingFormatTextBox.Height">100</sys:Double>
 	<sys:Double x:Key="Double/LogProfileEditorDialog.Width">500</sys:Double>
 	<Thickness x:Key="Thickness/LogProfileEditorDialog.IconComboBox.Icon.Margin">0,0,10,0</Thickness>
 
