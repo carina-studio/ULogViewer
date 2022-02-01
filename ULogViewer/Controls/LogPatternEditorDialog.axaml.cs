@@ -1,6 +1,5 @@
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.Primitives;
 using Avalonia.Data;
 using Avalonia.Markup.Xaml;
 using CarinaStudio.AppSuite.Controls;
@@ -18,7 +17,7 @@ namespace CarinaStudio.ULogViewer.Controls
 	/// <summary>
 	/// Editor of <see cref="LogPattern"/>.
 	/// </summary>
-	partial class LogPatternEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
+	partial class LogPatternEditorDialog : InputDialog<IULogViewerApplication>
 	{
 		/// <summary>
 		/// List of property names of log.
@@ -35,8 +34,6 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Fields.
-		readonly ToggleButton addLogPropertyGroupButton;
-		readonly ContextMenu addLogPropertyGroupMenu;
 		readonly RegexTextBox regexTextBox;
 		readonly ToggleSwitch repeatableSwitch;
 		readonly ToggleSwitch skippableSwitch;
@@ -48,29 +45,25 @@ namespace CarinaStudio.ULogViewer.Controls
 		public LogPatternEditorDialog()
 		{
 			InitializeComponent();
-			this.addLogPropertyGroupButton = this.FindControl<ToggleButton>("addLogPropertyGroupButton").AsNonNull();
-			this.addLogPropertyGroupMenu = ((ContextMenu)this.Resources["addLogPropertyGroupMenu"].AsNonNull()).Also(it =>
+			this.regexTextBox = this.FindControl<RegexTextBox>(nameof(regexTextBox)).AsNonNull().Also(it =>
 			{
-				var itemTemplate = it.DataTemplates[0];
-				var menuItems = new List<MenuItem>();
 				foreach (var propertyName in LogPropertyNames)
 				{
-					var header = itemTemplate.Build(propertyName);
-					menuItems.Add(new MenuItem().Also(menuItem =>
+					var group = new RegexGroup().Also(group =>
 					{
-						menuItem.Bind(MenuItem.CommandProperty, new Binding() { Path = nameof(InsertLogPropertyGroup), Source = this });
-						menuItem.CommandParameter = propertyName;
-						menuItem.DataContext = propertyName;
-						menuItem.Header = header;
-					}));
+						group.Bind(RegexGroup.DisplayNameProperty, new Binding()
+                        {
+							Converter = Converters.LogPropertyNameConverter.Default,
+							Path = nameof(RegexGroup.Name),
+							Source = group,
+                        });
+						group.Name = propertyName;
+					});
+					it.PredefinedGroups.Add(group);
 				}
-				it.Items = menuItems;
-				it.MenuClosed += (_, e) => this.SynchronizationContext.Post(() => this.addLogPropertyGroupButton.IsChecked = false);
-				it.MenuOpened += (_, e) => this.SynchronizationContext.Post(() => this.addLogPropertyGroupButton.IsChecked = true);
 			});
-			this.regexTextBox = this.FindControl<RegexTextBox>("regexTextBox");
-			this.repeatableSwitch = this.FindControl<ToggleSwitch>("repeatableSwitch");
-			this.skippableSwitch = this.FindControl<ToggleSwitch>("skippableSwitch");
+			this.repeatableSwitch = this.FindControl<ToggleSwitch>(nameof(repeatableSwitch)).AsNonNull();
+			this.skippableSwitch = this.FindControl<ToggleSwitch>(nameof(skippableSwitch)).AsNonNull();
 		}
 
 
@@ -143,15 +136,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		protected override bool OnValidateInput()
 		{
 			return base.OnValidateInput() && this.regexTextBox.IsTextValid && this.regexTextBox.Regex != null;
-		}
-
-
-		// Show menu to add log property group.
-		void ShowAddLogPropertyGroupMenu()
-		{
-			if (this.addLogPropertyGroupMenu.PlacementTarget == null)
-				this.addLogPropertyGroupMenu.PlacementTarget = this.addLogPropertyGroupButton;
-			this.addLogPropertyGroupMenu.Open(this);
 		}
 	}
 }

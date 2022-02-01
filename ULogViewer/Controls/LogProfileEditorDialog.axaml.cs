@@ -1,6 +1,5 @@
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.Primitives;
 using Avalonia.Data;
 using Avalonia.Data.Converters;
 using Avalonia.Interactivity;
@@ -56,8 +55,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ComboBox dataSourceProviderComboBox;
 		readonly TextBox descriptionTextBox;
 		readonly ComboBox iconComboBox;
-		readonly ToggleButton insertLogWritingFormatSyntaxButton;
-		readonly ContextMenu insertLogWritingFormatSyntaxMenu;
 		readonly SortedObservableList<KeyValuePair<string, LogLevel>> logLevelMapEntriesForReading = new SortedObservableList<KeyValuePair<string, LogLevel>>((x, y) => x.Key.CompareTo(y.Key));
 		readonly SortedObservableList<KeyValuePair<LogLevel, string>> logLevelMapEntriesForWriting = new SortedObservableList<KeyValuePair<LogLevel, string>>((x, y) => x.Key.CompareTo(y.Key));
 		readonly ListBox logLevelMapForReadingListBox;
@@ -118,32 +115,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.dataSourceProviderComboBox = this.FindControl<ComboBox>("dataSourceProviderComboBox").AsNonNull();
 			this.descriptionTextBox = this.FindControl<TextBox>(nameof(descriptionTextBox));
 			this.iconComboBox = this.FindControl<ComboBox>("iconComboBox").AsNonNull();
-			this.insertLogWritingFormatSyntaxButton = this.FindControl<ToggleButton>("insertLogWritingFormatSyntaxButton").AsNonNull();
-			this.insertLogWritingFormatSyntaxMenu = ((ContextMenu)this.Resources["insertLogWritingFormatSyntaxMenu"].AsNonNull()).Also(it =>
-			{
-				var itemTemplate = it.DataTemplates[0];
-				var items = new List<object>();
-				foreach (var propertyName in Log.PropertyNames)
-				{
-					items.Add(new MenuItem().Also(item =>
-					{
-						item.Bind(MenuItem.CommandProperty, new Binding() { Path = nameof(InsertLogWritingFormatSyntax), Source = this });
-						item.CommandParameter = propertyName;
-						item.DataContext = propertyName;
-						item.Header = itemTemplate.Build(propertyName);
-					}));
-				}
-				items.Add(new Separator());
-				items.Add(new MenuItem().Also(item =>
-				{
-					item.Bind(MenuItem.CommandProperty, new Binding() { Path = nameof(InsertLogWritingFormatSyntax), Source = this });
-					item.CommandParameter = "NewLine";
-					item.Bind(MenuItem.HeaderProperty, item.GetResourceObservable("String/Common.NewLine"));
-				}));
-				it.Items = items;
-				it.MenuClosed += (_, e) => this.SynchronizationContext.Post(() => this.insertLogWritingFormatSyntaxButton.IsChecked = false);
-				it.MenuOpened += (_, e) => this.SynchronizationContext.Post(() => this.insertLogWritingFormatSyntaxButton.IsChecked = true);
-			});
 			if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 				this.FindControl<Control>("isAdminNeededPanel").AsNonNull().IsVisible = false;
 			this.logLevelMapForReadingListBox = this.FindControl<ListBox>("logLevelMapForReadingListBox").AsNonNull();
@@ -151,7 +122,27 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.logPatternListBox = this.FindControl<ListBox>("logPatternListBox").AsNonNull();
 			this.logStringEncodingForReadingComboBox = this.FindControl<ComboBox>("logStringEncodingForReadingComboBox").AsNonNull();
 			this.logStringEncodingForWritingComboBox = this.FindControl<ComboBox>("logStringEncodingForWritingComboBox").AsNonNull();
-			this.logWritingFormatTextBox = this.FindControl<TextBox>("logWritingFormatTextBox").AsNonNull();
+			this.logWritingFormatTextBox = this.FindControl<AppSuite.Controls.StringInterpolationFormatTextBox>("logWritingFormatTextBox").AsNonNull().Also(it =>
+			{
+				foreach (var propertyName in Log.PropertyNames)
+				{
+					it.PredefinedVariables.Add(new AppSuite.Controls.StringInterpolationVariable().Also(variable =>
+					{
+						variable.Bind(AppSuite.Controls.StringInterpolationVariable.DisplayNameProperty, new Binding() 
+						{
+							Converter = Converters.LogPropertyNameConverter.Default,
+							Path = nameof(AppSuite.Controls.StringInterpolationVariable.Name),
+							Source = variable,
+						});
+						variable.Name = propertyName;
+					}));
+				}
+				it.PredefinedVariables.Add(new AppSuite.Controls.StringInterpolationVariable().Also(variable =>
+				{
+					variable.Bind(AppSuite.Controls.StringInterpolationVariable.DisplayNameProperty,this.GetResourceObservable("String/Common.NewLine"));
+					variable.Name = "NewLine";
+				}));
+			});
 			this.nameTextBox = this.FindControl<TextBox>("nameTextBox").AsNonNull();
 			this.restartReadingDelayUpDown = this.FindControl<NumericUpDown>(nameof(restartReadingDelayUpDown)).AsNonNull();
 			this.sortDirectionComboBox = this.FindControl<ComboBox>("sortDirectionComboBox").AsNonNull();
@@ -870,15 +861,6 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.dataSourceOptions = options.Value;
 				this.InvalidateInput();
 			}
-		}
-
-
-		// Show menu to insert log writing format syntax.
-		void ShowInsertLogWritingFormatSyntaxMenu()
-		{
-			if (this.insertLogWritingFormatSyntaxMenu.PlacementTarget == null)
-				this.insertLogWritingFormatSyntaxMenu.PlacementTarget = this.insertLogWritingFormatSyntaxButton;
-			this.insertLogWritingFormatSyntaxMenu.Open(this);
 		}
 
 

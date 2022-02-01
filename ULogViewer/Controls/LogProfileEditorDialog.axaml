@@ -17,26 +17,6 @@
         Classes="Dialog"
         Width="{DynamicResource Double/LogProfileEditorDialog.Width}">
 
-	<!-- Resources -->
-	<Window.Resources>
-		<ContextMenu x:Key="insertLogWritingFormatSyntaxMenu" PlacementMode="Bottom">
-			<ContextMenu.DataTemplates>
-				<DataTemplate DataType="{x:Type sys:String}">
-					<StackPanel Orientation="Horizontal">
-						<TextBlock Text="{Binding Converter={x:Static appConverters:LogPropertyNameConverter.Default}}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
-						<TextBlock Grid.Column="1" Opacity="0.3" TextTrimming="CharacterEllipsis" VerticalAlignment="Center">
-							<TextBlock.Text>
-								<MultiBinding StringFormat="{} ({0})">
-									<Binding/>
-								</MultiBinding>
-							</TextBlock.Text>
-						</TextBlock>
-					</StackPanel>
-				</DataTemplate>
-			</ContextMenu.DataTemplates>
-		</ContextMenu>
-	</Window.Resources>
-
 	<!-- Styles -->
 	<Window.Styles>
 		<Style Selector="ListBox">
@@ -400,10 +380,7 @@
 				
 				<!-- Log writing format -->
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogProfileEditorDialog.LogWritingFormat}"/>
-				<Grid ColumnDefinitions="*,Auto">
-					<TextBox Name="logWritingFormatTextBox" Watermark="{DynamicResource String/LogProfileEditorDialog.LogWritingFormat.Watermark}"/>
-					<ToggleButton Name="insertLogWritingFormatSyntaxButton" Classes="BrowseButton" Command="{Binding $parent[Window].ShowInsertLogWritingFormatSyntaxMenu}" Grid.Column="1"/>
-				</Grid>
+				<asControls:StringInterpolationFormatTextBox Name="logWritingFormatTextBox" Watermark="{DynamicResource String/LogProfileEditorDialog.LogWritingFormat.Watermark}"/>
 				<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.LogWritingFormat.Description}"/>
 				<asControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.FormatDescription}" Uri="{x:Static app:Uris.StringInterpolationReference}"/>
 				<Separator Classes="Dialog_Separator"/>
