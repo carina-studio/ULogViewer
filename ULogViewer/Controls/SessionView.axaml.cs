@@ -160,6 +160,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ScheduledAction scrollToLatestLogAction;
 		readonly HashSet<PredefinedLogTextFilter> selectedPredefinedLogTextFilters = new HashSet<PredefinedLogTextFilter>();
 		readonly MenuItem showLogPropertyMenuItem;
+		readonly ScheduledAction showLogStringPropertyAction;
 		readonly ColumnDefinition sidePanelColumn;
 		readonly ToolBarScrollViewer toolBarScrollViewer;
 		readonly ScheduledAction updateLogFiltersAction;
@@ -424,6 +425,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				catch
 				{ }
 			});
+			this.showLogStringPropertyAction = new ScheduledAction(() => this.ShowLogStringProperty());
 			this.updateLogFiltersAction = new ScheduledAction(() =>
 			{
 				// get session
@@ -1973,7 +1975,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				return;
 			}
-			this.ShowLogStringProperty();
+			this.showLogStringPropertyAction.Reschedule(Platform.IsMacOS ? 300 : 0);
 			e.Handled = true;
 		}
 
@@ -3302,6 +3304,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 		bool ShowLogStringProperty(DisplayableLog log, DisplayableLogProperty property)
 		{
+			this.showLogStringPropertyAction.Cancel();
 			this.FindLogicalAncestorOfType<Avalonia.Controls.Window>()?.Let(window =>
 			{
 				new LogStringPropertyDialog()
