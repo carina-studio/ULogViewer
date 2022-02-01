@@ -59,6 +59,10 @@ namespace CarinaStudio.ULogViewer
 		}
 
 
+		// Accept update for testing purpose.
+        //protected override bool ForceAcceptingUpdateInfo => true;
+
+
         // Initialize.
         public override void Initialize() => AvaloniaXamlLoader.Load(this);
 
