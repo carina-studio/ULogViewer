@@ -182,6 +182,11 @@
 	<sys:String x:Key="String/LogPatternEditorDialog.IsRepeatable">The line can be repeated continuously</sys:String>
 	<sys:String x:Key="String/LogPatternEditorDialog.Regex">Pattern (required)</sys:String>
 	<sys:String x:Key="String/LogPatternEditorDialog.Regex.Description">You can use Grouping Syntax "(?&lt;&gt;)" to capture log property from raw log</sys:String>
+	<sys:String x:Key="String/LogPatternEditorDialog.TestLogLine">Test log line</sys:String>
+	<sys:String x:Key="String/LogPatternEditorDialog.TestLogLine.Watermark">Text to verify the pattern and captured log properties</sys:String>
+	<sys:String x:Key="String/LogPatternEditorDialog.TestResult">Test result</sys:String>
+	<sys:String x:Key="String/LogPatternEditorDialog.TestResult.Failed">(Not matched)</sys:String>
+	<sys:String x:Key="String/LogPatternEditorDialog.TestResult.Success">(Matched)</sys:String>
 	<sys:String x:Key="String/LogPatternEditorDialog.Title">Pattern of log line</sys:String>
 
 	<!-- LogProfileIcon -->

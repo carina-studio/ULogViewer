@@ -3,12 +3,13 @@ using Avalonia.Controls;
 using Avalonia.Data;
 using Avalonia.Markup.Xaml;
 using CarinaStudio.AppSuite.Controls;
+using CarinaStudio.Collections;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -33,10 +34,19 @@ namespace CarinaStudio.ULogViewer.Controls
 		}).ToList().AsReadOnly();
 
 
+		// Static fields.
+		static readonly Regex DefaultRegexGroupNameRegex = new("^[\\d]+$");
+		static readonly AvaloniaProperty<bool> HasTestResultProperty = AvaloniaProperty.Register<LogPatternEditorDialog, bool>("HasTestResult");
+		static readonly AvaloniaProperty<string?> TestLogLineProperty = AvaloniaProperty.Register<LogPatternEditorDialog, string?>("TestLogLine");
+		static readonly AvaloniaProperty<bool> TestResultProperty = AvaloniaProperty.Register<LogPatternEditorDialog, bool>("TestResult");
+
+
 		// Fields.
+		readonly ObservableList<Tuple<string, string>> capturedLogProperties = new();
 		readonly RegexTextBox regexTextBox;
 		readonly ToggleSwitch repeatableSwitch;
 		readonly ToggleSwitch skippableSwitch;
+		readonly ScheduledAction testAction;
 
 
 		/// <summary>
@@ -44,6 +54,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// </summary>
 		public LogPatternEditorDialog()
 		{
+			this.CapturedLogProperties = this.capturedLogProperties.AsReadOnly();
 			InitializeComponent();
 			this.regexTextBox = this.FindControl<RegexTextBox>(nameof(regexTextBox)).AsNonNull().Also(it =>
 			{
@@ -64,7 +75,37 @@ namespace CarinaStudio.ULogViewer.Controls
 			});
 			this.repeatableSwitch = this.FindControl<ToggleSwitch>(nameof(repeatableSwitch)).AsNonNull();
 			this.skippableSwitch = this.FindControl<ToggleSwitch>(nameof(skippableSwitch)).AsNonNull();
+			this.testAction = new ScheduledAction(() =>
+			{
+				var regex = this.regexTextBox.Regex;
+				var testLine = this.GetValue<string?>(TestLogLineProperty);
+				this.capturedLogProperties.Clear();
+				if (!this.regexTextBox.IsTextValid || regex == null || string.IsNullOrEmpty(testLine))
+				{
+					this.SetValue<bool>(HasTestResultProperty, false);
+					return;
+				}
+				var match = regex.Match(testLine);
+				if (match.Success)
+				{
+					this.SetValue(TestResultProperty, true);
+					foreach (var name in match.Groups.Keys)
+                    {
+						var group = match.Groups[name];
+						if (DefaultRegexGroupNameRegex.IsMatch(name))
+							continue;
+						this.capturedLogProperties.Add(new(name, group.Value));
+                    }
+				}
+				else
+					this.SetValue(TestResultProperty, false);
+				this.SetValue<bool>(HasTestResultProperty, true);
+			});
 		}
+
+
+		// List of captured log properties.
+		IList<Tuple<string, string>> CapturedLogProperties { get; }
 
 
 		// Generate result.
@@ -80,27 +121,6 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Initialize.
 		private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
-
-
-		// INsert log property group into pattern.
-		void InsertLogPropertyGroup(string propertyName)
-		{
-			var currentRegex = this.regexTextBox.Text ?? "";
-			var selectionStart = this.regexTextBox.SelectionStart;
-			var selectionEnd = this.regexTextBox.SelectionEnd;
-			var newRegex = new StringBuilder();
-			if (selectionStart > 0)
-				newRegex.Append(currentRegex.Substring(0, selectionStart));
-			newRegex.Append("(?<");
-			newRegex.Append(propertyName);
-			newRegex.Append(">)");
-			newRegex.Append(currentRegex.Substring(selectionEnd));
-			selectionStart += propertyName.Length + 4;
-			this.regexTextBox.Text = newRegex.ToString();
-			this.regexTextBox.SelectionStart = selectionStart;
-			this.regexTextBox.SelectionEnd = selectionStart;
-			this.SynchronizationContext.Post(this.regexTextBox.Focus);
-		}
 
 
 		/// <summary>
@@ -124,11 +144,23 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Called when property of regex text box changed.
-		void OnRegexTextBoxPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
+		// Property changed.
+        protected override void OnPropertyChanged<T>(AvaloniaPropertyChangedEventArgs<T> change)
+        {
+            base.OnPropertyChanged(change);
+			if (change.Property == TestLogLineProperty)
+				this.testAction.Schedule();
+        }
+
+
+        // Called when property of regex text box changed.
+        void OnRegexTextBoxPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
 		{
 			if (e.Property == RegexTextBox.IsTextValidProperty || e.Property == RegexTextBox.RegexProperty)
+			{
 				this.InvalidateInput();
+				this.testAction.Schedule();
+			}
 		}
 
 
