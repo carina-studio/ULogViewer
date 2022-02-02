@@ -56,11 +56,6 @@
 
   <ItemGroup>
     <AvaloniaResource Include="AppIcon.ico" />
-    <AvaloniaResource Include="Resources/AppIcon_128px.png" />
-    <AvaloniaResource Include="Resources/AppIcon_256px.png" />
-    <AvaloniaResource Include="Resources/AppIcon_32px.png" />
-    <AvaloniaResource Include="Resources/AppIcon_512px.png" />
-    <AvaloniaResource Include="Resources/AppIcon_64px.png" />
     <AvaloniaResource Include="Strings/Default.axaml" />
     <AvaloniaResource Include="Strings/Default-Linux.axaml" />
     <AvaloniaResource Include="Strings/Default-OSX.axaml" />
@@ -71,7 +66,7 @@
 
   <ItemGroup>
     <PackageReference Include="Avalonia.AvaloniaEdit" Version="0.10.12.1" />
-    <PackageReference Include="CarinaStudio.AppSuite.Core" Version="0.36.4.131" />
+    <PackageReference Include="CarinaStudio.AppSuite.Core" Version="0.36.5.202" />
     <PackageReference Include="Dotnet.Bundle" Version="0.9.13" />
     <PackageReference Include="Microsoft.Win32.SystemEvents" Version="6.0.0" />
     <PackageReference Include="System.Data.Common" Version="4.3.0" />
