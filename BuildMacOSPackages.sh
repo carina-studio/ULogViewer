@@ -64,13 +64,13 @@ for i in "${!RID_LIST[@]}"; do
     # sign application
     find "./Packages/$PUB_PLATFORM/$APP_NAME.app/Contents/MacOS/" | while read FILE_NAME; do
         if [[ -f $FILE_NAME ]]; then
-            codesign -f -o runtime --timestamp --entitlements "$APP_NAME.entitlements" -s "$CERT_NAME" "$FILE_NAME"
+            codesign -f -o runtime --timestamp --entitlements "./$APP_NAME/$APP_NAME.entitlements" -s "$CERT_NAME" "$FILE_NAME"
             if [ "$?" != "0" ]; then
                 exit
             fi
         fi
     done
-    codesign -f -o runtime --timestamp --entitlements "$APP_NAME.entitlements" -s "$CERT_NAME" ./Packages/$PUB_PLATFORM/$APP_NAME.app
+    codesign -f -o runtime --timestamp --entitlements "./$APP_NAME/$APP_NAME.entitlements" -s "$CERT_NAME" ./Packages/$PUB_PLATFORM/$APP_NAME.app
     if [ "$?" != "0" ]; then
         exit
     fi
