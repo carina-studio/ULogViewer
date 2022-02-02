@@ -9,10 +9,16 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.MainWindow"
 		Classes="Tabbed"
-		ExtendClientAreaTitleBarHeightHint="{Binding #tabControl.TabStripSize}"
 		Icon="/AppIcon.ico"
 		MinHeight="{DynamicResource Double/MainWindow.MinHeight}"
 		MinWidth="{DynamicResource Double/MainWindow.MinWidth}">
+
+	<Window.ExtendClientAreaTitleBarHeightHint>
+		<MultiBinding Converter="{x:Static asConverters:DoubleConverters.Add}">
+			<Binding ElementName="tabControl" Path="TabStripSize"/>
+			<Binding RelativeSource="{RelativeSource Mode=Self}" Path="ContentPadding.Top"/>
+		</MultiBinding>
+	</Window.ExtendClientAreaTitleBarHeightHint>
 
 	<!-- Data templates -->
 	<Window.DataTemplates>
@@ -136,6 +142,13 @@
 		</NativeMenu>
 
 	</Window.Resources>
+
+	<!-- Styles -->
+	<Window.Styles>
+		<Style Selector="CaptionButtons">
+			<Setter Property="MaxHeight" Value="{Binding $parent[Window].ExtendClientAreaTitleBarHeightHint}"/>
+		</Style>
+	</Window.Styles>
 
 	<!-- Content -->
 	<asControls:TabControl Name="tabControl" DragDrop.AllowDrop="True" DragLeaveItem="OnDragLeaveTabItem" DragOverItem="OnDragOverTabItem" DropOnItem="OnDropOnTabItem" ItemDragged="OnTabItemDragged">
