@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
@@ -28,6 +29,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		// Fields.
 		IDisposable? sessionActivationToken;
 		readonly ObservableCollection<Session> sessions = new ObservableCollection<Session>();
+		readonly Stopwatch stopwatch = new Stopwatch();
 
 
 		/// <summary>
@@ -41,6 +43,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// restore
 			savedState?.Let(savedState => this.RestoreState(savedState));
+
+			// start watch
+			if (this.Application.IsDebugMode)
+				this.stopwatch.Start();
 		}
 
 
@@ -205,10 +211,19 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.Logger.LogDebug($"Close {session}");
 
 			// wait for task completion
+			var startTime = this.stopwatch.IsRunning ? this.stopwatch.ElapsedMilliseconds : 0;
 			await session.WaitForNecessaryTasksAsync();
+			if (startTime > 0)
+			{
+				var time = this.stopwatch.ElapsedMilliseconds;
+				this.Logger.LogTrace($"Take {time - startTime} ms to wait for necessary tasks of {session}");
+				startTime = time;
+			}
 
 			// dispose
 			session.Dispose();
+			if (startTime > 0)
+				this.Logger.LogTrace($"Take {this.stopwatch.ElapsedMilliseconds - startTime} ms to dispose {session}");
 		}
 
 
@@ -243,6 +258,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		// Dispose.
 		protected override void Dispose(bool disposing)
 		{
+			// stop watch
+			this.stopwatch.Stop();
+
 			// ignore disposing from finalizer
 			if (!disposing)
 			{

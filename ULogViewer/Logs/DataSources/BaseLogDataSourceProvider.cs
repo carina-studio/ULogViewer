@@ -25,7 +25,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		{
 			app.VerifyAccess();
 			this.Application = app;
-			this.Logger = app.LoggerFactory.CreateLogger(this.displayName);
+			this.Logger = app.LoggerFactory.CreateLogger(this.GetType().Name);
 			app.StringsUpdated += (_, e) => this.DisplayName = this.OnUpdateDisplayName();
 			this.SynchronizationContext.Post(() => this.DisplayName = this.OnUpdateDisplayName());
 		}

@@ -20,9 +20,9 @@ using Microsoft.Extensions.Logging;
 using Microsoft.WindowsAPICodePack.Taskbar;
 #endif
 using System;
-using System.Collections;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 
 namespace CarinaStudio.ULogViewer
@@ -30,7 +30,7 @@ namespace CarinaStudio.ULogViewer
 	/// <summary>
 	/// Main window.
 	/// </summary>
-	partial class MainWindow : AppSuite.Controls.MainWindow<IULogViewerApplication, Workspace>
+	partial class MainWindow : MainWindow<IULogViewerApplication, Workspace>
 	{
 		// Constants.
 		const string DraggingSessionKey = "DraggingSettion";
@@ -45,6 +45,7 @@ namespace CarinaStudio.ULogViewer
 		readonly ScheduledAction focusOnTabItemContentAction;
 		readonly ScheduledAction selectAndSetLogProfileAction;
 		readonly DataTemplate sessionTabItemHeaderTemplate;
+		readonly Stopwatch stopwatch = new Stopwatch();
 		readonly ScheduledAction updateSysTaskBarAction;
 		readonly AppSuite.Controls.TabControl tabControl;
 		readonly ScheduledAction tabControlSelectionChangedAction;
@@ -129,6 +130,10 @@ namespace CarinaStudio.ULogViewer
 #endif
 			});
 			this.tabControlSelectionChangedAction = new ScheduledAction(this.OnTabControlSelectionChanged);
+
+			// start stopwatch
+			if (this.Application.IsDebugMode)
+				this.stopwatch.Start();
 		}
 
 
@@ -276,9 +281,12 @@ namespace CarinaStudio.ULogViewer
 		{
 			if (tabItem.DataContext is not Session)
 				return;
+			var startTime = this.Application.IsDebugMode ? this.stopwatch.ElapsedMilliseconds : 0;
 			tabItem.DataContext = null;
 			(tabItem.Content as IControl)?.Let(it => it.DataContext = null);
 			(tabItem.Header as IControl)?.Let(it => it.DataContext = null);
+			if (startTime > 0)
+				this.Logger.LogTrace($"Take {this.stopwatch.ElapsedMilliseconds - startTime} ms to dispose session tab item");
 		}
 
 
@@ -414,6 +422,9 @@ namespace CarinaStudio.ULogViewer
 		{
 			// cancel scheduled actions
 			this.tabControlSelectionChangedAction.Cancel();
+
+			// stop stopwatch
+			this.stopwatch.Stop();
 
 			// call base
 			base.OnClosed(e);
@@ -703,7 +714,10 @@ namespace CarinaStudio.ULogViewer
 						for (var i = count - 1; i >= 0; --i)
 						{
 							this.DisposeSessionTabItem((TabItem)this.tabItems[startIndex + i].AsNonNull());
+							var startTime = this.stopwatch.IsRunning ? this.stopwatch.ElapsedMilliseconds : 0;
 							this.tabItems.RemoveAt(startIndex + i);
+							if (startTime > 0)
+								this.Logger.LogTrace($"Take {this.stopwatch.ElapsedMilliseconds - startTime} ms to move tab from {startIndex + i}");
 						}
 						if (workspace.Sessions.IsEmpty() && this.HasMultipleMainWindows)
 						{
