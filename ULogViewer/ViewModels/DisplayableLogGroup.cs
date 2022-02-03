@@ -122,7 +122,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <returns><see cref="IBrush"/> of color indicator.</returns>
 		internal IBrush? GetColorIndicatorBrush(DisplayableLog log)
 		{
-			this.VerifyDisposed();
+			if (this.IsDisposed)
+				return null;
 			if (this.colorIndicatorKeyGetter == null)
 				return null;
 			var key = this.colorIndicatorKeyGetter(log);
@@ -141,7 +142,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <returns><see cref="IBrush"/> for given log.</returns>
 		internal IBrush GetLevelBrush(DisplayableLog log, string? state = null)
 		{
-			this.VerifyDisposed();
+			if (this.IsDisposed)
+				return Brushes.Transparent;
 			if(!string.IsNullOrEmpty(state) && this.levelBrushes.TryGetValue($"{log.Level}.{state}", out var brush))
 				return brush.AsNonNull();
 			if (this.levelBrushes.TryGetValue(log.Level.ToString(), out brush))
