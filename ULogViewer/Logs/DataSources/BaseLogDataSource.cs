@@ -89,6 +89,8 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			this.state = state;
 			this.Logger.LogDebug($"Change state from {prevState} to {state}");
 			this.OnPropertyChanged(nameof(State));
+			if (this.Application.IsDebugMode)
+				this.Logger.LogTrace($"Complete changing state from {prevState} to {state}");
 			return this.state;
 		}
 

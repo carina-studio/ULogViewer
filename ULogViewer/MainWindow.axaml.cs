@@ -281,12 +281,18 @@ namespace CarinaStudio.ULogViewer
 		{
 			if (tabItem.DataContext is not Session)
 				return;
-			var startTime = this.Application.IsDebugMode ? this.stopwatch.ElapsedMilliseconds : 0;
+			var startTime = this.stopwatch.IsRunning ? this.stopwatch.ElapsedMilliseconds : 0;
 			tabItem.DataContext = null;
+			if (startTime > 0)
+            {
+				var time = this.stopwatch.ElapsedMilliseconds;
+				this.Logger.LogTrace($"Take {time - startTime} ms to detach session from tab item");
+				startTime = time;
+            }
 			(tabItem.Content as IControl)?.Let(it => it.DataContext = null);
 			(tabItem.Header as IControl)?.Let(it => it.DataContext = null);
 			if (startTime > 0)
-				this.Logger.LogTrace($"Take {this.stopwatch.ElapsedMilliseconds - startTime} ms to dispose session tab item");
+				this.Logger.LogTrace($"Take {this.stopwatch.ElapsedMilliseconds - startTime} ms to detach session from session view and header");
 		}
 
 
@@ -717,7 +723,7 @@ namespace CarinaStudio.ULogViewer
 							var startTime = this.stopwatch.IsRunning ? this.stopwatch.ElapsedMilliseconds : 0;
 							this.tabItems.RemoveAt(startIndex + i);
 							if (startTime > 0)
-								this.Logger.LogTrace($"Take {this.stopwatch.ElapsedMilliseconds - startTime} ms to move tab from {startIndex + i}");
+								this.Logger.LogTrace($"Take {this.stopwatch.ElapsedMilliseconds - startTime} ms to remove tab from position {startIndex + i}");
 						}
 						if (workspace.Sessions.IsEmpty() && this.HasMultipleMainWindows)
 						{
