@@ -1,42 +1,22 @@
 ﻿[
 	{
-		"Description": "支援使用拖動方式來排列分頁。",
+		"Description": "支援針對連續日誌讀取指定重新開始讀取前的延遲時間。",
 		"Type": "NewFeature"
 	},
 	{
-		"Description": "支援在新的視窗開啟分頁。",
+		"Description": "支援正規表示式及文字插值語法的輸入輔助。",
 		"Type": "NewFeature"
 	},
 	{
-		"Description": "支援以水平、垂直或網格方式排列視窗。",
+		"Description": "新增使用者介面以協助驗證日誌行格式以及其擷取的日誌屬性。",
 		"Type": "NewFeature"
 	},
 	{
-		"Description": "支援在 macOS 上使用系統佈景。",
+		"Description": "支援在 macOS 上使用自動更新。",
 		"Type": "NewFeature"
 	},
 	{
-		"Description": "新增「Android 裝置事件日誌」、「macOS 安裝日誌」、「macOS 全域系統日誌」、「macOS 系統日誌檔案」內建日誌類型。",
-		"Type": "NewFeature"
-	},
-	{
-		"Description": "支援隱藏側邊面板以提升日誌檢視空間。",
-		"Type": "NewFeature"
-	},
-	{
-		"Description": "支援從 .gz 檔案讀取日誌時進行解壓縮。",
-		"Type": "NewFeature"
-	},
-	{
-		"Description": "改善分頁捲動的使用體驗。",
-		"Type": "Improvement"
-	},
-	{
-		"Description": "改善工具列捲動的使用體驗。",
-		"Type": "Improvement"
-	},
-	{
-		"Description": "減少自動更新時的升級封裝大小。",
+		"Description": "針對 Windows 調整相關使用者介面。",
 		"Type": "Improvement"
 	},
 	{
@@ -44,19 +24,7 @@
 		"Type": "Improvement"
 	},
 	{
-		"Description": "在 macOS 上使用系統選單列。",
-		"Type": "BehaviorChange"
-	},
-	{
-		"Description": "使用單一處理程序來管理所有使窗。",
-		"Type": "BehaviorChange"
-	},
-	{
 		"Description": "更新相依程式庫。"
-	},
-	{
-		"Description": "修正在 ARM64 平台之電腦無法啟動的問題。",
-		"Type": "BugFixing"
 	},
 	{
 		"Description": "其他錯誤修正。",
