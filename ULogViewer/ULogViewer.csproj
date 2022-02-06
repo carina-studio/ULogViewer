@@ -12,7 +12,7 @@
     <Company>Carina Studio</Company>
     <Copyright>©2021 Carina Studio</Copyright>
     <StartupObject>CarinaStudio.ULogViewer.App</StartupObject>
-    <ApplicationIcon>AppIcon.ico</ApplicationIcon>
+    <ApplicationIcon>ULogViewer.ico</ApplicationIcon>
     <NoWin32Manifest>true</NoWin32Manifest>
     <Configurations>Debug;Release;Debug-Windows;Release-Windows</Configurations>
   </PropertyGroup>
@@ -43,25 +43,25 @@
   </PropertyGroup>
 
   <PropertyGroup>
-		<CFBundleName>ULogViewer</CFBundleName>
-		<CFBundleExecutable>ULogViewer</CFBundleExecutable>
-		<CFBundleIdentifier>com.carina-studio.ulogviewer</CFBundleIdentifier>
-		<CFBundleShortVersionString>$(Version)</CFBundleShortVersionString>
-		<CFBundleIconFile>ULogViewer.icns</CFBundleIconFile>
-		<CFBundlePackageType>APPL</CFBundlePackageType>
-		<NSPrincipalClass>NSApplication</NSPrincipalClass>
-		<NSHighResolutionCapable>True</NSHighResolutionCapable>
-		<NSHumanReadableCopyright>©2022 Carina Studio</NSHumanReadableCopyright>
-	</PropertyGroup>
+    <CFBundleName>ULogViewer</CFBundleName>
+    <CFBundleExecutable>ULogViewer</CFBundleExecutable>
+    <CFBundleIdentifier>com.carina-studio.ulogviewer</CFBundleIdentifier>
+    <CFBundleShortVersionString>$(Version)</CFBundleShortVersionString>
+    <CFBundleIconFile>ULogViewer.icns</CFBundleIconFile>
+    <CFBundlePackageType>APPL</CFBundlePackageType>
+    <NSPrincipalClass>NSApplication</NSPrincipalClass>
+    <NSHighResolutionCapable>True</NSHighResolutionCapable>
+    <NSHumanReadableCopyright>©2022 Carina Studio</NSHumanReadableCopyright>
+  </PropertyGroup>
 
   <ItemGroup>
-    <AvaloniaResource Include="AppIcon.ico" />
     <AvaloniaResource Include="Strings/Default.axaml" />
     <AvaloniaResource Include="Strings/Default-Linux.axaml" />
     <AvaloniaResource Include="Strings/Default-OSX.axaml" />
     <AvaloniaResource Include="Strings/zh-TW.axaml" />
     <AvaloniaResource Include="Strings/zh-TW-Linux.axaml" />
     <AvaloniaResource Include="Strings/zh-TW-OSX.axaml" />
+    <AvaloniaResource Include="ULogViewer.ico" />
   </ItemGroup>
 
   <ItemGroup>
@@ -77,52 +77,52 @@
   </ItemGroup>
 
   <ItemGroup Condition="$(TargetFramework.Contains('windows'))">
-		<PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
-	</ItemGroup>
+    <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
+  </ItemGroup>
 
-	<ItemGroup>
-		<None Update="AppIcon_128px.png">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-		</None>
-	</ItemGroup>
+  <ItemGroup>
+    <None Update="ULogViewer.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </None>
+  </ItemGroup>
 
-	<ItemGroup>
-		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
-			<_Parameter1>$(AssemblyName).Tests</_Parameter1>
-		</AssemblyAttribute>
-	</ItemGroup>
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+        <_Parameter1>$(AssemblyName).Tests</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
 
-	<ItemGroup>
-		<EmbeddedResource Include="ChangeList.json" />
-		<EmbeddedResource Include="ChangeList-zh-TW.json" />
-		<EmbeddedResource Include="Cryptography/AesIV" />
-		<EmbeddedResource Include="Cryptography/AesKey" />
-		<EmbeddedResource Include="Logs/Profiles/BuiltIn/AndroidDeviceEventLog.json" />
-		<EmbeddedResource Include="Logs/Profiles/BuiltIn/AndroidDeviceLog.json" />
-		<EmbeddedResource Include="Logs/Profiles/BuiltIn/AndroidFileLog.json" />
-		<EmbeddedResource Include="Logs/Profiles/BuiltIn/AndroidKernelLogFile.json" />
-		<EmbeddedResource Include="Logs/Profiles/BuiltIn/AndroidTraceFile.json" />
-		<EmbeddedResource Include="Logs/Profiles/BuiltIn/DummyLog.json" />
-		<EmbeddedResource Include="Logs/Profiles/BuiltIn/GitLog.json" />
-		<EmbeddedResource Include="Logs/Profiles/BuiltIn/GitLogSimple.json" />
-		<EmbeddedResource Include="Logs/Profiles/BuiltIn/LinuxKernelLog.json" />
-		<EmbeddedResource Include="Logs/Profiles/BuiltIn/LinuxKernelLogFile.json" />
-		<EmbeddedResource Include="Logs/Profiles/BuiltIn/LinuxSystemLog.json" />
-		<EmbeddedResource Include="Logs/Profiles/BuiltIn/LinuxSystemLogFile.json" />
+  <ItemGroup>
+    <EmbeddedResource Include="ChangeList.json" />
+    <EmbeddedResource Include="ChangeList-zh-TW.json" />
+    <EmbeddedResource Include="Cryptography/AesIV" />
+    <EmbeddedResource Include="Cryptography/AesKey" />
+    <EmbeddedResource Include="Logs/Profiles/BuiltIn/AndroidDeviceEventLog.json" />
+    <EmbeddedResource Include="Logs/Profiles/BuiltIn/AndroidDeviceLog.json" />
+    <EmbeddedResource Include="Logs/Profiles/BuiltIn/AndroidFileLog.json" />
+    <EmbeddedResource Include="Logs/Profiles/BuiltIn/AndroidKernelLogFile.json" />
+    <EmbeddedResource Include="Logs/Profiles/BuiltIn/AndroidTraceFile.json" />
+    <EmbeddedResource Include="Logs/Profiles/BuiltIn/DummyLog.json" />
+    <EmbeddedResource Include="Logs/Profiles/BuiltIn/GitLog.json" />
+    <EmbeddedResource Include="Logs/Profiles/BuiltIn/GitLogSimple.json" />
+    <EmbeddedResource Include="Logs/Profiles/BuiltIn/LinuxKernelLog.json" />
+    <EmbeddedResource Include="Logs/Profiles/BuiltIn/LinuxKernelLogFile.json" />
+    <EmbeddedResource Include="Logs/Profiles/BuiltIn/LinuxSystemLog.json" />
+    <EmbeddedResource Include="Logs/Profiles/BuiltIn/LinuxSystemLogFile.json" />
     <EmbeddedResource Include="Logs/Profiles/BuiltIn/MacOSInstallationLog.json" />
     <EmbeddedResource Include="Logs/Profiles/BuiltIn/MacOSRealtimeLog.json" />
     <EmbeddedResource Include="Logs/Profiles/BuiltIn/MacOSSystemLogFile.json" />
-		<EmbeddedResource Include="Logs/Profiles/BuiltIn/RawFile.json" />
-		<EmbeddedResource Include="Logs/Profiles/BuiltIn/RawHttp.json" />
-		<EmbeddedResource Include="Logs/Profiles/BuiltIn/RawTcpServer.json" />
-		<EmbeddedResource Include="Logs/Profiles/BuiltIn/TcpNLog.json" />
-		<EmbeddedResource Include="Logs/Profiles/BuiltIn/ULogViewerLog.json" />
-		<EmbeddedResource Include="Logs/Profiles/BuiltIn/ULogViewerMemoryLog.json" />
-		<EmbeddedResource Include="Logs/Profiles/BuiltIn/WindowsApplicationEventLogs.json" />
-		<EmbeddedResource Include="Logs/Profiles/BuiltIn/WindowsSecurityEventLogs.json" />
-		<EmbeddedResource Include="Logs/Profiles/BuiltIn/WindowsSetupEventLogs.json" />
-		<EmbeddedResource Include="Logs/Profiles/BuiltIn/WindowsSystemEventLogs.json" />
-	</ItemGroup>
+    <EmbeddedResource Include="Logs/Profiles/BuiltIn/RawFile.json" />
+    <EmbeddedResource Include="Logs/Profiles/BuiltIn/RawHttp.json" />
+    <EmbeddedResource Include="Logs/Profiles/BuiltIn/RawTcpServer.json" />
+    <EmbeddedResource Include="Logs/Profiles/BuiltIn/TcpNLog.json" />
+    <EmbeddedResource Include="Logs/Profiles/BuiltIn/ULogViewerLog.json" />
+    <EmbeddedResource Include="Logs/Profiles/BuiltIn/ULogViewerMemoryLog.json" />
+    <EmbeddedResource Include="Logs/Profiles/BuiltIn/WindowsApplicationEventLogs.json" />
+    <EmbeddedResource Include="Logs/Profiles/BuiltIn/WindowsSecurityEventLogs.json" />
+    <EmbeddedResource Include="Logs/Profiles/BuiltIn/WindowsSetupEventLogs.json" />
+    <EmbeddedResource Include="Logs/Profiles/BuiltIn/WindowsSystemEventLogs.json" />
+  </ItemGroup>
 
 </Project>

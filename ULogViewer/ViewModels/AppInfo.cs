@@ -10,13 +10,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
     /// </summary>
     class AppInfo : AppSuite.ViewModels.ApplicationInfo
     {
-        // Icon.
-        public override IBitmap Icon => AvaloniaLocator.Current.GetService<IAssetLoader>().Let(it =>
-        {
-            return it.AsNonNull().Open(new Uri("avares://ULogViewer/AppIcon.ico")).Use(stream => new Bitmap(stream));
-        });
-
-
         // URI of GitHub project.
         public override Uri? GitHubProjectUri => new Uri("https://github.com/carina-studio/ULogViewer");
 
