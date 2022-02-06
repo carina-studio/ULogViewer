@@ -2187,9 +2187,12 @@ namespace CarinaStudio.ULogViewer.Controls
 							}
 							break;
 						case Avalonia.Input.Key.F:
-							this.logTextFilterTextBox.Focus();
-							this.logTextFilterTextBox.SelectAll();
-							e.Handled = true;
+							if (this.logTextFilterTextBox.IsEnabled)
+							{
+								this.logTextFilterTextBox.Focus();
+								this.logTextFilterTextBox.SelectAll();
+								e.Handled = true;
+							}
 							break;
 						case Avalonia.Input.Key.M:
 							this.MarkSelectedLogs(MarkColor.Default);
