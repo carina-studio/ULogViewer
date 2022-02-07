@@ -787,6 +787,10 @@ namespace CarinaStudio.ULogViewer
 		// Called when tab item dragged.
 		void OnTabItemDragged(object? sender, TabItemDraggedEventArgs e)
 		{
+			// dragging is not supported properly on Linux
+			if (Platform.IsLinux)
+				return;
+
 			// get session
 			var session = (e.Item as TabItem)?.DataContext as Session;
 			if (session == null)
