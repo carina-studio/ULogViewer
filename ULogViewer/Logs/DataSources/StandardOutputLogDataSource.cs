@@ -1,6 +1,8 @@
 ﻿using CarinaStudio.Collections;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -235,7 +237,19 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			process.StartInfo.RedirectStandardOutput = true;
 			process.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
 			process.StartInfo.CreateNoWindow = true;
-			process.Start();
+			try
+			{
+				if (!process.Start())
+				{
+					reader = null;
+					return LogDataSourceState.SourceNotFound;
+				}
+			}
+			catch (Win32Exception)
+			{
+				reader = null;
+				return LogDataSourceState.SourceNotFound;
+			}
 			reader = new ReaderImpl(process);
 			return LogDataSourceState.ReaderOpened;
 		}
@@ -257,7 +271,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			var commandGroup = match.Groups["ExecutableCommand"];
 			executablePath = command.Substring(0, commandGroup.Length);
 			arguments = command.Substring(commandGroup.Length);
-			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && !executablePath.EndsWith(".exe"))
+			if (Platform.IsWindows && !executablePath.ToLower().EndsWith(".exe"))
 				executablePath += ".exe";
 			if (Path.IsPathRooted(executablePath))
 				return File.Exists(executablePath);
@@ -272,10 +286,34 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 						return true;
 					}
 				}
-				var environmentPaths = Environment.GetEnvironmentVariable("PATH");
+				var environmentPaths = Global.Run(() =>
+				{
+					if (Platform.IsMacOS)
+					{
+						try
+						{
+							using var reader = new StreamReader("/etc/paths");
+							var paths = new List<string>();
+							var path = reader.ReadLine();
+							while (path != null)
+							{
+								if (!string.IsNullOrWhiteSpace(path))
+									paths.Add(path);
+								path = reader.ReadLine();
+							}
+							return paths.IsNotEmpty() ? paths.ToArray() : null;
+						}
+						catch
+						{
+							return null;
+						}
+					}
+					else
+						return Environment.GetEnvironmentVariable("PATH")?.Split(Path.PathSeparator);
+				});
 				if (environmentPaths != null)
 				{
-					foreach (var environmentPath in environmentPaths.Split(Path.PathSeparator))
+					foreach (var environmentPath in environmentPaths)
 					{
 						string commandFile = Path.Combine(environmentPath, executablePath);
 						if (File.Exists(commandFile))

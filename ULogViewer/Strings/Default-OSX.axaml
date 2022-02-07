@@ -5,6 +5,9 @@
 	<!-- Common -->
 	<sys:String x:Key="String/Common.Administrator">Superuser</sys:String>
 
+	<!-- Session -->
+	<sys:String x:Key="String/Session.Message.SourceNotFound.StandardOutput">Cannot find '{0}' to read logs. Please make sure the command or executable has been installed and its path has been added to file '/etc/paths'.</sys:String>
+
 	<!-- SessionView -->
 	<sys:String x:Key="String/SessionView.AddLogFiles.WithShortcut">Add log files (⌘O)</sys:String>
 	<sys:String x:Key="String/SessionView.MemoryUsage">Total memory usage</sys:String>

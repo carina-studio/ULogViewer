@@ -2,6 +2,9 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 	
+	<!-- Session -->
+	<sys:String x:Key="String/Session.Message.SourceNotFound.StandardOutput">找不到 '{0}' 以讀取日誌。請確認指令或可執行檔已安裝且其路徑已加入至檔案 '/etc/paths'。</sys:String>
+	
 	<!-- SessionView -->
 	<sys:String x:Key="String/SessionView.AddLogFiles.WithShortcut">加入日誌檔案 (⌘O)</sys:String>
 	<sys:String x:Key="String/SessionView.MemoryUsage">總記憶體使用量</sys:String>
