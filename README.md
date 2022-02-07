@@ -1,4 +1,4 @@
-# ULogViewer [![](https://img.shields.io/github/release-date-pre/carina-studio/ULogViewer?style=flat-square)](https://github.com/carina-studio/ULogViewer/releases/tag/0.33.0.1223) [![](https://img.shields.io/github/last-commit/carina-studio/ULogViewer?style=flat-square)](https://github.com/carina-studio/ULogViewer/commits/master) [![](https://img.shields.io/github/license/carina-studio/ULogViewer?style=flat-square)](https://github.com/carina-studio/ULogViewer/blob/master/LICENSE)
+# ULogViewer [![](https://img.shields.io/github/release-date-pre/carina-studio/ULogViewer?style=flat-square)](https://github.com/carina-studio/ULogViewer/releases/tag/1.0.0.207) [![](https://img.shields.io/github/last-commit/carina-studio/ULogViewer?style=flat-square)](https://github.com/carina-studio/ULogViewer/commits/master) [![](https://img.shields.io/github/license/carina-studio/ULogViewer?style=flat-square)](https://github.com/carina-studio/ULogViewer/blob/master/LICENSE)
 
 ULogViewer is a [.NET](https://dotnet.microsoft.com/) based cross-platform universal log viewer written by C# which supports reading and parsing various type of logs.
 
@@ -6,30 +6,21 @@ ULogViewer is a [.NET](https://dotnet.microsoft.com/) based cross-platform unive
 
 Operating System                      | Download | Version | Screenshot
 :------------------------------------:|:--------:|:-------:|:----------:
-Windows 8/10/11                       |[x86](https://github.com/carina-studio/ULogViewer/releases/download/0.34.0.123/ULogViewer-0.34.0.123-win-x86.zip) &#124; [x64](https://github.com/carina-studio/ULogViewer/releases/download/0.34.0.123/ULogViewer-0.34.0.123-win-x64.zip)  &#124; [arm64](https://github.com/carina-studio/ULogViewer/releases/download/0.34.0.123/ULogViewer-0.34.0.123-win-arm64.zip)|0.34.0.123 (Preview)|[<img src="https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_Windows_Thumb.png" width="150"/>](https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_Windows.png)
-Windows 7<br/>*(.NET Runtime needed)* |[x86](https://github.com/carina-studio/ULogViewer/releases/download/0.34.0.123/ULogViewer-0.34.0.123-win-x86-fx-dependent.zip) &#124; [x64](https://github.com/carina-studio/ULogViewer/releases/download/0.34.0.123/ULogViewer-0.34.0.123-win-x64-fx-dependent.zip)|0.34.0.123 (Preview)|
-macOS 11/12                           |[x64](https://github.com/carina-studio/ULogViewer/releases/download/0.34.0.123/ULogViewer-0.34.0.123-osx-x64.zip) &#124; [arm64](https://github.com/carina-studio/ULogViewer/releases/download/0.34.0.123/ULogViewer-0.34.0.123-osx-arm64.zip)|0.34.0.123 (Preview)|[<img src="https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_macOS_Thumb.png" width="150"/>](https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_macOS.png)
-Linux                                 |[x64](https://github.com/carina-studio/ULogViewer/releases/download/0.33.0.1223/ULogViewer-0.33.0.1223-linux-x64.zip)|0.33.0.1223* (Preview)|[<img src="https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_Ubuntu_Thumb.png" width="150"/>](https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_Ubuntu.png)
+Windows 8/10/11                       |[x86](https://github.com/carina-studio/ULogViewer/releases/download/1.0.0.207/ULogViewer-1.0.0.207-win-x86.zip) &#124; [x64](https://github.com/carina-studio/ULogViewer/releases/download/1.0.0.207/ULogViewer-1.0.0.207-win-x64.zip)  &#124; [arm64](https://github.com/carina-studio/ULogViewer/releases/download/1.0.0.207/ULogViewer-1.0.0.207-win-arm64.zip)|1.0.0.207 (RC)|[<img src="https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_Windows_Thumb.png" width="150"/>](https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_Windows.png)
+Windows 7<br/>*(.NET Runtime needed)* |[x86](https://github.com/carina-studio/ULogViewer/releases/download/1.0.0.207/ULogViewer-1.0.0.207-win-x86-fx-dependent.zip) &#124; [x64](https://github.com/carina-studio/ULogViewer/releases/download/1.0.0.207/ULogViewer-1.0.0.207-win-x64-fx-dependent.zip)|1.0.0.207 (RC)|[<img src="https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_Windows7_Thumb.png" width="150"/>](https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_Windows7.png)
+macOS 11/12                           |[x64](https://github.com/carina-studio/ULogViewer/releases/download/1.0.0.207/ULogViewer-1.0.0.207-osx-x64.zip) &#124; [arm64](https://github.com/carina-studio/ULogViewer/releases/download/1.0.0.207/ULogViewer-1.0.0.207-osx-arm64.zip)|1.0.0.207 (RC)|[<img src="https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_macOS_Thumb.png" width="150"/>](https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_macOS.png)
+Linux                                 |[x64](https://github.com/carina-studio/ULogViewer/releases/download/1.0.0.207/ULogViewer-1.0.0.207-linux-x64.zip)|1.0.0.207 (RC)|[<img src="https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_Fedora_Thumb.png" width="150"/>](https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_Fedora.png)
 
-- *Currently there is a serious issue on Linux version which is caused by dependent library. We will release Linux version once the dependent library updated.*
 - [How to Install and Upgrade ULogViewer](https://carina-studio.github.io/ULogViewer/installation_and_upgrade.html)
 
-## 📣 What's Change in 0.34.0.123
-- Support arranging tabs by dragging.
-- Support opening tab in new window.
-- Support layouting windows in horizontal, vertical or tile mode.
-- Support using system theme mode on ```macOS```.
-- Add ```Android Device Event Log```, ```macOS Installation Log```, ```macOS System Wide Log```, ```macOS System Log Files``` built-in log profiles.
-- Support hiding side panel to get more space for viewing logs.
-- Support decompression while reading logs from ```.gz``` file.
-- Improve tab scrolling UX.
-- Improve toolbar scrolling UX.
-- Reduce size of update packages for auto updating.
+## 📣 What's Change in 1.0.0.207 RC
+- Support specifying delay between restarting reading logs for continuous reading case.
+- Support input assistance for regular expression and string interpolation format.
+- Add UI to help verifying log line pattern including captured log properties.
+- Support auto update on ```macOS```.
+- Finetune UI for ```Windows```.
 - Other UX improvement.
-- Use system menu bar on ```macOS```.
-- Use single process to manage all windows.
 - Update dependent libraries.
-- Fix issue of unable to launch on ```ARM64``` PC.
 - Other bug fixing.
 
 ## ⭐ Log data sources
