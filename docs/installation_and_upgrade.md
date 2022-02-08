@@ -20,7 +20,7 @@ If you want to run ULogViewer on Ubuntu (also for other Linux distributions), pl
 Name=ULogViewer  
 Comment=  
 Exec=(path to executable)
-Icon=(path to AppIcon_128px.png in ULogViewer folder)
+Icon=(path to ULogViewer.png in ULogViewer folder)
 Terminal=false  
 Type=Application
 ```
@@ -33,9 +33,9 @@ Reference: [How can I edit/create new launcher items in Unity by hand?
 Currently ULogViewer lacks of ability to detect screen DPI on Linux, so you may find that UI displays too small on Hi-DPI screen. In this case you can open ```Application Options``` of ULogViewer, find ```User interface scale factor``` and change the scale factor to proper value. If you found that scale factor doesn't work on your Linux PC, please install ```xrandr``` tool then check again.
 
 ## 📦 Upgrade
-ULogViewer checks for update periodically when you are using. It will notify you to upgrade once the update found. Alternatively you can click "Check for update" item in the "Other actions" menu on the right hand side of toolbar to check whether the update is available or not.
+ULogViewer checks for update periodically when you are using. It will notify you to upgrade once the update found. Alternatively you can click ```Check for update``` item in the ```Other actions``` menu on the right hand side of toolbar to check whether the update is available or not.
 
-ULogViewer supports self updating on Windows and Linux, so you just need to click "Update" button and wait for updating completed. For macOS user, you just need to download and extract new package, override all existing files to upgrade.
+ULogViewer supports self updating, so you just need to click ```Update``` button and wait for updating completed. If you are using ULogViewer before 1.0.0.207 on macOS, you just need to download and extract new package, override all existing files to upgrade.
 
 
 <br/>📔[Back to Home](index.md)
