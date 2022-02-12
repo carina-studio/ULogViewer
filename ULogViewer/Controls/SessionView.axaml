@@ -278,7 +278,7 @@
 	</UserControl.Resources>
 	
 	<!-- Content -->
-	<Grid Name="RootGrid" RowDefinitions="Auto,*,Auto">
+	<Grid Background="{DynamicResource Brush/Window.Background}" Name="RootGrid" RowDefinitions="Auto,*,Auto">
 
 		<!-- Columns -->
 		<Grid.ColumnDefinitions>
@@ -946,7 +946,7 @@
 				
 			</Grid>
 		</Border>
-		<GridSplitter Background="{DynamicResource Brush/WorkingArea.Panel.Background}" Classes="GridSplitter_Vertical" Grid.Column="1" Grid.Row="1" IsVisible="{Binding IsSidePanelVisible}"/>
+		<GridSplitter Background="{DynamicResource Brush/WorkingArea.Panel.Background}" BorderBrush="{DynamicResource Brush/Control.Border.Light}" BorderThickness="1,0,0,0" Classes="GridSplitter_Vertical" Grid.Column="1" Grid.Row="1" IsVisible="{Binding IsSidePanelVisible}"/>
 
 	</Grid>
 
