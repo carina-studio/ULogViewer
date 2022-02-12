@@ -45,9 +45,9 @@
 			<!-- Property value -->
 			<TextBlock Classes="Dialog_TextBlock" Grid.Row="1" Text="{Binding $parent[Window].LogPropertyDisplayName}"/>
 			<Panel Grid.Row="2" VerticalAlignment="Stretch">
-				<Border Background="{DynamicResource TextControlBackground}" BorderBrush="{DynamicResource TextControlBackground}" BorderThickness="{DynamicResource TextControlBorderThemeThicknessFocused}" CornerRadius="{DynamicResource ControlCornerRadius}" IsVisible="{Binding !#propertyValueTextEditor.IsPointerOver}"/>
-				<Border Background="{DynamicResource TextControlBackgroundPointerOver}" BorderBrush="{DynamicResource TextControlBackgroundPointerOver}" BorderThickness="{DynamicResource TextControlBorderThemeThicknessFocused}" CornerRadius="{DynamicResource ControlCornerRadius}" IsVisible="{Binding #propertyValueTextEditor.IsPointerOver}"/>
-				<Border Background="{DynamicResource TextControlBackgroundFocused}" BorderBrush="{DynamicResource TextControlBorderBrushFocused}" BorderThickness="{DynamicResource TextControlBorderThemeThicknessFocused}" CornerRadius="{DynamicResource ControlCornerRadius}" IsVisible="{Binding $parent[Window].IsPropertyValueTextEditorFocused}"/>
+				<Border Background="{DynamicResource TextControlBackground}" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{DynamicResource Thickness/Control.Border}" CornerRadius="{DynamicResource ControlCornerRadius}" IsVisible="{Binding !#propertyValueTextEditor.IsPointerOver}"/>
+				<Border Background="{DynamicResource TextControlBackgroundPointerOver}" BorderBrush="{DynamicResource TextControlBorderBrushPointerOver}" BorderThickness="{DynamicResource Thickness/Control.Border}" CornerRadius="{DynamicResource ControlCornerRadius}" IsVisible="{Binding #propertyValueTextEditor.IsPointerOver}"/>
+				<Border Background="{DynamicResource TextControlBackgroundFocused}" BorderBrush="{DynamicResource TextControlBorderBrushFocused}" BorderThickness="{DynamicResource Thickness/Control.Border.Focused}" CornerRadius="{DynamicResource ControlCornerRadius}" IsVisible="{Binding $parent[Window].IsPropertyValueTextEditorFocused}"/>
 				<ae:TextEditor Name="propertyValueTextEditor" HorizontalAlignment="Stretch" IsReadOnly="True" HorizontalScrollBarVisibility="Disabled"/>
 			</Panel>
 			<Separator Classes="Dialog_Separator" Grid.Row="3"/>
