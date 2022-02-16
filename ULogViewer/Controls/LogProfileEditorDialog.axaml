@@ -157,8 +157,8 @@
 
 				<!-- Log level map -->
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogProfileEditorDialog.LogLevelMapForReading}"/>
-				<ListBox Name="logLevelMapForReadingListBox" DoubleTapped="OnListBoxDoubleTapped" Items="{Binding $parent[Window].LogLevelMapEntriesForReading}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
-					<ListBox.ItemTemplate>
+				<asControls:ListBox Name="logLevelMapForReadingListBox" DoubleClickOnItem="OnListBoxDoubleClickOnItem" Items="{Binding $parent[Window].LogLevelMapEntriesForReading}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
+					<asControls:ListBox.ItemTemplate>
 						<DataTemplate>
 							<Grid ColumnDefinitions="*,*">
 								<TextBlock Text="{Binding Key}" TextTrimming="CharacterEllipsis"/>
@@ -179,8 +179,8 @@
 								</DockPanel>
 							</Grid>
 						</DataTemplate>
-					</ListBox.ItemTemplate>
-				</ListBox>
+					</asControls:ListBox.ItemTemplate>
+				</asControls:ListBox>
 				<Grid ColumnDefinitions="*,Auto">
 					<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.LogLevelMapForReading.Description}" VerticalAlignment="Top"/>
 					<Button Classes="ListAction" Command="{Binding $parent[Window].AddLogLevelMapEntryForReading}" Content="{DynamicResource String/Common.Add}" Grid.Column="1" VerticalAlignment="Top"/>
@@ -189,8 +189,8 @@
 
 				<!-- Log patterns -->
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogProfileEditorDialog.LogPatterns}"/>
-				<ListBox Name="logPatternListBox" DoubleTapped="OnListBoxDoubleTapped" Items="{Binding $parent[Window].LogPatterns}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
-					<ListBox.ItemTemplate>
+				<asControls:ListBox Name="logPatternListBox" DoubleClickOnItem="OnListBoxDoubleClickOnItem" Items="{Binding $parent[Window].LogPatterns}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
+					<asControls:ListBox.ItemTemplate>
 						<DataTemplate DataType="{x:Type appLogs:LogPattern}">
 							<Grid ColumnDefinitions="*,Auto">
 								<TextBlock Text="{Binding Regex}" TextTrimming="CharacterEllipsis"/>
@@ -211,8 +211,8 @@
 								</StackPanel>
 							</Grid>
 						</DataTemplate>
-					</ListBox.ItemTemplate>
-				</ListBox>
+					</asControls:ListBox.ItemTemplate>
+				</asControls:ListBox>
 				<Grid ColumnDefinitions="*,Auto">
 					<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.LogPatterns.Description}" VerticalAlignment="Top"/>
 					<Button Classes="ListAction" Command="{Binding $parent[Window].AddLogPattern}" Content="{DynamicResource String/Common.Add}" Grid.Column="1" VerticalAlignment="Top"/>
@@ -240,8 +240,8 @@
 							<iaCore:ChangePropertyAction PropertyName="IsEnabled" Value="False"/>
 						</iaCore:DataTriggerBehavior>
 					</ia:Interaction.Behaviors>
-					<ListBox Name="timestampFormatsForReadingListBox" DoubleTapped="OnListBoxDoubleTapped" Items="{Binding $parent[Window].TimestampFormatsForReading}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
-						<ListBox.ItemTemplate>
+					<asControls:ListBox Name="timestampFormatsForReadingListBox" DoubleClickOnItem="OnListBoxDoubleClickOnItem" Items="{Binding $parent[Window].TimestampFormatsForReading}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
+						<asControls:ListBox.ItemTemplate>
 							<DataTemplate>
 								<Grid ColumnDefinitions="*,Auto">
 									<TextBlock Text="{Binding}" TextTrimming="CharacterEllipsis"/>
@@ -256,8 +256,8 @@
 									</StackPanel>
 								</Grid>
 							</DataTemplate>
-						</ListBox.ItemTemplate>
-					</ListBox>
+						</asControls:ListBox.ItemTemplate>
+				</asControls:ListBox>
 					<Button Classes="ListAction" Command="{Binding $parent[Window].AddTimestampFormatForReading}" Content="{DynamicResource String/Common.Add}"/>
 				</StackPanel>
 				<Separator Classes="Dialog_Separator"/>
@@ -279,8 +279,8 @@
 							<iaCore:ChangePropertyAction PropertyName="IsEnabled" Value="False"/>
 						</iaCore:DataTriggerBehavior>
 					</ia:Interaction.Behaviors>
-					<ListBox Name="timeSpanFormatsForReadingListBox" DoubleTapped="OnListBoxDoubleTapped" Items="{Binding $parent[Window].TimeSpanFormatsForReading}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
-						<ListBox.ItemTemplate>
+					<asControls:ListBox Name="timeSpanFormatsForReadingListBox" DoubleClickOnItem="OnListBoxDoubleClickOnItem" Items="{Binding $parent[Window].TimeSpanFormatsForReading}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
+						<asControls:ListBox.ItemTemplate>
 							<DataTemplate>
 								<Grid ColumnDefinitions="*,Auto">
 									<TextBlock Text="{Binding}" TextTrimming="CharacterEllipsis"/>
@@ -295,8 +295,8 @@
 									</StackPanel>
 								</Grid>
 							</DataTemplate>
-						</ListBox.ItemTemplate>
-					</ListBox>
+						</asControls:ListBox.ItemTemplate>
+					</asControls:ListBox>
 					<Button Classes="ListAction" Command="{Binding $parent[Window].AddTimeSpanFormatForReading}" Content="{DynamicResource String/Common.Add}"/>
 				</StackPanel>
 				<Separator Classes="Dialog_Separator_Large"/>
@@ -308,8 +308,8 @@
 				
 				<!-- Visible log properties -->
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogProfileEditorDialog.VisibleLogProperties}"/>
-				<ListBox Name="visibleLogPropertyListBox" DoubleTapped="OnListBoxDoubleTapped" Items="{Binding $parent[Window].VisibleLogProperties}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
-					<ListBox.ItemTemplate>
+				<asControls:ListBox Name="visibleLogPropertyListBox" DoubleClickOnItem="OnListBoxDoubleClickOnItem" Items="{Binding $parent[Window].VisibleLogProperties}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
+					<asControls:ListBox.ItemTemplate>
 						<DataTemplate DataType="{x:Type appLogProfiles:LogProperty}">
 							<Grid ColumnDefinitions="Auto,*,Auto">
 								<TextBlock Text="{Binding DisplayName, Converter={x:Static appConverters:LogPropertyNameConverter.Default}}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
@@ -337,8 +337,8 @@
 								</StackPanel>
 							</Grid>
 						</DataTemplate>
-					</ListBox.ItemTemplate>
-				</ListBox>
+					</asControls:ListBox.ItemTemplate>
+				</asControls:ListBox>
 				<Grid ColumnDefinitions="*,Auto">
 					<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.VisibleLogProperties.Description}" VerticalAlignment="Top"/>
 					<Button Classes="ListAction" Command="{Binding $parent[Window].AddVisibleLogProperty}" Content="{DynamicResource String/Common.Add}" Grid.Column="1" VerticalAlignment="Top"/>
@@ -387,8 +387,8 @@
 				
 				<!-- Log level map -->
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogProfileEditorDialog.LogLevelMapForWriting}"/>
-				<ListBox Name="logLevelMapForWritingListBox" DoubleTapped="OnListBoxDoubleTapped" Items="{Binding $parent[Window].LogLevelMapEntriesForWriting}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
-					<ListBox.ItemTemplate>
+				<asControls:ListBox Name="logLevelMapForWritingListBox" DoubleClickOnItem="OnListBoxDoubleClickOnItem" Items="{Binding $parent[Window].LogLevelMapEntriesForWriting}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
+					<asControls:ListBox.ItemTemplate>
 						<DataTemplate>
 							<Grid ColumnDefinitions="*,*">
 								<StackPanel Orientation="Horizontal">
@@ -409,8 +409,8 @@
 								</DockPanel>
 							</Grid>
 						</DataTemplate>
-					</ListBox.ItemTemplate>
-				</ListBox>
+					</asControls:ListBox.ItemTemplate>
+				</asControls:ListBox>
 				<Grid ColumnDefinitions="*,Auto">
 					<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.LogLevelMapForWriting.Description}" VerticalAlignment="Top"/>
 					<Button Classes="ListAction" Command="{Binding $parent[Window].AddLogLevelMapEntryForWriting}" Content="{DynamicResource String/Common.Add}" Grid.Column="1" VerticalAlignment="Top"/>

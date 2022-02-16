@@ -603,8 +603,8 @@
 			</Border>
 
 			<!-- ListBox -->
-			<ListBox Name="logListBox" AutoScrollToSelectedItem="False" Background="{DynamicResource Brush/WorkingArea.Background}" BorderThickness="0" ContextMenu="{StaticResource logActionMenu}" CornerRadius="0" DoubleTapped="OnLogListBoxDoubleTapped" Grid.Row="1" HorizontalAlignment="Stretch" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" Items="{Binding Logs}" Padding="{DynamicResource Thickness/SessionView.LogListBox.Padding}" ScrollViewer.HorizontalScrollBarVisibility="Visible" SelectionChanged="OnLogListBoxSelectionChanged" SelectionMode="Multiple" VirtualizationMode="Simple">
-				<ListBox.Styles>
+			<asControls:ListBox Name="logListBox" AutoScrollToSelectedItem="False" Background="{DynamicResource Brush/WorkingArea.Background}" BorderThickness="0" ContextMenu="{StaticResource logActionMenu}" CornerRadius="0" DoubleClickOnItem="OnLogListBoxDoubleClickOnItem" Grid.Row="1" HorizontalAlignment="Stretch" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" Items="{Binding Logs}" Padding="{DynamicResource Thickness/SessionView.LogListBox.Padding}" ScrollViewer.HorizontalScrollBarVisibility="Visible" SelectionChanged="OnLogListBoxSelectionChanged" SelectionMode="Multiple" VirtualizationMode="Simple">
+				<asControls:ListBox.Styles>
 					<Style Selector="ListBoxItem">
 						<Setter Property="CornerRadius" Value="0"/>
 						<Setter Property="HorizontalAlignment" Value="Stretch"/>
@@ -627,8 +627,8 @@
 					<Style Selector="ListBoxItem:selected:pressed /template/ ContentPresenter#PART_ContentPresenter">
 						<Setter Property="Background" Value="{DynamicResource Brush/SessionView.LogListBox.Item.Background.Pressed}"/>
 					</Style>
-				</ListBox.Styles>
-			</ListBox>
+				</asControls:ListBox.Styles>
+			</asControls:ListBox>
 
 			<!-- Hints -->
 			<Viewbox Grid.Row="1" Margin="{DynamicResource Thickness/SessionView.Hint.Margin}" Stretch="Uniform" StretchDirection="DownOnly">
@@ -652,7 +652,7 @@
 			</Viewbox>
 
 			<!-- Logs time information -->
-			<Border Background="{DynamicResource Brush/SessionView.LogHeader.Background}" Classes="StatusBar" Grid.Row="2" IsVisible="{Binding HasLogsDuration}">
+			<Border Background="{DynamicResource Brush/SessionView.LogHeader.Background}" BorderBrush="{DynamicResource Brush/Control.Border.Light}" BorderThickness="0,1,0,0" Classes="StatusBar" Grid.Row="2" IsVisible="{Binding HasLogsDuration}">
 				<Grid ColumnDefinitions="*,Auto">
 
 					<!-- Logs -->

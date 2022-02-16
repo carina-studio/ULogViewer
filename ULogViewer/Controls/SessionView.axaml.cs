@@ -137,7 +137,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly Grid logHeaderGrid;
 		readonly List<MutableObservableValue<GridLength>> logHeaderWidths = new List<MutableObservableValue<GridLength>>();
 		readonly ComboBox logLevelFilterComboBox;
-		readonly ListBox logListBox;
+		readonly AppSuite.Controls.ListBox logListBox;
 		readonly Panel logListBoxContainer;
 		readonly ContextMenu logMarkingMenu;
 		readonly IntegerTextBox logProcessIdFilterTextBox;
@@ -148,11 +148,11 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly RegexTextBox logTextFilterTextBox;
 		readonly IntegerTextBox logThreadIdFilterTextBox;
 		readonly Panel logThreadIdFilterTextBoxPanel;
-		readonly ListBox markedLogListBox;
+		readonly Avalonia.Controls.ListBox markedLogListBox;
 		readonly double minLogListBoxSizeToCloseSidePanel;
 		readonly ToggleButton otherActionsButton;
 		readonly ContextMenu otherActionsMenu;
-		readonly ListBox predefinedLogTextFilterListBox;
+		readonly Avalonia.Controls.ListBox predefinedLogTextFilterListBox;
 		readonly SortedObservableList<PredefinedLogTextFilter> predefinedLogTextFilters;
 		readonly Popup predefinedLogTextFiltersPopup;
 		readonly HashSet<Avalonia.Input.Key> pressedKeys = new HashSet<Avalonia.Input.Key>();
@@ -160,7 +160,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ScheduledAction scrollToLatestLogAction;
 		readonly HashSet<PredefinedLogTextFilter> selectedPredefinedLogTextFilters = new HashSet<PredefinedLogTextFilter>();
 		readonly MenuItem showLogPropertyMenuItem;
-		readonly ScheduledAction showLogStringPropertyAction;
 		readonly ColumnDefinition sidePanelColumn;
 		readonly ToolBarScrollViewer toolBarScrollViewer;
 		readonly ScheduledAction updateLogFiltersAction;
@@ -251,12 +250,12 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				it.GetObservable(BoundsProperty).Subscribe(_ => this.autoCloseSidePanelAction?.Schedule());
 			});
-			this.logListBox = this.logListBoxContainer.FindControl<ListBox>(nameof(logListBox)).AsNonNull().Also(it =>
+			this.logListBox = this.logListBoxContainer.FindControl<AppSuite.Controls.ListBox>(nameof(logListBox)).AsNonNull().Also(it =>
 			{
-				it.AddHandler(ListBox.PointerPressedEvent, this.OnLogListBoxPointerPressed, RoutingStrategies.Tunnel);
-				it.AddHandler(ListBox.PointerReleasedEvent, this.OnLogListBoxPointerReleased, RoutingStrategies.Tunnel);
-				it.AddHandler(ListBox.PointerWheelChangedEvent, this.OnLogListBoxPointerWheelChanged, RoutingStrategies.Tunnel);
-				it.GetObservable(ListBox.ScrollProperty).Subscribe(_ =>
+				it.AddHandler(Avalonia.Controls.ListBox.PointerPressedEvent, this.OnLogListBoxPointerPressed, RoutingStrategies.Tunnel);
+				it.AddHandler(Avalonia.Controls.ListBox.PointerReleasedEvent, this.OnLogListBoxPointerReleased, RoutingStrategies.Tunnel);
+				it.AddHandler(Avalonia.Controls.ListBox.PointerWheelChangedEvent, this.OnLogListBoxPointerWheelChanged, RoutingStrategies.Tunnel);
+				it.GetObservable(Avalonia.Controls.ListBox.ScrollProperty).Subscribe(_ =>
 				{
 					this.logScrollViewer = (it.Scroll as ScrollViewer)?.Also(scrollViewer =>
 					{
@@ -287,7 +286,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			});
 			this.logThreadIdFilterTextBoxPanel = this.FindControl<Panel>(nameof(logThreadIdFilterTextBoxPanel)).AsNonNull();
 			this.logThreadIdFilterTextBox = this.logThreadIdFilterTextBoxPanel.FindControl<IntegerTextBox>(nameof(logThreadIdFilterTextBox)).AsNonNull();
-			this.markedLogListBox = this.FindControl<ListBox>(nameof(markedLogListBox)).AsNonNull();
+			this.markedLogListBox = this.FindControl<Avalonia.Controls.ListBox>(nameof(markedLogListBox)).AsNonNull();
 			this.otherActionsButton = this.FindControl<ToggleButton>(nameof(otherActionsButton)).AsNonNull().Also(it =>
 			{
 				if (Platform.IsMacOS)
@@ -298,7 +297,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				it.MenuClosed += (_, e) => this.SynchronizationContext.Post(() => this.otherActionsButton.IsChecked = false);
 				it.MenuOpened += (_, e) => this.SynchronizationContext.Post(() => this.otherActionsButton.IsChecked = true);
 			});
-			this.predefinedLogTextFilterListBox = this.FindControl<ListBox>(nameof(predefinedLogTextFilterListBox)).AsNonNull();
+			this.predefinedLogTextFilterListBox = this.FindControl<Avalonia.Controls.ListBox>(nameof(predefinedLogTextFilterListBox)).AsNonNull();
 			this.predefinedLogTextFiltersPopup = this.FindControl<Popup>(nameof(predefinedLogTextFiltersPopup)).AsNonNull().Also(it =>
 			{
 				it.Closed += (_, sender) => this.logListBox.Focus();
@@ -425,7 +424,6 @@ namespace CarinaStudio.ULogViewer.Controls
 				catch
 				{ }
 			});
-			this.showLogStringPropertyAction = new ScheduledAction(() => this.ShowLogStringProperty());
 			this.updateLogFiltersAction = new ScheduledAction(() =>
 			{
 				// get session
@@ -1965,17 +1963,9 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Called when double click on log list box.
-		void OnLogListBoxDoubleTapped(object? sender, RoutedEventArgs e)
+		void OnLogListBoxDoubleClickOnItem(object? sender, ListBoxItemEventArgs e)
 		{
-			var selectedItem = this.logListBox.SelectedItem;
-			if (selectedItem == null
-				|| !this.logListBox.TryFindListBoxItem(selectedItem, out var listBoxItem)
-				|| listBoxItem == null
-				|| !listBoxItem.IsPointerOver)
-			{
-				return;
-			}
-			this.showLogStringPropertyAction.Reschedule(Platform.IsMacOS ? 300 : 0);
+			this.ShowLogStringProperty();
 			e.Handled = true;
 		}
 
@@ -3307,7 +3297,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 		bool ShowLogStringProperty(DisplayableLog log, DisplayableLogProperty property)
 		{
-			this.showLogStringPropertyAction.Cancel();
 			this.FindLogicalAncestorOfType<Avalonia.Controls.Window>()?.Let(window =>
 			{
 				new LogStringPropertyDialog()

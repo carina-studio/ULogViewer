@@ -4,6 +4,7 @@ using Avalonia.Data;
 using Avalonia.Data.Converters;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Controls;
@@ -57,9 +58,9 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ComboBox iconComboBox;
 		readonly SortedObservableList<KeyValuePair<string, LogLevel>> logLevelMapEntriesForReading = new SortedObservableList<KeyValuePair<string, LogLevel>>((x, y) => x.Key.CompareTo(y.Key));
 		readonly SortedObservableList<KeyValuePair<LogLevel, string>> logLevelMapEntriesForWriting = new SortedObservableList<KeyValuePair<LogLevel, string>>((x, y) => x.Key.CompareTo(y.Key));
-		readonly ListBox logLevelMapForReadingListBox;
-		readonly ListBox logLevelMapForWritingListBox;
-		readonly ListBox logPatternListBox;
+		readonly AppSuite.Controls.ListBox logLevelMapForReadingListBox;
+		readonly AppSuite.Controls.ListBox logLevelMapForWritingListBox;
+		readonly AppSuite.Controls.ListBox logPatternListBox;
 		readonly ObservableList<LogPattern> logPatterns = new ObservableList<LogPattern>();
 		readonly ComboBox logStringEncodingForReadingComboBox;
 		readonly ComboBox logStringEncodingForWritingComboBox;
@@ -72,13 +73,13 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly TextBox timeSpanFormatForDisplayingTextBox;
 		readonly TextBox timeSpanFormatForWritingTextBox;
 		readonly ObservableList<string> timeSpanFormatsForReading = new ObservableList<string>();
-		readonly ListBox timeSpanFormatsForReadingListBox;
+		readonly AppSuite.Controls.ListBox timeSpanFormatsForReadingListBox;
 		readonly ComboBox timestampEncodingForReadingComboBox;
 		readonly TextBox timestampFormatForDisplayingTextBox;
 		readonly TextBox timestampFormatForWritingTextBox;
 		readonly ObservableList<string> timestampFormatsForReading = new ObservableList<string>();
-		readonly ListBox timestampFormatsForReadingListBox;
-		readonly ListBox visibleLogPropertyListBox;
+		readonly AppSuite.Controls.ListBox timestampFormatsForReadingListBox;
+		readonly AppSuite.Controls.ListBox visibleLogPropertyListBox;
 		readonly ObservableList<LogProperty> visibleLogProperties = new ObservableList<LogProperty>();
 		readonly ToggleSwitch workingDirNeededSwitch;
 
@@ -115,31 +116,31 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.dataSourceProviderComboBox = this.FindControl<ComboBox>("dataSourceProviderComboBox").AsNonNull();
 			this.descriptionTextBox = this.FindControl<TextBox>(nameof(descriptionTextBox));
 			this.iconComboBox = this.FindControl<ComboBox>("iconComboBox").AsNonNull();
-			if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+			if (Platform.IsNotWindows)
 				this.FindControl<Control>("isAdminNeededPanel").AsNonNull().IsVisible = false;
-			this.logLevelMapForReadingListBox = this.FindControl<ListBox>("logLevelMapForReadingListBox").AsNonNull();
-			this.logLevelMapForWritingListBox = this.FindControl<ListBox>("logLevelMapForWritingListBox").AsNonNull();
-			this.logPatternListBox = this.FindControl<ListBox>("logPatternListBox").AsNonNull();
+			this.logLevelMapForReadingListBox = this.FindControl<AppSuite.Controls.ListBox>("logLevelMapForReadingListBox").AsNonNull();
+			this.logLevelMapForWritingListBox = this.FindControl<AppSuite.Controls.ListBox>("logLevelMapForWritingListBox").AsNonNull();
+			this.logPatternListBox = this.FindControl<AppSuite.Controls.ListBox>("logPatternListBox").AsNonNull();
 			this.logStringEncodingForReadingComboBox = this.FindControl<ComboBox>("logStringEncodingForReadingComboBox").AsNonNull();
 			this.logStringEncodingForWritingComboBox = this.FindControl<ComboBox>("logStringEncodingForWritingComboBox").AsNonNull();
-			this.logWritingFormatTextBox = this.FindControl<AppSuite.Controls.StringInterpolationFormatTextBox>("logWritingFormatTextBox").AsNonNull().Also(it =>
+			this.logWritingFormatTextBox = this.FindControl<StringInterpolationFormatTextBox>("logWritingFormatTextBox").AsNonNull().Also(it =>
 			{
 				foreach (var propertyName in Log.PropertyNames)
 				{
-					it.PredefinedVariables.Add(new AppSuite.Controls.StringInterpolationVariable().Also(variable =>
+					it.PredefinedVariables.Add(new StringInterpolationVariable().Also(variable =>
 					{
-						variable.Bind(AppSuite.Controls.StringInterpolationVariable.DisplayNameProperty, new Binding() 
+						variable.Bind(StringInterpolationVariable.DisplayNameProperty, new Binding() 
 						{
 							Converter = Converters.LogPropertyNameConverter.Default,
-							Path = nameof(AppSuite.Controls.StringInterpolationVariable.Name),
+							Path = nameof(StringInterpolationVariable.Name),
 							Source = variable,
 						});
 						variable.Name = propertyName;
 					}));
 				}
-				it.PredefinedVariables.Add(new AppSuite.Controls.StringInterpolationVariable().Also(variable =>
+				it.PredefinedVariables.Add(new StringInterpolationVariable().Also(variable =>
 				{
-					variable.Bind(AppSuite.Controls.StringInterpolationVariable.DisplayNameProperty,this.GetResourceObservable("String/Common.NewLine"));
+					variable.Bind(StringInterpolationVariable.DisplayNameProperty,this.GetResourceObservable("String/Common.NewLine"));
 					variable.Name = "NewLine";
 				}));
 			});
@@ -150,12 +151,12 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.timeSpanEncodingForReadingComboBox = this.FindControl<ComboBox>(nameof(timeSpanEncodingForReadingComboBox));
 			this.timeSpanFormatForDisplayingTextBox = this.FindControl<TextBox>(nameof(timeSpanFormatForDisplayingTextBox));
 			this.timeSpanFormatForWritingTextBox = this.FindControl<TextBox>(nameof(timeSpanFormatForWritingTextBox));
-			this.timeSpanFormatsForReadingListBox = this.FindControl<ListBox>(nameof(timeSpanFormatsForReadingListBox));
+			this.timeSpanFormatsForReadingListBox = this.FindControl<AppSuite.Controls.ListBox>(nameof(timeSpanFormatsForReadingListBox));
 			this.timestampEncodingForReadingComboBox = this.FindControl<ComboBox>(nameof(timestampEncodingForReadingComboBox)).AsNonNull();
 			this.timestampFormatForDisplayingTextBox = this.FindControl<TextBox>("timestampFormatForDisplayingTextBox").AsNonNull();
 			this.timestampFormatForWritingTextBox = this.FindControl<TextBox>("timestampFormatForWritingTextBox").AsNonNull();
-			this.timestampFormatsForReadingListBox = this.FindControl<ListBox>(nameof(timestampFormatsForReadingListBox)).AsNonNull();
-			this.visibleLogPropertyListBox = this.FindControl<ListBox>("visibleLogPropertyListBox").AsNonNull();
+			this.timestampFormatsForReadingListBox = this.FindControl<AppSuite.Controls.ListBox>(nameof(timestampFormatsForReadingListBox)).AsNonNull();
+			this.visibleLogPropertyListBox = this.FindControl<AppSuite.Controls.ListBox>("visibleLogPropertyListBox").AsNonNull();
 			this.workingDirNeededSwitch = this.FindControl<ToggleSwitch>("workingDirNeededSwitch").AsNonNull();
 		}
 
@@ -174,9 +175,9 @@ namespace CarinaStudio.ULogViewer.Controls
 					return;
 				if (this.logLevelMapEntriesForReading.Contains(entry.Value))
 				{
-					await new AppSuite.Controls.MessageDialog()
+					await new MessageDialog()
 					{
-						Icon = AppSuite.Controls.MessageDialogIcon.Warning,
+						Icon = MessageDialogIcon.Warning,
 						Message = this.Application.GetFormattedString("LogProfileEditorDialog.DuplicateLogLevelMapEntry", entry.Value.Key),
 						Title = this.Application.GetString("LogProfileEditorDialog.LogLevelMapForReading"),
 					}.ShowDialog(this);
@@ -203,9 +204,9 @@ namespace CarinaStudio.ULogViewer.Controls
 					return;
 				if (this.logLevelMapEntriesForWriting.Contains(entry.Value))
 				{
-					await new AppSuite.Controls.MessageDialog()
+					await new MessageDialog()
 					{
-						Icon = AppSuite.Controls.MessageDialogIcon.Warning,
+						Icon = MessageDialogIcon.Warning,
 						Message = this.Application.GetFormattedString("LogProfileEditorDialog.DuplicateLogLevelMapEntry", LogLevelNameConverter.Convert(entry.Value.Key, typeof(string), null, this.Application.CultureInfo)),
 						Title = this.Application.GetString("LogProfileEditorDialog.LogLevelMapForReading"),
 					}.ShowDialog(this);
@@ -287,9 +288,9 @@ namespace CarinaStudio.ULogViewer.Controls
 				var checkingEntry = this.logLevelMapEntriesForReading.FirstOrDefault(it => it.Key == newEntry.Value.Key);
 				if (checkingEntry.Key != null && !entry.Equals(checkingEntry))
 				{
-					await new AppSuite.Controls.MessageDialog()
+					await new MessageDialog()
 					{
-						Icon = AppSuite.Controls.MessageDialogIcon.Warning,
+						Icon = MessageDialogIcon.Warning,
 						Message = this.Application.GetFormattedString("LogProfileEditorDialog.DuplicateLogLevelMapEntry", newEntry.Value.Key),
 						Title = this.Application.GetString("LogProfileEditorDialog.LogLevelMapForReading"),
 					}.ShowDialog(this);
@@ -318,9 +319,9 @@ namespace CarinaStudio.ULogViewer.Controls
 				var checkingEntry = this.logLevelMapEntriesForWriting.FirstOrDefault(it => it.Key == newEntry.Value.Key);
 				if (checkingEntry.Value != null && !entry.Equals(checkingEntry))
 				{
-					await new AppSuite.Controls.MessageDialog()
+					await new MessageDialog()
 					{
-						Icon = AppSuite.Controls.MessageDialogIcon.Warning,
+						Icon = MessageDialogIcon.Warning,
 						Message = this.Application.GetFormattedString("LogProfileEditorDialog.DuplicateLogLevelMapEntry", LogLevelNameConverter.Convert(newEntry.Value.Key, typeof(string), null, this.Application.CultureInfo)),
 						Title = this.Application.GetString("LogProfileEditorDialog.LogLevelMapForWriting"),
 					}.ShowDialog(this);
@@ -422,13 +423,13 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				if (this.visibleLogProperties.IsNotEmpty())
 				{
-					var result = await new AppSuite.Controls.MessageDialog()
+					var result = await new MessageDialog()
 					{
-						Buttons = AppSuite.Controls.MessageDialogButtons.YesNo,
-						Icon = AppSuite.Controls.MessageDialogIcon.Warning,
+						Buttons = MessageDialogButtons.YesNo,
+						Icon = MessageDialogIcon.Warning,
 						Message = this.Application.GetString("LogProfileEditorDialog.VisibleLogPropertiesWithoutLogPatterns"),
 					}.ShowDialog(this);
-					if (result == AppSuite.Controls.MessageDialogResult.Yes)
+					if (result == MessageDialogResult.Yes)
 					{
 						this.baseScrollViewer.ScrollIntoView(this.logPatternListBox);
 						this.logPatternListBox.Focus();
@@ -438,13 +439,13 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			else if (this.visibleLogProperties.IsEmpty())
 			{
-				var result = await new AppSuite.Controls.MessageDialog()
+				var result = await new MessageDialog()
 				{
-					Buttons = AppSuite.Controls.MessageDialogButtons.YesNo,
-					Icon = AppSuite.Controls.MessageDialogIcon.Warning,
+					Buttons = MessageDialogButtons.YesNo,
+					Icon = MessageDialogIcon.Warning,
 					Message = this.Application.GetString("LogProfileEditorDialog.LogPatternsWithoutVisibleLogProperties"),
 				}.ShowDialog(this);
-				if (result == AppSuite.Controls.MessageDialogResult.Yes)
+				if (result == MessageDialogResult.Yes)
 				{
 					this.baseScrollViewer.ScrollIntoView(this.visibleLogPropertyListBox);
 					this.visibleLogPropertyListBox.Focus();
@@ -608,22 +609,16 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Called when double-tapped on list box.
-		void OnListBoxDoubleTapped(object? sender, RoutedEventArgs e)
+		void OnListBoxDoubleClickOnItem(object? sender, ListBoxItemEventArgs e)
 		{
-			if (sender is not ListBox listBox)
+			if (sender is not Avalonia.Controls.ListBox listBox)
 				return;
-			var selectedItem = listBox.SelectedItem;
-			if (selectedItem == null
-				|| !listBox.TryFindListBoxItem(selectedItem, out var listBoxItem)
-				|| listBoxItem == null
-				|| !listBoxItem.IsPointerOver)
-			{
+			if (!listBox.TryFindListBoxItem(e.Item, out var listBoxItem) || listBoxItem == null)
 				return;
-			}
 			if (listBox == this.logLevelMapForReadingListBox)
-				this.EditLogLevelMapEntryForReading((KeyValuePair<string, LogLevel>)selectedItem.AsNonNull());
+				this.EditLogLevelMapEntryForReading((KeyValuePair<string, LogLevel>)e.Item);
 			else if (listBox == this.logLevelMapForWritingListBox)
-				this.EditLogLevelMapEntryForWriting((KeyValuePair<LogLevel, string>)selectedItem.AsNonNull());
+				this.EditLogLevelMapEntryForWriting((KeyValuePair<LogLevel, string>)e.Item);
 			else if (listBox == this.logPatternListBox)
 				this.EditLogPattern(listBoxItem);
 			else if (listBox == this.timeSpanFormatsForReadingListBox)
@@ -638,7 +633,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when list box lost focus.
 		void OnListBoxLostFocus(object? sender, RoutedEventArgs e)
 		{
-			if (sender is not ListBox listBox)
+			if (sender is not Avalonia.Controls.ListBox listBox)
 				return;
 			listBox.SelectedItems.Clear();
 		}
@@ -647,7 +642,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when selection in list box changed.
 		void OnListBoxSelectionChanged(object? sender, SelectionChangedEventArgs e)
 		{
-			if (sender is not ListBox listBox)
+			if (sender is not Avalonia.Controls.ListBox listBox)
 				return;
 			if (listBox.SelectedIndex >= 0)
 				listBox.ScrollIntoView(listBox.SelectedIndex);
@@ -715,17 +710,17 @@ namespace CarinaStudio.ULogViewer.Controls
 			// show hint of 'learn about logs reading and parsing'
 			if (!this.PersistentState.GetValueOrDefault(HasLearnAboutLogsReadingAndParsingHintShown))
 			{
-				var result = await new AppSuite.Controls.MessageDialog()
+				var result = await new MessageDialog()
 				{
-					Buttons = AppSuite.Controls.MessageDialogButtons.YesNo,
-					Icon = AppSuite.Controls.MessageDialogIcon.Question,
+					Buttons = MessageDialogButtons.YesNo,
+					Icon = MessageDialogIcon.Question,
 					Message = this.Application.GetString("LogProfileEditorDialog.LearnAboutLogsReadingAndParsingFirst"),
 					Title = this.Title
 				}.ShowDialog(this);
 				if (this.IsOpened)
 				{
 					this.PersistentState.SetValue<bool>(HasLearnAboutLogsReadingAndParsingHintShown, true);
-					if (result == AppSuite.Controls.MessageDialogResult.Yes)
+					if (result == MessageDialogResult.Yes)
 						Platform.OpenLink(LogsReadingAndParsingPageUri);
 				}
 			}
@@ -831,7 +826,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Select given item in list box.
-		void SelectListBoxItem(ListBox listBox, int index)
+		void SelectListBoxItem(Avalonia.Controls.ListBox listBox, int index)
 		{
 			this.SynchronizationContext.Post(() =>
 			{

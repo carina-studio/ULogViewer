@@ -75,9 +75,9 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly NumericUpDown portUpDown;
 		readonly TextBox queryStringTextBox;
 		readonly ObservableList<string> setupCommands = new ObservableList<string>();
-		readonly ListBox setupCommandsListBox;
+		readonly AppSuite.Controls.ListBox setupCommandsListBox;
 		readonly ObservableList<string> teardownCommands = new ObservableList<string>();
-		readonly ListBox teardownCommandsListBox;
+		readonly AppSuite.Controls.ListBox teardownCommandsListBox;
 		readonly UriTextBox uriTextBox;
 		readonly TextBox userNameTextBox;
 		readonly TextBox workingDirectoryTextBox;
@@ -105,9 +105,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.portUpDown = this.FindControl<NumericUpDown>(nameof(portUpDown)).AsNonNull();
 			this.queryStringTextBox = this.FindControl<TextBox>("queryStringTextBox").AsNonNull();
 			this.setupCommands.CollectionChanged += (_, e) => this.InvalidateInput();
-			this.setupCommandsListBox = this.FindControl<ListBox>("setupCommandsListBox").AsNonNull();
+			this.setupCommandsListBox = this.FindControl<AppSuite.Controls.ListBox>("setupCommandsListBox").AsNonNull();
 			this.teardownCommands.CollectionChanged += (_, e) => this.InvalidateInput();
-			this.teardownCommandsListBox = this.FindControl<ListBox>("teardownCommandsListBox").AsNonNull();
+			this.teardownCommandsListBox = this.FindControl<AppSuite.Controls.ListBox>("teardownCommandsListBox").AsNonNull();
 			this.uriTextBox = this.FindControl<UriTextBox>("uriTextBox").AsNonNull();
 			this.userNameTextBox = this.FindControl<TextBox>("userNameTextBox").AsNonNull();
 			this.workingDirectoryTextBox = this.FindControl<TextBox>("workingDirectoryTextBox").AsNonNull();
@@ -117,7 +117,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Add setup command.
 		async void AddSetupCommand()
 		{
-			var command = (await new AppSuite.Controls.TextInputDialog()
+			var command = (await new TextInputDialog()
 			{
 				Message = this.Application.GetString("LogDataSourceOptionsDialog.Command"),
 				Title = this.Application.GetString("LogDataSourceOptionsDialog.SetupCommands"),
@@ -133,7 +133,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Add teardown command.
 		async void AddTeardownCommand()
 		{
-			var command = (await new AppSuite.Controls.TextInputDialog()
+			var command = (await new TextInputDialog()
 			{
 				Message = this.Application.GetString("LogDataSourceOptionsDialog.Command"),
 				Title = this.Application.GetString("LogDataSourceOptionsDialog.TeardownCommands"),
@@ -170,7 +170,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		async void EditSetupTeardownCommand(ListBoxItem item)
 		{
 			// find index of command
-			var listBox = (ListBox)item.Parent.AsNonNull();
+			var listBox = (Avalonia.Controls.ListBox)item.Parent.AsNonNull();
 			var isSetupCommand = (listBox == this.setupCommandsListBox);
 			var index = isSetupCommand ? this.setupCommands.IndexOf((string)item.DataContext.AsNonNull()) : this.teardownCommands.IndexOf((string)item.DataContext.AsNonNull());
 			if (index < 0)
@@ -191,7 +191,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.setupCommands[index] = newCommand;
 			else
 				this.teardownCommands[index] = newCommand;
-			this.SelectListBoxItem((ListBox)item.Parent.AsNonNull(), index);
+			this.SelectListBoxItem((Avalonia.Controls.ListBox)item.Parent.AsNonNull(), index);
 		}
 
 
@@ -262,7 +262,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		void MoveSetupTeardownCommandDown(ListBoxItem item)
 		{
 			// find index of command
-			var listBox = (ListBox)item.Parent.AsNonNull();
+			var listBox = (Avalonia.Controls.ListBox)item.Parent.AsNonNull();
 			var index = listBox == this.setupCommandsListBox ? this.setupCommands.IndexOf((string)item.DataContext.AsNonNull()) : this.teardownCommands.IndexOf((string)item.DataContext.AsNonNull());
 			if (index < 0)
 				return;
@@ -282,7 +282,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		void MoveSetupTeardownCommandUp(ListBoxItem item)
 		{
 			// find index of command
-			var listBox = (ListBox)item.Parent.AsNonNull();
+			var listBox = (Avalonia.Controls.ListBox)item.Parent.AsNonNull();
 			var index = listBox == this.setupCommandsListBox ? this.setupCommands.IndexOf((string)item.DataContext.AsNonNull()) : this.teardownCommands.IndexOf((string)item.DataContext.AsNonNull());
 			if (index < 0)
 				return;
@@ -314,18 +314,12 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Called when double-tapped on list box.
-		void OnListBoxDoubleTapped(object? sender, RoutedEventArgs e)
+		void OnListBoxDoubleClickOnItem(object? sender, ListBoxItemEventArgs e)
 		{
-			if (sender is not ListBox listBox)
+			if (sender is not Avalonia.Controls.ListBox listBox)
 				return;
-			var selectedItem = listBox.SelectedItem;
-			if (selectedItem == null
-				|| !listBox.TryFindListBoxItem(selectedItem, out var listBoxItem)
-				|| listBoxItem == null
-				|| !listBoxItem.IsPointerOver)
-			{
+			if (!listBox.TryFindListBoxItem(e.Item, out var listBoxItem) || listBoxItem == null)
 				return;
-			}
 			if (listBox == this.setupCommandsListBox || listBox == this.teardownCommandsListBox)
 				this.EditSetupTeardownCommand(listBoxItem);
 		}
@@ -334,7 +328,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when list box lost focus.
 		void OnListBoxLostFocus(object? sender, RoutedEventArgs e)
 		{
-			if (sender is not ListBox listBox)
+			if (sender is not Avalonia.Controls.ListBox listBox)
 				return;
 			listBox.SelectedItems.Clear();
 		}
@@ -343,7 +337,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when selection in list box changed.
 		void OnListBoxSelectionChanged(object? sender, SelectionChangedEventArgs e)
 		{
-			if (sender is not ListBox listBox)
+			if (sender is not Avalonia.Controls.ListBox listBox)
 				return;
 			if (listBox.SelectedIndex >= 0)
 				listBox.ScrollIntoView(listBox.SelectedIndex);
@@ -522,7 +516,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		void RemoveSetupTeardownCommand(ListBoxItem item)
 		{
 			// find index of command
-			var listBox = (ListBox)item.Parent.AsNonNull();
+			var listBox = (Avalonia.Controls.ListBox)item.Parent.AsNonNull();
 			var index = listBox == this.setupCommandsListBox ? this.setupCommands.IndexOf((string)item.DataContext.AsNonNull()) : this.teardownCommands.IndexOf((string)item.DataContext.AsNonNull());
 			if (index < 0)
 				return;
@@ -550,7 +544,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Select given item in list box.
-		void SelectListBoxItem(ListBox listBox, int index)
+		void SelectListBoxItem(Avalonia.Controls.ListBox listBox, int index)
 		{
 			this.SynchronizationContext.Post(() =>
 			{

@@ -168,7 +168,7 @@
 					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogDataSourceOptionsDialog.SetupCommands}" VerticalAlignment="Center"/>
 					<TextBlock Classes="Dialog_TextBlock" IsVisible="{Binding $parent[Window].IsSetupCommandsRequired}" Text="{DynamicResource String/LogDataSourceOptionsDialog.Required}" VerticalAlignment="Center"/>
 				</StackPanel>
-				<ListBox Name="setupCommandsListBox" Classes="Commands" DoubleTapped="OnListBoxDoubleTapped" Height="{DynamicResource Double/LogDataSourceOptionsDialog.CommandListBox.Height}" Items="{Binding $parent[Window].SetupCommands}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged"/>
+				<asControls:ListBox Name="setupCommandsListBox" Classes="Commands" DoubleClickOnItem="OnListBoxDoubleClickOnItem" Height="{DynamicResource Double/LogDataSourceOptionsDialog.CommandListBox.Height}" Items="{Binding $parent[Window].SetupCommands}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged"/>
 				<Button Classes="ListAction" Command="{Binding $parent[Window].AddSetupCommand}" Content="{DynamicResource String/Common.Add}"/>
 				<Separator Classes="Dialog_Separator"/>
 			</StackPanel>
@@ -179,7 +179,7 @@
 					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogDataSourceOptionsDialog.TeardownCommands}" VerticalAlignment="Center"/>
 					<TextBlock Classes="Dialog_TextBlock" IsVisible="{Binding $parent[Window].IsTeardownCommandsRequired}" Text="{DynamicResource String/LogDataSourceOptionsDialog.Required}" VerticalAlignment="Center"/>
 				</StackPanel>
-				<ListBox Name="teardownCommandsListBox" Classes="Commands" DoubleTapped="OnListBoxDoubleTapped" Height="{DynamicResource Double/LogDataSourceOptionsDialog.CommandListBox.Height}" Items="{Binding $parent[Window].TeardownCommands}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged"/>
+				<asControls:ListBox Name="teardownCommandsListBox" Classes="Commands" DoubleClickOnItem="OnListBoxDoubleClickOnItem" Height="{DynamicResource Double/LogDataSourceOptionsDialog.CommandListBox.Height}" Items="{Binding $parent[Window].TeardownCommands}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged"/>
 				<Button Classes="ListAction" Command="{Binding $parent[Window].AddTeardownCommand}" Content="{DynamicResource String/Common.Add}"/>
 				<Separator Classes="Dialog_Separator"/>
 			</StackPanel>
