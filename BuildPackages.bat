@@ -21,7 +21,7 @@ IF %ERRORLEVEL% NEQ 0 (
    exit
 )
 
-del .\%APP_NAME%\bin\Release\net6.0\publish\win-x86\AppIcon_128px.png
+del .\%APP_NAME%\bin\Release\net6.0\publish\win-x86\ULogViewer.png
 PowerShell -NoLogo -Command Compress-Archive -Force -Path .\%APP_NAME%\bin\Release\net6.0\publish\win-x86\* -DestinationPath .\Packages\%APP_NAME%-%1-win-x86.zip
 PowerShell -NoLogo -Command Get-FileHash .\Packages\%APP_NAME%-%1-win-x86.zip > .\Packages\%APP_NAME%-%1-win-x86.txt
 
@@ -32,7 +32,7 @@ IF %ERRORLEVEL% NEQ 0 (
    exit
 )
 
-del .\%APP_NAME%\bin\Release\net6.0\publish\win-x64\AppIcon_128px.png
+del .\%APP_NAME%\bin\Release\net6.0\publish\win-x64\ULogViewer.png
 PowerShell -NoLogo -Command Compress-Archive -Force -Path .\%APP_NAME%\bin\Release\net6.0\publish\win-x64\* -DestinationPath .\Packages\%APP_NAME%-%1-win-x64.zip
 PowerShell -NoLogo -Command Get-FileHash .\Packages\%APP_NAME%-%1-win-x64.zip > .\Packages\%APP_NAME%-%1-win-x64.txt
 
@@ -43,7 +43,7 @@ IF %ERRORLEVEL% NEQ 0 (
    exit
 )
 
-del .\%APP_NAME%\bin\Release\net6.0\publish\win-arm64\AppIcon_128px.png
+del .\%APP_NAME%\bin\Release\net6.0\publish\win-arm64\ULogViewer.png
 PowerShell -NoLogo -Command Compress-Archive -Force -Path .\%APP_NAME%\bin\Release\net6.0\publish\win-arm64\* -DestinationPath .\Packages\%APP_NAME%-%1-win-arm64.zip
 PowerShell -NoLogo -Command Get-FileHash .\Packages\%APP_NAME%-%1-win-arm64.zip > .\Packages\%APP_NAME%-%1-win-arm64.txt
 
@@ -54,7 +54,7 @@ IF %ERRORLEVEL% NEQ 0 (
    exit
 )
 
-del .\%APP_NAME%\bin\Release\net6.0\publish\win-x86\AppIcon_128px.png
+del .\%APP_NAME%\bin\Release\net6.0\publish\win-x86\ULogViewer.png
 PowerShell -NoLogo -Command Compress-Archive -Force -Path .\%APP_NAME%\bin\Release\net6.0\publish\win-x86-fx-dependent\* -DestinationPath .\Packages\%APP_NAME%-%1-win-x86-fx-dependent.zip
 PowerShell -NoLogo -Command Get-FileHash .\Packages\%APP_NAME%-%1-win-x86-fx-dependent.zip > .\Packages\%APP_NAME%-%1-win-x86-fx-dependent.txt
 
@@ -65,7 +65,7 @@ IF %ERRORLEVEL% NEQ 0 (
    exit
 )
 
-del .\%APP_NAME%\bin\Release\net6.0\publish\win-x64\AppIcon_128px.png
+del .\%APP_NAME%\bin\Release\net6.0\publish\win-x64\ULogViewer.png
 PowerShell -NoLogo -Command Compress-Archive -Force -Path .\%APP_NAME%\bin\Release\net6.0\publish\win-x64-fx-dependent\* -DestinationPath .\Packages\%APP_NAME%-%1-win-x64-fx-dependent.zip
 PowerShell -NoLogo -Command Get-FileHash .\Packages\%APP_NAME%-%1-win-x64-fx-dependent.zip > .\Packages\%APP_NAME%-%1-win-x64-fx-dependent.txt
 
@@ -76,7 +76,7 @@ IF %ERRORLEVEL% NEQ 0 (
    exit
 )
 
-del .\%APP_NAME%\bin\Release\net6.0\publish\win-arm64\AppIcon_128px.png
+del .\%APP_NAME%\bin\Release\net6.0\publish\win-arm64\ULogViewer.png
 PowerShell -NoLogo -Command Compress-Archive -Force -Path .\%APP_NAME%\bin\Release\net6.0\publish\win-arm64-fx-dependent\* -DestinationPath .\Packages\%APP_NAME%-%1-win-arm64-fx-dependent.zip
 PowerShell -NoLogo -Command Get-FileHash .\Packages\%APP_NAME%-%1-win-arm64-fx-dependent.zip > .\Packages\%APP_NAME%-%1-win-arm64-fx-dependent.txt
 
