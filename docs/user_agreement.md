@@ -3,8 +3,8 @@ title: ULogViewer
 ---
 
 # User Agreement
-- Version: 1.2.
-- Update: 2022/1/23.
+- Version: 1.3.
+- Update: 2022/2/16.
 
 This is the User Agreement of ```ULogViewer``` which you need to read before you using ```ULogViewer```. 
 The User Agreement may be updated in the future and you can check it on the website of ```ULogViewer```. 
@@ -75,6 +75,7 @@ There are some necessary external command execution when running ```ULogViewer``
 * Run ```open``` to open Finder on mscOS.
 * Run ```defaults``` to check system language and theme mode on macOS.
 * Run ```nautilus``` or ```xdg-open``` to open File Manager on Linux.
+* Run ```gnome-shell``` to check GUI environment on Linux.
 
 Except for necessary cases above, external command execution will happen when the source of logs is ```Standard Output (stdout)```. You can check the list of commands and arguments in the ```Data source options``` dialog when editing ```Data Source``` of log profile.
 
