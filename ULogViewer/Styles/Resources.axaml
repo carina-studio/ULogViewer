@@ -86,9 +86,9 @@
 	<sys:Double x:Key="Double/PredefinedLogTextFilterEditorDialog.Width">500</sys:Double>
 	
 	<!-- SessionView -->
-	<CornerRadius x:Key="CornerRadius/SessionView.LogListBox.Item.Column.Border">2</CornerRadius>
+	<CornerRadius x:Key="CornerRadius/SessionView.LogListBox.Item.Column.Border">4</CornerRadius>
 	<CornerRadius x:Key="CornerRadius/SessionView.LogListBox.MarkIndicator.Border">6</CornerRadius>
-	<CornerRadius x:Key="CornerRadius/SessionView.MarkedLogListBox.Item.Border">2</CornerRadius>
+	<CornerRadius x:Key="CornerRadius/SessionView.MarkedLogListBox.Item.Border">4</CornerRadius>
 	<CornerRadius x:Key="CornerRadius/SessionView.Menu.MarkColorIcon">8</CornerRadius>
 	<sys:Double x:Key="Double/SessionView.Hint.NoLogToShow.FontSize">20</sys:Double>
 	<sys:Double x:Key="Double/SessionView.Hint.SelectLogProfile.FontSize">20</sys:Double>
@@ -125,14 +125,14 @@
 	<Thickness x:Key="Thickness/SessionView.LogHeader.Padding">5,0,5,0</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogListBox.ColorIndicator.Border">0,0,2,0</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogListBox.Item.Column.Border">1</Thickness>
-	<Thickness x:Key="Thickness/SessionView.LogListBox.Item.Padding">0,0,16,0</Thickness>
+	<Thickness x:Key="Thickness/SessionView.LogListBox.Item.Padding">0</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogListBox.Item.Property.Padding">2,3,2,3</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogListBox.MarkIndicator.Border">1</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogListBox.MarkIndicator.Margin">5,0,5,0</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogListBox.Padding">0,0,0,20</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogsTimeInfoPanel.Arrow.Margin">10,5,10,5</Thickness>
 	<Thickness x:Key="Thickness/SessionView.MarkedLogListBox.Item.Border.Selected">1</Thickness>
-	<Thickness x:Key="Thickness/SessionView.MarkedLogListBox.Item.Padding">4,3,3,3</Thickness>
+	<Thickness x:Key="Thickness/SessionView.MarkedLogListBox.Item.Padding">5,3,5,3</Thickness>
 	<Thickness x:Key="Thickness/SessionView.Menu.MarkColorIcon.Border">1</Thickness>
 	<Thickness x:Key="Thickness/SessionView.NoPredefinedLogTextFilterHint.Margin">15,12,15,15</Thickness>
 	<Thickness x:Key="Thickness/SessionView.PredefinedLogTextFilterHint.Padding">10,7,10,10</Thickness>

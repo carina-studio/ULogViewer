@@ -609,7 +609,7 @@
 						<Setter Property="CornerRadius" Value="0"/>
 						<Setter Property="HorizontalAlignment" Value="Stretch"/>
 						<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-						<Setter Property="Margin" Value="0"/>
+						<Setter Property="Margin" Value="0,0,20,0"/>
 						<Setter Property="Padding" Value="0"/>
 					</Style>
 					<Style Selector="ListBoxItem /template/ ContentPresenter#PART_ContentPresenter">
