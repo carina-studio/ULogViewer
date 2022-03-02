@@ -576,7 +576,7 @@
 								<Image Classes="Icon" Source="{StaticResource Image/Icon.More}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
 								<Image Classes="Icon" Source="{StaticResource Image/Icon.More.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
 								<Border Classes="ToolBar_NotificationIndicator" IsVisible="{Binding $parent[Window].Application.UpdateInfo, Converter={x:Static asConverters:ValueToBooleanConverters.NonNullToTrue}}">
-									<Image Classes="ToolBar_NotificationIndicator" Source="{DynamicResource Image/Icon.Information.Colored}"/>
+									<Image Classes="ToolBar_NotificationIndicator" Source="{DynamicResource Image/Icon.Update.Colored}"/>
 								</Border>
 							</Panel>
 						</ToggleButton>
