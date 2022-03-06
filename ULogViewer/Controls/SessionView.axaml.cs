@@ -98,7 +98,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ScheduledAction autoSetIPEndPointAction;
 		readonly ScheduledAction autoSetUriAction;
 		readonly ScheduledAction autoSetWorkingDirectoryAction;
-		readonly MutableObservableBoolean canAddLogFiles = new MutableObservableBoolean();
+		readonly ObservableCommandState canAddLogFiles = new();
 		readonly MutableObservableBoolean canCopyLogProperty = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canCopySelectedLogs = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canCopySelectedLogsWithFileNames = new MutableObservableBoolean();
@@ -107,14 +107,16 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly MutableObservableBoolean canFilterLogsByTid = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canMarkSelectedLogs = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canMarkUnmarkSelectedLogs = new MutableObservableBoolean();
-		readonly MutableObservableBoolean canReloadLogs = new MutableObservableBoolean();
+		readonly ObservableCommandState canReloadLogs = new();
+		readonly ObservableCommandState canResetLogProfileToSession = new();
 		readonly MutableObservableBoolean canRestartAsAdmin = new MutableObservableBoolean(RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && !App.Current.IsRunningAsAdministrator);
-		readonly MutableObservableBoolean canSaveLogs = new MutableObservableBoolean();
+		readonly ObservableCommandState canSaveLogs = new();
 		readonly MutableObservableBoolean canSelectMarkedLogs = new MutableObservableBoolean();
-		readonly MutableObservableBoolean canSetIPEndPoint = new MutableObservableBoolean();
-		readonly MutableObservableBoolean canSetLogProfile = new MutableObservableBoolean();
-		readonly MutableObservableBoolean canSetUri = new MutableObservableBoolean();
-		readonly MutableObservableBoolean canSetWorkingDirectory = new MutableObservableBoolean();
+		readonly ObservableCommandState canSetIPEndPoint = new();
+		readonly ForwardedObservableBoolean canSetLogProfile;
+		readonly ObservableCommandState canSetLogProfileToSession = new();
+		readonly ObservableCommandState canSetUri = new();
+		readonly ObservableCommandState canSetWorkingDirectory = new();
 		readonly MutableObservableBoolean canShowFileInExplorer = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canShowLogProperty = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canShowWorkingDirectoryInExplorer = new MutableObservableBoolean();
@@ -175,6 +177,77 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// </summary>
 		public SessionView()
 		{
+			// prepare command state observables
+			this.canAddLogFiles.Subscribe(value =>
+			{
+				if (value)
+				{
+					this.SynchronizationContext.Post(() =>
+					{
+						if (this.canAddLogFiles.Value 
+							&& this.isLogFileNeededAfterLogProfileSet 
+							&& this.isAttachedToLogicalTree)
+						{
+							this.isLogFileNeededAfterLogProfileSet = false;
+							this.autoAddLogFilesAction?.Reschedule();
+						}
+					});
+				}
+			});
+			this.canSetIPEndPoint.Subscribe(value =>
+			{
+				if (value)
+				{
+					this.SynchronizationContext.Post(() =>
+					{
+						if (this.canSetIPEndPoint.Value 
+							&& this.isIPEndPointNeededAfterLogProfileSet 
+							&& this.isAttachedToLogicalTree)
+						{
+							this.isIPEndPointNeededAfterLogProfileSet = false;
+							this.autoSetIPEndPointAction?.Reschedule();
+						}
+					});
+				}
+			});
+			this.canSetLogProfile = new ForwardedObservableBoolean(ForwardedObservableBoolean.CombinationMode.Or,
+				false,
+				this.canResetLogProfileToSession,
+				this.canSetLogProfileToSession
+			);
+			this.canSetUri.Subscribe(value =>
+			{
+				if (value)
+				{
+					this.SynchronizationContext.Post(() =>
+					{
+						if (this.canSetUri.Value 
+							&& this.isUriNeededAfterLogProfileSet 
+							&& this.isAttachedToLogicalTree)
+						{
+							this.isUriNeededAfterLogProfileSet = false;
+							this.autoSetUriAction?.Reschedule();
+						}
+					});
+				}
+			});
+			this.canSetWorkingDirectory.Subscribe(value =>
+			{
+				if (value)
+				{
+					this.SynchronizationContext.Post(() =>
+					{
+						if (this.canSetWorkingDirectory.Value 
+							&& this.isWorkingDirNeededAfterLogProfileSet 
+							&& this.isAttachedToLogicalTree)
+						{
+							this.isWorkingDirNeededAfterLogProfileSet = false;
+							this.autoSetWorkingDirectoryAction?.Reschedule();
+						}
+					});
+				}
+			});
+
 			// create commands
 			this.AddLogFilesCommand = new Command(this.AddLogFiles, this.canAddLogFiles);
 			this.CopyLogPropertyCommand = new Command(this.CopyLogProperty, this.canCopyLogProperty);
@@ -470,8 +543,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		async void AddLogFiles()
 		{
 			// check state
-			if (!this.canAddLogFiles.Value)
-				return;
 			if (this.attachedWindow == null)
 			{
 				this.Logger.LogError("Unable to add log files without attaching to window");
@@ -538,62 +609,15 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 
 			// attach to command
-			session.AddLogFileCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
-			session.ReloadLogsCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
-			session.ResetLogProfileCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
-			session.SaveLogsCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
-			session.SetIPEndPointCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
-			session.SetLogProfileCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
-			session.SetUriCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
-			session.SetWorkingDirectoryCommand.CanExecuteChanged += this.OnSessionCommandCanExecuteChanged;
-			if (session.AddLogFileCommand.CanExecute(null))
-			{
-				this.canAddLogFiles.Update(true);
-				if (this.isLogFileNeededAfterLogProfileSet && this.isAttachedToLogicalTree)
-				{
-					this.isLogFileNeededAfterLogProfileSet = false;
-					this.autoAddLogFilesAction.Reschedule();
-				}
-			}
-			else
-				this.canAddLogFiles.Update(false);
-			this.canReloadLogs.Update(session.ReloadLogsCommand.CanExecute(null));
-			this.canSaveLogs.Update(session.SaveLogsCommand.CanExecute(null));
-			this.canSetLogProfile.Update(session.ResetLogProfileCommand.CanExecute(null) || session.SetLogProfileCommand.CanExecute(null));
+			this.canAddLogFiles.Bind(session.AddLogFileCommand);
+			this.canReloadLogs.Bind(session.ReloadLogsCommand);
+			this.canResetLogProfileToSession.Bind(session.ResetLogProfileCommand);
+			this.canSaveLogs.Bind(session.SaveLogsCommand);
 			this.canSelectMarkedLogs.Update(session.HasMarkedLogs);
-			if (session.SetIPEndPointCommand.CanExecute(null))
-			{
-				this.canSetIPEndPoint.Update(true);
-				if (this.isIPEndPointNeededAfterLogProfileSet && this.isAttachedToLogicalTree)
-				{
-					this.isIPEndPointNeededAfterLogProfileSet = false;
-					this.autoSetIPEndPointAction.Reschedule();
-				}
-			}
-			else
-				this.canSetIPEndPoint.Update(false);
-			if (session.SetUriCommand.CanExecute(null))
-			{
-				this.canSetUri.Update(true);
-				if (this.isUriNeededAfterLogProfileSet && this.isAttachedToLogicalTree)
-				{
-					this.isUriNeededAfterLogProfileSet = false;
-					this.autoSetUriAction.Reschedule();
-				}
-			}
-			else
-				this.canSetUri.Update(false);
-			if (session.SetWorkingDirectoryCommand.CanExecute(null))
-			{
-				this.canSetWorkingDirectory.Update(true);
-				if (this.isWorkingDirNeededAfterLogProfileSet && this.isAttachedToLogicalTree)
-				{
-					this.isWorkingDirNeededAfterLogProfileSet = false;
-					this.autoSetWorkingDirectoryAction.Reschedule();
-				}
-			}
-			else
-				this.canSetWorkingDirectory.Update(false);
+			this.canSetIPEndPoint.Bind(session.SetIPEndPointCommand);
+			this.canSetLogProfileToSession.Bind(session.SetLogProfileCommand);
+			this.canSetUri.Bind(session.SetUriCommand);
+			this.canSetWorkingDirectory.Bind(session.SetWorkingDirectoryCommand);
 			this.canShowWorkingDirectoryInExplorer.Update(Platform.IsOpeningFileManagerSupported && session.HasWorkingDirectory);
 
 			// start auto scrolling
@@ -1243,21 +1267,15 @@ namespace CarinaStudio.ULogViewer.Controls
 			session.PropertyChanged -= this.OnSessionPropertyChanged;
 
 			// detach from commands
-			session.AddLogFileCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
-			session.ReloadLogsCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
-			session.SaveLogsCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
-			session.SetIPEndPointCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
-			session.SetLogProfileCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
-			session.SetLogProfileCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
-			session.SetWorkingDirectoryCommand.CanExecuteChanged -= this.OnSessionCommandCanExecuteChanged;
-			this.canAddLogFiles.Update(false);
-			this.canReloadLogs.Update(false);
-			this.canSaveLogs.Update(false);
+			this.canAddLogFiles.Unbind();
+			this.canReloadLogs.Unbind();
+			this.canResetLogProfileToSession.Unbind();
+			this.canSetIPEndPoint.Unbind();
+			this.canSaveLogs.Unbind();
 			this.canSelectMarkedLogs.Update(false);
-			this.canSetIPEndPoint.Update(false);
-			this.canSetLogProfile.Update(false);
-			this.canSetUri.Update(false);
-			this.canSetWorkingDirectory.Update(false);
+			this.canSetLogProfileToSession.Unbind();
+			this.canSetUri.Unbind();
+			this.canSetWorkingDirectory.Unbind();
 			this.canShowWorkingDirectoryInExplorer.Update(false);
 
 			// update properties
@@ -2572,76 +2590,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Called when CanExecute of command of Session has been changed.
-		void OnSessionCommandCanExecuteChanged(object? sender, EventArgs e)
-		{
-			if (this.DataContext is not Session session)
-				return;
-			if (sender == session.AddLogFileCommand)
-			{
-				if (session.AddLogFileCommand.CanExecute(null))
-				{
-					this.canAddLogFiles.Update(true);
-					if (this.isLogFileNeededAfterLogProfileSet && this.isAttachedToLogicalTree)
-					{
-						this.isLogFileNeededAfterLogProfileSet = false;
-						this.autoAddLogFilesAction.Reschedule();
-					}
-				}
-				else
-					this.canAddLogFiles.Update(false);
-			}
-			else if (sender == session.ReloadLogsCommand)
-				this.canReloadLogs.Update(session.ReloadLogsCommand.CanExecute(null));
-			else if (sender == session.ResetLogProfileCommand || sender == session.SetLogProfileCommand)
-				this.canSetLogProfile.Update(session.ResetLogProfileCommand.CanExecute(null) || session.SetLogProfileCommand.CanExecute(null));
-			else if (sender == session.SaveLogsCommand)
-				this.canSaveLogs.Update(session.SaveLogsCommand.CanExecute(null));
-			else if (sender == session.SetIPEndPointCommand)
-			{
-				if (session.SetIPEndPointCommand.CanExecute(null))
-				{
-					this.canSetIPEndPoint.Update(true);
-					if (this.isIPEndPointNeededAfterLogProfileSet && this.isAttachedToLogicalTree)
-					{
-						this.isIPEndPointNeededAfterLogProfileSet = false;
-						this.autoSetIPEndPointAction.Reschedule();
-					}
-				}
-				else
-					this.canSetIPEndPoint.Update(false);
-			}
-			else if (sender == session.SetUriCommand)
-			{
-				if (session.SetUriCommand.CanExecute(null))
-				{
-					this.canSetUri.Update(true);
-					if (this.isUriNeededAfterLogProfileSet && this.isAttachedToLogicalTree)
-					{
-						this.isUriNeededAfterLogProfileSet = false;
-						this.autoSetUriAction.Reschedule();
-					}
-				}
-				else
-					this.canSetUri.Update(false);
-			}
-			else if (sender == session.SetWorkingDirectoryCommand)
-			{
-				if (session.SetWorkingDirectoryCommand.CanExecute(null))
-				{
-					this.canSetWorkingDirectory.Update(true);
-					if (this.isWorkingDirNeededAfterLogProfileSet && this.isAttachedToLogicalTree)
-					{
-						this.isWorkingDirNeededAfterLogProfileSet = false;
-						this.autoSetWorkingDirectoryAction.Reschedule();
-					}
-				}
-				else
-					this.canSetWorkingDirectory.Update(false);
-			}
-		}
-
-
 		// Called when property of session has been changed.
 		void OnSessionPropertyChanged(object? sender, PropertyChangedEventArgs e)
 		{
@@ -2775,8 +2723,6 @@ namespace CarinaStudio.ULogViewer.Controls
         {
 			// check state
 			this.VerifyAccess();
-			if (!this.canReloadLogs.Value)
-				return;
 			if (this.DataContext is not Session session)
 				return;
 
@@ -2868,8 +2814,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.VerifyAccess();
 			if (this.isSelectingFileToSaveLogs)
 				return;
-			if (!this.canSaveLogs.Value)
-				return;
 			if (this.attachedWindow == null)
 			{
 				this.Logger.LogError("Unable to save logs without attaching to window");
@@ -2952,8 +2896,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		async void SelectAndSetIPEndPoint()
 		{
 			// check state
-			if (!this.canSetIPEndPoint.Value)
-				return;
 			if (this.attachedWindow == null)
 			{
 				this.Logger.LogError("Unable to set IP endpoint without attaching to window");
@@ -2994,8 +2936,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			// check state
 			this.VerifyAccess();
-			if (!this.canSetLogProfile.Value)
-				return;
 			if (this.attachedWindow == null)
 			{
 				this.Logger.LogError("Unable to set log profile without attaching to window");
@@ -3038,10 +2978,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.autoSetWorkingDirectoryAction.Cancel();
 			if (session.ResetLogProfileCommand.CanExecute(null))
 				session.ResetLogProfileCommand.Execute(null);
-
-			// check state
-			if (!this.canSetLogProfile.Value)
-				return;
 
 			// set log profile
 			if (!session.SetLogProfileCommand.TryExecute(logProfile))
@@ -3089,8 +3025,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		async void SelectAndSetUri()
         {
 			// check state
-			if (!this.canSetUri.Value)
-				return;
 			if (this.attachedWindow == null)
 			{
 				this.Logger.LogError("Unable to set URI without attaching to window");
