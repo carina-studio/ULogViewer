@@ -66,7 +66,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ComboBox logStringEncodingForWritingComboBox;
 		readonly TextBox logWritingFormatTextBox;
 		readonly TextBox nameTextBox;
-		readonly NumericUpDown restartReadingDelayUpDown;
+		readonly IntegerTextBox restartReadingDelayTextBox;
 		readonly ComboBox sortDirectionComboBox;
 		readonly ComboBox sortKeyComboBox;
 		readonly ComboBox timeSpanEncodingForReadingComboBox;
@@ -145,7 +145,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				}));
 			});
 			this.nameTextBox = this.FindControl<TextBox>("nameTextBox").AsNonNull();
-			this.restartReadingDelayUpDown = this.FindControl<NumericUpDown>(nameof(restartReadingDelayUpDown)).AsNonNull();
+			this.restartReadingDelayTextBox = this.FindControl<IntegerTextBox>(nameof(restartReadingDelayTextBox)).AsNonNull();
 			this.sortDirectionComboBox = this.FindControl<ComboBox>("sortDirectionComboBox").AsNonNull();
 			this.sortKeyComboBox = this.FindControl<ComboBox>("sortKeyComboBox").AsNonNull();
 			this.timeSpanEncodingForReadingComboBox = this.FindControl<ComboBox>(nameof(timeSpanEncodingForReadingComboBox));
@@ -476,7 +476,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				return it;
 			});
 			logProfile.Name = this.nameTextBox.Text.AsNonNull();
-			logProfile.RestartReadingDelay = (int)this.restartReadingDelayUpDown.Value;
+			logProfile.RestartReadingDelay = this.restartReadingDelayTextBox.Value.GetValueOrDefault();
 			logProfile.SortDirection = (SortDirection)this.sortDirectionComboBox.SelectedItem.AsNonNull();
 			logProfile.SortKey = (LogSortKey)this.sortKeyComboBox.SelectedItem.AsNonNull();
 			logProfile.TimeSpanEncodingForReading = (LogTimeSpanEncoding)this.timeSpanEncodingForReadingComboBox.SelectedItem.AsNonNull();
@@ -686,7 +686,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.logStringEncodingForWritingComboBox.SelectedItem = profile.LogStringEncodingForWriting;
 				this.logWritingFormatTextBox.Text = profile.LogWritingFormat;
 				this.nameTextBox.Text = profile.Name;
-				this.restartReadingDelayUpDown.Value = profile.RestartReadingDelay;
+				this.restartReadingDelayTextBox.Value = profile.RestartReadingDelay;
 				this.sortDirectionComboBox.SelectedItem = profile.SortDirection;
 				this.sortKeyComboBox.SelectedItem = profile.SortKey;
 				this.timeSpanEncodingForReadingComboBox.SelectedItem = profile.TimeSpanEncodingForReading;

@@ -74,7 +74,7 @@
 				<Grid ColumnDefinitions="*,Auto,*">
 					<ComboBox Classes="Dialog_ComboBox" Items="{Binding InstalledFontFamilies}" SelectedItem="{Binding LogFontFamily, Mode=TwoWay}"/>
 					<Separator Background="{x:Null}" Grid.Column="1" Width="{DynamicResource Double/Dialog.Separator.Height.Small}"/>
-					<NumericUpDown Classes="Dialog_NumericUpDown" Maximum="30" Minimum="10" Value="{Binding LogFontSize, Mode=TwoWay}" Grid.Column="2"/>
+					<asControls:IntegerTextBox Classes="Dialog_TextBox" Maximum="30" Minimum="10" Value="{Binding LogFontSize, Mode=TwoWay}" Grid.Column="2"/>
 				</Grid>
 				<Separator Classes="Dialog_Separator_Small"/>
 				<Border Background="{DynamicResource TextControlBackground}" BorderBrush="{DynamicResource Brush/Control.Border}" BorderThickness="{DynamicResource Thickness/Control.Border}" CornerRadius="{DynamicResource ControlCornerRadius}" HorizontalAlignment="Stretch">
@@ -87,7 +87,7 @@
 				
 				<!-- Max display line count for each log -->
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/AppOptionsDialog.MaxDisplayLineCountForEachLog}"/>
-				<NumericUpDown Classes="Dialog_NumericUpDown" Maximum="20" Minimum="1" Value="{Binding MaxDisplayLineCountForEachLog, Mode=TwoWay}"/>
+				<asControls:IntegerTextBox Classes="Dialog_TextBox" Maximum="20" Minimum="1" Value="{Binding MaxDisplayLineCountForEachLog, Mode=TwoWay}"/>
 				<Separator Classes="Dialog_Separator_Large"/>
 
 				<!-- Log operations -->
@@ -154,12 +154,12 @@
 
 				<!-- Max log count -->
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/AppOptionsDialog.MaxContinuousLogCount}"/>
-				<NumericUpDown Classes="Dialog_NumericUpDown" Maximum="10000000" Minimum="10000" Value="{Binding MaxContinuousLogCount, Mode=TwoWay}"/>
+				<asControls:IntegerTextBox Classes="Dialog_TextBox" Maximum="10000000" Minimum="10000" Value="{Binding MaxContinuousLogCount, Mode=TwoWay}"/>
 				<Separator Classes="Dialog_Separator"/>
 
 				<!-- Update interval -->
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/AppOptionsDialog.ContinuousLogReadingUpdateInterval}"/>
-				<NumericUpDown Classes="Dialog_NumericUpDown" Maximum="1000" Minimum="50" Value="{Binding ContinuousLogReadingUpdateInterval, Mode=TwoWay}"/>
+				<asControls:IntegerTextBox Classes="Dialog_TextBox" Maximum="1000" Minimum="50" Value="{Binding ContinuousLogReadingUpdateInterval, Mode=TwoWay}"/>
 				<Separator Classes="Dialog_Separator_Large"/>
 
 				<!-- Log filtering -->
@@ -172,9 +172,9 @@
 				<ToggleSwitch Classes="Dialog_ToggleSwitch" IsChecked="{Binding IgnoreCaseOfLogTextFilter, Mode=TwoWay}"/>
 				<Separator Classes="Dialog_Separator"/>
 
-				<!-- Max log count -->
+				<!-- Log filter update delay -->
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/AppOptionsDialog.UpdateLogFilterDelay}"/>
-				<NumericUpDown Classes="Dialog_NumericUpDown" Maximum="1500" Minimum="300" Value="{Binding UpdateLogFilterDelay, Mode=TwoWay}"/>
+				<asControls:IntegerTextBox Classes="Dialog_TextBox" Maximum="1500" Minimum="300" Value="{Binding UpdateLogFilterDelay, Mode=TwoWay}"/>
 				<Separator Classes="Dialog_Separator_Large"/>
 
 				<!-- Others -->

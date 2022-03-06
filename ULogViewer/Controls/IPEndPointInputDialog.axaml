@@ -29,7 +29,7 @@
 
 			<!-- Port -->
 			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/IPEndPointInputDialog.Port}"/>
-			<NumericUpDown Name="portUpDown" Classes="Dialog_NumericUpDown" Maximum="65535" Minimum="1" Value="32768"/>
+			<asControls:IntegerTextBox Name="portTextBox" Classes="Dialog_TextBox" IsNullValueAllowed="False" Maximum="65535" Minimum="1" Value="32768"/>
 			
 		</StackPanel>
 

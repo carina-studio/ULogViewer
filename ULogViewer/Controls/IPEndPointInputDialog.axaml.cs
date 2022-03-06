@@ -16,7 +16,7 @@ namespace CarinaStudio.ULogViewer.Controls
     {
         // Fields.
         readonly IPAddressTextBox ipAddressTextBox;
-        readonly NumericUpDown portUpDown;
+        readonly IntegerTextBox portTextBox;
 
 
         // Constructor.
@@ -24,13 +24,13 @@ namespace CarinaStudio.ULogViewer.Controls
         {
             InitializeComponent();
             this.ipAddressTextBox = this.FindControl<IPAddressTextBox>(nameof(ipAddressTextBox)).AsNonNull();
-            this.portUpDown = this.FindControl<NumericUpDown>(nameof(portUpDown));
+            this.portTextBox = this.FindControl<IntegerTextBox>(nameof(portTextBox));
         }
 
 
         // Generate result.
         protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken) =>
-            Task.FromResult((object?)new IPEndPoint(this.ipAddressTextBox.IPAddress.AsNonNull(), (int)this.portUpDown.Value));
+            Task.FromResult((object?)new IPEndPoint(this.ipAddressTextBox.IPAddress.AsNonNull(), (int)this.portTextBox.Value.GetValueOrDefault()));
 
 
         // Initialize.
@@ -56,8 +56,9 @@ namespace CarinaStudio.ULogViewer.Controls
             this.InitialIPEndPoint?.Let(it =>
             {
                 this.ipAddressTextBox.IPAddress = it.Address;
-                this.portUpDown.Value = it.Port;
+                this.portTextBox.Value = it.Port;
             });
+            this.portTextBox.Validate(); // [Workaround] Prevent showing error text color
             this.SynchronizationContext.Post(_ =>
             {
                 this.ipAddressTextBox.SelectAll();

@@ -72,7 +72,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly TextBox fileNameTextBox;
 		readonly IPAddressTextBox ipAddressTextBox;
 		readonly TextBox passwordTextBox;
-		readonly NumericUpDown portUpDown;
+		readonly IntegerTextBox portTextBox;
 		readonly TextBox queryStringTextBox;
 		readonly ObservableList<string> setupCommands = new ObservableList<string>();
 		readonly AppSuite.Controls.ListBox setupCommandsListBox;
@@ -102,7 +102,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.fileNameTextBox = this.FindControl<TextBox>("fileNameTextBox").AsNonNull();
 			this.ipAddressTextBox = this.FindControl<IPAddressTextBox>(nameof(ipAddressTextBox)).AsNonNull();
 			this.passwordTextBox = this.FindControl<TextBox>("passwordTextBox").AsNonNull();
-			this.portUpDown = this.FindControl<NumericUpDown>(nameof(portUpDown)).AsNonNull();
+			this.portTextBox = this.FindControl<IntegerTextBox>(nameof(portTextBox)).AsNonNull();
 			this.queryStringTextBox = this.FindControl<TextBox>("queryStringTextBox").AsNonNull();
 			this.setupCommands.CollectionChanged += (_, e) => this.InvalidateInput();
 			this.setupCommandsListBox = this.FindControl<AppSuite.Controls.ListBox>("setupCommandsListBox").AsNonNull();
@@ -211,7 +211,7 @@ namespace CarinaStudio.ULogViewer.Controls
             {
 				this.ipAddressTextBox.IPAddress?.Let(address =>
 				{
-					options.IPEndPoint = new IPEndPoint(address, (int)this.portUpDown.Value);
+					options.IPEndPoint = new IPEndPoint(address, (int)this.portTextBox.Value.GetValueOrDefault());
 				});
             }
 			if (this.IsQueryStringSupported)
@@ -375,8 +375,9 @@ namespace CarinaStudio.ULogViewer.Controls
 				options.IPEndPoint?.Let(it =>
 				{
 					this.ipAddressTextBox.IPAddress = it.Address;
-					this.portUpDown.Value = it.Port;
+					this.portTextBox.Value = it.Port;
 				});
+				this.portTextBox.Validate(); // [Workaround] Prevent showing error text color
 				firstEditor = firstEditor ?? this.ipAddressTextBox;
 			}
 			if (this.IsUriSupported)

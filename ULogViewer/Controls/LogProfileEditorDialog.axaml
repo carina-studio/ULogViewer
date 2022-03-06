@@ -152,7 +152,7 @@
 
 				<!-- Restart reading delay -->
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogProfileEditorDialog.RestartReadingDelay}"/>
-				<NumericUpDown Name="restartReadingDelayUpDown" Classes="Dialog_NumericUpDown" IsEnabled="{Binding #continuousReadingSwitch.IsChecked}" Maximum="3600000" Minimum="0"/>
+				<asControls:IntegerTextBox Name="restartReadingDelayTextBox" Classes="Dialog_TextBox" IsEnabled="{Binding #continuousReadingSwitch.IsChecked}" IsNullValueAllowed="False" Maximum="3600000" Minimum="0"/>
 				<Separator Classes="Dialog_Separator"/>
 
 				<!-- Log level map -->

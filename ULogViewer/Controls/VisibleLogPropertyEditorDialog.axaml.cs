@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.ULogViewer.Logs;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ULogViewer.ViewModels;
@@ -21,7 +22,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ComboBox displayNameComboBox;
 		readonly ComboBox nameComboBox;
 		readonly ToggleSwitch specifyWidthSwitch;
-		readonly NumericUpDown widthUpDown;
+		readonly IntegerTextBox widthTextBox;
 
 
 		/// <summary>
@@ -35,7 +36,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.displayNameComboBox = this.FindControl<ComboBox>("displayNameComboBox").AsNonNull();
 			this.nameComboBox = this.FindControl<ComboBox>("nameComboBox").AsNonNull();
 			this.specifyWidthSwitch = this.FindControl<ToggleSwitch>("specifyWidthSwitch").AsNonNull();
-			this.widthUpDown = this.FindControl<NumericUpDown>("widthUpDown").AsNonNull();
+			this.widthTextBox = this.FindControl<IntegerTextBox>("widthTextBox").AsNonNull();
 		}
 
 
@@ -45,7 +46,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			var displayName = this.customDisplayNameSwitch.IsChecked.GetValueOrDefault()
 				 ? this.customDisplayNameTextBox.Text.AsNonNull().Trim()
 				 : (string)this.displayNameComboBox.SelectedItem.AsNonNull();
-			var width = this.specifyWidthSwitch.IsChecked.GetValueOrDefault() ? (int?)this.widthUpDown.Value : null;
+			var width = this.specifyWidthSwitch.IsChecked.GetValueOrDefault() ? (int?)this.widthTextBox.Value : null;
 			return Task.FromResult((object?)new LogProperty((string)this.nameComboBox.SelectedItem.AsNonNull(), displayName, width));
 		}
 
@@ -87,7 +88,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				this.nameComboBox.SelectedItem = nameof(Log.Message);
 				this.specifyWidthSwitch.IsChecked = false;
-				this.widthUpDown.Value = 100;
+				this.widthTextBox.Value = 100;
 			}
 			else
 			{
@@ -102,9 +103,10 @@ namespace CarinaStudio.ULogViewer.Controls
 				property.Width.Let(it =>
 				{
 					this.specifyWidthSwitch.IsChecked = it.HasValue;
-					this.widthUpDown.Value = it ?? 100;
+					this.widthTextBox.Value = it ?? 100;
 				});
 			}
+			this.widthTextBox.Validate(); // [Workaround] Prevent showing error text color
 			this.nameComboBox.Focus();
 			base.OnOpened(e);
 		}
