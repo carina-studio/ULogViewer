@@ -106,7 +106,6 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.widthTextBox.Value = it ?? 100;
 				});
 			}
-			this.widthTextBox.Validate(); // [Workaround] Prevent showing error text color
 			this.nameComboBox.Focus();
 			base.OnOpened(e);
 		}

@@ -58,7 +58,6 @@ namespace CarinaStudio.ULogViewer.Controls
                 this.ipAddressTextBox.IPAddress = it.Address;
                 this.portTextBox.Value = it.Port;
             });
-            this.portTextBox.Validate(); // [Workaround] Prevent showing error text color
             this.SynchronizationContext.Post(_ =>
             {
                 this.ipAddressTextBox.SelectAll();
