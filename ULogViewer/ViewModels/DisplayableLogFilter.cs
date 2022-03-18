@@ -459,6 +459,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			if (sourceIndex < 0)
 				return;
 
+			// update version to drop current filtering result
+			++this.sourceLogVersions[sourceIndex];
+
 			// pass filter directly for marked log
 			if (this.includeMarkedLogs && log.IsMarked)
 			{
@@ -468,7 +471,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			}
 
 			// enqueue logs to unfiltered logs
-			++this.sourceLogVersions[sourceIndex];
 			this.unfilteredLogs.Add(log);
 			this.filteredLogs.Remove(log);
 
