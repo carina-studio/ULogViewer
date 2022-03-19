@@ -396,7 +396,7 @@ namespace CarinaStudio.ULogViewer
 
 
         // Releasing type.
-        public override AppSuite.ApplicationReleasingType ReleasingType => AppSuite.ApplicationReleasingType.ReleaseCandidate;
+        public override AppSuite.ApplicationReleasingType ReleasingType => AppSuite.ApplicationReleasingType.Stable;
 
 
 		// Version of settings.

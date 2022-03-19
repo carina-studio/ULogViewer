@@ -1,33 +1,3 @@
 ﻿[
-	{
-		"Description": "支援針對連續日誌讀取指定重新開始讀取前的延遲時間。",
-		"Type": "NewFeature"
-	},
-	{
-		"Description": "支援正規表示式及文字插值語法的輸入輔助。",
-		"Type": "NewFeature"
-	},
-	{
-		"Description": "新增使用者介面以協助驗證日誌行格式以及其擷取的日誌屬性。",
-		"Type": "NewFeature"
-	},
-	{
-		"Description": "支援在 macOS 上使用自動更新。",
-		"Type": "NewFeature"
-	},
-	{
-		"Description": "針對 Windows 調整相關使用者介面。",
-		"Type": "Improvement"
-	},
-	{
-		"Description": "其他使用者體驗改善。",
-		"Type": "Improvement"
-	},
-	{
-		"Description": "更新相依程式庫。"
-	},
-	{
-		"Description": "其他錯誤修正。",
-		"Type": "BugFixing"
-	}
+	
 ]

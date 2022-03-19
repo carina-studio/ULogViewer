@@ -1,33 +1,3 @@
 ﻿[
-	{
-		"Description": "Support specifying delay between restarting reading logs for continuous reading case.",
-		"Type": "NewFeature"
-	},
-	{
-		"Description": "Support input assistance for regular expression and string interpolation format.",
-		"Type": "NewFeature"
-	},
-	{
-		"Description": "Add UI to help verifying log line pattern including captured log properties.",
-		"Type": "NewFeature"
-	},
-	{
-		"Description": "Support auto update on macOS.",
-		"Type": "NewFeature"
-	},
-	{
-		"Description": "Finetune UI for Windows.",
-		"Type": "Improvement"
-	},
-	{
-		"Description": "Other UX improvement.",
-		"Type": "Improvement"
-	},
-	{
-		"Description": "Update dependent libraries."
-	},
-	{
-		"Description": "Other bug fixing.",
-		"Type": "BugFixing"
-	}
+	
 ]
