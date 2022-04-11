@@ -62,7 +62,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Property of <see cref="CustomTitle"/>.
 		/// </summary>
-		public static readonly ObservableProperty<string?> CustomTitleProperty = ObservableProperty.Register<Session, string?>(nameof(CustomTitle), coerce: it => string.IsNullOrWhiteSpace(it) ? null : it);
+		public static readonly ObservableProperty<string?> CustomTitleProperty = ObservableProperty.Register<Session, string?>(nameof(CustomTitle), coerce: (_, it) => string.IsNullOrWhiteSpace(it) ? null : it);
 		/// <summary>
 		/// Property of <see cref="DisplayLogProperties"/>.
 		/// </summary>
@@ -278,14 +278,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Property of <see cref="SidePanelSize"/>.
 		/// </summary>
-		public static readonly ObservableProperty<double> SidePanelSizeProperty = ObservableProperty.Register<Session, double>(nameof(SidePanelSize), (MinSidePanelSize + MaxSidePanelSize) / 2, coerce: it =>
-		{
-			if (it >= MaxSidePanelSize)
-				return MaxSidePanelSize;
-			if (it < MinSidePanelSize)
-				return MinSidePanelSize;
-			return it;
-		}, validate: it => double.IsFinite(it));
+		public static readonly ObservableProperty<double> SidePanelSizeProperty = ObservableProperty.Register<Session, double>(nameof(SidePanelSize), (MinSidePanelSize + MaxSidePanelSize) / 2, 
+			coerce: (_, it) =>
+			{
+				if (it >= MaxSidePanelSize)
+					return MaxSidePanelSize;
+				if (it < MinSidePanelSize)
+					return MinSidePanelSize;
+				return it;
+			}, 
+			validate: it => double.IsFinite(it));
 		/// <summary>
 		/// Property of <see cref="Title"/>.
 		/// </summary>

@@ -41,7 +41,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken)
 		{
 			var name = this.nameTextBox.Text;
-			var regex = this.regexTextBox.Regex.AsNonNull();
+			var regex = this.regexTextBox.Object.AsNonNull();
 			var filter = this.Filter;
 			if (filter != null)
 			{
@@ -74,14 +74,14 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (filter == null)
 			{
 				this.Bind(TitleProperty, this.GetResourceObservable("String/PredefinedLogTextFilterEditorDialog.Title.Create"));
-				this.regexTextBox.Regex = this.Regex;
+				this.regexTextBox.Object = this.Regex;
 				this.ignoreCaseSwitch.IsChecked = true;
 			}
 			else
 			{
 				this.Bind(TitleProperty, this.GetResourceObservable("String/PredefinedLogTextFilterEditorDialog.Title.Edit"));
 				this.nameTextBox.Text = filter.Name;
-				this.regexTextBox.Regex = filter.Regex;
+				this.regexTextBox.Object = filter.Regex;
 				this.ignoreCaseSwitch.IsChecked = (filter.Regex.Options & RegexOptions.IgnoreCase) != 0;
 			}
 			this.SynchronizationContext.Post(_ => this.nameTextBox.Focus(), null); // [Workaround] delay to prevent focus got by popup
@@ -91,7 +91,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when property of regex text box changed.
 		void OnRegexTextBoxPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
 		{
-			if (e.Property == RegexTextBox.IsTextValidProperty || e.Property == RegexTextBox.RegexProperty)
+			if (e.Property == RegexTextBox.IsTextValidProperty || e.Property == RegexTextBox.ObjectProperty)
 				this.InvalidateInput();
 		}
 
@@ -109,7 +109,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				return false;
 
 			// check regex
-			if (!this.regexTextBox.IsTextValid || this.regexTextBox.Regex == null)
+			if (!this.regexTextBox.IsTextValid || this.regexTextBox.Object == null)
 				return false;
 
 			// ok

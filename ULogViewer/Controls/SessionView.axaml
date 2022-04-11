@@ -5,6 +5,8 @@
              xmlns:sys="using:System"
              xmlns:ia="using:Avalonia.Xaml.Interactivity"
              xmlns:iaCore="using:Avalonia.Xaml.Interactions.Core"
+			 xmlns:aConverters="using:Avalonia.Data.Converters"
+			 xmlns:abControls="using:CarinaStudio.Controls"
 			 xmlns:as="using:CarinaStudio.AppSuite"
 			 xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
 			 xmlns:asConverters="using:CarinaStudio.AppSuite.Converters"
@@ -228,8 +230,8 @@
 			<MenuItem Command="{Binding $parent[Window].CheckForAppUpdate}" Header="{DynamicResource String/SessionView.CheckForAppUpdate}">
 				<MenuItem.Icon>
 					<Panel>
-						<Image Classes="MenuItem_Icon" IsVisible="{Binding $parent[Window].Application.UpdateInfo, Converter={x:Static asConverters:ValueToBooleanConverters.NullToTrue}}" Source="{DynamicResource Image/Icon.Update}"/>
-						<Image Classes="MenuItem_Icon" IsVisible="{Binding $parent[Window].Application.UpdateInfo, Converter={x:Static asConverters:ValueToBooleanConverters.NonNullToTrue}}" Source="{DynamicResource Image/Icon.Update.Colored}"/>
+						<Image Classes="MenuItem_Icon" IsVisible="{Binding $parent[Window].Application.UpdateInfo, Converter={x:Static aConverters:ObjectConverters.IsNull}}" Source="{DynamicResource Image/Icon.Update}"/>
+						<Image Classes="MenuItem_Icon" IsVisible="{Binding $parent[Window].Application.UpdateInfo, Converter={x:Static aConverters:ObjectConverters.IsNotNull}}" Source="{DynamicResource Image/Icon.Update.Colored}"/>
 					</Panel>
 				</MenuItem.Icon>
 			</MenuItem>
@@ -421,16 +423,16 @@
 
 								<!-- PID filter -->
 								<Panel Name="logProcessIdFilterTextBoxPanel" Grid.Column="1" IsVisible="False" Width="{DynamicResource Double/SessionView.ToolBar.LogProcessIdFilter.Width}">
-									<asControls:IntegerTextBox Name="logProcessIdFilterTextBox" Classes="ToolBar_TextBox_WithInPlaceAction" GotFocus="OnLogFilterTextBoxGotFocus" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" Maximum="2147483647" Minimum="0" PropertyChanged="OnLogFilterTextBoxPropertyChanged" ToolTip.Tip="{DynamicResource String/SessionView.LogProcessIdFilter.Description}" VerticalAlignment="Center" Watermark="{DynamicResource String/LogProperty.ProcessId}"/>
-									<Button Classes="TextBox_InPlaceAction" Command="{Binding #logProcessIdFilterTextBox.Clear}" IsVisible="{Binding #logProcessIdFilterTextBox.Text, Converter={x:Static asConverters:ValueToBooleanConverters.NonEmptyStringToTrue}}" ToolTip.Tip="{DynamicResource String/Common.Clear}">
+									<abControls:IntegerTextBox Name="logProcessIdFilterTextBox" Classes="ToolBar_TextBox_WithInPlaceAction" GotFocus="OnLogFilterTextBoxGotFocus" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" Maximum="2147483647" Minimum="0" PropertyChanged="OnLogFilterTextBoxPropertyChanged" ToolTip.Tip="{DynamicResource String/SessionView.LogProcessIdFilter.Description}" VerticalAlignment="Center" Watermark="{DynamicResource String/LogProperty.ProcessId}"/>
+									<Button Classes="TextBox_InPlaceAction" Command="{Binding #logProcessIdFilterTextBox.Clear}" IsVisible="{Binding #logProcessIdFilterTextBox.Text, Converter={x:Static aConverters:StringConverters.IsNotNullOrEmpty}}" ToolTip.Tip="{DynamicResource String/Common.Clear}">
 										<Image Classes="Icon" Source="{DynamicResource Image/Icon.Close}"/>
 									</Button>
 								</Panel>
 
 								<!-- TID filter -->
 								<Panel Name="logThreadIdFilterTextBoxPanel" Grid.Column="1" IsVisible="False" Width="{DynamicResource Double/SessionView.ToolBar.LogProcessIdFilter.Width}">
-									<asControls:IntegerTextBox Name="logThreadIdFilterTextBox" Classes="ToolBar_TextBox_WithInPlaceAction" GotFocus="OnLogFilterTextBoxGotFocus" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" Maximum="2147483647" Minimum="0" PropertyChanged="OnLogFilterTextBoxPropertyChanged" ToolTip.Tip="{DynamicResource String/SessionView.LogThreadIdFilter.Description}" VerticalAlignment="Center" Watermark="{DynamicResource String/LogProperty.ThreadId}"/>
-									<Button Classes="TextBox_InPlaceAction" Command="{Binding #logThreadIdFilterTextBox.Clear}" IsVisible="{Binding #logThreadIdFilterTextBox.Text, Converter={x:Static asConverters:ValueToBooleanConverters.NonEmptyStringToTrue}}" ToolTip.Tip="{DynamicResource String/Common.Clear}">
+									<abControls:IntegerTextBox Name="logThreadIdFilterTextBox" Classes="ToolBar_TextBox_WithInPlaceAction" GotFocus="OnLogFilterTextBoxGotFocus" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" Maximum="2147483647" Minimum="0" PropertyChanged="OnLogFilterTextBoxPropertyChanged" ToolTip.Tip="{DynamicResource String/SessionView.LogThreadIdFilter.Description}" VerticalAlignment="Center" Watermark="{DynamicResource String/LogProperty.ThreadId}"/>
+									<Button Classes="TextBox_InPlaceAction" Command="{Binding #logThreadIdFilterTextBox.Clear}" IsVisible="{Binding #logThreadIdFilterTextBox.Text, Converter={x:Static aConverters:StringConverters.IsNotNullOrEmpty}}" ToolTip.Tip="{DynamicResource String/Common.Clear}">
 										<Image Classes="Icon" Source="{DynamicResource Image/Icon.Close}"/>
 									</Button>
 								</Panel>
@@ -454,7 +456,7 @@
 							<!-- Text filter -->
 							<Panel Name="logTextFilterTextBoxPanel" Grid.Column="1" HorizontalAlignment="Stretch" Margin="{DynamicResource Thickness/ToolBar.Item.Margin}" MinWidth="{DynamicResource Double/SessionView.ToolBar.LogTextFilter.MinWidth}" VerticalAlignment="Center">
 								<asControls:RegexTextBox Name="logTextFilterTextBox" Classes="RegexTextBox_InvalidText" GotFocus="OnLogFilterTextBoxGotFocus" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" Padding="{DynamicResource Thickness/TextBox.Padding.WithInPlaceAction}" PropertyChanged="OnLogFilterTextBoxPropertyChanged" ToolTip.Tip="{DynamicResource String/SessionView.LogTextFilter.ToolTip}" Watermark="{DynamicResource String/SessionView.LogTextFilter.Watermark}"/>
-								<Button Classes="TextBox_InPlaceAction" Command="{Binding #logTextFilterTextBox.Clear}" IsVisible="{Binding #logTextFilterTextBox.Text, Converter={x:Static asConverters:ValueToBooleanConverters.NonEmptyStringToTrue}}" ToolTip.Tip="{DynamicResource String/Common.Clear}">
+								<Button Classes="TextBox_InPlaceAction" Command="{Binding #logTextFilterTextBox.Clear}" IsVisible="{Binding #logTextFilterTextBox.Text, Converter={x:Static aConverters:StringConverters.IsNotNullOrEmpty}}" ToolTip.Tip="{DynamicResource String/Common.Clear}">
 									<Image Classes="Icon" Source="{DynamicResource Image/Icon.Close}"/>
 								</Button>
 							</Panel>
@@ -565,8 +567,8 @@
 						<!-- Side panel -->
 						<ToggleButton Classes="ToolBar_ToggleButton" IsChecked="{Binding IsSidePanelVisible, Mode=TwoWay}" ToolTip.Tip="{DynamicResource String/SessionView.SidePanel}">
 							<Panel>
-								<Image Classes="Icon" Source="{StaticResource Image/Icon.SidePanel}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
-								<Image Classes="Icon" Source="{StaticResource Image/Icon.SidePanel.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
+								<Image Classes="Icon" Source="{StaticResource Image/Icon.Panel.Right}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
+								<Image Classes="Icon" Source="{StaticResource Image/Icon.Panel.Right.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
 							</Panel>
 						</ToggleButton>
 
@@ -575,7 +577,7 @@
 							<Panel>
 								<Image Classes="Icon" Source="{StaticResource Image/Icon.More}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
 								<Image Classes="Icon" Source="{StaticResource Image/Icon.More.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
-								<Border Classes="ToolBar_NotificationIndicator" IsVisible="{Binding $parent[Window].Application.UpdateInfo, Converter={x:Static asConverters:ValueToBooleanConverters.NonNullToTrue}}">
+								<Border Classes="ToolBar_NotificationIndicator" IsVisible="{Binding $parent[Window].Application.UpdateInfo, Converter={x:Static aConverters:ObjectConverters.IsNotNull}}">
 									<Image Classes="ToolBar_NotificationIndicator" Source="{DynamicResource Image/Icon.Update.Colored}"/>
 								</Border>
 							</Panel>

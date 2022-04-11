@@ -2,10 +2,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:abControls="using:CarinaStudio.Controls"
         xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
         xmlns:appLogs="using:CarinaStudio.ULogViewer.Logs"
         xmlns:appViewModels="using:CarinaStudio.ULogViewer.ViewModels"
-		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.VisibleLogPropertyEditorDialog"
         Classes="Dialog"
@@ -76,7 +76,7 @@
 			<ToggleSwitch Name="specifyWidthSwitch"/>
 			<Separator Classes="Dialog_Separator"/>
 			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/VisibleLogPropertyEditorDialog.Width}"/>
-			<asControls:IntegerTextBox Name="widthTextBox" Classes="Dialog_TextBox" IsEnabled="{Binding #specifyWidthSwitch.IsChecked}" IsNullValueAllowed="False" Minimum="10"/>
+			<abControls:IntegerTextBox Name="widthTextBox" Classes="Dialog_TextBox" IsEnabled="{Binding #specifyWidthSwitch.IsChecked}" IsNullValueAllowed="False" Minimum="10"/>
 			
 		</StackPanel>
 		

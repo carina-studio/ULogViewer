@@ -505,7 +505,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				session.LogThreadIdFilter = (int?)this.logThreadIdFilterTextBox.Value;
 
 				// update text filters
-				session.LogTextFilter = this.logTextFilterTextBox.Regex;
+				session.LogTextFilter = this.logTextFilterTextBox.Object;
 				session.PredefinedLogTextFilters.Clear();
 				foreach (var filter in this.selectedPredefinedLogTextFilters)
 					session.PredefinedLogTextFilters.Add(filter);
@@ -622,7 +622,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// sync log filters to UI
 			this.logProcessIdFilterTextBox.Value = session.LogProcessIdFilter;
-			this.logTextFilterTextBox.Regex = session.LogTextFilter;
+			this.logTextFilterTextBox.Object = session.LogTextFilter;
 			this.logThreadIdFilterTextBox.Value = session.LogThreadIdFilter;
 			this.logLevelFilterComboBox.SelectedItem = session.LogLevelFilter;
 			if (session.PredefinedLogTextFilters.IsNotEmpty())
@@ -1235,7 +1235,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			// create filter
 			var filter = await new PredefinedLogTextFilterEditorDialog()
 			{
-				Regex = this.logTextFilterTextBox.Regex
+				Regex = this.logTextFilterTextBox.Object
 			}.ShowDialog<PredefinedLogTextFilter>(this.attachedWindow);
 			if (filter == null)
 				return;
@@ -1975,7 +1975,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when property of log filter text box changed.
 		void OnLogFilterTextBoxPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
 		{
-			if (e.Property == IntegerTextBox.ValueProperty || e.Property == RegexTextBox.RegexProperty)
+			if (e.Property == IntegerTextBox.ValueProperty || e.Property == RegexTextBox.ObjectProperty)
 				this.updateLogFiltersAction.Reschedule();
 		}
 
@@ -2227,7 +2227,7 @@ namespace CarinaStudio.ULogViewer.Controls
 							if (e.Source == this.logTextFilterTextBox)
 							{
 								this.logTextFilterTextBox.Validate();
-								if (this.logTextFilterTextBox.IsTextValid && this.logTextFilterTextBox.Regex != null)
+								if (this.logTextFilterTextBox.IsTextValid && this.logTextFilterTextBox.Object != null)
 									this.CreatePredefinedLogTextFilter();
 							}
 							else
@@ -2770,7 +2770,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			this.logLevelFilterComboBox.SelectedIndex = 0;
 			this.logProcessIdFilterTextBox.Value = null;
-			this.logTextFilterTextBox.Regex = null;
+			this.logTextFilterTextBox.Object = null;
 			this.logThreadIdFilterTextBox.Value = null;
 			this.predefinedLogTextFilterListBox.SelectedItems.Clear();
 			this.updateLogFiltersAction.Execute();

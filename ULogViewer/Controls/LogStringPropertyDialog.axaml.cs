@@ -257,9 +257,9 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when property of find text text box changed.
 		void OnFindTextTextBoxPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
 		{
-			if (e.Property == RegexTextBox.RegexProperty)
+			if (e.Property == RegexTextBox.ObjectProperty)
 			{
-				this.highlightingDefinition.Filter = this.findTextTextBox.Regex;
+				this.highlightingDefinition.Filter = this.findTextTextBox.Object;
 				this.propertyValueTextEditor.TextArea.TextView.Redraw();
 			}
 		}

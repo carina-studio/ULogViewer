@@ -77,7 +77,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.skippableSwitch = this.FindControl<ToggleSwitch>(nameof(skippableSwitch)).AsNonNull();
 			this.testAction = new ScheduledAction(() =>
 			{
-				var regex = this.regexTextBox.Regex;
+				var regex = this.regexTextBox.Object;
 				var testLine = this.GetValue<string?>(TestLogLineProperty);
 				this.capturedLogProperties.Clear();
 				if (!this.regexTextBox.IsTextValid || regex == null || string.IsNullOrEmpty(testLine))
@@ -112,7 +112,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken)
 		{
 			var editingLogPattern = this.LogPattern;
-			var newLogPattern = new LogPattern(this.regexTextBox.Regex.AsNonNull(), this.repeatableSwitch.IsChecked.GetValueOrDefault(), this.skippableSwitch.IsChecked.GetValueOrDefault());
+			var newLogPattern = new LogPattern(this.regexTextBox.Object.AsNonNull(), this.repeatableSwitch.IsChecked.GetValueOrDefault(), this.skippableSwitch.IsChecked.GetValueOrDefault());
 			if (editingLogPattern != null && editingLogPattern == newLogPattern)
 				return Task.FromResult((object?)editingLogPattern);
 			return Task.FromResult((object?)newLogPattern);
@@ -136,7 +136,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			var logPattern = this.LogPattern;
 			if (logPattern != null)
 			{
-				this.regexTextBox.Regex = logPattern.Regex;
+				this.regexTextBox.Object = logPattern.Regex;
 				this.repeatableSwitch.IsChecked = logPattern.IsRepeatable;
 				this.skippableSwitch.IsChecked = logPattern.IsSkippable;
 			}
@@ -156,7 +156,7 @@ namespace CarinaStudio.ULogViewer.Controls
         // Called when property of regex text box changed.
         void OnRegexTextBoxPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
 		{
-			if (e.Property == RegexTextBox.IsTextValidProperty || e.Property == RegexTextBox.RegexProperty)
+			if (e.Property == RegexTextBox.IsTextValidProperty || e.Property == RegexTextBox.ObjectProperty)
 			{
 				this.InvalidateInput();
 				this.testAction.Schedule();
@@ -167,7 +167,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Validate input.
 		protected override bool OnValidateInput()
 		{
-			return base.OnValidateInput() && this.regexTextBox.IsTextValid && this.regexTextBox.Regex != null;
+			return base.OnValidateInput() && this.regexTextBox.IsTextValid && this.regexTextBox.Object != null;
 		}
 	}
 }

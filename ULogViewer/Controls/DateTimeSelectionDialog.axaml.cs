@@ -1,7 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
-using CarinaStudio.AppSuite.Controls;
+using CarinaStudio.Controls;
 using CarinaStudio.Windows.Input;
 using System;
 using System.Threading;
@@ -12,7 +12,7 @@ namespace CarinaStudio.ULogViewer.Controls
     /// <summary>
     /// Dialog to select <see cref="DateTime"/>.
     /// </summary>
-    partial class DateTimeSelectionDialog : InputDialog
+    partial class DateTimeSelectionDialog : AppSuite.Controls.InputDialog
     {
         // Fields.
         readonly DateTimeTextBox dateTimeTextBox;

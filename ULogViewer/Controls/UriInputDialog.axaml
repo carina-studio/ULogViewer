@@ -2,7 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
+		xmlns:abControls="using:CarinaStudio.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.UriInputDialog"
 		Classes="Dialog"
@@ -22,7 +22,7 @@
 		<!-- Content -->
 		<StackPanel Classes="Dialog_ContentPanel">
 			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/UriInputDialog.Message}"/>
-			<asControls:UriTextBox Name="uriTextBox" MaxLength="65535" PropertyChanged="OnUriTextBoxPropertyChanged" UriKind="Absolute"/>
+			<abControls:UriTextBox Name="uriTextBox" MaxLength="65535" PropertyChanged="OnUriTextBoxPropertyChanged" UriKind="Absolute"/>
 		</StackPanel>
 
 	</DockPanel>

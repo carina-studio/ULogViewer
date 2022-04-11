@@ -3,6 +3,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:app="using:CarinaStudio.ULogViewer"
+		xmlns:abControls="using:CarinaStudio.Controls"
 		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
         xmlns:appControls="clr-namespace:CarinaStudio.ULogViewer.Controls;assembly=ULogViewer"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
@@ -24,7 +25,7 @@
 			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/PredefinedLogTextFilterEditorDialog.Regex}"/>
 			<asControls:RegexTextBox Name="regexTextBox" Classes="Dialog_TextBox" Height="{DynamicResource Double/PredefinedLogTextFilterEditorDialog.RegexInput.Height}" PropertyChanged="OnRegexTextBoxPropertyChanged" ScrollViewer.HorizontalScrollBarVisibility="Disabled" TextWrapping="Wrap"/>
 			<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/PredefinedLogTextFilterEditorDialog.Regex.Description}"/>
-			<asControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/Common.RegularExpression.Reference}" Uri="{x:Static app:Uris.RegexReference}"/>
+			<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/Common.RegularExpression.Reference}" Uri="{x:Static app:Uris.RegexReference}"/>
 			<Separator Classes="Dialog_Separator"/>
 
 			<!-- Ignore case -->

@@ -3,7 +3,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:app="using:CarinaStudio.ULogViewer"
-		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
+		xmlns:abControls="using:CarinaStudio.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.TimeSpanFormatInputDialog"
 		Classes="Dialog"
@@ -24,7 +24,7 @@
 
 			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/TimeSpanFormatInputDialog.Message}"/>
 			<TextBox Name="formatTextBox" Classes="Dialog_TextBox" MaxLength="1024" PropertyChanged="OnFormatTextBoxPropertyChanged"/>
-			<asControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.FormatDescription}" Uri="{x:Static app:Uris.TimeSpanFormatReference}"/>
+			<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.FormatDescription}" Uri="{x:Static app:Uris.TimeSpanFormatReference}"/>
 
 		</StackPanel>
 

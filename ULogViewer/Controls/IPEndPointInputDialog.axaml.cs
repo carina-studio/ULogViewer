@@ -1,7 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using CarinaStudio.AppSuite.Controls;
+using CarinaStudio.Controls;
 using System;
 using System.Net;
 using System.Threading;
@@ -12,7 +12,7 @@ namespace CarinaStudio.ULogViewer.Controls
     /// <summary>
     /// Dialog to let user input an <see cref="IPEndPoint"/>.
     /// </summary>
-    partial class IPEndPointInputDialog : InputDialog
+    partial class IPEndPointInputDialog : AppSuite.Controls.InputDialog
     {
         // Fields.
         readonly IPAddressTextBox ipAddressTextBox;
@@ -30,7 +30,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
         // Generate result.
         protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken) =>
-            Task.FromResult((object?)new IPEndPoint(this.ipAddressTextBox.IPAddress.AsNonNull(), (int)this.portTextBox.Value.GetValueOrDefault()));
+            Task.FromResult((object?)new IPEndPoint(this.ipAddressTextBox.Object.AsNonNull(), (int)this.portTextBox.Value.GetValueOrDefault()));
 
 
         // Initialize.
@@ -44,7 +44,7 @@ namespace CarinaStudio.ULogViewer.Controls
         // Property of IPAddress text box changed.
         void OnIPAddressTextBoxPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
         {
-            if (e.Property == IPAddressTextBox.IsTextValidProperty || e.Property == IPAddressTextBox.IPAddressProperty)
+            if (e.Property == IPAddressTextBox.IsTextValidProperty || e.Property == IPAddressTextBox.ObjectProperty)
                 this.InvalidateInput();
         }
 
@@ -55,7 +55,7 @@ namespace CarinaStudio.ULogViewer.Controls
             base.OnOpened(e);
             this.InitialIPEndPoint?.Let(it =>
             {
-                this.ipAddressTextBox.IPAddress = it.Address;
+                this.ipAddressTextBox.Object = it.Address;
                 this.portTextBox.Value = it.Port;
             });
             this.SynchronizationContext.Post(_ =>
@@ -68,6 +68,6 @@ namespace CarinaStudio.ULogViewer.Controls
 
         // Validate input.
         protected override bool OnValidateInput() =>
-            base.OnValidateInput() && this.ipAddressTextBox.IsTextValid && this.ipAddressTextBox.IPAddress != null;
+            base.OnValidateInput() && this.ipAddressTextBox.IsTextValid && this.ipAddressTextBox.Object != null;
     }
 }

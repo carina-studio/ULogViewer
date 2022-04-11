@@ -5,6 +5,7 @@
         xmlns:sys="using:System"
         xmlns:ia="using:Avalonia.Xaml.Interactivity"
         xmlns:iaCore="using:Avalonia.Xaml.Interactions.Core"
+		xmlns:abControls="using:CarinaStudio.Controls"
 		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
         xmlns:app="clr-namespace:CarinaStudio.ULogViewer;assembly=ULogViewer"
         xmlns:appControls="clr-namespace:CarinaStudio.ULogViewer.Controls;assembly=ULogViewer"
@@ -49,7 +50,7 @@
 				</Border>
 
 				<!-- How to read and parse logs -->
-				<asControls:LinkTextBlock HorizontalAlignment="Left" Text="{DynamicResource String/LogProfileEditorDialog.LearnAboutLogsReadingAndParsing}" Uri="{x:Static appControls:LogProfileEditorDialog.LogsReadingAndParsingPageUri}"/>
+				<abControls:LinkTextBlock HorizontalAlignment="Left" Text="{DynamicResource String/LogProfileEditorDialog.LearnAboutLogsReadingAndParsing}" Uri="{x:Static appControls:LogProfileEditorDialog.LogsReadingAndParsingPageUri}"/>
 				<Separator Classes="Dialog_Separator"/>
 				
 				<!-- Name -->
@@ -152,7 +153,7 @@
 
 				<!-- Restart reading delay -->
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogProfileEditorDialog.RestartReadingDelay}"/>
-				<asControls:IntegerTextBox Name="restartReadingDelayTextBox" Classes="Dialog_TextBox" IsEnabled="{Binding #continuousReadingSwitch.IsChecked}" IsNullValueAllowed="False" Maximum="3600000" Minimum="0"/>
+				<abControls:IntegerTextBox Name="restartReadingDelayTextBox" Classes="Dialog_TextBox" IsEnabled="{Binding #continuousReadingSwitch.IsChecked}" IsNullValueAllowed="False" Maximum="3600000" Minimum="0"/>
 				<Separator Classes="Dialog_Separator"/>
 
 				<!-- Log level map -->
@@ -348,13 +349,13 @@
 				<!-- Timestamp format for displaying -->
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogProfileEditorDialog.TimestampFormatForDisplaying}"/>
 				<TextBox Name="timestampFormatForDisplayingTextBox" Classes="Dialog_TextBox" MaxLength="256"/>
-				<asControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.FormatDescription}" Uri="{x:Static app:Uris.DateTimeFormatReference}"/>
+				<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.FormatDescription}" Uri="{x:Static app:Uris.DateTimeFormatReference}"/>
 				<Separator Classes="Dialog_Separator"/>
 
 				<!-- Time span format for displaying -->
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogProfileEditorDialog.TimeSpanFormatForDisplaying}"/>
 				<TextBox Name="timeSpanFormatForDisplayingTextBox" Classes="Dialog_TextBox" MaxLength="256"/>
-				<asControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.FormatDescription}" Uri="{x:Static app:Uris.TimeSpanFormatReference}"/>
+				<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.FormatDescription}" Uri="{x:Static app:Uris.TimeSpanFormatReference}"/>
 				<Separator Classes="Dialog_Separator"/>
 
 				<!-- Color indicator -->
@@ -382,7 +383,7 @@
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogProfileEditorDialog.LogWritingFormat}"/>
 				<asControls:StringInterpolationFormatTextBox Name="logWritingFormatTextBox" Height="{DynamicResource Double/LogProfileEditorDialog.LogWritingFormatTextBox.Height}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" TextWrapping="Wrap" Watermark="{DynamicResource String/LogProfileEditorDialog.LogWritingFormat.Watermark}"/>
 				<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.LogWritingFormat.Description}"/>
-				<asControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.FormatDescription}" Uri="{x:Static app:Uris.StringInterpolationReference}"/>
+				<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.FormatDescription}" Uri="{x:Static app:Uris.StringInterpolationReference}"/>
 				<Separator Classes="Dialog_Separator"/>
 				
 				<!-- Log level map -->
@@ -425,13 +426,13 @@
 				<!-- Timestamp format for writing -->
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogProfileEditorDialog.TimestampFormatForWriting}"/>
 				<TextBox Name="timestampFormatForWritingTextBox" Classes="Dialog_TextBox" MaxLength="256" Watermark="{DynamicResource String/LogProfileEditorDialog.TimestampFormatForWriting.Watermark}"/>
-				<asControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.FormatDescription}" Uri="{x:Static app:Uris.DateTimeFormatReference}"/>
+				<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.FormatDescription}" Uri="{x:Static app:Uris.DateTimeFormatReference}"/>
 				<Separator Classes="Dialog_Separator"/>
 
 				<!-- Time span format for writing -->
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogProfileEditorDialog.TimeSpanFormatForWriting}"/>
 				<TextBox Name="timeSpanFormatForWritingTextBox" Classes="Dialog_TextBox" MaxLength="256" Watermark="{DynamicResource String/LogProfileEditorDialog.TimeSpanFormatForWriting.Watermark}"/>
-				<asControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.FormatDescription}" Uri="{x:Static app:Uris.TimeSpanFormatReference}"/>
+				<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.FormatDescription}" Uri="{x:Static app:Uris.TimeSpanFormatReference}"/>
 
 			</StackPanel>
 		</ScrollViewer>

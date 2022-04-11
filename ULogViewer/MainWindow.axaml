@@ -2,6 +2,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:abConverters="using:CarinaStudio.Data.Converters"
+		xmlns:aConverters="using:Avalonia.Data.Converters"
         xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
         xmlns:appViewModels="using:CarinaStudio.ULogViewer.ViewModels"
 		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
@@ -14,7 +16,7 @@
 		MinWidth="{DynamicResource Double/MainWindow.MinWidth}">
 
 	<Window.ExtendClientAreaTitleBarHeightHint>
-		<MultiBinding Converter="{x:Static asConverters:DoubleConverters.Add}">
+		<MultiBinding Converter="{x:Static abConverters:DoubleConverters.Addition}">
 			<Binding ElementName="tabControl" Path="TabStripSize"/>
 			<Binding RelativeSource="{RelativeSource Mode=Self}" Path="ContentPadding.Top"/>
 		</MultiBinding>
@@ -94,7 +96,7 @@
 								</StackPanel>
 							</StackPanel>
 							<StackPanel IsVisible="{Binding IsHibernated}" Orientation="Horizontal">
-								<Image Classes="ToolTipIcon" Source="{DynamicResource Image/Leaf}"/>
+								<Image Classes="ToolTipIcon" Source="{DynamicResource Image/Icon.Leaf.Colored}"/>
 								<TextBlock Classes="ToolTipText" Text="{DynamicResource String/MainWindow.Session.Hibernated}"/>
 							</StackPanel>
 						</StackPanel>
@@ -131,7 +133,7 @@
 						<NativeMenuItem Command="{Binding $self.CreateSessionTabItem}" Header="{DynamicResource String/Common.CreateTab}"  Gesture="Cmd+T"/>
 						<NativeMenuItemSeparator/>
 						<NativeMenuItem Command="{Binding $self.SetCurrentCustomSessionTitle}" Header="{DynamicResource String/MainWindow.SetCustomSessionTitle}"/>
-						<NativeMenuItem Command="{Binding $self.ClearCurrentCustomSessionTitle}" Header="{DynamicResource String/MainWindow.ClearCustomSessionTitle}" IsEnabled="{Binding ActiveSession.CustomTitle, Converter={x:Static asConverters:ValueToBooleanConverters.NonNullToTrue}}"/>
+						<NativeMenuItem Command="{Binding $self.ClearCurrentCustomSessionTitle}" Header="{DynamicResource String/MainWindow.ClearCustomSessionTitle}" IsEnabled="{Binding ActiveSession.CustomTitle, Converter={x:Static aConverters:ObjectConverters.IsNotNull}}"/>
 						<NativeMenuItemSeparator/>
 						<NativeMenuItem Command="{Binding $self.MoveCurrentSessionToNewWorkspace}" Header="{DynamicResource String/Common.OpenInNewWindow}" IsEnabled="{Binding $self.HasMultipleSessions}"/>
 						<NativeMenuItemSeparator/>

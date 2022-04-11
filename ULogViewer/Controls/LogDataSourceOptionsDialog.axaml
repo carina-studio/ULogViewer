@@ -4,6 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ia="using:Avalonia.Xaml.Interactivity"
         xmlns:iaCore="using:Avalonia.Xaml.Interactions.Core"
+		xmlns:abControls="using:CarinaStudio.Controls"
 		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
         xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
@@ -105,17 +106,17 @@
 			<!-- IP endpoint -->
 			<StackPanel IsVisible="{Binding $parent[Window].IsIPEndPointSupported}">
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/IPEndPointInputDialog.Address}"/>
-				<asControls:IPAddressTextBox Name="ipAddressTextBox" Classes="Dialog_TextBox" PropertyChanged="OnEditorControlPropertyChanged"/>
+				<abControls:IPAddressTextBox Name="ipAddressTextBox" Classes="Dialog_TextBox" PropertyChanged="OnEditorControlPropertyChanged"/>
 				<Separator Classes="Dialog_Separator"/>
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/IPEndPointInputDialog.Port}"/>
-				<asControls:IntegerTextBox Name="portTextBox" Classes="Dialog_TextBox" IsNullValueAllowed="False" Maximum="65535" Minimum="1" Value="32678"/>
+				<abControls:IntegerTextBox Name="portTextBox" Classes="Dialog_TextBox" IsNullValueAllowed="False" Maximum="65535" Minimum="1" Value="32678"/>
 				<Separator Classes="Dialog_Separator"/>
 			</StackPanel>
 
 			<!-- URI -->
 			<StackPanel IsVisible="{Binding $parent[Window].IsUriSupported}" Orientation="Vertical">
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogDataSourceOptionsDialog.Uri}"/>
-				<asControls:UriTextBox Name="uriTextBox" Classes="Dialog_TextBox" PropertyChanged="OnEditorControlPropertyChanged"/>
+				<abControls:UriTextBox Name="uriTextBox" Classes="Dialog_TextBox" PropertyChanged="OnEditorControlPropertyChanged"/>
 				<Separator Classes="Dialog_Separator"/>
 			</StackPanel>
 

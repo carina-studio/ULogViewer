@@ -209,7 +209,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				options.FileName = this.fileNameTextBox.Text?.Trim();
 			if (this.IsIPEndPointSupported)
             {
-				this.ipAddressTextBox.IPAddress?.Let(address =>
+				this.ipAddressTextBox.Object?.Let(address =>
 				{
 					options.IPEndPoint = new IPEndPoint(address, (int)this.portTextBox.Value.GetValueOrDefault());
 				});
@@ -223,7 +223,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (this.IsTeardownCommandsSupported)
 				options.TeardownCommands = this.teardownCommands;
 			if (this.IsUriSupported)
-				options.Uri = this.uriTextBox.Uri;
+				options.Uri = this.uriTextBox.Object;
 			if (this.IsUserNameSupported)
 				options.UserName = this.userNameTextBox.Text?.Trim();
 			if (this.IsWorkingDirectorySupported)
@@ -306,7 +306,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				|| property == IPAddressTextBox.IsTextValidProperty
 				|| property == ComboBox.SelectedItemProperty
 				|| (property == TextBox.TextProperty && sender is not UriTextBox)
-				|| property == UriTextBox.UriProperty)
+				|| property == UriTextBox.ObjectProperty)
 			{
 				this.InvalidateInput();
 			}
@@ -374,14 +374,14 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				options.IPEndPoint?.Let(it =>
 				{
-					this.ipAddressTextBox.IPAddress = it.Address;
+					this.ipAddressTextBox.Object = it.Address;
 					this.portTextBox.Value = it.Port;
 				});
 				firstEditor = firstEditor ?? this.ipAddressTextBox;
 			}
 			if (this.IsUriSupported)
 			{
-				this.uriTextBox.Uri = options.Uri;
+				this.uriTextBox.Object = options.Uri;
 				firstEditor = firstEditor ?? this.uriTextBox;
 			}
 			if (this.IsEncodingSupported)

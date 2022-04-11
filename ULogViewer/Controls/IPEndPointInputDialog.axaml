@@ -2,7 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
+		xmlns:abControls="using:CarinaStudio.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.IPEndPointInputDialog"
 		Classes="Dialog"
@@ -24,12 +24,12 @@
 
 			<!-- Address -->
 			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/IPEndPointInputDialog.Address}"/>
-			<asControls:IPAddressTextBox Name="ipAddressTextBox" Classes="Dialog_TextBox" MaxLength="1024" PropertyChanged="OnIPAddressTextBoxPropertyChanged"/>
+			<abControls:IPAddressTextBox Name="ipAddressTextBox" Classes="Dialog_TextBox" MaxLength="1024" PropertyChanged="OnIPAddressTextBoxPropertyChanged"/>
 			<Separator Classes="Dialog_Separator"/>
 
 			<!-- Port -->
 			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/IPEndPointInputDialog.Port}"/>
-			<asControls:IntegerTextBox Name="portTextBox" Classes="Dialog_TextBox" IsNullValueAllowed="False" Maximum="65535" Minimum="1" Value="32768"/>
+			<abControls:IntegerTextBox Name="portTextBox" Classes="Dialog_TextBox" IsNullValueAllowed="False" Maximum="65535" Minimum="1" Value="32768"/>
 			
 		</StackPanel>
 
