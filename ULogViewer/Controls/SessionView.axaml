@@ -654,7 +654,7 @@
 			</Viewbox>
 
 			<!-- Logs time information -->
-			<Border Background="{DynamicResource Brush/SessionView.LogHeader.Background}" BorderBrush="{DynamicResource Brush/Control.Border.Light}" BorderThickness="0,1,0,0" Classes="StatusBar" Grid.Row="2" IsVisible="{Binding HasLogsDuration}">
+			<Border Background="{DynamicResource Brush/SessionView.LogHeader.Background}" Classes="StatusBar" Grid.Row="2" IsVisible="{Binding HasLogsDuration}">
 				<Grid ColumnDefinitions="*,Auto">
 
 					<!-- Logs -->
@@ -948,7 +948,7 @@
 				
 			</Grid>
 		</Border>
-		<GridSplitter Background="{DynamicResource Brush/WorkingArea.Panel.Background}" BorderBrush="{DynamicResource Brush/Control.Border.Light}" BorderThickness="1,0,0,0" Classes="GridSplitter_Vertical" Grid.Column="1" Grid.Row="1" IsVisible="{Binding IsSidePanelVisible}"/>
+		<GridSplitter Background="{DynamicResource Brush/WorkingArea.Panel.Background}" Classes="GridSplitter_Vertical" Grid.Column="1" Grid.Row="1" IsVisible="{Binding IsSidePanelVisible}"/>
 
 	</Grid>
 
