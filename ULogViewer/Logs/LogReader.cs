@@ -25,21 +25,6 @@ namespace CarinaStudio.ULogViewer.Logs
 	/// </summary>
 	class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 	{
-		/// <summary>
-		/// Default interval of updating read logs for continuous reading.
-		/// </summary>
-		public const int DefaultContinuousUpdateInterval = 100;
-		/// <summary>
-		/// Default interval of updating read logs.
-		/// </summary>
-		public const int DefaultUpdateInterval = 2000;
-
-
-		// Constants.
-		const int LogsReadingChunkSize = 4096;
-		const int MinLogsReadingDuration = 50;
-
-
 		// Static fields.
 		static readonly CultureInfo defaultTimestampCultureInfo = CultureInfo.GetCultureInfo("en-US");
 		static int nextId = 1;
@@ -786,6 +771,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		void ReadLogs(object readingToken, TextReader reader, CancellationToken cancellationToken)
 		{
 			this.Logger.LogDebug("Start reading logs in background");
+			var configuration = this.Application.Configuration;
 			var readLogs = new List<Log>();
 			var readLog = (Log?)null;
 			var logPatterns = this.logPatterns;
@@ -822,6 +808,9 @@ namespace CarinaStudio.ULogViewer.Logs
 			var timeSpanFormats = this.timeSpanFormats.IsNotEmpty() ? this.timeSpanFormats.ToArray() : null;
 			var timestampFormats = this.timestampFormats.IsNotEmpty() ? this.timestampFormats.ToArray() : null;
 			var exception = (Exception?)null;
+			var defaultNonContinuousUpdateInterval = configuration.GetValueOrDefault(ConfigurationKeys.NonContinuousLogsReadingUpdateInterval);
+			var nonContinuousChunkSize = configuration.GetValueOrDefault(ConfigurationKeys.NonContinuousLogsReadingUpdateChunkSize);
+			var nonContinuousPaddingInterval = configuration.GetValueOrDefault(ConfigurationKeys.NonContinuousLogsReadingPaddingInterval);
 			var stopWatch = new Stopwatch().Also(it => it.Start());
 			try
 			{
@@ -836,7 +825,7 @@ namespace CarinaStudio.ULogViewer.Logs
 					var logPattern = logPatterns[logPatternIndex];
 					var updateInterval = this.updateInterval.HasValue
 							? this.updateInterval.Value
-							: (isContinuousReading ? DefaultContinuousUpdateInterval : DefaultUpdateInterval);
+							: (isContinuousReading ? configuration.GetValueOrDefault(ConfigurationKeys.ContinuousLogsReadingUpdateInterval) : defaultNonContinuousUpdateInterval);
 					try
 					{
 						var match = logPattern.Regex.Match(logLine);
@@ -988,18 +977,11 @@ namespace CarinaStudio.ULogViewer.Logs
 							flushContinuousReadingLog(updateInterval);
 						else
 						{
-							var delay = MinLogsReadingDuration - (stopWatch.ElapsedMilliseconds - startReadingTime);
-							var flushLogs = false;
-							if (readLogs.Count >= LogsReadingChunkSize)
+							var duration = (stopWatch.ElapsedMilliseconds - startReadingTime);
+							if (readLogs.Count >= nonContinuousChunkSize || duration >= updateInterval)
 							{
-								if (delay > 0)
-									Thread.Sleep((int)delay);
-								flushLogs = true;
-							}
-							else if (delay <= 0)
-								flushLogs = true;
-							if (flushLogs)
-							{
+								if (nonContinuousPaddingInterval > 0)
+									Thread.Sleep(nonContinuousPaddingInterval);
 								var logArray = readLogs.ToArray();
 								readLogs.Clear();
 								startReadingTime = stopWatch.ElapsedMilliseconds;
