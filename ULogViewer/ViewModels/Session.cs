@@ -7,6 +7,7 @@ using CarinaStudio.Data.Converters;
 using CarinaStudio.IO;
 using CarinaStudio.Threading;
 using CarinaStudio.Threading.Tasks;
+using CarinaStudio.ULogViewer.Collections;
 using CarinaStudio.ULogViewer.Converters;
 using CarinaStudio.ULogViewer.Logs;
 using CarinaStudio.ULogViewer.Logs.DataOutputs;
@@ -556,9 +557,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			});
 
 			// setup properties
-			this.AllLogs = this.allLogs.AsReadOnly();
-			this.SetValue(LogsProperty, this.allLogs.AsReadOnly());
-			this.MarkedLogs = this.markedLogs.AsReadOnly();
+			this.AllLogs = new SafeReadOnlyList<DisplayableLog>(this.allLogs);
+			this.SetValue(LogsProperty, this.AllLogs);
+			this.MarkedLogs = new SafeReadOnlyList<DisplayableLog>(this.markedLogs);
 
 			// setup delegates
 			this.compareDisplayableLogsDelegate = CompareDisplayableLogsById;
@@ -3834,7 +3835,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					displayLogProperties.Add(new DisplayableLogProperty(app, logProperty));
 				if (displayLogProperties.IsEmpty())
 					displayLogProperties.Add(new DisplayableLogProperty(app, nameof(DisplayableLog.Message), "RawData", null));
-				this.SetValue(DisplayLogPropertiesProperty, displayLogProperties.AsReadOnly());
+				this.SetValue(DisplayLogPropertiesProperty, new SafeReadOnlyList<DisplayableLogProperty>(displayLogProperties));
 				this.logFilter.FilteringLogProperties = displayLogProperties;
 			}
 		}
@@ -3867,7 +3868,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			else
 			{
 				var logLevels = new HashSet<Logs.LogLevel>(profile.LogLevelMapForReading.Values).Also(it => it.Add(ULogViewer.Logs.LogLevel.Undefined));
-				this.SetValue(ValidLogLevelsProperty, logLevels.ToList().AsReadOnly());
+				this.SetValue(ValidLogLevelsProperty, new SafeReadOnlyList<Logs.LogLevel>(logLevels.ToList()));
 			}
 		}
 
