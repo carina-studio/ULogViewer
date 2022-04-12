@@ -1,11 +1,11 @@
 ﻿using CarinaStudio.Collections;
+using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using CarinaStudio.Threading.Tasks;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -39,17 +39,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		}
 
 
-		// Constants.
-		const int ChunkSize = 8192;
-		const int MinChunkFilteringDuration = 100;
-
-
 		// Static fields.
 		static readonly Regex allMatchingPatternRegex = new Regex(@"^\.[\*\+]{0,1}$");
 
 
 		// Fields.
 		FilterCombinationMode combinationMode = FilterCombinationMode.Intersection;
+		readonly ISettings configuration;
 		volatile FilteringParams? currentFilterParams;
 		readonly SortedObservableList<DisplayableLog> filteredLogs;
 		IList<DisplayableLogProperty> filteringLogProperties = new DisplayableLogProperty[0];
@@ -62,7 +58,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		int? processId;
 		readonly List<byte> sourceLogVersions;
 		readonly ScheduledAction startFilteringLogsAction;
-		readonly Stopwatch stopWatch = new Stopwatch().Also(it => it.Start());
 		IList<Regex> textRegexList = new Regex[0];
 		int? threadId;
 		readonly SortedObservableList<DisplayableLog> unfilteredLogs;
@@ -86,6 +81,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <param name="comparison"><see cref="Comparison{T}"/> which used on <paramref name="sourceLogs"/>.</param>
 		public DisplayableLogFilter(IULogViewerApplication app, IList<DisplayableLog> sourceLogs, Comparison<DisplayableLog> comparison)
 		{
+			// get configuration
+			this.configuration = app.Configuration;
+
 			// create lists
 			this.filteredLogs = new SortedObservableList<DisplayableLog>(comparison);
 			this.sourceLogVersions = sourceLogs.Count.Let(it =>
@@ -193,9 +191,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// dispose task scheduler
 			this.filteringTaskScheduler.Dispose();
-
-			// stop watch
-			this.stopWatch.Stop();
 		}
 
 
@@ -251,7 +246,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			var textPropertyGetters = filteringParams.LogTextPropertyGetters;
 			var textPropertyCount = textPropertyGetters.Count;
 			var textToMatchBuilder = new StringBuilder();
-			var startTime = this.stopWatch.ElapsedMilliseconds;
 			for (int i = logs.Count - 1; i >= 0; --i)
 			{
 				// check marking state
@@ -313,6 +307,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			}
 
 			// wait for previous chunks
+			var paddingInterval = this.configuration.GetValueOrDefault(ConfigurationKeys.DisplayableLogChunkFilteringPaddingInterval);
+			if (paddingInterval > 0)
+				Thread.Sleep(paddingInterval);
 			while (true)
 			{
 				lock (filteringParams.FilteringChunkLock)
@@ -321,9 +318,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						return;
 					if (filteringParams.CompletedChunkId == chunkId - 1)
 					{
-						var delay = MinChunkFilteringDuration - (this.stopWatch.ElapsedMilliseconds - startTime);
-						if (delay > 0)
-							Thread.Sleep((int)delay);
 						this.SynchronizationContext.Post(() => this.OnChunkFiltered(filteringParams, chunkId, filteredLogs, filteredLogVersions));
 						return;
 					}
@@ -363,10 +357,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.OnPropertyChanged(nameof(FilteringProgress));
 
 			// start filtering
+			var chunkSize = Math.Max(1024, this.configuration.GetValueOrDefault(ConfigurationKeys.DisplayableLogChunkFilteringSize));
 			var chunkId = filteringParams.NextChunkId++;
 			var logs = this.unfilteredLogs.Let(it =>
 			{
-				if (it.Count <= ChunkSize)
+				if (it.Count <= chunkSize)
 				{
 					var array = it.ToArray();
 					it.Clear();
@@ -374,9 +369,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				}
 				else
 				{
-					var index = it.Count - ChunkSize;
-					var array = it.ToArray(index, ChunkSize);
-					it.RemoveRange(index, ChunkSize);
+					var index = it.Count - chunkSize;
+					var array = it.ToArray(index, chunkSize);
+					it.RemoveRange(index, chunkSize);
 					return array;
 				}
 			});
