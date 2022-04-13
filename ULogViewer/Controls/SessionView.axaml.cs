@@ -99,6 +99,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ScheduledAction autoSetIPEndPointAction;
 		readonly ScheduledAction autoSetUriAction;
 		readonly ScheduledAction autoSetWorkingDirectoryAction;
+		INotifyCollectionChanged? attachedLogs;
 		readonly ObservableCommandState canAddLogFiles = new();
 		readonly MutableObservableBoolean canCopyLogProperty = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canCopySelectedLogs = new MutableObservableBoolean();
@@ -141,7 +142,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly Grid logHeaderGrid;
 		readonly List<MutableObservableValue<GridLength>> logHeaderWidths = new List<MutableObservableValue<GridLength>>();
 		readonly ComboBox logLevelFilterComboBox;
-		readonly AppSuite.Controls.ListBox logListBox;
+		readonly Avalonia.Controls.ListBox logListBox;
 		readonly Panel logListBoxContainer;
 		readonly ContextMenu logMarkingMenu;
 		readonly IntegerTextBox logProcessIdFilterTextBox;
@@ -305,7 +306,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				it.GetObservable(BoundsProperty).Subscribe(_ => this.autoCloseSidePanelAction?.Schedule());
 			});
-			this.logListBox = this.logListBoxContainer.FindControl<AppSuite.Controls.ListBox>(nameof(logListBox)).AsNonNull().Also(it =>
+			this.logListBox = this.logListBoxContainer.FindControl<Avalonia.Controls.ListBox>(nameof(logListBox)).AsNonNull().Also(it =>
 			{
 				it.AddHandler(Avalonia.Controls.ListBox.PointerPressedEvent, this.OnLogListBoxPointerPressed, RoutingStrategies.Tunnel);
 				it.AddHandler(Avalonia.Controls.ListBox.PointerReleasedEvent, this.OnLogListBoxPointerReleased, RoutingStrategies.Tunnel);
@@ -581,6 +582,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			// add event handler
 			session.ErrorMessageGenerated += this.OnErrorMessageGeneratedBySession;
 			session.PropertyChanged += this.OnSessionPropertyChanged;
+			this.attachedLogs = session.Logs as INotifyCollectionChanged;
+			if (this.attachedLogs != null)
+				this.attachedLogs.CollectionChanged += this.OnLogsChanged;
 
 			// check profile
 			var profile = session.LogProfile;
@@ -1256,6 +1260,11 @@ namespace CarinaStudio.ULogViewer.Controls
 			// remove event handler
 			session.ErrorMessageGenerated -= this.OnErrorMessageGeneratedBySession;
 			session.PropertyChanged -= this.OnSessionPropertyChanged;
+			if (this.attachedLogs != null)
+			{
+				this.attachedLogs.CollectionChanged -= this.OnLogsChanged;
+				this.attachedLogs = null;
+			}
 
 			// detach from commands
 			this.canAddLogFiles.Unbind();
@@ -2108,6 +2117,25 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Called when list of logs changed.
+		void OnLogsChanged(object? sender, NotifyCollectionChangedEventArgs e)
+		{
+			if (e.Action == NotifyCollectionChangedAction.Remove)
+			{
+				// [Workaround] Force updating item containers
+				if (this.logScrollViewer != null)
+				{
+					var offset = this.logScrollViewer.Offset;
+					if (Math.Abs(offset.Y) > 0.1 && !this.IsScrollingToLatestLogNeeded)
+					{
+						this.logScrollViewer.PageUp();
+						this.logScrollViewer.PageDown();
+					}
+				}
+			}
+		}
+
+
 		// Called when key down.
 		protected override void OnKeyDown(Avalonia.Input.KeyEventArgs e)
 		{
@@ -2655,6 +2683,13 @@ namespace CarinaStudio.ULogViewer.Controls
 				case nameof(Session.Logs):
 					// [Workaround] SelectionChange may not be fired after changing items
 					this.SynchronizationContext.Post(this.OnLogListBoxSelectionChanged);
+					
+					// attach to new list of logs
+					if (this.attachedLogs != null)
+						this.attachedLogs.CollectionChanged -= this.OnLogsChanged;
+					this.attachedLogs = (session.Logs as INotifyCollectionChanged);
+					if (this.attachedLogs != null)
+						this.attachedLogs.CollectionChanged += this.OnLogsChanged;
 					break;
 				case nameof(Session.ValidLogLevels):
 					this.validLogLevels.Clear();
