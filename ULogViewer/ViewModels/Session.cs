@@ -2590,8 +2590,19 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						}
 						else
 						{
-							var removedLogs = new HashSet<Log>(oldItems.Cast<Log>());
-							this.allLogs.RemoveAll(it => removedLogs.Contains(it.Log));
+							var profile = this.LogProfile;
+							if (profile != null 
+								&& profile.SortKey == LogSortKey.Id 
+								&& this.logReaders.Count == 1 
+								&& this.logReaders[0] == logReader)
+							{
+								this.allLogs.RemoveRange(e.OldStartingIndex, oldItems.Count);
+							}
+							else
+							{
+								var removedLogs = new HashSet<Log>(oldItems.Cast<Log>());
+								this.allLogs.RemoveAll(it => removedLogs.Contains(it.Log));
+							}
 						}
 						logReader.DataSource.CreationOptions.FileName?.Let(fileName =>
 						{
