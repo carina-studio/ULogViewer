@@ -2128,8 +2128,31 @@ namespace CarinaStudio.ULogViewer.Controls
 					var offset = this.logScrollViewer.Offset;
 					if (Math.Abs(offset.Y) > 0.1 && !this.IsScrollingToLatestLogNeeded)
 					{
+						var oldStartIndex = e.OldStartingIndex;
+						var oldItems = e.OldItems.AsNonNull();
+						var lastVisibleItemIndex = -1;
+						var firstVisibleItemIndex = -1;
+						this.logListBox.ItemContainerGenerator.Let(it => 
+						{
+							foreach (var containerInfo in it.Containers)
+							{
+								if (firstVisibleItemIndex < 0 || containerInfo.Index < firstVisibleItemIndex)
+									firstVisibleItemIndex = containerInfo.Index;
+								if (lastVisibleItemIndex < 0 || containerInfo.Index > lastVisibleItemIndex)
+									lastVisibleItemIndex = containerInfo.Index;
+							}
+						});
 						this.logScrollViewer.PageUp();
+						this.logScrollViewer.LineUp();
+						this.logScrollViewer.LineDown();
 						this.logScrollViewer.PageDown();
+						if (firstVisibleItemIndex >= 0 
+							&& lastVisibleItemIndex >= 0
+							&& oldStartIndex + oldItems.Count <= firstVisibleItemIndex)
+						{
+							firstVisibleItemIndex -= oldItems.Count;
+							this.logListBox.ScrollIntoView(firstVisibleItemIndex);
+						}
 					}
 				}
 			}
