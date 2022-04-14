@@ -2,6 +2,7 @@ using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using CarinaStudio.Threading.Tasks;
+using CarinaStudio.ULogViewer.Collections;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -31,6 +32,17 @@ abstract class DisplayableLogProcessor<TProcessingToken, TProcessingResult> : Ba
         public ProcessingParams(TProcessingToken token) =>
             this.Token = token;
     }
+
+
+    // Constants.
+    const int ListPoolCapacity = 32;
+
+
+    // Static fields.
+    static readonly Stack<List<DisplayableLog>> InternalDisplayableLogListPool = new();
+    static readonly Stack<List<byte>> InternalDisplayableLogVersionListPool = new();
+
+
     // Fields.
     ProcessingParams? currentProcessingParams;
     readonly Comparison<DisplayableLog> logComparison;
@@ -263,8 +275,54 @@ abstract class DisplayableLogProcessor<TProcessingToken, TProcessingResult> : Ba
     protected virtual int MaxConcurrencyLevel { get => 1; }
 
 
+    /// <summary>
+    /// Get size of memory currently used by the instance directly in bytes.
+    /// </summary>
+    public virtual long MemorySize { get => this.unprocessedLogs.Count * IntPtr.Size + this.sourceLogVersions.Capacity; }
+
+
+    // Obtain an list of log for internal usage.
+    static List<DisplayableLog> ObtainInternalDisplayableLogList(IEnumerable<DisplayableLog>? elements = null)
+    {
+        var list = InternalDisplayableLogListPool.Lock(it =>
+        {
+            it.TryPop(out var list);
+            return list;
+        });
+        if (list != null)
+        {
+            if (elements != null)
+                list.AddRange(elements);
+            return list;
+        }
+        if (elements != null)
+            return new List<DisplayableLog>(elements);
+        return new List<DisplayableLog>();
+    }
+
+
+    // Obtain an list of version of log for internal usage.
+    static List<byte> ObtainInternalDisplayableLogVersionList(IEnumerable<byte>? elements = null)
+    {
+        var list = InternalDisplayableLogVersionListPool.Lock(it =>
+        {
+            it.TryPop(out var list);
+            return list;
+        });
+        if (list != null)
+        {
+            if (elements != null)
+                list.AddRange(elements);
+            return list;
+        }
+        if (elements != null)
+            return new List<byte>(elements);
+        return new List<byte>();
+    }
+
+
     // Called when chunk of logs processed.
-    void OnChunkProcessed(ProcessingParams processingParams, int chunkId, IList<DisplayableLog> logs, IList<byte> logVersions, IList<TProcessingResult> results)
+    void OnChunkProcessed(ProcessingParams processingParams, int chunkId, List<DisplayableLog> logs, List<byte> logVersions, List<TProcessingResult> results)
     {
         // unlock next chunk
         lock (processingParams.ProcessingChunkLock)
@@ -328,6 +386,9 @@ abstract class DisplayableLogProcessor<TProcessingToken, TProcessingResult> : Ba
             results.RemoveAt(processedIndex--);
         }
 
+        // recycle list
+        RecyceInternalDisplayableLogVersionList(logVersions);
+
         // handle processing result
         this.OnChunkProcessed(processingParams.Token, logs, results);
 
@@ -342,7 +403,7 @@ abstract class DisplayableLogProcessor<TProcessingToken, TProcessingResult> : Ba
     /// <param name="token">Token of processing.</param>
     /// <param name="logs">Processed logs.</param>
     /// <param name="results">Processing result.</param>
-    protected abstract void OnChunkProcessed(TProcessingToken token, IList<DisplayableLog> logs, IList<TProcessingResult> results);
+    protected abstract void OnChunkProcessed(TProcessingToken token, List<DisplayableLog> logs, List<TProcessingResult> results);
 
 
     /// <summary>
@@ -365,8 +426,9 @@ abstract class DisplayableLogProcessor<TProcessingToken, TProcessingResult> : Ba
     /// </summary>
     /// <param name="token">Token of processing.</param>
     /// <param name="log">Log.</param>
-    /// <returns>Processing result.</returns>
-    protected abstract TProcessingResult OnProcessLog(TProcessingToken token, DisplayableLog log);
+    /// <param name="result">Result of processing.</param>
+    /// <returns>True if processing result should be collected, False to drop the result.</returns>
+    protected abstract bool OnProcessLog(TProcessingToken token, DisplayableLog log, out TProcessingResult result);
 
     
     /// <summary>
@@ -419,7 +481,7 @@ abstract class DisplayableLogProcessor<TProcessingToken, TProcessingResult> : Ba
     
 
     // Process chunk of logs.
-    void ProcessChunk(ProcessingParams processingParams, int chunkId, IList<DisplayableLog> logs, IList<byte> logVersions)
+    void ProcessChunk(ProcessingParams processingParams, int chunkId, List<DisplayableLog> logs, List<byte> logVersions)
     {
         // check state
         if (this.currentProcessingParams != processingParams)
@@ -427,9 +489,24 @@ abstract class DisplayableLogProcessor<TProcessingToken, TProcessingResult> : Ba
 
         // process logs
         var logCount = logs.Count;
+        var processedLogs = new List<DisplayableLog>();
         var processingResults = new List<TProcessingResult>(logCount);
-        for (var i = 0; i < logCount; ++i)
-            processingResults.Add(this.OnProcessLog(processingParams.Token, logs[i]));
+        var token = processingParams.Token;
+        for (var i = logs.Count - 1; i >= 0; --i)
+        {
+            var log = logs[i];
+            if (this.OnProcessLog(token, log, out var result))
+            {
+                processedLogs.Add(log);
+                processingResults.Add(result);
+            }
+            else
+                logVersions.RemoveAt(i);
+        }
+        logVersions.Reverse();
+
+        // recycle list
+        RecyceInternalDisplayableLogList(logs);
 
         // wait for previous chunks
         var paddingInterval = this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.DisplayableLogChunkProcessingPaddingInterval);
@@ -443,7 +520,7 @@ abstract class DisplayableLogProcessor<TProcessingToken, TProcessingResult> : Ba
                     return;
                 if (processingParams.CompletedChunkId == chunkId - 1)
                 {
-                    this.SynchronizationContext.Post(() => this.OnChunkProcessed(processingParams, chunkId, logs, logVersions, processingResults));
+                    this.SynchronizationContext.Post(() => this.OnChunkProcessed(processingParams, chunkId, processedLogs, logVersions, processingResults));
                     return;
                 }
                 Monitor.Wait(processingParams.ProcessingChunkLock);
@@ -511,36 +588,38 @@ abstract class DisplayableLogProcessor<TProcessingToken, TProcessingResult> : Ba
         {
             if (it.Count <= chunkSize)
             {
-                var array = it.ToArray();
+                var list = ObtainInternalDisplayableLogList(it);
                 it.Clear();
-                return array;
+                return list;
             }
             else
             {
                 var index = it.Count - chunkSize;
-                var array = it.ToArray(index, chunkSize);
+                var list = ObtainInternalDisplayableLogList(it.GetRangeAsEnumerable(index, chunkSize));
                 it.RemoveRange(index, chunkSize);
-                return array;
+                return list;
             }
         });
-        var logVersions = new byte[logs.Length].Also(it =>
+        var logVersions = ObtainInternalDisplayableLogVersionList().Also(it =>
         {
             var sourceLogs = this.SourceLogs;
             var sourceLogVersions = this.sourceLogVersions;
             var comparer = this.unprocessedLogs.Comparer;
-            var logCount = it.Length;
+            var logCount = logs.Count;
             var unprocessedIndex = 0;
             var sourceIndex = sourceLogs.IndexOf(logs[0]);
             while (sourceIndex < 0 && unprocessedIndex < logCount - 1)
                 sourceIndex = sourceLogs.IndexOf(logs[++unprocessedIndex]);
             if (unprocessedIndex < logCount && sourceIndex >= 0)
             {
+                it.EnsureCapacity(logCount);
                 while (true)
                 {
                     var comparisonResult = comparer.Compare(logs[unprocessedIndex], sourceLogs[sourceIndex]);
                     if (comparisonResult == 0)
                     {
-                        it[unprocessedIndex++] = sourceLogVersions[sourceIndex--];
+                        ++unprocessedIndex;
+                        it.Add(sourceLogVersions[sourceIndex--]);
                         if (unprocessedIndex >= logCount || sourceIndex < 0)
                             break;
                     }
@@ -572,6 +651,30 @@ abstract class DisplayableLogProcessor<TProcessingToken, TProcessingResult> : Ba
 
     /// <inheritdoc/>
     public event PropertyChangedEventHandler? PropertyChanged;
+
+
+    // Recycle the list of log for internal usage.
+    static void RecyceInternalDisplayableLogList(List<DisplayableLog> list)
+    {
+        list.Clear();
+        lock (InternalDisplayableLogListPool)
+        {
+            if (InternalDisplayableLogListPool.Count < ListPoolCapacity)
+                InternalDisplayableLogListPool.Push(list);
+        }
+    }
+
+
+    // Recycle the list of version of log for internal usage.
+    static void RecyceInternalDisplayableLogVersionList(List<byte> list)
+    {
+        list.Clear();
+        lock (InternalDisplayableLogVersionListPool)
+        {
+            if (InternalDisplayableLogVersionListPool.Count < ListPoolCapacity)
+                InternalDisplayableLogVersionListPool.Push(list);
+        }
+    }
 
 
     /// <summary>
