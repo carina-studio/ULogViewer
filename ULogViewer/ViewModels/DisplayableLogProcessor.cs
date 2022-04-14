@@ -24,6 +24,7 @@ abstract class DisplayableLogProcessor<TProcessingToken, TProcessingResult> : Ba
         // Fields.
         public volatile int CompletedChunkId;
         public int ConcurrencyLevel;
+        public int MaxConcurrencyLevel = 1;
         public int NextChunkId = 1;
         public readonly object ProcessingChunkLock = new object();
         public readonly TProcessingToken Token;
@@ -41,17 +42,22 @@ abstract class DisplayableLogProcessor<TProcessingToken, TProcessingResult> : Ba
     // Static fields.
     static readonly Stack<List<DisplayableLog>> InternalDisplayableLogListPool = new();
     static readonly Stack<List<byte>> InternalDisplayableLogVersionListPool = new();
+    static int MaxProcessingConcurrencyLevelBackground = 1;
+    static int MaxProcessingConcurrencyLevelDefault = 2;
+    static int MaxProcessingConcurrencyLevelRealtime = Math.Min(4, Math.Max(1, Environment.ProcessorCount >> 1));
+    static volatile TaskFactory? ProcessingTaskFactoryBackground;
+    static volatile TaskFactory? ProcessingTaskFactoryDefault;
+    static volatile TaskFactory? ProcessingTaskFactoryRealtime;
+    static readonly object ProcessingTaskFactorySyncLock = new();
 
 
     // Fields.
     ProcessingParams? currentProcessingParams;
     readonly Comparison<DisplayableLog> logComparison;
-    volatile TaskFactory? processingTaskFactory;
-    volatile FixedThreadsTaskScheduler? processingTaskScheduler;
     readonly ScheduledAction processNextChunkAction;
-    readonly List<byte> sourceLogVersions;
+    readonly List<byte> sourceLogVersions; // Same order as source list
     readonly ScheduledAction startProcessingLogsAction;
-    readonly SortedObservableList<DisplayableLog> unprocessedLogs;
+    readonly SortedObservableList<DisplayableLog> unprocessedLogs; // Reverse order of source list
 
 
     /// <summary>
@@ -60,7 +66,8 @@ abstract class DisplayableLogProcessor<TProcessingToken, TProcessingResult> : Ba
     /// <param name="app">Application.</param>
     /// <param name="sourceLogs">Source list of logs.</param>
     /// <param name="comparison"><see cref="Comparison{T}"/> which used on <paramref name="sourceLogs"/>.</param>
-    protected DisplayableLogProcessor(IULogViewerApplication app, IList<DisplayableLog> sourceLogs, Comparison<DisplayableLog> comparison) : base(app)
+    /// <param name="priority">Priority of logs processing.</param>
+    protected DisplayableLogProcessor(IULogViewerApplication app, IList<DisplayableLog> sourceLogs, Comparison<DisplayableLog> comparison, DisplayableLogProcessingPriority priority = DisplayableLogProcessingPriority.Default) : base(app)
     {
         // create lists
         this.sourceLogVersions = sourceLogs.Count.Let(it =>
@@ -71,6 +78,7 @@ abstract class DisplayableLogProcessor<TProcessingToken, TProcessingResult> : Ba
 
         // setup properties
         this.logComparison = comparison;
+        this.ProcessingPriority = priority;
         this.SourceLogs = sourceLogs;
 
         // create schedule actions
@@ -90,6 +98,7 @@ abstract class DisplayableLogProcessor<TProcessingToken, TProcessingResult> : Ba
     void CancelProcessing()
     {
         // check state
+        this.startProcessingLogsAction.Cancel();
         var processingParams = this.currentProcessingParams;
         if (processingParams == null)
             return;
@@ -136,16 +145,9 @@ abstract class DisplayableLogProcessor<TProcessingToken, TProcessingResult> : Ba
     /// <inheritdoc/>
     protected override void Dispose(bool disposing)
     {
-        // dispose task scheduler only
+        // ignore if called from finalizer.
         if (!disposing)
-        {
-            lock (this)
-            {
-                (this.processingTaskScheduler as IDisposable)?.Dispose();
-                this.processingTaskScheduler = null;
-                this.processingTaskFactory = null;
-            }
-        }
+            return;
 
         // check thread
         this.VerifyAccess();
@@ -155,15 +157,20 @@ abstract class DisplayableLogProcessor<TProcessingToken, TProcessingResult> : Ba
 
         // cancecl processing
         this.CancelProcessing();
-
-        // dispose task scheduler
-        lock (this)
-        {
-            (this.processingTaskScheduler as IDisposable)?.Dispose();
-            this.processingTaskScheduler = null;
-            this.processingTaskFactory = null;
-        }
     }
+
+
+    /// <summary>
+    /// Get maximum supported concurrency level of logs processing.
+    /// </summary>
+    /// <param name="priority">Priority of processing.</param>
+    /// <returns>Maximum concurrency level.</returns>
+    public static int GetMaxConcurrencyLevel(DisplayableLogProcessingPriority priority) => priority switch
+    {
+        DisplayableLogProcessingPriority.Default => MaxProcessingConcurrencyLevelDefault,
+        DisplayableLogProcessingPriority.Realtime => MaxProcessingConcurrencyLevelRealtime,
+        _ => MaxProcessingConcurrencyLevelBackground,
+    };
 
 
     /// <summary>
@@ -239,7 +246,7 @@ abstract class DisplayableLogProcessor<TProcessingToken, TProcessingResult> : Ba
         if (needToProcess)
         {
             this.processNextChunkAction.Cancel();
-            for (var i = this.MaxConcurrencyLevel; i > 0; --i)
+            for (var i = this.currentProcessingParams.MaxConcurrencyLevel; i > 0; --i)
                 this.ProcessNextChunk(this.currentProcessingParams);
         }
     }
@@ -253,7 +260,13 @@ abstract class DisplayableLogProcessor<TProcessingToken, TProcessingResult> : Ba
         this.VerifyAccess();
         if (this.IsDisposed)
             return;
-        this.startProcessingLogsAction.Schedule();
+        var delay = this.ProcessingPriority switch
+        {
+            DisplayableLogProcessingPriority.Default => this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.DisplayableLogProcessinDelayDefault),
+            DisplayableLogProcessingPriority.Realtime => 0,
+            _ => this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.DisplayableLogProcessinDelayBackground),
+        };
+        this.startProcessingLogsAction.Schedule(delay);
     }
 
 
@@ -458,7 +471,7 @@ abstract class DisplayableLogProcessor<TProcessingToken, TProcessingResult> : Ba
                 {
                     this.unprocessedLogs.AddAll(e.NewItems.AsNonNull().Cast<DisplayableLog>().Reverse(), true);
                     this.processNextChunkAction.Cancel();
-                    for (var i = this.MaxConcurrencyLevel; i > 0; --i)
+                    for (var i = this.currentProcessingParams.MaxConcurrencyLevel; i > 0; --i)
                         this.ProcessNextChunk(this.currentProcessingParams);
                 }
                 break;
@@ -481,7 +494,7 @@ abstract class DisplayableLogProcessor<TProcessingToken, TProcessingResult> : Ba
     
 
     // Process chunk of logs.
-    void ProcessChunk(ProcessingParams processingParams, int chunkId, List<DisplayableLog> logs, List<byte> logVersions)
+    async void ProcessChunk(ProcessingParams processingParams, int chunkId, List<DisplayableLog> logs, List<byte> logVersions)
     {
         // check state
         if (this.currentProcessingParams != processingParams)
@@ -492,7 +505,7 @@ abstract class DisplayableLogProcessor<TProcessingToken, TProcessingResult> : Ba
         var processedLogs = new List<DisplayableLog>();
         var processingResults = new List<TProcessingResult>(logCount);
         var token = processingParams.Token;
-        for (var i = logs.Count - 1; i >= 0; --i)
+        for (var i = logs.Count - 1; i >= 0; --i) // Need to process in reverse order to make sure the processing order is same as source list
         {
             var log = logs[i];
             if (this.OnProcessLog(token, log, out var result))
@@ -503,15 +516,20 @@ abstract class DisplayableLogProcessor<TProcessingToken, TProcessingResult> : Ba
             else
                 logVersions.RemoveAt(i);
         }
-        logVersions.Reverse();
+        logVersions.Reverse(); // Reverse back to same order as source list
 
         // recycle list
         RecyceInternalDisplayableLogList(logs);
 
         // wait for previous chunks
-        var paddingInterval = this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.DisplayableLogChunkProcessingPaddingInterval);
+        var paddingInterval = this.ProcessingPriority switch
+        {
+            DisplayableLogProcessingPriority.Default => this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.DisplayableLogChunkProcessingPaddingIntervalDefault),
+            DisplayableLogProcessingPriority.Realtime => this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.DisplayableLogChunkProcessingPaddingIntervalRealtime),
+            _ => this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.DisplayableLogChunkProcessingPaddingIntervalBackground),
+        };
         if (paddingInterval > 0)
-            Thread.Sleep(paddingInterval);
+            await Task.Delay(paddingInterval);
         while (true)
         {
             lock (processingParams.ProcessingChunkLock)
@@ -527,6 +545,12 @@ abstract class DisplayableLogProcessor<TProcessingToken, TProcessingResult> : Ba
             }
         }
     }
+
+
+    /// <summary>
+    /// Get priority of logs processing.
+    /// </summary>
+    public DisplayableLogProcessingPriority ProcessingPriority { get; }
     
 
     /// <summary>
@@ -536,18 +560,32 @@ abstract class DisplayableLogProcessor<TProcessingToken, TProcessingResult> : Ba
     { 
         get
         {
-            if (this.processingTaskFactory != null)
-                return this.processingTaskFactory;
-            lock (this)
+            var taskFactory = this.ProcessingPriority switch
             {
-                if (this.processingTaskFactory == null)
+                DisplayableLogProcessingPriority.Default => ProcessingTaskFactoryDefault,
+                DisplayableLogProcessingPriority.Realtime => ProcessingTaskFactoryRealtime,
+                _ => ProcessingTaskFactoryBackground,
+            };
+            if (taskFactory != null)
+                return taskFactory;
+            return ProcessingTaskFactorySyncLock.Lock(_ => 
+            {
+                switch (this.ProcessingPriority)
                 {
-                    this.VerifyDisposed();
-                    this.processingTaskScheduler = new FixedThreadsTaskScheduler(Math.Max(1, this.MaxConcurrencyLevel));
-                    this.processingTaskFactory = new TaskFactory(this.processingTaskScheduler);
+                    case DisplayableLogProcessingPriority.Default:
+                        if (ProcessingTaskFactoryDefault == null)
+                            ProcessingTaskFactoryDefault = new(new FixedThreadsTaskScheduler(MaxProcessingConcurrencyLevelDefault << 1));
+                        return ProcessingTaskFactoryDefault;
+                    case DisplayableLogProcessingPriority.Realtime:
+                        if (ProcessingTaskFactoryRealtime == null)
+                            ProcessingTaskFactoryRealtime = new(new FixedThreadsTaskScheduler(MaxProcessingConcurrencyLevelRealtime << 1));
+                        return ProcessingTaskFactoryRealtime;
+                    default:
+                        if (ProcessingTaskFactoryBackground == null)
+                            ProcessingTaskFactoryBackground = new(new FixedThreadsTaskScheduler(MaxProcessingConcurrencyLevelBackground << 1));
+                        return ProcessingTaskFactoryBackground;
                 }
-                return this.processingTaskFactory;
-            }
+            });
         }   
     }
 
@@ -569,7 +607,7 @@ abstract class DisplayableLogProcessor<TProcessingToken, TProcessingResult> : Ba
             }
             return;
         }
-        if (processingParams.ConcurrencyLevel >= this.MaxConcurrencyLevel)
+        if (processingParams.ConcurrencyLevel >= processingParams.MaxConcurrencyLevel)
             return;
 
         // update state
@@ -600,7 +638,7 @@ abstract class DisplayableLogProcessor<TProcessingToken, TProcessingResult> : Ba
                 return list;
             }
         });
-        var logVersions = ObtainInternalDisplayableLogVersionList().Also(it =>
+        var logVersions = ObtainInternalDisplayableLogVersionList().Also(it => // The order will be reverse order of source list
         {
             var sourceLogs = this.SourceLogs;
             var sourceLogVersions = this.sourceLogVersions;
@@ -720,9 +758,32 @@ abstract class DisplayableLogProcessor<TProcessingToken, TProcessingResult> : Ba
             this.IsProcessingNeeded = true;
             this.OnPropertyChanged(nameof(IsProcessingNeeded));
         }
-        this.currentProcessingParams = new(processingToken);
+        this.currentProcessingParams = new ProcessingParams(processingToken).Also(it => 
+        {
+            it.MaxConcurrencyLevel = Math.Min(GetMaxConcurrencyLevel(this.ProcessingPriority), Math.Max(1, this.MaxConcurrencyLevel));
+        });
         this.unprocessedLogs.AddAll(this.SourceLogs.Reverse(), true);
-        for (var i = this.MaxConcurrencyLevel; i > 0; --i)
+        for (var i = this.currentProcessingParams.MaxConcurrencyLevel; i > 0; --i)
             this.ProcessNextChunk(this.currentProcessingParams);
     }
+}
+
+
+/// <summary>
+/// Priority of processing <see cref="DisplayableLog"/>.
+/// </summary>
+enum DisplayableLogProcessingPriority 
+{
+    /// <summary>
+    /// Realtime.
+    /// </summary>
+    Realtime,
+    /// <summary>
+    /// Default.
+    /// </summary>
+    Default,
+    /// <summary>
+    /// Background.
+    /// </summary>
+    Background,
 }
