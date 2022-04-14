@@ -31,7 +31,11 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		// Fields.
+		TimeSpan? beginningPreconditionTimeSpan;
+		DateTime? beginningPreconditionTimestamp;
 		int dropLogCount = -1;
+		TimeSpan? endingPreconditionTimeSpan;
+		DateTime? endingPreconditionTimestamp;
 		readonly ScheduledAction flushPendingLogsAction;
 		bool isContinuousReading;
 		bool isWaitingForDataSource;
@@ -110,6 +114,42 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// Get <see cref="IULogViewerApplication"/> instance.
 		/// </summary>
 		public IULogViewerApplication Application { get; }
+
+
+		/// <summary>
+		/// Get or set beginning time span for precondition of logs reading.
+		/// </summary>
+		public TimeSpan? BeginningPreconditionTimeSpan
+		{
+			get => this.beginningPreconditionTimeSpan;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyPreparing();
+				if (this.beginningPreconditionTimeSpan == value)
+					return;
+				this.beginningPreconditionTimeSpan = value;
+				this.OnPropertyChanged(nameof(BeginningPreconditionTimeSpan));
+			}
+		}
+
+
+		/// <summary>
+		/// Get or set beginning timestamp for precondition of logs reading.
+		/// </summary>
+		public DateTime? BeginningPreconditionTimestamp
+		{
+			get => this.beginningPreconditionTimestamp;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyPreparing();
+				if (this.beginningPreconditionTimestamp == value)
+					return;
+				this.beginningPreconditionTimestamp = value;
+				this.OnPropertyChanged(nameof(BeginningPreconditionTimestamp));
+			}
+		}
 
 
 		// Whether read logs can be added or not.
@@ -274,6 +314,42 @@ namespace CarinaStudio.ULogViewer.Logs
 				logs.RemoveRange(0, droppingLogCount);
 			else
 				logs.Clear();
+		}
+
+
+		/// <summary>
+		/// Get or set ending time span for precondition of logs reading.
+		/// </summary>
+		public TimeSpan? EndingPreconditionTimeSpan
+		{
+			get => this.endingPreconditionTimeSpan;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyPreparing();
+				if (this.endingPreconditionTimeSpan == value)
+					return;
+				this.endingPreconditionTimeSpan = value;
+				this.OnPropertyChanged(nameof(EndingPreconditionTimeSpan));
+			}
+		}
+
+
+		/// <summary>
+		/// Get or set ending timestamp for precondition of logs reading.
+		/// </summary>
+		public DateTime? EndingPreconditionTimestamp
+		{
+			get => this.endingPreconditionTimestamp;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyPreparing();
+				if (this.endingPreconditionTimestamp == value)
+					return;
+				this.endingPreconditionTimestamp = value;
+				this.OnPropertyChanged(nameof(EndingPreconditionTimestamp));
+			}
 		}
 
 
@@ -774,6 +850,14 @@ namespace CarinaStudio.ULogViewer.Logs
 			var configuration = this.Application.Configuration;
 			var readLogs = new List<Log>();
 			var readLog = (Log?)null;
+			var hasPrecondition = this.beginningPreconditionTimeSpan.HasValue
+				|| this.beginningPreconditionTimestamp.HasValue
+				|| this.endingPreconditionTimeSpan.HasValue
+				|| this.endingPreconditionTimestamp.HasValue;
+			var beginningPreconditionTimeSpan = this.beginningPreconditionTimeSpan ?? TimeSpan.MinValue;
+			var beginningPreconditionTimestamp = this.beginningPreconditionTimestamp ?? DateTime.MinValue;
+			var endingPreconditionTimeSpan = this.endingPreconditionTimeSpan ?? TimeSpan.MaxValue;
+			var endingPreconditionTimestamp = this.endingPreconditionTimestamp ?? DateTime.MaxValue;
 			var logPatterns = this.logPatterns;
 			var logBuilder = new LogBuilder()
 			{
@@ -784,7 +868,63 @@ namespace CarinaStudio.ULogViewer.Logs
 			var syncContext = this.SynchronizationContext;
 			var isContinuousReading = this.isContinuousReading;
 			var isFirstMatchedLine = true;
-			var flushContinuousReadingLog = new Action<int>(updateInterval =>
+			bool IsPreconditionMatched(Log log)
+			{
+				if (!hasPrecondition)
+					return true;
+				var hasTimeSpan = false;
+				var hasTimestamp = false;
+				if (log.BeginningTimestamp?.Let(it => 
+					{
+						hasTimestamp = true;
+						return it >= beginningPreconditionTimestamp && it <= endingPreconditionTimestamp;
+					}) == true)
+				{
+					return true;
+				}
+				if (log.EndingTimestamp?.Let(it => 
+					{
+						hasTimestamp = true;
+						return it >= beginningPreconditionTimestamp && it <= endingPreconditionTimestamp;
+					}) == true)
+				{
+					return true;
+				}
+				if (log.Timestamp?.Let(it => 
+					{
+						hasTimestamp = true;
+						return it >= beginningPreconditionTimestamp && it <= endingPreconditionTimestamp;
+					}) == true)
+				{
+					return true;
+				}
+				if (log.BeginningTimeSpan?.Let(it => 
+					{
+						hasTimeSpan = true;
+						return it >= beginningPreconditionTimeSpan && it <= endingPreconditionTimeSpan;
+					}) == true)
+				{
+					return true;
+				}
+				if (log.EndingTimeSpan?.Let(it => 
+					{
+						hasTimeSpan = true;
+						return it >= beginningPreconditionTimeSpan && it <= endingPreconditionTimeSpan;
+					}) == true)
+				{
+					return true;
+				}
+				if (log.TimeSpan?.Let(it => 
+					{
+						hasTimeSpan = true;
+						return it >= beginningPreconditionTimeSpan && it <= endingPreconditionTimeSpan;
+					}) == true)
+				{
+					return true;
+				}
+				return (!hasTimeSpan && !hasTimestamp);
+			} 
+			void FlushContinuousReadingLog(int updateInterval)
 			{
 				var log = readLog;
 				if (log != null)
@@ -801,7 +941,7 @@ namespace CarinaStudio.ULogViewer.Logs
 						this.flushPendingLogsAction.Schedule(updateInterval);
 					});
 				}
-			});
+			}
 			var dataSourceOptions = this.DataSource.CreationOptions;
 			var isReadingFromFile = dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName));
 			var stringPool = new StringPool();
@@ -856,10 +996,13 @@ namespace CarinaStudio.ULogViewer.Logs
 									if (logBuilder.IsNotEmpty())
 									{
 										readLog = logBuilder.BuildAndReset();
-										if (isContinuousReading)
-											flushContinuousReadingLog(updateInterval);
-										else
-											readLogs.Add(readLog);
+										if (IsPreconditionMatched(readLog))
+										{
+											if (isContinuousReading)
+												FlushContinuousReadingLog(updateInterval);
+											else
+												readLogs.Add(readLog);
+										}
 									}
 									logPatternIndex = 0;
 								}
@@ -884,10 +1027,13 @@ namespace CarinaStudio.ULogViewer.Logs
 							if (logBuilder.IsNotEmpty())
 							{
 								readLog = logBuilder.BuildAndReset();
-								if (isContinuousReading)
-									flushContinuousReadingLog(updateInterval);
-								else
-									readLogs.Add(readLog);
+								if (IsPreconditionMatched(readLog))
+								{
+									if (isContinuousReading)
+										FlushContinuousReadingLog(updateInterval);
+									else
+										readLogs.Add(readLog);
+								}
 							}
 
 							// need to move to next line if there is only one pattern or this is the first pattern
@@ -935,10 +1081,13 @@ namespace CarinaStudio.ULogViewer.Logs
 							if (logBuilder.IsNotEmpty())
 							{
 								readLog = logBuilder.BuildAndReset();
-								if (isContinuousReading)
-									flushContinuousReadingLog(updateInterval);
-								else
-									readLogs.Add(readLog);
+								if (IsPreconditionMatched(readLog))
+								{
+									if (isContinuousReading)
+										FlushContinuousReadingLog(updateInterval);
+									else
+										readLogs.Add(readLog);
+								}
 							}
 
 							// need to move to next line if there is only one pattern or this is the first pattern
@@ -974,7 +1123,7 @@ namespace CarinaStudio.ULogViewer.Logs
 					finally
 					{
 						if (isContinuousReading)
-							flushContinuousReadingLog(updateInterval);
+							FlushContinuousReadingLog(updateInterval);
 						else
 						{
 							var duration = (stopWatch.ElapsedMilliseconds - startReadingTime);
@@ -1070,8 +1219,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		{
 			// check state
 			this.VerifyAccess();
-			if (this.state != LogReaderState.Preparing)
-				throw new InvalidOperationException($"Cannot start log reading when state is {this.state}.");
+			this.VerifyPreparing();
 			if (this.logPatterns.IsEmpty())
 				throw new InvalidOperationException("No log pattern specified.");
 
@@ -1188,8 +1336,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			set
 			{
 				this.VerifyAccess();
-				if (this.state != LogReaderState.Preparing)
-					throw new InvalidOperationException($"Cannot change {nameof(TimeSpanCultureInfo)} when state is {this.state}.");
+				this.VerifyPreparing();
 				if (this.timeSpanCultureInfo.Equals(value))
 					return;
 				this.timeSpanCultureInfo = value;
@@ -1207,8 +1354,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			set
 			{
 				this.VerifyAccess();
-				if (this.state != LogReaderState.Preparing)
-					throw new InvalidOperationException($"Cannot change {nameof(TimeSpanEncoding)} when state is {this.state}.");
+				this.VerifyPreparing();
 				if (this.timeSpanEncoding == value)
 					return;
 				this.timeSpanEncoding = value;
@@ -1226,8 +1372,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			set
 			{
 				this.VerifyAccess();
-				if (this.state != LogReaderState.Preparing)
-					throw new InvalidOperationException($"Cannot change {nameof(TimeSpanFormats)} when state is {this.state}.");
+				this.VerifyPreparing();
 				if (this.timeSpanFormats.SequenceEqual(value))
 					return;
 				this.timeSpanFormats = value.ToArray().AsReadOnly();
@@ -1245,8 +1390,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			set
 			{
 				this.VerifyAccess();
-				if (this.state != LogReaderState.Preparing)
-					throw new InvalidOperationException($"Cannot change {nameof(TimestampCultureInfo)} when state is {this.state}.");
+				this.VerifyPreparing();
 				if (this.timestampCultureInfo.Equals(value))
 					return;
 				this.timestampCultureInfo = value;
@@ -1264,8 +1408,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			set
 			{
 				this.VerifyAccess();
-				if (this.state != LogReaderState.Preparing)
-					throw new InvalidOperationException($"Cannot change {nameof(TimestampEncoding)} when state is {this.state}.");
+				this.VerifyPreparing();
 				if (this.timestampEncoding == value)
 					return;
 				this.timestampEncoding = value;
@@ -1283,8 +1426,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			set
 			{
 				this.VerifyAccess();
-				if (this.state != LogReaderState.Preparing)
-					throw new InvalidOperationException($"Cannot change {nameof(TimestampFormats)} when state is {this.state}.");
+				this.VerifyPreparing();
 				if (this.timestampFormats.SequenceEqual(value))
 					return;
 				this.timestampFormats = value.ToArray().AsReadOnly();
@@ -1310,6 +1452,17 @@ namespace CarinaStudio.ULogViewer.Logs
 				this.updateInterval = value;
 				this.OnPropertyChanged(nameof(UpdateInterval));
 			}
+		}
+
+
+		// Throw exception if state is not Preparing.
+		void VerifyPreparing(string? changingPropertyName = null)
+		{
+			if (this.state == LogReaderState.Preparing)
+				return;
+			if (changingPropertyName != null)
+				throw new InvalidOperationException($"Cannot change {changingPropertyName} when state is {this.state}.");
+			throw new InvalidOperationException($"Cannot change property when state is {this.state}.");
 		}
 
 

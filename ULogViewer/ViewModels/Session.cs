@@ -3324,6 +3324,27 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			{
 				foreach (var markedLog in markedLogs)
 					markedLog.LineNumber?.Let(lineNumber => markedLogInfos.Add(new MarkedLogInfo(logFileName, lineNumber, markedLog.Log.Timestamp, markedLog.MarkedColor)));
+				var unmatchedMarkedLogInfos = this.unmatchedMarkedLogInfos;
+				var unmatchedInfoIndex = -1;
+				var pathComparer = PathEqualityComparer.Default;
+				for (var i = unmatchedMarkedLogInfos.Count - 1; i >= 0; --i)
+				{
+					if (pathComparer.Equals(unmatchedMarkedLogInfos[i].FileName, logFileName))
+					{
+						unmatchedInfoIndex = i;
+						break;
+					}
+				}
+				if (unmatchedInfoIndex >= 0)
+				{
+					var count = 0;
+					do
+					{
+						++count;
+						markedLogInfos.Add(unmatchedMarkedLogInfos[unmatchedInfoIndex--]);
+					} while (unmatchedInfoIndex >= 0 && pathComparer.Equals(unmatchedMarkedLogInfos[unmatchedInfoIndex].FileName, logFileName));
+					this.Logger.LogTrace($"Include {count} unmatched marked info of '{logFileName}'");
+				}
 			});
 			this.SaveMarkedLogs(logFileName, markedLogInfos);
 		}
