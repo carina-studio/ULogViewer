@@ -56,6 +56,18 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Raised when a set of analysis result has been added to a log.
+		/// </summary>
+		public event DirectDisplayableLogEventHandler? AnalysisResultAdded;
+
+
+		/// <summary>
+		/// Raised when a set of analysis result has been remoed from a log.
+		/// </summary>
+		public event DirectDisplayableLogEventHandler? AnalysisResultRemoved;
+
+
+		/// <summary>
 		/// Get <see cref="IULogViewerApplication"/> instance.
 		/// </summary>
 		public IULogViewerApplication Application { get; }
@@ -176,6 +188,22 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Get size of memory usage by the group in bytes.
 		/// </summary>
 		public long MemorySize { get; private set; }
+
+
+		/// <summary>
+		/// Called when a set of analysis result has been added to a log.
+		/// </summary>
+		/// <param name="log">Log.</param>
+		internal void OnAnalysisResultAdded(DisplayableLog log) =>
+			this.AnalysisResultAdded?.Invoke(this, log);
+		
+
+		/// <summary>
+		/// Called when a set of analysis result has been removed from a log.
+		/// </summary>
+		/// <param name="log">Log.</param>
+		internal void OnAnalysisResultRemoved(DisplayableLog log) =>
+			this.AnalysisResultRemoved?.Invoke(this, log);
 
 
 		// Called when application property changed.

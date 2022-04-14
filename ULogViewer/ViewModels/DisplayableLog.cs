@@ -29,6 +29,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		// Fields.
+		DisplayableLogAnalysisResult analysisResult;
 		CompressedString? beginningTimeSpanString;
 		CompressedString? beginningTimestampString;
 		CompressedString? endingTimeSpanString;
@@ -47,15 +48,17 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			foreach (var field in typeof(DisplayableLog).GetFields(BindingFlags.Instance | BindingFlags.NonPublic))
 			{
 				var type = field.FieldType;
+				if (type.IsEnum)
+					type = type.GetEnumUnderlyingType();
 				if (!type.IsValueType)
 					instanceFieldMemorySize += IntPtr.Size;
 				else if (type == typeof(byte))
 					instanceFieldMemorySize += 1;
-				else if (type == typeof(short))
+				else if (type == typeof(short) || type == typeof(ushort))
 					instanceFieldMemorySize += 2;
-				else if (type == typeof(int) || type.IsEnum)
+				else if (type == typeof(int) || type == typeof(uint))
 					instanceFieldMemorySize += 4;
-				else if (type == typeof(long))
+				else if (type == typeof(long) || type == typeof(ulong))
 					instanceFieldMemorySize += 8;
 				else
 					throw new NotSupportedException();
@@ -117,6 +120,29 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// notify group
 			group.OnDisplayableLogCreated(this);
 		}
+
+
+		/// <summary>
+		/// Add a set of analysis result to this log.
+		/// </summary>
+		/// <param name="result">Result to add.</param>
+		public void AddAnalysisResult(DisplayableLogAnalysisResult result)
+		{
+			this.VerifyAccess();
+			if (this.IsDisposed)
+				return;
+			if ((this.analysisResult & result) == result)
+				return;
+			this.analysisResult |= result;
+			this.Group.OnAnalysisResultAdded(this);
+			this.PropertyChanged?.Invoke(this, new(nameof(AnalysisResult)));
+		}
+
+
+		/// <summary>
+		/// Get set of analysis result.
+		/// </summary>
+		public DisplayableLogAnalysisResult AnalysisResult { get => this.analysisResult; }
 
 
 		/// <summary>
@@ -791,6 +817,23 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public string? ProcessName { get => this.Log.ProcessName; }
 
 
+		/// <summary>
+		/// Remove a set of analysis result from this log.
+		/// </summary>
+		/// <param name="result">Result to remove.</param>
+		public void RemoveAnalysisResult(DisplayableLogAnalysisResult result)
+		{
+			this.VerifyAccess();
+			if (this.IsDisposed)
+				return;
+			if ((this.analysisResult & result) == 0)
+				return;
+			this.analysisResult &= ~result;
+			this.Group.OnAnalysisResultRemoved(this);
+			this.PropertyChanged?.Invoke(this, new(nameof(AnalysisResult)));
+		}
+
+
 		// Setup property map.
 		static void SetupPropertyMap()
 		{
@@ -957,6 +1000,33 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		CarinaStudio.IApplication IApplicationObject.Application { get => this.Application; }
 		public event PropertyChangedEventHandler? PropertyChanged;
 		public SynchronizationContext SynchronizationContext { get => this.Application.SynchronizationContext; }
+	}
+
+
+	/// <summary>
+	/// Delegate of direct event handler for <see cref="DisplayableLog"/>.
+	/// </summary>
+	delegate void DirectDisplayableLogEventHandler(DisplayableLogGroup group, DisplayableLog log);
+
+
+	/// <summary>
+	/// Analysis result of <see cref="DisplayableLog"/>
+	/// </summary>
+	[Flags]
+	enum DisplayableLogAnalysisResult : ushort
+	{
+		/// <summary>
+		/// Start of section of logs.
+		/// </summary>
+		StartOfSection = 0x1,
+		/// <summary>
+		/// Warning.
+		/// </summary>
+		Warning = 0x10,
+		/// <summary>
+		/// Error.
+		/// </summary>
+		Error = 0x20,
 	}
 
 
