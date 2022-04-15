@@ -1,0 +1,59 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:abControls="using:CarinaStudio.Controls"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="CarinaStudio.ULogViewer.Controls.LogReadingPreconditionDialog"
+		Classes="Dialog"
+        Title="{DynamicResource String/LogReadingPreconditionDialog.Title}"
+		Width="{DynamicResource Double/LogReadingPreconditionDialog.Width}">
+
+	<DockPanel>
+
+		<!-- Control buttons -->
+		<Border Classes="Dialog_ControlButtonsPanel" DockPanel.Dock="Bottom">
+			<StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].GenerateResultCommand}" Content="{DynamicResource String/Common.OK}"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].Close}" Content="{DynamicResource String/Common.Cancel}"/>
+			</StackPanel>
+		</Border>
+
+		<!-- Content -->
+		<StackPanel Classes="Dialog_ContentPanel">
+			
+			<!-- Description -->
+			<Grid ColumnDefinitions="Auto,*">
+				<Image Classes="Dialog_Icon" Source="{DynamicResource Image/Icon.Information}"/>
+				<TextBlock Classes="Dialog_Icon_TextBlock" Grid.Column="1" Text="{DynamicResource String/LogReadingPreconditionDialog.Description}" TextWrapping="Wrap"/>
+			</Grid>
+			<Separator Classes="Dialog_Separator"/>
+
+			<!-- No precondition -->
+			<RadioButton Name="noPreconditionRadioButton" Classes="Dialog_RadioButton" Content="{DynamicResource String/LogReadingPreconditionDialog.NoPrecondition}"/>
+			<Separator Classes="Dialog_Separator_Small"/>
+
+			<!-- Timestamps -->
+			<RadioButton Name="timestampsRadioButton" Classes="Dialog_RadioButton" Content="{DynamicResource String/LogReadingPreconditionDialog.PreconditionTimestamps}"/>
+			<StackPanel Classes="Dialog_ContentPanel_Indented" IsEnabled="{Binding #timestampsRadioButton.IsChecked}">
+				<abControls:DateTimeTextBox Name="beginningTimestampTextBox" Classes="Dialog_TextBox"/>
+				<StackPanel Orientation="Horizontal">
+					<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/DateTimeSelectionDialog.DateTime}" VerticalAlignment="Center"/>
+					<TextBlock Classes="Dialog_TextBlock_Description" Text="{Binding #beginningTimestampTextBox.Value}" VerticalAlignment="Center"/>
+				</StackPanel>
+				<Separator Classes="Dialog_Separator_Small"/>
+				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogReadingPreconditionDialog.To}"/>
+				<abControls:DateTimeTextBox Name="endingTimestampTextBox" Classes="Dialog_TextBox"/>
+				<StackPanel Orientation="Horizontal">
+					<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/DateTimeSelectionDialog.DateTime}" VerticalAlignment="Center"/>
+					<TextBlock Classes="Dialog_TextBlock_Description" Text="{Binding #endingTimestampTextBox.Value}" VerticalAlignment="Center"/>
+				</StackPanel>
+				<Separator Classes="Dialog_Separator_Small"/>
+				<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/DateTimeTextBox.FormatDescription}"/>
+			</StackPanel>
+
+		</StackPanel>
+
+	</DockPanel>
+	
+</Window>

@@ -330,6 +330,13 @@
 	<sys:String x:Key="String/LogProperty.Uri">網址</sys:String>
 	<sys:String x:Key="String/LogProperty.UserName">使用者</sys:String>
 
+	<!-- LogReadingPreconditionDialog -->
+	<sys:String x:Key="String/LogReadingPreconditionDialog.Description">您可以為即將讀取的日誌指定預先條件，它不會影響已經或正在讀取的日誌。</sys:String>
+	<sys:String x:Key="String/LogReadingPreconditionDialog.NoPrecondition">不需要預先條件</sys:String>
+	<sys:String x:Key="String/LogReadingPreconditionDialog.PreconditionTimestamps">讀取時間戳介於</sys:String>
+	<sys:String x:Key="String/LogReadingPreconditionDialog.Title">日誌讀取預先條件</sys:String>
+	<sys:String x:Key="String/LogReadingPreconditionDialog.To">至</sys:String>
+
 	<!-- LogSortKey -->
 	<sys:String x:Key="String/LogSortKey.BeginningTimeSpan">日誌起始時距</sys:String>
 	<sys:String x:Key="String/LogSortKey.BeginningTimestamp">日誌起始時間</sys:String>

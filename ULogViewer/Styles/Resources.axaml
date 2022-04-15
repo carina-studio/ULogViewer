@@ -68,6 +68,9 @@
 	<Thickness x:Key="Thickness/LogProfileSelectionDialog.LogProfile.Name.Margin">0,0,5,5</Thickness>
 	<Thickness x:Key="Thickness/LogProfileSelectionDialog.LogProfile.Padding">15,13,15,13</Thickness>
 
+	<!-- LogReadingPreconditionDialog -->
+	<sys:Double x:Key="Double/LogReadingPreconditionDialog.Width">500</sys:Double>
+
 	<!-- LogStringPropertyDialog -->
 	<sys:Double x:Key="Double/LogStringPropertyDialog.Height">500</sys:Double>
 	<sys:Double x:Key="Double/LogStringPropertyDialog.MinHeight">300</sys:Double>
