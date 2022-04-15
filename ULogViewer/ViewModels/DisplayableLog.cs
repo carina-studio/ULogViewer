@@ -509,6 +509,15 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Check whether given property of log with <see cref="DateTime"/> value is existing or not.
+		/// </summary>
+		/// <param name="propertyName">Name of property.</param>
+		/// <returns>True if property of log is existing.</returns>
+		public static bool HasDateTimeProperty(string propertyName) =>
+			Log.HasDateTimeProperty(propertyName);
+
+
+		/// <summary>
 		/// Check whether number of lines in <see cref="Extra1"/> is greater than <see cref="DisplayableLogGroup.MaxDisplayLineCount"/> or not.
 		/// </summary>
 		public bool HasExtraLinesOfExtra1 { get => this.CheckExtraLinesOfExtra(0); }

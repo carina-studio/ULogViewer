@@ -61,6 +61,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<bool> AreLogsSortedByTimestampProperty = ObservableProperty.Register<Session, bool>(nameof(AreLogsSortedByTimestamp));
 		/// <summary>
+		/// Property of <see cref="BeginningPreconditionTimestamp"/>.
+		/// </summary>
+		public static readonly ObservableProperty<DateTime?> BeginningPreconditionTimestampProperty = ObservableProperty.Register<Session, DateTime?>(nameof(BeginningPreconditionTimestamp));
+		/// <summary>
 		/// Property of <see cref="CustomTitle"/>.
 		/// </summary>
 		public static readonly ObservableProperty<string?> CustomTitleProperty = ObservableProperty.Register<Session, string?>(nameof(CustomTitle), coerce: (_, it) => string.IsNullOrWhiteSpace(it) ? null : it);
@@ -72,6 +76,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Property of <see cref="EarliestLogTimestamp"/>.
 		/// </summary>
 		public static readonly ObservableProperty<DateTime?> EarliestLogTimestampProperty = ObservableProperty.Register<Session, DateTime?>(nameof(EarliestLogTimestamp));
+		/// <summary>
+		/// Property of <see cref="EndingPreconditionTimestamp"/>.
+		/// </summary>
+		public static readonly ObservableProperty<DateTime?> EndingPreconditionTimestampProperty = ObservableProperty.Register<Session, DateTime?>(nameof(EndingPreconditionTimestamp));
 		/// <summary>
 		/// Property of <see cref="FilteredLogCount"/>.
 		/// </summary>
@@ -132,6 +140,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Property of <see cref="HasUri"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> HasUriProperty = ObservableProperty.Register<Session, bool>(nameof(HasUri));
+		/// <summary>
+		/// Property of <see cref="HasTimestampDisplayableLogProperty"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> HasTimestampDisplayableLogPropertyProperty = ObservableProperty.Register<Session, bool>(nameof(HasTimestampDisplayableLogProperty));
 		/// <summary>
 		/// Property of <see cref="HasWorkingDirectory"/>.
 		/// </summary>
@@ -987,6 +999,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Get or set beginning timestamp of log reading precondition.
+		/// </summary>
+		public DateTime? BeginningPreconditionTimestamp
+		{ 
+			get => this.GetValue(BeginningPreconditionTimestampProperty);
+			set => this.SetValue(BeginningPreconditionTimestampProperty, value); 
+		}
+
+
+		/// <summary>
 		/// Calculate duration between given logs.
 		/// </summary>
 		/// <param name="x">First log.</param>
@@ -1070,6 +1092,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// update title
 			this.updateTitleAndIconAction.Schedule();
+
+			// reset log reading precondition
+			this.ResetValue(BeginningPreconditionTimestampProperty);
+			this.ResetValue(EndingPreconditionTimestampProperty);
 		}
 
 
@@ -1384,6 +1410,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			{
 				if (profile.IsContinuousReading)
 					it.UpdateInterval = this.ContinuousLogReadingUpdateInterval;
+				if (this.GetValue(HasTimestampDisplayableLogPropertyProperty))
+				{
+					it.BeginningPreconditionTimestamp = this.GetValue(BeginningPreconditionTimestampProperty);
+					it.EndingPreconditionTimestamp = this.GetValue(EndingPreconditionTimestampProperty);
+				}
 				it.IsContinuousReading = profile.IsContinuousReading;
 				it.LogLevelMap = profile.LogLevelMapForReading;
 				if (profile.LogPatterns.IsNotEmpty())
@@ -1726,6 +1757,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Get or set ending timestamp of log reading precondition.
+		/// </summary>
+		public DateTime? EndingPreconditionTimestamp
+		{ 
+			get => this.GetValue(EndingPreconditionTimestampProperty);
+			set => this.SetValue(EndingPreconditionTimestampProperty, value); 
+		}
+
+
+		/// <summary>
 		/// Raised when error message generated.
 		/// </summary>
 		public event EventHandler<MessageEventArgs>? ErrorMessageGenerated;
@@ -1897,6 +1938,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Check whether URI has been set or not.
 		/// </summary>
 		public bool HasUri { get => this.GetValue(HasUriProperty); }
+
+
+		/// <summary>
+		/// Check whether at least one property of <see cref="DisplayableLog"/> which represents timestamp will be shown in UI or not.
+		/// </summary>
+		public bool HasTimestampDisplayableLogProperty { get => this.GetValue(HasTimestampDisplayableLogPropertyProperty); }
 
 
 		/// <summary>
@@ -2886,6 +2933,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// clear file name table
 			this.addedLogFilePaths.Clear();
 
+			// clear log reading precondition
+			this.ResetValue(BeginningPreconditionTimestampProperty);
+			this.ResetValue(EndingPreconditionTimestampProperty);
+
 			// clear display log properties
 			this.UpdateDisplayLogProperties();
 
@@ -3051,6 +3102,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					return;
 				}
 				this.SetLogProfile(profile, false);
+
+				// setup log reading precondition
+				if (jsonState.TryGetProperty(nameof(BeginningPreconditionTimestamp), out jsonValue) && jsonValue.TryGetInt64(out var longValue))
+					this.SetValue(BeginningPreconditionTimestampProperty, DateTime.FromBinary(longValue));
+				if (jsonState.TryGetProperty(nameof(EndingPreconditionTimestamp), out jsonValue) && jsonValue.TryGetInt64(out longValue))
+					this.SetValue(EndingPreconditionTimestampProperty, DateTime.FromBinary(longValue));
 
 				// create log readers
 				if (jsonState.TryGetProperty("LogReaders", out jsonValue) && jsonValue.ValueKind == JsonValueKind.Array)
@@ -3481,6 +3538,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// update valid log levels
 			this.UpdateValidLogLevels();
 
+			// reset log reading precondition
+			this.ResetValue(BeginningPreconditionTimestampProperty);
+			this.ResetValue(EndingPreconditionTimestampProperty);
+
 			// read logs or wait for more actions
 			var dataSourceOptions = profile.DataSourceOptions;
 			var dataSourceProvider = profile.DataSourceProvider;
@@ -3587,6 +3648,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					jsonWriter.WriteEndObject();
 				}
 				jsonWriter.WriteEndArray();
+
+				// save log reading precondition
+				this.GetValue(BeginningPreconditionTimestampProperty)?.Let(it =>
+					jsonWriter.WriteNumber(nameof(BeginningPreconditionTimestamp), it.ToBinary()));
+				this.GetValue(EndingPreconditionTimestampProperty)?.Let(it =>
+					jsonWriter.WriteNumber(nameof(EndingPreconditionTimestamp), it.ToBinary()));
 
 				// save filtering parameters
 				jsonWriter.WriteString(nameof(LogFiltersCombinationMode), this.LogFiltersCombinationMode.ToString());
@@ -3857,6 +3924,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			var profile = this.LogProfile;
 			if (profile == null)
 			{
+				this.ResetValue(HasTimestampDisplayableLogPropertyProperty);
 				this.SetValue(DisplayLogPropertiesProperty, DisplayLogPropertiesProperty.DefaultValue);
 				this.logFilter.FilteringLogProperties = DisplayLogPropertiesProperty.DefaultValue;
 			}
@@ -3865,11 +3933,17 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				var app = (IULogViewerApplication)this.Application;
 				var visibleLogProperties = profile.VisibleLogProperties;
 				var displayLogProperties = new List<DisplayableLogProperty>();
+				var hasTimestamp = false;
 				foreach (var logProperty in visibleLogProperties)
+				{
 					displayLogProperties.Add(new DisplayableLogProperty(app, logProperty));
+					if (!hasTimestamp)
+						hasTimestamp = DisplayableLog.HasDateTimeProperty(logProperty.Name);
+				}
 				if (displayLogProperties.IsEmpty())
 					displayLogProperties.Add(new DisplayableLogProperty(app, nameof(DisplayableLog.Message), "RawData", null));
 				this.SetValue(DisplayLogPropertiesProperty, new SafeReadOnlyList<DisplayableLogProperty>(displayLogProperties));
+				this.SetValue(HasTimestampDisplayableLogPropertyProperty, hasTimestamp);
 				this.logFilter.FilteringLogProperties = displayLogProperties;
 			}
 		}
