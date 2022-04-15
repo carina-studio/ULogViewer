@@ -633,7 +633,7 @@ abstract class DisplayableLogProcessor<TProcessingToken, TProcessingResult> : Ba
             else
             {
                 var index = it.Count - chunkSize;
-                var list = ObtainInternalDisplayableLogList(it.GetRangeAsEnumerable(index, chunkSize));
+                var list = ObtainInternalDisplayableLogList(it.GetRangeView(index, chunkSize));
                 it.RemoveRange(index, chunkSize);
                 return list;
             }
