@@ -108,11 +108,6 @@
 
 	<!-- DateTimeSelectionDialog -->
 	<sys:String x:Key="String/DateTimeSelectionDialog.DateTime">Date and time:</sys:String>
-	<sys:String x:Key="String/DateTimeSelectionDialog.DateTimeFormatDescription">Supported formats:
-1.Common date and time format in English.
-2.Common date and time format in current language.
-3.Unix timestamp in seconds/milliseconds/microseconds.
-4.Text in format 'yyyyMMdd_HH:mm:ss.ffffff'. Year, seconds, sub seconds and ':' can be eliminated.</sys:String>
 	<sys:String x:Key="String/DateTimeSelectionDialog.Title">Select date and time</sys:String>
 	
 	<!-- FileFormat -->

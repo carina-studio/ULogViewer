@@ -32,7 +32,7 @@
 				<TextBlock Classes="Dialog_TextBlock_Description" Text="{Binding #dateTimeTextBox.Value}" VerticalAlignment="Center"/>
 			</StackPanel>
 			<Separator Classes="Dialog_Separator"/>
-			<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/DateTimeSelectionDialog.DateTimeFormatDescription}"/>
+			<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/DateTimeTextBox.FormatDescription}"/>
 			
 		</StackPanel>
 

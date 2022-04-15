@@ -110,11 +110,6 @@
 
 	<!-- DateTimeSelectionDialog -->
 	<sys:String x:Key="String/DateTimeSelectionDialog.DateTime">日期與時間：</sys:String>
-	<sys:String x:Key="String/DateTimeSelectionDialog.DateTimeFormatDescription">支援的格式：
-1.英語慣用的日期時間格式。
-2.目前語系慣用的日期時間格式。
-3.Unix 時間戳記，單位可以為秒、毫秒或微秒。
-4.格式為 'yyyyMMdd_HH:mm:ss.ffffff' 的文字，其中年份、秒、毫微秒以及 ':' 可以省略。</sys:String>
 	<sys:String x:Key="String/DateTimeSelectionDialog.Title">選擇日期與時間</sys:String>
 
 	<!-- FileFormat -->
