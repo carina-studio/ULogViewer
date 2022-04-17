@@ -61,10 +61,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<bool> AreLogsSortedByTimestampProperty = ObservableProperty.Register<Session, bool>(nameof(AreLogsSortedByTimestamp));
 		/// <summary>
-		/// Property of <see cref="BeginningPreconditionTimestamp"/>.
-		/// </summary>
-		public static readonly ObservableProperty<DateTime?> BeginningPreconditionTimestampProperty = ObservableProperty.Register<Session, DateTime?>(nameof(BeginningPreconditionTimestamp));
-		/// <summary>
 		/// Property of <see cref="CustomTitle"/>.
 		/// </summary>
 		public static readonly ObservableProperty<string?> CustomTitleProperty = ObservableProperty.Register<Session, string?>(nameof(CustomTitle), coerce: (_, it) => string.IsNullOrWhiteSpace(it) ? null : it);
@@ -76,10 +72,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Property of <see cref="EarliestLogTimestamp"/>.
 		/// </summary>
 		public static readonly ObservableProperty<DateTime?> EarliestLogTimestampProperty = ObservableProperty.Register<Session, DateTime?>(nameof(EarliestLogTimestamp));
-		/// <summary>
-		/// Property of <see cref="EndingPreconditionTimestamp"/>.
-		/// </summary>
-		public static readonly ObservableProperty<DateTime?> EndingPreconditionTimestampProperty = ObservableProperty.Register<Session, DateTime?>(nameof(EndingPreconditionTimestamp));
 		/// <summary>
 		/// Property of <see cref="FilteredLogCount"/>.
 		/// </summary>
@@ -442,6 +434,17 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		}
 
 
+		// Options of log reader.
+		class LogReaderOptions
+		{
+			public readonly LogDataSourceOptions DataSourceOptions;
+			public LogReadingPrecondition Precondition;
+
+			public LogReaderOptions(LogDataSourceOptions dataSourceOptions) =>
+				this.DataSourceOptions = dataSourceOptions;
+		}
+
+
 		// Class for marked log info.
 		class MarkedLogInfo
 		{
@@ -493,13 +496,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly Stopwatch logsFilteringWatch = new Stopwatch();
 		readonly Stopwatch logsReadingWatch = new Stopwatch();
 		readonly SortedObservableList<DisplayableLog> markedLogs;
-		readonly HashSet<string> markedLogsChangedFilePaths = new HashSet<string>(PathEqualityComparer.Default);
+		readonly HashSet<string> markedLogsChangedFilePaths = new(PathEqualityComparer.Default);
 		readonly ObservableList<PredefinedLogTextFilter> predefinedLogTextFilters;
 		readonly ScheduledAction reportLogsTimeInfoAction;
-		readonly List<LogDataSourceOptions> savedDataSourceOptions = new List<LogDataSourceOptions>();
+		readonly List<LogReaderOptions> savedLogReaderOptions = new();
 		readonly ScheduledAction saveMarkedLogsAction;
 		readonly ScheduledAction selectLogsToReportActions;
-		readonly List<MarkedLogInfo> unmatchedMarkedLogInfos = new List<MarkedLogInfo>();
+		readonly List<MarkedLogInfo> unmatchedMarkedLogInfos = new();
 		readonly ScheduledAction updateIsReadingLogsAction;
 		readonly ScheduledAction updateIsProcessingLogsAction;
 		readonly ScheduledAction updateLogFilterAction;
@@ -917,7 +920,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				// restore from hibernation
 				if (this.IsHibernated)
 				{
-					this.Logger.LogWarning($"Leave hibernation with {this.savedDataSourceOptions.Count} log reader(s)");
+					this.Logger.LogWarning($"Leave hibernation with {this.savedLogReaderOptions.Count} log reader(s)");
 
 					// restore log readers
 					this.RestoreLogReaders();
@@ -963,7 +966,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				return;
 
 			// create log reader
-			this.CreateLogReader(dataSource);
+			this.CreateLogReader(dataSource, new());
 		}
 
 
@@ -996,16 +999,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Check whether logs are sorted by one of <see cref="Log.BeginningTimestamp"/>, <see cref="Log.EndingTimestamp"/>, <see cref="Log.Timestamp"/> or not.
 		/// </summary>
 		public bool AreLogsSortedByTimestamp { get => this.GetValue(AreLogsSortedByTimestampProperty); }
-
-
-		/// <summary>
-		/// Get or set beginning timestamp of log reading precondition.
-		/// </summary>
-		public DateTime? BeginningPreconditionTimestamp
-		{ 
-			get => this.GetValue(BeginningPreconditionTimestampProperty);
-			set => this.SetValue(BeginningPreconditionTimestampProperty, value); 
-		}
 
 
 		/// <summary>
@@ -1092,10 +1085,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// update title
 			this.updateTitleAndIconAction.Schedule();
-
-			// reset log reading precondition
-			this.ResetValue(BeginningPreconditionTimestampProperty);
-			this.ResetValue(EndingPreconditionTimestampProperty);
 		}
 
 
@@ -1393,7 +1382,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		// Create log reader.
-		void CreateLogReader(ILogDataSource dataSource)
+		void CreateLogReader(ILogDataSource dataSource, LogReadingPrecondition precondition)
 		{
 			// prepare displayable log group
 			var profile = this.LogProfile ?? throw new InternalStateCorruptedException("No log profile to create log reader.");
@@ -1410,13 +1399,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			{
 				if (profile.IsContinuousReading)
 					it.UpdateInterval = this.ContinuousLogReadingUpdateInterval;
-				if (this.GetValue(HasTimestampDisplayableLogPropertyProperty))
-				{
-					it.Precondition = new LogReadingPrecondition()
-					{
-						TimestampRange = (this.GetValue(BeginningPreconditionTimestampProperty), this.GetValue(EndingPreconditionTimestampProperty)),
-					};
-				}
 				it.IsContinuousReading = profile.IsContinuousReading;
 				it.LogLevelMap = profile.LogLevelMapForReading;
 				if (profile.LogPatterns.IsNotEmpty())
@@ -1429,6 +1411,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					it.MaxLogCount = this.Settings.GetValueOrDefault(SettingKeys.MaxContinuousLogCount);
 					it.RestartReadingDelay = TimeSpan.FromMilliseconds(profile.RestartReadingDelay);
 				}
+				it.Precondition = precondition;
 				it.TimeSpanCultureInfo = profile.TimeSpanCultureInfoForReading;
 				it.TimeSpanEncoding = profile.TimeSpanEncodingForReading;
 				it.TimeSpanFormats = profile.TimeSpanFormatsForReading;
@@ -1756,16 +1739,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Get earliest timestamp of log in <see cref="Logs"/>.
 		/// </summary>
 		public DateTime? EarliestLogTimestamp { get => this.GetValue(EarliestLogTimestampProperty); }
-
-
-		/// <summary>
-		/// Get or set ending timestamp of log reading precondition.
-		/// </summary>
-		public DateTime? EndingPreconditionTimestamp
-		{ 
-			get => this.GetValue(EndingPreconditionTimestampProperty);
-			set => this.SetValue(EndingPreconditionTimestampProperty, value); 
-		}
 
 
 		/// <summary>
@@ -2865,7 +2838,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				// save log readers
 				this.SaveLogReaders();
 
-				this.Logger.LogWarning($"Reload logs with {this.savedDataSourceOptions.Count} log reader(s)");
+				this.Logger.LogWarning($"Reload logs with {this.savedLogReaderOptions.Count} log reader(s)");
 
 				// dispose log readers
 				this.DisposeLogReaders();
@@ -2935,10 +2908,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// clear file name table
 			this.addedLogFilePaths.Clear();
 
-			// clear log reading precondition
-			this.ResetValue(BeginningPreconditionTimestampProperty);
-			this.ResetValue(EndingPreconditionTimestampProperty);
-
 			// clear display log properties
 			this.UpdateDisplayLogProperties();
 
@@ -2963,12 +2932,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			var profile = this.LogProfile;
 			if (profile == null)
 			{
-				this.Logger.LogError($"No log profile to restore {this.savedDataSourceOptions.Count} log reader(s)");
-				this.savedDataSourceOptions.Clear();
+				this.Logger.LogError($"No log profile to restore {this.savedLogReaderOptions.Count} log reader(s)");
+				this.savedLogReaderOptions.Clear();
 				return;
 			}
 
-			this.Logger.LogWarning($"Start restoring {this.savedDataSourceOptions.Count} log reader(s)");
+			this.Logger.LogWarning($"Start restoring {this.savedLogReaderOptions.Count} log reader(s)");
 
 			// dispose current log readers
 			this.DisposeLogReaders();
@@ -3039,13 +3008,17 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			if (useDefaultDataSourceOptions)
 			{
 				this.Logger.LogWarning("Restore log reader(s) using default data source options");
-				this.savedDataSourceOptions.Clear();
-				this.savedDataSourceOptions.Add(defaultDataSourceOptions);
+				var precondition = this.savedLogReaderOptions.FirstOrDefault()?.Precondition ?? new();
+				this.savedLogReaderOptions.Clear();
+				this.savedLogReaderOptions.Add(new LogReaderOptions(defaultDataSourceOptions)
+				{
+					Precondition = precondition,
+				});
 			}
-			foreach (var dataSourceOption in this.savedDataSourceOptions)
+			foreach (var logReaderOption in this.savedLogReaderOptions)
 			{
 				// apply default options
-				var newDataSourceOptions = dataSourceOption;
+				var newDataSourceOptions = logReaderOption.DataSourceOptions;
 				newDataSourceOptions.Command = defaultDataSourceOptions.Command;
 				newDataSourceOptions.Encoding = defaultDataSourceOptions.Encoding;
 				newDataSourceOptions.SetupCommands = defaultDataSourceOptions.SetupCommands;
@@ -3054,14 +3027,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				// create data source and reader
 				var dataSource = this.CreateLogDataSourceOrNull(dataSourceProvider, newDataSourceOptions);
 				if (dataSource != null)
-					this.CreateLogReader(dataSource);
+					this.CreateLogReader(dataSource, logReaderOption.Precondition);
 				else
 				{
 					this.hasLogDataSourceCreationFailure = true;
 					this.checkDataSourceErrorsAction.Schedule();
 				}
 			}
-			this.savedDataSourceOptions.Clear();
+			this.savedLogReaderOptions.Clear();
 
 			this.Logger.LogWarning($"Complete restoring {this.logReaders.Count} log reader(s)");
 		}
@@ -3105,39 +3078,40 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				}
 				this.SetLogProfile(profile, false);
 
-				// setup log reading precondition
-				if (jsonState.TryGetProperty(nameof(BeginningPreconditionTimestamp), out jsonValue) && jsonValue.TryGetInt64(out var longValue))
-					this.SetValue(BeginningPreconditionTimestampProperty, DateTime.FromBinary(longValue));
-				if (jsonState.TryGetProperty(nameof(EndingPreconditionTimestamp), out jsonValue) && jsonValue.TryGetInt64(out longValue))
-					this.SetValue(EndingPreconditionTimestampProperty, DateTime.FromBinary(longValue));
-
 				// create log readers
 				if (jsonState.TryGetProperty("LogReaders", out jsonValue) && jsonValue.ValueKind == JsonValueKind.Array)
 				{
 					// restore data source options
-					this.savedDataSourceOptions.Clear();
+					this.savedLogReaderOptions.Clear();
 					foreach (var jsonLogReader in jsonValue.EnumerateArray())
 					{
 						// get data source options
 						if (!jsonLogReader.TryGetProperty("Options", out jsonValue) || jsonValue.ValueKind != JsonValueKind.Object)
 							continue;
-						var options = new LogDataSourceOptions();
+						var dataSourceOptions = new LogDataSourceOptions();
 						try
 						{
-							options = LogDataSourceOptions.Load(jsonValue);
-							this.savedDataSourceOptions.Add(options);
+							dataSourceOptions = LogDataSourceOptions.Load(jsonValue);
 						}
 						catch (Exception ex)
 						{
 							this.Logger.LogError(ex, "Failed to restore data source options");
 							continue;
 						}
+						var logReaderOptions = new LogReaderOptions(dataSourceOptions);
+
+						// get precondition
+						if (jsonLogReader.TryGetProperty("Precondition", out jsonValue))
+							logReaderOptions.Precondition = LogReadingPrecondition.Load(jsonValue);
+
+						// add options to list
+						this.savedLogReaderOptions.Add(logReaderOptions);
 
 						// check file paths
-						if (options.IsOptionSet(nameof(LogDataSourceOptions.FileName)))
-							this.addedLogFilePaths.Add(options.FileName.AsNonNull());
+						if (dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName)))
+							this.addedLogFilePaths.Add(dataSourceOptions.FileName.AsNonNull());
 					}
-					this.Logger.LogTrace($"{this.savedDataSourceOptions.Count} log reader(s) can be restored");
+					this.Logger.LogTrace($"{this.savedLogReaderOptions.Count} log reader(s) can be restored");
 
 					// restore log readers
 					if (!this.IsHibernated)
@@ -3213,7 +3187,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		void SaveLogReaders()
         {
 			// prepare
-			this.savedDataSourceOptions.Clear();
+			this.savedLogReaderOptions.Clear();
 
 			// check log reader
 			if (this.logReaders.IsEmpty())
@@ -3229,9 +3203,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// save data source options
 			foreach (var logReader in this.logReaders)
-				this.savedDataSourceOptions.Add(logReader.DataSource.CreationOptions);
+			{
+				this.savedLogReaderOptions.Add(new(logReader.DataSource.CreationOptions)
+				{
+					Precondition = logReader.Precondition,
+				});
+			}
 
-			this.Logger.LogWarning($"Complete saving {this.savedDataSourceOptions.Count} log reader(s)");
+			this.Logger.LogWarning($"Complete saving {this.savedLogReaderOptions.Count} log reader(s)");
 		}
 
 
@@ -3501,7 +3480,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			}
 
 			// create log reader
-			this.CreateLogReader(dataSource);
+			this.CreateLogReader(dataSource, new());
 		}
 
 
@@ -3539,10 +3518,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// update valid log levels
 			this.UpdateValidLogLevels();
-
-			// reset log reading precondition
-			this.ResetValue(BeginningPreconditionTimestampProperty);
-			this.ResetValue(EndingPreconditionTimestampProperty);
 
 			// read logs or wait for more actions
 			var dataSourceOptions = profile.DataSourceOptions;
@@ -3592,7 +3567,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.Logger.LogDebug($"Start reading logs for source '{dataSourceProvider.Name}'");
 				var dataSource = this.CreateLogDataSourceOrNull(dataSourceProvider, dataSourceOptions);
 				if (dataSource != null)
-					this.CreateLogReader(dataSource);
+					this.CreateLogReader(dataSource, new());
 				else
 				{
 					this.hasLogDataSourceCreationFailure = true;
@@ -3638,24 +3613,20 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				jsonWriter.WriteString(nameof(LogProfile), profile.Id);
 
 				// save log readers
-				if (this.savedDataSourceOptions.IsEmpty())
+				if (this.savedLogReaderOptions.IsEmpty())
 					this.SaveLogReaders();
 				jsonWriter.WritePropertyName("LogReaders");
 				jsonWriter.WriteStartArray();
-				foreach (var dataSourceOptions in this.savedDataSourceOptions)
+				foreach (var logReaderOptions in this.savedLogReaderOptions)
 				{
 					jsonWriter.WriteStartObject();
 					jsonWriter.WritePropertyName("Options");
-					dataSourceOptions.Save(jsonWriter);
+					logReaderOptions.DataSourceOptions.Save(jsonWriter);
+					jsonWriter.WritePropertyName("Precondition");
+					logReaderOptions.Precondition.Save(jsonWriter);
 					jsonWriter.WriteEndObject();
 				}
 				jsonWriter.WriteEndArray();
-
-				// save log reading precondition
-				this.GetValue(BeginningPreconditionTimestampProperty)?.Let(it =>
-					jsonWriter.WriteNumber(nameof(BeginningPreconditionTimestamp), it.ToBinary()));
-				this.GetValue(EndingPreconditionTimestampProperty)?.Let(it =>
-					jsonWriter.WriteNumber(nameof(EndingPreconditionTimestamp), it.ToBinary()));
 
 				// save filtering parameters
 				jsonWriter.WriteString(nameof(LogFiltersCombinationMode), this.LogFiltersCombinationMode.ToString());
@@ -3737,7 +3708,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			}
 
 			// create log reader
-			this.CreateLogReader(dataSource);
+			this.CreateLogReader(dataSource, new());
 		}
 
 
@@ -3790,7 +3761,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			}
 
 			// create log reader
-			this.CreateLogReader(dataSource);
+			this.CreateLogReader(dataSource, new());
 		}
 
 
