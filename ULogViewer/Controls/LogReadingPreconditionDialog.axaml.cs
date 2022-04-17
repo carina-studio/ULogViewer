@@ -13,16 +13,6 @@ namespace CarinaStudio.ULogViewer.Controls
     /// </summary>
     partial class LogReadingPreconditionDialog : AppSuite.Controls.InputDialog
     {
-        /// <summary>
-        /// Log reading precondition.
-        /// </summary>
-        public struct LogReadingPrecondition
-        {
-            public DateTime? BeginningTimestamp;
-            public DateTime? EndingTimestamp;
-        }
-
-
         // Fields.
         readonly DateTimeTextBox beginningTimestampTextBox;
         readonly DateTimeTextBox endingTimestampTextBox;
@@ -57,15 +47,12 @@ namespace CarinaStudio.ULogViewer.Controls
 
         // Generate result.
         protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken) =>
-            Task.FromResult((object?)new LogReadingPrecondition().Also(it =>
+            Task.FromResult((object?)new Logs.LogReadingPrecondition().Also(it =>
             {
                 if (this.noPreconditionRadioButton.IsChecked == true)
                     return;
                 if (this.timestampsRadioButton.IsChecked == true)
-                {
-                    it.BeginningTimestamp = this.beginningTimestampTextBox.Value;
-                    it.EndingTimestamp = this.endingTimestampTextBox.Value;
-                }
+                    it.TimestampRange = (this.beginningTimestampTextBox.Value, this.endingTimestampTextBox.Value);
             }));
 
 
@@ -74,11 +61,11 @@ namespace CarinaStudio.ULogViewer.Controls
         {
             base.OnOpened(e);
             var precondition = this.Precondition;
-            if (precondition.BeginningTimestamp.HasValue || precondition.EndingTimestamp.HasValue)
+            if (!precondition.TimeSpanRange.IsUniversal)
             {
                 this.timestampsRadioButton.IsChecked = true;
-                this.beginningTimestampTextBox.Value = precondition.BeginningTimestamp;
-                this.endingTimestampTextBox.Value = precondition.EndingTimestamp;
+                this.beginningTimestampTextBox.Value = precondition.TimestampRange.Start;
+                this.endingTimestampTextBox.Value = precondition.TimestampRange.End;
             }
             else
             {
@@ -100,8 +87,15 @@ namespace CarinaStudio.ULogViewer.Controls
             if (this.timestampsRadioButton.IsChecked == true)
             {
                 if (this.beginningTimestampTextBox.IsTextValid && this.beginningTimestampTextBox.Value.HasValue)
+                {
+                    if (this.endingTimestampTextBox.IsTextValid && this.endingTimestampTextBox.Value.HasValue)
+                    {
+                        if (this.beginningTimestampTextBox.Value.Value >= this.endingTimestampTextBox.Value.Value)
+                            return false;
+                    }
                     return true;
-                if (this.endingTimestampTextBox.IsTextValid && this.endingTimestampTextBox.Value.HasValue)
+                }
+                else if (this.endingTimestampTextBox.IsTextValid && this.endingTimestampTextBox.Value.HasValue)
                     return true;
                 return false;
             }
@@ -110,6 +104,6 @@ namespace CarinaStudio.ULogViewer.Controls
         
 
         // Precondition.
-        public LogReadingPrecondition Precondition { get; set; }
+        public Logs.LogReadingPrecondition Precondition { get; set; }
     }
 }

@@ -348,10 +348,10 @@
 
 	<!-- LogReadingPreconditionDialog -->
 	<sys:String x:Key="String/LogReadingPreconditionDialog.Description">You can set the precondition of logs to be read. It won't affect logs which were being or already read.</sys:String>
+	<sys:String x:Key="String/LogReadingPreconditionDialog.EndingTimestamp">to (exclusive)</sys:String>
 	<sys:String x:Key="String/LogReadingPreconditionDialog.NoPrecondition">Read without precondition</sys:String>
 	<sys:String x:Key="String/LogReadingPreconditionDialog.PreconditionTimestamps">Read with timestamp between</sys:String>
 	<sys:String x:Key="String/LogReadingPreconditionDialog.Title">Precondition of log reading</sys:String>
-	<sys:String x:Key="String/LogReadingPreconditionDialog.To">to</sys:String>
 
 	<!-- LogSortKey -->
 	<sys:String x:Key="String/LogSortKey.BeginningTimeSpan">Beginning time span of log</sys:String>

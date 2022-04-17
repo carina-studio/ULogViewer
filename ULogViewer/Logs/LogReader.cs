@@ -31,11 +31,7 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		// Fields.
-		TimeSpan? beginningPreconditionTimeSpan;
-		DateTime? beginningPreconditionTimestamp;
 		int dropLogCount = -1;
-		TimeSpan? endingPreconditionTimeSpan;
-		DateTime? endingPreconditionTimestamp;
 		readonly ScheduledAction flushPendingLogsAction;
 		bool isContinuousReading;
 		bool isWaitingForDataSource;
@@ -50,6 +46,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		readonly List<Log> pendingLogs = new List<Log>();
 		object? pendingLogsReadingToken;
 		readonly SingleThreadSynchronizationContext pendingLogsSyncContext = new SingleThreadSynchronizationContext();
+		LogReadingPrecondition precondition;
 		readonly IDictionary<string, LogLevel> readOnlyLogLevelMap;
 		readonly TaskFactory readingTaskFactory;
 		TimeSpan restartReadingDelay;
@@ -114,42 +111,6 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// Get <see cref="IULogViewerApplication"/> instance.
 		/// </summary>
 		public IULogViewerApplication Application { get; }
-
-
-		/// <summary>
-		/// Get or set beginning time span for precondition of logs reading.
-		/// </summary>
-		public TimeSpan? BeginningPreconditionTimeSpan
-		{
-			get => this.beginningPreconditionTimeSpan;
-			set
-			{
-				this.VerifyAccess();
-				this.VerifyPreparing();
-				if (this.beginningPreconditionTimeSpan == value)
-					return;
-				this.beginningPreconditionTimeSpan = value;
-				this.OnPropertyChanged(nameof(BeginningPreconditionTimeSpan));
-			}
-		}
-
-
-		/// <summary>
-		/// Get or set beginning timestamp for precondition of logs reading.
-		/// </summary>
-		public DateTime? BeginningPreconditionTimestamp
-		{
-			get => this.beginningPreconditionTimestamp;
-			set
-			{
-				this.VerifyAccess();
-				this.VerifyPreparing();
-				if (this.beginningPreconditionTimestamp == value)
-					return;
-				this.beginningPreconditionTimestamp = value;
-				this.OnPropertyChanged(nameof(BeginningPreconditionTimestamp));
-			}
-		}
 
 
 		// Whether read logs can be added or not.
@@ -314,42 +275,6 @@ namespace CarinaStudio.ULogViewer.Logs
 				logs.RemoveRange(0, droppingLogCount);
 			else
 				logs.Clear();
-		}
-
-
-		/// <summary>
-		/// Get or set ending time span for precondition of logs reading.
-		/// </summary>
-		public TimeSpan? EndingPreconditionTimeSpan
-		{
-			get => this.endingPreconditionTimeSpan;
-			set
-			{
-				this.VerifyAccess();
-				this.VerifyPreparing();
-				if (this.endingPreconditionTimeSpan == value)
-					return;
-				this.endingPreconditionTimeSpan = value;
-				this.OnPropertyChanged(nameof(EndingPreconditionTimeSpan));
-			}
-		}
-
-
-		/// <summary>
-		/// Get or set ending timestamp for precondition of logs reading.
-		/// </summary>
-		public DateTime? EndingPreconditionTimestamp
-		{
-			get => this.endingPreconditionTimestamp;
-			set
-			{
-				this.VerifyAccess();
-				this.VerifyPreparing();
-				if (this.endingPreconditionTimestamp == value)
-					return;
-				this.endingPreconditionTimestamp = value;
-				this.OnPropertyChanged(nameof(EndingPreconditionTimestamp));
-			}
 		}
 
 
@@ -689,6 +614,24 @@ namespace CarinaStudio.ULogViewer.Logs
 		}
 
 
+		/// <summary>
+		/// Get or set precondition of reading logs.
+		/// </summary>
+		public LogReadingPrecondition Precondition
+		{
+			get => this.precondition;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyPreparing();
+				if (this.precondition == value)
+					return;
+				this.precondition = value;
+				this.OnPropertyChanged(nameof(Precondition));
+			}
+		}
+
+
 		// Read single line of log.
 		void ReadLog(LogBuilder logBuilder, Match match, StringPool stringPool, string[]? timeSpanFormats, string[]? timestampFormats)
 		{
@@ -850,14 +793,8 @@ namespace CarinaStudio.ULogViewer.Logs
 			var configuration = this.Application.Configuration;
 			var readLogs = new List<Log>();
 			var readLog = (Log?)null;
-			var hasPrecondition = this.beginningPreconditionTimeSpan.HasValue
-				|| this.beginningPreconditionTimestamp.HasValue
-				|| this.endingPreconditionTimeSpan.HasValue
-				|| this.endingPreconditionTimestamp.HasValue;
-			var beginningPreconditionTimeSpan = this.beginningPreconditionTimeSpan ?? TimeSpan.MinValue;
-			var beginningPreconditionTimestamp = this.beginningPreconditionTimestamp ?? DateTime.MinValue;
-			var endingPreconditionTimeSpan = this.endingPreconditionTimeSpan ?? TimeSpan.MaxValue;
-			var endingPreconditionTimestamp = this.endingPreconditionTimestamp ?? DateTime.MaxValue;
+			var precondition = this.precondition;
+			var hasPrecondition = !precondition.IsEmpty;
 			var logPatterns = this.logPatterns;
 			var logBuilder = new LogBuilder()
 			{
@@ -868,62 +805,6 @@ namespace CarinaStudio.ULogViewer.Logs
 			var syncContext = this.SynchronizationContext;
 			var isContinuousReading = this.isContinuousReading;
 			var isFirstMatchedLine = true;
-			bool IsPreconditionMatched(Log log)
-			{
-				if (!hasPrecondition)
-					return true;
-				var hasTimeSpan = false;
-				var hasTimestamp = false;
-				if (log.BeginningTimestamp?.Let(it => 
-					{
-						hasTimestamp = true;
-						return it >= beginningPreconditionTimestamp && it <= endingPreconditionTimestamp;
-					}) == true)
-				{
-					return true;
-				}
-				if (log.EndingTimestamp?.Let(it => 
-					{
-						hasTimestamp = true;
-						return it >= beginningPreconditionTimestamp && it <= endingPreconditionTimestamp;
-					}) == true)
-				{
-					return true;
-				}
-				if (log.Timestamp?.Let(it => 
-					{
-						hasTimestamp = true;
-						return it >= beginningPreconditionTimestamp && it <= endingPreconditionTimestamp;
-					}) == true)
-				{
-					return true;
-				}
-				if (log.BeginningTimeSpan?.Let(it => 
-					{
-						hasTimeSpan = true;
-						return it >= beginningPreconditionTimeSpan && it <= endingPreconditionTimeSpan;
-					}) == true)
-				{
-					return true;
-				}
-				if (log.EndingTimeSpan?.Let(it => 
-					{
-						hasTimeSpan = true;
-						return it >= beginningPreconditionTimeSpan && it <= endingPreconditionTimeSpan;
-					}) == true)
-				{
-					return true;
-				}
-				if (log.TimeSpan?.Let(it => 
-					{
-						hasTimeSpan = true;
-						return it >= beginningPreconditionTimeSpan && it <= endingPreconditionTimeSpan;
-					}) == true)
-				{
-					return true;
-				}
-				return (!hasTimeSpan && !hasTimestamp);
-			} 
 			void FlushContinuousReadingLog(int updateInterval)
 			{
 				var log = readLog;
@@ -996,7 +877,7 @@ namespace CarinaStudio.ULogViewer.Logs
 									if (logBuilder.IsNotEmpty())
 									{
 										readLog = logBuilder.BuildAndReset();
-										if (IsPreconditionMatched(readLog))
+										if (!hasPrecondition || precondition.Matches(readLog))
 										{
 											if (isContinuousReading)
 												FlushContinuousReadingLog(updateInterval);
@@ -1027,7 +908,7 @@ namespace CarinaStudio.ULogViewer.Logs
 							if (logBuilder.IsNotEmpty())
 							{
 								readLog = logBuilder.BuildAndReset();
-								if (IsPreconditionMatched(readLog))
+								if (!hasPrecondition || precondition.Matches(readLog))
 								{
 									if (isContinuousReading)
 										FlushContinuousReadingLog(updateInterval);
@@ -1081,7 +962,7 @@ namespace CarinaStudio.ULogViewer.Logs
 							if (logBuilder.IsNotEmpty())
 							{
 								readLog = logBuilder.BuildAndReset();
-								if (IsPreconditionMatched(readLog))
+								if (!hasPrecondition || precondition.Matches(readLog))
 								{
 									if (isContinuousReading)
 										FlushContinuousReadingLog(updateInterval);

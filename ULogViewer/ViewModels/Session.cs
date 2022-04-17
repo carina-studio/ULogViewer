@@ -1412,8 +1412,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					it.UpdateInterval = this.ContinuousLogReadingUpdateInterval;
 				if (this.GetValue(HasTimestampDisplayableLogPropertyProperty))
 				{
-					it.BeginningPreconditionTimestamp = this.GetValue(BeginningPreconditionTimestampProperty);
-					it.EndingPreconditionTimestamp = this.GetValue(EndingPreconditionTimestampProperty);
+					it.Precondition = new LogReadingPrecondition()
+					{
+						TimestampRange = (this.GetValue(BeginningPreconditionTimestampProperty), this.GetValue(EndingPreconditionTimestampProperty)),
+					};
 				}
 				it.IsContinuousReading = profile.IsContinuousReading;
 				it.LogLevelMap = profile.LogLevelMapForReading;

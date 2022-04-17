@@ -42,7 +42,7 @@
 					<TextBlock Classes="Dialog_TextBlock_Description" Text="{Binding #beginningTimestampTextBox.Value}" VerticalAlignment="Center"/>
 				</StackPanel>
 				<Separator Classes="Dialog_Separator_Small"/>
-				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogReadingPreconditionDialog.To}"/>
+				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogReadingPreconditionDialog.EndingTimestamp}"/>
 				<abControls:DateTimeTextBox Name="endingTimestampTextBox" Classes="Dialog_TextBox"/>
 				<StackPanel Orientation="Horizontal">
 					<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/DateTimeSelectionDialog.DateTime}" VerticalAlignment="Center"/>
