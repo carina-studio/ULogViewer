@@ -22,6 +22,7 @@
 	<sys:String x:Key="String/AppOptionsDialog.SelectIPEndPointWhenNeeded">Show IP endpoint input when IP endpoint is needed</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectLogFilesWhenNeeded">Show file selector when log files are needed</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectLogProfileForNewSession">Show log profile selector after creating new tab</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.SelectLogReadingPreconditionForFiles">Specify precondition before reading logs from files if available</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectUriWhenNeeded">Show URI input when URI is needed</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectWorkingDirectoryWhenNeeded">Show directory selector when working directory is needed</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ShowProcessInfo">Show CPU/memory usage on status bar</sys:String>
@@ -349,8 +350,8 @@
 	<!-- LogReadingPreconditionDialog -->
 	<sys:String x:Key="String/LogReadingPreconditionDialog.Description">You can set the precondition of logs to be read. It won't affect logs which were being or already read.</sys:String>
 	<sys:String x:Key="String/LogReadingPreconditionDialog.EndingTimestamp">to (exclusive)</sys:String>
-	<sys:String x:Key="String/LogReadingPreconditionDialog.NoPrecondition">Read without precondition</sys:String>
 	<sys:String x:Key="String/LogReadingPreconditionDialog.PreconditionTimestamps">Read with timestamp between</sys:String>
+	<sys:String x:Key="String/LogReadingPreconditionDialog.SelectPreconditionBeforeReadingLogs.Description">You can also change the setting in Options</sys:String>
 	<sys:String x:Key="String/LogReadingPreconditionDialog.Title">Precondition of log reading</sys:String>
 
 	<!-- LogSortKey -->

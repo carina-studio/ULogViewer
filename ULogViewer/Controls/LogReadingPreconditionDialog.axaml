@@ -3,6 +3,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:abControls="using:CarinaStudio.Controls"
+		xmlns:aConverters="using:Avalonia.Data.Converters"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.LogReadingPreconditionDialog"
 		Classes="Dialog"
@@ -27,15 +28,11 @@
 				<Image Classes="Dialog_Icon" Source="{DynamicResource Image/Icon.Information}"/>
 				<TextBlock Classes="Dialog_Icon_TextBlock" Grid.Column="1" Text="{DynamicResource String/LogReadingPreconditionDialog.Description}" TextWrapping="Wrap"/>
 			</Grid>
-			<Separator Classes="Dialog_Separator"/>
-
-			<!-- No precondition -->
-			<RadioButton Name="noPreconditionRadioButton" Classes="Dialog_RadioButton" Content="{DynamicResource String/LogReadingPreconditionDialog.NoPrecondition}"/>
-			<Separator Classes="Dialog_Separator_Small"/>
+			<Separator Classes="Dialog_Separator_Large"/>
 
 			<!-- Timestamps -->
-			<RadioButton Name="timestampsRadioButton" Classes="Dialog_RadioButton" Content="{DynamicResource String/LogReadingPreconditionDialog.PreconditionTimestamps}"/>
-			<StackPanel Classes="Dialog_ContentPanel_Indented" IsEnabled="{Binding #timestampsRadioButton.IsChecked}">
+			<CheckBox Name="timestampsCheckBox" Classes="Dialog_CheckBox" Content="{DynamicResource String/LogReadingPreconditionDialog.PreconditionTimestamps}"/>
+			<StackPanel Classes="Dialog_ContentPanel_Indented" IsEnabled="{Binding #timestampsCheckBox.IsChecked}">
 				<abControls:DateTimeTextBox Name="beginningTimestampTextBox" Classes="Dialog_TextBox"/>
 				<StackPanel Orientation="Horizontal">
 					<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/DateTimeSelectionDialog.DateTime}" VerticalAlignment="Center"/>
@@ -50,6 +47,28 @@
 				</StackPanel>
 				<Separator Classes="Dialog_Separator_Small"/>
 				<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/DateTimeTextBox.FormatDescription}"/>
+			</StackPanel>
+
+			<!-- Select precondition before reading logs -->
+			<StackPanel>
+
+				<StackPanel.IsVisible>
+					<MultiBinding Converter="{x:Static aConverters:BoolConverters.Or}">
+						<Binding Path="IsReadingFromFiles" RelativeSource="{RelativeSource AncestorType={x:Type Window}}"/>
+					</MultiBinding>
+				</StackPanel.IsVisible>
+
+				<Separator Classes="Dialog_Separator_Large"/>
+
+				<!-- Files -->
+				<StackPanel IsVisible="{Binding $parent[Window].IsReadingFromFiles}">
+					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/AppOptionsDialog.SelectLogReadingPreconditionForFiles}"/>
+					<ToggleSwitch Classes="Dialog_ToggleSwitch" IsChecked="{Binding $parent[Window].SelectPreconditionForFiles, Mode=TwoWay}"/>
+				</StackPanel>
+
+				<!-- Description -->
+				<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogReadingPreconditionDialog.SelectPreconditionBeforeReadingLogs.Description}"/>
+
 			</StackPanel>
 
 		</StackPanel>

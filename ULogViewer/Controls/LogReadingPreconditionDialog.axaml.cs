@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using CarinaStudio.Configuration;
 using CarinaStudio.Controls;
 using System;
 using System.ComponentModel;
@@ -16,14 +17,14 @@ namespace CarinaStudio.ULogViewer.Controls
     {
         // Static fields.
         static readonly AvaloniaProperty<bool> IsCancellationAllowedProperty = AvaloniaProperty.Register<LogReadingPreconditionDialog, bool>(nameof(IsCancellationAllowed), true);
+        static readonly AvaloniaProperty<bool> IsReadingFromFilesProperty = AvaloniaProperty.Register<LogReadingPreconditionDialog, bool>(nameof(IsReadingFromFiles), false);
 
 
         // Fields.
         readonly DateTimeTextBox beginningTimestampTextBox;
         readonly DateTimeTextBox endingTimestampTextBox;
         bool isResultGenerated;
-        readonly RadioButton noPreconditionRadioButton;
-        readonly RadioButton timestampsRadioButton;
+        readonly CheckBox timestampsCheckBox;
 
 
         // Constructor.
@@ -40,11 +41,7 @@ namespace CarinaStudio.ULogViewer.Controls
                 it.GetObservable(DateTimeTextBox.IsTextValidProperty).Subscribe(_ => this.InvalidateInput());
                 it.GetObservable(DateTimeTextBox.ValueProperty).Subscribe(_ => this.InvalidateInput());
             });
-            this.noPreconditionRadioButton = this.FindControl<RadioButton>(nameof(noPreconditionRadioButton)).Also(it =>
-            {
-                it.GetObservable(RadioButton.IsCheckedProperty).Subscribe(_ => this.InvalidateInput());
-            });
-            this.timestampsRadioButton = this.FindControl<RadioButton>(nameof(timestampsRadioButton)).Also(it =>
+            this.timestampsCheckBox = this.FindControl<CheckBox>(nameof(timestampsCheckBox)).Also(it =>
             {
                 it.GetObservable(RadioButton.IsCheckedProperty).Subscribe(_ => this.InvalidateInput());
             });
@@ -57,9 +54,7 @@ namespace CarinaStudio.ULogViewer.Controls
             {
                 var precondition = new Logs.LogReadingPrecondition();
                 this.isResultGenerated = true;
-                if (this.noPreconditionRadioButton.IsChecked == true)
-                    return precondition;
-                if (this.timestampsRadioButton.IsChecked == true)
+                if (this.timestampsCheckBox.IsChecked == true)
                     precondition.TimestampRange = (this.beginningTimestampTextBox.Value, this.endingTimestampTextBox.Value);
                 return precondition;
             }));
@@ -70,6 +65,14 @@ namespace CarinaStudio.ULogViewer.Controls
         {
             get => this.GetValue<bool>(IsCancellationAllowedProperty);
             set => this.SetValue<bool>(IsCancellationAllowedProperty, value);
+        }
+
+
+        // Whether logs will be read from files or not.
+        public bool IsReadingFromFiles
+        {
+            get => this.GetValue<bool>(IsReadingFromFilesProperty);
+            set => this.SetValue<bool>(IsReadingFromFilesProperty, value);
         }
 
 
@@ -89,14 +92,13 @@ namespace CarinaStudio.ULogViewer.Controls
             var precondition = this.Precondition;
             if (!precondition.TimeSpanRange.IsUniversal)
             {
-                this.timestampsRadioButton.IsChecked = true;
+                this.timestampsCheckBox.IsChecked = true;
                 this.beginningTimestampTextBox.Value = precondition.TimestampRange.Start;
                 this.endingTimestampTextBox.Value = precondition.TimestampRange.End;
             }
             else
             {
                 var timestamp = DateTime.Now;
-                this.noPreconditionRadioButton.IsChecked = true;
                 this.beginningTimestampTextBox.Value = timestamp - TimeSpan.FromDays(365);
                 this.endingTimestampTextBox.Value = timestamp;
             }
@@ -108,9 +110,7 @@ namespace CarinaStudio.ULogViewer.Controls
         {
             if (!base.OnValidateInput())
                 return false;
-            if (this.noPreconditionRadioButton.IsChecked == true)
-                return true;
-            if (this.timestampsRadioButton.IsChecked == true)
+            if (this.timestampsCheckBox.IsChecked == true)
             {
                 if (this.beginningTimestampTextBox.IsTextValid && this.beginningTimestampTextBox.Value.HasValue)
                 {
@@ -125,11 +125,21 @@ namespace CarinaStudio.ULogViewer.Controls
                     return true;
                 return false;
             }
-            return false;
+            return true;
         }
         
 
         // Precondition.
         public Logs.LogReadingPrecondition Precondition { get; set; }
+
+
+        /// <summary>
+		/// Select precondition before reading logs from files.
+		/// </summary>
+		public bool SelectPreconditionForFiles
+		{
+			get => this.Settings.GetValueOrDefault(SettingKeys.SelectLogReadingPreconditionForFiles);
+			set => this.Settings.SetValue<bool>(SettingKeys.SelectLogReadingPreconditionForFiles, value);
+		}
     }
 }

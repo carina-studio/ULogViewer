@@ -71,6 +71,14 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Type of log data source.
+		[Flags]
+		enum LogDataSourceType
+		{
+			File = 0x1,
+		}
+
+
 		// Constants.
 		const int AutoAddLogFilesDelay = 0;
 		const int MaxLogCountForCopying = 65536;
@@ -560,7 +568,9 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 			
 			// select precondition
-			var precondition = await this.SelectLogReadingPreconditionAsync();
+			var precondition = this.Settings.GetValueOrDefault(SettingKeys.SelectLogReadingPreconditionForFiles) 
+				? await this.SelectLogReadingPreconditionAsync(LogDataSourceType.File)
+				: new Logs.LogReadingPrecondition();
 
 			// sort file names
 			Array.Sort(fileNames);
@@ -1477,7 +1487,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			else if (session.AddLogFileCommand.CanExecute(null))
 			{
 				// select precondition
-				var precondition = await this.SelectLogReadingPreconditionAsync();
+				var precondition = this.Settings.GetValueOrDefault(SettingKeys.SelectLogReadingPreconditionForFiles) 
+					? await this.SelectLogReadingPreconditionAsync(LogDataSourceType.File)
+					: new Logs.LogReadingPrecondition();
 
 				// add files
 				foreach (var filePath in filePaths)
@@ -3199,7 +3211,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Let user select the precondition of log reading.
-		async Task<Logs.LogReadingPrecondition> SelectLogReadingPreconditionAsync()
+		async Task<Logs.LogReadingPrecondition> SelectLogReadingPreconditionAsync(LogDataSourceType sourceType)
 		{
 			// check state
 			if (this.attachedWindow == null || this.DataContext is not Session session)
@@ -3213,6 +3225,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			var precondition = await new LogReadingPreconditionDialog()
 			{
 				IsCancellationAllowed = false,
+				IsReadingFromFiles = (sourceType & LogDataSourceType.File) != 0,
 			}.ShowDialog<Logs.LogReadingPrecondition?>(this.attachedWindow);
 			return precondition.GetValueOrDefault();
 		}

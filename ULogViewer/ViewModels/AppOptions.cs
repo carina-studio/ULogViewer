@@ -237,6 +237,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.OnPropertyChanged(nameof(SelectLogFilesWhenNeeded));
 			else if (key == SettingKeys.SelectLogProfileForNewSession)
 				this.OnPropertyChanged(nameof(SelectLogProfileForNewSession));
+			else if (key == SettingKeys.SelectLogReadingPreconditionForFiles)
+				this.OnPropertyChanged(nameof(SelectLogReadingPreconditionForFiles));
 			else if (key == SettingKeys.SelectUriWhenNeeded)
 				this.OnPropertyChanged(nameof(SelectUriWhenNeeded));
 			else if (key == SettingKeys.SelectWorkingDirectoryWhenNeeded)
@@ -296,6 +298,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			get => this.Settings.GetValueOrDefault(SettingKeys.SelectLogProfileForNewSession);
 			set => this.Settings.SetValue<bool>(SettingKeys.SelectLogProfileForNewSession, value);
+		}
+
+
+		/// <summary>
+		/// Select precondition before reading logs from files.
+		/// </summary>
+		public bool SelectLogReadingPreconditionForFiles
+		{
+			get => this.Settings.GetValueOrDefault(SettingKeys.SelectLogReadingPreconditionForFiles);
+			set => this.Settings.SetValue<bool>(SettingKeys.SelectLogReadingPreconditionForFiles, value);
 		}
 
 

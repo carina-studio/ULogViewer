@@ -60,6 +60,10 @@ namespace CarinaStudio.ULogViewer
 		/// </summary>
 		public static readonly SettingKey<bool> SelectLogProfileForNewSession = new SettingKey<bool>(nameof(SelectLogProfileForNewSession), true);
 		/// <summary>
+		/// Select precondition before reading logs from files.
+		/// </summary>
+		public static readonly SettingKey<bool> SelectLogReadingPreconditionForFiles = new SettingKey<bool>(nameof(SelectLogReadingPreconditionForFiles), true);
+		/// <summary>
 		/// Select URI immediately when it is needed.
 		/// </summary>
 		public static readonly SettingKey<bool> SelectUriWhenNeeded = new SettingKey<bool>(nameof(SelectUriWhenNeeded), true);

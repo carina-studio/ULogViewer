@@ -25,6 +25,7 @@
 	<sys:String x:Key="String/AppOptionsDialog.SelectIPEndPointWhenNeeded">當需要 IP 端點時立即顯示輸入介面</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectLogFilesWhenNeeded">當需要日誌檔案時立即開啟檔案選取介面</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectLogProfileForNewSession">建立新分頁後開啟日誌類型選取介面</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.SelectLogReadingPreconditionForFiles">在從檔案讀取日誌前指定前置讀取條件 (當條件支援時)</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectUriWhenNeeded">當需要 URI 時立即顯示輸入介面</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectWorkingDirectoryWhenNeeded">當需要工作目錄時立即開啟目錄選取介面</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ShowProcessInfo">在狀態列上顯示 CPU 及記憶體使用量</sys:String>
@@ -331,11 +332,11 @@
 	<sys:String x:Key="String/LogProperty.UserName">使用者</sys:String>
 
 	<!-- LogReadingPreconditionDialog -->
-	<sys:String x:Key="String/LogReadingPreconditionDialog.Description">您可以為即將讀取的日誌指定預先條件，它不會影響已經或正在讀取的日誌。</sys:String>
+	<sys:String x:Key="String/LogReadingPreconditionDialog.Description">您可以為即將讀取的日誌指定前置讀取條件，它不會影響已經或正在讀取的日誌。</sys:String>
 	<sys:String x:Key="String/LogReadingPreconditionDialog.EndingTimestamp">至 (不包含此時間戳)</sys:String>
-	<sys:String x:Key="String/LogReadingPreconditionDialog.NoPrecondition">不需要預先條件</sys:String>
 	<sys:String x:Key="String/LogReadingPreconditionDialog.PreconditionTimestamps">讀取時間戳介於</sys:String>
-	<sys:String x:Key="String/LogReadingPreconditionDialog.Title">日誌讀取預先條件</sys:String>
+	<sys:String x:Key="String/LogReadingPreconditionDialog.SelectPreconditionBeforeReadingLogs.Description">您也可以在應用程式選項中變更此設定</sys:String>
+	<sys:String x:Key="String/LogReadingPreconditionDialog.Title">日誌讀取前置條件</sys:String>
 
 	<!-- LogSortKey -->
 	<sys:String x:Key="String/LogSortKey.BeginningTimeSpan">日誌起始時距</sys:String>
