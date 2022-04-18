@@ -25,7 +25,7 @@
 			
 			<!-- Description -->
 			<Grid ColumnDefinitions="Auto,*">
-				<Image Classes="Dialog_Icon" Source="{DynamicResource Image/Icon.Information}"/>
+				<Image Classes="Dialog_Icon" Source="{DynamicResource Image/Icon.Information.Colored}"/>
 				<TextBlock Classes="Dialog_Icon_TextBlock" Grid.Column="1" Text="{DynamicResource String/LogReadingPreconditionDialog.Description}" TextWrapping="Wrap"/>
 			</Grid>
 			<Separator Classes="Dialog_Separator_Large"/>
@@ -45,6 +45,7 @@
 					<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/DateTimeSelectionDialog.DateTime}" VerticalAlignment="Center"/>
 					<TextBlock Classes="Dialog_TextBlock_Description" Text="{Binding #endingTimestampTextBox.Value}" VerticalAlignment="Center"/>
 				</StackPanel>
+				<TextBlock Name="invalidTimestampRangeTextBlock" Classes="Dialog_TextBlock_Description_Error" IsVisible="False" Text="{DynamicResource String/LogReadingPreconditionDialog.InvalidTimestampRange}"/>
 				<Separator Classes="Dialog_Separator_Small"/>
 				<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/DateTimeTextBox.FormatDescription}"/>
 			</StackPanel>

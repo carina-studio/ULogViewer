@@ -23,6 +23,7 @@ namespace CarinaStudio.ULogViewer.Controls
         // Fields.
         readonly DateTimeTextBox beginningTimestampTextBox;
         readonly DateTimeTextBox endingTimestampTextBox;
+        readonly Avalonia.Controls.TextBlock invalidTimestampRangeTextBlock;
         bool isResultGenerated;
         readonly CheckBox timestampsCheckBox;
 
@@ -41,9 +42,18 @@ namespace CarinaStudio.ULogViewer.Controls
                 it.GetObservable(DateTimeTextBox.IsTextValidProperty).Subscribe(_ => this.InvalidateInput());
                 it.GetObservable(DateTimeTextBox.ValueProperty).Subscribe(_ => this.InvalidateInput());
             });
+            this.invalidTimestampRangeTextBlock = this.FindControl<Avalonia.Controls.TextBlock>(nameof(invalidTimestampRangeTextBlock)).AsNonNull();
             this.timestampsCheckBox = this.FindControl<CheckBox>(nameof(timestampsCheckBox)).Also(it =>
             {
-                it.GetObservable(RadioButton.IsCheckedProperty).Subscribe(_ => this.InvalidateInput());
+                it.GetObservable(RadioButton.IsCheckedProperty).Subscribe(isChecked => 
+                {
+                    this.InvalidateInput();
+                    if (isChecked == true)
+                    {
+                        this.beginningTimestampTextBox.Focus();
+                        this.beginningTimestampTextBox.SelectAll();
+                    }
+                });
             });
         }
 
@@ -98,9 +108,7 @@ namespace CarinaStudio.ULogViewer.Controls
             }
             else
             {
-                var timestamp = DateTime.Now;
-                this.beginningTimestampTextBox.Value = timestamp - TimeSpan.FromDays(365);
-                this.endingTimestampTextBox.Value = timestamp;
+                this.endingTimestampTextBox.Value = DateTime.Now;
             }
         }
 
@@ -108,6 +116,8 @@ namespace CarinaStudio.ULogViewer.Controls
         // Validate input.
         protected override bool OnValidateInput()
         {
+            if (this.invalidTimestampRangeTextBlock != null)
+                this.invalidTimestampRangeTextBlock.IsVisible = false;
             if (!base.OnValidateInput())
                 return false;
             if (this.timestampsCheckBox.IsChecked == true)
@@ -117,7 +127,11 @@ namespace CarinaStudio.ULogViewer.Controls
                     if (this.endingTimestampTextBox.IsTextValid && this.endingTimestampTextBox.Value.HasValue)
                     {
                         if (this.beginningTimestampTextBox.Value.Value >= this.endingTimestampTextBox.Value.Value)
+                        {
+                            if (this.invalidTimestampRangeTextBlock != null)
+                                this.invalidTimestampRangeTextBlock.IsVisible = true;
                             return false;
+                        }
                     }
                     return true;
                 }

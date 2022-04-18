@@ -334,6 +334,7 @@
 	<!-- LogReadingPreconditionDialog -->
 	<sys:String x:Key="String/LogReadingPreconditionDialog.Description">您可以為即將讀取的日誌指定前置讀取條件，它不會影響已經或正在讀取的日誌。</sys:String>
 	<sys:String x:Key="String/LogReadingPreconditionDialog.EndingTimestamp">至 (不包含此時間戳)</sys:String>
+	<sys:String x:Key="String/LogReadingPreconditionDialog.InvalidTimestampRange">結束時間戳必須晚於起始時間戳</sys:String>
 	<sys:String x:Key="String/LogReadingPreconditionDialog.PreconditionTimestamps">讀取時間戳介於</sys:String>
 	<sys:String x:Key="String/LogReadingPreconditionDialog.SelectPreconditionBeforeReadingLogs.Description">您也可以在應用程式選項中變更此設定</sys:String>
 	<sys:String x:Key="String/LogReadingPreconditionDialog.Title">日誌讀取前置條件</sys:String>
