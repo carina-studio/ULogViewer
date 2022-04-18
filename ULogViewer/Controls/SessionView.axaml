@@ -684,6 +684,9 @@
 				</Grid>
 			</Border>
 
+			<!-- Drag-and-drop receiver -->
+			<Border Name="dragDropReceiverBorder" Background="{x:Static Brushes.Transparent}" Grid.RowSpan="3" IsVisible="False"/>
+
 		</Grid>
 
 		<!-- Status bar -->
