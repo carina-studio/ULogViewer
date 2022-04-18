@@ -326,6 +326,26 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Parameters of log data source.
+		/// </summary>
+		/// <typeparam name="TSource">Type of source of log data.</typeparam>
+		public class LogDataSourceParams<TSource>
+		{
+			/// <summary>
+			/// Precondition of log reading.
+			/// </summary>
+			public LogReadingPrecondition Precondition { get; set; }
+
+
+			/// <summary>
+			/// Source of log data.
+			/// </summary>
+			[System.Diagnostics.CodeAnalysis.AllowNull]
+			public TSource Source { get; set; }
+		}
+
+
+		/// <summary>
 		/// Parameters of marking logs.
 		/// </summary>
 		public class MarkingLogsParams
@@ -523,7 +543,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.activationHistoryListNode = new LinkedListNode<Session>(this);
 
 			// create commands
-			this.AddLogFileCommand = new Command<string?>(this.AddLogFile, this.GetValueAsObservable(IsLogFileNeededProperty));
+			this.AddLogFileCommand = new Command<LogDataSourceParams<string>?>(this.AddLogFile, this.GetValueAsObservable(IsLogFileNeededProperty));
 			this.ClearLogFilesCommand = new Command(this.ClearLogFiles, this.canClearLogFiles);
 			this.CopyLogsCommand = new Command<IList<DisplayableLog>>(it => this.CopyLogs(it, false), this.canCopyLogs);
 			this.CopyLogsWithFileNamesCommand = new Command<IList<DisplayableLog>>(it => this.CopyLogs(it, true), this.canCopyLogsWithFileNames);
@@ -933,13 +953,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		// Add file.
-		void AddLogFile(string? fileName)
+		void AddLogFile(LogDataSourceParams<string>? param)
 		{
 			// check parameter and state
 			this.VerifyAccess();
 			this.VerifyDisposed();
 			if (!this.IsLogFileNeeded)
 				return;
+			if (param == null)
+				throw new ArgumentNullException(nameof(param));
+			var fileName = param.Source;
 			if (fileName == null)
 				throw new ArgumentNullException(nameof(fileName));
 			if (PathEqualityComparer.Default.Equals(Path.GetExtension(fileName), MarkedFileExtension))
@@ -966,14 +989,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				return;
 
 			// create log reader
-			this.CreateLogReader(dataSource, new());
+			this.CreateLogReader(dataSource, param.Precondition);
 		}
 
 
 		/// <summary>
 		/// Command to add log file.
 		/// </summary>
-		/// <remarks>Type of command parameter is <see cref="string"/>.</remarks>
+		/// <remarks>Type of command parameter is <see cref="LogDataSourceParams{string}"/>.</remarks>
 		public ICommand AddLogFileCommand { get; }
 
 

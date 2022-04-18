@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using CarinaStudio.Controls;
 using System;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -13,9 +14,14 @@ namespace CarinaStudio.ULogViewer.Controls
     /// </summary>
     partial class LogReadingPreconditionDialog : AppSuite.Controls.InputDialog
     {
+        // Static fields.
+        static readonly AvaloniaProperty<bool> IsCancellationAllowedProperty = AvaloniaProperty.Register<LogReadingPreconditionDialog, bool>(nameof(IsCancellationAllowed), true);
+
+
         // Fields.
         readonly DateTimeTextBox beginningTimestampTextBox;
         readonly DateTimeTextBox endingTimestampTextBox;
+        bool isResultGenerated;
         readonly RadioButton noPreconditionRadioButton;
         readonly RadioButton timestampsRadioButton;
 
@@ -47,13 +53,33 @@ namespace CarinaStudio.ULogViewer.Controls
 
         // Generate result.
         protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken) =>
-            Task.FromResult((object?)new Logs.LogReadingPrecondition().Also(it =>
+            Task.FromResult((object?)Global.Run(() =>
             {
+                var precondition = new Logs.LogReadingPrecondition();
+                this.isResultGenerated = true;
                 if (this.noPreconditionRadioButton.IsChecked == true)
-                    return;
+                    return precondition;
                 if (this.timestampsRadioButton.IsChecked == true)
-                    it.TimestampRange = (this.beginningTimestampTextBox.Value, this.endingTimestampTextBox.Value);
+                    precondition.TimestampRange = (this.beginningTimestampTextBox.Value, this.endingTimestampTextBox.Value);
+                return precondition;
             }));
+        
+
+        // Whether cancellation is allowed or not.
+        public bool IsCancellationAllowed
+        {
+            get => this.GetValue<bool>(IsCancellationAllowedProperty);
+            set => this.SetValue<bool>(IsCancellationAllowedProperty, value);
+        }
+
+
+        // Called when closing.
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            if (!this.isResultGenerated && !this.IsCancellationAllowed)
+                e.Cancel = true;
+            base.OnClosing(e);
+        }
 
 
         // Window opened

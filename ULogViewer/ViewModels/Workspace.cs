@@ -149,7 +149,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// add log files
 			foreach (var filePath in filePaths)
 			{
-				if (!session.AddLogFileCommand.TryExecute(filePath))
+				var param = new Session.LogDataSourceParams<string>()
+				{
+					Source = filePath,
+				};
+				if (!session.AddLogFileCommand.TryExecute(param))
 				{
 					this.Logger.LogWarning($"Unable to add log file '{filePath}' to session '{session}'");
 					break;

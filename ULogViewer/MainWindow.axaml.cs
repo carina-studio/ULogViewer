@@ -309,7 +309,7 @@ namespace CarinaStudio.ULogViewer
 
 
 		// Find SessionView for specific session.
-		SessionView? FindSessionView(Session session) => this.FindSessionTabItem(session)?.Content as SessionView;
+		public SessionView? FindSessionView(Session session) => this.FindSessionTabItem(session)?.Content as SessionView;
 
 
 		// Find index of tab item by dragging position on window.

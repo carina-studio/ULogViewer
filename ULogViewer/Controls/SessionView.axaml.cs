@@ -558,13 +558,22 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 			if (!this.canAddLogFiles.Value)
 				return;
+			
+			// select precondition
+			var precondition = await this.SelectLogReadingPreconditionAsync();
 
 			// sort file names
 			Array.Sort(fileNames);
 
 			// add log files
 			foreach (var fileName in fileNames)
-				session.AddLogFileCommand.Execute(fileName);
+			{
+				session.AddLogFileCommand.Execute(new Session.LogDataSourceParams<string>()
+				{
+					Precondition = precondition,
+					Source = fileName,
+				});
+			}
 		}
 
 
@@ -1435,8 +1444,21 @@ namespace CarinaStudio.ULogViewer.Controls
 				}
 				else if (filePaths.IsNotEmpty())
 				{
-					var newSession = workspace.CreateAndAttachSessionWithLogFiles(newIndex, newLogProfile, filePaths);
-					workspace.ActiveSession = newSession;
+					if (this.attachedWindow is MainWindow mainWindow)
+					{
+						// create session
+						var newSession = workspace.CreateAndAttachSession(newIndex, newLogProfile);
+						workspace.ActiveSession = newSession;
+
+						// drop files to new session
+						mainWindow.FindSessionView(newSession)?.Let(view => 
+							view.DropAsync(keyModifiers, data));
+					}
+					else
+					{
+						var newSession = workspace.CreateAndAttachSessionWithLogFiles(newIndex, newLogProfile, filePaths);
+						workspace.ActiveSession = newSession;
+					}
 					return true;
 				}
 				else
@@ -1454,8 +1476,18 @@ namespace CarinaStudio.ULogViewer.Controls
 				session.SetWorkingDirectoryCommand.TryExecute(dirPaths[0]);
 			else if (session.AddLogFileCommand.CanExecute(null))
 			{
+				// select precondition
+				var precondition = await this.SelectLogReadingPreconditionAsync();
+
+				// add files
 				foreach (var filePath in filePaths)
-					session.AddLogFileCommand.TryExecute(filePath);
+				{
+					session.AddLogFileCommand.TryExecute(new Session.LogDataSourceParams<string>()
+					{
+						Precondition = precondition,
+						Source = filePath,
+					});
+				}
 			}
 
 			// complete
@@ -3164,6 +3196,26 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Duration of selected logs.
 		TimeSpan? SelectedLogsDuration { get => this.GetValue<TimeSpan?>(SelectedLogsDurationProperty); }
+
+
+		// Let user select the precondition of log reading.
+		async Task<Logs.LogReadingPrecondition> SelectLogReadingPreconditionAsync()
+		{
+			// check state
+			if (this.attachedWindow == null || this.DataContext is not Session session)
+				return new();
+			
+			// check whether precondition is needed or not
+			if (!session.HasTimestampDisplayableLogProperty)
+				return new();
+			
+			// select precondition
+			var precondition = await new LogReadingPreconditionDialog()
+			{
+				IsCancellationAllowed = false,
+			}.ShowDialog<Logs.LogReadingPrecondition?>(this.attachedWindow);
+			return precondition.GetValueOrDefault();
+		}
 
 
 		// Select all marked logs.
