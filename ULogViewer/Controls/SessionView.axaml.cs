@@ -567,16 +567,22 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (!this.canAddLogFiles.Value)
 				return;
 			
+			// exclude added files
+			var fileNameList = new List<string>(fileNames);
+			fileNameList.RemoveAll(session.IsLogFileAdded);
+			if (fileNameList.IsEmpty())
+				return;
+			
 			// select precondition
 			var precondition = this.Settings.GetValueOrDefault(SettingKeys.SelectLogReadingPreconditionForFiles) 
 				? await this.SelectLogReadingPreconditionAsync(LogDataSourceType.File)
 				: new Logs.LogReadingPrecondition();
 
 			// sort file names
-			Array.Sort(fileNames);
+			fileNameList.Sort();
 
 			// add log files
-			foreach (var fileName in fileNames)
+			foreach (var fileName in fileNameList)
 			{
 				session.AddLogFileCommand.Execute(new Session.LogDataSourceParams<string>()
 				{
@@ -1375,6 +1381,17 @@ namespace CarinaStudio.ULogViewer.Controls
 			// check state
 			if (this.DataContext is not Session session)
 				return false;
+			
+			// exclude added files
+			if (filePaths.IsNotEmpty())
+			{
+				filePaths.RemoveAll(session.IsLogFileAdded);
+				if (filePaths.IsEmpty())
+				{
+					this.Logger.LogTrace("All dropped files have been added to session before");
+					return true;
+				}
+			}
 
 			// check whether new log profile is needed or not
 			var warningMessage = "";
@@ -3226,6 +3243,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				IsCancellationAllowed = false,
 				IsReadingFromFiles = (sourceType & LogDataSourceType.File) != 0,
+				Precondition = session.LastLogReadingPrecondition,
 			}.ShowDialog<Logs.LogReadingPrecondition?>(this.attachedWindow);
 			return precondition.GetValueOrDefault();
 		}

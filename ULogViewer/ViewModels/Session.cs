@@ -221,6 +221,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsWorkingDirectoryNeededProperty = ObservableProperty.Register<Session, bool>(nameof(IsWorkingDirectoryNeeded));
 		/// <summary>
+		/// Property of <see cref="LastLogReadingPrecondition"/>.
+		/// </summary>
+		public static readonly ObservableProperty<LogReadingPrecondition> LastLogReadingPreconditionProperty = ObservableProperty.Register<Session, LogReadingPrecondition>(nameof(LastLogReadingPrecondition));
+		/// <summary>
 		/// Property of <see cref="LastLogsFilteringDuration"/>.
 		/// </summary>
 		public static readonly ObservableProperty<TimeSpan?> LastLogsFilteringDurationProperty = ObservableProperty.Register<Session, TimeSpan?>(nameof(LastLogsFilteringDuration));
@@ -987,6 +991,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			var dataSource = this.CreateLogDataSourceOrNull(profile.DataSourceProvider, dataSourceOptions);
 			if (dataSource == null)
 				return;
+			
+			// update state
+			this.SetValue(LastLogReadingPreconditionProperty, param.Precondition);
 
 			// create log reader
 			this.CreateLogReader(dataSource, param.Precondition);
@@ -2029,6 +2036,15 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Check whether given log file has been added or not.
+		/// </summary>
+		/// <param name="filePath">Path of log file.</param>
+		/// <returns>True if log file has been added.</returns>
+		public bool IsLogFileAdded(string? filePath) =>
+			filePath != null && this.addedLogFilePaths.Contains(filePath);
+
+
+		/// <summary>
 		/// Check whether logs file is needed or not.
 		/// </summary>
 		public bool IsLogFileNeeded { get => this.GetValue(IsLogFileNeededProperty); }
@@ -2102,6 +2118,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Check whether working directory is needed or not.
 		/// </summary>
 		public bool IsWorkingDirectoryNeeded { get => this.GetValue(IsWorkingDirectoryNeededProperty); }
+
+
+		/// <summary>
+		/// Get the last precondition of log reading.
+		/// </summary>
+		public LogReadingPrecondition LastLogReadingPrecondition { get => this.GetValue(LastLogReadingPreconditionProperty); }
 
 
 		/// <summary>
@@ -2914,6 +2936,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.SetValue(IsReadingLogsContinuouslyProperty, false);
 			this.SetValue(IsUriNeededProperty, false);
 			this.SetValue(IsWorkingDirectoryNeededProperty, false);
+			this.ResetValue(LastLogReadingPreconditionProperty);
 			this.UpdateIsLogsWritingAvailable(null);
 			this.UpdateValidLogLevels();
 
@@ -3100,6 +3123,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					return;
 				}
 				this.SetLogProfile(profile, false);
+
+				// restore log reading precondition
+				if (jsonState.TryGetProperty(nameof(LastLogReadingPrecondition), out jsonValue))
+					this.SetValue(LastLogReadingPreconditionProperty, LogReadingPrecondition.Load(jsonValue));
 
 				// create log readers
 				if (jsonState.TryGetProperty("LogReaders", out jsonValue) && jsonValue.ValueKind == JsonValueKind.Array)
@@ -3542,6 +3569,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// update valid log levels
 			this.UpdateValidLogLevels();
 
+			// reset state
+			this.ResetValue(LastLogReadingPreconditionProperty);
+
 			// read logs or wait for more actions
 			var dataSourceOptions = profile.DataSourceOptions;
 			var dataSourceProvider = profile.DataSourceProvider;
@@ -3650,6 +3680,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					jsonWriter.WriteEndObject();
 				}
 				jsonWriter.WriteEndArray();
+
+				// save log reading precondition
+				jsonWriter.WritePropertyName(nameof(LastLogReadingPrecondition));
+				this.GetValue(LastLogReadingPreconditionProperty).Save(jsonWriter);
 
 				// save filtering parameters
 				jsonWriter.WriteString(nameof(LogFiltersCombinationMode), this.LogFiltersCombinationMode.ToString());

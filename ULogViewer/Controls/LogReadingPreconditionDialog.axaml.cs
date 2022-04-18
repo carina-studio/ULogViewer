@@ -100,7 +100,7 @@ namespace CarinaStudio.ULogViewer.Controls
         {
             base.OnOpened(e);
             var precondition = this.Precondition;
-            if (!precondition.TimeSpanRange.IsUniversal)
+            if (!precondition.TimestampRange.IsUniversal)
             {
                 this.timestampsCheckBox.IsChecked = true;
                 this.beginningTimestampTextBox.Value = precondition.TimestampRange.Start;
