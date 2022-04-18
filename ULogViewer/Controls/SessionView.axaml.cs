@@ -132,6 +132,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly MutableObservableBoolean canShowWorkingDirectoryInExplorer = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canUnmarkSelectedLogs = new MutableObservableBoolean();
 		readonly MenuItem copyLogPropertyMenuItem;
+		readonly Border dragDropReceiverBorder;
 		bool isAttachedToLogicalTree;
 		bool isIPEndPointNeededAfterLogProfileSet;
 		bool isLogFileNeededAfterLogProfileSet;
@@ -281,6 +282,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// setup controls
 			this.copyLogPropertyMenuItem = this.FindControl<MenuItem>(nameof(copyLogPropertyMenuItem)).AsNonNull();
+			this.dragDropReceiverBorder = this.FindControl<Border>(nameof(dragDropReceiverBorder)).AsNonNull();
 			this.logActionMenu = ((ContextMenu)this.Resources[nameof(logActionMenu)].AsNonNull()).Also(it =>
 			{
 				it.MenuOpened += (_, e) =>
@@ -1727,6 +1729,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			// add event handlers
 			this.Application.StringsUpdated += this.OnApplicationStringsUpdated;
 			this.Settings.SettingChanged += this.OnSettingChanged;
+			this.AddHandler(DragDrop.DragEnterEvent, this.OnDragEnter);
+			this.AddHandler(DragDrop.DragLeaveEvent, this.OnDragLeave);
 			this.AddHandler(DragDrop.DragOverEvent, this.OnDragOver);
 			this.AddHandler(DragDrop.DropEvent, this.OnDrop);
 			this.AddHandler(KeyDownEvent, this.OnPreviewKeyDown, RoutingStrategies.Tunnel);
@@ -1777,6 +1781,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			// remove event handlers
 			this.Application.StringsUpdated -= this.OnApplicationStringsUpdated;
 			this.Settings.SettingChanged -= this.OnSettingChanged;
+			this.RemoveHandler(DragDrop.DragEnterEvent, this.OnDragEnter);
+			this.RemoveHandler(DragDrop.DragLeaveEvent, this.OnDragLeave);
 			this.RemoveHandler(DragDrop.DragOverEvent, this.OnDragOver);
 			this.RemoveHandler(DragDrop.DropEvent, this.OnDrop);
 			this.RemoveHandler(KeyDownEvent, this.OnPreviewKeyDown);
@@ -1964,6 +1970,16 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Called when drag enter.
+		void OnDragEnter(object? sender, DragEventArgs e) =>
+			this.dragDropReceiverBorder.IsVisible = true;
+
+
+		// Called when drag leave.
+		void OnDragLeave(object? sender, EventArgs e) =>
+			this.dragDropReceiverBorder.IsVisible = false;
+
+
 		// Called when drag over.
 		void OnDragOver(object? sender, DragEventArgs e)
 		{
@@ -1994,6 +2010,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when drop data on view.
 		async void OnDrop(object? sender, DragEventArgs e)
 		{
+			this.dragDropReceiverBorder.IsVisible = false;
 			if ((this.attachedWindow as AppSuite.Controls.Window)?.HasDialogs == true)
 				return;
 			e.Handled = true;
