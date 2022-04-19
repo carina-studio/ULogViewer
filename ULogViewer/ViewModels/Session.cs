@@ -350,6 +350,49 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Information of log file.
+		/// </summary>
+		public abstract class LogFileInfo : INotifyPropertyChanged
+		{
+			/// <summary>
+			/// Initialize new <see cref="LogFileInfo"/> instance.
+			/// </summary>
+			/// <param name="fileName">Name of log file.</param>
+			/// <param name="precondition">Precondition of reading logs from file.</param>
+			protected LogFileInfo(string fileName, LogReadingPrecondition precondition)
+			{
+				this.FileName = fileName;
+				this.LogReadingPrecondition = precondition;
+			}
+
+			/// <summary>
+			/// Get name of log file.
+			/// </summary>
+			public string FileName { get; }
+
+			/// <summary>
+			/// Get number of logs read from this file.
+			/// </summary>
+			public abstract int LogCount { get; }
+
+			/// <summary>
+			/// Raise <see cref="OnPropertyChanged"/> event.
+			/// </summary>
+			/// <param name="propertyName">Property name.</param>
+			protected void OnPropertyChanged(string propertyName) =>
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+			
+			/// <summary>
+			/// Get precondition of reading logs from this file.
+			/// </summary>
+			public LogReadingPrecondition LogReadingPrecondition { get; }
+
+			/// <inheritdoc/>
+			public event PropertyChangedEventHandler? PropertyChanged;
+		}
+
+
+		/// <summary>
 		/// Parameters of marking logs.
 		/// </summary>
 		public class MarkingLogsParams
@@ -458,6 +501,30 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		}
 
 
+		// Implementation of LogFileInfo.
+		class LogFileInfoImpl : LogFileInfo
+		{
+			// Fields.
+			int logCount;
+
+			// Constructor.
+			public LogFileInfoImpl(string fileName, LogReadingPrecondition precondition) : base(fileName, precondition)
+			{ }
+
+			// Log count.
+			public override int LogCount { get => this.logCount; }
+
+			// Update log count.
+			public void UpdateLogCount(int logCount)
+			{
+				if (this.logCount == logCount)
+					return;
+				this.logCount = logCount;
+				this.OnPropertyChanged(nameof(LogCount));
+			}
+		}
+
+
 		// Options of log reader.
 		class LogReaderOptions
 		{
@@ -494,7 +561,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		// Fields.
 		readonly LinkedListNode<Session> activationHistoryListNode;
 		readonly List<IDisposable> activationTokens = new List<IDisposable>();
-		readonly HashSet<string> addedLogFilePaths = new HashSet<string>(PathEqualityComparer.Default);
 		readonly SortedObservableList<DisplayableLog> allLogs;
 		readonly Dictionary<string, List<DisplayableLog>> allLogsByLogFilePath = new Dictionary<string, List<DisplayableLog>>(PathEqualityComparer.Default);
 		readonly MutableObservableBoolean canClearLogFiles = new MutableObservableBoolean();
@@ -515,6 +581,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		TaskFactory? fileLogsReadingTaskFactory;
 		bool hasLogDataSourceCreationFailure;
 		bool isRestoringState;
+		readonly Dictionary<LogReader, LogFileInfoImpl> logFileInfoMapByLogReader = new();
+		readonly SortedObservableList<LogFileInfo> logFileInfoList = new((lhs, rhs) =>
+			string.CompareOrdinal(Path.GetFileName(lhs?.FileName), Path.GetFileName(rhs?.FileName)));
 		readonly DisplayableLogFilter logFilter;
 		readonly List<LogReader> logReaders = new List<LogReader>();
 		readonly Stopwatch logsFilteringWatch = new Stopwatch();
@@ -599,6 +668,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// setup properties
 			this.AllLogs = new SafeReadOnlyList<DisplayableLog>(this.allLogs);
+			this.LogFiles = this.logFileInfoList.AsReadOnly();
 			this.SetValue(LogsProperty, this.AllLogs);
 			this.MarkedLogs = new SafeReadOnlyList<DisplayableLog>(this.markedLogs);
 
@@ -895,9 +965,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					var customTitle = this.CustomTitle;
 					if (logProfile == null)
 						return customTitle ?? app?.GetString("Session.Empty");
-					if (this.addedLogFilePaths.IsEmpty() || !logProfile.AllowMultipleFiles)
+					if (this.logFileInfoList.IsEmpty() || !logProfile.AllowMultipleFiles)
 						return customTitle ?? logProfile.Name;
-					return $"{customTitle ?? logProfile.Name} ({this.addedLogFilePaths.Count})";
+					return $"{customTitle ?? logProfile.Name} ({this.logFileInfoList.Count})";
 				});
 
 				// update properties
@@ -978,11 +1048,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			var dataSourceOptions = profile.DataSourceOptions;
 			if (dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName)))
 				throw new InternalStateCorruptedException($"Cannot add log file because file name is already specified.");
-			if (!this.addedLogFilePaths.Add(fileName))
+			if (this.logFileInfoList.FirstOrDefault(it => PathEqualityComparer.Default.Equals(it.FileName, fileName)) != null)
 			{
 				this.Logger.LogWarning($"File '{fileName}' is already added");
 				return;
 			}
+			this.logFileInfoList.Add(new LogFileInfoImpl(fileName, param.Precondition));
 
 			this.Logger.LogDebug($"Add log file '{fileName}'");
 
@@ -1111,7 +1182,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.DisposeLogReaders();
 
 			// clear file name table
-			this.addedLogFilePaths.Clear();
+			this.logFileInfoList.Clear();
 
 			// update title
 			this.updateTitleAndIconAction.Schedule();
@@ -1493,11 +1564,20 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// load marked logs
 			var creationOptions = dataSource.CreationOptions;
-			if (creationOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName)))
+			var hasFileName = creationOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName));
+			if (hasFileName)
 				this.LoadMarkedLogs(creationOptions.FileName.AsNonNull());
+			
+			// bind to log file info
+			if (hasFileName)
+			{
+				var fileName = creationOptions.FileName;
+				this.logFileInfoList.FirstOrDefault(it => PathEqualityComparer.Default.Equals(it.FileName, fileName))?.Let(it =>
+					this.logFileInfoMapByLogReader[logReader] = (LogFileInfoImpl)it);
+			}
 
 			// update state
-			if (this.addedLogFilePaths.IsNotEmpty() 
+			if (this.logFileInfoList.IsNotEmpty() 
 				&& !profile.DataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName)))
 			{
 				this.canClearLogFiles.Update(true);
@@ -1506,7 +1586,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.canPauseResumeLogsReading.Update(profile.IsContinuousReading);
 			this.canReloadLogs.Update(true);
 			this.SetValue(UriProperty, creationOptions.Uri);
-			if (creationOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName)))
+			if (hasFileName)
 			{
 				this.SetValue(HasLogFilesProperty, true);
 				if (!profile.AllowMultipleFiles)
@@ -1705,6 +1785,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// check data source waiting state
 			this.checkIsWaitingForDataSourcesAction.Schedule();
+
+			// unbind from log file info
+			this.logFileInfoMapByLogReader.Remove(logReader);
 
 			// update state
 			this.updateIsReadingLogsAction.Execute();
@@ -2041,7 +2124,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <param name="filePath">Path of log file.</param>
 		/// <returns>True if log file has been added.</returns>
 		public bool IsLogFileAdded(string? filePath) =>
-			filePath != null && this.addedLogFilePaths.Contains(filePath);
+			filePath != null && this.logFileInfoList.FirstOrDefault(it => PathEqualityComparer.Default.Equals(it.FileName, filePath)) != null;
 
 
 		/// <summary>
@@ -2208,7 +2291,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// check state
 			if (markedLogInfos.IsEmpty())
 				return;
-			if (!this.addedLogFilePaths.Contains(fileName))
+			if (this.logFileInfoList.FirstOrDefault(it => PathEqualityComparer.Default.Equals(it.FileName, fileName)) == null)
 				return;
 
 			// add as unmatched 
@@ -2217,6 +2300,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// match
 			this.MatchMarkedLogs();
 		}
+
+
+		/// <summary>
+		/// Get information of added log files.
+		/// </summary>
+		public IList<LogFileInfo> LogFiles { get; }
 
 
 		/// <summary>
@@ -2565,7 +2654,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 								this.ReloadLogs(true, false);
 							else
 							{
-								if (this.addedLogFilePaths.Count > 1)
+								if (this.logFileInfoList.Count > 1)
 									this.ClearLogFiles();
 								else
 									this.ReloadLogs(true, false);
@@ -2691,6 +2780,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				default:
 					throw new InvalidOperationException($"Unsupported logs change action: {e.Action}.");
 			}
+			if (this.logFileInfoMapByLogReader.TryGetValue(logReader, out var logFileInfo))
+				logFileInfo?.UpdateLogCount(logReader.Logs.Count);
 		}
 
 
@@ -2952,7 +3043,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.DisposeLogReaders();
 
 			// clear file name table
-			this.addedLogFilePaths.Clear();
+			this.logFileInfoList.Clear();
 
 			// clear display log properties
 			this.UpdateDisplayLogProperties();
@@ -2998,8 +3089,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				if (defaultDataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName)))
 				{
 					useDefaultDataSourceOptions = true;
-					this.addedLogFilePaths.Clear();
-					this.addedLogFilePaths.Add(defaultDataSourceOptions.FileName.AsNonNull());
+					this.logFileInfoList.Clear();
+					this.logFileInfoList.Add(new LogFileInfoImpl(defaultDataSourceOptions.FileName.AsNonNull(), new()));
 					this.canClearLogFiles.Update(false);
 					this.SetValue(IsLogFileNeededProperty, false);
 				}
@@ -3159,7 +3250,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 						// check file paths
 						if (dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName)))
-							this.addedLogFilePaths.Add(dataSourceOptions.FileName.AsNonNull());
+							this.logFileInfoList.Add(new LogFileInfoImpl(dataSourceOptions.FileName.AsNonNull(), logReaderOptions.Precondition));
 					}
 					this.Logger.LogTrace($"{this.savedLogReaderOptions.Count} log reader(s) can be restored");
 
@@ -3579,7 +3670,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			{
 				this.SetValue(AreFileBasedLogsProperty, true);
 				if (dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName)))
-					this.addedLogFilePaths.Add(dataSourceOptions.FileName.AsNonNull());
+					this.logFileInfoList.Add(new LogFileInfoImpl(dataSourceOptions.FileName.AsNonNull(), new()));
 				else
 				{
 					this.Logger.LogDebug("No file name specified, waiting for adding file");
