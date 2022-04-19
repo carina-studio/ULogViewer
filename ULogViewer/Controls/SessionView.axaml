@@ -7,6 +7,7 @@
              xmlns:iaCore="using:Avalonia.Xaml.Interactions.Core"
 			 xmlns:aConverters="using:Avalonia.Data.Converters"
 			 xmlns:abControls="using:CarinaStudio.Controls"
+			 xmlns:abConverters="using:CarinaStudio.Data.Converters"
 			 xmlns:as="using:CarinaStudio.AppSuite"
 			 xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
 			 xmlns:asConverters="using:CarinaStudio.AppSuite.Converters"
@@ -925,6 +926,16 @@
 				</ToggleButton>
 
 				<!-- Log files -->
+				<ToggleButton Classes="ToolBar_ToggleButton" IsChecked="{Binding IsLogFilesPanelVisible, Mode=TwoWay}" ToolTip.Tip="{DynamicResource String/SessionView.LogFilesPanel}">
+					<Panel>
+						<Image Classes="Icon" Source="{StaticResource Image/Icon.File}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
+						<Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}">
+							<DrawingImage>
+								<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/Icon.File}"/>
+							</DrawingImage>
+						</Image>
+					</Panel>
+				</ToggleButton>
 
 			</StackPanel>
 		</Border>
@@ -938,33 +949,57 @@
 				</MultiBinding>
 			</Border.IsVisible>
 
-			<!-- Marked logs -->
-			<Panel HorizontalAlignment="Stretch" IsVisible="{Binding IsMarkedLogsPanelVisible}" VerticalAlignment="Stretch">
-				<ListBox Name="markedLogListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" Focusable="False" IsVisible="{Binding HasMarkedLogs}" Items="{Binding MarkedLogs}" SelectionChanged="OnMarkedLogListBoxSelectionChanged" SelectionMode="Single">
-					<ListBox.Styles>
-						<Style Selector="ListBoxItem">
-							<Setter Property="CornerRadius" Value="0"/>
-							<Setter Property="HorizontalAlignment" Value="Stretch"/>
-							<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-							<Setter Property="Margin" Value="0"/>
-							<Setter Property="Padding" Value="0"/>
-						</Style>
-						<Style Selector="ListBoxItem:pressed /template/ ContentPresenter#PART_ContentPresenter">
-							<Setter Property="Background" Value="{DynamicResource Brush/SessionView.LogListBox.Item.Background.Pressed}"/>
-						</Style>
-						<Style Selector="ListBoxItem:selected /template/ ContentPresenter#PART_ContentPresenter">
-							<Setter Property="Background" Value="{DynamicResource Brush/SessionView.LogListBox.Item.Background.Selected}"/>
-						</Style>
-						<Style Selector="ListBoxItem:selected:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-							<Setter Property="Background" Value="{DynamicResource Brush/SessionView.LogListBox.Item.Background.Selected.PointerOver}"/>
-						</Style>
-						<Style Selector="ListBoxItem:selected:pressed /template/ ContentPresenter#PART_ContentPresenter">
-							<Setter Property="Background" Value="{DynamicResource Brush/SessionView.LogListBox.Item.Background.Pressed}"/>
-						</Style>
-					</ListBox.Styles>
-				</ListBox>
-				<TextBlock Classes="SessionView_SidePanel_EmptyHint" IsVisible="{Binding !HasMarkedLogs}" Text="{DynamicResource String/SessionView.NoMarkedLogs}"/>				
+			<Panel>
+				<!-- Marked logs -->
+				<Panel HorizontalAlignment="Stretch" IsVisible="{Binding IsMarkedLogsPanelVisible}" VerticalAlignment="Stretch">
+					<ListBox Name="markedLogListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" Focusable="False" IsVisible="{Binding HasMarkedLogs}" Items="{Binding MarkedLogs}" SelectionChanged="OnMarkedLogListBoxSelectionChanged" SelectionMode="Single">
+						<ListBox.Styles>
+							<Style Selector="ListBoxItem">
+								<Setter Property="CornerRadius" Value="0"/>
+								<Setter Property="HorizontalAlignment" Value="Stretch"/>
+								<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+								<Setter Property="Margin" Value="0"/>
+								<Setter Property="Padding" Value="0"/>
+							</Style>
+							<Style Selector="ListBoxItem:pressed /template/ ContentPresenter#PART_ContentPresenter">
+								<Setter Property="Background" Value="{DynamicResource Brush/SessionView.LogListBox.Item.Background.Pressed}"/>
+							</Style>
+							<Style Selector="ListBoxItem:selected /template/ ContentPresenter#PART_ContentPresenter">
+								<Setter Property="Background" Value="{DynamicResource Brush/SessionView.LogListBox.Item.Background.Selected}"/>
+							</Style>
+							<Style Selector="ListBoxItem:selected:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+								<Setter Property="Background" Value="{DynamicResource Brush/SessionView.LogListBox.Item.Background.Selected.PointerOver}"/>
+							</Style>
+							<Style Selector="ListBoxItem:selected:pressed /template/ ContentPresenter#PART_ContentPresenter">
+								<Setter Property="Background" Value="{DynamicResource Brush/SessionView.LogListBox.Item.Background.Pressed}"/>
+							</Style>
+						</ListBox.Styles>
+					</ListBox>
+					<TextBlock Classes="SessionView_SidePanel_EmptyHint" IsVisible="{Binding !HasMarkedLogs}" Text="{DynamicResource String/SessionView.NoMarkedLogs}"/>
+				</Panel>
+
+				<!-- Log files -->
+				<Panel HorizontalAlignment="Stretch" IsVisible="{Binding IsLogFilesPanelVisible}" VerticalAlignment="Stretch">
+					<ListBox Background="{x:Static Brushes.Transparent}" BorderThickness="0" Items="{Binding LogFiles}">
+						<ListBox.ItemTemplate>
+							<DataTemplate>
+								<Grid ColumnDefinitions="*,Auto">
+									<StackPanel>
+										<TextBlock Background="{x:Static Brushes.Transparent}" FontSize="{StaticResource Double/SessionView.LogFileInfo.FileName.FontSize}" FontWeight="Bold" HorizontalAlignment="Left" Margin="{StaticResource Thickness/SessionView.LogFileInfo.FileName.Margin}" Text="{Binding FileName, Converter={x:Static abConverters:FilePathConverters.FileName}}" TextTrimming="CharacterEllipsis" ToolTip.Tip="{Binding FileName}"/>
+										<Grid ColumnDefinitions="Auto,Auto" HorizontalAlignment="Left" Margin="{StaticResource Thickness/SessionView.LogFileInfo.Summary.Margin}">
+											<TextBlock FontSize="{StaticResource Double/SessionView.LogFileInfo.Summary.FontSize}" Text="{DynamicResource String/SessionView.LogCountInLogFile}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+											<TextBlock Grid.Column="1" FontSize="{StaticResource Double/SessionView.LogFileInfo.Summary.FontSize}" Text="{Binding LogCount}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+										</Grid>
+									</StackPanel>
+								</Grid>
+							</DataTemplate>
+						</ListBox.ItemTemplate>
+					</ListBox>
+					<TextBlock Classes="SessionView_SidePanel_EmptyHint" IsVisible="{Binding !LogFiles.Count}" Text="{DynamicResource String/SessionView.NoLogFiles}"/>
+				</Panel>
+
 			</Panel>
+
 		</Border>
 		<GridSplitter Background="{DynamicResource Brush/WorkingArea.Panel.Background}" Classes="GridSplitter_Vertical" Grid.Column="1" Grid.Row="1" IsVisible="{Binding #sidePanelContainer.IsVisible}"/>
 

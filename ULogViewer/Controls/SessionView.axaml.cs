@@ -175,6 +175,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly HashSet<PredefinedLogTextFilter> selectedPredefinedLogTextFilters = new HashSet<PredefinedLogTextFilter>();
 		readonly MenuItem showLogPropertyMenuItem;
 		readonly ColumnDefinition sidePanelColumn;
+		readonly Control sidePanelContainer;
 		readonly ToolBarScrollViewer toolBarScrollViewer;
 		readonly ScheduledAction updateLogFiltersAction;
 		readonly ScheduledAction updateStatusBarStateAction;
@@ -397,6 +398,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					});
 				});
 			});
+			this.sidePanelContainer = this.FindControl<Control>(nameof(sidePanelContainer)).AsNonNull();
 #if !DEBUG
 			this.FindControl<Button>("testButton").AsNonNull().IsVisible = false;
 #endif
@@ -1096,6 +1098,8 @@ namespace CarinaStudio.ULogViewer.Controls
 									session.UnmarkLogsCommand.TryExecute(new DisplayableLog[] { log });
 								else
 								{
+									if (this.sidePanelContainer.IsVisible)
+										session.IsMarkedLogsPanelVisible = true;
 									session.MarkLogsCommand.TryExecute(new Session.MarkingLogsParams()
 									{
 										Color = MarkColor.Default,
@@ -1675,6 +1679,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 			if (this.DataContext is not Session session)
 				return;
+			if (this.sidePanelContainer.IsVisible)
+				session.IsMarkedLogsPanelVisible = true;
 			session.MarkLogsCommand.TryExecute(new Session.MarkingLogsParams()
 			{
 				Color = color,
@@ -1695,6 +1701,15 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (this.DataContext is not Session session)
 				return;
 			var logs = this.logListBox.SelectedItems.Cast<DisplayableLog>().ToArray();
+			foreach (var log in logs)
+			{
+				if (log.MarkedColor == MarkColor.None)
+				{
+					if (this.sidePanelContainer.IsVisible)
+						session.IsMarkedLogsPanelVisible = true;
+					break;
+				}
+			}
 			session.MarkUnmarkLogsCommand.TryExecute(logs);
 		}
 
@@ -2760,6 +2775,21 @@ namespace CarinaStudio.ULogViewer.Controls
 				case nameof(Session.IsMarkedLogsPanelVisible):
 					if (session.IsLogFilesPanelVisible || session.IsMarkedLogsPanelVisible)
 					{
+						switch (e.PropertyName)
+						{
+							case nameof(Session.IsLogFilesPanelVisible):
+								if (session.IsLogFilesPanelVisible)
+								{
+									session.IsMarkedLogsPanelVisible = false;
+								}
+								break;
+							case nameof(Session.IsMarkedLogsPanelVisible):
+								if (session.IsMarkedLogsPanelVisible)
+								{
+									session.IsLogFilesPanelVisible = false;
+								}
+								break;
+						}
 						this.keepSidePanelVisible = true;
 						sidePanelColumn.Width = new GridLength(Math.Max(session.LogFilesPanelSize, session.MarkedLogsPanelSize));
 						Grid.SetColumnSpan(this.logListBoxContainer, 1);

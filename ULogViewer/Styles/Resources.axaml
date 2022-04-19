@@ -95,6 +95,8 @@
 	<CornerRadius x:Key="CornerRadius/SessionView.Menu.MarkColorIcon">8</CornerRadius>
 	<sys:Double x:Key="Double/SessionView.Hint.NoLogToShow.FontSize">20</sys:Double>
 	<sys:Double x:Key="Double/SessionView.Hint.SelectLogProfile.FontSize">20</sys:Double>
+	<sys:Double x:Key="Double/SessionView.LogFileInfo.FileName.FontSize">14</sys:Double>
+	<sys:Double x:Key="Double/SessionView.LogFileInfo.Summary.FontSize">13</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogHeader.MinWidth">50</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogListBox.ColorIndicator.Width">8</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogListBox.MarkIndicator.Size">12</sys:Double>
@@ -124,6 +126,8 @@
 	<KeyGesture x:Key="KeyGesture/SessionView.UnmarkLogs">Ctrl+Alt+D0</KeyGesture>
 	<Thickness x:Key="Thickness/SessionView.Hint.Margin">20</Thickness>
 	<Thickness x:Key="Thickness/SessionView.Hint.SelectLogProfile.Icon.Margin">8,0,8,0</Thickness>
+	<Thickness x:Key="Thickness/SessionView.LogFileInfo.FileName.Margin">0,0,0,4</Thickness>
+	<Thickness x:Key="Thickness/SessionView.LogFileInfo.Summary.Margin">0,1,0,1</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogHeader.Margin">3,8,3,8</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogHeader.Padding">5,0,5,0</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogListBox.ColorIndicator.Border">0,0,2,0</Thickness>
