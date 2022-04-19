@@ -386,8 +386,14 @@ namespace CarinaStudio.ULogViewer.Controls
 				{
 					it.GetObservable(ColumnDefinition.WidthProperty).Subscribe(length =>
 					{
-						if (this.DataContext is Session session && session.IsSidePanelVisible)
-							session.SidePanelSize = length.Value;
+						if (this.DataContext is Session session)
+						{
+							if (session.IsLogFilesPanelVisible || session.IsMarkedLogsPanelVisible)
+							{
+								session.LogFilesPanelSize = length.Value;
+								session.MarkedLogsPanelSize = length.Value;
+							}
+						}
 					});
 				});
 			});
@@ -420,7 +426,10 @@ namespace CarinaStudio.ULogViewer.Controls
 				if (this.keepSidePanelVisible)
 					this.keepSidePanelVisible = false;
 				else if (this.logListBoxContainer.Bounds.Width <= this.minLogListBoxSizeToCloseSidePanel)
-					session.IsSidePanelVisible = false;
+				{
+					session.IsLogFilesPanelVisible = false;
+					session.IsMarkedLogsPanelVisible = false;
+				}
 			});
 			this.autoSetIPEndPointAction = new ScheduledAction(() =>
 			{
@@ -671,9 +680,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.updateLogFiltersAction.Cancel();
 
 			// sync side panel state
-			if (session.IsSidePanelVisible)
+			if (session.IsMarkedLogsPanelVisible || session.IsLogFilesPanelVisible)
 			{
-				sidePanelColumn.Width = new GridLength(session.SidePanelSize);
+				sidePanelColumn.Width = new GridLength(Math.Max(session.LogFilesPanelSize, session.MarkedLogsPanelSize));
 				Grid.SetColumnSpan(this.logListBoxContainer, 1);
 			}
 			else
@@ -2747,14 +2756,12 @@ namespace CarinaStudio.ULogViewer.Controls
 					else if (this.HasLogProfile && session.LogProfile?.IsContinuousReading == true && this.IsScrollingToLatestLogNeeded)
 						this.scrollToLatestLogAction.Schedule(ScrollingToLatestLogInterval);
 					break;
-				case nameof(Session.IsLogsReadingPaused):
-					this.updateStatusBarStateAction.Schedule();
-					break;
-				case nameof(Session.IsSidePanelVisible):
-					if (session.IsSidePanelVisible)
+				case nameof(Session.IsLogFilesPanelVisible):
+				case nameof(Session.IsMarkedLogsPanelVisible):
+					if (session.IsLogFilesPanelVisible || session.IsMarkedLogsPanelVisible)
 					{
 						this.keepSidePanelVisible = true;
-						sidePanelColumn.Width = new GridLength(session.SidePanelSize);
+						sidePanelColumn.Width = new GridLength(Math.Max(session.LogFilesPanelSize, session.MarkedLogsPanelSize));
 						Grid.SetColumnSpan(this.logListBoxContainer, 1);
 					}
 					else
@@ -2763,6 +2770,9 @@ namespace CarinaStudio.ULogViewer.Controls
 						sidePanelColumn.Width = new GridLength(0);
 						Grid.SetColumnSpan(this.logListBoxContainer, 3);
 					}
+					break;
+				case nameof(Session.IsLogsReadingPaused):
+					this.updateStatusBarStateAction.Schedule();
 					break;
 				case nameof(Session.LogProfile):
 					session.LogProfile?.Let(profile =>

@@ -220,8 +220,14 @@
 	<DrawingImage x:Key="Image/Mark">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/Mark}"/>
 	</DrawingImage>
+	<DrawingImage x:Key="Image/Mark.Light">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/Mark}"/>
+	</DrawingImage>
 	<DrawingImage x:Key="Image/Marked">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/Marked}"/>
+	</DrawingImage>
+	<DrawingImage x:Key="Image/Marked.Light">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/Marked}"/>
 	</DrawingImage>
 	<DrawingImage x:Key="Image/MarkedOnly">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/MarkedOnly}"/>

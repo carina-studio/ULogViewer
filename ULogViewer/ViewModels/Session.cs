@@ -177,9 +177,17 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsLogFileNeededProperty = ObservableProperty.Register<Session, bool>(nameof(IsLogFileNeeded));
 		/// <summary>
+		/// Property of <see cref="IsLogFilesPanelVisible"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> IsLogFilesPanelVisibleProperty = ObservableProperty.Register<Session, bool>(nameof(IsLogFilesPanelVisible), false);
+		/// <summary>
 		/// Property of <see cref="IsLogsReadingPaused"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsLogsReadingPausedProperty = ObservableProperty.Register<Session, bool>(nameof(IsLogsReadingPaused));
+		/// <summary>
+		/// Property of <see cref="IsMarkedLogsPanelVisible"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> IsMarkedLogsPanelVisibleProperty = ObservableProperty.Register<Session, bool>(nameof(IsMarkedLogsPanelVisible), true);
 		/// <summary>
 		/// Property of <see cref="IsProcessingLogs"/>.
 		/// </summary>
@@ -204,10 +212,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Property of <see cref="IsShowingMarkedLogsTemporarily"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsShowingMarkedLogsTemporarilyProperty = ObservableProperty.Register<Session, bool>(nameof(IsShowingMarkedLogsTemporarily));
-		/// <summary>
-		/// Property of <see cref="IsSidePanelVisible"/>.
-		/// </summary>
-		public static readonly ObservableProperty<bool> IsSidePanelVisibleProperty = ObservableProperty.Register<Session, bool>(nameof(IsSidePanelVisible), true);
 		/// <summary>
 		/// Property of <see cref="IsUriNeeded"/>.
 		/// </summary>
@@ -236,6 +240,19 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Property of <see cref="LatestLogTimestamp"/>.
 		/// </summary>
 		public static readonly ObservableProperty<DateTime?> LatestLogTimestampProperty = ObservableProperty.Register<Session, DateTime?>(nameof(LatestLogTimestamp));
+		/// <summary>
+		/// Property of <see cref="LogFilesPanelSize"/>.
+		/// </summary>
+		public static readonly ObservableProperty<double> LogFilesPanelSizeProperty = ObservableProperty.Register<Session, double>(nameof(LogFilesPanelSize), (MinSidePanelSize + MaxSidePanelSize) / 2, 
+			coerce: (_, it) =>
+			{
+				if (it >= MaxSidePanelSize)
+					return MaxSidePanelSize;
+				if (it < MinSidePanelSize)
+					return MinSidePanelSize;
+				return it;
+			}, 
+			validate: it => double.IsFinite(it));
 		/// <summary>
 		/// Property of <see cref="LogFiltersCombinationMode"/>.
 		/// </summary>
@@ -285,9 +302,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<int?> LogThreadIdFilterProperty = ObservableProperty.Register<Session, int?>(nameof(LogThreadIdFilter));
 		/// <summary>
-		/// Property of <see cref="SidePanelSize"/>.
+		/// Property of <see cref="MarkedLogsPanelSize"/>.
 		/// </summary>
-		public static readonly ObservableProperty<double> SidePanelSizeProperty = ObservableProperty.Register<Session, double>(nameof(SidePanelSize), (MinSidePanelSize + MaxSidePanelSize) / 2, 
+		public static readonly ObservableProperty<double> MarkedLogsPanelSizeProperty = ObservableProperty.Register<Session, double>(nameof(MarkedLogsPanelSize), (MinSidePanelSize + MaxSidePanelSize) / 2, 
 			coerce: (_, it) =>
 			{
 				if (it >= MaxSidePanelSize)
@@ -486,7 +503,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			staticLogger?.LogWarning($"Hibernate {hibernatedSessionCount} session(s) to release {AppSuite.Converters.FileSizeConverter.Default.Convert<string>(releasedMemory)} memory");
 		});
 		static readonly TaskFactory ioTaskFactory = new TaskFactory(new FixedThreadsTaskScheduler(1));
-		static readonly SettingKey<double> latestSidePanelSizeKey = new SettingKey<double>("Session.LatestSidePanelSize", SidePanelSizeProperty.DefaultValue);
+		static readonly SettingKey<double> latestLogFilesPanelSizeKey = new SettingKey<double>("Session.LatestLogFilesPanelSize", LogFilesPanelSizeProperty.DefaultValue);
+		static readonly SettingKey<double> latestMarkedLogsPanelSizeKey = new SettingKey<double>("Session.LatestMarkedLogsPanelSize", MarkedLogsPanelSizeProperty.DefaultValue);
+		[Obsolete]
+		static readonly SettingKey<double> latestSidePanelSizeKey = new SettingKey<double>("Session.LatestSidePanelSize", MarkedLogsPanelSizeProperty.DefaultValue);
 		static long memoryThresholdToStartHibernation;
 		static ILogger? staticLogger;
 		static long totalLogsMemoryUsage;
@@ -978,7 +998,19 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.updateTitleAndIconAction.Execute();
 
 			// restore state
-			this.SetValue(SidePanelSizeProperty, this.PersistentState.GetValueOrDefault(latestSidePanelSizeKey));
+#pragma warning disable CS0612
+			if (this.PersistentState.GetRawValue(latestSidePanelSizeKey) is double sidePanelSize)
+			{
+				this.PersistentState.ResetValue(latestSidePanelSizeKey);
+				this.SetValue(LogFilesPanelSizeProperty, sidePanelSize);
+				this.SetValue(MarkedLogsPanelSizeProperty, sidePanelSize);
+			}
+			else
+			{
+				this.SetValue(LogFilesPanelSizeProperty, this.PersistentState.GetValueOrDefault(latestLogFilesPanelSizeKey));
+				this.SetValue(MarkedLogsPanelSizeProperty, this.PersistentState.GetValueOrDefault(latestMarkedLogsPanelSizeKey));
+			}
+#pragma warning restore CS0612
 		}
 
 
@@ -2134,9 +2166,29 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Get or set whether panel of added log files is visible or not.
+		/// </summary>
+		public bool IsLogFilesPanelVisible 
+		{
+			 get => this.GetValue(IsLogFilesPanelVisibleProperty);
+			 set => this.SetValue(IsLogFilesPanelVisibleProperty, value);
+		}
+
+
+		/// <summary>
 		/// Check whether logs reading has been paused or not.
 		/// </summary>
 		public bool IsLogsReadingPaused { get => this.GetValue(IsLogsReadingPausedProperty); }
+
+
+		/// <summary>
+		/// Get or set whether panel of marked logs is visible or not.
+		/// </summary>
+		public bool IsMarkedLogsPanelVisible 
+		{
+			 get => this.GetValue(IsMarkedLogsPanelVisibleProperty);
+			 set => this.SetValue(IsMarkedLogsPanelVisibleProperty, value);
+		}
 
 
 		/// <summary>
@@ -2173,16 +2225,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Check whether showing marked logs temporarily or not.
 		/// </summary>
 		public bool IsShowingMarkedLogsTemporarily { get => this.GetValue(IsShowingMarkedLogsTemporarilyProperty); }
-
-
-		/// <summary>
-		/// Get or set whether side panel is visible or not.
-		/// </summary>
-		public bool IsSidePanelVisible 
-		{
-			 get => this.GetValue(IsSidePanelVisibleProperty);
-			 set => this.SetValue(IsSidePanelVisibleProperty, value);
-		}
 
 
 		/// <summary>
@@ -2309,6 +2351,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Get or set size of panel of added log files.
+		/// </summary>
+		public double LogFilesPanelSize
+		{
+			 get => this.GetValue(LogFilesPanelSizeProperty);
+			 set => this.SetValue(LogFilesPanelSizeProperty, value);
+		}
+
+
+		/// <summary>
 		/// Get or set mode to combine condition of <see cref="LogTextFilter"/> and other conditions for logs filtering.
 		/// </summary>
 		public FilterCombinationMode LogFiltersCombinationMode 
@@ -2404,6 +2456,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Get list of marked <see cref="DisplayableLog"/>s .
 		/// </summary>
 		public IList<DisplayableLog> MarkedLogs { get; }
+
+
+		/// <summary>
+		/// Get or set size of panel of marked logs.
+		/// </summary>
+		public double MarkedLogsPanelSize
+		{
+			 get => this.GetValue(MarkedLogsPanelSizeProperty);
+			 set => this.SetValue(MarkedLogsPanelSizeProperty, value);
+		}
 
 
 		// Mark logs.
@@ -2871,6 +2933,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.SetValue(HasLastLogsReadingDurationProperty, this.LastLogsReadingDuration != null);
 			else if (property == LastLogsFilteringDurationProperty)
 				this.SetValue(HasLastLogsFilteringDurationProperty, this.LastLogsFilteringDuration != null);
+			else if (property == LogFilesPanelSizeProperty)
+			{
+				if (!this.isRestoringState)
+					this.PersistentState.SetValue<double>(latestLogFilesPanelSizeKey, (double)newValue.AsNonNull());
+			}
 			else if (property == LogFiltersCombinationModeProperty
 				|| property == LogLevelFilterProperty
 				|| property == LogProcessIdFilterProperty
@@ -2885,10 +2952,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.SetValue(HasLogProfileProperty, newValue != null);
 			else if (property == LogsProperty)
 				this.reportLogsTimeInfoAction?.Reschedule();
-			else if (property == SidePanelSizeProperty)
+			else if (property == MarkedLogsPanelSizeProperty)
 			{
 				if (!this.isRestoringState)
-					this.PersistentState.SetValue<double>(latestSidePanelSizeKey, (double)newValue.AsNonNull());
+					this.PersistentState.SetValue<double>(latestMarkedLogsPanelSizeKey, (double)newValue.AsNonNull());
 			}
 			else if (property == UriProperty)
 				this.SetValue(HasUriProperty, newValue != null);
@@ -3306,13 +3373,21 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				}
 
 				// restore side panel state
-				if (jsonState.TryGetProperty(nameof(IsSidePanelVisible), out jsonValue))
-					this.SetValue(IsSidePanelVisibleProperty, jsonValue.ValueKind != JsonValueKind.False);
-				if (jsonState.TryGetProperty(nameof(SidePanelSize), out jsonValue) 
+				if (jsonState.TryGetProperty(nameof(IsLogFilesPanelVisible), out jsonValue))
+					this.SetValue(IsLogFilesPanelVisibleProperty, jsonValue.ValueKind != JsonValueKind.False);
+				if (jsonState.TryGetProperty(nameof(IsMarkedLogsPanelVisible), out jsonValue))
+					this.SetValue(IsMarkedLogsPanelVisibleProperty, jsonValue.ValueKind != JsonValueKind.False);
+				if (jsonState.TryGetProperty(nameof(LogFilesPanelSize), out jsonValue) 
 					&& jsonValue.TryGetDouble(out var doubleValue)
-					&& SidePanelSizeProperty.ValidationFunction?.Invoke(doubleValue) == true)
+					&& LogFilesPanelSizeProperty.ValidationFunction.Invoke(doubleValue) == true)
 				{
-					this.SetValue(SidePanelSizeProperty, doubleValue);
+					this.SetValue(LogFilesPanelSizeProperty, doubleValue);
+				}
+				if (jsonState.TryGetProperty(nameof(MarkedLogsPanelSize), out jsonValue) 
+					&& jsonValue.TryGetDouble(out doubleValue)
+					&& MarkedLogsPanelSizeProperty.ValidationFunction.Invoke(doubleValue) == true)
+				{
+					this.SetValue(MarkedLogsPanelSizeProperty, doubleValue);
 				}
 
 				this.Logger.LogTrace("Complete restoring state");
@@ -3799,8 +3874,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				}
 
 				// save side panel state
-				jsonWriter.WriteBoolean(nameof(IsSidePanelVisible), this.IsSidePanelVisible);
-				jsonWriter.WriteNumber(nameof(SidePanelSize), this.SidePanelSize);
+				jsonWriter.WriteBoolean(nameof(IsLogFilesPanelVisible), this.IsLogFilesPanelVisible);
+				jsonWriter.WriteBoolean(nameof(IsMarkedLogsPanelVisible), this.IsMarkedLogsPanelVisible);
+				jsonWriter.WriteNumber(nameof(LogFilesPanelSize), this.LogFilesPanelSize);
+				jsonWriter.WriteNumber(nameof(MarkedLogsPanelSize), this.MarkedLogsPanelSize);
 			});
 			jsonWriter.WriteEndObject();
 		}
@@ -3918,16 +3995,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		/// <remarks>Type of command parameter is <see cref="string"/>.</remarks>
 		public ICommand SetWorkingDirectoryCommand { get; }
-
-
-		/// <summary>
-		/// Get or set size of side panel.
-		/// </summary>
-		public double SidePanelSize
-		{
-			 get => this.GetValue(SidePanelSizeProperty);
-			 set => this.SetValue(SidePanelSizeProperty, value);
-		}
 
 
 		/// <summary>
