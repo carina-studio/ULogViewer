@@ -22,7 +22,7 @@
 
 		<!-- Log header -->
 		<DataTemplate DataType="{x:Type appViewModels:DisplayableLogProperty}">
-			<Border BorderBrush="{DynamicResource Brush/SessionView.LogHeader.Separator}" BorderThickness="1,0,0,0" HorizontalAlignment="Stretch" Margin="{DynamicResource Thickness/SessionView.LogHeader.Margin}" Padding="{DynamicResource Thickness/SessionView.LogHeader.Padding}">
+			<Border BorderBrush="{DynamicResource Brush/SessionView.LogHeader.Separator}" BorderThickness="1,0,0,0" HorizontalAlignment="Stretch" Margin="{StaticResource Thickness/SessionView.LogHeader.Margin}" Padding="{StaticResource Thickness/SessionView.LogHeader.Padding}">
 				<TextBlock Text="{Binding DisplayName}" HorizontalAlignment="Stretch" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"/>
 			</Border>
 		</DataTemplate>
@@ -36,21 +36,21 @@
 		<ContextMenu x:Key="logActionMenu">
 			<MenuItem Name="showLogPropertyMenuItem" Command="{Binding $parent[UserControl].ShowLogStringPropertyCommand}" Header="{DynamicResource String/SessionView.ShowLogProperty.Disabled}">
 				<MenuItem.Icon>
-					<Image Classes="MenuItem_Icon" Source="{DynamicResource Image/Icon.Details}"/>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Details}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 			<Separator/>
 			<MenuItem Header="{DynamicResource String/SessionView.MarkLogs}">
 				<MenuItem.Icon>
-					<Image Classes="MenuItem_Icon" Source="{DynamicResource Image/Mark}"/>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Mark}"/>
 				</MenuItem.Icon>
 				<MenuItem.Styles>
 					<Style Selector="Border.MarkIcon">
 						<Setter Property="BorderBrush" Value="{DynamicResource MenuFlyoutItemForeground}"/>
-						<Setter Property="BorderThickness" Value="{DynamicResource Thickness/SessionView.Menu.MarkColorIcon.Border}"/>
-						<Setter Property="CornerRadius" Value="{DynamicResource CornerRadius/SessionView.Menu.MarkColorIcon}"/>
-						<Setter Property="Height" Value="{DynamicResource Double/MenuItem.Icon.Size}"/>
-						<Setter Property="Width" Value="{DynamicResource Double/MenuItem.Icon.Size}"/>
+						<Setter Property="BorderThickness" Value="{StaticResource Thickness/SessionView.Menu.MarkColorIcon.Border}"/>
+						<Setter Property="CornerRadius" Value="{StaticResource CornerRadius/SessionView.Menu.MarkColorIcon}"/>
+						<Setter Property="Height" Value="{StaticResource Double/MenuItem.Icon.Size}"/>
+						<Setter Property="Width" Value="{StaticResource Double/MenuItem.Icon.Size}"/>
 					</Style>
 				</MenuItem.Styles>
 				<MenuItem Command="{Binding $parent[UserControl].MarkSelectedLogsCommand}" CommandParameter="{x:Static appViewModels:MarkColor.Default}" Header="{DynamicResource String/MarkColor.Default}" InputGesture="{StaticResource KeyGesture/SessionView.MarkLogs.Default}"/>
@@ -97,7 +97,7 @@
 			</MenuItem>
 			<MenuItem Command="{Binding $parent[UserControl].UnmarkSelectedLogsCommand}" Header="{DynamicResource String/SessionView.UnmarkLogs}" InputGesture="{StaticResource KeyGesture/SessionView.UnmarkLogs}">
 				<MenuItem.Icon>
-					<Image Classes="Icon" Source="{DynamicResource Image/Unmark}"/>
+					<Image Classes="Icon" Source="{StaticResource Image/Unmark}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 			<MenuItem Command="{Binding $parent[UserControl].SelectMarkedLogsCommand}" Header="{DynamicResource String/SessionView.SelectMarkedLogs}" InputGesture="S"/>
@@ -105,12 +105,12 @@
 			<MenuItem Name="copyLogPropertyMenuItem" Command="{Binding $parent[UserControl].CopyLogPropertyCommand}" Header="{DynamicResource String/SessionView.CopyLogProperty.Disabled}"/>
 			<MenuItem Command="{Binding $parent[UserControl].CopySelectedLogsCommand}" Header="{DynamicResource String/SessionView.CopyLogs}" InputGesture="{StaticResource KeyGesture/SessionView.CopyLogs}">
 				<MenuItem.Icon>
-					<Image Classes="MenuItem_Icon" Source="{DynamicResource Image/Icon.Copy}"/>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Copy}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 			<MenuItem Command="{Binding $parent[UserControl].CopySelectedLogsWithFileNamesCommand}" Header="{DynamicResource String/SessionView.CopyLogsWithFileNames}" InputGesture="{StaticResource KeyGesture/SessionView.CopyLogsWithFileNames}">
 				<MenuItem.Icon>
-					<Image Classes="MenuItem_Icon" Source="{DynamicResource Image/Icon.Copy}"/>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Copy}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 			<Separator/>
@@ -119,7 +119,7 @@
 					<sys:Boolean>False</sys:Boolean>
 				</MenuItem.CommandParameter>
 				<MenuItem.Icon>
-					<Image Classes="MenuItem_Icon" Source="{DynamicResource Image/Filter}"/>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Filter}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 			<MenuItem Command="{Binding $parent[UserControl].FilterLogsByProcessIdCommand}" Header="{DynamicResource String/SessionView.FilterLogsBySelectedProcessIdOnly}">
@@ -127,7 +127,7 @@
 					<sys:Boolean>True</sys:Boolean>
 				</MenuItem.CommandParameter>
 				<MenuItem.Icon>
-					<Image Classes="MenuItem_Icon" Source="{DynamicResource Image/Filter}"/>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Filter}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 			<MenuItem Command="{Binding $parent[UserControl].FilterLogsByThreadIdCommand}" Header="{DynamicResource String/SessionView.FilterLogsBySelectedThreadId}">
@@ -135,7 +135,7 @@
 					<sys:Boolean>False</sys:Boolean>
 				</MenuItem.CommandParameter>
 				<MenuItem.Icon>
-					<Image Classes="MenuItem_Icon" Source="{DynamicResource Image/Filter}"/>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Filter}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 			<MenuItem Command="{Binding $parent[UserControl].FilterLogsByThreadIdCommand}" Header="{DynamicResource String/SessionView.FilterLogsBySelectedThreadIdOnly}">
@@ -143,13 +143,13 @@
 					<sys:Boolean>True</sys:Boolean>
 				</MenuItem.CommandParameter>
 				<MenuItem.Icon>
-					<Image Classes="MenuItem_Icon" Source="{DynamicResource Image/Filter}"/>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Filter}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 			<Separator/>
 			<MenuItem Command="{Binding $parent[UserControl].ShowFileInExplorerCommand}" Header="{DynamicResource String/SessionView.ShowFileInExplorer}">
 				<MenuItem.Icon>
-					<Image Classes="MenuItem_Icon" Source="{DynamicResource Image/Icon.FileManager}"/>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.FileManager}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 		</ContextMenu>
@@ -159,10 +159,10 @@
 			<ContextMenu.Styles>
 				<Style Selector="Border.MarkIcon">
 					<Setter Property="BorderBrush" Value="{DynamicResource MenuFlyoutItemForeground}"/>
-					<Setter Property="BorderThickness" Value="{DynamicResource Thickness/SessionView.Menu.MarkColorIcon.Border}"/>
-					<Setter Property="CornerRadius" Value="{DynamicResource CornerRadius/SessionView.Menu.MarkColorIcon}"/>
-					<Setter Property="Height" Value="{DynamicResource Double/MenuItem.Icon.Size}"/>
-					<Setter Property="Width" Value="{DynamicResource Double/MenuItem.Icon.Size}"/>
+					<Setter Property="BorderThickness" Value="{StaticResource Thickness/SessionView.Menu.MarkColorIcon.Border}"/>
+					<Setter Property="CornerRadius" Value="{StaticResource CornerRadius/SessionView.Menu.MarkColorIcon}"/>
+					<Setter Property="Height" Value="{StaticResource Double/MenuItem.Icon.Size}"/>
+					<Setter Property="Width" Value="{StaticResource Double/MenuItem.Icon.Size}"/>
 				</Style>
 			</ContextMenu.Styles>
 			<MenuItem Command="{Binding $parent[UserControl].MarkSelectedLogsCommand}" CommandParameter="{x:Static appViewModels:MarkColor.Default}" Header="{DynamicResource String/MarkColor.Default}" InputGesture="{StaticResource KeyGesture/SessionView.MarkLogs.Default}"/>
@@ -209,7 +209,7 @@
 			<Separator/>
 			<MenuItem Command="{Binding $parent[UserControl].UnmarkSelectedLogsCommand}" Header="{DynamicResource String/SessionView.UnmarkLogs}" InputGesture="{StaticResource KeyGesture/SessionView.UnmarkLogs}">
 				<MenuItem.Icon>
-					<Image Classes="MenuItem_Icon" Source="{DynamicResource Image/Unmark}"/>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Unmark}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 		</ContextMenu>
@@ -224,42 +224,42 @@
 		<ContextMenu x:Key="otherActionsMenu" PlacementMode="Bottom">
 			<MenuItem Command="{Binding $parent[Window].ShowAppOptions}" Header="{DynamicResource String/SessionView.AppOptions}">
 				<MenuItem.Icon>
-					<Image Classes="MenuItem_Icon" Source="{DynamicResource Image/Icon.Settings}"/>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Settings}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 			<MenuItem Command="{Binding $parent[Window].CheckForAppUpdate}" Header="{DynamicResource String/SessionView.CheckForAppUpdate}">
 				<MenuItem.Icon>
 					<Panel>
-						<Image Classes="MenuItem_Icon" IsVisible="{Binding $parent[Window].Application.UpdateInfo, Converter={x:Static aConverters:ObjectConverters.IsNull}}" Source="{DynamicResource Image/Icon.Update}"/>
-						<Image Classes="MenuItem_Icon" IsVisible="{Binding $parent[Window].Application.UpdateInfo, Converter={x:Static aConverters:ObjectConverters.IsNotNull}}" Source="{DynamicResource Image/Icon.Update.Colored}"/>
+						<Image Classes="MenuItem_Icon" IsVisible="{Binding $parent[Window].Application.UpdateInfo, Converter={x:Static aConverters:ObjectConverters.IsNull}}" Source="{StaticResource Image/Icon.Update}"/>
+						<Image Classes="MenuItem_Icon" IsVisible="{Binding $parent[Window].Application.UpdateInfo, Converter={x:Static aConverters:ObjectConverters.IsNotNull}}" Source="{StaticResource Image/Icon.Update.Colored}"/>
 					</Panel>
 				</MenuItem.Icon>
 			</MenuItem>
 			<MenuItem Command="{Binding $parent[UserControl].RestartAsAdministratorCommand}" Header="{DynamicResource String/SessionView.RestartAsAdministrator}">
 				<MenuItem.Icon>
-					<Image Classes="MenuItem_Icon" Source="{DynamicResource Image/Icon.Administrator}"/>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Administrator}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 			<Separator/>
 			<MenuItem Command="{Binding $parent[Window].CreateMainWindow}" Header="{DynamicResource String/Common.CreateWindow}" InputGesture="Ctrl+N">
 				<MenuItem.Icon>
-					<Image Classes="MenuItem_Icon" Source="{DynamicResource Image/Icon.AddWindow}"/>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.AddWindow}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 			<Separator/>
 			<MenuItem Command="{Binding $parent[Window].LayoutMainWindowsCommand}" CommandParameter="{x:Static asControls:MultiWindowLayout.Horizontal}" Header="{DynamicResource String/MainWindow.LayoutMainWindows.Horizontal}">
 				<MenuItem.Icon>
-					<Image Classes="MenuItem_Icon" Source="{DynamicResource Image/Icon.Layout.Horizontal}"/>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Layout.Horizontal}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 			<MenuItem Command="{Binding $parent[Window].LayoutMainWindowsCommand}" CommandParameter="{x:Static asControls:MultiWindowLayout.Vertical}" Header="{DynamicResource String/MainWindow.LayoutMainWindows.Vertical}">
 				<MenuItem.Icon>
-					<Image Classes="MenuItem_Icon" Source="{DynamicResource Image/Icon.Layout.Vertical}"/>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Layout.Vertical}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 			<MenuItem Command="{Binding $parent[Window].LayoutMainWindowsCommand}" CommandParameter="{x:Static asControls:MultiWindowLayout.Tile}" Header="{DynamicResource String/MainWindow.LayoutMainWindows.Tile}">
 				<MenuItem.Icon>
-					<Image Classes="MenuItem_Icon" Source="{DynamicResource Image/Icon.Layout.Tile}"/>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Layout.Tile}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 			<Separator/>
@@ -271,7 +271,7 @@
 			<MenuItem Command="{Binding $parent[UserControl].ShowWorkingDirectoryInExplorerCommand}" Header="{DynamicResource String/SessionView.ShowWorkingDirectoryInExplorer}">
 				<MenuItem.Icon>
 					<Border Classes="MenuItem_Icon">
-						<Image Classes="Icon" Source="{DynamicResource Image/Icon.FileManager}"/>
+						<Image Classes="Icon" Source="{StaticResource Image/Icon.FileManager}"/>
 					</Border>
 				</MenuItem.Icon>
 			</MenuItem>
@@ -402,7 +402,7 @@
 								<Separator Classes="ToolBar_Separator"/>
 
 								<!-- Level filter -->
-								<ComboBox Name="logLevelFilterComboBox" Classes="ToolBar_ComboBox" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" IsVisible="false" Items="{Binding $parent[UserControl].ValidLogLevels}" SelectionChanged="OnLogLevelFilterComboBoxSelectionChanged" ToolTip.Tip="{DynamicResource String/SessionView.LogLevelFilter.Description}" VerticalAlignment="Center" Width="{DynamicResource Double/SessionView.ToolBar.LogLevelFilter.Width}">
+								<ComboBox Name="logLevelFilterComboBox" Classes="ToolBar_ComboBox" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" IsVisible="false" Items="{Binding $parent[UserControl].ValidLogLevels}" SelectionChanged="OnLogLevelFilterComboBoxSelectionChanged" ToolTip.Tip="{DynamicResource String/SessionView.LogLevelFilter.Description}" VerticalAlignment="Center" Width="{StaticResource Double/SessionView.ToolBar.LogLevelFilter.Width}">
 									<ia:Interaction.Behaviors>
 										<iaCore:DataTriggerBehavior Binding="{Binding $parent[UserControl].ValidLogLevels.Count}" ComparisonCondition="GreaterThan" Value="1">
 											<iaCore:ChangePropertyAction PropertyName="IsVisible" Value="True"/>
@@ -414,7 +414,7 @@
 									<ComboBox.ItemTemplate>
 										<DataTemplate>
 											<StackPanel Orientation="Horizontal">
-												<Border Background="{Binding Converter={x:Static appConverters:LogLevelBrushConverter.Default}}" BorderBrush="{DynamicResource ComboBoxItemForeground}" BorderThickness="1" Height="{DynamicResource Double/LogLevelComboBox.Item.Indicator.Size}" Margin="{DynamicResource Thickness/LogLevelComboBox.Item.Indicator.Margin}" VerticalAlignment="Center" Width="{DynamicResource Double/LogLevelComboBox.Item.Indicator.Size}"/>
+												<Border Background="{Binding Converter={x:Static appConverters:LogLevelBrushConverter.Default}}" BorderBrush="{DynamicResource ComboBoxItemForeground}" BorderThickness="1" Height="{StaticResource Double/LogLevelComboBox.Item.Indicator.Size}" Margin="{StaticResource Thickness/LogLevelComboBox.Item.Indicator.Margin}" VerticalAlignment="Center" Width="{StaticResource Double/LogLevelComboBox.Item.Indicator.Size}"/>
 												<TextBlock Text="{Binding Converter={x:Static appControls:SessionView.LogLevelNameConverter}}" VerticalAlignment="Center"/>
 											</StackPanel>
 										</DataTemplate>
@@ -422,18 +422,18 @@
 								</ComboBox>
 
 								<!-- PID filter -->
-								<Panel Name="logProcessIdFilterTextBoxPanel" Grid.Column="1" IsVisible="False" Width="{DynamicResource Double/SessionView.ToolBar.LogProcessIdFilter.Width}">
+								<Panel Name="logProcessIdFilterTextBoxPanel" Grid.Column="1" IsVisible="False" Width="{StaticResource Double/SessionView.ToolBar.LogProcessIdFilter.Width}">
 									<abControls:IntegerTextBox Name="logProcessIdFilterTextBox" Classes="ToolBar_TextBox_WithInPlaceAction" GotFocus="OnLogFilterTextBoxGotFocus" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" Maximum="2147483647" Minimum="0" PropertyChanged="OnLogFilterTextBoxPropertyChanged" ToolTip.Tip="{DynamicResource String/SessionView.LogProcessIdFilter.Description}" VerticalAlignment="Center" Watermark="{DynamicResource String/LogProperty.ProcessId}"/>
 									<Button Classes="TextBox_InPlaceAction" Command="{Binding #logProcessIdFilterTextBox.Clear}" IsVisible="{Binding #logProcessIdFilterTextBox.Text, Converter={x:Static aConverters:StringConverters.IsNotNullOrEmpty}}" ToolTip.Tip="{DynamicResource String/Common.Clear}">
-										<Image Classes="Icon" Source="{DynamicResource Image/Icon.Close}"/>
+										<Image Classes="Icon" Source="{StaticResource Image/Icon.Close}"/>
 									</Button>
 								</Panel>
 
 								<!-- TID filter -->
-								<Panel Name="logThreadIdFilterTextBoxPanel" Grid.Column="1" IsVisible="False" Width="{DynamicResource Double/SessionView.ToolBar.LogProcessIdFilter.Width}">
+								<Panel Name="logThreadIdFilterTextBoxPanel" Grid.Column="1" IsVisible="False" Width="{StaticResource Double/SessionView.ToolBar.LogProcessIdFilter.Width}">
 									<abControls:IntegerTextBox Name="logThreadIdFilterTextBox" Classes="ToolBar_TextBox_WithInPlaceAction" GotFocus="OnLogFilterTextBoxGotFocus" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" Maximum="2147483647" Minimum="0" PropertyChanged="OnLogFilterTextBoxPropertyChanged" ToolTip.Tip="{DynamicResource String/SessionView.LogThreadIdFilter.Description}" VerticalAlignment="Center" Watermark="{DynamicResource String/LogProperty.ThreadId}"/>
 									<Button Classes="TextBox_InPlaceAction" Command="{Binding #logThreadIdFilterTextBox.Clear}" IsVisible="{Binding #logThreadIdFilterTextBox.Text, Converter={x:Static aConverters:StringConverters.IsNotNullOrEmpty}}" ToolTip.Tip="{DynamicResource String/Common.Clear}">
-										<Image Classes="Icon" Source="{DynamicResource Image/Icon.Close}"/>
+										<Image Classes="Icon" Source="{StaticResource Image/Icon.Close}"/>
 									</Button>
 								</Panel>
 
@@ -454,10 +454,10 @@
 							</StackPanel>
 
 							<!-- Text filter -->
-							<Panel Name="logTextFilterTextBoxPanel" Grid.Column="1" HorizontalAlignment="Stretch" Margin="{DynamicResource Thickness/ToolBar.Item.Margin}" MinWidth="{DynamicResource Double/SessionView.ToolBar.LogTextFilter.MinWidth}" VerticalAlignment="Center">
-								<asControls:RegexTextBox Name="logTextFilterTextBox" Classes="RegexTextBox_InvalidText" GotFocus="OnLogFilterTextBoxGotFocus" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" Padding="{DynamicResource Thickness/TextBox.Padding.WithInPlaceAction}" PropertyChanged="OnLogFilterTextBoxPropertyChanged" ToolTip.Tip="{DynamicResource String/SessionView.LogTextFilter.ToolTip}" Watermark="{DynamicResource String/SessionView.LogTextFilter.Watermark}"/>
+							<Panel Name="logTextFilterTextBoxPanel" Grid.Column="1" HorizontalAlignment="Stretch" Margin="{StaticResource Thickness/ToolBar.Item.Margin}" MinWidth="{StaticResource Double/SessionView.ToolBar.LogTextFilter.MinWidth}" VerticalAlignment="Center">
+								<asControls:RegexTextBox Name="logTextFilterTextBox" Classes="RegexTextBox_InvalidText" GotFocus="OnLogFilterTextBoxGotFocus" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" Padding="{StaticResource Thickness/TextBox.Padding.WithInPlaceAction}" PropertyChanged="OnLogFilterTextBoxPropertyChanged" ToolTip.Tip="{DynamicResource String/SessionView.LogTextFilter.ToolTip}" Watermark="{DynamicResource String/SessionView.LogTextFilter.Watermark}"/>
 								<Button Classes="TextBox_InPlaceAction" Command="{Binding #logTextFilterTextBox.Clear}" IsVisible="{Binding #logTextFilterTextBox.Text, Converter={x:Static aConverters:StringConverters.IsNotNullOrEmpty}}" ToolTip.Tip="{DynamicResource String/Common.Clear}">
-									<Image Classes="Icon" Source="{DynamicResource Image/Icon.Close}"/>
+									<Image Classes="Icon" Source="{StaticResource Image/Icon.Close}"/>
 								</Button>
 							</Panel>
 
@@ -476,20 +476,20 @@
 							</ia:Interaction.Behaviors>
 							<Panel>
 								<Panel>
-									<Image Classes="Icon" Source="{DynamicResource Image/Filters}" IsVisible="{Binding ElementName=predefinedLogTextFilterListBox, Path=!SelectedItems.Count}"/>
-									<Image Classes="Icon" Source="{DynamicResource Image/Filters.Active}" IsVisible="{Binding ElementName=predefinedLogTextFilterListBox, Path=SelectedItems.Count}"/>
-									<Image Classes="Icon" Source="{DynamicResource Image/Filters.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
+									<Image Classes="Icon" Source="{StaticResource Image/Filters}" IsVisible="{Binding ElementName=predefinedLogTextFilterListBox, Path=!SelectedItems.Count}"/>
+									<Image Classes="Icon" Source="{StaticResource Image/Filters.Active}" IsVisible="{Binding ElementName=predefinedLogTextFilterListBox, Path=SelectedItems.Count}"/>
+									<Image Classes="Icon" Source="{StaticResource Image/Filters.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
 								</Panel>
-								<Popup Name="predefinedLogTextFiltersPopup" IsLightDismissEnabled="True" IsOpen="{Binding $parent[ToggleButton].IsChecked, Mode=TwoWay}" MaxHeight="{DynamicResource Double/SessionView.PredefinedLogTextFiltersPopup.MaxHeight}" PlacementTarget="{Binding $parent[ToggleButton]}" Width="{DynamicResource Double/SessionView.PredefinedLogTextFiltersPopup.Width}" WindowManagerAddShadowHint="True">
-									<Border Background="{DynamicResource ComboBoxDropDownBackground}" BorderBrush="{DynamicResource ComboBoxDropDownBorderBrush}" BorderThickness="{DynamicResource ComboBoxDropdownBorderThickness}" CornerRadius="{DynamicResource OverlayCornerRadius}" Padding="{DynamicResource Thickness/SessionView.PredefinedLogTextFiltersPopup.Padding}">
+								<Popup Name="predefinedLogTextFiltersPopup" IsLightDismissEnabled="True" IsOpen="{Binding $parent[ToggleButton].IsChecked, Mode=TwoWay}" MaxHeight="{StaticResource Double/SessionView.PredefinedLogTextFiltersPopup.MaxHeight}" PlacementTarget="{Binding $parent[ToggleButton]}" Width="{StaticResource Double/SessionView.PredefinedLogTextFiltersPopup.Width}" WindowManagerAddShadowHint="True">
+									<Border Background="{DynamicResource ComboBoxDropDownBackground}" BorderBrush="{DynamicResource ComboBoxDropDownBorderBrush}" BorderThickness="{DynamicResource ComboBoxDropdownBorderThickness}" CornerRadius="{DynamicResource OverlayCornerRadius}" Padding="{StaticResource Thickness/SessionView.PredefinedLogTextFiltersPopup.Padding}">
 										<DockPanel>
-											<Border DockPanel.Dock="Bottom" Padding="{DynamicResource Thickness/Dialog.ControlButtonsPanel.Padding}">
+											<Border DockPanel.Dock="Bottom" Padding="{StaticResource Thickness/Dialog.ControlButtonsPanel.Padding}">
 												<StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
 													<Button Classes="Dialog_ControlButton" Command="{Binding $parent[UserControl].CreatePredefinedLogTextFilter}" Content="{DynamicResource String/SessionView.CreatePredefinedLogTextFilter}"/>
 													<Button Classes="Dialog_ControlButton" Command="{Binding $parent[UserControl].ClearPredefinedLogTextFilterSelection}" IsEnabled="{Binding ElementName=predefinedLogTextFilterListBox, Path=SelectedItems.Count}" Content="{DynamicResource String/SessionView.ClearPredefinedLogTextFiltersSelection}"/>
 												</StackPanel>
 											</Border>
-											<Border DockPanel.Dock="Top" IsVisible="{Binding $parent[UserControl].PredefinedLogTextFilters.Count}" Padding="{DynamicResource Thickness/SessionView.PredefinedLogTextFilterHint.Padding}">
+											<Border DockPanel.Dock="Top" IsVisible="{Binding $parent[UserControl].PredefinedLogTextFilters.Count}" Padding="{StaticResource Thickness/SessionView.PredefinedLogTextFilterHint.Padding}">
 												<TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" HorizontalAlignment="Center" Text="{DynamicResource String/SessionView.PredefinedLogTextFilters.Hint}" TextTrimming="CharacterEllipsis"/>
 											</Border>
 											<Panel>
@@ -497,18 +497,18 @@
 													<ListBox.ItemTemplate>
 														<DataTemplate DataType="{x:Type appViewModels:PredefinedLogTextFilter}">
 															<Grid ColumnDefinitions="Auto,*,Auto">
-																<Panel Height="{DynamicResource Double/SessionView.PredefinedLogTextFilterListBox.Icon.Size}" Margin="{DynamicResource Thickness/SessionView.PredefinedLogTextFilterListBox.Icon.Margin}" VerticalAlignment="Center" Width="{DynamicResource Double/SessionView.PredefinedLogTextFilterListBox.Icon.Size}">
-																	<Image Classes="Icon" Source="{DynamicResource Image/Filter}" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}"/>
-																	<Image Classes="Icon" Source="{DynamicResource Image/Filter.Light}" IsVisible="{Binding $parent[ListBoxItem].IsSelected}"/>
+																<Panel Height="{StaticResource Double/SessionView.PredefinedLogTextFilterListBox.Icon.Size}" Margin="{StaticResource Thickness/SessionView.PredefinedLogTextFilterListBox.Icon.Margin}" VerticalAlignment="Center" Width="{StaticResource Double/SessionView.PredefinedLogTextFilterListBox.Icon.Size}">
+																	<Image Classes="Icon" Source="{StaticResource Image/Filter}" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}"/>
+																	<Image Classes="Icon" Source="{StaticResource Image/Filter.Light}" IsVisible="{Binding $parent[ListBoxItem].IsSelected}"/>
 																</Panel>
 																<TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center"/>
 																<Border Classes="InPlaceAction_Reserved" Grid.Column="1"/>
 																<StackPanel Grid.Column="2" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal" VerticalAlignment="Center">
 																	<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].RemovePredefinedLogTextFilter}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
-																		<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Delete}"/>
+																		<Image Classes="InPlaceAction_Icon" Source="{StaticResource Image/Icon.Delete}"/>
 																	</Button>
 																	<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].EditPredefinedLogTextFilter}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
-																		<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Edit}"/>
+																		<Image Classes="InPlaceAction_Icon" Source="{StaticResource Image/Icon.Edit}"/>
 																	</Button>
 																</StackPanel>
 															</Grid>
@@ -517,12 +517,12 @@
 													<ListBox.Styles>
 														<Style Selector="ListBoxItem">
 															<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-															<Setter Property="Padding" Value="{DynamicResource Thickness/SessionView.PredefinedLogTextFilterListBox.Item.Padding}"/>
+															<Setter Property="Padding" Value="{StaticResource Thickness/SessionView.PredefinedLogTextFilterListBox.Item.Padding}"/>
 															<Setter Property="ToolTip.Tip" Value="{Binding Regex}"/>
 														</Style>
 													</ListBox.Styles>
 												</ListBox>
-												<TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" HorizontalAlignment="Center" IsVisible="{Binding !$parent[UserControl].PredefinedLogTextFilters.Count}" Margin="{DynamicResource Thickness/SessionView.NoPredefinedLogTextFilterHint.Margin}" Text="{DynamicResource String/SessionView.NoPredefinedLogTextFilter}" TextWrapping="Wrap"/>
+												<TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" HorizontalAlignment="Center" IsVisible="{Binding !$parent[UserControl].PredefinedLogTextFilters.Count}" Margin="{StaticResource Thickness/SessionView.NoPredefinedLogTextFilterHint.Margin}" Text="{DynamicResource String/SessionView.NoPredefinedLogTextFilter}" TextWrapping="Wrap"/>
 											</Panel>
 										</DockPanel>
 									</Border>
@@ -578,7 +578,7 @@
 								<Image Classes="Icon" Source="{StaticResource Image/Icon.More}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
 								<Image Classes="Icon" Source="{StaticResource Image/Icon.More.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
 								<Border Classes="ToolBar_NotificationIndicator" IsVisible="{Binding $parent[Window].Application.UpdateInfo, Converter={x:Static aConverters:ObjectConverters.IsNotNull}}">
-									<Image Classes="ToolBar_NotificationIndicator" Source="{DynamicResource Image/Icon.Update.Colored}"/>
+									<Image Classes="ToolBar_NotificationIndicator" Source="{StaticResource Image/Icon.Update.Colored}"/>
 								</Border>
 							</Panel>
 						</ToggleButton>
@@ -589,7 +589,7 @@
 			</Border>
 
 			<!-- Progress bar -->
-			<ProgressBar Background="{x:Null}" CornerRadius="0" Grid.ColumnSpan="3" Grid.Row="1" IsIndeterminate="True" IsVisible="{Binding IsProcessingLogs}" MaxHeight="{DynamicResource Double/SessionView.LogsProgessingBar.Height}" MinHeight="{DynamicResource Double/SessionView.LogsProgessingBar.Height}" VerticalAlignment="Bottom"/>
+			<ProgressBar Background="{x:Null}" CornerRadius="0" Grid.ColumnSpan="3" Grid.Row="1" IsIndeterminate="True" IsVisible="{Binding IsProcessingLogs}" MaxHeight="{StaticResource Double/SessionView.LogsProgessingBar.Height}" MinHeight="{StaticResource Double/SessionView.LogsProgessingBar.Height}" VerticalAlignment="Bottom"/>
 			
 		</Panel>
 
@@ -599,13 +599,13 @@
 			<!-- Header -->
 			<Border Background="{DynamicResource Brush/SessionView.LogHeader.Background}">
 				<Grid Name="logHeaderContainer">
-					<TextBlock Margin="{DynamicResource Thickness/SessionView.LogHeader.Margin}" Padding="{DynamicResource Thickness/SessionView.LogHeader.Padding}" Text=" "/>
+					<TextBlock Margin="{StaticResource Thickness/SessionView.LogHeader.Margin}" Padding="{StaticResource Thickness/SessionView.LogHeader.Padding}" Text=" "/>
 					<Grid Name="logHeaderGrid"/>
 				</Grid>
 			</Border>
 
 			<!-- ListBox -->
-			<asControls:ListBox Name="logListBox" AutoScrollToSelectedItem="False" Background="{DynamicResource Brush/WorkingArea.Background}" BorderThickness="0" ContextMenu="{StaticResource logActionMenu}" CornerRadius="0" DoubleClickOnItem="OnLogListBoxDoubleClickOnItem" Grid.Row="1" HorizontalAlignment="Stretch" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" Items="{Binding Logs}" Padding="{DynamicResource Thickness/SessionView.LogListBox.Padding}" ScrollViewer.HorizontalScrollBarVisibility="Visible" SelectionChanged="OnLogListBoxSelectionChanged" SelectionMode="Multiple" VirtualizationMode="Simple">
+			<asControls:ListBox Name="logListBox" AutoScrollToSelectedItem="False" Background="{DynamicResource Brush/WorkingArea.Background}" BorderThickness="0" ContextMenu="{StaticResource logActionMenu}" CornerRadius="0" DoubleClickOnItem="OnLogListBoxDoubleClickOnItem" Grid.Row="1" HorizontalAlignment="Stretch" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" Items="{Binding Logs}" Padding="{StaticResource Thickness/SessionView.LogListBox.Padding}" ScrollViewer.HorizontalScrollBarVisibility="Visible" SelectionChanged="OnLogListBoxSelectionChanged" SelectionMode="Multiple" VirtualizationMode="Simple">
 				<asControls:ListBox.Styles>
 					<Style Selector="ListBoxItem">
 						<Setter Property="CornerRadius" Value="0"/>
@@ -633,21 +633,21 @@
 			</asControls:ListBox>
 
 			<!-- Hints -->
-			<Viewbox Grid.Row="1" Margin="{DynamicResource Thickness/SessionView.Hint.Margin}" Stretch="Uniform" StretchDirection="DownOnly">
+			<Viewbox Grid.Row="1" Margin="{StaticResource Thickness/SessionView.Hint.Margin}" Stretch="Uniform" StretchDirection="DownOnly">
 				<Panel>
 
 					<!-- Hint: no log to show -->
 					<Border IsVisible="{Binding !HasLogs}">
-						<TextBlock FontSize="{DynamicResource Double/SessionView.Hint.NoLogToShow.FontSize}" HorizontalAlignment="Center" IsVisible="{Binding $parent[UserControl].HasLogProfile}" Text="{DynamicResource String/SessionView.Hint.NoLogToShow}" TextWrapping="Wrap" VerticalAlignment="Center"/>
+						<TextBlock FontSize="{StaticResource Double/SessionView.Hint.NoLogToShow.FontSize}" HorizontalAlignment="Center" IsVisible="{Binding $parent[UserControl].HasLogProfile}" Text="{DynamicResource String/SessionView.Hint.NoLogToShow}" TextWrapping="Wrap" VerticalAlignment="Center"/>
 					</Border>
 
 					<!-- Hint: select log profile -->
 					<StackPanel HorizontalAlignment="Center" IsVisible="{Binding !$parent[UserControl].HasLogProfile}" Orientation="Horizontal">
-						<TextBlock FontSize="{DynamicResource Double/SessionView.Hint.SelectLogProfile.FontSize}" Text="{DynamicResource String/SessionView.Hint.SelectLogProfile.Section1}" TextWrapping="NoWrap" VerticalAlignment="Center"/>
-						<Border Height="{DynamicResource Double/SessionView.Hint.SelectLogProfile.FontSize}" Margin="{DynamicResource Thickness/SessionView.Hint.SelectLogProfile.Icon.Margin}" VerticalAlignment="Center" Width="{DynamicResource Double/SessionView.Hint.SelectLogProfile.FontSize}">
-							<Image Classes="Icon" Source="{DynamicResource Image/LogProfile}"/>
+						<TextBlock FontSize="{StaticResource Double/SessionView.Hint.SelectLogProfile.FontSize}" Text="{DynamicResource String/SessionView.Hint.SelectLogProfile.Section1}" TextWrapping="NoWrap" VerticalAlignment="Center"/>
+						<Border Height="{StaticResource Double/SessionView.Hint.SelectLogProfile.FontSize}" Margin="{StaticResource Thickness/SessionView.Hint.SelectLogProfile.Icon.Margin}" VerticalAlignment="Center" Width="{StaticResource Double/SessionView.Hint.SelectLogProfile.FontSize}">
+							<Image Classes="Icon" Source="{StaticResource Image/LogProfile}"/>
 						</Border>
-						<TextBlock FontSize="{DynamicResource Double/SessionView.Hint.SelectLogProfile.FontSize}" Text="{DynamicResource String/SessionView.Hint.SelectLogProfile.Section2}" TextWrapping="NoWrap" VerticalAlignment="Center"/>
+						<TextBlock FontSize="{StaticResource Double/SessionView.Hint.SelectLogProfile.FontSize}" Text="{DynamicResource String/SessionView.Hint.SelectLogProfile.Section2}" TextWrapping="NoWrap" VerticalAlignment="Center"/>
 					</StackPanel>
 
 				</Panel>
@@ -661,15 +661,15 @@
 					<StackPanel ClipToBounds="True" Orientation="Horizontal">
 
 						<!-- Icon -->
-						<Image Classes="StatusBar_Icon" Source="{DynamicResource Image/Calendar}"/>
+						<Image Classes="StatusBar_Icon" Source="{StaticResource Image/Calendar}"/>
 
 						<!-- Starting point -->
 						<TextBlock Classes="StatusBar_TextBlock" Foreground="{DynamicResource TextControlForeground}" Text="{Binding LogsDurationStartingString}" ToolTip.Placement="Right" ToolTip.Tip="{DynamicResource String/SessionView.LogsDurationStartingPoint}"/>
 
 						<!-- Duration -->
-						<Image Classes="StatusBar_Icon" Margin="{DynamicResource Thickness/SessionView.LogsTimeInfoPanel.Arrow.Margin}" Source="{DynamicResource Image/Icon.Forward}"/>
+						<Image Classes="StatusBar_Icon" Margin="{StaticResource Thickness/SessionView.LogsTimeInfoPanel.Arrow.Margin}" Source="{StaticResource Image/Icon.Forward}"/>
 						<TextBlock Classes="StatusBar_TextBlock" Foreground="{DynamicResource TextControlForeground}" Text="{Binding LogsDuration, Converter={x:Static asConverters:TimeSpanConverter.Default}}" ToolTip.Placement="Left" ToolTip.Tip="{DynamicResource String/SessionView.LogsDuration}"/>
-						<Image Classes="StatusBar_Icon" Margin="{DynamicResource Thickness/SessionView.LogsTimeInfoPanel.Arrow.Margin}" Source="{DynamicResource Image/Icon.Forward}"/>
+						<Image Classes="StatusBar_Icon" Margin="{StaticResource Thickness/SessionView.LogsTimeInfoPanel.Arrow.Margin}" Source="{StaticResource Image/Icon.Forward}"/>
 
 						<!-- Ending point -->
 						<TextBlock Classes="StatusBar_TextBlock" Foreground="{DynamicResource TextControlForeground}" Text="{Binding LogsDurationEndingString}" ToolTip.Placement="Left" ToolTip.Tip="{DynamicResource String/SessionView.LogsDurationEndingPoint}"/>

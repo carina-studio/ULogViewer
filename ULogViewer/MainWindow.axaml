@@ -12,8 +12,8 @@
         x:Class="CarinaStudio.ULogViewer.MainWindow"
 		Classes="Tabbed"
 		Icon="/ULogViewer.ico"
-		MinHeight="{DynamicResource Double/MainWindow.MinHeight}"
-		MinWidth="{DynamicResource Double/MainWindow.MinWidth}">
+		MinHeight="{StaticResource Double/MainWindow.MinHeight}"
+		MinWidth="{StaticResource Double/MainWindow.MinWidth}">
 
 	<Window.ExtendClientAreaTitleBarHeightHint>
 		<MultiBinding Converter="{x:Static abConverters:DoubleConverters.Addition}">
@@ -31,7 +31,7 @@
 						<MenuItem Command="{Binding $parent[Window].SetCustomSessionTitle}" CommandParameter="{Binding $parent[TabItem]}" Header="{DynamicResource String/MainWindow.SetCustomSessionTitle}">
 							<MenuItem.Icon>
 								<Border Classes="MenuItem_Icon">
-									<Image Classes="Icon" Source="{DynamicResource Image/Icon.Edit}"/>
+									<Image Classes="Icon" Source="{StaticResource Image/Icon.Edit}"/>
 								</Border>
 							</MenuItem.Icon>
 						</MenuItem>
@@ -40,7 +40,7 @@
 						<MenuItem Command="{Binding $parent[Window].MoveSessionToNewWorkspace}" CommandParameter="{Binding $parent[TabItem]}" Header="{DynamicResource String/Common.OpenInNewWindow}" IsEnabled="{Binding $parent[Window].HasMultipleSessions}">
 							<MenuItem.Icon>
 								<Border Classes="MenuItem_Icon">
-									<Image Classes="Icon" Source="{DynamicResource Image/Icon.AddWindow}"/>
+									<Image Classes="Icon" Source="{StaticResource Image/Icon.AddWindow}"/>
 								</Border>
 							</MenuItem.Icon>
 						</MenuItem>
@@ -48,7 +48,7 @@
 						<MenuItem Command="{Binding $parent[Window].CloseSessionTabItem}" CommandParameter="{Binding $parent[TabItem]}" Header="{DynamicResource String/Common.CloseTab}" InputGesture="Ctrl+W">
 							<MenuItem.Icon>
 								<Border Classes="MenuItem_Icon">
-									<Image Classes="Icon" Source="{DynamicResource Image/Icon.Close}"/>
+									<Image Classes="Icon" Source="{StaticResource Image/Icon.Close}"/>
 								</Border>
 							</MenuItem.Icon>
 						</MenuItem>
@@ -56,14 +56,14 @@
 				</Grid.ContextMenu>
 				<Grid Name="Content" ColumnDefinitions="Auto,*" HorizontalAlignment="Stretch">
 					<ToolTip.Tip>
-						<StackPanel Margin="{DynamicResource Thickness/MainWindow.TabItem.ToolTip.Padding}">
+						<StackPanel Margin="{StaticResource Thickness/MainWindow.TabItem.ToolTip.Padding}">
 							<StackPanel.Styles>
 								<Style Selector="Image.ToolTipIcon">
-									<Setter Property="Height" Value="{DynamicResource Double/MainWindow.TabItem.ToolTip.Icon.Size}"/>
-									<Setter Property="Margin" Value="{DynamicResource Thickness/MainWindow.TabItem.ToolTip.Icon.Margin}"/>
+									<Setter Property="Height" Value="{StaticResource Double/MainWindow.TabItem.ToolTip.Icon.Size}"/>
+									<Setter Property="Margin" Value="{StaticResource Thickness/MainWindow.TabItem.ToolTip.Icon.Margin}"/>
 									<Setter Property="Stretch" Value="Uniform"/>
 									<Setter Property="VerticalAlignment" Value="Center"/>
-									<Setter Property="Width" Value="{DynamicResource Double/MainWindow.TabItem.ToolTip.Icon.Size}"/>
+									<Setter Property="Width" Value="{StaticResource Double/MainWindow.TabItem.ToolTip.Icon.Size}"/>
 								</Style>
 								<Style Selector="TextBlock.ToolTipText">
 									<Setter Property="VerticalAlignment" Value="Center"/>
@@ -74,14 +74,14 @@
 							<StackPanel IsVisible="{Binding !IsHibernated}">
 								<StackPanel IsVisible="{Binding IsLogsReadingPaused}">
 									<StackPanel Orientation="Horizontal">
-										<Image Classes="ToolTipIcon" Source="{DynamicResource Image/Icon.PauseMedia}"/>
+										<Image Classes="ToolTipIcon" Source="{StaticResource Image/Icon.PauseMedia}"/>
 										<TextBlock Classes="ToolTipText" Text="{DynamicResource String/MainWindow.Session.Paused}"/>
 									</StackPanel>
 									<Separator Classes="Dialog_Separator_Small"/>
 								</StackPanel>
 								<StackPanel IsVisible="{Binding IsWaitingForDataSources}">
 									<StackPanel Orientation="Horizontal">
-										<Image Classes="ToolTipIcon" Source="{DynamicResource Image/Icon.Waiting}"/>
+										<Image Classes="ToolTipIcon" Source="{StaticResource Image/Icon.Waiting}"/>
 										<TextBlock Classes="ToolTipText" Text="{DynamicResource String/MainWindow.Session.WaitingForDataSources}"/>
 									</StackPanel>
 									<Separator Classes="Dialog_Separator_Small"/>
@@ -96,7 +96,7 @@
 								</StackPanel>
 							</StackPanel>
 							<StackPanel IsVisible="{Binding IsHibernated}" Orientation="Horizontal">
-								<Image Classes="ToolTipIcon" Source="{DynamicResource Image/Icon.Leaf.Colored}"/>
+								<Image Classes="ToolTipIcon" Source="{StaticResource Image/Icon.Leaf.Colored}"/>
 								<TextBlock Classes="ToolTipText" Text="{DynamicResource String/MainWindow.Session.Hibernated}"/>
 							</StackPanel>
 						</StackPanel>
@@ -159,7 +159,7 @@
 		<TabItem Classes="Empty">
 			<TabItem.Header>
 				<Button Classes="AddTabItem" Command="{Binding $parent[Window].CreateSessionTabItem}">
-					<Image Classes="Icon" Source="{DynamicResource Image/Icon.Add}"/>
+					<Image Classes="Icon" Source="{StaticResource Image/Icon.Add}"/>
 				</Button>
 			</TabItem.Header>
 		</TabItem>
