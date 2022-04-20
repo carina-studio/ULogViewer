@@ -388,6 +388,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			public string FileName { get; }
 
 			/// <summary>
+			/// Check whether error was occurred while reading logs or not.
+			/// </summary>
+			public abstract bool HasError { get; }
+
+			/// <summary>
+			/// Check whether logs are being read from this file or not.
+			/// </summary>
+			public abstract bool IsReadingLogs { get; }
+
+			/// <summary>
 			/// Get number of logs read from this file.
 			/// </summary>
 			public abstract int LogCount { get; }
@@ -525,11 +535,19 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		class LogFileInfoImpl : LogFileInfo
 		{
 			// Fields.
+			bool hasError;
+			bool isReadingLogs = true;
 			int logCount;
 
 			// Constructor.
 			public LogFileInfoImpl(string fileName, LogReadingPrecondition precondition) : base(fileName, precondition)
 			{ }
+
+			// Has error.
+			public override bool HasError { get => this.hasError; }
+
+			// Is reading logs.
+			public override bool IsReadingLogs { get => this.isReadingLogs; }
 
 			// Log count.
 			public override int LogCount { get => this.logCount; }
@@ -541,6 +559,28 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					return;
 				this.logCount = logCount;
 				this.OnPropertyChanged(nameof(LogCount));
+			}
+
+			// Update log reader state.
+			public void UpdateLogReaderState(LogReaderState state)
+			{
+				var hasError = state == LogReaderState.DataSourceError 
+					|| state == LogReaderState.UnclassifiedError;
+				var isReadingLogs = state switch
+				{
+					LogReaderState.Stopped => false,
+					_ => true,
+				};
+				if (this.hasError != hasError)
+				{
+					this.hasError = hasError;
+					this.OnPropertyChanged(nameof(HasError));
+				}
+				if (this.isReadingLogs != isReadingLogs)
+				{
+					this.isReadingLogs = isReadingLogs;
+					this.OnPropertyChanged(nameof(IsReadingLogs));
+				}
 			}
 		}
 
@@ -603,7 +643,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		bool isRestoringState;
 		readonly Dictionary<LogReader, LogFileInfoImpl> logFileInfoMapByLogReader = new();
 		readonly SortedObservableList<LogFileInfo> logFileInfoList = new((lhs, rhs) =>
-			string.CompareOrdinal(Path.GetFileName(lhs?.FileName), Path.GetFileName(rhs?.FileName)));
+			PathComparer.Default.Compare(lhs?.FileName, rhs?.FileName));
 		readonly DisplayableLogFilter logFilter;
 		readonly List<LogReader> logReaders = new List<LogReader>();
 		readonly Stopwatch logsFilteringWatch = new Stopwatch();
@@ -1080,7 +1120,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			var dataSourceOptions = profile.DataSourceOptions;
 			if (dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName)))
 				throw new InternalStateCorruptedException($"Cannot add log file because file name is already specified.");
-			if (this.logFileInfoList.FirstOrDefault(it => PathEqualityComparer.Default.Equals(it.FileName, fileName)) != null)
+			if (this.logFileInfoList.BinarySearch<LogFileInfo, string>(fileName, it => it.FileName, PathComparer.Default.Compare) >= 0)
 			{
 				this.Logger.LogWarning($"File '{fileName}' is already added");
 				return;
@@ -1603,9 +1643,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// bind to log file info
 			if (hasFileName)
 			{
-				var fileName = creationOptions.FileName;
-				this.logFileInfoList.FirstOrDefault(it => PathEqualityComparer.Default.Equals(it.FileName, fileName))?.Let(it =>
-					this.logFileInfoMapByLogReader[logReader] = (LogFileInfoImpl)it);
+				var fileName = creationOptions.FileName.AsNonNull();
+				var logFileInfoIndex = this.logFileInfoList.BinarySearch<LogFileInfo, string>(fileName, it => it.FileName, PathComparer.Default.Compare);
+				if (logFileInfoIndex >= 0)
+					this.logFileInfoMapByLogReader[logReader] = (LogFileInfoImpl)this.logFileInfoList[logFileInfoIndex];
 			}
 
 			// update state
@@ -2156,7 +2197,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <param name="filePath">Path of log file.</param>
 		/// <returns>True if log file has been added.</returns>
 		public bool IsLogFileAdded(string? filePath) =>
-			filePath != null && this.logFileInfoList.FirstOrDefault(it => PathEqualityComparer.Default.Equals(it.FileName, filePath)) != null;
+			filePath != null && this.logFileInfoList.BinarySearch<LogFileInfo, string>(filePath, it => it.FileName, PathComparer.Default.Compare) >= 0;
 
 
 		/// <summary>
@@ -2333,7 +2374,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// check state
 			if (markedLogInfos.IsEmpty())
 				return;
-			if (this.logFileInfoList.FirstOrDefault(it => PathEqualityComparer.Default.Equals(it.FileName, fileName)) == null)
+			if (this.logFileInfoList.BinarySearch<LogFileInfo, string>(fileName, it => it.FileName, PathComparer.Default.Compare) < 0)
 				return;
 
 			// add as unmatched 
@@ -2872,6 +2913,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 								}
 							}
 						}
+						if (this.logFileInfoMapByLogReader.TryGetValue(reader, out var logFileInfo))
+							logFileInfo.UpdateLogReaderState(reader.State);
 					});
 					this.updateIsReadingLogsAction.Schedule();
 					break;

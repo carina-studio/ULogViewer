@@ -450,6 +450,7 @@
 	<sys:String x:Key="String/SessionView.FilterLogsBySelectedThreadId">Filter by selected TID</sys:String>
 	<sys:String x:Key="String/SessionView.FilterLogsBySelectedThreadIdOnly">Filter by selected TID only</sys:String>
 	<sys:String x:Key="String/SessionView.HasAllDataSourceErrors">Error occurred in data sources</sys:String>
+	<sys:String x:Key="String/SessionView.HasLogReadingPrecondition">Precondition set</sys:String>
 	<sys:String x:Key="String/SessionView.HasPartialDataSourceErrors">Error occurred in some of data sources</sys:String>
 	<sys:String x:Key="String/SessionView.Hint.NoLogToShow">No log to show</sys:String>
 	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.Section1">Click</sys:String>

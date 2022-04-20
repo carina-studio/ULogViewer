@@ -983,13 +983,19 @@
 					<ListBox Background="{x:Static Brushes.Transparent}" BorderThickness="0" Items="{Binding LogFiles}">
 						<ListBox.ItemTemplate>
 							<DataTemplate>
-								<Grid ColumnDefinitions="*,Auto">
-									<StackPanel>
+								<Grid ColumnDefinitions="Auto,*,Auto">
+									<Panel Height="{StaticResource Double/SessionView.LogFileInfo.Icon.Size}" IsVisible="{Binding !HasError}" Margin="{StaticResource Thickness/SessionView.LogFileInfo.Icon.Margin}" VerticalAlignment="Top" Width="{StaticResource Double/SessionView.LogFileInfo.Icon.Size}">
+										<Image Classes="Icon" IsVisible="{Binding !IsReadingLogs}" Source="{StaticResource Image/Icon.File}"/>
+										<Image Classes="Icon" IsVisible="{Binding IsReadingLogs}" Source="{StaticResource Image/Icon.Waiting}"/>
+									</Panel>
+									<Image Classes="Icon" Height="{StaticResource Double/SessionView.LogFileInfo.Icon.Size}" IsVisible="{Binding HasError}" Margin="{StaticResource Thickness/SessionView.LogFileInfo.Icon.Margin}" Source="{StaticResource Image/Icon.Error}" VerticalAlignment="Top" Width="{StaticResource Double/SessionView.LogFileInfo.Icon.Size}"/>
+									<StackPanel Grid.Column="1">
 										<TextBlock Background="{x:Static Brushes.Transparent}" FontSize="{StaticResource Double/SessionView.LogFileInfo.FileName.FontSize}" FontWeight="Bold" HorizontalAlignment="Left" Margin="{StaticResource Thickness/SessionView.LogFileInfo.FileName.Margin}" Text="{Binding FileName, Converter={x:Static abConverters:FilePathConverters.FileName}}" TextTrimming="CharacterEllipsis" ToolTip.Tip="{Binding FileName}"/>
 										<Grid ColumnDefinitions="Auto,Auto" HorizontalAlignment="Left" Margin="{StaticResource Thickness/SessionView.LogFileInfo.Summary.Margin}">
 											<TextBlock FontSize="{StaticResource Double/SessionView.LogFileInfo.Summary.FontSize}" Text="{DynamicResource String/SessionView.LogCountInLogFile}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
 											<TextBlock Grid.Column="1" FontSize="{StaticResource Double/SessionView.LogFileInfo.Summary.FontSize}" Text="{Binding LogCount}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
 										</Grid>
+										<TextBlock FontSize="{StaticResource Double/SessionView.LogFileInfo.Summary.FontSize}" IsVisible="{Binding !LogReadingPrecondition.IsEmpty}" Margin="{StaticResource Thickness/SessionView.LogFileInfo.Summary.Margin}" Text="{DynamicResource String/SessionView.HasLogReadingPrecondition}" TextTrimming="CharacterEllipsis"/>
 									</StackPanel>
 								</Grid>
 							</DataTemplate>
