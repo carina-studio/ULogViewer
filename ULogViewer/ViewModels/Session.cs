@@ -393,6 +393,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			public abstract bool HasError { get; }
 
 			/// <summary>
+			/// Check whether the log file is predefined by log profile or not.
+			/// </summary>
+			public abstract bool IsPredefined { get; }
+
+			/// <summary>
 			/// Check whether logs are being read from this file or not.
 			/// </summary>
 			public abstract bool IsReadingLogs { get; }
@@ -540,11 +545,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			int logCount;
 
 			// Constructor.
-			public LogFileInfoImpl(string fileName, LogReadingPrecondition precondition) : base(fileName, precondition)
-			{ }
+			public LogFileInfoImpl(string fileName, LogReadingPrecondition precondition, bool isPredefined = false) : base(fileName, precondition)
+			{ 
+				this.IsPredefined = isPredefined;
+			}
 
 			// Has error.
 			public override bool HasError { get => this.hasError; }
+
+			// Is predefined.
+			public override bool IsPredefined { get; }
 
 			// Is reading logs.
 			public override bool IsReadingLogs { get => this.isReadingLogs; }
@@ -3200,7 +3210,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				{
 					useDefaultDataSourceOptions = true;
 					this.logFileInfoList.Clear();
-					this.logFileInfoList.Add(new LogFileInfoImpl(defaultDataSourceOptions.FileName.AsNonNull(), new()));
+					this.logFileInfoList.Add(new LogFileInfoImpl(defaultDataSourceOptions.FileName.AsNonNull(), new(), true));
 					this.canClearLogFiles.Update(false);
 					this.SetValue(IsLogFileNeededProperty, false);
 				}
@@ -3788,7 +3798,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			{
 				this.SetValue(AreFileBasedLogsProperty, true);
 				if (dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName)))
-					this.logFileInfoList.Add(new LogFileInfoImpl(dataSourceOptions.FileName.AsNonNull(), new()));
+					this.logFileInfoList.Add(new LogFileInfoImpl(dataSourceOptions.FileName.AsNonNull(), new(), true));
 				else
 				{
 					this.Logger.LogDebug("No file name specified, waiting for adding file");

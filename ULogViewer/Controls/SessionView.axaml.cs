@@ -6,6 +6,7 @@ using Avalonia.Controls.Templates;
 using Avalonia.Data;
 using Avalonia.Data.Converters;
 using Avalonia.Input;
+using Avalonia.Input.Platform;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.LogicalTree;
@@ -146,6 +147,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		bool keepSidePanelVisible;
 		Control? lastClickedLogPropertyView;
 		readonly ContextMenu logActionMenu;
+		readonly ContextMenu logFileActionMenu;
+		readonly AppSuite.Controls.ListBox logFileListBox;
 		readonly List<ColumnDefinition> logHeaderColumns = new List<ColumnDefinition>();
 		readonly Control logHeaderContainer;
 		readonly Grid logHeaderGrid;
@@ -303,6 +306,25 @@ namespace CarinaStudio.ULogViewer.Controls
 					}
 				};
 			});
+			this.logFileActionMenu = ((ContextMenu)this.Resources[nameof(logFileActionMenu)].AsNonNull()).Also(it =>
+			{
+				it.MenuClosed += (_, e) =>
+				{
+					if (it.PlacementTarget is ToggleButton button)
+						SynchronizationContext.Post(() => button.IsChecked = false);
+					it.DataContext = null;
+					it.PlacementTarget = null;
+				};
+				it.MenuOpened += (_, e) =>
+				{
+					if (it.PlacementTarget is ToggleButton button)
+					{
+						it.DataContext = button.DataContext;
+						SynchronizationContext.Post(() => button.IsChecked = true);
+					}
+				};
+			});
+			this.logFileListBox = this.FindControl<AppSuite.Controls.ListBox>(nameof(logFileListBox)).AsNonNull();
 			this.logHeaderContainer = this.FindControl<Control>(nameof(logHeaderContainer)).AsNonNull();
 			this.logHeaderGrid = this.FindControl<Grid>(nameof(logHeaderGrid)).AsNonNull().Also(it =>
 			{
@@ -777,6 +799,34 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			this.Logger.LogWarning($"User denied to restart as administrator for '{profile.Name}'");
 			return false;
+		}
+
+
+		// Copy file name of log file.
+		void CopyLogFileName(string filePath)
+		{
+			try
+			{
+				_ = App.Current.Clipboard?.SetTextAsync(Path.GetFileName(filePath));
+			}
+			catch (Exception ex)
+			{
+				this.Logger.LogError(ex, "Unable to copy file name clipboard");
+			}
+		}
+
+
+		// Copy file path of log file.
+		void CopyLogFilePath(string filePath)
+		{
+			try
+			{
+				_ = App.Current.Clipboard?.SetTextAsync(filePath);
+			}
+			catch (Exception ex)
+			{
+				this.Logger.LogError(ex, "Unable to copy file name clipboard");
+			}
 		}
 
 
@@ -3409,6 +3459,25 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Command to show file in system file explorer.
 		ICommand ShowFileInExplorerCommand { get; }
+
+
+		// Show log file action menu.
+		void ShowLogFileActionMenu(Control anchor)
+		{
+			// select log file
+			anchor.DataContext?.Let(it =>
+				this.logFileListBox.SelectedItem = it);
+
+			// show menu
+			this.logFileActionMenu.Close();
+			this.logFileActionMenu.PlacementTarget = anchor;
+			this.logFileActionMenu.Open(anchor);
+		}
+
+
+		// Show single log file in system file manager.
+		void ShowLogFileInExplorer(string filePath) => 
+			Platform.OpenFileManager(filePath);
 
 
 		// Show menu for saving logs.

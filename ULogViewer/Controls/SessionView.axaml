@@ -15,6 +15,7 @@
              xmlns:appConverters="clr-namespace:CarinaStudio.ULogViewer.Converters;assembly=ULogViewer"
              xmlns:appLogs="clr-namespace:CarinaStudio.ULogViewer.Logs;assembly=ULogViewer"
              xmlns:appViewModels="clr-namespace:CarinaStudio.ULogViewer.ViewModels;assembly=ULogViewer"
+			 xmlns:cs="using:CarinaStudio"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="CarinaStudio.ULogViewer.Controls.SessionView">
 
@@ -149,6 +150,26 @@
 			</MenuItem>
 			<Separator/>
 			<MenuItem Command="{Binding $parent[UserControl].ShowFileInExplorerCommand}" Header="{DynamicResource String/SessionView.ShowFileInExplorer}">
+				<MenuItem.Icon>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.FileManager}"/>
+				</MenuItem.Icon>
+			</MenuItem>
+		</ContextMenu>
+
+		<!-- Log file action menu -->
+		<ContextMenu x:Key="logFileActionMenu" PlacementMode="Bottom">
+			<MenuItem Command="{Binding $parent[UserControl].CopyLogFileName}" CommandParameter="{Binding FileName}" Header="{DynamicResource String/SessionView.CopyLogFileName}">
+				<MenuItem.Icon>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Copy}"/>
+				</MenuItem.Icon>
+			</MenuItem>
+			<MenuItem Command="{Binding $parent[UserControl].CopyLogFilePath}" CommandParameter="{Binding FileName}" Header="{DynamicResource String/SessionView.CopyLogFilePath}">
+				<MenuItem.Icon>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Copy}"/>
+				</MenuItem.Icon>
+			</MenuItem>
+			<Separator/>
+			<MenuItem Command="{Binding $parent[UserControl].ShowLogFileInExplorer}" CommandParameter="{Binding FileName}" Header="{DynamicResource String/SessionView.ShowFileInExplorer}" IsEnabled="{x:Static cs:Platform.IsOpeningFileManagerSupported}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.FileManager}"/>
 				</MenuItem.Icon>
@@ -928,10 +949,10 @@
 				<!-- Log files -->
 				<ToggleButton Classes="ToolBar_ToggleButton" IsChecked="{Binding IsLogFilesPanelVisible, Mode=TwoWay}" ToolTip.Tip="{DynamicResource String/SessionView.LogFilesPanel}">
 					<Panel>
-						<Image Classes="Icon" Source="{StaticResource Image/Icon.File}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
+						<Image Classes="Icon" Source="{StaticResource Image/Icon.File.Text}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
 						<Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}">
 							<DrawingImage>
-								<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/Icon.File}"/>
+								<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/Icon.File.Text}"/>
 							</DrawingImage>
 						</Image>
 					</Panel>
@@ -980,12 +1001,12 @@
 
 				<!-- Log files -->
 				<Panel HorizontalAlignment="Stretch" IsVisible="{Binding IsLogFilesPanelVisible}" VerticalAlignment="Stretch">
-					<ListBox Background="{x:Static Brushes.Transparent}" BorderThickness="0" Items="{Binding LogFiles}">
-						<ListBox.ItemTemplate>
+					<asControls:ListBox Name="logFileListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" Items="{Binding LogFiles}">
+						<asControls:ListBox.ItemTemplate>
 							<DataTemplate>
 								<Grid ColumnDefinitions="Auto,*,Auto">
 									<Panel Height="{StaticResource Double/SessionView.LogFileInfo.Icon.Size}" IsVisible="{Binding !HasError}" Margin="{StaticResource Thickness/SessionView.LogFileInfo.Icon.Margin}" VerticalAlignment="Top" Width="{StaticResource Double/SessionView.LogFileInfo.Icon.Size}">
-										<Image Classes="Icon" IsVisible="{Binding !IsReadingLogs}" Source="{StaticResource Image/Icon.File}"/>
+										<Image Classes="Icon" IsVisible="{Binding !IsReadingLogs}" Source="{StaticResource Image/Icon.File.Text}"/>
 										<Image Classes="Icon" IsVisible="{Binding IsReadingLogs}" Source="{StaticResource Image/Icon.Waiting}"/>
 									</Panel>
 									<Image Classes="Icon" Height="{StaticResource Double/SessionView.LogFileInfo.Icon.Size}" IsVisible="{Binding HasError}" Margin="{StaticResource Thickness/SessionView.LogFileInfo.Icon.Margin}" Source="{StaticResource Image/Icon.Error}" VerticalAlignment="Top" Width="{StaticResource Double/SessionView.LogFileInfo.Icon.Size}"/>
@@ -997,10 +1018,25 @@
 										</Grid>
 										<TextBlock FontSize="{StaticResource Double/SessionView.LogFileInfo.Summary.FontSize}" IsVisible="{Binding !LogReadingPrecondition.IsEmpty}" Margin="{StaticResource Thickness/SessionView.LogFileInfo.Summary.Margin}" Text="{DynamicResource String/SessionView.HasLogReadingPrecondition}" TextTrimming="CharacterEllipsis"/>
 									</StackPanel>
+									<ToggleButton Name="logFileActionButton" Classes="InPlaceAction_ToggleButton_Medium" Command="{Binding $parent[UserControl].ShowLogFileActionMenu}" CommandParameter="{Binding $self}" Grid.Column="2" VerticalAlignment="Top">
+										<ToggleButton.IsVisible>
+											<MultiBinding Converter="{x:Static aConverters:BoolConverters.Or}">
+												<MultiBinding Converter="{x:Static aConverters:BoolConverters.And}">
+													<Binding Path="!IsPredefined"/>
+													<Binding Path="IsPointerOver" RelativeSource="{RelativeSource AncestorType={x:Type ListBoxItem}}"/>
+												</MultiBinding>
+												<Binding Path="IsChecked" RelativeSource="{RelativeSource Self}"/>
+											</MultiBinding>
+										</ToggleButton.IsVisible>
+										<Panel>
+											<Image Classes="InPlaceAction_Icon_Medium" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.More}"/>
+											<Image Classes="InPlaceAction_Icon_Medium" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.More.Light}"/>
+										</Panel>
+									</ToggleButton>
 								</Grid>
 							</DataTemplate>
-						</ListBox.ItemTemplate>
-					</ListBox>
+						</asControls:ListBox.ItemTemplate>
+					</asControls:ListBox>
 					<TextBlock Classes="SessionView_SidePanel_EmptyHint" IsVisible="{Binding !LogFiles.Count}" Text="{DynamicResource String/SessionView.NoLogFiles}"/>
 				</Panel>
 
