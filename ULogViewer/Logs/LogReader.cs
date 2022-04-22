@@ -198,9 +198,6 @@ namespace CarinaStudio.ULogViewer.Logs
 				this.stateBeforeClearingLogs = this.state;
 			this.ChangeState(LogReaderState.ClearingLogs);
 
-			// update data source waiting state
-			this.IsWaitingForDataSource = false;
-
 			// cancel reading logs
 			if (!this.isContinuousReading)
 			{
@@ -580,12 +577,12 @@ namespace CarinaStudio.ULogViewer.Logs
 				this.Start(false);
 			}
 			else if (this.isContinuousReading)
-			{
-				this.IsWaitingForDataSource = (this.stateBeforeClearingLogs == LogReaderState.ReadingLogs);
 				this.ChangeState(this.stateBeforeClearingLogs);
-			}
 			else
+			{
+				this.IsWaitingForDataSource = false;
 				this.ChangeState(LogReaderState.Stopped);
+			}
 		}
 
 
@@ -1248,6 +1245,10 @@ namespace CarinaStudio.ULogViewer.Logs
 				throw new InvalidOperationException();
 			if (this.logPatterns.IsEmpty())
 				throw new InvalidOperationException("No log pattern specified.");
+			
+			// change state
+			this.ChangeState(LogReaderState.Starting);
+			this.IsRestarting = false;
 
 			// start
 			this.startReadingLogsAction.Reschedule();
@@ -1273,12 +1274,6 @@ namespace CarinaStudio.ULogViewer.Logs
 				case LogReaderState.StartingWhenPaused:
 					break;
 				default:
-					if (this.isRestarting)
-					{
-						this.IsRestarting = false;
-						if (!this.ChangeState(LogReaderState.Starting))
-							return;
-					}
 					this.Logger.LogError($"Cannot start readong logs when state is {this.state}");
 					return;
 			}

@@ -379,11 +379,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			/// Initialize new <see cref="LogFileInfo"/> instance.
 			/// </summary>
 			/// <param name="fileName">Name of log file.</param>
-			/// <param name="precondition">Precondition of reading logs from file.</param>
-			protected LogFileInfo(string fileName, LogReadingPrecondition precondition)
+			protected LogFileInfo(string fileName)
 			{
 				this.FileName = fileName;
-				this.LogReadingPrecondition = precondition;
 			}
 
 			/// <summary>
@@ -431,7 +429,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			/// <summary>
 			/// Get precondition of reading logs from this file.
 			/// </summary>
-			public LogReadingPrecondition LogReadingPrecondition { get; }
+			public abstract LogReadingPrecondition LogReadingPrecondition { get; }
 
 			/// <inheritdoc/>
 			public event PropertyChangedEventHandler? PropertyChanged;
@@ -559,11 +557,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			bool isReadingLogs = true;
 			bool isRemoving;
 			int logCount;
+			LogReadingPrecondition readingPrecondition;
 
 			// Constructor.
-			public LogFileInfoImpl(string fileName, LogReadingPrecondition precondition, bool isPredefined = false) : base(fileName, precondition)
+			public LogFileInfoImpl(string fileName, LogReadingPrecondition precondition, bool isPredefined = false) : base(fileName)
 			{ 
 				this.IsPredefined = isPredefined;
+				this.readingPrecondition = precondition;
 			}
 
 			// Has error.
@@ -583,6 +583,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// Log count.
 			public override int LogCount { get => this.logCount; }
+
+			// Log reading precondition.
+			public override LogReadingPrecondition LogReadingPrecondition { get => this.readingPrecondition; }
 
 			// Update log count.
 			public void UpdateLogCount(int logCount)
@@ -636,6 +639,15 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.isRemoving = isRemoving;
 					this.OnPropertyChanged(nameof(IsRemoving));
 				}
+			}
+
+			// Update log reading precondition.
+			public void UpdateLogReadingPrecondition(LogReadingPrecondition precondition)
+			{
+				if (this.readingPrecondition == precondition)
+					return;
+				this.readingPrecondition = precondition;
+				this.OnPropertyChanged(nameof(LogReadingPrecondition));
 			}
 		}
 
@@ -739,6 +751,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.MarkLogsCommand = new Command<MarkingLogsParams>(this.MarkLogs, this.canMarkUnmarkLogs);
 			this.MarkUnmarkLogsCommand = new Command<IEnumerable<DisplayableLog>>(this.MarkUnmarkLogs, this.canMarkUnmarkLogs);
 			this.PauseResumeLogsReadingCommand = new Command(this.PauseResumeLogsReading, this.canPauseResumeLogsReading);
+			this.ReloadLogFileCommand = new Command<LogDataSourceParams<string>?>(this.ReloadLogFile, this.canClearLogFiles);
 			this.ReloadLogsCommand = new Command(() => 
 			{
 				if (this.canReloadLogs.Value)
@@ -3157,6 +3170,46 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public IList<PredefinedLogTextFilter> PredefinedLogTextFilters { get => this.predefinedLogTextFilters; }
 
 
+		// Reload log file.
+		void ReloadLogFile(LogDataSourceParams<string>? param)
+		{
+			// check state
+			this.VerifyAccess();
+			this.VerifyDisposed();
+			var fileName = param?.Source;
+			if (param == null || fileName == null)
+				return;
+			
+			// find log reader
+			var logReader = this.logReaders.FirstOrDefault(it => it.DataSource.CreationOptions.FileName == fileName);
+			if (logReader == null)
+				return;
+			
+			// check state
+			if (this.logFileInfoMapByLogReader.TryGetValue(logReader, out var logFileInfo) && logFileInfo.IsPredefined == true)
+				return;
+			if (logReader.Precondition == param.Precondition)
+				return;
+
+			this.Logger.LogDebug($"Request refreshing log file '{fileName}'");
+
+			// save marked logs to file immediately
+			this.saveMarkedLogsAction.ExecuteIfScheduled();
+
+			// reload logs
+			logFileInfo?.UpdateLogReadingPrecondition(param.Precondition);
+			logReader.Precondition = param.Precondition;
+			logReader.Restart();
+		}
+
+
+		/// <summary>
+		/// Command to reload added log file.
+		/// </summary>
+		/// <remarks>Type of parameter is <see cref="LogDataSourceParams{string}"/>.</remarks>
+		public ICommand ReloadLogFileCommand { get; }
+
+
 		// Reload logs.
 		void ReloadLogs(bool recreateLogReaders, bool updateDisplayLogProperties)
 		{
@@ -3211,14 +3264,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// check state
 			this.VerifyAccess();
 			this.VerifyDisposed();
-			if (!this.canClearLogFiles.Value)
-				return;
 			if (fileName == null)
 				return;
 			
 			// find log reader
 			var logReader = this.logReaders.FirstOrDefault(it => it.DataSource.CreationOptions.FileName == fileName);
 			if (logReader == null)
+				return;
+			
+			// check state
+			if (this.logFileInfoMapByLogReader.TryGetValue(logReader, out var logFileInfo) && logFileInfo.IsPredefined == true)
 				return;
 
 			this.Logger.LogDebug($"Request removing log file '{fileName}'");

@@ -173,6 +173,16 @@
 				</MenuItem.Icon>
 			</MenuItem>
 			<Separator/>
+			<MenuItem Command="{Binding $parent[UserControl].ReloadLogFile}" CommandParameter="{Binding FileName}" Header="{DynamicResource String/SessionView.ReloadLogFile}">
+				<MenuItem.Icon>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Refresh}"/>
+				</MenuItem.Icon>
+			</MenuItem>
+			<MenuItem Command="{Binding $parent[UserControl].ReloadLogFileWithoutLogReadingPrecondition}" CommandParameter="{Binding FileName}" Header="{DynamicResource String/SessionView.ReloadLogFile.WithoutLogReadingPrecondition}" IsEnabled="{Binding !LogReadingPrecondition.IsEmpty}">
+				<MenuItem.Icon>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Refresh}"/>
+				</MenuItem.Icon>
+			</MenuItem>
 			<MenuItem Command="{Binding $parent[UserControl].DataContext.RemoveLogFileCommand}" CommandParameter="{Binding FileName}" Header="{DynamicResource String/SessionView.RemoveLogFile}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Delete.Outline}"/>

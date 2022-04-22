@@ -487,6 +487,8 @@
 	<sys:String x:Key="String/SessionView.PauseResumeLogsReading">Pause/Resume reading logs (P)</sys:String>
 	<sys:String x:Key="String/SessionView.PredefinedLogTextFilters">Defined text filters (Ctrl+P)</sys:String>
 	<sys:String x:Key="String/SessionView.PredefinedLogTextFilters.Hint">Select one or more items</sys:String>
+	<sys:String x:Key="String/SessionView.ReloadLogFile">Change precondition of log reading…</sys:String>
+	<sys:String x:Key="String/SessionView.ReloadLogFile.WithoutLogReadingPrecondition">Clear precondition of log reading</sys:String>
 	<sys:String x:Key="String/SessionView.ReloadLogs">Reload logs (F5)</sys:String>
 	<sys:String x:Key="String/SessionView.RemoveLogFile">Remove log file</sys:String>
 	<sys:String x:Key="String/SessionView.ResetLogFilters">Clear all filters</sys:String>

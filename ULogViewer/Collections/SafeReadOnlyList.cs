@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 
 namespace CarinaStudio.ULogViewer.Collections;
 
@@ -9,7 +10,7 @@ namespace CarinaStudio.ULogViewer.Collections;
 /// Read-only <see cref="IList{T}"/> which returns Null or default value if getting item out of range.
 /// </summary>
 /// <typeparam name="T">Type of element.</typeparam>
-class SafeReadOnlyList<T> : IList, IList<T>, INotifyCollectionChanged
+class SafeReadOnlyList<T> : IList, IList<T>, INotifyCollectionChanged, INotifyPropertyChanged
 {
     // Fields.
     readonly IList<T> list;
@@ -24,6 +25,8 @@ class SafeReadOnlyList<T> : IList, IList<T>, INotifyCollectionChanged
         this.list = list;
         if (list is INotifyCollectionChanged notifyCollectionChanged)
             notifyCollectionChanged.CollectionChanged += (_, e) => this.CollectionChanged?.Invoke(this, e);
+        if (list is INotifyPropertyChanged notifyPropertyChanged)
+            notifyPropertyChanged.PropertyChanged += (_, e) => this.PropertyChanged?.Invoke(this, e);
     }
 
 
@@ -57,6 +60,10 @@ class SafeReadOnlyList<T> : IList, IList<T>, INotifyCollectionChanged
 
     /// <inheritdoc/>
     public bool IsReadOnly { get => true; }
+
+
+    /// <inheritdoc/>
+    public event PropertyChangedEventHandler? PropertyChanged;
 
 
     /// <summary>

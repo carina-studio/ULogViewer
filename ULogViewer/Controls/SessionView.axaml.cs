@@ -19,6 +19,7 @@ using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Controls;
 using CarinaStudio.Input;
+using CarinaStudio.IO;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.ULogViewer.Logs.Profiles;
@@ -610,7 +611,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			
 			// select precondition
 			var precondition = this.Settings.GetValueOrDefault(SettingKeys.SelectLogReadingPreconditionForFiles) 
-				? await this.SelectLogReadingPreconditionAsync(LogDataSourceType.File)
+				? (await this.SelectLogReadingPreconditionAsync(LogDataSourceType.File, session.LastLogReadingPrecondition, false)).GetValueOrDefault()
 				: new Logs.LogReadingPrecondition();
 
 			// sort file names
@@ -1409,7 +1410,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				{
 					try
 					{
-						if (File.Exists(path))
+						if (System.IO.File.Exists(path))
 							filePaths.Add(path);
 						else if (Directory.Exists(path))
 							dirPaths.Add(path);
@@ -1570,7 +1571,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				// select precondition
 				var precondition = this.Settings.GetValueOrDefault(SettingKeys.SelectLogReadingPreconditionForFiles) 
-					? await this.SelectLogReadingPreconditionAsync(LogDataSourceType.File)
+					? (await this.SelectLogReadingPreconditionAsync(LogDataSourceType.File, session.LastLogReadingPrecondition, false)).GetValueOrDefault()
 					: new Logs.LogReadingPrecondition();
 
 				// add files
@@ -2939,6 +2940,54 @@ namespace CarinaStudio.ULogViewer.Controls
 		IList<PredefinedLogTextFilter> PredefinedLogTextFilters { get => this.predefinedLogTextFilters; }
 
 
+		// Reload log file.
+		async void ReloadLogFile(string? fileName)
+		{
+			// check state
+			this.VerifyAccess();
+			if (this.DataContext is not Session session)
+				return;
+			if (fileName == null)
+				return;
+			var logFileInfo = session.LogFiles.FirstOrDefault(it => PathEqualityComparer.Default.Equals(it.FileName, fileName));
+			if (logFileInfo == null || logFileInfo.IsPredefined)
+				return;
+			
+			// select precondition
+			var precondition = await this.SelectLogReadingPreconditionAsync(LogDataSourceType.File, logFileInfo.LogReadingPrecondition, true);
+			if (!precondition.HasValue)
+				return;
+			
+			// reload log file
+			session.ReloadLogFileCommand.TryExecute(new Session.LogDataSourceParams<string>()
+			{
+				Precondition = precondition.Value,
+				Source = logFileInfo.FileName,
+			});
+		}
+
+
+		// Reload log file without reading precondition.
+		void ReloadLogFileWithoutLogReadingPrecondition(string? fileName)
+		{
+			// check state
+			this.VerifyAccess();
+			if (this.DataContext is not Session session)
+				return;
+			if (fileName == null)
+				return;
+			var logFileInfo = session.LogFiles.FirstOrDefault(it => PathEqualityComparer.Default.Equals(it.FileName, fileName));
+			if (logFileInfo == null || logFileInfo.IsPredefined || logFileInfo.LogReadingPrecondition.IsEmpty)
+				return;
+			
+			// reload log file
+			session.ReloadLogFileCommand.TryExecute(new Session.LogDataSourceParams<string>()
+			{
+				Source = logFileInfo.FileName,
+			});
+		}
+
+
 		// Reload logs.
 		void ReloadLogs()
         {
@@ -3335,7 +3384,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Let user select the precondition of log reading.
-		async Task<Logs.LogReadingPrecondition> SelectLogReadingPreconditionAsync(LogDataSourceType sourceType)
+		async Task<Logs.LogReadingPrecondition?> SelectLogReadingPreconditionAsync(LogDataSourceType sourceType, Logs.LogReadingPrecondition initPrecondition, bool isCancellable)
 		{
 			// check state
 			if (this.attachedWindow == null || this.DataContext is not Session session)
@@ -3348,11 +3397,11 @@ namespace CarinaStudio.ULogViewer.Controls
 			// select precondition
 			var precondition = await new LogReadingPreconditionDialog()
 			{
-				IsCancellationAllowed = false,
+				IsCancellationAllowed = isCancellable,
 				IsReadingFromFiles = (sourceType & LogDataSourceType.File) != 0,
-				Precondition = session.LastLogReadingPrecondition,
+				Precondition = initPrecondition,
 			}.ShowDialog<Logs.LogReadingPrecondition?>(this.attachedWindow);
-			return precondition.GetValueOrDefault();
+			return precondition;
 		}
 
 
