@@ -68,10 +68,10 @@ namespace CarinaStudio.ULogViewer.Logs
                 && jsonProperty.GetArrayLength() == 2)
             {
                 var array = jsonProperty.EnumerateArray().ToArray();
-                var start = array[0].TryGetInt64(out var binary)
+                var start = array[0].ValueKind == JsonValueKind.Number && array[0].TryGetInt64(out var binary)
                     ? DateTime.FromBinary(binary)
                     : (DateTime?)null;
-                var end = array[1].TryGetInt64(out binary)
+                var end = array[1].ValueKind == JsonValueKind.Number && array[1].TryGetInt64(out binary)
                     ? DateTime.FromBinary(binary)
                     : (DateTime?)null;
                 precondition.TimestampRange = (start, end);

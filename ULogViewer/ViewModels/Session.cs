@@ -3237,6 +3237,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 				// dispose log readers
 				this.DisposeLogReaders();
+
+				// reset log file info
+				foreach (LogFileInfoImpl logFileInfo in this.logFileInfoList)
+				{
+					logFileInfo.UpdateLogCount(0);
+					logFileInfo.UpdateLogReaderState(LogReaderState.Preparing);
+				}
 			}
 
 			// setup log comparer
