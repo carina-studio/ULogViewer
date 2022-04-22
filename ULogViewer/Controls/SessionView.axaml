@@ -38,13 +38,13 @@
 		<ContextMenu x:Key="logActionMenu">
 			<MenuItem Name="showLogPropertyMenuItem" Command="{Binding $parent[UserControl].ShowLogStringPropertyCommand}" Header="{DynamicResource String/SessionView.ShowLogProperty.Disabled}">
 				<MenuItem.Icon>
-					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Details}"/>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Details.Outline}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 			<Separator/>
 			<MenuItem Header="{DynamicResource String/SessionView.MarkLogs}">
 				<MenuItem.Icon>
-					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Mark}"/>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Mark.Outline}"/>
 				</MenuItem.Icon>
 				<MenuItem.Styles>
 					<Style Selector="Border.MarkIcon">
@@ -99,20 +99,24 @@
 			</MenuItem>
 			<MenuItem Command="{Binding $parent[UserControl].UnmarkSelectedLogsCommand}" Header="{DynamicResource String/SessionView.UnmarkLogs}" InputGesture="{StaticResource KeyGesture/SessionView.UnmarkLogs}">
 				<MenuItem.Icon>
-					<Image Classes="Icon" Source="{StaticResource Image/Unmark}"/>
+					<Image Classes="Icon" Source="{StaticResource Image/Unmark.Outline}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 			<MenuItem Command="{Binding $parent[UserControl].SelectMarkedLogsCommand}" Header="{DynamicResource String/SessionView.SelectMarkedLogs}" InputGesture="S"/>
 			<Separator/>
-			<MenuItem Name="copyLogPropertyMenuItem" Command="{Binding $parent[UserControl].CopyLogPropertyCommand}" Header="{DynamicResource String/SessionView.CopyLogProperty.Disabled}"/>
+			<MenuItem Name="copyLogPropertyMenuItem" Command="{Binding $parent[UserControl].CopyLogPropertyCommand}" Header="{DynamicResource String/SessionView.CopyLogProperty.Disabled}">
+				<MenuItem.Icon>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Copy.Outline}"/>
+				</MenuItem.Icon>
+			</MenuItem>
 			<MenuItem Command="{Binding $parent[UserControl].CopySelectedLogsCommand}" Header="{DynamicResource String/SessionView.CopyLogs}" InputGesture="{StaticResource KeyGesture/SessionView.CopyLogs}">
 				<MenuItem.Icon>
-					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Copy}"/>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Copy.Outline}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 			<MenuItem Command="{Binding $parent[UserControl].CopySelectedLogsWithFileNamesCommand}" Header="{DynamicResource String/SessionView.CopyLogsWithFileNames}" InputGesture="{StaticResource KeyGesture/SessionView.CopyLogsWithFileNames}">
 				<MenuItem.Icon>
-					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Copy}"/>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Copy.Outline}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 			<Separator/>
@@ -121,7 +125,7 @@
 					<sys:Boolean>False</sys:Boolean>
 				</MenuItem.CommandParameter>
 				<MenuItem.Icon>
-					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Filter}"/>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Filter.Outline}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 			<MenuItem Command="{Binding $parent[UserControl].FilterLogsByProcessIdCommand}" Header="{DynamicResource String/SessionView.FilterLogsBySelectedProcessIdOnly}">
@@ -129,7 +133,7 @@
 					<sys:Boolean>True</sys:Boolean>
 				</MenuItem.CommandParameter>
 				<MenuItem.Icon>
-					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Filter}"/>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Filter.Outline}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 			<MenuItem Command="{Binding $parent[UserControl].FilterLogsByThreadIdCommand}" Header="{DynamicResource String/SessionView.FilterLogsBySelectedThreadId}">
@@ -137,7 +141,7 @@
 					<sys:Boolean>False</sys:Boolean>
 				</MenuItem.CommandParameter>
 				<MenuItem.Icon>
-					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Filter}"/>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Filter.Outline}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 			<MenuItem Command="{Binding $parent[UserControl].FilterLogsByThreadIdCommand}" Header="{DynamicResource String/SessionView.FilterLogsBySelectedThreadIdOnly}">
@@ -145,13 +149,13 @@
 					<sys:Boolean>True</sys:Boolean>
 				</MenuItem.CommandParameter>
 				<MenuItem.Icon>
-					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Filter}"/>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Filter.Outline}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 			<Separator/>
 			<MenuItem Command="{Binding $parent[UserControl].ShowFileInExplorerCommand}" Header="{DynamicResource String/SessionView.ShowFileInExplorer}">
 				<MenuItem.Icon>
-					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.FileManager}"/>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.FileManager.Outline}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 		</ContextMenu>
@@ -160,24 +164,24 @@
 		<ContextMenu x:Key="logFileActionMenu" PlacementMode="Bottom">
 			<MenuItem Command="{Binding $parent[UserControl].CopyLogFileName}" CommandParameter="{Binding FileName}" Header="{DynamicResource String/SessionView.CopyLogFileName}">
 				<MenuItem.Icon>
-					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Copy}"/>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Copy.Outline}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 			<MenuItem Command="{Binding $parent[UserControl].CopyLogFilePath}" CommandParameter="{Binding FileName}" Header="{DynamicResource String/SessionView.CopyLogFilePath}">
 				<MenuItem.Icon>
-					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Copy}"/>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Copy.Outline}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 			<Separator/>
 			<MenuItem Command="{Binding $parent[UserControl].DataContext.RemoveLogFileCommand}" CommandParameter="{Binding FileName}" Header="{DynamicResource String/SessionView.RemoveLogFile}">
 				<MenuItem.Icon>
-					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Delete}"/>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Delete.Outline}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 			<Separator/>
 			<MenuItem Command="{Binding $parent[UserControl].ShowLogFileInExplorer}" CommandParameter="{Binding FileName}" Header="{DynamicResource String/SessionView.ShowFileInExplorer}" IsEnabled="{x:Static cs:Platform.IsOpeningFileManagerSupported}">
 				<MenuItem.Icon>
-					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.FileManager}"/>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.FileManager.Outline}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 		</ContextMenu>
@@ -237,7 +241,7 @@
 			<Separator/>
 			<MenuItem Command="{Binding $parent[UserControl].UnmarkSelectedLogsCommand}" Header="{DynamicResource String/SessionView.UnmarkLogs}" InputGesture="{StaticResource KeyGesture/SessionView.UnmarkLogs}">
 				<MenuItem.Icon>
-					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Unmark}"/>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Unmark.Outline}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 		</ContextMenu>
@@ -252,13 +256,13 @@
 		<ContextMenu x:Key="otherActionsMenu" PlacementMode="Bottom">
 			<MenuItem Command="{Binding $parent[Window].ShowAppOptions}" Header="{DynamicResource String/SessionView.AppOptions}">
 				<MenuItem.Icon>
-					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Settings}"/>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Settings.Outline}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 			<MenuItem Command="{Binding $parent[Window].CheckForAppUpdate}" Header="{DynamicResource String/SessionView.CheckForAppUpdate}">
 				<MenuItem.Icon>
 					<Panel>
-						<Image Classes="MenuItem_Icon" IsVisible="{Binding $parent[Window].Application.UpdateInfo, Converter={x:Static aConverters:ObjectConverters.IsNull}}" Source="{StaticResource Image/Icon.Update}"/>
+						<Image Classes="MenuItem_Icon" IsVisible="{Binding $parent[Window].Application.UpdateInfo, Converter={x:Static aConverters:ObjectConverters.IsNull}}" Source="{StaticResource Image/Icon.Update.Outline}"/>
 						<Image Classes="MenuItem_Icon" IsVisible="{Binding $parent[Window].Application.UpdateInfo, Converter={x:Static aConverters:ObjectConverters.IsNotNull}}" Source="{StaticResource Image/Icon.Update.Colored}"/>
 					</Panel>
 				</MenuItem.Icon>
@@ -299,7 +303,7 @@
 			<MenuItem Command="{Binding $parent[UserControl].ShowWorkingDirectoryInExplorerCommand}" Header="{DynamicResource String/SessionView.ShowWorkingDirectoryInExplorer}">
 				<MenuItem.Icon>
 					<Border Classes="MenuItem_Icon">
-						<Image Classes="Icon" Source="{StaticResource Image/Icon.FileManager}"/>
+						<Image Classes="Icon" Source="{StaticResource Image/Icon.FileManager.Outline}"/>
 					</Border>
 				</MenuItem.Icon>
 			</MenuItem>
@@ -527,8 +531,8 @@
 														<DataTemplate DataType="{x:Type appViewModels:PredefinedLogTextFilter}">
 															<Grid ColumnDefinitions="Auto,*,Auto">
 																<Panel Height="{StaticResource Double/SessionView.PredefinedLogTextFilterListBox.Icon.Size}" Margin="{StaticResource Thickness/SessionView.PredefinedLogTextFilterListBox.Icon.Margin}" VerticalAlignment="Center" Width="{StaticResource Double/SessionView.PredefinedLogTextFilterListBox.Icon.Size}">
-																	<Image Classes="Icon" Source="{StaticResource Image/Filter}" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}"/>
-																	<Image Classes="Icon" Source="{StaticResource Image/Filter.Light}" IsVisible="{Binding $parent[ListBoxItem].IsSelected}"/>
+																	<Image Classes="Icon" Source="{StaticResource Image/Filter.Outline}" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}"/>
+																	<Image Classes="Icon" Source="{StaticResource Image/Filter.Outline.Light}" IsVisible="{Binding $parent[ListBoxItem].IsSelected}"/>
 																</Panel>
 																<TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center"/>
 																<Border Classes="InPlaceAction_Reserved" Grid.Column="1"/>
@@ -947,8 +951,8 @@
 				<!-- Marked logs -->
 				<ToggleButton Classes="ToolBar_ToggleButton" IsChecked="{Binding IsMarkedLogsPanelVisible, Mode=TwoWay}" ToolTip.Tip="{DynamicResource String/SessionView.MarkedLogsPanel}">
 					<Panel>
-						<Image Classes="Icon" Source="{StaticResource Image/Marked}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
-						<Image Classes="Icon" Source="{StaticResource Image/Marked.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
+						<Image Classes="Icon" Source="{StaticResource Image/Marks}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
+						<Image Classes="Icon" Source="{StaticResource Image/Marks.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
 					</Panel>
 				</ToggleButton>
 
