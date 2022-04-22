@@ -56,6 +56,14 @@ sealed class ConfigurationKeys
     /// Interval between non-continuous logs reading reporting in milliseconds.
     /// </summary>
     public static readonly SettingKey<int> NonContinuousLogsReadingPaddingInterval = new(nameof(NonContinuousLogsReadingPaddingInterval), 50);
+    /// <summary>
+    /// Size of chunk of progressive log clearing.
+    /// </summary>
+    public static readonly SettingKey<int> ProgressiveLogClearingChunkSize = new(nameof(ProgressiveLogClearingChunkSize), 8192);
+    /// <summary>
+    /// Interval of progressive log clearing in milliseconds.
+    /// </summary>
+    public static readonly SettingKey<int> ProgressiveLogClearingInterval = new(nameof(ProgressiveLogClearingInterval), 60);
 
 
     // Constructor.

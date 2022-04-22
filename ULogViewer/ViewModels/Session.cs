@@ -201,6 +201,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsReadingLogsContinuouslyProperty = ObservableProperty.Register<Session, bool>(nameof(IsReadingLogsContinuously));
 		/// <summary>
+		/// Property of <see cref="IsRemovingLogFiles"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> IsRemovingLogFilesProperty = ObservableProperty.Register<Session, bool>(nameof(IsRemovingLogFiles));
+		/// <summary>
 		/// Property of <see cref="IsSavingLogs"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsSavingLogsProperty = ObservableProperty.Register<Session, bool>(nameof(IsSavingLogs));
@@ -393,6 +397,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			public abstract bool HasError { get; }
 
 			/// <summary>
+			/// Check whether all logs are read from log file or not.
+			/// </summary>
+			public abstract bool IsLogsReadingCompleted { get; }
+
+			/// <summary>
 			/// Check whether the log file is predefined by log profile or not.
 			/// </summary>
 			public abstract bool IsPredefined { get; }
@@ -401,6 +410,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			/// Check whether logs are being read from this file or not.
 			/// </summary>
 			public abstract bool IsReadingLogs { get; }
+
+			/// <summary>
+			/// Check whether the log file is being removed or not.
+			/// </summary>
+			public abstract bool IsRemoving { get; }
 
 			/// <summary>
 			/// Get number of logs read from this file.
@@ -541,7 +555,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			// Fields.
 			bool hasError;
+			bool isLogsReadingCompleted;
 			bool isReadingLogs = true;
+			bool isRemoving;
 			int logCount;
 
 			// Constructor.
@@ -553,11 +569,17 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// Has error.
 			public override bool HasError { get => this.hasError; }
 
+			// Whether all logs are read or not.
+			public override bool IsLogsReadingCompleted { get => this.isLogsReadingCompleted; }
+
 			// Is predefined.
 			public override bool IsPredefined { get; }
 
 			// Is reading logs.
 			public override bool IsReadingLogs { get => this.isReadingLogs; }
+
+			// Whether file is being removed or not.
+			public override bool IsRemoving { get => this.isRemoving; }
 
 			// Log count.
 			public override int LogCount { get => this.logCount; }
@@ -576,20 +598,43 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			{
 				var hasError = state == LogReaderState.DataSourceError 
 					|| state == LogReaderState.UnclassifiedError;
-				var isReadingLogs = state switch
+				var isLogsReadingCompleted = false;
+				var isReadingLogs = false;
+				var isRemoving = false;
+				switch (state)
 				{
-					LogReaderState.Stopped => false,
-					_ => true,
-				};
+					case LogReaderState.ClearingLogs:
+						isRemoving = true;
+						break;
+					case LogReaderState.DataSourceError:
+					case LogReaderState.UnclassifiedError:
+						break;
+					case LogReaderState.Stopped:
+						isLogsReadingCompleted = true;
+						break;
+					default:
+						isReadingLogs = true;
+						break;
+				}
 				if (this.hasError != hasError)
 				{
 					this.hasError = hasError;
 					this.OnPropertyChanged(nameof(HasError));
 				}
+				if (this.isLogsReadingCompleted != isLogsReadingCompleted)
+				{
+					this.isLogsReadingCompleted = isLogsReadingCompleted;
+					this.OnPropertyChanged(nameof(IsLogsReadingCompleted));
+				}
 				if (this.isReadingLogs != isReadingLogs)
 				{
 					this.isReadingLogs = isReadingLogs;
 					this.OnPropertyChanged(nameof(IsReadingLogs));
+				}
+				if (this.isRemoving != isRemoving)
+				{
+					this.isRemoving = isRemoving;
+					this.OnPropertyChanged(nameof(IsRemoving));
 				}
 			}
 		}
@@ -667,6 +712,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly ScheduledAction selectLogsToReportActions;
 		readonly List<MarkedLogInfo> unmatchedMarkedLogInfos = new();
 		readonly ScheduledAction updateIsReadingLogsAction;
+		readonly ScheduledAction updateIsRemovingLogFilesAction;
 		readonly ScheduledAction updateIsProcessingLogsAction;
 		readonly ScheduledAction updateLogFilterAction;
 		readonly ScheduledAction updateTitleAndIconAction;
@@ -698,6 +744,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				if (this.canReloadLogs.Value)
 					this.ReloadLogs(false, false);
 			}, this.canReloadLogs);
+			this.RemoveLogFileCommand = new Command<string?>(this.RemoveLogFile, this.canClearLogFiles);
 			this.ResetLogProfileCommand = new Command(this.ResetLogProfile, this.canResetLogProfile);
 			this.SaveLogsCommand = new Command<LogsSavingOptions>(this.SaveLogs, this.canSaveLogs);
 			this.SetIPEndPointCommand = new Command<IPEndPoint?>(this.SetIPEndPoint, this.GetValueAsObservable(IsIPEndPointNeededProperty));
@@ -963,6 +1010,28 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					}
 				}
 			});
+			this.updateIsRemovingLogFilesAction = new(() =>
+			{
+				if (this.IsDisposed)
+					return;
+				if (this.logReaders.IsEmpty())
+					this.ResetValue(IsRemovingLogFilesProperty);
+				else
+				{
+					var isRemovingLogFiles = false;
+					foreach (var logReader in this.logReaders)
+					{
+						if (!logReader.DataSource.CreationOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName)))
+							continue;
+						if (logReader.State == LogReaderState.ClearingLogs)
+						{
+							isRemovingLogFiles = true;
+							break;
+						}
+					}
+					this.SetValue(IsRemovingLogFilesProperty, isRemovingLogFiles);
+				}
+			});
 			this.updateIsProcessingLogsAction = new ScheduledAction(() =>
 			{
 				if (this.IsDisposed)
@@ -975,7 +1044,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				var logProfile = this.LogProfile;
 				if (logProfile == null || logProfile.IsContinuousReading)
 					this.SetValue(IsProcessingLogsProperty, false);
-				else if (this.IsFilteringLogs || this.IsReadingLogs)
+				else if (this.IsFilteringLogs || this.IsReadingLogs || this.IsRemovingLogFiles)
 					this.SetValue(IsProcessingLogsProperty, true);
 				else
 					this.SetValue(IsProcessingLogsProperty, false);
@@ -2261,6 +2330,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Check whether one or more log files are being removed or not.
+		/// </summary>
+		public bool IsRemovingLogFiles { get => this.GetValue(IsRemovingLogFilesProperty); }
+
+
+		/// <summary>
 		/// Check whether logs saving is on-going or not.
 		/// </summary>
 		public bool IsSavingLogs { get => this.GetValue(IsSavingLogsProperty); }
@@ -2909,6 +2984,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				case nameof(LogReader.State):
 					(sender as LogReader)?.Let(reader =>
 					{
+						this.logFileInfoMapByLogReader.TryGetValue(reader, out var logFileInfo);
 						if (reader.State == LogReaderState.DataSourceError)
 						{
 							var source = reader.DataSource;
@@ -2923,10 +2999,19 @@ namespace CarinaStudio.ULogViewer.ViewModels
 								}
 							}
 						}
-						if (this.logFileInfoMapByLogReader.TryGetValue(reader, out var logFileInfo))
-							logFileInfo.UpdateLogReaderState(reader.State);
+						else if (reader.State == LogReaderState.Stopped)
+						{
+							if (logFileInfo?.IsRemoving == true)
+							{
+								this.Logger.LogDebug($"All logs cleared, remove log file '{logFileInfo.FileName}'");
+								this.logFileInfoList.Remove(logFileInfo);
+								this.DisposeLogReader(reader, false);
+							}
+						}
+						logFileInfo?.UpdateLogReaderState(reader.State);
 					});
 					this.updateIsReadingLogsAction.Schedule();
+					this.updateIsRemovingLogFilesAction.Schedule();
 					break;
 			}
 		}
@@ -2968,7 +3053,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			else if (property == IPEndPointProperty)
 				this.SetValue(HasIPEndPointProperty, newValue != null);
 			else if (property == IsFilteringLogsProperty
-				|| property == IsReadingLogsProperty)
+				|| property == IsReadingLogsProperty
+				|| property == IsRemovingLogFilesProperty)
 			{
 				this.updateIsProcessingLogsAction.Schedule();
 			}
@@ -3117,6 +3203,46 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Command to reload logs.
 		/// </summary>
 		public ICommand ReloadLogsCommand { get; }
+
+
+		// Remove given log file.
+		void RemoveLogFile(string? fileName)
+		{
+			// check state
+			this.VerifyAccess();
+			this.VerifyDisposed();
+			if (!this.canClearLogFiles.Value)
+				return;
+			if (fileName == null)
+				return;
+			
+			// find log reader
+			var logReader = this.logReaders.FirstOrDefault(it => it.DataSource.CreationOptions.FileName == fileName);
+			if (logReader == null)
+				return;
+
+			this.Logger.LogDebug($"Request removing log file '{fileName}'");
+			
+			// clear logs directly
+			if (this.logReaders.Count == 1)
+			{
+				this.ClearLogFiles();
+				return;
+			}
+
+			// save marked logs to file immediately
+			this.saveMarkedLogsAction.ExecuteIfScheduled();
+
+			// clear logs and remove later
+			logReader.ClearLogs(true);
+		}
+
+
+		/// <summary>
+		/// Command ro remove log file.
+		/// </summary>
+		/// <remarks>Type of parameter is <see cref="string"/>.</remarks>
+		public ICommand RemoveLogFileCommand { get; }
 
 
 		// Reset log profile.
@@ -3473,6 +3599,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// save data source options
 			foreach (var logReader in this.logReaders)
 			{
+				if (logReader.State == LogReaderState.ClearingLogs && !logReader.IsRestarting)
+					continue;
 				this.savedLogReaderOptions.Add(new(logReader.DataSource.CreationOptions)
 				{
 					Precondition = logReader.Precondition,

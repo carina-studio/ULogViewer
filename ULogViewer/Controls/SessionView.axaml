@@ -169,6 +169,12 @@
 				</MenuItem.Icon>
 			</MenuItem>
 			<Separator/>
+			<MenuItem Command="{Binding $parent[UserControl].DataContext.RemoveLogFileCommand}" CommandParameter="{Binding FileName}" Header="{DynamicResource String/SessionView.RemoveLogFile}">
+				<MenuItem.Icon>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Delete}"/>
+				</MenuItem.Icon>
+			</MenuItem>
+			<Separator/>
 			<MenuItem Command="{Binding $parent[UserControl].ShowLogFileInExplorer}" CommandParameter="{Binding FileName}" Header="{DynamicResource String/SessionView.ShowFileInExplorer}" IsEnabled="{x:Static cs:Platform.IsOpeningFileManagerSupported}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.FileManager}"/>
@@ -1005,11 +1011,12 @@
 						<asControls:ListBox.ItemTemplate>
 							<DataTemplate>
 								<Grid ColumnDefinitions="Auto,*,Auto">
-									<Panel Height="{StaticResource Double/SessionView.LogFileInfo.Icon.Size}" IsVisible="{Binding !HasError}" Margin="{StaticResource Thickness/SessionView.LogFileInfo.Icon.Margin}" VerticalAlignment="Top" Width="{StaticResource Double/SessionView.LogFileInfo.Icon.Size}">
-										<Image Classes="Icon" IsVisible="{Binding !IsReadingLogs}" Source="{StaticResource Image/Icon.File.Text}"/>
+									<Panel Height="{StaticResource Double/SessionView.LogFileInfo.Icon.Size}" Margin="{StaticResource Thickness/SessionView.LogFileInfo.Icon.Margin}" VerticalAlignment="Top" Width="{StaticResource Double/SessionView.LogFileInfo.Icon.Size}">
+										<Image Classes="Icon" IsVisible="{Binding IsLogsReadingCompleted}" Source="{StaticResource Image/Icon.File.Text}"/>
 										<Image Classes="Icon" IsVisible="{Binding IsReadingLogs}" Source="{StaticResource Image/Icon.Waiting}"/>
+										<Image Classes="Icon" IsVisible="{Binding IsRemoving}" Source="{StaticResource Image/Icon.Delete}"/>
+										<Image Classes="Icon" IsVisible="{Binding HasError}" Source="{StaticResource Image/Icon.Error}"/>
 									</Panel>
-									<Image Classes="Icon" Height="{StaticResource Double/SessionView.LogFileInfo.Icon.Size}" IsVisible="{Binding HasError}" Margin="{StaticResource Thickness/SessionView.LogFileInfo.Icon.Margin}" Source="{StaticResource Image/Icon.Error}" VerticalAlignment="Top" Width="{StaticResource Double/SessionView.LogFileInfo.Icon.Size}"/>
 									<StackPanel Grid.Column="1">
 										<TextBlock Background="{x:Static Brushes.Transparent}" FontSize="{StaticResource Double/SessionView.LogFileInfo.FileName.FontSize}" FontWeight="Bold" HorizontalAlignment="Left" Margin="{StaticResource Thickness/SessionView.LogFileInfo.FileName.Margin}" Text="{Binding FileName, Converter={x:Static abConverters:FilePathConverters.FileName}}" TextTrimming="CharacterEllipsis" ToolTip.Tip="{Binding FileName}"/>
 										<Grid ColumnDefinitions="Auto,Auto" HorizontalAlignment="Left" Margin="{StaticResource Thickness/SessionView.LogFileInfo.Summary.Margin}">

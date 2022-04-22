@@ -31,9 +31,11 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		// Fields.
+		readonly ScheduledAction clearLogChunkAction;
 		int dropLogCount = -1;
 		readonly ScheduledAction flushPendingLogsAction;
 		bool isContinuousReading;
+		bool isRestarting;
 		bool isWaitingForDataSource;
 		readonly Dictionary<string, LogLevel> logLevelMap = new Dictionary<string, LogLevel>();
 		IList<LogPattern> logPatterns = new LogPattern[0];
@@ -52,6 +54,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		TimeSpan restartReadingDelay;
 		readonly ScheduledAction startReadingLogsAction;
 		LogReaderState state = LogReaderState.Preparing;
+		LogReaderState stateBeforeClearingLogs;
 		CultureInfo timeSpanCultureInfo = defaultTimestampCultureInfo;
 		LogTimeSpanEncoding timeSpanEncoding = LogTimeSpanEncoding.Custom;
 		IList<string> timeSpanFormats = new string[0];
@@ -81,6 +84,22 @@ namespace CarinaStudio.ULogViewer.Logs
 			this.readOnlyLogLevelMap = new ReadOnlyDictionary<string, LogLevel>(this.logLevelMap);
 
 			// create scheduled actions
+			this.clearLogChunkAction = new(() =>
+			{
+				if (this.state != LogReaderState.ClearingLogs)
+					return;
+				var chunkSize = Math.Max(128, this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.ProgressiveLogClearingChunkSize));
+				if (this.logs.Count <= chunkSize)
+				{
+					this.logs.RemoveRange(0, this.logs.Count);
+					this.OnLogsClearingCompleted();
+				}
+				else
+				{
+					this.logs.RemoveRange(this.logs.Count - chunkSize, chunkSize);
+					this.clearLogChunkAction?.Schedule(this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.ProgressiveLogClearingInterval));
+				}
+			});
 			this.flushPendingLogsAction = new ScheduledAction(this.pendingLogsSyncContext, () =>
 			{
 				if (this.pendingLogs.IsEmpty())
@@ -159,15 +178,56 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <summary>
 		/// Clear all read logs.
 		/// </summary>
-		public void ClearLogs()
+		/// <param name="progressive">True to clear logs progressively.</param>
+		public void ClearLogs(bool progressive = false)
 		{
+			// check state
 			this.VerifyAccess();
+			if (this.IsDisposed)
+				return;
+			if (this.state == LogReaderState.Preparing)
+				return;
+			if (this.state == LogReaderState.ClearingLogs)
+			{
+				if (this.clearLogChunkAction.IsScheduled == progressive)
+					return;
+			}
+
+			// change state
+			if (this.state != LogReaderState.ClearingLogs)
+				this.stateBeforeClearingLogs = this.state;
+			this.ChangeState(LogReaderState.ClearingLogs);
+
+			// update data source waiting state
+			this.IsWaitingForDataSource = false;
+
+			// cancel reading logs
+			if (!this.isContinuousReading)
+			{
+				this.logsReadingCancellationTokenSource?.Let(it =>
+				{
+					it.Cancel();
+					it.Dispose();
+					this.logsReadingCancellationTokenSource = null;
+				});
+			}
+
+			// drop pending logs
 			this.pendingLogsSyncContext.Post(() =>
 			{
 				this.pendingLogs.Clear();
 				this.flushPendingLogsAction.Cancel();
 			});
-			this.logs.Clear();
+
+			// start clearing logs
+			if (progressive)
+				this.clearLogChunkAction.Schedule();
+			else
+			{
+				this.clearLogChunkAction.Cancel();
+				this.logs.Clear();
+				this.OnLogsClearingCompleted();
+			}
 		}
 
 
@@ -195,6 +255,12 @@ namespace CarinaStudio.ULogViewer.Logs
 				this.pendingLogsSyncContext.Dispose();
 				return; // ignore releasing managed resources
 			}
+
+			// cancel clearing logs
+			this.clearLogChunkAction.Cancel();
+
+			// cancel restarting
+			this.isRestarting = false;
 
 			// change state
 			this.ChangeState(LogReaderState.Disposed);
@@ -300,6 +366,22 @@ namespace CarinaStudio.ULogViewer.Logs
 					return;
 				this.isContinuousReading = value;
 				this.OnPropertyChanged(nameof(IsContinuousReading));
+			}
+		}
+
+
+		/// <summary>
+		/// Check whether instance is restarting reading logs or not.
+		/// </summary>
+		public bool IsRestarting 
+		{
+			get => this.isRestarting;
+			private set
+			{
+				if (this.isRestarting == value)
+					return;
+				this.isRestarting = value;
+				this.OnPropertyChanged(nameof(IsRestarting));
 			}
 		}
 
@@ -487,6 +569,26 @@ namespace CarinaStudio.ULogViewer.Logs
 		}
 
 
+		// Called when clearing logs completed.
+		void OnLogsClearingCompleted()
+		{
+			if (this.state != LogReaderState.ClearingLogs)
+				return;
+			if (this.isRestarting)
+			{
+				this.Logger.LogWarning("Logs cleared, start reading logs");
+				this.Start(false);
+			}
+			else if (this.isContinuousReading)
+			{
+				this.IsWaitingForDataSource = (this.stateBeforeClearingLogs == LogReaderState.ReadingLogs);
+				this.ChangeState(this.stateBeforeClearingLogs);
+			}
+			else
+				this.ChangeState(LogReaderState.Stopped);
+		}
+
+
 		// Called when logs read.
 		void OnLogsRead(object readingToken, ICollection<Log> readLogs)
 		{
@@ -623,7 +725,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			set
 			{
 				this.VerifyAccess();
-				this.VerifyPreparing();
+				this.VerifyDisposed();
 				if (this.precondition == value)
 					return;
 				this.precondition = value;
@@ -1050,6 +1152,43 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		/// <summary>
+		/// Clear logs and restart reading logs.
+		/// </summary>
+		public void Restart()
+		{
+			// check state
+			this.VerifyAccess();
+			this.VerifyDisposed();
+			if (this.isRestarting)
+				return;
+
+			// start directly
+			if (this.state == LogReaderState.Preparing)
+			{
+				this.Start(false);
+				return;
+			}
+
+			this.Logger.LogWarning("Restart");
+
+			// update state
+			this.IsRestarting = true;
+
+			// clear logs
+			if (this.isContinuousReading || this.state != LogReaderState.ClearingLogs)
+				this.ClearLogs(!this.isContinuousReading);
+			if (this.state == LogReaderState.ClearingLogs)
+			{
+				this.Logger.LogWarning("Restart after clearing logs");
+				return;
+			}
+
+			// start reading logs
+			this.Start(false);
+		}
+
+
+		/// <summary>
 		/// Get or set delay before restarting logs reading when <see cref="IsContinuousReading"/> is True.
 		/// </summary>
 		public TimeSpan RestartReadingDelay
@@ -1096,11 +1235,17 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <summary>
 		/// Start reading logs.
 		/// </summary>
-		public void Start()
+		public void Start() =>
+			this.Start(true);
+
+
+		// Start reading logs.
+		void Start(bool checkState)
 		{
 			// check state
 			this.VerifyAccess();
-			this.VerifyPreparing();
+			if (checkState && state != LogReaderState.Preparing)
+				throw new InvalidOperationException();
 			if (this.logPatterns.IsEmpty())
 				throw new InvalidOperationException("No log pattern specified.");
 
@@ -1128,6 +1273,12 @@ namespace CarinaStudio.ULogViewer.Logs
 				case LogReaderState.StartingWhenPaused:
 					break;
 				default:
+					if (this.isRestarting)
+					{
+						this.IsRestarting = false;
+						if (!this.ChangeState(LogReaderState.Starting))
+							return;
+					}
 					this.Logger.LogError($"Cannot start readong logs when state is {this.state}");
 					return;
 			}
@@ -1217,7 +1368,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			set
 			{
 				this.VerifyAccess();
-				this.VerifyPreparing();
+				this.VerifyDisposed();
 				if (this.timeSpanCultureInfo.Equals(value))
 					return;
 				this.timeSpanCultureInfo = value;
@@ -1235,7 +1386,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			set
 			{
 				this.VerifyAccess();
-				this.VerifyPreparing();
+				this.VerifyDisposed();
 				if (this.timeSpanEncoding == value)
 					return;
 				this.timeSpanEncoding = value;
@@ -1253,7 +1404,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			set
 			{
 				this.VerifyAccess();
-				this.VerifyPreparing();
+				this.VerifyDisposed();
 				if (this.timeSpanFormats.SequenceEqual(value))
 					return;
 				this.timeSpanFormats = value.ToArray().AsReadOnly();
@@ -1271,7 +1422,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			set
 			{
 				this.VerifyAccess();
-				this.VerifyPreparing();
+				this.VerifyDisposed();
 				if (this.timestampCultureInfo.Equals(value))
 					return;
 				this.timestampCultureInfo = value;
@@ -1289,7 +1440,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			set
 			{
 				this.VerifyAccess();
-				this.VerifyPreparing();
+				this.VerifyDisposed();
 				if (this.timestampEncoding == value)
 					return;
 				this.timestampEncoding = value;
@@ -1307,7 +1458,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			set
 			{
 				this.VerifyAccess();
-				this.VerifyPreparing();
+				this.VerifyDisposed();
 				if (this.timestampFormats.SequenceEqual(value))
 					return;
 				this.timestampFormats = value.ToArray().AsReadOnly();
@@ -1333,17 +1484,6 @@ namespace CarinaStudio.ULogViewer.Logs
 				this.updateInterval = value;
 				this.OnPropertyChanged(nameof(UpdateInterval));
 			}
-		}
-
-
-		// Throw exception if state is not Preparing.
-		void VerifyPreparing(string? changingPropertyName = null)
-		{
-			if (this.state == LogReaderState.Preparing)
-				return;
-			if (changingPropertyName != null)
-				throw new InvalidOperationException($"Cannot change {changingPropertyName} when state is {this.state}.");
-			throw new InvalidOperationException($"Cannot change property when state is {this.state}.");
 		}
 
 
@@ -1385,6 +1525,10 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// Stopped.
 		/// </summary>
 		Stopped,
+		/// <summary>
+		/// Clearing logs.
+		/// </summary>
+		ClearingLogs,
 		/// <summary>
 		/// Error caused by <see cref="LogReader.DataSource"/>.
 		/// </summary>

@@ -488,6 +488,7 @@
 	<sys:String x:Key="String/SessionView.PredefinedLogTextFilters">Defined text filters (Ctrl+P)</sys:String>
 	<sys:String x:Key="String/SessionView.PredefinedLogTextFilters.Hint">Select one or more items</sys:String>
 	<sys:String x:Key="String/SessionView.ReloadLogs">Reload logs (F5)</sys:String>
+	<sys:String x:Key="String/SessionView.RemoveLogFile">Remove log file</sys:String>
 	<sys:String x:Key="String/SessionView.ResetLogFilters">Clear all filters</sys:String>
 	<sys:String x:Key="String/SessionView.RestartAsAdministrator">Restart as Administrator</sys:String>
 	<sys:String x:Key="String/SessionView.SaveAllLogs">Save all logs to file</sys:String>
