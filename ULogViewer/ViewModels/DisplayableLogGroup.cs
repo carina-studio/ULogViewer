@@ -259,6 +259,17 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		}
 
 
+		/// <summary>
+		/// Called when memory size of <see cref="DisplayableLog"/> has been changed.
+		/// </summary>
+		/// <param name="log"><see cref="DisplayableLog"/>.</param>
+		/// <param name="diff">Difference of memory size.</param>
+		internal void OnDisplayableLogMemorySizeChanged(DisplayableLog log, long diff)
+		{
+			this.MemorySize += diff;
+		}
+
+
 		// Called when property of log profile has been changed.
 		void OnLogProfilePropertyChanged(object? sender, PropertyChangedEventArgs e)
 		{

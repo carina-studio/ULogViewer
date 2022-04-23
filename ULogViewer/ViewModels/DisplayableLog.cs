@@ -1,6 +1,7 @@
 ﻿using Avalonia.Media;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs;
+using CarinaStudio.ULogViewer.ViewModels.Analysis;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -29,7 +30,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		// Fields.
-		DisplayableLogAnalysisResult analysisResult;
+		LinkedList<DisplayableLogAnalysisResult>? analysisResultList;
 		CompressedString? beginningTimeSpanString;
 		CompressedString? beginningTimestampString;
 		CompressedString? endingTimeSpanString;
@@ -123,26 +124,26 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
-		/// Add a set of analysis result to this log.
+		/// Add analysis results on the log.
 		/// </summary>
-		/// <param name="result">Result to add.</param>
-		public void AddAnalysisResult(DisplayableLogAnalysisResult result)
+		/// <param name="results">Analysis results.</param>
+		public void AddAnalysisResults(IEnumerable<DisplayableLogAnalysisResult> results)
 		{
 			this.VerifyAccess();
-			if (this.IsDisposed)
-				return;
-			if ((this.analysisResult & result) == result)
-				return;
-			this.analysisResult |= result;
-			this.Group.OnAnalysisResultAdded(this);
-			this.PropertyChanged?.Invoke(this, new(nameof(AnalysisResult)));
+			this.VerifyDisposed();
+			var memorySizeDiff = 0L;
+			if (this.analysisResultList == null)
+			{
+				this.analysisResultList = new();
+				memorySizeDiff += 4 + 2 * IntPtr.Size; // Count, First, Last in LinkedList<T>
+			}
+			foreach (var result in results)
+			{
+				memorySizeDiff += result.MemorySize;
+				this.analysisResultList.AddLast(result.Clone().LinkedListNode);
+			}
+			this.Group.OnDisplayableLogMemorySizeChanged(this, memorySizeDiff);
 		}
-
-
-		/// <summary>
-		/// Get set of analysis result.
-		/// </summary>
-		public DisplayableLogAnalysisResult AnalysisResult { get => this.analysisResult; }
 
 
 		/// <summary>
@@ -827,19 +828,37 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
-		/// Remove a set of analysis result from this log.
+		/// Remove analysis results from the log.
 		/// </summary>
-		/// <param name="result">Result to remove.</param>
-		public void RemoveAnalysisResult(DisplayableLogAnalysisResult result)
+		/// <param name="results">Analysis results.</param>
+		public void RemoveAnalysisResults(IEnumerable<DisplayableLogAnalysisResult> results)
 		{
 			this.VerifyAccess();
-			if (this.IsDisposed)
+			this.VerifyDisposed();
+			var memorySizeDiff = 0L;
+			if (this.analysisResultList == null)
 				return;
-			if ((this.analysisResult & result) == 0)
-				return;
-			this.analysisResult &= ~result;
-			this.Group.OnAnalysisResultRemoved(this);
-			this.PropertyChanged?.Invoke(this, new(nameof(AnalysisResult)));
+			foreach (var result in results)
+			{
+				var node = this.analysisResultList.First;
+				while (node != null)
+				{
+					if (node.Value.Equals(result))
+						break;
+					node = node.Next;
+				}
+				if (node != null)
+				{
+					memorySizeDiff -= result.MemorySize;
+					this.analysisResultList.Remove(node);
+				}
+			}
+			if (this.analysisResultList.Count == 0)
+			{
+				this.analysisResultList = null;
+				memorySizeDiff -= 4 + 2 * IntPtr.Size; // Count, First, Last in LinkedList<T>
+			}
+			this.Group.OnDisplayableLogMemorySizeChanged(this, memorySizeDiff);
 		}
 
 
@@ -1016,27 +1035,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 	/// Delegate of direct event handler for <see cref="DisplayableLog"/>.
 	/// </summary>
 	delegate void DirectDisplayableLogEventHandler(DisplayableLogGroup group, DisplayableLog log);
-
-
-	/// <summary>
-	/// Analysis result of <see cref="DisplayableLog"/>
-	/// </summary>
-	[Flags]
-	enum DisplayableLogAnalysisResult : ushort
-	{
-		/// <summary>
-		/// Start of section of logs.
-		/// </summary>
-		StartOfSection = 0x1,
-		/// <summary>
-		/// Warning.
-		/// </summary>
-		Warning = 0x10,
-		/// <summary>
-		/// Error.
-		/// </summary>
-		Error = 0x20,
-	}
 
 
 	/// <summary>
