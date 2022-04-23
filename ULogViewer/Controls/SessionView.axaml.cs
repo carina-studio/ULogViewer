@@ -1400,6 +1400,18 @@ namespace CarinaStudio.ULogViewer.Controls
 				return false;
 			this.attachedWindow.ActivateAndBringToFront();
 
+			// [Workaround] clone data to prevent underlying resource being released later
+			if (data is not DataObject)
+			{
+				var dataObject = new DataObject();
+				foreach (var format in data.GetDataFormats())
+				{
+					if (data.TryGetData(format, out object? value) && value != null)
+						dataObject.Set(format, value);
+				}
+				data = dataObject;
+			}
+
 			// collect files
 			var dropFilePaths = data.GetFileNames().AsNonNull();
 			var dirPaths = new List<string>();
