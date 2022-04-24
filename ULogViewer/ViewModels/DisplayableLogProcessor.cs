@@ -16,7 +16,7 @@ namespace CarinaStudio.ULogViewer.ViewModels;
 /// <summary>
 /// Base class to process list of <see cref="DisplayableLog"/> in background.
 /// </summary>
-abstract class DisplayableLogProcessor<TProcessingToken, TProcessingResult> : BaseDisposableApplicationObject<IULogViewerApplication>, INotifyPropertyChanged where TProcessingToken : class
+abstract class DisplayableLogProcessor<TProcessingToken, TProcessingResult> : BaseDisposableApplicationObject<IULogViewerApplication>, IDisplayableLogProcessor where TProcessingToken : class
 {
     // Processing parameters.
     class ProcessingParams
@@ -79,6 +79,7 @@ abstract class DisplayableLogProcessor<TProcessingToken, TProcessingResult> : Ba
         // setup properties
         this.logComparison = comparison;
         this.ProcessingPriority = priority;
+        this.SourceLogComparison = comparison;
         this.SourceLogs = sourceLogs;
 
         // create schedule actions
@@ -716,6 +717,12 @@ abstract class DisplayableLogProcessor<TProcessingToken, TProcessingResult> : Ba
 
 
     /// <summary>
+    /// <see cref="Comparison{DisplayableLog}"/> used by <see cref="SourceLogs"/> to sort logs.
+    /// </summary>
+    protected Comparison<DisplayableLog> SourceLogComparison { get; }
+
+
+    /// <summary>
     /// Get source list of <see cref="DisplayableLog"/> to be processed.
     /// </summary>
     public IList<DisplayableLog> SourceLogs { get; }
@@ -766,24 +773,4 @@ abstract class DisplayableLogProcessor<TProcessingToken, TProcessingResult> : Ba
         for (var i = this.currentProcessingParams.MaxConcurrencyLevel; i > 0; --i)
             this.ProcessNextChunk(this.currentProcessingParams);
     }
-}
-
-
-/// <summary>
-/// Priority of processing <see cref="DisplayableLog"/>.
-/// </summary>
-enum DisplayableLogProcessingPriority 
-{
-    /// <summary>
-    /// Realtime.
-    /// </summary>
-    Realtime,
-    /// <summary>
-    /// Default.
-    /// </summary>
-    Default,
-    /// <summary>
-    /// Background.
-    /// </summary>
-    Background,
 }

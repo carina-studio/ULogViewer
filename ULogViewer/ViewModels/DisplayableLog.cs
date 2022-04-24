@@ -30,7 +30,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		// Fields.
-		LinkedList<DisplayableLogAnalysisResult>? analysisResultList;
 		CompressedString? beginningTimeSpanString;
 		CompressedString? beginningTimestampString;
 		CompressedString? endingTimeSpanString;
@@ -120,29 +119,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// notify group
 			group.OnDisplayableLogCreated(this);
-		}
-
-
-		/// <summary>
-		/// Add analysis results on the log.
-		/// </summary>
-		/// <param name="results">Analysis results.</param>
-		public void AddAnalysisResults(IEnumerable<DisplayableLogAnalysisResult> results)
-		{
-			this.VerifyAccess();
-			this.VerifyDisposed();
-			var memorySizeDiff = 0L;
-			if (this.analysisResultList == null)
-			{
-				this.analysisResultList = new();
-				memorySizeDiff += 4 + 2 * IntPtr.Size; // Count, First, Last in LinkedList<T>
-			}
-			foreach (var result in results)
-			{
-				memorySizeDiff += result.MemorySize;
-				this.analysisResultList.AddLast(result.Clone().LinkedListNode);
-			}
-			this.Group.OnDisplayableLogMemorySizeChanged(this, memorySizeDiff);
 		}
 
 
@@ -825,41 +801,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Get name of process which generates log.
 		/// </summary>
 		public string? ProcessName { get => this.Log.ProcessName; }
-
-
-		/// <summary>
-		/// Remove analysis results from the log.
-		/// </summary>
-		/// <param name="results">Analysis results.</param>
-		public void RemoveAnalysisResults(IEnumerable<DisplayableLogAnalysisResult> results)
-		{
-			this.VerifyAccess();
-			this.VerifyDisposed();
-			var memorySizeDiff = 0L;
-			if (this.analysisResultList == null)
-				return;
-			foreach (var result in results)
-			{
-				var node = this.analysisResultList.First;
-				while (node != null)
-				{
-					if (node.Value.Equals(result))
-						break;
-					node = node.Next;
-				}
-				if (node != null)
-				{
-					memorySizeDiff -= result.MemorySize;
-					this.analysisResultList.Remove(node);
-				}
-			}
-			if (this.analysisResultList.Count == 0)
-			{
-				this.analysisResultList = null;
-				memorySizeDiff -= 4 + 2 * IntPtr.Size; // Count, First, Last in LinkedList<T>
-			}
-			this.Group.OnDisplayableLogMemorySizeChanged(this, memorySizeDiff);
-		}
 
 
 		// Setup property map.

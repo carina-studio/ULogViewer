@@ -1,66 +1,66 @@
 using System;
-using System.Collections.Generic;
 
 namespace CarinaStudio.ULogViewer.ViewModels.Analysis;
 
 /// <summary>
 /// Analysis result of <see cref="DisplayableLog"/>.
 /// </summary>
-abstract class DisplayableLogAnalysisResult : ICloneable, IEquatable<DisplayableLogAnalysisResult>
+class DisplayableLogAnalysisResult : IEquatable<DisplayableLogAnalysisResult>
 {
     // Constants.
-    static readonly long DefaultMemorySize = 5 * IntPtr.Size;
+    static readonly long DefaultMemorySize = 3 * IntPtr.Size;
 
 
     /// <summary>
     /// Initialize new <see cref="DisplayableLogAnalysisResult"/> instance.
     /// </summary>
+    /// <param name="analyzer">Get <see cref="IDisplayableLogAnalyzer"/> which generates this result.</param>
+    /// <param name="log"><see cref="DisplayableLog"/> which relates to this result.</param>
     /// <param name="message">Message.</param>
-    public DisplayableLogAnalysisResult(string? message)
+    public DisplayableLogAnalysisResult(IDisplayableLogAnalyzer analyzer, DisplayableLog log, string? message = null)
     {
-        this.LinkedListNode = new(this);
+        this.Analyzer = analyzer;
+        this.Log = log;
+        this.MemorySize = DefaultMemorySize + (message != null ? message.Length * 2 + 4 : 0);
         this.Message = message;
     }
 
 
     /// <summary>
-    /// Clone the result.
+    /// Get <see cref="IDisplayableLogAnalyzer"/> which generates this result.
     /// </summary>
-    /// <returns>Clone result.</returns>
-    public abstract DisplayableLogAnalysisResult Clone();
+    public IDisplayableLogAnalyzer Analyzer { get; }
 
 
     /// <inheritdoc/>
     public virtual bool Equals(DisplayableLogAnalysisResult? result) =>
         result != null
+        && result.Analyzer == this.Analyzer
+        && result.Log == this.Log
         && result.GetType() == this.GetType()
         && result.Message == this.Message;
 
 
     /// <inheritdoc/>
-    public override bool Equals(object? obj) =>
+    public sealed override bool Equals(object? obj) =>
         obj is DisplayableLogAnalysisResult result && this.Equals(result);
 
 
     /// <inheritdoc/>
-    public override int GetHashCode() =>
+    public sealed override int GetHashCode() =>
         this.Message?.GetHashCode() ?? (int)this.MemorySize;
-
+    
 
     /// <summary>
-    /// List node of the result.
+    /// Get <see cref="DisplayableLog"/> which relates to this result.
     /// </summary>
-    public LinkedListNode<DisplayableLogAnalysisResult> LinkedListNode { get; }
-
-
-    // Interface implementations.
-    object ICloneable.Clone() => this.Clone();
+    public DisplayableLog Log { get; }
 
 
     /// <summary>
     /// Get memory size of the result instance in bytes.
     /// </summary>
-    public virtual long MemorySize { get => DefaultMemorySize; }
+    public virtual long MemorySize { get; }
 
 
     /// <summary>
