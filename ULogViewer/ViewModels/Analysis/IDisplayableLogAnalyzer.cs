@@ -6,10 +6,10 @@ namespace CarinaStudio.ULogViewer.ViewModels.Analysis;
 /// <summary>
 /// Analyzer of list of <see cref="DisplayableLog"/>.
 /// </summary>
-interface IDisplayableLogAnalyzer : IDisplayableLogProcessor
+interface IDisplayableLogAnalyzer<out TResult> : IDisplayableLogProcessor where TResult : DisplayableLogAnalysisResult
 {
     /// <summary>
     /// Get results of analysis.
     /// </summary>
-    IList<DisplayableLogAnalysisResult> AnalysisResults { get; }
+    IReadOnlyList<TResult> AnalysisResults { get; }
 }

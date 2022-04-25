@@ -13,6 +13,7 @@ using CarinaStudio.ULogViewer.Logs;
 using CarinaStudio.ULogViewer.Logs.DataOutputs;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.ULogViewer.Logs.Profiles;
+using CarinaStudio.ULogViewer.ViewModels.Analysis;
 using CarinaStudio.ViewModels;
 using CarinaStudio.Windows.Input;
 using Microsoft.Extensions.Logging;
@@ -318,6 +319,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				return it;
 			}, 
 			validate: it => double.IsFinite(it));
+		/// <summary>
+		/// Property of <see cref="TimestampCategories"/>.
+		/// </summary>
+		public static readonly ObservableProperty<IReadOnlyList<DisplayableLogTimestampCategorizer.Category>> TimestampCategoriesProperty = ObservableProperty.Register<Session, IReadOnlyList<DisplayableLogTimestampCategorizer.Category>>(nameof(TimestampCategories), new DisplayableLogTimestampCategorizer.Category[0]);
 		/// <summary>
 		/// Property of <see cref="Title"/>.
 		/// </summary>
@@ -689,6 +694,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly LinkedListNode<Session> activationHistoryListNode;
 		readonly List<IDisposable> activationTokens = new List<IDisposable>();
 		readonly SortedObservableList<DisplayableLog> allLogs;
+		readonly DisplayableLogTimestampCategorizer allLogsTimestampCategorizer;
 		readonly Dictionary<string, List<DisplayableLog>> allLogsByLogFilePath = new Dictionary<string, List<DisplayableLog>>(PathEqualityComparer.Default);
 		readonly MutableObservableBoolean canClearLogFiles = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canCopyLogs = new MutableObservableBoolean();
@@ -706,6 +712,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		Comparison<DisplayableLog?> compareDisplayableLogsDelegate;
 		DisplayableLogGroup? displayableLogGroup;
 		TaskFactory? fileLogsReadingTaskFactory;
+		readonly DisplayableLogTimestampCategorizer filteredLogsTimestampCategorizer;
 		bool hasLogDataSourceCreationFailure;
 		bool isRestoringState;
 		readonly Dictionary<LogReader, LogFileInfoImpl> logFileInfoMapByLogReader = new();
@@ -717,6 +724,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly Stopwatch logsReadingWatch = new Stopwatch();
 		readonly SortedObservableList<DisplayableLog> markedLogs;
 		readonly HashSet<string> markedLogsChangedFilePaths = new(PathEqualityComparer.Default);
+		readonly DisplayableLogTimestampCategorizer markedLogsTimestampCategorizer;
 		readonly ObservableList<PredefinedLogTextFilter> predefinedLogTextFilters;
 		readonly ScheduledAction reportLogsTimeInfoAction;
 		readonly List<LogReaderOptions> savedLogReaderOptions = new();
@@ -796,6 +804,21 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				it.PropertyChanged += this.OnLogFilterPropertyChanged;
 			});
 
+			// create analyzers
+			this.allLogsTimestampCategorizer = new DisplayableLogTimestampCategorizer((IULogViewerApplication)this.Application, this.allLogs, this.CompareDisplayableLogs).Also(it =>
+			{
+				;
+			});
+			this.filteredLogsTimestampCategorizer = new DisplayableLogTimestampCategorizer((IULogViewerApplication)this.Application, this.logFilter.FilteredLogs, this.CompareDisplayableLogs).Also(it =>
+			{
+				;
+			});
+			this.markedLogsTimestampCategorizer = new DisplayableLogTimestampCategorizer((IULogViewerApplication)this.Application, this.markedLogs, this.CompareDisplayableLogs).Also(it =>
+			{
+				;
+			});
+			this.SetValue(TimestampCategoriesProperty, this.allLogsTimestampCategorizer.AnalysisResults);
+
 			// setup properties
 			this.AllLogs = new SafeReadOnlyList<DisplayableLog>(this.allLogs);
 			this.LogFiles = this.logFileInfoList.AsReadOnly();
@@ -865,7 +888,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 				// report memory usage
 				var prevLogsMemoryUsage = this.LogsMemoryUsage;
-				var logsMemoryUsage = (this.displayableLogGroup?.MemorySize ?? 0L) + ((this.allLogs.Count + this.markedLogs.Count) * IntPtr.Size + this.logFilter.MemorySize);
+				var logsMemoryUsage = (this.displayableLogGroup?.MemorySize ?? 0L) 
+					+ (this.allLogs.Count + this.markedLogs.Count) * IntPtr.Size
+					+ this.logFilter.MemorySize
+					+ this.allLogsTimestampCategorizer.MemorySize
+					+ this.filteredLogsTimestampCategorizer.MemorySize
+					+ this.markedLogsTimestampCategorizer.MemorySize;
 				this.SetValue(LogsMemoryUsageProperty, logsMemoryUsage);
 				totalLogsMemoryUsage += (logsMemoryUsage - prevLogsMemoryUsage);
 				this.SetValue(TotalLogsMemoryUsageProperty, totalLogsMemoryUsage);
@@ -874,7 +902,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				hibernateSessionsAction.Schedule();
 
 				// schedule next checking
-
 				this.checkLogsMemoryUsageAction?.Schedule(LogsMemoryUsageCheckInterval);
 			});
 			this.reportLogsTimeInfoAction = new ScheduledAction(() =>
@@ -966,18 +993,21 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					{
 						this.SetValue(LogsProperty, this.MarkedLogs);
 						this.SetValue(HasLogsProperty, this.markedLogs.IsNotEmpty());
+						this.SetValue(TimestampCategoriesProperty, this.markedLogsTimestampCategorizer.AnalysisResults);
 						return;
 					}
 					if (this.logFilter.IsProcessingNeeded)
 					{
 						this.SetValue(LogsProperty, logFilter.FilteredLogs);
 						this.SetValue(HasLogsProperty, logFilter.FilteredLogs.IsNotEmpty());
+						this.SetValue(TimestampCategoriesProperty, this.filteredLogsTimestampCategorizer.AnalysisResults);
 						return;
 					}
 				}
 				this.SetValue(LogsProperty, this.AllLogs);
 				this.SetValue(HasLogsProperty, this.allLogs.IsNotEmpty());
 				this.SetValue(LastLogsFilteringDurationProperty, null);
+				this.SetValue(TimestampCategoriesProperty, this.allLogsTimestampCategorizer.AnalysisResults);
 				if (!this.logFilter.IsProcessingNeeded && this.Settings.GetValueOrDefault(SettingKeys.SaveMemoryAggressively))
 				{
 					this.Logger.LogDebug("Trigger GC after clearing log filters");
@@ -1890,6 +1920,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			totalLogsMemoryUsage -= this.displayableLogGroup?.MemorySize ?? 0L;
 			this.displayableLogGroup = this.displayableLogGroup.DisposeAndReturnNull();
 			this.checkLogsMemoryUsageAction.Cancel();
+
+			// release log analyzers
+			this.allLogsTimestampCategorizer.Dispose();
+			this.filteredLogsTimestampCategorizer.Dispose();
+			this.markedLogsTimestampCategorizer.Dispose();
 
 			// detach from log profile
 			this.LogProfile?.Let(it => it.PropertyChanged -= this.OnLogProfilePropertyChanged);
@@ -4241,6 +4276,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Get list of log categories by timestamp.
+		/// </summary>
+		public IReadOnlyList<DisplayableLogTimestampCategorizer.Category> TimestampCategories { get =>this.GetValue(TimestampCategoriesProperty); }
+
+
+		/// <summary>
 		/// Get title of session.
 		/// </summary>
 		public string? Title { get => this.GetValue(TitleProperty); }
@@ -4343,6 +4384,18 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				LogSortKey.Timestamp => CompareDisplayableLogsByTimestamp,
 				_ => ((Comparison<DisplayableLog?>)CompareDisplayableLogsById).Also(_ => sortedByTimestamp = false),
 			};
+			(profile.SortKey switch
+			{
+				LogSortKey.BeginningTimestamp => nameof(DisplayableLog.BinaryBeginningTimestamp),
+				LogSortKey.EndingTimestamp => nameof(DisplayableLog.BinaryEndingTimestamp),
+				LogSortKey.Timestamp => nameof(DisplayableLog.BinaryTimestamp),
+				_ => null,
+			}).Let(propertyName =>
+			{
+				this.allLogsTimestampCategorizer.TimestampLogPropertyName = propertyName;
+				this.filteredLogsTimestampCategorizer.TimestampLogPropertyName = propertyName;
+				this.markedLogsTimestampCategorizer.TimestampLogPropertyName = propertyName;
+			});
 			if (profile.SortDirection == SortDirection.Descending)
 				this.compareDisplayableLogsDelegate = this.compareDisplayableLogsDelegate.Invert();
 			this.SetValue(AreLogsSortedByTimestampProperty, sortedByTimestamp);

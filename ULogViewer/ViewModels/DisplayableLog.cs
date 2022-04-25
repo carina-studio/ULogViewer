@@ -233,9 +233,18 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			return propertyName switch
 			{
+				nameof(BeginningTimeSpanString) => (it => (T)(object)it.BeginningTimeSpanString),
 				nameof(BeginningTimestampString) => (it => (T)(object)it.BeginningTimestampString),
+				nameof(BinaryBeginningTimeSpan) => (it => (T)(object)it.BinaryBeginningTimeSpan),
+				nameof(BinaryBeginningTimestamp) => (it => (T)(object)it.BinaryBeginningTimestamp),
+				nameof(BinaryEndingTimeSpan) => (it => (T)(object)it.BinaryEndingTimeSpan),
+				nameof(BinaryEndingTimestamp) => (it => (T)(object)it.BinaryEndingTimestamp),
+				nameof(BinaryTimeSpan) => (it => (T)(object)it.BinaryTimeSpan),
+				nameof(BinaryTimestamp) => (it => (T)(object)it.BinaryTimestamp),
+				nameof(EndingTimeSpanString) => (it => (T)(object)it.EndingTimeSpanString),
 				nameof(EndingTimestampString) => (it => (T)(object)it.EndingTimestampString),
 				nameof(LogId) => (it => (T)(object)it.LogId),
+				nameof(TimeSpanString) => (it => (T)(object)it.TimeSpanString),
 				nameof(TimestampString) => (it => (T)(object)it.TimestampString),
 				_ => Log.CreatePropertyGetter<T>(propertyName).Let(getter =>
 				{
@@ -567,6 +576,23 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Check whether given property of log with <see cref="Int64"/> value is existing or not.
+		/// </summary>
+		/// <param name="propertyName">Name of property.</param>
+		/// <returns>True if property of log is existing.</returns>
+		public static bool HasInt64Property(string propertyName) => propertyName switch
+		{
+			nameof(BinaryBeginningTimeSpan) 
+			or nameof(BinaryBeginningTimestamp)
+			or nameof(BinaryEndingTimeSpan)
+			or nameof(BinaryEndingTimestamp)
+			or nameof(BinaryTimeSpan)
+			or nameof(BinaryTimestamp) => true,
+			_ => false,
+		};
+
+
+		/// <summary>
 		/// Check whether given log property is exported by <see cref="DisplayableLog"/> with multi-line <see cref="string"/> value or not.
 		/// </summary>
 		/// <param name="propertyName">Name of property.</param>
@@ -835,6 +861,23 @@ namespace CarinaStudio.ULogViewer.ViewModels
 							catch
 							{ }
 						}
+						typeof(DisplayableLog).Let(type =>
+						{
+							var specificPropertyNames = new string[]
+							{
+								nameof(BinaryBeginningTimeSpan),
+								nameof(BinaryBeginningTimestamp),
+								nameof(BinaryEndingTimeSpan),
+								nameof(BinaryEndingTimestamp),
+								nameof(BinaryTimeSpan),
+								nameof(BinaryEndingTimestamp),
+							};
+							foreach (var propertyName in specificPropertyNames)
+							{
+								type.GetProperty(propertyName)?.Let(it =>
+									propertyMap[propertyName] = it);
+							}
+						});
 						isPropertyMapReady = true;
 					}
 				}

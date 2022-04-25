@@ -1,35 +1,40 @@
 using System;
+using System.ComponentModel;
 
 namespace CarinaStudio.ULogViewer.ViewModels.Analysis;
 
 /// <summary>
 /// Analysis result of <see cref="DisplayableLog"/>.
 /// </summary>
-class DisplayableLogAnalysisResult : IEquatable<DisplayableLogAnalysisResult>
+class DisplayableLogAnalysisResult : IEquatable<DisplayableLogAnalysisResult>, INotifyPropertyChanged
 {
     // Constants.
     static readonly long DefaultMemorySize = 3 * IntPtr.Size;
 
 
+    // Fields.
+    string? message;
+
+
     /// <summary>
     /// Initialize new <see cref="DisplayableLogAnalysisResult"/> instance.
     /// </summary>
-    /// <param name="analyzer">Get <see cref="IDisplayableLogAnalyzer"/> which generates this result.</param>
+    /// <param name="analyzer"><see cref="IDisplayableLogAnalyzer"/> which generates this result.</param>
     /// <param name="log"><see cref="DisplayableLog"/> which relates to this result.</param>
     /// <param name="message">Message.</param>
-    public DisplayableLogAnalysisResult(IDisplayableLogAnalyzer analyzer, DisplayableLog log, string? message = null)
+    public DisplayableLogAnalysisResult(IDisplayableLogAnalyzer<DisplayableLogAnalysisResult> analyzer, DisplayableLog? log, string? message = null)
     {
         this.Analyzer = analyzer;
         this.Log = log;
         this.MemorySize = DefaultMemorySize + (message != null ? message.Length * 2 + 4 : 0);
-        this.Message = message;
+        this.message = message;
     }
 
 
     /// <summary>
     /// Get <see cref="IDisplayableLogAnalyzer"/> which generates this result.
     /// </summary>
-    public IDisplayableLogAnalyzer Analyzer { get; }
+    public IDisplayableLogAnalyzer<DisplayableLogAnalysisResult> Analyzer { get; }
 
 
     /// <inheritdoc/>
@@ -54,7 +59,7 @@ class DisplayableLogAnalysisResult : IEquatable<DisplayableLogAnalysisResult>
     /// <summary>
     /// Get <see cref="DisplayableLog"/> which relates to this result.
     /// </summary>
-    public DisplayableLog Log { get; }
+    public DisplayableLog? Log { get; }
 
 
     /// <summary>
@@ -64,9 +69,31 @@ class DisplayableLogAnalysisResult : IEquatable<DisplayableLogAnalysisResult>
 
 
     /// <summary>
-    /// Get message of result.
+    /// Get or set message of result.
     /// </summary>
-    public string? Message { get; }
+    public string? Message
+    { 
+        get => this.message; 
+        protected set
+        {
+            if (this.message == value)
+                return;
+            this.message = value;
+            this.OnPropertyChanged(nameof(Message));
+        }
+    }
+
+
+    /// <summary>
+    /// Raise <see cref="PropertyChanged"/> event.
+    /// </summary>
+    /// <param name="propertyName">Property name.</param>
+    protected virtual void OnPropertyChanged(string propertyName) => 
+        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+
+    /// <inheritdoc/>
+    public event PropertyChangedEventHandler? PropertyChanged;
 
 
     /// <inheritdoc/>

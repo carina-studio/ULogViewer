@@ -55,6 +55,8 @@ abstract class DisplayableLogProcessor<TProcessingToken, TProcessingResult> : Ba
     ProcessingParams? currentProcessingParams;
     readonly Comparison<DisplayableLog> logComparison;
     readonly ScheduledAction processNextChunkAction;
+    Comparison<DisplayableLog> sourceLogComparison;
+    IList<DisplayableLog> sourceLogs;
     readonly List<byte> sourceLogVersions; // Same order as source list
     readonly ScheduledAction startProcessingLogsAction;
     readonly SortedObservableList<DisplayableLog> unprocessedLogs; // Reverse order of source list
@@ -79,8 +81,8 @@ abstract class DisplayableLogProcessor<TProcessingToken, TProcessingResult> : Ba
         // setup properties
         this.logComparison = comparison;
         this.ProcessingPriority = priority;
-        this.SourceLogComparison = comparison;
-        this.SourceLogs = sourceLogs;
+        this.sourceLogComparison = comparison;
+        this.sourceLogs = sourceLogs;
 
         // create schedule actions
         this.processNextChunkAction = new ScheduledAction(() =>
@@ -91,7 +93,8 @@ abstract class DisplayableLogProcessor<TProcessingToken, TProcessingResult> : Ba
         this.startProcessingLogsAction = new ScheduledAction(this.StartProcessingLogs);
         
         // attach to source logs
-        (sourceLogs as INotifyCollectionChanged)?.Let(it => it.CollectionChanged += this.OnSourceLogsChanged);
+        (sourceLogs as INotifyCollectionChanged)?.Let(it => 
+            it.CollectionChanged += this.OnSourceLogsChanged);
     }
 
 
@@ -154,7 +157,8 @@ abstract class DisplayableLogProcessor<TProcessingToken, TProcessingResult> : Ba
         this.VerifyAccess();
 
         // detach from source logs
-        (this.SourceLogs as INotifyCollectionChanged)?.Let(it => it.CollectionChanged -= this.OnSourceLogsChanged);
+        (this.sourceLogs as INotifyCollectionChanged)?.Let(it => 
+            it.CollectionChanged -= this.OnSourceLogsChanged);
 
         // cancecl processing
         this.CancelProcessing();
@@ -189,7 +193,7 @@ abstract class DisplayableLogProcessor<TProcessingToken, TProcessingResult> : Ba
             return;
 
         // check source version
-        var sourceIndex = this.SourceLogs.IndexOf(log);
+        var sourceIndex = this.sourceLogs.IndexOf(log);
         if (sourceIndex < 0)
             return;
 
@@ -222,7 +226,7 @@ abstract class DisplayableLogProcessor<TProcessingToken, TProcessingResult> : Ba
 
         // enqueue logs to unprocessed logs
         var needToProcess = false;
-        var sourceLogs = this.SourceLogs;
+        var sourceLogs = this.sourceLogs;
         var sourceLogVersions = this.sourceLogVersions;
         foreach (var log in logs)
         {
@@ -356,7 +360,7 @@ abstract class DisplayableLogProcessor<TProcessingToken, TProcessingResult> : Ba
         
         // remove logs which are not contained in source log list or out dated
         var sourceIndex = -1;
-        var sourceLogs = this.SourceLogs;
+        var sourceLogs = this.sourceLogs;
         var sourceLogVersions = this.sourceLogVersions;
         var processedIndex = logs.Count - 1;
         var logComparison = this.logComparison;
@@ -485,8 +489,9 @@ abstract class DisplayableLogProcessor<TProcessingToken, TProcessingResult> : Ba
                 break;
             case NotifyCollectionChangedAction.Reset:
                 this.sourceLogVersions.Clear();
-                this.sourceLogVersions.AddRange(new byte[this.SourceLogs.Count]);
-                this.InvalidateProcessing();
+                this.sourceLogVersions.AddRange(new byte[this.sourceLogs.Count]);
+                this.CancelProcessing();
+                this.startProcessingLogsAction.Reschedule();
                 break;
             default:
                 throw new InvalidOperationException($"Unsupported change of source log list: {e.Action}.");
@@ -617,7 +622,7 @@ abstract class DisplayableLogProcessor<TProcessingToken, TProcessingResult> : Ba
             this.IsProcessing = true;
             this.OnPropertyChanged(nameof(IsProcessing));
         }
-        this.Progress = 1.0 - ((double)this.unprocessedLogs.Count / this.SourceLogs.Count);
+        this.Progress = 1.0 - ((double)this.unprocessedLogs.Count / this.sourceLogs.Count);
         this.OnPropertyChanged(nameof(Progress));
 
         // start processing
@@ -641,7 +646,7 @@ abstract class DisplayableLogProcessor<TProcessingToken, TProcessingResult> : Ba
         });
         var logVersions = ObtainInternalDisplayableLogVersionList().Also(it => // The order will be reverse order of source list
         {
-            var sourceLogs = this.SourceLogs;
+            var sourceLogs = this.sourceLogs;
             var sourceLogVersions = this.sourceLogVersions;
             var comparer = this.unprocessedLogs.Comparer;
             var logCount = logs.Count;
@@ -716,16 +721,46 @@ abstract class DisplayableLogProcessor<TProcessingToken, TProcessingResult> : Ba
     }
 
 
-    /// <summary>
-    /// <see cref="Comparison{DisplayableLog}"/> used by <see cref="SourceLogs"/> to sort logs.
-    /// </summary>
-    protected Comparison<DisplayableLog> SourceLogComparison { get; }
+    /// <inheritdoc/>
+    public Comparison<DisplayableLog> SourceLogComparison 
+    { 
+        get => this.sourceLogComparison;
+        set
+        {
+            this.VerifyAccess();
+            this.VerifyDisposed();
+            if (this.sourceLogComparison == value)
+                return;
+            this.sourceLogComparison = value;
+            this.sourceLogVersions.Clear();
+            this.sourceLogVersions.AddRange(new byte[this.sourceLogs.Count]);
+            this.CancelProcessing();
+            this.startProcessingLogsAction.Reschedule();
+        }
+    }
 
 
-    /// <summary>
-    /// Get source list of <see cref="DisplayableLog"/> to be processed.
-    /// </summary>
-    public IList<DisplayableLog> SourceLogs { get; }
+    /// <inheritdoc/>
+    public IList<DisplayableLog> SourceLogs
+    { 
+        get => this.sourceLogs;
+        set
+        {
+            this.VerifyAccess();
+            this.VerifyDisposed();
+            if (this.sourceLogs == value)
+                return;
+            (this.sourceLogs as INotifyCollectionChanged)?.Let(it =>
+                it.CollectionChanged -= this.OnSourceLogsChanged);
+            (value as INotifyCollectionChanged)?.Let(it =>
+                it.CollectionChanged += this.OnSourceLogsChanged);
+            this.sourceLogs = value;
+            this.sourceLogVersions.Clear();
+            this.sourceLogVersions.AddRange(new byte[value.Count]);
+            this.CancelProcessing();
+            this.startProcessingLogsAction.Reschedule();
+        }
+    }
 
 
     // Start processing logs.
@@ -769,7 +804,7 @@ abstract class DisplayableLogProcessor<TProcessingToken, TProcessingResult> : Ba
         {
             it.MaxConcurrencyLevel = Math.Min(GetMaxConcurrencyLevel(this.ProcessingPriority), Math.Max(1, this.MaxConcurrencyLevel));
         });
-        this.unprocessedLogs.AddAll(this.SourceLogs.Reverse(), true);
+        this.unprocessedLogs.AddAll(this.sourceLogs.Reverse(), true);
         for (var i = this.currentProcessingParams.MaxConcurrencyLevel; i > 0; --i)
             this.ProcessNextChunk(this.currentProcessingParams);
     }
