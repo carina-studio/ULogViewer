@@ -966,6 +966,18 @@
 					</Panel>
 				</ToggleButton>
 
+				<!-- Timestamp categories -->
+				<ToggleButton Classes="ToolBar_ToggleButton" IsChecked="{Binding IsTimestampCategoriesPanelVisible, Mode=TwoWay}" ToolTip.Tip="{DynamicResource String/SessionView.TimestampCategories}">
+					<Panel>
+						<Image Classes="Icon" Source="{StaticResource Image/Calendar}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
+						<Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}">
+							<DrawingImage>
+								<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/Calendar}"/>
+							</DrawingImage>
+						</Image>
+					</Panel>
+				</ToggleButton>
+
 				<!-- Log files -->
 				<ToggleButton Classes="ToolBar_ToggleButton" IsChecked="{Binding IsLogFilesPanelVisible, Mode=TwoWay}" ToolTip.Tip="{DynamicResource String/SessionView.LogFilesPanel}">
 					<Panel>
@@ -973,18 +985,6 @@
 						<Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}">
 							<DrawingImage>
 								<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/Icon.File.Text}"/>
-							</DrawingImage>
-						</Image>
-					</Panel>
-				</ToggleButton>
-
-				<!-- Timestamp categories -->
-				<ToggleButton Classes="ToolBar_ToggleButton" IsChecked="{Binding IsTimestampCategoriesPanelVisible, Mode=TwoWay}" IsVisible="{Binding HasTimestampDisplayableLogProperty}" ToolTip.Tip="{DynamicResource String/SessionView.TimestampCategories}">
-					<Panel>
-						<Image Classes="Icon" Source="{StaticResource Image/Calendar}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
-						<Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}">
-							<DrawingImage>
-								<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/Calendar}"/>
 							</DrawingImage>
 						</Image>
 					</Panel>
@@ -1002,6 +1002,26 @@
 					<Binding Path="IsTimestampCategoriesPanelVisible"/>
 				</MultiBinding>
 			</Border.IsVisible>
+			<Border.Styles>
+				<Style Selector="ListBoxItem">
+					<Setter Property="CornerRadius" Value="0"/>
+					<Setter Property="HorizontalAlignment" Value="Stretch"/>
+					<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+					<Setter Property="Margin" Value="0"/>
+				</Style>
+				<Style Selector="ListBoxItem:pressed /template/ ContentPresenter#PART_ContentPresenter">
+					<Setter Property="Background" Value="{DynamicResource Brush/SessionView.LogListBox.Item.Background.Pressed}"/>
+				</Style>
+				<Style Selector="ListBoxItem:selected /template/ ContentPresenter#PART_ContentPresenter">
+					<Setter Property="Background" Value="{DynamicResource Brush/SessionView.LogListBox.Item.Background.Selected}"/>
+				</Style>
+				<Style Selector="ListBoxItem:selected:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+					<Setter Property="Background" Value="{DynamicResource Brush/SessionView.LogListBox.Item.Background.Selected.PointerOver}"/>
+				</Style>
+				<Style Selector="ListBoxItem:selected:pressed /template/ ContentPresenter#PART_ContentPresenter">
+					<Setter Property="Background" Value="{DynamicResource Brush/SessionView.LogListBox.Item.Background.Pressed}"/>
+				</Style>
+			</Border.Styles>
 
 			<Panel>
 
@@ -1010,32 +1030,41 @@
 					<ListBox Name="markedLogListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" Focusable="False" IsVisible="{Binding HasMarkedLogs}" Items="{Binding MarkedLogs}" SelectionChanged="OnMarkedLogListBoxSelectionChanged" SelectionMode="Single">
 						<ListBox.Styles>
 							<Style Selector="ListBoxItem">
-								<Setter Property="CornerRadius" Value="0"/>
-								<Setter Property="HorizontalAlignment" Value="Stretch"/>
-								<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-								<Setter Property="Margin" Value="0"/>
 								<Setter Property="Padding" Value="0"/>
-							</Style>
-							<Style Selector="ListBoxItem:pressed /template/ ContentPresenter#PART_ContentPresenter">
-								<Setter Property="Background" Value="{DynamicResource Brush/SessionView.LogListBox.Item.Background.Pressed}"/>
-							</Style>
-							<Style Selector="ListBoxItem:selected /template/ ContentPresenter#PART_ContentPresenter">
-								<Setter Property="Background" Value="{DynamicResource Brush/SessionView.LogListBox.Item.Background.Selected}"/>
-							</Style>
-							<Style Selector="ListBoxItem:selected:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-								<Setter Property="Background" Value="{DynamicResource Brush/SessionView.LogListBox.Item.Background.Selected.PointerOver}"/>
-							</Style>
-							<Style Selector="ListBoxItem:selected:pressed /template/ ContentPresenter#PART_ContentPresenter">
-								<Setter Property="Background" Value="{DynamicResource Brush/SessionView.LogListBox.Item.Background.Pressed}"/>
 							</Style>
 						</ListBox.Styles>
 					</ListBox>
 					<TextBlock Classes="SessionView_SidePanel_EmptyHint" IsVisible="{Binding !HasMarkedLogs}" Text="{DynamicResource String/SessionView.NoMarkedLogs}"/>
 				</Panel>
 
+				<!-- Timestamp categories -->
+				<Panel HorizontalAlignment="Stretch" IsVisible="{Binding IsTimestampCategoriesPanelVisible}" VerticalAlignment="Stretch">
+					<asControls:ListBox Name="timestampCategoryListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" Items="{Binding TimestampCategories}">
+						<asControls:ListBox.Styles>
+							<Style Selector="ListBoxItem">
+								<Setter Property="Padding" Value="0"/>
+							</Style>
+						</asControls:ListBox.Styles>
+						<asControls:ListBox.ItemTemplate>
+							<DataTemplate>
+								<Grid ColumnDefinitions="Auto,*">
+									<Border Background="{Binding Log.ColorIndicatorBrush}" BorderBrush="{DynamicResource Brush/WorkingArea.Panel.Background}" BorderThickness="{StaticResource Thickness/SessionView.LogListBox.ColorIndicator.Border}" IsVisible="{Binding $parent[UserControl].DataContext.HasLogColorIndicator}" Width="{StaticResource Double/SessionView.LogListBox.ColorIndicator.Width}"/>
+									<TextBlock FontFamily="{Binding $parent[UserControl].LogFontFamily}" FontSize="{Binding $parent[UserControl].LogFontSize}" Grid.Column="1" Margin="{StaticResource Thickness/SessionView.MarkedLogListBox.Item.Padding}" Text="{Binding Name}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+								</Grid>
+							</DataTemplate>
+						</asControls:ListBox.ItemTemplate>
+					</asControls:ListBox>
+					<TextBlock Classes="SessionView_SidePanel_EmptyHint" IsVisible="{Binding !TimestampCategories.Count}" Text="{DynamicResource String/SessionView.NoTimestampCategories}"/>
+				</Panel>
+
 				<!-- Log files -->
 				<Panel HorizontalAlignment="Stretch" IsVisible="{Binding IsLogFilesPanelVisible}" VerticalAlignment="Stretch">
 					<asControls:ListBox Name="logFileListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" Items="{Binding LogFiles}">
+						<asControls:ListBox.Styles>
+							<Style Selector="ListBoxItem">
+								<Setter Property="Padding" Value="{StaticResource Thickness/SessionView.LogFileListBox.Item.Padding}"/>
+							</Style>
+						</asControls:ListBox.Styles>
 						<asControls:ListBox.ItemTemplate>
 							<DataTemplate>
 								<Grid ColumnDefinitions="Auto,*,Auto">
@@ -1073,18 +1102,6 @@
 						</asControls:ListBox.ItemTemplate>
 					</asControls:ListBox>
 					<TextBlock Classes="SessionView_SidePanel_EmptyHint" IsVisible="{Binding !LogFiles.Count}" Text="{DynamicResource String/SessionView.NoLogFiles}"/>
-				</Panel>
-
-				<!-- Timestamp categories -->
-				<Panel HorizontalAlignment="Stretch" IsVisible="{Binding IsTimestampCategoriesPanelVisible}" VerticalAlignment="Stretch">
-					<asControls:ListBox Name="timestampCategoriesListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" Items="{Binding TimestampCategories}">
-						<asControls:ListBox.ItemTemplate>
-							<DataTemplate>
-								<TextBlock Text="{Binding Name}"/>
-							</DataTemplate>
-						</asControls:ListBox.ItemTemplate>
-					</asControls:ListBox>
-					<TextBlock Classes="SessionView_SidePanel_EmptyHint" IsVisible="{Binding !TimestampCategories.Count}" Text="{DynamicResource String/SessionView.NoTimestampCategories}"/>
 				</Panel>
 
 			</Panel>

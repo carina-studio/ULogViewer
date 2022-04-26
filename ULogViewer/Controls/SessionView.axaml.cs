@@ -6,7 +6,6 @@ using Avalonia.Controls.Templates;
 using Avalonia.Data;
 using Avalonia.Data.Converters;
 using Avalonia.Input;
-using Avalonia.Input.Platform;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.LogicalTree;
@@ -24,6 +23,7 @@ using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ULogViewer.ViewModels;
+using CarinaStudio.ULogViewer.ViewModels.Categorizing;
 using CarinaStudio.Windows.Input;
 using Microsoft.Extensions.Logging;
 using System;
@@ -180,6 +180,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly MenuItem showLogPropertyMenuItem;
 		readonly ColumnDefinition sidePanelColumn;
 		readonly Control sidePanelContainer;
+		readonly AppSuite.Controls.ListBox timestampCategoryListBox;
 		readonly ToolBarScrollViewer toolBarScrollViewer;
 		readonly ScheduledAction updateLogFiltersAction;
 		readonly ScheduledAction updateStatusBarStateAction;
@@ -428,6 +429,11 @@ namespace CarinaStudio.ULogViewer.Controls
 #if !DEBUG
 			this.FindControl<Button>("testButton").AsNonNull().IsVisible = false;
 #endif
+			this.timestampCategoryListBox = this.FindControl<AppSuite.Controls.ListBox>(nameof(timestampCategoryListBox)).AsNonNull().Also(it =>
+			{
+				it.GetObservable(Avalonia.Controls.ListBox.SelectedItemProperty).Subscribe(item =>
+					this.OnLogCategoryListBoxSelectedItemChanged(it, item as DisplayableLogCategory));
+			});
 			this.FindControl<Control>("toolBarContainer").AsNonNull().Let(it =>
 			{
 				it.AddHandler(Control.PointerReleasedEvent, this.OnToolBarPointerReleased, RoutingStrategies.Tunnel);
@@ -2131,6 +2137,26 @@ namespace CarinaStudio.ULogViewer.Controls
             base.OnGotFocus(e);
 			this.Logger.LogTrace("Got focus");
         }
+
+
+		// Called when selected item of log category changed.
+		void OnLogCategoryListBoxSelectedItemChanged(Avalonia.Controls.ListBox? listBox, DisplayableLogCategory? category)
+		{
+			if (category == null)
+				return;
+			category.Log?.Let(log =>
+			{
+				this.IsScrollingToLatestLogNeeded = false;
+				this.logListBox.SelectedItems.Clear();
+				this.logListBox.SelectedItem = log;
+				this.logListBox.ScrollIntoView(log);
+			});
+			if (listBox != null)
+			{
+				this.SynchronizationContext.Post(() =>
+					listBox.SelectedItem = null);
+			}
+		}
 
 
         // Called when log profile set.

@@ -98,6 +98,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<bool> HasLastLogsReadingDurationProperty = ObservableProperty.Register<Session, bool>(nameof(HasLastLogsReadingDuration));
 		/// <summary>
+		/// Property of <see cref="HasLogColorIndicator"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> HasLogColorIndicatorProperty = ObservableProperty.Register<Session, bool>(nameof(HasLogColorIndicator));
+		/// <summary>
 		/// Property of <see cref="HasLogFiles"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> HasLogFilesProperty = ObservableProperty.Register<Session, bool>(nameof(HasLogFiles));
@@ -556,6 +560,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		static readonly SettingKey<double> latestMarkedLogsPanelSizeKey = new SettingKey<double>("Session.LatestMarkedLogsPanelSize", MarkedLogsPanelSizeProperty.DefaultValue);
 		[Obsolete]
 		static readonly SettingKey<double> latestSidePanelSizeKey = new SettingKey<double>("Session.LatestSidePanelSize", MarkedLogsPanelSizeProperty.DefaultValue);
+		static readonly SettingKey<double> latestTimestampCategoriesPanelSizeKey = new SettingKey<double>("Session.LatestTimestampCategoriesPanelSize", TimestampCategoriesPanelSizeProperty.DefaultValue);
 		static long memoryThresholdToStartHibernation;
 		static ILogger? staticLogger;
 		static long totalLogsMemoryUsage;
@@ -1174,11 +1179,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.PersistentState.ResetValue(latestSidePanelSizeKey);
 				this.SetValue(LogFilesPanelSizeProperty, sidePanelSize);
 				this.SetValue(MarkedLogsPanelSizeProperty, sidePanelSize);
+				this.SetValue(TimestampCategoriesPanelSizeProperty, sidePanelSize);
 			}
 			else
 			{
 				this.SetValue(LogFilesPanelSizeProperty, this.PersistentState.GetValueOrDefault(latestLogFilesPanelSizeKey));
 				this.SetValue(MarkedLogsPanelSizeProperty, this.PersistentState.GetValueOrDefault(latestMarkedLogsPanelSizeKey));
+				this.SetValue(TimestampCategoriesPanelSizeProperty, this.PersistentState.GetValueOrDefault(latestTimestampCategoriesPanelSizeKey));
 			}
 #pragma warning restore CS0612
 		}
@@ -2183,6 +2190,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Check whether color indicator of log is needed or not.
+		/// </summary>
+		public bool HasLogColorIndicator { get => this.GetValue(HasLogColorIndicatorProperty); }
+
+
+		/// <summary>
 		/// Check whether at least one log file was added to session or not.
 		/// </summary>
 		public bool HasLogFiles { get => this.GetValue(HasLogFilesProperty); }
@@ -2917,6 +2930,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					});
 					break;
 				case nameof(LogProfile.ColorIndicator):
+					this.SetValue(HasLogColorIndicatorProperty, this.LogProfile?.ColorIndicator != LogColorIndicator.None);
 					this.SynchronizationContext.Post(() => this.ReloadLogs(false, true));
 					break;
 				case nameof(LogProfile.DataSourceOptions):
@@ -3116,11 +3130,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			{
 				this.UpdateIsLogsWritingAvailable(this.LogProfile);
 			}
-			else if (property == HasTimestampDisplayableLogPropertyProperty)
-			{
-				if (!(bool)oldValue.AsNonNull())
-					this.SetValue(IsTimestampCategoriesPanelVisibleProperty, false);
-			}
 			else if (property == IPEndPointProperty)
 				this.SetValue(HasIPEndPointProperty, newValue != null);
 			else if (property == IsFilteringLogsProperty
@@ -3166,6 +3175,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			{
 				if (!this.isRestoringState)
 					this.PersistentState.SetValue<double>(latestMarkedLogsPanelSizeKey, (double)newValue.AsNonNull());
+			}
+			else if (property == TimestampCategoriesPanelSizeProperty)
+			{
+				if (!this.isRestoringState)
+					this.PersistentState.SetValue<double>(latestTimestampCategoriesPanelSizeKey, (double)newValue.AsNonNull());
 			}
 			else if (property == UriProperty)
 				this.SetValue(HasUriProperty, newValue != null);
@@ -3388,6 +3402,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.SetValue(AreLogsSortedByTimestampProperty, false);
 			this.canResetLogProfile.Update(false);
 			this.canShowAllLogsTemporarily.Update(false);
+			this.SetValue(HasLogColorIndicatorProperty, false);
 			this.SetValue(IsIPEndPointNeededProperty, false);
 			this.SetValue(IsLogFileNeededProperty, false);
 			this.SetValue(IsReadingLogsContinuouslyProperty, false);
@@ -4044,7 +4059,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// update valid log levels
 			this.UpdateValidLogLevels();
 
-			// reset state
+			// update state
+			this.SetValue(HasLogColorIndicatorProperty, profile.ColorIndicator != LogColorIndicator.None);
 			this.ResetValue(LastLogReadingPreconditionProperty);
 
 			// read logs or wait for more actions
