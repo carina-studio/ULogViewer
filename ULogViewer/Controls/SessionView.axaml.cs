@@ -2151,11 +2151,12 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.logListBox.SelectedItem = log;
 				this.logListBox.ScrollIntoView(log);
 			});
-			if (listBox != null)
+			this.SynchronizationContext.Post(() =>
 			{
-				this.SynchronizationContext.Post(() =>
-					listBox.SelectedItem = null);
-			}
+				if (listBox != null)
+					listBox.SelectedItem = null;
+				this.logListBox.Focus();
+			});
 		}
 
 

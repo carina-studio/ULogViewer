@@ -77,8 +77,6 @@ class TimestampDisplayableLogCategory : DisplayableLogCategory
                     formatBuilder.Remove(match.Index, match.Length);
                     format = formatBuilder.ToString();
                 }
-                goto case TimestampDisplayableLogCategoryGranularity.Hour;
-            case TimestampDisplayableLogCategoryGranularity.Hour:
                 match = MinutesFormatRegex.Match(format);
                 if (match.Success)
                 {
