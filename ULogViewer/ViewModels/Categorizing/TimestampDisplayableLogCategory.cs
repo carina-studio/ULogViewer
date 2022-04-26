@@ -1,4 +1,7 @@
 using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Text.RegularExpressions;
 
 namespace CarinaStudio.ULogViewer.ViewModels.Categorizing;
 
@@ -7,6 +10,16 @@ namespace CarinaStudio.ULogViewer.ViewModels.Categorizing;
 /// </summary>
 class TimestampDisplayableLogCategory : DisplayableLogCategory
 {
+    // Static fields.
+    static readonly Dictionary<string, string> CachedTimestampFormatsDay = new();
+    static readonly Dictionary<string, string> CachedTimestampFormatsHour = new();
+    static readonly Dictionary<string, string> CachedTimestampFormatsMinute = new();
+    static readonly Regex HoursFormatRegex = new("[\\s]*[^\\s\\w]*h{1,2}[^\\s\\w]*[\\s]*", RegexOptions.IgnoreCase);
+    static readonly Regex MinutesFormatRegex = new("[\\s]*[^\\s\\w]*m{1,2}[^\\s\\w]*[\\s]*");
+    static readonly Regex SecondsFormatRegex = new("[\\s]*[^\\s\\w]*s{1,2}[^\\s\\w]*[\\s]*", RegexOptions.IgnoreCase);
+    static readonly Regex SubSecondsFormatRegex = new("[\\s]*[^\\s\\w]*f{1,7}[^\\s\\w]*[\\s]*", RegexOptions.IgnoreCase);
+
+
     /// <summary>
     /// Initializer new <see cref="TimestampDisplayableLogCategory"/> instance.
     /// </summary>
@@ -18,6 +31,66 @@ class TimestampDisplayableLogCategory : DisplayableLogCategory
     {
         this.Granularity = granularity;
         this.Timestamp = timestamp;
+    }
+
+
+    // Get proper timestamp format.
+    string GetTimestampFormat(string baseFormat)
+    {
+        // use cached format
+        var format = (string?)null;
+        var cache = this.Granularity switch
+        {
+            TimestampDisplayableLogCategoryGranularity.Day => CachedTimestampFormatsDay,
+            TimestampDisplayableLogCategoryGranularity.Hour => CachedTimestampFormatsHour,
+            TimestampDisplayableLogCategoryGranularity.Minute => CachedTimestampFormatsMinute,
+            _ => null,
+        };
+        if (cache?.TryGetValue(baseFormat, out format) == true && format != null)
+            return format;
+        
+        // remove sub-seconds part
+        format = baseFormat;
+        var formatBuilder = new StringBuilder(baseFormat);
+        var match = SubSecondsFormatRegex.Match(format);
+        if (match.Success)
+        {
+            formatBuilder.Remove(match.Index, match.Length);
+            format = formatBuilder.ToString();
+        }
+
+        // remove seconds part
+        match = SecondsFormatRegex.Match(format);
+        if (match.Success)
+        {
+            formatBuilder.Remove(match.Index, match.Length);
+            format = formatBuilder.ToString();
+        }
+
+        // remove minutes/hours part
+        switch (this.Granularity)
+        {
+            case TimestampDisplayableLogCategoryGranularity.Day:
+                match = HoursFormatRegex.Match(format);
+                if (match.Success)
+                {
+                    formatBuilder.Remove(match.Index, match.Length);
+                    format = formatBuilder.ToString();
+                }
+                goto case TimestampDisplayableLogCategoryGranularity.Hour;
+            case TimestampDisplayableLogCategoryGranularity.Hour:
+                match = MinutesFormatRegex.Match(format);
+                if (match.Success)
+                {
+                    formatBuilder.Remove(match.Index, match.Length);
+                    format = formatBuilder.ToString();
+                }
+                break;
+        }
+
+        // complete
+        cache?.Add(baseFormat, format);
+        return format;
     }
 
 
@@ -34,7 +107,7 @@ class TimestampDisplayableLogCategory : DisplayableLogCategory
     /// <inheritdoc/>
     protected override string? OnUpdateName()
     {
-        var format = this.Log?.Group?.LogProfile?.TimestampFormatForDisplaying;
+        var format = this.Log?.Group?.LogProfile?.TimestampFormatForDisplaying?.Let(this.GetTimestampFormat);
         if (format != null)
             return this.Timestamp.ToString(format);
         return this.Timestamp.ToLongTimeString();
