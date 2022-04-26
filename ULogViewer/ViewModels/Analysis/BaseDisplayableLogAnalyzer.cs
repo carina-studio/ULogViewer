@@ -32,6 +32,16 @@ abstract class BaseDisplayableLogAnalyzer<TProcessingToken, TResult> : BaseDispl
     public IReadOnlyList<TResult> AnalysisResults { get; }
 
 
+    /// <summary>
+    /// Invalidate and update message of all analysis results.
+    /// </summary>
+    protected void InvalidateAnalysisResultMessages()
+    {
+        foreach (var result in this.analysisResults)
+            result.InvalidateMessage();
+    }
+
+
     /// <inheritdoc/>
     public override long MemorySize
     {

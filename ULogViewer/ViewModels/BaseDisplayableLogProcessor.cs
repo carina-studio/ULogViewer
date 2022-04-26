@@ -2,7 +2,7 @@ using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using CarinaStudio.Threading.Tasks;
-using CarinaStudio.ULogViewer.Collections;
+using CarinaStudio.ULogViewer.Logs.Profiles;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -52,6 +52,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
 
 
     // Fields.
+    LogProfile? attachedLogProfile; // currently only supports attaching to single profile
     ProcessingParams? currentProcessingParams;
     readonly Comparison<DisplayableLog> logComparison;
     readonly ScheduledAction processNextChunkAction;
@@ -179,6 +180,13 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
         // detach from source logs
         (this.sourceLogs as INotifyCollectionChanged)?.Let(it => 
             it.CollectionChanged -= this.OnSourceLogsChanged);
+        
+        // detach from log profile
+        if (this.attachedLogProfile != null)
+        {
+            this.OnDetachFromLogProfile(this.attachedLogProfile);
+            this.attachedLogProfile = null;
+        }
 
         // cancecl processing
         this.CancelProcessing();
@@ -359,6 +367,16 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
     }
 
 
+    /// <summary>
+    /// Called to attach to log profile.
+    /// </summary>
+    /// <param name="profile">Log profile.</param>
+    protected virtual void OnAttachToLogProfile(LogProfile profile)
+    {
+        profile.PropertyChanged += this.OnLogProfilePropertyChanged;
+    }
+
+
     // Called when chunk of logs processed.
     void OnChunkProcessed(ProcessingParams processingParams, int chunkId, List<DisplayableLog> logs, List<byte> logVersions, List<TProcessingResult> results)
     {
@@ -445,11 +463,35 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
 
 
     /// <summary>
+    /// Called to detach from log profile.
+    /// </summary>
+    /// <param name="profile">Log profile.</param>
+    protected virtual void OnDetachFromLogProfile(LogProfile profile)
+    {
+        profile.PropertyChanged -= this.OnLogProfilePropertyChanged;
+    }
+
+
+    /// <summary>
     /// Called when given log was invalidated.
     /// </summary>
     /// <param name="log">Log.</param>
     /// <returns>True if log can be handled directly for invalidation.</returns>
     protected abstract bool OnLogInvalidated(DisplayableLog log);
+
+
+    // Called when property of attached log profile changed.
+    void OnLogProfilePropertyChanged(object? sender, PropertyChangedEventArgs e) =>
+        this.OnLogProfilePropertyChanged((LogProfile)sender.AsNonNull(), e);
+
+
+    /// <summary>
+    /// Called when property of attached log profile changed.
+    /// </summary>
+    /// <param name="profile">Log profile.</param>
+    /// <param name="e">Event data.</param>
+    protected virtual void OnLogProfilePropertyChanged(LogProfile profile, PropertyChangedEventArgs e)
+    { }
 
 
     /// <summary>
@@ -515,6 +557,11 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
                 break;
             default:
                 throw new InvalidOperationException($"Unsupported change of source log list: {e.Action}.");
+        }
+        if (this.sourceLogs.IsEmpty() && this.attachedLogProfile != null)
+        {
+            this.OnDetachFromLogProfile(this.attachedLogProfile);
+            this.attachedLogProfile = null;
         }
     }
     
@@ -644,6 +691,16 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
         }
         this.Progress = 1.0 - ((double)this.unprocessedLogs.Count / this.sourceLogs.Count);
         this.OnPropertyChanged(nameof(Progress));
+
+        // attach to log profile
+        var profile = this.unprocessedLogs[0].Group.LogProfile;
+        if (profile != this.attachedLogProfile)
+        {
+            if (this.attachedLogProfile != null)
+                this.OnDetachFromLogProfile(this.attachedLogProfile);
+            this.attachedLogProfile = profile;
+            this.OnAttachToLogProfile(profile);
+        }
 
         // start processing
         var chunkSize = Math.Max(64, this.ChunkSize);

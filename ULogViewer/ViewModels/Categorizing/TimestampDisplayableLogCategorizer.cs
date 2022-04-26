@@ -1,6 +1,8 @@
 using CarinaStudio.Threading;
+using CarinaStudio.ULogViewer.Logs.Profiles;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace CarinaStudio.ULogViewer.ViewModels.Categorizing;
 
@@ -43,6 +45,7 @@ class TimestampDisplayableLogCategorizer : BaseDisplayableLogCategorizer<Timesta
     public TimestampDisplayableLogCategorizer(IULogViewerApplication app, IList<DisplayableLog> sourceLogs, Comparison<DisplayableLog> comparison) : base(app, sourceLogs, comparison)
     { 
         this.emptyCategory = new(this, null, DateTime.MinValue);
+        this.Application.StringsUpdated += this.OnAppStringsUpdated;
     }
 
 
@@ -90,6 +93,20 @@ class TimestampDisplayableLogCategorizer : BaseDisplayableLogCategorizer<Timesta
 
 
     /// <inheritdoc/>
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing)
+            this.Application.StringsUpdated -= this.OnAppStringsUpdated;
+        base.Dispose(disposing);
+    }
+
+
+    // Called when application string resources updated.
+    void OnAppStringsUpdated(object? sender, EventArgs e) =>
+        this.InvalidateCategoryNames();
+
+
+    /// <inheritdoc/>
     protected override void OnChunkProcessed(ProcessingToken token, List<DisplayableLog> logs, List<TimestampDisplayableLogCategory> results)
     {
         for (var i = logs.Count - 1; i >= 0; --i)
@@ -109,6 +126,15 @@ class TimestampDisplayableLogCategorizer : BaseDisplayableLogCategorizer<Timesta
             this.categoriesByTimestamp[timestamp] = results[i];
         }
         base.OnChunkProcessed(token, logs, results);
+    }
+
+
+    /// <inheritdoc/>
+    protected override void OnLogProfilePropertyChanged(LogProfile profile, PropertyChangedEventArgs e)
+    {
+        base.OnLogProfilePropertyChanged(profile, e);
+        if (e.PropertyName == nameof(LogProfile.TimestampFormatForDisplaying))
+            this.InvalidateCategoryNames();
     }
 
 

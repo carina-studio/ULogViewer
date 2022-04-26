@@ -32,6 +32,16 @@ abstract class BaseDisplayableLogCategorizer<TProcessingToken, TCategory> : Base
     public IReadOnlyList<TCategory> Categories { get; }
 
 
+    /// <summary>
+    /// Invalidate and update name of all categories.
+    /// </summary>
+    protected void InvalidateCategoryNames()
+    {
+        foreach (var category in this.categories)
+            category.InvalidateName();
+    }
+
+
     /// <inheritdoc/>
     public override long MemorySize 
     { 

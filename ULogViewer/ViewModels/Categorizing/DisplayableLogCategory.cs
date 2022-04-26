@@ -40,7 +40,7 @@ class DisplayableLogCategory : BaseApplicationObject<IULogViewerApplication>, IN
     /// <summary>
     /// Invalidate and update name of category.
     /// </summary>
-    protected void InvalidateName()
+    public void InvalidateName()
     {
         this.VerifyAccess();
         if (this.isNameValid)

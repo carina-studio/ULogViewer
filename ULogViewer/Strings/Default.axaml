@@ -483,6 +483,7 @@
 	<sys:String x:Key="String/SessionView.NoLogFiles">No added log files</sys:String>
 	<sys:String x:Key="String/SessionView.NoMarkedLogs">No marked logs</sys:String>
 	<sys:String x:Key="String/SessionView.NoPredefinedLogTextFilter">No defined text filter</sys:String>
+	<sys:String x:Key="String/SessionView.NoTimestampCategories">No timestamp to categorize</sys:String>
 	<sys:String x:Key="String/SessionView.OtherActions">Other actions</sys:String>
 	<sys:String x:Key="String/SessionView.PauseResumeLogsReading">Pause/Resume reading logs (P)</sys:String>
 	<sys:String x:Key="String/SessionView.PredefinedLogTextFilters">Defined text filters (Ctrl+P)</sys:String>
@@ -515,6 +516,7 @@
 	<sys:String x:Key="String/SessionView.ShowLogProperty.Disabled">View log property…</sys:String>
 	<sys:String x:Key="String/SessionView.ShowMarkedLogsTemporarily">Show marked logs temporarily (Alt+M)</sys:String>
 	<sys:String x:Key="String/SessionView.ShowWorkingDirectoryInExplorer">Show working directory in Windows File Explorer</sys:String>
+	<sys:String x:Key="String/SessionView.TimestampCategories">Categories of timestamp</sys:String>
 	<sys:String x:Key="String/SessionView.TooManyDirectoryPathsDropped">Please drag and drop single directory.</sys:String>
 	<sys:String x:Key="String/SessionView.TotalLogsMemoryUsage">Total memory usage of logs</sys:String>
 	<sys:String x:Key="String/SessionView.UIResponseDuration">User interface response time</sys:String>

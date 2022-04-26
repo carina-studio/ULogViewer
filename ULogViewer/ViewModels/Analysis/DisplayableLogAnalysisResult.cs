@@ -40,7 +40,7 @@ class DisplayableLogAnalysisResult : BaseApplicationObject<IULogViewerApplicatio
     /// <summary>
     /// Invalidate and update message of result.
     /// </summary>
-    protected void InvalidateMessage()
+    public void InvalidateMessage()
     {
         this.VerifyAccess();
         if (this.isMessageValid)

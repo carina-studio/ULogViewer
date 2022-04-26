@@ -218,6 +218,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsShowingMarkedLogsTemporarilyProperty = ObservableProperty.Register<Session, bool>(nameof(IsShowingMarkedLogsTemporarily));
 		/// <summary>
+		/// Property of <see cref="IsTimestampCategoriesPanelVisible"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> IsTimestampCategoriesPanelVisibleProperty = ObservableProperty.Register<Session, bool>(nameof(IsTimestampCategoriesPanelVisible), false);
+		/// <summary>
 		/// Property of <see cref="IsUriNeeded"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsUriNeededProperty = ObservableProperty.Register<Session, bool>(nameof(IsUriNeeded));
@@ -323,6 +327,19 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Property of <see cref="TimestampCategories"/>.
 		/// </summary>
 		public static readonly ObservableProperty<IReadOnlyList<TimestampDisplayableLogCategory>> TimestampCategoriesProperty = ObservableProperty.Register<Session, IReadOnlyList<TimestampDisplayableLogCategory>>(nameof(TimestampCategories), new TimestampDisplayableLogCategory[0]);
+		/// <summary>
+		/// Property of <see cref="TimestampCategoriesPanelSize"/>.
+		/// </summary>
+		public static readonly ObservableProperty<double> TimestampCategoriesPanelSizeProperty = ObservableProperty.Register<Session, double>(nameof(TimestampCategoriesPanelSize), (MinSidePanelSize + MaxSidePanelSize) / 2, 
+			coerce: (_, it) =>
+			{
+				if (it >= MaxSidePanelSize)
+					return MaxSidePanelSize;
+				if (it < MinSidePanelSize)
+					return MinSidePanelSize;
+				return it;
+			}, 
+			validate: it => double.IsFinite(it));
 		/// <summary>
 		/// Property of <see cref="Title"/>.
 		/// </summary>
@@ -2393,6 +2410,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Get or set whether panel of timestamp categories is visible or not.
+		/// </summary>
+		public bool IsTimestampCategoriesPanelVisible 
+		{
+			 get => this.GetValue(IsTimestampCategoriesPanelVisibleProperty);
+			 set => this.SetValue(IsTimestampCategoriesPanelVisibleProperty, value);
+		}
+
+
+		/// <summary>
 		/// Check whether URI is needed or not.
 		/// </summary>
 		public bool IsUriNeeded { get => this.GetValue(IsUriNeededProperty); }
@@ -3089,6 +3116,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			{
 				this.UpdateIsLogsWritingAvailable(this.LogProfile);
 			}
+			else if (property == HasTimestampDisplayableLogPropertyProperty)
+			{
+				if (!(bool)oldValue.AsNonNull())
+					this.SetValue(IsTimestampCategoriesPanelVisibleProperty, false);
+			}
 			else if (property == IPEndPointProperty)
 				this.SetValue(HasIPEndPointProperty, newValue != null);
 			else if (property == IsFilteringLogsProperty
@@ -3639,11 +3671,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.LogThreadIdFilter = tid;
 				}
 
-				// restore side panel state
+				// restore panel state
 				if (jsonState.TryGetProperty(nameof(IsLogFilesPanelVisible), out jsonValue))
 					this.SetValue(IsLogFilesPanelVisibleProperty, jsonValue.ValueKind != JsonValueKind.False);
 				if (jsonState.TryGetProperty(nameof(IsMarkedLogsPanelVisible), out jsonValue))
 					this.SetValue(IsMarkedLogsPanelVisibleProperty, jsonValue.ValueKind != JsonValueKind.False);
+				if (jsonState.TryGetProperty(nameof(IsTimestampCategoriesPanelVisible), out jsonValue))
+					this.SetValue(IsTimestampCategoriesPanelVisibleProperty, jsonValue.ValueKind != JsonValueKind.False);
 				if (jsonState.TryGetProperty(nameof(LogFilesPanelSize), out jsonValue) 
 					&& jsonValue.TryGetDouble(out var doubleValue)
 					&& LogFilesPanelSizeProperty.ValidationFunction.Invoke(doubleValue) == true)
@@ -3655,6 +3689,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					&& MarkedLogsPanelSizeProperty.ValidationFunction.Invoke(doubleValue) == true)
 				{
 					this.SetValue(MarkedLogsPanelSizeProperty, doubleValue);
+				}
+				if (jsonState.TryGetProperty(nameof(TimestampCategoriesPanelSize), out jsonValue) 
+					&& jsonValue.TryGetDouble(out doubleValue)
+					&& TimestampCategoriesPanelSizeProperty.ValidationFunction.Invoke(doubleValue) == true)
+				{
+					this.SetValue(TimestampCategoriesPanelSizeProperty, doubleValue);
 				}
 
 				this.Logger.LogTrace("Complete restoring state");
@@ -4145,8 +4185,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				// save side panel state
 				jsonWriter.WriteBoolean(nameof(IsLogFilesPanelVisible), this.IsLogFilesPanelVisible);
 				jsonWriter.WriteBoolean(nameof(IsMarkedLogsPanelVisible), this.IsMarkedLogsPanelVisible);
+				jsonWriter.WriteBoolean(nameof(IsTimestampCategoriesPanelVisible), this.IsTimestampCategoriesPanelVisible);
 				jsonWriter.WriteNumber(nameof(LogFilesPanelSize), this.LogFilesPanelSize);
 				jsonWriter.WriteNumber(nameof(MarkedLogsPanelSize), this.MarkedLogsPanelSize);
+				jsonWriter.WriteNumber(nameof(TimestampCategoriesPanelSize), this.TimestampCategoriesPanelSize);
 			});
 			jsonWriter.WriteEndObject();
 		}
@@ -4270,6 +4312,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Get list of log categories by timestamp.
 		/// </summary>
 		public IReadOnlyList<TimestampDisplayableLogCategory> TimestampCategories { get =>this.GetValue(TimestampCategoriesProperty); }
+
+
+		/// <summary>
+		/// Get or set size of panel of timestamp categories.
+		/// </summary>
+		public double TimestampCategoriesPanelSize
+		{
+			 get => this.GetValue(TimestampCategoriesPanelSizeProperty);
+			 set => this.SetValue(TimestampCategoriesPanelSizeProperty, value);
+		}
 
 
 		/// <summary>

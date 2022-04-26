@@ -23,6 +23,16 @@ class TimestampDisplayableLogCategory : DisplayableLogCategory
     public override long MemorySize { get => base.MemorySize + 8; }
 
 
+    /// <inheritdoc/>
+    protected override string? OnUpdateName()
+    {
+        var format = this.Log?.Group?.LogProfile?.TimestampFormatForDisplaying;
+        if (format != null)
+            return this.Timestamp.ToString(format);
+        return this.Timestamp.ToLongTimeString();
+    }
+
+
     /// <summary>
     /// Get timestamp of this category.
     /// </summary>
