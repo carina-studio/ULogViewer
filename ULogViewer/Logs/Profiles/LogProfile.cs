@@ -4,6 +4,7 @@ using CarinaStudio.Threading;
 using CarinaStudio.Threading.Tasks;
 using CarinaStudio.ULogViewer.Cryptography;
 using CarinaStudio.ULogViewer.Logs.DataSources;
+using CarinaStudio.ULogViewer.ViewModels.Categorizing;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -68,6 +69,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		IList<string> timeSpanFormatsForReading = new string[0];
 		string? timeSpanFormatForDisplaying;
 		string? timeSpanFormatForWriting;
+		TimestampDisplayableLogCategoryGranularity timestampCategoryGranularity = TimestampDisplayableLogCategoryGranularity.Hour;
 		CultureInfo timestampCultureInfoForReading = defaultTimestampCultureInfoForReading;
 		CultureInfo timestampCultureInfoForWriting = defaultTimestampCultureInfoForReading;
 		LogTimestampEncoding timestampEncodingForReading = LogTimestampEncoding.Custom;
@@ -123,6 +125,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			this.timeSpanFormatForDisplaying = template.timeSpanFormatForDisplaying;
 			this.timeSpanFormatForWriting = template.timeSpanFormatForWriting;
 			this.timeSpanFormatsForReading = template.timeSpanFormatsForReading;
+			this.timestampCategoryGranularity = template.timestampCategoryGranularity;
 			this.timestampCultureInfoForReading = template.timestampCultureInfoForReading;
 			this.timestampCultureInfoForWriting = template.timestampCultureInfoForWriting;
 			this.timestampEncodingForReading = template.timestampEncodingForReading;
@@ -689,6 +692,10 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 								list.Add(jsonValue.GetString().AsNonNull());
 						}).AsReadOnly();
 						break;
+					case nameof(TimestampCategoryGranularity):
+						if (Enum.TryParse<TimestampDisplayableLogCategoryGranularity>(jsonProperty.Value.GetString(), out var timestampCategoryGranularity))
+							this.timestampCategoryGranularity = timestampCategoryGranularity;
+						break;
 					case nameof(TimestampCultureInfoForReading):
 						this.timestampCultureInfoForReading = CultureInfo.GetCultureInfo(jsonProperty.Value.GetString().AsNonNull());
 						break;
@@ -1054,6 +1061,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 						writer.WriteStringValue(format);
 					writer.WriteEndArray();
 				}
+				writer.WriteString(nameof(TimestampCategoryGranularity), this.timestampCategoryGranularity.ToString());
 				writer.WriteString(nameof(TimestampCultureInfoForReading), this.timestampCultureInfoForReading.ToString());
 				writer.WriteString(nameof(TimestampCultureInfoForWriting), this.timestampCultureInfoForWriting.ToString());
 				writer.WriteString(nameof(TimestampEncodingForReading), this.timestampEncodingForReading.ToString());
@@ -1287,6 +1295,24 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 					return;
 				this.timeSpanFormatsForReading = value.ToArray().AsReadOnly();
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TimeSpanFormatsForReading)));
+			}
+		}
+
+
+		/// <summary>
+		/// Get or set granularity of categorizing logs by timestamp.
+		/// </summary>
+		public TimestampDisplayableLogCategoryGranularity TimestampCategoryGranularity
+		{
+			get => this.timestampCategoryGranularity;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (this.timestampCategoryGranularity == value)
+					return;
+				this.timestampCategoryGranularity = value;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TimestampCategoryGranularity)));
 			}
 		}
 

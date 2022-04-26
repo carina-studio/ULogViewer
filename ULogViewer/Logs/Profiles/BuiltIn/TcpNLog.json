@@ -28,6 +28,7 @@
 	],
 	"LogWritingFormat": "{Timestamp} {DeviceName} {ProcessId,5} {ThreadId,5} {Level,5} {SourceName}: {Message}",
 	"SortKey": "Id",
+	"TimestampCategoryGranularity": "Minute",
 	"TimestampEncodingForReading": "UnixMilliseconds",
 	"TimestampFormatForDisplaying": "yyyy/MM/dd HH:mm:ss.fff",
 	"VisibleLogProperties": [

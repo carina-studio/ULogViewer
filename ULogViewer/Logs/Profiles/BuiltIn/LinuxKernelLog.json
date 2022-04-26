@@ -13,6 +13,7 @@
 	],
 	"LogWritingFormat": "{Timestamp} {DeviceName} {SourceName}: [{Extra1,12}] {Message}",
 	"SortKey": "Timestamp",
+	"TimestampCategoryGranularity": "Minute",
 	"TimestampFormatForDisplaying": "MM/dd HH:mm:ss",
 	"TimestampFormatsForReading": [
 		"MMM dd HH:mm:ss",

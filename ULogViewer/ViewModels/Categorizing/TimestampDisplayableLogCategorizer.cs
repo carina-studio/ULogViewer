@@ -17,14 +17,16 @@ class TimestampDisplayableLogCategorizer : BaseDisplayableLogCategorizer<Timesta
     public class ProcessingToken
     {
         // Fields.
+        public readonly TimestampDisplayableLogCategoryGranularity Granularity;
         public readonly Dictionary<DateTime, TimestampDisplayableLogCategory> PartialCategories = new();
         public readonly Func<DisplayableLog, DateTime?> TimestampGetter;
 
         // Constructor.
-        public ProcessingToken() : this(new(log => null))
+        public ProcessingToken() : this(new(log => null), default)
         { }
-        public ProcessingToken(Func<DisplayableLog, DateTime?> timestampGetter)
+        public ProcessingToken(Func<DisplayableLog, DateTime?> timestampGetter, TimestampDisplayableLogCategoryGranularity granularity)
         {
+            this.Granularity = granularity;
             this.TimestampGetter = timestampGetter;
         }
     }
@@ -33,6 +35,7 @@ class TimestampDisplayableLogCategorizer : BaseDisplayableLogCategorizer<Timesta
     // Fields.
     readonly Dictionary<DateTime, TimestampDisplayableLogCategory> categoriesByTimestamp = new();
     readonly TimestampDisplayableLogCategory emptyCategory;
+    TimestampDisplayableLogCategoryGranularity granularity = TimestampDisplayableLogCategoryGranularity.Day;
     string? timestampLogPropertyName;
 
 
@@ -44,7 +47,7 @@ class TimestampDisplayableLogCategorizer : BaseDisplayableLogCategorizer<Timesta
     /// <param name="comparison"><see cref="Comparison{T}"/> which used on <paramref name="sourceLogs"/>.</param>
     public TimestampDisplayableLogCategorizer(IULogViewerApplication app, IList<DisplayableLog> sourceLogs, Comparison<DisplayableLog> comparison) : base(app, sourceLogs, comparison)
     { 
-        this.emptyCategory = new(this, null, DateTime.MinValue);
+        this.emptyCategory = new(this, null, DateTime.MinValue, default);
         this.Application.StringsUpdated += this.OnAppStringsUpdated;
     }
 
@@ -59,6 +62,13 @@ class TimestampDisplayableLogCategorizer : BaseDisplayableLogCategorizer<Timesta
         
         // create property getter
         Func<DisplayableLog, DateTime?> getter;
+        TimestampDisplayableLogCategoryGranularity granularity = this.granularity;
+        DateTime QuantizeTimestamp(DateTime timestamp) => granularity switch
+        {
+            TimestampDisplayableLogCategoryGranularity.Hour => new DateTime(timestamp.Year, timestamp.Month, timestamp.Day, timestamp.Hour, 0, 0),
+            TimestampDisplayableLogCategoryGranularity.Day => new DateTime(timestamp.Year, timestamp.Month, timestamp.Day, 0, 0, 0),
+            _ => new DateTime(timestamp.Year, timestamp.Month, timestamp.Day, timestamp.Hour, timestamp.Minute, 0),
+        };
         if (DisplayableLog.HasInt64Property(this.timestampLogPropertyName))
         {
             var binaryTimestampGetter = DisplayableLog.CreateLogPropertyGetter<long>(this.timestampLogPropertyName);
@@ -67,8 +77,7 @@ class TimestampDisplayableLogCategorizer : BaseDisplayableLogCategorizer<Timesta
                 var binaryTimestamp = binaryTimestampGetter(log);
                 if (binaryTimestamp == 0)
                     return null;
-                var timestamp = DateTime.FromBinary(binaryTimestamp);
-                return new DateTime(timestamp.Year, timestamp.Month, timestamp.Day, timestamp.Hour, timestamp.Minute, 0);
+                return QuantizeTimestamp(DateTime.FromBinary(binaryTimestamp));
             };
         }
         else if (DisplayableLog.HasDateTimeProperty(this.timestampLogPropertyName))
@@ -79,8 +88,7 @@ class TimestampDisplayableLogCategorizer : BaseDisplayableLogCategorizer<Timesta
                 var rawTimestamp = rawTimestampGetter(log);
                 if (!rawTimestamp.HasValue)
                     return null;
-                var timestamp = rawTimestamp.Value;
-                return new DateTime(timestamp.Year, timestamp.Month, timestamp.Day, timestamp.Hour, timestamp.Minute, 0);
+                return QuantizeTimestamp(rawTimestamp.Value);
             };
         }
         else
@@ -88,7 +96,7 @@ class TimestampDisplayableLogCategorizer : BaseDisplayableLogCategorizer<Timesta
         
         // create token
         isProcessingNeeded = true;
-        return new(getter);
+        return new(getter, granularity);
     }
 
 
@@ -98,6 +106,25 @@ class TimestampDisplayableLogCategorizer : BaseDisplayableLogCategorizer<Timesta
         if (disposing)
             this.Application.StringsUpdated -= this.OnAppStringsUpdated;
         base.Dispose(disposing);
+    }
+
+
+    /// <summary>
+    /// Get or set granularity to categorizing logs.
+    /// </summary>
+    public TimestampDisplayableLogCategoryGranularity Granularity
+    {
+        get => this.granularity;
+        set
+        {
+            this.VerifyAccess();
+            this.VerifyDisposed();
+            if (this.granularity == value)
+                return;
+            this.granularity = value;
+            this.OnPropertyChanged(nameof(Granularity));
+            this.InvalidateProcessing();
+        }
     }
 
 
@@ -164,7 +191,7 @@ class TimestampDisplayableLogCategorizer : BaseDisplayableLogCategorizer<Timesta
             {
                 return false;
             }
-            result = new(this, log, timestamp.Value);
+            result = new(this, log, timestamp.Value, token.Granularity);
             token.PartialCategories[timestamp.Value] = result;
         }
         return true;

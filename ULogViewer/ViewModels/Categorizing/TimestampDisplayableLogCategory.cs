@@ -13,10 +13,18 @@ class TimestampDisplayableLogCategory : DisplayableLogCategory
     /// <param name="categorizer"><see cref="IDisplayableLogCategorizer{T}>"/> which generate this category.</param>
     /// <param name="log"><see cref="DisplayableLog"/> which represents this category.</param>
     /// <param name="timestamp">Timestamp of this category.</param>
-    public TimestampDisplayableLogCategory(IDisplayableLogCategorizer<TimestampDisplayableLogCategory> categorizer, DisplayableLog? log, DateTime timestamp) : base(categorizer, log)
+    /// <param name="granularity">Granularity of category.</param>
+    public TimestampDisplayableLogCategory(IDisplayableLogCategorizer<TimestampDisplayableLogCategory> categorizer, DisplayableLog? log, DateTime timestamp, TimestampDisplayableLogCategoryGranularity granularity) : base(categorizer, log)
     {
+        this.Granularity = granularity;
         this.Timestamp = timestamp;
     }
+
+
+    /// <summary>
+    /// Get granularity of category.
+    /// </summary>
+    public TimestampDisplayableLogCategoryGranularity Granularity { get; }
 
 
     /// <inheritdoc/>
@@ -37,4 +45,24 @@ class TimestampDisplayableLogCategory : DisplayableLogCategory
     /// Get timestamp of this category.
     /// </summary>
     public DateTime Timestamp { get; }
+}
+
+
+/// <summary>
+/// Granularity of category of log by timestamp.
+/// </summary>
+enum TimestampDisplayableLogCategoryGranularity
+{
+    /// <summary>
+    /// Minute.
+    /// </summary>
+    Minute,
+    /// <summary>
+    /// Hour.
+    /// </summary>
+    Hour,
+    /// <summary>
+    /// Day.
+    /// </summary>
+    Day,
 }

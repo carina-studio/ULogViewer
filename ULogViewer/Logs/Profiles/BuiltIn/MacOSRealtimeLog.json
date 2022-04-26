@@ -30,6 +30,7 @@
 	},
 	"LogWritingFormat": "{Timestamp} 0x{ThreadId,-8:x} {Level,-7} {Extra1,-10} {ProcessId,-6} {Extra2,-5} {SourceName}: {Message}",
 	"SortKey": "Id",
+	"TimestampCategoryGranularity": "Minute",
 	"TimestampFormatForDisplaying": "yyyy/MM/dd HH:mm:ss.ffffff",
 	"TimestampFormatsForReading": [
 		"yyyy-MM-dd HH:mm:ss.ffffff"

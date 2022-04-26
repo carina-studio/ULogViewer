@@ -2969,6 +2969,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 							this.logReaders[0].RestartReadingDelay = TimeSpan.FromMilliseconds(profile.RestartReadingDelay);
 					});
 					break;
+				case nameof(LogProfile.TimestampCategoryGranularity):
+					(this.LogProfile?.TimestampCategoryGranularity)?.Let(it =>
+					{
+						this.allLogsTimestampCategorizer.Granularity = it;
+						this.filteredLogsTimestampCategorizer.Granularity = it;
+						this.markedLogsTimestampCategorizer.Granularity = it;
+					});
+					break;
 				case nameof(LogProfile.VisibleLogProperties):
 					this.SynchronizationContext.Post(() => this.ReloadLogs(false, true));
 					break;
@@ -3318,12 +3326,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				}
 			}
 
-			// setup log comparer
-			this.UpdateDisplayableLogComparison();
-
 			// update display log properties
 			if (updateDisplayLogProperties)
 				this.UpdateDisplayLogProperties();
+			
+			// setup log comparer
+			this.UpdateDisplayableLogComparison();
 
 			// recreate log readers
 			if (this.logReaders.IsEmpty())
@@ -4053,8 +4061,19 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// attach to log profile
 			profile.PropertyChanged += this.OnLogProfilePropertyChanged;
 
+			// update display log properties
+			this.UpdateDisplayLogProperties();
+
 			// setup log comparer
 			this.UpdateDisplayableLogComparison();
+
+			// setup log categorizers
+			profile.TimestampCategoryGranularity.Let(it =>
+			{
+				this.allLogsTimestampCategorizer.Granularity = it;
+				this.filteredLogsTimestampCategorizer.Granularity = it;
+				this.markedLogsTimestampCategorizer.Granularity = it;
+			});
 
 			// update valid log levels
 			this.UpdateValidLogLevels();
@@ -4118,9 +4137,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.checkDataSourceErrorsAction.Schedule();
 				}
 			}
-
-			// update display log properties
-			this.UpdateDisplayLogProperties();
 
 			// update title
 			this.updateTitleAndIconAction.Schedule();
@@ -4448,7 +4464,22 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				LogSortKey.BeginningTimestamp => nameof(DisplayableLog.BinaryBeginningTimestamp),
 				LogSortKey.EndingTimestamp => nameof(DisplayableLog.BinaryEndingTimestamp),
 				LogSortKey.Timestamp => nameof(DisplayableLog.BinaryTimestamp),
-				_ => null,
+				_ => Global.Run(() =>
+				{
+					foreach (var property in this.DisplayLogProperties)
+					{
+						switch (property.Name)
+						{
+							case nameof(DisplayableLog.BeginningTimestampString):
+								return nameof(DisplayableLog.BinaryBeginningTimestamp);
+							case nameof(DisplayableLog.EndingTimestampString):
+								return nameof(DisplayableLog.BinaryEndingTimestamp);
+							case nameof(DisplayableLog.TimestampString):
+								return nameof(DisplayableLog.BinaryTimestamp);
+						}
+					}
+					return null;
+				}),
 			}).Let(propertyName =>
 			{
 				this.allLogsTimestampCategorizer.TimestampLogPropertyName = propertyName;

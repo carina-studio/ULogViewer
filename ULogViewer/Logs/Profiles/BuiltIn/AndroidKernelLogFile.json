@@ -26,6 +26,7 @@
 		}
 	],
 	"LogWritingFormat": "{Timestamp} {Level} {SourceName}: {Message}",
+	"TimestampCategoryGranularity": "Minute",
 	"TimestampFormatForDisplaying": "MM/dd HH:mm:ss.ffffff",
 	"TimestampFormatsForReading": [
 		"yyyyMMdd_HH:mm:ss.ffffff",

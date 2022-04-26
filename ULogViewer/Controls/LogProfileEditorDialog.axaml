@@ -8,6 +8,7 @@
 		xmlns:abControls="using:CarinaStudio.Controls"
 		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
         xmlns:app="clr-namespace:CarinaStudio.ULogViewer;assembly=ULogViewer"
+		xmlns:appCategorizing="using:CarinaStudio.ULogViewer.ViewModels.Categorizing"
         xmlns:appControls="clr-namespace:CarinaStudio.ULogViewer.Controls;assembly=ULogViewer"
         xmlns:appConverters="clr-namespace:CarinaStudio.ULogViewer.Converters;assembly=ULogViewer"
         xmlns:appDataSources="clr-namespace:CarinaStudio.ULogViewer.Logs.DataSources;assembly=ULogViewer"
@@ -259,7 +260,7 @@
 							</DataTemplate>
 						</asControls:ListBox.ItemTemplate>
 				</asControls:ListBox>
-					<Button Classes="ListAction" Command="{Binding $parent[Window].AddTimestampFormatForReading}" Content="{DynamicResource String/Common.Add}"/>
+				<Button Classes="ListAction" Command="{Binding $parent[Window].AddTimestampFormatForReading}" Content="{DynamicResource String/Common.Add}"/>
 				</StackPanel>
 				<Separator Classes="Dialog_Separator"/>
 
@@ -372,6 +373,11 @@
 				<!-- Sort direction -->
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogProfileEditorDialog.SortDirection}"/>
 				<asControls:EnumComboBox Name="sortDirectionComboBox" Classes="Dialog_ComboBox" EnumType="{x:Type app:SortDirection}"/>
+				<Separator Classes="Dialog_Separator"/>
+
+				<!-- Timestamp category granularity -->
+				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogProfileEditorDialog.TimestampCategoryGranularity}"/>
+				<asControls:EnumComboBox Name="timestampCategoryGranularityComboBox" Classes="Dialog_ComboBox" EnumType="{x:Type appCategorizing:TimestampDisplayableLogCategoryGranularity}"/>
 				<Separator Classes="Dialog_Separator_Large"/>
 
 				<!-- Header -->

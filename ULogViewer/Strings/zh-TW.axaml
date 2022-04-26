@@ -245,6 +245,7 @@
 	<sys:String x:Key="String/LogProfileEditorDialog.TimeSpanFormatForWriting">日誌時距輸出格式</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.TimeSpanFormatForWriting.Watermark">留白表示使用與讀取相同的格式</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.TimeSpanFormatsForReading">自訂日誌時距讀取格式</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.TimestampCategoryGranularity">日誌時間戳記分類顆粒度</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.TimestampEncodingForReading">日誌時間讀取類型</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.TimestampFormatForDisplaying">日誌時間顯示格式</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.TimestampFormatForWriting">日誌時間輸出格式</sys:String>
@@ -530,6 +531,11 @@
 
 	<!-- TimeSpanFormatInputDialog -->
 	<sys:String x:Key="String/TimeSpanFormatInputDialog.Message">時距格式</sys:String>
+
+	<!-- TimestampDisplayableLogCategoryGranularity -->
+	<sys:String x:Key="String/TimestampDisplayableLogCategoryGranularity.Day">日</sys:String>
+	<sys:String x:Key="String/TimestampDisplayableLogCategoryGranularity.Hour">小時</sys:String>
+	<sys:String x:Key="String/TimestampDisplayableLogCategoryGranularity.Minute">分鐘</sys:String>
 
 	<!-- UdpServerLogDataSourceProvider -->
 	<sys:String x:Key="String/UdpServerLogDataSourceProvider.DisplayName">UDP 伺服器</sys:String>

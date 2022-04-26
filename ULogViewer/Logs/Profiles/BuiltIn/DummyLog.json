@@ -20,6 +20,7 @@
 	"LogStringEncodingForReading": "Json",
 	"LogStringEncodingForWriting": "Xml",
 	"LogWritingFormat": "{Timestamp} {Message}",
+	"TimestampCategoryGranularity": "Minute",
 	"TimestampCultureInfoForReading": "en-US",
 	"TimestampFormatForDisplaying": "yyyy/MM/dd HH:mm:ss.fff",
 	"TimestampFormatsForReading": [

@@ -2,7 +2,6 @@
 using Avalonia.Media;
 using CarinaStudio.Configuration;
 using System;
-using System.Runtime.InteropServices;
 
 namespace CarinaStudio.ULogViewer
 {

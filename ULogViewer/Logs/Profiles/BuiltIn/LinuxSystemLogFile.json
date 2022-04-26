@@ -11,6 +11,7 @@
 	],
 	"LogWritingFormat": "{Timestamp} {DeviceName} {ProcessName}{ProcessId:'['#####']'}: {Message}",
 	"SortKey": "Timestamp",
+	"TimestampCategoryGranularity": "Minute",
 	"TimestampFormatForDisplaying": "MM/dd HH:mm:ss",
 	"TimestampFormatsForReading": [
 		"MMM dd HH:mm:ss",

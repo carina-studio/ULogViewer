@@ -12,10 +12,10 @@ using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.ULogViewer.Logs.Profiles;
+using CarinaStudio.ULogViewer.ViewModels.Categorizing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -74,6 +74,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly TextBox timeSpanFormatForWritingTextBox;
 		readonly ObservableList<string> timeSpanFormatsForReading = new ObservableList<string>();
 		readonly AppSuite.Controls.ListBox timeSpanFormatsForReadingListBox;
+		readonly ComboBox timestampCategoryGranularityComboBox;
 		readonly ComboBox timestampEncodingForReadingComboBox;
 		readonly TextBox timestampFormatForDisplayingTextBox;
 		readonly TextBox timestampFormatForWritingTextBox;
@@ -152,6 +153,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.timeSpanFormatForDisplayingTextBox = this.FindControl<TextBox>(nameof(timeSpanFormatForDisplayingTextBox));
 			this.timeSpanFormatForWritingTextBox = this.FindControl<TextBox>(nameof(timeSpanFormatForWritingTextBox));
 			this.timeSpanFormatsForReadingListBox = this.FindControl<AppSuite.Controls.ListBox>(nameof(timeSpanFormatsForReadingListBox));
+			this.timestampCategoryGranularityComboBox = this.FindControl<ComboBox>(nameof(timestampCategoryGranularityComboBox));
 			this.timestampEncodingForReadingComboBox = this.FindControl<ComboBox>(nameof(timestampEncodingForReadingComboBox)).AsNonNull();
 			this.timestampFormatForDisplayingTextBox = this.FindControl<TextBox>("timestampFormatForDisplayingTextBox").AsNonNull();
 			this.timestampFormatForWritingTextBox = this.FindControl<TextBox>("timestampFormatForWritingTextBox").AsNonNull();
@@ -483,6 +485,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			logProfile.TimeSpanFormatForDisplaying = this.timeSpanFormatForDisplayingTextBox.Text;
 			logProfile.TimeSpanFormatForWriting = this.timeSpanFormatForWritingTextBox.Text;
 			logProfile.TimeSpanFormatsForReading = this.timeSpanFormatsForReading;
+			logProfile.TimestampCategoryGranularity = (TimestampDisplayableLogCategoryGranularity)this.timestampCategoryGranularityComboBox.SelectedItem.AsNonNull();
 			logProfile.TimestampEncodingForReading = (LogTimestampEncoding)this.timestampEncodingForReadingComboBox.SelectedItem.AsNonNull();
 			logProfile.TimestampFormatForDisplaying = this.timestampFormatForDisplayingTextBox.Text;
 			logProfile.TimestampFormatForWriting = this.timestampFormatForWritingTextBox.Text;
@@ -666,6 +669,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.sortDirectionComboBox.SelectedItem = SortDirection.Ascending;
 				this.sortKeyComboBox.SelectedItem = LogSortKey.Timestamp;
 				this.timeSpanEncodingForReadingComboBox.SelectedItem = LogTimeSpanEncoding.Custom;
+				this.timestampCategoryGranularityComboBox.SelectedItem = TimestampDisplayableLogCategoryGranularity.Day;
 				this.timestampEncodingForReadingComboBox.SelectedItem = LogTimestampEncoding.Custom;
 			}
 			else if (!profile.IsBuiltIn)
@@ -693,6 +697,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.timeSpanFormatForDisplayingTextBox.Text = profile.TimeSpanFormatForDisplaying;
 				this.timeSpanFormatForWritingTextBox.Text = profile.TimeSpanFormatForWriting;
 				this.timeSpanFormatsForReading.AddRange(profile.TimeSpanFormatsForReading);
+				this.timestampCategoryGranularityComboBox.SelectedItem = profile.TimestampCategoryGranularity;
 				this.timestampEncodingForReadingComboBox.SelectedItem = profile.TimestampEncodingForReading;
 				this.timestampFormatForDisplayingTextBox.Text = profile.TimestampFormatForDisplaying;
 				this.timestampFormatForWritingTextBox.Text = profile.TimestampFormatForWriting;

@@ -257,6 +257,7 @@
 	<sys:String x:Key="String/LogProfileEditorDialog.TimeSpanFormatForWriting">Format of time span for output</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.TimeSpanFormatForWriting.Watermark">Empty to use same format as reading</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.TimeSpanFormatsForReading">Custom format of time span for reading</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.TimestampCategoryGranularity">Granularity of categorizing logs by timestamp</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.TimestampEncodingForReading">Type of timestamp for reading</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.TimestampFormatForDisplaying">Format of timestamp for displaying</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.TimestampFormatForWriting">Format of timestamp for output</sys:String>
@@ -547,6 +548,11 @@
 
 	<!-- TimeSpanFormatInputDialog -->
 	<sys:String x:Key="String/TimeSpanFormatInputDialog.Message">Time span format</sys:String>
+
+	<!-- TimestampDisplayableLogCategoryGranularity -->
+	<sys:String x:Key="String/TimestampDisplayableLogCategoryGranularity.Day">Day</sys:String>
+	<sys:String x:Key="String/TimestampDisplayableLogCategoryGranularity.Hour">Hour</sys:String>
+	<sys:String x:Key="String/TimestampDisplayableLogCategoryGranularity.Minute">Minute</sys:String>
 
 	<!-- UdpServerLogDataSourceProvider -->
 	<sys:String x:Key="String/UdpServerLogDataSourceProvider.DisplayName">UDP Server</sys:String>
