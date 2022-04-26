@@ -1,3 +1,4 @@
+using CarinaStudio.Threading;
 using System;
 using System.ComponentModel;
 
@@ -6,13 +7,15 @@ namespace CarinaStudio.ULogViewer.ViewModels.Analysis;
 /// <summary>
 /// Analysis result of <see cref="DisplayableLog"/>.
 /// </summary>
-class DisplayableLogAnalysisResult : IEquatable<DisplayableLogAnalysisResult>, INotifyPropertyChanged
+class DisplayableLogAnalysisResult : BaseApplicationObject<IULogViewerApplication>, INotifyPropertyChanged
 {
-    // Constants.
-    static readonly long DefaultMemorySize = 3 * IntPtr.Size;
+    // Static fields.
+    static readonly long DefaultMemorySize = (4 * IntPtr.Size) // Appliation, message, Analyzer, PropertyChanged
+        + 4; // isMessageValid
 
 
     // Fields.
+    bool isMessageValid;
     string? message;
 
 
@@ -21,13 +24,10 @@ class DisplayableLogAnalysisResult : IEquatable<DisplayableLogAnalysisResult>, I
     /// </summary>
     /// <param name="analyzer"><see cref="IDisplayableLogAnalyzer"/> which generates this result.</param>
     /// <param name="log"><see cref="DisplayableLog"/> which relates to this result.</param>
-    /// <param name="message">Message.</param>
-    public DisplayableLogAnalysisResult(IDisplayableLogAnalyzer<DisplayableLogAnalysisResult> analyzer, DisplayableLog? log, string? message = null)
+    public DisplayableLogAnalysisResult(IDisplayableLogAnalyzer<DisplayableLogAnalysisResult> analyzer, DisplayableLog? log) : base(analyzer.Application)
     {
         this.Analyzer = analyzer;
         this.Log = log;
-        this.MemorySize = DefaultMemorySize + (message != null ? message.Length * 2 + 4 : 0);
-        this.message = message;
     }
 
 
@@ -37,23 +37,22 @@ class DisplayableLogAnalysisResult : IEquatable<DisplayableLogAnalysisResult>, I
     public IDisplayableLogAnalyzer<DisplayableLogAnalysisResult> Analyzer { get; }
 
 
-    /// <inheritdoc/>
-    public virtual bool Equals(DisplayableLogAnalysisResult? result) =>
-        result != null
-        && result.Analyzer == this.Analyzer
-        && result.Log == this.Log
-        && result.GetType() == this.GetType()
-        && result.Message == this.Message;
-
-
-    /// <inheritdoc/>
-    public sealed override bool Equals(object? obj) =>
-        obj is DisplayableLogAnalysisResult result && this.Equals(result);
-
-
-    /// <inheritdoc/>
-    public sealed override int GetHashCode() =>
-        this.Message?.GetHashCode() ?? (int)this.MemorySize;
+    /// <summary>
+    /// Invalidate and update message of result.
+    /// </summary>
+    protected void InvalidateMessage()
+    {
+        this.VerifyAccess();
+        if (this.isMessageValid)
+        {
+            var message = this.OnUpdateMessage();
+            if (this.message != message)
+            {
+                this.message = message;
+                this.OnPropertyChanged(nameof(Message));
+            }
+        }
+    }
     
 
     /// <summary>
@@ -65,21 +64,24 @@ class DisplayableLogAnalysisResult : IEquatable<DisplayableLogAnalysisResult>, I
     /// <summary>
     /// Get memory size of the result instance in bytes.
     /// </summary>
-    public virtual long MemorySize { get; }
+    public virtual long MemorySize { get => DefaultMemorySize; }
 
 
     /// <summary>
-    /// Get or set message of result.
+    /// Get message of result.
     /// </summary>
     public string? Message
     { 
-        get => this.message; 
-        protected set
+        get
         {
-            if (this.message == value)
-                return;
-            this.message = value;
-            this.OnPropertyChanged(nameof(Message));
+            if (!this.CheckAccess())
+                return this.message;
+            if (!this.isMessageValid)
+            {
+                this.message = this.OnUpdateMessage();
+                this.isMessageValid = true;
+            }
+            return this.message;
         }
     }
 
@@ -90,6 +92,13 @@ class DisplayableLogAnalysisResult : IEquatable<DisplayableLogAnalysisResult>, I
     /// <param name="propertyName">Property name.</param>
     protected virtual void OnPropertyChanged(string propertyName) => 
         this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    
+
+    /// <summary>
+    /// Called to update message of result.
+    /// </summary>
+    /// <returns>Message of result.</returns>
+    protected virtual string? OnUpdateMessage() => null;
 
 
     /// <inheritdoc/>
@@ -98,5 +107,5 @@ class DisplayableLogAnalysisResult : IEquatable<DisplayableLogAnalysisResult>, I
 
     /// <inheritdoc/>
     public override string ToString() =>
-        this.Message ?? this.GetType().Name;
+        $"{this.GetType().Name}: {this.message}";
 }

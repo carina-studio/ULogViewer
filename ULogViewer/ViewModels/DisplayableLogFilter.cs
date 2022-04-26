@@ -12,7 +12,7 @@ namespace CarinaStudio.ULogViewer.ViewModels;
 /// <summary>
 /// Filter of <see cref="DisplayableLog"/>.
 /// </summary>
-class DisplayableLogFilter : DisplayableLogProcessor<DisplayableLogFilter.FilteringToken, byte>, IDisplayableLogFilter
+class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.FilteringToken, byte>, IDisplayableLogFilter
 {
     // Token of filtering.
     public class FilteringToken

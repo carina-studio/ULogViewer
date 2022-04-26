@@ -13,7 +13,7 @@ using CarinaStudio.ULogViewer.Logs;
 using CarinaStudio.ULogViewer.Logs.DataOutputs;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.ULogViewer.Logs.Profiles;
-using CarinaStudio.ULogViewer.ViewModels.Analysis;
+using CarinaStudio.ULogViewer.ViewModels.Categorizing;
 using CarinaStudio.ViewModels;
 using CarinaStudio.Windows.Input;
 using Microsoft.Extensions.Logging;
@@ -322,7 +322,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Property of <see cref="TimestampCategories"/>.
 		/// </summary>
-		public static readonly ObservableProperty<IReadOnlyList<DisplayableLogTimestampCategorizer.Category>> TimestampCategoriesProperty = ObservableProperty.Register<Session, IReadOnlyList<DisplayableLogTimestampCategorizer.Category>>(nameof(TimestampCategories), new DisplayableLogTimestampCategorizer.Category[0]);
+		public static readonly ObservableProperty<IReadOnlyList<TimestampDisplayableLogCategory>> TimestampCategoriesProperty = ObservableProperty.Register<Session, IReadOnlyList<TimestampDisplayableLogCategory>>(nameof(TimestampCategories), new TimestampDisplayableLogCategory[0]);
 		/// <summary>
 		/// Property of <see cref="Title"/>.
 		/// </summary>
@@ -694,7 +694,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly LinkedListNode<Session> activationHistoryListNode;
 		readonly List<IDisposable> activationTokens = new List<IDisposable>();
 		readonly SortedObservableList<DisplayableLog> allLogs;
-		readonly DisplayableLogTimestampCategorizer allLogsTimestampCategorizer;
+		readonly TimestampDisplayableLogCategorizer allLogsTimestampCategorizer;
 		readonly Dictionary<string, List<DisplayableLog>> allLogsByLogFilePath = new Dictionary<string, List<DisplayableLog>>(PathEqualityComparer.Default);
 		readonly MutableObservableBoolean canClearLogFiles = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canCopyLogs = new MutableObservableBoolean();
@@ -712,7 +712,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		Comparison<DisplayableLog?> compareDisplayableLogsDelegate;
 		DisplayableLogGroup? displayableLogGroup;
 		TaskFactory? fileLogsReadingTaskFactory;
-		readonly DisplayableLogTimestampCategorizer filteredLogsTimestampCategorizer;
+		readonly TimestampDisplayableLogCategorizer filteredLogsTimestampCategorizer;
 		bool hasLogDataSourceCreationFailure;
 		bool isRestoringState;
 		readonly Dictionary<LogReader, LogFileInfoImpl> logFileInfoMapByLogReader = new();
@@ -724,7 +724,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly Stopwatch logsReadingWatch = new Stopwatch();
 		readonly SortedObservableList<DisplayableLog> markedLogs;
 		readonly HashSet<string> markedLogsChangedFilePaths = new(PathEqualityComparer.Default);
-		readonly DisplayableLogTimestampCategorizer markedLogsTimestampCategorizer;
+		readonly TimestampDisplayableLogCategorizer markedLogsTimestampCategorizer;
 		readonly ObservableList<PredefinedLogTextFilter> predefinedLogTextFilters;
 		readonly ScheduledAction reportLogsTimeInfoAction;
 		readonly List<LogReaderOptions> savedLogReaderOptions = new();
@@ -804,20 +804,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				it.PropertyChanged += this.OnLogFilterPropertyChanged;
 			});
 
-			// create analyzers
-			this.allLogsTimestampCategorizer = new DisplayableLogTimestampCategorizer((IULogViewerApplication)this.Application, this.allLogs, this.CompareDisplayableLogs).Also(it =>
-			{
-				;
-			});
-			this.filteredLogsTimestampCategorizer = new DisplayableLogTimestampCategorizer((IULogViewerApplication)this.Application, this.logFilter.FilteredLogs, this.CompareDisplayableLogs).Also(it =>
-			{
-				;
-			});
-			this.markedLogsTimestampCategorizer = new DisplayableLogTimestampCategorizer((IULogViewerApplication)this.Application, this.markedLogs, this.CompareDisplayableLogs).Also(it =>
-			{
-				;
-			});
-			this.SetValue(TimestampCategoriesProperty, this.allLogsTimestampCategorizer.AnalysisResults);
+			// create categorizers
+			this.allLogsTimestampCategorizer = new TimestampDisplayableLogCategorizer((IULogViewerApplication)this.Application, this.allLogs, this.CompareDisplayableLogs);
+			this.filteredLogsTimestampCategorizer = new TimestampDisplayableLogCategorizer((IULogViewerApplication)this.Application, this.logFilter.FilteredLogs, this.CompareDisplayableLogs);
+			this.markedLogsTimestampCategorizer = new TimestampDisplayableLogCategorizer((IULogViewerApplication)this.Application, this.markedLogs, this.CompareDisplayableLogs);
+			this.SetValue(TimestampCategoriesProperty, this.allLogsTimestampCategorizer.Categories);
 
 			// setup properties
 			this.AllLogs = new SafeReadOnlyList<DisplayableLog>(this.allLogs);
@@ -993,21 +984,21 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					{
 						this.SetValue(LogsProperty, this.MarkedLogs);
 						this.SetValue(HasLogsProperty, this.markedLogs.IsNotEmpty());
-						this.SetValue(TimestampCategoriesProperty, this.markedLogsTimestampCategorizer.AnalysisResults);
+						this.SetValue(TimestampCategoriesProperty, this.markedLogsTimestampCategorizer.Categories);
 						return;
 					}
 					if (this.logFilter.IsProcessingNeeded)
 					{
 						this.SetValue(LogsProperty, logFilter.FilteredLogs);
 						this.SetValue(HasLogsProperty, logFilter.FilteredLogs.IsNotEmpty());
-						this.SetValue(TimestampCategoriesProperty, this.filteredLogsTimestampCategorizer.AnalysisResults);
+						this.SetValue(TimestampCategoriesProperty, this.filteredLogsTimestampCategorizer.Categories);
 						return;
 					}
 				}
 				this.SetValue(LogsProperty, this.AllLogs);
 				this.SetValue(HasLogsProperty, this.allLogs.IsNotEmpty());
 				this.SetValue(LastLogsFilteringDurationProperty, null);
-				this.SetValue(TimestampCategoriesProperty, this.allLogsTimestampCategorizer.AnalysisResults);
+				this.SetValue(TimestampCategoriesProperty, this.allLogsTimestampCategorizer.Categories);
 				if (!this.logFilter.IsProcessingNeeded && this.Settings.GetValueOrDefault(SettingKeys.SaveMemoryAggressively))
 				{
 					this.Logger.LogDebug("Trigger GC after clearing log filters");
@@ -1921,7 +1912,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.displayableLogGroup = this.displayableLogGroup.DisposeAndReturnNull();
 			this.checkLogsMemoryUsageAction.Cancel();
 
-			// release log analyzers
+			// release log categorizers
 			this.allLogsTimestampCategorizer.Dispose();
 			this.filteredLogsTimestampCategorizer.Dispose();
 			this.markedLogsTimestampCategorizer.Dispose();
@@ -4278,7 +4269,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get list of log categories by timestamp.
 		/// </summary>
-		public IReadOnlyList<DisplayableLogTimestampCategorizer.Category> TimestampCategories { get =>this.GetValue(TimestampCategoriesProperty); }
+		public IReadOnlyList<TimestampDisplayableLogCategory> TimestampCategories { get =>this.GetValue(TimestampCategoriesProperty); }
 
 
 		/// <summary>

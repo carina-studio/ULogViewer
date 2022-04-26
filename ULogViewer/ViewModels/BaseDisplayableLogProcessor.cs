@@ -14,9 +14,9 @@ using System.Threading.Tasks;
 namespace CarinaStudio.ULogViewer.ViewModels;
 
 /// <summary>
-/// Base class to process list of <see cref="DisplayableLog"/> in background.
+/// Base implementation of <see cref="IDisplayableLogProcessor"/>.
 /// </summary>
-abstract class DisplayableLogProcessor<TProcessingToken, TProcessingResult> : BaseDisposableApplicationObject<IULogViewerApplication>, IDisplayableLogProcessor where TProcessingToken : class
+abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> : BaseDisposableApplicationObject<IULogViewerApplication>, IDisplayableLogProcessor where TProcessingToken : class
 {
     // Processing parameters.
     class ProcessingParams
@@ -69,7 +69,7 @@ abstract class DisplayableLogProcessor<TProcessingToken, TProcessingResult> : Ba
     /// <param name="sourceLogs">Source list of logs.</param>
     /// <param name="comparison"><see cref="Comparison{T}"/> which used on <paramref name="sourceLogs"/>.</param>
     /// <param name="priority">Priority of logs processing.</param>
-    protected DisplayableLogProcessor(IULogViewerApplication app, IList<DisplayableLog> sourceLogs, Comparison<DisplayableLog> comparison, DisplayableLogProcessingPriority priority = DisplayableLogProcessingPriority.Default) : base(app)
+    protected BaseDisplayableLogProcessor(IULogViewerApplication app, IList<DisplayableLog> sourceLogs, Comparison<DisplayableLog> comparison, DisplayableLogProcessingPriority priority = DisplayableLogProcessingPriority.Default) : base(app)
     {
         // create lists
         this.sourceLogVersions = sourceLogs.Count.Let(it =>
@@ -136,6 +136,26 @@ abstract class DisplayableLogProcessor<TProcessingToken, TProcessingResult> : Ba
     /// Get size of ptocessing chunk.
     /// </summary>
     protected virtual int ChunkSize { get => this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.DisplayableLogChunkProcessingSize); }
+
+
+    /// <summary>
+    /// Compare nullable <see cref="DisplayableLog"/>s by <see cref="SourceLogComparison"/>.
+    /// </summary>
+    /// <param name="lhs">Left hand side log.</param>
+    /// <param name="rhs">Right hand side log.</param>
+    /// <returns>Comparison result.</returns>
+    protected int CompareSourceLogs(DisplayableLog? lhs, DisplayableLog? rhs)
+    {
+        if (lhs != null)
+        {
+            if (rhs != null)
+                return this.SourceLogComparison(lhs, rhs);
+            return -1;
+        }
+        if (rhs != null)
+            return 1;
+        return 0;
+    }
 
 
     /// <summary>

@@ -5,9 +5,9 @@ using System.Collections.Generic;
 namespace CarinaStudio.ULogViewer.ViewModels.Analysis;
 
 /// <summary>
-/// Base class of analyzer of <see cref="DisplayableLog"/>.
+/// Base implementation of <see cref="IDisplayableLogAnalyzer{TResult}"/>.
 /// </summary>
-abstract class DisplayableLogAnalyzer<TProcessingToken, TResult> : DisplayableLogProcessor<TProcessingToken, TResult>, IDisplayableLogAnalyzer<TResult> where TProcessingToken : class where TResult : DisplayableLogAnalysisResult
+abstract class BaseDisplayableLogAnalyzer<TProcessingToken, TResult> : BaseDisplayableLogProcessor<TProcessingToken, TResult>, IDisplayableLogAnalyzer<TResult> where TProcessingToken : class where TResult : DisplayableLogAnalysisResult
 {
     // Fields.
     readonly SortedObservableList<TResult> analysisResults;
@@ -21,7 +21,7 @@ abstract class DisplayableLogAnalyzer<TProcessingToken, TResult> : DisplayableLo
     /// <param name="sourceLogs">Source list of logs.</param>
     /// <param name="comparison"><see cref="Comparison{T}"/> which used on <paramref name="sourceLogs"/>.</param>
     /// <param name="priority">Priority of logs processing.</param>
-    protected DisplayableLogAnalyzer(IULogViewerApplication app, IList<DisplayableLog> sourceLogs, Comparison<DisplayableLog> comparison, DisplayableLogProcessingPriority priority = DisplayableLogProcessingPriority.Default) : base(app, sourceLogs, comparison, priority)
+    protected BaseDisplayableLogAnalyzer(IULogViewerApplication app, IList<DisplayableLog> sourceLogs, Comparison<DisplayableLog> comparison, DisplayableLogProcessingPriority priority = DisplayableLogProcessingPriority.Default) : base(app, sourceLogs, comparison, priority)
     { 
         this.analysisResults = new((lhs, rhs) => this.CompareSourceLogs(lhs.Log, rhs.Log));
         this.AnalysisResults = (IReadOnlyList<TResult>)this.analysisResults.AsReadOnly();
@@ -32,36 +32,25 @@ abstract class DisplayableLogAnalyzer<TProcessingToken, TResult> : DisplayableLo
     public IReadOnlyList<TResult> AnalysisResults { get; }
 
 
-    /// <summary>
-    /// Compare nullable <see cref="DisplayableLog"/>s by <see cref="SourceLogComparison"/>.
-    /// </summary>
-    /// <param name="lhs">Left hand side log.</param>
-    /// <param name="rhs">Right hand side log.</param>
-    /// <returns>Comparison result.</returns>
-    protected int CompareSourceLogs(DisplayableLog? lhs, DisplayableLog? rhs)
-    {
-        if (lhs != null)
-        {
-            if (rhs != null)
-                return this.SourceLogComparison(lhs, rhs);
-            return -1;
-        }
-        if (rhs != null)
-            return 1;
-        return 0;
-    }
-
-
     /// <inheritdoc/>
-    public override long MemorySize => base.MemorySize + this.analysisResultsMemorySize + this.analysisResults.Count * IntPtr.Size + 4;
+    public override long MemorySize
+    {
+        get => base.MemorySize 
+            + (this.analysisResults.Count + 1) * IntPtr.Size // analysisResults
+            + 8 // analysisResultsMemorySize
+            + this.analysisResultsMemorySize;
+    }
 
 
     /// <inheritdoc/>
     protected override void OnChunkProcessed(TProcessingToken token, List<DisplayableLog> logs, List<TResult> results)
     {
-        for ( var i = results.Count - 1; i >= 0; --i)
+        if (results.IsEmpty())
+            return;
+        for (var i = results.Count - 1; i >= 0; --i)
             this.analysisResultsMemorySize += results[i].MemorySize;
         this.analysisResults.AddAll(results, true);
+        this.OnPropertyChanged(nameof(MemorySize));
     }
 
 
@@ -73,6 +62,7 @@ abstract class DisplayableLogAnalyzer<TProcessingToken, TResult> : DisplayableLo
         {
             this.analysisResultsMemorySize -= this.analysisResults[index].MemorySize;
             this.analysisResults.RemoveAt(index);
+            this.OnPropertyChanged(nameof(MemorySize));
         }
         return false;
     }
@@ -81,8 +71,12 @@ abstract class DisplayableLogAnalyzer<TProcessingToken, TResult> : DisplayableLo
     /// <inheritdoc/>
     protected override void OnProcessingCancelled(TProcessingToken token)
     {
-        this.analysisResultsMemorySize = 0L;
         this.analysisResults.Clear();
+        if (this.analysisResultsMemorySize != 0L)
+        {
+            this.analysisResultsMemorySize = 0L;
+            this.OnPropertyChanged(nameof(MemorySize));
+        }
     }
 
 
@@ -91,6 +85,14 @@ abstract class DisplayableLogAnalyzer<TProcessingToken, TResult> : DisplayableLo
     /// </summary>
     /// <param name="result">Result to be removed.</param>
     /// <returns>True if result has been removed successfully.</returns>
-    protected bool RemoveAnalysisResult(TResult result) =>
-        this.analysisResults.Remove(result);
+    protected bool RemoveAnalysisResult(TResult result)
+    {
+        if (this.analysisResults.Remove(result))
+        {
+            this.analysisResultsMemorySize -= result.MemorySize;
+            this.OnPropertyChanged(nameof(MemorySize));
+            return true;
+        }
+        return false;
+    }
 }
