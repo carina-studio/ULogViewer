@@ -1771,13 +1771,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// update title
 			this.updateTitleAndIconAction.Schedule();
 
-			// load marked logs
+			// bind to log file info
 			var creationOptions = dataSource.CreationOptions;
 			var hasFileName = creationOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName));
-			if (hasFileName)
-				this.LoadMarkedLogs(creationOptions.FileName.AsNonNull());
-			
-			// bind to log file info
 			if (hasFileName)
 			{
 				var fileName = creationOptions.FileName.AsNonNull();
@@ -2542,6 +2538,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				return;
 
 			// add as unmatched 
+			this.unmatchedMarkedLogInfos.RemoveAll(it => PathEqualityComparer.Default.Equals(it.FileName, fileName));
 			this.unmatchedMarkedLogInfos.AddRange(markedLogInfos);
 
 			// match
@@ -3086,6 +3083,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 									this.ErrorMessageGenerated?.Invoke(this, new MessageEventArgs(message));
 								}
 							}
+						}
+						else if (reader.State == LogReaderState.ReadingLogs)
+						{
+							if (reader.DataSource.CreationOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName)))
+								this.LoadMarkedLogs(reader.DataSource.CreationOptions.FileName.AsNonNull());
 						}
 						else if (reader.State == LogReaderState.Stopped)
 						{
