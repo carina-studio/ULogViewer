@@ -967,7 +967,7 @@
 				</ToggleButton>
 
 				<!-- Timestamp categories -->
-				<ToggleButton Classes="ToolBar_ToggleButton" IsChecked="{Binding IsTimestampCategoriesPanelVisible, Mode=TwoWay}" ToolTip.Tip="{DynamicResource String/SessionView.TimestampCategories}">
+				<ToggleButton Classes="ToolBar_ToggleButton" IsChecked="{Binding IsTimestampCategoriesPanelVisible, Mode=TwoWay}" ToolTip.Tip="{DynamicResource String/SessionView.TimestampCategoriesPanel}">
 					<Panel>
 						<Image Classes="Icon" Source="{StaticResource Image/Calendar}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
 						<Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}">
@@ -1026,20 +1026,31 @@
 			<Panel>
 
 				<!-- Marked logs -->
-				<Panel HorizontalAlignment="Stretch" IsVisible="{Binding IsMarkedLogsPanelVisible}" VerticalAlignment="Stretch">
-					<ListBox Name="markedLogListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" Focusable="False" IsVisible="{Binding HasMarkedLogs}" Items="{Binding MarkedLogs}" SelectionChanged="OnMarkedLogListBoxSelectionChanged" SelectionMode="Single">
+				<Grid HorizontalAlignment="Stretch" IsVisible="{Binding IsMarkedLogsPanelVisible}" RowDefinitions="Auto,*" VerticalAlignment="Stretch">
+					<Border Classes="SessionView_SidePanel_Header">
+						<Grid ColumnDefinitions="Auto,*">
+							<TextBlock Classes="SessionView_SidePanel_Header" Text="{DynamicResource String/SessionView.MarkedLogsPanel}"/>
+							<TextBlock Classes="SessionView_SidePanel_Header" Grid.Column="1" Text="{Binding MarkedLogs.Count, StringFormat={} ({0})}"/>
+						</Grid>
+					</Border>
+					<ListBox Name="markedLogListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" Focusable="False" Grid.Row="1" IsVisible="{Binding HasMarkedLogs}" Items="{Binding MarkedLogs}" SelectionChanged="OnMarkedLogListBoxSelectionChanged" SelectionMode="Single">
 						<ListBox.Styles>
 							<Style Selector="ListBoxItem">
 								<Setter Property="Padding" Value="0"/>
 							</Style>
 						</ListBox.Styles>
 					</ListBox>
-					<TextBlock Classes="SessionView_SidePanel_EmptyHint" IsVisible="{Binding !HasMarkedLogs}" Text="{DynamicResource String/SessionView.NoMarkedLogs}"/>
-				</Panel>
+				</Grid>
 
 				<!-- Timestamp categories -->
-				<Panel HorizontalAlignment="Stretch" IsVisible="{Binding IsTimestampCategoriesPanelVisible}" VerticalAlignment="Stretch">
-					<asControls:ListBox Name="timestampCategoryListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" Items="{Binding TimestampCategories}">
+				<Grid HorizontalAlignment="Stretch" IsVisible="{Binding IsTimestampCategoriesPanelVisible}" RowDefinitions="Auto,*" VerticalAlignment="Stretch">
+					<Border Classes="SessionView_SidePanel_Header">
+						<Grid ColumnDefinitions="Auto,*">
+							<TextBlock Classes="SessionView_SidePanel_Header" Text="{DynamicResource String/SessionView.TimestampCategoriesPanel}"/>
+							<TextBlock Classes="SessionView_SidePanel_Header" Grid.Column="1" Text="{Binding TimestampCategories.Count, StringFormat={} ({0})}"/>
+						</Grid>
+					</Border>
+					<asControls:ListBox Name="timestampCategoryListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" Focusable="False" Grid.Row="1" Items="{Binding TimestampCategories}">
 						<asControls:ListBox.Styles>
 							<Style Selector="ListBoxItem">
 								<Setter Property="Padding" Value="0"/>
@@ -1054,12 +1065,17 @@
 							</DataTemplate>
 						</asControls:ListBox.ItemTemplate>
 					</asControls:ListBox>
-					<TextBlock Classes="SessionView_SidePanel_EmptyHint" IsVisible="{Binding !TimestampCategories.Count}" Text="{DynamicResource String/SessionView.NoTimestampCategories}"/>
-				</Panel>
+				</Grid>
 
 				<!-- Log files -->
-				<Panel HorizontalAlignment="Stretch" IsVisible="{Binding IsLogFilesPanelVisible}" VerticalAlignment="Stretch">
-					<asControls:ListBox Name="logFileListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" Items="{Binding LogFiles}">
+				<Grid HorizontalAlignment="Stretch" IsVisible="{Binding IsLogFilesPanelVisible}" RowDefinitions="Auto,*" VerticalAlignment="Stretch">
+					<Border Classes="SessionView_SidePanel_Header">
+						<Grid ColumnDefinitions="Auto,*">
+							<TextBlock Classes="SessionView_SidePanel_Header" Text="{DynamicResource String/SessionView.LogFilesPanel}"/>
+							<TextBlock Classes="SessionView_SidePanel_Header" Grid.Column="1" Text="{Binding LogFiles.Count, StringFormat={} ({0})}"/>
+						</Grid>
+					</Border>
+					<asControls:ListBox Name="logFileListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" Focusable="False" Grid.Row="1" Items="{Binding LogFiles}">
 						<asControls:ListBox.Styles>
 							<Style Selector="ListBoxItem">
 								<Setter Property="Padding" Value="{StaticResource Thickness/SessionView.LogFileListBox.Item.Padding}"/>
@@ -1080,7 +1096,7 @@
 											<TextBlock FontSize="{StaticResource Double/SessionView.LogFileInfo.Summary.FontSize}" Text="{DynamicResource String/SessionView.LogCountInLogFile}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
 											<TextBlock Grid.Column="1" FontSize="{StaticResource Double/SessionView.LogFileInfo.Summary.FontSize}" Text="{Binding LogCount}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
 										</Grid>
-										<TextBlock FontSize="{StaticResource Double/SessionView.LogFileInfo.Summary.FontSize}" IsVisible="{Binding !LogReadingPrecondition.IsEmpty}" Margin="{StaticResource Thickness/SessionView.LogFileInfo.Summary.Margin}" Text="{DynamicResource String/SessionView.HasLogReadingPrecondition}" TextTrimming="CharacterEllipsis"/>
+										<TextBlock FontSize="{StaticResource Double/SessionView.LogFileInfo.Summary.FontSize}" IsVisible="{Binding !LogReadingPrecondition.IsEmpty}" Margin="{StaticResource Thickness/SessionView.LogFileInfo.Summary.Margin}" Text="{DynamicResource String/SessionView.HasLogReadingPrecondition.WithBrackets}" TextTrimming="CharacterEllipsis"/>
 									</StackPanel>
 									<ToggleButton Name="logFileActionButton" Classes="InPlaceAction_ToggleButton_Medium" Command="{Binding $parent[UserControl].ShowLogFileActionMenu}" CommandParameter="{Binding $self}" Grid.Column="2" VerticalAlignment="Top">
 										<ToggleButton.IsVisible>
@@ -1101,8 +1117,7 @@
 							</DataTemplate>
 						</asControls:ListBox.ItemTemplate>
 					</asControls:ListBox>
-					<TextBlock Classes="SessionView_SidePanel_EmptyHint" IsVisible="{Binding !LogFiles.Count}" Text="{DynamicResource String/SessionView.NoLogFiles}"/>
-				</Panel>
+				</Grid>
 
 			</Panel>
 

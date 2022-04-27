@@ -245,7 +245,7 @@
 	<sys:String x:Key="String/LogProfileEditorDialog.TimeSpanFormatForWriting">日誌時距輸出格式</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.TimeSpanFormatForWriting.Watermark">留白表示使用與讀取相同的格式</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.TimeSpanFormatsForReading">自訂日誌時距讀取格式</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.TimestampCategoryGranularity">日誌時間戳記分類顆粒度</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.TimestampCategoryGranularity">日誌時間戳記分組時距</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.TimestampEncodingForReading">日誌時間讀取類型</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.TimestampFormatForDisplaying">日誌時間顯示格式</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.TimestampFormatForWriting">日誌時間輸出格式</sys:String>
@@ -435,7 +435,7 @@
 	<sys:String x:Key="String/SessionView.FilterLogsBySelectedThreadId">使用選取的 TID 篩選</sys:String>
 	<sys:String x:Key="String/SessionView.FilterLogsBySelectedThreadIdOnly">只使用選取的 TID 篩選</sys:String>
 	<sys:String x:Key="String/SessionView.HasAllDataSourceErrors">資料來源發生錯誤</sys:String>
-	<sys:String x:Key="String/SessionView.HasLogReadingPrecondition">已設定前置條件</sys:String>
+	<sys:String x:Key="String/SessionView.HasLogReadingPrecondition.WithBrackets">(已設定前置條件)</sys:String>
 	<sys:String x:Key="String/SessionView.HasPartialDataSourceErrors">部分資料來源發生錯誤</sys:String>
 	<sys:String x:Key="String/SessionView.Hint.NoLogToShow">沒有日誌可以顯示</sys:String>
 	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.Section1">點一下工具列的</sys:String>
@@ -463,10 +463,7 @@
 	<sys:String x:Key="String/SessionView.MultipleFilesAreNotAllowed">目前的日誌類型不允許加入多個檔案。</sys:String>
 	<sys:String x:Key="String/SessionView.NeedToRestartAsAdministrator">'{0}' 需要系統管理員身分，是否要以系統管理員身分重新啟動應用程式並使用此日誌類型？</sys:String>
 	<sys:String x:Key="String/SessionView.NoFilePathDropped">請拖放有效的檔案。</sys:String>
-	<sys:String x:Key="String/SessionView.NoLogFiles">沒有已加入的日誌檔案</sys:String>
-	<sys:String x:Key="String/SessionView.NoMarkedLogs">沒有已標記的日誌</sys:String>
 	<sys:String x:Key="String/SessionView.NoPredefinedLogTextFilter">沒有已定義的文字篩選</sys:String>
-	<sys:String x:Key="String/SessionView.NoTimestampCategories">沒有可分類的時間戳記</sys:String>
 	<sys:String x:Key="String/SessionView.OtherActions">其他動作</sys:String>
 	<sys:String x:Key="String/SessionView.PauseResumeLogsReading">暫停/繼續讀取日誌 (P)</sys:String>
 	<sys:String x:Key="String/SessionView.PredefinedLogTextFilters">已定義的文字篩選 (Ctrl+P)</sys:String>
@@ -500,7 +497,7 @@
 	<sys:String x:Key="String/SessionView.ShowMarkedLogsTemporarily">暫時只顯示已標記的日誌 (Alt+M)</sys:String>
 	<sys:String x:Key="String/SessionView.ShowWorkingDirectoryInExplorer">在檔案總管中開啟工作目錄</sys:String>
 	<sys:String x:Key="String/SessionView.SidePanel">側邊面板</sys:String>
-	<sys:String x:Key="String/SessionView.TimestampCategories">時間戳記分類</sys:String>
+	<sys:String x:Key="String/SessionView.TimestampCategoriesPanel">時間戳記分組</sys:String>
 	<sys:String x:Key="String/SessionView.TooManyDirectoryPathsDropped">請拖放單一目錄。</sys:String>
 	<sys:String x:Key="String/SessionView.TotalLogsMemoryUsage">總日誌記憶體使用量</sys:String>
 	<sys:String x:Key="String/SessionView.UIResponseDuration">使用者介面回應時間</sys:String>

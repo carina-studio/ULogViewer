@@ -257,7 +257,7 @@
 	<sys:String x:Key="String/LogProfileEditorDialog.TimeSpanFormatForWriting">Format of time span for output</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.TimeSpanFormatForWriting.Watermark">Empty to use same format as reading</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.TimeSpanFormatsForReading">Custom format of time span for reading</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.TimestampCategoryGranularity">Granularity of categorizing logs by timestamp</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.TimestampCategoryGranularity">Time span of categorizing logs by timestamp</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.TimestampEncodingForReading">Type of timestamp for reading</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.TimestampFormatForDisplaying">Format of timestamp for displaying</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.TimestampFormatForWriting">Format of timestamp for output</sys:String>
@@ -453,7 +453,7 @@
 	<sys:String x:Key="String/SessionView.FilterLogsBySelectedThreadId">Filter by selected TID</sys:String>
 	<sys:String x:Key="String/SessionView.FilterLogsBySelectedThreadIdOnly">Filter by selected TID only</sys:String>
 	<sys:String x:Key="String/SessionView.HasAllDataSourceErrors">Error occurred in data sources</sys:String>
-	<sys:String x:Key="String/SessionView.HasLogReadingPrecondition">Precondition set</sys:String>
+	<sys:String x:Key="String/SessionView.HasLogReadingPrecondition.WithBrackets">(Precondition set)</sys:String>
 	<sys:String x:Key="String/SessionView.HasPartialDataSourceErrors">Error occurred in some of data sources</sys:String>
 	<sys:String x:Key="String/SessionView.Hint.NoLogToShow">No log to show</sys:String>
 	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.Section1">Click</sys:String>
@@ -481,10 +481,7 @@
 	<sys:String x:Key="String/SessionView.MultipleFilesAreNotAllowed">Multiple files are not allowed by current log profile.</sys:String>
 	<sys:String x:Key="String/SessionView.NeedToRestartAsAdministrator">Administrator role is needed for '{0}'. Do you want to restart application as Administrator and use this profile?</sys:String>
 	<sys:String x:Key="String/SessionView.NoFilePathDropped">Please drag and drop valid files.</sys:String>
-	<sys:String x:Key="String/SessionView.NoLogFiles">No added log files</sys:String>
-	<sys:String x:Key="String/SessionView.NoMarkedLogs">No marked logs</sys:String>
 	<sys:String x:Key="String/SessionView.NoPredefinedLogTextFilter">No defined text filter</sys:String>
-	<sys:String x:Key="String/SessionView.NoTimestampCategories">No timestamp to categorize</sys:String>
 	<sys:String x:Key="String/SessionView.OtherActions">Other actions</sys:String>
 	<sys:String x:Key="String/SessionView.PauseResumeLogsReading">Pause/Resume reading logs (P)</sys:String>
 	<sys:String x:Key="String/SessionView.PredefinedLogTextFilters">Defined text filters (Ctrl+P)</sys:String>
@@ -517,7 +514,7 @@
 	<sys:String x:Key="String/SessionView.ShowLogProperty.Disabled">View log property…</sys:String>
 	<sys:String x:Key="String/SessionView.ShowMarkedLogsTemporarily">Show marked logs temporarily (Alt+M)</sys:String>
 	<sys:String x:Key="String/SessionView.ShowWorkingDirectoryInExplorer">Show working directory in Windows File Explorer</sys:String>
-	<sys:String x:Key="String/SessionView.TimestampCategories">Categories of timestamp</sys:String>
+	<sys:String x:Key="String/SessionView.TimestampCategoriesPanel">Categories of timestamp</sys:String>
 	<sys:String x:Key="String/SessionView.TooManyDirectoryPathsDropped">Please drag and drop single directory.</sys:String>
 	<sys:String x:Key="String/SessionView.TotalLogsMemoryUsage">Total memory usage of logs</sys:String>
 	<sys:String x:Key="String/SessionView.UIResponseDuration">User interface response time</sys:String>

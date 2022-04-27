@@ -149,10 +149,7 @@
 	<Thickness x:Key="Thickness/SessionView.PredefinedLogTextFilterListBox.Icon.Margin">0,0,5,0</Thickness>
 	<Thickness x:Key="Thickness/SessionView.PredefinedLogTextFilterListBox.Item.Padding">15,5,20,5</Thickness>
 	<Thickness x:Key="Thickness/SessionView.PredefinedLogTextFiltersPopup.Padding">0,3,0,0</Thickness>
-	<Thickness x:Key="Thickness/SessionView.SidePanel.EmptyHint.Margin">20,10,10,0</Thickness>
-	<Thickness x:Key="Thickness/SessionView.SidePanel.Header.Icon.Margin">0,0,5,0</Thickness>
-	<Thickness x:Key="Thickness/SessionView.SidePanel.Header.Margin">10,10,10,5</Thickness>
-	<Thickness x:Key="Thickness/SessionView.SidePanel.Header.Text.Margin">0</Thickness>
+	<Thickness x:Key="Thickness/SessionView.SidePanel.Header.Padding">8</Thickness>
 	
 	<!-- StringLogPropertyMapEntryEditorDialog -->
 	<sys:Double x:Key="Double/StringLogPropertyMapEntryEditorDialog.Width">400</sys:Double>
