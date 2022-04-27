@@ -1538,10 +1538,14 @@ namespace CarinaStudio.ULogViewer.Controls
 				else if (filePaths.Count > 1)
 				{
 					it.Filter = logProfile => logProfile.DataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.FileName))
-						&& logProfile.AllowMultipleFiles;
+						&& logProfile.AllowMultipleFiles
+						&& !logProfile.DataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName));
 				}
 				else
-					it.Filter = logProfile => logProfile.DataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.FileName));
+				{
+					it.Filter = logProfile => logProfile.DataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.FileName))
+						&& !logProfile.DataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName));
+				}
 			}).ShowDialog<LogProfile>(this.attachedWindow);
 
 			// set log profile or create new session
