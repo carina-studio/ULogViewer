@@ -597,7 +597,7 @@
 					</StackPanel>
 
 					<!-- Test and other actions -->
-					<StackPanel Grid.Column="2" Orientation="Horizontal">
+					<StackPanel Grid.Column="2" IsVisible="{x:Static cs:Platform.IsNotMacOS}" Orientation="Horizontal">
 
 						<!-- Separator -->
 						<Separator Classes="ToolBar_Separator"/>

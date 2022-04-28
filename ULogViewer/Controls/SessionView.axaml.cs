@@ -388,11 +388,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					(this.Application as AppSuite.AppSuiteApplication)?.EnsureClosingToolTipIfWindowIsInactive(it);
 			});
 			this.markedLogListBox = this.FindControl<Avalonia.Controls.ListBox>(nameof(markedLogListBox)).AsNonNull();
-			this.otherActionsButton = this.FindControl<ToggleButton>(nameof(otherActionsButton)).AsNonNull().Also(it =>
-			{
-				if (Platform.IsMacOS)
-					it.IsVisible = false;
-			});
+			this.otherActionsButton = this.FindControl<ToggleButton>(nameof(otherActionsButton)).AsNonNull();
 			this.otherActionsMenu = ((ContextMenu)this.Resources[nameof(otherActionsMenu)].AsNonNull()).Also(it =>
 			{
 				it.MenuClosed += (_, e) => this.SynchronizationContext.Post(() => this.otherActionsButton.IsChecked = false);
