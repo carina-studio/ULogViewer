@@ -941,16 +941,7 @@
 		</Border>
 
 		<!-- Side panel tool bar -->
-		<Border Classes="ToolBar" Grid.Column="3" Grid.Row="1">
-			<Border.Styles>
-				<Style Selector="Button.ToolBar_Button">
-					<Setter Property="Margin" Value="2"/>
-				</Style>
-				<Style Selector="ToggleButton.ToolBar_ToggleButton">
-					<Setter Property="Margin" Value="2"/>
-				</Style>
-			</Border.Styles>
-
+		<Border Classes="ToolBar" Background="{DynamicResource Brush/WorkingArea.Panel.Background}" Grid.Column="3" Grid.Row="1">
 			<StackPanel>
 
 				<!-- Test -->
