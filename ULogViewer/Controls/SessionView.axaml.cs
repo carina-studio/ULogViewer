@@ -46,6 +46,10 @@ namespace CarinaStudio.ULogViewer.Controls
 	partial class SessionView : UserControl<IULogViewerApplication>
 	{
 		/// <summary>
+		/// Property of <see cref="AreAllTutorialsShown"/>.
+		/// </summary>
+		public static readonly AvaloniaProperty<bool> AreAllTutorialsShownProperty = AvaloniaProperty.RegisterDirect<SessionView, bool>(nameof(AreAllTutorialsShown), v => v.areAllTutorialsShown);
+		/// <summary>
 		/// <see cref="IValueConverter"/> to convert log level to readable name.
 		/// </summary>
 		public static readonly IValueConverter LogLevelNameConverter = new LogLevelNameConverterImpl(App.Current);
@@ -94,6 +98,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		static readonly AvaloniaProperty<bool> HasSelectedLogsDurationProperty = AvaloniaProperty.Register<SessionView, bool>("HasSelectedLogsDuration", false);
 		static readonly AvaloniaProperty<bool> IsProcessInfoVisibleProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(IsProcessInfoVisible), false);
 		static readonly AvaloniaProperty<bool> IsScrollingToLatestLogNeededProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(IsScrollingToLatestLogNeeded), true);
+		static readonly SettingKey<bool> IsSelectingLogProfileToStartTutorialShownKey = new("SessionView.IsSelectingLogProfileToStartTutorialShown");
 		static readonly AvaloniaProperty<DateTime?> LatestSelectedLogTimestampProperty = AvaloniaProperty.Register<SessionView, DateTime?>(nameof(LatestSelectedLogTimestamp));
 		static readonly AvaloniaProperty<FontFamily> LogFontFamilyProperty = AvaloniaProperty.Register<SessionView, FontFamily>(nameof(LogFontFamily));
 		static readonly AvaloniaProperty<double> LogFontSizeProperty = AvaloniaProperty.Register<SessionView, double>(nameof(LogFontSize), 10.0);
@@ -103,6 +108,8 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Fields.
+		bool areAllTutorialsShown;
+		IDisposable? areInitDialogsClosedObserverToken;
 		Avalonia.Controls.Window? attachedWindow;
 		readonly ScheduledAction autoAddLogFilesAction;
 		readonly ScheduledAction autoCloseSidePanelAction;
@@ -135,6 +142,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly MutableObservableBoolean canUnmarkSelectedLogs = new MutableObservableBoolean();
 		readonly MenuItem copyLogPropertyMenuItem;
 		readonly Border dragDropReceiverBorder;
+		IDisposable? hasDialogsObserverToken;
 		bool isAttachedToLogicalTree;
 		bool isIPEndPointNeededAfterLogProfileSet;
 		bool isLogFileNeededAfterLogProfileSet;
@@ -187,6 +195,13 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly SortedObservableList<Logs.LogLevel> validLogLevels = new SortedObservableList<Logs.LogLevel>((x, y) => (int)x - (int)y);
 		readonly ToggleButton workingDirectoryActionsButton;
 		readonly ContextMenu workingDirectoryActionsMenu;
+
+
+		// Static initializer.
+		static SessionView()
+		{
+			//App.Current.PersistentState.ResetValue(IsSelectingLogProfileToStartTutorialShownKey);
+		}
 
 
 		/// <summary>
@@ -637,6 +652,12 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Command to add log files.
 		ICommand AddLogFilesCommand { get; }
+
+
+		/// <summary>
+		/// Ceck whether all tutorials are shown or not.
+		/// </summary>
+		public bool AreAllTutorialsShown { get => this.areAllTutorialsShown; }
 
 
 		// Attach to predefined log text filter
@@ -1822,8 +1843,16 @@ namespace CarinaStudio.ULogViewer.Controls
 			// call base
 			base.OnAttachedToLogicalTree(e);
 
-			// find window
-			this.attachedWindow = this.FindLogicalAncestorOfType<Avalonia.Controls.Window>();
+			// attach to window
+			this.attachedWindow = this.FindLogicalAncestorOfType<Avalonia.Controls.Window>().AsNonNull().Also(window =>
+			{
+				//this.areInitDialogsClosedObserverToken = (window as MainWindow)?.GetObservable(MainWindow.Ini)
+				this.hasDialogsObserverToken = (window as CarinaStudio.Controls.Window)?.GetObservable(CarinaStudio.Controls.Window.HasDialogsProperty)?.Subscribe(hasDialogs =>
+				{
+					if (!hasDialogs)
+						this.ShowNextTutorial();
+				});
+			});
 
 			// add event handlers
 			this.Application.StringsUpdated += this.OnApplicationStringsUpdated;
@@ -3632,6 +3661,55 @@ namespace CarinaStudio.ULogViewer.Controls
 		ICommand ShowLogStringPropertyCommand { get; }
 
 
+		// Show next tutorial is available.
+		internal bool ShowNextTutorial()
+		{
+			// check state
+			if (this.areAllTutorialsShown)
+				return false;
+			var window = this.attachedWindow as CarinaStudio.AppSuite.Controls.Window;
+			if (window == null 
+				//|| !window.AreInitialDialogsClosed
+				|| window.HasDialogs
+				|| window.CurrentTutorial != null)
+			{
+				return false;
+			}
+			if ((this.DataContext as Session)?.IsActivated != true)
+				return false;
+			
+			// show "select log profile to start"
+			var persistentState = this.PersistentState;
+			if (!persistentState.GetValueOrDefault(IsSelectingLogProfileToStartTutorialShownKey))
+			{
+				if (App.CurrentOrNull?.IsFirstLaunch == false)
+				{
+					// no need to show this tutorial for upgrade case
+					persistentState.SetValue<bool>(IsSelectingLogProfileToStartTutorialShownKey, true);
+				}
+				else
+				{
+					return window.ShowTutorial(new Tutorial().Also(it =>
+					{
+						it.Anchor = this.FindControl<Control>("selectAndSetLogProfileButton");
+						it.Bind(Tutorial.DescriptionProperty, this.GetResourceObservable("String/SessionView.Tutorial.SelectLogProfileToStart"));
+						it.Dismissed += (_, e) => 
+						{
+							persistentState.SetValue<bool>(IsSelectingLogProfileToStartTutorialShownKey, true);
+							this.ShowNextTutorial();
+						};
+						it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb");
+						it.SkippingAllTutorialRequested += (_, e) => this.SkipAllTutorials();
+					}));
+				}
+			}
+
+			// all tutorials shown
+			this.SetAndRaise<bool>(AreAllTutorialsShownProperty, ref this.areAllTutorialsShown, true);
+			return false;
+		}
+
+
 		// Show UI of other actions.
 		void ShowOtherActions()
 		{
@@ -3670,6 +3748,19 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Command to show working directory in system file explorer.
 		ICommand ShowWorkingDirectoryInExplorerCommand { get; }
+
+
+		// Skip all tutorials.
+		void SkipAllTutorials()
+		{
+			if (this.areAllTutorialsShown)
+				return;
+			this.PersistentState.Let(it =>
+			{
+				it.SetValue<bool>(IsSelectingLogProfileToStartTutorialShownKey, true);
+			});
+			this.SetAndRaise<bool>(AreAllTutorialsShownProperty, ref this.areAllTutorialsShown, true);
+		}
 
 
 		// Get current state of status bar.

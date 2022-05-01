@@ -228,8 +228,11 @@ namespace CarinaStudio.ULogViewer
 		{
 			if (this.DataContext is not Workspace workspace)
 				return;
-			workspace.ActiveSession = workspace.CreateAndAttachSession();
-			this.selectAndSetLogProfileAction.Reschedule(300);
+			var session = workspace.CreateAndAttachSession();
+			workspace.ActiveSession = session;
+			var sessionView = this.FindSessionView(session);
+			if (sessionView == null || !sessionView.ShowNextTutorial())
+				this.selectAndSetLogProfileAction.Reschedule(300);
 		}
 		TabItem CreateSessionTabItem(Session session)
 		{
@@ -248,12 +251,17 @@ namespace CarinaStudio.ULogViewer
 			}
 
 			// create session view
-			var sessionView = new SessionView()
+			var sessionView = new SessionView().Also(it =>
 			{
-				DataContext = session,
-				HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch,
-				VerticalAlignment = Avalonia.Layout.VerticalAlignment.Stretch,
-			};
+				it.GetObservable(SessionView.AreAllTutorialsShownProperty).Subscribe(shown =>
+				{
+					if (shown)
+						this.selectAndSetLogProfileAction.Schedule();
+				});
+				it.DataContext = session;
+				it.HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch;
+				it.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Stretch;
+			});
 
 			// create tab item
 			return new TabItem()
@@ -621,8 +629,14 @@ namespace CarinaStudio.ULogViewer
 		// Called when all initial dialogs of AppSuite closed.
         protected override void OnInitialDialogsClosed()
         {
+			// call base
             base.OnInitialDialogsClosed();
-			this.selectAndSetLogProfileAction.Schedule();
+			
+			// show tutorials or select log profile
+			var sessionView = (this.DataContext as Workspace)?.ActiveSession?.Let(it =>
+				this.FindSessionView(it));
+			if (sessionView == null || !sessionView.ShowNextTutorial())
+				this.selectAndSetLogProfileAction.Schedule();
         }
 
 
@@ -849,6 +863,10 @@ namespace CarinaStudio.ULogViewer
 			if (this.IsClosed || this.HasDialogs || !this.AreInitialDialogsClosed)
 				return;
 			if (this.DataContext is not Workspace workspace)
+				return;
+			var sessionView = workspace.ActiveSession?.Let(it =>
+				this.FindSessionView(it));
+			if (sessionView?.AreAllTutorialsShown == false)
 				return;
 
 			// select and set log profile

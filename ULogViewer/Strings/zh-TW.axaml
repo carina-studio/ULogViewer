@@ -500,6 +500,7 @@
 	<sys:String x:Key="String/SessionView.TimestampCategoriesPanel">時間戳記分組</sys:String>
 	<sys:String x:Key="String/SessionView.TooManyDirectoryPathsDropped">請拖放單一目錄。</sys:String>
 	<sys:String x:Key="String/SessionView.TotalLogsMemoryUsage">總日誌記憶體使用量</sys:String>
+	<sys:String x:Key="String/SessionView.Tutorial.SelectLogProfileToStart">點一下這裡以選取日誌類型並開始使用。</sys:String>
 	<sys:String x:Key="String/SessionView.UIResponseDuration">使用者介面回應時間</sys:String>
 	<sys:String x:Key="String/SessionView.UnmarkLogs">解除標記日誌</sys:String>
 	<sys:String x:Key="String/SessionView.ViewFullLogMessage">檢視更多…</sys:String>

@@ -347,7 +347,7 @@
 							<StackPanel Orientation="Horizontal">
 
 								<!-- Select log profiles -->
-								<Button Classes="ToolBar_Button" Command="{Binding $parent[UserControl].SelectAndSetLogProfileCommand}" ToolTip.Tip="{DynamicResource String/SessionView.SetLogProfile}">
+								<Button Name="selectAndSetLogProfileButton" Classes="ToolBar_Button" Command="{Binding $parent[UserControl].SelectAndSetLogProfileCommand}" ToolTip.Tip="{DynamicResource String/SessionView.SetLogProfile}">
 									<Image Classes="Icon" Source="{StaticResource Image/LogProfile}"/>
 								</Button>
 
