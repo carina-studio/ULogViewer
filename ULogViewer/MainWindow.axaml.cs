@@ -228,11 +228,8 @@ namespace CarinaStudio.ULogViewer
 		{
 			if (this.DataContext is not Workspace workspace)
 				return;
-			var session = workspace.CreateAndAttachSession();
-			workspace.ActiveSession = session;
-			var sessionView = this.FindSessionView(session);
-			if (sessionView == null || !sessionView.ShowNextTutorial())
-				this.selectAndSetLogProfileAction.Reschedule(300);
+			workspace.ActiveSession = workspace.CreateAndAttachSession();
+			this.selectAndSetLogProfileAction.Reschedule(300);
 		}
 		TabItem CreateSessionTabItem(Session session)
 		{
@@ -629,14 +626,8 @@ namespace CarinaStudio.ULogViewer
 		// Called when all initial dialogs of AppSuite closed.
         protected override void OnInitialDialogsClosed()
         {
-			// call base
             base.OnInitialDialogsClosed();
-			
-			// show tutorials or select log profile
-			var sessionView = (this.DataContext as Workspace)?.ActiveSession?.Let(it =>
-				this.FindSessionView(it));
-			if (sessionView == null || !sessionView.ShowNextTutorial())
-				this.selectAndSetLogProfileAction.Schedule();
+			this.selectAndSetLogProfileAction.Schedule();
         }
 
 

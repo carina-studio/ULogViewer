@@ -1846,7 +1846,11 @@ namespace CarinaStudio.ULogViewer.Controls
 			// attach to window
 			this.attachedWindow = this.FindLogicalAncestorOfType<Avalonia.Controls.Window>().AsNonNull().Also(window =>
 			{
-				//this.areInitDialogsClosedObserverToken = (window as MainWindow)?.GetObservable(MainWindow.Ini)
+				this.areInitDialogsClosedObserverToken = (window as MainWindow)?.GetObservable(MainWindow.AreInitialDialogsClosedProperty).Subscribe(closed =>
+				{
+					if (closed)
+						this.ShowNextTutorial();
+				});
 				this.hasDialogsObserverToken = (window as CarinaStudio.Controls.Window)?.GetObservable(CarinaStudio.Controls.Window.HasDialogsProperty)?.Subscribe(hasDialogs =>
 				{
 					if (!hasDialogs)
@@ -1897,6 +1901,9 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// check administrator role
 			this.ConfirmRestartingAsAdmin();
+
+			// show tutorial
+			this.SynchronizationContext.Post(() => this.ShowNextTutorial());
 		}
 
 
@@ -1922,7 +1929,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.predefinedLogTextFilters.Clear();
 			this.selectedPredefinedLogTextFilters.Clear();
 
-			// clear reference
+			// detach from window
+			this.areInitDialogsClosedObserverToken = this.areInitDialogsClosedObserverToken.DisposeAndReturnNull();
+			this.hasDialogsObserverToken = this.hasDialogsObserverToken.DisposeAndReturnNull();
 			this.attachedWindow = null;
 
 			// call base
@@ -3662,14 +3671,14 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Show next tutorial is available.
-		internal bool ShowNextTutorial()
+		bool ShowNextTutorial()
 		{
 			// check state
 			if (this.areAllTutorialsShown)
 				return false;
 			var window = this.attachedWindow as CarinaStudio.AppSuite.Controls.Window;
 			if (window == null 
-				//|| !window.AreInitialDialogsClosed
+				|| (window as MainWindow)?.AreInitialDialogsClosed == false
 				|| window.HasDialogs
 				|| window.CurrentTutorial != null)
 			{
