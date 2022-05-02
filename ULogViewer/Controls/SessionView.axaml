@@ -942,7 +942,7 @@
 
 		<!-- Side panel tool bar -->
 		<Border Classes="ToolBar" Background="{DynamicResource Brush/WorkingArea.Panel.Background}" Grid.Column="3" Grid.Row="1">
-			<StackPanel>
+			<StackPanel Name="sidePanelBoolBarItemsPanel" VerticalAlignment="Top">
 
 				<!-- Test -->
 				<Button Name="testButton" Classes="ToolBar_Button" Click="OnTestButtonClick" ToolTip.Tip="Test">
@@ -950,7 +950,7 @@
 				</Button>
 
 				<!-- Marked logs -->
-				<ToggleButton Classes="ToolBar_ToggleButton" IsChecked="{Binding IsMarkedLogsPanelVisible, Mode=TwoWay}" ToolTip.Tip="{DynamicResource String/SessionView.MarkedLogsPanel}">
+				<ToggleButton Name="markedLogsPanelButton" Classes="ToolBar_ToggleButton" IsChecked="{Binding IsMarkedLogsPanelVisible, Mode=TwoWay}" ToolTip.Tip="{DynamicResource String/SessionView.MarkedLogsPanel}">
 					<Panel>
 						<Image Classes="Icon" Source="{StaticResource Image/Marks}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
 						<Image Classes="Icon" Source="{StaticResource Image/Marks.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
@@ -958,7 +958,7 @@
 				</ToggleButton>
 
 				<!-- Timestamp categories -->
-				<ToggleButton Classes="ToolBar_ToggleButton" IsChecked="{Binding IsTimestampCategoriesPanelVisible, Mode=TwoWay}" ToolTip.Tip="{DynamicResource String/SessionView.TimestampCategoriesPanel}">
+				<ToggleButton Name="timestampCategoriesPanelButton" Classes="ToolBar_ToggleButton" IsChecked="{Binding IsTimestampCategoriesPanelVisible, Mode=TwoWay}" ToolTip.Tip="{DynamicResource String/SessionView.TimestampCategoriesPanel}">
 					<Panel>
 						<Image Classes="Icon" Source="{StaticResource Image/Calendar}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
 						<Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}">
@@ -970,7 +970,7 @@
 				</ToggleButton>
 
 				<!-- Log files -->
-				<ToggleButton Classes="ToolBar_ToggleButton" IsChecked="{Binding IsLogFilesPanelVisible, Mode=TwoWay}" ToolTip.Tip="{DynamicResource String/SessionView.LogFilesPanel}">
+				<ToggleButton Name="logFilesPanelButton" Classes="ToolBar_ToggleButton" IsChecked="{Binding IsLogFilesPanelVisible, Mode=TwoWay}" ToolTip.Tip="{DynamicResource String/SessionView.LogFilesPanel}">
 					<Panel>
 						<Image Classes="Icon" Source="{StaticResource Image/Icon.File.Text}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
 						<Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}">

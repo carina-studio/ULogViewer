@@ -98,7 +98,11 @@ namespace CarinaStudio.ULogViewer.Controls
 		static readonly AvaloniaProperty<bool> HasSelectedLogsDurationProperty = AvaloniaProperty.Register<SessionView, bool>("HasSelectedLogsDuration", false);
 		static readonly AvaloniaProperty<bool> IsProcessInfoVisibleProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(IsProcessInfoVisible), false);
 		static readonly AvaloniaProperty<bool> IsScrollingToLatestLogNeededProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(IsScrollingToLatestLogNeeded), true);
+		static readonly SettingKey<bool> IsLogFilesPanelTutorialShownKey = new("SessionView.IsLogFilesPanelTutorialShown");
+		static readonly SettingKey<bool> IsMarkedLogsPanelTutorialShownKey = new("SessionView.IsMarkedLogsPanelTutorialShown");
 		static readonly SettingKey<bool> IsSelectingLogProfileToStartTutorialShownKey = new("SessionView.IsSelectingLogProfileToStartTutorialShown");
+		static readonly SettingKey<bool> IsSwitchingSidePanelsTutorialShownKey = new("SessionView.IsSwitchingSidePanelsTutorialShown");
+		static readonly SettingKey<bool> IsTimestampCategoriesPanelTutorialShownKey = new("SessionView.IsTimestampCategoriesPanelTutorialShown");
 		static readonly AvaloniaProperty<DateTime?> LatestSelectedLogTimestampProperty = AvaloniaProperty.Register<SessionView, DateTime?>(nameof(LatestSelectedLogTimestamp));
 		static readonly AvaloniaProperty<FontFamily> LogFontFamilyProperty = AvaloniaProperty.Register<SessionView, FontFamily>(nameof(LogFontFamily));
 		static readonly AvaloniaProperty<double> LogFontSizeProperty = AvaloniaProperty.Register<SessionView, double>(nameof(LogFontSize), 10.0);
@@ -200,7 +204,11 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Static initializer.
 		static SessionView()
 		{
+			//App.Current.PersistentState.ResetValue(IsLogFilesPanelTutorialShownKey);
+			//App.Current.PersistentState.ResetValue(IsMarkedLogsPanelTutorialShownKey);
 			//App.Current.PersistentState.ResetValue(IsSelectingLogProfileToStartTutorialShownKey);
+			//App.Current.PersistentState.ResetValue(IsSwitchingSidePanelsTutorialShownKey);
+			//App.Current.PersistentState.ResetValue(IsTimestampCategoriesPanelTutorialShownKey);
 		}
 
 
@@ -3713,6 +3721,70 @@ namespace CarinaStudio.ULogViewer.Controls
 				}
 			}
 
+			// show "switch side panels"
+			if (!persistentState.GetValueOrDefault(IsSwitchingSidePanelsTutorialShownKey))
+			{
+				return window.ShowTutorial(new Tutorial().Also(it =>
+				{
+					it.Anchor = this.FindControl<Control>("sidePanelBoolBarItemsPanel");
+					it.Bind(Tutorial.DescriptionProperty, this.GetResourceObservable("String/SessionView.Tutorial.SwitchSidePanels"));
+					it.Dismissed += (_, e) => 
+					{
+						persistentState.SetValue<bool>(IsSwitchingSidePanelsTutorialShownKey, true);
+						this.ShowNextTutorial();
+					};
+					it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb");
+					it.SkippingAllTutorialRequested += (_, e) => this.SkipAllTutorials();
+				}));
+			}
+
+			// show side panel tutorials
+			if (!persistentState.GetValueOrDefault(IsMarkedLogsPanelTutorialShownKey))
+			{
+				return window.ShowTutorial(new Tutorial().Also(it =>
+				{
+					it.Anchor = this.FindControl<Control>("markedLogsPanelButton");
+					it.Bind(Tutorial.DescriptionProperty, this.GetResourceObservable("String/SessionView.Tutorial.MarkedLogsPanel"));
+					it.Dismissed += (_, e) => 
+					{
+						persistentState.SetValue<bool>(IsMarkedLogsPanelTutorialShownKey, true);
+						this.ShowNextTutorial();
+					};
+					it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb");
+					it.SkippingAllTutorialRequested += (_, e) => this.SkipAllTutorials();
+				}));
+			}
+			if (!persistentState.GetValueOrDefault(IsTimestampCategoriesPanelTutorialShownKey))
+			{
+				return window.ShowTutorial(new Tutorial().Also(it =>
+				{
+					it.Anchor = this.FindControl<Control>("timestampCategoriesPanelButton");
+					it.Bind(Tutorial.DescriptionProperty, this.GetResourceObservable("String/SessionView.Tutorial.TimestampCategoriesPanel"));
+					it.Dismissed += (_, e) => 
+					{
+						persistentState.SetValue<bool>(IsTimestampCategoriesPanelTutorialShownKey, true);
+						this.ShowNextTutorial();
+					};
+					it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb");
+					it.SkippingAllTutorialRequested += (_, e) => this.SkipAllTutorials();
+				}));
+			}
+			if (!persistentState.GetValueOrDefault(IsLogFilesPanelTutorialShownKey))
+			{
+				return window.ShowTutorial(new Tutorial().Also(it =>
+				{
+					it.Anchor = this.FindControl<Control>("logFilesPanelButton");
+					it.Bind(Tutorial.DescriptionProperty, this.GetResourceObservable("String/SessionView.Tutorial.LogFilesPanel"));
+					it.Dismissed += (_, e) => 
+					{
+						persistentState.SetValue<bool>(IsLogFilesPanelTutorialShownKey, true);
+						this.ShowNextTutorial();
+					};
+					it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb");
+					it.SkippingAllTutorialRequested += (_, e) => this.SkipAllTutorials();
+				}));
+			}
+
 			// all tutorials shown
 			this.SetAndRaise<bool>(AreAllTutorialsShownProperty, ref this.areAllTutorialsShown, true);
 			return false;
@@ -3766,7 +3838,11 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 			this.PersistentState.Let(it =>
 			{
+				it.SetValue<bool>(IsLogFilesPanelTutorialShownKey, true);
+				it.SetValue<bool>(IsMarkedLogsPanelTutorialShownKey, true);
 				it.SetValue<bool>(IsSelectingLogProfileToStartTutorialShownKey, true);
+				it.SetValue<bool>(IsSwitchingSidePanelsTutorialShownKey, true);
+				it.SetValue<bool>(IsTimestampCategoriesPanelTutorialShownKey, true);
 			});
 			this.SetAndRaise<bool>(AreAllTutorialsShownProperty, ref this.areAllTutorialsShown, true);
 		}
