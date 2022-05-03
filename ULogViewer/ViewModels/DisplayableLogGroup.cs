@@ -1,4 +1,5 @@
 ﻿using Avalonia.Media;
+using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Converters;
@@ -92,6 +93,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Raised when brushes of color indicator of log are needed to be updated.
+		/// </summary>
+		public event EventHandler? ColorIndicatorBrushesUpdated;
+
+
+		/// <summary>
 		/// Create new <see cref="DisplayableLog"/> instance.
 		/// </summary>
 		/// <param name="reader">Log reader which reads the log.</param>
@@ -134,11 +141,30 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <returns><see cref="IBrush"/> of color indicator.</returns>
 		internal IBrush? GetColorIndicatorBrush(DisplayableLog log)
 		{
-			if (this.IsDisposed)
-				return null;
 			if (this.colorIndicatorKeyGetter == null)
 				return null;
-			var key = this.colorIndicatorKeyGetter(log);
+			return this.GetColorIndicatorBrushInternal(this.colorIndicatorKeyGetter(log));
+		}
+
+
+		/// <summary>
+		/// Get <see cref="IBrush"/> of color indicator for given file name.
+		/// </summary>
+		/// <param name="fileName">File name.</param>
+		/// <returns><see cref="IBrush"/> of color indicator.</returns>
+		internal IBrush? GetColorIndicatorBrush(string fileName)
+		{
+			if (this.LogProfile.ColorIndicator != LogColorIndicator.FileName)
+				return null;
+			return this.GetColorIndicatorBrushInternal(fileName);
+		}
+
+
+		// Get brush for color indicator.
+		IBrush? GetColorIndicatorBrushInternal(string key)
+		{
+			if (this.IsDisposed)
+				return null;
 			if (this.colorIndicatorBrushes.TryGetValue(key, out var brush))
 				return brush.AsNonNull();
 			brush = new SolidColorBrush(Color.FromArgb(255, (byte)this.random.Next(100, 201), (byte)this.random.Next(100, 201), (byte)this.random.Next(100, 201)));
@@ -355,6 +381,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				LogColorIndicator.UserName => it => it.UserName ?? "",
 				_ => null,
 			};
+
+			// raise event
+			this.ColorIndicatorBrushesUpdated?.Invoke(this, EventArgs.Empty);
 		}
 
 

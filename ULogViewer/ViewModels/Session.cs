@@ -102,6 +102,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<bool> HasLogColorIndicatorProperty = ObservableProperty.Register<Session, bool>(nameof(HasLogColorIndicator));
 		/// <summary>
+		/// Property of <see cref="HasLogColorIndicatorByFileName"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> HasLogColorIndicatorByFileNameProperty = ObservableProperty.Register<Session, bool>(nameof(HasLogColorIndicatorByFileName));
+		/// <summary>
 		/// Property of <see cref="HasLogFiles"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> HasLogFilesProperty = ObservableProperty.Register<Session, bool>(nameof(HasLogFiles));
@@ -411,6 +415,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			}
 
 			/// <summary>
+			/// Get brush of color indicator.
+			/// </summary>
+			public virtual IBrush? ColorIndicatorBrush { get => null; }
+
+			/// <summary>
 			/// Get name of log file.
 			/// </summary>
 			public string FileName { get; }
@@ -585,13 +594,18 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			bool isRemoving;
 			int logCount;
 			LogReadingPrecondition readingPrecondition;
+			readonly Session session;
 
 			// Constructor.
-			public LogFileInfoImpl(string fileName, LogReadingPrecondition precondition, bool isPredefined = false) : base(fileName)
+			public LogFileInfoImpl(Session session, string fileName, LogReadingPrecondition precondition, bool isPredefined = false) : base(fileName)
 			{ 
 				this.IsPredefined = isPredefined;
 				this.readingPrecondition = precondition;
+				this.session = session;
 			}
+
+			// Color indicator brush.
+			public override IBrush? ColorIndicatorBrush { get => this.session.displayableLogGroup?.GetColorIndicatorBrush(this.FileName); }
 
 			// Has error.
 			public override bool HasError { get => this.hasError; }
@@ -614,13 +628,20 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// Log reading precondition.
 			public override LogReadingPrecondition LogReadingPrecondition { get => this.readingPrecondition; }
 
+			// Update color indicator brush.
+			public void UpdateColorIndicatorBrush() =>
+				this.OnPropertyChanged(nameof(ColorIndicatorBrush));
+
 			// Update log count.
 			public void UpdateLogCount(int logCount)
 			{
-				if (this.logCount == logCount)
+				var prevLogCount = this.logCount;
+				if (prevLogCount == logCount)
 					return;
 				this.logCount = logCount;
 				this.OnPropertyChanged(nameof(LogCount));
+				if (prevLogCount == 0)
+					this.OnPropertyChanged(nameof(ColorIndicatorBrush)); // to prevent getting brush too earlier by view
 			}
 
 			// Update log reader state.
@@ -1262,7 +1283,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.Logger.LogWarning($"File '{fileName}' is already added");
 				return;
 			}
-			this.logFileInfoList.Add(new LogFileInfoImpl(fileName, param.Precondition));
+			this.logFileInfoList.Add(new LogFileInfoImpl(this, fileName, param.Precondition));
 
 			this.Logger.LogDebug($"Add log file '{fileName}'");
 
@@ -1697,7 +1718,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// prepare displayable log group
 			var profile = this.LogProfile ?? throw new InternalStateCorruptedException("No log profile to create log reader.");
 			if (this.displayableLogGroup == null)
-				this.displayableLogGroup = new DisplayableLogGroup(profile);
+			{
+				this.displayableLogGroup = new DisplayableLogGroup(profile).Also(it =>
+				{
+					it.ColorIndicatorBrushesUpdated += (_, e) =>
+					{
+						foreach (var fileInfo in this.logFileInfoMapByLogReader.Values)
+							fileInfo.UpdateColorIndicatorBrush();
+					};
+				});
+			}
 
 			// select logs reading task factory
 			var readingTaskFactory = dataSource.CreationOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName))
@@ -2189,6 +2219,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Check whether color indicator of log is needed or not.
 		/// </summary>
 		public bool HasLogColorIndicator { get => this.GetValue(HasLogColorIndicatorProperty); }
+
+
+		/// <summary>
+		/// Check whether color indicator of log by file name is needed or not.
+		/// </summary>
+		public bool HasLogColorIndicatorByFileName { get => this.GetValue(HasLogColorIndicatorByFileNameProperty); }
 
 
 		/// <summary>
@@ -2928,6 +2964,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					break;
 				case nameof(LogProfile.ColorIndicator):
 					this.SetValue(HasLogColorIndicatorProperty, this.LogProfile?.ColorIndicator != LogColorIndicator.None);
+					this.SetValue(HasLogColorIndicatorByFileNameProperty, this.LogProfile?.ColorIndicator == LogColorIndicator.FileName);
 					this.SynchronizationContext.Post(() => this.ReloadLogs(false, true));
 					break;
 				case nameof(LogProfile.DataSourceOptions):
@@ -3412,7 +3449,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.SetValue(AreLogsSortedByTimestampProperty, false);
 			this.canResetLogProfile.Update(false);
 			this.canShowAllLogsTemporarily.Update(false);
-			this.SetValue(HasLogColorIndicatorProperty, false);
+			this.ResetValue(HasLogColorIndicatorProperty);
+			this.ResetValue(HasLogColorIndicatorByFileNameProperty);
 			this.SetValue(IsIPEndPointNeededProperty, false);
 			this.SetValue(IsLogFileNeededProperty, false);
 			this.SetValue(IsReadingLogsContinuouslyProperty, false);
@@ -3481,7 +3519,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				{
 					useDefaultDataSourceOptions = true;
 					this.logFileInfoList.Clear();
-					this.logFileInfoList.Add(new LogFileInfoImpl(defaultDataSourceOptions.FileName.AsNonNull(), new(), true));
+					this.logFileInfoList.Add(new LogFileInfoImpl(this, defaultDataSourceOptions.FileName.AsNonNull(), new(), true));
 					this.canClearLogFiles.Update(false);
 					this.SetValue(IsLogFileNeededProperty, false);
 				}
@@ -3641,7 +3679,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 						// check file paths
 						if (dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName)))
-							this.logFileInfoList.Add(new LogFileInfoImpl(dataSourceOptions.FileName.AsNonNull(), logReaderOptions.Precondition));
+							this.logFileInfoList.Add(new LogFileInfoImpl(this, dataSourceOptions.FileName.AsNonNull(), logReaderOptions.Precondition));
 					}
 					this.Logger.LogTrace($"{this.savedLogReaderOptions.Count} log reader(s) can be restored");
 
@@ -4082,6 +4120,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// update state
 			this.SetValue(HasLogColorIndicatorProperty, profile.ColorIndicator != LogColorIndicator.None);
+			this.SetValue(HasLogColorIndicatorByFileNameProperty, profile.ColorIndicator == LogColorIndicator.FileName);
 			this.ResetValue(LastLogReadingPreconditionProperty);
 
 			// read logs or wait for more actions
@@ -4091,7 +4130,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			{
 				this.SetValue(AreFileBasedLogsProperty, true);
 				if (dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName)))
-					this.logFileInfoList.Add(new LogFileInfoImpl(dataSourceOptions.FileName.AsNonNull(), new(), true));
+					this.logFileInfoList.Add(new LogFileInfoImpl(this, dataSourceOptions.FileName.AsNonNull(), new(), true));
 				else
 				{
 					this.Logger.LogDebug("No file name specified, waiting for adding file");
