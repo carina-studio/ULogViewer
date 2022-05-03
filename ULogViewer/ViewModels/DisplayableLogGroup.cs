@@ -174,6 +174,15 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Get tip text of color indicator for given log.
+		/// </summary>
+		/// <param name="log">Log.</param>
+		/// <returns>Tip text.</returns>
+		internal string? GetColorIndicatorTip(DisplayableLog log) =>
+			this.colorIndicatorKeyGetter?.Invoke(log);
+
+
+		/// <summary>
 		/// Get <see cref="IBrush"/> for given log.
 		/// </summary>
 		/// <param name="log"><see cref="DisplayableLog"/>.</param>

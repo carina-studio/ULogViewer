@@ -1118,7 +1118,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						it.BorderBrush = colorIndicatorBorderBrush;
 						it.BorderThickness = colorIndicatorBorderThickness;
 						it.HorizontalAlignment = HorizontalAlignment.Left;
-						it.Bind(ToolTip.TipProperty, new Binding() { Path = profile.ColorIndicator.ToString() });
+						it.Bind(ToolTip.TipProperty, new Binding() { Path = nameof(DisplayableLog.ColorIndicatorTip) });
 						it.Width = colorIndicatorWidth;
 						itemPanel.Children.Add(it);
 					});
@@ -1342,7 +1342,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						it.BorderBrush = colorIndicatorBorderBrush;
 						it.BorderThickness = colorIndicatorBorderThickness;
 						it.HorizontalAlignment = HorizontalAlignment.Left;
-						it.Bind(ToolTip.TipProperty, new Binding() { Path = profile.ColorIndicator.ToString() });
+						it.Bind(ToolTip.TipProperty, new Binding() { Path = nameof(DisplayableLog.ColorIndicatorTip) });
 						it.Width = colorIndicatorWidth;
 						itemPanel.Children.Add(it);
 					});

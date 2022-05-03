@@ -224,6 +224,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Get tip text for color indicator.
+		/// </summary>
+		public string? ColorIndicatorTip { get => this.Group.GetColorIndicatorTip(this); }
+
+
+		/// <summary>
 		/// Create <see cref="Func{T, TResult}"/> to get specific log property from <see cref="DisplayableLog"/>.
 		/// </summary>
 		/// <typeparam name="T">Type of property value.</typeparam>
