@@ -51,7 +51,10 @@
 				</Border>
 
 				<!-- How to read and parse logs -->
-				<abControls:LinkTextBlock HorizontalAlignment="Left" Text="{DynamicResource String/LogProfileEditorDialog.LearnAboutLogsReadingAndParsing}" Uri="{x:Static appControls:LogProfileEditorDialog.LogsReadingAndParsingPageUri}"/>
+				<StackPanel Orientation="Horizontal">
+					<Image Classes="Dialog_Icon" Source="{StaticResource Image/Icon.Question.Colored}"/>
+					<abControls:LinkTextBlock HorizontalAlignment="Left" Text="{DynamicResource String/LogProfileEditorDialog.LearnAboutLogsReadingAndParsing}" Uri="{x:Static appControls:LogProfileEditorDialog.LogsReadingAndParsingPageUri}"/>
+				</StackPanel>
 				<Separator Classes="Dialog_Separator"/>
 				
 				<!-- Name -->

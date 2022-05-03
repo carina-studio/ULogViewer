@@ -820,7 +820,7 @@
 							<StackPanel Orientation="Horizontal">
 								<Image Classes="StatusBar_Icon">
 									<DrawingImage>
-										<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Folder}"/>
+										<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Folder.Outline}"/>
 									</DrawingImage>
 								</Image>
 								<TextBlock Classes="StatusBar_TextBlock" Text="{Binding WorkingDirectoryName}"/>
