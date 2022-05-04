@@ -3715,7 +3715,7 @@ namespace CarinaStudio.ULogViewer.Controls
 							persistentState.SetValue<bool>(IsSelectingLogProfileToStartTutorialShownKey, true);
 							this.ShowNextTutorial();
 						};
-						it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb");
+						it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb.Colored");
 						it.SkippingAllTutorialRequested += (_, e) => this.SkipAllTutorials();
 					}));
 				}
@@ -3733,7 +3733,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						persistentState.SetValue<bool>(IsSwitchingSidePanelsTutorialShownKey, true);
 						this.ShowNextTutorial();
 					};
-					it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb");
+					it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb.Colored");
 					it.SkippingAllTutorialRequested += (_, e) => this.SkipAllTutorials();
 				}));
 			}
@@ -3750,7 +3750,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						persistentState.SetValue<bool>(IsMarkedLogsPanelTutorialShownKey, true);
 						this.ShowNextTutorial();
 					};
-					it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb");
+					it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb.Colored");
 					it.SkippingAllTutorialRequested += (_, e) => this.SkipAllTutorials();
 				}));
 			}
@@ -3765,7 +3765,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						persistentState.SetValue<bool>(IsTimestampCategoriesPanelTutorialShownKey, true);
 						this.ShowNextTutorial();
 					};
-					it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb");
+					it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb.Colored");
 					it.SkippingAllTutorialRequested += (_, e) => this.SkipAllTutorials();
 				}));
 			}
@@ -3780,7 +3780,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						persistentState.SetValue<bool>(IsLogFilesPanelTutorialShownKey, true);
 						this.ShowNextTutorial();
 					};
-					it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb");
+					it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb.Colored");
 					it.SkippingAllTutorialRequested += (_, e) => this.SkipAllTutorials();
 				}));
 			}

@@ -11,6 +11,7 @@
 			 xmlns:as="using:CarinaStudio.AppSuite"
 			 xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
 			 xmlns:asConverters="using:CarinaStudio.AppSuite.Converters"
+			 xmlns:app="using:CarinaStudio.ULogViewer"
              xmlns:appControls="clr-namespace:CarinaStudio.ULogViewer.Controls;assembly=ULogViewer"
              xmlns:appConverters="clr-namespace:CarinaStudio.ULogViewer.Converters;assembly=ULogViewer"
              xmlns:appLogs="clr-namespace:CarinaStudio.ULogViewer.Logs;assembly=ULogViewer"
@@ -417,8 +418,14 @@
 								<!-- Scroll to latest log -->
 								<ToggleButton Classes="ToolBar_ToggleButton" IsChecked="{Binding $parent[UserControl].IsScrollingToLatestLogNeeded, Mode=TwoWay}" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" ToolTip.Tip="{DynamicResource String/SessionView.ScrollToLatestLog}">
 									<Panel>
-										<Image Classes="Icon" Source="{StaticResource Image/Scrolling}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
-										<Image Classes="Icon" Source="{StaticResource Image/Scrolling.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
+										<Panel Name="scrollToBottomLogIconPanel" IsVisible="{Binding LogProfile.SortDirection, Converter={x:Static abConverters:ObjectConverters.IsEquivalentTo}, ConverterParameter={x:Static app:SortDirection.Ascending}}">
+											<Image Classes="Icon" Source="{StaticResource Image/ToBottom}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
+											<Image Classes="Icon" Source="{StaticResource Image/ToBottom.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
+										</Panel>
+										<Panel IsVisible="{Binding !#scrollToBottomLogIconPanel.IsVisible}">
+											<Image Classes="Icon" Source="{StaticResource Image/ToTop}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
+											<Image Classes="Icon" Source="{StaticResource Image/ToTop.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
+										</Panel>
 									</Panel>
 								</ToggleButton>
 
@@ -751,7 +758,7 @@
 						<Separator Classes="StatusBar_Separator"/>
 						<Image Classes="StatusBar_Icon">
 							<DrawingImage>
-								<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Filter}"/>
+								<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Filter.Outline}"/>
 							</DrawingImage>
 						</Image>
 						<TextBlock Classes="StatusBar_TextBlock" Text="{DynamicResource String/SessionView.LogsFilteringProgress}"/>
@@ -766,7 +773,7 @@
 						<Separator Classes="StatusBar_Separator"/>
 						<Image Classes="StatusBar_Icon">
 							<DrawingImage>
-								<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Save}"/>
+								<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Save.Outline}"/>
 							</DrawingImage>
 						</Image>
 						<TextBlock Classes="StatusBar_TextBlock" Text="{DynamicResource String/SessionView.SavingLogs}"/>
@@ -777,7 +784,7 @@
 						<Separator Classes="StatusBar_Separator"/>
 						<Image Classes="StatusBar_Icon">
 							<DrawingImage>
-								<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Waiting}"/>
+								<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Waiting.Outline}"/>
 							</DrawingImage>
 						</Image>
 						<TextBlock Classes="StatusBar_TextBlock" Text="{DynamicResource String/SessionView.WaitingForDataSources}"/>
@@ -838,7 +845,7 @@
 						<Separator Classes="StatusBar_Separator"/>
 						<Image Classes="StatusBar_Icon">
 							<DrawingImage>
-								<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Error}"/>
+								<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Error.Outline}"/>
 							</DrawingImage>
 						</Image>
 						<TextBlock Classes="StatusBar_TextBlock" Text="{DynamicResource String/SessionView.HasAllDataSourceErrors}"/>
@@ -846,7 +853,7 @@
 					<StackPanel Grid.Column="5" IsVisible="{Binding HasPartialDataSourceErrors}" Orientation="Horizontal">
 						<Image Classes="StatusBar_Icon">
 							<DrawingImage>
-								<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Warning}"/>
+								<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Warning.Outline}"/>
 							</DrawingImage>
 						</Image>
 						<TextBlock Classes="StatusBar_TextBlock" Text="{DynamicResource String/SessionView.HasPartialDataSourceErrors}"/>
@@ -858,7 +865,7 @@
 						<StackPanel IsVisible="{Binding $parent[UserControl].Application.IsDebugMode, Mode=OneTime}" Orientation="Horizontal">
 							<Image Classes="StatusBar_Icon" ToolTip.Tip="{DynamicResource String/SessionView.CpuUsage}">
 								<DrawingImage>
-									<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Speed}"/>
+									<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Speed.Outline}"/>
 								</DrawingImage>
 							</Image>
 							<Panel VerticalAlignment="Center">
@@ -868,7 +875,7 @@
 						</StackPanel>
 						<Image Classes="StatusBar_Icon" ToolTip.Tip="{DynamicResource String/SessionView.CpuUsage}">
 							<DrawingImage>
-								<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Cpu}"/>
+								<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Cpu.Outline}"/>
 							</DrawingImage>
 						</Image>
 						<Panel VerticalAlignment="Center">
@@ -878,7 +885,7 @@
 						<StackPanel Orientation="Horizontal">
 							<Image Classes="StatusBar_Icon" ToolTip.Tip="{DynamicResource String/SessionView.MemoryUsage}">
 								<DrawingImage>
-									<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Memory}"/>
+									<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Memory.Outline}"/>
 								</DrawingImage>
 							</Image>
 							<TextBlock Classes="StatusBar_TextBlock" Background="{x:Static Brushes.Transparent}" Text="{Binding LogsMemoryUsage, Converter={x:Static asConverters:FileSizeConverter.Default}}" ToolTip.Placement="Left" ToolTip.Tip="{DynamicResource String/SessionView.LogsMemoryUsage}" VerticalAlignment="Center"/>
@@ -1063,10 +1070,10 @@
 									<Border Background="{Binding ColorIndicatorBrush}" BorderBrush="{DynamicResource Brush/WorkingArea.Panel.Background}" BorderThickness="{StaticResource Thickness/SessionView.LogListBox.ColorIndicator.Border}" DockPanel.Dock="Left" IsVisible="{Binding $parent[UserControl].DataContext.HasLogColorIndicatorByFileName}" Width="{StaticResource Double/SessionView.LogListBox.ColorIndicator.Width}"/>
 									<Grid ColumnDefinitions="Auto,*,Auto" Margin="{StaticResource Thickness/SessionView.LogFileListBox.Item.Padding}">
 										<Panel Grid.Column="0" Height="{StaticResource Double/SessionView.LogFileInfo.Icon.Size}" Margin="{StaticResource Thickness/SessionView.LogFileInfo.Icon.Margin}" VerticalAlignment="Top" Width="{StaticResource Double/SessionView.LogFileInfo.Icon.Size}">
-											<Image Classes="Icon" IsVisible="{Binding IsLogsReadingCompleted}" Source="{StaticResource Image/Icon.File.Text}"/>
-											<Image Classes="Icon" IsVisible="{Binding IsReadingLogs}" Source="{StaticResource Image/Icon.Waiting}"/>
-											<Image Classes="Icon" IsVisible="{Binding IsRemoving}" Source="{StaticResource Image/Icon.Delete}"/>
-											<Image Classes="Icon" IsVisible="{Binding HasError}" Source="{StaticResource Image/Icon.Error}"/>
+											<Image Classes="Icon" IsVisible="{Binding IsLogsReadingCompleted}" Source="{StaticResource Image/Icon.File.Text.Outline}"/>
+											<Image Classes="Icon" IsVisible="{Binding IsReadingLogs}" Source="{StaticResource Image/Icon.Waiting.Outline}"/>
+											<Image Classes="Icon" IsVisible="{Binding IsRemoving}" Source="{StaticResource Image/Icon.Delete.Outline}"/>
+											<Image Classes="Icon" IsVisible="{Binding HasError}" Source="{StaticResource Image/Icon.Error.Outline}"/>
 										</Panel>
 										<StackPanel Grid.Column="1">
 											<TextBlock Background="{x:Static Brushes.Transparent}" FontSize="{StaticResource Double/SessionView.LogFileInfo.FileName.FontSize}" FontWeight="Bold" HorizontalAlignment="Left" Margin="{StaticResource Thickness/SessionView.LogFileInfo.FileName.Margin}" Text="{Binding FileName, Converter={x:Static abConverters:FilePathConverters.FileName}}" TextTrimming="CharacterEllipsis" ToolTip.Tip="{Binding FileName}"/>
