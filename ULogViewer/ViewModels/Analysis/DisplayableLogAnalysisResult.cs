@@ -11,7 +11,8 @@ class DisplayableLogAnalysisResult : BaseApplicationObject<IULogViewerApplicatio
 {
     // Static fields.
     static readonly long DefaultMemorySize = (4 * IntPtr.Size) // Appliation, message, Analyzer, PropertyChanged
-        + 4; // isMessageValid
+        + 4 // isMessageValid
+        + 4; // Type
 
 
     // Fields.
@@ -23,11 +24,13 @@ class DisplayableLogAnalysisResult : BaseApplicationObject<IULogViewerApplicatio
     /// Initialize new <see cref="DisplayableLogAnalysisResult"/> instance.
     /// </summary>
     /// <param name="analyzer"><see cref="IDisplayableLogAnalyzer"/> which generates this result.</param>
+    /// <param name="type">Type of result.</param>
     /// <param name="log"><see cref="DisplayableLog"/> which relates to this result.</param>
-    public DisplayableLogAnalysisResult(IDisplayableLogAnalyzer<DisplayableLogAnalysisResult> analyzer, DisplayableLog? log) : base(analyzer.Application)
+    public DisplayableLogAnalysisResult(IDisplayableLogAnalyzer<DisplayableLogAnalysisResult> analyzer, DisplayableLogAnalysisResultType type, DisplayableLog? log) : base(analyzer.Application)
     {
         this.Analyzer = analyzer;
         this.Log = log;
+        this.Type = type;
     }
 
 
@@ -107,5 +110,31 @@ class DisplayableLogAnalysisResult : BaseApplicationObject<IULogViewerApplicatio
 
     /// <inheritdoc/>
     public override string ToString() =>
-        $"{this.GetType().Name}: {this.message}";
+        $"[{this.Type}]: {this.message}";
+
+
+    /// <summary>
+    /// Get type of result.
+    /// </summary>
+    public DisplayableLogAnalysisResultType Type { get; }
+}
+
+
+/// <summary>
+/// Type of <see cref="DisplayableLogAnalysisResult"/>.
+/// </summary>
+enum DisplayableLogAnalysisResultType
+{
+    /// <summary>
+    /// Information.
+    /// </summary>
+    Information,
+    /// <summary>
+    /// Warning.
+    /// </summary>
+    Warning,
+    /// <summary>
+    /// Error.
+    /// </summary>
+    Error,
 }

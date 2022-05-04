@@ -52,6 +52,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
 
 
     // Fields.
+    DisplayableLogGroup? attachedLogGroup; // currently only supports attaching to single group
     LogProfile? attachedLogProfile; // currently only supports attaching to single profile
     ProcessingParams? currentProcessingParams;
     readonly Comparison<DisplayableLog> logComparison;
@@ -80,6 +81,12 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
         this.unprocessedLogs = new SortedObservableList<DisplayableLog>(comparison.Invert());
 
         // setup properties
+        this.ChunkSize = priority switch
+        {
+            DisplayableLogProcessingPriority.Background => this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.DisplayableLogChunkProcessingSizeBackground),
+            DisplayableLogProcessingPriority.Realtime => this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.DisplayableLogChunkProcessingSizeRealtime),
+            _ => this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.DisplayableLogChunkProcessingSizeDefault),
+        };
         this.logComparison = comparison;
         this.ProcessingPriority = priority;
         this.sourceLogComparison = comparison;
@@ -136,7 +143,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
     /// <summary>
     /// Get size of ptocessing chunk.
     /// </summary>
-    protected virtual int ChunkSize { get => this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.DisplayableLogChunkProcessingSize); }
+    protected virtual int ChunkSize { get; }
 
 
     /// <summary>
@@ -186,6 +193,13 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
         {
             this.OnDetachFromLogProfile(this.attachedLogProfile);
             this.attachedLogProfile = null;
+        }
+
+        // detach from log group
+        if (this.attachedLogGroup != null)
+        {
+            this.OnDetachFromLogGroup(this.attachedLogGroup);
+            this.attachedLogGroup = null;
         }
 
         // cancecl processing
@@ -368,6 +382,14 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
 
 
     /// <summary>
+    /// Called to attach to log group.
+    /// </summary>
+    /// <param name="group">Log group.</param>
+    protected virtual void OnAttachToLogGroup(DisplayableLogGroup group)
+    { }
+
+
+    /// <summary>
     /// Called to attach to log profile.
     /// </summary>
     /// <param name="profile">Log profile.</param>
@@ -460,6 +482,14 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
     /// <param name="logs">Processed logs.</param>
     /// <param name="results">Processing result.</param>
     protected abstract void OnChunkProcessed(TProcessingToken token, List<DisplayableLog> logs, List<TProcessingResult> results);
+
+
+    /// <summary>
+    /// Called to detach from log group.
+    /// </summary>
+    /// <param name="group">Log group.</param>
+    protected virtual void OnDetachFromLogGroup(DisplayableLogGroup group)
+    { }
 
 
     /// <summary>
@@ -558,10 +588,18 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
             default:
                 throw new InvalidOperationException($"Unsupported change of source log list: {e.Action}.");
         }
-        if (this.sourceLogs.IsEmpty() && this.attachedLogProfile != null)
+        if (this.sourceLogs.IsEmpty())
         {
-            this.OnDetachFromLogProfile(this.attachedLogProfile);
-            this.attachedLogProfile = null;
+            if (this.attachedLogProfile != null)
+            {
+                this.OnDetachFromLogProfile(this.attachedLogProfile);
+                this.attachedLogProfile = null;
+            }
+            if (this.attachedLogGroup != null)
+            {
+                this.OnDetachFromLogGroup(this.attachedLogGroup);
+                this.attachedLogGroup = null;
+            }
         }
     }
     
@@ -693,7 +731,15 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
         this.OnPropertyChanged(nameof(Progress));
 
         // attach to log profile
-        var profile = this.unprocessedLogs[0].Group.LogProfile;
+        var group = this.unprocessedLogs[0].Group;
+        var profile = group.LogProfile;
+        if (group != this.attachedLogGroup)
+        {
+            if (this.attachedLogGroup != null)
+                this.OnDetachFromLogGroup(this.attachedLogGroup);
+            this.attachedLogGroup = group;
+            this.OnAttachToLogGroup(group);
+        }
         if (profile != this.attachedLogProfile)
         {
             if (this.attachedLogProfile != null)

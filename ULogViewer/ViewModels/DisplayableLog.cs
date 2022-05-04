@@ -1,4 +1,5 @@
 ﻿using Avalonia.Media;
+using CarinaStudio.Collections;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs;
 using CarinaStudio.ULogViewer.ViewModels.Analysis;
@@ -15,7 +16,17 @@ namespace CarinaStudio.ULogViewer.ViewModels
 	/// </summary>
 	class DisplayableLog : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 	{
+		// Constants.
+		const uint HasErrorAnalysisResultFlag = 0x1;
+		const uint HasInformationAnalysisResultFlag = 0x2;
+		const uint HasWarningAnalysisResultFlag = 0x4;
+		const uint HasAnalysisResultFlagMask = HasErrorAnalysisResultFlag
+			| HasInformationAnalysisResultFlag
+			| HasWarningAnalysisResultFlag;
+
+
 		// Static fields.
+		static readonly DisplayableLogAnalysisResult[] emptyAnalysisResults = new DisplayableLogAnalysisResult[0];
 		static readonly int[] emptyInt32Array = new int[0];
 		static readonly long estimatedTimeSpanSize = TimeSpan.FromDays(1.23456).ToString().Length << 1;
 		static readonly long estimatedTimestampSize = DateTime.Now.ToString().Length << 1;
@@ -30,13 +41,17 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		// Fields.
+		DisplayableLogAnalysisResult[] analysisResults = emptyAnalysisResults;
 		CompressedString? beginningTimeSpanString;
 		CompressedString? beginningTimestampString;
 		CompressedString? endingTimeSpanString;
 		CompressedString? endingTimestampString;
 		readonly int[] extraLineCount;
+		uint flags;
 		MarkColor markedColor;
+		long memorySize;
 		int messageLineCount = -1;
+		IList<DisplayableLogAnalysisResult> readOnlyAnalysisResults = emptyAnalysisResults;
 		int summaryLineCount = -1;
 		CompressedString? timeSpanString;
 		CompressedString? timestampString;
@@ -115,11 +130,82 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				memorySize += estimatedTimestampSize;
 			if (log.Timestamp.HasValue)
 				memorySize += estimatedTimestampSize;
-			this.MemorySize = memorySize;
+			this.memorySize = memorySize;
 
 			// notify group
 			group.OnDisplayableLogCreated(this);
 		}
+
+
+		/// <summary>
+		/// Add <see cref="DisplayableLogAnalysisResult"/> to this log.
+		/// </summary>
+		/// <param name="result">Result to add.</param>
+		public void AddAnalysisResult(DisplayableLogAnalysisResult result)
+		{
+			// check state
+#if DEBUG
+			this.VerifyAccess();
+#endif
+			if (this.IsDisposed)
+				return;
+			
+			// add to list
+			var memorySizeDiff = 0L;
+			var currentResultCount = this.analysisResults.Length;
+			if (currentResultCount == 0)
+			{
+				this.analysisResults = new[] { result };
+				this.readOnlyAnalysisResults = this.analysisResults.AsReadOnly();
+				memorySizeDiff += (2 * IntPtr.Size) + 4;
+			}
+			else
+			{
+				var newList = new DisplayableLogAnalysisResult[currentResultCount + 1];
+				Array.Copy(this.analysisResults, newList, currentResultCount);
+				newList[currentResultCount] = result;
+				this.analysisResults = newList;
+				memorySizeDiff += IntPtr.Size;
+			}
+
+			// check type
+			var typeFlag = result.Type switch
+			{
+				DisplayableLogAnalysisResultType.Error => HasErrorAnalysisResultFlag,
+				DisplayableLogAnalysisResultType.Information => HasInformationAnalysisResultFlag,
+				DisplayableLogAnalysisResultType.Warning => HasWarningAnalysisResultFlag,
+				_ => throw new NotSupportedException(),
+			};
+			if ((this.flags & typeFlag) == 0)
+			{
+				this.flags |= typeFlag;
+				switch (result.Type)
+				{
+					case DisplayableLogAnalysisResultType.Error:
+						this.PropertyChanged?.Invoke(this, new(nameof(HasErrorAnalysisResult)));
+						break;
+					case DisplayableLogAnalysisResultType.Information:
+						this.PropertyChanged?.Invoke(this, new(nameof(HasInformationAnalysisResult)));
+						break;
+					case DisplayableLogAnalysisResultType.Warning:
+						this.PropertyChanged?.Invoke(this, new(nameof(HasWarningAnalysisResult)));
+						break;
+				}
+			}
+			if (currentResultCount == 0)
+				this.PropertyChanged?.Invoke(this, new(nameof(HasAnalysisResult)));
+			
+			// update memory usage
+			this.memorySize += memorySizeDiff;
+			this.Group.OnAnalysisResultAdded(this);
+			this.Group.OnDisplayableLogMemorySizeChanged(this, memorySizeDiff);
+		}
+
+
+		/// <summary>
+		/// Get all <see cref="DisplayableLogAnalysisResult"/>s which were added to this log.
+		/// </summary>
+		public IList<DisplayableLogAnalysisResult> AnalysisResults { get => this.readOnlyAnalysisResults; }
 
 
 		/// <summary>
@@ -501,12 +587,24 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Check whether at least one <see cref="DisplayableLogAnalysisResult"/> has been added to this log or not.
+		/// </summary>
+		public bool HasAnalysisResult { get => (this.flags & HasAnalysisResultFlagMask) != 0; }
+
+
+		/// <summary>
 		/// Check whether given property of log with <see cref="DateTime"/> value is existing or not.
 		/// </summary>
 		/// <param name="propertyName">Name of property.</param>
 		/// <returns>True if property of log is existing.</returns>
 		public static bool HasDateTimeProperty(string propertyName) =>
 			Log.HasDateTimeProperty(propertyName);
+		
+
+		/// <summary>
+		/// Check whether at least one <see cref="DisplayableLogAnalysisResult"/> with <see cref="DisplayableLogAnalysisResultType.Error"/> type has been added to this log or not.
+		/// </summary>
+		public bool HasErrorAnalysisResult { get => (this.flags & HasErrorAnalysisResultFlag) != 0; }
 
 
 		/// <summary>
@@ -582,6 +680,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Check whether at least one <see cref="DisplayableLogAnalysisResult"/> with <see cref="DisplayableLogAnalysisResultType.Information"/> type has been added to this log or not.
+		/// </summary>
+		public bool HasInformationAnalysisResult { get => (this.flags & HasInformationAnalysisResultFlag) != 0; }
+
+
+		/// <summary>
 		/// Check whether given property of log with <see cref="Int64"/> value is existing or not.
 		/// </summary>
 		/// <param name="propertyName">Name of property.</param>
@@ -633,6 +737,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			or nameof(TimestampString) => true,
 			_ => Log.HasStringProperty(propertyName),
 		};
+
+
+		/// <summary>
+		/// Check whether at least one <see cref="DisplayableLogAnalysisResult"/> with <see cref="DisplayableLogAnalysisResultType.Warning"/> type has been added to this log or not.
+		/// </summary>
+		public bool HasWarningAnalysisResult { get => (this.flags & HasWarningAnalysisResultFlag) != 0; }
 
 
 		/// <summary>
@@ -706,7 +816,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get size of memory usage by the instance in bytes.
 		/// </summary>
-		public long MemorySize { get; }
+		public long MemorySize { get => this.memorySize; }
 
 
 		/// <summary>
@@ -833,6 +943,188 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Get name of process which generates log.
 		/// </summary>
 		public string? ProcessName { get => this.Log.ProcessName; }
+
+
+		/// <summary>
+		/// Remove <see cref="DisplayableLogAnalysisResult"/> from this log.
+		/// </summary>
+		/// <param name="result">Result to remove.</param>
+		public void RemoveAnalysisResult(DisplayableLogAnalysisResult result)
+		{
+			// check state
+#if DEBUG
+			this.VerifyAccess();
+#endif
+			if (this.IsDisposed)
+				return;
+			var currentResultCount = this.analysisResults.Length;
+			if (currentResultCount == 0)
+				return;
+			
+			// remove from list
+			var memorySizeDiff = 0L;
+			for (var i = currentResultCount - 1; i >= 0; --i)
+			{
+				if (this.analysisResults[i] == result)
+				{
+					if (currentResultCount == 1)
+					{
+						this.analysisResults = emptyAnalysisResults;
+						this.readOnlyAnalysisResults = emptyAnalysisResults;
+						memorySizeDiff -= (2 * IntPtr.Size) + 4;
+					}
+					else if (i == 0)
+					{
+						var newList = new DisplayableLogAnalysisResult[currentResultCount - 1];
+						Array.Copy(this.analysisResults, 1, newList, 0, currentResultCount - 1);
+						this.analysisResults = newList;
+						memorySizeDiff -= IntPtr.Size;
+					}
+					else if (i == currentResultCount - 1)
+					{
+						var newList = new DisplayableLogAnalysisResult[currentResultCount - 1];
+						Array.Copy(this.analysisResults, 0, newList, 0, currentResultCount - 1);
+						this.analysisResults = newList;
+						memorySizeDiff -= IntPtr.Size;
+					}
+					else
+					{
+						var newList = new DisplayableLogAnalysisResult[currentResultCount - 1];
+						Array.Copy(this.analysisResults, 0, newList, 0, i);
+						Array.Copy(this.analysisResults, i + 1, newList, i, currentResultCount - i - 1);
+						this.analysisResults = newList;
+						memorySizeDiff -= IntPtr.Size;
+					}
+					break;
+				}
+			}
+			if (memorySizeDiff == 0)
+				return;
+			
+			// check type
+			var typeFlags = 0u;
+			var prevTypeFlags = (this.flags & HasAnalysisResultFlagMask);
+			for (var i = currentResultCount - 2; i >= 0; --i)
+			{
+				switch (this.analysisResults[i].Type)
+				{
+					case DisplayableLogAnalysisResultType.Error:
+						typeFlags |= HasErrorAnalysisResultFlag;
+						break;
+					case DisplayableLogAnalysisResultType.Information:
+						typeFlags |= HasInformationAnalysisResultFlag;
+						break;
+					case DisplayableLogAnalysisResultType.Warning:
+						typeFlags |= HasWarningAnalysisResultFlag;
+						break;
+				}
+			}
+			this.flags = (this.flags & ~HasAnalysisResultFlagMask) | typeFlags;
+			if ((typeFlags & HasErrorAnalysisResultFlag) == 0 && (prevTypeFlags & HasErrorAnalysisResultFlag) != 0)
+				this.PropertyChanged?.Invoke(this, new(nameof(HasErrorAnalysisResult)));
+			else if ((typeFlags & HasInformationAnalysisResultFlag) == 0 && (prevTypeFlags & HasInformationAnalysisResultFlag) != 0)
+				this.PropertyChanged?.Invoke(this, new(nameof(HasInformationAnalysisResult)));
+			else if ((typeFlags & HasWarningAnalysisResultFlag) == 0 && (prevTypeFlags & HasWarningAnalysisResultFlag) != 0)
+				this.PropertyChanged?.Invoke(this, new(nameof(HasWarningAnalysisResult)));
+			if (currentResultCount == 1)
+				this.PropertyChanged?.Invoke(this, new(nameof(HasAnalysisResult)));
+			
+			// update memory usage
+			this.memorySize += memorySizeDiff;
+			this.Group.OnAnalysisResultRemoved(this);
+			this.Group.OnDisplayableLogMemorySizeChanged(this, memorySizeDiff);
+		}
+
+
+		/// <summary>
+		/// Remove <see cref="DisplayableLogAnalysisResult"/>s from this log which were generated by given analyzer.
+		/// </summary>
+		/// <param name="analyzer"><see cref="DisplayableLogAnalysisResult"/> which generates results.</param>
+		public void RemoveAnalysisResults(IDisplayableLogAnalyzer<DisplayableLogAnalysisResult> analyzer)
+		{
+			// check state
+#if DEBUG
+			this.VerifyAccess();
+#endif
+			if (this.IsDisposed)
+				return;
+			var currentResultCount = this.analysisResults.Length;
+			if (currentResultCount == 0)
+				return;
+			
+			// remove from list
+			var memorySizeDiff = 0L;
+			for (var i = currentResultCount - 1; i >= 0; --i)
+			{
+				if (this.analysisResults[i].Analyzer == analyzer)
+				{
+					if (currentResultCount == 1)
+					{
+						this.analysisResults = emptyAnalysisResults;
+						this.readOnlyAnalysisResults = emptyAnalysisResults;
+						memorySizeDiff -= (2 * IntPtr.Size) + 4;
+					}
+					else if (i == 0)
+					{
+						var newList = new DisplayableLogAnalysisResult[currentResultCount - 1];
+						Array.Copy(this.analysisResults, 1, newList, 0, currentResultCount - 1);
+						this.analysisResults = newList;
+						memorySizeDiff -= IntPtr.Size;
+					}
+					else if (i == currentResultCount - 1)
+					{
+						var newList = new DisplayableLogAnalysisResult[currentResultCount - 1];
+						Array.Copy(this.analysisResults, 0, newList, 0, currentResultCount - 1);
+						this.analysisResults = newList;
+						memorySizeDiff -= IntPtr.Size;
+					}
+					else
+					{
+						var newList = new DisplayableLogAnalysisResult[currentResultCount - 1];
+						Array.Copy(this.analysisResults, 0, newList, 0, i);
+						Array.Copy(this.analysisResults, i + 1, newList, i, currentResultCount - i - 1);
+						this.analysisResults = newList;
+						memorySizeDiff -= IntPtr.Size;
+					}
+					--currentResultCount;
+				}
+			}
+			if (memorySizeDiff == 0)
+				return;
+			
+			// check type
+			var typeFlags = 0u;
+			var prevTypeFlags = (this.flags & HasAnalysisResultFlagMask);
+			for (var i = currentResultCount - 2; i >= 0; --i)
+			{
+				switch (this.analysisResults[i].Type)
+				{
+					case DisplayableLogAnalysisResultType.Error:
+						typeFlags |= HasErrorAnalysisResultFlag;
+						break;
+					case DisplayableLogAnalysisResultType.Information:
+						typeFlags |= HasInformationAnalysisResultFlag;
+						break;
+					case DisplayableLogAnalysisResultType.Warning:
+						typeFlags |= HasWarningAnalysisResultFlag;
+						break;
+				}
+			}
+			this.flags = (this.flags & ~HasAnalysisResultFlagMask) | typeFlags;
+			if ((typeFlags & HasErrorAnalysisResultFlag) == 0 && (prevTypeFlags & HasErrorAnalysisResultFlag) != 0)
+				this.PropertyChanged?.Invoke(this, new(nameof(HasErrorAnalysisResult)));
+			if ((typeFlags & HasInformationAnalysisResultFlag) == 0 && (prevTypeFlags & HasInformationAnalysisResultFlag) != 0)
+				this.PropertyChanged?.Invoke(this, new(nameof(HasInformationAnalysisResult)));
+			if ((typeFlags & HasWarningAnalysisResultFlag) == 0 && (prevTypeFlags & HasWarningAnalysisResultFlag) != 0)
+				this.PropertyChanged?.Invoke(this, new(nameof(HasWarningAnalysisResult)));
+			if (currentResultCount == 0)
+				this.PropertyChanged?.Invoke(this, new(nameof(HasAnalysisResult)));
+			
+			// update memory usage
+			this.memorySize += memorySizeDiff;
+			this.Group.OnAnalysisResultRemoved(this);
+			this.Group.OnDisplayableLogMemorySizeChanged(this, memorySizeDiff);
+		}
 
 
 		// Setup property map.

@@ -23,7 +23,7 @@ sealed class ConfigurationKeys
     /// <summary>
     /// Interval between each displayable log chunk processing in milliseconds.
     /// </summary>
-    public static readonly SettingKey<int> DisplayableLogChunkProcessingPaddingIntervalBackground = new(nameof(DisplayableLogChunkProcessingPaddingIntervalBackground), 1000);
+    public static readonly SettingKey<int> DisplayableLogChunkProcessingPaddingIntervalBackground = new(nameof(DisplayableLogChunkProcessingPaddingIntervalBackground), 300);
     /// <summary>
     /// Interval between each displayable log chunk processing in milliseconds.
     /// </summary>
@@ -35,7 +35,15 @@ sealed class ConfigurationKeys
     /// <summary>
     /// Size of chunk of displayable log processing.
     /// </summary>
-    public static readonly SettingKey<int> DisplayableLogChunkProcessingSize = new(nameof(DisplayableLogChunkProcessingSize), 16384);
+    public static readonly SettingKey<int> DisplayableLogChunkProcessingSizeBackground = new(nameof(DisplayableLogChunkProcessingSizeBackground), 1024);
+     /// <summary>
+    /// Size of chunk of displayable log processing.
+    /// </summary>
+    public static readonly SettingKey<int> DisplayableLogChunkProcessingSizeDefault = new(nameof(DisplayableLogChunkProcessingSizeDefault), 4096);
+     /// <summary>
+    /// Size of chunk of displayable log processing.
+    /// </summary>
+    public static readonly SettingKey<int> DisplayableLogChunkProcessingSizeRealtime = new(nameof(DisplayableLogChunkProcessingSizeRealtime), 16384);
     /// <summary>
     /// Delay before start processing displayable logs in milliseconds.
     /// </summary>

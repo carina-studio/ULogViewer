@@ -1,6 +1,9 @@
 using CarinaStudio.Collections;
+using CarinaStudio.Threading;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Linq;
 
 namespace CarinaStudio.ULogViewer.ViewModels.Analysis;
 
@@ -32,6 +35,23 @@ abstract class BaseDisplayableLogAnalyzer<TProcessingToken, TResult> : BaseDispl
     public IReadOnlyList<TResult> AnalysisResults { get; }
 
 
+    /// <inheritdoc/>
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            this.VerifyAccess();
+            if (this.analysisResults.IsNotEmpty())
+            {
+                foreach (var log in this.SourceLogs)
+                    log.RemoveAnalysisResults(this);
+                this.analysisResults.Clear();
+            }
+        }
+        base.Dispose(disposing);
+    }
+
+
     /// <summary>
     /// Invalidate and update message of all analysis results.
     /// </summary>
@@ -58,7 +78,11 @@ abstract class BaseDisplayableLogAnalyzer<TProcessingToken, TResult> : BaseDispl
         if (results.IsEmpty())
             return;
         for (var i = results.Count - 1; i >= 0; --i)
-            this.analysisResultsMemorySize += results[i].MemorySize;
+        {
+            var result = results[i];
+            this.analysisResultsMemorySize += result.MemorySize;
+            result.Log?.AddAnalysisResult(result);
+        }
         this.analysisResults.AddAll(results, true);
         this.OnPropertyChanged(nameof(MemorySize));
     }
@@ -81,12 +105,48 @@ abstract class BaseDisplayableLogAnalyzer<TProcessingToken, TResult> : BaseDispl
     /// <inheritdoc/>
     protected override void OnProcessingCancelled(TProcessingToken token)
     {
-        this.analysisResults.Clear();
+        if (this.analysisResults.IsNotEmpty())
+        {
+            foreach (var log in this.SourceLogs)
+                log.RemoveAnalysisResults(this);
+            this.analysisResults.Clear();
+        }
         if (this.analysisResultsMemorySize != 0L)
         {
             this.analysisResultsMemorySize = 0L;
             this.OnPropertyChanged(nameof(MemorySize));
         }
+    }
+
+
+    /// <inheritdoc/>
+    protected override void OnSourceLogsChanged(NotifyCollectionChangedEventArgs e)
+    {
+        switch (e.Action)
+        {
+            case NotifyCollectionChangedAction.Remove:
+            case NotifyCollectionChangedAction.Replace:
+                e.OldItems!.Cast<DisplayableLog>().Let(oldItems =>
+                {
+                    foreach (var log in oldItems)
+                    {
+                        if (log.HasAnalysisResult)
+                        {
+                            var results = log.AnalysisResults;
+                            for (var i = results.Count - 1; i >= 0; --i)
+                            {
+                                if (results[i].Analyzer == this)
+                                    this.analysisResults.Remove((TResult)results[i]);
+                            }
+                        }
+                    }
+                });
+                break;
+            case NotifyCollectionChangedAction.Reset:
+                this.analysisResults.Clear();
+                break;
+        }
+        base.OnSourceLogsChanged(e);
     }
 
 
