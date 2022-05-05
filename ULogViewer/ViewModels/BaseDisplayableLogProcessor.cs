@@ -103,6 +103,9 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
         // attach to source logs
         (sourceLogs as INotifyCollectionChanged)?.Let(it => 
             it.CollectionChanged += this.OnSourceLogsChanged);
+        
+        // start processing
+        this.InvalidateProcessing();
     }
 
 

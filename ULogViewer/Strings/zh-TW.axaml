@@ -447,6 +447,7 @@
 	<sys:String x:Key="String/SessionView.LogFiltersCombinationMode">篩選條件運算方式 (交集/聯集)</sys:String>
 	<sys:String x:Key="String/SessionView.LogLevelFilter.Description">使用等級篩選日誌</sys:String>
 	<sys:String x:Key="String/SessionView.LogProcessIdFilter.Description">使用處理程序 (Process ID) 篩選日誌</sys:String>
+	<sys:String x:Key="String/SessionView.LogsAnalysisProgress">分析日誌中…</sys:String>
 	<sys:String x:Key="String/SessionView.LogsDuration">日誌時間長度</sys:String>
 	<sys:String x:Key="String/SessionView.LogsDurationEndingPoint">最晚日誌時間/最大日誌時距</sys:String>
 	<sys:String x:Key="String/SessionView.LogsDurationStartingPoint">最早日誌時間/最小日誌時距</sys:String>

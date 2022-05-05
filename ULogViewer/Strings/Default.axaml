@@ -465,6 +465,7 @@
 	<sys:String x:Key="String/SessionView.LogFiltersCombinationMode">Way to combine conditions (Intersect/Union)</sys:String>
 	<sys:String x:Key="String/SessionView.LogLevelFilter.Description">Use level filter logs</sys:String>
 	<sys:String x:Key="String/SessionView.LogProcessIdFilter.Description">Use Process ID to filter logs</sys:String>
+	<sys:String x:Key="String/SessionView.LogsAnalysisProgress">Analyzing logs…</sys:String>
 	<sys:String x:Key="String/SessionView.LogsDuration">Duration of logs</sys:String>
 	<sys:String x:Key="String/SessionView.LogsDurationEndingPoint">Latest timestamp of log/Maximum time span of log</sys:String>
 	<sys:String x:Key="String/SessionView.LogsDurationStartingPoint">Earliest timestamp of log/Minimum time span of log</sys:String>

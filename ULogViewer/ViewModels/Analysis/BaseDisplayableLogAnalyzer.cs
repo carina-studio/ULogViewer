@@ -10,7 +10,7 @@ namespace CarinaStudio.ULogViewer.ViewModels.Analysis;
 /// <summary>
 /// Base implementation of <see cref="IDisplayableLogAnalyzer{TResult}"/>.
 /// </summary>
-abstract class BaseDisplayableLogAnalyzer<TProcessingToken, TResult> : BaseDisplayableLogProcessor<TProcessingToken, TResult>, IDisplayableLogAnalyzer<TResult> where TProcessingToken : class where TResult : DisplayableLogAnalysisResult
+abstract class BaseDisplayableLogAnalyzer<TProcessingToken, TResult> : BaseDisplayableLogProcessor<TProcessingToken, IList<TResult>>, IDisplayableLogAnalyzer<TResult> where TProcessingToken : class where TResult : DisplayableLogAnalysisResult
 {
     // Fields.
     readonly SortedObservableList<TResult> analysisResults;
@@ -18,7 +18,7 @@ abstract class BaseDisplayableLogAnalyzer<TProcessingToken, TResult> : BaseDispl
 
     
     /// <summary>
-    /// Initialize new <see cref="DisplayableLogAnalyzer"/> instance.
+    /// Initialize new <see cref="DisplayableLogAnalyzer{TProcessingToken, TResult}"/> instance.
     /// </summary>
     /// <param name="app">Application.</param>
     /// <param name="sourceLogs">Source list of logs.</param>
@@ -26,7 +26,13 @@ abstract class BaseDisplayableLogAnalyzer<TProcessingToken, TResult> : BaseDispl
     /// <param name="priority">Priority of logs processing.</param>
     protected BaseDisplayableLogAnalyzer(IULogViewerApplication app, IList<DisplayableLog> sourceLogs, Comparison<DisplayableLog> comparison, DisplayableLogProcessingPriority priority = DisplayableLogProcessingPriority.Default) : base(app, sourceLogs, comparison, priority)
     { 
-        this.analysisResults = new((lhs, rhs) => this.CompareSourceLogs(lhs.Log, rhs.Log));
+        this.analysisResults = new((lhs, rhs) => 
+        {
+            var result = this.CompareSourceLogs(lhs.Log, rhs.Log);
+            if (result != 0)
+                return result;
+            return lhs.Id - rhs.Id;
+        });
         this.AnalysisResults = (IReadOnlyList<TResult>)this.analysisResults.AsReadOnly();
     }
 
@@ -73,17 +79,21 @@ abstract class BaseDisplayableLogAnalyzer<TProcessingToken, TResult> : BaseDispl
 
 
     /// <inheritdoc/>
-    protected override void OnChunkProcessed(TProcessingToken token, List<DisplayableLog> logs, List<TResult> results)
+    protected override void OnChunkProcessed(TProcessingToken token, List<DisplayableLog> logs, List<IList<TResult>> results)
     {
         if (results.IsEmpty())
             return;
         for (var i = results.Count - 1; i >= 0; --i)
         {
-            var result = results[i];
-            this.analysisResultsMemorySize += result.MemorySize;
-            result.Log?.AddAnalysisResult(result);
+            var resultList = results[i];
+            for (var j = resultList.Count - 1; j >= 0; --j)
+            {
+                var result = resultList[j];
+                this.analysisResultsMemorySize += result.MemorySize;
+                result.Log?.AddAnalysisResult(result);
+            }
+            this.analysisResults.AddAll(resultList, true);
         }
-        this.analysisResults.AddAll(results, true);
         this.OnPropertyChanged(nameof(MemorySize));
     }
 
@@ -91,11 +101,20 @@ abstract class BaseDisplayableLogAnalyzer<TProcessingToken, TResult> : BaseDispl
     /// <inheritdoc/>
     protected override bool OnLogInvalidated(DisplayableLog log)
     {
-        var index = this.analysisResults.BinarySearch<TResult, DisplayableLog?>(log, it => it.Log, this.CompareSourceLogs);
+        var results = this.analysisResults;
+        var index = results.BinarySearch<TResult, DisplayableLog?>(log, it => it.Log, this.CompareSourceLogs);
         if (index >= 0)
         {
-            this.analysisResultsMemorySize -= this.analysisResults[index].MemorySize;
-            this.analysisResults.RemoveAt(index);
+            var startIndex = index;
+            var endIndex = index + 1;
+            var resultCount = results.Count;
+            while (startIndex > 0 && results[startIndex - 1].Log == log)
+                --startIndex;
+            while (endIndex < resultCount && results[endIndex].Log == log)
+                ++endIndex;
+            for (var i = endIndex - 1; i >= startIndex; --i)
+                this.analysisResultsMemorySize -= results[i].MemorySize;
+            results.RemoveRange(startIndex, endIndex - startIndex);
             this.OnPropertyChanged(nameof(MemorySize));
         }
         return false;
@@ -164,5 +183,66 @@ abstract class BaseDisplayableLogAnalyzer<TProcessingToken, TResult> : BaseDispl
             return true;
         }
         return false;
+    }
+}
+
+
+/// <summary>
+/// Base implementation of <see cref="IDisplayableLogAnalyzer{TResult}"/>.
+/// </summary>
+abstract class BaseDisplayableLogAnalyzer<TProcessingToken> : BaseDisplayableLogAnalyzer<TProcessingToken, DisplayableLogAnalysisResult> where TProcessingToken : class
+{
+    /// <summary>
+    /// Initialize new <see cref="DisplayableLogAnalyzer{TProcessingToken}"/> instance.
+    /// </summary>
+    /// <param name="app">Application.</param>
+    /// <param name="sourceLogs">Source list of logs.</param>
+    /// <param name="comparison"><see cref="Comparison{T}"/> which used on <paramref name="sourceLogs"/>.</param>
+    /// <param name="priority">Priority of logs processing.</param>
+    protected BaseDisplayableLogAnalyzer(IULogViewerApplication app, IList<DisplayableLog> sourceLogs, Comparison<DisplayableLog> comparison, DisplayableLogProcessingPriority priority = DisplayableLogProcessingPriority.Default) : base(app, sourceLogs, comparison, priority)
+    { 
+        this.EmptyResults = new DisplayableLogAnalysisResult[0];
+    }
+
+
+    /// <summary>
+    /// Get empty list of <see cref="DisplayableLogAnalysisResult"/>.
+    /// </summary>
+    protected IList<DisplayableLogAnalysisResult> EmptyResults { get; }
+
+
+    /// <inheritdoc/>
+    public override long MemorySize { get => base.MemorySize + IntPtr.Size + 4; }
+}
+
+
+/// <summary>
+/// Base implementation of <see cref="IDisplayableLogAnalyzer{TResult}"/>.
+/// </summary>
+abstract class BaseDisplayableLogAnalyzer : BaseDisplayableLogAnalyzer<object>
+{
+    /// <summary>
+    /// Initialize new <see cref="DisplayableLogAnalyzer"/> instance.
+    /// </summary>
+    /// <param name="app">Application.</param>
+    /// <param name="sourceLogs">Source list of logs.</param>
+    /// <param name="comparison"><see cref="Comparison{T}"/> which used on <paramref name="sourceLogs"/>.</param>
+    /// <param name="priority">Priority of logs processing.</param>
+    protected BaseDisplayableLogAnalyzer(IULogViewerApplication app, IList<DisplayableLog> sourceLogs, Comparison<DisplayableLog> comparison, DisplayableLogProcessingPriority priority = DisplayableLogProcessingPriority.Default) : base(app, sourceLogs, comparison, priority)
+    { }
+
+
+    /// <summary>
+    /// Called to check whether analyzing is needed or not.
+    /// </summary>
+    /// <returns>True if analyzing is needed.</returns>
+    protected abstract bool CheckIsAnalyzingNeeded();
+
+
+    /// <inheritdoc/>
+    protected override object CreateProcessingToken(out bool isProcessingNeeded)
+    {
+        isProcessingNeeded = this.CheckIsAnalyzingNeeded();
+        return new();
     }
 }

@@ -1,6 +1,7 @@
 using CarinaStudio.Threading;
 using System;
 using System.ComponentModel;
+using System.Threading;
 
 namespace CarinaStudio.ULogViewer.ViewModels.Analysis;
 
@@ -11,8 +12,10 @@ class DisplayableLogAnalysisResult : BaseApplicationObject<IULogViewerApplicatio
 {
     // Static fields.
     static readonly long DefaultMemorySize = (4 * IntPtr.Size) // Appliation, message, Analyzer, PropertyChanged
+        + 4 // Id
         + 4 // isMessageValid
         + 4; // Type
+    static int NextId = 1;
 
 
     // Fields.
@@ -29,6 +32,7 @@ class DisplayableLogAnalysisResult : BaseApplicationObject<IULogViewerApplicatio
     public DisplayableLogAnalysisResult(IDisplayableLogAnalyzer<DisplayableLogAnalysisResult> analyzer, DisplayableLogAnalysisResultType type, DisplayableLog? log) : base(analyzer.Application)
     {
         this.Analyzer = analyzer;
+        this.Id = Interlocked.Increment(ref NextId);
         this.Log = log;
         this.Type = type;
     }
@@ -38,6 +42,12 @@ class DisplayableLogAnalysisResult : BaseApplicationObject<IULogViewerApplicatio
     /// Get <see cref="IDisplayableLogAnalyzer"/> which generates this result.
     /// </summary>
     public IDisplayableLogAnalyzer<DisplayableLogAnalysisResult> Analyzer { get; }
+
+
+    /// <summary>
+    /// Get unique ID of result.
+    /// </summary>
+    public int Id { get; }
 
 
     /// <summary>

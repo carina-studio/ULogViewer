@@ -13,6 +13,7 @@ using CarinaStudio.ULogViewer.Logs;
 using CarinaStudio.ULogViewer.Logs.DataOutputs;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.ULogViewer.Logs.Profiles;
+using CarinaStudio.ULogViewer.ViewModels.Analysis;
 using CarinaStudio.ULogViewer.ViewModels.Categorizing;
 using CarinaStudio.ViewModels;
 using CarinaStudio.Windows.Input;
@@ -162,6 +163,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsActivatedProperty = ObservableProperty.Register<Session, bool>(nameof(IsActivated));
 		/// <summary>
+		/// Property of <see cref="IsAnalyzingLogs"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> IsAnalyzingLogsProperty = ObservableProperty.Register<Session, bool>(nameof(IsAnalyzingLogs));
+		/// <summary>
 		/// Property of <see cref="IsCopyingLogs"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsCopyingLogsProperty = ObservableProperty.Register<Session, bool>(nameof(IsCopyingLogs));
@@ -295,6 +300,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<IList<DisplayableLog>> LogsProperty = ObservableProperty.Register<Session, IList<DisplayableLog>>(nameof(Logs), new DisplayableLog[0]);
 		/// <summary>
+		/// Property of <see cref="LogsAnalysisProgress"/>.
+		/// </summary>
+		public static readonly ObservableProperty<double> LogsAnalysisProgressProperty = ObservableProperty.Register<Session, double>(nameof(LogsAnalysisProgress));
+		/// <summary>
 		/// Property of <see cref="LogsDuration"/>.
 		/// </summary>
 		public static readonly ObservableProperty<TimeSpan?> LogsDurationProperty = ObservableProperty.Register<Session, TimeSpan?>(nameof(LogsDuration));
@@ -375,9 +384,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
-		/// <see cref="IValueConverter"/> to convert from logs filtering progress to readable string.
+		/// <see cref="IValueConverter"/> to convert from logs operation progress to readable string.
 		/// </summary>
-		public static readonly IValueConverter LogsFilteringProgressConverter = new AppSuite.Converters.RatioToPercentageConverter(1);
+		public static readonly IValueConverter LogsOperationProgressConverter = new AppSuite.Converters.RatioToPercentageConverter(1);
 
 
 		/// <summary>
@@ -494,6 +503,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		const int DelaySaveMarkedLogs = 1000;
 		const int DisposeDisplayableLogsInterval = 100;
 		const int FileLogsReadingConcurrencyLevel = 1;
+		const int LogsAnalysisStateUpdateDelay = 300;
 		const int LogsTimeInfoReportingInterval = 500;
 
 
@@ -754,6 +764,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly ScheduledAction checkLogsMemoryUsageAction;
 		Comparison<DisplayableLog?> compareDisplayableLogsDelegate;
 		DisplayableLogGroup? displayableLogGroup;
+		readonly IDisplayableLogAnalyzer<DisplayableLogAnalysisResult>? dummyLogAnalyzer;
 		TaskFactory? fileLogsReadingTaskFactory;
 		readonly TimestampDisplayableLogCategorizer filteredLogsTimestampCategorizer;
 		bool hasLogDataSourceCreationFailure;
@@ -778,6 +789,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly ScheduledAction updateIsRemovingLogFilesAction;
 		readonly ScheduledAction updateIsProcessingLogsAction;
 		readonly ScheduledAction updateLogFilterAction;
+		readonly ScheduledAction updateLogsAnalysisStateAction;
 		readonly ScheduledAction updateTitleAndIconAction;
 
 
@@ -839,7 +851,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.updateLogFilterAction?.Reschedule();
 				};
 			});
-
+			
 			// create log filter
 			this.logFilter = new DisplayableLogFilter((IULogViewerApplication)this.Application, this.allLogs, this.CompareDisplayableLogs).Also(it =>
 			{
@@ -852,6 +864,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.filteredLogsTimestampCategorizer = new TimestampDisplayableLogCategorizer((IULogViewerApplication)this.Application, this.logFilter.FilteredLogs, this.CompareDisplayableLogs);
 			this.markedLogsTimestampCategorizer = new TimestampDisplayableLogCategorizer((IULogViewerApplication)this.Application, this.markedLogs, this.CompareDisplayableLogs);
 			this.SetValue(TimestampCategoriesProperty, this.allLogsTimestampCategorizer.Categories);
+
+			// create analyzers
+#if DEBUG
+			this.dummyLogAnalyzer = new DummyDisplayableLogAnalyzer((IULogViewerApplication)this.Application, this.allLogs, this.CompareDisplayableLogs).Also(it =>
+			{
+				it.PropertyChanged += this.OnLogAnalyzerPropertyChanged;
+			});
+#endif
 
 			// setup properties
 			this.AllLogs = new SafeReadOnlyList<DisplayableLog>(this.allLogs);
@@ -927,6 +947,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					+ this.logFilter.MemorySize
 					+ this.allLogsTimestampCategorizer.MemorySize
 					+ this.filteredLogsTimestampCategorizer.MemorySize
+					+ (this.dummyLogAnalyzer?.MemorySize).GetValueOrDefault()
 					+ this.markedLogsTimestampCategorizer.MemorySize;
 				this.SetValue(LogsMemoryUsageProperty, logsMemoryUsage);
 				totalLogsMemoryUsage += (logsMemoryUsage - prevLogsMemoryUsage);
@@ -1152,6 +1173,25 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				// cancel showing all.marked logs
 				this.SetValue(IsShowingAllLogsTemporarilyProperty, false);
 				this.SetValue(IsShowingMarkedLogsTemporarilyProperty, false);
+			});
+			this.updateLogsAnalysisStateAction = new(() =>
+			{
+				if (this.IsDisposed)
+					return;
+				var isAnalyzing = (this.dummyLogAnalyzer?.IsProcessing).GetValueOrDefault();
+				if (isAnalyzing)
+				{
+					var progress = 1.0;
+					(this.dummyLogAnalyzer?.Progress)?.Let(it =>
+						progress = Math.Min(progress, it));
+					this.SetValue(IsAnalyzingLogsProperty, true);
+					this.SetValue(LogsAnalysisProgressProperty, progress);
+				}
+				else
+				{
+					this.SetValue(IsAnalyzingLogsProperty, false);
+					this.SetValue(LogsAnalysisProgressProperty, 0);
+				}
 			});
 			this.updateTitleAndIconAction = new ScheduledAction(() =>
 			{
@@ -2056,6 +2096,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.SetValue(UriProperty, null);
 					this.SetValue(WorkingDirectoryNameProperty, null);
 					this.SetValue(WorkingDirectoryPathProperty, null);
+					this.updateLogsAnalysisStateAction.Reschedule();
 				}
 			}
 		}
@@ -2339,6 +2380,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Check whether session has been activated or not.
 		/// </summary>
 		public bool IsActivated { get => this.GetValue(IsActivatedProperty); }
+
+
+		/// <summary>
+		/// Check whether logs are being analyzed or not.
+		/// </summary>
+		public bool IsAnalyzingLogs { get => this.GetValue(IsAnalyzingLogsProperty); }
 
 
 		/// <summary>
@@ -2641,6 +2688,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Get progress of logs analysis.
+		/// </summary>
+		public double LogsAnalysisProgress { get => this.GetValue(LogsAnalysisProgressProperty); }
+
+
+		/// <summary>
 		/// Get duration of <see cref="Logs"/>.
 		/// </summary>
 		public TimeSpan? LogsDuration { get => this.GetValue(LogsDurationProperty); }
@@ -2890,6 +2943,19 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.reportLogsTimeInfoAction.Schedule(LogsTimeInfoReportingInterval);
 				}
 				this.SetValue(FilteredLogCountProperty, this.logFilter.FilteredLogs.Count);
+			}
+		}
+
+
+		// Called when property of log analyzer changed.
+		void OnLogAnalyzerPropertyChanged(object? sender, PropertyChangedEventArgs e)
+		{
+			switch (e.PropertyName)
+			{
+				case nameof(IDisplayableLogAnalyzer<DisplayableLogAnalysisResult>.IsProcessing):
+				case nameof(IDisplayableLogAnalyzer<DisplayableLogAnalysisResult>.Progress):
+					this.updateLogsAnalysisStateAction.Schedule(LogsAnalysisStateUpdateDelay);
+					break;
 			}
 		}
 
@@ -4379,6 +4445,15 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		/// <remarks>Type of command parameter is <see cref="string"/>.</remarks>
 		public ICommand SetWorkingDirectoryCommand { get; }
+
+
+		/// <summary>
+		/// For internal test only.
+		/// </summary>
+		internal void Test()
+		{
+			//
+		}
 
 
 		/// <summary>
