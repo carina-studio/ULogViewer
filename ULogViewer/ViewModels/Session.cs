@@ -769,6 +769,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly TimestampDisplayableLogCategorizer filteredLogsTimestampCategorizer;
 		bool hasLogDataSourceCreationFailure;
 		bool isRestoringState;
+		readonly SortedObservableList<DisplayableLogAnalysisResult> logAnalysisResults;
 		readonly Dictionary<LogReader, LogFileInfoImpl> logFileInfoMapByLogReader = new();
 		readonly SortedObservableList<LogFileInfo> logFileInfoList = new((lhs, rhs) =>
 			PathComparer.Default.Compare(lhs?.FileName, rhs?.FileName));
@@ -837,6 +838,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			{
 				it.CollectionChanged += this.OnAllLogsChanged;
 			});
+			this.logAnalysisResults = new((lhs, rhs) =>
+			{
+				var result = this.CompareDisplayableLogs(lhs.Log, rhs.Log);
+				if (result != 0)
+					return result;
+				return lhs.Id - rhs.Id;
+			});
 			this.markedLogs = new SortedObservableList<DisplayableLog>(this.CompareDisplayableLogs).Also(it =>
 			{
 				it.CollectionChanged += this.OnMarkedLogsChanged;
@@ -868,13 +876,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// create analyzers
 #if DEBUG
 			this.dummyLogAnalyzer = new DummyDisplayableLogAnalyzer((IULogViewerApplication)this.Application, this.allLogs, this.CompareDisplayableLogs).Also(it =>
-			{
-				it.PropertyChanged += this.OnLogAnalyzerPropertyChanged;
-			});
+				this.AttachToLogAnalyzer(it));
 #endif
 
 			// setup properties
 			this.AllLogs = new SafeReadOnlyList<DisplayableLog>(this.allLogs);
+			this.LogAnalysisResults = this.logAnalysisResults.AsReadOnly();
 			this.LogFiles = this.logFileInfoList.AsReadOnly();
 			this.SetValue(LogsProperty, this.AllLogs);
 			this.MarkedLogs = new SafeReadOnlyList<DisplayableLog>(this.markedLogs);
@@ -1370,6 +1377,22 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Check whether logs are sorted by one of <see cref="Log.BeginningTimestamp"/>, <see cref="Log.EndingTimestamp"/>, <see cref="Log.Timestamp"/> or not.
 		/// </summary>
 		public bool AreLogsSortedByTimestamp { get => this.GetValue(AreLogsSortedByTimestampProperty); }
+
+
+		// Attach to given log analyzer.
+		void AttachToLogAnalyzer(IDisplayableLogAnalyzer<DisplayableLogAnalysisResult> analyzer)
+		{
+			// add handlers
+			if (analyzer.AnalysisResults is INotifyCollectionChanged notifyCollectionChanged)
+				notifyCollectionChanged.CollectionChanged += this.OnLogAnalyzerAnalysisResultsChanged;
+			analyzer.PropertyChanged += this.OnLogAnalyzerPropertyChanged;
+
+			// add analysis results
+			this.logAnalysisResults.AddAll(analyzer.AnalysisResults, true);
+
+			// report state
+			this.updateLogsAnalysisStateAction?.Schedule();
+		}
 
 
 		/// <summary>
@@ -1967,6 +1990,22 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				if (this.Settings.GetValueOrDefault(SettingKeys.SaveMemoryAggressively))
 					this.Hibernate();
 			}
+		}
+
+
+		// Detach from given log analyzer.
+		void DetachFromLogAnalyzer(IDisplayableLogAnalyzer<DisplayableLogAnalysisResult> analyzer)
+		{
+			// remove handlers
+			if (analyzer.AnalysisResults is INotifyCollectionChanged notifyCollectionChanged)
+				notifyCollectionChanged.CollectionChanged -= this.OnLogAnalyzerAnalysisResultsChanged;
+			analyzer.PropertyChanged -= this.OnLogAnalyzerPropertyChanged;
+
+			// remove analysis results
+			this.logAnalysisResults.RemoveAll(analyzer.AnalysisResults, true);
+
+			// report state
+			this.updateLogsAnalysisStateAction?.Schedule();
 		}
 
 
@@ -2630,6 +2669,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Get list of result of log analysis.
+		/// </summary>
+		public IList<DisplayableLogAnalysisResult> LogAnalysisResults { get; }
+
+
+		/// <summary>
 		/// Get information of added log files.
 		/// </summary>
 		public IList<LogFileInfo> LogFiles { get; }
@@ -2943,6 +2988,35 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.reportLogsTimeInfoAction.Schedule(LogsTimeInfoReportingInterval);
 				}
 				this.SetValue(FilteredLogCountProperty, this.logFilter.FilteredLogs.Count);
+			}
+		}
+
+
+		// Called when analysis results of log analyzer changed.
+		void OnLogAnalyzerAnalysisResultsChanged(object? sender, NotifyCollectionChangedEventArgs e)
+		{
+			switch (e.Action)
+			{
+				case NotifyCollectionChangedAction.Add:
+					this.logAnalysisResults.AddAll(e.NewItems!.Cast<DisplayableLogAnalysisResult>(), true);
+					break;
+				case NotifyCollectionChangedAction.Remove:
+					this.logAnalysisResults.RemoveAll(e.OldItems!.Cast<DisplayableLogAnalysisResult>(), true);
+					break;
+				case NotifyCollectionChangedAction.Reset:
+					if (sender is IDisplayableLogAnalyzer<DisplayableLogAnalysisResult> analyzer)
+					{
+						this.logAnalysisResults.RemoveAll(it => it.Analyzer == analyzer);
+						this.logAnalysisResults.AddAll(analyzer.AnalysisResults, true);
+					}
+					break;
+				default:
+#if DEBUG
+					throw new NotSupportedException();
+#else
+					this.Logger.LogError($"Unsupported change action of list of log analysis result: {e.Action}");
+					break;
+#endif
 			}
 		}
 
