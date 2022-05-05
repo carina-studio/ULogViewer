@@ -460,12 +460,13 @@
 	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.Section2">on toolbar to select log profile to start</sys:String>
 	<sys:String x:Key="String/SessionView.LastLogsFilteringDuration">Filtering cost: </sys:String>
 	<sys:String x:Key="String/SessionView.LastLogsReadingDuration">Reading cost: </sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisPanel">Log Analysis</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisProgress">Analyzing logs…</sys:String>
 	<sys:String x:Key="String/SessionView.LogCountInLogFile">Log count:</sys:String>
 	<sys:String x:Key="String/SessionView.LogFilesPanel">Added log files</sys:String>
 	<sys:String x:Key="String/SessionView.LogFiltersCombinationMode">Way to combine conditions (Intersect/Union)</sys:String>
 	<sys:String x:Key="String/SessionView.LogLevelFilter.Description">Use level filter logs</sys:String>
 	<sys:String x:Key="String/SessionView.LogProcessIdFilter.Description">Use Process ID to filter logs</sys:String>
-	<sys:String x:Key="String/SessionView.LogsAnalysisProgress">Analyzing logs…</sys:String>
 	<sys:String x:Key="String/SessionView.LogsDuration">Duration of logs</sys:String>
 	<sys:String x:Key="String/SessionView.LogsDurationEndingPoint">Latest timestamp of log/Maximum time span of log</sys:String>
 	<sys:String x:Key="String/SessionView.LogsDurationStartingPoint">Earliest timestamp of log/Minimum time span of log</sys:String>
@@ -518,6 +519,7 @@
 	<sys:String x:Key="String/SessionView.TimestampCategoriesPanel">Categories of timestamp</sys:String>
 	<sys:String x:Key="String/SessionView.TooManyDirectoryPathsDropped">Please drag and drop single directory.</sys:String>
 	<sys:String x:Key="String/SessionView.TotalLogsMemoryUsage">Total memory usage of logs</sys:String>
+	<sys:String x:Key="String/SessionView.Tutorial.LogAnalysisPanel">View results of log analysis.</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.LogFilesPanel">View and manage added log files.</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.MarkedLogsPanel">List of marked logs.</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.SelectLogProfileToStart">Click here to select a log profile to start.</sys:String>

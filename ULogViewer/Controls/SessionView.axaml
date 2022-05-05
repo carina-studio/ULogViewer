@@ -782,10 +782,10 @@
 								<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Analysis}"/>
 							</DrawingImage>
 						</Image>
-						<TextBlock Classes="StatusBar_TextBlock" Text="{DynamicResource String/SessionView.LogsAnalysisProgress}"/>
+						<TextBlock Classes="StatusBar_TextBlock" Text="{DynamicResource String/SessionView.LogAnalysisProgress}"/>
 						<Panel VerticalAlignment="Center">
 							<TextBlock Classes="StatusBar_TextBlock" Text="00.0%" Opacity="0"/>
-							<TextBlock Classes="StatusBar_TextBlock" HorizontalAlignment="Left" Text="{Binding LogsAnalysisProgress, Converter={x:Static appViewModels:Session.LogsOperationProgressConverter}}"/>
+							<TextBlock Classes="StatusBar_TextBlock" HorizontalAlignment="Left" Text="{Binding LogAnalysisProgress, Converter={x:Static appViewModels:Session.LogsOperationProgressConverter}}"/>
 						</Panel>
 					</StackPanel>
 
@@ -997,6 +997,18 @@
 					</Panel>
 				</ToggleButton>
 
+				<!-- Log analysis -->
+				<ToggleButton Name="logAnalysisPanelButton" Classes="ToolBar_ToggleButton" IsChecked="{Binding IsLogAnalysisPanelVisible, Mode=TwoWay}" ToolTip.Tip="{DynamicResource String/SessionView.LogAnalysisPanel}">
+					<Panel>
+						<Image Classes="Icon" Source="{StaticResource Image/Icon.Analysis}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
+						<Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}">
+							<DrawingImage>
+								<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/Icon.Analysis}"/>
+							</DrawingImage>
+						</Image>
+					</Panel>
+				</ToggleButton>
+
 				<!-- Log files -->
 				<ToggleButton Name="logFilesPanelButton" Classes="ToolBar_ToggleButton" IsChecked="{Binding IsLogFilesPanelVisible, Mode=TwoWay}" ToolTip.Tip="{DynamicResource String/SessionView.LogFilesPanel}">
 					<Panel>
@@ -1016,6 +1028,7 @@
 		<Border Name="sidePanelContainer" Background="{DynamicResource Brush/WorkingArea.Panel.Background}" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Stretch" IsEnabled="{Binding $parent[UserControl].HasProfile}">
 			<Border.IsVisible>
 				<MultiBinding Converter="{x:Static aConverters:BoolConverters.Or}">
+					<Binding Path="IsLogAnalysisPanelVisible"/>
 					<Binding Path="IsLogFilesPanelVisible"/>
 					<Binding Path="IsMarkedLogsPanelVisible"/>
 					<Binding Path="IsTimestampCategoriesPanelVisible"/>
@@ -1070,6 +1083,25 @@
 								<Grid ColumnDefinitions="Auto,*">
 									<Border Background="{Binding Log.ColorIndicatorBrush}" BorderBrush="{DynamicResource Brush/WorkingArea.Panel.Background}" BorderThickness="{StaticResource Thickness/SessionView.LogListBox.ColorIndicator.Border}" IsVisible="{Binding $parent[UserControl].DataContext.HasLogColorIndicator}" ToolTip.Tip="{Binding Log.ColorIndicatorTip}" Width="{StaticResource Double/SessionView.LogListBox.ColorIndicator.Width}"/>
 									<TextBlock FontFamily="{Binding $parent[UserControl].LogFontFamily}" FontSize="{Binding $parent[UserControl].LogFontSize}" Grid.Column="1" Margin="{StaticResource Thickness/SessionView.MarkedLogListBox.Item.Padding}" Text="{Binding Name}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+								</Grid>
+							</DataTemplate>
+						</asControls:ListBox.ItemTemplate>
+					</asControls:ListBox>
+				</Grid>
+
+				<!-- Log analysis -->
+				<Grid HorizontalAlignment="Stretch" IsVisible="{Binding IsLogAnalysisPanelVisible}" RowDefinitions="Auto,*" VerticalAlignment="Stretch">
+					<Border Classes="SessionView_SidePanel_Header">
+						<Grid ColumnDefinitions="Auto,*">
+							<TextBlock Classes="SessionView_SidePanel_Header" Text="{DynamicResource String/SessionView.LogAnalysisPanel}"/>
+							<TextBlock Classes="SessionView_SidePanel_Header" Grid.Column="1" Text="{Binding LogAnalysisResults.Count, StringFormat={} ({0})}"/>
+						</Grid>
+					</Border>
+					<asControls:ListBox Name="logAnalysisResultListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" Focusable="False" Grid.Row="1" Items="{Binding LogAnalysisResults}">
+						<asControls:ListBox.ItemTemplate>
+							<DataTemplate>
+								<Grid ColumnDefinitions="Auto,*">
+									<TextBlock FontFamily="{Binding $parent[UserControl].LogFontFamily}" FontSize="{Binding $parent[UserControl].LogFontSize}" Grid.Column="1" Margin="{StaticResource Thickness/SessionView.MarkedLogListBox.Item.Padding}" Text="{Binding Message}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
 								</Grid>
 							</DataTemplate>
 						</asControls:ListBox.ItemTemplate>

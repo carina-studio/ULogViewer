@@ -10,7 +10,7 @@ namespace CarinaStudio.ULogViewer.Collections;
 /// Read-only <see cref="IList{T}"/> which returns Null or default value if getting item out of range.
 /// </summary>
 /// <typeparam name="T">Type of element.</typeparam>
-class SafeReadOnlyList<T> : IList, IList<T>, INotifyCollectionChanged, INotifyPropertyChanged
+class SafeReadOnlyList<T> : IList, IList<T>, INotifyCollectionChanged, INotifyPropertyChanged, IReadOnlyList<T>
 {
     // Fields.
     readonly IList<T> list;
@@ -129,4 +129,10 @@ class SafeReadOnlyList<T> : IList, IList<T>, INotifyCollectionChanged, INotifyPr
         set => throw new InvalidOperationException();
     }
 #pragma warning restore CS8768
+#pragma warning disable CS8603
+    T IReadOnlyList<T>.this[int index]
+    {
+        get => this[index];
+    }
+#pragma warning restore CS8603
 }

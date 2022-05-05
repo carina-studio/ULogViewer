@@ -1,3 +1,4 @@
+using CarinaStudio.Collections;
 using System;
 using System.Collections.Generic;
 
@@ -12,7 +13,7 @@ class DummyDisplayableLogAnalyzer : BaseDisplayableLogAnalyzer
     class Result : DisplayableLogAnalysisResult
     {
         // Constructor.
-        public Result(DummyDisplayableLogAnalyzer analyzer, DisplayableLog log) : base(analyzer, DisplayableLogAnalysisResultType.Information, log)
+        public Result(DummyDisplayableLogAnalyzer analyzer, DisplayableLog log) : base(analyzer, Enum.GetValues<DisplayableLogAnalysisResultType>().SelectRandomElement(), log)
         { }
 
         // Update message.

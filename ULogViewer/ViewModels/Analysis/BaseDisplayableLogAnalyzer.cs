@@ -15,6 +15,7 @@ abstract class BaseDisplayableLogAnalyzer<TProcessingToken, TResult> : BaseDispl
     // Fields.
     readonly SortedObservableList<TResult> analysisResults;
     long analysisResultsMemorySize;
+    readonly List<TResult> tempResults = new();
 
     
     /// <summary>
@@ -33,7 +34,7 @@ abstract class BaseDisplayableLogAnalyzer<TProcessingToken, TResult> : BaseDispl
                 return result;
             return lhs.Id - rhs.Id;
         });
-        this.AnalysisResults = (IReadOnlyList<TResult>)this.analysisResults.AsReadOnly();
+        this.AnalysisResults = new Collections.SafeReadOnlyList<TResult>(this.analysisResults);
     }
 
 
@@ -73,7 +74,6 @@ abstract class BaseDisplayableLogAnalyzer<TProcessingToken, TResult> : BaseDispl
     {
         get => base.MemorySize 
             + (this.analysisResults.Count + 1) * IntPtr.Size // analysisResults
-            + 8 // analysisResultsMemorySize
             + this.analysisResultsMemorySize;
     }
 
@@ -81,9 +81,10 @@ abstract class BaseDisplayableLogAnalyzer<TProcessingToken, TResult> : BaseDispl
     /// <inheritdoc/>
     protected override void OnChunkProcessed(TProcessingToken token, List<DisplayableLog> logs, List<IList<TResult>> results)
     {
-        if (results.IsEmpty())
+        var count = logs.Count;
+        if (count == 0)
             return;
-        for (var i = results.Count - 1; i >= 0; --i)
+        for (var i = 0; i < count; ++i)
         {
             var resultList = results[i];
             for (var j = resultList.Count - 1; j >= 0; --j)
@@ -92,8 +93,10 @@ abstract class BaseDisplayableLogAnalyzer<TProcessingToken, TResult> : BaseDispl
                 this.analysisResultsMemorySize += result.MemorySize;
                 result.Log?.AddAnalysisResult(result);
             }
-            this.analysisResults.AddAll(resultList, true);
+            this.tempResults.AddRange(resultList);
         }
+        this.analysisResults.AddAll(this.tempResults, true);
+        this.tempResults.Clear();
         this.OnPropertyChanged(nameof(MemorySize));
     }
 
