@@ -37,9 +37,7 @@
 	<sys:Double x:Key="Double/LogLevelMapEntryEditor.Width">300</sys:Double>
 
 	<!-- LogPatternEditorDialog -->
-	<sys:Double x:Key="Double/LogPatternEditorDialog.CapturedLogProperties.Height">150</sys:Double>
 	<sys:Double x:Key="Double/LogPatternEditorDialog.RegexInput.Height">100</sys:Double>
-	<sys:Double x:Key="Double/LogPatternEditorDialog.TestLogLine.Height">100</sys:Double>
 	<sys:Double x:Key="Double/LogPatternEditorDialog.Width">600</sys:Double>
 	
 	<!-- LogProfileEditorDialog -->

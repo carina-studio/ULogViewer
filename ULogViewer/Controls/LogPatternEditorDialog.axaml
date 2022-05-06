@@ -29,39 +29,12 @@
 		<!-- Content -->
 		<StackPanel Classes="Dialog_ContentPanel">
 
-			<!-- Regex -->
+			<!-- Pattern -->
 			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogPatternEditorDialog.Regex}"/>
-			<asControls:RegexTextBox Name="regexTextBox" Height="{DynamicResource Double/LogPatternEditorDialog.RegexInput.Height}" IgnoreCase="False" PropertyChanged="OnRegexTextBoxPropertyChanged" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" TextWrapping="Wrap"/>
-			<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogPatternEditorDialog.Regex.Description}"/>
-			<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/Common.RegularExpression.Reference}" Uri="{x:Static app:Uris.RegexReference}"/>
-			<Separator Classes="Dialog_Separator"/>
-
-			<!-- Test -->
-			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogPatternEditorDialog.TestLogLine}"/>
-			<TextBox Classes="Dialog_TextBox" Height="{DynamicResource Double/LogPatternEditorDialog.TestLogLine.Height}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" Text="{Binding $parent[Window].TestLogLine, Mode=TwoWay}" TextWrapping="Wrap" Watermark="{DynamicResource String/LogPatternEditorDialog.TestLogLine.Watermark}"/>
-			<Separator Classes="Dialog_Separator"/>
-			<StackPanel Orientation="Horizontal">
-				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogPatternEditorDialog.TestResult}" VerticalAlignment="Center"/>
-				<Separator Classes="Dialog_Separator_Small"/>
-				<Panel IsVisible="{Binding $parent[Window].HasTestResult}" VerticalAlignment="Center">
-					<TextBlock Classes="Dialog_TextBlock" HorizontalAlignment="Left" IsVisible="{Binding $parent[Window].TestResult}" Text="{DynamicResource String/LogPatternEditorDialog.TestResult.Success}" VerticalAlignment="Center"/>
-					<TextBlock Classes="Dialog_TextBlock" HorizontalAlignment="Left" IsVisible="{Binding !$parent[Window].TestResult}" Text="{DynamicResource String/LogPatternEditorDialog.TestResult.Failed}" VerticalAlignment="Center"/>
-				</Panel>
-			</StackPanel>
-			<ListBox Classes="Dialog_ListBox" Height="{DynamicResource Double/LogPatternEditorDialog.CapturedLogProperties.Height}" Items="{Binding $parent[Window].CapturedLogProperties}">
-				<ListBox.DataTemplates>
-					<DataTemplate>
-						<TextBlock>
-							<TextBlock.Text>
-								<MultiBinding StringFormat="{}{0} = {1}">
-									<Binding Path="Item1"/>
-									<Binding Path="Item2"/>
-								</MultiBinding>
-							</TextBlock.Text>
-						</TextBlock>
-					</DataTemplate>
-				</ListBox.DataTemplates>
-			</ListBox>
+			<Grid ColumnDefinitions="*,Auto">
+				<TextBox Name="patternTextBox" Height="{DynamicResource Double/LogPatternEditorDialog.RegexInput.Height}" IsReadOnly="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" TextWrapping="Wrap"/>
+				<Button Classes="BrowseButton" Command="{Binding $parent[Window].EditRegex}" Grid.Column="1" VerticalAlignment="Top"/>
+			</Grid>
 			<Separator Classes="Dialog_Separator"/>
 
 			<!-- Repeatable -->

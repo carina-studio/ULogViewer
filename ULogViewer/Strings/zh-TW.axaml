@@ -176,12 +176,6 @@
 	<sys:String x:Key="String/LogPatternEditorDialog.IsSkippable">此行可以被忽略</sys:String>
 	<sys:String x:Key="String/LogPatternEditorDialog.IsRepeatable">此行可以連續重複出現</sys:String>
 	<sys:String x:Key="String/LogPatternEditorDialog.Regex">格式 (必要)</sys:String>
-	<sys:String x:Key="String/LogPatternEditorDialog.Regex.Description">您可以使分組語法 "(?&lt;&gt;)" 以從原始日誌中擷取對應的日誌屬性</sys:String>
-	<sys:String x:Key="String/LogPatternEditorDialog.TestLogLine">測試日誌行</sys:String>
-	<sys:String x:Key="String/LogPatternEditorDialog.TestLogLine.Watermark">用以驗證格式與擷取的日誌屬性</sys:String>
-	<sys:String x:Key="String/LogPatternEditorDialog.TestResult">測試結果</sys:String>
-	<sys:String x:Key="String/LogPatternEditorDialog.TestResult.Failed">(不符合)</sys:String>
-	<sys:String x:Key="String/LogPatternEditorDialog.TestResult.Success">(符合)</sys:String>
 	<sys:String x:Key="String/LogPatternEditorDialog.Title">日誌行格式</sys:String>
 
 	<!-- LogProfileIcon -->

@@ -37,7 +37,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Static fields.
 		static readonly Regex DefaultRegexGroupNameRegex = new("^[\\d]+$");
 		static readonly AvaloniaProperty<bool> HasTestResultProperty = AvaloniaProperty.Register<RegexEditorDialog, bool>("HasTestResult");
-		static readonly AvaloniaProperty<bool> IsCapturingGroupEnabledProperty = AvaloniaProperty.Register<RegexEditorDialog, bool>(nameof(IsCapturingGroupEnabled));
+		static readonly AvaloniaProperty<bool> IsCapturingGroupsEnabledProperty = AvaloniaProperty.Register<RegexEditorDialog, bool>(nameof(IsCapturingGroupsEnabled));
 		static readonly AvaloniaProperty<string?> TestLogLineProperty = AvaloniaProperty.Register<RegexEditorDialog, string?>("TestLogLine");
 		static readonly AvaloniaProperty<bool> TestResultProperty = AvaloniaProperty.Register<RegexEditorDialog, bool>("TestResult");
 
@@ -57,7 +57,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			AvaloniaXamlLoader.Load(this);
 			this.regexTextBox = this.FindControl<RegexTextBox>(nameof(regexTextBox))!.Also(it =>
 			{
-				if (this.IsCapturingGroupEnabled)
+				if (this.IsCapturingGroupsEnabled)
 				{
 					foreach (var propertyName in LogPropertyNames)
 					{
@@ -128,10 +128,10 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Whether group capturing is enabled or not.
-		public bool IsCapturingGroupEnabled
+		public bool IsCapturingGroupsEnabled
 		{
-			get => this.GetValue<bool>(IsCapturingGroupEnabledProperty);
-			set => this.SetValue<bool>(IsCapturingGroupEnabledProperty, value);
+			get => this.GetValue<bool>(IsCapturingGroupsEnabledProperty);
+			set => this.SetValue<bool>(IsCapturingGroupsEnabledProperty, value);
 		}
 
 
