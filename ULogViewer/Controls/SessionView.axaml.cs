@@ -952,20 +952,23 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			var app = (App)this.Application;
 			var logPropertyCount = logProperties.Count;
-			var colorIndicatorBorderBrush = app.TryFindResource("Brush/WorkingArea.Background", out var rawResource) ? (IBrush)rawResource.AsNonNull() : null;
-			var colorIndicatorBorderThickness = app.TryFindResource("Thickness/SessionView.LogListBox.ColorIndicator.Border", out rawResource) ? (Thickness)rawResource.AsNonNull() : new Thickness();
-			var colorIndicatorWidth = app.TryFindResource("Double/SessionView.LogListBox.ColorIndicator.Width", out rawResource) ? (double)rawResource.AsNonNull() : 0.0;
-			var markIndicatorSize = app.TryFindResource("Double/SessionView.LogListBox.MarkIndicator.Size", out rawResource) ? (double)rawResource.AsNonNull() : 0.0;
-			var markIndicatorBorderThickness = app.TryFindResource("Thickness/SessionView.LogListBox.MarkIndicator.Border", out rawResource) ? (Thickness)rawResource.AsNonNull() : new Thickness();
-			var markIndicatorCornerRadius = app.TryFindResource("CornerRadius/SessionView.LogListBox.MarkIndicator.Border", out rawResource) ? (CornerRadius)rawResource.AsNonNull() : new CornerRadius(0);
-			var markIndicatorMargin = app.TryFindResource("Thickness/SessionView.LogListBox.MarkIndicator.Margin", out rawResource) ? (Thickness)rawResource.AsNonNull() : new Thickness(1);
+			var colorIndicatorBorderBrush = app.TryFindResource("Brush/WorkingArea.Background", out var rawResource) ? (IBrush?)rawResource : default;
+			var colorIndicatorBorderThickness = app.TryFindResource("Thickness/SessionView.LogListBox.ColorIndicator.Border", out rawResource) ? (Thickness)rawResource! : default;
+			var colorIndicatorWidth = app.TryFindResource("Double/SessionView.LogListBox.ColorIndicator.Width", out rawResource) ? (double)rawResource! : default;
+			var analysisResultIndicatorSize = app.TryFindResource("Double/SessionView.LogListBox.LogAnalysisResultIndicator.Size", out rawResource) ? (double)rawResource! : default;
+			var analysisResultIndicatorMargin = app.TryFindResource("Thickness/SessionView.LogListBox.LogAnalysisResultIndicator.Margin", out rawResource) ? (Thickness)rawResource! : default;
+			var analysisResultIndicatorWidth = (analysisResultIndicatorSize + analysisResultIndicatorMargin.Left + analysisResultIndicatorMargin.Right);
+			var markIndicatorSize = app.TryFindResource("Double/SessionView.LogListBox.MarkIndicator.Size", out rawResource) ? (double)rawResource! : default;
+			var markIndicatorBorderThickness = app.TryFindResource("Thickness/SessionView.LogListBox.MarkIndicator.Border", out rawResource) ? (Thickness)rawResource! : default;
+			var markIndicatorCornerRadius = app.TryFindResource("CornerRadius/SessionView.LogListBox.MarkIndicator.Border", out rawResource) ? (CornerRadius)rawResource! : default;
+			var markIndicatorMargin = app.TryFindResource("Thickness/SessionView.LogListBox.MarkIndicator.Margin", out rawResource) ? (Thickness)rawResource! : new Thickness(1);
 			var markIndicatorWidth = (markIndicatorSize + markIndicatorMargin.Left + markIndicatorMargin.Right);
-			var itemBorderThickness = app.TryFindResource("Thickness/SessionView.LogListBox.Item.Column.Border", out rawResource) ? (Thickness)rawResource.AsNonNull() : new Thickness(1);
-			var itemCornerRadius = app.TryFindResource("CornerRadius/SessionView.LogListBox.Item.Column.Border", out rawResource) ? (CornerRadius)rawResource.AsNonNull() : new CornerRadius(0);
-			var itemPadding = app.TryFindResource("Thickness/SessionView.LogListBox.Item.Padding", out rawResource) ? (Thickness)rawResource.AsNonNull() : new Thickness();
-			var propertyPadding = app.TryFindResource("Thickness/SessionView.LogListBox.Item.Property.Padding", out rawResource) ? (Thickness)rawResource.AsNonNull() : new Thickness();
-			var splitterWidth = app.TryFindResource("Double/GridSplitter.Thickness", out rawResource) ? (double)rawResource.AsNonNull() : 0.0;
-			var itemStartingContentWidth = markIndicatorWidth;
+			var itemBorderThickness = app.TryFindResource("Thickness/SessionView.LogListBox.Item.Column.Border", out rawResource) ? (Thickness)rawResource! : new Thickness(1);
+			var itemCornerRadius = app.TryFindResource("CornerRadius/SessionView.LogListBox.Item.Column.Border", out rawResource) ? (CornerRadius)rawResource! : default;
+			var itemPadding = app.TryFindResource("Thickness/SessionView.LogListBox.Item.Padding", out rawResource) ? (Thickness)rawResource! : default;
+			var propertyPadding = app.TryFindResource("Thickness/SessionView.LogListBox.Item.Property.Padding", out rawResource) ? (Thickness)rawResource! : default;
+			var splitterWidth = app.TryFindResource("Double/GridSplitter.Thickness", out rawResource) ? (double)rawResource! : default;
+			var itemStartingContentWidth = (analysisResultIndicatorWidth + markIndicatorWidth);
 			if (profile.ColorIndicator != LogColorIndicator.None)
 				itemStartingContentWidth += colorIndicatorWidth + colorIndicatorBorderThickness.Left + colorIndicatorBorderThickness.Right;
 			itemPadding = new Thickness(itemPadding.Left + itemStartingContentWidth, itemPadding.Top, itemPadding.Right, itemPadding.Bottom);
@@ -1135,100 +1138,154 @@ namespace CarinaStudio.ULogViewer.Controls
 					});
 				}
 
-				// mark indicator
-				itemPanel.Children.Add(new Panel().Also(panel =>
+				// indicators
+				itemPanel.Children.Add(new Panel().Also(indicatorsPanel =>
 				{
-					var isLeftPointerDown = false;
-					var isRightPointerDown = false;
-					var isMenuOpen = false;
-					panel.Children.Add(new Border().Also(selectionBackgroundBorder =>
+					// setup panel
+					indicatorsPanel.HorizontalAlignment = HorizontalAlignment.Left;
+					indicatorsPanel.Margin = new Thickness((profile.ColorIndicator != LogColorIndicator.None ? colorIndicatorWidth : 0), 0, 0, 0);
+					indicatorsPanel.VerticalAlignment = VerticalAlignment.Stretch;
+					indicatorsPanel.Width = (analysisResultIndicatorWidth + markIndicatorWidth);
+
+					// mark indicator
+					indicatorsPanel.Children.Add(new Panel().Also(panel =>
 					{
-						selectionBackgroundBorder.Bind(Border.BackgroundProperty, this.GetResourceObservable("Brush/SessionView.LogListBox.Item.SelectionIndicator.Background"));
-						selectionBackgroundBorder.Bind(Border.IsVisibleProperty, new Binding()
+						var isLeftPointerDown = false;
+						var isRightPointerDown = false;
+						var isMenuOpen = false;
+						panel.Children.Add(new Border().Also(selectionBackgroundBorder =>
 						{
-							RelativeSource = new RelativeSource(RelativeSourceMode.FindAncestor) { AncestorType = typeof(ListBoxItem) },
-							Path = nameof(ListBoxItem.IsSelected)
-						});
-					}));
-					var emptyMarker = new Border().Also(border =>
-					{
-						border.Bind(Border.BorderBrushProperty, this.GetResourceObservable("Brush/Icon"));
-						border.BorderThickness = markIndicatorBorderThickness;
-						border.CornerRadius = markIndicatorCornerRadius;
-						border.Height = markIndicatorSize;
-						border.IsVisible = false;
-						border.Margin = markIndicatorMargin;
-						border.Opacity = 0.5;
-						border.VerticalAlignment = VerticalAlignment.Center;
-						border.Width = markIndicatorSize;
-					});
-					panel.Background = Brushes.Transparent;
-					panel.Children.Add(emptyMarker);
-					panel.Children.Add(new Border().Also(border =>
-					{
-						border.Bind(Border.BackgroundProperty, new Binding() { Path = nameof(DisplayableLog.MarkedColor), Converter = Converters.MarkColorToIndicatorConverter.Default });
-						border.Bind(Border.BorderBrushProperty, this.GetResourceObservable("Brush/Icon"));
-						border.BorderThickness = markIndicatorBorderThickness;
-						border.CornerRadius = markIndicatorCornerRadius;
-						border.Height = markIndicatorSize;
-						border.Bind(Image.IsVisibleProperty, new Binding() { Path = nameof(DisplayableLog.IsMarked) });
-						border.Margin = markIndicatorMargin;
-						border.VerticalAlignment = VerticalAlignment.Center;
-						border.Width = markIndicatorSize;
-					}));
-					panel.Cursor = new Avalonia.Input.Cursor(StandardCursorType.Hand);
-					panel.HorizontalAlignment = HorizontalAlignment.Left;
-					panel.Margin = new Thickness((profile.ColorIndicator != LogColorIndicator.None ? colorIndicatorWidth : 0), 0, 0, 0);
-					panel.PointerEnter += (_, e) => emptyMarker.IsVisible = true;
-					panel.PointerLeave += (_, e) => emptyMarker.IsVisible = isMenuOpen;
-					panel.PointerPressed += (_, e) =>
-					{
-						var properties = e.GetCurrentPoint(panel).Properties;
-						isLeftPointerDown = properties.IsLeftButtonPressed;
-						isRightPointerDown = properties.IsRightButtonPressed;
-					};
-					panel.AddHandler(Panel.PointerReleasedEvent, (_, e) =>
-					{
-						if (isLeftPointerDown)
-						{
-							if (this.DataContext is Session session && itemPanel.DataContext is DisplayableLog log)
+							selectionBackgroundBorder.Bind(Border.BackgroundProperty, this.GetResourceObservable("Brush/SessionView.LogListBox.Item.SelectionIndicator.Background"));
+							selectionBackgroundBorder.Bind(Border.IsVisibleProperty, new Binding()
 							{
-								if (log.IsMarked)
-									session.UnmarkLogsCommand.TryExecute(new DisplayableLog[] { log });
-								else
+								RelativeSource = new RelativeSource(RelativeSourceMode.FindAncestor) { AncestorType = typeof(ListBoxItem) },
+								Path = nameof(ListBoxItem.IsSelected)
+							});
+						}));
+						var emptyMarker = new Border().Also(border =>
+						{
+							border.Bind(Border.BorderBrushProperty, this.GetResourceObservable("Brush/Icon"));
+							border.BorderThickness = markIndicatorBorderThickness;
+							border.CornerRadius = markIndicatorCornerRadius;
+							border.Height = markIndicatorSize;
+							border.IsVisible = false;
+							border.Margin = markIndicatorMargin;
+							border.Opacity = 0.5;
+							border.VerticalAlignment = VerticalAlignment.Center;
+							border.Width = markIndicatorSize;
+						});
+						panel.Background = Brushes.Transparent;
+						panel.Children.Add(emptyMarker);
+						panel.Children.Add(new Border().Also(border =>
+						{
+							border.Bind(Border.BackgroundProperty, new Binding() { Path = nameof(DisplayableLog.MarkedColor), Converter = Converters.MarkColorToIndicatorConverter.Default });
+							border.Bind(Border.BorderBrushProperty, this.GetResourceObservable("Brush/Icon"));
+							border.BorderThickness = markIndicatorBorderThickness;
+							border.CornerRadius = markIndicatorCornerRadius;
+							border.Height = markIndicatorSize;
+							border.Bind(Image.IsVisibleProperty, new Binding() { Path = nameof(DisplayableLog.IsMarked) });
+							border.Margin = markIndicatorMargin;
+							border.VerticalAlignment = VerticalAlignment.Center;
+							border.Width = markIndicatorSize;
+						}));
+						panel.Cursor = new Avalonia.Input.Cursor(StandardCursorType.Hand);
+						panel.HorizontalAlignment = HorizontalAlignment.Left;
+						panel.PointerEnter += (_, e) => emptyMarker.IsVisible = true;
+						panel.PointerLeave += (_, e) => emptyMarker.IsVisible = isMenuOpen;
+						panel.PointerPressed += (_, e) =>
+						{
+							var properties = e.GetCurrentPoint(panel).Properties;
+							isLeftPointerDown = properties.IsLeftButtonPressed;
+							isRightPointerDown = properties.IsRightButtonPressed;
+						};
+						panel.AddHandler(Panel.PointerReleasedEvent, (_, e) =>
+						{
+							if (isLeftPointerDown)
+							{
+								if (this.DataContext is Session session && itemPanel.DataContext is DisplayableLog log)
 								{
-									if (this.sidePanelContainer.IsVisible)
-										session.IsMarkedLogsPanelVisible = true;
-									session.MarkLogsCommand.TryExecute(new Session.MarkingLogsParams()
+									if (log.IsMarked)
+										session.UnmarkLogsCommand.TryExecute(new DisplayableLog[] { log });
+									else
 									{
-										Color = MarkColor.Default,
-										Logs = new DisplayableLog[] { log },
-									});
+										if (this.sidePanelContainer.IsVisible)
+											session.IsMarkedLogsPanelVisible = true;
+										session.MarkLogsCommand.TryExecute(new Session.MarkingLogsParams()
+										{
+											Color = MarkColor.Default,
+											Logs = new DisplayableLog[] { log },
+										});
+									}
 								}
 							}
-						}
-						else if (isRightPointerDown)
-						{
-							e.Handled = true;
-							var closedHandler = (EventHandler<RoutedEventArgs>?)null;
-							closedHandler = (sender, e2) =>
+							else if (isRightPointerDown)
 							{
-								this.logMarkingMenu.MenuClosed -= closedHandler;
-								isMenuOpen = false;
-								emptyMarker.IsVisible = panel.IsPointerOver;
-							};
-							isMenuOpen = true;
-							emptyMarker.IsVisible = true;
-							this.logMarkingMenu.MenuClosed += closedHandler;
-							this.logMarkingMenu.PlacementTarget = panel;
-							this.logMarkingMenu.Open(panel);
-						}
-						isLeftPointerDown = false;
-						isRightPointerDown = false;
-					}, RoutingStrategies.Tunnel);
-					panel.Bind(ToolTip.TipProperty, this.GetResourceObservable("String/SessionView.MarkUnmarkLog"));
-					panel.VerticalAlignment = VerticalAlignment.Stretch;
-					panel.Width = markIndicatorWidth;
+								e.Handled = true;
+								var closedHandler = (EventHandler<RoutedEventArgs>?)null;
+								closedHandler = (sender, e2) =>
+								{
+									this.logMarkingMenu.MenuClosed -= closedHandler;
+									isMenuOpen = false;
+									emptyMarker.IsVisible = panel.IsPointerOver;
+								};
+								isMenuOpen = true;
+								emptyMarker.IsVisible = true;
+								this.logMarkingMenu.MenuClosed += closedHandler;
+								this.logMarkingMenu.PlacementTarget = panel;
+								this.logMarkingMenu.Open(panel);
+							}
+							isLeftPointerDown = false;
+							isRightPointerDown = false;
+						}, RoutingStrategies.Tunnel);
+						panel.Bind(ToolTip.TipProperty, this.GetResourceObservable("String/SessionView.MarkUnmarkLog"));
+						panel.VerticalAlignment = VerticalAlignment.Stretch;
+						panel.Width = markIndicatorWidth;
+					}));
+
+					// analysis result indicator
+					indicatorsPanel.Children.Add(new Panel().Also(panel =>
+					{
+						panel.Height = analysisResultIndicatorSize;
+						panel.HorizontalAlignment = HorizontalAlignment.Right;
+						panel.Margin = analysisResultIndicatorMargin;
+						panel.VerticalAlignment = VerticalAlignment.Center;
+						panel.Width = analysisResultIndicatorSize;
+						panel.Children.Add(new Border().Also(background =>
+						{
+							var isLeftPointerDown = false;
+							background.Background = Brushes.Transparent;
+							background.Cursor = new Avalonia.Input.Cursor(StandardCursorType.Hand);
+							background.Bind(Border.IsVisibleProperty, new Binding() { Path = "HasAnalysisResult" });
+							background.PointerPressed += (_, e) =>
+								isLeftPointerDown = e.GetCurrentPoint(background).Properties.IsLeftButtonPressed;
+							background.AddHandler(Border.PointerReleasedEvent, (_, e) =>
+							{
+								if (isLeftPointerDown)
+								{
+									isLeftPointerDown = false;
+									// jump to analysis results
+								}
+							}, RoutingStrategies.Tunnel);
+						}));
+						panel.Children.Add(new Image().Also(image =>
+						{
+							image.Classes.Add("Icon");
+							image.Bind(Image.IsVisibleProperty, new Binding() { Path = "HasErrorAnalysisResult" });
+							image.Source = app.TryFindResource<IImage>("Image/Icon.Error.Outline.Colored", out var res) ? res : default;
+						}));
+						panel.Children.Add(new Image().Also(image =>
+						{
+							image.Classes.Add("Icon");
+							image.Bind(Image.IsVisibleProperty, new Binding() { Path = "HasInformationAnalysisResult" });
+							image.Source = app.TryFindResource<IImage>("Image/Icon.Information.Outline.Colored", out var res) ? res : default;
+						}));
+						panel.Children.Add(new Image().Also(image =>
+						{
+							image.Classes.Add("Icon");
+							image.Bind(Image.IsVisibleProperty, new Binding() { Path = "HasWarningAnalysisResult" });
+							image.Source = app.TryFindResource<IImage>("Image/Icon.Warning.Outline.Colored", out var res) ? res : default;
+						}));
+					}));
 				}));
 
 				// complete
@@ -1988,12 +2045,14 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// build headers
 			var app = (App)this.Application;
-			var markIndicatorSize = app.TryFindResource("Double/SessionView.LogListBox.MarkIndicator.Size", out var rawResource) ? (double)rawResource.AsNonNull() : 0.0;
-			var markIndicatorMargin = app.TryFindResource("Thickness/SessionView.LogListBox.MarkIndicator.Margin", out rawResource) ? (Thickness)rawResource.AsNonNull() : new Thickness();
-			var splitterWidth = app.TryFindResource("Double/GridSplitter.Thickness", out rawResource) ? (double)rawResource.AsNonNull() : 0.0;
-			var minHeaderWidth = app.TryFindResource("Double/SessionView.LogHeader.MinWidth", out rawResource) ? (double)rawResource.AsNonNull() : 0.0;
-			var itemPadding = app.TryFindResource("Thickness/SessionView.LogListBox.Item.Padding", out rawResource) ? (Thickness)rawResource.AsNonNull() : new Thickness();
-			var colorIndicatorWidth = app.TryFindResource("Double/SessionView.LogListBox.ColorIndicator.Width", out rawResource) ? (double)rawResource.AsNonNull() : 0.0;
+			var analysisResultIndicatorSize = app.TryFindResource("Double/SessionView.LogListBox.LogAnalysisResultIndicator.Size", out var rawResource) ? (double)rawResource! : default;
+			var analysisResultIndicatorMargin = app.TryFindResource("Thickness/SessionView.LogListBox.LogAnalysisResultIndicator.Margin", out rawResource) ? (Thickness)rawResource! : default;
+			var markIndicatorSize = app.TryFindResource("Double/SessionView.LogListBox.MarkIndicator.Size", out rawResource) ? (double)rawResource! : default;
+			var markIndicatorMargin = app.TryFindResource("Thickness/SessionView.LogListBox.MarkIndicator.Margin", out rawResource) ? (Thickness)rawResource! : default;
+			var splitterWidth = app.TryFindResource("Double/GridSplitter.Thickness", out rawResource) ? (double)rawResource! : default;
+			var minHeaderWidth = app.TryFindResource("Double/SessionView.LogHeader.MinWidth", out rawResource) ? (double)rawResource! : default;
+			var itemPadding = app.TryFindResource("Thickness/SessionView.LogListBox.Item.Padding", out rawResource) ? (Thickness)rawResource! : default;
+			var colorIndicatorWidth = app.TryFindResource("Double/SessionView.LogListBox.ColorIndicator.Width", out rawResource) ? (double)rawResource! : default;
 			var headerTemplate = (DataTemplate)this.DataTemplates.First(it => it is DataTemplate dt && dt.DataType == typeof(DisplayableLogProperty));
 			var columIndexOffset = 0;
 			if (profile.ColorIndicator != LogColorIndicator.None)
@@ -2011,12 +2070,32 @@ namespace CarinaStudio.ULogViewer.Controls
 					border.Child = new Image().Also(image =>
 					{
 						image.Classes.Add("Icon");
-						if (app.TryFindResource("Image/Marked", out rawResource))
+						if (app.TryFindResource("Image/Mark", out rawResource))
 							image.Source = (rawResource as IImage);
 					});
 					border.Height = markIndicatorSize;
 					border.Margin = markIndicatorMargin;
 					border.Width = markIndicatorSize;
+					border.VerticalAlignment = VerticalAlignment.Center;
+				}));
+				++columIndexOffset;
+			}
+			if (analysisResultIndicatorSize > 0)
+			{
+				this.logHeaderGrid.ColumnDefinitions.Add(new ColumnDefinition(analysisResultIndicatorSize + analysisResultIndicatorMargin.Left + analysisResultIndicatorMargin.Right, GridUnitType.Pixel));
+				this.logHeaderGrid.Children.Add(new Border().Also(border =>
+				{
+					Grid.SetColumn(border, columIndexOffset);
+					border.Classes.Add("Icon");
+					border.Child = new Image().Also(image =>
+					{
+						image.Classes.Add("Icon");
+						if (app.TryFindResource("Image/Icon.Analysis", out rawResource))
+							image.Source = (rawResource as IImage);
+					});
+					border.Height = analysisResultIndicatorSize;
+					border.Margin = analysisResultIndicatorMargin;
+					border.Width = analysisResultIndicatorSize;
 					border.VerticalAlignment = VerticalAlignment.Center;
 				}));
 				++columIndexOffset;

@@ -1101,6 +1101,11 @@
 						<asControls:ListBox.ItemTemplate>
 							<DataTemplate>
 								<Grid ColumnDefinitions="Auto,*">
+									<Panel Height="{StaticResource Double/SessionView.LogAnalysisResult.Icon.Size}" Margin="{StaticResource Thickness/SessionView.LogAnalysisResult.Icon.Margin}" VerticalAlignment="Center" Width="{StaticResource Double/SessionView.LogAnalysisResult.Icon.Size}">
+										<Image Classes="Icon" IsVisible="{Binding IsError}" Source="{StaticResource Image/Icon.Error.Outline.Colored}"/>
+										<Image Classes="Icon" IsVisible="{Binding IsInformation}" Source="{StaticResource Image/Icon.Information.Outline.Colored}"/>
+										<Image Classes="Icon" IsVisible="{Binding IsWarning}" Source="{StaticResource Image/Icon.Warning.Outline.Colored}"/>
+									</Panel>
 									<TextBlock FontFamily="{Binding $parent[UserControl].LogFontFamily}" FontSize="{Binding $parent[UserControl].LogFontSize}" Grid.Column="1" Margin="{StaticResource Thickness/SessionView.MarkedLogListBox.Item.Padding}" Text="{Binding Message}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
 								</Grid>
 							</DataTemplate>

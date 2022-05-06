@@ -66,6 +66,24 @@ class DisplayableLogAnalysisResult : BaseApplicationObject<IULogViewerApplicatio
             }
         }
     }
+
+
+    /// <summary>
+    /// Check whether type of result is <see cref="DisplayableLogAnalysisResultType.Error"/> or not.
+    /// </summary>
+    public bool IsError { get => this.Type == DisplayableLogAnalysisResultType.Error; }
+
+
+    /// <summary>
+    /// Check whether type of result is <see cref="DisplayableLogAnalysisResultType.Information"/> or not.
+    /// </summary>
+    public bool IsInformation { get => this.Type == DisplayableLogAnalysisResultType.Information; }
+
+
+    /// <summary>
+    /// Check whether type of result is <see cref="DisplayableLogAnalysisResultType.Warning"/> or not.
+    /// </summary>
+    public bool IsWarning { get => this.Type == DisplayableLogAnalysisResultType.Warning; }
     
 
     /// <summary>

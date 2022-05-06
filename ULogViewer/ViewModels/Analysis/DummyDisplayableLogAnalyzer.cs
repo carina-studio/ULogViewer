@@ -18,7 +18,7 @@ class DummyDisplayableLogAnalyzer : BaseDisplayableLogAnalyzer
 
         // Update message.
         protected override string? OnUpdateMessage() =>
-            $"Message of dummy result, log: {this.Log}";
+            $"Result #{this.Id}";
     }
 
 
@@ -48,7 +48,7 @@ class DummyDisplayableLogAnalyzer : BaseDisplayableLogAnalyzer
     /// <inheritdoc/>
     protected override bool OnProcessLog(object token, DisplayableLog log, out IList<DisplayableLogAnalysisResult> result)
     {
-        if ((log.Message?.Length).GetValueOrDefault() > 100)
+        if ((log.Message?.Length).GetValueOrDefault() > 200)
         {
             result = new DisplayableLogAnalysisResult[] { new Result(this, log) };
             return true;
