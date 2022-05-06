@@ -23,6 +23,7 @@ using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ULogViewer.ViewModels;
+using CarinaStudio.ULogViewer.ViewModels.Analysis;
 using CarinaStudio.ULogViewer.ViewModels.Categorizing;
 using CarinaStudio.Windows.Input;
 using Microsoft.Extensions.Logging;
@@ -96,12 +97,14 @@ namespace CarinaStudio.ULogViewer.Controls
 		static readonly AvaloniaProperty<DateTime?> EarliestSelectedLogTimestampProperty = AvaloniaProperty.Register<SessionView, DateTime?>(nameof(EarliestSelectedLogTimestamp));
 		static readonly AvaloniaProperty<bool> HasLogProfileProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(HasLogProfile), false);
 		static readonly AvaloniaProperty<bool> HasSelectedLogsDurationProperty = AvaloniaProperty.Register<SessionView, bool>("HasSelectedLogsDuration", false);
+		static readonly SettingKey<bool> IsCancelShowingMarkedLogsForLogAnalysisResultTutorialShownKey = new("SessionView.IsCancelShowingMarkedLogsForLogAnalysisResultTutorialShown");
 		static readonly AvaloniaProperty<bool> IsProcessInfoVisibleProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(IsProcessInfoVisible), false);
 		static readonly AvaloniaProperty<bool> IsScrollingToLatestLogNeededProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(IsScrollingToLatestLogNeeded), true);
 		static readonly SettingKey<bool> IsLogAnalysisPanelTutorialShownKey = new("SessionView.IsLogAnalysisPanelTutorialShown");
 		static readonly SettingKey<bool> IsLogFilesPanelTutorialShownKey = new("SessionView.IsLogFilesPanelTutorialShown");
 		static readonly SettingKey<bool> IsMarkedLogsPanelTutorialShownKey = new("SessionView.IsMarkedLogsPanelTutorialShown");
 		static readonly SettingKey<bool> IsSelectingLogProfileToStartTutorialShownKey = new("SessionView.IsSelectingLogProfileToStartTutorialShown");
+		static readonly SettingKey<bool> IsShowAllLogsForLogAnalysisResultTutorialShownKey = new("SessionView.IsShowAllLogsForLogAnalysisResultTutorialShown");
 		static readonly SettingKey<bool> IsSwitchingSidePanelsTutorialShownKey = new("SessionView.IsSwitchingSidePanelsTutorialShown");
 		static readonly SettingKey<bool> IsTimestampCategoriesPanelTutorialShownKey = new("SessionView.IsTimestampCategoriesPanelTutorialShown");
 		static readonly AvaloniaProperty<DateTime?> LatestSelectedLogTimestampProperty = AvaloniaProperty.Register<SessionView, DateTime?>(nameof(LatestSelectedLogTimestamp));
@@ -161,6 +164,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		bool keepSidePanelVisible;
 		Control? lastClickedLogPropertyView;
 		readonly ContextMenu logActionMenu;
+		readonly Avalonia.Controls.ListBox logAnalysisResultListBox;
 		readonly ContextMenu logFileActionMenu;
 		readonly AppSuite.Controls.ListBox logFileListBox;
 		readonly List<ColumnDefinition> logHeaderColumns = new List<ColumnDefinition>();
@@ -332,6 +336,10 @@ namespace CarinaStudio.ULogViewer.Controls
 						this.showLogPropertyMenuItem.Header = this.Application.GetString("SessionView.ShowLogProperty.Disabled");
 					}
 				};
+			});
+			this.logAnalysisResultListBox = this.FindControl<Avalonia.Controls.ListBox>(nameof(logAnalysisResultListBox))!.Also(it =>
+			{
+				it.SelectionChanged += this.OnLogAnalysisResultListBoxSelectionChanged;
 			});
 			this.logFileActionMenu = ((ContextMenu)this.Resources[nameof(logFileActionMenu)].AsNonNull()).Also(it =>
 			{
@@ -1263,27 +1271,43 @@ namespace CarinaStudio.ULogViewer.Controls
 								if (isLeftPointerDown)
 								{
 									isLeftPointerDown = false;
-									// jump to analysis results
+									if (itemPanel.DataContext is DisplayableLog log)
+										this.OnLogAnalysisResultIndicatorClicked(log);
 								}
 							}, RoutingStrategies.Tunnel);
 						}));
-						panel.Children.Add(new Image().Also(image =>
+						var errorIndicatorIcon = new Image().Also(image =>
 						{
 							image.Classes.Add("Icon");
 							image.Bind(Image.IsVisibleProperty, new Binding() { Path = "HasErrorAnalysisResult" });
+							image.Name = "errorIndicatorIcon";
 							image.Source = app.TryFindResource<IImage>("Image/Icon.Error.Outline.Colored", out var res) ? res : default;
-						}));
-						panel.Children.Add(new Image().Also(image =>
+						});
+						var warningIndicatorIcon = new Image().Also(image =>
 						{
 							image.Classes.Add("Icon");
-							image.Bind(Image.IsVisibleProperty, new Binding() { Path = "HasInformationAnalysisResult" });
-							image.Source = app.TryFindResource<IImage>("Image/Icon.Information.Outline.Colored", out var res) ? res : default;
-						}));
-						panel.Children.Add(new Image().Also(image =>
-						{
-							image.Classes.Add("Icon");
-							image.Bind(Image.IsVisibleProperty, new Binding() { Path = "HasWarningAnalysisResult" });
+							image.Bind(Image.IsVisibleProperty, new MultiBinding().Also(it =>
+							{
+								it.Converter = Avalonia.Data.Converters.BoolConverters.And;
+								it.Bindings.Add(new Binding() { Path = "HasWarningAnalysisResult" });
+								it.Bindings.Add(new Binding() { Path = "!IsVisible", Source = errorIndicatorIcon });
+							}));
+							image.Name = "warningIndicatorIcon";
 							image.Source = app.TryFindResource<IImage>("Image/Icon.Warning.Outline.Colored", out var res) ? res : default;
+						});
+						panel.Children.Add(errorIndicatorIcon);
+						panel.Children.Add(warningIndicatorIcon);
+						panel.Children.Add(new Image().Also(image =>
+						{
+							image.Classes.Add("Icon");
+							image.Bind(Image.IsVisibleProperty, new MultiBinding().Also(it =>
+							{
+								it.Converter = Avalonia.Data.Converters.BoolConverters.And;
+								it.Bindings.Add(new Binding() { Path = "HasInformationAnalysisResult" });
+								it.Bindings.Add(new Binding() { Path = "!IsVisible", Source = errorIndicatorIcon });
+								it.Bindings.Add(new Binding() { Path = "!IsVisible", Source = warningIndicatorIcon });
+							}));
+							image.Source = app.TryFindResource<IImage>("Image/Icon.Information.Outline.Colored", out var res) ? res : default;
 						}));
 					}));
 				}));
@@ -2273,6 +2297,107 @@ namespace CarinaStudio.ULogViewer.Controls
             base.OnGotFocus(e);
 			this.Logger.LogTrace("Got focus");
         }
+
+
+		// Called when user clicked the indicator of log analysis result.
+		void OnLogAnalysisResultIndicatorClicked(DisplayableLog log)
+		{
+			if (this.DataContext is not Session session)
+				return;
+			var firstResult = (DisplayableLogAnalysisResult?)null;
+			this.logAnalysisResultListBox.SelectedItems.Clear();
+			foreach (var result in log.AnalysisResults)
+			{
+				firstResult ??= result;
+				this.logAnalysisResultListBox.SelectedItems.Add(result);
+			}
+			if (firstResult != null)
+			{
+				session.IsLogAnalysisPanelVisible = true;
+				this.logAnalysisResultListBox.ScrollIntoView(firstResult);
+			}
+		}
+
+
+		// Called when log analysis result list box selection changed.
+		void OnLogAnalysisResultListBoxSelectionChanged(object? sender, SelectionChangedEventArgs e)
+		{
+			this.SynchronizationContext.Post(() =>
+			{
+				var count = this.logAnalysisResultListBox.SelectedItems.Count;
+				if (count == 0)
+					return;
+				if (count == 1 
+					&& this.logAnalysisResultListBox.SelectedItem is DisplayableLogAnalysisResult result
+					&& this.DataContext is Session session)
+				{
+					result.Log?.Let(new Func<DisplayableLog, Task>(async (log) =>
+					{
+						// show all logs if needed
+						if (!session.Logs.Contains(log))
+						{
+							// cancel showing marked logs only
+							var isLogFound = false;
+							var window = this.attachedWindow as MainWindow;
+							if (session.IsShowingMarkedLogsTemporarily)
+							{
+								// cancel showing marked logs only
+								if (!session.ToggleShowingMarkedLogsTemporarilyCommand.TryExecute())
+									return;
+								await Task.Yield();
+								
+								// show tutorial
+								isLogFound = session.Logs.Contains(log);
+								if (isLogFound 
+									&& !this.PersistentState.GetValueOrDefault(IsCancelShowingMarkedLogsForLogAnalysisResultTutorialShownKey)
+									&& window != null)
+								{
+									window.ShowTutorial(new Tutorial().Also(it =>
+									{
+										it.Anchor = this.FindControl<Control>("showMarkedLogsOnlyButton");
+										it.Bind(Tutorial.DescriptionProperty, this.GetResourceObservable("String/SessionView.Tutorial.CancelShowingMarkedLogsOnlyForSelectingLogAnalysisResult"));
+										it.Dismissed += (_, e) =>
+											this.PersistentState.SetValue<bool>(IsCancelShowingMarkedLogsForLogAnalysisResultTutorialShownKey, true);
+										it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb.Colored");
+										it.IsSkippingAllTutorialsAllowed = false;
+									}));
+								}
+							}
+
+							// show all logs
+							if (!isLogFound)
+							{
+								// show all logs
+								if (session.IsShowingMarkedLogsTemporarily || !session.ToggleShowingAllLogsTemporarilyCommand.TryExecute())
+									return;
+								await Task.Yield();
+								
+								// show tutorial
+								if (!this.PersistentState.GetValueOrDefault(IsShowAllLogsForLogAnalysisResultTutorialShownKey)
+									&& window != null)
+								{
+									window.ShowTutorial(new Tutorial().Also(it =>
+									{
+										it.Anchor = this.FindControl<Control>("showAllLogsTemporarilyButton");
+										it.Bind(Tutorial.DescriptionProperty, this.GetResourceObservable("String/SessionView.Tutorial.ShowAllLogsTemporarilyForSelectingLogAnalysisResult"));
+										it.Dismissed += (_, e) =>
+											this.PersistentState.SetValue<bool>(IsShowAllLogsForLogAnalysisResultTutorialShownKey, true);
+										it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb.Colored");
+										it.IsSkippingAllTutorialsAllowed = false;
+									}));
+								}
+							}
+						}
+
+						// select log
+						this.logListBox.SelectedItems.Clear();
+						this.logListBox.SelectedItem = log;
+						this.logListBox.ScrollIntoView(log);
+					}));
+				}
+				this.logListBox.Focus();
+			});
+		}
 
 
 		// Called when selected item of log category changed.

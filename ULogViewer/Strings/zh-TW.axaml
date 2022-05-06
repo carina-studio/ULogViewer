@@ -502,10 +502,12 @@
 	<sys:String x:Key="String/SessionView.TimestampCategoriesPanel">時間戳記分組</sys:String>
 	<sys:String x:Key="String/SessionView.TooManyDirectoryPathsDropped">請拖放單一目錄。</sys:String>
 	<sys:String x:Key="String/SessionView.TotalLogsMemoryUsage">總日誌記憶體使用量</sys:String>
+	<sys:String x:Key="String/SessionView.Tutorial.CancelShowingMarkedLogsOnlyForSelectingLogAnalysisResult">由於目前的列表不包含分析結果之日誌，因此必須取消只顯示已標記的日誌。您可以自行將其開啟。</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.LogAnalysisPanel">檢視日誌的分析結果。</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.LogFilesPanel">檢視及管理已加入的日誌檔案。</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.MarkedLogsPanel">已標記的日誌列表。</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.SelectLogProfileToStart">點一下這裡以選取日誌類型並開始使用。</sys:String>
+	<sys:String x:Key="String/SessionView.Tutorial.ShowAllLogsTemporarilyForSelectingLogAnalysisResult">由於目前的列表不包含分析結果之日誌，因此必須暫時顯示所有日誌。您可以自行將其關閉。</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.SwitchSidePanels">從這裡切換側邊面板內容或關閉面板。</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.TimestampCategoriesPanel">根據時間戳記的日誌分組列表。</sys:String>
 	<sys:String x:Key="String/SessionView.UIResponseDuration">使用者介面回應時間</sys:String>

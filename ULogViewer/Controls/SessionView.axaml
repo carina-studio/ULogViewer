@@ -586,7 +586,7 @@
 						</Button>
 
 						<!-- Show marked logs only -->
-						<ToggleButton Classes="ToolBar_ToggleButton" Command="{Binding ToggleShowingMarkedLogsTemporarilyCommand}" IsChecked="{Binding IsShowingMarkedLogsTemporarily}" ToolTip.Tip="{DynamicResource String/SessionView.ShowMarkedLogsTemporarily}">
+						<ToggleButton Name="showMarkedLogsOnlyButton" Classes="ToolBar_ToggleButton" Command="{Binding ToggleShowingMarkedLogsTemporarilyCommand}" IsChecked="{Binding IsShowingMarkedLogsTemporarily}" ToolTip.Tip="{DynamicResource String/SessionView.ShowMarkedLogsTemporarily}">
 							<Panel>
 								<Image Classes="Icon" Source="{StaticResource Image/MarkedOnly}" IsVisible="{Binding !IsShowingMarkedLogsTemporarily}"/>
 								<Image Classes="Icon" Source="{StaticResource Image/MarkedOnly.Light}" IsVisible="{Binding IsShowingMarkedLogsTemporarily}"/>
@@ -594,7 +594,7 @@
 						</ToggleButton>
 
 						<!-- Show all logs temporarily -->
-						<ToggleButton Classes="ToolBar_ToggleButton" Command="{Binding ToggleShowingAllLogsTemporarilyCommand}" IsChecked="{Binding IsShowingAllLogsTemporarily}" ToolTip.Tip="{DynamicResource String/SessionView.ShowAllLogsTemporarily}">
+						<ToggleButton Name="showAllLogsTemporarilyButton" Classes="ToolBar_ToggleButton" Command="{Binding ToggleShowingAllLogsTemporarilyCommand}" IsChecked="{Binding IsShowingAllLogsTemporarily}" ToolTip.Tip="{DynamicResource String/SessionView.ShowAllLogsTemporarily}">
 							<Panel>
 								<Image Classes="Icon" Source="{StaticResource Image/Visibility}" IsVisible="{Binding !IsShowingAllLogsTemporarily}"/>
 								<Image Classes="Icon" Source="{StaticResource Image/Visibility.Light}" IsVisible="{Binding IsShowingAllLogsTemporarily}"/>
@@ -1097,7 +1097,7 @@
 							<TextBlock Classes="SessionView_SidePanel_Header" Grid.Column="1" Text="{Binding LogAnalysisResults.Count, StringFormat={} ({0})}"/>
 						</Grid>
 					</Border>
-					<asControls:ListBox Name="logAnalysisResultListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" Focusable="False" Grid.Row="1" Items="{Binding LogAnalysisResults}">
+					<asControls:ListBox Name="logAnalysisResultListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" Focusable="False" Grid.Row="1" Items="{Binding LogAnalysisResults}" SelectionMode="Multiple">
 						<asControls:ListBox.ItemTemplate>
 							<DataTemplate>
 								<Grid ColumnDefinitions="Auto,Auto,*">
