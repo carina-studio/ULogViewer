@@ -1,0 +1,76 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+		xmlns:abControls="using:CarinaStudio.Controls"
+		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
+        xmlns:app="using:CarinaStudio.ULogViewer"
+        xmlns:appControls="clr-namespace:CarinaStudio.ULogViewer.Controls;assembly=ULogViewer"
+        xmlns:appConverters="clr-namespace:CarinaStudio.ULogViewer.Converters;assembly=ULogViewer"
+        xmlns:appLogs="clr-namespace:CarinaStudio.ULogViewer.Logs;assembly=ULogViewer"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="CarinaStudio.ULogViewer.Controls.RegexEditorDialog"
+        Classes="Dialog"
+        Title="{DynamicResource String/RegexEditorDialog.Title}"
+        Width="{DynamicResource Double/RegexEditorDialog.Width}">
+	
+	<!-- Content -->
+	<DockPanel>
+
+		<!-- Control buttons -->
+		<Border Classes="Dialog_ControlButtonsPanel">
+			<StackPanel Classes="Dialog_ControlButtonsPanel">
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].GenerateResultCommand}" Content="{DynamicResource String/Common.OK}"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].Close}" Content="{DynamicResource String/Common.Cancel}"/>
+			</StackPanel>
+		</Border>
+
+		<!-- Content -->
+		<StackPanel Classes="Dialog_ContentPanel">
+
+			<!-- Regex -->
+			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/RegexEditorDialog.Regex}"/>
+			<asControls:RegexTextBox Name="regexTextBox" Height="{DynamicResource Double/RegexEditorDialog.RegexInput.Height}" IgnoreCase="False" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" TextWrapping="Wrap"/>
+			<TextBlock Classes="Dialog_TextBlock_Description" IsVisible="{Binding $parent[Window].IsCapturingGroupEnabled}" Text="{DynamicResource String/RegexEditorDialog.Regex.Description}"/>
+			<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/Common.RegularExpression.Reference}" Uri="{x:Static app:Uris.RegexReference}"/>
+			<Separator Classes="Dialog_Separator"/>
+
+			<!-- Ignore case -->
+			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/RegexEditorDialog.IgnoreCase}"/>
+			<ToggleSwitch Classes="Dialog_ToggleSwitch" IsChecked="{Binding #regexTextBox.IgnoreCase, Mode=TwoWay}"/>
+			<Separator Classes="Dialog_Separator"/>
+
+			<!-- Test -->
+			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/RegexEditorDialog.TestLogLine}"/>
+			<TextBox Classes="Dialog_TextBox" Height="{DynamicResource Double/RegexEditorDialog.TestLogLine.Height}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" Text="{Binding $parent[Window].TestLogLine, Mode=TwoWay}" TextWrapping="Wrap" Watermark="{DynamicResource String/RegexEditorDialog.TestLogLine.Watermark}"/>
+			<Separator Classes="Dialog_Separator"/>
+			<StackPanel Orientation="Horizontal">
+				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/RegexEditorDialog.TestResult}" VerticalAlignment="Center"/>
+				<Separator Classes="Dialog_Separator_Small"/>
+				<Panel IsVisible="{Binding $parent[Window].HasTestResult}" VerticalAlignment="Center">
+					<TextBlock Classes="Dialog_TextBlock" HorizontalAlignment="Left" IsVisible="{Binding $parent[Window].TestResult}" Text="{DynamicResource String/RegexEditorDialog.TestResult.Success}" VerticalAlignment="Center"/>
+					<TextBlock Classes="Dialog_TextBlock" HorizontalAlignment="Left" IsVisible="{Binding !$parent[Window].TestResult}" Text="{DynamicResource String/RegexEditorDialog.TestResult.Failed}" VerticalAlignment="Center"/>
+				</Panel>
+			</StackPanel>
+			<ListBox Classes="Dialog_ListBox" Height="{DynamicResource Double/RegexEditorDialog.CapturedGroups.Height}" IsVisible="{Binding $parent[Window].IsCapturingGroupEnabled}" Items="{Binding $parent[Window].CapturedGroups}">
+				<ListBox.DataTemplates>
+					<DataTemplate>
+						<TextBlock>
+							<TextBlock.Text>
+								<MultiBinding StringFormat="{}{0} = {1}">
+									<Binding Path="Item1"/>
+									<Binding Path="Item2"/>
+								</MultiBinding>
+							</TextBlock.Text>
+						</TextBlock>
+					</DataTemplate>
+				</ListBox.DataTemplates>
+			</ListBox>
+			<TextBlock Classes="Dialog_TextBlock_Description" IsVisible="{Binding !$parent[Window].IsCapturingGroupEnabled}" Text="{DynamicResource String/RegexEditorDialog.CapturingGroupsDisabled}"/>
+			
+		</StackPanel>
+		
+	</DockPanel>
+	
+</Window>

@@ -87,6 +87,12 @@
 	<!-- PredefinedLogTextFilterEditorDialog -->
 	<sys:Double x:Key="Double/PredefinedLogTextFilterEditorDialog.RegexInput.Height">100</sys:Double>
 	<sys:Double x:Key="Double/PredefinedLogTextFilterEditorDialog.Width">500</sys:Double>
+
+	<!-- RegexEditorDialog -->
+	<sys:Double x:Key="Double/RegexEditorDialog.CapturedGroups.Height">150</sys:Double>
+	<sys:Double x:Key="Double/RegexEditorDialog.RegexInput.Height">100</sys:Double>
+	<sys:Double x:Key="Double/RegexEditorDialog.TestLogLine.Height">100</sys:Double>
+	<sys:Double x:Key="Double/RegexEditorDialog.Width">600</sys:Double>
 	
 	<!-- SessionView -->
 	<CornerRadius x:Key="CornerRadius/SessionView.LogListBox.Item.Column.Border">4</CornerRadius>

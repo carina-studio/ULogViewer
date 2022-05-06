@@ -765,12 +765,13 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			var logPatterns = new List<LogPattern>();
 			foreach (var logPatternElement in logPatternsElement.EnumerateArray())
 			{
-				var regex = new Regex(logPatternElement.GetProperty("Regex").GetString().AsNonNull());
+				var ignoreCase = logPatternElement.TryGetProperty(nameof(RegexOptions.IgnoreCase), out var jsonProperty) && jsonProperty.ValueKind == JsonValueKind.True;
+				var regex = new Regex(logPatternElement.GetProperty("Regex").GetString()!, ignoreCase ? RegexOptions.IgnoreCase : RegexOptions.None);
 				var isRepeatable = false;
 				var isSkippable = false;
-				if (logPatternElement.TryGetProperty("IsRepeatable", out var jsonProperty))
+				if (logPatternElement.TryGetProperty(nameof(LogPattern.IsRepeatable), out jsonProperty))
 					isRepeatable = jsonProperty.GetBoolean();
-				if (logPatternElement.TryGetProperty("IsSkippable", out jsonProperty))
+				if (logPatternElement.TryGetProperty(nameof(LogPattern.IsSkippable), out jsonProperty))
 					isSkippable = jsonProperty.GetBoolean();
 				logPatterns.Add(new LogPattern(regex, isRepeatable, isSkippable));
 			}
@@ -1127,6 +1128,8 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			{
 				writer.WriteStartObject();
 				writer.WriteString(nameof(LogPattern.Regex), pattern.Regex.ToString());
+				if ((pattern.Regex.Options & RegexOptions.IgnoreCase) != 0)
+					writer.WriteBoolean(nameof(RegexOptions.IgnoreCase), true);
 				if (pattern.IsRepeatable)
 					writer.WriteBoolean(nameof(LogPattern.IsRepeatable), true);
 				if (pattern.IsSkippable)
