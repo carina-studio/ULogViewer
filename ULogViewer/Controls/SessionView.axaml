@@ -756,7 +756,7 @@
 					<!-- Filtering progress -->
 					<StackPanel Name="filterProgressStatusBarItem" Grid.Column="0" IsVisible="{Binding IsFilteringLogs}" Orientation="Horizontal">
 						<Separator Classes="StatusBar_Separator"/>
-						<Image Classes="StatusBar_Icon">
+						<Image Classes="StatusBar_IconWithText">
 							<DrawingImage>
 								<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Filter.Outline}"/>
 							</DrawingImage>
@@ -777,9 +777,9 @@
 							</MultiBinding>
 						</StackPanel.IsVisible>
 						<Separator Classes="StatusBar_Separator"/>
-						<Image Classes="StatusBar_Icon">
+						<Image Classes="StatusBar_IconWithText">
 							<DrawingImage>
-								<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Analysis}"/>
+								<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Analysis.Outline}"/>
 							</DrawingImage>
 						</Image>
 						<TextBlock Classes="StatusBar_TextBlock" Text="{DynamicResource String/SessionView.LogAnalysisProgress}"/>
@@ -792,7 +792,7 @@
 					<!-- Saving logs -->
 					<StackPanel Grid.Column="1" IsVisible="{Binding IsSavingLogs}" Orientation="Horizontal">
 						<Separator Classes="StatusBar_Separator"/>
-						<Image Classes="StatusBar_Icon">
+						<Image Classes="StatusBar_IconWithText">
 							<DrawingImage>
 								<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Save.Outline}"/>
 							</DrawingImage>
@@ -803,7 +803,7 @@
 					<!-- Waiting for data sources -->
 					<StackPanel Grid.Column="2" IsVisible="{Binding IsWaitingForDataSources}" Orientation="Horizontal">
 						<Separator Classes="StatusBar_Separator"/>
-						<Image Classes="StatusBar_Icon">
+						<Image Classes="StatusBar_IconWithText">
 							<DrawingImage>
 								<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Waiting.Outline}"/>
 							</DrawingImage>
@@ -814,7 +814,7 @@
 					<!-- URI -->
 					<StackPanel Grid.Column="3" IsVisible="{Binding HasUri}" Orientation="Horizontal">
 						<Separator Classes="StatusBar_Separator"/>
-						<Image Classes="StatusBar_Icon">
+						<Image Classes="StatusBar_IconWithText">
 							<DrawingImage>
 								<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/LogProfile.Network}"/>
 							</DrawingImage>
@@ -833,7 +833,7 @@
 					<!-- IP endpoint -->
 					<StackPanel Grid.Column="3" IsVisible="{Binding HasIPEndPoint}" Orientation="Horizontal">
 						<Separator Classes="StatusBar_Separator"/>
-						<Image Classes="StatusBar_Icon">
+						<Image Classes="StatusBar_IconWithText">
 							<DrawingImage>
 								<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/LogProfile.Network}"/>
 							</DrawingImage>
@@ -846,7 +846,7 @@
 						<Separator Classes="StatusBar_Separator"/>
 						<ToggleButton Name="workingDirectoryActionsButton" Classes="StatusBar_ToggleButton" Command="{Binding $parent[UserControl].ShowWorkingDirectoryActions}" ToolTip.Placement="Left" ToolTip.Tip="{Binding WorkingDirectoryPath}">
 							<StackPanel Orientation="Horizontal">
-								<Image Classes="StatusBar_Icon">
+								<Image Classes="StatusBar_IconWithText">
 									<DrawingImage>
 										<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Folder.Outline}"/>
 									</DrawingImage>
@@ -864,7 +864,7 @@
 					<!-- Error message -->
 					<StackPanel Grid.Column="5" IsVisible="{Binding HasAllDataSourceErrors}" Orientation="Horizontal">
 						<Separator Classes="StatusBar_Separator"/>
-						<Image Classes="StatusBar_Icon">
+						<Image Classes="StatusBar_IconWithText">
 							<DrawingImage>
 								<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Error.Outline}"/>
 							</DrawingImage>
@@ -872,7 +872,7 @@
 						<TextBlock Classes="StatusBar_TextBlock" Text="{DynamicResource String/SessionView.HasAllDataSourceErrors}"/>
 					</StackPanel>
 					<StackPanel Grid.Column="5" IsVisible="{Binding HasPartialDataSourceErrors}" Orientation="Horizontal">
-						<Image Classes="StatusBar_Icon">
+						<Image Classes="StatusBar_IconWithText">
 							<DrawingImage>
 								<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Warning.Outline}"/>
 							</DrawingImage>
@@ -884,7 +884,7 @@
 					<StackPanel Grid.Column="6" IsVisible="{Binding $parent[UserControl].IsProcessInfoVisible}" Orientation="Horizontal">
 						<Separator Classes="StatusBar_Separator"/>
 						<StackPanel IsVisible="{Binding $parent[UserControl].Application.IsDebugMode, Mode=OneTime}" Orientation="Horizontal">
-							<Image Classes="StatusBar_Icon" ToolTip.Tip="{DynamicResource String/SessionView.CpuUsage}">
+							<Image Classes="StatusBar_IconWithText" ToolTip.Tip="{DynamicResource String/SessionView.CpuUsage}">
 								<DrawingImage>
 									<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Speed.Outline}"/>
 								</DrawingImage>
@@ -894,7 +894,7 @@
 								<TextBlock Classes="StatusBar_TextBlock" Background="{x:Static Brushes.Transparent}" HorizontalAlignment="Left" VerticalAlignment="Center" Text="{Binding $parent[UserControl].Application.ProcessInfo.UIResponseDuration, Converter={x:Static asConverters:TimeSpanConverter.Default}}" ToolTip.Placement="Left" ToolTip.Tip="{DynamicResource String/SessionView.UIResponseDuration}"/>
 							</Panel>
 						</StackPanel>
-						<Image Classes="StatusBar_Icon" ToolTip.Tip="{DynamicResource String/SessionView.CpuUsage}">
+						<Image Classes="StatusBar_IconWithText" ToolTip.Tip="{DynamicResource String/SessionView.CpuUsage}">
 							<DrawingImage>
 								<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Cpu.Outline}"/>
 							</DrawingImage>
@@ -904,7 +904,7 @@
 							<TextBlock Classes="StatusBar_TextBlock" Background="{x:Static Brushes.Transparent}" HorizontalAlignment="Left" Text="{Binding $parent[UserControl].Application.ProcessInfo.CpuUsagePercentage, StringFormat={}{0:F1} %}" ToolTip.Placement="Left" ToolTip.Tip="{DynamicResource String/SessionView.CpuUsage}"/>
 						</Panel>
 						<StackPanel Orientation="Horizontal">
-							<Image Classes="StatusBar_Icon" ToolTip.Tip="{DynamicResource String/SessionView.MemoryUsage}">
+							<Image Classes="StatusBar_IconWithText" ToolTip.Tip="{DynamicResource String/SessionView.MemoryUsage}">
 								<DrawingImage>
 									<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Memory.Outline}"/>
 								</DrawingImage>
