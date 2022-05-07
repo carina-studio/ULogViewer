@@ -4,6 +4,7 @@ using Avalonia.Data;
 using Avalonia.Markup.Xaml;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.Collections;
+using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs;
 using System;
@@ -20,6 +21,10 @@ namespace CarinaStudio.ULogViewer.Controls
 	/// </summary>
 	partial class RegexEditorDialog : InputDialog<IULogViewerApplication>
 	{
+		/// <summary>
+		/// Key for checking whether tutorial of "click button to edit pattern" has been shown before or not.
+		/// </summary>
+		public static readonly SettingKey<bool> IsClickButtonToEditPatternTutorialShownKey = new("RegexEditorDialog.IsClickButtonToEditPatternTutorialShown");
 		/// <summary>
 		/// List of property names of log.
 		/// </summary>

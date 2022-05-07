@@ -1,6 +1,9 @@
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using Avalonia.Media;
 using CarinaStudio.AppSuite.Controls;
+using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs;
 using System;
@@ -80,7 +83,23 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.repeatableSwitch.IsChecked = logPattern.IsRepeatable;
 				this.skippableSwitch.IsChecked = logPattern.IsSkippable;
 			}
-			this.SynchronizationContext.Post(this.patternTextBox.Focus);
+			if (!this.Application.PersistentState.GetValueOrDefault(RegexEditorDialog.IsClickButtonToEditPatternTutorialShownKey))
+			{
+				this.FindControl<TutorialPresenter>("tutorialPresenter")!.ShowTutorial(new Tutorial().Also(it =>
+				{
+					it.Anchor = this.FindControl<Control>("editPatternButton");
+					it.Bind(Tutorial.DescriptionProperty, this.GetResourceObservable("String/RegexEditorDialog.Tutorial.ClickButtonToEditPattern"));
+					it.Dismissed += (_, e) =>
+					{
+						this.Application.PersistentState.SetValue<bool>(RegexEditorDialog.IsClickButtonToEditPatternTutorialShownKey, true);
+						this.patternTextBox.Focus();
+					};
+					it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb.Colored");
+					it.IsSkippingAllTutorialsAllowed = false;
+				}));
+			}
+			else
+				this.SynchronizationContext.Post(this.patternTextBox.Focus);
 		}
 
 

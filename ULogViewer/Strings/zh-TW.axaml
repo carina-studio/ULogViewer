@@ -411,6 +411,7 @@
 	<sys:String x:Key="String/RegexEditorDialog.TestResult.Failed">(不符合)</sys:String>
 	<sys:String x:Key="String/RegexEditorDialog.TestResult.Success">(符合)</sys:String>
 	<sys:String x:Key="String/RegexEditorDialog.Title">編輯格式</sys:String>
+	<sys:String x:Key="String/RegexEditorDialog.Tutorial.ClickButtonToEditPattern">點一下這裡以編輯格式。</sys:String>
 
 	<!-- Session -->
 	<sys:String x:Key="String/Session.Empty">空白分頁</sys:String>

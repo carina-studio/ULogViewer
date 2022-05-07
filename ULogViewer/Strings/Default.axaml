@@ -429,6 +429,7 @@
 	<sys:String x:Key="String/RegexEditorDialog.TestResult.Failed">(Not matched)</sys:String>
 	<sys:String x:Key="String/RegexEditorDialog.TestResult.Success">(Matched)</sys:String>
 	<sys:String x:Key="String/RegexEditorDialog.Title">Edit pattern</sys:String>
+	<sys:String x:Key="String/RegexEditorDialog.Tutorial.ClickButtonToEditPattern">Click here to edit the pattern.</sys:String>
 
 	<!-- Session -->
 	<sys:String x:Key="String/Session.Empty">Empty Tab</sys:String>

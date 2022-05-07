@@ -16,38 +16,41 @@
         Width="{DynamicResource Double/LogPatternEditorDialog.Width}">
 	
 	<!-- Content -->
-	<DockPanel>
+	<Panel>
+		<DockPanel>
 
-		<!-- Control buttons -->
-		<Border Classes="Dialog_ControlButtonsPanel">
-			<StackPanel Classes="Dialog_ControlButtonsPanel">
-				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].GenerateResultCommand}" Content="{DynamicResource String/Common.OK}"/>
-				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].Close}" Content="{DynamicResource String/Common.Cancel}"/>
+			<!-- Control buttons -->
+			<Border Classes="Dialog_ControlButtonsPanel">
+				<StackPanel Classes="Dialog_ControlButtonsPanel">
+					<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].GenerateResultCommand}" Content="{DynamicResource String/Common.OK}"/>
+					<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].Close}" Content="{DynamicResource String/Common.Cancel}"/>
+				</StackPanel>
+			</Border>
+	
+			<!-- Content -->
+			<StackPanel Classes="Dialog_ContentPanel">
+	
+				<!-- Pattern -->
+				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogPatternEditorDialog.Regex}"/>
+				<Grid ColumnDefinitions="*,Auto">
+					<TextBox Name="patternTextBox" Height="{DynamicResource Double/LogPatternEditorDialog.RegexInput.Height}" IsReadOnly="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" TextWrapping="Wrap"/>
+					<Button Name="editPatternButton" Classes="BrowseButton" Command="{Binding $parent[Window].EditRegex}" Grid.Column="1" VerticalAlignment="Top"/>
+				</Grid>
+				<Separator Classes="Dialog_Separator"/>
+	
+				<!-- Repeatable -->
+				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogPatternEditorDialog.IsRepeatable}"/>
+				<ToggleSwitch Name="repeatableSwitch" Classes="Dialog_ToggleSwitch"/>
+				<Separator Classes="Dialog_Separator"/>
+	
+				<!-- Skippable -->
+				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogPatternEditorDialog.IsSkippable}"/>
+				<ToggleSwitch Name="skippableSwitch" Classes="Dialog_ToggleSwitch"/>
+				
 			</StackPanel>
-		</Border>
-
-		<!-- Content -->
-		<StackPanel Classes="Dialog_ContentPanel">
-
-			<!-- Pattern -->
-			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogPatternEditorDialog.Regex}"/>
-			<Grid ColumnDefinitions="*,Auto">
-				<TextBox Name="patternTextBox" Height="{DynamicResource Double/LogPatternEditorDialog.RegexInput.Height}" IsReadOnly="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" TextWrapping="Wrap"/>
-				<Button Classes="BrowseButton" Command="{Binding $parent[Window].EditRegex}" Grid.Column="1" VerticalAlignment="Top"/>
-			</Grid>
-			<Separator Classes="Dialog_Separator"/>
-
-			<!-- Repeatable -->
-			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogPatternEditorDialog.IsRepeatable}"/>
-			<ToggleSwitch Name="repeatableSwitch" Classes="Dialog_ToggleSwitch"/>
-			<Separator Classes="Dialog_Separator"/>
-
-			<!-- Skippable -->
-			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogPatternEditorDialog.IsSkippable}"/>
-			<ToggleSwitch Name="skippableSwitch" Classes="Dialog_ToggleSwitch"/>
 			
-		</StackPanel>
-		
-	</DockPanel>
+		</DockPanel>
+		<asControls:FullWindowTutorialPresenter Name="tutorialPresenter"/>
+	</Panel>
 	
 </Window>
