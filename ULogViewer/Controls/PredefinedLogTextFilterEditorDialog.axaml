@@ -18,20 +18,18 @@
 
 			<!-- Name -->
 			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/PredefinedLogTextFilterEditorDialog.Name}"/>
-			<TextBox Name="nameTextBox" Classes="Dialog_TextBox" MaxLength="256" PropertyChanged="OnNameTextBoxPropertyChanged"/>
+			<TextBox Name="nameTextBox" Classes="Dialog_TextBox" MaxLength="256"/>
 			<Separator Classes="Dialog_Separator"/>
 
-			<!-- Regex -->
+			<!-- Pattern -->
 			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/PredefinedLogTextFilterEditorDialog.Regex}"/>
-			<asControls:RegexTextBox Name="regexTextBox" Classes="Dialog_TextBox" Height="{DynamicResource Double/PredefinedLogTextFilterEditorDialog.RegexInput.Height}" PropertyChanged="OnRegexTextBoxPropertyChanged" ScrollViewer.HorizontalScrollBarVisibility="Disabled" TextWrapping="Wrap"/>
+			<Grid ColumnDefinitions="*,Auto">
+				<TextBox Name="patternTextBox" Classes="Dialog_TextBox" Height="{DynamicResource Double/PredefinedLogTextFilterEditorDialog.RegexInput.Height}" IsReadOnly="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled" TextWrapping="Wrap"/>
+				<Button Name="editPatternButton" Classes="BrowseButton" Command="{Binding $parent[Window].EditPattern}" Grid.Column="1" VerticalAlignment="Top"/>
+			</Grid>
 			<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/PredefinedLogTextFilterEditorDialog.Regex.Description}"/>
 			<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/Common.RegularExpression.Reference}" Uri="{x:Static app:Uris.RegexReference}"/>
-			<Separator Classes="Dialog_Separator"/>
 
-			<!-- Ignore case -->
-			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/PredefinedLogTextFilterEditorDialog.IgnoreCase}"/>
-			<ToggleSwitch Name="ignoreCaseSwitch" Classes="Dialog_ToggleSwitch" IsChecked="{Binding ElementName=regexTextBox, Path=IgnoreCase, Mode=OneWayToSource}"/>
-			
 		</StackPanel>
 
 		<!-- Control buttons -->
@@ -41,6 +39,9 @@
 				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].Close}" Content="{DynamicResource String/Common.Cancel}"/>
 			</StackPanel>
 		</Border>
+
+		<!-- Tutorial -->
+		<asControls:FullWindowTutorialPresenter Name="tutorialPresenter" Grid.RowSpan="2"/>
 		
 	</Grid>
   

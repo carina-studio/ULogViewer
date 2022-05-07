@@ -1,7 +1,10 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using Avalonia.Media;
 using CarinaStudio.AppSuite.Controls;
+using CarinaStudio.Configuration;
+using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.ViewModels;
 using System;
 using System.Text.RegularExpressions;
@@ -16,18 +19,37 @@ namespace CarinaStudio.ULogViewer.Controls
 	partial class PredefinedLogTextFilterEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
 	{
 		// Fields.
-		readonly ToggleSwitch ignoreCaseSwitch;
+		Regex? regex;
 		readonly TextBox nameTextBox;
-		readonly RegexTextBox regexTextBox;
+		readonly TextBox patternTextBox;
 
 
 		// Constructor.
 		public PredefinedLogTextFilterEditorDialog()
 		{
-			InitializeComponent();
-			this.ignoreCaseSwitch = this.FindControl<ToggleSwitch>("ignoreCaseSwitch").AsNonNull();
-			this.nameTextBox = this.FindControl<TextBox>("nameTextBox").AsNonNull();
-			this.regexTextBox = this.FindControl<RegexTextBox>("regexTextBox").AsNonNull();
+			AvaloniaXamlLoader.Load(this);
+			this.nameTextBox = this.FindControl<TextBox>(nameof(nameTextBox))!.Also(it =>
+			{
+				it.GetObservable(TextBox.TextProperty).Subscribe(_ =>
+					this.InvalidateInput());
+			});
+			this.patternTextBox = this.FindControl<TextBox>(nameof(patternTextBox)).AsNonNull();
+		}
+
+
+		// Edit pattern.
+		async void EditPattern()
+		{
+			var regex = await new RegexEditorDialog()
+			{
+				InitialRegex = this.regex,
+			}.ShowDialog<Regex?>(this);
+			if (regex != null)
+			{
+				this.regex = regex;
+				this.patternTextBox.Text = regex.ToString();
+				this.InvalidateInput();
+			}
 		}
 
 
@@ -41,7 +63,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken)
 		{
 			var name = this.nameTextBox.Text;
-			var regex = this.regexTextBox.Object.AsNonNull();
+			var regex = this.regex.AsNonNull();
 			var filter = this.Filter;
 			if (filter != null)
 			{
@@ -54,45 +76,37 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Initialize Avalonia components.
-		private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
-
-
-		// Called when property of name text box changed.
-		void OnNameTextBoxPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
-		{
-			if (e.Property == TextBox.TextProperty)
-				this.InvalidateInput();
-		}
-
-
 		// Called when opened.
 		protected override void OnOpened(EventArgs e)
 		{
 			base.OnOpened(e);
 			var filter = this.Filter;
 			if (filter == null)
-			{
 				this.Bind(TitleProperty, this.GetResourceObservable("String/PredefinedLogTextFilterEditorDialog.Title.Create"));
-				this.regexTextBox.Object = this.Regex;
-				this.ignoreCaseSwitch.IsChecked = true;
-			}
 			else
 			{
 				this.Bind(TitleProperty, this.GetResourceObservable("String/PredefinedLogTextFilterEditorDialog.Title.Edit"));
 				this.nameTextBox.Text = filter.Name;
-				this.regexTextBox.Object = filter.Regex;
-				this.ignoreCaseSwitch.IsChecked = (filter.Regex.Options & RegexOptions.IgnoreCase) != 0;
+				this.patternTextBox.Text = filter.Regex.ToString();
+				this.regex = filter.Regex;
 			}
-			this.SynchronizationContext.Post(_ => this.nameTextBox.Focus(), null); // [Workaround] delay to prevent focus got by popup
-		}
-
-
-		// Called when property of regex text box changed.
-		void OnRegexTextBoxPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
-		{
-			if (e.Property == RegexTextBox.IsTextValidProperty || e.Property == RegexTextBox.ObjectProperty)
-				this.InvalidateInput();
+			if (!this.Application.PersistentState.GetValueOrDefault(RegexEditorDialog.IsClickButtonToEditPatternTutorialShownKey))
+			{
+				this.FindControl<TutorialPresenter>("tutorialPresenter")!.ShowTutorial(new Tutorial().Also(it =>
+				{
+					it.Anchor = this.FindControl<Control>("editPatternButton");
+					it.Bind(Tutorial.DescriptionProperty, this.GetResourceObservable("String/RegexEditorDialog.Tutorial.ClickButtonToEditPattern"));
+					it.Dismissed += (_, e) =>
+					{
+						this.Application.PersistentState.SetValue<bool>(RegexEditorDialog.IsClickButtonToEditPatternTutorialShownKey, true);
+						this.nameTextBox.Focus();
+					};
+					it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb.Colored");
+					it.IsSkippingAllTutorialsAllowed = false;
+				}));
+			}
+			else
+				this.SynchronizationContext.Post(this.nameTextBox.Focus);
 		}
 
 
@@ -109,7 +123,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				return false;
 
 			// check regex
-			if (!this.regexTextBox.IsTextValid || this.regexTextBox.Object == null)
+			if (this.regex == null)
 				return false;
 
 			// ok

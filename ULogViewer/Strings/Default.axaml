@@ -411,9 +411,8 @@
 	<sys:String x:Key="String/MemoryLoggerLogDataSourceProvider.DisplayName">ULogViewer realtime log</sys:String>
 
 	<!-- PredefinedLogTextFilterEditorDialog -->
-	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.IgnoreCase">Ignore case</sys:String>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Name">Name (required)</sys:String>
-	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Regex">Text filter (required)</sys:String>
+	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Regex">Pattern (required)</sys:String>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Regex.Description">You can use \$\$ as separator between text properties. For example, if you want to filter log with user name "John" and message "Hello" then you can use pattern "John\$\$Hello". The order of text properties are same as visible log properties defined by log profile.</sys:String>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Title.Create">Create text filter</sys:String>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Title.Edit">Edit text filter</sys:String>
