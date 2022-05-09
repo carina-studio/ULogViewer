@@ -1,7 +1,7 @@
-﻿using CarinaStudio.Collections;
+﻿using CarinaStudio.AppSuite.Data;
+using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
-using CarinaStudio.Threading.Tasks;
 using CarinaStudio.ULogViewer.Cryptography;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.ULogViewer.ViewModels.Categorizing;
@@ -9,7 +9,6 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -17,7 +16,6 @@ using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.Logs.Profiles
@@ -25,7 +23,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 	/// <summary>
 	/// Log profile.
 	/// </summary>
-	class LogProfile : IApplicationObject, INotifyPropertyChanged
+	class LogProfile : BaseProfile<IULogViewerApplication>
 	{
 		// Constants.
 		const string EmptyId = "Empty";
@@ -33,31 +31,28 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 
 		// Static fields.
 		static readonly CultureInfo defaultTimestampCultureInfoForReading = CultureInfo.GetCultureInfo("en-US");
-		static readonly TaskFactory ioTaskFactory = new TaskFactory(new FixedThreadsTaskScheduler(1));
 
 
 		// Fields.
 		bool allowMultipleFiles = true;
+		string builtInName = "";
 		LogColorIndicator colorIndicator = LogColorIndicator.None;
 		LogDataSourceOptions dataSourceOptions;
 		ILogDataSourceProvider dataSourceProvider = LogDataSourceProviders.Empty;
 		string? description;
 		bool hasDescription;
 		LogProfileIcon icon = LogProfileIcon.File;
-		string id;
 		bool isAdministratorNeeded;
 		bool isContinuousReading;
 		bool isPinned;
 		SettingKey<bool>? isPinnedSettingKey;
 		bool isWorkingDirectoryNeeded;
-		readonly ILogger logger;
 		Dictionary<string, LogLevel> logLevelMapForReading = new Dictionary<string, LogLevel>();
 		Dictionary<LogLevel, string> logLevelMapForWriting = new Dictionary<LogLevel, string>();
 		IList<LogPattern> logPatterns = new LogPattern[0];
 		LogStringEncoding logStringEncodingForReading = LogStringEncoding.Plane;
 		LogStringEncoding logStringEncodingForWriting = LogStringEncoding.Plane;
 		string? logWritingFormat;
-		string name = "";
 		IDictionary<string, LogLevel> readOnlyLogLevelMapForReading;
 		IDictionary<LogLevel, string> readOnlyLogLevelMapForWriting;
 		long restartReadingDelay;
@@ -79,26 +74,30 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		IList<LogProperty> visibleLogProperties = new LogProperty[0];
 
 
-		/// <summary>
-		/// Initialize new <see cref="LogProfile"/> instance.
-		/// </summary>
-		/// <param name="app">Application.</param>
-		public LogProfile(IULogViewerApplication app)
+		// Constructor.
+		LogProfile(IULogViewerApplication app, string id, bool isBuiltIn) : base(app, id, isBuiltIn)
 		{
-			app.VerifyAccess();
-			this.Application = app;
-			this.id = "";
-			this.logger = app.LoggerFactory.CreateLogger(this.GetType().Name);
+			this.isPinnedSettingKey = isBuiltIn ? new($"BuiltInProfile.{id}.IsPinned") : null;
 			this.readOnlyLogLevelMapForReading = new ReadOnlyDictionary<string, LogLevel>(this.logLevelMapForReading);
 			this.readOnlyLogLevelMapForWriting = new ReadOnlyDictionary<LogLevel, string>(this.logLevelMapForWriting);
+			if (isBuiltIn)
+				this.UpdateBuiltInNameAndDescription();
 		}
 
 
 		/// <summary>
 		/// Initialize new <see cref="LogProfile"/> instance.
 		/// </summary>
+		/// <param name="app">Application.</param>
+		public LogProfile(IULogViewerApplication app) : this(app, LogProfileManager.Default.GenerateProfileId(), false)
+		{ }
+
+
+		/// <summary>
+		/// Initialize new <see cref="LogProfile"/> instance.
+		/// </summary>
 		/// <param name="template">Template profile.</param>
-		public LogProfile(LogProfile template) : this(template.Application)
+		public LogProfile(LogProfile template) : this(template.Application, LogProfileManager.Default.GenerateProfileId(), false)
 		{
 			this.allowMultipleFiles = template.allowMultipleFiles;
 			this.colorIndicator = template.colorIndicator;
@@ -117,7 +116,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			this.logStringEncodingForReading = template.logStringEncodingForReading;
 			this.logStringEncodingForWriting = template.logStringEncodingForWriting;
 			this.logWritingFormat = template.logWritingFormat;
-			this.name = template.name;
+			this.Name = template.Name;
 			this.sortDirection = template.sortDirection;
 			this.sortKey = template.sortKey;
 			this.timeSpanCultureInfoForReading = template.timeSpanCultureInfoForReading;
@@ -136,16 +135,6 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		}
 
 
-		// Constructor for built-in profile.
-		LogProfile(IULogViewerApplication app, string builtInId) : this(app)
-		{
-			this.BuiltInId = builtInId;
-			this.id = builtInId;
-			this.isPinnedSettingKey = new SettingKey<bool>($"BuiltInProfile.{builtInId}.IsPinned");
-			this.UpdateBuiltInNameAndDescription();
-		}
-
-
 		/// <summary>
 		/// Get or set whether multiple files are allowed or not.
 		/// </summary>
@@ -159,19 +148,9 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				if (this.allowMultipleFiles == value)
 					return;
 				this.allowMultipleFiles = value;
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AllowMultipleFiles)));
+				this.OnPropertyChanged(nameof(AllowMultipleFiles));
 			}
 		}
-
-
-		/// <summary>
-		/// Get application instance.
-		/// </summary>
-		public IULogViewerApplication Application { get; }
-
-
-		// ID of built-in profile.
-		string? BuiltInId { get; }
 
 
 		/// <summary>
@@ -181,8 +160,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		{
 			this.VerifyAccess();
 			this.VerifyBuiltIn();
-			this.id = LogProfiles.GenerateId();
-			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Id)));
+			this.Id = LogProfileManager.Default.GenerateProfileId();
 		}
 
 
@@ -199,7 +177,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				if (this.colorIndicator == value)
 					return;
 				this.colorIndicator = value;
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ColorIndicator)));
+				this.OnPropertyChanged(nameof(ColorIndicator));
 			}
 		}
 
@@ -209,7 +187,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// </summary>
 		/// <param name="app">Application.</param>
 		/// <returns>Built-in empty log profile.</returns>
-		internal static LogProfile CreateEmptyBuiltInProfile(IULogViewerApplication app) => new LogProfile(app, EmptyId);
+		internal static LogProfile CreateEmptyBuiltInProfile(IULogViewerApplication app) => new LogProfile(app, EmptyId, true);
 
 
 		/// <summary>
@@ -225,7 +203,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				if (this.dataSourceOptions == value)
 					return;
 				this.dataSourceOptions = value;
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(DataSourceOptions)));
+				this.OnPropertyChanged(nameof(DataSourceOptions));
 			}
 		}
 
@@ -245,24 +223,9 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				if (value.IsSourceOptionRequired(nameof(LogDataSourceOptions.FileName)) && this.isContinuousReading)
 					this.IsContinuousReading = false;
 				this.dataSourceProvider = value;
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(DataSourceProvider)));
+				this.OnPropertyChanged(nameof(DataSourceProvider));
 				this.Validate();
 			}
-		}
-
-
-		/// <summary>
-		/// Delete the file which instance load from or save to asynchronously.
-		/// </summary>
-		/// <returns></returns>
-		public async Task DeleteFileAsync()
-		{
-			this.VerifyAccess();
-			var fileName = this.FileName;
-			if (fileName == null)
-				return;
-			this.FileName = null;
-			await ioTaskFactory.StartNew(() => Global.RunWithoutError(() => File.Delete(fileName)));
 		}
 
 
@@ -282,66 +245,14 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 					return;
 				this.description = value;
 				this.HasDescription = (value != null);
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Description)));
+				this.OnPropertyChanged(nameof(Description));
 			}
 		}
 
 
-		/// <summary>
-		/// Detach from the file which instance has been loaded from or saved to.
-		/// </summary>
-		public void DetachFromFile()
-		{
-			this.VerifyAccess();
-			this.FileName = null;
-		}
-
-
-		/// <summary>
-		/// Get name of file which instance loaded from or saved to.
-		/// </summary>
-		public string? FileName { get; private set; }
-
-
-		/// <summary>
-		/// Find valid file name for saving <see cref="LogProfile"/> to file in given directory asynchronously.
-		/// </summary>
-		/// <param name="directoryName">Name of directory contains file.</param>
-		/// <returns>Found file name.</returns>
-		public async Task<string> FindValidFileNameAsync(string directoryName)
-		{
-			// generate base name for file
-			var baseNameBuilder = new StringBuilder(this.name);
-			if (baseNameBuilder.Length > 0)
-			{
-				for (var i = baseNameBuilder.Length - 1; i >= 0; --i)
-				{
-					var c = baseNameBuilder[i];
-					if (char.IsWhiteSpace(c))
-						baseNameBuilder[i] = '_';
-					if (!char.IsDigit(c) && !char.IsLetter(c) && c != '-')
-						baseNameBuilder[i] = '_';
-				}
-			}
-			else
-				baseNameBuilder.Append("Empty");
-			var baseName = baseNameBuilder.ToString();
-
-			// find valid file name
-			return await ioTaskFactory.StartNew(() =>
-			{
-				var fileName = Path.Combine(directoryName, $"{baseName}.json");
-				if (!File.Exists(fileName) && !Directory.Exists(fileName))
-					return fileName;
-				for (var i = 1; i <= 1000; ++i)
-				{
-					fileName = Path.Combine(directoryName, $"{baseName}_{i}.json");
-					if (!File.Exists(fileName) && !Directory.Exists(fileName))
-						return fileName;
-				}
-				throw new ArgumentException($"Unable to find proper file name for '{this.name}' in directory '{directoryName}'.");
-			});
-		}
+		/// <inheritdoc/>
+		public override bool Equals(IProfile<IULogViewerApplication>? profile) =>
+			this.Id == profile?.Id;
 
 
 		/// <summary>
@@ -355,7 +266,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				if (this.hasDescription == value)
 					return;
 				this.hasDescription = value;
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasDescription)));
+				this.OnPropertyChanged(nameof(HasDescription));
             }
 		}
 
@@ -373,15 +284,9 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				if (this.icon == value)
 					return;
 				this.icon = value;
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Icon)));
+				this.OnPropertyChanged(nameof(Icon));
 			}
 		}
-
-
-		/// <summary>
-		/// Get unique ID of profile.
-		/// </summary>
-		public string Id { get => this.id; }
 
 
 		/// <summary>
@@ -397,15 +302,9 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				if (this.isAdministratorNeeded == value)
 					return;
 				this.isAdministratorNeeded = value;
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsAdministratorNeeded)));
+				this.OnPropertyChanged(nameof(IsAdministratorNeeded));
 			}
 		}
-
-
-		/// <summary>
-		/// Check whether instance represents a built-in profile or not.
-		/// </summary>
-		public bool IsBuiltIn { get => this.BuiltInId != null; }
 
 
 		/// <summary>
@@ -423,7 +322,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				if (value && this.dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.FileName)))
 					return;
 				this.isContinuousReading = value;
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsContinuousReading)));
+				this.OnPropertyChanged(nameof(IsContinuousReading));
 			}
 		}
 
@@ -448,7 +347,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				this.isPinned = value;
 				if (this.IsBuiltIn)
 					this.Application.PersistentState.SetValue<bool>(this.isPinnedSettingKey.AsNonNull(), value);
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsPinned)));
+				this.OnPropertyChanged(nameof(IsPinned));
 			}
 		}
 
@@ -472,8 +371,43 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				if (this.isWorkingDirectoryNeeded == value)
 					return;
 				this.isWorkingDirectoryNeeded = value;
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsWorkingDirectoryNeeded)));
+				this.OnPropertyChanged(nameof(IsWorkingDirectoryNeeded));
 			}
+		}
+
+
+		/// <summary>
+		/// Load profile asynchronously.
+		/// </summary>
+		/// <param name="app">Application.</param>
+		/// <param name="fileName">Name of profile file.</param>
+		/// <returns>Task of loading operation.</returns>
+		public static async Task<LogProfile> LoadAsync(IULogViewerApplication app, string fileName)
+		{
+			// load JSON document
+			var jsonDocument = await Task.Run(() =>
+			{
+				using var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read);
+				return JsonDocument.Parse(stream);
+			});
+			var element = jsonDocument.RootElement;
+			if (element.ValueKind != JsonValueKind.Object)
+				throw new ArgumentException("Root element must be an object.");
+
+			// get ID
+			var id = element.TryGetProperty(nameof(Id), out var jsonProperty) && jsonProperty.ValueKind == JsonValueKind.String
+				? jsonProperty.GetString()!
+				: LogProfileManager.Default.GenerateProfileId();
+
+			// load profile
+			var profile = new LogProfile(app, id, false);
+			profile.Load(element);
+
+			// validate
+			profile.Validate();
+
+			// complete
+			return profile;
 		}
 
 
@@ -483,20 +417,18 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// <param name="app">Application.</param>
 		/// <param name="id">ID of built-in profile.</param>
 		/// <returns>Task of loading operation.</returns>
-		public static async Task<LogProfile> LoadBuiltInProfileAsync(IULogViewerApplication app, string id)
+		public static async Task<LogProfile> LoadBuiltInAsync(IULogViewerApplication app, string id)
 		{
 			// load JSON document
-			var jsonDocument = await ioTaskFactory.StartNew(() =>
+			var jsonDocument = await Task.Run(() =>
 			{
 				using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream($"CarinaStudio.ULogViewer.Logs.Profiles.BuiltIn.{id}.json") ?? throw new ArgumentException($"Cannot find built-in profile '{id}'.");
 				return JsonDocument.Parse(stream);
 			});
 
-			// prepare profile
-			var profile = new LogProfile(app, id);
-
 			// load profile
-			await ioTaskFactory.StartNew(() => profile.LoadFromJson(jsonDocument.RootElement));
+			var profile = new LogProfile(app, id, true);
+			profile.Load(jsonDocument.RootElement);
 			profile.isPinned = app.PersistentState.GetValueOrDefault(profile.isPinnedSettingKey.AsNonNull());
 
 			// validate
@@ -577,7 +509,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 								options.WorkingDirectory = jsonProperty.Value.GetString();
 								break;
 							default:
-								this.logger.LogWarning($"Unknown property of DataSource: {jsonProperty.Name}");
+								this.Logger.LogWarning($"Unknown property of DataSource: {jsonProperty.Name}");
 								continue;
 						}
 						this.IsDataUpgraded = true;
@@ -595,10 +527,201 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		}
 
 
-		// Load profile from JSON element.
-		void LoadFromJson(JsonElement profileElement)
+		// Load log level map from JSON.
+		void LoadLogLevelMapForReadingFromJson(JsonElement logLevelMapElement)
 		{
-			foreach (var jsonProperty in profileElement.EnumerateObject())
+			this.logLevelMapForReading.Clear();
+			foreach (var jsonProperty in logLevelMapElement.EnumerateObject())
+			{
+				var key = jsonProperty.Name;
+				var logLevel = Enum.Parse<LogLevel>(jsonProperty.Value.GetString() ?? "");
+				this.logLevelMapForReading[key] = logLevel;
+			}
+		}
+
+
+		// Load log level map from JSON.
+		void LoadLogLevelMapForWritingFromJson(JsonElement logLevelMapElement)
+		{
+			this.logLevelMapForWriting.Clear();
+			foreach (var jsonProperty in logLevelMapElement.EnumerateObject())
+			{
+				var logLevel = Enum.Parse<LogLevel>(jsonProperty.Name);
+				this.logLevelMapForWriting[logLevel] = jsonProperty.Value.GetString().AsNonNull();
+			}
+		}
+
+
+		// Load log patterns from JSON.
+		void LoadLogPatternsFromJson(JsonElement logPatternsElement)
+		{
+			var logPatterns = new List<LogPattern>();
+			foreach (var logPatternElement in logPatternsElement.EnumerateArray())
+			{
+				var ignoreCase = logPatternElement.TryGetProperty(nameof(RegexOptions.IgnoreCase), out var jsonProperty) && jsonProperty.ValueKind == JsonValueKind.True;
+				var regex = new Regex(logPatternElement.GetProperty("Regex").GetString()!, ignoreCase ? RegexOptions.IgnoreCase : RegexOptions.None);
+				var isRepeatable = false;
+				var isSkippable = false;
+				if (logPatternElement.TryGetProperty(nameof(LogPattern.IsRepeatable), out jsonProperty))
+					isRepeatable = jsonProperty.GetBoolean();
+				if (logPatternElement.TryGetProperty(nameof(LogPattern.IsSkippable), out jsonProperty))
+					isSkippable = jsonProperty.GetBoolean();
+				logPatterns.Add(new LogPattern(regex, isRepeatable, isSkippable));
+			}
+			this.logPatterns = logPatterns.AsReadOnly();
+		}
+
+
+		// Load visible log properties from JSON.
+		void LoadVisibleLogPropertiesFromJson(JsonElement visibleLogPropertiesElement)
+		{
+			var logProperties = new List<LogProperty>();
+			foreach (var logPropertyElement in visibleLogPropertiesElement.EnumerateArray())
+			{
+				var name = logPropertyElement.GetProperty("Name").GetString().AsNonNull();
+				var displayName = (string?)null;
+				var width = (int?)null;
+				if (logPropertyElement.TryGetProperty("DisplayName", out var jsonElement))
+					displayName = jsonElement.GetString();
+				if (logPropertyElement.TryGetProperty("Width", out jsonElement))
+					width = jsonElement.GetInt32();
+				logProperties.Add(new LogProperty(name, displayName, width));
+			}
+			this.visibleLogProperties = logProperties.AsReadOnly();
+		}
+
+
+		/// <summary>
+		/// Get or set map of conversion from string to <see cref="LogLevel"/>.
+		/// </summary>
+		public IDictionary<string, LogLevel> LogLevelMapForReading
+		{
+			get => this.readOnlyLogLevelMapForReading;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (this.logLevelMapForReading.SequenceEqual(value))
+					return;
+				this.logLevelMapForReading.Clear();
+				this.logLevelMapForReading.AddAll(value);
+				this.OnPropertyChanged(nameof(LogLevelMapForReading));
+			}
+		}
+
+
+		/// <summary>
+		/// Get or set map of conversion from <see cref="LogLevel"/> to string.
+		/// </summary>
+		public IDictionary<LogLevel, string> LogLevelMapForWriting
+		{
+			get => this.readOnlyLogLevelMapForWriting;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (this.logLevelMapForWriting.SequenceEqual(value))
+					return;
+				this.logLevelMapForWriting.Clear();
+				this.logLevelMapForWriting.AddAll(value);
+				this.OnPropertyChanged(nameof(LogLevelMapForWriting));
+			}
+		}
+
+
+		/// <summary>
+		/// Get of set list of <see cref="LogPattern"/> to parse log data.
+		/// </summary>
+		public IList<LogPattern> LogPatterns
+		{
+			get => this.logPatterns;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (this.logPatterns.SequenceEqual(value))
+					return;
+				this.logPatterns = new List<LogPattern>(value).AsReadOnly();
+				this.OnPropertyChanged(nameof(LogPatterns));
+				this.Validate();
+			}
+		}
+
+
+		/// <summary>
+		/// Get of set string encoding of logs for reading.
+		/// </summary>
+		public LogStringEncoding LogStringEncodingForReading
+		{
+			get => this.logStringEncodingForReading;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (this.logStringEncodingForReading == value)
+					return;
+				this.logStringEncodingForReading = value;
+				this.OnPropertyChanged(nameof(LogStringEncodingForReading));
+			}
+		}
+
+
+		/// <summary>
+		/// Get of set string encoding of logs for writing.
+		/// </summary>
+		public LogStringEncoding LogStringEncodingForWriting
+		{
+			get => this.logStringEncodingForWriting;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (this.logStringEncodingForWriting == value)
+					return;
+				this.logStringEncodingForWriting = value;
+				this.OnPropertyChanged(nameof(LogStringEncodingForWriting));
+			}
+		}
+
+
+		/// <summary>
+		/// Get of set format to write log.
+		/// </summary>
+		public string? LogWritingFormat
+		{
+			get => this.logWritingFormat;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (this.logWritingFormat == value)
+					return;
+				this.logWritingFormat = value;
+				this.OnPropertyChanged(nameof(LogWritingFormat));
+			}
+		}
+
+
+		/// <summary>
+		/// Get of set name of profile.
+		/// </summary>
+		public override string? Name
+		{
+			get => this.IsBuiltIn ? this.builtInName : base.Name;
+			set => base.Name = value;
+		}
+
+
+		/// <summary>
+		/// Called when application string resources updated.
+		/// </summary>
+		public void OnApplicationStringsUpdated() => this.UpdateBuiltInNameAndDescription();
+
+
+		/// <inheritdoc/>
+		protected override void OnLoad(JsonElement element)
+		{
+			foreach (var jsonProperty in element.EnumerateObject())
 			{
 				switch (jsonProperty.Name)
 				{
@@ -622,8 +745,6 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 							this.icon = profileIcon;
 						break;
 					case nameof(Id):
-						if (!this.IsBuiltIn)
-							this.id = jsonProperty.Value.GetString().AsNonNull();
 						break;
 					case nameof(IsAdministratorNeeded):
 						this.isAdministratorNeeded = jsonProperty.Value.GetBoolean();
@@ -658,7 +779,10 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 						this.logWritingFormat = jsonProperty.Value.GetString();
 						break;
 					case nameof(Name):
-						this.name = jsonProperty.Value.GetString() ?? "";
+						if (this.IsBuiltIn)
+							this.builtInName = jsonProperty.Value.GetString()!;
+						else
+							this.Name = jsonProperty.Value.GetString();
 						break;
 					case nameof(RestartReadingDelay):
 						this.restartReadingDelay = Math.Max(0, jsonProperty.Value.GetInt64());
@@ -727,248 +851,77 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 						this.LoadVisibleLogPropertiesFromJson(jsonProperty.Value);
 						break;
 					default:
-						this.logger.LogWarning($"Unknown property of profile: {jsonProperty.Name}");
+						this.Logger.LogWarning($"Unknown property of profile: {jsonProperty.Name}");
 						break;
 				}
 			}
 		}
 
 
-		// Load log level map from JSON.
-		void LoadLogLevelMapForReadingFromJson(JsonElement logLevelMapElement)
+		/// <inheritdoc/>
+		protected override void OnSave(Utf8JsonWriter writer, bool includeId)
 		{
-			this.logLevelMapForReading.Clear();
-			foreach (var jsonProperty in logLevelMapElement.EnumerateObject())
+			writer.WriteStartObject();
+			writer.WriteBoolean(nameof(AllowMultipleFiles), this.allowMultipleFiles);
+			writer.WritePropertyName("DataSource");
+			this.SaveDataSourceToJson(writer);
+			writer.WriteString(nameof(ColorIndicator), this.colorIndicator.ToString());
+			writer.WriteString(nameof(Description), this.description);
+			writer.WriteString(nameof(Icon), this.icon.ToString());
+			if (!this.IsBuiltIn && includeId)
+				writer.WriteString(nameof(Id), this.Id);
+			if (this.isAdministratorNeeded)
+				writer.WriteBoolean(nameof(IsAdministratorNeeded), true);
+			if (this.isContinuousReading)
+				writer.WriteBoolean(nameof(IsContinuousReading), true);
+			if (this.isPinned)
+				writer.WriteBoolean(nameof(IsPinned), true);
+			if (this.isWorkingDirectoryNeeded)
+				writer.WriteBoolean(nameof(IsWorkingDirectoryNeeded), true);
+			writer.WritePropertyName(nameof(LogLevelMapForReading));
+			this.SaveLogLevelMapForReadingToJson(writer);
+			writer.WritePropertyName(nameof(LogLevelMapForWriting));
+			this.SaveLogLevelMapForWritingToJson(writer);
+			writer.WritePropertyName(nameof(LogPatterns));
+			this.SaveLogPatternsToJson(writer);
+			writer.WriteString(nameof(LogStringEncodingForReading), this.logStringEncodingForReading.ToString());
+			writer.WriteString(nameof(LogStringEncodingForWriting), this.logStringEncodingForWriting.ToString());
+			this.logWritingFormat?.Let(it => writer.WriteString(nameof(LogWritingFormat), it));
+			writer.WriteString(nameof(Name), this.Name);
+			writer.WriteNumber(nameof(RestartReadingDelay), this.restartReadingDelay);
+			writer.WriteString(nameof(SortDirection), this.sortDirection.ToString());
+			writer.WriteString(nameof(SortKey), this.sortKey.ToString());
+			writer.WriteString(nameof(TimeSpanCultureInfoForReading), this.timeSpanCultureInfoForReading.ToString());
+			writer.WriteString(nameof(TimeSpanCultureInfoForWriting), this.timeSpanCultureInfoForWriting.ToString());
+			writer.WriteString(nameof(TimeSpanEncodingForReading), this.timestampEncodingForReading.ToString());
+			this.timeSpanFormatForDisplaying?.Let(it => writer.WriteString(nameof(TimeSpanFormatForDisplaying), it));
+			this.timeSpanFormatForWriting?.Let(it => writer.WriteString(nameof(TimeSpanFormatForWriting), it));
+			if (timeSpanFormatsForReading.IsNotEmpty())
 			{
-				var key = jsonProperty.Name;
-				var logLevel = Enum.Parse<LogLevel>(jsonProperty.Value.GetString() ?? "");
-				this.logLevelMapForReading[key] = logLevel;
+				writer.WritePropertyName(nameof(TimeSpanFormatsForReading));
+				writer.WriteStartArray();
+				foreach (var format in timeSpanFormatsForReading)
+					writer.WriteStringValue(format);
+				writer.WriteEndArray();
 			}
-		}
-
-
-		// Load log level map from JSON.
-		void LoadLogLevelMapForWritingFromJson(JsonElement logLevelMapElement)
-		{
-			this.logLevelMapForWriting.Clear();
-			foreach (var jsonProperty in logLevelMapElement.EnumerateObject())
+			writer.WriteString(nameof(TimestampCategoryGranularity), this.timestampCategoryGranularity.ToString());
+			writer.WriteString(nameof(TimestampCultureInfoForReading), this.timestampCultureInfoForReading.ToString());
+			writer.WriteString(nameof(TimestampCultureInfoForWriting), this.timestampCultureInfoForWriting.ToString());
+			writer.WriteString(nameof(TimestampEncodingForReading), this.timestampEncodingForReading.ToString());
+			this.timestampFormatForDisplaying?.Let(it => writer.WriteString(nameof(TimestampFormatForDisplaying), it));
+			this.timestampFormatForWriting?.Let(it => writer.WriteString(nameof(TimestampFormatForWriting), it));
+			if (timestampFormatsForReading.IsNotEmpty())
 			{
-				var logLevel = Enum.Parse<LogLevel>(jsonProperty.Name);
-				this.logLevelMapForWriting[logLevel] = jsonProperty.Value.GetString().AsNonNull();
+				writer.WritePropertyName(nameof(TimestampFormatsForReading));
+				writer.WriteStartArray();
+				foreach (var format in timestampFormatsForReading)
+					writer.WriteStringValue(format);
+				writer.WriteEndArray();
 			}
+			writer.WritePropertyName(nameof(VisibleLogProperties));
+			this.SaveVisibleLogPropertiesToJson(writer);
+			writer.WriteEndObject();
 		}
-
-
-		// Load log patterns from JSON.
-		void LoadLogPatternsFromJson(JsonElement logPatternsElement)
-		{
-			var logPatterns = new List<LogPattern>();
-			foreach (var logPatternElement in logPatternsElement.EnumerateArray())
-			{
-				var ignoreCase = logPatternElement.TryGetProperty(nameof(RegexOptions.IgnoreCase), out var jsonProperty) && jsonProperty.ValueKind == JsonValueKind.True;
-				var regex = new Regex(logPatternElement.GetProperty("Regex").GetString()!, ignoreCase ? RegexOptions.IgnoreCase : RegexOptions.None);
-				var isRepeatable = false;
-				var isSkippable = false;
-				if (logPatternElement.TryGetProperty(nameof(LogPattern.IsRepeatable), out jsonProperty))
-					isRepeatable = jsonProperty.GetBoolean();
-				if (logPatternElement.TryGetProperty(nameof(LogPattern.IsSkippable), out jsonProperty))
-					isSkippable = jsonProperty.GetBoolean();
-				logPatterns.Add(new LogPattern(regex, isRepeatable, isSkippable));
-			}
-			this.logPatterns = logPatterns.AsReadOnly();
-		}
-
-
-		/// <summary>
-		/// Load profile asynchronously.
-		/// </summary>
-		/// <param name="app">Application.</param>
-		/// <param name="fileName">Name of profile file.</param>
-		/// <returns>Task of loading operation.</returns>
-		public static async Task<LogProfile> LoadProfileAsync(IULogViewerApplication app, string fileName)
-		{
-			// load JSON document
-			var jsonDocument = await ioTaskFactory.StartNew(() =>
-			{
-				using var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read);
-				return JsonDocument.Parse(stream);
-			});
-
-			// prepare profile
-			var profile = new LogProfile(app);
-
-			// load profile
-			await ioTaskFactory.StartNew(() => profile.LoadFromJson(jsonDocument.RootElement));
-			if (string.IsNullOrEmpty(profile.name))
-				profile.name = Path.GetFileNameWithoutExtension(fileName);
-			profile.FileName = fileName;
-
-			// validate
-			profile.Validate();
-
-			// complete
-			return profile;
-		}
-
-
-		// Load visible log properties from JSON.
-		void LoadVisibleLogPropertiesFromJson(JsonElement visibleLogPropertiesElement)
-		{
-			var logProperties = new List<LogProperty>();
-			foreach (var logPropertyElement in visibleLogPropertiesElement.EnumerateArray())
-			{
-				var name = logPropertyElement.GetProperty("Name").GetString().AsNonNull();
-				var displayName = (string?)null;
-				var width = (int?)null;
-				if (logPropertyElement.TryGetProperty("DisplayName", out var jsonElement))
-					displayName = jsonElement.GetString();
-				if (logPropertyElement.TryGetProperty("Width", out jsonElement))
-					width = jsonElement.GetInt32();
-				logProperties.Add(new LogProperty(name, displayName, width));
-			}
-			this.visibleLogProperties = logProperties.AsReadOnly();
-		}
-
-
-		/// <summary>
-		/// Get or set map of conversion from string to <see cref="LogLevel"/>.
-		/// </summary>
-		public IDictionary<string, LogLevel> LogLevelMapForReading
-		{
-			get => this.readOnlyLogLevelMapForReading;
-			set
-			{
-				this.VerifyAccess();
-				this.VerifyBuiltIn();
-				if (this.logLevelMapForReading.SequenceEqual(value))
-					return;
-				this.logLevelMapForReading.Clear();
-				this.logLevelMapForReading.AddAll(value);
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LogLevelMapForReading)));
-			}
-		}
-
-
-		/// <summary>
-		/// Get or set map of conversion from <see cref="LogLevel"/> to string.
-		/// </summary>
-		public IDictionary<LogLevel, string> LogLevelMapForWriting
-		{
-			get => this.readOnlyLogLevelMapForWriting;
-			set
-			{
-				this.VerifyAccess();
-				this.VerifyBuiltIn();
-				if (this.logLevelMapForWriting.SequenceEqual(value))
-					return;
-				this.logLevelMapForWriting.Clear();
-				this.logLevelMapForWriting.AddAll(value);
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LogLevelMapForWriting)));
-			}
-		}
-
-
-		/// <summary>
-		/// Get of set list of <see cref="LogPattern"/> to parse log data.
-		/// </summary>
-		public IList<LogPattern> LogPatterns
-		{
-			get => this.logPatterns;
-			set
-			{
-				this.VerifyAccess();
-				this.VerifyBuiltIn();
-				if (this.logPatterns.SequenceEqual(value))
-					return;
-				this.logPatterns = new List<LogPattern>(value).AsReadOnly();
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LogPatterns)));
-				this.Validate();
-			}
-		}
-
-
-		/// <summary>
-		/// Get of set string encoding of logs for reading.
-		/// </summary>
-		public LogStringEncoding LogStringEncodingForReading
-		{
-			get => this.logStringEncodingForReading;
-			set
-			{
-				this.VerifyAccess();
-				this.VerifyBuiltIn();
-				if (this.logStringEncodingForReading == value)
-					return;
-				this.logStringEncodingForReading = value;
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LogStringEncodingForReading)));
-			}
-		}
-
-
-		/// <summary>
-		/// Get of set string encoding of logs for writing.
-		/// </summary>
-		public LogStringEncoding LogStringEncodingForWriting
-		{
-			get => this.logStringEncodingForWriting;
-			set
-			{
-				this.VerifyAccess();
-				this.VerifyBuiltIn();
-				if (this.logStringEncodingForWriting == value)
-					return;
-				this.logStringEncodingForWriting = value;
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LogStringEncodingForWriting)));
-			}
-		}
-
-
-		/// <summary>
-		/// Get of set format to write log.
-		/// </summary>
-		public string? LogWritingFormat
-		{
-			get => this.logWritingFormat;
-			set
-			{
-				this.VerifyAccess();
-				this.VerifyBuiltIn();
-				if (this.logWritingFormat == value)
-					return;
-				this.logWritingFormat = value;
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LogWritingFormat)));
-			}
-		}
-
-
-		/// <summary>
-		/// Get of set name of profile.
-		/// </summary>
-		public string Name
-		{
-			get => this.name;
-			set
-			{
-				this.VerifyAccess();
-				this.VerifyBuiltIn();
-				if (this.name == value)
-					return;
-				this.name = value;
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Name)));
-			}
-		}
-
-
-		/// <summary>
-		/// Called when application string resources updated.
-		/// </summary>
-		public void OnApplicationStringsUpdated() => this.UpdateBuiltInNameAndDescription();
-
-
-		/// <summary>
-		/// Raised when property changed.
-		/// </summary>
-		public event PropertyChangedEventHandler? PropertyChanged;
 
 
 		/// <summary>
@@ -988,99 +941,8 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				if (value < 0)
 					throw new ArgumentOutOfRangeException();
 				this.restartReadingDelay = value;
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(RestartReadingDelay)));
+				this.OnPropertyChanged(nameof(RestartReadingDelay));
 			}
-		}
-
-
-		/// <summary>
-		/// Save profile to file asynchronously.
-		/// </summary>
-		/// <param name="fileName">Name of file.</param>
-		/// <returns>Task of saving.</returns>
-		public async Task SaveAsync(string fileName)
-		{
-			this.VerifyAccess();
-			this.VerifyBuiltIn();
-			this.IsDataUpgraded = false;
-			var prevFileName = this.FileName;
-			var timeSpanFormatsForReading = this.timeSpanFormatsForReading.ToArray();
-			var timestampFormatsForReading = this.timestampFormatsForReading.ToArray();
-			await ioTaskFactory.StartNew(() =>
-			{
-				// delete previous file
-				if (prevFileName != null && prevFileName != fileName)
-					Global.RunWithoutError(() => File.Delete(prevFileName));
-
-				// create directory
-				if (Path.IsPathRooted(fileName))
-					Directory.CreateDirectory(Path.GetDirectoryName(fileName).AsNonNull());
-
-				// save to file
-				using var stream = new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite);
-				using var writer = new Utf8JsonWriter(stream, new JsonWriterOptions() { Indented = true });
-				writer.WriteStartObject();
-				writer.WriteBoolean(nameof(AllowMultipleFiles), this.allowMultipleFiles);
-				writer.WritePropertyName("DataSource");
-				this.SaveDataSourceToJson(writer);
-				writer.WriteString(nameof(ColorIndicator), this.colorIndicator.ToString());
-				writer.WriteString(nameof(Description), this.description);
-				writer.WriteString(nameof(Icon), this.icon.ToString());
-				if (!this.IsBuiltIn)
-					writer.WriteString(nameof(Id), this.id);
-				if (this.isAdministratorNeeded)
-					writer.WriteBoolean(nameof(IsAdministratorNeeded), true);
-				if (this.isContinuousReading)
-					writer.WriteBoolean(nameof(IsContinuousReading), true);
-				if (this.isPinned)
-					writer.WriteBoolean(nameof(IsPinned), true);
-				if (this.isWorkingDirectoryNeeded)
-					writer.WriteBoolean(nameof(IsWorkingDirectoryNeeded), true);
-				writer.WritePropertyName(nameof(LogLevelMapForReading));
-				this.SaveLogLevelMapForReadingToJson(writer);
-				writer.WritePropertyName(nameof(LogLevelMapForWriting));
-				this.SaveLogLevelMapForWritingToJson(writer);
-				writer.WritePropertyName(nameof(LogPatterns));
-				this.SaveLogPatternsToJson(writer);
-				writer.WriteString(nameof(LogStringEncodingForReading), this.logStringEncodingForReading.ToString());
-				writer.WriteString(nameof(LogStringEncodingForWriting), this.logStringEncodingForWriting.ToString());
-				this.logWritingFormat?.Let(it => writer.WriteString(nameof(LogWritingFormat), it));
-				writer.WriteString(nameof(Name), this.name);
-				writer.WriteNumber(nameof(RestartReadingDelay), this.restartReadingDelay);
-				writer.WriteString(nameof(SortDirection), this.sortDirection.ToString());
-				writer.WriteString(nameof(SortKey), this.sortKey.ToString());
-				writer.WriteString(nameof(TimeSpanCultureInfoForReading), this.timeSpanCultureInfoForReading.ToString());
-				writer.WriteString(nameof(TimeSpanCultureInfoForWriting), this.timeSpanCultureInfoForWriting.ToString());
-				writer.WriteString(nameof(TimeSpanEncodingForReading), this.timestampEncodingForReading.ToString());
-				this.timeSpanFormatForDisplaying?.Let(it => writer.WriteString(nameof(TimeSpanFormatForDisplaying), it));
-				this.timeSpanFormatForWriting?.Let(it => writer.WriteString(nameof(TimeSpanFormatForWriting), it));
-				if (timeSpanFormatsForReading.IsNotEmpty())
-				{
-					writer.WritePropertyName(nameof(TimeSpanFormatsForReading));
-					writer.WriteStartArray();
-					foreach (var format in timeSpanFormatsForReading)
-						writer.WriteStringValue(format);
-					writer.WriteEndArray();
-				}
-				writer.WriteString(nameof(TimestampCategoryGranularity), this.timestampCategoryGranularity.ToString());
-				writer.WriteString(nameof(TimestampCultureInfoForReading), this.timestampCultureInfoForReading.ToString());
-				writer.WriteString(nameof(TimestampCultureInfoForWriting), this.timestampCultureInfoForWriting.ToString());
-				writer.WriteString(nameof(TimestampEncodingForReading), this.timestampEncodingForReading.ToString());
-				this.timestampFormatForDisplaying?.Let(it => writer.WriteString(nameof(TimestampFormatForDisplaying), it));
-				this.timestampFormatForWriting?.Let(it => writer.WriteString(nameof(TimestampFormatForWriting), it));
-				if (timestampFormatsForReading.IsNotEmpty())
-				{
-					writer.WritePropertyName(nameof(TimestampFormatsForReading));
-					writer.WriteStartArray();
-					foreach (var format in timestampFormatsForReading)
-						writer.WriteStringValue(format);
-					writer.WriteEndArray();
-				}
-				writer.WritePropertyName(nameof(VisibleLogProperties));
-				this.SaveVisibleLogPropertiesToJson(writer);
-				writer.WriteEndObject();
-			});
-			this.FileName = fileName;
 		}
 
 
@@ -1171,7 +1033,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				if (this.sortDirection == value)
 					return;
 				this.sortDirection = value;
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SortDirection)));
+				this.OnPropertyChanged(nameof(SortDirection));
 			}
 		}
 
@@ -1189,7 +1051,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				if (this.sortKey == value)
 					return;
 				this.sortKey = value;
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SortKey)));
+				this.OnPropertyChanged(nameof(SortKey));
 			}
 		}
 
@@ -1207,7 +1069,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				if (this.timeSpanCultureInfoForReading.Equals(value))
 					return;
 				this.timeSpanCultureInfoForReading = value;
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TimeSpanCultureInfoForReading)));
+				this.OnPropertyChanged(nameof(TimeSpanCultureInfoForReading));
 			}
 		}
 
@@ -1225,7 +1087,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				if (this.timeSpanCultureInfoForWriting.Equals(value))
 					return;
 				this.timeSpanCultureInfoForWriting = value;
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TimeSpanCultureInfoForWriting)));
+				this.OnPropertyChanged(nameof(TimeSpanCultureInfoForWriting));
 			}
 		}
 
@@ -1243,7 +1105,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				if (this.timeSpanEncodingForReading == value)
 					return;
 				this.timeSpanEncodingForReading = value;
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TimeSpanEncodingForReading)));
+				this.OnPropertyChanged(nameof(TimeSpanEncodingForReading));
 			}
 		}
 
@@ -1261,7 +1123,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				if (this.timeSpanFormatForDisplaying == value)
 					return;
 				this.timeSpanFormatForDisplaying = value;
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TimeSpanFormatForDisplaying)));
+				this.OnPropertyChanged(nameof(TimeSpanFormatForDisplaying));
 			}
 		}
 
@@ -1279,7 +1141,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				if (this.timeSpanFormatForWriting == value)
 					return;
 				this.timeSpanFormatForWriting = value;
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TimeSpanFormatForWriting)));
+				this.OnPropertyChanged(nameof(TimeSpanFormatForWriting));
 			}
 		}
 
@@ -1297,7 +1159,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				if (this.timeSpanFormatsForReading.SequenceEqual(value))
 					return;
 				this.timeSpanFormatsForReading = value.ToArray().AsReadOnly();
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TimeSpanFormatsForReading)));
+				this.OnPropertyChanged(nameof(TimeSpanFormatsForReading));
 			}
 		}
 
@@ -1315,7 +1177,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				if (this.timestampCategoryGranularity == value)
 					return;
 				this.timestampCategoryGranularity = value;
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TimestampCategoryGranularity)));
+				this.OnPropertyChanged(nameof(timestampCategoryGranularity));
 			}
 		}
 
@@ -1333,7 +1195,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				if (this.timestampCultureInfoForReading.Equals(value))
 					return;
 				this.timestampCultureInfoForReading = value;
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TimestampCultureInfoForReading)));
+				this.OnPropertyChanged(nameof(TimestampCultureInfoForReading));
 			}
 		}
 
@@ -1351,7 +1213,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				if (this.timestampCultureInfoForWriting.Equals(value))
 					return;
 				this.timestampCultureInfoForWriting = value;
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TimestampCultureInfoForWriting)));
+				this.OnPropertyChanged(nameof(TimestampCultureInfoForWriting));
 			}
 		}
 
@@ -1369,7 +1231,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				if (this.timestampEncodingForReading == value)
 					return;
 				this.timestampEncodingForReading = value;
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TimestampEncodingForReading)));
+				this.OnPropertyChanged(nameof(TimestampEncodingForReading));
 			}
 		}
 
@@ -1387,7 +1249,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				if (this.timestampFormatForDisplaying == value)
 					return;
 				this.timestampFormatForDisplaying = value;
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TimestampFormatForDisplaying)));
+				this.OnPropertyChanged(nameof(TimestampFormatForDisplaying));
 			}
 		}
 
@@ -1405,7 +1267,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				if (this.timestampFormatForWriting == value)
 					return;
 				this.timestampFormatForWriting = value;
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TimestampFormatForWriting)));
+				this.OnPropertyChanged(nameof(TimestampFormatForWriting));
 			}
 		}
 
@@ -1423,7 +1285,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				if (this.timestampFormatsForReading.SequenceEqual(value))
 					return;
 				this.timestampFormatsForReading = value.ToArray().AsReadOnly();
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TimestampFormatsForReading)));
+				this.OnPropertyChanged(nameof(TimestampFormatsForReading));
 			}
 		}
 
@@ -1431,20 +1293,20 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		// Update name and description of built-in profile.
 		void UpdateBuiltInNameAndDescription()
 		{
-			if (this.BuiltInId == null)
+			if (!this.IsBuiltIn)
 				return;
-			var name = this.Application.GetStringNonNull($"BuiltInProfile.{this.BuiltInId}", this.BuiltInId);
-			if (this.name != name)
+			var name = this.Application.GetStringNonNull($"BuiltInProfile.{this.Id}", this.Id);
+			if (this.builtInName != name)
 			{
-				this.name = name;
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Name)));
+				this.builtInName = name;
+				this.OnPropertyChanged(nameof(Name));
 			}
-			var description = this.Application.GetString($"BuiltInProfile.{this.BuiltInId}.Description");
+			var description = this.Application.GetString($"BuiltInProfile.{this.Id}.Description");
 			if (this.description != description)
 			{
 				this.description = description;
 				this.HasDescription = (description != null);
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Description)));
+				this.OnPropertyChanged(nameof(Description));
 			}
 		}
 
@@ -1468,15 +1330,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			if (this.IsValid == isValid)
 				return;
 			this.IsValid = isValid;
-			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsValid)));
-		}
-
-
-		// Throw exception if profile is built-in.
-		void VerifyBuiltIn()
-		{
-			if (this.IsBuiltIn)
-				throw new InvalidOperationException();
+			this.OnPropertyChanged(nameof(IsValid));
 		}
 
 
@@ -1493,22 +1347,9 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				if (this.visibleLogProperties.SequenceEqual(value))
 					return;
 				this.visibleLogProperties = new List<LogProperty>(value).AsReadOnly();
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(VisibleLogProperties)));
+				this.OnPropertyChanged(nameof(VisibleLogProperties));
 				this.Validate();
 			}
 		}
-
-
-		/// <summary>
-		/// Wait for completion of all IO tasks.
-		/// </summary>
-		/// <returns>Task of waiting.</returns>
-		public static async Task WaitForIOCompletionAsync() => await ioTaskFactory.StartNew(() => { });
-
-
-		// Interface implementations.
-		public bool CheckAccess() => this.Application.CheckAccess();
-		CarinaStudio.IApplication IApplicationObject.Application { get => this.Application; }
-		public SynchronizationContext SynchronizationContext { get => this.Application.SynchronizationContext; }
 	}
 }

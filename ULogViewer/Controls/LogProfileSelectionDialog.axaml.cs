@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using CarinaStudio.AppSuite.Data;
 using CarinaStudio.Collections;
 using CarinaStudio.Controls;
 using CarinaStudio.IO;
@@ -55,7 +56,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.scrollViewer = this.FindControl<ScrollViewer>("scrollViewer").AsNonNull();
 
 			// attach to log profiles
-			((INotifyCollectionChanged)LogProfiles.All).CollectionChanged += this.OnAllLogProfilesChanged;
+			((INotifyCollectionChanged)LogProfileManager.Default.Profiles).CollectionChanged += this.OnAllLogProfilesChanged;
 			this.RefreshLogProfiles();
 		}
 
@@ -69,7 +70,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 
 			// add profile
-			LogProfiles.Add(profile);
+			LogProfileManager.Default.AddProfile(profile);
 			this.otherLogProfileListBox.SelectedItem = profile;
 		}
 
@@ -79,7 +80,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (x == null || y == null)
 				return 0;
-			var result = x.Name.CompareTo(y.Name);
+			var result = string.Compare(x.Name, y.Name);
 			if (result != 0)
 				return result;
 			result = x.Id.CompareTo(y.Id);
@@ -105,7 +106,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 
 			// add log profile
-			LogProfiles.Add(newProfile);
+			LogProfileManager.Default.AddProfile(newProfile);
 			this.SelectLogProfile(newProfile);
 		}
 
@@ -148,7 +149,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			var copiedProfile = new LogProfile(logProfile);
 			try
 			{
-				await copiedProfile.SaveAsync(fileName);
+				await copiedProfile.SaveAsync(fileName, false);
 			}
 			catch (Exception ex)
 			{
@@ -197,26 +198,12 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (fileNames == null || fileNames.IsEmpty())
 				return;
 
-			// find current log profile
-			var fileName = fileNames[0];
-			var comparer = PathEqualityComparer.Default;
-			var logProfile = this.pinnedLogProfiles.FirstOrDefault(it => comparer.Equals(it.FileName, fileName));
-			if (logProfile != null)
-			{
-				this.pinnedLogProfileListBox.SelectedItem = logProfile;
-				return;
-			}
-			logProfile = this.otherLogProfiles.FirstOrDefault(it => comparer.Equals(it.FileName, fileName));
-			if (logProfile != null)
-			{
-				this.otherLogProfileListBox.SelectedItem = logProfile;
-				return;
-			}
-
 			// load log profile
+			var fileName = fileNames[0];
+			var logProfile = (LogProfile?)null;
 			try
 			{
-				logProfile = await LogProfile.LoadProfileAsync(this.Application, fileName);
+				logProfile = await LogProfile.LoadAsync(this.Application, fileName);
 			}
 			catch (Exception ex)
 			{
@@ -232,7 +219,6 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 
 			// edit log profile
-			logProfile.DetachFromFile();
 			logProfile.IsPinned = false;
 			logProfile = await new LogProfileEditorDialog()
 			{
@@ -242,7 +228,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 
 			// add log profile
-			LogProfiles.Add(logProfile);
+			LogProfileManager.Default.AddProfile(logProfile);
 			this.otherLogProfileListBox.SelectedItem = logProfile;
 		}
 
@@ -258,7 +244,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				case NotifyCollectionChangedAction.Add:
 					var filter = this.Filter;
-					foreach (LogProfile logProfile in e.NewItems.AsNonNull())
+					foreach (LogProfile logProfile in e.NewItems!)
 					{
 						if (filter != null && !filter(logProfile))
 							continue;
@@ -268,7 +254,7 @@ namespace CarinaStudio.ULogViewer.Controls
 							this.pinnedLogProfiles.Add(logProfile);
 						else
 							this.otherLogProfiles.Add(logProfile);
-						logProfile.PropertyChanged += this.OnLogProdilePropertyChanged;
+						logProfile.PropertyChanged += this.OnLogProfilePropertyChanged;
 					}
 					break;
 				case NotifyCollectionChangedAction.Remove:
@@ -276,7 +262,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					{
 						if (!this.attachedLogProfiles.Remove(logProfile))
 							continue;
-						logProfile.PropertyChanged -= this.OnLogProdilePropertyChanged;
+						logProfile.PropertyChanged -= this.OnLogProfilePropertyChanged;
 						this.otherLogProfiles.Remove(logProfile);
 						this.pinnedLogProfiles.Remove(logProfile);
 					}
@@ -289,9 +275,9 @@ namespace CarinaStudio.ULogViewer.Controls
 		protected override void OnClosed(EventArgs e)
 		{
 			// detach from log profiles
-			((INotifyCollectionChanged)LogProfiles.All).CollectionChanged -= this.OnAllLogProfilesChanged;
+			((INotifyCollectionChanged)LogProfileManager.Default.Profiles).CollectionChanged -= this.OnAllLogProfilesChanged;
 			foreach (var profile in this.attachedLogProfiles)
-				profile.PropertyChanged -= this.OnLogProdilePropertyChanged;
+				profile.PropertyChanged -= this.OnLogProfilePropertyChanged;
 			this.attachedLogProfiles.Clear();
 
 			// call base
@@ -304,7 +290,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Called when property of log profile has been changed.
-		void OnLogProdilePropertyChanged(object? sender, PropertyChangedEventArgs e)
+		void OnLogProfilePropertyChanged(object? sender, PropertyChangedEventArgs e)
 		{
 			if (sender is not LogProfile profile)
 				return;
@@ -412,7 +398,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			var filter = this.Filter;
 			if (filter == null)
 			{
-				foreach (var profile in LogProfiles.All)
+				foreach (var profile in LogProfileManager.Default.Profiles)
 				{
 					if (!this.attachedLogProfiles.Add(profile))
 						continue;
@@ -420,7 +406,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						this.pinnedLogProfiles.Add(profile);
 					else
 						this.otherLogProfiles.Add(profile);
-					profile.PropertyChanged += this.OnLogProdilePropertyChanged;
+					profile.PropertyChanged += this.OnLogProfilePropertyChanged;
 				}
 			}
 			else
@@ -432,10 +418,10 @@ namespace CarinaStudio.ULogViewer.Controls
 						this.attachedLogProfiles.Remove(profile);
 						this.otherLogProfiles.Remove(profile);
 						this.pinnedLogProfiles.Remove(profile);
-						profile.PropertyChanged -= this.OnLogProdilePropertyChanged;
+						profile.PropertyChanged -= this.OnLogProfilePropertyChanged;
 					}
 				}
-				foreach (var profile in LogProfiles.All)
+				foreach (var profile in LogProfileManager.Default.Profiles)
 				{
 					if (!filter(profile) || !this.attachedLogProfiles.Add(profile))
 						continue;
@@ -443,7 +429,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						this.pinnedLogProfiles.Add(profile);
 					else
 						this.otherLogProfiles.Add(profile);
-					profile.PropertyChanged += this.OnLogProdilePropertyChanged;
+					profile.PropertyChanged += this.OnLogProfilePropertyChanged;
 				}
 			}
 		}
@@ -454,7 +440,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (logProfile == null)
 				return;
-			LogProfiles.Remove(logProfile);
+			LogProfileManager.Default.RemoveProfile(logProfile);
 		}
 
 

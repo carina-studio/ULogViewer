@@ -3842,7 +3842,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.Logger.LogTrace("No state to restore");
 					return;
 				}
-				if (!LogProfiles.TryFindProfileById(jsonValue.GetString().AsNonNull(), out var profile) || profile == null)
+				var profile = LogProfileManager.Default.GetProfileOrDefault(jsonValue.GetString()!);
+				if (profile == null)
 				{
 					this.Logger.LogWarning($"Unable to find log profile '{jsonValue.GetString()}' to restore state");
 					return;

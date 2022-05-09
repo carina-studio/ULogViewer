@@ -39,7 +39,7 @@ namespace CarinaStudio.ULogViewer.Converters
 			var iconName = (string?)null;
 			if (value is LogProfile profile)
 			{
-				if (profile == LogProfiles.EmptyProfile)
+				if (profile == LogProfileManager.Default.EmptyProfile)
 					iconName = "Empty";
 				else
 					iconName = profile.Icon.ToString();

@@ -113,7 +113,8 @@ namespace CarinaStudio.ULogViewer
 					return null;
 				})?.Let(it =>
 				{
-					if (LogProfiles.TryFindProfileById(it, out var profile))
+					var profile = LogProfileManager.Default.GetProfileOrDefault(it);
+					if (profile != null)
 					{
 						this.Logger.LogWarning($"Initial log profile is '{profile?.Name}'");
 						return profile;
@@ -124,7 +125,8 @@ namespace CarinaStudio.ULogViewer
 				{
 					if (string.IsNullOrEmpty(it))
 						return null;
-					if (LogProfiles.TryFindProfileById(it, out var profile))
+					var profile = LogProfileManager.Default.GetProfileOrDefault(it);
+					if (profile != null)
 					{
 						this.Logger.LogWarning($"Initial log profile is '{profile?.Name}'");
 						return profile;
@@ -226,7 +228,7 @@ namespace CarinaStudio.ULogViewer
 			await PredefinedLogTextFilters.SaveAllAsync();
 
 			// wait for IO completion of log profiles
-			await LogProfiles.WaitForIOCompletionAsync();
+			await LogProfileManager.Default.WaitForIOTaskCompletion();
 
 			// call base
 			await base.OnMainWindowClosedAsync(mainWindow, viewModel);
@@ -321,7 +323,7 @@ namespace CarinaStudio.ULogViewer
 			LogDataSourceProviders.Initialize(this);
 
 			// initialize log profiles
-			await LogProfiles.InitializeAsync(this);
+			await LogProfileManager.InitializeAsync(this);
 
 			// initialize predefined log text filters
 			this.UpdateSplashWindowMessage(this.GetStringNonNull("SplashWindow.InitializePredefinedLogTextFilters"));

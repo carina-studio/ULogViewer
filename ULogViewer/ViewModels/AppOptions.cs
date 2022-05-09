@@ -25,13 +25,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public AppOptions() : base()
 		{
 			// setup properties
-			this.logProfiles.Add(Logs.Profiles.LogProfiles.EmptyProfile);
-			this.logProfiles.AddAll(Logs.Profiles.LogProfiles.All);
+			this.logProfiles.Add(LogProfileManager.Default.EmptyProfile);
+			this.logProfiles.AddAll(LogProfileManager.Default.Profiles);
 			this.LogProfiles = this.logProfiles.AsReadOnly();
 			this.SampleLogFontFamily = new FontFamily(this.LogFontFamily);
 
 			// add event handlers
-			((INotifyCollectionChanged)Logs.Profiles.LogProfiles.All).CollectionChanged += this.OnLogProfilesChanged;
+			((INotifyCollectionChanged)LogProfileManager.Default.Profiles).CollectionChanged += this.OnLogProfilesChanged;
 		}
 
 
@@ -44,11 +44,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				return -1;
 			if (y == null)
 				return 1;
-			if (x == Logs.Profiles.LogProfiles.EmptyProfile)
+			if (x == LogProfileManager.Default.EmptyProfile)
 				return -1;
-			if (y == Logs.Profiles.LogProfiles.EmptyProfile)
+			if (y == LogProfileManager.Default.EmptyProfile)
 				return 1;
-			var result = x.Name.CompareTo(y.Name);
+			var result = string.Compare(x.Name, y.Name);
 			if (result != 0)
 				return result;
 			result = x.Id.CompareTo(y.Id);
@@ -72,7 +72,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		protected override void Dispose(bool disposing)
 		{
 			// remove event handlers
-			((INotifyCollectionChanged)Logs.Profiles.LogProfiles.All).CollectionChanged -= this.OnLogProfilesChanged;
+			((INotifyCollectionChanged)LogProfileManager.Default.Profiles).CollectionChanged -= this.OnLogProfilesChanged;
 
 			// save settings
 			if (this.isSettingsModified)
@@ -114,14 +114,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			get => this.Settings.GetValueOrDefault(SettingKeys.InitialLogProfile).Let(it =>
 			{
 				if (string.IsNullOrEmpty(it))
-					return Logs.Profiles.LogProfiles.EmptyProfile;
-				if (Logs.Profiles.LogProfiles.TryFindProfileById(it, out var profile))
-					return profile.AsNonNull();
-				return Logs.Profiles.LogProfiles.EmptyProfile;
+					return LogProfileManager.Default.EmptyProfile;
+				return LogProfileManager.Default.GetProfileOrDefault(it) ?? LogProfileManager.Default.EmptyProfile;
 			});
 			set => value.Let(it =>
 			{
-				if (it == Logs.Profiles.LogProfiles.EmptyProfile)
+				if (it == LogProfileManager.Default.EmptyProfile)
 					this.Settings.ResetValue(SettingKeys.InitialLogProfile);
 				else
 					this.Settings.SetValue<string>(SettingKeys.InitialLogProfile, it.Id);
