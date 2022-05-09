@@ -543,6 +543,7 @@
 	<sys:String x:Key="String/SortDirection.Descending">Descending</sys:String>
 
 	<!-- SplashWindow -->
+	<sys:String x:Key="String/SplashWindow.InitializeLogAnalysisRules">Loading log analysis rules</sys:String>
 	<sys:String x:Key="String/SplashWindow.InitializeLogProfiles">Loading log profiles</sys:String>
 	<sys:String x:Key="String/SplashWindow.InitializePredefinedLogTextFilters">Loading text filters</sys:String>
 	<sys:String x:Key="String/SplashWindow.ShowMainWindow">Showing main window</sys:String>

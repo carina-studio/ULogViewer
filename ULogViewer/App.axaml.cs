@@ -8,6 +8,7 @@ using CarinaStudio.Configuration;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ULogViewer.ViewModels;
+using CarinaStudio.ULogViewer.ViewModels.Analysis;
 using CarinaStudio.ViewModels;
 using Microsoft.Extensions.Logging;
 using System;
@@ -15,7 +16,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text.Json;
 using System.Threading.Tasks;
-using System.Xml;
 
 namespace CarinaStudio.ULogViewer
 {
@@ -224,10 +224,13 @@ namespace CarinaStudio.ULogViewer
         // Called when main window closed.
         protected override async Task OnMainWindowClosedAsync(CarinaStudio.Controls.Window mainWindow, ViewModel viewModel)
         {
-			// save predefined log text filters
+			// wait for I/O completion of log analysis rules
+			await KeyLogAnalysisRuleManager.Default.WaitForIOTaskCompletion();
+
+			// wait for I/O completion of log text filters
 			await PredefinedLogTextFilterManager.Default.WaitForIOTaskCompletion();
 
-			// wait for IO completion of log profiles
+			// wait for I/O completion of log profiles
 			await LogProfileManager.Default.WaitForIOTaskCompletion();
 
 			// call base
@@ -328,6 +331,10 @@ namespace CarinaStudio.ULogViewer
 			// initialize predefined log text filters
 			this.UpdateSplashWindowMessage(this.GetStringNonNull("SplashWindow.InitializePredefinedLogTextFilters"));
 			await PredefinedLogTextFilterManager.InitializeAsync(this);
+
+			// initialize log analysis rules
+			this.UpdateSplashWindowMessage(this.GetStringNonNull("SplashWindow.InitializeLogAnalysisRules"));
+			await KeyLogAnalysisRuleManager.InitializeAsync(this);
 
 			// show main window
 			if (!this.IsRestoringMainWindowsRequested)
