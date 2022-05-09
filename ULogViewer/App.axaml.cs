@@ -225,7 +225,7 @@ namespace CarinaStudio.ULogViewer
         protected override async Task OnMainWindowClosedAsync(CarinaStudio.Controls.Window mainWindow, ViewModel viewModel)
         {
 			// save predefined log text filters
-			await PredefinedLogTextFilters.SaveAllAsync();
+			await PredefinedLogTextFilterManager.Default.WaitForIOTaskCompletion();
 
 			// wait for IO completion of log profiles
 			await LogProfileManager.Default.WaitForIOTaskCompletion();
@@ -327,7 +327,7 @@ namespace CarinaStudio.ULogViewer
 
 			// initialize predefined log text filters
 			this.UpdateSplashWindowMessage(this.GetStringNonNull("SplashWindow.InitializePredefinedLogTextFilters"));
-			await PredefinedLogTextFilters.InitializeAsync(this);
+			await PredefinedLogTextFilterManager.InitializeAsync(this);
 
 			// show main window
 			if (!this.IsRestoringMainWindowsRequested)

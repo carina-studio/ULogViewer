@@ -804,7 +804,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			if (y == null)
 				return 1;
-			var result = x.Name.CompareTo(y.Name);
+			var result = string.Compare(x.Name, y.Name);
 			if (result != 0)
 				return result;
 			return x.GetHashCode() - y.GetHashCode();
@@ -1463,7 +1463,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			}.ShowDialog<PredefinedLogTextFilter>(this.attachedWindow);
 			if (filter == null)
 				return;
-			ViewModels.PredefinedLogTextFilters.Add(filter);
+			PredefinedLogTextFilterManager.Default.AddFilter(filter);
 		}
 
 
@@ -1968,10 +1968,10 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.AddHandler(KeyDownEvent, this.OnPreviewKeyDown, RoutingStrategies.Tunnel);
 
 			// setup predefined log text filter list
-			this.predefinedLogTextFilters.AddAll(ViewModels.PredefinedLogTextFilters.All);
-			foreach (var filter in ViewModels.PredefinedLogTextFilters.All)
+			this.predefinedLogTextFilters.AddAll(PredefinedLogTextFilterManager.Default.Filters);
+			foreach (var filter in PredefinedLogTextFilterManager.Default.Filters)
 				this.AttachToPredefinedLogTextFilter(filter);
-			((INotifyCollectionChanged)ViewModels.PredefinedLogTextFilters.All).CollectionChanged += this.OnPredefinedLogTextFiltersChanged;
+			((INotifyCollectionChanged)PredefinedLogTextFilterManager.Default.Filters).CollectionChanged += this.OnPredefinedLogTextFiltersChanged;
 
 			// select log files or working directory
 			if (this.canSetIPEndPoint.Value
@@ -2023,7 +2023,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.RemoveHandler(KeyDownEvent, this.OnPreviewKeyDown);
 
 			// release predefined log text filter list
-			((INotifyCollectionChanged)ViewModels.PredefinedLogTextFilters.All).CollectionChanged -= this.OnPredefinedLogTextFiltersChanged;
+			((INotifyCollectionChanged)PredefinedLogTextFilterManager.Default.Filters).CollectionChanged -= this.OnPredefinedLogTextFiltersChanged;
 			foreach (var filter in this.predefinedLogTextFilters)
 				this.DetachFromPredefinedLogTextFilter(filter);
 			this.predefinedLogTextFilters.Clear();
@@ -3356,7 +3356,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (filter == null)
 				return;
-			ViewModels.PredefinedLogTextFilters.Remove(filter);
+			PredefinedLogTextFilterManager.Default.RemoveFilter(filter);
 		}
 
 
