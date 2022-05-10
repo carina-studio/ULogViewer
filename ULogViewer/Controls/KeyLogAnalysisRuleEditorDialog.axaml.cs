@@ -119,13 +119,13 @@ partial class KeyLogAnalysisRuleEditorDialog : AppSuite.Controls.InputDialog<IUL
 	}
 
 
+	/// <inheritdoc/>
+    protected override bool OnValidateInput() =>
+		base.OnValidateInput() && this.patternRegex != null && !string.IsNullOrEmpty(this.messageTextBox.Text);
+	
+
 	/// <summary>
 	/// Get of set rule to be edited.
 	/// </summary>
 	public KeyLogAnalysisRuleSet.Rule? Rule { get; set; }
-
-
-	/// <inheritdoc/>
-    protected override bool OnValidateInput() =>
-		base.OnValidateInput() && this.patternRegex != null && !string.IsNullOrEmpty(this.messageTextBox.Text);
 }

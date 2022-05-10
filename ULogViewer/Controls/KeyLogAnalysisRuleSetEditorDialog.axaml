@@ -1,0 +1,60 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:appAnalysis="using:CarinaStudio.ULogViewer.ViewModels.Analysis"
+		xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
+		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="CarinaStudio.ULogViewer.Controls.KeyLogAnalysisRuleSetEditorDialog"
+        Classes="Dialog"
+        Title="{DynamicResource String/KeyLogAnalysisRuleSetEditorDialog.Title}"
+        Width="{DynamicResource Double/KeyLogAnalysisRuleSetEditorDialog.Width}">
+
+	<DockPanel>
+
+		<!-- Control buttons -->
+		<Border Classes="Dialog_ControlButtonsPanel">
+			<StackPanel Classes="Dialog_ControlButtonsPanel">
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].GenerateResultCommand}" Content="{DynamicResource String/Common.OK}"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].Close}" Content="{DynamicResource String/Common.Cancel}"/>
+			</StackPanel>
+		</Border>
+
+		<!-- Content -->
+		<StackPanel Classes="Dialog_ContentPanel">
+
+			<!-- Name -->
+			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/KeyLogAnalysisRuleSetEditorDialog.Name}"/>
+			<TextBox Name="nameTextBox" Classes="Dialog_TextBox" MaxLength="256"/>
+			<Separator Classes="Dialog_Separator"/>
+
+			<!-- Rules -->
+			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/KeyLogAnalysisRuleSetEditorDialog.Rules}"/>
+			<asControls:ListBox Name="ruleListBox" Height="{StaticResource Double/KeyLogAnalysisRuleSetEditorDialog.RuleListBox.Height}" Items="{Binding $parent[Window].Rules}">
+				<asControls:ListBox.ItemTemplate>
+					<DataTemplate>
+						<Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto">
+							<Image Classes="Icon" Height="{StaticResource Double/KeyLogAnalysisRuleSetEditorDialog.RuleListBox.Item.Icon.Size}" Margin="{StaticResource Thickness/KeyLogAnalysisRuleSetEditorDialog.RuleListBox.Item.Icon.Margin}" Source="{Binding ResultType, Converter={x:Static appConverters:DisplayableLogAnalysisResultIconConverter.Default}}" VerticalAlignment="Center" Width="{StaticResource Double/KeyLogAnalysisRuleSetEditorDialog.RuleListBox.Item.Icon.Size}"/>
+							<TextBlock Grid.Column="1" Margin="{StaticResource Thickness/KeyLogAnalysisRuleSetEditorDialog.RuleListBox.Item.Pattern.Margin}" Text="{Binding Pattern}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+							<TextBlock Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="1" Opacity="{StaticResource Double/KeyLogAnalysisRuleSetEditorDialog.RuleListBox.Item.Message.Opacity}" Text="{Binding Message}" TextTrimming="CharacterEllipsis"/>
+							<Border Classes="InPlaceAction_Reserved"/>
+							<StackPanel Grid.Column="2" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
+								<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveRule}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
+									<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Delete}"/>
+								</Button>
+								<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditRule}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
+									<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Edit}"/>
+								</Button>
+							</StackPanel>
+						</Grid>
+					</DataTemplate>
+				</asControls:ListBox.ItemTemplate>
+			</asControls:ListBox>
+			<Button Classes="ListAction" Command="{Binding $parent[Window].AddRule}" Content="{DynamicResource String/Common.Add}"/>
+			
+		</StackPanel>
+		
+	</DockPanel>
+	
+</Window>

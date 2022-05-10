@@ -143,6 +143,11 @@
 	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.ResultType">分析結果類型</sys:String>
 	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Title">編輯規則</sys:String>
 
+	<!-- KeyLogAnalysisRuleSetEditorDialog -->
+	<sys:String x:Key="String/KeyLogAnalysisRuleSetEditorDialog.Name">名稱 (必要)</sys:String>
+	<sys:String x:Key="String/KeyLogAnalysisRuleSetEditorDialog.Rules">規則 (必要)</sys:String>
+	<sys:String x:Key="String/KeyLogAnalysisRuleSetEditorDialog.Title">編輯規則集</sys:String>
+
 	<!-- LogColorIndicator -->
 	<sys:String x:Key="String/LogColorIndicator.FileName">檔案</sys:String>
 	<sys:String x:Key="String/LogColorIndicator.None">無</sys:String>

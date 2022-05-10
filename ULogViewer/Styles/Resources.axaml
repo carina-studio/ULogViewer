@@ -25,6 +25,14 @@
 	<sys:Double x:Key="Double/KeyLogAnalysisRuleEditorDialog.PatternInput.Height">100</sys:Double>
 	<sys:Double x:Key="Double/KeyLogAnalysisRuleEditorDialog.Width">500</sys:Double>
 
+	<!-- KeyLogAnalysisRuleSetEditorDialog -->
+	<sys:Double x:Key="Double/KeyLogAnalysisRuleSetEditorDialog.RuleListBox.Height">200</sys:Double>
+	<sys:Double x:Key="Double/KeyLogAnalysisRuleSetEditorDialog.RuleListBox.Item.Icon.Size">14</sys:Double>
+	<sys:Double x:Key="Double/KeyLogAnalysisRuleSetEditorDialog.RuleListBox.Item.Message.Opacity">0.5</sys:Double>
+	<sys:Double x:Key="Double/KeyLogAnalysisRuleSetEditorDialog.Width">500</sys:Double>
+	<Thickness x:Key="Thickness/KeyLogAnalysisRuleSetEditorDialog.RuleListBox.Item.Icon.Margin">0,0,8,3</Thickness>
+	<Thickness x:Key="Thickness/KeyLogAnalysisRuleSetEditorDialog.RuleListBox.Item.Pattern.Margin">0,0,0,3</Thickness>
+
 	<!-- ListAction -->
 	<sys:Double x:Key="Double/ListAction.MinWidth">80</sys:Double>
 	<Thickness x:Key="Thickness/ListAction.Padding">10,5,10,5</Thickness>
