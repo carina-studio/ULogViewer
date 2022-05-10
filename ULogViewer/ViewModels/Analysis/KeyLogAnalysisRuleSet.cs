@@ -4,6 +4,7 @@ using CarinaStudio.Threading;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -199,6 +200,8 @@ class KeyLogAnalysisRuleSet : BaseProfile<IULogViewerApplication>
         {
             this.VerifyAccess();
             this.VerifyBuiltIn();
+            if (this.rules.SequenceEqual(value))
+                return;
             this.rules = value.AsReadOnly();
             this.OnPropertyChanged(nameof(Rules));
         }

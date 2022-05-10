@@ -53,6 +53,10 @@ sealed class ConfigurationKeys
     /// </summary>
     public static readonly SettingKey<int> DisplayableLogProcessinDelayDefault = new(nameof(DisplayableLogProcessinDelayDefault), 500);
     /// <summary>
+    /// Delay before applying log analysis parameters in milliseconds.
+    /// </summary>
+    public static readonly SettingKey<int> LogAnalysisParamsUpdateDelay = new(nameof(LogAnalysisParamsUpdateDelay), 500);
+    /// <summary>
     /// Size of chunk of non-continuous logs reading.
     /// </summary>
     public static readonly SettingKey<int> NonContinuousLogsReadingUpdateChunkSize = new(nameof(NonContinuousLogsReadingUpdateChunkSize), 32768);
