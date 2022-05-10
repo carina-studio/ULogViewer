@@ -4760,6 +4760,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		void UpdateDisplayLogProperties()
 		{
 			var profile = this.LogProfile;
+			this.keyLogAnalyzer.LogProperties.Clear();
 			if (profile == null)
 			{
 				this.ResetValue(HasTimestampDisplayableLogPropertyProperty);
@@ -4774,7 +4775,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				var hasTimestamp = false;
 				foreach (var logProperty in visibleLogProperties)
 				{
-					displayLogProperties.Add(new DisplayableLogProperty(app, logProperty));
+					var displayableLogProperty = new DisplayableLogProperty(app, logProperty);
+					displayLogProperties.Add(displayableLogProperty);
+					this.keyLogAnalyzer.LogProperties.Add(displayableLogProperty);
 					if (!hasTimestamp)
 						hasTimestamp = DisplayableLog.HasDateTimeProperty(logProperty.Name);
 				}

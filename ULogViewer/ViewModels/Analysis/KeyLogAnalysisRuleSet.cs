@@ -25,10 +25,10 @@ class KeyLogAnalysisRuleSet : BaseProfile<IULogViewerApplication>
         /// </summary>
         /// <param name="pattern">Pattern to match log.</param>
         /// <param name="resultType">Type of analysis result to be generated when pattern matched.</param>
-        /// <param name="formattedMessage">Formatted message to be generated when pattern matched.</param>
-        public Rule(Regex pattern, DisplayableLogAnalysisResultType resultType, string formattedMessage)
+        /// <param name="message">Formatted message to be generated when pattern matched.</param>
+        public Rule(Regex pattern, DisplayableLogAnalysisResultType resultType, string message)
         {
-            this.FormattedMessage = formattedMessage;
+            this.Message = message;
             this.Pattern = pattern;
             this.ResultType = resultType;
         }
@@ -36,7 +36,7 @@ class KeyLogAnalysisRuleSet : BaseProfile<IULogViewerApplication>
         /// <summary>
         /// Get formatted message to be generated when pattern matched.
         /// </summary>
-        public string FormattedMessage { get; }
+        public string Message { get; }
 
         /// <summary>
         /// Get pattern to match log.
@@ -127,7 +127,7 @@ class KeyLogAnalysisRuleSet : BaseProfile<IULogViewerApplication>
                         {
                             var ignoreCase = jsonValue.TryGetProperty("IgnoreCase", out var ignoreCaseProperty) && ignoreCaseProperty.ValueKind == JsonValueKind.True;
                             var regex = new Regex(jsonValue.GetProperty(nameof(Rule.Pattern)).GetString()!, ignoreCase ? RegexOptions.IgnoreCase : RegexOptions.None);
-                            var formattedMessage = jsonValue.GetProperty(nameof(Rule.FormattedMessage)).GetString().AsNonNull();
+                            var formattedMessage = jsonValue.GetProperty(nameof(Rule.Message)).GetString().AsNonNull();
                             var resultType = jsonValue.TryGetProperty(nameof(Rule.ResultType), out var resultTypeValue) 
                                 && resultTypeValue.ValueKind == JsonValueKind.String
                                 && Enum.TryParse<DisplayableLogAnalysisResultType>(resultTypeValue.GetString(), out var type)
@@ -163,7 +163,7 @@ class KeyLogAnalysisRuleSet : BaseProfile<IULogViewerApplication>
                     if ((it.Options & RegexOptions.IgnoreCase) != 0)
                         writer.WriteBoolean("IgnoreCase", true);
                 });
-                writer.WriteString(nameof(Rule.FormattedMessage), pattern.FormattedMessage);
+                writer.WriteString(nameof(Rule.Message), pattern.Message);
                 writer.WriteString(nameof(Rule.ResultType), pattern.ResultType.ToString());
                 writer.WriteEndObject();
             }
