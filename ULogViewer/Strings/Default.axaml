@@ -460,8 +460,9 @@
 	<sys:String x:Key="String/SessionView.AppInfo">About ULogViewer…</sys:String>
 	<sys:String x:Key="String/SessionView.AppOptions">Options…</sys:String>
 	<sys:String x:Key="String/SessionView.CheckForAppUpdate">Check for update…</sys:String>
+	<sys:String x:Key="String/SessionView.ClearLogAnalysisRuleSetsSelection">Clear selection</sys:String>
 	<sys:String x:Key="String/SessionView.ClearLogFiles">Clear all added log files</sys:String>
-	<sys:String x:Key="String/SessionView.ClearPredefinedLogTextFiltersSelection">Clear selection</sys:String>
+	<sys:String x:Key="String/SessionView.ClearPredefinedLogTextFiltersSelection">Create…</sys:String>
 	<sys:String x:Key="String/SessionView.ConfirmSelectingAllLogs">It will take some time to select large amount of logs. Do you want to continue selection?</sys:String>
 	<sys:String x:Key="String/SessionView.CopyLogFileName">Copy file name</sys:String>
 	<sys:String x:Key="String/SessionView.CopyLogFilePath">Copy full path</sys:String>
@@ -470,6 +471,7 @@
 	<sys:String x:Key="String/SessionView.CopyLogs">Copy logs</sys:String>
 	<sys:String x:Key="String/SessionView.CopyLogsWithFileNames">Copy logs with file names</sys:String>
 	<sys:String x:Key="String/SessionView.CpuUsage">CPU usage</sys:String>
+	<sys:String x:Key="String/SessionView.CreateLogAnalysisRuleSets">Create…</sys:String>
 	<sys:String x:Key="String/SessionView.CreatePredefinedLogTextFilter">Create…</sys:String>
 	<sys:String x:Key="String/SessionView.FilteredLogCount">, Filtered: </sys:String>
 	<sys:String x:Key="String/SessionView.FilterLogsBySelectedProcessId">Filter by selected PID</sys:String>
@@ -482,10 +484,12 @@
 	<sys:String x:Key="String/SessionView.Hint.NoLogToShow">No log to show</sys:String>
 	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.Section1">Click</sys:String>
 	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.Section2">on toolbar to select log profile to start</sys:String>
+	<sys:String x:Key="String/SessionView.KeyLogAnalysisRuleSets">Key log analysis</sys:String>
 	<sys:String x:Key="String/SessionView.LastLogsFilteringDuration">Filtering cost: </sys:String>
 	<sys:String x:Key="String/SessionView.LastLogsReadingDuration">Reading cost: </sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisPanel">Log Analysis</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisProgress">Analyzing logs…</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets">Rule sets of analysis</sys:String>
 	<sys:String x:Key="String/SessionView.LogCountInLogFile">Log count:</sys:String>
 	<sys:String x:Key="String/SessionView.LogFilesPanel">Added log files</sys:String>
 	<sys:String x:Key="String/SessionView.LogFiltersCombinationMode">Way to combine conditions (Intersect/Union)</sys:String>

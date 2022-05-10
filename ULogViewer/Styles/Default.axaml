@@ -129,8 +129,16 @@
 		<Setter Property="ClipToBounds" Value="True"/>
 		<Setter Property="Padding" Value="{StaticResource Thickness/SessionView.SidePanel.Header.Padding}"/>
 	</Style>
-	<Style Selector="TextBlock.SessionView_SidePanel_Header">
-		<Setter Property="FontSize" Value="{DynamicResource Double/SessionView.SidePanel.Header.FontSize}"/>
+	<Style Selector="TextBlock.SessionView_SidePanel_Header_Left">
+		<Setter Property="FontSize" Value="{StaticResource Double/SessionView.SidePanel.Header.FontSize}"/>
+		<Setter Property="Margin" Value="{StaticResource Thickness/SessionView.SidePanel.Header.Text.Left.Margin}"/>
+		<Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+		<Setter Property="TextWrapping" Value="NoWrap"/>
+		<Setter Property="VerticalAlignment" Value="Center"/>
+	</Style>
+	<Style Selector="TextBlock.SessionView_SidePanel_Header_Right">
+		<Setter Property="FontSize" Value="{StaticResource Double/SessionView.SidePanel.Header.FontSize}"/>
+		<Setter Property="Margin" Value="{StaticResource Thickness/SessionView.SidePanel.Header.Text.Right.Margin}"/>
 		<Setter Property="TextTrimming" Value="CharacterEllipsis"/>
 		<Setter Property="TextWrapping" Value="NoWrap"/>
 		<Setter Property="VerticalAlignment" Value="Center"/>

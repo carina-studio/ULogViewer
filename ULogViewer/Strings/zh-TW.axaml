@@ -442,6 +442,7 @@
 	<sys:String x:Key="String/SessionView.AppInfo">關於 ULogViewer…</sys:String>
 	<sys:String x:Key="String/SessionView.AppOptions">應用程式選項…</sys:String>
 	<sys:String x:Key="String/SessionView.CheckForAppUpdate">檢查更新…</sys:String>
+	<sys:String x:Key="String/SessionView.ClearLogAnalysisRuleSetsSelection">清除選取</sys:String>
 	<sys:String x:Key="String/SessionView.ClearLogFiles">清除所有已加入的日誌檔案</sys:String>
 	<sys:String x:Key="String/SessionView.ClearPredefinedLogTextFiltersSelection">清除選取</sys:String>
 	<sys:String x:Key="String/SessionView.ConfirmSelectingAllLogs">選取大量日誌會使用一些時間。是否要繼續選取？</sys:String>
@@ -452,6 +453,7 @@
 	<sys:String x:Key="String/SessionView.CopyLogs">複製日誌</sys:String>
 	<sys:String x:Key="String/SessionView.CopyLogsWithFileNames">複製日誌 (包含檔案名稱)</sys:String>
 	<sys:String x:Key="String/SessionView.CpuUsage">CPU 使用率</sys:String>
+	<sys:String x:Key="String/SessionView.CreateLogAnalysisRuleSets">建立…</sys:String>
 	<sys:String x:Key="String/SessionView.CreatePredefinedLogTextFilter">建立…</sys:String>
 	<sys:String x:Key="String/SessionView.FilteredLogCount">，已篩選：</sys:String>
 	<sys:String x:Key="String/SessionView.FilterLogsBySelectedProcessId">使用選取的 PID 篩選</sys:String>
@@ -464,10 +466,12 @@
 	<sys:String x:Key="String/SessionView.Hint.NoLogToShow">沒有日誌可以顯示</sys:String>
 	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.Section1">點一下工具列的</sys:String>
 	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.Section2">來選取日誌類型以開始使用</sys:String>
+	<sys:String x:Key="String/SessionView.KeyLogAnalysisRuleSets">關鍵日誌分析</sys:String>
 	<sys:String x:Key="String/SessionView.LastLogsFilteringDuration">篩選耗時：</sys:String>
 	<sys:String x:Key="String/SessionView.LastLogsReadingDuration">讀取耗時：</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisPanel">日誌分析</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisProgress">分析日誌中…</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets">分析規則集</sys:String>
 	<sys:String x:Key="String/SessionView.LogCountInLogFile">日誌個數：</sys:String>
 	<sys:String x:Key="String/SessionView.LogFilesPanel">已加入的日誌檔案</sys:String>
 	<sys:String x:Key="String/SessionView.LogFiltersCombinationMode">篩選條件運算方式 (交集/聯集)</sys:String>

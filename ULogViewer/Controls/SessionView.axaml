@@ -1062,8 +1062,8 @@
 				<Grid HorizontalAlignment="Stretch" IsVisible="{Binding IsMarkedLogsPanelVisible}" RowDefinitions="Auto,*" VerticalAlignment="Stretch">
 					<Border Classes="SessionView_SidePanel_Header">
 						<Grid ColumnDefinitions="Auto,*">
-							<TextBlock Classes="SessionView_SidePanel_Header" Text="{DynamicResource String/SessionView.MarkedLogsPanel}"/>
-							<TextBlock Classes="SessionView_SidePanel_Header" Grid.Column="1" Text="{Binding MarkedLogs.Count, StringFormat={} ({0})}"/>
+							<TextBlock Classes="SessionView_SidePanel_Header_Left" Text="{DynamicResource String/SessionView.MarkedLogsPanel}"/>
+							<TextBlock Classes="SessionView_SidePanel_Header_Right" Grid.Column="1" Text="{Binding MarkedLogs.Count, StringFormat={} ({0})}"/>
 						</Grid>
 					</Border>
 					<ListBox Name="markedLogListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" Focusable="False" Grid.Row="1" IsVisible="{Binding HasMarkedLogs}" Items="{Binding MarkedLogs}" SelectionChanged="OnMarkedLogListBoxSelectionChanged" SelectionMode="Single"/>
@@ -1073,8 +1073,8 @@
 				<Grid HorizontalAlignment="Stretch" IsVisible="{Binding IsTimestampCategoriesPanelVisible}" RowDefinitions="Auto,*" VerticalAlignment="Stretch">
 					<Border Classes="SessionView_SidePanel_Header">
 						<Grid ColumnDefinitions="Auto,*">
-							<TextBlock Classes="SessionView_SidePanel_Header" Text="{DynamicResource String/SessionView.TimestampCategoriesPanel}"/>
-							<TextBlock Classes="SessionView_SidePanel_Header" Grid.Column="1" Text="{Binding TimestampCategories.Count, StringFormat={} ({0})}"/>
+							<TextBlock Classes="SessionView_SidePanel_Header_Left" Text="{DynamicResource String/SessionView.TimestampCategoriesPanel}"/>
+							<TextBlock Classes="SessionView_SidePanel_Header_Right" Grid.Column="1" Text="{Binding TimestampCategories.Count, StringFormat={} ({0})}"/>
 						</Grid>
 					</Border>
 					<asControls:ListBox Name="timestampCategoryListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" Focusable="False" Grid.Row="1" Items="{Binding TimestampCategories}">
@@ -1092,9 +1092,89 @@
 				<!-- Log analysis -->
 				<Grid HorizontalAlignment="Stretch" IsVisible="{Binding IsLogAnalysisPanelVisible}" RowDefinitions="Auto,*" VerticalAlignment="Stretch">
 					<Border Classes="SessionView_SidePanel_Header">
-						<Grid ColumnDefinitions="Auto,*">
-							<TextBlock Classes="SessionView_SidePanel_Header" Text="{DynamicResource String/SessionView.LogAnalysisPanel}"/>
-							<TextBlock Classes="SessionView_SidePanel_Header" Grid.Column="1" Text="{Binding LogAnalysisResults.Count, StringFormat={} ({0})}"/>
+						<Border.Styles>
+							<Style Selector="ToggleButton.ToolBar_ToggleButton">
+								<Setter Property="Height" Value="{StaticResource Double/SessionView.SidePanel.Header.Button.Size}"/>
+								<Setter Property="Margin" Value="0"/>
+								<Setter Property="Padding" Value="{StaticResource Thickness/SessionView.SidePanel.Header.Button.Padding}"/>
+								<Setter Property="Width" Value="{StaticResource Double/SessionView.SidePanel.Header.Button.Size}"/>
+							</Style>
+						</Border.Styles>
+						<Grid ColumnDefinitions="Auto,*,Auto">
+							<TextBlock Classes="SessionView_SidePanel_Header_Left" Text="{DynamicResource String/SessionView.LogAnalysisPanel}"/>
+							<TextBlock Classes="SessionView_SidePanel_Header_Right" Grid.Column="1" Text="{Binding LogAnalysisResults.Count, StringFormat={} ({0})}"/>
+							<ToggleButton Name="logAnalysisRuleSetsButton" Classes="ToolBar_ToggleButton" Grid.Column="2" IsChecked="{Binding #logAnalysisRuleSetsPopup.IsOpen, Mode=TwoWay}" ToolTip.Tip="{DynamicResource String/SessionView.LogAnalysisRuleSets}">
+								<Panel>
+									<Image Classes="Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.More}"/>
+									<Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.More.Light}"/>
+								</Panel>
+							</ToggleButton>
+							<Popup Name="logAnalysisRuleSetsPopup" IsLightDismissEnabled="True" PlacementMode="Bottom" PlacementTarget="{Binding #logAnalysisRuleSetsButton}" Width="{StaticResource Double/SessionView.LogAnalysisRuleSetsPopup.Width}" WindowManagerAddShadowHint="True">
+								<Border Background="{DynamicResource ComboBoxDropDownBackground}" BorderBrush="{DynamicResource ComboBoxDropDownBorderBrush}" BorderThickness="{DynamicResource ComboBoxDropdownBorderThickness}" CornerRadius="{DynamicResource OverlayCornerRadius}">
+									<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+										<StackPanel Margin="{StaticResource Thickness/SessionView.LogAnalysisRuleSetsPopup.Padding}">
+											<StackPanel.Resources>
+												<Thickness x:Key="ExpanderContentPadding">0</Thickness>
+											</StackPanel.Resources>
+											
+											<!-- Key log analysis -->
+											<!--asControls:GroupBox Header="{DynamicResource String/SessionView.KeyLogAnalysisRuleSets}">
+												<DockPanel>
+													<Border DockPanel.Dock="Bottom" Padding="{StaticResource Thickness/Dialog.ControlButtonsPanel.Padding}">
+														<StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+															<Button Classes="Dialog_ControlButton" Command="{Binding $parent[UserControl].CreateKeyLogAnalysisRuleSet}" Content="{DynamicResource String/SessionView.CreateLogAnalysisRuleSets}"/>
+															<Button Classes="Dialog_ControlButton" Command="{Binding $parent[UserControl].ClearKeyLogAnalysisRuleSetsSelection}" IsEnabled="{Binding ElementName=predefinedLogTextFilterListBox2, Path=SelectedItems.Count}" Content="{DynamicResource String/SessionView.ClearLogAnalysisRuleSetsSelection}"/>
+														</StackPanel>
+													</Border>
+												</DockPanel>
+											</asControls:GroupBox-->
+
+										</StackPanel>
+									</ScrollViewer>
+									<!--DockPanel>
+										<Border DockPanel.Dock="Bottom" Padding="{StaticResource Thickness/Dialog.ControlButtonsPanel.Padding}">
+											<StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+												<Button Classes="Dialog_ControlButton" Command="{Binding $parent[UserControl].CreatePredefinedLogTextFilter}" Content="{DynamicResource String/SessionView.CreatePredefinedLogTextFilter}"/>
+												<Button Classes="Dialog_ControlButton" Command="{Binding $parent[UserControl].ClearPredefinedLogTextFilterSelection}" IsEnabled="{Binding ElementName=predefinedLogTextFilterListBox, Path=SelectedItems.Count}" Content="{DynamicResource String/SessionView.ClearPredefinedLogTextFiltersSelection}"/>
+											</StackPanel>
+										</Border>
+										<Border DockPanel.Dock="Top" IsVisible="{Binding $parent[UserControl].PredefinedLogTextFilters.Count}" Padding="{StaticResource Thickness/SessionView.PredefinedLogTextFilterHint.Padding}">
+											<TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" HorizontalAlignment="Center" Text="{DynamicResource String/SessionView.PredefinedLogTextFilters.Hint}" TextTrimming="CharacterEllipsis"/>
+										</Border>
+										<Panel>
+											<ListBox Name="predefinedLogTextFilterListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" CornerRadius="0" IsVisible="{Binding $parent[UserControl].PredefinedLogTextFilters.Count}" Items="{Binding $parent[UserControl].PredefinedLogTextFilters}" SelectionChanged="OnPredefinedLogTextFilterListBoxSelectionChanged" SelectionMode="Multiple" VirtualizationMode="None">
+												<ListBox.ItemTemplate>
+													<DataTemplate DataType="{x:Type appViewModels:PredefinedLogTextFilter}">
+														<Grid ColumnDefinitions="Auto,*,Auto">
+															<Panel Height="{StaticResource Double/SessionView.PredefinedLogTextFilterListBox.Icon.Size}" Margin="{StaticResource Thickness/SessionView.PredefinedLogTextFilterListBox.Icon.Margin}" VerticalAlignment="Center" Width="{StaticResource Double/SessionView.PredefinedLogTextFilterListBox.Icon.Size}">
+																<Image Classes="Icon" Source="{StaticResource Image/Filter.Outline}" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}"/>
+																<Image Classes="Icon" Source="{StaticResource Image/Filter.Outline.Light}" IsVisible="{Binding $parent[ListBoxItem].IsSelected}"/>
+															</Panel>
+															<TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center"/>
+															<Border Classes="InPlaceAction_Reserved" Grid.Column="1"/>
+															<StackPanel Grid.Column="2" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal" VerticalAlignment="Center">
+																<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].RemovePredefinedLogTextFilter}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
+																	<Image Classes="InPlaceAction_Icon" Source="{StaticResource Image/Icon.Delete}"/>
+																</Button>
+																<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].EditPredefinedLogTextFilter}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
+																	<Image Classes="InPlaceAction_Icon" Source="{StaticResource Image/Icon.Edit}"/>
+																</Button>
+															</StackPanel>
+														</Grid>
+													</DataTemplate>
+												</ListBox.ItemTemplate>
+												<ListBox.Styles>
+													<Style Selector="ListBoxItem">
+														<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+														<Setter Property="Padding" Value="{StaticResource Thickness/SessionView.PredefinedLogTextFilterListBox.Item.Padding}"/>
+													</Style>
+												</ListBox.Styles>
+											</ListBox>
+											<TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" HorizontalAlignment="Center" IsVisible="{Binding !$parent[UserControl].PredefinedLogTextFilters.Count}" Margin="{StaticResource Thickness/SessionView.NoPredefinedLogTextFilterHint.Margin}" Text="{DynamicResource String/SessionView.NoPredefinedLogTextFilter}" TextWrapping="Wrap"/>
+										</Panel>
+									</DockPanel-->
+								</Border>
+							</Popup>
 						</Grid>
 					</Border>
 					<asControls:ListBox Name="logAnalysisResultListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" Focusable="False" Grid.Row="1" Items="{Binding LogAnalysisResults}" SelectionMode="Multiple">
@@ -1114,8 +1194,8 @@
 				<Grid HorizontalAlignment="Stretch" IsVisible="{Binding IsLogFilesPanelVisible}" RowDefinitions="Auto,*" VerticalAlignment="Stretch">
 					<Border Classes="SessionView_SidePanel_Header">
 						<Grid ColumnDefinitions="Auto,*">
-							<TextBlock Classes="SessionView_SidePanel_Header" Text="{DynamicResource String/SessionView.LogFilesPanel}"/>
-							<TextBlock Classes="SessionView_SidePanel_Header" Grid.Column="1" Text="{Binding LogFiles.Count, StringFormat={} ({0})}"/>
+							<TextBlock Classes="SessionView_SidePanel_Header_Left" Text="{DynamicResource String/SessionView.LogFilesPanel}"/>
+							<TextBlock Classes="SessionView_SidePanel_Header_Right" Grid.Column="1" Text="{Binding LogFiles.Count, StringFormat={} ({0})}"/>
 						</Grid>
 					</Border>
 					<asControls:ListBox Name="logFileListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" Focusable="False" Grid.Row="1" Items="{Binding LogFiles}">

@@ -3260,7 +3260,11 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when test button clicked.
 		void OnTestButtonClick(object? sender, RoutedEventArgs e)
 		{
-			this.Application.Restart(AppSuite.AppSuiteApplication.RestoreMainWindowsArgument);
+			_ = new KeyLogAnalysisRuleSetEditorDialog()
+			{
+				RuleSet = KeyLogAnalysisRuleSetManager.Default.RuleSets[0],
+			}.ShowDialog<KeyLogAnalysisRuleSet?>(this.attachedWindow!);
+			//this.Application.Restart(AppSuite.AppSuiteApplication.RestoreMainWindowsArgument);
 		}
 
 
