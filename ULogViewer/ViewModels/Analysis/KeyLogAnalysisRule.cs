@@ -26,6 +26,11 @@ class KeyLogAnalysisRule : BaseProfile<IULogViewerApplication>
     { }
 
 
+    // Change ID.
+    internal void ChangeId() =>
+        this.Id = KeyLogAnalysisRuleManager.Default.GenerateProfileId();
+
+
     /// <inheritdoc/>
     public override bool Equals(IProfile<IULogViewerApplication>? profile) =>
         profile is KeyLogAnalysisRule analysisProfile

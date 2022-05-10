@@ -1,9 +1,9 @@
 using CarinaStudio.AppSuite.Data;
 using CarinaStudio.Threading;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.ViewModels;
@@ -50,6 +50,15 @@ class PredefinedLogTextFilterManager : BaseProfileManager<IULogViewerApplication
 
 
     /// <summary>
+    /// Get filter with given ID.
+    /// </summary>
+    /// <param name="id">ID of filter.</param>
+    /// <returns>Filter with given ID or Null if filter cannot be found.</returns>
+    public PredefinedLogTextFilter? GetFilterOrDefault(string id) =>
+        base.GetProfileOrDefault(id);
+
+
+    /// <summary>
     /// Initialize asynchronously.
     /// </summary>
     /// <param name="app">Application.</param>
@@ -60,56 +69,19 @@ class PredefinedLogTextFilterManager : BaseProfileManager<IULogViewerApplication
         if (defaultInstance != null)
             throw new InvalidOperationException();
         
-        // create instance
+        // initialize
         defaultInstance = new(app);
-        defaultInstance.Logger.LogTrace("Start initialization");
-
-        // find filter files
-        var filterFileNames = await Task.Run(() =>
-        {
-            try
-            {
-                if (Directory.Exists(defaultInstance.ProfilesDirectory))
-                    return Directory.GetFiles(defaultInstance.ProfilesDirectory, "*.json");
-                return new string[0];
-            }
-            catch(Exception ex)
-            {
-                defaultInstance.Logger.LogError(ex, $"Unable to find filter files in '{defaultInstance.ProfilesDirectory}'");
-                return new string[0];
-            }
-        });
-        defaultInstance.Logger.LogDebug($"Found {filterFileNames.Length} filter file(s)");
-
-        // load filters
-        foreach (var fileName in filterFileNames)
-        {
-            try
-            {
-                var filter = await PredefinedLogTextFilter.LoadAsync(app, fileName);
-                if (Path.GetFileNameWithoutExtension(fileName) != filter.Id)
-                {
-                    defaultInstance.Logger.LogWarning($"Delete legacy filter file '{fileName}'");
-                    defaultInstance.AddProfile(filter ,true);
-                    Global.RunWithoutErrorAsync(() => File.Delete(fileName));
-                }
-                else
-                    defaultInstance.AddProfile(filter ,false);
-            }
-            catch (Exception ex)
-            {
-                defaultInstance.Logger.LogError(ex, $"Unable to load filter from file '{fileName}'");
-            }
-        }
-        defaultInstance.Logger.LogDebug($"{defaultInstance.Profiles.Count} filter(s) loaded");
-        
-        // complete
-        defaultInstance.Logger.LogTrace("Complete initialization");
+        await defaultInstance.WaitForInitialization();
     }
 
 
     /// <inheritdoc/>
-    protected override string ProfilesDirectory { get => Path.Combine(this.Application.RootPrivateDirectoryPath, "TextFilters"); }
+    protected override Task<PredefinedLogTextFilter> OnLoadProfileAsync(string fileName, CancellationToken cancellationToken = default) =>
+        PredefinedLogTextFilter.LoadAsync(this.Application, fileName);
+
+
+    /// <inheritdoc/>
+    protected override string ProfilesDirectory => Path.Combine(this.Application.RootPrivateDirectoryPath, "TextFilters");
 
 
     /// <summary>

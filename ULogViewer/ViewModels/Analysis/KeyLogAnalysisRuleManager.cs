@@ -1,8 +1,9 @@
 using CarinaStudio.AppSuite.Data;
+using CarinaStudio.Threading;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.ViewModels.Analysis;
@@ -22,9 +23,33 @@ class KeyLogAnalysisRuleManager : BaseProfileManager<IULogViewerApplication, Key
 
 
     /// <summary>
+    /// Add rule.
+    /// </summary>
+    /// <param name="rule">Rule to add.</param>
+    public void AddRule(KeyLogAnalysisRule rule)
+    {
+        this.VerifyAccess();
+        if (rule.Manager != null)
+            throw new InvalidOperationException();
+        if (this.GetProfileOrDefault(rule.Id) != null)
+            rule.ChangeId();
+        this.AddProfile(rule);
+    }
+
+
+    /// <summary>
     /// Default instance.
     /// </summary>
     public static KeyLogAnalysisRuleManager Default { get => defaultInstance ?? throw new InvalidOperationException(); }
+
+
+    /// <summary>
+    /// Get rule with given ID.
+    /// </summary>
+    /// <param name="id">ID of rule.</param>
+    /// <returns>Rule with given ID or Null if rule cannot be found.</returns>
+    public KeyLogAnalysisRule? GetRuleOrDefault(string id) =>
+        this.GetProfileOrDefault(id);
 
 
     /// <summary>
@@ -38,13 +63,30 @@ class KeyLogAnalysisRuleManager : BaseProfileManager<IULogViewerApplication, Key
         if (defaultInstance != null)
             throw new InvalidOperationException();
         
-        // create instance
+        // initialize
         defaultInstance = new(app);
+        await defaultInstance.WaitForInitialization();
+    }
+
+
+    /// <inheritdoc/>
+    protected override Task<KeyLogAnalysisRule> OnLoadProfileAsync(string fileName, CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
     }
 
 
     /// <inheritdoc/>
     protected override string ProfilesDirectory => Path.Combine(this.Application.RootPrivateDirectoryPath, "KeyLogAnalysis");
+
+
+    /// <summary>
+    /// Remove given rule.
+    /// </summary>
+    /// <param name="rule">Rule to remove.</param>
+    /// <returns>True if rule has been removed successfully.</returns>
+    public bool RemoveRule(KeyLogAnalysisRule rule) =>
+        this.RemoveProfile(rule);
 
 
     /// <summary>

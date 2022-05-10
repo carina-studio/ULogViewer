@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.Logs.Profiles;
@@ -110,6 +110,15 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
 
 
     /// <summary>
+    /// Get log profile with given ID.
+    /// </summary>
+    /// <param name="id">ID of log profile.</param>
+    /// <returns>Log profile with given ID or Null if profile cannot be found.</returns>
+    public new LogProfile? GetProfileOrDefault(string id) =>
+        base.GetProfileOrDefault(id);
+
+
+    /// <summary>
     /// Initialize <see cref="LogProfileManager"/> asynchronously.
     /// </summary>
     /// <param name="app">Application.</param>
@@ -120,62 +129,9 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
         if (defaultInstance != null)
             throw new InvalidOperationException();
         
-        // create manager
+        // initialize
         defaultInstance = new(app);
-        defaultInstance.Logger.LogTrace("Start initialization");
-
-        // load build-in profiles
-        defaultInstance.Logger.LogDebug("Start loading built-in profiles");
-        var profileCount = 0;
-        foreach (var id in builtInProfileIDs)
-        {
-            defaultInstance.Logger.LogDebug($"Load '{id}'");
-            defaultInstance.AddProfile(await LogProfile.LoadBuiltInAsync(app, id), false);
-            ++profileCount;
-        }
-        defaultInstance.Logger.LogDebug($"Complete loading {profileCount} built-in profile(s)");
-
-        // load profiles
-        profileCount = 0;
-        defaultInstance.Logger.LogDebug("Start loading profiles");
-        var fileNames = await Task.Run(() =>
-        {
-            try
-            {
-                if (!Directory.Exists(defaultInstance.ProfilesDirectory))
-                    return new string[0];
-                return Directory.GetFiles(defaultInstance.ProfilesDirectory, "*.json");
-            }
-            catch (Exception ex)
-            {
-                defaultInstance.Logger.LogError(ex, $"Unable to check profiles in directory '{defaultInstance.ProfilesDirectory}'");
-                return new string[0];
-            }
-        });
-        foreach (var fileName in fileNames)
-        {
-            try
-            {
-                var profile = await LogProfile.LoadAsync(app, fileName);
-                if (Path.GetFileNameWithoutExtension(fileName) != profile.Id)
-                {
-                    defaultInstance.AddProfile(profile);
-                    defaultInstance.Logger.LogWarning($"Delete legacy profile file '{fileName}'");
-                    Global.RunWithoutErrorAsync(() => System.IO.File.Delete(fileName));
-                }
-                else
-                    defaultInstance.AddProfile(profile, false);
-                ++profileCount;
-            }
-            catch (Exception ex)
-            {
-                defaultInstance.Logger.LogError(ex, $"Unable to load profile from '{fileName}'");
-            }
-        }
-        defaultInstance.Logger.LogDebug($"Complete loading {profileCount} profile(s)");
-
-        // complete
-        defaultInstance.Logger.LogTrace("Complete initialization");
+        await defaultInstance.WaitForInitialization();
     }
 
 
@@ -199,9 +155,27 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
     /// <inheritdoc/>
     protected override void OnDetachFromProfile(LogProfile profile)
     {
-         this.pinnedProfiles.Remove(profile);
+        this.pinnedProfiles.Remove(profile);
         base.OnDetachFromProfile(profile);
     }
+
+
+    /// <inheritdoc/>
+    protected override async Task<ICollection<LogProfile>> OnLoadBuiltInProfilesAsync(CancellationToken cancellationToken = default)
+    {
+        var profiles = new List<LogProfile>();
+        foreach (var id in builtInProfileIDs)
+        {
+            this.Logger.LogDebug($"Load '{id}'");
+            profiles.Add(await LogProfile.LoadBuiltInAsync(this.Application, id));
+        }
+        return profiles;
+    }
+
+
+    /// <inheritdoc/>
+    protected override Task<LogProfile> OnLoadProfileAsync(string fileName, CancellationToken cancellationToken = default) =>
+        LogProfile.LoadAsync(this.Application, fileName);
 
 
     /// <inheritdoc/>
@@ -225,8 +199,14 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
     public IReadOnlyList<LogProfile> PinnedProfiles { get; }
 
 
+    /// <summary>
+    /// Get all log profiles.
+    /// </summary>
+    public new IReadOnlyList<LogProfile> Profiles { get => base.Profiles; }
+
+
     /// <inheritdoc/>
-    protected override string ProfilesDirectory { get => Path.Combine(this.Application.RootPrivateDirectoryPath, "Profiles"); }
+    protected override string ProfilesDirectory => Path.Combine(this.Application.RootPrivateDirectoryPath, "Profiles");
 
 
     /// <summary>
