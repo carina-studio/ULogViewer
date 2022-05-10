@@ -81,6 +81,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			base.OnOpened(e);
 			var filter = this.Filter;
+			var editPatternButton = this.FindControl<Control>("editPatternButton").AsNonNull();
 			if (filter == null)
 				this.Bind(TitleProperty, this.GetResourceObservable("String/PredefinedLogTextFilterEditorDialog.Title.Create"));
 			else
@@ -94,19 +95,19 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				this.FindControl<TutorialPresenter>("tutorialPresenter")!.ShowTutorial(new Tutorial().Also(it =>
 				{
-					it.Anchor = this.FindControl<Control>("editPatternButton");
+					it.Anchor = editPatternButton;
 					it.Bind(Tutorial.DescriptionProperty, this.GetResourceObservable("String/RegexEditorDialog.Tutorial.ClickButtonToEditPattern"));
 					it.Dismissed += (_, e) =>
 					{
 						this.Application.PersistentState.SetValue<bool>(RegexEditorDialog.IsClickButtonToEditPatternTutorialShownKey, true);
-						this.nameTextBox.Focus();
+						editPatternButton.Focus();
 					};
 					it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb.Colored");
 					it.IsSkippingAllTutorialsAllowed = false;
 				}));
 			}
 			else
-				this.SynchronizationContext.Post(this.nameTextBox.Focus);
+				this.SynchronizationContext.Post(editPatternButton.Focus);
 		}
 
 

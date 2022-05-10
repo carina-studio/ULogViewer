@@ -20,6 +20,11 @@
 	<sys:Double x:Key="Double/JsonLogsSavingOptionsDialog.ListBox.Height">200</sys:Double>
 	<sys:Double x:Key="Double/JsonLogsSavingOptionsDialog.Width">450</sys:Double>
 
+	<!-- KeyLogAnalysisRuleEditorDialog -->
+	<sys:Double x:Key="Double/KeyLogAnalysisRuleEditorDialog.MessageInput.Height">100</sys:Double>
+	<sys:Double x:Key="Double/KeyLogAnalysisRuleEditorDialog.PatternInput.Height">100</sys:Double>
+	<sys:Double x:Key="Double/KeyLogAnalysisRuleEditorDialog.Width">500</sys:Double>
+
 	<!-- ListAction -->
 	<sys:Double x:Key="Double/ListAction.MinWidth">80</sys:Double>
 	<Thickness x:Key="Thickness/ListAction.Padding">10,5,10,5</Thickness>

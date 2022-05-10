@@ -113,6 +113,11 @@
 	<sys:String x:Key="String/DateTimeSelectionDialog.DateTime">日期與時間：</sys:String>
 	<sys:String x:Key="String/DateTimeSelectionDialog.Title">選擇日期與時間</sys:String>
 
+	<!-- DisplayableLogAnalysisResultType -->
+	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Error">錯誤</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Information">資訊</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Warning">警告</sys:String>
+
 	<!-- FileFormat -->
 	<sys:String x:Key="String/FileFormat.Json">JSON 檔案</sys:String>
 	<sys:String x:Key="String/FileFormat.Log">日誌檔案</sys:String>
@@ -129,6 +134,14 @@
 	<sys:String x:Key="String/JsonLogsSavingOptionsDialog.LogProperties">輸出的日誌屬性</sys:String>
 	<sys:String x:Key="String/JsonLogsSavingOptionsDialog.LogProperties.Description">日誌屬性將根據名稱自動排序。</sys:String>
 	<sys:String x:Key="String/JsonLogsSavingOptionsDialog.Title">JSON 選項</sys:String>
+
+	<!-- KeyLogAnalysisRuleEditorDialog -->
+	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Message">分析結果訊息 (必要)</sys:String>
+	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Message.Description">您可以使用插值語法 "{}" 以將日誌屬性或格式中的自訂分組輸出至訊息</sys:String>
+	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Pattern">格式 (必要)</sys:String>
+	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Pattern.Description">您可以使用 \$\$ 表示文字屬性分隔線。例如您想找到使用者為 "John" 且訊息為 "Hello" 的日誌，就可以使用 "John\$\$Hello" 這個格式。文字屬性的排列順序和日誌類型所定義之可見的日誌屬性相同。</sys:String>
+	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.ResultType">分析結果類型</sys:String>
+	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Title">編輯規則</sys:String>
 
 	<!-- LogColorIndicator -->
 	<sys:String x:Key="String/LogColorIndicator.FileName">檔案</sys:String>
@@ -227,7 +240,7 @@
 	<sys:String x:Key="String/LogProfileEditorDialog.LogStringEncodingForWriting">日誌文字輸出編碼方式</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogWriting">日誌輸出設定</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogWritingFormat">日誌輸出格式</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LogWritingFormat.Description">此格式將用於日誌複製與儲存。您可以使用插值語法 "{}" 以將日誌屬性產生至輸出的日誌文字</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogWritingFormat.Description">此格式將用於日誌複製與儲存。您可以使用插值語法 "{}" 以將日誌屬性產生至輸出的日誌文字。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogWritingFormat.Watermark">留白以使用預設格式</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Name">名稱 (必要)</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.RestartReadingDelay">重新開始讀取日誌前的延遲 (毫秒)</sys:String>
@@ -395,7 +408,7 @@
 	<!-- PredefinedLogTextFilterEditorDialog -->
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Name">名稱 (必要)</sys:String>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Regex">格式 (必要)</sys:String>
-	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Regex.Description">您可以使用 \$\$ 表示文字屬性分隔線。例如您想篩選使用者為 "John" 且訊息為 "Hello" 的日誌，就可以使用 "John\$\$Hello" 這個篩選模式。文字屬性的排列順序和日誌類型所定義之可見的日誌屬性相同。</sys:String>
+	<StaticResourceExtension x:Key="String/PredefinedLogTextFilterEditorDialog.Regex.Description" ResourceKey="String/KeyLogAnalysisRuleEditorDialog.Pattern.Description"/>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Title.Create">建立文字篩選</sys:String>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Title.Edit">編輯文字篩選</sys:String>
 
@@ -460,7 +473,7 @@
 	<sys:String x:Key="String/SessionView.LogsDurationStartingPoint">最早日誌時間/最小日誌時距</sys:String>
 	<sys:String x:Key="String/SessionView.LogsFilteringProgress">篩選日誌中…</sys:String>
 	<sys:String x:Key="String/SessionView.LogsMemoryUsage">此分頁日誌記憶體使用量</sys:String>
-	<StaticResource x:Key="String/SessionView.LogTextFilter.ToolTip" ResourceKey="String/PredefinedLogTextFilterEditorDialog.Regex.Description"/>
+	<StaticResource x:Key="String/SessionView.LogTextFilter.ToolTip" ResourceKey="String/KeyLogAnalysisRuleEditorDialog.Pattern.Description"/>
 	<sys:String x:Key="String/SessionView.LogTextFilter.Watermark">文字篩選 (正規表示式)</sys:String>
 	<sys:String x:Key="String/SessionView.LogThreadIdFilter.Description">使用執行緒 (Thread ID) 篩選日誌</sys:String>
 	<sys:String x:Key="String/SessionView.MarkedLogsPanel">已標記日誌</sys:String>

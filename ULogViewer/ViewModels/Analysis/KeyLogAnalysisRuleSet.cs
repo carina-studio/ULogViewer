@@ -18,7 +18,7 @@ class KeyLogAnalysisRuleSet : BaseProfile<IULogViewerApplication>
     /// <summary>
     /// Analysis rule.
     /// </summary>
-    public class Rule
+    public class Rule : IEquatable<Rule>
     {
         /// <summary>
         /// Initialize new <see cref="Rule"/> instance.
@@ -32,6 +32,22 @@ class KeyLogAnalysisRuleSet : BaseProfile<IULogViewerApplication>
             this.Pattern = pattern;
             this.ResultType = resultType;
         }
+
+        /// <inheritdoc/>
+        public bool Equals(Rule? rule) =>
+            rule != null
+            && rule.Message == this.Message
+            && rule.Pattern.ToString() == this.Pattern.ToString()
+            && rule.Pattern.Options == this.Pattern.Options
+            && rule.ResultType == this.ResultType;
+
+        /// <inheritdoc/>
+        public override bool Equals(object? obj) =>
+            obj is Rule rule && this.Equals(rule);
+
+        /// <inheritdoc/>
+        public override int GetHashCode() =>
+            this.Pattern.ToString().GetHashCode();
 
         /// <summary>
         /// Get formatted message to be generated when pattern matched.

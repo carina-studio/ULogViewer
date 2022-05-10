@@ -110,6 +110,11 @@
 	<!-- DateTimeSelectionDialog -->
 	<sys:String x:Key="String/DateTimeSelectionDialog.DateTime">Date and time:</sys:String>
 	<sys:String x:Key="String/DateTimeSelectionDialog.Title">Select date and time</sys:String>
+
+	<!-- DisplayableLogAnalysisResultType -->
+	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Error">Error</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Information">Information</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Warning">Warning</sys:String>
 	
 	<!-- FileFormat -->
 	<sys:String x:Key="String/FileFormat.Json">JSON File</sys:String>
@@ -127,6 +132,14 @@
 	<sys:String x:Key="String/JsonLogsSavingOptionsDialog.LogProperties">Properties of log to output</sys:String>
 	<sys:String x:Key="String/JsonLogsSavingOptionsDialog.LogProperties.Description">Properties will be sorted by name automatically.</sys:String>
 	<sys:String x:Key="String/JsonLogsSavingOptionsDialog.Title">JSON options</sys:String>
+
+	<!-- KeyLogAnalysisRuleEditorDialog -->
+	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Message">Message of analysis result (required)</sys:String>
+	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Message.Description">You can use Interpolation Syntax "{}" to output log property or custom group in pattern to message.</sys:String>
+	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Pattern">Pattern (required)</sys:String>
+	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Pattern.Description">You can use \$\$ as separator between text properties. For example, if you want to find log with user name "John" and message "Hello" then you can use pattern "John\$\$Hello". The order of text properties are same as visible log properties defined by log profile.</sys:String>
+	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.ResultType">Type of analysis result</sys:String>
+	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Title">Edit rule</sys:String>
 
 	<!-- LogColorIndicator -->
 	<sys:String x:Key="String/LogColorIndicator.FileName">File</sys:String>
@@ -239,7 +252,7 @@
 	<sys:String x:Key="String/LogProfileEditorDialog.LogStringEncodingForWriting">Encoding of text in log for output</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogWriting">Log Output</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogWritingFormat">Log output format</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LogWritingFormat.Description">The format will be used for logs copying and saving. You can use Interpolation Syntax "{}" to produce log property to output log text</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogWritingFormat.Description">The format will be used for logs copying and saving. You can use Interpolation Syntax "{}" to output log property to log text.</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogWritingFormat.Watermark">Empty to use default format</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Name">Name (required)</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.RestartReadingDelay">Delay before restarting log reading (ms)</sys:String>
@@ -413,7 +426,7 @@
 	<!-- PredefinedLogTextFilterEditorDialog -->
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Name">Name (required)</sys:String>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Regex">Pattern (required)</sys:String>
-	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Regex.Description">You can use \$\$ as separator between text properties. For example, if you want to filter log with user name "John" and message "Hello" then you can use pattern "John\$\$Hello". The order of text properties are same as visible log properties defined by log profile.</sys:String>
+	<StaticResourceExtension x:Key="String/PredefinedLogTextFilterEditorDialog.Regex.Description" ResourceKey="String/KeyLogAnalysisRuleEditorDialog.Pattern.Description"/>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Title.Create">Create text filter</sys:String>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Title.Edit">Edit text filter</sys:String>
 
@@ -478,7 +491,7 @@
 	<sys:String x:Key="String/SessionView.LogsDurationStartingPoint">Earliest timestamp of log/Minimum time span of log</sys:String>
 	<sys:String x:Key="String/SessionView.LogsFilteringProgress">Filtering logs…</sys:String>
 	<sys:String x:Key="String/SessionView.LogsMemoryUsage">Logs memory usage of this tab</sys:String>
-	<StaticResource x:Key="String/SessionView.LogTextFilter.ToolTip" ResourceKey="String/PredefinedLogTextFilterEditorDialog.Regex.Description"/>
+	<StaticResource x:Key="String/SessionView.LogTextFilter.ToolTip" ResourceKey="String/KeyLogAnalysisRuleEditorDialog.Pattern.Description"/>
 	<sys:String x:Key="String/SessionView.LogTextFilter.Watermark">Text filter (Regular Expression)</sys:String>
 	<sys:String x:Key="String/SessionView.LogThreadIdFilter.Description">Use Thread ID to filter logs</sys:String>
 	<sys:String x:Key="String/SessionView.MarkedLogsPanel">Marked logs</sys:String>

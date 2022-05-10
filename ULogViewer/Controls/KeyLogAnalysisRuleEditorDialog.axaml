@@ -1,0 +1,54 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:ia="using:Avalonia.Xaml.Interactivity"
+        xmlns:iaCore="using:Avalonia.Xaml.Interactions.Core"
+		xmlns:appAnalysis="using:CarinaStudio.ULogViewer.ViewModels.Analysis"
+		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="CarinaStudio.ULogViewer.Controls.KeyLogAnalysisRuleEditorDialog"
+        Classes="Dialog"
+        Title="{DynamicResource String/KeyLogAnalysisRuleEditorDialog.Title}"
+        Width="{DynamicResource Double/KeyLogAnalysisRuleEditorDialog.Width}">
+
+	<Panel>
+		<DockPanel>
+
+			<!-- Control buttons -->
+			<Border Classes="Dialog_ControlButtonsPanel">
+				<StackPanel Classes="Dialog_ControlButtonsPanel">
+					<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].GenerateResultCommand}" Content="{DynamicResource String/Common.OK}"/>
+					<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].Close}" Content="{DynamicResource String/Common.Cancel}"/>
+				</StackPanel>
+			</Border>
+
+			<!-- Content -->
+			<StackPanel Classes="Dialog_ContentPanel">
+
+				<!-- Pattern -->
+				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/KeyLogAnalysisRuleEditorDialog.Pattern}"/>
+				<Grid ColumnDefinitions="*,Auto">
+					<TextBox Name="patternTextBox" Classes="Dialog_TextBox" Height="{StaticResource Double/KeyLogAnalysisRuleEditorDialog.PatternInput.Height}" IsReadOnly="True"/>
+					<Button Name="editPatternButton" Classes="BrowseButton" Command="{Binding $parent[Window].EditPattern}" Grid.Column="1" VerticalAlignment="Top"/>
+				</Grid>
+				<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/KeyLogAnalysisRuleEditorDialog.Pattern.Description}"/>
+				<Separator Classes="Dialog_Separator"/>
+
+				<!-- Result type -->
+				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/KeyLogAnalysisRuleEditorDialog.ResultType}"/>
+				<asControls:EnumComboBox Name="resultTypeComboBox" Classes="Dialog_ComboBox" EnumType="{x:Type appAnalysis:DisplayableLogAnalysisResultType}"/>
+				<Separator Classes="Dialog_Separator"/>
+
+				<!-- Message -->
+				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/KeyLogAnalysisRuleEditorDialog.Message}"/>
+				<asControls:StringInterpolationFormatTextBox Name="messageTextBox" Classes="Dialog_TextBox" Height="{StaticResource Double/KeyLogAnalysisRuleEditorDialog.MessageInput.Height}"/>
+				<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/KeyLogAnalysisRuleEditorDialog.Message.Description}"/>
+				
+			</StackPanel>
+			
+		</DockPanel>
+		<asControls:FullWindowTutorialPresenter Name="tutorialPresenter"/>
+	</Panel>
+	
+</Window>

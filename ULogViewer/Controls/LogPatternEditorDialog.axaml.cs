@@ -76,6 +76,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			base.OnOpened(e);
 			var logPattern = this.LogPattern;
+			var editPatternButton = this.FindControl<Control>("editPatternButton").AsNonNull();
 			if (logPattern != null)
 			{
 				this.regex = logPattern.Regex;
@@ -87,19 +88,19 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				this.FindControl<TutorialPresenter>("tutorialPresenter")!.ShowTutorial(new Tutorial().Also(it =>
 				{
-					it.Anchor = this.FindControl<Control>("editPatternButton");
+					it.Anchor = editPatternButton;
 					it.Bind(Tutorial.DescriptionProperty, this.GetResourceObservable("String/RegexEditorDialog.Tutorial.ClickButtonToEditPattern"));
 					it.Dismissed += (_, e) =>
 					{
 						this.Application.PersistentState.SetValue<bool>(RegexEditorDialog.IsClickButtonToEditPatternTutorialShownKey, true);
-						this.patternTextBox.Focus();
+						editPatternButton.Focus();
 					};
 					it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb.Colored");
 					it.IsSkippingAllTutorialsAllowed = false;
 				}));
 			}
 			else
-				this.SynchronizationContext.Post(this.patternTextBox.Focus);
+				this.SynchronizationContext.Post(editPatternButton.Focus);
 		}
 
 
