@@ -225,7 +225,7 @@ namespace CarinaStudio.ULogViewer
         protected override async Task OnMainWindowClosedAsync(CarinaStudio.Controls.Window mainWindow, ViewModel viewModel)
         {
 			// wait for I/O completion of log analysis rules
-			await KeyLogAnalysisRuleManager.Default.WaitForIOTaskCompletion();
+			await KeyLogAnalysisRuleSetManager.Default.WaitForIOTaskCompletion();
 
 			// wait for I/O completion of log text filters
 			await PredefinedLogTextFilterManager.Default.WaitForIOTaskCompletion();
@@ -334,7 +334,7 @@ namespace CarinaStudio.ULogViewer
 
 			// initialize log analysis rules
 			this.UpdateSplashWindowMessage(this.GetStringNonNull("SplashWindow.InitializeLogAnalysisRules"));
-			await KeyLogAnalysisRuleManager.InitializeAsync(this);
+			await KeyLogAnalysisRuleSetManager.InitializeAsync(this);
 
 			// show main window
 			if (!this.IsRestoringMainWindowsRequested)

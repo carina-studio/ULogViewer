@@ -9,24 +9,24 @@ using System.Threading.Tasks;
 namespace CarinaStudio.ULogViewer.ViewModels.Analysis;
 
 /// <summary>
-/// Manager of <see cref="KeyLogAnalysisRule"/>.
+/// Manager of <see cref="KeyLogAnalysisRuleSet"/>.
 /// </summary>
-class KeyLogAnalysisRuleManager : BaseProfileManager<IULogViewerApplication, KeyLogAnalysisRule>
+class KeyLogAnalysisRuleSetManager : BaseProfileManager<IULogViewerApplication, KeyLogAnalysisRuleSet>
 {
     // Static fields.
-    static KeyLogAnalysisRuleManager? defaultInstance;
+    static KeyLogAnalysisRuleSetManager? defaultInstance;
 
 
     // Constructor.
-    KeyLogAnalysisRuleManager(IULogViewerApplication app) : base(app)
+    KeyLogAnalysisRuleSetManager(IULogViewerApplication app) : base(app)
     { }
 
 
     /// <summary>
-    /// Add rule.
+    /// Add rule set.
     /// </summary>
     /// <param name="rule">Rule to add.</param>
-    public void AddRule(KeyLogAnalysisRule rule)
+    public void AddRuleSet(KeyLogAnalysisRuleSet rule)
     {
         this.VerifyAccess();
         if (rule.Manager != null)
@@ -40,15 +40,15 @@ class KeyLogAnalysisRuleManager : BaseProfileManager<IULogViewerApplication, Key
     /// <summary>
     /// Default instance.
     /// </summary>
-    public static KeyLogAnalysisRuleManager Default { get => defaultInstance ?? throw new InvalidOperationException(); }
+    public static KeyLogAnalysisRuleSetManager Default { get => defaultInstance ?? throw new InvalidOperationException(); }
 
 
     /// <summary>
-    /// Get rule with given ID.
+    /// Get rule set with given ID.
     /// </summary>
-    /// <param name="id">ID of rule.</param>
-    /// <returns>Rule with given ID or Null if rule cannot be found.</returns>
-    public KeyLogAnalysisRule? GetRuleOrDefault(string id) =>
+    /// <param name="id">ID of rule set.</param>
+    /// <returns>Rule set with given ID or Null if rule cannot be found.</returns>
+    public KeyLogAnalysisRuleSet? GetRuleSetOrDefault(string id) =>
         this.GetProfileOrDefault(id);
 
 
@@ -70,27 +70,25 @@ class KeyLogAnalysisRuleManager : BaseProfileManager<IULogViewerApplication, Key
 
 
     /// <inheritdoc/>
-    protected override Task<KeyLogAnalysisRule> OnLoadProfileAsync(string fileName, CancellationToken cancellationToken = default)
-    {
-        throw new NotImplementedException();
-    }
+    protected override Task<KeyLogAnalysisRuleSet> OnLoadProfileAsync(string fileName, CancellationToken cancellationToken = default) =>
+        KeyLogAnalysisRuleSet.LoadAsync(this.Application, fileName);
 
 
     /// <inheritdoc/>
-    protected override string ProfilesDirectory => Path.Combine(this.Application.RootPrivateDirectoryPath, "KeyLogAnalysis");
+    protected override string ProfilesDirectory => Path.Combine(this.Application.RootPrivateDirectoryPath, "KeyLogAnalysisRules");
 
 
     /// <summary>
-    /// Remove given rule.
+    /// Remove given rule set.
     /// </summary>
-    /// <param name="rule">Rule to remove.</param>
-    /// <returns>True if rule has been removed successfully.</returns>
-    public bool RemoveRule(KeyLogAnalysisRule rule) =>
+    /// <param name="rule">Rule set to remove.</param>
+    /// <returns>True if rule set has been removed successfully.</returns>
+    public bool RemoveRuleSet(KeyLogAnalysisRuleSet rule) =>
         this.RemoveProfile(rule);
 
 
     /// <summary>
-    /// Get all rules.
+    /// Get all rule sets.
     /// </summary>
-    public IReadOnlyList<KeyLogAnalysisRule> Rules { get => base.Profiles; }
+    public IReadOnlyList<KeyLogAnalysisRuleSet> RuleSets { get => base.Profiles; }
 }

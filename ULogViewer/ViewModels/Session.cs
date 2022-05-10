@@ -783,11 +783,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly ScheduledAction checkLogsMemoryUsageAction;
 		Comparison<DisplayableLog?> compareDisplayableLogsDelegate;
 		DisplayableLogGroup? displayableLogGroup;
-		readonly IDisplayableLogAnalyzer<DisplayableLogAnalysisResult>? dummyLogAnalyzer;
 		TaskFactory? fileLogsReadingTaskFactory;
 		readonly TimestampDisplayableLogCategorizer filteredLogsTimestampCategorizer;
 		bool hasLogDataSourceCreationFailure;
 		bool isRestoringState;
+		readonly KeyLogDisplayableLogAnalyzer keyLogAnalyzer;
 		readonly SortedObservableList<DisplayableLogAnalysisResult> logAnalysisResults;
 		readonly Dictionary<LogReader, LogFileInfoImpl> logFileInfoMapByLogReader = new();
 		readonly SortedObservableList<LogFileInfo> logFileInfoList = new((lhs, rhs) =>
@@ -893,10 +893,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.SetValue(TimestampCategoriesProperty, this.allLogsTimestampCategorizer.Categories);
 
 			// create analyzers
-#if DEBUG
-			this.dummyLogAnalyzer = new DummyDisplayableLogAnalyzer((IULogViewerApplication)this.Application, this.allLogs, this.CompareDisplayableLogs).Also(it =>
+			this.keyLogAnalyzer = new KeyLogDisplayableLogAnalyzer((IULogViewerApplication)this.Application, this.allLogs, this.CompareDisplayableLogs).Also(it =>
 				this.AttachToLogAnalyzer(it));
-#endif
 
 			// setup properties
 			this.AllLogs = new SafeReadOnlyList<DisplayableLog>(this.allLogs);
