@@ -206,6 +206,8 @@ class KeyLogDisplayableLogAnalyzer : BaseDisplayableLogAnalyzer<KeyLogDisplayabl
                     // find next interpolation
                     formatMatch = formatMatch.NextMatch();
                 }
+                if (startIndex > 0 && startIndex < messageFormat.Length)
+                    messageBuffer.Append(messageFormat.Substring(startIndex));
                 var message = messageBuffer.Length > 0
                     ? messageBuffer.ToString().Also(_ => messageBuffer.Clear())
                     : messageFormat;

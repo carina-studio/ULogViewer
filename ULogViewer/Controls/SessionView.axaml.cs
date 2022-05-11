@@ -162,6 +162,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		bool isUriNeededAfterLogProfileSet;
 		bool isWorkingDirNeededAfterLogProfileSet;
 		bool keepSidePanelVisible;
+		readonly Avalonia.Controls.ListBox keyLogAnalysisRuleSetListBox;
 		Control? lastClickedLogPropertyView;
 		readonly ContextMenu logActionMenu;
 		readonly Avalonia.Controls.ListBox logAnalysisResultListBox;
@@ -193,12 +194,15 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly HashSet<Avalonia.Input.Key> pressedKeys = new HashSet<Avalonia.Input.Key>();
 		readonly ScheduledAction reportSelectedLogsTimeInfoAction;
 		readonly ScheduledAction scrollToLatestLogAction;
-		readonly HashSet<PredefinedLogTextFilter> selectedPredefinedLogTextFilters = new HashSet<PredefinedLogTextFilter>();
+		
+		readonly HashSet<KeyLogAnalysisRuleSet> selectedKeyLogAnalysisRuleSets = new();
+		readonly HashSet<PredefinedLogTextFilter> selectedPredefinedLogTextFilters = new();
 		readonly MenuItem showLogPropertyMenuItem;
 		readonly ColumnDefinition sidePanelColumn;
 		readonly Control sidePanelContainer;
 		readonly AppSuite.Controls.ListBox timestampCategoryListBox;
 		readonly ToolBarScrollViewer toolBarScrollViewer;
+		readonly ScheduledAction updateLogAnalysisAction;
 		readonly ScheduledAction updateLogFiltersAction;
 		readonly ScheduledAction updateStatusBarStateAction;
 		readonly SortedObservableList<Logs.LogLevel> validLogLevels = new SortedObservableList<Logs.LogLevel>((x, y) => (int)x - (int)y);
@@ -318,6 +322,10 @@ namespace CarinaStudio.ULogViewer.Controls
 			// setup controls
 			this.copyLogPropertyMenuItem = this.FindControl<MenuItem>(nameof(copyLogPropertyMenuItem)).AsNonNull();
 			this.dragDropReceiverBorder = this.FindControl<Border>(nameof(dragDropReceiverBorder)).AsNonNull();
+			this.keyLogAnalysisRuleSetListBox = this.FindControl<Avalonia.Controls.ListBox>(nameof(keyLogAnalysisRuleSetListBox))!.Also(it =>
+			{
+				it.SelectionChanged += this.OnKeyLogAnalysisRuleSetListBoxSelectionChanged;
+			});
 			this.logActionMenu = ((ContextMenu)this.Resources[nameof(logActionMenu)].AsNonNull()).Also(it =>
 			{
 				it.MenuOpened += (_, e) =>
@@ -576,6 +584,14 @@ namespace CarinaStudio.ULogViewer.Controls
 				catch
 				{ }
 			});
+			this.updateLogAnalysisAction = new(() =>
+			{
+				if (this.DataContext is not Session session)
+					return;
+				session.KeyLogAnalysisRuleSets.Clear();
+				foreach (var ruleSet in this.selectedKeyLogAnalysisRuleSets)
+					session.KeyLogAnalysisRuleSets.Add(ruleSet);
+			});
 			this.updateLogFiltersAction = new ScheduledAction(() =>
 			{
 				// get session
@@ -785,6 +801,14 @@ namespace CarinaStudio.ULogViewer.Controls
 		bool CanFilterLogsByNonTextFilters { get => this.GetValue<bool>(CanFilterLogsByNonTextFiltersProperty); }
 
 
+		// Clear key log analysis rule set selection.
+		void ClearKeyLogAnalysisRuleSetSelection()
+		{
+			this.keyLogAnalysisRuleSetListBox.SelectedItems.Clear();
+			this.updateLogAnalysisAction.Reschedule();
+		}
+
+
 		// Clear predefined log text fliter selection.
 		void ClearPredefinedLogTextFilterSelection()
 		{
@@ -953,6 +977,21 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Command to copy selected logs with file names.
 		ICommand CopySelectedLogsWithFileNamesCommand { get; }
+
+
+		// Create new key log analysis rule set.
+		async void CreateKeyLogAnalysisRuleSet()
+		{
+			// check state
+			if (this.attachedWindow == null)
+				return;
+			
+			// create rule set
+			var ruleSet = await new KeyLogAnalysisRuleSetEditorDialog().ShowDialog<KeyLogAnalysisRuleSet?>(this.attachedWindow);
+			if (ruleSet == null)
+				return;
+			KeyLogAnalysisRuleSetManager.Default.AddRuleSet(ruleSet);
+		}
 
 
 		// Create item template for item of log list box.
@@ -1739,6 +1778,23 @@ namespace CarinaStudio.ULogViewer.Controls
 		DateTime? EarliestSelectedLogTimestamp { get => this.GetValue<DateTime?>(EarliestSelectedLogTimestampProperty); }
 
 
+		// Edit given key log analysis rule set.
+		void EditKeyLogAnalysisRuleSet(KeyLogAnalysisRuleSet? ruleSet)
+		{
+			// check state
+			if (ruleSet == null)
+				return;
+			if (this.attachedWindow == null)
+				return;
+
+			// edit rule set
+			new KeyLogAnalysisRuleSetEditorDialog()
+			{
+				RuleSet = ruleSet
+			}.ShowDialog(this.attachedWindow);
+		}
+
+
 		// Edit current log profile.
 		void EditLogProfile()
 		{
@@ -2393,6 +2449,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						this.logListBox.SelectedItems.Clear();
 						this.logListBox.SelectedItem = log;
 						this.logListBox.ScrollIntoView(log);
+						this.IsScrollingToLatestLogNeeded = false;
 					}));
 				}
 				this.logListBox.Focus();
@@ -2815,6 +2872,37 @@ namespace CarinaStudio.ULogViewer.Controls
 			else if (this.Application.IsDebugMode && e.Source is not TextBox)
 				this.Logger.LogTrace($"[KeyDown] {e.Key} was handled by another component");
 			base.OnKeyDown(e);
+		}
+
+
+		// Called when selection of list box of predefined log text fliter has been changed.
+		void OnKeyLogAnalysisRuleSetListBoxSelectionChanged(object? sender, SelectionChangedEventArgs e)
+		{
+			foreach (var ruleSet in e.RemovedItems.Cast<KeyLogAnalysisRuleSet>())
+				this.selectedKeyLogAnalysisRuleSets.Remove(ruleSet);
+			foreach (var ruleSet in e.AddedItems.Cast<KeyLogAnalysisRuleSet>())
+				this.selectedKeyLogAnalysisRuleSets.Add(ruleSet);
+			if (this.selectedKeyLogAnalysisRuleSets.Count != this.keyLogAnalysisRuleSetListBox.SelectedItems.Count)
+			{
+				// [Workaround] Need to sync selection back to control because selection will be cleared when popup opened
+				if (this.selectedKeyLogAnalysisRuleSets.IsNotEmpty())
+				{
+					var isScheduled = this.updateLogAnalysisAction?.IsScheduled ?? false;
+					this.selectedKeyLogAnalysisRuleSets.ToArray().Let(it =>
+					{
+						this.SynchronizationContext.Post(() =>
+						{
+							this.keyLogAnalysisRuleSetListBox.SelectedItems.Clear();
+							foreach (var ruleSet in it)
+								this.keyLogAnalysisRuleSetListBox.SelectedItems.Add(ruleSet);
+							if (!isScheduled)
+								this.updateLogAnalysisAction?.Cancel();
+						});
+					});
+				}
+			}
+			else
+				this.updateLogAnalysisAction.Reschedule(this.UpdateLogAnalysisParamsDelay);
 		}
 
 
@@ -3353,6 +3441,15 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Command to reload logs.
 		ICommand ReloadLogsCommand { get; }
+
+
+		// Remove given key log analysis rule set.
+		void RemoveKeyLogAnalysisRuleSet(KeyLogAnalysisRuleSet? ruleSet)
+		{
+			if (ruleSet == null)
+				return;
+			KeyLogAnalysisRuleSetManager.Default.RemoveRuleSet(ruleSet);
+		}
 
 
 		// Remove given predefined log text filter.
@@ -4195,6 +4292,10 @@ namespace CarinaStudio.ULogViewer.Controls
 				}
 			}
 		}
+
+
+		// Get delay of updating log analysis.
+		int UpdateLogAnalysisParamsDelay { get => 500; }
 
 
 		// Update font family of log.

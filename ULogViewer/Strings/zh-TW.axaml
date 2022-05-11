@@ -466,7 +466,7 @@
 	<sys:String x:Key="String/SessionView.Hint.NoLogToShow">沒有日誌可以顯示</sys:String>
 	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.Section1">點一下工具列的</sys:String>
 	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.Section2">來選取日誌類型以開始使用</sys:String>
-	<sys:String x:Key="String/SessionView.KeyLogAnalysisRuleSets">關鍵日誌分析</sys:String>
+	<sys:String x:Key="String/SessionView.KeyLogAnalysisRuleSets">關鍵日誌分析 (可多選)</sys:String>
 	<sys:String x:Key="String/SessionView.LastLogsFilteringDuration">篩選耗時：</sys:String>
 	<sys:String x:Key="String/SessionView.LastLogsReadingDuration">讀取耗時：</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisPanel">日誌分析</sys:String>
