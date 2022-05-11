@@ -154,15 +154,35 @@ class DisplayableLogAnalysisResult : BaseApplicationObject<IULogViewerApplicatio
 enum DisplayableLogAnalysisResultType
 {
     /// <summary>
-    /// Information.
+    /// Checkpoint.
     /// </summary>
-    Information,
-    /// <summary>
-    /// Warning.
-    /// </summary>
-    Warning,
+    Checkpoint,
     /// <summary>
     /// Error.
     /// </summary>
     Error,
+    /// <summary>
+    /// Information.
+    /// </summary>
+    Information,
+    /// <summary>
+    /// End of operation.
+    /// </summary>
+    OperationEnd,
+    /// <summary>
+    /// Start of operation.
+    /// </summary>
+    OperationStart,
+    /// <summary>
+    /// Performance.
+    /// </summary>
+    Performance,
+    /// <summary>
+    /// Time span.
+    /// </summary>
+    TimeSpan,
+    /// <summary>
+    /// Warning.
+    /// </summary>
+    Warning,
 }

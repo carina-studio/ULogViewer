@@ -37,8 +37,25 @@ class DisplayableLogAnalysisResultIconConverter : BaseValueConverter<object?, II
             DisplayableLogAnalysisResultType => (DisplayableLogAnalysisResultType?)value,
             _ => null,
         };
-        if (type.HasValue && app.TryGetResource<IImage>($"Image/Icon.{type.Value}.Outline.Colored", out var image))
-            return image;
+        if (type.HasValue)
+        {
+            var image = (IImage?)null;
+            switch (type.Value)
+            {
+                case DisplayableLogAnalysisResultType.Checkpoint:
+                case DisplayableLogAnalysisResultType.OperationEnd:
+                case DisplayableLogAnalysisResultType.OperationStart:
+                case DisplayableLogAnalysisResultType.Performance:
+                    app.TryGetResource<IImage>($"Image/{type.Value}.Outline.Colored", out image);
+                    return image;
+                case DisplayableLogAnalysisResultType.TimeSpan:
+                    app.TryGetResource<IImage>($"Image/Clock.Outline.Colored", out image);
+                    return image;
+                default:
+                    app.TryGetResource<IImage>($"Image/Icon.{type.Value}.Outline.Colored", out image);
+                    return image;
+            }
+        }
         return null;
     }
 }

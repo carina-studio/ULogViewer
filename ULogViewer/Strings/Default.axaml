@@ -112,8 +112,13 @@
 	<sys:String x:Key="String/DateTimeSelectionDialog.Title">Select date and time</sys:String>
 
 	<!-- DisplayableLogAnalysisResultType -->
+	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Checkpoint">Checkpoint</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Error">Error</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Information">Information</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisResultType.OperationEnd">End of operation</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisResultType.OperationStart">Start of operation</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Performance">Performance</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisResultType.TimeSpan">Time span</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Warning">Warning</sys:String>
 	
 	<!-- FileFormat -->
