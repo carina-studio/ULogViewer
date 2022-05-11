@@ -14,6 +14,7 @@ using Avalonia.Markup.Xaml.Templates;
 using Avalonia.Media;
 using Avalonia.VisualTree;
 using CarinaStudio.AppSuite.Controls;
+using CarinaStudio.AppSuite.Data;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Controls;
@@ -1841,6 +1842,45 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Export given key log analysis rule set.
+		async void ExportKeyLogAnalysisRuleSet(KeyLogAnalysisRuleSet? ruleSet)
+		{
+			// check state
+			if (ruleSet == null || this.attachedWindow == null)
+				return;
+			
+			// select file
+			var fileName = await new SaveFileDialog().Also(it =>
+			{
+				it.Filters.Add(new FileDialogFilter().Also(filter =>
+				{
+					filter.Extensions.Add("json");
+					filter.Name = this.Application.GetString("FileFormat.Json");
+				}));
+			}).ShowAsync(this.attachedWindow);
+			if (string.IsNullOrEmpty(fileName))
+				return;
+			
+			// export
+			try
+			{
+				await ruleSet.SaveAsync(fileName, false);
+			}
+			catch (Exception ex)
+			{
+				this.Logger.LogError(ex, $"Failed to export key log analysis rule set '{ruleSet.Id}' to '{fileName}'");
+				if (this.attachedWindow != null)
+				{
+					_ = new MessageDialog()
+					{
+						Icon = MessageDialogIcon.Error,
+						Message = this.Application.GetFormattedString("SessionView.FailedToExportLogAnalysisRuleSet", ruleSet.Name, fileName),
+					}.ShowDialog(this.attachedWindow);
+				}
+			}
+		}
+
+
 		// Filter logs by process ID.
 		void FilterLogsByProcessId(bool resetOtherFilters)
 		{
@@ -1895,6 +1935,60 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Check whether log profile has been set or not.
 		bool HasLogProfile { get => this.GetValue<bool>(HasLogProfileProperty); }
+
+
+		// Import key log analysis rule set.
+		async void ImportKeyLogAnalysisRuleSet()
+		{
+			// check state
+			if (this.attachedWindow == null)
+				return;
+			
+			// select file
+			var fileNames = await new OpenFileDialog().Also(dialog =>
+			{
+				dialog.Filters.Add(new FileDialogFilter().Also(filter =>
+				{
+					filter.Extensions.Add("json");
+					filter.Name = this.Application.GetString("FileFormat.Json");
+				}));
+			}).ShowAsync(this.attachedWindow);
+			if (fileNames == null || fileNames.IsEmpty())
+				return;
+			
+			// load rule set
+			var ruleSet = (KeyLogAnalysisRuleSet?)null;
+			try
+			{
+				ruleSet = await KeyLogAnalysisRuleSet.LoadAsync(this.Application, fileNames[0]);
+			}
+			catch (Exception ex)
+			{
+				this.Logger.LogError(ex, $"Failed to load key log analysis rule set from '{fileNames[0]}' to import");
+				if (this.attachedWindow != null)
+				{
+					_ = new MessageDialog()
+					{
+						Icon = MessageDialogIcon.Error,
+						Message = this.Application.GetFormattedString("SessionView.FailedToImportLogAnalysisRuleSet", fileNames[0]),
+					}.ShowDialog(this.attachedWindow);
+				}
+				return;
+			}
+			if (this.attachedWindow == null)
+				return;
+
+			// edit rule set
+			ruleSet = await new KeyLogAnalysisRuleSetEditorDialog()
+			{
+				RuleSet = ruleSet,
+			}.ShowDialog<KeyLogAnalysisRuleSet?>(this.attachedWindow);
+			if (ruleSet == null)
+				return;
+			
+			// add rule set
+			KeyLogAnalysisRuleSetManager.Default.AddRuleSet(ruleSet);
+		}
 
 
 		// Initialize Avalonia components.
