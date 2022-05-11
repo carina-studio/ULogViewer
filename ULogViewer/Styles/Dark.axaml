@@ -49,9 +49,9 @@
 			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Background.Marked.Purple">#2fb200ff</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Background.Marked.Red">#2fff0000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Background.Marked.Yellow">#2fffff00</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Background.Pressed">#7f0073cc</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Background.Selected">#7f004881</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Background.Selected.PointerOver">#7f0073cc</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Background.Pressed" Color="{DynamicResource Color/Accent}" Opacity="0.3"/>
+			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Background.Selected" Color="{DynamicResource Color/Accent}" Opacity="0.4"/>
+			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Background.Selected.PointerOver" Color="{DynamicResource Color/Accent}" Opacity="0.6"/>
 			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Column.Border.PointerOver">#7fffffff</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.SelectionIndicator.Background">#40ffffff</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.MarkedLogListBox.Item.Border.Selected">#7fffffff</SolidColorBrush>
