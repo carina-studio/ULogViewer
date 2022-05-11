@@ -1,3 +1,4 @@
+using System.Linq;
 using CarinaStudio.AppSuite.Data;
 using CarinaStudio.Collections;
 using CarinaStudio.Threading;
@@ -138,7 +139,7 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
     // Called when application string resources updated.
     void OnApplicationStringsUpdated(object? sender, EventArgs e)
     {
-        foreach (var profile in this.Profiles)
+        foreach (var profile in this.Profiles.ToArray())
             profile.OnApplicationStringsUpdated();
     }
 
