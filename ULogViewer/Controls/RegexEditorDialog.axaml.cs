@@ -43,6 +43,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		static readonly Regex DefaultRegexGroupNameRegex = new("^[\\d]+$");
 		static readonly AvaloniaProperty<bool> HasTestResultProperty = AvaloniaProperty.Register<RegexEditorDialog, bool>("HasTestResult");
 		static readonly AvaloniaProperty<bool> IsCapturingGroupsEnabledProperty = AvaloniaProperty.Register<RegexEditorDialog, bool>(nameof(IsCapturingGroupsEnabled));
+		static readonly AvaloniaProperty<bool> IsCapturingLogPropertiesEnabledProperty = AvaloniaProperty.Register<RegexEditorDialog, bool>(nameof(IsCapturingLogPropertiesEnabled));
 		static readonly AvaloniaProperty<string?> TestLogLineProperty = AvaloniaProperty.Register<RegexEditorDialog, string?>("TestLogLine");
 		static readonly AvaloniaProperty<bool> TestResultProperty = AvaloniaProperty.Register<RegexEditorDialog, bool>("TestResult");
 
@@ -51,6 +52,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ObservableList<Tuple<string, string>> capturedGroups = new();
 		readonly RegexTextBox regexTextBox;
 		readonly ScheduledAction testAction;
+		readonly TextBox testLogLineTextBox;
 
 
 		/// <summary>
@@ -62,23 +64,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			AvaloniaXamlLoader.Load(this);
 			this.regexTextBox = this.FindControl<RegexTextBox>(nameof(regexTextBox))!.Also(it =>
 			{
-				if (this.IsCapturingGroupsEnabled)
-				{
-					foreach (var propertyName in LogPropertyNames)
-					{
-						var group = new RegexGroup().Also(group =>
-						{
-							group.Bind(RegexGroup.DisplayNameProperty, new Binding()
-							{
-								Converter = Converters.LogPropertyNameConverter.Default,
-								Path = nameof(RegexGroup.Name),
-								Source = group,
-							});
-							group.Name = propertyName;
-						});
-						it.PredefinedGroups.Add(group);
-					}
-				}
 				it.GetObservable(RegexTextBox.IsTextValidProperty).Subscribe(_ =>
 				{
 					this.InvalidateInput();
@@ -116,6 +101,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.SetValue(TestResultProperty, false);
 				this.SetValue<bool>(HasTestResultProperty, true);
 			});
+			this.testLogLineTextBox = this.FindControl<TextBox>(nameof(testLogLineTextBox)).AsNonNull();
 		}
 
 
@@ -140,10 +126,43 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Whether log property capturing is enabled or not.
+		public bool IsCapturingLogPropertiesEnabled
+		{
+			get => this.GetValue<bool>(IsCapturingLogPropertiesEnabledProperty);
+			set => this.SetValue<bool>(IsCapturingLogPropertiesEnabledProperty, value);
+		}
+
+
 		// Called when opened.
 		protected override void OnOpened(EventArgs e)
 		{
 			base.OnOpened(e);
+			if (this.IsCapturingGroupsEnabled)
+			{
+				if (this.IsCapturingLogPropertiesEnabled)
+				{
+					foreach (var propertyName in LogPropertyNames)
+					{
+						var group = new RegexGroup().Also(group =>
+						{
+							group.Bind(RegexGroup.DisplayNameProperty, new Binding()
+							{
+								Converter = Converters.LogPropertyNameConverter.Default,
+								Path = nameof(RegexGroup.Name),
+								Source = group,
+							});
+							group.Name = propertyName;
+						});
+						this.regexTextBox.PredefinedGroups.Add(group);
+					}
+					this.testLogLineTextBox.Bind(TextBox.WatermarkProperty, this.GetResourceObservable("String/RegexEditorDialog.TestLogLine.Watermark.CapturingLogProperties"));
+				}
+				else
+					this.testLogLineTextBox.Bind(TextBox.WatermarkProperty, this.GetResourceObservable("String/RegexEditorDialog.TestLogLine.Watermark.CapturingGroups"));
+			}
+			else
+				this.testLogLineTextBox.Bind(TextBox.WatermarkProperty, this.GetResourceObservable("String/RegexEditorDialog.TestLogLine.Watermark"));
 			var regex = this.InitialRegex;
 			if (regex != null)
 			{

@@ -44,6 +44,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				InitialRegex = this.regex,
 				IsCapturingGroupsEnabled = true,
+				IsCapturingLogPropertiesEnabled = true,
 			}.ShowDialog<Regex?>(this);
 			if (regex != null)
 			{

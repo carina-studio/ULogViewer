@@ -421,9 +421,12 @@
 	<sys:String x:Key="String/RegexEditorDialog.CapturingGroupsDisabled">分組在此格式中不被支援</sys:String>
 	<sys:String x:Key="String/RegexEditorDialog.IgnoreCase">忽略大小寫</sys:String>
 	<sys:String x:Key="String/RegexEditorDialog.Regex">格式 (必要)</sys:String>
-	<sys:String x:Key="String/RegexEditorDialog.Regex.Description">您可以使分組語法 "(?&lt;&gt;)" 以從文字中擷取對應的日誌屬性</sys:String>
+	<sys:String x:Key="String/RegexEditorDialog.Regex.Description.CapturingGroups">您可以使分組語法 "(?&lt;&gt;)" 以從文字中擷取特定的字串</sys:String>
+	<sys:String x:Key="String/RegexEditorDialog.Regex.Description.CapturingLogProperties">您可以使分組語法 "(?&lt;&gt;)" 以從文字中擷取對應的日誌屬性</sys:String>
 	<sys:String x:Key="String/RegexEditorDialog.TestLogLine">測試日誌行</sys:String>
-	<sys:String x:Key="String/RegexEditorDialog.TestLogLine.Watermark">用以驗證格式與擷取的分組</sys:String>
+	<sys:String x:Key="String/RegexEditorDialog.TestLogLine.Watermark">用以驗證格式</sys:String>
+	<sys:String x:Key="String/RegexEditorDialog.TestLogLine.Watermark.CapturingGroups">用以驗證格式及擷取的分組字串</sys:String>
+	<sys:String x:Key="String/RegexEditorDialog.TestLogLine.Watermark.CapturingLogProperties">用以驗證格式及擷取的日誌屬性</sys:String>
 	<sys:String x:Key="String/RegexEditorDialog.TestResult">測試結果</sys:String>
 	<sys:String x:Key="String/RegexEditorDialog.TestResult.Failed">(不符合)</sys:String>
 	<sys:String x:Key="String/RegexEditorDialog.TestResult.Success">(符合)</sys:String>

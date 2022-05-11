@@ -439,9 +439,12 @@
 	<sys:String x:Key="String/RegexEditorDialog.CapturingGroupsDisabled">Grouping is unsupported for this pattern.</sys:String>
 	<sys:String x:Key="String/RegexEditorDialog.IgnoreCase">Ignore case</sys:String>
 	<sys:String x:Key="String/RegexEditorDialog.Regex">Pattern (required)</sys:String>
-	<sys:String x:Key="String/RegexEditorDialog.Regex.Description">You can use Grouping Syntax "(?&lt;&gt;)" to capture log property from text</sys:String>
+	<sys:String x:Key="String/RegexEditorDialog.Regex.Description.CapturingGroups">You can use Grouping Syntax "(?&lt;&gt;)" to capture strings from text</sys:String>
+	<sys:String x:Key="String/RegexEditorDialog.Regex.Description.CapturingLogProperties">You can use Grouping Syntax "(?&lt;&gt;)" to capture log properties from text</sys:String>
 	<sys:String x:Key="String/RegexEditorDialog.TestLogLine">Test log line</sys:String>
-	<sys:String x:Key="String/RegexEditorDialog.TestLogLine.Watermark">Text to verify the pattern and captured groups</sys:String>
+	<sys:String x:Key="String/RegexEditorDialog.TestLogLine.Watermark">Text to verify the pattern</sys:String>
+	<sys:String x:Key="String/RegexEditorDialog.TestLogLine.Watermark.CapturingGroups">Text to verify the pattern and captured group strings</sys:String>
+	<sys:String x:Key="String/RegexEditorDialog.TestLogLine.Watermark.CapturingLogProperties">Text to verify the pattern and captured log properties</sys:String>
 	<sys:String x:Key="String/RegexEditorDialog.TestResult">Test result</sys:String>
 	<sys:String x:Key="String/RegexEditorDialog.TestResult.Failed">(Not matched)</sys:String>
 	<sys:String x:Key="String/RegexEditorDialog.TestResult.Success">(Matched)</sys:String>
