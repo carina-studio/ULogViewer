@@ -124,7 +124,8 @@
 	<sys:Double x:Key="Double/SessionView.LogListBox.MinSizeToCloseSidePanel">100</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogsProgessingBar.Height">2</sys:Double>
 	<sys:Double x:Key="Double/SessionView.PredefinedLogTextFilterListBox.Icon.Size">12</sys:Double>
-	<sys:Double x:Key="Double/SessionView.PredefinedLogTextFiltersPopup.MaxHeight">500</sys:Double>
+	<sys:Double x:Key="Double/SessionView.PredefinedLogTextFilterListBox.MaxHeight">400</sys:Double>
+	<sys:Double x:Key="Double/SessionView.PredefinedLogTextFilterListBox.MinHeight">100</sys:Double>
 	<sys:Double x:Key="Double/SessionView.PredefinedLogTextFiltersPopup.Width">300</sys:Double>
 	<sys:Double x:Key="Double/SessionView.SidePanel.Header.Button.Size">24</sys:Double>
 	<sys:Double x:Key="Double/SessionView.SidePanel.Header.FontSize">14</sys:Double>
@@ -168,11 +169,12 @@
 	<Thickness x:Key="Thickness/SessionView.MarkedLogListBox.Item.Border.Selected">1</Thickness>
 	<Thickness x:Key="Thickness/SessionView.MarkedLogListBox.Item.Padding">5,3,5,3</Thickness>
 	<Thickness x:Key="Thickness/SessionView.Menu.MarkColorIcon.Border">1</Thickness>
-	<Thickness x:Key="Thickness/SessionView.NoPredefinedLogTextFilterHint.Margin">15,12,15,15</Thickness>
+	<Thickness x:Key="Thickness/SessionView.NoPredefinedLogTextFilterHint.Margin">10</Thickness>
 	<Thickness x:Key="Thickness/SessionView.PredefinedLogTextFilterHint.Padding">10,7,10,10</Thickness>
 	<Thickness x:Key="Thickness/SessionView.PredefinedLogTextFilterListBox.Icon.Margin">0,0,5,0</Thickness>
-	<Thickness x:Key="Thickness/SessionView.PredefinedLogTextFilterListBox.Item.Padding">15,5,20,5</Thickness>
-	<Thickness x:Key="Thickness/SessionView.PredefinedLogTextFiltersPopup.Padding">0,3,0,0</Thickness>
+	<Thickness x:Key="Thickness/SessionView.PredefinedLogTextFilterListBox.Item.Padding">5,5,20,5</Thickness>
+	<Thickness x:Key="Thickness/SessionView.PredefinedLogTextFiltersPopup.Border">1</Thickness>
+	<Thickness x:Key="Thickness/SessionView.PredefinedLogTextFiltersPopup.Padding">10</Thickness>
 	<Thickness x:Key="Thickness/SessionView.SidePanel.Header.Button.Padding">5</Thickness>
 	<Thickness x:Key="Thickness/SessionView.SidePanel.Header.Padding">3</Thickness>
 	<Thickness x:Key="Thickness/SessionView.SidePanel.Header.Text.Left.Margin">5,5,0,5</Thickness>

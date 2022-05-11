@@ -511,11 +511,10 @@
 	<sys:String x:Key="String/SessionView.MultipleFilesAreNotAllowed">Multiple files are not allowed by current log profile.</sys:String>
 	<sys:String x:Key="String/SessionView.NeedToRestartAsAdministrator">Administrator role is needed for '{0}'. Do you want to restart application as Administrator and use this profile?</sys:String>
 	<sys:String x:Key="String/SessionView.NoFilePathDropped">Please drag and drop valid files.</sys:String>
-	<sys:String x:Key="String/SessionView.NoPredefinedLogTextFilter">No defined text filter</sys:String>
 	<sys:String x:Key="String/SessionView.OtherActions">Other actions</sys:String>
 	<sys:String x:Key="String/SessionView.PauseResumeLogsReading">Pause/Resume reading logs (P)</sys:String>
 	<sys:String x:Key="String/SessionView.PredefinedLogTextFilters">Defined text filters (Ctrl+P)</sys:String>
-	<sys:String x:Key="String/SessionView.PredefinedLogTextFilters.Hint">Select one or more items</sys:String>
+	<sys:String x:Key="String/SessionView.PredefinedLogTextFiltersPopup.Header">Text filters (multi-selectable)</sys:String>
 	<sys:String x:Key="String/SessionView.ReloadLogFile">Change precondition of log reading…</sys:String>
 	<sys:String x:Key="String/SessionView.ReloadLogFile.WithoutLogReadingPrecondition">Clear precondition of log reading</sys:String>
 	<sys:String x:Key="String/SessionView.ReloadLogs">Reload logs (F5)</sys:String>
