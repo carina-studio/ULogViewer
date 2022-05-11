@@ -103,6 +103,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		static readonly SettingKey<bool> IsLogAnalysisPanelTutorialShownKey = new("SessionView.IsLogAnalysisPanelTutorialShown");
 		static readonly SettingKey<bool> IsLogFilesPanelTutorialShownKey = new("SessionView.IsLogFilesPanelTutorialShown");
 		static readonly SettingKey<bool> IsMarkedLogsPanelTutorialShownKey = new("SessionView.IsMarkedLogsPanelTutorialShown");
+		static readonly SettingKey<bool> IsSelectLogAnalysisRuleSetsTutorialShownKey = new("SessionView.IsSelectLogAnalysisRuleSetsTutorialShown");
 		static readonly SettingKey<bool> IsSelectingLogProfileToStartTutorialShownKey = new("SessionView.IsSelectingLogProfileToStartTutorialShown");
 		static readonly SettingKey<bool> IsShowAllLogsForLogAnalysisResultTutorialShownKey = new("SessionView.IsShowAllLogsForLogAnalysisResultTutorialShown");
 		static readonly SettingKey<bool> IsSwitchingSidePanelsTutorialShownKey = new("SessionView.IsSwitchingSidePanelsTutorialShown");
@@ -3233,6 +3234,21 @@ namespace CarinaStudio.ULogViewer.Controls
 									session.IsLogFilesPanelVisible = false;
 									session.IsMarkedLogsPanelVisible = false;
 									session.IsTimestampCategoriesPanelVisible = false;
+
+									// show tutorial
+									if (!this.PersistentState.GetValueOrDefault(IsSelectLogAnalysisRuleSetsTutorialShownKey)
+										&& this.attachedWindow is MainWindow window)
+									{
+										window.ShowTutorial(new Tutorial().Also(it =>
+										{
+											it.Anchor = this.FindControl<Control>("logAnalysisRuleSetsButton");
+											it.Bind(Tutorial.DescriptionProperty, this.GetResourceObservable("String/SessionView.Tutorial.SelectLogAnalysisRuleSets"));
+											it.Dismissed += (_, e) => 
+												this.PersistentState.SetValue<bool>(IsSelectLogAnalysisRuleSetsTutorialShownKey, true);
+											it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb.Colored");
+											it.IsSkippingAllTutorialsAllowed = false;
+										}));
+									}
 								}
 								break;
 							case nameof(Session.IsLogFilesPanelVisible):

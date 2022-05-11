@@ -553,6 +553,7 @@
 	<sys:String x:Key="String/SessionView.Tutorial.LogAnalysisPanel">View results of log analysis.</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.LogFilesPanel">View and manage added log files.</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.MarkedLogsPanel">List of marked logs.</sys:String>
+	<sys:String x:Key="String/SessionView.Tutorial.SelectLogAnalysisRuleSets">Click here to select log analysis rule sets to apply.</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.SelectLogProfileToStart">Click here to select a log profile to start.</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.ShowAllLogsTemporarilyForSelectingLogAnalysisResult">It is needed to show all logs temporarily because the log of analysis result is not contained in current list. You can switch it OFF manually.</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.SwitchSidePanels">Switch between panels or collapse them here.</sys:String>
