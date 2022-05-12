@@ -1,6 +1,7 @@
 using CarinaStudio.AppSuite.Data;
 using CarinaStudio.Collections;
 using CarinaStudio.Threading;
+using CarinaStudio.ULogViewer.Logs.Profiles;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -68,6 +69,7 @@ class KeyLogAnalysisRuleSet : BaseProfile<IULogViewerApplication>
 
 
     // Fields.
+    LogProfileIcon icon = LogProfileIcon.Analysis;
     IList<Rule> rules = new Rule[0];
 
 
@@ -93,6 +95,24 @@ class KeyLogAnalysisRuleSet : BaseProfile<IULogViewerApplication>
     public override bool Equals(IProfile<IULogViewerApplication>? profile) =>
         profile is KeyLogAnalysisRuleSet analysisProfile
         && analysisProfile.Id == this.Id;
+    
+
+    /// <summary>
+    /// Get or set icon of rule sets.
+    /// </summary>
+    public LogProfileIcon Icon
+    {
+        get => this.icon;
+        set
+        {
+            this.VerifyAccess();
+            this.VerifyBuiltIn();
+            if (this.icon == value)
+                return;
+            this.icon = value;
+            this.OnPropertyChanged(nameof(Icon));
+        }
+    }
     
 
     /// <summary>
@@ -132,6 +152,10 @@ class KeyLogAnalysisRuleSet : BaseProfile<IULogViewerApplication>
         {
             switch (jsonProperty.Name)
             {
+                case nameof(Icon):
+                    if (jsonProperty.Value.ValueKind == JsonValueKind.String)
+                        Enum.TryParse<LogProfileIcon>(jsonProperty.Value.GetString(), out this.icon);
+                    break;
                 case nameof(Id):
                     break;
                 case nameof(Name):
@@ -163,6 +187,7 @@ class KeyLogAnalysisRuleSet : BaseProfile<IULogViewerApplication>
     protected override void OnSave(Utf8JsonWriter writer, bool includeId)
     {
         writer.WriteStartObject();
+        writer.WriteString(nameof(Icon), this.icon.ToString());
         if (includeId)
             writer.WriteString(nameof(Id), this.Id);
         this.Name?.Let(it =>

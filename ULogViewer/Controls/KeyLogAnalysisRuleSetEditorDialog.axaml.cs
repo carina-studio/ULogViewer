@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using CarinaStudio.Collections;
+using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ULogViewer.ViewModels.Analysis;
 using CarinaStudio.Threading;
 using System;
@@ -18,6 +19,7 @@ namespace CarinaStudio.ULogViewer.Controls;
 partial class KeyLogAnalysisRuleSetEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
 {
 	// Fields.
+	readonly ComboBox iconComboBox;
 	readonly TextBox nameTextBox;
 	readonly Avalonia.Controls.ListBox ruleListBox;
 	readonly ObservableList<KeyLogAnalysisRuleSet.Rule> rules = new();
@@ -29,6 +31,7 @@ partial class KeyLogAnalysisRuleSetEditorDialog : AppSuite.Controls.InputDialog<
 	public KeyLogAnalysisRuleSetEditorDialog()
 	{
 		AvaloniaXamlLoader.Load(this);
+		this.iconComboBox = this.FindControl<ComboBox>(nameof(iconComboBox));
 		this.nameTextBox = this.FindControl<TextBox>(nameof(nameTextBox))!.Also(it =>
 		{
 			it.GetObservable(TextBox.TextProperty).Subscribe(_ => this.InvalidateInput());
@@ -91,10 +94,15 @@ partial class KeyLogAnalysisRuleSetEditorDialog : AppSuite.Controls.InputDialog<
 	protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken)
 	{
 		var ruleSet = this.RuleSet ?? new KeyLogAnalysisRuleSet(this.Application);
+		ruleSet.Icon = (LogProfileIcon)this.iconComboBox.SelectedItem!;
 		ruleSet.Name = this.nameTextBox.Text.AsNonNull();
 		ruleSet.Rules = this.rules;
 		return Task.FromResult<object?>(ruleSet);
 	}
+
+
+	// Get available icons.
+	LogProfileIcon[] Icons { get; } = Enum.GetValues<LogProfileIcon>();
 
 
 	/// <inheritdoc/>
@@ -104,9 +112,12 @@ partial class KeyLogAnalysisRuleSetEditorDialog : AppSuite.Controls.InputDialog<
 		var ruleSet = this.RuleSet;
 		if (ruleSet != null)
 		{
+			this.iconComboBox.SelectedItem = ruleSet.Icon;
 			this.nameTextBox.Text = ruleSet.Name;
 			this.rules.AddRange(ruleSet.Rules);
 		}
+		else
+			this.iconComboBox.SelectedItem = LogProfileIcon.Analysis;
 		this.SynchronizationContext.Post(this.nameTextBox.Focus);
 	}
 

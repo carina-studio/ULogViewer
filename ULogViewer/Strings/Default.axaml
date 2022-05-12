@@ -147,6 +147,7 @@
 	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Title">Edit rule</sys:String>
 
 	<!-- KeyLogAnalysisRuleSetEditorDialog -->
+	<sys:String x:Key="String/KeyLogAnalysisRuleSetEditorDialog.Icon">Icon</sys:String>
 	<sys:String x:Key="String/KeyLogAnalysisRuleSetEditorDialog.Name">Name (required)</sys:String>
 	<sys:String x:Key="String/KeyLogAnalysisRuleSetEditorDialog.Rules">Rules (required)</sys:String>
 	<sys:String x:Key="String/KeyLogAnalysisRuleSetEditorDialog.Title">Edit rule set</sys:String>

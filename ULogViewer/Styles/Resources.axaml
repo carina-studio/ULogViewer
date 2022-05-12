@@ -26,7 +26,7 @@
 	<sys:Double x:Key="Double/KeyLogAnalysisRuleEditorDialog.Width">500</sys:Double>
 
 	<!-- KeyLogAnalysisRuleSetEditorDialog -->
-	<sys:Double x:Key="Double/KeyLogAnalysisRuleSetEditorDialog.RuleListBox.Height">200</sys:Double>
+	<sys:Double x:Key="Double/KeyLogAnalysisRuleSetEditorDialog.RuleListBox.Height">400</sys:Double>
 	<sys:Double x:Key="Double/KeyLogAnalysisRuleSetEditorDialog.RuleListBox.Item.Icon.Size">14</sys:Double>
 	<sys:Double x:Key="Double/KeyLogAnalysisRuleSetEditorDialog.RuleListBox.Item.Message.Opacity">0.5</sys:Double>
 	<sys:Double x:Key="Double/KeyLogAnalysisRuleSetEditorDialog.Width">500</sys:Double>
@@ -113,6 +113,7 @@
 	<sys:Double x:Key="Double/SessionView.Hint.NoLogToShow.FontSize">20</sys:Double>
 	<sys:Double x:Key="Double/SessionView.Hint.SelectLogProfile.FontSize">20</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogAnalysisResult.Icon.Size">14</sys:Double>
+	<sys:Double x:Key="Double/SessionView.LogAnalysisRuleSetListBox.Icon.Size">14</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogAnalysisRuleSetListBox.MaxHeight">300</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogAnalysisRuleSetListBox.MinHeight">100</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogAnalysisRuleSetsPopup.Width">400</sys:Double>
@@ -152,7 +153,8 @@
 	<Thickness x:Key="Thickness/SessionView.Hint.Margin">20</Thickness>
 	<Thickness x:Key="Thickness/SessionView.Hint.SelectLogProfile.Icon.Margin">8,0,8,0</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogAnalysisResult.Icon.Margin">3,0,3,0</Thickness>
-	<Thickness x:Key="Thickness/SessionView.LogAnalysisRuleSetListBox.Item.Padding">5,5,20,5</Thickness>
+	<Thickness x:Key="Thickness/SessionView.LogAnalysisRuleSetListBox.Icon.Margin">0,0,8,0</Thickness>
+	<Thickness x:Key="Thickness/SessionView.LogAnalysisRuleSetListBox.Item.Padding">8,5,20,5</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogAnalysisRuleSetsPopup.Border">1</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogAnalysisRuleSetsPopup.Padding">10</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogFileInfo.FileName.Margin">0,0,0,4</Thickness>
@@ -175,7 +177,7 @@
 	<Thickness x:Key="Thickness/SessionView.Menu.MarkColorIcon.Border">1</Thickness>
 	<Thickness x:Key="Thickness/SessionView.NoLogAnalysisRuleSetHint.Margin">10</Thickness>
 	<Thickness x:Key="Thickness/SessionView.NoPredefinedLogTextFilterHint.Margin">10</Thickness>
-	<Thickness x:Key="Thickness/SessionView.PredefinedLogTextFilterListBox.Item.Padding">5,5,20,5</Thickness>
+	<Thickness x:Key="Thickness/SessionView.PredefinedLogTextFilterListBox.Item.Padding">8,5,20,5</Thickness>
 	<Thickness x:Key="Thickness/SessionView.PredefinedLogTextFiltersPopup.Border">1</Thickness>
 	<Thickness x:Key="Thickness/SessionView.PredefinedLogTextFiltersPopup.Padding">10</Thickness>
 	<Thickness x:Key="Thickness/SessionView.SidePanel.Header.Button.Padding">5</Thickness>

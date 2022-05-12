@@ -141,6 +141,7 @@
 	<sys:String x:Key="String/JsonLogsSavingOptionsDialog.Title">JSON 選項</sys:String>
 
 	<!-- KeyLogAnalysisRuleEditorDialog -->
+	
 	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Message">分析結果訊息 (必要)</sys:String>
 	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Message.Description">您可以使用插值語法 "{}" 以將日誌屬性或格式中的自訂分組輸出至訊息</sys:String>
 	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Pattern">格式 (必要)</sys:String>
@@ -149,6 +150,7 @@
 	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Title">編輯規則</sys:String>
 
 	<!-- KeyLogAnalysisRuleSetEditorDialog -->
+	<sys:String x:Key="String/KeyLogAnalysisRuleSetEditorDialog.Icon">圖示</sys:String>
 	<sys:String x:Key="String/KeyLogAnalysisRuleSetEditorDialog.Name">名稱 (必要)</sys:String>
 	<sys:String x:Key="String/KeyLogAnalysisRuleSetEditorDialog.Rules">規則 (必要)</sys:String>
 	<sys:String x:Key="String/KeyLogAnalysisRuleSetEditorDialog.Title">編輯規則集</sys:String>

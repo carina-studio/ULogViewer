@@ -1103,10 +1103,11 @@
 											<ListBox Name="keyLogAnalysisRuleSetListBox" Background="{DynamicResource Brush/SessionView.LogAnalysisRuleSetListBox.Background}" Items="{Binding RuleSets, Source={x:Static appAnalysis:KeyLogAnalysisRuleSetManager.Default}}" MaxHeight="{StaticResource Double/SessionView.LogAnalysisRuleSetListBox.MaxHeight}" MinHeight="{StaticResource Double/SessionView.LogAnalysisRuleSetListBox.MinHeight}" SelectionMode="Multiple">
 												<ListBox.ItemTemplate>
 													<DataTemplate>
-														<Grid ColumnDefinitions="*,Auto">
-															<TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
-															<Border Classes="InPlaceAction_Reserved"/>
-															<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal" VerticalAlignment="Center">
+														<Grid ColumnDefinitions="Auto,*,Auto">
+															<Image Classes="Icon" Height="{StaticResource Double/SessionView.LogAnalysisRuleSetListBox.Icon.Size}" Margin="{StaticResource Thickness/SessionView.LogAnalysisRuleSetListBox.Icon.Margin}" Source="{Binding Icon, Converter={x:Static appConverters:LogProfileIconConverter.Default}}" VerticalAlignment="Center" Width="{StaticResource Double/SessionView.LogAnalysisRuleSetListBox.Icon.Size}"/>
+															<TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center"/>
+															<Border Grid.Column="1" Classes="InPlaceAction_Reserved"/>
+															<StackPanel Grid.Column="2" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal" VerticalAlignment="Center">
 																<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].ExportKeyLogAnalysisRuleSet}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Export}">
 																	<Image Classes="InPlaceAction_Icon" Source="{StaticResource Image/Icon.Export}"/>
 																</Button>
