@@ -132,6 +132,12 @@
 	<DrawingImage x:Key="Image/FindDate" Drawing="{StaticResource Drawing/FindDate}"/>
 	<DrawingImage x:Key="Image/Intersection" Drawing="{StaticResource Drawing/Intersection}"/>
 	<DrawingImage x:Key="Image/LogProfile" Drawing="{StaticResource Drawing/LogProfile}"/>
+	<DrawingImage x:Key="Image/LogProfile.Analysis">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{DynamicResource Geometry/Icon.Analysis}"/>
+	</DrawingImage>
+	<DrawingImage x:Key="Image/LogProfile.Analysis.Light">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{DynamicResource Geometry/Icon.Analysis}"/>
+	</DrawingImage>
 	<DrawingImage x:Key="Image/LogProfile.Android" Drawing="{StaticResource Drawing/LogProfile.Android}"/>
 	<DrawingImage x:Key="Image/LogProfile.Android.Light" Drawing="{StaticResource Drawing/LogProfile.Android.Light}"/>
 	<DrawingImage x:Key="Image/LogProfile.Apple" Drawing="{StaticResource Drawing/LogProfile.Apple}"/>

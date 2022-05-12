@@ -8,6 +8,10 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 	enum LogProfileIcon
 	{
 		/// <summary>
+		/// Analysis.
+		/// </summary>
+		Analysis,
+		/// <summary>
 		/// Android.
 		/// </summary>
 		Android,
