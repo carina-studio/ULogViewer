@@ -1,6 +1,8 @@
 ﻿using Avalonia.Media;
 using CarinaStudio.Collections;
+using CarinaStudio.Data.Converters;
 using CarinaStudio.Threading;
+using CarinaStudio.ULogViewer.Converters;
 using CarinaStudio.ULogViewer.Logs;
 using CarinaStudio.ULogViewer.ViewModels.Analysis;
 using System;
@@ -16,15 +18,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 	/// </summary>
 	class DisplayableLog : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 	{
-		// Constants.
-		const uint HasErrorAnalysisResultFlag = 0x1;
-		const uint HasInformationAnalysisResultFlag = 0x2;
-		const uint HasWarningAnalysisResultFlag = 0x4;
-		const uint HasAnalysisResultFlagMask = HasErrorAnalysisResultFlag
-			| HasInformationAnalysisResultFlag
-			| HasWarningAnalysisResultFlag;
-
-
 		// Static fields.
 		static readonly DisplayableLogAnalysisResult[] emptyAnalysisResults = new DisplayableLogAnalysisResult[0];
 		static readonly int[] emptyInt32Array = new int[0];
@@ -41,13 +34,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		// Fields.
+		DisplayableLogAnalysisResultType activeAnalysisResultType;
+		IImage? analysisResultIndicatorIcon;
 		DisplayableLogAnalysisResult[] analysisResults = emptyAnalysisResults;
 		CompressedString? beginningTimeSpanString;
 		CompressedString? beginningTimestampString;
 		CompressedString? endingTimeSpanString;
 		CompressedString? endingTimestampString;
 		readonly int[] extraLineCount;
-		uint flags;
 		MarkColor markedColor;
 		long memorySize;
 		int messageLineCount = -1;
@@ -168,29 +162,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				memorySizeDiff += IntPtr.Size;
 			}
 
-			// check type
-			var typeFlag = result.Type switch
+			// select active type
+			if (this.activeAnalysisResultType == 0 || this.activeAnalysisResultType > result.Type)
 			{
-				DisplayableLogAnalysisResultType.Error => HasErrorAnalysisResultFlag,
-				DisplayableLogAnalysisResultType.Information => HasInformationAnalysisResultFlag,
-				DisplayableLogAnalysisResultType.Warning => HasWarningAnalysisResultFlag,
-				_ => throw new NotSupportedException(),
-			};
-			if ((this.flags & typeFlag) == 0)
-			{
-				this.flags |= typeFlag;
-				switch (result.Type)
-				{
-					case DisplayableLogAnalysisResultType.Error:
-						this.PropertyChanged?.Invoke(this, new(nameof(HasErrorAnalysisResult)));
-						break;
-					case DisplayableLogAnalysisResultType.Information:
-						this.PropertyChanged?.Invoke(this, new(nameof(HasInformationAnalysisResult)));
-						break;
-					case DisplayableLogAnalysisResultType.Warning:
-						this.PropertyChanged?.Invoke(this, new(nameof(HasWarningAnalysisResult)));
-						break;
-				}
+				this.activeAnalysisResultType = result.Type;
+				this.analysisResultIndicatorIcon = null;
+				this.PropertyChanged?.Invoke(this, new(nameof(AnalysisResultIndicatorIcon)));
 			}
 			if (currentResultCount == 0)
 				this.PropertyChanged?.Invoke(this, new(nameof(HasAnalysisResult)));
@@ -199,6 +176,21 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.memorySize += memorySizeDiff;
 			this.Group.OnAnalysisResultAdded(this);
 			this.Group.OnDisplayableLogMemorySizeChanged(this, memorySizeDiff);
+		}
+
+
+		/// <summary>
+		/// Get icon for analysis result indicator.
+		/// </summary>
+		public IImage? AnalysisResultIndicatorIcon 
+		{ 
+			get 
+			{
+				if (this.analysisResultIndicatorIcon != null || this.activeAnalysisResultType == 0)
+					return this.analysisResultIndicatorIcon;
+				this.analysisResultIndicatorIcon = DisplayableLogAnalysisResultIconConverter.Default.Convert<IImage?>(this.activeAnalysisResultType);
+				return this.analysisResultIndicatorIcon;
+			}
 		}
 
 
@@ -589,7 +581,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Check whether at least one <see cref="DisplayableLogAnalysisResult"/> has been added to this log or not.
 		/// </summary>
-		public bool HasAnalysisResult { get => (this.flags & HasAnalysisResultFlagMask) != 0; }
+		public bool HasAnalysisResult { get => this.analysisResults.IsNotEmpty(); }
 
 
 		/// <summary>
@@ -600,12 +592,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public static bool HasDateTimeProperty(string propertyName) =>
 			Log.HasDateTimeProperty(propertyName);
 		
-
-		/// <summary>
-		/// Check whether at least one <see cref="DisplayableLogAnalysisResult"/> with <see cref="DisplayableLogAnalysisResultType.Error"/> type has been added to this log or not.
-		/// </summary>
-		public bool HasErrorAnalysisResult { get => (this.flags & HasErrorAnalysisResultFlag) != 0; }
-
 
 		/// <summary>
 		/// Check whether number of lines in <see cref="Extra1"/> is greater than <see cref="DisplayableLogGroup.MaxDisplayLineCount"/> or not.
@@ -680,12 +666,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
-		/// Check whether at least one <see cref="DisplayableLogAnalysisResult"/> with <see cref="DisplayableLogAnalysisResultType.Information"/> type has been added to this log or not.
-		/// </summary>
-		public bool HasInformationAnalysisResult { get => (this.flags & HasInformationAnalysisResultFlag) != 0; }
-
-
-		/// <summary>
 		/// Check whether given property of log with <see cref="Int64"/> value is existing or not.
 		/// </summary>
 		/// <param name="propertyName">Name of property.</param>
@@ -737,12 +717,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			or nameof(TimestampString) => true,
 			_ => Log.HasStringProperty(propertyName),
 		};
-
-
-		/// <summary>
-		/// Check whether at least one <see cref="DisplayableLogAnalysisResult"/> with <see cref="DisplayableLogAnalysisResultType.Warning"/> type has been added to this log or not.
-		/// </summary>
-		public bool HasWarningAnalysisResult { get => (this.flags & HasWarningAnalysisResultFlag) != 0; }
 
 
 		/// <summary>
@@ -1001,33 +975,24 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			if (memorySizeDiff == 0)
 				return;
 			
-			// check type
-			var typeFlags = 0u;
-			var prevTypeFlags = (this.flags & HasAnalysisResultFlagMask);
-			for (var i = currentResultCount - 2; i >= 0; --i)
+			// update active type
+			if (this.activeAnalysisResultType >= result.Type)
 			{
-				switch (this.analysisResults[i].Type)
+				this.activeAnalysisResultType = currentResultCount > 1 ? this.analysisResults[0].Type : 0;
+				for (var i = currentResultCount - 2; i >= 1; --i)
 				{
-					case DisplayableLogAnalysisResultType.Error:
-						typeFlags |= HasErrorAnalysisResultFlag;
-						break;
-					case DisplayableLogAnalysisResultType.Information:
-						typeFlags |= HasInformationAnalysisResultFlag;
-						break;
-					case DisplayableLogAnalysisResultType.Warning:
-						typeFlags |= HasWarningAnalysisResultFlag;
-						break;
+					var type = this.analysisResults[i].Type;
+					if (this.activeAnalysisResultType > type)
+						this.activeAnalysisResultType = type;
 				}
+				if (this.activeAnalysisResultType > result.Type)
+				{
+					this.analysisResultIndicatorIcon = null;
+					this.PropertyChanged?.Invoke(this, new(nameof(AnalysisResultIndicatorIcon)));
+				}
+				if (currentResultCount == 1)
+					this.PropertyChanged?.Invoke(this, new(nameof(HasAnalysisResult)));
 			}
-			this.flags = (this.flags & ~HasAnalysisResultFlagMask) | typeFlags;
-			if ((typeFlags & HasErrorAnalysisResultFlag) == 0 && (prevTypeFlags & HasErrorAnalysisResultFlag) != 0)
-				this.PropertyChanged?.Invoke(this, new(nameof(HasErrorAnalysisResult)));
-			else if ((typeFlags & HasInformationAnalysisResultFlag) == 0 && (prevTypeFlags & HasInformationAnalysisResultFlag) != 0)
-				this.PropertyChanged?.Invoke(this, new(nameof(HasInformationAnalysisResult)));
-			else if ((typeFlags & HasWarningAnalysisResultFlag) == 0 && (prevTypeFlags & HasWarningAnalysisResultFlag) != 0)
-				this.PropertyChanged?.Invoke(this, new(nameof(HasWarningAnalysisResult)));
-			if (currentResultCount == 1)
-				this.PropertyChanged?.Invoke(this, new(nameof(HasAnalysisResult)));
 			
 			// update memory usage
 			this.memorySize += memorySizeDiff;
@@ -1092,31 +1057,20 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			if (memorySizeDiff == 0)
 				return;
 			
-			// check type
-			var typeFlags = 0u;
-			var prevTypeFlags = (this.flags & HasAnalysisResultFlagMask);
-			for (var i = currentResultCount - 2; i >= 0; --i)
+			// update active type
+			var currentActiveResultType = this.activeAnalysisResultType;
+			this.activeAnalysisResultType = currentResultCount > 0 ? this.analysisResults[0].Type : 0;
+			for (var i = currentResultCount - 1; i >= 1; --i)
 			{
-				switch (this.analysisResults[i].Type)
-				{
-					case DisplayableLogAnalysisResultType.Error:
-						typeFlags |= HasErrorAnalysisResultFlag;
-						break;
-					case DisplayableLogAnalysisResultType.Information:
-						typeFlags |= HasInformationAnalysisResultFlag;
-						break;
-					case DisplayableLogAnalysisResultType.Warning:
-						typeFlags |= HasWarningAnalysisResultFlag;
-						break;
-				}
+				var type = this.analysisResults[i].Type;
+				if (this.activeAnalysisResultType > type)
+					this.activeAnalysisResultType = type;
 			}
-			this.flags = (this.flags & ~HasAnalysisResultFlagMask) | typeFlags;
-			if ((typeFlags & HasErrorAnalysisResultFlag) == 0 && (prevTypeFlags & HasErrorAnalysisResultFlag) != 0)
-				this.PropertyChanged?.Invoke(this, new(nameof(HasErrorAnalysisResult)));
-			if ((typeFlags & HasInformationAnalysisResultFlag) == 0 && (prevTypeFlags & HasInformationAnalysisResultFlag) != 0)
-				this.PropertyChanged?.Invoke(this, new(nameof(HasInformationAnalysisResult)));
-			if ((typeFlags & HasWarningAnalysisResultFlag) == 0 && (prevTypeFlags & HasWarningAnalysisResultFlag) != 0)
-				this.PropertyChanged?.Invoke(this, new(nameof(HasWarningAnalysisResult)));
+			if (this.activeAnalysisResultType > currentActiveResultType)
+			{
+				this.analysisResultIndicatorIcon = null;
+				this.PropertyChanged?.Invoke(this, new(nameof(AnalysisResultIndicatorIcon)));
+			}
 			if (currentResultCount == 0)
 				this.PropertyChanged?.Invoke(this, new(nameof(HasAnalysisResult)));
 			

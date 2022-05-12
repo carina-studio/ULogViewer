@@ -1317,38 +1317,11 @@ namespace CarinaStudio.ULogViewer.Controls
 								}
 							}, RoutingStrategies.Tunnel);
 						}));
-						var errorIndicatorIcon = new Image().Also(image =>
-						{
-							image.Classes.Add("Icon");
-							image.Bind(Image.IsVisibleProperty, new Binding() { Path = "HasErrorAnalysisResult" });
-							image.Name = "errorIndicatorIcon";
-							image.Source = app.TryFindResource<IImage>("Image/Icon.Error.Outline.Colored", out var res) ? res : default;
-						});
-						var warningIndicatorIcon = new Image().Also(image =>
-						{
-							image.Classes.Add("Icon");
-							image.Bind(Image.IsVisibleProperty, new MultiBinding().Also(it =>
-							{
-								it.Converter = Avalonia.Data.Converters.BoolConverters.And;
-								it.Bindings.Add(new Binding() { Path = "HasWarningAnalysisResult" });
-								it.Bindings.Add(new Binding() { Path = "!IsVisible", Source = errorIndicatorIcon });
-							}));
-							image.Name = "warningIndicatorIcon";
-							image.Source = app.TryFindResource<IImage>("Image/Icon.Warning.Outline.Colored", out var res) ? res : default;
-						});
-						panel.Children.Add(errorIndicatorIcon);
-						panel.Children.Add(warningIndicatorIcon);
 						panel.Children.Add(new Image().Also(image =>
 						{
 							image.Classes.Add("Icon");
-							image.Bind(Image.IsVisibleProperty, new MultiBinding().Also(it =>
-							{
-								it.Converter = Avalonia.Data.Converters.BoolConverters.And;
-								it.Bindings.Add(new Binding() { Path = "HasInformationAnalysisResult" });
-								it.Bindings.Add(new Binding() { Path = "!IsVisible", Source = errorIndicatorIcon });
-								it.Bindings.Add(new Binding() { Path = "!IsVisible", Source = warningIndicatorIcon });
-							}));
-							image.Source = app.TryFindResource<IImage>("Image/Icon.Information.Outline.Colored", out var res) ? res : default;
+							image.Bind(Image.IsVisibleProperty, new Binding() { Path = nameof(DisplayableLog.HasAnalysisResult) });
+							image.Bind(Image.SourceProperty, new Binding() { Path = nameof(DisplayableLog.AnalysisResultIndicatorIcon) });
 						}));
 					}));
 				}));

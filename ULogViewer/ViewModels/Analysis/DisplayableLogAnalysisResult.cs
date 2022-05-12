@@ -151,38 +151,38 @@ class DisplayableLogAnalysisResult : BaseApplicationObject<IULogViewerApplicatio
 /// <summary>
 /// Type of <see cref="DisplayableLogAnalysisResult"/>.
 /// </summary>
-enum DisplayableLogAnalysisResultType
+enum DisplayableLogAnalysisResultType : uint
 {
-    /// <summary>
-    /// Checkpoint.
-    /// </summary>
-    Checkpoint,
     /// <summary>
     /// Error.
     /// </summary>
-    Error,
-    /// <summary>
-    /// Information.
-    /// </summary>
-    Information,
-    /// <summary>
-    /// End of operation.
-    /// </summary>
-    OperationEnd,
-    /// <summary>
-    /// Start of operation.
-    /// </summary>
-    OperationStart,
-    /// <summary>
-    /// Performance.
-    /// </summary>
-    Performance,
-    /// <summary>
-    /// Time span.
-    /// </summary>
-    TimeSpan,
+    Error = 0x1,
     /// <summary>
     /// Warning.
     /// </summary>
-    Warning,
+    Warning = 0x2,
+    /// <summary>
+    /// Start of operation.
+    /// </summary>
+    OperationStart = 0x4,
+    /// <summary>
+    /// End of operation.
+    /// </summary>
+    OperationEnd = 0x8,
+    /// <summary>
+    /// Checkpoint.
+    /// </summary>
+    Checkpoint = 0x10,
+    /// <summary>
+    /// Time span.
+    /// </summary>
+    TimeSpan = 0x20,
+    /// <summary>
+    /// Performance.
+    /// </summary>
+    Performance = 0x40,
+    /// <summary>
+    /// Information.
+    /// </summary>
+    Information = 0x80,
 }
