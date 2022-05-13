@@ -20,6 +20,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.WindowsAPICodePack.Taskbar;
 #endif
 using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -298,6 +299,41 @@ namespace CarinaStudio.ULogViewer
 			(tabItem.Header as IControl)?.Let(it => it.DataContext = null);
 			if (startTime > 0)
 				this.Logger.LogTrace($"Take {this.stopwatch.ElapsedMilliseconds - startTime} ms to detach session from session view and header");
+		}
+
+
+		/// <summary>
+		/// Edit application configuration.
+		/// </summary>
+		public void EditConfiguration()
+		{
+			var keys = new List<SettingKey>(SettingKey.GetDefinedKeys<AppSuite.ConfigurationKeys>());
+			keys.AddRange(SettingKey.GetDefinedKeys<ConfigurationKeys>());
+			_ = new SettingsEditorDialog()
+			{
+				SettingKeys = keys,
+				Settings = this.Application.Configuration,
+			}.ShowDialog(this);
+		}
+
+
+		/// <summary>
+		/// Edit application persistent state.
+		/// </summary>
+		public void EditPersistentState()
+		{
+			var keys = new List<SettingKey>(this.Application.PersistentState.Keys);
+#if !DEBUG
+			keys.RemoveAll(it =>
+			{
+				return it.Name == "AgreedPrivacyPolicyVersion" || it.Name == "AgreedUserAgreementVersion";
+			});
+#endif
+			_ = new SettingsEditorDialog()
+			{
+				SettingKeys = keys,
+				Settings = this.Application.PersistentState,
+			}.ShowDialog(this);
 		}
 
 

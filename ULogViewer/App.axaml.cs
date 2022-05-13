@@ -14,6 +14,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -252,6 +253,12 @@ namespace CarinaStudio.ULogViewer
 				case "CheckForUpdate":
 					(this.LatestActiveMainWindow as MainWindow)?.CheckForAppUpdate();
 					break;
+				case "EditConfiguration":
+					(this.LatestActiveMainWindow as MainWindow)?.EditConfiguration();
+					break;
+				case "EditPersistentState":
+					(this.LatestActiveMainWindow as MainWindow)?.EditPersistentState();
+					break;
 				case "Shutdown":
 					this.Shutdown();
 					break;
@@ -320,6 +327,26 @@ namespace CarinaStudio.ULogViewer
 
 			// call base
 			await base.OnPrepareStartingAsync();
+
+			// remove debug menu items
+			if (!this.IsDebugMode)
+			{
+				NativeMenu.GetMenu(this)?.Let(menu =>
+				{
+					foreach (var item in menu.Items.ToArray())
+					{
+						if (item is not NativeMenuItem menuItem)
+							continue;
+						switch (menuItem.CommandParameter as string)
+						{
+							case "EditConfiguration":
+							case "EditPersistentState":
+								menu.Items.Remove(item);
+								break;
+						}
+					}
+				});
+			}
 
 			// initialize log data source providers
 			this.UpdateSplashWindowMessage(this.GetStringNonNull("SplashWindow.InitializeLogProfiles"));

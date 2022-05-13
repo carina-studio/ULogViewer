@@ -485,6 +485,8 @@
 	<sys:String x:Key="String/SessionView.CpuUsage">CPU usage</sys:String>
 	<sys:String x:Key="String/SessionView.CreateLogAnalysisRuleSets">Create…</sys:String>
 	<sys:String x:Key="String/SessionView.CreatePredefinedLogTextFilter">Create…</sys:String>
+	<sys:String x:Key="String/SessionView.EditConfiguration">Edit internal configuration…</sys:String>
+	<sys:String x:Key="String/SessionView.EditPersistentState">Edit internal persistent state…</sys:String>
 	<sys:String x:Key="String/SessionView.FailedToExportLogAnalysisRuleSet">Unable to export rule set '{0}' to '{1}'.</sys:String>
 	<sys:String x:Key="String/SessionView.FailedToImportLogAnalysisRuleSet">Unable to import rule set from '{0}'.</sys:String>
 	<sys:String x:Key="String/SessionView.FilteredLogCount">, Filtered: </sys:String>

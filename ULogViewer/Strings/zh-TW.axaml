@@ -468,6 +468,8 @@
 	<sys:String x:Key="String/SessionView.CpuUsage">CPU 使用率</sys:String>
 	<sys:String x:Key="String/SessionView.CreateLogAnalysisRuleSets">建立…</sys:String>
 	<sys:String x:Key="String/SessionView.CreatePredefinedLogTextFilter">建立…</sys:String>
+	<sys:String x:Key="String/SessionView.EditConfiguration">編輯內部組態…</sys:String>
+	<sys:String x:Key="String/SessionView.EditPersistentState">編輯內部儲存的狀態…</sys:String>
 	<sys:String x:Key="String/SessionView.FailedToExportLogAnalysisRuleSet">無法將規則集 '{0}' 匯出至 '{1}'。</sys:String>
 	<sys:String x:Key="String/SessionView.FailedToImportLogAnalysisRuleSet">無法從 '{0}' 匯入規則集。</sys:String>
 	<sys:String x:Key="String/SessionView.FilteredLogCount">，已篩選：</sys:String>
