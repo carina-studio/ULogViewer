@@ -146,6 +146,11 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		/// <inheritdoc/>
+		protected override WindowTransparencyLevel OnSelectTransparentLevelHint() =>
+			WindowTransparencyLevel.None;
+
+
 		/// <summary>
 		/// Show dialog to edit given text filter.
 		/// </summary>

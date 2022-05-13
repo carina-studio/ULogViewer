@@ -161,6 +161,11 @@ partial class KeyLogAnalysisRuleSetEditorDialog : AppSuite.Controls.Window<IULog
 		this.validateParametersAction.Execute();
 		this.SynchronizationContext.Post(this.nameTextBox.Focus);
 	}
+
+
+	/// <inheritdoc/>
+	protected override WindowTransparencyLevel OnSelectTransparentLevelHint() =>
+		WindowTransparencyLevel.None;
 	
 
 	// Remove rule.
