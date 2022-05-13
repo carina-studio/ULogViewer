@@ -2,27 +2,34 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.Collections;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ULogViewer.ViewModels.Analysis;
 using CarinaStudio.Threading;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Threading;
+using System.Linq;
 
 namespace CarinaStudio.ULogViewer.Controls;
 
 /// <summary>
 /// Dialog to edit <see cref="KeyLogAnalysisRuleSet"/>.
 /// </summary>
-partial class KeyLogAnalysisRuleSetEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
+partial class KeyLogAnalysisRuleSetEditorDialog : AppSuite.Controls.Window<IULogViewerApplication>
 {
+	// Static fields.
+	static readonly AvaloniaProperty<bool> AreValidParametersProperty = AvaloniaProperty.Register<KeyLogAnalysisRuleSetEditorDialog, bool>("AreValidParameters");
+	static readonly Dictionary<KeyLogAnalysisRuleSet, KeyLogAnalysisRuleSetEditorDialog> DialogWithEditingRuleSets = new();
+
+
 	// Fields.
+	KeyLogAnalysisRuleSet? editingRuleSet;
 	readonly ComboBox iconComboBox;
 	readonly TextBox nameTextBox;
 	readonly Avalonia.Controls.ListBox ruleListBox;
 	readonly ObservableList<KeyLogAnalysisRuleSet.Rule> rules = new();
+	readonly ScheduledAction validateParametersAction;
 
 
 	/// <summary>
@@ -34,7 +41,7 @@ partial class KeyLogAnalysisRuleSetEditorDialog : AppSuite.Controls.InputDialog<
 		this.iconComboBox = this.FindControl<ComboBox>(nameof(iconComboBox));
 		this.nameTextBox = this.FindControl<TextBox>(nameof(nameTextBox))!.Also(it =>
 		{
-			it.GetObservable(TextBox.TextProperty).Subscribe(_ => this.InvalidateInput());
+			it.GetObservable(TextBox.TextProperty).Subscribe(_ => this.validateParametersAction?.Schedule());
 		});
 		this.ruleListBox = this.FindControl<CarinaStudio.AppSuite.Controls.ListBox>(nameof(ruleListBox))!.Also(it =>
 		{
@@ -48,7 +55,19 @@ partial class KeyLogAnalysisRuleSetEditorDialog : AppSuite.Controls.InputDialog<
 				});
 			};
 		});
-		this.rules.CollectionChanged += (_, e) => this.InvalidateInput();
+		this.rules.CollectionChanged += (_, e) => this.validateParametersAction?.Schedule();
+		this.validateParametersAction = new(() =>
+		{
+			if (this.IsClosed)
+				return;
+			if (string.IsNullOrWhiteSpace(this.nameTextBox.Text)
+				|| this.rules.IsEmpty())
+			{
+				this.SetValue<bool>(AreValidParametersProperty, false);
+			}
+			else
+				this.SetValue<bool>(AreValidParametersProperty, true);
+		});
 	}
 
 
@@ -62,6 +81,29 @@ partial class KeyLogAnalysisRuleSetEditorDialog : AppSuite.Controls.InputDialog<
 			this.ruleListBox.SelectedItem = rule;
 			this.ruleListBox.Focus();
 		}
+	}
+
+
+	// Complete editing.
+	void CompleteEditing()
+	{
+		// validate parameters
+		this.validateParametersAction.ExecuteIfScheduled();
+		if (!this.GetValue<bool>(AreValidParametersProperty))
+			return;
+		
+		// setup rule set
+		var ruleSet = this.editingRuleSet ?? new KeyLogAnalysisRuleSet(this.Application);
+		ruleSet.Icon = (LogProfileIcon)this.iconComboBox.SelectedItem!;
+		ruleSet.Name = this.nameTextBox.Text.AsNonNull();
+		ruleSet.Rules = this.rules;
+
+		// add rule set
+		if (!KeyLogAnalysisRuleSetManager.Default.RuleSets.Contains(ruleSet))
+			KeyLogAnalysisRuleSetManager.Default.AddRuleSet(ruleSet);
+
+		// close window
+		this.Close();
 	}
 
 
@@ -90,26 +132,24 @@ partial class KeyLogAnalysisRuleSetEditorDialog : AppSuite.Controls.InputDialog<
 	}
 
 
-	// Generate result.
-	protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken)
-	{
-		var ruleSet = this.RuleSet ?? new KeyLogAnalysisRuleSet(this.Application);
-		ruleSet.Icon = (LogProfileIcon)this.iconComboBox.SelectedItem!;
-		ruleSet.Name = this.nameTextBox.Text.AsNonNull();
-		ruleSet.Rules = this.rules;
-		return Task.FromResult<object?>(ruleSet);
-	}
-
-
 	// Get available icons.
 	LogProfileIcon[] Icons { get; } = Enum.GetValues<LogProfileIcon>();
+
+
+	/// <inheritdoc/>
+	protected override void OnClosed(EventArgs e)
+	{
+		if (this.editingRuleSet != null)
+			DialogWithEditingRuleSets.Remove(this.editingRuleSet);
+		base.OnClosed(e);
+	}
 
 
 	/// <inheritdoc/>
 	protected override void OnOpened(EventArgs e)
 	{
 		base.OnOpened(e);
-		var ruleSet = this.RuleSet;
+		var ruleSet = this.editingRuleSet;
 		if (ruleSet != null)
 		{
 			this.iconComboBox.SelectedItem = ruleSet.Icon;
@@ -118,13 +158,9 @@ partial class KeyLogAnalysisRuleSetEditorDialog : AppSuite.Controls.InputDialog<
 		}
 		else
 			this.iconComboBox.SelectedItem = LogProfileIcon.Analysis;
+		this.validateParametersAction.Execute();
 		this.SynchronizationContext.Post(this.nameTextBox.Focus);
 	}
-
-
-	/// <inheritdoc/>
-    protected override bool OnValidateInput() =>
-		base.OnValidateInput() && !string.IsNullOrWhiteSpace(this.nameTextBox.Text) && this.rules.IsNotEmpty();
 	
 
 	// Remove rule.
@@ -147,7 +183,26 @@ partial class KeyLogAnalysisRuleSetEditorDialog : AppSuite.Controls.InputDialog<
 
 
 	/// <summary>
-	/// Get or set the rule set to be edited.
+	/// Show dialog to edit given rule set.
 	/// </summary>
-	public KeyLogAnalysisRuleSet? RuleSet { get; set; }
+	/// <param name="parent">Parent window.</param>
+	/// <param name="ruleSet">Rule set to edit.</param>
+	public static void Show(Avalonia.Controls.Window parent, KeyLogAnalysisRuleSet? ruleSet)
+	{
+		// show existing dialog
+		if (ruleSet != null && DialogWithEditingRuleSets.TryGetValue(ruleSet, out var dialog))
+		{
+			dialog?.ActivateAndBringToFront();
+			return;
+		}
+
+		// show dialog
+		dialog = new()
+		{
+			editingRuleSet = ruleSet
+		};
+		if (ruleSet != null)
+			DialogWithEditingRuleSets[ruleSet] = dialog;
+		dialog.Show(parent);
+	}
 }

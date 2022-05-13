@@ -982,17 +982,10 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Create new key log analysis rule set.
-		async void CreateKeyLogAnalysisRuleSet()
+		void CreateKeyLogAnalysisRuleSet()
 		{
-			// check state
-			if (this.attachedWindow == null)
-				return;
-			
-			// create rule set
-			var ruleSet = await new KeyLogAnalysisRuleSetEditorDialog().ShowDialog<KeyLogAnalysisRuleSet?>(this.attachedWindow);
-			if (ruleSet == null)
-				return;
-			KeyLogAnalysisRuleSetManager.Default.AddRuleSet(ruleSet);
+			if (this.attachedWindow != null)
+				KeyLogAnalysisRuleSetEditorDialog.Show(this.attachedWindow, null);
 		}
 
 
@@ -1758,17 +1751,9 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Edit given key log analysis rule set.
 		void EditKeyLogAnalysisRuleSet(KeyLogAnalysisRuleSet? ruleSet)
 		{
-			// check state
-			if (ruleSet == null)
+			if (ruleSet == null || this.attachedWindow == null)
 				return;
-			if (this.attachedWindow == null)
-				return;
-
-			// edit rule set
-			new KeyLogAnalysisRuleSetEditorDialog()
-			{
-				RuleSet = ruleSet
-			}.ShowDialog(this.attachedWindow);
+			KeyLogAnalysisRuleSetEditorDialog.Show(this.attachedWindow, ruleSet);
 		}
 
 
@@ -1953,16 +1938,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (this.attachedWindow == null)
 				return;
 
-			// edit rule set
-			ruleSet = await new KeyLogAnalysisRuleSetEditorDialog()
-			{
-				RuleSet = ruleSet,
-			}.ShowDialog<KeyLogAnalysisRuleSet?>(this.attachedWindow);
-			if (ruleSet == null)
-				return;
-			
-			// add rule set
-			KeyLogAnalysisRuleSetManager.Default.AddRuleSet(ruleSet);
+			// edit and add rule set
+			KeyLogAnalysisRuleSetEditorDialog.Show(this.attachedWindow, ruleSet);
 		}
 
 
@@ -3479,10 +3456,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when test button clicked.
 		void OnTestButtonClick(object? sender, RoutedEventArgs e)
 		{
-			_ = new KeyLogAnalysisRuleSetEditorDialog()
-			{
-				RuleSet = KeyLogAnalysisRuleSetManager.Default.RuleSets[0],
-			}.ShowDialog<KeyLogAnalysisRuleSet?>(this.attachedWindow!);
 			//this.Application.Restart(AppSuite.AppSuiteApplication.RestoreMainWindowsArgument);
 		}
 
