@@ -11,12 +11,14 @@
 	<sys:String x:Key="String/AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs.Description">Only for continuous logs reading</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.IgnoreCaseOfLogTextFilter">Ignore case of text filter</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.InitialLogProfile">Initial log profile when startup</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.LogAnalysis">Log Analysis</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.LogFiltering">Log Filtering</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.LogFont">Log font and size</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.LogFont.Sample">Sample Log Text 123</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.LogOperations">Log Operations</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.MaxContinuousLogCount">Maximum number of logs when continuous reading</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.MaxDisplayLineCountForEachLog">Maximum number of lines to display for each log</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.ResetLogAnalysisRuleSetsAfterSettingLogProfile">Reset applied rule sets after changing log profile</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SaveMemoryAggressively">Save memory usage aggressively</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SaveMemoryAggressively.Description">Keep memory usage as low as possible. It will reduce speed of logs reading/filtering and UI smoothness.</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectIPEndPointWhenNeeded">Show IP endpoint input when IP endpoint is needed</sys:String>

@@ -14,12 +14,14 @@
 	<sys:String x:Key="String/AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs.Description">僅適用於連續讀取日誌</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.IgnoreCaseOfLogTextFilter">文字篩選忽略大小寫</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.InitialLogProfile">啟動時的初始日誌類型</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.LogAnalysis">日誌分析</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.LogFiltering">日誌篩選</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.LogFont">日誌字型及大小</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.LogFont.Sample">日誌文字 ABC abc 123</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.LogOperations">日誌操作</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.MaxContinuousLogCount">連續讀取時的最大日誌個數</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.MaxDisplayLineCountForEachLog">每筆日誌最大顯示行數</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.ResetLogAnalysisRuleSetsAfterSettingLogProfile">變更日誌類型後重設套用的規則集</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SaveMemoryAggressively">節省記憶體使用</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SaveMemoryAggressively.Description">盡量使用較少的記憶體，這將會使日誌載入及篩選速度下降，也會影響使用者介面的順暢度。</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectIPEndPointWhenNeeded">當需要 IP 端點時立即顯示輸入介面</sys:String>

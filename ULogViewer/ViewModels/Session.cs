@@ -4366,6 +4366,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.markedLogsTimestampCategorizer.Granularity = it;
 			});
 
+			// reset log analysis rule sets
+			if (this.Settings.GetValueOrDefault(SettingKeys.ResetLogAnalysisRuleSetsAfterSettingLogProfile))
+				this.keyLogAnalysisRuleSets.Clear();
+
 			// update valid log levels
 			this.UpdateValidLogLevels();
 

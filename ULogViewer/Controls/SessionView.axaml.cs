@@ -591,8 +591,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				if (this.DataContext is not Session session)
 					return;
 				session.KeyLogAnalysisRuleSets.Clear();
-				foreach (var ruleSet in this.selectedKeyLogAnalysisRuleSets)
-					session.KeyLogAnalysisRuleSets.Add(ruleSet);
+				session.KeyLogAnalysisRuleSets.AddAll(this.selectedKeyLogAnalysisRuleSets);
 			});
 			this.updateLogFiltersAction = new ScheduledAction(() =>
 			{
@@ -612,8 +611,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				// update text filters
 				session.LogTextFilter = this.logTextFilterTextBox.Object;
 				session.PredefinedLogTextFilters.Clear();
-				foreach (var filter in this.selectedPredefinedLogTextFilters)
-					session.PredefinedLogTextFilters.Add(filter);
+				session.PredefinedLogTextFilters.AddAll(this.selectedPredefinedLogTextFilters);
 			});
 			this.updateStatusBarStateAction = new ScheduledAction(() =>
 			{
@@ -712,6 +710,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.attachedLogs = session.Logs as INotifyCollectionChanged;
 			if (this.attachedLogs != null)
 				this.attachedLogs.CollectionChanged += this.OnLogsChanged;
+			(session.KeyLogAnalysisRuleSets as INotifyCollectionChanged)?.Let(it =>
+				it.CollectionChanged += this.OnSessionKeyLogAnalysisRuleSetsChanged);
 
 			// check profile
 			var profile = session.LogProfile;
@@ -1499,6 +1499,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.attachedLogs.CollectionChanged -= this.OnLogsChanged;
 				this.attachedLogs = null;
 			}
+			(session.KeyLogAnalysisRuleSets as INotifyCollectionChanged)?.Let(it =>
+				it.CollectionChanged -= this.OnSessionKeyLogAnalysisRuleSetsChanged);
 
 			// detach from commands
 			this.canAddLogFiles.Unbind();
@@ -3248,6 +3250,52 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			else if (property == SelectedLogsDurationProperty)
 				this.SetValue<bool>(HasSelectedLogsDurationProperty, change.NewValue.Value != null);
+		}
+
+
+		// Called when list of key log analysis of session changed.
+		void OnSessionKeyLogAnalysisRuleSetsChanged(object? sender, NotifyCollectionChangedEventArgs e)
+		{
+			var isUpdateShceduled = this.updateLogAnalysisAction.IsScheduled;
+			var syncBack = false;
+			var selectedItems = this.keyLogAnalysisRuleSetListBox.SelectedItems;
+			switch (e.Action)
+			{
+				case NotifyCollectionChangedAction.Add:
+					foreach (var ruleSet in e.NewItems!.Cast<KeyLogAnalysisRuleSet>())
+					{
+						if (!selectedItems.Contains(ruleSet))
+						{
+							syncBack = true;
+							selectedItems.Add(ruleSet);
+						}
+					}
+					break;
+				case NotifyCollectionChangedAction.Remove:
+					foreach (var ruleSet in e.OldItems!.Cast<KeyLogAnalysisRuleSet>())
+					{
+						if (selectedItems.Contains(ruleSet))
+						{
+							syncBack = true;
+							selectedItems.Remove(ruleSet);
+						}
+					}
+					break;
+				case NotifyCollectionChangedAction.Reset:
+					syncBack = true;
+					selectedItems.Clear();
+					if (this.DataContext is Session session)
+					{
+						foreach (var ruleSet in session.KeyLogAnalysisRuleSets)
+							selectedItems.Add(ruleSet);
+					}
+					break;
+				default:
+					this.Logger.LogError($"Unsupported change of key log analysis rule sets: {e.Action}");
+					break;
+			}
+			if (syncBack && !isUpdateShceduled)
+				this.updateLogAnalysisAction.Cancel();
 		}
 
 

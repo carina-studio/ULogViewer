@@ -183,6 +183,16 @@
 				<abControls:IntegerTextBox Classes="Dialog_TextBox" Maximum="1500" Minimum="300" Value="{Binding UpdateLogFilterDelay, Mode=TwoWay}"/>
 				<Separator Classes="Dialog_Separator_Large"/>
 
+				<!-- Log analysis -->
+				<Border Classes="Dialog_TextBlock_Header1">
+					<TextBlock Classes="Dialog_TextBlock_Header1" Text="{DynamicResource String/AppOptionsDialog.LogAnalysis}"/>
+				</Border>
+
+				<!-- Reset rule sets after setting log profile -->
+				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/AppOptionsDialog.ResetLogAnalysisRuleSetsAfterSettingLogProfile}"/>
+				<ToggleSwitch Classes="Dialog_ToggleSwitch" IsChecked="{Binding ResetLogAnalysisRuleSetsAfterSettingLogProfile, Mode=TwoWay}"/>
+				<Separator Classes="Dialog_Separator_Large"/>
+
 				<!-- Others -->
 				<Border Classes="Dialog_TextBlock_Header1">
 					<TextBlock Classes="Dialog_TextBlock_Header1" Text="{DynamicResource String/ApplicationOptions.Others}"/>

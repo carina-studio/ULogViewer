@@ -227,6 +227,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.OnPropertyChanged(nameof(MaxContinuousLogCount));
 			else if (key == SettingKeys.MaxDisplayLineCountForEachLog)
 				this.OnPropertyChanged(nameof(MaxDisplayLineCountForEachLog));
+			else if (key == SettingKeys.ResetLogAnalysisRuleSetsAfterSettingLogProfile)
+				this.OnPropertyChanged(nameof(ResetLogAnalysisRuleSetsAfterSettingLogProfile));
 			else if (key == SettingKeys.SaveMemoryAggressively)
 				this.OnPropertyChanged(nameof(SaveMemoryAggressively));
 			else if (key == SettingKeys.SelectIPEndPointWhenNeeded)
@@ -250,6 +252,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			else
 				return;
 			this.isSettingsModified = true;
+		}
+
+
+		/// <summary>
+		/// Reset all log analysis rule sets after setting log profile.
+		/// </summary>
+		public bool ResetLogAnalysisRuleSetsAfterSettingLogProfile
+		{
+			get => this.Settings.GetValueOrDefault(SettingKeys.ResetLogAnalysisRuleSetsAfterSettingLogProfile);
+			set => this.Settings.SetValue<bool>(SettingKeys.ResetLogAnalysisRuleSetsAfterSettingLogProfile, value);
 		}
 
 
