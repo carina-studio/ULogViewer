@@ -26,7 +26,7 @@
 
 		<!-- Content -->
 		<ScrollViewer MaxHeight="{DynamicResource Double/ApplicationOptionsDialog.Content.MaxHeight}">
-			<StackPanel Classes="Dialog_ContentPanel">
+			<StackPanel Classes="Dialog_ContentPanel_WithHeader">
 
 				<!-- User interface -->
 				<Border Classes="Dialog_TextBlock_Header1">
