@@ -1457,20 +1457,11 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Create predefined log text fliter.
-		async void CreatePredefinedLogTextFilter()
+		void CreatePredefinedLogTextFilter()
 		{
-			// check state
 			if (this.attachedWindow == null)
 				return;
-
-			// create filter
-			var filter = await new PredefinedLogTextFilterEditorDialog()
-			{
-				Regex = this.logTextFilterTextBox.Object
-			}.ShowDialog<PredefinedLogTextFilter>(this.attachedWindow);
-			if (filter == null)
-				return;
-			PredefinedLogTextFilterManager.Default.AddFilter(filter);
+			PredefinedLogTextFilterEditorDialog.Show(this.attachedWindow, null, this.logTextFilterTextBox.Object);
 		}
 
 
@@ -1788,17 +1779,9 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Edit given predefined log text filter.
 		void EditPredefinedLogTextFilter(PredefinedLogTextFilter? filter)
 		{
-			// check state
-			if (filter == null)
+			if (filter == null || this.attachedWindow == null)
 				return;
-			if (this.attachedWindow == null)
-				return;
-
-			// edit filter
-			new PredefinedLogTextFilterEditorDialog()
-			{
-				Filter = filter
-			}.ShowDialog(this.attachedWindow);
+			PredefinedLogTextFilterEditorDialog.Show(this.attachedWindow, filter, null);
 		}
 
 

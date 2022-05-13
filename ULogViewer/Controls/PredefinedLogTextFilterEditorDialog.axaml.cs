@@ -7,21 +7,28 @@ using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.ViewModels;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.Controls
 {
 	/// <summary>
 	/// Dialog to edit or create <see cref="PredefinedLogTextFilter"/>.
 	/// </summary>
-	partial class PredefinedLogTextFilterEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
+	partial class PredefinedLogTextFilterEditorDialog : AppSuite.Controls.Window<IULogViewerApplication>
 	{
+		// Static fields.
+		static readonly AvaloniaProperty<bool> AreValidParametersProperty = AvaloniaProperty.Register<PredefinedLogTextFilterEditorDialog, bool>("AreValidParameters");
+		static readonly Dictionary<PredefinedLogTextFilter, PredefinedLogTextFilterEditorDialog> DialogWithEditingRuleSets = new();
+
+
 		// Fields.
+		PredefinedLogTextFilter? editingFilter;
 		Regex? regex;
 		readonly TextBox nameTextBox;
 		readonly TextBox patternTextBox;
+		readonly ScheduledAction validateParametersAction;
 
 
 		// Constructor.
@@ -31,9 +38,48 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.nameTextBox = this.FindControl<TextBox>(nameof(nameTextBox))!.Also(it =>
 			{
 				it.GetObservable(TextBox.TextProperty).Subscribe(_ =>
-					this.InvalidateInput());
+					this.validateParametersAction?.Schedule());
 			});
 			this.patternTextBox = this.FindControl<TextBox>(nameof(patternTextBox)).AsNonNull();
+			this.validateParametersAction = new(() =>
+			{
+				if (this.IsClosed)
+					return;
+				if (string.IsNullOrWhiteSpace(this.nameTextBox.Text)
+					|| this.regex == null)
+				{
+					this.SetValue<bool>(AreValidParametersProperty, false);
+				}
+				else
+					this.SetValue<bool>(AreValidParametersProperty, true);
+			});
+		}
+
+
+		// Complete editing.
+		void CompleteEditing()
+		{
+			// validate parameters
+			this.validateParametersAction.ExecuteIfScheduled();
+			if (!this.GetValue<bool>(AreValidParametersProperty))
+				return;
+			
+			// edit or add filter
+			var name = this.nameTextBox.Text;
+			var regex = this.regex.AsNonNull();
+			var filter = this.editingFilter;
+			if (filter != null)
+			{
+				filter.Name = name;
+				filter.Regex = regex;
+			}
+			else
+				filter = new PredefinedLogTextFilter(this.Application, name, regex);
+			if (PredefinedLogTextFilterManager.Default.Filters.Contains(filter))
+				PredefinedLogTextFilterManager.Default.AddFilter(filter);
+
+			// close window
+			this.Close();
 		}
 
 
@@ -48,31 +94,17 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				this.regex = regex;
 				this.patternTextBox.Text = regex.ToString();
-				this.InvalidateInput();
+				this.validateParametersAction.Schedule();
 			}
 		}
 
 
-		/// <summary>
-		/// Get or set <see cref="PredefinedLogTextFilter"/> to be edited.
-		/// </summary>
-		public PredefinedLogTextFilter? Filter { get; set; }
-
-
-		// Generate result.
-		protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken)
+		/// <inheritdoc/>
+		protected override void OnClosed(EventArgs e)
 		{
-			var name = this.nameTextBox.Text;
-			var regex = this.regex.AsNonNull();
-			var filter = this.Filter;
-			if (filter != null)
-			{
-				filter.Name = name;
-				filter.Regex = regex;
-			}
-			else
-				filter = new PredefinedLogTextFilter(this.Application, name, regex);
-			return Task.FromResult((object?)filter);
+			if (this.editingFilter != null)
+				DialogWithEditingRuleSets.Remove(this.editingFilter);
+			base.OnClosed(e);
 		}
 
 
@@ -80,10 +112,13 @@ namespace CarinaStudio.ULogViewer.Controls
 		protected override void OnOpened(EventArgs e)
 		{
 			base.OnOpened(e);
-			var filter = this.Filter;
+			var filter = this.editingFilter;
 			var editPatternButton = this.FindControl<Control>("editPatternButton").AsNonNull();
 			if (filter == null)
+			{
 				this.Bind(TitleProperty, this.GetResourceObservable("String/PredefinedLogTextFilterEditorDialog.Title.Create"));
+				this.patternTextBox.Text = this.regex?.ToString();
+			}
 			else
 			{
 				this.Bind(TitleProperty, this.GetResourceObservable("String/PredefinedLogTextFilterEditorDialog.Title.Edit"));
@@ -111,30 +146,30 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Validate input.
-		protected override bool OnValidateInput()
-		{
-			// call base
-			if (!base.OnValidateInput())
-				return false;
-
-			// check name
-			var name = this.nameTextBox.Text?.Trim() ?? "";
-			if (name.Length == 0)
-				return false;
-
-			// check regex
-			if (this.regex == null)
-				return false;
-
-			// ok
-			return true;
-		}
-
-
 		/// <summary>
-		/// Get or set <see cref="Regex"/> of text filter.
+		/// Show dialog to edit given text filter.
 		/// </summary>
-		public Regex? Regex { get; set; }
+		/// <param name="parent">Parent window.</param>
+		/// <param name="filter">Text filter to edit.</param>
+		/// <param name="regex">Preferred regex for text filter.</param>
+		public static void Show(Avalonia.Controls.Window parent, PredefinedLogTextFilter? filter, Regex? regex)
+		{
+			// show existing dialog
+			if (filter != null && DialogWithEditingRuleSets.TryGetValue(filter, out var dialog))
+			{
+				dialog?.ActivateAndBringToFront();
+				return;
+			}
+
+			// show dialog
+			dialog = new()
+			{
+				editingFilter = filter,
+				regex = regex,
+			};
+			if (filter != null)
+				DialogWithEditingRuleSets[filter] = dialog;
+			dialog.Show(parent);
+		}
 	}
 }

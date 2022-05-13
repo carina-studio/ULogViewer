@@ -11,6 +11,7 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.KeyLogAnalysisRuleSetEditorDialog"
         Classes="Dialog"
+		Icon="/ULogViewer.ico"
 		ShowInTaskbar="True"
         Title="{DynamicResource String/KeyLogAnalysisRuleSetEditorDialog.Title}"
         Width="{DynamicResource Double/KeyLogAnalysisRuleSetEditorDialog.Width}">
