@@ -19,5 +19,9 @@ namespace CarinaStudio.ULogViewer
 		/// Chinese (Taiwan).
 		/// </summary>
 		ZH_TW,
+		/// <summary>
+		/// Chinese (Simplified).
+		/// </summary>
+		ZH_CN,
 	}
 }

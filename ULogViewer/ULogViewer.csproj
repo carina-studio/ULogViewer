@@ -61,6 +61,9 @@
     <AvaloniaResource Include="Strings/zh-TW.axaml" />
     <AvaloniaResource Include="Strings/zh-TW-Linux.axaml" />
     <AvaloniaResource Include="Strings/zh-TW-OSX.axaml" />
+    <AvaloniaResource Include="Strings/zh-CN.axaml" />
+    <AvaloniaResource Include="Strings/zh-CN-Linux.axaml" />
+    <AvaloniaResource Include="Strings/zh-CN-OSX.axaml" />
     <AvaloniaResource Include="ULogViewer.ico" />
   </ItemGroup>
 

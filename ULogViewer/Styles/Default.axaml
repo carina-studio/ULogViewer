@@ -162,7 +162,8 @@
 	<!-- TextEditor -->
 	<Style Selector="ae|TextEditor">
 		<Setter Property="Background" Value="{DynamicResource TextControlBackgroundBrush}"/>
-		<Setter Property="FontFamily" Value="{DynamicResource FontFamily/TextBox.FallbackFontFamilies}"/>
+		<!--<Setter Property="FontFamily" Value="{DynamicResource FontFamily/TextBox.FallbackFontFamilies}"/>-->
+		<Setter Property="FontFamily" Value="Microsoft JhengHei,Noto Sans CJK TC,蘋方-繁,宋体"/>
 		<Setter Property="Padding" Value="{DynamicResource TextControlThemePadding}"/>
 	</Style>
 
