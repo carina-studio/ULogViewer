@@ -43,7 +43,7 @@
 
 		<!-- Content -->
 		<ScrollViewer Name="baseScrollViewer" Classes="Dialog_ContentPanel" HorizontalScrollBarVisibility="Disabled" MaxHeight="{DynamicResource Double/LogProfileEditorDialog.Content.MaxHeight}">
-			<StackPanel Classes="Dialog_ContentPanel">
+			<StackPanel Classes="Dialog_ContentPanel_WithHeader">
 
 				<!-- Header -->
 				<Border Classes="Dialog_TextBlock_Header1">
