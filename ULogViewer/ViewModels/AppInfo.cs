@@ -14,10 +14,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
         public override Uri? GitHubProjectUri => new Uri("https://github.com/carina-studio/ULogViewer");
 
 
-        // URI of PayPal.
-        public override Uri? PayPalUri => new Uri("https://paypal.me/CarinaStudio");
-
-
         // URI of privacy policy.
         public override Uri? PrivacyPolicyUri => this.Application.CultureInfo.ToString() switch
         {
