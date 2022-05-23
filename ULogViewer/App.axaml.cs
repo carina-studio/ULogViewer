@@ -333,15 +333,19 @@ namespace CarinaStudio.ULogViewer
 			{
 				NativeMenu.GetMenu(this)?.Let(menu =>
 				{
-					foreach (var item in menu.Items.ToArray())
+					for (var i = menu.Items.Count - 1; i >= 0 ; --i)
 					{
+						var item = menu.Items[i];
 						if (item is not NativeMenuItem menuItem)
 							continue;
 						switch (menuItem.CommandParameter as string)
 						{
 							case "EditConfiguration":
+								menu.Items.RemoveAt(i--);
+								menu.Items.RemoveAt(i); // Separator
+								break;
 							case "EditPersistentState":
-								menu.Items.Remove(item);
+								menu.Items.RemoveAt(i);
 								break;
 						}
 					}
