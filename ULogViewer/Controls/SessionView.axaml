@@ -1011,7 +1011,7 @@
 				</ToggleButton>
 
 				<!-- Log analysis -->
-				<ToggleButton Name="logAnalysisPanelButton" Classes="ToolBar_ToggleButton" IsChecked="{Binding IsLogAnalysisPanelVisible, Mode=TwoWay}" ToolTip.Tip="{DynamicResource String/SessionView.LogAnalysisPanel}">
+				<ToggleButton Name="logAnalysisPanelButton" Classes="ToolBar_ToggleButton" IsChecked="{Binding IsLogAnalysisPanelVisible, Mode=TwoWay}" IsVisible="False" ToolTip.Tip="{DynamicResource String/SessionView.LogAnalysisPanel}">
 					<Panel>
 						<Image Classes="Icon" Source="{StaticResource Image/Icon.Analysis}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
 						<Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}">
