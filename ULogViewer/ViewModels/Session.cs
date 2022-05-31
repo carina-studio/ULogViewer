@@ -1,6 +1,6 @@
 ﻿using Avalonia.Data.Converters;
 using Avalonia.Media;
-using CarinaStudio.AppSuite;
+using CarinaStudio.AppSuite.Product;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Data.Converters;
@@ -899,6 +899,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.updateKeyLogAnalysisAction?.Schedule(this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogAnalysisParamsUpdateDelay));
 			this.keyLogAnalyzer = new KeyLogDisplayableLogAnalyzer(this.Application, this.allLogs, this.CompareDisplayableLogs).Also(it =>
 				this.AttachToLogAnalyzer(it));
+			
+			// attach to product manager
+			this.Application.ProductManager.ProductStateChanged += this.OnProductStateChanged;
 
 			// setup properties
 			this.AllLogs = new SafeReadOnlyList<DisplayableLog>(this.allLogs);
@@ -2111,6 +2114,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// remove from activation history
 			if (this.activationHistoryListNode.List != null)
 				activationHistoryList.Remove(this.activationHistoryListNode);
+			
+			// detach from product manager
+			this.Application.ProductManager.ProductStateChanged -= this.OnProductStateChanged;
 
 			// call base
 			base.Dispose(disposing);
@@ -3384,6 +3390,18 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		}
 
 
+		// Called when product state changed.
+		void OnProductStateChanged(IProductManager? productManager, string productId)
+		{
+			if (productManager == null || productId != Products.Professional)
+				return;
+			if (!productManager.IsProductActivated(productId))
+			{
+				this.keyLogAnalysisRuleSets.Clear();
+			}
+		}
+
+
 		// Called when property changed.
 		protected override void OnPropertyChanged(ObservableProperty property, object? oldValue, object? newValue)
 		{
@@ -3965,15 +3983,18 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 				// restore log analysis state
 				this.keyLogAnalysisRuleSets.Clear();
-				if (jsonState.TryGetProperty(nameof(KeyLogAnalysisRuleSet), out jsonValue) && jsonValue.ValueKind == JsonValueKind.Array)
+				if (this.Application.ProductManager.IsProductActivated(Products.Professional))
 				{
-					foreach (var jsonId in jsonValue.EnumerateArray())
+					if (jsonState.TryGetProperty(nameof(KeyLogAnalysisRuleSet), out jsonValue) && jsonValue.ValueKind == JsonValueKind.Array)
 					{
-						var ruleSet = jsonId.ValueKind == JsonValueKind.String
-							? KeyLogAnalysisRuleSetManager.Default.GetRuleSetOrDefault(jsonId.GetString()!)
-							: null;
-						if (ruleSet != null)
-							this.keyLogAnalysisRuleSets.Add(ruleSet);
+						foreach (var jsonId in jsonValue.EnumerateArray())
+						{
+							var ruleSet = jsonId.ValueKind == JsonValueKind.String
+								? KeyLogAnalysisRuleSetManager.Default.GetRuleSetOrDefault(jsonId.GetString()!)
+								: null;
+							if (ruleSet != null)
+								this.keyLogAnalysisRuleSets.Add(ruleSet);
+						}
 					}
 				}
 

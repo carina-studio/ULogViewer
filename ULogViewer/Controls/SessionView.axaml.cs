@@ -2062,6 +2062,8 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// check product state
 			this.SetValue<bool>(IsProVersionActivatedProperty, this.Application.ProductManager.IsProductActivated(Products.Professional));
+			if (this.GetValue<bool>(IsProVersionActivatedProperty))
+				this.RecreateLogHeadersAndItemTemplate();
 
 			// setup predefined log text filter list
 			this.predefinedLogTextFilters.AddAll(PredefinedLogTextFilterManager.Default.Filters);
@@ -3201,17 +3203,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 			productManager.TryGetProductState(productId, out var state);
 			this.SetValue<bool>(IsProVersionActivatedProperty, state == ProductState.Activated);
-			if (this.DataContext is Session session)
-			{
-				var profile = session.LogProfile;
-				if (profile == null)
-					return;
-				if (state == ProductState.Deactivated || state == ProductState.Activated)
-				{
-					this.OnDisplayLogPropertiesChanged();
-					this.CreateLogItemTemplate(profile, session.DisplayLogProperties);
-				}
-			}
+			if (state == ProductState.Deactivated || state == ProductState.Activated)
+				this.RecreateLogHeadersAndItemTemplate();
 		}
 
 
@@ -3486,6 +3479,17 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Sorted predefined log text filters.
 		IList<PredefinedLogTextFilter> PredefinedLogTextFilters { get => this.predefinedLogTextFilters; }
+
+
+		// Rebuild log header views and template of log item.
+		void RecreateLogHeadersAndItemTemplate()
+		{
+			if (this.DataContext is not Session session)
+				return;
+			this.logListBox.Items = null;
+			this.OnDisplayLogPropertiesChanged();
+			this.logListBox.Bind(Avalonia.Controls.ListBox.ItemsProperty, new Binding() { Path = nameof(Session.Logs)} );
+		}
 
 
 		// Reload log file.
