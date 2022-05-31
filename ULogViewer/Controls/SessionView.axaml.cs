@@ -15,6 +15,7 @@ using Avalonia.Media;
 using Avalonia.VisualTree;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.AppSuite.Data;
+using CarinaStudio.AppSuite.Product;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Controls;
@@ -993,12 +994,13 @@ namespace CarinaStudio.ULogViewer.Controls
 		DataTemplate CreateLogItemTemplate(LogProfile profile, IList<DisplayableLogProperty> logProperties)
 		{
 			var app = (App)this.Application;
+			var isProVersion = app.ProductManager.IsProductActivated(Products.Professional);
 			var logPropertyCount = logProperties.Count;
 			var colorIndicatorBorderBrush = app.TryFindResource("Brush/WorkingArea.Background", out var rawResource) ? (IBrush?)rawResource : default;
 			var colorIndicatorBorderThickness = app.TryFindResource("Thickness/SessionView.LogListBox.ColorIndicator.Border", out rawResource) ? (Thickness)rawResource! : default;
 			var colorIndicatorWidth = app.TryFindResource("Double/SessionView.LogListBox.ColorIndicator.Width", out rawResource) ? (double)rawResource! : default;
-			var analysisResultIndicatorSize = app.TryFindResource("Double/SessionView.LogListBox.LogAnalysisResultIndicator.Size", out rawResource) ? (double)rawResource! : default;
-			var analysisResultIndicatorMargin = app.TryFindResource("Thickness/SessionView.LogListBox.LogAnalysisResultIndicator.Margin", out rawResource) ? (Thickness)rawResource! : default;
+			var analysisResultIndicatorSize = isProVersion && app.TryFindResource("Double/SessionView.LogListBox.LogAnalysisResultIndicator.Size", out rawResource) ? (double)rawResource! : default;
+			var analysisResultIndicatorMargin = isProVersion && app.TryFindResource("Thickness/SessionView.LogListBox.LogAnalysisResultIndicator.Margin", out rawResource) ? (Thickness)rawResource! : default;
 			var analysisResultIndicatorWidth = (analysisResultIndicatorSize + analysisResultIndicatorMargin.Left + analysisResultIndicatorMargin.Right);
 			var markIndicatorSize = app.TryFindResource("Double/SessionView.LogListBox.MarkIndicator.Size", out rawResource) ? (double)rawResource! : default;
 			var markIndicatorBorderThickness = app.TryFindResource("Thickness/SessionView.LogListBox.MarkIndicator.Border", out rawResource) ? (Thickness)rawResource! : default;
@@ -1285,38 +1287,41 @@ namespace CarinaStudio.ULogViewer.Controls
 					}));
 
 					// analysis result indicator
-					indicatorsPanel.Children.Add(new Panel().Also(panel =>
+					if (isProVersion)
 					{
-						panel.Height = analysisResultIndicatorSize;
-						panel.HorizontalAlignment = HorizontalAlignment.Right;
-						panel.Margin = analysisResultIndicatorMargin;
-						panel.VerticalAlignment = VerticalAlignment.Center;
-						panel.Width = analysisResultIndicatorSize;
-						panel.Children.Add(new Border().Also(background =>
+						indicatorsPanel.Children.Add(new Panel().Also(panel =>
 						{
-							var isLeftPointerDown = false;
-							background.Background = Brushes.Transparent;
-							background.Cursor = new Avalonia.Input.Cursor(StandardCursorType.Hand);
-							background.Bind(Border.IsVisibleProperty, new Binding() { Path = "HasAnalysisResult" });
-							background.PointerPressed += (_, e) =>
-								isLeftPointerDown = e.GetCurrentPoint(background).Properties.IsLeftButtonPressed;
-							background.AddHandler(Border.PointerReleasedEvent, (_, e) =>
+							panel.Height = analysisResultIndicatorSize;
+							panel.HorizontalAlignment = HorizontalAlignment.Right;
+							panel.Margin = analysisResultIndicatorMargin;
+							panel.VerticalAlignment = VerticalAlignment.Center;
+							panel.Width = analysisResultIndicatorSize;
+							panel.Children.Add(new Border().Also(background =>
 							{
-								if (isLeftPointerDown)
+								var isLeftPointerDown = false;
+								background.Background = Brushes.Transparent;
+								background.Cursor = new Avalonia.Input.Cursor(StandardCursorType.Hand);
+								background.Bind(Border.IsVisibleProperty, new Binding() { Path = "HasAnalysisResult" });
+								background.PointerPressed += (_, e) =>
+									isLeftPointerDown = e.GetCurrentPoint(background).Properties.IsLeftButtonPressed;
+								background.AddHandler(Border.PointerReleasedEvent, (_, e) =>
 								{
-									isLeftPointerDown = false;
-									if (itemPanel.DataContext is DisplayableLog log)
-										this.OnLogAnalysisResultIndicatorClicked(log);
-								}
-							}, RoutingStrategies.Tunnel);
+									if (isLeftPointerDown)
+									{
+										isLeftPointerDown = false;
+										if (itemPanel.DataContext is DisplayableLog log)
+											this.OnLogAnalysisResultIndicatorClicked(log);
+									}
+								}, RoutingStrategies.Tunnel);
+							}));
+							panel.Children.Add(new Image().Also(image =>
+							{
+								image.Classes.Add("Icon");
+								image.Bind(Image.IsVisibleProperty, new Binding() { Path = nameof(DisplayableLog.HasAnalysisResult) });
+								image.Bind(Image.SourceProperty, new Binding() { Path = nameof(DisplayableLog.AnalysisResultIndicatorIcon) });
+							}));
 						}));
-						panel.Children.Add(new Image().Also(image =>
-						{
-							image.Classes.Add("Icon");
-							image.Bind(Image.IsVisibleProperty, new Binding() { Path = nameof(DisplayableLog.HasAnalysisResult) });
-							image.Bind(Image.SourceProperty, new Binding() { Path = nameof(DisplayableLog.AnalysisResultIndicatorIcon) });
-						}));
-					}));
+						}
 				}));
 
 				// complete
@@ -2046,6 +2051,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// add event handlers
 			this.Application.StringsUpdated += this.OnApplicationStringsUpdated;
+			this.Application.ProductManager.ProductStateChanged += this.OnProductStateChanged;
 			this.Settings.SettingChanged += this.OnSettingChanged;
 			this.AddHandler(DragDrop.DragEnterEvent, this.OnDragEnter);
 			this.AddHandler(DragDrop.DragLeaveEvent, this.OnDragLeave);
@@ -2101,6 +2107,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// remove event handlers
 			this.Application.StringsUpdated -= this.OnApplicationStringsUpdated;
+			this.Application.ProductManager.ProductStateChanged -= this.OnProductStateChanged;
 			this.Settings.SettingChanged -= this.OnSettingChanged;
 			this.RemoveHandler(DragDrop.DragEnterEvent, this.OnDragEnter);
 			this.RemoveHandler(DragDrop.DragLeaveEvent, this.OnDragLeave);
@@ -2155,8 +2162,9 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// build headers
 			var app = (App)this.Application;
-			var analysisResultIndicatorSize = app.TryFindResource("Double/SessionView.LogListBox.LogAnalysisResultIndicator.Size", out var rawResource) ? (double)rawResource! : default;
-			var analysisResultIndicatorMargin = app.TryFindResource("Thickness/SessionView.LogListBox.LogAnalysisResultIndicator.Margin", out rawResource) ? (Thickness)rawResource! : default;
+			var isProVersion = app.ProductManager.IsProductActivated(Products.Professional);
+			var analysisResultIndicatorSize = isProVersion && app.TryFindResource("Double/SessionView.LogListBox.LogAnalysisResultIndicator.Size", out var rawResource) ? (double)rawResource! : default;
+			var analysisResultIndicatorMargin = isProVersion && app.TryFindResource("Thickness/SessionView.LogListBox.LogAnalysisResultIndicator.Margin", out rawResource) ? (Thickness)rawResource! : default;
 			var markIndicatorSize = app.TryFindResource("Double/SessionView.LogListBox.MarkIndicator.Size", out rawResource) ? (double)rawResource! : default;
 			var markIndicatorMargin = app.TryFindResource("Thickness/SessionView.LogListBox.MarkIndicator.Margin", out rawResource) ? (Thickness)rawResource! : default;
 			var splitterWidth = app.TryFindResource("Double/GridSplitter.Thickness", out rawResource) ? (double)rawResource! : default;
@@ -3178,6 +3186,26 @@ namespace CarinaStudio.ULogViewer.Controls
 						selectedItems.Add(log);
 				}
 				
+			}
+		}
+
+
+		// Called when product state changed.
+		void OnProductStateChanged(IProductManager? productManager, string productId)
+		{
+			if (productId != Products.Professional)
+				return;
+			if (productManager?.TryGetProductState(productId, out var state) == true
+				&& this.DataContext is Session session)
+			{
+				var profile = session.LogProfile;
+				if (profile == null)
+					return;
+				if (state == ProductState.Deactivated || state == ProductState.Activated)
+				{
+					this.OnDisplayLogPropertiesChanged();
+					this.CreateLogItemTemplate(profile, session.DisplayLogProperties);
+				}
 			}
 		}
 
