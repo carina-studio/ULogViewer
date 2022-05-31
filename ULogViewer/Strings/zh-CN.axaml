@@ -514,6 +514,7 @@
 	<sys:String x:Key="String/SessionView.PauseResumeLogsReading">暂停/继续读取日志 (P)</sys:String>
 	<sys:String x:Key="String/SessionView.PredefinedLogTextFilters">已定义的文字筛选 (Ctrl+P)</sys:String>
 	<sys:String x:Key="String/SessionView.PredefinedLogTextFiltersPopup.Header">文字筛选 (可多选)</sys:String>
+	<sys:String x:Key="String/SessionView.ProVersionNeeded">需升级至专业版以启用此功能</sys:String>
 	<sys:String x:Key="String/SessionView.ReloadLogFile">变更日志读取前置条件…</sys:String>
 	<sys:String x:Key="String/SessionView.ReloadLogFile.WithoutLogReadingPrecondition">清除日志读取前置条件</sys:String>
 	<sys:String x:Key="String/SessionView.ReloadLogs">重新载入日志 (F5)</sys:String>

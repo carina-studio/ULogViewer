@@ -101,6 +101,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		static readonly AvaloniaProperty<bool> HasSelectedLogsDurationProperty = AvaloniaProperty.Register<SessionView, bool>("HasSelectedLogsDuration", false);
 		static readonly SettingKey<bool> IsCancelShowingMarkedLogsForLogAnalysisResultTutorialShownKey = new("SessionView.IsCancelShowingMarkedLogsForLogAnalysisResultTutorialShown");
 		static readonly AvaloniaProperty<bool> IsProcessInfoVisibleProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(IsProcessInfoVisible), false);
+		static readonly AvaloniaProperty<bool> IsProVersionActivatedProperty = AvaloniaProperty.Register<SessionView, bool>("IsProVersionActivated", false);
 		static readonly AvaloniaProperty<bool> IsScrollingToLatestLogNeededProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(IsScrollingToLatestLogNeeded), true);
 		static readonly SettingKey<bool> IsLogAnalysisPanelTutorialShownKey = new("SessionView.IsLogAnalysisPanelTutorialShown");
 		static readonly SettingKey<bool> IsLogFilesPanelTutorialShownKey = new("SessionView.IsLogFilesPanelTutorialShown");
@@ -994,7 +995,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		DataTemplate CreateLogItemTemplate(LogProfile profile, IList<DisplayableLogProperty> logProperties)
 		{
 			var app = (App)this.Application;
-			var isProVersion = app.ProductManager.IsProductActivated(Products.Professional);
+			var isProVersion = this.GetValue<bool>(IsProVersionActivatedProperty);
 			var logPropertyCount = logProperties.Count;
 			var colorIndicatorBorderBrush = app.TryFindResource("Brush/WorkingArea.Background", out var rawResource) ? (IBrush?)rawResource : default;
 			var colorIndicatorBorderThickness = app.TryFindResource("Thickness/SessionView.LogListBox.ColorIndicator.Border", out rawResource) ? (Thickness)rawResource! : default;
@@ -2059,6 +2060,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.AddHandler(DragDrop.DropEvent, this.OnDrop);
 			this.AddHandler(KeyDownEvent, this.OnPreviewKeyDown, RoutingStrategies.Tunnel);
 
+			// check product state
+			this.SetValue<bool>(IsProVersionActivatedProperty, this.Application.ProductManager.IsProductActivated(Products.Professional));
+
 			// setup predefined log text filter list
 			this.predefinedLogTextFilters.AddAll(PredefinedLogTextFilterManager.Default.Filters);
 			foreach (var filter in PredefinedLogTextFilterManager.Default.Filters)
@@ -2162,7 +2166,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// build headers
 			var app = (App)this.Application;
-			var isProVersion = app.ProductManager.IsProductActivated(Products.Professional);
+			var isProVersion = this.GetValue<bool>(IsProVersionActivatedProperty);
 			var analysisResultIndicatorSize = isProVersion && app.TryFindResource("Double/SessionView.LogListBox.LogAnalysisResultIndicator.Size", out var rawResource) ? (double)rawResource! : default;
 			var analysisResultIndicatorMargin = isProVersion && app.TryFindResource("Thickness/SessionView.LogListBox.LogAnalysisResultIndicator.Margin", out rawResource) ? (Thickness)rawResource! : default;
 			var markIndicatorSize = app.TryFindResource("Double/SessionView.LogListBox.MarkIndicator.Size", out rawResource) ? (double)rawResource! : default;
@@ -3193,9 +3197,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when product state changed.
 		void OnProductStateChanged(IProductManager? productManager, string productId)
 		{
-			if (productId != Products.Professional)
+			if (productManager == null || productId != Products.Professional)
 				return;
-			if (productManager?.TryGetProductState(productId, out var state) == true
+			this.SetValue<bool>(IsProVersionActivatedProperty, productManager.IsProductActivated(Products.Professional));
+			if (productManager.TryGetProductState(productId, out var state)
 				&& this.DataContext is Session session)
 			{
 				var profile = session.LogProfile;

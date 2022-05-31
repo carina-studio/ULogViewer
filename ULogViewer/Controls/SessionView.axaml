@@ -1095,7 +1095,7 @@
 						<Grid ColumnDefinitions="Auto,*,Auto">
 							<TextBlock Classes="SessionView_SidePanel_Header_Left" Text="{DynamicResource String/SessionView.LogAnalysisPanel}"/>
 							<TextBlock Classes="SessionView_SidePanel_Header_Right" Grid.Column="1" Text="{Binding LogAnalysisResults.Count, StringFormat={} ({0})}"/>
-							<ToggleButton Name="logAnalysisRuleSetsButton" Classes="ToolBar_ToggleButton" Grid.Column="2" IsChecked="{Binding #logAnalysisRuleSetsPopup.IsOpen, Mode=TwoWay}" ToolTip.Tip="{DynamicResource String/SessionView.LogAnalysisRuleSets}">
+							<ToggleButton Name="logAnalysisRuleSetsButton" Classes="ToolBar_ToggleButton" Grid.Column="2" IsChecked="{Binding #logAnalysisRuleSetsPopup.IsOpen, Mode=TwoWay}" IsVisible="{Binding $parent[UserControl].IsProVersionActivated}" ToolTip.Tip="{DynamicResource String/SessionView.LogAnalysisRuleSets}">
 								<Panel>
 									<Panel IsVisible="{Binding !$parent[ToggleButton].IsChecked}">
 										<Image Classes="Icon" IsVisible="{Binding !KeyLogAnalysisRuleSets.Count}" Source="{StaticResource Image/Icon.More}"/>
@@ -1157,7 +1157,7 @@
 							</Popup>
 						</Grid>
 					</Border>
-					<asControls:ListBox Classes="Log" Name="logAnalysisResultListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" Focusable="False" Grid.Row="1" Items="{Binding LogAnalysisResults}" SelectionMode="Multiple">
+					<asControls:ListBox Classes="Log" Name="logAnalysisResultListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" Focusable="False" Grid.Row="1" IsVisible="{Binding $parent[UserControl].IsProVersionActivated}" Items="{Binding LogAnalysisResults}" SelectionMode="Multiple">
 						<asControls:ListBox.ItemTemplate>
 							<DataTemplate>
 								<Grid ColumnDefinitions="Auto,Auto,*">
@@ -1177,6 +1177,9 @@
 							</DataTemplate>
 						</asControls:ListBox.ItemTemplate>
 					</asControls:ListBox>
+					<Border Background="{x:Static Brushes.Transparent}" Grid.Row="1" IsVisible="{Binding !$parent[UserControl].IsProVersionActivated}">
+						<TextBlock Classes="SessionView_SidePanel_FullPanelHint" Text="{DynamicResource String/SessionView.ProVersionNeeded}"/>
+					</Border>
 				</Grid>
 
 				<!-- Log files -->
