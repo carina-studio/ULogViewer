@@ -138,6 +138,18 @@ namespace CarinaStudio.ULogViewer
 		}
 
 
+		/// <summary>
+		/// Activate Pro version.
+		/// </summary>
+		public void ActivateProVersion()
+		{
+			this.VerifyAccess();
+			if (this.IsClosed)
+				return;
+			this.Application.ProductManager.ActivateProductAsync(Products.Professional, this);
+		}
+
+
 		// Attach to active session.
 		void AttachToActiveSession(Session session)
 		{
@@ -866,6 +878,18 @@ namespace CarinaStudio.ULogViewer
 					this.DetachFromActiveSession();
 				}
 			}
+		}
+
+
+		/// <summary>
+		/// Purchase Pro version.
+		/// </summary>
+		public void PurchaseProVersion()
+		{
+			this.VerifyAccess();
+			if (this.IsClosed)
+				return;
+			this.Application.ProductManager.PurchaseProduct(Products.Professional, this);
 		}
 
 
