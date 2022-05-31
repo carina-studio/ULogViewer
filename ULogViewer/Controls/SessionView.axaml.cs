@@ -3199,9 +3199,9 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (productManager == null || productId != Products.Professional)
 				return;
-			this.SetValue<bool>(IsProVersionActivatedProperty, productManager.IsProductActivated(Products.Professional));
-			if (productManager.TryGetProductState(productId, out var state)
-				&& this.DataContext is Session session)
+			productManager.TryGetProductState(productId, out var state);
+			this.SetValue<bool>(IsProVersionActivatedProperty, state == ProductState.Activated);
+			if (this.DataContext is Session session)
 			{
 				var profile = session.LogProfile;
 				if (profile == null)
