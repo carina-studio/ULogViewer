@@ -592,8 +592,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				if (this.DataContext is not Session session)
 					return;
+				var selectedRuleSets = this.selectedKeyLogAnalysisRuleSets.ToArray();
 				session.KeyLogAnalysisRuleSets.Clear();
-				session.KeyLogAnalysisRuleSets.AddAll(this.selectedKeyLogAnalysisRuleSets);
+				session.KeyLogAnalysisRuleSets.AddAll(selectedRuleSets);
 			});
 			this.updateLogFiltersAction = new ScheduledAction(() =>
 			{
