@@ -1,6 +1,5 @@
-﻿using Avalonia;
-using Avalonia.Media.Imaging;
-using Avalonia.Platform;
+﻿using Avalonia.Media;
+using CarinaStudio.Controls;
 using System;
 
 namespace CarinaStudio.ULogViewer.ViewModels
@@ -10,6 +9,25 @@ namespace CarinaStudio.ULogViewer.ViewModels
     /// </summary>
     class AppInfo : AppSuite.ViewModels.ApplicationInfo
     {
+        // Constructor.
+        public AppInfo()
+        {
+            var isProVersion = this.Application.ProductManager.Let(it =>
+                !it.IsMock && it.IsProductActivated(ULogViewer.Products.Professional));
+            if (isProVersion)
+            {
+                this.Application.TryGetResource<IImage>("Image/Icon.Professional", out var icon);
+                this.Badges = new IImage[] { icon.AsNonNull() };
+            }
+            else
+                this.Badges = new IImage[0];
+        }
+
+
+        // Badges.
+        public override IList<IImage> Badges { get; }
+
+
         // URI of GitHub project.
         public override Uri? GitHubProjectUri => new Uri("https://github.com/carina-studio/ULogViewer");
 
