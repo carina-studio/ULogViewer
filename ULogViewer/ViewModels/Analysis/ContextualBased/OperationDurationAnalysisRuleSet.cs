@@ -86,13 +86,13 @@ class OperationDurationAnalysisRuleSet : BaseProfile<IULogViewerApplication>
         /// Equality operator.
         /// </summary>
         public static bool operator ==(Rule? lhs, Rule? rhs) =>
-            lhs?.Equals(rhs) ?? rhs == null;
+            lhs?.Equals(rhs) ?? object.ReferenceEquals(rhs, null);
         
         /// <summary>
         /// Inequality operator.
         /// </summary>
         public static bool operator !=(Rule? lhs, Rule? rhs) =>
-            !lhs?.Equals(rhs) ?? rhs != null;
+            object.ReferenceEquals(lhs, null) ? !object.ReferenceEquals(rhs, null) : !lhs.Equals(rhs);
     }
 
 

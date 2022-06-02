@@ -73,13 +73,13 @@ abstract class ContextualBaseAnalysisCondition : IEquatable<ContextualBaseAnalys
     /// Equality operator.
     /// </summary>
     public static bool operator ==(ContextualBaseAnalysisCondition? lhs, ContextualBaseAnalysisCondition? rhs) =>
-        lhs?.Equals(rhs) ?? rhs == null;
+        lhs?.Equals(rhs) ?? object.ReferenceEquals(rhs, null);
     
     /// <summary>
     /// Inequality operator.
     /// </summary>
     public static bool operator !=(ContextualBaseAnalysisCondition? lhs, ContextualBaseAnalysisCondition? rhs) =>
-        !lhs?.Equals(rhs) ?? rhs != null;
+        object.ReferenceEquals(lhs, null) ? !object.ReferenceEquals(rhs, null) : !lhs.Equals(rhs);
     
 
     /// <summary>
