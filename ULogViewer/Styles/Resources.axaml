@@ -95,6 +95,12 @@
 	<Thickness x:Key="Thickness/MainWindow.TabItem.ToolTip.Icon.Margin">0,0,3,0</Thickness>
 	<Thickness x:Key="Thickness/MainWindow.TabItem.ToolTip.Padding">5</Thickness>
 
+	<!-- OperationDurationAnalysisRuleEditorDialog -->
+	<sys:Double x:Key="Double/OperationDurationAnalysisRuleEditorDialog.ConditionListBox.Height">120</sys:Double>
+	<sys:Double x:Key="Double/OperationDurationAnalysisRuleEditorDialog.Content.MaxHeight">500</sys:Double>
+	<sys:Double x:Key="Double/OperationDurationAnalysisRuleEditorDialog.PatternTextBox.Height">100</sys:Double>
+	<sys:Double x:Key="Double/OperationDurationAnalysisRuleEditorDialog.Width">500</sys:Double>
+
 	<!-- PredefinedLogTextFilterEditorDialog -->
 	<sys:Double x:Key="Double/PredefinedLogTextFilterEditorDialog.RegexInput.Height">100</sys:Double>
 	<sys:Double x:Key="Double/PredefinedLogTextFilterEditorDialog.Width">500</sys:Double>

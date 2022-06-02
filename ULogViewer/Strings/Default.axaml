@@ -445,6 +445,16 @@
 	<!-- MemoryLoggerLogDataSourceProvider -->
 	<sys:String x:Key="String/MemoryLoggerLogDataSourceProvider.DisplayName">ULogViewer realtime log</sys:String>
 
+	<!-- OperationDurationAnalysisRuleEditorDialog -->
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningConditions">Extra conditions of beginning log</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningPattern">Pattern of beginning log</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingConditions">Extra conditions of ending log</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingPattern">Pattern of ending log</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.OperationName">Name of operation</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.Title">Edit rule of operation duration analysis</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.VarAndConstComparisonCondition">Comparison between variable and constant</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.VarsComparisonCondition">Comparison between variables</sys:String>
+
 	<!-- PredefinedLogTextFilterEditorDialog -->
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Name">Name (required)</sys:String>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Regex">Pattern (required)</sys:String>

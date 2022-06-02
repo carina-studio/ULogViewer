@@ -110,6 +110,14 @@
 		<Setter Property="Padding" Value="{DynamicResource Thickness/ListAction.Padding}"/>
 		<Setter Property="VerticalContentAlignment" Value="Center"/>
 	</Style>
+	<Style Selector="ToggleButton.ListAction">
+		<Setter Property="HorizontalAlignment" Value="Right"/>
+		<Setter Property="HorizontalContentAlignment" Value="Center"/>
+		<Setter Property="Margin" Value="{DynamicResource Thickness/ListAction.Margin}"/>
+		<Setter Property="MinWidth" Value="{DynamicResource Double/ListAction.MinWidth}"/>
+		<Setter Property="Padding" Value="{DynamicResource Thickness/ListAction.Padding}"/>
+		<Setter Property="VerticalContentAlignment" Value="Center"/>
+	</Style>
 
 	<!-- LogProfileSelectionDialog -->
 	<Style Selector="Border.LogProfileSelectionDialog_LogProfile_Label">

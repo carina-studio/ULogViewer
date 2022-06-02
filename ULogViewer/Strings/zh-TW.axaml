@@ -420,6 +420,16 @@
 	<!-- MemoryLoggerLogDataSourceProvider -->
 	<sys:String x:Key="String/MemoryLoggerLogDataSourceProvider.DisplayName">ULogViewer 即時日誌</sys:String>
 
+	<!-- OperationDurationAnalysisRuleEditorDialog -->
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningConditions">起始日誌額外條件</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningPattern">起始日誌文字格式</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingConditions">結束日誌額外條件</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingPattern">結束日誌文字格式</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.OperationName">動作名稱</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.Title">編輯動作時距分析規則</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.VarAndConstComparisonCondition">變數與常數之比較</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.VarsComparisonCondition">變數之間之比較</sys:String>
+
 	<!-- PredefinedLogTextFilterEditorDialog -->
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Name">名稱 (必要)</sys:String>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Regex">格式 (必要)</sys:String>
