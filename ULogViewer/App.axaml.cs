@@ -9,6 +9,7 @@ using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ULogViewer.ViewModels;
 using CarinaStudio.ULogViewer.ViewModels.Analysis;
+using CarinaStudio.ULogViewer.ViewModels.Analysis.ContextualBased;
 using CarinaStudio.ViewModels;
 using Microsoft.Extensions.Logging;
 using System;
@@ -227,6 +228,7 @@ namespace CarinaStudio.ULogViewer
         {
 			// wait for I/O completion of log analysis rules
 			await KeyLogAnalysisRuleSetManager.Default.WaitForIOTaskCompletion();
+			await OperationDurationAnalysisRuleSetManager.Default.WaitForIOTaskCompletion();
 
 			// wait for I/O completion of log text filters
 			await PredefinedLogTextFilterManager.Default.WaitForIOTaskCompletion();
@@ -366,6 +368,7 @@ namespace CarinaStudio.ULogViewer
 			// initialize log analysis rules
 			this.UpdateSplashWindowMessage(this.GetStringNonNull("SplashWindow.InitializeLogAnalysisRules"));
 			await KeyLogAnalysisRuleSetManager.InitializeAsync(this);
+			await OperationDurationAnalysisRuleSetManager.InitializeAsync(this);
 
 			// show main window
 			if (!this.IsRestoringMainWindowsRequested)
