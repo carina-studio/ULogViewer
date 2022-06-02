@@ -189,6 +189,10 @@
 	<!-- StringLogPropertyMapEntryEditorDialog -->
 	<sys:Double x:Key="Double/StringLogPropertyMapEntryEditorDialog.Width">400</sys:Double>
 
+	<!-- VarAndConstComparisonEditorDialog -->
+	<sys:Double x:Key="Double/VarAndConstComparisonEditorDialog.ComparisonType.MinWidth">100</sys:Double>
+	<sys:Double x:Key="Double/VarAndConstComparisonEditorDialog.Width">600</sys:Double>
+
 	<!-- VisibleLogPropertyEditorDialog -->
 	<sys:Double x:Key="Double/VisibleLogPropertyEditorDialog.Width">400</sys:Double>
 	

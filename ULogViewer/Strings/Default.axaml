@@ -102,6 +102,14 @@
 	<sys:String x:Key="String/Common.Rename">Rename</sys:String>
 	<sys:String x:Key="String/Common.Yes">Yes</sys:String>
 
+	<!-- ComparisonType -->
+	<sys:String x:Key="String/ComparisonType.Equivalent">=</sys:String>
+	<sys:String x:Key="String/ComparisonType.Greater">&gt;</sys:String>
+	<sys:String x:Key="String/ComparisonType.GreaterOrEquivalent">≥</sys:String>
+	<sys:String x:Key="String/ComparisonType.NotEquivalent">≠</sys:String>
+	<sys:String x:Key="String/ComparisonType.Smaller">&lt;</sys:String>
+	<sys:String x:Key="String/ComparisonType.SmallerOrEquivalent">≤</sys:String>
+
 	<!-- DatabaseSourceType -->
 	<sys:String x:Key="String/DatabaseSourceType.File">File</sys:String>
 	<sys:String x:Key="String/DatabaseSourceType.Network">Network</sys:String>
@@ -613,6 +621,12 @@
 	<!-- UriInputDialog -->
 	<sys:String x:Key="String/UriInputDialog.Message">Please enter an valid URI:</sys:String>
 	<sys:String x:Key="String/UriInputDialog.Title">URI</sys:String>
+
+	<!-- VarAndConstComparisonEditorDialog -->
+	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.ComparisonType">Comparison</sys:String>
+	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Constant">Value</sys:String>
+	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Title">Edit comparison condition</sys:String>
+	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Variable">Variable name</sys:String>
 
 	<!-- VisibleLogPropertyEditorDialog -->
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.CustomDisplayName">Custom display name</sys:String>

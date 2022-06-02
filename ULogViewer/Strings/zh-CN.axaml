@@ -598,6 +598,12 @@
 	<sys:String x:Key="String/UriInputDialog.Message">请输入有效的 URI：</sys:String>
 	<sys:String x:Key="String/UriInputDialog.Title">URI</sys:String>
 
+	<!-- VarAndConstComparisonEditorDialog -->
+	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.ComparisonType">比较方式</sys:String>
+	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Constant">值</sys:String>
+	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Title">编辑比较条件</sys:String>
+	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Variable">变量名称</sys:String>
+
 	<!-- VisibleLogPropertyEditorDialog -->
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.CustomDisplayName">手动输入显示名称</sys:String>
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.DisplayName">显示名称</sys:String>
