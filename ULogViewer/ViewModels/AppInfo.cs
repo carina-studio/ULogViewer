@@ -1,6 +1,7 @@
 ﻿using Avalonia.Media;
 using CarinaStudio.Controls;
 using System;
+using System.Collections.Generic;
 
 namespace CarinaStudio.ULogViewer.ViewModels
 {
