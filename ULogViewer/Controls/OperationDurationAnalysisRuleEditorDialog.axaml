@@ -86,6 +86,12 @@
 					<Button Name="editBeginningPatternButton" Classes="ListAction" Command="{Binding $parent[Window].EditBeginningPattern}" Content="{DynamicResource String/Common.Edit}"/>
 					<Separator Classes="Dialog_Separator"/>
 
+					<!-- Ending pattern -->
+					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.EndingPattern}"/>
+					<TextBox Name="endingPatternTextBox" Classes="Dialog_TextBox" Height="{StaticResource Double/OperationDurationAnalysisRuleEditorDialog.PatternTextBox.Height}" IsReadOnly="True" ScrollViewer.VerticalScrollBarVisibility="Auto" TextWrapping="Wrap"/>
+					<Button Classes="ListAction" Command="{Binding $parent[Window].EditEndingPattern}" Content="{DynamicResource String/Common.Edit}"/>
+					<Separator Classes="Dialog_Separator"/>
+
 					<!-- Beginning conditions -->
 					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.BeginningConditions}"/>
 					<asControls:ListBox Name="beginningConditionListBox" Classes="Dialog_ListBox" Height="{StaticResource Double/OperationDurationAnalysisRuleEditorDialog.ConditionListBox.Height}" Items="{Binding $parent[Window].BeginningConditions}">
@@ -97,12 +103,6 @@
 					<ToggleButton Name="addBeginningConditionButton" Classes="ListAction" Content="{DynamicResource String/Common.Add}"/>
 					<Separator Classes="Dialog_Separator"/>
 
-					<!-- Ending pattern -->
-					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.EndingPattern}"/>
-					<TextBox Name="endingPatternTextBox" Classes="Dialog_TextBox" Height="{StaticResource Double/OperationDurationAnalysisRuleEditorDialog.PatternTextBox.Height}" IsReadOnly="True" ScrollViewer.VerticalScrollBarVisibility="Auto" TextWrapping="Wrap"/>
-					<Button Classes="ListAction" Command="{Binding $parent[Window].EditEndingPattern}" Content="{DynamicResource String/Common.Edit}"/>
-					<Separator Classes="Dialog_Separator"/>
-
 					<!-- Ending conditions -->
 					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.EndingConditions}"/>
 					<asControls:ListBox Name="endingConditionListBox" Classes="Dialog_ListBox" Height="{StaticResource Double/OperationDurationAnalysisRuleEditorDialog.ConditionListBox.Height}" Items="{Binding $parent[Window].EndingConditions}">
@@ -112,6 +112,11 @@
 						</asControls:ListBox.DataTemplates>
 					</asControls:ListBox>
 					<ToggleButton Name="addEndingConditionButton" Classes="ListAction" Content="{DynamicResource String/Common.Add}"/>
+					<Separator Classes="Dialog_Separator"/>
+
+					<!-- Ending order -->
+					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.EndingOrder}"/>
+					<asControls:EnumComboBox Name="endingOrderComboBox" Classes="Dialog_ComboBox" EnumType="{x:Type appCtxlBased:OperationEndingOrder}"/>
 					
 				</StackPanel>
 			</ScrollViewer>

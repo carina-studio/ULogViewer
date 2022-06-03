@@ -424,6 +424,7 @@
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningConditions">起始日誌額外條件</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningPattern">起始日誌文字格式</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingConditions">結束日誌額外條件</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingOrder">動作結束順序</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingPattern">結束日誌文字格式</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.OperationName">動作名稱</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.Title">編輯規則</sys:String>
@@ -435,6 +436,10 @@
 	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.Name">名稱 (必要)</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.Rules">規則 (必要)</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.Title">編輯規則集</sys:String>
+
+	<!-- OperationEndingOrder -->
+	<sys:String x:Key="String/OperationEndingOrder.FirstInFirstOut">先進先出 (FIFO)</sys:String>
+	<sys:String x:Key="String/OperationEndingOrder.FirstInLastOut">先進後出 (FILO)</sys:String>
 
 	<!-- PredefinedLogTextFilterEditorDialog -->
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Name">名稱 (必要)</sys:String>

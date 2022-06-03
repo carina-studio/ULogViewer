@@ -30,11 +30,13 @@ class OperationDurationAnalysisRuleSet : BaseProfile<IULogViewerApplication>
         /// <param name="beginningConditions">Conditions for beginning of operation log after text matched.</param>
         /// <param name="endingPattern">Pattern to match text of ending of operation log.</param>
         /// <param name="endingConditions">Conditions for ending of operation log after text matched.</param>
-        public Rule(string operationName, Regex beginningPattern, IEnumerable<ContextualBaseAnalysisCondition> beginningConditions, Regex endingPattern, IEnumerable<ContextualBaseAnalysisCondition> endingConditions)
+        /// <param name="endingOrder">Order of ending operation.</param>
+        public Rule(string operationName, Regex beginningPattern, IEnumerable<ContextualBaseAnalysisCondition> beginningConditions, Regex endingPattern, IEnumerable<ContextualBaseAnalysisCondition> endingConditions, OperationEndingOrder endingOrder)
         {
             this.BeginningConditions = beginningConditions.ToArray().AsReadOnly();
             this.BeginningPattern = beginningPattern;
             this.EndingConditions = endingConditions.ToArray().AsReadOnly();
+            this.EndingOrder = endingOrder;
             this.EndingPattern = endingPattern;
             this.OperationName = operationName;
         }
@@ -53,6 +55,11 @@ class OperationDurationAnalysisRuleSet : BaseProfile<IULogViewerApplication>
         /// Get list of conditions for ending of operation log after text matched.
         /// </summary>
         public IList<ContextualBaseAnalysisCondition> EndingConditions { get; }
+
+        /// <summary>
+        /// Get order of ending operation.
+        /// </summary>
+        public OperationEndingOrder EndingOrder { get; }
 
         /// <summary>
         /// Get pattern to match text of ending of operation log.
@@ -208,4 +215,20 @@ class OperationDurationAnalysisRuleSet : BaseProfile<IULogViewerApplication>
             this.OnPropertyChanged(nameof(Rules));
         }
     }
+}
+
+
+/// <summary>
+/// Order of handling ending of operation.
+/// </summary>
+enum OperationEndingOrder
+{
+    /// <summary>
+    /// First-in First-out.
+    /// </summary>
+    FirstInFirstOut,
+    /// <summary>
+    /// First-in Last-out.
+    /// </summary>
+    FirstInLastOut,
 }

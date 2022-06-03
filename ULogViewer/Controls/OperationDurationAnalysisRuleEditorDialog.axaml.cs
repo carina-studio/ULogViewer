@@ -40,6 +40,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly TextBox beginningPatternTextBox;
 		readonly Avalonia.Controls.ListBox endingConditionListBox;
 		readonly ObservableList<ContextualBaseAnalysisCondition> endingConditions = new();
+		readonly ComboBox endingOrderComboBox;
 		Regex? endingPattern;
 		readonly TextBox endingPatternTextBox;
 		readonly TextBox operationNameTextBox;
@@ -98,6 +99,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				it.DoubleClickOnItem += (_, e) => this.EditEndingCondition((ContextualBaseAnalysisCondition)e.Item);
 			});
+			this.endingOrderComboBox = this.Get<ComboBox>(nameof(endingOrderComboBox));
 			this.endingPatternTextBox = this.Get<TextBox>(nameof(endingPatternTextBox));
 			this.operationNameTextBox = this.Get<TextBox>(nameof(operationNameTextBox)).Also(it =>
 			{
@@ -270,7 +272,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.beginningPattern.AsNonNull(),
 				this.beginningConditions,
 				this.endingPattern.AsNonNull(),
-				this.endingConditions);
+				this.endingConditions,
+				(OperationEndingOrder)this.endingOrderComboBox.SelectedItem.AsNonNull());
 			if (rule == newRule)
 				return Task.FromResult<object?>(rule);
 			return Task.FromResult<object?>(newRule);
@@ -289,9 +292,12 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.beginningPattern = rule.BeginningPattern;
 				this.beginningPatternTextBox.Text = rule.BeginningPattern.ToString();
 				this.endingConditions.AddAll(rule.EndingConditions);
+				this.endingOrderComboBox.SelectedItem = rule.EndingOrder;
 				this.endingPattern = rule.EndingPattern;
 				this.endingPatternTextBox.Text = rule.EndingPattern.ToString();
 			}
+			else
+				this.endingOrderComboBox.SelectedItem = OperationEndingOrder.FirstInFirstOut;
 			if (!this.Application.PersistentState.GetValueOrDefault(RegexEditorDialog.IsClickButtonToEditPatternTutorialShownKey))
 			{
 				this.FindControl<TutorialPresenter>("tutorialPresenter")!.ShowTutorial(new Tutorial().Also(it =>

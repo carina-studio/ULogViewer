@@ -449,6 +449,7 @@
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningConditions">Extra conditions of beginning log</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningPattern">Pattern of beginning log</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingConditions">Extra conditions of ending log</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingOrder">Order of ending operations</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingPattern">Pattern of ending log</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.OperationName">Name of operation</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.Title">Edit rule</sys:String>
@@ -460,6 +461,10 @@
 	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.Name">Name (required)</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.Rules">Rules (required)</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.Title">Edit rule set</sys:String>
+
+	<!-- OperationEndingOrder -->
+	<sys:String x:Key="String/OperationEndingOrder.FirstInFirstOut">First in, first out</sys:String>
+	<sys:String x:Key="String/OperationEndingOrder.FirstInLastOut">First in, last out</sys:String>
 
 	<!-- PredefinedLogTextFilterEditorDialog -->
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Name">Name (required)</sys:String>
