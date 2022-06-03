@@ -15,6 +15,7 @@
 			 xmlns:appAnalysis="using:CarinaStudio.ULogViewer.ViewModels.Analysis"
              xmlns:appControls="clr-namespace:CarinaStudio.ULogViewer.Controls;assembly=ULogViewer"
              xmlns:appConverters="clr-namespace:CarinaStudio.ULogViewer.Converters;assembly=ULogViewer"
+			 xmlns:appCtxlBased="using:CarinaStudio.ULogViewer.ViewModels.Analysis.ContextualBased"
              xmlns:appLogs="clr-namespace:CarinaStudio.ULogViewer.Logs;assembly=ULogViewer"
              xmlns:appViewModels="clr-namespace:CarinaStudio.ULogViewer.ViewModels;assembly=ULogViewer"
 			 xmlns:cs="using:CarinaStudio"
@@ -1112,6 +1113,13 @@
 								<Border Background="{DynamicResource ComboBoxDropDownBackground}" BorderBrush="{DynamicResource ComboBoxDropDownBorderBrush}" BorderThickness="{DynamicResource Thickness/SessionView.LogAnalysisRuleSetsPopup.Border}" CornerRadius="{DynamicResource OverlayCornerRadius}" Padding="{StaticResource Thickness/SessionView.LogAnalysisRuleSetsPopup.Padding}">
 									<StackPanel>
 
+										<StackPanel.Styles>
+											<Style Selector="ListBoxItem">
+												<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+												<Setter Property="Padding" Value="{StaticResource Thickness/SessionView.LogAnalysisRuleSetListBox.Item.Padding}"/>
+											</Style>
+										</StackPanel.Styles>
+
 										<!-- Key log analysis -->
 										<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/SessionView.KeyLogAnalysisRuleSets}"/>
 										<Panel>
@@ -1136,12 +1144,6 @@
 														</Grid>
 													</DataTemplate>
 												</ListBox.ItemTemplate>
-												<ListBox.Styles>
-													<Style Selector="ListBoxItem">
-														<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-														<Setter Property="Padding" Value="{StaticResource Thickness/SessionView.LogAnalysisRuleSetListBox.Item.Padding}"/>
-													</Style>
-												</ListBox.Styles>
 											</ListBox>
 											<TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" HorizontalAlignment="Center" IsVisible="{Binding !RuleSets.Count, Source={x:Static appAnalysis:KeyLogAnalysisRuleSetManager.Default}}" Margin="{StaticResource Thickness/SessionView.NoLogAnalysisRuleSetHint.Margin}" Text="{DynamicResource String/Common.Empty}" TextWrapping="Wrap" VerticalAlignment="Center"/>
 										</Panel>
@@ -1149,7 +1151,42 @@
 										<StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
 											<Button Classes="Dialog_ControlButton" Command="{Binding $parent[UserControl].ImportKeyLogAnalysisRuleSet}" Content="{DynamicResource String/Common.Import.WithDialog}"/>
 											<Button Classes="Dialog_ControlButton" Command="{Binding $parent[UserControl].CreateKeyLogAnalysisRuleSet}" Content="{DynamicResource String/SessionView.CreatePredefinedLogTextFilter}"/>
-											<Button Classes="Dialog_ControlButton" Command="{Binding $parent[UserControl].ClearKeyLogAnalysisRuleSetSelection}" IsEnabled="{Binding ElementName=keyLogAnalysisRuleSetListBox, Path=SelectedItems.Count}" Content="{DynamicResource String/SessionView.ClearLogAnalysisRuleSetsSelection}"/>
+											<Button Classes="Dialog_ControlButton" Command="{Binding $parent[UserControl].ClearKeyLogAnalysisRuleSetSelection}" IsEnabled="{Binding #keyLogAnalysisRuleSetListBox.SelectedItems.Count}" Content="{DynamicResource String/SessionView.ClearLogAnalysisRuleSetsSelection}"/>
+										</StackPanel>
+										<Separator Classes="Dialog_Separator"/>
+
+										<!-- Operation duration analysis -->
+										<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/SessionView.OperationDurationAnalysisRuleSets}"/>
+										<Panel>
+											<ListBox Name="operationDurationAnalysisRuleSetListBox" Background="{DynamicResource Brush/SessionView.LogAnalysisRuleSetListBox.Background}" Items="{Binding RuleSets, Source={x:Static appCtxlBased:OperationDurationAnalysisRuleSetManager.Default}}" MaxHeight="{StaticResource Double/SessionView.LogAnalysisRuleSetListBox.MaxHeight}" MinHeight="{StaticResource Double/SessionView.LogAnalysisRuleSetListBox.MinHeight}" SelectionMode="Multiple">
+												<ListBox.ItemTemplate>
+													<DataTemplate>
+														<Grid ColumnDefinitions="Auto,*,Auto">
+															<Image Classes="Icon" Height="{StaticResource Double/SessionView.LogAnalysisRuleSetListBox.Icon.Size}" Margin="{StaticResource Thickness/SessionView.LogAnalysisRuleSetListBox.Icon.Margin}" Source="{Binding Icon, Converter={x:Static appConverters:LogProfileIconConverter.Default}}" VerticalAlignment="Center" Width="{StaticResource Double/SessionView.LogAnalysisRuleSetListBox.Icon.Size}"/>
+															<TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center"/>
+															<Border Grid.Column="1" Classes="InPlaceAction_Reserved"/>
+															<StackPanel Grid.Column="2" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal" VerticalAlignment="Center">
+																<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].ExportOperationDurationAnalysisRuleSet}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Export}">
+																	<Image Classes="InPlaceAction_Icon" Source="{StaticResource Image/Icon.Export}"/>
+																</Button>
+																<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].RemoveOperationDurationAnalysisRuleSet}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
+																	<Image Classes="InPlaceAction_Icon" Source="{StaticResource Image/Icon.Delete}"/>
+																</Button>
+																<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].EditOperationDurationAnalysisRuleSet}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
+																	<Image Classes="InPlaceAction_Icon" Source="{StaticResource Image/Icon.Edit}"/>
+																</Button>
+															</StackPanel>
+														</Grid>
+													</DataTemplate>
+												</ListBox.ItemTemplate>
+											</ListBox>
+											<TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" HorizontalAlignment="Center" IsVisible="{Binding !RuleSets.Count, Source={x:Static appAnalysis:KeyLogAnalysisRuleSetManager.Default}}" Margin="{StaticResource Thickness/SessionView.NoLogAnalysisRuleSetHint.Margin}" Text="{DynamicResource String/Common.Empty}" TextWrapping="Wrap" VerticalAlignment="Center"/>
+										</Panel>
+										<Separator Classes="Dialog_Separator_Small"/>
+										<StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+											<Button Classes="Dialog_ControlButton" Command="{Binding $parent[UserControl].ImportOperationDurationAnalysisRuleSet}" Content="{DynamicResource String/Common.Import.WithDialog}"/>
+											<Button Classes="Dialog_ControlButton" Command="{Binding $parent[UserControl].CreateOperationDurationAnalysisRuleSet}" Content="{DynamicResource String/SessionView.CreatePredefinedLogTextFilter}"/>
+											<Button Classes="Dialog_ControlButton" Command="{Binding $parent[UserControl].ClearOperationDurationAnalysisRuleSetSelection}" IsEnabled="{Binding #operationDurationAnalysisRuleSetListBox.SelectedItems.Count}" Content="{DynamicResource String/SessionView.ClearLogAnalysisRuleSetsSelection}"/>
 										</StackPanel>
 
 									</StackPanel>

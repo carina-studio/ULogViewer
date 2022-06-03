@@ -26,6 +26,7 @@ using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ULogViewer.ViewModels;
 using CarinaStudio.ULogViewer.ViewModels.Analysis;
+using CarinaStudio.ULogViewer.ViewModels.Analysis.ContextualBased;
 using CarinaStudio.ULogViewer.ViewModels.Categorizing;
 using CarinaStudio.Windows.Input;
 using Microsoft.Extensions.Logging;
@@ -190,6 +191,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly Panel logThreadIdFilterTextBoxPanel;
 		readonly Avalonia.Controls.ListBox markedLogListBox;
 		readonly double minLogListBoxSizeToCloseSidePanel;
+		readonly Avalonia.Controls.ListBox operationDurationAnalysisRuleSetListBox;
 		readonly ToggleButton otherActionsButton;
 		readonly ContextMenu otherActionsMenu;
 		readonly Avalonia.Controls.ListBox predefinedLogTextFilterListBox;
@@ -200,6 +202,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ScheduledAction scrollToLatestLogAction;
 		
 		readonly HashSet<KeyLogAnalysisRuleSet> selectedKeyLogAnalysisRuleSets = new();
+		readonly HashSet<OperationDurationAnalysisRuleSet> selectedOperationDurationAnalysisRuleSets = new();
 		readonly HashSet<PredefinedLogTextFilter> selectedPredefinedLogTextFilters = new();
 		readonly MenuItem showLogPropertyMenuItem;
 		readonly ColumnDefinition sidePanelColumn;
@@ -433,6 +436,10 @@ namespace CarinaStudio.ULogViewer.Controls
 					(this.Application as AppSuite.AppSuiteApplication)?.EnsureClosingToolTipIfWindowIsInactive(it);
 			});
 			this.markedLogListBox = this.FindControl<Avalonia.Controls.ListBox>(nameof(markedLogListBox)).AsNonNull();
+			this.operationDurationAnalysisRuleSetListBox = this.Get<Avalonia.Controls.ListBox>(nameof(operationDurationAnalysisRuleSetListBox)).Also(it =>
+			{
+				it.SelectionChanged += this.OnOperationDurationAnalysisRuleSetListBoxSelectionChanged;
+			});
 			this.otherActionsButton = this.FindControl<ToggleButton>(nameof(otherActionsButton)).AsNonNull();
 			this.otherActionsMenu = ((ContextMenu)this.Resources[nameof(otherActionsMenu)].AsNonNull()).Also(it =>
 			{
@@ -592,9 +599,12 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				if (this.DataContext is not Session session)
 					return;
-				var selectedRuleSets = this.selectedKeyLogAnalysisRuleSets.ToArray();
+				var selectedKlaRuleSets = this.selectedKeyLogAnalysisRuleSets.ToArray();
+				var selectedOdaRuleSets = this.selectedOperationDurationAnalysisRuleSets.ToArray();
 				session.KeyLogAnalysisRuleSets.Clear();
-				session.KeyLogAnalysisRuleSets.AddAll(selectedRuleSets);
+				session.KeyLogAnalysisRuleSets.AddAll(selectedKlaRuleSets);
+				session.OperationDurationAnalysisRuleSets.Clear();
+				session.OperationDurationAnalysisRuleSets.AddAll(selectedOdaRuleSets);
 			});
 			this.updateLogFiltersAction = new ScheduledAction(() =>
 			{
@@ -810,6 +820,14 @@ namespace CarinaStudio.ULogViewer.Controls
 		void ClearKeyLogAnalysisRuleSetSelection()
 		{
 			this.keyLogAnalysisRuleSetListBox.SelectedItems.Clear();
+			this.updateLogAnalysisAction.Reschedule();
+		}
+
+
+		// Clear operation duration analysis rule set selection.
+		void ClearOperationDurationAnalysisRuleSetSelection()
+		{
+			this.operationDurationAnalysisRuleSetListBox.SelectedItems.Clear();
 			this.updateLogAnalysisAction.Reschedule();
 		}
 
@@ -1463,6 +1481,14 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Create new operation duration analysis rule set.
+		void CreateOperationDurationAnalysisRuleSet()
+		{
+			if (this.attachedWindow != null)
+				OperationDurationAnalysisRuleSetEditorDialog.Show(this.attachedWindow, null);
+		}
+
+
 		// Create predefined log text fliter.
 		void CreatePredefinedLogTextFilter()
 		{
@@ -1783,6 +1809,15 @@ namespace CarinaStudio.ULogViewer.Controls
 		ICommand EditLogProfileCommand { get; }
 
 
+		// Edit given operation duration analysis rule set.
+		void EditOperationDurationAnalysisRuleSet(OperationDurationAnalysisRuleSet? ruleSet)
+		{
+			if (ruleSet == null || this.attachedWindow == null)
+				return;
+			OperationDurationAnalysisRuleSetEditorDialog.Show(this.attachedWindow, ruleSet);
+		}
+
+
 		// Edit given predefined log text filter.
 		void EditPredefinedLogTextFilter(PredefinedLogTextFilter? filter)
 		{
@@ -1819,6 +1854,45 @@ namespace CarinaStudio.ULogViewer.Controls
 			catch (Exception ex)
 			{
 				this.Logger.LogError(ex, $"Failed to export key log analysis rule set '{ruleSet.Id}' to '{fileName}'");
+				if (this.attachedWindow != null)
+				{
+					_ = new MessageDialog()
+					{
+						Icon = MessageDialogIcon.Error,
+						Message = this.Application.GetFormattedString("SessionView.FailedToExportLogAnalysisRuleSet", ruleSet.Name, fileName),
+					}.ShowDialog(this.attachedWindow);
+				}
+			}
+		}
+
+
+		// Export given operation duration analysis rule set.
+		async void ExportOperationDurationAnalysisRuleSet(OperationDurationAnalysisRuleSet? ruleSet)
+		{
+			// check state
+			if (ruleSet == null || this.attachedWindow == null)
+				return;
+			
+			// select file
+			var fileName = await new SaveFileDialog().Also(it =>
+			{
+				it.Filters.Add(new FileDialogFilter().Also(filter =>
+				{
+					filter.Extensions.Add("json");
+					filter.Name = this.Application.GetString("FileFormat.Json");
+				}));
+			}).ShowAsync(this.attachedWindow);
+			if (string.IsNullOrEmpty(fileName))
+				return;
+			
+			// export
+			try
+			{
+				await ruleSet.SaveAsync(fileName, false);
+			}
+			catch (Exception ex)
+			{
+				this.Logger.LogError(ex, $"Failed to export operation duration analysis rule set '{ruleSet.Id}' to '{fileName}'");
 				if (this.attachedWindow != null)
 				{
 					_ = new MessageDialog()
@@ -1930,6 +2004,52 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// edit and add rule set
 			KeyLogAnalysisRuleSetEditorDialog.Show(this.attachedWindow, ruleSet);
+		}
+
+
+		// Import operation duration analysis rule set.
+		async void ImportOperationDurationAnalysisRuleSet()
+		{
+			// check state
+			if (this.attachedWindow == null)
+				return;
+			
+			// select file
+			var fileNames = await new OpenFileDialog().Also(dialog =>
+			{
+				dialog.Filters.Add(new FileDialogFilter().Also(filter =>
+				{
+					filter.Extensions.Add("json");
+					filter.Name = this.Application.GetString("FileFormat.Json");
+				}));
+			}).ShowAsync(this.attachedWindow);
+			if (fileNames == null || fileNames.IsEmpty())
+				return;
+			
+			// load rule set
+			var ruleSet = (OperationDurationAnalysisRuleSet?)null;
+			try
+			{
+				ruleSet = await OperationDurationAnalysisRuleSet.LoadAsync(this.Application, fileNames[0]);
+			}
+			catch (Exception ex)
+			{
+				this.Logger.LogError(ex, $"Failed to load operation duration analysis rule set from '{fileNames[0]}' to import");
+				if (this.attachedWindow != null)
+				{
+					_ = new MessageDialog()
+					{
+						Icon = MessageDialogIcon.Error,
+						Message = this.Application.GetFormattedString("SessionView.FailedToImportLogAnalysisRuleSet", fileNames[0]),
+					}.ShowDialog(this.attachedWindow);
+				}
+				return;
+			}
+			if (this.attachedWindow == null)
+				return;
+
+			// edit and add rule set
+			OperationDurationAnalysisRuleSetEditorDialog.Show(this.attachedWindow, ruleSet);
 		}
 
 
@@ -2920,7 +3040,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Called when selection of list box of predefined log text fliter has been changed.
+		// Called when selection of list box of key log analysis rule sets has been changed.
 		void OnKeyLogAnalysisRuleSetListBoxSelectionChanged(object? sender, SelectionChangedEventArgs e)
 		{
 			foreach (var ruleSet in e.RemovedItems.Cast<KeyLogAnalysisRuleSet>())
@@ -3076,6 +3196,37 @@ namespace CarinaStudio.ULogViewer.Controls
 				it.Focus();
 			});
 			this.IsScrollingToLatestLogNeeded = false;
+		}
+
+
+		// Called when selection of list box of operation duration analysis rule sets has been changed.
+		void OnOperationDurationAnalysisRuleSetListBoxSelectionChanged(object? sender, SelectionChangedEventArgs e)
+		{
+			foreach (var ruleSet in e.RemovedItems.Cast<OperationDurationAnalysisRuleSet>())
+				this.selectedOperationDurationAnalysisRuleSets.Remove(ruleSet);
+			foreach (var ruleSet in e.AddedItems.Cast<OperationDurationAnalysisRuleSet>())
+				this.selectedOperationDurationAnalysisRuleSets.Add(ruleSet);
+			if (this.selectedOperationDurationAnalysisRuleSets.Count != this.operationDurationAnalysisRuleSetListBox.SelectedItems.Count)
+			{
+				// [Workaround] Need to sync selection back to control because selection will be cleared when popup opened
+				if (this.selectedOperationDurationAnalysisRuleSets.IsNotEmpty())
+				{
+					var isScheduled = this.updateLogAnalysisAction?.IsScheduled ?? false;
+					this.selectedOperationDurationAnalysisRuleSets.ToArray().Let(it =>
+					{
+						this.SynchronizationContext.Post(() =>
+						{
+							this.operationDurationAnalysisRuleSetListBox.SelectedItems.Clear();
+							foreach (var ruleSet in it)
+								this.operationDurationAnalysisRuleSetListBox.SelectedItems.Add(ruleSet);
+							if (!isScheduled)
+								this.updateLogAnalysisAction?.Cancel();
+						});
+					});
+				}
+			}
+			else
+				this.updateLogAnalysisAction.Reschedule(this.UpdateLogAnalysisParamsDelay);
 		}
 
 
@@ -3574,6 +3725,15 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (ruleSet == null)
 				return;
 			KeyLogAnalysisRuleSetManager.Default.RemoveRuleSet(ruleSet);
+		}
+
+
+		// Remove given operation duration analysis rule set.
+		void RemoveOperationDurationAnalysisRuleSet(OperationDurationAnalysisRuleSet? ruleSet)
+		{
+			if (ruleSet == null)
+				return;
+			OperationDurationAnalysisRuleSetManager.Default.RemoveRuleSet(ruleSet);
 		}
 
 
