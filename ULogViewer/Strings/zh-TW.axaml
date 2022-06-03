@@ -426,9 +426,15 @@
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingConditions">結束日誌額外條件</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingPattern">結束日誌文字格式</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.OperationName">動作名稱</sys:String>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.Title">編輯動作時距分析規則</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.Title">編輯規則</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.VarAndConstComparisonCondition">變數與常數之比較</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.VarsComparisonCondition">變數之間之比較</sys:String>
+
+	<!-- OperationDurationAnalysisRuleSetEditorDialog -->
+	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.Icon">圖示</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.Name">名稱 (必要)</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.Rules">規則 (必要)</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.Title">編輯規則集</sys:String>
 
 	<!-- PredefinedLogTextFilterEditorDialog -->
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Name">名稱 (必要)</sys:String>

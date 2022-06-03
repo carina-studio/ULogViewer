@@ -321,7 +321,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		
 
 		/// <summary>
-		/// Get or set rule to br edited.
+		/// Get or set rule to be edited.
 		/// </summary>
 		public OperationDurationAnalysisRuleSet.Rule? Rule { get; set; }
 

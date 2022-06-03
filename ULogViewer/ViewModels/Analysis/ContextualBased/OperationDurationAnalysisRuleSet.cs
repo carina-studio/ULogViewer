@@ -116,6 +116,11 @@ class OperationDurationAnalysisRuleSet : BaseProfile<IULogViewerApplication>
     { }
 
 
+    // Change ID.
+    internal void ChangeId() =>
+        this.Id = OperationDurationAnalysisRuleSetManager.Default.GenerateProfileId();
+
+
     /// <inheritdoc/>
     public override bool Equals(IProfile<IULogViewerApplication>? profile) =>
         profile is OperationDurationAnalysisRuleSet ruleSet

@@ -101,6 +101,10 @@
 	<sys:Double x:Key="Double/OperationDurationAnalysisRuleEditorDialog.PatternTextBox.Height">100</sys:Double>
 	<sys:Double x:Key="Double/OperationDurationAnalysisRuleEditorDialog.Width">500</sys:Double>
 
+	<!-- OperationDurationAnalysisRuleSetEditorDialog -->
+	<sys:Double x:Key="Double/OperationDurationAnalysisRuleSetEditorDialog.RuleListBox.Height">300</sys:Double>
+	<sys:Double x:Key="Double/OperationDurationAnalysisRuleSetEditorDialog.Width">500</sys:Double>
+
 	<!-- PredefinedLogTextFilterEditorDialog -->
 	<sys:Double x:Key="Double/PredefinedLogTextFilterEditorDialog.RegexInput.Height">100</sys:Double>
 	<sys:Double x:Key="Double/PredefinedLogTextFilterEditorDialog.Width">500</sys:Double>
