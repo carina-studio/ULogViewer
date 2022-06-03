@@ -53,8 +53,7 @@ class OperationDurationDisplayableLogAnalyzer : ContextualBasedDisplayableLogAna
 
 
     // Static fields.
-    [ThreadStatic]
-    static StringBuilder? LogTextBuffer;
+    //
 
 
     // Fields.
@@ -70,7 +69,7 @@ class OperationDurationDisplayableLogAnalyzer : ContextualBasedDisplayableLogAna
     /// <param name="app">Application.</param>
     /// <param name="sourceLogs">Source list of logs.</param>
     /// <param name="comparison"><see cref="Comparison{T}"/> which used on <paramref name="sourceLogs"/>.</param>
-    protected OperationDurationDisplayableLogAnalyzer(IULogViewerApplication app, IList<DisplayableLog> sourceLogs, Comparison<DisplayableLog> comparison) : base(app, sourceLogs, comparison)
+    public OperationDurationDisplayableLogAnalyzer(IULogViewerApplication app, IList<DisplayableLog> sourceLogs, Comparison<DisplayableLog> comparison) : base(app, sourceLogs, comparison)
     { 
         this.logProperties.CollectionChanged += (_, e) => this.InvalidateProcessing();
         this.ruleSets.CollectionChanged += this.OnRuleSetsChanged;
@@ -90,6 +89,12 @@ class OperationDurationDisplayableLogAnalyzer : ContextualBasedDisplayableLogAna
         isProcessingNeeded = true;
         return context;
     }
+
+
+    /// <summary>
+    /// Get list of log properties to be included in analysis.
+    /// </summary>
+    public IList<DisplayableLogProperty> LogProperties { get => this.logProperties; }
 
 
     /// <inheritdoc/>

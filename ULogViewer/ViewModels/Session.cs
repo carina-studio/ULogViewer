@@ -14,6 +14,7 @@ using CarinaStudio.ULogViewer.Logs.DataOutputs;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ULogViewer.ViewModels.Analysis;
+using CarinaStudio.ULogViewer.ViewModels.Analysis.ContextualBased;
 using CarinaStudio.ULogViewer.ViewModels.Categorizing;
 using CarinaStudio.ViewModels;
 using CarinaStudio.Windows.Input;
@@ -800,6 +801,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly SortedObservableList<DisplayableLog> markedLogs;
 		readonly HashSet<string> markedLogsChangedFilePaths = new(PathEqualityComparer.Default);
 		readonly TimestampDisplayableLogCategorizer markedLogsTimestampCategorizer;
+		readonly ObservableList<OperationDurationAnalysisRuleSet> operationDurationAnalysisRuleSets = new();
+		readonly OperationDurationDisplayableLogAnalyzer operationDurationAnalyzer;
 		readonly ObservableList<PredefinedLogTextFilter> predefinedLogTextFilters;
 		readonly ScheduledAction reportLogsTimeInfoAction;
 		readonly List<LogReaderOptions> savedLogReaderOptions = new();
@@ -812,6 +815,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly ScheduledAction updateKeyLogAnalysisAction;
 		readonly ScheduledAction updateLogFilterAction;
 		readonly ScheduledAction updateLogsAnalysisStateAction;
+		readonly ScheduledAction updateOperationDurationAnalysisAction;
 		readonly ScheduledAction updateTitleAndIconAction;
 
 
@@ -899,7 +903,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.updateKeyLogAnalysisAction?.Schedule(this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogAnalysisParamsUpdateDelay));
 			this.keyLogAnalyzer = new KeyLogDisplayableLogAnalyzer(this.Application, this.allLogs, this.CompareDisplayableLogs).Also(it =>
 				this.AttachToLogAnalyzer(it));
-			
+			this.operationDurationAnalysisRuleSets.CollectionChanged += (_, e) => 
+				this.updateOperationDurationAnalysisAction?.Schedule(this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogAnalysisParamsUpdateDelay));
+			this.operationDurationAnalyzer = new OperationDurationDisplayableLogAnalyzer(this.Application, this.allLogs, this.CompareDisplayableLogs).Also(it =>
+				this.AttachToLogAnalyzer(it));
+
 			// attach to product manager
 			this.Application.ProductManager.ProductStateChanged += this.OnProductStateChanged;
 
@@ -1186,8 +1194,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				if (!this.keyLogAnalyzer.RuleSets.SequenceEqual(this.keyLogAnalysisRuleSets))
 				{
 					this.keyLogAnalyzer.RuleSets.Clear();
-					foreach (var ruleSet in this.keyLogAnalysisRuleSets)
-						this.keyLogAnalyzer.RuleSets.Add(ruleSet);
+					this.keyLogAnalyzer.RuleSets.AddAll(this.keyLogAnalysisRuleSets);
 				}
 			});
 			this.updateLogFilterAction = new ScheduledAction(() =>
@@ -1240,6 +1247,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				{
 					this.SetValue(IsAnalyzingLogsProperty, false);
 					this.SetValue(LogAnalysisProgressProperty, 0);
+				}
+			});
+			this.updateOperationDurationAnalysisAction = new(() =>
+			{
+				if (this.IsDisposed)
+					return;
+				if (!this.operationDurationAnalyzer.RuleSets.SequenceEqual(this.operationDurationAnalysisRuleSets))
+				{
+					this.operationDurationAnalyzer.RuleSets.Clear();
+					this.operationDurationAnalyzer.RuleSets.AddAll(this.operationDurationAnalysisRuleSets);
 				}
 			});
 			this.updateTitleAndIconAction = new ScheduledAction(() =>
@@ -3398,6 +3415,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			if (!productManager.IsProductActivated(productId))
 			{
 				this.keyLogAnalysisRuleSets.Clear();
+				this.operationDurationAnalysisRuleSets.Clear();
 			}
 		}
 
@@ -3494,6 +3512,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.logReaders.First().MaxLogCount = (int)e.Value;
 			}
 		}
+
+
+		/// <summary>
+		/// Get list of <see cref="OperationDurationAnalysisRuleSet"/> for log analysis.
+		/// </summary>
+		public IList<OperationDurationAnalysisRuleSet> OperationDurationAnalysisRuleSets { get => this.operationDurationAnalysisRuleSets; }
 
 
 		// Pause or resume logs reading.
@@ -3994,6 +4018,17 @@ namespace CarinaStudio.ULogViewer.ViewModels
 								: null;
 							if (ruleSet != null)
 								this.keyLogAnalysisRuleSets.Add(ruleSet);
+						}
+					}
+					if (jsonState.TryGetProperty(nameof(OperationDurationAnalysisRuleSets), out jsonValue) && jsonValue.ValueKind == JsonValueKind.Array)
+					{
+						foreach (var jsonId in jsonValue.EnumerateArray())
+						{
+							var ruleSet = jsonId.ValueKind == JsonValueKind.String
+								? OperationDurationAnalysisRuleSetManager.Default.GetRuleSetOrDefault(jsonId.GetString()!)
+								: null;
+							if (ruleSet != null)
+								this.operationDurationAnalysisRuleSets.Add(ruleSet);
 						}
 					}
 				}
@@ -4544,6 +4579,18 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					}
 					jsonWriter.WriteEndArray();
 				}
+				if (this.operationDurationAnalysisRuleSets.IsNotEmpty())
+				{
+					var idSet = new HashSet<string>();
+					jsonWriter.WritePropertyName(nameof(OperationDurationAnalysisRuleSets));
+					jsonWriter.WriteStartArray();
+					foreach (var ruleSet in this.operationDurationAnalysisRuleSets)
+					{
+						if (idSet.Add(ruleSet.Id))
+							jsonWriter.WriteStringValue(ruleSet.Id);
+					}
+					jsonWriter.WriteEndArray();
+				}
 
 				// save side panel state
 				jsonWriter.WriteBoolean(nameof(IsLogAnalysisPanelVisible), this.IsLogAnalysisPanelVisible);
@@ -4839,6 +4886,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			var profile = this.LogProfile;
 			this.keyLogAnalyzer.LogProperties.Clear();
+			this.operationDurationAnalyzer.LogProperties.Clear();
 			if (profile == null)
 			{
 				this.ResetValue(HasTimestampDisplayableLogPropertyProperty);
@@ -4856,6 +4904,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					var displayableLogProperty = new DisplayableLogProperty(app, logProperty);
 					displayLogProperties.Add(displayableLogProperty);
 					this.keyLogAnalyzer.LogProperties.Add(displayableLogProperty);
+					this.operationDurationAnalyzer.LogProperties.Add(displayableLogProperty);
 					if (!hasTimestamp)
 						hasTimestamp = DisplayableLog.HasDateTimeProperty(logProperty.Name);
 				}
