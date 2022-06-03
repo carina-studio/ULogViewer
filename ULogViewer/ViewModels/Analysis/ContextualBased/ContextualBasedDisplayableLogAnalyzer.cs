@@ -18,4 +18,8 @@ abstract class ContextualBasedDisplayableLogAnalyzer<TProcessingToken> : BaseDis
     /// <param name="priority">Priority of logs processing.</param>
     protected ContextualBasedDisplayableLogAnalyzer(IULogViewerApplication app, IList<DisplayableLog> sourceLogs, Comparison<DisplayableLog> comparison, DisplayableLogProcessingPriority priority = DisplayableLogProcessingPriority.Default) : base(app, sourceLogs, comparison, priority)
     { }
+
+
+    /// <inheritdoc/>
+    protected sealed override int MaxConcurrencyLevel => 1;
 }
