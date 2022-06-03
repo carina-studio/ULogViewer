@@ -3,8 +3,11 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
+		xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
 		xmlns:appCtxlBased="using:CarinaStudio.ULogViewer.ViewModels.Analysis.ContextualBased"
         xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
+		xmlns:ia="using:Avalonia.Xaml.Interactivity"
+        xmlns:iaCore="using:Avalonia.Xaml.Interactions.Core"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.OperationDurationAnalysisRuleSetEditorDialog"
         Classes="Dialog"
@@ -31,6 +34,27 @@
 			<Separator Classes="Dialog_Separator"/>
 
 			<!-- Icon -->
+			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/OperationDurationAnalysisRuleSetEditorDialog.Icon}"/>
+			<ComboBox Name="iconComboBox" Classes="Dialog_ComboBox" Items="{Binding $parent[Window].Icons}">
+				<ComboBox.ItemTemplate>
+					<DataTemplate>
+						<StackPanel Orientation="Horizontal">
+							<Image Classes="Icon" Height="{DynamicResource Double/LogProfileEditorDialog.IconComboBox.Icon.Size}" Margin="{DynamicResource Thickness/LogProfileEditorDialog.IconComboBox.Icon.Margin}" Source="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}}" Width="{DynamicResource Double/LogProfileEditorDialog.IconComboBox.Icon.Size}">
+								<ia:Interaction.Behaviors>
+									<iaCore:DataTriggerBehavior Binding="{Binding $parent[ComboBoxItem].IsSelected}" Value="True">
+										<iaCore:ChangePropertyAction PropertyName="Source" Value="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}, ConverterParameter=Light}"/>
+									</iaCore:DataTriggerBehavior>
+									<iaCore:DataTriggerBehavior Binding="{Binding $parent[ComboBoxItem].IsSelected}" Value="False">
+										<iaCore:ChangePropertyAction PropertyName="Source" Value="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}}"/>
+									</iaCore:DataTriggerBehavior>
+								</ia:Interaction.Behaviors>
+							</Image>
+							<TextBlock Text="{Binding Converter={x:Static appControls:LogProfileEditorDialog.LogProfileIconNameConverter}}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+						</StackPanel>
+					</DataTemplate>
+				</ComboBox.ItemTemplate>
+			</ComboBox>
+			<Separator Classes="Dialog_Separator"/>
 
 			<!-- Rules -->
 			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/OperationDurationAnalysisRuleSetEditorDialog.Rules}"/>

@@ -1,6 +1,7 @@
 using CarinaStudio.AppSuite.Data;
 using CarinaStudio.Collections;
 using CarinaStudio.Threading;
+using CarinaStudio.ULogViewer.Logs.Profiles;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -97,6 +98,7 @@ class OperationDurationAnalysisRuleSet : BaseProfile<IULogViewerApplication>
 
 
     // Fields.
+    LogProfileIcon icon = LogProfileIcon.Analysis;
     IList<Rule> rules = new Rule[0];
 
 
@@ -126,7 +128,26 @@ class OperationDurationAnalysisRuleSet : BaseProfile<IULogViewerApplication>
         profile is OperationDurationAnalysisRuleSet ruleSet
         && this.Id == ruleSet.Id
         && this.Name == ruleSet.Name
+        && this.icon == ruleSet.icon
         && this.rules.SequenceEqual(ruleSet.rules);
+    
+
+    /// <summary>
+    /// Get or set icon of rule set.
+    /// </summary>
+    public LogProfileIcon Icon
+    {
+        get => this.icon;
+        set
+        {
+            this.VerifyAccess();
+            this.VerifyBuiltIn();
+            if (this.icon == value)
+                return;
+            this.icon = value;
+            this.OnPropertyChanged(nameof(Icon));
+        }
+    }
     
 
     /// <summary>

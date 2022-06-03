@@ -5,6 +5,7 @@ using Avalonia.Markup.Xaml;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.Collections;
 using CarinaStudio.Threading;
+using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ULogViewer.ViewModels.Analysis.ContextualBased;
 using System;
 using System.Collections.Generic;
@@ -22,6 +23,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		
 		// Fields.
+		readonly ComboBox iconComboBox;
 		readonly TextBox nameTextBox;
 		readonly ObservableList<OperationDurationAnalysisRuleSet.Rule> rules = new();
 		readonly Avalonia.Controls.ListBox ruleListBox;
@@ -35,6 +37,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		public OperationDurationAnalysisRuleSetEditorDialog()
 		{
 			AvaloniaXamlLoader.Load(this);
+			this.iconComboBox = this.Get<ComboBox>(nameof(iconComboBox));
 			this.nameTextBox = this.Get<TextBox>(nameof(nameTextBox)).Also(it =>
 			{
 				it.GetObservable(TextBox.TextProperty).Subscribe(_ => this.validateParametersAction?.Schedule());
@@ -72,14 +75,14 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 			
 			// create rule set
-			var newRuleSet = new OperationDurationAnalysisRuleSet(this.Application, this.nameTextBox.Text.AsNonNull()).Also(it =>
-			{
-				it.Rules = this.rules;
-			});
+			var ruleSet = this.ruleSet ?? new OperationDurationAnalysisRuleSet(this.Application, "");
+			ruleSet.Icon = (LogProfileIcon)this.iconComboBox.SelectedItem.AsNonNull();
+			ruleSet.Name = this.nameTextBox.Text.AsNonNull();
+			ruleSet.Rules = this.rules;
 
 			// add rule set
-			if (!OperationDurationAnalysisRuleSetManager.Default.RuleSets.Contains(newRuleSet))
-				OperationDurationAnalysisRuleSetManager.Default.AddRuleSet(newRuleSet);
+			if (!OperationDurationAnalysisRuleSetManager.Default.RuleSets.Contains(ruleSet))
+				OperationDurationAnalysisRuleSetManager.Default.AddRuleSet(ruleSet);
 
 			// close window
 			this.Close();
@@ -109,6 +112,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Available icons.
+		LogProfileIcon[] Icons { get; } = Enum.GetValues<LogProfileIcon>();
+
+
 		/// <inheritdoc/>
 		protected override void OnClosed(EventArgs e)
 		{
@@ -125,9 +132,12 @@ namespace CarinaStudio.ULogViewer.Controls
 			var ruleSet = this.ruleSet;
 			if (ruleSet != null)
 			{
+				this.iconComboBox.SelectedItem = ruleSet.Icon;
 				this.nameTextBox.Text = ruleSet.Name;
 				this.rules.AddAll(ruleSet.Rules);
 			}
+			else
+				this.iconComboBox.SelectedItem = LogProfileIcon.Analysis;
 			this.validateParametersAction.Schedule();
 			this.SynchronizationContext.Post(this.nameTextBox.Focus);
 		}
