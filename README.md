@@ -6,12 +6,12 @@ ULogViewer is a [.NET](https://dotnet.microsoft.com/) based cross-platform unive
 
 Operating System                      | Download | Version | Screenshot
 :------------------------------------:|:--------:|:-------:|:----------:
-Windows 8/10/11                       |[x86](https://github.com/carina-studio/ULogViewer/releases/download/1.0.6.422/ULogViewer-1.0.6.422-win-x86.zip) &#124; [x64](https://github.com/carina-studio/ULogViewer/releases/download/1.0.6.422/ULogViewer-1.0.6.422-win-x64.zip) &#124; [arm64](https://github.com/carina-studio/ULogViewer/releases/download/1.0.6.422/ULogViewer-1.0.6.422-win-arm64.zip)|1.0.6.422|[<img src="https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_Windows_Thumb.png" width="150"/>](https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_Windows.png)
-Windows 7<br/>*(.NET Runtime needed)* |[x86](https://github.com/carina-studio/ULogViewer/releases/download/1.0.6.422/ULogViewer-1.0.6.422-win-x86-fx-dependent.zip) &#124; [x64](https://github.com/carina-studio/ULogViewer/releases/download/1.0.6.422/ULogViewer-1.0.6.422-win-x64-fx-dependent.zip)|1.0.6.422|[<img src="https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_Windows7_Thumb.png" width="150"/>](https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_Windows7.png)
-macOS 11/12                           |[x64](https://github.com/carina-studio/ULogViewer/releases/download/1.0.6.422/ULogViewer-1.0.6.422-osx-x64.zip) &#124; [arm64](https://github.com/carina-studio/ULogViewer/releases/download/1.0.6.422/ULogViewer-1.0.6.422-osx-arm64.zip)|1.0.6.422|[<img src="https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_macOS_Thumb.png" width="150"/>](https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_macOS.png)
-Linux                                 |[x64](https://github.com/carina-studio/ULogViewer/releases/download/1.0.6.422/ULogViewer-1.0.6.422-linux-x64.zip) &#124; [arm64](https://github.com/carina-studio/ULogViewer/releases/download/1.0.6.422/ULogViewer-1.0.6.422-linux-arm64.zip)|1.0.6.422|[<img src="https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_Fedora_Thumb.png" width="150"/>](https://carina-studio.github.io/ULogViewer/Screenshots/Screenshot_Fedora.png)
+Windows 8/10/11                       |[x86](https://github.com/carina-studio/ULogViewer/releases/download/1.0.6.422/ULogViewer-1.0.6.422-win-x86.zip) &#124; [x64](https://github.com/carina-studio/ULogViewer/releases/download/1.0.6.422/ULogViewer-1.0.6.422-win-x64.zip) &#124; [arm64](https://github.com/carina-studio/ULogViewer/releases/download/1.0.6.422/ULogViewer-1.0.6.422-win-arm64.zip)|1.0.6.422|[<img src="https://carinastudio.azurewebsites.net/ULogViewer/Screenshots/Screenshot_Windows_Thumb.png" width="150"/>](https://carinastudio.azurewebsites.net/ULogViewer/Screenshots/Screenshot_Windows.png)
+Windows 7<br/>*(.NET Runtime needed)* |[x86](https://github.com/carina-studio/ULogViewer/releases/download/1.0.6.422/ULogViewer-1.0.6.422-win-x86-fx-dependent.zip) &#124; [x64](https://github.com/carina-studio/ULogViewer/releases/download/1.0.6.422/ULogViewer-1.0.6.422-win-x64-fx-dependent.zip)|1.0.6.422|[<img src="https://carinastudio.azurewebsites.net/ULogViewer/Screenshots/Screenshot_Windows7_Thumb.png" width="150"/>](https://carinastudio.azurewebsites.net/ULogViewer/Screenshots/Screenshot_Windows7.png)
+macOS 11/12                           |[x64](https://github.com/carina-studio/ULogViewer/releases/download/1.0.6.422/ULogViewer-1.0.6.422-osx-x64.zip) &#124; [arm64](https://github.com/carina-studio/ULogViewer/releases/download/1.0.6.422/ULogViewer-1.0.6.422-osx-arm64.zip)|1.0.6.422|[<img src="https://carinastudio.azurewebsites.net/ULogViewer/Screenshots/Screenshot_macOS_Thumb.png" width="150"/>](https://carinastudio.azurewebsites.net/ULogViewer/Screenshots/Screenshot_macOS.png)
+Linux                                 |[x64](https://github.com/carina-studio/ULogViewer/releases/download/1.0.6.422/ULogViewer-1.0.6.422-linux-x64.zip) &#124; [arm64](https://github.com/carina-studio/ULogViewer/releases/download/1.0.6.422/ULogViewer-1.0.6.422-linux-arm64.zip)|1.0.6.422|[<img src="https://carinastudio.azurewebsites.net/ULogViewer/Screenshots/Screenshot_Fedora_Thumb.png" width="150"/>](https://carinastudio.azurewebsites.net/ULogViewer/Screenshots/Screenshot_Fedora.png)
 
-- [How to Install and Upgrade ULogViewer](https://carina-studio.github.io/ULogViewer/installation_and_upgrade.html)
+- [Installation and Upgrade Guide](https://carinastudio.azurewebsites.net/ULogViewer/InstallAndUpgrade)
 
 ## 📣 What's Change in 1.0
 - Support specifying delay between restarting reading logs for continuous reading case.
@@ -77,7 +77,7 @@ When viewing logs, you can mark some logs with different colors which are import
 Marked logs will be kept if you are viewing logs from files so that you don't need to mark them again when you open log files next time.
 
 ## 📔 Other Topics
-- [How Does ULogViewer Read and Parse Logs](https://carina-studio.github.io/ULogViewer/logs_reading_flow.html)
+- [How Does ULogViewer Read and Parse Logs](https://carinastudio.azurewebsites.net/ULogViewer/HowToReadAndParseLogs)
 
 ## 🤝 Dependencies
 - [.NET](https://dotnet.microsoft.com/)
