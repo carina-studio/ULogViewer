@@ -34,18 +34,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
         // URI of privacy policy.
-        public override Uri? PrivacyPolicyUri => this.Application.CultureInfo.ToString() switch
-        {
-            "zh-TW" => new Uri("https://carina-studio.github.io/ULogViewer/privacy_policy_zh-TW.html"),
-            _ => new Uri("https://carina-studio.github.io/ULogViewer/privacy_policy.html"),
-        };
+        public override Uri? PrivacyPolicyUri => this.Application.PrivacyPolicyVersion?.Let(it =>
+            new Uri($"https://carinastudio.azurewebsites.net/Documents/ULogViewer/PrivacyPolicy?version={it.Major}.{it.Minor}"));
 
 
         // URI of user agreement.
-        public override Uri? UserAgreementUri => this.Application.CultureInfo.ToString() switch
-        {
-            "zh-TW" => new Uri("https://carina-studio.github.io/ULogViewer/user_agreement_zh-TW.html"),
-            _ => new Uri("https://carina-studio.github.io/ULogViewer/user_agreement.html"),
-        };
+        public override Uri? UserAgreementUri => this.Application.UserAgreementVersion?.Let(it =>
+            new Uri($"https://carinastudio.azurewebsites.net/Documents/ULogViewer/UserAgreement?version={it.Major}.{it.Minor}"));
     }
 }

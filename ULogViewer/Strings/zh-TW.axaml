@@ -240,8 +240,8 @@
 	<sys:String x:Key="String/LogProfileEditorDialog.IsContinuousReading">連續讀取</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.IsContinuousReading.Description">讀取至資料末端時將自動重新開始讀取日誌</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.IsWorkingDirectoryNeeded">必須選擇工作目錄</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LearnAboutLogsReadingAndParsing">了解 《ULogViewer 如何讀取及解析日誌 (英文)》</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LearnAboutLogsReadingAndParsingFirst">您是否想要先了解 《ULogViewer 如何讀取及解析日誌 (英文)》 以幫助您建立日誌類型？</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LearnAboutLogsReadingAndParsing">了解 《ULogViewer 如何讀取及解析日誌》</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LearnAboutLogsReadingAndParsingFirst">您是否想要先了解 《ULogViewer 如何讀取及解析日誌》 以幫助您建立日誌類型？</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogDisplaying">日誌顯示設定</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogLevelMapForReading">日誌等級對照表</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogLevelMapForReading.Description">將原始日誌中的特定文字對應至日誌等級</sys:String>

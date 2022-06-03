@@ -37,7 +37,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// <summary>
 		/// URI of 'How ULogViewer read and parse logs' page.
 		/// </summary>
-		public static readonly Uri LogsReadingAndParsingPageUri = new Uri("https://carina-studio.github.io/ULogViewer/logs_reading_flow.html");
+		public static readonly Uri LogsReadingAndParsingPageUri = new Uri("https://carinastudio.azurewebsites.net/ULogViewer/HowToReadAndParseLogs");
 
 
 		// Static fields.
