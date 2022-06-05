@@ -178,6 +178,7 @@
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.DatabaseSourceType">Database source</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.Encoding">Text encoding</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.FileName">File path</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptionsDialog.IncludeStandardError">Include Standard Error (stderr)</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.Password">Password</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.QueryString">Query string</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.Required"> (required)</sys:String>

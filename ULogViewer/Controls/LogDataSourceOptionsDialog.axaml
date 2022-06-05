@@ -82,6 +82,13 @@
 				<TextBox Name="commandTextBox" Classes="Dialog_TextBox" PropertyChanged="OnEditorControlPropertyChanged"/>
 				<Separator Classes="Dialog_Separator"/>
 			</StackPanel>
+
+			<!-- Include standard error -->
+			<StackPanel IsVisible="{Binding $parent[Window].IsIncludeStandardErrorSupported}" Orientation="Vertical">
+				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogDataSourceOptionsDialog.IncludeStandardError}"/>
+				<ToggleSwitch Name="includeStderrSwitch" Classes="Dialog_ToggleSwitch"/>
+				<Separator Classes="Dialog_Separator"/>
+			</StackPanel>
 			
 			<!-- File name -->
 			<StackPanel IsVisible="{Binding $parent[Window].IsFileNameSupported}" Orientation="Vertical">

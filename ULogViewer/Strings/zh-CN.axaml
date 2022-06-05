@@ -170,6 +170,7 @@
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.DatabaseSourceType">资料库来源</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.Encoding">文字编码</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.FileName">档案路径</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptionsDialog.IncludeStandardError">包含标准错误输出 (stderr)</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.Password">密码</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.QueryString">查询字符串</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.Required"> (必要)</sys:String>

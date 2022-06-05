@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -21,28 +22,191 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		class ReaderImpl : TextReader
 		{
 			// Fields.
+			string? bufferedLineFromStderr;
+			string? bufferedLineFromStdout;
+			volatile bool endOfStream;
+			volatile bool isReadingLine;
 			readonly Process process;
-			readonly TextReader stdoutReader;
+			readonly StandardOutputLogDataSource source;
+			readonly object stderrReadingLock = new object();
+			readonly TextReader? stdoutReader;
+			readonly object stdoutReadingLock = new object();
+			readonly object syncLock = new();
 
 			// Constructor.
-			public ReaderImpl(Process process)
+			public ReaderImpl(StandardOutputLogDataSource source, Process process, bool includeStderr)
 			{
 				this.process = process;
-				this.stdoutReader = process.StandardOutput;
+				this.source = source;
+				if (includeStderr)
+				{
+					new Thread(() => this.ReadLinesFromProcess("stderr", process.BeginErrorReadLine, typeof(Process).GetEvent("ErrorDataReceived").AsNonNull(), ref this.bufferedLineFromStderr, this.stderrReadingLock))
+					{
+						IsBackground = true,
+						Name = $"{nameof(StandardOutputLogDataSource)}-{source.Id}-stderr",
+					}.Start();
+					new Thread(() => this.ReadLinesFromProcess("stdout", process.BeginOutputReadLine, typeof(Process).GetEvent("OutputDataReceived").AsNonNull(), ref this.bufferedLineFromStdout, this.stdoutReadingLock))
+					{
+						IsBackground = true,
+						Name = $"{nameof(StandardOutputLogDataSource)}-{source.Id}-stderr",
+					}.Start();
+				}
+				else
+					this.stdoutReader = process.StandardOutput;
 			}
 
 			// Dispose.
 			protected override void Dispose(bool disposing)
 			{
+				lock (this.syncLock)
+				{
+					this.endOfStream = true;
+					this.isReadingLine = false;
+					if (this.stdoutReader == null)
+					{
+						this.source.Logger.LogTrace("Notify to complete reading lines from stderr/stdout");
+						Global.RunWithoutError(this.process.CancelErrorRead);
+						Global.RunWithoutError(this.process.CancelOutputRead);
+						lock (this.stderrReadingLock)
+							Monitor.PulseAll(this.stderrReadingLock);
+						lock (this.stdoutReadingLock)
+							Monitor.PulseAll(this.stdoutReadingLock);
+					}
+				}
 				if (disposing)
-					this.stdoutReader.Dispose();
+					this.stdoutReader?.Close();
 				Global.RunWithoutError(() => this.process.Kill());
 				Global.RunWithoutError(() => this.process.WaitForExit(1000));
 				base.Dispose(disposing);
 			}
 
-			// Implementations.
-			public override string? ReadLine() => this.stdoutReader.ReadLine();
+			// Read line.
+			public override string? ReadLine()
+			{
+				if (this.stdoutReader != null)
+					return this.stdoutReader.ReadLine();
+				if (this.endOfStream)
+					return null;
+				lock (this.syncLock)
+				{
+					// start reading line
+					if (this.endOfStream)
+						return null;
+					if (this.isReadingLine)
+						throw new InvalidOperationException();
+					this.isReadingLine = true;
+					Monitor.PulseAll(this.syncLock);
+
+					// wait for reading line
+					try
+					{
+						Monitor.Wait(this.syncLock);
+					}
+					finally
+					{
+						this.isReadingLine = false;
+					}
+
+					// get read line
+					if (this.bufferedLineFromStderr != null)
+					{
+						var line = this.bufferedLineFromStderr;
+						this.bufferedLineFromStderr = null;
+						return line;
+					}
+					if (this.bufferedLineFromStdout != null)
+					{
+						var line = this.bufferedLineFromStdout;
+						this.bufferedLineFromStdout = null;
+						return line;
+					}
+					Monitor.PulseAll(this.syncLock);
+					this.endOfStream = true;
+					return null;
+				}
+			}
+
+			// Read lines from given reader.
+			void ReadLinesFromProcess(string name, Action beginReadLineAction, EventInfo lineReadEvent, ref string? bufferedLine, object readingLock)
+			{
+				// setup event handler to receive read line
+				this.source.Logger.LogTrace($"Start reading lines from {name}");
+				var lineQueue = new Queue<string?>();
+				var lineReadHandler = new DataReceivedEventHandler((_, e) =>
+				{
+					lock (readingLock)
+					{
+						lineQueue.Enqueue(e.Data);
+						Monitor.Pulse(readingLock);
+					}
+				});
+				lineReadEvent.AddEventHandler(this.process, lineReadHandler);
+
+				// read lines
+				try
+				{
+					beginReadLineAction();
+				}
+				catch (Exception ex)
+				{
+					this.source.Logger.LogError(ex, $"Failed to start reading lines from {name}");
+					lock (this.syncLock)
+						Monitor.PulseAll(this.syncLock);
+					return;
+				}
+				var isReadingFirstLine = true;
+				while (true)
+				{
+					// wait for start reading line
+					while (true)
+					{
+						lock (this.syncLock)
+						{
+							if (this.endOfStream)
+								break;
+							else if (!this.isReadingLine || bufferedLine != null)
+								Monitor.Wait(this.syncLock);
+							else
+								break;
+						}
+					}
+					if (this.endOfStream)
+						break;
+
+					// read line
+					var line = (string?)null;
+					try
+					{
+						if (isReadingFirstLine)
+							this.source.Logger.LogTrace($"Wait for first line from {name}");
+						lock (readingLock)
+						{
+							if (!lineQueue.TryDequeue(out line))
+							{
+								Monitor.Wait(readingLock);
+								lineQueue.TryDequeue(out line);
+							}
+							if (isReadingFirstLine)
+							{
+								isReadingFirstLine = false;
+								this.source.Logger.LogTrace($"First line read from {name}");
+							}
+						}
+					}
+					catch
+					{ }
+
+					// notify
+					lock (this.syncLock)
+					{
+						bufferedLine = line;
+						Monitor.PulseAll(this.syncLock);
+					}
+					if (line == null)
+						break;
+				}
+				this.source.Logger.LogTrace($"Complete reading lines from {name}");
+			}
 		}
 
 
@@ -234,6 +398,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 					process.StartInfo.Arguments = this.arguments;
 			}
 			process.StartInfo.UseShellExecute = false;
+			process.StartInfo.RedirectStandardError = true;
 			process.StartInfo.RedirectStandardOutput = true;
 			process.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
 			process.StartInfo.CreateNoWindow = true;
@@ -250,7 +415,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				reader = null;
 				return LogDataSourceState.SourceNotFound;
 			}
-			reader = new ReaderImpl(process);
+			reader = new ReaderImpl(this, process, options.IncludeStandardError);
 			return LogDataSourceState.ReaderOpened;
 		}
 

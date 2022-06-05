@@ -50,6 +50,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		static readonly AvaloniaProperty<bool> IsCommandSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsCommandSupported));
 		static readonly AvaloniaProperty<bool> IsEncodingSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsEncodingSupported));
 		static readonly AvaloniaProperty<bool> IsFileNameSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsFileNameSupported));
+		static readonly AvaloniaProperty<bool> IsIncludeStandardErrorSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>("IsIncludeStandardErrorSupported");
 		static readonly AvaloniaProperty<bool> IsIPEndPointSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsIPEndPointSupported));
 		static readonly AvaloniaProperty<bool> IsPasswordRequiredProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsPasswordRequired));
 		static readonly AvaloniaProperty<bool> IsPasswordSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsPasswordSupported));
@@ -70,6 +71,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly TextBox commandTextBox;
 		readonly ComboBox encodingComboBox;
 		readonly TextBox fileNameTextBox;
+		readonly ToggleSwitch includeStderrSwitch;
 		readonly IPAddressTextBox ipAddressTextBox;
 		readonly TextBox passwordTextBox;
 		readonly IntegerTextBox portTextBox;
@@ -100,6 +102,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			});
 			this.encodingComboBox = this.FindControl<ComboBox>("encodingComboBox").AsNonNull();
 			this.fileNameTextBox = this.FindControl<TextBox>("fileNameTextBox").AsNonNull();
+			this.includeStderrSwitch = this.Get<ToggleSwitch>(nameof(includeStderrSwitch));
 			this.ipAddressTextBox = this.FindControl<IPAddressTextBox>(nameof(ipAddressTextBox)).AsNonNull();
 			this.passwordTextBox = this.FindControl<TextBox>("passwordTextBox").AsNonNull();
 			this.portTextBox = this.FindControl<IntegerTextBox>(nameof(portTextBox)).AsNonNull();
@@ -207,6 +210,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				options.Encoding = this.encodingComboBox.SelectedItem as Encoding;
 			if (this.IsFileNameSupported)
 				options.FileName = this.fileNameTextBox.Text?.Trim();
+			if (this.GetValue<bool>(IsIncludeStandardErrorSupportedProperty))
+				options.IncludeStandardError = this.includeStderrSwitch.IsChecked.GetValueOrDefault();
 			if (this.IsIPEndPointSupported)
             {
 				this.ipAddressTextBox.Object?.Let(address =>
@@ -353,22 +358,24 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (this.IsCategorySupported)
 			{
 				this.categoryTextBox.Text = options.Category;
-				firstEditor = firstEditor ?? this.categoryTextBox;
+				firstEditor ??= this.categoryTextBox;
 			}
 			if (this.IsCommandSupported)
 			{
 				this.commandTextBox.Text = options.Command;
-				firstEditor = firstEditor ?? this.commandTextBox;
+				firstEditor ??= this.commandTextBox;
 			}
 			if (this.IsFileNameSupported)
 			{
 				this.fileNameTextBox.Text = options.FileName;
-				firstEditor = firstEditor ?? this.fileNameTextBox;
+				firstEditor ??= this.fileNameTextBox;
 			}
+			if (this.GetValue<bool>(IsIncludeStandardErrorSupportedProperty))
+				this.includeStderrSwitch.IsChecked = options.IncludeStandardError;
 			if (this.IsWorkingDirectorySupported)
 			{
 				this.workingDirectoryTextBox.Text = options.WorkingDirectory;
-				firstEditor = firstEditor ?? this.workingDirectoryTextBox;
+				firstEditor ??= this.workingDirectoryTextBox;
 			}
 			if (this.IsIPEndPointSupported)
 			{
@@ -377,42 +384,42 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.ipAddressTextBox.Object = it.Address;
 					this.portTextBox.Value = it.Port;
 				});
-				firstEditor = firstEditor ?? this.ipAddressTextBox;
+				firstEditor ??= this.ipAddressTextBox;
 			}
 			if (this.IsUriSupported)
 			{
 				this.uriTextBox.Object = options.Uri;
-				firstEditor = firstEditor ?? this.uriTextBox;
+				firstEditor ??= this.uriTextBox;
 			}
 			if (this.IsEncodingSupported)
 			{
 				this.encodingComboBox.SelectedItem = options.Encoding ?? Encoding.UTF8;
-				firstEditor = firstEditor ?? this.encodingComboBox;
+				firstEditor ??= this.encodingComboBox;
 			}
 			if (this.IsQueryStringSupported)
 			{
 				this.queryStringTextBox.Text = options.QueryString;
-				firstEditor = firstEditor ?? this.queryStringTextBox;
+				firstEditor ??= this.queryStringTextBox;
 			}
 			if (this.IsUserNameSupported)
 			{
 				this.userNameTextBox.Text = options.UserName;
-				firstEditor = firstEditor ?? this.userNameTextBox;
+				firstEditor ??= this.userNameTextBox;
 			}
 			if (this.IsPasswordSupported)
 			{
 				this.passwordTextBox.Text = options.Password;
-				firstEditor = firstEditor ?? this.passwordTextBox;
+				firstEditor ??= this.passwordTextBox;
 			}
 			if (this.IsSetupCommandsSupported)
 			{
 				this.setupCommands.AddRange(options.SetupCommands);
-				firstEditor = firstEditor ?? this.setupCommandsListBox;
+				firstEditor ??= this.setupCommandsListBox;
 			}
 			if (this.IsTeardownCommandsSupported)
 			{
 				this.teardownCommands.AddRange(options.TeardownCommands);
-				firstEditor = firstEditor ?? this.teardownCommandsListBox;
+				firstEditor ??= this.teardownCommandsListBox;
 			}
 
 			// move focus to first editor
@@ -441,6 +448,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.SetValue<bool>(IsCommandSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.Command)));
 					this.SetValue<bool>(IsEncodingSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.Encoding)));
 					this.SetValue<bool>(IsFileNameSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.FileName)));
+					this.SetValue<bool>(IsIncludeStandardErrorSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.IncludeStandardError)));
 					this.SetValue<bool>(IsIPEndPointSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.IPEndPoint)));
 					this.SetValue<bool>(IsPasswordRequiredProperty, provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.Password)));
 					this.SetValue<bool>(IsPasswordSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.Password)));
@@ -463,6 +471,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.SetValue<bool>(IsCommandSupportedProperty, false);
 					this.SetValue<bool>(IsEncodingSupportedProperty, false);
 					this.SetValue<bool>(IsFileNameSupportedProperty, false);
+					this.SetValue<bool>(IsIncludeStandardErrorSupportedProperty, false);
 					this.SetValue<bool>(IsIPEndPointSupportedProperty, false);
 					this.SetValue<bool>(IsPasswordRequiredProperty, false);
 					this.SetValue<bool>(IsPasswordSupportedProperty, false);

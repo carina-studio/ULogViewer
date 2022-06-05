@@ -113,6 +113,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 					&& this.Command == options.Command
 					&& this.Encoding == options.Encoding
 					&& this.FileName == options.FileName
+					&& this.IncludeStandardError == options.IncludeStandardError
 					&& object.Equals(this.IPEndPoint, options.IPEndPoint)
 					&& this.Password == options.Password
 					&& this.QueryString == options.QueryString
@@ -161,6 +162,12 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				return propertyInfo?.GetValue(this);
 			return null;
 		}
+
+
+		/// <summary>
+		/// Get or set whether standard errpr (stderr) should be included or not.
+		/// </summary>
+		public bool IncludeStandardError { get; set; }
 
 
 		/// <summary>
@@ -228,6 +235,9 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 							break;
 						case nameof(FileName):
 							options.FileName = jsonProperty.Value.GetString();
+							break;
+						case nameof(IncludeStandardError):
+							options.IncludeStandardError = jsonProperty.Value.ValueKind == JsonValueKind.True;
 							break;
 						case nameof(IPEndPoint):
 							if (jsonProperty.Value.ValueKind == JsonValueKind.Object)
@@ -318,6 +328,8 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				this.Command?.Let(it => jsonWriter.WriteString(nameof(Command), it));
 				this.Encoding?.Let(it => jsonWriter.WriteString(nameof(Encoding), it.WebName));
 				this.FileName?.Let(it => jsonWriter.WriteString(nameof(FileName), it));
+				if (this.IncludeStandardError)
+					jsonWriter.WriteBoolean(nameof(IncludeStandardError), true);
 				this.IPEndPoint?.Let(it =>
 				{
 					jsonWriter.WritePropertyName(nameof(IPEndPoint));
