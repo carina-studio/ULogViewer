@@ -1119,17 +1119,14 @@ namespace CarinaStudio.ULogViewer.Controls
 							it.Children.Add(propertyView);
 							it.Children.Add(new LinkTextBlock().Also(viewDetails =>
 							{
+								viewDetails.Command = new Command(() =>
+								{
+									if (viewDetails.FindLogicalAncestorOfType<ListBoxItem>()?.DataContext is DisplayableLog log)
+										this.ShowLogStringProperty(log, logProperty);
+								});
 								viewDetails.HorizontalAlignment = HorizontalAlignment.Left;
 								viewDetails.Bind(TextBlock.IsVisibleProperty, new Binding() { Path = $"HasExtraLinesOf{logProperty.Name}" });
 								viewDetails.Bind(TextBlock.TextProperty, viewDetails.GetResourceObservable("String/SessionView.ViewFullLogMessage"));
-								viewDetails.PointerReleased += (_, e) =>
-								{
-									if (e.InitialPressMouseButton == Avalonia.Input.MouseButton.Left 
-										&& viewDetails.FindLogicalAncestorOfType<ListBoxItem>()?.DataContext is DisplayableLog log)
-									{
-										this.ShowLogStringProperty(log, logProperty);
-									}
-								};
 							}));
 							it.Orientation = Orientation.Vertical;
 						});
