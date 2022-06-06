@@ -493,8 +493,6 @@
 	<sys:String x:Key="String/SessionView.CopyLogs">复制日志</sys:String>
 	<sys:String x:Key="String/SessionView.CopyLogsWithFileNames">复制日志 (包含档案名称)</sys:String>
 	<sys:String x:Key="String/SessionView.CpuUsage">CPU 使用率</sys:String>
-	<sys:String x:Key="String/SessionView.CreateLogAnalysisRuleSets">建立…</sys:String>
-	<sys:String x:Key="String/SessionView.CreatePredefinedLogTextFilter">建立</sys:String>
 	<sys:String x:Key="String/SessionView.EditConfiguration">编辑內部配置…</sys:String>
 	<sys:String x:Key="String/SessionView.EditPersistentState">编辑內部存储的状态…</sys:String>
 	<sys:String x:Key="String/SessionView.FailedToExportLogAnalysisRuleSet">无法将规则集 '{0}' 导出至 '{1}'。</sys:String>

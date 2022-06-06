@@ -602,7 +602,7 @@
 												</ListBox>
 												<TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" HorizontalAlignment="Center" IsVisible="{Binding !$parent[UserControl].PredefinedLogTextFilters.Count}" Margin="{StaticResource Thickness/SessionView.NoPredefinedLogTextFilterHint.Margin}" Text="{DynamicResource String/Common.Empty}" TextWrapping="Wrap" VerticalAlignment="Center"/>
 												<StackPanel Grid.Column="1" VerticalAlignment="Top">
-													<Button Classes="BrowseButton" Command="{Binding $parent[UserControl].CreatePredefinedLogTextFilter}" ToolTip.Tip="{DynamicResource String/SessionView.CreatePredefinedLogTextFilter}">
+													<Button Classes="BrowseButton" Command="{Binding $parent[UserControl].CreatePredefinedLogTextFilter}" ToolTip.Tip="{DynamicResource String/Common.Create}">
 														<Image Classes="BrowseButtonIcon" Source="{StaticResource Image/Icon.Add}"/>
 													</Button>
 													<Separator Classes="Dialog_Separator_Small"/>
@@ -1151,7 +1151,7 @@
 											</ListBox>
 											<TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" HorizontalAlignment="Center" IsVisible="{Binding !RuleSets.Count, Source={x:Static appAnalysis:KeyLogAnalysisRuleSetManager.Default}}" Margin="{StaticResource Thickness/SessionView.NoLogAnalysisRuleSetHint.Margin}" Text="{DynamicResource String/Common.Empty}" TextWrapping="Wrap" VerticalAlignment="Center"/>
 											<StackPanel Grid.Column="1" VerticalAlignment="Top">
-												<Button Classes="BrowseButton" Command="{Binding $parent[UserControl].CreateKeyLogAnalysisRuleSet}" ToolTip.Tip="{DynamicResource String/SessionView.CreatePredefinedLogTextFilter}">
+												<Button Classes="BrowseButton" Command="{Binding $parent[UserControl].CreateKeyLogAnalysisRuleSet}" ToolTip.Tip="{DynamicResource String/Common.Create}">
 													<Image Classes="BrowseButtonIcon" Source="{StaticResource Image/Icon.Add}"/>
 												</Button>
 												<Separator Classes="Dialog_Separator_Small"/>
@@ -1193,7 +1193,7 @@
 											</ListBox>
 											<TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" HorizontalAlignment="Center" IsVisible="{Binding !RuleSets.Count, Source={x:Static appAnalysis:KeyLogAnalysisRuleSetManager.Default}}" Margin="{StaticResource Thickness/SessionView.NoLogAnalysisRuleSetHint.Margin}" Text="{DynamicResource String/Common.Empty}" TextWrapping="Wrap" VerticalAlignment="Center"/>
 											<StackPanel Grid.Column="1" VerticalAlignment="Top">
-												<Button Classes="BrowseButton" Command="{Binding $parent[UserControl].CreateOperationDurationAnalysisRuleSet}" ToolTip.Tip="{DynamicResource String/SessionView.CreatePredefinedLogTextFilter}">
+												<Button Classes="BrowseButton" Command="{Binding $parent[UserControl].CreateOperationDurationAnalysisRuleSet}" ToolTip.Tip="{DynamicResource String/Common.Create}">
 													<Image Classes="BrowseButtonIcon" Source="{StaticResource Image/Icon.Add}"/>
 												</Button>
 												<Separator Classes="Dialog_Separator_Small"/>
