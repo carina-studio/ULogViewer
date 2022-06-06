@@ -340,6 +340,12 @@ namespace CarinaStudio.ULogViewer
 				});
 			}
 
+			// setup external dependencies
+			this.externalDependencies = new ExternalDependency[] {
+				new ExecutableExternalDependency(this, "AndroidSDK", ExternalDependencyPriority.RequiredByFeatures, "adb", new Uri("https://developer.android.com/"), new Uri("https://developer.android.com/studio")),
+				new ExecutableExternalDependency(this, "Git", ExternalDependencyPriority.RequiredByFeatures, "git", new Uri("https://git-scm.com/"), new Uri("https://git-scm.com/downloads")),
+			};
+
 			// call base
 			await base.OnPrepareStartingAsync();
 

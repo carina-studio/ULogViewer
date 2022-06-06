@@ -130,6 +130,12 @@
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Performance">Performance</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.TimeSpan">Time span</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Warning">Warning</sys:String>
+
+	<!-- ExternalDependency-->
+	<sys:String x:Key="String/ExternalDependency.AndroidSDK">Android SDK</sys:String>
+	<sys:String x:Key="String/ExternalDependency.AndroidSDK.Description">'Android Device Log' and 'Android Device Event Log' built-in log profiles use Android Debug Bridge (ADB) which is distributed with Android SDK.</sys:String>
+	<sys:String x:Key="String/ExternalDependency.Git">Git</sys:String>
+	<sys:String x:Key="String/ExternalDependency.Git.Description">'Git Log' and 'Git Log (Simple)' built-in log profiles use Git to read commit logs.</sys:String>
 	
 	<!-- FileFormat -->
 	<sys:String x:Key="String/FileFormat.Json">JSON File</sys:String>

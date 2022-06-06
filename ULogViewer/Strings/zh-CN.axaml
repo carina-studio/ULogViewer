@@ -125,6 +125,12 @@
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.TimeSpan">时距</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Warning">警告</sys:String>
 
+	<!-- ExternalDependency-->
+	<sys:String x:Key="String/ExternalDependency.AndroidSDK">Android SDK</sys:String>
+	<sys:String x:Key="String/ExternalDependency.AndroidSDK.Description">「Android 设备日志」 及 「Android 设备事件日志」 内建日志类型会使用跟随 Android SDK 发布之 Android Debug Bridge (ADB)。</sys:String>
+	<sys:String x:Key="String/ExternalDependency.Git">Git</sys:String>
+	<sys:String x:Key="String/ExternalDependency.Git.Description">「Git 提交纪录」 及 「Git 提交纪录 (精简)」 内建日志类型会使用 Git 读取提交纪录。</sys:String>
+
 	<!-- FileFormat -->
 	<sys:String x:Key="String/FileFormat.Json">JSON 档案</sys:String>
 	<sys:String x:Key="String/FileFormat.Log">日志档案</sys:String>
@@ -143,7 +149,6 @@
 	<sys:String x:Key="String/JsonLogsSavingOptionsDialog.Title">JSON 选项</sys:String>
 
 	<!-- KeyLogAnalysisRuleEditorDialog -->
-	
 	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Message">分析结果信息 (必要)</sys:String>
 	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Message.Description">您可以使用插值语法 "{}" 以将日志属性或格式中的自定义分组输出至消息</sys:String>
 	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Pattern">格式 (必要)</sys:String>
