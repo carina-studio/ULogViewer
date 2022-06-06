@@ -136,7 +136,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			// select file
 			var fileName = await new SaveFileDialog().Also(it =>
 			{
-				it.Filters.Add(new FileDialogFilter().Also(filter =>
+				it.Filters!.Add(new FileDialogFilter().Also(filter =>
 				{
 					filter.Extensions.Add("json");
 					filter.Name = this.Application.GetString("FileFormat.Json");
@@ -189,7 +189,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			// select file
 			var fileNames = await new OpenFileDialog().Also(it =>
 			{
-				it.Filters.Add(new FileDialogFilter().Also(filter =>
+				it.Filters!.Add(new FileDialogFilter().Also(filter =>
 				{
 					filter.Extensions.Add("json");
 					filter.Name = this.Application.GetString("FileFormat.Json");
