@@ -69,9 +69,8 @@
 
   <ItemGroup>
     <PackageReference Include="Avalonia.AvaloniaEdit" Version="0.10.12.2" />
-    <PackageReference Include="CarinaStudio.AppSuite.Core" Version="1.8.0.606-preview" />
+    <PackageReference Include="CarinaStudio.AppSuite.Core" Version="1.8.1.606-preview" />
     <PackageReference Include="Dotnet.Bundle" Version="0.9.13" />
-    <PackageReference Include="Microsoft.Win32.SystemEvents" Version="6.0.0" />
     <PackageReference Include="System.Data.Common" Version="4.3.0" />
     <PackageReference Include="System.Data.SQLite" Version="1.0.115.5" />
     <PackageReference Include="System.Diagnostics.EventLog" Version="6.0.0" />
