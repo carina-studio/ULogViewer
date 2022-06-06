@@ -4,6 +4,7 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.Markup.Xaml.Styling;
 using Avalonia.Styling;
+using CarinaStudio.AppSuite;
 using CarinaStudio.Configuration;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.ULogViewer.Logs.Profiles;
@@ -35,6 +36,10 @@ namespace CarinaStudio.ULogViewer
 		static readonly SettingKey<string> LegacyThemeModeSettingKey = new SettingKey<string>("ThemeMode", "");
 
 
+		// Fields.
+		ExternalDependency[] externalDependencies = new ExternalDependency[0];
+
+
 		// Constructor.
 		public App()
 		{
@@ -59,6 +64,14 @@ namespace CarinaStudio.ULogViewer
 		{
 			get => (App)Application.Current;
 		}
+
+
+		/// <inheritdoc/>
+		public override IEnumerable<ExternalDependency> ExternalDependencies { get => this.externalDependencies; }
+
+
+		/// <inheritdoc/>
+		public override int ExternalDependenciesVersion => 1;
 
 
 		// Accept update for testing purpose.
