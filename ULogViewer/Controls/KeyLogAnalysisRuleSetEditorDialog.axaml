@@ -59,27 +59,31 @@
 
 			<!-- Rules -->
 			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/KeyLogAnalysisRuleSetEditorDialog.Rules}"/>
-			<asControls:ListBox Name="ruleListBox" Height="{StaticResource Double/KeyLogAnalysisRuleSetEditorDialog.RuleListBox.Height}" Items="{Binding $parent[Window].Rules}">
-				<asControls:ListBox.ItemTemplate>
-					<DataTemplate>
-						<Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto">
-							<Image Classes="Icon" Height="{StaticResource Double/KeyLogAnalysisRuleSetEditorDialog.RuleListBox.Item.Icon.Size}" Margin="{StaticResource Thickness/KeyLogAnalysisRuleSetEditorDialog.RuleListBox.Item.Icon.Margin}" Source="{Binding ResultType, Converter={x:Static appConverters:DisplayableLogAnalysisResultIconConverter.Default}}" VerticalAlignment="Center" Width="{StaticResource Double/KeyLogAnalysisRuleSetEditorDialog.RuleListBox.Item.Icon.Size}"/>
-							<TextBlock Grid.Column="1" Margin="{StaticResource Thickness/KeyLogAnalysisRuleSetEditorDialog.RuleListBox.Item.Pattern.Margin}" Text="{Binding Pattern}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
-							<TextBlock Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="1" Opacity="{StaticResource Double/KeyLogAnalysisRuleSetEditorDialog.RuleListBox.Item.Message.Opacity}" Text="{Binding Message}" TextTrimming="CharacterEllipsis"/>
-							<Border Classes="InPlaceAction_Reserved"/>
-							<StackPanel Grid.Column="2" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
-								<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveRule}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
-									<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Delete}"/>
-								</Button>
-								<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditRule}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
-									<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Edit}"/>
-								</Button>
-							</StackPanel>
-						</Grid>
-					</DataTemplate>
-				</asControls:ListBox.ItemTemplate>
-			</asControls:ListBox>
-			<Button Classes="ListAction" Command="{Binding $parent[Window].AddRule}" Content="{DynamicResource String/Common.Add}"/>
+			<Grid ColumnDefinitions="*,Auto">
+				<asControls:ListBox Name="ruleListBox" Height="{StaticResource Double/KeyLogAnalysisRuleSetEditorDialog.RuleListBox.Height}" Items="{Binding $parent[Window].Rules}">
+					<asControls:ListBox.ItemTemplate>
+						<DataTemplate>
+							<Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto">
+								<Image Classes="Icon" Height="{StaticResource Double/KeyLogAnalysisRuleSetEditorDialog.RuleListBox.Item.Icon.Size}" Margin="{StaticResource Thickness/KeyLogAnalysisRuleSetEditorDialog.RuleListBox.Item.Icon.Margin}" Source="{Binding ResultType, Converter={x:Static appConverters:DisplayableLogAnalysisResultIconConverter.Default}}" VerticalAlignment="Center" Width="{StaticResource Double/KeyLogAnalysisRuleSetEditorDialog.RuleListBox.Item.Icon.Size}"/>
+								<TextBlock Grid.Column="1" Margin="{StaticResource Thickness/KeyLogAnalysisRuleSetEditorDialog.RuleListBox.Item.Pattern.Margin}" Text="{Binding Pattern}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+								<TextBlock Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="1" Opacity="{StaticResource Double/KeyLogAnalysisRuleSetEditorDialog.RuleListBox.Item.Message.Opacity}" Text="{Binding Message}" TextTrimming="CharacterEllipsis"/>
+								<Border Classes="InPlaceAction_Reserved"/>
+								<StackPanel Grid.Column="2" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
+									<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveRule}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
+										<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Delete}"/>
+									</Button>
+									<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditRule}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
+										<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Edit}"/>
+									</Button>
+								</StackPanel>
+							</Grid>
+						</DataTemplate>
+					</asControls:ListBox.ItemTemplate>
+				</asControls:ListBox>
+				<Button Classes="BrowseButton" Command="{Binding $parent[Window].AddRule}" Grid.Column="1" VerticalAlignment="Top">
+					<Image Classes="BrowseButtonIcon" Source="{StaticResource Image/Icon.Add}"/>
+				</Button>
+			</Grid>
 			
 		</StackPanel>
 		

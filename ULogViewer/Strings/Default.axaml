@@ -255,7 +255,6 @@
 	<sys:String x:Key="String/LogProfileEditorDialog.ColorIndicator">Color indicator</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.ColorIndicator.Description">Way of grouping to show color block on the left hand side of each log</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Common">Common</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.DataSourceOptions">Options…</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.DataSourceProvider">Data source</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Description">Description</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.DuplicateLogLevelMapEntry">Conversion from '{0}' is already defined.</sys:String>

@@ -94,8 +94,10 @@
 			<StackPanel IsVisible="{Binding $parent[Window].IsFileNameSupported}" Orientation="Vertical">
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogDataSourceOptionsDialog.FileName}"/>
 				<Grid ColumnDefinitions="*,Auto">
-					<TextBox Name="fileNameTextBox" Classes="Dialog_TextBox"/>
-					<Button Classes="BrowseButton" Command="{Binding $parent[Window].SelectFileName}" Grid.Column="1"/>
+					<TextBox Name="fileNameTextBox" Classes="Dialog_TextBox" VerticalAlignment="Center"/>
+					<Button Classes="BrowseButton" Command="{Binding $parent[Window].SelectFileName}" Grid.Column="1" VerticalAlignment="Center">
+						<Image Classes="BrowseButtonIcon" Source="{DynamicResource Image/Icon.OpenFile}"/>
+					</Button>
 				</Grid>
 				<Separator Classes="Dialog_Separator"/>
 			</StackPanel>
@@ -104,8 +106,10 @@
 			<StackPanel IsVisible="{Binding $parent[Window].IsWorkingDirectorySupported}" Orientation="Vertical">
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogDataSourceOptionsDialog.WorkingDirectory}"/>
 				<Grid ColumnDefinitions="*,Auto">
-					<TextBox Name="workingDirectoryTextBox" Classes="Dialog_TextBox"/>
-					<Button Classes="BrowseButton" Command="{Binding $parent[Window].SelectWorkingDirectory}" Grid.Column="1"/>
+					<TextBox Name="workingDirectoryTextBox" Classes="Dialog_TextBox" VerticalAlignment="Center"/>
+					<Button Classes="BrowseButton" Command="{Binding $parent[Window].SelectWorkingDirectory}" Grid.Column="1" VerticalAlignment="Center">
+						<Image Classes="BrowseButtonIcon" Source="{DynamicResource Image/Icon.OpenFile}"/>
+					</Button>
 				</Grid>
 				<Separator Classes="Dialog_Separator"/>
 			</StackPanel>
@@ -176,8 +180,12 @@
 					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogDataSourceOptionsDialog.SetupCommands}" VerticalAlignment="Center"/>
 					<TextBlock Classes="Dialog_TextBlock" IsVisible="{Binding $parent[Window].IsSetupCommandsRequired}" Text="{DynamicResource String/LogDataSourceOptionsDialog.Required}" VerticalAlignment="Center"/>
 				</StackPanel>
-				<asControls:ListBox Name="setupCommandsListBox" Classes="Commands" DoubleClickOnItem="OnListBoxDoubleClickOnItem" Height="{DynamicResource Double/LogDataSourceOptionsDialog.CommandListBox.Height}" Items="{Binding $parent[Window].SetupCommands}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged"/>
-				<Button Classes="ListAction" Command="{Binding $parent[Window].AddSetupCommand}" Content="{DynamicResource String/Common.Add}"/>
+				<Grid ColumnDefinitions="*,Auto">
+					<asControls:ListBox Name="setupCommandsListBox" Classes="Commands" DoubleClickOnItem="OnListBoxDoubleClickOnItem" Height="{DynamicResource Double/LogDataSourceOptionsDialog.CommandListBox.Height}" Items="{Binding $parent[Window].SetupCommands}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged"/>
+					<Button Classes="BrowseButton" Command="{Binding $parent[Window].AddSetupCommand}" Grid.Column="1" VerticalAlignment="Top">
+						<Image Classes="BrowseButtonIcon" Source="{DynamicResource Image/Icon.Add}"/>
+					</Button>
+				</Grid>
 				<Separator Classes="Dialog_Separator"/>
 			</StackPanel>
 
@@ -187,8 +195,12 @@
 					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogDataSourceOptionsDialog.TeardownCommands}" VerticalAlignment="Center"/>
 					<TextBlock Classes="Dialog_TextBlock" IsVisible="{Binding $parent[Window].IsTeardownCommandsRequired}" Text="{DynamicResource String/LogDataSourceOptionsDialog.Required}" VerticalAlignment="Center"/>
 				</StackPanel>
-				<asControls:ListBox Name="teardownCommandsListBox" Classes="Commands" DoubleClickOnItem="OnListBoxDoubleClickOnItem" Height="{DynamicResource Double/LogDataSourceOptionsDialog.CommandListBox.Height}" Items="{Binding $parent[Window].TeardownCommands}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged"/>
-				<Button Classes="ListAction" Command="{Binding $parent[Window].AddTeardownCommand}" Content="{DynamicResource String/Common.Add}"/>
+				<Grid ColumnDefinitions="*,Auto">
+					<asControls:ListBox Name="teardownCommandsListBox" Classes="Commands" DoubleClickOnItem="OnListBoxDoubleClickOnItem" Height="{DynamicResource Double/LogDataSourceOptionsDialog.CommandListBox.Height}" Items="{Binding $parent[Window].TeardownCommands}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged"/>
+					<Button Classes="BrowseButton" Command="{Binding $parent[Window].AddTeardownCommand}" Grid.Column="1" VerticalAlignment="Top">
+						<Image Classes="BrowseButtonIcon" Source="{DynamicResource Image/Icon.Add}"/>
+					</Button>
+				</Grid>
 				<Separator Classes="Dialog_Separator"/>
 			</StackPanel>
 			

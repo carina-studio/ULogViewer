@@ -235,7 +235,6 @@
 	<sys:String x:Key="String/LogProfileEditorDialog.ColorIndicator">色彩指示</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.ColorIndicator.Description">顯示於日誌左側的色塊分組方式</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Common">一般設定</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.DataSourceOptions">參數…</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.DataSourceProvider">資料來源</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Description">描述</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.DuplicateLogLevelMapEntry">已經定義從 '{0}' 的轉換。</sys:String>

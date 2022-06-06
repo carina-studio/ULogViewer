@@ -58,25 +58,29 @@
 
 			<!-- Rules -->
 			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/OperationDurationAnalysisRuleSetEditorDialog.Rules}"/>
-			<asControls:ListBox Name="ruleListBox" Classes="Dialog_ListBox" Height="{StaticResource Double/OperationDurationAnalysisRuleSetEditorDialog.RuleListBox.Height}" Items="{Binding $parent[Window].Rules}">
-				<asControls:ListBox.ItemTemplate>
-					<DataTemplate>
-						<Grid ColumnDefinitions="*,Auto">
-							<TextBlock Text="{Binding OperationName}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
-							<Border Classes="InPlaceAction_Reserved"/>
-							<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
-								<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveRule}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
-									<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Delete}"/>
-								</Button>
-								<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditRule}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
-									<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Edit}"/>
-								</Button>
-							</StackPanel>
-						</Grid>
-					</DataTemplate>
-				</asControls:ListBox.ItemTemplate>
-			</asControls:ListBox>
-			<Button Classes="ListAction" Command="{Binding $parent[Window].AddRule}" Content="{DynamicResource String/Common.Add}"/>
+			<Grid ColumnDefinitions="*,Auto">
+				<asControls:ListBox Name="ruleListBox" Classes="Dialog_ListBox" Height="{StaticResource Double/OperationDurationAnalysisRuleSetEditorDialog.RuleListBox.Height}" Items="{Binding $parent[Window].Rules}">
+					<asControls:ListBox.ItemTemplate>
+						<DataTemplate>
+							<Grid ColumnDefinitions="*,Auto">
+								<TextBlock Text="{Binding OperationName}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+								<Border Classes="InPlaceAction_Reserved"/>
+								<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
+									<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveRule}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
+										<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Delete}"/>
+									</Button>
+									<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditRule}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
+										<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Edit}"/>
+									</Button>
+								</StackPanel>
+							</Grid>
+						</DataTemplate>
+					</asControls:ListBox.ItemTemplate>
+				</asControls:ListBox>
+				<Button Classes="BrowseButton" Command="{Binding $parent[Window].AddRule}" Grid.Column="1" VerticalAlignment="Top">
+					<Image Classes="BrowseButtonIcon" Source="{StaticResource Image/Icon.Add}"/>
+				</Button>
+			</Grid>
 
 		</StackPanel>
 		
