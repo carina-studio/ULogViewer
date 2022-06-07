@@ -2258,6 +2258,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Raised when one or more external dependencies not found.
+		/// </summary>
+		public event EventHandler? ExternalDependencyNotFound;
+
+
+		/// <summary>
 		/// Get number of filtered logs.
 		/// </summary>
 		public int FilteredLogCount { get => this.GetValue(FilteredLogCountProperty); }
@@ -3366,6 +3372,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 									this.ErrorMessageGenerated?.Invoke(this, new MessageEventArgs(message));
 								}
 							}
+							else if (source.State == LogDataSourceState.ExternalDependencyNotFound)
+								this.ExternalDependencyNotFound?.Invoke(this, EventArgs.Empty);
 						}
 						else if (reader.State == LogReaderState.ReadingLogs)
 						{

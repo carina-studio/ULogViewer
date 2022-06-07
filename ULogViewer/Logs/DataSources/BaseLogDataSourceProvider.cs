@@ -1,4 +1,5 @@
-﻿using CarinaStudio.Threading;
+﻿using CarinaStudio.AppSuite;
+using CarinaStudio.Threading;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -52,6 +53,10 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				this.OnPropertyChanged(nameof(DisplayName));
 			}
 		}
+
+
+		/// <inheritdoc/>
+		public virtual IEnumerable<ExternalDependency> ExternalDependencies { get; } = new ExternalDependency[0];
 
 
 		/// <summary>

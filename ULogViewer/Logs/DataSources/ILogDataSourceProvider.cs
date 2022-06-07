@@ -1,4 +1,5 @@
-﻿using CarinaStudio.Collections;
+﻿using CarinaStudio.AppSuite;
+using CarinaStudio.Collections;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Cryptography;
 using System;
@@ -41,6 +42,12 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// Get name for displaying purpose.
 		/// </summary>
 		string DisplayName { get; }
+
+
+		/// <summary>
+		/// Get all external dependencies needed by the source.
+		/// </summary>
+		IEnumerable<ExternalDependency> ExternalDependencies { get; }
 
 
 		/// <summary>

@@ -719,6 +719,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			// add event handler
 			session.ErrorMessageGenerated += this.OnErrorMessageGeneratedBySession;
+			session.ExternalDependencyNotFound += this.OnExternalDependencyNotFound;
 			session.PropertyChanged += this.OnSessionPropertyChanged;
 			this.attachedLogs = session.Logs as INotifyCollectionChanged;
 			if (this.attachedLogs != null)
@@ -1507,6 +1508,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// remove event handler
 			session.ErrorMessageGenerated -= this.OnErrorMessageGeneratedBySession;
+			session.ExternalDependencyNotFound -= this.OnExternalDependencyNotFound;
 			session.PropertyChanged -= this.OnSessionPropertyChanged;
 			if (this.attachedLogs != null)
 			{
@@ -2503,6 +2505,34 @@ namespace CarinaStudio.ULogViewer.Controls
 				Icon = MessageDialogIcon.Error,
 				Message = e.Message,
 			}.ShowDialog(this.attachedWindow);
+		}
+
+
+		// Called when external dependency not found.
+		async void OnExternalDependencyNotFound(object? sender, EventArgs e)
+		{
+			// check state
+			if (this.attachedWindow == null)
+				return;
+			var session = sender as Session;
+			if (session != null && !session.IsActivated)
+				return;
+			
+			// notify user
+			await new MessageDialog()
+			{
+				Icon = MessageDialogIcon.Error,
+				Message = this.Application.GetString("SessionView.ExternalDependencyNotFound"),
+			}.ShowDialog(this.attachedWindow);
+
+			// show external dependencies dialog
+			if (this.attachedWindow == null || (session != null && !session.IsActivated))
+				return;
+			await new ExternalDependenciesDialog().ShowDialog(this.attachedWindow);
+
+			// reload logs
+			if (this.DataContext == session && session != null && session.HasAllDataSourceErrors)
+				session.ReloadLogsCommand.TryExecute();
 		}
 
 

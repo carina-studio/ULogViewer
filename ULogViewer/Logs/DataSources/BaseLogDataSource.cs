@@ -1,6 +1,8 @@
-﻿using CarinaStudio.Threading;
+﻿using CarinaStudio.AppSuite;
+using CarinaStudio.Threading;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Threading;
@@ -129,6 +131,10 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			if (this.Provider is BaseLogDataSourceProvider baseProvider)
 				baseProvider.NotifySourceDisposedInternal(this);
 		}
+
+		
+		/// <inheritdoc/>
+		public IEnumerable<ExternalDependency> ExternalDependencies => this.Provider.ExternalDependencies;
 
 
 		/// <summary>
@@ -303,6 +309,20 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			// change state
 			if (this.ChangeState(LogDataSourceState.Preparing) != LogDataSourceState.Preparing)
 				return;
+			
+			// check external dependencies
+			foreach (var extDep in this.ExternalDependencies)
+			{
+				await extDep.WaitForCheckingAcailability();
+				if (this.state != LogDataSourceState.Preparing)
+					return;
+				if (extDep.State != ExternalDependencyState.Available)
+				{
+					this.Logger.LogError($"External dependency '{extDep.Id}' is unavailable");
+					this.ChangeState(LogDataSourceState.ExternalDependencyNotFound);
+					return;
+				}
+			}
 
 			// prepare
 			var result = await this.TaskFactory.StartNew(() =>

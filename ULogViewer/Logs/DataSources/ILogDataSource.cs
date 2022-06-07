@@ -1,5 +1,7 @@
-﻿using CarinaStudio.Threading;
+﻿using CarinaStudio.AppSuite;
+using CarinaStudio.Threading;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Threading;
@@ -22,6 +24,12 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// Get name for displaying purpose.
 		/// </summary>
 		string? DisplayName { get; }
+
+
+		/// <summary>
+		/// Get all external dependencies needed by the source.
+		/// </summary>
+		IEnumerable<ExternalDependency> ExternalDependencies { get; }
 
 
 		/// <summary>
@@ -60,8 +68,9 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// <returns>True if given <see cref="ILogDataSource"/> is now in error state.</returns>
 		public static bool IsErrorState(this ILogDataSource source) => source.State switch
 		{
-			LogDataSourceState.SourceNotFound => true,
-			LogDataSourceState.UnclassifiedError => true,
+			LogDataSourceState.ExternalDependencyNotFound
+			or LogDataSourceState.SourceNotFound
+			or LogDataSourceState.UnclassifiedError => true,
 			_ => false,
 		};
 	}
@@ -100,6 +109,10 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// Source cannot be found.
 		/// </summary>
 		SourceNotFound,
+		/// <summary>
+		/// External dependency cannot be found.
+		/// </summary>
+		ExternalDependencyNotFound,
 		/// <summary>
 		/// Unclassified error.
 		/// </summary>
