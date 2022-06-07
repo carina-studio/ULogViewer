@@ -35,6 +35,7 @@
 
 	<!-- LogDataSourceOptionsDialog -->
 	<sys:Double x:Key="Double/LogDataSourceOptionsDialog.CommandListBox.Height">150</sys:Double>
+	<sys:Double x:Key="Double/LogDataSourceOptionsDialog.Content.MaxHeight">500</sys:Double>
 	<sys:Double x:Key="Double/LogDataSourceOptionsDialog.Width">500</sys:Double>
 	
 	<!-- LogLevelComboBox -->
