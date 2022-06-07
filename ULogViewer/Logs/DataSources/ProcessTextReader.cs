@@ -1,3 +1,4 @@
+using System.Text;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -208,6 +209,25 @@ class ProcessTextReader : TextReader
                 break;
         }
         this.logger.LogTrace($"Complete reading lines from {name}");
+    }
+
+
+    /// <inheritdoc/>
+    public override string ReadToEnd()
+    {
+        if (this.stdoutReader != null)
+            return this.stdoutReader.ReadToEnd();
+        var buffer = new StringBuilder();
+        var line = this.ReadLine();
+        var isFirstLine = true;
+        while (line != null)
+        {
+            if (!isFirstLine)
+                buffer.AppendLine();
+            buffer.Append(line);
+            line = this.ReadLine();
+        }
+        return buffer.ToString();
     }
 
 
