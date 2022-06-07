@@ -1795,10 +1795,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 
 			// edit log profile
-			_ = new LogProfileEditorDialog()
-			{
-				LogProfile = profile,
-			}.ShowDialog(this.attachedWindow);
+			LogProfileEditorDialog.Show(this.attachedWindow, profile);
 		}
 
 

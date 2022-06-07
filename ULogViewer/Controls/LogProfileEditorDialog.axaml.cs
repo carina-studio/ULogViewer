@@ -41,6 +41,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Static fields.
+		static readonly Dictionary<LogProfile, LogProfileEditorDialog> NonBlockingDialogs = new();
 		static readonly SettingKey<bool> HasLearnAboutLogsReadingAndParsingHintShown = new SettingKey<bool>($"{nameof(LogProfileEditorDialog)}.{nameof(HasLearnAboutLogsReadingAndParsingHintShown)}");
 		static readonly AvaloniaProperty<bool> IsValidDataSourceOptionsProperty = AvaloniaProperty.Register<LogProfileEditorDialog, bool>(nameof(IsValidDataSourceOptions), true);
 		
@@ -593,6 +594,19 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		/// <inheritdoc/>
+		protected override void OnClosed(EventArgs e)
+		{
+			if (this.LogProfile != null 
+				&& NonBlockingDialogs.TryGetValue(this.LogProfile, out var dialog)
+				&& dialog == this)
+			{
+				NonBlockingDialogs.Remove(this.LogProfile);
+			}
+			base.OnClosed(e);
+		}
+
+
 		// Called when selection of data source provider changed.
 		void OnDataSourceProviderComboBoxSelectionChanged(object? sender, SelectionChangedEventArgs e)
 		{
@@ -862,6 +876,28 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.InvalidateInput();
 			}
 		}
+
+
+		/// <summary>
+		/// Show dialog in non-blocking mode.
+		/// </summary>
+		/// <param name="parent">Parent window.</param>
+		/// <param name="logProfile">Log profile to be edited.</param>
+		public static void Show(Avalonia.Controls.Window? parent, LogProfile? logProfile)
+		{
+			if (logProfile != null && NonBlockingDialogs.TryGetValue(logProfile, out var dialog))
+			{
+				dialog.ActivateAndBringToFront();
+				return;
+			}
+			dialog = new LogProfileEditorDialog()
+			{
+				LogProfile = logProfile,
+			};
+			if (logProfile != null)
+				NonBlockingDialogs[logProfile] = dialog;
+			dialog.Show(parent);
+		} 
 
 
 		// List of time span format to read logs.
