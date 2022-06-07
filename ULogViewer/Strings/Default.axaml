@@ -31,6 +31,9 @@
 	<sys:String x:Key="String/AppOptionsDialog.UpdateLogFilterDelay">Delay between changing conditions and start filtering (milliseconds)</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.UseSystemAccentColor">Apply system accent color</sys:String>
 
+	<!-- AzureCliLogDataSourceProvider -->
+	<sys:String x:Key="String/AzureCliLogDataSourceProvider.DisplayName">Azure CLI</sys:String>
+
 	<!-- Built-in profile -->
 	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceEventLog">Android Device Event Log</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceEventLog.Description">Real-time event logs from Android device through ADB.</sys:String>

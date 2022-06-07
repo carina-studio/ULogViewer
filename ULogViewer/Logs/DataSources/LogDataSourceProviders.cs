@@ -1,4 +1,7 @@
-﻿using CarinaStudio.Threading;
+﻿using System.Reflection.Metadata;
+using CarinaStudio.AppSuite.Product;
+using CarinaStudio.Collections;
+using CarinaStudio.Threading;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -16,7 +19,8 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		static volatile IULogViewerApplication? app;
 		static volatile EmptyLogDataSourceProvider? empty;
 		static volatile ILogger? logger;
-		static readonly List<ILogDataSourceProvider> providers = new List<ILogDataSourceProvider>();
+		static readonly SortedObservableList<ILogDataSourceProvider> providers = new((lhs, rhs) => string.Compare(lhs.Name, rhs.Name));
+		static readonly HashSet<ILogDataSourceProvider> providersForProVersion = new();
 
 
 		/// <summary>
@@ -50,12 +54,16 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			// attach to application
 			LogDataSourceProviders.app = app;
 
+			// attach to product manager
+			app.ProductManager.ProductStateChanged += OnProductStateChanged;
+
 			// create logger
 			logger = app.LoggerFactory.CreateLogger(typeof(LogDataSourceProviders).Name);
 
 			// create providers
 			logger.LogDebug("Initialize");
 			empty = new EmptyLogDataSourceProvider(app);
+			providersForProVersion.Add(new AzureCliLogDataSourceProvider(app));
 #if DEBUG
 			providers.Add(new DummyLogDataSourceProvider(app));
 #endif
@@ -69,6 +77,27 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			providers.Add(new UdpServerLogDataSourceProvider(app));
 			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 				providers.Add(new WindowsEventLogDataSourceProvider(app));
+			if (app.ProductManager.IsProductActivated(Products.Professional))
+				providers.AddAll(providersForProVersion);
+		}
+
+
+		// Called when state of product changed.
+		static void OnProductStateChanged(IProductManager? productManager, string productId)
+		{
+			if (productManager == null || productId != Products.Professional)
+				return;
+			if (!productManager.TryGetProductState(Products.Professional, out var state))
+				return;
+			switch (state)
+			{
+				case ProductState.Deactivated:
+					providers.RemoveAll(providersForProVersion.Contains);
+					break;
+				case ProductState.Activated:
+					providers.AddAll(providersForProVersion);
+					break;
+			}
 		}
 
 
