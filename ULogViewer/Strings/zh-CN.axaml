@@ -519,7 +519,11 @@
 	<sys:String x:Key="String/SessionView.LogCountInLogFile">日志个数：</sys:String>
 	<sys:String x:Key="String/SessionView.LogFilesPanel">已加入的日志档案</sys:String>
 	<sys:String x:Key="String/SessionView.LogFiltersCombinationMode">筛选条件运算方式 (交集/并集)</sys:String>
+	<sys:String x:Key="String/SessionView.LoginToAzure">登录 Azure</sys:String>
+	<sys:String x:Key="String/SessionView.LoginToAzure.WithProVersion">登录 Azure (专业版)</sys:String>
 	<sys:String x:Key="String/SessionView.LogLevelFilter.Description">使用等级筛选日志</sys:String>
+	<sys:String x:Key="String/SessionView.LogoutFromAzure">登出 Azure</sys:String>
+	<sys:String x:Key="String/SessionView.LogoutFromAzure.WithProVersion">登出 Azure (专业版)</sys:String>
 	<sys:String x:Key="String/SessionView.LogProcessIdFilter.Description">使用 进程ID (Process ID) 筛选日志</sys:String>
 	<sys:String x:Key="String/SessionView.LogsDuration">日志时间长度</sys:String>
 	<sys:String x:Key="String/SessionView.LogsDurationEndingPoint">最晚日志时间/最大日志时距</sys:String>
@@ -573,6 +577,7 @@
 	<sys:String x:Key="String/SessionView.ShowWorkingDirectoryInExplorer">在档案管理中开启工作目录</sys:String>
 	<sys:String x:Key="String/SessionView.SidePanel">侧边面板</sys:String>
 	<sys:String x:Key="String/SessionView.TimestampCategoriesPanel">时间戳分组</sys:String>
+	<sys:String x:Key="String/SessionView.Tools">工具</sys:String>
 	<sys:String x:Key="String/SessionView.TooManyDirectoryPathsDropped">请拖放单个目录。</sys:String>
 	<sys:String x:Key="String/SessionView.TotalLogsMemoryUsage">总日志内存使用量</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.CancelShowingMarkedLogsOnlyForSelectingLogAnalysisResult">在于目前的列表不包含分析结果的日志，因此必须取消只显示已标记的日志。您可以自行将其开启。</sys:String>
