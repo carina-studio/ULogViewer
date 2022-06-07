@@ -38,6 +38,7 @@ namespace CarinaStudio.ULogViewer
 
 		// Fields.
 		ExternalDependency[] externalDependencies = new ExternalDependency[0];
+		NativeMenuItem? toolsNativeMenuItem;
 
 
 		// Constructor.
@@ -349,29 +350,35 @@ namespace CarinaStudio.ULogViewer
 			// call base
 			await base.OnPrepareStartingAsync();
 
-			// remove debug menu items
-			if (!this.IsDebugMode)
+			// find menu items
+			NativeMenu.GetMenu(this)?.Let(menu =>
 			{
-				NativeMenu.GetMenu(this)?.Let(menu =>
+				for (var i = menu.Items.Count - 1; i >= 0 ; --i)
 				{
-					for (var i = menu.Items.Count - 1; i >= 0 ; --i)
+					var item = menu.Items[i];
+					if (item is not NativeMenuItem menuItem)
+						continue;
+					switch (menuItem.CommandParameter as string)
 					{
-						var item = menu.Items[i];
-						if (item is not NativeMenuItem menuItem)
-							continue;
-						switch (menuItem.CommandParameter as string)
-						{
-							case "EditConfiguration":
+						case "EditConfiguration":
+							if (!this.IsDebugMode)
+							{
 								menu.Items.RemoveAt(i--);
 								menu.Items.RemoveAt(i); // Separator
-								break;
-							case "EditPersistentState":
+							}
+							break;
+						case "EditPersistentState":
+							if (!this.IsDebugMode)
 								menu.Items.RemoveAt(i);
-								break;
-						}
+							break;
+						case "Tools":
+							toolsNativeMenuItem = menuItem;
+							menu.Items.RemoveAt(i--);
+							menu.Items.RemoveAt(i); // Separator
+							break;
 					}
-				});
-			}
+				}
+			});
 
 			// initialize log data source providers
 			this.UpdateSplashWindowMessage(this.GetStringNonNull("SplashWindow.InitializeLogProfiles"));

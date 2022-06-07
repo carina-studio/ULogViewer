@@ -21,6 +21,11 @@
 			<NativeMenuItem Click="OnNativeMenuItemClick" CommandParameter="EditConfiguration" Header="{DynamicResource String/SessionView.EditConfiguration}"/>
 			<NativeMenuItem Click="OnNativeMenuItemClick" CommandParameter="EditPersistentState" Header="{DynamicResource String/SessionView.EditPersistentState}"/>
 			<NativeMenuItemSeparator/>
+			<NativeMenuItem CommandParameter="Tools" Header="{DynamicResource String/SessionView.Tools}">
+				<NativeMenu>
+				</NativeMenu>
+			</NativeMenuItem>
+			<NativeMenuItemSeparator/>
 			<NativeMenuItem Click="OnNativeMenuItemClick" CommandParameter="AppInfo" Header="{DynamicResource String/SessionView.AppInfo}"/>
 			<NativeMenuItemSeparator/>
 			<NativeMenuItem Click="OnNativeMenuItemClick" CommandParameter="Shutdown" Header="{DynamicResource String/App.Shutdown}"/>

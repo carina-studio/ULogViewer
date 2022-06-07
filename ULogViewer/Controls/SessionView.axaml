@@ -319,6 +319,12 @@
 				</MenuItem.Icon>
 			</MenuItem>
 			<Separator IsVisible="{Binding $parent[UserControl].Application.IsDebugMode}"/>
+			<MenuItem Header="{DynamicResource String/SessionView.Tools}" IsVisible="False">
+				<MenuItem.Icon>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Tool.Outline}"/>
+				</MenuItem.Icon>
+			</MenuItem>
+			<Separator IsVisible="False"/>
 			<MenuItem Command="{Binding $parent[Window].ShowAppInfo}" Header="{DynamicResource String/SessionView.AppInfo}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Information.Outline}"/>
