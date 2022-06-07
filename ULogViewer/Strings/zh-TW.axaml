@@ -127,7 +127,7 @@
 
 	<!-- ExternalDependency-->
 	<sys:String x:Key="String/ExternalDependency.AndroidSDK">Android SDK</sys:String>
-	<sys:String x:Key="String/ExternalDependency.AndroidSDK.Description">「Android 裝置日誌」 及 「Android 裝置事件日誌」 內建日誌類型會使用跟隨 Android SDK 發布之 Android Debug Bridge (ADB)。</sys:String>
+	<sys:String x:Key="String/ExternalDependency.AndroidSDK.Description">「Android 裝置日誌」 及 「Android 裝置事件日誌」 內建日誌類型會使用跟隨 Android SDK 發布之 Android Debug Bridge (ADB)。對於 Windows/Linux 使用者，請將 Android SDK 中的 'platform-tools' 資料夾路徑加至 'PATH' 環境變數。對於 macOS 使用者，請將 Android SDK 中的 'platform-tools' 資料夾路徑加至 '/etc/paths'。</sys:String>
 	<sys:String x:Key="String/ExternalDependency.Git">Git</sys:String>
 	<sys:String x:Key="String/ExternalDependency.Git.Description">「Git 提交紀錄」 及 「Git 提交紀錄 (精簡)」 內建日誌類型會使用 Git 讀取提交紀錄。</sys:String>
 
