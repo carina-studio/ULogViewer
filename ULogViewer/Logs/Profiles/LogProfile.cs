@@ -1177,7 +1177,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				if (this.timestampCategoryGranularity == value)
 					return;
 				this.timestampCategoryGranularity = value;
-				this.OnPropertyChanged(nameof(timestampCategoryGranularity));
+				this.OnPropertyChanged(nameof(TimestampCategoryGranularity));
 			}
 		}
 
