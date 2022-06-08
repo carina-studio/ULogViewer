@@ -372,13 +372,16 @@ namespace CarinaStudio.ULogViewer
 								menu.Items.RemoveAt(i);
 							break;
 						case "Tools":
-							toolsNativeMenuItem = menuItem;
+						{
+							this.toolsNativeMenuItem = menuItem;
 							menu.Items.RemoveAt(i--);
 							menu.Items.RemoveAt(i); // Separator
 							break;
+						}
 					}
 				}
 			});
+			this.UpdateToolMenuItems();
 
 			// initialize log data source providers
 			this.UpdateSplashWindowMessage(this.GetStringNonNull("SplashWindow.InitializeLogProfiles"));
@@ -470,6 +473,12 @@ namespace CarinaStudio.ULogViewer
 
 		// Version of settings.
 		protected override int SettingsVersion => 3;
+
+
+		// Update menu items of tools.
+		void UpdateToolMenuItems()
+		{
+		}
 
 
 		/// <inheritdoc/>

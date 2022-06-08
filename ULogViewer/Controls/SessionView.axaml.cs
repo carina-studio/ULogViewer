@@ -496,6 +496,17 @@ namespace CarinaStudio.ULogViewer.Controls
 				it.MenuOpened += (_, e) => this.SynchronizationContext.Post(() => this.workingDirectoryActionsButton.IsChecked = true);
 			});
 
+			// find menu items
+			var toolsMenuItem = this.otherActionsMenu.Items.Let(it =>
+			{
+				foreach (var item in it)
+				{
+					if (item is MenuItem menuItem && menuItem.Name == "toolsMenuItem")
+						return menuItem;
+				}
+				return null;
+			}).AsNonNull();
+
 			// create scheduled actions
 			this.autoAddLogFilesAction = new ScheduledAction(() =>
 			{
@@ -2077,6 +2088,18 @@ namespace CarinaStudio.ULogViewer.Controls
 		double LogFontSize { get => this.GetValue<double>(LogFontSizeProperty); }
 
 
+		// Log in to Azure.
+		void LoginToAzure()
+		{
+		}
+
+
+		// Log out from Azure.
+		void LogoutFromAzure()
+		{
+		}
+
+
 		// Mark logs with color.
 		void MarkSelectedLogs(MarkColor color)
         {
@@ -2181,6 +2204,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.SetValue<bool>(IsProVersionActivatedProperty, this.Application.ProductManager.IsProductActivated(Products.Professional));
 			if (this.GetValue<bool>(IsProVersionActivatedProperty))
 				this.RecreateLogHeadersAndItemTemplate();
+			this.UpdateToolsMenuItems();
 
 			// setup predefined log text filter list
 			this.predefinedLogTextFilters.AddAll(PredefinedLogTextFilterManager.Default.Filters);
@@ -3380,7 +3404,10 @@ namespace CarinaStudio.ULogViewer.Controls
 			productManager.TryGetProductState(productId, out var state);
 			this.SetValue<bool>(IsProVersionActivatedProperty, state == ProductState.Activated);
 			if (state == ProductState.Deactivated || state == ProductState.Activated)
+			{
 				this.RecreateLogHeadersAndItemTemplate();
+				this.UpdateToolsMenuItems();
+			}
 		}
 
 
@@ -4627,6 +4654,12 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Get delay of updating log filter.
 		int UpdateLogFilterParamsDelay { get => Math.Max(SettingKeys.MinUpdateLogFilterDelay, Math.Min(SettingKeys.MaxUpdateLogFilterDelay, this.Settings.GetValueOrDefault(SettingKeys.UpdateLogFilterDelay))); }
+
+
+		// Update menu items of tools.
+		void UpdateToolsMenuItems()
+		{
+		}
 
 
 		// LIst of log levels defined by log profile.
