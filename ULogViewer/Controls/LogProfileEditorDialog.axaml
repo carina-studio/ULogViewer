@@ -101,7 +101,19 @@
 					<ComboBox Name="dataSourceProviderComboBox" HorizontalAlignment="Stretch" Items="{x:Static appDataSources:LogDataSourceProviders.All}" SelectionChanged="OnDataSourceProviderComboBoxSelectionChanged" VerticalAlignment="Center">
 						<ComboBox.ItemTemplate>
 							<DataTemplate>
-								<TextBlock Text="{Binding DisplayName}" TextTrimming="CharacterEllipsis"/>
+								<StackPanel Orientation="Horizontal">
+									<Image Classes="Icon" Height="{StaticResource Double/LogProfileEditorDialog.IconComboBox.Icon.Size}" Margin="{StaticResource Thickness/LogProfileEditorDialog.IconComboBox.Icon.Margin}" Source="{Binding Converter={x:Static appConverters:LogDataSourceProviderIconConverter.Default}}" Width="{StaticResource Double/LogProfileEditorDialog.IconComboBox.Icon.Size}">
+										<ia:Interaction.Behaviors>
+											<iaCore:DataTriggerBehavior Binding="{Binding $parent[ComboBoxItem].IsSelected}" Value="True">
+												<iaCore:ChangePropertyAction PropertyName="Source" Value="{Binding Converter={x:Static appConverters:LogDataSourceProviderIconConverter.Default}, ConverterParameter=Light}"/>
+											</iaCore:DataTriggerBehavior>
+											<iaCore:DataTriggerBehavior Binding="{Binding $parent[ComboBoxItem].IsSelected}" Value="False">
+												<iaCore:ChangePropertyAction PropertyName="Source" Value="{Binding Converter={x:Static appConverters:LogDataSourceProviderIconConverter.Default}}"/>
+											</iaCore:DataTriggerBehavior>
+										</ia:Interaction.Behaviors>
+									</Image>
+									<TextBlock Text="{Binding DisplayName}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+								</StackPanel>
 							</DataTemplate>
 						</ComboBox.ItemTemplate>
 					</ComboBox>
