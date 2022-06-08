@@ -2522,7 +2522,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			await new MessageDialog()
 			{
 				Icon = MessageDialogIcon.Error,
-				Message = this.Application.GetString("SessionView.ExternalDependencyNotFound"),
+				Message = this.Application.GetString("Common.ExternalDependencyNotFound"),
 			}.ShowDialog(this.attachedWindow);
 
 			// show external dependencies dialog

@@ -93,6 +93,7 @@
 	<sys:String x:Key="String/Common.Delete">删除</sys:String>
 	<sys:String x:Key="String/Common.Edit">编辑</sys:String>
 	<sys:String x:Key="String/Common.Empty">空</sys:String>
+	<sys:String x:Key="String/Common.ExternalDependencyNotFound">至少有一个必要的外部依赖没有安装至设备，请先安装后再尝试。</sys:String>
 	<sys:String x:Key="String/Common.KnowMoreAbout">了解更多</sys:String>
 	<sys:String x:Key="String/Common.MoveDown">下移</sys:String>
 	<sys:String x:Key="String/Common.MoveUp">上移</sys:String>
@@ -496,7 +497,6 @@
 	<sys:String x:Key="String/SessionView.CpuUsage">CPU 使用率</sys:String>
 	<sys:String x:Key="String/SessionView.EditConfiguration">编辑內部配置…</sys:String>
 	<sys:String x:Key="String/SessionView.EditPersistentState">编辑內部存储的状态…</sys:String>
-	<sys:String x:Key="String/SessionView.ExternalDependencyNotFound">至少有一个必要的外部依赖没有安装至设备，请先安装后再尝试。</sys:String>
 	<sys:String x:Key="String/SessionView.FailedToExportLogAnalysisRuleSet">无法将规则集 '{0}' 导出至 '{1}'。</sys:String>
 	<sys:String x:Key="String/SessionView.FailedToImportLogAnalysisRuleSet">无法从 '{0}' 导入規則集。</sys:String>
 	<sys:String x:Key="String/SessionView.FilteredLogCount">，已筛选：</sys:String>

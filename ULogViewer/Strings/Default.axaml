@@ -94,6 +94,7 @@
 	<sys:String x:Key="String/Common.Delete">Delete</sys:String>
 	<sys:String x:Key="String/Common.Edit">Edit</sys:String>
 	<sys:String x:Key="String/Common.Empty">Empty</sys:String>
+	<sys:String x:Key="String/Common.ExternalDependencyNotFound">At least one required external dependency is not installed on device. Please install then try again.</sys:String>
 	<sys:String x:Key="String/Common.KnowMoreAbout">Know more about</sys:String>
 	<sys:String x:Key="String/Common.MoveDown">Move down</sys:String>
 	<sys:String x:Key="String/Common.MoveUp">Move up</sys:String>
@@ -525,7 +526,6 @@
 	<sys:String x:Key="String/SessionView.CpuUsage">CPU usage</sys:String>
 	<sys:String x:Key="String/SessionView.EditConfiguration">Edit internal configuration…</sys:String>
 	<sys:String x:Key="String/SessionView.EditPersistentState">Edit internal persistent state…</sys:String>
-	<sys:String x:Key="String/SessionView.ExternalDependencyNotFound">At least one required external dependency is not installed on device. Please install then try again.</sys:String>
 	<sys:String x:Key="String/SessionView.FailedToExportLogAnalysisRuleSet">Unable to export rule set '{0}' to '{1}'.</sys:String>
 	<sys:String x:Key="String/SessionView.FailedToImportLogAnalysisRuleSet">Unable to import rule set from '{0}'.</sys:String>
 	<sys:String x:Key="String/SessionView.FilteredLogCount">, Filtered: </sys:String>
