@@ -34,6 +34,11 @@
 	<sys:String x:Key="String/AppOptionsDialog.UpdateLogFilterDelay">条件改变至开始筛选的延迟时间（毫秒）</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.UseSystemAccentColor">使用系统强调色彩</sys:String>
 
+	<!-- Azure -->
+	<sys:String x:Key="String/Azure.FailedToLogin">无法登录至 Azure。</sys:String>
+	<sys:String x:Key="String/Azure.LoggedIn">成功以 '{0}' 登录至 Azure。</sys:String>
+	<sys:String x:Key="String/Azure.LoggedOut">已登出 Azure。</sys:String>
+
 	<!-- Built-in profile -->
 	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceEventLog">Android 设备事件日志</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceEventLog.Description">通过 ADB 取得 Android 设备即时事件日志。</sys:String>

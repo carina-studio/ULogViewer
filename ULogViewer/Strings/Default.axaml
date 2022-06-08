@@ -31,6 +31,11 @@
 	<sys:String x:Key="String/AppOptionsDialog.UpdateLogFilterDelay">Delay between changing conditions and start filtering (milliseconds)</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.UseSystemAccentColor">Apply system accent color</sys:String>
 
+	<!-- Azure -->
+	<sys:String x:Key="String/Azure.FailedToLogin">Unable to log in to Azure.</sys:String>
+	<sys:String x:Key="String/Azure.LoggedIn">Logged in to Azure with user '{0}'.</sys:String>
+	<sys:String x:Key="String/Azure.LoggedOut">Logged out from Azure.</sys:String>
+
 	<!-- AzureCliLogDataSourceProvider -->
 	<sys:String x:Key="String/AzureCliLogDataSourceProvider.DisplayName">Azure CLI</sys:String>
 
