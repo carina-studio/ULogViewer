@@ -5,6 +5,7 @@
         xmlns:ia="using:Avalonia.Xaml.Interactivity"
         xmlns:iaCore="using:Avalonia.Xaml.Interactions.Core"
 		xmlns:abControls="using:CarinaStudio.Controls"
+		xmlns:aConverters="using:Avalonia.Data.Converters"
 		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
         xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
@@ -71,6 +72,7 @@
 						<TextBlock Classes="Dialog_TextBlock" IsVisible="{Binding $parent[Window].IsCategoryRequired}" Text="{DynamicResource String/LogDataSourceOptionsDialog.Required}" VerticalAlignment="Center"/>
 					</StackPanel>
 					<TextBox Name="categoryTextBox" Classes="Dialog_TextBox" PropertyChanged="OnEditorControlPropertyChanged"/>
+					<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" IsVisible="{Binding $parent[Window].CategoryReferenceUri, Converter={x:Static aConverters:ObjectConverters.IsNotNull}}" Text="{DynamicResource String/Common.References}" Uri="{Binding $parent[Window].CategoryReferenceUri}"/>
 					<Separator Classes="Dialog_Separator"/>
 				</StackPanel>
 
@@ -81,6 +83,7 @@
 						<TextBlock Classes="Dialog_TextBlock" IsVisible="{Binding $parent[Window].IsCommandRequired}" Text="{DynamicResource String/LogDataSourceOptionsDialog.Required}" VerticalAlignment="Center"/>
 					</StackPanel>
 					<TextBox Name="commandTextBox" Classes="Dialog_TextBox" PropertyChanged="OnEditorControlPropertyChanged"/>
+					<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" IsVisible="{Binding $parent[Window].CommandReferenceUri, Converter={x:Static aConverters:ObjectConverters.IsNotNull}}" Text="{DynamicResource String/Common.References}" Uri="{Binding $parent[Window].CommandReferenceUri}"/>
 					<Separator Classes="Dialog_Separator"/>
 				</StackPanel>
 
@@ -152,6 +155,7 @@
 						<TextBlock Classes="Dialog_TextBlock" IsVisible="{Binding $parent[Window].IsQueryStringRequired}" Text="{DynamicResource String/LogDataSourceOptionsDialog.Required}" VerticalAlignment="Center"/>
 					</StackPanel>
 					<TextBox Name="queryStringTextBox" Classes="Dialog_TextBox" PropertyChanged="OnEditorControlPropertyChanged"/>
+					<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" IsVisible="{Binding $parent[Window].QueryStringReferenceUri, Converter={x:Static aConverters:ObjectConverters.IsNotNull}}" Text="{DynamicResource String/Common.References}" Uri="{Binding $parent[Window].QueryStringReferenceUri}"/>
 					<Separator Classes="Dialog_Separator"/>
 				</StackPanel>
 

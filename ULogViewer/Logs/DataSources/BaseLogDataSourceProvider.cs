@@ -59,6 +59,10 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		public virtual IEnumerable<ExternalDependency> ExternalDependencies { get; } = new ExternalDependency[0];
 
 
+		/// <inheritdoc/>
+		public virtual Uri? GetSourceOptionReferenceUri(string name) => null;
+
+
 		/// <summary>
 		/// Get logger.
 		/// </summary>

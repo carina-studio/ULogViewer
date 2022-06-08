@@ -106,6 +106,7 @@
 	<sys:String x:Key="String/Common.No">否</sys:String>
 	<sys:String x:Key="String/Common.OK">确定</sys:String>
 	<sys:String x:Key="String/Common.Options">选项</sys:String>
+	<sys:String x:Key="String/Common.References">参考文件</sys:String>
 	<sys:String x:Key="String/Common.RegularExpression.Reference">语法说明</sys:String>
 	<sys:String x:Key="String/Common.Rename">重新命名</sys:String>
 	<sys:String x:Key="String/Common.Yes">是</sys:String>

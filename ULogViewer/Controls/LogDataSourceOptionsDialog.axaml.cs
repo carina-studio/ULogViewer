@@ -44,6 +44,8 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Static fields.
+		static readonly AvaloniaProperty<Uri?> CategoryReferenceUriProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, Uri?>(nameof(CategoryReferenceUri));
+		static readonly AvaloniaProperty<Uri?> CommandReferenceUriProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, Uri?>(nameof(CommandReferenceUri));
 		static readonly AvaloniaProperty<bool> IsCategoryRequiredProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsCategoryRequired));
 		static readonly AvaloniaProperty<bool> IsCategorySupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsCategorySupported));
 		static readonly AvaloniaProperty<bool> IsCommandRequiredProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsCommandRequired));
@@ -64,6 +66,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		static readonly AvaloniaProperty<bool> IsUserNameRequiredProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsUserNameRequired));
 		static readonly AvaloniaProperty<bool> IsUserNameSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsUserNameSupported));
 		static readonly AvaloniaProperty<bool> IsWorkingDirectorySupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsWorkingDirectorySupported));
+		static readonly AvaloniaProperty<Uri?> QueryStringReferenceUriProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, Uri?>(nameof(QueryStringReferenceUri));
 
 
 		// Fields.
@@ -146,6 +149,27 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.teardownCommands.Add(command);
 				this.SelectListBoxItem(this.teardownCommandsListBox, this.teardownCommands.Count - 1);
 			}
+		}
+
+
+		/// <summary>
+		/// Get or set URI of reference of <see cref="LogDataSourceOptions.Category"/>.
+		/// </summary>
+		public Uri? CategoryReferenceUri
+		{
+			get => this.GetValue<Uri?>(CategoryReferenceUriProperty);
+			set => this.SetValue<Uri?>(CategoryReferenceUriProperty, value);
+		}
+
+
+
+		/// <summary>
+		/// Get or set URI of reference of <see cref="LogDataSourceOptions.Command"/>.
+		/// </summary>
+		public Uri? CommandReferenceUri
+		{
+			get => this.GetValue<Uri?>(CommandReferenceUriProperty);
+			set => this.SetValue<Uri?>(CommandReferenceUriProperty, value);
 		}
 
 
@@ -519,6 +543,16 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// Get or set <see cref="LogDataSourceOptions"/> to be edited.
 		/// </summary>
 		public LogDataSourceOptions Options { get; set; }
+
+
+		/// <summary>
+		/// Get or set URI of reference of <see cref="LogDataSourceOptions.QueryString"/>.
+		/// </summary>
+		public Uri? QueryStringReferenceUri
+		{
+			get => this.GetValue<Uri?>(QueryStringReferenceUriProperty);
+			set => this.SetValue<Uri?>(QueryStringReferenceUriProperty, value);
+		}
 
 
 		// Remove given setup or teardown command.

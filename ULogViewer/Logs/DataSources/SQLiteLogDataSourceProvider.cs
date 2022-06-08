@@ -17,6 +17,14 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		{ }
 
 
+		/// <inheritdoc/>
+		public override Uri? GetSourceOptionReferenceUri(string name) => name switch
+		{
+			nameof(LogDataSourceOptions.QueryString) => new Uri("https://www.sqlite.org/lang_select.html"),
+			_ => base.GetSourceOptionReferenceUri(name),
+		};
+
+
 		// Update display name.
 		protected override string OnUpdateDisplayName() => "SQLite";
 

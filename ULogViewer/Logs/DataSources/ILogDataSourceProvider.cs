@@ -51,6 +51,14 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		/// <summary>
+		/// Get URI of reference of specific option in <see cref="LogDataSourceOptions"/>.
+		/// </summary>
+		/// <param name="name">Name of specific option.</param>
+		/// <returns>URI of reference.</returns>
+		Uri? GetSourceOptionReferenceUri(string name);
+
+
+		/// <summary>
 		/// Get unique name to identify this provider.
 		/// </summary>
 		string Name { get; }

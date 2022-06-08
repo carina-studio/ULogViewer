@@ -1,5 +1,6 @@
 using CarinaStudio.AppSuite;
 using CarinaStudio.Collections;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -27,6 +28,14 @@ class AzureCliLogDataSourceProvider : BaseLogDataSourceProvider
 
     /// <inheritdoc/>
     public override IEnumerable<ExternalDependency> ExternalDependencies { get; }
+
+
+    /// <inheritdoc/>
+    public override Uri? GetSourceOptionReferenceUri(string name) => name switch
+    {
+        nameof(LogDataSourceOptions.Command) => new Uri("https://docs.microsoft.com/cli/azure/reference-index"),
+        _ => base.GetSourceOptionReferenceUri(name),
+    };
 
 
     /// <inheritdoc/>
