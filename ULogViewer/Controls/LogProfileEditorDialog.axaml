@@ -88,6 +88,12 @@
 						</DataTemplate>
 					</ComboBox.ItemTemplate>
 				</ComboBox>
+				<Separator Classes="Dialog_Separator"/>
+
+				<!-- Is template -->
+				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogProfileEditorDialog.IsTemplate}"/>
+				<ToggleSwitch Name="isTemplateSwitch" Classes="Dialog_ToggleSwitch"/>
+				<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.IsTemplate.Description}"/>
 				<Separator Classes="Dialog_Separator_Large"/>
 
 				<!-- Header -->

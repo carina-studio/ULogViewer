@@ -46,6 +46,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		bool isContinuousReading;
 		bool isPinned;
 		SettingKey<bool>? isPinnedSettingKey;
+		bool isTemplate;
 		bool isWorkingDirectoryNeeded;
 		Dictionary<string, LogLevel> logLevelMapForReading = new Dictionary<string, LogLevel>();
 		Dictionary<LogLevel, string> logLevelMapForWriting = new Dictionary<LogLevel, string>();
@@ -348,6 +349,25 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				if (this.IsBuiltIn)
 					this.Application.PersistentState.SetValue<bool>(this.isPinnedSettingKey.AsNonNull(), value);
 				this.OnPropertyChanged(nameof(IsPinned));
+			}
+		}
+
+
+		/// <summary>
+		/// Check whether the profile should be treated as template or not.
+		/// </summary>
+		public bool IsTemplate
+		{
+			get => this.isTemplate;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (this.isTemplate == value)
+					return;
+				this.isTemplate = value;
+				this.OnPropertyChanged(nameof(IsTemplate));
+				this.Validate();
 			}
 		}
 
@@ -755,6 +775,9 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 					case nameof(IsPinned):
 						this.isPinned = jsonProperty.Value.GetBoolean();
 						break;
+					case nameof(IsTemplate):
+						this.isTemplate = jsonProperty.Value.GetBoolean();
+						break;
 					case nameof(IsWorkingDirectoryNeeded):
 						this.isWorkingDirectoryNeeded = jsonProperty.Value.GetBoolean();
 						break;
@@ -876,6 +899,8 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				writer.WriteBoolean(nameof(IsContinuousReading), true);
 			if (this.isPinned)
 				writer.WriteBoolean(nameof(IsPinned), true);
+			if (this.isTemplate)
+				writer.WriteBoolean(nameof(IsTemplate), true);
 			if (this.isWorkingDirectoryNeeded)
 				writer.WriteBoolean(nameof(IsWorkingDirectoryNeeded), true);
 			writer.WritePropertyName(nameof(LogLevelMapForReading));
@@ -1314,19 +1339,21 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		// Check whether properties of profile is valid or not.
 		void Validate()
 		{
-			var isValid = this.dataSourceProvider is not EmptyLogDataSourceProvider
-				&& this.logPatterns.IsNotEmpty()
-				&& this.visibleLogProperties.Let(it =>
-				{
-					if (it.IsEmpty())
-						return false;
-					foreach (var property in it)
-					{
-						if (!Log.HasProperty(property.Name))
-							return false;
-					}
-					return true;
-				});
+			var isValid = this.dataSourceProvider is not EmptyLogDataSourceProvider 
+				&& !this.isTemplate
+					? this.logPatterns.IsNotEmpty()
+						&& this.visibleLogProperties.Let(it =>
+						{
+							if (it.IsEmpty())
+								return false;
+							foreach (var property in it)
+							{
+								if (!Log.HasProperty(property.Name))
+									return false;
+							}
+							return true;
+						})
+					: true;
 			if (this.IsValid == isValid)
 				return;
 			this.IsValid = isValid;

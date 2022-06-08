@@ -253,6 +253,8 @@
 	<sys:String x:Key="String/LogProfileEditorDialog.IsAdministratorNeeded">需要系统管理员身份</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.IsContinuousReading">连续读取</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.IsContinuousReading.Description">读取至资料末端时将自动重新开始读取日志</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.IsTemplate">指定为模板</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.IsTemplate.Description">模板无法被直接使用，但可以用于包含部分参数并复制成为新的日志类型。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.IsWorkingDirectoryNeeded">必须选择工作目录</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LearnAboutLogsReadingAndParsing">了解 《ULogViewer 如何读取及解析日志》</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LearnAboutLogsReadingAndParsingFirst">您是否想要先了解 《ULogViewer 如何读取及解析日志》 以帮助您建立日志类型？</sys:String>
@@ -310,6 +312,7 @@
 	<sys:String x:Key="String/LogProfileSelectionDialog.PinnedLogProfiles">已订选</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.PinUnpinLogProfile">订选/移除订选日志类型</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.RemoveLogProfile">删除日志类型</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionDialog.TemplateLogProfiles">模板</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.Title">选择日志类型</sys:String>
 
 	<!-- LogProperty -->

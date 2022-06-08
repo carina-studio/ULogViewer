@@ -57,6 +57,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ComboBox dataSourceProviderComboBox;
 		readonly TextBox descriptionTextBox;
 		readonly ComboBox iconComboBox;
+		readonly ToggleSwitch isTemplateSwitch;
 		readonly SortedObservableList<KeyValuePair<string, LogLevel>> logLevelMapEntriesForReading = new SortedObservableList<KeyValuePair<string, LogLevel>>((x, y) => x.Key.CompareTo(y.Key));
 		readonly SortedObservableList<KeyValuePair<LogLevel, string>> logLevelMapEntriesForWriting = new SortedObservableList<KeyValuePair<LogLevel, string>>((x, y) => x.Key.CompareTo(y.Key));
 		readonly AppSuite.Controls.ListBox logLevelMapForReadingListBox;
@@ -120,6 +121,10 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.iconComboBox = this.FindControl<ComboBox>("iconComboBox").AsNonNull();
 			if (Platform.IsNotWindows)
 				this.FindControl<Control>("isAdminNeededPanel").AsNonNull().IsVisible = false;
+			this.isTemplateSwitch = this.Get<ToggleSwitch>(nameof(isTemplateSwitch)).Also(it =>
+			{
+				it.GetObservable(ToggleSwitch.IsCheckedProperty).Subscribe(_ => this.InvalidateInput());
+			});
 			this.logLevelMapForReadingListBox = this.FindControl<AppSuite.Controls.ListBox>("logLevelMapForReadingListBox").AsNonNull();
 			this.logLevelMapForWritingListBox = this.FindControl<AppSuite.Controls.ListBox>("logLevelMapForWritingListBox").AsNonNull();
 			this.logPatternListBox = this.FindControl<AppSuite.Controls.ListBox>("logPatternListBox").AsNonNull();
@@ -422,7 +427,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		protected override async Task<object?> GenerateResultAsync(CancellationToken cancellationToken)
 		{
 			// check log patterns and visible log properties
-			if (this.logPatterns.IsEmpty())
+			var isTemplate = this.isTemplateSwitch.IsChecked.GetValueOrDefault();
+			if (this.logPatterns.IsEmpty() && !isTemplate)
 			{
 				if (this.visibleLogProperties.IsNotEmpty())
 				{
@@ -440,7 +446,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					}
 				}
 			}
-			else if (this.visibleLogProperties.IsEmpty())
+			else if (this.visibleLogProperties.IsEmpty() && !isTemplate)
 			{
 				var result = await new MessageDialog()
 				{
@@ -466,6 +472,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			logProfile.Icon = (LogProfileIcon)this.iconComboBox.SelectedItem.AsNonNull();
 			logProfile.IsAdministratorNeeded = this.adminNeededSwitch.IsChecked.GetValueOrDefault();
 			logProfile.IsContinuousReading = this.continuousReadingSwitch.IsChecked.GetValueOrDefault();
+			logProfile.IsTemplate = isTemplate;
 			logProfile.IsWorkingDirectoryNeeded = this.workingDirNeededSwitch.IsChecked.GetValueOrDefault();
 			logProfile.LogLevelMapForReading = new Dictionary<string, LogLevel>(this.logLevelMapEntriesForReading);
 			logProfile.LogLevelMapForWriting = new Dictionary<LogLevel, string>(this.logLevelMapEntriesForWriting);
@@ -696,6 +703,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.dataSourceProviderComboBox.SelectedItem = profile.DataSourceProvider;
 				this.descriptionTextBox.Text = profile.Description;
 				this.iconComboBox.SelectedItem = profile.Icon;
+				this.isTemplateSwitch.IsChecked = profile.IsTemplate;
 				this.continuousReadingSwitch.IsChecked = profile.IsContinuousReading;
 				this.logLevelMapEntriesForReading.AddAll(profile.LogLevelMapForReading);
 				this.logLevelMapEntriesForWriting.AddAll(profile.LogLevelMapForWriting);
@@ -752,25 +760,29 @@ namespace CarinaStudio.ULogViewer.Controls
 			// call base
 			if (!base.OnValidateInput())
 				return false;
-
+			
 			// check data source and options
+			var isTemplate = this.isTemplateSwitch.IsChecked.GetValueOrDefault();
 			var dataSourceProvider = (this.dataSourceProviderComboBox.SelectedItem as ILogDataSourceProvider);
 			if (dataSourceProvider == null)
 				return false;
 			this.allowMultipleFilesPanel.IsVisible = dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.FileName));
-			foreach (var optionName in dataSourceProvider.RequiredSourceOptions)
+			if (!isTemplate)
 			{
-				switch (optionName)
+				foreach (var optionName in dataSourceProvider.RequiredSourceOptions)
 				{
-					case nameof(LogDataSourceOptions.Category):
-					case nameof(LogDataSourceOptions.Command):
-					case nameof(LogDataSourceOptions.QueryString):
-						if (!this.dataSourceOptions.IsOptionSet(optionName))
-						{
-							this.SetValue<bool>(IsValidDataSourceOptionsProperty, false);
-							return false;
-						}
-						break;
+					switch (optionName)
+					{
+						case nameof(LogDataSourceOptions.Category):
+						case nameof(LogDataSourceOptions.Command):
+						case nameof(LogDataSourceOptions.QueryString):
+							if (!this.dataSourceOptions.IsOptionSet(optionName))
+							{
+								this.SetValue<bool>(IsValidDataSourceOptionsProperty, false);
+								return false;
+							}
+							break;
+					}
 				}
 			}
 			this.SetValue<bool>(IsValidDataSourceOptionsProperty, true);
@@ -870,6 +882,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				CategoryReferenceUri = dataSourceProvider.GetSourceOptionReferenceUri(nameof(LogDataSourceOptions.Category)),
 				CommandReferenceUri = dataSourceProvider.GetSourceOptionReferenceUri(nameof(LogDataSourceOptions.Command)),
 				DataSourceProvider = dataSourceProvider,
+				IsTemplate = this.isTemplateSwitch.IsChecked.GetValueOrDefault(),
 				Options = this.dataSourceOptions,
 				QueryStringReferenceUri = dataSourceProvider.GetSourceOptionReferenceUri(nameof(LogDataSourceOptions.QueryString)),
 			}.ShowDialog<LogDataSourceOptions?>(this);

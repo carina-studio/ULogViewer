@@ -36,6 +36,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ListBox pinnedLogProfileListBox;
 		readonly SortedObservableList<LogProfile> pinnedLogProfiles = new SortedObservableList<LogProfile>(CompareLogProfiles);
 		readonly ScrollViewer scrollViewer;
+		readonly ListBox templateLogProfileListBox;
+		readonly SortedObservableList<LogProfile> templateLogProfiles = new SortedObservableList<LogProfile>(CompareLogProfiles);
 
 
 		/// <summary>
@@ -46,14 +48,16 @@ namespace CarinaStudio.ULogViewer.Controls
 			// setup properties
 			this.OtherLogProfiles = this.otherLogProfiles.AsReadOnly();
 			this.PinnedLogProfiles = this.pinnedLogProfiles.AsReadOnly();
+			this.TemplateLogProfiles = this.templateLogProfiles.AsReadOnly();
 
 			// initialize
 			this.InitializeComponent();
 
 			// setup controls
-			this.otherLogProfileListBox = this.FindControl<ListBox>("otherLogProfileListBox").AsNonNull();
-			this.pinnedLogProfileListBox = this.FindControl<ListBox>("pinnedLogProfileListBox").AsNonNull();
-			this.scrollViewer = this.FindControl<ScrollViewer>("scrollViewer").AsNonNull();
+			this.otherLogProfileListBox = this.Get<ListBox>(nameof(otherLogProfileListBox));
+			this.pinnedLogProfileListBox = this.Get<ListBox>(nameof(pinnedLogProfileListBox));
+			this.scrollViewer = this.Get<ScrollViewer>(nameof(scrollViewer));
+			this.templateLogProfileListBox = this.Get<ListBox>(nameof(templateLogProfileListBox));
 
 			// attach to log profiles
 			((INotifyCollectionChanged)LogProfileManager.Default.Profiles).CollectionChanged += this.OnAllLogProfilesChanged;
@@ -250,7 +254,12 @@ namespace CarinaStudio.ULogViewer.Controls
 							continue;
 						if (!this.attachedLogProfiles.Add(logProfile))
 							continue;
-						if (logProfile.IsPinned)
+						if (logProfile.IsTemplate)
+						{
+							if (this.Filter == null)
+								this.templateLogProfiles.Add(logProfile);
+						}
+						else if (logProfile.IsPinned)
 							this.pinnedLogProfiles.Add(logProfile);
 						else
 							this.otherLogProfiles.Add(logProfile);
@@ -265,6 +274,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						logProfile.PropertyChanged -= this.OnLogProfilePropertyChanged;
 						this.otherLogProfiles.Remove(logProfile);
 						this.pinnedLogProfiles.Remove(logProfile);
+						this.templateLogProfiles.Remove(logProfile);
 					}
 					break;
 			}
@@ -297,20 +307,44 @@ namespace CarinaStudio.ULogViewer.Controls
 			switch (e.PropertyName)
 			{
 				case nameof(LogProfile.IsPinned):
-					if (profile.IsPinned)
+					if (!profile.IsTemplate)
+					{
+						if (profile.IsPinned)
+						{
+							this.otherLogProfiles.Remove(profile);
+							this.pinnedLogProfiles.Add(profile);
+						}
+						else
+						{
+							this.pinnedLogProfiles.Remove(profile);
+							this.otherLogProfiles.Add(profile);
+						}
+					}
+					break;
+				case nameof(LogProfile.IsTemplate):
+					if (profile.IsTemplate)
 					{
 						this.otherLogProfiles.Remove(profile);
+						this.pinnedLogProfiles.Remove(profile);
+						if (this.Filter == null)
+							this.templateLogProfiles.Add(profile);
+						profile.IsPinned = false;
+					}
+					else if (profile.IsPinned)
+					{
+						this.templateLogProfiles.Remove(profile);
 						this.pinnedLogProfiles.Add(profile);
 					}
 					else
 					{
-						this.pinnedLogProfiles.Remove(profile);
+						this.templateLogProfiles.Remove(profile);
 						this.otherLogProfiles.Add(profile);
 					}
 					break;
 				case nameof(LogProfile.Name):
 					this.otherLogProfiles.Sort(profile);
 					this.pinnedLogProfiles.Sort(profile);
+					this.templateLogProfiles.Sort(profile);
 					break;
 			}
 		}
@@ -326,6 +360,8 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.pinnedLogProfileListBox.Focus();
 				else if (this.otherLogProfiles.IsNotEmpty())
 					this.otherLogProfileListBox.Focus();
+				else if (this.templateLogProfiles.IsNotEmpty())
+					this.templateLogProfileListBox.Focus();
 				else
 					this.Close();
 			});
@@ -336,7 +372,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		void OnOtherLogProfilesSelectionChanged(object? sender, SelectionChangedEventArgs e)
 		{
 			if (this.otherLogProfileListBox.SelectedIndex >= 0)
+			{
 				this.pinnedLogProfileListBox.SelectedIndex = -1;
+				this.templateLogProfileListBox.SelectedIndex = -1;
+			}
 			this.InvalidateInput();
 			this.ScrollToSelectedLogProfile();
 		}
@@ -346,7 +385,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		void OnPinnedLogProfilesSelectionChanged(object? sender, SelectionChangedEventArgs e)
 		{
 			if (this.pinnedLogProfileListBox.SelectedIndex >= 0)
+			{
 				this.otherLogProfileListBox.SelectedIndex = -1;
+				this.templateLogProfileListBox.SelectedIndex = -1;
+			}
 			this.InvalidateInput();
 			this.ScrollToSelectedLogProfile();
 		}
@@ -358,6 +400,19 @@ namespace CarinaStudio.ULogViewer.Controls
 			base.OnPropertyChanged(change);
 			if (change.Property == FilterProperty)
 				this.RefreshLogProfiles();
+		}
+
+
+		// Called when selection in template log profiles changed.
+		void OnTemplateLogProfilesSelectionChanged(object? sender, SelectionChangedEventArgs e)
+		{
+			if (this.templateLogProfileListBox.SelectedIndex >= 0)
+			{
+				this.otherLogProfileListBox.SelectedIndex = -1;
+				this.pinnedLogProfileListBox.SelectedIndex = -1;
+			}
+			this.InvalidateInput();
+			this.ScrollToSelectedLogProfile();
 		}
 
 
@@ -402,7 +457,9 @@ namespace CarinaStudio.ULogViewer.Controls
 				{
 					if (!this.attachedLogProfiles.Add(profile))
 						continue;
-					if (profile.IsPinned)
+					if (profile.IsTemplate)
+						this.templateLogProfiles.Add(profile);
+					else if (profile.IsPinned)
 						this.pinnedLogProfiles.Add(profile);
 					else
 						this.otherLogProfiles.Add(profile);
@@ -413,11 +470,12 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				foreach (var profile in this.attachedLogProfiles)
 				{
-					if (!filter(profile))
+					if (!filter(profile) || profile.IsTemplate)
 					{
 						this.attachedLogProfiles.Remove(profile);
 						this.otherLogProfiles.Remove(profile);
 						this.pinnedLogProfiles.Remove(profile);
+						this.templateLogProfiles.Remove(profile);
 						profile.PropertyChanged -= this.OnLogProfilePropertyChanged;
 					}
 				}
@@ -425,10 +483,13 @@ namespace CarinaStudio.ULogViewer.Controls
 				{
 					if (!filter(profile) || !this.attachedLogProfiles.Add(profile))
 						continue;
-					if (profile.IsPinned)
-						this.pinnedLogProfiles.Add(profile);
-					else
-						this.otherLogProfiles.Add(profile);
+					if (!profile.IsTemplate)
+					{
+						if (profile.IsPinned)
+							this.pinnedLogProfiles.Add(profile);
+						else
+							this.otherLogProfiles.Add(profile);
+					}
 					profile.PropertyChanged += this.OnLogProfilePropertyChanged;
 				}
 			}
@@ -459,6 +520,12 @@ namespace CarinaStudio.ULogViewer.Controls
 					logProfile = this.otherLogProfileListBox.SelectedItem as LogProfile;
 					if (logProfile != null)
 						this.otherLogProfileListBox.TryFindListBoxItem(logProfile, out listBoxItem);
+					else
+					{
+						logProfile = this.templateLogProfileListBox.SelectedItem as LogProfile;
+						if (logProfile != null)
+							this.templateLogProfileListBox.TryFindListBoxItem(logProfile, out listBoxItem);
+					}
 				}
 				if (listBoxItem == null)
 					return;
@@ -472,11 +539,19 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Select given log profile.
 		void SelectLogProfile(LogProfile profile)
 		{
-			if (profile.IsPinned)
+			if (profile.IsTemplate)
+				this.templateLogProfileListBox.SelectedItem = profile;
+			else if (profile.IsPinned)
 				this.pinnedLogProfileListBox.SelectedItem = profile;
 			else
 				this.otherLogProfileListBox.SelectedItem = profile;
 			this.ScrollToSelectedLogProfile();
 		}
+
+
+		/// <summary>
+		/// Get template log profiles.
+		/// </summary>
+		IList<LogProfile> TemplateLogProfiles { get; }
 	}
 }

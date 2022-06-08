@@ -62,6 +62,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		static readonly AvaloniaProperty<bool> IsSetupCommandsSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsSetupCommandsSupported));
 		static readonly AvaloniaProperty<bool> IsTeardownCommandsRequiredProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsTeardownCommandsRequired));
 		static readonly AvaloniaProperty<bool> IsTeardownCommandsSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsTeardownCommandsSupported));
+		static readonly AvaloniaProperty<bool> IsTemplateProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsTemplate));
 		static readonly AvaloniaProperty<bool> IsUriSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsUriSupported));
 		static readonly AvaloniaProperty<bool> IsUserNameRequiredProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsUserNameRequired));
 		static readonly AvaloniaProperty<bool> IsUserNameSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsUserNameSupported));
@@ -287,6 +288,16 @@ namespace CarinaStudio.ULogViewer.Controls
 		bool IsWorkingDirectorySupported { get => this.GetValue<bool>(IsWorkingDirectorySupportedProperty); }
 
 
+		/// <summary>
+		/// Get or set whether the options is used for template or not.
+		/// </summary>
+		public bool IsTemplate
+		{
+			get =>this.GetValue<bool>(IsTemplateProperty);
+			set => this.SetValue<bool>(IsTemplateProperty, value);
+		}
+
+
 		// Move given setup or teardown command down.
 		void MoveSetupTeardownCommandDown(ListBoxItem item)
 		{
@@ -461,55 +472,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		protected override void OnPropertyChanged<T>(AvaloniaPropertyChangedEventArgs<T> change)
 		{
 			base.OnPropertyChanged(change);
-			if (change.Property == DataSourceProviderProperty)
+			if (change.Property == DataSourceProviderProperty
+				|| change.Property == IsTemplateProperty)
 			{
-				var provider = (change.NewValue.Value as ILogDataSourceProvider);
-				if (provider != null)
-				{
-					this.SetValue<bool>(IsCategoryRequiredProperty, provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.Category)));
-					this.SetValue<bool>(IsCategorySupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.Category)));
-					this.SetValue<bool>(IsCommandRequiredProperty, provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.Command)));
-					this.SetValue<bool>(IsCommandSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.Command)));
-					this.SetValue<bool>(IsEncodingSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.Encoding)));
-					this.SetValue<bool>(IsFileNameSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.FileName)));
-					this.SetValue<bool>(IsIncludeStandardErrorSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.IncludeStandardError)));
-					this.SetValue<bool>(IsIPEndPointSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.IPEndPoint)));
-					this.SetValue<bool>(IsPasswordRequiredProperty, provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.Password)));
-					this.SetValue<bool>(IsPasswordSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.Password)));
-					this.SetValue<bool>(IsQueryStringRequiredProperty, provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.QueryString)));
-					this.SetValue<bool>(IsQueryStringSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.QueryString)));
-					this.SetValue<bool>(IsSetupCommandsRequiredProperty, provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.SetupCommands)));
-					this.SetValue<bool>(IsSetupCommandsSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.SetupCommands)));
-					this.SetValue<bool>(IsTeardownCommandsRequiredProperty, provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.TeardownCommands)));
-					this.SetValue<bool>(IsTeardownCommandsSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.TeardownCommands)));
-					this.SetValue<bool>(IsUriSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.Uri)));
-					this.SetValue<bool>(IsUserNameRequiredProperty, provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.UserName)));
-					this.SetValue<bool>(IsUserNameSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.UserName)));
-					this.SetValue<bool>(IsWorkingDirectorySupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.WorkingDirectory)));
-				}
-				else
-				{
-					this.SetValue<bool>(IsCategoryRequiredProperty, false);
-					this.SetValue<bool>(IsCategorySupportedProperty, false);
-					this.SetValue<bool>(IsCommandRequiredProperty, false);
-					this.SetValue<bool>(IsCommandSupportedProperty, false);
-					this.SetValue<bool>(IsEncodingSupportedProperty, false);
-					this.SetValue<bool>(IsFileNameSupportedProperty, false);
-					this.SetValue<bool>(IsIncludeStandardErrorSupportedProperty, false);
-					this.SetValue<bool>(IsIPEndPointSupportedProperty, false);
-					this.SetValue<bool>(IsPasswordRequiredProperty, false);
-					this.SetValue<bool>(IsPasswordSupportedProperty, false);
-					this.SetValue<bool>(IsQueryStringRequiredProperty, false);
-					this.SetValue<bool>(IsQueryStringSupportedProperty, false);
-					this.SetValue<bool>(IsSetupCommandsRequiredProperty, false);
-					this.SetValue<bool>(IsSetupCommandsSupportedProperty, false);
-					this.SetValue<bool>(IsTeardownCommandsRequiredProperty, false);
-					this.SetValue<bool>(IsTeardownCommandsSupportedProperty, false);
-					this.SetValue<bool>(IsUriSupportedProperty, false);
-					this.SetValue<bool>(IsUserNameRequiredProperty, false);
-					this.SetValue<bool>(IsUserNameSupportedProperty, false);
-					this.SetValue<bool>(IsWorkingDirectorySupportedProperty, false);
-				}
+				this.RefreshOptionStates();
 			}
 		}
 
@@ -552,6 +518,60 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			get => this.GetValue<Uri?>(QueryStringReferenceUriProperty);
 			set => this.SetValue<Uri?>(QueryStringReferenceUriProperty, value);
+		}
+
+
+		// Refresh state of all options.
+		void RefreshOptionStates()
+		{
+			var provider = this.GetValue<ILogDataSourceProvider?>(DataSourceProviderProperty);
+			if (provider != null)
+			{
+				var isTemplate = this.GetValue<bool>(IsTemplateProperty);
+				this.SetValue<bool>(IsCategoryRequiredProperty, !isTemplate && provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.Category)));
+				this.SetValue<bool>(IsCategorySupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.Category)));
+				this.SetValue<bool>(IsCommandRequiredProperty, !isTemplate && provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.Command)));
+				this.SetValue<bool>(IsCommandSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.Command)));
+				this.SetValue<bool>(IsEncodingSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.Encoding)));
+				this.SetValue<bool>(IsFileNameSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.FileName)));
+				this.SetValue<bool>(IsIncludeStandardErrorSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.IncludeStandardError)));
+				this.SetValue<bool>(IsIPEndPointSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.IPEndPoint)));
+				this.SetValue<bool>(IsPasswordRequiredProperty, !isTemplate && provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.Password)));
+				this.SetValue<bool>(IsPasswordSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.Password)));
+				this.SetValue<bool>(IsQueryStringRequiredProperty, !isTemplate && provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.QueryString)));
+				this.SetValue<bool>(IsQueryStringSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.QueryString)));
+				this.SetValue<bool>(IsSetupCommandsRequiredProperty, !isTemplate && provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.SetupCommands)));
+				this.SetValue<bool>(IsSetupCommandsSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.SetupCommands)));
+				this.SetValue<bool>(IsTeardownCommandsRequiredProperty, !isTemplate && provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.TeardownCommands)));
+				this.SetValue<bool>(IsTeardownCommandsSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.TeardownCommands)));
+				this.SetValue<bool>(IsUriSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.Uri)));
+				this.SetValue<bool>(IsUserNameRequiredProperty, !isTemplate && provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.UserName)));
+				this.SetValue<bool>(IsUserNameSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.UserName)));
+				this.SetValue<bool>(IsWorkingDirectorySupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.WorkingDirectory)));
+			}
+			else
+			{
+				this.SetValue<bool>(IsCategoryRequiredProperty, false);
+				this.SetValue<bool>(IsCategorySupportedProperty, false);
+				this.SetValue<bool>(IsCommandRequiredProperty, false);
+				this.SetValue<bool>(IsCommandSupportedProperty, false);
+				this.SetValue<bool>(IsEncodingSupportedProperty, false);
+				this.SetValue<bool>(IsFileNameSupportedProperty, false);
+				this.SetValue<bool>(IsIncludeStandardErrorSupportedProperty, false);
+				this.SetValue<bool>(IsIPEndPointSupportedProperty, false);
+				this.SetValue<bool>(IsPasswordRequiredProperty, false);
+				this.SetValue<bool>(IsPasswordSupportedProperty, false);
+				this.SetValue<bool>(IsQueryStringRequiredProperty, false);
+				this.SetValue<bool>(IsQueryStringSupportedProperty, false);
+				this.SetValue<bool>(IsSetupCommandsRequiredProperty, false);
+				this.SetValue<bool>(IsSetupCommandsSupportedProperty, false);
+				this.SetValue<bool>(IsTeardownCommandsRequiredProperty, false);
+				this.SetValue<bool>(IsTeardownCommandsSupportedProperty, false);
+				this.SetValue<bool>(IsUriSupportedProperty, false);
+				this.SetValue<bool>(IsUserNameRequiredProperty, false);
+				this.SetValue<bool>(IsUserNameSupportedProperty, false);
+				this.SetValue<bool>(IsWorkingDirectorySupportedProperty, false);
+			}
 		}
 
 

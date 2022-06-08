@@ -263,7 +263,7 @@
 	<sys:String x:Key="String/LogProfileIcon.Windows">Windows</sys:String>
 
 	<!-- LogProfileEditorDialog -->
-	<sys:String x:Key="String/LogProfileEditorDialog.AllowMultipleFiles">允許加入多個檔案</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.AllowMultipleFiles">Allow multiple files</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.ColorIndicator">Color indicator</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.ColorIndicator.Description">Way of grouping to show color block on the left hand side of each log</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Common">Common</sys:String>
@@ -276,6 +276,8 @@
 	<sys:String x:Key="String/LogProfileEditorDialog.IsAdministratorNeeded">Administrator role needed</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.IsContinuousReading">Continuous reading</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.IsContinuousReading.Description">Restart reading logs automatically when reaching end of data source</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.IsTemplate">Set as template</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.IsTemplate.Description">Template cannot be used directly but can be cloned as new log profile with partial parameters.</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.IsWorkingDirectoryNeeded">Need to select working directory</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LearnAboutLogsReadingAndParsing">Learn about《How does ULogViewer read and parse logs》</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LearnAboutLogsReadingAndParsingFirst">Do you want to learn about 《How does ULogViewer read and parse logs》 to help you to create log profile?</sys:String>
@@ -333,6 +335,7 @@
 	<sys:String x:Key="String/LogProfileSelectionDialog.PinnedLogProfiles">Pinned</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.PinUnpinLogProfile">Pin/Unpin profile</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.RemoveLogProfile">Delete profile</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionDialog.TemplateLogProfiles">Template</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.Title">Select log profile</sys:String>
 
 	<!-- LogProperty -->
