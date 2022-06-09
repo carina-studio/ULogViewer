@@ -1979,7 +1979,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// prepare log writer
 			var logWriter = new RawLogWriter(dataOutput);
-			logWriter.LogFormat = string.IsNullOrWhiteSpace(writingFormat)
+			logWriter.LogFormats = string.IsNullOrWhiteSpace(writingFormat)
 				? new StringBuilder().Let(it =>
 				{
 					foreach (var property in this.DisplayLogProperties)
@@ -2009,9 +2009,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 								break;
 						}
 					}
-					return it.ToString();
+					return new string[] { it.ToString() };
 				})
-				: writingFormat;
+				: new string[] { writingFormat };
 			logWriter.LogLevelMap = profile.LogLevelMapForWriting;
 			logWriter.LogStringEncoding = profile.LogStringEncodingForWriting;
 			logWriter.TimeSpanCultureInfo = profile.TimeSpanCultureInfoForWriting;

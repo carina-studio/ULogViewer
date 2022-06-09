@@ -28,7 +28,7 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		// Fields.
-		string logFormat = "";
+		IList<string> logFormats = new string[0];
 		readonly Dictionary<Log, int> lineNumbers = new Dictionary<Log, int>();
 		readonly HashSet<Log> logsToGetLineNumber = new HashSet<Log>();
 		readonly Dictionary<LogLevel, string> logLevelMap = new Dictionary<LogLevel, string>();
@@ -62,19 +62,19 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		/// <summary>
-		/// Get or set string format to output raw log data.
+		/// Get or set list of string format to output raw log data.
 		/// </summary>
-		public string LogFormat
+		public IList<string> LogFormats
 		{
-			get => this.logFormat;
+			get => this.logFormats;
 			set
 			{
 				this.VerifyAccess();
 				this.VerifyPreparing();
-				if (this.logFormat == value)
+				if (this.logFormats.SequenceEqual(value))
 					return;
-				this.logFormat = value;
-				this.OnPropertyChanged(nameof(LogFormat));
+				this.logFormats = value.ToArray().AsReadOnly();
+				this.OnPropertyChanged(nameof(LogFormats));
 			}
 		}
 
@@ -226,12 +226,11 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		// Write logs.
-		void WriteLogs(TextWriter writer, string format, IList<Func<Log, object?>> logPropertyGetters, CancellationToken cancellationToken)
+		void WriteLogs(TextWriter writer, List<(string, List<string>)> formats, Dictionary<string, Func<Log, object?>> logPropertyGetters, CancellationToken cancellationToken)
 		{
 			var logs = this.Logs;
 			var logCount = logs.Count;
 			var logsToGetLineNumber = this.logsToGetLineNumber;
-			var logPropertyCount = logPropertyGetters.Count;
 			var logStringEncoding = this.logStringEncoding;
 			var logStringBuilder = new StringBuilder();
 			using var logStringWriter = new StringWriter(logStringBuilder);
@@ -239,16 +238,48 @@ namespace CarinaStudio.ULogViewer.Logs
 			var currentFileName = "";
 			var writtenLineCount = 0;
 			var lineNumbers = new Dictionary<Log, int>();
+			var formatArgs = new object?[logPropertyGetters.Count];
 			try
 			{
-				var formatArgs = new object?[logPropertyCount];
 				for (var i = 0; i < logCount && !cancellationToken.IsCancellationRequested; ++i)
 				{
-					// get property values
+					// select format
 					var log = logs[i];
-					for (var j = logPropertyCount - 1; j >= 0; --j)
+					var format = (string?)null;
+					var propertyNameList = (List<string>?)null;
+					foreach (var (candFormat, candPropNameList) in formats)
 					{
-						formatArgs[j] = logPropertyGetters[j](log).Let(it =>
+						var areAllPropertiesValid = true;
+						foreach (var propName in candPropNameList)
+						{
+							if (!logPropertyGetters.TryGetValue(propName, out var getter)
+								|| getter(log) == null)
+							{
+								areAllPropertiesValid = false;
+								break;;
+							}
+						}
+						if (areAllPropertiesValid)
+						{
+							format = candFormat;
+							propertyNameList = candPropNameList;
+							break;
+						}
+					}
+					if (format == null)
+					{
+						format = formats[0].Item1;
+						propertyNameList = formats[0].Item2;
+					}
+					
+					// get property values
+					if (formatArgs.Length < propertyNameList!.Count)
+						formatArgs = new object?[propertyNameList.Count];
+					for (var j = propertyNameList.Count - 1; j >= 0; --j)
+					{
+						if (!logPropertyGetters.TryGetValue(propertyNameList[j], out var getter))
+							continue;
+						formatArgs[j] = getter(log).Let(it =>
 						{
 							if (it is not string str || str.Length == 0)
 								return it;
@@ -311,92 +342,103 @@ namespace CarinaStudio.ULogViewer.Logs
 			// prepare output format and log property getters
 			var logFormatStart = 0;
 			var formatBuilder = new StringBuilder();
-			var logPropertyGetters = new List<Func<Log, object?>>();
+			var logPropertyGetters = new Dictionary<string, Func<Log, object?>>();
+			var formats = new List<(string, List<string>)>();
 			var argIndex = 0;
 			var cultureInfo = this.Application.CultureInfo;
-			var match = logPropertyNameRegex.Match(this.logFormat);
-			while (match.Success)
+			foreach (var logFormat in this.logFormats)
 			{
-				formatBuilder.Append(this.logFormat.Substring(logFormatStart, match.Index - logFormatStart));
-				logFormatStart = match.Index + match.Length;
-				var propertyName = match.Groups["PropertyName"].Value;
-				if (propertyName == "NewLine")
-					formatBuilder.Append(newLineString);
-				else if (Log.HasProperty(propertyName))
+				var propNameList = new List<string>();
+				var match = logPropertyNameRegex.Match(logFormat);
+				while (match.Success)
 				{
-					var logPropertyGetter = propertyName switch
+					formatBuilder.Append(logFormat.Substring(logFormatStart, match.Index - logFormatStart));
+					logFormatStart = match.Index + match.Length;
+					var propertyName = match.Groups["PropertyName"].Value;
+					if (propertyName == "NewLine")
+						formatBuilder.Append(newLineString);
+					else if (Log.HasProperty(propertyName))
 					{
-						nameof(Log.BeginningTimeSpan)
-						or nameof(Log.EndingTimeSpan)
-						or nameof(Log.TimeSpan) => Log.CreatePropertyGetter<TimeSpan?>(propertyName).Let(getter =>
-                        {
-							return (Func<Log, string?>)(log =>
-							{
-								var timeSpan = getter(log);
-								if (timeSpan == null)
-									return "";
-								if (this.timeSpanFormat != null)
-                                {
-									try
-									{
-										return timeSpan.Value.ToString(this.timeSpanFormat, this.timeSpanCultureInfo);
-									}
-									catch
-									{ }
-                                }
-								return timeSpan.Value.ToString();
-							});
-                        }),
-						nameof(Log.BeginningTimestamp)
-						or nameof(Log.EndingTimestamp)
-						or nameof(Log.Timestamp) => Log.CreatePropertyGetter<DateTime?>(propertyName).Let(getter =>
+						if (!logPropertyGetters.ContainsKey(propertyName))
 						{
-							return (Func<Log, string?>)(log =>
+							var logPropertyGetter = propertyName switch
 							{
-								var timestamp = getter(log);
-								if (timestamp == null)
-									return "";
-								if (this.timestampFormat != null)
+								nameof(Log.BeginningTimeSpan)
+								or nameof(Log.EndingTimeSpan)
+								or nameof(Log.TimeSpan) => Log.CreatePropertyGetter<TimeSpan?>(propertyName).Let(getter =>
 								{
-									try
+									return (Func<Log, string?>)(log =>
 									{
-										return timestamp.Value.ToString(this.timestampFormat, this.timestampCultureInfo);
-									}
-									catch
-									{ }
-								}
-								return timestamp.Value.ToString(this.timestampCultureInfo);
-							});
-						}),
-						nameof(Log.Level) => log =>
+										var timeSpan = getter(log);
+										if (timeSpan == null)
+											return "";
+										if (this.timeSpanFormat != null)
+										{
+											try
+											{
+												return timeSpan.Value.ToString(this.timeSpanFormat, this.timeSpanCultureInfo);
+											}
+											catch
+											{ }
+										}
+										return timeSpan.Value.ToString();
+									});
+								}),
+								nameof(Log.BeginningTimestamp)
+								or nameof(Log.EndingTimestamp)
+								or nameof(Log.Timestamp) => Log.CreatePropertyGetter<DateTime?>(propertyName).Let(getter =>
+								{
+									return (Func<Log, string?>)(log =>
+									{
+										var timestamp = getter(log);
+										if (timestamp == null)
+											return "";
+										if (this.timestampFormat != null)
+										{
+											try
+											{
+												return timestamp.Value.ToString(this.timestampFormat, this.timestampCultureInfo);
+											}
+											catch
+											{ }
+										}
+										return timestamp.Value.ToString(this.timestampCultureInfo);
+									});
+								}),
+								nameof(Log.Level) => log =>
+								{
+									if (this.logLevelMap.TryGetValue(log.Level, out var str))
+										return str;
+									return Converters.EnumConverters.LogLevel.Convert(log.Level, typeof(string), null, cultureInfo);
+								},
+								_ => Log.CreatePropertyGetter<object?>(propertyName),
+							};
+							logPropertyGetters[propertyName] = logPropertyGetter;
+						}
+						formatBuilder.Append($"{{{argIndex++}");
+						match.Groups["Alignment"].Let(it =>
 						{
-							if (this.logLevelMap.TryGetValue(log.Level, out var str))
-								return str;
-							return Converters.EnumConverters.LogLevel.Convert(log.Level, typeof(string), null, cultureInfo);
-						},
-						_ => Log.CreatePropertyGetter<object?>(propertyName),
-					};
-					logPropertyGetters.Add(logPropertyGetter);
-					formatBuilder.Append($"{{{argIndex++}");
-					match.Groups["Alignment"].Let(it =>
-					{
-						if (it.Success)
-							formatBuilder.Append($",{it.Value}");
-					});
-					match.Groups["Format"].Let(it =>
-					{
-						if (it.Success)
-							formatBuilder.Append($":{it.Value}");
-					});
-					formatBuilder.Append('}');
+							if (it.Success)
+								formatBuilder.Append($",{it.Value}");
+						});
+						match.Groups["Format"].Let(it =>
+						{
+							if (it.Success)
+								formatBuilder.Append($":{it.Value}");
+						});
+						formatBuilder.Append('}');
+						propNameList.Add(propertyName);
+					}
+					match = match.NextMatch();
 				}
-				match = match.NextMatch();
+				formatBuilder.Append(logFormat.Substring(logFormatStart));
+				formats.Add(new(formatBuilder.ToString(), propNameList));
+				formatBuilder.Clear();
 			}
-			formatBuilder.Append(this.logFormat.Substring(logFormatStart));
 
 			// start writing
 			var format = formatBuilder.ToString();
-			await Task.Run(() => this.WriteLogs(writer, format, logPropertyGetters, cancellationToken));
+			await Task.Run(() => this.WriteLogs(writer, formats, logPropertyGetters, cancellationToken));
 		}
 	}
 }
