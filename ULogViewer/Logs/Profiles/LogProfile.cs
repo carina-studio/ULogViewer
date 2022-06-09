@@ -53,7 +53,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		IList<LogPattern> logPatterns = new LogPattern[0];
 		LogStringEncoding logStringEncodingForReading = LogStringEncoding.Plane;
 		LogStringEncoding logStringEncodingForWriting = LogStringEncoding.Plane;
-		string? logWritingFormat;
+		IList<string> logWritingFormats = new string[0];
 		IDictionary<string, LogLevel> readOnlyLogLevelMapForReading;
 		IDictionary<LogLevel, string> readOnlyLogLevelMapForWriting;
 		long restartReadingDelay;
@@ -116,7 +116,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			this.logPatterns = template.logPatterns;
 			this.logStringEncodingForReading = template.logStringEncodingForReading;
 			this.logStringEncodingForWriting = template.logStringEncodingForWriting;
-			this.logWritingFormat = template.logWritingFormat;
+			this.logWritingFormats = template.logWritingFormats;
 			this.Name = template.Name;
 			this.sortDirection = template.sortDirection;
 			this.sortKey = template.sortKey;
@@ -705,19 +705,19 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 
 
 		/// <summary>
-		/// Get of set format to write log.
+		/// Get of set list of formats to write log.
 		/// </summary>
-		public string? LogWritingFormat
+		public IList<string> LogWritingFormats
 		{
-			get => this.logWritingFormat;
+			get => this.logWritingFormats;
 			set
 			{
 				this.VerifyAccess();
 				this.VerifyBuiltIn();
-				if (this.logWritingFormat == value)
+				if (this.logWritingFormats.SequenceEqual(value))
 					return;
-				this.logWritingFormat = value;
-				this.OnPropertyChanged(nameof(LogWritingFormat));
+				this.logWritingFormats = value.ToArray().AsReadOnly();
+				this.OnPropertyChanged(nameof(LogWritingFormats));
 			}
 		}
 
@@ -798,8 +798,16 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 						if (Enum.TryParse<LogStringEncoding>(jsonProperty.Value.GetString(), out encoding))
 							this.logStringEncodingForWriting = encoding;
 						break;
-					case nameof(LogWritingFormat):
-						this.logWritingFormat = jsonProperty.Value.GetString();
+					case "LogWritingFormat":
+						this.logWritingFormats = new string[] { jsonProperty.Value.GetString().AsNonNull() };
+						this.IsDataUpgraded = true;
+						break;
+					case nameof(LogWritingFormats):
+						this.logWritingFormats = new List<string>().Also(list =>
+						{
+							foreach (var jsonValue in jsonProperty.Value.EnumerateArray())
+								list.Add(jsonValue.GetString().AsNonNull());
+						}).AsReadOnly();
 						break;
 					case nameof(Name):
 						if (this.IsBuiltIn)
@@ -911,7 +919,14 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			this.SaveLogPatternsToJson(writer);
 			writer.WriteString(nameof(LogStringEncodingForReading), this.logStringEncodingForReading.ToString());
 			writer.WriteString(nameof(LogStringEncodingForWriting), this.logStringEncodingForWriting.ToString());
-			this.logWritingFormat?.Let(it => writer.WriteString(nameof(LogWritingFormat), it));
+			if (logWritingFormats.IsNotEmpty())
+			{
+				writer.WritePropertyName(nameof(LogWritingFormats));
+				writer.WriteStartArray();
+				foreach (var format in this.logWritingFormats)
+					writer.WriteStringValue(format);
+				writer.WriteEndArray();
+			}
 			writer.WriteString(nameof(Name), this.Name);
 			writer.WriteNumber(nameof(RestartReadingDelay), this.restartReadingDelay);
 			writer.WriteString(nameof(SortDirection), this.sortDirection.ToString());

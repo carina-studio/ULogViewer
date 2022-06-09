@@ -9,7 +9,9 @@
 			"Regex": "^[\\s]*(?<ThreadName>.*)\\-(?<ThreadId>[\\d]+)[\\s]+\\([\\s]*(?<ProcessId>[\\d\\-]+)\\)[\\s]+\\[(?<Extra1>[\\d]+)]*\\][\\s]+(?<Extra2>[\\d\\w\\.]+)[\\s]+(?<TimeSpan>[\\d]+\\.[\\d]+)[\\s]*\\:[\\s]*(?<SourceName>[^\\:]*)\\:[\\s](?<Message>.*)$"
 		}
 	],
-	"LogWritingFormat": "{ThreadName,16}-{ThreadId,-5} ({ProcessId,5}) [{Extra1}] {Extra2} {TimeSpan}: {SourceName}: {Message}",
+	"LogWritingFormats": [
+		"{ThreadName,16}-{ThreadId,-5} ({ProcessId,5}) [{Extra1}] {Extra2} {TimeSpan}: {SourceName}: {Message}"
+	],
 	"SortKey": "TimeSpan",
 	"TimeSpanEncodingForReading": "TotalSeconds",
 	"TimeSpanFormatForDisplaying": "dd\\ h\\:mm\\:ss\\.ffffff",

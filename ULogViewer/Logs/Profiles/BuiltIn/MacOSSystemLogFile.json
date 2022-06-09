@@ -13,7 +13,9 @@
 			"IsSkippable": true
 		}
 	],
-	"LogWritingFormat": "{Timestamp} {DeviceName} {ProcessName}{ProcessId:'['#####']'}: {Message}",
+	"LogWritingFormats": [
+		"{Timestamp} {DeviceName} {ProcessName}{ProcessId:'['#####']'}: {Message}"
+	],
 	"SortKey": "Timestamp",
 	"TimestampFormatForDisplaying": "MM/dd HH:mm:ss",
 	"TimestampFormatsForReading": [

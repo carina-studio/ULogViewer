@@ -9,7 +9,9 @@
 			"Regex": "^(?<Timestamp>[\\w]+[\\s]+[\\d]+[\\s]+[\\d\\:\\.]+)[\\s]+(?<DeviceName>[^\\s]*)[\\s]+(?<SourceName>[^\\[\\:]*)\\:[\\s](\\[[\\s]*(?<Extra1>[\\d\\.]+)[\\s]*\\][\\s]?)?(?<Message>.*)$"
 		}
 	],
-	"LogWritingFormat": "{Timestamp} {DeviceName} {SourceName}: [{Extra1,12}] {Message}",
+	"LogWritingFormats": [
+		"{Timestamp} {DeviceName} {SourceName}: [{Extra1,12}] {Message}"
+	],
 	"SortKey": "Timestamp",
 	"TimestampCategoryGranularity": "Minute",
 	"TimestampFormatForDisplaying": "MM/dd HH:mm:ss",

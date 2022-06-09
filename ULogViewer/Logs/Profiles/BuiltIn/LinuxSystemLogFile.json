@@ -9,7 +9,9 @@
 			"Regex": "^(?<Timestamp>[\\w]+[\\s]+[\\d]+[\\s]+[\\d\\:\\.]+)[\\s]+(?<DeviceName>[^\\s]*)[\\s]+((?<ProcessName>[^\\[]*)(\\[(?<ProcessId>[\\d]+)\\])|(?<ProcessName>[^\\:]*))\\:[\\s](?<Message>.*)$"
 		}
 	],
-	"LogWritingFormat": "{Timestamp} {DeviceName} {ProcessName}{ProcessId:'['#####']'}: {Message}",
+	"LogWritingFormats": [
+		"{Timestamp} {DeviceName} {ProcessName}{ProcessId:'['#####']'}: {Message}"
+	],
 	"SortKey": "Timestamp",
 	"TimestampCategoryGranularity": "Minute",
 	"TimestampFormatForDisplaying": "MM/dd HH:mm:ss",

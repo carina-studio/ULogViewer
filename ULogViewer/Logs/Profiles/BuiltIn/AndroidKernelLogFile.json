@@ -25,7 +25,9 @@
 			"Regex": "^(?<Timestamp>[^\\s]+[\\s]+[^\\s]+)[\\s]+[\\d]+[\\s]+[\\d]+[\\s]+(?<Level>[\\w]+)[\\s]+(\\:)?[\\s]*(\\[(?<Timestamp>[\\d]+_[\\d\\:\\.]+)\\](\\@[\\d]+)?[\\s]*)?((?<SourceName>([^\\s\\:]|([\\s]+[^\\s\\:])|([\\:]+[^\\s\\:]))*[\\:]*[\\s]*)\\:)?[\\s](?<Message>.*)$"
 		}
 	],
-	"LogWritingFormat": "{Timestamp} {Level} {SourceName}: {Message}",
+	"LogWritingFormats": [
+		"{Timestamp} {Level} {SourceName}: {Message}"
+	],
 	"TimestampCategoryGranularity": "Minute",
 	"TimestampFormatForDisplaying": "MM/dd HH:mm:ss.ffffff",
 	"TimestampFormatsForReading": [

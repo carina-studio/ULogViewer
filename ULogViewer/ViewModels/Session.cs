@@ -1975,11 +1975,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// check state
 			var profile = this.LogProfile ?? throw new InternalStateCorruptedException("No log profile.");
 			var app = this.Application as App ?? throw new InternalStateCorruptedException("No application.");
-			var writingFormat = profile.LogWritingFormat ?? "";
+			var writingFormats = profile.LogWritingFormats ?? new string[0];
 
 			// prepare log writer
 			var logWriter = new RawLogWriter(dataOutput);
-			logWriter.LogFormats = string.IsNullOrWhiteSpace(writingFormat)
+			logWriter.LogFormats = writingFormats.IsEmpty()
 				? new StringBuilder().Let(it =>
 				{
 					foreach (var property in this.DisplayLogProperties)
@@ -2011,7 +2011,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					}
 					return new string[] { it.ToString() };
 				})
-				: new string[] { writingFormat };
+				: writingFormats;
 			logWriter.LogLevelMap = profile.LogLevelMapForWriting;
 			logWriter.LogStringEncoding = profile.LogStringEncodingForWriting;
 			logWriter.TimeSpanCultureInfo = profile.TimeSpanCultureInfoForWriting;
@@ -3235,7 +3235,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				case nameof(LogProfile.LogLevelMapForReading):
 					this.UpdateValidLogLevels();
 					goto case nameof(LogProfile.LogPatterns);
-				case nameof(LogProfile.LogWritingFormat):
+				case nameof(LogProfile.LogWritingFormats):
 					this.UpdateIsLogsWritingAvailable(this.LogProfile);
 					break;
 				case nameof(LogProfile.LogPatterns):

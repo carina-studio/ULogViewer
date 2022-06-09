@@ -26,7 +26,9 @@
 			"Regex": "^\\<log4j\\:event[\\s]+logger=\"(?<SourceName>[^\"]*)\"[\\s]+level=\"(?<Level>[^\"]+)\"[\\s]+timestamp=\"(?<Timestamp>[^\"]+)\"[\\s]+thread=\"(?<ThreadId>[^\"]+)\"\\>.*\\<log4j\\:message\\>(?<Message>[^\\<]*)\\<.*\\<log4j\\:data[\\s]+name=\"log4japp\"[\\s]+value=\".*\\((?<ProcessId>[\\d]+)\\)\".*\\<log4j\\:data[\\s]+name=\"log4jmachinename\"[\\s]+value=\"(?<DeviceName>[^\"]*)\""
 		}
 	],
-	"LogWritingFormat": "{Timestamp} {DeviceName} {ProcessId,5} {ThreadId,5} {Level,5} {SourceName}: {Message}",
+	"LogWritingFormats": [
+		"{Timestamp} {DeviceName} {ProcessId,5} {ThreadId,5} {Level,5} {SourceName}: {Message}"
+	],
 	"SortKey": "Id",
 	"TimestampCategoryGranularity": "Minute",
 	"TimestampEncodingForReading": "UnixMilliseconds",

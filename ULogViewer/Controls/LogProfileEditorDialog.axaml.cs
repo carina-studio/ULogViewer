@@ -479,12 +479,12 @@ namespace CarinaStudio.ULogViewer.Controls
 			logProfile.LogPatterns = this.logPatterns;
 			logProfile.LogStringEncodingForReading = (LogStringEncoding)this.logStringEncodingForReadingComboBox.SelectedItem.AsNonNull();
 			logProfile.LogStringEncodingForWriting = (LogStringEncoding)this.logStringEncodingForWritingComboBox.SelectedItem.AsNonNull();
-			logProfile.LogWritingFormat = this.logWritingFormatTextBox.Text?.Let(it =>
+			logProfile.LogWritingFormats = this.logWritingFormatTextBox.Text?.Let(it =>
 			{
 				if (string.IsNullOrWhiteSpace(it))
-					return null;
-				return it;
-			});
+					return new string[0];
+				return new string[] { it };
+			}) ?? new string[0];
 			logProfile.Name = this.nameTextBox.Text.AsNonNull();
 			logProfile.RestartReadingDelay = this.restartReadingDelayTextBox.Value.GetValueOrDefault();
 			logProfile.SortDirection = (SortDirection)this.sortDirectionComboBox.SelectedItem.AsNonNull();
@@ -710,7 +710,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.logPatterns.AddRange(profile.LogPatterns);
 				this.logStringEncodingForReadingComboBox.SelectedItem = profile.LogStringEncodingForReading;
 				this.logStringEncodingForWritingComboBox.SelectedItem = profile.LogStringEncodingForWriting;
-				this.logWritingFormatTextBox.Text = profile.LogWritingFormat;
+				this.logWritingFormatTextBox.Text = profile.LogWritingFormats.Let(it => it.IsNotEmpty() ? it[0] : null);
 				this.nameTextBox.Text = profile.Name;
 				this.restartReadingDelayTextBox.Value = profile.RestartReadingDelay;
 				this.sortDirectionComboBox.SelectedItem = profile.SortDirection;
