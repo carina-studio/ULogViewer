@@ -20,6 +20,14 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// </summary>
 		Apple,
 		/// <summary>
+		/// AWS.
+		/// </summary>
+		AWS,
+		/// <summary>
+		/// Azure.
+		/// </summary>
+		Azure,
+		/// <summary>
 		/// Book.
 		/// </summary>
 		Book,
@@ -48,6 +56,10 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// </summary>
 		Debug,
 		/// <summary>
+		/// Diagnostic.
+		/// </summary>
+		Diagnostic,
+		/// <summary>
 		/// Experiment.
 		/// </summary>
 		Experiment,
@@ -59,6 +71,10 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// Folder.
 		/// </summary>
 		Folder,
+		/// <summary>
+		/// Google Cloud Platform.
+		/// </summary>
+		GCP,
 		/// <summary>
 		/// Linux.
 		/// </summary>
@@ -104,6 +120,10 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// </summary>
 		Security,
 		/// <summary>
+		/// Statistic.
+		/// </summary>
+		Statistic,
+		/// <summary>
 		/// Terminal.
 		/// </summary>
 		Terminal,
@@ -115,6 +135,10 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// Version control.
 		/// </summary>
 		VersionControl,
+		/// <summary>
+		/// Website.
+		/// </summary>
+		Website,
 		/// <summary>
 		/// Windows.
 		/// </summary>

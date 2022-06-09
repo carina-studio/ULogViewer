@@ -229,6 +229,7 @@
 	<sys:String x:Key="String/LogProfileIcon.Configuration">配置</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Database">数据库</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Debug">调试</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Diagnostic">诊断</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Experiment">实验</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.File">档案</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Folder">目录</sys:String>
@@ -236,8 +237,10 @@
 	<sys:String x:Key="String/LogProfileIcon.Performance">性能</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Phone">手机</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Security">安全性</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Statistic">统计</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Terminal">终端</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.VersionControl">版本控制</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Website">网站</sys:String>
 
 	<!-- LogProfileEditorDialog -->
 	<sys:String x:Key="String/LogProfileEditorDialog.AllowMultipleFiles">允许加入多个档案</sys:String>

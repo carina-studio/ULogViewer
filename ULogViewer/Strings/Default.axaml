@@ -236,6 +236,8 @@
 	<sys:String x:Key="String/LogProfileIcon.Analysis">Analysis</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Android">Android</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Apple">Apple</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.AWS">Amazon Web Services (AWS)</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Azure">Azure</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Book">Book</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Cloud">Cloud</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Code">Code</sys:String>
@@ -243,9 +245,11 @@
 	<sys:String x:Key="String/LogProfileIcon.Configuration">Configuration</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Database">Database</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Debug">Debug</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Diagnostic">Diagnostic</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Experiment">Experiment</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.File">File</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Folder">Folder</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.GCP">Google Cloud Platform (GCP)</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Linux">Linux</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Linux_Debian">Debian</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Linux_Fedora">Fedora</sys:String>
@@ -257,9 +261,11 @@
 	<sys:String x:Key="String/LogProfileIcon.Performance">Performance</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Phone">Mobile phone</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Security">Security</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Statistic">Statistic</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Terminal">Terminal</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Usb">USB</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.VersionControl">Version control</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Website">Website</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Windows">Windows</sys:String>
 
 	<!-- LogProfileEditorDialog -->
