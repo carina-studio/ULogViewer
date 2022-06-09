@@ -123,7 +123,7 @@
 							</DataTemplate>
 						</ComboBox.ItemTemplate>
 					</ComboBox>
-					<Button Classes="BrowseButton" Command="{Binding $parent[Window].SetDataSourceOptions}" Grid.Column="1" IsEnabled="{Binding #dataSourceProviderComboBox.SelectedItem.SupportedSourceOptions.Count}" VerticalAlignment="Center">
+					<Button Classes="BrowseButton" Command="{Binding $parent[Window].SetDataSourceOptions}" Grid.Column="1" IsEnabled="{Binding #dataSourceProviderComboBox.SelectedItem.SupportedSourceOptions.Count}" ToolTip.Tip="{DynamicResource String/Common.Edit}" VerticalAlignment="Center">
 						<Image Classes="BrowseButtonIcon" Source="{DynamicResource Image/Icon.Settings}"/>
 					</Button>
 				</Grid>
@@ -207,7 +207,7 @@
 							</DataTemplate>
 						</asControls:ListBox.ItemTemplate>
 					</asControls:ListBox>
-					<Button Classes="BrowseButton" Command="{Binding $parent[Window].AddLogLevelMapEntryForReading}" Grid.Column="1" VerticalAlignment="Top">
+					<Button Classes="BrowseButton" Command="{Binding $parent[Window].AddLogLevelMapEntryForReading}" Grid.Column="1" ToolTip.Tip="{DynamicResource String/Common.Add}" VerticalAlignment="Top">
 						<Image Classes="BrowseButtonIcon" Source="{DynamicResource Image/Icon.Add}"/>
 					</Button>
 				</Grid>
@@ -241,7 +241,7 @@
 							</DataTemplate>
 						</asControls:ListBox.ItemTemplate>
 					</asControls:ListBox>
-					<Button Classes="BrowseButton" Command="{Binding $parent[Window].AddLogPattern}" Grid.Column="1" VerticalAlignment="Top">
+					<Button Classes="BrowseButton" Command="{Binding $parent[Window].AddLogPattern}" Grid.Column="1" ToolTip.Tip="{DynamicResource String/Common.Add}" VerticalAlignment="Top">
 						<Image Classes="BrowseButtonIcon" Source="{DynamicResource Image/Icon.Add}"/>
 					</Button>
 				</Grid>
@@ -287,7 +287,7 @@
 							</DataTemplate>
 						</asControls:ListBox.ItemTemplate>
 					</asControls:ListBox>
-					<Button Classes="BrowseButton" Command="{Binding $parent[Window].AddTimestampFormatForReading}" Grid.Column="1" VerticalAlignment="Top">
+					<Button Classes="BrowseButton" Command="{Binding $parent[Window].AddTimestampFormatForReading}" Grid.Column="1" ToolTip.Tip="{DynamicResource String/Common.Add}" VerticalAlignment="Top">
 						<Image Classes="BrowseButtonIcon" Source="{DynamicResource Image/Icon.Add}"/>
 					</Button>
 				</Grid>
@@ -328,7 +328,7 @@
 							</DataTemplate>
 						</asControls:ListBox.ItemTemplate>
 					</asControls:ListBox>
-					<Button Classes="BrowseButton" Command="{Binding $parent[Window].AddTimeSpanFormatForReading}" Grid.Column="1" VerticalAlignment="Top">
+					<Button Classes="BrowseButton" Command="{Binding $parent[Window].AddTimeSpanFormatForReading}" Grid.Column="1" ToolTip.Tip="{DynamicResource String/Common.Add}" VerticalAlignment="Top">
 						<Image Classes="BrowseButtonIcon" Source="{DynamicResource Image/Icon.Add}"/>
 					</Button>
 				</Grid>
@@ -373,7 +373,7 @@
 							</DataTemplate>
 						</asControls:ListBox.ItemTemplate>
 					</asControls:ListBox>
-					<Button Classes="BrowseButton" Command="{Binding $parent[Window].AddVisibleLogProperty}" Grid.Column="1" VerticalAlignment="Top">
+					<Button Classes="BrowseButton" Command="{Binding $parent[Window].AddVisibleLogProperty}" Grid.Column="1" ToolTip.Tip="{DynamicResource String/Common.Add}" VerticalAlignment="Top">
 						<Image Classes="BrowseButtonIcon" Source="{DynamicResource Image/Icon.Add}"/>
 					</Button>
 				</Grid>
@@ -418,11 +418,38 @@
 					<TextBlock Classes="Dialog_TextBlock_Header1" Text="{DynamicResource String/LogProfileEditorDialog.LogWriting}"/>
 				</Border>
 				
-				<!-- Log writing format -->
-				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogProfileEditorDialog.LogWritingFormat}"/>
-				<asControls:StringInterpolationFormatTextBox Name="logWritingFormatTextBox" Height="{DynamicResource Double/LogProfileEditorDialog.LogWritingFormatTextBox.Height}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" TextWrapping="Wrap" Watermark="{DynamicResource String/LogProfileEditorDialog.LogWritingFormat.Watermark}"/>
-				<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.LogWritingFormat.Description}"/>
-				<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.FormatDescription}" Uri="{x:Static app:Uris.StringInterpolationReference}"/>
+				<!-- Log writing formats -->
+				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogProfileEditorDialog.LogWritingFormats}"/>
+				<Grid ColumnDefinitions="*,Auto">
+					<asControls:ListBox Name="logWritingFormatListBox" DoubleClickOnItem="OnListBoxDoubleClickOnItem" Items="{Binding $parent[Window].LogWritingFormats}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
+						<asControls:ListBox.ItemTemplate>
+							<DataTemplate>
+								<Grid ColumnDefinitions="*,Auto">
+									<TextBlock Text="{Binding}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
+									<Border Classes="InPlaceAction_Reserved"/>
+									<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
+										<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveLogWritingFormat}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
+											<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Delete}"/>
+										</Button>
+										<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditLogWritingFormat}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
+											<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Edit}"/>
+										</Button>
+										<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].MoveLogWritingFormatUp}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.MoveUp}">
+											<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.MoveUp}"/>
+										</Button>
+										<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].MoveLogWritingFormatDown}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.MoveDown}">
+											<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.MoveDown}"/>
+										</Button>
+									</StackPanel>
+								</Grid>
+							</DataTemplate>
+						</asControls:ListBox.ItemTemplate>
+					</asControls:ListBox>
+					<Button Classes="BrowseButton" Command="{Binding $parent[Window].AddLogWritingFormat}" Grid.Column="1" ToolTip.Tip="{DynamicResource String/Common.Add}" VerticalAlignment="Top">
+						<Image Classes="BrowseButtonIcon" Source="{DynamicResource Image/Icon.Add}"/>
+					</Button>
+				</Grid>
+				<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.LogWritingFormats.Description}"/>
 				<Separator Classes="Dialog_Separator"/>
 				
 				<!-- Log level map -->
@@ -452,7 +479,7 @@
 							</DataTemplate>
 						</asControls:ListBox.ItemTemplate>
 					</asControls:ListBox>
-					<Button Classes="BrowseButton" Command="{Binding $parent[Window].AddLogLevelMapEntryForWriting}" Grid.Column="1" VerticalAlignment="Top">
+					<Button Classes="BrowseButton" Command="{Binding $parent[Window].AddLogLevelMapEntryForWriting}" Grid.Column="1" ToolTip.Tip="{DynamicResource String/Common.Add}" VerticalAlignment="Top">
 						<Image Classes="BrowseButtonIcon" Source="{DynamicResource Image/Icon.Add}"/>
 					</Button>
 				</Grid>

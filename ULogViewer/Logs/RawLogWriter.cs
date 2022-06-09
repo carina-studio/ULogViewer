@@ -434,10 +434,11 @@ namespace CarinaStudio.ULogViewer.Logs
 				formatBuilder.Append(logFormat.Substring(logFormatStart));
 				formats.Add(new(formatBuilder.ToString(), propNameList));
 				formatBuilder.Clear();
+				logFormatStart = 0;
+				argIndex = 0;
 			}
 
 			// start writing
-			var format = formatBuilder.ToString();
 			await Task.Run(() => this.WriteLogs(writer, formats, logPropertyGetters, cancellationToken));
 		}
 	}

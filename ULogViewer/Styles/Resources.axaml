@@ -84,6 +84,10 @@
 	<sys:Double x:Key="Double/LogStringPropertyDialog.MinWidth">300</sys:Double>
 	<sys:Double x:Key="Double/LogStringPropertyDialog.Width">600</sys:Double>
 
+	<!-- LogWritingFormatEditorDialog -->
+	<sys:Double x:Key="Double/LogWritingFormatEditorDialog.FormatTextBox.Height">100</sys:Double>
+	<sys:Double x:Key="Double/LogWritingFormatEditorDialog.Width">600</sys:Double>
+
 	<!-- MainWindow -->
 	<sys:Double x:Key="Double/MainWindow.MinHeight">150</sys:Double>
 	<sys:Double x:Key="Double/MainWindow.MinWidth">300</sys:Double>

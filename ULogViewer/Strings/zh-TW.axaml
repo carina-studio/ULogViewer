@@ -273,9 +273,8 @@
 	<sys:String x:Key="String/LogProfileEditorDialog.LogStringEncodingForReading">日誌文字讀取編碼方式</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogStringEncodingForWriting">日誌文字輸出編碼方式</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogWriting">日誌輸出設定</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LogWritingFormat">日誌輸出格式</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LogWritingFormat.Description">此格式將用於日誌複製與儲存。您可以使用插值語法 "{}" 以將日誌屬性產生至輸出的日誌文字。</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LogWritingFormat.Watermark">留白以使用預設格式</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogWritingFormats">日誌輸出格式</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogWritingFormats.Description">此格式將用於日誌複製與儲存。對於每筆日誌，將從列表中選出第一個包含所有有效日誌屬性的格式使用，否則使用列表中的第一個格式。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Name">名稱 (必要)</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.RestartReadingDelay">重新開始讀取日誌前的延遲 (毫秒)</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.SortDirection">日誌排序方向</sys:String>
@@ -413,6 +412,11 @@
 	<sys:String x:Key="String/LogTimestampEncoding.Unix">Unix 時間戳記</sys:String>
 	<sys:String x:Key="String/LogTimestampEncoding.UnixMicroseconds">Unix 時間戳記 (微秒)</sys:String>
 	<sys:String x:Key="String/LogTimestampEncoding.UnixMilliseconds">Unix 時間戳記 (毫秒)</sys:String>
+
+	<!-- LogWritingFormatEditorDialog -->
+	<sys:String x:Key="String/LogWritingFormatEditorDialog.Format">格式</sys:String>
+	<sys:String x:Key="String/LogWritingFormatEditorDialog.Format.Description">您可以使用插值語法 "{}" 以將日誌屬性產生至輸出的日誌文字。</sys:String>
+	<sys:String x:Key="String/LogWritingFormatEditorDialog.Title">日誌輸出格式</sys:String>
 
 	<!-- MainWindow -->
 	<sys:String x:Key="String/MainWindow.ClearCustomSessionTitle">重設分頁標題</sys:String>

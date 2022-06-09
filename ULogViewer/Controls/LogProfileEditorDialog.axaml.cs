@@ -66,7 +66,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ObservableList<LogPattern> logPatterns = new ObservableList<LogPattern>();
 		readonly ComboBox logStringEncodingForReadingComboBox;
 		readonly ComboBox logStringEncodingForWritingComboBox;
-		readonly TextBox logWritingFormatTextBox;
+		readonly Avalonia.Controls.ListBox logWritingFormatListBox;
+		readonly ObservableList<string> logWritingFormats = new();
 		readonly TextBox nameTextBox;
 		readonly IntegerTextBox restartReadingDelayTextBox;
 		readonly ComboBox sortDirectionComboBox;
@@ -99,6 +100,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				it.CollectionChanged += (_, e) => this.InvalidateInput();
 			}).AsReadOnly();
+			this.LogWritingFormats = this.logWritingFormats.AsReadOnly();
 			this.TimeSpanFormatsForReading = this.timeSpanFormatsForReading.AsReadOnly();
 			this.TimestampFormatsForReading = this.timestampFormatsForReading.AsReadOnly();
 			this.VisibleLogProperties = this.visibleLogProperties.Also(it =>
@@ -130,27 +132,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.logPatternListBox = this.FindControl<AppSuite.Controls.ListBox>("logPatternListBox").AsNonNull();
 			this.logStringEncodingForReadingComboBox = this.FindControl<ComboBox>("logStringEncodingForReadingComboBox").AsNonNull();
 			this.logStringEncodingForWritingComboBox = this.FindControl<ComboBox>("logStringEncodingForWritingComboBox").AsNonNull();
-			this.logWritingFormatTextBox = this.FindControl<StringInterpolationFormatTextBox>("logWritingFormatTextBox").AsNonNull().Also(it =>
-			{
-				foreach (var propertyName in Log.PropertyNames)
-				{
-					it.PredefinedVariables.Add(new StringInterpolationVariable().Also(variable =>
-					{
-						variable.Bind(StringInterpolationVariable.DisplayNameProperty, new Binding() 
-						{
-							Converter = Converters.LogPropertyNameConverter.Default,
-							Path = nameof(StringInterpolationVariable.Name),
-							Source = variable,
-						});
-						variable.Name = propertyName;
-					}));
-				}
-				it.PredefinedVariables.Add(new StringInterpolationVariable().Also(variable =>
-				{
-					variable.Bind(StringInterpolationVariable.DisplayNameProperty,this.GetResourceObservable("String/Common.NewLine"));
-					variable.Name = "NewLine";
-				}));
-			});
+			this.logWritingFormatListBox = this.FindControl<Avalonia.Controls.ListBox>(nameof(logWritingFormatListBox)).AsNonNull();
 			this.nameTextBox = this.FindControl<TextBox>("nameTextBox").AsNonNull();
 			this.restartReadingDelayTextBox = this.FindControl<IntegerTextBox>(nameof(restartReadingDelayTextBox)).AsNonNull();
 			this.sortDirectionComboBox = this.FindControl<ComboBox>("sortDirectionComboBox").AsNonNull();
@@ -235,6 +217,18 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				this.logPatterns.Add(logPattern);
 				this.SelectListBoxItem(this.logPatternListBox, this.logPatterns.Count - 1);
+			}
+		}
+
+
+		// Add log writing format.
+		async void AddLogWritingFormat()
+		{
+			var format = await new LogWritingFormatEditorDialog().ShowDialog<string?>(this);
+			if (format != null)
+			{
+				this.logWritingFormats.Add(format);
+				this.SelectListBoxItem(this.logWritingFormatListBox, this.logWritingFormats.Count - 1);
 			}
 		}
 
@@ -346,10 +340,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Edit log pattern.
 		async void EditLogPattern(ListBoxItem item)
 		{
-			var index = this.logPatterns.IndexOf((LogPattern)item.DataContext.AsNonNull());
-			if (index < 0)
-				return;
 			if (item.DataContext is not LogPattern logPattern)
+				return;
+			var index = this.logPatterns.IndexOf(logPattern);
+			if (index < 0)
 				return;
 			var newLlogPattern = await new LogPatternEditorDialog()
 			{
@@ -359,6 +353,26 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				this.logPatterns[index] = newLlogPattern;
 				this.SelectListBoxItem(this.logPatternListBox, index);
+			}
+		}
+
+
+		// Edit log writing format.
+		async void EditLogWritingFormat(ListBoxItem item)
+		{
+			if (item.DataContext is not string format)
+				return;
+			var index = this.logWritingFormats.IndexOf(format);
+			if (index < 0)
+				return;
+			var newFormat = await new LogWritingFormatEditorDialog()
+			{
+				Format = format
+			}.ShowDialog<string?>(this);
+			if (newFormat != null && newFormat != format)
+			{
+				this.logWritingFormats[index] = newFormat;
+				this.SelectListBoxItem(this.logWritingFormatListBox, index);
 			}
 		}
 
@@ -479,12 +493,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			logProfile.LogPatterns = this.logPatterns;
 			logProfile.LogStringEncodingForReading = (LogStringEncoding)this.logStringEncodingForReadingComboBox.SelectedItem.AsNonNull();
 			logProfile.LogStringEncodingForWriting = (LogStringEncoding)this.logStringEncodingForWritingComboBox.SelectedItem.AsNonNull();
-			logProfile.LogWritingFormats = this.logWritingFormatTextBox.Text?.Let(it =>
-			{
-				if (string.IsNullOrWhiteSpace(it))
-					return new string[0];
-				return new string[] { it };
-			}) ?? new string[0];
+			logProfile.LogWritingFormats = this.logWritingFormats;
 			logProfile.Name = this.nameTextBox.Text.AsNonNull();
 			logProfile.RestartReadingDelay = this.restartReadingDelayTextBox.Value.GetValueOrDefault();
 			logProfile.SortDirection = (SortDirection)this.sortDirectionComboBox.SelectedItem.AsNonNull();
@@ -505,14 +514,6 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Initialize.
 		private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
-
-
-		// Insert log writing syntax for given log property.
-		void InsertLogWritingFormatSyntax(string propertyName)
-		{
-			this.logWritingFormatTextBox.SelectedText = $"{{{propertyName}}}";
-			this.logWritingFormatTextBox.Focus();
-		}
 
 
 		// Check whether log data source options is valid or not.
@@ -539,6 +540,10 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// All log profile icons.
 		IList<LogProfileIcon> LogProfileIcons { get; } = (LogProfileIcon[])Enum.GetValues(typeof(LogProfileIcon));
+
+
+		// Log writing formats.
+		public IList<string> LogWritingFormats { get; }
 
 
 		// Move log pattern down.
@@ -568,6 +573,36 @@ namespace CarinaStudio.ULogViewer.Controls
 				--index;
 			}
 			this.SelectListBoxItem(this.logPatternListBox, index);
+		}
+
+
+		// Move log writing format down.
+		void MoveLogWritingFormatDown(ListBoxItem item)
+		{
+			var index = this.logWritingFormats.IndexOf((string)item.DataContext.AsNonNull());
+			if (index < 0)
+				return;
+			if (index < this.logWritingFormats.Count - 1)
+			{
+				this.logWritingFormats.Move(index, index + 1);
+				++index;
+			}
+			this.SelectListBoxItem(this.logWritingFormatListBox, index);
+		}
+
+
+		// Move log writing format up.
+		void MoveLogWritingFormatUp(ListBoxItem item)
+		{
+			var index = this.logWritingFormats.IndexOf((string)item.DataContext.AsNonNull());
+			if (index < 0)
+				return;
+			if (index > 0)
+			{
+				this.logWritingFormats.Move(index, index - 1);
+				--index;
+			}
+			this.SelectListBoxItem(this.logWritingFormatListBox, index);
 		}
 
 
@@ -645,6 +680,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.EditLogLevelMapEntryForWriting((KeyValuePair<LogLevel, string>)e.Item);
 			else if (listBox == this.logPatternListBox)
 				this.EditLogPattern(listBoxItem);
+			else if (listBox == this.logWritingFormatListBox)
+				this.EditLogWritingFormat(listBoxItem);
 			else if (listBox == this.timeSpanFormatsForReadingListBox)
 				this.EditTimeSpanFormatForReading(listBoxItem);
 			else if (listBox == this.timestampFormatsForReadingListBox)
@@ -710,7 +747,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.logPatterns.AddRange(profile.LogPatterns);
 				this.logStringEncodingForReadingComboBox.SelectedItem = profile.LogStringEncodingForReading;
 				this.logStringEncodingForWritingComboBox.SelectedItem = profile.LogStringEncodingForWriting;
-				this.logWritingFormatTextBox.Text = profile.LogWritingFormats.Let(it => it.IsNotEmpty() ? it[0] : null);
+				this.logWritingFormats.AddAll(profile.LogWritingFormats);
 				this.nameTextBox.Text = profile.Name;
 				this.restartReadingDelayTextBox.Value = profile.RestartReadingDelay;
 				this.sortDirectionComboBox.SelectedItem = profile.SortDirection;
@@ -820,6 +857,17 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 			this.logPatterns.RemoveAt(index);
 			this.SelectListBoxItem(this.logPatternListBox, -1);
+		}
+
+
+		// Remove log writing format.
+		void RemoveLogWritingFormat(ListBoxItem item)
+		{
+			var index = this.logWritingFormats.IndexOf((string)item.DataContext.AsNonNull());
+			if (index < 0)
+				return;
+			this.logWritingFormats.RemoveAt(index);
+			this.SelectListBoxItem(this.logWritingFormatListBox, -1);
 		}
 
 

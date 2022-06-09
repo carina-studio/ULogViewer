@@ -299,9 +299,8 @@
 	<sys:String x:Key="String/LogProfileEditorDialog.LogStringEncodingForReading">Encoding of text in log for reading</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogStringEncodingForWriting">Encoding of text in log for output</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogWriting">Log Output</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LogWritingFormat">Log output format</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LogWritingFormat.Description">The format will be used for logs copying and saving. You can use Interpolation Syntax "{}" to output log property to log text.</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LogWritingFormat.Watermark">Empty to use default format</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogWritingFormats">Log output formats</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogWritingFormats.Description">The format will be used for logs copying and saving. For each log, the first format which contains all valid log properties will be used from list. Otherwise, the first format in list will be used.</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Name">Name (required)</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.RestartReadingDelay">Delay before restarting log reading (ms)</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.SortDirection">Sort direction of log</sys:String>
@@ -445,6 +444,11 @@
 	<sys:String x:Key="String/LogTimestampEncoding.Unix">Unix timestamp</sys:String>
 	<sys:String x:Key="String/LogTimestampEncoding.UnixMicroseconds">Unix timestamp (microseconds)</sys:String>
 	<sys:String x:Key="String/LogTimestampEncoding.UnixMilliseconds">Unix timestamp (milliseconds)</sys:String>
+
+	<!-- LogWritingFormatEditorDialog -->
+	<sys:String x:Key="String/LogWritingFormatEditorDialog.Format">Format</sys:String>
+	<sys:String x:Key="String/LogWritingFormatEditorDialog.Format.Description">You can use Interpolation Syntax "{}" to output log property to log text.</sys:String>
+	<sys:String x:Key="String/LogWritingFormatEditorDialog.Title">Log output format</sys:String>
 
 	<!-- MainWindow -->
 	<sys:String x:Key="String/MainWindow.ClearCustomSessionTitle">Reset title of this tab</sys:String>
