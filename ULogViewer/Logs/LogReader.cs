@@ -932,6 +932,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			var nonContinuousChunkSize = configuration.GetValueOrDefault(ConfigurationKeys.NonContinuousLogsReadingUpdateChunkSize);
 			var nonContinuousPaddingInterval = configuration.GetValueOrDefault(ConfigurationKeys.NonContinuousLogsReadingPaddingInterval);
 			var stopWatch = new Stopwatch().Also(it => it.Start());
+			var readLineSyncLock = new object();
 			try
 			{
 				var prevLogPattern = (LogPattern?)null;
@@ -939,11 +940,82 @@ namespace CarinaStudio.ULogViewer.Logs
 				var lastLogPatternIndex = (logPatterns.Count - 1);
 				var lineNumber = 1;
 				var startReadingTime = stopWatch.ElapsedMilliseconds;
-				var logLine = reader.ReadLine();
+				var updateInterval = 0;
+				var logLine = (string?)null;
+				void ReadNextLine()
+				{
+					++lineNumber;
+					logLine = reader.ReadLine();
+				}
+				void ReadNextLineSkippable()
+				{
+					if (logPatterns[logPatternIndex].IsSkippable)
+					{
+						lock (readLineSyncLock)
+						{
+							ThreadPool.QueueUserWorkItem(_ =>
+							{
+								try
+								{
+									logLine = reader.ReadLine();
+								}
+								catch 
+								{ }
+								lock (readLineSyncLock)
+								{
+									Monitor.PulseAll(readLineSyncLock);
+								}
+							});
+							if (Monitor.Wait(readLineSyncLock, 5000))
+								++lineNumber;
+							else
+							{
+								this.Logger.LogTrace("No line read, skip patterns");
+
+								// skip all skippable patterns because of no line read
+								while (logPatternIndex <= lastLogPatternIndex)
+								{
+									++logPatternIndex;
+									if (logPatternIndex > lastLogPatternIndex)
+										break;
+									if (!logPatterns[logPatternIndex].IsSkippable)
+										break;
+								}
+
+								// create log
+								if (logPatternIndex >= lastLogPatternIndex)
+								{
+									if (logBuilder.IsNotEmpty())
+									{
+										readLog = logBuilder.BuildAndReset();
+										if (!hasPrecondition || precondition.Matches(readLog))
+										{
+											if (isContinuousReading)
+												FlushContinuousReadingLog(updateInterval);
+											else
+												readLogs.Add(readLog);
+										}
+									}
+									logPatternIndex = 0;
+								}
+
+								// wait for reading line
+								Monitor.Wait(readLineSyncLock);
+								++lineNumber;
+							}
+						}
+					}
+					else
+					{
+						++lineNumber;
+						logLine = reader.ReadLine();
+					}
+				}
+				ReadNextLine();
 				while (logLine != null && !cancellationToken.IsCancellationRequested)
 				{
 					var logPattern = logPatterns[logPatternIndex];
-					var updateInterval = this.updateInterval.HasValue
+					updateInterval = this.updateInterval.HasValue
 							? this.updateInterval.Value
 							: (isContinuousReading ? configuration.GetValueOrDefault(ConfigurationKeys.ContinuousLogsReadingUpdateInterval) : defaultNonContinuousUpdateInterval);
 					try
@@ -990,9 +1062,8 @@ namespace CarinaStudio.ULogViewer.Logs
 									++logPatternIndex;
 							}
 
-							// read next line
-							++lineNumber;
-							logLine = reader.ReadLine();
+							// read next line or skip patterns
+							ReadNextLineSkippable();
 						}
 						else if (logPattern.IsSkippable)
 						{
@@ -1016,12 +1087,9 @@ namespace CarinaStudio.ULogViewer.Logs
 								}
 							}
 
-							// need to move to next line if there is only one pattern or this is the first pattern
-							if (logPatternIndex == 0 || lastLogPatternIndex == 0)
-							{
-								++lineNumber;
-								logLine = reader.ReadLine();
-							}
+							// need to move to next line if there is only one pattern
+							if (lastLogPatternIndex == 0)
+								ReadNextLineSkippable();
 
 							// move to first pattern
 							logPatternIndex = 0;
@@ -1040,10 +1108,7 @@ namespace CarinaStudio.ULogViewer.Logs
 
 								// need to move to next line if there is only one pattern or this is the first pattern
 								if (logPatternIndex == 0 || lastLogPatternIndex == 0)
-								{
-									++lineNumber;
-									logLine = reader.ReadLine();
-								}
+									ReadNextLine();
 
 								// move to first pattern
 								logPatternIndex = 0;
@@ -1072,10 +1137,7 @@ namespace CarinaStudio.ULogViewer.Logs
 
 							// need to move to next line if there is only one pattern or this is the first pattern
 							if (logPatternIndex == 0 || lastLogPatternIndex == 0)
-							{
-								++lineNumber;
-								logLine = reader.ReadLine();
-							}
+								ReadNextLine();
 
 							// move to first pattern
 							logPatternIndex = 0;
@@ -1091,10 +1153,7 @@ namespace CarinaStudio.ULogViewer.Logs
 
 							// need to move to next line if there is only one pattern or this is the first pattern
 							if (logPatternIndex == 0 || lastLogPatternIndex == 0)
-							{
-								++lineNumber;
-								logLine = reader.ReadLine();
-							}
+								ReadNextLine();
 
 							// move to first pattern
 							logPatternIndex = 0;
