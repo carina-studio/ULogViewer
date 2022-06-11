@@ -26,7 +26,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			// setup properties
 			this.logProfiles.Add(LogProfileManager.Default.EmptyProfile);
-			this.logProfiles.AddAll(LogProfileManager.Default.Profiles);
+			this.logProfiles.AddAll(LogProfileManager.Default.Profiles.Where(it => !it.IsTemplate));
 			this.LogProfiles = this.logProfiles.AsReadOnly();
 			this.SampleLogFontFamily = new FontFamily(this.LogFontFamily);
 
@@ -193,7 +193,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			switch(e.Action)
 			{
 				case NotifyCollectionChangedAction.Add:
-					this.logProfiles.AddAll(e.NewItems.AsNonNull().Cast<LogProfile>());
+					this.logProfiles.AddAll(e.NewItems.AsNonNull().Cast<LogProfile>().Where(it => !it.IsTemplate));
 					break;
 				case NotifyCollectionChangedAction.Remove:
 					this.logProfiles.RemoveAll(e.OldItems.AsNonNull().Cast<LogProfile>());

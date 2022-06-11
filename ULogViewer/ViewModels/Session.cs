@@ -3232,6 +3232,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				case nameof(LogProfile.IsContinuousReading):
 					this.SetValue(IsReadingLogsContinuouslyProperty, this.LogProfile.AsNonNull().IsContinuousReading);
 					goto case nameof(LogProfile.LogPatterns);
+				case nameof(LogProfile.IsTemplate):
+					(sender as LogProfile)?.Let(it =>
+					{
+						if (it.IsTemplate)
+						{
+							this.Logger.LogWarning($"Log profile '{it.Name}' has been set as template, reset log profile");
+							this.ResetLogProfile();
+						}
+					});
+					break;
 				case nameof(LogProfile.LogLevelMapForReading):
 					this.UpdateValidLogLevels();
 					goto case nameof(LogProfile.LogPatterns);
@@ -4409,6 +4419,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				throw new ArgumentNullException(nameof(profile));
 			if (this.LogProfile != null)
 				throw new InternalStateCorruptedException("Already set another log profile.");
+			if (profile.IsTemplate)
+				throw new ArgumentException("Cannot set template log profile.");
 
 			// set profile
 			this.Logger.LogWarning($"Set profile '{profile.Name}'");

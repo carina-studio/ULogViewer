@@ -3600,7 +3600,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.updateStatusBarStateAction.Schedule();
 					break;
 				case nameof(Session.LogProfile):
-					session.LogProfile?.Let(profile =>
+					session.LogProfile.Let(profile =>
 					{
 						if (profile != null)
 						{
