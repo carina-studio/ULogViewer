@@ -313,7 +313,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			// check external dependencies
 			foreach (var extDep in this.ExternalDependencies)
 			{
-				await extDep.WaitForCheckingAcailability();
+				await extDep.WaitForCheckingAvailability();
 				if (this.state != LogDataSourceState.Preparing)
 					return;
 				if (extDep.State != ExternalDependencyState.Available)
