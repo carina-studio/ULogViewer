@@ -50,6 +50,10 @@
 	<sys:String x:Key="String/BuiltInProfile.AndroidKernelLogFile.Description">在一個或多個檔案中的 Android 核心日誌。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidTraceFile">Android 系統追蹤檔案</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidTraceFile.Description">用以追蹤及分析 Android 系統及應用程式效能的檔案。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AzureWebappLogFile">Azure Webapp 日誌檔案</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AzureWebappLogFile.Description">從 Azure 下載之 Webapp 日誌檔案。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AzureWebappLogStream">Azure Webapp 即時日誌</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AzureWebappLogStream.Description">位於 Azure 上特定 Webapp 之即時日誌。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.Empty">無</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.GitLog">Git 提交紀錄</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.GitLog.Description">顯示指定存放庫中的 Git 提交列表。</sys:String>

@@ -1,0 +1,70 @@
+{
+  "AllowMultipleFiles": true,
+  "DataSource": {
+    "Name": "File"
+  },
+  "ColorIndicator": "FileName",
+  "Icon": "Azure",
+  "LogLevelMapForReading": {
+    "Debug": "Debug",
+    "Error": "Error",
+    "Information": "Info",
+    "Trace": "Debug",
+    "WARNING": "Warn"
+  },
+  "LogLevelMapForWriting": {
+    "Trace": "Trace",
+    "Debug": "Trace",
+    "Info": "Information",
+    "Warn": "WARNING",
+    "Error": "Error"
+  },
+  "LogPatterns": [
+    {
+      "Regex": "^((?\u003CLevel\u003E\\w\u002B)\\:\\s*)?(?\u003CTimestamp\u003E\\d{4}\\-\\d{2}\\-\\d{2}[T\\s]\u002B[\\d\\:\\.]\u002B\\s\u002B([\\\u002B\\-][\\d\\:]\u002B)?)\\s*(\\[(?\u003CLevel\u003E\\w\u002B)\\])?\\s*((?\u003CSourceName\u003E([^\\:\\.]\u002B\\.)*(?\u003CTags\u003E[^\\:\\.]\u002B))\\:)?\\s(?\u003CMessage\u003E.*)",
+      "IgnoreCase": true
+    },
+    {
+      "Regex": "^(?!WARNING:)(?!\\d{4}\\-\\d{2}\\-\\d{2})(?\u003CMessage\u003E.*)",
+      "IgnoreCase": true,
+      "IsRepeatable": true,
+      "IsSkippable": true
+    }
+  ],
+  "LogStringEncodingForReading": "Plane",
+  "LogStringEncodingForWriting": "Plane",
+  "LogWritingFormats": [
+    "{Timestamp} [{Level}] {SourceName}: {Message}",
+    "{Level}: {Timestamp} {Message}"
+  ],
+  "RestartReadingDelay": 0,
+  "SortDirection": "Ascending",
+  "SortKey": "Id",
+  "TimeSpanCultureInfoForReading": "en-US",
+  "TimeSpanCultureInfoForWriting": "en-US",
+  "TimeSpanEncodingForReading": "Custom",
+  "TimestampCategoryGranularity": "Minute",
+  "TimestampCultureInfoForReading": "en-US",
+  "TimestampCultureInfoForWriting": "en-US",
+  "TimestampEncodingForReading": "Custom",
+  "TimestampFormatForDisplaying": "yyyy/MM/dd HH:mm:ss.fff",
+  "TimestampFormatForWriting": "yyyy-MM-dd HH:mm:ss.fff K",
+  "VisibleLogProperties": [
+    {
+      "Name": "Timestamp",
+      "Width": 200
+    },
+    {
+      "Name": "SourceName",
+      "Width": 100
+    },
+    {
+      "DisplayName": "Name",
+      "Name": "Tags",
+      "Width": 150
+    },
+    {
+      "Name": "Message"
+    }
+  ]
+}

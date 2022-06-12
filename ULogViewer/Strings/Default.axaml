@@ -50,6 +50,10 @@
 	<sys:String x:Key="String/BuiltInProfile.AndroidKernelLogFile.Description">Android kernel logs stored in one or more files.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidTraceFile">Android System Trace File</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidTraceFile.Description">Parse System Trace file to analyze system and application performance on Android device.</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AzureWebappLogFile">Azure Webapp log Files</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AzureWebappLogFile.Description">Log files of web application downloaded from Azure.</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AzureWebappLogStream">Azure Webapp Log Stream</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AzureWebappLogStream.Description">Realtime log stream of specific web application on Azure.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.Empty">None</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.GitLog">Git Log</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.GitLog.Description">List of git commits of specified repository.</sys:String>
