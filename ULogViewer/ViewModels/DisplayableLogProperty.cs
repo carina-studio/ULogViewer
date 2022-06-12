@@ -82,6 +82,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					displayNames = new List<string>(Log.PropertyNames).Also(it =>
 					{
 						it.Add("Author");
+						it.Add("BeginningValue");
 						it.Add("Child");
 						it.Add("Children");
 						it.Add("Code");
@@ -90,7 +91,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						it.Add("Count");
 						it.Add("Cpu");
 						it.Add("Duration");
+						it.Add("End");
+						it.Add("EndingValue");
 						it.Add("ID");
+						it.Add("Key");
 						it.Add("Name");
 						it.Add("Number");
 						it.Add("Parent");
@@ -100,9 +104,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						it.Add("RelativeEndingTimestamp");
 						it.Add("RelativeTimestamp");
 						it.Add("ShortName");
+						it.Add("Start");
 						it.Add("Tag");
 						it.Add("Type");
 						it.Add("Uri");
+						it.Add("Value");
 						it.Sort();
 					}).AsReadOnly();
 				}

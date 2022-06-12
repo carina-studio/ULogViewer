@@ -355,6 +355,7 @@
 	<sys:String x:Key="String/LogProperty.Author">Author</sys:String>
 	<sys:String x:Key="String/LogProperty.BeginningTimeSpan">Beginning Time Span</sys:String>
 	<sys:String x:Key="String/LogProperty.BeginningTimestamp">Beginning Timestamp</sys:String>
+	<sys:String x:Key="String/LogProperty.BeginningValue">Beginning Value</sys:String>
 	<sys:String x:Key="String/LogProperty.Category">Category</sys:String>
 	<sys:String x:Key="String/LogProperty.Child">Child</sys:String>
 	<sys:String x:Key="String/LogProperty.Children">Children</sys:String>
@@ -366,8 +367,10 @@
 	<sys:String x:Key="String/LogProperty.DeviceId">Device ID</sys:String>
 	<sys:String x:Key="String/LogProperty.DeviceName">Device Name</sys:String>
 	<sys:String x:Key="String/LogProperty.Duration">Duration</sys:String>
+	<sys:String x:Key="String/LogProperty.End">End</sys:String>
 	<sys:String x:Key="String/LogProperty.EndingTimeSpan">Ending Time Span</sys:String>
 	<sys:String x:Key="String/LogProperty.EndingTimestamp">Ending Timestamp</sys:String>
+	<sys:String x:Key="String/LogProperty.EndingValue">Ending Value</sys:String>
 	<sys:String x:Key="String/LogProperty.Event">Event</sys:String>
 	<sys:String x:Key="String/LogProperty.Extra1">Extra 1</sys:String>
 	<sys:String x:Key="String/LogProperty.Extra10">Extra 10</sys:String>
@@ -381,6 +384,7 @@
 	<sys:String x:Key="String/LogProperty.Extra9">Extra 9</sys:String>
 	<sys:String x:Key="String/LogProperty.FileName">File</sys:String>
 	<sys:String x:Key="String/LogProperty.ID">ID</sys:String>
+	<sys:String x:Key="String/LogProperty.Key">Key</sys:String>
 	<sys:String x:Key="String/LogProperty.Level">Level</sys:String>
 	<sys:String x:Key="String/LogProperty.LineNumber">Line Number</sys:String>
 	<sys:String x:Key="String/LogProperty.Message">Message</sys:String>
@@ -396,6 +400,7 @@
 	<sys:String x:Key="String/LogProperty.RelativeTimestamp">Relative Timestamp</sys:String>
 	<sys:String x:Key="String/LogProperty.ShortName">Short Name</sys:String>
 	<sys:String x:Key="String/LogProperty.SourceName">Source</sys:String>
+	<sys:String x:Key="String/LogProperty.Start">Start</sys:String>
 	<sys:String x:Key="String/LogProperty.Summary">Summary</sys:String>
 	<sys:String x:Key="String/LogProperty.Tag">Tag</sys:String>
 	<sys:String x:Key="String/LogProperty.Tags">Tags</sys:String>
@@ -410,6 +415,7 @@
 	<sys:String x:Key="String/LogProperty.Uri">URL</sys:String>
 	<sys:String x:Key="String/LogProperty.UserId">UID</sys:String>
 	<sys:String x:Key="String/LogProperty.UserName">User</sys:String>
+	<sys:String x:Key="String/LogProperty.Value">Value</sys:String>
 
 	<!-- LogReadingPreconditionDialog -->
 	<sys:String x:Key="String/LogReadingPreconditionDialog.Description">You can set the precondition of logs to be read. It won't affect logs which were being or already read.</sys:String>
