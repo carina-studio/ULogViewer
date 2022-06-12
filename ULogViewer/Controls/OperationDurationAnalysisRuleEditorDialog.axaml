@@ -84,7 +84,7 @@
 					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.BeginningPattern}"/>
 					<Grid ColumnDefinitions="*,Auto">
 						<TextBox Name="beginningPatternTextBox" Classes="Dialog_TextBox" Height="{StaticResource Double/OperationDurationAnalysisRuleEditorDialog.PatternTextBox.Height}" IsReadOnly="True" ScrollViewer.VerticalScrollBarVisibility="Auto" TextWrapping="Wrap"/>
-						<Button Name="editBeginningPatternButton" Classes="BrowseButton" Command="{Binding $parent[Window].EditBeginningPattern}" Grid.Column="1" VerticalAlignment="Top">
+						<Button Name="editBeginningPatternButton" Classes="BrowseButton" Command="{Binding $parent[Window].EditBeginningPattern}" Grid.Column="1" ToolTip.Tip="{DynamicResource String/Common.Edit}" VerticalAlignment="Top">
 							<Image Classes="BrowseButtonIcon" Source="{StaticResource Image/Icon.Edit}"/>
 						</Button>
 					</Grid>
@@ -94,7 +94,7 @@
 					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.EndingPattern}"/>
 					<Grid ColumnDefinitions="*,Auto">
 						<TextBox Name="endingPatternTextBox" Classes="Dialog_TextBox" Height="{StaticResource Double/OperationDurationAnalysisRuleEditorDialog.PatternTextBox.Height}" IsReadOnly="True" ScrollViewer.VerticalScrollBarVisibility="Auto" TextWrapping="Wrap"/>
-						<Button Classes="BrowseButton" Command="{Binding $parent[Window].EditEndingPattern}" Grid.Column="1" VerticalAlignment="Top">
+						<Button Classes="BrowseButton" Command="{Binding $parent[Window].EditEndingPattern}" Grid.Column="1" ToolTip.Tip="{DynamicResource String/Common.Edit}" VerticalAlignment="Top">
 							<Image Classes="BrowseButtonIcon" Source="{StaticResource Image/Icon.Edit}"/>
 						</Button>
 					</Grid>
@@ -109,7 +109,7 @@
 								<StaticResourceExtension ResourceKey="varsComparisonConditionTemplate"/>
 							</asControls:ListBox.DataTemplates>
 						</asControls:ListBox>
-						<ToggleButton Name="addBeginningConditionButton" Classes="BrowseButton" Grid.Column="1" VerticalAlignment="Top">
+						<ToggleButton Name="addBeginningConditionButton" Classes="BrowseButton" Grid.Column="1" ToolTip.Tip="{DynamicResource String/Common.Add}" VerticalAlignment="Top">
 							<Image Classes="BrowseButtonIcon" Source="{StaticResource Image/Icon.Add}"/>
 						</ToggleButton>
 					</Grid>
@@ -124,7 +124,7 @@
 								<StaticResourceExtension ResourceKey="varsComparisonConditionTemplate"/>
 							</asControls:ListBox.DataTemplates>
 						</asControls:ListBox>
-						<ToggleButton Name="addEndingConditionButton" Classes="BrowseButton" Grid.Column="1" VerticalAlignment="Top">
+						<ToggleButton Name="addEndingConditionButton" Classes="BrowseButton" Grid.Column="1" ToolTip.Tip="{DynamicResource String/Common.Add}" VerticalAlignment="Top">
 							<Image Classes="BrowseButtonIcon" Source="{StaticResource Image/Icon.Add}"/>
 						</ToggleButton>
 					</Grid>

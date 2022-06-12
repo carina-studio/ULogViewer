@@ -34,7 +34,7 @@
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogPatternEditorDialog.Regex}"/>
 				<Grid ColumnDefinitions="*,Auto">
 					<TextBox Name="patternTextBox" Height="{DynamicResource Double/LogPatternEditorDialog.RegexInput.Height}" IsReadOnly="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" TextWrapping="Wrap"/>
-					<Button Name="editPatternButton" Classes="BrowseButton" Command="{Binding $parent[Window].EditRegex}" Grid.Column="1" VerticalAlignment="Top">
+					<Button Name="editPatternButton" Classes="BrowseButton" Command="{Binding $parent[Window].EditRegex}" Grid.Column="1" ToolTip.Tip="{DynamicResource String/Common.Edit}" VerticalAlignment="Top">
 						<Image Classes="BrowseButtonIcon" Source="{DynamicResource Image/Icon.Edit}"/>
 					</Button>
 				</Grid>

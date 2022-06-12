@@ -77,7 +77,7 @@
 						</DataTemplate>
 					</asControls:ListBox.ItemTemplate>
 				</asControls:ListBox>
-				<Button Classes="BrowseButton" Command="{Binding $parent[Window].AddRule}" Grid.Column="1" VerticalAlignment="Top">
+				<Button Classes="BrowseButton" Command="{Binding $parent[Window].AddRule}" Grid.Column="1" ToolTip.Tip="{DynamicResource String/Common.Add}" VerticalAlignment="Top">
 					<Image Classes="BrowseButtonIcon" Source="{StaticResource Image/Icon.Add}"/>
 				</Button>
 			</Grid>

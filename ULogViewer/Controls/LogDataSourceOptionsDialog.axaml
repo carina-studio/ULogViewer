@@ -187,7 +187,7 @@
 					</StackPanel>
 					<Grid ColumnDefinitions="*,Auto">
 						<asControls:ListBox Name="setupCommandsListBox" Classes="Commands" DoubleClickOnItem="OnListBoxDoubleClickOnItem" Height="{DynamicResource Double/LogDataSourceOptionsDialog.CommandListBox.Height}" Items="{Binding $parent[Window].SetupCommands}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged"/>
-						<Button Classes="BrowseButton" Command="{Binding $parent[Window].AddSetupCommand}" Grid.Column="1" VerticalAlignment="Top">
+						<Button Classes="BrowseButton" Command="{Binding $parent[Window].AddSetupCommand}" Grid.Column="1" ToolTip.Tip="{DynamicResource String/Common.Add}" VerticalAlignment="Top">
 							<Image Classes="BrowseButtonIcon" Source="{DynamicResource Image/Icon.Add}"/>
 						</Button>
 					</Grid>
@@ -202,7 +202,7 @@
 					</StackPanel>
 					<Grid ColumnDefinitions="*,Auto">
 						<asControls:ListBox Name="teardownCommandsListBox" Classes="Commands" DoubleClickOnItem="OnListBoxDoubleClickOnItem" Height="{DynamicResource Double/LogDataSourceOptionsDialog.CommandListBox.Height}" Items="{Binding $parent[Window].TeardownCommands}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged"/>
-						<Button Classes="BrowseButton" Command="{Binding $parent[Window].AddTeardownCommand}" Grid.Column="1" VerticalAlignment="Top">
+						<Button Classes="BrowseButton" Command="{Binding $parent[Window].AddTeardownCommand}" Grid.Column="1" ToolTip.Tip="{DynamicResource String/Common.Add}" VerticalAlignment="Top">
 							<Image Classes="BrowseButtonIcon" Source="{DynamicResource Image/Icon.Add}"/>
 						</Button>
 					</Grid>
