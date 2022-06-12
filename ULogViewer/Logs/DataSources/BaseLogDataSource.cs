@@ -189,7 +189,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		// Open reader asynchronously.
-		public async Task<TextReader> OpenReaderAsync(CancellationToken? cancellationToken)
+		public async Task<TextReader> OpenReaderAsync(CancellationToken cancellationToken)
 		{
 			// check state
 			this.VerifyAccess();
@@ -206,11 +206,11 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			var openingResult = LogDataSourceState.UnclassifiedError;
 			try
 			{
-				openingResult = await this.TaskFactory.StartNew(() => this.OpenReaderCore(cancellationToken ?? new CancellationToken(), out reader));
+				(openingResult, reader) = await this.OpenReaderCoreAsync(cancellationToken);
 			}
 			catch (Exception ex)
 			{
-				if (cancellationToken.GetValueOrDefault().IsCancellationRequested)
+				if (cancellationToken.IsCancellationRequested)
 				{
 					this.Logger.LogWarning("Opening reader has been cancelled");
 					Global.RunWithoutErrorAsync(() => reader?.Close());
@@ -236,7 +236,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 					throw new InvalidOperationException("Source has been disposed when opening reader.");
 				throw new InternalStateCorruptedException("Internal state has been changed when opening reader.");
 			}
-			if (cancellationToken.GetValueOrDefault().IsCancellationRequested)
+			if (cancellationToken.IsCancellationRequested)
 			{
 				this.Logger.LogWarning("Opening reader has been cancelled");
 				Global.RunWithoutErrorAsync(() => reader?.Close());
@@ -273,13 +273,11 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		/// <summary>
-		/// Open <see cref="TextReader"/> to read log data.
+		/// Open <see cref="TextReader"/> asynchronously to read log data.
 		/// </summary>
-		/// <remarks>The method will be called in background thead.</remarks>
 		/// <param name="cancellationToken"><see cref="CancellationToken"/> to cancel opening task.</param>
-		/// <param name="reader">Opened <see cref="TextReader"/>.</param>
-		/// <returns>One of <see cref="LogDataSourceState.ReaderOpened"/>, <see cref="LogDataSourceState.SourceNotFound"/>, <see cref="LogDataSourceState.UnclassifiedError"/></returns>
-		protected abstract LogDataSourceState OpenReaderCore(CancellationToken cancellationToken, out TextReader? reader);
+		/// <returns>Task of opening reader. The result should be one of <see cref="LogDataSourceState.ReaderOpened"/>, <see cref="LogDataSourceState.SourceNotFound"/>, <see cref="LogDataSourceState.UnclassifiedError"/></returns>
+		protected abstract Task<(LogDataSourceState, TextReader?)> OpenReaderCoreAsync(CancellationToken cancellationToken);
 
 
 		/// <summary>
@@ -325,18 +323,15 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			}
 
 			// prepare
-			var result = await this.TaskFactory.StartNew(() =>
+			var result = LogDataSourceState.UnclassifiedError;
+			try
 			{
-				try
-				{
-					return this.PrepareCore();
-				}
-				catch(Exception ex)
-				{
-					this.Logger.LogError(ex, "Error occurred while preparing");
-					return LogDataSourceState.UnclassifiedError;
-				}
-			});
+				result = await this.PrepareCoreAsync(default);
+			}
+			catch(Exception ex)
+			{
+				this.Logger.LogError(ex, "Error occurred while preparing");
+			}
 			if (this.state != LogDataSourceState.Preparing)
 				return;
 
@@ -353,9 +348,9 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// <summary>
 		/// Prepare source.
 		/// </summary>
-		/// <remarks>The method will be called in background thead.</remarks>
-		/// <returns>One of <see cref="LogDataSourceState.ReadyToOpenReader"/>, <see cref="LogDataSourceState.SourceNotFound"/>, <see cref="LogDataSourceState.UnclassifiedError"/>.</returns>
-		protected abstract LogDataSourceState PrepareCore();
+		/// <param name="cancellationToken">Cancellation token.</param>
+		/// <returns>Task of preparation. The result should be one of <see cref="LogDataSourceState.ReadyToOpenReader"/>, <see cref="LogDataSourceState.SourceNotFound"/>, <see cref="LogDataSourceState.UnclassifiedError"/>.</returns>
+		protected abstract Task<LogDataSourceState> PrepareCoreAsync(CancellationToken cancellationToken);
 
 
 		/// <summary>

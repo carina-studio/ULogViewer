@@ -31,43 +31,53 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		// Open reader.
-		protected override LogDataSourceState OpenReaderCore(CancellationToken cancellationToken, out TextReader? reader)
+		protected override async Task<(LogDataSourceState, TextReader?)> OpenReaderCoreAsync(CancellationToken cancellationToken)
 		{
 			var options = this.CreationOptions;
 			try
 			{
 				var fileName = options.FileName.AsNonNull();
 				var encoding = options.Encoding ?? Encoding.UTF8;
-				reader = new FileStream(fileName, FileMode.Open, FileAccess.Read).Let(stream =>
+				var reader = await this.TaskFactory.StartNew(() =>
 				{
-					return Path.GetExtension(options.FileName)?.ToLower() switch
+					return new FileStream(fileName, FileMode.Open, FileAccess.Read).Let(stream =>
 					{
-						".gz" => new GZipStream(stream, CompressionMode.Decompress).Let(gzipStream =>
-							new StreamReader(gzipStream, encoding)),
-						_ => new StreamReader(stream, encoding),
-					};
+						return Path.GetExtension(options.FileName)?.ToLower() switch
+						{
+							".gz" => new GZipStream(stream, CompressionMode.Decompress).Let(gzipStream =>
+								new StreamReader(gzipStream, encoding)),
+							_ => new StreamReader(stream, encoding),
+						};
+					});
 				});
-				return LogDataSourceState.ReaderOpened;
+				if (cancellationToken.IsCancellationRequested)
+				{
+					_ = this.TaskFactory.StartNew(() => Global.RunWithoutError(reader.Close));
+					throw new TaskCanceledException();
+				}
+				return (LogDataSourceState.ReaderOpened, reader);
+			}
+			catch (TaskCanceledException)
+			{
+				throw;
 			}
 			catch (FileNotFoundException)
 			{
 				this.Logger.LogError($"File '{options.FileName}' not found");
-				reader = null;
-				return LogDataSourceState.SourceNotFound;
+				return (LogDataSourceState.SourceNotFound, null);
 			}
 			catch (Exception ex)
 			{
 				this.Logger.LogError(ex, $"Unable to open file '{options.FileName}'");
-				reader = null;
-				return LogDataSourceState.UnclassifiedError;
+				return (LogDataSourceState.UnclassifiedError, null);
 			}
 		}
 
 
 		// Prepare.
-		protected override LogDataSourceState PrepareCore()
+		protected override async Task<LogDataSourceState> PrepareCoreAsync(CancellationToken cancellationToken)
 		{
-			if (File.Exists(this.CreationOptions.FileName))
+			if (await this.TaskFactory.StartNew(() => File.Exists(this.CreationOptions.FileName)))
 				return LogDataSourceState.ReadyToOpenReader;
 			return LogDataSourceState.SourceNotFound;
 		}

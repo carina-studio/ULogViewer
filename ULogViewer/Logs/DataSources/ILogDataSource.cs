@@ -40,7 +40,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// <exception cref="InvalidOperationException">Current state is not <see cref="LogDataSourceState.ReadyToOpenReader"/>.</exception>
 		/// <exception cref="ObjectDisposedException">Instance has been disposed.</exception>
 		/// <exception cref="TaskCanceledException">Opening task has been cancelled.</exception>
-		Task<TextReader> OpenReaderAsync(CancellationToken? cancellationToken = null);
+		Task<TextReader> OpenReaderAsync(CancellationToken cancellationToken = default);
 
 
 		/// <summary>

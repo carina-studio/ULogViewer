@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.Logs.DataSources
 {
@@ -58,14 +59,12 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		// Open reader.
-		protected override LogDataSourceState OpenReaderCore(CancellationToken cancellationToken, out TextReader? reader)
-		{
-			reader = new ReaderImpl();
-			return LogDataSourceState.ReaderOpened;
-		}
+		protected override Task<(LogDataSourceState, TextReader?)> OpenReaderCoreAsync(CancellationToken cancellationToken) =>
+			Task.FromResult<(LogDataSourceState, TextReader?)>((LogDataSourceState.ReaderOpened, new ReaderImpl()));
 
 
 		// Prepare.
-		protected override LogDataSourceState PrepareCore() => LogDataSourceState.ReadyToOpenReader;
+		protected override Task<LogDataSourceState> PrepareCoreAsync(CancellationToken cancellationToken) =>
+			Task.FromResult(LogDataSourceState.ReadyToOpenReader);
 	}
 }

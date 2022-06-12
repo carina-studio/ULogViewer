@@ -1,11 +1,11 @@
 ﻿using CarinaStudio.Collections;
+using CarinaStudio.Threading;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -26,9 +26,8 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		// Fields.
 		volatile string? arguments;
 		volatile string? commandFileOnReady;
-		volatile bool isExecutingTeardownCommands;
 		static readonly Regex regex = new Regex("^(?<ExecutableCommand>([^\\s\"]*)|\"([^\\s])*\")[\\s$]");
-		readonly object teardownCommandsLock = new object();
+		Task? teardownCommandsTask;
 
 
 		/// <summary>
@@ -112,44 +111,38 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			var options = this.CreationOptions;
 			if (options.TeardownCommands.IsNotEmpty())
 			{
-				Task.Run(() =>
+				this.SynchronizationContext.Post(async () =>
 				{
-					lock (this.teardownCommandsLock)
-					{
-						this.Logger.LogWarning("Start executing teardown commands");
-						this.isExecutingTeardownCommands = true;
-					}
+					if (this.teardownCommandsTask != null)
+						await this.teardownCommandsTask;
+					this.Logger.LogWarning("Start executing teardown commands");
+					var taskCompletionSource = new TaskCompletionSource();
+					this.teardownCommandsTask = taskCompletionSource.Task;
 					foreach (var command in options.TeardownCommands)
-						this.ExecuteCommandAndWaitForExit(command, options.WorkingDirectory);
-					lock (this.teardownCommandsLock)
 					{
-						this.Logger.LogWarning("Complete executing teardown commands");
-						this.isExecutingTeardownCommands = false;
-						Monitor.PulseAll(this.teardownCommandsLock);
+						await this.TaskFactory.StartNew(() =>
+							this.ExecuteCommandAndWaitForExit(command, options.WorkingDirectory));
 					}
+					this.Logger.LogWarning("Complete executing teardown commands");
+					this.teardownCommandsTask = null;
+					taskCompletionSource.SetResult();
 				});
 			}
 		}
 
 
 		// Open reader core.
-		protected override LogDataSourceState OpenReaderCore(CancellationToken cancellationToken, out TextReader? reader)
+		protected override async Task<(LogDataSourceState, TextReader?)> OpenReaderCoreAsync(CancellationToken cancellationToken)
 		{
 			// check state
 			if (commandFileOnReady == null)
-			{
-				reader = null;
-				return LogDataSourceState.SourceNotFound;
-			}
+				return (LogDataSourceState.SourceNotFound, null);
 
 			// wait for teardown commands
-			lock (this.teardownCommandsLock)
+			if (this.teardownCommandsTask != null)
 			{
-				if (this.isExecutingTeardownCommands)
-				{
-					this.Logger.LogWarning("Wait for teardown commands");
-					Monitor.Wait(this.teardownCommandsLock);
-				}
+				this.Logger.LogWarning("Wait for teardown commands");
+				await this.teardownCommandsTask;
 			}
 
 			// execute setup commands
@@ -157,20 +150,27 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			if (options.SetupCommands.IsNotEmpty())
 			{
 				this.Logger.LogWarning("Start executing setup commands");
-				foreach (var command in options.SetupCommands)
+				var success = await this.TaskFactory.StartNew(() =>
 				{
-					if (!this.ExecuteCommandAndWaitForExit(command, options.WorkingDirectory))
+					foreach (var command in options.SetupCommands)
 					{
-						this.Logger.LogError($"Unable to execute setup command: {command}");
-						reader = null;
-						return LogDataSourceState.UnclassifiedError;
+						if (!this.ExecuteCommandAndWaitForExit(command, options.WorkingDirectory))
+						{
+							this.Logger.LogError($"Unable to execute setup command: {command}");
+							return false;
+						}
+						if (cancellationToken.IsCancellationRequested)
+							throw new TaskCanceledException();
 					}
-				}
+					return true;
+				});
+				if (!success)
+					return (LogDataSourceState.UnclassifiedError, null);
 				this.Logger.LogWarning("Complete executing setup commands");
 			}
 
 			// check executable type
-			var isSameArchExecutable = Global.Run(() =>
+			var isSameArchExecutable = await this.TaskFactory.StartNew(() =>
 			{
 				if (Platform.IsWindows)
 				{
@@ -213,18 +213,13 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			try
 			{
 				if (!process.Start())
-				{
-					reader = null;
-					return LogDataSourceState.SourceNotFound;
-				}
+					return (LogDataSourceState.SourceNotFound, null);
 			}
 			catch (Win32Exception)
 			{
-				reader = null;
-				return LogDataSourceState.SourceNotFound;
+				return (LogDataSourceState.SourceNotFound, null);
 			}
-			reader = new ProcessTextReader(this, process, options.IncludeStandardError);
-			return LogDataSourceState.ReaderOpened;
+			return (LogDataSourceState.ReaderOpened, new ProcessTextReader(this, process, options.IncludeStandardError));
 		}
 
 
@@ -306,7 +301,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		// Prepare core.
-		protected override LogDataSourceState PrepareCore()
+		protected override Task<LogDataSourceState> PrepareCoreAsync(CancellationToken cancellationToken) => this.TaskFactory.StartNew(() =>
 		{
 			if (!this.ParseCommand(this.CreationOptions.Command, this.CreationOptions.WorkingDirectory, out var executablePath, out var arguments))
 			{
@@ -317,6 +312,6 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			this.commandFileOnReady = executablePath;
 			this.arguments = arguments;
 			return LogDataSourceState.ReadyToOpenReader;
-		}
+		});
 	}
 }

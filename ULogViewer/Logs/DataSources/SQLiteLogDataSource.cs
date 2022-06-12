@@ -1,6 +1,7 @@
-﻿using System;
-using System.Data.SQLite;
+﻿using System.Data.SQLite;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.Logs.DataSources
 {
@@ -19,7 +20,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		// Create connection.
-		protected override SQLiteConnection CreateConnection(LogDataSourceOptions options)
+		protected override Task<SQLiteConnection> CreateConnectionAsync(LogDataSourceOptions options, CancellationToken cancellationToken)
 		{
 			// data source
 			var connectionString = new StringBuilder("Data source='");
@@ -41,16 +42,16 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			});
 
 			// create connection
-			return new SQLiteConnection(connectionString.ToString());
+			return Task.FromResult(new SQLiteConnection(connectionString.ToString()));
 		}
 
 
 		// Create data reader.
-		protected override SQLiteDataReader CreateDataReader(SQLiteConnection connection, LogDataSourceOptions options)
+		protected override async Task<SQLiteDataReader> CreateDataReaderAsync(SQLiteConnection connection, LogDataSourceOptions options, CancellationToken cancellationToken)
 		{
 			using var command = connection.CreateCommand();
 			command.CommandText = options.QueryString;
-			return command.ExecuteReader();
+			return (SQLiteDataReader)(await command.ExecuteReaderAsync(cancellationToken));
 		}
 	}
 }

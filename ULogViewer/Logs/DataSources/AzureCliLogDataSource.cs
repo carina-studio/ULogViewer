@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.Logs.DataSources;
 
@@ -18,14 +19,14 @@ class AzureCliLogDataSource : BaseLogDataSource
 
 
     /// <inheritdoc/>
-    protected override LogDataSourceState OpenReaderCore(CancellationToken cancellationToken, out TextReader? reader)
+    protected override Task<(LogDataSourceState, TextReader?)> OpenReaderCoreAsync(CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }
 
 
     /// <inheritdoc/>
-    protected override LogDataSourceState PrepareCore()
+    protected override Task<LogDataSourceState> PrepareCoreAsync(CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }

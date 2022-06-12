@@ -1,6 +1,6 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.Logs.DataSources
 {
@@ -19,14 +19,12 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		// Open reader.
-		protected override LogDataSourceState OpenReaderCore(CancellationToken cancellationToken, out TextReader? reader)
-		{
-			reader = null;
-			return LogDataSourceState.UnclassifiedError;
-		}
+		protected override Task<(LogDataSourceState, TextReader?)> OpenReaderCoreAsync(CancellationToken cancellationToken) =>
+			Task.FromResult<(LogDataSourceState, TextReader?)> ((LogDataSourceState.UnclassifiedError, null));
 
 
 		// Prepare.
-		protected override LogDataSourceState PrepareCore() => LogDataSourceState.UnclassifiedError;
+		protected override Task<LogDataSourceState> PrepareCoreAsync(CancellationToken cancellationToken) => 
+			Task.FromResult(LogDataSourceState.UnclassifiedError);
 	}
 }

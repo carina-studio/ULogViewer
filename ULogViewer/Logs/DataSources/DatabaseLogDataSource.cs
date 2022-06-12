@@ -5,6 +5,7 @@ using System.Data.Common;
 using System.IO;
 using System.Net;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.Logs.DataSources
 {
@@ -118,8 +119,9 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// Create database connection.
 		/// </summary>
 		/// <param name="options">Options.</param>
+		/// <param name="cancellationToken">Cancellation token.</param>
 		/// <returns>Database connection.</returns>
-		protected abstract TConnection CreateConnection(LogDataSourceOptions options);
+		protected abstract Task<TConnection> CreateConnectionAsync(LogDataSourceOptions options, CancellationToken cancellationToken);
 
 
 		/// <summary>
@@ -127,8 +129,9 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// </summary>
 		/// <param name="connection">Database connection.</param>
 		/// <param name="options">Options.</param>
+		/// <param name="cancellationToken">Cancellation token.</param>
 		/// <returns>Data reader.</returns>
-		protected abstract TDataReader CreateDataReader(TConnection connection, LogDataSourceOptions options);
+		protected abstract Task<TDataReader> CreateDataReaderAsync(TConnection connection, LogDataSourceOptions options, CancellationToken cancellationToken);
 
 
 		// Dispose.
@@ -140,48 +143,47 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		// Open reader.
-		protected override LogDataSourceState OpenReaderCore(CancellationToken cancellationToken, out TextReader? reader)
+		protected override async Task<(LogDataSourceState, TextReader?)> OpenReaderCoreAsync(CancellationToken cancellationToken)
 		{
 			// check connection
-			reader = null;
 			var connection = this.connection;
 			if (connection == null)
-				return LogDataSourceState.UnclassifiedError;
+				return (LogDataSourceState.UnclassifiedError, null);
 
 			// get data reader
 			var dataReader = (TDataReader?)null;
 			try
 			{
-				dataReader = this.CreateDataReader(connection, this.CreationOptions);
+				dataReader = await this.CreateDataReaderAsync(connection, this.CreationOptions, cancellationToken);
 			}
 			catch (Exception ex)
 			{
 				this.Logger.LogError(ex, "Unable to create data reader");
-				return LogDataSourceState.UnclassifiedError;
+				_ = this.TaskFactory.StartNew(() => Global.RunWithoutError(connection.Close));
+				return (LogDataSourceState.UnclassifiedError, null);
 			}
 
 			// complete
-			reader = new ReaderImpl(dataReader);
-			return LogDataSourceState.ReaderOpened;
+			return (LogDataSourceState.ReaderOpened, new ReaderImpl(dataReader));
 		}
 
 
 		// Prepare.
-		protected override LogDataSourceState PrepareCore()
+		protected override async Task<LogDataSourceState> PrepareCoreAsync(CancellationToken cancellationToken)
 		{
 			if (this.connection != null)
 				return LogDataSourceState.ReadyToOpenReader;
-			var connection = this.CreateConnection(this.CreationOptions);
+			var connection = await this.CreateConnectionAsync(this.CreationOptions, cancellationToken);
 			try
 			{
-				connection.Open();
+				await connection.OpenAsync(cancellationToken);
 				this.connection = connection;
 				return LogDataSourceState.ReadyToOpenReader;
 			}
 			catch (Exception ex)
 			{
 				this.Logger.LogError(ex, "Unable to open database connection");
-				Global.RunWithoutError(connection.Dispose);
+				_ = connection.CloseAsync();
 				return LogDataSourceState.UnclassifiedError;
 			}
 		}

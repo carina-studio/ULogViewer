@@ -3,10 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Runtime.InteropServices;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.Logs.DataSources
 {
@@ -114,25 +113,21 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		// Open reader.
-		protected override LogDataSourceState OpenReaderCore(CancellationToken cancellationToken, out TextReader? reader)
+		protected override Task<(LogDataSourceState, TextReader?)> OpenReaderCoreAsync(CancellationToken cancellationToken)
 		{
 			var eventLog = this.eventLog;
 			if (eventLog == null)
-			{
-				reader = null;
-				return LogDataSourceState.SourceNotFound;
-			}
-			reader = new ReaderImpl(this, eventLog);
-			return LogDataSourceState.ReaderOpened;
+				return Task.FromResult<(LogDataSourceState, TextReader?)>((LogDataSourceState.SourceNotFound, null));
+			return Task.FromResult<(LogDataSourceState, TextReader?)>((LogDataSourceState.ReaderOpened, new ReaderImpl(this, eventLog)));
 		}
 
 
 #pragma warning disable CA1416
 		// Prepare.
-		protected override LogDataSourceState PrepareCore()
+		protected override async Task<LogDataSourceState> PrepareCoreAsync(CancellationToken cancellationToken)
 		{
 			// check platform
-			if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+			if (Platform.IsNotWindows)
 			{
 				this.Logger.LogError("OS is not Windows");
 				return LogDataSourceState.UnclassifiedError;
@@ -147,22 +142,31 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 			// find event log
 			var category = this.CreationOptions.Category;
-			this.eventLog = EventLog.GetEventLogs().Let(it =>
+			var eventLog = await this.TaskFactory.StartNew(() => EventLog.GetEventLogs().Let(it =>
 			{
 				var eventLog = (EventLog?)null;
 				foreach (var candidate in it)
 				{
-					if (candidate.Log == category)
+					if (candidate.Log == category && !cancellationToken.IsCancellationRequested)
 						eventLog = candidate;
 					else
 						candidate.Dispose();
 				}
 				return eventLog;
-			});
+			}));
+			if (cancellationToken.IsCancellationRequested)
+			{
+				if (eventLog != null)
+					_ = this.TaskFactory.StartNew(eventLog.Dispose);
+				throw new TaskCanceledException();
+			}
 
 			// complete
-			if (this.eventLog != null)
+			if (eventLog != null)
+			{
+				this.eventLog = eventLog;
 				return LogDataSourceState.ReadyToOpenReader;
+			}
 			return LogDataSourceState.SourceNotFound;
 		}
 #pragma warning restore CA1416

@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.Logs.DataSources
 {
@@ -80,7 +81,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		// Open reader.
-		protected override LogDataSourceState OpenReaderCore(CancellationToken cancellationToken, out TextReader? reader)
+		protected override async Task<(LogDataSourceState, TextReader?)> OpenReaderCoreAsync(CancellationToken cancellationToken)
 		{
 			// setup HTTP client
 			var options = this.CreationOptions;
@@ -99,34 +100,31 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 #if DEBUG
 				this.Logger.LogDebug($"Start getting response from {uri}");
 #endif
-				var task = httpClient.GetAsync(uri, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
-				task.Wait(cancellationToken);
+				response = await httpClient.GetAsync(uri, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
 #if DEBUG
 				this.Logger.LogDebug($"Complete getting response from {uri}");
 #endif
-				response = task.Result;
 			}
 			catch (Exception ex)
 			{
-				reader = null;
 				if (cancellationToken.IsCancellationRequested)
 				{
 					this.Logger.LogWarning(ex, $"Getting response from {uri} has been cancelled");
-					return LogDataSourceState.UnclassifiedError;
+					return (LogDataSourceState.UnclassifiedError, null);
 				}
 				this.Logger.LogError(ex, $"Failed to get response from {uri}");
 				if (ex is HttpRequestException httpException && httpException.StatusCode == HttpStatusCode.NotFound)
-					return LogDataSourceState.SourceNotFound;
-				return LogDataSourceState.UnclassifiedError;
+					return (LogDataSourceState.SourceNotFound, null);
+				return (LogDataSourceState.UnclassifiedError, null);
 			}
 
 			// open reader
-			reader = new ReaderImpl(httpClient, response);
-			return LogDataSourceState.ReaderOpened;
+			return (LogDataSourceState.ReaderOpened, new ReaderImpl(httpClient, response));
 		}
 
 
 		// Prepare.
-		protected override LogDataSourceState PrepareCore() => LogDataSourceState.ReadyToOpenReader;
+		protected override Task<LogDataSourceState> PrepareCoreAsync(CancellationToken cancellationToken) => 
+			Task.FromResult(LogDataSourceState.ReadyToOpenReader);
 	}
 }

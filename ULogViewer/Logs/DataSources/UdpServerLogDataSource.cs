@@ -1,11 +1,11 @@
-﻿using CarinaStudio.Collections;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.Logs.DataSources
 {
@@ -172,7 +172,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		// Open reader.
-		protected override LogDataSourceState OpenReaderCore(CancellationToken cancellationToken, out TextReader? reader)
+		protected override Task<(LogDataSourceState, TextReader?)> OpenReaderCoreAsync(CancellationToken cancellationToken)
 		{
 			// get options
 			var options = this.CreationOptions;
@@ -183,12 +183,12 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			var udpClient = new UdpClient(endPoint);
 
 			// create reader
-			reader = new ReaderImpl(this, udpClient, endPoint, encoding);
-			return LogDataSourceState.ReaderOpened;
+			return Task.FromResult<(LogDataSourceState, TextReader?)>((LogDataSourceState.ReaderOpened,new ReaderImpl(this, udpClient, endPoint, encoding)));
 		}
 
 
 		// Prepare.
-		protected override LogDataSourceState PrepareCore() => LogDataSourceState.ReadyToOpenReader;
+		protected override Task<LogDataSourceState> PrepareCoreAsync(CancellationToken cancellationToken) => 
+			Task.FromResult(LogDataSourceState.ReadyToOpenReader);
 	}
 }
