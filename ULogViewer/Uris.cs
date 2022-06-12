@@ -18,7 +18,7 @@ namespace CarinaStudio.ULogViewer
 		/// <summary>
 		/// Reference of date time format.
 		/// </summary>
-		public static readonly Uri DateTimeFormatReference = new Uri("https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings");
+		public static readonly Uri DateTimeFormatReference = new Uri("https://docs.microsoft.com/dotnet/standard/base-types/custom-date-and-time-format-strings");
 		/// <summary>
 		/// Application package manifest (Preview).
 		/// </summary>
@@ -26,14 +26,14 @@ namespace CarinaStudio.ULogViewer
 		/// <summary>
 		/// Reference of regular expression.
 		/// </summary>
-		public static readonly Uri RegexReference = new Uri("https://docs.microsoft.com/en-us/dotnet/standard/base-types/regular-expression-language-quick-reference");
+		public static readonly Uri RegexReference = new Uri("https://docs.microsoft.com/dotnet/standard/base-types/regular-expression-language-quick-reference");
 		/// <summary>
 		/// Reference of string interpolation.
 		/// </summary>
-		public static readonly Uri StringInterpolationReference = new Uri("https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/tokens/interpolated#structure-of-an-interpolated-string");
+		public static readonly Uri StringInterpolationReference = new Uri("https://docs.microsoft.com/dotnet/csharp/language-reference/tokens/interpolated#structure-of-an-interpolated-string");
 		/// <summary>
 		/// Reference of time span format.
 		/// </summary>
-		public static readonly Uri TimeSpanFormatReference = new Uri("https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-timespan-format-strings");
+		public static readonly Uri TimeSpanFormatReference = new Uri("https://docs.microsoft.com/dotnet/standard/base-types/custom-timespan-format-strings");
 	}
 }
