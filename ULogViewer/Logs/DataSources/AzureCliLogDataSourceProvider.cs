@@ -39,6 +39,10 @@ class AzureCliLogDataSourceProvider : BaseLogDataSourceProvider
 
 
     /// <inheritdoc/>
+	public override bool IsProVersionOnly { get => true; }
+
+
+    /// <inheritdoc/>
     public override string Name => "AzureCLI";
 
 

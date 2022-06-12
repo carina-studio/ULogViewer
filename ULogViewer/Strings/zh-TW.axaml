@@ -248,6 +248,7 @@
 	<sys:String x:Key="String/LogProfileEditorDialog.ColorIndicator.Description">顯示於日誌左側的色塊分組方式</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Common">一般設定</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.DataSourceProvider">資料來源</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.DataSourceProvider.ProVersionOnly">(專業版)</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Description">描述</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.DuplicateLogLevelMapEntry">已經定義從 '{0}' 的轉換。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.FormatDescription">格式說明</sys:String>
@@ -276,6 +277,7 @@
 	<sys:String x:Key="String/LogProfileEditorDialog.LogWritingFormats">日誌輸出格式</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogWritingFormats.Description">此格式將用於日誌複製與儲存。對於每筆日誌，將從列表中選出第一個包含所有有效日誌屬性的格式使用，否則使用列表中的第一個格式。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Name">名稱 (必要)</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.ProVersionOnly">需要升級至專業版</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.RestartReadingDelay">重新開始讀取日誌前的延遲 (毫秒)</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.SortDirection">日誌排序方向</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.SortKey">日誌排序依據</sys:String>
@@ -301,6 +303,7 @@
 	<sys:String x:Key="String/LogProfileSelectionDialog.AddLogProfile">建立…</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.AllLogProfiles">所有日誌類型</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.BuiltInLogProfile">內建</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionDialog.CannotImportProVersionOnlyLogProfile">無法從 '{0}' 匯入日誌類型因其包含專業版之參數。</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.EditLogProfile">編輯日誌類型</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.ExportLogProfile">匯出日誌類型</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.FailedToExportLogProfile">無法匯出日誌類型至 '{0}'。</sys:String>
@@ -313,6 +316,7 @@
 	<sys:String x:Key="String/LogProfileSelectionDialog.OtherLogProfiles">其他日誌類型</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.PinnedLogProfiles">已釘選</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.PinUnpinLogProfile">釘選/移除釘選日誌類型</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionDialog.ProVersionOnly">需要升級至專業版</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.RemoveLogProfile">刪除日誌類型</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.TemplateLogProfiles">範本</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.Title">選擇日誌類型</sys:String>

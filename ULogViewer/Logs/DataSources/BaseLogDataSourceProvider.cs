@@ -63,6 +63,10 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		public virtual Uri? GetSourceOptionReferenceUri(string name) => null;
 
 
+		/// <inheritdoc/>
+		public virtual bool IsProVersionOnly { get => false; }
+
+
 		/// <summary>
 		/// Get logger.
 		/// </summary>

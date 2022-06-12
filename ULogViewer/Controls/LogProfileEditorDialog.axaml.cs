@@ -1,10 +1,10 @@
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Data;
 using Avalonia.Data.Converters;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using CarinaStudio.AppSuite.Controls;
+using CarinaStudio.AppSuite.Product;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Controls;
@@ -42,8 +42,11 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Static fields.
 		static readonly Dictionary<LogProfile, LogProfileEditorDialog> NonBlockingDialogs = new();
+		static readonly AvaloniaProperty<bool> HasDataSourceOptionsProperty = AvaloniaProperty.Register<LogProfileEditorDialog, bool>("HasDataSourceOptions");
 		static readonly SettingKey<bool> HasLearnAboutLogsReadingAndParsingHintShown = new SettingKey<bool>($"{nameof(LogProfileEditorDialog)}.{nameof(HasLearnAboutLogsReadingAndParsingHintShown)}");
+		static readonly AvaloniaProperty<bool> IsProVersionActivatedProperty = AvaloniaProperty.Register<LogProfileEditorDialog, bool>("IsProVersionActivated");
 		static readonly AvaloniaProperty<bool> IsValidDataSourceOptionsProperty = AvaloniaProperty.Register<LogProfileEditorDialog, bool>(nameof(IsValidDataSourceOptions), true);
+		static readonly AvaloniaProperty<bool> IsWorkingDirectorySupportedProperty = AvaloniaProperty.Register<LogProfileEditorDialog, bool>("IsWorkingDirectorySupported");
 		
 
 		// Fields.
@@ -118,7 +121,17 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.baseScrollViewer = this.FindControl<ScrollViewer>("baseScrollViewer").AsNonNull();
 			this.colorIndicatorComboBox = this.FindControl<ComboBox>("colorIndicatorComboBox").AsNonNull();
 			this.continuousReadingSwitch = this.FindControl<ToggleSwitch>("continuousReadingSwitch").AsNonNull();
-			this.dataSourceProviderComboBox = this.FindControl<ComboBox>("dataSourceProviderComboBox").AsNonNull();
+			this.dataSourceProviderComboBox = this.Get<ComboBox>("dataSourceProviderComboBox").Also(it =>
+			{
+				it.GetObservable(ComboBox.SelectedItemProperty).Subscribe(item =>
+				{
+					if (item is not ILogDataSourceProvider provider)
+						return;
+					this.SetValue<bool>(HasDataSourceOptionsProperty, provider.SupportedSourceOptions.IsNotEmpty());
+					this.SetValue<bool>(IsWorkingDirectorySupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.WorkingDirectory))
+						&& !provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.WorkingDirectory)));
+				});
+			});
 			this.descriptionTextBox = this.FindControl<TextBox>(nameof(descriptionTextBox));
 			this.iconComboBox = this.FindControl<ComboBox>("iconComboBox").AsNonNull();
 			if (Platform.IsNotWindows)
@@ -645,6 +658,11 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				NonBlockingDialogs.Remove(this.LogProfile);
 			}
+
+			// detach fron product manager
+			this.Application.ProductManager.ProductStateChanged -= this.OnProductStateChanged;
+
+			// call base
 			base.OnClosed(e);
 		}
 
@@ -713,6 +731,13 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when opened.
 		protected override async void OnOpened(EventArgs e)
 		{
+			// attach to product manager
+			this.Application.ProductManager.Let(it =>
+			{
+				this.SetValue<bool>(IsProVersionActivatedProperty, it.IsProductActivated(Products.Professional));
+				it.ProductStateChanged += this.OnProductStateChanged;
+			});
+
 			// setup initial state and focus
 			var profile = this.LogProfile;
 			if (profile == null)
@@ -791,6 +816,17 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Called when stte of product changed.
+		void OnProductStateChanged(IProductManager? productManager, string productId)
+		{
+			if (productManager != null && productId == Products.Professional)
+			{
+				this.SetValue<bool>(IsProVersionActivatedProperty, productManager.IsProductActivated(productId));
+				this.InvalidateInput();
+			}
+		}
+
+
 		// Validate input.
 		protected override bool OnValidateInput()
 		{
@@ -826,6 +862,10 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// check name
 			if (string.IsNullOrEmpty(this.nameTextBox.Text))
+				return false;
+			
+			// data pro-version only data source
+			if (dataSourceProvider.IsProVersionOnly && !this.GetValue<bool>(IsProVersionActivatedProperty))
 				return false;
 
 			// ok

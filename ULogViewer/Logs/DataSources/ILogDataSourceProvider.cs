@@ -59,6 +59,12 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		/// <summary>
+		/// Check whether the provider can be used in Pro version only or not.
+		/// </summary>
+		bool IsProVersionOnly { get; }
+
+
+		/// <summary>
 		/// Get unique name to identify this provider.
 		/// </summary>
 		string Name { get; }

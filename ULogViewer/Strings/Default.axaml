@@ -274,6 +274,7 @@
 	<sys:String x:Key="String/LogProfileEditorDialog.ColorIndicator.Description">Way of grouping to show color block on the left hand side of each log</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Common">Common</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.DataSourceProvider">Data source</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.DataSourceProvider.ProVersionOnly">(Pro)</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Description">Description</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.DuplicateLogLevelMapEntry">Conversion from '{0}' is already defined.</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.FormatDescription">Format description</sys:String>
@@ -302,6 +303,7 @@
 	<sys:String x:Key="String/LogProfileEditorDialog.LogWritingFormats">Log output formats</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogWritingFormats.Description">The format will be used for logs copying and saving. For each log, the first format which contains all valid log properties will be used from list. Otherwise, the first format in list will be used.</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Name">Name (required)</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.ProVersionOnly">Upgrade to Pro version needed</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.RestartReadingDelay">Delay before restarting log reading (ms)</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.SortDirection">Sort direction of log</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.SortKey">Sort key of log</sys:String>
@@ -327,6 +329,7 @@
 	<sys:String x:Key="String/LogProfileSelectionDialog.AddLogProfile">Create…</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.AllLogProfiles">All profiles</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.BuiltInLogProfile">Built-in</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionDialog.CannotImportProVersionOnlyLogProfile">Unable to import profile from '{0}' because of containing Pro version parameters.</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.EditLogProfile">Edit profile</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.ExportLogProfile">Export profile</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.FailedToExportLogProfile">Unable to export profile to '{0}'.</sys:String>
@@ -339,6 +342,7 @@
 	<sys:String x:Key="String/LogProfileSelectionDialog.OtherLogProfiles">Other profiles</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.PinnedLogProfiles">Pinned</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.PinUnpinLogProfile">Pin/Unpin profile</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionDialog.ProVersionOnly">Upgrade to Pro version needed</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.RemoveLogProfile">Delete profile</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.TemplateLogProfiles">Template</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.Title">Select log profile</sys:String>

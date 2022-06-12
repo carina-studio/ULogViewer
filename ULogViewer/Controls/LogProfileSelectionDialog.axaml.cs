@@ -3,9 +3,9 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using CarinaStudio.AppSuite.Data;
+using CarinaStudio.AppSuite.Product;
 using CarinaStudio.Collections;
 using CarinaStudio.Controls;
-using CarinaStudio.IO;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.Windows.Input;
@@ -14,7 +14,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -27,6 +26,7 @@ namespace CarinaStudio.ULogViewer.Controls
 	{
 		// Static fields.
 		static readonly AvaloniaProperty<Predicate<LogProfile>?> FilterProperty = AvaloniaProperty.Register<LogProfileEditorDialog, Predicate<LogProfile>?>(nameof(Filter));
+		static readonly AvaloniaProperty<bool> IsProVersionActivatedProperty = AvaloniaProperty.Register<LogProfileSelectionDialog, bool>("IsProVersionActivated");
 
 
 		// Fields.
@@ -221,6 +221,17 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			if (this.IsClosed)
 				return;
+			
+			// check pro-version only parameters
+			if (!this.GetValue<bool>(IsProVersionActivatedProperty) && logProfile.DataSourceProvider.IsProVersionOnly)
+			{
+				_ = new AppSuite.Controls.MessageDialog()
+				{
+					Icon = AppSuite.Controls.MessageDialogIcon.Warning,
+					Message = this.Application.GetFormattedString("LogProfileSelectionDialog.CannotImportProVersionOnlyLogProfile", fileName),
+				}.ShowDialog(this);
+				return;
+			}
 
 			// edit log profile
 			logProfile.IsPinned = false;
@@ -290,6 +301,9 @@ namespace CarinaStudio.ULogViewer.Controls
 				profile.PropertyChanged -= this.OnLogProfilePropertyChanged;
 			this.attachedLogProfiles.Clear();
 
+			// detach fron product manager
+			this.Application.ProductManager.ProductStateChanged -= this.OnProductStateChanged;
+
 			// call base
 			base.OnClosed(e);
 		}
@@ -353,7 +367,17 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when opened.
 		protected override void OnOpened(EventArgs e)
 		{
+			// attach to product manager
+			this.Application.ProductManager.Let(it =>
+			{
+				this.SetValue<bool>(IsProVersionActivatedProperty, it.IsProductActivated(Products.Professional));
+				it.ProductStateChanged += this.OnProductStateChanged;
+			});
+
+			// call base
 			base.OnOpened(e);
+
+			// setup focus
 			this.SynchronizationContext.Post(() =>
 			{
 				if (pinnedLogProfiles.IsNotEmpty())
@@ -394,6 +418,17 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Called when stte of product changed.
+		void OnProductStateChanged(IProductManager? productManager, string productId)
+		{
+			if (productManager != null && productId == Products.Professional)
+			{
+				this.SetValue<bool>(IsProVersionActivatedProperty, productManager.IsProductActivated(productId));
+				this.InvalidateInput();
+			}
+		}
+
+
 		// Called when property changed.
 		protected override void OnPropertyChanged<T>(AvaloniaPropertyChangedEventArgs<T> change)
 		{
@@ -419,7 +454,12 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Validate input.
 		protected override bool OnValidateInput()
 		{
-			return base.OnValidateInput() && (this.pinnedLogProfileListBox.SelectedItem != null || this.otherLogProfileListBox.SelectedItem != null);
+			if (!base.OnValidateInput())
+				return false;
+			var profile = (this.pinnedLogProfileListBox.SelectedItem ?? this.otherLogProfileListBox.SelectedItem) as LogProfile;
+			if (profile == null)
+				return false;
+			return !profile.DataSourceProvider.IsProVersionOnly || this.GetValue<bool>(IsProVersionActivatedProperty);
 		}
 
 

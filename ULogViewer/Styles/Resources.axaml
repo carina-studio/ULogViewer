@@ -65,6 +65,7 @@
 	<sys:Double x:Key="Double/LogProfileSelectionDialog.LogProfile.Icon.Size">30</sys:Double>
 	<sys:Double x:Key="Double/LogProfileSelectionDialog.LogProfile.Label.FontSize">10</sys:Double>
 	<sys:Double x:Key="Double/LogProfileSelectionDialog.LogProfile.Name.FontSize">16</sys:Double>
+	<sys:Double x:Key="Double/LogProfileSelectionDialog.LogProfile.ProVersionIcon.Size">18</sys:Double>
 	<sys:Double x:Key="Double/LogProfileSelectionDialog.Width">500</sys:Double>
 	<Thickness x:Key="Thickness/LogProfileSelectionDialog.Label.Margin">20,15,20,10</Thickness>
 	<Thickness x:Key="Thickness/LogProfileSelectionDialog.LogProfile.Description.Margin">0,0,5,5</Thickness>
@@ -74,6 +75,7 @@
 	<Thickness x:Key="Thickness/LogProfileSelectionDialog.LogProfile.Margin">5,1,5,1</Thickness>
 	<Thickness x:Key="Thickness/LogProfileSelectionDialog.LogProfile.Name.Margin">0,0,5,5</Thickness>
 	<Thickness x:Key="Thickness/LogProfileSelectionDialog.LogProfile.Padding">15,13,15,13</Thickness>
+	<Thickness x:Key="Thickness/LogProfileSelectionDialog.LogProfile.ProVersionIcon.Margin">5,0,5,5</Thickness>
 
 	<!-- LogReadingPreconditionDialog -->
 	<sys:Double x:Key="Double/LogReadingPreconditionDialog.Width">500</sys:Double>

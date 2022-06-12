@@ -4420,7 +4420,15 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			if (this.LogProfile != null)
 				throw new InternalStateCorruptedException("Already set another log profile.");
 			if (profile.IsTemplate)
-				throw new ArgumentException("Cannot set template log profile.");
+			{
+				this.Logger.LogError($"Cannot use template log profile '{profile.Name}'");
+				return;
+			}
+			if (profile.DataSourceProvider.IsProVersionOnly && !this.Application.ProductManager.IsProductActivated(Products.Professional))
+			{
+				this.Logger.LogError($"Cannot use log profile '{profile.Name}' with Pro-version only data source '{profile.DataSourceProvider.Name}'");
+				return;
+			}
 
 			// set profile
 			this.Logger.LogWarning($"Set profile '{profile.Name}'");

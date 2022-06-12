@@ -6,6 +6,7 @@
         xmlns:ia="using:Avalonia.Xaml.Interactivity"
         xmlns:iaCore="using:Avalonia.Xaml.Interactions.Core"
 		xmlns:abControls="using:CarinaStudio.Controls"
+		xmlns:aConverters="using:Avalonia.Data.Converters"
 		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
         xmlns:app="clr-namespace:CarinaStudio.ULogViewer;assembly=ULogViewer"
 		xmlns:appCategorizing="using:CarinaStudio.ULogViewer.ViewModels.Categorizing"
@@ -17,6 +18,7 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.LogProfileEditorDialog"
         Classes="Dialog"
+		Name="window"
         Width="{DynamicResource Double/LogProfileEditorDialog.Width}">
 
 	<!-- Styles -->
@@ -118,16 +120,51 @@
 											</iaCore:DataTriggerBehavior>
 										</ia:Interaction.Behaviors>
 									</Image>
-									<TextBlock Text="{Binding DisplayName}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+									<Grid ColumnDefinitions="Auto,Auto,*">
+										<TextBlock Text="{Binding DisplayName}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+										<Separator Classes="Dialog_Separator_Small" Grid.Column="1" IsVisible="{Binding #proVersionOnly.IsVisible}"/>
+										<TextBlock Name="proVersionOnly" Grid.Column="2" Text="{DynamicResource String/LogProfileEditorDialog.DataSourceProvider.ProVersionOnly}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center">
+											<TextBlock.IsVisible>
+												<MultiBinding Converter="{x:Static aConverters:BoolConverters.And}">
+													<Binding Path="!IsProVersionActivated" ElementName="window"/>
+													<Binding Path="IsProVersionOnly"/>
+												</MultiBinding>
+											</TextBlock.IsVisible>
+										</TextBlock>
+									</Grid>
 								</StackPanel>
 							</DataTemplate>
 						</ComboBox.ItemTemplate>
 					</ComboBox>
-					<Button Classes="BrowseButton" Command="{Binding $parent[Window].SetDataSourceOptions}" Grid.Column="1" IsEnabled="{Binding #dataSourceProviderComboBox.SelectedItem.SupportedSourceOptions.Count}" ToolTip.Tip="{DynamicResource String/Common.Edit}" VerticalAlignment="Center">
+					<Button Classes="BrowseButton" Command="{Binding $parent[Window].SetDataSourceOptions}" Grid.Column="1" ToolTip.Tip="{DynamicResource String/Common.Edit}" VerticalAlignment="Center">
+						<Button.IsEnabled>
+							<MultiBinding Converter="{x:Static aConverters:BoolConverters.And}">
+								<Binding Path="HasDataSourceOptions" ElementName="window"/>
+								<MultiBinding Converter="{x:Static aConverters:BoolConverters.Or}">
+									<Binding Path="IsProVersionActivated" ElementName="window"/>
+									<Binding Path="!SelectedItem.IsProVersionOnly" ElementName="dataSourceProviderComboBox"/>
+								</MultiBinding>
+							</MultiBinding>
+						</Button.IsEnabled>
 						<Image Classes="BrowseButtonIcon" Source="{DynamicResource Image/Icon.Settings}"/>
 					</Button>
 				</Grid>
-				<TextBlock Classes="Dialog_TextBlock_Description_Error" IsVisible="{Binding !$parent[Window].IsValidDataSourceOptions}" Text="{DynamicResource String/LogProfileEditorDialog.InvalidDataSourceOptions}"/>
+				<TextBlock Name="proVersionOnlyDataSourceProvider" Classes="Dialog_TextBlock_Description_Warning" IsVisible="{Binding !$parent[Window].IsValidDataSourceOptions}" Text="{DynamicResource String/LogProfileEditorDialog.ProVersionOnly}">
+					<TextBlock.IsVisible>
+						<MultiBinding Converter="{x:Static aConverters:BoolConverters.And}">
+							<Binding Path="!IsProVersionActivated" ElementName="window"/>
+							<Binding Path="SelectedItem.IsProVersionOnly" ElementName="dataSourceProviderComboBox"/>
+						</MultiBinding>
+					</TextBlock.IsVisible>
+				</TextBlock>
+				<TextBlock Classes="Dialog_TextBlock_Description_Error" Text="{DynamicResource String/LogProfileEditorDialog.InvalidDataSourceOptions}">
+					<TextBlock.IsVisible>
+						<MultiBinding Converter="{x:Static aConverters:BoolConverters.And}">
+							<Binding Path="!IsValidDataSourceOptions" ElementName="window"/>
+							<Binding Path="!IsVisible" ElementName="proVersionOnlyDataSourceProvider"/>
+						</MultiBinding>
+					</TextBlock.IsVisible>
+				</TextBlock>
 				<Separator Classes="Dialog_Separator"/>
 
 				<!-- Allow multiple files -->
@@ -138,15 +175,7 @@
 				</StackPanel>
 
 				<!-- Is working directory needed -->
-				<StackPanel HorizontalAlignment="Stretch" Orientation="Vertical">
-					<ia:Interaction.Behaviors>
-						<iaCore:DataTriggerBehavior Binding="{Binding $parent[Window].UnderlyingDataSource}" ComparisonCondition="Equal" Value="StandardOutput">
-							<iaCore:ChangePropertyAction PropertyName="IsEnabled" Value="True"/>
-						</iaCore:DataTriggerBehavior>
-						<iaCore:DataTriggerBehavior Binding="{Binding $parent[Window].UnderlyingDataSource}" ComparisonCondition="NotEqual" Value="StandardOutput">
-							<iaCore:ChangePropertyAction PropertyName="IsEnabled" Value="False"/>
-						</iaCore:DataTriggerBehavior>
-					</ia:Interaction.Behaviors>
+				<StackPanel HorizontalAlignment="Stretch" IsEnabled="{Binding $parent[Window].IsWorkingDirectorySupported}" Orientation="Vertical">
 					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogProfileEditorDialog.IsWorkingDirectoryNeeded}"/>
 					<ToggleSwitch Name="workingDirNeededSwitch" Classes="Dialog_ToggleSwitch"/>
 					<Separator Classes="Dialog_Separator"/>
@@ -163,11 +192,11 @@
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogProfileEditorDialog.IsContinuousReading}"/>
 				<ToggleSwitch Name="continuousReadingSwitch" Classes="Dialog_ToggleSwitch">
 					<ia:Interaction.Behaviors>
-						<iaCore:DataTriggerBehavior Binding="{Binding #dataSourceProviderComboBox.SelectedItem.UnderlyingSource}" ComparisonCondition="Equal" Value="File">
+						<iaCore:DataTriggerBehavior Binding="{Binding #dataSourceProviderComboBox.SelectedItem.Name}" ComparisonCondition="Equal" Value="File">
 							<iaCore:ChangePropertyAction PropertyName="IsChecked" Value="False"/>
 							<iaCore:ChangePropertyAction PropertyName="IsEnabled" Value="False"/>
 						</iaCore:DataTriggerBehavior>
-						<iaCore:DataTriggerBehavior Binding="{Binding #dataSourceProviderComboBox.SelectedItem.UnderlyingSource}" ComparisonCondition="NotEqual" Value="File">
+						<iaCore:DataTriggerBehavior Binding="{Binding #dataSourceProviderComboBox.SelectedItem.Name}" ComparisonCondition="NotEqual" Value="File">
 							<iaCore:ChangePropertyAction PropertyName="IsEnabled" Value="True"/>
 						</iaCore:DataTriggerBehavior>
 					</ia:Interaction.Behaviors>

@@ -248,6 +248,7 @@
 	<sys:String x:Key="String/LogProfileEditorDialog.ColorIndicator.Description">显示于日志左侧的色块分组方式</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Common">一般设定</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.DataSourceProvider">数据来源</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.DataSourceProvider.ProVersionOnly">(专业版)</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Description">描述</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.DuplicateLogLevelMapEntry">已经定义从 '{0}' 的转换。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.FormatDescription">格式说明</sys:String>
@@ -276,6 +277,7 @@
 	<sys:String x:Key="String/LogProfileEditorDialog.LogWritingFormats">日志输出格式</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogWritingFormats.Description">此格式将用于日志复制与存储。对于每笔日志，将从列表中选出第一个包含所有有效日志属性的格式使用，否则使用列表中的第一个格式。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Name">名称 (必要)</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.ProVersionOnly">需要升级至专业版</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.RestartReadingDelay">重新开始读取日志的延迟(毫秒)</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.SortDirection">日志排序方向</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.SortKey">日志排序依据</sys:String>
@@ -301,6 +303,7 @@
 	<sys:String x:Key="String/LogProfileSelectionDialog.AddLogProfile">建立…</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.AllLogProfiles">所有日志类型</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.BuiltInLogProfile">內建</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionDialog.CannotImportProVersionOnlyLogProfile">无法从 '{0}' 汇入日志类型因其包含专业版之参数。</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.EditLogProfile">编辑日志类型</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.ExportLogProfile">导出日志类型</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.FailedToExportLogProfile">无法输出日志类型至'{0}'。</sys:String>
@@ -313,6 +316,7 @@
 	<sys:String x:Key="String/LogProfileSelectionDialog.OtherLogProfiles">其他日志类型</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.PinnedLogProfiles">已订选</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.PinUnpinLogProfile">订选/移除订选日志类型</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionDialog.ProVersionOnly">需要升级至专业版</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.RemoveLogProfile">删除日志类型</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.TemplateLogProfiles">模板</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.Title">选择日志类型</sys:String>
