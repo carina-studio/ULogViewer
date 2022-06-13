@@ -15,6 +15,10 @@ namespace CarinaStudio.ULogViewer.Controls
     /// </summary>
     partial class UriInputDialog : AppSuite.Controls.InputDialog
     {
+        // Static fields.
+        static readonly AvaloniaProperty<string?> DefaultSchemeProperty = AvaloniaProperty.Register<UriInputDialog, string?>(nameof(DefaultScheme));
+
+
         // Fields.
         readonly UriTextBox uriTextBox;
 
@@ -22,18 +26,24 @@ namespace CarinaStudio.ULogViewer.Controls
         // Constructor.
         public UriInputDialog()
         {
-            InitializeComponent();
-            this.uriTextBox = this.FindControl<UriTextBox>(nameof(uriTextBox));
+            AvaloniaXamlLoader.Load(this);
+            this.uriTextBox = this.Get<UriTextBox>(nameof(uriTextBox));
+        }
+
+
+        /// <summary>
+        /// Get or set default scheme of URI.
+        /// </summary>
+        public string? DefaultScheme
+        {
+            get => this.GetValue<string?>(DefaultSchemeProperty);
+            set => this.SetValue<string?>(DefaultSchemeProperty, value);
         }
 
 
         // Generate result.
         protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken) =>
             Task.FromResult((object?)this.uriTextBox.Object);
-
-
-        // Initialize.
-        private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
 
 
         // Initial URI to show,

@@ -4097,6 +4097,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			// select URI
 			var uri = await new UriInputDialog()
 			{
+				DefaultScheme = session.LogProfile?.DataSourceProvider?.Name == "Http" ? "https" : null,
 				InitialUri = session.Uri,
 				Title = this.Application.GetString("SessionView.SetUri"),
 			}.ShowDialog<Uri>(this.attachedWindow);
