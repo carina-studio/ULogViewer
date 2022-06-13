@@ -14,6 +14,7 @@
     <StartupObject>CarinaStudio.ULogViewer.App</StartupObject>
     <ApplicationIcon>ULogViewer.ico</ApplicationIcon>
     <NoWin32Manifest>true</NoWin32Manifest>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
     <Configurations>Debug;Release;Debug-Windows;Release-Windows</Configurations>
   </PropertyGroup>
 
@@ -80,6 +81,16 @@
 
   <ItemGroup Condition="$(TargetFramework.Contains('windows'))">
     <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$(RuntimeIdentifier.Contains('osx'))">
+    <Content Include="../SQLite/1.0.116/$(RuntimeIdentifier)/System.Data.SQLite.dll" Link="System.Data.SQLite.dll">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+    <Content Include="../SQLite/1.0.116/$(RuntimeIdentifier)/SQLite.Interop.dll" Link="SQLite.Interop.dll">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<ExcludeFromSingleFile>True</ExcludeFromSingleFile>
+		</Content>
   </ItemGroup>
 
   <ItemGroup>
