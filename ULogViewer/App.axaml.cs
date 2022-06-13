@@ -351,36 +351,39 @@ namespace CarinaStudio.ULogViewer
 			await base.OnPrepareStartingAsync();
 
 			// find menu items
-			NativeMenu.GetMenu(this)?.Let(menu =>
+			if (Platform.IsMacOS)
 			{
-				for (var i = menu.Items.Count - 1; i >= 0 ; --i)
+				NativeMenu.GetMenu(this)?.Let(menu =>
 				{
-					var item = menu.Items[i];
-					if (item is not NativeMenuItem menuItem)
-						continue;
-					switch (menuItem.CommandParameter as string)
+					for (var i = menu.Items.Count - 1; i >= 0 ; --i)
 					{
-						case "EditConfiguration":
-							if (!this.IsDebugMode)
+						var item = menu.Items[i];
+						if (item is not NativeMenuItem menuItem)
+							continue;
+						switch (menuItem.CommandParameter as string)
+						{
+							case "EditConfiguration":
+								if (!this.IsDebugMode)
+								{
+									menu.Items.RemoveAt(i--);
+									menu.Items.RemoveAt(i); // Separator
+								}
+								break;
+							case "EditPersistentState":
+								if (!this.IsDebugMode)
+									menu.Items.RemoveAt(i);
+								break;
+							case "Tools":
 							{
+								this.toolsNativeMenuItem = menuItem;
 								menu.Items.RemoveAt(i--);
 								menu.Items.RemoveAt(i); // Separator
+								break;
 							}
-							break;
-						case "EditPersistentState":
-							if (!this.IsDebugMode)
-								menu.Items.RemoveAt(i);
-							break;
-						case "Tools":
-						{
-							this.toolsNativeMenuItem = menuItem;
-							menu.Items.RemoveAt(i--);
-							menu.Items.RemoveAt(i); // Separator
-							break;
 						}
 					}
-				}
-			});
+				});
+			}
 			this.UpdateToolMenuItems();
 
 			// initialize log data source providers
