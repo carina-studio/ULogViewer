@@ -2,7 +2,7 @@
 	"DataSource": {
 		"Name": "TCP Server"
 	},
-	"Icon": "Experiment",
+	"Icon": "Network",
 	"IsContinuousReading": true,
 	"SortKey": "Id"
 }

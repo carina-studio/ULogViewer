@@ -4,6 +4,6 @@
 		"Name": "File"
 	},
 	"ColorIndicator": "FileName",
-	"Icon": "Experiment",
+	"Icon": "File",
 	"SortKey": "Id"
 }
