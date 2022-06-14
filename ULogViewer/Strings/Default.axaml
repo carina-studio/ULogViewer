@@ -667,6 +667,12 @@
 	<sys:String x:Key="String/SplashWindow.ShowMainWindow">Showing main window</sys:String>
 	<sys:String x:Key="String/SplashWindow.UpdateStyles">Loading styles</sys:String>
 
+	<!-- SQLiteLogDataSourceProvider -->
+	<sys:String x:Key="String/SQLiteLogDataSourceProvider.DisplayName">SQLite Database</sys:String>
+
+	<!-- SqlServerDatabaseLogDataSourceProvider -->
+	<sys:String x:Key="String/SqlServerDatabaseLogDataSourceProvider.DisplayName">SQL Server Database</sys:String>
+
 	<!-- StandardOutputLogDataSourceProvider -->
 	<sys:String x:Key="String/StandardOutputLogDataSourceProvider.DisplayName">Standard output (stdout)</sys:String>
 

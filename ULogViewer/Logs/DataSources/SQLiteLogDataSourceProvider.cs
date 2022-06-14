@@ -25,10 +25,6 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		};
 
 
-		// Update display name.
-		protected override string OnUpdateDisplayName() => "SQLite";
-
-
 		// Implementations.
 		protected override ILogDataSource CreateSourceCore(LogDataSourceOptions options) => new SQLiteLogDataSource(this, options);
 		public override string Name => "SQLite";

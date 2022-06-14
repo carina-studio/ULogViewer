@@ -636,6 +636,12 @@
 	<sys:String x:Key="String/SplashWindow.ShowMainWindow">开启主视图</sys:String>
 	<sys:String x:Key="String/SplashWindow.UpdateStyles">正在载入样式</sys:String>
 
+	<!-- SQLiteLogDataSourceProvider -->
+	<sys:String x:Key="String/SQLiteLogDataSourceProvider.DisplayName">SQLite 资料库</sys:String>
+
+	<!-- SqlServerDatabaseLogDataSourceProvider -->
+	<sys:String x:Key="String/SqlServerDatabaseLogDataSourceProvider.DisplayName">SQL Server 资料库</sys:String>
+
 	<!-- StandardOutputLogDataSourceProvider -->
 	<sys:String x:Key="String/StandardOutputLogDataSourceProvider.DisplayName">标准输出 (stdout)</sys:String>
 
