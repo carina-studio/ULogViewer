@@ -156,6 +156,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly MenuItem copyLogPropertyMenuItem;
 		readonly Border dragDropReceiverBorder;
 		IDisposable? hasDialogsObserverToken;
+		IDisposable? isActiveObserverToken;
 		bool isAttachedToLogicalTree;
 		bool isIPEndPointNeededAfterLogProfileSet;
 		bool isLogFileNeededAfterLogProfileSet;
@@ -2188,6 +2189,11 @@ namespace CarinaStudio.ULogViewer.Controls
 					if (!hasDialogs)
 						this.ShowNextTutorial();
 				});
+				this.isActiveObserverToken = window.GetObservable(Avalonia.Controls.Window.IsActiveProperty).Subscribe(isActive =>
+				{
+					if (isActive)
+						this.ShowLogAnalysisRuleSetsTutorial();
+				});
 			});
 
 			// add event handlers
@@ -2272,6 +2278,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			// detach from window
 			this.areInitDialogsClosedObserverToken = this.areInitDialogsClosedObserverToken.DisposeAndReturnNull();
 			this.hasDialogsObserverToken = this.hasDialogsObserverToken.DisposeAndReturnNull();
+			this.isActiveObserverToken = this.isActiveObserverToken.DisposeAndReturnNull();
 			this.attachedWindow = null;
 
 			// call base
@@ -3401,8 +3408,12 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.SetValue<bool>(IsProVersionActivatedProperty, state == ProductState.Activated);
 			if (state == ProductState.Deactivated || state == ProductState.Activated)
 			{
+				// update UI
 				this.RecreateLogHeadersAndItemTemplate();
 				this.UpdateToolsMenuItems();
+
+				// show tutorial
+				this.ShowLogAnalysisRuleSetsTutorial();
 			}
 		}
 
@@ -3514,8 +3525,12 @@ namespace CarinaStudio.ULogViewer.Controls
 				case nameof(Session.IsActivated):
 					if (!session.IsActivated)
 						this.scrollToLatestLogAction.Cancel();
-					else if (this.HasLogProfile && session.LogProfile?.IsContinuousReading == true && this.IsScrollingToLatestLogNeeded)
-						this.scrollToLatestLogAction.Schedule(ScrollingToLatestLogInterval);
+					else
+					{
+						this.ShowLogAnalysisRuleSetsTutorial();
+						if (this.HasLogProfile && session.LogProfile?.IsContinuousReading == true && this.IsScrollingToLatestLogNeeded)
+							this.scrollToLatestLogAction.Schedule(ScrollingToLatestLogInterval);
+					}
 					break;
 				case nameof(Session.IsLogAnalysisPanelVisible):
 				case nameof(Session.IsLogFilesPanelVisible):
@@ -3536,19 +3551,7 @@ namespace CarinaStudio.ULogViewer.Controls
 									session.IsTimestampCategoriesPanelVisible = false;
 
 									// show tutorial
-									if (!this.PersistentState.GetValueOrDefault(IsSelectLogAnalysisRuleSetsTutorialShownKey)
-										&& this.attachedWindow is MainWindow window)
-									{
-										window.ShowTutorial(new Tutorial().Also(it =>
-										{
-											it.Anchor = this.FindControl<Control>("logAnalysisRuleSetsButton");
-											it.Bind(Tutorial.DescriptionProperty, this.GetResourceObservable("String/SessionView.Tutorial.SelectLogAnalysisRuleSets"));
-											it.Dismissed += (_, e) => 
-												this.PersistentState.SetValue<bool>(IsSelectLogAnalysisRuleSetsTutorialShownKey, true);
-											it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb.Colored");
-											it.IsSkippingAllTutorialsAllowed = false;
-										}));
-									}
+									this.ShowLogAnalysisRuleSetsTutorial();
 								}
 								break;
 							case nameof(Session.IsLogFilesPanelVisible):
@@ -4278,6 +4281,33 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Command to show file in system file explorer.
 		ICommand ShowFileInExplorerCommand { get; }
+
+
+		// Show tutorial of log analysis rule sets if needed.
+		void ShowLogAnalysisRuleSetsTutorial()
+		{
+			// check state
+			if (this.PersistentState.GetValueOrDefault(IsSelectLogAnalysisRuleSetsTutorialShownKey))
+				return;
+			if (this.attachedWindow is not MainWindow window || window.CurrentTutorial != null || !window.IsActive)
+				return;
+			if (this.DataContext is not Session session || !session.IsActivated || !session.IsLogAnalysisPanelVisible)
+				return;
+			var button = this.Get<Control>("logAnalysisRuleSetsButton");
+			if (!button.IsEffectivelyVisible)
+				return;
+
+			// show tutorial
+			window.ShowTutorial(new Tutorial().Also(it =>
+			{
+				it.Anchor = button;
+				it.Bind(Tutorial.DescriptionProperty, this.GetResourceObservable("String/SessionView.Tutorial.SelectLogAnalysisRuleSets"));
+				it.Dismissed += (_, e) => 
+					this.PersistentState.SetValue<bool>(IsSelectLogAnalysisRuleSetsTutorialShownKey, true);
+				it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb.Colored");
+				it.IsSkippingAllTutorialsAllowed = false;
+			}));
+		}
 
 
 		// Show log file action menu.
