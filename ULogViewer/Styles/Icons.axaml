@@ -171,6 +171,12 @@
 	<DrawingImage x:Key="Image/LogDataSourceProvider.SQLite.Light">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/LogProfile.Database}"/>
 	</DrawingImage>
+	<DrawingImage x:Key="Image/LogDataSourceProvider.SqlServerDatabase">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/LogProfile.Database}"/>
+	</DrawingImage>
+	<DrawingImage x:Key="Image/LogDataSourceProvider.SqlServerDatabase.Light">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/LogProfile.Database}"/>
+	</DrawingImage>
 	<DrawingImage x:Key="Image/LogDataSourceProvider.StandardOutput">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/LogProfile.Terminal}"/>
 	</DrawingImage>
