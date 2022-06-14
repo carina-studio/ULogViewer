@@ -2982,6 +2982,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				var newDataSourceOptions = dataSourceOption;
 				newDataSourceOptions.Command = defaultDataSourceOptions.Command;
 				newDataSourceOptions.Encoding = defaultDataSourceOptions.Encoding;
+				newDataSourceOptions.QueryString = defaultDataSourceOptions.QueryString;
 				newDataSourceOptions.SetupCommands = defaultDataSourceOptions.SetupCommands;
 				newDataSourceOptions.TeardownCommands = defaultDataSourceOptions.TeardownCommands;
 
