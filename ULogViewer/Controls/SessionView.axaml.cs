@@ -2553,10 +2553,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (this.attachedWindow == null || (session != null && !session.IsActivated))
 				return;
 			await new ExternalDependenciesDialog().ShowDialog(this.attachedWindow);
-
-			// reload logs
-			if (this.DataContext == session && session != null && session.HasAllDataSourceErrors)
-				session.ReloadLogsCommand.TryExecute();
 		}
 
 
