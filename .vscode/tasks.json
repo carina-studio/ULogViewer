@@ -28,6 +28,22 @@
             "problemMatcher": "$msCompile"
         },
         {
+            "label": "build-macOS-arm64",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/ULogViewer/ULogViewer.csproj",
+                "-c",
+                "Debug",
+                "-r",
+                "osx.11.0-arm64",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
             "label": "publish",
             "command": "dotnet",
             "type": "process",

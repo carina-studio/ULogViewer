@@ -29,6 +29,17 @@
             "stopAtEntry": false
         },
         {
+            "name": "ULogViewer-macOS-arm64",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build-macOS-arm64",
+            "program": "${workspaceFolder}/ULogViewer/bin/Debug/net6.0/osx.11.0-arm64/ULogViewer.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/ULogViewer",
+            "console": "internalConsole",
+            "stopAtEntry": false
+        },
+        {
             "name": ".NET Core Attach",
             "type": "coreclr",
             "request": "attach"
