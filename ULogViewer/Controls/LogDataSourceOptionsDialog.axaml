@@ -154,7 +154,7 @@
 						<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogDataSourceOptionsDialog.ConnectionString}" VerticalAlignment="Center"/>
 						<TextBlock Classes="Dialog_TextBlock" IsVisible="{Binding $parent[Window].IsConnectionStringRequired}" Text="{DynamicResource String/LogDataSourceOptionsDialog.Required}" VerticalAlignment="Center"/>
 					</StackPanel>
-					<TextBox Name="connectionStringStringTextBox" Classes="Dialog_TextBox" PropertyChanged="OnEditorControlPropertyChanged"/>
+					<TextBox Name="connectionStringStringTextBox" Classes="Dialog_TextBox" AcceptsReturn="True" AcceptsTab="True" Height="{StaticResource Double/LogDataSourceOptionsDialog.ConnectionStringTextBox.Height}" PropertyChanged="OnEditorControlPropertyChanged" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
 					<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" IsVisible="{Binding $parent[Window].ConnectionStringReferenceUri, Converter={x:Static aConverters:ObjectConverters.IsNotNull}}" Text="{DynamicResource String/Common.References}" Uri="{Binding $parent[Window].ConnectionStringReferenceUri}"/>
 					<Separator Classes="Dialog_Separator"/>
 				</StackPanel>
@@ -165,7 +165,7 @@
 						<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogDataSourceOptionsDialog.QueryString}" VerticalAlignment="Center"/>
 						<TextBlock Classes="Dialog_TextBlock" IsVisible="{Binding $parent[Window].IsQueryStringRequired}" Text="{DynamicResource String/LogDataSourceOptionsDialog.Required}" VerticalAlignment="Center"/>
 					</StackPanel>
-					<TextBox Name="queryStringTextBox" Classes="Dialog_TextBox" PropertyChanged="OnEditorControlPropertyChanged"/>
+					<TextBox Name="queryStringTextBox" Classes="Dialog_TextBox" AcceptsReturn="True" AcceptsTab="True" Height="{StaticResource Double/LogDataSourceOptionsDialog.QueryStringTextBox.Height}" PropertyChanged="OnEditorControlPropertyChanged" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
 					<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" IsVisible="{Binding $parent[Window].QueryStringReferenceUri, Converter={x:Static aConverters:ObjectConverters.IsNotNull}}" Text="{DynamicResource String/Common.References}" Uri="{Binding $parent[Window].QueryStringReferenceUri}"/>
 					<Separator Classes="Dialog_Separator"/>
 				</StackPanel>
