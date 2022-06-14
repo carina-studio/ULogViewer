@@ -3877,7 +3877,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				// apply default options
 				var newDataSourceOptions = logReaderOption.DataSourceOptions;
 				newDataSourceOptions.Command = defaultDataSourceOptions.Command;
+				newDataSourceOptions.ConnectionString = defaultDataSourceOptions.ConnectionString;
 				newDataSourceOptions.Encoding = defaultDataSourceOptions.Encoding;
+				newDataSourceOptions.QueryString = defaultDataSourceOptions.QueryString;
 				newDataSourceOptions.SetupCommands = defaultDataSourceOptions.SetupCommands;
 				newDataSourceOptions.TeardownCommands = defaultDataSourceOptions.TeardownCommands;
 
