@@ -967,12 +967,9 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 			var options = await new LogDataSourceOptionsDialog()
 			{
-				CategoryReferenceUri = dataSourceProvider.GetSourceOptionReferenceUri(nameof(LogDataSourceOptions.Category)),
-				CommandReferenceUri = dataSourceProvider.GetSourceOptionReferenceUri(nameof(LogDataSourceOptions.Command)),
 				DataSourceProvider = dataSourceProvider,
 				IsTemplate = this.isTemplateSwitch.IsChecked.GetValueOrDefault(),
 				Options = this.dataSourceOptions,
-				QueryStringReferenceUri = dataSourceProvider.GetSourceOptionReferenceUri(nameof(LogDataSourceOptions.QueryString)),
 			}.ShowDialog<LogDataSourceOptions?>(this);
 			if (options != null)
 			{

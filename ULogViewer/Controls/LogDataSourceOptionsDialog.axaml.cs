@@ -44,8 +44,8 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Static fields.
-		static readonly AvaloniaProperty<Uri?> CategoryReferenceUriProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, Uri?>(nameof(CategoryReferenceUri));
-		static readonly AvaloniaProperty<Uri?> CommandReferenceUriProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, Uri?>(nameof(CommandReferenceUri));
+		static readonly AvaloniaProperty<Uri?> CategoryReferenceUriProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, Uri?>("CategoryReferenceUri");
+		static readonly AvaloniaProperty<Uri?> CommandReferenceUriProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, Uri?>("CommandReferenceUri");
 		static readonly AvaloniaProperty<bool> IsCategoryRequiredProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsCategoryRequired));
 		static readonly AvaloniaProperty<bool> IsCategorySupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsCategorySupported));
 		static readonly AvaloniaProperty<bool> IsCommandRequiredProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsCommandRequired));
@@ -67,7 +67,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		static readonly AvaloniaProperty<bool> IsUserNameRequiredProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsUserNameRequired));
 		static readonly AvaloniaProperty<bool> IsUserNameSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsUserNameSupported));
 		static readonly AvaloniaProperty<bool> IsWorkingDirectorySupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsWorkingDirectorySupported));
-		static readonly AvaloniaProperty<Uri?> QueryStringReferenceUriProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, Uri?>(nameof(QueryStringReferenceUri));
+		static readonly AvaloniaProperty<Uri?> QueryStringReferenceUriProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, Uri?>("QueryStringReferenceUri");
 
 
 		// Fields.
@@ -150,27 +150,6 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.teardownCommands.Add(command);
 				this.SelectListBoxItem(this.teardownCommandsListBox, this.teardownCommands.Count - 1);
 			}
-		}
-
-
-		/// <summary>
-		/// Get or set URI of reference of <see cref="LogDataSourceOptions.Category"/>.
-		/// </summary>
-		public Uri? CategoryReferenceUri
-		{
-			get => this.GetValue<Uri?>(CategoryReferenceUriProperty);
-			set => this.SetValue<Uri?>(CategoryReferenceUriProperty, value);
-		}
-
-
-
-		/// <summary>
-		/// Get or set URI of reference of <see cref="LogDataSourceOptions.Command"/>.
-		/// </summary>
-		public Uri? CommandReferenceUri
-		{
-			get => this.GetValue<Uri?>(CommandReferenceUriProperty);
-			set => this.SetValue<Uri?>(CommandReferenceUriProperty, value);
 		}
 
 
@@ -511,16 +490,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		public LogDataSourceOptions Options { get; set; }
 
 
-		/// <summary>
-		/// Get or set URI of reference of <see cref="LogDataSourceOptions.QueryString"/>.
-		/// </summary>
-		public Uri? QueryStringReferenceUri
-		{
-			get => this.GetValue<Uri?>(QueryStringReferenceUriProperty);
-			set => this.SetValue<Uri?>(QueryStringReferenceUriProperty, value);
-		}
-
-
 		// Refresh state of all options.
 		void RefreshOptionStates()
 		{
@@ -528,6 +497,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (provider != null)
 			{
 				var isTemplate = this.GetValue<bool>(IsTemplateProperty);
+				this.SetValue<Uri?>(CategoryReferenceUriProperty, provider.GetSourceOptionReferenceUri(nameof(LogDataSourceOptions.Category)));
+				this.SetValue<Uri?>(CommandReferenceUriProperty, provider.GetSourceOptionReferenceUri(nameof(LogDataSourceOptions.Command)));
 				this.SetValue<bool>(IsCategoryRequiredProperty, !isTemplate && provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.Category)));
 				this.SetValue<bool>(IsCategorySupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.Category)));
 				this.SetValue<bool>(IsCommandRequiredProperty, !isTemplate && provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.Command)));
@@ -548,9 +519,12 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.SetValue<bool>(IsUserNameRequiredProperty, !isTemplate && provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.UserName)));
 				this.SetValue<bool>(IsUserNameSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.UserName)));
 				this.SetValue<bool>(IsWorkingDirectorySupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.WorkingDirectory)));
+				this.SetValue<Uri?>(QueryStringReferenceUriProperty, provider.GetSourceOptionReferenceUri(nameof(LogDataSourceOptions.QueryString)));
 			}
 			else
 			{
+				this.SetValue<Uri?>(CategoryReferenceUriProperty, null);
+				this.SetValue<Uri?>(CommandReferenceUriProperty, null);
 				this.SetValue<bool>(IsCategoryRequiredProperty, false);
 				this.SetValue<bool>(IsCategorySupportedProperty, false);
 				this.SetValue<bool>(IsCommandRequiredProperty, false);
@@ -571,6 +545,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.SetValue<bool>(IsUserNameRequiredProperty, false);
 				this.SetValue<bool>(IsUserNameSupportedProperty, false);
 				this.SetValue<bool>(IsWorkingDirectorySupportedProperty, false);
+				this.SetValue<Uri?>(QueryStringReferenceUriProperty, null);
 			}
 		}
 
