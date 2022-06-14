@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Text;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -49,6 +50,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 					var columnCount = dataReader.FieldCount;
 					if (columnCount <= 0)
 						return null;
+					var lineBuffer = new StringBuilder();
 					for (var i = 0; i < columnCount; ++i)
 					{
 						var name = dataReader.GetName(i);
@@ -68,25 +70,26 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 							return false;
 						});
 						if (value == null)
-						{
-							if (isStringValue)
-							{
-								lines.Add($"<{name}>");
-								lines.Add($"</{name}>");
-							}
-							else
-								lines.Add($"<{name}></{name}>");
-						}
+							lines.Add($"<{name}></{name}>");
 						else if (value is byte[] bytes)
 							lines.Add($"<{name}>{Convert.ToBase64String(bytes)}</{name}>");
 						else if (value is DateTime dateTime)
 							lines.Add($"<{name}>{dateTime.ToString("yyyy/MM/dd HH:mm:ss.ffffff")}</{name}>");
 						else if (value is string str)
 						{
-							lines.Add($"<{name}>");
-							foreach (var line in str.Split('\n'))
-								lines.Add(WebUtility.HtmlEncode(line));
-							lines.Add($"</{name}>");
+							lineBuffer.Append($"<{name}>");
+							str.Split('\n').Let(lines =>
+							{
+								for (var i = 0; i < lines.Length; ++i)
+								{
+									if (i > 0)
+										lineBuffer.Append("&#10;");
+									lineBuffer.Append(WebUtility.HtmlEncode(lines[i]));
+								}
+							});
+							lineBuffer.Append($"</{name}>");
+							lines.Add(lineBuffer.ToString());
+							lineBuffer.Clear();
 						}
 						else
 							lines.Add($"<{name}>{WebUtility.HtmlEncode(value.ToString() ?? "")}</{name}>");
