@@ -76,6 +76,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Fields.
 		readonly TextBox categoryTextBox;
 		readonly TextBox commandTextBox;
+		readonly TextBox connectionStringStringTextBox;
 		readonly ComboBox encodingComboBox;
 		readonly TextBox fileNameTextBox;
 		readonly ToggleSwitch includeStderrSwitch;
@@ -100,6 +101,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			InitializeComponent();
 			this.categoryTextBox = this.FindControl<TextBox>("categoryTextBox").AsNonNull();
 			this.commandTextBox = this.FindControl<TextBox>("commandTextBox").AsNonNull();
+			this.connectionStringStringTextBox = this.Get<TextBox>(nameof(connectionStringStringTextBox));
 			this.FindControl<Panel>("editorsPanel").AsNonNull().Let(it =>
 			{
 				// remove empty space created by last separator
@@ -213,6 +215,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				options.Category = this.categoryTextBox.Text?.Trim();
 			if (this.IsCommandSupported)
 				options.Command = this.commandTextBox.Text?.Trim();
+			if (this.GetValue<bool>(IsConnectionStringSupportedProperty))
+				options.ConnectionString = this.connectionStringStringTextBox.Text?.Trim();
 			if (this.IsEncodingSupported)
 				options.Encoding = this.encodingComboBox.SelectedItem as Encoding;
 			if (this.IsFileNameSupported)
@@ -382,6 +386,11 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.commandTextBox.Text = options.Command;
 				firstEditor ??= this.commandTextBox;
 			}
+			if (this.GetValue<bool>(IsConnectionStringSupportedProperty))
+			{
+				this.connectionStringStringTextBox.Text = options.ConnectionString;
+				firstEditor ??= this.connectionStringStringTextBox;
+			}
 			if (this.IsFileNameSupported)
 			{
 				this.fileNameTextBox.Text = options.FileName;
@@ -470,6 +479,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (this.IsCategoryRequired && string.IsNullOrWhiteSpace(this.categoryTextBox.Text))
 				return false;
 			if (this.IsCommandRequired && string.IsNullOrWhiteSpace(this.commandTextBox.Text))
+				return false;
+			if (this.GetValue<bool>(IsConnectionStringRequiredProperty) && string.IsNullOrWhiteSpace(this.connectionStringStringTextBox.Text))
 				return false;
 			if (this.IsIPEndPointSupported && !this.ipAddressTextBox.IsTextValid)
 				return false;
