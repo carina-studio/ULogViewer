@@ -148,6 +148,17 @@
 					<Separator Classes="Dialog_Separator"/>
 				</StackPanel>
 
+				<!-- Connection string -->
+				<StackPanel IsVisible="{Binding $parent[Window].IsConnectionStringSupported}" Orientation="Vertical">
+					<StackPanel Orientation="Horizontal">
+						<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogDataSourceOptionsDialog.ConnectionString}" VerticalAlignment="Center"/>
+						<TextBlock Classes="Dialog_TextBlock" IsVisible="{Binding $parent[Window].IsConnectionStringRequired}" Text="{DynamicResource String/LogDataSourceOptionsDialog.Required}" VerticalAlignment="Center"/>
+					</StackPanel>
+					<TextBox Name="connectionStringStringTextBox" Classes="Dialog_TextBox" PropertyChanged="OnEditorControlPropertyChanged"/>
+					<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" IsVisible="{Binding $parent[Window].ConnectionStringReferenceUri, Converter={x:Static aConverters:ObjectConverters.IsNotNull}}" Text="{DynamicResource String/Common.References}" Uri="{Binding $parent[Window].ConnectionStringReferenceUri}"/>
+					<Separator Classes="Dialog_Separator"/>
+				</StackPanel>
+
 				<!-- Query string -->
 				<StackPanel IsVisible="{Binding $parent[Window].IsQueryStringSupported}" Orientation="Vertical">
 					<StackPanel Orientation="Horizontal">

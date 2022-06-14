@@ -120,6 +120,12 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		/// <summary>
+		/// Get or set connection string to connect database.
+		/// </summary>
+		public string? ConnectionString { get; set; }
+
+
+		/// <summary>
 		/// Get or set encoding of text.
 		/// </summary>
 		public Encoding? Encoding { get; set; }
@@ -132,6 +138,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			{
 				return this.Category == options.Category
 					&& this.Command == options.Command
+					&& this.ConnectionString == options.ConnectionString
 					&& this.Encoding == options.Encoding
 					&& this.FileName == options.FileName
 					&& this.IncludeStandardError == options.IncludeStandardError
@@ -161,6 +168,8 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				return this.Category.GetHashCode();
 			if (this.Command != null)
 				return this.Command.GetHashCode();
+			if (this.ConnectionString != null)
+				return this.ConnectionString.GetHashCode();
 			if (this.FileName != null)
 				return this.FileName.GetHashCode();
 			if (this.IPEndPoint != null)
@@ -250,6 +259,9 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 							break;
 						case nameof(Command):
 							options.Command = jsonProperty.Value.GetString();
+							break;
+						case nameof(ConnectionString):
+							options.ConnectionString = jsonProperty.Value.GetString();
 							break;
 						case nameof(Encoding):
 							options.Encoding = Encoding.GetEncoding(jsonProperty.Value.GetString().AsNonNull());
@@ -347,6 +359,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				jsonWriter.WriteStartObject();
 				this.Category?.Let(it => jsonWriter.WriteString(nameof(Category), it));
 				this.Command?.Let(it => jsonWriter.WriteString(nameof(Command), it));
+				this.ConnectionString?.Let(it => jsonWriter.WriteString(nameof(ConnectionString), it));
 				this.Encoding?.Let(it => jsonWriter.WriteString(nameof(Encoding), it.WebName));
 				this.FileName?.Let(it => jsonWriter.WriteString(nameof(FileName), it));
 				if (this.IncludeStandardError)

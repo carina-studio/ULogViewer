@@ -185,6 +185,7 @@
 	<!-- LogDataSourceOptionsDialog -->
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.Category">日志分类</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.Command">指令</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptionsDialog.ConnectionString">连线字符串</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.DatabaseSourceType">资料库来源</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.Encoding">文字编码</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.FileName">档案路径</sys:String>

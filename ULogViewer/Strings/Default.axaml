@@ -197,6 +197,7 @@
 	<!-- LogDataSourceOptionsDialog -->
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.Category">Log category</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.Command">Command</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptionsDialog.ConnectionString">Connection string</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.DatabaseSourceType">Database source</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.Encoding">Text encoding</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.FileName">File path</sys:String>
