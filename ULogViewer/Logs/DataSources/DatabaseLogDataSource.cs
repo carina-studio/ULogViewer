@@ -1,10 +1,10 @@
-﻿using System.Text;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.IO;
 using System.Net;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -112,10 +112,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// <param name="provider">Provider.</param>
 		/// <param name="options">Options.</param>
 		protected DatabaseLogDataSource(ILogDataSourceProvider provider, LogDataSourceOptions options) : base(provider, options)
-		{
-			if (options.Uri == null && string.IsNullOrWhiteSpace(options.FileName))
-				throw new ArgumentException("No file name or URI of database specified.");
-		}
+		{ }
 
 
 		/// <summary>

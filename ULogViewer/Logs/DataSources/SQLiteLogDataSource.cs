@@ -1,4 +1,5 @@
-﻿using System.Data.SQLite;
+﻿using System;
+using System.Data.SQLite;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,7 +17,13 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// <param name="provider">Provider.</param>
 		/// <param name="options">Options.</param>
 		public SQLiteLogDataSource(SQLiteLogDataSourceProvider provider, LogDataSourceOptions options) : base(provider, options)
-		{ }
+		{
+			if (!options.IsOptionSet(nameof(LogDataSourceOptions.FileName)) 
+				|| !options.IsOptionSet(nameof(LogDataSourceOptions.QueryString)))
+			{
+				throw new ArgumentException();
+			}
+		}
 
 
 		// Create connection.
