@@ -143,6 +143,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 					&& this.FileName == options.FileName
 					&& this.IncludeStandardError == options.IncludeStandardError
 					&& object.Equals(this.IPEndPoint, options.IPEndPoint)
+					&& this.IsResourceOnAzure == options.IsResourceOnAzure
 					&& this.Password == options.Password
 					&& this.QueryString == options.QueryString
 					&& this.SetupCommands.SequenceEqual(options.SetupCommands)
@@ -226,6 +227,12 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		/// <summary>
+		/// Get or set whether the source is one of resource on Azure or not.
+		/// </summary>
+		public bool IsResourceOnAzure { get; set; }
+
+
+		/// <summary>
 		/// Equality operator.
 		/// </summary>
 		public static bool operator ==(LogDataSourceOptions x, LogDataSourceOptions y) => x.Equals(y);
@@ -282,6 +289,9 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 							}
 							else
 								throw new JsonException($"JSON element of {nameof(IPEndPoint)} is not an object.");
+							break;
+						case nameof(IsResourceOnAzure):
+							options.IsResourceOnAzure = jsonProperty.Value.GetBoolean();
 							break;
 						case nameof(Password):
 							if (crypto == null)
@@ -372,6 +382,8 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 					jsonWriter.WriteNumber(nameof(System.Net.IPEndPoint.Port), it.Port);
 					jsonWriter.WriteEndObject();
 				});
+				if (this.IsResourceOnAzure)
+					jsonWriter.WriteBoolean(nameof(IsResourceOnAzure), true);
 				this.Password?.Let(it =>
 				{
 					crypto = new Crypto(App.Current);

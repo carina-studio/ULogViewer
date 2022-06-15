@@ -165,6 +165,14 @@
 						<Separator Classes="Dialog_Separator"/>
 					</StackPanel>
 
+					<!-- Resource on Azure -->
+					<StackPanel IsVisible="{Binding $parent[Window].IsResourceOnAzureSupported}" Orientation="Vertical">
+						<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogDataSourceOptionsDialog.IsResourceOnAzure}"/>
+						<ToggleSwitch Name="isResourceOnAzureSwitch" Classes="Dialog_ToggleSwitch"/>
+						<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogDataSourceOptionsDialog.IsResourceOnAzure.Description}"/>
+						<Separator Classes="Dialog_Separator"/>
+					</StackPanel>
+
 					<!-- Query string -->
 					<StackPanel IsVisible="{Binding $parent[Window].IsQueryStringSupported}" Orientation="Vertical">
 						<StackPanel Orientation="Horizontal">

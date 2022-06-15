@@ -64,6 +64,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		static readonly AvaloniaProperty<bool> IsPasswordSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsPasswordSupported));
 		static readonly AvaloniaProperty<bool> IsQueryStringRequiredProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsQueryStringRequired));
 		static readonly AvaloniaProperty<bool> IsQueryStringSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsQueryStringSupported));
+		static readonly AvaloniaProperty<bool> IsResourceOnAzureSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>("IsResourceOnAzureSupported");
 		static readonly SettingKey<bool> IsSelectAzureResourcesTutorialShownKey = new("LogDataSourceOptionsDialog.IsSelectAzureResourcesTutorialShown");
 		static readonly AvaloniaProperty<bool> IsSetupCommandsRequiredProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsSetupCommandsRequired));
 		static readonly AvaloniaProperty<bool> IsSetupCommandsSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsSetupCommandsSupported));
@@ -85,6 +86,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly TextBox fileNameTextBox;
 		readonly ToggleSwitch includeStderrSwitch;
 		readonly IPAddressTextBox ipAddressTextBox;
+		readonly ToggleSwitch isResourceOnAzureSwitch;
 		readonly TextBox passwordTextBox;
 		readonly IntegerTextBox portTextBox;
 		readonly TextBox queryStringTextBox;
@@ -117,6 +119,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.fileNameTextBox = this.FindControl<TextBox>("fileNameTextBox").AsNonNull();
 			this.includeStderrSwitch = this.Get<ToggleSwitch>(nameof(includeStderrSwitch));
 			this.ipAddressTextBox = this.FindControl<IPAddressTextBox>(nameof(ipAddressTextBox)).AsNonNull();
+			this.isResourceOnAzureSwitch = this.Get<ToggleSwitch>(nameof(isResourceOnAzureSwitch));
 			this.passwordTextBox = this.FindControl<TextBox>("passwordTextBox").AsNonNull();
 			this.portTextBox = this.FindControl<IntegerTextBox>(nameof(portTextBox)).AsNonNull();
 			this.queryStringTextBox = this.FindControl<TextBox>("queryStringTextBox").AsNonNull();
@@ -238,6 +241,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				options.QueryString = this.queryStringTextBox.Text?.Trim();
 			if (this.IsPasswordSupported)
 				options.Password = this.passwordTextBox.Text?.Trim();
+			if (this.GetValue<bool>(IsResourceOnAzureSupportedProperty))
+				options.IsResourceOnAzure = this.isResourceOnAzureSwitch.IsChecked.GetValueOrDefault();
 			if (this.IsSetupCommandsSupported)
 				options.SetupCommands = this.setupCommands;
 			if (this.IsTeardownCommandsSupported)
@@ -416,6 +421,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				});
 				firstEditor ??= this.ipAddressTextBox;
 			}
+			if (this.GetValue<bool>(IsResourceOnAzureSupportedProperty))
+				this.isResourceOnAzureSwitch.IsChecked = options.IsResourceOnAzure;
 			if (this.IsUriSupported)
 			{
 				this.uriTextBox.Object = options.Uri;
@@ -556,6 +563,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.SetValue<bool>(IsPasswordSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.Password)));
 				this.SetValue<bool>(IsQueryStringRequiredProperty, !isTemplate && provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.QueryString)));
 				this.SetValue<bool>(IsQueryStringSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.QueryString)));
+				this.SetValue<bool>(IsResourceOnAzureSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.IsResourceOnAzure)));
 				this.SetValue<bool>(IsSetupCommandsRequiredProperty, !isTemplate && provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.SetupCommands)));
 				this.SetValue<bool>(IsSetupCommandsSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.SetupCommands)));
 				this.SetValue<bool>(IsTeardownCommandsRequiredProperty, !isTemplate && provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.TeardownCommands)));
@@ -586,6 +594,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.SetValue<bool>(IsPasswordSupportedProperty, false);
 				this.SetValue<bool>(IsQueryStringRequiredProperty, false);
 				this.SetValue<bool>(IsQueryStringSupportedProperty, false);
+				this.SetValue<bool>(IsResourceOnAzureSupportedProperty, false);
 				this.SetValue<bool>(IsSetupCommandsRequiredProperty, false);
 				this.SetValue<bool>(IsSetupCommandsSupportedProperty, false);
 				this.SetValue<bool>(IsTeardownCommandsRequiredProperty, false);
