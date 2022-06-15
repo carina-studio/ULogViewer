@@ -209,9 +209,11 @@
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.Password">Password</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.QueryString">Query string</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.Required"> (required)</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptionsDialog.SelectAzureResources">Select resources on Azure</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.SetupCommands">Commands before reading logs</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.TeardownCommands">Commands after reading logs</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.Title">Data source options</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptionsDialog.Tutorial.SelectAzureResources">You can click here to view and select resources on Azure.</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.Uri">URI</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.UserName">User name</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.WorkingDirectory">Working directory</sys:String>

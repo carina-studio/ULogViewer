@@ -2,8 +2,10 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using Avalonia.Media;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.Collections;
+using CarinaStudio.Configuration;
 using CarinaStudio.Controls;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.DataSources;
@@ -47,6 +49,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		static readonly AvaloniaProperty<Uri?> CategoryReferenceUriProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, Uri?>("CategoryReferenceUri");
 		static readonly AvaloniaProperty<Uri?> CommandReferenceUriProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, Uri?>("CommandReferenceUri");
 		static readonly AvaloniaProperty<Uri?> ConnectionStringReferenceUriProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, Uri?>("ConnectionStringReferenceUri");
+		static readonly AvaloniaProperty<bool> IsAzureRelatedDataSourceProviderProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>("IsAzureRelatedDataSourceProvider");
 		static readonly AvaloniaProperty<bool> IsCategoryRequiredProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsCategoryRequired));
 		static readonly AvaloniaProperty<bool> IsCategorySupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsCategorySupported));
 		static readonly AvaloniaProperty<bool> IsCommandRequiredProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsCommandRequired));
@@ -61,6 +64,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		static readonly AvaloniaProperty<bool> IsPasswordSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsPasswordSupported));
 		static readonly AvaloniaProperty<bool> IsQueryStringRequiredProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsQueryStringRequired));
 		static readonly AvaloniaProperty<bool> IsQueryStringSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsQueryStringSupported));
+		static readonly SettingKey<bool> IsSelectAzureResourcesTutorialShownKey = new("LogDataSourceOptionsDialog.IsSelectAzureResourcesTutorialShown");
 		static readonly AvaloniaProperty<bool> IsSetupCommandsRequiredProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsSetupCommandsRequired));
 		static readonly AvaloniaProperty<bool> IsSetupCommandsSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsSetupCommandsSupported));
 		static readonly AvaloniaProperty<bool> IsTeardownCommandsRequiredProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsTeardownCommandsRequired));
@@ -450,7 +454,30 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// move focus to first editor
 			if (firstEditor != null)
-				this.SynchronizationContext.Post(firstEditor.Focus);
+			{
+				if (this.GetValue<bool>(IsAzureRelatedDataSourceProviderProperty)
+					&& this.IsCommandSupported
+					&& !this.PersistentState.GetValueOrDefault(IsSelectAzureResourcesTutorialShownKey))
+				{
+					this.Get<TutorialPresenter>("tutorialPresenter").Let(presenter =>
+					{
+						presenter.ShowTutorial(new Tutorial().Also(it =>
+						{
+							it.Anchor = this.Get<Control>("selectAzureResourcesButton");
+							it.Bind(Tutorial.DescriptionProperty, this.GetResourceObservable("String/LogDataSourceOptionsDialog.Tutorial.SelectAzureResources"));
+							it.Dismissed += (_, e) =>
+							{
+								this.PersistentState.SetValue<bool>(IsSelectAzureResourcesTutorialShownKey, true);
+								firstEditor.Focus();
+							};
+							it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb.Colored");
+							it.IsSkippingAllTutorialsAllowed = false;
+						}));
+					});
+				}
+				else
+					firstEditor.Focus();
+			}
 			else
 				this.SynchronizationContext.Post(this.Close);
 
@@ -514,6 +541,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.SetValue<Uri?>(CategoryReferenceUriProperty, provider.GetSourceOptionReferenceUri(nameof(LogDataSourceOptions.Category)));
 				this.SetValue<Uri?>(CommandReferenceUriProperty, provider.GetSourceOptionReferenceUri(nameof(LogDataSourceOptions.Command)));
 				this.SetValue<Uri?>(ConnectionStringReferenceUriProperty, provider.GetSourceOptionReferenceUri(nameof(LogDataSourceOptions.ConnectionString)));
+				this.SetValue<bool>(IsAzureRelatedDataSourceProviderProperty, provider is AzureCliLogDataSourceProvider);
 				this.SetValue<bool>(IsCategoryRequiredProperty, !isTemplate && provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.Category)));
 				this.SetValue<bool>(IsCategorySupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.Category)));
 				this.SetValue<bool>(IsCommandRequiredProperty, !isTemplate && provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.Command)));
@@ -543,6 +571,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.SetValue<Uri?>(CategoryReferenceUriProperty, null);
 				this.SetValue<Uri?>(CommandReferenceUriProperty, null);
 				this.SetValue<Uri?>(ConnectionStringReferenceUriProperty, null);
+				this.SetValue<bool>(IsAzureRelatedDataSourceProviderProperty, false);
 				this.SetValue<bool>(IsCategoryRequiredProperty, false);
 				this.SetValue<bool>(IsCategorySupportedProperty, false);
 				this.SetValue<bool>(IsCommandRequiredProperty, false);
@@ -585,6 +614,12 @@ namespace CarinaStudio.ULogViewer.Controls
 			else
 				this.teardownCommands.RemoveAt(index);
 			this.SelectListBoxItem(listBox, -1);
+		}
+
+
+		// Select resources on Azure.
+		void SelectAzureResources()
+		{
 		}
 
 

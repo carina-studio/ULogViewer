@@ -197,9 +197,11 @@
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.Password">密码</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.QueryString">查询字符串</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.Required"> (必要)</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptionsDialog.SelectAzureResources">选取 Azure 上的资源</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.SetupCommands">日志读取前指令</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.TeardownCommands">日志读取后指令</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.Title">资料来源参数</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptionsDialog.Tutorial.SelectAzureResources">您可以点击这里以列出并选取 Azure 上的资源。</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.Uri">URI</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.UserName">使用者名称</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.WorkingDirectory">工作目录</sys:String>
