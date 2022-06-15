@@ -39,6 +39,10 @@
 	<!-- AzureCliLogDataSourceProvider -->
 	<sys:String x:Key="String/AzureCliLogDataSourceProvider.DisplayName">Azure CLI</sys:String>
 
+	<!-- AzureResourcesDialog -->
+	<sys:String x:Key="String/AzureResourcesDialog.DoubleClickToSelectName">Double click item to use resource</sys:String>
+	<sys:String x:Key="String/AzureResourcesDialog.Title">Resources on Azure</sys:String>
+
 	<!-- Built-in profile -->
 	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceEventLog">Android Device Event Log</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceEventLog.Description">Real-time event logs from Android device through ADB.</sys:String>

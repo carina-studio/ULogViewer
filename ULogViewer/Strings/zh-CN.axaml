@@ -39,6 +39,10 @@
 	<sys:String x:Key="String/Azure.LoggedIn">成功以 '{0}' 登录至 Azure。</sys:String>
 	<sys:String x:Key="String/Azure.LoggedOut">已登出 Azure。</sys:String>
 
+	<!-- AzureResourcesDialog -->
+	<sys:String x:Key="String/AzureResourcesDialog.DoubleClickToSelectName">双击项目以使用该资源</sys:String>
+	<sys:String x:Key="String/AzureResourcesDialog.Title">Azure 上的资源</sys:String>
+
 	<!-- Built-in profile -->
 	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceEventLog">Android 设备事件日志</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceEventLog.Description">通过 ADB 取得 Android 设备即时事件日志。</sys:String>
