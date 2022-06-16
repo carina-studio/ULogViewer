@@ -467,6 +467,9 @@
 	<!-- MemoryLoggerLogDataSourceProvider -->
 	<sys:String x:Key="String/MemoryLoggerLogDataSourceProvider.DisplayName">ULogViewer 即时日志</sys:String>
 
+	<!-- MySqlDatabaseLogDataSourceProvider -->
+	<sys:String x:Key="String/MySqlDatabaseLogDataSourceProvider.DisplayName">MySQL 资料库</sys:String>
+
 	<!-- OperationDurationAnalysisRuleEditorDialog -->
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningConditions">起始日志额外条件</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningPattern">起始日志文字格式</sys:String>
