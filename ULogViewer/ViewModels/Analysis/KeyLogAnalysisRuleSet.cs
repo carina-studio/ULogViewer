@@ -113,6 +113,10 @@ class KeyLogAnalysisRuleSet : BaseProfile<IULogViewerApplication>
             this.OnPropertyChanged(nameof(Icon));
         }
     }
+
+
+    // Check whether data has been upgraded when loading or not.
+    internal bool IsDataUpgraded { get; private set; }
     
 
     /// <summary>
@@ -148,6 +152,7 @@ class KeyLogAnalysisRuleSet : BaseProfile<IULogViewerApplication>
     /// <inheritdoc/>
     protected override void OnLoad(JsonElement element)
     { 
+        var hasType = false;
         foreach (var jsonProperty in element.EnumerateObject())
         {
             switch (jsonProperty.Name)
@@ -178,8 +183,15 @@ class KeyLogAnalysisRuleSet : BaseProfile<IULogViewerApplication>
                         }
                     }).AsReadOnly();
                     break;
+                case "Type":
+                    if (jsonProperty.Value.GetString() != nameof(KeyLogAnalysisRuleSet))
+                        throw new ArgumentException($"Incorrect type: {jsonProperty.Value.GetString()}");
+                    hasType = true;
+                    break;
             }
         }
+        if (!hasType)
+            this.IsDataUpgraded = true;
     }
 
 
@@ -187,6 +199,7 @@ class KeyLogAnalysisRuleSet : BaseProfile<IULogViewerApplication>
     protected override void OnSave(Utf8JsonWriter writer, bool includeId)
     {
         writer.WriteStartObject();
+        writer.WriteString("Type", nameof(KeyLogAnalysisRuleSet));
         writer.WriteString(nameof(Icon), this.icon.ToString());
         if (includeId)
             writer.WriteString(nameof(Id), this.Id);

@@ -155,6 +155,10 @@ class OperationDurationAnalysisRuleSet : BaseProfile<IULogViewerApplication>
             this.OnPropertyChanged(nameof(Icon));
         }
     }
+
+
+    // Check whether data has been upgraded when loading or not.
+    internal bool IsDataUpgraded { get; private set; }
     
 
     /// <summary>

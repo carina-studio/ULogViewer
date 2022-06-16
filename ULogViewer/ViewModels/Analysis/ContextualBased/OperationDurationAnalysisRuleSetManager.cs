@@ -65,6 +65,15 @@ class OperationDurationAnalysisRuleSetManager : BaseProfileManager<IULogViewerAp
     /// <returns>Rule set with given ID or Null if rule cannot be found.</returns>
     public OperationDurationAnalysisRuleSet? GetRuleSetOrDefault(string id) =>
         this.GetProfileOrDefault(id);
+    
+
+    /// <inheritdoc/>
+    protected override void OnAttachToProfile(OperationDurationAnalysisRuleSet profile)
+    {
+        base.OnAttachToProfile(profile);
+        if (profile.IsDataUpgraded)
+            this.ScheduleSavingProfile(profile);
+    }
 
 
     /// <inheritdoc/>

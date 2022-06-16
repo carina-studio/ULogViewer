@@ -70,6 +70,15 @@ class KeyLogAnalysisRuleSetManager : BaseProfileManager<IULogViewerApplication, 
 
 
     /// <inheritdoc/>
+    protected override void OnAttachToProfile(KeyLogAnalysisRuleSet profile)
+    {
+        base.OnAttachToProfile(profile);
+        if (profile.IsDataUpgraded)
+            this.ScheduleSavingProfile(profile);
+    }
+
+
+    /// <inheritdoc/>
     protected override Task<KeyLogAnalysisRuleSet> OnLoadProfileAsync(string fileName, CancellationToken cancellationToken = default) =>
         KeyLogAnalysisRuleSet.LoadAsync(this.Application, fileName);
 
