@@ -130,6 +130,11 @@
 	<sys:String x:Key="String/DateTimeSelectionDialog.DateTime">日期與時間：</sys:String>
 	<sys:String x:Key="String/DateTimeSelectionDialog.Title">選擇日期與時間</sys:String>
 
+	<!-- DequeueToVarEditorDialog -->
+	<sys:String x:Key="String/DequeueToVarEditorDialog.Queue">佇列名稱 (必要)</sys:String>
+	<sys:String x:Key="String/DequeueToVarEditorDialog.Title">取出佇列值至變數</sys:String>
+	<sys:String x:Key="String/DequeueToVarEditorDialog.Variable">變數名稱 (必要)</sys:String>
+
 	<!-- DisplayableLogAnalysisResultType -->
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Checkpoint">檢查點</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Error">錯誤</sys:String>
@@ -139,6 +144,11 @@
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Performance">效能</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.TimeSpan">時距</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Warning">警告</sys:String>
+
+	<!-- EnqueueVarEditorDialog -->
+	<sys:String x:Key="String/EnqueueVarEditorDialog.Queue">佇列名稱 (必要)</sys:String>
+	<sys:String x:Key="String/EnqueueVarEditorDialog.Title">將變數值加入佇列</sys:String>
+	<sys:String x:Key="String/EnqueueVarEditorDialog.Variable">變數名稱 (必要)</sys:String>
 
 	<!-- ExternalDependency-->
 	<sys:String x:Key="String/ExternalDependency.AndroidSDK">Android SDK</sys:String>
@@ -491,12 +501,22 @@
 	<sys:String x:Key="String/OperationEndingOrder.FirstInFirstOut">先進先出 (FIFO)</sys:String>
 	<sys:String x:Key="String/OperationEndingOrder.FirstInLastOut">先進後出 (FILO)</sys:String>
 
+	<!-- PopToVarEditorDialog -->
+	<sys:String x:Key="String/PopToVarEditorDialog.Stack">堆疊名稱 (必要)</sys:String>
+	<sys:String x:Key="String/PopToVarEditorDialog.Title">取出堆疊值至變數</sys:String>
+	<sys:String x:Key="String/PopToVarEditorDialog.Variable">變數名稱 (必要)</sys:String>
+
 	<!-- PredefinedLogTextFilterEditorDialog -->
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Name">名稱 (必要)</sys:String>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Regex">格式 (必要)</sys:String>
 	<StaticResourceExtension x:Key="String/PredefinedLogTextFilterEditorDialog.Regex.Description" ResourceKey="String/KeyLogAnalysisRuleEditorDialog.Pattern.Description"/>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Title.Create">建立文字篩選</sys:String>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Title.Edit">編輯文字篩選</sys:String>
+
+	<!-- PushVarEditorDialog -->
+	<sys:String x:Key="String/PushVarEditorDialog.Stack">堆疊名稱 (必要)</sys:String>
+	<sys:String x:Key="String/PushVarEditorDialog.Title">將變數值加入堆疊</sys:String>
+	<sys:String x:Key="String/PushVarEditorDialog.Variable">變數名稱 (必要)</sys:String>
 
 	<!-- RegexEditorDialog -->
 	<sys:String x:Key="String/RegexEditorDialog.CapturingGroupsDisabled">分組在此格式中不被支援</sys:String>

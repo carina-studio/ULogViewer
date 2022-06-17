@@ -130,6 +130,11 @@
 	<sys:String x:Key="String/DateTimeSelectionDialog.DateTime">日期与时间：</sys:String>
 	<sys:String x:Key="String/DateTimeSelectionDialog.Title">选择日期与时间</sys:String>
 
+	<!-- DequeueToVarEditorDialog -->
+	<sys:String x:Key="String/DequeueToVarEditorDialog.Queue">队列名称 (必要)</sys:String>
+	<sys:String x:Key="String/DequeueToVarEditorDialog.Title">取出队列值至变量</sys:String>
+	<sys:String x:Key="String/DequeueToVarEditorDialog.Variable">变量名称 (必要)</sys:String>
+
 	<!-- DisplayableLogAnalysisResultType -->
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Checkpoint">检查点</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Error">错误</sys:String>
@@ -139,6 +144,11 @@
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Performance">性能</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.TimeSpan">时距</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Warning">警告</sys:String>
+
+	<!-- EnqueueVarEditorDialog -->
+	<sys:String x:Key="String/EnqueueVarEditorDialog.Queue">队列名称 (必要)</sys:String>
+	<sys:String x:Key="String/EnqueueVarEditorDialog.Title">将变量值加入队列</sys:String>
+	<sys:String x:Key="String/EnqueueVarEditorDialog.Variable">变量名称 (必要)</sys:String>
 
 	<!-- ExternalDependency-->
 	<sys:String x:Key="String/ExternalDependency.AndroidSDK">Android SDK</sys:String>
@@ -491,12 +501,22 @@
 	<sys:String x:Key="String/OperationEndingOrder.FirstInFirstOut">先进先出 (FIFO)</sys:String>
 	<sys:String x:Key="String/OperationEndingOrder.FirstInLastOut">先进后出 (FILO)</sys:String>
 
+	<!-- PopToVarEditorDialog -->
+	<sys:String x:Key="String/PopToVarEditorDialog.Stack">堆栈名称 (必要)</sys:String>
+	<sys:String x:Key="String/PopToVarEditorDialog.Title">取出堆栈值至变量</sys:String>
+	<sys:String x:Key="String/PopToVarEditorDialog.Variable">变量名称 (必要)</sys:String>
+
 	<!-- PredefinedLogTextFilterEditorDialog -->
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Name">名称 (必要)</sys:String>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Regex">格式 (必要)</sys:String>
 	<StaticResourceExtension x:Key="String/PredefinedLogTextFilterEditorDialog.Regex.Description" ResourceKey="String/KeyLogAnalysisRuleEditorDialog.Pattern.Description"/>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Title.Create">创建文字过滤器</sys:String>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Title.Edit">编辑文字过滤器</sys:String>
+
+	<!-- PushVarEditorDialog -->
+	<sys:String x:Key="String/PushVarEditorDialog.Stack">堆栈名称 (必要)</sys:String>
+	<sys:String x:Key="String/PushVarEditorDialog.Title">将变量值加入堆栈</sys:String>
+	<sys:String x:Key="String/PushVarEditorDialog.Variable">变量名称 (必要)</sys:String>
 
 	<!-- RegexEditorDialog -->
 	<sys:String x:Key="String/RegexEditorDialog.CapturingGroupsDisabled">分组在此格式中被禁用</sys:String>

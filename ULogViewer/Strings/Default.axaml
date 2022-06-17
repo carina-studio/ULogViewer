@@ -139,6 +139,11 @@
 	<sys:String x:Key="String/DateTimeSelectionDialog.DateTime">Date and time:</sys:String>
 	<sys:String x:Key="String/DateTimeSelectionDialog.Title">Select date and time</sys:String>
 
+	<!-- DequeueToVarEditorDialog -->
+	<sys:String x:Key="String/DequeueToVarEditorDialog.Queue">Name of queue (required)</sys:String>
+	<sys:String x:Key="String/DequeueToVarEditorDialog.Title">Dequeu value from queue to variable</sys:String>
+	<sys:String x:Key="String/DequeueToVarEditorDialog.Variable">Name of variable (required)</sys:String>
+
 	<!-- DisplayableLogAnalysisResultType -->
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Checkpoint">Checkpoint</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Error">Error</sys:String>
@@ -148,6 +153,11 @@
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Performance">Performance</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.TimeSpan">Time span</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Warning">Warning</sys:String>
+
+	<!-- EnqueueVarEditorDialog -->
+	<sys:String x:Key="String/EnqueueVarEditorDialog.Queue">Name of queue (required)</sys:String>
+	<sys:String x:Key="String/EnqueueVarEditorDialog.Title">Enqueue value of variable to queue</sys:String>
+	<sys:String x:Key="String/EnqueueVarEditorDialog.Variable">Name of variable (required)</sys:String>
 
 	<!-- ExternalDependency-->
 	<sys:String x:Key="String/ExternalDependency.AndroidSDK">Android SDK</sys:String>
@@ -523,12 +533,22 @@
 	<sys:String x:Key="String/OperationEndingOrder.FirstInFirstOut">First in, first out</sys:String>
 	<sys:String x:Key="String/OperationEndingOrder.FirstInLastOut">First in, last out</sys:String>
 
+	<!-- PopToVarEditorDialog -->
+	<sys:String x:Key="String/PopToVarEditorDialog.Stack">Name of stack (required)</sys:String>
+	<sys:String x:Key="String/PopToVarEditorDialog.Title">Pop value from stack to variable</sys:String>
+	<sys:String x:Key="String/PopToVarEditorDialog.Variable">Name of variable (required)</sys:String>
+
 	<!-- PredefinedLogTextFilterEditorDialog -->
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Name">Name (required)</sys:String>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Regex">Pattern (required)</sys:String>
 	<StaticResourceExtension x:Key="String/PredefinedLogTextFilterEditorDialog.Regex.Description" ResourceKey="String/KeyLogAnalysisRuleEditorDialog.Pattern.Description"/>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Title.Create">Create text filter</sys:String>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Title.Edit">Edit text filter</sys:String>
+
+	<!-- PushVarEditorDialog -->
+	<sys:String x:Key="String/PushVarEditorDialog.Stack">Name of stack (required)</sys:String>
+	<sys:String x:Key="String/PushVarEditorDialog.Title">Push value of variable to stack</sys:String>
+	<sys:String x:Key="String/PushVarEditorDialog.Variable">Name of variable (required)</sys:String>
 
 	<!-- RegexEditorDialog -->
 	<sys:String x:Key="String/RegexEditorDialog.CapturingGroupsDisabled">Grouping is unsupported for this pattern.</sys:String>
