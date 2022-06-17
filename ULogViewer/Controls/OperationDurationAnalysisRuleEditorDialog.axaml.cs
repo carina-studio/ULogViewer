@@ -1,12 +1,10 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
-using Avalonia.Data.Converters;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.VisualTree;
 using CarinaStudio.AppSuite.Controls;
-using CarinaStudio.AppSuite.Converters;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
@@ -24,12 +22,6 @@ namespace CarinaStudio.ULogViewer.Controls
 	/// </summary>
 	partial class OperationDurationAnalysisRuleEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
 	{
-		/// <summary>
-		/// Converter to convert from <see cref="ComparisonType"/> to string.
-		/// </summary>
-		public static readonly IValueConverter ComparisonTypeConverter = new EnumConverter(App.CurrentOrNull, typeof(ComparisonType));
-
-
 		// Fields.
 		readonly ToggleButton addBeginningConditionButton;
 		readonly ToggleButton addEndingConditionButton;

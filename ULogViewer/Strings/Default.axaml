@@ -144,6 +144,9 @@
 	<sys:String x:Key="String/DequeueToVarEditorDialog.Title">Dequeu value from queue to variable</sys:String>
 	<sys:String x:Key="String/DequeueToVarEditorDialog.Variable">Name of variable (required)</sys:String>
 
+	<!-- DequeueToVariableAction -->
+	<sys:String x:Key="String/DequeueToVariableAction">Dequeue value from queue '{0}' to $({1})</sys:String>
+
 	<!-- DisplayableLogAnalysisResultType -->
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Checkpoint">Checkpoint</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Error">Error</sys:String>
@@ -158,6 +161,9 @@
 	<sys:String x:Key="String/EnqueueVarEditorDialog.Queue">Name of queue (required)</sys:String>
 	<sys:String x:Key="String/EnqueueVarEditorDialog.Title">Enqueue value of variable to queue</sys:String>
 	<sys:String x:Key="String/EnqueueVarEditorDialog.Variable">Name of variable (required)</sys:String>
+
+	<!-- EnqueueVariableAction -->
+	<sys:String x:Key="String/EnqueueVariableAction">Enqueue $({0}) to queue '{1}'</sys:String>
 
 	<!-- ExternalDependency-->
 	<sys:String x:Key="String/ExternalDependency.AndroidSDK">Android SDK</sys:String>
@@ -538,6 +544,9 @@
 	<sys:String x:Key="String/PopToVarEditorDialog.Title">Pop value from stack to variable</sys:String>
 	<sys:String x:Key="String/PopToVarEditorDialog.Variable">Name of variable (required)</sys:String>
 
+	<!-- PopToVariableAction -->
+	<sys:String x:Key="String/PopToVariableAction">Pop value from stack '{0}' to $({1})</sys:String>
+
 	<!-- PredefinedLogTextFilterEditorDialog -->
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Name">Name (required)</sys:String>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Regex">Pattern (required)</sys:String>
@@ -549,6 +558,9 @@
 	<sys:String x:Key="String/PushVarEditorDialog.Stack">Name of stack (required)</sys:String>
 	<sys:String x:Key="String/PushVarEditorDialog.Title">Push value of variable to stack</sys:String>
 	<sys:String x:Key="String/PushVarEditorDialog.Variable">Name of variable (required)</sys:String>
+
+	<!-- PushVariableAction -->
+	<sys:String x:Key="String/PushVariableAction">Push $({0}) to stack '{1}'</sys:String>
 
 	<!-- RegexEditorDialog -->
 	<sys:String x:Key="String/RegexEditorDialog.CapturingGroupsDisabled">Grouping is unsupported for this pattern.</sys:String>
@@ -735,6 +747,12 @@
 	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Constant">Value</sys:String>
 	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Title">Edit comparison condition</sys:String>
 	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Variable">Variable name</sys:String>
+
+	<!-- VariableAndConstantComparisonCondition -->
+	<sys:String x:Key="String/VariableAndConstantComparisonCondition">$({0}) {1} '{2}'</sys:String>
+
+	<!-- VariablesComparisonCondition -->
+	<sys:String x:Key="String/VariablesComparisonCondition">$({0}) {1} $({2})</sys:String>
 
 	<!-- VisibleLogPropertyEditorDialog -->
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.CustomDisplayName">Custom display name</sys:String>

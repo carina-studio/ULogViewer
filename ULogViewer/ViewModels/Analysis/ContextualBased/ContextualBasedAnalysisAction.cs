@@ -119,6 +119,11 @@ class DequeueToVariableAction : VariableAction
     {
         throw new NotImplementedException();
     }
+
+
+    /// <inheritdoc/>
+    public override string? ToString() =>
+        App.CurrentOrNull?.GetFormattedString("DequeueToVariableAction", this.Queue, this.Variable) ?? base.ToString();
 }
 
 
@@ -174,6 +179,11 @@ class EnqueueVariableAction : VariableAction
     {
         throw new NotImplementedException();
     }
+
+
+    /// <inheritdoc/>
+    public override string? ToString() =>
+        App.CurrentOrNull?.GetFormattedString("EnqueueVariableAction", this.Variable, this.Queue) ?? base.ToString();
 }
 
 
@@ -229,6 +239,11 @@ class PopToVariableAction : VariableAction
     /// Get name of stack to pop value.
     /// </summary>
     public string Stack { get; }
+
+
+    /// <inheritdoc/>
+    public override string? ToString() =>
+        App.CurrentOrNull?.GetFormattedString("PopToVariableAction", this.Stack, this.Variable) ?? base.ToString();
 }
 
 
@@ -284,6 +299,11 @@ class PushVariableAction : VariableAction
     /// Get name of stack to push variable.
     /// </summary>
     public string Stack { get; }
+
+
+    /// <inheritdoc/>
+    public override string? ToString() =>
+        App.CurrentOrNull?.GetFormattedString("PushVariableAction", this.Variable, this.Variable) ?? base.ToString();
 }
 
 

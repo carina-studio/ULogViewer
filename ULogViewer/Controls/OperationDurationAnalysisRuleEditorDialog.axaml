@@ -18,34 +18,11 @@
 			<MenuItem Command="{Binding $parent[Window].AddVarsComparisonCondition}" Header="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.VarsComparisonCondition}"/>
 		</ContextMenu>
 
-		<DataTemplate x:Key="varAndConstComparisonConditionTemplate" DataType="{x:Type appCtxlBased:VariableAndConstantComparisonCondition}">
-			<Grid ColumnDefinitions="Auto,Auto,Auto,Auto,*,Auto">
-				<TextBlock Grid.Column="0" Text="{Binding Variable, StringFormat={}${0}}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
-				<Separator Classes="Dialog_Separator_Small" Grid.Column="1"/>
-				<TextBlock Grid.Column="2" Text="{Binding ComparisonType, Converter={x:Static appControls:OperationDurationAnalysisRuleEditorDialog.ComparisonTypeConverter}}" VerticalAlignment="Center"/>
-				<Separator Classes="Dialog_Separator_Small" Grid.Column="3"/>
-				<TextBlock Grid.Column="4" Text="{Binding Constant, StringFormat={}\'{0}\'}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+		<DataTemplate x:Key="conditionTemplate" DataType="{x:Type appCtxlBased:ContextualBaseAnalysisCondition}">
+			<Grid ColumnDefinitions="*,Auto">
+				<TextBlock Grid.Column="0" Text="{Binding}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
 				<Border Classes="InPlaceAction_Reserved"/>
-				<StackPanel Grid.Column="5" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
-					<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveCondition}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
-						<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Delete}"/>
-					</Button>
-					<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditCondition}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
-						<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Edit}"/>
-					</Button>
-				</StackPanel>
-			</Grid>
-		</DataTemplate>
-
-		<DataTemplate x:Key="varsComparisonConditionTemplate" DataType="{x:Type appCtxlBased:VariablesComparisonCondition}">
-			<Grid ColumnDefinitions="Auto,Auto,Auto,Auto,*,Auto">
-				<TextBlock Grid.Column="0" Text="{Binding LhsVariable, StringFormat={}${0}}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
-				<Separator Classes="Dialog_Separator_Small" Grid.Column="1"/>
-				<TextBlock Grid.Column="2" Text="{Binding ComparisonType, Converter={x:Static appControls:OperationDurationAnalysisRuleEditorDialog.ComparisonTypeConverter}}" VerticalAlignment="Center"/>
-				<Separator Classes="Dialog_Separator_Small" Grid.Column="3"/>
-				<TextBlock Grid.Column="4" Text="{Binding RhsVariable, StringFormat={}${0}}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
-				<Border Classes="InPlaceAction_Reserved"/>
-				<StackPanel Grid.Column="5" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
+				<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
 					<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveCondition}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
 						<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Delete}"/>
 					</Button>
@@ -105,8 +82,7 @@
 					<Grid ColumnDefinitions="*,Auto">
 						<asControls:ListBox Name="beginningConditionListBox" Classes="Dialog_ListBox" Height="{StaticResource Double/OperationDurationAnalysisRuleEditorDialog.ConditionListBox.Height}" Items="{Binding $parent[Window].BeginningConditions}">
 							<asControls:ListBox.DataTemplates>
-								<StaticResourceExtension ResourceKey="varAndConstComparisonConditionTemplate"/>
-								<StaticResourceExtension ResourceKey="varsComparisonConditionTemplate"/>
+								<StaticResourceExtension ResourceKey="conditionTemplate"/>
 							</asControls:ListBox.DataTemplates>
 						</asControls:ListBox>
 						<ToggleButton Name="addBeginningConditionButton" Classes="BrowseButton" Grid.Column="1" ToolTip.Tip="{DynamicResource String/Common.Add}" VerticalAlignment="Top">
@@ -120,8 +96,7 @@
 					<Grid ColumnDefinitions="*,Auto">
 						<asControls:ListBox Name="endingConditionListBox" Classes="Dialog_ListBox" Height="{StaticResource Double/OperationDurationAnalysisRuleEditorDialog.ConditionListBox.Height}" Items="{Binding $parent[Window].EndingConditions}">
 							<asControls:ListBox.DataTemplates>
-								<StaticResourceExtension ResourceKey="varAndConstComparisonConditionTemplate"/>
-								<StaticResourceExtension ResourceKey="varsComparisonConditionTemplate"/>
+								<StaticResourceExtension ResourceKey="conditionTemplate"/>
 							</asControls:ListBox.DataTemplates>
 						</asControls:ListBox>
 						<ToggleButton Name="addEndingConditionButton" Classes="BrowseButton" Grid.Column="1" ToolTip.Tip="{DynamicResource String/Common.Add}" VerticalAlignment="Top">

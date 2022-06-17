@@ -199,6 +199,14 @@ class VariableAndConstantComparisonCondition : ValuesComparisonCondition
 
 
     /// <inheritdoc/>
+    public override string? ToString() => App.CurrentOrNull?.Let(app =>
+    {
+        var c = app.GetStringNonNull($"ComparisonType.{this.ComparisonType}", this.ComparisonType.ToString());
+        return app.GetFormattedString("VariableAndConstantComparisonCondition", this.Variable, c, this.Constant);
+    }) ?? base.ToString();
+
+
+    /// <inheritdoc/>
     protected override bool TryGetValues(ContextualBasedAnalysisContext context, DisplayableLog log, object?[] parameters, out string lhs, out string rhs)
     {
         lhs = context.GetVariable(this.Variable);
@@ -272,6 +280,14 @@ class VariablesComparisonCondition : ValuesComparisonCondition
     public override void Save(Utf8JsonWriter writer)
     {
     }
+
+
+    /// <inheritdoc/>
+    public override string? ToString() => App.CurrentOrNull?.Let(app =>
+    {
+        var c = app.GetStringNonNull($"ComparisonType.{this.ComparisonType}", this.ComparisonType.ToString());
+        return app.GetFormattedString("VariablesComparisonCondition", this.LhsVariable, c, this.RhsVariable);
+    }) ?? base.ToString();
 
 
     /// <inheritdoc/>
