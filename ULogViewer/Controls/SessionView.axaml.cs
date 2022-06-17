@@ -239,7 +239,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Static initializer.
 		static SessionView()
 		{
-			//App.Current.PersistentState.ResetValue(IsLogAnalysisPanelTutorialShownKey);
+			App.Current.PersistentState.SetValue<bool>(IsLogAnalysisPanelTutorialShownKey, true);
 			//App.Current.PersistentState.ResetValue(IsLogFilesPanelTutorialShownKey);
 			//App.Current.PersistentState.ResetValue(IsMarkedLogsPanelTutorialShownKey);
 			//App.Current.PersistentState.ResetValue(IsSelectingLogProfileToStartTutorialShownKey);
