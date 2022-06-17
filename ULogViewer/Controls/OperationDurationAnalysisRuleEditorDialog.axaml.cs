@@ -270,9 +270,13 @@ namespace CarinaStudio.ULogViewer.Controls
 			var rule = this.Rule;
 			var newRule = new OperationDurationAnalysisRuleSet.Rule(this.operationNameTextBox.Text.AsNonNull(),
 				this.beginningPattern.AsNonNull(),
+				new ContextualBasedAnalysisAction[0],
 				this.beginningConditions,
+				new ContextualBasedAnalysisAction[0],
 				this.endingPattern.AsNonNull(),
+				new ContextualBasedAnalysisAction[0],
 				this.endingConditions,
+				new ContextualBasedAnalysisAction[0],
 				(OperationEndingOrder)this.endingOrderComboBox.SelectedItem.AsNonNull());
 			if (rule == newRule)
 				return Task.FromResult<object?>(rule);

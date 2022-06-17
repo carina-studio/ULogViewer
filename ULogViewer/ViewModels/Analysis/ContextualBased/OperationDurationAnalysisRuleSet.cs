@@ -27,17 +27,34 @@ class OperationDurationAnalysisRuleSet : BaseProfile<IULogViewerApplication>
         /// </summary>
         /// <param name="operationName">Name of operation.</param>
         /// <param name="beginningPattern">Pattern to match text of beginning of operation log.</param>
+        /// <param name="beginningPreActions">Actions to perform before all matching beginning conditions.</param>
         /// <param name="beginningConditions">Conditions for beginning of operation log after text matched.</param>
+        /// <param name="beginningPostActions">Actions to perform after all beginning conditions matched.</param>
         /// <param name="endingPattern">Pattern to match text of ending of operation log.</param>
+        /// <param name="endingPreActions">Actions to perform before all matching ending conditions.</param>
         /// <param name="endingConditions">Conditions for ending of operation log after text matched.</param>
+        /// <param name="endingPostActions">Actions to perform after all ending conditions matched.</param>
         /// <param name="endingOrder">Order of ending operation.</param>
-        public Rule(string operationName, Regex beginningPattern, IEnumerable<ContextualBaseAnalysisCondition> beginningConditions, Regex endingPattern, IEnumerable<ContextualBaseAnalysisCondition> endingConditions, OperationEndingOrder endingOrder)
+        public Rule(string operationName, 
+            Regex beginningPattern, 
+            IEnumerable<ContextualBasedAnalysisAction> beginningPreActions,
+            IEnumerable<ContextualBaseAnalysisCondition> beginningConditions, 
+            IEnumerable<ContextualBasedAnalysisAction> beginningPostActions,
+            Regex endingPattern, 
+            IEnumerable<ContextualBasedAnalysisAction> endingPreActions,
+            IEnumerable<ContextualBaseAnalysisCondition> endingConditions, 
+            IEnumerable<ContextualBasedAnalysisAction> endingPostActions,
+            OperationEndingOrder endingOrder)
         {
             this.BeginningConditions = beginningConditions.ToArray().AsReadOnly();
             this.BeginningPattern = beginningPattern;
+            this.BeginningPostActions = beginningPostActions.ToArray().AsReadOnly();
+            this.BeginningPreActions = beginningPreActions.ToArray().AsReadOnly();
             this.EndingConditions = endingConditions.ToArray().AsReadOnly();
             this.EndingOrder = endingOrder;
             this.EndingPattern = endingPattern;
+            this.EndingPostActions = endingPostActions.ToArray().AsReadOnly();
+            this.EndingPreActions = endingPreActions.ToArray().AsReadOnly();
             this.OperationName = operationName;
         }
 
@@ -50,6 +67,16 @@ class OperationDurationAnalysisRuleSet : BaseProfile<IULogViewerApplication>
         /// Get pattern to match text of beginning of operation log.
         /// </summary>
         public Regex BeginningPattern { get; }
+
+        /// <summary>
+        /// Get list of actions to perform after all beginning conditions matched.
+        /// </summary>
+        public IList<ContextualBasedAnalysisAction> BeginningPostActions { get; }
+
+        /// <summary>
+        /// Get list of actions to perform before all matching beginning conditions.
+        /// </summary>
+        public IList<ContextualBasedAnalysisAction> BeginningPreActions { get; }
 
         /// <summary>
         /// Get list of conditions for ending of operation log after text matched.
@@ -66,6 +93,16 @@ class OperationDurationAnalysisRuleSet : BaseProfile<IULogViewerApplication>
         /// </summary>
         public Regex EndingPattern { get; }
 
+        /// <summary>
+        /// Get list of actions to perform after all ending conditions matched.
+        /// </summary>
+        public IList<ContextualBasedAnalysisAction> EndingPostActions { get; }
+
+        /// <summary>
+        /// Get list of actions to perform before all matching ending conditions.
+        /// </summary>
+        public IList<ContextualBasedAnalysisAction> EndingPreActions { get; }
+
         /// <inheritdoc/>
         public bool Equals(Rule? rule) =>
             rule != null
@@ -73,9 +110,13 @@ class OperationDurationAnalysisRuleSet : BaseProfile<IULogViewerApplication>
             && rule.BeginningPattern.ToString() == this.BeginningPattern.ToString()
             && rule.BeginningPattern.Options == this.BeginningPattern.Options
             && rule.BeginningConditions.SequenceEqual(this.BeginningConditions)
+            && rule.BeginningPreActions.SequenceEqual(this.BeginningPreActions)
+            && rule.BeginningPostActions.SequenceEqual(this.BeginningPostActions)
             && rule.EndingPattern.ToString() == this.EndingPattern.ToString()
             && rule.EndingPattern.Options == this.EndingPattern.Options
-            && rule.EndingConditions.SequenceEqual(this.EndingConditions);
+            && rule.EndingConditions.SequenceEqual(this.EndingConditions)
+            && rule.EndingPreActions.SequenceEqual(this.EndingPreActions)
+            && rule.EndingPostActions.SequenceEqual(this.EndingPostActions);
 
         /// <inheritdoc/>
         public override bool Equals(object? obj) =>
