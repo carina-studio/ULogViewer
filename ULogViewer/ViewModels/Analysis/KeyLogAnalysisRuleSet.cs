@@ -124,8 +124,9 @@ class KeyLogAnalysisRuleSet : BaseProfile<IULogViewerApplication>
     /// </summary>
     /// <param name="app">Application.</param>
     /// <param name="fileName">File name.</param>
+    /// <param name="checkType">True to check whether type written in file is correct or not.</param>
     /// <returns>Task of loading profile.</returns>
-    public static async Task<KeyLogAnalysisRuleSet> LoadAsync(IULogViewerApplication app, string fileName)
+    public static async Task<KeyLogAnalysisRuleSet> LoadAsync(IULogViewerApplication app, string fileName, bool checkType)
     {
         // load JSON data
         using var jsonDocument = await ProfileExtensions.IOTaskFactory.StartNew(() =>
@@ -136,6 +137,15 @@ class KeyLogAnalysisRuleSet : BaseProfile<IULogViewerApplication>
         var element = jsonDocument.RootElement;
         if (element.ValueKind != JsonValueKind.Object)
             throw new ArgumentException("Root element must be an object.");
+        if (checkType)
+        {
+            if (!element.TryGetProperty("Type", out var jsonValue)
+                || jsonValue.ValueKind != JsonValueKind.String
+                || jsonValue.GetString() != nameof(KeyLogAnalysisRuleSet))
+            {
+                throw new ArgumentException($"Invalid type: {jsonValue}.");
+            }
+        }
         
         // get ID
         var id = element.TryGetProperty(nameof(Id), out var jsonProperty) && jsonProperty.ValueKind == JsonValueKind.String

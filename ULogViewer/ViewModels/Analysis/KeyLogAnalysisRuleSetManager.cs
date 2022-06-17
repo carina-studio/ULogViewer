@@ -80,7 +80,7 @@ class KeyLogAnalysisRuleSetManager : BaseProfileManager<IULogViewerApplication, 
 
     /// <inheritdoc/>
     protected override Task<KeyLogAnalysisRuleSet> OnLoadProfileAsync(string fileName, CancellationToken cancellationToken = default) =>
-        KeyLogAnalysisRuleSet.LoadAsync(this.Application, fileName);
+        KeyLogAnalysisRuleSet.LoadAsync(this.Application, fileName, false);
 
 
     /// <inheritdoc/>

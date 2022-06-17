@@ -31,6 +31,7 @@ using CarinaStudio.ULogViewer.ViewModels.Categorizing;
 using CarinaStudio.Windows.Input;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -53,6 +54,19 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// Property of <see cref="AreAllTutorialsShown"/>.
 		/// </summary>
 		public static readonly AvaloniaProperty<bool> AreAllTutorialsShownProperty = AvaloniaProperty.RegisterDirect<SessionView, bool>(nameof(AreAllTutorialsShown), v => v.areAllTutorialsShown);
+		/// <summary>
+		/// <see cref="IValueConverter"/> to convert number to boolean.
+		/// </summary>
+		public static readonly IValueConverter NumberToBooleanConverter = new FuncValueConverter<object, bool>(value =>
+		{
+			if (value is bool boolValue)
+				return boolValue;
+			if (value is int intValue)
+				return intValue != 0;
+			if (value is IConvertible convertible)
+				return convertible.ToInt32(null) != 0;
+			return false;
+		});
 		/// <summary>
 		/// <see cref="IValueConverter"/> to convert log level to readable name.
 		/// </summary>
@@ -154,10 +168,13 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly MutableObservableBoolean canShowWorkingDirectoryInExplorer = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canUnmarkSelectedLogs = new MutableObservableBoolean();
 		readonly MenuItem copyLogPropertyMenuItem;
+		readonly ToggleButton createLogAnalysisRuleSetButton;
+		readonly ContextMenu createLogAnalysisRuleSetMenu;
 		readonly Border dragDropReceiverBorder;
 		IDisposable? hasDialogsObserverToken;
 		IDisposable? isActiveObserverToken;
 		bool isAttachedToLogicalTree;
+		bool isCtrlKeyPressed;
 		bool isIPEndPointNeededAfterLogProfileSet;
 		bool isLogFileNeededAfterLogProfileSet;
 		bool isPidLogPropertyVisible;
@@ -172,6 +189,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		Control? lastClickedLogPropertyView;
 		readonly ContextMenu logActionMenu;
 		readonly Avalonia.Controls.ListBox logAnalysisResultListBox;
+		readonly Popup logAnalysisRuleSetsPopup;
 		readonly ContextMenu logFileActionMenu;
 		readonly AppSuite.Controls.ListBox logFileListBox;
 		readonly List<ColumnDefinition> logHeaderColumns = new List<ColumnDefinition>();
@@ -321,7 +339,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.ValidLogLevels = this.validLogLevels.AsReadOnly();
 
 			// initialize
-			this.InitializeComponent();
+			AvaloniaXamlLoader.Load(this);
 
 			// load resources
 			if (this.Application.TryGetResource<double>("Double/SessionView.LogListBox.MinSizeToCloseSidePanel", out var doubleRes))
@@ -329,10 +347,16 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// setup controls
 			this.copyLogPropertyMenuItem = this.FindControl<MenuItem>(nameof(copyLogPropertyMenuItem)).AsNonNull();
+			this.createLogAnalysisRuleSetButton = this.Get<ToggleButton>(nameof(createLogAnalysisRuleSetButton));
+			this.createLogAnalysisRuleSetMenu = ((ContextMenu)this.Resources[nameof(createLogAnalysisRuleSetMenu)].AsNonNull()).Also(it =>
+			{
+				it.MenuClosed += (_, e) => this.SynchronizationContext.Post(() => this.createLogAnalysisRuleSetButton.IsChecked = false);
+				it.MenuOpened += (_, e) => this.SynchronizationContext.Post(() => this.createLogAnalysisRuleSetButton.IsChecked = true);
+			});
 			this.dragDropReceiverBorder = this.FindControl<Border>(nameof(dragDropReceiverBorder)).AsNonNull();
 			this.keyLogAnalysisRuleSetListBox = this.FindControl<Avalonia.Controls.ListBox>(nameof(keyLogAnalysisRuleSetListBox))!.Also(it =>
 			{
-				it.SelectionChanged += this.OnKeyLogAnalysisRuleSetListBoxSelectionChanged;
+				it.SelectionChanged += this.OnLogAnalysisRuleSetListBoxSelectionChanged;
 			});
 			this.logActionMenu = ((ContextMenu)this.Resources[nameof(logActionMenu)].AsNonNull()).Also(it =>
 			{
@@ -357,6 +381,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				it.SelectionChanged += this.OnLogAnalysisResultListBoxSelectionChanged;
 			});
+			this.logAnalysisRuleSetsPopup = this.Get<Popup>(nameof(logAnalysisRuleSetsPopup));
 			this.logFileActionMenu = ((ContextMenu)this.Resources[nameof(logFileActionMenu)].AsNonNull()).Also(it =>
 			{
 				it.MenuClosed += (_, e) =>
@@ -439,7 +464,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.markedLogListBox = this.FindControl<Avalonia.Controls.ListBox>(nameof(markedLogListBox)).AsNonNull();
 			this.operationDurationAnalysisRuleSetListBox = this.Get<Avalonia.Controls.ListBox>(nameof(operationDurationAnalysisRuleSetListBox)).Also(it =>
 			{
-				it.SelectionChanged += this.OnOperationDurationAnalysisRuleSetListBoxSelectionChanged;
+				it.SelectionChanged += this.OnLogAnalysisRuleSetListBoxSelectionChanged;
 			});
 			this.otherActionsButton = this.FindControl<ToggleButton>(nameof(otherActionsButton)).AsNonNull();
 			this.otherActionsMenu = ((ContextMenu)this.Resources[nameof(otherActionsMenu)].AsNonNull()).Also(it =>
@@ -737,7 +762,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (this.attachedLogs != null)
 				this.attachedLogs.CollectionChanged += this.OnLogsChanged;
 			(session.KeyLogAnalysisRuleSets as INotifyCollectionChanged)?.Let(it =>
-				it.CollectionChanged += this.OnSessionKeyLogAnalysisRuleSetsChanged);
+				it.CollectionChanged += this.OnSessionLogAnalysisRuleSetsChanged);
+			(session.OperationDurationAnalysisRuleSets as INotifyCollectionChanged)?.Let(it =>
+				it.CollectionChanged += this.OnSessionLogAnalysisRuleSetsChanged);
 
 			// check profile
 			var profile = session.LogProfile;
@@ -796,6 +823,21 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			this.updateLogFiltersAction.Cancel();
 
+			// sync log analysis rule sets to UI
+			this.keyLogAnalysisRuleSetListBox.SelectedItems.Let(it =>
+			{
+				it.Clear();
+				foreach (var ruleSet in session.KeyLogAnalysisRuleSets)
+					it.Add(ruleSet);
+			});
+			this.operationDurationAnalysisRuleSetListBox.SelectedItems.Let(it =>
+			{
+				it.Clear();
+				foreach (var ruleSet in session.OperationDurationAnalysisRuleSets)
+					it.Add(ruleSet);
+			});
+			this.updateLogAnalysisAction.Cancel();
+
 			// sync side panel state
 			if (session.IsLogAnalysisPanelVisible 
 				|| session.IsMarkedLogsPanelVisible 
@@ -829,17 +871,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		bool CanFilterLogsByNonTextFilters { get => this.GetValue<bool>(CanFilterLogsByNonTextFiltersProperty); }
 
 
-		// Clear key log analysis rule set selection.
-		void ClearKeyLogAnalysisRuleSetSelection()
+		// Clear log analysis rule set selection.
+		void ClearLogAnalysisRuleSetSelection()
 		{
 			this.keyLogAnalysisRuleSetListBox.SelectedItems.Clear();
-			this.updateLogAnalysisAction.Reschedule();
-		}
-
-
-		// Clear operation duration analysis rule set selection.
-		void ClearOperationDurationAnalysisRuleSetSelection()
-		{
 			this.operationDurationAnalysisRuleSetListBox.SelectedItems.Clear();
 			this.updateLogAnalysisAction.Reschedule();
 		}
@@ -1021,6 +1056,11 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (this.attachedWindow != null)
 				KeyLogAnalysisRuleSetEditorDialog.Show(this.attachedWindow, null);
 		}
+
+
+		// Create new log analysis rule set.
+		void CreateLogAnalysisRuleSet() =>
+			this.createLogAnalysisRuleSetMenu.Open(this.createLogAnalysisRuleSetButton);
 
 
 		// Create item template for item of log list box.
@@ -1528,7 +1568,9 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.attachedLogs = null;
 			}
 			(session.KeyLogAnalysisRuleSets as INotifyCollectionChanged)?.Let(it =>
-				it.CollectionChanged -= this.OnSessionKeyLogAnalysisRuleSetsChanged);
+				it.CollectionChanged -= this.OnSessionLogAnalysisRuleSetsChanged);
+			(session.OperationDurationAnalysisRuleSets as INotifyCollectionChanged)?.Let(it =>
+				it.CollectionChanged -= this.OnSessionLogAnalysisRuleSetsChanged);
 
 			// detach from commands
 			this.canAddLogFiles.Unbind();
@@ -1969,8 +2011,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		bool HasLogProfile { get => this.GetValue<bool>(HasLogProfileProperty); }
 
 
-		// Import key log analysis rule set.
-		async void ImportKeyLogAnalysisRuleSet()
+		// Import log analysis rule set.
+		async void ImportLogAnalysisRuleSet()
 		{
 			// check state
 			if (this.attachedWindow == null)
@@ -1988,81 +2030,42 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (fileNames == null || fileNames.IsEmpty())
 				return;
 			
-			// load rule set
-			var ruleSet = (KeyLogAnalysisRuleSet?)null;
+			// try loading rule set
+			var klaRuleSet = (KeyLogAnalysisRuleSet?)null;
 			try
 			{
-				ruleSet = await KeyLogAnalysisRuleSet.LoadAsync(this.Application, fileNames[0]);
+				klaRuleSet = await KeyLogAnalysisRuleSet.LoadAsync(this.Application, fileNames[0], true);
 			}
-			catch (Exception ex)
+			catch
+			{ }
+			var odaRuleSet = (OperationDurationAnalysisRuleSet?)null;
+			if (klaRuleSet == null)
 			{
-				this.Logger.LogError(ex, $"Failed to load key log analysis rule set from '{fileNames[0]}' to import");
-				if (this.attachedWindow != null)
+				try
 				{
-					_ = new MessageDialog()
-					{
-						Icon = MessageDialogIcon.Error,
-						Message = this.Application.GetFormattedString("SessionView.FailedToImportLogAnalysisRuleSet", fileNames[0]),
-					}.ShowDialog(this.attachedWindow);
+					odaRuleSet = await OperationDurationAnalysisRuleSet.LoadAsync(this.Application, fileNames[0], true);
 				}
-				return;
+				catch
+				{ }
 			}
 			if (this.attachedWindow == null)
 				return;
+			if (klaRuleSet == null && odaRuleSet == null)
+			{
+				_ = new MessageDialog()
+				{
+					Icon = MessageDialogIcon.Error,
+					Message = this.Application.GetFormattedString("SessionView.FailedToImportLogAnalysisRuleSet", fileNames[0]),
+				}.ShowDialog(this.attachedWindow);
+				return;
+			}
 
 			// edit and add rule set
-			KeyLogAnalysisRuleSetEditorDialog.Show(this.attachedWindow, ruleSet);
+			if (klaRuleSet != null)
+				KeyLogAnalysisRuleSetEditorDialog.Show(this.attachedWindow, klaRuleSet);
+			else if (odaRuleSet != null)
+				OperationDurationAnalysisRuleSetEditorDialog.Show(this.attachedWindow, odaRuleSet);
 		}
-
-
-		// Import operation duration analysis rule set.
-		async void ImportOperationDurationAnalysisRuleSet()
-		{
-			// check state
-			if (this.attachedWindow == null)
-				return;
-			
-			// select file
-			var fileNames = await new OpenFileDialog().Also(dialog =>
-			{
-				dialog.Filters!.Add(new FileDialogFilter().Also(filter =>
-				{
-					filter.Extensions.Add("json");
-					filter.Name = this.Application.GetString("FileFormat.Json");
-				}));
-			}).ShowAsync(this.attachedWindow);
-			if (fileNames == null || fileNames.IsEmpty())
-				return;
-			
-			// load rule set
-			var ruleSet = (OperationDurationAnalysisRuleSet?)null;
-			try
-			{
-				ruleSet = await OperationDurationAnalysisRuleSet.LoadAsync(this.Application, fileNames[0]);
-			}
-			catch (Exception ex)
-			{
-				this.Logger.LogError(ex, $"Failed to load operation duration analysis rule set from '{fileNames[0]}' to import");
-				if (this.attachedWindow != null)
-				{
-					_ = new MessageDialog()
-					{
-						Icon = MessageDialogIcon.Error,
-						Message = this.Application.GetFormattedString("SessionView.FailedToImportLogAnalysisRuleSet", fileNames[0]),
-					}.ShowDialog(this.attachedWindow);
-				}
-				return;
-			}
-			if (this.attachedWindow == null)
-				return;
-
-			// edit and add rule set
-			OperationDurationAnalysisRuleSetEditorDialog.Show(this.attachedWindow, ruleSet);
-		}
-
-
-		// Initialize Avalonia components.
-		private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
 
 
 		// Check whether process info should be shown or not.
@@ -2205,6 +2208,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.AddHandler(DragDrop.DragOverEvent, this.OnDragOver);
 			this.AddHandler(DragDrop.DropEvent, this.OnDrop);
 			this.AddHandler(KeyDownEvent, this.OnPreviewKeyDown, RoutingStrategies.Tunnel);
+			this.AddHandler(KeyUpEvent, this.OnPreviewKeyUp, RoutingStrategies.Tunnel);
 
 			// check product state
 			this.SetValue<bool>(IsProVersionActivatedProperty, this.Application.ProductManager.IsProductActivated(Products.Professional));
@@ -2267,6 +2271,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.RemoveHandler(DragDrop.DragOverEvent, this.OnDragOver);
 			this.RemoveHandler(DragDrop.DropEvent, this.OnDrop);
 			this.RemoveHandler(KeyDownEvent, this.OnPreviewKeyDown);
+			this.RemoveHandler(KeyUpEvent, this.OnPreviewKeyUp);
 
 			// release predefined log text filter list
 			((INotifyCollectionChanged)PredefinedLogTextFilterManager.Default.Filters).CollectionChanged -= this.OnPredefinedLogTextFiltersChanged;
@@ -2673,6 +2678,78 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Called when selection of list box of log analysis rule sets has been changed.
+		void OnLogAnalysisRuleSetListBoxSelectionChanged(object? sender, SelectionChangedEventArgs e)
+		{
+			// update selected rule sets
+			var listBox = (Avalonia.Controls.ListBox)sender.AsNonNull();
+			foreach (var ruleSet in e.RemovedItems!)
+			{
+				if (ruleSet is KeyLogAnalysisRuleSet klaRuleSets)
+					this.selectedKeyLogAnalysisRuleSets.Remove(klaRuleSets);
+				else if (ruleSet is OperationDurationAnalysisRuleSet odaRuleSets)
+					this.selectedOperationDurationAnalysisRuleSets.Remove(odaRuleSets);
+				else if (ruleSet != null)
+					throw new NotImplementedException();
+			}
+			foreach (var ruleSet in e.AddedItems!)
+			{
+				if (ruleSet is KeyLogAnalysisRuleSet klaRuleSets)
+					this.selectedKeyLogAnalysisRuleSets.Add(klaRuleSets);
+				else if (ruleSet is OperationDurationAnalysisRuleSet odaRuleSets)
+					this.selectedOperationDurationAnalysisRuleSets.Add(odaRuleSets);
+				else if (ruleSet != null)
+					throw new NotImplementedException();
+			}
+
+			// sync back to UI if needed
+			var selectedRuleSetCount = 0;
+			var copiedSelectedRuleSets = (IEnumerable)new object[0];
+			var syncBackToUI = Global.Run(() =>
+			{
+				if (listBox == this.keyLogAnalysisRuleSetListBox)
+				{
+					selectedRuleSetCount = this.selectedKeyLogAnalysisRuleSets.Count;
+					if (this.selectedKeyLogAnalysisRuleSets.Count != listBox.SelectedItems.Count)
+					{
+						copiedSelectedRuleSets = this.selectedKeyLogAnalysisRuleSets.ToArray();
+						return true;
+					}
+					return false;
+				}
+				if (listBox == this.operationDurationAnalysisRuleSetListBox)
+				{
+					selectedRuleSetCount = this.selectedOperationDurationAnalysisRuleSets.Count;
+					if (this.selectedOperationDurationAnalysisRuleSets.Count != listBox.SelectedItems.Count)
+					{
+						copiedSelectedRuleSets = this.selectedOperationDurationAnalysisRuleSets.ToArray();
+						return true;
+					}
+					return false;
+				}
+				throw new NotImplementedException();
+			});
+			if (syncBackToUI)
+			{
+				// [Workaround] Need to sync selection back to control because selection will be cleared when popup opened
+				if (selectedRuleSetCount > 0)
+				{
+					var isScheduled = this.updateLogAnalysisAction?.IsScheduled ?? false;
+					this.SynchronizationContext.Post(() =>
+					{
+						listBox.SelectedItems.Clear();
+						foreach (var ruleSet in copiedSelectedRuleSets)
+							listBox.SelectedItems.Add(ruleSet);
+						if (!isScheduled)
+							this.updateLogAnalysisAction?.Cancel();
+					});
+				}
+			}
+			else
+				this.updateLogAnalysisAction.Reschedule(this.UpdateLogAnalysisParamsDelay);
+		}
+
+
 		// Called when selected item of log category changed.
 		void OnLogCategoryListBoxSelectedItemChanged(Avalonia.Controls.ListBox? listBox, DisplayableLogCategory? category)
 		{
@@ -2895,7 +2972,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		protected override void OnKeyDown(Avalonia.Input.KeyEventArgs e)
 		{
 			this.pressedKeys.Add(e.Key);
-			if (!e.Handled)
+			if (!e.Handled && !logAnalysisRuleSetsPopup.IsOpen)
 			{
 				var isCmdPressed = Platform.IsMacOS && (this.pressedKeys.Contains(Avalonia.Input.Key.LWin) || this.pressedKeys.Contains(Avalonia.Input.Key.RWin));
 				var isCtrlPressed = Platform.IsMacOS ? isCmdPressed : (e.KeyModifiers & KeyModifiers.Control) != 0;
@@ -3091,37 +3168,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Called when selection of list box of key log analysis rule sets has been changed.
-		void OnKeyLogAnalysisRuleSetListBoxSelectionChanged(object? sender, SelectionChangedEventArgs e)
-		{
-			foreach (var ruleSet in e.RemovedItems.Cast<KeyLogAnalysisRuleSet>())
-				this.selectedKeyLogAnalysisRuleSets.Remove(ruleSet);
-			foreach (var ruleSet in e.AddedItems.Cast<KeyLogAnalysisRuleSet>())
-				this.selectedKeyLogAnalysisRuleSets.Add(ruleSet);
-			if (this.selectedKeyLogAnalysisRuleSets.Count != this.keyLogAnalysisRuleSetListBox.SelectedItems.Count)
-			{
-				// [Workaround] Need to sync selection back to control because selection will be cleared when popup opened
-				if (this.selectedKeyLogAnalysisRuleSets.IsNotEmpty())
-				{
-					var isScheduled = this.updateLogAnalysisAction?.IsScheduled ?? false;
-					this.selectedKeyLogAnalysisRuleSets.ToArray().Let(it =>
-					{
-						this.SynchronizationContext.Post(() =>
-						{
-							this.keyLogAnalysisRuleSetListBox.SelectedItems.Clear();
-							foreach (var ruleSet in it)
-								this.keyLogAnalysisRuleSetListBox.SelectedItems.Add(ruleSet);
-							if (!isScheduled)
-								this.updateLogAnalysisAction?.Cancel();
-						});
-					});
-				}
-			}
-			else
-				this.updateLogAnalysisAction.Reschedule(this.UpdateLogAnalysisParamsDelay);
-		}
-
-
 		// Called when key up.
 		protected override void OnKeyUp(Avalonia.Input.KeyEventArgs e)
 		{
@@ -3136,75 +3182,80 @@ namespace CarinaStudio.ULogViewer.Controls
 			// handle key event for single key
 			if (!e.Handled)
 			{
-				var isCmdPressed = Platform.IsMacOS && (this.pressedKeys.Contains(Avalonia.Input.Key.LWin) || this.pressedKeys.Contains(Avalonia.Input.Key.RWin));
-				var isCtrlPressed = Platform.IsMacOS ? isCmdPressed : (e.KeyModifiers & KeyModifiers.Control) != 0;
-				if (this.Application.IsDebugMode && e.Source is not TextBox)
-					this.Logger.LogTrace($"[KeyUp] {e.Key}, Ctrl/Cmd: {isCmdPressed}, Shift: {(e.KeyModifiers & KeyModifiers.Shift) != 0}, Alt: {(e.KeyModifiers & KeyModifiers.Alt) != 0}");
-				if (!isCmdPressed && e.KeyModifiers == 0)
+				if (!logAnalysisRuleSetsPopup.IsOpen)
 				{
-					switch (e.Key)
+					var isCmdPressed = Platform.IsMacOS && (this.pressedKeys.Contains(Avalonia.Input.Key.LWin) || this.pressedKeys.Contains(Avalonia.Input.Key.RWin));
+					var isCtrlPressed = Platform.IsMacOS ? isCmdPressed : (e.KeyModifiers & KeyModifiers.Control) != 0;
+					if (this.Application.IsDebugMode && e.Source is not TextBox)
+						this.Logger.LogTrace($"[KeyUp] {e.Key}, Ctrl/Cmd: {isCmdPressed}, Shift: {(e.KeyModifiers & KeyModifiers.Shift) != 0}, Alt: {(e.KeyModifiers & KeyModifiers.Alt) != 0}");
+					if (!isCmdPressed && e.KeyModifiers == 0)
 					{
-						case Avalonia.Input.Key.End:
-							if (e.Source is not TextBox)
-							{
-								if (this.predefinedLogTextFiltersPopup.IsOpen)
-									this.predefinedLogTextFilterListBox.SelectLastItem();
-								else
-									this.logListBox.SelectLastItem();
+						switch (e.Key)
+						{
+							case Avalonia.Input.Key.End:
+								if (e.Source is not TextBox)
+								{
+									if (this.predefinedLogTextFiltersPopup.IsOpen)
+										this.predefinedLogTextFilterListBox.SelectLastItem();
+									else
+										this.logListBox.SelectLastItem();
+									e.Handled = true;
+								}
+								break;
+							case Avalonia.Input.Key.Escape:
+								if (e.Source is TextBox)
+								{
+									if (this.Application.IsDebugMode)
+										this.Logger.LogTrace($"[KeyUp] {e.Key} on text box");
+									this.logListBox.Focus();
+									e.Handled = true;
+								}
+								else if (this.predefinedLogTextFiltersPopup.IsOpen)
+								{
+									this.predefinedLogTextFiltersPopup.IsOpen = false;
+									e.Handled = true;
+								}
+								break;
+							case Avalonia.Input.Key.F5:
+								this.ReloadLogs();
 								e.Handled = true;
-							}
-							break;
-						case Avalonia.Input.Key.Escape:
-							if (e.Source is TextBox)
-							{
-								if (this.Application.IsDebugMode)
-									this.Logger.LogTrace($"[KeyUp] {e.Key} on text box");
-								this.logListBox.Focus();
-								e.Handled = true;
-							}
-							else if (this.predefinedLogTextFiltersPopup.IsOpen)
-							{
-								this.predefinedLogTextFiltersPopup.IsOpen = false;
-								e.Handled = true;
-							}
-							break;
-						case Avalonia.Input.Key.F5:
-							this.ReloadLogs();
-							e.Handled = true;
-							break;
-						case Avalonia.Input.Key.Home:
-							if (e.Source is not TextBox)
-							{
-								if (this.predefinedLogTextFiltersPopup.IsOpen)
-									this.predefinedLogTextFilterListBox.SelectFirstItem();
-								else
-									this.logListBox.SelectFirstItem();
-								e.Handled = true;
-							}
-							break;
-						case Avalonia.Input.Key.M:
-							if (e.Source is not TextBox)
-							{
-								this.MarkUnmarkSelectedLogs();
-								e.Handled = true;
-							}
-							break;
-						case Avalonia.Input.Key.P:
-							if (e.Source is not TextBox)
-							{
-								(this.DataContext as Session)?.PauseResumeLogsReadingCommand?.TryExecute();
-								e.Handled = true;
-							}
-							break;
-						case Avalonia.Input.Key.S:
-							if (e.Source is not TextBox && !this.isSelectingFileToSaveLogs)
-							{
-								this.SelectMarkedLogs();
-								e.Handled = true;
-							}
-							break;
+								break;
+							case Avalonia.Input.Key.Home:
+								if (e.Source is not TextBox)
+								{
+									if (this.predefinedLogTextFiltersPopup.IsOpen)
+										this.predefinedLogTextFilterListBox.SelectFirstItem();
+									else
+										this.logListBox.SelectFirstItem();
+									e.Handled = true;
+								}
+								break;
+							case Avalonia.Input.Key.M:
+								if (e.Source is not TextBox)
+								{
+									this.MarkUnmarkSelectedLogs();
+									e.Handled = true;
+								}
+								break;
+							case Avalonia.Input.Key.P:
+								if (e.Source is not TextBox)
+								{
+									(this.DataContext as Session)?.PauseResumeLogsReadingCommand?.TryExecute();
+									e.Handled = true;
+								}
+								break;
+							case Avalonia.Input.Key.S:
+								if (e.Source is not TextBox && !this.isSelectingFileToSaveLogs)
+								{
+									this.SelectMarkedLogs();
+									e.Handled = true;
+								}
+								break;
+						}
 					}
 				}
+				else if (e.Key == Avalonia.Input.Key.Escape)
+					this.logAnalysisRuleSetsPopup.Close();
 			}
 			else if (this.Application.IsDebugMode && e.Source is not TextBox)
 				this.Logger.LogTrace($"[KeyUp] {e.Key} was handled by another component");
@@ -3247,37 +3298,6 @@ namespace CarinaStudio.ULogViewer.Controls
 				it.Focus();
 			});
 			this.IsScrollingToLatestLogNeeded = false;
-		}
-
-
-		// Called when selection of list box of operation duration analysis rule sets has been changed.
-		void OnOperationDurationAnalysisRuleSetListBoxSelectionChanged(object? sender, SelectionChangedEventArgs e)
-		{
-			foreach (var ruleSet in e.RemovedItems.Cast<OperationDurationAnalysisRuleSet>())
-				this.selectedOperationDurationAnalysisRuleSets.Remove(ruleSet);
-			foreach (var ruleSet in e.AddedItems.Cast<OperationDurationAnalysisRuleSet>())
-				this.selectedOperationDurationAnalysisRuleSets.Add(ruleSet);
-			if (this.selectedOperationDurationAnalysisRuleSets.Count != this.operationDurationAnalysisRuleSetListBox.SelectedItems.Count)
-			{
-				// [Workaround] Need to sync selection back to control because selection will be cleared when popup opened
-				if (this.selectedOperationDurationAnalysisRuleSets.IsNotEmpty())
-				{
-					var isScheduled = this.updateLogAnalysisAction?.IsScheduled ?? false;
-					this.selectedOperationDurationAnalysisRuleSets.ToArray().Let(it =>
-					{
-						this.SynchronizationContext.Post(() =>
-						{
-							this.operationDurationAnalysisRuleSetListBox.SelectedItems.Clear();
-							foreach (var ruleSet in it)
-								this.operationDurationAnalysisRuleSetListBox.SelectedItems.Add(ruleSet);
-							if (!isScheduled)
-								this.updateLogAnalysisAction?.Cancel();
-						});
-					});
-				}
-			}
-			else
-				this.updateLogAnalysisAction.Reschedule(this.UpdateLogAnalysisParamsDelay);
 		}
 
 
@@ -3357,6 +3377,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called to handle key-down before all children.
 		async void OnPreviewKeyDown(object? sender, Avalonia.Input.KeyEventArgs e)
 		{
+			// check Ctrl key
+			if (e.Key == Avalonia.Input.Key.LeftCtrl || e.Key == Avalonia.Input.Key.RightCtrl)
+				this.isCtrlKeyPressed = true;
+
 			// [Workaround] It will take long time to select all items by list box itself
 			if (!e.Handled 
 				&& e.Source is not TextBox
@@ -3395,6 +3419,18 @@ namespace CarinaStudio.ULogViewer.Controls
 						selectedItems.Add(log);
 				}
 				
+			}
+		}
+
+
+		// Called to handle key-up before all children.
+		void OnPreviewKeyUp(object? sender, Avalonia.Input.KeyEventArgs e)
+		{
+			// check Ctrl key
+			if (e.Key == Avalonia.Input.Key.LeftCtrl || e.Key == Avalonia.Input.Key.RightCtrl)
+			{
+				if ((e.KeyModifiers & KeyModifiers.Control) == 0)
+					this.isCtrlKeyPressed = false;
 			}
 		}
 
@@ -3449,16 +3485,26 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Called when list of key log analysis of session changed.
-		void OnSessionKeyLogAnalysisRuleSetsChanged(object? sender, NotifyCollectionChangedEventArgs e)
+		// Called when list of log analysis of session changed.
+		void OnSessionLogAnalysisRuleSetsChanged(object? sender, NotifyCollectionChangedEventArgs e)
 		{
+			if (this.DataContext is not Session session)
+				return;
 			var isUpdateShceduled = this.updateLogAnalysisAction.IsScheduled;
 			var syncBack = false;
-			var selectedItems = this.keyLogAnalysisRuleSetListBox.SelectedItems;
+			var selectedItems = Global.Run(() =>
+			{
+				if (sender == session.KeyLogAnalysisRuleSets)
+					return this.keyLogAnalysisRuleSetListBox.SelectedItems;
+				else if (sender == session.OperationDurationAnalysisRuleSets)
+					return this.operationDurationAnalysisRuleSetListBox.SelectedItems;
+				else
+					throw new NotImplementedException();
+			});
 			switch (e.Action)
 			{
 				case NotifyCollectionChangedAction.Add:
-					foreach (var ruleSet in e.NewItems!.Cast<KeyLogAnalysisRuleSet>())
+					foreach (var ruleSet in e.NewItems!)
 					{
 						if (!selectedItems.Contains(ruleSet))
 						{
@@ -3468,7 +3514,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					}
 					break;
 				case NotifyCollectionChangedAction.Remove:
-					foreach (var ruleSet in e.OldItems!.Cast<KeyLogAnalysisRuleSet>())
+					foreach (var ruleSet in e.OldItems!)
 					{
 						if (selectedItems.Contains(ruleSet))
 						{
@@ -3480,11 +3526,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				case NotifyCollectionChangedAction.Reset:
 					syncBack = true;
 					selectedItems.Clear();
-					if (this.DataContext is Session session)
-					{
-						foreach (var ruleSet in session.KeyLogAnalysisRuleSets)
-							selectedItems.Add(ruleSet);
-					}
+					foreach (var ruleSet in (IList)sender.AsNonNull())
+						selectedItems.Add(ruleSet);
 					break;
 				default:
 					this.Logger.LogError($"Unsupported change of key log analysis rule sets: {e.Action}");

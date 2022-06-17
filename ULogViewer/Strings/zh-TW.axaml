@@ -171,13 +171,13 @@
 	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Pattern">格式 (必要)</sys:String>
 	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Pattern.Description">您可以使用 \$\$ 表示文字屬性分隔線。例如您想找到使用者為 "John" 且訊息為 "Hello" 的日誌，就可以使用 "John\$\$Hello" 這個格式。文字屬性的排列順序和日誌類型所定義之可見的日誌屬性相同。</sys:String>
 	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.ResultType">分析結果類型</sys:String>
-	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Title">編輯規則</sys:String>
+	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Title">編輯關鍵日誌分析規則</sys:String>
 
 	<!-- KeyLogAnalysisRuleSetEditorDialog -->
 	<sys:String x:Key="String/KeyLogAnalysisRuleSetEditorDialog.Icon">圖示</sys:String>
 	<sys:String x:Key="String/KeyLogAnalysisRuleSetEditorDialog.Name">名稱 (必要)</sys:String>
 	<sys:String x:Key="String/KeyLogAnalysisRuleSetEditorDialog.Rules">規則 (必要)</sys:String>
-	<sys:String x:Key="String/KeyLogAnalysisRuleSetEditorDialog.Title">編輯規則集</sys:String>
+	<sys:String x:Key="String/KeyLogAnalysisRuleSetEditorDialog.Title">編輯關鍵日誌分析規則集</sys:String>
 
 	<!-- LogColorIndicator -->
 	<sys:String x:Key="String/LogColorIndicator.FileName">檔案</sys:String>
@@ -477,7 +477,7 @@
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingOrder">動作結束順序</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingPattern">結束日誌文字格式</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.OperationName">動作名稱</sys:String>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.Title">編輯規則</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.Title">編輯動作時距分析規則</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.VarAndConstComparisonCondition">變數與常數之比較</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.VarsComparisonCondition">變數之間之比較</sys:String>
 
@@ -485,7 +485,7 @@
 	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.Icon">圖示</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.Name">名稱 (必要)</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.Rules">規則 (必要)</sys:String>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.Title">編輯規則集</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.Title">編輯動作時距分析規則集</sys:String>
 
 	<!-- OperationEndingOrder -->
 	<sys:String x:Key="String/OperationEndingOrder.FirstInFirstOut">先進先出 (FIFO)</sys:String>
@@ -552,12 +552,13 @@
 	<sys:String x:Key="String/SessionView.Hint.NoLogToShow">沒有日誌可以顯示</sys:String>
 	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.Section1">點一下工具列的</sys:String>
 	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.Section2">來選取日誌類型以開始使用</sys:String>
-	<sys:String x:Key="String/SessionView.KeyLogAnalysisRuleSets">關鍵日誌分析 (可多選)</sys:String>
 	<sys:String x:Key="String/SessionView.LastLogsFilteringDuration">篩選耗時：</sys:String>
 	<sys:String x:Key="String/SessionView.LastLogsReadingDuration">讀取耗時：</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisPanel">日誌分析</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisProgress">分析日誌中…</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets">分析規則集</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.KeyLogAnalysisRuleSet">關鍵日誌分析</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.OperationDurationAnalysisRuleSet">動作時距分析</sys:String>
 	<sys:String x:Key="String/SessionView.LogCountInLogFile">日誌個數：</sys:String>
 	<sys:String x:Key="String/SessionView.LogFilesPanel">已加入的日誌檔案</sys:String>
 	<sys:String x:Key="String/SessionView.LogFiltersCombinationMode">篩選條件運算方式 (交集/聯集)</sys:String>
@@ -583,7 +584,6 @@
 	<sys:String x:Key="String/SessionView.MultipleFilesAreNotAllowed">目前的日誌類型不允許加入多個檔案。</sys:String>
 	<sys:String x:Key="String/SessionView.NeedToRestartAsAdministrator">'{0}' 需要系統管理員身分，是否要以系統管理員身分重新啟動應用程式並使用此日誌類型？</sys:String>
 	<sys:String x:Key="String/SessionView.NoFilePathDropped">請拖放有效的檔案。</sys:String>
-	<sys:String x:Key="String/SessionView.OperationDurationAnalysisRuleSets">動作時距分析 (可多選)</sys:String>
 	<sys:String x:Key="String/SessionView.OtherActions">其他動作</sys:String>
 	<sys:String x:Key="String/SessionView.PauseResumeLogsReading">暫停/繼續讀取日誌 (P)</sys:String>
 	<sys:String x:Key="String/SessionView.PredefinedLogTextFilters">已定義的文字篩選 (Ctrl+P)</sys:String>

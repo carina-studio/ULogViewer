@@ -78,7 +78,7 @@ class OperationDurationAnalysisRuleSetManager : BaseProfileManager<IULogViewerAp
 
     /// <inheritdoc/>
     protected override Task<OperationDurationAnalysisRuleSet> OnLoadProfileAsync(string fileName, CancellationToken cancellationToken = default) =>
-        OperationDurationAnalysisRuleSet.LoadAsync(this.Application, fileName);
+        OperationDurationAnalysisRuleSet.LoadAsync(this.Application, fileName, false);
 
 
     /// <inheritdoc/>

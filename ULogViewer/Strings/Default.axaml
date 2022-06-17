@@ -180,13 +180,13 @@
 	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Pattern">Pattern (required)</sys:String>
 	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Pattern.Description">You can use \$\$ as separator between text properties. For example, if you want to find log with user name "John" and message "Hello" then you can use pattern "John\$\$Hello". The order of text properties are same as visible log properties defined by log profile.</sys:String>
 	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.ResultType">Type of analysis result</sys:String>
-	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Title">Edit rule</sys:String>
+	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Title">Edit key log analysis rule</sys:String>
 
 	<!-- KeyLogAnalysisRuleSetEditorDialog -->
 	<sys:String x:Key="String/KeyLogAnalysisRuleSetEditorDialog.Icon">Icon</sys:String>
 	<sys:String x:Key="String/KeyLogAnalysisRuleSetEditorDialog.Name">Name (required)</sys:String>
 	<sys:String x:Key="String/KeyLogAnalysisRuleSetEditorDialog.Rules">Rules (required)</sys:String>
-	<sys:String x:Key="String/KeyLogAnalysisRuleSetEditorDialog.Title">Edit rule set</sys:String>
+	<sys:String x:Key="String/KeyLogAnalysisRuleSetEditorDialog.Title">Edit key log analysis rule set</sys:String>
 
 	<!-- LogColorIndicator -->
 	<sys:String x:Key="String/LogColorIndicator.FileName">File</sys:String>
@@ -509,7 +509,7 @@
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingOrder">Order of ending operations</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingPattern">Pattern of ending log</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.OperationName">Name of operation</sys:String>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.Title">Edit rule</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.Title">Edit operation duration analysis rule</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.VarAndConstComparisonCondition">Comparison between variable and constant</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.VarsComparisonCondition">Comparison between variables</sys:String>
 
@@ -517,7 +517,7 @@
 	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.Icon">Icon</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.Name">Name (required)</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.Rules">Rules (required)</sys:String>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.Title">Edit rule set</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.Title">Edit operation duration analysis rule set</sys:String>
 
 	<!-- OperationEndingOrder -->
 	<sys:String x:Key="String/OperationEndingOrder.FirstInFirstOut">First in, first out</sys:String>
@@ -584,12 +584,13 @@
 	<sys:String x:Key="String/SessionView.Hint.NoLogToShow">No log to show</sys:String>
 	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.Section1">Click</sys:String>
 	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.Section2">on toolbar to select log profile to start</sys:String>
-	<sys:String x:Key="String/SessionView.KeyLogAnalysisRuleSets">Key log analysis (multi-selectable)</sys:String>
 	<sys:String x:Key="String/SessionView.LastLogsFilteringDuration">Filtering cost: </sys:String>
 	<sys:String x:Key="String/SessionView.LastLogsReadingDuration">Reading cost: </sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisPanel">Log Analysis</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisProgress">Analyzing logs…</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets">Rule sets of analysis</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.KeyLogAnalysisRuleSet">Key log analysis</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.OperationDurationAnalysisRuleSet">Operation duration analysis</sys:String>
 	<sys:String x:Key="String/SessionView.LogCountInLogFile">Log count:</sys:String>
 	<sys:String x:Key="String/SessionView.LogFilesPanel">Added log files</sys:String>
 	<sys:String x:Key="String/SessionView.LogFiltersCombinationMode">Way to combine conditions (Intersect/Union)</sys:String>
@@ -615,7 +616,6 @@
 	<sys:String x:Key="String/SessionView.MultipleFilesAreNotAllowed">Multiple files are not allowed by current log profile.</sys:String>
 	<sys:String x:Key="String/SessionView.NeedToRestartAsAdministrator">Administrator role is needed for '{0}'. Do you want to restart application as Administrator and use this profile?</sys:String>
 	<sys:String x:Key="String/SessionView.NoFilePathDropped">Please drag and drop valid files.</sys:String>
-	<sys:String x:Key="String/SessionView.OperationDurationAnalysisRuleSets">Operation duration analysis (multi-selectable)</sys:String>
 	<sys:String x:Key="String/SessionView.OtherActions">Other actions</sys:String>
 	<sys:String x:Key="String/SessionView.PauseResumeLogsReading">Pause/Resume reading logs (P)</sys:String>
 	<sys:String x:Key="String/SessionView.PredefinedLogTextFilters">Defined text filters (Ctrl+P)</sys:String>
