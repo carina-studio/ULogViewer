@@ -11,7 +11,6 @@ using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -23,7 +22,6 @@ namespace CarinaStudio.ULogViewer.Logs
 	class RawLogWriter : BaseLogWriter
 	{
 		// Static fields.
-		static readonly Regex logPropertyNameRegex = new Regex("\\{(?<PropertyName>[\\w\\d]+)(\\,(?<Alignment>[\\+\\-]?[\\d]+))?(\\:(?<Format>[^\\}]+))?\\}");
 		static readonly string newLineString = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "\r\n" : "\n";
 
 
@@ -226,7 +224,7 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		// Write logs.
-		void WriteLogs(TextWriter writer, List<(string, List<string>)> formats, Dictionary<string, Func<Log, object?>> logPropertyGetters, CancellationToken cancellationToken)
+		void WriteLogs(TextWriter writer, List<StringFormatter> formatters, Dictionary<string, Func<Log, object?>> logPropertyGetters, CancellationToken cancellationToken)
 		{
 			var logs = this.Logs;
 			var logCount = logs.Count;
@@ -245,12 +243,11 @@ namespace CarinaStudio.ULogViewer.Logs
 				{
 					// select format
 					var log = logs[i];
-					var format = (string?)null;
-					var propertyNameList = (List<string>?)null;
-					foreach (var (candFormat, candPropNameList) in formats)
+					var formatter = (StringFormatter?)null;
+					foreach (var candFormatter in formatters)
 					{
 						var areAllPropertiesValid = true;
-						foreach (var propName in candPropNameList)
+						foreach (var propName in candFormatter.ParameterNames)
 						{
 							if (!logPropertyGetters.TryGetValue(propName, out var getter)
 								|| getter(log) == null)
@@ -261,36 +258,11 @@ namespace CarinaStudio.ULogViewer.Logs
 						}
 						if (areAllPropertiesValid)
 						{
-							format = candFormat;
-							propertyNameList = candPropNameList;
+							formatter = candFormatter;
 							break;
 						}
 					}
-					if (format == null)
-					{
-						format = formats[0].Item1;
-						propertyNameList = formats[0].Item2;
-					}
-					
-					// get property values
-					if (formatArgs.Length < propertyNameList!.Count)
-						formatArgs = new object?[propertyNameList.Count];
-					for (var j = propertyNameList.Count - 1; j >= 0; --j)
-					{
-						if (!logPropertyGetters.TryGetValue(propertyNameList[j], out var getter))
-							continue;
-						formatArgs[j] = getter(log).Let(it =>
-						{
-							if (it is not string str || str.Length == 0)
-								return it;
-							return logStringEncoding switch
-							{
-								LogStringEncoding.Json => JsonUtility.EncodeToJsonString(str),
-								LogStringEncoding.Xml => WebUtility.HtmlEncode(str),
-								_ => it,
-							};
-						});
-					}
+					formatter ??= formatters[0];
 
 					// move to next line
 					if (i > 0)
@@ -308,7 +280,7 @@ namespace CarinaStudio.ULogViewer.Logs
 							}
 						});
 					}
-					logStringWriter.Write(string.Format(format, formatArgs));
+					logStringWriter.Write(formatter.ToString(log));
 
 					// check line count
 					if (logsToGetLineNumber.IsNotEmpty())
@@ -340,28 +312,22 @@ namespace CarinaStudio.ULogViewer.Logs
 		protected override async Task WriteLogsAsync(TextWriter writer, CancellationToken cancellationToken)
 		{
 			// prepare output format and log property getters
-			var logFormatStart = 0;
-			var formatBuilder = new StringBuilder();
 			var logPropertyGetters = new Dictionary<string, Func<Log, object?>>();
-			var formats = new List<(string, List<string>)>();
-			var argIndex = 0;
+			var formatters = new List<StringFormatter>();
 			var cultureInfo = this.Application.CultureInfo;
 			foreach (var logFormat in this.logFormats)
 			{
-				var propNameList = new List<string>();
-				var match = logPropertyNameRegex.Match(logFormat);
-				while (match.Success)
+				var formatter = new StringFormatter(logFormat, (obj, propertyName) =>
 				{
-					formatBuilder.Append(logFormat.Substring(logFormatStart, match.Index - logFormatStart));
-					logFormatStart = match.Index + match.Length;
-					var propertyName = match.Groups["PropertyName"].Value;
+					if (obj is not Log log)
+						return null;
 					if (propertyName == "NewLine")
-						formatBuilder.Append(newLineString);
-					else if (Log.HasProperty(propertyName))
+						return "\n";
+					if (Log.HasProperty(propertyName))
 					{
-						if (!logPropertyGetters.ContainsKey(propertyName))
+						if (!logPropertyGetters.TryGetValue(propertyName, out var getter))
 						{
-							var logPropertyGetter = propertyName switch
+							getter = propertyName switch
 							{
 								nameof(Log.BeginningTimeSpan)
 								or nameof(Log.EndingTimeSpan)
@@ -411,35 +377,33 @@ namespace CarinaStudio.ULogViewer.Logs
 										return str;
 									return Converters.EnumConverters.LogLevel.Convert(log.Level, typeof(string), null, cultureInfo);
 								},
-								_ => Log.CreatePropertyGetter<object?>(propertyName),
+								_ => Log.CreatePropertyGetter<object?>(propertyName).Let(getter =>
+								{
+									return (Func<Log, object?>)(log =>
+									{
+										var value = getter(log);
+										if (value is not string str || str.Length == 0)
+											return value;
+										return logStringEncoding switch
+										{
+											LogStringEncoding.Json => JsonUtility.EncodeToJsonString(str),
+											LogStringEncoding.Xml => WebUtility.HtmlEncode(str),
+											_ => str,
+										};
+									});
+								}),
 							};
-							logPropertyGetters[propertyName] = logPropertyGetter;
+							logPropertyGetters[propertyName] = getter;
 						}
-						formatBuilder.Append($"{{{argIndex++}");
-						match.Groups["Alignment"].Let(it =>
-						{
-							if (it.Success)
-								formatBuilder.Append($",{it.Value}");
-						});
-						match.Groups["Format"].Let(it =>
-						{
-							if (it.Success)
-								formatBuilder.Append($":{it.Value}");
-						});
-						formatBuilder.Append('}');
-						propNameList.Add(propertyName);
+						return getter(log);
 					}
-					match = match.NextMatch();
-				}
-				formatBuilder.Append(logFormat.Substring(logFormatStart));
-				formats.Add(new(formatBuilder.ToString(), propNameList));
-				formatBuilder.Clear();
-				logFormatStart = 0;
-				argIndex = 0;
+					return null;
+				});
+				formatters.Add(formatter);
 			}
 
 			// start writing
-			await Task.Run(() => this.WriteLogs(writer, formats, logPropertyGetters, cancellationToken));
+			await Task.Run(() => this.WriteLogs(writer, formatters, logPropertyGetters, cancellationToken));
 		}
 	}
 }
