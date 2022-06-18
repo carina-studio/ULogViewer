@@ -938,7 +938,7 @@ namespace CarinaStudio.ULogViewer.Logs
 				var prevLogPattern = (LogPattern?)null;
 				var logPatternIndex = 0;
 				var lastLogPatternIndex = (logPatterns.Count - 1);
-				var lineNumber = 1;
+				var lineNumber = 0;
 				var startReadingTime = stopWatch.ElapsedMilliseconds;
 				var updateInterval = 0;
 				var logLine = (string?)null;
