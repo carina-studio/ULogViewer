@@ -174,7 +174,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		IDisposable? hasDialogsObserverToken;
 		IDisposable? isActiveObserverToken;
 		bool isAttachedToLogicalTree;
-		bool isCtrlKeyPressed;
 		bool isIPEndPointNeededAfterLogProfileSet;
 		bool isLogFileNeededAfterLogProfileSet;
 		bool isPidLogPropertyVisible;
@@ -3377,10 +3376,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called to handle key-down before all children.
 		async void OnPreviewKeyDown(object? sender, Avalonia.Input.KeyEventArgs e)
 		{
-			// check Ctrl key
-			if (e.Key == Avalonia.Input.Key.LeftCtrl || e.Key == Avalonia.Input.Key.RightCtrl)
-				this.isCtrlKeyPressed = true;
-
 			// [Workaround] It will take long time to select all items by list box itself
 			if (!e.Handled 
 				&& e.Source is not TextBox
@@ -3426,12 +3421,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called to handle key-up before all children.
 		void OnPreviewKeyUp(object? sender, Avalonia.Input.KeyEventArgs e)
 		{
-			// check Ctrl key
-			if (e.Key == Avalonia.Input.Key.LeftCtrl || e.Key == Avalonia.Input.Key.RightCtrl)
-			{
-				if ((e.KeyModifiers & KeyModifiers.Control) == 0)
-					this.isCtrlKeyPressed = false;
-			}
 		}
 
 
