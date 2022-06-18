@@ -128,6 +128,12 @@
 	<sys:String x:Key="String/ComparisonType.Smaller">&lt;</sys:String>
 	<sys:String x:Key="String/ComparisonType.SmallerOrEquivalent">≤</sys:String>
 
+	<!-- ContextualBasedAnalysisActionsEditor -->
+	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.DequeueToVariableAction.WithDialog">Dequeue from queue to variable…</sys:String>
+	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.EnqueueVariableAction.WithDialog">Enqueue variable to queue…</sys:String>
+	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.PopToVariableAction.WithDialog">Pop from stack to variable…</sys:String>
+	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.PushVariableAction.WithDialog">Push variable to stack…</sys:String>
+
 	<!-- DatabaseSourceType -->
 	<sys:String x:Key="String/DatabaseSourceType.File">File</sys:String>
 	<sys:String x:Key="String/DatabaseSourceType.Network">Network</sys:String>
@@ -519,12 +525,16 @@
 	<sys:String x:Key="String/MySqlDatabaseLogDataSourceProvider.DisplayName">MySQL Database</sys:String>
 
 	<!-- OperationDurationAnalysisRuleEditorDialog -->
-	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningConditions">Extra conditions of beginning log</sys:String>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningPattern">Pattern of beginning log</sys:String>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingConditions">Extra conditions of ending log</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog">Log of beginning of operation</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.Common">Common</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.Conditions">Extra conditions</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingLog">Log of ending of operation</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingOrder">Order of ending operations</sys:String>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingPattern">Pattern of ending log</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.OperationName">Name of operation</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.Other">Other</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.Pattern">Pattern (required)</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.PostActions">Actions to perform after extra conditions matched</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.PreActions">Actions to perform after text matched</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.Title">Edit operation duration analysis rule</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.VarAndConstComparisonCondition">Comparison between variable and constant</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.VarsComparisonCondition">Comparison between variables</sys:String>

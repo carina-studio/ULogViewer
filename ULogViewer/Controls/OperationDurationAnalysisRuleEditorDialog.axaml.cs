@@ -30,11 +30,19 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ObservableList<ContextualBaseAnalysisCondition> beginningConditions = new();
 		Regex? beginningPattern;
 		readonly TextBox beginningPatternTextBox;
+		readonly Avalonia.Controls.ListBox beginningPostActionListBox;
+		readonly ObservableList<ContextualBasedAnalysisAction> beginningPostActions = new();
+		readonly Avalonia.Controls.ListBox beginningPreActionListBox;
+		readonly ObservableList<ContextualBasedAnalysisAction> beginningPreActions = new();
 		readonly Avalonia.Controls.ListBox endingConditionListBox;
 		readonly ObservableList<ContextualBaseAnalysisCondition> endingConditions = new();
 		readonly ComboBox endingOrderComboBox;
 		Regex? endingPattern;
 		readonly TextBox endingPatternTextBox;
+		readonly Avalonia.Controls.ListBox endingPostActionListBox;
+		readonly ObservableList<ContextualBasedAnalysisAction> endingPostActions = new();
+		readonly Avalonia.Controls.ListBox endingPreActionListBox;
+		readonly ObservableList<ContextualBasedAnalysisAction> endingPreActions = new();
 		readonly TextBox operationNameTextBox;
 
 
@@ -85,11 +93,13 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.beginningConditionListBox = this.Get<AppSuite.Controls.ListBox>(nameof(beginningConditionListBox)).Also(it =>
 			{
 				it.DoubleClickOnItem += (_, e) => this.EditBeginningCondition((ContextualBaseAnalysisCondition)e.Item);
+				it.SelectionChanged += this.OnListBoxSelectionChanged;
 			});
 			this.beginningPatternTextBox = this.Get<TextBox>(nameof(beginningPatternTextBox));
 			this.endingConditionListBox = this.Get<AppSuite.Controls.ListBox>(nameof(endingConditionListBox)).Also(it =>
 			{
 				it.DoubleClickOnItem += (_, e) => this.EditEndingCondition((ContextualBaseAnalysisCondition)e.Item);
+				it.SelectionChanged += this.OnListBoxSelectionChanged;
 			});
 			this.endingOrderComboBox = this.Get<ComboBox>(nameof(endingOrderComboBox));
 			this.endingPatternTextBox = this.Get<TextBox>(nameof(endingPatternTextBox));
@@ -143,6 +153,14 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Beginning conditions.
 		IList<ContextualBaseAnalysisCondition> BeginningConditions { get => this.beginningConditions; }
+
+
+		// Post-actions for beginning of operation.
+		IList<ContextualBasedAnalysisAction> BeginningPostActions { get => this.beginningPostActions; }
+
+
+		// Pre-actions for beginning of operation.
+		IList<ContextualBasedAnalysisAction> BeginningPreActions { get => this.beginningPreActions; }
 
 
 		// Edit beginning patten.
@@ -256,24 +274,43 @@ namespace CarinaStudio.ULogViewer.Controls
 		IList<ContextualBaseAnalysisCondition> EndingConditions { get => this.endingConditions; }
 
 
+		// Post-actions for ending of operation.
+		IList<ContextualBasedAnalysisAction> EndingPostActions { get => this.endingPostActions; }
+
+
+		// Pre-actions for ending of operation.
+		IList<ContextualBasedAnalysisAction> EndingPreActions { get => this.endingPreActions; }
+
+
 		// Generate result.
 		protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken)
 		{
 			var rule = this.Rule;
 			var newRule = new OperationDurationAnalysisRuleSet.Rule(this.operationNameTextBox.Text.AsNonNull(),
 				this.beginningPattern.AsNonNull(),
-				new ContextualBasedAnalysisAction[0],
+				this.beginningPreActions,
 				this.beginningConditions,
-				new ContextualBasedAnalysisAction[0],
+				this.beginningPostActions,
 				this.endingPattern.AsNonNull(),
-				new ContextualBasedAnalysisAction[0],
+				this.endingPreActions,
 				this.endingConditions,
-				new ContextualBasedAnalysisAction[0],
+				this.endingPostActions,
 				(OperationEndingOrder)this.endingOrderComboBox.SelectedItem.AsNonNull());
 			if (rule == newRule)
 				return Task.FromResult<object?>(rule);
 			return Task.FromResult<object?>(newRule);
 		}
+
+
+		// Called when selection in list box changed.
+		void OnListBoxSelectionChanged(object? sender, SelectionChangedEventArgs e)
+		{
+			if (sender is not Avalonia.Controls.ListBox listBox)
+				return;
+			if (listBox.SelectedIndex >= 0)
+				listBox.ScrollIntoView(listBox.SelectedIndex);
+		}
+
 
 
 		// Dialog opened.
@@ -287,10 +324,14 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.beginningConditions.AddAll(rule.BeginningConditions);
 				this.beginningPattern = rule.BeginningPattern;
 				this.beginningPatternTextBox.Text = rule.BeginningPattern.ToString();
+				this.beginningPreActions.AddAll(rule.BeginningPreActions);
+				this.beginningPostActions.AddAll(rule.BeginningPostActions);
 				this.endingConditions.AddAll(rule.EndingConditions);
 				this.endingOrderComboBox.SelectedItem = rule.EndingOrder;
 				this.endingPattern = rule.EndingPattern;
 				this.endingPatternTextBox.Text = rule.EndingPattern.ToString();
+				this.endingPreActions.AddAll(rule.EndingPreActions);
+				this.endingPostActions.AddAll(rule.EndingPostActions);
 			}
 			else
 				this.endingOrderComboBox.SelectedItem = OperationEndingOrder.FirstInFirstOut;
@@ -355,6 +396,21 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 			this.endingConditions.Remove(condition);
 			this.endingConditionListBox.Focus();
+		}
+
+
+		// Select list of actions according to ListBox.
+		ObservableList<ContextualBasedAnalysisAction> SelectActionList(Avalonia.Controls.ListBox listBox)
+		{
+			if (listBox == this.beginningPreActionListBox)
+				return this.beginningPreActions;
+			if (listBox == this.beginningPostActionListBox)
+				return this.beginningPostActions;
+			if (listBox == this.endingPreActionListBox)
+				return this.endingPreActions;
+			if (listBox == this.endingPostActionListBox)
+				return this.endingPostActions;
+			throw new NotImplementedException();
 		}
 	}
 }

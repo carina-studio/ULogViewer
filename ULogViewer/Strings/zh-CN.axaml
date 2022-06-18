@@ -119,6 +119,12 @@
 	<sys:String x:Key="String/Common.Rename">重新命名</sys:String>
 	<sys:String x:Key="String/Common.Yes">是</sys:String>
 
+	<!-- ContextualBasedAnalysisActionsEditor -->
+	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.DequeueToVariableAction.WithDialog">自队列取出至变量…</sys:String>
+	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.EnqueueVariableAction.WithDialog">将变量加入至队列…</sys:String>
+	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.PopToVariableAction.WithDialog">自堆栈取出至变量…</sys:String>
+	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.PushVariableAction.WithDialog">将变量加入至堆栈…</sys:String>
+
 	<!-- DatabaseSourceType -->
 	<sys:String x:Key="String/DatabaseSourceType.File">档案</sys:String>
 	<sys:String x:Key="String/DatabaseSourceType.Network">网络</sys:String>
@@ -487,12 +493,16 @@
 	<sys:String x:Key="String/MySqlDatabaseLogDataSourceProvider.DisplayName">MySQL 资料库</sys:String>
 
 	<!-- OperationDurationAnalysisRuleEditorDialog -->
-	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningConditions">起始日志额外条件</sys:String>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningPattern">起始日志文字格式</sys:String>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingConditions">结束日志额外条件</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog">动作起始日志</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.Common">一般</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.Conditions">额外条件</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingLog">动作结束日志</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingOrder">动作结束顺序</sys:String>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingPattern">结束日志文字格式</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.OperationName">动作名称</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.Other">其他</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.Pattern">文字格式 (必要)</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.PostActions">额外条件符合后执行动作</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.PreActions">文字格式符合后执行动作</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.Title">编辑动作时距分析规则</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.VarAndConstComparisonCondition">变量与常量之比较</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.VarsComparisonCondition">变量之间之比较</sys:String>
