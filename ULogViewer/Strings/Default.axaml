@@ -533,7 +533,10 @@
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.Common">Common</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.Conditions">Extra conditions</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingLog">Log of ending of operation</sys:String>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingOrder">Order of ending operations</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingMode">Mode of ending operations</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingVariable">Variable to compare</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingVariables">Variables to compare</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingVariables.Description">The variables are used for finding beginning log. All listed variables should be captured in both beginning and ending log and values should be equivalent.</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.OperationName">Name of operation</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.Other">Other</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.Pattern">Pattern (required)</sys:String>
@@ -547,9 +550,10 @@
 	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.Rules">Rules (required)</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.Title">Edit operation duration analysis rule set</sys:String>
 
-	<!-- OperationEndingOrder -->
-	<sys:String x:Key="String/OperationEndingOrder.FirstInFirstOut">First in, first out</sys:String>
-	<sys:String x:Key="String/OperationEndingOrder.FirstInLastOut">First in, last out</sys:String>
+	<!-- OperationEndingMode -->
+	<sys:String x:Key="String/OperationEndingMode.CompareVariables">Compare variables</sys:String>
+	<sys:String x:Key="String/OperationEndingMode.FirstInFirstOut">First in, first out</sys:String>
+	<sys:String x:Key="String/OperationEndingMode.FirstInLastOut">First in, last out</sys:String>
 
 	<!-- PopToVarEditorDialog -->
 	<sys:String x:Key="String/PopToVarEditorDialog.Stack">Name of stack (required)</sys:String>

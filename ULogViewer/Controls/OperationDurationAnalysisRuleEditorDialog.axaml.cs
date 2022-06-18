@@ -27,11 +27,13 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ObservableList<ContextualBasedAnalysisAction> beginningPostActions = new();
 		readonly ObservableList<ContextualBasedAnalysisAction> beginningPreActions = new();
 		readonly ObservableList<ContextualBasedAnalysisCondition> endingConditions = new();
-		readonly ComboBox endingOrderComboBox;
+		readonly ComboBox endingModeComboBox;
 		Regex? endingPattern;
 		readonly TextBox endingPatternTextBox;
 		readonly ObservableList<ContextualBasedAnalysisAction> endingPostActions = new();
 		readonly ObservableList<ContextualBasedAnalysisAction> endingPreActions = new();
+		readonly Avalonia.Controls.ListBox endingVariableListBox;
+		readonly ObservableList<string> endingVariables = new();
 		readonly TextBox operationNameTextBox;
 
 
@@ -42,12 +44,39 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			AvaloniaXamlLoader.Load(this);
 			this.beginningPatternTextBox = this.Get<TextBox>(nameof(beginningPatternTextBox));
-			this.endingOrderComboBox = this.Get<ComboBox>(nameof(endingOrderComboBox));
+			this.endingModeComboBox = this.Get<ComboBox>(nameof(endingModeComboBox));
 			this.endingPatternTextBox = this.Get<TextBox>(nameof(endingPatternTextBox));
+			this.endingVariableListBox = this.Get<AppSuite.Controls.ListBox>(nameof(endingVariableListBox)).Also(it =>
+			{
+				it.DoubleClickOnItem += (_, e) => this.EditEndingVariable((string)e.Item);
+			});
 			this.operationNameTextBox = this.Get<TextBox>(nameof(operationNameTextBox)).Also(it =>
 			{
 				it.GetObservable(TextBox.TextProperty).Subscribe(_ => this.InvalidateInput());
 			});
+		}
+
+
+		// Add ending variable.
+		async void AddEndingVariable()
+		{
+			var variable = await new TextInputDialog()
+			{
+				MaxTextLength = 256,
+				Message = this.Application.GetString("OperationDurationAnalysisRuleEditorDialog.EndingVariable"),
+			}.ShowDialog(this);
+			if (string.IsNullOrWhiteSpace(variable))
+				return;
+			variable = variable.Trim();
+			var index = this.endingVariables.IndexOf(variable);
+			if (index < 0)
+			{
+				this.endingVariables.Add(variable);
+				this.endingVariableListBox.SelectedIndex = this.endingVariables.Count - 1;
+			}
+			else
+				this.endingVariableListBox.SelectedIndex = index;
+			this.endingVariableListBox.Focus();
 		}
 
 
@@ -95,6 +124,31 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Edit ending variable.
+		void EditEndingVariable(ListBoxItem item) =>
+			this.EditEndingVariable((string)item.DataContext.AsNonNull());
+		async void EditEndingVariable(string variable)
+		{
+			var index = this.endingVariables.IndexOf(variable);
+			if (index < 0)
+				return;
+			var newVariable = await new TextInputDialog()
+			{
+				InitialText = variable,
+				MaxTextLength = 256,
+				Message = this.Application.GetString("OperationDurationAnalysisRuleEditorDialog.EndingVariable"),
+			}.ShowDialog(this);
+			if (string.IsNullOrWhiteSpace(newVariable))
+				return;
+			newVariable = newVariable.Trim();
+			if (newVariable == variable)
+				return;
+			this.endingVariables[index] = newVariable;
+			this.endingVariableListBox.SelectedIndex = index;
+			this.endingVariableListBox.Focus();
+		}
+
+
 		// Ending conditions.
 		IList<ContextualBasedAnalysisCondition> EndingConditions { get => this.endingConditions; }
 
@@ -105,6 +159,10 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Pre-actions for ending of operation.
 		IList<ContextualBasedAnalysisAction> EndingPreActions { get => this.endingPreActions; }
+
+
+		// Ending variables.
+		IList<string> EndingVariables { get => this.endingVariables; }
 
 
 		// Generate result.
@@ -120,7 +178,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.endingPreActions,
 				this.endingConditions,
 				this.endingPostActions,
-				(OperationEndingOrder)this.endingOrderComboBox.SelectedItem.AsNonNull());
+				(OperationEndingMode)this.endingModeComboBox.SelectedItem.AsNonNull(),
+				this.endingVariables);
 			if (rule == newRule)
 				return Task.FromResult<object?>(rule);
 			return Task.FromResult<object?>(newRule);
@@ -141,14 +200,15 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.beginningPreActions.AddAll(rule.BeginningPreActions);
 				this.beginningPostActions.AddAll(rule.BeginningPostActions);
 				this.endingConditions.AddAll(rule.EndingConditions);
-				this.endingOrderComboBox.SelectedItem = rule.EndingOrder;
+				this.endingModeComboBox.SelectedItem = rule.EndingMode;
 				this.endingPattern = rule.EndingPattern;
 				this.endingPatternTextBox.Text = rule.EndingPattern.ToString();
 				this.endingPreActions.AddAll(rule.EndingPreActions);
 				this.endingPostActions.AddAll(rule.EndingPostActions);
+				this.endingVariables.AddAll(rule.EndingVariables);
 			}
 			else
-				this.endingOrderComboBox.SelectedItem = OperationEndingOrder.FirstInFirstOut;
+				this.endingModeComboBox.SelectedItem = OperationEndingMode.FirstInFirstOut;
 			if (!this.Application.PersistentState.GetValueOrDefault(RegexEditorDialog.IsClickButtonToEditPatternTutorialShownKey))
 			{
 				this.FindControl<TutorialPresenter>("tutorialPresenter")!.ShowTutorial(new Tutorial().Also(it =>
@@ -175,6 +235,16 @@ namespace CarinaStudio.ULogViewer.Controls
 			&& !string.IsNullOrWhiteSpace(this.operationNameTextBox.Text) 
 			&& this.beginningPattern != null
 			&& this.endingPattern != null;
+		
+
+		// Remove ending variable.
+		void RemoveEndingVariable(ListBoxItem item)
+		{
+			var variable = (string)item.DataContext.AsNonNull();
+			this.endingVariables.Remove(variable);
+			this.endingVariableListBox.SelectedItem = null;
+			this.endingVariableListBox.Focus();
+		}
 		
 
 		/// <summary>

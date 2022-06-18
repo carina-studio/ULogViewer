@@ -44,7 +44,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Generate result.
 		protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken) =>
-			Task.FromResult<object?>(new DequeueToVariableAction(this.queueTextBox.Text.AsNonNull(), this.varTextBox.Text.AsNonNull()));
+			Task.FromResult<object?>(new DequeueToVariableAction(this.queueTextBox.Text.AsNonNull().Trim(), this.varTextBox.Text.AsNonNull().Trim()));
 
 
 		// Dialog opened.

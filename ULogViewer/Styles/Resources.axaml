@@ -118,6 +118,7 @@
 	<sys:Double x:Key="Double/OperationDurationAnalysisRuleEditorDialog.ConditionsEditor.Height">120</sys:Double>
 	<sys:Double x:Key="Double/OperationDurationAnalysisRuleEditorDialog.Content.MaxHeight">500</sys:Double>
 	<sys:Double x:Key="Double/OperationDurationAnalysisRuleEditorDialog.PatternTextBox.Height">100</sys:Double>
+	<sys:Double x:Key="Double/OperationDurationAnalysisRuleEditorDialog.VariableListBox.Height">120</sys:Double>
 	<sys:Double x:Key="Double/OperationDurationAnalysisRuleEditorDialog.Width">600</sys:Double>
 
 	<!-- OperationDurationAnalysisRuleSetEditorDialog -->

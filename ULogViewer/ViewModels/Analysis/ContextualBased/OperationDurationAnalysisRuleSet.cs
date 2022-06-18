@@ -34,7 +34,8 @@ class OperationDurationAnalysisRuleSet : BaseProfile<IULogViewerApplication>
         /// <param name="endingPreActions">Actions to perform before all matching ending conditions.</param>
         /// <param name="endingConditions">Conditions for ending of operation log after text matched.</param>
         /// <param name="endingPostActions">Actions to perform after all ending conditions matched.</param>
-        /// <param name="endingOrder">Order of ending operation.</param>
+        /// <param name="endingMode">Mode of ending operation.</param>
+        /// <param name="endingVars">variables to compare when <paramref name="endingMode"/> is <see cref="OperationEndingMode.CompareVariables"/>.</param>
         public Rule(string operationName, 
             Regex beginningPattern, 
             IEnumerable<ContextualBasedAnalysisAction> beginningPreActions,
@@ -44,17 +45,19 @@ class OperationDurationAnalysisRuleSet : BaseProfile<IULogViewerApplication>
             IEnumerable<ContextualBasedAnalysisAction> endingPreActions,
             IEnumerable<ContextualBasedAnalysisCondition> endingConditions, 
             IEnumerable<ContextualBasedAnalysisAction> endingPostActions,
-            OperationEndingOrder endingOrder)
+            OperationEndingMode endingMode,
+            IEnumerable<string> endingVars)
         {
             this.BeginningConditions = beginningConditions.ToArray().AsReadOnly();
             this.BeginningPattern = beginningPattern;
             this.BeginningPostActions = beginningPostActions.ToArray().AsReadOnly();
             this.BeginningPreActions = beginningPreActions.ToArray().AsReadOnly();
             this.EndingConditions = endingConditions.ToArray().AsReadOnly();
-            this.EndingOrder = endingOrder;
+            this.EndingMode = endingMode;
             this.EndingPattern = endingPattern;
             this.EndingPostActions = endingPostActions.ToArray().AsReadOnly();
             this.EndingPreActions = endingPreActions.ToArray().AsReadOnly();
+            this.EndingVariables = endingVars.ToArray().AsReadOnly();
             this.OperationName = operationName;
         }
 
@@ -84,9 +87,9 @@ class OperationDurationAnalysisRuleSet : BaseProfile<IULogViewerApplication>
         public IList<ContextualBasedAnalysisCondition> EndingConditions { get; }
 
         /// <summary>
-        /// Get order of ending operation.
+        /// Get mode of ending operation.
         /// </summary>
-        public OperationEndingOrder EndingOrder { get; }
+        public OperationEndingMode EndingMode { get; }
 
         /// <summary>
         /// Get pattern to match text of ending of operation log.
@@ -103,6 +106,11 @@ class OperationDurationAnalysisRuleSet : BaseProfile<IULogViewerApplication>
         /// </summary>
         public IList<ContextualBasedAnalysisAction> EndingPreActions { get; }
 
+        /// <summary>
+        /// Get list of variables to compare when <see cref="EndingMode"/> is <see cref="OperationEndingMode.CompareVariables"/>.
+        /// </summary>
+        public IList<string> EndingVariables { get; }
+
         /// <inheritdoc/>
         public bool Equals(Rule? rule) =>
             rule != null
@@ -116,7 +124,8 @@ class OperationDurationAnalysisRuleSet : BaseProfile<IULogViewerApplication>
             && rule.EndingPattern.Options == this.EndingPattern.Options
             && rule.EndingConditions.SequenceEqual(this.EndingConditions)
             && rule.EndingPreActions.SequenceEqual(this.EndingPreActions)
-            && rule.EndingPostActions.SequenceEqual(this.EndingPostActions);
+            && rule.EndingPostActions.SequenceEqual(this.EndingPostActions)
+            && rule.EndingVariables.SequenceEqual(this.EndingVariables);
 
         /// <inheritdoc/>
         public override bool Equals(object? obj) =>
@@ -274,9 +283,9 @@ class OperationDurationAnalysisRuleSet : BaseProfile<IULogViewerApplication>
 
 
 /// <summary>
-/// Order of handling ending of operation.
+/// Mode of handling ending of operation.
 /// </summary>
-enum OperationEndingOrder
+enum OperationEndingMode
 {
     /// <summary>
     /// First-in First-out.
@@ -286,4 +295,8 @@ enum OperationEndingOrder
     /// First-in Last-out.
     /// </summary>
     FirstInLastOut,
+    /// <summary>
+    /// One or more variables of begin/end are equivalent.
+    /// </summary>
+    CompareVariables,
 }

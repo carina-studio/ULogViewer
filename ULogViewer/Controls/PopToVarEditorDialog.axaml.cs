@@ -44,7 +44,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Generate result.
 		protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken) =>
-			Task.FromResult<object?>(new PopToVariableAction(this.stackTextBox.Text.AsNonNull(), this.varTextBox.Text.AsNonNull()));
+			Task.FromResult<object?>(new PopToVariableAction(this.stackTextBox.Text.AsNonNull().Trim(), this.varTextBox.Text.AsNonNull().Trim()));
 
 
 		// Dialog opened.

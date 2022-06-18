@@ -48,7 +48,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken)
 		{
 			var condition = this.Condition;
-			var newCondition = new VariablesComparisonCondition(this.lhsVarTextBox.Text.AsNonNull(), (ComparisonType)this.comparisonTypeComboBox.SelectedItem.AsNonNull(), this.rhsVarTextBox.Text.AsNonNull());
+			var newCondition = new VariablesComparisonCondition(this.lhsVarTextBox.Text.AsNonNull().Trim(), (ComparisonType)this.comparisonTypeComboBox.SelectedItem.AsNonNull(), this.rhsVarTextBox.Text.AsNonNull().Trim());
 			if (newCondition != condition)
 				return Task.FromResult<object?>(newCondition);
 			return Task.FromResult<object?>(condition);

@@ -2,6 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:abConverters="using:CarinaStudio.Data.Converters"
 		xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
 		xmlns:appCtxlBased="using:CarinaStudio.ULogViewer.ViewModels.Analysis.ContextualBased"
         xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
@@ -103,9 +104,37 @@
 						<TextBlock Classes="Dialog_TextBlock_Header1" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.Other}"/>
 					</Border>
 
-					<!-- Ending order -->
-					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.EndingOrder}"/>
-					<asControls:EnumComboBox Name="endingOrderComboBox" Classes="Dialog_ComboBox" EnumType="{x:Type appCtxlBased:OperationEndingOrder}"/>
+					<!-- Ending mode -->
+					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.EndingMode}"/>
+					<asControls:EnumComboBox Name="endingModeComboBox" Classes="Dialog_ComboBox" EnumType="{x:Type appCtxlBased:OperationEndingMode}"/>
+					<Separator Classes="Dialog_Separator"/>
+
+					<!-- Ending variables -->
+					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.EndingVariables}"/>
+					<Grid ColumnDefinitions="*,Auto">
+						<asControls:ListBox Name="endingVariableListBox" Height="{StaticResource Double/OperationDurationAnalysisRuleEditorDialog.VariableListBox.Height}" IsEnabled="{Binding #endingModeComboBox.SelectedItem, Converter={x:Static abConverters:ObjectConverters.IsEquivalentTo}, ConverterParameter={x:Static appCtxlBased:OperationEndingMode.CompareVariables}}" Items="{Binding $parent[Window].EndingVariables}">
+							<asControls:ListBox.ItemTemplate>
+								<DataTemplate>
+									<Grid ColumnDefinitions="*,Auto">
+										<TextBlock Grid.Column="0" Text="{Binding, StringFormat={}$({0})}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+										<Border Classes="InPlaceAction_Reserved"/>
+										<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
+											<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveEndingVariable}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
+												<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Delete}"/>
+											</Button>
+											<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditEndingVariable}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
+												<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Edit}"/>
+											</Button>
+										</StackPanel>
+									</Grid>
+								</DataTemplate>
+							</asControls:ListBox.ItemTemplate>
+						</asControls:ListBox>
+						<Button Classes="BrowseButton" Command="{Binding $parent[Window].AddEndingVariable}" Grid.Column="1" IsEnabled="{Binding #endingVariableListBox.IsEnabled}" ToolTip.Tip="{DynamicResource String/Common.Add}" VerticalAlignment="Top">
+							<Image Classes="BrowseButtonIcon" Source="{StaticResource Image/Icon.Add}"/>
+						</Button>
+					</Grid>
+					<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.EndingVariables.Description}"/>
 					
 				</StackPanel>
 			</ScrollViewer>
