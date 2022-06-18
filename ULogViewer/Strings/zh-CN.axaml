@@ -125,6 +125,10 @@
 	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.PopToVariableAction.WithDialog">自堆栈取出至变量…</sys:String>
 	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.PushVariableAction.WithDialog">将变量加入至堆栈…</sys:String>
 
+	<!-- ContextualBasedAnalysisConditionsEditor -->
+	<sys:String x:Key="String/ContextualBasedAnalysisConditionsEditor.VarAndConstComparisonCondition.WithDialog">比较变量与常量…</sys:String>
+	<sys:String x:Key="String/ContextualBasedAnalysisConditionsEditor.VarsComparisonCondition.WithDialog">比较变量…</sys:String>
+
 	<!-- DatabaseSourceType -->
 	<sys:String x:Key="String/DatabaseSourceType.File">档案</sys:String>
 	<sys:String x:Key="String/DatabaseSourceType.Network">网络</sys:String>
@@ -504,8 +508,6 @@
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.PostActions">额外条件符合后执行动作</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.PreActions">文字格式符合后执行动作</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.Title">编辑动作时距分析规则</sys:String>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.VarAndConstComparisonCondition">变量与常量之比较</sys:String>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.VarsComparisonCondition">变量之间之比较</sys:String>
 
 	<!-- OperationDurationAnalysisRuleSetEditorDialog -->
 	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.Icon">图标</sys:String>

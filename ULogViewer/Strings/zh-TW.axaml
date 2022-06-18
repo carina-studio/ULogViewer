@@ -125,6 +125,10 @@
 	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.PopToVariableAction.WithDialog">自堆疊取出至變數…</sys:String>
 	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.PushVariableAction.WithDialog">將變數加入至堆疊…</sys:String>
 
+	<!-- ContextualBasedAnalysisConditionsEditor -->
+	<sys:String x:Key="String/ContextualBasedAnalysisConditionsEditor.VarAndConstComparisonCondition.WithDialog">比較變數與常數…</sys:String>
+	<sys:String x:Key="String/ContextualBasedAnalysisConditionsEditor.VarsComparisonCondition.WithDialog">比較變數…</sys:String>
+
 	<!-- DatabaseSourceType -->
 	<sys:String x:Key="String/DatabaseSourceType.File">檔案</sys:String>
 	<sys:String x:Key="String/DatabaseSourceType.Network">網路</sys:String>
@@ -504,8 +508,6 @@
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.PostActions">額外條件符合後執行動作</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.PreActions">文字格式符合後執行動作</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.Title">編輯動作時距分析規則</sys:String>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.VarAndConstComparisonCondition">變數與常數之比較</sys:String>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.VarsComparisonCondition">變數之間之比較</sys:String>
 
 	<!-- OperationDurationAnalysisRuleSetEditorDialog -->
 	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.Icon">圖示</sys:String>

@@ -10,30 +10,6 @@
         Classes="Dialog"
         Title="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.Title}"
         Width="{DynamicResource Double/OperationDurationAnalysisRuleEditorDialog.Width}">
-	
-	<Window.Resources>
-
-		<ContextMenu x:Key="addConditionMenu" PlacementMode="Bottom">
-			<MenuItem Command="{Binding $parent[Window].AddVarAndConstComparisonCondition}" Header="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.VarAndConstComparisonCondition}"/>
-			<MenuItem Command="{Binding $parent[Window].AddVarsComparisonCondition}" Header="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.VarsComparisonCondition}"/>
-		</ContextMenu>
-
-		<DataTemplate x:Key="conditionTemplate" DataType="{x:Type appCtxlBased:ContextualBasedAnalysisCondition}">
-			<Grid ColumnDefinitions="*,Auto">
-				<TextBlock Grid.Column="0" Text="{Binding}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
-				<Border Classes="InPlaceAction_Reserved"/>
-				<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
-					<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveCondition}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
-						<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Delete}"/>
-					</Button>
-					<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditCondition}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
-						<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Edit}"/>
-					</Button>
-				</StackPanel>
-			</Grid>
-		</DataTemplate>
-
-	</Window.Resources>
 
 	<Panel>
 
@@ -84,16 +60,7 @@
 
 					<!-- Beginning conditions -->
 					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.Conditions}"/>
-					<Grid ColumnDefinitions="*,Auto">
-						<asControls:ListBox Name="beginningConditionListBox" Classes="Dialog_ListBox" Height="{StaticResource Double/OperationDurationAnalysisRuleEditorDialog.ConditionListBox.Height}" Items="{Binding $parent[Window].BeginningConditions}">
-							<asControls:ListBox.DataTemplates>
-								<StaticResourceExtension ResourceKey="conditionTemplate"/>
-							</asControls:ListBox.DataTemplates>
-						</asControls:ListBox>
-						<ToggleButton Name="addBeginningConditionButton" Classes="BrowseButton" Grid.Column="1" ToolTip.Tip="{DynamicResource String/Common.Add}" VerticalAlignment="Top">
-							<Image Classes="BrowseButtonIcon" Source="{StaticResource Image/Icon.Add}"/>
-						</ToggleButton>
-					</Grid>
+					<appControls:ContextualBasedAnalysisConditionsEditor Conditions="{Binding $parent[Window].BeginningConditions}" Height="{StaticResource Double/OperationDurationAnalysisRuleEditorDialog.ConditionsEditor.Height}"/>
 					<Separator Classes="Dialog_Separator"/>
 
 					<!-- Beginning post-actions -->
@@ -123,16 +90,7 @@
 
 					<!-- Ending conditions -->
 					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.Conditions}"/>
-					<Grid ColumnDefinitions="*,Auto">
-						<asControls:ListBox Name="endingConditionListBox" Classes="Dialog_ListBox" Height="{StaticResource Double/OperationDurationAnalysisRuleEditorDialog.ConditionListBox.Height}" Items="{Binding $parent[Window].EndingConditions}">
-							<asControls:ListBox.DataTemplates>
-								<StaticResourceExtension ResourceKey="conditionTemplate"/>
-							</asControls:ListBox.DataTemplates>
-						</asControls:ListBox>
-						<ToggleButton Name="addEndingConditionButton" Classes="BrowseButton" Grid.Column="1" ToolTip.Tip="{DynamicResource String/Common.Add}" VerticalAlignment="Top">
-							<Image Classes="BrowseButtonIcon" Source="{StaticResource Image/Icon.Add}"/>
-						</ToggleButton>
-					</Grid>
+					<appControls:ContextualBasedAnalysisConditionsEditor Conditions="{Binding $parent[Window].EndingConditions}" Height="{StaticResource Double/OperationDurationAnalysisRuleEditorDialog.ConditionsEditor.Height}"/>
 					<Separator Classes="Dialog_Separator"/>
 
 					<!-- Ending post-actions -->

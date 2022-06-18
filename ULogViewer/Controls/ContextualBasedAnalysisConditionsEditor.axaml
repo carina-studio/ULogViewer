@@ -1,0 +1,42 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="CarinaStudio.ULogViewer.Controls.ContextualBasedAnalysisConditionsEditor">
+	
+	<UserControl.Resources>
+
+		<ContextMenu x:Key="addConditionMenu" PlacementMode="Bottom">
+			<MenuItem Command="{Binding $parent[UserControl].AddVarAndConstComparisonCondition}" Header="{DynamicResource String/ContextualBasedAnalysisConditionsEditor.VarAndConstComparisonCondition.WithDialog}"/>
+			<MenuItem Command="{Binding $parent[UserControl].AddVarsComparisonCondition}" Header="{DynamicResource String/ContextualBasedAnalysisConditionsEditor.VarsComparisonCondition.WithDialog}"/>
+		</ContextMenu>
+
+	</UserControl.Resources>
+
+	<Grid ColumnDefinitions="*,Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+		<asControls:ListBox Name="conditionListBox" Classes="Dialog_ListBox" Items="{Binding $parent[UserControl].Conditions}" VerticalAlignment="Stretch">
+			<asControls:ListBox.ItemTemplate>
+				<DataTemplate>
+					<Grid ColumnDefinitions="*,Auto">
+						<TextBlock Grid.Column="0" Text="{Binding}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+						<Border Classes="InPlaceAction_Reserved"/>
+						<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
+							<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].RemoveCondition}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
+								<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Delete}"/>
+							</Button>
+							<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].EditCondition}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
+								<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Edit}"/>
+							</Button>
+						</StackPanel>
+					</Grid>
+				</DataTemplate>
+			</asControls:ListBox.ItemTemplate>
+		</asControls:ListBox>
+		<ToggleButton Name="addConditionButton" Classes="BrowseButton" Command="{Binding $parent[UserControl].ShowAddConditionMenu}" Grid.Column="1" ToolTip.Tip="{DynamicResource String/Common.Add}" VerticalAlignment="Top">
+			<Image Classes="BrowseButtonIcon" Source="{StaticResource Image/Icon.Add}"/>
+		</ToggleButton>
+	</Grid>
+	
+</UserControl>

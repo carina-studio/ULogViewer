@@ -1,9 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.Primitives;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
-using Avalonia.VisualTree;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
@@ -23,25 +21,16 @@ namespace CarinaStudio.ULogViewer.Controls
 	partial class OperationDurationAnalysisRuleEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
 	{
 		// Fields.
-		readonly ToggleButton addBeginningConditionButton;
-		readonly ToggleButton addEndingConditionButton;
-		readonly ContextMenu addConditionMenu;
-		readonly Avalonia.Controls.ListBox beginningConditionListBox;
 		readonly ObservableList<ContextualBasedAnalysisCondition> beginningConditions = new();
 		Regex? beginningPattern;
 		readonly TextBox beginningPatternTextBox;
-		readonly Avalonia.Controls.ListBox beginningPostActionListBox;
 		readonly ObservableList<ContextualBasedAnalysisAction> beginningPostActions = new();
-		readonly Avalonia.Controls.ListBox beginningPreActionListBox;
 		readonly ObservableList<ContextualBasedAnalysisAction> beginningPreActions = new();
-		readonly Avalonia.Controls.ListBox endingConditionListBox;
 		readonly ObservableList<ContextualBasedAnalysisCondition> endingConditions = new();
 		readonly ComboBox endingOrderComboBox;
 		Regex? endingPattern;
 		readonly TextBox endingPatternTextBox;
-		readonly Avalonia.Controls.ListBox endingPostActionListBox;
 		readonly ObservableList<ContextualBasedAnalysisAction> endingPostActions = new();
-		readonly Avalonia.Controls.ListBox endingPreActionListBox;
 		readonly ObservableList<ContextualBasedAnalysisAction> endingPreActions = new();
 		readonly TextBox operationNameTextBox;
 
@@ -52,102 +41,13 @@ namespace CarinaStudio.ULogViewer.Controls
 		public OperationDurationAnalysisRuleEditorDialog()
 		{
 			AvaloniaXamlLoader.Load(this);
-			this.addBeginningConditionButton = this.Get<ToggleButton>(nameof(addBeginningConditionButton)).Also(it =>
-			{
-				it.Click += (_, e) =>
-				{
-					if (it.IsChecked == true)
-					{
-						this.addConditionMenu!.Tag = it;
-						this.addConditionMenu.Open(it);
-					}
-				};
-			});
-			this.addEndingConditionButton = this.Get<ToggleButton>(nameof(addEndingConditionButton)).Also(it =>
-			{
-				it.Click += (_, e) =>
-				{
-					if (it.IsChecked == true)
-					{
-						this.addConditionMenu!.Tag = it;
-						this.addConditionMenu.Open(it);
-					}
-				};
-			});
-			this.addConditionMenu = ((ContextMenu)this.Resources[nameof(addConditionMenu)].AsNonNull()).Also(it =>
-			{
-				it.MenuClosed += (_, e) =>
-				{
-					this.SynchronizationContext.Post(() =>
-					{
-						(it.Tag as ToggleButton)?.Let(tb => tb.IsChecked = false);
-						it.Tag = null;
-					});
-				};
-				it.MenuOpened += (_, e) =>
-				{
-					this.SynchronizationContext.Post(() =>
-						(it.Tag as ToggleButton)?.Let(tb => tb.IsChecked = true));
-				};
-			});
-			this.beginningConditionListBox = this.Get<AppSuite.Controls.ListBox>(nameof(beginningConditionListBox)).Also(it =>
-			{
-				it.DoubleClickOnItem += (_, e) => this.EditBeginningCondition((ContextualBasedAnalysisCondition)e.Item);
-				it.SelectionChanged += this.OnListBoxSelectionChanged;
-			});
 			this.beginningPatternTextBox = this.Get<TextBox>(nameof(beginningPatternTextBox));
-			this.endingConditionListBox = this.Get<AppSuite.Controls.ListBox>(nameof(endingConditionListBox)).Also(it =>
-			{
-				it.DoubleClickOnItem += (_, e) => this.EditEndingCondition((ContextualBasedAnalysisCondition)e.Item);
-				it.SelectionChanged += this.OnListBoxSelectionChanged;
-			});
 			this.endingOrderComboBox = this.Get<ComboBox>(nameof(endingOrderComboBox));
 			this.endingPatternTextBox = this.Get<TextBox>(nameof(endingPatternTextBox));
 			this.operationNameTextBox = this.Get<TextBox>(nameof(operationNameTextBox)).Also(it =>
 			{
 				it.GetObservable(TextBox.TextProperty).Subscribe(_ => this.InvalidateInput());
 			});
-		}
-
-
-		// Add condition.
-		async void AddVarAndConstComparisonCondition()
-		{
-			var isBeginning = this.addConditionMenu.Tag == this.addBeginningConditionButton;
-			var condition = await new VarAndConstComparisonEditorDialog().ShowDialog<VariableAndConstantComparisonCondition?>(this);
-			if (condition == null)
-				return;
-			if (isBeginning)
-			{
-				this.beginningConditions.Add(condition);
-				this.beginningConditionListBox.SelectedItem = condition;
-				this.beginningConditionListBox.Focus();
-			}
-			else
-			{
-				this.endingConditions.Add(condition);
-				this.endingConditionListBox.SelectedItem = condition;
-				this.endingConditionListBox.Focus();
-			}
-		}
-		async void AddVarsComparisonCondition()
-		{
-			var isBeginning = this.addConditionMenu.Tag == this.addBeginningConditionButton;
-			var condition = await new VarsComparisonEditorDialog().ShowDialog<VariablesComparisonCondition?>(this);
-			if (condition == null)
-				return;
-			if (isBeginning)
-			{
-				this.beginningConditions.Add(condition);
-				this.beginningConditionListBox.SelectedItem = condition;
-				this.beginningConditionListBox.Focus();
-			}
-			else
-			{
-				this.endingConditions.Add(condition);
-				this.endingConditionListBox.SelectedItem = condition;
-				this.endingConditionListBox.Focus();
-			}
 		}
 
 
@@ -195,81 +95,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Edit beginning condition.
-		void EditBeginningCondition(ListBoxItem item)
-		{
-			if (item.DataContext is ContextualBasedAnalysisCondition condition)
-				this.EditBeginningCondition(condition);
-		}
-		async void EditBeginningCondition(ContextualBasedAnalysisCondition condition)
-		{
-			// find position
-			var index = this.beginningConditions.IndexOf(condition);
-			if (index < 0)
-				return;
-			
-			// edit
-			var newCondition = await this.EditConditionAsync(condition);
-			if (newCondition == null || newCondition == condition)
-				return;
-			
-			// update
-			this.beginningConditions[index] = newCondition;
-			this.beginningConditionListBox.SelectedItem = newCondition;
-			this.beginningConditionListBox.Focus();
-		}
-
-
-		// Edit condition.
-		void EditCondition(ListBoxItem item)
-		{
-			if (item.FindAncestorOfType<Avalonia.Controls.ListBox>() == this.beginningConditionListBox)
-				this.EditBeginningCondition(item);
-			else
-				this.EditEndingCondition(item);
-		}
-
-
-		// Edit condition.
-		async Task<ContextualBasedAnalysisCondition?> EditConditionAsync(ContextualBasedAnalysisCondition condition) => condition switch
-		{
-			VariableAndConstantComparisonCondition varAndConstComparisonCondition => await new VarAndConstComparisonEditorDialog()
-			{
-				Condition = varAndConstComparisonCondition,
-			}.ShowDialog<ContextualBasedAnalysisCondition?>(this),
-			VariablesComparisonCondition varsComparisonCondition => await new VarsComparisonEditorDialog()
-			{
-				Condition = varsComparisonCondition,
-			}.ShowDialog<ContextualBasedAnalysisCondition?>(this),
-			_ => throw new NotImplementedException(),
-		};
-
-
-		// Edit ending condition.
-		void EditEndingCondition(ListBoxItem item)
-		{
-			if (item.DataContext is ContextualBasedAnalysisCondition condition)
-				this.EditEndingCondition(condition);
-		}
-		async void EditEndingCondition(ContextualBasedAnalysisCondition condition)
-		{
-			// find position
-			var index = this.endingConditions.IndexOf(condition);
-			if (index < 0)
-				return;
-			
-			// edit
-			var newCondition = await this.EditConditionAsync(condition);
-			if (newCondition == null || newCondition == condition)
-				return;
-			
-			// update
-			this.endingConditions[index] = newCondition;
-			this.endingConditionListBox.SelectedItem = newCondition;
-			this.endingConditionListBox.Focus();
-		}
-
-
 		// Ending conditions.
 		IList<ContextualBasedAnalysisCondition> EndingConditions { get => this.endingConditions; }
 
@@ -300,17 +125,6 @@ namespace CarinaStudio.ULogViewer.Controls
 				return Task.FromResult<object?>(rule);
 			return Task.FromResult<object?>(newRule);
 		}
-
-
-		// Called when selection in list box changed.
-		void OnListBoxSelectionChanged(object? sender, SelectionChangedEventArgs e)
-		{
-			if (sender is not Avalonia.Controls.ListBox listBox)
-				return;
-			if (listBox.SelectedIndex >= 0)
-				listBox.ScrollIntoView(listBox.SelectedIndex);
-		}
-
 
 
 		// Dialog opened.
@@ -367,50 +181,5 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// Get or set rule to be edited.
 		/// </summary>
 		public OperationDurationAnalysisRuleSet.Rule? Rule { get; set; }
-
-
-		// Remove beginning condition.
-		void RemoveBeginningCondition(ListBoxItem item)
-		{
-			if (item.DataContext is not ContextualBasedAnalysisCondition condition)
-				return;
-			this.beginningConditions.Remove(condition);
-			this.beginningConditionListBox.Focus();
-		}
-
-
-		// Remove condition.
-		void RemoveCondition(ListBoxItem item)
-		{
-			if (item.FindAncestorOfType<Avalonia.Controls.ListBox>() == this.beginningConditionListBox)
-				this.RemoveBeginningCondition(item);
-			else
-				this.RemoveEndingCondition(item);
-		}
-
-
-		// Remove ending condition.
-		void RemoveEndingCondition(ListBoxItem item)
-		{
-			if (item.DataContext is not ContextualBasedAnalysisCondition condition)
-				return;
-			this.endingConditions.Remove(condition);
-			this.endingConditionListBox.Focus();
-		}
-
-
-		// Select list of actions according to ListBox.
-		ObservableList<ContextualBasedAnalysisAction> SelectActionList(Avalonia.Controls.ListBox listBox)
-		{
-			if (listBox == this.beginningPreActionListBox)
-				return this.beginningPreActions;
-			if (listBox == this.beginningPostActionListBox)
-				return this.beginningPostActions;
-			if (listBox == this.endingPreActionListBox)
-				return this.endingPreActions;
-			if (listBox == this.endingPostActionListBox)
-				return this.endingPostActions;
-			throw new NotImplementedException();
-		}
 	}
 }

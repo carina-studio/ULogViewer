@@ -134,6 +134,10 @@
 	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.PopToVariableAction.WithDialog">Pop from stack to variable…</sys:String>
 	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.PushVariableAction.WithDialog">Push variable to stack…</sys:String>
 
+	<!-- ContextualBasedAnalysisConditionsEditor -->
+	<sys:String x:Key="String/ContextualBasedAnalysisConditionsEditor.VarAndConstComparisonCondition.WithDialog">Compare variable and constant…</sys:String>
+	<sys:String x:Key="String/ContextualBasedAnalysisConditionsEditor.VarsComparisonCondition.WithDialog">Compare variables…</sys:String>
+
 	<!-- DatabaseSourceType -->
 	<sys:String x:Key="String/DatabaseSourceType.File">File</sys:String>
 	<sys:String x:Key="String/DatabaseSourceType.Network">Network</sys:String>
@@ -536,8 +540,6 @@
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.PostActions">Actions to perform after extra conditions matched</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.PreActions">Actions to perform after text matched</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.Title">Edit operation duration analysis rule</sys:String>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.VarAndConstComparisonCondition">Comparison between variable and constant</sys:String>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.VarsComparisonCondition">Comparison between variables</sys:String>
 
 	<!-- OperationDurationAnalysisRuleSetEditorDialog -->
 	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.Icon">Icon</sys:String>
