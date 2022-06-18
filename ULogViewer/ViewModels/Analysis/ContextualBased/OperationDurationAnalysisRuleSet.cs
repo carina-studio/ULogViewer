@@ -38,11 +38,11 @@ class OperationDurationAnalysisRuleSet : BaseProfile<IULogViewerApplication>
         public Rule(string operationName, 
             Regex beginningPattern, 
             IEnumerable<ContextualBasedAnalysisAction> beginningPreActions,
-            IEnumerable<ContextualBaseAnalysisCondition> beginningConditions, 
+            IEnumerable<ContextualBasedAnalysisCondition> beginningConditions, 
             IEnumerable<ContextualBasedAnalysisAction> beginningPostActions,
             Regex endingPattern, 
             IEnumerable<ContextualBasedAnalysisAction> endingPreActions,
-            IEnumerable<ContextualBaseAnalysisCondition> endingConditions, 
+            IEnumerable<ContextualBasedAnalysisCondition> endingConditions, 
             IEnumerable<ContextualBasedAnalysisAction> endingPostActions,
             OperationEndingOrder endingOrder)
         {
@@ -61,7 +61,7 @@ class OperationDurationAnalysisRuleSet : BaseProfile<IULogViewerApplication>
         /// <summary>
         /// Get list of conditions for beginning of operation log after text matched.
         /// </summary>
-        public IList<ContextualBaseAnalysisCondition> BeginningConditions { get; }
+        public IList<ContextualBasedAnalysisCondition> BeginningConditions { get; }
 
         /// <summary>
         /// Get pattern to match text of beginning of operation log.
@@ -81,7 +81,7 @@ class OperationDurationAnalysisRuleSet : BaseProfile<IULogViewerApplication>
         /// <summary>
         /// Get list of conditions for ending of operation log after text matched.
         /// </summary>
-        public IList<ContextualBaseAnalysisCondition> EndingConditions { get; }
+        public IList<ContextualBasedAnalysisCondition> EndingConditions { get; }
 
         /// <summary>
         /// Get order of ending operation.

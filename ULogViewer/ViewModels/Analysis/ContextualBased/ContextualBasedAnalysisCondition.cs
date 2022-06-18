@@ -42,7 +42,7 @@ enum ComparisonType
 /// </summary>
 #pragma warning disable CS0659
 #pragma warning disable CS0661
-abstract class ContextualBaseAnalysisCondition : IEquatable<ContextualBaseAnalysisCondition>
+abstract class ContextualBasedAnalysisCondition : IEquatable<ContextualBasedAnalysisCondition>
 #pragma warning restore CS0659
 #pragma warning restore CS0661
 {
@@ -51,12 +51,12 @@ abstract class ContextualBaseAnalysisCondition : IEquatable<ContextualBaseAnalys
 
 
     /// <inheritdoc/>
-    public abstract bool Equals(ContextualBaseAnalysisCondition? condition);
+    public abstract bool Equals(ContextualBasedAnalysisCondition? condition);
 
 
     /// <inheritdoc/>
     public override bool Equals(object? obj) =>
-        obj is ContextualBaseAnalysisCondition condition
+        obj is ContextualBasedAnalysisCondition condition
         && this.Equals(condition);
 
 
@@ -72,13 +72,13 @@ abstract class ContextualBaseAnalysisCondition : IEquatable<ContextualBaseAnalys
     /// <summary>
     /// Equality operator.
     /// </summary>
-    public static bool operator ==(ContextualBaseAnalysisCondition? lhs, ContextualBaseAnalysisCondition? rhs) =>
+    public static bool operator ==(ContextualBasedAnalysisCondition? lhs, ContextualBasedAnalysisCondition? rhs) =>
         lhs?.Equals(rhs) ?? object.ReferenceEquals(rhs, null);
     
     /// <summary>
     /// Inequality operator.
     /// </summary>
-    public static bool operator !=(ContextualBaseAnalysisCondition? lhs, ContextualBaseAnalysisCondition? rhs) =>
+    public static bool operator !=(ContextualBasedAnalysisCondition? lhs, ContextualBasedAnalysisCondition? rhs) =>
         object.ReferenceEquals(lhs, null) ? !object.ReferenceEquals(rhs, null) : !lhs.Equals(rhs);
     
 
@@ -90,12 +90,12 @@ abstract class ContextualBaseAnalysisCondition : IEquatable<ContextualBaseAnalys
 
 
     /// <summary>
-    /// Try loading JSON format data as <see cref="ContextualBaseAnalysisCondition"/>.
+    /// Try loading JSON format data as <see cref="ContextualBasedAnalysisCondition"/>.
     /// </summary>
     /// <param name="jsonElement">JSON element.</param>
     /// <param name="condition">Loaded condition.</param>
     /// <returns>True if condition loaded successfully.</returns>
-    public static bool TryLoad(JsonElement jsonElement, out ContextualBaseAnalysisCondition? condition)
+    public static bool TryLoad(JsonElement jsonElement, out ContextualBasedAnalysisCondition? condition)
     {
         condition = null;
         return false;
@@ -106,7 +106,7 @@ abstract class ContextualBaseAnalysisCondition : IEquatable<ContextualBaseAnalys
 /// <summary>
 /// Condition based-on comparison of values.
 /// </summary>
-abstract class ValuesComparisonCondition : ContextualBaseAnalysisCondition
+abstract class ValuesComparisonCondition : ContextualBasedAnalysisCondition
 {
     /// <summary>
     /// Initialize new <see cref="ValuesComparisonCondition"/> instance.
@@ -169,7 +169,7 @@ class VariableAndConstantComparisonCondition : ValuesComparisonCondition
 
 
     /// <inheritdoc/>
-    public override bool Equals(ContextualBaseAnalysisCondition? condition) =>
+    public override bool Equals(ContextualBasedAnalysisCondition? condition) =>
         condition is VariableAndConstantComparisonCondition vccCondition
         && vccCondition.ComparisonType == this.ComparisonType
         && vccCondition.Variable == this.Variable
@@ -241,7 +241,7 @@ class VariablesComparisonCondition : ValuesComparisonCondition
 
 
     /// <inheritdoc/>
-    public override bool Equals(ContextualBaseAnalysisCondition? condition) =>
+    public override bool Equals(ContextualBasedAnalysisCondition? condition) =>
         condition is VariablesComparisonCondition vcCondition
         && vcCondition.ComparisonType == this.ComparisonType
         && vcCondition.LhsVariable == this.LhsVariable
