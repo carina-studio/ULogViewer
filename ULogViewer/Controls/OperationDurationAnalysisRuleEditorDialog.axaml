@@ -18,7 +18,7 @@
 			<MenuItem Command="{Binding $parent[Window].AddVarsComparisonCondition}" Header="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.VarsComparisonCondition}"/>
 		</ContextMenu>
 
-		<DataTemplate x:Key="conditionTemplate" DataType="{x:Type appCtxlBased:ContextualBaseAnalysisCondition}">
+		<DataTemplate x:Key="conditionTemplate" DataType="{x:Type appCtxlBased:ContextualBasedAnalysisCondition}">
 			<Grid ColumnDefinitions="*,Auto">
 				<TextBlock Grid.Column="0" Text="{Binding}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
 				<Border Classes="InPlaceAction_Reserved"/>
