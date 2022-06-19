@@ -1222,8 +1222,17 @@
 							<DataTemplate>
 								<Grid ColumnDefinitions="Auto,Auto,*">
 									<Border Background="{Binding Log.ColorIndicatorBrush}" BorderBrush="{DynamicResource Brush/WorkingArea.Panel.Background}" BorderThickness="{StaticResource Thickness/SessionView.LogListBox.ColorIndicator.Border}" IsVisible="{Binding $parent[UserControl].DataContext.HasLogColorIndicator}" ToolTip.Tip="{Binding Log.ColorIndicatorTip}" Width="{StaticResource Double/SessionView.LogListBox.ColorIndicator.Width}"/>
-									<Image Classes="Icon" Grid.Column="1" Height="{StaticResource Double/SessionView.LogAnalysisResult.Icon.Size}" Margin="{StaticResource Thickness/SessionView.LogAnalysisResult.Icon.Margin}" Source="{Binding Type, Converter={x:Static appConverters:DisplayableLogAnalysisResultIconConverter.Default}}" VerticalAlignment="Center" Width="{StaticResource Double/SessionView.LogAnalysisResult.Icon.Size}"/>
-									<appControls:TextBlock FontFamily="{Binding $parent[UserControl].LogFontFamily}" FontSize="{Binding $parent[UserControl].LogFontSize}" Grid.Column="2" Margin="{StaticResource Thickness/SessionView.MarkedLogListBox.Item.Padding}" Text="{Binding Message}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center">
+									<Image Classes="Icon" Grid.Column="1" Height="{StaticResource Double/SessionView.LogAnalysisResult.Icon.Size}" Margin="{StaticResource Thickness/SessionView.LogAnalysisResult.Icon.Margin}" Source="{Binding Type, Converter={x:Static appConverters:DisplayableLogAnalysisResultIconConverter.Default}}" Width="{StaticResource Double/SessionView.LogAnalysisResult.Icon.Size}">
+										<ia:Interaction.Behaviors>
+											<iaCore:DataTriggerBehavior Binding="{Binding #messageTextBlock.IsMultiLineText}" Value="True">
+												<iaCore:ChangePropertyAction PropertyName="VerticalAlignment" Value="Top"/>
+											</iaCore:DataTriggerBehavior>
+											<iaCore:DataTriggerBehavior Binding="{Binding #messageTextBlock.IsMultiLineText}" Value="False">
+												<iaCore:ChangePropertyAction PropertyName="VerticalAlignment" Value="Center"/>
+											</iaCore:DataTriggerBehavior>
+										</ia:Interaction.Behaviors>
+									</Image>
+									<appControls:TextBlock Name="messageTextBlock" FontFamily="{Binding $parent[UserControl].LogFontFamily}" FontSize="{Binding $parent[UserControl].LogFontSize}" Grid.Column="2" Margin="{StaticResource Thickness/SessionView.MarkedLogListBox.Item.Padding}" Text="{Binding Message}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center">
 										<ia:Interaction.Behaviors>
 											<iaCore:DataTriggerBehavior Binding="{Binding $self.IsTextTrimmed}" Value="True">
 												<iaCore:ChangePropertyAction PropertyName="ToolTip.Tip" Value="{Binding Message}"/>
