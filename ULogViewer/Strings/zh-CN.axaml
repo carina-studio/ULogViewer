@@ -500,6 +500,8 @@
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog">动作起始日志</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.Common">一般</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.Conditions">额外条件</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.CustomMessage">自订分析结果讯息</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.CustomMessage.Description">您可以使用插值语法 "{}" 以将变量值输出至讯息。</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingLog">动作结束日志</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingMode">动作结束方式</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingVariable">比对的变量</sys:String>

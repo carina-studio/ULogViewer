@@ -532,6 +532,8 @@
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog">Log of beginning of operation</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.Common">Common</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.Conditions">Extra conditions</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.CustomMessage">Custom result message</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.CustomMessage.Description">You can use Interpolation Syntax "{}" to output value of variable to message.</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingLog">Log of ending of operation</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingMode">Mode of ending operations</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingVariable">Variable to compare</sys:String>

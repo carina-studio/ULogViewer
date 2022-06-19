@@ -193,7 +193,7 @@
 
 	<!-- KeyLogAnalysisRuleEditorDialog -->
 	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Message">分析結果訊息 (必要)</sys:String>
-	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Message.Description">您可以使用插值語法 "{}" 以將日誌屬性或格式中的自訂分組輸出至訊息</sys:String>
+	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Message.Description">您可以使用插值語法 "{}" 以將日誌屬性或格式中的自訂分組輸出至訊息。</sys:String>
 	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Pattern">格式 (必要)</sys:String>
 	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Pattern.Description">您可以使用 \$\$ 表示文字屬性分隔線。例如您想找到使用者為 "John" 且訊息為 "Hello" 的日誌，就可以使用 "John\$\$Hello" 這個格式。文字屬性的排列順序和日誌類型所定義之可見的日誌屬性相同。</sys:String>
 	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.ResultType">分析結果類型</sys:String>
@@ -500,6 +500,8 @@
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog">動作起始日誌</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.Common">一般</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.Conditions">額外條件</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.CustomMessage">自訂分析結果訊息</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.CustomMessage.Description">您可以使用插值語法 "{}" 以將變數值輸出至訊息。</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingLog">動作結束日誌</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingMode">動作結束方式</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingVariable">比對的變數</sys:String>

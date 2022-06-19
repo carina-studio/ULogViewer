@@ -22,6 +22,7 @@ class OperationDurationDisplayableLogAnalyzer : ContextualBasedDisplayableLogAna
     {
         public Func<DisplayableLog, TimeSpan?>? BeginningTimeSpanGetter;
         public Func<DisplayableLog, DateTime?>? BeginningTimestampGetter;
+        public readonly Dictionary<OperationDurationAnalysisRuleSet.Rule, StringFormatter> CustomMessageFormatters = new();
         public Func<DisplayableLog, TimeSpan?>? EndingTimeSpanGetter;
         public Func<DisplayableLog, DateTime?>? EndingTimestampGetter;
         public OperationDurationAnalysisRuleSet[] RuleSets = new OperationDurationAnalysisRuleSet[0];
@@ -33,12 +34,14 @@ class OperationDurationDisplayableLogAnalyzer : ContextualBasedDisplayableLogAna
     class Result : DisplayableLogAnalysisResult
     {
         // Fields.
+        readonly string? customMessage;
         readonly TimeSpan duration;
         readonly string operationName;
 
         // Constructor.
-        public Result(OperationDurationDisplayableLogAnalyzer analyzer, string operationName, DisplayableLog beginningLog, TimeSpan duration) : base(analyzer, DisplayableLogAnalysisResultType.TimeSpan, beginningLog)
+        public Result(OperationDurationDisplayableLogAnalyzer analyzer, string operationName, DisplayableLog beginningLog, TimeSpan duration, string? customMessage) : base(analyzer, DisplayableLogAnalysisResultType.TimeSpan, beginningLog)
         {
+            this.customMessage = customMessage;
             this.duration = duration;
             this.operationName = operationName;
         }
@@ -47,8 +50,13 @@ class OperationDurationDisplayableLogAnalyzer : ContextualBasedDisplayableLogAna
         public override long MemorySize => base.MemorySize + 8 + IntPtr.Size + (this.operationName.Length << 1);
 
         // Update message.
-        protected override string? OnUpdateMessage() =>
-            $"{this.operationName}\n{AppSuite.Converters.TimeSpanConverter.Default.Convert<string>(this.duration)}";
+        protected override string? OnUpdateMessage()
+        {
+            var durationMessage = AppSuite.Converters.TimeSpanConverter.Default.Convert<string>(this.duration);
+            if (string.IsNullOrWhiteSpace(this.customMessage))
+                return $"{this.operationName}\n{durationMessage}";
+            return $"{this.customMessage}\n{durationMessage}";
+        }
     }
 
 

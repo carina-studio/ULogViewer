@@ -36,6 +36,7 @@ class OperationDurationAnalysisRuleSet : BaseProfile<IULogViewerApplication>
         /// <param name="endingPostActions">Actions to perform after all ending conditions matched.</param>
         /// <param name="endingMode">Mode of ending operation.</param>
         /// <param name="endingVars">variables to compare when <paramref name="endingMode"/> is <see cref="OperationEndingMode.CompareVariables"/>.</param>
+        /// <param name="customMessage">Custom formatted message.</param>
         public Rule(string operationName, 
             Regex beginningPattern, 
             IEnumerable<ContextualBasedAnalysisAction> beginningPreActions,
@@ -46,12 +47,14 @@ class OperationDurationAnalysisRuleSet : BaseProfile<IULogViewerApplication>
             IEnumerable<ContextualBasedAnalysisCondition> endingConditions, 
             IEnumerable<ContextualBasedAnalysisAction> endingPostActions,
             OperationEndingMode endingMode,
-            IEnumerable<string> endingVars)
+            IEnumerable<string> endingVars,
+            string? customMessage)
         {
             this.BeginningConditions = beginningConditions.ToArray().AsReadOnly();
             this.BeginningPattern = beginningPattern;
             this.BeginningPostActions = beginningPostActions.ToArray().AsReadOnly();
             this.BeginningPreActions = beginningPreActions.ToArray().AsReadOnly();
+            this.CustomMessage = customMessage;
             this.EndingConditions = endingConditions.ToArray().AsReadOnly();
             this.EndingMode = endingMode;
             this.EndingPattern = endingPattern;
@@ -80,6 +83,11 @@ class OperationDurationAnalysisRuleSet : BaseProfile<IULogViewerApplication>
         /// Get list of actions to perform before all matching beginning conditions.
         /// </summary>
         public IList<ContextualBasedAnalysisAction> BeginningPreActions { get; }
+
+        /// <summary>
+        /// Get custom formatted message.
+        /// </summary>
+        public string? CustomMessage { get; }
 
         /// <summary>
         /// Get list of conditions for ending of operation log after text matched.
@@ -120,6 +128,7 @@ class OperationDurationAnalysisRuleSet : BaseProfile<IULogViewerApplication>
             && rule.BeginningConditions.SequenceEqual(this.BeginningConditions)
             && rule.BeginningPreActions.SequenceEqual(this.BeginningPreActions)
             && rule.BeginningPostActions.SequenceEqual(this.BeginningPostActions)
+            && rule.CustomMessage == this.CustomMessage
             && rule.EndingPattern.ToString() == this.EndingPattern.ToString()
             && rule.EndingPattern.Options == this.EndingPattern.Options
             && rule.EndingConditions.SequenceEqual(this.EndingConditions)

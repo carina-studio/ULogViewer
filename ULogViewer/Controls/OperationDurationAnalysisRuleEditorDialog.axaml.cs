@@ -26,6 +26,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly TextBox beginningPatternTextBox;
 		readonly ObservableList<ContextualBasedAnalysisAction> beginningPostActions = new();
 		readonly ObservableList<ContextualBasedAnalysisAction> beginningPreActions = new();
+		readonly TextBox customMessageTextBox;
 		readonly ObservableList<ContextualBasedAnalysisCondition> endingConditions = new();
 		readonly ComboBox endingModeComboBox;
 		Regex? endingPattern;
@@ -44,6 +45,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			AvaloniaXamlLoader.Load(this);
 			this.beginningPatternTextBox = this.Get<TextBox>(nameof(beginningPatternTextBox));
+			this.customMessageTextBox = this.Get<TextBox>(nameof(customMessageTextBox));
 			this.endingModeComboBox = this.Get<ComboBox>(nameof(endingModeComboBox));
 			this.endingPatternTextBox = this.Get<TextBox>(nameof(endingPatternTextBox));
 			this.endingVariableListBox = this.Get<AppSuite.Controls.ListBox>(nameof(endingVariableListBox)).Also(it =>
@@ -179,7 +181,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.endingConditions,
 				this.endingPostActions,
 				(OperationEndingMode)this.endingModeComboBox.SelectedItem.AsNonNull(),
-				this.endingVariables);
+				this.endingVariables,
+				this.customMessageTextBox.Text);
 			if (rule == newRule)
 				return Task.FromResult<object?>(rule);
 			return Task.FromResult<object?>(newRule);
@@ -199,6 +202,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.beginningPatternTextBox.Text = rule.BeginningPattern.ToString();
 				this.beginningPreActions.AddAll(rule.BeginningPreActions);
 				this.beginningPostActions.AddAll(rule.BeginningPostActions);
+				this.customMessageTextBox.Text = rule.CustomMessage;
 				this.endingConditions.AddAll(rule.EndingConditions);
 				this.endingModeComboBox.SelectedItem = rule.EndingMode;
 				this.endingPattern = rule.EndingPattern;
