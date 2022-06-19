@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,10 +14,15 @@ namespace CarinaStudio.ULogViewer.Scripting;
 /// Script.
 /// </summary>
 /// <typeparam name="TContext">Type of context.</typeparam>
-class Script<TContext> where TContext : ScriptContext, IEquatable<Script<TContext>>
+abstract class Script<TContext> where TContext : ScriptContext, IEquatable<Script<TContext>>
 {
+    // Static logger.
+    static volatile int NextId = 0;
+
+
     // Fields.
     readonly string hashCodeSource;
+    readonly ILogger logger;
 
 
     /// <summary>
@@ -24,17 +30,20 @@ class Script<TContext> where TContext : ScriptContext, IEquatable<Script<TContex
     /// </summary>
     /// <param name="language">Language.</param>
     /// <param name="source">Source code.</param>
-    public Script(ScriptLanguage language, string source)
+    protected Script(ScriptLanguage language, string source)
     {
         this.hashCodeSource = source.Length <= 32 ? source : source.Substring(0, 32);
+        this.Id = Interlocked.Increment(ref NextId);
         this.Language = language;
+        this.logger = App.Current.LoggerFactory.CreateLogger($"Script-{this.Id}");
         this.Source = source;
     }
 
 
     /// <inheritdoc/>
-    public bool Equals(Script<TContext>? script) =>
+    public virtual bool Equals(Script<TContext>? script) =>
         script != null
+        && script.GetType().Equals(this.GetType())
         && this.Language == this.Language
         && this.Source == this.Source;
 
@@ -48,6 +57,12 @@ class Script<TContext> where TContext : ScriptContext, IEquatable<Script<TContex
     /// <inheritdoc/>
     public override int GetHashCode() =>
         this.hashCodeSource.GetHashCode();
+    
+
+    /// <summary>
+    /// Get unique ID of script instance.
+    /// </summary>
+    public int Id { get; }
 
 
     /// <summary>
@@ -62,7 +77,7 @@ class Script<TContext> where TContext : ScriptContext, IEquatable<Script<TContex
     /// <param name="fileName">File name.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>Task of loading script.</returns>
-    public static async Task<Script<TContext>> LoadAsync(string fileName, CancellationToken cancellationToken = default)
+    public static async Task<TScript> LoadAsync<TScript>(string fileName, CancellationToken cancellationToken = default) where TScript : Script<TContext>
     {
         if (cancellationToken.IsCancellationRequested)
             throw new TaskCanceledException();
@@ -85,18 +100,23 @@ class Script<TContext> where TContext : ScriptContext, IEquatable<Script<TContex
         });
         if (cancellationToken.IsCancellationRequested)
             throw new TaskCanceledException();
-        return new(language, source);
+        return (TScript)Activator.CreateInstance(typeof(TScript), language, source).AsNonNull();
     }
+
+
+    /// <summary>
+    /// Get list of referenced assemblies.
+    /// </summary>
+    public abstract IList<Assembly> References { get; }
 
 
     /// <summary>
     /// Run script asynchronously.
     /// </summary>
     /// <param name="context">Context.</param>
-    /// <param name="references">Extra reference assemblies.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>Task of running script.</returns>
-    public Task RunAsync(TContext context, IEnumerable<Assembly> references, CancellationToken cancellationToken = default)
+    public Task RunAsync(TContext context, CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();
     }
@@ -106,11 +126,10 @@ class Script<TContext> where TContext : ScriptContext, IEquatable<Script<TContex
     /// Run script asynchronously.
     /// </summary>
     /// <param name="context">Context.</param>
-    /// <param name="references">Extra reference assemblies.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <typeparam name="TResult">Type of result.</typeparam>
     /// <returns>Task of running script.</returns>
-    public Task<TResult> RunAsync<TResult>(TContext context, IEnumerable<Assembly> references, CancellationToken cancellationToken = default)
+    public Task<TResult> RunAsync<TResult>(TContext context, CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();
     }
@@ -134,6 +153,12 @@ class Script<TContext> where TContext : ScriptContext, IEquatable<Script<TContex
         writer.WriteString(nameof(Source), Convert.ToBase64String(Encoding.UTF8.GetBytes(this.Source)));
         writer.WriteEndObject();
     });
+
+
+    // Setup script if needed.
+    void Setup()
+    {
+    }
 
 
     /// <summary>
