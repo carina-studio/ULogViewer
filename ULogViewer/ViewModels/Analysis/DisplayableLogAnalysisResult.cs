@@ -45,6 +45,18 @@ class DisplayableLogAnalysisResult : BaseApplicationObject<IULogViewerApplicatio
 
 
     /// <summary>
+    /// Get beginning <see cref="DisplayableLog"/> which relates to this result.
+    /// </summary>
+    public virtual DisplayableLog? BeginningLog { get; }
+
+
+    /// <summary>
+    /// Get ending <see cref="DisplayableLog"/> which relates to this result.
+    /// </summary>
+    public virtual DisplayableLog? EndingLog { get; }
+
+
+    /// <summary>
     /// Get unique ID of result.
     /// </summary>
     public int Id { get; }

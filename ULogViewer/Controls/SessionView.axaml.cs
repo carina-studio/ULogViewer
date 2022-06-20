@@ -173,6 +173,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly Border dragDropReceiverBorder;
 		IDisposable? hasDialogsObserverToken;
 		IDisposable? isActiveObserverToken;
+		bool isAltKeyPressed;
 		bool isAttachedToLogicalTree;
 		bool isIPEndPointNeededAfterLogProfileSet;
 		bool isLogFileNeededAfterLogProfileSet;
@@ -376,8 +377,9 @@ namespace CarinaStudio.ULogViewer.Controls
 					}
 				};
 			});
-			this.logAnalysisResultListBox = this.FindControl<Avalonia.Controls.ListBox>(nameof(logAnalysisResultListBox))!.Also(it =>
+			this.logAnalysisResultListBox = this.FindControl<AppSuite.Controls.ListBox>(nameof(logAnalysisResultListBox))!.Also(it =>
 			{
+				it.DoubleClickOnItem += this.OnLogAnalysisResultListBoxDoubleClickOnItem;
 				it.SelectionChanged += this.OnLogAnalysisResultListBoxSelectionChanged;
 			});
 			this.logAnalysisRuleSetsPopup = this.Get<Popup>(nameof(logAnalysisRuleSetsPopup));
@@ -2595,8 +2597,15 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Called when double clicked on item in log analysis result list box.
+		void OnLogAnalysisResultListBoxDoubleClickOnItem(object? sender, ListBoxItemEventArgs e) =>
+			this.OnLogAnalysisResultListBoxSelectionChanged(true);
+
+
 		// Called when log analysis result list box selection changed.
-		void OnLogAnalysisResultListBoxSelectionChanged(object? sender, SelectionChangedEventArgs e)
+		void OnLogAnalysisResultListBoxSelectionChanged(object? sender, SelectionChangedEventArgs e) =>
+			this.OnLogAnalysisResultListBoxSelectionChanged(false);
+		void OnLogAnalysisResultListBoxSelectionChanged(bool forceReSelection)
 		{
 			this.SynchronizationContext.Post(() =>
 			{
@@ -2607,70 +2616,92 @@ namespace CarinaStudio.ULogViewer.Controls
 					&& this.logAnalysisResultListBox.SelectedItem is DisplayableLogAnalysisResult result
 					&& this.DataContext is Session session)
 				{
-					result.Log?.Let(new Func<DisplayableLog, Task>(async (log) =>
-					{
-						// show all logs if needed
-						if (!session.Logs.Contains(log))
+					// select log to focus
+					var log = this.isAltKeyPressed
+						? (result.EndingLog ?? result.Log ?? result.BeginningLog)
+						: (result.BeginningLog ?? result.Log ?? result.EndingLog);
+					var isLogSelected = log != null && this.logListBox.SelectedItems.Count == 1
+						? Global.Run(() =>
 						{
-							// cancel showing marked logs only
-							var isLogFound = false;
-							var window = this.attachedWindow as MainWindow;
-							if (session.IsShowingMarkedLogsTemporarily)
+							var selectedLog = this.logListBox.SelectedItem as DisplayableLog;
+							if (result.Log != null && result.Log == selectedLog)
+								return true;
+							if (result.BeginningLog != null && result.BeginningLog == selectedLog)
+								return true;
+							if (result.EndingLog != null && result.EndingLog == selectedLog)
+								return true;
+							return false;
+						})
+						: false;
+
+					// focus on log
+					if (log != null && (forceReSelection || !isLogSelected))
+					{
+						log.Let(new Func<DisplayableLog, Task>(async (log) =>
+						{
+							// show all logs if needed
+							if (!session.Logs.Contains(log))
 							{
 								// cancel showing marked logs only
-								if (!session.ToggleShowingMarkedLogsTemporarilyCommand.TryExecute())
-									return;
-								await Task.Yield();
-								
-								// show tutorial
-								isLogFound = session.Logs.Contains(log);
-								if (isLogFound 
-									&& !this.PersistentState.GetValueOrDefault(IsCancelShowingMarkedLogsForLogAnalysisResultTutorialShownKey)
-									&& window != null)
+								var isLogFound = false;
+								var window = this.attachedWindow as MainWindow;
+								if (session.IsShowingMarkedLogsTemporarily)
 								{
-									window.ShowTutorial(new Tutorial().Also(it =>
+									// cancel showing marked logs only
+									if (!session.ToggleShowingMarkedLogsTemporarilyCommand.TryExecute())
+										return;
+									await Task.Yield();
+									
+									// show tutorial
+									isLogFound = session.Logs.Contains(log);
+									if (isLogFound 
+										&& !this.PersistentState.GetValueOrDefault(IsCancelShowingMarkedLogsForLogAnalysisResultTutorialShownKey)
+										&& window != null)
 									{
-										it.Anchor = this.FindControl<Control>("showMarkedLogsOnlyButton");
-										it.Bind(Tutorial.DescriptionProperty, this.GetResourceObservable("String/SessionView.Tutorial.CancelShowingMarkedLogsOnlyForSelectingLogAnalysisResult"));
-										it.Dismissed += (_, e) =>
-											this.PersistentState.SetValue<bool>(IsCancelShowingMarkedLogsForLogAnalysisResultTutorialShownKey, true);
-										it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb.Colored");
-										it.IsSkippingAllTutorialsAllowed = false;
-									}));
+										window.ShowTutorial(new Tutorial().Also(it =>
+										{
+											it.Anchor = this.FindControl<Control>("showMarkedLogsOnlyButton");
+											it.Bind(Tutorial.DescriptionProperty, this.GetResourceObservable("String/SessionView.Tutorial.CancelShowingMarkedLogsOnlyForSelectingLogAnalysisResult"));
+											it.Dismissed += (_, e) =>
+												this.PersistentState.SetValue<bool>(IsCancelShowingMarkedLogsForLogAnalysisResultTutorialShownKey, true);
+											it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb.Colored");
+											it.IsSkippingAllTutorialsAllowed = false;
+										}));
+									}
 								}
-							}
 
-							// show all logs
-							if (!isLogFound)
-							{
 								// show all logs
-								if (session.IsShowingMarkedLogsTemporarily || !session.ToggleShowingAllLogsTemporarilyCommand.TryExecute())
-									return;
-								await Task.Yield();
-								
-								// show tutorial
-								if (!this.PersistentState.GetValueOrDefault(IsShowAllLogsForLogAnalysisResultTutorialShownKey)
-									&& window != null)
+								if (!isLogFound)
 								{
-									window.ShowTutorial(new Tutorial().Also(it =>
+									// show all logs
+									if (session.IsShowingMarkedLogsTemporarily || !session.ToggleShowingAllLogsTemporarilyCommand.TryExecute())
+										return;
+									await Task.Yield();
+									
+									// show tutorial
+									if (!this.PersistentState.GetValueOrDefault(IsShowAllLogsForLogAnalysisResultTutorialShownKey)
+										&& window != null)
 									{
-										it.Anchor = this.FindControl<Control>("showAllLogsTemporarilyButton");
-										it.Bind(Tutorial.DescriptionProperty, this.GetResourceObservable("String/SessionView.Tutorial.ShowAllLogsTemporarilyForSelectingLogAnalysisResult"));
-										it.Dismissed += (_, e) =>
-											this.PersistentState.SetValue<bool>(IsShowAllLogsForLogAnalysisResultTutorialShownKey, true);
-										it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb.Colored");
-										it.IsSkippingAllTutorialsAllowed = false;
-									}));
+										window.ShowTutorial(new Tutorial().Also(it =>
+										{
+											it.Anchor = this.FindControl<Control>("showAllLogsTemporarilyButton");
+											it.Bind(Tutorial.DescriptionProperty, this.GetResourceObservable("String/SessionView.Tutorial.ShowAllLogsTemporarilyForSelectingLogAnalysisResult"));
+											it.Dismissed += (_, e) =>
+												this.PersistentState.SetValue<bool>(IsShowAllLogsForLogAnalysisResultTutorialShownKey, true);
+											it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb.Colored");
+											it.IsSkippingAllTutorialsAllowed = false;
+										}));
+									}
 								}
 							}
-						}
 
-						// select log
-						this.logListBox.SelectedItems.Clear();
-						this.logListBox.SelectedItem = log;
-						this.logListBox.ScrollIntoView(log);
-						this.IsScrollingToLatestLogNeeded = false;
-					}));
+							// select log
+							this.logListBox.SelectedItems.Clear();
+							this.logListBox.SelectedItem = log;
+							this.logListBox.ScrollIntoView(log);
+							this.IsScrollingToLatestLogNeeded = false;
+						}));
+					}
 				}
 				this.logListBox.Focus();
 			});
@@ -3376,6 +3407,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called to handle key-down before all children.
 		async void OnPreviewKeyDown(object? sender, Avalonia.Input.KeyEventArgs e)
 		{
+			// check modifier keys
+			if ((e.KeyModifiers & KeyModifiers.Alt) != 0)
+				this.isAltKeyPressed = true;
+
 			// [Workaround] It will take long time to select all items by list box itself
 			if (!e.Handled 
 				&& e.Source is not TextBox
@@ -3421,6 +3456,9 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called to handle key-up before all children.
 		void OnPreviewKeyUp(object? sender, Avalonia.Input.KeyEventArgs e)
 		{
+			// check modifier keys
+			if ((e.KeyModifiers & KeyModifiers.Alt) == 0)
+				this.isAltKeyPressed = false;
 		}
 
 

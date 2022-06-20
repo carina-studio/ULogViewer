@@ -92,6 +92,16 @@ abstract class BaseDisplayableLogAnalyzer<TProcessingToken, TResult> : BaseDispl
                 var result = resultList[j];
                 this.analysisResultsMemorySize += result.MemorySize;
                 result.Log?.AddAnalysisResult(result);
+                result.BeginningLog?.Let(it =>
+                {
+                    if (it != result.Log)
+                        it.AddAnalysisResult(result);
+                });
+                result.EndingLog?.Let(it =>
+                {
+                    if (it != result.Log && it != result.BeginningLog)
+                        it.AddAnalysisResult(result);
+                });
             }
             this.tempResults.AddRange(resultList);
         }
