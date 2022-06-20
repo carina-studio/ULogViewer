@@ -136,6 +136,11 @@
 	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.PopToVariableAction.WithDialog">Pop from stack to variable…</sys:String>
 	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.PushVariableAction.WithDialog">Push variable to stack…</sys:String>
 
+	<!-- ContextualBasedAnalysisActionsEditorDialog -->
+	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Queue">Name of queue (required)</sys:String>
+	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Stack">Name of stack (required)</sys:String>
+	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Variable">Name of variable (required)</sys:String>
+
 	<!-- ContextualBasedAnalysisConditionsEditor -->
 	<sys:String x:Key="String/ContextualBasedAnalysisConditionsEditor.VarAndConstComparisonCondition.WithDialog">Compare variable and constant…</sys:String>
 	<sys:String x:Key="String/ContextualBasedAnalysisConditionsEditor.VarsComparisonCondition.WithDialog">Compare variables…</sys:String>
@@ -152,9 +157,7 @@
 	<sys:String x:Key="String/DateTimeSelectionDialog.Title">Select date and time</sys:String>
 
 	<!-- DequeueToVarEditorDialog -->
-	<sys:String x:Key="String/DequeueToVarEditorDialog.Queue">Name of queue (required)</sys:String>
 	<sys:String x:Key="String/DequeueToVarEditorDialog.Title">Dequeu value from queue to variable</sys:String>
-	<sys:String x:Key="String/DequeueToVarEditorDialog.Variable">Name of variable (required)</sys:String>
 
 	<!-- DequeueToVariableAction -->
 	<sys:String x:Key="String/DequeueToVariableAction">Dequeue value from queue '{0}' to $({1})</sys:String>
@@ -559,16 +562,20 @@
 	<sys:String x:Key="String/OperationEndingMode.FirstInFirstOut">First in, first out</sys:String>
 	<sys:String x:Key="String/OperationEndingMode.FirstInLastOut">First in, last out</sys:String>
 
+	<!-- PeekQueueToVarEditorDialog -->
+	<sys:String x:Key="String/PeekQueueToVarEditorDialog.Title">Copy value from queue to variable</sys:String>
+
 	<!-- PeekQueueToVariableAction -->
 	<sys:String x:Key="String/PeekQueueToVariableAction">Copy value from queue '{0}' to $({1})</sys:String>
+
+	<!-- PeekStackToVarEditorDialog -->
+	<sys:String x:Key="String/PeekStackToVarEditorDialog.Title">Copy value from stack to variable</sys:String>
 
 	<!-- PeekStackToVariableAction -->
 	<sys:String x:Key="String/PeekStackToVariableAction">Copy value from stack '{0}' to $({1})</sys:String>
 
 	<!-- PopToVarEditorDialog -->
-	<sys:String x:Key="String/PopToVarEditorDialog.Stack">Name of stack (required)</sys:String>
 	<sys:String x:Key="String/PopToVarEditorDialog.Title">Pop value from stack to variable</sys:String>
-	<sys:String x:Key="String/PopToVarEditorDialog.Variable">Name of variable (required)</sys:String>
 
 	<!-- PopToVariableAction -->
 	<sys:String x:Key="String/PopToVariableAction">Pop value from stack '{0}' to $({1})</sys:String>

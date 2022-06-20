@@ -24,12 +24,12 @@
 		<StackPanel Classes="Dialog_ContentPanel">
 			
 			<!-- Variable -->
-			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/PushVarEditorDialog.Variable}"/>
+			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/ContextualBasedAnalysisActionsEditorDialog.Variable}"/>
 			<TextBox Name="varTextBox" Classes="Dialog_TextBox" MaxLength="256"/>
 			<Separator Classes="Dialog_Separator"/>
 			
 			<!-- Stack -->
-			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/PushVarEditorDialog.Stack}"/>
+			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/ContextualBasedAnalysisActionsEditorDialog.Stack}"/>
 			<TextBox Name="stackTextBox" Classes="Dialog_TextBox" MaxLength="256"/>
 			
 		</StackPanel>

@@ -127,6 +127,11 @@
 	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.PopToVariableAction.WithDialog">自堆栈取出至变量…</sys:String>
 	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.PushVariableAction.WithDialog">将变量加入至堆栈…</sys:String>
 
+	<!-- ContextualBasedAnalysisActionsEditorDialog -->
+	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Queue">队列名称 (必要)</sys:String>
+	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Stack">堆栈名称 (必要)</sys:String>
+	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Variable">变量名称 (必要)</sys:String>
+
 	<!-- ContextualBasedAnalysisConditionsEditor -->
 	<sys:String x:Key="String/ContextualBasedAnalysisConditionsEditor.VarAndConstComparisonCondition.WithDialog">比较变量与常量…</sys:String>
 	<sys:String x:Key="String/ContextualBasedAnalysisConditionsEditor.VarsComparisonCondition.WithDialog">比较变量…</sys:String>
@@ -143,9 +148,7 @@
 	<sys:String x:Key="String/DateTimeSelectionDialog.Title">选择日期与时间</sys:String>
 
 	<!-- DequeueToVarEditorDialog -->
-	<sys:String x:Key="String/DequeueToVarEditorDialog.Queue">队列名称 (必要)</sys:String>
 	<sys:String x:Key="String/DequeueToVarEditorDialog.Title">取出队列值至变量</sys:String>
-	<sys:String x:Key="String/DequeueToVarEditorDialog.Variable">变量名称 (必要)</sys:String>
 
 	<!-- DequeueToVariableAction -->
 	<sys:String x:Key="String/DequeueToVariableAction">從队列 '{0}' 取出值至 $({1})</sys:String>
@@ -161,9 +164,7 @@
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Warning">警告</sys:String>
 
 	<!-- EnqueueVarEditorDialog -->
-	<sys:String x:Key="String/EnqueueVarEditorDialog.Queue">队列名称 (必要)</sys:String>
 	<sys:String x:Key="String/EnqueueVarEditorDialog.Title">将变量值加入队列</sys:String>
-	<sys:String x:Key="String/EnqueueVarEditorDialog.Variable">变量名称 (必要)</sys:String>
 
 	<!-- EnqueueVariableAction -->
 	<sys:String x:Key="String/EnqueueVariableAction">将 $({0}) 加入至队列 '{1}'</sys:String>
@@ -527,16 +528,20 @@
 	<sys:String x:Key="String/OperationEndingMode.FirstInFirstOut">先进先出 (FIFO)</sys:String>
 	<sys:String x:Key="String/OperationEndingMode.FirstInLastOut">先进后出 (FILO)</sys:String>
 
+	<!-- PeekQueueToVarEditorDialog -->
+	<sys:String x:Key="String/PeekQueueToVarEditorDialog.Title">从队列复制值至变量</sys:String>
+
 	<!-- PeekQueueToVariableAction -->
 	<sys:String x:Key="String/PeekQueueToVariableAction">从队列 '{0}' 复制值至 $({1})</sys:String>
+
+	<!-- PeekStackToVarEditorDialog -->
+	<sys:String x:Key="String/PeekStackToVarEditorDialog.Title">从堆栈复制值至变量</sys:String>
 
 	<!-- PeekStackToVariableAction -->
 	<sys:String x:Key="String/PeekStackToVariableAction">从堆栈 '{0}' 复制值至 $({1})</sys:String>
 
 	<!-- PopToVarEditorDialog -->
-	<sys:String x:Key="String/PopToVarEditorDialog.Stack">堆栈名称 (必要)</sys:String>
 	<sys:String x:Key="String/PopToVarEditorDialog.Title">取出堆栈值至变量</sys:String>
-	<sys:String x:Key="String/PopToVarEditorDialog.Variable">变量名称 (必要)</sys:String>
 
 	<!-- PopToVariableAction -->
 	<sys:String x:Key="String/PopToVariableAction">从堆栈 '{0}' 取出值至 $({1})</sys:String>
@@ -549,9 +554,7 @@
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Title.Edit">编辑文字过滤器</sys:String>
 
 	<!-- PushVarEditorDialog -->
-	<sys:String x:Key="String/PushVarEditorDialog.Stack">堆栈名称 (必要)</sys:String>
 	<sys:String x:Key="String/PushVarEditorDialog.Title">将变量值加入堆栈</sys:String>
-	<sys:String x:Key="String/PushVarEditorDialog.Variable">变量名称 (必要)</sys:String>
 
 	<!-- PushVariableAction -->
 	<sys:String x:Key="String/PushVariableAction">将 $({0}) 加入至堆栈 '{1}'</sys:String>

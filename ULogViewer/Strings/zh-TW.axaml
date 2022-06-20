@@ -127,6 +127,11 @@
 	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.PopToVariableAction.WithDialog">自堆疊取出至變數…</sys:String>
 	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.PushVariableAction.WithDialog">將變數加入至堆疊…</sys:String>
 
+	<!-- ContextualBasedAnalysisActionsEditorDialog -->
+	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Queue">佇列名稱 (必要)</sys:String>
+	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Stack">堆疊名稱 (必要)</sys:String>
+	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Variable">變數名稱 (必要)</sys:String>
+
 	<!-- ContextualBasedAnalysisConditionsEditor -->
 	<sys:String x:Key="String/ContextualBasedAnalysisConditionsEditor.VarAndConstComparisonCondition.WithDialog">比較變數與常數…</sys:String>
 	<sys:String x:Key="String/ContextualBasedAnalysisConditionsEditor.VarsComparisonCondition.WithDialog">比較變數…</sys:String>
@@ -143,9 +148,7 @@
 	<sys:String x:Key="String/DateTimeSelectionDialog.Title">選擇日期與時間</sys:String>
 
 	<!-- DequeueToVarEditorDialog -->
-	<sys:String x:Key="String/DequeueToVarEditorDialog.Queue">佇列名稱 (必要)</sys:String>
 	<sys:String x:Key="String/DequeueToVarEditorDialog.Title">取出佇列值至變數</sys:String>
-	<sys:String x:Key="String/DequeueToVarEditorDialog.Variable">變數名稱 (必要)</sys:String>
 
 	<!-- DequeueToVariableAction -->
 	<sys:String x:Key="String/DequeueToVariableAction">從佇列 '{0}' 取出值至 $({1})</sys:String>
@@ -161,9 +164,7 @@
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Warning">警告</sys:String>
 
 	<!-- EnqueueVarEditorDialog -->
-	<sys:String x:Key="String/EnqueueVarEditorDialog.Queue">佇列名稱 (必要)</sys:String>
 	<sys:String x:Key="String/EnqueueVarEditorDialog.Title">將變數值加入佇列</sys:String>
-	<sys:String x:Key="String/EnqueueVarEditorDialog.Variable">變數名稱 (必要)</sys:String>
 
 	<!-- EnqueueVariableAction -->
 	<sys:String x:Key="String/EnqueueVariableAction">將 $({0}) 加入至佇列 '{1}'</sys:String>
@@ -527,16 +528,20 @@
 	<sys:String x:Key="String/OperationEndingMode.FirstInFirstOut">先進先出 (FIFO)</sys:String>
 	<sys:String x:Key="String/OperationEndingMode.FirstInLastOut">先進後出 (FILO)</sys:String>
 
+	<!-- PeekQueueToVarEditorDialog -->
+	<sys:String x:Key="String/PeekQueueToVarEditorDialog.Title">從佇列複製值至變數</sys:String>
+
 	<!-- PeekQueueToVariableAction -->
 	<sys:String x:Key="String/PeekQueueToVariableAction">從佇列 '{0}' 複製值至 $({1})</sys:String>
+
+	<!-- PeekStackToVarEditorDialog -->
+	<sys:String x:Key="String/PeekStackToVarEditorDialog.Title">從佇堆疊製值至變數</sys:String>
 
 	<!-- PeekStackToVariableAction -->
 	<sys:String x:Key="String/PeekStackToVariableAction">從堆疊 '{0}' 複製值至 $({1})</sys:String>
 
 	<!-- PopToVarEditorDialog -->
-	<sys:String x:Key="String/PopToVarEditorDialog.Stack">堆疊名稱 (必要)</sys:String>
 	<sys:String x:Key="String/PopToVarEditorDialog.Title">取出堆疊值至變數</sys:String>
-	<sys:String x:Key="String/PopToVarEditorDialog.Variable">變數名稱 (必要)</sys:String>
 
 	<!-- PopToVariableAction -->
 	<sys:String x:Key="String/PopToVariableAction">從堆疊 '{0}' 取出值至 $({1})</sys:String>
@@ -549,9 +554,7 @@
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Title.Edit">編輯文字篩選</sys:String>
 
 	<!-- PushVarEditorDialog -->
-	<sys:String x:Key="String/PushVarEditorDialog.Stack">堆疊名稱 (必要)</sys:String>
 	<sys:String x:Key="String/PushVarEditorDialog.Title">將變數值加入堆疊</sys:String>
-	<sys:String x:Key="String/PushVarEditorDialog.Variable">變數名稱 (必要)</sys:String>
 
 	<!-- PushVariableAction -->
 	<sys:String x:Key="String/PushVariableAction">將 $({0}) 加入至堆疊 '{1}'</sys:String>
