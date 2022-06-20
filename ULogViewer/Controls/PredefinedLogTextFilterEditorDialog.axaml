@@ -27,9 +27,15 @@
 			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/PredefinedLogTextFilterEditorDialog.Regex}"/>
 			<Grid ColumnDefinitions="*,Auto">
 				<TextBox Name="patternTextBox" Classes="Dialog_TextBox" Height="{DynamicResource Double/PredefinedLogTextFilterEditorDialog.RegexInput.Height}" IsReadOnly="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled" TextWrapping="Wrap"/>
-				<Button Name="editPatternButton" Classes="BrowseButton" Command="{Binding $parent[Window].EditPattern}" Grid.Column="1" ToolTip.Tip="{DynamicResource String/Common.Edit}" VerticalAlignment="Top">
-					<Image Classes="BrowseButtonIcon" Source="{DynamicResource Image/Icon.Edit}"/>
-				</Button>
+				<StackPanel Grid.Column="1" VerticalAlignment="Top">
+					<Button Name="editPatternButton" Classes="BrowseButton" Command="{Binding $parent[Window].EditPattern}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
+						<Image Classes="BrowseButtonIcon" Source="{DynamicResource Image/Icon.Edit}"/>
+					</Button>
+					<Separator Classes="Dialog_Separator_Small"/>
+					<Button Classes="BrowseButton" Command="{Binding $parent[Window].CopyPattern}" CommandParameter="{Binding #patternTextBox}" ToolTip.Tip="{DynamicResource String/Common.Copy}">
+						<Image Classes="BrowseButtonIcon" Source="{StaticResource Image/Icon.Copy}"/>
+					</Button>
+				</StackPanel>
 			</Grid>
 			<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/PredefinedLogTextFilterEditorDialog.Regex.Description}"/>
 			<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/Common.RegularExpression.Reference}" Uri="{x:Static app:Uris.RegexReference}"/>

@@ -34,9 +34,15 @@
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogPatternEditorDialog.Regex}"/>
 				<Grid ColumnDefinitions="*,Auto">
 					<TextBox Name="patternTextBox" Height="{DynamicResource Double/LogPatternEditorDialog.RegexInput.Height}" IsReadOnly="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" TextWrapping="Wrap"/>
-					<Button Name="editPatternButton" Classes="BrowseButton" Command="{Binding $parent[Window].EditRegex}" Grid.Column="1" ToolTip.Tip="{DynamicResource String/Common.Edit}" VerticalAlignment="Top">
-						<Image Classes="BrowseButtonIcon" Source="{DynamicResource Image/Icon.Edit}"/>
-					</Button>
+					<StackPanel Grid.Column="1" VerticalAlignment="Top">
+						<Button Name="editPatternButton" Classes="BrowseButton" Command="{Binding $parent[Window].EditRegex}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
+							<Image Classes="BrowseButtonIcon" Source="{DynamicResource Image/Icon.Edit}"/>
+						</Button>
+						<Separator Classes="Dialog_Separator_Small"/>
+						<Button Classes="BrowseButton" Command="{Binding $parent[Window].CopyPattern}" CommandParameter="{Binding #patternTextBox}" ToolTip.Tip="{DynamicResource String/Common.Copy}">
+							<Image Classes="BrowseButtonIcon" Source="{StaticResource Image/Icon.Copy}"/>
+						</Button>
+					</StackPanel>
 				</Grid>
 				<Separator Classes="Dialog_Separator"/>
 	

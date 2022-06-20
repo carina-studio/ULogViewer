@@ -94,6 +94,11 @@ namespace CarinaStudio.ULogViewer.Controls
 		IList<ContextualBasedAnalysisAction> BeginningPreActions { get => this.beginningPreActions; }
 
 
+		// Copy pattern.
+		void CopyPattern(TextBox textBox) =>
+			textBox.CopyTextIfNotEmpty();
+
+
 		// Edit beginning patten.
 		async void EditBeginningPattern()
 		{

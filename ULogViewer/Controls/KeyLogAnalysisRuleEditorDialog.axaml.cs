@@ -57,6 +57,11 @@ partial class KeyLogAnalysisRuleEditorDialog : AppSuite.Controls.InputDialog<IUL
 	}
 
 
+	// Copy pattern.
+	void CopyPattern(TextBox textBox) =>
+		textBox.CopyTextIfNotEmpty();
+
+
 	// Edit pattern.
 	async void EditPattern()
 	{

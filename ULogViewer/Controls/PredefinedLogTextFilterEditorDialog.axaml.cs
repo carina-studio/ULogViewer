@@ -83,6 +83,11 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Copy pattern.
+		void CopyPattern(TextBox textBox) =>
+			textBox.CopyTextIfNotEmpty();
+
+
 		// Edit pattern.
 		async void EditPattern()
 		{
