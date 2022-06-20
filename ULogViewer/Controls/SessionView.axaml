@@ -1115,14 +1115,20 @@
 							<ToggleButton Name="logAnalysisRuleSetsButton" Classes="ToolBar_ToggleButton" Grid.Column="2" IsChecked="{Binding #logAnalysisRuleSetsPopup.IsOpen, Mode=TwoWay}" IsVisible="{Binding $parent[UserControl].IsProVersionActivated}" ToolTip.Tip="{DynamicResource String/SessionView.LogAnalysisRuleSets}">
 								<Panel>
 									<Panel IsVisible="{Binding !$parent[ToggleButton].IsChecked}">
-										<Image Classes="Icon" IsVisible="{Binding !KeyLogAnalysisRuleSets.Count}" Source="{StaticResource Image/Icon.More}"/>
-										<Image Classes="Icon" IsVisible="{Binding KeyLogAnalysisRuleSets.Count}">
+										<Image Classes="Icon" IsVisible="{Binding !KeyLogAnalysisRuleSets.Count}" Source="{StaticResource Image/Checklist}"/>
+										<Image Classes="Icon">
+											<Image.IsVisible>
+												<MultiBinding Converter="{x:Static aConverters:BoolConverters.Or}">
+													<Binding Path="KeyLogAnalysisRuleSets.Count" Converter="{x:Static appControls:SessionView.NumberToBooleanConverter}"/>
+													<Binding Path="OperationDurationAnalysisRuleSets.Count" Converter="{x:Static appControls:SessionView.NumberToBooleanConverter}"/>
+												</MultiBinding>
+											</Image.IsVisible>
 											<DrawingImage>
-												<GeometryDrawing Brush="{DynamicResource Brush/Accent}" Geometry="{StaticResource Geometry/Icon.More}"/>
+												<GeometryDrawing Brush="{DynamicResource Brush/Accent}" Geometry="{StaticResource Geometry/Checklist}"/>
 											</DrawingImage>
 										</Image>
 									</Panel>
-									<Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.More.Light}"/>
+									<Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Checklist.Light}"/>
 								</Panel>
 							</ToggleButton>
 							<Popup Name="logAnalysisRuleSetsPopup" IsLightDismissEnabled="True" MaxHeight="{StaticResource Double/SessionView.LogAnalysisRuleSetsPopup.MaxHeight}" PlacementMode="Bottom" PlacementTarget="{Binding #logAnalysisRuleSetsButton}" Width="{StaticResource Double/SessionView.LogAnalysisRuleSetsPopup.Width}" WindowManagerAddShadowHint="True">
