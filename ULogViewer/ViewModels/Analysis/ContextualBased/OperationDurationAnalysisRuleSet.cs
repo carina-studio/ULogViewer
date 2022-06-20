@@ -65,6 +65,27 @@ class OperationDurationAnalysisRuleSet : BaseProfile<IULogViewerApplication>
         }
 
         /// <summary>
+        /// Initialize new <see cref="Rule"/> instance.
+        /// </summary>
+        /// <param name="template">Template rule.</param>
+        /// <param name="operationName">Operation name.</param>
+        public Rule(Rule template, string operationName)
+        {
+            this.BeginningConditions = template.BeginningConditions;
+            this.BeginningPattern = template.BeginningPattern;
+            this.BeginningPostActions = template.BeginningPostActions;
+            this.BeginningPreActions = template.BeginningPreActions;
+            this.CustomMessage = template.CustomMessage;
+            this.EndingConditions = template.EndingConditions;
+            this.EndingMode = template.EndingMode;
+            this.EndingPattern = template.EndingPattern;
+            this.EndingPostActions = template.EndingPostActions;
+            this.EndingPreActions = template.EndingPreActions;
+            this.EndingVariables = template.EndingVariables;
+            this.OperationName = operationName;
+        }
+
+        /// <summary>
         /// Get list of conditions for beginning of operation log after text matched.
         /// </summary>
         public IList<ContextualBasedAnalysisCondition> BeginningConditions { get; }

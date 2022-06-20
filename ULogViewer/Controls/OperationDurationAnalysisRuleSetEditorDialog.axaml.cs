@@ -9,6 +9,7 @@ using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ULogViewer.ViewModels.Analysis.ContextualBased;
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace CarinaStudio.ULogViewer.Controls
 {
@@ -20,6 +21,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Static fields.
 		static readonly AvaloniaProperty<bool> AreValidParametersProperty = AvaloniaProperty.Register<OperationDurationAnalysisRuleSetEditorDialog, bool>("AreValidParameters");
 		static readonly Dictionary<OperationDurationAnalysisRuleSet, OperationDurationAnalysisRuleSetEditorDialog> DialogWithEditingRuleSets = new();
+		static readonly Regex OriginalOperationNameRegex = new("^(?<Name>.+)\\s\\(\\d+\\)$");
 
 		
 		// Fields.
@@ -86,6 +88,45 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// close window
 			this.Close();
+		}
+
+
+		// Copy rule.
+		async void CopyRule(ListBoxItem item)
+		{
+			// get rule
+			var rule = (OperationDurationAnalysisRuleSet.Rule)item.DataContext.AsNonNull();
+			var index = this.rules.IndexOf(rule);
+			if (index < 0)
+				return;
+			
+			// find proper name
+			var match = OriginalOperationNameRegex.Match(rule.OperationName);
+			var baseOperationName = match.Success ? match.Groups["Name"].Value : rule.OperationName;
+			var selectedOperationName = baseOperationName;
+			for (var i = 2; i <= 99; ++i)
+			{
+				var operationName = $"{baseOperationName} ({i})";
+				if (this.rules.FirstOrDefault(it => it.OperationName == operationName) == null)
+				{
+					selectedOperationName = operationName;
+					break;
+				}
+			}
+
+			// edit rule
+			var newRule = await new OperationDurationAnalysisRuleEditorDialog()
+			{
+				Rule = new OperationDurationAnalysisRuleSet.Rule(rule, selectedOperationName),
+			}.ShowDialog<OperationDurationAnalysisRuleSet.Rule?>(this);
+			
+			// add rule
+			if (newRule != null)
+			{
+				this.rules.Add(newRule);
+				this.ruleListBox.SelectedItem = newRule;
+				this.ruleListBox.Focus();
+			}
 		}
 
 

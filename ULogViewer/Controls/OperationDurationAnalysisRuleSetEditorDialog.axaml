@@ -69,6 +69,9 @@
 									<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveRule}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
 										<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Delete}"/>
 									</Button>
+									<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].CopyRule}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Copy}">
+										<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Copy}"/>
+									</Button>
 									<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditRule}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
 										<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Edit}"/>
 									</Button>
