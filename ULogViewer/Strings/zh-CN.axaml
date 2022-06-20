@@ -122,6 +122,8 @@
 	<!-- ContextualBasedAnalysisActionsEditor -->
 	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.DequeueToVariableAction.WithDialog">自队列取出至变量…</sys:String>
 	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.EnqueueVariableAction.WithDialog">将变量加入至队列…</sys:String>
+	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.PeekQueueToVariableAction.WithDialog">自队列复制至变量…</sys:String>
+	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.PeekStackToVariableAction.WithDialog">自堆栈复制至变量…</sys:String>
 	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.PopToVariableAction.WithDialog">自堆栈取出至变量…</sys:String>
 	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.PushVariableAction.WithDialog">将变量加入至堆栈…</sys:String>
 
@@ -524,6 +526,12 @@
 	<sys:String x:Key="String/OperationEndingMode.CompareVariables">比对变量</sys:String>
 	<sys:String x:Key="String/OperationEndingMode.FirstInFirstOut">先进先出 (FIFO)</sys:String>
 	<sys:String x:Key="String/OperationEndingMode.FirstInLastOut">先进后出 (FILO)</sys:String>
+
+	<!-- PeekQueueToVariableAction -->
+	<sys:String x:Key="String/PeekQueueToVariableAction">从队列 '{0}' 复制值至 $({1})</sys:String>
+
+	<!-- PeekStackToVariableAction -->
+	<sys:String x:Key="String/PeekStackToVariableAction">从堆栈 '{0}' 复制值至 $({1})</sys:String>
 
 	<!-- PopToVarEditorDialog -->
 	<sys:String x:Key="String/PopToVarEditorDialog.Stack">堆栈名称 (必要)</sys:String>

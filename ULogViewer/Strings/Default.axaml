@@ -131,6 +131,8 @@
 	<!-- ContextualBasedAnalysisActionsEditor -->
 	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.DequeueToVariableAction.WithDialog">Dequeue from queue to variable…</sys:String>
 	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.EnqueueVariableAction.WithDialog">Enqueue variable to queue…</sys:String>
+	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.PeekQueueToVariableAction.WithDialog">Copy from queue to variable…</sys:String>
+	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.PeekStackToVariableAction.WithDialog">Copy from stack to variable…</sys:String>
 	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.PopToVariableAction.WithDialog">Pop from stack to variable…</sys:String>
 	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.PushVariableAction.WithDialog">Push variable to stack…</sys:String>
 
@@ -556,6 +558,12 @@
 	<sys:String x:Key="String/OperationEndingMode.CompareVariables">Compare variables</sys:String>
 	<sys:String x:Key="String/OperationEndingMode.FirstInFirstOut">First in, first out</sys:String>
 	<sys:String x:Key="String/OperationEndingMode.FirstInLastOut">First in, last out</sys:String>
+
+	<!-- PeekQueueToVariableAction -->
+	<sys:String x:Key="String/PeekQueueToVariableAction">Copy value from queue '{0}' to $({1})</sys:String>
+
+	<!-- PeekStackToVariableAction -->
+	<sys:String x:Key="String/PeekStackToVariableAction">Copy value from stack '{0}' to $({1})</sys:String>
 
 	<!-- PopToVarEditorDialog -->
 	<sys:String x:Key="String/PopToVarEditorDialog.Stack">Name of stack (required)</sys:String>

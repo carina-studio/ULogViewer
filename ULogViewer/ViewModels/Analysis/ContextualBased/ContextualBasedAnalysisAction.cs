@@ -188,6 +188,138 @@ class EnqueueVariableAction : VariableAction
 
 
 /// <summary>
+/// Peek value in front of queue and put to variable.
+/// </summary>
+class PeekQueueToVariableAction : VariableAction
+{
+    /// <summary>
+    /// Initialize new <see cref="PeekQueueToVariableAction"/> instance.
+    /// </summary>
+    /// <param name="queue">Name of queue.</param>
+    /// <param name="variable">Name of variable.</param>
+    public PeekQueueToVariableAction(string queue, string variable) : base(variable)
+    {
+        this.Queue = queue;
+    }
+
+
+    /// <inheritdoc/>
+    public override bool Equals(ContextualBasedAnalysisAction? action) =>
+        action is EnqueueVariableAction evAction
+        && this.Queue == evAction.Queue
+        && this.Variable == evAction.Variable;
+    
+
+    /// <summary>
+    /// Load action from JSON format data.
+    /// </summary>
+    /// <param name="jsonElement">JSON element.</param>
+    /// <returns>Loaded action.</returns>
+    public static EnqueueVariableAction Load(JsonElement jsonElement)
+    {
+        var queue = jsonElement.GetProperty(nameof(Queue)).GetString().AsNonNull();
+        var variable = jsonElement.GetProperty(nameof(Variable)).GetString().AsNonNull();
+        return new(variable, queue);
+    }
+
+
+    /// <inheritdoc/>
+    public override bool Perform(ContextualBasedAnalysisContext context, DisplayableLog log, params object?[] parameters)
+    {
+        throw new NotImplementedException();
+    }
+
+
+    /// <summary>
+    /// Get name of queue to enqueue variable.
+    /// </summary>
+    public string Queue { get; }
+
+
+    /// <inheritdoc/>
+    public override void Save(Utf8JsonWriter writer)
+    {
+        writer.WriteStartObject();
+        writer.WriteString("Type", this.GetType().Name);
+        writer.WriteString(nameof(Queue), this.Queue);
+        writer.WriteString(nameof(Variable), this.Variable);
+        writer.WriteEndObject();
+    }
+
+
+    /// <inheritdoc/>
+    public override string? ToString() =>
+        App.CurrentOrNull?.GetFormattedString("PeekQueueToVariableAction", this.Queue, this.Variable) ?? base.ToString();
+}
+
+
+/// <summary>
+/// Peek value at top of stack and put to variable.
+/// </summary>
+class PeekStackToVariableAction : VariableAction
+{
+    /// <summary>
+    /// Initialize new <see cref="PeekStackToVariableAction"/> instance.
+    /// </summary>
+    /// <param name="stack">Name of stack.</param>
+    /// <param name="variable">Name of variable.</param>
+    public PeekStackToVariableAction(string stack, string variable) : base(variable)
+    {
+        this.Stack = stack;
+    }
+
+
+    /// <inheritdoc/>
+    public override bool Equals(ContextualBasedAnalysisAction? action) =>
+        action is PopToVariableAction ptvAction
+        && this.Stack == ptvAction.Stack
+        && this.Variable == ptvAction.Variable;
+    
+
+    /// <summary>
+    /// Load action from JSON format data.
+    /// </summary>
+    /// <param name="jsonElement">JSON element.</param>
+    /// <returns>Loaded action.</returns>
+    public static PopToVariableAction Load(JsonElement jsonElement)
+    {
+        var variable = jsonElement.GetProperty(nameof(Variable)).GetString().AsNonNull();
+        var stack = jsonElement.GetProperty(nameof(Stack)).GetString().AsNonNull();
+        return new(stack, variable);
+    }
+
+
+    /// <inheritdoc/>
+    public override bool Perform(ContextualBasedAnalysisContext context, DisplayableLog log, params object?[] parameters)
+    {
+        throw new NotImplementedException();
+    }
+
+
+    /// <inheritdoc/>
+    public override void Save(Utf8JsonWriter writer)
+    {
+        writer.WriteStartObject();
+        writer.WriteString("Type", this.GetType().Name);
+        writer.WriteString(nameof(Stack), this.Stack);
+        writer.WriteString(nameof(Variable), this.Variable);
+        writer.WriteEndObject();
+    }
+
+
+    /// <summary>
+    /// Get name of stack to pop value.
+    /// </summary>
+    public string Stack { get; }
+
+
+    /// <inheritdoc/>
+    public override string? ToString() =>
+        App.CurrentOrNull?.GetFormattedString("PeekStackToVariableAction", this.Stack, this.Variable) ?? base.ToString();
+}
+
+
+/// <summary>
 /// Action to pop value to given variable.
 /// </summary>
 class PopToVariableAction : VariableAction

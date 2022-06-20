@@ -122,6 +122,8 @@
 	<!-- ContextualBasedAnalysisActionsEditor -->
 	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.DequeueToVariableAction.WithDialog">自佇列取出至變數…</sys:String>
 	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.EnqueueVariableAction.WithDialog">將變數加入至佇列…</sys:String>
+	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.PeekQueueToVariableAction.WithDialog">自佇列複製至變數…</sys:String>
+	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.PeekStackToVariableAction.WithDialog">自堆疊複製至變數…</sys:String>
 	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.PopToVariableAction.WithDialog">自堆疊取出至變數…</sys:String>
 	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.PushVariableAction.WithDialog">將變數加入至堆疊…</sys:String>
 
@@ -524,6 +526,12 @@
 	<sys:String x:Key="String/OperationEndingMode.CompareVariables">比對變數</sys:String>
 	<sys:String x:Key="String/OperationEndingMode.FirstInFirstOut">先進先出 (FIFO)</sys:String>
 	<sys:String x:Key="String/OperationEndingMode.FirstInLastOut">先進後出 (FILO)</sys:String>
+
+	<!-- PeekQueueToVariableAction -->
+	<sys:String x:Key="String/PeekQueueToVariableAction">從佇列 '{0}' 複製值至 $({1})</sys:String>
+
+	<!-- PeekStackToVariableAction -->
+	<sys:String x:Key="String/PeekStackToVariableAction">從堆疊 '{0}' 複製值至 $({1})</sys:String>
 
 	<!-- PopToVarEditorDialog -->
 	<sys:String x:Key="String/PopToVarEditorDialog.Stack">堆疊名稱 (必要)</sys:String>
