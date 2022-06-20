@@ -107,6 +107,31 @@ partial class KeyLogAnalysisRuleSetEditorDialog : AppSuite.Controls.Window<IULog
 	}
 
 
+	// Copy rule.
+		async void CopyRule(ListBoxItem item)
+		{
+			// get rule
+			var rule = (KeyLogAnalysisRuleSet.Rule)item.DataContext.AsNonNull();
+			var index = this.rules.IndexOf(rule);
+			if (index < 0)
+				return;
+
+			// edit rule
+			var newRule = await new KeyLogAnalysisRuleEditorDialog()
+			{
+				Rule = rule,
+			}.ShowDialog<KeyLogAnalysisRuleSet.Rule?>(this);
+			
+			// add rule
+			if (newRule != null)
+			{
+				this.rules.Add(newRule);
+				this.ruleListBox.SelectedItem = newRule;
+				this.ruleListBox.Focus();
+			}
+		}
+
+
 	// Edit rule.
 	void EditRule(ListBoxItem item)
 	{
