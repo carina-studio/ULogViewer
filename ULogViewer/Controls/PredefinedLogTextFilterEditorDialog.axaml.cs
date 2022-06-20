@@ -75,7 +75,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			else
 				filter = new PredefinedLogTextFilter(this.Application, name, regex);
-			if (PredefinedLogTextFilterManager.Default.Filters.Contains(filter))
+			if (!PredefinedLogTextFilterManager.Default.Filters.Contains(filter))
 				PredefinedLogTextFilterManager.Default.AddFilter(filter);
 
 			// close window

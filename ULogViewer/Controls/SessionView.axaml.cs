@@ -1025,6 +1025,16 @@ namespace CarinaStudio.ULogViewer.Controls
 		ICommand CopyLogPropertyCommand { get; }
 
 
+		// Copy selected predefined log text filter.
+		void CopyPredefinedLogTextFilter(PredefinedLogTextFilter filter)
+		{
+			if (this.attachedWindow == null)
+				return;
+			var newFilter = new PredefinedLogTextFilter(this.Application, filter.Name ?? "", filter.Regex);
+			PredefinedLogTextFilterEditorDialog.Show(this.attachedWindow, newFilter, null);
+		}
+
+
 		// Copy selected logs.
 		void CopySelectedLogs()
 		{
