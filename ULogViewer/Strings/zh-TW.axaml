@@ -524,7 +524,6 @@
 	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.Title">編輯動作時距分析規則集</sys:String>
 
 	<!-- OperationEndingMode -->
-	<sys:String x:Key="String/OperationEndingMode.CompareVariables">比對變數</sys:String>
 	<sys:String x:Key="String/OperationEndingMode.FirstInFirstOut">先進先出 (FIFO)</sys:String>
 	<sys:String x:Key="String/OperationEndingMode.FirstInLastOut">先進後出 (FILO)</sys:String>
 

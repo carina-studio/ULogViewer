@@ -325,8 +325,4 @@ enum OperationEndingMode
     /// First-in Last-out.
     /// </summary>
     FirstInLastOut,
-    /// <summary>
-    /// One or more variables of begin/end are equivalent.
-    /// </summary>
-    CompareVariables,
 }

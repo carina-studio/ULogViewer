@@ -126,7 +126,7 @@
 					<!-- Ending variables -->
 					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.EndingVariables}"/>
 					<Grid ColumnDefinitions="*,Auto">
-						<asControls:ListBox Name="endingVariableListBox" Height="{StaticResource Double/OperationDurationAnalysisRuleEditorDialog.VariableListBox.Height}" IsEnabled="{Binding #endingModeComboBox.SelectedItem, Converter={x:Static abConverters:ObjectConverters.IsEquivalentTo}, ConverterParameter={x:Static appCtxlBased:OperationEndingMode.CompareVariables}}" Items="{Binding $parent[Window].EndingVariables}">
+						<asControls:ListBox Name="endingVariableListBox" Height="{StaticResource Double/OperationDurationAnalysisRuleEditorDialog.VariableListBox.Height}" Items="{Binding $parent[Window].EndingVariables}">
 							<asControls:ListBox.ItemTemplate>
 								<DataTemplate>
 									<Grid ColumnDefinitions="*,Auto">

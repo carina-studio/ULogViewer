@@ -558,7 +558,6 @@
 	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.Title">Edit operation duration analysis rule set</sys:String>
 
 	<!-- OperationEndingMode -->
-	<sys:String x:Key="String/OperationEndingMode.CompareVariables">Compare variables</sys:String>
 	<sys:String x:Key="String/OperationEndingMode.FirstInFirstOut">First in, first out</sys:String>
 	<sys:String x:Key="String/OperationEndingMode.FirstInLastOut">First in, last out</sys:String>
 
