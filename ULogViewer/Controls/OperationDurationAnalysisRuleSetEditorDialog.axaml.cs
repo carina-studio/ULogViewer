@@ -68,6 +68,17 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		/// <summary>
+		/// Class dialog which is editing the given rule set.
+		/// </summary>
+		/// <param name="ruleSet">Rule set.</param>
+		public static void Close(OperationDurationAnalysisRuleSet ruleSet)
+		{
+			if (DialogWithEditingRuleSets.TryGetValue(ruleSet, out var dialog))
+				dialog.Close();
+		}
+
+
 		// Complete editing.
 		void CompleteEditing()
 		{

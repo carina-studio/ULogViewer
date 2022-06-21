@@ -3894,20 +3894,40 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Remove given key log analysis rule set.
-		void RemoveKeyLogAnalysisRuleSet(KeyLogAnalysisRuleSet? ruleSet)
+		async void RemoveKeyLogAnalysisRuleSet(KeyLogAnalysisRuleSet? ruleSet)
 		{
-			if (ruleSet == null)
+			if (ruleSet == null || this.attachedWindow == null)
 				return;
-			KeyLogAnalysisRuleSetManager.Default.RemoveRuleSet(ruleSet);
+			var result = await new MessageDialog()
+			{
+				Buttons = MessageDialogButtons.YesNo,
+				Icon = MessageDialogIcon.Question,
+				Message = this.Application.GetFormattedString("SessionView.ConfirmRemovingLogAnalysisRuleSet", ruleSet.Name),
+			}.ShowDialog(this.attachedWindow);
+			if (result == MessageDialogResult.Yes)
+			{
+				KeyLogAnalysisRuleSetEditorDialog.Close(ruleSet);
+				KeyLogAnalysisRuleSetManager.Default.RemoveRuleSet(ruleSet);
+			}
 		}
 
 
 		// Remove given operation duration analysis rule set.
-		void RemoveOperationDurationAnalysisRuleSet(OperationDurationAnalysisRuleSet? ruleSet)
+		async void RemoveOperationDurationAnalysisRuleSet(OperationDurationAnalysisRuleSet? ruleSet)
 		{
-			if (ruleSet == null)
+			if (ruleSet == null || this.attachedWindow == null)
 				return;
-			OperationDurationAnalysisRuleSetManager.Default.RemoveRuleSet(ruleSet);
+			var result = await new MessageDialog()
+			{
+				Buttons = MessageDialogButtons.YesNo,
+				Icon = MessageDialogIcon.Question,
+				Message = this.Application.GetFormattedString("SessionView.ConfirmRemovingLogAnalysisRuleSet", ruleSet.Name),
+			}.ShowDialog(this.attachedWindow);
+			if (result == MessageDialogResult.Yes)
+			{
+				OperationDurationAnalysisRuleSetEditorDialog.Close(ruleSet);
+				OperationDurationAnalysisRuleSetManager.Default.RemoveRuleSet(ruleSet);
+			}
 		}
 
 

@@ -589,6 +589,7 @@
 	<sys:String x:Key="String/SessionView.ClearLogAnalysisRuleSetsSelection">清除选择</sys:String>
 	<sys:String x:Key="String/SessionView.ClearLogFiles">清除所有已加入的日志档案</sys:String>
 	<sys:String x:Key="String/SessionView.ClearPredefinedLogTextFiltersSelection">清除选择</sys:String>
+	<sys:String x:Key="String/SessionView.ConfirmRemovingLogAnalysisRuleSet">您是否确定要移除规则集「{0}」？</sys:String>
 	<sys:String x:Key="String/SessionView.ConfirmSelectingAllLogs">选择大量日志会使用一些时间，是否继续选择？</sys:String>
 	<sys:String x:Key="String/SessionView.CopyLogFileName">复制档案名称</sys:String>
 	<sys:String x:Key="String/SessionView.CopyLogFilePath">复制完整档案路径</sys:String>
