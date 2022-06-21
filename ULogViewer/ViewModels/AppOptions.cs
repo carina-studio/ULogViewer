@@ -48,7 +48,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				return -1;
 			if (y == LogProfileManager.Default.EmptyProfile)
 				return 1;
-			var result = string.Compare(x.Name, y.Name);
+			var result = string.CompareOrdinal(x.Name, y.Name);
 			if (result != 0)
 				return result;
 			result = x.Id.CompareTo(y.Id);

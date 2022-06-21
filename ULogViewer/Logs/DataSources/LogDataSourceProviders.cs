@@ -17,7 +17,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		static volatile IULogViewerApplication? app;
 		static volatile EmptyLogDataSourceProvider? empty;
 		static volatile ILogger? logger;
-		static readonly SortedObservableList<ILogDataSourceProvider> providers = new((lhs, rhs) => string.Compare(lhs.Name, rhs.Name));
+		static readonly SortedObservableList<ILogDataSourceProvider> providers = new((lhs, rhs) => string.CompareOrdinal(lhs.Name, rhs.Name));
 
 
 		/// <summary>

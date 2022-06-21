@@ -946,7 +946,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			if (y == null)
 				return 1;
-			var result = string.Compare(x.Name, y.Name);
+			var result = string.CompareOrdinal(x.Name, y.Name);
 			if (result != 0)
 				return result;
 			return x.GetHashCode() - y.GetHashCode();
