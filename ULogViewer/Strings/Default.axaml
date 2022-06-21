@@ -160,7 +160,7 @@
 	<sys:String x:Key="String/DequeueToVarEditorDialog.Title">Dequeu value from queue to variable</sys:String>
 
 	<!-- DequeueToVariableAction -->
-	<sys:String x:Key="String/DequeueToVariableAction">Dequeue value from queue '{0}' to $({1})</sys:String>
+	<sys:String x:Key="String/DequeueToVariableAction">Dequeue value from queue '{0}' to {{{1}}}</sys:String>
 
 	<!-- DisplayableLogAnalysisResultType -->
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Checkpoint">Checkpoint</sys:String>
@@ -178,7 +178,7 @@
 	<sys:String x:Key="String/EnqueueVarEditorDialog.Variable">Name of variable (required)</sys:String>
 
 	<!-- EnqueueVariableAction -->
-	<sys:String x:Key="String/EnqueueVariableAction">Enqueue $({0}) to queue '{1}'</sys:String>
+	<sys:String x:Key="String/EnqueueVariableAction">Enqueue {{{0}}} to queue '{1}'</sys:String>
 
 	<!-- ExternalDependency-->
 	<sys:String x:Key="String/ExternalDependency.AndroidSDK">Android SDK</sys:String>
@@ -565,19 +565,19 @@
 	<sys:String x:Key="String/PeekQueueToVarEditorDialog.Title">Copy value from queue to variable</sys:String>
 
 	<!-- PeekQueueToVariableAction -->
-	<sys:String x:Key="String/PeekQueueToVariableAction">Copy value from queue '{0}' to $({1})</sys:String>
+	<sys:String x:Key="String/PeekQueueToVariableAction">Copy value from queue '{0}' to {{{1}}}</sys:String>
 
 	<!-- PeekStackToVarEditorDialog -->
 	<sys:String x:Key="String/PeekStackToVarEditorDialog.Title">Copy value from stack to variable</sys:String>
 
 	<!-- PeekStackToVariableAction -->
-	<sys:String x:Key="String/PeekStackToVariableAction">Copy value from stack '{0}' to $({1})</sys:String>
+	<sys:String x:Key="String/PeekStackToVariableAction">Copy value from stack '{0}' to {{{1}}}</sys:String>
 
 	<!-- PopToVarEditorDialog -->
 	<sys:String x:Key="String/PopToVarEditorDialog.Title">Pop value from stack to variable</sys:String>
 
 	<!-- PopToVariableAction -->
-	<sys:String x:Key="String/PopToVariableAction">Pop value from stack '{0}' to $({1})</sys:String>
+	<sys:String x:Key="String/PopToVariableAction">Pop value from stack '{0}' to {{{1}}}</sys:String>
 
 	<!-- PredefinedLogTextFilterEditorDialog -->
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Name">Name (required)</sys:String>
@@ -587,12 +587,10 @@
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Title.Edit">Edit text filter</sys:String>
 
 	<!-- PushVarEditorDialog -->
-	<sys:String x:Key="String/PushVarEditorDialog.Stack">Name of stack (required)</sys:String>
 	<sys:String x:Key="String/PushVarEditorDialog.Title">Push value of variable to stack</sys:String>
-	<sys:String x:Key="String/PushVarEditorDialog.Variable">Name of variable (required)</sys:String>
 
 	<!-- PushVariableAction -->
-	<sys:String x:Key="String/PushVariableAction">Push $({0}) to stack '{1}'</sys:String>
+	<sys:String x:Key="String/PushVariableAction">Push {{{0}}} to stack '{1}'</sys:String>
 
 	<!-- RegexEditorDialog -->
 	<sys:String x:Key="String/RegexEditorDialog.CapturingGroupsDisabled">Grouping is unsupported for this pattern.</sys:String>
@@ -781,10 +779,10 @@
 	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Variable">Variable name</sys:String>
 
 	<!-- VariableAndConstantComparisonCondition -->
-	<sys:String x:Key="String/VariableAndConstantComparisonCondition">$({0}) {1} '{2}'</sys:String>
+	<sys:String x:Key="String/VariableAndConstantComparisonCondition">{{{0}}} {1} '{2}'</sys:String>
 
 	<!-- VariablesComparisonCondition -->
-	<sys:String x:Key="String/VariablesComparisonCondition">$({0}) {1} $({2})</sys:String>
+	<sys:String x:Key="String/VariablesComparisonCondition">{{{0}}} {1} {{{2}}}</sys:String>
 
 	<!-- VisibleLogPropertyEditorDialog -->
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.CustomDisplayName">Custom display name</sys:String>

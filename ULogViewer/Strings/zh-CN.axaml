@@ -151,7 +151,7 @@
 	<sys:String x:Key="String/DequeueToVarEditorDialog.Title">取出队列值至变量</sys:String>
 
 	<!-- DequeueToVariableAction -->
-	<sys:String x:Key="String/DequeueToVariableAction">從队列 '{0}' 取出值至 $({1})</sys:String>
+	<sys:String x:Key="String/DequeueToVariableAction">從队列「{0}」取出值至 {{{1}}}</sys:String>
 
 	<!-- DisplayableLogAnalysisResultType -->
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Checkpoint">检查点</sys:String>
@@ -167,7 +167,7 @@
 	<sys:String x:Key="String/EnqueueVarEditorDialog.Title">将变量值加入队列</sys:String>
 
 	<!-- EnqueueVariableAction -->
-	<sys:String x:Key="String/EnqueueVariableAction">将 $({0}) 加入至队列 '{1}'</sys:String>
+	<sys:String x:Key="String/EnqueueVariableAction">将 {{{0}}} 加入至队列「{1}」</sys:String>
 
 	<!-- ExternalDependency-->
 	<sys:String x:Key="String/ExternalDependency.AndroidSDK">Android SDK</sys:String>
@@ -531,19 +531,19 @@
 	<sys:String x:Key="String/PeekQueueToVarEditorDialog.Title">从队列复制值至变量</sys:String>
 
 	<!-- PeekQueueToVariableAction -->
-	<sys:String x:Key="String/PeekQueueToVariableAction">从队列 '{0}' 复制值至 $({1})</sys:String>
+	<sys:String x:Key="String/PeekQueueToVariableAction">从队列「{0}」复制值至 {{{1}}}</sys:String>
 
 	<!-- PeekStackToVarEditorDialog -->
 	<sys:String x:Key="String/PeekStackToVarEditorDialog.Title">从堆栈复制值至变量</sys:String>
 
 	<!-- PeekStackToVariableAction -->
-	<sys:String x:Key="String/PeekStackToVariableAction">从堆栈 '{0}' 复制值至 $({1})</sys:String>
+	<sys:String x:Key="String/PeekStackToVariableAction">从堆栈「{0}」复制值至 {{{1}}}</sys:String>
 
 	<!-- PopToVarEditorDialog -->
 	<sys:String x:Key="String/PopToVarEditorDialog.Title">取出堆栈值至变量</sys:String>
 
 	<!-- PopToVariableAction -->
-	<sys:String x:Key="String/PopToVariableAction">从堆栈 '{0}' 取出值至 $({1})</sys:String>
+	<sys:String x:Key="String/PopToVariableAction">从堆栈「{0}」取出值至 {{{1}}}</sys:String>
 
 	<!-- PredefinedLogTextFilterEditorDialog -->
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Name">名称 (必要)</sys:String>
@@ -556,7 +556,7 @@
 	<sys:String x:Key="String/PushVarEditorDialog.Title">将变量值加入堆栈</sys:String>
 
 	<!-- PushVariableAction -->
-	<sys:String x:Key="String/PushVariableAction">将 $({0}) 加入至堆栈 '{1}'</sys:String>
+	<sys:String x:Key="String/PushVariableAction">将 {{{0}}} 加入至堆栈「{1}」</sys:String>
 
 	<!-- RegexEditorDialog -->
 	<sys:String x:Key="String/RegexEditorDialog.CapturingGroupsDisabled">分组在此格式中被禁用</sys:String>

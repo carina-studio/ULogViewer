@@ -151,7 +151,7 @@
 	<sys:String x:Key="String/DequeueToVarEditorDialog.Title">取出佇列值至變數</sys:String>
 
 	<!-- DequeueToVariableAction -->
-	<sys:String x:Key="String/DequeueToVariableAction">從佇列 '{0}' 取出值至 $({1})</sys:String>
+	<sys:String x:Key="String/DequeueToVariableAction">從佇列「{0}」取出值至 {{{1}}}</sys:String>
 
 	<!-- DisplayableLogAnalysisResultType -->
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Checkpoint">檢查點</sys:String>
@@ -167,7 +167,7 @@
 	<sys:String x:Key="String/EnqueueVarEditorDialog.Title">將變數值加入佇列</sys:String>
 
 	<!-- EnqueueVariableAction -->
-	<sys:String x:Key="String/EnqueueVariableAction">將 $({0}) 加入至佇列 '{1}'</sys:String>
+	<sys:String x:Key="String/EnqueueVariableAction">將 {{{0}}} 加入至佇列「{1}」</sys:String>
 
 	<!-- ExternalDependency-->
 	<sys:String x:Key="String/ExternalDependency.AndroidSDK">Android SDK</sys:String>
@@ -531,19 +531,19 @@
 	<sys:String x:Key="String/PeekQueueToVarEditorDialog.Title">從佇列複製值至變數</sys:String>
 
 	<!-- PeekQueueToVariableAction -->
-	<sys:String x:Key="String/PeekQueueToVariableAction">從佇列 '{0}' 複製值至 $({1})</sys:String>
+	<sys:String x:Key="String/PeekQueueToVariableAction">從佇列「{0}」複製值至 {{{1}}}</sys:String>
 
 	<!-- PeekStackToVarEditorDialog -->
 	<sys:String x:Key="String/PeekStackToVarEditorDialog.Title">從佇堆疊製值至變數</sys:String>
 
 	<!-- PeekStackToVariableAction -->
-	<sys:String x:Key="String/PeekStackToVariableAction">從堆疊 '{0}' 複製值至 $({1})</sys:String>
+	<sys:String x:Key="String/PeekStackToVariableAction">從堆疊「{0}」複製值至 {{{1}}}</sys:String>
 
 	<!-- PopToVarEditorDialog -->
 	<sys:String x:Key="String/PopToVarEditorDialog.Title">取出堆疊值至變數</sys:String>
 
 	<!-- PopToVariableAction -->
-	<sys:String x:Key="String/PopToVariableAction">從堆疊 '{0}' 取出值至 $({1})</sys:String>
+	<sys:String x:Key="String/PopToVariableAction">從堆疊「{0}」取出值至 {{{1}}}</sys:String>
 
 	<!-- PredefinedLogTextFilterEditorDialog -->
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Name">名稱 (必要)</sys:String>
@@ -556,7 +556,7 @@
 	<sys:String x:Key="String/PushVarEditorDialog.Title">將變數值加入堆疊</sys:String>
 
 	<!-- PushVariableAction -->
-	<sys:String x:Key="String/PushVariableAction">將 $({0}) 加入至堆疊 '{1}'</sys:String>
+	<sys:String x:Key="String/PushVariableAction">將 {{{0}}} 加入至堆疊「{1}」</sys:String>
 
 	<!-- RegexEditorDialog -->
 	<sys:String x:Key="String/RegexEditorDialog.CapturingGroupsDisabled">分組在此格式中不被支援</sys:String>
