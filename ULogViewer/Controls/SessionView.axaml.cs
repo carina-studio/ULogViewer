@@ -130,6 +130,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		static readonly AvaloniaProperty<FontFamily> LogFontFamilyProperty = AvaloniaProperty.Register<SessionView, FontFamily>(nameof(LogFontFamily));
 		static readonly AvaloniaProperty<double> LogFontSizeProperty = AvaloniaProperty.Register<SessionView, double>(nameof(LogFontSize), 10.0);
 		static readonly AvaloniaProperty<int> MaxDisplayLineCountForEachLogProperty = AvaloniaProperty.Register<SessionView, int>(nameof(MaxDisplayLineCountForEachLog), 1);
+		static readonly MutableObservableValue<object?> NullObservableValue = new();
 		static readonly AvaloniaProperty<TimeSpan?> SelectedLogsDurationProperty = AvaloniaProperty.Register<SessionView, TimeSpan?>(nameof(SelectedLogsDuration));
 		static readonly AvaloniaProperty<SessionViewStatusBarState> StatusBarStateProperty = AvaloniaProperty.Register<SessionView, SessionViewStatusBarState>(nameof(StatusBarState), SessionViewStatusBarState.None);
 
@@ -189,6 +190,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		Control? lastClickedLogPropertyView;
 		readonly ContextMenu logActionMenu;
 		readonly Avalonia.Controls.ListBox logAnalysisResultListBox;
+		readonly ToggleButton logAnalysisRuleSetsButton;
 		readonly Popup logAnalysisRuleSetsPopup;
 		readonly ContextMenu logFileActionMenu;
 		readonly AppSuite.Controls.ListBox logFileListBox;
@@ -215,11 +217,11 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ContextMenu otherActionsMenu;
 		readonly Avalonia.Controls.ListBox predefinedLogTextFilterListBox;
 		readonly SortedObservableList<PredefinedLogTextFilter> predefinedLogTextFilters;
+		readonly ToggleButton predefinedLogTextFiltersButton;
 		readonly Popup predefinedLogTextFiltersPopup;
 		readonly HashSet<Avalonia.Input.Key> pressedKeys = new HashSet<Avalonia.Input.Key>();
 		readonly ScheduledAction reportSelectedLogsTimeInfoAction;
 		readonly ScheduledAction scrollToLatestLogAction;
-		
 		readonly HashSet<KeyLogAnalysisRuleSet> selectedKeyLogAnalysisRuleSets = new();
 		readonly HashSet<OperationDurationAnalysisRuleSet> selectedOperationDurationAnalysisRuleSets = new();
 		readonly HashSet<PredefinedLogTextFilter> selectedPredefinedLogTextFilters = new();
@@ -351,7 +353,11 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.createLogAnalysisRuleSetMenu = ((ContextMenu)this.Resources[nameof(createLogAnalysisRuleSetMenu)].AsNonNull()).Also(it =>
 			{
 				it.MenuClosed += (_, e) => this.SynchronizationContext.Post(() => this.createLogAnalysisRuleSetButton.IsChecked = false);
-				it.MenuOpened += (_, e) => this.SynchronizationContext.Post(() => this.createLogAnalysisRuleSetButton.IsChecked = true);
+				it.MenuOpened += (_, e) => this.SynchronizationContext.Post(() => 
+				{
+					ToolTip.SetIsOpen(this.createLogAnalysisRuleSetButton, false);
+					this.createLogAnalysisRuleSetButton.IsChecked = true;
+				});
 			});
 			this.dragDropReceiverBorder = this.FindControl<Border>(nameof(dragDropReceiverBorder)).AsNonNull();
 			this.keyLogAnalysisRuleSetListBox = this.FindControl<Avalonia.Controls.ListBox>(nameof(keyLogAnalysisRuleSetListBox))!.Also(it =>
@@ -382,7 +388,22 @@ namespace CarinaStudio.ULogViewer.Controls
 				it.DoubleClickOnItem += this.OnLogAnalysisResultListBoxDoubleClickOnItem;
 				it.SelectionChanged += this.OnLogAnalysisResultListBoxSelectionChanged;
 			});
-			this.logAnalysisRuleSetsPopup = this.Get<Popup>(nameof(logAnalysisRuleSetsPopup));
+			this.logAnalysisRuleSetsButton = this.Get<ToggleButton>(nameof(logAnalysisRuleSetsButton));
+			this.logAnalysisRuleSetsPopup = this.Get<Popup>(nameof(logAnalysisRuleSetsPopup)).Also(it =>
+			{
+				var nullToolTipToken = (IDisposable?)null;
+				it.Closed += (_, e) => 
+				{
+					Global.RunWithoutError(() => nullToolTipToken?.Dispose()); // [Workaround] NRE may be thrown inside Avalonia.
+					nullToolTipToken = null;
+					this.logListBox?.Focus();
+				};
+				it.Opened += (_, e) => 
+				{
+					nullToolTipToken = this.logAnalysisRuleSetsButton.Bind(ToolTip.TipProperty, NullObservableValue);
+					this.keyLogAnalysisRuleSetListBox.Focus();
+				};
+			});
 			this.logFileActionMenu = ((ContextMenu)this.Resources[nameof(logFileActionMenu)].AsNonNull()).Also(it =>
 			{
 				it.MenuClosed += (_, e) =>
@@ -447,7 +468,11 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.logsSavingMenu = ((ContextMenu)this.Resources[nameof(logsSavingMenu)].AsNonNull()).Also(it =>
 			{
 				it.MenuClosed += (_, e) => this.SynchronizationContext.Post(() => this.logsSavingButton.IsChecked = false);
-				it.MenuOpened += (_, e) => this.SynchronizationContext.Post(() => this.logsSavingButton.IsChecked = true);
+				it.MenuOpened += (_, e) => this.SynchronizationContext.Post(() => 
+				{
+					ToolTip.SetIsOpen(this.logsSavingButton, false);
+					this.logsSavingButton.IsChecked = true;
+				});
 			});
 			this.logTextFilterTextBox = this.FindControl<RegexTextBox>(nameof(logTextFilterTextBox)).AsNonNull().Also(it =>
 			{
@@ -471,13 +496,28 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.otherActionsMenu = ((ContextMenu)this.Resources[nameof(otherActionsMenu)].AsNonNull()).Also(it =>
 			{
 				it.MenuClosed += (_, e) => this.SynchronizationContext.Post(() => this.otherActionsButton.IsChecked = false);
-				it.MenuOpened += (_, e) => this.SynchronizationContext.Post(() => this.otherActionsButton.IsChecked = true);
+				it.MenuOpened += (_, e) => this.SynchronizationContext.Post(() => 
+				{
+					ToolTip.SetIsOpen(this.otherActionsButton, false);
+					this.otherActionsButton.IsChecked = true;
+				});
 			});
 			this.predefinedLogTextFilterListBox = this.FindControl<Avalonia.Controls.ListBox>(nameof(predefinedLogTextFilterListBox)).AsNonNull();
+			this.predefinedLogTextFiltersButton = this.Get<ToggleButton>(nameof(predefinedLogTextFiltersButton));
 			this.predefinedLogTextFiltersPopup = this.FindControl<Popup>(nameof(predefinedLogTextFiltersPopup)).AsNonNull().Also(it =>
 			{
-				it.Closed += (_, sender) => this.logListBox.Focus();
-				it.Opened += (_, sender) => this.predefinedLogTextFilterListBox.Focus();
+				var nullToolTipToken = (IDisposable?)null;
+				it.Closed += (_, sender) => 
+				{
+					Global.RunWithoutError(() => nullToolTipToken?.Dispose()); // [Workaround] NRE may be thrown inside Avalonia.
+					nullToolTipToken = null;
+					this.logListBox.Focus();
+				};
+				it.Opened += (_, sender) => this.SynchronizationContext.Post(() =>
+				{
+					nullToolTipToken = this.predefinedLogTextFiltersButton.Bind(ToolTip.TipProperty, NullObservableValue);
+					this.predefinedLogTextFilterListBox.Focus();
+				});
 			});
 			this.showLogPropertyMenuItem = this.FindControl<MenuItem>(nameof(showLogPropertyMenuItem)).AsNonNull();
 			this.sidePanelColumn = this.FindControl<Grid>("RootGrid").AsNonNull().Let(grid =>
@@ -520,7 +560,11 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.workingDirectoryActionsMenu = ((ContextMenu)this.Resources[nameof(workingDirectoryActionsMenu)].AsNonNull()).Also(it =>
 			{
 				it.MenuClosed += (_, e) => this.SynchronizationContext.Post(() => this.workingDirectoryActionsButton.IsChecked = false);
-				it.MenuOpened += (_, e) => this.SynchronizationContext.Post(() => this.workingDirectoryActionsButton.IsChecked = true);
+				it.MenuOpened += (_, e) => this.SynchronizationContext.Post(() => 
+				{
+					ToolTip.SetIsOpen(this.workingDirectoryActionsButton, false);
+					this.workingDirectoryActionsButton.IsChecked = true;
+				});
 			});
 
 			// find menu items
@@ -4373,14 +4417,13 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 			if (this.DataContext is not Session session || !session.IsActivated || !session.IsLogAnalysisPanelVisible)
 				return;
-			var button = this.Get<Control>("logAnalysisRuleSetsButton");
-			if (!button.IsEffectivelyVisible)
+			if (!this.logAnalysisRuleSetsButton.IsEffectivelyVisible)
 				return;
 
 			// show tutorial
 			window.ShowTutorial(new Tutorial().Also(it =>
 			{
-				it.Anchor = button;
+				it.Anchor = this.logAnalysisRuleSetsButton;
 				it.Bind(Tutorial.DescriptionProperty, this.GetResourceObservable("String/SessionView.Tutorial.SelectLogAnalysisRuleSets"));
 				it.Dismissed += (_, e) => 
 					this.PersistentState.SetValue<bool>(IsSelectLogAnalysisRuleSetsTutorialShownKey, true);
