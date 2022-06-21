@@ -277,7 +277,8 @@ class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.Fi
         var isTextRegexMatched = false;
         if (isTextFilteringNeeded)
         {
-            var textRegexCount = token.TextRegexList.Count;
+            var textRegexList = token.TextRegexList;
+            var textRegexCount = textRegexList.Count;
             var textPropertyCount = token.LogTextPropertyGetters.Count;
             var textToMatchBuilder = logTextToMatchBuilder ?? new StringBuilder().Also(it => logTextToMatchBuilder = it);
             for (var j = 0; j < textPropertyCount; ++j)
