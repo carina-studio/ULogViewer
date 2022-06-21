@@ -85,10 +85,10 @@ partial class KeyLogAnalysisRuleSetEditorDialog : AppSuite.Controls.Window<IULog
 
 
 	/// <summary>
-	/// Class dialog which is editing the given rule set.
+	/// Class all dialogs which are editing the given rule set.
 	/// </summary>
 	/// <param name="ruleSet">Rule set.</param>
-	public static void Close(KeyLogAnalysisRuleSet ruleSet)
+	public static void CloseAll(KeyLogAnalysisRuleSet ruleSet)
 	{
 		if (DialogWithEditingRuleSets.TryGetValue(ruleSet, out var dialog))
 			dialog.Close();

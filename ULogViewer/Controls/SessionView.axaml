@@ -1159,6 +1159,9 @@
 																		<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].RemoveKeyLogAnalysisRuleSet}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
 																			<Image Classes="InPlaceAction_Icon" Source="{StaticResource Image/Icon.Delete}"/>
 																		</Button>
+																		<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].CopyKeyLogAnalysisRuleSet}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Copy}">
+																			<Image Classes="InPlaceAction_Icon" Source="{StaticResource Image/Icon.Copy}"/>
+																		</Button>
 																		<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].EditKeyLogAnalysisRuleSet}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
 																			<Image Classes="InPlaceAction_Icon" Source="{StaticResource Image/Icon.Edit}"/>
 																		</Button>
@@ -1184,6 +1187,9 @@
 																		</Button>
 																		<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].RemoveOperationDurationAnalysisRuleSet}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
 																			<Image Classes="InPlaceAction_Icon" Source="{StaticResource Image/Icon.Delete}"/>
+																		</Button>
+																		<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].CopyOperationDurationAnalysisRuleSet}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Copy}">
+																			<Image Classes="InPlaceAction_Icon" Source="{StaticResource Image/Icon.Copy}"/>
 																		</Button>
 																		<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].EditOperationDurationAnalysisRuleSet}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
 																			<Image Classes="InPlaceAction_Icon" Source="{StaticResource Image/Icon.Edit}"/>

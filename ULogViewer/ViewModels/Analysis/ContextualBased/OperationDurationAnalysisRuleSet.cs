@@ -200,6 +200,18 @@ class OperationDurationAnalysisRuleSet : BaseProfile<IULogViewerApplication>
     }
 
 
+    /// <summary>
+    /// Initialize new <see cref="OperationDurationAnalysisRuleSet"/> instance.
+    /// </summary>
+    /// <param name="template">Template rule set.</param>
+    /// <param name="name">Name.</param>
+    public OperationDurationAnalysisRuleSet(OperationDurationAnalysisRuleSet template, string name) : this(template.Application, name)
+    {
+        this.icon = template.icon;
+        this.rules = template.rules;
+    }
+
+
     // Constructor.
     OperationDurationAnalysisRuleSet(IULogViewerApplication app, string id, bool isBuiltIn) : base(app, id, isBuiltIn)
     { }

@@ -86,6 +86,19 @@ class KeyLogAnalysisRuleSet : BaseProfile<IULogViewerApplication>
     { }
 
 
+    /// <summary>
+    /// Initialize new <see cref="KeyLogAnalysisRuleSet"/> instance.
+    /// </summary>
+    /// <param name="template">Template rule set.</param>
+    /// <param name="name">Name.</param>
+    public KeyLogAnalysisRuleSet(KeyLogAnalysisRuleSet template, string name) : this(template.Application)
+    {
+        this.icon = template.icon;
+        this.Name = name;
+        this.rules = template.rules;
+    }
+
+
     // Change ID.
     internal void ChangeId() =>
         this.Id = KeyLogAnalysisRuleSetManager.Default.GenerateProfileId();

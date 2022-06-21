@@ -40,6 +40,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -110,6 +111,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Static fields.
+		static readonly Regex BaseNameRegex = new("^(?<Name>.+)\\s+\\(\\d+\\)\\s*$");
 		static readonly AvaloniaProperty<bool> CanFilterLogsByNonTextFiltersProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(CanFilterLogsByNonTextFilters), false);
 		static readonly AvaloniaProperty<DateTime?> EarliestSelectedLogTimestampProperty = AvaloniaProperty.Register<SessionView, DateTime?>(nameof(EarliestSelectedLogTimestamp));
 		static readonly AvaloniaProperty<bool> HasLogProfileProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(HasLogProfile), false);
@@ -999,6 +1001,28 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Copy selected log analysis rule set.
+		void CopyKeyLogAnalysisRuleSet(KeyLogAnalysisRuleSet ruleSet)
+		{
+			if (this.attachedWindow == null)
+				return;
+			var baseName = BaseNameRegex.Match(ruleSet.Name ?? "").Let(it =>
+				it.Success ? it.Groups["Name"].Value : ruleSet.Name ?? "");
+			var newName = baseName;
+			for (var n = 2; n <= 10; ++n)
+			{
+				var candidateName = $"{baseName} ({n})";
+				if (KeyLogAnalysisRuleSetManager.Default.RuleSets.FirstOrDefault(it => it.Name == candidateName) == null)
+				{
+					newName = candidateName;
+					break;
+				}
+			}
+			var newRuleSet = new KeyLogAnalysisRuleSet(ruleSet, newName);
+			KeyLogAnalysisRuleSetEditorDialog.Show(this.attachedWindow, newRuleSet);
+		}
+
+
 		// Copy file name of log file.
 		void CopyLogFileName(string filePath)
 		{
@@ -1069,12 +1093,46 @@ namespace CarinaStudio.ULogViewer.Controls
 		ICommand CopyLogPropertyCommand { get; }
 
 
+		// Copy selected log analysis rule set.
+		void CopyOperationDurationAnalysisRuleSet(OperationDurationAnalysisRuleSet ruleSet)
+		{
+			if (this.attachedWindow == null)
+				return;
+			var baseName = BaseNameRegex.Match(ruleSet.Name ?? "").Let(it =>
+				it.Success ? it.Groups["Name"].Value : ruleSet.Name ?? "");
+			var newName = baseName;
+			for (var n = 2; n <= 10; ++n)
+			{
+				var candidateName = $"{baseName} ({n})";
+				if (OperationDurationAnalysisRuleSetManager.Default.RuleSets.FirstOrDefault(it => it.Name == candidateName) == null)
+				{
+					newName = candidateName;
+					break;
+				}
+			}
+			var newRuleSet = new OperationDurationAnalysisRuleSet(ruleSet, newName);
+			OperationDurationAnalysisRuleSetEditorDialog.Show(this.attachedWindow, newRuleSet);
+		}
+
+
 		// Copy selected predefined log text filter.
 		void CopyPredefinedLogTextFilter(PredefinedLogTextFilter filter)
 		{
 			if (this.attachedWindow == null)
 				return;
-			var newFilter = new PredefinedLogTextFilter(this.Application, filter.Name ?? "", filter.Regex);
+			var baseName = BaseNameRegex.Match(filter.Name ?? "").Let(it =>
+				it.Success ? it.Groups["Name"].Value : filter.Name ?? "");
+			var newName = baseName;
+			for (var n = 2; n <= 10; ++n)
+			{
+				var candidateName = $"{baseName} ({n})";
+				if (PredefinedLogTextFilterManager.Default.Filters.FirstOrDefault(it => it.Name == candidateName) == null)
+				{
+					newName = candidateName;
+					break;
+				}
+			}
+			var newFilter = new PredefinedLogTextFilter(this.Application, newName, filter.Regex);
 			PredefinedLogTextFilterEditorDialog.Show(this.attachedWindow, newFilter, null);
 		}
 
@@ -3906,7 +3964,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			}.ShowDialog(this.attachedWindow);
 			if (result == MessageDialogResult.Yes)
 			{
-				KeyLogAnalysisRuleSetEditorDialog.Close(ruleSet);
+				KeyLogAnalysisRuleSetEditorDialog.CloseAll(ruleSet);
 				KeyLogAnalysisRuleSetManager.Default.RemoveRuleSet(ruleSet);
 			}
 		}
@@ -3925,7 +3983,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			}.ShowDialog(this.attachedWindow);
 			if (result == MessageDialogResult.Yes)
 			{
-				OperationDurationAnalysisRuleSetEditorDialog.Close(ruleSet);
+				OperationDurationAnalysisRuleSetEditorDialog.CloseAll(ruleSet);
 				OperationDurationAnalysisRuleSetManager.Default.RemoveRuleSet(ruleSet);
 			}
 		}
