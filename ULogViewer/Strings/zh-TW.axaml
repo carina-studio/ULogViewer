@@ -596,6 +596,7 @@
 	<sys:String x:Key="String/SessionView.CopyLogProperty">複製日誌屬性 '{0}'</sys:String>
 	<sys:String x:Key="String/SessionView.CopyLogProperty.Disabled">複製日誌屬性</sys:String>
 	<sys:String x:Key="String/SessionView.CopyLogs">複製日誌</sys:String>
+	<sys:String x:Key="String/SessionView.CopyLogText">複製篩選用日誌文字</sys:String>
 	<sys:String x:Key="String/SessionView.CopyLogsWithFileNames">複製日誌 (包含檔案名稱)</sys:String>
 	<sys:String x:Key="String/SessionView.CpuUsage">CPU 使用率</sys:String>
 	<sys:String x:Key="String/SessionView.EditConfiguration">編輯內部組態…</sys:String>

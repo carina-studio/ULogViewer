@@ -630,6 +630,7 @@
 	<sys:String x:Key="String/SessionView.CopyLogProperty">Copy log property '{0}'</sys:String>
 	<sys:String x:Key="String/SessionView.CopyLogProperty.Disabled">Copy log property</sys:String>
 	<sys:String x:Key="String/SessionView.CopyLogs">Copy logs</sys:String>
+	<sys:String x:Key="String/SessionView.CopyLogText">Copy text of log for filtering</sys:String>
 	<sys:String x:Key="String/SessionView.CopyLogsWithFileNames">Copy logs with file names</sys:String>
 	<sys:String x:Key="String/SessionView.CpuUsage">CPU usage</sys:String>
 	<sys:String x:Key="String/SessionView.EditConfiguration">Edit internal configuration…</sys:String>

@@ -1,3 +1,4 @@
+using System.Text;
 using Avalonia;
 using Avalonia.Collections;
 using Avalonia.Controls;
@@ -149,6 +150,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		INotifyCollectionChanged? attachedLogs;
 		readonly ObservableCommandState canAddLogFiles = new();
 		readonly MutableObservableBoolean canCopyLogProperty = new MutableObservableBoolean();
+		readonly MutableObservableBoolean canCopyLogText = new();
 		readonly MutableObservableBoolean canCopySelectedLogs = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canCopySelectedLogsWithFileNames = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canEditLogProfile = new MutableObservableBoolean();
@@ -307,6 +309,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			// create commands
 			this.AddLogFilesCommand = new Command(this.AddLogFiles, this.canAddLogFiles);
 			this.CopyLogPropertyCommand = new Command(this.CopyLogProperty, this.canCopyLogProperty);
+			this.CopyLogTextCommand = new Command(this.CopyLogText, this.canCopyLogText);
 			this.CopySelectedLogsCommand = new Command(this.CopySelectedLogs, this.canCopySelectedLogs);
 			this.CopySelectedLogsWithFileNamesCommand = new Command(this.CopySelectedLogsWithFileNames, this.canCopySelectedLogsWithFileNames);
 			this.EditLogProfileCommand = new Command(this.EditLogProfile, this.canEditLogProfile);
@@ -1091,6 +1094,47 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Command to copy property of log.
 		ICommand CopyLogPropertyCommand { get; }
+
+
+		// Copy text value of selected log.
+		void CopyLogText()
+		{
+			// check state
+			if (this.logListBox.SelectedItems.Count != 1)
+				return;
+			if (this.logListBox.SelectedItem is not DisplayableLog log)
+				return;
+			if (this.DataContext is not Session session)
+				return;
+			var logProperties = session.DisplayLogProperties;
+			if (logProperties.IsEmpty())
+				return;
+			
+			// generate text
+			var textBuffer = new StringBuilder();
+			for (int i = 0, count = logProperties.Count; i < count; ++i)
+			{
+				if (i > 0)
+					textBuffer.Append("$$");
+				//var name = 
+				var getter = DisplayableLog.CreateLogPropertyGetter<object?>(logProperties[i].Name);
+				textBuffer.Append(getter(log));
+			}
+
+			// put to clipboard
+			try
+			{
+				_ = App.Current.Clipboard?.SetTextAsync(textBuffer.ToString());
+			}
+			catch (Exception ex)
+			{
+				this.Logger.LogError(ex, "Failed to set text to clipboard");
+			}
+		}
+
+
+		// Command to copy log text.
+		ICommand CopyLogTextCommand { get; }
 
 
 		// Copy selected log analysis rule set.
@@ -3040,6 +3084,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 				// update command states
 				this.canCopyLogProperty.Update(hasSingleSelectedItem && logProperty != null);
+				this.canCopyLogText.Update(hasSingleSelectedItem);
 				this.canCopySelectedLogs.Update(hasSelectedItems && session.CopyLogsCommand.CanExecute(null) && selectionCount <= MaxLogCountForCopying);
 				this.canCopySelectedLogsWithFileNames.Update(hasSelectedItems && session.CopyLogsWithFileNamesCommand.CanExecute(null) && selectionCount <= MaxLogCountForCopying);
 				this.canFilterLogsByPid.Update(hasSingleSelectedItem && this.isPidLogPropertyVisible);
