@@ -151,6 +151,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ObservableCommandState canAddLogFiles = new();
 		readonly MutableObservableBoolean canCopyLogProperty = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canCopyLogText = new();
+		readonly MutableObservableBoolean canCopySelectedLogAnalysisResults = new();
 		readonly MutableObservableBoolean canCopySelectedLogs = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canCopySelectedLogsWithFileNames = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canEditLogProfile = new MutableObservableBoolean();
@@ -310,6 +311,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.AddLogFilesCommand = new Command(this.AddLogFiles, this.canAddLogFiles);
 			this.CopyLogPropertyCommand = new Command(this.CopyLogProperty, this.canCopyLogProperty);
 			this.CopyLogTextCommand = new Command(this.CopyLogText, this.canCopyLogText);
+			this.CopySelectedLogAnalysisResultsCommand = new Command(this.CopySelectedLogAnalysisResults, this.canCopySelectedLogAnalysisResults);
 			this.CopySelectedLogsCommand = new Command(this.CopySelectedLogs, this.canCopySelectedLogs);
 			this.CopySelectedLogsWithFileNamesCommand = new Command(this.CopySelectedLogsWithFileNames, this.canCopySelectedLogsWithFileNames);
 			this.EditLogProfileCommand = new Command(this.EditLogProfile, this.canEditLogProfile);
@@ -391,6 +393,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.logAnalysisResultListBox = this.FindControl<AppSuite.Controls.ListBox>(nameof(logAnalysisResultListBox))!.Also(it =>
 			{
 				it.DoubleClickOnItem += this.OnLogAnalysisResultListBoxDoubleClickOnItem;
+				it.AddHandler(PointerPressedEvent, this.OnLogAnalysisResultListBoxPointerPressed, RoutingStrategies.Tunnel);
 				it.SelectionChanged += this.OnLogAnalysisResultListBoxSelectionChanged;
 			});
 			this.logAnalysisRuleSetsButton = this.Get<ToggleButton>(nameof(logAnalysisRuleSetsButton));
@@ -1179,6 +1182,41 @@ namespace CarinaStudio.ULogViewer.Controls
 			var newFilter = new PredefinedLogTextFilter(this.Application, newName, filter.Regex);
 			PredefinedLogTextFilterEditorDialog.Show(this.attachedWindow, newFilter, null);
 		}
+
+
+		// Copy selected log analysis results.
+		void CopySelectedLogAnalysisResults()
+		{
+			// check state
+			var selectedItems = this.logAnalysisResultListBox.SelectedItems;
+			var count = selectedItems.Count;
+			if (count == 0)
+				return;
+			
+			// generate text
+			var textBuffer = new StringBuilder();
+			for (var i = 0; i < count; ++i)
+			{
+				if (i > 0)
+					textBuffer.AppendLine();
+				var result = (DisplayableLogAnalysisResult)selectedItems[i].AsNonNull();
+				textBuffer.Append(result.Message);
+			}
+
+			// set to clipboard
+			try
+			{
+				_ = App.Current.Clipboard?.SetTextAsync(textBuffer.ToString());
+			}
+			catch (Exception ex)
+			{
+				this.Logger.LogError(ex, "Failed to set text of log analysis results to clipboard");
+			}
+		}
+
+
+		// Command to copy selected log analysis results.
+		ICommand CopySelectedLogAnalysisResultsCommand { get; }
 
 
 		// Copy selected logs.
@@ -2753,6 +2791,30 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Called when pointer pressed on log analysis result list box.
+		void OnLogAnalysisResultListBoxPointerPressed(object? sender, PointerPressedEventArgs e)
+		{
+			// clear selection
+			var point = e.GetCurrentPoint(this.logAnalysisResultListBox);
+			var hitControl = this.logAnalysisResultListBox.InputHitTest(point.Position).Let(it =>
+			{
+				if (it == null)
+					return (IVisual?)null;
+				var listBoxItem = it.FindAncestorOfType<ListBoxItem>(true);
+				if (listBoxItem != null)
+					return listBoxItem;
+				return it.FindAncestorOfType<ScrollBar>(true);
+			});
+			if (hitControl == null)
+				this.SynchronizationContext.Post(() => this.logAnalysisResultListBox.SelectedItems.Clear());
+			else if (hitControl is ListBoxItem && (e.KeyModifiers & KeyModifiers.Control) == 0 && point.Properties.IsLeftButtonPressed)
+			{
+				// [Workaround] Clear selection first to prevent performance issue of changing selection from multiple items
+				this.logAnalysisResultListBox.SelectedItems.Clear();
+			}
+		}
+
+
 		// Called when double clicked on item in log analysis result list box.
 		void OnLogAnalysisResultListBoxDoubleClickOnItem(object? sender, ListBoxItemEventArgs e) =>
 			this.OnLogAnalysisResultListBoxSelectionChanged(true);
@@ -2767,7 +2829,10 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				var count = this.logAnalysisResultListBox.SelectedItems.Count;
 				if (count == 0)
+				{
+					this.canCopySelectedLogAnalysisResults.Update(false);
 					return;
+				}
 				if (count == 1 
 					&& this.logAnalysisResultListBox.SelectedItem is DisplayableLogAnalysisResult result
 					&& this.DataContext is Session session)
@@ -2859,6 +2924,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						}));
 					}
 				}
+				this.canCopySelectedLogAnalysisResults.Update(true);
 				this.logListBox.Focus();
 			});
 		}
