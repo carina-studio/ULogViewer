@@ -22,6 +22,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		public static readonly AvaloniaProperty<IList<ContextualBasedAnalysisAction>> ActionsProperty = AvaloniaProperty.Register<ContextualBasedAnalysisActionsEditor, IList<ContextualBasedAnalysisAction>>(nameof(Actions));
 
 
+		// Static fields.
+		static readonly IObservable<object?> NullValueObservable = new MutableObservableValue<object?>();
+
+
 		// Fields.
 		readonly Avalonia.Controls.ListBox actionListBox;
 		readonly ToggleButton addActionButton;
@@ -42,8 +46,18 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.addActionButton = this.Get<ToggleButton>(nameof(addActionButton));
 			this.addActionMenu = ((ContextMenu)this.Resources[nameof(addActionMenu)].AsNonNull()).Also(it =>
 			{
-				it.MenuClosed += (_, e) => this.SynchronizationContext.Post(() => this.addActionButton.IsChecked = false);
-				it.MenuOpened += (_, e) => this.SynchronizationContext.Post(() => this.addActionButton.IsChecked = true);
+				var nullValueToken = (IDisposable?)null;
+				it.MenuClosed += (_, e) => 
+				{
+					Global.RunWithoutError(() => nullValueToken?.Dispose());
+					nullValueToken = null;
+					this.SynchronizationContext.Post(() => this.addActionButton.IsChecked = false);
+				};
+				it.MenuOpened += (_, e) => 
+				{
+					nullValueToken = this.addActionButton.Bind(ToolTip.TipProperty, NullValueObservable);
+					this.SynchronizationContext.Post(() => this.addActionButton.IsChecked = true);
+				};
 			});
 		}
 
