@@ -597,7 +597,7 @@
 	<sys:String x:Key="String/SessionView.ConfirmSelectingAllLogs">选择大量日志会使用一些时间，是否继续选择？</sys:String>
 	<sys:String x:Key="String/SessionView.CopyLogFileName">复制档案名称</sys:String>
 	<sys:String x:Key="String/SessionView.CopyLogFilePath">复制完整档案路径</sys:String>
-	<sys:String x:Key="String/SessionView.CopyLogProperty">复制日志属性 '{0}'</sys:String>
+	<sys:String x:Key="String/SessionView.CopyLogProperty">复制日志属性「{0}」</sys:String>
 	<sys:String x:Key="String/SessionView.CopyLogProperty.Disabled">复制日志属性</sys:String>
 	<sys:String x:Key="String/SessionView.CopyLogs">复制日志</sys:String>
 	<sys:String x:Key="String/SessionView.CopyLogText">复制筛选用日志文字</sys:String>
@@ -605,7 +605,7 @@
 	<sys:String x:Key="String/SessionView.CpuUsage">CPU 使用率</sys:String>
 	<sys:String x:Key="String/SessionView.EditConfiguration">编辑內部配置…</sys:String>
 	<sys:String x:Key="String/SessionView.EditPersistentState">编辑內部存储的状态…</sys:String>
-	<sys:String x:Key="String/SessionView.FailedToExportLogAnalysisRuleSet">无法将规则集 '{0}' 导出至 '{1}'。</sys:String>
+	<sys:String x:Key="String/SessionView.FailedToExportLogAnalysisRuleSet">无法将规则集「{0}」导出至 '{1}'。</sys:String>
 	<sys:String x:Key="String/SessionView.FailedToImportLogAnalysisRuleSet">无法从 '{0}' 导入規則集。</sys:String>
 	<sys:String x:Key="String/SessionView.FilteredLogCount">，已筛选：</sys:String>
 	<sys:String x:Key="String/SessionView.FilterLogsBySelectedProcessId">使用选择的 PID 筛选</sys:String>
@@ -648,7 +648,7 @@
 	<sys:String x:Key="String/SessionView.MarkUnmarkLogs">标记/解除标记日志</sys:String>
 	<sys:String x:Key="String/SessionView.MemoryUsage">私有内存使用量</sys:String>
 	<sys:String x:Key="String/SessionView.MultipleFilesAreNotAllowed">目前的日志类型不允许加入多个档案。</sys:String>
-	<sys:String x:Key="String/SessionView.NeedToRestartAsAdministrator">'{0}' 需要系统管理员身份，是否要以系统管理员身份重新启动应用程序并使用此日志类型？</sys:String>
+	<sys:String x:Key="String/SessionView.NeedToRestartAsAdministrator">「{0}」需要系统管理员身份，是否要以系统管理员身份重新启动应用程序并使用此日志类型？</sys:String>
 	<sys:String x:Key="String/SessionView.NoFilePathDropped">请拖放有效的档案。</sys:String>
 	<sys:String x:Key="String/SessionView.OtherActions">其他动作</sys:String>
 	<sys:String x:Key="String/SessionView.PauseResumeLogsReading">暂停/继续读取日志 (P)</sys:String>
@@ -679,7 +679,7 @@
 	<sys:String x:Key="String/SessionView.SetWorkingDirectory">选择/变更工作目录</sys:String>
 	<sys:String x:Key="String/SessionView.ShowAllLogsTemporarily">暂时显示所有日志(Alt+A)</sys:String>
 	<sys:String x:Key="String/SessionView.ShowFileInExplorer">在档案管理中显示档案</sys:String>
-	<sys:String x:Key="String/SessionView.ShowLogProperty">显示日志属性 '{0}'…</sys:String>
+	<sys:String x:Key="String/SessionView.ShowLogProperty">显示日志属性「{0}」…</sys:String>
 	<sys:String x:Key="String/SessionView.ShowLogProperty.Disabled">显示日志属性…</sys:String>
 	<sys:String x:Key="String/SessionView.ShowMarkedLogsTemporarily">暂时只显示已标记的日志 (Alt+M)</sys:String>
 	<sys:String x:Key="String/SessionView.ShowWorkingDirectoryInExplorer">在档案管理中开启工作目录</sys:String>
