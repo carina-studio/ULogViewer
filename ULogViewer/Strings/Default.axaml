@@ -50,12 +50,14 @@
 	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceEventLog.Description">Real-time event logs from Android device through ADB.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceLog">Android Device Log</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceLog.Description">Real-time logs from Android device through ADB.</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceTrace">Android Device System Trace</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceTrace.Description">Capture 5 seconds system trace from Android device to analyze system and application performance.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidFileLog">Android Log Files</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidFileLog.Description">Android logs stored in one or more files. Event logs are also supported by this profile.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidKernelLogFile">Android Kernel Log Files</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidKernelLogFile.Description">Android kernel logs stored in one or more files.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidTraceFile">Android System Trace File</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.AndroidTraceFile.Description">Parse System Trace file to analyze system and application performance on Android device.</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AndroidTraceFile.Description">Parse System Trace file (*.html) to analyze system and application performance on Android device.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AzureWebappLogFile">Azure Webapp log Files</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AzureWebappLogFile.Description">Log files of web application downloaded from Azure.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AzureWebappLogStream">Azure Webapp Log Stream</sys:String>
@@ -184,11 +186,13 @@
 
 	<!-- ExternalDependency-->
 	<sys:String x:Key="String/ExternalDependency.AndroidSDK">Android SDK</sys:String>
-	<sys:String x:Key="String/ExternalDependency.AndroidSDK.Description">'Android Device Log' and 'Android Device Event Log' built-in log profiles use Android Debug Bridge (ADB) which is distributed with Android SDK. For Windows/Linux user please add path of 'platform-tools' folder of Android SDK to PATH environment variable. For macOS user please add path of 'platform-tools' folder of Android SDK to '/etc/paths'.</sys:String>
+	<sys:String x:Key="String/ExternalDependency.AndroidSDK.Description">'Android Device Log', 'Android Device Event Log' and 'Android Device System Trace' built-in log profiles use Android Debug Bridge (ADB) which is distributed with Android SDK. For Windows/Linux user please add path of 'platform-tools' folder of Android SDK to PATH environment variable. For macOS user please add path of 'platform-tools' folder of Android SDK to '/etc/paths'.</sys:String>
 	<sys:String x:Key="String/ExternalDependency.AzureCLI">Azure Command-Line Interface (CLI)</sys:String>
-	<sys:String x:Key="String/ExternalDependency.AzureCLI.Description">'Azure CLI', 'MySQL Database' and 'SQL Server Database' data source uses Azure Command-Line Interface (CLI) to read log data or access functions of Azure. For Windows/Linux user please add path of folder contains 'az' tool to PATH environment variable. For macOS user please add path of folder contains 'az' tool to '/etc/paths'.</sys:String>
+	<sys:String x:Key="String/ExternalDependency.AzureCLI.Description">'Azure CLI', 'MySQL Database' and 'SQL Server Database' data source uses Azure Command-Line Interface (CLI) to read log data or access functions of Azure. For Windows/Linux user please add path of folder contains 'az' command to PATH environment variable. For macOS user please add path of folder contains 'az' command to '/etc/paths'.</sys:String>
 	<sys:String x:Key="String/ExternalDependency.Git">Git</sys:String>
 	<sys:String x:Key="String/ExternalDependency.Git.Description">'Git Log' and 'Git Log (Simple)' built-in log profiles use Git to read commit logs.</sys:String>
+	<sys:String x:Key="String/ExternalDependency.TraceConv">Trace Conversion Tool</sys:String>
+	<sys:String x:Key="String/ExternalDependency.TraceConv.Description">'Android Device System Trace' built-in log profile uses Trace Conversion Tool provided by Perfetto to convert captured data into Android Systrace format. For Linux user please add path of folder contains 'traceconv' command to PATH environment variable. For macOS user please add path of folder contains 'traceconv' command to '/etc/paths'.</sys:String>
 	
 	<!-- FileFormat -->
 	<sys:String x:Key="String/FileFormat.Json">JSON File</sys:String>

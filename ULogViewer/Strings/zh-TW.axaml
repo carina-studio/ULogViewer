@@ -50,12 +50,14 @@
 	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceEventLog.Description">透過 ADB 取得的 Android 裝置即時事件日誌。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceLog">Android 裝置日誌</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceLog.Description">透過 ADB 取得的 Android 裝置即時日誌。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceTrace">Android 裝置系統追蹤</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceTrace.Description">自 Android 裝置擷取 5 秒系統追蹤以追分析 Android 系統及應用程式效能。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidFileLog">Android 日誌檔案</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidFileLog.Description">在一個或多個檔案中的 Android 日誌。此類型亦支援事件日誌。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidKernelLogFile">Android 核心日誌檔案</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidKernelLogFile.Description">在一個或多個檔案中的 Android 核心日誌。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidTraceFile">Android 系統追蹤檔案</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.AndroidTraceFile.Description">用以追蹤及分析 Android 系統及應用程式效能的檔案。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AndroidTraceFile.Description">用以追蹤及分析 Android 系統及應用程式效能的檔案 (*.html)。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AzureWebappLogFile">Azure Webapp 日誌檔案</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AzureWebappLogFile.Description">從 Azure 下載之 Webapp 日誌檔案。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AzureWebappLogStream">Azure Webapp 即時日誌</sys:String>
@@ -173,11 +175,13 @@
 
 	<!-- ExternalDependency-->
 	<sys:String x:Key="String/ExternalDependency.AndroidSDK">Android SDK</sys:String>
-	<sys:String x:Key="String/ExternalDependency.AndroidSDK.Description">「Android 裝置日誌」及「Android 裝置事件日誌」內建日誌類型會使用跟隨 Android SDK 發布之 Android Debug Bridge (ADB)。對於 Windows/Linux 使用者，請將 Android SDK 中的 'platform-tools' 資料夾路徑加至 PATH 環境變數。對於 macOS 使用者，請將 Android SDK 中的 'platform-tools' 資料夾路徑加至 '/etc/paths'。</sys:String>
+	<sys:String x:Key="String/ExternalDependency.AndroidSDK.Description">「Android 裝置日誌」、「Android 裝置事件日誌」及「Android 裝置系統追蹤」內建日誌類型會使用跟隨 Android SDK 發布之 Android Debug Bridge (ADB)。對於 Windows/Linux 使用者，請將 Android SDK 中的 'platform-tools' 資料夾路徑加至 PATH 環境變數。對於 macOS 使用者，請將 Android SDK 中的 'platform-tools' 資料夾路徑加至 '/etc/paths'。</sys:String>
 	<sys:String x:Key="String/ExternalDependency.AzureCLI">Azure 命令列介面 (CLI)</sys:String>
-	<sys:String x:Key="String/ExternalDependency.AzureCLI.Description">「Azure CLI」、「MySQL 資料庫」及「SQL Server 資料庫」資料來源使用 Azure 命令列介面 (CLI) 讀取日誌資料或存取 Azure 功能。對於 Windows/Linux 使用者，請將包含 'az' 工具之資料夾路徑加至 PATH 環境變數。對於 macOS 使用者，請將包含 'az' 工具之資料夾路徑加至 '/etc/paths'。</sys:String>
+	<sys:String x:Key="String/ExternalDependency.AzureCLI.Description">「Azure CLI」、「MySQL 資料庫」及「SQL Server 資料庫」資料來源使用 Azure 命令列介面 (CLI) 讀取日誌資料或存取 Azure 功能。對於 Windows/Linux 使用者，請將包含 'az' 指令之資料夾路徑加至 PATH 環境變數。對於 macOS 使用者，請將包含 'az' 指令之資料夾路徑加至 '/etc/paths'。</sys:String>
 	<sys:String x:Key="String/ExternalDependency.Git">Git</sys:String>
 	<sys:String x:Key="String/ExternalDependency.Git.Description">「Git 提交紀錄」及「Git 提交紀錄 (精簡)」內建日誌類型會使用 Git 讀取提交紀錄。</sys:String>
+	<sys:String x:Key="String/ExternalDependency.TraceConv">Trace 轉換工具</sys:String>
+	<sys:String x:Key="String/ExternalDependency.TraceConv.Description">「Android 裝置系統追蹤」內建日誌類型使用由 Perfetto 提供的 Trace 轉換工具將自裝置擷取的資料轉換成為 Android 系統追蹤格式。對於 Linux 使用者，請將包含 'traceconv' 指令之資料夾路徑加至 PATH 環境變數。對於 macOS 使用者，請將包含 'traceconv' 指令之資料夾路徑加至 '/etc/paths'。</sys:String>
 
 	<!-- FileFormat -->
 	<sys:String x:Key="String/FileFormat.Json">JSON 檔案</sys:String>

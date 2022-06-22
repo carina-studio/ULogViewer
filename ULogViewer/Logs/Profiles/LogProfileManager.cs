@@ -58,11 +58,13 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
         }
         else if (Platform.IsLinux)
         {
+            builtInProfileIDs.Add("AndroidDeviceTrace");
             builtInProfileIDs.Add("LinuxKernelLog");
             builtInProfileIDs.Add("LinuxSystemLog");
         }
         else if (Platform.IsMacOS)
         {
+            builtInProfileIDs.Add("AndroidDeviceTrace");
             builtInProfileIDs.Add("MacOSInstallationLog");
             builtInProfileIDs.Add("MacOSRealtimeLog");
         }

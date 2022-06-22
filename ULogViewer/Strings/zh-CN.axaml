@@ -50,6 +50,8 @@
 	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceEventLog.Description">通过 ADB 取得 Android 设备即时事件日志。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceLog">Android 设备日志</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceLog.Description">通过 ADB 取得 Android 设备即时日志。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceTrace">Android 设备系统追踪</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceTrace.Description">自 Android 设备撷取 5 秒系统追踪以追分析 Android 系统及应用程序效能。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidFileLog">Android 日志档案</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidFileLog.Description">在一个或多个档案中的 Android 日志。此类型亦支援事件日志。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidKernelLogFile">Android 核心日志档案</sys:String>
@@ -173,11 +175,13 @@
 
 	<!-- ExternalDependency-->
 	<sys:String x:Key="String/ExternalDependency.AndroidSDK">Android SDK</sys:String>
-	<sys:String x:Key="String/ExternalDependency.AndroidSDK.Description">「Android 设备日志」及「Android 设备事件日志」内建日志类型会使用跟随 Android SDK 发布之 Android Debug Bridge (ADB)。对于 Windows/Linux 用户，请将 Android SDK 中的 'platform-tools' 资料夹路径加至 PATH 环境变量。对于 macOS 用户，请将 Android SDK 中的 'platform-tools' 资料夹路径加至 '/etc/paths'。</sys:String>
+	<sys:String x:Key="String/ExternalDependency.AndroidSDK.Description">「Android 设备日志」、「Android 设备事件日志」及「Android 设备系统追踪」内建日志类型会使用跟随 Android SDK 发布之 Android Debug Bridge (ADB)。对于 Windows/Linux 用户，请将 Android SDK 中的 'platform-tools' 资料夹路径加至 PATH 环境变量。对于 macOS 用户，请将 Android SDK 中的 'platform-tools' 资料夹路径加至 '/etc/paths'。</sys:String>
 	<sys:String x:Key="String/ExternalDependency.AzureCLI">Azure 命令行接口 (CLI)</sys:String>
-	<sys:String x:Key="String/ExternalDependency.AzureCLI.Description">「Azure CLI」、「MySQL 资料库」及「SQL Server 资料库」资料来源使用 Azure 命令行接口 (CLI) 读取日志资料或调用 Azure 功能。对于 Windows/Linux 用户，请将包含 'az' 工具之资料夹路径加至 PATH 环境变量。对于 macOS 用户，请将包含 'az' 工具之资料夹路径加至 '/etc/paths'。</sys:String>
+	<sys:String x:Key="String/ExternalDependency.AzureCLI.Description">「Azure CLI」、「MySQL 资料库」及「SQL Server 资料库」资料来源使用 Azure 命令行接口 (CLI) 读取日志资料或调用 Azure 功能。对于 Windows/Linux 用户，请将包含 'az' 指令之资料夹路径加至 PATH 环境变量。对于 macOS 用户，请将包含 'az' 指令之资料夹路径加至 '/etc/paths'。</sys:String>
 	<sys:String x:Key="String/ExternalDependency.Git">Git</sys:String>
 	<sys:String x:Key="String/ExternalDependency.Git.Description">「Git 提交纪录」及「Git 提交纪录 (精简)」内建日志类型会使用 Git 读取提交纪录。</sys:String>
+	<sys:String x:Key="String/ExternalDependency.TraceConv">Trace 转换工具</sys:String>
+	<sys:String x:Key="String/ExternalDependency.TraceConv.Description">「Android 设备系统追踪」内建日志类型使用由 Perfetto 提供的 Trace 转换工具将自设备撷取的资料转换成为 Android 系统追踪格式。對於 Linux 使用者，請將包含 'traceconv' 指令之資料夾路徑加至 PATH 環境變數。對於 macOS 使用者，請將包含 'traceconv' 指令之資料夾路徑加至 '/etc/paths'。</sys:String>
 
 	<!-- FileFormat -->
 	<sys:String x:Key="String/FileFormat.Json">JSON 档案</sys:String>
