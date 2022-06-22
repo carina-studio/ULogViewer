@@ -138,6 +138,23 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		/// <summary>
+		/// Generate message.
+		/// </summary>
+		/// <remarks>The method can be called from any thread.</remarks>
+		/// <param name="type">Type.</param>
+		/// <param name="message">Message.</param>
+		protected void GenerateMessage(LogDataSourceMessageType type, string message)
+		{
+			if (!this.CheckAccess())
+			{
+				this.SynchronizationContext.Post(() => this.GenerateMessage(type, message));
+				return;
+			}
+			this.MessageGenerated?.Invoke(this, new LogDataSourceMessage(type, message));
+		}
+
+
+		/// <summary>
 		/// Get unique ID of this <see cref="BaseLogDataSource"/> instance.
 		/// </summary>
 		protected int Id { get; }
@@ -147,6 +164,10 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// Get logger.
 		/// </summary>
 		protected ILogger Logger { get; }
+
+
+		/// <inheritdoc/>
+		public event Action<ILogDataSource, LogDataSourceMessage>? MessageGenerated;
 
 
 		/// <summary>

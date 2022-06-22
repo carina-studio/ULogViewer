@@ -35,6 +35,8 @@
 	<sys:String x:Key="String/AppOptionsDialog.UseSystemAccentColor">使用系统强调色彩</sys:String>
 
 	<!-- Azure -->
+	<sys:String x:Key="String/Azure.AzureCliNotFound">找不到 Azure 命令列介面 (CLI)。请确认 Azure 命令列介面已经安装且其路径已加入至 PATH 环境变量。</sys:String>
+	<sys:String x:Key="String/Azure.FailedExecuteAzureCli">无法执行 Azure 命令列介面 (CLI)。</sys:String>
 	<sys:String x:Key="String/Azure.FailedToLogin">无法登录至 Azure。</sys:String>
 	<sys:String x:Key="String/Azure.LoggedIn">成功以 '{0}' 登录至 Azure。</sys:String>
 	<sys:String x:Key="String/Azure.LoggedOut">已登出 Azure。</sys:String>
@@ -496,6 +498,9 @@
 	<!-- MemoryLoggerLogDataSourceProvider -->
 	<sys:String x:Key="String/MemoryLoggerLogDataSourceProvider.DisplayName">ULogViewer 即时日志</sys:String>
 
+	<!-- MySqlDatabaseLogDataSource -->
+	<sys:String x:Key="String/MySqlDatabaseLogDataSource.FailedToUpdateFirewallRules">无法更新 MySQL 服务器的防火墙规则。</sys:String>
+
 	<!-- MySqlDatabaseLogDataSourceProvider -->
 	<sys:String x:Key="String/MySqlDatabaseLogDataSourceProvider.DisplayName">MySQL 资料库</sys:String>
 
@@ -576,8 +581,7 @@
 
 	<!-- Session -->
 	<sys:String x:Key="String/Session.Empty">空白页面</sys:String>
-	<sys:String x:Key="String/Session.Message.SourceNotFound.StandardOutput">找不到 '{0}' 以读取日志。请确认指令或可执行程序已安装其路径依加入至 'PATH' 环境变量。</sys:String>
-
+	
 	<!-- SessionView -->
 	<sys:String x:Key="String/SessionView.AddLogFiles">加入日志档案</sys:String>
 	<sys:String x:Key="String/SessionView.AddLogFiles.WithShortcut">加入日志档案 (Ctrl+O)</sys:String>
@@ -712,8 +716,15 @@
 	<!-- SQLiteLogDataSourceProvider -->
 	<sys:String x:Key="String/SQLiteLogDataSourceProvider.DisplayName">SQLite 资料库</sys:String>
 
+	<!-- SqlServerDatabaseLogDataSource -->
+	<sys:String x:Key="String/SqlServerDatabaseLogDataSource.FailedToUpdateFirewallRules">无法更新 SQL Server 的防火墙规则。</sys:String>
+
 	<!-- SqlServerDatabaseLogDataSourceProvider -->
 	<sys:String x:Key="String/SqlServerDatabaseLogDataSourceProvider.DisplayName">SQL Server 资料库</sys:String>
+
+	<!-- StandardOutputLogDataSource -->
+	<sys:String x:Key="String/StandardOutputLogDataSource.CommandNotFound">找不到指令 '{0}'。请确认指令或可执行档已安装且其路径已加入至 PATH 环境变量。</sys:String>
+	<sys:String x:Key="String/StandardOutputLogDataSource.FailedToExecuteCommand">无法执行指令 '{0}'。请确认指令或可执行档为正确格式且有可执行权限。</sys:String>
 
 	<!-- StandardOutputLogDataSourceProvider -->
 	<sys:String x:Key="String/StandardOutputLogDataSourceProvider.DisplayName">标准输出 (stdout)</sys:String>

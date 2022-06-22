@@ -43,7 +43,11 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		bool ExecuteCommandAndWaitForExit(string command, string? workingDirectory, int timeoutMillis = 10000)
 		{
 			if (!this.ParseCommand(command, workingDirectory, out var executablePath, out var args))
+			{
+				if (TryGettingExecutableCommand(command, out var exe))
+					this.GenerateMessage(LogDataSourceMessageType.Error, this.Application.GetFormattedString("StandardOutputLogDataSource.CommandNotFound", exe));
 				return false;
+			}
 			try
 			{
 				var process = new Process().Also(process =>
@@ -85,6 +89,8 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				if (!process.Start())
 				{
 					this.Logger.LogWarning($"Unable to execute command: {command}");
+					if (TryGettingExecutableCommand(command, out var exe))
+						this.GenerateMessage(LogDataSourceMessageType.Error, this.Application.GetFormattedString("StandardOutputLogDataSource.FailedToExecuteCommand", exe));
 					return false;
 				}
 				process.WaitForExit(timeoutMillis);
@@ -94,6 +100,8 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			catch(Exception ex)
 			{
 				this.Logger.LogWarning(ex, $"Unable to execute command: {command}");
+				if (TryGettingExecutableCommand(command, out var exe))
+					this.GenerateMessage(LogDataSourceMessageType.Error, this.Application.GetFormattedString("StandardOutputLogDataSource.FailedToExecuteCommand", exe));
 				return false;
 			}
 		}
@@ -306,6 +314,8 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			if (!this.ParseCommand(this.CreationOptions.Command, this.CreationOptions.WorkingDirectory, out var executablePath, out var arguments))
 			{
 				this.Logger.LogError($"Unable to locate executable for command: {this.CreationOptions.Command}");
+				if (TryGettingExecutableCommand(this.CreationOptions.Command, out var exe))
+					this.GenerateMessage(LogDataSourceMessageType.Error, this.Application.GetFormattedString("StandardOutputLogDataSource.CommandNotFound", exe));
 				return LogDataSourceState.SourceNotFound;
 			}
 			this.Logger.LogDebug($"Executable found: {executablePath}");
@@ -313,5 +323,24 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			this.arguments = arguments;
 			return LogDataSourceState.ReadyToOpenReader;
 		});
+
+
+		// Try getting executable name from command.
+		static bool TryGettingExecutableCommand(string? command, out string exeCommand)
+		{
+			if (command == null)
+			{
+				exeCommand = "";
+				return false;
+			}
+			var match = regex.Match(command);
+			if (match.Success)
+			{
+				exeCommand = match.Groups["ExecutableCommand"].Value;
+				return true;
+			}
+			exeCommand = "";
+			return false;
+		}
 	}
 }

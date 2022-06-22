@@ -2,9 +2,9 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 	
-	<!-- Session -->
-	<sys:String x:Key="String/Session.Message.SourceNotFound.StandardOutput">找不到 '{0}' 以读取日志。请确认指令或应用程序以安装且其路径已加入至档案 '/etc/paths'。</sys:String>
-	
+	<!-- Azure -->
+	<sys:String x:Key="String/Azure.AzureCliNotFound">找不到 Azure 命令列介面 (CLI)。请确认 Azure 命令列介面已经安装且其路径已加入至文件 '/etc/paths'。</sys:String>
+
 	<!-- SessionView -->
 	<sys:String x:Key="String/SessionView.AddLogFiles.WithShortcut">加入日志档案 (⌘O)</sys:String>
 	<sys:String x:Key="String/SessionView.MemoryUsage">总内存使用量</sys:String>
@@ -14,5 +14,8 @@
 	<sys:String x:Key="String/SessionView.ShowFileInExplorer">在 Finder 中显示档案</sys:String>
 	<sys:String x:Key="String/SessionView.ShowMarkedLogsTemporarily">暂时只显示已标记的日志 (⌥M)</sys:String>
 	<sys:String x:Key="String/SessionView.ShowWorkingDirectoryInExplorer">在 Finder 中开启工作目录</sys:String>
+
+	<!-- StandardOutputLogDataSource -->
+	<sys:String x:Key="String/StandardOutputLogDataSource.CommandNotFound">找不到指令 '{0}'。请确认指令或可执行档已安装且其路径已加入至文件 '/etc/paths'。</sys:String>
 	
 </ResourceDictionary>

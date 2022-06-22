@@ -2748,18 +2748,13 @@ namespace CarinaStudio.ULogViewer.Controls
 			var session = sender as Session;
 			if (session != null && !session.IsActivated)
 				return;
-			
-			// notify user
-			await new MessageDialog()
-			{
-				Icon = MessageDialogIcon.Error,
-				Message = this.Application.GetString("Common.ExternalDependencyNotFound"),
-			}.ShowDialog(this.attachedWindow);
 
 			// show external dependencies dialog
+			/*
 			if (this.attachedWindow == null || (session != null && !session.IsActivated))
 				return;
 			await new ExternalDependenciesDialog().ShowDialog(this.attachedWindow);
+			*/
 		}
 
 

@@ -2,11 +2,11 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 	
+	<!-- Azure -->
+	<sys:String x:Key="String/Azure.AzureCliNotFound">Cannot find Azure CLI. Please make sure that Azure CLI has been installed and its path has been added to file '/etc/paths'.</sys:String>
+
 	<!-- Common -->
 	<sys:String x:Key="String/Common.Administrator">Superuser</sys:String>
-
-	<!-- Session -->
-	<sys:String x:Key="String/Session.Message.SourceNotFound.StandardOutput">Cannot find '{0}' to read logs. Please make sure the command or executable has been installed and its path has been added to file '/etc/paths'.</sys:String>
 
 	<!-- SessionView -->
 	<sys:String x:Key="String/SessionView.AddLogFiles.WithShortcut">Add log files (⌘O)</sys:String>
@@ -17,5 +17,8 @@
 	<sys:String x:Key="String/SessionView.ShowFileInExplorer">Show file in Finder</sys:String>
 	<sys:String x:Key="String/SessionView.ShowMarkedLogsTemporarily">Show marked logs temporarily (⌥M)</sys:String>
 	<sys:String x:Key="String/SessionView.ShowWorkingDirectoryInExplorer">Show working directory in Finder</sys:String>
+
+	<!-- StandardOutputLogDataSource -->
+	<sys:String x:Key="String/StandardOutputLogDataSource.CommandNotFound">Cannot find command '{0}'. Please make sure that command or executable has been installed and its path has been added to file '/etc/paths'.</sys:String>
 	
 </ResourceDictionary>

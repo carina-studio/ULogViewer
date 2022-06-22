@@ -33,6 +33,12 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		/// <summary>
+		/// Raised when message generated.
+		/// </summary>
+		event Action<ILogDataSource, LogDataSourceMessage> MessageGenerated;
+
+
+		/// <summary>
 		/// Open <see cref="TextReader"/> to read log data asynchronously.
 		/// </summary>
 		/// <param name="cancellationToken"><see cref="CancellationToken"/> to cancel opening task.</param>

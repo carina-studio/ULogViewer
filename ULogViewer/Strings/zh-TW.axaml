@@ -35,6 +35,8 @@
 	<sys:String x:Key="String/AppOptionsDialog.UseSystemAccentColor">套用系統強調色彩</sys:String>
 
 	<!-- Azure -->
+	<sys:String x:Key="String/Azure.AzureCliNotFound">找不到 Azure 命令列介面 (CLI)。請確認 Azure 命令列介面已經安裝且其路徑已加入至 PATH 環境變數。</sys:String>
+	<sys:String x:Key="String/Azure.FailedExecuteAzureCli">無法執行 Azure 命令列介面 (CLI)。</sys:String>
 	<sys:String x:Key="String/Azure.FailedToLogin">無法登入至 Azure。</sys:String>
 	<sys:String x:Key="String/Azure.LoggedIn">成功以 '{0}' 登入至 Azure。</sys:String>
 	<sys:String x:Key="String/Azure.LoggedOut">已登出 Azure。</sys:String>
@@ -496,6 +498,9 @@
 	<!-- MemoryLoggerLogDataSourceProvider -->
 	<sys:String x:Key="String/MemoryLoggerLogDataSourceProvider.DisplayName">ULogViewer 即時日誌</sys:String>
 
+	<!-- MySqlDatabaseLogDataSource -->
+	<sys:String x:Key="String/MySqlDatabaseLogDataSource.FailedToUpdateFirewallRules">無法更新 MySQL 伺服器的防火牆規則。</sys:String>
+
 	<!-- MySqlDatabaseLogDataSourceProvider -->
 	<sys:String x:Key="String/MySqlDatabaseLogDataSourceProvider.DisplayName">MySQL 資料庫</sys:String>
 
@@ -576,7 +581,6 @@
 
 	<!-- Session -->
 	<sys:String x:Key="String/Session.Empty">空白分頁</sys:String>
-	<sys:String x:Key="String/Session.Message.SourceNotFound.StandardOutput">找不到 '{0}' 以讀取日誌。請確認指令或可執行檔已安裝且其路徑已加入至 'PATH' 環境變數。</sys:String>
 
 	<!-- SessionView -->
 	<sys:String x:Key="String/SessionView.AddLogFiles">加入日誌檔案</sys:String>
@@ -712,8 +716,15 @@
 	<!-- SQLiteLogDataSourceProvider -->
 	<sys:String x:Key="String/SQLiteLogDataSourceProvider.DisplayName">SQLite 資料庫</sys:String>
 
+	<!-- SqlServerDatabaseLogDataSource -->
+	<sys:String x:Key="String/SqlServerDatabaseLogDataSource.FailedToUpdateFirewallRules">無法更新 SQL Server 的防火牆規則。</sys:String>
+
 	<!-- SqlServerDatabaseLogDataSourceProvider -->
 	<sys:String x:Key="String/SqlServerDatabaseLogDataSourceProvider.DisplayName">SQL Server 資料庫</sys:String>
+
+	<!-- StandardOutputLogDataSource -->
+	<sys:String x:Key="String/StandardOutputLogDataSource.CommandNotFound">找不到指令 '{0}'。請確認指令或可執行檔已安裝且其路徑已加入至 PATH 環境變數。</sys:String>
+	<sys:String x:Key="String/StandardOutputLogDataSource.FailedToExecuteCommand">無法執行指令 '{0}'。請確認指令或可執行檔為正確格式且有可執行權限。</sys:String>
 
 	<!-- StandardOutputLogDataSourceProvider -->
 	<sys:String x:Key="String/StandardOutputLogDataSourceProvider.DisplayName">標準輸出 (stdout)</sys:String>

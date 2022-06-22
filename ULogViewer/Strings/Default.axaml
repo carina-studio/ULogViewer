@@ -32,6 +32,8 @@
 	<sys:String x:Key="String/AppOptionsDialog.UseSystemAccentColor">Apply system accent color</sys:String>
 
 	<!-- Azure -->
+	<sys:String x:Key="String/Azure.AzureCliNotFound">Cannot find Azure CLI. Please make sure that Azure CLI has been installed and its path has been added to PATH environment variable.</sys:String>
+	<sys:String x:Key="String/Azure.FailedExecuteAzureCli">Unable to execute Azure CLI.</sys:String>
 	<sys:String x:Key="String/Azure.FailedToLogin">Unable to log in to Azure.</sys:String>
 	<sys:String x:Key="String/Azure.LoggedIn">Logged in to Azure with user '{0}'.</sys:String>
 	<sys:String x:Key="String/Azure.LoggedOut">Logged out from Azure.</sys:String>
@@ -530,6 +532,9 @@
 	<!-- MemoryLoggerLogDataSourceProvider -->
 	<sys:String x:Key="String/MemoryLoggerLogDataSourceProvider.DisplayName">ULogViewer realtime log</sys:String>
 
+	<!-- MySqlDatabaseLogDataSource -->
+	<sys:String x:Key="String/MySqlDatabaseLogDataSource.FailedToUpdateFirewallRules">Failed to update firewall rules of MySQL Server.</sys:String>
+
 	<!-- MySqlDatabaseLogDataSourceProvider -->
 	<sys:String x:Key="String/MySqlDatabaseLogDataSourceProvider.DisplayName">MySQL Database</sys:String>
 
@@ -610,7 +615,6 @@
 
 	<!-- Session -->
 	<sys:String x:Key="String/Session.Empty">Empty Tab</sys:String>
-	<sys:String x:Key="String/Session.Message.SourceNotFound.StandardOutput">Cannot find '{0}' to read logs. Please make sure the command or executable has been installed and its path has been added to 'PATH' environment variable.</sys:String>
 
 	<!-- SessionView -->
 	<sys:String x:Key="String/SessionView.AddLogFiles">Add log files</sys:String>
@@ -745,8 +749,15 @@
 	<!-- SQLiteLogDataSourceProvider -->
 	<sys:String x:Key="String/SQLiteLogDataSourceProvider.DisplayName">SQLite Database</sys:String>
 
+	<!-- SqlServerDatabaseLogDataSource -->
+	<sys:String x:Key="String/SqlServerDatabaseLogDataSource.FailedToUpdateFirewallRules">Failed to update firewall rules of SQL Server.</sys:String>
+
 	<!-- SqlServerDatabaseLogDataSourceProvider -->
 	<sys:String x:Key="String/SqlServerDatabaseLogDataSourceProvider.DisplayName">SQL Server Database</sys:String>
+
+	<!-- StandardOutputLogDataSource -->
+	<sys:String x:Key="String/StandardOutputLogDataSource.CommandNotFound">Cannot find command '{0}'. Please make sure that command or executable has been installed and its path has been added to PATH environment variable.</sys:String>
+	<sys:String x:Key="String/StandardOutputLogDataSource.FailedToExecuteCommand">Failed to execute '{0}'. Please make sure the command or executable has correct format and permission to be executed.</sys:String>
 
 	<!-- StandardOutputLogDataSourceProvider -->
 	<sys:String x:Key="String/StandardOutputLogDataSourceProvider.DisplayName">Standard output (stdout)</sys:String>
