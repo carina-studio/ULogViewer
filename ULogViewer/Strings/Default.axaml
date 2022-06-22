@@ -184,9 +184,9 @@
 
 	<!-- ExternalDependency-->
 	<sys:String x:Key="String/ExternalDependency.AndroidSDK">Android SDK</sys:String>
-	<sys:String x:Key="String/ExternalDependency.AndroidSDK.Description">'Android Device Log' and 'Android Device Event Log' built-in log profiles use Android Debug Bridge (ADB) which is distributed with Android SDK. For Windows/Linux user please add path of 'platform-tools' folder of Android SDK to 'PATH' environment variable. For macOS user please add path of 'platform-tools' folder of Android SDK to '/etc/paths'.</sys:String>
+	<sys:String x:Key="String/ExternalDependency.AndroidSDK.Description">'Android Device Log' and 'Android Device Event Log' built-in log profiles use Android Debug Bridge (ADB) which is distributed with Android SDK. For Windows/Linux user please add path of 'platform-tools' folder of Android SDK to PATH environment variable. For macOS user please add path of 'platform-tools' folder of Android SDK to '/etc/paths'.</sys:String>
 	<sys:String x:Key="String/ExternalDependency.AzureCLI">Azure Command-Line Interface (CLI)</sys:String>
-	<sys:String x:Key="String/ExternalDependency.AzureCLI.Description">'Azure CLI' data source uses Azure Command-Line Interface (CLI) to read log data. For Windows/Linux user please add path of folder contains 'az' tool to 'PATH' environment variable. For macOS user please add path of folder contains 'az' tool to '/etc/paths'.</sys:String>
+	<sys:String x:Key="String/ExternalDependency.AzureCLI.Description">'Azure CLI', 'MySQL Database' and 'SQL Server Database' data source uses Azure Command-Line Interface (CLI) to read log data or access functions of Azure. For Windows/Linux user please add path of folder contains 'az' tool to PATH environment variable. For macOS user please add path of folder contains 'az' tool to '/etc/paths'.</sys:String>
 	<sys:String x:Key="String/ExternalDependency.Git">Git</sys:String>
 	<sys:String x:Key="String/ExternalDependency.Git.Description">'Git Log' and 'Git Log (Simple)' built-in log profiles use Git to read commit logs.</sys:String>
 	

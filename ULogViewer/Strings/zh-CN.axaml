@@ -35,8 +35,8 @@
 	<sys:String x:Key="String/AppOptionsDialog.UseSystemAccentColor">使用系统强调色彩</sys:String>
 
 	<!-- Azure -->
-	<sys:String x:Key="String/Azure.AzureCliNotFound">找不到 Azure 命令列介面 (CLI)。请确认 Azure 命令列介面已经安装且其路径已加入至 PATH 环境变量。</sys:String>
-	<sys:String x:Key="String/Azure.FailedExecuteAzureCli">无法执行 Azure 命令列介面 (CLI)。</sys:String>
+	<sys:String x:Key="String/Azure.AzureCliNotFound">找不到 Azure 命令列接口 (CLI)。请确认 Azure 命令列接口已经安装且其路径已加入至 PATH 环境变量。</sys:String>
+	<sys:String x:Key="String/Azure.FailedExecuteAzureCli">无法执行 Azure 命令列接口 (CLI)。</sys:String>
 	<sys:String x:Key="String/Azure.FailedToLogin">无法登录至 Azure。</sys:String>
 	<sys:String x:Key="String/Azure.LoggedIn">成功以 '{0}' 登录至 Azure。</sys:String>
 	<sys:String x:Key="String/Azure.LoggedOut">已登出 Azure。</sys:String>
@@ -173,11 +173,11 @@
 
 	<!-- ExternalDependency-->
 	<sys:String x:Key="String/ExternalDependency.AndroidSDK">Android SDK</sys:String>
-	<sys:String x:Key="String/ExternalDependency.AndroidSDK.Description">「Android 设备日志」 及 「Android 设备事件日志」 内建日志类型会使用跟随 Android SDK 发布之 Android Debug Bridge (ADB)。对于 Windows/Linux 用户，请将 Android SDK 中的 'platform-tools' 资料夹路径加至 'PATH' 环境变量。对于 macOS 用户，请将 Android SDK 中的 'platform-tools' 资料夹路径加至 '/etc/paths'。</sys:String>
+	<sys:String x:Key="String/ExternalDependency.AndroidSDK.Description">「Android 设备日志」及「Android 设备事件日志」内建日志类型会使用跟随 Android SDK 发布之 Android Debug Bridge (ADB)。对于 Windows/Linux 用户，请将 Android SDK 中的 'platform-tools' 资料夹路径加至 PATH 环境变量。对于 macOS 用户，请将 Android SDK 中的 'platform-tools' 资料夹路径加至 '/etc/paths'。</sys:String>
 	<sys:String x:Key="String/ExternalDependency.AzureCLI">Azure 命令行接口 (CLI)</sys:String>
-	<sys:String x:Key="String/ExternalDependency.AzureCLI.Description">「Azure CLI」 资料来源使用 Azure 命令行接口 (CLI) 读取日志资料。对于 Windows/Linux 用户，请将包含 'az' 工具之资料夹路径加至 'PATH' 环境变量。对于 macOS 用户，请将包含 'az' 工具之资料夹路径加至 '/etc/paths'。</sys:String>
+	<sys:String x:Key="String/ExternalDependency.AzureCLI.Description">「Azure CLI」、「MySQL 资料库」及「SQL Server 资料库」资料来源使用 Azure 命令行接口 (CLI) 读取日志资料或调用 Azure 功能。对于 Windows/Linux 用户，请将包含 'az' 工具之资料夹路径加至 PATH 环境变量。对于 macOS 用户，请将包含 'az' 工具之资料夹路径加至 '/etc/paths'。</sys:String>
 	<sys:String x:Key="String/ExternalDependency.Git">Git</sys:String>
-	<sys:String x:Key="String/ExternalDependency.Git.Description">「Git 提交纪录」 及 「Git 提交纪录 (精简)」 内建日志类型会使用 Git 读取提交纪录。</sys:String>
+	<sys:String x:Key="String/ExternalDependency.Git.Description">「Git 提交纪录」及「Git 提交纪录 (精简)」内建日志类型会使用 Git 读取提交纪录。</sys:String>
 
 	<!-- FileFormat -->
 	<sys:String x:Key="String/FileFormat.Json">JSON 档案</sys:String>
