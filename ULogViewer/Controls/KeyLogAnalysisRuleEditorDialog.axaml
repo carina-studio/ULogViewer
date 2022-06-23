@@ -6,6 +6,8 @@
 		xmlns:abControls="using:CarinaStudio.Controls"
 		xmlns:app="using:CarinaStudio.ULogViewer"
 		xmlns:appAnalysis="using:CarinaStudio.ULogViewer.ViewModels.Analysis"
+		xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
+		xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
 		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.KeyLogAnalysisRuleEditorDialog"
@@ -42,6 +44,21 @@
 					</StackPanel>
 				</Grid>
 				<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/KeyLogAnalysisRuleEditorDialog.Pattern.Description}"/>
+				<Separator Classes="Dialog_Separator"/>
+
+				<!-- Level -->
+				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/KeyLogAnalysisRuleEditorDialog.Level}"/>
+				<ComboBox Name="levelComboBox" Classes="Dialog_ComboBox" Items="{Binding $parent[Window].LogLevels}">
+					<ComboBox.ItemTemplate>
+						<DataTemplate>
+							<StackPanel Orientation="Horizontal">
+								<Border Background="{Binding Converter={x:Static appConverters:LogLevelBrushConverter.Default}}" BorderBrush="{DynamicResource ComboBoxItemForeground}" BorderThickness="1" Height="{StaticResource Double/LogLevelComboBox.Item.Indicator.Size}" Margin="{StaticResource Thickness/LogLevelComboBox.Item.Indicator.Margin}" VerticalAlignment="Center" Width="{StaticResource Double/LogLevelComboBox.Item.Indicator.Size}"/>
+								<TextBlock Text="{Binding Converter={x:Static appControls:SessionView.LogLevelNameConverter}}" VerticalAlignment="Center"/>
+							</StackPanel>
+						</DataTemplate>
+					</ComboBox.ItemTemplate>
+				</ComboBox>
+				<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/KeyLogAnalysisRuleEditorDialog.Level.Description}"/>
 				<Separator Classes="Dialog_Separator"/>
 
 				<!-- Result type -->

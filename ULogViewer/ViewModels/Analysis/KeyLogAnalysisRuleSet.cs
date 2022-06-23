@@ -26,10 +26,12 @@ class KeyLogAnalysisRuleSet : BaseProfile<IULogViewerApplication>
         /// Initialize new <see cref="Rule"/> instance.
         /// </summary>
         /// <param name="pattern">Pattern to match log.</param>
+        /// <param name="level">Level to match log.</param>
         /// <param name="resultType">Type of analysis result to be generated when pattern matched.</param>
         /// <param name="message">Formatted message to be generated when pattern matched.</param>
-        public Rule(Regex pattern, DisplayableLogAnalysisResultType resultType, string message)
+        public Rule(Regex pattern, Logs.LogLevel level, DisplayableLogAnalysisResultType resultType, string message)
         {
+            this.Level = level;
             this.Message = message;
             this.Pattern = pattern;
             this.ResultType = resultType;
@@ -38,6 +40,7 @@ class KeyLogAnalysisRuleSet : BaseProfile<IULogViewerApplication>
         /// <inheritdoc/>
         public bool Equals(Rule? rule) =>
             rule != null
+            && rule.Level == this.Level
             && rule.Message == this.Message
             && rule.Pattern.ToString() == this.Pattern.ToString()
             && rule.Pattern.Options == this.Pattern.Options
@@ -50,6 +53,11 @@ class KeyLogAnalysisRuleSet : BaseProfile<IULogViewerApplication>
         /// <inheritdoc/>
         public override int GetHashCode() =>
             this.Pattern.ToString().GetHashCode();
+        
+        /// <summary>
+        /// Get level to match log.
+        /// </summary>
+        public Logs.LogLevel Level { get; }
 
         /// <summary>
         /// Get formatted message to be generated when pattern matched.
@@ -196,13 +204,18 @@ class KeyLogAnalysisRuleSet : BaseProfile<IULogViewerApplication>
                         {
                             var ignoreCase = jsonValue.TryGetProperty("IgnoreCase", out var ignoreCaseProperty) && ignoreCaseProperty.ValueKind == JsonValueKind.True;
                             var regex = new Regex(jsonValue.GetProperty(nameof(Rule.Pattern)).GetString()!, ignoreCase ? RegexOptions.IgnoreCase : RegexOptions.None);
+                            var level = jsonValue.TryGetProperty(nameof(Rule.Level), out var jsonLevel)
+                                && jsonLevel.ValueKind == JsonValueKind.String
+                                && Enum.TryParse<Logs.LogLevel>(jsonLevel.GetString(), out var candLevel)
+                                    ? candLevel
+                                    : Logs.LogLevel.Undefined;
                             var formattedMessage = jsonValue.GetProperty(nameof(Rule.Message)).GetString().AsNonNull();
                             var resultType = jsonValue.TryGetProperty(nameof(Rule.ResultType), out var resultTypeValue) 
                                 && resultTypeValue.ValueKind == JsonValueKind.String
                                 && Enum.TryParse<DisplayableLogAnalysisResultType>(resultTypeValue.GetString(), out var type)
                                     ? type
                                     : DisplayableLogAnalysisResultType.Information;
-                            patterns.Add(new(regex, resultType, formattedMessage));
+                            patterns.Add(new(regex, level, resultType, formattedMessage));
                         }
                     }).AsReadOnly();
                     break;
@@ -232,17 +245,19 @@ class KeyLogAnalysisRuleSet : BaseProfile<IULogViewerApplication>
         {
             writer.WritePropertyName(nameof(Rules));
             writer.WriteStartArray();
-            foreach (var pattern in this.rules)
+            foreach (var rule in this.rules)
             {
                 writer.WriteStartObject();
-                pattern.Pattern.Let(it =>
+                rule.Pattern.Let(it =>
                 {
                     writer.WriteString(nameof(Rule.Pattern), it.ToString());
                     if ((it.Options & RegexOptions.IgnoreCase) != 0)
                         writer.WriteBoolean("IgnoreCase", true);
                 });
-                writer.WriteString(nameof(Rule.Message), pattern.Message);
-                writer.WriteString(nameof(Rule.ResultType), pattern.ResultType.ToString());
+                if (rule.Level != Logs.LogLevel.Undefined)
+                    writer.WriteString(nameof(Rule.Level), rule.Level.ToString());
+                writer.WriteString(nameof(Rule.Message), rule.Message);
+                writer.WriteString(nameof(Rule.ResultType), rule.ResultType.ToString());
                 writer.WriteEndObject();
             }
             writer.WriteEndArray();

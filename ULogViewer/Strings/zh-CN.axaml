@@ -202,6 +202,8 @@
 	<sys:String x:Key="String/JsonLogsSavingOptionsDialog.Title">JSON 选项</sys:String>
 
 	<!-- KeyLogAnalysisRuleEditorDialog -->
+	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Level">日志等级</sys:String>
+	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Level.Description">只有符合指定等级的日志才会被选择以输出结果。</sys:String>
 	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Message">分析结果信息 (必要)</sys:String>
 	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Message.Description">您可以使用插值语法 "{}" 以将日志属性或格式中的自定义分组输出至消息</sys:String>
 	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Pattern">格式 (必要)</sys:String>

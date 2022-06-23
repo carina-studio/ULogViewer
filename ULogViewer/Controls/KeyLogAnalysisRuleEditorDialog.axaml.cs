@@ -23,6 +23,7 @@ namespace CarinaStudio.ULogViewer.Controls;
 partial class KeyLogAnalysisRuleEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
 {
 	// Fields.
+	readonly ComboBox levelComboBox;
 	readonly StringInterpolationFormatTextBox messageTextBox;
 	Regex? patternRegex;
 	readonly TextBox patternTextBox;
@@ -35,6 +36,7 @@ partial class KeyLogAnalysisRuleEditorDialog : AppSuite.Controls.InputDialog<IUL
 	public KeyLogAnalysisRuleEditorDialog()
 	{
 		AvaloniaXamlLoader.Load(this);
+		this.levelComboBox = this.Get<ComboBox>(nameof(levelComboBox));
 		this.messageTextBox = this.FindControl<StringInterpolationFormatTextBox>(nameof(messageTextBox))!.Also(it =>
 		{
 			foreach (var propertyName in Log.PropertyNames)
@@ -82,11 +84,18 @@ partial class KeyLogAnalysisRuleEditorDialog : AppSuite.Controls.InputDialog<IUL
 	// Generate result.
 	protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken)
 	{
-		var rule = new KeyLogAnalysisRuleSet.Rule(this.patternRegex.AsNonNull(), (DisplayableLogAnalysisResultType)this.resultTypeComboBox.SelectedItem!, this.messageTextBox.Text.AsNonNull());
+		var rule = new KeyLogAnalysisRuleSet.Rule(this.patternRegex.AsNonNull(), 
+			(Logs.LogLevel)this.levelComboBox.SelectedItem!,
+			(DisplayableLogAnalysisResultType)this.resultTypeComboBox.SelectedItem!, 
+			this.messageTextBox.Text.AsNonNull());
 		if (rule.Equals(this.Rule))
 			return Task.FromResult<object?>(this.Rule);
 		return Task.FromResult<object?>(rule);
 	}
+
+
+	// All log levels.
+	Logs.LogLevel[] LogLevels { get; } = Enum.GetValues<Logs.LogLevel>();
 
 
 	/// <inheritdoc/>
@@ -96,9 +105,13 @@ partial class KeyLogAnalysisRuleEditorDialog : AppSuite.Controls.InputDialog<IUL
 		var rule = this.Rule;
 		var editPatternButton = this.FindControl<Control>("editPatternButton").AsNonNull();
 		if (rule == null)
+		{
+			this.levelComboBox.SelectedItem = Logs.LogLevel.Undefined;
 			this.resultTypeComboBox.SelectedItem = DisplayableLogAnalysisResultType.Information;
+		}
 		else
 		{
+			this.levelComboBox.SelectedItem = rule.Level;
 			this.messageTextBox.Text = rule.Message;
 			this.patternRegex = rule.Pattern;
 			this.patternTextBox.Text = rule.Pattern.ToString();
