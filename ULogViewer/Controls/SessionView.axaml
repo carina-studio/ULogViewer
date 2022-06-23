@@ -1044,7 +1044,7 @@
 				</ToggleButton>
 
 				<!-- Log files -->
-				<ToggleButton Name="logFilesPanelButton" Classes="ToolBar_ToggleButton" IsChecked="{Binding IsLogFilesPanelVisible, Mode=TwoWay}" ToolTip.Tip="{DynamicResource String/SessionView.LogFilesPanel}">
+				<ToggleButton Name="logFilesPanelButton" Classes="ToolBar_ToggleButton" IsChecked="{Binding IsLogFilesPanelVisible, Mode=TwoWay}" IsVisible="False" ToolTip.Tip="{DynamicResource String/SessionView.LogFilesPanel}">
 					<Panel>
 						<Image Classes="Icon" Source="{StaticResource Image/Icon.File.Text}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
 						<Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}">
@@ -1284,7 +1284,7 @@
 							<TextBlock Classes="SessionView_SidePanel_Header_Right" Grid.Column="1" Text="{Binding LogFiles.Count, StringFormat={} ({0})}"/>
 						</Grid>
 					</Border>
-					<asControls:ListBox Classes="Log" Name="logFileListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" Focusable="False" Grid.Row="1" Items="{Binding LogFiles}">
+					<asControls:ListBox Classes="Log" Name="logFileListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" Focusable="False" Grid.Row="1" IsVisible="{Binding $parent[UserControl].IsProVersionActivated}">
 						<asControls:ListBox.ItemTemplate>
 							<DataTemplate>
 								<DockPanel>
@@ -1324,6 +1324,9 @@
 							</DataTemplate>
 						</asControls:ListBox.ItemTemplate>
 					</asControls:ListBox>
+					<Border Background="{x:Static Brushes.Transparent}" Grid.Row="1" IsVisible="{Binding !$parent[UserControl].IsProVersionActivated}">
+						<TextBlock Classes="SessionView_SidePanel_FullPanelHint" Text="{DynamicResource String/SessionView.ProVersionNeeded}"/>
+					</Border>
 				</Grid>
 
 			</Panel>

@@ -119,7 +119,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		static readonly AvaloniaProperty<bool> HasSelectedLogsDurationProperty = AvaloniaProperty.Register<SessionView, bool>("HasSelectedLogsDuration", false);
 		static readonly SettingKey<bool> IsCancelShowingMarkedLogsForLogAnalysisResultTutorialShownKey = new("SessionView.IsCancelShowingMarkedLogsForLogAnalysisResultTutorialShown");
 		static readonly AvaloniaProperty<bool> IsProcessInfoVisibleProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(IsProcessInfoVisible), false);
-		static readonly AvaloniaProperty<bool> IsProVersionActivatedProperty = AvaloniaProperty.Register<SessionView, bool>("IsProVersionActivated", false);
+		static readonly AvaloniaProperty<bool> IsProVersionActivatedProperty = AvaloniaProperty.RegisterDirect<SessionView, bool>("IsProVersionActivated", c => c.isProVersionActivated);
 		static readonly AvaloniaProperty<bool> IsScrollingToLatestLogNeededProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(IsScrollingToLatestLogNeeded), true);
 		static readonly SettingKey<bool> IsLogAnalysisPanelTutorialShownKey = new("SessionView.IsLogAnalysisPanelTutorialShown");
 		static readonly SettingKey<bool> IsLogFilesPanelTutorialShownKey = new("SessionView.IsLogFilesPanelTutorialShown");
@@ -185,6 +185,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		bool isLogFileNeededAfterLogProfileSet;
 		bool isPidLogPropertyVisible;
 		bool isPointerPressedOnLogListBox;
+		bool isProVersionActivated;
 		bool isRestartingAsAdminConfirmed;
 		bool isSelectingFileToSaveLogs;
 		bool isTidLogPropertyVisible;
@@ -247,7 +248,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		static SessionView()
 		{
 			App.Current.PersistentState.SetValue<bool>(IsLogAnalysisPanelTutorialShownKey, true);
-			//App.Current.PersistentState.ResetValue(IsLogFilesPanelTutorialShownKey);
+			App.Current.PersistentState.SetValue<bool>(IsLogFilesPanelTutorialShownKey, true);
 			//App.Current.PersistentState.ResetValue(IsMarkedLogsPanelTutorialShownKey);
 			//App.Current.PersistentState.ResetValue(IsSelectingLogProfileToStartTutorialShownKey);
 			//App.Current.PersistentState.ResetValue(IsSwitchingSidePanelsTutorialShownKey);
@@ -1262,7 +1263,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		DataTemplate CreateLogItemTemplate(LogProfile profile, IList<DisplayableLogProperty> logProperties)
 		{
 			var app = (App)this.Application;
-			var isProVersion = this.GetValue<bool>(IsProVersionActivatedProperty);
+			var isProVersion = this.isProVersionActivated;
 			var logPropertyCount = logProperties.Count;
 			var colorIndicatorBorderBrush = app.TryFindResource("Brush/WorkingArea.Background", out var rawResource) ? (IBrush?)rawResource : default;
 			var colorIndicatorBorderThickness = app.TryFindResource("Thickness/SessionView.LogListBox.ColorIndicator.Border", out rawResource) ? (Thickness)rawResource! : default;
@@ -2406,8 +2407,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.AddHandler(KeyUpEvent, this.OnPreviewKeyUp, RoutingStrategies.Tunnel);
 
 			// check product state
-			this.SetValue<bool>(IsProVersionActivatedProperty, this.Application.ProductManager.IsProductActivated(Products.Professional));
-			if (this.GetValue<bool>(IsProVersionActivatedProperty))
+			this.SetAndRaise<bool>(IsProVersionActivatedProperty, ref this.isProVersionActivated, this.Application.ProductManager.IsProductActivated(Products.Professional));
+			if (this.isProVersionActivated)
 				this.RecreateLogHeadersAndItemTemplate();
 			this.UpdateToolsMenuItems();
 
@@ -2516,7 +2517,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// build headers
 			var app = (App)this.Application;
-			var isProVersion = this.GetValue<bool>(IsProVersionActivatedProperty);
+			var isProVersion = this.isProVersionActivated;
 			var analysisResultIndicatorSize = isProVersion && app.TryFindResource("Double/SessionView.LogListBox.LogAnalysisResultIndicator.Size", out var rawResource) ? (double)rawResource! : default;
 			var analysisResultIndicatorMargin = isProVersion && app.TryFindResource("Thickness/SessionView.LogListBox.LogAnalysisResultIndicator.Margin", out rawResource) ? (Thickness)rawResource! : default;
 			var markIndicatorSize = app.TryFindResource("Double/SessionView.LogListBox.MarkIndicator.Size", out rawResource) ? (double)rawResource! : default;
@@ -3686,7 +3687,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (productManager == null || productId != Products.Professional)
 				return;
 			productManager.TryGetProductState(productId, out var state);
-			this.SetValue<bool>(IsProVersionActivatedProperty, state == ProductState.Activated);
+			this.SetAndRaise<bool>(IsProVersionActivatedProperty, ref this.isProVersionActivated, state == ProductState.Activated);
 			if (state == ProductState.Deactivated || state == ProductState.Activated)
 			{
 				// update UI
@@ -3983,50 +3984,14 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Reload log file.
-		async void ReloadLogFile(string? fileName)
+		void ReloadLogFile(string? fileName)
 		{
-			// check state
-			this.VerifyAccess();
-			if (this.DataContext is not Session session)
-				return;
-			if (fileName == null)
-				return;
-			var logFileInfo = session.LogFiles.FirstOrDefault(it => PathEqualityComparer.Default.Equals(it.FileName, fileName));
-			if (logFileInfo == null || logFileInfo.IsPredefined)
-				return;
-			
-			// select precondition
-			var precondition = await this.SelectLogReadingPreconditionAsync(LogDataSourceType.File, logFileInfo.LogReadingPrecondition, true);
-			if (!precondition.HasValue)
-				return;
-			
-			// reload log file
-			session.ReloadLogFileCommand.TryExecute(new Session.LogDataSourceParams<string>()
-			{
-				Precondition = precondition.Value,
-				Source = logFileInfo.FileName,
-			});
 		}
 
 
 		// Reload log file without reading precondition.
 		void ReloadLogFileWithoutLogReadingPrecondition(string? fileName)
 		{
-			// check state
-			this.VerifyAccess();
-			if (this.DataContext is not Session session)
-				return;
-			if (fileName == null)
-				return;
-			var logFileInfo = session.LogFiles.FirstOrDefault(it => PathEqualityComparer.Default.Equals(it.FileName, fileName));
-			if (logFileInfo == null || logFileInfo.IsPredefined || logFileInfo.LogReadingPrecondition.IsEmpty)
-				return;
-			
-			// reload log file
-			session.ReloadLogFileCommand.TryExecute(new Session.LogDataSourceParams<string>()
-			{
-				Source = logFileInfo.FileName,
-			});
 		}
 
 

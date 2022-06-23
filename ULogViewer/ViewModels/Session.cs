@@ -914,7 +914,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// setup properties
 			this.AllLogs = new SafeReadOnlyList<DisplayableLog>(this.allLogs);
 			this.LogAnalysisResults = this.logAnalysisResults.AsReadOnly();
-			this.LogFiles = this.logFileInfoList.AsReadOnly();
 			this.SetValue(LogsProperty, this.AllLogs);
 			this.MarkedLogs = new SafeReadOnlyList<DisplayableLog>(this.markedLogs);
 
@@ -2788,12 +2787,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Get list of result of log analysis.
 		/// </summary>
 		public IList<DisplayableLogAnalysisResult> LogAnalysisResults { get; }
-
-
-		/// <summary>
-		/// Get information of added log files.
-		/// </summary>
-		public IList<LogFileInfo> LogFiles { get; }
 
 
 		/// <summary>
