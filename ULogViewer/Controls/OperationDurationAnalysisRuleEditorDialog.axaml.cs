@@ -6,6 +6,7 @@ using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
+using CarinaStudio.ULogViewer.ViewModels.Analysis;
 using CarinaStudio.ULogViewer.ViewModels.Analysis.ContextualBased;
 using System;
 using System.Collections.Generic;
@@ -38,6 +39,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly CarinaStudio.Controls.TimeSpanTextBox maxDurationTextBox;
 		readonly CarinaStudio.Controls.TimeSpanTextBox minDurationTextBox;
 		readonly TextBox operationNameTextBox;
+		readonly ComboBox resultTypeComboBox;
 
 
 		/// <summary>
@@ -68,6 +70,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				it.GetObservable(TextBox.TextProperty).Subscribe(_ => this.InvalidateInput());
 			});
+			this.resultTypeComboBox = this.Get<ComboBox>(nameof(resultTypeComboBox));
 		}
 
 
@@ -189,6 +192,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			var rule = this.Rule;
 			var newRule = new OperationDurationAnalysisRuleSet.Rule(this.operationNameTextBox.Text.AsNonNull(),
+				(DisplayableLogAnalysisResultType)this.resultTypeComboBox.SelectedItem.AsNonNull(),
 				this.beginningPattern.AsNonNull(),
 				this.beginningPreActions,
 				this.beginningConditions,
@@ -216,6 +220,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (rule != null)
 			{
 				this.operationNameTextBox.Text = rule.OperationName;
+				this.resultTypeComboBox.SelectedItem = rule.ResultType;
 				this.beginningConditions.AddAll(rule.BeginningConditions);
 				this.beginningPattern = rule.BeginningPattern;
 				this.beginningPatternTextBox.Text = rule.BeginningPattern.ToString();
@@ -233,7 +238,10 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.maxDurationTextBox.Value = rule.MaxDuration;
 			}
 			else
+			{
+				this.resultTypeComboBox.SelectedItem = DisplayableLogAnalysisResultType.TimeSpan;
 				this.endingModeComboBox.SelectedItem = OperationEndingMode.FirstInFirstOut;
+			}
 			if (!this.Application.PersistentState.GetValueOrDefault(RegexEditorDialog.IsClickButtonToEditPatternTutorialShownKey))
 			{
 				this.FindControl<TutorialPresenter>("tutorialPresenter")!.ShowTutorial(new Tutorial().Also(it =>

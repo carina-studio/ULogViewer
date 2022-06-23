@@ -5,6 +5,7 @@
 		xmlns:abControls="using:CarinaStudio.Controls"
 		xmlns:abConverters="using:CarinaStudio.Data.Converters"
 		xmlns:app="using:CarinaStudio.ULogViewer"
+		xmlns:appAnalysis="using:CarinaStudio.ULogViewer.ViewModels.Analysis"
 		xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
 		xmlns:appCtxlBased="using:CarinaStudio.ULogViewer.ViewModels.Analysis.ContextualBased"
         xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
@@ -39,6 +40,11 @@
 					<!-- Operation name -->
 					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.OperationName}"/>
 					<TextBox Name="operationNameTextBox" Classes="Dialog_TextBox" MaxLength="256"/>
+					<Separator Classes="Dialog_Separator"/>
+
+					<!-- Result type -->
+					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.ResultType}"/>
+					<asControls:EnumComboBox Name="resultTypeComboBox" Classes="Dialog_ComboBox" EnumType="{x:Type appAnalysis:DisplayableLogAnalysisResultType}"/>
 					<Separator Classes="Dialog_Separator_Large"/>
 
 					<!-- Beginning log -->

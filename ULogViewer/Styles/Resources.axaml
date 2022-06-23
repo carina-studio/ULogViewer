@@ -124,7 +124,9 @@
 
 	<!-- OperationDurationAnalysisRuleSetEditorDialog -->
 	<sys:Double x:Key="Double/OperationDurationAnalysisRuleSetEditorDialog.RuleListBox.Height">300</sys:Double>
+	<sys:Double x:Key="Double/OperationDurationAnalysisRuleSetEditorDialog.RuleListBox.Item.Icon.Size">14</sys:Double>
 	<sys:Double x:Key="Double/OperationDurationAnalysisRuleSetEditorDialog.Width">500</sys:Double>
+	<Thickness x:Key="Thickness/OperationDurationAnalysisRuleSetEditorDialog.RuleListBox.Item.Icon.Margin">0,0,8,0</Thickness>
 
 	<!-- PopToVarEditorDialog -->
 	<sys:Double x:Key="Double/PopToVarEditorDialog.Width">300</sys:Double>

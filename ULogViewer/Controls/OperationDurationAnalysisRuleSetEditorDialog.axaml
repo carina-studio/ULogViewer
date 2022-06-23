@@ -62,10 +62,11 @@
 				<asControls:ListBox Name="ruleListBox" Classes="Dialog_ListBox" Height="{StaticResource Double/OperationDurationAnalysisRuleSetEditorDialog.RuleListBox.Height}" Items="{Binding $parent[Window].Rules}">
 					<asControls:ListBox.ItemTemplate>
 						<DataTemplate>
-							<Grid ColumnDefinitions="*,Auto">
-								<TextBlock Text="{Binding OperationName}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
-								<Border Classes="InPlaceAction_Reserved"/>
-								<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
+							<Grid ColumnDefinitions="Auto,*,Auto">
+								<Image Classes="Icon" Height="{StaticResource Double/OperationDurationAnalysisRuleSetEditorDialog.RuleListBox.Item.Icon.Size}" Margin="{StaticResource Thickness/OperationDurationAnalysisRuleSetEditorDialog.RuleListBox.Item.Icon.Margin}" Source="{Binding ResultType, Converter={x:Static appConverters:DisplayableLogAnalysisResultIconConverter.Default}}" VerticalAlignment="Center" Width="{StaticResource Double/OperationDurationAnalysisRuleSetEditorDialog.RuleListBox.Item.Icon.Size}"/>
+								<TextBlock Grid.Column="1" Text="{Binding OperationName}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+								<Border Classes="InPlaceAction_Reserved" Grid.Column="1"/>
+								<StackPanel Grid.Column="2" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
 									<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveRule}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
 										<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Delete}"/>
 									</Button>

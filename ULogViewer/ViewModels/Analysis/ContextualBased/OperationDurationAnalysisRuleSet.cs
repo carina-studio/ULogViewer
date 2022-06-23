@@ -26,6 +26,7 @@ class OperationDurationAnalysisRuleSet : BaseProfile<IULogViewerApplication>
         /// Initialize new <see cref="Rule"/> instance.
         /// </summary>
         /// <param name="operationName">Name of operation.</param>
+        /// <param name="resultType">Type of generated result.</param>
         /// <param name="beginningPattern">Pattern to match text of beginning of operation log.</param>
         /// <param name="beginningPreActions">Actions to perform before all matching beginning conditions.</param>
         /// <param name="beginningConditions">Conditions for beginning of operation log after text matched.</param>
@@ -40,6 +41,7 @@ class OperationDurationAnalysisRuleSet : BaseProfile<IULogViewerApplication>
         /// <param name="maxDuration">The upper bound of duration to generate result.</param>
         /// <param name="customMessage">Custom formatted message.</param>
         public Rule(string operationName, 
+            DisplayableLogAnalysisResultType resultType,
             Regex beginningPattern, 
             IEnumerable<ContextualBasedAnalysisAction> beginningPreActions,
             IEnumerable<ContextualBasedAnalysisCondition> beginningConditions, 
@@ -86,6 +88,7 @@ class OperationDurationAnalysisRuleSet : BaseProfile<IULogViewerApplication>
             this.MaxDuration = maxDuration;
             this.MinDuration = minDuration;
             this.OperationName = operationName;
+            this.ResultType = resultType;
         }
 
         /// <summary>
@@ -109,6 +112,7 @@ class OperationDurationAnalysisRuleSet : BaseProfile<IULogViewerApplication>
             this.MaxDuration = template.MaxDuration;
             this.MinDuration = template.MinDuration;
             this.OperationName = operationName;
+            this.ResultType = template.ResultType;
         }
 
         /// <summary>
@@ -183,7 +187,8 @@ class OperationDurationAnalysisRuleSet : BaseProfile<IULogViewerApplication>
             && rule.EndingPostActions.SequenceEqual(this.EndingPostActions)
             && rule.EndingVariables.SequenceEqual(this.EndingVariables)
             && rule.MaxDuration == this.MaxDuration
-            && rule.MinDuration == this.MinDuration;
+            && rule.MinDuration == this.MinDuration
+            && rule.ResultType == this.ResultType;
 
         /// <inheritdoc/>
         public override bool Equals(object? obj) =>
@@ -219,6 +224,11 @@ class OperationDurationAnalysisRuleSet : BaseProfile<IULogViewerApplication>
         /// </summary>
         public static bool operator !=(Rule? lhs, Rule? rhs) =>
             object.ReferenceEquals(lhs, null) ? !object.ReferenceEquals(rhs, null) : !lhs.Equals(rhs);
+        
+        /// <summary>
+        /// Get result type.
+        /// </summary>
+        public DisplayableLogAnalysisResultType ResultType { get; }
     }
 
 

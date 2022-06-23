@@ -561,6 +561,7 @@
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.Pattern">Pattern (required)</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.PostActions">Actions to perform after extra conditions matched</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.PreActions">Actions to perform after text matched</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.ResultType">Type of analysis result</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.Title">Edit operation duration analysis rule</sys:String>
 
 	<!-- OperationDurationAnalysisRuleSetEditorDialog -->

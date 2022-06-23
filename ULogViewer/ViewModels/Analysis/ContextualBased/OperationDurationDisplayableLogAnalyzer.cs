@@ -39,7 +39,7 @@ class OperationDurationDisplayableLogAnalyzer : ContextualBasedDisplayableLogAna
         readonly string operationName;
 
         // Constructor.
-        public Result(OperationDurationDisplayableLogAnalyzer analyzer, string operationName, DisplayableLog beginningLog, TimeSpan duration, string? customMessage) : base(analyzer, DisplayableLogAnalysisResultType.TimeSpan, beginningLog)
+        public Result(OperationDurationDisplayableLogAnalyzer analyzer, string operationName, DisplayableLogAnalysisResultType resultType, DisplayableLog beginningLog, DisplayableLog endingLog, TimeSpan duration, string? customMessage) : base(analyzer, resultType, beginningLog)
         {
             this.customMessage = customMessage;
             this.duration = duration;

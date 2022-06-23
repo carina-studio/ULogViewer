@@ -527,6 +527,7 @@
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.Pattern">文字格式 (必要)</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.PostActions">額外條件符合後執行動作</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.PreActions">文字格式符合後執行動作</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.ResultType">分析結果類型</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.Title">編輯動作時距分析規則</sys:String>
 
 	<!-- OperationDurationAnalysisRuleSetEditorDialog -->
