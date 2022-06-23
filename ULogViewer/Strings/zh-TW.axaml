@@ -355,6 +355,7 @@
 	<sys:String x:Key="String/LogProfileSelectionDialog.AllLogProfiles">所有日誌類型</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.BuiltInLogProfile">內建</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.CannotImportProVersionOnlyLogProfile">無法從 '{0}' 匯入日誌類型因其包含專業版之參數。</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionDialog.ConfirmRemovingLogProfile">您是否確定要移除日誌類型「{0}」？</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.EditLogProfile">編輯日誌類型</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.ExportLogProfile">匯出日誌類型</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.FailedToExportLogProfile">無法匯出日誌類型至 '{0}'。</sys:String>

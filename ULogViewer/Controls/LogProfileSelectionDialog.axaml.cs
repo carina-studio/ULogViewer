@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.AppSuite.Data;
 using CarinaStudio.AppSuite.Product;
 using CarinaStudio.Collections;
@@ -31,12 +32,12 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Fields.
 		readonly HashSet<LogProfile> attachedLogProfiles = new HashSet<LogProfile>();
-		readonly ListBox otherLogProfileListBox;
+		readonly Avalonia.Controls.ListBox otherLogProfileListBox;
 		readonly SortedObservableList<LogProfile> otherLogProfiles = new SortedObservableList<LogProfile>(CompareLogProfiles);
-		readonly ListBox pinnedLogProfileListBox;
+		readonly Avalonia.Controls.ListBox pinnedLogProfileListBox;
 		readonly SortedObservableList<LogProfile> pinnedLogProfiles = new SortedObservableList<LogProfile>(CompareLogProfiles);
 		readonly ScrollViewer scrollViewer;
-		readonly ListBox templateLogProfileListBox;
+		readonly Avalonia.Controls.ListBox templateLogProfileListBox;
 		readonly SortedObservableList<LogProfile> templateLogProfiles = new SortedObservableList<LogProfile>(CompareLogProfiles);
 
 
@@ -54,10 +55,10 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.InitializeComponent();
 
 			// setup controls
-			this.otherLogProfileListBox = this.Get<ListBox>(nameof(otherLogProfileListBox));
-			this.pinnedLogProfileListBox = this.Get<ListBox>(nameof(pinnedLogProfileListBox));
+			this.otherLogProfileListBox = this.Get<Avalonia.Controls.ListBox>(nameof(otherLogProfileListBox));
+			this.pinnedLogProfileListBox = this.Get<Avalonia.Controls.ListBox>(nameof(pinnedLogProfileListBox));
 			this.scrollViewer = this.Get<ScrollViewer>(nameof(scrollViewer));
-			this.templateLogProfileListBox = this.Get<ListBox>(nameof(templateLogProfileListBox));
+			this.templateLogProfileListBox = this.Get<Avalonia.Controls.ListBox>(nameof(templateLogProfileListBox));
 
 			// attach to log profiles
 			((INotifyCollectionChanged)LogProfileManager.Default.Profiles).CollectionChanged += this.OnAllLogProfilesChanged;
@@ -537,11 +538,18 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Remove log profile.
-		void RemoveLogProfile(LogProfile? logProfile)
+		async void RemoveLogProfile(LogProfile? logProfile)
 		{
 			if (logProfile == null)
 				return;
-			LogProfileManager.Default.RemoveProfile(logProfile);
+			var result = await new MessageDialog()
+			{
+				Buttons = MessageDialogButtons.YesNo,
+				Icon = MessageDialogIcon.Question,
+				Message = this.Application.GetFormattedString("LogProfileSelectionDialog.ConfirmRemovingLogProfile", logProfile.Name),
+			}.ShowDialog(this);
+			if (result == MessageDialogResult.Yes)
+				LogProfileManager.Default.RemoveProfile(logProfile);
 		}
 
 

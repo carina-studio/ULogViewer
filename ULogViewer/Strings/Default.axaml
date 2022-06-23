@@ -383,6 +383,7 @@
 	<sys:String x:Key="String/LogProfileSelectionDialog.AllLogProfiles">All profiles</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.BuiltInLogProfile">Built-in</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.CannotImportProVersionOnlyLogProfile">Unable to import profile from '{0}' because of containing Pro version parameters.</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionDialog.ConfirmRemovingLogProfile">Are you sure to remove log profile '{0}'?</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.EditLogProfile">Edit profile</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.ExportLogProfile">Export profile</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.FailedToExportLogProfile">Unable to export profile to '{0}'.</sys:String>
