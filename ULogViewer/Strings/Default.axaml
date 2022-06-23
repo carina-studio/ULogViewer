@@ -122,6 +122,7 @@
 	<sys:String x:Key="String/Common.References">References</sys:String>
 	<sys:String x:Key="String/Common.RegularExpression.Reference">Syntax reference</sys:String>
 	<sys:String x:Key="String/Common.Rename">Rename</sys:String>
+	<sys:String x:Key="String/Common.To">To</sys:String>
 	<sys:String x:Key="String/Common.Yes">Yes</sys:String>
 
 	<!-- ComparisonType -->
@@ -553,6 +554,8 @@
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingVariable">Variable to compare</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingVariables">Variables to compare</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingVariables.Description">The variables are used for finding beginning log. All listed variables should be captured in both beginning and ending log and values should be equivalent.</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.MinMaxDuration">Effective duration of operation</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.MinMaxDuration.Description">Only operations with duration in the range will be selected to generate results. Leave it empty if there is no lower/upper bound.</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.OperationName">Name of operation</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.Other">Other</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.Pattern">Pattern (required)</sys:String>

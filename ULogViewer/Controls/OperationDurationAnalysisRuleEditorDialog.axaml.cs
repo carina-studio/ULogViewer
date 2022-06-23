@@ -35,6 +35,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ObservableList<ContextualBasedAnalysisAction> endingPreActions = new();
 		readonly Avalonia.Controls.ListBox endingVariableListBox;
 		readonly ObservableList<string> endingVariables = new();
+		readonly CarinaStudio.Controls.TimeSpanTextBox maxDurationTextBox;
+		readonly CarinaStudio.Controls.TimeSpanTextBox minDurationTextBox;
 		readonly TextBox operationNameTextBox;
 
 
@@ -51,6 +53,16 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.endingVariableListBox = this.Get<AppSuite.Controls.ListBox>(nameof(endingVariableListBox)).Also(it =>
 			{
 				it.DoubleClickOnItem += (_, e) => this.EditEndingVariable((string)e.Item);
+			});
+			this.maxDurationTextBox = this.Get<CarinaStudio.Controls.TimeSpanTextBox>(nameof(maxDurationTextBox)).Also(it =>
+			{
+				it.GetObservable(CarinaStudio.Controls.TimeSpanTextBox.IsTextValidProperty).Subscribe(_ => this.InvalidateInput());
+				it.GetObservable(CarinaStudio.Controls.TimeSpanTextBox.ValueProperty).Subscribe(_ => this.InvalidateInput());
+			});
+			this.minDurationTextBox = this.Get<CarinaStudio.Controls.TimeSpanTextBox>(nameof(minDurationTextBox)).Also(it =>
+			{
+				it.GetObservable(CarinaStudio.Controls.TimeSpanTextBox.IsTextValidProperty).Subscribe(_ => this.InvalidateInput());
+				it.GetObservable(CarinaStudio.Controls.TimeSpanTextBox.ValueProperty).Subscribe(_ => this.InvalidateInput());
 			});
 			this.operationNameTextBox = this.Get<TextBox>(nameof(operationNameTextBox)).Also(it =>
 			{
@@ -187,6 +199,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.endingPostActions,
 				(OperationEndingMode)this.endingModeComboBox.SelectedItem.AsNonNull(),
 				this.endingVariables,
+				this.minDurationTextBox.Value,
+				this.maxDurationTextBox.Value,
 				this.customMessageTextBox.Text);
 			if (rule == newRule)
 				return Task.FromResult<object?>(rule);
@@ -215,6 +229,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.endingPreActions.AddAll(rule.EndingPreActions);
 				this.endingPostActions.AddAll(rule.EndingPostActions);
 				this.endingVariables.AddAll(rule.EndingVariables);
+				this.minDurationTextBox.Value = rule.MinDuration;
+				this.maxDurationTextBox.Value = rule.MaxDuration;
 			}
 			else
 				this.endingModeComboBox.SelectedItem = OperationEndingMode.FirstInFirstOut;
@@ -243,7 +259,18 @@ namespace CarinaStudio.ULogViewer.Controls
 			base.OnValidateInput() 
 			&& !string.IsNullOrWhiteSpace(this.operationNameTextBox.Text) 
 			&& this.beginningPattern != null
-			&& this.endingPattern != null;
+			&& this.endingPattern != null
+			&& this.minDurationTextBox.IsTextValid
+			&& this.maxDurationTextBox.IsTextValid
+			&& this.minDurationTextBox.Value.Let(minDuration =>
+			{
+				return this.maxDurationTextBox.Value.Let(maxDuration =>
+				{
+					if (!minDuration.HasValue || !maxDuration.HasValue)
+						return true;
+					return minDuration <= maxDuration;
+				});
+			});
 		
 
 		// Remove ending variable.

@@ -36,6 +36,8 @@ class OperationDurationAnalysisRuleSet : BaseProfile<IULogViewerApplication>
         /// <param name="endingPostActions">Actions to perform after all ending conditions matched.</param>
         /// <param name="endingMode">Mode of ending operation.</param>
         /// <param name="endingVars">variables to compare when <paramref name="endingMode"/> is <see cref="OperationEndingMode.CompareVariables"/>.</param>
+        /// <param name="minDuration">The lower bound of duration to generate result.</param>
+        /// <param name="maxDuration">The upper bound of duration to generate result.</param>
         /// <param name="customMessage">Custom formatted message.</param>
         public Rule(string operationName, 
             Regex beginningPattern, 
@@ -48,8 +50,28 @@ class OperationDurationAnalysisRuleSet : BaseProfile<IULogViewerApplication>
             IEnumerable<ContextualBasedAnalysisAction> endingPostActions,
             OperationEndingMode endingMode,
             IEnumerable<string> endingVars,
+            TimeSpan? minDuration,
+            TimeSpan? maxDuration,
             string? customMessage)
         {
+            minDuration?.Let(min =>
+            {
+                maxDuration?.Let(max =>
+                {
+                    if (min.Ticks < 0)
+                    {
+                        min = default;
+                        minDuration = null;
+                    }
+                    if (max.Ticks < 0)
+                    {
+                        max = default;
+                        maxDuration = null;
+                    }
+                    if (max < min)
+                        maxDuration = minDuration;
+                });
+            });
             this.BeginningConditions = beginningConditions.ToArray().AsReadOnly();
             this.BeginningPattern = beginningPattern;
             this.BeginningPostActions = beginningPostActions.ToArray().AsReadOnly();
@@ -61,6 +83,8 @@ class OperationDurationAnalysisRuleSet : BaseProfile<IULogViewerApplication>
             this.EndingPostActions = endingPostActions.ToArray().AsReadOnly();
             this.EndingPreActions = endingPreActions.ToArray().AsReadOnly();
             this.EndingVariables = endingVars.ToArray().AsReadOnly();
+            this.MaxDuration = maxDuration;
+            this.MinDuration = minDuration;
             this.OperationName = operationName;
         }
 
@@ -82,6 +106,8 @@ class OperationDurationAnalysisRuleSet : BaseProfile<IULogViewerApplication>
             this.EndingPostActions = template.EndingPostActions;
             this.EndingPreActions = template.EndingPreActions;
             this.EndingVariables = template.EndingVariables;
+            this.MaxDuration = template.MaxDuration;
+            this.MinDuration = template.MinDuration;
             this.OperationName = operationName;
         }
 
@@ -155,7 +181,9 @@ class OperationDurationAnalysisRuleSet : BaseProfile<IULogViewerApplication>
             && rule.EndingConditions.SequenceEqual(this.EndingConditions)
             && rule.EndingPreActions.SequenceEqual(this.EndingPreActions)
             && rule.EndingPostActions.SequenceEqual(this.EndingPostActions)
-            && rule.EndingVariables.SequenceEqual(this.EndingVariables);
+            && rule.EndingVariables.SequenceEqual(this.EndingVariables)
+            && rule.MaxDuration == this.MaxDuration
+            && rule.MinDuration == this.MinDuration;
 
         /// <inheritdoc/>
         public override bool Equals(object? obj) =>
@@ -164,6 +192,16 @@ class OperationDurationAnalysisRuleSet : BaseProfile<IULogViewerApplication>
         /// <inheritdoc/>
         public override int GetHashCode() =>
             this.OperationName.GetHashCode();
+        
+        /// <summary>
+        /// Get the upper bound of duration to generate result.
+        /// </summary>
+        public TimeSpan? MaxDuration { get; }
+
+        /// <summary>
+        /// Get the lower bound of duration to generate result.
+        /// </summary>
+        public TimeSpan? MinDuration { get; }
 
         /// <summary>
         /// Get name of operation.

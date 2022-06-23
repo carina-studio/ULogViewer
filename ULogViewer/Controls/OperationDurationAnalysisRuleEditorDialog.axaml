@@ -151,6 +151,20 @@
 					<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.EndingVariables.Description}"/>
 					<Separator Classes="Dialog_Separator"/>
 
+					<!-- Min/Max duration -->
+					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.MinMaxDuration}"/>
+					<Grid ColumnDefinitions="*,Auto,Auto,Auto,*">
+						<abControls:TimeSpanTextBox Name="minDurationTextBox" Classes="Dialog_TextBox" Grid.Column="0"/>
+						<Separator Classes="Dialog_Separator_Small" Grid.Column="1"/>
+						<TextBlock Grid.Column="2" Text="{DynamicResource String/Common.To}" VerticalAlignment="Center"/>
+						<Separator Classes="Dialog_Separator_Small" Grid.Column="3"/>
+						<abControls:TimeSpanTextBox Name="maxDurationTextBox" Classes="Dialog_TextBox" Grid.Column="4"/>
+					</Grid>
+					<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.MinMaxDuration.Description}"/>
+					<Separator Classes="Dialog_Separator_Small"/>
+					<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/TimeSpanTextBox.FormatDescription}" TextWrapping="Wrap"/>
+					<Separator Classes="Dialog_Separator"/>
+
 					<!-- Custom message -->
 					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.CustomMessage}"/>
 					<asControls:StringInterpolationFormatTextBox Name="customMessageTextBox" Classes="Dialog_TextBlock" Height="{StaticResource Double/OperationDurationAnalysisRuleEditorDialog.CustomMessageTextBox.Height}"/>

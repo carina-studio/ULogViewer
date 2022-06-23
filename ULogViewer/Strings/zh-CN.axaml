@@ -121,6 +121,7 @@
 	<sys:String x:Key="String/Common.References">参考文件</sys:String>
 	<sys:String x:Key="String/Common.RegularExpression.Reference">语法说明</sys:String>
 	<sys:String x:Key="String/Common.Rename">重新命名</sys:String>
+	<sys:String x:Key="String/Common.To">至</sys:String>
 	<sys:String x:Key="String/Common.Yes">是</sys:String>
 
 	<!-- ContextualBasedAnalysisActionsEditor -->
@@ -519,6 +520,8 @@
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingVariable">比对的变量</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingVariables">比对的变量</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingVariables.Description">变量将用于搜寻动作起始日志。所有列出的变量必须同时在起始及结束日志中被撷取且值相同。</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.MinMaxDuration">有效动作时距</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.MinMaxDuration.Description">只有在指定时距区间内的动作才会被用以输出结果。若没有上/下限则留白。</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.OperationName">动作名称</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.Other">其他</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.Pattern">文字格式 (必要)</sys:String>
