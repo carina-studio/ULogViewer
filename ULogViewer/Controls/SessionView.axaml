@@ -20,7 +20,8 @@
              xmlns:appViewModels="clr-namespace:CarinaStudio.ULogViewer.ViewModels;assembly=ULogViewer"
 			 xmlns:cs="using:CarinaStudio"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="CarinaStudio.ULogViewer.Controls.SessionView">
+             x:Class="CarinaStudio.ULogViewer.Controls.SessionView"
+			 Name="root">
 
 	<!-- Data templates -->
 	<UserControl.DataTemplates>
@@ -1324,6 +1325,15 @@
 							</DataTemplate>
 						</asControls:ListBox.ItemTemplate>
 					</asControls:ListBox>
+					<Border Background="{x:Static Brushes.Transparent}" Grid.Row="1">
+						<Border.IsVisible>
+							<MultiBinding Converter="{x:Static aConverters:BoolConverters.And}">
+								<Binding Path="IsProVersionActivated" ElementName="root"/>
+								<Binding Path="!IsLogFileSupported"/>
+							</MultiBinding>
+						</Border.IsVisible>
+						<TextBlock Classes="SessionView_SidePanel_FullPanelHint" Text="{DynamicResource String/SessionView.LogFileIsUnsupported}"/>
+					</Border>
 					<Border Background="{x:Static Brushes.Transparent}" Grid.Row="1" IsVisible="{Binding !$parent[UserControl].IsProVersionActivated}">
 						<TextBlock Classes="SessionView_SidePanel_FullPanelHint" Text="{DynamicResource String/SessionView.ProVersionNeeded}"/>
 					</Border>

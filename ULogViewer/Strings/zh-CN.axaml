@@ -637,6 +637,7 @@
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.KeyLogAnalysisRuleSet">关键日志分析</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.OperationDurationAnalysisRuleSet">动作时距分析</sys:String>
 	<sys:String x:Key="String/SessionView.LogCountInLogFile">日志个数：</sys:String>
+	<sys:String x:Key="String/SessionView.LogFileIsUnsupported">当前的日志类型不支持使用档案</sys:String>
 	<sys:String x:Key="String/SessionView.LogFilesPanel">已加入的日志档案</sys:String>
 	<sys:String x:Key="String/SessionView.LogFiltersCombinationMode">筛选条件运算方式 (交集/并集)</sys:String>
 	<sys:String x:Key="String/SessionView.LoginToAzure">登录 Azure</sys:String>

@@ -671,6 +671,7 @@
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.KeyLogAnalysisRuleSet">Key log analysis</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.OperationDurationAnalysisRuleSet">Operation duration analysis</sys:String>
 	<sys:String x:Key="String/SessionView.LogCountInLogFile">Log count:</sys:String>
+	<sys:String x:Key="String/SessionView.LogFileIsUnsupported">File is unsupported in current log profile</sys:String>
 	<sys:String x:Key="String/SessionView.LogFilesPanel">Added log files</sys:String>
 	<sys:String x:Key="String/SessionView.LogFiltersCombinationMode">Way to combine conditions (Intersect/Union)</sys:String>
 	<sys:String x:Key="String/SessionView.LoginToAzure">Login to Azure</sys:String>

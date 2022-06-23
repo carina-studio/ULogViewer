@@ -200,6 +200,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsLogFilesPanelVisibleProperty = ObservableProperty.Register<Session, bool>(nameof(IsLogFilesPanelVisible), false);
 		/// <summary>
+		/// Property of <see cref="IsLogFileSupported"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> IsLogFileSupportedProperty = ObservableProperty.Register<Session, bool>(nameof(IsLogFileSupported), false);
+		/// <summary>
 		/// Property of <see cref="IsLogsReadingPaused"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsLogsReadingPausedProperty = ObservableProperty.Register<Session, bool>(nameof(IsLogsReadingPaused));
@@ -2576,6 +2580,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Check whether logs file is supported or not.
+		/// </summary>
+		public bool IsLogFileSupported { get => this.GetValue(IsLogFileSupportedProperty); }
+
+
+		/// <summary>
 		/// Check whether logs reading has been paused or not.
 		/// </summary>
 		public bool IsLogsReadingPaused { get => this.GetValue(IsLogsReadingPausedProperty); }
@@ -3745,6 +3755,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.ResetValue(HasLogColorIndicatorByFileNameProperty);
 			this.SetValue(IsIPEndPointNeededProperty, false);
 			this.SetValue(IsLogFileNeededProperty, false);
+			this.ResetValue(IsLogFileSupportedProperty);
 			this.SetValue(IsReadingLogsContinuouslyProperty, false);
 			this.SetValue(IsUriNeededProperty, false);
 			this.SetValue(IsWorkingDirectoryNeededProperty, false);
@@ -3807,6 +3818,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.FileName)))
 			{
 				this.SetValue(AreFileBasedLogsProperty, true);
+				this.SetValue(IsLogFileSupportedProperty, true);
 				if (defaultDataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName)))
 				{
 					useDefaultDataSourceOptions = true;
@@ -3823,6 +3835,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.canClearLogFiles.Update(false);
 				this.SetValue(AreFileBasedLogsProperty, false);
 				this.SetValue(IsLogFileNeededProperty, false);
+				this.SetValue(IsLogFileSupportedProperty, dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.FileName)));
 			}
 			if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.IPEndPoint)))
 			{
@@ -4474,6 +4487,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.FileName)))
 			{
 				this.SetValue(AreFileBasedLogsProperty, true);
+				this.SetValue(IsLogFileSupportedProperty, true);
 				if (dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName)))
 					this.logFileInfoList.Add(new LogFileInfoImpl(this, dataSourceOptions.FileName.AsNonNull(), new(), true));
 				else
@@ -4483,6 +4497,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					startReadingLogs = false;
 				}
 			}
+			else
+				this.SetValue(IsLogFileSupportedProperty, dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.FileName)));
 			if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.IPEndPoint)))
 			{
 				if (!dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.IPEndPoint)))
