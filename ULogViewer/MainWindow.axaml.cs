@@ -7,6 +7,8 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.Templates;
 using Avalonia.VisualTree;
 using CarinaStudio.AppSuite.Controls;
+using CarinaStudio.AppSuite.Net;
+using CarinaStudio.AppSuite.Product;
 using CarinaStudio.AppSuite.ViewModels;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
@@ -39,11 +41,13 @@ namespace CarinaStudio.ULogViewer
 
 		// Static fields.
 		static readonly AvaloniaProperty<bool> HasMultipleSessionsProperty = AvaloniaProperty.Register<MainWindow, bool>("HasMultipleSessions");
+		static bool IsNetworkConnForProductActivationNotified;
 
 
 		// Fields.
 		Session? attachedActiveSession;
 		readonly ScheduledAction focusOnTabItemContentAction;
+		readonly ScheduledAction notifyNetworkConnForProductActivationAction;
 		readonly ScheduledAction selectAndSetLogProfileAction;
 		readonly DataTemplate sessionTabItemHeaderTemplate;
 		readonly Stopwatch stopwatch = new Stopwatch();
@@ -59,7 +63,7 @@ namespace CarinaStudio.ULogViewer
 		public MainWindow()
 		{
 			// initialize.
-			InitializeComponent();
+			AvaloniaXamlLoader.Load(this);
 			if (Platform.IsMacOS)
 				NativeMenu.SetMenu(this, this.Resources["nativeMenu"] as NativeMenu);
 
@@ -82,6 +86,22 @@ namespace CarinaStudio.ULogViewer
 			this.focusOnTabItemContentAction = new ScheduledAction(() =>
 			{
 				((this.tabControl.SelectedItem as TabItem)?.Content as IControl)?.Focus();
+			});
+			this.notifyNetworkConnForProductActivationAction = new(() =>
+			{
+				if (IsNetworkConnForProductActivationNotified
+					|| NetworkManager.Default.IsNetworkConnected
+					|| this.Application.ProductManager.IsProductActivated(Products.Professional, true))
+				{
+					return;
+				}
+				IsNetworkConnForProductActivationNotified = true;
+				this.Application.ProductManager.TryGetProductName(Products.Professional, out var productName);
+				_ = new MessageDialog()
+				{
+					Icon = MessageDialogIcon.Information,
+					Message = this.Application.GetFormattedString("MainWindow.NetworkConnectionNeededForProductActivation", productName),
+				}.ShowDialog(this);
 			});
 			this.selectAndSetLogProfileAction = new ScheduledAction(this.SelectAndSetLogProfile);
 			this.updateSysTaskBarAction = new ScheduledAction(() =>
@@ -382,10 +402,6 @@ namespace CarinaStudio.ULogViewer
 		}
 
 
-		// Initialize Avalonia components.
-		private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
-
-
 		// Move current session to new workspace.
 		void MoveCurrentSessionToNewWorkspace() =>
 			(this.tabControl.SelectedItem as TabItem)?.Let(it => this.MoveSessionToNewWorkspace(it));
@@ -484,6 +500,13 @@ namespace CarinaStudio.ULogViewer
 
 			// stop stopwatch
 			this.stopwatch.Stop();
+
+			// remove event handlers
+			NetworkManager.Default.PropertyChanged -= this.OnNetworkManagerPropertyChanged;
+			this.Application.ProductManager.ProductStateChanged -= this.OnProductStateChanged;
+
+			// stop checking network connection for product activation
+			this.notifyNetworkConnForProductActivationAction.Cancel();
 
 			// call base
 			base.OnClosed(e);
@@ -733,6 +756,53 @@ namespace CarinaStudio.ULogViewer
 
 			// call base
 			base.OnKeyDown(e);
+		}
+
+
+		// Called when property of network manager changed.
+		void OnNetworkManagerPropertyChanged(object? sender, PropertyChangedEventArgs e)
+		{
+			if (sender is NetworkManager networkManager 
+				&& e.PropertyName == nameof(NetworkManager.IsNetworkConnected))
+			{
+				if (networkManager.IsNetworkConnected)
+					this.notifyNetworkConnForProductActivationAction.Cancel();
+				else if (!this.Application.ProductManager.IsProductActivated(Products.Professional, true)
+					&& !IsNetworkConnForProductActivationNotified)
+				{
+					this.notifyNetworkConnForProductActivationAction.Reschedule(this.Configuration.GetValueOrDefault(ConfigurationKeys.TimeoutToNotifyNetworkConnectionForProductActivation));
+				}
+			}
+		}
+
+
+		/// <inheritdoc/>
+		protected override void OnOpened(EventArgs e)
+		{
+			// call base
+			base.OnOpened(e);
+
+			// add event handlers
+			NetworkManager.Default.PropertyChanged += this.OnNetworkManagerPropertyChanged;
+			this.Application.ProductManager.ProductStateChanged += this.OnProductStateChanged;
+
+			// check network connection for product activation
+			if (!this.Application.ProductManager.IsProductActivated(Products.Professional, true)
+				&& !NetworkManager.Default.IsNetworkConnected
+				&& !IsNetworkConnForProductActivationNotified)
+			{
+				this.notifyNetworkConnForProductActivationAction.Schedule(this.Configuration.GetValueOrDefault(ConfigurationKeys.TimeoutToNotifyNetworkConnectionForProductActivation));
+			}
+		}
+
+
+		// Called when product state changed.
+		void OnProductStateChanged(IProductManager? productManager, string productId)
+		{
+			if (productManager == null || productId != Products.Professional)
+				return;
+			if (productManager.IsProductActivated(Products.Professional, true))
+				this.notifyNetworkConnForProductActivationAction.Cancel();
 		}
 
 

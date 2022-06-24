@@ -76,6 +76,10 @@ sealed class ConfigurationKeys
     /// Interval of progressive log clearing in milliseconds.
     /// </summary>
     public static readonly SettingKey<int> ProgressiveLogClearingInterval = new(nameof(ProgressiveLogClearingInterval), 60);
+    /// <summary>
+    /// Timeout before notifying user that network connection is needed for product activation.
+    /// </summary>
+    public static readonly SettingKey<int> TimeoutToNotifyNetworkConnectionForProductActivation = new(nameof(TimeoutToNotifyNetworkConnectionForProductActivation), 3 * 60 * 1000);
 
 
     // Constructor.

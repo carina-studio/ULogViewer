@@ -516,6 +516,7 @@
 
 	<!-- MainWindow -->
 	<sys:String x:Key="String/MainWindow.ClearCustomSessionTitle">Reset title of this tab</sys:String>
+	<sys:String x:Key="String/MainWindow.NetworkConnectionNeededForProductActivation">In order to activate '{0}', please connect to internet or it will be deactivated temporarily after a while.</sys:String>
 	<sys:String x:Key="String/MainWindow.Session.AllLogCount">Total logs:</sys:String>
 	<sys:String x:Key="String/MainWindow.Session.Hibernated">Hibernated to save resources</sys:String>
 	<sys:String x:Key="String/MainWindow.Session.LogsMemoryUsage">Memory usage:</sys:String>
