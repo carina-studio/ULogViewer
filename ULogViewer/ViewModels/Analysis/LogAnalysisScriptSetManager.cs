@@ -46,6 +46,15 @@ class LogAnalysisScriptSetManager : BaseProfileManager<IULogViewerApplication, L
 
 
     /// <summary>
+    /// Get script set with given ID.
+    /// </summary>
+    /// <param name="id">ID of script set.</param>
+    /// <returns>Script set with given ID or Null is script set cannot be found.</returns>
+    public LogAnalysisScriptSet? GetScriptSetOrDefault(string id) =>
+        base.GetProfileOrDefault(id);
+
+
+    /// <summary>
     /// Initialize asynchronously.
     /// </summary>
     /// <param name="app">Application.</param>
