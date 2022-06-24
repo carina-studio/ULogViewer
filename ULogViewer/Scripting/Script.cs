@@ -14,9 +14,10 @@ namespace CarinaStudio.ULogViewer.Scripting;
 /// Script.
 /// </summary>
 /// <typeparam name="TContext">Type of context.</typeparam>
-abstract class Script<TContext> where TContext : ScriptContext, IEquatable<Script<TContext>>
+class Script<TContext> : IEquatable<Script<TContext>> where TContext : ScriptContext
 {
     // Static logger.
+    static volatile Script<ScriptContext>? EmptyScript;
     static volatile int NextId = 0;
 
 
@@ -72,42 +73,67 @@ abstract class Script<TContext> where TContext : ScriptContext, IEquatable<Scrip
 
 
     /// <summary>
-    /// Load script from file asynchronously.
+    /// Load script from JSON format data.
     /// </summary>
-    /// <param name="fileName">File name.</param>
-    /// <param name="cancellationToken">Cancellation token.</param>
-    /// <returns>Task of loading script.</returns>
-    public static async Task<TScript> LoadAsync<TScript>(string fileName, CancellationToken cancellationToken = default) where TScript : Script<TContext>
+    /// <param name="json">JSON data.</param>
+    /// <typeparam name="TScript">Type of script.</typeparam>
+    /// <returns>Loaded script.</returns>
+    public static TScript Load<TScript>(JsonElement json)
     {
-        if (cancellationToken.IsCancellationRequested)
-            throw new TaskCanceledException();
-        var language = ScriptLanguage.CSharp;
-        var source = "";
-        await Task.Run(() =>
-        {
-            if (!CarinaStudio.IO.File.TryOpenRead(fileName, 5000, out var stream) || stream == null)
-                throw new IOException($"Unable to open file '{fileName}'.");
-            using var jsonDocument = JsonDocument.Parse(stream);
-            var jsonScript = jsonDocument.RootElement;
-            if (jsonScript.ValueKind != JsonValueKind.Object)
-                throw new JsonException("Root element should be an object.");
-            if (jsonScript.TryGetProperty(nameof(Language), out var jsonValue)
-                && jsonValue.ValueKind == JsonValueKind.String)
-            {
-                Enum.TryParse<ScriptLanguage>(jsonValue.GetString(), out language);
-            }
-            source = Encoding.UTF8.GetString(Convert.FromBase64String(jsonScript.GetProperty(nameof(Source)).GetString().AsNonNull()));
-        });
-        if (cancellationToken.IsCancellationRequested)
-            throw new TaskCanceledException();
+        if (json.ValueKind != JsonValueKind.Object)
+            throw new JsonException("Element should be an object.");
+        var language = json.TryGetProperty(nameof(Language), out var jsonValue)
+            && jsonValue.ValueKind == JsonValueKind.String
+            && Enum.TryParse<ScriptLanguage>(jsonValue.GetString(), out var candLanguage)
+                ? candLanguage
+                : ScriptLanguage.CSharp;
+        var source = Encoding.UTF8.GetString(Convert.FromBase64String(json.GetProperty(nameof(Source)).GetString().AsNonNull()));
         return (TScript)Activator.CreateInstance(typeof(TScript), language, source).AsNonNull();
     }
 
 
     /// <summary>
+    /// Load script from file asynchronously.
+    /// </summary>
+    /// <param name="fileName">File name.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <typeparam name="TScript">Type of script.</typeparam>
+    /// <returns>Task of loading script.</returns>
+    public static async Task<TScript> LoadAsync<TScript>(string fileName, CancellationToken cancellationToken = default) where TScript : Script<TContext>
+    {
+        if (cancellationToken.IsCancellationRequested)
+            throw new TaskCanceledException();
+        var json = default(JsonElement);
+        await Task.Run(() =>
+        {
+            if (!CarinaStudio.IO.File.TryOpenRead(fileName, 5000, out var stream) || stream == null)
+                throw new IOException($"Unable to open file '{fileName}'.");
+            json = JsonDocument.Parse(stream).RootElement;
+        });
+        if (cancellationToken.IsCancellationRequested)
+            throw new TaskCanceledException();
+        return Load<TScript>(json);
+    }
+
+
+    /// <summary>
+    /// Equality operator.
+    /// </summary>
+    public static bool operator ==(Script<TContext>? x, Script<TContext>? y) =>
+        object.ReferenceEquals(x, null) ? object.ReferenceEquals(y, null) : x.Equals(y);
+    
+
+    /// <summary>
+    /// Inequality operator.
+    /// </summary>
+    public static bool operator !=(Script<TContext>? x, Script<TContext>? y) =>
+        object.ReferenceEquals(x, null) ? !object.ReferenceEquals(y, null) : !x.Equals(y);
+
+
+    /// <summary>
     /// Get list of referenced assemblies.
     /// </summary>
-    public abstract IList<Assembly> References { get; }
+    public virtual IList<Assembly> References { get; } = new Assembly[0];
 
 
     /// <summary>
@@ -136,6 +162,19 @@ abstract class Script<TContext> where TContext : ScriptContext, IEquatable<Scrip
 
 
     /// <summary>
+    /// Save script in JSON format data.
+    /// </summary>
+    /// <param name="writer">JSON writer.</param>
+    public void Save(Utf8JsonWriter writer)
+    {
+        writer.WriteStartObject();
+        writer.WriteString(nameof(Language), this.Language.ToString());
+        writer.WriteString(nameof(Source), Convert.ToBase64String(Encoding.UTF8.GetBytes(this.Source)));
+        writer.WriteEndObject();
+    }
+
+
+    /// <summary>
     /// Save script to file asynchronously.
     /// </summary>
     /// <param name="fileName">File name.</param>
@@ -148,10 +187,7 @@ abstract class Script<TContext> where TContext : ScriptContext, IEquatable<Scrip
         if (!CarinaStudio.IO.File.TryOpenWrite(fileName, 5000, out var stream) || stream == null)
             throw new IOException($"Unable to open file '{fileName}'.");
         using var writer = new Utf8JsonWriter(stream, new JsonWriterOptions() { Indented = true });
-        writer.WriteStartObject();
-        writer.WriteString(nameof(Language), this.Language.ToString());
-        writer.WriteString(nameof(Source), Convert.ToBase64String(Encoding.UTF8.GetBytes(this.Source)));
-        writer.WriteEndObject();
+        this.Save(writer);
     });
 
 
