@@ -198,15 +198,44 @@ class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.Fi
     // Check whether given regex can match all strings or not.
     bool IsAllMatchingRegex(Regex regex)
     {
-        var patterns = regex.ToString().Split('|');
-        for (var i = patterns.Length - 1; i >= 0; --i)
+        var pattern = regex.ToString();
+        var patternLength = pattern.Length;
+        var patternStart = 0;
+        var subPatternBuffer = new StringBuilder();
+        var bracketCount = 0;
+        while (patternStart < patternLength)
         {
-            var pattern = patterns[i];
-            if (pattern.Length == 0)
-                return true;
-            if (allMatchingPatternRegex.IsMatch(pattern))
-                return true;
+            var c = pattern[patternStart++];
+            switch (c)
+            {
+                case '|':
+                    if (bracketCount == 0)
+                    {
+                        if (subPatternBuffer.Length == 0 || allMatchingPatternRegex.IsMatch(subPatternBuffer.ToString()))
+                            return true;
+                        subPatternBuffer.Clear();
+                        break;
+                    }
+                    goto default;
+                case '\\':
+                    subPatternBuffer.Append(c);
+                    if (patternStart >= patternLength)
+                        break;
+                    c = pattern[patternStart++];
+                    goto default;
+                case '(':
+                    ++bracketCount;
+                    goto default;
+                case ')':
+                    --bracketCount;
+                    goto default;
+                default:
+                    subPatternBuffer.Append(c);
+                    break;
+            }
         }
+        if (bracketCount == 0)
+            return (subPatternBuffer.Length == 0 || allMatchingPatternRegex.IsMatch(subPatternBuffer.ToString()));
         return false;
     }
 
