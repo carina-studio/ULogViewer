@@ -6,11 +6,11 @@
 	"Icon": "Performance",
 	"LogPatterns": [
 		{
-			"Regex": "^[\\s]*(?<ThreadName>.*)\\-(?<ThreadId>[\\d]+)[\\s]+\\([\\s]*(?<ProcessId>[\\d\\-]+)\\)[\\s]+\\[(?<Extra1>[\\d]+)]*\\][\\s]+(?<Extra2>[\\d\\w\\.]+)[\\s]+(?<TimeSpan>[\\d]+\\.[\\d]+)[\\s]*\\:[\\s]*(?<SourceName>[^\\:]*)\\:[\\s](?<Message>.*)$"
+			"Regex": "^[\\s]*(?<ThreadName>.*)\\-(?<ThreadId>[\\d]+)[\\s]+\\([\\s]*(?<ProcessId>[\\d\\-]+)\\)[\\s]+\\[(?<Extra1>[\\d]+)]*\\][\\s]+(?<Extra2>[\\d\\w\\.])(?<Extra3>[\\d\\w\\.])(?<Extra4>[\\d\\w\\.])(?<Extra5>[\\d\\w\\.])[\\s]+(?<TimeSpan>[\\d]+\\.[\\d]+)[\\s]*\\:[\\s]*(?<SourceName>[^\\:]*)\\:[\\s](?<Message>.*)$"
 		}
 	],
 	"LogWritingFormats": [
-		"{ThreadName,16}-{ThreadId,-5} ({ProcessId,5}) [{Extra1}] {Extra2} {TimeSpan}: {SourceName}: {Message}"
+		"{ThreadName,16}-{ThreadId,-5} ({ProcessId,5}) [{Extra1}] {Extra2}{Extra3}{Extra4}{Extra5} {TimeSpan}: {SourceName}: {Message}"
 	],
 	"SortKey": "TimeSpan",
 	"TimeSpanEncodingForReading": "TotalSeconds",
@@ -20,25 +20,40 @@
 		{
 			"DisplayName": "RelativeTimestamp",
 			"Name": "TimeSpan",
-			"Width": 180
+			"Width": 170
 		},
 		{
 			"DisplayName": "Cpu",
 			"Name": "Extra1",
-			"Width": 80
+			"Width": 60
 		},
 		{
-			"DisplayName": "||||",
+			"DisplayName": "irqs-off",
 			"Name": "Extra2",
 			"Width": 50
 		},
 		{
+			"DisplayName": "need-resched",
+			"Name": "Extra3",
+			"Width": 50
+		},
+		{
+			"DisplayName": "hardirq/softirq",
+			"Name": "Extra4",
+			"Width": 50
+		},
+		{
+			"DisplayName": "preempt-depth",
+			"Name": "Extra5",
+			"Width": 50
+		},
+		{
 			"Name": "ProcessId",
-			"Width": 80
+			"Width": 60
 		},
 		{
 			"Name": "ThreadId",
-			"Width": 80
+			"Width": 60
 		},
 		{
 			"Name": "ThreadName",
