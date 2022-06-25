@@ -42,10 +42,11 @@ class Script<TContext> : IEquatable<Script<TContext>> where TContext : IScriptCo
 
     /// <inheritdoc/>
     public virtual bool Equals(Script<TContext>? script) =>
-        script != null
-        && script.GetType().Equals(this.GetType())
-        && this.Language == this.Language
-        && this.Source == this.Source;
+        object.ReferenceEquals(this, script)
+        || (script != null
+            && script.GetType().Equals(this.GetType())
+            && this.Language == this.Language
+            && this.Source == this.Source);
 
 
     /// <inheritdoc/>
@@ -133,6 +134,28 @@ class Script<TContext> : IEquatable<Script<TContext>> where TContext : IScriptCo
     /// Get list of referenced assemblies.
     /// </summary>
     public virtual IList<Assembly> References { get; } = new Assembly[0];
+
+
+    /// <summary>
+    /// Run script.
+    /// </summary>
+    /// <param name="context">Context.</param>
+    public void Run(TContext context) =>
+        this.RunAsync(context).Wait();
+    
+
+    /// <summary>
+    /// Run script.
+    /// </summary>
+    /// <param name="context">Context.</param>
+    /// <typeparam name="TResult">Type of result.</typeparam>
+    /// <returns>Result.</returns>
+    public TResult Run<TResult>(TContext context)
+    {
+        var task = this.RunAsync<TResult>(context);
+        task.Wait();
+        return task.Result;
+    }
 
 
     /// <summary>
