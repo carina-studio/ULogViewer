@@ -1,0 +1,17 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:ae="using:AvaloniaEdit"
+        xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="CarinaStudio.ULogViewer.Controls.ScriptEditor">
+	
+	<Panel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+		<Border Background="{DynamicResource TextControlBackground}" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{DynamicResource Thickness/Control.Border}" CornerRadius="{DynamicResource ControlCornerRadius}" IsVisible="{Binding !#sourceEditor.IsPointerOver}"/>
+		<Border Background="{DynamicResource TextControlBackgroundPointerOver}" BorderBrush="{DynamicResource TextControlBorderBrushPointerOver}" BorderThickness="{DynamicResource Thickness/Control.Border}" CornerRadius="{DynamicResource ControlCornerRadius}" IsVisible="{Binding #sourceEditor.IsPointerOver}"/>
+		<Border Background="{DynamicResource TextControlBackgroundFocused}" BorderBrush="{DynamicResource TextControlBorderBrushFocused}" BorderThickness="{DynamicResource Thickness/Control.Border.Focused}" CornerRadius="{DynamicResource ControlCornerRadius}" IsVisible="{Binding $parent[Window].IsSourceEditorFocused}"/>
+		<ae:TextEditor Name="sourceEditor" HorizontalAlignment="Stretch"/>
+	</Panel>
+	
+</UserControl>
