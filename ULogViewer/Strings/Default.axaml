@@ -625,6 +625,9 @@
 	<sys:String x:Key="String/RegexEditorDialog.Title">Edit pattern</sys:String>
 	<sys:String x:Key="String/RegexEditorDialog.Tutorial.ClickButtonToEditPattern">Click here to edit the pattern.</sys:String>
 
+	<!-- ScriptEditorDialog -->
+	<sys:String x:Key="String/ScriptEditorDialog.Title">Edit script (C#)</sys:String>
+
 	<!-- Session -->
 	<sys:String x:Key="String/Session.Empty">Empty Tab</sys:String>
 

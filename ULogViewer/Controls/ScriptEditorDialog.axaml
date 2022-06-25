@@ -1,0 +1,44 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:ae="using:AvaloniaEdit"
+		xmlns:appCtxlBased="using:CarinaStudio.ULogViewer.ViewModels.Analysis.ContextualBased"
+        xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="CarinaStudio.ULogViewer.Controls.ScriptEditorDialog"
+		CanResize="True"
+        Classes="Dialog"
+		Height="{DynamicResource Double/ScriptEditorDialog.Height}"
+        MinHeight="{DynamicResource Double/ScriptEditorDialog.MinHeight}"
+        MinWidth="{DynamicResource Double/ScriptEditorDialog.MinWidth}"
+		SizeToContent="Manual"
+        Title="{DynamicResource String/ScriptEditorDialog.Title}"
+        Width="{DynamicResource Double/ScriptEditorDialog.Width}">
+
+	<DockPanel>
+
+		<!-- Control buttons -->
+		<Border Classes="Dialog_ControlButtonsPanel">
+			<StackPanel Classes="Dialog_ControlButtonsPanel">
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].CompleteEditing}" Content="{DynamicResource String/Common.OK}" IsEnabled="{Binding $parent[Window].AreValidParameters}"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].Close}" Content="{DynamicResource String/Common.Cancel}"/>
+			</StackPanel>
+		</Border>
+
+		<!-- Content -->
+		<Grid Classes="Dialog_ContentPanel" RowDefinitions="*">
+			
+			<!-- Source -->
+			<Panel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+				<Border Background="{DynamicResource TextControlBackground}" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{DynamicResource Thickness/Control.Border}" CornerRadius="{DynamicResource ControlCornerRadius}" IsVisible="{Binding !#sourceEditor.IsPointerOver}"/>
+				<Border Background="{DynamicResource TextControlBackgroundPointerOver}" BorderBrush="{DynamicResource TextControlBorderBrushPointerOver}" BorderThickness="{DynamicResource Thickness/Control.Border}" CornerRadius="{DynamicResource ControlCornerRadius}" IsVisible="{Binding #sourceEditor.IsPointerOver}"/>
+				<Border Background="{DynamicResource TextControlBackgroundFocused}" BorderBrush="{DynamicResource TextControlBorderBrushFocused}" BorderThickness="{DynamicResource Thickness/Control.Border.Focused}" CornerRadius="{DynamicResource ControlCornerRadius}" IsVisible="{Binding $parent[Window].IsSourceEditorFocused}"/>
+				<ae:TextEditor Name="sourceEditor" HorizontalAlignment="Stretch"/>
+			</Panel>
+			
+		</Grid>
+		
+	</DockPanel>
+	
+</Window>

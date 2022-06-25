@@ -591,6 +591,9 @@
 	<sys:String x:Key="String/RegexEditorDialog.Title">编辑格式</sys:String>
 	<sys:String x:Key="String/RegexEditorDialog.Tutorial.ClickButtonToEditPattern">点一下这里编辑格式。</sys:String>
 
+	<!-- ScriptEditorDialog -->
+	<sys:String x:Key="String/ScriptEditorDialog.Title">编辑脚本 (C#)</sys:String>
+
 	<!-- Session -->
 	<sys:String x:Key="String/Session.Empty">空白页面</sys:String>
 	

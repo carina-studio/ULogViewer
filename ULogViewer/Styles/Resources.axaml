@@ -143,6 +143,12 @@
 	<sys:Double x:Key="Double/RegexEditorDialog.RegexInput.Height">100</sys:Double>
 	<sys:Double x:Key="Double/RegexEditorDialog.TestLogLine.Height">100</sys:Double>
 	<sys:Double x:Key="Double/RegexEditorDialog.Width">600</sys:Double>
+
+	<!-- ScriptEditorDialog -->
+	<sys:Double x:Key="Double/ScriptEditorDialog.Height">500</sys:Double>
+	<sys:Double x:Key="Double/ScriptEditorDialog.MinHeight">300</sys:Double>
+	<sys:Double x:Key="Double/ScriptEditorDialog.MinWidth">300</sys:Double>
+	<sys:Double x:Key="Double/ScriptEditorDialog.Width">600</sys:Double>
 	
 	<!-- SessionView -->
 	<CornerRadius x:Key="CornerRadius/SessionView.LogListBox.Item.Column.Border">4</CornerRadius>
