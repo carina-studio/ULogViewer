@@ -17,7 +17,6 @@ class LogAnalysisScriptSet : BaseProfile<IULogViewerApplication>
     LogAnalysisScript? analysisScript;
     LogProfileIcon icon = LogProfileIcon.Analysis;
     LogAnalysisScript? setupScript;
-    LogAnalysisScript? teardownScript;
 
 
     /// <summary>
@@ -63,12 +62,12 @@ class LogAnalysisScriptSet : BaseProfile<IULogViewerApplication>
 
     /// <inheritdoc/>
     public override bool Equals(IProfile<IULogViewerApplication>? profile) =>
-        profile is LogAnalysisScriptSet scriptSet
-        && scriptSet.analysisScript == this.analysisScript
-        && scriptSet.icon == this.icon
-        && scriptSet.Name == this.Name
-        && scriptSet.setupScript == this.setupScript
-        && scriptSet.teardownScript == this.teardownScript;
+        object.ReferenceEquals(this, profile)
+        || (profile is LogAnalysisScriptSet scriptSet
+            && scriptSet.analysisScript == this.analysisScript
+            && scriptSet.icon == this.icon
+            && scriptSet.Name == this.Name
+            && scriptSet.setupScript == this.setupScript);
 
 
     /// <summary>
@@ -148,25 +147,6 @@ class LogAnalysisScriptSet : BaseProfile<IULogViewerApplication>
                 return;
             this.setupScript = value;
             this.OnPropertyChanged(nameof(SetupScript));
-        }
-    }
-
-
-    /// <summary>
-    /// Script to teardown analysis context.
-    /// </summary>
-    /// <remarks>There is no returned value from script.</remarks>
-    public LogAnalysisScript? TeardownScript
-    {
-        get => this.teardownScript;
-        set
-        {
-            this.VerifyAccess();
-            this.VerifyBuiltIn();
-            if (this.teardownScript == value)
-                return;
-            this.teardownScript = value;
-            this.OnPropertyChanged(nameof(TeardownScript));
         }
     }
 }

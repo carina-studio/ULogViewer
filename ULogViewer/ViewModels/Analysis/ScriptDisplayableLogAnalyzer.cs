@@ -72,7 +72,6 @@ class ScriptDisplayableLogAnalyzer : BaseDisplayableLogAnalyzer<ScriptDisplayabl
         {
             case nameof(LogAnalysisScriptSet.AnalysisScript):
             case nameof(LogAnalysisScriptSet.SetupScript):
-            case nameof(LogAnalysisScriptSet.TeardownScript):
                 this.InvalidateProcessing();
                 break;
         }
