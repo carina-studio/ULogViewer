@@ -5,9 +5,9 @@ using System.Threading;
 namespace CarinaStudio.ULogViewer.Scripting;
 
 /// <summary>
-/// Base class of context of script.
+/// Base implementation of <see cref="IScriptContext"/>.
 /// </summary>
-public abstract class ScriptContext
+abstract class BaseScriptContext : IScriptContext
 {
     // Fields.
     readonly IDictionary<string, object> data = new ConcurrentDictionary<string, object>();
@@ -15,10 +15,10 @@ public abstract class ScriptContext
 
 
     /// <summary>
-    /// Initialize new <see cref="ScriptContext"/> instance.
+    /// Initialize new <see cref="BaseScriptContext"/> instance.
     /// </summary>
     /// <param name="app">Application.</param>
-    internal ScriptContext(IULogViewerApplication app)
+    public BaseScriptContext(IULogViewerApplication app)
     {
         this.app = app;
     }
@@ -38,16 +38,6 @@ public abstract class ScriptContext
     /// <returns>String defined in resource or <paramref name="defaultString"/> if string not found.</returns>
     public string? GetString(string key, string? defaultString) =>
         app.GetString(key, defaultString);
-
-    
-    /// <summary>
-    /// Get formatted string defined in application resource.
-    /// </summary>
-    /// <param name="key">Key of string.</param>
-    /// <param name="args">Arguments to format string.</param>
-    /// <returns>Formatted string or Null if string not found.</returns>
-    public string? GetFormattedString(string key, params object?[] args) =>
-        app.GetFormattedString(key, args);
     
 
     /// <summary>

@@ -14,10 +14,9 @@ namespace CarinaStudio.ULogViewer.Scripting;
 /// Script.
 /// </summary>
 /// <typeparam name="TContext">Type of context.</typeparam>
-class Script<TContext> : IEquatable<Script<TContext>> where TContext : ScriptContext
+class Script<TContext> : IEquatable<Script<TContext>> where TContext : IScriptContext
 {
     // Static logger.
-    static volatile Script<ScriptContext>? EmptyScript;
     static volatile int NextId = 0;
 
 
