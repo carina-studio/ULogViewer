@@ -652,6 +652,7 @@
 	<sys:String x:Key="String/SessionView.ClearLogFiles">Clear all added log files</sys:String>
 	<sys:String x:Key="String/SessionView.ClearPredefinedLogTextFiltersSelection">Create…</sys:String>
 	<sys:String x:Key="String/SessionView.ConfirmRemovingLogAnalysisRuleSet">Are you sure to remove the rule set '{0}'?</sys:String>
+	<sys:String x:Key="String/SessionView.ConfirmRemovingLogAnalysisScriptSet">Are you sure to remove the script '{0}'?</sys:String>
 	<sys:String x:Key="String/SessionView.ConfirmSelectingAllLogs">It will take some time to select large amount of logs. Do you want to continue selection?</sys:String>
 	<sys:String x:Key="String/SessionView.CopyLogFileName">Copy file name</sys:String>
 	<sys:String x:Key="String/SessionView.CopyLogFilePath">Copy full path</sys:String>
@@ -682,6 +683,7 @@
 	<sys:String x:Key="String/SessionView.LogAnalysisProgress">Analyzing logs…</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets">Rule sets of analysis</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.KeyLogAnalysisRuleSet">Key log analysis</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.LogAnalysisScriptSet">Log analysis script</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.OperationDurationAnalysisRuleSet">Operation duration analysis</sys:String>
 	<sys:String x:Key="String/SessionView.LogCountInLogFile">Log count:</sys:String>
 	<sys:String x:Key="String/SessionView.LogFileIsUnsupported">File is unsupported in current log profile</sys:String>

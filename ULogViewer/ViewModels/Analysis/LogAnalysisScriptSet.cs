@@ -37,6 +37,20 @@ class LogAnalysisScriptSet : BaseProfile<IULogViewerApplication>
 
 
     /// <summary>
+    /// Initialize new <see cref="LogAnalysisScriptSet"/> instance.
+    /// </summary>
+    /// <param name="template">Template.</param>
+    /// <param name="name">Name.</param>
+    public LogAnalysisScriptSet(LogAnalysisScriptSet template, string name) : base(template.Application, LogAnalysisScriptSetManager.Default.GenerateProfileId(), false)
+    { 
+        this.analysisScript = template.analysisScript;
+        this.icon = template.icon;
+        this.Name = name;
+        this.setupScript = template.setupScript;
+    }
+
+
+    /// <summary>
     /// Script to analysis log.
     /// </summary>
     /// <remarks>Type of returned value is <see cref="bool"/>.</remarks>

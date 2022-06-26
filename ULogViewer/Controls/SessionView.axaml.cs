@@ -198,6 +198,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly Avalonia.Controls.ListBox logAnalysisResultListBox;
 		readonly ToggleButton logAnalysisRuleSetsButton;
 		readonly Popup logAnalysisRuleSetsPopup;
+		readonly Avalonia.Controls.ListBox logAnalysisScriptSetListBox;
 		readonly ContextMenu logFileActionMenu;
 		readonly AppSuite.Controls.ListBox logFileListBox;
 		readonly List<ColumnDefinition> logHeaderColumns = new List<ColumnDefinition>();
@@ -229,6 +230,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ScheduledAction reportSelectedLogsTimeInfoAction;
 		readonly ScheduledAction scrollToLatestLogAction;
 		readonly HashSet<KeyLogAnalysisRuleSet> selectedKeyLogAnalysisRuleSets = new();
+		readonly HashSet<LogAnalysisScriptSet> selectedLogAnalysisScriptSets = new();
 		readonly HashSet<OperationDurationAnalysisRuleSet> selectedOperationDurationAnalysisRuleSets = new();
 		readonly HashSet<PredefinedLogTextFilter> selectedPredefinedLogTextFilters = new();
 		readonly MenuItem showLogPropertyMenuItem;
@@ -412,6 +414,10 @@ namespace CarinaStudio.ULogViewer.Controls
 					nullToolTipToken = this.logAnalysisRuleSetsButton.Bind(ToolTip.TipProperty, NullObservableValue);
 					this.keyLogAnalysisRuleSetListBox.Focus();
 				};
+			});
+			this.logAnalysisScriptSetListBox = this.Get<Avalonia.Controls.ListBox>(nameof(logAnalysisScriptSetListBox)).Also(it =>
+			{
+				it.SelectionChanged += this.OnLogAnalysisRuleSetListBoxSelectionChanged;
 			});
 			this.logFileActionMenu = ((ContextMenu)this.Resources[nameof(logFileActionMenu)].AsNonNull()).Also(it =>
 			{
@@ -692,10 +698,13 @@ namespace CarinaStudio.ULogViewer.Controls
 					return;
 				var selectedKlaRuleSets = this.selectedKeyLogAnalysisRuleSets.ToArray();
 				var selectedOdaRuleSets = this.selectedOperationDurationAnalysisRuleSets.ToArray();
+				var selectedLaScriptSets = this.selectedLogAnalysisScriptSets.ToArray();
 				session.KeyLogAnalysisRuleSets.Clear();
 				session.KeyLogAnalysisRuleSets.AddAll(selectedKlaRuleSets);
 				session.OperationDurationAnalysisRuleSets.Clear();
 				session.OperationDurationAnalysisRuleSets.AddAll(selectedOdaRuleSets);
+				session.LogAnalysisScriptSets.Clear();
+				session.LogAnalysisScriptSets.AddAll(selectedLaScriptSets);
 			});
 			this.updateLogFiltersAction = new ScheduledAction(() =>
 			{
@@ -884,6 +893,12 @@ namespace CarinaStudio.ULogViewer.Controls
 				foreach (var ruleSet in session.KeyLogAnalysisRuleSets)
 					it.Add(ruleSet);
 			});
+			this.logAnalysisScriptSetListBox.SelectedItems.Let(it =>
+			{
+				it.Clear();
+				foreach (var scriptSet in session.LogAnalysisScriptSets)
+					it.Add(scriptSet);
+			});
 			this.operationDurationAnalysisRuleSetListBox.SelectedItems.Let(it =>
 			{
 				it.Clear();
@@ -929,6 +944,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		void ClearLogAnalysisRuleSetSelection()
 		{
 			this.keyLogAnalysisRuleSetListBox.SelectedItems.Clear();
+			this.logAnalysisResultListBox.SelectedItems.Clear();
 			this.operationDurationAnalysisRuleSetListBox.SelectedItems.Clear();
 			this.updateLogAnalysisAction.Reschedule();
 		}
@@ -957,6 +973,23 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (result != 0)
 				return result;
 			return x.GetHashCode() - y.GetHashCode();
+		}
+
+
+		// Show UI to confirm removing log analysis rule set.
+		async Task<bool> ConfirmRemovingLogAnalysisRuleSetAsync(string? ruleSetName, bool isScriptSet)
+		{
+			if (this.attachedWindow == null)
+				return false;
+			var result = await new MessageDialog()
+			{
+				Buttons = MessageDialogButtons.YesNo,
+				Icon = MessageDialogIcon.Question,
+				Message = isScriptSet
+					? this.Application.GetFormattedString("SessionView.ConfirmRemovingLogAnalysisScriptSet", ruleSetName)
+					: this.Application.GetFormattedString("SessionView.ConfirmRemovingLogAnalysisRuleSet", ruleSetName),
+			}.ShowDialog(this.attachedWindow);
+			return (result == MessageDialogResult.Yes);
 		}
 
 
@@ -1027,6 +1060,28 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			var newRuleSet = new KeyLogAnalysisRuleSet(ruleSet, newName);
 			KeyLogAnalysisRuleSetEditorDialog.Show(this.attachedWindow, newRuleSet);
+		}
+
+
+		// Copy selected log analysis script set.
+		void CopyLogAnalysisScriptSet(LogAnalysisScriptSet scriptSet)
+		{
+			if (this.attachedWindow == null)
+				return;
+			var baseName = BaseNameRegex.Match(scriptSet.Name ?? "").Let(it =>
+				it.Success ? it.Groups["Name"].Value : scriptSet.Name ?? "");
+			var newName = baseName;
+			for (var n = 2; n <= 10; ++n)
+			{
+				var candidateName = $"{baseName} ({n})";
+				if (LogAnalysisScriptSetManager.Default.ScriptSets.FirstOrDefault(it => it.Name == candidateName) == null)
+				{
+					newName = candidateName;
+					break;
+				}
+			}
+			var newScriptSet = new LogAnalysisScriptSet(scriptSet, newName);
+			LogAnalysisScriptSetEditorDialog.Show(this.attachedWindow, newScriptSet);
 		}
 
 
@@ -1257,6 +1312,14 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Create new log analysis rule set.
 		void CreateLogAnalysisRuleSet() =>
 			this.createLogAnalysisRuleSetMenu.Open(this.createLogAnalysisRuleSetButton);
+		
+
+		// Create new log analysis script set.
+		void CreateLogAnalysisScriptSet()
+		{
+			if (this.attachedWindow != null)
+				LogAnalysisScriptSetEditorDialog.Show(this.attachedWindow, null);
+		}
 
 
 		// Create item template for item of log list box.
@@ -2030,6 +2093,15 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Edit given log analysis script set.
+		void EditLogAnalysisScriptSet(LogAnalysisScriptSet? scriptSet)
+		{
+			if (scriptSet == null || this.attachedWindow == null)
+				return;
+			LogAnalysisScriptSetEditorDialog.Show(this.attachedWindow, scriptSet);
+		}
+
+
 		// Edit current log profile.
 		void EditLogProfile()
 		{
@@ -2081,14 +2153,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 			
 			// select file
-			var fileName = await new SaveFileDialog().Also(it =>
-			{
-				it.Filters!.Add(new FileDialogFilter().Also(filter =>
-				{
-					filter.Extensions.Add("json");
-					filter.Name = this.Application.GetString("FileFormat.Json");
-				}));
-			}).ShowAsync(this.attachedWindow);
+			var fileName = await this.SelectFileToExportLogAnalysisRuleSetAsync();
 			if (string.IsNullOrEmpty(fileName))
 				return;
 			
@@ -2100,14 +2165,32 @@ namespace CarinaStudio.ULogViewer.Controls
 			catch (Exception ex)
 			{
 				this.Logger.LogError(ex, $"Failed to export key log analysis rule set '{ruleSet.Id}' to '{fileName}'");
-				if (this.attachedWindow != null)
-				{
-					_ = new MessageDialog()
-					{
-						Icon = MessageDialogIcon.Error,
-						Message = this.Application.GetFormattedString("SessionView.FailedToExportLogAnalysisRuleSet", ruleSet.Name, fileName),
-					}.ShowDialog(this.attachedWindow);
-				}
+				this.OnExportLogAnalysisRuleSetFailed(ruleSet.Name, fileName);
+			}
+		}
+
+
+		// Export given log analysis script set.
+		async void ExportLogAnalysisScriptSet(LogAnalysisScriptSet? scriptSet)
+		{
+			// check state
+			if (scriptSet == null || this.attachedWindow == null)
+				return;
+			
+			// select file
+			var fileName = await this.SelectFileToExportLogAnalysisRuleSetAsync();
+			if (string.IsNullOrEmpty(fileName))
+				return;
+			
+			// export
+			try
+			{
+				await scriptSet.SaveAsync(fileName, false);
+			}
+			catch (Exception ex)
+			{
+				this.Logger.LogError(ex, $"Failed to export log analysis script set '{scriptSet.Id}' to '{fileName}'");
+				this.OnExportLogAnalysisRuleSetFailed(scriptSet.Name, fileName);
 			}
 		}
 
@@ -2120,14 +2203,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 			
 			// select file
-			var fileName = await new SaveFileDialog().Also(it =>
-			{
-				it.Filters!.Add(new FileDialogFilter().Also(filter =>
-				{
-					filter.Extensions.Add("json");
-					filter.Name = this.Application.GetString("FileFormat.Json");
-				}));
-			}).ShowAsync(this.attachedWindow);
+			var fileName = await this.SelectFileToExportLogAnalysisRuleSetAsync();
 			if (string.IsNullOrEmpty(fileName))
 				return;
 			
@@ -2139,14 +2215,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			catch (Exception ex)
 			{
 				this.Logger.LogError(ex, $"Failed to export operation duration analysis rule set '{ruleSet.Id}' to '{fileName}'");
-				if (this.attachedWindow != null)
-				{
-					_ = new MessageDialog()
-					{
-						Icon = MessageDialogIcon.Error,
-						Message = this.Application.GetFormattedString("SessionView.FailedToExportLogAnalysisRuleSet", ruleSet.Name, fileName),
-					}.ShowDialog(this.attachedWindow);
-				}
+				this.OnExportLogAnalysisRuleSetFailed(ruleSet.Name, fileName);
 			}
 		}
 
@@ -2234,8 +2303,18 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			catch
 			{ }
-			var odaRuleSet = (OperationDurationAnalysisRuleSet?)null;
+			var laScriptSet = (LogAnalysisScriptSet?)null;
 			if (klaRuleSet == null)
+			{
+				try
+				{
+					laScriptSet = await LogAnalysisScriptSet.LoadAsync(this.Application, fileNames[0]);
+				}
+				catch
+				{ }
+			}
+			var odaRuleSet = (OperationDurationAnalysisRuleSet?)null;
+			if (klaRuleSet == null && laScriptSet == null)
 			{
 				try
 				{
@@ -2246,7 +2325,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			if (this.attachedWindow == null)
 				return;
-			if (klaRuleSet == null && odaRuleSet == null)
+			if (klaRuleSet == null 
+				&& laScriptSet == null
+				&& odaRuleSet == null)
 			{
 				_ = new MessageDialog()
 				{
@@ -2259,6 +2340,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			// edit and add rule set
 			if (klaRuleSet != null)
 				KeyLogAnalysisRuleSetEditorDialog.Show(this.attachedWindow, klaRuleSet);
+			else if (laScriptSet != null)
+				LogAnalysisScriptSetEditorDialog.Show(this.attachedWindow, laScriptSet);
 			else if (odaRuleSet != null)
 				OperationDurationAnalysisRuleSetEditorDialog.Show(this.attachedWindow, odaRuleSet);
 		}
@@ -2740,6 +2823,20 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Called when failed to export log analysis rule set.
+		void OnExportLogAnalysisRuleSetFailed(string? ruleSetName, string fileName)
+		{
+			if (this.attachedWindow != null)
+			{
+				_ = new MessageDialog()
+				{
+					Icon = MessageDialogIcon.Error,
+					Message = this.Application.GetFormattedString("SessionView.FailedToExportLogAnalysisRuleSet", ruleSetName, fileName),
+				}.ShowDialog(this.attachedWindow);
+			}
+		}
+
+
 		// Called when external dependency not found.
 		async void OnExternalDependencyNotFound(object? sender, EventArgs e)
 		{
@@ -2935,6 +3032,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				if (ruleSet is KeyLogAnalysisRuleSet klaRuleSets)
 					this.selectedKeyLogAnalysisRuleSets.Remove(klaRuleSets);
+				else if (ruleSet is LogAnalysisScriptSet laScriptSet)
+					this.selectedLogAnalysisScriptSets.Remove(laScriptSet);
 				else if (ruleSet is OperationDurationAnalysisRuleSet odaRuleSets)
 					this.selectedOperationDurationAnalysisRuleSets.Remove(odaRuleSets);
 				else if (ruleSet != null)
@@ -2944,6 +3043,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				if (ruleSet is KeyLogAnalysisRuleSet klaRuleSets)
 					this.selectedKeyLogAnalysisRuleSets.Add(klaRuleSets);
+				else if (ruleSet is LogAnalysisScriptSet laScriptSet)
+					this.selectedLogAnalysisScriptSets.Add(laScriptSet);
 				else if (ruleSet is OperationDurationAnalysisRuleSet odaRuleSets)
 					this.selectedOperationDurationAnalysisRuleSets.Add(odaRuleSets);
 				else if (ruleSet != null)
@@ -2965,7 +3066,17 @@ namespace CarinaStudio.ULogViewer.Controls
 					}
 					return false;
 				}
-				if (listBox == this.operationDurationAnalysisRuleSetListBox)
+				else if (listBox == this.logAnalysisScriptSetListBox)
+				{
+					selectedRuleSetCount = this.selectedLogAnalysisScriptSets.Count;
+					if (this.selectedLogAnalysisScriptSets.Count != listBox.SelectedItems.Count)
+					{
+						copiedSelectedRuleSets = this.selectedLogAnalysisScriptSets.ToArray();
+						return true;
+					}
+					return false;
+				}
+				else if (listBox == this.operationDurationAnalysisRuleSetListBox)
 				{
 					selectedRuleSetCount = this.selectedOperationDurationAnalysisRuleSets.Count;
 					if (this.selectedOperationDurationAnalysisRuleSets.Count != listBox.SelectedItems.Count)
@@ -3742,6 +3853,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				if (sender == session.KeyLogAnalysisRuleSets)
 					return this.keyLogAnalysisRuleSetListBox.SelectedItems;
+				else if (sender == this.logAnalysisResultListBox)
+					return this.logAnalysisScriptSetListBox.SelectedItems;
 				else if (sender == session.OperationDurationAnalysisRuleSets)
 					return this.operationDurationAnalysisRuleSetListBox.SelectedItems;
 				else
@@ -4027,16 +4140,23 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (ruleSet == null || this.attachedWindow == null)
 				return;
-			var result = await new MessageDialog()
-			{
-				Buttons = MessageDialogButtons.YesNo,
-				Icon = MessageDialogIcon.Question,
-				Message = this.Application.GetFormattedString("SessionView.ConfirmRemovingLogAnalysisRuleSet", ruleSet.Name),
-			}.ShowDialog(this.attachedWindow);
-			if (result == MessageDialogResult.Yes)
+			if (await this.ConfirmRemovingLogAnalysisRuleSetAsync(ruleSet.Name, false))
 			{
 				KeyLogAnalysisRuleSetEditorDialog.CloseAll(ruleSet);
 				KeyLogAnalysisRuleSetManager.Default.RemoveRuleSet(ruleSet);
+			}
+		}
+
+
+		// Remove given log analysis script set.
+		async void RemoveLogAnalysisScriptSet(LogAnalysisScriptSet? scriptSet)
+		{
+			if (scriptSet == null || this.attachedWindow == null)
+				return;
+			if (await this.ConfirmRemovingLogAnalysisRuleSetAsync(scriptSet.Name, true))
+			{
+				LogAnalysisScriptSetEditorDialog.CloseAll(scriptSet);
+				LogAnalysisScriptSetManager.Default.RemoveScriptSet(scriptSet);
 			}
 		}
 
@@ -4046,13 +4166,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (ruleSet == null || this.attachedWindow == null)
 				return;
-			var result = await new MessageDialog()
-			{
-				Buttons = MessageDialogButtons.YesNo,
-				Icon = MessageDialogIcon.Question,
-				Message = this.Application.GetFormattedString("SessionView.ConfirmRemovingLogAnalysisRuleSet", ruleSet.Name),
-			}.ShowDialog(this.attachedWindow);
-			if (result == MessageDialogResult.Yes)
+			if (await this.ConfirmRemovingLogAnalysisRuleSetAsync(ruleSet.Name, false))
 			{
 				OperationDurationAnalysisRuleSetEditorDialog.CloseAll(ruleSet);
 				OperationDurationAnalysisRuleSetManager.Default.RemoveRuleSet(ruleSet);
@@ -4427,6 +4541,22 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Duration of selected logs.
 		TimeSpan? SelectedLogsDuration { get => this.GetValue<TimeSpan?>(SelectedLogsDurationProperty); }
+
+
+		// Show UI for user to select file to export log analysis rule set.
+		async Task<string?> SelectFileToExportLogAnalysisRuleSetAsync()
+		{
+			if (this.attachedWindow == null)
+				return null;
+			return await new SaveFileDialog().Also(it =>
+			{
+				it.Filters!.Add(new FileDialogFilter().Also(filter =>
+				{
+					filter.Extensions.Add("json");
+					filter.Name = this.Application.GetString("FileFormat.Json");
+				}));
+			}).ShowAsync(this.attachedWindow);
+		}
 
 
 		// Let user select the precondition of log reading.
