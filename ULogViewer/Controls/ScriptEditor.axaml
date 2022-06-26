@@ -10,7 +10,7 @@
 	<Panel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 		<Border Background="{DynamicResource TextControlBackground}" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{DynamicResource Thickness/Control.Border}" CornerRadius="{DynamicResource ControlCornerRadius}" IsVisible="{Binding !#sourceEditor.IsPointerOver}"/>
 		<Border Background="{DynamicResource TextControlBackgroundPointerOver}" BorderBrush="{DynamicResource TextControlBorderBrushPointerOver}" BorderThickness="{DynamicResource Thickness/Control.Border}" CornerRadius="{DynamicResource ControlCornerRadius}" IsVisible="{Binding #sourceEditor.IsPointerOver}"/>
-		<Border Background="{DynamicResource TextControlBackgroundFocused}" BorderBrush="{DynamicResource TextControlBorderBrushFocused}" BorderThickness="{DynamicResource Thickness/Control.Border.Focused}" CornerRadius="{DynamicResource ControlCornerRadius}" IsVisible="{Binding $parent[Window].IsSourceEditorFocused}"/>
+		<Border Background="{DynamicResource TextControlBackgroundFocused}" BorderBrush="{DynamicResource TextControlBorderBrushFocused}" BorderThickness="{DynamicResource Thickness/Control.Border.Focused}" CornerRadius="{DynamicResource ControlCornerRadius}" IsVisible="{Binding $parent[UserControl].IsSourceEditorFocused}"/>
 		<ae:TextEditor Name="sourceEditor" HorizontalAlignment="Stretch"/>
 	</Panel>
 	

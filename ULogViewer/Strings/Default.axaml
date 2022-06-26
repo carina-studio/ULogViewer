@@ -228,6 +228,15 @@
 	<sys:String x:Key="String/KeyLogAnalysisRuleSetEditorDialog.Rules">Rules (required)</sys:String>
 	<sys:String x:Key="String/KeyLogAnalysisRuleSetEditorDialog.Title">Edit key log analysis rule set</sys:String>
 
+	<!-- LogAnalysisScriptSetEditorDialog -->
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript">Script to analyze log (C#)</sys:String>
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Description">The script will be run for each log to analyze. The type of return value is boolean to indicate whether analysis results of the log should be taken or not.</sys:String>
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.Icon">Icon</sys:String>
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.Name">Name (required)</sys:String>
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript">Script to setup analysis (C#)</sys:String>
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript.Description">The script will be run one time before starting analysis process. There is no return value needed.</sys:String>
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.Title">Edit log analysis script</sys:String>
+
 	<!-- LogColorIndicator -->
 	<sys:String x:Key="String/LogColorIndicator.FileName">File</sys:String>
 	<sys:String x:Key="String/LogColorIndicator.None">None</sys:String>

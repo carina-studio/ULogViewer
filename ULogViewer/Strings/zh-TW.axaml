@@ -217,6 +217,15 @@
 	<sys:String x:Key="String/KeyLogAnalysisRuleSetEditorDialog.Rules">規則 (必要)</sys:String>
 	<sys:String x:Key="String/KeyLogAnalysisRuleSetEditorDialog.Title">編輯關鍵日誌分析規則集</sys:String>
 
+	<!-- LogAnalysisScriptSetEditorDialog -->
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript">日誌分析腳本 (C#)</sys:String>
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Description">腳本將針對每筆日誌執行以分析日誌。需回傳布林值 (boolean) 以指示針對此日誌的分析結果是否需要被擷取。</sys:String>
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.Icon">圖示</sys:String>
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.Name">名稱 (必要)</sys:String>
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript">分析初始化腳本 (C#)</sys:String>
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript.Description">腳本將在分析流程開始前執行一次且不需要回傳值。</sys:String>
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.Title">編輯日誌分析腳本</sys:String>
+
 	<!-- LogColorIndicator -->
 	<sys:String x:Key="String/LogColorIndicator.FileName">檔案</sys:String>
 	<sys:String x:Key="String/LogColorIndicator.None">無</sys:String>

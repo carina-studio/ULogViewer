@@ -47,6 +47,13 @@
 	<Thickness x:Key="Thickness/KeyLogAnalysisRuleSetEditorDialog.RuleListBox.Item.Icon.Margin">0,0,8,3</Thickness>
 	<Thickness x:Key="Thickness/KeyLogAnalysisRuleSetEditorDialog.RuleListBox.Item.Pattern.Margin">0,0,0,3</Thickness>
 
+	<!-- LogAnalysisScriptSetEditorDialog -->
+	<sys:Double x:Key="Double/LogAnalysisScriptSetEditorDialog.Height">500</sys:Double>
+	<sys:Double x:Key="Double/LogAnalysisScriptSetEditorDialog.MinHeight">400</sys:Double>
+	<sys:Double x:Key="Double/LogAnalysisScriptSetEditorDialog.MinWidth">300</sys:Double>
+	<sys:Double x:Key="Double/LogAnalysisScriptSetEditorDialog.ScriptEditor.Height">300</sys:Double>
+	<sys:Double x:Key="Double/LogAnalysisScriptSetEditorDialog.Width">650</sys:Double>
+
 	<!-- LogDataSourceOptionsDialog -->
 	<sys:Double x:Key="Double/LogDataSourceOptionsDialog.CommandListBox.Height">150</sys:Double>
 	<sys:Double x:Key="Double/LogDataSourceOptionsDialog.ConnectionStringTextBox.Height">150</sys:Double>
