@@ -269,3 +269,53 @@ enum ScriptLanguage
     /// </summary>
     CSharp,
 }
+
+
+/// <summary>
+/// Result of script compilation.
+/// </summary>
+class CompilationResult
+{
+    /// <summary>
+    /// Get (line, column) of end position.
+    /// </summary>
+    public (int, int)? EndPosition { get; }
+
+
+    /// <summary>
+    /// Get message of result.
+    /// </summary>
+    public string? Message { get; }
+
+
+    /// <summary>
+    /// Get (line, column) of start position.
+    /// </summary>
+    public (int, int)? StartPosition { get; }
+
+
+    /// <summary>
+    /// Get type of result.
+    /// </summary>
+    public CompilationResultType Type { get; }
+}
+
+
+/// <summary>
+/// Type of result of script compilation.
+/// </summary>
+enum CompilationResultType
+{
+    /// <summary>
+    /// Information.
+    /// </summary>
+    Information,
+    /// <summary>
+    /// Warning.
+    /// </summary>
+    Warning,
+    /// <summary>
+    /// Error.
+    /// </summary>
+    Error,
+}
