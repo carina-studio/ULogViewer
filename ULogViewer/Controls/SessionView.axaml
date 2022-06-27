@@ -1127,6 +1127,7 @@
 												<MultiBinding Converter="{x:Static aConverters:BoolConverters.Or}">
 													<Binding Path="KeyLogAnalysisRuleSets.Count" Converter="{x:Static appControls:SessionView.NumberToBooleanConverter}"/>
 													<Binding Path="OperationDurationAnalysisRuleSets.Count" Converter="{x:Static appControls:SessionView.NumberToBooleanConverter}"/>
+													<Binding Path="LogAnalysisScriptSets.Count" Converter="{x:Static appControls:SessionView.NumberToBooleanConverter}"/>
 												</MultiBinding>
 											</Image.IsVisible>
 											<DrawingImage>
