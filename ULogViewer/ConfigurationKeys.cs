@@ -13,6 +13,10 @@ sealed class ConfigurationKeys
     /// </summary>
     public static readonly SettingKey<int> ContinuousLogsReadingUpdateInterval = new(nameof(ContinuousLogsReadingUpdateInterval), 100);
     /// <summary>
+    /// Delay before compiling current script source when editing in milliseconds.
+    /// </summary>
+    public static readonly SettingKey<int> DelayToCompileScriptWhenEditing = new(nameof(DelayToCompileScriptWhenEditing), 500);
+    /// <summary>
     /// Interval between each displayable log chunk filtering in milliseconds.
     /// </summary>
     public static readonly SettingKey<int> DisplayableLogChunkFilteringPaddingInterval = new(nameof(DisplayableLogChunkFilteringPaddingInterval), 50);
