@@ -1,3 +1,4 @@
+using CarinaStudio.Collections;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -37,6 +38,23 @@ class Script<TContext> : IEquatable<Script<TContext>> where TContext : IScriptCo
         this.Language = language;
         this.logger = App.Current.LoggerFactory.CreateLogger($"Script-{this.Id}");
         this.Source = source;
+    }
+
+
+    /// <summary>
+    /// Get latest compilation results.
+    /// </summary>
+    public IReadOnlyList<CompilationResult> CompilationResults { get; private set; } = (IReadOnlyList<CompilationResult>)new CompilationResult[0].AsReadOnly();
+
+
+    /// <summary>
+    /// Compile script asynchronously.
+    /// </summary>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Task of compilation.</returns>
+    public Task<bool> CompileAsync(CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
     }
 
 
