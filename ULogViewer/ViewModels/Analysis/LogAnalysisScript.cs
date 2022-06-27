@@ -1,5 +1,9 @@
 using CarinaStudio.ULogViewer.Scripting;
+using System;
+using System.Collections.Generic;
+using System.Reflection;
 using System.Text.Json;
+using System.Threading;
 
 namespace CarinaStudio.ULogViewer.ViewModels.Analysis;
 
@@ -8,6 +12,18 @@ namespace CarinaStudio.ULogViewer.ViewModels.Analysis;
 /// </summary>
 class LogAnalysisScript : Script<ILogAnalysisScriptContext>
 {
+    // Static fields.
+    static readonly List<string> _Namespaces = new List<string>()
+    {
+        "CarinaStudio.ULogViewer.Logs",
+        "CarinaStudio.ULogViewer.ViewModels.Analysis",
+        "System.Text.RegularExpressions",
+    };
+    static readonly List<Assembly> _References = new List<Assembly>().Also(it =>
+    {
+    });
+
+
     /// <summary>
     /// Initialize new <see cref="LogAnalysisScript"/> instance.
     /// </summary>
@@ -24,6 +40,14 @@ class LogAnalysisScript : Script<ILogAnalysisScriptContext>
     /// <returns>Loaded script.</returns>
     public static LogAnalysisScript Load(JsonElement json) =>
         LogAnalysisScript.Load<LogAnalysisScript>(json);
+
+
+    /// <inheritdoc/>
+    public override IList<string> Namespaces => _Namespaces;
+
+
+    /// <inheritdoc/>
+    public override IList<Assembly> References => _References;
 }
 
 
@@ -51,10 +75,26 @@ public interface ILogAnalysisScriptContext : IScriptContext
     void AddAnalysisResult(DisplayableLogAnalysisResultType type, string message, ILogAnalysisScriptLog beginningLog, ILogAnalysisScriptLog endingLog);
 
 
+    /// <inheritdoc/>
+    new IDictionary<string, object> Data { get; } // [Workaround] Inherited member cannot be accessed.
+
+
+    /// <inheritdoc/>
+    new string? GetString(string key, string? defaultString); // [Workaround] Inherited member cannot be accessed.
+
+
+    /// <inheritdoc/>
+    new bool IsMainThread { get; } // [Workaround] Inherited member cannot be accessed.
+
+
     /// <summary>
     /// Get current log.
     /// </summary>
     ILogAnalysisScriptLog Log { get; }
+
+
+    /// <inheritdoc/>
+    new SynchronizationContext MainThreadSynchronizationContext { get; } // [Workaround] Inherited member cannot be accessed.
 }
 
 

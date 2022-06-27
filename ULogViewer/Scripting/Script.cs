@@ -45,8 +45,8 @@ class Script<TContext> : IEquatable<Script<TContext>> where TContext : IScriptCo
         object.ReferenceEquals(this, script)
         || (script != null
             && script.GetType().Equals(this.GetType())
-            && this.Language == this.Language
-            && this.Source == this.Source);
+            && script.Language == this.Language
+            && script.Source == this.Source);
 
 
     /// <inheritdoc/>
@@ -58,6 +58,12 @@ class Script<TContext> : IEquatable<Script<TContext>> where TContext : IScriptCo
     /// <inheritdoc/>
     public override int GetHashCode() =>
         this.hashCodeSource.GetHashCode();
+    
+
+    /// <summary>
+    /// Check whether error was occurred or not.
+    /// </summary>
+    public bool HasError { get; private set; }
     
 
     /// <summary>
@@ -117,6 +123,12 @@ class Script<TContext> : IEquatable<Script<TContext>> where TContext : IScriptCo
 
 
     /// <summary>
+    /// Get list of namespaces to be imported.
+    /// </summary>
+    public virtual IList<string> Namespaces { get; } = new string[0];
+
+
+    /// <summary>
     /// Equality operator.
     /// </summary>
     public static bool operator ==(Script<TContext>? x, Script<TContext>? y) =>
@@ -140,20 +152,26 @@ class Script<TContext> : IEquatable<Script<TContext>> where TContext : IScriptCo
     /// Run script.
     /// </summary>
     /// <param name="context">Context.</param>
-    public void Run(TContext context) =>
-        this.RunAsync(context).Wait();
+    /// <param name="timeout">Timeout in milliseconds.</param>
+    public void Run(TContext context, int timeout = Timeout.Infinite)
+    {
+        if (!this.RunAsync(context).Wait(timeout))
+            throw new TimeoutException();
+    }
     
 
     /// <summary>
     /// Run script.
     /// </summary>
     /// <param name="context">Context.</param>
+    /// <param name="timeout">Timeout in milliseconds.</param>
     /// <typeparam name="TResult">Type of result.</typeparam>
     /// <returns>Result.</returns>
-    public TResult Run<TResult>(TContext context)
+    public TResult Run<TResult>(TContext context, int timeout = Timeout.Infinite)
     {
         var task = this.RunAsync<TResult>(context);
-        task.Wait();
+        if (!task.Wait(timeout))
+            throw new TimeoutException();
         return task.Result;
     }
 
