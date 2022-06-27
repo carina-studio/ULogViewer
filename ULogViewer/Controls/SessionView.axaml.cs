@@ -944,7 +944,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		void ClearLogAnalysisRuleSetSelection()
 		{
 			this.keyLogAnalysisRuleSetListBox.SelectedItems.Clear();
-			this.logAnalysisResultListBox.SelectedItems.Clear();
+			this.logAnalysisScriptSetListBox.SelectedItems.Clear();
 			this.operationDurationAnalysisRuleSetListBox.SelectedItems.Clear();
 			this.updateLogAnalysisAction.Reschedule();
 		}
