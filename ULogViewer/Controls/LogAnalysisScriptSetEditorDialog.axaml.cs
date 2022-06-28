@@ -1,11 +1,15 @@
 using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Data.Converters;
 using Avalonia.Markup.Xaml;
+using Avalonia.Media;
 using CarinaStudio.AppSuite.Controls;
+using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.Profiles;
+using CarinaStudio.ULogViewer.Scripting;
 using CarinaStudio.ULogViewer.ViewModels.Analysis;
 using Microsoft.Extensions.Logging;
 using System;
@@ -18,21 +22,55 @@ namespace CarinaStudio.ULogViewer.Controls;
 /// </summary>
 partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Window<IULogViewerApplication>
 {
+	/// <summary>
+	/// <see cref="IValueConverter"/> to convert from type of compilation result to brush.
+	/// </summary>
+	public static readonly IValueConverter CompilationResultTypeBrushConverter = new FuncValueConverter<CompilationResultType, IBrush?>(type =>
+	{
+		return type switch
+		{
+			CompilationResultType.Error => App.Current.FindResource("Brush/LogLevel.Error"),
+			CompilationResultType.Warning => App.Current.FindResource("Brush/LogLevel.Warn"),
+			CompilationResultType.Information => App.Current.FindResource("Brush/LogLevel.Info"),
+			_ => App.Current.FindResource("Brush/LogLevel.Undefined"),
+		} as IBrush;
+	});
+	/// <summary>
+	/// <see cref="IValueConverter"/> to convert number to boolean.
+	/// </summary>
+	public static readonly IValueConverter NumberToBooleanConverter = new FuncValueConverter<object, bool>(value =>
+	{
+		if (value is bool boolValue)
+			return boolValue;
+		if (value is int intValue)
+			return intValue != 0;
+		if (value is IConvertible convertible)
+			return convertible.ToInt32(null) != 0;
+		return false;
+	});
+
+
 	// Static fields.
 	static readonly AvaloniaProperty<bool> AreValidParametersProperty = AvaloniaProperty.RegisterDirect<LogAnalysisScriptSetEditorDialog, bool>("AreValidParameters", d => d.areValidParameters);
 	static readonly Dictionary<LogAnalysisScriptSet, LogAnalysisScriptSetEditorDialog> Dialogs = new();
+	static readonly AvaloniaProperty<bool> IsCompilingAnalysisScriptProperty = AvaloniaProperty.RegisterDirect<LogAnalysisScriptSetEditorDialog, bool>("IsCompilingAnalysisScript", d => d.isCompilingAnalysisScript);
+	static readonly AvaloniaProperty<bool> IsCompilingSetupScriptProperty = AvaloniaProperty.RegisterDirect<LogAnalysisScriptSetEditorDialog, bool>("IsCompilingSetupScript", d => d.isCompilingSetupScript);
 
 
 	// Fields.
 	LogAnalysisScript? analysisScript;
+	readonly SortedObservableList<CompilationResult> analysisScriptCompilationResults = new(CompareCompilationResult);
 	readonly ScriptEditor analysisScriptEditor;
 	bool areValidParameters;
 	readonly ScheduledAction compileAnalysisScriptAction;
 	readonly ScheduledAction compileSetupScriptAction;
 	readonly ComboBox iconComboBox;
+	bool isCompilingAnalysisScript;
+	bool isCompilingSetupScript;
 	readonly TextBox nameTextBox;
 	LogAnalysisScriptSet? scriptSetToEdit;
 	LogAnalysisScript? setupScript;
+	readonly SortedObservableList<CompilationResult> setupScriptCompilationResults = new(CompareCompilationResult);
 	readonly ScriptEditor setupScriptEditor;
 	readonly ScheduledAction validateParametersAction;
 
@@ -42,37 +80,70 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Window<IU
 	/// </summary>
 	public LogAnalysisScriptSetEditorDialog()
 	{
+		this.AnalysisScriptCompilationResults = this.analysisScriptCompilationResults.AsReadOnly();
+		this.SetupScriptCompilationResults = this.setupScriptCompilationResults.AsReadOnly();
 		AvaloniaXamlLoader.Load(this);
+		this.Get<Avalonia.Controls.ListBox>("analysisScriptCompilationResultListBox").Also(it =>
+		{
+			it.GetObservable(Avalonia.Controls.ListBox.SelectedItemProperty).Subscribe(item =>
+			{
+				if (item is CompilationResult result)
+				{
+					result.StartPosition?.Let(startPosition =>
+					{
+						var endPosition = result.EndPosition ?? (-1, -1);
+						if (startPosition.Item1 == endPosition.Item1)
+							this.analysisScriptEditor?.SelectAtLine(startPosition.Item1 + 1, startPosition.Item2, endPosition.Item2 - startPosition.Item2);
+						else
+							this.analysisScriptEditor?.SelectAtLine(startPosition.Item1 + 1, startPosition.Item2, 0);
+					});
+					this.SynchronizationContext.Post(() => 
+					{
+						this.analysisScriptEditor?.Focus();
+						it.SelectedItem = null;
+					});
+				}
+			});
+		});
 		this.analysisScriptEditor = this.Get<ScriptEditor>(nameof(analysisScriptEditor)).Also(it =>
 		{
 			it.GetObservable(ScriptEditor.SourceProperty).Subscribe(_ =>
 			{
 				analysisScript = null;
+				this.SetAndRaise<bool>(IsCompilingAnalysisScriptProperty, ref this.isCompilingAnalysisScript, false);
 				this.compileAnalysisScriptAction?.Reschedule(this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.DelayToCompileScriptWhenEditing));
 			});
 		});
 		this.compileAnalysisScriptAction = new(async () =>
 		{
 			var analysisScript = this.analysisScript ?? this.CreateScript(this.analysisScriptEditor).Also(it => this.analysisScript = it);
+			this.analysisScriptCompilationResults.Clear();
 			if (analysisScript != null)
 			{
 				this.Logger.LogTrace("Start compiling analysis script");
+				this.SetAndRaise<bool>(IsCompilingAnalysisScriptProperty, ref this.isCompilingAnalysisScript, true);
 				var result = await analysisScript.CompileAsync();
 				if (this.analysisScript != analysisScript)
 					return;
 				this.Logger.LogTrace("Analysis script compilation " + (result ? "succeeded" : "failed") + ", result count: " + analysisScript.CompilationResults.Count);
+				this.SetAndRaise<bool>(IsCompilingAnalysisScriptProperty, ref this.isCompilingAnalysisScript, false);
+				this.analysisScriptCompilationResults.AddAll(analysisScript.CompilationResults);
 			}
 		});
 		this.compileSetupScriptAction = new(async () =>
 		{
 			var setupScript = this.setupScript ?? this.CreateScript(this.setupScriptEditor).Also(it => this.setupScript = it);
+			this.setupScriptCompilationResults.Clear();
 			if (setupScript != null)
 			{
 				this.Logger.LogTrace("Start compiling setup script");
+				this.SetAndRaise<bool>(IsCompilingSetupScriptProperty, ref this.isCompilingSetupScript, true);
 				var result = await setupScript.CompileAsync();
 				if (this.setupScript != setupScript)
 					return;
 				this.Logger.LogTrace("Setup script compilation " + (result ? "succeeded" : "failed") + ", result count: " + setupScript.CompilationResults.Count);
+				this.SetAndRaise<bool>(IsCompilingSetupScriptProperty, ref this.isCompilingSetupScript, false);
+				this.setupScriptCompilationResults.AddAll(setupScript.CompilationResults);
 			}
 		});
 		this.iconComboBox = this.Get<ComboBox>(nameof(iconComboBox));
@@ -80,11 +151,34 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Window<IU
 		{
 			it.GetObservable(TextBox.TextProperty).Subscribe(_ => this.validateParametersAction?.Schedule());
 		});
+		this.Get<Avalonia.Controls.ListBox>("setupScriptCompilationResultListBox").Also(it =>
+		{
+			it.GetObservable(Avalonia.Controls.ListBox.SelectedItemProperty).Subscribe(item =>
+			{
+				if (item is CompilationResult result)
+				{
+					result.StartPosition?.Let(startPosition =>
+					{
+						var endPosition = result.EndPosition ?? (-1, -1);
+						if (startPosition.Item1 == endPosition.Item1)
+							this.setupScriptEditor?.SelectAtLine(startPosition.Item1 + 1, startPosition.Item2, endPosition.Item2 - startPosition.Item2);
+						else
+							this.setupScriptEditor?.SelectAtLine(startPosition.Item1 + 1, startPosition.Item2, 0);
+					});
+					this.SynchronizationContext.Post(() => 
+					{
+						this.setupScriptEditor?.Focus();
+						it.SelectedItem = null;
+					});
+				}
+			});
+		});
 		this.setupScriptEditor = this.Get<ScriptEditor>(nameof(setupScriptEditor)).Also(it =>
 		{
 			it.GetObservable(ScriptEditor.SourceProperty).Subscribe(_ =>
 			{
 				setupScript = null;
+				this.SetAndRaise<bool>(IsCompilingSetupScriptProperty, ref this.isCompilingSetupScript, false);
 				this.compileSetupScriptAction?.Reschedule(this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.DelayToCompileScriptWhenEditing));
 			});
 		});
@@ -95,6 +189,10 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Window<IU
 	}
 
 
+	// Get compilation results of analysis script.
+	IList<CompilationResult> AnalysisScriptCompilationResults { get; }
+
+
 	/// <summary>
 	/// Close all window related to given script set.
 	/// </summary>
@@ -103,6 +201,25 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Window<IU
 	{
 		if (!Dialogs.TryGetValue(scriptSet, out var dialog))
 			dialog?.Close();
+	}
+
+
+	// Compare compilation result.
+	static int CompareCompilationResult(CompilationResult lhs, CompilationResult rhs)
+	{
+		var result = (int)rhs.Type - (int)lhs.Type;
+		if (result != 0)
+			return result;
+		result = lhs.StartPosition.GetValueOrDefault().Item1 - rhs.StartPosition.GetValueOrDefault().Item1;
+		if (result != 0)
+			return result;
+		result = lhs.StartPosition.GetValueOrDefault().Item2 - rhs.StartPosition.GetValueOrDefault().Item2;
+		if (result != 0)
+			return result;
+		result = string.CompareOrdinal(lhs.Message, rhs.Message);
+		if (result != 0)
+			return result;
+		return lhs.GetHashCode() - rhs.GetHashCode();
 	}
 
 
@@ -168,8 +285,16 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Window<IU
 		}
 		else
 			this.iconComboBox.SelectedItem = LogProfileIcon.Analysis;
-		this.SynchronizationContext.Post(this.nameTextBox.Focus);
+		this.SynchronizationContext.Post(() =>
+		{
+			this.Get<ScrollViewer>("contentScrollViewer").ScrollToHome();
+			this.nameTextBox.Focus();
+		});
 	}
+
+
+	// Get compilation results of setup script.
+	IList<CompilationResult> SetupScriptCompilationResults { get; }
 
 
 	/// <summary>

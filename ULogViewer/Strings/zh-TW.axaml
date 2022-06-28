@@ -220,6 +220,7 @@
 	<!-- LogAnalysisScriptSetEditorDialog -->
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript">日誌分析腳本 (C#)</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Description">腳本將針對每筆日誌執行以分析日誌。需回傳布林值 (boolean) 以指示針對此日誌的分析結果是否需要被擷取。</sys:String>
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.CompilingScript">正在編譯腳本…</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.Icon">圖示</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.Name">名稱 (必要)</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript">分析初始化腳本 (C#)</sys:String>

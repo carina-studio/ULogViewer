@@ -269,6 +269,14 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 	}
 
 
+	/// <inheritdoc/>
+	protected override void OnGotFocus(GotFocusEventArgs e)
+	{
+		base.OnGotFocus(e);
+		this.sourceEditor.Focus();
+	}
+
+
 	// Report can scrolling state.
 	void ReportCanScrolling()
 	{
@@ -282,6 +290,40 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 			ref this.canScrollVertically,
 			(this.vertScrollBarVisibility == ScrollBarVisibility.Auto || this.vertScrollBarVisibility == ScrollBarVisibility.Visible)
 				&& this.sourceEditor.ExtentHeight > this.sourceEditor.ViewportHeight);
+	}
+
+
+	/// <summary>
+	/// Select text at given line.
+	/// </summary>
+	/// <param name="lineNumber">Line number starting from 1.</param>
+	/// <param name="start">Position of start character at line.</param>
+	/// <param name="length">Length of selection.</param>
+	public void SelectAtLine(int lineNumber, int start, int length)
+	{
+		this.VerifyAccess();
+		if (start < 0 || length < 0)
+			throw new ArgumentOutOfRangeException();
+		if (lineNumber <= 0)
+		{
+			this.sourceEditor.Select(0, 0);
+			return;
+		}
+		var lines = this.sourceEditor.Document.Lines;
+		if (lineNumber > lines.Count)
+		{
+			this.sourceEditor.Select(this.sourceEditor.Document.TextLength, 0);
+			return;
+		}
+		var line = lines[lineNumber - 1];
+		if (start > line.Length)
+		{
+			start = line.Length;
+			length = 0;
+		}
+		else if (start + length > line.Length)
+			length = line.Length - start;
+		this.sourceEditor.Select(line.Offset + start, length);
 	}
 
 
