@@ -635,6 +635,9 @@
 	<sys:String x:Key="String/RegexEditorDialog.Title">Edit pattern</sys:String>
 	<sys:String x:Key="String/RegexEditorDialog.Tutorial.ClickButtonToEditPattern">Click here to edit the pattern.</sys:String>
 
+	<!-- ScriptEditor -->
+	<sys:String x:Key="String/ScriptEditor.DefaultFontFamilies">Consolas,Menlo,Monaco,Courier New</sys:String>
+
 	<!-- ScriptEditorDialog -->
 	<sys:String x:Key="String/ScriptEditorDialog.Title">Edit script (C#)</sys:String>
 

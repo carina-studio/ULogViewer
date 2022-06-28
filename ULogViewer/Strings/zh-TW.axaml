@@ -601,6 +601,9 @@
 	<sys:String x:Key="String/RegexEditorDialog.Title">編輯格式</sys:String>
 	<sys:String x:Key="String/RegexEditorDialog.Tutorial.ClickButtonToEditPattern">點一下這裡以編輯格式。</sys:String>
 
+	<!-- ScriptEditor -->
+	<sys:String x:Key="String/ScriptEditor.DefaultFontFamilies">Consolas,蘭亭黑-繁,Courier New</sys:String>
+
 	<!-- ScriptEditorDialog -->
 	<sys:String x:Key="String/ScriptEditorDialog.Title">編輯腳本 (C#)</sys:String>
 

@@ -8,6 +8,7 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using AvaloniaEdit;
 using AvaloniaEdit.Highlighting;
+using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Scripting;
 using System;
@@ -57,6 +58,9 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 	// Fields.
 	bool canScrollHorizontally;
 	bool canScrollVertically;
+	string? defaultFontFamilyName;
+	IObservable<object?>? defaultFontFamilyNameObservable;
+	IDisposable? defaultFontFamilyNameObserverToken;
 	ScrollBarVisibility horzScrollBarVisibility;
 	bool isReadOnly;
 	bool isSourceEditorFocused;
@@ -66,6 +70,7 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 	{
 		{ ScriptLanguage.CSharp, HighlightingManager.Instance.GetDefinition("C#") },
 	};
+	readonly ScheduledAction updateFontFamilyAndSizeAction;
 	readonly ScheduledAction updateSyntaxHighlightingAction;
 	ScrollBarVisibility vertScrollBarVisibility;
 
@@ -130,6 +135,26 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 				this.ReportCanScrolling();
 			});
 		});
+		this.updateFontFamilyAndSizeAction = new(() =>
+		{
+			var fontFamilyNames = this.Settings.GetValueOrDefault(SettingKeys.ScriptEditorFontFamily).Let(it =>
+			{
+				if (string.IsNullOrWhiteSpace(it))
+					return this.defaultFontFamilyName;
+				return it;
+			});
+			var fontSize = this.Settings.GetValueOrDefault(SettingKeys.ScriptEditorFontSize).Let(it =>
+			{
+				if (it < SettingKeys.MinScriptEditorFontSize)
+					return SettingKeys.MinScriptEditorFontSize;
+				if (it > SettingKeys.MaxScriptEditorFontSize)
+					return SettingKeys.MaxScriptEditorFontSize;
+				return it;
+			});
+			if (fontFamilyNames != null)
+				this.sourceEditor.FontFamily = new(fontFamilyNames);
+			this.sourceEditor.FontSize = fontSize;
+		});
 		this.updateSyntaxHighlightingAction = new(() =>
 		{
 			if (this.syntaxHighlightingDefs.TryGetValue(this.Language, out var definition))
@@ -193,6 +218,18 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 	{
 		// call base
 		base.OnAttachedToLogicalTree(e);
+
+		// updating font
+		this.Settings.SettingChanged += this.OnSettingChanged;
+		this.defaultFontFamilyNameObservable = this.GetResourceObservable("String/ScriptEditor.DefaultFontFamilies");
+		this.defaultFontFamilyNameObserverToken = this.defaultFontFamilyNameObservable.Subscribe(value =>
+		{
+			if (value is string name)
+			{
+				this.defaultFontFamilyName = name;
+				this.updateFontFamilyAndSizeAction.Schedule();
+			}
+		});
 
 		// setup syntax highlighting
 		foreach (var (language, definition) in this.syntaxHighlightingDefs)
@@ -273,10 +310,28 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 
 
 	/// <inheritdoc/>
+	protected override void OnDetachedFromLogicalTree(LogicalTreeAttachmentEventArgs e)
+	{
+		this.Settings.SettingChanged -= this.OnSettingChanged;
+		this.defaultFontFamilyNameObservable = null;
+		this.defaultFontFamilyNameObserverToken = this.defaultFontFamilyNameObserverToken.DisposeAndReturnNull();
+		base.OnDetachedFromLogicalTree(e);
+	}
+
+
+	/// <inheritdoc/>
 	protected override void OnGotFocus(GotFocusEventArgs e)
 	{
 		base.OnGotFocus(e);
 		this.sourceEditor.Focus();
+	}
+
+
+	// Called when setting changed.
+	void OnSettingChanged(object? sender, SettingChangedEventArgs e)
+	{
+		if (e.Key == SettingKeys.ScriptEditorFontFamily || e.Key == SettingKeys.ScriptEditorFontSize)
+			this.updateFontFamilyAndSizeAction.Schedule();
 	}
 
 

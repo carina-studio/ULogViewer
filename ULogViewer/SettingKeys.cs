@@ -51,6 +51,14 @@ namespace CarinaStudio.ULogViewer
 		/// </summary>
 		public static readonly SettingKey<bool> SaveMemoryAggressively = new SettingKey<bool>(nameof(SaveMemoryAggressively), false);
 		/// <summary>
+		/// Font family of script editor.
+		/// </summary>
+		public static readonly SettingKey<string> ScriptEditorFontFamily = new SettingKey<string>(nameof(ScriptEditorFontFamily), "");
+		/// <summary>
+		/// Font size of script editor.
+		/// </summary>
+		public static readonly SettingKey<int> ScriptEditorFontSize = new SettingKey<int>(nameof(ScriptEditorFontSize), Platform.IsMacOS ? 13 : 14);
+		/// <summary>
 		/// Select IP endpoint immediately when they are needed.
 		/// </summary>
 		public static readonly SettingKey<bool> SelectIPEndPointWhenNeeded = new SettingKey<bool>(nameof(SelectIPEndPointWhenNeeded), true);
@@ -93,6 +101,10 @@ namespace CarinaStudio.ULogViewer
 		/// </summary>
 		public const int MaxLogFontSize = 30;
 		/// <summary>
+		/// Maximum value of <see cref="ScriptEditorFontSize"/>.
+		/// </summary>
+		public const int MaxScriptEditorFontSize = 30;
+		/// <summary>
 		/// Maximum value of <see cref="UpdateLogFilterDelay"/>.
 		/// </summary>
 		public const int MaxUpdateLogFilterDelay = 1500;
@@ -104,6 +116,10 @@ namespace CarinaStudio.ULogViewer
 		/// Maximum value of <see cref="LogFontSize"/>.
 		/// </summary>
 		public const int MinLogFontSize = 10;
+		/// <summary>
+		/// Minimum value of <see cref="ScriptEditorFontSize"/>.
+		/// </summary>
+		public const int MinScriptEditorFontSize = 10;
 		/// <summary>
 		/// Minimum value of <see cref="UpdateLogFilterDelay"/>.
 		/// </summary>
