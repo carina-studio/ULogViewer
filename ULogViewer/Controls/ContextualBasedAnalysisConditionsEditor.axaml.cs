@@ -21,10 +21,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		public static readonly AvaloniaProperty<IList<ContextualBasedAnalysisCondition>> ConditionsProperty = AvaloniaProperty.Register<ContextualBasedAnalysisActionsEditor, IList<ContextualBasedAnalysisCondition>>(nameof(Conditions));
 
 
-		// Static fields.
-		static readonly IObservable<object?> NullValueObservable = new MutableObservableValue<object?>();
-
-
 		// Fields.
 		readonly ToggleButton addConditionButton;
 		readonly ContextMenu addConditionMenu;
@@ -41,16 +37,18 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.addConditionButton = this.Get<ToggleButton>(nameof(addConditionButton));
 			this.addConditionMenu = ((ContextMenu)this.Resources[nameof(addConditionMenu)].AsNonNull()).Also(it =>
 			{
-				var nullValueToken = (IDisposable?)null;
 				it.MenuClosed += (_, e) => 
-				{
-					Global.RunWithoutError(() => nullValueToken?.Dispose());
-					nullValueToken = null;
 					this.SynchronizationContext.Post(() => this.addConditionButton.IsChecked = false);
-				};
 				it.MenuOpened += (_, e) => 
 				{
-					nullValueToken = this.addConditionButton.Bind(ToolTip.TipProperty, NullValueObservable);
+					if (Platform.IsMacOS)
+					{
+						this.SynchronizationContext.PostDelayed(() =>
+						{
+							ToolTip.SetIsOpen(this.addConditionButton, true);
+							ToolTip.SetIsOpen(this.addConditionButton, false);
+						}, 100);
+					}
 					this.SynchronizationContext.Post(() => this.addConditionButton.IsChecked = true);
 				};
 			});

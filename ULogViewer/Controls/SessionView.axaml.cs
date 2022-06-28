@@ -133,7 +133,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		static readonly AvaloniaProperty<FontFamily> LogFontFamilyProperty = AvaloniaProperty.Register<SessionView, FontFamily>(nameof(LogFontFamily));
 		static readonly AvaloniaProperty<double> LogFontSizeProperty = AvaloniaProperty.Register<SessionView, double>(nameof(LogFontSize), 10.0);
 		static readonly AvaloniaProperty<int> MaxDisplayLineCountForEachLogProperty = AvaloniaProperty.Register<SessionView, int>(nameof(MaxDisplayLineCountForEachLog), 1);
-		static readonly MutableObservableValue<object?> NullObservableValue = new();
 		static readonly AvaloniaProperty<TimeSpan?> SelectedLogsDurationProperty = AvaloniaProperty.Register<SessionView, TimeSpan?>(nameof(SelectedLogsDuration));
 		static readonly AvaloniaProperty<SessionViewStatusBarState> StatusBarStateProperty = AvaloniaProperty.Register<SessionView, SessionViewStatusBarState>(nameof(StatusBarState), SessionViewStatusBarState.None);
 
@@ -402,16 +401,17 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.logAnalysisRuleSetsButton = this.Get<ToggleButton>(nameof(logAnalysisRuleSetsButton));
 			this.logAnalysisRuleSetsPopup = this.Get<Popup>(nameof(logAnalysisRuleSetsPopup)).Also(it =>
 			{
-				var nullToolTipToken = (IDisposable?)null;
-				it.Closed += (_, e) => 
-				{
-					Global.RunWithoutError(() => nullToolTipToken?.Dispose()); // [Workaround] NRE may be thrown inside Avalonia.
-					nullToolTipToken = null;
-					this.logListBox?.Focus();
-				};
+				it.Closed += (_, e) => this.logListBox?.Focus();
 				it.Opened += (_, e) => 
 				{
-					nullToolTipToken = this.logAnalysisRuleSetsButton.Bind(ToolTip.TipProperty, NullObservableValue);
+					if (Platform.IsMacOS)
+					{
+						this.SynchronizationContext.PostDelayed(() =>
+						{
+							ToolTip.SetIsOpen(this.logAnalysisRuleSetsButton, true);
+							ToolTip.SetIsOpen(this.logAnalysisRuleSetsButton, false);
+						}, 100);
+					}
 					this.keyLogAnalysisRuleSetListBox.Focus();
 				};
 			});
@@ -521,16 +521,17 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.predefinedLogTextFiltersButton = this.Get<ToggleButton>(nameof(predefinedLogTextFiltersButton));
 			this.predefinedLogTextFiltersPopup = this.FindControl<Popup>(nameof(predefinedLogTextFiltersPopup)).AsNonNull().Also(it =>
 			{
-				var nullToolTipToken = (IDisposable?)null;
-				it.Closed += (_, sender) => 
-				{
-					Global.RunWithoutError(() => nullToolTipToken?.Dispose()); // [Workaround] NRE may be thrown inside Avalonia.
-					nullToolTipToken = null;
-					this.logListBox.Focus();
-				};
+				it.Closed += (_, sender) => this.logListBox.Focus();
 				it.Opened += (_, sender) => this.SynchronizationContext.Post(() =>
 				{
-					nullToolTipToken = this.predefinedLogTextFiltersButton.Bind(ToolTip.TipProperty, NullObservableValue);
+					if (Platform.IsMacOS)
+					{
+						this.SynchronizationContext.PostDelayed(() =>
+						{
+							ToolTip.SetIsOpen(this.predefinedLogTextFiltersButton, true);
+							ToolTip.SetIsOpen(this.predefinedLogTextFiltersButton, false);
+						}, 100);
+					}
 					this.predefinedLogTextFilterListBox.Focus();
 				});
 			});
