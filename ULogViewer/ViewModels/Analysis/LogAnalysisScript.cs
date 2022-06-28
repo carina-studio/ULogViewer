@@ -1,5 +1,5 @@
 using CarinaStudio.ULogViewer.Scripting;
-using System;
+using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text.Json;
@@ -91,6 +91,10 @@ public interface ILogAnalysisScriptContext : IScriptContext
     /// Get current log.
     /// </summary>
     ILogAnalysisScriptLog Log { get; }
+
+
+    /// <inheritdoc/>
+    new ILogger Logger { get; } // [Workaround] Inherited member cannot be accessed.
 
 
     /// <inheritdoc/>

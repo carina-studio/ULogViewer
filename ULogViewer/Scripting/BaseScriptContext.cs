@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
@@ -18,9 +19,11 @@ abstract class BaseScriptContext : IScriptContext
     /// Initialize new <see cref="BaseScriptContext"/> instance.
     /// </summary>
     /// <param name="app">Application.</param>
-    public BaseScriptContext(IULogViewerApplication app)
+    /// <param name="name">Name of context.</param>
+    public BaseScriptContext(IULogViewerApplication app, string name)
     {
         this.app = app;
+        this.Logger = app.LoggerFactory.CreateLogger(string.IsNullOrWhiteSpace(name) ? this.GetType().Name : name);
     }
 
 
@@ -44,6 +47,10 @@ abstract class BaseScriptContext : IScriptContext
     /// Check whether current thread is main thread of application or not.
     /// </summary>
     public bool IsMainThread { get => app.CheckAccess(); }
+
+
+    /// <inheritdoc/>
+    public ILogger Logger { get; }
     
 
     /// <summary>

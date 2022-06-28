@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Threading;
 
@@ -27,6 +28,12 @@ public interface IScriptContext
     /// Check whether current thread is main thread of application or not.
     /// </summary>
     bool IsMainThread { get; }
+
+
+    /// <summary>
+    /// Get logger.
+    /// </summary>
+    ILogger Logger { get; }
     
 
     /// <summary>
