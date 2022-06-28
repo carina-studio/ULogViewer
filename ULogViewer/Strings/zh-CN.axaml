@@ -602,7 +602,8 @@
 	<sys:String x:Key="String/RegexEditorDialog.Tutorial.ClickButtonToEditPattern">点一下这里编辑格式。</sys:String>
 
 	<!-- ScriptEditor -->
-	<sys:String x:Key="String/ScriptEditor.DefaultFontFamilies">Consolas,蘭亭黑-簡,Courier New</sys:String>
+	<sys:String x:Key="String/ScriptEditor.DefaultFontFamilies">Consolas,兰亭黑-简,Courier New</sys:String>
+	<sys:String x:Key="String/ScriptEditor.DefaultFontFamilies.CJK">Microsoft YaHei</sys:String>
 
 	<!-- ScriptEditorDialog -->
 	<sys:String x:Key="String/ScriptEditorDialog.Title">编辑脚本 (C#)</sys:String>

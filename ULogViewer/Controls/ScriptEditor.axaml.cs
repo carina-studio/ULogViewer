@@ -8,6 +8,7 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using AvaloniaEdit;
 using AvaloniaEdit.Highlighting;
+using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Scripting;
@@ -58,6 +59,10 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 	// Fields.
 	bool canScrollHorizontally;
 	bool canScrollVertically;
+	readonly List<HighlightingSpan> cjkSpans = new();
+	string? defaultCjkFontFamilyName;
+	IObservable<object?>? defaultCjkFontFamilyNameObservable;
+	IDisposable? defaultCjkFontFamilyNameObserverToken;
 	string? defaultFontFamilyName;
 	IObservable<object?>? defaultFontFamilyNameObservable;
 	IDisposable? defaultFontFamilyNameObserverToken;
@@ -70,6 +75,7 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 	{
 		{ ScriptLanguage.CSharp, HighlightingManager.Instance.GetDefinition("C#") },
 	};
+	readonly ScheduledAction updateCjkSpanFontFamilies;
 	readonly ScheduledAction updateFontFamilyAndSizeAction;
 	readonly ScheduledAction updateSyntaxHighlightingAction;
 	ScrollBarVisibility vertScrollBarVisibility;
@@ -134,6 +140,23 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 				this.SetAndRaise<ScrollBarVisibility>(VerticalScrollBarVisibilityProperty, ref this.vertScrollBarVisibility, visibility);
 				this.ReportCanScrolling();
 			});
+		});
+		this.updateCjkSpanFontFamilies = new(() =>
+		{
+			if (this.cjkSpans.IsEmpty())
+				return;
+			var fontFamilyNames = this.Settings.GetValueOrDefault(SettingKeys.ScriptEditorFontFamily).Let(it =>
+			{
+				if (string.IsNullOrWhiteSpace(it))
+					return this.defaultCjkFontFamilyName;
+				return it;
+			});
+			if (fontFamilyNames != null)
+			{
+				var fontFamily = new FontFamily(fontFamilyNames);
+				foreach (var span in this.cjkSpans)
+					span.SpanColor.FontFamily = fontFamily;
+			}
 		});
 		this.updateFontFamilyAndSizeAction = new(() =>
 		{
@@ -227,17 +250,28 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 			if (value is string name)
 			{
 				this.defaultFontFamilyName = name;
-				this.updateFontFamilyAndSizeAction.Schedule();
+				this.updateFontFamilyAndSizeAction.Execute();
+			}
+		});
+		this.defaultCjkFontFamilyNameObservable = this.GetResourceObservable("String/ScriptEditor.DefaultFontFamilies.CJK");
+		this.defaultCjkFontFamilyNameObserverToken = this.defaultCjkFontFamilyNameObservable.Subscribe(value =>
+		{
+			if (value is string name)
+			{
+				this.defaultCjkFontFamilyName = name;
+				this.updateCjkSpanFontFamilies.Execute();
 			}
 		});
 
 		// setup syntax highlighting
+		this.cjkSpans.Clear();
 		foreach (var (language, definition) in this.syntaxHighlightingDefs)
 		{
 			switch (language)
 			{
 				case ScriptLanguage.CSharp:
 					{
+						// update colors
 						var baseColor = (Color)this.FindResource("SystemBaseHighColor").AsNonNull();
 						var cfKeywordColor = (Color)this.FindResource("Color/SyntaxHighlighting.CSharp.Keyword.ControlFlow").AsNonNull();
 						var commentColor = (Color)this.FindResource("Color/SyntaxHighlighting.CSharp.Comment").AsNonNull();
@@ -285,6 +319,7 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 								|| pattern.StartsWith("/\\*"))
 							{
 								span.SpanColor = new HighlightingColor() { Foreground = new SimpleHighlightingBrush(commentColor) };
+								cjkSpans.Add(span);
 							}
 							else if (pattern.StartsWith("\"")
 								|| pattern.StartsWith("@\"")
@@ -292,6 +327,7 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 								|| pattern.StartsWith("\'"))
 							{
 								span.SpanColor = new() { Foreground = new SimpleHighlightingBrush(stringColor) };
+								cjkSpans.Add(span);
 							}
 							else if (pattern.StartsWith("\\#"))
 								span.SpanColor = new HighlightingColor() { Foreground = new SimpleHighlightingBrush(directiveColor) };
@@ -302,6 +338,8 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 					break;
 			}
 		}
+		this.updateCjkSpanFontFamilies.Execute();
+		this.updateSyntaxHighlightingAction.Execute();
 
 		// setup selection color
 		if (this.TryFindResource("SystemAccentColor", out var res) && res is Color accentColor)
@@ -315,6 +353,8 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 		this.Settings.SettingChanged -= this.OnSettingChanged;
 		this.defaultFontFamilyNameObservable = null;
 		this.defaultFontFamilyNameObserverToken = this.defaultFontFamilyNameObserverToken.DisposeAndReturnNull();
+		this.defaultCjkFontFamilyNameObservable = null;
+		this.defaultCjkFontFamilyNameObserverToken = this.defaultCjkFontFamilyNameObserverToken.DisposeAndReturnNull();
 		base.OnDetachedFromLogicalTree(e);
 	}
 
