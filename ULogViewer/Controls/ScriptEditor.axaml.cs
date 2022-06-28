@@ -1,5 +1,8 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
+using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
@@ -18,6 +21,18 @@ namespace CarinaStudio.ULogViewer.Controls;
 partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplication>
 {
 	/// <summary>
+	/// Property of <see cref="CanScrollHorizontally"/>.
+	/// </summary>
+	public static readonly AvaloniaProperty<bool> CanScrollHorizontallyProperty = AvaloniaProperty.RegisterDirect<ScriptEditor, bool>(nameof(CanScrollHorizontally), c => c.canScrollHorizontally);
+	/// <summary>
+	/// Property of <see cref="CanScrollVertically"/>.
+	/// </summary>
+	public static readonly AvaloniaProperty<bool> CanScrollVerticallyProperty = AvaloniaProperty.RegisterDirect<ScriptEditor, bool>(nameof(CanScrollVertically), c => c.canScrollVertically);
+	/// <summary>
+	/// Property of <see cref="HorizontalScrollBarVisibility"/>.
+	/// </summary>
+	public static readonly AvaloniaProperty<ScrollBarVisibility> HorizontalScrollBarVisibilityProperty = AvaloniaProperty.RegisterDirect<ScriptEditor, ScrollBarVisibility>(nameof(HorizontalScrollBarVisibility), c => c.horzScrollBarVisibility);
+	/// <summary>
 	/// Property of <see cref="IsReadOnly"/>.
 	/// </summary>
 	public static readonly AvaloniaProperty<bool> IsReadOnlyProperty = AvaloniaProperty.RegisterDirect<ScriptEditor, bool>(nameof(IsReadOnly), c => c.isReadOnly);
@@ -29,6 +44,10 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 	/// Property of <see cref="Source"/>.
 	/// </summary>
 	public static readonly AvaloniaProperty<string?> SourceProperty = AvaloniaProperty.RegisterDirect<ScriptEditor, string?>(nameof(Source), c => c.source);
+	/// <summary>
+	/// Property of <see cref="VerticalScrollBarVisibility"/>.
+	/// </summary>
+	public static readonly AvaloniaProperty<ScrollBarVisibility> VerticalScrollBarVisibilityProperty = AvaloniaProperty.RegisterDirect<ScriptEditor, ScrollBarVisibility>(nameof(VerticalScrollBarVisibility), c => c.vertScrollBarVisibility);
 
 
 	// Static fields.
@@ -36,6 +55,9 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 
 
 	// Fields.
+	bool canScrollHorizontally;
+	bool canScrollVertically;
+	ScrollBarVisibility horzScrollBarVisibility;
 	bool isReadOnly;
 	bool isSourceEditorFocused;
 	string? source;
@@ -45,6 +67,7 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 		{ ScriptLanguage.CSharp, HighlightingManager.Instance.GetDefinition("C#") },
 	};
 	readonly ScheduledAction updateSyntaxHighlightingAction;
+	ScrollBarVisibility vertScrollBarVisibility;
 
 
 	/// <summary>
@@ -53,22 +76,59 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 	public ScriptEditor()
 	{
 		AvaloniaXamlLoader.Load(this);
+		this.AddHandler(PointerWheelChangedEvent, (object? sender, PointerWheelEventArgs e) =>
+		{
+			var intercept = false;
+			if (!this.GetValue<bool>(IsSourceEditorFocusedProperty))
+				intercept = true;
+			else if (Math.Abs(e.Delta.Y) >= Math.Abs(e.Delta.X))
+				intercept = !this.canScrollVertically;
+			else
+				intercept = !this.canScrollHorizontally;
+			if (intercept)
+			{
+				this.Parent?.RaiseEvent(e);
+				e.Handled = true;
+			}
+		}, RoutingStrategies.Tunnel);
 		this.sourceEditor = this.Get<TextEditor>(nameof(sourceEditor)).Also(it =>
 		{
+			it.EffectiveViewportChanged += (_, e) => this.ReportCanScrolling();
+			it.GetObservable(TextEditor.HorizontalScrollBarVisibilityProperty).Subscribe(visibility => 
+			{
+				this.SetAndRaise<ScrollBarVisibility>(HorizontalScrollBarVisibilityProperty, ref this.horzScrollBarVisibility, visibility);
+				this.ReportCanScrolling();
+			});
 			it.ShowLineNumbers = true;
 			it.TextArea.Let(textArea =>
 			{
-				textArea.GotFocus += (sender, e) => this.SetAndRaise<bool>(IsSourceEditorFocusedProperty, ref this.isSourceEditorFocused, true);
-				textArea.LostFocus += (sender, e) => this.SetAndRaise<bool>(IsSourceEditorFocusedProperty, ref this.isSourceEditorFocused, false);
+				textArea.GotFocus += (sender, e) => 
+				{
+					this.SynchronizationContext.Post(() => textArea.Options.HighlightCurrentLine = true);
+					this.SetAndRaise<bool>(IsSourceEditorFocusedProperty, ref this.isSourceEditorFocused, true);
+				};
+				textArea.LostFocus += (sender, e) => 
+				{
+					this.SynchronizationContext.Post(() => textArea.Options.HighlightCurrentLine = false);
+					this.SetAndRaise<bool>(IsSourceEditorFocusedProperty, ref this.isSourceEditorFocused, false);
+				};
 				textArea.Options.EnableEmailHyperlinks = true;
 				textArea.Options.EnableHyperlinks = true;
 				textArea.Options.EnableImeSupport = true;
 				textArea.Options.EnableRectangularSelection = true;
 				textArea.Options.EnableTextDragDrop = true;
-				textArea.Options.HighlightCurrentLine = true;
 				textArea.Options.RequireControlModifierForHyperlinkClick = true;
 			});
-			it.TextChanged += (_, e) => this.SetAndRaise<string?>(SourceProperty, ref this.source, it.Text);
+			it.TextChanged += (_, e) => 
+			{
+				this.SetAndRaise<string?>(SourceProperty, ref this.source, it.Text);
+				this.ReportCanScrolling();
+			};
+			it.GetObservable(TextEditor.VerticalScrollBarVisibilityProperty).Subscribe(visibility => 
+			{
+				this.SetAndRaise<ScrollBarVisibility>(VerticalScrollBarVisibilityProperty, ref this.vertScrollBarVisibility, visibility);
+				this.ReportCanScrolling();
+			});
 		});
 		this.updateSyntaxHighlightingAction = new(() =>
 		{
@@ -77,6 +137,29 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 		});
 		this.GetObservable(LanguageProperty).Subscribe(_ => this.updateSyntaxHighlightingAction.Schedule());
 		this.updateSyntaxHighlightingAction.Schedule();
+		this.SynchronizationContext.Post(this.ReportCanScrolling);
+	}
+
+
+	/// <summary>
+	/// Check whether user can scroll content horizontally or not.
+	/// </summary>
+	public bool CanScrollHorizontally { get => this.canScrollHorizontally; }
+
+
+	/// <summary>
+	/// Check whether user can scroll content vertically or not.
+	/// </summary>
+	public bool CanScrollVertically { get => this.canScrollVertically; }
+
+
+	/// <summary>
+	/// Get or set horizontal scroll bar visibility.
+	/// </summary>
+	public ScrollBarVisibility HorizontalScrollBarVisibility
+	{
+		get => this.horzScrollBarVisibility;
+		set => this.sourceEditor.HorizontalScrollBarVisibility = value;
 	}
 
 
@@ -186,10 +269,19 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 	}
 
 
-	/// <inheritdoc/>
-	protected override void OnPropertyChanged<T>(AvaloniaPropertyChangedEventArgs<T> e)
+	// Report can scrolling state.
+	void ReportCanScrolling()
 	{
-		base.OnPropertyChanged<T>(e);
+		if (this.sourceEditor == null)
+			return;
+		this.SetAndRaise<bool>(CanScrollHorizontallyProperty, 
+			ref this.canScrollHorizontally,
+			(this.horzScrollBarVisibility == ScrollBarVisibility.Auto || this.horzScrollBarVisibility == ScrollBarVisibility.Visible)
+				&& this.sourceEditor.ExtentWidth > this.sourceEditor.ViewportWidth);
+		this.SetAndRaise<bool>(CanScrollVerticallyProperty, 
+			ref this.canScrollVertically,
+			(this.vertScrollBarVisibility == ScrollBarVisibility.Auto || this.vertScrollBarVisibility == ScrollBarVisibility.Visible)
+				&& this.sourceEditor.ExtentHeight > this.sourceEditor.ViewportHeight);
 	}
 
 
@@ -204,5 +296,15 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 			this.VerifyAccess();
 			this.sourceEditor.Text = value;
 		}
+	}
+
+
+	/// <summary>
+	/// Get or set vertical scroll bar visibility.
+	/// </summary>
+	public ScrollBarVisibility VerticalScrollBarVisibility
+	{
+		get => this.vertScrollBarVisibility;
+		set => this.sourceEditor.VerticalScrollBarVisibility = value;
 	}
 }
