@@ -96,6 +96,7 @@
 
 			<!-- SyntaxHighlighting -->
 			<Color x:Key="Color/SyntaxHighlighting.CSharp.Comment">#5b9b4c</Color>
+			<Color x:Key="Color/SyntaxHighlighting.CSharp.CompilerDirective">#7b7b7b</Color>
 			<Color x:Key="Color/SyntaxHighlighting.CSharp.Keyword">#389edb</Color>
 			<Color x:Key="Color/SyntaxHighlighting.CSharp.Keyword.ControlFlow">#d081c3</Color>
 			<Color x:Key="Color/SyntaxHighlighting.CSharp.Number">#afcfa4</Color>

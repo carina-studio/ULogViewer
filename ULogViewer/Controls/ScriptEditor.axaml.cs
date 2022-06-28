@@ -204,6 +204,7 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 						var baseColor = (Color)this.FindResource("SystemBaseHighColor").AsNonNull();
 						var cfKeywordColor = (Color)this.FindResource("Color/SyntaxHighlighting.CSharp.Keyword.ControlFlow").AsNonNull();
 						var commentColor = (Color)this.FindResource("Color/SyntaxHighlighting.CSharp.Comment").AsNonNull();
+						var directiveColor = (Color)this.FindResource("Color/SyntaxHighlighting.CSharp.CompilerDirective").AsNonNull();
 						var keywordColor = (Color)this.FindResource("Color/SyntaxHighlighting.CSharp.Keyword").AsNonNull();
 						var numberColor = (Color)this.FindResource("Color/SyntaxHighlighting.CSharp.Number").AsNonNull();
 						var stringColor = (Color)this.FindResource("Color/SyntaxHighlighting.CSharp.String").AsNonNull();
@@ -250,11 +251,13 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 							}
 							else if (pattern.StartsWith("\"")
 								|| pattern.StartsWith("@\"")
-								|| pattern.StartsWith("$\"")
+								|| pattern.StartsWith("\\$\"")
 								|| pattern.StartsWith("\'"))
 							{
 								span.SpanColor = new() { Foreground = new SimpleHighlightingBrush(stringColor) };
 							}
+							else if (pattern.StartsWith("\\#"))
+								span.SpanColor = new HighlightingColor() { Foreground = new SimpleHighlightingBrush(directiveColor) };
 							else
 								span.SpanColor = new HighlightingColor() { Foreground = new SimpleHighlightingBrush(baseColor) };
 						}
