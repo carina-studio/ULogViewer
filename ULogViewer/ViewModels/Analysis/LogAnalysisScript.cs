@@ -57,12 +57,52 @@ class LogAnalysisScript : Script<ILogAnalysisScriptContext>
 public interface ILogAnalysisScriptContext : IScriptContext
 {
     /// <summary>
+    /// Type of analysis result.
+    /// </summary>
+    public enum ResultType
+    {
+        /// <summary>
+        /// Error.
+        /// </summary>
+        Error = (int)DisplayableLogAnalysisResultType.Error,
+        /// <summary>
+        /// Warning.
+        /// </summary>
+        Warning = (int)DisplayableLogAnalysisResultType.Warning,
+        /// <summary>
+        /// Start of operation.
+        /// </summary>
+        OperationStart = (int)DisplayableLogAnalysisResultType.OperationStart,
+        /// <summary>
+        /// End of operation.
+        /// </summary>
+        OperationEnd = (int)DisplayableLogAnalysisResultType.OperationEnd,
+        /// <summary>
+        /// Checkpoint.
+        /// </summary>
+        Checkpoint = (int)DisplayableLogAnalysisResultType.Checkpoint,
+        /// <summary>
+        /// Time span.
+        /// </summary>
+        TimeSpan = (int)DisplayableLogAnalysisResultType.TimeSpan,
+        /// <summary>
+        /// Performance.
+        /// </summary>
+        Performance = (int)DisplayableLogAnalysisResultType.Performance,
+        /// <summary>
+        /// Information.
+        /// </summary>
+        Information = (int)DisplayableLogAnalysisResultType.Information,
+    }
+
+
+    /// <summary>
     /// Add analysis result.
     /// </summary>
     /// <param name="type">Type of result.</param>
     /// <param name="message">Message.</param>
     /// <param name="log">Related log.</param>
-    void AddAnalysisResult(DisplayableLogAnalysisResultType type, string message, ILogAnalysisScriptLog? log);
+    void AddResult(ResultType type, string message, ILogAnalysisScriptLog? log);
 
 
     /// <summary>
@@ -72,7 +112,7 @@ public interface ILogAnalysisScriptContext : IScriptContext
     /// <param name="message">Message.</param>
     /// <param name="beginningLog">Beginning log.</param>
     /// <param name="endingLog">Ending log.</param>
-    void AddAnalysisResult(DisplayableLogAnalysisResultType type, string message, ILogAnalysisScriptLog beginningLog, ILogAnalysisScriptLog endingLog);
+    void AddResult(ResultType type, string message, ILogAnalysisScriptLog beginningLog, ILogAnalysisScriptLog endingLog);
 
 
     /// <inheritdoc/>

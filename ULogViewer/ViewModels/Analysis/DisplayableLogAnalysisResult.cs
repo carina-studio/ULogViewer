@@ -163,7 +163,7 @@ class DisplayableLogAnalysisResult : BaseApplicationObject<IULogViewerApplicatio
 /// <summary>
 /// Type of <see cref="DisplayableLogAnalysisResult"/>.
 /// </summary>
-public enum DisplayableLogAnalysisResultType : uint
+enum DisplayableLogAnalysisResultType : uint
 {
     /// <summary>
     /// Error.
