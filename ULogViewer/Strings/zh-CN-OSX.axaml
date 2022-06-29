@@ -5,6 +5,10 @@
 	<!-- Azure -->
 	<sys:String x:Key="String/Azure.AzureCliNotFound">找不到 Azure 命令列介面 (CLI)。请确认 Azure 命令列介面已经安装且其路径已加入至文件 '/etc/paths'。</sys:String>
 
+	<!-- ScriptEditor -->
+	<sys:String x:Key="String/ScriptEditor.DefaultFontFamilies">兰亭黑-简</sys:String>
+	<sys:String x:Key="String/ScriptEditor.DefaultFontFamilies.CJK" xml:space="preserve">&#x20;</sys:String>
+
 	<!-- SessionView -->
 	<sys:String x:Key="String/SessionView.AddLogFiles.WithShortcut">加入日志档案 (⌘O)</sys:String>
 	<sys:String x:Key="String/SessionView.MemoryUsage">总内存使用量</sys:String>

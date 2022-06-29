@@ -151,7 +151,7 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 					return this.defaultCjkFontFamilyName;
 				return it;
 			});
-			if (fontFamilyNames != null)
+			if (!string.IsNullOrWhiteSpace(fontFamilyNames))
 			{
 				var fontFamily = new FontFamily(fontFamilyNames);
 				foreach (var span in this.cjkSpans)
@@ -174,7 +174,7 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 					return SettingKeys.MaxScriptEditorFontSize;
 				return it;
 			});
-			if (fontFamilyNames != null)
+			if (!string.IsNullOrWhiteSpace(fontFamilyNames))
 				this.sourceEditor.FontFamily = new(fontFamilyNames);
 			this.sourceEditor.FontSize = fontSize;
 		});
