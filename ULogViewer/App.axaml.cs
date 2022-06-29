@@ -39,11 +39,6 @@ namespace CarinaStudio.ULogViewer
 		// Fields.
 		ExternalDependency[] externalDependencies = new ExternalDependency[0];
 		NativeMenuItem? toolsNativeMenuItem;
-#if WINDOWS_ONLY
-#pragma warning disable CS0169
-		readonly global::Windows.UI.Color? uiColor; // Make Windows SDK assembly loaded when startup
-#pragma warning restore CS0169
-#endif
 
 
 		// Constructor.
@@ -496,5 +491,11 @@ namespace CarinaStudio.ULogViewer
 
 		/// <inheritdoc/>
 		public override Version? UserAgreementVersion => new Version(1, 3);
+
+
+#if WINDOWS_ONLY
+		/// <inheritdoc/>
+		protected override System.Reflection.Assembly WindowsSdkAssembly => typeof(global::Windows.UI.Color).Assembly;
+#endif
     }
 }
