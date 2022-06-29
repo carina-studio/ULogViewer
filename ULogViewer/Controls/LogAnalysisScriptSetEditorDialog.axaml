@@ -3,6 +3,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:abControls="using:CarinaStudio.Controls"
+		xmlns:abConverters="using:CarinaStudio.Data.Converters"
 		xmlns:aConverters="using:Avalonia.Data.Converters"
 		xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
 		xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
@@ -24,7 +25,10 @@
 	
 	<Window.Resources>
 		<DataTemplate x:Key="scriptCompilationResultTemplate">
-			<TextBlock Foreground="{Binding Type, Converter={x:Static appControls:LogAnalysisScriptSetEditorDialog.CompilationResultTypeBrushConverter}}" Text="{Binding Message}" TextTrimming="CharacterEllipsis"/>
+		<Grid ColumnDefinitions="Auto,*">
+			<Image Classes="Dialog_Icon" Source="{Binding Type, Converter={x:Static appControls:LogAnalysisScriptSetEditorDialog.CompilationResultTypeIconConverter}}" VerticalAlignment="Center"/>
+			<TextBlock Classes="Dialog_Icon_TextBlock" Foreground="{Binding Type, Converter={x:Static appControls:LogAnalysisScriptSetEditorDialog.CompilationResultTypeBrushConverter}}" Grid.Column="1" Text="{Binding Message}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" VerticalAlignment="Center"/>
+		</Grid>
 		</DataTemplate>
 	</Window.Resources>
 
@@ -76,18 +80,19 @@
 				<StackPanel>
 					<StackPanel.IsVisible>
 						<MultiBinding Converter="{x:Static aConverters:BoolConverters.And}">
-							<Binding Path="AnalysisScriptCompilationResults.Count" Converter="{x:Static appControls:LogAnalysisScriptSetEditorDialog.NumberToBooleanConverter}" ElementName="window"/>
+							<Binding Path="AnalysisScriptCompilationResults.Count" Converter="{x:Static abConverters:NumberConverters.IsNonZero}" ElementName="window"/>
 							<Binding Path="!IsCompilingAnalysisScript" ElementName="window"/>
 						</MultiBinding>
 					</StackPanel.IsVisible>
 					<Separator Classes="Dialog_Separator_Small"/>
-					<ListBox Name="analysisScriptCompilationResultListBox" Background="{x:Null}" BorderThickness="0" Focusable="False" Items="{Binding $parent[Window].AnalysisScriptCompilationResults}" Padding="0">
+					<ListBox Name="analysisScriptCompilationResultListBox" Background="{x:Null}" BorderThickness="0" Focusable="False" Items="{Binding $parent[Window].AnalysisScriptCompilationResults}" Margin="{StaticResource Thickness/LogAnalysisScriptSetEditorDialog.ScriptCompilationResults.Margin}" Padding="0">
 						<ListBox.ItemTemplate>
 							<StaticResourceExtension ResourceKey="scriptCompilationResultTemplate"/>
 						</ListBox.ItemTemplate>
 						<ListBox.Styles>
 							<Style Selector="ListBoxItem">
-								<Setter Property="Padding" Value="{StaticResource Thickness/LogAnalysisScriptSetEditorDialog.ScriptCompilationResult.Padding}"/> 
+								<Setter Property="Cursor" Value="Hand"/>
+								<Setter Property="Padding" Value="{StaticResource Thickness/LogAnalysisScriptSetEditorDialog.ScriptCompilationResults.Item.Padding}"/> 
 							</Style>
 						</ListBox.Styles>
 					</ListBox>
@@ -108,18 +113,19 @@
 				<StackPanel>
 					<StackPanel.IsVisible>
 						<MultiBinding Converter="{x:Static aConverters:BoolConverters.And}">
-							<Binding Path="SetupScriptCompilationResults.Count" Converter="{x:Static appControls:LogAnalysisScriptSetEditorDialog.NumberToBooleanConverter}" ElementName="window"/>
+							<Binding Path="SetupScriptCompilationResults.Count" Converter="{x:Static abConverters:NumberConverters.IsNonZero}" ElementName="window"/>
 							<Binding Path="!IsCompilingSetupScript" ElementName="window"/>
 						</MultiBinding>
 					</StackPanel.IsVisible>
 					<Separator Classes="Dialog_Separator_Small"/>
-					<ListBox Name="setupScriptCompilationResultListBox" Background="{x:Null}" BorderThickness="0" Focusable="False" Items="{Binding $parent[Window].SetupScriptCompilationResults}" Padding="0">
+					<ListBox Name="setupScriptCompilationResultListBox" Background="{x:Null}" BorderThickness="0" Focusable="False" Items="{Binding $parent[Window].SetupScriptCompilationResults}" Margin="{StaticResource Thickness/LogAnalysisScriptSetEditorDialog.ScriptCompilationResults.Margin}" Padding="0">
 						<ListBox.ItemTemplate>
 							<StaticResourceExtension ResourceKey="scriptCompilationResultTemplate"/>
 						</ListBox.ItemTemplate>
 						<ListBox.Styles>
 							<Style Selector="ListBoxItem">
-								<Setter Property="Padding" Value="{StaticResource Thickness/LogAnalysisScriptSetEditorDialog.ScriptCompilationResult.Padding}"/> 
+								<Setter Property="Cursor" Value="Hand"/>
+								<Setter Property="Padding" Value="{StaticResource Thickness/LogAnalysisScriptSetEditorDialog.ScriptCompilationResults.Item.Padding}"/> 
 							</Style>
 						</ListBox.Styles>
 					</ListBox>

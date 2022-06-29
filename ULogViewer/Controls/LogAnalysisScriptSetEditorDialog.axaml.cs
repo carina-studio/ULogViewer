@@ -36,17 +36,17 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Window<IU
 		} as IBrush;
 	});
 	/// <summary>
-	/// <see cref="IValueConverter"/> to convert number to boolean.
+	/// <see cref="IValueConverter"/> to convert from type of compilation result to image.
 	/// </summary>
-	public static readonly IValueConverter NumberToBooleanConverter = new FuncValueConverter<object, bool>(value =>
+	public static readonly IValueConverter CompilationResultTypeIconConverter = new FuncValueConverter<CompilationResultType, IImage?>(type =>
 	{
-		if (value is bool boolValue)
-			return boolValue;
-		if (value is int intValue)
-			return intValue != 0;
-		if (value is IConvertible convertible)
-			return convertible.ToInt32(null) != 0;
-		return false;
+		return type switch
+		{
+			CompilationResultType.Error => App.Current.FindResource("Image/Icon.Error.Outline.Colored"),
+			CompilationResultType.Warning => App.Current.FindResource("Image/Icon.Warning.Outline.Colored"),
+			CompilationResultType.Information => App.Current.FindResource("Image/Icon.Information.Outline.Colored"),
+			_ => App.Current.FindResource("Image/Icon.Information.Outline"),
+		} as IImage;
 	});
 
 

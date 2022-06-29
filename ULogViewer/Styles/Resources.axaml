@@ -53,7 +53,8 @@
 	<sys:Double x:Key="Double/LogAnalysisScriptSetEditorDialog.MinWidth">300</sys:Double>
 	<sys:Double x:Key="Double/LogAnalysisScriptSetEditorDialog.ScriptEditor.Height">300</sys:Double>
 	<sys:Double x:Key="Double/LogAnalysisScriptSetEditorDialog.Width">650</sys:Double>
-	<Thickness x:Key="Thickness/LogAnalysisScriptSetEditorDialog.ScriptCompilationResult.Padding">0,3,0,3</Thickness>
+	<Thickness x:Key="Thickness/LogAnalysisScriptSetEditorDialog.ScriptCompilationResults.Item.Padding">3</Thickness>
+	<Thickness x:Key="Thickness/LogAnalysisScriptSetEditorDialog.ScriptCompilationResults.Margin">-3,0,-3,0</Thickness>
 
 	<!-- LogDataSourceOptionsDialog -->
 	<sys:Double x:Key="Double/LogDataSourceOptionsDialog.CommandListBox.Height">150</sys:Double>
