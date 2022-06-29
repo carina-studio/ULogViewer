@@ -57,19 +57,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// </summary>
 		public static readonly AvaloniaProperty<bool> AreAllTutorialsShownProperty = AvaloniaProperty.RegisterDirect<SessionView, bool>(nameof(AreAllTutorialsShown), v => v.areAllTutorialsShown);
 		/// <summary>
-		/// <see cref="IValueConverter"/> to convert number to boolean.
-		/// </summary>
-		public static readonly IValueConverter NumberToBooleanConverter = new FuncValueConverter<object, bool>(value =>
-		{
-			if (value is bool boolValue)
-				return boolValue;
-			if (value is int intValue)
-				return intValue != 0;
-			if (value is IConvertible convertible)
-				return convertible.ToInt32(null) != 0;
-			return false;
-		});
-		/// <summary>
 		/// <see cref="IValueConverter"/> to convert log level to readable name.
 		/// </summary>
 		public static readonly IValueConverter LogLevelNameConverter = new LogLevelNameConverterImpl(App.Current);

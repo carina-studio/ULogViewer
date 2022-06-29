@@ -1125,9 +1125,9 @@
 										<Image Classes="Icon">
 											<Image.IsVisible>
 												<MultiBinding Converter="{x:Static aConverters:BoolConverters.Or}">
-													<Binding Path="KeyLogAnalysisRuleSets.Count" Converter="{x:Static appControls:SessionView.NumberToBooleanConverter}"/>
-													<Binding Path="OperationDurationAnalysisRuleSets.Count" Converter="{x:Static appControls:SessionView.NumberToBooleanConverter}"/>
-													<Binding Path="LogAnalysisScriptSets.Count" Converter="{x:Static appControls:SessionView.NumberToBooleanConverter}"/>
+													<Binding Path="KeyLogAnalysisRuleSets.Count" Converter="{x:Static abConverters:NumberConverters.IsNonZero}"/>
+													<Binding Path="OperationDurationAnalysisRuleSets.Count" Converter="{x:Static abConverters:NumberConverters.IsNonZero}"/>
+													<Binding Path="LogAnalysisScriptSets.Count" Converter="{x:Static abConverters:NumberConverters.IsNonZero}"/>
 												</MultiBinding>
 											</Image.IsVisible>
 											<DrawingImage>
@@ -1253,9 +1253,9 @@
 											<Button Classes="BrowseButton" Command="{Binding $parent[UserControl].ClearLogAnalysisRuleSetSelection}" ToolTip.Tip="{DynamicResource String/SessionView.ClearLogAnalysisRuleSetsSelection}">
 												<Button.IsEnabled>
 													<MultiBinding Converter="{x:Static aConverters:BoolConverters.Or}">
-														<Binding Path="SelectedItems.Count" Converter="{x:Static appControls:SessionView.NumberToBooleanConverter}" ElementName="keyLogAnalysisRuleSetListBox"/>
-														<Binding Path="SelectedItems.Count" Converter="{x:Static appControls:SessionView.NumberToBooleanConverter}" ElementName="operationDurationAnalysisRuleSetListBox"/>
-														<Binding Path="SelectedItems.Count" Converter="{x:Static appControls:SessionView.NumberToBooleanConverter}" ElementName="logAnalysisScriptSetListBox"/>
+														<Binding Path="SelectedItems.Count" Converter="{x:Static abConverters:NumberConverters.IsNonZero}" ElementName="keyLogAnalysisRuleSetListBox"/>
+														<Binding Path="SelectedItems.Count" Converter="{x:Static abConverters:NumberConverters.IsNonZero}" ElementName="operationDurationAnalysisRuleSetListBox"/>
+														<Binding Path="SelectedItems.Count" Converter="{x:Static abConverters:NumberConverters.IsNonZero}" ElementName="logAnalysisScriptSetListBox"/>
 													</MultiBinding>
 												</Button.IsEnabled>
 												<Image Classes="BrowseButtonIcon" Source="{StaticResource Image/ClearSelection}"/>
