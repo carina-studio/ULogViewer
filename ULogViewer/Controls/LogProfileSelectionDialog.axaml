@@ -8,6 +8,7 @@
         xmlns:appControls="clr-namespace:CarinaStudio.ULogViewer.Controls;assembly=ULogViewer"
         xmlns:appConverters="clr-namespace:CarinaStudio.ULogViewer.Converters;assembly=ULogViewer"
         xmlns:appProfiles="clr-namespace:CarinaStudio.ULogViewer.Logs.Profiles;assembly=ULogViewer"
+		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.LogProfileSelectionDialog"
         Classes="Dialog"
@@ -121,21 +122,41 @@
 										</MultiBinding>
 									</StackPanel.IsVisible>
 									<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveLogProfile}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" IsVisible="{Binding !IsBuiltIn}" ToolTip.Tip="{DynamicResource String/LogProfileSelectionDialog.RemoveLogProfile}">
-										<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Delete}"/>
+										<asControls:Image Classes="InPlaceAction_Icon">
+											<DrawingImage>
+												<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
+											</DrawingImage>
+										</asControls:Image>
 									</Button>
 									<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].ExportLogProfile}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/LogProfileSelectionDialog.ExportLogProfile}">
-										<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Export}"/>
+										<asControls:Image Classes="InPlaceAction_Icon">
+											<DrawingImage>
+												<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Export}"/>
+											</DrawingImage>
+										</asControls:Image>
 									</Button>
 									<StackPanel IsVisible="{Binding $parent[Window].Filter, Converter={x:Static aConverters:ObjectConverters.IsNull}}" Orientation="Horizontal">
 										<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].CopyLogProfile}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Copy}">
-											<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Copy}"/>
+											<asControls:Image Classes="InPlaceAction_Icon">
+												<DrawingImage>
+													<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Copy}"/>
+												</DrawingImage>
+											</asControls:Image>
 										</Button>
 										<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditLogProfile}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" IsVisible="{Binding !IsBuiltIn}" ToolTip.Tip="{DynamicResource String/LogProfileSelectionDialog.EditLogProfile}">
-											<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Edit}"/>
+											<asControls:Image Classes="InPlaceAction_Icon">
+												<DrawingImage>
+													<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
+												</DrawingImage>
+											</asControls:Image>
 										</Button>
 									</StackPanel>
 									<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].PinUnpinLogProfile}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" IsVisible="{Binding !IsTemplate}" ToolTip.Tip="{DynamicResource String/LogProfileSelectionDialog.PinUnpinLogProfile}">
-										<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Pin}"/>
+										<asControls:Image Classes="InPlaceAction_Icon">
+											<DrawingImage>
+												<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Pin}"/>
+											</DrawingImage>
+										</asControls:Image>
 									</Button>
 								</StackPanel>
 

@@ -125,6 +125,7 @@
 	</Style>
 	<Style Selector="TextBlock.LogProfileSelectionDialog_LogProfile_Label">
 		<Setter Property="FontSize" Value="{DynamicResource Double/LogProfileSelectionDialog.LogProfile.Label.FontSize}"/>
+		<Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
 		<Setter Property="Opacity" Value="0.75"/>
 	</Style>
 
