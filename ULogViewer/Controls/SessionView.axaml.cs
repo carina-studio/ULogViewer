@@ -1557,7 +1557,7 @@ namespace CarinaStudio.ULogViewer.Controls
 							border.BorderThickness = markIndicatorBorderThickness;
 							border.CornerRadius = markIndicatorCornerRadius;
 							border.Height = markIndicatorSize;
-							border.Bind(Image.IsVisibleProperty, new Binding() { Path = nameof(DisplayableLog.IsMarked) });
+							border.Bind(Avalonia.Controls.Image.IsVisibleProperty, new Binding() { Path = nameof(DisplayableLog.IsMarked) });
 							border.Margin = markIndicatorMargin;
 							border.VerticalAlignment = VerticalAlignment.Center;
 							border.Width = markIndicatorSize;
@@ -1644,11 +1644,11 @@ namespace CarinaStudio.ULogViewer.Controls
 									}
 								}, RoutingStrategies.Tunnel);
 							}));
-							panel.Children.Add(new Image().Also(image =>
+							panel.Children.Add(new Avalonia.Controls.Image().Also(image =>
 							{
 								image.Classes.Add("Icon");
-								image.Bind(Image.IsVisibleProperty, new Binding() { Path = nameof(DisplayableLog.HasAnalysisResult) });
-								image.Bind(Image.SourceProperty, new Binding() { Path = nameof(DisplayableLog.AnalysisResultIndicatorIcon) });
+								image.Bind(Avalonia.Controls.Image.IsVisibleProperty, new Binding() { Path = nameof(DisplayableLog.HasAnalysisResult) });
+								image.Bind(Avalonia.Controls.Image.SourceProperty, new Binding() { Path = nameof(DisplayableLog.AnalysisResultIndicatorIcon) });
 							}));
 						}));
 						}
@@ -2624,7 +2624,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				{
 					Grid.SetColumn(border, columIndexOffset);
 					border.Classes.Add("Icon");
-					border.Child = new Image().Also(image =>
+					border.Child = new Avalonia.Controls.Image().Also(image =>
 					{
 						image.Classes.Add("Icon");
 						if (app.TryFindResource("Image/Mark", out rawResource))
@@ -2644,7 +2644,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				{
 					Grid.SetColumn(border, columIndexOffset);
 					border.Classes.Add("Icon");
-					border.Child = new Image().Also(image =>
+					border.Child = new Avalonia.Controls.Image().Also(image =>
 					{
 						image.Classes.Add("Icon");
 						if (app.TryFindResource("Image/Icon.Analysis", out rawResource))
