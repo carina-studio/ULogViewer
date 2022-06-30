@@ -136,7 +136,7 @@
 		<Setter Property="Padding" Value="{StaticResource Thickness/SessionView.SidePanel.Header.Padding}"/>
 	</Style>
 	<Style Selector="TextBlock.SessionView_SidePanel_FullPanelHint">
-		<Setter Property="HorizontalAlignment" Value="Right"/>
+		<Setter Property="HorizontalAlignment" Value="Center"/>
 		<Setter Property="Margin" Value="{StaticResource Thickness/SessionView.SidePanel.FullPanelHint.Text.Margin}"/>
 		<Setter Property="TextTrimming" Value="CharacterEllipsis"/>
 		<Setter Property="TextWrapping" Value="Wrap"/>
