@@ -37,7 +37,7 @@ for i in "${!RID_LIST[@]}"; do
     fi
     
     # build
-    dotnet msbuild $APP_NAME -t:BundleApp -property:Configuration=$CONFIG -p:SelfContained=true -p:PublishSingleFile=true -p:PublishTrimmed=false -p:RuntimeIdentifier=$RID
+    dotnet msbuild $APP_NAME -t:BundleApp -property:Configuration=$CONFIG -p:SelfContained=true -p:PublishSingleFile=false -p:PublishTrimmed=false -p:RuntimeIdentifier=$RID
     if [ "$?" != "0" ]; then
         exit
     fi
@@ -66,7 +66,7 @@ for i in "${!RID_LIST[@]}"; do
     # sign application
     find "./Packages/$PUB_PLATFORM/$APP_NAME.app/Contents/MacOS/" | while read FILE_NAME; do
         if [[ -f $FILE_NAME ]]; then
-            codesign -f -o runtime --timestamp --entitlements "./$APP_NAME/$APP_NAME.entitlements" -s "$CERT_NAME" "$FILE_NAME"
+            codesign -f -o runtime --deep --timestamp --entitlements "./$APP_NAME/$APP_NAME.entitlements" -s "$CERT_NAME" "$FILE_NAME"
             if [ "$?" != "0" ]; then
                 exit
             fi
