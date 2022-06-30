@@ -70,13 +70,25 @@
 								<Border Classes="InPlaceAction_Reserved"/>
 								<StackPanel Grid.Column="2" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
 									<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveRule}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
-										<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Delete}"/>
+										<asControls:Image Classes="InPlaceAction_Icon">
+											<DrawingImage>
+												<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
+											</DrawingImage>
+										</asControls:Image>
 									</Button>
 									<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].CopyRule}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Copy}">
-										<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Copy}"/>
+										<asControls:Image Classes="InPlaceAction_Icon">
+											<DrawingImage>
+												<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Copy}"/>
+											</DrawingImage>
+										</asControls:Image>
 									</Button>
 									<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditRule}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
-										<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Edit}"/>
+										<asControls:Image Classes="InPlaceAction_Icon">
+											<DrawingImage>
+												<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
+											</DrawingImage>
+										</asControls:Image>
 									</Button>
 								</StackPanel>
 							</Grid>

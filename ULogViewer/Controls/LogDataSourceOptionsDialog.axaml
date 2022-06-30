@@ -26,16 +26,32 @@
 							<Border Classes="InPlaceAction_Reserved"/>
 							<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
 								<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveSetupTeardownCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
-									<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Delete}"/>
+									<asControls:Image Classes="InPlaceAction_Icon">
+										<DrawingImage>
+											<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
+										</DrawingImage>
+									</asControls:Image>
 								</Button>
 								<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditSetupTeardownCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
-									<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Edit}"/>
+									<asControls:Image Classes="InPlaceAction_Icon">
+										<DrawingImage>
+											<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
+										</DrawingImage>
+									</asControls:Image>
 								</Button>
 								<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].MoveSetupTeardownCommandUp}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.MoveUp}">
-									<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.MoveUp}"/>
+									<asControls:Image Classes="InPlaceAction_Icon">
+										<DrawingImage>
+											<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.MoveUp}"/>
+										</DrawingImage>
+									</asControls:Image>
 								</Button>
 								<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].MoveSetupTeardownCommandDown}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.MoveDown}">
-									<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.MoveDown}"/>
+									<asControls:Image Classes="InPlaceAction_Icon">
+										<DrawingImage>
+											<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.MoveDown}"/>
+										</DrawingImage>
+									</asControls:Image>
 								</Button>
 							</StackPanel>
 						</Grid>

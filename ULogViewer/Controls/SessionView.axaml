@@ -598,13 +598,25 @@
 																<Border Classes="InPlaceAction_Reserved"/>
 																<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal" VerticalAlignment="Center">
 																	<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].RemovePredefinedLogTextFilter}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
-																		<Image Classes="InPlaceAction_Icon" Source="{StaticResource Image/Icon.Delete}"/>
+																		<asControls:Image Classes="InPlaceAction_Icon">
+																			<DrawingImage>
+																				<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
+																			</DrawingImage>
+																		</asControls:Image>
 																	</Button>
 																	<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].CopyPredefinedLogTextFilter}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Copy}">
-																		<Image Classes="InPlaceAction_Icon" Source="{StaticResource Image/Icon.Copy}"/>
+																		<asControls:Image Classes="InPlaceAction_Icon">
+																			<DrawingImage>
+																				<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Copy}"/>
+																			</DrawingImage>
+																		</asControls:Image>
 																	</Button>
 																	<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].EditPredefinedLogTextFilter}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
-																		<Image Classes="InPlaceAction_Icon" Source="{StaticResource Image/Icon.Edit}"/>
+																		<asControls:Image Classes="InPlaceAction_Icon">
+																			<DrawingImage>
+																				<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
+																			</DrawingImage>
+																		</asControls:Image>
 																	</Button>
 																</StackPanel>
 															</Grid>
@@ -1163,16 +1175,32 @@
 																	<Border Grid.Column="1" Classes="InPlaceAction_Reserved"/>
 																	<StackPanel Grid.Column="2" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal" VerticalAlignment="Center">
 																		<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].ExportKeyLogAnalysisRuleSet}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Export}">
-																			<Image Classes="InPlaceAction_Icon" Source="{StaticResource Image/Icon.Export}"/>
+																			<asControls:Image Classes="InPlaceAction_Icon">
+																				<DrawingImage>
+																					<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Export}"/>
+																				</DrawingImage>
+																			</asControls:Image>
 																		</Button>
 																		<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].RemoveKeyLogAnalysisRuleSet}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
-																			<Image Classes="InPlaceAction_Icon" Source="{StaticResource Image/Icon.Delete}"/>
+																			<asControls:Image Classes="InPlaceAction_Icon">
+																				<DrawingImage>
+																					<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
+																				</DrawingImage>
+																			</asControls:Image>
 																		</Button>
 																		<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].CopyKeyLogAnalysisRuleSet}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Copy}">
-																			<Image Classes="InPlaceAction_Icon" Source="{StaticResource Image/Icon.Copy}"/>
+																			<asControls:Image Classes="InPlaceAction_Icon">
+																				<DrawingImage>
+																					<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Copy}"/>
+																				</DrawingImage>
+																			</asControls:Image>
 																		</Button>
 																		<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].EditKeyLogAnalysisRuleSet}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
-																			<Image Classes="InPlaceAction_Icon" Source="{StaticResource Image/Icon.Edit}"/>
+																			<asControls:Image Classes="InPlaceAction_Icon">
+																				<DrawingImage>
+																					<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
+																				</DrawingImage>
+																			</asControls:Image>
 																		</Button>
 																	</StackPanel>
 																</Grid>
@@ -1192,16 +1220,32 @@
 																	<Border Grid.Column="1" Classes="InPlaceAction_Reserved"/>
 																	<StackPanel Grid.Column="2" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal" VerticalAlignment="Center">
 																		<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].ExportOperationDurationAnalysisRuleSet}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Export}">
-																			<Image Classes="InPlaceAction_Icon" Source="{StaticResource Image/Icon.Export}"/>
+																			<asControls:Image Classes="InPlaceAction_Icon">
+																				<DrawingImage>
+																					<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Export}"/>
+																				</DrawingImage>
+																			</asControls:Image>
 																		</Button>
 																		<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].RemoveOperationDurationAnalysisRuleSet}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
-																			<Image Classes="InPlaceAction_Icon" Source="{StaticResource Image/Icon.Delete}"/>
+																			<asControls:Image Classes="InPlaceAction_Icon">
+																				<DrawingImage>
+																					<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
+																				</DrawingImage>
+																			</asControls:Image>
 																		</Button>
 																		<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].CopyOperationDurationAnalysisRuleSet}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Copy}">
-																			<Image Classes="InPlaceAction_Icon" Source="{StaticResource Image/Icon.Copy}"/>
+																			<asControls:Image Classes="InPlaceAction_Icon">
+																				<DrawingImage>
+																					<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Copy}"/>
+																				</DrawingImage>
+																			</asControls:Image>
 																		</Button>
 																		<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].EditOperationDurationAnalysisRuleSet}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
-																			<Image Classes="InPlaceAction_Icon" Source="{StaticResource Image/Icon.Edit}"/>
+																			<asControls:Image Classes="InPlaceAction_Icon">
+																				<DrawingImage>
+																					<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
+																				</DrawingImage>
+																			</asControls:Image>
 																		</Button>
 																	</StackPanel>
 																</Grid>
@@ -1221,16 +1265,32 @@
 																	<Border Grid.Column="1" Classes="InPlaceAction_Reserved"/>
 																	<StackPanel Grid.Column="2" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal" VerticalAlignment="Center">
 																		<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].ExportLogAnalysisScriptSet}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Export}">
-																			<Image Classes="InPlaceAction_Icon" Source="{StaticResource Image/Icon.Export}"/>
+																			<asControls:Image Classes="InPlaceAction_Icon">
+																				<DrawingImage>
+																					<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Export}"/>
+																				</DrawingImage>
+																			</asControls:Image>
 																		</Button>
 																		<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].RemoveLogAnalysisScriptSet}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
-																			<Image Classes="InPlaceAction_Icon" Source="{StaticResource Image/Icon.Delete}"/>
+																			<asControls:Image Classes="InPlaceAction_Icon">
+																				<DrawingImage>
+																					<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
+																				</DrawingImage>
+																			</asControls:Image>
 																		</Button>
 																		<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].CopyLogAnalysisScriptSet}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Copy}">
-																			<Image Classes="InPlaceAction_Icon" Source="{StaticResource Image/Icon.Copy}"/>
+																			<asControls:Image Classes="InPlaceAction_Icon">
+																				<DrawingImage>
+																					<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Copy}"/>
+																				</DrawingImage>
+																			</asControls:Image>
 																		</Button>
 																		<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].EditLogAnalysisScriptSet}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
-																			<Image Classes="InPlaceAction_Icon" Source="{StaticResource Image/Icon.Edit}"/>
+																			<asControls:Image Classes="InPlaceAction_Icon">
+																				<DrawingImage>
+																					<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
+																				</DrawingImage>
+																			</asControls:Image>
 																		</Button>
 																	</StackPanel>
 																</Grid>
