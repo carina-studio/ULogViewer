@@ -649,6 +649,10 @@
 	<!-- ScriptEditorDialog -->
 	<sys:String x:Key="String/ScriptEditorDialog.Title">Edit script (C#)</sys:String>
 
+	<!-- ScriptLanguage -->
+	<sys:String x:Key="String/ScriptLanguage.CSharp">C# Script</sys:String>
+	<sys:String x:Key="String/ScriptLanguage.JavaScript">JavaScript (ECMAScript 5.1)</sys:String>
+
 	<!-- Session -->
 	<sys:String x:Key="String/Session.Empty">Empty Tab</sys:String>
 

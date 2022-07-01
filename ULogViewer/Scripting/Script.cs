@@ -291,6 +291,10 @@ enum ScriptLanguage
     /// C# script.
     /// </summary>
     CSharp,
+    /// <summary>
+    /// JavaScript (ECMAScript 5.1).
+    /// </summary>
+    JavaScript,
 }
 
 

@@ -616,6 +616,9 @@
 	<!-- ScriptEditorDialog -->
 	<sys:String x:Key="String/ScriptEditorDialog.Title">編輯腳本 (C#)</sys:String>
 
+	<!-- ScriptLanguage -->
+	<sys:String x:Key="String/ScriptLanguage.CSharp">C# 腳本語言</sys:String>
+
 	<!-- Session -->
 	<sys:String x:Key="String/Session.Empty">空白分頁</sys:String>
 
