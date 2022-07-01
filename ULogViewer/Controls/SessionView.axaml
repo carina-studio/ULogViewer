@@ -1391,16 +1391,7 @@
 											</iaCore:DataTriggerBehavior>
 										</ia:Interaction.Behaviors>
 									</Image>
-									<appControls:TextBlock Name="messageTextBlock" FontFamily="{Binding $parent[UserControl].LogFontFamily}" FontSize="{Binding $parent[UserControl].LogFontSize}" Grid.Column="2" Margin="{StaticResource Thickness/SessionView.MarkedLogListBox.Item.Padding}" Text="{Binding Message}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center">
-										<ia:Interaction.Behaviors>
-											<iaCore:DataTriggerBehavior Binding="{Binding $self.IsTextTrimmed}" Value="True">
-												<iaCore:ChangePropertyAction PropertyName="ToolTip.Tip" Value="{Binding Message}"/>
-											</iaCore:DataTriggerBehavior>
-											<iaCore:DataTriggerBehavior Binding="{Binding $self.IsTextTrimmed}" Value="False">
-												<iaCore:ChangePropertyAction PropertyName="ToolTip.Tip" Value="{x:Null}"/>
-											</iaCore:DataTriggerBehavior>
-										</ia:Interaction.Behaviors>
-									</appControls:TextBlock>
+									<abControls:TextBlock Name="messageTextBlock" FontFamily="{Binding $parent[UserControl].LogFontFamily}" FontSize="{Binding $parent[UserControl].LogFontSize}" Grid.Column="2" Margin="{StaticResource Thickness/SessionView.MarkedLogListBox.Item.Padding}" Text="{Binding Message}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
 								</Grid>
 							</DataTemplate>
 						</asControls:ListBox.ItemTemplate>

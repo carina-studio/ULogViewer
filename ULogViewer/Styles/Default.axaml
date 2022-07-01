@@ -158,7 +158,7 @@
 	</Style>
 
 	<!-- TabItem -->
-	<Style Selector="appControls|TextBlock.TabItem_TextBlock">
+	<Style Selector="TextBlock.TabItem_TextBlock">
 		<Setter Property="TextWrapping" Value="NoWrap"/>
 		<Setter Property="TextTrimming" Value="CharacterEllipsis"/>
 		<Setter Property="VerticalAlignment" Value="Center"/>

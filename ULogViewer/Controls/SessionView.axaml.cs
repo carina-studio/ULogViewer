@@ -1359,8 +1359,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				new Avalonia.Controls.TextBlock().Let(it =>
 				{
 					// empty view to reserve height of item
-					it.Bind(TextBlock.FontFamilyProperty, new Binding() { Path = nameof(LogFontFamily), Source = this });
-					it.Bind(TextBlock.FontSizeProperty, new Binding() { Path = nameof(LogFontSize), Source = this });
+					it.Bind(Avalonia.Controls.TextBlock.FontFamilyProperty, new Binding() { Path = nameof(LogFontFamily), Source = this });
+					it.Bind(Avalonia.Controls.TextBlock.FontSizeProperty, new Binding() { Path = nameof(LogFontSize), Source = this });
 					it.Opacity = 0;
 					it.Padding = propertyPadding;
 					it.Text = " ";
@@ -1390,17 +1390,17 @@ namespace CarinaStudio.ULogViewer.Controls
 					var isMultiLineProperty = DisplayableLog.HasMultiLineStringProperty(logProperty.Name);
 					var propertyView = logProperty.Name switch
 					{
-						_ => (Control)new TextBlock().Also(it =>
+						_ => (Control)new CarinaStudio.Controls.TextBlock().Also(it =>
 						{
-							it.Bind(TextBlock.FontFamilyProperty, new Binding() { Path = nameof(LogFontFamily), Source = this });
-							it.Bind(TextBlock.FontSizeProperty, new Binding() { Path = nameof(LogFontSize), Source = this });
+							it.Bind(CarinaStudio.Controls.TextBlock.FontFamilyProperty, new Binding() { Path = nameof(LogFontFamily), Source = this });
+							it.Bind(CarinaStudio.Controls.TextBlock.FontSizeProperty, new Binding() { Path = nameof(LogFontSize), Source = this });
 							//it.Bind(TextBlock.ForegroundProperty, new Binding() { Path = nameof(DisplayableLog.LevelBrush) });
 							if (isMultiLineProperty)
-								it.Bind(TextBlock.MaxLinesProperty, new Binding() { Path = nameof(MaxDisplayLineCountForEachLog), Source = this });
+								it.Bind(CarinaStudio.Controls.TextBlock.MaxLinesProperty, new Binding() { Path = nameof(MaxDisplayLineCountForEachLog), Source = this });
 							else
 								it.MaxLines = 1;
 							it.Padding = propertyPadding;
-							it.Bind(TextBlock.TextProperty, new Binding().Also(binding =>
+							it.Bind(CarinaStudio.Controls.TextBlock.TextProperty, new Binding().Also(binding =>
 							{
 								if (logProperty.Name == nameof(DisplayableLog.Level))
 									binding.Converter = Converters.EnumConverters.LogLevel;
@@ -1425,8 +1425,8 @@ namespace CarinaStudio.ULogViewer.Controls
 										this.ShowLogStringProperty(log, logProperty);
 								});
 								viewDetails.HorizontalAlignment = HorizontalAlignment.Left;
-								viewDetails.Bind(TextBlock.IsVisibleProperty, new Binding() { Path = $"HasExtraLinesOf{logProperty.Name}" });
-								viewDetails.Bind(TextBlock.TextProperty, viewDetails.GetResourceObservable("String/SessionView.ViewFullLogMessage"));
+								viewDetails.Bind(LinkTextBlock.IsVisibleProperty, new Binding() { Path = $"HasExtraLinesOf{logProperty.Name}" });
+								viewDetails.Bind(LinkTextBlock.TextProperty, viewDetails.GetResourceObservable("String/SessionView.ViewFullLogMessage"));
 							}));
 							it.Orientation = Orientation.Vertical;
 						});
@@ -1444,12 +1444,12 @@ namespace CarinaStudio.ULogViewer.Controls
 							if (isPointerOver)
 							{
 								it.BorderBrush = this.TryFindResource("Brush/SessionView.LogListBox.Item.Column.Border.PointerOver", out var res).Let(_ => res as IBrush);
-								it.Bind(TextBlock.ForegroundProperty, new Binding() { Path = nameof(DisplayableLog.LevelBrushForPointerOver) });
+								it.Bind(Avalonia.Controls.TextBlock.ForegroundProperty, new Binding() { Path = nameof(DisplayableLog.LevelBrushForPointerOver) });
 							}
 							else
 							{
 								it.BorderBrush = null;
-								it.Bind(TextBlock.ForegroundProperty, new Binding() { Path = nameof(DisplayableLog.LevelBrush) });
+								it.Bind(Avalonia.Controls.TextBlock.ForegroundProperty, new Binding() { Path = nameof(DisplayableLog.LevelBrush) });
 							}
 						}));
 						it.PointerPressed += (_, e) =>
@@ -1462,22 +1462,16 @@ namespace CarinaStudio.ULogViewer.Controls
 									this.canShowLogProperty.Update(true);
 							}
 						};
-						if (actualPropertyView is TextBlock textBlock && width != null)
+						if (actualPropertyView is CarinaStudio.Controls.TextBlock textBlock 
+							&& width != null
+							&& Platform.IsMacOS 
+							&& this.attachedWindow != null)
 						{
-							var tipBinding = (IDisposable?)null;
-							void updateToolTip(bool isTextTrimmed)
+							this.attachedWindow.GetObservable(Avalonia.Controls.Window.IsActiveProperty).Subscribe(isActive => 
 							{
-								if (isTextTrimmed && (Platform.IsNotMacOS || this.attachedWindow?.IsActive == true))
-									tipBinding = it.Bind(ToolTip.TipProperty, new Binding() { Source = textBlock, Path = nameof(TextBlock.Text) });
-								else
-									tipBinding?.Dispose();
-							}
-							textBlock.GetObservable(TextBlock.IsTextTrimmedProperty).Subscribe(updateToolTip);
-							if (Platform.IsMacOS && this.attachedWindow != null)
-							{
-								this.attachedWindow.GetObservable(Avalonia.Controls.Window.IsActiveProperty).Subscribe(_ => 
-									updateToolTip(textBlock.IsTextTrimmed));
-							}
+								if (!isActive)
+									ToolTip.SetIsOpen(textBlock, false);
+							});
 						}
 					});
 					Grid.SetColumn(propertyView, logPropertyIndex * 2);
@@ -1720,8 +1714,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				new Avalonia.Controls.TextBlock().Let(it =>
 				{
 					// empty view to reserve height of item
-					it.Bind(TextBlock.FontFamilyProperty, new Binding() { Path = nameof(LogFontFamily), Source = this });
-					it.Bind(TextBlock.FontSizeProperty, new Binding() { Path = nameof(LogFontSize), Source = this });
+					it.Bind(Avalonia.Controls.TextBlock.FontFamilyProperty, new Binding() { Path = nameof(LogFontFamily), Source = this });
+					it.Bind(Avalonia.Controls.TextBlock.FontSizeProperty, new Binding() { Path = nameof(LogFontSize), Source = this });
 					it.Margin = itemPadding;
 					it.Opacity = 0;
 					it.Text = " ";
@@ -1729,10 +1723,10 @@ namespace CarinaStudio.ULogViewer.Controls
 				});
 				var propertyView = new Avalonia.Controls.TextBlock().Also(it =>
 				{
-					it.Bind(TextBlock.FontFamilyProperty, new Binding() { Path = nameof(LogFontFamily), Source = this });
-					it.Bind(TextBlock.FontSizeProperty, new Binding() { Path = nameof(LogFontSize), Source = this });
-					it.Bind(TextBlock.ForegroundProperty, new Binding() { Path = nameof(DisplayableLog.LevelBrush) });
-					it.Bind(TextBlock.TextProperty, new Binding() { Path = propertyInMarkedItem });
+					it.Bind(Avalonia.Controls.TextBlock.FontFamilyProperty, new Binding() { Path = nameof(LogFontFamily), Source = this });
+					it.Bind(Avalonia.Controls.TextBlock.FontSizeProperty, new Binding() { Path = nameof(LogFontSize), Source = this });
+					it.Bind(Avalonia.Controls.TextBlock.ForegroundProperty, new Binding() { Path = nameof(DisplayableLog.LevelBrush) });
+					it.Bind(Avalonia.Controls.TextBlock.TextProperty, new Binding() { Path = propertyInMarkedItem });
 					it.Margin = itemPadding;
 					it.MaxLines = 1;
 					it.TextTrimming = TextTrimming.CharacterEllipsis;
