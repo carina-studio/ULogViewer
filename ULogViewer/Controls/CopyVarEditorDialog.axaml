@@ -1,0 +1,39 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:appCtxlBased="using:CarinaStudio.ULogViewer.ViewModels.Analysis.ContextualBased"
+        xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="CarinaStudio.ULogViewer.Controls.CopyVarEditorDialog"
+        Classes="Dialog"
+        Title="{DynamicResource String/CopyVarEditorDialog.Title}"
+        Width="{DynamicResource Double/CopyVarEditorDialog.Width}">
+
+	<DockPanel>
+
+		<!-- Control buttons -->
+		<Border Classes="Dialog_ControlButtonsPanel">
+			<StackPanel Classes="Dialog_ControlButtonsPanel">
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].GenerateResultCommand}" Content="{DynamicResource String/Common.OK}"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].Close}" Content="{DynamicResource String/Common.Cancel}"/>
+			</StackPanel>
+		</Border>
+
+		<!-- Content -->
+		<StackPanel Classes="Dialog_ContentPanel">
+			
+			<!-- Source variable -->
+			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/CopyVarEditorDialog.SourceVariable}"/>
+			<TextBox Name="sourceVarTextBox" Classes="Dialog_TextBox" MaxLength="256"/>
+			<Separator Classes="Dialog_Separator"/>
+
+			<!-- Target variable -->
+			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/CopyVarEditorDialog.TargetVariable}"/>
+			<TextBox Name="targetVarTextBox" Classes="Dialog_TextBox" MaxLength="256"/>
+			
+		</StackPanel>
+		
+	</DockPanel>
+	
+</Window>

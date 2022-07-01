@@ -83,6 +83,14 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Add action.
+		async void AddCopyVarAction()
+		{
+			if (this.window != null)
+				this.AddAction(await new CopyVarEditorDialog().ShowDialog<ContextualBasedAnalysisAction?>(this.window));
+		}
+
+
+		// Add action.
 		async void AddDequeueToVarAction()
 		{
 			if (this.window != null)
@@ -132,6 +140,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 			var newAction = action switch
 			{
+				CopyVariableAction cvAction => await new CopyVarEditorDialog() { Action = cvAction }.ShowDialog<ContextualBasedAnalysisAction?>(this.window),
 				DequeueToVariableAction dtvAction => await new DequeueToVarEditorDialog() { Action = dtvAction }.ShowDialog<ContextualBasedAnalysisAction?>(this.window),
 				EnqueueVariableAction evAction => await new EnqueueVarEditorDialog() { Action = evAction }.ShowDialog<ContextualBasedAnalysisAction?>(this.window),
 				PopToVariableAction ptvAction => await new PopToVarEditorDialog() { Action = ptvAction }.ShowDialog<ContextualBasedAnalysisAction?>(this.window),

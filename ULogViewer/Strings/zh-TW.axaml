@@ -125,6 +125,7 @@
 	<sys:String x:Key="String/Common.Yes">是</sys:String>
 
 	<!-- ContextualBasedAnalysisActionsEditor -->
+	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.CopyVariableAction.WithDialog">複製變數值…</sys:String>
 	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.DequeueToVariableAction.WithDialog">自佇列取出至變數…</sys:String>
 	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.EnqueueVariableAction.WithDialog">將變數加入至佇列…</sys:String>
 	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.PeekQueueToVariableAction.WithDialog">自佇列複製至變數…</sys:String>
@@ -140,6 +141,11 @@
 	<!-- ContextualBasedAnalysisConditionsEditor -->
 	<sys:String x:Key="String/ContextualBasedAnalysisConditionsEditor.VarAndConstComparisonCondition.WithDialog">比較變數與常數…</sys:String>
 	<sys:String x:Key="String/ContextualBasedAnalysisConditionsEditor.VarsComparisonCondition.WithDialog">比較變數…</sys:String>
+
+	<!-- CopyVarEditorDialog -->
+	<sys:String x:Key="String/CopyVarEditorDialog.SourceVariable">來源變數 (必要)</sys:String>
+	<sys:String x:Key="String/CopyVarEditorDialog.TargetVariable">目標變數 (必要)</sys:String>
+	<sys:String x:Key="String/CopyVarEditorDialog.Title">複製變數值</sys:String>
 
 	<!-- CopyVariableAction -->
 	<sys:String x:Key="String/CopyVariableAction">複製 {{{0}}} 至 {{{1}}}</sys:String>
@@ -791,9 +797,9 @@
 
 	<!-- VarAndConstComparisonEditorDialog -->
 	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.ComparisonType">比較方式</sys:String>
-	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Constant">值</sys:String>
+	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Constant">值 (必要)</sys:String>
 	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Title">編輯比較條件</sys:String>
-	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Variable">變數名稱</sys:String>
+	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Variable">變數名稱 (必要)</sys:String>
 
 	<!-- VisibleLogPropertyEditorDialog -->
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.CustomDisplayName">手動輸入顯示名稱</sys:String>

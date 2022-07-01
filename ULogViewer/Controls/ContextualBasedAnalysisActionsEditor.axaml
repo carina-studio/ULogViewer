@@ -9,6 +9,8 @@
 	<UserControl.Resources>
 
 		<ContextMenu x:Key="addActionMenu" PlacementMode="Bottom">
+			<MenuItem Command="{Binding $parent[UserControl].AddCopyVarAction}" Header="{DynamicResource String/ContextualBasedAnalysisActionsEditor.CopyVariableAction.WithDialog}"/>
+			<Separator/>
 			<MenuItem Command="{Binding $parent[UserControl].AddEnqueueVarAction}" Header="{DynamicResource String/ContextualBasedAnalysisActionsEditor.EnqueueVariableAction.WithDialog}"/>
 			<MenuItem Command="{Binding $parent[UserControl].AddDequeueToVarAction}" Header="{DynamicResource String/ContextualBasedAnalysisActionsEditor.DequeueToVariableAction.WithDialog}"/>
 			<Separator/>

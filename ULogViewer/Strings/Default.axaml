@@ -134,6 +134,7 @@
 	<sys:String x:Key="String/ComparisonType.SmallerOrEquivalent">≤</sys:String>
 
 	<!-- ContextualBasedAnalysisActionsEditor -->
+	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.CopyVariableAction.WithDialog">Copy value between variables…</sys:String>
 	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.DequeueToVariableAction.WithDialog">Dequeue from queue to variable…</sys:String>
 	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.EnqueueVariableAction.WithDialog">Enqueue variable to queue…</sys:String>
 	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.PeekQueueToVariableAction.WithDialog">Copy from queue to variable…</sys:String>
@@ -149,6 +150,11 @@
 	<!-- ContextualBasedAnalysisConditionsEditor -->
 	<sys:String x:Key="String/ContextualBasedAnalysisConditionsEditor.VarAndConstComparisonCondition.WithDialog">Compare variable and constant…</sys:String>
 	<sys:String x:Key="String/ContextualBasedAnalysisConditionsEditor.VarsComparisonCondition.WithDialog">Compare variables…</sys:String>
+
+	<!-- CopyVarEditorDialog -->
+	<sys:String x:Key="String/CopyVarEditorDialog.SourceVariable">Name of source variable (required)</sys:String>
+	<sys:String x:Key="String/CopyVarEditorDialog.TargetVariable">Name of target variable (required)</sys:String>
+	<sys:String x:Key="String/CopyVarEditorDialog.Title">Copy value between variables</sys:String>
 
 	<!-- CopyVariableAction -->
 	<sys:String x:Key="String/CopyVariableAction">Copy from {{{0}}} to {{{1}}}</sys:String>
@@ -823,9 +829,9 @@
 
 	<!-- VarAndConstComparisonEditorDialog -->
 	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.ComparisonType">Comparison</sys:String>
-	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Constant">Value</sys:String>
+	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Constant">Value (required)</sys:String>
 	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Title">Edit comparison condition</sys:String>
-	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Variable">Variable name</sys:String>
+	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Variable">Name of variable (required)</sys:String>
 
 	<!-- VariableAndConstantComparisonCondition -->
 	<sys:String x:Key="String/VariableAndConstantComparisonCondition">{{{0}}} {1} '{2}'</sys:String>
