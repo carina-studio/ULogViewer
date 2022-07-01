@@ -141,6 +141,9 @@
 	<sys:String x:Key="String/ContextualBasedAnalysisConditionsEditor.VarAndConstComparisonCondition.WithDialog">比較變數與常數…</sys:String>
 	<sys:String x:Key="String/ContextualBasedAnalysisConditionsEditor.VarsComparisonCondition.WithDialog">比較變數…</sys:String>
 
+	<!-- CopyVariableAction -->
+	<sys:String x:Key="String/CopyVariableAction">複製 {{{0}}} 至 {{{1}}}</sys:String>
+
 	<!-- DatabaseSourceType -->
 	<sys:String x:Key="String/DatabaseSourceType.File">檔案</sys:String>
 	<sys:String x:Key="String/DatabaseSourceType.Network">網路</sys:String>

@@ -68,6 +68,79 @@ abstract class ContextualBasedAnalysisAction : IEquatable<ContextualBasedAnalysi
 
 
 /// <summary>
+/// Action to copy value of variable to another variable.
+/// </summary>
+class CopyVariableAction : ContextualBasedAnalysisAction
+{
+    /// <summary>
+    /// Initialize new <see cref="CopyVariableAction"/> instance.
+    /// </summary>
+    /// <param name="sourceVar">Name of source variable.</param>
+    /// <param name="targetVar">Name of target variable.</param>
+    public CopyVariableAction(string sourceVar, string targetVar)
+    {
+        this.SourceVariable = sourceVar;
+        this.TargetVariable = targetVar;
+    }
+
+
+    /// <inheritdoc/>
+    public override bool Equals(ContextualBasedAnalysisAction? action) =>
+        action is CopyVariableAction cvAction
+        && this.SourceVariable == cvAction.SourceVariable
+        && this.TargetVariable == cvAction.TargetVariable;
+    
+
+    /// <summary>
+    /// Load action from JSON format data.
+    /// </summary>
+    /// <param name="jsonElement">JSON element.</param>
+    /// <returns>Loaded action.</returns>
+    public static CopyVariableAction Load(JsonElement jsonElement)
+    {
+        var srcVar = jsonElement.GetProperty(nameof(SourceVariable)).GetString().AsNonNull();
+        var targetVar = jsonElement.GetProperty(nameof(TargetException)).GetString().AsNonNull();
+        return new(srcVar, targetVar);
+    }
+    
+
+    /// <inheritdoc/>
+    public override bool Perform(ContextualBasedAnalysisContext context, DisplayableLog log, params object?[] parameters)
+    {
+       throw new NotImplementedException();
+    }
+
+
+    /// <inheritdoc/>
+    public override void Save(Utf8JsonWriter writer)
+    {
+        writer.WriteStartObject();
+        writer.WriteString("Type", this.GetType().Name);
+        writer.WriteString(nameof(SourceVariable), this.SourceVariable);
+        writer.WriteString(nameof(TargetVariable), this.TargetVariable);
+        writer.WriteEndObject();
+    }
+
+
+    /// <summary>
+    /// Get name of source variable.
+    /// </summary>
+    public string SourceVariable { get; }
+
+
+    /// <inheritdoc/>
+    public override string? ToString() =>
+        App.CurrentOrNull?.GetFormattedString("CopyVariableAction", this.SourceVariable, this.TargetVariable) ?? base.ToString();
+
+
+    /// <summary>
+    /// Get name of target variable.
+    /// </summary>
+    public string TargetVariable { get; }
+}
+
+
+/// <summary>
 /// Action to dequeue value to given variable.
 /// </summary>
 class DequeueToVariableAction : VariableAction
