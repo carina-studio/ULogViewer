@@ -405,12 +405,15 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 		if (lineNumber <= 0)
 		{
 			this.sourceEditor.Select(0, 0);
+			this.sourceEditor.TextArea.Caret.BringCaretToView();
 			return;
 		}
 		var lines = this.sourceEditor.Document.Lines;
 		if (lineNumber > lines.Count)
 		{
+			var lastLine = lines[lines.Count - 1];
 			this.sourceEditor.Select(this.sourceEditor.Document.TextLength, 0);
+			this.sourceEditor.TextArea.Caret.BringCaretToView();
 			return;
 		}
 		var line = lines[lineNumber - 1];
@@ -422,6 +425,7 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 		else if (start + length > line.Length)
 			length = line.Length - start;
 		this.sourceEditor.Select(line.Offset + start, length);
+		this.sourceEditor.TextArea.Caret.BringCaretToView();
 	}
 
 

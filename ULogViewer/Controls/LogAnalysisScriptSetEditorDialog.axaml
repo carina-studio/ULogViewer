@@ -77,15 +77,9 @@
 				<!-- Analysis script -->
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.AnalysisScript}"/>
 				<appControls:ScriptEditor Name="analysisScriptEditor" Height="{StaticResource Double/LogAnalysisScriptSetEditorDialog.ScriptEditor.Height}" HorizontalAlignment="Stretch"/>
-				<StackPanel>
-					<StackPanel.IsVisible>
-						<MultiBinding Converter="{x:Static aConverters:BoolConverters.And}">
-							<Binding Path="AnalysisScriptCompilationResults.Count" Converter="{x:Static abConverters:NumberConverters.IsNonZero}" ElementName="window"/>
-							<Binding Path="!IsCompilingAnalysisScript" ElementName="window"/>
-						</MultiBinding>
-					</StackPanel.IsVisible>
+				<StackPanel IsVisible="{Binding $parent[Window].AnalysisScriptCompilationResults.Count}">
 					<Separator Classes="Dialog_Separator_Small"/>
-					<ListBox Name="analysisScriptCompilationResultListBox" Background="{x:Null}" BorderThickness="0" Focusable="False" Items="{Binding $parent[Window].AnalysisScriptCompilationResults}" Margin="{StaticResource Thickness/LogAnalysisScriptSetEditorDialog.ScriptCompilationResults.Margin}" Padding="0">
+					<ListBox Name="analysisScriptCompilationResultListBox" Background="{x:Null}" BorderThickness="0" Focusable="False" Items="{Binding $parent[Window].AnalysisScriptCompilationResults}" Margin="{StaticResource Thickness/LogAnalysisScriptSetEditorDialog.ScriptCompilationResults.Margin}" Padding="0" ScrollViewer.VerticalScrollBarVisibility="Disabled" VirtualizationMode="None">
 						<ListBox.ItemTemplate>
 							<StaticResourceExtension ResourceKey="scriptCompilationResultTemplate"/>
 						</ListBox.ItemTemplate>
@@ -96,13 +90,6 @@
 							</Style>
 						</ListBox.Styles>
 					</ListBox>
-				</StackPanel>
-				<StackPanel IsVisible="{Binding $parent[Window].IsCompilingAnalysisScript}">
-					<Separator Classes="Dialog_Separator_Small"/>
-					<Grid ColumnDefinitions="Auto,*">
-						<abControls:ProgressRing Height="{StaticResource Double/Dialog.Icon.Size}" IsIndeterminate="True" Margin="{StaticResource Thickness/Dialog.Icon.Margin}" VerticalAlignment="Center" Width="{StaticResource Double/Dialog.Icon.Size}"/>
-						<TextBlock Classes="Dialog_Icon_TextBlock" Grid.Column="1" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.CompilingScript}"/>
-					</Grid>
 				</StackPanel>
 				<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Description}"/>
 				<Separator Classes="Dialog_Separator"/>
@@ -110,15 +97,9 @@
 				<!-- Setup script -->
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.SetupScript}"/>
 				<appControls:ScriptEditor Name="setupScriptEditor" Height="{StaticResource Double/LogAnalysisScriptSetEditorDialog.ScriptEditor.Height}" HorizontalAlignment="Stretch"/>
-				<StackPanel>
-					<StackPanel.IsVisible>
-						<MultiBinding Converter="{x:Static aConverters:BoolConverters.And}">
-							<Binding Path="SetupScriptCompilationResults.Count" Converter="{x:Static abConverters:NumberConverters.IsNonZero}" ElementName="window"/>
-							<Binding Path="!IsCompilingSetupScript" ElementName="window"/>
-						</MultiBinding>
-					</StackPanel.IsVisible>
+				<StackPanel IsVisible="{Binding $parent[Window].SetupScriptCompilationResults.Count}">
 					<Separator Classes="Dialog_Separator_Small"/>
-					<ListBox Name="setupScriptCompilationResultListBox" Background="{x:Null}" BorderThickness="0" Focusable="False" Items="{Binding $parent[Window].SetupScriptCompilationResults}" Margin="{StaticResource Thickness/LogAnalysisScriptSetEditorDialog.ScriptCompilationResults.Margin}" Padding="0">
+					<ListBox Name="setupScriptCompilationResultListBox" Background="{x:Null}" BorderThickness="0" Focusable="False" Items="{Binding $parent[Window].SetupScriptCompilationResults}" Margin="{StaticResource Thickness/LogAnalysisScriptSetEditorDialog.ScriptCompilationResults.Margin}" Padding="0" ScrollViewer.VerticalScrollBarVisibility="Disabled" VirtualizationMode="None">
 						<ListBox.ItemTemplate>
 							<StaticResourceExtension ResourceKey="scriptCompilationResultTemplate"/>
 						</ListBox.ItemTemplate>
@@ -129,13 +110,6 @@
 							</Style>
 						</ListBox.Styles>
 					</ListBox>
-				</StackPanel>
-				<StackPanel IsVisible="{Binding $parent[Window].IsCompilingSetupScript}">
-					<Separator Classes="Dialog_Separator_Small"/>
-					<Grid ColumnDefinitions="Auto,*">
-						<abControls:ProgressRing Height="{StaticResource Double/Dialog.Icon.Size}" IsIndeterminate="True" Margin="{StaticResource Thickness/Dialog.Icon.Margin}" VerticalAlignment="Center" Width="{StaticResource Double/Dialog.Icon.Size}"/>
-						<TextBlock Classes="Dialog_Icon_TextBlock" Grid.Column="1" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.CompilingScript}"/>
-					</Grid>
 				</StackPanel>
 				<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.SetupScript.Description}"/>
 				

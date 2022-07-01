@@ -117,7 +117,6 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Window<IU
 		this.compileAnalysisScriptAction = new(async () =>
 		{
 			var analysisScript = this.analysisScript ?? this.CreateScript(this.analysisScriptEditor).Also(it => this.analysisScript = it);
-			this.analysisScriptCompilationResults.Clear();
 			if (analysisScript != null)
 			{
 				this.Logger.LogTrace("Start compiling analysis script");
@@ -127,13 +126,15 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Window<IU
 					return;
 				this.Logger.LogTrace("Analysis script compilation " + (result ? "succeeded" : "failed") + ", result count: " + analysisScript.CompilationResults.Count);
 				this.SetAndRaise<bool>(IsCompilingAnalysisScriptProperty, ref this.isCompilingAnalysisScript, false);
+				this.analysisScriptCompilationResults.Clear();
 				this.analysisScriptCompilationResults.AddAll(analysisScript.CompilationResults);
 			}
+			else
+				this.analysisScriptCompilationResults.Clear();
 		});
 		this.compileSetupScriptAction = new(async () =>
 		{
 			var setupScript = this.setupScript ?? this.CreateScript(this.setupScriptEditor).Also(it => this.setupScript = it);
-			this.setupScriptCompilationResults.Clear();
 			if (setupScript != null)
 			{
 				this.Logger.LogTrace("Start compiling setup script");
@@ -143,8 +144,11 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Window<IU
 					return;
 				this.Logger.LogTrace("Setup script compilation " + (result ? "succeeded" : "failed") + ", result count: " + setupScript.CompilationResults.Count);
 				this.SetAndRaise<bool>(IsCompilingSetupScriptProperty, ref this.isCompilingSetupScript, false);
+				this.setupScriptCompilationResults.Clear();
 				this.setupScriptCompilationResults.AddAll(setupScript.CompilationResults);
 			}
+			else
+				this.setupScriptCompilationResults.Clear();
 		});
 		this.iconComboBox = this.Get<ComboBox>(nameof(iconComboBox));
 		this.nameTextBox = this.Get<TextBox>(nameof(nameTextBox)).Also(it =>
