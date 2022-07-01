@@ -10,7 +10,11 @@
 
 		<ContextMenu x:Key="addConditionMenu" PlacementMode="Bottom">
 			<MenuItem Command="{Binding $parent[UserControl].AddVarAndConstComparisonCondition}" Header="{DynamicResource String/ContextualBasedAnalysisConditionsEditor.VarAndConstComparisonCondition.WithDialog}"/>
-			<MenuItem Command="{Binding $parent[UserControl].AddVarsComparisonCondition}" Header="{DynamicResource String/ContextualBasedAnalysisConditionsEditor.VarsComparisonCondition.WithDialog}"/>
+			<MenuItem Command="{Binding $parent[UserControl].AddVarsComparisonCondition}" Header="{DynamicResource String/ContextualBasedAnalysisConditionsEditor.VarsComparisonCondition.WithDialog}">
+				<MenuItem.Icon>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Variable}"/>
+				</MenuItem.Icon>
+			</MenuItem>
 		</ContextMenu>
 
 	</UserControl.Resources>

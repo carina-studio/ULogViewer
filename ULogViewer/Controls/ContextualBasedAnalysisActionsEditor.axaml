@@ -9,13 +9,43 @@
 	<UserControl.Resources>
 
 		<ContextMenu x:Key="addActionMenu" PlacementMode="Bottom">
-			<MenuItem Command="{Binding $parent[UserControl].AddCopyVarAction}" Header="{DynamicResource String/ContextualBasedAnalysisActionsEditor.CopyVariableAction.WithDialog}"/>
+			<MenuItem Command="{Binding $parent[UserControl].AddCopyVarAction}" Header="{DynamicResource String/ContextualBasedAnalysisActionsEditor.CopyVariableAction.WithDialog}">
+				<MenuItem.Icon>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Variable}"/>
+				</MenuItem.Icon>
+			</MenuItem>
 			<Separator/>
-			<MenuItem Command="{Binding $parent[UserControl].AddEnqueueVarAction}" Header="{DynamicResource String/ContextualBasedAnalysisActionsEditor.EnqueueVariableAction.WithDialog}"/>
-			<MenuItem Command="{Binding $parent[UserControl].AddDequeueToVarAction}" Header="{DynamicResource String/ContextualBasedAnalysisActionsEditor.DequeueToVariableAction.WithDialog}"/>
+			<MenuItem Command="{Binding $parent[UserControl].AddEnqueueVarAction}" Header="{DynamicResource String/ContextualBasedAnalysisActionsEditor.EnqueueVariableAction.WithDialog}">
+				<MenuItem.Icon>
+					<Image Classes="MenuItem_Icon" Source="{DynamicResource Image/Icon.Enter}"/>
+				</MenuItem.Icon>
+			</MenuItem>
+			<MenuItem Command="{Binding $parent[UserControl].AddPeekQueueToVarAction}" Header="{DynamicResource String/ContextualBasedAnalysisActionsEditor.PeekQueueToVariableAction.WithDialog}">
+				<MenuItem.Icon>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Peek.Outline}"/>
+				</MenuItem.Icon>
+			</MenuItem>
+			<MenuItem Command="{Binding $parent[UserControl].AddDequeueToVarAction}" Header="{DynamicResource String/ContextualBasedAnalysisActionsEditor.DequeueToVariableAction.WithDialog}">
+				<MenuItem.Icon>
+					<Image Classes="MenuItem_Icon" Source="{DynamicResource Image/Icon.Exit}"/>
+				</MenuItem.Icon>
+			</MenuItem>
 			<Separator/>
-			<MenuItem Command="{Binding $parent[UserControl].AddPushVarAction}" Header="{DynamicResource String/ContextualBasedAnalysisActionsEditor.PushVariableAction.WithDialog}"/>
-			<MenuItem Command="{Binding $parent[UserControl].AddPopToVarAction}" Header="{DynamicResource String/ContextualBasedAnalysisActionsEditor.PopToVariableAction.WithDialog}"/>
+			<MenuItem Command="{Binding $parent[UserControl].AddPushVarAction}" Header="{DynamicResource String/ContextualBasedAnalysisActionsEditor.PushVariableAction.WithDialog}">
+				<MenuItem.Icon>
+					<Image Classes="MenuItem_Icon" Source="{DynamicResource Image/Icon.Enter}"/>
+				</MenuItem.Icon>
+			</MenuItem>
+			<MenuItem Command="{Binding $parent[UserControl].AddPeekStackToVarAction}" Header="{DynamicResource String/ContextualBasedAnalysisActionsEditor.PeekStackToVariableAction.WithDialog}">
+				<MenuItem.Icon>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Peek.Outline}"/>
+				</MenuItem.Icon>
+			</MenuItem>
+			<MenuItem Command="{Binding $parent[UserControl].AddPopToVarAction}" Header="{DynamicResource String/ContextualBasedAnalysisActionsEditor.PopToVariableAction.WithDialog}">
+				<MenuItem.Icon>
+					<Image Classes="MenuItem_Icon" Source="{DynamicResource Image/Icon.Exit}"/>
+				</MenuItem.Icon>
+			</MenuItem>
 		</ContextMenu>
 
 	</UserControl.Resources>

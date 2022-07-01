@@ -99,7 +99,7 @@ class CopyVariableAction : ContextualBasedAnalysisAction
     public static CopyVariableAction Load(JsonElement jsonElement)
     {
         var srcVar = jsonElement.GetProperty(nameof(SourceVariable)).GetString().AsNonNull();
-        var targetVar = jsonElement.GetProperty(nameof(TargetException)).GetString().AsNonNull();
+        var targetVar = jsonElement.GetProperty(nameof(TargetVariable)).GetString().AsNonNull();
         return new(srcVar, targetVar);
     }
     

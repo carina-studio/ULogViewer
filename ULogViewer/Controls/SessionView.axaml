@@ -40,9 +40,21 @@
 
 		<!-- Create log analysis rule set menu -->
 		<ContextMenu x:Key="createLogAnalysisRuleSetMenu" PlacementMode="Bottom">
-			<MenuItem Command="{Binding $parent[UserControl].CreateKeyLogAnalysisRuleSet}" Header="{DynamicResource String/SessionView.LogAnalysisRuleSets.KeyLogAnalysisRuleSet}"/>
-			<MenuItem Command="{Binding $parent[UserControl].CreateOperationDurationAnalysisRuleSet}" Header="{DynamicResource String/SessionView.LogAnalysisRuleSets.OperationDurationAnalysisRuleSet}"/>
-			<MenuItem Command="{Binding $parent[UserControl].CreateLogAnalysisScriptSet}" Header="{DynamicResource String/SessionView.LogAnalysisRuleSets.LogAnalysisScriptSet}"/>
+			<MenuItem Command="{Binding $parent[UserControl].CreateKeyLogAnalysisRuleSet}" Header="{DynamicResource String/SessionView.LogAnalysisRuleSets.KeyLogAnalysisRuleSet}">
+				<MenuItem.Icon>
+					<Image Classes="MenuItem_Icon" Source="{DynamicResource Image/Icon.Flag.Outline}"/>
+				</MenuItem.Icon>
+			</MenuItem>
+			<MenuItem Command="{Binding $parent[UserControl].CreateOperationDurationAnalysisRuleSet}" Header="{DynamicResource String/SessionView.LogAnalysisRuleSets.OperationDurationAnalysisRuleSet}">
+				<MenuItem.Icon>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Timer.Outline}"/>
+				</MenuItem.Icon>
+			</MenuItem>
+			<MenuItem Command="{Binding $parent[UserControl].CreateLogAnalysisScriptSet}" Header="{DynamicResource String/SessionView.LogAnalysisRuleSets.LogAnalysisScriptSet}">
+				<MenuItem.Icon>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Code}"/>
+				</MenuItem.Icon>
+			</MenuItem>
 		</ContextMenu>
 
 		<!-- Log actions menu -->
