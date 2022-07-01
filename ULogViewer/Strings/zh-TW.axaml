@@ -651,6 +651,7 @@
 	<sys:String x:Key="String/SessionView.LastLogsFilteringDuration">篩選耗時：</sys:String>
 	<sys:String x:Key="String/SessionView.LastLogsReadingDuration">讀取耗時：</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisPanel">日誌分析</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisPanel.Hint">點一下面板右上角的按鈕以選擇要套用的的分析規則集</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisProgress">分析日誌中…</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets">分析規則集</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.KeyLogAnalysisRuleSet">關鍵日誌分析</sys:String>

@@ -1393,6 +1393,18 @@
 							</DataTemplate>
 						</asControls:ListBox.ItemTemplate>
 					</asControls:ListBox>
+					<Border Background="{x:Static Brushes.Transparent}" Grid.Row="1">
+						<Border.IsVisible>
+							<MultiBinding Converter="{x:Static aConverters:BoolConverters.And}">
+								<Binding Path="IsProVersionActivated" ElementName="root"/>
+								<Binding Path="LogAnalysisResults.Count" Converter="{x:Static abConverters:NumberConverters.IsZero}"/>
+								<Binding Path="SelectedItems.Count" Converter="{x:Static abConverters:NumberConverters.IsZero}" ElementName="keyLogAnalysisRuleSetListBox"/>
+								<Binding Path="SelectedItems.Count" Converter="{x:Static abConverters:NumberConverters.IsZero}" ElementName="operationDurationAnalysisRuleSetListBox"/>
+								<Binding Path="SelectedItems.Count" Converter="{x:Static abConverters:NumberConverters.IsZero}" ElementName="logAnalysisScriptSetListBox"/>
+							</MultiBinding>
+						</Border.IsVisible>
+						<TextBlock Classes="SessionView_SidePanel_FullPanelHint" Text="{DynamicResource String/SessionView.LogAnalysisPanel.Hint}"/>
+					</Border>
 					<Border Background="{x:Static Brushes.Transparent}" Grid.Row="1" IsVisible="{Binding !$parent[UserControl].IsProVersionActivated}">
 						<TextBlock Classes="SessionView_SidePanel_FullPanelHint" Text="{DynamicResource String/SessionView.ProVersionNeeded}"/>
 					</Border>
