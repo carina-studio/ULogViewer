@@ -248,7 +248,7 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Window<IU
 	{
 		if (string.IsNullOrEmpty(source))
 			return null;
-		return new LogAnalysisScript(Scripting.ScriptLanguage.CSharp, source);
+		return new LogAnalysisScript(this.Application, Scripting.ScriptLanguage.CSharp, source);
 	});
 
 

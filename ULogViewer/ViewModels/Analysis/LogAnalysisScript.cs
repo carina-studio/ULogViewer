@@ -27,19 +27,21 @@ class LogAnalysisScript : Script<ILogAnalysisScriptContext>
     /// <summary>
     /// Initialize new <see cref="LogAnalysisScript"/> instance.
     /// </summary>
+    /// <param name="app">Application.</param>
     /// <param name="language">Language.</param>
     /// <param name="source">Source.</param>
-    public LogAnalysisScript(ScriptLanguage language, string source) : base(language, source)
+    public LogAnalysisScript(IULogViewerApplication app, ScriptLanguage language, string source) : base(app, language, source)
     { }
 
 
     /// <summary>
     /// Load script from JSON format data.
     /// </summary>
+    /// <param name="app">Application.</param>
     /// <param name="json">JSON data.</param>
     /// <returns>Loaded script.</returns>
-    public static LogAnalysisScript Load(JsonElement json) =>
-        LogAnalysisScript.Load<LogAnalysisScript>(json);
+    public static LogAnalysisScript Load(IULogViewerApplication app, JsonElement json) =>
+        LogAnalysisScript.Load<LogAnalysisScript>(app, json);
 
 
     /// <inheritdoc/>
@@ -54,48 +56,8 @@ class LogAnalysisScript : Script<ILogAnalysisScriptContext>
 /// <summary>
 /// Context of log analysis script.
 /// </summary>
-public interface ILogAnalysisScriptContext : IScriptContext
+public interface ILogAnalysisScriptContext : IContext
 {
-    /// <summary>
-    /// Type of analysis result.
-    /// </summary>
-    public enum ResultType
-    {
-        /// <summary>
-        /// Error.
-        /// </summary>
-        Error = (int)DisplayableLogAnalysisResultType.Error,
-        /// <summary>
-        /// Warning.
-        /// </summary>
-        Warning = (int)DisplayableLogAnalysisResultType.Warning,
-        /// <summary>
-        /// Start of operation.
-        /// </summary>
-        OperationStart = (int)DisplayableLogAnalysisResultType.OperationStart,
-        /// <summary>
-        /// End of operation.
-        /// </summary>
-        OperationEnd = (int)DisplayableLogAnalysisResultType.OperationEnd,
-        /// <summary>
-        /// Checkpoint.
-        /// </summary>
-        Checkpoint = (int)DisplayableLogAnalysisResultType.Checkpoint,
-        /// <summary>
-        /// Time span.
-        /// </summary>
-        TimeSpan = (int)DisplayableLogAnalysisResultType.TimeSpan,
-        /// <summary>
-        /// Performance.
-        /// </summary>
-        Performance = (int)DisplayableLogAnalysisResultType.Performance,
-        /// <summary>
-        /// Information.
-        /// </summary>
-        Information = (int)DisplayableLogAnalysisResultType.Information,
-    }
-
-
     /// <summary>
     /// Add analysis result.
     /// </summary>
@@ -115,30 +77,10 @@ public interface ILogAnalysisScriptContext : IScriptContext
     void AddResult(ResultType type, string message, ILogAnalysisScriptLog beginningLog, ILogAnalysisScriptLog endingLog);
 
 
-    /// <inheritdoc/>
-    new IDictionary<string, object> Data { get; } // [Workaround] Inherited member cannot be accessed.
-
-
-    /// <inheritdoc/>
-    new string? GetString(string key, string? defaultString); // [Workaround] Inherited member cannot be accessed.
-
-
-    /// <inheritdoc/>
-    new bool IsMainThread { get; } // [Workaround] Inherited member cannot be accessed.
-
-
     /// <summary>
     /// Get current log.
     /// </summary>
     ILogAnalysisScriptLog Log { get; }
-
-
-    /// <inheritdoc/>
-    new ILogger Logger { get; } // [Workaround] Inherited member cannot be accessed.
-
-
-    /// <inheritdoc/>
-    new SynchronizationContext MainThreadSynchronizationContext { get; } // [Workaround] Inherited member cannot be accessed.
 }
 
 
@@ -186,4 +128,44 @@ class EmptyLogAnalysisScriptLog : ILogAnalysisScriptLog
 
     /// <inheritdoc/>
     public string Text => "";
+}
+
+
+/// <summary>
+/// Type of analysis result exported to script.
+/// </summary>
+public enum ResultType
+{
+    /// <summary>
+    /// Error.
+    /// </summary>
+    Error = (int)DisplayableLogAnalysisResultType.Error,
+    /// <summary>
+    /// Warning.
+    /// </summary>
+    Warning = (int)DisplayableLogAnalysisResultType.Warning,
+    /// <summary>
+    /// Start of operation.
+    /// </summary>
+    OperationStart = (int)DisplayableLogAnalysisResultType.OperationStart,
+    /// <summary>
+    /// End of operation.
+    /// </summary>
+    OperationEnd = (int)DisplayableLogAnalysisResultType.OperationEnd,
+    /// <summary>
+    /// Checkpoint.
+    /// </summary>
+    Checkpoint = (int)DisplayableLogAnalysisResultType.Checkpoint,
+    /// <summary>
+    /// Time span.
+    /// </summary>
+    TimeSpan = (int)DisplayableLogAnalysisResultType.TimeSpan,
+    /// <summary>
+    /// Performance.
+    /// </summary>
+    Performance = (int)DisplayableLogAnalysisResultType.Performance,
+    /// <summary>
+    /// Information.
+    /// </summary>
+    Information = (int)DisplayableLogAnalysisResultType.Information,
 }

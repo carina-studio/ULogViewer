@@ -15,13 +15,14 @@ namespace CarinaStudio.ULogViewer.Scripting;
 /// Script.
 /// </summary>
 /// <typeparam name="TContext">Type of context.</typeparam>
-class Script<TContext> : IEquatable<Script<TContext>> where TContext : IScriptContext
+class Script<TContext> : IEquatable<Script<TContext>> where TContext : IContext
 {
     // Static logger.
     static volatile int NextId = 0;
 
 
     // Fields.
+    readonly IULogViewerApplication app;
     readonly string hashCodeSource;
     readonly ILogger logger;
 
@@ -29,10 +30,12 @@ class Script<TContext> : IEquatable<Script<TContext>> where TContext : IScriptCo
     /// <summary>
     /// Initialize new <see cref="Script{TContext, TResult}"/> instance.
     /// </summary>
+    /// <param name="app">Application.</param>
     /// <param name="language">Language.</param>
     /// <param name="source">Source code.</param>
-    protected Script(ScriptLanguage language, string source)
+    protected Script(IULogViewerApplication app, ScriptLanguage language, string source)
     {
+        this.app = app;
         this.hashCodeSource = source.Length <= 32 ? source : source.Substring(0, 32);
         this.Id = Interlocked.Increment(ref NextId);
         this.Language = language;
@@ -99,10 +102,11 @@ class Script<TContext> : IEquatable<Script<TContext>> where TContext : IScriptCo
     /// <summary>
     /// Load script from JSON format data.
     /// </summary>
+    /// <param name="app">Application.</param>
     /// <param name="json">JSON data.</param>
     /// <typeparam name="TScript">Type of script.</typeparam>
     /// <returns>Loaded script.</returns>
-    public static TScript Load<TScript>(JsonElement json)
+    public static TScript Load<TScript>(IULogViewerApplication app, JsonElement json)
     {
         if (json.ValueKind != JsonValueKind.Object)
             throw new JsonException("Element should be an object.");
@@ -112,18 +116,19 @@ class Script<TContext> : IEquatable<Script<TContext>> where TContext : IScriptCo
                 ? candLanguage
                 : ScriptLanguage.CSharp;
         var source = Encoding.UTF8.GetString(Convert.FromBase64String(json.GetProperty(nameof(Source)).GetString().AsNonNull()));
-        return (TScript)Activator.CreateInstance(typeof(TScript), language, source).AsNonNull();
+        return (TScript)Activator.CreateInstance(typeof(TScript), app, language, source).AsNonNull();
     }
 
 
     /// <summary>
     /// Load script from file asynchronously.
     /// </summary>
+    /// <param name="app">Application.</param>
     /// <param name="fileName">File name.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <typeparam name="TScript">Type of script.</typeparam>
     /// <returns>Task of loading script.</returns>
-    public static async Task<TScript> LoadAsync<TScript>(string fileName, CancellationToken cancellationToken = default) where TScript : Script<TContext>
+    public static async Task<TScript> LoadAsync<TScript>(IULogViewerApplication app, string fileName, CancellationToken cancellationToken = default) where TScript : Script<TContext>
     {
         if (cancellationToken.IsCancellationRequested)
             throw new TaskCanceledException();
@@ -136,7 +141,7 @@ class Script<TContext> : IEquatable<Script<TContext>> where TContext : IScriptCo
         });
         if (cancellationToken.IsCancellationRequested)
             throw new TaskCanceledException();
-        return Load<TScript>(json);
+        return Load<TScript>(app, json);
     }
 
 
