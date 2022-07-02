@@ -283,9 +283,56 @@ class ScriptException : Exception
     /// Initialize new <see cref="ScriptException"/> instance.
     /// </summary>
     /// <param name="message">Message.</param>
+    /// <param name="line">Line number of source which causes the exception.</param>
+    /// <param name="column">Position of source in line which causes the exception.</param>
+    /// <param name="ex">Inner exception.</param>
+    public ScriptException(string message, int line, int column, Exception ex) : base(message, ex)
+    {
+        this.Column = column;
+        this.Line = line;
+    }
+
+
+    /// <summary>
+    /// Initialize new <see cref="ScriptException"/> instance.
+    /// </summary>
+    /// <param name="message">Message.</param>
     /// <param name="ex">Inner exception.</param>
     public ScriptException(string message, Exception ex) : base(message, ex)
     { }
+
+
+    /// <summary>
+    /// Initialize new <see cref="ScriptException"/> instance.
+    /// </summary>
+    /// <param name="message">Message.</param>
+    /// <param name="line">Line number of source which causes the exception.</param>
+    /// <param name="column">Position of source in line which causes the exception.</param>
+    public ScriptException(string message, int line, int column) : base(message)
+    { 
+        this.Column = column;
+        this.Line = line;
+    }
+
+
+    /// <summary>
+    /// Initialize new <see cref="ScriptException"/> instance.
+    /// </summary>
+    /// <param name="message">Message.</param>
+    public ScriptException(string message) : base(message)
+    { }
+
+
+    /// <summary>
+    /// Get position of source in line which causes the exception.
+    /// </summary>
+    public int Column { get; }
+
+
+    /// <summary>
+    /// Get line number of source which causes the exception.
+    /// </summary>
+    public int Line { get; }
 }
 
 
