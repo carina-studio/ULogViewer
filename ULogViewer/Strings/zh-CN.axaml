@@ -227,11 +227,11 @@
 	<sys:String x:Key="String/KeyLogAnalysisRuleSetEditorDialog.Title">编辑关键日志分析规则集</sys:String>
 
 	<!-- LogAnalysisScriptSetEditorDialog -->
-	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript">日志分析脚本 (C#)</sys:String>
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript">日志分析脚本</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Description">脚本将针对每笔日志调用以分析日志。需返回布林值 (boolean) 以指示针对此日志的分析结果是否需要被撷取。</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.Icon">图标</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.Name">名称 (必要)</sys:String>
-	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript">分析初始化脚本 (C#)</sys:String>
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript">分析初始化脚本</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript.Description">脚本将在分析流程开始前调用一次且不需要返回值。</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.Title">编辑日志分析脚本</sys:String>
 

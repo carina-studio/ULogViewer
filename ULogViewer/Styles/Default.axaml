@@ -95,12 +95,13 @@
 			<SolidColorBrush x:Key="Brush/SessionView.StatusBar.Background.Warning">#ca5100</SolidColorBrush>
 
 			<!-- SyntaxHighlighting -->
-			<Color x:Key="Color/SyntaxHighlighting.CSharp.Comment">#5b9b4c</Color>
-			<Color x:Key="Color/SyntaxHighlighting.CSharp.CompilerDirective">#7b7b7b</Color>
-			<Color x:Key="Color/SyntaxHighlighting.CSharp.Keyword">#389edb</Color>
-			<Color x:Key="Color/SyntaxHighlighting.CSharp.Keyword.ControlFlow">#d081c3</Color>
-			<Color x:Key="Color/SyntaxHighlighting.CSharp.Number">#afcfa4</Color>
-			<Color x:Key="Color/SyntaxHighlighting.CSharp.String">#d98d74</Color>
+			<Color x:Key="Color/SyntaxHighlighting.Comment">#5b9b4c</Color>
+			<Color x:Key="Color/SyntaxHighlighting.CompilerDirective">#7b7b7b</Color>
+			<Color x:Key="Color/SyntaxHighlighting.Keyword">#389edb</Color>
+			<Color x:Key="Color/SyntaxHighlighting.Keyword.ControlFlow">#d081c3</Color>
+			<Color x:Key="Color/SyntaxHighlighting.Number">#afcfa4</Color>
+			<Color x:Key="Color/SyntaxHighlighting.String">#d98d74</Color>
+			<Color x:Key="Color/SyntaxHighlighting.Type">#00ccaf</Color>
 
 			<!-- TextArea -->
 			<SolidColorBrush x:Key="Brush/TextArea.Selection.Background">#3f0078d7</SolidColorBrush>

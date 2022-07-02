@@ -62,11 +62,12 @@
 			<SolidColorBrush x:Key="Brush/SessionView.StatusBar.Background.Paused">#aaaaaa</SolidColorBrush>
 
 			<!-- SyntaxHighlighting -->
-			<Color x:Key="Color/SyntaxHighlighting.CSharp.Comment">#008200</Color>
-			<Color x:Key="Color/SyntaxHighlighting.CSharp.Keyword">#0000ff</Color>
-			<Color x:Key="Color/SyntaxHighlighting.CSharp.Keyword.ControlFlow">#bf00e3</Color>
-			<Color x:Key="Color/SyntaxHighlighting.CSharp.Number">#008855</Color>
-			<Color x:Key="Color/SyntaxHighlighting.CSharp.String">#b20002</Color>
+			<Color x:Key="Color/SyntaxHighlighting.Comment">#008200</Color>
+			<Color x:Key="Color/SyntaxHighlighting.Keyword">#0000ff</Color>
+			<Color x:Key="Color/SyntaxHighlighting.Keyword.ControlFlow">#bf00e3</Color>
+			<Color x:Key="Color/SyntaxHighlighting.Number">#008855</Color>
+			<Color x:Key="Color/SyntaxHighlighting.String">#b20002</Color>
+			<Color x:Key="Color/SyntaxHighlighting.Type">#00819c</Color>
 
 		</ResourceDictionary>
 	</Styles.Resources>

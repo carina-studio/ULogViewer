@@ -74,6 +74,7 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 	readonly Dictionary<ScriptLanguage, IHighlightingDefinition> syntaxHighlightingDefs = new()
 	{
 		{ ScriptLanguage.CSharp, HighlightingManager.Instance.GetDefinition("C#") },
+		{ ScriptLanguage.JavaScript, HighlightingManager.Instance.GetDefinition("JavaScript") },
 	};
 	readonly ScheduledAction updateCjkSpanFontFamilies;
 	readonly ScheduledAction updateFontFamilyAndSizeAction;
@@ -271,14 +272,13 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 			{
 				case ScriptLanguage.CSharp:
 					{
-						// update colors
 						var baseColor = (Color)this.FindResource("SystemBaseHighColor").AsNonNull();
-						var cfKeywordColor = (Color)this.FindResource("Color/SyntaxHighlighting.CSharp.Keyword.ControlFlow").AsNonNull();
-						var commentColor = (Color)this.FindResource("Color/SyntaxHighlighting.CSharp.Comment").AsNonNull();
-						var directiveColor = (Color)this.FindResource("Color/SyntaxHighlighting.CSharp.CompilerDirective").AsNonNull();
-						var keywordColor = (Color)this.FindResource("Color/SyntaxHighlighting.CSharp.Keyword").AsNonNull();
-						var numberColor = (Color)this.FindResource("Color/SyntaxHighlighting.CSharp.Number").AsNonNull();
-						var stringColor = (Color)this.FindResource("Color/SyntaxHighlighting.CSharp.String").AsNonNull();
+						var cfKeywordColor = (Color)this.FindResource("Color/SyntaxHighlighting.Keyword.ControlFlow").AsNonNull();
+						var commentColor = (Color)this.FindResource("Color/SyntaxHighlighting.Comment").AsNonNull();
+						var directiveColor = (Color)this.FindResource("Color/SyntaxHighlighting.CompilerDirective").AsNonNull();
+						var keywordColor = (Color)this.FindResource("Color/SyntaxHighlighting.Keyword").AsNonNull();
+						var numberColor = (Color)this.FindResource("Color/SyntaxHighlighting.Number").AsNonNull();
+						var stringColor = (Color)this.FindResource("Color/SyntaxHighlighting.String").AsNonNull();
 						foreach (var rule in definition.MainRuleSet.Rules)
 						{
 							var pattern = rule.Regex.ToString();
@@ -331,6 +331,49 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 							}
 							else if (pattern.StartsWith("\\#"))
 								span.SpanColor = new HighlightingColor() { Foreground = new SimpleHighlightingBrush(directiveColor) };
+							else
+								span.SpanColor = new HighlightingColor() { Foreground = new SimpleHighlightingBrush(baseColor) };
+						}
+					}
+					break;
+				case ScriptLanguage.JavaScript:
+					{
+						var baseColor = (Color)this.FindResource("SystemBaseHighColor").AsNonNull();
+						var commentColor = (Color)this.FindResource("Color/SyntaxHighlighting.Comment").AsNonNull();
+						var keywordColor = (Color)this.FindResource("Color/SyntaxHighlighting.Keyword").AsNonNull();
+						var numberColor = (Color)this.FindResource("Color/SyntaxHighlighting.Number").AsNonNull();
+						var stringColor = (Color)this.FindResource("Color/SyntaxHighlighting.String").AsNonNull();
+						var typeColor = (Color)this.FindResource("Color/SyntaxHighlighting.Type").AsNonNull();
+						foreach (var rule in definition.MainRuleSet.Rules)
+						{
+							var pattern = rule.Regex.ToString();
+							if (pattern.StartsWith("\\b(?>synchronized")
+								|| pattern.StartsWith("\\b(?>Infinity"))
+							{
+								rule.Color = new() { Foreground = new SimpleHighlightingBrush(keywordColor) };
+							}
+							else if (pattern.StartsWith("\\b(?>Function"))
+								rule.Color = new() { Foreground = new SimpleHighlightingBrush(typeColor) };
+							else if (pattern.StartsWith("\\b0[xX][0-9a-fA-F]+"))
+								rule.Color = new() { Foreground = new SimpleHighlightingBrush(numberColor) };
+							else
+								rule.Color = new() { Foreground = new SimpleHighlightingBrush(baseColor) };
+						}
+						foreach (var span in definition.MainRuleSet.Spans)
+						{
+							var pattern = span.StartExpression.ToString();
+							if (pattern.StartsWith("//")
+								|| pattern.StartsWith("/\\*"))
+							{
+								span.SpanColor = new HighlightingColor() { Foreground = new SimpleHighlightingBrush(commentColor) };
+								cjkSpans.Add(span);
+							}
+							else if (pattern.StartsWith("\"")
+								|| pattern.StartsWith("'"))
+							{
+								span.SpanColor = new() { Foreground = new SimpleHighlightingBrush(stringColor) };
+								cjkSpans.Add(span);
+							}
 							else
 								span.SpanColor = new HighlightingColor() { Foreground = new SimpleHighlightingBrush(baseColor) };
 						}

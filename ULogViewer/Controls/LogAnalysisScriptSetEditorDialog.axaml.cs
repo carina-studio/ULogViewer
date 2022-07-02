@@ -107,12 +107,14 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Window<IU
 		});
 		this.analysisScriptEditor = this.Get<ScriptEditor>(nameof(analysisScriptEditor)).Also(it =>
 		{
-			it.GetObservable(ScriptEditor.SourceProperty).Subscribe(_ =>
+			void ScheduleCompilation()
 			{
 				analysisScript = null;
 				this.SetAndRaise<bool>(IsCompilingAnalysisScriptProperty, ref this.isCompilingAnalysisScript, false);
 				this.compileAnalysisScriptAction?.Reschedule(this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.DelayToCompileScriptWhenEditing));
-			});
+			}
+			it.GetObservable(ScriptEditor.LanguageProperty).Subscribe(_ => ScheduleCompilation());
+			it.GetObservable(ScriptEditor.SourceProperty).Subscribe(_ => ScheduleCompilation());
 		});
 		this.compileAnalysisScriptAction = new(async () =>
 		{
@@ -179,12 +181,14 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Window<IU
 		});
 		this.setupScriptEditor = this.Get<ScriptEditor>(nameof(setupScriptEditor)).Also(it =>
 		{
-			it.GetObservable(ScriptEditor.SourceProperty).Subscribe(_ =>
+			void ScheduleCompilation()
 			{
 				setupScript = null;
 				this.SetAndRaise<bool>(IsCompilingSetupScriptProperty, ref this.isCompilingSetupScript, false);
 				this.compileSetupScriptAction?.Reschedule(this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.DelayToCompileScriptWhenEditing));
-			});
+			}
+			it.GetObservable(ScriptEditor.LanguageProperty).Subscribe(_ => ScheduleCompilation());
+			it.GetObservable(ScriptEditor.SourceProperty).Subscribe(_ => ScheduleCompilation());
 		});
 		this.validateParametersAction = new(() =>
 		{
@@ -244,11 +248,11 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Window<IU
 
 
 	// Create script.
-	LogAnalysisScript? CreateScript(ScriptEditor? editor) => editor?.Source?.Trim()?.Let(source =>
+	LogAnalysisScript? CreateScript(ScriptEditor? editor) => editor?.Source?.Let(source =>
 	{
 		if (string.IsNullOrEmpty(source))
 			return null;
-		return new LogAnalysisScript(this.Application, Scripting.ScriptLanguage.CSharp, source);
+		return new LogAnalysisScript(this.Application, editor.Language, source);
 	});
 
 
@@ -279,11 +283,19 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Window<IU
 		if (scriptSet != null)
 		{
 			this.analysisScript = scriptSet.AnalysisScript;
-			this.analysisScriptEditor.Source = this.analysisScript?.Source;
+			this.analysisScript?.Let(script =>
+			{
+				this.analysisScriptEditor.Language = script.Language;
+				this.analysisScriptEditor.Source = script.Source;
+			});
 			this.iconComboBox.SelectedItem = scriptSet.Icon;
 			this.nameTextBox.Text = scriptSet.Name;
 			this.setupScript = scriptSet.SetupScript;
-			this.setupScriptEditor.Source = this.setupScript?.Source;
+			this.setupScript?.Let(script =>
+			{
+				this.setupScriptEditor.Language = script.Language;
+				this.setupScriptEditor.Source = script.Source;
+			});
 			this.compileAnalysisScriptAction.Schedule();
 			this.compileSetupScriptAction.Schedule();
 		}
