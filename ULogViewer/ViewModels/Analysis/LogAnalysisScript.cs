@@ -85,6 +85,180 @@ public interface ILogAnalysisScriptContext : IContext
 
 
 /// <summary>
+/// Extensions for <see cref="ILogAnalysisScriptContext"/>.
+/// </summary>
+public static class LogAnalysisScriptContextExtensions
+{
+    /// <summary>
+    /// Add analysis result with type <see cref="ResultType.Checkpoint"/>.
+    /// </summary>
+    /// <param name="context"><see cref="ILogAnalysisScriptContext"/>.</param>
+    /// <param name="message">Message.</param>
+    /// <param name="log">Related log.</param>
+    public static void AddCheckpointResult(this ILogAnalysisScriptContext context, string message, ILogAnalysisScriptLog? log) =>
+        context.AddResult(ResultType.Checkpoint, message, log);
+    
+
+    /// <summary>
+    /// Add analysis result with type <see cref="ResultType.Checkpoint"/>.
+    /// </summary>
+    /// <param name="context"><see cref="ILogAnalysisScriptContext"/>.</param>
+    /// <param name="message">Message.</param>
+    /// <param name="beginningLog">Beginning log.</param>
+    /// <param name="endingLog">Ending log.</param>
+    public static void AddCheckpointResult(this ILogAnalysisScriptContext context, string message, ILogAnalysisScriptLog beginningLog, ILogAnalysisScriptLog endingLog) =>
+        context.AddResult(ResultType.Checkpoint, message, beginningLog, endingLog);
+
+
+    /// <summary>
+    /// Add analysis result with type <see cref="ResultType.Error"/>.
+    /// </summary>
+    /// <param name="context"><see cref="ILogAnalysisScriptContext"/>.</param>
+    /// <param name="message">Message.</param>
+    /// <param name="log">Related log.</param>
+    public static void AddErrorResult(this ILogAnalysisScriptContext context, string message, ILogAnalysisScriptLog? log) =>
+        context.AddResult(ResultType.Error, message, log);
+    
+
+    /// <summary>
+    /// Add analysis result with type <see cref="ResultType.Error"/>.
+    /// </summary>
+    /// <param name="context"><see cref="ILogAnalysisScriptContext"/>.</param>
+    /// <param name="message">Message.</param>
+    /// <param name="beginningLog">Beginning log.</param>
+    /// <param name="endingLog">Ending log.</param>
+    public static void AddErrorResult(this ILogAnalysisScriptContext context, string message, ILogAnalysisScriptLog beginningLog, ILogAnalysisScriptLog endingLog) =>
+        context.AddResult(ResultType.Error, message, beginningLog, endingLog);
+
+
+    /// <summary>
+    /// Add analysis result with type <see cref="ResultType.Information"/>.
+    /// </summary>
+    /// <param name="context"><see cref="ILogAnalysisScriptContext"/>.</param>
+    /// <param name="message">Message.</param>
+    /// <param name="log">Related log.</param>
+    public static void AddInformationResult(this ILogAnalysisScriptContext context, string message, ILogAnalysisScriptLog? log) =>
+        context.AddResult(ResultType.Information, message, log);
+    
+
+    /// <summary>
+    /// Add analysis result with type <see cref="ResultType.Information"/>.
+    /// </summary>
+    /// <param name="context"><see cref="ILogAnalysisScriptContext"/>.</param>
+    /// <param name="message">Message.</param>
+    /// <param name="beginningLog">Beginning log.</param>
+    /// <param name="endingLog">Ending log.</param>
+    public static void AddInformationResult(this ILogAnalysisScriptContext context, string message, ILogAnalysisScriptLog beginningLog, ILogAnalysisScriptLog endingLog) =>
+        context.AddResult(ResultType.Information, message, beginningLog, endingLog);
+    
+
+    /// <summary>
+    /// Add analysis result with type <see cref="ResultType.OperationEnd"/>.
+    /// </summary>
+    /// <param name="context"><see cref="ILogAnalysisScriptContext"/>.</param>
+    /// <param name="message">Message.</param>
+    /// <param name="log">Related log.</param>
+    public static void AddOperationEndResult(this ILogAnalysisScriptContext context, string message, ILogAnalysisScriptLog? log) =>
+        context.AddResult(ResultType.OperationEnd, message, log);
+    
+
+    /// <summary>
+    /// Add analysis result with type <see cref="ResultType.OperationEnd"/>.
+    /// </summary>
+    /// <param name="context"><see cref="ILogAnalysisScriptContext"/>.</param>
+    /// <param name="message">Message.</param>
+    /// <param name="beginningLog">Beginning log.</param>
+    /// <param name="endingLog">Ending log.</param>
+    public static void AddOperationEndResult(this ILogAnalysisScriptContext context, string message, ILogAnalysisScriptLog beginningLog, ILogAnalysisScriptLog endingLog) =>
+        context.AddResult(ResultType.OperationEnd, message, beginningLog, endingLog);
+
+    
+    /// <summary>
+    /// Add analysis result with type <see cref="ResultType.OperationStart"/>.
+    /// </summary>
+    /// <param name="context"><see cref="ILogAnalysisScriptContext"/>.</param>
+    /// <param name="message">Message.</param>
+    /// <param name="log">Related log.</param>
+    public static void AddOperationStartResult(this ILogAnalysisScriptContext context, string message, ILogAnalysisScriptLog? log) =>
+        context.AddResult(ResultType.OperationStart, message, log);
+    
+
+    /// <summary>
+    /// Add analysis result with type <see cref="ResultType.OperationStart"/>.
+    /// </summary>
+    /// <param name="context"><see cref="ILogAnalysisScriptContext"/>.</param>
+    /// <param name="message">Message.</param>
+    /// <param name="beginningLog">Beginning log.</param>
+    /// <param name="endingLog">Ending log.</param>
+    public static void AddOperationStartResult(this ILogAnalysisScriptContext context, string message, ILogAnalysisScriptLog beginningLog, ILogAnalysisScriptLog endingLog) =>
+        context.AddResult(ResultType.OperationStart, message, beginningLog, endingLog);
+    
+
+    /// <summary>
+    /// Add analysis result with type <see cref="ResultType.Performance"/>.
+    /// </summary>
+    /// <param name="context"><see cref="ILogAnalysisScriptContext"/>.</param>
+    /// <param name="message">Message.</param>
+    /// <param name="log">Related log.</param>
+    public static void AddPerformanceResult(this ILogAnalysisScriptContext context, string message, ILogAnalysisScriptLog? log) =>
+        context.AddResult(ResultType.Performance, message, log);
+    
+
+    /// <summary>
+    /// Add analysis result with type <see cref="ResultType.Performance"/>.
+    /// </summary>
+    /// <param name="context"><see cref="ILogAnalysisScriptContext"/>.</param>
+    /// <param name="message">Message.</param>
+    /// <param name="beginningLog">Beginning log.</param>
+    /// <param name="endingLog">Ending log.</param>
+    public static void AddPerformanceResult(this ILogAnalysisScriptContext context, string message, ILogAnalysisScriptLog beginningLog, ILogAnalysisScriptLog endingLog) =>
+        context.AddResult(ResultType.Performance, message, beginningLog, endingLog);
+
+
+    /// <summary>
+    /// Add analysis result with type <see cref="ResultType.TimeSpan"/>.
+    /// </summary>
+    /// <param name="context"><see cref="ILogAnalysisScriptContext"/>.</param>
+    /// <param name="message">Message.</param>
+    /// <param name="log">Related log.</param>
+    public static void AddTimeSpanResult(this ILogAnalysisScriptContext context, string message, ILogAnalysisScriptLog? log) =>
+        context.AddResult(ResultType.TimeSpan, message, log);
+    
+
+    /// <summary>
+    /// Add analysis result with type <see cref="ResultType.TimeSpan"/>.
+    /// </summary>
+    /// <param name="context"><see cref="ILogAnalysisScriptContext"/>.</param>
+    /// <param name="message">Message.</param>
+    /// <param name="beginningLog">Beginning log.</param>
+    /// <param name="endingLog">Ending log.</param>
+    public static void AddTimeSpanResult(this ILogAnalysisScriptContext context, string message, ILogAnalysisScriptLog beginningLog, ILogAnalysisScriptLog endingLog) =>
+        context.AddResult(ResultType.TimeSpan, message, beginningLog, endingLog);
+    
+
+    /// <summary>
+    /// Add analysis result with type <see cref="ResultType.Warning"/>.
+    /// </summary>
+    /// <param name="context"><see cref="ILogAnalysisScriptContext"/>.</param>
+    /// <param name="message">Message.</param>
+    /// <param name="log">Related log.</param>
+    public static void AddWarningResult(this ILogAnalysisScriptContext context, string message, ILogAnalysisScriptLog? log) =>
+        context.AddResult(ResultType.Warning, message, log);
+    
+
+    /// <summary>
+    /// Add analysis result with type <see cref="ResultType.Warning"/>.
+    /// </summary>
+    /// <param name="context"><see cref="ILogAnalysisScriptContext"/>.</param>
+    /// <param name="message">Message.</param>
+    /// <param name="beginningLog">Beginning log.</param>
+    /// <param name="endingLog">Ending log.</param>
+    public static void AddWarningResult(this ILogAnalysisScriptContext context, string message, ILogAnalysisScriptLog beginningLog, ILogAnalysisScriptLog endingLog) =>
+        context.AddResult(ResultType.Warning, message, beginningLog, endingLog);
+}
+
+
+/// <summary>
 /// Interface for <see cref="LogAnalysisScript"/> to access log.
 /// </summary>
 public interface ILogAnalysisScriptLog
