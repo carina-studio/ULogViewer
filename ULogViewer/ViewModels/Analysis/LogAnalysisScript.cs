@@ -1,9 +1,8 @@
 using CarinaStudio.ULogViewer.Scripting;
-using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text.Json;
-using System.Threading;
 
 namespace CarinaStudio.ULogViewer.ViewModels.Analysis;
 
@@ -13,6 +12,10 @@ namespace CarinaStudio.ULogViewer.ViewModels.Analysis;
 class LogAnalysisScript : Script<ILogAnalysisScriptContext>
 {
     // Static fields.
+    static readonly List<Type> _ExtensionMethodProviders = new()
+    {
+        typeof(LogAnalysisScriptContextExtensions),
+    };
     static readonly List<string> _Namespaces = new List<string>()
     {
         "CarinaStudio.ULogViewer.Logs",
@@ -32,6 +35,10 @@ class LogAnalysisScript : Script<ILogAnalysisScriptContext>
     /// <param name="source">Source.</param>
     public LogAnalysisScript(IULogViewerApplication app, ScriptLanguage language, string source) : base(app, language, source)
     { }
+
+
+    /// <inheritdoc/>
+    protected override IEnumerable<Type> ExtensionMethodProviders => _ExtensionMethodProviders;
 
 
     /// <summary>

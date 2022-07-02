@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
@@ -74,6 +75,12 @@ class Script<TContext> : IEquatable<Script<TContext>> where TContext : IContext
     public override bool Equals(object? obj) =>
         obj is Script<TContext> script
         && this.Equals(script);
+    
+
+    /// <summary>
+    /// Get list of type to provide extension methods to allow accessing by script.
+    /// </summary>
+    protected virtual IEnumerable<Type> ExtensionMethodProviders { get; } = new Type[0];
 
 
     /// <inheritdoc/>
