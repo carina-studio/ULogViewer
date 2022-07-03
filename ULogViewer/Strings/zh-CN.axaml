@@ -47,9 +47,9 @@
 
 	<!-- Built-in profile -->
 	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceEventLog">Android 设备事件日志</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceEventLog.Description">通过 ADB 取得 Android 设备即时事件日志。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceEventLog.Description">通过 ADB 取得 Android 设备实时事件日志。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceLog">Android 设备日志</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceLog.Description">通过 ADB 取得 Android 设备即时日志。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceLog.Description">通过 ADB 取得 Android 设备实时日志。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceTrace">Android 设备系统追踪</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceTrace.Description">自 Android 设备撷取 5 秒系统追踪以追分析 Android 系统及应用程序效能。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidFileLog">Android 日志档案</sys:String>
@@ -87,11 +87,11 @@
 	<sys:String x:Key="String/BuiltInProfile.RawHttp.Description">送出 HTTP/HTTPS 请求并读取未分析的响应内容。通常用于测试及调试时使用。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.RawTcpServer">TCP 客户端原始内容</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.RawTcpServer.Description">建立 TCP 服务器并读取来自 TCP 客户端传输的内原始文字内容。通常用于测试及调试时使用。</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.TcpNLog.Description">使用 NLog 以 'NLogViewer' 格式输出，并通过 TCP 传输即时日志。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.TcpNLog.Description">使用 NLog 以 'NLogViewer' 格式输出，并通过 TCP 传输实时日志。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.ULogViewerLog">ULogViewer 日志档案</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.ULogViewerLog.Description">由 ULogViewer 或其他 Carina Studio 应用程序输出的日志档案。</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.ULogViewerMemoryLog">ULogViewer 即时日志</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.ULogViewerMemoryLog.Description">来自 ULogViewer 位于内存中的即时日志。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.ULogViewerMemoryLog">ULogViewer 实时日志</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.ULogViewerMemoryLog.Description">来自 ULogViewer 位于内存中的实时日志。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.WindowsApplicationEventLogs">Windows 事件记录 (应用程序)</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.WindowsApplicationEventLogs.Description">位于本机上分类为 'Application' 的 Windows 事件记录。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.WindowsSecurityEventLogs">Windows 事件记录 (安全性)</sys:String>
@@ -454,7 +454,7 @@
 	<sys:String x:Key="String/LogProperty.Value">值</sys:String>
 
 	<!-- LogReadingPreconditionDialog -->
-	<sys:String x:Key="String/LogReadingPreconditionDialog.Description">您可以为即时读取的日志指定前置读取条件，它不会影响已经或正在读取的日志。</sys:String>
+	<sys:String x:Key="String/LogReadingPreconditionDialog.Description">您可以为即将读取的日志指定前置读取条件，它不会影响已经或正在读取的日志。</sys:String>
 	<sys:String x:Key="String/LogReadingPreconditionDialog.EndingTimestamp">至 (不包含此时间戳)</sys:String>
 	<sys:String x:Key="String/LogReadingPreconditionDialog.InvalidTimestampRange">结束时间戳必须晚于起始时间戳</sys:String>
 	<sys:String x:Key="String/LogReadingPreconditionDialog.PreconditionTimestamps">读取时间戳介于</sys:String>
@@ -523,7 +523,7 @@
 	<sys:String x:Key="String/MarkColor.Yellow">黄色</sys:String>
 
 	<!-- MemoryLoggerLogDataSourceProvider -->
-	<sys:String x:Key="String/MemoryLoggerLogDataSourceProvider.DisplayName">ULogViewer 即时日志</sys:String>
+	<sys:String x:Key="String/MemoryLoggerLogDataSourceProvider.DisplayName">ULogViewer 实时日志</sys:String>
 
 	<!-- MySqlDatabaseLogDataSource -->
 	<sys:String x:Key="String/MySqlDatabaseLogDataSource.FailedToUpdateFirewallRules">无法更新 MySQL 服务器的防火墙规则。</sys:String>
