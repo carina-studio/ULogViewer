@@ -38,6 +38,8 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
         "RawHttp",
         "RawTcpServer",
         "TcpNLog",
+        "ULogViewerLog",
+        "ULogViewerMemoryLog",
     };
     static LogProfileManager? defaultInstance;
 
@@ -74,11 +76,6 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
     // Constructor.
     LogProfileManager(IULogViewerApplication app) : base(app)
     { 
-        if (app.IsDebugMode)
-        {
-            builtInProfileIDs.Add("ULogViewerLog");
-            builtInProfileIDs.Add("ULogViewerMemoryLog");
-        }
         this.EmptyProfile = LogProfile.CreateEmptyBuiltInProfile(app);
         this.pinnedProfiles = new(this.CompareProfiles);
         this.PinnedProfiles = (IReadOnlyList<LogProfile>)this.pinnedProfiles.AsReadOnly();
