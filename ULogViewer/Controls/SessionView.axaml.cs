@@ -385,7 +385,14 @@ namespace CarinaStudio.ULogViewer.Controls
 				it.AddHandler(PointerPressedEvent, this.OnLogAnalysisResultListBoxPointerPressed, RoutingStrategies.Tunnel);
 				it.SelectionChanged += this.OnLogAnalysisResultListBoxSelectionChanged;
 			});
-			this.logAnalysisRuleSetsButton = this.Get<ToggleButton>(nameof(logAnalysisRuleSetsButton));
+			this.logAnalysisRuleSetsButton = this.Get<ToggleButton>(nameof(logAnalysisRuleSetsButton)).Also(it =>
+			{
+				it.GetObservable(Control.IsVisibleProperty).Subscribe(isVisible =>
+				{
+					if (isVisible)
+						this.SynchronizationContext.Post(() => this.ShowLogAnalysisRuleSetsTutorial());
+				});
+			});
 			this.logAnalysisRuleSetsPopup = this.Get<Popup>(nameof(logAnalysisRuleSetsPopup)).Also(it =>
 			{
 				it.Closed += (_, e) => this.logListBox?.Focus();
@@ -2456,7 +2463,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.isActiveObserverToken = window.GetObservable(Avalonia.Controls.Window.IsActiveProperty).Subscribe(isActive =>
 				{
 					if (isActive)
-						this.ShowLogAnalysisRuleSetsTutorial();
+						this.SynchronizationContext.Post(() => this.ShowLogAnalysisRuleSetsTutorial());
 				});
 			});
 
@@ -4678,7 +4685,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 			if (this.DataContext is not Session session || !session.IsActivated || !session.IsLogAnalysisPanelVisible)
 				return;
-			if (!this.logAnalysisRuleSetsButton.IsEffectivelyVisible)
+			if (!this.logAnalysisRuleSetsButton.IsVisible)
 				return;
 
 			// show tutorial
