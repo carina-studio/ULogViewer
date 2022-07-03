@@ -15,6 +15,7 @@ class LogAnalysisScript : Script<ILogAnalysisScriptContext>
     static readonly List<Type> _ExtensionMethodProviders = new()
     {
         typeof(LogAnalysisScriptContextExtensions),
+        typeof(LogAnalysisScriptLogExtensions),
     };
     static readonly List<string> _Namespaces = new List<string>()
     {
@@ -309,6 +310,21 @@ class EmptyLogAnalysisScriptLog : ILogAnalysisScriptLog
 
     /// <inheritdoc/>
     public string Text => "";
+}
+
+
+/// <summary>
+/// Extensions for <see cref="LogAnalysisScriptLog"/>.
+/// </summary>
+public static class LogAnalysisScriptLogExtensions
+{
+    /// <summary>
+    /// Get property of log.
+    /// </summary>
+    /// <param name="name">Name of property.</param>
+    /// <returns>Value of log property or Null.</returns>
+    public static object? GetPropertyOrNull(this ILogAnalysisScriptLog log, string name) =>
+        log.GetProperty<object?>(name, null);
 }
 
 
