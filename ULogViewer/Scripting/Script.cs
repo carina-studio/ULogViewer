@@ -121,7 +121,7 @@ class Script<TContext> : IEquatable<Script<TContext>> where TContext : IContext
             && jsonValue.ValueKind == JsonValueKind.String
             && Enum.TryParse<ScriptLanguage>(jsonValue.GetString(), out var candLanguage)
                 ? candLanguage
-                : ScriptLanguage.CSharp;
+                : ScriptLanguage.JavaScript;
         var source = Encoding.UTF8.GetString(Convert.FromBase64String(json.GetProperty(nameof(Source)).GetString().AsNonNull()));
         return (TScript)Activator.CreateInstance(typeof(TScript), app, language, source).AsNonNull();
     }

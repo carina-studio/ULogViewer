@@ -300,7 +300,11 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Window<IU
 			this.compileSetupScriptAction.Schedule();
 		}
 		else
+		{
+			this.analysisScriptEditor.Language = ScriptLanguage.JavaScript;
 			this.iconComboBox.SelectedItem = LogProfileIcon.Analysis;
+			this.setupScriptEditor.Language = ScriptLanguage.JavaScript;
+		}
 		this.SynchronizationContext.Post(() =>
 		{
 			this.Get<ScrollViewer>("contentScrollViewer").ScrollToHome();
