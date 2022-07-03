@@ -821,6 +821,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.attachedLogs.CollectionChanged += this.OnLogsChanged;
 			(session.KeyLogAnalysisRuleSets as INotifyCollectionChanged)?.Let(it =>
 				it.CollectionChanged += this.OnSessionLogAnalysisRuleSetsChanged);
+			(session.LogAnalysisScriptSets as INotifyCollectionChanged)?.Let(it =>
+				it.CollectionChanged += this.OnSessionLogAnalysisRuleSetsChanged);
 			(session.OperationDurationAnalysisRuleSets as INotifyCollectionChanged)?.Let(it =>
 				it.CollectionChanged += this.OnSessionLogAnalysisRuleSetsChanged);
 
@@ -1816,6 +1818,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.attachedLogs = null;
 			}
 			(session.KeyLogAnalysisRuleSets as INotifyCollectionChanged)?.Let(it =>
+				it.CollectionChanged -= this.OnSessionLogAnalysisRuleSetsChanged);
+			(session.LogAnalysisScriptSets as INotifyCollectionChanged)?.Let(it =>
 				it.CollectionChanged -= this.OnSessionLogAnalysisRuleSetsChanged);
 			(session.OperationDurationAnalysisRuleSets as INotifyCollectionChanged)?.Let(it =>
 				it.CollectionChanged -= this.OnSessionLogAnalysisRuleSetsChanged);
@@ -3842,7 +3846,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				if (sender == session.KeyLogAnalysisRuleSets)
 					return this.keyLogAnalysisRuleSetListBox.SelectedItems;
-				else if (sender == this.logAnalysisResultListBox)
+				else if (sender == session.LogAnalysisScriptSets)
 					return this.logAnalysisScriptSetListBox.SelectedItems;
 				else if (sender == session.OperationDurationAnalysisRuleSets)
 					return this.operationDurationAnalysisRuleSetListBox.SelectedItems;
