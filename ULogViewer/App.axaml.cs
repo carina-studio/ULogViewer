@@ -315,23 +315,20 @@ namespace CarinaStudio.ULogViewer
 		protected override async Task OnPrepareStartingAsync()
 		{
 			// setup log output rules
-			if (this.IsDebugMode)
+			NLog.LogManager.Configuration.AddTarget(new NLog.Targets.MethodCallTarget("methodCall").Also(it =>
 			{
-				NLog.LogManager.Configuration.AddTarget(new NLog.Targets.MethodCallTarget("methodCall").Also(it =>
-				{
-					it.ClassName = "CarinaStudio.ULogViewer.MemoryLogger, ULogViewer";
-					it.MethodName = "Log";
-					it.Parameters.Add(new NLog.Targets.MethodCallParameter(new NLog.Layouts.SimpleLayout("${longdate}")));
-					it.Parameters.Add(new NLog.Targets.MethodCallParameter(new NLog.Layouts.SimpleLayout("${processid}")));
-					it.Parameters.Add(new NLog.Targets.MethodCallParameter(new NLog.Layouts.SimpleLayout("${threadid}")));
-					it.Parameters.Add(new NLog.Targets.MethodCallParameter(new NLog.Layouts.SimpleLayout("${level:uppercase=true}")));
-					it.Parameters.Add(new NLog.Targets.MethodCallParameter(new NLog.Layouts.SimpleLayout("${logger:shortName=true}")));
-					it.Parameters.Add(new NLog.Targets.MethodCallParameter(new NLog.Layouts.SimpleLayout("${message}")));
-					it.Parameters.Add(new NLog.Targets.MethodCallParameter(new NLog.Layouts.SimpleLayout("${exception:format=tostring}")));
-				}));
-				NLog.LogManager.Configuration.AddRuleForAllLevels("methodCall");
-				NLog.LogManager.ReconfigExistingLoggers();
-			}
+				it.ClassName = "CarinaStudio.ULogViewer.MemoryLogger, ULogViewer";
+				it.MethodName = "Log";
+				it.Parameters.Add(new NLog.Targets.MethodCallParameter(new NLog.Layouts.SimpleLayout("${longdate}")));
+				it.Parameters.Add(new NLog.Targets.MethodCallParameter(new NLog.Layouts.SimpleLayout("${processid}")));
+				it.Parameters.Add(new NLog.Targets.MethodCallParameter(new NLog.Layouts.SimpleLayout("${threadid}")));
+				it.Parameters.Add(new NLog.Targets.MethodCallParameter(new NLog.Layouts.SimpleLayout("${level:uppercase=true}")));
+				it.Parameters.Add(new NLog.Targets.MethodCallParameter(new NLog.Layouts.SimpleLayout("${logger:shortName=true}")));
+				it.Parameters.Add(new NLog.Targets.MethodCallParameter(new NLog.Layouts.SimpleLayout("${message}")));
+				it.Parameters.Add(new NLog.Targets.MethodCallParameter(new NLog.Layouts.SimpleLayout("${exception:format=tostring}")));
+			}));
+			NLog.LogManager.Configuration.AddRuleForAllLevels("methodCall");
+			NLog.LogManager.ReconfigExistingLoggers();
 
 			// prepare platform specific resources
 			if (Platform.IsMacOS)
