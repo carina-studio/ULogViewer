@@ -664,6 +664,7 @@
 	<sys:String x:Key="String/SessionView.LogAnalysisPanel">日志分析</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisPanel.Hint">点击面板右上角的按钮以选择要套用的的分析规则集</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisProgress">分析日志中…</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisResult">分析结果</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets">分析规则集</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.KeyLogAnalysisRuleSet">关键日志分析</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.LogAnalysisScriptSet">日志分析脚本</sys:String>
@@ -679,6 +680,7 @@
 	<sys:String x:Key="String/SessionView.LogoutFromAzure">登出 Azure</sys:String>
 	<sys:String x:Key="String/SessionView.LogoutFromAzure.WithProVersion">登出 Azure (专业版)</sys:String>
 	<sys:String x:Key="String/SessionView.LogProcessIdFilter.Description">使用 进程ID (Process ID) 筛选日志</sys:String>
+	<sys:String x:Key="String/SessionView.LogPropertyName">属性名称：</sys:String>
 	<sys:String x:Key="String/SessionView.LogsDuration">日志时间长度</sys:String>
 	<sys:String x:Key="String/SessionView.LogsDurationEndingPoint">最晚日志时间/最大日志时距</sys:String>
 	<sys:String x:Key="String/SessionView.LogsDurationStartingPoint">最早日志时间/最小日志间距</sys:String>
@@ -688,6 +690,7 @@
 	<sys:String x:Key="String/SessionView.LogTextFilter.Watermark">文字筛选 (正则表达式)</sys:String>
 	<sys:String x:Key="String/SessionView.LogThreadIdFilter.Description">使用线程ID (Thread ID) 筛选日志</sys:String>
 	<sys:String x:Key="String/SessionView.MarkedLogsPanel">已标记日志</sys:String>
+	<sys:String x:Key="String/SessionView.MarkLog">标记日志</sys:String>
 	<sys:String x:Key="String/SessionView.MarkLogs">标记日志</sys:String>
 	<sys:String x:Key="String/SessionView.MarkUnmarkLog">标记/解除标记</sys:String>
 	<sys:String x:Key="String/SessionView.MarkUnmarkLogs">标记/解除标记日志</sys:String>

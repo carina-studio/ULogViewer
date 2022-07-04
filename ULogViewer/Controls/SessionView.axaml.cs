@@ -2615,6 +2615,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.logHeaderGrid.Children.Add(new Border().Also(border =>
 				{
 					Grid.SetColumn(border, columIndexOffset);
+					border.Background = Brushes.Transparent;
 					border.Classes.Add("Icon");
 					border.Child = new Avalonia.Controls.Image().Also(image =>
 					{
@@ -2624,6 +2625,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					});
 					border.Height = markIndicatorSize;
 					border.Margin = markIndicatorMargin;
+					border.Bind(ToolTip.TipProperty, this.GetResourceObservable("String/SessionView.MarkLog"));
 					border.Width = markIndicatorSize;
 					border.VerticalAlignment = VerticalAlignment.Center;
 				}));
@@ -2635,6 +2637,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.logHeaderGrid.Children.Add(new Border().Also(border =>
 				{
 					Grid.SetColumn(border, columIndexOffset);
+					border.Background = Brushes.Transparent;
 					border.Classes.Add("Icon");
 					border.Child = new Avalonia.Controls.Image().Also(image =>
 					{
@@ -2644,6 +2647,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					});
 					border.Height = analysisResultIndicatorSize;
 					border.Margin = analysisResultIndicatorMargin;
+					border.Bind(ToolTip.TipProperty, this.GetResourceObservable("String/SessionView.LogAnalysisResult"));
 					border.Width = analysisResultIndicatorSize;
 					border.VerticalAlignment = VerticalAlignment.Center;
 				}));

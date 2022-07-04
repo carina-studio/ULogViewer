@@ -28,7 +28,13 @@
 
 		<!-- Log header -->
 		<DataTemplate DataType="{x:Type appViewModels:DisplayableLogProperty}">
-			<Border BorderBrush="{DynamicResource Brush/SessionView.LogHeader.Separator}" BorderThickness="1,0,0,0" HorizontalAlignment="Stretch" Margin="{StaticResource Thickness/SessionView.LogHeader.Margin}" Padding="{StaticResource Thickness/SessionView.LogHeader.Padding}">
+			<Border Background="{x:Static Brushes.Transparent}" BorderBrush="{DynamicResource Brush/SessionView.LogHeader.Separator}" BorderThickness="1,0,0,0" HorizontalAlignment="Stretch" Margin="{StaticResource Thickness/SessionView.LogHeader.Margin}" Padding="{StaticResource Thickness/SessionView.LogHeader.Padding}">
+				<ToolTip.Tip>
+					<StackPanel Orientation="Horizontal">
+						<TextBlock Text="{DynamicResource String/SessionView.LogPropertyName}" VerticalAlignment="Center"/>
+						<TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
+					</StackPanel>
+				</ToolTip.Tip>
 				<TextBlock Text="{Binding DisplayName}" HorizontalAlignment="Stretch" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"/>
 			</Border>
 		</DataTemplate>

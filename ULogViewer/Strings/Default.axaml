@@ -698,6 +698,7 @@
 	<sys:String x:Key="String/SessionView.LogAnalysisPanel">Log Analysis</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisPanel.Hint">Click button on the top-right of panel to select analysis rule sets to apply</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisProgress">Analyzing logs…</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisResult">Analysis result</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets">Rule sets of analysis</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.KeyLogAnalysisRuleSet">Key log analysis</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.LogAnalysisScriptSet">Log analysis script</sys:String>
@@ -713,6 +714,7 @@
 	<sys:String x:Key="String/SessionView.LogoutFromAzure">Logout from Azure</sys:String>
 	<sys:String x:Key="String/SessionView.LogoutFromAzure.WithProVersion">Logout from Azure (Pro)</sys:String>
 	<sys:String x:Key="String/SessionView.LogProcessIdFilter.Description">Use Process ID to filter logs</sys:String>
+	<sys:String x:Key="String/SessionView.LogPropertyName">Property name:</sys:String>
 	<sys:String x:Key="String/SessionView.LogsDuration">Duration of logs</sys:String>
 	<sys:String x:Key="String/SessionView.LogsDurationEndingPoint">Latest timestamp of log/Maximum time span of log</sys:String>
 	<sys:String x:Key="String/SessionView.LogsDurationStartingPoint">Earliest timestamp of log/Minimum time span of log</sys:String>
@@ -722,6 +724,7 @@
 	<sys:String x:Key="String/SessionView.LogTextFilter.Watermark">Text filter (Regular Expression)</sys:String>
 	<sys:String x:Key="String/SessionView.LogThreadIdFilter.Description">Use Thread ID to filter logs</sys:String>
 	<sys:String x:Key="String/SessionView.MarkedLogsPanel">Marked logs</sys:String>
+	<sys:String x:Key="String/SessionView.MarkLog">Mark log</sys:String>
 	<sys:String x:Key="String/SessionView.MarkLogs">Mark logs</sys:String>
 	<sys:String x:Key="String/SessionView.MarkUnmarkLog">Mark/Unmark</sys:String>
 	<sys:String x:Key="String/SessionView.MarkUnmarkLogs">Mark/Unmark logs</sys:String>
