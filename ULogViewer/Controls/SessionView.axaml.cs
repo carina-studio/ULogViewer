@@ -95,7 +95,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Constants.
 		const int AutoAddLogFilesDelay = 0;
 		const int MaxLogCountForCopying = 65536;
-		const int ScrollingToLatestLogInterval = 100;
+		const int ScrollingToLatestLogInterval = 200;
 
 
 		// Static fields.
