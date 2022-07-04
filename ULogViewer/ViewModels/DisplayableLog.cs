@@ -354,7 +354,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		protected override void Dispose(bool disposing)
 		{
 			// check thread
+#if DEBUG
 			this.VerifyAccess();
+#endif
 
 			// notify
 			this.Group.OnDisplayableLogDisposed(this);
@@ -775,7 +777,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			get => this.markedColor;
 			set
 			{
+#if DEBUG
 				this.VerifyAccess();
+#endif
 				if (this.markedColor == value)
 					return;
 				var isPrevMarked = this.IsMarked;

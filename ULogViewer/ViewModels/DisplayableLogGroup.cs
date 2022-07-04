@@ -106,7 +106,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <returns><see cref="DisplayableLog"/>.</returns>
 		public DisplayableLog CreateDisplayableLog(LogReader reader, Log log)
 		{
+#if DEBUG
 			this.VerifyAccess();
+#endif
 			this.VerifyDisposed();
 			return new DisplayableLog(this, reader, log);
 		}

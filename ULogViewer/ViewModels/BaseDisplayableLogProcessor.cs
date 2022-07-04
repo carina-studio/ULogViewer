@@ -230,7 +230,9 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
     public void InvalidateLog(DisplayableLog log)
     {
         // check state
+#if DEBUG
         this.VerifyAccess();
+#endif
         this.VerifyDisposed();
         if (this.currentProcessingParams == null)
             return;
@@ -264,7 +266,9 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
     public void InvalidateLogs(IEnumerable<DisplayableLog> logs)
     {
         // check state
+#if DEBUG
         this.VerifyAccess();
+#endif
         this.VerifyDisposed();
         if (this.currentProcessingParams == null)
             return;
@@ -307,7 +311,9 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
     /// </summary>
     protected void InvalidateProcessing()
     {
+#if DEBUG
         this.VerifyAccess();
+#endif
         if (this.IsDisposed)
             return;
         var delay = this.ProcessingPriority switch
