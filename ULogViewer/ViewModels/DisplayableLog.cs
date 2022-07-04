@@ -21,7 +21,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		// Static fields.
 		static readonly DisplayableLogAnalysisResult[] emptyAnalysisResults = new DisplayableLogAnalysisResult[0];
 		static readonly int[] emptyInt32Array = new int[0];
-		static readonly long estimatedTimeSpanSize = TimeSpan.FromDays(1.23456).ToString().Length << 1;
+		static readonly long estimatedTimeSpanSize = System.TimeSpan.FromDays(1.23456).ToString().Length << 1;
 		static readonly long estimatedTimestampSize = DateTime.Now.ToString().Length << 1;
 		static readonly Func<Log, string?>[] extraGetters = new Func<Log, string?>[Log.ExtraCapacity].Also(it =>
 		{
@@ -207,6 +207,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Get beginning time span of log.
+		/// </summary>
+		public TimeSpan? BeginningTimeSpan { get => this.Log.BeginningTimeSpan; }
+
+
+		/// <summary>
 		/// Get beginning time span of log in string format.
 		/// </summary>
 		public string BeginningTimeSpanString
@@ -218,6 +224,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				return this.beginningTimeSpanString.ToString();
 			}
 		}
+
+
+		/// <summary>
+		/// Get beginning timestamp of log.
+		/// </summary>
+		public DateTime? BeginningTimestamp { get => this.Log.BeginningTimestamp; }
 
 
 		/// <summary>
@@ -364,6 +376,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Get ending time span of log.
+		/// </summary>
+		public TimeSpan? EndingTimeSpan { get => this.Log.EndingTimeSpan; }
+
+
+		/// <summary>
 		/// Get ending time span of log in string format.
 		/// </summary>
 		public string EndingTimeSpanString
@@ -375,6 +393,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				return this.endingTimeSpanString.ToString();
 			}
 		}
+
+
+		/// <summary>
+		/// Get ending timestamp.
+		/// </summary>
+		public DateTime? EndingTimestamp { get => this.Log.EndingTimestamp; }
 
 
 		/// <summary>
@@ -1099,17 +1123,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					{
 						foreach (var propertyName in Log.PropertyNames)
 						{
-							var convertedName = propertyName switch
-							{
-								nameof(Logs.Log.BeginningTimeSpan) => nameof(BeginningTimeSpanString),
-								nameof(Logs.Log.BeginningTimestamp) => nameof(BeginningTimestampString),
-								nameof(Logs.Log.EndingTimeSpan) => nameof(EndingTimeSpanString),
-								nameof(Logs.Log.EndingTimestamp) => nameof(EndingTimestampString),
-								nameof(Logs.Log.Id) => nameof(LogId),
-								nameof(Logs.Log.TimeSpan) => nameof(TimeSpanString),
-								nameof(Logs.Log.Timestamp) => nameof(TimestampString),
-								_ => propertyName,
-							};
+							var convertedName = (propertyName == nameof(Logs.Log.Id))
+								? nameof(LogId)
+								: propertyName;
 							try
 							{
 								typeof(DisplayableLog).GetProperty(convertedName)?.Let(it =>
@@ -1124,12 +1140,18 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						{
 							var specificPropertyNames = new string[]
 							{
+								nameof(BeginningTimeSpanString),
+								nameof(BeginningTimestampString),
 								nameof(BinaryBeginningTimeSpan),
 								nameof(BinaryBeginningTimestamp),
 								nameof(BinaryEndingTimeSpan),
 								nameof(BinaryEndingTimestamp),
 								nameof(BinaryTimeSpan),
 								nameof(BinaryEndingTimestamp),
+								nameof(EndingTimeSpanString),
+								nameof(EndingTimestampString),
+								nameof(TimeSpanString),
+								nameof(TimestampString),
 							};
 							foreach (var propertyName in specificPropertyNames)
 							{
@@ -1189,6 +1211,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Get time span of log.
+		/// </summary>
+		public TimeSpan? TimeSpan { get => this.Log.TimeSpan; }
+
+
+		/// <summary>
 		/// Get time span of log in string format.
 		/// </summary>
 		public string TimeSpanString
@@ -1200,6 +1228,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				return this.timeSpanString.ToString();
 			}
 		}
+
+
+		/// <summary>
+		/// Get timestamp of log.
+		/// </summary>
+		public DateTime? Timestamp { get => this.Log.Timestamp; }
 
 
 		/// <summary>

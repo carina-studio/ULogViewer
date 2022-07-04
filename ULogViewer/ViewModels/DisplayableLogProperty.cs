@@ -34,6 +34,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.displayNameId = displayName ?? name;
 			this.DisplayName = LogPropertyNameConverter.Default.Convert(this.displayNameId);
 			this.Name = name;
+			this.NameForLogProperty = name switch
+			{
+				nameof(DisplayableLog.BeginningTimeSpanString) => nameof(Log.BeginningTimeSpan),
+				nameof(DisplayableLog.BeginningTimestampString) => nameof(Log.BeginningTimestamp),
+				nameof(DisplayableLog.EndingTimeSpanString) => nameof(Log.EndingTimeSpan),
+				nameof(DisplayableLog.EndingTimestampString) => nameof(Log.EndingTimestamp),
+				nameof(DisplayableLog.TimeSpanString) => nameof(Log.TimeSpan),
+				nameof(DisplayableLog.TimestampString) => nameof(Log.Timestamp),
+				_ => name,
+			};
 			this.Width = width;
 			app.StringsUpdated += this.OnApplicationStringsUpdated;
 		}
@@ -58,6 +68,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				nameof(Log.Timestamp) => nameof(DisplayableLog.TimestampString),
 				_ => logProperty.Name,
 			};
+			this.NameForLogProperty = logProperty.Name;
 			this.DisplayName = LogPropertyNameConverter.Default.Convert(this.displayNameId);
 			this.Width = logProperty.Width;
 			app.StringsUpdated += this.OnApplicationStringsUpdated;
@@ -130,6 +141,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public string Name { get; }
 
 
+		/// <summary>
+		/// Get name of property which is mapped to <see cref="Log"/>.
+		/// </summary>
+		public string NameForLogProperty { get; }
+
+
 		// Called when application strings updated.
 		void OnApplicationStringsUpdated(object? sender, EventArgs e)
 		{
@@ -152,20 +169,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		/// <param name="resolveDisplayName">True to resolve display name to readable value.</param>
 		/// <returns><see cref="LogProperty"/>.</returns>
-		public LogProperty ToLogProperty(bool resolveDisplayName = true)
-		{
-			var name = this.Name switch
-			{
-				nameof(DisplayableLog.BeginningTimeSpanString) => nameof(Log.BeginningTimeSpan),
-				nameof(DisplayableLog.BeginningTimestampString) => nameof(Log.BeginningTimestamp),
-				nameof(DisplayableLog.EndingTimeSpanString) => nameof(Log.EndingTimeSpan),
-				nameof(DisplayableLog.EndingTimestampString) => nameof(Log.EndingTimestamp),
-				nameof(DisplayableLog.TimeSpanString) => nameof(Log.TimeSpan),
-				nameof(DisplayableLog.TimestampString) => nameof(Log.Timestamp),
-				_ => this.Name,
-			};
-			return new LogProperty(name, resolveDisplayName ? this.DisplayName : this.displayNameId, this.Width);
-		}
+		public LogProperty ToLogProperty(bool resolveDisplayName = true) =>
+			new LogProperty(this.NameForLogProperty, resolveDisplayName ? this.DisplayName : this.displayNameId, this.Width);
 
 
 		/// <summary>

@@ -32,7 +32,7 @@
 				<ToolTip.Tip>
 					<StackPanel Orientation="Horizontal">
 						<TextBlock Text="{DynamicResource String/SessionView.LogPropertyName}" VerticalAlignment="Center"/>
-						<TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
+						<TextBlock Text="{Binding NameForLogProperty}" VerticalAlignment="Center"/>
 					</StackPanel>
 				</ToolTip.Tip>
 				<TextBlock Text="{Binding DisplayName}" HorizontalAlignment="Stretch" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"/>
