@@ -1,6 +1,10 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
+	
+	<!-- ScriptEditor -->
+	<sys:String x:Key="String/ScriptEditor.DefaultFontFamilies">Noto Sans Mono CJK TC,Noto Sans Mono CJK TS</sys:String>
+	<sys:String x:Key="String/ScriptEditor.DefaultFontFamilies.CJK">Noto Sans Mono CJK TC,Noto Sans Mono CJK TS</sys:String>
 
 	<!-- SessionView -->
 	<sys:String x:Key="String/SessionView.RestartAsAdministrator">以 Superuser 身分重新啟動</sys:String>

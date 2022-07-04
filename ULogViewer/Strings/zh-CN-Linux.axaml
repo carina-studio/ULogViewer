@@ -2,6 +2,10 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
+	<!-- ScriptEditor -->
+	<sys:String x:Key="String/ScriptEditor.DefaultFontFamilies">Noto Sans Mono CJK TS,Noto Sans Mono CJK TC</sys:String>
+	<sys:String x:Key="String/ScriptEditor.DefaultFontFamilies.CJK">Noto Sans Mono CJK TS,Noto Sans Mono CJK TC</sys:String>
+
 	<!-- SessionView -->
 	<sys:String x:Key="String/SessionView.RestartAsAdministrator">以 超级管理员 身份重新启动</sys:String>
 	<sys:String x:Key="String/SessionView.ShowFileInExplorer">在档案管理器中显示档案</sys:String>
