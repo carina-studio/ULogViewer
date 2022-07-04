@@ -18,13 +18,20 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// <summary>
 		/// Property of <see cref="Conditions"/>.
 		/// </summary>
-		public static readonly AvaloniaProperty<IList<ContextualBasedAnalysisCondition>> ConditionsProperty = AvaloniaProperty.Register<ContextualBasedAnalysisActionsEditor, IList<ContextualBasedAnalysisCondition>>(nameof(Conditions));
+		public static readonly AvaloniaProperty<IList<ContextualBasedAnalysisCondition>> ConditionsProperty = AvaloniaProperty.Register<ContextualBasedAnalysisConditionsEditor, IList<ContextualBasedAnalysisCondition>>(nameof(Conditions));
+		/// <summary>
+		/// Property of <see cref="VerticalScrollBarVisibility"/>.
+		/// </summary>
+		public static readonly AvaloniaProperty<ScrollBarVisibility> VerticalScrollBarVisibilityProperty = AvaloniaProperty.RegisterDirect<ContextualBasedAnalysisConditionsEditor, ScrollBarVisibility>(nameof(VerticalScrollBarVisibility), 
+			c => c.verticalScrollBarVisibility,
+			(c, v) => ScrollViewer.SetVerticalScrollBarVisibility(c.conditionListBox, v));
 
 
 		// Fields.
 		readonly ToggleButton addConditionButton;
 		readonly ContextMenu addConditionMenu;
 		readonly Avalonia.Controls.ListBox conditionListBox;
+		ScrollBarVisibility verticalScrollBarVisibility;
 		Avalonia.Controls.Window? window;
 
 
@@ -55,6 +62,10 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.conditionListBox = this.Get<AppSuite.Controls.ListBox>(nameof(conditionListBox)).Also(it =>
 			{
 				it.DoubleClickOnItem += (_, e) => this.EditCondition((ContextualBasedAnalysisCondition)e.Item);
+				it.GetObservable(ScrollViewer.VerticalScrollBarVisibilityProperty).Subscribe(visibility =>
+				{
+					this.SetAndRaise<ScrollBarVisibility>(VerticalScrollBarVisibilityProperty, ref this.verticalScrollBarVisibility, visibility);
+				});
 			});
 		}
 
@@ -165,5 +176,15 @@ namespace CarinaStudio.ULogViewer.Controls
 		// show menu for adding condition.
 		void ShowAddConditionMenu() =>
 			this.addConditionMenu.Open(this.addConditionButton);
+		
+
+		/// <summary>
+		/// Get or set visibility of vertical scrollbar.
+		/// </summary>
+		public ScrollBarVisibility VerticalScrollBarVisibility
+		{
+			get => this.verticalScrollBarVisibility;
+			set => ScrollViewer.SetVerticalScrollBarVisibility(this.conditionListBox, value);
+		}
 	}
 }

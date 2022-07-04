@@ -24,7 +24,8 @@
 	<!-- Styles -->
 	<Window.Styles>
 		<Style Selector="ListBox">
-			<Setter Property="Height" Value="{DynamicResource Double/LogProfileEditorDialog.ListBox.Height}"/>
+			<Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled"/>
+			<Setter Property="VirtualizationMode" Value="None"/>
 		</Style>
 		<Style Selector="ListBoxItem">
 			<Setter Property="HorizontalContentAlignment" Value="Stretch"/>

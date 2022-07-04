@@ -51,7 +51,7 @@
 	</UserControl.Resources>
 
 	<Grid ColumnDefinitions="*,Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-		<asControls:ListBox Name="actionListBox" Classes="Dialog_ListBox" Items="{Binding $parent[UserControl].Actions}" VerticalAlignment="Stretch">
+		<asControls:ListBox Name="actionListBox" Classes="Dialog_ListBox" Items="{Binding $parent[UserControl].Actions}" VerticalAlignment="Stretch" VirtualizationMode="None">
 			<asControls:ListBox.ItemTemplate>
 				<DataTemplate>
 					<Grid ColumnDefinitions="*,Auto">

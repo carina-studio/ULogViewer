@@ -20,12 +20,19 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// Property of <see cref="Actions"/>.
 		/// </summary>
 		public static readonly AvaloniaProperty<IList<ContextualBasedAnalysisAction>> ActionsProperty = AvaloniaProperty.Register<ContextualBasedAnalysisActionsEditor, IList<ContextualBasedAnalysisAction>>(nameof(Actions));
+		/// <summary>
+		/// Property of <see cref="VerticalScrollBarVisibility"/>.
+		/// </summary>
+		public static readonly AvaloniaProperty<ScrollBarVisibility> VerticalScrollBarVisibilityProperty = AvaloniaProperty.RegisterDirect<ContextualBasedAnalysisActionsEditor, ScrollBarVisibility>(nameof(VerticalScrollBarVisibility), 
+			c => c.verticalScrollBarVisibility, 
+			(c, v) => ScrollViewer.SetVerticalScrollBarVisibility(c.actionListBox, v));
 
 
 		// Fields.
 		readonly Avalonia.Controls.ListBox actionListBox;
 		readonly ToggleButton addActionButton;
 		readonly ContextMenu addActionMenu;
+		ScrollBarVisibility verticalScrollBarVisibility;
 		Avalonia.Controls.Window? window;
 
 
@@ -38,6 +45,10 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.actionListBox = this.Get<AppSuite.Controls.ListBox>(nameof(actionListBox)).Also(it =>
 			{
 				it.DoubleClickOnItem += (_, e) => this.EditAction((ContextualBasedAnalysisAction)e.Item);
+				it.GetObservable(ScrollViewer.VerticalScrollBarVisibilityProperty).Subscribe(visibility =>
+				{
+					this.SetAndRaise<ScrollBarVisibility>(VerticalScrollBarVisibilityProperty, ref this.verticalScrollBarVisibility, visibility);
+				});
 			});
 			this.addActionButton = this.Get<ToggleButton>(nameof(addActionButton));
 			this.addActionMenu = ((ContextMenu)this.Resources[nameof(addActionMenu)].AsNonNull()).Also(it =>
@@ -235,5 +246,15 @@ namespace CarinaStudio.ULogViewer.Controls
 		// show menu for adding action.
 		void ShowAddActionMenu() =>
 			this.addActionMenu.Open(this.addActionButton);
+		
+
+		/// <summary>
+		/// Get or set visibility of vertical scrollbar.
+		/// </summary>
+		public ScrollBarVisibility VerticalScrollBarVisibility
+		{
+			get => this.verticalScrollBarVisibility;
+			set => ScrollViewer.SetVerticalScrollBarVisibility(this.actionListBox, value);
+		}
 	}
 }

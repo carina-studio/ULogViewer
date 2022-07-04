@@ -14,6 +14,15 @@
         Classes="Dialog"
         Title="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.Title}"
         Width="{DynamicResource Double/OperationDurationAnalysisRuleEditorDialog.Width}">
+	
+	<Window.Styles>
+		<Style Selector="appControls|ContextualBasedAnalysisActionsEditor">
+			<Setter Property="VerticalScrollBarVisibility" Value="Disabled"/>
+		</Style>
+		<Style Selector="appControls|ContextualBasedAnalysisConditionsEditor">
+			<Setter Property="VerticalScrollBarVisibility" Value="Disabled"/>
+		</Style>
+	</Window.Styles>
 
 	<Panel>
 
@@ -70,17 +79,17 @@
 
 					<!-- Beginning pre-actions -->
 					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.PreActions}"/>
-					<appControls:ContextualBasedAnalysisActionsEditor Actions="{Binding $parent[Window].BeginningPreActions}" Height="{StaticResource Double/OperationDurationAnalysisRuleEditorDialog.ActionsEditor.Height}"/>
+					<appControls:ContextualBasedAnalysisActionsEditor Actions="{Binding $parent[Window].BeginningPreActions}"/>
 					<Separator Classes="Dialog_Separator"/>
 
 					<!-- Beginning conditions -->
 					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.Conditions}"/>
-					<appControls:ContextualBasedAnalysisConditionsEditor Conditions="{Binding $parent[Window].BeginningConditions}" Height="{StaticResource Double/OperationDurationAnalysisRuleEditorDialog.ConditionsEditor.Height}"/>
+					<appControls:ContextualBasedAnalysisConditionsEditor Conditions="{Binding $parent[Window].BeginningConditions}"/>
 					<Separator Classes="Dialog_Separator"/>
 
 					<!-- Beginning post-actions -->
 					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.PostActions}"/>
-					<appControls:ContextualBasedAnalysisActionsEditor Actions="{Binding $parent[Window].BeginningPostActions}" Height="{StaticResource Double/OperationDurationAnalysisRuleEditorDialog.ActionsEditor.Height}"/>
+					<appControls:ContextualBasedAnalysisActionsEditor Actions="{Binding $parent[Window].BeginningPostActions}"/>
 					<Separator Classes="Dialog_Separator_Large"/>
 
 					<!-- Ending log -->
@@ -106,17 +115,17 @@
 
 					<!-- Ending pre-actions -->
 					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.PreActions}"/>
-					<appControls:ContextualBasedAnalysisActionsEditor Actions="{Binding $parent[Window].EndingPreActions}" Height="{StaticResource Double/OperationDurationAnalysisRuleEditorDialog.ActionsEditor.Height}"/>
+					<appControls:ContextualBasedAnalysisActionsEditor Actions="{Binding $parent[Window].EndingPreActions}"/>
 					<Separator Classes="Dialog_Separator"/>
 
 					<!-- Ending conditions -->
 					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.Conditions}"/>
-					<appControls:ContextualBasedAnalysisConditionsEditor Conditions="{Binding $parent[Window].EndingConditions}" Height="{StaticResource Double/OperationDurationAnalysisRuleEditorDialog.ConditionsEditor.Height}"/>
+					<appControls:ContextualBasedAnalysisConditionsEditor Conditions="{Binding $parent[Window].EndingConditions}"/>
 					<Separator Classes="Dialog_Separator"/>
 
 					<!-- Ending post-actions -->
 					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.PostActions}"/>
-					<appControls:ContextualBasedAnalysisActionsEditor Actions="{Binding $parent[Window].EndingPostActions}" Height="{StaticResource Double/OperationDurationAnalysisRuleEditorDialog.ActionsEditor.Height}"/>
+					<appControls:ContextualBasedAnalysisActionsEditor Actions="{Binding $parent[Window].EndingPostActions}"/>
 					<Separator Classes="Dialog_Separator_Large"/>
 
 					<!-- Other -->
@@ -132,7 +141,7 @@
 					<!-- Ending variables -->
 					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.EndingVariables}"/>
 					<Grid ColumnDefinitions="*,Auto">
-						<asControls:ListBox Name="endingVariableListBox" Height="{StaticResource Double/OperationDurationAnalysisRuleEditorDialog.VariableListBox.Height}" Items="{Binding $parent[Window].EndingVariables}">
+						<asControls:ListBox Name="endingVariableListBox" Items="{Binding $parent[Window].EndingVariables}" ScrollViewer.VerticalScrollBarVisibility="Disabled" VirtualizationMode="None">
 							<asControls:ListBox.ItemTemplate>
 								<DataTemplate>
 									<Grid ColumnDefinitions="*,Auto">

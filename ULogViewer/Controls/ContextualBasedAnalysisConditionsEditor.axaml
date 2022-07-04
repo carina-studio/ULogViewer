@@ -20,7 +20,7 @@
 	</UserControl.Resources>
 
 	<Grid ColumnDefinitions="*,Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-		<asControls:ListBox Name="conditionListBox" Classes="Dialog_ListBox" Items="{Binding $parent[UserControl].Conditions}" VerticalAlignment="Stretch">
+		<asControls:ListBox Name="conditionListBox" Classes="Dialog_ListBox" Items="{Binding $parent[UserControl].Conditions}" VerticalAlignment="Stretch" VirtualizationMode="None">
 			<asControls:ListBox.ItemTemplate>
 				<DataTemplate>
 					<Grid ColumnDefinitions="*,Auto">
