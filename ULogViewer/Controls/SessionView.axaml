@@ -148,8 +148,7 @@
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Copy.Outline}"/>
 				</MenuItem.Icon>
 			</MenuItem>
-			<Separator IsVisible="{Binding $parent[UserControl].Application.IsDebugMode}"/>
-			<MenuItem Command="{Binding $parent[UserControl].CopyLogTextCommand}" Header="{DynamicResource String/SessionView.CopyLogText}" IsVisible="{Binding $parent[UserControl].Application.IsDebugMode}">
+			<MenuItem Command="{Binding $parent[UserControl].CopyLogTextCommand}" Header="{DynamicResource String/SessionView.CopyLogText}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Debug.Outline}"/>
 				</MenuItem.Icon>

@@ -770,6 +770,7 @@
 	<sys:String x:Key="String/SessionView.TooManyDirectoryPathsDropped">Please drag and drop single directory.</sys:String>
 	<sys:String x:Key="String/SessionView.TotalLogsMemoryUsage">Total memory usage of logs</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.CancelShowingMarkedLogsOnlyForSelectingLogAnalysisResult">It is needed to cancel showing only marked logs because the log of analysis result is not contained in current list. You can switch it ON manually.</sys:String>
+	<sys:String x:Key="String/SessionView.Tutorial.CopyLogText">The text you copied is the full text of log which is used for log filtering. You can use it to verify the pattern of log text filtering and log analysis.</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.LogAnalysisPanel">View results of log analysis.</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.LogFilesPanel">View and manage added log files.</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.MarkedLogsPanel">List of marked logs.</sys:String>

@@ -108,6 +108,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		static readonly AvaloniaProperty<bool> IsProcessInfoVisibleProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(IsProcessInfoVisible), false);
 		static readonly AvaloniaProperty<bool> IsProVersionActivatedProperty = AvaloniaProperty.RegisterDirect<SessionView, bool>("IsProVersionActivated", c => c.isProVersionActivated);
 		static readonly AvaloniaProperty<bool> IsScrollingToLatestLogNeededProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(IsScrollingToLatestLogNeeded), true);
+		static readonly SettingKey<bool> IsCopyLogTextTutorialShownKey = new("SessionView.IsCopyLogTextTutorialShown");
 		static readonly SettingKey<bool> IsLogAnalysisPanelTutorialShownKey = new("SessionView.IsLogAnalysisPanelTutorialShown");
 		static readonly SettingKey<bool> IsLogFilesPanelTutorialShownKey = new("SessionView.IsLogFilesPanelTutorialShown");
 		static readonly SettingKey<bool> IsMarkedLogsPanelTutorialShownKey = new("SessionView.IsMarkedLogsPanelTutorialShown");
@@ -1165,6 +1166,18 @@ namespace CarinaStudio.ULogViewer.Controls
 			var logProperties = session.DisplayLogProperties;
 			if (logProperties.IsEmpty())
 				return;
+			
+			// show tutorial
+			if (!this.PersistentState.GetValueOrDefault(IsCopyLogTextTutorialShownKey)
+				&& this.attachedWindow != null)
+			{
+				this.PersistentState.SetValue<bool>(IsCopyLogTextTutorialShownKey, true);
+				_ = new MessageDialog()
+				{
+					Icon = MessageDialogIcon.Information,
+					Message = this.Application.GetString("SessionView.Tutorial.CopyLogText"),
+				}.ShowDialog(this.attachedWindow);
+			}
 			
 			// generate text
 			var textBuffer = new StringBuilder();
