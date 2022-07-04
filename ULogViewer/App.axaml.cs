@@ -327,7 +327,10 @@ namespace CarinaStudio.ULogViewer
 				it.Parameters.Add(new NLog.Targets.MethodCallParameter(new NLog.Layouts.SimpleLayout("${message}")));
 				it.Parameters.Add(new NLog.Targets.MethodCallParameter(new NLog.Layouts.SimpleLayout("${exception:format=tostring}")));
 			}));
-			NLog.LogManager.Configuration.AddRuleForAllLevels("methodCall");
+			if (!this.IsDebugMode)
+				NLog.LogManager.Configuration.AddRule(NLog.LogLevel.Debug, NLog.LogLevel.Fatal, "methodCall");
+			else
+				NLog.LogManager.Configuration.AddRuleForAllLevels("methodCall");
 			NLog.LogManager.ReconfigExistingLoggers();
 
 			// prepare platform specific resources
