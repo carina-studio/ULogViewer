@@ -2858,11 +2858,27 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 
 			// show external dependencies dialog
-			/*
+			await Task.Delay(300);
+			if (this.attachedWindow is MainWindow mainWindow && mainWindow.HasDialogs)
+			{
+				var waitingTask = new TaskCompletionSource();
+				var observableToken = (IDisposable?)null;
+				observableToken = mainWindow.GetObservable(MainWindow.HasDialogsProperty).Subscribe(hasDialogs =>
+				{
+					this.SynchronizationContext.Post(() =>
+					{
+						if (!mainWindow.HasDialogs)
+						{
+							observableToken?.Dispose();
+							waitingTask.SetResult();
+						}
+					});
+				});
+				await waitingTask.Task;
+			}
 			if (this.attachedWindow == null || (session != null && !session.IsActivated))
 				return;
 			await new ExternalDependenciesDialog().ShowDialog(this.attachedWindow);
-			*/
 		}
 
 

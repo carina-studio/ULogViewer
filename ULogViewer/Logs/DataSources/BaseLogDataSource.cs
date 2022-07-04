@@ -359,8 +359,9 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			// update state
 			this.ChangeState(result switch
 			{
-				LogDataSourceState.ReadyToOpenReader => LogDataSourceState.ReadyToOpenReader,
-				LogDataSourceState.SourceNotFound => LogDataSourceState.SourceNotFound,
+				LogDataSourceState.ExternalDependencyNotFound
+				or LogDataSourceState.ReadyToOpenReader
+				or LogDataSourceState.SourceNotFound => result,
 				_ => LogDataSourceState.UnclassifiedError,
 			});
 		}
