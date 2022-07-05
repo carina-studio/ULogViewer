@@ -45,10 +45,10 @@
 				<appLogs:LogLevel>Fatal</appLogs:LogLevel>
 				<ComboBox.ItemTemplate>
 					<DataTemplate>
-						<StackPanel Orientation="Horizontal">
-							<Border Background="{Binding Converter={x:Static appConverters:LogLevelBrushConverter.Default}}" BorderBrush="{DynamicResource ComboBoxItemForeground}" BorderThickness="1" Height="{DynamicResource Double/LogLevelComboBox.Item.Indicator.Size}" Margin="{DynamicResource Thickness/LogLevelComboBox.Item.Indicator.Margin}" VerticalAlignment="Center" Width="{DynamicResource Double/LogLevelComboBox.Item.Indicator.Size}"/>
-							<TextBlock Text="{Binding Converter={x:Static appControls:SessionView.LogLevelNameConverter}}" VerticalAlignment="Center"/>
-						</StackPanel>
+						<Grid ColumnDefinitions="Auto,*">
+							<Border Classes="ListBoxItem_Icon" Background="{Binding Converter={x:Static appConverters:LogLevelBrushConverter.Default}}" BorderBrush="{DynamicResource ComboBoxItemForeground}" BorderThickness="1"/>
+							<TextBlock Classes="ListBoxItem_TextBlock" Grid.Column="1" Text="{Binding Converter={x:Static appControls:SessionView.LogLevelNameConverter}}"/>
+						</Grid>
 					</DataTemplate>
 				</ComboBox.ItemTemplate>
 			</ComboBox>

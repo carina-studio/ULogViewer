@@ -59,10 +59,6 @@
 	<sys:Double x:Key="Double/LogDataSourceOptionsDialog.Content.MaxHeight">500</sys:Double>
 	<sys:Double x:Key="Double/LogDataSourceOptionsDialog.QueryStringTextBox.Height">150</sys:Double>
 	<sys:Double x:Key="Double/LogDataSourceOptionsDialog.Width">500</sys:Double>
-	
-	<!-- LogLevelComboBox -->
-	<sys:Double x:Key="Double/LogLevelComboBox.Item.Indicator.Size">14</sys:Double>
-	<Thickness x:Key="Thickness/LogLevelComboBox.Item.Indicator.Margin">0,0,10,0</Thickness>
 
 	<!-- LogLevelMapEntryEditor -->
 	<sys:Double x:Key="Double/LogLevelMapEntryEditor.Width">300</sys:Double>

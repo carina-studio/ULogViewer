@@ -541,8 +541,8 @@
 									<ComboBox.ItemTemplate>
 										<DataTemplate>
 											<StackPanel Orientation="Horizontal">
-												<Border Background="{Binding Converter={x:Static appConverters:LogLevelBrushConverter.Default}}" BorderBrush="{DynamicResource ComboBoxItemForeground}" BorderThickness="1" Height="{StaticResource Double/LogLevelComboBox.Item.Indicator.Size}" Margin="{StaticResource Thickness/LogLevelComboBox.Item.Indicator.Margin}" VerticalAlignment="Center" Width="{StaticResource Double/LogLevelComboBox.Item.Indicator.Size}"/>
-												<TextBlock Text="{Binding Converter={x:Static appControls:SessionView.LogLevelNameConverter}}" VerticalAlignment="Center"/>
+												<Border Classes="ComboBoxItem_Icon" Background="{Binding Converter={x:Static appConverters:LogLevelBrushConverter.Default}}" BorderBrush="{DynamicResource ComboBoxItemForeground}" BorderThickness="1"/>
+												<TextBlock Classes="ComboBoxItem_TextBlock" Text="{Binding Converter={x:Static appControls:SessionView.LogLevelNameConverter}}" VerticalAlignment="Center"/>
 											</StackPanel>
 										</DataTemplate>
 									</ComboBox.ItemTemplate>
