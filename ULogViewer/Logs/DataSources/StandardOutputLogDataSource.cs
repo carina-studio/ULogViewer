@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -284,8 +285,15 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 							return null;
 						}
 					}
-					else
-						return Environment.GetEnvironmentVariable("PATH")?.Split(Path.PathSeparator);
+					else if (Platform.IsWindows)
+					{
+						return new HashSet<string>(IO.PathEqualityComparer.Default).Also(pathSet =>
+						{
+							Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.User)?.Split(Path.PathSeparator)?.Let(it => pathSet.AddAll(it));
+							Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.Machine)?.Split(Path.PathSeparator)?.Let(it => pathSet.AddAll(it));
+						}).ToArray();
+					}
+					return Environment.GetEnvironmentVariable("PATH")?.Split(Path.PathSeparator);
 				});
 				if (environmentPaths != null)
 				{
