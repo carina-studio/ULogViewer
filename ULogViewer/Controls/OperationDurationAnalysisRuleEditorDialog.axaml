@@ -7,6 +7,7 @@
 		xmlns:app="using:CarinaStudio.ULogViewer"
 		xmlns:appAnalysis="using:CarinaStudio.ULogViewer.ViewModels.Analysis"
 		xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
+		xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
 		xmlns:appCtxlBased="using:CarinaStudio.ULogViewer.ViewModels.Analysis.ContextualBased"
         xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
@@ -53,7 +54,19 @@
 
 					<!-- Result type -->
 					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.ResultType}"/>
-					<asControls:EnumComboBox Name="resultTypeComboBox" Classes="Dialog_ComboBox" EnumType="{x:Type appAnalysis:DisplayableLogAnalysisResultType}"/>
+					<ComboBox Name="resultTypeComboBox" Classes="Dialog_ComboBox" Items="{Binding $parent[Window].ResultTypes}">
+						<ComboBox.ItemTemplate>
+							<DataTemplate>
+								<Grid ColumnDefinitions="Auto,*">
+									<Panel Classes="ComboBoxItem_Icon">
+										<Image Classes="Icon" IsVisible="{Binding $parent[ComboBoxItem].IsSelected}" Source="{Binding Converter={x:Static appConverters:DisplayableLogAnalysisResultIconConverter.Default}, ConverterParameter=Light}"/>
+										<Image Classes="Icon" IsVisible="{Binding !$parent[ComboBoxItem].IsSelected}" Source="{Binding Converter={x:Static appConverters:DisplayableLogAnalysisResultIconConverter.Default}}"/>
+									</Panel>
+									<TextBlock Classes="ComboBoxItem_TextBlock" Grid.Column="1" Text="{Binding Converter={x:Static appConverters:EnumConverters.DisplayableLogAnalysisResultType}}"/>
+								</Grid>
+							</DataTemplate>
+						</ComboBox.ItemTemplate>
+					</ComboBox>
 					<Separator Classes="Dialog_Separator_Large"/>
 
 					<!-- Beginning log -->

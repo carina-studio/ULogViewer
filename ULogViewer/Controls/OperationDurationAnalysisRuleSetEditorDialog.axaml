@@ -6,8 +6,6 @@
 		xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
 		xmlns:appCtxlBased="using:CarinaStudio.ULogViewer.ViewModels.Analysis.ContextualBased"
         xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
-		xmlns:ia="using:Avalonia.Xaml.Interactivity"
-        xmlns:iaCore="using:Avalonia.Xaml.Interactions.Core"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.OperationDurationAnalysisRuleSetEditorDialog"
         Classes="Dialog"
@@ -38,19 +36,13 @@
 			<ComboBox Name="iconComboBox" Classes="Dialog_ComboBox" Items="{Binding $parent[Window].Icons}">
 				<ComboBox.ItemTemplate>
 					<DataTemplate>
-						<StackPanel Orientation="Horizontal">
-							<Image Classes="Icon" Height="{DynamicResource Double/LogProfileEditorDialog.IconComboBox.Icon.Size}" Margin="{DynamicResource Thickness/LogProfileEditorDialog.IconComboBox.Icon.Margin}" Source="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}}" Width="{DynamicResource Double/LogProfileEditorDialog.IconComboBox.Icon.Size}">
-								<ia:Interaction.Behaviors>
-									<iaCore:DataTriggerBehavior Binding="{Binding $parent[ComboBoxItem].IsSelected}" Value="True">
-										<iaCore:ChangePropertyAction PropertyName="Source" Value="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}, ConverterParameter=Light}"/>
-									</iaCore:DataTriggerBehavior>
-									<iaCore:DataTriggerBehavior Binding="{Binding $parent[ComboBoxItem].IsSelected}" Value="False">
-										<iaCore:ChangePropertyAction PropertyName="Source" Value="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}}"/>
-									</iaCore:DataTriggerBehavior>
-								</ia:Interaction.Behaviors>
-							</Image>
-							<TextBlock Text="{Binding Converter={x:Static appControls:LogProfileEditorDialog.LogProfileIconNameConverter}}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
-						</StackPanel>
+						<Grid ColumnDefinitions="Auto,*">
+							<Panel Classes="ComboBoxItem_Icon">
+								<Image Classes="Icon" IsVisible="{Binding $parent[ComboBoxItem].IsSelected}" Source="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}, ConverterParameter=Light}"/>
+								<Image Classes="Icon" IsVisible="{Binding !$parent[ComboBoxItem].IsSelected}" Source="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}}"/>
+							</Panel>
+							<TextBlock Classes="ComboBoxItem_TextBlock" Grid.Column="1" Text="{Binding Converter={x:Static appControls:LogProfileEditorDialog.LogProfileIconNameConverter}}"/>
+						</Grid>
 					</DataTemplate>
 				</ComboBox.ItemTemplate>
 			</ComboBox>
@@ -63,8 +55,11 @@
 					<asControls:ListBox.ItemTemplate>
 						<DataTemplate>
 							<Grid ColumnDefinitions="Auto,*,Auto">
-								<Image Classes="Icon" Height="{StaticResource Double/OperationDurationAnalysisRuleSetEditorDialog.RuleListBox.Item.Icon.Size}" Margin="{StaticResource Thickness/OperationDurationAnalysisRuleSetEditorDialog.RuleListBox.Item.Icon.Margin}" Source="{Binding ResultType, Converter={x:Static appConverters:DisplayableLogAnalysisResultIconConverter.Default}}" VerticalAlignment="Center" Width="{StaticResource Double/OperationDurationAnalysisRuleSetEditorDialog.RuleListBox.Item.Icon.Size}"/>
-								<TextBlock Grid.Column="1" Text="{Binding OperationName}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+								<Panel Classes="ListBoxItem_Icon">
+									<Image Classes="Icon" IsVisible="{Binding $parent[ListBoxItem].IsSelected}" Source="{Binding ResultType, Converter={x:Static appConverters:DisplayableLogAnalysisResultIconConverter.Default}, ConverterParameter=Light}"/>
+									<Image Classes="Icon" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}" Source="{Binding ResultType, Converter={x:Static appConverters:DisplayableLogAnalysisResultIconConverter.Default}}"/>
+								</Panel>
+								<TextBlock Classes="ListBoxItem_TextBlock" Grid.Column="1" Text="{Binding OperationName}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
 								<Border Classes="InPlaceAction_Reserved" Grid.Column="1"/>
 								<StackPanel Grid.Column="2" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
 									<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveRule}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">

@@ -2,8 +2,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:ia="using:Avalonia.Xaml.Interactivity"
-        xmlns:iaCore="using:Avalonia.Xaml.Interactions.Core"
 		xmlns:abControls="using:CarinaStudio.Controls"
 		xmlns:as="using:CarinaStudio.AppSuite"
 		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
@@ -102,20 +100,11 @@
 					<ComboBox.ItemTemplate>
 						<DataTemplate>
 							<Grid ColumnDefinitions="Auto,*">
-								<Panel Height="{DynamicResource Double/AppOptionsDialog.InitialLogProfile.Icon.Size}" Margin="{DynamicResource Thickness/AppOptionsDialog.InitialLogProfile.Icon.Margin}" VerticalAlignment="Center" Width="{DynamicResource Double/AppOptionsDialog.InitialLogProfile.Icon.Size}">
-									<Image Classes="Icon" Source="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}}"/>
-									<Image Classes="Icon" Source="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}, ConverterParameter=Light}" IsVisible="False">
-										<ia:Interaction.Behaviors>
-											<iaCore:DataTriggerBehavior Binding="{Binding $parent[ComboBoxItem].IsSelected}" Value="True">
-												<iaCore:ChangePropertyAction PropertyName="IsVisible" Value="True"/>
-											</iaCore:DataTriggerBehavior>
-											<iaCore:DataTriggerBehavior Binding="{Binding $parent[ComboBoxItem].IsSelected}" Value="False">
-												<iaCore:ChangePropertyAction PropertyName="IsVisible" Value="False"/>
-											</iaCore:DataTriggerBehavior>
-										</ia:Interaction.Behaviors>
-									</Image>
+								<Panel Classes="ComboBoxItem_Icon">
+									<Image Classes="Icon" IsVisible="{Binding $parent[ComboBoxItem].IsSelected}" Source="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}, ConverterParameter=Light}"/>
+									<Image Classes="Icon" IsVisible="{Binding !$parent[ComboBoxItem].IsSelected}" Source="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}}"/>
 								</Panel>
-								<TextBlock Grid.Column="1" Text="{Binding Name}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+								<TextBlock Classes="ComboBoxItem_TextBlock" Grid.Column="1" Text="{Binding Name}"/>
 							</Grid>
 						</DataTemplate>
 					</ComboBox.ItemTemplate>

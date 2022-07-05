@@ -134,6 +134,9 @@
 	<DrawingImage x:Key="Image/Checkpoint.Outline.Colored">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{DynamicResource Geometry/Icon.OK.Outline}"/>
 	</DrawingImage>
+	<DrawingImage x:Key="Image/Checkpoint.Outline.Light">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{DynamicResource Geometry/Icon.OK.Outline}"/>
+	</DrawingImage>
 	<DrawingImage x:Key="Image/ClearFilters" Drawing="{StaticResource Drawing/ClearFilters}"/>
 	<DrawingImage x:Key="Image/ClearSelection">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/ClearSelection}"/>
@@ -143,6 +146,9 @@
 	</DrawingImage>
 	<DrawingImage x:Key="Image/Clock.Outline.Colored">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Question}" Geometry="{DynamicResource Geometry/Clock.Outline}"/>
+	</DrawingImage>
+	<DrawingImage x:Key="Image/Clock.Outline.Light">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{DynamicResource Geometry/Clock.Outline}"/>
 	</DrawingImage>
 	<DrawingImage x:Key="Image/Code">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/LogProfile.Code}"/>
@@ -433,11 +439,17 @@
 	<DrawingImage x:Key="Image/OperationEnd.Outline.Colored">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon.OK}" Geometry="{DynamicResource Geometry/OperationEnd.Outline}"/>
 	</DrawingImage>
+	<DrawingImage x:Key="Image/OperationEnd.Outline.Light">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{DynamicResource Geometry/OperationEnd.Outline}"/>
+	</DrawingImage>
 	<DrawingImage x:Key="Image/OperationStart.Outline">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{DynamicResource Geometry/OperationStart.Outline}"/>
 	</DrawingImage>
 	<DrawingImage x:Key="Image/OperationStart.Outline.Colored">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon.OK}" Geometry="{DynamicResource Geometry/OperationStart.Outline}"/>
+	</DrawingImage>
+	<DrawingImage x:Key="Image/OperationStart.Outline.Light">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{DynamicResource Geometry/OperationStart.Outline}"/>
 	</DrawingImage>
 	<DrawingImage x:Key="Image/Peek">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/Peek}"/>
@@ -450,6 +462,9 @@
 	</DrawingImage>
 	<DrawingImage x:Key="Image/Performance.Outline.Colored">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon.LogProfile.Performance}" Geometry="{DynamicResource Geometry/Icon.Speed.Outline}"/>
+	</DrawingImage>
+	<DrawingImage x:Key="Image/Performance.Outline.Light">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{DynamicResource Geometry/Icon.Speed.Outline}"/>
 	</DrawingImage>
 	<DrawingImage x:Key="Image/Resource">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/Resource}"/>

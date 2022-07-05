@@ -142,6 +142,10 @@ partial class KeyLogAnalysisRuleEditorDialog : AppSuite.Controls.InputDialog<IUL
 		base.OnValidateInput() && this.patternRegex != null && !string.IsNullOrEmpty(this.messageTextBox.Text);
 	
 
+	// Available result types.
+	DisplayableLogAnalysisResultType[] ResultTypes { get; } = Enum.GetValues<DisplayableLogAnalysisResultType>();
+	
+
 	/// <summary>
 	/// Get of set rule to be edited.
 	/// </summary>

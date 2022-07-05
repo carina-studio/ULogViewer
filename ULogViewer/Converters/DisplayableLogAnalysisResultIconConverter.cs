@@ -46,13 +46,22 @@ class DisplayableLogAnalysisResultIconConverter : BaseValueConverter<object?, II
                 case DisplayableLogAnalysisResultType.OperationEnd:
                 case DisplayableLogAnalysisResultType.OperationStart:
                 case DisplayableLogAnalysisResultType.Performance:
-                    app.TryGetResource<IImage>($"Image/{type.Value}.Outline.Colored", out image);
+                    if ((parameter as string) != "Light")
+                        app.TryGetResource<IImage>($"Image/{type.Value}.Outline.Colored", out image);
+                    else
+                        app.TryGetResource<IImage>($"Image/{type.Value}.Outline.Light", out image);
                     return image;
                 case DisplayableLogAnalysisResultType.TimeSpan:
-                    app.TryGetResource<IImage>($"Image/Clock.Outline.Colored", out image);
+                    if ((parameter as string) != "Light")
+                        app.TryGetResource<IImage>($"Image/Clock.Outline.Colored", out image);
+                    else
+                        app.TryGetResource<IImage>($"Image/Clock.Outline.Light", out image);
                     return image;
                 default:
-                    app.TryGetResource<IImage>($"Image/Icon.{type.Value}.Outline.Colored", out image);
+                    if ((parameter as string) != "Light")
+                        app.TryGetResource<IImage>($"Image/Icon.{type.Value}.Outline.Colored", out image);
+                    else
+                        app.TryGetResource<IImage>($"Image/Icon.{type.Value}.Outline.Light", out image);
                     return image;
             }
         }

@@ -75,19 +75,13 @@
 				<ComboBox Name="iconComboBox" Classes="Dialog_ComboBox" Items="{Binding $parent[Window].LogProfileIcons}">
 					<ComboBox.ItemTemplate>
 						<DataTemplate>
-							<StackPanel Orientation="Horizontal">
-								<Image Classes="Icon" Height="{DynamicResource Double/LogProfileEditorDialog.IconComboBox.Icon.Size}" Margin="{DynamicResource Thickness/LogProfileEditorDialog.IconComboBox.Icon.Margin}" Source="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}}" Width="{DynamicResource Double/LogProfileEditorDialog.IconComboBox.Icon.Size}">
-									<ia:Interaction.Behaviors>
-										<iaCore:DataTriggerBehavior Binding="{Binding $parent[ComboBoxItem].IsSelected}" Value="True">
-											<iaCore:ChangePropertyAction PropertyName="Source" Value="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}, ConverterParameter=Light}"/>
-										</iaCore:DataTriggerBehavior>
-										<iaCore:DataTriggerBehavior Binding="{Binding $parent[ComboBoxItem].IsSelected}" Value="False">
-											<iaCore:ChangePropertyAction PropertyName="Source" Value="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}}"/>
-										</iaCore:DataTriggerBehavior>
-									</ia:Interaction.Behaviors>
-								</Image>
-								<TextBlock Text="{Binding Converter={x:Static appControls:LogProfileEditorDialog.LogProfileIconNameConverter}}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
-							</StackPanel>
+							<Grid ColumnDefinitions="Auto,*">
+								<Panel Classes="ComboBoxItem_Icon">
+									<Image Classes="Icon" IsVisible="{Binding $parent[ComboBoxItem].IsSelected}" Source="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}, ConverterParameter=Light}"/>
+									<Image Classes="Icon" IsVisible="{Binding !$parent[ComboBoxItem].IsSelected}" Source="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}}"/>
+								</Panel>
+								<TextBlock Classes="ComboBoxItem_TextBlock" Grid.Column="1" Text="{Binding Converter={x:Static appControls:LogProfileEditorDialog.LogProfileIconNameConverter}}"/>
+							</Grid>
 						</DataTemplate>
 					</ComboBox.ItemTemplate>
 				</ComboBox>
@@ -110,30 +104,22 @@
 					<ComboBox Name="dataSourceProviderComboBox" HorizontalAlignment="Stretch" Items="{x:Static appDataSources:LogDataSourceProviders.All}" SelectionChanged="OnDataSourceProviderComboBoxSelectionChanged" VerticalAlignment="Center">
 						<ComboBox.ItemTemplate>
 							<DataTemplate>
-								<StackPanel Orientation="Horizontal">
-									<Image Classes="Icon" Height="{StaticResource Double/LogProfileEditorDialog.IconComboBox.Icon.Size}" Margin="{StaticResource Thickness/LogProfileEditorDialog.IconComboBox.Icon.Margin}" Source="{Binding Converter={x:Static appConverters:LogDataSourceProviderIconConverter.Default}}" Width="{StaticResource Double/LogProfileEditorDialog.IconComboBox.Icon.Size}">
-										<ia:Interaction.Behaviors>
-											<iaCore:DataTriggerBehavior Binding="{Binding $parent[ComboBoxItem].IsSelected}" Value="True">
-												<iaCore:ChangePropertyAction PropertyName="Source" Value="{Binding Converter={x:Static appConverters:LogDataSourceProviderIconConverter.Default}, ConverterParameter=Light}"/>
-											</iaCore:DataTriggerBehavior>
-											<iaCore:DataTriggerBehavior Binding="{Binding $parent[ComboBoxItem].IsSelected}" Value="False">
-												<iaCore:ChangePropertyAction PropertyName="Source" Value="{Binding Converter={x:Static appConverters:LogDataSourceProviderIconConverter.Default}}"/>
-											</iaCore:DataTriggerBehavior>
-										</ia:Interaction.Behaviors>
-									</Image>
-									<Grid ColumnDefinitions="Auto,Auto,*">
-										<TextBlock Text="{Binding DisplayName}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
-										<Separator Classes="Dialog_Separator_Small" Grid.Column="1" IsVisible="{Binding #proVersionOnly.IsVisible}"/>
-										<TextBlock Name="proVersionOnly" Grid.Column="2" Text="{DynamicResource String/LogProfileEditorDialog.DataSourceProvider.ProVersionOnly}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center">
-											<TextBlock.IsVisible>
-												<MultiBinding Converter="{x:Static aConverters:BoolConverters.And}">
-													<Binding Path="!IsProVersionActivated" ElementName="window"/>
-													<Binding Path="IsProVersionOnly"/>
-												</MultiBinding>
-											</TextBlock.IsVisible>
-										</TextBlock>
-									</Grid>
-								</StackPanel>
+								<Grid ColumnDefinitions="Auto,Auto,Auto,*">
+									<Panel Classes="ComboBoxItem_Icon">
+										<Image Classes="Icon" IsVisible="{Binding $parent[ComboBoxItem].IsSelected}" Source="{Binding Converter={x:Static appConverters:LogDataSourceProviderIconConverter.Default}, ConverterParameter=Light}"/>
+										<Image Classes="Icon" IsVisible="{Binding !$parent[ComboBoxItem].IsSelected}" Source="{Binding Converter={x:Static appConverters:LogDataSourceProviderIconConverter.Default}}"/>
+									</Panel>
+									<TextBlock Classes="ComboBoxItem_TextBlock" Text="{Binding DisplayName}" Grid.Column="1"/>
+									<Separator Classes="Dialog_Separator_Small" Grid.Column="2" IsVisible="{Binding #proVersionOnly.IsVisible}"/>
+									<TextBlock Classes="ComboBoxItem_TextBlock" Name="proVersionOnly" Grid.Column="3" Text="{DynamicResource String/LogProfileEditorDialog.DataSourceProvider.ProVersionOnly}">
+										<TextBlock.IsVisible>
+											<MultiBinding Converter="{x:Static aConverters:BoolConverters.And}">
+												<Binding Path="!IsProVersionActivated" ElementName="window"/>
+												<Binding Path="IsProVersionOnly"/>
+											</MultiBinding>
+										</TextBlock.IsVisible>
+									</TextBlock>
+								</Grid>
 							</DataTemplate>
 						</ComboBox.ItemTemplate>
 					</ComboBox>
