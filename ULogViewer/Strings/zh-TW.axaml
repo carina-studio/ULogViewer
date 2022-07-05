@@ -501,6 +501,7 @@
 	<!-- MainWindow -->
 	<sys:String x:Key="String/MainWindow.ClearCustomSessionTitle">重設分頁標題</sys:String>
 	<sys:String x:Key="String/MainWindow.NetworkConnectionNeededForProductActivation">請連接至網際網路以啟用「{0}」，否則「{0}」將會在一段時間後暫時被停用。</sys:String>
+	<sys:String x:Key="String/MainWindow.ReActivateProductNeeded">無法啟用「{0}」，請嘗試再次啟用。</sys:String>
 	<sys:String x:Key="String/MainWindow.Session.AllLogCount">總日誌數：</sys:String>
 	<sys:String x:Key="String/MainWindow.Session.Hibernated">休眠中以節省資源</sys:String>
 	<sys:String x:Key="String/MainWindow.Session.LogsMemoryUsage">記憶體使用：</sys:String>

@@ -42,12 +42,15 @@ namespace CarinaStudio.ULogViewer
 		// Static fields.
 		static readonly AvaloniaProperty<bool> HasMultipleSessionsProperty = AvaloniaProperty.Register<MainWindow, bool>("HasMultipleSessions");
 		static bool IsNetworkConnForProductActivationNotified;
+		static bool IsReActivatingProVersionNeeded;
+		static MainWindow? MainWindowToActivateProVersion;
 
 
 		// Fields.
 		Session? attachedActiveSession;
 		readonly ScheduledAction focusOnTabItemContentAction;
 		readonly ScheduledAction notifyNetworkConnForProductActivationAction;
+		readonly ScheduledAction reActivateProVersionAction;
 		readonly ScheduledAction selectAndSetLogProfileAction;
 		readonly DataTemplate sessionTabItemHeaderTemplate;
 		readonly Stopwatch stopwatch = new Stopwatch();
@@ -83,7 +86,7 @@ namespace CarinaStudio.ULogViewer
 			this.tabControl.Items = this.tabItems;
 
 			// create scheduled actions
-			this.focusOnTabItemContentAction = new ScheduledAction(() =>
+			this.focusOnTabItemContentAction = new(() =>
 			{
 				((this.tabControl.SelectedItem as TabItem)?.Content as IControl)?.Focus();
 			});
@@ -103,8 +106,25 @@ namespace CarinaStudio.ULogViewer
 					Message = this.Application.GetFormattedString("MainWindow.NetworkConnectionNeededForProductActivation", productName),
 				}.ShowDialog(this);
 			});
-			this.selectAndSetLogProfileAction = new ScheduledAction(this.SelectAndSetLogProfile);
-			this.updateSysTaskBarAction = new ScheduledAction(() =>
+			this.reActivateProVersionAction = new(async () =>
+			{
+				if (this.IsClosed || !IsReActivatingProVersionNeeded || this.HasDialogs || !this.IsActive)
+					return;
+				IsReActivatingProVersionNeeded = false;
+				if (this.Application.ProductManager.TryGetProductState(Products.Professional, out var state)
+					&& state == ProductState.Deactivated)
+				{
+					this.Application.ProductManager.TryGetProductName(Products.Professional, out var name);
+					await new MessageDialog()
+					{
+						Icon = MessageDialogIcon.Warning,
+						Message = this.Application.GetFormattedString("MainWindow.ReActivateProductNeeded", name),
+					}.ShowDialog(this);
+					_ = this.Application.ProductManager.ActivateProductAsync(Products.Professional, this);
+				}
+			});
+			this.selectAndSetLogProfileAction = new(this.SelectAndSetLogProfile);
+			this.updateSysTaskBarAction = new(() =>
 			{
 				// check state
 				if (this.IsClosed)
@@ -150,7 +170,24 @@ namespace CarinaStudio.ULogViewer
 					TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.NoProgress);
 #endif
 			});
-			this.tabControlSelectionChangedAction = new ScheduledAction(this.OnTabControlSelectionChanged);
+			this.tabControlSelectionChangedAction = new(this.OnTabControlSelectionChanged);
+
+			// attach to property change
+			this.GetObservable(HasDialogsProperty).Subscribe(hasDialogs =>
+			{
+				if (!hasDialogs && IsReActivatingProVersionNeeded)
+					this.reActivateProVersionAction.Schedule();
+			});
+			this.GetObservable(IsActiveProperty).Subscribe(isActive =>
+			{
+				if (isActive)
+				{
+					if (FocusManager.Instance?.Current is not TextBox)
+						((this.tabControl.SelectedItem as TabItem)?.Content as Control)?.Focus();
+					if (IsReActivatingProVersionNeeded)
+						this.reActivateProVersionAction.Schedule();
+				}
+			});
 
 			// start stopwatch
 			if (this.Application.IsDebugMode)
@@ -161,12 +198,19 @@ namespace CarinaStudio.ULogViewer
 		/// <summary>
 		/// Activate Pro version.
 		/// </summary>
-		public void ActivateProVersion()
+		public async void ActivateProVersion()
 		{
 			this.VerifyAccess();
 			if (this.IsClosed)
 				return;
-			this.Application.ProductManager.ActivateProductAsync(Products.Professional, this);
+			if (MainWindowToActivateProVersion != null)
+			{
+				MainWindowToActivateProVersion.Activate();
+				return;
+			}
+			MainWindowToActivateProVersion = this;
+			await this.Application.ProductManager.ActivateProductAsync(Products.Professional, this);
+			MainWindowToActivateProVersion = null;
 		}
 
 
@@ -496,6 +540,7 @@ namespace CarinaStudio.ULogViewer
 		protected override void OnClosed(EventArgs e)
 		{
 			// cancel scheduled actions
+			this.reActivateProVersionAction.Cancel();
 			this.tabControlSelectionChangedAction.Cancel();
 
 			// stop stopwatch
@@ -507,6 +552,10 @@ namespace CarinaStudio.ULogViewer
 
 			// stop checking network connection for product activation
 			this.notifyNetworkConnForProductActivationAction.Cancel();
+
+			// cancel activating Pro-version
+			if (MainWindowToActivateProVersion == this)
+				MainWindowToActivateProVersion = null;
 
 			// call base
 			base.OnClosed(e);
@@ -785,6 +834,7 @@ namespace CarinaStudio.ULogViewer
 			// add event handlers
 			NetworkManager.Default.PropertyChanged += this.OnNetworkManagerPropertyChanged;
 			this.Application.ProductManager.ProductStateChanged += this.OnProductStateChanged;
+			this.OnProductStateChanged(this.Application.ProductManager, Products.Professional);
 
 			// check network connection for product activation
 			if (!this.Application.ProductManager.IsProductActivated(Products.Professional, true)
@@ -799,21 +849,31 @@ namespace CarinaStudio.ULogViewer
 		// Called when product state changed.
 		void OnProductStateChanged(IProductManager? productManager, string productId)
 		{
-			if (productManager == null || productId != Products.Professional)
-				return;
-			if (productManager.IsProductActivated(Products.Professional, true))
-				this.notifyNetworkConnForProductActivationAction.Cancel();
-		}
-
-
-		// Property changed.
-		protected override void OnPropertyChanged<T>(AvaloniaPropertyChangedEventArgs<T> change)
-		{
-			base.OnPropertyChanged(change);
-			if (change.Property == IsActiveProperty)
+			if (productManager == null 
+				|| productId != Products.Professional
+				|| !productManager.TryGetProductState(productId, out var state))
 			{
-				if (this.IsActive && FocusManager.Instance?.Current is not TextBox)
-					((this.tabControl.SelectedItem as TabItem)?.Content as Control)?.Focus();
+				return;
+			}
+			switch (state)
+			{
+				case ProductState.Activated:
+					this.notifyNetworkConnForProductActivationAction.Cancel();
+					goto default;
+				case ProductState.Deactivated:
+					if (MainWindowToActivateProVersion == null
+						&& productManager.TryGetProductActivationFailure(productId, out var failure)
+						&& failure != ProductActivationFailure.NoNetworkConnection)
+					{
+						this.Logger.LogWarning($"Need to reactivate Pro-version because of {failure}");
+						IsReActivatingProVersionNeeded = true;
+						this.reActivateProVersionAction.Schedule();
+					}
+					break;
+				default:
+					IsReActivatingProVersionNeeded = false;
+					this.reActivateProVersionAction.Cancel();
+					break;
 			}
 		}
 
