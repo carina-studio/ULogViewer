@@ -273,6 +273,12 @@ namespace CarinaStudio.ULogViewer
 				case "EditConfiguration":
 					(this.LatestActiveMainWindow as MainWindow)?.EditConfiguration();
 					break;
+				case "EditPathEnvVar":
+					this.LatestActiveMainWindow?.Let(window =>
+					{
+						_ = new AppSuite.Controls.PathEnvVarEditorDialog().ShowDialog(window);
+					});
+					break;
 				case "EditPersistentState":
 					(this.LatestActiveMainWindow as MainWindow)?.EditPersistentState();
 					break;
@@ -380,8 +386,6 @@ namespace CarinaStudio.ULogViewer
 							case "Tools":
 							{
 								this.toolsNativeMenuItem = menuItem;
-								menu.Items.RemoveAt(i--);
-								menu.Items.RemoveAt(i); // Separator
 								break;
 							}
 						}

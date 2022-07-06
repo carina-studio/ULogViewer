@@ -10,6 +10,7 @@
 
 	<!-- SessionView -->
 	<sys:String x:Key="String/SessionView.AddLogFiles.WithShortcut">Add log files (⌘O)</sys:String>
+	<sys:String x:Key="String/SessionView.EditPathEnvVar">Edit /etc/paths…</sys:String>
 	<sys:String x:Key="String/SessionView.MemoryUsage">Total memory usage</sys:String>
 	<sys:String x:Key="String/SessionView.PredefinedLogTextFilters">Defined text filters (⌘P)</sys:String>
 	<sys:String x:Key="String/SessionView.RestartAsAdministrator">Restart as Superuser</sys:String>

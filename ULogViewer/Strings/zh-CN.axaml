@@ -646,6 +646,7 @@
 	<sys:String x:Key="String/SessionView.CopyLogsWithFileNames">复制日志 (包含档案名称)</sys:String>
 	<sys:String x:Key="String/SessionView.CpuUsage">CPU 使用率</sys:String>
 	<sys:String x:Key="String/SessionView.EditConfiguration">编辑內部配置…</sys:String>
+	<sys:String x:Key="String/SessionView.EditPathEnvVar">编辑 PATH 环境变量…</sys:String>
 	<sys:String x:Key="String/SessionView.EditPersistentState">编辑內部存储的状态…</sys:String>
 	<sys:String x:Key="String/SessionView.FailedToExportLogAnalysisRuleSet">无法将规则集「{0}」导出至 '{1}'。</sys:String>
 	<sys:String x:Key="String/SessionView.FailedToImportLogAnalysisRuleSet">无法从 '{0}' 导入規則集。</sys:String>

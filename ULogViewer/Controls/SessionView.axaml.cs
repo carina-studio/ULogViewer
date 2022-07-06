@@ -2142,6 +2142,15 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Edit PATH environment variable.
+		void EditPathEnvVar()
+		{
+			if (!PathEnvVarEditorDialog.IsSupported || this.attachedWindow == null)
+				return;
+			_ = new PathEnvVarEditorDialog().ShowDialog(this.attachedWindow);
+		}
+
+
 		// Edit given predefined log text filter.
 		void EditPredefinedLogTextFilter(PredefinedLogTextFilter? filter)
 		{

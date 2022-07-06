@@ -23,6 +23,7 @@
 			<NativeMenuItemSeparator/>
 			<NativeMenuItem CommandParameter="Tools" Header="{DynamicResource String/SessionView.Tools}">
 				<NativeMenu>
+					<NativeMenuItem Click="OnNativeMenuItemClick" CommandParameter="EditPathEnvVar" Header="{DynamicResource String/SessionView.EditPathEnvVar}"/>
 				</NativeMenu>
 			</NativeMenuItem>
 			<NativeMenuItemSeparator/>

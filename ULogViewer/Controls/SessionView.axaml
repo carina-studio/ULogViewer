@@ -350,10 +350,15 @@
 				</MenuItem.Icon>
 			</MenuItem>
 			<Separator IsVisible="{Binding $parent[UserControl].Application.IsDebugMode}"/>
-			<MenuItem Name="toolsMenuItem" Header="{DynamicResource String/SessionView.Tools}" IsVisible="False">
+			<MenuItem Name="toolsMenuItem" Header="{DynamicResource String/SessionView.Tools}" IsVisible="{x:Static asControls:PathEnvVarEditorDialog.IsSupported}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Tool.Outline}"/>
 				</MenuItem.Icon>
+				<MenuItem Command="{Binding $parent[UserControl].EditPathEnvVar}" Header="{DynamicResource String/SessionView.EditPathEnvVar}" IsVisible="{x:Static asControls:PathEnvVarEditorDialog.IsSupported}">
+					<MenuItem.Icon>
+						<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Edit}"/>
+					</MenuItem.Icon>
+				</MenuItem>
 			</MenuItem>
 			<Separator IsVisible="False"/>
 			<MenuItem Command="{Binding $parent[Window].ShowAppInfo}" Header="{DynamicResource String/SessionView.AppInfo}">

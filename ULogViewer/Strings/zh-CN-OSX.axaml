@@ -11,6 +11,7 @@
 
 	<!-- SessionView -->
 	<sys:String x:Key="String/SessionView.AddLogFiles.WithShortcut">加入日志档案 (⌘O)</sys:String>
+	<sys:String x:Key="String/SessionView.EditPathEnvVar">编辑 /etc/paths…</sys:String>
 	<sys:String x:Key="String/SessionView.MemoryUsage">总内存使用量</sys:String>
 	<sys:String x:Key="String/SessionView.PredefinedLogTextFilters">已定义的文字筛选 (⌘P)</sys:String>
 	<sys:String x:Key="String/SessionView.RestartAsAdministrator">以 超级管理员 身份重新启动</sys:String>
