@@ -4,10 +4,8 @@
 
 	<!-- AzureResourcesDialog -->
 	<sys:Double x:Key="Double/AzureResourcesDialog.ResourceTreeView.Height">400</sys:Double>
-	<sys:Double x:Key="Double/AzureResourcesDialog.ResourceTreeView.Item.Icon.Size">16</sys:Double>
 	<sys:Double x:Key="Double/AzureResourcesDialog.ResourceTreeView.Item.Type.Opacity">0.5</sys:Double>
 	<sys:Double x:Key="Double/AzureResourcesDialog.Width">450</sys:Double>
-	<Thickness x:Key="Thickness/AzureResourcesDialog.ResourceTreeView.Item.Icon.Margin">0,0,8,0</Thickness>
 	<Thickness x:Key="Thickness/AzureResourcesDialog.ResourceTreeView.Item.Type.Margin">0,3,0,0</Thickness>
 
 	<!-- CopyVarEditorDialog -->
