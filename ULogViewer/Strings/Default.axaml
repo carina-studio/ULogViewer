@@ -109,6 +109,7 @@
 	<sys:String x:Key="String/Common.Copy">Copy</sys:String>
 	<sys:String x:Key="String/Common.DebugMode">Debug Mode</sys:String>
 	<sys:String x:Key="String/Common.Delete">Delete</sys:String>
+	<sys:String x:Key="String/Common.Documentation">Documentation</sys:String>
 	<sys:String x:Key="String/Common.Edit">Edit</sys:String>
 	<sys:String x:Key="String/Common.Empty">Empty</sys:String>
 	<sys:String x:Key="String/Common.ExternalDependencyNotFound">At least one required external dependency is not installed on device. Please install then try again.</sys:String>
@@ -357,7 +358,6 @@
 	<sys:String x:Key="String/LogProfileEditorDialog.IsTemplate">Set as template</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.IsTemplate.Description">Template cannot be used directly but can be cloned as new log profile with partial parameters.</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.IsWorkingDirectoryNeeded">Need to select working directory</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LearnAboutLogsReadingAndParsing">Learn about《How does ULogViewer read and parse logs》</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LearnAboutLogsReadingAndParsingFirst">Do you want to learn about 《How does ULogViewer read and parse logs》 to help you to create log profile?</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogDisplaying">Log Displaying</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogLevelMapForReading">Mapping of log level</sys:String>

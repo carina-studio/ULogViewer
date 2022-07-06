@@ -15,6 +15,7 @@
         xmlns:appDataSources="clr-namespace:CarinaStudio.ULogViewer.Logs.DataSources;assembly=ULogViewer"
         xmlns:appLogProfiles="clr-namespace:CarinaStudio.ULogViewer.Logs.Profiles;assembly=ULogViewer"
         xmlns:appLogs="clr-namespace:CarinaStudio.ULogViewer.Logs;assembly=ULogViewer"
+		xmlns:cs="using:CarinaStudio"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.LogProfileEditorDialog"
         Classes="Dialog"
@@ -39,6 +40,10 @@
 		<!-- Control buttons -->
 		<Border Classes="Dialog_ControlButtonsPanel" DockPanel.Dock="Bottom">
 			<StackPanel Classes="Dialog_ControlButtonsPanel">
+				<Button Classes="Dialog_IconControlButton" Command="{Binding $parent[Window].OpenDocumentation}" ToolTip.Tip="{DynamicResource String/Common.Documentation}">
+					<Image Classes="Dialog_IconControlButton_Icon" Source="{StaticResource Image/Icon.Question}"/>
+				</Button>
+				<Separator Classes="Dialog_Separator_Small"/>
 				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].GenerateResultCommand}" Content="{DynamicResource String/Common.OK}"/>
 				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].Close}" Content="{DynamicResource String/Common.Cancel}"/>
 			</StackPanel>
@@ -52,13 +57,6 @@
 				<Border Classes="Dialog_TextBlock_Header1">
 					<TextBlock Classes="Dialog_TextBlock_Header1" Text="{DynamicResource String/LogProfileEditorDialog.Common}"/>
 				</Border>
-
-				<!-- How to read and parse logs -->
-				<StackPanel Orientation="Horizontal">
-					<Image Classes="Dialog_Icon" Source="{StaticResource Image/Icon.Question.Colored}"/>
-					<abControls:LinkTextBlock HorizontalAlignment="Left" Text="{DynamicResource String/LogProfileEditorDialog.LearnAboutLogsReadingAndParsing}" Uri="{x:Static appControls:LogProfileEditorDialog.LogsReadingAndParsingPageUri}"/>
-				</StackPanel>
-				<Separator Classes="Dialog_Separator"/>
 				
 				<!-- Name -->
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogProfileEditorDialog.Name}"/>

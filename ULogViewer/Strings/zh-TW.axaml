@@ -108,6 +108,7 @@
 	<sys:String x:Key="String/Common.Copy">複製</sys:String>
 	<sys:String x:Key="String/Common.DebugMode">偵錯模式</sys:String>
 	<sys:String x:Key="String/Common.Delete">刪除</sys:String>
+	<sys:String x:Key="String/Common.Documentation">說明文件</sys:String>
 	<sys:String x:Key="String/Common.Edit">編輯</sys:String>
 	<sys:String x:Key="String/Common.Empty">空</sys:String>
 	<sys:String x:Key="String/Common.ExternalDependencyNotFound">至少有一個必要的外部相依性沒有安裝至裝置，請先安裝後再嘗試。</sys:String>
@@ -329,7 +330,6 @@
 	<sys:String x:Key="String/LogProfileEditorDialog.IsTemplate">指定為範本</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.IsTemplate.Description">範本無法被直接使用，但可以用於包含部分參數並複製成為新的日誌類型。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.IsWorkingDirectoryNeeded">必須選擇工作目錄</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LearnAboutLogsReadingAndParsing">了解 《ULogViewer 如何讀取及解析日誌》</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LearnAboutLogsReadingAndParsingFirst">您是否想要先了解 《ULogViewer 如何讀取及解析日誌》 以幫助您建立日誌類型？</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogDisplaying">日誌顯示設定</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogLevelMapForReading">日誌等級對照表</sys:String>

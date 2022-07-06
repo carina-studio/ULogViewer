@@ -108,6 +108,7 @@
 	<sys:String x:Key="String/Common.Copy">复制</sys:String>
 	<sys:String x:Key="String/Common.DebugMode">调试模式</sys:String>
 	<sys:String x:Key="String/Common.Delete">删除</sys:String>
+	<sys:String x:Key="String/Common.Documentation">说明文件</sys:String>
 	<sys:String x:Key="String/Common.Edit">编辑</sys:String>
 	<sys:String x:Key="String/Common.Empty">空</sys:String>
 	<sys:String x:Key="String/Common.ExternalDependencyNotFound">至少有一个必要的外部依赖没有安装至设备，请先安装后再尝试。</sys:String>
@@ -329,7 +330,6 @@
 	<sys:String x:Key="String/LogProfileEditorDialog.IsTemplate">指定为模板</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.IsTemplate.Description">模板无法被直接使用，但可以用于包含部分参数并复制成为新的日志类型。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.IsWorkingDirectoryNeeded">必须选择工作目录</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LearnAboutLogsReadingAndParsing">了解 《ULogViewer 如何读取及解析日志》</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LearnAboutLogsReadingAndParsingFirst">您是否想要先了解 《ULogViewer 如何读取及解析日志》 以帮助您建立日志类型？</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogDisplaying">日志显示設定</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogLevelMapForReading">日志等级对照表</sys:String>

@@ -873,6 +873,11 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Open online documentation.
+		void OpenDocumentation() =>
+			Platform.OpenLink("https://carinastudio.azurewebsites.net/ULogViewer/HowToReadAndParseLogs");
+
+
 		// Remove log level map entry.
 		void RemoveLogLevelMapEntry(object entry)
 		{
