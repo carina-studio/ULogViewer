@@ -102,28 +102,14 @@
 	<sys:String x:Key="String/BuiltInProfile.WindowsSystemEventLogs.Description">位于本机上分类为 'System' 的 Windows 事件记录。</sys:String>
 	
 	<!-- Common -->
-	<sys:String x:Key="String/Common.Add">新增</sys:String>
-	<sys:String x:Key="String/Common.Administrator">系统管理员</sys:String>
-	<sys:String x:Key="String/Common.Cancel">取消</sys:String>
-	<sys:String x:Key="String/Common.Copy">复制</sys:String>
-	<sys:String x:Key="String/Common.DebugMode">调试模式</sys:String>
-	<sys:String x:Key="String/Common.Delete">删除</sys:String>
 	<sys:String x:Key="String/Common.Documentation">说明文件</sys:String>
-	<sys:String x:Key="String/Common.Edit">编辑</sys:String>
-	<sys:String x:Key="String/Common.Empty">空</sys:String>
 	<sys:String x:Key="String/Common.ExternalDependencyNotFound">至少有一个必要的外部依赖没有安装至设备，请先安装后再尝试。</sys:String>
-	<sys:String x:Key="String/Common.KnowMoreAbout">了解更多</sys:String>
 	<sys:String x:Key="String/Common.MoveDown">下移</sys:String>
 	<sys:String x:Key="String/Common.MoveUp">上移</sys:String>
 	<sys:String x:Key="String/Common.NewLine">换行</sys:String>
-	<sys:String x:Key="String/Common.No">否</sys:String>
-	<sys:String x:Key="String/Common.OK">确定</sys:String>
-	<sys:String x:Key="String/Common.Options">选项</sys:String>
 	<sys:String x:Key="String/Common.References">参考文件</sys:String>
 	<sys:String x:Key="String/Common.RegularExpression.Reference">语法说明</sys:String>
-	<sys:String x:Key="String/Common.Rename">重新命名</sys:String>
 	<sys:String x:Key="String/Common.To">至</sys:String>
-	<sys:String x:Key="String/Common.Yes">是</sys:String>
 
 	<!-- ContextualBasedAnalysisActionsEditor -->
 	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.CopyVariableAction.WithDialog">复制变量值…</sys:String>
