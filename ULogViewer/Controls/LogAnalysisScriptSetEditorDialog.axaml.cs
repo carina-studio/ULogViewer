@@ -278,7 +278,27 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Window<IU
 	/// <inheritdoc/>
 	protected override void OnOpened(EventArgs e)
 	{
+		// call base
 		base.OnOpened(e);
+
+		// setup initial window size and position
+		(this.Screens.ScreenFromWindow(this.PlatformImpl) ?? this.Screens.Primary)?.Let(screen =>
+		{
+			var workingArea = screen.WorkingArea;
+			var widthRatio = this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogAnalysisScriptSetEditorDialogInitWidthRatio);
+			var heightRatio = this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogAnalysisScriptSetEditorDialogInitHeightRatio);
+			var pixelDensity = Platform.IsMacOS ? 1.0 : screen.PixelDensity;
+			var left = (workingArea.TopLeft.X + workingArea.Width * (1 - widthRatio) / 2) / pixelDensity;
+			var top = (workingArea.TopLeft.Y + workingArea.Height * (1 - heightRatio) / 2) / pixelDensity;
+			var width = (workingArea.Width * widthRatio) / pixelDensity;
+			var height = (workingArea.Height * heightRatio) / pixelDensity;
+			var sysDecorSize = this.GetSystemDecorationSizes();
+			this.Position = new((int)(left + 0.5), (int)(top + 0.5));
+			this.Width = width;
+			this.Height = (height - sysDecorSize.Top - sysDecorSize.Bottom);
+		});
+
+		// show script
 		var scriptSet = this.scriptSetToEdit;
 		if (scriptSet != null)
 		{
@@ -305,6 +325,8 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Window<IU
 			this.iconComboBox.SelectedItem = LogProfileIcon.Analysis;
 			this.setupScriptEditor.Language = ScriptLanguage.JavaScript;
 		}
+
+		// setup initial focus
 		this.SynchronizationContext.Post(() =>
 		{
 			this.Get<ScrollViewer>("contentScrollViewer").ScrollToHome();

@@ -61,6 +61,14 @@ sealed class ConfigurationKeys
     /// </summary>
     public static readonly SettingKey<int> LogAnalysisParamsUpdateDelay = new(nameof(LogAnalysisParamsUpdateDelay), 500);
     /// <summary>
+    /// Initial ratio of height of LogAnalysisScriptSetEditorDialog.
+    /// </summary>
+    public static readonly SettingKey<double> LogAnalysisScriptSetEditorDialogInitHeightRatio = new(nameof(LogAnalysisScriptSetEditorDialogInitHeightRatio), 0.9);
+    /// <summary>
+    /// Initial ratio of width of LogAnalysisScriptSetEditorDialog.
+    /// </summary>
+    public static readonly SettingKey<double> LogAnalysisScriptSetEditorDialogInitWidthRatio = new(nameof(LogAnalysisScriptSetEditorDialogInitWidthRatio), 0.6);
+    /// <summary>
     /// Size of chunk of non-continuous logs reading.
     /// </summary>
     public static readonly SettingKey<int> NonContinuousLogsReadingUpdateChunkSize = new(nameof(NonContinuousLogsReadingUpdateChunkSize), 32768);
