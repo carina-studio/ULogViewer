@@ -204,6 +204,11 @@ partial class KeyLogAnalysisRuleSetEditorDialog : AppSuite.Controls.Window<IULog
 		WindowTransparencyLevel.None;
 	
 
+	// Open online documentation.
+	void OpenDocumentation() =>
+		Platform.OpenLink("https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#KeyLogAnalysis");
+	
+
 	// Remove rule.
 	void RemoveRule(ListBoxItem item)
 	{

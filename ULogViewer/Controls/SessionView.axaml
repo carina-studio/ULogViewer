@@ -1370,6 +1370,10 @@
 													</Button.IsEnabled>
 													<Image Classes="BrowseButtonIcon" Source="{StaticResource Image/ClearSelection}"/>
 												</Button>
+												<Separator Classes="Dialog_Separator"/>
+												<Button Classes="BrowseButton" Command="{Binding $parent[UserControl].OpenLogAnalysisDocumentation}" ToolTip.Tip="{DynamicResource String/Common.Help}">
+													<Image Classes="BrowseButtonIcon" Source="{StaticResource Image/Icon.Question}"/>
+												</Button>
 											</StackPanel>
 										</Grid>
 									</StackPanel>

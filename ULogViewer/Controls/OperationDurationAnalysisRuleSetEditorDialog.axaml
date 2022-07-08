@@ -18,6 +18,10 @@
 		<!-- Control buttons -->
 		<Border Classes="Dialog_ControlButtonsPanel">
 			<StackPanel Classes="Dialog_ControlButtonsPanel">
+				<Button Classes="Dialog_IconControlButton" Command="{Binding $parent[Window].OpenDocumentation}" ToolTip.Tip="{DynamicResource String/Common.Help}">
+					<Image Classes="Dialog_IconControlButton_Icon" Source="{StaticResource Image/Icon.Question}"/>
+				</Button>
+				<Separator Classes="Dialog_Separator_Small"/>
 				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].CompleteEditing}" Content="{DynamicResource String/Common.OK}" IsEnabled="{Binding $parent[Window].AreValidParameters}"/>
 				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].Close}" Content="{DynamicResource String/Common.Cancel}"/>
 			</StackPanel>

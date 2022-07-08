@@ -313,6 +313,11 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Window<IU
 	}
 
 
+	// Open online documentation.
+	void OpenDocumentation() =>
+		Platform.OpenLink("https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#LogAnalysisScript");
+
+
 	// Get compilation results of setup script.
 	IList<CompilationResult> SetupScriptCompilationResults { get; }
 

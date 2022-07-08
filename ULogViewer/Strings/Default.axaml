@@ -103,7 +103,6 @@
 	<sys:String x:Key="String/BuiltInProfile.WindowsSystemEventLogs.Description">Windows events belongs to category 'System' of local machine.</sys:String>
 	
 	<!-- Common -->
-	<sys:String x:Key="String/Common.Documentation">Documentation</sys:String>
 	<sys:String x:Key="String/Common.ExternalDependencyNotFound">At least one required external dependency is not installed on device. Please install then try again.</sys:String>
 	<sys:String x:Key="String/Common.MoveDown">Move down</sys:String>
 	<sys:String x:Key="String/Common.MoveUp">Move up</sys:String>

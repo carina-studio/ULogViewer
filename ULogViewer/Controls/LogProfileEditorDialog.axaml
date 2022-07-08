@@ -40,7 +40,7 @@
 		<!-- Control buttons -->
 		<Border Classes="Dialog_ControlButtonsPanel" DockPanel.Dock="Bottom">
 			<StackPanel Classes="Dialog_ControlButtonsPanel">
-				<Button Classes="Dialog_IconControlButton" Command="{Binding $parent[Window].OpenDocumentation}" ToolTip.Tip="{DynamicResource String/Common.Documentation}">
+				<Button Classes="Dialog_IconControlButton" Command="{Binding $parent[Window].OpenDocumentation}" ToolTip.Tip="{DynamicResource String/Common.Help}">
 					<Image Classes="Dialog_IconControlButton_Icon" Source="{StaticResource Image/Icon.Question}"/>
 				</Button>
 				<Separator Classes="Dialog_Separator_Small"/>

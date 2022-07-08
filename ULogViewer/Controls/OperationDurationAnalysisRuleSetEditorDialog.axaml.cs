@@ -200,6 +200,11 @@ namespace CarinaStudio.ULogViewer.Controls
 			WindowTransparencyLevel.None;
 		
 
+		// Open online documentation.
+		void OpenDocumentation() =>
+			Platform.OpenLink("https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#OperationDurationAnalysis");
+		
+
 		// Remove rule.
 		void RemoveRule(ListBoxItem item)
 		{

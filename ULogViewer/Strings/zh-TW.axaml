@@ -102,7 +102,6 @@
 	<sys:String x:Key="String/BuiltInProfile.WindowsSystemEventLogs.Description">位於本機上分類為 'System' 的 Windows 事件紀錄。</sys:String>
 	
 	<!-- Common -->
-	<sys:String x:Key="String/Common.Documentation">說明文件</sys:String>
 	<sys:String x:Key="String/Common.ExternalDependencyNotFound">至少有一個必要的外部相依性沒有安裝至裝置，請先安裝後再嘗試。</sys:String>
 	<sys:String x:Key="String/Common.MoveDown">下移</sys:String>
 	<sys:String x:Key="String/Common.MoveUp">上移</sys:String>

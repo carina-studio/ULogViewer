@@ -4116,6 +4116,11 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Open online documentation.
+		void OpenLogAnalysisDocumentation() =>
+			Platform.OpenLink("https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis");
+
+
 		// Sorted predefined log text filters.
 		IList<PredefinedLogTextFilter> PredefinedLogTextFilters { get => this.predefinedLogTextFilters; }
 
