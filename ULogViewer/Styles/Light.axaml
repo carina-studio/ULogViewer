@@ -67,6 +67,7 @@
 			<Color x:Key="Color/SyntaxHighlighting.Keyword.ControlFlow">#bf00e3</Color>
 			<Color x:Key="Color/SyntaxHighlighting.Number">#008855</Color>
 			<Color x:Key="Color/SyntaxHighlighting.String">#b20002</Color>
+			<Color x:Key="Color/SyntaxHighlighting.String.EscapeCharacter">#ff0000</Color>
 			<Color x:Key="Color/SyntaxHighlighting.Type">#00819c</Color>
 
 		</ResourceDictionary>

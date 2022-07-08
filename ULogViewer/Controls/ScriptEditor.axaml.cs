@@ -276,6 +276,7 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 						var cfKeywordColor = (Color)this.FindResource("Color/SyntaxHighlighting.Keyword.ControlFlow").AsNonNull();
 						var commentColor = (Color)this.FindResource("Color/SyntaxHighlighting.Comment").AsNonNull();
 						var directiveColor = (Color)this.FindResource("Color/SyntaxHighlighting.CompilerDirective").AsNonNull();
+						var ecColor = (Color)this.FindResource("Color/SyntaxHighlighting.String.EscapeCharacter").AsNonNull();
 						var keywordColor = (Color)this.FindResource("Color/SyntaxHighlighting.Keyword").AsNonNull();
 						var numberColor = (Color)this.FindResource("Color/SyntaxHighlighting.Number").AsNonNull();
 						var stringColor = (Color)this.FindResource("Color/SyntaxHighlighting.String").AsNonNull();
@@ -327,6 +328,24 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 								|| pattern.StartsWith("\'"))
 							{
 								span.SpanColor = new() { Foreground = new SimpleHighlightingBrush(stringColor) };
+								foreach (var subSpan in span.RuleSet.Spans)
+								{
+									var subPattern = subSpan.StartExpression.ToString();
+									if (subPattern.StartsWith($"\\"))
+										subSpan.SpanColor = new() { Foreground = new SimpleHighlightingBrush(ecColor) };
+									else if (subPattern.StartsWith("{"))
+									{
+										subSpan.StartColor = new() { Foreground = new SimpleHighlightingBrush(stringColor) };
+										subSpan.EndColor = new() { Foreground = new SimpleHighlightingBrush(stringColor) };
+										subSpan.SpanColor = new() { Foreground = new SimpleHighlightingBrush(baseColor) };
+									}
+									else
+									{
+										subSpan.StartColor = new() { Foreground = new SimpleHighlightingBrush(stringColor) };
+										subSpan.EndColor = new() { Foreground = new SimpleHighlightingBrush(stringColor) };
+										subSpan.SpanColor = new() { Foreground = new SimpleHighlightingBrush(stringColor) };
+									}
+								}
 								cjkSpans.Add(span);
 							}
 							else if (pattern.StartsWith("\\#"))

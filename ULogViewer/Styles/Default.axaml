@@ -101,6 +101,7 @@
 			<Color x:Key="Color/SyntaxHighlighting.Keyword.ControlFlow">#d081c3</Color>
 			<Color x:Key="Color/SyntaxHighlighting.Number">#afcfa4</Color>
 			<Color x:Key="Color/SyntaxHighlighting.String">#d98d74</Color>
+			<Color x:Key="Color/SyntaxHighlighting.String.EscapeCharacter">#ddb974</Color>
 			<Color x:Key="Color/SyntaxHighlighting.Type">#00ccaf</Color>
 
 			<!-- TextArea -->
