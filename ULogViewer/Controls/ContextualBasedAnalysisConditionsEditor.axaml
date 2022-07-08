@@ -47,7 +47,10 @@
 			</asControls:ListBox.ItemTemplate>
 		</asControls:ListBox>
 		<ToggleButton Name="addConditionButton" Classes="BrowseButton" Command="{Binding $parent[UserControl].ShowAddConditionMenu}" Grid.Column="1" ToolTip.Tip="{DynamicResource String/Common.Add}" VerticalAlignment="Top">
-			<Image Classes="BrowseButtonIcon" Source="{StaticResource Image/Icon.Add}"/>
+			<Panel>
+				<Image Classes="BrowseButtonIcon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.Add.Light}"/>
+				<Image Classes="BrowseButtonIcon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.Add}"/>
+			</Panel>
 		</ToggleButton>
 	</Grid>
 	

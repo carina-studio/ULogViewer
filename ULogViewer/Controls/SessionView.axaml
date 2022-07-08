@@ -475,12 +475,8 @@
 										</iaCore:DataTriggerBehavior>
 									</ia:Interaction.Behaviors>
 									<Panel>
+										<Image Classes="Icon" Source="{StaticResource Image/Icon.Save.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
 										<Image Classes="Icon" Source="{StaticResource Image/Icon.Save}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
-										<Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}">
-											<DrawingImage>
-												<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/Icon.Save}"/>
-											</DrawingImage>
-										</Image>
 									</Panel>
 								</ToggleButton>
 
@@ -1353,7 +1349,10 @@
 											</Border>
 											<StackPanel Grid.Column="1" VerticalAlignment="Top">
 												<ToggleButton Name="createLogAnalysisRuleSetButton" Classes="BrowseButton" Command="{Binding $parent[UserControl].CreateLogAnalysisRuleSet}" ToolTip.Tip="{DynamicResource String/Common.Create}">
-													<Image Classes="BrowseButtonIcon" Source="{StaticResource Image/Icon.Add}"/>
+													<Panel>
+														<Image Classes="BrowseButtonIcon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.Add.Light}"/>
+														<Image Classes="BrowseButtonIcon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.Add}"/>
+													</Panel>
 												</ToggleButton>
 												<Separator Classes="Dialog_Separator_Small"/>
 												<Button Classes="BrowseButton" Command="{Binding $parent[UserControl].ImportLogAnalysisRuleSet}" ToolTip.Tip="{DynamicResource String/Common.Import}">
