@@ -7,6 +7,8 @@ using Avalonia.LogicalTree;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using AvaloniaEdit;
+using AvaloniaEdit.Document;
+using AvaloniaEdit.Editing;
 using AvaloniaEdit.Highlighting;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
@@ -71,6 +73,7 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 	bool isSourceEditorFocused;
 	string? source;
 	readonly TextEditor sourceEditor;
+	readonly TextArea sourceEditorArea;
 	readonly Dictionary<ScriptLanguage, IHighlightingDefinition> syntaxHighlightingDefs = new()
 	{
 		{ ScriptLanguage.CSharp, HighlightingManager.Instance.GetDefinition("C#") },
@@ -112,25 +115,6 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 				this.ReportCanScrolling();
 			});
 			it.ShowLineNumbers = true;
-			it.TextArea.Let(textArea =>
-			{
-				textArea.GotFocus += (sender, e) => 
-				{
-					this.SynchronizationContext.Post(() => textArea.Options.HighlightCurrentLine = true);
-					this.SetAndRaise<bool>(IsSourceEditorFocusedProperty, ref this.isSourceEditorFocused, true);
-				};
-				textArea.LostFocus += (sender, e) => 
-				{
-					this.SynchronizationContext.Post(() => textArea.Options.HighlightCurrentLine = false);
-					this.SetAndRaise<bool>(IsSourceEditorFocusedProperty, ref this.isSourceEditorFocused, false);
-				};
-				textArea.Options.EnableEmailHyperlinks = true;
-				textArea.Options.EnableHyperlinks = true;
-				textArea.Options.EnableImeSupport = true;
-				textArea.Options.EnableRectangularSelection = true;
-				textArea.Options.EnableTextDragDrop = true;
-				textArea.Options.RequireControlModifierForHyperlinkClick = true;
-			});
 			it.TextChanged += (_, e) => 
 			{
 				this.SetAndRaise<string?>(SourceProperty, ref this.source, it.Text);
@@ -141,6 +125,30 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 				this.SetAndRaise<ScrollBarVisibility>(VerticalScrollBarVisibilityProperty, ref this.vertScrollBarVisibility, visibility);
 				this.ReportCanScrolling();
 			});
+		});
+		this.sourceEditorArea = this.sourceEditor.TextArea.Also(it =>
+		{
+			it.GotFocus += (sender, e) => 
+			{
+				this.SynchronizationContext.Post(() => it.Options.HighlightCurrentLine = true);
+				this.SetAndRaise<bool>(IsSourceEditorFocusedProperty, ref this.isSourceEditorFocused, true);
+			};
+			it.LostFocus += (sender, e) => 
+			{
+				this.SynchronizationContext.Post(() => it.Options.HighlightCurrentLine = false);
+				this.SetAndRaise<bool>(IsSourceEditorFocusedProperty, ref this.isSourceEditorFocused, false);
+			};
+			it.TextEntered += (_, e) =>
+			{
+				var text = e.Text;
+			};
+			it.TextEntering += this.OnTextEntering;
+			it.Options.EnableEmailHyperlinks = true;
+			it.Options.EnableHyperlinks = true;
+			it.Options.EnableImeSupport = true;
+			it.Options.EnableRectangularSelection = true;
+			it.Options.EnableTextDragDrop = true;
+			it.Options.RequireControlModifierForHyperlinkClick = true;
 		});
 		this.updateCjkSpanFontFamilies = new(() =>
 		{
@@ -202,6 +210,52 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 	public bool CanScrollVertically { get => this.canScrollVertically; }
 
 
+	// Create indentation.
+	string CreateIndentation() =>
+		this.CreateIndentation(1);
+	string CreateIndentation(int indentation) => indentation > 0
+		? new string(new char[indentation].Also(it =>
+		{
+			for (var i = it.Length - 1; i >= 0; --i)
+				it[i] = '\t';
+		}))
+		: "";
+
+
+	// Get current line.
+	DocumentLine GetCurrentLine()
+	{
+		var position = this.sourceEditor.SelectionStart + this.sourceEditor.SelectionLength;
+		var lines = this.sourceEditorArea.Document.Lines;
+		for (var i = lines.Count - 1; i > 0; --i)
+		{
+			if (lines[i].Offset <= position)
+				return lines[i];
+		}
+		return lines[0];
+	}
+
+
+	// Get indentation of given line.
+	int GetIndentation(DocumentLine line)
+	{
+		var indentation = 0;
+		var indentationSize = this.sourceEditorArea.Options.IndentationSize;
+		var text = this.sourceEditor.Text;
+		for (int i = line.Offset, end = line.EndOffset; i < end; ++i)
+		{
+			var c = text[i];
+			if (c == '\t')
+				indentation += indentationSize;
+			else if (char.IsWhiteSpace(c))
+				++indentation;
+			else
+				break;
+		}
+		return (indentation / indentationSize);
+	}
+
+
 	/// <summary>
 	/// Get or set horizontal scroll bar visibility.
 	/// </summary>
@@ -225,6 +279,19 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 			this.SetAndRaise<bool>(IsReadOnlyProperty, ref this.isReadOnly, value);
 		}
 	}
+
+
+	// Check whether given line contains whitespace only or not.
+	bool IsWhitespace(DocumentLine line)
+	{
+		var text = this.sourceEditor.Text;
+		for (int i = line.Offset, end = line.EndOffset; i < end; ++i)
+		{
+			if (!char.IsWhiteSpace(text[i]))
+				return false;
+		}
+		return true;
+	} 
 
 
 	/// <summary>
@@ -434,6 +501,121 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 	{
 		if (e.Key == SettingKeys.ScriptEditorFontFamily || e.Key == SettingKeys.ScriptEditorFontSize)
 			this.updateFontFamilyAndSizeAction.Schedule();
+	}
+
+
+	// Called when text entering.
+	void OnTextEntering(object? sender, TextInputEventArgs e)
+	{
+		switch (e.Text)
+		{
+			case "\n":
+				{
+					var line = this.GetCurrentLine();
+					var indentation = this.GetIndentation(line);
+					(var prevChar, var nextChar) = this.sourceEditor.Text.Let(text =>
+					{
+						var prevChar = '\0';
+						var nextChar = '\0';
+						for (int i = this.sourceEditor.SelectionStart - 1, start = line.Offset; i >= start; --i)
+						{
+							var c = text[i];
+							if (!char.IsWhiteSpace(c))
+							{
+								prevChar = c;
+								break;
+							}
+						}
+						for (int i = this.sourceEditor.SelectionStart + this.sourceEditor.SelectionLength, end = line.EndOffset; i < end; ++i)
+						{
+							var c = text[i];
+							if (!char.IsWhiteSpace(c))
+							{
+								nextChar = c;
+								break;
+							}
+						}
+						return (prevChar, nextChar);
+					});
+					if (prevChar != '{')
+						e.Text = $"\n{this.CreateIndentation(indentation)}";
+					else if (nextChar != '}')
+						e.Text = $"\n{this.CreateIndentation(indentation + 1)}";
+					else
+					{
+						var textForNextLine = $"\n{this.CreateIndentation(indentation)}";
+						e.Text = $"\n{this.CreateIndentation(indentation + 1)}{textForNextLine}";
+						this.SynchronizationContext.Post(() =>
+						{
+							this.sourceEditor.SelectionStart -= textForNextLine.Length;
+						});
+					}
+				}
+				break;
+			case "{":
+				if (this.sourceEditor.SelectionLength == 0)
+				{
+					var position = this.sourceEditor.SelectionStart;
+					var text = this.sourceEditor.Text;
+					if (position == 0 || (text[position - 1] != '{' && text[position - 1] != '\\'))
+					{
+						e.Text = "{}";
+						this.SynchronizationContext.Post(() =>
+						{
+							this.sourceEditor.SelectionStart = position + 1;
+							this.sourceEditor.SelectionLength = 0;
+						});
+					}
+				}
+				break;
+			case "}":
+				{
+					var line = this.GetCurrentLine();
+					var prevLine = line.PreviousLine;
+					if (IsWhitespace(line) && prevLine != null)
+					{
+						var position = this.sourceEditor.SelectionStart;
+						var indentation = this.GetIndentation(prevLine);
+						var newText = $"{this.CreateIndentation(Math.Max(0, indentation - 1))}}}";
+						e.Text = "";
+						this.SynchronizationContext.Post(() =>
+						{
+							this.sourceEditor.Select(line.Offset, line.Length);
+							this.sourceEditor.SelectedText = newText;
+							this.sourceEditor.SelectionLength = 0;
+							this.sourceEditor.SelectionStart = line.Offset + newText.Length;
+						});
+					}
+				}
+				break;
+			case "(":
+			case "[":
+			case "'":
+			case "\"":
+				if (this.sourceEditor.SelectionLength == 0)
+				{
+					var position = this.sourceEditor.SelectionStart;
+					if (position == 0 || this.sourceEditor.Text[position - 1] != '\\')
+					{
+						var startingStr = e.Text;
+						var endingStr = startingStr switch
+						{
+							"(" => ")",
+							"[" => "]",
+							"'" => "'",
+							"\"" => "\"",
+							_ => "",
+						};
+						e.Text = $"{startingStr}{endingStr}";
+						this.SynchronizationContext.Post(() =>
+						{
+							this.sourceEditor.SelectionStart = position + startingStr.Length;
+							this.sourceEditor.SelectionLength = 0;
+						});
+					}
+				}
+				break;
+		}
 	}
 
 
