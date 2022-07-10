@@ -8,6 +8,9 @@
 	<!-- Common -->
 	<sys:String x:Key="String/Common.Administrator">Superuser</sys:String>
 
+	<!-- ScriptEditor -->
+	<sys:String x:Key="String/ScriptEditor.DefaultFontFamilies">Monaco,Menlo</sys:String>
+
 	<!-- SessionView -->
 	<sys:String x:Key="String/SessionView.AddLogFiles.WithShortcut">Add log files (⌘O)</sys:String>
 	<sys:String x:Key="String/SessionView.EditPathEnvVar">Edit /etc/paths…</sys:String>

@@ -10,12 +10,12 @@ using AvaloniaEdit;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Editing;
 using AvaloniaEdit.Highlighting;
-using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Scripting;
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace CarinaStudio.ULogViewer.Controls;
 
@@ -55,13 +55,21 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 
 
 	// Static fields.
+	static readonly Regex CjkCharRegex = new("(\\p{IsCJKRadicalsSupplement}|\\p{IsCJKSymbolsandPunctuation}|\\p{IsEnclosedCJKLettersandMonths}|\\p{IsCJKCompatibility}|\\p{IsCJKUnifiedIdeographsExtensionA}|\\p{IsCJKUnifiedIdeographs}|\\p{IsCJKCompatibilityIdeographs}|\\p{IsCJKCompatibilityForms})+");
 	static readonly AvaloniaProperty<bool> IsSourceEditorFocusedProperty = AvaloniaProperty.RegisterDirect<ScriptEditor, bool>("IsSourceEditorFocused", d => d.isSourceEditorFocused);
 
 
 	// Fields.
 	bool canScrollHorizontally;
 	bool canScrollVertically;
-	readonly List<HighlightingSpan> cjkSpans = new();
+	readonly HighlightingRule cjkRule = new()
+	{
+		Color = new() 
+		{ 
+			Background = new SimpleHighlightingBrush(Colors.Transparent),
+		},
+		Regex = CjkCharRegex,
+	};
 	string? defaultCjkFontFamilyName;
 	IObservable<object?>? defaultCjkFontFamilyNameObservable;
 	IDisposable? defaultCjkFontFamilyNameObserverToken;
@@ -79,7 +87,7 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 		{ ScriptLanguage.CSharp, HighlightingManager.Instance.GetDefinition("C#") },
 		{ ScriptLanguage.JavaScript, HighlightingManager.Instance.GetDefinition("JavaScript") },
 	};
-	readonly ScheduledAction updateCjkSpanFontFamilies;
+	readonly ScheduledAction updateCjkFontFamilies;
 	readonly ScheduledAction updateFontFamilyAndSizeAction;
 	readonly ScheduledAction updateSyntaxHighlightingAction;
 	ScrollBarVisibility vertScrollBarVisibility;
@@ -153,10 +161,8 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 			it.Options.IndentationSize = Math.Max(1, this.Settings.GetValueOrDefault(SettingKeys.IndentationSizeInScript));
 			it.Options.RequireControlModifierForHyperlinkClick = true;
 		});
-		this.updateCjkSpanFontFamilies = new(() =>
+		this.updateCjkFontFamilies = new(() =>
 		{
-			if (this.cjkSpans.IsEmpty())
-				return;
 			var fontFamilyNames = this.Settings.GetValueOrDefault(SettingKeys.ScriptEditorFontFamily).Let(it =>
 			{
 				if (string.IsNullOrWhiteSpace(it))
@@ -164,11 +170,7 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 				return it;
 			});
 			if (!string.IsNullOrWhiteSpace(fontFamilyNames))
-			{
-				var fontFamily = new FontFamily(fontFamilyNames);
-				foreach (var span in this.cjkSpans)
-					span.SpanColor.FontFamily = fontFamily;
-			}
+				this.cjkRule.Color.FontFamily = new(fontFamilyNames);
 		});
 		this.updateFontFamilyAndSizeAction = new(() =>
 		{
@@ -343,12 +345,11 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 			if (value is string name)
 			{
 				this.defaultCjkFontFamilyName = name;
-				this.updateCjkSpanFontFamilies.Execute();
+				this.updateCjkFontFamilies.Execute();
 			}
 		});
 
 		// setup syntax highlighting
-		this.cjkSpans.Clear();
 		foreach (var (language, definition) in this.syntaxHighlightingDefs)
 		{
 			switch (language)
@@ -403,7 +404,10 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 								|| pattern.StartsWith("/\\*"))
 							{
 								span.SpanColor = new HighlightingColor() { Foreground = new SimpleHighlightingBrush(commentColor) };
-								cjkSpans.Add(span);
+								if (span.RuleSet == null)
+									span.RuleSet = new();
+								if (!span.RuleSet.Rules.Contains(this.cjkRule))
+									span.RuleSet.Rules.Add(this.cjkRule);
 							}
 							else if (pattern.StartsWith("\"")
 								|| pattern.StartsWith("@\"")
@@ -429,7 +433,10 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 										subSpan.SpanColor = new() { Foreground = new SimpleHighlightingBrush(stringColor) };
 									}
 								}
-								cjkSpans.Add(span);
+								if (span.RuleSet == null)
+									span.RuleSet = new();
+								if (!span.RuleSet.Rules.Contains(this.cjkRule))
+									span.RuleSet.Rules.Add(this.cjkRule);
 							}
 							else if (pattern.StartsWith("\\#"))
 								span.SpanColor = new HighlightingColor() { Foreground = new SimpleHighlightingBrush(directiveColor) };
@@ -468,13 +475,19 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 								|| pattern.StartsWith("/\\*"))
 							{
 								span.SpanColor = new HighlightingColor() { Foreground = new SimpleHighlightingBrush(commentColor) };
-								cjkSpans.Add(span);
+								if (span.RuleSet == null)
+									span.RuleSet = new();
+								if (!span.RuleSet.Rules.Contains(this.cjkRule))
+									span.RuleSet.Rules.Add(this.cjkRule);
 							}
 							else if (pattern.StartsWith("\"")
 								|| pattern.StartsWith("'"))
 							{
 								span.SpanColor = new() { Foreground = new SimpleHighlightingBrush(stringColor) };
-								cjkSpans.Add(span);
+								if (span.RuleSet == null)
+									span.RuleSet = new();
+								if (!span.RuleSet.Rules.Contains(this.cjkRule))
+									span.RuleSet.Rules.Add(this.cjkRule);
 							}
 							else
 								span.SpanColor = new HighlightingColor() { Foreground = new SimpleHighlightingBrush(baseColor) };
@@ -483,7 +496,7 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 					break;
 			}
 		}
-		this.updateCjkSpanFontFamilies.Execute();
+		this.updateCjkFontFamilies.Execute();
 		this.updateSyntaxHighlightingAction.Execute();
 
 		// setup selection color
