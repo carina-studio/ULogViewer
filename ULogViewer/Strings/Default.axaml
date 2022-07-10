@@ -7,9 +7,11 @@
 
 	<!-- AppOptionsDialog -->
 	<sys:String x:Key="String/AppOptionsDialog.ContinuousLogReadingUpdateInterval">Log update interval when continuous reading (milliseconds)</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.DefaultScriptLanguage">Default language</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs">Scroll to latest log after reloading logs</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs.Description">Only for continuous logs reading</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.IgnoreCaseOfLogTextFilter">Ignore case of text filter</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.IndentationSizeInScript">Size of indentation</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.InitialLogProfile">Initial log profile when startup</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.LogAnalysis">Log Analysis</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.LogFiltering">Log Filtering</sys:String>
@@ -21,6 +23,7 @@
 	<sys:String x:Key="String/AppOptionsDialog.ResetLogAnalysisRuleSetsAfterSettingLogProfile">Reset applied rule sets after changing log profile</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SaveMemoryAggressively">Save memory usage aggressively</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SaveMemoryAggressively.Description">Keep memory usage as low as possible. It will reduce speed of logs reading/filtering and UI smoothness.</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.Scripting">Scripting</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectIPEndPointWhenNeeded">Show IP endpoint input when IP endpoint is needed</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectLogFilesWhenNeeded">Show file selector when log files are needed</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectLogProfileForNewSession">Show log profile selector after creating new tab</sys:String>
@@ -29,6 +32,7 @@
 	<sys:String x:Key="String/AppOptionsDialog.SelectWorkingDirectoryWhenNeeded">Show directory selector when working directory is needed</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ShowProcessInfo">Show CPU/memory usage on status bar</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.UpdateLogFilterDelay">Delay between changing conditions and start filtering (milliseconds)</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.UseSpacesForIndentationInScript">Use spaces for indentation</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.UseSystemAccentColor">Apply system accent color</sys:String>
 
 	<!-- Azure -->

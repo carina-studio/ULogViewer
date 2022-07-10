@@ -2,6 +2,7 @@
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.ULogViewer.Logs.Profiles;
+using CarinaStudio.ULogViewer.Scripting;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -68,6 +69,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		}
 
 
+		/// <summary>
+		/// Get or set default script language.
+		/// </summary>
+		public ScriptLanguage DefaultScriptLanguage
+		{
+			get => this.Settings.GetValueOrDefault(SettingKeys.DefaultScriptLanguage);
+			set => this.Settings.SetValue<ScriptLanguage>(SettingKeys.DefaultScriptLanguage, value);
+		}
+
+
 		// Dispose.
 		protected override void Dispose(bool disposing)
 		{
@@ -103,6 +114,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			get => this.Settings.GetValueOrDefault(SettingKeys.IgnoreCaseOfLogTextFilter);
 			set => this.Settings.SetValue<bool>(SettingKeys.IgnoreCaseOfLogTextFilter, value);
+		}
+
+
+		/// <summary>
+		/// Get or set indentation size for script.
+		/// </summary>
+		public int IndentationSizeInScript
+		{
+			get => this.Settings.GetValueOrDefault(SettingKeys.IndentationSizeInScript);
+			set => this.Settings.SetValue<int>(SettingKeys.IndentationSizeInScript, value);
 		}
 
 
@@ -209,10 +230,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			var key = e.Key;
 			if (key == SettingKeys.ContinuousLogReadingUpdateInterval)
 				this.OnPropertyChanged(nameof(ContinuousLogReadingUpdateInterval));
+			else if (key == SettingKeys.DefaultScriptLanguage)
+				this.OnPropertyChanged(nameof(DefaultScriptLanguage));
 			else if (key == SettingKeys.EnableScrollingToLatestLogAfterReloadingLogs)
 				this.OnPropertyChanged(nameof(EnableScrollingToLatestLogAfterReloadingLogs));
 			else if (key == SettingKeys.IgnoreCaseOfLogTextFilter)
 				this.OnPropertyChanged(nameof(IgnoreCaseOfLogTextFilter));
+			else if (key == SettingKeys.IndentationSizeInScript)
+				this.OnPropertyChanged(nameof(IndentationSizeInScript));
 			else if (key == SettingKeys.InitialLogProfile)
 				this.OnPropertyChanged(nameof(InitialLogProfile));
 			else if (key == SettingKeys.LogFontFamily)
@@ -247,6 +272,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.OnPropertyChanged(nameof(ShowProcessInfo));
 			else if (key == SettingKeys.UpdateLogFilterDelay)
 				this.OnPropertyChanged(nameof(UpdateLogFilterDelay));
+			else if (key == SettingKeys.UseSpacesForIndentationInScript)
+				this.OnPropertyChanged(nameof(UseSpacesForIndentationInScript));
 			else if (key == SettingKeys.UseSystemAccentColor)
 				this.OnPropertyChanged(nameof(UseSystemAccentColor));
 			else
@@ -358,6 +385,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			get => this.Settings.GetValueOrDefault(SettingKeys.UpdateLogFilterDelay);
 			set => this.Settings.SetValue<int>(SettingKeys.UpdateLogFilterDelay, value);
+		}
+
+
+		/// <summary>
+		/// Get or set whether using spaces instead of tab for indentation of script or not.
+		/// </summary>
+		public bool UseSpacesForIndentationInScript
+		{
+			get => this.Settings.GetValueOrDefault(SettingKeys.UseSpacesForIndentationInScript);
+			set => this.Settings.SetValue<bool>(SettingKeys.UseSpacesForIndentationInScript, value);
 		}
 
 

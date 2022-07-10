@@ -91,6 +91,7 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 	public ScriptEditor()
 	{
 		AvaloniaXamlLoader.Load(this);
+		this.SetValue<ScriptLanguage>(LanguageProperty, this.Settings.GetValueOrDefault(SettingKeys.DefaultScriptLanguage));
 		this.AddHandler(PointerWheelChangedEvent, (object? sender, PointerWheelEventArgs e) =>
 		{
 			var intercept = false;
@@ -143,11 +144,13 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 				var text = e.Text;
 			};
 			it.TextEntering += this.OnTextEntering;
+			it.Options.ConvertTabsToSpaces = this.Settings.GetValueOrDefault(SettingKeys.UseSpacesForIndentationInScript);
 			it.Options.EnableEmailHyperlinks = true;
 			it.Options.EnableHyperlinks = true;
 			it.Options.EnableImeSupport = true;
 			it.Options.EnableRectangularSelection = true;
 			it.Options.EnableTextDragDrop = true;
+			it.Options.IndentationSize = Math.Max(1, this.Settings.GetValueOrDefault(SettingKeys.IndentationSizeInScript));
 			it.Options.RequireControlModifierForHyperlinkClick = true;
 		});
 		this.updateCjkSpanFontFamilies = new(() =>
@@ -213,14 +216,27 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 	// Create indentation.
 	string CreateIndentation() =>
 		this.CreateIndentation(1);
-	string CreateIndentation(int indentation) => indentation > 0
-		? new string(new char[indentation].Also(it =>
+	string CreateIndentation(int indentation)
+	{
+		if (indentation <= 0)
+			return "";
+		if (this.Settings.GetValueOrDefault(SettingKeys.UseSpacesForIndentationInScript))
 		{
-			for (var i = it.Length - 1; i >= 0; --i)
-				it[i] = '\t';
-		}))
-		: "";
-
+			return new string(new char[indentation * this.sourceEditorArea.Options.IndentationSize].Also(it =>
+			{
+				for (var i = it.Length - 1; i >= 0; --i)
+					it[i] = ' ';
+			}));
+		}
+		else
+		{
+			return new string(new char[indentation].Also(it =>
+			{
+				for (var i = it.Length - 1; i >= 0; --i)
+					it[i] = '\t';
+			}));
+		}
+	}
 
 	// Get current line.
 	DocumentLine GetCurrentLine()
@@ -501,6 +517,10 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 	{
 		if (e.Key == SettingKeys.ScriptEditorFontFamily || e.Key == SettingKeys.ScriptEditorFontSize)
 			this.updateFontFamilyAndSizeAction.Schedule();
+		else if (e.Key == SettingKeys.IndentationSizeInScript)
+			this.sourceEditorArea.Options.IndentationSize = Math.Max(1, (int)e.Value);
+		else if (e.Key == SettingKeys.UseSpacesForIndentationInScript)
+			this.sourceEditorArea.Options.ConvertTabsToSpaces = (bool)e.Value;
 	}
 
 

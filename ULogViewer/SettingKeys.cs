@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Avalonia.Media;
 using CarinaStudio.Configuration;
-using System;
+using CarinaStudio.ULogViewer.Scripting;
 
 namespace CarinaStudio.ULogViewer
 {
@@ -13,35 +13,43 @@ namespace CarinaStudio.ULogViewer
 		/// <summary>
 		/// Interval of updating logs for continuous reading.
 		/// </summary>
-		public static readonly SettingKey<int> ContinuousLogReadingUpdateInterval = new SettingKey<int>(nameof(ContinuousLogReadingUpdateInterval), 100);
+		public static readonly SettingKey<int> ContinuousLogReadingUpdateInterval = new(nameof(ContinuousLogReadingUpdateInterval), 100);
+		/// <summary>
+		/// Default language of script.
+		/// </summary>
+		public static readonly SettingKey<ScriptLanguage> DefaultScriptLanguage = new(nameof(DefaultScriptLanguage), ScriptLanguage.JavaScript);
 		/// <summary>
 		/// Enable scrolling to latest log automatically after reloading logs.
 		/// </summary>
-		public static readonly SettingKey<bool> EnableScrollingToLatestLogAfterReloadingLogs = new SettingKey<bool>(nameof(EnableScrollingToLatestLogAfterReloadingLogs), true);
+		public static readonly SettingKey<bool> EnableScrollingToLatestLogAfterReloadingLogs = new(nameof(EnableScrollingToLatestLogAfterReloadingLogs), true);
 		/// <summary>
 		/// Ignore case of log text filter.
 		/// </summary>
-		public static readonly SettingKey<bool> IgnoreCaseOfLogTextFilter = new SettingKey<bool>(nameof(IgnoreCaseOfLogTextFilter), true);
+		public static readonly SettingKey<bool> IgnoreCaseOfLogTextFilter = new(nameof(IgnoreCaseOfLogTextFilter), true);
+		/// <summary>
+		/// Indentation size of script.
+		/// </summary>
+		public static readonly SettingKey<int> IndentationSizeInScript = new(nameof(IndentationSizeInScript), 4);
 		/// <summary>
 		/// ID of initial log profile.
 		/// </summary>
-		public static readonly SettingKey<string> InitialLogProfile = new SettingKey<string>(nameof(InitialLogProfile), "");
+		public static readonly SettingKey<string> InitialLogProfile = new(nameof(InitialLogProfile), "");
 		/// <summary>
 		/// Font family of log.
 		/// </summary>
-		public static readonly SettingKey<string> LogFontFamily = new SettingKey<string>(nameof(LogFontFamily), "");
+		public static readonly SettingKey<string> LogFontFamily = new(nameof(LogFontFamily), "");
 		/// <summary>
 		/// Font size of log.
 		/// </summary>
-		public static readonly SettingKey<int> LogFontSize = new SettingKey<int>(nameof(LogFontSize), Platform.IsMacOS ? 13 : 14);
+		public static readonly SettingKey<int> LogFontSize = new(nameof(LogFontSize), Platform.IsMacOS ? 13 : 14);
 		/// <summary>
 		/// Maximum number of logs for continuous logs reading.
 		/// </summary>
-		public static readonly SettingKey<int> MaxContinuousLogCount = new SettingKey<int>(nameof(MaxContinuousLogCount), 1000000);
+		public static readonly SettingKey<int> MaxContinuousLogCount = new(nameof(MaxContinuousLogCount), 1000000);
 		/// <summary>
 		/// Maximum line count to display for each log.
 		/// </summary>
-		public static readonly SettingKey<int> MaxDisplayLineCountForEachLog = new SettingKey<int>(nameof(MaxDisplayLineCountForEachLog), 5);
+		public static readonly SettingKey<int> MaxDisplayLineCountForEachLog = new(nameof(MaxDisplayLineCountForEachLog), 5);
 		/// <summary>
 		/// Reset all log analysis rule sets after setting log profile.
 		/// </summary>
@@ -49,47 +57,51 @@ namespace CarinaStudio.ULogViewer
 		/// <summary>
 		/// Keep memory usage as low as possible.
 		/// </summary>
-		public static readonly SettingKey<bool> SaveMemoryAggressively = new SettingKey<bool>(nameof(SaveMemoryAggressively), false);
+		public static readonly SettingKey<bool> SaveMemoryAggressively = new(nameof(SaveMemoryAggressively), false);
 		/// <summary>
 		/// Font family of script editor.
 		/// </summary>
-		public static readonly SettingKey<string> ScriptEditorFontFamily = new SettingKey<string>(nameof(ScriptEditorFontFamily), "");
+		public static readonly SettingKey<string> ScriptEditorFontFamily = new(nameof(ScriptEditorFontFamily), "");
 		/// <summary>
 		/// Font size of script editor.
 		/// </summary>
-		public static readonly SettingKey<int> ScriptEditorFontSize = new SettingKey<int>(nameof(ScriptEditorFontSize), Platform.IsMacOS ? 13 : 14);
+		public static readonly SettingKey<int> ScriptEditorFontSize = new(nameof(ScriptEditorFontSize), Platform.IsMacOS ? 13 : 14);
 		/// <summary>
 		/// Select IP endpoint immediately when they are needed.
 		/// </summary>
-		public static readonly SettingKey<bool> SelectIPEndPointWhenNeeded = new SettingKey<bool>(nameof(SelectIPEndPointWhenNeeded), true);
+		public static readonly SettingKey<bool> SelectIPEndPointWhenNeeded = new(nameof(SelectIPEndPointWhenNeeded), true);
 		/// <summary>
 		/// Select log files immediately when they are needed.
 		/// </summary>
-		public static readonly SettingKey<bool> SelectLogFilesWhenNeeded = new SettingKey<bool>(nameof(SelectLogFilesWhenNeeded), false);
+		public static readonly SettingKey<bool> SelectLogFilesWhenNeeded = new(nameof(SelectLogFilesWhenNeeded), false);
 		/// <summary>
 		/// Select log profile immediately after creating new session.
 		/// </summary>
-		public static readonly SettingKey<bool> SelectLogProfileForNewSession = new SettingKey<bool>(nameof(SelectLogProfileForNewSession), true);
+		public static readonly SettingKey<bool> SelectLogProfileForNewSession = new(nameof(SelectLogProfileForNewSession), true);
 		/// <summary>
 		/// Select precondition before reading logs from files.
 		/// </summary>
-		public static readonly SettingKey<bool> SelectLogReadingPreconditionForFiles = new SettingKey<bool>(nameof(SelectLogReadingPreconditionForFiles), true);
+		public static readonly SettingKey<bool> SelectLogReadingPreconditionForFiles = new(nameof(SelectLogReadingPreconditionForFiles), true);
 		/// <summary>
 		/// Select URI immediately when it is needed.
 		/// </summary>
-		public static readonly SettingKey<bool> SelectUriWhenNeeded = new SettingKey<bool>(nameof(SelectUriWhenNeeded), true);
+		public static readonly SettingKey<bool> SelectUriWhenNeeded = new(nameof(SelectUriWhenNeeded), true);
 		/// <summary>
 		/// Select working directory immediately when it is needed.
 		/// </summary>
-		public static readonly SettingKey<bool> SelectWorkingDirectoryWhenNeeded = new SettingKey<bool>(nameof(SelectWorkingDirectoryWhenNeeded), true);
+		public static readonly SettingKey<bool> SelectWorkingDirectoryWhenNeeded = new(nameof(SelectWorkingDirectoryWhenNeeded), true);
 		/// <summary>
 		/// Delay of updating log filter after changing related parameters in milliseconds.
 		/// </summary>
-		public static readonly SettingKey<int> UpdateLogFilterDelay = new SettingKey<int>(nameof(UpdateLogFilterDelay), 500);
+		public static readonly SettingKey<int> UpdateLogFilterDelay = new(nameof(UpdateLogFilterDelay), 500);
+		/// <summary>
+		/// Use spaces instead of tab for indentation in script.
+		/// </summary>
+		public static readonly SettingKey<bool> UseSpacesForIndentationInScript = new(nameof(UseSpacesForIndentationInScript), true);
 		/// <summary>
 		/// Use system accent color or not.
 		/// </summary>
-		public static readonly SettingKey<bool> UseSystemAccentColor = new SettingKey<bool>(nameof(UseSystemAccentColor), true);
+		public static readonly SettingKey<bool> UseSystemAccentColor = new(nameof(UseSystemAccentColor), true);
 
 
 		/// <summary>

@@ -321,9 +321,9 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Window<IU
 		}
 		else
 		{
-			this.analysisScriptEditor.Language = ScriptLanguage.JavaScript;
+			this.analysisScriptEditor.Language = this.Settings.GetValueOrDefault(SettingKeys.DefaultScriptLanguage);
 			this.iconComboBox.SelectedItem = LogProfileIcon.Analysis;
-			this.setupScriptEditor.Language = ScriptLanguage.JavaScript;
+			this.setupScriptEditor.Language = this.Settings.GetValueOrDefault(SettingKeys.DefaultScriptLanguage);
 		}
 
 		// setup initial focus
