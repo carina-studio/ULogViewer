@@ -15,6 +15,7 @@
 		CanResize="True"
         Classes="Dialog"
 		Height="{DynamicResource Double/LogAnalysisScriptSetEditorDialog.Height}"
+		Icon="/ULogViewer.ico"
         MinHeight="{DynamicResource Double/LogAnalysisScriptSetEditorDialog.MinHeight}"
         MinWidth="{DynamicResource Double/LogAnalysisScriptSetEditorDialog.MinWidth}"
 		SizeToContent="Manual"
