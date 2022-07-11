@@ -152,6 +152,7 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 
 	// Static fields.
 	static readonly Regex CjkCharRegex = new("(\\p{IsCJKRadicalsSupplement}|\\p{IsCJKSymbolsandPunctuation}|\\p{IsEnclosedCJKLettersandMonths}|\\p{IsCJKCompatibility}|\\p{IsCJKUnifiedIdeographsExtensionA}|\\p{IsCJKUnifiedIdeographs}|\\p{IsCJKCompatibilityIdeographs}|\\p{IsCJKCompatibilityForms})+");
+	static bool IsFirstApplyingSyntaxHighlighting = true;
 	static readonly AvaloniaProperty<bool> IsSourceEditorFocusedProperty = AvaloniaProperty.RegisterDirect<ScriptEditor, bool>("IsSourceEditorFocused", d => d.isSourceEditorFocused);
 
 
@@ -504,10 +505,6 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 								|| pattern.StartsWith("/\\*"))
 							{
 								span.SpanColor = new HighlightingColor() { Foreground = new SimpleHighlightingBrush(commentColor) };
-								if (span.RuleSet == null)
-									span.RuleSet = new();
-								if (!span.RuleSet.Rules.Contains(this.cjkRule))
-									span.RuleSet.Rules.Add(this.cjkRule);
 							}
 							else if (pattern.StartsWith("\"")
 								|| pattern.StartsWith("@\"")
@@ -533,15 +530,16 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 										subSpan.SpanColor = new() { Foreground = new SimpleHighlightingBrush(stringColor) };
 									}
 								}
-								if (span.RuleSet == null)
-									span.RuleSet = new();
-								if (!span.RuleSet.Rules.Contains(this.cjkRule))
-									span.RuleSet.Rules.Add(this.cjkRule);
 							}
 							else if (pattern.StartsWith("\\#"))
 								span.SpanColor = new HighlightingColor() { Foreground = new SimpleHighlightingBrush(directiveColor) };
 							else
 								span.SpanColor = new HighlightingColor() { Foreground = new SimpleHighlightingBrush(baseColor) };
+							if (IsFirstApplyingSyntaxHighlighting)
+							{
+								span.RuleSet ??= new();
+								span.RuleSet.Rules.Add(this.cjkRule);
+							}
 						}
 					}
 					break;
@@ -575,27 +573,25 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 								|| pattern.StartsWith("/\\*"))
 							{
 								span.SpanColor = new HighlightingColor() { Foreground = new SimpleHighlightingBrush(commentColor) };
-								if (span.RuleSet == null)
-									span.RuleSet = new();
-								if (!span.RuleSet.Rules.Contains(this.cjkRule))
-									span.RuleSet.Rules.Add(this.cjkRule);
 							}
 							else if (pattern.StartsWith("\"")
 								|| pattern.StartsWith("'"))
 							{
 								span.SpanColor = new() { Foreground = new SimpleHighlightingBrush(stringColor) };
-								if (span.RuleSet == null)
-									span.RuleSet = new();
-								if (!span.RuleSet.Rules.Contains(this.cjkRule))
-									span.RuleSet.Rules.Add(this.cjkRule);
 							}
 							else
 								span.SpanColor = new HighlightingColor() { Foreground = new SimpleHighlightingBrush(baseColor) };
+							if (IsFirstApplyingSyntaxHighlighting)
+							{
+								span.RuleSet ??= new();
+								span.RuleSet.Rules.Add(this.cjkRule);
+							}
 						}
 					}
 					break;
 			}
 		}
+		IsFirstApplyingSyntaxHighlighting = false;
 		this.updateCjkFontFamilies.Execute();
 		this.updateSyntaxHighlightingAction.Execute();
 
