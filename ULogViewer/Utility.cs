@@ -94,7 +94,7 @@ static class Utility
         // select file
         var fileName = await new SaveFileDialog().Also(dialog =>
         {
-            dialog.Filters.Add(new FileDialogFilter().Also(it =>
+            dialog.Filters?.Add(new FileDialogFilter().Also(it =>
             {
                 it.Extensions.Add("png");
                 it.Name = App.Current.GetString("FileFormat.Png");
