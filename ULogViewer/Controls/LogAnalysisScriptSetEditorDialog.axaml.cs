@@ -288,8 +288,8 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Window<IU
 			var widthRatio = this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogAnalysisScriptSetEditorDialogInitWidthRatio);
 			var heightRatio = this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogAnalysisScriptSetEditorDialogInitHeightRatio);
 			var pixelDensity = Platform.IsMacOS ? 1.0 : screen.PixelDensity;
-			var left = (workingArea.TopLeft.X + workingArea.Width * (1 - widthRatio) / 2) / pixelDensity;
-			var top = (workingArea.TopLeft.Y + workingArea.Height * (1 - heightRatio) / 2) / pixelDensity;
+			var left = (workingArea.TopLeft.X + workingArea.Width * (1 - widthRatio) / 2); // in device pixels
+			var top = (workingArea.TopLeft.Y + workingArea.Height * (1 - heightRatio) / 2); // in device pixels
 			var width = (workingArea.Width * widthRatio) / pixelDensity;
 			var height = (workingArea.Height * heightRatio) / pixelDensity;
 			var sysDecorSize = this.GetSystemDecorationSizes();
