@@ -55,6 +55,12 @@ abstract class BaseContext : IContext
 
 
     /// <summary>
+    /// Get or set whether showing text input dialog is allowed or not.
+    /// </summary>
+    internal bool IsShowingTextInputDialogAllowed { get; set; } = true;
+
+
+    /// <summary>
     /// Check whether context is waiting for user input or not.
     /// </summary>
     internal bool IsWaitingForUserInput { get => this.userInputWaitingCount > 0; }
@@ -71,7 +77,7 @@ abstract class BaseContext : IContext
 
 
     /// <inheritdoc/>
-    public MessageDialogResult ShowMessageDialog(string message, MessageDialogIcon icon, MessageDialogButtons buttons)
+    public MessageDialogResult ShowMessageDialog(string? message, MessageDialogIcon icon, MessageDialogButtons buttons)
     {
         if (!this.IsShowingMessageDialogAllowed)
             return GetDefaultMessageDialogResult(buttons);
@@ -122,6 +128,74 @@ abstract class BaseContext : IContext
                             };
                             result = (MessageDialogResult)await dialog.ShowDialog(window);
                             this.IsShowingMessageDialogAllowed = !dialog.DoNotAskOrShowAgain.GetValueOrDefault();
+                        }
+                        lock (syncLock)
+                            Monitor.Pulse(syncLock);
+                    });
+                    Monitor.Wait(syncLock);
+                });
+            }
+            return result;
+        }
+        finally
+        {
+            waitingCount = Interlocked.Decrement(ref this.userInputWaitingCount);
+            if (waitingCount == 0)
+                this.IsWaitingForUserInputChanged?.Invoke(false);
+        }
+    }
+
+
+    /// <inheritdoc/>
+    public string? ShowTextInputDialog(string? message, string? initialText)
+    {
+        if (!this.IsShowingTextInputDialogAllowed)
+            return null;
+        var waitingCount = Interlocked.Increment(ref this.userInputWaitingCount);
+        if (waitingCount == 1)
+            this.IsWaitingForUserInputChanged?.Invoke(true);
+        try
+        {
+            var result = (string?)null;
+            if (this.app.CheckAccess())
+            {
+                var window = this.app.LatestActiveMainWindow;
+                if (window != null)
+                {
+                    var taskCompletionSource = new TaskCompletionSource();
+                    this.app.SynchronizationContext.Post(async () =>
+                    {
+                        var dialog = new ASControls.TextInputDialog()
+                        {
+                            DoNotShowAgain = false,
+                            InitialText = initialText,
+                            Message = message,
+                        };
+                        result = await dialog.ShowDialog(window);
+                        this.IsShowingTextInputDialogAllowed = !dialog.DoNotShowAgain.GetValueOrDefault();
+                        taskCompletionSource.SetResult();
+                    });
+                    while (!taskCompletionSource.Task.IsCompleted)
+                        Avalonia.Threading.Dispatcher.UIThread.RunJobs();
+                }
+            }
+            else
+            {
+                new object().Lock(syncLock =>
+                {
+                    this.app.SynchronizationContext.Post(async () =>
+                    {
+                        var window = this.app.LatestActiveMainWindow;
+                        if (window != null)
+                        {
+                            var dialog = new ASControls.TextInputDialog()
+                            {
+                                DoNotShowAgain = false,
+                                InitialText = initialText,
+                                Message = message,
+                            };
+                            result = await dialog.ShowDialog(window);
+                            this.IsShowingTextInputDialogAllowed = !dialog.DoNotShowAgain.GetValueOrDefault();
                         }
                         lock (syncLock)
                             Monitor.Pulse(syncLock);

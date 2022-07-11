@@ -28,7 +28,50 @@ public interface IContext
     /// <param name="icon">Icon.</param>
     /// <param name="buttons">Buttons.</param>
     /// <returns>Result of dialog.</returns>
-    MessageDialogResult ShowMessageDialog(string message, MessageDialogIcon icon = MessageDialogIcon.Information, MessageDialogButtons buttons = MessageDialogButtons.OK);
+    MessageDialogResult ShowMessageDialog(string? message, MessageDialogIcon icon = MessageDialogIcon.Information, MessageDialogButtons buttons = MessageDialogButtons.OK);
+
+
+    /// <summary>
+    /// Show text input dialog.
+    /// </summary>
+    /// <param name="message">Message.</param>
+    /// <param name="initialText">Initial text.</param>
+    /// <returns>User input text.</returns>
+    string? ShowTextInputDialog(string? message, string? initialText = null);
+}
+
+
+/// <summary>
+/// Extensions for <see cref="IContext"/>.
+/// </summary>
+public static class ContextExtensions
+{
+    /// <summary>
+    /// Show message dialog.
+    /// </summary>
+    /// <param name="message">Message.</param>
+    /// <returns>Result of dialog.</returns>
+    public static MessageDialogResult ShowMessageDialog(this IContext context, string? message) =>
+        context.ShowMessageDialog(message, MessageDialogIcon.Information, MessageDialogButtons.OK);
+    
+
+    /// <summary>
+    /// Show message dialog.
+    /// </summary>
+    /// <param name="message">Message.</param>
+    /// <param name="icon">Icon.</param>
+    /// <returns>Result of dialog.</returns>
+    public static MessageDialogResult ShowMessageDialog(this IContext context, string? message, MessageDialogIcon icon) =>
+        context.ShowMessageDialog(message, icon, MessageDialogButtons.OK);
+    
+
+    /// <summary>
+    /// Show text input dialog.
+    /// </summary>
+    /// <param name="message">Message.</param>
+    /// <returns>User input text.</returns>
+    public static string? ShowTextInputDialog(this IContext context, string? message) =>
+        context.ShowTextInputDialog(message, null);
 }
 
 
