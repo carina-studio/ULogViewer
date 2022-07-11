@@ -89,13 +89,13 @@ sealed class ConfigurationKeys
     /// </summary>
     public static readonly SettingKey<int> ProgressiveLogClearingInterval = new(nameof(ProgressiveLogClearingInterval), 60);
     /// <summary>
+    /// Interval of checking whether script running is completed or not.
+    /// </summary>
+    public static readonly SettingKey<int> ScriptCompletionCheckingInterval = new(nameof(ScriptCompletionCheckingInterval), 3000);
+    /// <summary>
     /// Timeout before notifying user that network connection is needed for product activation.
     /// </summary>
     public static readonly SettingKey<int> TimeoutToNotifyNetworkConnectionForProductActivation = new(nameof(TimeoutToNotifyNetworkConnectionForProductActivation), 3 * 60 * 1000);
-    /// <summary>
-    /// Timeout of running script pf log analysis.
-    /// </summary>
-    public static readonly SettingKey<int> TimeoutToRunLogAnalysisScript = new(nameof(TimeoutToRunLogAnalysisScript), 5000);
 
 
     // Constructor.

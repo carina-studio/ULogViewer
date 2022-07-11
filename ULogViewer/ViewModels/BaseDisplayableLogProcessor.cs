@@ -327,6 +327,15 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
 
 
     /// <summary>
+    /// Check whether the given token is the token of current processing or not.
+    /// </summary>
+    /// <param name="token">Token to check.</param>
+    /// <returns>True if given token is the token of current processing.</returns>
+    protected bool IsCurrentProcessingToken(TProcessingToken token) =>
+        object.ReferenceEquals(this.currentProcessingParams?.Token, token);
+
+
+    /// <summary>
     /// Check whether logs processing is on-going or not.
     /// </summary>
     public bool IsProcessing { get; private set; }
