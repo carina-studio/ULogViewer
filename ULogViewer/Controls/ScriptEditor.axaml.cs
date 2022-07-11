@@ -2,14 +2,17 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
+using Avalonia.Input.TextInput;
 using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
+using Avalonia.VisualTree;
 using AvaloniaEdit;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Editing;
 using AvaloniaEdit.Highlighting;
+using AvaloniaEdit.Rendering;
 using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Scripting;
@@ -54,6 +57,99 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 	public static readonly AvaloniaProperty<ScrollBarVisibility> VerticalScrollBarVisibilityProperty = AvaloniaProperty.RegisterDirect<ScriptEditor, ScrollBarVisibility>(nameof(VerticalScrollBarVisibility), c => c.vertScrollBarVisibility);
 
 
+	// IME client.
+	class TextInputMethodClient : ITextInputMethodClient
+	{
+		// Fields.
+		Rect? cursorRect;
+		readonly ScrollViewer? scrollViewer;
+		readonly TextArea textArea;
+		readonly TextEditor textEditor;
+		readonly TextView textView;
+
+		// Constructor.
+		public TextInputMethodClient(TextEditor textEditor)
+		{
+			this.scrollViewer = textEditor.FindDescendantOfType<ScrollViewer>()?.Also(it =>
+			{
+				it.ScrollChanged += (_, e) =>
+				{
+					this.cursorRect = null;
+					this.CursorRectangleChanged?.Invoke(this, EventArgs.Empty);
+				};
+			});
+			this.textArea = textEditor.TextArea;
+			this.textArea.Caret.PositionChanged += (_, e) => 
+			{
+				this.cursorRect = null;
+				this.CursorRectangleChanged?.Invoke(this, EventArgs.Empty);
+			};
+			this.textEditor = textEditor;
+			this.textView = this.textArea.TextView;
+		}
+
+		// Implementations.
+		public Rect CursorRectangle 
+		{ 
+			get
+			{
+				if (this.cursorRect == null)
+				{
+					// calculate cursor rect relate to focused element (textArea)
+					var cursorRect = this.textArea.Caret.CalculateCaretRectangle();
+					var scrollOffsetX = this.textEditor.HorizontalOffset;
+					var scrollOffsetY = this.textEditor.VerticalOffset;
+					var offset = this.textView.Bounds.TopLeft;
+					var parent = this.textView.Parent;
+					while (parent != this.textArea && parent != null)
+					{
+						offset = parent.Bounds.Let(it =>
+							new Point(offset.X + it.X, offset.Y + it.Y));
+						parent = parent.Parent;
+					}
+					this.cursorRect = new(cursorRect.X + offset.X - scrollOffsetX, cursorRect.Y + offset.Y - scrollOffsetY, cursorRect.Width, cursorRect.Height);
+				}
+				return this.cursorRect.GetValueOrDefault();
+			}
+		}
+		public event EventHandler? CursorRectangleChanged;
+		public void SetPreeditText(string text)
+		{ }
+		public bool SupportsPreedit { get => true; }
+		public bool SupportsSurroundingText { get => false; }
+#pragma warning disable CS0067
+		public event EventHandler? SurroundingTextChanged;
+#pragma warning restore CS0067
+		public string TextAfterCursor 
+		{ 
+			get
+			{
+				var position = this.textEditor.SelectionStart + this.textEditor.SelectionLength;
+				var text = this.textEditor.Text;
+				if (position < text.Length)
+					return text.Substring(position, 1);
+				return "";
+			}
+		}
+		public string TextBeforeCursor 
+		{ 
+			get
+			{
+				var position = this.textEditor.SelectionStart;
+				var text = this.textEditor.Text;
+				if (position > 0)
+					return text.Substring(position - 1, 1);
+				return "";
+			}
+		}
+		public TextInputMethodSurroundingText SurroundingText { get; }
+		public IVisual TextViewVisual { get => this.textView; }
+#pragma warning disable CS0067
+		public event EventHandler? TextViewVisualChanged;
+#pragma warning restore CS0067
+	}
+
+
 	// Static fields.
 	static readonly Regex CjkCharRegex = new("(\\p{IsCJKRadicalsSupplement}|\\p{IsCJKSymbolsandPunctuation}|\\p{IsEnclosedCJKLettersandMonths}|\\p{IsCJKCompatibility}|\\p{IsCJKUnifiedIdeographsExtensionA}|\\p{IsCJKUnifiedIdeographs}|\\p{IsCJKCompatibilityIdeographs}|\\p{IsCJKCompatibilityForms})+");
 	static readonly AvaloniaProperty<bool> IsSourceEditorFocusedProperty = AvaloniaProperty.RegisterDirect<ScriptEditor, bool>("IsSourceEditorFocused", d => d.isSourceEditorFocused);
@@ -77,6 +173,7 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 	IObservable<object?>? defaultFontFamilyNameObservable;
 	IDisposable? defaultFontFamilyNameObserverToken;
 	ScrollBarVisibility horzScrollBarVisibility;
+	TextInputMethodClient? imClient;
 	bool isReadOnly;
 	bool isSourceEditorFocused;
 	string? source;
@@ -87,6 +184,7 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 		{ ScriptLanguage.CSharp, HighlightingManager.Instance.GetDefinition("C#") },
 		{ ScriptLanguage.JavaScript, HighlightingManager.Instance.GetDefinition("JavaScript") },
 	};
+	ITextInputMethodRoot? textInputMethodRoot;
 	readonly ScheduledAction updateCjkFontFamilies;
 	readonly ScheduledAction updateFontFamilyAndSizeAction;
 	readonly ScheduledAction updateSyntaxHighlightingAction;
@@ -141,17 +239,19 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 			{
 				this.SynchronizationContext.Post(() => it.Options.HighlightCurrentLine = true);
 				this.SetAndRaise<bool>(IsSourceEditorFocusedProperty, ref this.isSourceEditorFocused, true);
+				this.textInputMethodRoot?.InputMethod?.SetActive(true);
 			};
 			it.LostFocus += (sender, e) => 
 			{
 				this.SynchronizationContext.Post(() => it.Options.HighlightCurrentLine = false);
 				this.SetAndRaise<bool>(IsSourceEditorFocusedProperty, ref this.isSourceEditorFocused, false);
 			};
-			it.TextEntered += (_, e) =>
-			{
-				var text = e.Text;
-			};
 			it.TextEntering += this.OnTextEntering;
+			it.TextInputMethodClientRequested += (_, e) =>
+			{
+				this.imClient ??= new(this.sourceEditor);
+				e.Client = this.imClient;
+			};
 			it.Options.ConvertTabsToSpaces = this.Settings.GetValueOrDefault(SettingKeys.UseSpacesForIndentationInScript);
 			it.Options.EnableEmailHyperlinks = true;
 			it.Options.EnableHyperlinks = true;
@@ -506,6 +606,14 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 
 
 	/// <inheritdoc/>
+	protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+	{
+		base.OnAttachedToVisualTree(e);
+		this.textInputMethodRoot = (this.VisualRoot as ITextInputMethodRoot);
+	}
+
+
+	/// <inheritdoc/>
 	protected override void OnDetachedFromLogicalTree(LogicalTreeAttachmentEventArgs e)
 	{
 		this.Settings.SettingChanged -= this.OnSettingChanged;
@@ -514,6 +622,14 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 		this.defaultCjkFontFamilyNameObservable = null;
 		this.defaultCjkFontFamilyNameObserverToken = this.defaultCjkFontFamilyNameObserverToken.DisposeAndReturnNull();
 		base.OnDetachedFromLogicalTree(e);
+	}
+
+
+	/// <inheritdoc/>
+	protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+	{
+		this.textInputMethodRoot = null;
+		base.OnDetachedFromVisualTree(e);
 	}
 
 
