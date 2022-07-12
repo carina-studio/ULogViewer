@@ -98,6 +98,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Get or set whether script running is enabled or not.
+		/// </summary>
+		public bool EnableRunningScript
+		{
+			get => this.Settings.GetValueOrDefault(SettingKeys.EnableRunningScript);
+			set => this.Settings.SetValue<bool>(SettingKeys.EnableRunningScript, value);
+		}
+
+
+		/// <summary>
 		/// Enable scrolling to latest log automatically after reloading logs.
 		/// </summary>
 		public bool EnableScrollingToLatestLogAfterReloadingLogs
@@ -232,6 +242,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.OnPropertyChanged(nameof(ContinuousLogReadingUpdateInterval));
 			else if (key == SettingKeys.DefaultScriptLanguage)
 				this.OnPropertyChanged(nameof(DefaultScriptLanguage));
+			else if (key == SettingKeys.EnableRunningScript)
+				this.OnPropertyChanged(nameof(EnableRunningScript));
 			else if (key == SettingKeys.EnableScrollingToLatestLogAfterReloadingLogs)
 				this.OnPropertyChanged(nameof(EnableScrollingToLatestLogAfterReloadingLogs));
 			else if (key == SettingKeys.IgnoreCaseOfLogTextFilter)

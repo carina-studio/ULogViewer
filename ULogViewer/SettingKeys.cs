@@ -19,6 +19,10 @@ namespace CarinaStudio.ULogViewer
 		/// </summary>
 		public static readonly SettingKey<ScriptLanguage> DefaultScriptLanguage = new(nameof(DefaultScriptLanguage), ScriptLanguage.JavaScript);
 		/// <summary>
+		/// Enable running script or not.
+		/// </summary>
+		public static readonly SettingKey<bool> EnableRunningScript = new(nameof(EnableRunningScript), false);
+		/// <summary>
 		/// Enable scrolling to latest log automatically after reloading logs.
 		/// </summary>
 		public static readonly SettingKey<bool> EnableScrollingToLatestLogAfterReloadingLogs = new(nameof(EnableScrollingToLatestLogAfterReloadingLogs), true);

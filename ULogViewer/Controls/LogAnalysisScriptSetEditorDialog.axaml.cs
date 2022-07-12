@@ -332,6 +332,27 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Window<IU
 			this.Get<ScrollViewer>("contentScrollViewer").ScrollToHome();
 			this.nameTextBox.Focus();
 		});
+
+		// enable script running
+		if (!this.Settings.GetValueOrDefault(SettingKeys.EnableRunningScript))
+		{
+			this.SynchronizationContext.Post(async () =>
+			{
+				if (this.Settings.GetValueOrDefault(SettingKeys.EnableRunningScript) || this.IsClosed)
+					return;
+				var result = await new MessageDialog()
+				{
+					Buttons = AppSuite.Controls.MessageDialogButtons.YesNo,
+					DefaultResult = AppSuite.Controls.MessageDialogResult.No,
+					Icon = AppSuite.Controls.MessageDialogIcon.Warning,
+					Message = this.Application.GetString("Script.MessageForEnablingRunningScript"),
+				}.ShowDialog(this);
+				if (result == AppSuite.Controls.MessageDialogResult.Yes)
+					this.Settings.SetValue<bool>(SettingKeys.EnableRunningScript, true);
+				else
+					this.Close();
+			});
+		}
 	}
 
 

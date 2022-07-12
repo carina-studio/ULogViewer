@@ -11,6 +11,7 @@
 	<!-- AppOptionsDialog -->
 	<sys:String x:Key="String/AppOptionsDialog.ContinuousLogReadingUpdateInterval">連續讀取時的日誌更新時距 (毫秒)</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.DefaultScriptLanguage">預設腳本語言</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.EnableRunningScript">啟用腳本執行…</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs">在重新載入日誌後捲動至最新的日誌</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs.Description">僅適用於連續讀取日誌</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.IgnoreCaseOfLogTextFilter">文字篩選忽略大小寫</sys:String>
@@ -598,6 +599,9 @@
 	<sys:String x:Key="String/RegexEditorDialog.TestResult.Success">(符合)</sys:String>
 	<sys:String x:Key="String/RegexEditorDialog.Title">編輯格式</sys:String>
 	<sys:String x:Key="String/RegexEditorDialog.Tutorial.ClickButtonToEditPattern">點一下這裡以編輯格式。</sys:String>
+
+	<!-- Script -->
+	<sys:String x:Key="String/Script.MessageForEnablingRunningScript">執行腳本可能會修改或損壞您的電腦，在執行腳本之前您必須仔細確認您所撰寫或匯入的腳本。是否確定要在 ULogViewer 中啟用腳本執行？</sys:String>
 
 	<!-- ScriptEditor -->
 	<sys:String x:Key="String/ScriptEditor.DefaultFontFamilies">Consolas,Courier New</sys:String>

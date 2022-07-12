@@ -8,6 +8,7 @@
 	<!-- AppOptionsDialog -->
 	<sys:String x:Key="String/AppOptionsDialog.ContinuousLogReadingUpdateInterval">Log update interval when continuous reading (milliseconds)</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.DefaultScriptLanguage">Default language</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.EnableRunningScript">Enable scripting…</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs">Scroll to latest log after reloading logs</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs.Description">Only for continuous logs reading</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.IgnoreCaseOfLogTextFilter">Ignore case of text filter</sys:String>
@@ -632,6 +633,9 @@
 	<sys:String x:Key="String/RegexEditorDialog.TestResult.Success">(Matched)</sys:String>
 	<sys:String x:Key="String/RegexEditorDialog.Title">Edit pattern</sys:String>
 	<sys:String x:Key="String/RegexEditorDialog.Tutorial.ClickButtonToEditPattern">Click here to edit the pattern.</sys:String>
+
+	<!-- Script -->
+	<sys:String x:Key="String/Script.MessageForEnablingRunningScript">Your computer may be modified or damaged by running script. You need to review the script you wrote or imported carefully before running it. Are you sure to enable scripting in ULogViewer?</sys:String>
 
 	<!-- ScriptEditor -->
 	<sys:String x:Key="String/ScriptEditor.DefaultFontFamilies">Consolas,Courier New</sys:String>
