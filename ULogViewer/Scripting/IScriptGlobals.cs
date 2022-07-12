@@ -1,4 +1,5 @@
 namespace CarinaStudio.ULogViewer.Scripting;
+using System.Threading;
 
 /// <summary>
 /// Interface of global environment for script.
@@ -9,6 +10,12 @@ public interface IScriptGlobals<TContext> where TContext : IContext
     /// Get application.
     /// </summary>
     IApplication App { get; }
+
+
+    /// <summary>
+    /// Get cancellation token of running script.
+    /// </summary>
+    CancellationToken CancellationToken { get; }
 
 
     /// <summary>

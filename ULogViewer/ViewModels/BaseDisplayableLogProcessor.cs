@@ -634,7 +634,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
         var processedLogs = new List<DisplayableLog>();
         var processingResults = new List<TProcessingResult>(logCount);
         var token = processingParams.Token;
-        for (var i = logs.Count - 1; i >= 0; --i) // Need to process in reverse order to make sure the processing order is same as source list
+        for (var i = logs.Count - 1; i >= 0 && this.currentProcessingParams == processingParams; --i) // Need to process in reverse order to make sure the processing order is same as source list
         {
             var log = logs[i];
             if (this.OnProcessLog(token, log, out var result))
