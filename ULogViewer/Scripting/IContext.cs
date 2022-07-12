@@ -92,7 +92,7 @@ public enum MessageDialogButtons
 /// </summary>
 public enum MessageDialogIcon
 {
-    OK = ASControls.MessageDialogIcon.Error,
+    Error = ASControls.MessageDialogIcon.Error,
     Information = ASControls.MessageDialogIcon.Information,
     Question = ASControls.MessageDialogIcon.Question,
     Success = ASControls.MessageDialogIcon.Success,
