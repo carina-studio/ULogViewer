@@ -102,6 +102,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		static readonly Regex BaseNameRegex = new("^(?<Name>.+)\\s+\\(\\d+\\)\\s*$");
 		static readonly AvaloniaProperty<bool> CanFilterLogsByNonTextFiltersProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(CanFilterLogsByNonTextFilters), false);
 		static readonly AvaloniaProperty<DateTime?> EarliestSelectedLogTimestampProperty = AvaloniaProperty.Register<SessionView, DateTime?>(nameof(EarliestSelectedLogTimestamp));
+		static readonly AvaloniaProperty<bool> EnableRunningScriptProperty = AvaloniaProperty.Register<SessionView, bool>("EnableRunningScript", false);
 		static readonly AvaloniaProperty<bool> HasLogProfileProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(HasLogProfile), false);
 		static readonly AvaloniaProperty<bool> HasSelectedLogsDurationProperty = AvaloniaProperty.Register<SessionView, bool>("HasSelectedLogsDuration", false);
 		static readonly SettingKey<bool> IsCancelShowingMarkedLogsForLogAnalysisResultTutorialShownKey = new("SessionView.IsCancelShowingMarkedLogsForLogAnalysisResultTutorialShown");
@@ -2510,6 +2511,9 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.RecreateLogHeadersAndItemTemplate();
 			this.UpdateToolsMenuItems();
 
+			// check script running
+			this.SetValue<bool>(EnableRunningScriptProperty, this.Settings.GetValueOrDefault(SettingKeys.EnableRunningScript));
+
 			// setup predefined log text filter list
 			this.predefinedLogTextFilters.AddAll(PredefinedLogTextFilterManager.Default.Filters);
 			foreach (var filter in PredefinedLogTextFilterManager.Default.Filters)
@@ -4077,7 +4081,14 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when setting changed.
 		void OnSettingChanged(object? sender, SettingChangedEventArgs e)
 		{
-			if (e.Key == SettingKeys.IgnoreCaseOfLogTextFilter)
+			if (e.Key == SettingKeys.EnableRunningScript)
+			{
+				var isEnabled = (bool)e.Value;
+				this.SetValue<bool>(EnableRunningScriptProperty, isEnabled);
+				if (!isEnabled)
+					this.logAnalysisScriptSetListBox.SelectedItems.Clear();
+			}
+			else if (e.Key == SettingKeys.IgnoreCaseOfLogTextFilter)
 				this.logTextFilterTextBox.IgnoreCase = (bool)e.Value;
 			else if (e.Key == SettingKeys.LogFontFamily)
 				this.UpdateLogFontFamily();

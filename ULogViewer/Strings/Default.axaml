@@ -695,6 +695,7 @@
 	<sys:String x:Key="String/SessionView.LogAnalysisProgress">Analyzing logs…</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisResult">Analysis result</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets">Rule sets of analysis</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.Disabled">(Disabled)</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.KeyLogAnalysisRuleSet">Key log analysis</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.LogAnalysisScriptSet">Log analysis script</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.OperationDurationAnalysisRuleSet">Operation duration analysis</sys:String>

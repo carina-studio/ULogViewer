@@ -661,6 +661,7 @@
 	<sys:String x:Key="String/SessionView.LogAnalysisProgress">分析日志中…</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisResult">分析结果</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets">分析规则集</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.Disabled">(已停用)</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.KeyLogAnalysisRuleSet">关键日志分析</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.LogAnalysisScriptSet">日志分析脚本</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.OperationDurationAnalysisRuleSet">动作时距分析</sys:String>
