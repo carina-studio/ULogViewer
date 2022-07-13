@@ -23,7 +23,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			readonly HttpResponseMessage httpResponse;
 
 			// Constructor.
-			public ReaderImpl(HttpClient httpClient, HttpResponseMessage httpResponse)
+			public ReaderImpl(HttpClient httpClient, HttpResponseMessage httpResponse, LogDataSourceOptions options)
 			{
 				this.httpClient = httpClient;
 				this.httpResponse = httpResponse;
@@ -41,6 +41,8 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 					return null;
 				}) ?? Encoding.UTF8;
 				this.contentReader = new StreamReader(httpResponse.Content.ReadAsStream(), encoding);
+				if (options.FormatJsonData)
+					this.contentReader = new FormattedJsonTextReader(this.contentReader);
 			}
 
 			// Dispose.
@@ -56,7 +58,11 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			}
 
 			// Implementations.
+			public override int Peek() => this.contentReader.Peek();
+			public override int Read() => this.contentReader.Read();
+			public override int ReadBlock(char[] buffer, int offset, int count) => this.contentReader.ReadBlock(buffer, offset, count);
 			public override string? ReadLine() => this.contentReader.ReadLine();
+			public override string ReadToEnd() => this.contentReader.ReadToEnd();
 		}
 
 
@@ -119,7 +125,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			}
 
 			// open reader
-			return (LogDataSourceState.ReaderOpened, new ReaderImpl(httpClient, response));
+			return (LogDataSourceState.ReaderOpened, new ReaderImpl(httpClient, response, options));
 		}
 
 

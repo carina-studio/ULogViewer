@@ -30,6 +30,8 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		}.AsReadOnly();
 		public override ISet<string> SupportedSourceOptions => new HashSet<string>()
 		{
+			nameof(LogDataSourceOptions.FormatJsonData),
+			//nameof(LogDataSourceOptions.FormatXmlData),
 			nameof(LogDataSourceOptions.Password),
 			nameof(LogDataSourceOptions.Uri),
 			nameof(LogDataSourceOptions.UserName),

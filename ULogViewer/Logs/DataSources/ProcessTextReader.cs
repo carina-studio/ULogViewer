@@ -81,6 +81,85 @@ class ProcessTextReader : TextReader
         base.Dispose(disposing);
     }
 
+
+    /// <inheritdoc/>
+    public override int Read()
+    {
+        if (this.stdoutReader != null)
+            return this.stdoutReader.Read();
+        if (this.endOfStream)
+            return -1;
+        lock (this.syncLock)
+        {
+            // start reading line
+            if (this.endOfStream)
+                return -1;
+            if (this.isReadingLine)
+                throw new InvalidOperationException();
+            if (this.bufferedLineFromStderr != null)
+            {
+                var line = this.bufferedLineFromStderr;
+                if (line.Length > 0)
+                {
+                    this.bufferedLineFromStderr = line.Substring(1);
+                    return line[0];
+                }
+                this.bufferedLineFromStderr = null;
+                return '\n';
+            }
+            if (this.bufferedLineFromStdout != null)
+            {
+                var line = this.bufferedLineFromStdout;
+                if (line.Length > 0)
+                {
+                    this.bufferedLineFromStdout = line.Substring(1);
+                    return line[0];
+                }
+                this.bufferedLineFromStdout = null;
+                return '\n';
+            }
+            this.isReadingLine = true;
+            Monitor.PulseAll(this.syncLock);
+
+            // wait for reading line
+            try
+            {
+                Monitor.Wait(this.syncLock);
+            }
+            finally
+            {
+                this.isReadingLine = false;
+            }
+
+            // get read line
+            if (this.bufferedLineFromStderr != null)
+            {
+                var line = this.bufferedLineFromStderr;
+                if (line.Length > 0)
+                {
+                    this.bufferedLineFromStderr = line.Substring(1);
+                    return line[0];
+                }
+                this.bufferedLineFromStderr = null;
+                return '\n';
+            }
+            if (this.bufferedLineFromStdout != null)
+            {
+                var line = this.bufferedLineFromStdout;
+                if (line.Length > 0)
+                {
+                    this.bufferedLineFromStdout = line.Substring(1);
+                    return line[0];
+                }
+                this.bufferedLineFromStdout = null;
+                return '\n';
+            }
+            Monitor.PulseAll(this.syncLock);
+            this.endOfStream = true;
+            return -1;
+        }
+    }
+
     
     /// <inheritdoc/>
     public override string? ReadLine()

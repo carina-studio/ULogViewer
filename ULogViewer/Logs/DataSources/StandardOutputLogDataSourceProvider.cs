@@ -28,6 +28,8 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		public override ISet<string> SupportedSourceOptions => new HashSet<string>()
 		{
 			nameof(LogDataSourceOptions.Command),
+			nameof(LogDataSourceOptions.FormatJsonData),
+			//nameof(LogDataSourceOptions.FormatXmlData),
 			nameof(LogDataSourceOptions.IncludeStandardError),
 			nameof(LogDataSourceOptions.SetupCommands),
 			nameof(LogDataSourceOptions.TeardownCommands),

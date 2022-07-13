@@ -228,7 +228,13 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			{
 				return (LogDataSourceState.SourceNotFound, null);
 			}
-			return (LogDataSourceState.ReaderOpened, new ProcessTextReader(this, process, options.IncludeStandardError));
+			var reader = new ProcessTextReader(this, process, options.IncludeStandardError).Let(it =>
+			{
+				if (options.FormatJsonData)
+					return new FormattedJsonTextReader(it);
+				return (TextReader)it;
+			});
+			return (LogDataSourceState.ReaderOpened, reader);
 		}
 
 
