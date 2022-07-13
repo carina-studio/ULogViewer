@@ -1,4 +1,3 @@
-using System.Text;
 using Avalonia;
 using Avalonia.Collections;
 using Avalonia.Controls;
@@ -41,6 +40,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -968,7 +968,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			if (y == null)
 				return 1;
-			var result = string.CompareOrdinal(x.Name, y.Name);
+			var result = string.Compare(x.Name, y.Name, true, CultureInfo.InvariantCulture);
 			if (result != 0)
 				return result;
 			return x.GetHashCode() - y.GetHashCode();

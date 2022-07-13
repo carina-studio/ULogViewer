@@ -3,6 +3,7 @@ using CarinaStudio.Threading;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -17,7 +18,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		static volatile IULogViewerApplication? app;
 		static volatile EmptyLogDataSourceProvider? empty;
 		static volatile ILogger? logger;
-		static readonly SortedObservableList<ILogDataSourceProvider> providers = new((lhs, rhs) => string.CompareOrdinal(lhs.Name, rhs.Name));
+		static readonly SortedObservableList<ILogDataSourceProvider> providers = new((lhs, rhs) => string.Compare(lhs.Name, rhs.Name, true, CultureInfo.InvariantCulture));
 
 
 		/// <summary>

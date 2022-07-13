@@ -1,4 +1,3 @@
-using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Data.Converters;
@@ -14,6 +13,8 @@ using CarinaStudio.ULogViewer.ViewModels.Analysis;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 
 namespace CarinaStudio.ULogViewer.Controls;
 
@@ -224,7 +225,7 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Window<IU
 		result = lhs.StartPosition.GetValueOrDefault().Item2 - rhs.StartPosition.GetValueOrDefault().Item2;
 		if (result != 0)
 			return result;
-		result = string.CompareOrdinal(lhs.Message, rhs.Message);
+		result = string.Compare(lhs.Message, rhs.Message, true, CultureInfo.InvariantCulture);
 		if (result != 0)
 			return result;
 		return lhs.GetHashCode() - rhs.GetHashCode();

@@ -6,6 +6,7 @@ using CarinaStudio.ULogViewer.Scripting;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Globalization;
 using System.Linq;
 
 namespace CarinaStudio.ULogViewer.ViewModels
@@ -49,7 +50,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				return -1;
 			if (y == LogProfileManager.Default.EmptyProfile)
 				return 1;
-			var result = string.CompareOrdinal(x.Name, y.Name);
+			var result = string.Compare(x.Name, y.Name, true, CultureInfo.InvariantCulture);
 			if (result != 0)
 				return result;
 			result = x.Id.CompareTo(y.Id);

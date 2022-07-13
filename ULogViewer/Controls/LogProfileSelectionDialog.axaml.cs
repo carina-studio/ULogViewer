@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -85,7 +86,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (x == null || y == null)
 				return 0;
-			var result = string.CompareOrdinal(x.Name, y.Name);
+			var result = string.Compare(x.Name, y.Name, true, CultureInfo.InvariantCulture);
 			if (result != 0)
 				return result;
 			result = x.Id.CompareTo(y.Id);
