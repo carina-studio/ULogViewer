@@ -94,7 +94,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 	/// <summary>
 	/// Options to create <see cref="ILogDataSource"/>.
 	/// </summary>
-	struct LogDataSourceOptions
+	public struct LogDataSourceOptions
 	{
 		// Static fields.
 		static readonly IList<string> emptyCommands = new string[0];
