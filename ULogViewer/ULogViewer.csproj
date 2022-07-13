@@ -73,6 +73,7 @@
     <PackageReference Include="CarinaStudio.AppSuite.Core" Version="1.8.20.711-preview" />
     <PackageReference Include="Dotnet.Bundle" Version="0.9.13" />
     <PackageReference Include="MySql.Data" Version="8.0.29" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="System.Data.Common" Version="4.3.0" />
     <PackageReference Include="System.Data.SQLite" Version="1.0.116" />
     <PackageReference Include="System.Diagnostics.EventLog" Version="6.0.0" />

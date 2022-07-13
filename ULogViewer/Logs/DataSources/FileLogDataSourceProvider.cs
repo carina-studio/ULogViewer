@@ -28,6 +28,8 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		{
 			nameof(LogDataSourceOptions.Encoding),
 			nameof(LogDataSourceOptions.FileName),
+			nameof(LogDataSourceOptions.FormatJsonData),
+			//nameof(LogDataSourceOptions.FormatXmlData),
 		}.AsReadOnly();
 	}
 }

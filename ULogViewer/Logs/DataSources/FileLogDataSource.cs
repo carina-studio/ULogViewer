@@ -46,7 +46,10 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 						{
 							".gz" => new GZipStream(stream, CompressionMode.Decompress).Let(gzipStream =>
 								new StreamReader(gzipStream, encoding)),
-							_ => new StreamReader(stream, encoding),
+							".json" => options.FormatJsonData
+								? new FormattedJsonTextReader(new StreamReader(stream, encoding))
+								: new StreamReader(stream, encoding),
+							_ => (TextReader)new StreamReader(stream, encoding),
 						};
 					});
 				});
