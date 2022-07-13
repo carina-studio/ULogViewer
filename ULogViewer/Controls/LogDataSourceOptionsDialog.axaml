@@ -170,6 +170,20 @@
 						<Separator Classes="Dialog_Separator"/>
 					</StackPanel>
 
+					<!-- Format JSON data -->
+					<StackPanel IsVisible="{Binding $parent[Window].IsFormatJsonDataSupported}" Orientation="Vertical">
+						<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogDataSourceOptionsDialog.FormatJsonData}"/>
+						<ToggleSwitch Name="formatJsonDataSwitch" Classes="Dialog_ToggleSwitch"/>
+						<Separator Classes="Dialog_Separator"/>
+					</StackPanel>
+
+					<!-- Format XML data -->
+					<StackPanel IsVisible="{Binding $parent[Window].IsFormatXmlDataSupported}" Orientation="Vertical">
+						<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogDataSourceOptionsDialog.FormatXmlData}"/>
+						<ToggleSwitch Name="formatXmlDataSwitch" Classes="Dialog_ToggleSwitch"/>
+						<Separator Classes="Dialog_Separator"/>
+					</StackPanel>
+
 					<!-- Connection string -->
 					<StackPanel IsVisible="{Binding $parent[Window].IsConnectionStringSupported}" Orientation="Vertical">
 						<StackPanel Orientation="Horizontal">

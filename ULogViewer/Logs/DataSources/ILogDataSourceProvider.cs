@@ -141,6 +141,8 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 					&& this.ConnectionString == options.ConnectionString
 					&& this.Encoding == options.Encoding
 					&& this.FileName == options.FileName
+					&& this.FormatJsonData == options.FormatJsonData
+					&& this.FormatXmlData == options.FormatXmlData
 					&& this.IncludeStandardError == options.IncludeStandardError
 					&& object.Equals(this.IPEndPoint, options.IPEndPoint)
 					&& this.IsResourceOnAzure == options.IsResourceOnAzure
@@ -160,6 +162,18 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// Get or set name of file to open.
 		/// </summary>
 		public string? FileName { get; set; }
+
+
+		/// <summary>
+		/// Get or set whether JSON data should be formatted when reading or not.
+		/// </summary>
+		public bool FormatJsonData { get; set; }
+
+
+		/// <summary>
+		/// Get or set whether XML data should be formatted when reading or not.
+		/// </summary>
+		public bool FormatXmlData { get; set; }
 
 
 		// Get hash code.
@@ -276,6 +290,12 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 						case nameof(FileName):
 							options.FileName = jsonProperty.Value.GetString();
 							break;
+						case nameof(FormatJsonData):
+							options.FormatJsonData = jsonProperty.Value.ValueKind == JsonValueKind.True;
+							break;
+						case nameof(FormatXmlData):
+							options.FormatXmlData = jsonProperty.Value.ValueKind == JsonValueKind.True;
+							break;
 						case nameof(IncludeStandardError):
 							options.IncludeStandardError = jsonProperty.Value.ValueKind == JsonValueKind.True;
 							break;
@@ -372,6 +392,10 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				this.ConnectionString?.Let(it => jsonWriter.WriteString(nameof(ConnectionString), it));
 				this.Encoding?.Let(it => jsonWriter.WriteString(nameof(Encoding), it.WebName));
 				this.FileName?.Let(it => jsonWriter.WriteString(nameof(FileName), it));
+				if (this.FormatJsonData)
+					jsonWriter.WriteBoolean(nameof(FormatJsonData), true);
+				if (this.FormatXmlData)
+					jsonWriter.WriteBoolean(nameof(FormatXmlData), true);
 				if (this.IncludeStandardError)
 					jsonWriter.WriteBoolean(nameof(IncludeStandardError), true);
 				this.IPEndPoint?.Let(it =>

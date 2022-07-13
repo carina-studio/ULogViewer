@@ -3918,6 +3918,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				var newDataSourceOptions = logReaderOption.DataSourceOptions;
 				newDataSourceOptions.Command = defaultDataSourceOptions.Command;
 				newDataSourceOptions.ConnectionString = defaultDataSourceOptions.ConnectionString;
+				newDataSourceOptions.FormatJsonData = defaultDataSourceOptions.FormatJsonData;
+				newDataSourceOptions.FormatXmlData = defaultDataSourceOptions.FormatXmlData;
 				newDataSourceOptions.Encoding = defaultDataSourceOptions.Encoding;
 				newDataSourceOptions.QueryString = defaultDataSourceOptions.QueryString;
 				newDataSourceOptions.SetupCommands = defaultDataSourceOptions.SetupCommands;

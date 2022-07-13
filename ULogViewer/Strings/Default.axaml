@@ -254,6 +254,8 @@
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.DatabaseSourceType">Database source</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.Encoding">Text encoding</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.FileName">File path</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptionsDialog.FormatJsonData">Format JSON data when reading</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptionsDialog.FormatXmlData">Format XML data when reading</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.IncludeStandardError">Include Standard Error (stderr)</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.IsResourceOnAzure">This is the resource on Azure</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.IsResourceOnAzure.Description">ULogViewer will setup environment automatically if it is the resource on Azure. For ex, logging in or updating firewall rules.</sys:String>

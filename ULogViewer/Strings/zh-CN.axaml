@@ -240,6 +240,8 @@
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.DatabaseSourceType">资料库来源</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.Encoding">文字编码</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.FileName">档案路径</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptionsDialog.FormatJsonData">读取时格式化 JSON 资料</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptionsDialog.FormatXmlData">读取时格式化 XML 资料</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.IncludeStandardError">包含标准错误输出 (stderr)</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.IsResourceOnAzure">这是 Azure 上的资源</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.IsResourceOnAzure.Description">若这是 Azure 上的资源则 ULogViewer 将自动设定相关环境，例如登录或更新防火墙规则。</sys:String>
