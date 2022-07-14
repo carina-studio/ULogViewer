@@ -16,6 +16,6 @@ class LogDataSourceOptionConverter : FuncValueConverter<string?, string?>
 
 
     // Constructor.
-    LogDataSourceOptionConverter() : base(option => (App.CurrentOrNull?.FindResource($"String/LogDataSourceOptions.{option}") as string) ?? option)
+    LogDataSourceOptionConverter() : base(option => App.CurrentOrNull?.GetString($"LogDataSourceOptions.{option}", option))
     { }
 }

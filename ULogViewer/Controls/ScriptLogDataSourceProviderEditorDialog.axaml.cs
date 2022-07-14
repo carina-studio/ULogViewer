@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -21,6 +22,49 @@ namespace CarinaStudio.ULogViewer.Controls;
 /// </summary>
 partial class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.InputDialog<IULogViewerApplication>
 {
+	// Supported source option.
+	public class SupportedSourceOption
+	{
+		// Fields.
+		bool? isRequired;
+
+		// Constructor.
+		public SupportedSourceOption(string name, bool isRequired)
+		{
+			this.CanBeRequired = name switch
+			{
+				nameof(LogDataSourceOptions.Encoding)
+				or nameof(LogDataSourceOptions.FormatJsonData)
+				or nameof(LogDataSourceOptions.FormatXmlData)
+				or nameof(LogDataSourceOptions.IncludeStandardError)
+				or nameof(LogDataSourceOptions.IsResourceOnAzure)
+				or nameof(LogDataSourceOptions.SetupCommands)
+				or nameof(LogDataSourceOptions.TeardownCommands) => false,
+				_ => true,
+			};
+			this.isRequired = this.CanBeRequired ? isRequired : null;
+			this.Name = name;
+		}
+
+		// Whether option can be required or not.
+		public bool CanBeRequired { get; }
+
+		// Whether option is required or not.
+		public bool? IsRequired
+		{
+			get => this.isRequired;
+			set
+			{
+				if (this.CanBeRequired)
+					this.isRequired = value;
+			}
+		}
+
+		// Option name.
+		public string Name { get; }
+	}
+
+
 	// Fields.
 	LogDataSourceScript? closingReaderScript;
 	readonly SortedObservableList<CompilationResult> closingReaderScriptCompilationResults = new(CompareCompilationResult);
@@ -35,6 +79,7 @@ partial class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.In
 	LogDataSourceScript? readingLineScript;
 	readonly SortedObservableList<CompilationResult> readingLineScriptCompilationResults = new(CompareCompilationResult);
 	readonly ScriptEditor readingLineScriptEditor;
+	readonly SortedObservableList<SupportedSourceOption> supportedSourceOptions = new((lhs, rhs) => string.Compare(lhs.Name, rhs.Name, true, CultureInfo.InvariantCulture));
 
 
 	/// <summary>
@@ -45,6 +90,7 @@ partial class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.In
 		this.ClosingReaderScriptCompilationResults = this.closingReaderScriptCompilationResults.AsReadOnly();
 		this.OpeningReaderScriptCompilationResults = this.openingReaderScriptCompilationResults.AsReadOnly();
 		this.ReadingLineScriptCompilationResults = this.readingLineScriptCompilationResults.AsReadOnly();
+		this.SupportedSourceOptions = this.supportedSourceOptions.AsReadOnly();
 		AvaloniaXamlLoader.Load(this);
 		this.closingReaderScriptEditor = this.Get<ScriptEditor>(nameof(closingReaderScriptEditor)).Also(it =>
 		{
@@ -171,6 +217,10 @@ partial class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.In
 		provider.ClosingReaderScript = this.closingReaderScript ?? this.CreateScript(this.closingReaderScriptEditor);
 		provider.OpeningReaderScript = this.openingReaderScript ?? this.CreateScript(this.openingReaderScriptEditor);
 		provider.ReadingLineScript = this.readingLineScript ?? this.CreateScript(this.readingLineScriptEditor);
+		provider.SetSupportedSourceOptions(
+			this.supportedSourceOptions.Select(it => it.Name),
+			this.supportedSourceOptions.Where(it => it.IsRequired == true).Select(it => it.Name)
+		);
 		return Task.FromResult<object?>(provider);
 	}
 
@@ -231,6 +281,8 @@ partial class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.In
 				this.readingLineScriptEditor.Language = script.Language;
 				this.readingLineScriptEditor.Source = script.Source;
 			});
+			foreach (var option in provider.SupportedSourceOptions)
+				this.supportedSourceOptions.Add(new(option, provider.RequiredSourceOptions.Contains(option)));
 			this.compileClosingReaderScriptAction.Schedule();
 			this.compileOpeningReaderScriptAction.Schedule();
 			this.compileReadingLineScriptAction.Schedule();
@@ -272,6 +324,11 @@ partial class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.In
 	}
 
 
+	/// <inheritdoc/>
+	protected override bool OnValidateInput() =>
+		base.OnValidateInput() && !string.IsNullOrWhiteSpace(this.displayNameTextBox.Text);
+
+
 	// Open online documentation.
 	void OpenDocumentation() =>
 		Platform.OpenLink("https://carinastudio.azurewebsites.net/ULogViewer/Scripting");
@@ -289,4 +346,8 @@ partial class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.In
 
 	// Get compilation results of reading line script.
 	IList<CompilationResult> ReadingLineScriptCompilationResults { get; }
+
+
+	// Get supported log data source options.
+	IList<SupportedSourceOption> SupportedSourceOptions { get; }
 }

@@ -624,6 +624,8 @@
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Description">腳本將在開啟原始日誌行讀取器時執行。需回傳 LogDataSourceState.ReaderOpened 表示讀取器開啟成功，或其他值表示失敗。</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript">原始日誌行讀取腳本</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Description">腳本將在每行原始日誌行讀取時執行。需回傳字串 (String) 或 Null 表示已讀取至最後一行。</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.SupportedSourceOptions">支援的資料來源參數</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.SupportedSourceOptions.Required">必要參數</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.Title">編輯日誌資料來源腳本</sys:String>
 
 	<!-- Session -->

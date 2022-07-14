@@ -658,6 +658,8 @@
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Description">The script will be run one time when opening raw log reader. The returned value should be LogDataSourceState.ReaderOpened if succeeded, or failure if returning other values.</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript">Script to read raw log line</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Description">The script will be run for reading each raw log line. The returned value should be String or Null.</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.SupportedSourceOptions">Supported source options</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.SupportedSourceOptions.Required">Required</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.Title">Edit log data source script</sys:String>
 
 	<!-- Session -->
