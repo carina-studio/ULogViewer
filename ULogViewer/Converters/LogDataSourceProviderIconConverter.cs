@@ -29,9 +29,13 @@ class LogDataSourceProviderIconConverter : BaseValueConverter<ILogDataSourceProv
     {
         if (value == null)
             return null;
-        var resName = (parameter as string) == "Light"
-            ? $"Image/LogDataSourceProvider.{value.Name}.Light"
-            : $"Image/LogDataSourceProvider.{value.Name}";
+        var resName = value is not ScriptLogDataSourceProvider
+            ? (parameter as string) == "Light"
+                ? $"Image/LogDataSourceProvider.{value.Name}.Light"
+                : $"Image/LogDataSourceProvider.{value.Name}"
+            : (parameter as string) == "Light"
+                ? "Image/Code.Light"
+                : "Image/Code";
         if (App.Current.TryFindResource<IImage>(resName, out var icon))
             return icon;
         resName = (parameter as string) == "Light"

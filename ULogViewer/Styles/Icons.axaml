@@ -153,6 +153,9 @@
 	<DrawingImage x:Key="Image/Code">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/LogProfile.Code}"/>
 	</DrawingImage>
+	<DrawingImage x:Key="Image/Code.Light">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/LogProfile.Code}"/>
+	</DrawingImage>
 	<DrawingImage x:Key="Image/CreateLogProfile" Drawing="{StaticResource Drawing/CreateLogProfile}"/>
 	<DrawingImage x:Key="Image/Database">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/LogProfile.Database}"/>
