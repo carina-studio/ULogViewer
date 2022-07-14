@@ -1,0 +1,27 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
+		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="CarinaStudio.ULogViewer.Controls.ScriptCompilationResultViewer">
+
+	<ListBox Name="compilationResultListBox" Background="{x:Null}" BorderThickness="0" Focusable="False" HorizontalAlignment="Stretch" Items="{Binding $parent[UserControl].CompilationResults}" Margin="{StaticResource Thickness/ScriptCompilationResultViewer.CompilationResults.Margin}" Padding="0" ScrollViewer.VerticalScrollBarVisibility="Disabled" VerticalAlignment="Stretch" VirtualizationMode="None">
+		<ListBox.ItemTemplate>
+			<DataTemplate>
+				<Grid ColumnDefinitions="Auto,*">
+					<Image Classes="Dialog_Icon" Source="{Binding Converter={x:Static appConverters:ScriptCompilationResultIconConverter.Default}}" VerticalAlignment="Center"/>
+					<TextBlock Classes="Dialog_Icon_TextBlock" Foreground="{Binding Converter={x:Static appConverters:ScriptCompilationResultBrushConverter.Default}}" Grid.Column="1" Text="{Binding Message}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" VerticalAlignment="Center"/>
+				</Grid>
+			</DataTemplate>
+		</ListBox.ItemTemplate>
+		<ListBox.Styles>
+			<Style Selector="ListBoxItem">
+				<Setter Property="Cursor" Value="Hand"/>
+				<Setter Property="Padding" Value="{StaticResource Thickness/ScriptCompilationResultViewer.CompilationResults.Item.Padding}"/> 
+			</Style>
+		</ListBox.Styles>
+	</ListBox>
+	
+</UserControl>

@@ -21,15 +21,6 @@
 		SizeToContent="Manual"
         Title="{DynamicResource String/LogAnalysisScriptSetEditorDialog.Title}"
         Width="{DynamicResource Double/LogAnalysisScriptSetEditorDialog.Width}">
-	
-	<Window.Resources>
-		<DataTemplate x:Key="scriptCompilationResultTemplate">
-		<Grid ColumnDefinitions="Auto,*">
-			<Image Classes="Dialog_Icon" Source="{Binding Type, Converter={x:Static appControls:LogAnalysisScriptSetEditorDialog.CompilationResultTypeIconConverter}}" VerticalAlignment="Center"/>
-			<TextBlock Classes="Dialog_Icon_TextBlock" Foreground="{Binding Type, Converter={x:Static appControls:LogAnalysisScriptSetEditorDialog.CompilationResultTypeBrushConverter}}" Grid.Column="1" Text="{Binding Message}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" VerticalAlignment="Center"/>
-		</Grid>
-		</DataTemplate>
-	</Window.Resources>
 
 	<DockPanel>
 
@@ -76,17 +67,7 @@
 				<appControls:ScriptEditor Name="analysisScriptEditor" Height="{StaticResource Double/LogAnalysisScriptSetEditorDialog.ScriptEditor.Height}" HorizontalAlignment="Stretch"/>
 				<StackPanel IsVisible="{Binding $parent[Window].AnalysisScriptCompilationResults.Count}">
 					<Separator Classes="Dialog_Separator_Small"/>
-					<ListBox Name="analysisScriptCompilationResultListBox" Background="{x:Null}" BorderThickness="0" Focusable="False" Items="{Binding $parent[Window].AnalysisScriptCompilationResults}" Margin="{StaticResource Thickness/LogAnalysisScriptSetEditorDialog.ScriptCompilationResults.Margin}" Padding="0" ScrollViewer.VerticalScrollBarVisibility="Disabled" VirtualizationMode="None">
-						<ListBox.ItemTemplate>
-							<StaticResourceExtension ResourceKey="scriptCompilationResultTemplate"/>
-						</ListBox.ItemTemplate>
-						<ListBox.Styles>
-							<Style Selector="ListBoxItem">
-								<Setter Property="Cursor" Value="Hand"/>
-								<Setter Property="Padding" Value="{StaticResource Thickness/LogAnalysisScriptSetEditorDialog.ScriptCompilationResults.Item.Padding}"/> 
-							</Style>
-						</ListBox.Styles>
-					</ListBox>
+					<appControls:ScriptCompilationResultViewer CompilationResults="{Binding $parent[Window].AnalysisScriptCompilationResults}" ScriptEditor="{Binding #analysisScriptEditor}"/>
 				</StackPanel>
 				<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Description}"/>
 				<Separator Classes="Dialog_Separator"/>
@@ -96,17 +77,7 @@
 				<appControls:ScriptEditor Name="setupScriptEditor" Height="{StaticResource Double/LogAnalysisScriptSetEditorDialog.ScriptEditor.Height}" HorizontalAlignment="Stretch"/>
 				<StackPanel IsVisible="{Binding $parent[Window].SetupScriptCompilationResults.Count}">
 					<Separator Classes="Dialog_Separator_Small"/>
-					<ListBox Name="setupScriptCompilationResultListBox" Background="{x:Null}" BorderThickness="0" Focusable="False" Items="{Binding $parent[Window].SetupScriptCompilationResults}" Margin="{StaticResource Thickness/LogAnalysisScriptSetEditorDialog.ScriptCompilationResults.Margin}" Padding="0" ScrollViewer.VerticalScrollBarVisibility="Disabled" VirtualizationMode="None">
-						<ListBox.ItemTemplate>
-							<StaticResourceExtension ResourceKey="scriptCompilationResultTemplate"/>
-						</ListBox.ItemTemplate>
-						<ListBox.Styles>
-							<Style Selector="ListBoxItem">
-								<Setter Property="Cursor" Value="Hand"/>
-								<Setter Property="Padding" Value="{StaticResource Thickness/LogAnalysisScriptSetEditorDialog.ScriptCompilationResults.Item.Padding}"/> 
-							</Style>
-						</ListBox.Styles>
-					</ListBox>
+					<appControls:ScriptCompilationResultViewer CompilationResults="{Binding $parent[Window].SetupScriptCompilationResults}" ScriptEditor="{Binding #setupScriptEditor}"/>
 				</StackPanel>
 				<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.SetupScript.Description}"/>
 				

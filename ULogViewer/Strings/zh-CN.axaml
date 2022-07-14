@@ -616,6 +616,16 @@
 	<!-- ScriptLanguage -->
 	<sys:String x:Key="String/ScriptLanguage.CSharp">C# 脚本语言</sys:String>
 
+	<!-- ScriptLogDataSourceProviderEditorDialog -->
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript">原始日志行读取器关闭脚本</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Description">脚本将在关闭原始日志行读取器时执行。此脚本不需要返回值。</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.DisplayName">名称 (必要)</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript">原始日志行读取器开启脚本</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Description">脚本将在开启原始日志行读取器时执行。需返回 LogDataSourceState.ReaderOpened 表示读取器开启成功，或其他值表示失败。</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript">原始日志行读取脚本</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Description">脚本将在每行原始日志行读取时执行。需返回字符串 (String) 或 Null 表示已读取至最后一行。</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.Title">编辑日志资料来源脚本</sys:String>
+
 	<!-- Session -->
 	<sys:String x:Key="String/Session.Empty">空白页面</sys:String>
 	

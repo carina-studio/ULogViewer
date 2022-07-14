@@ -1,0 +1,82 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:abControls="using:CarinaStudio.Controls"
+		xmlns:abConverters="using:CarinaStudio.Data.Converters"
+		xmlns:aConverters="using:Avalonia.Data.Converters"
+		xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
+		xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
+		xmlns:appCtxlBased="using:CarinaStudio.ULogViewer.ViewModels.Analysis.ContextualBased"
+        xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="CarinaStudio.ULogViewer.Controls.ScriptLogDataSourceProviderEditorDialog"
+		Name="window"
+		CanResize="True"
+        Classes="Dialog"
+		Height="{DynamicResource Double/ScriptLogDataSourceProviderEditorDialog.Height}"
+        MinHeight="{DynamicResource Double/ScriptLogDataSourceProviderEditorDialog.MinHeight}"
+        MinWidth="{DynamicResource Double/ScriptLogDataSourceProviderEditorDialog.MinWidth}"
+		SizeToContent="Manual"
+        Title="{DynamicResource String/ScriptLogDataSourceProviderEditorDialog.Title}"
+        Width="{DynamicResource Double/ScriptLogDataSourceProviderEditorDialog.Width}">
+
+	<DockPanel>
+
+		<!-- Control buttons -->
+		<Border Classes="Dialog_ControlButtonsPanel">
+			<StackPanel Classes="Dialog_ControlButtonsPanel">
+				<Button Classes="Dialog_IconControlButton" Command="{Binding $parent[Window].OpenDocumentation}" ToolTip.Tip="{DynamicResource String/Common.Help}">
+					<Image Classes="Dialog_IconControlButton_Icon" Source="{StaticResource Image/Icon.Question}"/>
+				</Button>
+				<Separator Classes="Dialog_Separator_Small"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].CompleteEditing}" Content="{DynamicResource String/Common.OK}" IsEnabled="{Binding $parent[Window].AreValidParameters}"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].Close}" Content="{DynamicResource String/Common.Cancel}"/>
+			</StackPanel>
+		</Border>
+
+		<!-- Content -->
+		<ScrollViewer Name="contentScrollViewer" HorizontalScrollBarVisibility="Disabled">
+			<StackPanel Classes="Dialog_ContentPanel">
+				
+				<!-- Display Name -->
+				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/ScriptLogDataSourceProviderEditorDialog.DisplayName}"/>
+				<TextBox Name="displayNameTextBox" Classes="Dialog_TextBox" MaxLength="256"/>
+				<Separator Classes="Dialog_Separator"/>
+
+				<!-- Opening reader script -->
+				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript}"/>
+				<appControls:ScriptEditor Name="openingReaderScriptEditor" Height="{StaticResource Double/ScriptLogDataSourceProviderEditorDialog.ScriptEditor.Height}" HorizontalAlignment="Stretch"/>
+				<StackPanel IsVisible="{Binding $parent[Window].OpeningReaderScriptCompilationResults.Count}">
+					<Separator Classes="Dialog_Separator_Small"/>
+					<appControls:ScriptCompilationResultViewer CompilationResults="{Binding $parent[Window].OpeningReaderScriptCompilationResults}" ScriptEditor="{Binding #openingReaderScriptEditor}"/>
+				</StackPanel>
+				<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Description}"/>
+				<Separator Classes="Dialog_Separator"/>
+
+				<!-- Reading line script -->
+				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript}"/>
+				<appControls:ScriptEditor Name="readingLineScriptEditor" Height="{StaticResource Double/ScriptLogDataSourceProviderEditorDialog.ScriptEditor.Height}" HorizontalAlignment="Stretch"/>
+				<StackPanel IsVisible="{Binding $parent[Window].ReadingLineScriptCompilationResults.Count}">
+					<Separator Classes="Dialog_Separator_Small"/>
+					<appControls:ScriptCompilationResultViewer CompilationResults="{Binding $parent[Window].ReadingLineScriptCompilationResults}" ScriptEditor="{Binding #readingLineScriptEditor}"/>
+				</StackPanel>
+				<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Description}"/>
+				<Separator Classes="Dialog_Separator"/>
+
+				<!-- Closing reader script -->
+				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript}"/>
+				<appControls:ScriptEditor Name="closingReaderScriptEditor" Height="{StaticResource Double/ScriptLogDataSourceProviderEditorDialog.ScriptEditor.Height}" HorizontalAlignment="Stretch"/>
+				<StackPanel IsVisible="{Binding $parent[Window].ClosingReaderScriptCompilationResults.Count}">
+					<Separator Classes="Dialog_Separator_Small"/>
+					<appControls:ScriptCompilationResultViewer CompilationResults="{Binding $parent[Window].ClosingReaderScriptCompilationResults}" ScriptEditor="{Binding #closingReaderScriptEditor}"/>
+				</StackPanel>
+				<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Description}"/>
+				<Separator Classes="Dialog_Separator"/>
+				
+			</StackPanel>
+		</ScrollViewer>
+		
+	</DockPanel>
+	
+</Window>

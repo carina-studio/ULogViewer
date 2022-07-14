@@ -1,8 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Data.Converters;
 using Avalonia.Markup.Xaml;
-using Avalonia.Media;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
@@ -23,34 +21,6 @@ namespace CarinaStudio.ULogViewer.Controls;
 /// </summary>
 partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Window<IULogViewerApplication>
 {
-	/// <summary>
-	/// <see cref="IValueConverter"/> to convert from type of compilation result to brush.
-	/// </summary>
-	public static readonly IValueConverter CompilationResultTypeBrushConverter = new FuncValueConverter<CompilationResultType, IBrush?>(type =>
-	{
-		return type switch
-		{
-			CompilationResultType.Error => App.Current.FindResource("Brush/LogLevel.Error"),
-			CompilationResultType.Warning => App.Current.FindResource("Brush/LogLevel.Warn"),
-			CompilationResultType.Information => App.Current.FindResource("Brush/LogLevel.Info"),
-			_ => App.Current.FindResource("Brush/LogLevel.Undefined"),
-		} as IBrush;
-	});
-	/// <summary>
-	/// <see cref="IValueConverter"/> to convert from type of compilation result to image.
-	/// </summary>
-	public static readonly IValueConverter CompilationResultTypeIconConverter = new FuncValueConverter<CompilationResultType, IImage?>(type =>
-	{
-		return type switch
-		{
-			CompilationResultType.Error => App.Current.FindResource("Image/Icon.Error.Outline.Colored"),
-			CompilationResultType.Warning => App.Current.FindResource("Image/Icon.Warning.Outline.Colored"),
-			CompilationResultType.Information => App.Current.FindResource("Image/Icon.Information.Outline.Colored"),
-			_ => App.Current.FindResource("Image/Icon.Information.Outline"),
-		} as IImage;
-	});
-
-
 	// Static fields.
 	static readonly AvaloniaProperty<bool> AreValidParametersProperty = AvaloniaProperty.RegisterDirect<LogAnalysisScriptSetEditorDialog, bool>("AreValidParameters", d => d.areValidParameters);
 	static readonly Dictionary<LogAnalysisScriptSet, LogAnalysisScriptSetEditorDialog> Dialogs = new();
@@ -84,28 +54,6 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Window<IU
 		this.AnalysisScriptCompilationResults = this.analysisScriptCompilationResults.AsReadOnly();
 		this.SetupScriptCompilationResults = this.setupScriptCompilationResults.AsReadOnly();
 		AvaloniaXamlLoader.Load(this);
-		this.Get<Avalonia.Controls.ListBox>("analysisScriptCompilationResultListBox").Also(it =>
-		{
-			it.GetObservable(Avalonia.Controls.ListBox.SelectedItemProperty).Subscribe(item =>
-			{
-				if (item is CompilationResult result)
-				{
-					result.StartPosition?.Let(startPosition =>
-					{
-						var endPosition = result.EndPosition ?? (-1, -1);
-						if (startPosition.Item1 == endPosition.Item1)
-							this.analysisScriptEditor?.SelectAtLine(startPosition.Item1 + 1, startPosition.Item2, endPosition.Item2 - startPosition.Item2);
-						else
-							this.analysisScriptEditor?.SelectAtLine(startPosition.Item1 + 1, startPosition.Item2, 0);
-					});
-					this.SynchronizationContext.Post(() => 
-					{
-						this.analysisScriptEditor?.Focus();
-						it.SelectedItem = null;
-					});
-				}
-			});
-		});
 		this.analysisScriptEditor = this.Get<ScriptEditor>(nameof(analysisScriptEditor)).Also(it =>
 		{
 			void ScheduleCompilation()
@@ -157,28 +105,6 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Window<IU
 		this.nameTextBox = this.Get<TextBox>(nameof(nameTextBox)).Also(it =>
 		{
 			it.GetObservable(TextBox.TextProperty).Subscribe(_ => this.validateParametersAction?.Schedule());
-		});
-		this.Get<Avalonia.Controls.ListBox>("setupScriptCompilationResultListBox").Also(it =>
-		{
-			it.GetObservable(Avalonia.Controls.ListBox.SelectedItemProperty).Subscribe(item =>
-			{
-				if (item is CompilationResult result)
-				{
-					result.StartPosition?.Let(startPosition =>
-					{
-						var endPosition = result.EndPosition ?? (-1, -1);
-						if (startPosition.Item1 == endPosition.Item1)
-							this.setupScriptEditor?.SelectAtLine(startPosition.Item1 + 1, startPosition.Item2, endPosition.Item2 - startPosition.Item2);
-						else
-							this.setupScriptEditor?.SelectAtLine(startPosition.Item1 + 1, startPosition.Item2, 0);
-					});
-					this.SynchronizationContext.Post(() => 
-					{
-						this.setupScriptEditor?.Focus();
-						it.SelectedItem = null;
-					});
-				}
-			});
 		});
 		this.setupScriptEditor = this.Get<ScriptEditor>(nameof(setupScriptEditor)).Also(it =>
 		{

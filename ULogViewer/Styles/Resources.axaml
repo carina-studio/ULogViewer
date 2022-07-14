@@ -136,11 +136,22 @@
 	<sys:Double x:Key="Double/RegexEditorDialog.TestLogLine.Height">100</sys:Double>
 	<sys:Double x:Key="Double/RegexEditorDialog.Width">600</sys:Double>
 
+	<!-- ScriptCompilationResultViewer -->
+	<Thickness x:Key="Thickness/ScriptCompilationResultViewer.CompilationResults.Item.Padding">3</Thickness>
+	<Thickness x:Key="Thickness/ScriptCompilationResultViewer.CompilationResults.Margin">-3,0,-3,0</Thickness>
+
 	<!-- ScriptEditorDialog -->
 	<sys:Double x:Key="Double/ScriptEditorDialog.Height">500</sys:Double>
 	<sys:Double x:Key="Double/ScriptEditorDialog.MinHeight">300</sys:Double>
 	<sys:Double x:Key="Double/ScriptEditorDialog.MinWidth">300</sys:Double>
 	<sys:Double x:Key="Double/ScriptEditorDialog.Width">600</sys:Double>
+
+	<!-- ScriptLogDataSourceProviderEditorDialog -->
+	<sys:Double x:Key="Double/ScriptLogDataSourceProviderEditorDialog.Height">550</sys:Double>
+	<sys:Double x:Key="Double/ScriptLogDataSourceProviderEditorDialog.MinHeight">400</sys:Double>
+	<sys:Double x:Key="Double/ScriptLogDataSourceProviderEditorDialog.MinWidth">300</sys:Double>
+	<sys:Double x:Key="Double/ScriptLogDataSourceProviderEditorDialog.ScriptEditor.Height">300</sys:Double>
+	<sys:Double x:Key="Double/ScriptLogDataSourceProviderEditorDialog.Width">650</sys:Double>
 	
 	<!-- SessionView -->
 	<CornerRadius x:Key="CornerRadius/SessionView.LogListBox.Item.Column.Border">4</CornerRadius>
