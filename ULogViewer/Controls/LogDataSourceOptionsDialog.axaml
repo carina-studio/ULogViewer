@@ -85,7 +85,7 @@
 					<!-- Category -->
 					<StackPanel IsVisible="{Binding $parent[Window].IsCategorySupported}" Orientation="Vertical">
 						<StackPanel Orientation="Horizontal">
-							<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogDataSourceOptionsDialog.Category}" VerticalAlignment="Center"/>
+							<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogDataSourceOptions.Category}" VerticalAlignment="Center"/>
 							<TextBlock Classes="Dialog_TextBlock" IsVisible="{Binding $parent[Window].IsCategoryRequired}" Text="{DynamicResource String/LogDataSourceOptionsDialog.Required}" VerticalAlignment="Center"/>
 						</StackPanel>
 						<TextBox Name="categoryTextBox" Classes="Dialog_TextBox" PropertyChanged="OnEditorControlPropertyChanged"/>
@@ -96,7 +96,7 @@
 					<!-- Command -->
 					<StackPanel IsVisible="{Binding $parent[Window].IsCommandSupported}" Orientation="Vertical">
 						<StackPanel Orientation="Horizontal">
-							<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogDataSourceOptionsDialog.Command}" VerticalAlignment="Center"/>
+							<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogDataSourceOptions.Command}" VerticalAlignment="Center"/>
 							<TextBlock Classes="Dialog_TextBlock" IsVisible="{Binding $parent[Window].IsCommandRequired}" Text="{DynamicResource String/LogDataSourceOptionsDialog.Required}" VerticalAlignment="Center"/>
 						</StackPanel>
 						<Grid ColumnDefinitions="*,Auto">
@@ -111,14 +111,14 @@
 
 					<!-- Include standard error -->
 					<StackPanel IsVisible="{Binding $parent[Window].IsIncludeStandardErrorSupported}" Orientation="Vertical">
-						<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogDataSourceOptionsDialog.IncludeStandardError}"/>
+						<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogDataSourceOptions.IncludeStandardError}"/>
 						<ToggleSwitch Name="includeStderrSwitch" Classes="Dialog_ToggleSwitch"/>
 						<Separator Classes="Dialog_Separator"/>
 					</StackPanel>
 					
 					<!-- File name -->
 					<StackPanel IsVisible="{Binding $parent[Window].IsFileNameSupported}" Orientation="Vertical">
-						<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogDataSourceOptionsDialog.FileName}"/>
+						<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogDataSourceOptions.FileName}"/>
 						<Grid ColumnDefinitions="*,Auto">
 							<TextBox Name="fileNameTextBox" Classes="Dialog_TextBox" VerticalAlignment="Center"/>
 							<Button Classes="BrowseButton" Command="{Binding $parent[Window].SelectFileName}" Grid.Column="1" VerticalAlignment="Center">
@@ -130,7 +130,7 @@
 
 					<!-- Working directory -->
 					<StackPanel IsVisible="{Binding $parent[Window].IsWorkingDirectorySupported}" Orientation="Vertical">
-						<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogDataSourceOptionsDialog.WorkingDirectory}"/>
+						<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogDataSourceOptions.WorkingDirectory}"/>
 						<Grid ColumnDefinitions="*,Auto">
 							<TextBox Name="workingDirectoryTextBox" Classes="Dialog_TextBox" VerticalAlignment="Center"/>
 							<Button Classes="BrowseButton" Command="{Binding $parent[Window].SelectWorkingDirectory}" Grid.Column="1" VerticalAlignment="Center">
@@ -152,14 +152,14 @@
 
 					<!-- URI -->
 					<StackPanel IsVisible="{Binding $parent[Window].IsUriSupported}" Orientation="Vertical">
-						<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogDataSourceOptionsDialog.Uri}"/>
+						<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogDataSourceOptions.Uri}"/>
 						<abControls:UriTextBox Name="uriTextBox" Classes="Dialog_TextBox" PropertyChanged="OnEditorControlPropertyChanged"/>
 						<Separator Classes="Dialog_Separator"/>
 					</StackPanel>
 
 					<!-- Encoding -->
 					<StackPanel IsVisible="{Binding $parent[Window].IsEncodingSupported}" Orientation="Vertical">
-						<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogDataSourceOptionsDialog.Encoding}"/>
+						<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogDataSourceOptions.Encoding}"/>
 						<ComboBox Name="encodingComboBox" Classes="Dialog_ComboBox" Items="{Binding $parent[Window].Encodings}">
 							<ComboBox.ItemTemplate>
 								<DataTemplate>
@@ -172,14 +172,14 @@
 
 					<!-- Format JSON data -->
 					<StackPanel IsVisible="{Binding $parent[Window].IsFormatJsonDataSupported}" Orientation="Vertical">
-						<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogDataSourceOptionsDialog.FormatJsonData}"/>
+						<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogDataSourceOptions.FormatJsonData}"/>
 						<ToggleSwitch Name="formatJsonDataSwitch" Classes="Dialog_ToggleSwitch"/>
 						<Separator Classes="Dialog_Separator"/>
 					</StackPanel>
 
 					<!-- Format XML data -->
 					<StackPanel IsVisible="{Binding $parent[Window].IsFormatXmlDataSupported}" Orientation="Vertical">
-						<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogDataSourceOptionsDialog.FormatXmlData}"/>
+						<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogDataSourceOptions.FormatXmlData}"/>
 						<ToggleSwitch Name="formatXmlDataSwitch" Classes="Dialog_ToggleSwitch"/>
 						<Separator Classes="Dialog_Separator"/>
 					</StackPanel>
@@ -187,7 +187,7 @@
 					<!-- Connection string -->
 					<StackPanel IsVisible="{Binding $parent[Window].IsConnectionStringSupported}" Orientation="Vertical">
 						<StackPanel Orientation="Horizontal">
-							<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogDataSourceOptionsDialog.ConnectionString}" VerticalAlignment="Center"/>
+							<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogDataSourceOptions.ConnectionString}" VerticalAlignment="Center"/>
 							<TextBlock Classes="Dialog_TextBlock" IsVisible="{Binding $parent[Window].IsConnectionStringRequired}" Text="{DynamicResource String/LogDataSourceOptionsDialog.Required}" VerticalAlignment="Center"/>
 						</StackPanel>
 						<TextBox Name="connectionStringStringTextBox" Classes="Dialog_TextBox" AcceptsReturn="True" AcceptsTab="True" Height="{StaticResource Double/LogDataSourceOptionsDialog.ConnectionStringTextBox.Height}" PropertyChanged="OnEditorControlPropertyChanged" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
@@ -197,7 +197,7 @@
 
 					<!-- Resource on Azure -->
 					<StackPanel IsVisible="{Binding $parent[Window].IsResourceOnAzureSupported}" Orientation="Vertical">
-						<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogDataSourceOptionsDialog.IsResourceOnAzure}"/>
+						<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogDataSourceOptions.IsResourceOnAzure}"/>
 						<ToggleSwitch Name="isResourceOnAzureSwitch" Classes="Dialog_ToggleSwitch"/>
 						<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogDataSourceOptionsDialog.IsResourceOnAzure.Description}"/>
 						<Separator Classes="Dialog_Separator"/>
@@ -206,7 +206,7 @@
 					<!-- Query string -->
 					<StackPanel IsVisible="{Binding $parent[Window].IsQueryStringSupported}" Orientation="Vertical">
 						<StackPanel Orientation="Horizontal">
-							<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogDataSourceOptionsDialog.QueryString}" VerticalAlignment="Center"/>
+							<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogDataSourceOptions.QueryString}" VerticalAlignment="Center"/>
 							<TextBlock Classes="Dialog_TextBlock" IsVisible="{Binding $parent[Window].IsQueryStringRequired}" Text="{DynamicResource String/LogDataSourceOptionsDialog.Required}" VerticalAlignment="Center"/>
 						</StackPanel>
 						<TextBox Name="queryStringTextBox" Classes="Dialog_TextBox" AcceptsReturn="True" AcceptsTab="True" Height="{StaticResource Double/LogDataSourceOptionsDialog.QueryStringTextBox.Height}" PropertyChanged="OnEditorControlPropertyChanged" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
@@ -217,7 +217,7 @@
 					<!-- User name -->
 					<StackPanel IsVisible="{Binding $parent[Window].IsUserNameSupported}" Orientation="Vertical">
 						<StackPanel Orientation="Horizontal">
-							<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogDataSourceOptionsDialog.UserName}" VerticalAlignment="Center"/>
+							<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogDataSourceOptions.UserName}" VerticalAlignment="Center"/>
 							<TextBlock Classes="Dialog_TextBlock" IsVisible="{Binding $parent[Window].IsUserNameRequired}" Text="{DynamicResource String/LogDataSourceOptionsDialog.Required}" VerticalAlignment="Center"/>
 						</StackPanel>
 						<TextBox Name="userNameTextBox" Classes="Dialog_TextBox" PropertyChanged="OnEditorControlPropertyChanged"/>
@@ -227,7 +227,7 @@
 					<!-- Password -->
 					<StackPanel IsVisible="{Binding $parent[Window].IsPasswordSupported}" Orientation="Vertical">
 						<StackPanel Orientation="Horizontal">
-							<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogDataSourceOptionsDialog.Password}" VerticalAlignment="Center"/>
+							<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogDataSourceOptions.Password}" VerticalAlignment="Center"/>
 							<TextBlock Classes="Dialog_TextBlock" IsVisible="{Binding $parent[Window].IsPasswordRequired}" Text="{DynamicResource String/LogDataSourceOptionsDialog.Required}" VerticalAlignment="Center"/>
 						</StackPanel>
 						<TextBox Name="passwordTextBox" Classes="Dialog_TextBox" PasswordChar="●" PropertyChanged="OnEditorControlPropertyChanged"/>
@@ -237,7 +237,7 @@
 					<!-- Setup commands -->
 					<StackPanel IsVisible="{Binding $parent[Window].IsSetupCommandsSupported}" Orientation="Vertical">
 						<StackPanel Orientation="Horizontal">
-							<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogDataSourceOptionsDialog.SetupCommands}" VerticalAlignment="Center"/>
+							<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogDataSourceOptions.SetupCommands}" VerticalAlignment="Center"/>
 							<TextBlock Classes="Dialog_TextBlock" IsVisible="{Binding $parent[Window].IsSetupCommandsRequired}" Text="{DynamicResource String/LogDataSourceOptionsDialog.Required}" VerticalAlignment="Center"/>
 						</StackPanel>
 						<Grid ColumnDefinitions="*,Auto">
@@ -252,7 +252,7 @@
 					<!-- Teardown commands -->
 					<StackPanel IsVisible="{Binding $parent[Window].IsTeardownCommandsSupported}" Orientation="Vertical">
 						<StackPanel Orientation="Horizontal">
-							<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogDataSourceOptionsDialog.TeardownCommands}" VerticalAlignment="Center"/>
+							<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogDataSourceOptions.TeardownCommands}" VerticalAlignment="Center"/>
 							<TextBlock Classes="Dialog_TextBlock" IsVisible="{Binding $parent[Window].IsTeardownCommandsRequired}" Text="{DynamicResource String/LogDataSourceOptionsDialog.Required}" VerticalAlignment="Center"/>
 						</StackPanel>
 						<Grid ColumnDefinitions="*,Auto">

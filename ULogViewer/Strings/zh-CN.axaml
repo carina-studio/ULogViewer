@@ -233,29 +233,30 @@
 	<sys:String x:Key="String/LogColorIndicator.ThreadName">线程名称</sys:String>
 	<sys:String x:Key="String/LogColorIndicator.UserName">使用者</sys:String>
 
+	<!-- LogDataSourceOptions -->
+	<sys:String x:Key="String/LogDataSourceOptions.Category">日志分类</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.Command">指令</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.ConnectionString">连线字符串</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.Encoding">文字编码</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.FileName">档案路径</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.FormatJsonData">读取时格式化 JSON 资料</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.FormatXmlData">读取时格式化 XML 资料</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.IncludeStandardError">包含标准错误输出 (stderr)</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.IsResourceOnAzure">这是 Azure 上的资源</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.Password">密码</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.QueryString">查询字符串</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.SetupCommands">日志读取前指令</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.TeardownCommands">日志读取后指令</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.Uri">URI</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.UserName">使用者名称</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.WorkingDirectory">工作目录</sys:String>
+
 	<!-- LogDataSourceOptionsDialog -->
-	<sys:String x:Key="String/LogDataSourceOptionsDialog.Category">日志分类</sys:String>
-	<sys:String x:Key="String/LogDataSourceOptionsDialog.Command">指令</sys:String>
-	<sys:String x:Key="String/LogDataSourceOptionsDialog.ConnectionString">连线字符串</sys:String>
-	<sys:String x:Key="String/LogDataSourceOptionsDialog.DatabaseSourceType">资料库来源</sys:String>
-	<sys:String x:Key="String/LogDataSourceOptionsDialog.Encoding">文字编码</sys:String>
-	<sys:String x:Key="String/LogDataSourceOptionsDialog.FileName">档案路径</sys:String>
-	<sys:String x:Key="String/LogDataSourceOptionsDialog.FormatJsonData">读取时格式化 JSON 资料</sys:String>
-	<sys:String x:Key="String/LogDataSourceOptionsDialog.FormatXmlData">读取时格式化 XML 资料</sys:String>
-	<sys:String x:Key="String/LogDataSourceOptionsDialog.IncludeStandardError">包含标准错误输出 (stderr)</sys:String>
-	<sys:String x:Key="String/LogDataSourceOptionsDialog.IsResourceOnAzure">这是 Azure 上的资源</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.IsResourceOnAzure.Description">若这是 Azure 上的资源则 ULogViewer 将自动设定相关环境，例如登录或更新防火墙规则。</sys:String>
-	<sys:String x:Key="String/LogDataSourceOptionsDialog.Password">密码</sys:String>
-	<sys:String x:Key="String/LogDataSourceOptionsDialog.QueryString">查询字符串</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.Required"> (必要)</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.SelectAzureResources">选取 Azure 上的资源</sys:String>
-	<sys:String x:Key="String/LogDataSourceOptionsDialog.SetupCommands">日志读取前指令</sys:String>
-	<sys:String x:Key="String/LogDataSourceOptionsDialog.TeardownCommands">日志读取后指令</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.Title">资料来源参数</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.Tutorial.SelectAzureResources">您可以点击这里以列出并选取 Azure 上的资源。</sys:String>
-	<sys:String x:Key="String/LogDataSourceOptionsDialog.Uri">URI</sys:String>
-	<sys:String x:Key="String/LogDataSourceOptionsDialog.UserName">使用者名称</sys:String>
-	<sys:String x:Key="String/LogDataSourceOptionsDialog.WorkingDirectory">工作目录</sys:String>
 
 	<!-- LogLevel -->
 	<sys:String x:Key="String/LogLevel.Debug">调试</sys:String>
