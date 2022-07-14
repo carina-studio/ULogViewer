@@ -47,18 +47,18 @@
 				<!-- Supported source options -->
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/ScriptLogDataSourceProviderEditorDialog.SupportedSourceOptions}"/>
 				<Grid ColumnDefinitions="*,Auto">
-					<ListBox Items="{Binding $parent[Window].SupportedSourceOptions}" VirtualizationMode="None">
+					<ListBox Name="supportedSourceOptionListBox" Items="{Binding $parent[Window].SupportedSourceOptions}" VirtualizationMode="None">
 						<ListBox.ItemTemplate>
 							<DataTemplate>
 								<Grid ColumnDefinitions="*,*">
 									<TextBlock Classes="ListBoxItem_TextBlock" Text="{Binding Name, Converter={x:Static appConverters:LogDataSourceOptionConverter.Default}}"/>
 									<Border Classes="InPlaceAction_Reserved"/>
 									<Grid Grid.Column="1" ColumnDefinitions="*,Auto" VerticalAlignment="Center">
-										<Border Height="22" ClipToBounds="True" Padding="0,-5,0,-5" VerticalAlignment="Center">
+										<Border Height="20" ClipToBounds="True" Padding="0,-6,0,-6" VerticalAlignment="Center">
 											<CheckBox Content="{DynamicResource String/ScriptLogDataSourceProviderEditorDialog.SupportedSourceOptions.Required}" IsChecked="{Binding IsRequired}" IsEnabled="{Binding CanBeRequired}" MinHeight="0" VerticalAlignment="Center"/>
 										</Border>
 										<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
-											<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveSupportedSourceOption}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
+											<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveSupportedSourceOption}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
 												<asControls:Image Classes="InPlaceAction_Icon">
 													<DrawingImage>
 														<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
@@ -71,7 +71,7 @@
 							</DataTemplate>
 						</ListBox.ItemTemplate>
 					</ListBox>
-					<Button Classes="BrowseButton" Command="{Binding $parent[Window].AddSupportedSourceOption}" Grid.Column="1" ToolTip.Tip="{DynamicResource String/Common.Add}" VerticalAlignment="Top">
+					<Button Classes="BrowseButton" Command="{Binding $parent[Window].AddSupportedSourceOptions}" Grid.Column="1" IsEnabled="{Binding $parent[Window].HasUnsupportedSourceOptions}" ToolTip.Tip="{DynamicResource String/Common.Add}" VerticalAlignment="Top">
 						<Image Classes="BrowseButtonIcon" Source="{StaticResource Image/Icon.Add}"/>
 					</Button>
 				</Grid>

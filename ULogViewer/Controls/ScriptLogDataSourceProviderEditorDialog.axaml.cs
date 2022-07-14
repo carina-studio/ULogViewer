@@ -31,13 +31,9 @@ partial class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.In
 		// Constructor.
 		public SupportedSourceOption(string name, bool isRequired)
 		{
-			this.CanBeRequired = name switch
+			this.CanBeRequired = !LogDataSourceOptions.IsValueTypeOption(name) && name switch
 			{
 				nameof(LogDataSourceOptions.Encoding)
-				or nameof(LogDataSourceOptions.FormatJsonData)
-				or nameof(LogDataSourceOptions.FormatXmlData)
-				or nameof(LogDataSourceOptions.IncludeStandardError)
-				or nameof(LogDataSourceOptions.IsResourceOnAzure)
 				or nameof(LogDataSourceOptions.SetupCommands)
 				or nameof(LogDataSourceOptions.TeardownCommands) => false,
 				_ => true,
@@ -65,6 +61,10 @@ partial class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.In
 	}
 
 
+	// Static fields.
+	static readonly AvaloniaProperty<bool> HasUnsupportedSourceOptionsProperty = AvaloniaProperty.Register<ScriptLogDataSourceProviderEditorDialog, bool>("HasUnsupportedSourceOptions", true);
+
+
 	// Fields.
 	LogDataSourceScript? closingReaderScript;
 	readonly SortedObservableList<CompilationResult> closingReaderScriptCompilationResults = new(CompareCompilationResult);
@@ -79,7 +79,9 @@ partial class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.In
 	LogDataSourceScript? readingLineScript;
 	readonly SortedObservableList<CompilationResult> readingLineScriptCompilationResults = new(CompareCompilationResult);
 	readonly ScriptEditor readingLineScriptEditor;
+	readonly Avalonia.Controls.ListBox supportedSourceOptionListBox;
 	readonly SortedObservableList<SupportedSourceOption> supportedSourceOptions = new((lhs, rhs) => string.Compare(lhs.Name, rhs.Name, true, CultureInfo.InvariantCulture));
+	readonly HashSet<string> unsupportedSourceOptions = new(LogDataSourceOptions.OptionNames);
 
 
 	/// <summary>
@@ -174,6 +176,25 @@ partial class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.In
 			it.GetObservable(ScriptEditor.LanguageProperty).Subscribe(_ => ScheduleCompilation());
 			it.GetObservable(ScriptEditor.SourceProperty).Subscribe(_ => ScheduleCompilation());
 		});
+		this.supportedSourceOptionListBox = this.Get<Avalonia.Controls.ListBox>(nameof(supportedSourceOptionListBox));
+	}
+
+
+	// Add supported source option.
+	async void AddSupportedSourceOptions()
+	{
+		if (this.unsupportedSourceOptions.IsEmpty())
+			return;
+		var options = await new LogDataSourceOptionsSelectionDialog()
+		{
+			AvailableOptions = this.unsupportedSourceOptions,
+		}.ShowDialog<ISet<string>?>(this);
+		if (options == null || options.IsEmpty())
+			return;
+		this.unsupportedSourceOptions.RemoveWhere(options.Contains);
+		this.SetValue<bool>(HasUnsupportedSourceOptionsProperty, this.unsupportedSourceOptions.IsNotEmpty());
+		foreach (var option in options)
+			this.supportedSourceOptions.Add(new(option, false));
 	}
 
 
@@ -282,7 +303,11 @@ partial class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.In
 				this.readingLineScriptEditor.Source = script.Source;
 			});
 			foreach (var option in provider.SupportedSourceOptions)
+			{
+				this.unsupportedSourceOptions.Remove(option);
 				this.supportedSourceOptions.Add(new(option, provider.RequiredSourceOptions.Contains(option)));
+			}
+			this.SetValue<bool>(HasUnsupportedSourceOptionsProperty, this.unsupportedSourceOptions.IsNotEmpty());
 			this.compileClosingReaderScriptAction.Schedule();
 			this.compileOpeningReaderScriptAction.Schedule();
 			this.compileReadingLineScriptAction.Schedule();
@@ -336,6 +361,19 @@ partial class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.In
 
 	// Get compilation results of opening reader script.
 	IList<CompilationResult> OpeningReaderScriptCompilationResults { get; }
+
+
+	// Remove supported source option.
+	void RemoveSupportedSourceOption(SupportedSourceOption option)
+	{
+		if (this.supportedSourceOptions.Remove(option))
+		{
+			this.unsupportedSourceOptions.Add(option.Name);
+			this.SetValue<bool>(HasUnsupportedSourceOptionsProperty, true);
+		}
+		this.supportedSourceOptionListBox.SelectedItem = null;
+		this.supportedSourceOptionListBox.Focus();
+	}
 
 
 	/// <summary>

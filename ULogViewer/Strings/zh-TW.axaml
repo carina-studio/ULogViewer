@@ -242,6 +242,7 @@
 	<sys:String x:Key="String/LogDataSourceOptions.FormatJsonData">讀取時格式化 JSON 資料</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.FormatXmlData">讀取時格式化 XML 資料</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.IncludeStandardError">包含標準錯誤輸出 (stderr)</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.IPEndPoint">IP 位址</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.IsResourceOnAzure">這是 Azure 上的資源</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.Password">密碼</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.QueryString">查詢字串</sys:String>
@@ -257,6 +258,9 @@
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.SelectAzureResources">選取 Azure 上的資源</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.Title">資料來源參數</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.Tutorial.SelectAzureResources">您可以點一下這裡以列出並選取 Azure 上的資源。</sys:String>
+
+	<!-- LogDataSourceOptionsSelectionDialog -->
+	<sys:String x:Key="String/LogDataSourceOptionsSelectionDialog.Title">選擇資料來源參數</sys:String>
 
 	<!-- LogLevel -->
 	<sys:String x:Key="String/LogLevel.Debug">偵錯</sys:String>

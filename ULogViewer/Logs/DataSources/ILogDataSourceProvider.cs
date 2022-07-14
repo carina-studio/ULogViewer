@@ -99,6 +99,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		// Static fields.
 		static readonly IList<string> emptyCommands = new string[0];
 		static volatile bool isOptionPropertyInfoMapReady;
+		static volatile IList<string> optionNames = new string[0];
 		static readonly Dictionary<string, PropertyInfo> optionPropertyInfoMap = new Dictionary<string, PropertyInfo>();
 
 
@@ -241,6 +242,19 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		/// <summary>
+		/// Check whether type of given option is <see cref="ValueType"/> or not.
+		/// </summary>
+		/// <param name="optionName">Name of option.</param>
+		/// <returns>True if type of given option is <see cref="ValueType"/>.</returns>
+		public static bool IsValueTypeOption(string optionName)
+		{
+			SetupOptionPropertyInfoMap();
+			return optionPropertyInfoMap.TryGetValue(optionName, out var propertyInfo)
+				&& propertyInfo.PropertyType.IsValueType;
+		}
+
+
+		/// <summary>
 		/// Get or set whether the source is one of resource on Azure or not.
 		/// </summary>
 		public bool IsResourceOnAzure { get; set; }
@@ -366,6 +380,19 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		/// <summary>
+		/// Get all names of options.
+		/// </summary>
+		public static IList<string> OptionNames
+		{
+			get
+			{
+				SetupOptionPropertyInfoMap();
+				return optionNames;
+			}
+		}
+
+
+		/// <summary>
 		/// Get or set command to start process.
 		/// </summary>
 		public string? Password { get; set; }
@@ -472,8 +499,9 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			{
 				if (isOptionPropertyInfoMapReady)
 					return;
-				foreach (var propertyInfo in typeof(LogDataSourceOptions).GetProperties())
+				foreach (var propertyInfo in typeof(LogDataSourceOptions).GetProperties(BindingFlags.Instance | BindingFlags.Public))
 					optionPropertyInfoMap[propertyInfo.Name] = propertyInfo;
+				optionNames = optionPropertyInfoMap.Keys.ToArray().AsReadOnly();
 				isOptionPropertyInfoMapReady = true;
 			}
 		}

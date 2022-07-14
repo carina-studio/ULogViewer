@@ -256,6 +256,7 @@
 	<sys:String x:Key="String/LogDataSourceOptions.FormatJsonData">Format JSON data when reading</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.FormatXmlData">Format XML data when reading</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.IncludeStandardError">Include Standard Error (stderr)</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.IPEndPoint">IP address</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.IsResourceOnAzure">This is the resource on Azure</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.Password">Password</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.QueryString">Query string</sys:String>
@@ -271,6 +272,9 @@
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.SelectAzureResources">Select resources on Azure</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.Title">Data source options</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.Tutorial.SelectAzureResources">You can click here to view and select resources on Azure.</sys:String>
+
+	<!-- LogDataSourceOptionsSelectionDialog -->
+	<sys:String x:Key="String/LogDataSourceOptionsSelectionDialog.Title">Select data source options</sys:String>
 
 	<!-- LogLevel -->
 	<sys:String x:Key="String/LogLevel.Debug">Debug</sys:String>
@@ -658,7 +662,7 @@
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Description">The script will be run one time when opening raw log reader. The returned value should be LogDataSourceState.ReaderOpened if succeeded, or failure if returning other values.</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript">Script to read raw log line</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Description">The script will be run for reading each raw log line. The returned value should be String or Null.</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.SupportedSourceOptions">Supported source options</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.SupportedSourceOptions">Supported data source options</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.SupportedSourceOptions.Required">Required</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.Title">Edit log data source script</sys:String>
 
