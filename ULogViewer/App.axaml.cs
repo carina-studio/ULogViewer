@@ -251,6 +251,9 @@ namespace CarinaStudio.ULogViewer
 			// wait for I/O completion of log profiles
 			await LogProfileManager.Default.WaitForIOTaskCompletion();
 
+			// wait for I/O completion of log data source providers
+			await LogDataSourceProviders.WaitForIOTaskCompletion();
+
 			// call base
 			await base.OnMainWindowClosedAsync(mainWindow, viewModel);
 		}
@@ -396,7 +399,7 @@ namespace CarinaStudio.ULogViewer
 
 			// initialize log data source providers
 			this.UpdateSplashWindowMessage(this.GetStringNonNull("SplashWindow.InitializeLogProfiles"));
-			LogDataSourceProviders.Initialize(this);
+			await LogDataSourceProviders.InitializeAsync(this);
 
 			// initialize log profiles
 			await LogProfileManager.InitializeAsync(this);

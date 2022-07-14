@@ -4,12 +4,12 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.Logs.DataSources
 {
-	/// <summary>
+	/// <summary>p
 	/// Manage all <see cref="ILogDataSourceProvider"/>s in application.
 	/// </summary>
 	static class LogDataSourceProviders
@@ -19,6 +19,18 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		static volatile EmptyLogDataSourceProvider? empty;
 		static volatile ILogger? logger;
 		static readonly SortedObservableList<ILogDataSourceProvider> providers = new((lhs, rhs) => string.Compare(lhs.Name, rhs.Name, true, CultureInfo.InvariantCulture));
+		static readonly SortedObservableList<ScriptLogDataSourceProvider> scriptProviders = new((lhs, rhs) => string.Compare(lhs.Name, rhs.Name, true, CultureInfo.InvariantCulture));
+
+
+		/// <summary>
+		/// Add new <see cref="ScriptLogDataSourceProvider"/>.
+		/// </summary>
+		/// <param name="provider">Provider.</param>
+		/// <returns>True if provider has been added successfully.</returns>
+		public static bool AddScriptProvider(ScriptLogDataSourceProvider provider)
+		{
+			return false;
+		}
 
 
 		/// <summary>
@@ -34,11 +46,10 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		/// <summary>
-		/// Initialize <see cref="ILogDataSourceProvider"/>s.
+		/// Initialize asynchronously.
 		/// </summary>
 		/// <param name="app">Application.</param>
-		[MethodImpl(MethodImplOptions.Synchronized)]
-		public static void Initialize(IULogViewerApplication app)
+		public static async Task InitializeAsync(IULogViewerApplication app)
 		{
 			// check state
 			app.VerifyAccess();
@@ -55,7 +66,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			// create logger
 			logger = app.LoggerFactory.CreateLogger(typeof(LogDataSourceProviders).Name);
 
-			// create providers
+			// create built-in providers
 			logger.LogDebug("Initialize");
 			empty = new EmptyLogDataSourceProvider(app);
 #if DEBUG
@@ -70,7 +81,30 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			providers.Add(new UdpServerLogDataSourceProvider(app));
 			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 				providers.Add(new WindowsEventLogDataSourceProvider(app));
+
+			// find script log data source providers
+			//
+			
+			// load script log data source providers
+			await Task.Yield();
 		}
+
+
+		/// <summary>
+		/// Remove <see cref="ScriptLogDataSourceProvider"/>.
+		/// </summary>
+		/// <param name="provider">Provider.</param>
+		/// <returns>True if provider has been removed successfully.</returns>
+		public static bool RemoveScriptProvider(ScriptLogDataSourceProvider provider)
+		{
+			return false;
+		}
+
+
+		/// <summary>
+		/// Get all <see cref="ScriptLogDataSourceProvider"/>s.
+		/// </summary>
+		public static IList<ScriptLogDataSourceProvider> ScriptProviders { get; } = scriptProviders.AsReadOnly();
 
 
 		/// <summary>
@@ -91,6 +125,16 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			}
 			provider = null;
 			return false;
+		}
+
+
+		/// <summary>
+		/// Wait for completion of I/O tasks.
+		/// </summary>
+		/// <returns>Task of waiting.</returns>
+		public static Task WaitForIOTaskCompletion()
+		{
+			return Task.CompletedTask;
 		}
 	}
 }
