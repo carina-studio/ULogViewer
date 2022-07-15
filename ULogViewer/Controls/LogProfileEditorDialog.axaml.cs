@@ -1006,6 +1006,11 @@ namespace CarinaStudio.ULogViewer.Controls
 		} 
 
 
+		// Show dialog to manage script log data source providers.
+		void ShowScriptLogDataSourceProvidersDialog() =>
+			_ = new ScriptLogDataSourceProvidersDialog().ShowDialog(this);
+
+
 		// List of time span format to read logs.
 		IList<string> TimeSpanFormatsForReading { get; }
 
