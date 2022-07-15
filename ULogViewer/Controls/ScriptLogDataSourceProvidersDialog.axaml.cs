@@ -3,6 +3,7 @@ using Avalonia.Markup.Xaml;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.DataSources;
+using CarinaStudio.ULogViewer.Logs.Profiles;
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -101,11 +102,14 @@ partial class ScriptLogDataSourceProvidersDialog : CarinaStudio.Controls.Dialog<
 	// Remove provider.
 	async void RemoveProvider(ScriptLogDataSourceProvider provider)
 	{
+		var logProfileCount = LogProfileManager.Default.Profiles.Count(it => it.DataSourceProvider == provider);
 		var result = await new MessageDialog()
 		{
 			Buttons = AppSuite.Controls.MessageDialogButtons.YesNo,
 			Icon = AppSuite.Controls.MessageDialogIcon.Question,
-			Message = this.Application.GetFormattedString("ScriptLogDataSourceProvidersDialog.ConfirmDeletingProvider", provider.DisplayName),
+			Message = logProfileCount > 0 
+				? this.Application.GetFormattedString("ScriptLogDataSourceProvidersDialog.ConfirmDeletingProvider.WithLogProfiles", provider.DisplayName, logProfileCount)
+				: this.Application.GetFormattedString("ScriptLogDataSourceProvidersDialog.ConfirmDeletingProvider", provider.DisplayName),
 		}.ShowDialog(this);
 		if (result != AppSuite.Controls.MessageDialogResult.Yes)
 			return;

@@ -631,6 +631,7 @@
 
 	<!-- ScriptLogDataSourceProvidersDialog -->
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.ConfirmDeletingProvider">您是否確定要刪除日誌資料來源腳本「{0}」？</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.ConfirmDeletingProvider.WithLogProfiles">您是否確定要刪除日誌資料來源腳本「{0}」以及相關的 {1} 個日誌類型？</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.Title">管理日誌資料來源腳本</sys:String>
 
 	<!-- Session -->

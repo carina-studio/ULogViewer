@@ -665,6 +665,7 @@
 
 	<!-- ScriptLogDataSourceProvidersDialog -->
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.ConfirmDeletingProvider">Are you sure to delete log data source script '{0}'?</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.ConfirmDeletingProvider.WithLogProfiles">Are you sure to delete log data source script '{0}' and {1} related log profile(s)?</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.Title">Manage log data source scripts</sys:String>
 
 	<!-- Session -->
