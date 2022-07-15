@@ -339,18 +339,7 @@
 				</MenuItem.Icon>
 			</MenuItem>
 			<Separator/>
-			<MenuItem Command="{Binding $parent[Window].EditConfiguration}" Header="{DynamicResource String/SessionView.EditConfiguration}" IsVisible="{Binding $parent[UserControl].Application.IsDebugMode}">
-				<MenuItem.Icon>
-					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Tool.Outline}"/>
-				</MenuItem.Icon>
-			</MenuItem>
-			<MenuItem Command="{Binding $parent[Window].EditPersistentState}" Header="{DynamicResource String/SessionView.EditPersistentState}" IsVisible="{Binding $parent[UserControl].Application.IsDebugMode}">
-				<MenuItem.Icon>
-					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Tool.Outline}"/>
-				</MenuItem.Icon>
-			</MenuItem>
-			<Separator IsVisible="{Binding $parent[UserControl].Application.IsDebugMode}"/>
-			<MenuItem Name="toolsMenuItem" Header="{DynamicResource String/SessionView.Tools}" IsVisible="{x:Static asControls:PathEnvVarEditorDialog.IsSupported}">
+			<MenuItem Name="toolsMenuItem" Header="{DynamicResource String/SessionView.Tools}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Tool.Outline}"/>
 				</MenuItem.Icon>
@@ -359,8 +348,19 @@
 						<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Edit}"/>
 					</MenuItem.Icon>
 				</MenuItem>
+				<Separator IsVisible="{x:Static asControls:PathEnvVarEditorDialog.IsSupported}"/>
+				<MenuItem Command="{Binding $parent[Window].EditConfiguration}" Header="{DynamicResource String/SessionView.EditConfiguration}" IsVisible="{Binding $parent[UserControl].Application.IsDebugMode}">
+					<MenuItem.Icon>
+						<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Tool.Outline}"/>
+					</MenuItem.Icon>
+				</MenuItem>
+				<MenuItem Command="{Binding $parent[Window].EditPersistentState}" Header="{DynamicResource String/SessionView.EditPersistentState}" IsVisible="{Binding $parent[UserControl].Application.IsDebugMode}">
+					<MenuItem.Icon>
+						<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Tool.Outline}"/>
+					</MenuItem.Icon>
+				</MenuItem>
 			</MenuItem>
-			<Separator IsVisible="False"/>
+			<Separator/>
 			<MenuItem Command="{Binding $parent[Window].ShowAppInfo}" Header="{DynamicResource String/SessionView.AppInfo}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Information.Outline}"/>
