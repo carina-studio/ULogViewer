@@ -18,15 +18,6 @@
 			<NativeMenuItem Click="OnNativeMenuItemClick" CommandParameter="AppOptions" Header="{DynamicResource String/SessionView.AppOptions}"/>
 			<NativeMenuItem Click="OnNativeMenuItemClick" CommandParameter="CheckForUpdate" Header="{DynamicResource String/SessionView.CheckForAppUpdate}"/>
 			<NativeMenuItemSeparator/>
-			<NativeMenuItem Click="OnNativeMenuItemClick" CommandParameter="EditConfiguration" Header="{DynamicResource String/SessionView.EditConfiguration}"/>
-			<NativeMenuItem Click="OnNativeMenuItemClick" CommandParameter="EditPersistentState" Header="{DynamicResource String/SessionView.EditPersistentState}"/>
-			<NativeMenuItemSeparator/>
-			<NativeMenuItem CommandParameter="Tools" Header="{DynamicResource String/SessionView.Tools}">
-				<NativeMenu>
-					<NativeMenuItem Click="OnNativeMenuItemClick" CommandParameter="EditPathEnvVar" Header="{DynamicResource String/SessionView.EditPathEnvVar}"/>
-				</NativeMenu>
-			</NativeMenuItem>
-			<NativeMenuItemSeparator/>
 			<NativeMenuItem Click="OnNativeMenuItemClick" CommandParameter="AppInfo" Header="{DynamicResource String/SessionView.AppInfo}"/>
 			<NativeMenuItemSeparator/>
 			<NativeMenuItem Click="OnNativeMenuItemClick" CommandParameter="Shutdown" Header="{DynamicResource String/App.Shutdown}"/>

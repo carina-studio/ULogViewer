@@ -16,7 +16,6 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -38,7 +37,6 @@ namespace CarinaStudio.ULogViewer
 
 		// Fields.
 		ExternalDependency[] externalDependencies = new ExternalDependency[0];
-		NativeMenuItem? toolsNativeMenuItem;
 
 
 		// Constructor.
@@ -273,18 +271,6 @@ namespace CarinaStudio.ULogViewer
 				case "CheckForUpdate":
 					(this.LatestActiveMainWindow as MainWindow)?.CheckForAppUpdate();
 					break;
-				case "EditConfiguration":
-					(this.LatestActiveMainWindow as MainWindow)?.EditConfiguration();
-					break;
-				case "EditPathEnvVar":
-					this.LatestActiveMainWindow?.Let(window =>
-					{
-						_ = new AppSuite.Controls.PathEnvVarEditorDialog().ShowDialog(window);
-					});
-					break;
-				case "EditPersistentState":
-					(this.LatestActiveMainWindow as MainWindow)?.EditPersistentState();
-					break;
 				case "Shutdown":
 					this.Shutdown();
 					break;
@@ -386,16 +372,10 @@ namespace CarinaStudio.ULogViewer
 								if (!this.IsDebugMode)
 									menu.Items.RemoveAt(i);
 								break;
-							case "Tools":
-							{
-								this.toolsNativeMenuItem = menuItem;
-								break;
-							}
 						}
 					}
 				});
 			}
-			this.UpdateToolMenuItems();
 
 			// initialize log data source providers
 			this.UpdateSplashWindowMessage(this.GetStringNonNull("SplashWindow.InitializeLogProfiles"));
@@ -488,12 +468,6 @@ namespace CarinaStudio.ULogViewer
 
 		// Version of settings.
 		protected override int SettingsVersion => 3;
-
-
-		// Update menu items of tools.
-		void UpdateToolMenuItems()
-		{
-		}
 
 
 		/// <inheritdoc/>

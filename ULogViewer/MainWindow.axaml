@@ -141,6 +141,16 @@
 					</NativeMenu>
 				</NativeMenuItem.Menu>
 			</NativeMenuItem>
+			<NativeMenuItem CommandParameter="Tools" Header="{DynamicResource String/SessionView.Tools}">
+				<NativeMenuItem.Menu>
+					<NativeMenu>
+						<NativeMenuItem Command="{Binding $self.EditPathEnvironmentVariable}" Header="{DynamicResource String/SessionView.EditPathEnvVar}"/>
+						<NativeMenuItemSeparator/>
+						<NativeMenuItem Command="{Binding $self.EditConfiguration}" CommandParameter="EditConfiguration" Header="{DynamicResource String/SessionView.EditConfiguration}"/>
+						<NativeMenuItem Command="{Binding $self.EditPersistentState}" CommandParameter="EditPersistentState" Header="{DynamicResource String/SessionView.EditPersistentState}"/>
+					</NativeMenu>
+				</NativeMenuItem.Menu>
+			</NativeMenuItem>
 		</NativeMenu>
 
 	</Window.Resources>

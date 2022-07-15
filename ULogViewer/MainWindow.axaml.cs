@@ -58,6 +58,7 @@ namespace CarinaStudio.ULogViewer
 		readonly AppSuite.Controls.TabControl tabControl;
 		readonly ScheduledAction tabControlSelectionChangedAction;
 		readonly ObservableList<TabItem> tabItems = new ObservableList<TabItem>();
+		NativeMenuItem? toolsNativeMenuItem;
 
 
 		/// <summary>
@@ -84,6 +85,45 @@ namespace CarinaStudio.ULogViewer
 			});
 			this.tabItems.AddRange(this.tabControl.Items.Cast<TabItem>());
 			this.tabControl.Items = this.tabItems;
+
+			// setup native menu items
+			if (Platform.IsMacOS)
+			{
+				NativeMenu.GetMenu(this)?.Let(nativeMenu =>
+				{
+					for (var i = nativeMenu.Items.Count - 1; i >= 0; --i)
+					{
+						if (nativeMenu.Items[i] is not NativeMenuItem menuItem)
+							continue;
+						switch (menuItem.CommandParameter as string)
+						{
+							case "Tools":
+								this.toolsNativeMenuItem = menuItem;
+								for (var j = menuItem.Menu.Items.Count - 1; j >= 0; --j)
+								{
+									if (menuItem.Menu.Items[j] is not NativeMenuItem subMenuItem)
+										continue;
+									switch (subMenuItem.CommandParameter as string)
+									{
+										case "EditConfiguration":
+											if (!this.Application.IsDebugMode)
+												menuItem.Menu.Items.RemoveAt(j);
+											break;
+										case "EditPersistentState":
+											if (!this.Application.IsDebugMode)
+											{
+												menuItem.Menu.Items.RemoveAt(j);
+												menuItem.Menu.Items.RemoveAt(--j); // separator
+											}
+											break;
+									}
+								}
+								break;
+						}
+					}
+				});
+			}
+			this.UpdateToolMenuItems();
 
 			// create scheduled actions
 			this.focusOnTabItemContentAction = new(() =>
@@ -391,6 +431,11 @@ namespace CarinaStudio.ULogViewer
 				Settings = this.Application.Configuration,
 			}.ShowDialog(this);
 		}
+
+
+		// Edit PATH environment variable.
+		void EditPathEnvironmentVariable() =>
+			_ = new AppSuite.Controls.PathEnvVarEditorDialog().ShowDialog(this);
 
 
 		/// <summary>
@@ -859,6 +904,7 @@ namespace CarinaStudio.ULogViewer
 			{
 				case ProductState.Activated:
 					this.notifyNetworkConnForProductActivationAction.Cancel();
+					this.UpdateToolMenuItems();
 					goto default;
 				case ProductState.Deactivated:
 					if (MainWindowToActivateProVersion == null
@@ -869,6 +915,7 @@ namespace CarinaStudio.ULogViewer
 						IsReActivatingProVersionNeeded = true;
 						this.reActivateProVersionAction.Schedule();
 					}
+					this.UpdateToolMenuItems();
 					break;
 				default:
 					IsReActivatingProVersionNeeded = false;
@@ -1119,6 +1166,12 @@ namespace CarinaStudio.ULogViewer
 					this.Application.RestartMainWindows();
 					break;
 			}
+		}
+
+
+		// Update menu items of tools.
+		void UpdateToolMenuItems()
+		{
 		}
 	}
 }
