@@ -1,0 +1,78 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:abControls="using:CarinaStudio.Controls"
+		xmlns:abConverters="using:CarinaStudio.Data.Converters"
+		xmlns:aConverters="using:Avalonia.Data.Converters"
+		xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
+		xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
+		xmlns:appDataSources="using:CarinaStudio.ULogViewer.Logs.DataSources"
+        xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
+		xmlns:sys="using:System"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="CarinaStudio.ULogViewer.Controls.ScriptLogDataSourceProvidersDialog"
+        Classes="Dialog"
+        Title="{DynamicResource String/ScriptLogDataSourceProvidersDialog.Title}"
+        Width="{DynamicResource Double/ScriptLogDataSourceProvidersDialog.Width}">
+
+	<DockPanel>
+
+		<!-- Control buttons -->
+		<Border Classes="Dialog_ControlButtonsPanel">
+			<StackPanel Classes="Dialog_ControlButtonsPanel">
+				<Button Classes="Dialog_IconControlButton" Command="{Binding $parent[Window].OpenDocumentation}" ToolTip.Tip="{DynamicResource String/Common.Help}">
+					<Image Classes="Dialog_IconControlButton_Icon" Source="{StaticResource Image/Icon.Question}"/>
+				</Button>
+				<Separator Classes="Dialog_Separator_Small"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].Close}" Content="{DynamicResource String/Common.OK}"/>
+			</StackPanel>
+		</Border>
+
+		<!-- Content -->
+		<Grid Classes="Dialog_ContentPanel" ColumnDefinitions="*,Auto">
+			<asControls:ListBox Name="providerListBox" Height="{StaticResource Double/ScriptLogDataSourceProvidersDialog.ProviderListBox.Height}" Items="{x:Static appDataSources:LogDataSourceProviders.ScriptProviders}">
+				<asControls:ListBox.ItemTemplate>
+					<DataTemplate>
+						<Grid ColumnDefinitions="Auto,*,Auto">
+							<Panel Classes="ListBoxItem_Icon">
+								<Image Classes="Icon" IsVisible="{Binding $parent[ListBoxItem].IsSelected}" Source="{StaticResource Image/Code.Light}"/>
+								<Image Classes="Icon" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}" Source="{StaticResource Image/Code}"/>
+							</Panel>
+							<TextBlock Classes="ListBoxItem_TextBlock" Grid.Column="1" Text="{Binding DisplayName}"/>
+							<Border Classes="InPlaceAction_Reserved" Grid.Column="1"/>
+							<StackPanel Grid.Column="2" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
+								<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveProvider}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
+									<asControls:Image Classes="InPlaceAction_Icon">
+										<DrawingImage>
+											<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
+										</DrawingImage>
+									</asControls:Image>
+								</Button>
+								<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].CopyProvider}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Copy}">
+									<asControls:Image Classes="InPlaceAction_Icon">
+										<DrawingImage>
+											<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Copy}"/>
+										</DrawingImage>
+									</asControls:Image>
+								</Button>
+								<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditProvider}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
+									<asControls:Image Classes="InPlaceAction_Icon">
+										<DrawingImage>
+											<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
+										</DrawingImage>
+									</asControls:Image>
+								</Button>
+							</StackPanel>
+						</Grid>
+					</DataTemplate>
+				</asControls:ListBox.ItemTemplate>
+			</asControls:ListBox>
+			<Button Classes="BrowseButton" Command="{Binding $parent[Window].AddProvider}" Grid.Column="1" ToolTip.Tip="{DynamicResource String/Common.Add}" VerticalAlignment="Top">
+				<Image Classes="BrowseButtonIcon" Source="{StaticResource Image/Icon.Add}"/>
+			</Button>
+		</Grid>
+		
+	</DockPanel>
+	
+</Window>

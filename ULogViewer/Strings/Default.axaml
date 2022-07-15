@@ -663,6 +663,10 @@
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.SupportedSourceOptions.Required">Required</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.Title">Edit log data source script</sys:String>
 
+	<!-- ScriptLogDataSourceProvidersDialog -->
+	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.ConfirmDeletingProvider">Are you sure to delete log data source script '{0}'?</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.Title">Manage log data source scripts</sys:String>
+
 	<!-- Session -->
 	<sys:String x:Key="String/Session.Empty">Empty Tab</sys:String>
 

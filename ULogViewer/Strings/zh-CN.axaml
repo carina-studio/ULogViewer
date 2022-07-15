@@ -629,6 +629,10 @@
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.SupportedSourceOptions.Required">必要参数</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.Title">编辑日志资料来源脚本</sys:String>
 
+	<!-- ScriptLogDataSourceProvidersDialog -->
+	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.ConfirmDeletingProvider">您是否确定要删除日志资料来源脚本「{0}」？</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.Title">管理日志资料来源脚本</sys:String>
+
 	<!-- Session -->
 	<sys:String x:Key="String/Session.Empty">空白页面</sys:String>
 	

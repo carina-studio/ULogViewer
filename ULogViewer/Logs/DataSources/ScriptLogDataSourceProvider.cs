@@ -25,6 +25,20 @@ class ScriptLogDataSourceProvider : BaseLogDataSourceProvider
     { }
 
 
+    /// <summary>
+    /// Initialize new <see cref=""/> instance.
+    /// </summary>
+    /// <param name="template">Template provider.</param>
+    /// <param name="displayName">Display name.</param>
+    public ScriptLogDataSourceProvider(ScriptLogDataSourceProvider template, string? displayName) : this(template.Application, GenerateName())
+    {
+        this.closingReaderScript = template.closingReaderScript;
+        this.displayName = displayName;
+        this.openingReaderScript = template.openingReaderScript;
+        this.readingLineScript = template.readingLineScript;
+    }
+
+
     // Constructor.
     ScriptLogDataSourceProvider(IULogViewerApplication app, string name) : base(app)
     {
@@ -75,7 +89,7 @@ class ScriptLogDataSourceProvider : BaseLogDataSourceProvider
     static string GenerateName()
     {
         var r = new Random();
-        var prefix = new string(new char[32].Also(it =>
+        var postfix = new string(new char[32].Also(it =>
         {
             for (var i = it.Length - 1; i >= 0; --i)
             {
@@ -83,7 +97,7 @@ class ScriptLogDataSourceProvider : BaseLogDataSourceProvider
                 it[i] = n < 10 ? (char)('0' + n) : (char)('a' + (n - 10));
             }
         }));
-        return $"{prefix}-{DateTime.UtcNow.Ticks}";
+        return $"{DateTime.UtcNow.Ticks}-{postfix}";
     }
 
 

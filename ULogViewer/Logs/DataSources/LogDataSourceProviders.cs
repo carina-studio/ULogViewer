@@ -3,6 +3,7 @@ using CarinaStudio.Threading;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
@@ -18,7 +19,18 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		static volatile IULogViewerApplication? app;
 		static volatile EmptyLogDataSourceProvider? empty;
 		static volatile ILogger? logger;
-		static readonly SortedObservableList<ILogDataSourceProvider> providers = new((lhs, rhs) => string.Compare(lhs.Name, rhs.Name, true, CultureInfo.InvariantCulture));
+		static readonly SortedObservableList<ILogDataSourceProvider> providers = new((lhs, rhs) => 
+		{
+			if (lhs is ScriptLogDataSourceProvider)
+			{
+				if (rhs is ScriptLogDataSourceProvider)
+					return string.Compare(lhs.Name, rhs.Name, true, CultureInfo.InvariantCulture);
+				return 1;
+			}
+			if (rhs is ScriptLogDataSourceProvider)
+				return -1;
+			return string.Compare(lhs.Name, rhs.Name, true, CultureInfo.InvariantCulture);
+		});
 		static readonly SortedObservableList<ScriptLogDataSourceProvider> scriptProviders = new((lhs, rhs) => string.Compare(lhs.Name, rhs.Name, true, CultureInfo.InvariantCulture));
 
 
@@ -87,6 +99,12 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			
 			// load script log data source providers
 			await Task.Yield();
+		}
+
+
+		// Called when property of provider changed.
+		static void OnProviderPropertyChanged(object? sender, PropertyChangedEventArgs e)
+		{
 		}
 
 

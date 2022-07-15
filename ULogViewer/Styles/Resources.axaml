@@ -152,6 +152,10 @@
 	<sys:Double x:Key="Double/ScriptLogDataSourceProviderEditorDialog.MinWidth">300</sys:Double>
 	<sys:Double x:Key="Double/ScriptLogDataSourceProviderEditorDialog.ScriptEditor.Height">300</sys:Double>
 	<sys:Double x:Key="Double/ScriptLogDataSourceProviderEditorDialog.Width">650</sys:Double>
+
+	<!-- ScriptLogDataSourceProvidersDialog -->
+	<sys:Double x:Key="Double/ScriptLogDataSourceProvidersDialog.ProviderListBox.Height">300</sys:Double>
+	<sys:Double x:Key="Double/ScriptLogDataSourceProvidersDialog.Width">400</sys:Double>
 	
 	<!-- SessionView -->
 	<CornerRadius x:Key="CornerRadius/SessionView.LogListBox.Item.Column.Border">4</CornerRadius>
