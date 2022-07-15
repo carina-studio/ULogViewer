@@ -1,5 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
+using Avalonia.Data;
 using Avalonia.Markup.Xaml;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.Collections;
@@ -61,11 +63,9 @@ partial class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.In
 	}
 
 
-	// Static fields.
-	static readonly AvaloniaProperty<bool> HasUnsupportedSourceOptionsProperty = AvaloniaProperty.Register<ScriptLogDataSourceProviderEditorDialog, bool>("HasUnsupportedSourceOptions", true);
-
-
 	// Fields.
+	readonly ToggleButton addSupportedSourceOptionButton;
+	readonly ContextMenu addSupportedSourceOptionMenu;
 	LogDataSourceScript? closingReaderScript;
 	readonly SortedObservableList<CompilationResult> closingReaderScriptCompilationResults = new(CompareCompilationResult);
 	readonly ScriptEditor closingReaderScriptEditor;
@@ -81,7 +81,8 @@ partial class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.In
 	readonly ScriptEditor readingLineScriptEditor;
 	readonly Avalonia.Controls.ListBox supportedSourceOptionListBox;
 	readonly SortedObservableList<SupportedSourceOption> supportedSourceOptions = new((lhs, rhs) => string.Compare(lhs.Name, rhs.Name, true, CultureInfo.InvariantCulture));
-	readonly HashSet<string> unsupportedSourceOptions = new(LogDataSourceOptions.OptionNames);
+	readonly SortedObservableList<MenuItem> unsupportedSourceOptionMenuItems = new((lhs, rhs) => string.Compare(lhs.DataContext as string, rhs.DataContext as string, true, CultureInfo.InvariantCulture));
+	readonly SortedObservableList<string> unsupportedSourceOptions = new((lhs, rhs) => string.Compare(lhs, rhs, true, CultureInfo.InvariantCulture), LogDataSourceOptions.OptionNames);
 
 
 	/// <summary>
@@ -94,6 +95,17 @@ partial class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.In
 		this.ReadingLineScriptCompilationResults = this.readingLineScriptCompilationResults.AsReadOnly();
 		this.SupportedSourceOptions = this.supportedSourceOptions.AsReadOnly();
 		AvaloniaXamlLoader.Load(this);
+		this.addSupportedSourceOptionButton = this.Get<ToggleButton>(nameof(addSupportedSourceOptionButton));
+		this.addSupportedSourceOptionMenu = ((ContextMenu)this.Resources[nameof(addSupportedSourceOptionMenu)].AsNonNull()).Also(it =>
+		{
+			it.Items = this.unsupportedSourceOptionMenuItems;
+			it.MenuClosed += (_, e) => this.SynchronizationContext.Post(() => this.addSupportedSourceOptionButton.IsChecked = false);
+			it.MenuOpened += (_, e) =>
+			{
+				ToolTip.SetIsOpen(this.addSupportedSourceOptionButton, false);
+				this.SynchronizationContext.Post(() => this.addSupportedSourceOptionButton.IsChecked = true);
+			};
+		});
 		this.closingReaderScriptEditor = this.Get<ScriptEditor>(nameof(closingReaderScriptEditor)).Also(it =>
 		{
 			void ScheduleCompilation()
@@ -181,20 +193,12 @@ partial class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.In
 
 
 	// Add supported source option.
-	async void AddSupportedSourceOptions()
+	void AddSupportedSourceOption(MenuItem menuItem)
 	{
-		if (this.unsupportedSourceOptions.IsEmpty())
-			return;
-		var options = await new LogDataSourceOptionsSelectionDialog()
-		{
-			AvailableOptions = this.unsupportedSourceOptions,
-		}.ShowDialog<ISet<string>?>(this);
-		if (options == null || options.IsEmpty())
-			return;
-		this.unsupportedSourceOptions.RemoveWhere(options.Contains);
-		this.SetValue<bool>(HasUnsupportedSourceOptionsProperty, this.unsupportedSourceOptions.IsNotEmpty());
-		foreach (var option in options)
-			this.supportedSourceOptions.Add(new(option, false));
+		var option = (string)menuItem.DataContext.AsNonNull();
+		this.unsupportedSourceOptions.Remove(option);
+		this.unsupportedSourceOptionMenuItems.Remove(menuItem);
+		this.supportedSourceOptions.Add(new(option, false));
 	}
 
 
@@ -227,6 +231,26 @@ partial class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.In
 		if (string.IsNullOrEmpty(source))
 			return null;
 		return new LogDataSourceScript(this.Application, editor.Language, source);
+	});
+
+
+	// Create menu item for unsupported log data source option.
+	MenuItem CreateUnsupportedSourceOptionMenuItem(string option) => new MenuItem().Also(menuItem =>
+	{
+		menuItem.Click += (_, e) =>
+		{
+			this.addSupportedSourceOptionMenu.Close();
+			this.AddSupportedSourceOption(menuItem);
+		};
+		menuItem.DataContext = option;
+		menuItem.Header = new TextBlock().Also(it =>
+		{
+			it.Bind(TextBlock.TextProperty, new Binding()
+			{
+				Converter = Converters.LogDataSourceOptionConverter.Default,
+				Source = option,
+			});
+		});
 	});
 
 
@@ -307,7 +331,6 @@ partial class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.In
 				this.unsupportedSourceOptions.Remove(option);
 				this.supportedSourceOptions.Add(new(option, provider.RequiredSourceOptions.Contains(option)));
 			}
-			this.SetValue<bool>(HasUnsupportedSourceOptionsProperty, this.unsupportedSourceOptions.IsNotEmpty());
 			this.compileClosingReaderScriptAction.Schedule();
 			this.compileOpeningReaderScriptAction.Schedule();
 			this.compileReadingLineScriptAction.Schedule();
@@ -318,6 +341,8 @@ partial class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.In
 			this.openingReaderScriptEditor.Language = this.Settings.GetValueOrDefault(SettingKeys.DefaultScriptLanguage);
 			this.readingLineScriptEditor.Language = this.Settings.GetValueOrDefault(SettingKeys.DefaultScriptLanguage);
 		}
+		foreach (var option in this.unsupportedSourceOptions)
+			this.unsupportedSourceOptionMenuItems.Add(this.CreateUnsupportedSourceOptionMenuItem(option));
 
 		// setup initial focus
 		this.SynchronizationContext.Post(() =>
@@ -369,7 +394,7 @@ partial class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.In
 		if (this.supportedSourceOptions.Remove(option))
 		{
 			this.unsupportedSourceOptions.Add(option.Name);
-			this.SetValue<bool>(HasUnsupportedSourceOptionsProperty, true);
+			this.unsupportedSourceOptionMenuItems.Add(this.CreateUnsupportedSourceOptionMenuItem(option.Name));
 		}
 		this.supportedSourceOptionListBox.SelectedItem = null;
 		this.supportedSourceOptionListBox.Focus();
@@ -384,6 +409,11 @@ partial class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.In
 
 	// Get compilation results of reading line script.
 	IList<CompilationResult> ReadingLineScriptCompilationResults { get; }
+
+
+	// Show menu of adding supported log data source options.
+	void ShowAddSupportedSourceOptionMenu() =>
+		this.addSupportedSourceOptionMenu.Open(this.addSupportedSourceOptionButton);
 
 
 	// Get supported log data source options.

@@ -273,9 +273,6 @@
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.Title">Data source options</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.Tutorial.SelectAzureResources">You can click here to view and select resources on Azure.</sys:String>
 
-	<!-- LogDataSourceOptionsSelectionDialog -->
-	<sys:String x:Key="String/LogDataSourceOptionsSelectionDialog.Title">Select data source options</sys:String>
-
 	<!-- LogLevel -->
 	<sys:String x:Key="String/LogLevel.Debug">Debug</sys:String>
 	<sys:String x:Key="String/LogLevel.Error">Error</sys:String>

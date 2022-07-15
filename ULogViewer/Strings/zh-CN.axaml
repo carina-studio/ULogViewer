@@ -259,9 +259,6 @@
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.Title">资料来源参数</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.Tutorial.SelectAzureResources">您可以点击这里以列出并选取 Azure 上的资源。</sys:String>
 
-	<!-- LogDataSourceOptionsSelectionDialog -->
-	<sys:String x:Key="String/LogDataSourceOptionsSelectionDialog.Title">选择资料来源参数</sys:String>
-
 	<!-- LogLevel -->
 	<sys:String x:Key="String/LogLevel.Debug">调试</sys:String>
 	<sys:String x:Key="String/LogLevel.Error">错误</sys:String>

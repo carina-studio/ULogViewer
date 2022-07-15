@@ -7,8 +7,8 @@
 		xmlns:aConverters="using:Avalonia.Data.Converters"
 		xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
 		xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
-		xmlns:appCtxlBased="using:CarinaStudio.ULogViewer.ViewModels.Analysis.ContextualBased"
         xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
+		xmlns:sys="using:System"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.ScriptLogDataSourceProviderEditorDialog"
 		Name="window"
@@ -20,6 +20,10 @@
 		SizeToContent="Manual"
         Title="{DynamicResource String/ScriptLogDataSourceProviderEditorDialog.Title}"
         Width="{DynamicResource Double/ScriptLogDataSourceProviderEditorDialog.Width}">
+	
+	<Window.Resources>
+		<ContextMenu x:Key="addSupportedSourceOptionMenu" PlacementMode="Bottom"/>
+	</Window.Resources>
 
 	<DockPanel>
 
@@ -71,9 +75,12 @@
 							</DataTemplate>
 						</ListBox.ItemTemplate>
 					</ListBox>
-					<Button Classes="BrowseButton" Command="{Binding $parent[Window].AddSupportedSourceOptions}" Grid.Column="1" IsEnabled="{Binding $parent[Window].HasUnsupportedSourceOptions}" ToolTip.Tip="{DynamicResource String/Common.Add}" VerticalAlignment="Top">
-						<Image Classes="BrowseButtonIcon" Source="{StaticResource Image/Icon.Add}"/>
-					</Button>
+					<ToggleButton Name="addSupportedSourceOptionButton" Classes="BrowseButton" Command="{Binding $parent[Window].ShowAddSupportedSourceOptionMenu}" Grid.Column="1" IsEnabled="{Binding $parent[Window].UnsupportedSOurceOptions.Count}" ToolTip.Tip="{DynamicResource String/Common.Add}" VerticalAlignment="Top">
+						<Panel>
+							<Image Classes="BrowseButtonIcon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.Add.Light}"/>
+							<Image Classes="BrowseButtonIcon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.Add}"/>
+						</Panel>
+					</ToggleButton>
 				</Grid>
 				<Separator Classes="Dialog_Separator"/>
 
