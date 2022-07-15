@@ -339,7 +339,7 @@
 				</MenuItem.Icon>
 			</MenuItem>
 			<Separator/>
-			<MenuItem Name="toolsMenuItem" Header="{DynamicResource String/SessionView.Tools}">
+			<MenuItem Name="toolsMenuItem" Header="{DynamicResource String/SessionView.Tools}" IsVisible="{Binding $parent[UserControl].IsToolsMenuItemVisible}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Tool.Outline}"/>
 				</MenuItem.Icon>

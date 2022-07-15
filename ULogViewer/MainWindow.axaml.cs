@@ -53,6 +53,8 @@ namespace CarinaStudio.ULogViewer
 		readonly ScheduledAction reActivateProVersionAction;
 		readonly ScheduledAction selectAndSetLogProfileAction;
 		readonly DataTemplate sessionTabItemHeaderTemplate;
+		NativeMenuItem? showScriptLdsProvidersDialogMenuItem;
+		IDisposable? showScriptLdsProvidersDialogMenuItemHeaderBinding;
 		readonly Stopwatch stopwatch = new Stopwatch();
 		readonly ScheduledAction updateSysTaskBarAction;
 		readonly AppSuite.Controls.TabControl tabControl;
@@ -1167,6 +1169,11 @@ namespace CarinaStudio.ULogViewer
 					break;
 			}
 		}
+
+
+		// Show dialog to manage script log data source providers.
+		void ShowScriptLogDataSourceProvidersDialog() =>
+			_ = new ScriptLogDataSourceProvidersDialog().ShowDialog(this);
 
 
 		// Update menu items of tools.

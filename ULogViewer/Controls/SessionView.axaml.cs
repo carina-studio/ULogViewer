@@ -339,6 +339,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.ValidLogLevels = this.validLogLevels.AsReadOnly();
 
 			// initialize
+			this.IsToolsMenuItemVisible = this.Application.IsDebugMode || AppSuite.Controls.PathEnvVarEditorDialog.IsSupported;
 			AvaloniaXamlLoader.Load(this);
 
 			// load resources
@@ -2375,6 +2376,10 @@ namespace CarinaStudio.ULogViewer.Controls
 			get => this.GetValue<bool>(IsScrollingToLatestLogNeededProperty);
 			set => this.SetValue<bool>(IsScrollingToLatestLogNeededProperty, value);
 		}
+
+
+		// Whether "Tools" menu item is visible or not.
+		bool IsToolsMenuItemVisible { get; }
 
 
 		// Latest timestamp of selected log.
@@ -4964,6 +4969,14 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (this.otherActionsMenu.PlacementTarget == null)
 				this.otherActionsMenu.PlacementTarget = this.otherActionsButton;
 			this.otherActionsMenu.Open(this);
+		}
+
+
+		// Show dialog to manage script log data source providers.
+		void ShowScriptLogDataSourceProvidersDialog()
+		{
+			if (this.attachedWindow != null)
+				_ = new ScriptLogDataSourceProvidersDialog().ShowDialog(this.attachedWindow);
 		}
 
 

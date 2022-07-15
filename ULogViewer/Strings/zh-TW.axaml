@@ -343,7 +343,7 @@
 	<sys:String x:Key="String/LogProfileEditorDialog.ProVersionOnly">需要升級至專業版</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.RestartReadingDelay">重新開始讀取日誌前的延遲 (毫秒)</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.ScriptLogDataSourceProviders">管理日誌資料來源腳本…</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.ScriptLogDataSourceProviders.ProVersionOnly">管理日誌資料來源腳本 (專業版)…</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.ScriptLogDataSourceProviders.WithProVersion">管理日誌資料來源腳本 (專業版)…</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.SortDirection">日誌排序方向</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.SortKey">日誌排序依據</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.TimeSpanEncodingForReading">日誌時距讀取類型</sys:String>
