@@ -155,6 +155,16 @@ class ScriptLogDataSourceProvider : BaseLogDataSourceProvider
     }
 
 
+    /// <summary>
+    /// Set set of supported source options.
+    /// </summary>
+    /// <param name="options">Name of supported options.</param>
+    /// <param name="required">Name of required options.</param>
+    public void SetSupportedSourceOptions(IEnumerable<string> options, IEnumerable<string> required)
+    {
+    }
+
+
     /// <inheritdoc/>
     public override ISet<string> SupportedSourceOptions => throw new NotImplementedException();
 }
