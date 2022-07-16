@@ -652,7 +652,8 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 	// Called when text entering.
 	void OnTextEntering(object? sender, TextInputEventArgs e)
 	{
-		switch (e.Text)
+		var enteringText = e.Text;
+		switch (enteringText)
 		{
 			case "\n":
 				{
@@ -690,9 +691,12 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 					{
 						var textForNextLine = $"\n{this.CreateIndentation(indentation)}";
 						e.Text = $"\n{this.CreateIndentation(indentation + 1)}{textForNextLine}";
+						this.sourceEditorArea.Caret.Hide();
 						this.SynchronizationContext.Post(() =>
 						{
 							this.sourceEditor.SelectionStart -= textForNextLine.Length;
+							if (this.sourceEditorArea.IsFocused)
+								this.sourceEditorArea.Caret.Show();
 						});
 					}
 				}
@@ -705,10 +709,13 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 					if (position == 0 || (text[position - 1] != '{' && text[position - 1] != '\\'))
 					{
 						e.Text = "{}";
+						this.sourceEditorArea.Caret.Hide();
 						this.SynchronizationContext.Post(() =>
 						{
 							this.sourceEditor.SelectionStart = position + 1;
 							this.sourceEditor.SelectionLength = 0;
+							if (this.sourceEditorArea.IsFocused)
+								this.sourceEditorArea.Caret.Show();
 						});
 					}
 				}
@@ -723,26 +730,50 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 						var indentation = this.GetIndentation(prevLine);
 						var newText = $"{this.CreateIndentation(Math.Max(0, indentation - 1))}}}";
 						e.Text = "";
+						this.sourceEditorArea.Caret.Hide();
 						this.SynchronizationContext.Post(() =>
 						{
 							this.sourceEditor.Select(line.Offset, line.Length);
 							this.sourceEditor.SelectedText = newText;
 							this.sourceEditor.SelectionLength = 0;
 							this.sourceEditor.SelectionStart = line.Offset + newText.Length;
+							if (this.sourceEditorArea.IsFocused)
+								this.sourceEditorArea.Caret.Show();
 						});
 					}
 				}
 				break;
-			case "(":
-			case "[":
 			case "'":
 			case "\"":
+				if (this.sourceEditor.SelectionLength == 0)
+				{
+					var text = this.sourceEditor.Text;
+					var position = this.sourceEditor.SelectionStart;
+					if (position > 0 && position < text.Length && text[position - 1] == enteringText[0])
+					{
+						if (position <= 1 || text[position - 2] != '\\')
+						{
+							e.Text = "";
+							this.sourceEditorArea.Caret.Hide();
+							this.SynchronizationContext.Post(() => 
+							{
+								this.sourceEditor.SelectionStart += enteringText.Length;
+								if (this.sourceEditorArea.IsFocused)
+									this.sourceEditorArea.Caret.Show();
+							});
+							break;
+						}
+					}
+				}
+				goto case "(";
+			case "(":
+			case "[":
 				if (this.sourceEditor.SelectionLength == 0)
 				{
 					var position = this.sourceEditor.SelectionStart;
 					if (position == 0 || this.sourceEditor.Text[position - 1] != '\\')
 					{
-						var startingStr = e.Text;
+						var startingStr = enteringText;
 						var endingStr = startingStr switch
 						{
 							"(" => ")",
@@ -752,11 +783,43 @@ partial class ScriptEditor : CarinaStudio.Controls.UserControl<IULogViewerApplic
 							_ => "",
 						};
 						e.Text = $"{startingStr}{endingStr}";
+						this.sourceEditorArea.Caret.Hide();
 						this.SynchronizationContext.Post(() =>
 						{
 							this.sourceEditor.SelectionStart = position + startingStr.Length;
 							this.sourceEditor.SelectionLength = 0;
+							if (this.sourceEditorArea.IsFocused)
+								this.sourceEditorArea.Caret.Show();
 						});
+					}
+				}
+				break;
+			case ")":
+			case "]":
+				if (this.sourceEditor.SelectionLength == 0)
+				{
+					var text = this.sourceEditor.Text;
+					var position = this.sourceEditor.SelectionStart;
+					var startingChar = enteringText switch
+					{
+						")" => '(',
+						"]" => '[',
+						_ => enteringText[0],
+					};
+					if (position > 0 && position < text.Length && text[position - 1] == startingChar)
+					{
+						if (position <= 1 || text[position - 2] != '\\')
+						{
+							e.Text = "";
+							this.sourceEditorArea.Caret.Hide();
+							this.SynchronizationContext.Post(() => 
+							{
+								this.sourceEditor.SelectionStart += enteringText.Length;
+								if (this.sourceEditorArea.IsFocused)
+									this.sourceEditorArea.Caret.Show();
+							});
+							break;
+						}
 					}
 				}
 				break;
