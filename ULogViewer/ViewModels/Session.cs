@@ -773,6 +773,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly TimestampDisplayableLogCategorizer allLogsTimestampCategorizer;
 		readonly Dictionary<string, List<DisplayableLog>> allLogsByLogFilePath = new Dictionary<string, List<DisplayableLog>>(PathEqualityComparer.Default);
 		readonly HashSet<IDisplayableLogAnalyzer<DisplayableLogAnalysisResult>> attachedLogAnalyzers = new();
+		ILogDataSourceProvider? attachedLogDataSourceProvider;
 		readonly MutableObservableBoolean canClearLogFiles = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canCopyLogs = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canCopyLogsWithFileNames = new MutableObservableBoolean();
@@ -809,6 +810,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly ObservableList<OperationDurationAnalysisRuleSet> operationDurationAnalysisRuleSets = new();
 		readonly OperationDurationDisplayableLogAnalyzer operationDurationAnalyzer;
 		readonly ObservableList<PredefinedLogTextFilter> predefinedLogTextFilters;
+		readonly ScheduledAction reloadLogsAction;
+		readonly ScheduledAction reloadLogsFullyAction;
+		readonly ScheduledAction reloadLogsWithRecreatingLogReadersAction;
+		readonly ScheduledAction reloadLogsWithUpdatingVisPropAction;
 		readonly ScheduledAction reportLogsTimeInfoAction;
 		readonly List<LogReaderOptions> savedLogReaderOptions = new();
 		readonly ScheduledAction saveMarkedLogsAction;
@@ -851,7 +856,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.ReloadLogsCommand = new Command(() => 
 			{
 				if (this.canReloadLogs.Value)
-					this.ReloadLogs(false, false);
+					this.ScheduleReloadingLogs(false, false);
 			}, this.canReloadLogs);
 			this.RemoveLogFileCommand = new Command<string?>(this.RemoveLogFile, this.canClearLogFiles);
 			this.ResetLogProfileCommand = new Command(this.ResetLogProfile, this.canResetLogProfile);
@@ -1009,6 +1014,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				// schedule next checking
 				this.checkLogsMemoryUsageAction?.Schedule(LogsMemoryUsageCheckInterval);
 			});
+			this.reloadLogsAction = new(() => this.ReloadLogs(false, false));
+			this.reloadLogsFullyAction= new(() => this.ReloadLogs(true, true));
+			this.reloadLogsWithRecreatingLogReadersAction = new(() => this.ReloadLogs(true, false));
+			this.reloadLogsWithUpdatingVisPropAction = new(() => this.ReloadLogs(false, true));
 			this.reportLogsTimeInfoAction = new ScheduledAction(() =>
 			{
 				if (this.IsDisposed)
@@ -3200,6 +3209,33 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		}
 
 
+		// Called when property of log data source provider changed.
+		void OnLogDataSourceProviderPropertyChanged(object? sender, PropertyChangedEventArgs e)
+		{
+			if (sender is ScriptLogDataSourceProvider scriptProvider)
+			{
+				switch (e.PropertyName)
+				{
+					case nameof(ScriptLogDataSourceProvider.ClosingReaderScript):
+					case nameof(ScriptLogDataSourceProvider.OpeningReaderScript):
+					case nameof(ScriptLogDataSourceProvider.ReadingLineScript):
+						if (!this.reloadLogsFullyAction.IsScheduled)
+						{
+							this.reloadLogsAction.Cancel();
+							if (this.reloadLogsWithUpdatingVisPropAction.IsScheduled)
+							{
+								this.reloadLogsWithUpdatingVisPropAction.Cancel();
+								this.reloadLogsFullyAction.Schedule();
+							}
+							else
+								this.reloadLogsWithRecreatingLogReadersAction.Schedule();
+						}
+						break;
+				}
+			}
+		}
+
+
 		// Called when property of log filter changed.
 		void OnLogFilterPropertyChanged(object? sender, PropertyChangedEventArgs e)
 		{
@@ -3249,13 +3285,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						if (this.AreFileBasedLogs)
 						{
 							if (profile.AllowMultipleFiles)
-								this.ReloadLogs(true, false);
+								this.ScheduleReloadingLogs(true, false);
 							else
 							{
 								if (this.logFileInfoList.Count > 1)
 									this.ClearLogFiles();
 								else
-									this.ReloadLogs(true, false);
+									this.ScheduleReloadingLogs(true, false);
 							}
 						}
 					});
@@ -3263,13 +3299,18 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				case nameof(LogProfile.ColorIndicator):
 					this.SetValue(HasLogColorIndicatorProperty, this.LogProfile?.ColorIndicator != LogColorIndicator.None);
 					this.SetValue(HasLogColorIndicatorByFileNameProperty, this.LogProfile?.ColorIndicator == LogColorIndicator.FileName);
-					this.SynchronizationContext.Post(() => this.ReloadLogs(false, true));
+					this.ScheduleReloadingLogs(false, true);
 					break;
 				case nameof(LogProfile.DataSourceOptions):
-					this.SynchronizationContext.Post(() => this.ReloadLogs(true, false));
+					this.ScheduleReloadingLogs(true, false);
 					break;
 				case nameof(LogProfile.DataSourceProvider):
-					this.SynchronizationContext.Post(() => this.ReloadLogs(true, true));
+					if (this.attachedLogDataSourceProvider != null)
+						this.attachedLogDataSourceProvider.PropertyChanged -= this.OnLogDataSourceProviderPropertyChanged;
+					this.attachedLogDataSourceProvider = (sender as LogProfile)?.DataSourceProvider;
+					if (this.attachedLogDataSourceProvider != null)
+						this.attachedLogDataSourceProvider.PropertyChanged += this.OnLogDataSourceProviderPropertyChanged;
+					this.ScheduleReloadingLogs(true, true);
 					break;
 				case nameof(LogProfile.Icon):
 				case nameof(LogProfile.Name):
@@ -3302,7 +3343,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				case nameof(LogProfile.TimestampFormatForDisplaying):
 				case nameof(LogProfile.TimestampEncodingForReading):
 				case nameof(LogProfile.TimestampFormatsForReading):
-					this.SynchronizationContext.Post(() => this.ReloadLogs(true, false));
+					this.ScheduleReloadingLogs(true, false);
 					break;
 				case nameof(LogProfile.RestartReadingDelay):
 					(sender as LogProfile)?.Let(profile =>
@@ -3320,7 +3361,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					});
 					break;
 				case nameof(LogProfile.VisibleLogProperties):
-					this.SynchronizationContext.Post(() => this.ReloadLogs(false, true));
+					this.ScheduleReloadingLogs(false, true);
 					break;
 			}
 		}
@@ -3663,6 +3704,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			var profile = this.LogProfile;
 			if (profile == null)
 				throw new InternalStateCorruptedException("No log profile to reload logs.");
+			
+			// cancel scheduled reloading logs
+			this.reloadLogsAction.Cancel();
+			this.reloadLogsFullyAction.Cancel();
+			this.reloadLogsWithRecreatingLogReadersAction.Cancel();
+			this.reloadLogsWithUpdatingVisPropAction.Cancel();
 
 			// clear logs
 			var isContinuousReading = profile.IsContinuousReading;
@@ -3765,12 +3812,25 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			var profile = this.LogProfile;
 			if (profile == null)
 				throw new InternalStateCorruptedException("No log profile to reset.");
+			
+			// cancel scheduled reloading logs
+			this.reloadLogsAction.Cancel();
+			this.reloadLogsFullyAction.Cancel();
+			this.reloadLogsWithRecreatingLogReadersAction.Cancel();
+			this.reloadLogsWithUpdatingVisPropAction.Cancel();
 
 			// save marked logs to file immediately
 			this.saveMarkedLogsAction.ExecuteIfScheduled();
 
 			// detach from log profile
 			profile.PropertyChanged -= this.OnLogProfilePropertyChanged;
+
+			// detach from log data source provider
+			if (this.attachedLogDataSourceProvider != null)
+			{
+				this.attachedLogDataSourceProvider.PropertyChanged -= this.OnLogDataSourceProviderPropertyChanged;
+				this.attachedLogDataSourceProvider = null;
+			}
 
 			// update state
 			this.SetValue(AreFileBasedLogsProperty, false);
@@ -4494,6 +4554,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// attach to log profile
 			profile.PropertyChanged += this.OnLogProfilePropertyChanged;
 
+			// attach to log data source provider
+			this.attachedLogDataSourceProvider = profile.DataSourceProvider;
+			this.attachedLogDataSourceProvider.PropertyChanged += this.OnLogDataSourceProviderPropertyChanged;
+
 			// update display log properties
 			this.UpdateDisplayLogProperties();
 
@@ -4708,6 +4772,46 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				jsonWriter.WriteNumber(nameof(TimestampCategoriesPanelSize), this.TimestampCategoriesPanelSize);
 			});
 			jsonWriter.WriteEndObject();
+		}
+
+
+		// Schedule reloading logs.
+		void ScheduleReloadingLogs(bool recreateLogReaders, bool updateVisibleProperties)
+		{
+			if (this.reloadLogsFullyAction.IsScheduled)
+				return;
+			if (recreateLogReaders)
+			{
+				if (updateVisibleProperties || this.reloadLogsWithUpdatingVisPropAction.IsScheduled)
+				{
+					this.reloadLogsAction.Cancel();
+					this.reloadLogsWithRecreatingLogReadersAction.Cancel();
+					this.reloadLogsWithUpdatingVisPropAction.Cancel();
+					this.reloadLogsFullyAction.Schedule();
+				}
+				else
+				{
+					this.reloadLogsAction.Cancel();
+					this.reloadLogsWithRecreatingLogReadersAction.Schedule();
+				}
+			}
+			else if (updateVisibleProperties)
+			{
+				if (this.reloadLogsWithRecreatingLogReadersAction.IsScheduled)
+				{
+					this.reloadLogsAction.Cancel();
+					this.reloadLogsWithRecreatingLogReadersAction.Cancel();
+					this.reloadLogsWithUpdatingVisPropAction.Cancel();
+					this.reloadLogsFullyAction.Schedule();
+				}
+				else
+				{
+					this.reloadLogsAction.Cancel();
+					this.reloadLogsWithUpdatingVisPropAction.Schedule();
+				}
+			}
+			else
+				this.reloadLogsAction.Schedule();
 		}
 
 
