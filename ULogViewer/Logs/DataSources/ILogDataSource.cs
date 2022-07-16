@@ -85,7 +85,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 	/// <summary>
 	/// State of <see cref="ILogDataSource"/>.
 	/// </summary>
-	enum LogDataSourceState
+	public enum LogDataSourceState
 	{
 		/// <summary>
 		/// Initializing. This is the initial state.

@@ -12,6 +12,7 @@ class LogDataSourceScript : Script<ILogDataSourceScriptContext>
     // Static fields.
     static readonly List<string> _Namespaces = new List<string>()
     {
+        "CarinaStudio.ULogViewer.Logs.DataSources",
         "System.IO",
     };
 
