@@ -1,3 +1,4 @@
+using System;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
@@ -127,7 +128,9 @@ static class Utility
                 bitmap.CreateDrawingContext(new ImmediateRenderer(new Panel())).Use(idc =>
                 {
                     using var dc = new DrawingContext(idc, false);
-                    image.Draw(dc, new(0, 0, image.Size.Width, image.Size.Height), new(0, 0, outputSize.Width, outputSize.Height), BitmapInterpolationMode.HighQuality);
+                    var srcSize = image.Size;
+                    var srcSideLength = Math.Max(srcSize.Width, srcSize.Height);
+                    image.Draw(dc, new((srcSize.Width - srcSideLength) / 2, (srcSize.Height - srcSideLength) / 2, srcSideLength, srcSideLength), new(0, 0, outputSize.Width, outputSize.Height), BitmapInterpolationMode.HighQuality);
                 });
             });
 
