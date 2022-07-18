@@ -96,7 +96,7 @@ partial class ScriptLogDataSourceProvidersDialog : CarinaStudio.Controls.Dialog<
 
 	// Open online documentation.
 	void OpenDocumentation() =>
-		Platform.OpenLink("https://carinastudio.azurewebsites.net/ULogViewer/Scripting");
+		Platform.OpenLink("https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource");
 	
 
 	// Remove provider.
