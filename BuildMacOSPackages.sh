@@ -79,7 +79,7 @@ for i in "${!RID_LIST[@]}"; do
 
     # zip .app directory
     cd ./Packages/$PUB_PLATFORM
-    zip -r ./$APP_NAME-$VERSION-$PUB_PLATFORM.zip ./
+    zip -9 -r ./$APP_NAME-$VERSION-$PUB_PLATFORM.zip ./
     if [ "$?" != "0" ]; then
         cd -
         exit
