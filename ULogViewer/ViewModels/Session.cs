@@ -1960,8 +1960,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.updateTitleAndIconAction.Schedule();
 
 			// bind to log file info
+			var dataSourceProvider = dataSource.Provider;
 			var creationOptions = dataSource.CreationOptions;
-			var hasFileName = creationOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName));
+			var hasFileName = dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.FileName)) 
+				&& creationOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName));
 			if (hasFileName)
 			{
 				var fileName = creationOptions.FileName.AsNonNull();
@@ -1986,9 +1988,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				if (!profile.AllowMultipleFiles)
 					this.SetValue(IsLogFileNeededProperty, false);
 			}
-			if (creationOptions.IsOptionSet(nameof(LogDataSourceOptions.IPEndPoint)))
+			if (dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.IPEndPoint)) 
+				&& creationOptions.IsOptionSet(nameof(LogDataSourceOptions.IPEndPoint)))
+			{
 				this.SetValue(IPEndPointProperty, creationOptions.IPEndPoint);
-			if (creationOptions.IsOptionSet(nameof(LogDataSourceOptions.WorkingDirectory)))
+			}
+			if (dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.WorkingDirectory))
+				&& creationOptions.IsOptionSet(nameof(LogDataSourceOptions.WorkingDirectory)))
 			{
 				var directory = creationOptions.WorkingDirectory;
 				this.SetValue(WorkingDirectoryNameProperty, Path.GetFileName(directory));
