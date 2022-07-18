@@ -53,8 +53,6 @@ namespace CarinaStudio.ULogViewer
 		readonly ScheduledAction reActivateProVersionAction;
 		readonly ScheduledAction selectAndSetLogProfileAction;
 		readonly DataTemplate sessionTabItemHeaderTemplate;
-		NativeMenuItem? showScriptLdsProvidersDialogMenuItem;
-		IDisposable? showScriptLdsProvidersDialogMenuItemHeaderBinding;
 		readonly Stopwatch stopwatch = new Stopwatch();
 		readonly ScheduledAction updateSysTaskBarAction;
 		readonly AppSuite.Controls.TabControl tabControl;
