@@ -41,5 +41,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
         // URI of user agreement.
         public override Uri? UserAgreementUri => this.Application.UserAgreementVersion?.Let(it =>
             new Uri($"https://carinastudio.azurewebsites.net/Documents/ULogViewer/UserAgreement?version={it.Major}.{it.Minor}"));
+
+
+        // URI of website.
+        public override Uri? WebsiteUri =>
+            new Uri($"https://carinastudio.azurewebsites.net/ULogViewer/");
     }
 }
