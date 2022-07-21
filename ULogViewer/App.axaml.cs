@@ -306,6 +306,13 @@ namespace CarinaStudio.ULogViewer
         }
 
 
+		/// <inheritdoc/>
+		protected override AppSuite.Controls.SplashWindowParams OnPrepareSplashWindow() => base.OnPrepareSplashWindow().Also((ref AppSuite.Controls.SplashWindowParams param) =>
+		{
+			param.AccentColor = Avalonia.Media.Color.FromRgb(0x91, 0x2f, 0xbf);
+		});
+
+
 		// Prepare starting.
 		protected override async Task OnPrepareStartingAsync()
 		{
