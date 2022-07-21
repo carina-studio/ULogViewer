@@ -2,6 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:abControls="using:CarinaStudio.Controls"
 		xmlns:abConverters="using:CarinaStudio.Data.Converters"
 		xmlns:aConverters="using:Avalonia.Data.Converters"
         xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
@@ -86,14 +87,8 @@
 									</StackPanel>
 									<Separator Classes="Dialog_Separator_Small"/>
 								</StackPanel>
-								<StackPanel Orientation="Horizontal">
-									<TextBlock Classes="ToolTipText" Text="{DynamicResource String/MainWindow.Session.AllLogCount}"/>
-									<TextBlock Classes="ToolTipText" Text="{Binding AllLogCount}"/>
-								</StackPanel>
-								<StackPanel Orientation="Horizontal">
-									<TextBlock Classes="ToolTipText" Text="{DynamicResource String/MainWindow.Session.LogsMemoryUsage}"/>
-									<TextBlock Classes="ToolTipText" Text="{Binding LogsMemoryUsage, Converter={x:Static asConverters:FileSizeConverter.Default}}"/>
-								</StackPanel>
+								<abControls:FormattedTextBlock Classes="ToolTipText" Arg1="{Binding AllLogCount}" Format="{DynamicResource String/MainWindow.Session.AllLogCount}"/>
+								<abControls:FormattedTextBlock Classes="ToolTipText" Arg1="{Binding LogsMemoryUsage, Converter={x:Static asConverters:FileSizeConverter.Default}}" Format="{DynamicResource String/MainWindow.Session.LogsMemoryUsage}"/>
 							</StackPanel>
 							<StackPanel IsVisible="{Binding IsHibernated}" Orientation="Horizontal">
 								<Image Classes="ToolTipIcon" Source="{StaticResource Image/Icon.Leaf.Colored}"/>

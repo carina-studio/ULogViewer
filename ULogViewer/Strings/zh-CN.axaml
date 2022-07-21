@@ -498,9 +498,9 @@
 	<sys:String x:Key="String/MainWindow.ClearCustomSessionTitle">重设页面标题</sys:String>
 	<sys:String x:Key="String/MainWindow.NetworkConnectionNeededForProductActivation">请连接至互联网以启用「{0}」，否则「{0}」将会在一段时间后暂时被停用。</sys:String>
 	<sys:String x:Key="String/MainWindow.ReActivateProductNeeded">无法启用「{0}」，请尝试再次启用。</sys:String>
-	<sys:String x:Key="String/MainWindow.Session.AllLogCount">总日志数：</sys:String>
+	<sys:String x:Key="String/MainWindow.Session.AllLogCount">总共 {0} 笔</sys:String>
 	<sys:String x:Key="String/MainWindow.Session.Hibernated">休眠中以节省资源</sys:String>
-	<sys:String x:Key="String/MainWindow.Session.LogsMemoryUsage">内存使用：</sys:String>
+	<sys:String x:Key="String/MainWindow.Session.LogsMemoryUsage">内存使用 {0}</sys:String>
 	<sys:String x:Key="String/MainWindow.Session.Paused">已暂停</sys:String>
 	<sys:String x:Key="String/MainWindow.Session.WaitingForDataSources">正在等待资料来源</sys:String>
 	<sys:String x:Key="String/MainWindow.SetCustomSessionTitle">自定义页面标题…</sys:String>
@@ -642,7 +642,7 @@
 	<!-- SessionView -->
 	<sys:String x:Key="String/SessionView.AddLogFiles">加入日志档案</sys:String>
 	<sys:String x:Key="String/SessionView.AddLogFiles.WithShortcut">加入日志档案 (Ctrl+O)</sys:String>
-	<sys:String x:Key="String/SessionView.AllLogCount">总数：</sys:String>
+	<sys:String x:Key="String/SessionView.AllLogCount">总共 {0} 笔</sys:String>
 	<sys:String x:Key="String/SessionView.AllLogLevels">所有等级</sys:String>
 	<sys:String x:Key="String/SessionView.AppInfo">关于 ULogViewer…</sys:String>
 	<sys:String x:Key="String/SessionView.AppOptions">应用程序选项…</sys:String>
@@ -666,7 +666,7 @@
 	<sys:String x:Key="String/SessionView.EditPersistentState">编辑內部存储的状态…</sys:String>
 	<sys:String x:Key="String/SessionView.FailedToExportLogAnalysisRuleSet">无法将规则集「{0}」导出至 '{1}'。</sys:String>
 	<sys:String x:Key="String/SessionView.FailedToImportLogAnalysisRuleSet">无法从 '{0}' 导入規則集。</sys:String>
-	<sys:String x:Key="String/SessionView.FilteredLogCount">，已筛选：</sys:String>
+	<sys:String x:Key="String/SessionView.FilteredLogCount">，已筛选 {0} 笔</sys:String>
 	<sys:String x:Key="String/SessionView.FilterLogsBySelectedProcessId">使用选择的 PID 筛选</sys:String>
 	<sys:String x:Key="String/SessionView.FilterLogsBySelectedProcessIdOnly">只使用选择的 PID 筛选</sys:String>
 	<sys:String x:Key="String/SessionView.FilterLogsBySelectedThreadId">使用选择的 TID 筛选</sys:String>
@@ -677,8 +677,8 @@
 	<sys:String x:Key="String/SessionView.Hint.NoLogToShow">沒有日志可以展示</sys:String>
 	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.Section1">点一下工具列的</sys:String>
 	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.Section2">来选择日志类型以开始使用</sys:String>
-	<sys:String x:Key="String/SessionView.LastLogsFilteringDuration">筛选耗时：</sys:String>
-	<sys:String x:Key="String/SessionView.LastLogsReadingDuration">读取耗时：</sys:String>
+	<sys:String x:Key="String/SessionView.LastLogsFilteringDuration">筛选耗时 {0}</sys:String>
+	<sys:String x:Key="String/SessionView.LastLogsReadingDuration">读取耗时 {0}</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisPanel">日志分析</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisPanel.Hint">点击面板右上角的按钮以选择要套用的的分析规则集</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisProgress">分析日志中…</sys:String>
@@ -734,8 +734,8 @@
 	<sys:String x:Key="String/SessionView.SaveLogs.WithShortcut">储存日志到档案 (Ctrl+S)</sys:String>
 	<sys:String x:Key="String/SessionView.SavingLogs">正在存储日志…</sys:String>
 	<sys:String x:Key="String/SessionView.ScrollToLatestLog">滚动至最新的日志</sys:String>
-	<sys:String x:Key="String/SessionView.SelectedLogCount">已选区：</sys:String>
-	<sys:String x:Key="String/SessionView.SelectedLogsDuration">选择的时长：</sys:String>
+	<sys:String x:Key="String/SessionView.SelectedLogCount">已选取 {0} 笔</sys:String>
+	<sys:String x:Key="String/SessionView.SelectedLogsDuration">选择的时长为 {0}</sys:String>
 	<sys:String x:Key="String/SessionView.SelectMarkedLogs">选择已标记的日志</sys:String>
 	<sys:String x:Key="String/SessionView.SelectNearestLogByTimestamp">选择最近指定时间戳的日志</sys:String>
 	<sys:String x:Key="String/SessionView.SelectNearestLogByTimestamp.Message">指定的时间戳</sys:String>

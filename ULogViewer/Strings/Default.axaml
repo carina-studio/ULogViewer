@@ -532,9 +532,9 @@
 	<sys:String x:Key="String/MainWindow.ClearCustomSessionTitle">Reset title of this tab</sys:String>
 	<sys:String x:Key="String/MainWindow.NetworkConnectionNeededForProductActivation">In order to activate '{0}', please connect to internet or it will be deactivated temporarily after a while.</sys:String>
 	<sys:String x:Key="String/MainWindow.ReActivateProductNeeded">Unable to activate '{0}', please try activating it again.</sys:String>
-	<sys:String x:Key="String/MainWindow.Session.AllLogCount">Total logs:</sys:String>
+	<sys:String x:Key="String/MainWindow.Session.AllLogCount">Total: {0}</sys:String>
 	<sys:String x:Key="String/MainWindow.Session.Hibernated">Hibernated to save resources</sys:String>
-	<sys:String x:Key="String/MainWindow.Session.LogsMemoryUsage">Memory usage:</sys:String>
+	<sys:String x:Key="String/MainWindow.Session.LogsMemoryUsage">Memory usage: {0}</sys:String>
 	<sys:String x:Key="String/MainWindow.Session.Paused">Paused</sys:String>
 	<sys:String x:Key="String/MainWindow.Session.WaitingForDataSources">Waiting for data source</sys:String>
 	<sys:String x:Key="String/MainWindow.SetCustomSessionTitle">Set title of this tab…</sys:String>
@@ -676,7 +676,7 @@
 	<!-- SessionView -->
 	<sys:String x:Key="String/SessionView.AddLogFiles">Add log files</sys:String>
 	<sys:String x:Key="String/SessionView.AddLogFiles.WithShortcut">Add log files (Ctrl+O)</sys:String>
-	<sys:String x:Key="String/SessionView.AllLogCount">Total: </sys:String>
+	<sys:String x:Key="String/SessionView.AllLogCount">Total: {0}</sys:String>
 	<sys:String x:Key="String/SessionView.AllLogLevels">All levels</sys:String>
 	<sys:String x:Key="String/SessionView.AppInfo">About ULogViewer…</sys:String>
 	<sys:String x:Key="String/SessionView.AppOptions">Options…</sys:String>
@@ -700,7 +700,7 @@
 	<sys:String x:Key="String/SessionView.EditPersistentState">Edit internal persistent state…</sys:String>
 	<sys:String x:Key="String/SessionView.FailedToExportLogAnalysisRuleSet">Unable to export rule set '{0}' to '{1}'.</sys:String>
 	<sys:String x:Key="String/SessionView.FailedToImportLogAnalysisRuleSet">Unable to import rule set from '{0}'.</sys:String>
-	<sys:String x:Key="String/SessionView.FilteredLogCount">, Filtered: </sys:String>
+	<sys:String x:Key="String/SessionView.FilteredLogCount">, Filtered: {0}</sys:String>
 	<sys:String x:Key="String/SessionView.FilterLogsBySelectedProcessId">Filter by selected PID</sys:String>
 	<sys:String x:Key="String/SessionView.FilterLogsBySelectedProcessIdOnly">Filter by selected PID only</sys:String>
 	<sys:String x:Key="String/SessionView.FilterLogsBySelectedThreadId">Filter by selected TID</sys:String>
@@ -711,8 +711,8 @@
 	<sys:String x:Key="String/SessionView.Hint.NoLogToShow">No log to show</sys:String>
 	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.Section1">Click</sys:String>
 	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.Section2">on toolbar to select log profile to start</sys:String>
-	<sys:String x:Key="String/SessionView.LastLogsFilteringDuration">Filtering cost: </sys:String>
-	<sys:String x:Key="String/SessionView.LastLogsReadingDuration">Reading cost: </sys:String>
+	<sys:String x:Key="String/SessionView.LastLogsFilteringDuration">Filtering took {0}</sys:String>
+	<sys:String x:Key="String/SessionView.LastLogsReadingDuration">Reading took {0}</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisPanel">Log Analysis</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisPanel.Hint">Click button on the top-right of panel to select analysis rule sets to apply</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisProgress">Analyzing logs…</sys:String>
@@ -768,8 +768,8 @@
 	<sys:String x:Key="String/SessionView.SaveLogs.WithShortcut">Save logs to file (Ctrl+S)</sys:String>
 	<sys:String x:Key="String/SessionView.SavingLogs">Saving logs…</sys:String>
 	<sys:String x:Key="String/SessionView.ScrollToLatestLog">Scroll to latest log</sys:String>
-	<sys:String x:Key="String/SessionView.SelectedLogCount">Selected: </sys:String>
-	<sys:String x:Key="String/SessionView.SelectedLogsDuration">Duration of selection:</sys:String>
+	<sys:String x:Key="String/SessionView.SelectedLogCount">{0} Selected</sys:String>
+	<sys:String x:Key="String/SessionView.SelectedLogsDuration">Duration of selection is {0}</sys:String>
 	<sys:String x:Key="String/SessionView.SelectMarkedLogs">Select marked logs</sys:String>
 	<sys:String x:Key="String/SessionView.SelectNearestLogByTimestamp">Select log nearest to specified timestamp</sys:String>
 	<sys:String x:Key="String/SessionView.SelectNearestLogByTimestamp.Message">Specified timestamp</sys:String>
