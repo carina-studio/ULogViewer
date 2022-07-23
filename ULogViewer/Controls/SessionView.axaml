@@ -657,6 +657,10 @@
 													<Button Classes="BrowseButton" Command="{Binding $parent[UserControl].ClearPredefinedLogTextFilterSelection}" IsEnabled="{Binding ElementName=predefinedLogTextFilterListBox, Path=SelectedItems.Count}" ToolTip.Tip="{DynamicResource String/SessionView.ClearPredefinedLogTextFiltersSelection}">
 														<Image Classes="BrowseButtonIcon" Source="{StaticResource Image/ClearSelection}"/>
 													</Button>
+													<Separator Classes="Dialog_Separator"/>
+													<Button Classes="BrowseButton" Command="{Binding $parent[UserControl].OpenPredefinedTextFiltersDocumentation}" ToolTip.Tip="{DynamicResource String/Common.Help}">
+														<Image Classes="BrowseButtonIcon" Source="{StaticResource Image/Icon.Question}"/>
+													</Button>
 												</StackPanel>
 											</Grid>
 										</StackPanel>
