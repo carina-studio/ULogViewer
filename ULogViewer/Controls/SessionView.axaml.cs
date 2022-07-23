@@ -4140,6 +4140,11 @@ namespace CarinaStudio.ULogViewer.Controls
 		
 
 		// Open online documentation.
+		void OpenLogFilteringDocumentation() =>
+			Platform.OpenLink("https://carinastudio.azurewebsites.net/ULogViewer/LogFiltering");
+		
+
+		// Open online documentation.
 		void OpenPredefinedTextFiltersDocumentation() =>
 			Platform.OpenLink("https://carinastudio.azurewebsites.net/ULogViewer/LogFiltering#PredefinedTextFilters");
 

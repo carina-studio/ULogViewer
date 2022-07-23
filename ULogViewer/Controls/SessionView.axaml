@@ -584,9 +584,14 @@
 							<!-- Text filter -->
 							<Panel Name="logTextFilterTextBoxPanel" Grid.Column="1" HorizontalAlignment="Stretch" Margin="{StaticResource Thickness/ToolBar.Item.Margin}" MinWidth="{StaticResource Double/SessionView.ToolBar.LogTextFilter.MinWidth}" VerticalAlignment="Center">
 								<asControls:RegexTextBox Name="logTextFilterTextBox" Classes="RegexTextBox_InvalidText" GotFocus="OnLogFilterTextBoxGotFocus" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" Padding="{StaticResource Thickness/TextBox.Padding.WithInPlaceAction}" PropertyChanged="OnLogFilterTextBoxPropertyChanged" ToolTip.Tip="{DynamicResource String/SessionView.LogTextFilter.ToolTip}" Watermark="{DynamicResource String/SessionView.LogTextFilter.Watermark}"/>
-								<Button Classes="TextBox_InPlaceAction" Command="{Binding #logTextFilterTextBox.Clear}" IsVisible="{Binding #logTextFilterTextBox.Text, Converter={x:Static aConverters:StringConverters.IsNotNullOrEmpty}}" ToolTip.Tip="{DynamicResource String/Common.Clear}">
-									<Image Classes="Icon" Source="{StaticResource Image/Icon.Close}"/>
-								</Button>
+								<StackPanel HorizontalAlignment="Right" Orientation="Horizontal" VerticalAlignment="Center">
+									<Button Name="clearLogTextFilterButton" Classes="TextBox_InPlaceAction" Command="{Binding #logTextFilterTextBox.Clear}" IsVisible="{Binding #logTextFilterTextBox.Text, Converter={x:Static aConverters:StringConverters.IsNotNullOrEmpty}}" ToolTip.Tip="{DynamicResource String/Common.Clear}">
+										<Image Classes="Icon" Source="{StaticResource Image/Icon.Close}"/>
+									</Button>
+									<Button Classes="TextBox_InPlaceAction" Command="{Binding $parent[UserControl].OpenLogFilteringDocumentation}" IsVisible="{Binding !#clearLogTextFilterButton.IsVisible}" ToolTip.Tip="{DynamicResource String/Common.Help}">
+										<Image Classes="Icon" Source="{StaticResource Image/Icon.Question}"/>
+									</Button>
+								</StackPanel>
 							</Panel>
 
 						</Grid>
