@@ -109,8 +109,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="ChangeList-zh-CN.json" />
     <EmbeddedResource Include="ChangeList.json" />
+    <EmbeddedResource Include="ChangeList-zh-CN.json" />
     <EmbeddedResource Include="ChangeList-zh-TW.json" />
     <EmbeddedResource Include="Cryptography/AesIV" />
     <EmbeddedResource Include="Cryptography/AesKey" />
