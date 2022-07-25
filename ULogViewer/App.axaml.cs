@@ -466,7 +466,7 @@ namespace CarinaStudio.ULogViewer
 
 
 		/// <inheritdoc/>
-		public override Version? PrivacyPolicyVersion => new Version(1, 2);
+		public override Version? PrivacyPolicyVersion => new Version(1, 3);
 
 
         // Releasing type.
@@ -478,7 +478,7 @@ namespace CarinaStudio.ULogViewer
 
 
 		/// <inheritdoc/>
-		public override Version? UserAgreementVersion => new Version(1, 3);
+		public override Version? UserAgreementVersion => new Version(1, 4);
 
 
 #if WINDOWS_ONLY
