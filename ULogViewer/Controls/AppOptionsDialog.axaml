@@ -6,6 +6,7 @@
 		xmlns:as="using:CarinaStudio.AppSuite"
 		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
 		xmlns:asConverters="using:CarinaStudio.AppSuite.Converters"
+		xmlns:asScripting="using:CarinaStudio.AppSuite.Scripting"
 		xmlns:asViewModels="using:CarinaStudio.AppSuite.ViewModels"
         xmlns:app="using:CarinaStudio.ULogViewer"
         xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"

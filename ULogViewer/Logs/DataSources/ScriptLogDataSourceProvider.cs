@@ -1,6 +1,9 @@
+using CarinaStudio.AppSuite.Scripting;
+using CarinaStudio.Collections;
 using CarinaStudio.Threading;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.Logs.DataSources;
@@ -10,11 +13,35 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources;
 /// </summary>
 class ScriptLogDataSourceProvider : BaseLogDataSourceProvider
 {
+    /// <summary>
+    /// Options for sub scripts.
+    /// </summary>
+    public static readonly ScriptOptions ScriptOptions = new()
+    {
+        ContextType = typeof(ILogDataSourceScriptContext),
+        ImportedNamespaces = new HashSet<string>()
+        {
+            "CarinaStudio.ULogViewer.Logs.DataSources",
+            "System.IO",
+        },
+        ReferencedAssemblies = new HashSet<Assembly>()
+        {
+            Assembly.GetExecutingAssembly(),
+        },
+    };
+
+
+    // Static fields.
+    static readonly ISet<string> EmptyStringSet = new HashSet<string>().AsReadOnly();
+
+
     // Fields.
-    LogDataSourceScript? closingReaderScript;
+    IScript? closingReaderScript;
     string? displayName;
-    LogDataSourceScript? openingReaderScript;
-    LogDataSourceScript? readingLineScript;
+    IScript? openingReaderScript;
+    IScript? readingLineScript;
+    ISet<string> requiredSourceOptions = EmptyStringSet;
+    ISet<string> supportedSourceOptions = EmptyStringSet;
 
 
     /// <summary>
@@ -49,13 +76,13 @@ class ScriptLogDataSourceProvider : BaseLogDataSourceProvider
     /// <summary>
     /// Get or set script to close log data reader.
     /// </summary>
-    public LogDataSourceScript? ClosingReaderScript
+    public IScript? ClosingReaderScript
     {
         get => this.closingReaderScript;
         set
         {
             this.VerifyAccess();
-            if (this.closingReaderScript == value)
+            if (this.closingReaderScript?.Equals(value) ?? value == null)
                 return;
             this.closingReaderScript = value;
             this.OnPropertyChanged(nameof(ClosingReaderScript));
@@ -123,13 +150,13 @@ class ScriptLogDataSourceProvider : BaseLogDataSourceProvider
     /// <summary>
     /// Get or set script to open log data reader.
     /// </summary>
-    public LogDataSourceScript? OpeningReaderScript
+    public IScript? OpeningReaderScript
     {
         get => this.openingReaderScript;
         set
         {
             this.VerifyAccess();
-            if (this.openingReaderScript == value)
+            if (this.openingReaderScript?.Equals(value) ?? value == null)
                 return;
             this.openingReaderScript = value;
             this.OnPropertyChanged(nameof(OpeningReaderScript));
@@ -140,13 +167,13 @@ class ScriptLogDataSourceProvider : BaseLogDataSourceProvider
     /// <summary>
     /// Get or set script to read raw log line.
     /// </summary>
-    public LogDataSourceScript? ReadingLineScript
+    public IScript? ReadingLineScript
     {
         get => this.readingLineScript;
         set
         {
             this.VerifyAccess();
-            if (this.readingLineScript == value)
+            if (this.readingLineScript?.Equals(value) ?? value == null)
                 return;
             this.readingLineScript = value;
             this.OnPropertyChanged(nameof(ReadingLineScript));

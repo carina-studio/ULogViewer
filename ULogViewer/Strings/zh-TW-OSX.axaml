@@ -5,10 +5,6 @@
 	<!-- Azure -->
 	<sys:String x:Key="String/Azure.AzureCliNotFound">找不到 Azure 命令列介面 (CLI)。請確認 Azure 命令列介面已經安裝且其路徑已加入至檔案 '/etc/paths'。</sys:String>
 
-	<!-- ScriptEditor -->
-	<sys:String x:Key="String/ScriptEditor.DefaultFontFamilies">Menlo,Monaco</sys:String>
-	<sys:String x:Key="String/ScriptEditor.DefaultFontFamilies.CJK" xml:space="preserve">蘭亭黑-繁</sys:String>
-
 	<!-- SessionView -->
 	<sys:String x:Key="String/SessionView.AddLogFiles.WithShortcut">加入日誌檔案 (⌘O)</sys:String>
 	<sys:String x:Key="String/SessionView.EditPathEnvVar">編輯 /etc/paths…</sys:String>

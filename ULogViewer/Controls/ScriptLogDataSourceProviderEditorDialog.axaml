@@ -86,31 +86,16 @@
 
 				<!-- Opening reader script -->
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript}"/>
-				<appControls:ScriptEditor Name="openingReaderScriptEditor" Height="{StaticResource Double/ScriptLogDataSourceProviderEditorDialog.ScriptEditor.Height}" HorizontalAlignment="Stretch"/>
-				<StackPanel IsVisible="{Binding $parent[Window].OpeningReaderScriptCompilationResults.Count}">
-					<Separator Classes="Dialog_Separator_Small"/>
-					<appControls:ScriptCompilationResultViewer CompilationResults="{Binding $parent[Window].OpeningReaderScriptCompilationResults}" ScriptEditor="{Binding #openingReaderScriptEditor}"/>
-				</StackPanel>
 				<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Description}"/>
 				<Separator Classes="Dialog_Separator"/>
 
 				<!-- Reading line script -->
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript}"/>
-				<appControls:ScriptEditor Name="readingLineScriptEditor" Height="{StaticResource Double/ScriptLogDataSourceProviderEditorDialog.ScriptEditor.Height}" HorizontalAlignment="Stretch"/>
-				<StackPanel IsVisible="{Binding $parent[Window].ReadingLineScriptCompilationResults.Count}">
-					<Separator Classes="Dialog_Separator_Small"/>
-					<appControls:ScriptCompilationResultViewer CompilationResults="{Binding $parent[Window].ReadingLineScriptCompilationResults}" ScriptEditor="{Binding #readingLineScriptEditor}"/>
-				</StackPanel>
 				<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Description}"/>
 				<Separator Classes="Dialog_Separator"/>
 
 				<!-- Closing reader script -->
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript}"/>
-				<appControls:ScriptEditor Name="closingReaderScriptEditor" Height="{StaticResource Double/ScriptLogDataSourceProviderEditorDialog.ScriptEditor.Height}" HorizontalAlignment="Stretch"/>
-				<StackPanel IsVisible="{Binding $parent[Window].ClosingReaderScriptCompilationResults.Count}">
-					<Separator Classes="Dialog_Separator_Small"/>
-					<appControls:ScriptCompilationResultViewer CompilationResults="{Binding $parent[Window].ClosingReaderScriptCompilationResults}" ScriptEditor="{Binding #closingReaderScriptEditor}"/>
-				</StackPanel>
 				<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Description}"/>
 				<Separator Classes="Dialog_Separator"/>
 				

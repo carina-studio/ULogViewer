@@ -7,12 +7,9 @@
 
 	<!-- AppOptionsDialog -->
 	<sys:String x:Key="String/AppOptionsDialog.ContinuousLogReadingUpdateInterval">Log update interval when continuous reading (milliseconds)</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.DefaultScriptLanguage">Default language</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.EnableRunningScript">Enable scripting</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs">Scroll to latest log after reloading logs</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs.Description">Only for continuous logs reading</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.IgnoreCaseOfLogTextFilter">Ignore case of text filter</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.IndentationSizeInScript">Size of indentation</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.InitialLogProfile">Initial log profile when startup</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.LogAnalysis">Log Analysis</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.LogFiltering">Log Filtering</sys:String>
@@ -24,7 +21,6 @@
 	<sys:String x:Key="String/AppOptionsDialog.ResetLogAnalysisRuleSetsAfterSettingLogProfile">Reset applied rule sets after changing log profile</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SaveMemoryAggressively">Save memory usage aggressively</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SaveMemoryAggressively.Description">Keep memory usage as low as possible. It will reduce speed of logs reading/filtering and UI smoothness.</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.Scripting">Scripting</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectIPEndPointWhenNeeded">Show IP endpoint input when IP endpoint is needed</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectLogFilesWhenNeeded">Show file selector when log files are needed</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectLogProfileForNewSession">Show log profile selector after creating new tab</sys:String>
@@ -33,7 +29,6 @@
 	<sys:String x:Key="String/AppOptionsDialog.SelectWorkingDirectoryWhenNeeded">Show directory selector when working directory is needed</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ShowProcessInfo">Show CPU/memory usage on status bar</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.UpdateLogFilterDelay">Delay between changing conditions and start filtering (milliseconds)</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.UseSpacesForIndentationInScript">Use spaces for indentation</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.UseSystemAccentColor">Apply system accent color</sys:String>
 
 	<!-- Azure -->
@@ -639,19 +634,6 @@
 	<sys:String x:Key="String/RegexEditorDialog.TestResult.Success">(Matched)</sys:String>
 	<sys:String x:Key="String/RegexEditorDialog.Title">Edit pattern</sys:String>
 	<sys:String x:Key="String/RegexEditorDialog.Tutorial.ClickButtonToEditPattern">Click here to edit the pattern.</sys:String>
-
-	<!-- Script -->
-	<sys:String x:Key="String/Script.MessageForEnablingRunningScript">Your computer may be modified or damaged by running script. You need to review the script you wrote or imported carefully before running it. Are you sure to enable scripting in ULogViewer?</sys:String>
-
-	<!-- ScriptEditor -->
-	<sys:String x:Key="String/ScriptEditor.DefaultFontFamilies">Consolas,Courier New</sys:String>
-
-	<!-- ScriptEditorDialog -->
-	<sys:String x:Key="String/ScriptEditorDialog.Title">Edit script (C#)</sys:String>
-
-	<!-- ScriptLanguage -->
-	<sys:String x:Key="String/ScriptLanguage.CSharp">C# Script</sys:String>
-	<sys:String x:Key="String/ScriptLanguage.JavaScript">JavaScript (ECMAScript 5.1)</sys:String>
 
 	<!-- ScriptLogDataSourceProviderEditorDialog -->
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript">Script to close raw log reader</sys:String>

@@ -10,12 +10,9 @@
 
 	<!-- AppOptionsDialog -->
 	<sys:String x:Key="String/AppOptionsDialog.ContinuousLogReadingUpdateInterval">連續讀取時的日誌更新時距 (毫秒)</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.DefaultScriptLanguage">預設腳本語言</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.EnableRunningScript">啟用腳本執行</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs">在重新載入日誌後捲動至最新的日誌</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs.Description">僅適用於連續讀取日誌</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.IgnoreCaseOfLogTextFilter">文字篩選忽略大小寫</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.IndentationSizeInScript">縮排空白字元數</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.InitialLogProfile">啟動時的初始日誌類型</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.LogAnalysis">日誌分析</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.LogFiltering">日誌篩選</sys:String>
@@ -27,7 +24,6 @@
 	<sys:String x:Key="String/AppOptionsDialog.ResetLogAnalysisRuleSetsAfterSettingLogProfile">變更日誌類型後重設套用的規則集</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SaveMemoryAggressively">節省記憶體使用</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SaveMemoryAggressively.Description">盡量使用較少的記憶體，這將會使日誌載入及篩選速度下降，也會影響使用者介面的順暢度。</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.Scripting">腳本</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectIPEndPointWhenNeeded">當需要 IP 端點時立即顯示輸入介面</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectLogFilesWhenNeeded">當需要日誌檔案時立即開啟檔案選取介面</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectLogProfileForNewSession">建立新分頁後開啟日誌類型選取介面</sys:String>
@@ -36,7 +32,6 @@
 	<sys:String x:Key="String/AppOptionsDialog.SelectWorkingDirectoryWhenNeeded">當需要工作目錄時立即開啟目錄選取介面</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ShowProcessInfo">在狀態列上顯示 CPU 及記憶體使用量</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.UpdateLogFilterDelay">條件改變至開始篩選的延遲時間 (毫秒)</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.UseSpacesForIndentationInScript">使用空白字元進行縮排</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.UseSystemAccentColor">套用系統強調色彩</sys:String>
 
 	<!-- Azure -->
@@ -605,19 +600,6 @@
 	<sys:String x:Key="String/RegexEditorDialog.TestResult.Success">(符合)</sys:String>
 	<sys:String x:Key="String/RegexEditorDialog.Title">編輯格式</sys:String>
 	<sys:String x:Key="String/RegexEditorDialog.Tutorial.ClickButtonToEditPattern">點一下這裡以編輯格式。</sys:String>
-
-	<!-- Script -->
-	<sys:String x:Key="String/Script.MessageForEnablingRunningScript">執行腳本可能會修改或損壞您的電腦，在執行腳本之前您必須仔細確認您所撰寫或匯入的腳本。是否確定要在 ULogViewer 中啟用腳本執行？</sys:String>
-
-	<!-- ScriptEditor -->
-	<sys:String x:Key="String/ScriptEditor.DefaultFontFamilies">Consolas,Courier New</sys:String>
-	<sys:String x:Key="String/ScriptEditor.DefaultFontFamilies.CJK">Microsoft JhengHei</sys:String>
-
-	<!-- ScriptEditorDialog -->
-	<sys:String x:Key="String/ScriptEditorDialog.Title">編輯腳本 (C#)</sys:String>
-
-	<!-- ScriptLanguage -->
-	<sys:String x:Key="String/ScriptLanguage.CSharp">C# 腳本語言</sys:String>
 
 	<!-- ScriptLogDataSourceProviderEditorDialog -->
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript">原始日誌行讀取器關閉腳本</sys:String>

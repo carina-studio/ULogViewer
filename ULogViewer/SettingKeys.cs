@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using Avalonia.Media;
 using CarinaStudio.Configuration;
-using CarinaStudio.ULogViewer.Scripting;
 
 namespace CarinaStudio.ULogViewer
 {
@@ -15,14 +14,6 @@ namespace CarinaStudio.ULogViewer
 		/// </summary>
 		public static readonly SettingKey<int> ContinuousLogReadingUpdateInterval = new(nameof(ContinuousLogReadingUpdateInterval), 100);
 		/// <summary>
-		/// Default language of script.
-		/// </summary>
-		public static readonly SettingKey<ScriptLanguage> DefaultScriptLanguage = new(nameof(DefaultScriptLanguage), ScriptLanguage.JavaScript);
-		/// <summary>
-		/// Enable running script or not.
-		/// </summary>
-		public static readonly SettingKey<bool> EnableRunningScript = new(nameof(EnableRunningScript), false);
-		/// <summary>
 		/// Enable scrolling to latest log automatically after reloading logs.
 		/// </summary>
 		public static readonly SettingKey<bool> EnableScrollingToLatestLogAfterReloadingLogs = new(nameof(EnableScrollingToLatestLogAfterReloadingLogs), true);
@@ -30,10 +21,6 @@ namespace CarinaStudio.ULogViewer
 		/// Ignore case of log text filter.
 		/// </summary>
 		public static readonly SettingKey<bool> IgnoreCaseOfLogTextFilter = new(nameof(IgnoreCaseOfLogTextFilter), true);
-		/// <summary>
-		/// Indentation size of script.
-		/// </summary>
-		public static readonly SettingKey<int> IndentationSizeInScript = new(nameof(IndentationSizeInScript), 4);
 		/// <summary>
 		/// ID of initial log profile.
 		/// </summary>
@@ -98,10 +85,6 @@ namespace CarinaStudio.ULogViewer
 		/// Delay of updating log filter after changing related parameters in milliseconds.
 		/// </summary>
 		public static readonly SettingKey<int> UpdateLogFilterDelay = new(nameof(UpdateLogFilterDelay), 500);
-		/// <summary>
-		/// Use spaces instead of tab for indentation in script.
-		/// </summary>
-		public static readonly SettingKey<bool> UseSpacesForIndentationInScript = new(nameof(UseSpacesForIndentationInScript), true);
 		/// <summary>
 		/// Use system accent color or not.
 		/// </summary>

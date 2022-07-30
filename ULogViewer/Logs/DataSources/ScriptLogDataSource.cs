@@ -1,3 +1,4 @@
+using CarinaStudio.AppSuite.Scripting;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -33,4 +34,16 @@ class ScriptLogDataSource : BaseLogDataSource
     {
         throw new System.NotImplementedException();
     }
+}
+
+
+/// <summary>
+/// <see cref="IContext"/> for log data source script.
+/// </summary>
+public interface ILogDataSourceScriptContext : IUserInteractiveContext
+{
+    /// <summary>
+    /// Get options of data source.
+    /// </summary>
+    LogDataSourceOptions Options { get; }
 }

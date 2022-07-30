@@ -64,21 +64,11 @@
 
 				<!-- Analysis script -->
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.AnalysisScript}"/>
-				<appControls:ScriptEditor Name="analysisScriptEditor" Height="{StaticResource Double/LogAnalysisScriptSetEditorDialog.ScriptEditor.Height}" HorizontalAlignment="Stretch"/>
-				<StackPanel IsVisible="{Binding $parent[Window].AnalysisScriptCompilationResults.Count}">
-					<Separator Classes="Dialog_Separator_Small"/>
-					<appControls:ScriptCompilationResultViewer CompilationResults="{Binding $parent[Window].AnalysisScriptCompilationResults}" ScriptEditor="{Binding #analysisScriptEditor}"/>
-				</StackPanel>
 				<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Description}"/>
 				<Separator Classes="Dialog_Separator"/>
 
 				<!-- Setup script -->
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.SetupScript}"/>
-				<appControls:ScriptEditor Name="setupScriptEditor" Height="{StaticResource Double/LogAnalysisScriptSetEditorDialog.ScriptEditor.Height}" HorizontalAlignment="Stretch"/>
-				<StackPanel IsVisible="{Binding $parent[Window].SetupScriptCompilationResults.Count}">
-					<Separator Classes="Dialog_Separator_Small"/>
-					<appControls:ScriptCompilationResultViewer CompilationResults="{Binding $parent[Window].SetupScriptCompilationResults}" ScriptEditor="{Binding #setupScriptEditor}"/>
-				</StackPanel>
 				<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.SetupScript.Description}"/>
 				
 			</StackPanel>

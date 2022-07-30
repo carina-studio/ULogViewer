@@ -2519,7 +2519,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.UpdateToolsMenuItems();
 
 			// check script running
-			this.SetValue<bool>(EnableRunningScriptProperty, this.Settings.GetValueOrDefault(SettingKeys.EnableRunningScript));
+			this.SetValue<bool>(EnableRunningScriptProperty, this.Settings.GetValueOrDefault(AppSuite.SettingKeys.EnableRunningScript));
 
 			// setup predefined log text filter list
 			this.predefinedLogTextFilters.AddAll(PredefinedLogTextFilterManager.Default.Filters);
@@ -4088,7 +4088,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when setting changed.
 		void OnSettingChanged(object? sender, SettingChangedEventArgs e)
 		{
-			if (e.Key == SettingKeys.EnableRunningScript)
+			if (e.Key == AppSuite.SettingKeys.EnableRunningScript)
 			{
 				var isEnabled = (bool)e.Value;
 				this.SetValue<bool>(EnableRunningScriptProperty, isEnabled);
