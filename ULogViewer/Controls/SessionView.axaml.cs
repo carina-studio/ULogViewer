@@ -4185,8 +4185,13 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 
 			// reload logs
+			var hasSelectedLogs = this.logListBox.SelectedItems.Count > 0;
 			if (!session.ReloadLogsCommand.TryExecute())
 				return;
+			
+			// [Workaround] Make sure log selection information will be updated
+			if (hasSelectedLogs)
+				this.OnLogListBoxSelectionChanged();
 
 			// scroll to latest log
 			if (session.LogProfile?.IsContinuousReading == true
