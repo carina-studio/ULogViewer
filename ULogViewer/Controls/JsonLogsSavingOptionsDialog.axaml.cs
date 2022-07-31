@@ -1,3 +1,4 @@
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
@@ -63,7 +64,11 @@ namespace CarinaStudio.ULogViewer.Controls
 					await new AppSuite.Controls.MessageDialog()
 					{
 						Icon = AppSuite.Controls.MessageDialogIcon.Warning,
-						Message = this.Application.GetFormattedString("LogProfileEditorDialog.DuplicateLogLevelMapEntry", LogPropertyNameConverter.Default.Convert(newKey)),
+						Message = new FormattedString().Also(it =>
+						{
+							it.Arg1 = LogPropertyNameConverter.Default.Convert(newKey);
+							it.Bind(FormattedString.FormatProperty, this.GetResourceObservable("String/LogProfileEditorDialog.DuplicateLogLevelMapEntry"));
+						}),
 						Title = this.Title,
 					}.ShowDialog(this);
 					continue;

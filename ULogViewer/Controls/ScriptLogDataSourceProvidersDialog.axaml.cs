@@ -1,3 +1,4 @@
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using CarinaStudio.AppSuite.Controls;
@@ -108,8 +109,17 @@ partial class ScriptLogDataSourceProvidersDialog : CarinaStudio.Controls.Dialog<
 			Buttons = AppSuite.Controls.MessageDialogButtons.YesNo,
 			Icon = AppSuite.Controls.MessageDialogIcon.Question,
 			Message = logProfileCount > 0 
-				? this.Application.GetFormattedString("ScriptLogDataSourceProvidersDialog.ConfirmDeletingProvider.WithLogProfiles", provider.DisplayName, logProfileCount)
-				: this.Application.GetFormattedString("ScriptLogDataSourceProvidersDialog.ConfirmDeletingProvider", provider.DisplayName),
+				? new FormattedString().Also(it =>
+				{
+					it.Arg1 = provider.DisplayName;
+					it.Arg2 = logProfileCount;
+					it.Bind(FormattedString.FormatProperty, this.GetResourceObservable("String/ScriptLogDataSourceProvidersDialog.ConfirmDeletingProvider.WithLogProfiles"));
+				})
+				: new FormattedString().Also(it =>
+				{
+					it.Arg1 = provider.DisplayName;
+					it.Bind(FormattedString.FormatProperty, this.GetResourceObservable("String/ScriptLogDataSourceProvidersDialog.ConfirmDeletingProvider"));
+				}),
 		}.ShowDialog(this);
 		if (result != AppSuite.Controls.MessageDialogResult.Yes)
 			return;

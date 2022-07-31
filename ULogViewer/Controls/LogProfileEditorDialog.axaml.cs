@@ -181,8 +181,12 @@ namespace CarinaStudio.ULogViewer.Controls
 					await new MessageDialog()
 					{
 						Icon = MessageDialogIcon.Warning,
-						Message = this.Application.GetFormattedString("LogProfileEditorDialog.DuplicateLogLevelMapEntry", entry.Value.Key),
-						Title = this.Application.GetString("LogProfileEditorDialog.LogLevelMapForReading"),
+						Message = new FormattedString().Also(it =>
+						{
+							it.Arg1 = entry.Value.Key;
+							it.Bind(FormattedString.FormatProperty, this.GetResourceObservable("String/LogProfileEditorDialog.DuplicateLogLevelMapEntry"));
+						}),
+						Title = this.Application.GetResourceObservable("String/LogProfileEditorDialog.LogLevelMapForReading"),
 					}.ShowDialog(this);
 					continue;
 				}
@@ -210,8 +214,12 @@ namespace CarinaStudio.ULogViewer.Controls
 					await new MessageDialog()
 					{
 						Icon = MessageDialogIcon.Warning,
-						Message = this.Application.GetFormattedString("LogProfileEditorDialog.DuplicateLogLevelMapEntry", LogLevelNameConverter.Convert(entry.Value.Key, typeof(string), null, this.Application.CultureInfo)),
-						Title = this.Application.GetString("LogProfileEditorDialog.LogLevelMapForReading"),
+						Message = new FormattedString().Also(it =>
+						{
+							it.Arg1 = LogLevelNameConverter.Convert(entry.Value.Key, typeof(string), null, this.Application.CultureInfo);
+							it.Bind(FormattedString.FormatProperty, this.GetResourceObservable("String/LogProfileEditorDialog.DuplicateLogLevelMapEntry"));
+						}),
+						Title = this.GetResourceObservable("String/LogProfileEditorDialog.LogLevelMapForReading"),
 					}.ShowDialog(this);
 					continue;
 				}
@@ -249,10 +257,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Add time span format for reading log.
 		async void AddTimeSpanFormatForReading()
 		{
-			var format = await new TimeSpanFormatInputDialog()
+			var format = await new TimeSpanFormatInputDialog().Also(it =>
 			{
-				Title = this.Application.GetString("LogProfileEditorDialog.TimeSpanFormatsForReading")
-			}.ShowDialog<string>(this);
+				it.Bind(TitleProperty, this.GetResourceObservable("String/LogProfileEditorDialog.TimeSpanFormatsForReading"));
+			}).ShowDialog<string>(this);
 			if (!string.IsNullOrWhiteSpace(format))
 			{
 				this.timeSpanFormatsForReading.Add(format);
@@ -264,10 +272,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Add timestamp format for reading log.
 		async void AddTimestampFormatForReading()
         {
-			var format = await new DateTimeFormatInputDialog()
+			var format = await new DateTimeFormatInputDialog().Also(it =>
 			{
-				Title = this.Application.GetString("LogProfileEditorDialog.TimestampFormatsForReading")
-			}.ShowDialog<string>(this);
+				it.Bind(TitleProperty, this.GetResourceObservable("String/LogProfileEditorDialog.TimestampFormatsForReading"));
+			}).ShowDialog<string>(this);
 			if (!string.IsNullOrWhiteSpace(format))
 			{
 				this.timestampFormatsForReading.Add(format);
@@ -306,8 +314,12 @@ namespace CarinaStudio.ULogViewer.Controls
 					await new MessageDialog()
 					{
 						Icon = MessageDialogIcon.Warning,
-						Message = this.Application.GetFormattedString("LogProfileEditorDialog.DuplicateLogLevelMapEntry", newEntry.Value.Key),
-						Title = this.Application.GetString("LogProfileEditorDialog.LogLevelMapForReading"),
+						Message = new FormattedString().Also(it =>
+						{
+							it.Arg1 = newEntry.Value.Key;
+							it.Bind(FormattedString.FormatProperty, this.GetResourceObservable("String/LogProfileEditorDialog.DuplicateLogLevelMapEntry"));
+						}),
+						Title = this.GetResourceObservable("String/LogProfileEditorDialog.LogLevelMapForReading"),
 					}.ShowDialog(this);
 					continue;
 				}
@@ -337,8 +349,12 @@ namespace CarinaStudio.ULogViewer.Controls
 					await new MessageDialog()
 					{
 						Icon = MessageDialogIcon.Warning,
-						Message = this.Application.GetFormattedString("LogProfileEditorDialog.DuplicateLogLevelMapEntry", LogLevelNameConverter.Convert(newEntry.Value.Key, typeof(string), null, this.Application.CultureInfo)),
-						Title = this.Application.GetString("LogProfileEditorDialog.LogLevelMapForWriting"),
+						Message = new FormattedString().Also(it =>
+						{
+							it.Arg1 = LogLevelNameConverter.Convert(newEntry.Value.Key, typeof(string), null, this.Application.CultureInfo);
+							it.Bind(FormattedString.FormatProperty, this.GetResourceObservable("String/LogProfileEditorDialog.DuplicateLogLevelMapEntry"));
+						}),
+						Title = this.GetResourceObservable("String/LogProfileEditorDialog.LogLevelMapForWriting"),
 					}.ShowDialog(this);
 					continue;
 				}
@@ -397,11 +413,11 @@ namespace CarinaStudio.ULogViewer.Controls
 			var index = this.timeSpanFormatsForReading.IndexOf(format);
 			if (index < 0)
 				return;
-			var newFormat = await new TimeSpanFormatInputDialog()
+			var newFormat = await new TimeSpanFormatInputDialog().Also(it =>
 			{
-				InitialFormat = format,
-				Title = this.Application.GetString("LogProfileEditorDialog.TimeSpanFormatsForReading")
-			}.ShowDialog<string>(this);
+				it.InitialFormat = format;
+				it.Bind(TitleProperty, this.GetResourceObservable("String/LogProfileEditorDialog.TimeSpanFormatsForReading"));
+			}).ShowDialog<string>(this);
 			if (!string.IsNullOrWhiteSpace(newFormat) && newFormat != format)
 			{
 				this.timeSpanFormatsForReading[index] = newFormat;
@@ -417,11 +433,11 @@ namespace CarinaStudio.ULogViewer.Controls
 			var index = this.timestampFormatsForReading.IndexOf(format);
 			if (index < 0)
 				return;
-			var newFormat = await new DateTimeFormatInputDialog()
+			var newFormat = await new DateTimeFormatInputDialog().Also(it =>
 			{
-				InitialFormat = format,
-				Title = this.Application.GetString("LogProfileEditorDialog.TimestampFormatsForReading")
-			}.ShowDialog<string>(this);
+				it.InitialFormat = format;
+				it.Bind(TitleProperty, this.GetResourceObservable("String/LogProfileEditorDialog.TimestampFormatsForReading"));
+			}).ShowDialog<string>(this);
 			if (!string.IsNullOrWhiteSpace(newFormat) && newFormat != format)
 			{
 				this.timestampFormatsForReading[index] = newFormat;
@@ -463,7 +479,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					{
 						Buttons = MessageDialogButtons.YesNo,
 						Icon = MessageDialogIcon.Warning,
-						Message = this.Application.GetString("LogProfileEditorDialog.VisibleLogPropertiesWithoutLogPatterns"),
+						Message = this.GetResourceObservable("String/LogProfileEditorDialog.VisibleLogPropertiesWithoutLogPatterns"),
 					}.ShowDialog(this);
 					if (result == MessageDialogResult.Yes)
 					{
@@ -479,7 +495,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				{
 					Buttons = MessageDialogButtons.YesNo,
 					Icon = MessageDialogIcon.Warning,
-					Message = this.Application.GetString("LogProfileEditorDialog.LogPatternsWithoutVisibleLogProperties"),
+					Message = this.GetResourceObservable("String/LogProfileEditorDialog.LogPatternsWithoutVisibleLogProperties"),
 				}.ShowDialog(this);
 				if (result == MessageDialogResult.Yes)
 				{
@@ -742,7 +758,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			var profile = this.LogProfile;
 			if (profile == null)
 			{
-				this.Title = this.Application.GetString("LogProfileEditorDialog.Title.Create");
+				this.Bind(TitleProperty, this.GetResourceObservable("String/LogProfileEditorDialog.Title.Create"));
 				this.allowMultipleFilesSwitch.IsChecked = true;
 				this.colorIndicatorComboBox.SelectedItem = LogColorIndicator.None;
 				this.dataSourceProviderComboBox.SelectedItem = LogDataSourceProviders.All.FirstOrDefault(it => it is FileLogDataSourceProvider);
@@ -757,7 +773,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			else if (!profile.IsBuiltIn)
 			{
-				this.Title = this.Application.GetString("LogProfileEditorDialog.Title.Edit");
+				this.Bind(TitleProperty, this.GetResourceObservable("String/LogProfileEditorDialog.Title.Edit"));
 				this.adminNeededSwitch.IsChecked = profile.IsAdministratorNeeded;
 				this.allowMultipleFilesSwitch.IsChecked = profile.AllowMultipleFiles;
 				this.colorIndicatorComboBox.SelectedItem = profile.ColorIndicator;
@@ -803,8 +819,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				{
 					Buttons = MessageDialogButtons.YesNo,
 					Icon = MessageDialogIcon.Question,
-					Message = this.Application.GetString("LogProfileEditorDialog.LearnAboutLogsReadingAndParsingFirst"),
-					Title = this.Title
+					Message = this.GetResourceObservable("String/LogProfileEditorDialog.LearnAboutLogsReadingAndParsingFirst"),
+					Title = this.GetObservable(TitleProperty),
 				}.ShowDialog(this);
 				if (this.IsOpened)
 				{

@@ -163,7 +163,11 @@ namespace CarinaStudio.ULogViewer.Controls
 				_ = new AppSuite.Controls.MessageDialog()
 				{
 					Icon = AppSuite.Controls.MessageDialogIcon.Error,
-					Message = this.Application.GetFormattedString("LogProfileSelectionDialog.FailedToExportLogProfile", fileName),
+					Message = new FormattedString().Also(it =>
+					{
+						it.Arg1 = fileName;
+						it.Bind(FormattedString.FormatProperty, this.GetResourceObservable("String/LogProfileSelectionDialog.FailedToExportLogProfile"));
+					}),
 				}.ShowDialog(this);
 			}
 		}
@@ -217,7 +221,11 @@ namespace CarinaStudio.ULogViewer.Controls
 				_ = new AppSuite.Controls.MessageDialog()
 				{
 					Icon = AppSuite.Controls.MessageDialogIcon.Error,
-					Message = this.Application.GetFormattedString("LogProfileSelectionDialog.FailedToImportLogProfile", fileName),
+					Message = new FormattedString().Also(it =>
+					{
+						it.Arg1 = fileName;
+						it.Bind(FormattedString.FormatProperty, this.GetResourceObservable("String/LogProfileSelectionDialog.FailedToImportLogProfile"));
+					}),
 				}.ShowDialog(this);
 				return;
 			}
@@ -230,7 +238,11 @@ namespace CarinaStudio.ULogViewer.Controls
 				_ = new AppSuite.Controls.MessageDialog()
 				{
 					Icon = AppSuite.Controls.MessageDialogIcon.Warning,
-					Message = this.Application.GetFormattedString("LogProfileSelectionDialog.CannotImportProVersionOnlyLogProfile", fileName),
+					Message = new FormattedString().Also(it =>
+					{
+						it.Arg1 = fileName;
+						it.Bind(FormattedString.FormatProperty, this.GetResourceObservable("String/LogProfileSelectionDialog.CannotImportProVersionOnlyLogProfile"));
+					}),
 				}.ShowDialog(this);
 				return;
 			}
@@ -547,7 +559,11 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				Buttons = MessageDialogButtons.YesNo,
 				Icon = MessageDialogIcon.Question,
-				Message = this.Application.GetFormattedString("LogProfileSelectionDialog.ConfirmRemovingLogProfile", logProfile.Name),
+				Message = new FormattedString().Also(it =>
+				{
+					it.Bind(FormattedString.Arg1Property, new Avalonia.Data.Binding() { Path = nameof(LogProfile.Name), Source = logProfile});
+					it.Bind(FormattedString.FormatProperty, this.GetResourceObservable("String/LogProfileSelectionDialog.ConfirmRemovingLogProfile"));
+				}),
 			}.ShowDialog(this);
 			if (result == MessageDialogResult.Yes)
 				LogProfileManager.Default.RemoveProfile(logProfile);

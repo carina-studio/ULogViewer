@@ -143,7 +143,11 @@ namespace CarinaStudio.ULogViewer
 				_ = new MessageDialog()
 				{
 					Icon = MessageDialogIcon.Information,
-					Message = this.Application.GetFormattedString("MainWindow.NetworkConnectionNeededForProductActivation", productName),
+					Message = new FormattedString().Also(it =>
+					{
+						it.Bind(FormattedString.Arg1Property, this.GetResourceObservable("String/Product.ULogViewer-Pro"));
+						it.Bind(FormattedString.FormatProperty, this.GetResourceObservable("String/MainWindow.NetworkConnectionNeededForProductActivation"));
+					}),
 				}.ShowDialog(this);
 			});
 			this.reActivateProVersionAction = new(async () =>
@@ -154,11 +158,14 @@ namespace CarinaStudio.ULogViewer
 				if (this.Application.ProductManager.TryGetProductState(Products.Professional, out var state)
 					&& state == ProductState.Deactivated)
 				{
-					this.Application.ProductManager.TryGetProductName(Products.Professional, out var name);
 					await new MessageDialog()
 					{
 						Icon = MessageDialogIcon.Warning,
-						Message = this.Application.GetFormattedString("MainWindow.ReActivateProductNeeded", name),
+						Message = new FormattedString().Also(it =>
+						{
+							it.Bind(FormattedString.Arg1Property, this.GetResourceObservable("String/Product.ULogViewer-Pro"));
+							it.Bind(FormattedString.FormatProperty, this.GetResourceObservable("String/MainWindow.ReActivateProductNeeded"));
+						}),
 					}.ShowDialog(this);
 					_ = this.Application.ProductManager.ActivateProductAsync(Products.Professional, this);
 				}
@@ -1127,7 +1134,7 @@ namespace CarinaStudio.ULogViewer
 			{
 				InitialText = session.CustomTitle,
 				MaxTextLength = 128,
-				Message = this.Application.GetString("MainWindow.SetCustomSessionTitle.Message"),
+				Message = this.GetResourceObservable("String/MainWindow.SetCustomSessionTitle.Message"),
 			}.ShowDialog(this);
 			if (string.IsNullOrWhiteSpace(title))
 				return;

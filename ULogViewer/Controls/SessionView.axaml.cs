@@ -986,8 +986,16 @@ namespace CarinaStudio.ULogViewer.Controls
 				Buttons = MessageDialogButtons.YesNo,
 				Icon = MessageDialogIcon.Question,
 				Message = isScriptSet
-					? this.Application.GetFormattedString("SessionView.ConfirmRemovingLogAnalysisScriptSet", ruleSetName)
-					: this.Application.GetFormattedString("SessionView.ConfirmRemovingLogAnalysisRuleSet", ruleSetName),
+					? new FormattedString().Also(it =>
+					{
+						it.Arg1 = ruleSetName;
+						it.Bind(FormattedString.FormatProperty, this.GetResourceObservable("String/SessionView.ConfirmRemovingLogAnalysisScriptSet"));
+					})
+					: new FormattedString().Also(it =>
+					{
+						it.Arg1 = ruleSetName;
+						it.Bind(FormattedString.FormatProperty, this.GetResourceObservable("String/SessionView.ConfirmRemovingLogAnalysisRuleSet"));
+					}),
 			}.ShowDialog(this.attachedWindow);
 			return (result == MessageDialogResult.Yes);
 		}
@@ -1029,7 +1037,11 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				Buttons = MessageDialogButtons.YesNo,
 				Icon = MessageDialogIcon.Question,
-				Message = this.Application.GetFormattedString("SessionView.NeedToRestartAsAdministrator", profile.Name),
+				Message = new FormattedString().Also(it =>
+				{
+					it.Bind(FormattedString.Arg1Property, new Binding() { Path = nameof(LogProfile.Name), Source = profile });
+					it.Bind(FormattedString.FormatProperty, this.GetResourceObservable("String/SessionView.NeedToRestartAsAdministrator"));
+				}),
 			}.ShowDialog(this.attachedWindow);
 			if (result == MessageDialogResult.Yes)
 			{
@@ -1177,7 +1189,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				_ = new MessageDialog()
 				{
 					Icon = MessageDialogIcon.Information,
-					Message = this.Application.GetString("SessionView.Tutorial.CopyLogText"),
+					Message = this.GetResourceObservable("String/SessionView.Tutorial.CopyLogText"),
 				}.ShowDialog(this.attachedWindow);
 			}
 			
@@ -1923,7 +1935,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					_ = new MessageDialog()
 					{
 						Icon = MessageDialogIcon.Information,
-						Message = this.Application.GetString("SessionView.NoFilePathDropped")
+						Message = this.GetResourceObservable("String/SessionView.NoFilePathDropped")
 					}.ShowDialog(this.attachedWindow);
 					return false;
 				}
@@ -1934,7 +1946,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					_ = new MessageDialog()
 					{
 						Icon = MessageDialogIcon.Information,
-						Message = this.Application.GetString("SessionView.TooManyDirectoryPathsDropped")
+						Message = this.GetResourceObservable("String/SessionView.TooManyDirectoryPathsDropped")
 					}.ShowDialog(this.attachedWindow);
 					return false;
 				}
@@ -1956,7 +1968,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 
 			// check whether new log profile is needed or not
-			var warningMessage = "";
+			var warningMessage = (IObservable<object?>?)null;
 			var currentLogProfile = session.LogProfile;
 			var needNewLogProfile = Global.Run(() =>
 			{
@@ -1970,7 +1982,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					{
 						if (!session.IsLogFileNeeded || filePaths.Count > 1)
 						{
-							warningMessage = this.Application.GetString("SessionView.MultipleFilesAreNotAllowed");
+							warningMessage = this.GetResourceObservable("String/SessionView.MultipleFilesAreNotAllowed");
 							return true;
 						}
 					}
@@ -1984,7 +1996,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			// show warning message
 			if (this.attachedWindow == null)
 				return false;
-			if (!string.IsNullOrEmpty(warningMessage))
+			if (warningMessage != null)
 			{
 				await new MessageDialog()
 				{
@@ -2351,7 +2363,11 @@ namespace CarinaStudio.ULogViewer.Controls
 				_ = new MessageDialog()
 				{
 					Icon = MessageDialogIcon.Error,
-					Message = this.Application.GetFormattedString("SessionView.FailedToImportLogAnalysisRuleSet", fileNames[0]),
+					Message = new FormattedString().Also(it =>
+					{
+						it.Arg1 = fileNames[0];
+						it.Bind(FormattedString.FormatProperty, this.GetResourceObservable("String/SessionView.FailedToImportLogAnalysisRuleSet"));
+					}),
 				}.ShowDialog(this.attachedWindow);
 				return;
 			}
@@ -2861,7 +2877,12 @@ namespace CarinaStudio.ULogViewer.Controls
 				_ = new MessageDialog()
 				{
 					Icon = MessageDialogIcon.Error,
-					Message = this.Application.GetFormattedString("SessionView.FailedToExportLogAnalysisRuleSet", ruleSetName, fileName),
+					Message = new FormattedString().Also(it =>
+					{
+						it.Arg1 = ruleSetName;
+						it.Arg2 = fileName;
+						it.Bind(FormattedString.FormatProperty, this.GetResourceObservable("String/SessionView.FailedToExportLogAnalysisRuleSet"));
+					}),
 				}.ShowDialog(this.attachedWindow);
 			}
 		}
@@ -3807,7 +3828,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						{
 							Buttons = MessageDialogButtons.YesNo,
 							Icon = MessageDialogIcon.Question,
-							Message = this.Application.GetString("SessionView.ConfirmSelectingAllLogs"),
+							Message = this.GetResourceObservable("String/SessionView.ConfirmSelectingAllLogs"),
 						}.ShowDialog(this.attachedWindow);
 						if (result == MessageDialogResult.No)
 							return;
@@ -4410,11 +4431,11 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.autoSetIPEndPointAction.Cancel();
 
 			// select IP endpoint
-			var endPoint = await new IPEndPointInputDialog()
+			var endPoint = await new IPEndPointInputDialog().Also(it =>
 			{
-				InitialIPEndPoint = session.IPEndPoint,
-				Title = this.Application.GetString("SessionView.SetIPEndPoint"),
-			}.ShowDialog<IPEndPoint>(this.attachedWindow);
+				it.InitialIPEndPoint = session.IPEndPoint;
+				it.Bind(Avalonia.Controls.Window.TitleProperty, this.GetResourceObservable("String/SessionView.SetIPEndPoint"));
+			}).ShowDialog<IPEndPoint>(this.attachedWindow);
 			if (endPoint == null)
 				return;
 
@@ -4554,12 +4575,12 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.autoSetUriAction.Cancel();
 
 			// select URI
-			var uri = await new UriInputDialog()
+			var uri = await new UriInputDialog().Also(it =>
 			{
-				DefaultScheme = session.LogProfile?.DataSourceProvider?.Name == "Http" ? "https" : null,
-				InitialUri = session.Uri,
-				Title = this.Application.GetString("SessionView.SetUri"),
-			}.ShowDialog<Uri>(this.attachedWindow);
+				it.DefaultScheme = session.LogProfile?.DataSourceProvider?.Name == "Http" ? "https" : null;
+				it.InitialUri = session.Uri;
+				it.Bind(Avalonia.Controls.Window.TitleProperty, this.GetResourceObservable("String/SessionView.SetUri"));
+			}).ShowDialog<Uri>(this.attachedWindow);
 			if (uri == null)
 				return;
 
@@ -4691,12 +4712,12 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 
 			// select timestamp
-			var timestamp = await new DateTimeSelectionDialog()
+			var timestamp = await new DateTimeSelectionDialog().Also(it =>
 			{
-				InitialDateTime = this.EarliestSelectedLogTimestamp ?? session.EarliestLogTimestamp,
-				Message = this.Application.GetString("SessionView.SelectNearestLogByTimestamp.Message"),
-				Title = this.Application.GetString("SessionView.SelectNearestLogByTimestamp.Title"),
-			}.ShowDialog<DateTime?>(this.attachedWindow);
+				it.InitialDateTime = this.EarliestSelectedLogTimestamp ?? session.EarliestLogTimestamp;
+				it.Message = this.Application.GetString("SessionView.SelectNearestLogByTimestamp.Message");
+				it.Bind(Avalonia.Controls.Window.TitleProperty, this.GetResourceObservable("String/SessionView.SelectNearestLogByTimestamp.Title"));
+			}).ShowDialog<DateTime?>(this.attachedWindow);
 			if (timestamp == null)
 				return;
 
