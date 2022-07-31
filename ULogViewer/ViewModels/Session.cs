@@ -2138,6 +2138,15 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.logFilter.PropertyChanged -= this.OnLogFilterPropertyChanged;
 			this.logFilter.Dispose();
 
+			// cancel scheduled reloading logs
+			this.reloadLogsAction.Cancel();
+			this.reloadLogsFullyAction.Cancel();
+			this.reloadLogsWithRecreatingLogReadersAction.Cancel();
+			this.reloadLogsWithUpdatingVisPropAction.Cancel();
+
+			// save marked logs to file immediately
+			this.saveMarkedLogsAction.ExecuteIfScheduled();
+
 			// dispose log readers
 			this.DisposeLogReaders();
 
@@ -2158,6 +2167,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// detach from log profile
 			this.LogProfile?.Let(it => it.PropertyChanged -= this.OnLogProfilePropertyChanged);
+
+			// detach from log data source provider
+			if (this.attachedLogDataSourceProvider != null)
+			{
+				this.attachedLogDataSourceProvider.PropertyChanged -= this.OnLogDataSourceProviderPropertyChanged;
+				this.attachedLogDataSourceProvider = null;
+			}
 
 			// stop watches
 			this.logsFilteringWatch.Stop();
