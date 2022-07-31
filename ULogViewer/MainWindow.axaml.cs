@@ -49,6 +49,7 @@ namespace CarinaStudio.ULogViewer
 		// Fields.
 		Session? attachedActiveSession;
 		readonly ScheduledAction focusOnTabItemContentAction;
+		bool isReActivatingProVersion;
 		readonly ScheduledAction notifyNetworkConnForProductActivationAction;
 		readonly ScheduledAction reActivateProVersionAction;
 		readonly ScheduledAction selectAndSetLogProfileAction;
@@ -152,7 +153,7 @@ namespace CarinaStudio.ULogViewer
 			});
 			this.reActivateProVersionAction = new(async () =>
 			{
-				if (this.IsClosed || !IsReActivatingProVersionNeeded || this.HasDialogs || !this.IsActive)
+				if (this.IsClosed || !IsReActivatingProVersionNeeded || this.HasDialogs || !this.IsActive || this.isReActivatingProVersion)
 					return;
 				IsReActivatingProVersionNeeded = false;
 				if (this.Application.ProductManager.TryGetProductState(Products.Professional, out var state)
@@ -167,7 +168,9 @@ namespace CarinaStudio.ULogViewer
 							it.Bind(FormattedString.FormatProperty, this.GetResourceObservable("String/MainWindow.ReActivateProductNeeded"));
 						}),
 					}.ShowDialog(this);
-					_ = this.Application.ProductManager.ActivateProductAsync(Products.Professional, this);
+					this.isReActivatingProVersion = true;
+					await this.Application.ProductManager.ActivateProductAsync(Products.Professional, this);
+					this.isReActivatingProVersion = false;
 				}
 			});
 			this.selectAndSetLogProfileAction = new(this.SelectAndSetLogProfile);
@@ -916,7 +919,8 @@ namespace CarinaStudio.ULogViewer
 				case ProductState.Deactivated:
 					if (MainWindowToActivateProVersion == null
 						&& productManager.TryGetProductActivationFailure(productId, out var failure)
-						&& failure != ProductActivationFailure.NoNetworkConnection)
+						&& failure != ProductActivationFailure.NoNetworkConnection
+						&& !this.isReActivatingProVersion)
 					{
 						this.Logger.LogWarning($"Need to reactivate Pro-version because of {failure}");
 						IsReActivatingProVersionNeeded = true;
