@@ -21,7 +21,7 @@ class LogAnalysisScriptSet : BaseProfile<IULogViewerApplication>
     /// </summary>
     public static readonly ScriptOptions ScriptOptions = new()
     {
-        ContextType = null,
+        ContextType = typeof(ILogAnalysisScriptContext),
         ExtensionTypes = new HashSet<Type>()
         {
             typeof(LogAnalysisScriptContextExtensions),
