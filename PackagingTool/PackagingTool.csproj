@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net6.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<RootNamespace>CarinaStudio.ULogViewer.Packaging</RootNamespace>
+		<AssemblyName>CarinaStudio.ULogViewer.Packaging</AssemblyName>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="CarinaStudio.AppSuite.Packaging" Version="1.0.0.802" />
+	</ItemGroup>
+
+</Project>
