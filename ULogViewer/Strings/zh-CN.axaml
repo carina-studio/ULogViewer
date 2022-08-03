@@ -605,15 +605,31 @@
 	<sys:String x:Key="String/ScriptDisplayableLogAnalyzer.AnalysisScript.ErrorOccurred">执行「{0}」之脚本以分析日志时发生错误：
 {1}
 	</sys:String>
+	<sys:String x:Key="String/ScriptDisplayableLogAnalyzer.AnalysisScript.ErrorOccurred.WithLocation">执行「{0}」之脚本以分析日志时发生错误：
+{1}
+位于第 {2} 行第 {3} 栏。
+	</sys:String>
 	<sys:String x:Key="String/ScriptDisplayableLogAnalyzer.SetupScript.ErrorOccurred">执行「{0}」之脚本以初始化分析时发生错误：
 {1}
+	</sys:String>
+	<sys:String x:Key="String/ScriptDisplayableLogAnalyzer.SetupScript.ErrorOccurred.WithLocation">执行「{0}」之脚本以初始化分析时发生错误：
+{1}
+位于第 {2} 行第 {3} 栏。
 	</sys:String>
 
 	<sys:String x:Key="String/ScriptLogDataSource.OpeningReaderScript.ErrorOccurred">执行「{0}」之脚本以开启原始日志行读取器时发生错误：
 {1}
 	</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSource.OpeningReaderScript.ErrorOccurred.WithLocation">执行「{0}」之脚本以开启原始日志行读取器时发生错误：
+{1}
+位于第 {2} 行第 {3} 栏。
+	</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSource.ReadingLineScript.ErrorOccurred">执行「{0}」之脚本以读取原始日志行时发生错误：
 {1}
+	</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSource.ReadingLineScript.ErrorOccurred.WithLocation">执行「{0}」之脚本以读取原始日志行时发生错误：
+{1}
+位于第 {2} 行第 {3} 栏。
 	</sys:String>
 
 	<!-- ScriptLogDataSourceProviderEditorDialog -->
