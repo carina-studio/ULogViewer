@@ -601,6 +601,14 @@
 	<sys:String x:Key="String/RegexEditorDialog.Title">编辑格式</sys:String>
 	<sys:String x:Key="String/RegexEditorDialog.Tutorial.ClickButtonToEditPattern">点一下这里编辑格式。</sys:String>
 
+	<!-- ScriptDisplayableLogAnalyzer -->
+	<sys:String x:Key="String/ScriptDisplayableLogAnalyzer.AnalysisScript.ErrorOccurred">执行「{0}」之日志分析脚本时发生错误：
+{1}
+	</sys:String>
+	<sys:String x:Key="String/ScriptDisplayableLogAnalyzer.SetupScript.ErrorOccurred">执行「{0}」之分析初始化脚本时发生错误：
+{1}
+	</sys:String>
+
 	<!-- ScriptLogDataSourceProviderEditorDialog -->
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript">原始日志行读取器关闭脚本</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Description">脚本将在关闭原始日志行读取器时执行。此脚本不需要返回值。</sys:String>

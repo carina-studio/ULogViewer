@@ -10,6 +10,12 @@ namespace CarinaStudio.ULogViewer.ViewModels;
 interface IDisplayableLogProcessor : IApplicationObject<IULogViewerApplication>, IDisposable, INotifyPropertyChanged
 {
     /// <summary>
+    /// Raise when error message generated.
+    /// </summary>
+    event Action<IDisplayableLogProcessor, MessageEventArgs>? ErrorMessageGenerated;
+
+
+    /// <summary>
     /// Notify that given log was updated and should be processed again.
     /// </summary>
     /// <param name="log">Log to be processed again.</param>
