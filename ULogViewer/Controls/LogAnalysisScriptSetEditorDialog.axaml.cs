@@ -131,7 +131,7 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Window<IU
 		// enable script running
 		if (!this.Settings.GetValueOrDefault(AppSuite.SettingKeys.EnableRunningScript))
 		{
-			this.SynchronizationContext.Post(async () =>
+			this.SynchronizationContext.PostDelayed(async () =>
 			{
 				if (this.Settings.GetValueOrDefault(AppSuite.SettingKeys.EnableRunningScript) || this.IsClosed)
 					return;
@@ -146,7 +146,7 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Window<IU
 					this.Settings.SetValue<bool>(AppSuite.SettingKeys.EnableRunningScript, true);
 				else
 					this.Close();
-			});
+			}, 300);
 		}
 	}
 
