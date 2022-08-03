@@ -602,10 +602,17 @@
 	<sys:String x:Key="String/RegexEditorDialog.Tutorial.ClickButtonToEditPattern">点一下这里编辑格式。</sys:String>
 
 	<!-- ScriptDisplayableLogAnalyzer -->
-	<sys:String x:Key="String/ScriptDisplayableLogAnalyzer.AnalysisScript.ErrorOccurred">执行「{0}」之日志分析脚本时发生错误：
+	<sys:String x:Key="String/ScriptDisplayableLogAnalyzer.AnalysisScript.ErrorOccurred">执行「{0}」之脚本以分析日志时发生错误：
 {1}
 	</sys:String>
-	<sys:String x:Key="String/ScriptDisplayableLogAnalyzer.SetupScript.ErrorOccurred">执行「{0}」之分析初始化脚本时发生错误：
+	<sys:String x:Key="String/ScriptDisplayableLogAnalyzer.SetupScript.ErrorOccurred">执行「{0}」之脚本以初始化分析时发生错误：
+{1}
+	</sys:String>
+
+	<sys:String x:Key="String/ScriptLogDataSource.OpeningReaderScript.ErrorOccurred">执行「{0}」之脚本以开启原始日志行读取器时发生错误：
+{1}
+	</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSource.ReadingLineScript.ErrorOccurred">执行「{0}」之脚本以读取原始日志行时发生错误：
 {1}
 	</sys:String>
 
