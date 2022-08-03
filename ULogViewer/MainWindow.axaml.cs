@@ -140,7 +140,6 @@ namespace CarinaStudio.ULogViewer
 					return;
 				}
 				IsNetworkConnForProductActivationNotified = true;
-				this.Application.ProductManager.TryGetProductName(Products.Professional, out var productName);
 				_ = new MessageDialog()
 				{
 					Icon = MessageDialogIcon.Information,
