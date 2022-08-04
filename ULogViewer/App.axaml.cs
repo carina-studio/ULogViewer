@@ -407,6 +407,16 @@ namespace CarinaStudio.ULogViewer
 		}
 
 
+		/// <inheritdoc/>
+        protected override bool OnRestoreMainWindows()
+        {
+            if (base.OnRestoreMainWindows())
+				return true;
+			this.ShowMainWindow();
+			return false;
+        }
+
+
         // Select whether to enter debug mode or not.
         protected override bool OnSelectEnteringDebugMode()
         {
