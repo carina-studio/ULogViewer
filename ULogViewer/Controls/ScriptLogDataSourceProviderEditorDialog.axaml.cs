@@ -187,7 +187,7 @@ partial class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.In
 		// enable script running
 		if (!this.Settings.GetValueOrDefault(AppSuite.SettingKeys.EnableRunningScript))
 		{
-			this.SynchronizationContext.Post(async () =>
+			this.SynchronizationContext.PostDelayed(async () =>
 			{
 				if (this.Settings.GetValueOrDefault(AppSuite.SettingKeys.EnableRunningScript) || this.IsClosed)
 					return;
@@ -202,7 +202,7 @@ partial class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.In
 					this.Settings.SetValue<bool>(AppSuite.SettingKeys.EnableRunningScript, true);
 				else
 					this.Close();
-			});
+			}, 300);
 		}
 	}
 

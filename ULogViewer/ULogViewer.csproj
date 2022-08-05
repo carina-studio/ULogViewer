@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <AssemblyVersion>2.0.1.801</AssemblyVersion>
-    <Version>2.0.1.801</Version>
+    <AssemblyVersion>2.0.2.805</AssemblyVersion>
+    <Version>2.0.2.805</Version>
     <OutputType>WinExe</OutputType>
     <DebugType>embedded</DebugType>
     <RootNamespace>CarinaStudio.ULogViewer</RootNamespace>
@@ -70,7 +70,7 @@
 
   <ItemGroup>
     <PackageReference Include="Avalonia.AvaloniaEdit" Version="0.10.12.2" />
-    <PackageReference Include="CarinaStudio.AppSuite.Core" Version="1.9.8.731-preview" />
+    <PackageReference Include="CarinaStudio.AppSuite.Core" Version="1.9.10.803-preview" />
     <PackageReference Include="Dotnet.Bundle" Version="0.9.13" />
     <PackageReference Include="MySql.Data" Version="8.0.29" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />

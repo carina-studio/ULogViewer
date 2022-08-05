@@ -601,6 +601,37 @@
 	<sys:String x:Key="String/RegexEditorDialog.Title">编辑格式</sys:String>
 	<sys:String x:Key="String/RegexEditorDialog.Tutorial.ClickButtonToEditPattern">点一下这里编辑格式。</sys:String>
 
+	<!-- ScriptDisplayableLogAnalyzer -->
+	<sys:String x:Key="String/ScriptDisplayableLogAnalyzer.AnalysisScript.ErrorOccurred">执行「{0}」之脚本以分析日志时发生错误：
+{1}
+	</sys:String>
+	<sys:String x:Key="String/ScriptDisplayableLogAnalyzer.AnalysisScript.ErrorOccurred.WithLocation">执行「{0}」之脚本以分析日志时发生错误：
+{1}
+位于第 {2} 行第 {3} 栏。
+	</sys:String>
+	<sys:String x:Key="String/ScriptDisplayableLogAnalyzer.SetupScript.ErrorOccurred">执行「{0}」之脚本以初始化分析时发生错误：
+{1}
+	</sys:String>
+	<sys:String x:Key="String/ScriptDisplayableLogAnalyzer.SetupScript.ErrorOccurred.WithLocation">执行「{0}」之脚本以初始化分析时发生错误：
+{1}
+位于第 {2} 行第 {3} 栏。
+	</sys:String>
+
+	<sys:String x:Key="String/ScriptLogDataSource.OpeningReaderScript.ErrorOccurred">执行「{0}」之脚本以开启原始日志行读取器时发生错误：
+{1}
+	</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSource.OpeningReaderScript.ErrorOccurred.WithLocation">执行「{0}」之脚本以开启原始日志行读取器时发生错误：
+{1}
+位于第 {2} 行第 {3} 栏。
+	</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSource.ReadingLineScript.ErrorOccurred">执行「{0}」之脚本以读取原始日志行时发生错误：
+{1}
+	</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSource.ReadingLineScript.ErrorOccurred.WithLocation">执行「{0}」之脚本以读取原始日志行时发生错误：
+{1}
+位于第 {2} 行第 {3} 栏。
+	</sys:String>
+
 	<!-- ScriptLogDataSourceProviderEditorDialog -->
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript">原始日志行读取器关闭脚本</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Description">脚本将在关闭原始日志行读取器时执行。此脚本不需要返回值。</sys:String>
@@ -616,6 +647,8 @@
 	<!-- ScriptLogDataSourceProvidersDialog -->
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.ConfirmDeletingProvider">您是否确定要删除日志资料来源脚本「{0}」？</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.ConfirmDeletingProvider.WithLogProfiles">您是否确定要删除日志资料来源脚本「{0}」以及相关的 {1} 个日志类型？</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.FailedToExportProvider">无法将日志资料来源脚本「{0}」导出至 '{1}'。</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.FailedToImportProvider">无法自文件 '{0}' 导入日志资料来源脚本。</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.Title">管理日志资料来源脚本</sys:String>
 
 	<!-- Session -->

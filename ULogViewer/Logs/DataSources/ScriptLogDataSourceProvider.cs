@@ -11,7 +11,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources;
 /// <summary>
 /// Provider of <see cref="ScriptLogDataSource"/>.
 /// </summary>
-class ScriptLogDataSourceProvider : BaseLogDataSourceProvider
+class ScriptLogDataSourceProvider : BaseLogDataSourceProvider, ILogDataSourceProvider
 {
     /// <summary>
     /// Options for sub scripts.
@@ -126,6 +126,10 @@ class ScriptLogDataSourceProvider : BaseLogDataSourceProvider
         }));
         return $"{DateTime.UtcNow.Ticks}-{postfix}";
     }
+
+
+    /// <inheritdoc/>
+    string ILogDataSourceProvider.DisplayName { get => this.displayName ?? ""; }
 
 
     /// <inheritdoc/>

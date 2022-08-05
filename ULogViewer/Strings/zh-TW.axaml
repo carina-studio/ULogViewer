@@ -601,6 +601,38 @@
 	<sys:String x:Key="String/RegexEditorDialog.Title">編輯格式</sys:String>
 	<sys:String x:Key="String/RegexEditorDialog.Tutorial.ClickButtonToEditPattern">點一下這裡以編輯格式。</sys:String>
 
+	<!-- ScriptDisplayableLogAnalyzer -->
+	<sys:String x:Key="String/ScriptDisplayableLogAnalyzer.AnalysisScript.ErrorOccurred">執行「{0}」之腳本以分析日誌時發生錯誤：
+{1}
+	</sys:String>
+	<sys:String x:Key="String/ScriptDisplayableLogAnalyzer.AnalysisScript.ErrorOccurred.WithLocation">執行「{0}」之腳本以分析日誌時發生錯誤：
+{1}
+位於第 {2} 行第 {3} 欄。
+	</sys:String>
+	<sys:String x:Key="String/ScriptDisplayableLogAnalyzer.SetupScript.ErrorOccurred">執行「{0}」之腳本以初始化分析時發生錯誤：
+{1}
+	</sys:String>
+	<sys:String x:Key="String/ScriptDisplayableLogAnalyzer.SetupScript.ErrorOccurred.WithLocation">執行「{0}」之腳本以初始化分析時發生錯誤：
+{1}
+位於第 {2} 行第 {3} 欄。
+	</sys:String>
+
+	<!-- ScriptLogDataSource -->
+	<sys:String x:Key="String/ScriptLogDataSource.OpeningReaderScript.ErrorOccurred">執行「{0}」之腳本以開啟原始日誌行讀取器時發生錯誤：
+{1}
+	</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSource.OpeningReaderScript.ErrorOccurred.WithLocation">執行「{0}」之腳本以開啟原始日誌行讀取器時發生錯誤：
+{1}
+位於第 {2} 行第 {3} 欄。
+	</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSource.ReadingLineScript.ErrorOccurred">執行「{0}」之腳本以讀取原始日誌行時發生錯誤：
+{1}
+	</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSource.ReadingLineScript.ErrorOccurred.WithLocation">執行「{0}」之腳本以讀取原始日誌行時發生錯誤：
+{1}
+位於第 {2} 行第 {3} 欄。
+	</sys:String>
+
 	<!-- ScriptLogDataSourceProviderEditorDialog -->
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript">原始日誌行讀取器關閉腳本</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Description">腳本將在關閉原始日誌行讀取器時執行。此腳本不需要回傳值。</sys:String>
@@ -616,6 +648,8 @@
 	<!-- ScriptLogDataSourceProvidersDialog -->
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.ConfirmDeletingProvider">您是否確定要刪除日誌資料來源腳本「{0}」？</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.ConfirmDeletingProvider.WithLogProfiles">您是否確定要刪除日誌資料來源腳本「{0}」以及相關的 {1} 個日誌類型？</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.FailedToExportProvider">無法將日誌資料來源腳本「{0}」匯出至 '{1}'。</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.FailedToImportProvider">無法自檔案 '{0}' 匯入日誌資料來源腳本。</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.Title">管理日誌資料來源腳本</sys:String>
 
 	<!-- Session -->

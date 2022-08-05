@@ -5,15 +5,15 @@ PUB_PLATFORM_LIST=("osx-x64" "osx-arm64")
 USERNAME="" # Apple Developer ID
 PASSWORD="" # Application specific password
 
+echo "********** Start notarizing $APP_NAME **********"
+
 # Get application version
-VERSION=$(cat ./$APP_NAME/$APP_NAME.csproj | grep "<Version>" | egrep -o "[0-9]+(.[0-9]+)+")
-if [ "$VERSION" == "" ]; then
+VERSION=$(dotnet run --project PackagingTool get-current-version $APP_NAME/$APP_NAME.csproj)
+if [ "$?" != "0" ]; then
     echo "Unable to get version of $APP_NAME"
     exit
 fi
-
-echo " " 
-echo "******************** Notarize $APP_NAME $VERSION ********************"
+echo "Version: $VERSION"
 
 # Notarize
 for i in "${!RID_LIST[@]}"; do
@@ -25,7 +25,7 @@ for i in "${!RID_LIST[@]}"; do
     echo " "
 
     # notarize
-    xcrun altool --notarize-app -f "./Packages/$PUB_PLATFORM/$APP_NAME-$VERSION-$PUB_PLATFORM.zip" --primary-bundle-id "$APP_BUNDLE_ID" -u "$USERNAME" -p "$PASSWORD"
+    xcrun altool --notarize-app -f "./Packages/$VERSION/$APP_NAME-$VERSION-$PUB_PLATFORM.zip" --primary-bundle-id "$APP_BUNDLE_ID" -u "$USERNAME" -p "$PASSWORD"
     if [ "$?" != "0" ]; then
         exit
     fi

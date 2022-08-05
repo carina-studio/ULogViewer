@@ -211,6 +211,34 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
 
 
     /// <summary>
+    /// Raise when error message generated.
+    /// </summary>
+    public event Action<IDisplayableLogProcessor, MessageEventArgs>? ErrorMessageGenerated;
+
+
+    /// <summary>
+    /// Generate error message.
+    /// </summary>
+    /// <param name="message">Message.</param>
+    protected void GenerateErrorMessage(string message)
+    {
+        if (this.CheckAccess())
+        {
+            if (!this.IsDisposed)
+                this.ErrorMessageGenerated?.Invoke(this, new(message));
+        }
+        else
+        {
+            this.SynchronizationContext.Post(() => 
+            {
+                if (!this.IsDisposed)
+                    this.ErrorMessageGenerated?.Invoke(this, new(message));
+            });
+        }
+    }
+
+
+    /// <summary>
     /// Get maximum supported concurrency level of logs processing.
     /// </summary>
     /// <param name="priority">Priority of processing.</param>
