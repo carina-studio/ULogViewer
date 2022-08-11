@@ -303,7 +303,7 @@
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Settings.Outline}"/>
 				</MenuItem.Icon>
 			</MenuItem>
-			<MenuItem Command="{Binding $parent[Window].CheckForAppUpdate}" Header="{DynamicResource String/SessionView.CheckForAppUpdate}">
+			<MenuItem Command="{Binding $parent[Window].CheckForApplicationUpdateAsync}" Header="{DynamicResource String/SessionView.CheckForAppUpdate}">
 				<MenuItem.Icon>
 					<Panel>
 						<Image Classes="MenuItem_Icon" IsVisible="{Binding $parent[Window].Application.UpdateInfo, Converter={x:Static aConverters:ObjectConverters.IsNull}}" Source="{StaticResource Image/Icon.Update.Outline}"/>
@@ -361,7 +361,7 @@
 				</MenuItem>
 			</MenuItem>
 			<Separator/>
-			<MenuItem Command="{Binding $parent[Window].ShowAppInfo}" Header="{DynamicResource String/SessionView.AppInfo}">
+			<MenuItem Command="{Binding $parent[Window].ShowApplicationInfoDialogAsync}" Header="{DynamicResource String/SessionView.AppInfo}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Information.Outline}"/>
 				</MenuItem.Icon>

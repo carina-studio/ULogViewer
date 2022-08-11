@@ -322,27 +322,6 @@ namespace CarinaStudio.ULogViewer
 
 
 		/// <summary>
-		/// Check for application update.
-		/// </summary>
-		public async void CheckForAppUpdate()
-		{
-			// check for update
-			using var appUpdater = new AppSuite.ViewModels.ApplicationUpdater();
-			var result = await new AppSuite.Controls.ApplicationUpdateDialog(appUpdater)
-			{
-				CheckForUpdateWhenShowing = true
-			}.ShowDialog(this);
-
-			// shutdown to update
-			if (result == AppSuite.Controls.ApplicationUpdateDialogResult.ShutdownNeeded)
-			{
-				this.Logger.LogWarning("Shutdown to update application");
-				this.Application.Shutdown();
-			}
-		}
-
-
-		/// <summary>
 		/// Show new main window.
 		/// </summary>
 		public void CreateMainWindow() =>
@@ -1144,16 +1123,6 @@ namespace CarinaStudio.ULogViewer
 
 			// set title
 			session.CustomTitle = title;
-		}
-
-
-		/// <summary>
-		/// Show application info dialog.
-		/// </summary>
-		public async void ShowAppInfo()
-		{
-			using var appInfo = new AppInfo();
-			await new AppSuite.Controls.ApplicationInfoDialog(appInfo).ShowDialog(this);
 		}
 
 
