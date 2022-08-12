@@ -1,3 +1,5 @@
+//#define DEMO
+
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Data;
@@ -876,6 +878,28 @@ namespace CarinaStudio.ULogViewer
 			{
 				this.notifyNetworkConnForProductActivationAction.Schedule(this.Configuration.GetValueOrDefault(ConfigurationKeys.TimeoutToNotifyNetworkConnectionForProductActivation));
 			}
+
+			// setup for demo
+#if DEMO
+			this.SynchronizationContext.Post(() =>
+			{
+				this.WindowState = WindowState.Normal;
+				(this.Screens.ScreenFromWindow(this.PlatformImpl) ?? this.Screens.Primary)?.Let(screen =>
+				{
+					var workingArea = screen.WorkingArea;
+					var w = (workingArea.Width * 0.95) / 4;
+					var h = (workingArea.Height * 0.95) / 3;
+					var u = Math.Min(w, h);
+					var sysDecorSizes = this.GetSystemDecorationSizes();
+					if (Platform.IsNotMacOS)
+						u /= screen.PixelDensity;
+					this.Width = u * 4;
+					this.Height = this.ExtendClientAreaToDecorationsHint
+						? u * 3
+						: u * 3 - sysDecorSizes.Top - sysDecorSizes.Bottom;
+				});
+			});
+#endif
 		}
 
 
