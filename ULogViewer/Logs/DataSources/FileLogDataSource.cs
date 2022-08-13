@@ -1,4 +1,5 @@
-﻿using CarinaStudio.Threading.Tasks;
+﻿using CarinaStudio.Configuration;
+using CarinaStudio.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
@@ -42,7 +43,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				{
 					return new FileStream(fileName, FileMode.Open, FileAccess.Read).Let(stream =>
 					{
-						return Path.GetExtension(options.FileName)?.ToLower() switch
+						var reader = Path.GetExtension(options.FileName)?.ToLower() switch
 						{
 							".gz" => new GZipStream(stream, CompressionMode.Decompress).Let(gzipStream =>
 								new StreamReader(gzipStream, encoding)),
@@ -51,6 +52,9 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 								: new StreamReader(stream, encoding),
 							_ => (TextReader)new StreamReader(stream, encoding),
 						};
+						if (this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.ReadRawLogLinesConcurrently))
+							reader = new IO.ConcurrentTextReader(reader);
+						return reader;
 					});
 				});
 				if (cancellationToken.IsCancellationRequested)
