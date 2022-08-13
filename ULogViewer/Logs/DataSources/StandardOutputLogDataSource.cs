@@ -293,7 +293,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 					}
 					else if (Platform.IsWindows)
 					{
-						return new HashSet<string>(IO.PathEqualityComparer.Default).Also(pathSet =>
+						return new HashSet<string>(CarinaStudio.IO.PathEqualityComparer.Default).Also(pathSet =>
 						{
 							Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.User)?.Split(Path.PathSeparator)?.Let(it => pathSet.AddAll(it));
 							Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.Machine)?.Split(Path.PathSeparator)?.Let(it => pathSet.AddAll(it));

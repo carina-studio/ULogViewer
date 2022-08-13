@@ -88,6 +88,10 @@ sealed class ConfigurationKeys
     /// </summary>
     public static readonly SettingKey<int> ProgressiveLogClearingInterval = new(nameof(ProgressiveLogClearingInterval), 60);
     /// <summary>
+    /// Try reading raw log lines concurrently.
+    /// </summary>
+    public static readonly SettingKey<bool> ReadRawLogLinesConcurrently = new(nameof(ReadRawLogLinesConcurrently), false);
+    /// <summary>
     /// Timeout before notifying user that network connection is needed for product activation.
     /// </summary>
     public static readonly SettingKey<int> TimeoutToNotifyNetworkConnectionForProductActivation = new(nameof(TimeoutToNotifyNetworkConnectionForProductActivation), 3 * 60 * 1000);

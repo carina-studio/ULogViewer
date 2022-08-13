@@ -1417,7 +1417,12 @@ namespace CarinaStudio.ULogViewer.Logs
 			this.logsReadingCancellationTokenSource = new CancellationTokenSource();
 			var readingToken = this.logsReadingToken;
 			var cancellationToken = this.logsReadingCancellationTokenSource.Token;
-			_ = this.readingTaskFactory.StartNew(() => this.ReadLogs(readingToken, reader, cancellationToken));
+			_ = this.readingTaskFactory.StartNew(() => 
+			{
+				if (this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.ReadRawLogLinesConcurrently))
+					reader = new IO.ConcurrentTextReader(reader);
+				this.ReadLogs(readingToken, reader, cancellationToken);
+			});
 		}
 
 

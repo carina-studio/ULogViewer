@@ -2771,7 +2771,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				try
 				{
 					this.Logger.LogTrace($"Start loading marked log file '{markedFileName}'");
-					if (!IO.File.TryOpenRead(markedFileName, DefaultFileOpeningTimeout, out var stream) || stream == null)
+					if (!CarinaStudio.IO.File.TryOpenRead(markedFileName, DefaultFileOpeningTimeout, out var stream) || stream == null)
 					{
 						this.Logger.LogError($"Unable to open marked file to load: {markedFileName}");
 						return Array.Empty<MarkedLogInfo>();
@@ -4464,7 +4464,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.Logger.LogTrace($"Start saving {markedLogInfos.Count} marked log(s) to '{markedFileName}'");
 					try
 					{
-						if (!IO.File.TryOpenReadWrite(markedFileName, DefaultFileOpeningTimeout, out var stream) || stream == null)
+						if (!CarinaStudio.IO.File.TryOpenReadWrite(markedFileName, DefaultFileOpeningTimeout, out var stream) || stream == null)
 						{
 							this.Logger.LogError($"Unable to open marked file to save: {markedFileName}");
 							return;

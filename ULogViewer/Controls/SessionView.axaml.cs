@@ -4745,7 +4745,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 
 			// collect paths
-			var comparer = IO.PathEqualityComparer.Default;
+			var comparer = CarinaStudio.IO.PathEqualityComparer.Default;
 			var filePath = (string?)null;
 			var dirPathSet = new HashSet<string>(comparer);
 			foreach (DisplayableLog log in this.logListBox.SelectedItems)
