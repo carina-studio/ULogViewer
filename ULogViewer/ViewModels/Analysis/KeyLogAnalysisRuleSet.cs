@@ -1,5 +1,6 @@
 using CarinaStudio.AppSuite.Data;
 using CarinaStudio.Collections;
+using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using System;
@@ -200,10 +201,14 @@ class KeyLogAnalysisRuleSet : BaseProfile<IULogViewerApplication>
                 case nameof(Rules):
                     this.rules = new List<Rule>().Also(patterns =>
                     {
+                        var useCompiledRegex = this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.UseCompiledRegex);
                         foreach (var jsonValue in jsonProperty.Value.EnumerateArray())
                         {
                             var ignoreCase = jsonValue.TryGetProperty("IgnoreCase", out var ignoreCaseProperty) && ignoreCaseProperty.ValueKind == JsonValueKind.True;
-                            var regex = new Regex(jsonValue.GetProperty(nameof(Rule.Pattern)).GetString()!, ignoreCase ? RegexOptions.IgnoreCase : RegexOptions.None);
+                            var options = ignoreCase ? RegexOptions.IgnoreCase : RegexOptions.None;
+                            if (useCompiledRegex)
+                                options |= RegexOptions.Compiled;
+                            var regex = new Regex(jsonValue.GetProperty(nameof(Rule.Pattern)).GetString()!, options);
                             var level = jsonValue.TryGetProperty(nameof(Rule.Level), out var jsonLevel)
                                 && jsonLevel.ValueKind == JsonValueKind.String
                                 && Enum.TryParse<Logs.LogLevel>(jsonLevel.GetString(), out var candLevel)

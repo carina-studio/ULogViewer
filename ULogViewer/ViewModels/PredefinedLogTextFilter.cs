@@ -1,4 +1,5 @@
 ﻿using CarinaStudio.AppSuite.Data;
+using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using System;
 using System.IO;
@@ -107,8 +108,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			var ignoreCase = false;
 			if (element.TryGetProperty("IgnoreCase", out var jsonValue))
 				ignoreCase = jsonValue.GetBoolean();
+			var options = ignoreCase ? RegexOptions.IgnoreCase : RegexOptions.None;
+			if (this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.UseCompiledRegex))
+				options |= RegexOptions.Compiled;
 			this.Name = element.GetProperty(nameof(Name)).GetString();
-			this.regex = new Regex(element.GetProperty(nameof(Regex)).GetString().AsNonNull(), ignoreCase ? RegexOptions.IgnoreCase : RegexOptions.None);
+			this.regex = new Regex(element.GetProperty(nameof(Regex)).GetString().AsNonNull(), options);
 		}
 
 

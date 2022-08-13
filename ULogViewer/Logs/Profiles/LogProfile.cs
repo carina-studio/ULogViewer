@@ -576,10 +576,14 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		void LoadLogPatternsFromJson(JsonElement logPatternsElement)
 		{
 			var logPatterns = new List<LogPattern>();
+			var useCompiledRegex = this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.UseCompiledRegex);
 			foreach (var logPatternElement in logPatternsElement.EnumerateArray())
 			{
 				var ignoreCase = logPatternElement.TryGetProperty(nameof(RegexOptions.IgnoreCase), out var jsonProperty) && jsonProperty.ValueKind == JsonValueKind.True;
-				var regex = new Regex(logPatternElement.GetProperty("Regex").GetString()!, ignoreCase ? RegexOptions.IgnoreCase : RegexOptions.None);
+				var options = ignoreCase ? RegexOptions.IgnoreCase : RegexOptions.None;
+				if (useCompiledRegex)
+					options |= RegexOptions.Compiled;
+				var regex = new Regex(logPatternElement.GetProperty("Regex").GetString()!, options);
 				var isRepeatable = false;
 				var isSkippable = false;
 				if (logPatternElement.TryGetProperty(nameof(LogPattern.IsRepeatable), out jsonProperty))

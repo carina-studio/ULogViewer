@@ -1,4 +1,5 @@
 using CarinaStudio.Collections;
+using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using System;
 using System.Collections.Generic;
@@ -23,11 +24,12 @@ class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.Fi
         public bool HasLogThreadId;
         public bool HasTextRegex;
         public bool IncludeMarkedLogs;
+        public volatile bool IsTextRegexListReady;
         public Logs.LogLevel Level;
         public IList<Func<DisplayableLog, string?>> LogTextPropertyGetters = new Func<DisplayableLog, string?>[0];
         public int? ProcessId;
         public int? ThreadId;
-        public IList<Regex> TextRegexList = new Regex[0];
+        public Regex[] TextRegexList = new Regex[0];
     }
 
 
@@ -307,7 +309,26 @@ class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.Fi
         if (isTextFilteringNeeded)
         {
             var textRegexList = token.TextRegexList;
-            var textRegexCount = textRegexList.Count;
+            var textRegexCount = textRegexList.Length;
+            if (!token.IsTextRegexListReady)
+            {
+                lock (token)
+                {
+                    if (!token.IsTextRegexListReady)
+                    {
+                        if (this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.UseCompiledRegex))
+                        {
+                            for (var i = textRegexCount - 1; i >= 0 ; --i)
+                            {
+                                var regex = textRegexList[i];
+                                if ((regex.Options & RegexOptions.Compiled) == 0)
+                                    textRegexList[i] = new(regex.ToString(), regex.Options | RegexOptions.Compiled);
+                            }
+                        }
+                        token.IsTextRegexListReady = true;
+                    }
+                }
+            }
             var textPropertyCount = token.LogTextPropertyGetters.Count;
             var textToMatchBuilder = logTextToMatchBuilder ?? new StringBuilder().Also(it => logTextToMatchBuilder = it);
             for (var j = 0; j < textPropertyCount; ++j)

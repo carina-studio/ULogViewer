@@ -894,7 +894,21 @@ namespace CarinaStudio.ULogViewer.Logs
 			var readLog = (Log?)null;
 			var precondition = this.precondition;
 			var hasPrecondition = !precondition.IsEmpty;
-			var logPatterns = this.logPatterns;
+			var logPatterns = this.logPatterns.ToArray().Also(it =>
+			{
+				if (this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.UseCompiledRegex))
+				{
+					for (var i = it.Length - 1; i >= 0; --i)
+					{
+						var logPattern = it[i];
+						if ((logPattern.Regex.Options & RegexOptions.Compiled) == 0)
+						{
+							var regex = new Regex(logPattern.Regex.ToString(), logPattern.Regex.Options | RegexOptions.Compiled);
+							it[i] = new(regex, logPattern.IsRepeatable, logPattern.IsSkippable);
+						}
+					}
+				}
+			});
 			var logBuilder = new LogBuilder()
 			{
 				StringCompressionLevel = this.Application.Settings.GetValueOrDefault(SettingKeys.SaveMemoryAggressively)
@@ -937,7 +951,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			{
 				var prevLogPattern = (LogPattern?)null;
 				var logPatternIndex = 0;
-				var lastLogPatternIndex = (logPatterns.Count - 1);
+				var lastLogPatternIndex = (logPatterns.Length - 1);
 				var lineNumber = 0;
 				var startReadingTime = stopWatch.ElapsedMilliseconds;
 				var updateInterval = 0;

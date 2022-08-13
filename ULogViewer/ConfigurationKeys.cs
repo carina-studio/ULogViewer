@@ -1,5 +1,4 @@
 using CarinaStudio.Configuration;
-using System;
 
 namespace CarinaStudio.ULogViewer;
 
@@ -92,6 +91,10 @@ sealed class ConfigurationKeys
     /// Timeout before notifying user that network connection is needed for product activation.
     /// </summary>
     public static readonly SettingKey<int> TimeoutToNotifyNetworkConnectionForProductActivation = new(nameof(TimeoutToNotifyNetworkConnectionForProductActivation), 3 * 60 * 1000);
+    /// <summary>
+    /// Whether regular expression should be compiled before using or not.
+    /// </summary>
+    public static readonly SettingKey<bool> UseCompiledRegex = new(nameof(UseCompiledRegex), true);
 
 
     // Constructor.
