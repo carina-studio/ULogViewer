@@ -70,7 +70,7 @@ namespace CarinaStudio.ULogViewer
 
 
 		/// <inheritdoc/>
-		public override int ExternalDependenciesVersion => 1;
+		public override int ExternalDependenciesVersion => 2;
 
 
 		// Accept update for testing purpose.
@@ -346,11 +346,13 @@ namespace CarinaStudio.ULogViewer
 
 			// setup external dependencies
 			this.externalDependencies = new List<ExternalDependency>().Also(it =>
-			 {
+			{
 				it.Add(new ExecutableExternalDependency(this, "AndroidSDK", ExternalDependencyPriority.RequiredByFeatures, "adb", new Uri("https://developer.android.com/"), new Uri("https://developer.android.com/studio")));
 				it.Add(new ExecutableExternalDependency(this, "Git", ExternalDependencyPriority.RequiredByFeatures, "git", new Uri("https://git-scm.com/"), new Uri("https://git-scm.com/downloads")));
 				if (Platform.IsNotWindows)
 					it.Add(new ExecutableExternalDependency(this, "TraceConv", ExternalDependencyPriority.RequiredByFeatures, "traceconv", new Uri("https://perfetto.dev/docs/quickstart/traceconv"), new Uri("https://perfetto.dev/docs/quickstart/traceconv#setup")));
+				if (Platform.IsLinux)
+					it.Add(new ExecutableExternalDependency(this, "XRandR", ExternalDependencyPriority.Optional, "xrandr", new Uri("https://www.x.org/wiki/Projects/XRandR/"), new Uri("https://command-not-found.com/xrandr")));
 			}).ToArray();
 
 			// call base
