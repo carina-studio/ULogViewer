@@ -85,4 +85,9 @@ partial class AppOptionsDialog : BaseApplicationOptionsDialog
 			});
 		}
     }
+
+
+	// Show dialog of external dependencies.
+	void ShowExternalDependenciesDialog() =>
+		_ = new ExternalDependenciesDialog().ShowDialog(this);
 }
