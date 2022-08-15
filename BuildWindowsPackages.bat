@@ -66,6 +66,12 @@ REM Build packages
     if exist %APP_NAME%\bin\%CONFIG%\%FRAMEWORK%\%%r\publish\ULogViewer.png (
         del /Q %APP_NAME%\bin\%CONFIG%\%FRAMEWORK%\%%r\publish\ULogViewer.png
     )
+    if exist %APP_NAME%\bin\%CONFIG%\%FRAMEWORK%\%%r\publish\PresentationFramework.dll (
+        del /Q %APP_NAME%\bin\%CONFIG%\%FRAMEWORK%\%%r\publish\PresentationFramework.dll
+    )
+    if exist %APP_NAME%\bin\%CONFIG%\%FRAMEWORK%\%%r\publish\System.Windows.Forms.dll (
+        del /Q %APP_NAME%\bin\%CONFIG%\%FRAMEWORK%\%%r\publish\System.Windows.Forms.dll
+    )
 
     REM Generate package
     start /Wait PowerShell -NoLogo -Command Compress-Archive -Force -Path %APP_NAME%\bin\%CONFIG%\%FRAMEWORK%\%%r\publish\* -DestinationPath Packages\%CURRENT_VERSION%\%APP_NAME%-%CURRENT_VERSION%-%%r.zip
