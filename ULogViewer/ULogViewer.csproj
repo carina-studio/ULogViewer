@@ -126,6 +126,7 @@
     <EmbeddedResource Include="Logs/Profiles/BuiltIn/GitLogSimple.json" />
     <EmbeddedResource Include="Logs/Profiles/BuiltIn/LinuxKernelLog.json" />
     <EmbeddedResource Include="Logs/Profiles/BuiltIn/LinuxKernelLogFile.json" />
+    <EmbeddedResource Include="Logs/Profiles/BuiltIn/LinuxRealtimeLog.json" />
     <EmbeddedResource Include="Logs/Profiles/BuiltIn/LinuxSystemLog.json" />
     <EmbeddedResource Include="Logs/Profiles/BuiltIn/LinuxSystemLogFile.json" />
     <EmbeddedResource Include="Logs/Profiles/BuiltIn/MacOSInstallationLog.json" />
