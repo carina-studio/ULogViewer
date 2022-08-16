@@ -7,9 +7,9 @@ ULogViewer is a [.NET](https://dotnet.microsoft.com/) based cross-platform unive
 ### Preview
 Operating System                      | Download | Version | Screenshot
 :------------------------------------:|:--------:|:-------:|:----------:
-Windows 8/10/11                       |[x86](https://github.com/carina-studio/ULogViewer/releases/download/2.0.3.811/ULogViewer-2.0.3.811-win-x86.zip) &#124; [x64](https://github.com/carina-studio/ULogViewer/releases/download/2.0.3.811/ULogViewer-2.0.3.811-win-x64.zip) &#124; [arm64](https://github.com/carina-studio/ULogViewer/releases/download/2.0.3.811/ULogViewer-2.0.3.811-win-arm64.zip)|2.0.3.811 (Preview)|[<img src="https://carinastudio.azurewebsites.net/ULogViewer/Screenshots/Screenshot_Windows_Preview_Thumb.png" width="150"/>](https://carinastudio.azurewebsites.net/ULogViewer/Screenshots/Screenshot_Windows_Preview.png)
-macOS 11/12                           |[x64](https://github.com/carina-studio/ULogViewer/releases/download/2.0.3.811/ULogViewer-2.0.3.811-osx-x64.zip) &#124; [arm64](https://github.com/carina-studio/ULogViewer/releases/download/2.0.3.811/ULogViewer-2.0.3.811-osx-arm64.zip)|2.0.3.811 (Preview)|[<img src="https://carinastudio.azurewebsites.net/ULogViewer/Screenshots/Screenshot_macOS_Preview_Thumb.png" width="150"/>](https://carinastudio.azurewebsites.net/ULogViewer/Screenshots/Screenshot_macOS_Preview.png)
-Linux                                 |[x64](https://github.com/carina-studio/ULogViewer/releases/download/2.0.3.811/ULogViewer-2.0.3.811-linux-x64.zip) &#124; [arm64](https://github.com/carina-studio/ULogViewer/releases/download/2.0.3.811/ULogViewer-2.0.3.811-linux-arm64.zip)|2.0.3.811 (Preview)|[<img src="https://carinastudio.azurewebsites.net/ULogViewer/Screenshots/Screenshot_Fedora_Preview_Thumb.png" width="150"/>](https://carinastudio.azurewebsites.net/ULogViewer/Screenshots/Screenshot_Fedora_Preview.png)
+Windows 8/10/11                       |[x86](https://github.com/carina-studio/ULogViewer/releases/download/2.0.4.815/ULogViewer-2.0.4.815-win-x86.zip) &#124; [x64](https://github.com/carina-studio/ULogViewer/releases/download/2.0.4.815/ULogViewer-2.0.4.815-win-x64.zip) &#124; [arm64](https://github.com/carina-studio/ULogViewer/releases/download/2.0.4.815/ULogViewer-2.0.4.815-win-arm64.zip)|2.0.4.815 (RC)|[<img src="https://carinastudio.azurewebsites.net/ULogViewer/Screenshots/Screenshot_Windows_Preview_Thumb.png" width="150"/>](https://carinastudio.azurewebsites.net/ULogViewer/Screenshots/Screenshot_Windows_Preview.png)
+macOS 11/12                           |[x64](https://github.com/carina-studio/ULogViewer/releases/download/2.0.4.815/ULogViewer-2.0.4.815-osx-x64.zip) &#124; [arm64](https://github.com/carina-studio/ULogViewer/releases/download/2.0.4.815/ULogViewer-2.0.4.815-osx-arm64.zip)|2.0.4.815 (RC)|[<img src="https://carinastudio.azurewebsites.net/ULogViewer/Screenshots/Screenshot_macOS_Preview_Thumb.png" width="150"/>](https://carinastudio.azurewebsites.net/ULogViewer/Screenshots/Screenshot_macOS_Preview.png)
+Linux                                 |[x64](https://github.com/carina-studio/ULogViewer/releases/download/2.0.4.815/ULogViewer-2.0.4.815-linux-x64.zip) &#124; [arm64](https://github.com/carina-studio/ULogViewer/releases/download/2.0.4.815/ULogViewer-2.0.4.815-linux-arm64.zip)|2.0.4.815 (RC)|[<img src="https://carinastudio.azurewebsites.net/ULogViewer/Screenshots/Screenshot_Fedora_Preview_Thumb.png" width="150"/>](https://carinastudio.azurewebsites.net/ULogViewer/Screenshots/Screenshot_Fedora_Preview.png)
 
 ### Stable
 Operating System                      | Download | Version | Screenshot
@@ -21,7 +21,7 @@ Linux                                 |[x64](https://github.com/carina-studio/UL
 
 - [Installation and Upgrade Guide](https://carinastudio.azurewebsites.net/ULogViewer/InstallAndUpgrade)
 
-## 📣 What's Change in 2.0 (Preview)
+## 📣 What's Change in 2.0 (RC)
 - Log analysis including finding key logs, calculating duration of operation, even writing your own script to analyze logs.
 - Listing and managing added log files in side panel.
 - Categorizing logs by timestamp automatically.
