@@ -1,11 +1,12 @@
 ﻿{
 	"DataSource": {
-		"Name": "File",
+		"Name": "StandardOutput",
 		"Options": {
-			"FileName": "/var/log/syslog"
+			"Command": "journalctl -f --no-tail"
 		}
 	},
 	"Icon": "Linux",
+	"IsContinuousReading": true,
 	"LogPatterns": [
 		{
 			"Regex": "^(?<Timestamp>[\\w]+[\\s]+[\\d]+[\\s]+[\\d\\:\\.]+)[\\s]+(?<DeviceName>[^\\s]*)[\\s]+((?<ProcessName>[^\\[]*)(\\[(?<ProcessId>[\\d]+)\\])|(?<ProcessName>[^\\:]*))\\:[\\s](?<Message>.*)$"

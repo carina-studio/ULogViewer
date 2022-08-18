@@ -7,6 +7,11 @@
 	"LogPatterns": [
 		{
 			"Regex": "^(?<Timestamp>[\\w]+[\\s]+[\\d]+[\\s]+[\\d\\:\\.]+)[\\s]+(?<DeviceName>[^\\s]*)[\\s]+(?<SourceName>[^\\[\\:]*)\\:[\\s](\\[[\\s]*(?<Extra1>[\\d\\.]+)[\\s]*\\][\\s]?)?(?<Message>.*)$"
+		},
+		{
+			"Regex": "^((\\s{4}|\\t))+(?<Message>.*)$",
+			"IsRepeatable": true,
+			"IsSkippable": true
 		}
 	],
 	"LogWritingFormats": [
