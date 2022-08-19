@@ -1169,13 +1169,13 @@
 									<Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Checklist.Light}"/>
 								</Panel>
 							</ToggleButton>
-							<Popup Name="logAnalysisRuleSetsPopup" IsLightDismissEnabled="True" MaxHeight="{StaticResource Double/SessionView.LogAnalysisRuleSetsPopup.MaxHeight}" PlacementMode="Bottom" PlacementTarget="{Binding #logAnalysisRuleSetsButton}" Width="{StaticResource Double/SessionView.LogAnalysisRuleSetsPopup.Width}" WindowManagerAddShadowHint="True">
+							<Popup Name="logAnalysisRuleSetsPopup" IsLightDismissEnabled="True" PlacementMode="Bottom" PlacementTarget="{Binding #logAnalysisRuleSetsButton}" Width="{StaticResource Double/SessionView.LogAnalysisRuleSetsPopup.Width}" WindowManagerAddShadowHint="True">
 								<Border Background="{DynamicResource ComboBoxDropDownBackground}" BorderBrush="{DynamicResource ComboBoxDropDownBorderBrush}" BorderThickness="{DynamicResource Thickness/SessionView.LogAnalysisRuleSetsPopup.Border}" CornerRadius="{DynamicResource OverlayCornerRadius}" Padding="{StaticResource Thickness/SessionView.LogAnalysisRuleSetsPopup.Padding}">
 									<StackPanel>
 										<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/SessionView.LogAnalysisRuleSetsPopup.Header}"/>
 										<Grid ColumnDefinitions="*,Auto">
 											<Border Background="{DynamicResource Brush/SessionView.LogAnalysisRuleSetListBox.Background}" BorderBrush="{DynamicResource Brush/Control.Border}" BorderThickness="{DynamicResource Thickness/Control.Border}" CornerRadius="{DynamicResource ControlCornerRadius}">
-												<Panel>
+												<Panel MaxHeight="{StaticResource Double/SessionView.LogAnalysisRuleSetsPopup.MaxHeight}">
 													<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
 														<StackPanel>
 

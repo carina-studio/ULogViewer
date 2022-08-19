@@ -156,7 +156,7 @@
 	<sys:Double x:Key="Double/SessionView.Hint.SelectLogProfile.FontSize">20</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogAnalysisResult.Icon.Size">14</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogAnalysisRuleSetListBox.Icon.Size">14</sys:Double>
-	<sys:Double x:Key="Double/SessionView.LogAnalysisRuleSetsPopup.MaxHeight">550</sys:Double>
+	<sys:Double x:Key="Double/SessionView.LogAnalysisRuleSetsPopup.MaxHeight">520</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogAnalysisRuleSetsPopup.Width">400</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogFileInfo.FileName.FontSize">14</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogFileInfo.Icon.Size">20</sys:Double>
