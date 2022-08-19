@@ -1149,7 +1149,7 @@
 						<Grid ColumnDefinitions="Auto,*,Auto">
 							<TextBlock Classes="SessionView_SidePanel_Header_Left" Text="{DynamicResource String/SessionView.LogAnalysisPanel}"/>
 							<TextBlock Classes="SessionView_SidePanel_Header_Right" Grid.Column="1" Text="{Binding LogAnalysisResults.Count, StringFormat={} ({0})}"/>
-							<ToggleButton Name="logAnalysisRuleSetsButton" Classes="ToolBar_ToggleButton" Grid.Column="2" IsChecked="{Binding #logAnalysisRuleSetsPopup.IsOpen, Mode=TwoWay}" IsVisible="{Binding $parent[UserControl].IsProVersionActivated}" ToolTip.Tip="{DynamicResource String/SessionView.LogAnalysisRuleSets}">
+							<ToggleButton Name="logAnalysisRuleSetsButton" Classes="ToolBar_ToggleButton" Grid.Column="2" IsChecked="{Binding #logAnalysisRuleSetsPopup.IsOpen, Mode=TwoWay}" ToolTip.Tip="{DynamicResource String/SessionView.LogAnalysisRuleSets}">
 								<Panel>
 									<Panel IsVisible="{Binding !$parent[ToggleButton].IsChecked}">
 										<Image Classes="Icon" IsVisible="{Binding !KeyLogAnalysisRuleSets.Count}" Source="{StaticResource Image/Checklist}"/>
@@ -1236,7 +1236,14 @@
 															</ListBox>
 
 															<!-- Operation duration analysis -->
-															<Separator Classes="Dialog_Separator_Small" IsVisible="{Binding #operationDurationAnalysisRuleSetListBox.IsVisible}"/>
+															<Separator Classes="Dialog_Separator_Small">
+																<Separator.IsVisible>
+																	<MultiBinding Converter="{x:Static aConverters:BoolConverters.And}">
+																		<Binding Path="IsVisible" ElementName="keyLogAnalysisRuleSetListBox"/>
+																		<Binding Path="IsVisible" ElementName="operationDurationAnalysisRuleSetListBox"/>
+																	</MultiBinding>
+																</Separator.IsVisible>
+															</Separator>
 															<Border Background="{DynamicResource Brush/Dialog.TextBlock.Background.Header1}" CornerRadius="{StaticResource CornerRadius/ListBoxItem}" IsVisible="{Binding #operationDurationAnalysisRuleSetListBox.IsVisible}" Margin="{StaticResource Thickness/SessionView.LogAnalysisRuleSetListBox.Header.Margin}" Padding="{StaticResource Thickness/SessionView.LogAnalysisRuleSetListBox.Header.Padding}">
 																<TextBlock FontWeight="Bold" Text="{DynamicResource String/SessionView.LogAnalysisRuleSets.OperationDurationAnalysisRuleSet}" TextTrimming="CharacterEllipsis"/>
 															</Border>
@@ -1286,7 +1293,17 @@
 															</ListBox>
 
 															<!-- Log analysis script -->
-															<Separator Classes="Dialog_Separator_Small" IsVisible="{Binding #logAnalysisScriptSetListBox.IsVisible}"/>
+															<Separator Classes="Dialog_Separator_Small">
+																<Separator.IsVisible>
+																	<MultiBinding Converter="{x:Static aConverters:BoolConverters.And}">
+																		<Binding Path="IsVisible" ElementName="logAnalysisScriptSetListBox"/>
+																		<MultiBinding Converter="{x:Static aConverters:BoolConverters.Or}">
+																			<Binding Path="IsVisible" ElementName="keyLogAnalysisRuleSetListBox"/>
+																			<Binding Path="IsVisible" ElementName="operationDurationAnalysisRuleSetListBox"/>
+																		</MultiBinding>
+																	</MultiBinding>
+																</Separator.IsVisible>
+															</Separator>
 															<Border Background="{DynamicResource Brush/Dialog.TextBlock.Background.Header1}" CornerRadius="{StaticResource CornerRadius/ListBoxItem}" IsVisible="{Binding #logAnalysisScriptSetListBox.IsVisible}" Margin="{StaticResource Thickness/SessionView.LogAnalysisRuleSetListBox.Header.Margin}" Padding="{StaticResource Thickness/SessionView.LogAnalysisRuleSetListBox.Header.Padding}">
 																<StackPanel Orientation="Horizontal">
 																	<TextBlock FontWeight="Bold" Text="{DynamicResource String/SessionView.LogAnalysisRuleSets.LogAnalysisScriptSet}" TextTrimming="CharacterEllipsis"/>
@@ -1417,7 +1434,6 @@
 					<Border Background="{x:Static Brushes.Transparent}" Grid.Row="1">
 						<Border.IsVisible>
 							<MultiBinding Converter="{x:Static aConverters:BoolConverters.And}">
-								<Binding Path="IsProVersionActivated" ElementName="root"/>
 								<Binding Path="LogAnalysisResults.Count" Converter="{x:Static abConverters:NumberConverters.IsZero}"/>
 								<Binding Path="SelectedItems.Count" Converter="{x:Static abConverters:NumberConverters.IsZero}" ElementName="keyLogAnalysisRuleSetListBox"/>
 								<Binding Path="SelectedItems.Count" Converter="{x:Static abConverters:NumberConverters.IsZero}" ElementName="operationDurationAnalysisRuleSetListBox"/>
@@ -1425,9 +1441,6 @@
 							</MultiBinding>
 						</Border.IsVisible>
 						<TextBlock Classes="SessionView_SidePanel_FullPanelHint" Text="{DynamicResource String/SessionView.LogAnalysisPanel.Hint}"/>
-					</Border>
-					<Border Background="{x:Static Brushes.Transparent}" Grid.Row="1" IsVisible="{Binding !$parent[UserControl].IsProVersionActivated}">
-						<TextBlock Classes="SessionView_SidePanel_FullPanelHint" Text="{DynamicResource String/SessionView.ProVersionNeeded}"/>
 					</Border>
 				</Grid>
 

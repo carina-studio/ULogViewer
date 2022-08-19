@@ -220,8 +220,10 @@
 	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Title">Edit key log analysis rule</sys:String>
 
 	<!-- KeyLogAnalysisRuleSetEditorDialog -->
+	<sys:String x:Key="String/KeyLogAnalysisRuleSetEditorDialog.CannotAddMoreRuleSetWithoutProVersion">Cannot create more rule set before activating Pro version.</sys:String>
 	<sys:String x:Key="String/KeyLogAnalysisRuleSetEditorDialog.Icon">Icon</sys:String>
 	<sys:String x:Key="String/KeyLogAnalysisRuleSetEditorDialog.Name">Name (required)</sys:String>
+	<sys:String x:Key="String/KeyLogAnalysisRuleSetEditorDialog.RestrictionsOfNonProVersion">Before activating Pro version, you can have only 1 rule set and rule set won't be kept after closing ULogViewer.</sys:String>
 	<sys:String x:Key="String/KeyLogAnalysisRuleSetEditorDialog.Rules">Rules (required)</sys:String>
 	<sys:String x:Key="String/KeyLogAnalysisRuleSetEditorDialog.Title">Edit key log analysis rule set</sys:String>
 

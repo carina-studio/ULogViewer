@@ -223,6 +223,6 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
     /// </summary>
     /// <param name="profile">Profile to remove.</param>
     /// <returns>True if profile has neem removed successfully.</returns>
-    public new bool RemoveProfile(LogProfile profile) =>
-        base.RemoveProfile(profile);
+    public bool RemoveProfile(LogProfile profile) =>
+        base.RemoveProfile(profile, true);
 }
