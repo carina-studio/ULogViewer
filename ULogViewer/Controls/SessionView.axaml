@@ -1439,7 +1439,7 @@
 							<TextBlock Classes="SessionView_SidePanel_Header_Right" Grid.Column="1" Text="{Binding LogFiles.Count, StringFormat={} ({0})}"/>
 						</Grid>
 					</Border>
-					<asControls:ListBox Classes="Log" Name="logFileListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" Focusable="False" Grid.Row="1" IsVisible="{Binding $parent[UserControl].IsProVersionActivated}">
+					<asControls:ListBox Classes="Log" Name="logFileListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" Focusable="False" Grid.Row="1" IsEnabled="{Binding $parent[UserControl].IsProVersionActivated}">
 						<asControls:ListBox.ItemTemplate>
 							<DataTemplate>
 								<DockPanel>
@@ -1488,7 +1488,7 @@
 						</Border.IsVisible>
 						<TextBlock Classes="SessionView_SidePanel_FullPanelHint" Text="{DynamicResource String/SessionView.LogFileIsUnsupported}"/>
 					</Border>
-					<Border Background="{x:Static Brushes.Transparent}" Grid.Row="1" IsVisible="{Binding !$parent[UserControl].IsProVersionActivated}">
+					<Border Background="{StaticResource Brush/SessionView.SidePanel.FullPanelHint.Background}" Grid.Row="1" IsVisible="{Binding !$parent[UserControl].IsProVersionActivated}">
 						<TextBlock Classes="SessionView_SidePanel_FullPanelHint" Text="{DynamicResource String/SessionView.ProVersionNeeded}"/>
 					</Border>
 				</Grid>
