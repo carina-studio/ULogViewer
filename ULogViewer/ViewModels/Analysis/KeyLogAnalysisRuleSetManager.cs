@@ -135,7 +135,12 @@ class KeyLogAnalysisRuleSetManager : BaseProfileManager<IULogViewerApplication, 
         {
             if (state == ProductState.Activated)
             {
-                _ = this.LoadProfilesAsync();
+                var loadingTask = this.LoadProfilesAsync();
+                loadingTask.ContinueWith((t, s) => 
+                {
+                    if (productManager.IsProductActivated(Products.Professional))
+                        this.ScheduleSavingProfiles();
+                }, null);
                 if (!this.CanAddRuleSet)
                 {
                     this.CanAddRuleSet = true;
@@ -146,6 +151,7 @@ class KeyLogAnalysisRuleSetManager : BaseProfileManager<IULogViewerApplication, 
             {
                 foreach (var ruleSet in this.Profiles.ToArray())
                     this.RemoveProfile(ruleSet, false);
+                this.CancelSavingProfiles();
                 if (!this.CanAddRuleSet)
                 {
                     this.CanAddRuleSet = true;
