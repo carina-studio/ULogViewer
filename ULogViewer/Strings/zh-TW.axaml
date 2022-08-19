@@ -219,8 +219,10 @@
 	<!-- LogAnalysisScriptSetEditorDialog -->
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript">日誌分析腳本</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Description">腳本將針對每筆日誌執行以分析日誌。需回傳布林值 (boolean) 以指示針對此日誌的分析結果是否需要被擷取。</sys:String>
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.CannotAddMoreScriptSetWithoutProVersion">在啟用專業版之前，您無法建立更多的日誌分析腳本。</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.Icon">圖示</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.Name">名稱 (必要)</sys:String>
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.RestrictionsOfNonProVersion">在啟用專業版之前，您只能建立 1 個日誌分析腳本，且在關閉 ULogViewer 後不會被儲存。</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript">分析初始化腳本</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript.Description">腳本將在分析流程開始前執行一次且不需要回傳值。</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.Title">編輯日誌分析腳本</sys:String>
@@ -549,8 +551,10 @@
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.Title">編輯動作時距分析規則</sys:String>
 
 	<!-- OperationDurationAnalysisRuleSetEditorDialog -->
+	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.CannotAddMoreRuleSetWithoutProVersion">在啟用專業版之前，您無法建立更多的規則集。</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.Icon">圖示</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.Name">名稱 (必要)</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.RestrictionsOfNonProVersion">在啟用專業版之前，您只能建立 1 個規則集，且在關閉 ULogViewer 後不會被儲存。</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.Rules">規則 (必要)</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.Title">編輯動作時距分析規則集</sys:String>
 

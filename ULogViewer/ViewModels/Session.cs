@@ -924,9 +924,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.scriptLogAnalyzer = new ScriptDisplayableLogAnalyzer(this.Application, this.allLogs, this.CompareDisplayableLogs).Also(it =>
 				this.AttachToLogAnalyzer(it));
 
-			// attach to product manager
-			this.Application.ProductManager.ProductStateChanged += this.OnProductStateChanged;
-
 			// setup properties
 			this.AllLogs = new SafeReadOnlyList<DisplayableLog>(this.allLogs);
 			this.LogAnalysisResults = this.logAnalysisResults.AsReadOnly();
@@ -2187,9 +2184,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// remove from activation history
 			if (this.activationHistoryListNode.List != null)
 				activationHistoryList.Remove(this.activationHistoryListNode);
-			
-			// detach from product manager
-			this.Application.ProductManager.ProductStateChanged -= this.OnProductStateChanged;
 
 			// call base
 			base.Dispose(disposing);
@@ -3531,20 +3525,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		}
 
 
-		// Called when product state changed.
-		void OnProductStateChanged(IProductManager? productManager, string productId)
-		{
-			if (productManager == null || productId != Products.Professional)
-				return;
-			if (!productManager.IsProductActivated(productId))
-			{
-				this.keyLogAnalysisRuleSets.Clear();
-				this.logAnalysisScriptSets.Clear();
-				this.operationDurationAnalysisRuleSets.Clear();
-			}
-		}
-
-
 		// Called when property changed.
 		protected override void OnPropertyChanged(ObservableProperty property, object? oldValue, object? newValue)
 		{
@@ -4161,40 +4141,39 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 				// restore log analysis state
 				this.keyLogAnalysisRuleSets.Clear();
-				if (this.Application.ProductManager.IsProductActivated(Products.Professional))
+				this.operationDurationAnalysisRuleSets.Clear();
+				this.logAnalysisScriptSets.Clear();
+				if (jsonState.TryGetProperty(nameof(KeyLogAnalysisRuleSet), out jsonValue) && jsonValue.ValueKind == JsonValueKind.Array)
 				{
-					if (jsonState.TryGetProperty(nameof(KeyLogAnalysisRuleSet), out jsonValue) && jsonValue.ValueKind == JsonValueKind.Array)
+					foreach (var jsonId in jsonValue.EnumerateArray())
 					{
-						foreach (var jsonId in jsonValue.EnumerateArray())
-						{
-							var ruleSet = jsonId.ValueKind == JsonValueKind.String
-								? KeyLogAnalysisRuleSetManager.Default.GetRuleSetOrDefault(jsonId.GetString()!)
-								: null;
-							if (ruleSet != null)
-								this.keyLogAnalysisRuleSets.Add(ruleSet);
-						}
+						var ruleSet = jsonId.ValueKind == JsonValueKind.String
+							? KeyLogAnalysisRuleSetManager.Default.GetRuleSetOrDefault(jsonId.GetString()!)
+							: null;
+						if (ruleSet != null)
+							this.keyLogAnalysisRuleSets.Add(ruleSet);
 					}
-					if (jsonState.TryGetProperty(nameof(LogAnalysisScriptSet), out jsonValue) && jsonValue.ValueKind == JsonValueKind.Array)
+				}
+				if (jsonState.TryGetProperty(nameof(LogAnalysisScriptSet), out jsonValue) && jsonValue.ValueKind == JsonValueKind.Array)
+				{
+					foreach (var jsonId in jsonValue.EnumerateArray())
 					{
-						foreach (var jsonId in jsonValue.EnumerateArray())
-						{
-							var scriptSet = jsonId.ValueKind == JsonValueKind.String
-								? LogAnalysisScriptSetManager.Default.GetScriptSetOrDefault(jsonId.GetString()!)
-								: null;
-							if (scriptSet != null)
-								this.logAnalysisScriptSets.Add(scriptSet);
-						}
+						var scriptSet = jsonId.ValueKind == JsonValueKind.String
+							? LogAnalysisScriptSetManager.Default.GetScriptSetOrDefault(jsonId.GetString()!)
+							: null;
+						if (scriptSet != null)
+							this.logAnalysisScriptSets.Add(scriptSet);
 					}
-					if (jsonState.TryGetProperty(nameof(OperationDurationAnalysisRuleSets), out jsonValue) && jsonValue.ValueKind == JsonValueKind.Array)
+				}
+				if (jsonState.TryGetProperty(nameof(OperationDurationAnalysisRuleSets), out jsonValue) && jsonValue.ValueKind == JsonValueKind.Array)
+				{
+					foreach (var jsonId in jsonValue.EnumerateArray())
 					{
-						foreach (var jsonId in jsonValue.EnumerateArray())
-						{
-							var ruleSet = jsonId.ValueKind == JsonValueKind.String
-								? OperationDurationAnalysisRuleSetManager.Default.GetRuleSetOrDefault(jsonId.GetString()!)
-								: null;
-							if (ruleSet != null)
-								this.operationDurationAnalysisRuleSets.Add(ruleSet);
-						}
+						var ruleSet = jsonId.ValueKind == JsonValueKind.String
+							? OperationDurationAnalysisRuleSetManager.Default.GetRuleSetOrDefault(jsonId.GetString()!)
+							: null;
+						if (ruleSet != null)
+							this.operationDurationAnalysisRuleSets.Add(ruleSet);
 					}
 				}
 

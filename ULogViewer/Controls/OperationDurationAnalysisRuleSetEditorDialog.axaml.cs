@@ -1,14 +1,15 @@
-using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.Collections;
+using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ULogViewer.ViewModels.Analysis.ContextualBased;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace CarinaStudio.ULogViewer.Controls
@@ -21,6 +22,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Static fields.
 		static readonly AvaloniaProperty<bool> AreValidParametersProperty = AvaloniaProperty.Register<OperationDurationAnalysisRuleSetEditorDialog, bool>("AreValidParameters");
 		static readonly Dictionary<OperationDurationAnalysisRuleSet, OperationDurationAnalysisRuleSetEditorDialog> DialogWithEditingRuleSets = new();
+		static readonly SettingKey<bool> DonotShowRestrictionsWithNonProVersionKey = new("OperationDurationAnalysisRuleSetEditorDialog.DonotShowRestrictionsWithNonProVersion");
 		static readonly Regex OriginalOperationNameRegex = new("^(?<Name>.+)\\s\\(\\d+\\)$");
 
 		
@@ -80,12 +82,25 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Complete editing.
-		void CompleteEditing()
+		async void CompleteEditing()
 		{
 			// validate parameters
 			this.validateParametersAction.ExecuteIfScheduled();
 			if (!this.GetValue<bool>(AreValidParametersProperty))
 				return;
+			
+			// check Pro version
+			if (!this.Application.ProductManager.IsProductActivated(Products.Professional)
+				&& this.ruleSet == null
+				&& !OperationDurationAnalysisRuleSetManager.Default.CanAddRuleSet)
+			{
+				await new MessageDialog()
+				{
+					Icon = MessageDialogIcon.Warning,
+					Message = this.GetResourceObservable("String/OperationDurationAnalysisRuleSetEditorDialog.CannotAddMoreRuleSetWithoutProVersion"),
+				}.ShowDialog(this);
+				return;
+			}
 			
 			// create rule set
 			var ruleSet = this.ruleSet ?? new OperationDurationAnalysisRuleSet(this.Application, "");
@@ -189,7 +204,36 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.rules.AddAll(ruleSet.Rules);
 			}
 			else
+			{
 				this.iconComboBox.SelectedItem = LogProfileIcon.Analysis;
+				if (!this.Application.ProductManager.IsProductActivated(Products.Professional))
+				{
+					this.SynchronizationContext.Post(async () =>
+					{
+						if (!OperationDurationAnalysisRuleSetManager.Default.CanAddRuleSet)
+						{
+							await new MessageDialog()
+							{
+								Icon = MessageDialogIcon.Warning,
+								Message = this.GetResourceObservable("String/OperationDurationAnalysisRuleSetEditorDialog.CannotAddMoreRuleSetWithoutProVersion"),
+							}.ShowDialog(this);
+							this.Close();
+						}
+						else if (!this.PersistentState.GetValueOrDefault(DonotShowRestrictionsWithNonProVersionKey))
+						{
+							var messageDialog = new MessageDialog()
+							{
+								DoNotAskOrShowAgain = false,
+								Icon = MessageDialogIcon.Information,
+								Message = this.GetResourceObservable("String/OperationDurationAnalysisRuleSetEditorDialog.RestrictionsOfNonProVersion"),
+							};
+							await messageDialog.ShowDialog(this);
+							if (messageDialog.DoNotAskOrShowAgain == true)
+								this.PersistentState.SetValue<bool>(DonotShowRestrictionsWithNonProVersionKey, true);
+						}
+					});
+				}
+			}
 			this.validateParametersAction.Schedule();
 			this.SynchronizationContext.Post(this.nameTextBox.Focus);
 		}
