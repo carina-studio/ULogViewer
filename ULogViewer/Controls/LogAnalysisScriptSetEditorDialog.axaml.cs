@@ -20,6 +20,7 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Window<IU
 	// Static fields.
 	static readonly AvaloniaProperty<bool> AreValidParametersProperty = AvaloniaProperty.RegisterDirect<LogAnalysisScriptSetEditorDialog, bool>("AreValidParameters", d => d.areValidParameters);
 	static readonly Dictionary<LogAnalysisScriptSet, LogAnalysisScriptSetEditorDialog> Dialogs = new();
+	static readonly SettingKey<bool> DonotShowRestrictionsWithNonProVersionKey = new("LogAnalysisScriptSetEditorDialog.DonotShowRestrictionsWithNonProVersion");
 
 
 	// Fields.
@@ -60,8 +61,22 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Window<IU
 
 
 	// Complete editing.
-	void CompleteEditing()
+	async void CompleteEditing()
 	{
+		// check Pro version
+		if (!this.Application.ProductManager.IsProductActivated(Products.Professional)
+			&& this.scriptSetToEdit == null
+			&& !LogAnalysisScriptSetManager.Default.CanAddScriptSet)
+		{
+			await new MessageDialog()
+			{
+				Icon = MessageDialogIcon.Warning,
+				Message = this.GetResourceObservable("String/LogAnalysisScriptSetEditorDialog.CannotAddMoreScriptSetWithoutProVersion"),
+			}.ShowDialog(this);
+			return;
+		}
+
+		// create or edit script set
 		var scriptSet = this.scriptSetToEdit ?? new(this.Application);
 		scriptSet.Name = this.nameTextBox.Text?.Trim();
 		scriptSet.Icon = (LogProfileIcon)this.iconComboBox.SelectedItem.AsNonNull();
@@ -119,7 +134,36 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Window<IU
 			this.nameTextBox.Text = scriptSet.Name;
 		}
 		else
+		{
 			this.iconComboBox.SelectedItem = LogProfileIcon.Analysis;
+			if (!this.Application.ProductManager.IsProductActivated(Products.Professional))
+			{
+				this.SynchronizationContext.Post(async () =>
+				{
+					if (!LogAnalysisScriptSetManager.Default.CanAddScriptSet)
+					{
+						await new MessageDialog()
+						{
+							Icon = MessageDialogIcon.Warning,
+							Message = this.GetResourceObservable("String/LogAnalysisScriptSetEditorDialog.CannotAddMoreScriptSetWithoutProVersion"),
+						}.ShowDialog(this);
+						this.Close();
+					}
+					else if (!this.PersistentState.GetValueOrDefault(DonotShowRestrictionsWithNonProVersionKey))
+					{
+						var messageDialog = new MessageDialog()
+						{
+							DoNotAskOrShowAgain = false,
+							Icon = MessageDialogIcon.Information,
+							Message = this.GetResourceObservable("String/LogAnalysisScriptSetEditorDialog.RestrictionsOfNonProVersion"),
+						};
+						await messageDialog.ShowDialog(this);
+						if (messageDialog.DoNotAskOrShowAgain == true)
+							this.PersistentState.SetValue<bool>(DonotShowRestrictionsWithNonProVersionKey, true);
+					}
+				});
+			}
+		}
 
 		// setup initial focus
 		this.SynchronizationContext.Post(() =>
