@@ -4,6 +4,7 @@ using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.Collections;
+using CarinaStudio.Configuration;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ULogViewer.ViewModels.Analysis;
 using CarinaStudio.Threading;
@@ -21,6 +22,7 @@ partial class KeyLogAnalysisRuleSetEditorDialog : AppSuite.Controls.Window<IULog
 	// Static fields.
 	static readonly AvaloniaProperty<bool> AreValidParametersProperty = AvaloniaProperty.Register<KeyLogAnalysisRuleSetEditorDialog, bool>("AreValidParameters");
 	static readonly Dictionary<KeyLogAnalysisRuleSet, KeyLogAnalysisRuleSetEditorDialog> DialogWithEditingRuleSets = new();
+	static readonly SettingKey<bool> DonotShowRestrictionsWithNonProVersionKey = new("KeyLogAnalysisRuleSetEditorDialog.DonotShowRestrictionsWithNonProVersion");
 
 
 	// Fields.
@@ -96,12 +98,25 @@ partial class KeyLogAnalysisRuleSetEditorDialog : AppSuite.Controls.Window<IULog
 
 
 	// Complete editing.
-	void CompleteEditing()
+	async void CompleteEditing()
 	{
 		// validate parameters
 		this.validateParametersAction.ExecuteIfScheduled();
 		if (!this.GetValue<bool>(AreValidParametersProperty))
 			return;
+		
+		// check Pro version
+		if (!this.Application.ProductManager.IsProductActivated(Products.Professional)
+			&& this.editingRuleSet == null
+			&& !KeyLogAnalysisRuleSetManager.Default.CanAddRuleSet)
+		{
+			await new MessageDialog()
+			{
+				Icon = MessageDialogIcon.Warning,
+				Message = this.GetResourceObservable("String/KeyLogAnalysisRuleSetEditorDialog.CannotAddMoreRuleSetWithoutProVersion"),
+			}.ShowDialog(this);
+			return;
+		}
 		
 		// setup rule set
 		var ruleSet = this.editingRuleSet ?? new KeyLogAnalysisRuleSet(this.Application);
@@ -193,7 +208,36 @@ partial class KeyLogAnalysisRuleSetEditorDialog : AppSuite.Controls.Window<IULog
 			this.rules.AddRange(ruleSet.Rules);
 		}
 		else
+		{
 			this.iconComboBox.SelectedItem = LogProfileIcon.Analysis;
+			if (!this.Application.ProductManager.IsProductActivated(Products.Professional))
+			{
+				this.SynchronizationContext.Post(async () =>
+				{
+					if (!KeyLogAnalysisRuleSetManager.Default.CanAddRuleSet)
+					{
+						await new MessageDialog()
+						{
+							Icon = MessageDialogIcon.Warning,
+							Message = this.GetResourceObservable("String/KeyLogAnalysisRuleSetEditorDialog.CannotAddMoreRuleSetWithoutProVersion"),
+						}.ShowDialog(this);
+						this.Close();
+					}
+					else if (!this.PersistentState.GetValueOrDefault(DonotShowRestrictionsWithNonProVersionKey))
+					{
+						var messageDialog = new MessageDialog()
+						{
+							DoNotAskOrShowAgain = false,
+							Icon = MessageDialogIcon.Information,
+							Message = this.GetResourceObservable("String/KeyLogAnalysisRuleSetEditorDialog.RestrictionsOfNonProVersion"),
+						};
+						await messageDialog.ShowDialog(this);
+						if (messageDialog.DoNotAskOrShowAgain == true)
+							this.PersistentState.SetValue<bool>(DonotShowRestrictionsWithNonProVersionKey, true);
+					}
+				});
+			}
+		}
 		this.validateParametersAction.Execute();
 		this.SynchronizationContext.Post(this.nameTextBox.Focus);
 	}

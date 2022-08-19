@@ -209,8 +209,10 @@
 	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Title">編輯關鍵日誌分析規則</sys:String>
 
 	<!-- KeyLogAnalysisRuleSetEditorDialog -->
+	<sys:String x:Key="String/KeyLogAnalysisRuleSetEditorDialog.CannotAddMoreRuleSetWithoutProVersion">在啟用專業版之前，您無法建立更多的規則集。</sys:String>
 	<sys:String x:Key="String/KeyLogAnalysisRuleSetEditorDialog.Icon">圖示</sys:String>
 	<sys:String x:Key="String/KeyLogAnalysisRuleSetEditorDialog.Name">名稱 (必要)</sys:String>
+	<sys:String x:Key="String/KeyLogAnalysisRuleSetEditorDialog.RestrictionsOfNonProVersion">在啟用專業版之前，您只能建立 1 個規則集，且在關閉 ULogViewer 後不會被儲存。</sys:String>
 	<sys:String x:Key="String/KeyLogAnalysisRuleSetEditorDialog.Rules">規則 (必要)</sys:String>
 	<sys:String x:Key="String/KeyLogAnalysisRuleSetEditorDialog.Title">編輯關鍵日誌分析規則集</sys:String>
 
