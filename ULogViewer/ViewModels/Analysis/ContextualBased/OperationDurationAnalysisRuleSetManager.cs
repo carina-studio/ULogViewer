@@ -133,12 +133,8 @@ class OperationDurationAnalysisRuleSetManager : BaseProfileManager<IULogViewerAp
         {
             if (state == ProductState.Activated)
             {
-                var loadingTask = this.LoadProfilesAsync();
-                loadingTask.ContinueWith((t, s) => 
-                {
-                    if (productManager.IsProductActivated(Products.Professional))
-                        this.ScheduleSavingProfiles();
-                }, null);
+                this.ScheduleSavingProfiles();
+                this.LoadProfilesAsync();
                 if (!this.CanAddRuleSet)
                 {
                     this.CanAddRuleSet = true;
