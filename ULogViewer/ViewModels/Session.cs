@@ -1324,6 +1324,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			});
 			this.checkLogsMemoryUsageAction.Schedule();
 			this.updateTitleAndIconAction.Execute();
+		
+			// attach to log profile manager
+			(LogProfileManager.Default.Profiles as INotifyCollectionChanged)?.Let(it =>
+				it.CollectionChanged += this.OnLogProfilesChanged);
 
 			// restore state
 #pragma warning disable CS0612
@@ -2173,6 +2177,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.attachedLogDataSourceProvider.PropertyChanged -= this.OnLogDataSourceProviderPropertyChanged;
 				this.attachedLogDataSourceProvider = null;
 			}
+
+			// detach from log profile manager
+			(LogProfileManager.Default.Profiles as INotifyCollectionChanged)?.Let(it =>
+				it.CollectionChanged -= this.OnLogProfilesChanged);
 
 			// stop watches
 			this.logsFilteringWatch.Stop();
@@ -3290,6 +3298,27 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					break;
 				case nameof(DisplayableLogFilter.Progress):
 					this.SetValue(LogsFilteringProgressProperty, this.logFilter.Progress);
+					break;
+			}
+		}
+
+
+		// Called when collection of log profiles changed.
+		void OnLogProfilesChanged(object? sender, NotifyCollectionChangedEventArgs e)
+		{
+			switch (e.Action)
+			{
+				case NotifyCollectionChangedAction.Remove:
+				case NotifyCollectionChangedAction.Replace:
+				case NotifyCollectionChangedAction.Reset:
+					this.LogProfile?.Let(profile =>
+					{
+						if (!LogProfileManager.Default.Profiles.Contains(profile))
+						{
+							this.Logger.LogWarning($"Log profile '{profile.Name}' ({profile.Id}) has been removed, reset log profile");
+							this.ResetLogProfile();
+						}
+					});
 					break;
 			}
 		}
