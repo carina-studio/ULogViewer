@@ -60,6 +60,10 @@ partial class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.In
 		public string Name { get; }
 	}
 
+	
+	// Static fields.
+	static readonly SettingKey<bool> DonotShowRestrictionsWithNonProVersionKey = new("ScriptLogDataSourceProviderEditorDialog.DonotShowRestrictionsWithNonProVersion");
+
 
 	// Fields.
 	readonly ToggleButton addSupportedSourceOptionButton;
@@ -128,15 +132,29 @@ partial class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.In
 
 
 	/// <inheritdoc/>
-	protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken)
+	protected override async Task<object?> GenerateResultAsync(CancellationToken cancellationToken)
 	{
+		// check Pro version
+		if (!this.Application.ProductManager.IsProductActivated(Products.Professional)
+			&& this.Provider == null
+			&& !LogDataSourceProviders.CanAddScriptProvider)
+		{
+			await new MessageDialog()
+			{
+				Icon = MessageDialogIcon.Warning,
+				Message = this.GetResourceObservable("String/ScriptLogDataSourceProviderEditorDialog.CannotAddMoreProviderWithoutProVersion"),
+			}.ShowDialog(this);
+			return null;
+		}
+
+		// create provider
 		var provider = this.Provider ?? new ScriptLogDataSourceProvider(this.Application);
 		provider.DisplayName = this.displayNameTextBox.Text;
 		provider.SetSupportedSourceOptions(
 			this.supportedSourceOptions.Select(it => it.Name),
 			this.supportedSourceOptions.Where(it => it.IsRequired == true).Select(it => it.Name)
 		);
-		return Task.FromResult<object?>(provider);
+		return provider;
 	}
 
 
@@ -172,6 +190,36 @@ partial class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.In
 			{
 				this.unsupportedSourceOptions.Remove(option);
 				this.supportedSourceOptions.Add(new(option, provider.RequiredSourceOptions.Contains(option)));
+			}
+		}
+		else
+		{
+			if (!this.Application.ProductManager.IsProductActivated(Products.Professional))
+			{
+				this.SynchronizationContext.Post(async () =>
+				{
+					if (!LogDataSourceProviders.CanAddScriptProvider)
+					{
+						await new MessageDialog()
+						{
+							Icon = MessageDialogIcon.Warning,
+							Message = this.GetResourceObservable("String/ScriptLogDataSourceProviderEditorDialog.CannotAddMoreProviderWithoutProVersion"),
+						}.ShowDialog(this);
+						this.Close();
+					}
+					else if (!this.PersistentState.GetValueOrDefault(DonotShowRestrictionsWithNonProVersionKey))
+					{
+						var messageDialog = new MessageDialog()
+						{
+							DoNotAskOrShowAgain = false,
+							Icon = MessageDialogIcon.Information,
+							Message = this.GetResourceObservable("String/ScriptLogDataSourceProviderEditorDialog.RestrictionsOfNonProVersion"),
+						};
+						await messageDialog.ShowDialog(this);
+						if (messageDialog.DoNotAskOrShowAgain == true)
+							this.PersistentState.SetValue<bool>(DonotShowRestrictionsWithNonProVersionKey, true);
+					}
+				});
 			}
 		}
 		foreach (var option in this.unsupportedSourceOptions)

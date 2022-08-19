@@ -344,7 +344,6 @@
 	<sys:String x:Key="String/LogProfileEditorDialog.ProVersionOnly">需要升級至專業版</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.RestartReadingDelay">重新開始讀取日誌前的延遲 (毫秒)</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.ScriptLogDataSourceProviders">管理日誌資料來源腳本…</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.ScriptLogDataSourceProviders.WithProVersion">管理日誌資料來源腳本 (專業版)…</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.SortDirection">日誌排序方向</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.SortKey">日誌排序依據</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.TimeSpanEncodingForReading">日誌時距讀取類型</sys:String>
@@ -642,6 +641,7 @@
 	</sys:String>
 
 	<!-- ScriptLogDataSourceProviderEditorDialog -->
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.CannotAddMoreProviderWithoutProVersion">在啟用專業版之前，您無法建立更多的日誌資料來源腳本。</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript">原始日誌行讀取器關閉腳本</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Description">腳本將在關閉原始日誌行讀取器時執行。此腳本不需要回傳值。</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.DisplayName">名稱 (必要)</sys:String>
@@ -649,6 +649,7 @@
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Description">腳本將在開啟原始日誌行讀取器時執行。需回傳 LogDataSourceState.ReaderOpened 表示讀取器開啟成功，或其他值表示失敗。</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript">原始日誌行讀取腳本</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Description">腳本將在每行原始日誌行讀取時執行。需回傳字串 (String) 或 Null 表示已讀取至最後一行。</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.RestrictionsOfNonProVersion">在啟用專業版之前，您只能建立 1 個日誌資料來源腳本，且在關閉 ULogViewer 後不會被儲存。</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.SupportedSourceOptions">支援的資料來源參數</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.SupportedSourceOptions.Required">必要參數</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.Title">編輯日誌資料來源腳本</sys:String>

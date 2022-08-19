@@ -372,7 +372,6 @@
 	<sys:String x:Key="String/LogProfileEditorDialog.ProVersionOnly">Upgrade to Pro version needed</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.RestartReadingDelay">Delay before restarting log reading (ms)</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.ScriptLogDataSourceProviders">Manage log data source scripts…</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.ScriptLogDataSourceProviders.WithProVersion">Manage log data source scripts (Pro version)…</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.SortDirection">Sort direction of log</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.SortKey">Sort key of log</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.TimeSpanEncodingForReading">Type of time span for reading</sys:String>
@@ -676,6 +675,7 @@ At line {2} column {3}.
 	</sys:String>
 
 	<!-- ScriptLogDataSourceProviderEditorDialog -->
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.CannotAddMoreProviderWithoutProVersion">Cannot create more log data source script before activating Pro version.</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript">Script to close raw log reader</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Description">The script will be run one time when closing raw log reader. There is no return value needed.</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.DisplayName">Name (required)</sys:String>
@@ -683,6 +683,7 @@ At line {2} column {3}.
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Description">The script will be run one time when opening raw log reader. The returned value should be LogDataSourceState.ReaderOpened if succeeded, or failure if returning other values.</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript">Script to read raw log line</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Description">The script will be run for reading each raw log line. The returned value should be String or Null.</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.RestrictionsOfNonProVersion">Before activating Pro version, you can have only 1 log data source script and script won't be kept after closing ULogViewer.</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.SupportedSourceOptions">Supported data source options</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.SupportedSourceOptions.Required">Required</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.Title">Edit log data source script</sys:String>

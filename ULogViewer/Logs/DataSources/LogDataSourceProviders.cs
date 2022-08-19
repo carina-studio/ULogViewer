@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.Logs.DataSources
@@ -52,6 +51,12 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		/// <summary>
+		/// Check whether at least one script log data source provider can be added or not.
+		/// </summary>
+		public static bool CanAddScriptProvider { get; private set; }
+
+
+		/// <summary>
 		/// Get empty implementation of <see cref="ILogDataSourceProvider"/>.
 		/// </summary>
 		public static ILogDataSourceProvider Empty { get => empty ?? throw new InvalidOperationException($"{nameof(LogDataSourceProviders)} is not initialized yet."); }
@@ -91,7 +96,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			providers.Add(new StandardOutputLogDataSourceProvider(app));
 			providers.Add(new TcpServerLogDataSourceProvider(app));
 			providers.Add(new UdpServerLogDataSourceProvider(app));
-			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+			if (Platform.IsWindows)
 				providers.Add(new WindowsEventLogDataSourceProvider(app));
 
 			// find script log data source providers
@@ -112,8 +117,9 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// Remove <see cref="ScriptLogDataSourceProvider"/>.
 		/// </summary>
 		/// <param name="provider">Provider.</param>
+		/// <param name="deleteFiles">True to delete related files.</param>
 		/// <returns>True if provider has been removed successfully.</returns>
-		public static bool RemoveScriptProvider(ScriptLogDataSourceProvider provider)
+		public static bool RemoveScriptProvider(ScriptLogDataSourceProvider provider, bool deleteFiles = true)
 		{
 			return false;
 		}

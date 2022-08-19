@@ -132,10 +132,6 @@ class ScriptLogDataSourceProvider : BaseLogDataSourceProvider, ILogDataSourcePro
     string ILogDataSourceProvider.DisplayName { get => this.displayName ?? ""; }
 
 
-    /// <inheritdoc/>
-    public override bool IsProVersionOnly => true;
-
-
     /// <summary>
     /// Load provider from file asynchronously.
     /// </summary>
