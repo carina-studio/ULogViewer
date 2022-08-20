@@ -89,19 +89,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (!this.GetValue<bool>(AreValidParametersProperty))
 				return;
 			
-			// check Pro version
-			if (!this.Application.ProductManager.IsProductActivated(Products.Professional)
-				&& this.ruleSet == null
-				&& !OperationDurationAnalysisRuleSetManager.Default.CanAddRuleSet)
-			{
-				await new MessageDialog()
-				{
-					Icon = MessageDialogIcon.Warning,
-					Message = this.GetResourceObservable("String/OperationDurationAnalysisRuleSetEditorDialog.CannotAddMoreRuleSetWithoutProVersion"),
-				}.ShowDialog(this);
-				return;
-			}
-			
 			// create rule set
 			var ruleSet = this.ruleSet ?? new OperationDurationAnalysisRuleSet(this.Application, "");
 			ruleSet.Icon = (LogProfileIcon)this.iconComboBox.SelectedItem.AsNonNull();
@@ -110,7 +97,19 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// add rule set
 			if (!OperationDurationAnalysisRuleSetManager.Default.RuleSets.Contains(ruleSet))
+			{
+				if (!this.Application.ProductManager.IsProductActivated(Products.Professional)
+					&& !OperationDurationAnalysisRuleSetManager.Default.CanAddRuleSet)
+				{
+					await new MessageDialog()
+					{
+						Icon = MessageDialogIcon.Warning,
+						Message = this.GetResourceObservable("String/OperationDurationAnalysisRuleSetEditorDialog.CannotAddMoreRuleSetWithoutProVersion"),
+					}.ShowDialog(this);
+					return;
+				}
 				OperationDurationAnalysisRuleSetManager.Default.AddRuleSet(ruleSet);
+			}
 
 			// close window
 			this.Close();

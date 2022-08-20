@@ -65,25 +65,23 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Window<IU
 	// Complete editing.
 	async void CompleteEditing()
 	{
-		// check Pro version
-		if (!this.Application.ProductManager.IsProductActivated(Products.Professional)
-			&& this.scriptSetToEdit == null
-			&& !LogAnalysisScriptSetManager.Default.CanAddScriptSet)
-		{
-			await new MessageDialog()
-			{
-				Icon = MessageDialogIcon.Warning,
-				Message = this.GetResourceObservable("String/LogAnalysisScriptSetEditorDialog.CannotAddMoreScriptSetWithoutProVersion"),
-			}.ShowDialog(this);
-			return;
-		}
-
-		// create or edit script set
 		var scriptSet = this.scriptSetToEdit ?? new(this.Application);
 		scriptSet.Name = this.nameTextBox.Text?.Trim();
 		scriptSet.Icon = (LogProfileIcon)this.iconComboBox.SelectedItem.AsNonNull();
 		if (!LogAnalysisScriptSetManager.Default.ScriptSets.Contains(scriptSet))
+		{
+			if (!this.Application.ProductManager.IsProductActivated(Products.Professional)
+				&& !LogAnalysisScriptSetManager.Default.CanAddScriptSet)
+			{
+				await new MessageDialog()
+				{
+					Icon = MessageDialogIcon.Warning,
+					Message = this.GetResourceObservable("String/LogAnalysisScriptSetEditorDialog.CannotAddMoreScriptSetWithoutProVersion"),
+				}.ShowDialog(this);
+				return;
+			}
 			LogAnalysisScriptSetManager.Default.AddScriptSet(scriptSet);
+		}
 		this.Close(scriptSet);
 	}
 

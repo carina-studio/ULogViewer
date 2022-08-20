@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.Collections;
+using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.ULogViewer.Logs.Profiles;
@@ -20,6 +21,7 @@ partial class ScriptLogDataSourceProvidersDialog : CarinaStudio.Controls.Dialog<
 {
 	// Static fields.
 	static readonly Regex BaseNameRegex = new("^(?<Name>.+)\\s+\\(\\d+\\)\\s*$");
+	static readonly SettingKey<bool> DonotShowRestrictionsWithNonProVersionKey = new("ScriptLogDataSourceProvidersDialog.DonotShowRestrictionsWithNonProVersion");
 
 
 	// Fields.
@@ -42,6 +44,19 @@ partial class ScriptLogDataSourceProvidersDialog : CarinaStudio.Controls.Dialog<
 	// Add new provider.
 	async void AddProvider()
 	{
+		// check Pro version
+		if (!this.Application.ProductManager.IsProductActivated(Products.Professional)
+			&& !LogDataSourceProviders.CanAddScriptProvider)
+		{
+			await new MessageDialog()
+			{
+				Icon = MessageDialogIcon.Warning,
+				Message = this.GetResourceObservable("String/ScriptLogDataSourceProvidersDialog.CannotAddMoreProviderWithoutProVersion"),
+			}.ShowDialog(this);
+			return;
+		}
+
+		// add provider
 		var provider = await new ScriptLogDataSourceProviderEditorDialog().ShowDialog<ScriptLogDataSourceProvider?>(this);
 		if (provider == null || !LogDataSourceProviders.AddScriptProvider(provider))
 			return;
@@ -53,6 +68,19 @@ partial class ScriptLogDataSourceProvidersDialog : CarinaStudio.Controls.Dialog<
 	// Copy provider.
 	async void CopyProvider(ScriptLogDataSourceProvider provider)
 	{
+		// check Pro version
+		if (!this.Application.ProductManager.IsProductActivated(Products.Professional)
+			&& !LogDataSourceProviders.CanAddScriptProvider)
+		{
+			await new MessageDialog()
+			{
+				Icon = MessageDialogIcon.Warning,
+				Message = this.GetResourceObservable("String/ScriptLogDataSourceProvidersDialog.CannotAddMoreProviderWithoutProVersion"),
+			}.ShowDialog(this);
+			return;
+		}
+
+		// find new name for provider
 		var baseName = BaseNameRegex.Match(provider.DisplayName ?? "").Let(it =>
 			it.Success ? it.Groups["Name"].Value : provider.DisplayName ?? "");
 		var newName = baseName;
@@ -65,6 +93,8 @@ partial class ScriptLogDataSourceProvidersDialog : CarinaStudio.Controls.Dialog<
 				break;
 			}
 		}
+
+		// copy provider
 		var newProvider = await new ScriptLogDataSourceProviderEditorDialog()
 		{
 			Provider = new ScriptLogDataSourceProvider(provider, newName),
@@ -129,6 +159,18 @@ partial class ScriptLogDataSourceProvidersDialog : CarinaStudio.Controls.Dialog<
 	// Import provider.
 	async void ImportProvider()
 	{
+		// check Pro version
+		if (!this.Application.ProductManager.IsProductActivated(Products.Professional)
+			&& !LogDataSourceProviders.CanAddScriptProvider)
+		{
+			await new MessageDialog()
+			{
+				Icon = MessageDialogIcon.Warning,
+				Message = this.GetResourceObservable("String/ScriptLogDataSourceProvidersDialog.CannotAddMoreProviderWithoutProVersion"),
+			}.ShowDialog(this);
+			return;
+		}
+
 		// select file
 		var fileNames = await new OpenFileDialog().Also(dialog =>
 		{
@@ -192,6 +234,25 @@ partial class ScriptLogDataSourceProvidersDialog : CarinaStudio.Controls.Dialog<
 	protected override void OnOpened(EventArgs e)
 	{
 		base.OnOpened(e);
+		if (!this.Application.ProductManager.IsProductActivated(Products.Professional))
+		{
+			this.SynchronizationContext.PostDelayed(async () =>
+			{
+				if (this.IsOpened 
+					&& !this.PersistentState.GetValueOrDefault(DonotShowRestrictionsWithNonProVersionKey))
+				{
+					var messageDialog = new MessageDialog()
+					{
+						DoNotAskOrShowAgain = false,
+						Icon = MessageDialogIcon.Information,
+						Message = this.GetResourceObservable("String/ScriptLogDataSourceProvidersDialog.RestrictionsOfNonProVersion"),
+					};
+					await messageDialog.ShowDialog(this);
+					if (messageDialog.DoNotAskOrShowAgain == true)
+						this.PersistentState.SetValue<bool>(DonotShowRestrictionsWithNonProVersionKey, true);
+				}
+			}, 300);
+		}
 		this.SynchronizationContext.Post(this.providerListBox.Focus);
 	}
 

@@ -675,7 +675,6 @@ At line {2} column {3}.
 	</sys:String>
 
 	<!-- ScriptLogDataSourceProviderEditorDialog -->
-	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.CannotAddMoreProviderWithoutProVersion">Cannot create more log data source script before activating Pro version.</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript">Script to close raw log reader</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Description">The script will be run one time when closing raw log reader. There is no return value needed.</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.DisplayName">Name (required)</sys:String>
@@ -683,16 +682,17 @@ At line {2} column {3}.
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Description">The script will be run one time when opening raw log reader. The returned value should be LogDataSourceState.ReaderOpened if succeeded, or failure if returning other values.</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript">Script to read raw log line</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Description">The script will be run for reading each raw log line. The returned value should be String or Null.</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.RestrictionsOfNonProVersion">Before activating Pro version, you can have only 1 log data source script and script won't be kept after closing ULogViewer.</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.SupportedSourceOptions">Supported data source options</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.SupportedSourceOptions.Required">Required</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.Title">Edit log data source script</sys:String>
 
 	<!-- ScriptLogDataSourceProvidersDialog -->
+	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.CannotAddMoreProviderWithoutProVersion">Cannot create more log data source script before activating Pro version.</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.ConfirmDeletingProvider">Are you sure to delete log data source script '{0}'?</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.ConfirmDeletingProvider.WithLogProfiles">Are you sure to delete log data source script '{0}' and {1} related log profile(s)?</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.FailedToExportProvider">Unable to export data source script '{0}' to '{1}'.</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.FailedToImportProvider">Unable to import data source script from '{0}'.</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.RestrictionsOfNonProVersion">Before activating Pro version, you can have only 1 log data source script and script won't be kept after closing ULogViewer.</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.Title">Manage log data source scripts</sys:String>
 
 	<!-- Session -->
