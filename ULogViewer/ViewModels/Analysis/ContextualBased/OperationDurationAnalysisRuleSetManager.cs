@@ -1,10 +1,8 @@
 using CarinaStudio.AppSuite.Data;
-using CarinaStudio.AppSuite.Product;
 using CarinaStudio.Threading;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -15,7 +13,7 @@ namespace CarinaStudio.ULogViewer.ViewModels.Analysis.ContextualBased;
 /// <summary>
 /// Manager of <see cref="OperationDurationAnalysisRuleSet"/>.
 /// </summary>
-class OperationDurationAnalysisRuleSetManager : BaseProfileManager<IULogViewerApplication, OperationDurationAnalysisRuleSet>, INotifyPropertyChanged
+class OperationDurationAnalysisRuleSetManager : BaseProfileManager<IULogViewerApplication, OperationDurationAnalysisRuleSet>
 {
     // Fields.
     static OperationDurationAnalysisRuleSetManager? DefaultInstance;
@@ -46,7 +44,7 @@ class OperationDurationAnalysisRuleSetManager : BaseProfileManager<IULogViewerAp
         if (!isProVersionActivated)
         {
             this.CanAddRuleSet = false;
-            this.PropertyChanged?.Invoke(this, new(nameof(CanAddRuleSet)));
+            this.OnPropertyChanged(new(nameof(CanAddRuleSet)));
         }
         this.AddProfile(rule);
     }
@@ -114,7 +112,7 @@ class OperationDurationAnalysisRuleSetManager : BaseProfileManager<IULogViewerAp
             || this.Profiles.Count == 0)
         {
             this.CanAddRuleSet = true;
-            this.PropertyChanged?.Invoke(this, new(nameof(CanAddRuleSet)));
+            this.OnPropertyChanged(new(nameof(CanAddRuleSet)));
         }
     }
 
@@ -125,32 +123,30 @@ class OperationDurationAnalysisRuleSetManager : BaseProfileManager<IULogViewerAp
     
 
     /// <inheritdoc/>
-    protected override void OnProductStateChanged(IProductManager productManager, string productId)
+    protected override void OnProductActivationChanged(string productId, bool isActivated)
     {
-        base.OnProductStateChanged(productManager, productId);
-        if (productId == Products.Professional 
-            && productManager.TryGetProductState(productId, out var state))
+        base.OnProductActivationChanged(productId, isActivated);
+        if (productId != Products.Professional)
+            return;
+        if (isActivated)
         {
-            if (state == ProductState.Activated)
+            this.ScheduleSavingProfiles();
+            this.LoadProfilesAsync();
+            if (!this.CanAddRuleSet)
             {
-                this.ScheduleSavingProfiles();
-                this.LoadProfilesAsync();
-                if (!this.CanAddRuleSet)
-                {
-                    this.CanAddRuleSet = true;
-                    this.PropertyChanged?.Invoke(this, new(nameof(CanAddRuleSet)));
-                }
+                this.CanAddRuleSet = true;
+                this.OnPropertyChanged(new(nameof(CanAddRuleSet)));
             }
-            else if (state == ProductState.Deactivated)
+        }
+        else
+        {
+            foreach (var ruleSet in this.Profiles.ToArray())
+                this.RemoveProfile(ruleSet, false);
+            this.CancelSavingProfiles();
+            if (!this.CanAddRuleSet)
             {
-                foreach (var ruleSet in this.Profiles.ToArray())
-                    this.RemoveProfile(ruleSet, false);
-                this.CancelSavingProfiles();
-                if (!this.CanAddRuleSet)
-                {
-                    this.CanAddRuleSet = true;
-                    this.PropertyChanged?.Invoke(this, new(nameof(CanAddRuleSet)));
-                }
+                this.CanAddRuleSet = true;
+                this.OnPropertyChanged(new(nameof(CanAddRuleSet)));
             }
         }
     }
@@ -170,10 +166,6 @@ class OperationDurationAnalysisRuleSetManager : BaseProfileManager<IULogViewerAp
     protected override string ProfilesDirectory => Path.Combine(this.Application.RootPrivateDirectoryPath, "OperationDurationAnalysisRules");
 
 
-    /// <inheritdoc/>
-    public event PropertyChangedEventHandler? PropertyChanged;
-
-
     /// <summary>
     /// Remove given rule set.
     /// </summary>
@@ -188,7 +180,7 @@ class OperationDurationAnalysisRuleSetManager : BaseProfileManager<IULogViewerAp
             && !this.CanAddRuleSet)
         {
             this.CanAddRuleSet = true;
-            this.PropertyChanged?.Invoke(this, new(nameof(CanAddRuleSet)));
+            this.OnPropertyChanged(new(nameof(CanAddRuleSet)));
         }
         return result;
     }

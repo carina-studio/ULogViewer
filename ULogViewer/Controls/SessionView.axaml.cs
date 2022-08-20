@@ -2519,7 +2519,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// add event handlers
 			this.Application.StringsUpdated += this.OnApplicationStringsUpdated;
-			this.Application.ProductManager.ProductStateChanged += this.OnProductStateChanged;
+			this.Application.ProductManager.ProductActivationChanged += this.OnProductActivationChanged;
 			this.Settings.SettingChanged += this.OnSettingChanged;
 			this.AddHandler(DragDrop.DragEnterEvent, this.OnDragEnter);
 			this.AddHandler(DragDrop.DragLeaveEvent, this.OnDragLeave);
@@ -2585,7 +2585,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// remove event handlers
 			this.Application.StringsUpdated -= this.OnApplicationStringsUpdated;
-			this.Application.ProductManager.ProductStateChanged -= this.OnProductStateChanged;
+			this.Application.ProductManager.ProductActivationChanged -= this.OnProductActivationChanged;
 			this.Settings.SettingChanged -= this.OnSettingChanged;
 			this.RemoveHandler(DragDrop.DragEnterEvent, this.OnDragEnter);
 			this.RemoveHandler(DragDrop.DragLeaveEvent, this.OnDragLeave);
@@ -3860,21 +3860,19 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Called when product state changed.
-		void OnProductStateChanged(IProductManager? productManager, string productId)
+		void OnProductActivationChanged(IProductManager productManager, string productId, bool isActivated)
 		{
-			if (productManager == null || productId != Products.Professional)
+			// update state
+			if (productId != Products.Professional)
 				return;
-			productManager.TryGetProductState(productId, out var state);
-			this.SetAndRaise<bool>(IsProVersionActivatedProperty, ref this.isProVersionActivated, state == ProductState.Activated);
-			if (state == ProductState.Deactivated || state == ProductState.Activated)
-			{
-				// update UI
-				this.RecreateLogHeadersAndItemTemplate();
-				this.UpdateToolsMenuItems();
+			this.SetAndRaise<bool>(IsProVersionActivatedProperty, ref this.isProVersionActivated, isActivated);
+			
+			// update UI
+			this.RecreateLogHeadersAndItemTemplate();
+			this.UpdateToolsMenuItems();
 
-				// show tutorial
-				this.ShowLogAnalysisRuleSetsTutorial();
-			}
+			// show tutorial
+			this.ShowLogAnalysisRuleSetsTutorial();
 		}
 
 
