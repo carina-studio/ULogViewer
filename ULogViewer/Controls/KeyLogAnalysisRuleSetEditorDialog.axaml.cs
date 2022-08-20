@@ -105,19 +105,6 @@ partial class KeyLogAnalysisRuleSetEditorDialog : AppSuite.Controls.Window<IULog
 		if (!this.GetValue<bool>(AreValidParametersProperty))
 			return;
 		
-		// check Pro version
-		if (!this.Application.ProductManager.IsProductActivated(Products.Professional)
-			&& this.editingRuleSet == null
-			&& !KeyLogAnalysisRuleSetManager.Default.CanAddRuleSet)
-		{
-			await new MessageDialog()
-			{
-				Icon = MessageDialogIcon.Warning,
-				Message = this.GetResourceObservable("String/KeyLogAnalysisRuleSetEditorDialog.CannotAddMoreRuleSetWithoutProVersion"),
-			}.ShowDialog(this);
-			return;
-		}
-		
 		// setup rule set
 		var ruleSet = this.editingRuleSet ?? new KeyLogAnalysisRuleSet(this.Application);
 		ruleSet.Icon = (LogProfileIcon)this.iconComboBox.SelectedItem!;
@@ -126,7 +113,19 @@ partial class KeyLogAnalysisRuleSetEditorDialog : AppSuite.Controls.Window<IULog
 
 		// add rule set
 		if (!KeyLogAnalysisRuleSetManager.Default.RuleSets.Contains(ruleSet))
+		{
+			if (!this.Application.ProductManager.IsProductActivated(Products.Professional)
+				&& !KeyLogAnalysisRuleSetManager.Default.CanAddRuleSet)
+			{
+				await new MessageDialog()
+				{
+					Icon = MessageDialogIcon.Warning,
+					Message = this.GetResourceObservable("String/KeyLogAnalysisRuleSetEditorDialog.CannotAddMoreRuleSetWithoutProVersion"),
+				}.ShowDialog(this);
+				return;
+			}
 			KeyLogAnalysisRuleSetManager.Default.AddRuleSet(ruleSet);
+		}
 
 		// close window
 		this.Close();

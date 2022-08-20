@@ -640,7 +640,6 @@
 	</sys:String>
 
 	<!-- ScriptLogDataSourceProviderEditorDialog -->
-	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.CannotAddMoreProviderWithoutProVersion">在启用专业版之前，您无法建立更多的日志资料来源脚本。</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript">原始日志行读取器关闭脚本</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Description">脚本将在关闭原始日志行读取器时执行。此脚本不需要返回值。</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.DisplayName">名称 (必要)</sys:String>
@@ -648,16 +647,17 @@
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Description">脚本将在开启原始日志行读取器时执行。需返回 LogDataSourceState.ReaderOpened 表示读取器开启成功，或其他值表示失败。</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript">原始日志行读取脚本</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Description">脚本将在每行原始日志行读取时执行。需返回字符串 (String) 或 Null 表示已读取至最后一行。</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.RestrictionsOfNonProVersion">在启用专业版之前，您只能建立 1 个日志资料来源脚本，且在关闭 ULogViewer 后不会被保留。</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.SupportedSourceOptions">支持的资料来源参数</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.SupportedSourceOptions.Required">必要参数</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.Title">编辑日志资料来源脚本</sys:String>
 
 	<!-- ScriptLogDataSourceProvidersDialog -->
+	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.CannotAddMoreProviderWithoutProVersion">在启用专业版之前，您无法建立更多的日志资料来源脚本。</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.ConfirmDeletingProvider">您是否确定要删除日志资料来源脚本「{0}」？</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.ConfirmDeletingProvider.WithLogProfiles">您是否确定要删除日志资料来源脚本「{0}」以及相关的 {1} 个日志类型？</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.FailedToExportProvider">无法将日志资料来源脚本「{0}」导出至 '{1}'。</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.FailedToImportProvider">无法自文件 '{0}' 导入日志资料来源脚本。</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.RestrictionsOfNonProVersion">在启用专业版之前，您只能建立 1 个日志资料来源脚本，且在关闭 ULogViewer 后不会被保留。</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.Title">管理日志资料来源脚本</sys:String>
 
 	<!-- Session -->
