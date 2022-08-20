@@ -1,10 +1,8 @@
 using CarinaStudio.AppSuite.Data;
-using CarinaStudio.AppSuite.Product;
 using CarinaStudio.Threading;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -15,7 +13,7 @@ namespace CarinaStudio.ULogViewer.ViewModels.Analysis;
 /// <summary>
 /// Manager of <see cref="LogAnalysisScriptSet"/>.
 /// </summary>
-class LogAnalysisScriptSetManager : BaseProfileManager<IULogViewerApplication, LogAnalysisScriptSet>, INotifyPropertyChanged
+class LogAnalysisScriptSetManager : BaseProfileManager<IULogViewerApplication, LogAnalysisScriptSet>
 {
     // Static fields.
     static LogAnalysisScriptSetManager? DefaultInstance;
@@ -48,7 +46,7 @@ class LogAnalysisScriptSetManager : BaseProfileManager<IULogViewerApplication, L
         if (!isProVersionActivated)
         {
             this.CanAddScriptSet = false;
-            this.PropertyChanged?.Invoke(this, new(nameof(CanAddScriptSet)));
+            this.OnPropertyChanged(new(nameof(CanAddScriptSet)));
         }
         this.AddProfile(scriptSet);
     }
@@ -110,7 +108,7 @@ class LogAnalysisScriptSetManager : BaseProfileManager<IULogViewerApplication, L
             || this.Profiles.Count == 0)
         {
             this.CanAddScriptSet = true;
-            this.PropertyChanged?.Invoke(this, new(nameof(CanAddScriptSet)));
+            this.OnPropertyChanged(new(nameof(CanAddScriptSet)));
         }
     }
 
@@ -121,32 +119,30 @@ class LogAnalysisScriptSetManager : BaseProfileManager<IULogViewerApplication, L
     
 
     /// <inheritdoc/>
-    protected override void OnProductStateChanged(IProductManager productManager, string productId)
+    protected override void OnProductActivationChanged(string productId, bool isActivated)
     {
-        base.OnProductStateChanged(productManager, productId);
-        if (productId == Products.Professional 
-            && productManager.TryGetProductState(productId, out var state))
+        base.OnProductActivationChanged(productId, isActivated);
+        if (productId != Products.Professional)
+            return;
+        if (isActivated)
         {
-            if (state == ProductState.Activated)
+            this.ScheduleSavingProfiles();
+            this.LoadProfilesAsync();
+            if (!this.CanAddScriptSet)
             {
-                this.ScheduleSavingProfiles();
-                this.LoadProfilesAsync();
-                if (!this.CanAddScriptSet)
-                {
-                    this.CanAddScriptSet = true;
-                    this.PropertyChanged?.Invoke(this, new(nameof(CanAddScriptSet)));
-                }
+                this.CanAddScriptSet = true;
+                this.OnPropertyChanged(new(nameof(CanAddScriptSet)));
             }
-            else if (state == ProductState.Deactivated)
+        }
+        else
+        {
+            foreach (var ruleSet in this.Profiles.ToArray())
+                this.RemoveProfile(ruleSet, false);
+            this.CancelSavingProfiles();
+            if (!this.CanAddScriptSet)
             {
-                foreach (var ruleSet in this.Profiles.ToArray())
-                    this.RemoveProfile(ruleSet, false);
-                this.CancelSavingProfiles();
-                if (!this.CanAddScriptSet)
-                {
-                    this.CanAddScriptSet = true;
-                    this.PropertyChanged?.Invoke(this, new(nameof(CanAddScriptSet)));
-                }
+                this.CanAddScriptSet = true;
+                this.OnPropertyChanged(new(nameof(CanAddScriptSet)));
             }
         }
     }
@@ -169,10 +165,6 @@ class LogAnalysisScriptSetManager : BaseProfileManager<IULogViewerApplication, L
 
 
     /// <inheritdoc/>
-    public event PropertyChangedEventHandler? PropertyChanged;
-
-
-    /// <inheritdoc/>
     protected override string ProfilesDirectory { get; }
 
 
@@ -190,7 +182,7 @@ class LogAnalysisScriptSetManager : BaseProfileManager<IULogViewerApplication, L
             && !this.CanAddScriptSet)
         {
             this.CanAddScriptSet = true;
-            this.PropertyChanged?.Invoke(this, new(nameof(CanAddScriptSet)));
+            this.OnPropertyChanged(new(nameof(CanAddScriptSet)));
         }
         return result;
     }

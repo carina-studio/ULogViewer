@@ -583,6 +583,7 @@ namespace CarinaStudio.ULogViewer
 
 			// remove event handlers
 			NetworkManager.Default.PropertyChanged -= this.OnNetworkManagerPropertyChanged;
+			this.Application.ProductManager.ProductActivationChanged -= this.OnProductActivationChanged;
 			this.Application.ProductManager.ProductStateChanged -= this.OnProductStateChanged;
 
 			// stop checking network connection for product activation
@@ -868,8 +869,10 @@ namespace CarinaStudio.ULogViewer
 
 			// add event handlers
 			NetworkManager.Default.PropertyChanged += this.OnNetworkManagerPropertyChanged;
+			this.Application.ProductManager.ProductActivationChanged += this.OnProductActivationChanged;
 			this.Application.ProductManager.ProductStateChanged += this.OnProductStateChanged;
 			this.OnProductStateChanged(this.Application.ProductManager, Products.Professional);
+			this.UpdateToolMenuItems();
 
 			// check network connection for product activation
 			if (!this.Application.ProductManager.IsProductActivated(Products.Professional, true)
@@ -903,11 +906,19 @@ namespace CarinaStudio.ULogViewer
 		}
 
 
-		// Called when product state changed.
-		void OnProductStateChanged(IProductManager? productManager, string productId)
+		// Called when product ativation state changed.
+		void OnProductActivationChanged(IProductManager productManager, string productId, bool isActivated)
 		{
-			if (productManager == null 
-				|| productId != Products.Professional
+			if (productId != Products.Professional)
+				return;
+			this.UpdateToolMenuItems();
+		}
+
+
+		// Called when product state changed.
+		void OnProductStateChanged(IProductManager productManager, string productId)
+		{
+			if (productId != Products.Professional
 				|| !productManager.TryGetProductState(productId, out var state))
 			{
 				return;
@@ -916,7 +927,6 @@ namespace CarinaStudio.ULogViewer
 			{
 				case ProductState.Activated:
 					this.notifyNetworkConnForProductActivationAction.Cancel();
-					this.UpdateToolMenuItems();
 					goto default;
 				case ProductState.Deactivated:
 					if (MainWindowToActivateProVersion == null
@@ -928,7 +938,6 @@ namespace CarinaStudio.ULogViewer
 						IsReActivatingProVersionNeeded = true;
 						this.reActivateProVersionAction.Schedule();
 					}
-					this.UpdateToolMenuItems();
 					break;
 				default:
 					IsReActivatingProVersionNeeded = false;
