@@ -1350,13 +1350,12 @@ namespace CarinaStudio.ULogViewer.Controls
 		DataTemplate CreateLogItemTemplate(LogProfile profile, IList<DisplayableLogProperty> logProperties)
 		{
 			var app = (App)this.Application;
-			var isProVersion = this.isProVersionActivated;
 			var logPropertyCount = logProperties.Count;
 			var colorIndicatorBorderBrush = app.FindResourceOrDefault<IBrush?>("Brush/WorkingArea.Background");
 			var colorIndicatorBorderThickness = app.FindResourceOrDefault<Thickness>("Thickness/SessionView.LogListBox.ColorIndicator.Border");
 			var colorIndicatorWidth = app.FindResourceOrDefault<double>("Double/SessionView.LogListBox.ColorIndicator.Width");
-			var analysisResultIndicatorSize = isProVersion ? app.FindResourceOrDefault<double>("Double/SessionView.LogListBox.LogAnalysisResultIndicator.Size") : default;
-			var analysisResultIndicatorMargin = isProVersion ? app.FindResourceOrDefault<Thickness>("Thickness/SessionView.LogListBox.LogAnalysisResultIndicator.Margin") : default;
+			var analysisResultIndicatorSize = 0.0;
+			var analysisResultIndicatorMargin = new Thickness();
 			var analysisResultIndicatorWidth = (analysisResultIndicatorSize + analysisResultIndicatorMargin.Left + analysisResultIndicatorMargin.Right);
 			var markIndicatorSize = app.FindResourceOrDefault<double>("Double/SessionView.LogListBox.MarkIndicator.Size");
 			var markIndicatorBorderThickness = app.FindResourceOrDefault<Thickness>("Thickness/SessionView.LogListBox.MarkIndicator.Border");
@@ -1636,41 +1635,38 @@ namespace CarinaStudio.ULogViewer.Controls
 					}));
 
 					// analysis result indicator
-					if (isProVersion)
+					indicatorsPanel.Children.Add(new Panel().Also(panel =>
 					{
-						indicatorsPanel.Children.Add(new Panel().Also(panel =>
+						panel.Height = analysisResultIndicatorSize;
+						panel.HorizontalAlignment = HorizontalAlignment.Right;
+						panel.Margin = analysisResultIndicatorMargin;
+						panel.VerticalAlignment = VerticalAlignment.Center;
+						panel.Width = analysisResultIndicatorSize;
+						panel.Children.Add(new Border().Also(background =>
 						{
-							panel.Height = analysisResultIndicatorSize;
-							panel.HorizontalAlignment = HorizontalAlignment.Right;
-							panel.Margin = analysisResultIndicatorMargin;
-							panel.VerticalAlignment = VerticalAlignment.Center;
-							panel.Width = analysisResultIndicatorSize;
-							panel.Children.Add(new Border().Also(background =>
+							var isLeftPointerDown = false;
+							background.Background = Brushes.Transparent;
+							background.Cursor = new Avalonia.Input.Cursor(StandardCursorType.Hand);
+							background.Bind(Border.IsVisibleProperty, new Binding() { Path = "HasAnalysisResult" });
+							background.PointerPressed += (_, e) =>
+								isLeftPointerDown = e.GetCurrentPoint(background).Properties.IsLeftButtonPressed;
+							background.AddHandler(Border.PointerReleasedEvent, (_, e) =>
 							{
-								var isLeftPointerDown = false;
-								background.Background = Brushes.Transparent;
-								background.Cursor = new Avalonia.Input.Cursor(StandardCursorType.Hand);
-								background.Bind(Border.IsVisibleProperty, new Binding() { Path = "HasAnalysisResult" });
-								background.PointerPressed += (_, e) =>
-									isLeftPointerDown = e.GetCurrentPoint(background).Properties.IsLeftButtonPressed;
-								background.AddHandler(Border.PointerReleasedEvent, (_, e) =>
+								if (isLeftPointerDown)
 								{
-									if (isLeftPointerDown)
-									{
-										isLeftPointerDown = false;
-										if (itemPanel.DataContext is DisplayableLog log)
-											this.OnLogAnalysisResultIndicatorClicked(log);
-									}
-								}, RoutingStrategies.Tunnel);
-							}));
-							panel.Children.Add(new Avalonia.Controls.Image().Also(image =>
-							{
-								image.Classes.Add("Icon");
-								image.Bind(Avalonia.Controls.Image.IsVisibleProperty, new Binding() { Path = nameof(DisplayableLog.HasAnalysisResult) });
-								image.Bind(Avalonia.Controls.Image.SourceProperty, new Binding() { Path = nameof(DisplayableLog.AnalysisResultIndicatorIcon) });
-							}));
+									isLeftPointerDown = false;
+									if (itemPanel.DataContext is DisplayableLog log)
+										this.OnLogAnalysisResultIndicatorClicked(log);
+								}
+							}, RoutingStrategies.Tunnel);
 						}));
-						}
+						panel.Children.Add(new Avalonia.Controls.Image().Also(image =>
+						{
+							image.Classes.Add("Icon");
+							image.Bind(Avalonia.Controls.Image.IsVisibleProperty, new Binding() { Path = nameof(DisplayableLog.HasAnalysisResult) });
+							image.Bind(Avalonia.Controls.Image.SourceProperty, new Binding() { Path = nameof(DisplayableLog.AnalysisResultIndicatorIcon) });
+						}));
+					}));
 				}));
 
 				// complete
@@ -2642,10 +2638,9 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// build headers
 			var app = (App)this.Application;
-			var isProVersion = this.isProVersionActivated;
-			var analysisResultIndicatorSize = isProVersion && app.TryFindResource("Double/SessionView.LogListBox.LogAnalysisResultIndicator.Size", out var rawResource) ? (double)rawResource! : default;
-			var analysisResultIndicatorMargin = isProVersion && app.TryFindResource("Thickness/SessionView.LogListBox.LogAnalysisResultIndicator.Margin", out rawResource) ? (Thickness)rawResource! : default;
-			var markIndicatorSize = app.TryFindResource("Double/SessionView.LogListBox.MarkIndicator.Size", out rawResource) ? (double)rawResource! : default;
+			var analysisResultIndicatorSize = 0.0;
+			var analysisResultIndicatorMargin = new Thickness();
+			var markIndicatorSize = app.TryFindResource("Double/SessionView.LogListBox.MarkIndicator.Size", out var rawResource) ? (double)rawResource! : default;
 			var markIndicatorMargin = app.TryFindResource("Thickness/SessionView.LogListBox.MarkIndicator.Margin", out rawResource) ? (Thickness)rawResource! : default;
 			var splitterWidth = app.TryFindResource("Double/GridSplitter.Thickness", out rawResource) ? (double)rawResource! : default;
 			var minHeaderWidth = app.TryFindResource("Double/SessionView.LogHeader.MinWidth", out rawResource) ? (double)rawResource! : default;
@@ -3868,11 +3863,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.SetAndRaise<bool>(IsProVersionActivatedProperty, ref this.isProVersionActivated, isActivated);
 			
 			// update UI
-			this.RecreateLogHeadersAndItemTemplate();
 			this.UpdateToolsMenuItems();
-
-			// show tutorial
-			this.ShowLogAnalysisRuleSetsTutorial();
 		}
 
 
