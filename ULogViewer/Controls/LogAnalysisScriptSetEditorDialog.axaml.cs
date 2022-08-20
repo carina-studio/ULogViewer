@@ -37,6 +37,8 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Window<IU
 	public LogAnalysisScriptSetEditorDialog()
 	{
 		AvaloniaXamlLoader.Load(this);
+		if (Platform.IsLinux)
+			this.WindowStartupLocation = WindowStartupLocation.Manual;
 		this.iconComboBox = this.Get<ComboBox>(nameof(iconComboBox));
 		this.nameTextBox = this.Get<TextBox>(nameof(nameTextBox)).Also(it =>
 		{
@@ -138,7 +140,7 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Window<IU
 			this.iconComboBox.SelectedItem = LogProfileIcon.Analysis;
 			if (!this.Application.ProductManager.IsProductActivated(Products.Professional))
 			{
-				this.SynchronizationContext.Post(async () =>
+				this.SynchronizationContext.PostDelayed(async () =>
 				{
 					if (!LogAnalysisScriptSetManager.Default.CanAddScriptSet)
 					{
@@ -161,7 +163,7 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Window<IU
 						if (messageDialog.DoNotAskOrShowAgain == true)
 							this.PersistentState.SetValue<bool>(DonotShowRestrictionsWithNonProVersionKey, true);
 					}
-				});
+				}, 300);
 			}
 		}
 

@@ -82,6 +82,8 @@ partial class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.In
 	{
 		this.SupportedSourceOptions = this.supportedSourceOptions.AsReadOnly();
 		AvaloniaXamlLoader.Load(this);
+		if (Platform.IsLinux)
+			this.WindowStartupLocation = WindowStartupLocation.Manual;
 		this.addSupportedSourceOptionButton = this.Get<ToggleButton>(nameof(addSupportedSourceOptionButton));
 		this.addSupportedSourceOptionMenu = ((ContextMenu)this.Resources[nameof(addSupportedSourceOptionMenu)].AsNonNull()).Also(it =>
 		{
@@ -196,7 +198,7 @@ partial class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.In
 		{
 			if (!this.Application.ProductManager.IsProductActivated(Products.Professional))
 			{
-				this.SynchronizationContext.Post(async () =>
+				this.SynchronizationContext.PostDelayed(async () =>
 				{
 					if (!LogDataSourceProviders.CanAddScriptProvider)
 					{
@@ -219,7 +221,7 @@ partial class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.In
 						if (messageDialog.DoNotAskOrShowAgain == true)
 							this.PersistentState.SetValue<bool>(DonotShowRestrictionsWithNonProVersionKey, true);
 					}
-				});
+				}, 300);
 			}
 		}
 		foreach (var option in this.unsupportedSourceOptions)
