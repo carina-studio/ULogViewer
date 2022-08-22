@@ -7,9 +7,9 @@ ULogViewer is a [.NET](https://dotnet.microsoft.com/) based cross-platform unive
 ### Preview
 Operating System                      | Download | Version | Screenshot
 :------------------------------------:|:--------:|:-------:|:----------:
-Windows 8/10/11                       |[x86](https://github.com/carina-studio/ULogViewer/releases/download/2.0.4.815/ULogViewer-2.0.4.815-win-x86.zip) &#124; [x64](https://github.com/carina-studio/ULogViewer/releases/download/2.0.4.815/ULogViewer-2.0.4.815-win-x64.zip) &#124; [arm64](https://github.com/carina-studio/ULogViewer/releases/download/2.0.4.815/ULogViewer-2.0.4.815-win-arm64.zip)|2.0.4.815 (RC)|[<img src="https://carinastudio.azurewebsites.net/ULogViewer/Screenshots/Screenshot_Windows_Preview_Thumb.png" width="150"/>](https://carinastudio.azurewebsites.net/ULogViewer/Screenshots/Screenshot_Windows_Preview.png)
-macOS 11/12                           |[x64](https://github.com/carina-studio/ULogViewer/releases/download/2.0.4.815/ULogViewer-2.0.4.815-osx-x64.zip) &#124; [arm64](https://github.com/carina-studio/ULogViewer/releases/download/2.0.4.815/ULogViewer-2.0.4.815-osx-arm64.zip)|2.0.4.815 (RC)|[<img src="https://carinastudio.azurewebsites.net/ULogViewer/Screenshots/Screenshot_macOS_Preview_Thumb.png" width="150"/>](https://carinastudio.azurewebsites.net/ULogViewer/Screenshots/Screenshot_macOS_Preview.png)
-Linux                                 |[x64](https://github.com/carina-studio/ULogViewer/releases/download/2.0.4.815/ULogViewer-2.0.4.815-linux-x64.zip) &#124; [arm64](https://github.com/carina-studio/ULogViewer/releases/download/2.0.4.815/ULogViewer-2.0.4.815-linux-arm64.zip)|2.0.4.815 (RC)|[<img src="https://carinastudio.azurewebsites.net/ULogViewer/Screenshots/Screenshot_Fedora_Preview_Thumb.png" width="150"/>](https://carinastudio.azurewebsites.net/ULogViewer/Screenshots/Screenshot_Fedora_Preview.png)
+Windows 8/10/11                       |[x86](https://github.com/carina-studio/ULogViewer/releases/download/2.0.5.822/ULogViewer-2.0.5.822-win-x86.zip) &#124; [x64](https://github.com/carina-studio/ULogViewer/releases/download/2.0.5.822/ULogViewer-2.0.5.822-win-x64.zip) &#124; [arm64](https://github.com/carina-studio/ULogViewer/releases/download/2.0.5.822/ULogViewer-2.0.5.822-win-arm64.zip)|2.0.5.822 (RC)|[<img src="https://carinastudio.azurewebsites.net/ULogViewer/Screenshots/Screenshot_Windows_Preview_Thumb.png" width="150"/>](https://carinastudio.azurewebsites.net/ULogViewer/Screenshots/Screenshot_Windows_Preview.png)
+macOS 11/12                           |[x64](https://github.com/carina-studio/ULogViewer/releases/download/2.0.5.822/ULogViewer-2.0.5.822-osx-x64.zip) &#124; [arm64](https://github.com/carina-studio/ULogViewer/releases/download/2.0.5.822/ULogViewer-2.0.5.822-osx-arm64.zip)|2.0.5.822 (RC)|[<img src="https://carinastudio.azurewebsites.net/ULogViewer/Screenshots/Screenshot_macOS_Preview_Thumb.png" width="150"/>](https://carinastudio.azurewebsites.net/ULogViewer/Screenshots/Screenshot_macOS_Preview.png)
+Linux                                 |[x64](https://github.com/carina-studio/ULogViewer/releases/download/2.0.5.822/ULogViewer-2.0.5.822-linux-x64.zip) &#124; [arm64](https://github.com/carina-studio/ULogViewer/releases/download/2.0.5.822/ULogViewer-2.0.5.822-linux-arm64.zip)|2.0.5.822 (RC)|[<img src="https://carinastudio.azurewebsites.net/ULogViewer/Screenshots/Screenshot_Fedora_Preview_Thumb.png" width="150"/>](https://carinastudio.azurewebsites.net/ULogViewer/Screenshots/Screenshot_Fedora_Preview.png)
 
 ### Stable
 Operating System                      | Download | Version | Screenshot
@@ -29,7 +29,7 @@ Linux                                 |[x64](https://github.com/carina-studio/UL
 - Supporting writing your own script to read raw log data.
 - Support setting log profile as template.
 - New ```Azure CLI```, ```MySQL Database``` and ```SQL Server Database``` built-in log data sources.
-- New ```Android Device System Trace```, ```Azure Webapp log Files```, ```ULogViewer Log File``` and ```ULogViewer Real-time Log``` built-in log profiles.
+- New ```Android Device System Trace```, ```Azure Webapp log Files```, ```Linux Real-time System Wide Log```, ```ULogViewer Log File``` and ```ULogViewer Real-time Log``` built-in log profiles.
 - New ```Azure Webapp Log Stream``` built-in log profile template.
 - Supporting editing PATH environment variable.
 - Adding ```zh-CN``` language support.
@@ -65,7 +65,7 @@ Each log profile defines:
 - What properties of log should be displayed in the list.
 - How to output logs back to text (ex, copying).
 
-Currently there are 27 built-in log profiles:
+Currently there are 28 built-in log profiles:
 - Android Device Event Log.
 - Android Device Log.
 - Android Device System Trace [macOS/Linux][v2.0+].
@@ -78,11 +78,12 @@ Currently there are 27 built-in log profiles:
 - Git Log (Simple).
 - Linux Kernel Log [Linux].
 - Linux Kernel Log Files.
+- Linux Real-time System Wide Log [Linux][v2.0+].
 - Linux System Log [Linux].
 - Linux System Log Files.
 - macOS Installation Log [macOS].
+- macOS Real-time System Wide Log [macOS].
 - macOS System Log Files.
-- macOS System Wide Log [macOS].
 - NLog (TCP).
 - Raw Text In Files.
 - Raw HTTP/HTTPS Response.
@@ -106,6 +107,8 @@ You can filter logs by:
 
 For text filter, you can also predefine some filters you may use frequently and filter logs by cobination of these text filters.
 
+[Know more about](https://carinastudio.azurewebsites.net/ULogViewer/LogFiltering)
+
 ## 📌 Log marking
 When viewing logs, you can mark some logs with different colors which are important for you. There is a separated side panel to list all marked logs to help you to jump to marked log quickly.
 Marked logs will be kept if you are viewing logs from files so that you don't need to mark them again when you open log files next time.
@@ -122,7 +125,7 @@ Except for log filtering, you can also define rule sets or write scripts to anal
 
   Write script to analyze logs according to your requirement completely.
 
-Log analysis is enabled only in Pro version.
+[Know more about](https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis)
 
 ## 📔 Other Topics
 - [How Does ULogViewer Read and Parse Logs](https://carinastudio.azurewebsites.net/ULogViewer/HowToReadAndParseLogs)
