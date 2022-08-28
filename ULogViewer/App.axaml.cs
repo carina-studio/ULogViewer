@@ -220,7 +220,7 @@ namespace CarinaStudio.ULogViewer
 
 
 		// Load theme.
-		protected override IStyle? OnLoadTheme(AppSuite.ThemeMode themeMode)
+		protected override IStyle? OnLoadTheme(AppSuite.ThemeMode themeMode, bool useCompactUI)
 		{
 			var uri = themeMode switch
 			{
