@@ -3,6 +3,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:abControls="using:CarinaStudio.Controls"
+		xmlns:aConverters="using:Avalonia.Data.Converters"
 		xmlns:as="using:CarinaStudio.AppSuite"
 		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
 		xmlns:asConverters="using:CarinaStudio.AppSuite.Converters"
