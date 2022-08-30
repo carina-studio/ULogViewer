@@ -1,135 +1,135 @@
 {
   "Name": "ULogViewer",
-  "Version": "2.0.5.822",
-  "PageUri": "https://github.com/carina-studio/ULogViewer/releases/tag/2.0.5.822",
+  "Version": "2.0.6.830",
+  "PageUri": "https://github.com/carina-studio/ULogViewer/releases/tag/2.0.6.830",
   "Packages": [
     {
       "Architecture": "Arm64",
-      "BaseVersion": "2.0.4.815",
+      "BaseVersion": "2.0.5.822",
       "OperatingSystem": "Windows",
       "FrameworkVersion": "99.99",
       "RuntimeVersion": "6.0.1",
-      "SHA256": "52EBE982223710B69887AF7F806DCEE0A8EEF77014CC42A64F59C67FDCA975E9",
-      "Uri": "https://github.com/carina-studio/ULogViewer/releases/download/2.0.5.822/ULogViewer-2.0.4.815-2.0.5.822-win-arm64-fx-dependent.zip"
+      "SHA256": "3D32B46356F9941E940E2F2824AA4A8AE53508E261B62A3F6BEB2368503FB092",
+      "Uri": "https://github.com/carina-studio/ULogViewer/releases/download/2.0.6.830/ULogViewer-2.0.5.822-2.0.6.830-win-arm64-fx-dependent.zip"
     },
     {
       "Architecture": "X64",
-      "BaseVersion": "2.0.4.815",
+      "BaseVersion": "2.0.5.822",
       "OperatingSystem": "Windows",
       "FrameworkVersion": "99.99",
       "RuntimeVersion": "6.0.1",
-      "SHA256": "47657B0E624EE8C44D02CA153AFA9C0BF75B3883E0549747F229CD79B4E60E49",
-      "Uri": "https://github.com/carina-studio/ULogViewer/releases/download/2.0.5.822/ULogViewer-2.0.4.815-2.0.5.822-win-x64-fx-dependent.zip"
+      "SHA256": "58933E3F854C56079B952AAA13E2A47FA5F3ED7B0396F4272454D76E8FCC317B",
+      "Uri": "https://github.com/carina-studio/ULogViewer/releases/download/2.0.6.830/ULogViewer-2.0.5.822-2.0.6.830-win-x64-fx-dependent.zip"
     },
     {
       "Architecture": "X86",
-      "BaseVersion": "2.0.4.815",
+      "BaseVersion": "2.0.5.822",
       "OperatingSystem": "Windows",
       "FrameworkVersion": "99.99",
       "RuntimeVersion": "6.0.1",
-      "SHA256": "721367F630E2E37A7F1692D6C4CD38383AA25E71D290BF2660FAFABA864C8BB5",
-      "Uri": "https://github.com/carina-studio/ULogViewer/releases/download/2.0.5.822/ULogViewer-2.0.4.815-2.0.5.822-win-x86-fx-dependent.zip"
+      "SHA256": "3A559F61899B517E426C921540C8CBD56E4195724214261BB910729A7F20A203",
+      "Uri": "https://github.com/carina-studio/ULogViewer/releases/download/2.0.6.830/ULogViewer-2.0.5.822-2.0.6.830-win-x86-fx-dependent.zip"
     },
     {
       "Architecture": "Arm64",
       "OperatingSystem": "Windows",
       "FrameworkVersion": "99.99",
       "RuntimeVersion": "6.0.1",
-      "SHA256": "04965A21227AE33CEF19D3C22D8EC108E9D95E385FE4BE019339A124530882B7",
-      "Uri": "https://github.com/carina-studio/ULogViewer/releases/download/2.0.5.822/ULogViewer-2.0.5.822-win-arm64-fx-dependent.zip"
+      "SHA256": "C3FACE1752391BFF69F50A6B771D7B6A4A4808C3826F3DD305381F553BF0D94C",
+      "Uri": "https://github.com/carina-studio/ULogViewer/releases/download/2.0.6.830/ULogViewer-2.0.6.830-win-arm64-fx-dependent.zip"
     },
     {
       "Architecture": "Arm64",
-      "BaseVersion": "2.0.4.815",
+      "BaseVersion": "2.0.5.822",
       "OperatingSystem": "Linux",
-      "SHA256": "4F3454DB591420E5C573D91CF886B543F7D8660ACA47779F78045F5186FDDB43",
-      "Uri": "https://github.com/carina-studio/ULogViewer/releases/download/2.0.5.822/ULogViewer-2.0.4.815-2.0.5.822-linux-arm64.zip"
+      "SHA256": "5174CF983C0E9028DF5C336740C18B92FC9E0342DE94CCD3ABC348EA7A011D3D",
+      "Uri": "https://github.com/carina-studio/ULogViewer/releases/download/2.0.6.830/ULogViewer-2.0.5.822-2.0.6.830-linux-arm64.zip"
     },
     {
       "Architecture": "X64",
       "OperatingSystem": "Windows",
       "FrameworkVersion": "99.99",
       "RuntimeVersion": "6.0.1",
-      "SHA256": "9F9BB029C550585C056B5123F692D70B8EB5FB4B7D5E6A56BF4533A499326796",
-      "Uri": "https://github.com/carina-studio/ULogViewer/releases/download/2.0.5.822/ULogViewer-2.0.5.822-win-x64-fx-dependent.zip"
+      "SHA256": "FD5A1E59E5AA4900B63E583FE25D41672D4625AC7F8FB0C43D54A6AD06F180C5",
+      "Uri": "https://github.com/carina-studio/ULogViewer/releases/download/2.0.6.830/ULogViewer-2.0.6.830-win-x64-fx-dependent.zip"
     },
     {
       "Architecture": "X86",
       "OperatingSystem": "Windows",
       "FrameworkVersion": "99.99",
       "RuntimeVersion": "6.0.1",
-      "SHA256": "2C1EDFC9C3B89E2BE9FB0C63483221F0A7DEFA66DF9571FE867926DB871E017B",
-      "Uri": "https://github.com/carina-studio/ULogViewer/releases/download/2.0.5.822/ULogViewer-2.0.5.822-win-x86-fx-dependent.zip"
+      "SHA256": "1D573CAB9C967CF42F199BFEB054F770CA43F3E9523313FDBFB4FF5FEA339014",
+      "Uri": "https://github.com/carina-studio/ULogViewer/releases/download/2.0.6.830/ULogViewer-2.0.6.830-win-x86-fx-dependent.zip"
     },
     {
       "Architecture": "X64",
-      "BaseVersion": "2.0.4.815",
+      "BaseVersion": "2.0.5.822",
       "OperatingSystem": "Linux",
-      "SHA256": "5BA67767B240B6528A0F1EF1F5391638C30C470794B768BF3C931BEDA81E75B1",
-      "Uri": "https://github.com/carina-studio/ULogViewer/releases/download/2.0.5.822/ULogViewer-2.0.4.815-2.0.5.822-linux-x64.zip"
+      "SHA256": "FFA1D6493489DE8073960666A5D5C29DFD037CEA803D7D6286E5216A6B84BA28",
+      "Uri": "https://github.com/carina-studio/ULogViewer/releases/download/2.0.6.830/ULogViewer-2.0.5.822-2.0.6.830-linux-x64.zip"
     },
     {
       "Architecture": "Arm64",
-      "BaseVersion": "2.0.4.815",
+      "BaseVersion": "2.0.5.822",
       "OperatingSystem": "Windows",
-      "SHA256": "B891EFEC7B547B5A55F181DD56027EDC3A67921CA1D8C70B05D867A141B8FF80",
-      "Uri": "https://github.com/carina-studio/ULogViewer/releases/download/2.0.5.822/ULogViewer-2.0.4.815-2.0.5.822-win-arm64.zip"
+      "SHA256": "68EB954BEC8757CBBA5E9B4FBBFD9929E926B5F3FA4E61F5E1B0CB835282FBC3",
+      "Uri": "https://github.com/carina-studio/ULogViewer/releases/download/2.0.6.830/ULogViewer-2.0.5.822-2.0.6.830-win-arm64.zip"
     },
     {
       "Architecture": "X64",
-      "BaseVersion": "2.0.4.815",
+      "BaseVersion": "2.0.5.822",
       "OperatingSystem": "Windows",
-      "SHA256": "6716222326C8EA7278DF4016E3BE9A3D9D8FDAC016F4460DCB9AB183F5CED40B",
-      "Uri": "https://github.com/carina-studio/ULogViewer/releases/download/2.0.5.822/ULogViewer-2.0.4.815-2.0.5.822-win-x64.zip"
+      "SHA256": "3039A08B3C418C7838B51C6FB968808D7AF52AAE3B1BDD9D13C14581CE0F1427",
+      "Uri": "https://github.com/carina-studio/ULogViewer/releases/download/2.0.6.830/ULogViewer-2.0.5.822-2.0.6.830-win-x64.zip"
     },
     {
       "Architecture": "X86",
-      "BaseVersion": "2.0.4.815",
+      "BaseVersion": "2.0.5.822",
       "OperatingSystem": "Windows",
-      "SHA256": "6CEC73B5166D44F75C46C7DA0E3377E18500854423873AC47D05ACC83351AAAE",
-      "Uri": "https://github.com/carina-studio/ULogViewer/releases/download/2.0.5.822/ULogViewer-2.0.4.815-2.0.5.822-win-x86.zip"
+      "SHA256": "49E5E715C0C7C61A3B943085EDEEC0602CA47FFB94E39BB084DE8CD9C8DE27D4",
+      "Uri": "https://github.com/carina-studio/ULogViewer/releases/download/2.0.6.830/ULogViewer-2.0.5.822-2.0.6.830-win-x86.zip"
     },
     {
       "Architecture": "Arm64",
       "OperatingSystem": "Linux",
-      "SHA256": "CCA34E9EEB39A9975057B9EF1BE476DD56BCB4071A80EC9F11A5A003FEFE6CDA",
-      "Uri": "https://github.com/carina-studio/ULogViewer/releases/download/2.0.5.822/ULogViewer-2.0.5.822-linux-arm64.zip"
+      "SHA256": "1BE02D606988C6D5AD48983DB426586BF689E92746407A5F46ABCC24C271BB1D",
+      "Uri": "https://github.com/carina-studio/ULogViewer/releases/download/2.0.6.830/ULogViewer-2.0.6.830-linux-arm64.zip"
     },
     {
       "Architecture": "X64",
       "OperatingSystem": "Linux",
-      "SHA256": "E064B69992C49AD1133D696813B2B2311E780F665FD417434A40757C35AA4705",
-      "Uri": "https://github.com/carina-studio/ULogViewer/releases/download/2.0.5.822/ULogViewer-2.0.5.822-linux-x64.zip"
+      "SHA256": "80A498E274E149647B30E1B7BAF7328B8999CDE53394AB31EA0A16FF45D3108D",
+      "Uri": "https://github.com/carina-studio/ULogViewer/releases/download/2.0.6.830/ULogViewer-2.0.6.830-linux-x64.zip"
     },
     {
       "Architecture": "Arm64",
       "OperatingSystem": "OSX",
-      "SHA256": "76F9BB95D9F6AE934B0ACBA1B54642EF9C06ABB859F3A3093036D371DE7A42E2",
-      "Uri": "https://github.com/carina-studio/ULogViewer/releases/download/2.0.5.822/ULogViewer-2.0.5.822-osx-arm64.zip"
+      "SHA256": "02D0BD3B77E5D558BE32DEA160A691B5BD0CA9ACC6479EBB002C57AEC9D6B2DD",
+      "Uri": "https://github.com/carina-studio/ULogViewer/releases/download/2.0.6.830/ULogViewer-2.0.6.830-osx-arm64.zip"
     },
     {
       "Architecture": "Arm64",
       "OperatingSystem": "Windows",
-      "SHA256": "42DF860FDCC4A405F76ACE0E5DDA71E4291DAAFF298CFEAD169F0B8FFA4FB668",
-      "Uri": "https://github.com/carina-studio/ULogViewer/releases/download/2.0.5.822/ULogViewer-2.0.5.822-win-arm64.zip"
+      "SHA256": "16E2544A7F65C177864AC27706FAF57664C144C0A6C6B739AF8DBCFE493A1BDA",
+      "Uri": "https://github.com/carina-studio/ULogViewer/releases/download/2.0.6.830/ULogViewer-2.0.6.830-win-arm64.zip"
     },
     {
       "Architecture": "X64",
       "OperatingSystem": "OSX",
-      "SHA256": "4559153A363387848507F8ADDB6EB00B93306B218AF00E228ACC59622C9B96DC",
-      "Uri": "https://github.com/carina-studio/ULogViewer/releases/download/2.0.5.822/ULogViewer-2.0.5.822-osx-x64.zip"
+      "SHA256": "9F7D59F22726D31B3C034F69A5548DE8A6052CF0845EBE81BE785987EF724C9F",
+      "Uri": "https://github.com/carina-studio/ULogViewer/releases/download/2.0.6.830/ULogViewer-2.0.6.830-osx-x64.zip"
     },
     {
       "Architecture": "X64",
       "OperatingSystem": "Windows",
-      "SHA256": "CF9CE4CA7F7FB32D3F4294C0E72FF75C11B4E0E501F380FB68136DB89E0E2569",
-      "Uri": "https://github.com/carina-studio/ULogViewer/releases/download/2.0.5.822/ULogViewer-2.0.5.822-win-x64.zip"
+      "SHA256": "2265F645553E2C5C27BBE2F8B668C1D60D7957554BE2090AAADA4F183CEC2F5A",
+      "Uri": "https://github.com/carina-studio/ULogViewer/releases/download/2.0.6.830/ULogViewer-2.0.6.830-win-x64.zip"
     },
     {
       "Architecture": "X86",
       "OperatingSystem": "Windows",
-      "SHA256": "D1BCE4506A10011379BFA3AC5579AB356A132194F350DFF3F36C2A964F9D504E",
-      "Uri": "https://github.com/carina-studio/ULogViewer/releases/download/2.0.5.822/ULogViewer-2.0.5.822-win-x86.zip"
+      "SHA256": "4EE9C60E452811E05D332F3564900430739F531312E1E920DC0255007D0C96CB",
+      "Uri": "https://github.com/carina-studio/ULogViewer/releases/download/2.0.6.830/ULogViewer-2.0.6.830-win-x86.zip"
     }
   ]
 }
