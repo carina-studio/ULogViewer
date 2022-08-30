@@ -7,7 +7,7 @@
         "adb shell perfetto --out /data/misc/perfetto-traces/trace.proto --time 5s aidl am audio binder_driver binder_lock camera dalvik database disk freq gfx hal idle input memory memreclaim network nnapi pm power res rro rs sched sm ss sync vibrator video view webview wm",
         "adb pull /data/misc/perfetto-traces/trace.proto .",
         "adb shell rm /data/misc/perfetto-traces/trace.proto",
-        "traceconv systrace ./trace.proto ./trace.html",
+        "traceconv systrace trace.proto trace.html",
         "rm trace.proto"
       ],
       "TeardownCommands": [
