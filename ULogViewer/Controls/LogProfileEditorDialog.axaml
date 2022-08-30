@@ -134,22 +134,16 @@
 						<Image Classes="BrowseButtonIcon" Source="{DynamicResource Image/Icon.Settings}"/>
 					</Button>
 				</Grid>
-				<TextBlock Name="proVersionOnlyDataSourceProvider" Classes="Dialog_TextBlock_Description_Warning" IsVisible="{Binding !$parent[Window].IsValidDataSourceOptions}" Text="{DynamicResource String/LogProfileEditorDialog.ProVersionOnly}">
-					<TextBlock.IsVisible>
-						<MultiBinding Converter="{x:Static aConverters:BoolConverters.And}">
-							<Binding Path="!IsProVersionActivated" ElementName="window"/>
-							<Binding Path="SelectedItem.IsProVersionOnly" ElementName="dataSourceProviderComboBox"/>
-						</MultiBinding>
-					</TextBlock.IsVisible>
-				</TextBlock>
-				<TextBlock Classes="Dialog_TextBlock_Description_Error" Text="{DynamicResource String/LogProfileEditorDialog.InvalidDataSourceOptions}">
-					<TextBlock.IsVisible>
+				<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Command="{Binding $parent[Window].ShowScriptLogDataSourceProvidersDialog}" Text="{DynamicResource String/LogProfileEditorDialog.ScriptLogDataSourceProviders}"/>
+				<Grid ColumnDefinitions="Auto,*" Margin="{StaticResource Thickness/Dialog.TextBlock.Margin.Description}">
+					<Grid.IsVisible>
 						<MultiBinding Converter="{x:Static aConverters:BoolConverters.And}">
 							<Binding Path="!IsValidDataSourceOptions" ElementName="window"/>
-							<Binding Path="!IsVisible" ElementName="proVersionOnlyDataSourceProvider"/>
 						</MultiBinding>
-					</TextBlock.IsVisible>
-				</TextBlock>
+					</Grid.IsVisible>
+					<Image Classes="Dialog_Icon" Source="{StaticResource Image/Icon.Error.Outline.Colored}"/>
+					<TextBlock Classes="Dialog_Icon_TextBlock" Foreground="{DynamicResource Brush/Dialog.TextBlock.Foreground.Error}" Grid.Column="1" Text="{DynamicResource String/LogProfileEditorDialog.InvalidDataSourceOptions}"/>
+				</Grid>
 				<Separator Classes="Dialog_Separator"/>
 
 				<!-- Allow multiple files -->
