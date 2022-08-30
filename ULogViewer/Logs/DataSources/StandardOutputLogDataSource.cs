@@ -7,7 +7,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,16 +18,12 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 	/// </summary>
 	class StandardOutputLogDataSource : BaseLogDataSource
 	{
-		// Constants.
-		const uint SCS_32BIT_BINARY = 0; // 32-bit Windows application
-		const uint SCS_64BIT_BINARY = 6; // 64-bit Windows application
-
-
 		// Fields.
 		volatile string? arguments;
 		volatile string? commandFileOnReady;
 		static readonly Regex regex = new Regex("^(?<ExecutableCommand>([^\\s\"]*)|\"([^\\s])*\")[\\s$]");
 		Task? teardownCommandsTask;
+		string? tempWorkingDirectory;
 
 
 		/// <summary>
@@ -53,35 +48,10 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			{
 				var process = new Process().Also(process =>
 				{
-					var isSameArchExecutable = Global.Run(() =>
-					{
-						if (Platform.IsWindows)
-						{
-							try
-							{
-								if (GetBinaryType(executablePath, out var binaryType))
-								{
-									var is64BitExe = binaryType == SCS_64BIT_BINARY;
-									return Environment.Is64BitProcess == is64BitExe;
-								}
-							}
-							catch
-							{ }
-						}
-						return (bool?)null;
-					});
 					process.StartInfo.Let(it =>
 					{
-						if (isSameArchExecutable == false && Platform.IsWindows)
-						{
-							it.Arguments = $"/c \"{executablePath}\" {args}";
-							it.FileName = "cmd";
-						}
-						else
-						{
-							it.Arguments = args ?? "";
-							it.FileName = executablePath.AsNonNull();
-						}
+						it.Arguments = args ?? "";
+						it.FileName = executablePath.AsNonNull();
 						it.CreateNoWindow = true;
 						it.UseShellExecute = false;
 						it.WorkingDirectory = workingDirectory ?? "";
@@ -108,18 +78,15 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		}
 
 
-		// Get type of executable (Windows).
-		[DllImport("Kernel32")]
-		static extern bool GetBinaryType(string? applicationName, out uint binaryType);
-
-
 		// Reader closed.
 		protected override void OnReaderClosed()
 		{
 			base.OnReaderClosed();
 			var options = this.CreationOptions;
+			var tempWorkingDirectory = this.tempWorkingDirectory;
 			if (options.TeardownCommands.IsNotEmpty())
 			{
+				var workingDirectory = tempWorkingDirectory ?? options.WorkingDirectory;
 				this.SynchronizationContext.Post(async () =>
 				{
 					if (this.teardownCommandsTask != null)
@@ -130,12 +97,24 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 					foreach (var command in options.TeardownCommands)
 					{
 						await this.TaskFactory.StartNew(() =>
-							this.ExecuteCommandAndWaitForExit(command, options.WorkingDirectory));
+							this.ExecuteCommandAndWaitForExit(command, workingDirectory));
 					}
 					this.Logger.LogWarning("Complete executing teardown commands");
+					if (tempWorkingDirectory != null)
+					{
+						this.Logger.LogTrace($"Delete temp working directory '{tempWorkingDirectory}' after completing teardown commands");
+						Global.RunWithoutErrorAsync(() => Directory.Delete(tempWorkingDirectory, true));
+						this.tempWorkingDirectory = null;
+					}
 					this.teardownCommandsTask = null;
 					taskCompletionSource.SetResult();
 				});
+			}
+			else if (tempWorkingDirectory != null)
+			{
+				this.Logger.LogTrace($"Delete temp working directory '{tempWorkingDirectory}' after closing reader");
+				Global.RunWithoutErrorAsync(() => Directory.Delete(tempWorkingDirectory, true));
+				this.tempWorkingDirectory = null;
 			}
 		}
 
@@ -156,6 +135,29 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 			// execute setup commands
 			var options = this.CreationOptions;
+			var workingDirectory = await options.WorkingDirectory.LetAsync(async it =>
+			{
+				if (string.IsNullOrWhiteSpace(it))
+				{
+					this.tempWorkingDirectory = await this.TaskFactory.StartNew(() =>
+					{
+						var path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+						this.Logger.LogTrace($"Create temp working directory '{path}'");
+						Directory.CreateDirectory(path);
+						return path;
+					});
+					if (cancellationToken.IsCancellationRequested)
+					{
+						var path = this.tempWorkingDirectory;
+						this.tempWorkingDirectory = null;
+						this.Logger.LogTrace($"Delete temp working directory '{path}' because of cancellation has been requested");
+						Global.RunWithoutError(() => Directory.Delete(path, true));
+						throw new TaskCanceledException();
+					}
+					return this.tempWorkingDirectory;
+				}
+				return it;
+			});
 			if (options.SetupCommands.IsNotEmpty())
 			{
 				this.Logger.LogWarning("Start executing setup commands");
@@ -163,13 +165,27 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				{
 					foreach (var command in options.SetupCommands)
 					{
-						if (!this.ExecuteCommandAndWaitForExit(command, options.WorkingDirectory))
+						if (!this.ExecuteCommandAndWaitForExit(command, workingDirectory))
 						{
 							this.Logger.LogError($"Unable to execute setup command: {command}");
+							this.tempWorkingDirectory?.Let(it =>
+							{
+								this.Logger.LogTrace($"Delete temp working directory '{it}' because of failure of executing setup command");
+								this.tempWorkingDirectory = null;
+								Global.RunWithoutError(() => Directory.Delete(it, true));
+							});
 							return false;
 						}
 						if (cancellationToken.IsCancellationRequested)
+						{
+							this.tempWorkingDirectory?.Let(it =>
+							{
+								this.Logger.LogTrace($"Delete temp working directory '{it}' because of cancellation has been requested");
+								this.tempWorkingDirectory = null;
+								Global.RunWithoutError(() => Directory.Delete(it, true));
+							});
 							throw new TaskCanceledException();
+						}
 					}
 					return true;
 				});
@@ -178,42 +194,12 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				this.Logger.LogWarning("Complete executing setup commands");
 			}
 
-			// check executable type
-			var isSameArchExecutable = await this.TaskFactory.StartNew(() =>
-			{
-				if (Platform.IsWindows)
-				{
-					try
-					{
-						if (GetBinaryType(this.commandFileOnReady, out var binaryType))
-						{
-							var is64BitExe = binaryType == SCS_64BIT_BINARY;
-							return Environment.Is64BitProcess == is64BitExe;
-						}
-					}
-					catch
-					{ }
-				}
-				return (bool?)null;
-			});
-
 			// start process
 			var process = new Process();
-			if (isSameArchExecutable == false && Platform.IsWindows)
-			{
-				process.StartInfo.FileName = "cmd";
-				if (this.CreationOptions.WorkingDirectory != null)
-					process.StartInfo.WorkingDirectory = this.CreationOptions.WorkingDirectory;
-				process.StartInfo.Arguments = $"/c \"{this.commandFileOnReady}\" {this.arguments}";
-			}
-			else
-			{
-				process.StartInfo.FileName = commandFileOnReady;
-				if (this.CreationOptions.WorkingDirectory != null)
-					process.StartInfo.WorkingDirectory = this.CreationOptions.WorkingDirectory;
-				if (this.arguments != null)
-					process.StartInfo.Arguments = this.arguments;
-			}
+			process.StartInfo.FileName = commandFileOnReady;
+			process.StartInfo.WorkingDirectory = workingDirectory;
+			if (this.arguments != null)
+				process.StartInfo.Arguments = this.arguments;
 			process.StartInfo.UseShellExecute = false;
 			process.StartInfo.RedirectStandardError = true;
 			process.StartInfo.RedirectStandardOutput = true;
@@ -222,10 +208,24 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			try
 			{
 				if (!process.Start())
+				{
+					this.tempWorkingDirectory?.Let(it =>
+					{
+						this.Logger.LogTrace($"Delete temp working directory '{it}' because of failure of starting process");
+						this.tempWorkingDirectory = null;
+						Global.RunWithoutError(() => Directory.Delete(it, true));
+					});
 					return (LogDataSourceState.SourceNotFound, null);
+				}
 			}
 			catch (Win32Exception)
 			{
+				this.tempWorkingDirectory?.Let(it =>
+				{
+					this.Logger.LogTrace($"Delete temp working directory '{it}' because of failure of starting process");
+					this.tempWorkingDirectory = null;
+					Global.RunWithoutError(() => Directory.Delete(it, true));
+				});
 				return (LogDataSourceState.SourceNotFound, null);
 			}
 			var reader = new ProcessTextReader(this, process, options.IncludeStandardError).Let(it =>
