@@ -3391,6 +3391,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				case nameof(LogProfile.LogStringEncodingForReading):
 				case nameof(LogProfile.SortDirection):
 				case nameof(LogProfile.SortKey):
+				case nameof(LogProfile.TimeSpanCultureInfoForReading):
+				case nameof(LogProfile.TimeSpanEncodingForReading):
+				case nameof(LogProfile.TimeSpanFormatForDisplaying):
+				case nameof(LogProfile.TimeSpanFormatsForReading):
 				case nameof(LogProfile.TimestampCultureInfoForReading):
 				case nameof(LogProfile.TimestampFormatForDisplaying):
 				case nameof(LogProfile.TimestampEncodingForReading):
