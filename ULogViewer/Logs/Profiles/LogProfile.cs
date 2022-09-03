@@ -934,7 +934,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			writer.WriteString(nameof(SortKey), this.sortKey.ToString());
 			writer.WriteString(nameof(TimeSpanCultureInfoForReading), this.timeSpanCultureInfoForReading.ToString());
 			writer.WriteString(nameof(TimeSpanCultureInfoForWriting), this.timeSpanCultureInfoForWriting.ToString());
-			writer.WriteString(nameof(TimeSpanEncodingForReading), this.timestampEncodingForReading.ToString());
+			writer.WriteString(nameof(TimeSpanEncodingForReading), this.timeSpanEncodingForReading.ToString());
 			this.timeSpanFormatForDisplaying?.Let(it => writer.WriteString(nameof(TimeSpanFormatForDisplaying), it));
 			this.timeSpanFormatForWriting?.Let(it => writer.WriteString(nameof(TimeSpanFormatForWriting), it));
 			if (timeSpanFormatsForReading.IsNotEmpty())
