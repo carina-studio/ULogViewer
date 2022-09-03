@@ -3050,7 +3050,7 @@ namespace CarinaStudio.ULogViewer.Controls
 								if (!isLogFound)
 								{
 									// show all logs
-									if (session.IsShowingMarkedLogsTemporarily || !session.ToggleShowingAllLogsTemporarilyCommand.TryExecute())
+									if (session.IsShowingAllLogsTemporarily || !session.ToggleShowingAllLogsTemporarilyCommand.TryExecute())
 										return;
 									await Task.Yield();
 									
