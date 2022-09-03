@@ -877,7 +877,25 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			});
 			this.logAnalysisResults = new((lhs, rhs) =>
 			{
-				var result = this.CompareDisplayableLogs(lhs.Log, rhs.Log);
+				DisplayableLog? SelectLog(DisplayableLogAnalysisResult result)
+				{
+					var logs = new DisplayableLog?[] {
+						result.BeginningLog,
+						result.EndingLog,
+						result.Log,
+					};
+					Array.Sort(logs, CompareDisplayableLogs);
+					for (int i = 0, count = logs.Length; i < count; ++i)
+					{
+						if (logs[i] != null)
+							return logs[i];
+					}
+					return null;
+				}
+				var result = this.CompareDisplayableLogs(SelectLog(lhs), SelectLog(rhs));
+				if (result != 0)
+					return result;
+				result = lhs.Type.CompareTo(rhs.Type);
 				if (result != 0)
 					return result;
 				return lhs.Id - rhs.Id;
