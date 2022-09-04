@@ -88,6 +88,9 @@ for i in "${!RID_LIST[@]}"; do
 
     # zip .app directory
     ditto -c -k --sequesterRsrc --keepParent "./Packages/$VERSION/$PUB_PLATFORM/$APP_NAME.app" "./Packages/$VERSION/$APP_NAME-$VERSION-$PUB_PLATFORM.zip"
+    if [ "$?" != "0" ]; then
+        exit
+    fi
 
 done
 
