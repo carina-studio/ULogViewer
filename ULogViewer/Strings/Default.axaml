@@ -595,6 +595,11 @@
 	<sys:String x:Key="String/OperationEndingMode.FirstInFirstOut">First in, first out</sys:String>
 	<sys:String x:Key="String/OperationEndingMode.FirstInLastOut">First in, last out</sys:String>
 
+	<!-- PatternEditor -->
+	<sys:String x:Key="String/PatternEditor.ConfirmReplacingPattern">Are you sure to replace this pattern?</sys:String>
+	<sys:String x:Key="String/PatternEditor.Tutorial.ClickButtonToEditPattern">Click here to edit the pattern.</sys:String>
+	<sys:String x:Key="String/PatternEditor.Tutorial.DoubleClickToEditPattern">You can also double-click here to edit the pattern.</sys:String>
+
 	<!-- PeekQueueToVarEditorDialog -->
 	<sys:String x:Key="String/PeekQueueToVarEditorDialog.Title">Copy value from queue to variable</sys:String>
 
@@ -640,7 +645,6 @@
 	<sys:String x:Key="String/RegexEditorDialog.TestResult.Failed">(Not matched)</sys:String>
 	<sys:String x:Key="String/RegexEditorDialog.TestResult.Success">(Matched)</sys:String>
 	<sys:String x:Key="String/RegexEditorDialog.Title">Edit pattern</sys:String>
-	<sys:String x:Key="String/RegexEditorDialog.Tutorial.ClickButtonToEditPattern">Click here to edit the pattern.</sys:String>
 
 	<!-- ScriptDisplayableLogAnalyzer -->
 	<sys:String x:Key="String/ScriptDisplayableLogAnalyzer.AnalysisScript.ErrorOccurred">Error occurred while running script of '{0}' to analyze log:

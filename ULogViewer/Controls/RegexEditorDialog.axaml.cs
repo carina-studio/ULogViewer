@@ -22,10 +22,6 @@ namespace CarinaStudio.ULogViewer.Controls
 	partial class RegexEditorDialog : InputDialog<IULogViewerApplication>
 	{
 		/// <summary>
-		/// Key for checking whether tutorial of "click button to edit pattern" has been shown before or not.
-		/// </summary>
-		public static readonly SettingKey<bool> IsClickButtonToEditPatternTutorialShownKey = new("RegexEditorDialog.IsClickButtonToEditPatternTutorialShown");
-		/// <summary>
 		/// List of property names of log.
 		/// </summary>
 		public static readonly IList<string> LogPropertyNames = Log.PropertyNames.Where(it =>
@@ -118,6 +114,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		public Regex? InitialRegex { get; set; }
 
 
+		// Initial text of regex.
+		public string? InitialRegexText { get; set; }
+
+
 		// Whether group capturing is enabled or not.
 		public bool IsCapturingGroupsEnabled
 		{
@@ -168,6 +168,11 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				this.regexTextBox.IgnoreCase = (regex.Options & RegexOptions.IgnoreCase) != 0;
 				this.regexTextBox.Object = regex;
+			}
+			else if (this.InitialRegexText != null)
+			{
+				this.regexTextBox.IgnoreCase = true;
+				this.regexTextBox.Text = this.InitialRegexText;
 			}
 			else
 				this.regexTextBox.IgnoreCase = true;

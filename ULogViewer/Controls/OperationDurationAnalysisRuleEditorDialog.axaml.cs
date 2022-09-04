@@ -1,16 +1,13 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using Avalonia.Media;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.Collections;
-using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.ViewModels.Analysis;
 using CarinaStudio.ULogViewer.ViewModels.Analysis.ContextualBased;
 using System;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Threading;
 
@@ -23,15 +20,13 @@ namespace CarinaStudio.ULogViewer.Controls
 	{
 		// Fields.
 		readonly ObservableList<ContextualBasedAnalysisCondition> beginningConditions = new();
-		Regex? beginningPattern;
-		readonly TextBox beginningPatternTextBox;
+		readonly PatternEditor beginningPatternEditor;
 		readonly ObservableList<ContextualBasedAnalysisAction> beginningPostActions = new();
 		readonly ObservableList<ContextualBasedAnalysisAction> beginningPreActions = new();
 		readonly TextBox customMessageTextBox;
 		readonly ObservableList<ContextualBasedAnalysisCondition> endingConditions = new();
 		readonly ComboBox endingModeComboBox;
-		Regex? endingPattern;
-		readonly TextBox endingPatternTextBox;
+		readonly PatternEditor endingPatternEditor;
 		readonly ObservableList<ContextualBasedAnalysisAction> endingPostActions = new();
 		readonly ObservableList<ContextualBasedAnalysisAction> endingPreActions = new();
 		readonly Avalonia.Controls.ListBox endingVariableListBox;
@@ -48,10 +43,16 @@ namespace CarinaStudio.ULogViewer.Controls
 		public OperationDurationAnalysisRuleEditorDialog()
 		{
 			AvaloniaXamlLoader.Load(this);
-			this.beginningPatternTextBox = this.Get<TextBox>(nameof(beginningPatternTextBox));
+			this.beginningPatternEditor = this.Get<PatternEditor>(nameof(beginningPatternEditor)).Also(it =>
+			{
+				it.GetObservable(PatternEditor.PatternProperty).Subscribe(_ => this.InvalidateInput());
+			});
 			this.customMessageTextBox = this.Get<TextBox>(nameof(customMessageTextBox));
 			this.endingModeComboBox = this.Get<ComboBox>(nameof(endingModeComboBox));
-			this.endingPatternTextBox = this.Get<TextBox>(nameof(endingPatternTextBox));
+			this.endingPatternEditor = this.Get<PatternEditor>(nameof(endingPatternEditor)).Also(it =>
+			{
+				it.GetObservable(PatternEditor.PatternProperty).Subscribe(_ => this.InvalidateInput());
+			});
 			this.endingVariableListBox = this.Get<AppSuite.Controls.ListBox>(nameof(endingVariableListBox)).Also(it =>
 			{
 				it.DoubleClickOnItem += (_, e) => this.EditEndingVariable((string)e.Item);
@@ -109,43 +110,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		IList<ContextualBasedAnalysisAction> BeginningPreActions { get => this.beginningPreActions; }
 
 
-		// Copy pattern.
-		void CopyPattern(TextBox textBox) =>
-			textBox.CopyTextIfNotEmpty();
-
-
-		// Edit beginning patten.
-		async void EditBeginningPattern()
-		{
-			var newPattern = await new RegexEditorDialog()
-			{
-				InitialRegex = this.beginningPattern,
-				IsCapturingGroupsEnabled = true,
-			}.ShowDialog<Regex?>(this);
-			if (newPattern == null)
-				return;
-			this.beginningPattern = newPattern;
-			this.beginningPatternTextBox.Text = newPattern.ToString();
-			this.InvalidateInput();
-		}
-
-
-		// Edit ending patten.
-		async void EditEndingPattern()
-		{
-			var newPattern = await new RegexEditorDialog()
-			{
-				InitialRegex = this.endingPattern,
-				IsCapturingGroupsEnabled = true,
-			}.ShowDialog<Regex?>(this);
-			if (newPattern == null)
-				return;
-			this.endingPattern = newPattern;
-			this.endingPatternTextBox.Text = newPattern.ToString();
-			this.InvalidateInput();
-		}
-
-
 		// Edit ending variable.
 		void EditEndingVariable(ListBoxItem item) =>
 			this.EditEndingVariable((string)item.DataContext.AsNonNull());
@@ -193,11 +157,11 @@ namespace CarinaStudio.ULogViewer.Controls
 			var rule = this.Rule;
 			var newRule = new OperationDurationAnalysisRuleSet.Rule(this.operationNameTextBox.Text.AsNonNull(),
 				(DisplayableLogAnalysisResultType)this.resultTypeComboBox.SelectedItem.AsNonNull(),
-				this.beginningPattern.AsNonNull(),
+				this.beginningPatternEditor.Pattern.AsNonNull(),
 				this.beginningPreActions,
 				this.beginningConditions,
 				this.beginningPostActions,
-				this.endingPattern.AsNonNull(),
+				this.endingPatternEditor.Pattern.AsNonNull(),
 				this.endingPreActions,
 				this.endingConditions,
 				this.endingPostActions,
@@ -222,15 +186,13 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.operationNameTextBox.Text = rule.OperationName;
 				this.resultTypeComboBox.SelectedItem = rule.ResultType;
 				this.beginningConditions.AddAll(rule.BeginningConditions);
-				this.beginningPattern = rule.BeginningPattern;
-				this.beginningPatternTextBox.Text = rule.BeginningPattern.ToString();
+				this.beginningPatternEditor.Pattern = rule.BeginningPattern;
 				this.beginningPreActions.AddAll(rule.BeginningPreActions);
 				this.beginningPostActions.AddAll(rule.BeginningPostActions);
 				this.customMessageTextBox.Text = rule.CustomMessage;
 				this.endingConditions.AddAll(rule.EndingConditions);
 				this.endingModeComboBox.SelectedItem = rule.EndingMode;
-				this.endingPattern = rule.EndingPattern;
-				this.endingPatternTextBox.Text = rule.EndingPattern.ToString();
+				this.endingPatternEditor.Pattern = rule.EndingPattern;
 				this.endingPreActions.AddAll(rule.EndingPreActions);
 				this.endingPostActions.AddAll(rule.EndingPostActions);
 				this.endingVariables.AddAll(rule.EndingVariables);
@@ -242,23 +204,11 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.resultTypeComboBox.SelectedItem = DisplayableLogAnalysisResultType.TimeSpan;
 				this.endingModeComboBox.SelectedItem = OperationEndingMode.FirstInFirstOut;
 			}
-			if (!this.Application.PersistentState.GetValueOrDefault(RegexEditorDialog.IsClickButtonToEditPatternTutorialShownKey))
+			this.SynchronizationContext.Post(() =>
 			{
-				this.FindControl<TutorialPresenter>("tutorialPresenter")!.ShowTutorial(new Tutorial().Also(it =>
-				{
-					it.Anchor = this.Get<Control>("editBeginningPatternButton");
-					it.Bind(Tutorial.DescriptionProperty, this.GetResourceObservable("String/RegexEditorDialog.Tutorial.ClickButtonToEditPattern"));
-					it.Dismissed += (_, e) =>
-					{
-						this.Application.PersistentState.SetValue<bool>(RegexEditorDialog.IsClickButtonToEditPatternTutorialShownKey, true);
-						this.operationNameTextBox.Focus();
-					};
-					it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb.Colored");
-					it.IsSkippingAllTutorialsAllowed = false;
-				}));
-			}
-			else
-				this.SynchronizationContext.Post(this.operationNameTextBox.Focus);
+				if (!this.beginningPatternEditor.ShowTutorialIfNeeded(this.Get<TutorialPresenter>("tutorialPresenter"), this.operationNameTextBox))
+					this.operationNameTextBox.Focus();
+			});
 		}
 
 
@@ -266,8 +216,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		protected override bool OnValidateInput() =>
 			base.OnValidateInput() 
 			&& !string.IsNullOrWhiteSpace(this.operationNameTextBox.Text) 
-			&& this.beginningPattern != null
-			&& this.endingPattern != null
+			&& this.beginningPatternEditor.Pattern != null
+			&& this.endingPatternEditor.Pattern != null
 			&& this.minDurationTextBox.IsTextValid
 			&& this.maxDurationTextBox.IsTextValid
 			&& this.minDurationTextBox.Value.Let(minDuration =>

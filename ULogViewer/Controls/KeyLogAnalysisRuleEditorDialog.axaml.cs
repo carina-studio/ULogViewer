@@ -3,15 +3,11 @@ using Avalonia.Controls;
 using Avalonia.Data;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
-using Avalonia.Media;
 using CarinaStudio.AppSuite.Controls;
-using CarinaStudio.Configuration;
 using CarinaStudio.ULogViewer.Logs;
 using CarinaStudio.ULogViewer.ViewModels.Analysis;
 using CarinaStudio.Threading;
 using System;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Threading;
 
@@ -25,8 +21,7 @@ partial class KeyLogAnalysisRuleEditorDialog : AppSuite.Controls.InputDialog<IUL
 	// Fields.
 	readonly ComboBox levelComboBox;
 	readonly StringInterpolationFormatTextBox messageTextBox;
-	Regex? patternRegex;
-	readonly TextBox patternTextBox;
+	readonly PatternEditor patternEditor;
 	readonly ComboBox resultTypeComboBox;
 
 
@@ -37,7 +32,7 @@ partial class KeyLogAnalysisRuleEditorDialog : AppSuite.Controls.InputDialog<IUL
 	{
 		AvaloniaXamlLoader.Load(this);
 		this.levelComboBox = this.Get<ComboBox>(nameof(levelComboBox));
-		this.messageTextBox = this.FindControl<StringInterpolationFormatTextBox>(nameof(messageTextBox))!.Also(it =>
+		this.messageTextBox = this.Get<StringInterpolationFormatTextBox>(nameof(messageTextBox)).Also(it =>
 		{
 			foreach (var propertyName in Log.PropertyNames)
 			{
@@ -54,37 +49,18 @@ partial class KeyLogAnalysisRuleEditorDialog : AppSuite.Controls.InputDialog<IUL
 			}
 			it.GetObservable(TextBox.TextProperty).Subscribe(_ => this.InvalidateInput());
 		});
-		this.patternTextBox = this.FindControl<TextBox>(nameof(patternTextBox)).AsNonNull();
-		this.resultTypeComboBox = this.FindControl<ComboBox>(nameof(resultTypeComboBox)).AsNonNull();
-	}
-
-
-	// Copy pattern.
-	void CopyPattern(TextBox textBox) =>
-		textBox.CopyTextIfNotEmpty();
-
-
-	// Edit pattern.
-	async void EditPattern()
-	{
-		var regex = await new RegexEditorDialog()
+		this.patternEditor = this.Get<PatternEditor>(nameof(patternEditor)).Also(it =>
 		{
-			InitialRegex = this.patternRegex,
-			IsCapturingGroupsEnabled = true,
-		}.ShowDialog<Regex?>(this);
-		if (regex != null)
-		{
-			this.patternRegex = regex;
-			this.patternTextBox.Text = regex.ToString();
-			this.InvalidateInput();
-		}
+			it.GetObservable(PatternEditor.PatternProperty).Subscribe(_ => this.InvalidateInput());
+		});
+		this.resultTypeComboBox = this.Get<ComboBox>(nameof(resultTypeComboBox));
 	}
 
 
 	// Generate result.
 	protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken)
 	{
-		var rule = new KeyLogAnalysisRuleSet.Rule(this.patternRegex.AsNonNull(), 
+		var rule = new KeyLogAnalysisRuleSet.Rule(this.patternEditor.Pattern.AsNonNull(), 
 			(Logs.LogLevel)this.levelComboBox.SelectedItem!,
 			(DisplayableLogAnalysisResultType)this.resultTypeComboBox.SelectedItem!, 
 			this.messageTextBox.Text.AsNonNull());
@@ -103,7 +79,6 @@ partial class KeyLogAnalysisRuleEditorDialog : AppSuite.Controls.InputDialog<IUL
 	{
 		base.OnOpened(e);
 		var rule = this.Rule;
-		var editPatternButton = this.FindControl<Control>("editPatternButton").AsNonNull();
 		if (rule == null)
 		{
 			this.levelComboBox.SelectedItem = Logs.LogLevel.Undefined;
@@ -113,33 +88,20 @@ partial class KeyLogAnalysisRuleEditorDialog : AppSuite.Controls.InputDialog<IUL
 		{
 			this.levelComboBox.SelectedItem = rule.Level;
 			this.messageTextBox.Text = rule.Message;
-			this.patternRegex = rule.Pattern;
-			this.patternTextBox.Text = rule.Pattern.ToString();
+			this.patternEditor.Pattern = rule.Pattern;
 			this.resultTypeComboBox.SelectedItem = rule.ResultType;
 		}
-		if (!this.Application.PersistentState.GetValueOrDefault(RegexEditorDialog.IsClickButtonToEditPatternTutorialShownKey))
+		this.SynchronizationContext.Post(() =>
 		{
-			this.FindControl<TutorialPresenter>("tutorialPresenter")!.ShowTutorial(new Tutorial().Also(it =>
-			{
-				it.Anchor = editPatternButton;
-				it.Bind(Tutorial.DescriptionProperty, this.GetResourceObservable("String/RegexEditorDialog.Tutorial.ClickButtonToEditPattern"));
-				it.Dismissed += (_, e) =>
-				{
-					this.Application.PersistentState.SetValue<bool>(RegexEditorDialog.IsClickButtonToEditPatternTutorialShownKey, true);
-					editPatternButton.Focus();
-				};
-				it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb.Colored");
-				it.IsSkippingAllTutorialsAllowed = false;
-			}));
-		}
-		else
-			this.SynchronizationContext.Post(editPatternButton.Focus);
+			if (!this.patternEditor.ShowTutorialIfNeeded(this.Get<TutorialPresenter>("tutorialPresenter")))
+				this.patternEditor.Focus();
+		});
 	}
 
 
 	/// <inheritdoc/>
     protected override bool OnValidateInput() =>
-		base.OnValidateInput() && this.patternRegex != null && !string.IsNullOrEmpty(this.messageTextBox.Text);
+		base.OnValidateInput() && this.patternEditor.Pattern != null && !string.IsNullOrEmpty(this.messageTextBox.Text);
 	
 
 	// Available result types.

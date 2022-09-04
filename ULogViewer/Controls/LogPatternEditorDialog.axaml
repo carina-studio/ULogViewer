@@ -32,18 +32,7 @@
 	
 				<!-- Pattern -->
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogPatternEditorDialog.Regex}"/>
-				<Grid ColumnDefinitions="*,Auto">
-					<TextBox Name="patternTextBox" Height="{DynamicResource Double/LogPatternEditorDialog.RegexInput.Height}" IsReadOnly="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" TextWrapping="Wrap"/>
-					<StackPanel Grid.Column="1" VerticalAlignment="Top">
-						<Button Name="editPatternButton" Classes="BrowseButton" Command="{Binding $parent[Window].EditRegex}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
-							<Image Classes="BrowseButtonIcon" Source="{DynamicResource Image/Icon.Edit}"/>
-						</Button>
-						<Separator Classes="Dialog_Separator_Small"/>
-						<Button Classes="BrowseButton" Command="{Binding $parent[Window].CopyPattern}" CommandParameter="{Binding #patternTextBox}" ToolTip.Tip="{DynamicResource String/Common.Copy}">
-							<Image Classes="BrowseButtonIcon" Source="{StaticResource Image/Icon.Copy}"/>
-						</Button>
-					</StackPanel>
-				</Grid>
+				<appControls:PatternEditor Name="patternEditor" IsCapturingGroupsEnabled="True" IsCapturingLogPropertiesEnabled="True" MinHeight="{DynamicResource Double/LogPatternEditorDialog.RegexInput.Height}"/>
 				<Separator Classes="Dialog_Separator"/>
 	
 				<!-- Repeatable -->

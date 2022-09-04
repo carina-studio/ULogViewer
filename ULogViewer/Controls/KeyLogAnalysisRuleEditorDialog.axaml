@@ -4,6 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ia="using:Avalonia.Xaml.Interactivity"
 		xmlns:abControls="using:CarinaStudio.Controls"
+		xmlns:aConverters="using:Avalonia.Data.Converters"
 		xmlns:app="using:CarinaStudio.ULogViewer"
 		xmlns:appAnalysis="using:CarinaStudio.ULogViewer.ViewModels.Analysis"
 		xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
@@ -31,18 +32,7 @@
 
 				<!-- Pattern -->
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/KeyLogAnalysisRuleEditorDialog.Pattern}"/>
-				<Grid ColumnDefinitions="*,Auto">
-					<TextBox Name="patternTextBox" Classes="Dialog_TextBox" Height="{StaticResource Double/KeyLogAnalysisRuleEditorDialog.PatternInput.Height}" IsReadOnly="True"/>
-					<StackPanel Grid.Column="1" VerticalAlignment="Top">
-						<Button Name="editPatternButton" Classes="BrowseButton" Command="{Binding $parent[Window].EditPattern}" Grid.Column="1" ToolTip.Tip="{DynamicResource String/Common.Edit}" VerticalAlignment="Top">
-							<Image Classes="BrowseButtonIcon" Source="{StaticResource Image/Icon.Edit}"/>
-						</Button>
-						<Separator Classes="Dialog_Separator_Small"/>
-						<Button Classes="BrowseButton" Command="{Binding $parent[Window].CopyPattern}" CommandParameter="{Binding #patternTextBox}" ToolTip.Tip="{DynamicResource String/Common.Copy}">
-							<Image Classes="BrowseButtonIcon" Source="{StaticResource Image/Icon.Copy}"/>
-						</Button>
-					</StackPanel>
-				</Grid>
+				<appControls:PatternEditor Name="patternEditor" IsCapturingGroupsEnabled="True" MinHeight="{DynamicResource Double/KeyLogAnalysisRuleEditorDialog.PatternInput.Height}"/>
 				<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/KeyLogAnalysisRuleEditorDialog.Pattern.Description}"/>
 				<Separator Classes="Dialog_Separator"/>
 

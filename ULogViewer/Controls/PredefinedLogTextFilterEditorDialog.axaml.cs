@@ -1,7 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using Avalonia.Media;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
@@ -25,9 +24,9 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Fields.
 		PredefinedLogTextFilter? editingFilter;
-		Regex? regex;
+		Regex? initialPattern;
 		readonly TextBox nameTextBox;
-		readonly TextBox patternTextBox;
+		readonly PatternEditor patternEditor;
 		readonly ScheduledAction validateParametersAction;
 
 
@@ -35,18 +34,22 @@ namespace CarinaStudio.ULogViewer.Controls
 		public PredefinedLogTextFilterEditorDialog()
 		{
 			AvaloniaXamlLoader.Load(this);
-			this.nameTextBox = this.FindControl<TextBox>(nameof(nameTextBox))!.Also(it =>
+			this.nameTextBox = this.Get<TextBox>(nameof(nameTextBox)).Also(it =>
 			{
 				it.GetObservable(TextBox.TextProperty).Subscribe(_ =>
 					this.validateParametersAction?.Schedule());
 			});
-			this.patternTextBox = this.FindControl<TextBox>(nameof(patternTextBox)).AsNonNull();
+			this.patternEditor = this.Get<PatternEditor>(nameof(patternEditor)).Also(it =>
+			{
+				it.GetObservable(PatternEditor.PatternProperty).Subscribe(_ =>
+					this.validateParametersAction?.Schedule());
+			});
 			this.validateParametersAction = new(() =>
 			{
 				if (this.IsClosed)
 					return;
 				if (string.IsNullOrWhiteSpace(this.nameTextBox.Text)
-					|| this.regex == null)
+					|| this.patternEditor.Pattern == null)
 				{
 					this.SetValue<bool>(AreValidParametersProperty, false);
 				}
@@ -66,7 +69,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			
 			// edit or add filter
 			var name = this.nameTextBox.Text;
-			var regex = this.regex.AsNonNull();
+			var regex = this.patternEditor.Pattern.AsNonNull();
 			var filter = this.editingFilter;
 			if (filter != null)
 			{
@@ -80,27 +83,6 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// close window
 			this.Close();
-		}
-
-
-		// Copy pattern.
-		void CopyPattern(TextBox textBox) =>
-			textBox.CopyTextIfNotEmpty();
-
-
-		// Edit pattern.
-		async void EditPattern()
-		{
-			var regex = await new RegexEditorDialog()
-			{
-				InitialRegex = this.regex,
-			}.ShowDialog<Regex?>(this);
-			if (regex != null)
-			{
-				this.regex = regex;
-				this.patternTextBox.Text = regex.ToString();
-				this.validateParametersAction.Schedule();
-			}
 		}
 
 
@@ -118,36 +100,22 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			base.OnOpened(e);
 			var filter = this.editingFilter;
-			var editPatternButton = this.FindControl<Control>("editPatternButton").AsNonNull();
 			if (filter == null)
 			{
 				this.Bind(TitleProperty, this.GetResourceObservable("String/PredefinedLogTextFilterEditorDialog.Title.Create"));
-				this.patternTextBox.Text = this.regex?.ToString();
+				this.patternEditor.Pattern = this.initialPattern;
 			}
 			else
 			{
 				this.Bind(TitleProperty, this.GetResourceObservable("String/PredefinedLogTextFilterEditorDialog.Title.Edit"));
 				this.nameTextBox.Text = filter.Name;
-				this.patternTextBox.Text = filter.Regex.ToString();
-				this.regex = filter.Regex;
+				this.patternEditor.Pattern = filter.Regex;
 			}
-			if (!this.Application.PersistentState.GetValueOrDefault(RegexEditorDialog.IsClickButtonToEditPatternTutorialShownKey))
+			this.SynchronizationContext.Post(() =>
 			{
-				this.FindControl<TutorialPresenter>("tutorialPresenter")!.ShowTutorial(new Tutorial().Also(it =>
-				{
-					it.Anchor = editPatternButton;
-					it.Bind(Tutorial.DescriptionProperty, this.GetResourceObservable("String/RegexEditorDialog.Tutorial.ClickButtonToEditPattern"));
-					it.Dismissed += (_, e) =>
-					{
-						this.Application.PersistentState.SetValue<bool>(RegexEditorDialog.IsClickButtonToEditPatternTutorialShownKey, true);
-						editPatternButton.Focus();
-					};
-					it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb.Colored");
-					it.IsSkippingAllTutorialsAllowed = false;
-				}));
-			}
-			else
-				this.SynchronizationContext.Post(editPatternButton.Focus);
+				if (!this.patternEditor.ShowTutorialIfNeeded(this.Get<TutorialPresenter>("tutorialPresenter"), this.nameTextBox))
+					this.nameTextBox.Focus();
+			});
 		}
 
 
@@ -175,7 +143,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			dialog = new()
 			{
 				editingFilter = filter,
-				regex = regex,
+				initialPattern = regex,
 			};
 			if (filter != null)
 				DialogWithEditingRuleSets[filter] = dialog;

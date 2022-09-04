@@ -4,6 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:app="using:CarinaStudio.ULogViewer"
 		xmlns:abControls="using:CarinaStudio.Controls"
+		xmlns:aConverters="using:Avalonia.Data.Converters"
 		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
         xmlns:appControls="clr-namespace:CarinaStudio.ULogViewer.Controls;assembly=ULogViewer"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
@@ -25,18 +26,7 @@
 
 			<!-- Pattern -->
 			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/PredefinedLogTextFilterEditorDialog.Regex}"/>
-			<Grid ColumnDefinitions="*,Auto">
-				<TextBox Name="patternTextBox" Classes="Dialog_TextBox" Height="{DynamicResource Double/PredefinedLogTextFilterEditorDialog.RegexInput.Height}" IsReadOnly="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled" TextWrapping="Wrap"/>
-				<StackPanel Grid.Column="1" VerticalAlignment="Top">
-					<Button Name="editPatternButton" Classes="BrowseButton" Command="{Binding $parent[Window].EditPattern}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
-						<Image Classes="BrowseButtonIcon" Source="{DynamicResource Image/Icon.Edit}"/>
-					</Button>
-					<Separator Classes="Dialog_Separator_Small"/>
-					<Button Classes="BrowseButton" Command="{Binding $parent[Window].CopyPattern}" CommandParameter="{Binding #patternTextBox}" ToolTip.Tip="{DynamicResource String/Common.Copy}">
-						<Image Classes="BrowseButtonIcon" Source="{StaticResource Image/Icon.Copy}"/>
-					</Button>
-				</StackPanel>
-			</Grid>
+			<appControls:PatternEditor Name="patternEditor" MinHeight="{DynamicResource Double/PredefinedLogTextFilterEditorDialog.RegexInput.Height}"/>
 			<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/PredefinedLogTextFilterEditorDialog.Regex.Description}"/>
 			<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/Common.RegularExpression.Reference}" Uri="{x:Static app:Uris.RegexReference}"/>
 

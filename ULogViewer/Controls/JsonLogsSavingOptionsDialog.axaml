@@ -65,7 +65,7 @@
 						</Style>
 					</ListBox.Styles>
 				</ListBox>
-				<Button Name="editPatternButton" Classes="BrowseButton" Command="{Binding $parent[Window].AddLogPropertyMapEntry}" Grid.Column="1" ToolTip.Tip="{DynamicResource String/Common.Add}" VerticalAlignment="Top">
+				<Button Classes="BrowseButton" Command="{Binding $parent[Window].AddLogPropertyMapEntry}" Grid.Column="1" ToolTip.Tip="{DynamicResource String/Common.Add}" VerticalAlignment="Top">
 					<Image Classes="BrowseButtonIcon" Source="{DynamicResource Image/Icon.Add}"/>
 				</Button>
 			</Grid>

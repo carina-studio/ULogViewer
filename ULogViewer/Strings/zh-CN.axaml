@@ -561,6 +561,11 @@
 	<sys:String x:Key="String/OperationEndingMode.FirstInFirstOut">先进先出 (FIFO)</sys:String>
 	<sys:String x:Key="String/OperationEndingMode.FirstInLastOut">先进后出 (FILO)</sys:String>
 
+	<!-- PatternEditor -->
+	<sys:String x:Key="String/PatternEditor.ConfirmReplacingPattern">您是否确定要取代此格式？</sys:String>
+	<sys:String x:Key="String/PatternEditor.Tutorial.ClickButtonToEditPattern">点击这里编辑格式。</sys:String>
+	<sys:String x:Key="String/PatternEditor.Tutorial.DoubleClickToEditPattern">您也可以双击这里以编辑格式。</sys:String>
+
 	<!-- PeekQueueToVarEditorDialog -->
 	<sys:String x:Key="String/PeekQueueToVarEditorDialog.Title">从队列复制值至变量</sys:String>
 
@@ -606,7 +611,6 @@
 	<sys:String x:Key="String/RegexEditorDialog.TestResult.Failed">(不符合)</sys:String>
 	<sys:String x:Key="String/RegexEditorDialog.TestResult.Success">(符合)</sys:String>
 	<sys:String x:Key="String/RegexEditorDialog.Title">编辑格式</sys:String>
-	<sys:String x:Key="String/RegexEditorDialog.Tutorial.ClickButtonToEditPattern">点一下这里编辑格式。</sys:String>
 
 	<!-- ScriptDisplayableLogAnalyzer -->
 	<sys:String x:Key="String/ScriptDisplayableLogAnalyzer.AnalysisScript.ErrorOccurred">执行「{0}」之脚本以分析日志时发生错误：

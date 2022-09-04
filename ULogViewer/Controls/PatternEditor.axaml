@@ -1,0 +1,26 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:aConverters="using:Avalonia.Data.Converters"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="CarinaStudio.ULogViewer.Controls.PatternEditor">
+
+	<Grid ColumnDefinitions="*,Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+		<TextBox Name="patternTextBox" Classes="Dialog_TextBox" Focusable="False" IsReadOnly="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled" TextWrapping="Wrap"/>
+		<StackPanel Grid.Column="1" VerticalAlignment="Top">
+			<Button Name="editPatternButton" Classes="BrowseButton" Command="{Binding $parent[UserControl].EditPattern}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
+				<Image Classes="BrowseButtonIcon" Source="{DynamicResource Image/Icon.Edit}"/>
+			</Button>
+			<Separator Classes="Dialog_Separator_Small"/>
+			<Button Classes="BrowseButton" Command="{Binding $parent[UserControl].CopyPattern}" IsEnabled="{Binding #patternTextBox.Text, Converter={x:Static aConverters:StringConverters.IsNotNullOrEmpty}}" ToolTip.Tip="{DynamicResource String/Common.Copy}">
+				<Image Classes="BrowseButtonIcon" Source="{StaticResource Image/Icon.Copy}"/>
+			</Button>
+			<Separator Classes="Dialog_Separator_Small"/>
+			<Button Classes="BrowseButton" Command="{Binding $parent[UserControl].PastePattern}" ToolTip.Tip="{DynamicResource String/Common.Paste}">
+				<Image Classes="BrowseButtonIcon" Source="{StaticResource Image/Icon.Paste}"/>
+			</Button>
+		</StackPanel>
+	</Grid>
+	
+</UserControl>

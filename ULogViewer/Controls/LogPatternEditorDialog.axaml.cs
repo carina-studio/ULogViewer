@@ -1,13 +1,10 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using Avalonia.Media;
 using CarinaStudio.AppSuite.Controls;
-using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs;
 using System;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -19,8 +16,7 @@ namespace CarinaStudio.ULogViewer.Controls
 	partial class LogPatternEditorDialog : InputDialog<IULogViewerApplication>
 	{
 		// Fields.
-		Regex? regex;
-		readonly TextBox patternTextBox;
+		readonly PatternEditor patternEditor;
 		readonly ToggleSwitch repeatableSwitch;
 		readonly ToggleSwitch skippableSwitch;
 
@@ -31,32 +27,12 @@ namespace CarinaStudio.ULogViewer.Controls
 		public LogPatternEditorDialog()
 		{
 			AvaloniaXamlLoader.Load(this);
-			this.patternTextBox = this.FindControl<TextBox>(nameof(patternTextBox)).AsNonNull();
-			this.repeatableSwitch = this.FindControl<ToggleSwitch>(nameof(repeatableSwitch)).AsNonNull();
-			this.skippableSwitch = this.FindControl<ToggleSwitch>(nameof(skippableSwitch)).AsNonNull();
-		}
-
-
-		// Copy pattern.
-		void CopyPattern(TextBox textBox) =>
-			textBox.CopyTextIfNotEmpty();
-
-
-		// Edit regex.
-		async void EditRegex()
-		{
-			var regex = await new RegexEditorDialog()
+			this.patternEditor = this.Get<PatternEditor>(nameof(patternEditor)).Also(it =>
 			{
-				InitialRegex = this.regex,
-				IsCapturingGroupsEnabled = true,
-				IsCapturingLogPropertiesEnabled = true,
-			}.ShowDialog<Regex?>(this);
-			if (regex != null)
-			{
-				this.regex = regex;
-				this.patternTextBox.Text = regex.ToString();
-				this.InvalidateInput();
-			}
+				it.GetObservable(PatternEditor.PatternProperty).Subscribe(_ => this.InvalidateInput());
+			});
+			this.repeatableSwitch = this.Get<ToggleSwitch>(nameof(repeatableSwitch));
+			this.skippableSwitch = this.Get<ToggleSwitch>(nameof(skippableSwitch));
 		}
 
 
@@ -64,7 +40,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken)
 		{
 			var editingLogPattern = this.LogPattern;
-			var newLogPattern = new LogPattern(this.regex.AsNonNull(), this.repeatableSwitch.IsChecked.GetValueOrDefault(), this.skippableSwitch.IsChecked.GetValueOrDefault());
+			var newLogPattern = new LogPattern(this.patternEditor.Pattern.AsNonNull(), this.repeatableSwitch.IsChecked.GetValueOrDefault(), this.skippableSwitch.IsChecked.GetValueOrDefault());
 			if (editingLogPattern != null && editingLogPattern == newLogPattern)
 				return Task.FromResult((object?)editingLogPattern);
 			return Task.FromResult((object?)newLogPattern);
@@ -82,36 +58,22 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			base.OnOpened(e);
 			var logPattern = this.LogPattern;
-			var editPatternButton = this.FindControl<Control>("editPatternButton").AsNonNull();
 			if (logPattern != null)
 			{
-				this.regex = logPattern.Regex;
-				this.patternTextBox.Text = this.regex.ToString();
+				this.patternEditor.Pattern = logPattern.Regex;
 				this.repeatableSwitch.IsChecked = logPattern.IsRepeatable;
 				this.skippableSwitch.IsChecked = logPattern.IsSkippable;
 			}
-			if (!this.Application.PersistentState.GetValueOrDefault(RegexEditorDialog.IsClickButtonToEditPatternTutorialShownKey))
+			this.SynchronizationContext.Post(() =>
 			{
-				this.FindControl<TutorialPresenter>("tutorialPresenter")!.ShowTutorial(new Tutorial().Also(it =>
-				{
-					it.Anchor = editPatternButton;
-					it.Bind(Tutorial.DescriptionProperty, this.GetResourceObservable("String/RegexEditorDialog.Tutorial.ClickButtonToEditPattern"));
-					it.Dismissed += (_, e) =>
-					{
-						this.Application.PersistentState.SetValue<bool>(RegexEditorDialog.IsClickButtonToEditPatternTutorialShownKey, true);
-						editPatternButton.Focus();
-					};
-					it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb.Colored");
-					it.IsSkippingAllTutorialsAllowed = false;
-				}));
-			}
-			else
-				this.SynchronizationContext.Post(editPatternButton.Focus);
+				if (!this.patternEditor.ShowTutorialIfNeeded(this.Get<TutorialPresenter>("tutorialPresenter")))
+					this.patternEditor.Focus();
+			});
 		}
 
 
 		// Validate input.
 		protected override bool OnValidateInput() =>
-			base.OnValidateInput() && this.regex != null;
+			base.OnValidateInput() && this.patternEditor.Pattern != null;
 	}
 }
