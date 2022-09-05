@@ -795,6 +795,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		bool isRestoringState;
 		readonly ObservableList<KeyLogAnalysisRuleSet> keyLogAnalysisRuleSets = new();
 		readonly KeyLogDisplayableLogAnalyzer keyLogAnalyzer;
+		readonly DisplayableLog?[] logAnalysisResultComparisonTempLogs1 = new DisplayableLog?[3];
+		readonly DisplayableLog?[] logAnalysisResultComparisonTempLogs2 = new DisplayableLog?[3];
 		readonly SortedObservableList<DisplayableLogAnalysisResult> logAnalysisResults;
 		readonly ObservableList<LogAnalysisScriptSet> logAnalysisScriptSets = new();
 		readonly Dictionary<LogReader, LogFileInfoImpl> logFileInfoMapByLogReader = new();
@@ -875,31 +877,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			{
 				it.CollectionChanged += this.OnAllLogsChanged;
 			});
-			this.logAnalysisResults = new((lhs, rhs) =>
-			{
-				DisplayableLog? SelectLog(DisplayableLogAnalysisResult result)
-				{
-					var logs = new DisplayableLog?[] {
-						result.BeginningLog,
-						result.EndingLog,
-						result.Log,
-					};
-					Array.Sort(logs, CompareDisplayableLogs);
-					for (int i = 0, count = logs.Length; i < count; ++i)
-					{
-						if (logs[i] != null)
-							return logs[i];
-					}
-					return null;
-				}
-				var result = this.CompareDisplayableLogs(SelectLog(lhs), SelectLog(rhs));
-				if (result != 0)
-					return result;
-				result = lhs.Type.CompareTo(rhs.Type);
-				if (result != 0)
-					return result;
-				return lhs.Id - rhs.Id;
-			});
+			this.logAnalysisResults = new(this.CompareDisplayableLogAnalysisResults);
 			this.markedLogs = new SortedObservableList<DisplayableLog>(this.CompareDisplayableLogs).Also(it =>
 			{
 				it.CollectionChanged += this.OnMarkedLogsChanged;
@@ -1600,6 +1578,52 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Command to clear all added log files.
 		/// </summary>
 		public ICommand ClearLogFilesCommand { get; }
+
+
+		// Compare displayable log analysis results.
+		int CompareDisplayableLogAnalysisResults(DisplayableLogAnalysisResult? lhs, DisplayableLogAnalysisResult? rhs)
+		{
+			// get logs
+			var lhsLogs = this.logAnalysisResultComparisonTempLogs1;
+			lhsLogs[0] = lhs!.BeginningLog;
+			lhsLogs[1] = lhs.Log;
+			lhsLogs[2] = lhs.EndingLog;
+			var rhsLogs = this.logAnalysisResultComparisonTempLogs2;
+			rhsLogs[0] = rhs!.BeginningLog;
+			rhsLogs[1] = rhs.Log;
+			rhsLogs[2] = rhs.EndingLog;
+
+			// compare logs
+			var logCount = lhsLogs.Length;
+			var lhsLogIndex = 0;
+			var rhsLogIndex = 0;
+			var result = 0;
+			while (lhsLogIndex < logCount && rhsLogIndex < logCount)
+			{
+				var lhsLog = lhsLogs[lhsLogIndex];
+				var rhsLog = rhsLogs[rhsLogIndex];
+				if (lhsLog == null)
+					++lhsLogIndex;
+				else if (rhsLog == null)
+					++rhsLogIndex;
+				else
+				{
+					result = this.CompareDisplayableLogs(lhsLog, rhsLog);
+					if (result != 0)
+						return result;
+					++lhsLogIndex;
+					++rhsLogIndex;
+				}
+			}
+			
+			// compare types
+			result = lhs.Type.CompareTo(rhs.Type);
+			if (result != 0)
+				return result;
+			
+			// compare IDs
+			return lhs.Id - rhs.Id;
+		}
 
 
 		// Compare displayable logs.
