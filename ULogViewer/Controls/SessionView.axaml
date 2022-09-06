@@ -383,6 +383,9 @@
 
 	<!-- Styles -->
 	<UserControl.Styles>
+		<Style Selector="ListBox.Log">
+			<Setter Property="Padding" Value="{StaticResource Thickness/SessionView.LogListBox.Padding}"/>
+		</Style>
 		<Style Selector="ListBox.Log > ListBoxItem">
 			<Setter Property="CornerRadius" Value="0"/>
 			<Setter Property="HorizontalAlignment" Value="Stretch"/>
@@ -736,7 +739,7 @@
 			</Border>
 
 			<!-- ListBox -->
-			<asControls:ListBox Classes="Log" Name="logListBox" AutoScrollToSelectedItem="False" Background="{DynamicResource Brush/WorkingArea.Background}" BorderThickness="0" ContextMenu="{StaticResource logActionMenu}" CornerRadius="0" DoubleClickOnItem="OnLogListBoxDoubleClickOnItem" Grid.Row="1" HorizontalAlignment="Stretch" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" Items="{Binding Logs}" Padding="{StaticResource Thickness/SessionView.LogListBox.Padding}" ScrollViewer.HorizontalScrollBarVisibility="Visible" SelectionChanged="OnLogListBoxSelectionChanged" SelectionMode="Multiple" VirtualizationMode="Simple">
+			<asControls:ListBox Classes="Log" Name="logListBox" AutoScrollToSelectedItem="False" Background="{DynamicResource Brush/WorkingArea.Background}" BorderThickness="0" ContextMenu="{StaticResource logActionMenu}" CornerRadius="0" DoubleClickOnItem="OnLogListBoxDoubleClickOnItem" Grid.Row="1" HorizontalAlignment="Stretch" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" Items="{Binding Logs}" ScrollViewer.HorizontalScrollBarVisibility="Visible" SelectionChanged="OnLogListBoxSelectionChanged" SelectionMode="Multiple" VirtualizationMode="Simple">
 				<asControls:ListBox.Styles>
 					<Style Selector="ListBoxItem">
 						<Setter Property="Margin" Value="0,0,20,0"/>
