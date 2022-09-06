@@ -1480,7 +1480,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			analyzer.PropertyChanged += this.OnLogAnalyzerPropertyChanged;
 
 			// add analysis results
-			this.logAnalysisResults.AddAll(analyzer.AnalysisResults, true);
+			this.logAnalysisResults.AddAll(analyzer.AnalysisResults);
 
 			// report state
 			this.updateLogsAnalysisStateAction?.Schedule();
@@ -2152,7 +2152,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			analyzer.PropertyChanged -= this.OnLogAnalyzerPropertyChanged;
 
 			// remove analysis results
-			this.logAnalysisResults.RemoveAll(analyzer.AnalysisResults, true);
+			this.logAnalysisResults.RemoveAll(analyzer.AnalysisResults);
 
 			// report state
 			this.updateLogsAnalysisStateAction?.Schedule();
@@ -3213,10 +3213,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			switch (e.Action)
 			{
 				case NotifyCollectionChangedAction.Add:
-					this.logAnalysisResults.AddAll(e.NewItems!.Cast<DisplayableLogAnalysisResult>(), true);
+					this.logAnalysisResults.AddAll(e.NewItems!.Cast<DisplayableLogAnalysisResult>());
 					break;
 				case NotifyCollectionChangedAction.Remove:
-					this.logAnalysisResults.RemoveAll(e.OldItems!.Cast<DisplayableLogAnalysisResult>(), true);
+					this.logAnalysisResults.RemoveAll(e.OldItems!.Cast<DisplayableLogAnalysisResult>());
 					break;
 				case NotifyCollectionChangedAction.Reset:
 					foreach (var analyzer in this.attachedLogAnalyzers)
@@ -3224,7 +3224,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						if (analyzer.AnalysisResults == sender)
 						{
 							this.logAnalysisResults.RemoveAll(it => it.Analyzer == analyzer);
-							this.logAnalysisResults.AddAll(analyzer.AnalysisResults, true);
+							this.logAnalysisResults.AddAll(analyzer.AnalysisResults);
 							break;
 						}
 					}
