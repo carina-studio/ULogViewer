@@ -1116,8 +1116,11 @@ namespace CarinaStudio.ULogViewer
 				return;
 			var sessionView = workspace.ActiveSession?.Let(it =>
 				this.FindSessionView(it));
-			if (sessionView?.AreAllTutorialsShown == false)
+			if (sessionView?.AreAllTutorialsShown == false 
+				|| sessionView?.IsHandlingDragAndDrop == true)
+			{
 				return;
+			}
 
 			// select and set log profile
 			workspace.ActiveSession?.Let(it =>
