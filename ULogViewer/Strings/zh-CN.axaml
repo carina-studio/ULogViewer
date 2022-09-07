@@ -506,6 +506,7 @@
 	<sys:String x:Key="String/MainWindow.SetCustomSessionTitle">自定义页面标题…</sys:String>
 	<sys:String x:Key="String/MainWindow.SetCustomSessionTitle.Message">页面标题</sys:String>
 	<sys:String x:Key="String/MainWindow.Tabs">选项卡</sys:String>
+	<sys:String x:Key="String/MainWindow.Tutorial.UseAddTabButtonToSelectLogProfile">您也可以在这里点击右键以选取日志类型，并套用至新的页面。</sys:String>
 	<sys:String x:Key="String/MainWindow.Windows">窗口</sys:String>
 
 	<!-- MarkColor -->

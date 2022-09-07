@@ -164,6 +164,9 @@
 		<TabItem Classes="Empty">
 			<TabItem.Header>
 				<Button Classes="AddTabItem" Command="{Binding $parent[Window].CreateSessionTabItem}">
+					<Button.ContextMenu>
+						<appControls:LogProfileSelectionContextMenu LogProfileSelected="OnLogProfileSelected"/>
+					</Button.ContextMenu>
 					<Image Classes="Icon" Source="{StaticResource Image/Icon.Add}"/>
 				</Button>
 			</TabItem.Header>

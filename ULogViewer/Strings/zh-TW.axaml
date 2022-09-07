@@ -506,6 +506,7 @@
 	<sys:String x:Key="String/MainWindow.SetCustomSessionTitle">自訂分頁標題…</sys:String>
 	<sys:String x:Key="String/MainWindow.SetCustomSessionTitle.Message">分頁標題</sys:String>
 	<sys:String x:Key="String/MainWindow.Tabs">分頁</sys:String>
+	<sys:String x:Key="String/MainWindow.Tutorial.UseAddTabButtonToSelectLogProfile">您也可以在這裡按一下右鍵以選取日誌類型，並套用至新的分頁。</sys:String>
 	<sys:String x:Key="String/MainWindow.Windows">視窗</sys:String>
 
 	<!-- MarkColor -->

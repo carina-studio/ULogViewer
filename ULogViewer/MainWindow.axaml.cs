@@ -7,6 +7,7 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.Templates;
+using Avalonia.Media;
 using Avalonia.VisualTree;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.AppSuite.Net;
@@ -45,6 +46,7 @@ namespace CarinaStudio.ULogViewer
 		static readonly AvaloniaProperty<bool> HasMultipleSessionsProperty = AvaloniaProperty.Register<MainWindow, bool>("HasMultipleSessions");
 		static bool IsNetworkConnForProductActivationNotified;
 		static bool IsReActivatingProVersionNeeded;
+		static readonly SettingKey<bool> IsUsingAddTabButtonToSelectLogProfileTutorialShownKey = new("MainWindow.IsUsingAddTabButtonToSelectLogProfileTutorialShown");
 		static MainWindow? MainWindowToActivateProVersion;
 
 
@@ -844,6 +846,18 @@ namespace CarinaStudio.ULogViewer
 		}
 
 
+		// Called when user selected a log profile.
+		void OnLogProfileSelected(LogProfileSelectionContextMenu sender, Logs.Profiles.LogProfile logProfile)
+		{
+			if (this.DataContext is not Workspace workspace)
+				return;
+			var session = workspace.CreateAndAttachSession();
+			var sessionView = this.FindSessionView(session);
+			workspace.ActiveSession = session;
+			_ = sessionView?.SetLogProfileAsync(logProfile);
+		}
+
+
 		// Called when property of network manager changed.
 		void OnNetworkManagerPropertyChanged(object? sender, PropertyChangedEventArgs e)
 		{
@@ -1129,7 +1143,7 @@ namespace CarinaStudio.ULogViewer
 					&& this.Settings.GetValueOrDefault(SettingKeys.SelectLogProfileForNewSession)
 					&& !this.HasDialogs)
 				{
-					this.FindSessionView(it)?.SelectAndSetLogProfile();
+					this.FindSessionView(it)?.SelectAndSetLogProfileAsync();
 				}
 			});
 		}
@@ -1187,6 +1201,37 @@ namespace CarinaStudio.ULogViewer
 		// Show dialog to manage script log data source providers.
 		void ShowScriptLogDataSourceProvidersDialog() =>
 			_ = new ScriptLogDataSourceProvidersDialog().ShowDialog(this);
+		
+
+		/// <summary>
+		/// Show tutorial of using add tab button to select log profile if needed.
+		/// </summary>
+		/// <param name="dismissed">Action when tutorial dismissed.</param>
+		/// <param name="requestSkippingAllTutorials">Action when user request skipping all tutorials.</param>
+		/// <returns>True if tutorial is being shown.</returns>
+		public bool ShowTutorialOfUsingAddTabButtonToSelectLogProfile(Action? dismissed, Action? requestSkippingAllTutorials)
+		{
+			this.VerifyAccess();
+			if (this.PersistentState.GetValueOrDefault(IsUsingAddTabButtonToSelectLogProfileTutorialShownKey))
+				return false;
+			if (this.tabItems.IsEmpty())
+				return false;
+			var button = this.tabItems.Last().Header as Control;
+			if (button == null)
+				return false;
+			return this.ShowTutorial(new Tutorial().Also(it =>
+			{
+				it.Anchor = button;
+				it.Bind(Tutorial.DescriptionProperty, this.GetResourceObservable("String/MainWindow.Tutorial.UseAddTabButtonToSelectLogProfile"));
+				it.Dismissed += (_, e) => 
+				{
+					this.PersistentState.SetValue<bool>(IsUsingAddTabButtonToSelectLogProfileTutorialShownKey, true);
+					dismissed?.Invoke();
+				};
+				it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb.Colored");
+				it.SkippingAllTutorialRequested += (_, e) => requestSkippingAllTutorials?.Invoke();
+			}));
+		}
 
 
 		// Update menu items of tools.

@@ -540,6 +540,7 @@
 	<sys:String x:Key="String/MainWindow.SetCustomSessionTitle">Set title of this tab…</sys:String>
 	<sys:String x:Key="String/MainWindow.SetCustomSessionTitle.Message">Title of tab</sys:String>
 	<sys:String x:Key="String/MainWindow.Tabs">Tabs</sys:String>
+	<sys:String x:Key="String/MainWindow.Tutorial.UseAddTabButtonToSelectLogProfile">You can also right-click on here to select log profile and set to new tab.</sys:String>
 	<sys:String x:Key="String/MainWindow.Windows">Windows</sys:String>
 
 	<!-- MarkColor -->

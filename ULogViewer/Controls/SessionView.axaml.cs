@@ -316,7 +316,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.SaveAllLogsCommand = new Command(() => this.SaveLogs(true), this.canSaveLogs);
 			this.SaveLogsCommand = new Command(() => this.SaveLogs(false), this.canSaveLogs);
 			this.SelectAndSetIPEndPointCommand = new Command(this.SelectAndSetIPEndPoint, this.canSetIPEndPoint);
-			this.SelectAndSetLogProfileCommand = new Command(this.SelectAndSetLogProfile, this.canSetLogProfile);
+			this.SelectAndSetLogProfileCommand = new Command(this.SelectAndSetLogProfileAsync, this.canSetLogProfile);
 			this.SelectAndSetUriCommand = new Command(this.SelectAndSetUri, this.canSetUri);
 			this.SelectAndSetWorkingDirectoryCommand = new Command(this.SelectAndSetWorkingDirectory, this.canSetWorkingDirectory);
 			this.SelectMarkedLogsCommand = new Command(this.SelectMarkedLogs, this.canSelectMarkedLogs);
@@ -4461,7 +4461,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// <summary>
 		/// Select and set log profile.
 		/// </summary>
-		public async void SelectAndSetLogProfile()
+		public async void SelectAndSetLogProfileAsync()
 		{
 			// check state
 			this.VerifyAccess();
@@ -4475,89 +4475,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			var logProfile = await new LogProfileSelectionDialog().ShowDialog<LogProfile>(this.attachedWindow);
 			if (logProfile == null)
 				return;
-
-			// check state
-			if (this.DataContext is not Session session)
-				return;
-
-			// check administrator role
-			var isRestartingAsAdminNeeded = false;
-			if (logProfile.IsAdministratorNeeded && !this.Application.IsRunningAsAdministrator)
-			{
-				if (await this.ConfirmRestartingAsAdmin(logProfile))
-					isRestartingAsAdminNeeded = true;
-				else
-				{
-					this.Logger.LogWarning($"Unable to use profile '{logProfile.Name}' because application is not running as administrator");
-					return;
-				}
-			}
-
-			// reset log filters
-			this.ResetLogFilters();
-
-			// reset log profile
-			this.isIPEndPointNeededAfterLogProfileSet = false;
-			this.isLogFileNeededAfterLogProfileSet = false;
-			this.isRestartingAsAdminConfirmed = false;
-			this.isUriNeededAfterLogProfileSet = false;
-			this.isWorkingDirNeededAfterLogProfileSet = false;
-			this.autoAddLogFilesAction.Cancel();
-			this.autoSetUriAction.Cancel();
-			this.autoSetWorkingDirectoryAction.Cancel();
-			session.ResetLogProfileCommand.TryExecute(null);
-
+			
 			// set log profile
-			if (!session.SetLogProfileCommand.TryExecute(logProfile))
-			{
-				this.Logger.LogError("Unable to set log profile to session");
-				return;
-			}
-			if (session.IsIPEndPointNeeded)
-			{
-				this.isIPEndPointNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(SettingKeys.SelectIPEndPointWhenNeeded);
-				if (this.canSetIPEndPoint.Value 
-					&& this.isIPEndPointNeededAfterLogProfileSet
-					&& this.isAttachedToLogicalTree)
-				{
-					this.autoSetIPEndPointAction.Reschedule(AutoAddLogFilesDelay);
-				}
-			}
-			else if (session.IsLogFileNeeded)
-			{
-				this.isLogFileNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(SettingKeys.SelectLogFilesWhenNeeded);
-				if (this.canAddLogFiles.Value 
-					&& this.isLogFileNeededAfterLogProfileSet
-					&& this.isAttachedToLogicalTree)
-				{
-					this.autoAddLogFilesAction.Reschedule(AutoAddLogFilesDelay);
-				}
-			}
-			else if (session.IsUriNeeded)
-			{
-				this.isUriNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(SettingKeys.SelectUriWhenNeeded);
-				if (this.canSetUri.Value 
-					&& this.isUriNeededAfterLogProfileSet
-					&& this.isAttachedToLogicalTree)
-				{
-					this.autoSetUriAction.Reschedule(AutoAddLogFilesDelay);
-				}
-			}
-			else if (session.IsWorkingDirectoryNeeded)
-			{
-				this.isWorkingDirNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(SettingKeys.SelectWorkingDirectoryWhenNeeded);
-				if (this.canSetWorkingDirectory.Value 
-					&& this.isWorkingDirNeededAfterLogProfileSet
-					&& this.isAttachedToLogicalTree)
-				{
-					this.autoSetWorkingDirectoryAction.Reschedule(AutoAddLogFilesDelay);
-				}
-			}
-			this.OnLogProfileSet(logProfile);
-
-			// restart as administrator role
-			if (isRestartingAsAdminNeeded)
-				this.RestartAsAdministrator();
+			await this.SetLogProfileAsync(logProfile);
 		}
 
 
@@ -4742,6 +4662,104 @@ namespace CarinaStudio.ULogViewer.Controls
         }
 
 
+		/// <summary>
+		/// Set given log profile to <see cref="Session"/> hosted by this view.
+		/// </summary>
+		/// <param name="logProfile">Log profile.</param>
+		/// <returns>True if log profile has been set successfully.</returns>
+		public async Task<bool> SetLogProfileAsync(LogProfile logProfile)
+		{
+			// check state
+			this.VerifyAccess();
+			if (this.DataContext is not Session session)
+				return false;
+			if (session.LogProfile == logProfile)
+				return true;
+			
+			// check administrator role
+			var isRestartingAsAdminNeeded = false;
+			if (logProfile.IsAdministratorNeeded && !this.Application.IsRunningAsAdministrator)
+			{
+				if (await this.ConfirmRestartingAsAdmin(logProfile))
+					isRestartingAsAdminNeeded = true;
+				else
+				{
+					this.Logger.LogWarning($"Unable to use profile '{logProfile.Name}' ({logProfile.Id}) because application is not running as administrator");
+					return false;
+				}
+			}
+
+			// reset log filters
+			this.ResetLogFilters();
+
+			// reset log profile
+			this.isIPEndPointNeededAfterLogProfileSet = false;
+			this.isLogFileNeededAfterLogProfileSet = false;
+			this.isRestartingAsAdminConfirmed = false;
+			this.isUriNeededAfterLogProfileSet = false;
+			this.isWorkingDirNeededAfterLogProfileSet = false;
+			this.autoAddLogFilesAction.Cancel();
+			this.autoSetUriAction.Cancel();
+			this.autoSetWorkingDirectoryAction.Cancel();
+			session.ResetLogProfileCommand.TryExecute(null);
+
+			// set log profile
+			if (!session.SetLogProfileCommand.TryExecute(logProfile))
+			{
+				this.Logger.LogError($"Unable to set log profile '{logProfile.Name}' ({logProfile.Id}) to session");
+				return false;
+			}
+			if (session.IsIPEndPointNeeded)
+			{
+				this.isIPEndPointNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(SettingKeys.SelectIPEndPointWhenNeeded);
+				if (this.canSetIPEndPoint.Value 
+					&& this.isIPEndPointNeededAfterLogProfileSet
+					&& this.isAttachedToLogicalTree)
+				{
+					this.autoSetIPEndPointAction.Reschedule(AutoAddLogFilesDelay);
+				}
+			}
+			else if (session.IsLogFileNeeded)
+			{
+				this.isLogFileNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(SettingKeys.SelectLogFilesWhenNeeded);
+				if (this.canAddLogFiles.Value 
+					&& this.isLogFileNeededAfterLogProfileSet
+					&& this.isAttachedToLogicalTree)
+				{
+					this.autoAddLogFilesAction.Reschedule(AutoAddLogFilesDelay);
+				}
+			}
+			else if (session.IsUriNeeded)
+			{
+				this.isUriNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(SettingKeys.SelectUriWhenNeeded);
+				if (this.canSetUri.Value 
+					&& this.isUriNeededAfterLogProfileSet
+					&& this.isAttachedToLogicalTree)
+				{
+					this.autoSetUriAction.Reschedule(AutoAddLogFilesDelay);
+				}
+			}
+			else if (session.IsWorkingDirectoryNeeded)
+			{
+				this.isWorkingDirNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(SettingKeys.SelectWorkingDirectoryWhenNeeded);
+				if (this.canSetWorkingDirectory.Value 
+					&& this.isWorkingDirNeededAfterLogProfileSet
+					&& this.isAttachedToLogicalTree)
+				{
+					this.autoSetWorkingDirectoryAction.Reschedule(AutoAddLogFilesDelay);
+				}
+			}
+			this.OnLogProfileSet(logProfile);
+
+			// restart as administrator role
+			if (isRestartingAsAdminNeeded)
+				this.RestartAsAdministrator();
+			
+			// complete
+			return true;
+		}
+
+
 		// Show file in system file explorer.
 		void ShowFileInExplorer()
 		{
@@ -4919,6 +4937,10 @@ namespace CarinaStudio.ULogViewer.Controls
 					}));
 				}
 			}
+
+			// show "use add tab button to select log profile"
+			if ((window as MainWindow)?.ShowTutorialOfUsingAddTabButtonToSelectLogProfile(() => this.ShowNextTutorial(), this.SkipAllTutorials) == true)
+				return true;
 
 			// show "switch side panels"
 			if (!persistentState.GetValueOrDefault(IsSwitchingSidePanelsTutorialShownKey))
