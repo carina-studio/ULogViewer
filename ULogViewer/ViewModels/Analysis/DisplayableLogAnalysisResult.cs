@@ -15,7 +15,7 @@ class DisplayableLogAnalysisResult : BaseApplicationObject<IULogViewerApplicatio
         + 4 // Id
         + 4 // isMessageValid
         + 4; // Type
-    static int NextId = 1;
+    static volatile int NextId = 1;
 
 
     // Fields.
