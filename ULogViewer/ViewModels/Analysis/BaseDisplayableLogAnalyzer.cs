@@ -27,13 +27,7 @@ abstract class BaseDisplayableLogAnalyzer<TProcessingToken, TResult> : BaseDispl
     /// <param name="priority">Priority of logs processing.</param>
     protected BaseDisplayableLogAnalyzer(IULogViewerApplication app, IList<DisplayableLog> sourceLogs, Comparison<DisplayableLog> comparison, DisplayableLogProcessingPriority priority = DisplayableLogProcessingPriority.Default) : base(app, sourceLogs, comparison, priority)
     { 
-        this.analysisResults = new((lhs, rhs) => 
-        {
-            var result = this.CompareSourceLogs(lhs.Log, rhs.Log);
-            if (result != 0)
-                return result;
-            return lhs.Id - rhs.Id;
-        });
+        this.analysisResults = new((lhs, rhs) => lhs.Id - rhs.Id);
         this.AnalysisResults = new Collections.SafeReadOnlyList<TResult>(this.analysisResults);
     }
 
@@ -105,7 +99,7 @@ abstract class BaseDisplayableLogAnalyzer<TProcessingToken, TResult> : BaseDispl
             }
             this.tempResults.AddRange(resultList);
         }
-        this.analysisResults.AddAll(this.tempResults, true);
+        this.analysisResults.AddAll(this.tempResults);
         this.tempResults.Clear();
         this.OnPropertyChanged(nameof(MemorySize));
     }
