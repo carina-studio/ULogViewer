@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Data;
 using Avalonia.LogicalTree;
 using Avalonia.Styling;
+using CarinaStudio.AppSuite.Product;
 using CarinaStudio.Collections;
 using CarinaStudio.ULogViewer.Converters;
 using CarinaStudio.ULogViewer.Logs.Profiles;
@@ -24,6 +25,10 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
     /// Property of <see cref="ShowPinnedLogProfiles"/>.
     /// </summary>
     public static readonly StyledProperty<bool> ShowPinnedLogProfilesProperty = AvaloniaProperty.Register<LogProfileSelectionContextMenu, bool>(nameof(ShowPinnedLogProfiles), true);
+
+
+    // Static fields.
+    static readonly StyledProperty<bool> IsProVersionActivatedProperty = AvaloniaProperty.Register<LogProfileSelectionContextMenu, bool>("IsProVersionActivated", false);
 
 
     // Fields.
@@ -133,6 +138,19 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
         { 
             Path = nameof(LogProfile.Name) 
         });
+        menuItem.Bind(MenuItem.IsEnabledProperty, new MultiBinding().Also(it =>
+        {
+            it.Bindings.Add(new Binding()
+            {
+                Path = "IsProVersionActivated",
+                Source = this,
+            });
+            it.Bindings.Add(new Binding()
+            {
+                Path = $"!{nameof(LogProfile.DataSourceProvider)}.{nameof(Logs.DataSources.ILogDataSourceProvider.IsProVersionOnly)}",
+            });
+            it.Converter = Avalonia.Data.Converters.BoolConverters.Or;
+        }));
     });
 
 
@@ -173,6 +191,16 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
             if (this.GetValue<bool>(ShowPinnedLogProfilesProperty) && this.pinnedLogProfiles.IsNotEmpty())
                 it.Add(this.pinnedLogProfilesSeparator);
         }));
+        App.Current.ProductManager.Let(it =>
+        {
+            if (it.IsMock)
+                this.SetValue<bool>(IsProVersionActivatedProperty, false);
+            else
+            {
+                this.SetValue<bool>(IsProVersionActivatedProperty, it.IsProductActivated(Products.Professional));
+                it.ProductActivationChanged += this.OnProductActivationChanged;
+            }
+        });
     }
 
 
@@ -186,6 +214,7 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
             logProfile.PropertyChanged -= this.OnLogProfilePropertyChanged;
         this.items.Clear();
         this.pinnedLogProfiles.Clear();
+        App.Current.ProductManager.ProductActivationChanged -= this.OnProductActivationChanged;
         base.OnDetachedFromLogicalTree(e);
     }
 
@@ -288,6 +317,14 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
             default:
                 throw new NotSupportedException($"Unsupported action of change of log profile list: {e.Action}");
         }
+    }
+
+
+    // Called when activation state of product changed.
+    void OnProductActivationChanged(IProductManager productManager, string productId, bool isActivated)
+    {
+        if (productId == Products.Professional)
+            this.SetValue<bool>(IsProVersionActivatedProperty, isActivated);
     }
 
 
