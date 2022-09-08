@@ -199,6 +199,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ContextMenu logMarkingMenu;
 		readonly IntegerTextBox logProcessIdFilterTextBox;
 		readonly Panel logProcessIdFilterTextBoxPanel;
+		readonly ContextMenu logProfileSelectionMenu;
 		readonly ToggleButton logsSavingButton;
 		readonly ContextMenu logsSavingMenu;
 		ScrollViewer? logScrollViewer;
@@ -217,6 +218,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly HashSet<Avalonia.Input.Key> pressedKeys = new HashSet<Avalonia.Input.Key>();
 		readonly ScheduledAction reportSelectedLogsTimeInfoAction;
 		readonly ScheduledAction scrollToLatestLogAction;
+		readonly ToggleButton selectAndSetLogProfileDropDownButton;
 		readonly HashSet<KeyLogAnalysisRuleSet> selectedKeyLogAnalysisRuleSets = new();
 		readonly HashSet<LogAnalysisScriptSet> selectedLogAnalysisScriptSets = new();
 		readonly HashSet<OperationDurationAnalysisRuleSet> selectedOperationDurationAnalysisRuleSets = new();
@@ -346,8 +348,19 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (this.Application.TryGetResource<double>("Double/SessionView.LogListBox.MinSizeToCloseSidePanel", out var doubleRes))
 				this.minLogListBoxSizeToCloseSidePanel = doubleRes.GetValueOrDefault();
 
+			// setup containers
+			this.logListBoxContainer = this.Get<Panel>(nameof(logListBoxContainer)).Also(it =>
+			{
+				it.GetObservable(BoundsProperty).Subscribe(_ => this.autoCloseSidePanelAction?.Schedule());
+			});
+			this.logThreadIdFilterTextBoxPanel = this.Get<Panel>(nameof(logThreadIdFilterTextBoxPanel));
+			var toolBarContainer = this.Get<Control>("toolBarContainer").Also(it =>
+			{
+				it.AddHandler(Control.PointerReleasedEvent, this.OnToolBarPointerReleased, RoutingStrategies.Tunnel);
+			});
+
 			// setup controls
-			this.copyLogPropertyMenuItem = this.FindControl<MenuItem>(nameof(copyLogPropertyMenuItem)).AsNonNull();
+			this.copyLogPropertyMenuItem = this.Get<MenuItem>(nameof(copyLogPropertyMenuItem));
 			this.createLogAnalysisRuleSetButton = this.Get<ToggleButton>(nameof(createLogAnalysisRuleSetButton));
 			this.createLogAnalysisRuleSetMenu = ((ContextMenu)this.Resources[nameof(createLogAnalysisRuleSetMenu)].AsNonNull()).Also(it =>
 			{
@@ -358,8 +371,8 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.createLogAnalysisRuleSetButton.IsChecked = true;
 				});
 			});
-			this.dragDropReceiverBorder = this.FindControl<Border>(nameof(dragDropReceiverBorder)).AsNonNull();
-			this.keyLogAnalysisRuleSetListBox = this.FindControl<Avalonia.Controls.ListBox>(nameof(keyLogAnalysisRuleSetListBox))!.Also(it =>
+			this.dragDropReceiverBorder = this.Get<Border>(nameof(dragDropReceiverBorder));
+			this.keyLogAnalysisRuleSetListBox = this.Get<Avalonia.Controls.ListBox>(nameof(keyLogAnalysisRuleSetListBox)).Also(it =>
 			{
 				it.SelectionChanged += this.OnLogAnalysisRuleSetListBoxSelectionChanged;
 			});
@@ -382,7 +395,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					}
 				};
 			});
-			this.logAnalysisResultListBox = this.FindControl<AppSuite.Controls.ListBox>(nameof(logAnalysisResultListBox))!.Also(it =>
+			this.logAnalysisResultListBox = this.Get<AppSuite.Controls.ListBox>(nameof(logAnalysisResultListBox)).Also(it =>
 			{
 				it.DoubleClickOnItem += this.OnLogAnalysisResultListBoxDoubleClickOnItem;
 				it.AddHandler(PointerPressedEvent, this.OnLogAnalysisResultListBoxPointerPressed, RoutingStrategies.Tunnel);
@@ -434,22 +447,18 @@ namespace CarinaStudio.ULogViewer.Controls
 					}
 				};
 			});
-			this.logFileListBox = this.FindControl<AppSuite.Controls.ListBox>(nameof(logFileListBox)).AsNonNull();
-			this.logHeaderContainer = this.FindControl<Control>(nameof(logHeaderContainer)).AsNonNull();
-			this.logHeaderGrid = this.FindControl<Grid>(nameof(logHeaderGrid)).AsNonNull().Also(it =>
+			this.logFileListBox = this.Get<AppSuite.Controls.ListBox>(nameof(logFileListBox));
+			this.logHeaderContainer = this.Get<Control>(nameof(logHeaderContainer));
+			this.logHeaderGrid = this.Get<Grid>(nameof(logHeaderGrid)).Also(it =>
 			{
 				it.GetObservable(BoundsProperty).Subscribe(_ => this.ReportLogHeaderColumnWidths());
 			});
-			this.logLevelFilterComboBox = this.FindControl<ComboBox>(nameof(logLevelFilterComboBox)).AsNonNull().Also(it =>
+			this.logLevelFilterComboBox = this.Get<ComboBox>(nameof(logLevelFilterComboBox)).Also(it =>
 			{
 				if (Platform.IsMacOS)
 					(this.Application as AppSuite.AppSuiteApplication)?.EnsureClosingToolTipIfWindowIsInactive(it);
 			});
-			this.logListBoxContainer = this.FindControl<Panel>(nameof(logListBoxContainer)).AsNonNull().Also(it =>
-			{
-				it.GetObservable(BoundsProperty).Subscribe(_ => this.autoCloseSidePanelAction?.Schedule());
-			});
-			this.logListBox = this.logListBoxContainer.FindControl<Avalonia.Controls.ListBox>(nameof(logListBox)).AsNonNull().Also(it =>
+			this.logListBox = this.logListBoxContainer.FindControl<Avalonia.Controls.ListBox>(nameof(logListBox))!.Also(it =>
 			{
 				it.AddHandler(Avalonia.Controls.ListBox.PointerPressedEvent, this.OnLogListBoxPointerPressed, RoutingStrategies.Tunnel);
 				it.AddHandler(Avalonia.Controls.ListBox.PointerReleasedEvent, this.OnLogListBoxPointerReleased, RoutingStrategies.Tunnel);
@@ -470,13 +479,26 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.IsScrollingToLatestLogNeeded = false;
 				};
 			});
-			this.logProcessIdFilterTextBoxPanel = this.FindControl<Panel>(nameof(logProcessIdFilterTextBoxPanel)).AsNonNull();
-			this.logProcessIdFilterTextBox = this.logProcessIdFilterTextBoxPanel.FindControl<IntegerTextBox>(nameof(logProcessIdFilterTextBox)).AsNonNull().Also(it =>
+			this.logProfileSelectionMenu = ((LogProfileSelectionContextMenu)this.Resources[nameof(logProfileSelectionMenu)].AsNonNull()).Also(it =>
+			{
+				it.LogProfileSelected += async (_, logProfile) => 
+				{
+					await this.SetLogProfileAsync(logProfile);
+				};
+				it.MenuClosed += (_, e) => this.SynchronizationContext.Post(() => this.selectAndSetLogProfileDropDownButton!.IsChecked = false);
+				it.MenuOpened += (_, e) => this.SynchronizationContext.Post(() =>
+				{
+					ToolTip.SetIsOpen(this.selectAndSetLogProfileDropDownButton!, false);
+					this.selectAndSetLogProfileDropDownButton!.IsChecked = true;
+				});
+			});
+			this.logProcessIdFilterTextBoxPanel = this.Get<Panel>(nameof(logProcessIdFilterTextBoxPanel));
+			this.logProcessIdFilterTextBox = this.logProcessIdFilterTextBoxPanel.FindControl<IntegerTextBox>(nameof(logProcessIdFilterTextBox))!.Also(it =>
 			{
 				if (Platform.IsMacOS)
 					(this.Application as AppSuite.AppSuiteApplication)?.EnsureClosingToolTipIfWindowIsInactive(it);
 			});
-			this.logsSavingButton = this.FindControl<ToggleButton>(nameof(logsSavingButton)).AsNonNull();
+			this.logsSavingButton = this.Get<ToggleButton>(nameof(logsSavingButton));
 			this.logsSavingMenu = ((ContextMenu)this.Resources[nameof(logsSavingMenu)].AsNonNull()).Also(it =>
 			{
 				it.MenuClosed += (_, e) => this.SynchronizationContext.Post(() => this.logsSavingButton.IsChecked = false);
@@ -486,25 +508,24 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.logsSavingButton.IsChecked = true;
 				});
 			});
-			this.logTextFilterTextBox = this.FindControl<RegexTextBox>(nameof(logTextFilterTextBox)).AsNonNull().Also(it =>
+			this.logTextFilterTextBox = this.Get<RegexTextBox>(nameof(logTextFilterTextBox)).Also(it =>
 			{
 				it.IgnoreCase = this.Settings.GetValueOrDefault(SettingKeys.IgnoreCaseOfLogTextFilter);
 				it.ValidationDelay = this.UpdateLogFilterParamsDelay;
 				if (Platform.IsMacOS)
 					(this.Application as AppSuite.AppSuiteApplication)?.EnsureClosingToolTipIfWindowIsInactive(it);
 			});
-			this.logThreadIdFilterTextBoxPanel = this.FindControl<Panel>(nameof(logThreadIdFilterTextBoxPanel)).AsNonNull();
 			this.logThreadIdFilterTextBox = this.logThreadIdFilterTextBoxPanel.FindControl<IntegerTextBox>(nameof(logThreadIdFilterTextBox)).AsNonNull().Also(it =>
 			{
 				if (Platform.IsMacOS)
 					(this.Application as AppSuite.AppSuiteApplication)?.EnsureClosingToolTipIfWindowIsInactive(it);
 			});
-			this.markedLogListBox = this.FindControl<Avalonia.Controls.ListBox>(nameof(markedLogListBox)).AsNonNull();
+			this.markedLogListBox = this.Get<Avalonia.Controls.ListBox>(nameof(markedLogListBox));
 			this.operationDurationAnalysisRuleSetListBox = this.Get<Avalonia.Controls.ListBox>(nameof(operationDurationAnalysisRuleSetListBox)).Also(it =>
 			{
 				it.SelectionChanged += this.OnLogAnalysisRuleSetListBoxSelectionChanged;
 			});
-			this.otherActionsButton = this.FindControl<ToggleButton>(nameof(otherActionsButton)).AsNonNull();
+			this.otherActionsButton = this.Get<ToggleButton>(nameof(otherActionsButton));
 			this.otherActionsMenu = ((ContextMenu)this.Resources[nameof(otherActionsMenu)].AsNonNull()).Also(it =>
 			{
 				it.MenuClosed += (_, e) => this.SynchronizationContext.Post(() => this.otherActionsButton.IsChecked = false);
@@ -514,9 +535,9 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.otherActionsButton.IsChecked = true;
 				});
 			});
-			this.predefinedLogTextFilterListBox = this.FindControl<Avalonia.Controls.ListBox>(nameof(predefinedLogTextFilterListBox)).AsNonNull();
+			this.predefinedLogTextFilterListBox = this.Get<Avalonia.Controls.ListBox>(nameof(predefinedLogTextFilterListBox));
 			this.predefinedLogTextFiltersButton = this.Get<ToggleButton>(nameof(predefinedLogTextFiltersButton));
-			this.predefinedLogTextFiltersPopup = this.FindControl<Popup>(nameof(predefinedLogTextFiltersPopup)).AsNonNull().Also(it =>
+			this.predefinedLogTextFiltersPopup = this.Get<Popup>(nameof(predefinedLogTextFiltersPopup)).Also(it =>
 			{
 				it.Closed += (_, sender) => this.logListBox.Focus();
 				it.Opened += (_, sender) => this.SynchronizationContext.Post(() =>
@@ -532,8 +553,9 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.predefinedLogTextFilterListBox.Focus();
 				});
 			});
-			this.showLogPropertyMenuItem = this.FindControl<MenuItem>(nameof(showLogPropertyMenuItem)).AsNonNull();
-			this.sidePanelColumn = this.FindControl<Grid>("RootGrid").AsNonNull().Let(grid =>
+			this.selectAndSetLogProfileDropDownButton = toolBarContainer.FindControl<ToggleButton>(nameof(selectAndSetLogProfileDropDownButton)).AsNonNull();
+			this.showLogPropertyMenuItem = this.Get<MenuItem>(nameof(showLogPropertyMenuItem));
+			this.sidePanelColumn = this.Get<Grid>("RootGrid").Let(grid =>
 			{
 				return grid.ColumnDefinitions[2].Also(it =>
 				{
@@ -555,21 +577,17 @@ namespace CarinaStudio.ULogViewer.Controls
 					});
 				});
 			});
-			this.sidePanelContainer = this.FindControl<Control>(nameof(sidePanelContainer)).AsNonNull();
+			this.sidePanelContainer = this.Get<Control>(nameof(sidePanelContainer));
 #if !DEBUG
-			this.FindControl<Button>("testButton").AsNonNull().IsVisible = false;
+			this.Get<Button>("testButton").IsVisible = false;
 #endif
-			this.timestampCategoryListBox = this.FindControl<AppSuite.Controls.ListBox>(nameof(timestampCategoryListBox)).AsNonNull().Also(it =>
+			this.timestampCategoryListBox = this.Get<AppSuite.Controls.ListBox>(nameof(timestampCategoryListBox)).Also(it =>
 			{
 				it.GetObservable(Avalonia.Controls.ListBox.SelectedItemProperty).Subscribe(item =>
 					this.OnLogCategoryListBoxSelectedItemChanged(it, item as DisplayableLogCategory));
 			});
-			this.FindControl<Control>("toolBarContainer").AsNonNull().Let(it =>
-			{
-				it.AddHandler(Control.PointerReleasedEvent, this.OnToolBarPointerReleased, RoutingStrategies.Tunnel);
-			});
-			this.toolBarScrollViewer = this.FindControl<ToolBarScrollViewer>(nameof(toolBarScrollViewer)).AsNonNull();
-			this.workingDirectoryActionsButton = this.FindControl<ToggleButton>(nameof(workingDirectoryActionsButton)).AsNonNull();
+			this.toolBarScrollViewer = this.Get<ToolBarScrollViewer>(nameof(toolBarScrollViewer));
+			this.workingDirectoryActionsButton = this.Get<ToggleButton>(nameof(workingDirectoryActionsButton));
 			this.workingDirectoryActionsMenu = ((ContextMenu)this.Resources[nameof(workingDirectoryActionsMenu)].AsNonNull()).Also(it =>
 			{
 				it.MenuClosed += (_, e) => this.SynchronizationContext.Post(() => this.workingDirectoryActionsButton.IsChecked = false);
@@ -4847,6 +4865,11 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Show single log file in system file manager.
 		void ShowLogFileInExplorer(string filePath) => 
 			Platform.OpenFileManager(filePath);
+		
+
+		// Show menu to select log profile.
+		public void ShowLogProfileSelectionMenu() =>
+			this.logProfileSelectionMenu.Open(this.selectAndSetLogProfileDropDownButton);
 
 
 		// Show menu for saving logs.

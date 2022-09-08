@@ -290,6 +290,9 @@
 			</MenuItem>
 		</ContextMenu>
 
+		<!-- Log profile selection menu -->
+		<appControls:LogProfileSelectionContextMenu x:Key="logProfileSelectionMenu" PlacementMode="Bottom"/>
+
 		<!-- Logs saving menu -->
 		<ContextMenu x:Key="logsSavingMenu" PlacementMode="Bottom">
 			<MenuItem Command="{Binding $parent[UserControl].SaveLogsCommand}" Header="{DynamicResource String/SessionView.SaveLogs}" InputGesture="{StaticResource KeyGesture/SessionView.SaveLogs}"/>
@@ -433,9 +436,15 @@
 							<StackPanel Orientation="Horizontal">
 
 								<!-- Select log profiles -->
-								<Button Name="selectAndSetLogProfileButton" Classes="ToolBar_Button" Command="{Binding $parent[UserControl].SelectAndSetLogProfileCommand}" ToolTip.Tip="{DynamicResource String/SessionView.SetLogProfile}">
+								<Button Name="selectAndSetLogProfileButton" Classes="ToolBar_Button_WithDropDownButton" Command="{Binding $parent[UserControl].SelectAndSetLogProfileCommand}" ToolTip.Tip="{DynamicResource String/SessionView.SetLogProfile}">
 									<Image Classes="Icon" Source="{StaticResource Image/LogProfile}"/>
 								</Button>
+								<ToggleButton Name="selectAndSetLogProfileDropDownButton" Classes="ToolBar_DropDownButton" Command="{Binding $parent[UserControl].ShowLogProfileSelectionMenu}" IsEnabled="{Binding #selectAndSetLogProfileButton.IsEnabled}" ToolTip.Tip="{DynamicResource String/SessionView.SetLogProfile}">
+									<Panel>
+										<Image Classes="ToolBar_DropDownButtonIcon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.MoveDown}"/>
+										<Image Classes="ToolBar_DropDownButtonIcon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.MoveDown.Light}"/>
+									</Panel>
+								</ToggleButton>
 
 								<!-- Edit log profile -->
 								<Button Classes="ToolBar_Button" Command="{Binding $parent[UserControl].EditLogProfileCommand}" IsVisible="{Binding $parent[UserControl].HasLogProfile}" ToolTip.Tip="{DynamicResource String/LogProfileSelectionDialog.EditLogProfile}">
