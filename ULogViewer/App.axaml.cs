@@ -36,6 +36,8 @@ namespace CarinaStudio.ULogViewer
 
 
 		// Fields.
+		IResourceProvider? compactResources;
+		IDisposable? compactResourcesToken;
 		ExternalDependency[] externalDependencies = new ExternalDependency[0];
 
 
@@ -222,6 +224,20 @@ namespace CarinaStudio.ULogViewer
 		// Load theme.
 		protected override IStyle? OnLoadTheme(AppSuite.ThemeMode themeMode, bool useCompactUI)
 		{
+			// load resources
+			if (!useCompactUI)
+				this.compactResourcesToken = this.compactResourcesToken.DisposeAndReturnNull();
+			else
+			{
+				this.compactResources ??= new ResourceInclude()
+				{
+					Source = new Uri("avares://ULogViewer/Styles/Resources-Compact.axaml")
+				};
+				if (this.compactResourcesToken == null)
+					this.compactResourcesToken = this.AddCustomResource(this.compactResources);
+			}
+
+			// load styles
 			var uri = themeMode switch
 			{
 				AppSuite.ThemeMode.Light => new Uri($"avares://ULogViewer/Styles/Light.axaml"),
