@@ -15,28 +15,44 @@
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile" Color="{DynamicResource SystemAccentColorLight1}"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Android" Color="#9fc037"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Apple" Color="#ffffff"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Audio" Color="#3ebdcd"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.AWS" Color="#ff9900"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Azure" Color="#0171cc"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Battery" Color="#d9c72a"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Book" Color="#7f3300"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Checklist" Color="#93d894"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Cloud" Color="#ffffff"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Code" Color="#404040"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Database" Color="#ffd400"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Debug" Color="#00bfbf"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Diagnostic" Color="#cd3800"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Experiment" Color="#007f0e"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Flag" Color="#20b37c"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Folder" Color="#d8b400"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Image" Color="#4289d9"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Inspiration" Color="#e6d16d"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Launch" Color="#ff3f00"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Layers" Color="#9f67d9"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Linux_Debian" Color="#d40a4e"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Linux_Fedora" Color="#376cbc"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Linux_OpenSuse" Color="#72ba27"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Linux_Mint" Color="#a9e768"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Linux_Ubuntu" Color="#ff620c"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Location" Color="#cd3e3e"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Login" Color="#53be25"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Logout" Color="#53be25"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Network" Color="#0094ff"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Performance" Color="#ff3f00"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Phone" Color="#000000"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Power" Color="#e6d16d"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Screen" Color="#317fff"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Security" Color="#00bfbf"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Signal" Color="#317fff"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Statistic" Color="#5200cd"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Temperature" Color="#e64329"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Terminal" Color="#000000"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.VersionControl" Color="#ff6600"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Video" Color="#89cc3e"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Website" Color="#016abf"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Windows" Color="#00a8e9"/>
 

@@ -287,24 +287,50 @@
 
 	<!-- LogProfileIcon -->
 	<sys:String x:Key="String/LogProfileIcon.Analysis">分析</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.ArtificialIntelligence">人工智慧</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Audio">音訊</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Battery">電池</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Book">書籍</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Checklist">核對列表</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Cloud">雲端</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Code">程式碼</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Computer">電腦</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Configuration">組態</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.CPU">處理器</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Database">資料庫</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Debug">偵錯</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Diagnostic">診斷</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Error">錯誤</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Experiment">實驗</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.File">檔案</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Flag">旗幟</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Folder">資料夾</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Image">影像</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Information">資訊</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Inspiration">靈感</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Launch">啟動</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Layers">階層</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Location">位置</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Login">登入</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Logout">登出</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Mark">標記</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Network">網路</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Performance">效能</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Phone">手機</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Power">電力</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.RAM">記憶體</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Screen">螢幕</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Security">安全性</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Server">伺服器</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Signal">訊號</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Statistic">統計</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Table">表格</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Temperature">溫度</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Terminal">終端機</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.VersionControl">版本控制</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Video">視訊</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Warning">警告</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Watch">手錶</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Website">網站</sys:String>
 
 	<!-- LogProfileEditorDialog -->

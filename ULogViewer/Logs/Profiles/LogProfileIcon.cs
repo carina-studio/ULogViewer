@@ -20,6 +20,14 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// </summary>
 		Apple,
 		/// <summary>
+		/// Artificial Intelligence (AI).
+		/// </summary>
+		ArtificialIntelligence,
+		/// <summary>
+		/// Audio.
+		/// </summary>
+		Audio,
+		/// <summary>
 		/// AWS.
 		/// </summary>
 		AWS,
@@ -28,9 +36,17 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// </summary>
 		Azure,
 		/// <summary>
+		/// Battery.
+		/// </summary>
+		Battery,
+		/// <summary>
 		/// Book.
 		/// </summary>
 		Book,
+		/// <summary>
+		/// Checklist.
+		/// </summary>
+		Checklist,
 		/// <summary>
 		/// Cloud data.
 		/// </summary>
@@ -48,6 +64,10 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// </summary>
 		Configuration,
 		/// <summary>
+		/// CPU.
+		/// </summary>
+		CPU,
+		/// <summary>
 		/// Database.
 		/// </summary>
 		Database,
@@ -60,6 +80,10 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// </summary>
 		Diagnostic,
 		/// <summary>
+		/// Error.
+		/// </summary>
+		Error,
+		/// <summary>
 		/// Experiment.
 		/// </summary>
 		Experiment,
@@ -68,6 +92,10 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// </summary>
 		File,
 		/// <summary>
+		/// Flag.
+		/// </summary>
+		Flag,
+		/// <summary>
 		/// Folder.
 		/// </summary>
 		Folder,
@@ -75,6 +103,26 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// Google Cloud Platform.
 		/// </summary>
 		GCP,
+		/// <summary>
+		/// Image.
+		/// </summary>
+		Image,
+		/// <summary>
+		/// Information.
+		/// </summary>
+		Information,
+		/// <summary>
+		/// Inspiration.
+		/// </summary>
+		Inspiration,
+		/// <summary>
+		/// Layers.
+		/// </summary>
+		Layers,
+		/// <summary>
+		/// Launch.
+		/// </summary>
+		Launch,
 		/// <summary>
 		/// Linux.
 		/// </summary>
@@ -104,6 +152,22 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// </summary>
 		Linux_Ubuntu,
 		/// <summary>
+		/// Location.
+		/// </summary>
+		Location,
+		/// <summary>
+		/// Login.
+		/// </summary>
+		Login,
+		/// <summary>
+		/// Logout.
+		/// </summary>
+		Logout,
+		/// <summary>
+		/// Mark.
+		/// </summary>
+		Mark,
+		/// <summary>
 		/// Network.
 		/// </summary>
 		Network,
@@ -116,13 +180,41 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// </summary>
 		Phone,
 		/// <summary>
+		/// Power.
+		/// </summary>
+		Power,
+		/// <summary>
+		/// RAM.
+		/// </summary>
+		RAM,
+		/// <summary>
+		/// Screen.
+		/// </summary>
+		Screen,
+		/// <summary>
 		/// Security.
 		/// </summary>
 		Security,
 		/// <summary>
+		/// Server.
+		/// </summary>
+		Server,
+		/// <summary>
+		/// Signal.
+		/// </summary>
+		Signal,
+		/// <summary>
 		/// Statistic.
 		/// </summary>
 		Statistic,
+		/// <summary>
+		/// Table.
+		/// </summary>
+		Table,
+		/// <summary>
+		/// Temperature.
+		/// </summary>
+		Temperature,
 		/// <summary>
 		/// Terminal.
 		/// </summary>
@@ -135,6 +227,18 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// Version control.
 		/// </summary>
 		VersionControl,
+		/// <summary>
+		/// Video.
+		/// </summary>
+		Video,
+		/// <summary>
+		/// Warning.
+		/// </summary>
+		Warning,
+		/// <summary>
+		/// Watch.
+		/// </summary>
+		Watch,
 		/// <summary>
 		/// Website.
 		/// </summary>
