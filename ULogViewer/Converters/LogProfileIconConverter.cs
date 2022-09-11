@@ -1,5 +1,6 @@
 ﻿using Avalonia.Data.Converters;
 using Avalonia.Media;
+using CarinaStudio.Controls;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using System;
 using System.Globalization;
@@ -37,36 +38,59 @@ namespace CarinaStudio.ULogViewer.Converters
 
 			// select name of icon
 			var iconName = (string?)null;
+			var iconColor = LogProfileIconColor.Default;
 			if (value is LogProfile profile)
 			{
 				if (profile == LogProfileManager.Default.EmptyProfile)
 					iconName = "Empty";
 				else
+				{
 					iconName = profile.Icon.ToString();
+					//color = profile.IconColor;
+				}
 			}
 			else if (value is LogProfileIcon icon)
 				iconName = icon.ToString();
 			else
 				return null;
+			
+			// select color of icon if specified
+			if (parameter is LogProfileIconColor)
+				iconColor = (LogProfileIconColor)parameter;
+			else if (parameter is string strParam && Enum.TryParse<LogProfileIconColor>(strParam, out var iconColorParam))
+				iconColor = iconColorParam;
 
-			// convert to image
-			var mode = parameter as string;
-			var res = (object?)null;
-			if (mode != null)
+			// get image
+			var modeParam = parameter as string;
+			var image = (IImage?)null;
+			if (modeParam != null)
+				app.Resources.TryGetResource<IImage>($"Image/LogProfile.{iconName}.{modeParam}", out image);
+			if (image == null)
+				app.Resources.TryGetResource($"Image/LogProfile.{iconName}", out image);
+			if (image == null)
 			{
-				if (app.Resources.TryGetResource($"Image/LogProfile.{iconName}.{mode}", out res) && res is IImage)
-					return res;
+				if (modeParam != null)
+					app.Resources.TryGetResource($"Image/LogProfile.File.{modeParam}", out image);
+				if (image == null)
+					app.Resources.TryGetResource($"Image/LogProfile.File", out image);
 			}
-			if (app.Resources.TryGetResource($"Image/LogProfile.{iconName}", out res) && res is IImage)
-				return res;
-			if (mode != null)
+			if (image == null)
+				return null;
+			
+			// apply color
+			if (iconColor != LogProfileIconColor.Default)
 			{
-				if (app.Resources.TryGetResource($"Image/LogProfile.File.{mode}", out res) && res is IImage)
-					return res;
+				var geometry = ((image as DrawingImage)?.Drawing as GeometryDrawing)?.Geometry;
+				if (geometry != null && app.Styles.TryGetResource<IBrush>($"Brush/LogProfileIconColor.{iconColor}", out var brush))
+				{
+					image = new DrawingImage(new GeometryDrawing()
+					{
+						Brush = brush,
+						Geometry = geometry,
+					});
+				}
 			}
-			if (app.Resources.TryGetResource($"Image/LogProfile.File", out res) && res is IImage)
-				return res;
-			return null;
+			return image;
 		}
 
 
