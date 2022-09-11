@@ -387,6 +387,7 @@
 	<!-- Styles -->
 	<UserControl.Styles>
 		<Style Selector="ListBox.Log">
+			<Setter Property="CornerRadius" Value="0"/>
 			<Setter Property="Padding" Value="{StaticResource Thickness/SessionView.LogListBox.Padding}"/>
 		</Style>
 		<Style Selector="ListBox.Log > ListBoxItem">
@@ -785,7 +786,7 @@
 					<StackPanel ClipToBounds="True" Orientation="Horizontal">
 
 						<!-- Icon -->
-						<Image Classes="StatusBar_Icon" Source="{StaticResource Image/Calendar}"/>
+						<Image Classes="StatusBar_IconWithText" Source="{StaticResource Image/Calendar}"/>
 
 						<!-- Starting point -->
 						<TextBlock Classes="StatusBar_TextBlock" Foreground="{DynamicResource TextControlForeground}" Text="{Binding LogsDurationStartingString}" ToolTip.Placement="Right" ToolTip.Tip="{DynamicResource String/SessionView.LogsDurationStartingPoint}"/>
@@ -1148,7 +1149,7 @@
 				</Grid>
 
 				<!-- Log analysis -->
-				<Grid HorizontalAlignment="Stretch" IsVisible="{Binding IsLogAnalysisPanelVisible}" RowDefinitions="Auto,*" VerticalAlignment="Stretch">
+				<Grid HorizontalAlignment="Stretch" IsVisible="{Binding IsLogAnalysisPanelVisible}" RowDefinitions="Auto,*,Auto" VerticalAlignment="Stretch">
 					<Border Classes="SessionView_SidePanel_Header">
 						<Border.Styles>
 							<Style Selector="ToggleButton.ToolBar_ToggleButton">
@@ -1453,6 +1454,18 @@
 							</MultiBinding>
 						</Border.IsVisible>
 						<TextBlock Classes="SessionView_SidePanel_FullPanelHint" Text="{DynamicResource String/SessionView.LogAnalysisPanel.Hint}"/>
+					</Border>
+					<Border Background="{DynamicResource Brush/SessionView.LogHeader.Background}" Classes="StatusBar" Grid.Row="2" IsVisible="{Binding $parent[UserControl].SelectedLogAnalysisResultsTotalDuration, Converter={x:Static aConverters:ObjectConverters.IsNotNull}}" Padding="{StaticResource Thickness/StatusBar.Item.Margin}">
+						<StackPanel VerticalAlignment="Center">
+							<Grid Background="{x:Static Brushes.Transparent}" ColumnDefinitions="Auto,*" HorizontalAlignment="Left" ToolTip.Placement="Left" ToolTip.Tip="{DynamicResource String/SessionView.SelectedLogAnalysisResultsTotalDuration}">
+								<Image Classes="StatusBar_IconWithText" Source="{StaticResource Image/Total}"/>
+								<TextBlock Classes="StatusBar_TextBlock" Grid.Column="1" Margin="0" Text="{Binding $parent[UserControl].SelectedLogAnalysisResultsTotalDuration, Converter={x:Static asConverters:TimeSpanConverter.Default}}"/>
+							</Grid>
+							<Grid Background="{x:Static Brushes.Transparent}" ColumnDefinitions="Auto,*" HorizontalAlignment="Left" IsVisible="{Binding $parent[UserControl].SelectedLogAnalysisResultsAverageDuration, Converter={x:Static aConverters:ObjectConverters.IsNotNull}}" ToolTip.Placement="Left" ToolTip.Tip="{DynamicResource String/SessionView.SelectedLogAnalysisResultsAverageDuration}">
+								<Image Classes="StatusBar_IconWithText" Source="{StaticResource Image/Average}"/>
+								<TextBlock Classes="StatusBar_TextBlock" Grid.Column="1" Margin="0" Text="{Binding $parent[UserControl].SelectedLogAnalysisResultsAverageDuration, Converter={x:Static asConverters:TimeSpanConverter.Default}}"/>
+							</Grid>
+						</StackPanel>
 					</Border>
 				</Grid>
 

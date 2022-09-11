@@ -804,6 +804,8 @@
 	<sys:String x:Key="String/SessionView.SaveLogs.WithShortcut">储存日志到档案 (Ctrl+S)</sys:String>
 	<sys:String x:Key="String/SessionView.SavingLogs">正在存储日志…</sys:String>
 	<sys:String x:Key="String/SessionView.ScrollToLatestLog">滚动至最新的日志</sys:String>
+	<sys:String x:Key="String/SessionView.SelectedLogAnalysisResultsAverageDuration">平均时距</sys:String>
+	<sys:String x:Key="String/SessionView.SelectedLogAnalysisResultsTotalDuration">总时距</sys:String>
 	<sys:String x:Key="String/SessionView.SelectedLogCount">已选取 {0} 笔</sys:String>
 	<sys:String x:Key="String/SessionView.SelectedLogsDuration">选择的时长为 {0}</sys:String>
 	<sys:String x:Key="String/SessionView.SelectMarkedLogs">选择已标记的日志</sys:String>

@@ -31,20 +31,28 @@ class OperationDurationDisplayableLogAnalyzer : ContextualBasedDisplayableLogAna
 
 
     // Result of analysis.
-    class Result : DisplayableLogAnalysisResult
+    public class Result : DisplayableLogAnalysisResult
     {
         // Fields.
         readonly string? customMessage;
-        readonly TimeSpan duration;
         readonly string operationName;
 
         // Constructor.
         public Result(OperationDurationDisplayableLogAnalyzer analyzer, string operationName, DisplayableLogAnalysisResultType resultType, DisplayableLog beginningLog, DisplayableLog endingLog, TimeSpan duration, string? customMessage) : base(analyzer, resultType, beginningLog)
         {
             this.customMessage = customMessage;
-            this.duration = duration;
+            this.Duration = duration;
             this.operationName = operationName;
         }
+
+        // Beginning log.
+        public override DisplayableLog? BeginningLog { get; }
+
+        // Duration.
+        public TimeSpan Duration { get; }
+
+        // Beginning log.
+        public override DisplayableLog? EndingLog { get; }
 
         // Memory size.
         public override long MemorySize => base.MemorySize + 8 + IntPtr.Size + (this.operationName.Length << 1);
@@ -52,7 +60,7 @@ class OperationDurationDisplayableLogAnalyzer : ContextualBasedDisplayableLogAna
         // Update message.
         protected override string? OnUpdateMessage()
         {
-            var durationMessage = AppSuite.Converters.TimeSpanConverter.Default.Convert<string>(this.duration);
+            var durationMessage = AppSuite.Converters.TimeSpanConverter.Default.Convert<string>(this.Duration);
             if (string.IsNullOrWhiteSpace(this.customMessage))
                 return $"{this.operationName}\n{durationMessage}";
             return $"{this.customMessage}\n{durationMessage}";

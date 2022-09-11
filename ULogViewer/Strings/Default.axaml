@@ -839,6 +839,8 @@ At line {2} column {3}.
 	<sys:String x:Key="String/SessionView.SaveLogs.WithShortcut">Save logs to file (Ctrl+S)</sys:String>
 	<sys:String x:Key="String/SessionView.SavingLogs">Saving logs…</sys:String>
 	<sys:String x:Key="String/SessionView.ScrollToLatestLog">Scroll to latest log</sys:String>
+	<sys:String x:Key="String/SessionView.SelectedLogAnalysisResultsAverageDuration">Average duration</sys:String>
+	<sys:String x:Key="String/SessionView.SelectedLogAnalysisResultsTotalDuration">Total duration</sys:String>
 	<sys:String x:Key="String/SessionView.SelectedLogCount">{0} Selected</sys:String>
 	<sys:String x:Key="String/SessionView.SelectedLogsDuration">Duration of selection is {0}</sys:String>
 	<sys:String x:Key="String/SessionView.SelectMarkedLogs">Select marked logs</sys:String>

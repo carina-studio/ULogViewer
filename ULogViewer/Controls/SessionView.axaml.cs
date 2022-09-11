@@ -122,6 +122,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		static readonly AvaloniaProperty<FontFamily> LogFontFamilyProperty = AvaloniaProperty.Register<SessionView, FontFamily>(nameof(LogFontFamily));
 		static readonly AvaloniaProperty<double> LogFontSizeProperty = AvaloniaProperty.Register<SessionView, double>(nameof(LogFontSize), 10.0);
 		static readonly AvaloniaProperty<int> MaxDisplayLineCountForEachLogProperty = AvaloniaProperty.Register<SessionView, int>(nameof(MaxDisplayLineCountForEachLog), 1);
+		static readonly DirectProperty<SessionView, TimeSpan?> SelectedLogAnalysisResultsAverageDurationProperty = AvaloniaProperty.RegisterDirect<SessionView, TimeSpan?>("SelectedLogAnalysisResultsAverageDuration", v => v.selectedLogAnalysisResultsAvgDuration);
+		static readonly DirectProperty<SessionView, TimeSpan?> SelectedLogAnalysisResultsTotalDurationProperty = AvaloniaProperty.RegisterDirect<SessionView, TimeSpan?>("SelectedLogAnalysisResultsTotalDuration", v => v.selectedLogAnalysisResultsTotalDuration);
 		static readonly AvaloniaProperty<TimeSpan?> SelectedLogsDurationProperty = AvaloniaProperty.Register<SessionView, TimeSpan?>(nameof(SelectedLogsDuration));
 		static readonly AvaloniaProperty<SessionViewStatusBarState> StatusBarStateProperty = AvaloniaProperty.Register<SessionView, SessionViewStatusBarState>(nameof(StatusBarState), SessionViewStatusBarState.None);
 
@@ -216,7 +218,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ToggleButton predefinedLogTextFiltersButton;
 		readonly Popup predefinedLogTextFiltersPopup;
 		readonly HashSet<Avalonia.Input.Key> pressedKeys = new HashSet<Avalonia.Input.Key>();
+		readonly ScheduledAction reportSelectedLogAnalysisDurationAction;
 		readonly ScheduledAction reportSelectedLogsTimeInfoAction;
+		TimeSpan? selectedLogAnalysisResultsAvgDuration;
+		TimeSpan? selectedLogAnalysisResultsTotalDuration;
 		readonly ScheduledAction scrollToLatestLogAction;
 		readonly ToggleButton selectAndSetLogProfileDropDownButton;
 		readonly HashSet<KeyLogAnalysisRuleSet> selectedKeyLogAnalysisRuleSets = new();
@@ -647,6 +652,32 @@ namespace CarinaStudio.ULogViewer.Controls
 				if (this.DataContext is not Session session || session.HasLogReaders)
 					return;
 				this.SelectAndSetWorkingDirectory();
+			});
+			this.reportSelectedLogAnalysisDurationAction = new(() =>
+			{
+				var totalDurtion = new TimeSpan();
+				var resultCount = 0;
+				if (this.logAnalysisResultListBox.SelectedItems.Count > 0)
+				{
+					foreach (var result in this.logAnalysisResultListBox.SelectedItems.Cast<DisplayableLogAnalysisResult>())
+					{
+						if (result is OperationDurationDisplayableLogAnalyzer.Result odResult)
+						{
+							totalDurtion += odResult.Duration;
+							++resultCount;
+						}
+					}
+				}
+				if (resultCount > 0)
+				{
+					this.SetAndRaise<TimeSpan?>(SelectedLogAnalysisResultsAverageDurationProperty, ref this.selectedLogAnalysisResultsAvgDuration, resultCount > 1 ? totalDurtion / resultCount : null);
+					this.SetAndRaise<TimeSpan?>(SelectedLogAnalysisResultsTotalDurationProperty, ref this.selectedLogAnalysisResultsTotalDuration, totalDurtion);
+				}
+				else
+				{
+					this.SetAndRaise<TimeSpan?>(SelectedLogAnalysisResultsAverageDurationProperty, ref this.selectedLogAnalysisResultsAvgDuration, null);
+					this.SetAndRaise<TimeSpan?>(SelectedLogAnalysisResultsTotalDurationProperty, ref this.selectedLogAnalysisResultsTotalDuration, null);
+				}
 			});
 			this.reportSelectedLogsTimeInfoAction = new ScheduledAction(() =>
 			{
@@ -3117,6 +3148,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.canCopySelectedLogAnalysisResults.Update(true);
 				this.logListBox.Focus();
 			});
+			this.reportSelectedLogAnalysisDurationAction.Schedule();
 		}
 
 
