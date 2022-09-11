@@ -25,6 +25,7 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Window<IU
 
 	// Fields.
 	bool areValidParameters;
+	readonly LogProfileIconColorComboBox iconColorComboBox;
 	readonly LogProfileIconComboBox iconComboBox;
 	readonly TextBox nameTextBox;
 	LogAnalysisScriptSet? scriptSetToEdit;
@@ -39,6 +40,7 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Window<IU
 		AvaloniaXamlLoader.Load(this);
 		if (Platform.IsLinux)
 			this.WindowStartupLocation = WindowStartupLocation.Manual;
+		this.iconColorComboBox = this.Get<LogProfileIconColorComboBox>(nameof(iconColorComboBox));
 		this.iconComboBox = this.Get<LogProfileIconComboBox>(nameof(iconComboBox));
 		this.nameTextBox = this.Get<TextBox>(nameof(nameTextBox)).Also(it =>
 		{
@@ -68,6 +70,7 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Window<IU
 		var scriptSet = this.scriptSetToEdit ?? new(this.Application);
 		scriptSet.Name = this.nameTextBox.Text?.Trim();
 		scriptSet.Icon = this.iconComboBox.SelectedItem.GetValueOrDefault();
+		scriptSet.IconColor = this.iconColorComboBox.SelectedItem.GetValueOrDefault();
 		if (!LogAnalysisScriptSetManager.Default.ScriptSets.Contains(scriptSet))
 		{
 			if (!this.Application.ProductManager.IsProductActivated(Products.Professional)
@@ -130,6 +133,7 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Window<IU
 		var scriptSet = this.scriptSetToEdit;
 		if (scriptSet != null)
 		{
+			this.iconColorComboBox.SelectedItem = scriptSet.IconColor;
 			this.iconComboBox.SelectedItem = scriptSet.Icon;
 			this.nameTextBox.Text = scriptSet.Name;
 		}

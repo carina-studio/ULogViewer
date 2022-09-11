@@ -222,6 +222,7 @@
 	<!-- KeyLogAnalysisRuleSetEditorDialog -->
 	<sys:String x:Key="String/KeyLogAnalysisRuleSetEditorDialog.CannotAddMoreRuleSetWithoutProVersion">Cannot create more rule set before activating Pro version.</sys:String>
 	<sys:String x:Key="String/KeyLogAnalysisRuleSetEditorDialog.Icon">Icon</sys:String>
+	<sys:String x:Key="String/KeyLogAnalysisRuleSetEditorDialog.IconColor">Color of icon</sys:String>
 	<sys:String x:Key="String/KeyLogAnalysisRuleSetEditorDialog.Name">Name (required)</sys:String>
 	<sys:String x:Key="String/KeyLogAnalysisRuleSetEditorDialog.RestrictionsOfNonProVersion">Before activating Pro version, you can have only 1 rule set and rule set won't be kept after closing ULogViewer.</sys:String>
 	<sys:String x:Key="String/KeyLogAnalysisRuleSetEditorDialog.Rules">Rules (required)</sys:String>
@@ -232,6 +233,7 @@
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Description">The script will be run for each log to analyze. The type of return value is boolean to indicate whether analysis results of the log should be taken or not.</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.CannotAddMoreScriptSetWithoutProVersion">Cannot create more log analysis script before activating Pro version.</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.Icon">Icon</sys:String>
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.IconColor">Color of icon</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.Name">Name (required)</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.RestrictionsOfNonProVersion">Before activating Pro version, you can have only 1 log analysis script and script won't be kept after closing ULogViewer.</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript">Script to setup analysis</sys:String>
@@ -625,6 +627,7 @@
 	<!-- OperationDurationAnalysisRuleSetEditorDialog -->
 	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.CannotAddMoreRuleSetWithoutProVersion">Cannot create more rule set before activating Pro version.</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.Icon">Icon</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.IconColor">Color of icon</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.Name">Name (required)</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.RestrictionsOfNonProVersion">Before activating Pro version, you can have only 1 rule set and rule set won't be kept after closing ULogViewer.</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.Rules">Rules (required)</sys:String>

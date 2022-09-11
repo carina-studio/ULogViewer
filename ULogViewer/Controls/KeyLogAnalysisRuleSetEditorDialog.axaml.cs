@@ -27,6 +27,7 @@ partial class KeyLogAnalysisRuleSetEditorDialog : AppSuite.Controls.Window<IULog
 
 	// Fields.
 	KeyLogAnalysisRuleSet? editingRuleSet;
+	readonly LogProfileIconColorComboBox iconColorComboBox;
 	readonly LogProfileIconComboBox iconComboBox;
 	readonly TextBox nameTextBox;
 	readonly Avalonia.Controls.ListBox ruleListBox;
@@ -40,6 +41,7 @@ partial class KeyLogAnalysisRuleSetEditorDialog : AppSuite.Controls.Window<IULog
 	public KeyLogAnalysisRuleSetEditorDialog()
 	{
 		AvaloniaXamlLoader.Load(this);
+		this.iconColorComboBox = this.Get<LogProfileIconColorComboBox>(nameof(iconColorComboBox));
 		this.iconComboBox = this.Get<LogProfileIconComboBox>(nameof(iconComboBox));
 		this.nameTextBox = this.Get<TextBox>(nameof(nameTextBox)).Also(it =>
 		{
@@ -108,6 +110,7 @@ partial class KeyLogAnalysisRuleSetEditorDialog : AppSuite.Controls.Window<IULog
 		// setup rule set
 		var ruleSet = this.editingRuleSet ?? new KeyLogAnalysisRuleSet(this.Application);
 		ruleSet.Icon = this.iconComboBox.SelectedItem.GetValueOrDefault();
+		ruleSet.IconColor = this.iconColorComboBox.SelectedItem.GetValueOrDefault();
 		ruleSet.Name = this.nameTextBox.Text.AsNonNull();
 		ruleSet.Rules = this.rules;
 
@@ -202,6 +205,7 @@ partial class KeyLogAnalysisRuleSetEditorDialog : AppSuite.Controls.Window<IULog
 		var ruleSet = this.editingRuleSet;
 		if (ruleSet != null)
 		{
+			this.iconColorComboBox.SelectedItem = ruleSet.IconColor;
 			this.iconComboBox.SelectedItem = ruleSet.Icon;
 			this.nameTextBox.Text = ruleSet.Name;
 			this.rules.AddRange(ruleSet.Rules);

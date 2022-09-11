@@ -1207,8 +1207,8 @@
 																	<DataTemplate>
 																		<Grid ColumnDefinitions="Auto,*,Auto">
 																			<Panel Height="{StaticResource Double/SessionView.LogAnalysisRuleSetListBox.Icon.Size}" Margin="{StaticResource Thickness/SessionView.LogAnalysisRuleSetListBox.Icon.Margin}" VerticalAlignment="Center" Width="{StaticResource Double/SessionView.LogAnalysisRuleSetListBox.Icon.Size}">
-																				<Image Classes="Icon" Source="{Binding Icon, Converter={x:Static appConverters:LogProfileIconConverter.Default}, ConverterParameter=Light}" IsVisible="{Binding $parent[ListBoxItem].IsSelected}"/>
-																				<Image Classes="Icon" Source="{Binding Icon, Converter={x:Static appConverters:LogProfileIconConverter.Default}}" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}"/>
+																				<Image Classes="Icon" Source="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}, ConverterParameter=Light}" IsVisible="{Binding $parent[ListBoxItem].IsSelected}"/>
+																				<Image Classes="Icon" Source="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}}" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}"/>
 																			</Panel>
 																			<TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center"/>
 																			<Border Grid.Column="1" Classes="InPlaceAction_Reserved"/>
@@ -1264,8 +1264,8 @@
 																	<DataTemplate>
 																		<Grid ColumnDefinitions="Auto,*,Auto">
 																			<Panel Height="{StaticResource Double/SessionView.LogAnalysisRuleSetListBox.Icon.Size}" Margin="{StaticResource Thickness/SessionView.LogAnalysisRuleSetListBox.Icon.Margin}" VerticalAlignment="Center" Width="{StaticResource Double/SessionView.LogAnalysisRuleSetListBox.Icon.Size}">
-																				<Image Classes="Icon" Source="{Binding Icon, Converter={x:Static appConverters:LogProfileIconConverter.Default}, ConverterParameter=Light}" IsVisible="{Binding $parent[ListBoxItem].IsSelected}"/>
-																				<Image Classes="Icon" Source="{Binding Icon, Converter={x:Static appConverters:LogProfileIconConverter.Default}}" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}"/>
+																				<Image Classes="Icon" Source="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}, ConverterParameter=Light}" IsVisible="{Binding $parent[ListBoxItem].IsSelected}"/>
+																				<Image Classes="Icon" Source="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}}" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}"/>
 																			</Panel>
 																			<TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center"/>
 																			<Border Grid.Column="1" Classes="InPlaceAction_Reserved"/>
@@ -1328,8 +1328,8 @@
 																	<DataTemplate>
 																		<Grid ColumnDefinitions="Auto,*,Auto">
 																			<Panel Height="{StaticResource Double/SessionView.LogAnalysisRuleSetListBox.Icon.Size}" Margin="{StaticResource Thickness/SessionView.LogAnalysisRuleSetListBox.Icon.Margin}" VerticalAlignment="Center" Width="{StaticResource Double/SessionView.LogAnalysisRuleSetListBox.Icon.Size}">
-																				<Image Classes="Icon" Source="{Binding Icon, Converter={x:Static appConverters:LogProfileIconConverter.Default}, ConverterParameter=Light}" IsVisible="{Binding $parent[ListBoxItem].IsSelected}"/>
-																				<Image Classes="Icon" Source="{Binding Icon, Converter={x:Static appConverters:LogProfileIconConverter.Default}}" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}"/>
+																				<Image Classes="Icon" Source="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}, ConverterParameter=Light}" IsVisible="{Binding $parent[ListBoxItem].IsSelected}"/>
+																				<Image Classes="Icon" Source="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}}" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}"/>
 																			</Panel>
 																			<TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center"/>
 																			<Border Grid.Column="1" Classes="InPlaceAction_Reserved"/>

@@ -37,8 +37,17 @@
 			<Separator Classes="Dialog_Separator"/>
 
 			<!-- Icon -->
-			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/KeyLogAnalysisRuleSetEditorDialog.Icon}"/>
-			<appControls:LogProfileIconComboBox Name="iconComboBox" Classes="Dialog_ComboBox"/>
+			<Grid ColumnDefinitions="*,Auto,*" HorizontalAlignment="Stretch">
+				<StackPanel>
+					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/KeyLogAnalysisRuleSetEditorDialog.Icon}"/>
+					<appControls:LogProfileIconComboBox Name="iconComboBox" Classes="Dialog_ComboBox" IconColor="{Binding #iconColorComboBox.SelectedItem}"/>
+				</StackPanel>
+				<Separator Classes="Dialog_Separator_Small" Grid.Column="1"/>
+				<StackPanel Grid.Column="2">
+					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/KeyLogAnalysisRuleSetEditorDialog.IconColor}"/>
+					<appControls:LogProfileIconColorComboBox Name="iconColorComboBox" Classes="Dialog_ComboBox"/>
+				</StackPanel>
+			</Grid>
 			<Separator Classes="Dialog_Separator"/>
 
 			<!-- Rules -->
