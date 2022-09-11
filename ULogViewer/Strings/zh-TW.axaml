@@ -333,6 +333,17 @@
 	<sys:String x:Key="String/LogProfileIcon.Watch">手錶</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Website">網站</sys:String>
 
+	<!-- LogProfileIconColor -->
+	<sys:String x:Key="String/LogProfileIconColor.Blue">藍色</sys:String>
+	<sys:String x:Key="String/LogProfileIconColor.Default">預設</sys:String>
+	<sys:String x:Key="String/LogProfileIconColor.Green">綠色</sys:String>
+	<sys:String x:Key="String/LogProfileIconColor.Indigo">靛色</sys:String>
+	<sys:String x:Key="String/LogProfileIconColor.Magenta">洋紅色</sys:String>
+	<sys:String x:Key="String/LogProfileIconColor.Orange">橘色</sys:String>
+	<sys:String x:Key="String/LogProfileIconColor.Purple">紫色</sys:String>
+	<sys:String x:Key="String/LogProfileIconColor.Red">紅色</sys:String>
+	<sys:String x:Key="String/LogProfileIconColor.Yellow">黃色</sys:String>
+
 	<!-- LogProfileEditorDialog -->
 	<sys:String x:Key="String/LogProfileEditorDialog.AllowMultipleFiles">允許加入多個檔案</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.ColorIndicator">色彩指示</sys:String>

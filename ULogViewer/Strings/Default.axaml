@@ -361,6 +361,17 @@
 	<sys:String x:Key="String/LogProfileIcon.Website">Website</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Windows">Windows</sys:String>
 
+	<!-- LogProfileIconColor -->
+	<sys:String x:Key="String/LogProfileIconColor.Blue">Blue</sys:String>
+	<sys:String x:Key="String/LogProfileIconColor.Default">Default</sys:String>
+	<sys:String x:Key="String/LogProfileIconColor.Green">Green</sys:String>
+	<sys:String x:Key="String/LogProfileIconColor.Indigo">Indigo</sys:String>
+	<sys:String x:Key="String/LogProfileIconColor.Magenta">Magenta</sys:String>
+	<sys:String x:Key="String/LogProfileIconColor.Orange">Orange</sys:String>
+	<sys:String x:Key="String/LogProfileIconColor.Purple">Purple</sys:String>
+	<sys:String x:Key="String/LogProfileIconColor.Red">Red</sys:String>
+	<sys:String x:Key="String/LogProfileIconColor.Yellow">Yellow</sys:String>
+	
 	<!-- LogProfileEditorDialog -->
 	<sys:String x:Key="String/LogProfileEditorDialog.AllowMultipleFiles">Allow multiple files</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.ColorIndicator">Color indicator</sys:String>
