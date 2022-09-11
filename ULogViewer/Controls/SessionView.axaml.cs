@@ -2444,6 +2444,36 @@ namespace CarinaStudio.ULogViewer.Controls
 		public bool IsHandlingDragAndDrop { get; private set; }
 
 
+		// Check whether at least one key for multi-selection has been pressed or not.
+		bool IsMultiSelectionKeyPressed(KeyModifiers keyModifiers)
+		{
+			if ((keyModifiers & KeyModifiers.Shift) != 0
+				|| this.pressedKeys.Contains(Avalonia.Input.Key.LeftShift) 
+				|| this.pressedKeys.Contains(Avalonia.Input.Key.RightShift))
+			{
+				return true;
+			}
+			if (Platform.IsMacOS)
+			{
+				if (this.pressedKeys.Contains(Avalonia.Input.Key.LWin) 
+					|| this.pressedKeys.Contains(Avalonia.Input.Key.RWin))
+				{
+					return true;
+				}
+			}
+			else
+			{
+				if ((keyModifiers & KeyModifiers.Control) != 0
+					|| this.pressedKeys.Contains(Avalonia.Input.Key.LeftCtrl) 
+					|| this.pressedKeys.Contains(Avalonia.Input.Key.RightCtrl))
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+
+
 		// Check whether process info should be shown or not.
 		bool IsProcessInfoVisible { get => this.GetValue<bool>(IsProcessInfoVisibleProperty); }
 
@@ -3028,7 +3058,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			});
 			if (hitControl == null)
 				this.SynchronizationContext.Post(() => this.logAnalysisResultListBox.SelectedItems.Clear());
-			else if (hitControl is ListBoxItem && (e.KeyModifiers & KeyModifiers.Control) == 0 && point.Properties.IsLeftButtonPressed)
+			else if (hitControl is ListBoxItem && !this.IsMultiSelectionKeyPressed(e.KeyModifiers) && point.Properties.IsLeftButtonPressed)
 			{
 				// [Workaround] Clear selection first to prevent performance issue of changing selection from multiple items
 				this.logAnalysisResultListBox.SelectedItems.Clear();
@@ -3318,7 +3348,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			});
 			if (hitControl == null)
 				this.SynchronizationContext.Post(() => this.logListBox.SelectedItems.Clear());
-			else if (hitControl is ListBoxItem && (e.KeyModifiers & KeyModifiers.Control) == 0 && point.Properties.IsLeftButtonPressed)
+			else if (hitControl is ListBoxItem && !this.IsMultiSelectionKeyPressed(e.KeyModifiers) && point.Properties.IsLeftButtonPressed)
 			{
 				// [Workaround] Clear selection first to prevent performance issue of changing selection from multiple items
 				this.logListBox.SelectedItems.Clear();
@@ -3677,7 +3707,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					var isCtrlPressed = Platform.IsMacOS ? isCmdPressed : (e.KeyModifiers & KeyModifiers.Control) != 0;
 					if (this.Application.IsDebugMode && e.Source is not TextBox)
 						this.Logger.LogTrace($"[KeyUp] {e.Key}, Ctrl/Cmd: {isCmdPressed}, Shift: {(e.KeyModifiers & KeyModifiers.Shift) != 0}, Alt: {(e.KeyModifiers & KeyModifiers.Alt) != 0}");
-					if (!isCmdPressed && e.KeyModifiers == 0)
+					if (!this.IsMultiSelectionKeyPressed(e.KeyModifiers))
 					{
 						switch (e.Key)
 						{
