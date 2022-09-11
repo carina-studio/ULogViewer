@@ -16,7 +16,7 @@ namespace CarinaStudio.ULogViewer.ViewModels.Analysis;
 /// <summary>
 /// Set of rule for key log analysis.
 /// </summary>
-class KeyLogAnalysisRuleSet : BaseProfile<IULogViewerApplication>
+class KeyLogAnalysisRuleSet : BaseProfile<IULogViewerApplication>, ILogProfileIconSource
 {
     /// <summary>
     /// Analysis rule.
@@ -79,6 +79,7 @@ class KeyLogAnalysisRuleSet : BaseProfile<IULogViewerApplication>
 
     // Fields.
     LogProfileIcon icon = LogProfileIcon.Analysis;
+    LogProfileIconColor iconColor = LogProfileIconColor.Default;
     IList<Rule> rules = new Rule[0];
 
 
@@ -103,6 +104,7 @@ class KeyLogAnalysisRuleSet : BaseProfile<IULogViewerApplication>
     public KeyLogAnalysisRuleSet(KeyLogAnalysisRuleSet template, string name) : this(template.Application)
     {
         this.icon = template.icon;
+        this.iconColor = template.iconColor;
         this.Name = name;
         this.rules = template.rules;
     }
@@ -115,8 +117,12 @@ class KeyLogAnalysisRuleSet : BaseProfile<IULogViewerApplication>
 
     /// <inheritdoc/>
     public override bool Equals(IProfile<IULogViewerApplication>? profile) =>
-        profile is KeyLogAnalysisRuleSet analysisProfile
-        && analysisProfile.Id == this.Id;
+        profile is KeyLogAnalysisRuleSet ruleSet
+        && this.Id == ruleSet.Id
+        && this.icon == ruleSet.icon
+        && this.iconColor == ruleSet.iconColor
+        && this.Name == ruleSet.Name
+        && this.rules.SequenceEqual(ruleSet.rules);
     
 
     /// <summary>
@@ -133,6 +139,24 @@ class KeyLogAnalysisRuleSet : BaseProfile<IULogViewerApplication>
                 return;
             this.icon = value;
             this.OnPropertyChanged(nameof(Icon));
+        }
+    }
+
+
+    /// <summary>
+    /// Get or set color of icon of rule sets.
+    /// </summary>
+    public LogProfileIconColor IconColor
+    {
+        get => this.iconColor;
+        set
+        {
+            this.VerifyAccess();
+            this.VerifyBuiltIn();
+            if (this.iconColor == value)
+                return;
+            this.iconColor = value;
+            this.OnPropertyChanged(nameof(IconColor));
         }
     }
 
@@ -193,6 +217,10 @@ class KeyLogAnalysisRuleSet : BaseProfile<IULogViewerApplication>
                     if (jsonProperty.Value.ValueKind == JsonValueKind.String)
                         Enum.TryParse<LogProfileIcon>(jsonProperty.Value.GetString(), out this.icon);
                     break;
+                case nameof(IconColor):
+                    if (jsonProperty.Value.ValueKind == JsonValueKind.String)
+                        Enum.TryParse<LogProfileIconColor>(jsonProperty.Value.GetString(), out this.iconColor);
+                    break;
                 case nameof(Id):
                     break;
                 case nameof(Name):
@@ -242,6 +270,8 @@ class KeyLogAnalysisRuleSet : BaseProfile<IULogViewerApplication>
         writer.WriteStartObject();
         writer.WriteString("Type", nameof(KeyLogAnalysisRuleSet));
         writer.WriteString(nameof(Icon), this.icon.ToString());
+        if (this.iconColor != LogProfileIconColor.Default)
+            writer.WriteString(nameof(IconColor), this.iconColor.ToString());
         if (includeId)
             writer.WriteString(nameof(Id), this.Id);
         this.Name?.Let(it =>

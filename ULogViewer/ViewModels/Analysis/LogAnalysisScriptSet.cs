@@ -14,7 +14,7 @@ namespace CarinaStudio.ULogViewer.ViewModels.Analysis;
 /// <summary>
 /// Set of script to analyze log.
 /// </summary>
-class LogAnalysisScriptSet : BaseProfile<IULogViewerApplication>
+class LogAnalysisScriptSet : BaseProfile<IULogViewerApplication>, ILogProfileIconSource
 {
     /// <summary>
     /// Options for sub scripts.
@@ -43,6 +43,7 @@ class LogAnalysisScriptSet : BaseProfile<IULogViewerApplication>
     // Fields.
     IScript? analysisScript;
     LogProfileIcon icon = LogProfileIcon.Analysis;
+    LogProfileIconColor iconColor = LogProfileIconColor.Default;
     IScript? setupScript;
 
 
@@ -72,6 +73,7 @@ class LogAnalysisScriptSet : BaseProfile<IULogViewerApplication>
     { 
         this.analysisScript = template.analysisScript;
         this.icon = template.icon;
+        this.iconColor = template.iconColor;
         this.Name = name;
         this.setupScript = template.setupScript;
     }
@@ -107,6 +109,7 @@ class LogAnalysisScriptSet : BaseProfile<IULogViewerApplication>
         || (profile is LogAnalysisScriptSet scriptSet
             && scriptSet.analysisScript == this.analysisScript
             && scriptSet.icon == this.icon
+            && scriptSet.iconColor == this.iconColor
             && scriptSet.Name == this.Name
             && scriptSet.setupScript == this.setupScript);
 
@@ -125,6 +128,24 @@ class LogAnalysisScriptSet : BaseProfile<IULogViewerApplication>
                 return;
             this.icon = value;
             this.OnPropertyChanged(nameof(Icon));
+        }
+    }
+
+
+    /// <summary>
+    /// Get or set color of icon of rule sets.
+    /// </summary>
+    public LogProfileIconColor IconColor
+    {
+        get => this.iconColor;
+        set
+        {
+            this.VerifyAccess();
+            this.VerifyBuiltIn();
+            if (this.iconColor == value)
+                return;
+            this.iconColor = value;
+            this.OnPropertyChanged(nameof(IconColor));
         }
     }
 

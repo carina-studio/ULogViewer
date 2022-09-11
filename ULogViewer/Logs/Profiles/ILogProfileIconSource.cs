@@ -1,5 +1,3 @@
-using System;
-
 namespace CarinaStudio.ULogViewer.Logs.Profiles;
 
 /// <summary>
@@ -11,12 +9,6 @@ interface ILogProfileIconSource
     /// Get icon.
     /// </summary>
     LogProfileIcon Icon { get; }
-
-
-    /// <summary>
-    /// Raised when icon or related property changed.
-    /// </summary>
-    event EventHandler? IconChanged;
 
 
     /// <summary>

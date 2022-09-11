@@ -289,13 +289,8 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 					return;
 				this.icon = value;
 				this.OnPropertyChanged(nameof(Icon));
-				this.IconChanged?.Invoke(this, EventArgs.Empty);
 			}
 		}
-
-
-		/// <inheritdoc/>
-		public event EventHandler? IconChanged;
 
 
 		/// <summary>
@@ -312,7 +307,6 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 					return;
 				this.iconColor = value;
 				this.OnPropertyChanged(nameof(IconColor));
-				this.IconChanged?.Invoke(this, EventArgs.Empty);
 			}
 		}
 

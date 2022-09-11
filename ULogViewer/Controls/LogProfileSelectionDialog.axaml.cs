@@ -335,21 +335,18 @@ namespace CarinaStudio.ULogViewer.Controls
 			switch (e.PropertyName)
 			{
 				case nameof(LogProfile.IconColor):
-					if (profile.IsTemplate)
+					Global.Run(() =>
 					{
-						this.templateLogProfiles.Remove(profile);
-						this.templateLogProfiles.Add(profile);
-					}
-					else if (profile.IsPinned)
+						if (profile.IsTemplate)
+							return this.templateLogProfiles;
+						if (profile.IsPinned)
+							return pinnedLogProfiles;
+						return otherLogProfiles;
+					}).Let(it =>
 					{
-						this.pinnedLogProfiles.Remove(profile);
-						this.pinnedLogProfiles.Add(profile);
-					}
-					else
-					{
-						this.otherLogProfiles.Remove(profile);
-						this.otherLogProfiles.Add(profile);
-					}
+						it.Remove(profile);
+						it.Add(profile);
+					});
 					break;
 				case nameof(LogProfile.IsPinned):
 					if (!profile.IsTemplate)

@@ -15,7 +15,7 @@ namespace CarinaStudio.ULogViewer.ViewModels.Analysis.ContextualBased;
 /// <summary>
 /// Rule set of operation duration analysis.
 /// </summary>
-class OperationDurationAnalysisRuleSet : BaseProfile<IULogViewerApplication>
+class OperationDurationAnalysisRuleSet : BaseProfile<IULogViewerApplication>, ILogProfileIconSource
 {
     /// <summary>
     /// A rule of operation duration analysis.
@@ -234,6 +234,7 @@ class OperationDurationAnalysisRuleSet : BaseProfile<IULogViewerApplication>
 
     // Fields.
     LogProfileIcon icon = LogProfileIcon.Analysis;
+    LogProfileIconColor iconColor = LogProfileIconColor.Default;
     IList<Rule> rules = new Rule[0];
 
 
@@ -256,6 +257,7 @@ class OperationDurationAnalysisRuleSet : BaseProfile<IULogViewerApplication>
     public OperationDurationAnalysisRuleSet(OperationDurationAnalysisRuleSet template, string name) : this(template.Application, name)
     {
         this.icon = template.icon;
+        this.iconColor = template.iconColor;
         this.rules = template.rules;
     }
 
@@ -276,6 +278,7 @@ class OperationDurationAnalysisRuleSet : BaseProfile<IULogViewerApplication>
         && this.Id == ruleSet.Id
         && this.Name == ruleSet.Name
         && this.icon == ruleSet.icon
+        && this.iconColor == ruleSet.iconColor
         && this.rules.SequenceEqual(ruleSet.rules);
     
 
@@ -293,6 +296,24 @@ class OperationDurationAnalysisRuleSet : BaseProfile<IULogViewerApplication>
                 return;
             this.icon = value;
             this.OnPropertyChanged(nameof(Icon));
+        }
+    }
+
+
+    /// <summary>
+    /// Get or set color of icon of rule sets.
+    /// </summary>
+    public LogProfileIconColor IconColor
+    {
+        get => this.iconColor;
+        set
+        {
+            this.VerifyAccess();
+            this.VerifyBuiltIn();
+            if (this.iconColor == value)
+                return;
+            this.iconColor = value;
+            this.OnPropertyChanged(nameof(IconColor));
         }
     }
 
