@@ -59,7 +59,7 @@
 			<!-- LogProfileIconColor -->
 			<SolidColorBrush x:Key="Brush/LogProfileIconColor.Blue" Color="#0094ff"/>
 			<SolidColorBrush x:Key="Brush/LogProfileIconColor.Green" Color="#00b214"/>
-			<SolidColorBrush x:Key="Brush/LogProfileIconColor.Indigo" Color="#001ecc"/>
+			<SolidColorBrush x:Key="Brush/LogProfileIconColor.Indigo" Color="#193bff"/>
 			<SolidColorBrush x:Key="Brush/LogProfileIconColor.Magenta" Color="#ff00ff"/>
 			<SolidColorBrush x:Key="Brush/LogProfileIconColor.Orange" Color="#ff6a00"/>
 			<SolidColorBrush x:Key="Brush/LogProfileIconColor.Purple" Color="#7f00ff"/>

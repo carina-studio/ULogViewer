@@ -37,6 +37,10 @@
 			<SolidColorBrush x:Key="Brush/LogLevel.Verbose">#000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/LogLevel.Warn">#e5772d</SolidColorBrush>
 
+			<!-- LogProfileIconColor -->
+			<SolidColorBrush x:Key="Brush/LogProfileIconColor.Indigo" Color="#001ecc"/>
+			<SolidColorBrush x:Key="Brush/LogProfileIconColor.Yellow" Color="#ccbb00"/>
+
 			<!-- LogProfileSelectionDialog -->
 			<SolidColorBrush x:Key="Brush/LogProfileSelectionDialog.Label.Background">#cccccc</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/LogProfileSelectionDialog.Label.Border">#808080</SolidColorBrush>
