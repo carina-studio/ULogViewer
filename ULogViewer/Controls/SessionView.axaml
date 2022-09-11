@@ -384,6 +384,7 @@
 	<!-- Styles -->
 	<UserControl.Styles>
 		<Style Selector="ListBox.Log">
+			<Setter Property="CornerRadius" Value="0"/>
 			<Setter Property="Padding" Value="{StaticResource Thickness/SessionView.LogListBox.Padding}"/>
 		</Style>
 		<Style Selector="ListBox.Log > ListBoxItem">
