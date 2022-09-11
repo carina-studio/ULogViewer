@@ -1299,7 +1299,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						return res as IImage;
 					}
 					else if (app != null)
-						return LogProfileIconConverter.Default.Convert(logProfile.Icon, typeof(IImage), null, app.CultureInfo) as IImage;
+						return LogProfileIconConverter.Default.Convert(logProfile, typeof(IImage), null, app.CultureInfo) as IImage;
 					return null;
 				});
 
@@ -3407,6 +3407,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.ScheduleReloadingLogs(true, true);
 					break;
 				case nameof(LogProfile.Icon):
+				case nameof(LogProfile.IconColor):
 				case nameof(LogProfile.Name):
 					this.updateTitleAndIconAction.Schedule();
 					break;

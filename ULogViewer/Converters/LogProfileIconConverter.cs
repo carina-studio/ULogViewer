@@ -39,14 +39,17 @@ namespace CarinaStudio.ULogViewer.Converters
 			// select name of icon
 			var iconName = (string?)null;
 			var iconColor = LogProfileIconColor.Default;
-			if (value is LogProfile profile)
+			if (value is ILogProfileIconSource iconSource)
 			{
-				if (profile == LogProfileManager.Default.EmptyProfile)
+				if (iconSource is LogProfile profile 
+					&& profile == LogProfileManager.Default.EmptyProfile)
+				{
 					iconName = "Empty";
+				}
 				else
 				{
-					iconName = profile.Icon.ToString();
-					//color = profile.IconColor;
+					iconName = iconSource.Icon.ToString();
+					iconColor = iconSource.IconColor;
 				}
 			}
 			else if (value is LogProfileIcon icon)

@@ -23,7 +23,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 	/// <summary>
 	/// Log profile.
 	/// </summary>
-	class LogProfile : BaseProfile<IULogViewerApplication>
+	class LogProfile : BaseProfile<IULogViewerApplication>, ILogProfileIconSource
 	{
 		// Constants.
 		const string EmptyId = "Empty";
@@ -42,6 +42,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		string? description;
 		bool hasDescription;
 		LogProfileIcon icon = LogProfileIcon.File;
+		LogProfileIconColor iconColor = LogProfileIconColor.Default;
 		bool isAdministratorNeeded;
 		bool isContinuousReading;
 		bool isPinned;
@@ -107,6 +108,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			this.description = template.description;
 			this.hasDescription = template.hasDescription;
 			this.icon = template.icon;
+			this.iconColor = template.iconColor;
 			this.isAdministratorNeeded = template.isAdministratorNeeded;
 			this.isContinuousReading = template.isContinuousReading;
 			this.isPinned = template.isPinned;
@@ -287,6 +289,30 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 					return;
 				this.icon = value;
 				this.OnPropertyChanged(nameof(Icon));
+				this.IconChanged?.Invoke(this, EventArgs.Empty);
+			}
+		}
+
+
+		/// <inheritdoc/>
+		public event EventHandler? IconChanged;
+
+
+		/// <summary>
+		/// Get or set color of icon.
+		/// </summary>
+		public LogProfileIconColor IconColor
+		{
+			get => this.iconColor;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (this.iconColor == value)
+					return;
+				this.iconColor = value;
+				this.OnPropertyChanged(nameof(IconColor));
+				this.IconChanged?.Invoke(this, EventArgs.Empty);
 			}
 		}
 
@@ -769,6 +795,10 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 						if (Enum.TryParse<LogProfileIcon>(jsonProperty.Value.GetString(), out var profileIcon))
 							this.icon = profileIcon;
 						break;
+					case nameof(IconColor):
+						if (Enum.TryParse<LogProfileIconColor>(jsonProperty.Value.GetString(), out var profileIconColor))
+							this.iconColor = profileIconColor;
+						break;
 					case nameof(Id):
 						break;
 					case nameof(IsAdministratorNeeded):
@@ -904,6 +934,8 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			writer.WriteString(nameof(ColorIndicator), this.colorIndicator.ToString());
 			writer.WriteString(nameof(Description), this.description);
 			writer.WriteString(nameof(Icon), this.icon.ToString());
+			if (this.iconColor != LogProfileIconColor.Default)
+				writer.WriteString(nameof(IconColor), this.iconColor.ToString());
 			if (!this.IsBuiltIn && includeId)
 				writer.WriteString(nameof(Id), this.Id);
 			if (this.isAdministratorNeeded)
