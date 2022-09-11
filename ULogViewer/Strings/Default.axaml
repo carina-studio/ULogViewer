@@ -383,6 +383,7 @@
 	<sys:String x:Key="String/LogProfileEditorDialog.DuplicateLogLevelMapEntry">Conversion from '{0}' is already defined.</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.FormatDescription">Format description</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Icon">Icon</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.IconColor">Color of icon</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.InvalidDataSourceOptions">Need to set valid options</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.IsAdministratorNeeded">Administrator role needed</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.IsContinuousReading">Continuous reading</sys:String>

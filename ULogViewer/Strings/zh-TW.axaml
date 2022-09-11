@@ -355,6 +355,7 @@
 	<sys:String x:Key="String/LogProfileEditorDialog.DuplicateLogLevelMapEntry">已經定義從 '{0}' 的轉換。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.FormatDescription">格式說明</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Icon">圖示</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.IconColor">圖示色彩</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.InvalidDataSourceOptions">需要有效的參數</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.IsAdministratorNeeded">需要系統管理員身分</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.IsContinuousReading">連續讀取</sys:String>

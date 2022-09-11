@@ -17,8 +17,18 @@ namespace CarinaStudio.ULogViewer.Controls;
 /// </summary>
 class LogProfileIconComboBox : ComboBox, IStyleable
 {
+    /// <summary>
+    /// Property of <see cref="IconColor"/>.
+    /// </summary>
+    public static readonly StyledProperty<LogProfileIconColor> IconColorProperty = AvaloniaProperty.Register<LogProfileIconComboBox, LogProfileIconColor>(nameof(IconColor), LogProfileIconColor.Default);
+
+
     // Static fields.
     static readonly EnumConverter LogProfileIconNameConverter = new(App.CurrentOrNull, typeof(LogProfileIcon));
+
+
+    // Fields.
+    readonly DataTemplate dataTemplate;
 
 
     /// <summary>
@@ -26,7 +36,7 @@ class LogProfileIconComboBox : ComboBox, IStyleable
     /// </summary>
     public LogProfileIconComboBox()
     {
-        this.DataTemplates.Add(new DataTemplate()
+        this.dataTemplate = new DataTemplate()
         {
             Content = new Func<IServiceProvider, object>(_ =>
             {
@@ -66,7 +76,11 @@ class LogProfileIconComboBox : ComboBox, IStyleable
                     var icon = new Image().Also(image =>
                     {
                         image.Classes.Add("Icon");
-                        image.Bind(Image.SourceProperty, new Binding() { Converter = LogProfileIconConverter.Default });
+                        image.Bind(Image.SourceProperty, new Binding() 
+                        { 
+                            Converter = LogProfileIconConverter.Default,
+                            ConverterParameter = this.GetValue<LogProfileIconColor>(IconColorProperty),
+                        });
                     });
                     selectedIcon.GetObservable(Image.IsVisibleProperty).Subscribe(isVisible =>
                         icon.IsVisible = !isVisible);
@@ -84,9 +98,31 @@ class LogProfileIconComboBox : ComboBox, IStyleable
 				return new ControlTemplateResult(rootPanel, null);
             }),
             DataType = typeof(LogProfileIcon),
+        };
+        this.DataTemplates.Add(this.dataTemplate);
+        this.GetObservable(IconColorProperty).Subscribe(_ =>
+        {
+            this.DataTemplates.Remove(this.dataTemplate);
+            this.DataTemplates.Add(this.dataTemplate);
+            var selectedIndex = this.SelectedIndex;
+            if (selectedIndex >= 0)
+            {
+                this.SelectedIndex = -1;
+                this.SelectedIndex = selectedIndex;
+            }
         });
         base.Items = Enum.GetValues<LogProfileIcon>();
         this.SelectedIndex = 0;
+    }
+
+
+    /// <summary>
+    /// Get or set color of icon.
+    /// </summary>
+    public LogProfileIconColor IconColor
+    {
+        get => this.GetValue<LogProfileIconColor>(IconColorProperty);
+        set => this.SetValue<LogProfileIconColor>(IconColorProperty, value);
     }
 
 

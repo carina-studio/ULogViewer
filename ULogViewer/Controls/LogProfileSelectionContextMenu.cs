@@ -131,7 +131,6 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
             icon.Bind(Image.SourceProperty, new Binding()
             {
                 Converter = LogProfileIconConverter.Default,
-                Path = nameof(LogProfile.Icon),
             });
         });
         menuItem.Bind(MenuItem.HeaderProperty, new Binding() 

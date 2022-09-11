@@ -8,6 +8,9 @@
 	<!-- LogProfileEditorDialog -->
 	<sys:Double x:Key="Double/LogProfileEditorDialog.Content.MaxHeight">500</sys:Double>
 
+	<!-- LogProfileIconColorComboBox -->
+	<CornerRadius x:Key="CornerRadius/LogProfileIconColorComboBox.Icon">0</CornerRadius>
+
 	<!-- LogProfileSelectionDialog -->
 	<CornerRadius x:Key="CornerRadius/LogProfileSelectionDialog.Label">0</CornerRadius>
 	<sys:Double x:Key="Double/LogProfileSelectionDialog.Content.MaxHeight">450</sys:Double>

@@ -47,8 +47,8 @@
 											<Binding Path="!DataSourceProvider.IsProVersionOnly"/>
 										</MultiBinding>
 									</Panel.IsEnabled>
-									<Image Classes="Icon" Source="{Binding Icon, Converter={x:Static appConverters:LogProfileIconConverter.Default}}" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}"/>
-									<Image Classes="Icon" Source="{Binding Icon, Converter={x:Static appConverters:LogProfileIconConverter.Default}, ConverterParameter=Light}}" IsVisible="{Binding $parent[ListBoxItem].IsSelected}"/>
+									<Image Classes="Icon" Source="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}}" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}"/>
+									<Image Classes="Icon" Source="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}, ConverterParameter=Light}}" IsVisible="{Binding $parent[ListBoxItem].IsSelected}"/>
 								</Panel>
 								
 								<!-- Name -->

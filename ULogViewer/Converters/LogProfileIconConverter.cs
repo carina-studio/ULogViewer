@@ -81,7 +81,7 @@ namespace CarinaStudio.ULogViewer.Converters
 				return null;
 			
 			// apply color
-			if (iconColor != LogProfileIconColor.Default)
+			if (iconColor != LogProfileIconColor.Default && modeParam == null)
 			{
 				var geometry = ((image as DrawingImage)?.Drawing as GeometryDrawing)?.Geometry;
 				if (geometry != null && app.Styles.TryGetResource<IBrush>($"Brush/LogProfileIconColor.{iconColor}", out var brush))

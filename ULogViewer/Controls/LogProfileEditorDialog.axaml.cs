@@ -59,6 +59,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		LogDataSourceOptions dataSourceOptions;
 		readonly ComboBox dataSourceProviderComboBox;
 		readonly TextBox descriptionTextBox;
+		readonly LogProfileIconColorComboBox iconColorComboBox;
 		readonly LogProfileIconComboBox iconComboBox;
 		readonly ToggleSwitch isTemplateSwitch;
 		readonly SortedObservableList<KeyValuePair<string, LogLevel>> logLevelMapEntriesForReading = new SortedObservableList<KeyValuePair<string, LogLevel>>((x, y) => x.Key.CompareTo(y.Key));
@@ -133,6 +134,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				});
 			});
 			this.descriptionTextBox = this.Get<TextBox>(nameof(descriptionTextBox));
+			this.iconColorComboBox = this.Get<LogProfileIconColorComboBox>(nameof(iconColorComboBox));
 			this.iconComboBox = this.Get<LogProfileIconComboBox>("iconComboBox");
 			if (Platform.IsNotWindows)
 				this.Get<Control>("isAdminNeededPanel").IsVisible = false;
@@ -513,6 +515,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			logProfile.DataSourceProvider = (ILogDataSourceProvider)this.dataSourceProviderComboBox.SelectedItem.AsNonNull();
 			logProfile.Description = this.descriptionTextBox.Text;
 			logProfile.Icon = this.iconComboBox.SelectedItem.GetValueOrDefault();
+			logProfile.IconColor = this.iconColorComboBox.SelectedItem.GetValueOrDefault();
 			logProfile.IsAdministratorNeeded = this.adminNeededSwitch.IsChecked.GetValueOrDefault();
 			logProfile.IsContinuousReading = this.continuousReadingSwitch.IsChecked.GetValueOrDefault();
 			logProfile.IsTemplate = isTemplate;
@@ -772,6 +775,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.dataSourceOptions = profile.DataSourceOptions;
 				this.dataSourceProviderComboBox.SelectedItem = profile.DataSourceProvider;
 				this.descriptionTextBox.Text = profile.Description;
+				this.iconColorComboBox.SelectedItem = profile.IconColor;
 				this.iconComboBox.SelectedItem = profile.Icon;
 				this.isTemplateSwitch.IsChecked = profile.IsTemplate;
 				this.continuousReadingSwitch.IsChecked = profile.IsContinuousReading;
