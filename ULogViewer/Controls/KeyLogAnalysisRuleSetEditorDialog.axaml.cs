@@ -27,7 +27,7 @@ partial class KeyLogAnalysisRuleSetEditorDialog : AppSuite.Controls.Window<IULog
 
 	// Fields.
 	KeyLogAnalysisRuleSet? editingRuleSet;
-	readonly ComboBox iconComboBox;
+	readonly LogProfileIconComboBox iconComboBox;
 	readonly TextBox nameTextBox;
 	readonly Avalonia.Controls.ListBox ruleListBox;
 	readonly ObservableList<KeyLogAnalysisRuleSet.Rule> rules = new();
@@ -40,12 +40,12 @@ partial class KeyLogAnalysisRuleSetEditorDialog : AppSuite.Controls.Window<IULog
 	public KeyLogAnalysisRuleSetEditorDialog()
 	{
 		AvaloniaXamlLoader.Load(this);
-		this.iconComboBox = this.FindControl<ComboBox>(nameof(iconComboBox));
-		this.nameTextBox = this.FindControl<TextBox>(nameof(nameTextBox))!.Also(it =>
+		this.iconComboBox = this.Get<LogProfileIconComboBox>(nameof(iconComboBox));
+		this.nameTextBox = this.Get<TextBox>(nameof(nameTextBox)).Also(it =>
 		{
 			it.GetObservable(TextBox.TextProperty).Subscribe(_ => this.validateParametersAction?.Schedule());
 		});
-		this.ruleListBox = this.FindControl<CarinaStudio.AppSuite.Controls.ListBox>(nameof(ruleListBox))!.Also(it =>
+		this.ruleListBox = this.Get<CarinaStudio.AppSuite.Controls.ListBox>(nameof(ruleListBox)).Also(it =>
 		{
 			it.DoubleClickOnItem += (_, e) => this.EditRule((KeyLogAnalysisRuleSet.Rule)e.Item);
 			it.SelectionChanged += (_, e) =>
@@ -107,7 +107,7 @@ partial class KeyLogAnalysisRuleSetEditorDialog : AppSuite.Controls.Window<IULog
 		
 		// setup rule set
 		var ruleSet = this.editingRuleSet ?? new KeyLogAnalysisRuleSet(this.Application);
-		ruleSet.Icon = (LogProfileIcon)this.iconComboBox.SelectedItem!;
+		ruleSet.Icon = this.iconComboBox.SelectedItem.GetValueOrDefault();
 		ruleSet.Name = this.nameTextBox.Text.AsNonNull();
 		ruleSet.Rules = this.rules;
 

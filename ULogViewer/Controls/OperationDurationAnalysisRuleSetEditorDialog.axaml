@@ -38,19 +38,7 @@
 
 			<!-- Icon -->
 			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/OperationDurationAnalysisRuleSetEditorDialog.Icon}"/>
-			<ComboBox Name="iconComboBox" Classes="Dialog_ComboBox" Items="{Binding $parent[Window].Icons}">
-				<ComboBox.ItemTemplate>
-					<DataTemplate>
-						<Grid ColumnDefinitions="Auto,*">
-							<Panel Classes="ComboBoxItem_Icon">
-								<Image Classes="Icon" IsVisible="{Binding $parent[ComboBoxItem].IsSelected}" Source="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}, ConverterParameter=Light}"/>
-								<Image Classes="Icon" IsVisible="{Binding !$parent[ComboBoxItem].IsSelected}" Source="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}}"/>
-							</Panel>
-							<TextBlock Classes="ComboBoxItem_TextBlock" Grid.Column="1" Text="{Binding Converter={x:Static appControls:LogProfileEditorDialog.LogProfileIconNameConverter}}"/>
-						</Grid>
-					</DataTemplate>
-				</ComboBox.ItemTemplate>
-			</ComboBox>
+			<appControls:LogProfileIconComboBox Name="iconComboBox" Classes="Dialog_ComboBox"/>
 			<Separator Classes="Dialog_Separator"/>
 
 			<!-- Rules -->

@@ -59,7 +59,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		LogDataSourceOptions dataSourceOptions;
 		readonly ComboBox dataSourceProviderComboBox;
 		readonly TextBox descriptionTextBox;
-		readonly ComboBox iconComboBox;
+		readonly LogProfileIconComboBox iconComboBox;
 		readonly ToggleSwitch isTemplateSwitch;
 		readonly SortedObservableList<KeyValuePair<string, LogLevel>> logLevelMapEntriesForReading = new SortedObservableList<KeyValuePair<string, LogLevel>>((x, y) => x.Key.CompareTo(y.Key));
 		readonly SortedObservableList<KeyValuePair<LogLevel, string>> logLevelMapEntriesForWriting = new SortedObservableList<KeyValuePair<LogLevel, string>>((x, y) => x.Key.CompareTo(y.Key));
@@ -112,15 +112,15 @@ namespace CarinaStudio.ULogViewer.Controls
 			}).AsReadOnly();
 
 			// initialize.
-			InitializeComponent();
+			AvaloniaXamlLoader.Load(this);
 
 			// setup controls
-			this.adminNeededSwitch = this.FindControl<ToggleSwitch>("adminNeededSwitch").AsNonNull();
-			this.allowMultipleFilesPanel = this.FindControl<Panel>(nameof(allowMultipleFilesPanel));
+			this.adminNeededSwitch = this.Get<ToggleSwitch>("adminNeededSwitch");
+			this.allowMultipleFilesPanel = this.Get<Panel>(nameof(allowMultipleFilesPanel));
 			this.allowMultipleFilesSwitch = this.allowMultipleFilesPanel.FindControl<ToggleSwitch>(nameof(allowMultipleFilesSwitch));
-			this.baseScrollViewer = this.FindControl<ScrollViewer>("baseScrollViewer").AsNonNull();
-			this.colorIndicatorComboBox = this.FindControl<ComboBox>("colorIndicatorComboBox").AsNonNull();
-			this.continuousReadingSwitch = this.FindControl<ToggleSwitch>("continuousReadingSwitch").AsNonNull();
+			this.baseScrollViewer = this.Get<ScrollViewer>("baseScrollViewer");
+			this.colorIndicatorComboBox = this.Get<ComboBox>("colorIndicatorComboBox");
+			this.continuousReadingSwitch = this.Get<ToggleSwitch>("continuousReadingSwitch");
 			this.dataSourceProviderComboBox = this.Get<ComboBox>("dataSourceProviderComboBox").Also(it =>
 			{
 				it.GetObservable(ComboBox.SelectedItemProperty).Subscribe(item =>
@@ -132,35 +132,35 @@ namespace CarinaStudio.ULogViewer.Controls
 						&& !provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.WorkingDirectory)));
 				});
 			});
-			this.descriptionTextBox = this.FindControl<TextBox>(nameof(descriptionTextBox));
-			this.iconComboBox = this.FindControl<ComboBox>("iconComboBox").AsNonNull();
+			this.descriptionTextBox = this.Get<TextBox>(nameof(descriptionTextBox));
+			this.iconComboBox = this.Get<LogProfileIconComboBox>("iconComboBox");
 			if (Platform.IsNotWindows)
-				this.FindControl<Control>("isAdminNeededPanel").AsNonNull().IsVisible = false;
+				this.Get<Control>("isAdminNeededPanel").IsVisible = false;
 			this.isTemplateSwitch = this.Get<ToggleSwitch>(nameof(isTemplateSwitch)).Also(it =>
 			{
 				it.GetObservable(ToggleSwitch.IsCheckedProperty).Subscribe(_ => this.InvalidateInput());
 			});
-			this.logLevelMapForReadingListBox = this.FindControl<AppSuite.Controls.ListBox>("logLevelMapForReadingListBox").AsNonNull();
-			this.logLevelMapForWritingListBox = this.FindControl<AppSuite.Controls.ListBox>("logLevelMapForWritingListBox").AsNonNull();
-			this.logPatternListBox = this.FindControl<AppSuite.Controls.ListBox>("logPatternListBox").AsNonNull();
-			this.logStringEncodingForReadingComboBox = this.FindControl<ComboBox>("logStringEncodingForReadingComboBox").AsNonNull();
-			this.logStringEncodingForWritingComboBox = this.FindControl<ComboBox>("logStringEncodingForWritingComboBox").AsNonNull();
-			this.logWritingFormatListBox = this.FindControl<Avalonia.Controls.ListBox>(nameof(logWritingFormatListBox)).AsNonNull();
-			this.nameTextBox = this.FindControl<TextBox>("nameTextBox").AsNonNull();
-			this.restartReadingDelayTextBox = this.FindControl<IntegerTextBox>(nameof(restartReadingDelayTextBox)).AsNonNull();
-			this.sortDirectionComboBox = this.FindControl<ComboBox>("sortDirectionComboBox").AsNonNull();
-			this.sortKeyComboBox = this.FindControl<ComboBox>("sortKeyComboBox").AsNonNull();
-			this.timeSpanEncodingForReadingComboBox = this.FindControl<ComboBox>(nameof(timeSpanEncodingForReadingComboBox));
-			this.timeSpanFormatForDisplayingTextBox = this.FindControl<TextBox>(nameof(timeSpanFormatForDisplayingTextBox));
-			this.timeSpanFormatForWritingTextBox = this.FindControl<TextBox>(nameof(timeSpanFormatForWritingTextBox));
-			this.timeSpanFormatsForReadingListBox = this.FindControl<AppSuite.Controls.ListBox>(nameof(timeSpanFormatsForReadingListBox));
-			this.timestampCategoryGranularityComboBox = this.FindControl<ComboBox>(nameof(timestampCategoryGranularityComboBox));
-			this.timestampEncodingForReadingComboBox = this.FindControl<ComboBox>(nameof(timestampEncodingForReadingComboBox)).AsNonNull();
-			this.timestampFormatForDisplayingTextBox = this.FindControl<TextBox>("timestampFormatForDisplayingTextBox").AsNonNull();
-			this.timestampFormatForWritingTextBox = this.FindControl<TextBox>("timestampFormatForWritingTextBox").AsNonNull();
-			this.timestampFormatsForReadingListBox = this.FindControl<AppSuite.Controls.ListBox>(nameof(timestampFormatsForReadingListBox)).AsNonNull();
-			this.visibleLogPropertyListBox = this.FindControl<AppSuite.Controls.ListBox>("visibleLogPropertyListBox").AsNonNull();
-			this.workingDirNeededSwitch = this.FindControl<ToggleSwitch>("workingDirNeededSwitch").AsNonNull();
+			this.logLevelMapForReadingListBox = this.Get<AppSuite.Controls.ListBox>("logLevelMapForReadingListBox");
+			this.logLevelMapForWritingListBox = this.Get<AppSuite.Controls.ListBox>("logLevelMapForWritingListBox");
+			this.logPatternListBox = this.Get<AppSuite.Controls.ListBox>("logPatternListBox");
+			this.logStringEncodingForReadingComboBox = this.Get<ComboBox>("logStringEncodingForReadingComboBox");
+			this.logStringEncodingForWritingComboBox = this.Get<ComboBox>("logStringEncodingForWritingComboBox");
+			this.logWritingFormatListBox = this.Get<Avalonia.Controls.ListBox>(nameof(logWritingFormatListBox));
+			this.nameTextBox = this.Get<TextBox>("nameTextBox");
+			this.restartReadingDelayTextBox = this.Get<IntegerTextBox>(nameof(restartReadingDelayTextBox));
+			this.sortDirectionComboBox = this.Get<ComboBox>("sortDirectionComboBox");
+			this.sortKeyComboBox = this.Get<ComboBox>("sortKeyComboBox");
+			this.timeSpanEncodingForReadingComboBox = this.Get<ComboBox>(nameof(timeSpanEncodingForReadingComboBox));
+			this.timeSpanFormatForDisplayingTextBox = this.Get<TextBox>(nameof(timeSpanFormatForDisplayingTextBox));
+			this.timeSpanFormatForWritingTextBox = this.Get<TextBox>(nameof(timeSpanFormatForWritingTextBox));
+			this.timeSpanFormatsForReadingListBox = this.Get<AppSuite.Controls.ListBox>(nameof(timeSpanFormatsForReadingListBox));
+			this.timestampCategoryGranularityComboBox = this.Get<ComboBox>(nameof(timestampCategoryGranularityComboBox));
+			this.timestampEncodingForReadingComboBox = this.Get<ComboBox>(nameof(timestampEncodingForReadingComboBox));
+			this.timestampFormatForDisplayingTextBox = this.Get<TextBox>("timestampFormatForDisplayingTextBox");
+			this.timestampFormatForWritingTextBox = this.Get<TextBox>("timestampFormatForWritingTextBox");
+			this.timestampFormatsForReadingListBox = this.Get<AppSuite.Controls.ListBox>(nameof(timestampFormatsForReadingListBox));
+			this.visibleLogPropertyListBox = this.Get<AppSuite.Controls.ListBox>("visibleLogPropertyListBox");
+			this.workingDirNeededSwitch = this.Get<ToggleSwitch>("workingDirNeededSwitch");
 		}
 
 
@@ -512,7 +512,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			logProfile.DataSourceOptions = this.dataSourceOptions;
 			logProfile.DataSourceProvider = (ILogDataSourceProvider)this.dataSourceProviderComboBox.SelectedItem.AsNonNull();
 			logProfile.Description = this.descriptionTextBox.Text;
-			logProfile.Icon = (LogProfileIcon)this.iconComboBox.SelectedItem.AsNonNull();
+			logProfile.Icon = this.iconComboBox.SelectedItem.GetValueOrDefault();
 			logProfile.IsAdministratorNeeded = this.adminNeededSwitch.IsChecked.GetValueOrDefault();
 			logProfile.IsContinuousReading = this.continuousReadingSwitch.IsChecked.GetValueOrDefault();
 			logProfile.IsTemplate = isTemplate;
@@ -541,10 +541,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Initialize.
-		private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
-
-
 		// Check whether log data source options is valid or not.
 		bool IsValidDataSourceOptions { get => this.GetValue<bool>(IsValidDataSourceOptionsProperty); }
 
@@ -565,10 +561,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// Get or set <see cref="LogProfile"/> to be edited.
 		/// </summary>
 		public LogProfile? LogProfile { get; set; }
-
-
-		// All log profile icons.
-		IList<LogProfileIcon> LogProfileIcons { get; } = (LogProfileIcon[])Enum.GetValues(typeof(LogProfileIcon));
 
 
 		// Log writing formats.

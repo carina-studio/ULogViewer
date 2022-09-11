@@ -25,7 +25,7 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Window<IU
 
 	// Fields.
 	bool areValidParameters;
-	readonly ComboBox iconComboBox;
+	readonly LogProfileIconComboBox iconComboBox;
 	readonly TextBox nameTextBox;
 	LogAnalysisScriptSet? scriptSetToEdit;
 	readonly ScheduledAction validateParametersAction;
@@ -39,7 +39,7 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Window<IU
 		AvaloniaXamlLoader.Load(this);
 		if (Platform.IsLinux)
 			this.WindowStartupLocation = WindowStartupLocation.Manual;
-		this.iconComboBox = this.Get<ComboBox>(nameof(iconComboBox));
+		this.iconComboBox = this.Get<LogProfileIconComboBox>(nameof(iconComboBox));
 		this.nameTextBox = this.Get<TextBox>(nameof(nameTextBox)).Also(it =>
 		{
 			it.GetObservable(TextBox.TextProperty).Subscribe(_ => this.validateParametersAction?.Schedule());
@@ -67,7 +67,7 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Window<IU
 	{
 		var scriptSet = this.scriptSetToEdit ?? new(this.Application);
 		scriptSet.Name = this.nameTextBox.Text?.Trim();
-		scriptSet.Icon = (LogProfileIcon)this.iconComboBox.SelectedItem.AsNonNull();
+		scriptSet.Icon = this.iconComboBox.SelectedItem.GetValueOrDefault();
 		if (!LogAnalysisScriptSetManager.Default.ScriptSets.Contains(scriptSet))
 		{
 			if (!this.Application.ProductManager.IsProductActivated(Products.Professional)

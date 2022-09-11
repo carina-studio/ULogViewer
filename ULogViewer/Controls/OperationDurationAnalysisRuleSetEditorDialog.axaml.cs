@@ -27,7 +27,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		
 		// Fields.
-		readonly ComboBox iconComboBox;
+		readonly LogProfileIconComboBox iconComboBox;
 		readonly TextBox nameTextBox;
 		readonly ObservableList<OperationDurationAnalysisRuleSet.Rule> rules = new();
 		readonly Avalonia.Controls.ListBox ruleListBox;
@@ -41,7 +41,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		public OperationDurationAnalysisRuleSetEditorDialog()
 		{
 			AvaloniaXamlLoader.Load(this);
-			this.iconComboBox = this.Get<ComboBox>(nameof(iconComboBox));
+			this.iconComboBox = this.Get<LogProfileIconComboBox>(nameof(iconComboBox));
 			this.nameTextBox = this.Get<TextBox>(nameof(nameTextBox)).Also(it =>
 			{
 				it.GetObservable(TextBox.TextProperty).Subscribe(_ => this.validateParametersAction?.Schedule());
@@ -91,7 +91,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			
 			// create rule set
 			var ruleSet = this.ruleSet ?? new OperationDurationAnalysisRuleSet(this.Application, "");
-			ruleSet.Icon = (LogProfileIcon)this.iconComboBox.SelectedItem.AsNonNull();
+			ruleSet.Icon = this.iconComboBox.SelectedItem.GetValueOrDefault();
 			ruleSet.Name = this.nameTextBox.Text.AsNonNull();
 			ruleSet.Rules = this.rules;
 
