@@ -26,6 +26,8 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Window<IU
 	// Fields.
 	bool areValidParameters;
 	readonly ComboBox iconComboBox;
+	bool isAnalysisScriptModified;
+	bool isSetupScriptModified;
 	readonly TextBox nameTextBox;
 	LogAnalysisScriptSet? scriptSetToEdit;
 	readonly ScheduledAction validateParametersAction;
@@ -219,5 +221,18 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Window<IU
 		if (scriptSet != null)
 			Dialogs[scriptSet] = dialog;
 		dialog.Show(parent);
+	}
+
+
+	// Show template of script.
+	void ShowScriptTemplate(ScriptEditor editor, string name, ref bool isScriptModified)
+	{
+		var language = editor.ScriptLanguage;
+		var source = this.Application.GetString($"LogAnalysisScriptSetEditorDialog.{name}.Template.{language}");
+		if (string.IsNullOrWhiteSpace(source))
+			editor.Script = null;
+		else
+			editor.Script = AppSuite.Scripting.ScriptManager.Default.CreateScript(language, source, LogAnalysisScriptSet.ScriptOptions);
+		isScriptModified = false;
 	}
 }
