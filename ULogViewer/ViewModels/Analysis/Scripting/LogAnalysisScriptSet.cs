@@ -243,7 +243,7 @@ public interface ILog
     /// <param name="name">Name of property.</param>
     /// <param name="defaultValue">Default value if there is no value got from property.</param>
     /// <returns>Value of log property.</returns>
-    T? GetProperty<T>(string name, T? defaultValue = default);
+    object? GetProperty(string name, object? defaultValue = default);
 
 
     /// <summary>
@@ -270,7 +270,7 @@ class EmptyLog : ILog
 
 
     /// <inheritdoc/>
-    public T? GetProperty<T>(string name, T? defaultValue = default) =>
+    public object? GetProperty(string name, object? defaultValue = default) =>
         defaultValue;
     
 
@@ -287,10 +287,41 @@ public static class LogExtensions
     /// <summary>
     /// Get property of log.
     /// </summary>
+    /// <param name="log">Log.</param>
     /// <param name="name">Name of property.</param>
     /// <returns>Value of log property or Null.</returns>
-    public static object? GetPropertyOrNull(this ILog log, string name) =>
-        log.GetProperty<object?>(name, null);
+    public static object? GetProperty(this ILog log, string name) =>
+        log.GetProperty(name, default);
+
+
+    /// <summary>
+    /// Get property of log with specific type.
+    /// </summary>
+    /// <param name="log">Log.</param>
+    /// <param name="name">Name of property.</param>
+    /// <returns>Value of log property or default value.</returns>
+#pragma warning disable CS8604
+    public static T? GetProperty<T>(this ILog log, string name) =>
+        GetProperty<T>(log, name, default);
+#pragma warning restore CS8604
+    
+
+    /// <summary>
+    /// Get property of log with specific type.
+    /// </summary>
+    /// <param name="log">Log.</param>
+    /// <param name="name">Name of property.</param>
+    /// <param name="defaultValue">Default value.</param>
+    /// <returns>Value of log property or default value.</returns>
+    public static T? GetProperty<T>(this ILog log, string name, T defaultValue)
+    {
+        var rawValue = log.GetProperty(name);
+        if (rawValue == null)
+            return defaultValue;
+        if (rawValue is T targetValue)
+            return targetValue;
+        return defaultValue;
+    }
 }
 
 
