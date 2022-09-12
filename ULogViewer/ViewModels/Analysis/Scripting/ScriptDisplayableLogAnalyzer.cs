@@ -5,7 +5,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 
-namespace CarinaStudio.ULogViewer.ViewModels.Analysis;
+namespace CarinaStudio.ULogViewer.ViewModels.Analysis.Scripting;
 
 /// <summary>
 /// Log analyzer based-on user defined script.

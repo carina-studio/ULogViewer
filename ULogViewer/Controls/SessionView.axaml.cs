@@ -27,6 +27,7 @@ using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ULogViewer.ViewModels;
 using CarinaStudio.ULogViewer.ViewModels.Analysis;
 using CarinaStudio.ULogViewer.ViewModels.Analysis.ContextualBased;
+using CarinaStudio.ULogViewer.ViewModels.Analysis.Scripting;
 using CarinaStudio.ULogViewer.ViewModels.Categorizing;
 using CarinaStudio.Windows.Input;
 using Microsoft.Extensions.Logging;

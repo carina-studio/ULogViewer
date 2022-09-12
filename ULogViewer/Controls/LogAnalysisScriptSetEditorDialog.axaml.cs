@@ -5,7 +5,7 @@ using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.Profiles;
-using CarinaStudio.ULogViewer.ViewModels.Analysis;
+using CarinaStudio.ULogViewer.ViewModels.Analysis.Scripting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
