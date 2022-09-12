@@ -220,6 +220,27 @@
 	<!-- LogAnalysisScriptSetEditorDialog -->
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript">日志分析脚本</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Description">脚本将针对每笔日志调用以分析日志。需返回布林值 (boolean) 以指示针对此日志的分析结果是否需要被撷取。</sys:String>
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Template.CSharp">/*
+ * 相关命名空间已自动添加以提供日志分析所需之型别，例如 ILog 及 ResultType。
+ * 请参阅 https://carinastudio.azurewebsites.net/ULogViewer/Scripting
+ * 及 https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#LogAnalysisScript 以取得更多信息。
+ */
+
+/*
+ * 返回 True 以保留透过 Context.AddResult() 所建立的分析结果，或返回 False 以略过目前的日志及分析结果。
+ */
+return false;</sys:String>
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Template.JavaScript">/*
+ * 添加命名空间以提供日志分析所需之型别，例如 ILog 及 ResultType。
+ * 请参阅 https://carinastudio.azurewebsites.net/ULogViewer/Scripting
+ * 及 https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#LogAnalysisScript 以取得更多信息。
+ */
+var scripting = importNamespace("CarinaStudio.ULogViewer.ViewModels.Analysis.Scripting");
+
+/*
+ * 返回 True 以保留透过 context.addResult() 所建立的分析结果，或返回 False 以略过目前的日志及分析结果。
+ */
+return false;</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.CannotAddMoreScriptSetWithoutProVersion">在启用专业版之前，您无法建立更多的日志分析脚本。</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.Icon">图标</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.IconColor">图标色彩</sys:String>
@@ -227,6 +248,14 @@
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.RestrictionsOfNonProVersion">在启用专业版之前，您只能建立 1 个日志分析脚本，且在关闭 ULogViewer 后不会被保留。</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript">分析初始化脚本</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript.Description">脚本将在分析流程开始前调用一次且不需要返回值。</sys:String>
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript.Template.CSharp">/*
+ * 请参阅 https://carinastudio.azurewebsites.net/ULogViewer/Scripting
+ * 及 https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#LogAnalysisScript 以取得更多信息。
+ */</sys:String>
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript.Template.JavaScript">/*
+ * 请参阅 https://carinastudio.azurewebsites.net/ULogViewer/Scripting
+ * 及 https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#LogAnalysisScript 以取得更多信息。
+ */</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.Title">编辑日志分析脚本</sys:String>
 
 	<!-- LogColorIndicator -->
