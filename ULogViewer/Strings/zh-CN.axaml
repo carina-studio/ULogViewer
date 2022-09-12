@@ -671,11 +671,73 @@ return false;</sys:String>
 	<!-- ScriptLogDataSourceProviderEditorDialog -->
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript">原始日志行读取器关闭脚本</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Description">脚本将在关闭原始日志行读取器时执行。此脚本不需要返回值。</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Template.CSharp">/*
+ * 相关命名空间已自动添加以提供日志读取所需之型别，例如 FileStream。
+ * 请参阅 https://carinastudio.azurewebsites.net/ULogViewer/Scripting
+ * 及 https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource 以取得更多信息。
+ */</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Template.JavaScript">/*
+ * 请参阅 https://carinastudio.azurewebsites.net/ULogViewer/Scripting
+ * 及 https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource 以取得更多信息。
+ */</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.DisplayName">名称 (必要)</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript">原始日志行读取器开启脚本</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Description">脚本将在开启原始日志行读取器时执行。需返回 LogDataSourceState.ReaderOpened 表示读取器开启成功，或其他值表示失败。</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Template.CSharp">/*
+ * 相关命名空间已自动添加以提供日志读取所需之型别，例如 FileStream 及 LogDataSourceState。
+ * 请参阅 https://carinastudio.azurewebsites.net/ULogViewer/Scripting
+ * 及 https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource 以取得更多信息。
+ */
+
+/*
+ * 返回 LogDataSourceState.ReaderOpened 表示原始日志行读取器开启成功。
+ * 若失败则返回下列值：
+ *   * LogDataSourceState.ExternalDependencyNotFound
+ *   * LogDataSourceState.SourceNotFound
+ *   * LogDataSourceState.UnclassifiedError
+ */
+return LogDataSourceState.UnclassifiedError;</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Template.JavaScript">/*
+ * 添加命名空间以提供日志读取所需之型别，例如 FileStream 及 LogDataSourceState。
+ * 请参阅 https://carinastudio.azurewebsites.net/ULogViewer/Scripting
+ * 及 https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource 以取得更多信息。
+ */
+var ds = importNamespace("CarinaStudio.ULogViewer.Logs.DataSources");
+var io = importNamespace("System.IO");
+var text = importNamespace("System.Text");
+
+/*
+ * 返回 LogDataSourceState.readerOpened 表示原始日志行读取器开启成功。
+ * 若失败则返回下列值：
+ *   * LogDataSourceState.externalDependencyNotFound
+ *   * LogDataSourceState.sourceNotFound
+ *   * LogDataSourceState.unclassifiedError
+ */
+return ds.LogDataSourceState.unclassifiedError;</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript">原始日志行读取脚本</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Description">脚本将在每行原始日志行读取时执行。需返回字符串 (String) 或 Null 表示已读取至最后一行。</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Template.CSharp">/*
+ * 相关命名空间已自动添加以提供日志读取所需之型别，例如 FileStream。
+ * 请参阅 https://carinastudio.azurewebsites.net/ULogViewer/Scripting
+ * 及 https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource 以取得更多信息。
+ */
+
+/*
+ * 返回自来源读取的单一原始日志行 (string)，若没有剩余的原始日志行可读取时则返回 Null。
+ */
+return null;</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Template.JavaScript">/*
+ * 添加命名空间以提供日志读取所需之型别，例如 FileStream。
+ * 请参阅 https://carinastudio.azurewebsites.net/ULogViewer/Scripting
+ * 及 https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource 以取得更多信息。
+ */
+var io = importNamespace("System.IO");
+var text = importNamespace("System.Text");
+
+/*
+ * 返回自来源读取的单一原始日志行 (String)，若没有剩余的原始日志行可读取时则返回 Null。
+ */
+return null;</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.SupportedSourceOptions">支持的资料来源参数</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.SupportedSourceOptions.Required">必要参数</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.Title">编辑日志资料来源脚本</sys:String>

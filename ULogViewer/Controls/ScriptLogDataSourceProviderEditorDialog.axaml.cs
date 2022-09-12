@@ -65,6 +65,9 @@ partial class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.In
 	readonly ToggleButton addSupportedSourceOptionButton;
 	readonly ContextMenu addSupportedSourceOptionMenu;
 	readonly TextBox displayNameTextBox;
+	bool isClosingReaderScriptModified;
+	bool isOpeningReaderScriptModified;
+	bool isReadingLineScriptModified;
 	readonly Avalonia.Controls.ListBox supportedSourceOptionListBox;
 	readonly SortedObservableList<SupportedSourceOption> supportedSourceOptions = new((lhs, rhs) => string.Compare(lhs.Name, rhs.Name, true, CultureInfo.InvariantCulture));
 	readonly SortedObservableList<MenuItem> unsupportedSourceOptionMenuItems = new((lhs, rhs) => string.Compare(lhs.DataContext as string, rhs.DataContext as string, true, CultureInfo.InvariantCulture));
@@ -241,6 +244,19 @@ partial class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.In
 	// Show menu of adding supported log data source options.
 	void ShowAddSupportedSourceOptionMenu() =>
 		this.addSupportedSourceOptionMenu.Open(this.addSupportedSourceOptionButton);
+	
+
+	// Show template of script.
+	void ShowScriptTemplate(ScriptEditor editor, string name, ref bool isScriptModified)
+	{
+		var language = editor.ScriptLanguage;
+		var source = this.Application.GetString($"ScriptLogDataSourceProviderEditorDialog.{name}.Template.{language}");
+		if (string.IsNullOrWhiteSpace(source))
+			editor.Script = null;
+		else
+			editor.Script = AppSuite.Scripting.ScriptManager.Default.CreateScript(language, source, ScriptLogDataSourceProvider.ScriptOptions);
+		isScriptModified = false;
+	}
 
 
 	// Get supported log data source options.
