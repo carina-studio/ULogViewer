@@ -271,6 +271,29 @@ public interface ILogAnalysisScriptContext : IUserInteractiveContext
 /// </summary>
 public static class LogAnalysisScriptContextExtensions
 {
+    /// <summary>
+    /// Add analysis result.
+    /// </summary>
+    /// <param name="context">Context.</param>
+    /// <param name="type">Type of result.</param>
+    /// <param name="message">Message.</param>
+    /// <param name="log">Related log.</param>
+    /// <param name="duration">Related duration in milliseconds.</param>
+    public static void AddResult(this ILogAnalysisScriptContext context, ResultType type, string message, ILog? log, double duration) =>
+        context.AddResult(type, message, log, TimeSpan.FromMilliseconds(duration));
+    
+
+    /// <summary>
+    /// Add analysis result.
+    /// </summary>
+    /// <param name="context">Context.</param>
+    /// <param name="type">Type of result.</param>
+    /// <param name="message">Message.</param>
+    /// <param name="beginningLog">Beginning log.</param>
+    /// <param name="endingLog">Ending log.</param>
+    /// <param name="duration">Related duration in milliseconds.</param>
+    public static void AddResult(this ILogAnalysisScriptContext context, ResultType type, string message, ILog beginningLog, ILog endingLog, double duration) =>
+        context.AddResult(type, message, beginningLog, endingLog, TimeSpan.FromMilliseconds(duration));
 }
 
 
