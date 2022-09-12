@@ -25,12 +25,12 @@ class LogAnalysisScriptSet : BaseProfile<IULogViewerApplication>, ILogProfileIco
         ExtensionTypes = new HashSet<Type>()
         {
             typeof(LogAnalysisScriptContextExtensions),
-            typeof(LogAnalysisScriptLogExtensions),
+            typeof(LogExtensions),
         },
         ImportedNamespaces = new HashSet<string>()
         {
             "CarinaStudio.ULogViewer.Logs",
-            "CarinaStudio.ULogViewer.ViewModels.Analysis",
+            "CarinaStudio.ULogViewer.ViewModels.Analysis.Scripting",
             "System.Text.RegularExpressions",
         },
         ReferencedAssemblies = new HashSet<Assembly>()
@@ -225,7 +225,7 @@ public interface ILogAnalysisScriptContext : IUserInteractiveContext
     /// <param name="type">Type of result.</param>
     /// <param name="message">Message.</param>
     /// <param name="log">Related log.</param>
-    void AddResult(ResultType type, string message, ILogAnalysisScriptLog? log);
+    void AddResult(ResultType type, string message, ILog? log);
 
 
     /// <summary>
@@ -235,7 +235,7 @@ public interface ILogAnalysisScriptContext : IUserInteractiveContext
     /// <param name="message">Message.</param>
     /// <param name="log">Related log.</param>
     /// <param name="duration">Related duration.</param>
-    void AddResult(ResultType type, string message, ILogAnalysisScriptLog? log, TimeSpan duration);
+    void AddResult(ResultType type, string message, ILog? log, TimeSpan duration);
 
 
     /// <summary>
@@ -245,7 +245,7 @@ public interface ILogAnalysisScriptContext : IUserInteractiveContext
     /// <param name="message">Message.</param>
     /// <param name="beginningLog">Beginning log.</param>
     /// <param name="endingLog">Ending log.</param>
-    void AddResult(ResultType type, string message, ILogAnalysisScriptLog beginningLog, ILogAnalysisScriptLog endingLog);
+    void AddResult(ResultType type, string message, ILog beginningLog, ILog endingLog);
 
 
     /// <summary>
@@ -256,13 +256,13 @@ public interface ILogAnalysisScriptContext : IUserInteractiveContext
     /// <param name="beginningLog">Beginning log.</param>
     /// <param name="endingLog">Ending log.</param>
     /// <param name="duration">Related duration.</param>
-    void AddResult(ResultType type, string message, ILogAnalysisScriptLog beginningLog, ILogAnalysisScriptLog endingLog, TimeSpan duration);
+    void AddResult(ResultType type, string message, ILog beginningLog, ILog endingLog, TimeSpan duration);
 
 
     /// <summary>
     /// Get current log.
     /// </summary>
-    ILogAnalysisScriptLog Log { get; }
+    ILog Log { get; }
 }
 
 
@@ -277,7 +277,7 @@ public static class LogAnalysisScriptContextExtensions
     /// <param name="context"><see cref="ILogAnalysisScriptContext"/>.</param>
     /// <param name="message">Message.</param>
     /// <param name="log">Related log.</param>
-    public static void AddCheckpointResult(this ILogAnalysisScriptContext context, string message, ILogAnalysisScriptLog? log) =>
+    public static void AddCheckpointResult(this ILogAnalysisScriptContext context, string message, ILog? log) =>
         context.AddResult(ResultType.Checkpoint, message, log);
     
 
@@ -288,7 +288,7 @@ public static class LogAnalysisScriptContextExtensions
     /// <param name="message">Message.</param>
     /// <param name="beginningLog">Beginning log.</param>
     /// <param name="endingLog">Ending log.</param>
-    public static void AddCheckpointResult(this ILogAnalysisScriptContext context, string message, ILogAnalysisScriptLog beginningLog, ILogAnalysisScriptLog endingLog) =>
+    public static void AddCheckpointResult(this ILogAnalysisScriptContext context, string message, ILog beginningLog, ILog endingLog) =>
         context.AddResult(ResultType.Checkpoint, message, beginningLog, endingLog);
 
 
@@ -298,7 +298,7 @@ public static class LogAnalysisScriptContextExtensions
     /// <param name="context"><see cref="ILogAnalysisScriptContext"/>.</param>
     /// <param name="message">Message.</param>
     /// <param name="log">Related log.</param>
-    public static void AddErrorResult(this ILogAnalysisScriptContext context, string message, ILogAnalysisScriptLog? log) =>
+    public static void AddErrorResult(this ILogAnalysisScriptContext context, string message, ILog? log) =>
         context.AddResult(ResultType.Error, message, log);
     
 
@@ -309,7 +309,7 @@ public static class LogAnalysisScriptContextExtensions
     /// <param name="message">Message.</param>
     /// <param name="beginningLog">Beginning log.</param>
     /// <param name="endingLog">Ending log.</param>
-    public static void AddErrorResult(this ILogAnalysisScriptContext context, string message, ILogAnalysisScriptLog beginningLog, ILogAnalysisScriptLog endingLog) =>
+    public static void AddErrorResult(this ILogAnalysisScriptContext context, string message, ILog beginningLog, ILog endingLog) =>
         context.AddResult(ResultType.Error, message, beginningLog, endingLog);
 
 
@@ -319,7 +319,7 @@ public static class LogAnalysisScriptContextExtensions
     /// <param name="context"><see cref="ILogAnalysisScriptContext"/>.</param>
     /// <param name="message">Message.</param>
     /// <param name="log">Related log.</param>
-    public static void AddInformationResult(this ILogAnalysisScriptContext context, string message, ILogAnalysisScriptLog? log) =>
+    public static void AddInformationResult(this ILogAnalysisScriptContext context, string message, ILog? log) =>
         context.AddResult(ResultType.Information, message, log);
     
 
@@ -330,7 +330,7 @@ public static class LogAnalysisScriptContextExtensions
     /// <param name="message">Message.</param>
     /// <param name="beginningLog">Beginning log.</param>
     /// <param name="endingLog">Ending log.</param>
-    public static void AddInformationResult(this ILogAnalysisScriptContext context, string message, ILogAnalysisScriptLog beginningLog, ILogAnalysisScriptLog endingLog) =>
+    public static void AddInformationResult(this ILogAnalysisScriptContext context, string message, ILog beginningLog, ILog endingLog) =>
         context.AddResult(ResultType.Information, message, beginningLog, endingLog);
     
 
@@ -340,7 +340,7 @@ public static class LogAnalysisScriptContextExtensions
     /// <param name="context"><see cref="ILogAnalysisScriptContext"/>.</param>
     /// <param name="message">Message.</param>
     /// <param name="log">Related log.</param>
-    public static void AddOperationEndResult(this ILogAnalysisScriptContext context, string message, ILogAnalysisScriptLog? log) =>
+    public static void AddOperationEndResult(this ILogAnalysisScriptContext context, string message, ILog? log) =>
         context.AddResult(ResultType.OperationEnd, message, log);
     
 
@@ -351,7 +351,7 @@ public static class LogAnalysisScriptContextExtensions
     /// <param name="message">Message.</param>
     /// <param name="beginningLog">Beginning log.</param>
     /// <param name="endingLog">Ending log.</param>
-    public static void AddOperationEndResult(this ILogAnalysisScriptContext context, string message, ILogAnalysisScriptLog beginningLog, ILogAnalysisScriptLog endingLog) =>
+    public static void AddOperationEndResult(this ILogAnalysisScriptContext context, string message, ILog beginningLog, ILog endingLog) =>
         context.AddResult(ResultType.OperationEnd, message, beginningLog, endingLog);
 
     
@@ -361,7 +361,7 @@ public static class LogAnalysisScriptContextExtensions
     /// <param name="context"><see cref="ILogAnalysisScriptContext"/>.</param>
     /// <param name="message">Message.</param>
     /// <param name="log">Related log.</param>
-    public static void AddOperationStartResult(this ILogAnalysisScriptContext context, string message, ILogAnalysisScriptLog? log) =>
+    public static void AddOperationStartResult(this ILogAnalysisScriptContext context, string message, ILog? log) =>
         context.AddResult(ResultType.OperationStart, message, log);
     
 
@@ -372,7 +372,7 @@ public static class LogAnalysisScriptContextExtensions
     /// <param name="message">Message.</param>
     /// <param name="beginningLog">Beginning log.</param>
     /// <param name="endingLog">Ending log.</param>
-    public static void AddOperationStartResult(this ILogAnalysisScriptContext context, string message, ILogAnalysisScriptLog beginningLog, ILogAnalysisScriptLog endingLog) =>
+    public static void AddOperationStartResult(this ILogAnalysisScriptContext context, string message, ILog beginningLog, ILog endingLog) =>
         context.AddResult(ResultType.OperationStart, message, beginningLog, endingLog);
     
 
@@ -382,7 +382,7 @@ public static class LogAnalysisScriptContextExtensions
     /// <param name="context"><see cref="ILogAnalysisScriptContext"/>.</param>
     /// <param name="message">Message.</param>
     /// <param name="log">Related log.</param>
-    public static void AddPerformanceResult(this ILogAnalysisScriptContext context, string message, ILogAnalysisScriptLog? log) =>
+    public static void AddPerformanceResult(this ILogAnalysisScriptContext context, string message, ILog? log) =>
         context.AddResult(ResultType.Performance, message, log);
     
 
@@ -393,7 +393,7 @@ public static class LogAnalysisScriptContextExtensions
     /// <param name="message">Message.</param>
     /// <param name="beginningLog">Beginning log.</param>
     /// <param name="endingLog">Ending log.</param>
-    public static void AddPerformanceResult(this ILogAnalysisScriptContext context, string message, ILogAnalysisScriptLog beginningLog, ILogAnalysisScriptLog endingLog) =>
+    public static void AddPerformanceResult(this ILogAnalysisScriptContext context, string message, ILog beginningLog, ILog endingLog) =>
         context.AddResult(ResultType.Performance, message, beginningLog, endingLog);
 
 
@@ -403,7 +403,7 @@ public static class LogAnalysisScriptContextExtensions
     /// <param name="context"><see cref="ILogAnalysisScriptContext"/>.</param>
     /// <param name="message">Message.</param>
     /// <param name="log">Related log.</param>
-    public static void AddTimeSpanResult(this ILogAnalysisScriptContext context, string message, ILogAnalysisScriptLog? log) =>
+    public static void AddTimeSpanResult(this ILogAnalysisScriptContext context, string message, ILog? log) =>
         context.AddResult(ResultType.TimeSpan, message, log);
     
 
@@ -414,7 +414,7 @@ public static class LogAnalysisScriptContextExtensions
     /// <param name="message">Message.</param>
     /// <param name="beginningLog">Beginning log.</param>
     /// <param name="endingLog">Ending log.</param>
-    public static void AddTimeSpanResult(this ILogAnalysisScriptContext context, string message, ILogAnalysisScriptLog beginningLog, ILogAnalysisScriptLog endingLog) =>
+    public static void AddTimeSpanResult(this ILogAnalysisScriptContext context, string message, ILog beginningLog, ILog endingLog) =>
         context.AddResult(ResultType.TimeSpan, message, beginningLog, endingLog);
     
 
@@ -424,7 +424,7 @@ public static class LogAnalysisScriptContextExtensions
     /// <param name="context"><see cref="ILogAnalysisScriptContext"/>.</param>
     /// <param name="message">Message.</param>
     /// <param name="log">Related log.</param>
-    public static void AddWarningResult(this ILogAnalysisScriptContext context, string message, ILogAnalysisScriptLog? log) =>
+    public static void AddWarningResult(this ILogAnalysisScriptContext context, string message, ILog? log) =>
         context.AddResult(ResultType.Warning, message, log);
     
 
@@ -435,7 +435,7 @@ public static class LogAnalysisScriptContextExtensions
     /// <param name="message">Message.</param>
     /// <param name="beginningLog">Beginning log.</param>
     /// <param name="endingLog">Ending log.</param>
-    public static void AddWarningResult(this ILogAnalysisScriptContext context, string message, ILogAnalysisScriptLog beginningLog, ILogAnalysisScriptLog endingLog) =>
+    public static void AddWarningResult(this ILogAnalysisScriptContext context, string message, ILog beginningLog, ILog endingLog) =>
         context.AddResult(ResultType.Warning, message, beginningLog, endingLog);
 }
 
@@ -443,7 +443,7 @@ public static class LogAnalysisScriptContextExtensions
 /// <summary>
 /// Interface for <see cref="LogAnalysisScript"/> to access log.
 /// </summary>
-public interface ILogAnalysisScriptLog
+public interface ILog
 {
     /// <summary>
     /// Get property of log.
@@ -462,18 +462,18 @@ public interface ILogAnalysisScriptLog
 
 
 /// <summary>
-/// Empty implementation of <see cref="ILogAnalysisScriptLog"/>.
+/// Empty implementation of <see cref="ILog"/>.
 /// </summary>
-class EmptyLogAnalysisScriptLog : ILogAnalysisScriptLog
+class EmptyLog : ILog
 {
     /// <summary>
     /// Default instance.
     /// </summary>
-    public static readonly ILogAnalysisScriptLog Default = new EmptyLogAnalysisScriptLog();
+    public static readonly ILog Default = new EmptyLog();
 
 
     // Constructor.
-    EmptyLogAnalysisScriptLog()
+    EmptyLog()
     { }
 
 
@@ -488,16 +488,16 @@ class EmptyLogAnalysisScriptLog : ILogAnalysisScriptLog
 
 
 /// <summary>
-/// Extensions for <see cref="LogAnalysisScriptLog"/>.
+/// Extensions for <see cref="ILog"/>.
 /// </summary>
-public static class LogAnalysisScriptLogExtensions
+public static class LogExtensions
 {
     /// <summary>
     /// Get property of log.
     /// </summary>
     /// <param name="name">Name of property.</param>
     /// <returns>Value of log property or Null.</returns>
-    public static object? GetPropertyOrNull(this ILogAnalysisScriptLog log, string name) =>
+    public static object? GetPropertyOrNull(this ILog log, string name) =>
         log.GetProperty<object?>(name, null);
 }
 
