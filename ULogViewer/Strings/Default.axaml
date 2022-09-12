@@ -752,11 +752,73 @@ At line {2} column {3}.
 	<!-- ScriptLogDataSourceProviderEditorDialog -->
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript">Script to close raw log reader</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Description">The script will be run one time when closing raw log reader. There is no return value needed.</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Template.CSharp">/*
+ * Namespaces are imported automatically for types and functions for log reading. For ex, FileStream.
+ * Please refer to https://carinastudio.azurewebsites.net/ULogViewer/Scripting
+ * and https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource for more information.
+ */</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Template.JavaScript">/*
+ * Please refer to https://carinastudio.azurewebsites.net/ULogViewer/Scripting
+ * and https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource for more information.
+ */</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.DisplayName">Name (required)</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript">Script to open raw log reader</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Description">The script will be run one time when opening raw log reader. The returned value should be LogDataSourceState.ReaderOpened if succeeded, or failure if returning other values.</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Template.CSharp">/*
+ * Namespaces are imported automatically for types and functions for log reading. For ex, FileStream and LogDataSourceState.
+ * Please refer to https://carinastudio.azurewebsites.net/ULogViewer/Scripting
+ * and https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource for more information.
+ */
+
+/*
+ * Return LogDataSourceState.ReaderOpened if reader has been opened successfully.
+ * Or you can return one of the following values for failure cases:
+ *   * LogDataSourceState.ExternalDependencyNotFound
+ *   * LogDataSourceState.SourceNotFound
+ *   * LogDataSourceState.UnclassifiedError
+ */
+return LogDataSourceState.UnclassifiedError;</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Template.JavaScript">/*
+ * Import namespaces for types and functions for log reading. For ex, FileStream and LogDataSourceState.
+ * Please refer to https://carinastudio.azurewebsites.net/ULogViewer/Scripting
+ * and https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource for more information.
+ */
+var ds = importNamespace("CarinaStudio.ULogViewer.Logs.DataSources");
+var io = importNamespace("System.IO");
+var text = importNamespace("System.Text");
+
+/*
+ * Return LogDataSourceState.readerOpened if reader has been opened successfully.
+ * Or you can return one of the following values for failure cases:
+ *   * LogDataSourceState.externalDependencyNotFound
+ *   * LogDataSourceState.sourceNotFound
+ *   * LogDataSourceState.unclassifiedError
+ */
+return ds.LogDataSourceState.unclassifiedError;</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript">Script to read raw log line</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Description">The script will be run for reading each raw log line. The returned value should be String or Null.</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Template.CSharp">/*
+ * Namespaces are imported automatically for types and functions for log reading. For ex, FileStream.
+ * Please refer to https://carinastudio.azurewebsites.net/ULogViewer/Scripting
+ * and https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource for more information.
+ */
+
+/*
+ * Return a raw log line (string) read from source, or Null if there is no more raw log line can be read.
+ */
+return null;</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Template.JavaScript">/*
+ * Import namespaces for types and functions for log reading. For ex, FileStream.
+ * Please refer to https://carinastudio.azurewebsites.net/ULogViewer/Scripting
+ * and https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource for more information.
+ */
+var io = importNamespace("System.IO");
+var text = importNamespace("System.Text");
+
+/*
+ * Return a raw log line (String) read from source, or Null if there is no more raw log line can be read.
+ */
+return null;</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.SupportedSourceOptions">Supported data source options</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.SupportedSourceOptions.Required">Required</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.Title">Edit log data source script</sys:String>
