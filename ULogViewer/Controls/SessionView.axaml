@@ -13,6 +13,7 @@
 			 xmlns:asConverters="using:CarinaStudio.AppSuite.Converters"
 			 xmlns:app="using:CarinaStudio.ULogViewer"
 			 xmlns:appAnalysis="using:CarinaStudio.ULogViewer.ViewModels.Analysis"
+			 xmlns:appAnalysisScripting="using:CarinaStudio.ULogViewer.ViewModels.Analysis.Scripting"
              xmlns:appControls="clr-namespace:CarinaStudio.ULogViewer.Controls;assembly=ULogViewer"
              xmlns:appConverters="clr-namespace:CarinaStudio.ULogViewer.Converters;assembly=ULogViewer"
 			 xmlns:appCtxlBased="using:CarinaStudio.ULogViewer.ViewModels.Analysis.ContextualBased"
@@ -1324,7 +1325,7 @@
 																	<TextBlock IsVisible="{Binding !$parent[UserControl].EnableRunningScript}" Text="{DynamicResource String/SessionView.LogAnalysisRuleSets.Disabled}" TextTrimming="CharacterEllipsis"/>
 																</StackPanel>
 															</Border>
-															<ListBox Name="logAnalysisScriptSetListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" IsEnabled="{Binding $parent[UserControl].EnableRunningScript}" IsVisible="{Binding ScriptSets.Count, Source={x:Static appAnalysis:LogAnalysisScriptSetManager.Default}}" Items="{Binding ScriptSets, Source={x:Static appAnalysis:LogAnalysisScriptSetManager.Default}}" SelectionMode="Multiple" VirtualizationMode="None">
+															<ListBox Name="logAnalysisScriptSetListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" IsEnabled="{Binding $parent[UserControl].EnableRunningScript}" IsVisible="{Binding ScriptSets.Count, Source={x:Static appAnalysisScripting:LogAnalysisScriptSetManager.Default}}" Items="{Binding ScriptSets, Source={x:Static appAnalysisScripting:LogAnalysisScriptSetManager.Default}}" SelectionMode="Multiple" VirtualizationMode="None">
 																<ListBox.ItemTemplate>
 																	<DataTemplate>
 																		<Grid ColumnDefinitions="Auto,*,Auto">
@@ -1376,7 +1377,7 @@
 															<MultiBinding Converter="{x:Static aConverters:BoolConverters.And}">
 																<Binding Path="RuleSets.Count" Source="{x:Static appAnalysis:KeyLogAnalysisRuleSetManager.Default}" Converter="{x:Static abConverters:NumberConverters.IsZero}"/>
 																<Binding Path="RuleSets.Count" Source="{x:Static appCtxlBased:OperationDurationAnalysisRuleSetManager.Default}" Converter="{x:Static abConverters:NumberConverters.IsZero}"/>
-																<Binding Path="ScriptSets.Count" Source="{x:Static appAnalysis:LogAnalysisScriptSetManager.Default}" Converter="{x:Static abConverters:NumberConverters.IsZero}"/>
+																<Binding Path="ScriptSets.Count" Source="{x:Static appAnalysisScripting:LogAnalysisScriptSetManager.Default}" Converter="{x:Static abConverters:NumberConverters.IsZero}"/>
 															</MultiBinding>
 														</TextBlock.IsVisible>
 													</TextBlock>

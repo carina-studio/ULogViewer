@@ -9,7 +9,7 @@ using System.Reflection;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace CarinaStudio.ULogViewer.ViewModels.Analysis;
+namespace CarinaStudio.ULogViewer.ViewModels.Analysis.Scripting;
 
 /// <summary>
 /// Set of script to analyze log.

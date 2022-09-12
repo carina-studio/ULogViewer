@@ -15,6 +15,7 @@ using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ULogViewer.ViewModels.Analysis;
 using CarinaStudio.ULogViewer.ViewModels.Analysis.ContextualBased;
+using CarinaStudio.ULogViewer.ViewModels.Analysis.Scripting;
 using CarinaStudio.ULogViewer.ViewModels.Categorizing;
 using CarinaStudio.ViewModels;
 using CarinaStudio.Windows.Input;

@@ -8,7 +8,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CarinaStudio.ULogViewer.ViewModels.Analysis;
+namespace CarinaStudio.ULogViewer.ViewModels.Analysis.Scripting;
 
 /// <summary>
 /// Manager of <see cref="LogAnalysisScriptSet"/>.
