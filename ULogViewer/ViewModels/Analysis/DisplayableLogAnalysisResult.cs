@@ -1,3 +1,4 @@
+using Avalonia.Media;
 using CarinaStudio.Threading;
 using System;
 using System.ComponentModel;
@@ -48,6 +49,15 @@ class DisplayableLogAnalysisResult : BaseApplicationObject<IULogViewerApplicatio
     /// Get beginning <see cref="DisplayableLog"/> which relates to this result.
     /// </summary>
     public virtual DisplayableLog? BeginningLog { get; }
+
+
+    /// <summary>
+    /// Get <see cref="IBrush"/> of color indicator.
+    /// </summary>
+    public IBrush? ColorIndicatorBrush 
+    { 
+        get => (this.Log ?? this.BeginningLog ?? this.EndingLog)?.ColorIndicatorBrush;
+    }
 
 
     /// <summary>

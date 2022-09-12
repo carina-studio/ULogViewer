@@ -1420,7 +1420,7 @@
 						<asControls:ListBox.ItemTemplate>
 							<DataTemplate>
 								<Grid ColumnDefinitions="Auto,Auto,*">
-									<Border Background="{Binding Log.ColorIndicatorBrush}" BorderBrush="{DynamicResource Brush/WorkingArea.Panel.Background}" BorderThickness="{StaticResource Thickness/SessionView.LogListBox.ColorIndicator.Border}" IsVisible="{Binding $parent[UserControl].DataContext.HasLogColorIndicator}" ToolTip.Tip="{Binding Log.ColorIndicatorTip}" Width="{StaticResource Double/SessionView.LogListBox.ColorIndicator.Width}"/>
+									<Border Background="{Binding ColorIndicatorBrush}" BorderBrush="{DynamicResource Brush/WorkingArea.Panel.Background}" BorderThickness="{StaticResource Thickness/SessionView.LogListBox.ColorIndicator.Border}" IsVisible="{Binding $parent[UserControl].DataContext.HasLogColorIndicator}" ToolTip.Tip="{Binding Log.ColorIndicatorTip}" Width="{StaticResource Double/SessionView.LogListBox.ColorIndicator.Width}"/>
 									<Image Classes="Icon" Grid.Column="1" Height="{StaticResource Double/SessionView.LogAnalysisResult.Icon.Size}" Margin="{StaticResource Thickness/SessionView.LogAnalysisResult.Icon.Margin}" Source="{Binding Type, Converter={x:Static appConverters:DisplayableLogAnalysisResultIconConverter.Default}}" Width="{StaticResource Double/SessionView.LogAnalysisResult.Icon.Size}">
 										<ia:Interaction.Behaviors>
 											<iaCore:DataTriggerBehavior Binding="{Binding #messageTextBlock.IsMultiLineText}" Value="True">
