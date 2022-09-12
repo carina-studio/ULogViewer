@@ -233,9 +233,30 @@ public interface ILogAnalysisScriptContext : IUserInteractiveContext
     /// </summary>
     /// <param name="type">Type of result.</param>
     /// <param name="message">Message.</param>
+    /// <param name="log">Related log.</param>
+    /// <param name="duration">Related duration.</param>
+    void AddResult(ResultType type, string message, ILogAnalysisScriptLog? log, TimeSpan duration);
+
+
+    /// <summary>
+    /// Add analysis result.
+    /// </summary>
+    /// <param name="type">Type of result.</param>
+    /// <param name="message">Message.</param>
     /// <param name="beginningLog">Beginning log.</param>
     /// <param name="endingLog">Ending log.</param>
     void AddResult(ResultType type, string message, ILogAnalysisScriptLog beginningLog, ILogAnalysisScriptLog endingLog);
+
+
+    /// <summary>
+    /// Add analysis result.
+    /// </summary>
+    /// <param name="type">Type of result.</param>
+    /// <param name="message">Message.</param>
+    /// <param name="beginningLog">Beginning log.</param>
+    /// <param name="endingLog">Ending log.</param>
+    /// <param name="duration">Related duration.</param>
+    void AddResult(ResultType type, string message, ILogAnalysisScriptLog beginningLog, ILogAnalysisScriptLog endingLog, TimeSpan duration);
 
 
     /// <summary>

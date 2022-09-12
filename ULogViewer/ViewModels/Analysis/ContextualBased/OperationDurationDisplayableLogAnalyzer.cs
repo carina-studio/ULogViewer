@@ -49,7 +49,7 @@ class OperationDurationDisplayableLogAnalyzer : ContextualBasedDisplayableLogAna
         public override DisplayableLog? BeginningLog { get; }
 
         // Duration.
-        public TimeSpan Duration { get; }
+        public override TimeSpan? Duration { get; }
 
         // Beginning log.
         public override DisplayableLog? EndingLog { get; }

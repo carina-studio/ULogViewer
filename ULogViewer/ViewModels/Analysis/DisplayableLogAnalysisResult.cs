@@ -51,6 +51,12 @@ class DisplayableLogAnalysisResult : BaseApplicationObject<IULogViewerApplicatio
 
 
     /// <summary>
+    /// Get related duration of result.
+    /// </summary>
+    public virtual TimeSpan? Duration { get; }
+
+
+    /// <summary>
     /// Get ending <see cref="DisplayableLog"/> which relates to this result.
     /// </summary>
     public virtual DisplayableLog? EndingLog { get; }

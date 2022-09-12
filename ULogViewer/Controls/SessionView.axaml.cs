@@ -661,11 +661,11 @@ namespace CarinaStudio.ULogViewer.Controls
 				{
 					foreach (var result in this.logAnalysisResultListBox.SelectedItems.Cast<DisplayableLogAnalysisResult>())
 					{
-						if (result is OperationDurationDisplayableLogAnalyzer.Result odResult)
+						result.Duration?.Let(duration =>
 						{
-							totalDurtion += odResult.Duration;
+							totalDurtion += duration;
 							++resultCount;
-						}
+						});
 					}
 				}
 				if (resultCount > 0)
