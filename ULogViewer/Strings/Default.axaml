@@ -242,11 +242,10 @@
  */
 return false;</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Template.JavaScript">/*
- * Import namespace for types and functions for log analysis. For ex, ILog and ResultType.
+ * Namespaces are imported automatically for types and functions for log analysis. For ex, csScripting.ILog and csScripting.ResultType.
  * Please refer to https://carinastudio.azurewebsites.net/ULogViewer/Scripting
  * and https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#LogAnalysisScript for more information.
  */
-var scripting = importNamespace("CarinaStudio.ULogViewer.ViewModels.Analysis.Scripting");
 
 /*
  * Return True to take results added by context.addResult(), or False to ignore current log and results.
@@ -758,6 +757,7 @@ At line {2} column {3}.
  * and https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource for more information.
  */</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Template.JavaScript">/*
+ * Namespaces are imported automatically for types and functions for log reading. For ex, sysIO.FileStream.
  * Please refer to https://carinastudio.azurewebsites.net/ULogViewer/Scripting
  * and https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource for more information.
  */</sys:String>
@@ -779,13 +779,10 @@ At line {2} column {3}.
  */
 return LogDataSourceState.UnclassifiedError;</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Template.JavaScript">/*
- * Import namespaces for types and functions for log reading. For ex, FileStream and LogDataSourceState.
+ * Namespaces are imported automatically for types and functions for log reading. For ex, sysIO.FileStream and csDataSources.LogDataSourceState.
  * Please refer to https://carinastudio.azurewebsites.net/ULogViewer/Scripting
  * and https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource for more information.
  */
-var ds = importNamespace("CarinaStudio.ULogViewer.Logs.DataSources");
-var io = importNamespace("System.IO");
-var text = importNamespace("System.Text");
 
 /*
  * Return LogDataSourceState.readerOpened if reader has been opened successfully.
@@ -794,7 +791,7 @@ var text = importNamespace("System.Text");
  *   * LogDataSourceState.sourceNotFound
  *   * LogDataSourceState.unclassifiedError
  */
-return ds.LogDataSourceState.unclassifiedError;</sys:String>
+return csDataSources.LogDataSourceState.unclassifiedError;</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript">Script to read raw log line</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Description">The script will be run for reading each raw log line. The returned value should be String or Null.</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Template.CSharp">/*
@@ -808,15 +805,13 @@ return ds.LogDataSourceState.unclassifiedError;</sys:String>
  */
 return null;</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Template.JavaScript">/*
- * Import namespaces for types and functions for log reading. For ex, FileStream.
+ * Namespaces are imported automatically for types and functions for log reading. For ex, sysIO.FileStream.
  * Please refer to https://carinastudio.azurewebsites.net/ULogViewer/Scripting
  * and https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource for more information.
  */
-var io = importNamespace("System.IO");
-var text = importNamespace("System.Text");
 
 /*
- * Return a raw log line (String) read from source, or Null if there is no more raw log line can be read.
+ * Return a raw log line (string) read from source, or Null if there is no more raw log line can be read.
  */
 return null;</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.SupportedSourceOptions">Supported data source options</sys:String>

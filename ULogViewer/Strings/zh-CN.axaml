@@ -231,11 +231,10 @@
  */
 return false;</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Template.JavaScript">/*
- * 添加命名空间以提供日志分析所需之型别，例如 ILog 及 ResultType。
+ * 相关命名空间已自动添加以提供日志分析所需之型别，例如 csScripting.ILog 及 csScripting.ResultType。
  * 请参阅 https://carinastudio.azurewebsites.net/ULogViewer/Scripting
  * 及 https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#LogAnalysisScript 以取得更多信息。
  */
-var scripting = importNamespace("CarinaStudio.ULogViewer.ViewModels.Analysis.Scripting");
 
 /*
  * 返回 True 以保留透过 context.addResult() 所建立的分析结果，或返回 False 以略过目前的日志及分析结果。
@@ -723,6 +722,7 @@ return false;</sys:String>
  * 及 https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource 以取得更多信息。
  */</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Template.JavaScript">/*
+ * 相关命名空间已自动添加以提供日志读取所需之型别，例如 sysIO.FileStream。
  * 请参阅 https://carinastudio.azurewebsites.net/ULogViewer/Scripting
  * 及 https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource 以取得更多信息。
  */</sys:String>
@@ -744,13 +744,10 @@ return false;</sys:String>
  */
 return LogDataSourceState.UnclassifiedError;</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Template.JavaScript">/*
- * 添加命名空间以提供日志读取所需之型别，例如 FileStream 及 LogDataSourceState。
+ * 相关命名空间已自动添加以提供日志读取所需之型别，例如 sysIO.FileStream 及 csDataSources.LogDataSourceState。
  * 请参阅 https://carinastudio.azurewebsites.net/ULogViewer/Scripting
  * 及 https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource 以取得更多信息。
  */
-var ds = importNamespace("CarinaStudio.ULogViewer.Logs.DataSources");
-var io = importNamespace("System.IO");
-var text = importNamespace("System.Text");
 
 /*
  * 返回 LogDataSourceState.readerOpened 表示原始日志行读取器开启成功。
@@ -759,7 +756,7 @@ var text = importNamespace("System.Text");
  *   * LogDataSourceState.sourceNotFound
  *   * LogDataSourceState.unclassifiedError
  */
-return ds.LogDataSourceState.unclassifiedError;</sys:String>
+return csDataSources.LogDataSourceState.unclassifiedError;</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript">原始日志行读取脚本</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Description">脚本将在每行原始日志行读取时执行。需返回字符串 (String) 或 Null 表示已读取至最后一行。</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Template.CSharp">/*
@@ -773,15 +770,13 @@ return ds.LogDataSourceState.unclassifiedError;</sys:String>
  */
 return null;</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Template.JavaScript">/*
- * 添加命名空间以提供日志读取所需之型别，例如 FileStream。
+ * 相关命名空间已自动添加以提供日志读取所需之型别，例如 sysIO.FileStream。
  * 请参阅 https://carinastudio.azurewebsites.net/ULogViewer/Scripting
  * 及 https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource 以取得更多信息。
  */
-var io = importNamespace("System.IO");
-var text = importNamespace("System.Text");
 
 /*
- * 返回自来源读取的单一原始日志行 (String)，若没有剩余的原始日志行可读取时则返回 Null。
+ * 返回自来源读取的单一原始日志行 (string)，若没有剩余的原始日志行可读取时则返回 Null。
  */
 return null;</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.SupportedSourceOptions">支持的资料来源参数</sys:String>
