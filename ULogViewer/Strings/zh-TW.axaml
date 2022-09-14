@@ -230,7 +230,7 @@
  */
 return false;</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Template.JavaScript">/*
- * 相關命名空間已自動匯入以提供日誌分析所需之型別，例如 csScripting.ILog 及 csScripting.ResultType。
+ * 相關命名空間已自動匯入以提供日誌分析所需之型別，例如 csUlvScripting.ILog 及 csUlvScripting.ResultType。
  * 請參閱 https://carinastudio.azurewebsites.net/ULogViewer/Scripting
  * 及 https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#LogAnalysisScript 以取得更多資訊。
  */
@@ -699,7 +699,7 @@ return false;</sys:String>
  */
 return LogDataSourceState.UnclassifiedError;</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Template.JavaScript">/*
- * 相關命名空間已自動匯入以提供日誌讀取所需之型別，例如 sysIO.FileStream 及 csDataSources.LogDataSourceState。
+ * 相關命名空間已自動匯入以提供日誌讀取所需之型別，例如 sysIO.FileStream 及 csUlvDataSources.LogDataSourceState。
  * 請參閱 https://carinastudio.azurewebsites.net/ULogViewer/Scripting
  * 及 https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource 以取得更多資訊。
  */
@@ -711,7 +711,7 @@ return LogDataSourceState.UnclassifiedError;</sys:String>
  *   * LogDataSourceState.sourceNotFound
  *   * LogDataSourceState.unclassifiedError
  */
-return csDataSources.LogDataSourceState.unclassifiedError;</sys:String>
+return csUlvDataSources.LogDataSourceState.unclassifiedError;</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript">原始日誌行讀取腳本</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Description">腳本將在每行原始日誌行讀取時執行。需回傳字串 (String) 或 Null 表示已讀取至最後一行。</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Template.CSharp">/*

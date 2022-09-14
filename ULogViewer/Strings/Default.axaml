@@ -241,7 +241,7 @@
  */
 return false;</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Template.JavaScript">/*
- * Namespaces are imported automatically for types and functions for log analysis. For ex, csScripting.ILog and csScripting.ResultType.
+ * Namespaces are imported automatically for types and functions for log analysis. For ex, csUlvScripting.ILog and csUlvScripting.ResultType.
  * Please refer to https://carinastudio.azurewebsites.net/ULogViewer/Scripting
  * and https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#LogAnalysisScript for more information.
  */
@@ -733,7 +733,7 @@ At line {2} column {3}.
  */
 return LogDataSourceState.UnclassifiedError;</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Template.JavaScript">/*
- * Namespaces are imported automatically for types and functions for log reading. For ex, sysIO.FileStream and csDataSources.LogDataSourceState.
+ * Namespaces are imported automatically for types and functions for log reading. For ex, sysIO.FileStream and csUlvDataSources.LogDataSourceState.
  * Please refer to https://carinastudio.azurewebsites.net/ULogViewer/Scripting
  * and https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource for more information.
  */
@@ -745,7 +745,7 @@ return LogDataSourceState.UnclassifiedError;</sys:String>
  *   * LogDataSourceState.sourceNotFound
  *   * LogDataSourceState.unclassifiedError
  */
-return csDataSources.LogDataSourceState.unclassifiedError;</sys:String>
+return csUlvDataSources.LogDataSourceState.unclassifiedError;</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript">Script to read raw log line</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Description">The script will be run for reading each raw log line. The returned value should be String or Null.</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Template.CSharp">/*
