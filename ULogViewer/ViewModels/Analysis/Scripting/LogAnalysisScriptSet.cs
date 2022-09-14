@@ -222,41 +222,8 @@ public interface ILogAnalysisScriptContext : IUserInteractiveContext
     /// <summary>
     /// Add analysis result.
     /// </summary>
-    /// <param name="type">Type of result.</param>
-    /// <param name="message">Message.</param>
-    /// <param name="log">Related log.</param>
-    void AddResult(ResultType type, string message, ILog? log);
-
-
-    /// <summary>
-    /// Add analysis result.
-    /// </summary>
-    /// <param name="type">Type of result.</param>
-    /// <param name="message">Message.</param>
-    /// <param name="log">Related log.</param>
-    /// <param name="duration">Related duration.</param>
-    void AddResult(ResultType type, string message, ILog? log, TimeSpan duration);
-
-
-    /// <summary>
-    /// Add analysis result.
-    /// </summary>
-    /// <param name="type">Type of result.</param>
-    /// <param name="message">Message.</param>
-    /// <param name="beginningLog">Beginning log.</param>
-    /// <param name="endingLog">Ending log.</param>
-    void AddResult(ResultType type, string message, ILog beginningLog, ILog endingLog);
-
-
-    /// <summary>
-    /// Add analysis result.
-    /// </summary>
-    /// <param name="type">Type of result.</param>
-    /// <param name="message">Message.</param>
-    /// <param name="beginningLog">Beginning log.</param>
-    /// <param name="endingLog">Ending log.</param>
-    /// <param name="duration">Related duration.</param>
-    void AddResult(ResultType type, string message, ILog beginningLog, ILog endingLog, TimeSpan duration);
+    /// <param name="result">Result.</param>
+    void AddResult(Result result);
 
 
     /// <summary>
@@ -271,29 +238,6 @@ public interface ILogAnalysisScriptContext : IUserInteractiveContext
 /// </summary>
 public static class LogAnalysisScriptContextExtensions
 {
-    /// <summary>
-    /// Add analysis result.
-    /// </summary>
-    /// <param name="context">Context.</param>
-    /// <param name="type">Type of result.</param>
-    /// <param name="message">Message.</param>
-    /// <param name="log">Related log.</param>
-    /// <param name="duration">Related duration in milliseconds.</param>
-    public static void AddResult(this ILogAnalysisScriptContext context, ResultType type, string message, ILog? log, double duration) =>
-        context.AddResult(type, message, log, TimeSpan.FromMilliseconds(duration));
-    
-
-    /// <summary>
-    /// Add analysis result.
-    /// </summary>
-    /// <param name="context">Context.</param>
-    /// <param name="type">Type of result.</param>
-    /// <param name="message">Message.</param>
-    /// <param name="beginningLog">Beginning log.</param>
-    /// <param name="endingLog">Ending log.</param>
-    /// <param name="duration">Related duration in milliseconds.</param>
-    public static void AddResult(this ILogAnalysisScriptContext context, ResultType type, string message, ILog beginningLog, ILog endingLog, double duration) =>
-        context.AddResult(type, message, beginningLog, endingLog, TimeSpan.FromMilliseconds(duration));
 }
 
 
@@ -387,6 +331,83 @@ public static class LogExtensions
             return targetValue;
         return defaultValue;
     }
+}
+
+
+/// <summary>
+/// Result of analysis by script.
+/// </summary>
+public struct Result
+{
+    /// <summary>
+    /// Initialize <see cref="Result"/> structure.
+    /// </summary>
+    /// <param name="type">Type.</param>
+    /// <param name="message">Message.</param>
+    /// <param name="log">Log.</param>
+    public Result(ResultType type, string message, ILog log)
+    {
+        this.BeginningLog = null;
+        this.Duration = null;
+        this.EndingLog = null;
+        this.Log = log;
+        this.Message = message;
+        this.Type = type;
+    }
+
+
+    /// <summary>
+    /// Initialize <see cref="Result"/> structure.
+    /// </summary>
+    /// <param name="type">Type.</param>
+    /// <param name="message">Message.</param>
+    /// <param name="beginningLog">Beginning log.</param>
+    /// <param name="endingLog">Ending log.</param>
+    public Result(ResultType type, string message, ILog beginningLog, ILog endingLog)
+    {
+        this.BeginningLog = beginningLog;
+        this.Duration = null;
+        this.EndingLog = endingLog;
+        this.Log = null;
+        this.Message = message;
+        this.Type = type;
+    }
+
+
+    /// <summary>
+    /// Beginning log.
+    /// </summary>
+    public ILog? BeginningLog { get; set; }
+
+
+    /// <summary>
+    /// Duration.
+    /// </summary>
+    public TimeSpan? Duration { get; set; }
+
+
+    /// <summary>
+    /// Ending log.
+    /// </summary>
+    public ILog? EndingLog { get; set; }
+
+
+    /// <summary>
+    /// Log.
+    /// </summary>
+    public ILog? Log { get; set; }
+
+
+    /// <summary>
+    /// Message of result.
+    /// </summary>
+    public string? Message { get; set; }
+
+
+    /// <summary>
+    /// Type of result.
+    /// </summary>
+    public ResultType Type { get; set; }
 }
 
 
