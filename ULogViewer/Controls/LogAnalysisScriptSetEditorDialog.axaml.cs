@@ -27,7 +27,6 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Window<IU
 	bool areValidParameters;
 	readonly LogProfileIconColorComboBox iconColorComboBox;
 	readonly LogProfileIconComboBox iconComboBox;
-	bool isScriptSetShown = false;
 	readonly TextBox nameTextBox;
 	LogAnalysisScriptSet? scriptSetToEdit;
 	readonly ScheduledAction validateParametersAction;
@@ -169,7 +168,6 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Window<IU
 				}, 300);
 			}
 		}
-		this.isScriptSetShown = true;
 
 		// setup initial focus
 		this.SynchronizationContext.Post(() =>
