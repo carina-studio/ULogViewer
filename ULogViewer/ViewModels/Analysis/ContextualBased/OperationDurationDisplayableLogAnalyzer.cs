@@ -60,10 +60,9 @@ class OperationDurationDisplayableLogAnalyzer : ContextualBasedDisplayableLogAna
         // Update message.
         protected override string? OnUpdateMessage()
         {
-            var durationMessage = AppSuite.Converters.TimeSpanConverter.Default.Convert<string>(this.Duration);
             if (string.IsNullOrWhiteSpace(this.customMessage))
-                return $"{this.operationName}\n{durationMessage}";
-            return $"{this.customMessage}\n{durationMessage}";
+                return this.operationName;
+            return this.customMessage;
         }
     }
 

@@ -73,6 +73,12 @@ class DisplayableLogAnalysisResult : BaseApplicationObject<IULogViewerApplicatio
 
 
     /// <summary>
+    /// Check whether <see cref="Duration"/> is valid value or not.
+    /// </summary>
+    public bool HasDuration { get => this.Duration.HasValue; }
+
+
+    /// <summary>
     /// Get unique ID of result.
     /// </summary>
     public int Id { get; }

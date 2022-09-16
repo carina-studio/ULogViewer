@@ -1428,8 +1428,8 @@
 						</asControls:ListBox.ContextMenu>
 						<asControls:ListBox.ItemTemplate>
 							<DataTemplate>
-								<Grid ColumnDefinitions="Auto,Auto,*">
-									<Border Background="{Binding ColorIndicatorBrush}" BorderBrush="{DynamicResource Brush/WorkingArea.Panel.Background}" BorderThickness="{StaticResource Thickness/SessionView.LogListBox.ColorIndicator.Border}" IsVisible="{Binding $parent[UserControl].DataContext.HasLogColorIndicator}" ToolTip.Tip="{Binding Log.ColorIndicatorTip}" Width="{StaticResource Double/SessionView.LogListBox.ColorIndicator.Width}"/>
+								<Grid ColumnDefinitions="Auto,Auto,*" RowDefinitions="Auto,*">
+									<Border Background="{Binding ColorIndicatorBrush}" BorderBrush="{DynamicResource Brush/WorkingArea.Panel.Background}" BorderThickness="{StaticResource Thickness/SessionView.LogListBox.ColorIndicator.Border}" Grid.RowSpan="2" IsVisible="{Binding $parent[UserControl].DataContext.HasLogColorIndicator}" ToolTip.Tip="{Binding Log.ColorIndicatorTip}" Width="{StaticResource Double/SessionView.LogListBox.ColorIndicator.Width}"/>
 									<Image Classes="Icon" Grid.Column="1" Height="{StaticResource Double/SessionView.LogAnalysisResult.Icon.Size}" Margin="{StaticResource Thickness/SessionView.LogAnalysisResult.Icon.Margin}" Source="{Binding Type, Converter={x:Static appConverters:DisplayableLogAnalysisResultIconConverter.Default}}" Width="{StaticResource Double/SessionView.LogAnalysisResult.Icon.Size}">
 										<ia:Interaction.Behaviors>
 											<iaCore:DataTriggerBehavior Binding="{Binding #messageTextBlock.IsMultiLineText}" Value="True">
@@ -1441,6 +1441,18 @@
 										</ia:Interaction.Behaviors>
 									</Image>
 									<abControls:TextBlock Name="messageTextBlock" FontFamily="{Binding $parent[UserControl].LogFontFamily}" FontSize="{Binding $parent[UserControl].LogFontSize}" Grid.Column="2" Margin="{StaticResource Thickness/SessionView.MarkedLogListBox.Item.Padding}" Text="{Binding Message}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+									<Grid ColumnDefinitions="Auto,*" Grid.Column="2" Grid.Row="1" Margin="{StaticResource Thickness/SessionView.LogAnalysisResult.SubInfoPanel.Padding}" RowDefinitions="Auto,Auto" VerticalAlignment="Center">
+										<Grid.IsVisible>
+											<MultiBinding Converter="{x:Static aConverters:BoolConverters.Or}">
+												<Binding Path="HasDuration"/>
+											</MultiBinding>
+										</Grid.IsVisible>
+										
+										<!-- Duration -->
+										<Image Classes="Icon" Grid.Row="1" Height="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.Icon.Size}" IsVisible="{Binding HasDuration}" Margin="{StaticResource Thickness/SessionView.LogAnalysisResult.SubInfo.Icon.Margin}" Source="{StaticResource Image/Timer.Outline}" VerticalAlignment="Center" Width="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.Icon.Size}"/>
+										<TextBlock FontSize="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.FontSize}" Grid.Column="1" Grid.Row="1" IsVisible="{Binding HasDuration}" Text="{Binding Duration, Converter={x:Static asConverters:TimeSpanConverter.Default}}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+										
+									</Grid>
 								</Grid>
 							</DataTemplate>
 						</asControls:ListBox.ItemTemplate>
