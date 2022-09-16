@@ -1449,8 +1449,24 @@
 										</Grid.IsVisible>
 										
 										<!-- Duration -->
-										<Image Classes="Icon" Grid.Row="1" Height="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.Icon.Size}" IsVisible="{Binding HasDuration}" Margin="{StaticResource Thickness/SessionView.LogAnalysisResult.SubInfo.Icon.Margin}" Source="{StaticResource Image/Timer.Outline}" VerticalAlignment="Center" Width="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.Icon.Size}"/>
-										<TextBlock FontSize="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.FontSize}" Grid.Column="1" Grid.Row="1" IsVisible="{Binding HasDuration}" Text="{Binding Duration, Converter={x:Static asConverters:TimeSpanConverter.Default}}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+										<Image 
+											Classes="Icon" 
+											Grid.Row="1" 
+											Height="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.Icon.Size}" 
+											IsVisible="{Binding HasDuration}" 
+											Margin="{StaticResource Thickness/SessionView.LogAnalysisResult.SubInfo.Icon.Margin}" 
+											Source="{StaticResource Image/Timer.Outline}" 
+											VerticalAlignment="Center" 
+											Width="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.Icon.Size}"/>
+										<TextBlock 
+											FontSize="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.FontSize}" 
+											Grid.Column="1" 
+											Grid.Row="1" 
+											IsVisible="{Binding HasDuration}" 
+											Text="{Binding Duration, Converter={x:Static asConverters:TimeSpanConverter.Default}}" 
+											TextTrimming="CharacterEllipsis" 
+											ToolTip.Tip="{DynamicResource String/SessionView.LogAnalysisResult.Duration}"
+											VerticalAlignment="Center"/>
 										
 									</Grid>
 								</Grid>
@@ -1468,15 +1484,38 @@
 						</Border.IsVisible>
 						<TextBlock Classes="SessionView_SidePanel_FullPanelHint" Text="{DynamicResource String/SessionView.LogAnalysisPanel.Hint}"/>
 					</Border>
-					<Border Background="{DynamicResource Brush/SessionView.LogHeader.Background}" Classes="StatusBar" Grid.Row="2" IsVisible="{Binding $parent[UserControl].SelectedLogAnalysisResultsTotalDuration, Converter={x:Static aConverters:ObjectConverters.IsNotNull}}" Padding="{StaticResource Thickness/StatusBar.Item.Margin}">
+					<Border Background="{DynamicResource Brush/SessionView.LogHeader.Background}" Classes="StatusBar" Grid.Row="2" Padding="{StaticResource Thickness/StatusBar.Item.Margin}">
+						<Border.IsVisible>
+							<MultiBinding Converter="{x:Static aConverters:BoolConverters.Or}">
+								<Binding Path="SelectedLogAnalysisResultsTotalDuration" ElementName="root" Converter="{x:Static aConverters:ObjectConverters.IsNotNull}"/>
+							</MultiBinding>
+						</Border.IsVisible>
 						<StackPanel VerticalAlignment="Center">
-							<Grid Background="{x:Static Brushes.Transparent}" ColumnDefinitions="Auto,*" HorizontalAlignment="Left" ToolTip.Placement="Left" ToolTip.Tip="{DynamicResource String/SessionView.SelectedLogAnalysisResultsTotalDuration}">
-								<Image Classes="StatusBar_IconWithText" Source="{StaticResource Image/Total}"/>
-								<TextBlock Classes="StatusBar_TextBlock" Grid.Column="1" Margin="0" Text="{Binding $parent[UserControl].SelectedLogAnalysisResultsTotalDuration, Converter={x:Static asConverters:TimeSpanConverter.Default}}"/>
-							</Grid>
-							<Grid Background="{x:Static Brushes.Transparent}" ColumnDefinitions="Auto,*" HorizontalAlignment="Left" IsVisible="{Binding $parent[UserControl].SelectedLogAnalysisResultsAverageDuration, Converter={x:Static aConverters:ObjectConverters.IsNotNull}}" ToolTip.Placement="Left" ToolTip.Tip="{DynamicResource String/SessionView.SelectedLogAnalysisResultsAverageDuration}">
-								<Image Classes="StatusBar_IconWithText" Source="{StaticResource Image/Average}"/>
-								<TextBlock Classes="StatusBar_TextBlock" Grid.Column="1" Margin="0" Text="{Binding $parent[UserControl].SelectedLogAnalysisResultsAverageDuration, Converter={x:Static asConverters:TimeSpanConverter.Default}}"/>
+							<Grid ColumnDefinitions="Auto,Auto,Auto,*">
+								<Image 
+									Classes="StatusBar_IconWithText" 
+									Source="{StaticResource Image/Timer.Outline}"/>
+								<TextBlock 
+									Classes="StatusBar_TextBlock" 
+									Grid.Column="1" 
+									Margin="0" 
+									Text="{Binding $parent[UserControl].SelectedLogAnalysisResultsTotalDuration, Converter={x:Static asConverters:TimeSpanConverter.Default}}" 
+									ToolTip.Placement="Left"
+									ToolTip.Tip="{DynamicResource String/SessionView.SelectedLogAnalysisResultsTotalDuration}"/>
+								<TextBlock 
+									Classes="StatusBar_TextBlock" 
+									Grid.Column="2" 
+									IsVisible="{Binding #selectedLogAnalysisResultAvgDuration.IsVisible}" 
+									Margin="0" 
+									Text=" / "/>
+								<TextBlock Name="selectedLogAnalysisResultAvgDuration" 
+									Classes="StatusBar_TextBlock" 
+									Grid.Column="3" 
+									IsVisible="{Binding $parent[UserControl].SelectedLogAnalysisResultsAverageDuration, Converter={x:Static aConverters:ObjectConverters.IsNotNull}}" 
+									Margin="0" 
+									Text="{Binding $parent[UserControl].SelectedLogAnalysisResultsAverageDuration, Converter={x:Static asConverters:TimeSpanConverter.Default}}" 
+									ToolTip.Placement="Left"
+									ToolTip.Tip="{DynamicResource String/SessionView.SelectedLogAnalysisResultsAverageDuration}"/>
 							</Grid>
 						</StackPanel>
 					</Border>
