@@ -352,6 +352,7 @@ public struct Result
         this.EndingLog = null;
         this.Log = log;
         this.Message = message;
+        this.Quantity = null;
         this.Type = type;
     }
 
@@ -370,6 +371,7 @@ public struct Result
         this.EndingLog = endingLog;
         this.Log = null;
         this.Message = message;
+        this.Quantity = null;
         this.Type = type;
     }
 
@@ -402,6 +404,12 @@ public struct Result
     /// Message of result.
     /// </summary>
     public string? Message { get; set; }
+
+
+    /// <summary>
+    /// Related quantity of result.
+    /// </summary>
+    public long? Quantity { get; set; }
 
 
     /// <summary>

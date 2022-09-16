@@ -875,6 +875,7 @@ return null;</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisProgress">Analyzing logs…</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisResult">Analysis result</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisResult.Duration">Duration</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisResult.Quantity">Quantity</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets">Rule sets of analysis</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.Disabled">(Disabled)</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.KeyLogAnalysisRuleSet">Key log analysis</sys:String>

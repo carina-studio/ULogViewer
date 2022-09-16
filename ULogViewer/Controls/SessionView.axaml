@@ -1445,13 +1445,14 @@
 										<Grid.IsVisible>
 											<MultiBinding Converter="{x:Static aConverters:BoolConverters.Or}">
 												<Binding Path="HasDuration"/>
+												<Binding Path="HasQuantity"/>
 											</MultiBinding>
 										</Grid.IsVisible>
 										
 										<!-- Duration -->
 										<Image 
 											Classes="Icon" 
-											Grid.Row="1" 
+											Grid.Row="0" 
 											Height="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.Icon.Size}" 
 											IsVisible="{Binding HasDuration}" 
 											Margin="{StaticResource Thickness/SessionView.LogAnalysisResult.SubInfo.Icon.Margin}" 
@@ -1461,11 +1462,31 @@
 										<TextBlock 
 											FontSize="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.FontSize}" 
 											Grid.Column="1" 
-											Grid.Row="1" 
+											Grid.Row="0" 
 											IsVisible="{Binding HasDuration}" 
 											Text="{Binding Duration, Converter={x:Static asConverters:TimeSpanConverter.Default}}" 
 											TextTrimming="CharacterEllipsis" 
 											ToolTip.Tip="{DynamicResource String/SessionView.LogAnalysisResult.Duration}"
+											VerticalAlignment="Center"/>
+										
+										<!-- Quantity -->
+										<Image 
+											Classes="Icon" 
+											Grid.Row="1" 
+											Height="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.Icon.Size}" 
+											IsVisible="{Binding HasQuantity}" 
+											Margin="{StaticResource Thickness/SessionView.LogAnalysisResult.SubInfo.Icon.Margin}" 
+											Source="{StaticResource Image/Layers.Outline}" 
+											VerticalAlignment="Center" 
+											Width="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.Icon.Size}"/>
+										<TextBlock 
+											FontSize="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.FontSize}" 
+											Grid.Column="1" 
+											Grid.Row="1" 
+											IsVisible="{Binding HasQuantity}" 
+											Text="{Binding Quantity}" 
+											TextTrimming="CharacterEllipsis" 
+											ToolTip.Tip="{DynamicResource String/SessionView.LogAnalysisResult.Quantity}"
 											VerticalAlignment="Center"/>
 										
 									</Grid>

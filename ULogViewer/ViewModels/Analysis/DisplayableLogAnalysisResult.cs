@@ -79,6 +79,12 @@ class DisplayableLogAnalysisResult : BaseApplicationObject<IULogViewerApplicatio
 
 
     /// <summary>
+    /// Check whether <see cref="Quantity"/> is valid value or not.
+    /// </summary>
+    public bool HasQuantity { get => this.Quantity.HasValue; }
+
+
+    /// <summary>
     /// Get unique ID of result.
     /// </summary>
     public int Id { get; }
@@ -168,6 +174,12 @@ class DisplayableLogAnalysisResult : BaseApplicationObject<IULogViewerApplicatio
 
     /// <inheritdoc/>
     public event PropertyChangedEventHandler? PropertyChanged;
+
+
+    /// <summary>
+    /// Get related quantity of analysis result.
+    /// </summary>
+    public virtual long? Quantity { get; }
 
 
     /// <inheritdoc/>
