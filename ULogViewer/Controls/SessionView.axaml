@@ -1157,8 +1157,8 @@
 							<ToggleButton Name="logAnalysisRuleSetsButton" Classes="ToolBar_ToggleButton" Grid.Column="2" IsChecked="{Binding #logAnalysisRuleSetsPopup.IsOpen, Mode=TwoWay}" ToolTip.Tip="{DynamicResource String/SessionView.LogAnalysisRuleSets}">
 								<Panel>
 									<Panel IsVisible="{Binding !$parent[ToggleButton].IsChecked}">
-										<Image Classes="Icon" IsVisible="{Binding !KeyLogAnalysisRuleSets.Count}" Source="{StaticResource Image/Checklist}"/>
-										<Image Classes="Icon">
+										<Image Classes="Icon" IsVisible="{Binding !#logAnalysisRuleSetsActiveIcon.IsVisible}" Source="{StaticResource Image/Checklist}"/>
+										<Image Name="logAnalysisRuleSetsActiveIcon" Classes="Icon">
 											<Image.IsVisible>
 												<MultiBinding Converter="{x:Static aConverters:BoolConverters.Or}">
 													<Binding Path="KeyLogAnalysisRuleSets.Count" Converter="{x:Static abConverters:NumberConverters.IsNonZero}"/>
