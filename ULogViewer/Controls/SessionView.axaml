@@ -1162,17 +1162,17 @@
 						</Border.Styles>
 						<Grid ColumnDefinitions="Auto,*,Auto">
 							<TextBlock Classes="SessionView_SidePanel_Header_Left" Text="{DynamicResource String/SessionView.LogAnalysisPanel}"/>
-							<TextBlock Classes="SessionView_SidePanel_Header_Right" Grid.Column="1" Text="{Binding LogAnalysisResults.Count, StringFormat={} ({0})}"/>
+							<TextBlock Classes="SessionView_SidePanel_Header_Right" Grid.Column="1" Text="{Binding LogAnalysis.LogAnalysisResults.Count, StringFormat={} ({0})}"/>
 							<ToggleButton Name="logAnalysisRuleSetsButton" Classes="ToolBar_ToggleButton" Grid.Column="2" IsChecked="{Binding #logAnalysisRuleSetsPopup.IsOpen, Mode=TwoWay}" ToolTip.Tip="{DynamicResource String/SessionView.LogAnalysisRuleSets}">
 								<Panel>
 									<Panel IsVisible="{Binding !$parent[ToggleButton].IsChecked}">
-										<Image Classes="Icon" IsVisible="{Binding !KeyLogAnalysisRuleSets.Count}" Source="{StaticResource Image/Checklist}"/>
-										<Image Classes="Icon">
+										<Image Classes="Icon" IsVisible="{Binding !#logAnalysisRuleSetsActiveIcon.IsVisible}" Source="{StaticResource Image/Checklist}"/>
+										<Image Name="logAnalysisRuleSetsActiveIcon" Classes="Icon">
 											<Image.IsVisible>
 												<MultiBinding Converter="{x:Static aConverters:BoolConverters.Or}">
-													<Binding Path="KeyLogAnalysisRuleSets.Count" Converter="{x:Static abConverters:NumberConverters.IsNonZero}"/>
-													<Binding Path="OperationDurationAnalysisRuleSets.Count" Converter="{x:Static abConverters:NumberConverters.IsNonZero}"/>
-													<Binding Path="LogAnalysisScriptSets.Count" Converter="{x:Static abConverters:NumberConverters.IsNonZero}"/>
+													<Binding Path="LogAnalysis.KeyLogAnalysisRuleSets.Count" Converter="{x:Static abConverters:NumberConverters.IsNonZero}"/>
+													<Binding Path="LogAnalysis.OperationDurationAnalysisRuleSets.Count" Converter="{x:Static abConverters:NumberConverters.IsNonZero}"/>
+													<Binding Path="LogAnalysis.LogAnalysisScriptSets.Count" Converter="{x:Static abConverters:NumberConverters.IsNonZero}"/>
 												</MultiBinding>
 											</Image.IsVisible>
 											<DrawingImage>
@@ -1416,7 +1416,7 @@
 							</Popup>
 						</Grid>
 					</Border>
-					<asControls:ListBox Classes="Log" Name="logAnalysisResultListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" Focusable="False" Grid.Row="1" Items="{Binding LogAnalysisResults}" SelectionMode="Multiple">
+					<asControls:ListBox Classes="Log" Name="logAnalysisResultListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" Focusable="False" Grid.Row="1" Items="{Binding LogAnalysis.LogAnalysisResults}" SelectionMode="Multiple">
 						<asControls:ListBox.ContextMenu>
 							<ContextMenu>
 								<MenuItem Command="{Binding $parent[UserControl].CopySelectedLogAnalysisResultsCommand}" Header="{DynamicResource String/Common.Copy}">
@@ -1497,7 +1497,7 @@
 					<Border Background="{x:Static Brushes.Transparent}" Grid.Row="1">
 						<Border.IsVisible>
 							<MultiBinding Converter="{x:Static aConverters:BoolConverters.And}">
-								<Binding Path="LogAnalysisResults.Count" Converter="{x:Static abConverters:NumberConverters.IsZero}"/>
+								<Binding Path="LogAnalysis.LogAnalysisResults.Count" Converter="{x:Static abConverters:NumberConverters.IsZero}"/>
 								<Binding Path="SelectedItems.Count" Converter="{x:Static abConverters:NumberConverters.IsZero}" ElementName="keyLogAnalysisRuleSetListBox"/>
 								<Binding Path="SelectedItems.Count" Converter="{x:Static abConverters:NumberConverters.IsZero}" ElementName="operationDurationAnalysisRuleSetListBox"/>
 								<Binding Path="SelectedItems.Count" Converter="{x:Static abConverters:NumberConverters.IsZero}" ElementName="logAnalysisScriptSetListBox"/>

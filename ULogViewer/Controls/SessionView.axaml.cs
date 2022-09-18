@@ -747,12 +747,12 @@ namespace CarinaStudio.ULogViewer.Controls
 				var selectedKlaRuleSets = this.selectedKeyLogAnalysisRuleSets.ToArray();
 				var selectedOdaRuleSets = this.selectedOperationDurationAnalysisRuleSets.ToArray();
 				var selectedLaScriptSets = this.selectedLogAnalysisScriptSets.ToArray();
-				session.KeyLogAnalysisRuleSets.Clear();
-				session.KeyLogAnalysisRuleSets.AddAll(selectedKlaRuleSets);
-				session.OperationDurationAnalysisRuleSets.Clear();
-				session.OperationDurationAnalysisRuleSets.AddAll(selectedOdaRuleSets);
-				session.LogAnalysisScriptSets.Clear();
-				session.LogAnalysisScriptSets.AddAll(selectedLaScriptSets);
+				session.LogAnalysis.KeyLogAnalysisRuleSets.Clear();
+				session.LogAnalysis.KeyLogAnalysisRuleSets.AddAll(selectedKlaRuleSets);
+				session.LogAnalysis.OperationDurationAnalysisRuleSets.Clear();
+				session.LogAnalysis.OperationDurationAnalysisRuleSets.AddAll(selectedOdaRuleSets);
+				session.LogAnalysis.LogAnalysisScriptSets.Clear();
+				session.LogAnalysis.LogAnalysisScriptSets.AddAll(selectedLaScriptSets);
 			});
 			this.updateLogFiltersAction = new ScheduledAction(() =>
 			{
@@ -872,11 +872,11 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.attachedLogs = session.Logs as INotifyCollectionChanged;
 			if (this.attachedLogs != null)
 				this.attachedLogs.CollectionChanged += this.OnLogsChanged;
-			(session.KeyLogAnalysisRuleSets as INotifyCollectionChanged)?.Let(it =>
+			(session.LogAnalysis.KeyLogAnalysisRuleSets as INotifyCollectionChanged)?.Let(it =>
 				it.CollectionChanged += this.OnSessionLogAnalysisRuleSetsChanged);
-			(session.LogAnalysisScriptSets as INotifyCollectionChanged)?.Let(it =>
+			(session.LogAnalysis.LogAnalysisScriptSets as INotifyCollectionChanged)?.Let(it =>
 				it.CollectionChanged += this.OnSessionLogAnalysisRuleSetsChanged);
-			(session.OperationDurationAnalysisRuleSets as INotifyCollectionChanged)?.Let(it =>
+			(session.LogAnalysis.OperationDurationAnalysisRuleSets as INotifyCollectionChanged)?.Let(it =>
 				it.CollectionChanged += this.OnSessionLogAnalysisRuleSetsChanged);
 
 			// check profile
@@ -940,19 +940,19 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.keyLogAnalysisRuleSetListBox.SelectedItems.Let(it =>
 			{
 				it.Clear();
-				foreach (var ruleSet in session.KeyLogAnalysisRuleSets)
+				foreach (var ruleSet in session.LogAnalysis.KeyLogAnalysisRuleSets)
 					it.Add(ruleSet);
 			});
 			this.logAnalysisScriptSetListBox.SelectedItems.Let(it =>
 			{
 				it.Clear();
-				foreach (var scriptSet in session.LogAnalysisScriptSets)
+				foreach (var scriptSet in session.LogAnalysis.LogAnalysisScriptSets)
 					it.Add(scriptSet);
 			});
 			this.operationDurationAnalysisRuleSetListBox.SelectedItems.Let(it =>
 			{
 				it.Clear();
-				foreach (var ruleSet in session.OperationDurationAnalysisRuleSets)
+				foreach (var ruleSet in session.LogAnalysis.OperationDurationAnalysisRuleSets)
 					it.Add(ruleSet);
 			});
 			this.updateLogAnalysisAction.Cancel();
@@ -1892,11 +1892,11 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.attachedLogs.CollectionChanged -= this.OnLogsChanged;
 				this.attachedLogs = null;
 			}
-			(session.KeyLogAnalysisRuleSets as INotifyCollectionChanged)?.Let(it =>
+			(session.LogAnalysis.KeyLogAnalysisRuleSets as INotifyCollectionChanged)?.Let(it =>
 				it.CollectionChanged -= this.OnSessionLogAnalysisRuleSetsChanged);
-			(session.LogAnalysisScriptSets as INotifyCollectionChanged)?.Let(it =>
+			(session.LogAnalysis.LogAnalysisScriptSets as INotifyCollectionChanged)?.Let(it =>
 				it.CollectionChanged -= this.OnSessionLogAnalysisRuleSetsChanged);
-			(session.OperationDurationAnalysisRuleSets as INotifyCollectionChanged)?.Let(it =>
+			(session.LogAnalysis.OperationDurationAnalysisRuleSets as INotifyCollectionChanged)?.Let(it =>
 				it.CollectionChanged -= this.OnSessionLogAnalysisRuleSetsChanged);
 
 			// detach from commands
@@ -4005,11 +4005,11 @@ namespace CarinaStudio.ULogViewer.Controls
 			var syncBack = false;
 			var selectedItems = Global.Run(() =>
 			{
-				if (sender == session.KeyLogAnalysisRuleSets)
+				if (sender == session.LogAnalysis.KeyLogAnalysisRuleSets)
 					return this.keyLogAnalysisRuleSetListBox.SelectedItems;
-				else if (sender == session.LogAnalysisScriptSets)
+				else if (sender == session.LogAnalysis.LogAnalysisScriptSets)
 					return this.logAnalysisScriptSetListBox.SelectedItems;
-				else if (sender == session.OperationDurationAnalysisRuleSets)
+				else if (sender == session.LogAnalysis.OperationDurationAnalysisRuleSets)
 					return this.operationDurationAnalysisRuleSetListBox.SelectedItems;
 				else
 					throw new NotImplementedException();

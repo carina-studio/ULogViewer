@@ -13,9 +13,6 @@ using CarinaStudio.ULogViewer.Logs;
 using CarinaStudio.ULogViewer.Logs.DataOutputs;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.ULogViewer.Logs.Profiles;
-using CarinaStudio.ULogViewer.ViewModels.Analysis;
-using CarinaStudio.ULogViewer.ViewModels.Analysis.ContextualBased;
-using CarinaStudio.ULogViewer.ViewModels.Analysis.Scripting;
 using CarinaStudio.ULogViewer.ViewModels.Categorizing;
 using CarinaStudio.ViewModels;
 using CarinaStudio.Windows.Input;
@@ -286,10 +283,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			}, 
 			validate: it => double.IsFinite(it));
 		/// <summary>
-		/// Property of <see cref="LogAnalysisProgress"/>.
-		/// </summary>
-		public static readonly ObservableProperty<double> LogAnalysisProgressProperty = ObservableProperty.Register<Session, double>(nameof(LogAnalysisProgress));
-		/// <summary>
 		/// Property of <see cref="LogFilesPanelSize"/>.
 		/// </summary>
 		public static readonly ObservableProperty<double> LogFilesPanelSizeProperty = ObservableProperty.Register<Session, double>(nameof(LogFilesPanelSize), (MinSidePanelSize + MaxSidePanelSize) / 2, 
@@ -526,7 +519,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		const int DelaySaveMarkedLogs = 1000;
 		const int DisposeDisplayableLogsInterval = 100;
 		const int FileLogsReadingConcurrencyLevel = 1;
-		const int LogsAnalysisStateUpdateDelay = 300;
 		const int LogsTimeInfoReportingInterval = 500;
 
 
@@ -773,7 +765,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly SortedObservableList<DisplayableLog> allLogs;
 		readonly TimestampDisplayableLogCategorizer allLogsTimestampCategorizer;
 		readonly Dictionary<string, List<DisplayableLog>> allLogsByLogFilePath = new Dictionary<string, List<DisplayableLog>>(PathEqualityComparer.Default);
-		readonly HashSet<IDisplayableLogAnalyzer<DisplayableLogAnalysisResult>> attachedLogAnalyzers = new();
+		readonly HashSet<SessionComponent> attachedComponents = new();
 		ILogDataSourceProvider? attachedLogDataSourceProvider;
 		readonly MutableObservableBoolean canClearLogFiles = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canCopyLogs = new MutableObservableBoolean();
@@ -794,12 +786,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly TimestampDisplayableLogCategorizer filteredLogsTimestampCategorizer;
 		bool hasLogDataSourceCreationFailure;
 		bool isRestoringState;
-		readonly ObservableList<KeyLogAnalysisRuleSet> keyLogAnalysisRuleSets = new();
-		readonly KeyLogDisplayableLogAnalyzer keyLogAnalyzer;
-		readonly DisplayableLog?[] logAnalysisResultComparisonTempLogs1 = new DisplayableLog?[3];
-		readonly DisplayableLog?[] logAnalysisResultComparisonTempLogs2 = new DisplayableLog?[3];
-		readonly SortedObservableList<DisplayableLogAnalysisResult> logAnalysisResults;
-		readonly ObservableList<LogAnalysisScriptSet> logAnalysisScriptSets = new();
 		readonly Dictionary<LogReader, LogFileInfoImpl> logFileInfoMapByLogReader = new();
 		readonly SortedObservableList<LogFileInfo> logFileInfoList = new((lhs, rhs) =>
 			PathComparer.Default.Compare(lhs?.FileName, rhs?.FileName));
@@ -810,8 +796,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly SortedObservableList<DisplayableLog> markedLogs;
 		readonly HashSet<string> markedLogsChangedFilePaths = new(PathEqualityComparer.Default);
 		readonly TimestampDisplayableLogCategorizer markedLogsTimestampCategorizer;
-		readonly ObservableList<OperationDurationAnalysisRuleSet> operationDurationAnalysisRuleSets = new();
-		readonly OperationDurationDisplayableLogAnalyzer operationDurationAnalyzer;
 		readonly ObservableList<PredefinedLogTextFilter> predefinedLogTextFilters;
 		readonly ScheduledAction reloadLogsAction;
 		readonly ScheduledAction reloadLogsFullyAction;
@@ -820,17 +804,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly ScheduledAction reportLogsTimeInfoAction;
 		readonly List<LogReaderOptions> savedLogReaderOptions = new();
 		readonly ScheduledAction saveMarkedLogsAction;
-		readonly ScriptDisplayableLogAnalyzer scriptLogAnalyzer;
 		readonly ScheduledAction selectLogsToReportActions;
 		readonly List<MarkedLogInfo> unmatchedMarkedLogInfos = new();
 		readonly ScheduledAction updateIsReadingLogsAction;
 		readonly ScheduledAction updateIsRemovingLogFilesAction;
 		readonly ScheduledAction updateIsProcessingLogsAction;
-		readonly ScheduledAction updateKeyLogAnalysisAction;
 		readonly ScheduledAction updateLogFilterAction;
-		readonly ScheduledAction updateLogsAnalysisStateAction;
-		readonly ScheduledAction updateOperationDurationAnalysisAction;
-		readonly ScheduledAction updateScriptLogAnalysis;
 		readonly ScheduledAction updateTitleAndIconAction;
 
 
@@ -878,7 +857,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			{
 				it.CollectionChanged += this.OnAllLogsChanged;
 			});
-			this.logAnalysisResults = new(this.CompareDisplayableLogAnalysisResults);
 			this.markedLogs = new SortedObservableList<DisplayableLog>(this.CompareDisplayableLogs).Also(it =>
 			{
 				it.CollectionChanged += this.OnMarkedLogsChanged;
@@ -907,28 +885,17 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.markedLogsTimestampCategorizer = new TimestampDisplayableLogCategorizer(this.Application, this.markedLogs, this.CompareDisplayableLogs);
 			this.SetValue(TimestampCategoriesProperty, this.allLogsTimestampCategorizer.Categories);
 
-			// create analyzers
-			this.keyLogAnalysisRuleSets.CollectionChanged += (_, e) => 
-				this.updateKeyLogAnalysisAction?.Schedule(this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogAnalysisParamsUpdateDelay));
-			this.keyLogAnalyzer = new KeyLogDisplayableLogAnalyzer(this.Application, this.allLogs, this.CompareDisplayableLogs).Also(it =>
-				this.AttachToLogAnalyzer(it));
-			this.logAnalysisScriptSets.CollectionChanged += (_, e) =>
-				this.updateScriptLogAnalysis?.Schedule(this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogAnalysisParamsUpdateDelay));
-			this.operationDurationAnalysisRuleSets.CollectionChanged += (_, e) => 
-				this.updateOperationDurationAnalysisAction?.Schedule(this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogAnalysisParamsUpdateDelay));
-			this.operationDurationAnalyzer = new OperationDurationDisplayableLogAnalyzer(this.Application, this.allLogs, this.CompareDisplayableLogs).Also(it =>
-				this.AttachToLogAnalyzer(it));
-			this.scriptLogAnalyzer = new ScriptDisplayableLogAnalyzer(this.Application, this.allLogs, this.CompareDisplayableLogs).Also(it =>
-				this.AttachToLogAnalyzer(it));
-
 			// setup properties
 			this.AllLogs = new SafeReadOnlyList<DisplayableLog>(this.allLogs);
-			this.LogAnalysisResults = this.logAnalysisResults.AsReadOnly();
 			this.SetValue(LogsProperty, this.AllLogs);
 			this.MarkedLogs = new SafeReadOnlyList<DisplayableLog>(this.markedLogs);
 
 			// setup delegates
 			this.compareDisplayableLogsDelegate = CompareDisplayableLogsById;
+
+			// create components
+			this.LogAnalysis = new LogAnalysisViewModel(this).Also(it =>
+				this.AttachToComponent(it));
 
 			// create scheduled actions
 			this.checkDataSourceErrorsAction = new ScheduledAction(() =>
@@ -991,13 +958,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				// report memory usage
 				var prevLogsMemoryUsage = this.LogsMemoryUsage;
 				var logsMemoryUsage = (this.displayableLogGroup?.MemorySize ?? 0L) 
-					+ (this.allLogs.Count + this.markedLogs.Count +this.logAnalysisResults.Count) * IntPtr.Size
+					+ (this.allLogs.Count + this.markedLogs.Count) * IntPtr.Size
 					+ this.logFilter.MemorySize
 					+ this.allLogsTimestampCategorizer.MemorySize
 					+ this.filteredLogsTimestampCategorizer.MemorySize
 					+ this.markedLogsTimestampCategorizer.MemorySize;
-				foreach (var analyzer in this.attachedLogAnalyzers)
-					logsMemoryUsage += analyzer.MemorySize;
+				foreach (var component in this.attachedComponents)
+					logsMemoryUsage += component.MemorySize;
 				this.SetValue(LogsMemoryUsageProperty, logsMemoryUsage);
 				totalLogsMemoryUsage += (logsMemoryUsage - prevLogsMemoryUsage);
 				this.SetValue(TotalLogsMemoryUsageProperty, totalLogsMemoryUsage);
@@ -1200,16 +1167,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				else
 					this.SetValue(IsProcessingLogsProperty, false);
 			});
-			this.updateKeyLogAnalysisAction = new(() =>
-			{
-				if (this.IsDisposed)
-					return;
-				if (!this.keyLogAnalyzer.RuleSets.SequenceEqual(this.keyLogAnalysisRuleSets))
-				{
-					this.keyLogAnalyzer.RuleSets.Clear();
-					this.keyLogAnalyzer.RuleSets.AddAll(this.keyLogAnalysisRuleSets);
-				}
-			});
 			this.updateLogFilterAction = new ScheduledAction(() =>
 			{
 				// check state
@@ -1236,51 +1193,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				// cancel showing all.marked logs
 				this.SetValue(IsShowingAllLogsTemporarilyProperty, false);
 				this.SetValue(IsShowingMarkedLogsTemporarilyProperty, false);
-			});
-			this.updateLogsAnalysisStateAction = new(() =>
-			{
-				if (this.IsDisposed)
-					return;
-				var isAnalyzing = false;
-				var progress = 1.0;
-				foreach (var analyzer in this.attachedLogAnalyzers)
-				{
-					if (analyzer.IsProcessing)
-					{
-						isAnalyzing = true;
-						progress = Math.Min(progress, analyzer.Progress);
-					}
-				}
-				if (isAnalyzing)
-				{
-					this.SetValue(IsAnalyzingLogsProperty, true);
-					this.SetValue(LogAnalysisProgressProperty, progress);
-				}
-				else
-				{
-					this.SetValue(IsAnalyzingLogsProperty, false);
-					this.SetValue(LogAnalysisProgressProperty, 0);
-				}
-			});
-			this.updateOperationDurationAnalysisAction = new(() =>
-			{
-				if (this.IsDisposed)
-					return;
-				if (!this.operationDurationAnalyzer.RuleSets.SequenceEqual(this.operationDurationAnalysisRuleSets))
-				{
-					this.operationDurationAnalyzer.RuleSets.Clear();
-					this.operationDurationAnalyzer.RuleSets.AddAll(this.operationDurationAnalysisRuleSets);
-				}
-			});
-			this.updateScriptLogAnalysis = new(() =>
-			{
-				if (this.IsDisposed)
-					return;
-				if (!this.scriptLogAnalyzer.ScriptSets.SequenceEqual(this.logAnalysisScriptSets))
-				{
-					this.scriptLogAnalyzer.ScriptSets.Clear();
-					this.scriptLogAnalyzer.ScriptSets.AddAll(this.logAnalysisScriptSets);
-				}
 			});
 			this.updateTitleAndIconAction = new ScheduledAction(() =>
 			{
@@ -1450,6 +1362,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Raised when all log readers have been disposed.
+		/// </summary>
+		public event Action? AllLogReadersDisposed;
+
+
+		/// <summary>
 		/// Get all logs without filtering.
 		/// </summary>
 		public IList<DisplayableLog> AllLogs { get; }
@@ -1467,24 +1385,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public bool AreLogsSortedByTimestamp { get => this.GetValue(AreLogsSortedByTimestampProperty); }
 
 
-		// Attach to given log analyzer.
-		void AttachToLogAnalyzer(IDisplayableLogAnalyzer<DisplayableLogAnalysisResult> analyzer)
+		// Attach to given component.
+		void AttachToComponent(SessionComponent component)
 		{
-			// add to set
-			if (!this.attachedLogAnalyzers.Add(analyzer))
+			if (this.IsDisposed || !this.attachedComponents.Add(component))
 				return;
-			
-			// add handlers
-			if (analyzer.AnalysisResults is INotifyCollectionChanged notifyCollectionChanged)
-				notifyCollectionChanged.CollectionChanged += this.OnLogAnalyzerAnalysisResultsChanged;
-			analyzer.ErrorMessageGenerated += this.OnLogAnalyzerErrorMessageGenerated;
-			analyzer.PropertyChanged += this.OnLogAnalyzerPropertyChanged;
-
-			// add analysis results
-			this.logAnalysisResults.AddAll(analyzer.AnalysisResults);
-
-			// report state
-			this.updateLogsAnalysisStateAction?.Schedule();
+			component.ErrorMessageGenerated += this.OnComponentErrorMessageGenerated;
 		}
 
 
@@ -1581,54 +1487,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public ICommand ClearLogFilesCommand { get; }
 
 
-		// Compare displayable log analysis results.
-		int CompareDisplayableLogAnalysisResults(DisplayableLogAnalysisResult? lhs, DisplayableLogAnalysisResult? rhs)
-		{
-			// get logs
-			var lhsLogs = this.logAnalysisResultComparisonTempLogs1;
-			lhsLogs[0] = lhs!.BeginningLog;
-			lhsLogs[1] = lhs.Log;
-			lhsLogs[2] = lhs.EndingLog;
-			var rhsLogs = this.logAnalysisResultComparisonTempLogs2;
-			rhsLogs[0] = rhs!.BeginningLog;
-			rhsLogs[1] = rhs.Log;
-			rhsLogs[2] = rhs.EndingLog;
-
-			// compare logs
-			var logCount = lhsLogs.Length;
-			var lhsLogIndex = 0;
-			var rhsLogIndex = 0;
-			var result = 0;
-			while (lhsLogIndex < logCount && rhsLogIndex < logCount)
-			{
-				var lhsLog = lhsLogs[lhsLogIndex];
-				var rhsLog = rhsLogs[rhsLogIndex];
-				if (lhsLog == null)
-					++lhsLogIndex;
-				else if (rhsLog == null)
-					++rhsLogIndex;
-				else
-				{
-					result = this.CompareDisplayableLogs(lhsLog, rhsLog);
-					if (result != 0)
-						return result;
-					++lhsLogIndex;
-					++rhsLogIndex;
-				}
-			}
-			
-			// compare types
-			result = lhs.Type.CompareTo(rhs.Type);
-			if (result != 0)
-				return result;
-			
-			// compare IDs
-			return lhs.Id - rhs.Id;
-		}
-
-
 		// Compare displayable logs.
-		int CompareDisplayableLogs(DisplayableLog? x, DisplayableLog? y) => this.compareDisplayableLogsDelegate(x, y);
+		internal int CompareDisplayableLogs(DisplayableLog? x, DisplayableLog? y) => this.compareDisplayableLogsDelegate(x, y);
 		static int CompareDisplayableLogsByBeginningTimeSpan(DisplayableLog? x, DisplayableLog? y)
 		{
 			// compare by reference
@@ -2139,27 +1999,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		}
 
 
-		// Detach from given log analyzer.
-		void DetachFromLogAnalyzer(IDisplayableLogAnalyzer<DisplayableLogAnalysisResult> analyzer)
-		{
-			// remove from set
-			if (!this.attachedLogAnalyzers.Remove(analyzer))
-				return;
-
-			// remove handlers
-			if (analyzer.AnalysisResults is INotifyCollectionChanged notifyCollectionChanged)
-				notifyCollectionChanged.CollectionChanged -= this.OnLogAnalyzerAnalysisResultsChanged;
-			analyzer.ErrorMessageGenerated -= this.OnLogAnalyzerErrorMessageGenerated;
-			analyzer.PropertyChanged -= this.OnLogAnalyzerPropertyChanged;
-
-			// remove analysis results
-			this.logAnalysisResults.RemoveAll(analyzer.AnalysisResults);
-
-			// report state
-			this.updateLogsAnalysisStateAction?.Schedule();
-		}
-
-
 		/// <summary>
 		/// Get list of property of <see cref="DisplayableLog"/> needed to be shown on UI.
 		/// </summary>
@@ -2178,6 +2017,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// check thread
 			this.VerifyAccess();
+
+			// dispose components
+			foreach (var component in this.attachedComponents.ToArray())
+				this.DisposeComponent(component);
 
 			// cancel filtering
 			((INotifyCollectionChanged)this.logFilter.FilteredLogs).CollectionChanged -= this.OnFilteredLogsChanged;
@@ -2206,11 +2049,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.filteredLogsTimestampCategorizer.Dispose();
 			this.markedLogsTimestampCategorizer.Dispose();
 
-			// release log analyzers
-			this.keyLogAnalyzer.Dispose();
-			this.operationDurationAnalyzer.Dispose();
-			this.scriptLogAnalyzer.Dispose();
-
 			// detach from log profile
 			this.LogProfile?.Let(it => it.PropertyChanged -= this.OnLogProfilePropertyChanged);
 
@@ -2238,6 +2076,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// call base
 			base.Dispose(disposing);
+		}
+
+
+		// Detach from and dispose given component.
+		void DisposeComponent(SessionComponent component)
+		{
+			if (!this.attachedComponents.Remove(component))
+				return;
+			component.ErrorMessageGenerated -= this.OnComponentErrorMessageGenerated;
+			component.Dispose();
 		}
 
 
@@ -2312,8 +2160,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.SetValue(UriProperty, null);
 					this.SetValue(WorkingDirectoryNameProperty, null);
 					this.SetValue(WorkingDirectoryPathProperty, null);
-					this.updateKeyLogAnalysisAction.Reschedule();
-					this.updateLogsAnalysisStateAction.Reschedule();
+					this.AllLogReadersDisposed?.Invoke();
 				}
 			}
 		}
@@ -2769,12 +2616,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
-		/// Get list of <see cref="KeyLogAnalysisRuleSet"/> for log analysis.
-		/// </summary>
-		public IList<KeyLogAnalysisRuleSet> KeyLogAnalysisRuleSets { get => this.keyLogAnalysisRuleSets; }
-
-
-		/// <summary>
 		/// Get the last precondition of log reading.
 		/// </summary>
 		public LogReadingPrecondition LastLogReadingPrecondition { get => this.GetValue(LastLogReadingPreconditionProperty); }
@@ -2875,6 +2716,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Get view-model of log analysis.
+		/// </summary>
+		public LogAnalysisViewModel LogAnalysis { get; }
+
+
+		/// <summary>
 		/// Get or set size of panel of log analysis.
 		/// </summary>
 		public double LogAnalysisPanelSize
@@ -2882,24 +2729,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			 get => this.GetValue(LogAnalysisPanelSizeProperty);
 			 set => this.SetValue(LogAnalysisPanelSizeProperty, value);
 		}
-
-
-		/// <summary>
-		/// Get progress of logs analysis.
-		/// </summary>
-		public double LogAnalysisProgress { get => this.GetValue(LogAnalysisProgressProperty); }
-
-
-		/// <summary>
-		/// Get list of result of log analysis.
-		/// </summary>
-		public IList<DisplayableLogAnalysisResult> LogAnalysisResults { get; }
-
-
-		/// <summary>
-		/// Get list of script sets to analyze log.
-		/// </summary>
-		public IList<LogAnalysisScriptSet> LogAnalysisScriptSets { get => this.logAnalysisScriptSets; }
 
 
 		/// <summary>
@@ -3193,6 +3022,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		}
 
 
+		// Called when error message generated by component.
+		void OnComponentErrorMessageGenerated(object? sender, MessageEventArgs e) =>
+			this.ErrorMessageGenerated?.Invoke(this, e);
+
+
 		// Called when filtered logs has been changed.
 		void OnFilteredLogsChanged(object? sender, NotifyCollectionChangedEventArgs e)
 		{
@@ -3204,57 +3038,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.reportLogsTimeInfoAction.Schedule(LogsTimeInfoReportingInterval);
 				}
 				this.SetValue(FilteredLogCountProperty, this.logFilter.FilteredLogs.Count);
-			}
-		}
-
-
-		// Called when analysis results of log analyzer changed.
-		void OnLogAnalyzerAnalysisResultsChanged(object? sender, NotifyCollectionChangedEventArgs e)
-		{
-			switch (e.Action)
-			{
-				case NotifyCollectionChangedAction.Add:
-					this.logAnalysisResults.AddAll(e.NewItems!.Cast<DisplayableLogAnalysisResult>());
-					break;
-				case NotifyCollectionChangedAction.Remove:
-					this.logAnalysisResults.RemoveAll(e.OldItems!.Cast<DisplayableLogAnalysisResult>());
-					break;
-				case NotifyCollectionChangedAction.Reset:
-					foreach (var analyzer in this.attachedLogAnalyzers)
-					{
-						if (analyzer.AnalysisResults == sender)
-						{
-							this.logAnalysisResults.RemoveAll(it => it.Analyzer == analyzer);
-							this.logAnalysisResults.AddAll(analyzer.AnalysisResults);
-							break;
-						}
-					}
-					break;
-				default:
-#if DEBUG
-					throw new NotSupportedException();
-#else
-					this.Logger.LogError($"Unsupported change action of list of log analysis result: {e.Action}");
-					break;
-#endif
-			}
-		}
-
-
-		// Called when error message generated by log analyzer.
-		void OnLogAnalyzerErrorMessageGenerated(IDisplayableLogProcessor analyzer, MessageEventArgs e) =>
-			this.ErrorMessageGenerated?.Invoke(this, e);
-
-
-		// Called when property of log analyzer changed.
-		void OnLogAnalyzerPropertyChanged(object? sender, PropertyChangedEventArgs e)
-		{
-			switch (e.PropertyName)
-			{
-				case nameof(IDisplayableLogAnalyzer<DisplayableLogAnalysisResult>.IsProcessing):
-				case nameof(IDisplayableLogAnalyzer<DisplayableLogAnalysisResult>.Progress):
-					this.updateLogsAnalysisStateAction.Schedule(LogsAnalysisStateUpdateDelay);
-					break;
 			}
 		}
 
@@ -3694,12 +3477,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.logReaders.First().MaxLogCount = (int)e.Value;
 			}
 		}
-
-
-		/// <summary>
-		/// Get list of <see cref="OperationDurationAnalysisRuleSet"/> for log analysis.
-		/// </summary>
-		public IList<OperationDurationAnalysisRuleSet> OperationDurationAnalysisRuleSets { get => this.operationDurationAnalysisRuleSets; }
 
 
 		// Pause or resume logs reading.
@@ -4216,44 +3993,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.LogThreadIdFilter = tid;
 				}
 
-				// restore log analysis state
-				this.keyLogAnalysisRuleSets.Clear();
-				this.operationDurationAnalysisRuleSets.Clear();
-				this.logAnalysisScriptSets.Clear();
-				if (jsonState.TryGetProperty(nameof(KeyLogAnalysisRuleSet), out jsonValue) && jsonValue.ValueKind == JsonValueKind.Array)
-				{
-					foreach (var jsonId in jsonValue.EnumerateArray())
-					{
-						var ruleSet = jsonId.ValueKind == JsonValueKind.String
-							? KeyLogAnalysisRuleSetManager.Default.GetRuleSetOrDefault(jsonId.GetString()!)
-							: null;
-						if (ruleSet != null)
-							this.keyLogAnalysisRuleSets.Add(ruleSet);
-					}
-				}
-				if (jsonState.TryGetProperty(nameof(LogAnalysisScriptSet), out jsonValue) && jsonValue.ValueKind == JsonValueKind.Array)
-				{
-					foreach (var jsonId in jsonValue.EnumerateArray())
-					{
-						var scriptSet = jsonId.ValueKind == JsonValueKind.String
-							? LogAnalysisScriptSetManager.Default.GetScriptSetOrDefault(jsonId.GetString()!)
-							: null;
-						if (scriptSet != null)
-							this.logAnalysisScriptSets.Add(scriptSet);
-					}
-				}
-				if (jsonState.TryGetProperty(nameof(OperationDurationAnalysisRuleSets), out jsonValue) && jsonValue.ValueKind == JsonValueKind.Array)
-				{
-					foreach (var jsonId in jsonValue.EnumerateArray())
-					{
-						var ruleSet = jsonId.ValueKind == JsonValueKind.String
-							? OperationDurationAnalysisRuleSetManager.Default.GetRuleSetOrDefault(jsonId.GetString()!)
-							: null;
-						if (ruleSet != null)
-							this.operationDurationAnalysisRuleSets.Add(ruleSet);
-					}
-				}
-
 				// restore panel state
 				if (jsonState.TryGetProperty(nameof(IsLogAnalysisPanelVisible), out jsonValue))
 					this.SetValue(IsLogAnalysisPanelVisibleProperty, jsonValue.ValueKind != JsonValueKind.False);
@@ -4288,6 +4027,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.SetValue(TimestampCategoriesPanelSizeProperty, doubleValue);
 				}
 
+				// raise event
+				this.RestoringState?.Invoke(jsonState);
+
 				this.Logger.LogTrace("Complete restoring state");
 			}
 			finally
@@ -4295,6 +4037,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.isRestoringState = false;
 			}
 		}
+
+
+		/// <summary>
+		/// Raised when restoring state from JSON data.
+		/// </summary>
+		public event Action<JsonElement>? RestoringState;
 
 
 		// Save state of log readers in memory.
@@ -4657,14 +4405,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.markedLogsTimestampCategorizer.Granularity = it;
 			});
 
-			// reset log analysis rule sets
-			if (this.Settings.GetValueOrDefault(SettingKeys.ResetLogAnalysisRuleSetsAfterSettingLogProfile))
-			{
-				this.keyLogAnalysisRuleSets.Clear();
-				this.logAnalysisScriptSets.Clear();
-				this.operationDurationAnalysisRuleSets.Clear();
-			}
-
 			// update valid log levels
 			this.UpdateValidLogLevels();
 
@@ -4808,44 +4548,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					jsonWriter.WriteEndArray();
 				}
 
-				// save log analysis state
-				if (this.keyLogAnalysisRuleSets.IsNotEmpty())
-				{
-					var idSet = new HashSet<string>();
-					jsonWriter.WritePropertyName(nameof(KeyLogAnalysisRuleSet));
-					jsonWriter.WriteStartArray();
-					foreach (var ruleSet in this.keyLogAnalysisRuleSets)
-					{
-						if (idSet.Add(ruleSet.Id))
-							jsonWriter.WriteStringValue(ruleSet.Id);
-					}
-					jsonWriter.WriteEndArray();
-				}
-				if (this.logAnalysisScriptSets.IsNotEmpty())
-				{
-					var idSet = new HashSet<string>();
-					jsonWriter.WritePropertyName(nameof(LogAnalysisScriptSets));
-					jsonWriter.WriteStartArray();
-					foreach (var scriptSet in this.logAnalysisScriptSets)
-					{
-						if (idSet.Add(scriptSet.Id))
-							jsonWriter.WriteStringValue(scriptSet.Id);
-					}
-					jsonWriter.WriteEndArray();
-				}
-				if (this.operationDurationAnalysisRuleSets.IsNotEmpty())
-				{
-					var idSet = new HashSet<string>();
-					jsonWriter.WritePropertyName(nameof(OperationDurationAnalysisRuleSets));
-					jsonWriter.WriteStartArray();
-					foreach (var ruleSet in this.operationDurationAnalysisRuleSets)
-					{
-						if (idSet.Add(ruleSet.Id))
-							jsonWriter.WriteStringValue(ruleSet.Id);
-					}
-					jsonWriter.WriteEndArray();
-				}
-
 				// save side panel state
 				jsonWriter.WriteBoolean(nameof(IsLogAnalysisPanelVisible), this.IsLogAnalysisPanelVisible);
 				jsonWriter.WriteBoolean(nameof(IsLogFilesPanelVisible), this.IsLogFilesPanelVisible);
@@ -4855,9 +4557,18 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				jsonWriter.WriteNumber(nameof(LogFilesPanelSize), this.LogFilesPanelSize);
 				jsonWriter.WriteNumber(nameof(MarkedLogsPanelSize), this.MarkedLogsPanelSize);
 				jsonWriter.WriteNumber(nameof(TimestampCategoriesPanelSize), this.TimestampCategoriesPanelSize);
+
+				// raise event
+				this.SavingState?.Invoke(jsonWriter);
 			});
 			jsonWriter.WriteEndObject();
 		}
+
+
+		/// <summary>
+		/// Raised when saving state in JSON data.
+		/// </summary>
+		public event Action<Utf8JsonWriter>? SavingState;
 
 
 		// Schedule reloading logs.
@@ -5179,9 +4890,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		void UpdateDisplayLogProperties()
 		{
 			var profile = this.LogProfile;
-			this.keyLogAnalyzer.LogProperties.Clear();
-			this.operationDurationAnalyzer.LogProperties.Clear();
-			this.scriptLogAnalyzer.LogProperties.Clear();
 			if (profile == null)
 			{
 				this.ResetValue(HasTimestampDisplayableLogPropertyProperty);
@@ -5198,9 +4906,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				{
 					var displayableLogProperty = new DisplayableLogProperty(app, logProperty);
 					displayLogProperties.Add(displayableLogProperty);
-					this.keyLogAnalyzer.LogProperties.Add(displayableLogProperty);
-					this.operationDurationAnalyzer.LogProperties.Add(displayableLogProperty);
-					this.scriptLogAnalyzer.LogProperties.Add(displayableLogProperty);
 					if (!hasTimestamp)
 						hasTimestamp = DisplayableLog.HasDateTimeProperty(logProperty.Name);
 				}
