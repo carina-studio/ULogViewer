@@ -55,7 +55,8 @@ class OperationDurationDisplayableLogAnalyzer : ContextualBasedDisplayableLogAna
         public override DisplayableLog? EndingLog { get; }
 
         // Memory size.
-        public override long MemorySize => base.MemorySize + 8 + IntPtr.Size + (this.operationName.Length << 1);
+        public override long MemorySize => base.MemorySize 
+            + (2 * IntPtr.Size); // customMessage, operationName
 
         // Update message.
         protected override string? OnUpdateMessage()

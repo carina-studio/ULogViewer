@@ -12,9 +12,11 @@ namespace CarinaStudio.ULogViewer.ViewModels.Analysis;
 class DisplayableLogAnalysisResult : BaseApplicationObject<IULogViewerApplication>, INotifyPropertyChanged
 {
     // Static fields.
-    static readonly long DefaultMemorySize = (4 * IntPtr.Size) // Appliation, message, Analyzer, PropertyChanged
+    static readonly long DefaultMemorySize = (7 * IntPtr.Size) // Appliation, BeginningLog, EndingLog, Log, message, Analyzer, PropertyChanged
+        + (4 + 8) // Duration
         + 4 // Id
         + 4 // isMessageValid
+        + (4 + 8) // Quantity
         + 4; // Type
     static volatile int NextId = 1;
 
