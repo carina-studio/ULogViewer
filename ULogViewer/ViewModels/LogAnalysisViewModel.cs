@@ -20,17 +20,17 @@ namespace CarinaStudio.ULogViewer.ViewModels;
 class LogAnalysisViewModel : SessionComponent
 {
     /// <summary>
-    /// Property of <see cref="IsAnalyzingLogs"/>.
+    /// Property of <see cref="AnalysisProgress"/>.
     /// </summary>
-    public static readonly ObservableProperty<bool> IsAnalyzingLogsProperty = ObservableProperty.Register<LogAnalysisViewModel, bool>(nameof(IsAnalyzingLogs));
+    public static readonly ObservableProperty<double> AnalysisProgressProperty = ObservableProperty.Register<LogAnalysisViewModel, double>(nameof(AnalysisProgress));
+    /// <summary>
+    /// Property of <see cref="IsAnalyzing"/>.
+    /// </summary>
+    public static readonly ObservableProperty<bool> IsAnalyzingProperty = ObservableProperty.Register<LogAnalysisViewModel, bool>(nameof(IsAnalyzing));
     /// <summary>
     /// Property of <see cref="IsPanelVisible"/>.
     /// </summary>
     public static readonly ObservableProperty<bool> IsPanelVisibleProperty = ObservableProperty.Register<LogAnalysisViewModel, bool>(nameof(IsPanelVisible), false);
-    /// <summary>
-    /// Property of <see cref="LogAnalysisProgress"/>.
-    /// </summary>
-    public static readonly ObservableProperty<double> LogAnalysisProgressProperty = ObservableProperty.Register<LogAnalysisViewModel, double>(nameof(LogAnalysisProgress));
     /// <summary>
     /// Property of <see cref="PanelSize"/>.
     /// </summary>
@@ -132,13 +132,13 @@ class LogAnalysisViewModel : SessionComponent
             }
             if (isAnalyzing)
             {
-                this.SetValue(IsAnalyzingLogsProperty, true);
-                this.SetValue(LogAnalysisProgressProperty, progress);
+                this.SetValue(IsAnalyzingProperty, true);
+                this.SetValue(AnalysisProgressProperty, progress);
             }
             else
             {
-                this.SetValue(IsAnalyzingLogsProperty, false);
-                this.SetValue(LogAnalysisProgressProperty, 0);
+                this.SetValue(IsAnalyzingProperty, false);
+                this.SetValue(AnalysisProgressProperty, 0);
             }
         });
         this.updateOperationDurationAnalysisAction = new(() =>
@@ -202,6 +202,12 @@ class LogAnalysisViewModel : SessionComponent
         // complete initialization
         isInit = false;
     }
+
+
+    /// <summary>
+    /// Get progress of logs analysis.
+    /// </summary>
+    public double AnalysisProgress { get => this.GetValue(AnalysisProgressProperty); }
 
 
     // Attach to given log analyzer.
@@ -307,7 +313,7 @@ class LogAnalysisViewModel : SessionComponent
     /// <summary>
     /// Check whether logs are being analyzed or not.
     /// </summary>
-    public bool IsAnalyzingLogs { get => this.GetValue(IsAnalyzingLogsProperty); }
+    public bool IsAnalyzing { get => this.GetValue(IsAnalyzingProperty); }
 
 
     /// <summary>
@@ -324,12 +330,6 @@ class LogAnalysisViewModel : SessionComponent
     /// Get list of <see cref="KeyLogAnalysisRuleSet"/> for log analysis.
     /// </summary>
     public IList<KeyLogAnalysisRuleSet> KeyLogAnalysisRuleSets { get => this.keyLogAnalysisRuleSets; }
-
-
-    /// <summary>
-    /// Get progress of logs analysis.
-    /// </summary>
-    public double LogAnalysisProgress { get => this.GetValue(LogAnalysisProgressProperty); }
 
 
     /// <summary>

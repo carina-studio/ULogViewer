@@ -860,7 +860,7 @@
 					<StackPanel Grid.Column="0" Orientation="Horizontal">
 						<StackPanel.IsVisible>
 							<MultiBinding Converter="{x:Static aConverters:BoolConverters.And}">
-								<Binding Path="IsAnalyzingLogs"/>
+								<Binding Path="LogAnalysis.IsAnalyzing"/>
 								<Binding Path="!IsVisible" ElementName="filterProgressStatusBarItem"/>
 							</MultiBinding>
 						</StackPanel.IsVisible>
@@ -873,7 +873,7 @@
 						<TextBlock Classes="StatusBar_TextBlock" Text="{DynamicResource String/SessionView.LogAnalysisProgress}"/>
 						<Panel VerticalAlignment="Center">
 							<TextBlock Classes="StatusBar_TextBlock" Text="00.0%" Opacity="0"/>
-							<TextBlock Classes="StatusBar_TextBlock" HorizontalAlignment="Left" Text="{Binding LogAnalysisProgress, Converter={x:Static appViewModels:Session.LogsOperationProgressConverter}}"/>
+							<TextBlock Classes="StatusBar_TextBlock" HorizontalAlignment="Left" Text="{Binding LogAnalysis.AnalysisProgress, Converter={x:Static appViewModels:Session.LogsOperationProgressConverter}}"/>
 						</Panel>
 					</StackPanel>
 
