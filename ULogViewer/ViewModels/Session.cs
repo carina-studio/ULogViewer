@@ -186,10 +186,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsIPEndPointNeededProperty = ObservableProperty.Register<Session, bool>(nameof(IsIPEndPointNeeded));
 		/// <summary>
-		/// Property of <see cref="IsLogAnalysisPanelVisible"/>.
-		/// </summary>
-		public static readonly ObservableProperty<bool> IsLogAnalysisPanelVisibleProperty = ObservableProperty.Register<Session, bool>(nameof(IsLogAnalysisPanelVisible), false);
-		/// <summary>
 		/// Property of <see cref="IsLogFileNeeded"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsLogFileNeededProperty = ObservableProperty.Register<Session, bool>(nameof(IsLogFileNeeded));
@@ -269,19 +265,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Property of <see cref="LatestLogTimestamp"/>.
 		/// </summary>
 		public static readonly ObservableProperty<DateTime?> LatestLogTimestampProperty = ObservableProperty.Register<Session, DateTime?>(nameof(LatestLogTimestamp));
-		/// <summary>
-		/// Property of <see cref="LogAnalysisPanelSize"/>.
-		/// </summary>
-		public static readonly ObservableProperty<double> LogAnalysisPanelSizeProperty = ObservableProperty.Register<Session, double>(nameof(LogAnalysisPanelSize), (MinSidePanelSize + MaxSidePanelSize) / 2, 
-			coerce: (_, it) =>
-			{
-				if (it >= MaxSidePanelSize)
-					return MaxSidePanelSize;
-				if (it < MinSidePanelSize)
-					return MinSidePanelSize;
-				return it;
-			}, 
-			validate: it => double.IsFinite(it));
 		/// <summary>
 		/// Property of <see cref="LogFilesPanelSize"/>.
 		/// </summary>
@@ -590,7 +573,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			staticLogger?.LogWarning($"Hibernate {hibernatedSessionCount} session(s) to release {AppSuite.Converters.FileSizeConverter.Default.Convert<string>(releasedMemory)} memory");
 		});
 		static readonly TaskFactory ioTaskFactory = new TaskFactory(new FixedThreadsTaskScheduler(1));
-		static readonly SettingKey<double> latestLogAnalysisPanelSizeKey = new SettingKey<double>("Session.LatestLogAnalysisPanelSize", LogAnalysisPanelSizeProperty.DefaultValue);
 		static readonly SettingKey<double> latestLogFilesPanelSizeKey = new SettingKey<double>("Session.LatestLogFilesPanelSize", LogFilesPanelSizeProperty.DefaultValue);
 		static readonly SettingKey<double> latestMarkedLogsPanelSizeKey = new SettingKey<double>("Session.LatestMarkedLogsPanelSize", MarkedLogsPanelSizeProperty.DefaultValue);
 		[Obsolete]
@@ -1243,14 +1225,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			if (this.PersistentState.GetRawValue(latestSidePanelSizeKey) is double sidePanelSize)
 			{
 				this.PersistentState.ResetValue(latestSidePanelSizeKey);
-				this.SetValue(LogAnalysisPanelSizeProperty, sidePanelSize);
 				this.SetValue(LogFilesPanelSizeProperty, sidePanelSize);
 				this.SetValue(MarkedLogsPanelSizeProperty, sidePanelSize);
 				this.SetValue(TimestampCategoriesPanelSizeProperty, sidePanelSize);
 			}
 			else
 			{
-				this.SetValue(LogAnalysisPanelSizeProperty, this.PersistentState.GetValueOrDefault(latestLogAnalysisPanelSizeKey));
 				this.SetValue(LogFilesPanelSizeProperty, this.PersistentState.GetValueOrDefault(latestLogFilesPanelSizeKey));
 				this.SetValue(MarkedLogsPanelSizeProperty, this.PersistentState.GetValueOrDefault(latestMarkedLogsPanelSizeKey));
 				this.SetValue(TimestampCategoriesPanelSizeProperty, this.PersistentState.GetValueOrDefault(latestTimestampCategoriesPanelSizeKey));
@@ -2489,16 +2469,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
-		/// Get or set whether panel of log analysis is visible or not.
-		/// </summary>
-		public bool IsLogAnalysisPanelVisible 
-		{
-			 get => this.GetValue(IsLogAnalysisPanelVisibleProperty);
-			 set => this.SetValue(IsLogAnalysisPanelVisibleProperty, value);
-		}
-
-
-		/// <summary>
 		/// Check whether given log file has been added or not.
 		/// </summary>
 		/// <param name="filePath">Path of log file.</param>
@@ -2719,16 +2689,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Get view-model of log analysis.
 		/// </summary>
 		public LogAnalysisViewModel LogAnalysis { get; }
-
-
-		/// <summary>
-		/// Get or set size of panel of log analysis.
-		/// </summary>
-		public double LogAnalysisPanelSize
-		{
-			 get => this.GetValue(LogAnalysisPanelSizeProperty);
-			 set => this.SetValue(LogAnalysisPanelSizeProperty, value);
-		}
 
 
 		/// <summary>
@@ -3423,11 +3383,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.SetValue(HasLastLogsReadingDurationProperty, this.LastLogsReadingDuration != null);
 			else if (property == LastLogsFilteringDurationProperty)
 				this.SetValue(HasLastLogsFilteringDurationProperty, this.LastLogsFilteringDuration != null);
-			else if (property == LogAnalysisPanelSizeProperty)
-			{
-				if (!this.isRestoringState)
-					this.PersistentState.SetValue<double>(latestLogAnalysisPanelSizeKey, (double)newValue.AsNonNull());
-			}
 			else if (property == LogFilesPanelSizeProperty)
 			{
 				if (!this.isRestoringState)
@@ -3994,22 +3949,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				}
 
 				// restore panel state
-				if (jsonState.TryGetProperty(nameof(IsLogAnalysisPanelVisible), out jsonValue))
-					this.SetValue(IsLogAnalysisPanelVisibleProperty, jsonValue.ValueKind != JsonValueKind.False);
 				if (jsonState.TryGetProperty(nameof(IsLogFilesPanelVisible), out jsonValue))
 					this.SetValue(IsLogFilesPanelVisibleProperty, jsonValue.ValueKind != JsonValueKind.False);
 				if (jsonState.TryGetProperty(nameof(IsMarkedLogsPanelVisible), out jsonValue))
 					this.SetValue(IsMarkedLogsPanelVisibleProperty, jsonValue.ValueKind != JsonValueKind.False);
 				if (jsonState.TryGetProperty(nameof(IsTimestampCategoriesPanelVisible), out jsonValue))
 					this.SetValue(IsTimestampCategoriesPanelVisibleProperty, jsonValue.ValueKind != JsonValueKind.False);
-				if (jsonState.TryGetProperty(nameof(LogAnalysisPanelSize), out jsonValue) 
-					&& jsonValue.TryGetDouble(out var doubleValue)
-					&& LogAnalysisPanelSizeProperty.ValidationFunction(doubleValue) == true)
-				{
-					this.SetValue(LogAnalysisPanelSizeProperty, doubleValue);
-				}
 				if (jsonState.TryGetProperty(nameof(LogFilesPanelSize), out jsonValue) 
-					&& jsonValue.TryGetDouble(out doubleValue)
+					&& jsonValue.TryGetDouble(out var doubleValue)
 					&& LogFilesPanelSizeProperty.ValidationFunction(doubleValue) == true)
 				{
 					this.SetValue(LogFilesPanelSizeProperty, doubleValue);
@@ -4549,11 +4496,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				}
 
 				// save side panel state
-				jsonWriter.WriteBoolean(nameof(IsLogAnalysisPanelVisible), this.IsLogAnalysisPanelVisible);
 				jsonWriter.WriteBoolean(nameof(IsLogFilesPanelVisible), this.IsLogFilesPanelVisible);
 				jsonWriter.WriteBoolean(nameof(IsMarkedLogsPanelVisible), this.IsMarkedLogsPanelVisible);
 				jsonWriter.WriteBoolean(nameof(IsTimestampCategoriesPanelVisible), this.IsTimestampCategoriesPanelVisible);
-				jsonWriter.WriteNumber(nameof(LogAnalysisPanelSize), this.LogAnalysisPanelSize);
 				jsonWriter.WriteNumber(nameof(LogFilesPanelSize), this.LogFilesPanelSize);
 				jsonWriter.WriteNumber(nameof(MarkedLogsPanelSize), this.MarkedLogsPanelSize);
 				jsonWriter.WriteNumber(nameof(TimestampCategoriesPanelSize), this.TimestampCategoriesPanelSize);

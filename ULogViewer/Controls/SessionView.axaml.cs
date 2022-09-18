@@ -29,6 +29,7 @@ using CarinaStudio.ULogViewer.ViewModels.Analysis;
 using CarinaStudio.ULogViewer.ViewModels.Analysis.ContextualBased;
 using CarinaStudio.ULogViewer.ViewModels.Analysis.Scripting;
 using CarinaStudio.ULogViewer.ViewModels.Categorizing;
+using CarinaStudio.ViewModels;
 using CarinaStudio.Windows.Input;
 using Microsoft.Extensions.Logging;
 using System;
@@ -186,12 +187,14 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly Avalonia.Controls.ListBox keyLogAnalysisRuleSetListBox;
 		Control? lastClickedLogPropertyView;
 		readonly ContextMenu logActionMenu;
+		IDisposable logAnalysisPanelVisibilityObserverToken = EmptyDisposable.Default;
 		readonly Avalonia.Controls.ListBox logAnalysisResultListBox;
 		readonly ToggleButton logAnalysisRuleSetsButton;
 		readonly Popup logAnalysisRuleSetsPopup;
 		readonly Avalonia.Controls.ListBox logAnalysisScriptSetListBox;
 		readonly ContextMenu logFileActionMenu;
 		readonly AppSuite.Controls.ListBox logFileListBox;
+		IDisposable logFilesPanelVisibilityObserverToken = EmptyDisposable.Default;
 		readonly List<ColumnDefinition> logHeaderColumns = new List<ColumnDefinition>();
 		readonly Control logHeaderContainer;
 		readonly Grid logHeaderGrid;
@@ -210,6 +213,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly IntegerTextBox logThreadIdFilterTextBox;
 		readonly Panel logThreadIdFilterTextBoxPanel;
 		readonly Avalonia.Controls.ListBox markedLogListBox;
+		IDisposable markedLogsPanelVisibilityObserverToken = EmptyDisposable.Default;
 		readonly double minLogListBoxSizeToCloseSidePanel;
 		readonly Avalonia.Controls.ListBox operationDurationAnalysisRuleSetListBox;
 		readonly ToggleButton otherActionsButton;
@@ -233,6 +237,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ColumnDefinition sidePanelColumn;
 		readonly Control sidePanelContainer;
 		readonly AppSuite.Controls.ListBox timestampCategoryListBox;
+		IDisposable timestampCategoryPanelVisibilityObserverToken = EmptyDisposable.Default;
 		readonly ToolBarScrollViewer toolBarScrollViewer;
 		readonly ScheduledAction updateLogAnalysisAction;
 		readonly ScheduledAction updateLogFiltersAction;
@@ -569,12 +574,12 @@ namespace CarinaStudio.ULogViewer.Controls
 					{
 						if (this.DataContext is Session session)
 						{
-							if (session.IsLogAnalysisPanelVisible 
+							if (session.LogAnalysis.IsPanelVisible 
 								|| session.IsLogFilesPanelVisible 
 								|| session.IsMarkedLogsPanelVisible
 								|| session.IsTimestampCategoriesPanelVisible)
 							{
-								session.LogAnalysisPanelSize = length.Value;
+								session.LogAnalysis.PanelSize = length.Value;
 								session.LogFilesPanelSize = length.Value;
 								session.MarkedLogsPanelSize = length.Value;
 								session.TimestampCategoriesPanelSize = length.Value;
@@ -630,7 +635,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.keepSidePanelVisible = false;
 				else if (this.logListBoxContainer.Bounds.Width <= this.minLogListBoxSizeToCloseSidePanel)
 				{
-					session.IsLogAnalysisPanelVisible = false;
+					session.LogAnalysis.IsPanelVisible = false;
 					session.IsLogFilesPanelVisible = false;
 					session.IsMarkedLogsPanelVisible = false;
 					session.IsTimestampCategoriesPanelVisible = false;
@@ -878,6 +883,30 @@ namespace CarinaStudio.ULogViewer.Controls
 				it.CollectionChanged += this.OnSessionLogAnalysisRuleSetsChanged);
 			(session.LogAnalysis.OperationDurationAnalysisRuleSets as INotifyCollectionChanged)?.Let(it =>
 				it.CollectionChanged += this.OnSessionLogAnalysisRuleSetsChanged);
+			
+			// attach to properties
+			var isAttaching = true;
+			this.logAnalysisPanelVisibilityObserverToken = session.LogAnalysis.GetValueAsObservable(LogAnalysisViewModel.IsPanelVisibleProperty).Subscribe(isVisible =>
+			{
+				if (!isAttaching)
+					this.UpdateSidePanelState(LogAnalysisViewModel.IsPanelVisibleProperty);
+			});
+			this.logFilesPanelVisibilityObserverToken = session.GetValueAsObservable(Session.IsLogFilesPanelVisibleProperty).Subscribe(isVisible =>
+			{
+				if (!isAttaching)
+					this.UpdateSidePanelState(Session.IsLogFilesPanelVisibleProperty);
+			});
+			this.markedLogsPanelVisibilityObserverToken = session.GetValueAsObservable(Session.IsMarkedLogsPanelVisibleProperty).Subscribe(isVisible =>
+			{
+				if (!isAttaching)
+					this.UpdateSidePanelState(Session.IsMarkedLogsPanelVisibleProperty);
+			});
+			this.timestampCategoryPanelVisibilityObserverToken = session.GetValueAsObservable(Session.IsTimestampCategoriesPanelVisibleProperty).Subscribe(isVisible =>
+			{
+				if (!isAttaching)
+					this.UpdateSidePanelState(Session.IsTimestampCategoriesPanelVisibleProperty);
+			});
+			isAttaching = false;
 
 			// check profile
 			var profile = session.LogProfile;
@@ -958,13 +987,13 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.updateLogAnalysisAction.Cancel();
 
 			// sync side panel state
-			if (session.IsLogAnalysisPanelVisible 
+			if (session.LogAnalysis.IsPanelVisible 
 				|| session.IsMarkedLogsPanelVisible 
 				|| session.IsLogFilesPanelVisible
 				|| session.IsTimestampCategoriesPanelVisible)
 			{
 				sidePanelColumn.Width = new GridLength(new double[] {
-					session.LogAnalysisPanelSize,
+					session.LogAnalysis.PanelSize,
 					session.LogFilesPanelSize,
 					session.MarkedLogsPanelSize,
 					session.TimestampCategoriesPanelSize,
@@ -1898,6 +1927,12 @@ namespace CarinaStudio.ULogViewer.Controls
 				it.CollectionChanged -= this.OnSessionLogAnalysisRuleSetsChanged);
 			(session.LogAnalysis.OperationDurationAnalysisRuleSets as INotifyCollectionChanged)?.Let(it =>
 				it.CollectionChanged -= this.OnSessionLogAnalysisRuleSetsChanged);
+			
+			// detach from properties
+			this.logAnalysisPanelVisibilityObserverToken.Dispose();
+			this.logFilesPanelVisibilityObserverToken.Dispose();
+			this.markedLogsPanelVisibilityObserverToken.Dispose();
+			this.timestampCategoryPanelVisibilityObserverToken.Dispose();
 
 			// detach from commands
 			this.canAddLogFiles.Unbind();
@@ -3037,7 +3072,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			if (firstResult != null)
 			{
-				session.IsLogAnalysisPanelVisible = true;
+				session.LogAnalysis.IsPanelVisible = true;
 				this.logAnalysisResultListBox.ScrollIntoView(firstResult);
 			}
 		}
@@ -4088,69 +4123,6 @@ namespace CarinaStudio.ULogViewer.Controls
 							this.scrollToLatestLogAction.Schedule(ScrollingToLatestLogInterval);
 					}
 					break;
-				case nameof(Session.IsLogAnalysisPanelVisible):
-				case nameof(Session.IsLogFilesPanelVisible):
-				case nameof(Session.IsMarkedLogsPanelVisible):
-				case nameof(Session.IsTimestampCategoriesPanelVisible):
-					if (session.IsLogAnalysisPanelVisible 
-						|| session.IsLogFilesPanelVisible 
-						|| session.IsMarkedLogsPanelVisible
-						|| session.IsTimestampCategoriesPanelVisible)
-					{
-						switch (e.PropertyName)
-						{
-							case nameof(Session.IsLogAnalysisPanelVisible):
-								if (session.IsLogAnalysisPanelVisible)
-								{
-									session.IsLogFilesPanelVisible = false;
-									session.IsMarkedLogsPanelVisible = false;
-									session.IsTimestampCategoriesPanelVisible = false;
-
-									// show tutorial
-									this.ShowLogAnalysisRuleSetsTutorial();
-								}
-								break;
-							case nameof(Session.IsLogFilesPanelVisible):
-								if (session.IsLogFilesPanelVisible)
-								{
-									session.IsLogAnalysisPanelVisible = false;
-									session.IsMarkedLogsPanelVisible = false;
-									session.IsTimestampCategoriesPanelVisible = false;
-								}
-								break;
-							case nameof(Session.IsMarkedLogsPanelVisible):
-								if (session.IsMarkedLogsPanelVisible)
-								{
-									session.IsLogAnalysisPanelVisible = false;
-									session.IsLogFilesPanelVisible = false;
-									session.IsTimestampCategoriesPanelVisible = false;
-								}
-								break;
-							case nameof(Session.IsTimestampCategoriesPanelVisible):
-								if (session.IsTimestampCategoriesPanelVisible)
-								{
-									session.IsLogAnalysisPanelVisible = false;
-									session.IsLogFilesPanelVisible = false;
-									session.IsMarkedLogsPanelVisible = false;
-								}
-								break;
-						}
-						this.keepSidePanelVisible = true;
-						sidePanelColumn.Width = new GridLength(new double[] {
-							session.LogAnalysisPanelSize,
-							session.LogFilesPanelSize,
-							session.MarkedLogsPanelSize,
-							session.TimestampCategoriesPanelSize,
-						}.Max());
-						Grid.SetColumnSpan(this.logListBoxContainer, 1);
-					}
-					else
-					{
-						this.keepSidePanelVisible = false;
-						sidePanelColumn.Width = new GridLength(0);
-						Grid.SetColumnSpan(this.logListBoxContainer, 3);
-					}
-					break;
 				case nameof(Session.IsLogsReadingPaused):
 					this.updateStatusBarStateAction.Schedule();
 					break;
@@ -4893,7 +4865,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 			if (this.attachedWindow is not MainWindow window || window.CurrentTutorial != null || !window.IsActive)
 				return;
-			if (this.DataContext is not Session session || !session.IsActivated || !session.IsLogAnalysisPanelVisible)
+			if (this.DataContext is not Session session || !session.IsActivated || !session.LogAnalysis.IsPanelVisible)
 				return;
 			if (!this.logAnalysisRuleSetsButton.IsVisible)
 				return;
@@ -5299,6 +5271,73 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Get delay of updating log filter.
 		int UpdateLogFilterParamsDelay { get => Math.Max(SettingKeys.MinUpdateLogFilterDelay, Math.Min(SettingKeys.MaxUpdateLogFilterDelay, this.Settings.GetValueOrDefault(SettingKeys.UpdateLogFilterDelay))); }
+
+
+		// Update state of side panel.
+		void UpdateSidePanelState(ObservableProperty<bool>? changedProperty)
+		{
+			if (this.DataContext is not Session session)
+				return;
+			if (session.LogAnalysis.IsPanelVisible
+				|| session.IsLogFilesPanelVisible 
+				|| session.IsMarkedLogsPanelVisible
+				|| session.IsTimestampCategoriesPanelVisible)
+			{
+				if (changedProperty == LogAnalysisViewModel.IsPanelVisibleProperty)
+				{
+					if (session.LogAnalysis.IsPanelVisible)
+					{
+						session.IsLogFilesPanelVisible = false;
+						session.IsMarkedLogsPanelVisible = false;
+						session.IsTimestampCategoriesPanelVisible = false;
+
+						// show tutorial
+						this.ShowLogAnalysisRuleSetsTutorial();
+					}
+				}
+				else if (changedProperty == Session.IsLogFilesPanelVisibleProperty)
+				{
+					if (session.IsLogFilesPanelVisible)
+					{
+						session.LogAnalysis.IsPanelVisible = false;
+						session.IsMarkedLogsPanelVisible = false;
+						session.IsTimestampCategoriesPanelVisible = false;
+					}
+				}
+				else if (changedProperty == Session.IsMarkedLogsPanelVisibleProperty)
+				{
+					if (session.IsMarkedLogsPanelVisible)
+					{
+						session.LogAnalysis.IsPanelVisible = false;
+						session.IsLogFilesPanelVisible = false;
+						session.IsTimestampCategoriesPanelVisible = false;
+					}
+				}
+				else if (changedProperty == Session.IsTimestampCategoriesPanelVisibleProperty)
+				{
+					if (session.IsTimestampCategoriesPanelVisible)
+					{
+						session.LogAnalysis.IsPanelVisible = false;
+						session.IsLogFilesPanelVisible = false;
+						session.IsMarkedLogsPanelVisible = false;
+					}
+				}
+				this.keepSidePanelVisible = true;
+				sidePanelColumn.Width = new GridLength(new double[] {
+					session.LogAnalysis.PanelSize,
+					session.LogFilesPanelSize,
+					session.MarkedLogsPanelSize,
+					session.TimestampCategoriesPanelSize,
+				}.Max());
+				Grid.SetColumnSpan(this.logListBoxContainer, 1);
+			}
+			else
+			{
+				this.keepSidePanelVisible = false;
+				sidePanelColumn.Width = new GridLength(0);
+				Grid.SetColumnSpan(this.logListBoxContainer, 3);
+			}
+		}
 
 
 		// Update menu items of tools.

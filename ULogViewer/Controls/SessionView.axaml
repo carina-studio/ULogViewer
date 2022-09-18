@@ -1079,7 +1079,7 @@
 				</ToggleButton>
 
 				<!-- Log analysis -->
-				<ToggleButton Name="logAnalysisPanelButton" Classes="ToolBar_ToggleButton" IsChecked="{Binding IsLogAnalysisPanelVisible, Mode=TwoWay}" IsVisible="False" ToolTip.Tip="{DynamicResource String/SessionView.LogAnalysisPanel}">
+				<ToggleButton Name="logAnalysisPanelButton" Classes="ToolBar_ToggleButton" IsChecked="{Binding LogAnalysis.IsPanelVisible, Mode=TwoWay}" IsVisible="False" ToolTip.Tip="{DynamicResource String/SessionView.LogAnalysisPanel}">
 					<Panel>
 						<Image Classes="Icon" Source="{StaticResource Image/Icon.Analysis}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
 						<Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}">
@@ -1109,7 +1109,7 @@
 		<Border Name="sidePanelContainer" Background="{DynamicResource Brush/WorkingArea.Panel.Background}" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Stretch" IsEnabled="{Binding $parent[UserControl].HasProfile}">
 			<Border.IsVisible>
 				<MultiBinding Converter="{x:Static aConverters:BoolConverters.Or}">
-					<Binding Path="IsLogAnalysisPanelVisible"/>
+					<Binding Path="LogAnalysis.IsPanelVisible"/>
 					<Binding Path="IsLogFilesPanelVisible"/>
 					<Binding Path="IsMarkedLogsPanelVisible"/>
 					<Binding Path="IsTimestampCategoriesPanelVisible"/>
@@ -1150,7 +1150,7 @@
 				</Grid>
 
 				<!-- Log analysis -->
-				<Grid HorizontalAlignment="Stretch" IsVisible="{Binding IsLogAnalysisPanelVisible}" RowDefinitions="Auto,*,Auto" VerticalAlignment="Stretch">
+				<Grid HorizontalAlignment="Stretch" IsVisible="{Binding LogAnalysis.IsPanelVisible}" RowDefinitions="Auto,*,Auto" VerticalAlignment="Stretch">
 					<Border Classes="SessionView_SidePanel_Header">
 						<Border.Styles>
 							<Style Selector="ToggleButton.ToolBar_ToggleButton">

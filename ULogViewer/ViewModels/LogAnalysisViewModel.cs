@@ -24,18 +24,42 @@ class LogAnalysisViewModel : SessionComponent
     /// </summary>
     public static readonly ObservableProperty<bool> IsAnalyzingLogsProperty = ObservableProperty.Register<LogAnalysisViewModel, bool>(nameof(IsAnalyzingLogs));
     /// <summary>
+    /// Property of <see cref="IsPanelVisible"/>.
+    /// </summary>
+    public static readonly ObservableProperty<bool> IsPanelVisibleProperty = ObservableProperty.Register<LogAnalysisViewModel, bool>(nameof(IsPanelVisible), false);
+    /// <summary>
     /// Property of <see cref="LogAnalysisProgress"/>.
     /// </summary>
     public static readonly ObservableProperty<double> LogAnalysisProgressProperty = ObservableProperty.Register<LogAnalysisViewModel, double>(nameof(LogAnalysisProgress));
+    /// <summary>
+    /// Property of <see cref="PanelSize"/>.
+    /// </summary>
+    public static readonly ObservableProperty<double> PanelSizeProperty = ObservableProperty.Register<LogAnalysisViewModel, double>(nameof(PanelSize), (Session.MinSidePanelSize + Session.MaxSidePanelSize) / 2, 
+        coerce: (_, it) =>
+        {
+            if (it >= Session.MaxSidePanelSize)
+                return Session.MaxSidePanelSize;
+            if (it < Session.MinSidePanelSize)
+                return Session.MinSidePanelSize;
+            return it;
+        }, 
+        validate: it => double.IsFinite(it));
 
 
     // Constants.
     const int LogsAnalysisStateUpdateDelay = 300;
 
+
+    // Static fields.
+    static readonly SettingKey<double> latestPanelSizeKey = new SettingKey<double>("Session.LatestLogAnalysisPanelSize", PanelSizeProperty.DefaultValue);
+    [Obsolete]
+	static readonly SettingKey<double> latestSidePanelSizeKey = new SettingKey<double>("Session.LatestSidePanelSize", Session.MarkedLogsPanelSizeProperty.DefaultValue);
+
     
     // Fields.
     readonly HashSet<IDisplayableLogAnalyzer<DisplayableLogAnalysisResult>> attachedLogAnalyzers = new();
     readonly IDisposable displayLogPropertiesObserverToken;
+    bool isRestoringState;
     readonly ObservableList<KeyLogAnalysisRuleSet> keyLogAnalysisRuleSets = new();
     readonly KeyLogDisplayableLogAnalyzer keyLogAnalyzer;
     readonly DisplayableLog?[] logAnalysisResultComparisonTempLogs1 = new DisplayableLog?[3];
@@ -58,6 +82,9 @@ class LogAnalysisViewModel : SessionComponent
     /// <param name="session">Session.</param>
     public LogAnalysisViewModel(Session session) : base(session)
     { 
+        // start initialization
+        bool isInit = true;
+
         // create collections
         this.logAnalysisResults = new(this.CompareLogAnalysisResults);
 
@@ -134,6 +161,13 @@ class LogAnalysisViewModel : SessionComponent
                 this.scriptLogAnalyzer.ScriptSets.AddAll(this.logAnalysisScriptSets);
             }
         });
+
+        // attach to self properties
+        this.GetValueAsObservable(PanelSizeProperty).Subscribe(size =>
+        {
+            if (!isInit && !this.isRestoringState)
+                this.PersistentState.SetValue<double>(latestPanelSizeKey, size);
+        });
         
         // attach to session
         session.AllLogReadersDisposed += this.OnAllLogReadersDisposed;
@@ -156,6 +190,17 @@ class LogAnalysisViewModel : SessionComponent
 				this.operationDurationAnalysisRuleSets.Clear();
 			}
         });
+
+        // restore state
+#pragma warning disable CS0612
+        if (this.PersistentState.GetRawValue(latestSidePanelSizeKey) is double sidePanelSize)
+            this.SetValue(PanelSizeProperty, sidePanelSize);
+        else
+            this.SetValue(PanelSizeProperty, this.PersistentState.GetValueOrDefault(latestPanelSizeKey));
+#pragma warning restore CS0612
+
+        // complete initialization
+        isInit = false;
     }
 
 
@@ -266,6 +311,16 @@ class LogAnalysisViewModel : SessionComponent
 
 
     /// <summary>
+    /// Get or set whether panel of log analysis is visible or not.
+    /// </summary>
+    public bool IsPanelVisible 
+    {
+        get => this.GetValue(IsPanelVisibleProperty);
+        set => this.SetValue(IsPanelVisibleProperty, value);
+    }
+
+
+    /// <summary>
     /// Get list of <see cref="KeyLogAnalysisRuleSet"/> for log analysis.
     /// </summary>
     public IList<KeyLogAnalysisRuleSet> KeyLogAnalysisRuleSets { get => this.keyLogAnalysisRuleSets; }
@@ -367,7 +422,11 @@ class LogAnalysisViewModel : SessionComponent
     /// <inheritdoc/>
     protected override void OnRestoreState(JsonElement element)
     {
+        // call base
+        this.isRestoringState = true;
         base.OnRestoreState(element);
+
+        // restore rule sets
         this.keyLogAnalysisRuleSets.Clear();
         this.operationDurationAnalysisRuleSets.Clear();
         this.logAnalysisScriptSets.Clear();
@@ -404,12 +463,30 @@ class LogAnalysisViewModel : SessionComponent
                     this.operationDurationAnalysisRuleSets.Add(ruleSet);
             }
         }
+
+        // restore panel state
+        if (element.TryGetProperty("IsLogAnalysisPanelVisible", out jsonValue) // for upgrade case
+            || element.TryGetProperty(nameof(IsPanelVisible), out jsonValue))
+        {
+            this.SetValue(IsPanelVisibleProperty, jsonValue.ValueKind != JsonValueKind.False);
+        }
+        if ((element.TryGetProperty("LogAnalysisPanelSize", out jsonValue) // for upgrade case
+            || element.TryGetProperty(nameof(PanelSize), out jsonValue))
+                && jsonValue.TryGetDouble(out var doubleValue)
+                && PanelSizeProperty.ValidationFunction(doubleValue) == true)
+        {
+            this.SetValue(PanelSizeProperty, doubleValue);
+        }
+
+        // complete
+        this.isRestoringState = false;
     }
 
 
     /// <inheritdoc/>
     protected override void OnSaveState(Utf8JsonWriter writer)
     {
+        // save rule sets
         if (this.keyLogAnalysisRuleSets.IsNotEmpty())
         {
             var idSet = new HashSet<string>();
@@ -446,6 +523,12 @@ class LogAnalysisViewModel : SessionComponent
             }
             writer.WriteEndArray();
         }
+
+        // save panel state
+        writer.WriteBoolean(nameof(IsPanelVisible), this.IsPanelVisible);
+        writer.WriteNumber(nameof(PanelSize), this.PanelSize);
+
+        // call base
         base.OnSaveState(writer);
     }
 
@@ -454,4 +537,14 @@ class LogAnalysisViewModel : SessionComponent
     /// Get list of <see cref="OperationDurationAnalysisRuleSet"/> for log analysis.
     /// </summary>
     public IList<OperationDurationAnalysisRuleSet> OperationDurationAnalysisRuleSets { get => this.operationDurationAnalysisRuleSets; }
+
+
+    /// <summary>
+    /// Get or set size of panel of log analysis.
+    /// </summary>
+    public double PanelSize
+    {
+        get => this.GetValue(PanelSizeProperty);
+        set => this.SetValue(PanelSizeProperty, value);
+    }
 }
