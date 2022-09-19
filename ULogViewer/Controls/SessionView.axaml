@@ -1162,7 +1162,7 @@
 						</Border.Styles>
 						<Grid ColumnDefinitions="Auto,*,Auto">
 							<TextBlock Classes="SessionView_SidePanel_Header_Left" Text="{DynamicResource String/SessionView.LogAnalysisPanel}"/>
-							<TextBlock Classes="SessionView_SidePanel_Header_Right" Grid.Column="1" Text="{Binding LogAnalysis.LogAnalysisResults.Count, StringFormat={} ({0})}"/>
+							<TextBlock Classes="SessionView_SidePanel_Header_Right" Grid.Column="1" Text="{Binding LogAnalysis.AnalysisResults.Count, StringFormat={} ({0})}"/>
 							<ToggleButton Name="logAnalysisRuleSetsButton" Classes="ToolBar_ToggleButton" Grid.Column="2" IsChecked="{Binding #logAnalysisRuleSetsPopup.IsOpen, Mode=TwoWay}" ToolTip.Tip="{DynamicResource String/SessionView.LogAnalysisRuleSets}">
 								<Panel>
 									<Panel IsVisible="{Binding !$parent[ToggleButton].IsChecked}">
@@ -1416,7 +1416,7 @@
 							</Popup>
 						</Grid>
 					</Border>
-					<asControls:ListBox Classes="Log" Name="logAnalysisResultListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" Focusable="False" Grid.Row="1" Items="{Binding LogAnalysis.LogAnalysisResults}" SelectionMode="Multiple">
+					<asControls:ListBox Classes="Log" Name="logAnalysisResultListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" Focusable="False" Grid.Row="1" Items="{Binding LogAnalysis.AnalysisResults}" SelectionMode="Multiple" SelectedItems="{Binding LogAnalysis.SelectedAnalysisResults}">
 						<asControls:ListBox.ContextMenu>
 							<ContextMenu>
 								<MenuItem Command="{Binding $parent[UserControl].CopySelectedLogAnalysisResultsCommand}" Header="{DynamicResource String/Common.Copy}">
@@ -1497,7 +1497,7 @@
 					<Border Background="{x:Static Brushes.Transparent}" Grid.Row="1">
 						<Border.IsVisible>
 							<MultiBinding Converter="{x:Static aConverters:BoolConverters.And}">
-								<Binding Path="LogAnalysis.LogAnalysisResults.Count" Converter="{x:Static abConverters:NumberConverters.IsZero}"/>
+								<Binding Path="LogAnalysis.AnalysisResults.Count" Converter="{x:Static abConverters:NumberConverters.IsZero}"/>
 								<Binding Path="SelectedItems.Count" Converter="{x:Static abConverters:NumberConverters.IsZero}" ElementName="keyLogAnalysisRuleSetListBox"/>
 								<Binding Path="SelectedItems.Count" Converter="{x:Static abConverters:NumberConverters.IsZero}" ElementName="operationDurationAnalysisRuleSetListBox"/>
 								<Binding Path="SelectedItems.Count" Converter="{x:Static abConverters:NumberConverters.IsZero}" ElementName="logAnalysisScriptSetListBox"/>
@@ -1508,10 +1508,12 @@
 					<Border Background="{DynamicResource Brush/SessionView.LogHeader.Background}" Classes="StatusBar" Grid.Row="2" Padding="{StaticResource Thickness/StatusBar.Item.Margin}">
 						<Border.IsVisible>
 							<MultiBinding Converter="{x:Static aConverters:BoolConverters.Or}">
-								<Binding Path="SelectedLogAnalysisResultsTotalDuration" ElementName="root" Converter="{x:Static aConverters:ObjectConverters.IsNotNull}"/>
+								<Binding Path="LogAnalysis.SelectedAnalysisResultsTotalDuration" Converter="{x:Static aConverters:ObjectConverters.IsNotNull}"/>
 							</MultiBinding>
 						</Border.IsVisible>
 						<StackPanel VerticalAlignment="Center">
+
+							<!-- Duration -->
 							<Grid ColumnDefinitions="Auto,Auto,Auto,*">
 								<Image 
 									Classes="StatusBar_IconWithText" 
@@ -1520,7 +1522,7 @@
 									Classes="StatusBar_TextBlock" 
 									Grid.Column="1" 
 									Margin="0" 
-									Text="{Binding $parent[UserControl].SelectedLogAnalysisResultsTotalDuration, Converter={x:Static asConverters:TimeSpanConverter.Default}}" 
+									Text="{Binding LogAnalysis.SelectedAnalysisResultsTotalDuration, Converter={x:Static asConverters:TimeSpanConverter.Default}}" 
 									ToolTip.Placement="Left"
 									ToolTip.Tip="{DynamicResource String/SessionView.SelectedLogAnalysisResultsTotalDuration}"/>
 								<TextBlock 
@@ -1532,12 +1534,13 @@
 								<TextBlock Name="selectedLogAnalysisResultAvgDuration" 
 									Classes="StatusBar_TextBlock" 
 									Grid.Column="3" 
-									IsVisible="{Binding $parent[UserControl].SelectedLogAnalysisResultsAverageDuration, Converter={x:Static aConverters:ObjectConverters.IsNotNull}}" 
+									IsVisible="{Binding LogAnalysis.SelectedAnalysisResultsAverageDuration, Converter={x:Static aConverters:ObjectConverters.IsNotNull}}" 
 									Margin="0" 
-									Text="{Binding $parent[UserControl].SelectedLogAnalysisResultsAverageDuration, Converter={x:Static asConverters:TimeSpanConverter.Default}}" 
+									Text="{Binding LogAnalysis.SelectedAnalysisResultsAverageDuration, Converter={x:Static asConverters:TimeSpanConverter.Default}}" 
 									ToolTip.Placement="Left"
 									ToolTip.Tip="{DynamicResource String/SessionView.SelectedLogAnalysisResultsAverageDuration}"/>
 							</Grid>
+
 						</StackPanel>
 					</Border>
 				</Grid>

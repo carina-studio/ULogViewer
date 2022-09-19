@@ -6,11 +6,13 @@ using CarinaStudio.ULogViewer.ViewModels.Analysis;
 using CarinaStudio.ULogViewer.ViewModels.Analysis.ContextualBased;
 using CarinaStudio.ULogViewer.ViewModels.Analysis.Scripting;
 using CarinaStudio.ViewModels;
+using CarinaStudio.Windows.Input;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Text.Json;
+using System.Windows.Input;
 
 namespace CarinaStudio.ULogViewer.ViewModels;
 
@@ -23,6 +25,10 @@ class LogAnalysisViewModel : SessionComponent
     /// Property of <see cref="AnalysisProgress"/>.
     /// </summary>
     public static readonly ObservableProperty<double> AnalysisProgressProperty = ObservableProperty.Register<LogAnalysisViewModel, double>(nameof(AnalysisProgress));
+    /// <summary>
+    /// Property of <see cref="HasSelectedAnalysisResults"/>.
+    /// </summary>
+    public static readonly ObservableProperty<bool> HasSelectedAnalysisResultsProperty = ObservableProperty.Register<LogAnalysisViewModel, bool>(nameof(HasSelectedAnalysisResults));
     /// <summary>
     /// Property of <see cref="IsAnalyzing"/>.
     /// </summary>
@@ -44,6 +50,14 @@ class LogAnalysisViewModel : SessionComponent
             return it;
         }, 
         validate: it => double.IsFinite(it));
+    /// <summary>
+    /// Property of <see cref="SelectedAnalysisResultsAverageDuration"/>.
+    /// </summary>
+    public static readonly ObservableProperty<TimeSpan?> SelectedAnalysisResultsAverageDurationProperty = ObservableProperty.Register<LogAnalysisViewModel, TimeSpan?>(nameof(SelectedAnalysisResultsAverageDuration));
+    /// <summary>
+    /// Property of <see cref="SelectedAnalysisResultsTotalDuration"/>.
+    /// </summary>
+    public static readonly ObservableProperty<TimeSpan?> SelectedAnalysisResultsTotalDurationProperty = ObservableProperty.Register<LogAnalysisViewModel, TimeSpan?>(nameof(SelectedAnalysisResultsTotalDuration));
 
 
     // Constants.
@@ -57,21 +71,23 @@ class LogAnalysisViewModel : SessionComponent
 
     
     // Fields.
-    readonly HashSet<IDisplayableLogAnalyzer<DisplayableLogAnalysisResult>> attachedLogAnalyzers = new();
+    readonly DisplayableLog?[] analysisResultComparisonTempLogs1 = new DisplayableLog?[3];
+    readonly DisplayableLog?[] analysisResultComparisonTempLogs2 = new DisplayableLog?[3];
+    readonly SortedObservableList<DisplayableLogAnalysisResult> analysisResults;
+    readonly HashSet<IDisplayableLogAnalyzer<DisplayableLogAnalysisResult>> attachedAnalyzers = new();
     readonly IDisposable displayLogPropertiesObserverToken;
     bool isRestoringState;
     readonly ObservableList<KeyLogAnalysisRuleSet> keyLogAnalysisRuleSets = new();
     readonly KeyLogDisplayableLogAnalyzer keyLogAnalyzer;
-    readonly DisplayableLog?[] logAnalysisResultComparisonTempLogs1 = new DisplayableLog?[3];
-    readonly DisplayableLog?[] logAnalysisResultComparisonTempLogs2 = new DisplayableLog?[3];
-    readonly SortedObservableList<DisplayableLogAnalysisResult> logAnalysisResults;
 	readonly ObservableList<LogAnalysisScriptSet> logAnalysisScriptSets = new();
     readonly IDisposable logProfileObserverToken;
     readonly ObservableList<OperationDurationAnalysisRuleSet> operationDurationAnalysisRuleSets = new();
 	readonly OperationDurationDisplayableLogAnalyzer operationDurationAnalyzer;
+    readonly ScheduledAction reportSelectedAnalysisResultsInfoAction;
     readonly ScriptDisplayableLogAnalyzer scriptLogAnalyzer;
+    readonly SortedObservableList<DisplayableLogAnalysisResult> selectedAnalysisResults;
+    readonly ScheduledAction updateAnalysisStateAction;
     readonly ScheduledAction updateKeyLogAnalysisAction;
-    readonly ScheduledAction updateLogsAnalysisStateAction;
     readonly ScheduledAction updateOperationDurationAnalysisAction;
     readonly ScheduledAction updateScriptLogAnalysis;
     
@@ -85,27 +101,59 @@ class LogAnalysisViewModel : SessionComponent
         // start initialization
         bool isInit = true;
 
+        // create commands
+        this.ClearSelectedAnalysisResultsCommand = new Command(() => this.selectedAnalysisResults?.Clear(), this.GetValueAsObservable(HasSelectedAnalysisResultsProperty));
+
         // create collections
-        this.logAnalysisResults = new(this.CompareLogAnalysisResults);
+        this.analysisResults = new SortedObservableList<DisplayableLogAnalysisResult>(this.CompareAnalysisResults).Also(it =>
+            it.CollectionChanged += this.OnAnalysisResultsChanged);
+        this.selectedAnalysisResults = new SortedObservableList<DisplayableLogAnalysisResult>(this.CompareAnalysisResults).Also(it =>
+            it.CollectionChanged += this.OnSelectedAnalysisResultsChanged);
 
         // create analyzers
         this.keyLogAnalysisRuleSets.CollectionChanged += (_, e) => 
             this.updateKeyLogAnalysisAction?.Schedule(this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogAnalysisParamsUpdateDelay));
         this.keyLogAnalyzer = new KeyLogDisplayableLogAnalyzer(this.Application, this.AllLogs, this.CompareLogs).Also(it =>
-            this.AttachToLogAnalyzer(it));
+            this.AttachToAnalyzer(it));
         this.logAnalysisScriptSets.CollectionChanged += (_, e) =>
             this.updateScriptLogAnalysis?.Schedule(this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogAnalysisParamsUpdateDelay));
         this.operationDurationAnalysisRuleSets.CollectionChanged += (_, e) => 
             this.updateOperationDurationAnalysisAction?.Schedule(this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogAnalysisParamsUpdateDelay));
         this.operationDurationAnalyzer = new OperationDurationDisplayableLogAnalyzer(this.Application, this.AllLogs, this.CompareLogs).Also(it =>
-            this.AttachToLogAnalyzer(it));
+            this.AttachToAnalyzer(it));
         this.scriptLogAnalyzer = new ScriptDisplayableLogAnalyzer(this.Application, this.AllLogs, this.CompareLogs).Also(it =>
-            this.AttachToLogAnalyzer(it));
+            this.AttachToAnalyzer(it));
         
         // setup properties
-        this.LogAnalysisResults = this.logAnalysisResults.AsReadOnly();
+        this.AnalysisResults = this.analysisResults.AsReadOnly();
 
         // create scheduled actions
+        this.reportSelectedAnalysisResultsInfoAction = new(() =>
+        {
+            if (this.IsDisposed)
+                return;
+            var durationResultCount = 0;
+            var totalDuration = new TimeSpan();
+            for (var i = this.selectedAnalysisResults.Count - 1; i >= 0; --i)
+            {
+                var result = this.selectedAnalysisResults[i];
+                result.Duration?.Let(it =>
+                {
+                    ++durationResultCount;
+                    totalDuration += it;
+                });
+            }
+            if (durationResultCount == 0)
+            {
+                this.SetValue(SelectedAnalysisResultsAverageDurationProperty, null);
+                this.SetValue(SelectedAnalysisResultsTotalDurationProperty, null);
+            }
+            else
+            {
+                this.SetValue(SelectedAnalysisResultsAverageDurationProperty, durationResultCount > 1 ? totalDuration / durationResultCount : null);
+                this.SetValue(SelectedAnalysisResultsTotalDurationProperty, totalDuration);
+            }
+        });
         this.updateKeyLogAnalysisAction = new(() =>
         {
             if (this.IsDisposed)
@@ -116,13 +164,13 @@ class LogAnalysisViewModel : SessionComponent
                 this.keyLogAnalyzer.RuleSets.AddAll(this.keyLogAnalysisRuleSets);
             }
         });
-        this.updateLogsAnalysisStateAction = new(() =>
+        this.updateAnalysisStateAction = new(() =>
         {
             if (this.IsDisposed)
                 return;
             var isAnalyzing = false;
             var progress = 1.0;
-            foreach (var analyzer in this.attachedLogAnalyzers)
+            foreach (var analyzer in this.attachedAnalyzers)
             {
                 if (analyzer.IsProcessing)
                 {
@@ -210,36 +258,48 @@ class LogAnalysisViewModel : SessionComponent
     public double AnalysisProgress { get => this.GetValue(AnalysisProgressProperty); }
 
 
+    /// <summary>
+    /// Get list of result of log analysis.
+    /// </summary>
+    public IList<DisplayableLogAnalysisResult> AnalysisResults { get; }
+
+
     // Attach to given log analyzer.
-    void AttachToLogAnalyzer(IDisplayableLogAnalyzer<DisplayableLogAnalysisResult> analyzer)
+    void AttachToAnalyzer(IDisplayableLogAnalyzer<DisplayableLogAnalysisResult> analyzer)
     {
         // add to set
-        if (!this.attachedLogAnalyzers.Add(analyzer))
+        if (!this.attachedAnalyzers.Add(analyzer))
             return;
         
         // add handlers
         if (analyzer.AnalysisResults is INotifyCollectionChanged notifyCollectionChanged)
-            notifyCollectionChanged.CollectionChanged += this.OnLogAnalyzerAnalysisResultsChanged;
-        analyzer.ErrorMessageGenerated += this.OnLogAnalyzerErrorMessageGenerated;
-        analyzer.PropertyChanged += this.OnLogAnalyzerPropertyChanged;
+            notifyCollectionChanged.CollectionChanged += this.OnAnalyzerAnalysisResultsChanged;
+        analyzer.ErrorMessageGenerated += this.OnAnalyzerErrorMessageGenerated;
+        analyzer.PropertyChanged += this.OnAnalyzerPropertyChanged;
 
         // add analysis results
-        this.logAnalysisResults.AddAll(analyzer.AnalysisResults);
+        this.analysisResults.AddAll(analyzer.AnalysisResults);
 
         // report state
-        this.updateLogsAnalysisStateAction?.Schedule();
+        this.updateAnalysisStateAction?.Schedule();
     }
 
 
+    /// <summary>
+    /// Command to clear selected analysis results.
+    /// </summary>
+    public ICommand ClearSelectedAnalysisResultsCommand { get; }
+
+
     // Compare log analysis results.
-    int CompareLogAnalysisResults(DisplayableLogAnalysisResult? lhs, DisplayableLogAnalysisResult? rhs)
+    int CompareAnalysisResults(DisplayableLogAnalysisResult? lhs, DisplayableLogAnalysisResult? rhs)
     {
         // get logs
-        var lhsLogs = this.logAnalysisResultComparisonTempLogs1;
+        var lhsLogs = this.analysisResultComparisonTempLogs1;
         lhsLogs[0] = lhs!.BeginningLog;
         lhsLogs[1] = lhs.Log;
         lhsLogs[2] = lhs.EndingLog;
-        var rhsLogs = this.logAnalysisResultComparisonTempLogs2;
+        var rhsLogs = this.analysisResultComparisonTempLogs2;
         rhsLogs[0] = rhs!.BeginningLog;
         rhsLogs[1] = rhs.Log;
         rhsLogs[2] = rhs.EndingLog;
@@ -278,23 +338,23 @@ class LogAnalysisViewModel : SessionComponent
 
 
     // Detach from given log analyzer.
-    void DetachFromLogAnalyzer(IDisplayableLogAnalyzer<DisplayableLogAnalysisResult> analyzer)
+    void DetachFromAnalyzer(IDisplayableLogAnalyzer<DisplayableLogAnalysisResult> analyzer)
     {
         // remove from set
-        if (!this.attachedLogAnalyzers.Remove(analyzer))
+        if (!this.attachedAnalyzers.Remove(analyzer))
             return;
 
         // remove handlers
         if (analyzer.AnalysisResults is INotifyCollectionChanged notifyCollectionChanged)
-            notifyCollectionChanged.CollectionChanged -= this.OnLogAnalyzerAnalysisResultsChanged;
-        analyzer.ErrorMessageGenerated -= this.OnLogAnalyzerErrorMessageGenerated;
-        analyzer.PropertyChanged -= this.OnLogAnalyzerPropertyChanged;
+            notifyCollectionChanged.CollectionChanged -= this.OnAnalyzerAnalysisResultsChanged;
+        analyzer.ErrorMessageGenerated -= this.OnAnalyzerErrorMessageGenerated;
+        analyzer.PropertyChanged -= this.OnAnalyzerPropertyChanged;
 
         // remove analysis results
-        this.logAnalysisResults.RemoveAll(analyzer.AnalysisResults);
+        this.analysisResults.RemoveAll(analyzer.AnalysisResults);
 
         // report state
-        this.updateLogsAnalysisStateAction?.Schedule();
+        this.updateAnalysisStateAction?.Schedule();
     }
 
 
@@ -308,6 +368,12 @@ class LogAnalysisViewModel : SessionComponent
         // call base
         base.Dispose(disposing);
     }
+
+
+    /// <summary>
+    /// Check whether at least one analysis result is selected or not.
+    /// </summary>
+    public bool HasSelectedAnalysisResults { get => this.GetValue(HasSelectedAnalysisResultsProperty); }
 
 
     /// <summary>
@@ -333,12 +399,6 @@ class LogAnalysisViewModel : SessionComponent
 
 
     /// <summary>
-    /// Get list of result of log analysis.
-    /// </summary>
-    public IList<DisplayableLogAnalysisResult> LogAnalysisResults { get; }
-
-
-    /// <summary>
     /// Get list of script sets to analyze log.
     /// </summary>
     public IList<LogAnalysisScriptSet> LogAnalysisScriptSets { get => this.logAnalysisScriptSets; }
@@ -349,8 +409,8 @@ class LogAnalysisViewModel : SessionComponent
     {
         get
         {
-            var size = (long)(this.logAnalysisResults.Count * IntPtr.Size);
-            foreach (var analyzer in this.attachedLogAnalyzers)
+            var size = (long)(this.analysisResults.Count * IntPtr.Size);
+            foreach (var analyzer in this.attachedAnalyzers)
                 size += analyzer.MemorySize;
             return size;
         }
@@ -368,24 +428,45 @@ class LogAnalysisViewModel : SessionComponent
     }
 
 
+    // Called when list of analysis results changed.
+    void OnAnalysisResultsChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        switch (e.Action)
+        {
+            case NotifyCollectionChangedAction.Remove:
+                e.OldItems!.Cast<DisplayableLogAnalysisResult>().Let(it =>
+                {
+                    if (it.Count == 1)
+                        this.selectedAnalysisResults.Remove(it[0]);
+                    else
+                        this.selectedAnalysisResults.RemoveAll(it, true);
+                });
+                break;
+            case NotifyCollectionChangedAction.Reset:
+                this.selectedAnalysisResults.Clear();
+                break;
+        }
+    }
+
+
     // Called when analysis results of log analyzer changed.
-    void OnLogAnalyzerAnalysisResultsChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    void OnAnalyzerAnalysisResultsChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
         switch (e.Action)
         {
             case NotifyCollectionChangedAction.Add:
-                this.logAnalysisResults.AddAll(e.NewItems!.Cast<DisplayableLogAnalysisResult>());
+                this.analysisResults.AddAll(e.NewItems!.Cast<DisplayableLogAnalysisResult>());
                 break;
             case NotifyCollectionChangedAction.Remove:
-                this.logAnalysisResults.RemoveAll(e.OldItems!.Cast<DisplayableLogAnalysisResult>());
+                this.analysisResults.RemoveAll(e.OldItems!.Cast<DisplayableLogAnalysisResult>());
                 break;
             case NotifyCollectionChangedAction.Reset:
-                foreach (var analyzer in this.attachedLogAnalyzers)
+                foreach (var analyzer in this.attachedAnalyzers)
                 {
                     if (analyzer.AnalysisResults == sender)
                     {
-                        this.logAnalysisResults.RemoveAll(it => it.Analyzer == analyzer);
-                        this.logAnalysisResults.AddAll(analyzer.AnalysisResults);
+                        this.analysisResults.RemoveAll(it => it.Analyzer == analyzer);
+                        this.analysisResults.AddAll(analyzer.AnalysisResults);
                         break;
                     }
                 }
@@ -402,18 +483,18 @@ class LogAnalysisViewModel : SessionComponent
 
 
     // Called when error message generated by log analyzer.
-    void OnLogAnalyzerErrorMessageGenerated(IDisplayableLogProcessor analyzer, MessageEventArgs e) =>
+    void OnAnalyzerErrorMessageGenerated(IDisplayableLogProcessor analyzer, MessageEventArgs e) =>
         this.GenerateErrorMessage(e.Message);
     
 
     // Called when property of log analyzer changed.
-    void OnLogAnalyzerPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    void OnAnalyzerPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         switch (e.PropertyName)
         {
             case nameof(IDisplayableLogAnalyzer<DisplayableLogAnalysisResult>.IsProcessing):
             case nameof(IDisplayableLogAnalyzer<DisplayableLogAnalysisResult>.Progress):
-                this.updateLogsAnalysisStateAction.Schedule(LogsAnalysisStateUpdateDelay);
+                this.updateAnalysisStateAction.Schedule(LogsAnalysisStateUpdateDelay);
                 break;
         }
     }
@@ -533,6 +614,15 @@ class LogAnalysisViewModel : SessionComponent
     }
 
 
+    // Called when selected analysis results changed.
+    void OnSelectedAnalysisResultsChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        this.reportSelectedAnalysisResultsInfoAction.Schedule();
+        if (!this.IsDisposed)
+            this.SetValue(HasSelectedAnalysisResultsProperty, this.selectedAnalysisResults.IsNotEmpty());
+    }
+
+
     /// <summary>
     /// Get list of <see cref="OperationDurationAnalysisRuleSet"/> for log analysis.
     /// </summary>
@@ -547,4 +637,22 @@ class LogAnalysisViewModel : SessionComponent
         get => this.GetValue(PanelSizeProperty);
         set => this.SetValue(PanelSizeProperty, value);
     }
+
+
+    /// <summary>
+    /// Get collection of selected analysis results.
+    /// </summary>
+    public IList<DisplayableLogAnalysisResult> SelectedAnalysisResults { get => this.selectedAnalysisResults; }
+
+
+    /// <summary>
+    /// Get average duration of selcted analysis results.
+    /// </summary>
+    public TimeSpan? SelectedAnalysisResultsAverageDuration { get => this.GetValue(SelectedAnalysisResultsAverageDurationProperty); }
+
+
+    /// <summary>
+    /// Get total duration of selcted analysis results.
+    /// </summary>
+    public TimeSpan? SelectedAnalysisResultsTotalDuration { get => this.GetValue(SelectedAnalysisResultsTotalDurationProperty); }
 }
