@@ -268,6 +268,9 @@ return false;</sys:String>
  */</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.Title">Edit log analysis script</sys:String>
 
+	<!-- LogAnalysisViewModel -->
+	<sys:String x:Key="String/LogAnalysisViewModel.FailedToCopySelectedAnalysisResults">Unable to copy selected log analysis results.</sys:String>
+
 	<!-- LogColorIndicator -->
 	<sys:String x:Key="String/LogColorIndicator.FileName">File</sys:String>
 	<sys:String x:Key="String/LogColorIndicator.None">None</sys:String>

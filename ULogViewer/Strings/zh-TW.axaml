@@ -257,6 +257,9 @@ return false;</sys:String>
  */</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.Title">編輯日誌分析腳本</sys:String>
 
+	<!-- LogAnalysisViewModel -->
+	<sys:String x:Key="String/LogAnalysisViewModel.FailedToCopySelectedAnalysisResults">無法將選取的日誌分析結果複製至剪貼簿。</sys:String>
+
 	<!-- LogColorIndicator -->
 	<sys:String x:Key="String/LogColorIndicator.FileName">檔案</sys:String>
 	<sys:String x:Key="String/LogColorIndicator.None">無</sys:String>

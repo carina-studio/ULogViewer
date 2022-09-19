@@ -310,7 +310,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.AddLogFilesCommand = new Command(this.AddLogFiles, this.canAddLogFiles);
 			this.CopyLogPropertyCommand = new Command(this.CopyLogProperty, this.canCopyLogProperty);
 			this.CopyLogTextCommand = new Command(this.CopyLogText, this.canCopyLogText);
-			this.CopySelectedLogAnalysisResultsCommand = new Command(this.CopySelectedLogAnalysisResults, this.canCopySelectedLogAnalysisResults);
 			this.CopySelectedLogsCommand = new Command(this.CopySelectedLogs, this.canCopySelectedLogs);
 			this.CopySelectedLogsWithFileNamesCommand = new Command(this.CopySelectedLogsWithFileNames, this.canCopySelectedLogsWithFileNames);
 			this.EditLogProfileCommand = new Command(this.EditLogProfile, this.canEditLogProfile);
@@ -1310,41 +1309,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			var newFilter = new PredefinedLogTextFilter(this.Application, newName, filter.Regex);
 			PredefinedLogTextFilterEditorDialog.Show(this.attachedWindow, newFilter, null);
 		}
-
-
-		// Copy selected log analysis results.
-		void CopySelectedLogAnalysisResults()
-		{
-			// check state
-			var selectedItems = this.logAnalysisResultListBox.SelectedItems;
-			var count = selectedItems.Count;
-			if (count == 0)
-				return;
-			
-			// generate text
-			var textBuffer = new StringBuilder();
-			for (var i = 0; i < count; ++i)
-			{
-				if (i > 0)
-					textBuffer.AppendLine();
-				var result = (DisplayableLogAnalysisResult)selectedItems[i].AsNonNull();
-				textBuffer.Append(result.Message);
-			}
-
-			// set to clipboard
-			try
-			{
-				_ = App.Current.Clipboard?.SetTextAsync(textBuffer.ToString());
-			}
-			catch (Exception ex)
-			{
-				this.Logger.LogError(ex, "Failed to set text of log analysis results to clipboard");
-			}
-		}
-
-
-		// Command to copy selected log analysis results.
-		ICommand CopySelectedLogAnalysisResultsCommand { get; }
 
 
 		// Copy selected logs.

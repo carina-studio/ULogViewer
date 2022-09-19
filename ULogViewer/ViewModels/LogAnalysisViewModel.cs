@@ -7,10 +7,12 @@ using CarinaStudio.ULogViewer.ViewModels.Analysis.ContextualBased;
 using CarinaStudio.ULogViewer.ViewModels.Analysis.Scripting;
 using CarinaStudio.ViewModels;
 using CarinaStudio.Windows.Input;
+using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
+using System.Text;
 using System.Text.Json;
 using System.Windows.Input;
 
@@ -103,6 +105,7 @@ class LogAnalysisViewModel : SessionComponent
 
         // create commands
         this.ClearSelectedAnalysisResultsCommand = new Command(() => this.selectedAnalysisResults?.Clear(), this.GetValueAsObservable(HasSelectedAnalysisResultsProperty));
+        this.CopySelectedAnalysisResultsCommand = new Command(this.CopySelectedAnalysisResults, this.GetValueAsObservable(HasSelectedAnalysisResultsProperty));
 
         // create collections
         this.analysisResults = new SortedObservableList<DisplayableLogAnalysisResult>(this.CompareAnalysisResults).Also(it =>
@@ -335,6 +338,42 @@ class LogAnalysisViewModel : SessionComponent
         // compare IDs
         return lhs.Id - rhs.Id;
     }
+
+
+    // Copy selected log analysis results to clipboard.
+    async void CopySelectedAnalysisResults()
+    {
+        // check state
+        var count = this.selectedAnalysisResults.Count;
+        if (count <= 0)
+            return;
+        
+        // generate text
+        var textBuffer = new StringBuilder();
+        for (var i = 0; i < count; ++i)
+        {
+            if (i > 0)
+                textBuffer.AppendLine();
+            textBuffer.Append(this.selectedAnalysisResults[i].Message);
+        }
+
+        // set to clipboard
+        try
+        {
+            await App.Current.Clipboard!.SetTextAsync(textBuffer.ToString());
+        }
+        catch (Exception ex)
+        {
+            this.Logger.LogError(ex, "Failed to set text of log analysis results to clipboard");
+            this.GenerateErrorMessage(this.Application.GetStringNonNull("LogAnalysisViewModel.FailedToCopySelectedAnalysisResults"));
+        }
+    }
+
+
+    /// <summary>
+    /// Command to copy selected log analysis results to clipboard.
+    /// </summary>
+    public ICommand CopySelectedAnalysisResultsCommand { get; }
 
 
     // Detach from given log analyzer.
