@@ -51,6 +51,7 @@ namespace CarinaStudio.ULogViewer
 
 
 		// Fields.
+		IDisposable? activeFilteringProgressObserverToken;
 		Session? attachedActiveSession;
 		readonly ScheduledAction focusOnTabItemContentAction;
 		bool isReActivatingProVersion;
@@ -206,10 +207,10 @@ namespace CarinaStudio.ULogViewer
 				{
 					if (session.IsReadingLogs)
 						TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Indeterminate);
-					else if (double.IsFinite(session.LogsFilteringProgress))
+					else if (double.IsFinite(session.LogFiltering.FilteringProgress))
 					{
 						TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Normal);
-						TaskbarManager.Instance.SetProgressValue((int)(session.LogsFilteringProgress * 100 + 0.5), 100);
+						TaskbarManager.Instance.SetProgressValue((int)(session.LogFiltering.FilteringProgress * 100 + 0.5), 100);
 					}
 					else
 						TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.NoProgress);
@@ -274,6 +275,8 @@ namespace CarinaStudio.ULogViewer
 				return;
 			this.DetachFromActiveSession();
 			session.PropertyChanged += this.OnActiveSessionPropertyChanged;
+			this.activeFilteringProgressObserverToken = session.LogFiltering.GetValueAsObservable(LogFilteringViewModel.FilteringProgressProperty).Subscribe(_ =>
+				this.updateSysTaskBarAction.Schedule());
 			this.attachedActiveSession = session;
 			this.updateSysTaskBarAction.Schedule();
 		}
@@ -385,6 +388,7 @@ namespace CarinaStudio.ULogViewer
 			if (this.attachedActiveSession == null)
 				return;
 			this.attachedActiveSession.PropertyChanged -= this.OnActiveSessionPropertyChanged;
+			this.activeFilteringProgressObserverToken = this.activeFilteringProgressObserverToken.DisposeAndReturnNull();
 			this.attachedActiveSession = null;
 			this.updateSysTaskBarAction.Reschedule();
         }
@@ -526,9 +530,6 @@ namespace CarinaStudio.ULogViewer
 		{
 			switch (e.PropertyName)
 			{
-				case nameof(Session.LogsFilteringProgress):
-					this.updateSysTaskBarAction.Schedule(100);
-					break;
 				case nameof(Session.HasAllDataSourceErrors):
 				case nameof(Session.IsLogsReadingPaused):
 				case nameof(Session.IsProcessingLogs):

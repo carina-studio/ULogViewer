@@ -842,7 +842,7 @@
 				<Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto" DockPanel.Dock="Right">
 
 					<!-- Filtering progress -->
-					<StackPanel Name="filterProgressStatusBarItem" Grid.Column="0" IsVisible="{Binding IsFilteringLogs}" Orientation="Horizontal">
+					<StackPanel Name="filterProgressStatusBarItem" Grid.Column="0" IsVisible="{Binding LogFiltering.IsFiltering}" Orientation="Horizontal">
 						<Separator Classes="StatusBar_Separator"/>
 						<Image Classes="StatusBar_IconWithText">
 							<DrawingImage>
@@ -852,7 +852,7 @@
 						<TextBlock Classes="StatusBar_TextBlock" Text="{DynamicResource String/SessionView.LogsFilteringProgress}"/>
 						<Panel VerticalAlignment="Center">
 							<TextBlock Classes="StatusBar_TextBlock" Text="00.0%" Opacity="0"/>
-							<TextBlock Classes="StatusBar_TextBlock" HorizontalAlignment="Left" Text="{Binding LogsFilteringProgress, Converter={x:Static appViewModels:Session.LogsOperationProgressConverter}}"/>
+							<TextBlock Classes="StatusBar_TextBlock" HorizontalAlignment="Left" Text="{Binding LogFiltering.FilteringProgress, Converter={x:Static appViewModels:Session.LogsOperationProgressConverter}}"/>
 						</Panel>
 					</StackPanel>
 
@@ -1022,7 +1022,7 @@
 					</StackPanel>
 					<StackPanel IsVisible="{Binding AllLogCount}" Orientation="Horizontal">
 						<abControls:FormattedTextBlock Classes="StatusBar_TextBlock" Arg1="{Binding AllLogCount}" Format="{DynamicResource String/SessionView.AllLogCount}" VerticalAlignment="Center"/>
-						<abControls:FormattedTextBlock Classes="StatusBar_TextBlock" Arg1="{Binding FilteredLogCount}" Format="{DynamicResource String/SessionView.FilteredLogCount}" IsVisible="{Binding IsFilteringLogsNeeded}" VerticalAlignment="Center"/>
+						<abControls:FormattedTextBlock Classes="StatusBar_TextBlock" Arg1="{Binding LogFiltering.FilteredLogs.Count}" Format="{DynamicResource String/SessionView.FilteredLogCount}" IsVisible="{Binding LogFiltering.IsFilteringNeeded}" VerticalAlignment="Center"/>
 						<Separator Classes="StatusBar_Separator"/>
 					</StackPanel>
 
@@ -1033,8 +1033,14 @@
 					</StackPanel>
 
 					<!-- Last logs filtering duration -->
-					<StackPanel Grid.Column="2" IsVisible="{Binding HasLastLogsFilteringDuration}" Orientation="Horizontal">
-						<abControls:FormattedTextBlock Classes="StatusBar_TextBlock" Arg1="{Binding LastLogsFilteringDuration, Converter={x:Static asConverters:TimeSpanConverter.Default}}" Format="{DynamicResource String/SessionView.LastLogsFilteringDuration}" VerticalAlignment="Center"/>
+					<StackPanel Grid.Column="2" Orientation="Horizontal">
+						<StackPanel.IsVisible>
+							<MultiBinding Converter="{x:Static aConverters:BoolConverters.And}">
+								<Binding Path="LogFiltering.IsFilteringNeeded"/>
+								<Binding Path="LogFiltering.LastFilteringDuration" Converter="{x:Static aConverters:ObjectConverters.IsNotNull}"/>
+							</MultiBinding>
+						</StackPanel.IsVisible>
+						<abControls:FormattedTextBlock Classes="StatusBar_TextBlock" Arg1="{Binding LogFiltering.LastFilteringDuration, Converter={x:Static asConverters:TimeSpanConverter.Default}}" Format="{DynamicResource String/SessionView.LastLogsFilteringDuration}" VerticalAlignment="Center"/>
 						<Separator Classes="StatusBar_Separator"/>
 					</StackPanel>
 

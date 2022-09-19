@@ -734,18 +734,18 @@ namespace CarinaStudio.ULogViewer.Controls
 					return;
 
 				// set level 
-				session.LogLevelFilter = this.logLevelFilterComboBox.SelectedItem is Logs.LogLevel logLevel ? logLevel : Logs.LogLevel.Undefined;
+				session.LogFiltering.LevelFilter = this.logLevelFilterComboBox.SelectedItem is Logs.LogLevel logLevel ? logLevel : Logs.LogLevel.Undefined;
 
 				// set PID
-				session.LogProcessIdFilter = (int?)this.logProcessIdFilterTextBox.Value;
+				session.LogFiltering.ProcessIdFilter = (int?)this.logProcessIdFilterTextBox.Value;
 
 				// set TID
-				session.LogThreadIdFilter = (int?)this.logThreadIdFilterTextBox.Value;
+				session.LogFiltering.ThreadIdFilter = (int?)this.logThreadIdFilterTextBox.Value;
 
 				// update text filters
-				session.LogTextFilter = this.logTextFilterTextBox.Object;
-				session.PredefinedLogTextFilters.Clear();
-				session.PredefinedLogTextFilters.AddAll(this.selectedPredefinedLogTextFilters);
+				session.LogFiltering.TextFilter = this.logTextFilterTextBox.Object;
+				session.LogFiltering.PredefinedTextFilters.Clear();
+				session.LogFiltering.PredefinedTextFilters.AddAll(this.selectedPredefinedLogTextFilters);
 			});
 			this.updateStatusBarStateAction = new ScheduledAction(() =>
 			{
@@ -915,15 +915,15 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.scrollToLatestLogAction.Schedule(ScrollingToLatestLogInterval);
 
 			// sync log filters to UI
-			this.logProcessIdFilterTextBox.Value = session.LogProcessIdFilter;
-			this.logTextFilterTextBox.Object = session.LogTextFilter;
-			this.logThreadIdFilterTextBox.Value = session.LogThreadIdFilter;
-			this.logLevelFilterComboBox.SelectedItem = session.LogLevelFilter;
-			if (session.PredefinedLogTextFilters.IsNotEmpty())
+			this.logProcessIdFilterTextBox.Value = session.LogFiltering.ProcessIdFilter;
+			this.logTextFilterTextBox.Object = session.LogFiltering.TextFilter;
+			this.logThreadIdFilterTextBox.Value = session.LogFiltering.ThreadIdFilter;
+			this.logLevelFilterComboBox.SelectedItem = session.LogFiltering.LevelFilter;
+			if (session.LogFiltering.PredefinedTextFilters.IsNotEmpty())
 			{
 				this.SynchronizationContext.Post(() =>
 				{
-					foreach (var textFilter in session.PredefinedLogTextFilters)
+					foreach (var textFilter in session.LogFiltering.PredefinedTextFilters)
 					{
 						this.predefinedLogTextFilterListBox.SelectedItems.Add(textFilter);
 						this.selectedPredefinedLogTextFilters.Add(textFilter);
@@ -5092,7 +5092,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (this.DataContext is not Session session)
 				return;
-			session.LogFiltersCombinationMode = session.LogFiltersCombinationMode switch
+			session.LogFiltering.FiltersCombinationMode = session.LogFiltering.FiltersCombinationMode switch
 			{
 				FilterCombinationMode.Intersection => FilterCombinationMode.Union,
 				_ => FilterCombinationMode.Intersection,
