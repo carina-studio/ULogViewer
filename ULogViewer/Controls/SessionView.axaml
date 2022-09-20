@@ -1550,14 +1550,15 @@
 					<Border Background="{DynamicResource Brush/SessionView.LogHeader.Background}" Classes="StatusBar" Grid.Row="2" Padding="{StaticResource Thickness/StatusBar.Item.Margin}">
 						<Border.IsVisible>
 							<MultiBinding Converter="{x:Static aConverters:BoolConverters.Or}">
-								<Binding Path="IsVisible" ElementName="selectedLogAnalysisResultDurationPanel"/>
-								<Binding Path="IsVisible" ElementName="selectedLogAnalysisResultQuantityPanel"/>
+								<Binding Path="IsVisible" ElementName="selectedLogAnalysisResultsDurationPanel"/>
+								<Binding Path="IsVisible" ElementName="selectedLogAnalysisResultsByteSizePanel"/>
+								<Binding Path="IsVisible" ElementName="selectedLogAnalysisResultsQuantityPanel"/>
 							</MultiBinding>
 						</Border.IsVisible>
 						<StackPanel VerticalAlignment="Center">
 
 							<!-- Duration -->
-							<Grid Name="selectedLogAnalysisResultDurationPanel" ColumnDefinitions="Auto,Auto,Auto,*" IsVisible="{Binding LogAnalysis.SelectedAnalysisResultsTotalDuration, Converter={x:Static aConverters:ObjectConverters.IsNotNull}}">
+							<Grid Name="selectedLogAnalysisResultsDurationPanel" ColumnDefinitions="Auto,Auto,Auto,*" IsVisible="{Binding LogAnalysis.SelectedAnalysisResultsTotalDuration, Converter={x:Static aConverters:ObjectConverters.IsNotNull}}">
 								<Image 
 									Classes="StatusBar_IconWithText" 
 									Source="{StaticResource Image/Timer.Outline}"/>
@@ -1571,10 +1572,10 @@
 								<TextBlock 
 									Classes="StatusBar_TextBlock" 
 									Grid.Column="2" 
-									IsVisible="{Binding #selectedLogAnalysisResultAvgDuration.IsVisible}" 
+									IsVisible="{Binding #selectedLogAnalysisResultsAvgDuration.IsVisible}" 
 									Margin="0" 
 									Text=" / "/>
-								<TextBlock Name="selectedLogAnalysisResultAvgDuration" 
+								<TextBlock Name="selectedLogAnalysisResultsAvgDuration" 
 									Classes="StatusBar_TextBlock" 
 									Grid.Column="3" 
 									IsVisible="{Binding LogAnalysis.SelectedAnalysisResultsAverageDuration, Converter={x:Static aConverters:ObjectConverters.IsNotNull}}" 
@@ -1584,8 +1585,36 @@
 									ToolTip.Tip="{DynamicResource String/SessionView.SelectedLogAnalysisResultsAverageDuration}"/>
 							</Grid>
 
+							<!-- ByteSize -->
+							<Grid Name="selectedLogAnalysisResultsByteSizePanel" ColumnDefinitions="Auto,Auto,Auto,*" IsVisible="{Binding LogAnalysis.SelectedAnalysisResultsTotalDuration, Converter={x:Static aConverters:ObjectConverters.IsNotNull}}">
+								<Image 
+									Classes="StatusBar_IconWithText" 
+									Source="{StaticResource Image/Icon.Memory.Outline}"/>
+								<TextBlock 
+									Classes="StatusBar_TextBlock" 
+									Grid.Column="1" 
+									Margin="0" 
+									Text="{Binding LogAnalysis.SelectedAnalysisResultsTotalByteSize, Converter={x:Static asConverters:FileSizeConverter.Default}}" 
+									ToolTip.Placement="Left"
+									ToolTip.Tip="{DynamicResource String/SessionView.SelectedLogAnalysisResultsTotalByteSize}"/>
+								<TextBlock 
+									Classes="StatusBar_TextBlock" 
+									Grid.Column="2" 
+									IsVisible="{Binding #selectedLogAnalysisResultsAvgByteSize.IsVisible}" 
+									Margin="0" 
+									Text=" / "/>
+								<TextBlock Name="selectedLogAnalysisResultsAvgByteSize" 
+									Classes="StatusBar_TextBlock" 
+									Grid.Column="3" 
+									IsVisible="{Binding LogAnalysis.SelectedAnalysisResultsAverageByteSize, Converter={x:Static aConverters:ObjectConverters.IsNotNull}}" 
+									Margin="0" 
+									Text="{Binding LogAnalysis.SelectedAnalysisResultsAverageByteSize, Converter={x:Static asConverters:FileSizeConverter.Default}}" 
+									ToolTip.Placement="Left"
+									ToolTip.Tip="{DynamicResource String/SessionView.SelectedLogAnalysisResultsAverageByteSize}"/>
+							</Grid>
+
 							<!-- Quantity -->
-							<Grid Name="selectedLogAnalysisResultQuantityPanel" ColumnDefinitions="Auto,Auto,Auto,*" IsVisible="{Binding LogAnalysis.SelectedAnalysisResultsTotalQuantity, Converter={x:Static aConverters:ObjectConverters.IsNotNull}}">
+							<Grid Name="selectedLogAnalysisResultsQuantityPanel" ColumnDefinitions="Auto,Auto,Auto,*" IsVisible="{Binding LogAnalysis.SelectedAnalysisResultsTotalQuantity, Converter={x:Static aConverters:ObjectConverters.IsNotNull}}">
 								<Image 
 									Classes="StatusBar_IconWithText" 
 									Source="{StaticResource Image/Layers.Outline}"/>
@@ -1599,10 +1628,10 @@
 								<TextBlock 
 									Classes="StatusBar_TextBlock" 
 									Grid.Column="2" 
-									IsVisible="{Binding #selectedLogAnalysisResultAvgQuantity.IsVisible}" 
+									IsVisible="{Binding #selectedLogAnalysisResultsAvgQuantity.IsVisible}" 
 									Margin="0" 
 									Text=" / "/>
-								<TextBlock Name="selectedLogAnalysisResultAvgQuantity" 
+								<TextBlock Name="selectedLogAnalysisResultsAvgQuantity" 
 									Classes="StatusBar_TextBlock" 
 									Grid.Column="3" 
 									IsVisible="{Binding LogAnalysis.SelectedAnalysisResultsAverageQuantity, Converter={x:Static aConverters:ObjectConverters.IsNotNull}}" 

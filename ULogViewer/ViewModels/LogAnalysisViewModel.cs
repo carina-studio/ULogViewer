@@ -53,6 +53,10 @@ class LogAnalysisViewModel : SessionComponent
         }, 
         validate: it => double.IsFinite(it));
     /// <summary>
+    /// Property of <see cref="SelectedAnalysisResultsAverageByteSize"/>.
+    /// </summary>
+    public static readonly ObservableProperty<long?> SelectedAnalysisResultsAverageByteSizeProperty = ObservableProperty.Register<LogAnalysisViewModel, long?>(nameof(SelectedAnalysisResultsAverageByteSize));
+    /// <summary>
     /// Property of <see cref="SelectedAnalysisResultsAverageDuration"/>.
     /// </summary>
     public static readonly ObservableProperty<TimeSpan?> SelectedAnalysisResultsAverageDurationProperty = ObservableProperty.Register<LogAnalysisViewModel, TimeSpan?>(nameof(SelectedAnalysisResultsAverageDuration));
@@ -60,6 +64,10 @@ class LogAnalysisViewModel : SessionComponent
     /// Property of <see cref="SelectedAnalysisResultsAverageQuantity"/>.
     /// </summary>
     public static readonly ObservableProperty<double?> SelectedAnalysisResultsAverageQuantityProperty = ObservableProperty.Register<LogAnalysisViewModel, double?>(nameof(SelectedAnalysisResultsAverageQuantity));
+    /// <summary>
+    /// Property of <see cref="SelectedAnalysisResultsTotalByteSize"/>.
+    /// </summary>
+    public static readonly ObservableProperty<long?> SelectedAnalysisResultsTotalByteSizeProperty = ObservableProperty.Register<LogAnalysisViewModel, long?>(nameof(SelectedAnalysisResultsTotalByteSize));
     /// <summary>
     /// Property of <see cref="SelectedAnalysisResultsTotalDuration"/>.
     /// </summary>
@@ -143,6 +151,8 @@ class LogAnalysisViewModel : SessionComponent
         {
             if (this.IsDisposed)
                 return;
+            var byteSizeCount = 0;
+            var totalByteSize = 0L;
             var durationResultCount = 0;
             var totalDuration = new TimeSpan();
             var quantityCount = 0;
@@ -150,6 +160,11 @@ class LogAnalysisViewModel : SessionComponent
             for (var i = this.selectedAnalysisResults.Count - 1; i >= 0; --i)
             {
                 var result = this.selectedAnalysisResults[i];
+                result.ByteSize?.Let(it =>
+                {
+                    ++byteSizeCount;
+                    totalByteSize += it;
+                });
                 result.Duration?.Let(it =>
                 {
                     ++durationResultCount;
@@ -160,6 +175,16 @@ class LogAnalysisViewModel : SessionComponent
                     ++quantityCount;
                     totalQuantity += it;
                 });
+            }
+            if (byteSizeCount == 0)
+            {
+                this.SetValue(SelectedAnalysisResultsAverageByteSizeProperty, null);
+                this.SetValue(SelectedAnalysisResultsTotalByteSizeProperty, null);
+            }
+            else
+            {
+                this.SetValue(SelectedAnalysisResultsAverageByteSizeProperty, byteSizeCount > 1 ? totalByteSize / byteSizeCount : null);
+                this.SetValue(SelectedAnalysisResultsTotalByteSizeProperty, totalByteSize);
             }
             if (durationResultCount == 0)
             {
@@ -710,6 +735,12 @@ class LogAnalysisViewModel : SessionComponent
 
 
     /// <summary>
+    /// Get average byte size of selcted analysis results.
+    /// </summary>
+    public long? SelectedAnalysisResultsAverageByteSize { get => this.GetValue(SelectedAnalysisResultsAverageByteSizeProperty); }
+
+
+    /// <summary>
     /// Get average duration of selcted analysis results.
     /// </summary>
     public TimeSpan? SelectedAnalysisResultsAverageDuration { get => this.GetValue(SelectedAnalysisResultsAverageDurationProperty); }
@@ -719,6 +750,12 @@ class LogAnalysisViewModel : SessionComponent
     /// Get average quantity of selcted analysis results.
     /// </summary>
     public double? SelectedAnalysisResultsAverageQuantity { get => this.GetValue(SelectedAnalysisResultsAverageQuantityProperty); }
+
+
+    /// <summary>
+    /// Get total byte size of selcted analysis results.
+    /// </summary>
+    public long? SelectedAnalysisResultsTotalByteSize { get => this.GetValue(SelectedAnalysisResultsTotalByteSizeProperty); }
 
 
     /// <summary>

@@ -896,8 +896,10 @@ return null;</sys:String>
 	<sys:String x:Key="String/SessionView.SaveLogs.WithShortcut">储存日志到档案 (Ctrl+S)</sys:String>
 	<sys:String x:Key="String/SessionView.SavingLogs">正在存储日志…</sys:String>
 	<sys:String x:Key="String/SessionView.ScrollToLatestLog">滚动至最新的日志</sys:String>
+	<sys:String x:Key="String/SessionView.SelectedLogAnalysisResultsAverageByteSize">平均字节大小</sys:String>
 	<sys:String x:Key="String/SessionView.SelectedLogAnalysisResultsAverageDuration">平均时距</sys:String>
 	<sys:String x:Key="String/SessionView.SelectedLogAnalysisResultsAverageQuantity">平均数量</sys:String>
+	<sys:String x:Key="String/SessionView.SelectedLogAnalysisResultsTotalByteSize">总字节大小</sys:String>
 	<sys:String x:Key="String/SessionView.SelectedLogAnalysisResultsTotalDuration">总时距</sys:String>
 	<sys:String x:Key="String/SessionView.SelectedLogAnalysisResultsTotalQuantity">总数量</sys:String>
 	<sys:String x:Key="String/SessionView.SelectedLogCount">已选取 {0} 笔</sys:String>
