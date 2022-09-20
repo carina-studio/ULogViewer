@@ -783,14 +783,18 @@ namespace CarinaStudio.ULogViewer.Logs
 						case LogTimestampEncoding.Custom:
 							if (timestampFormats != null)
 							{
+								var parsed = false;
 								for (var i = timestampFormats.Length - 1; i >= 0; --i)
 								{
 									if (DateTime.TryParseExact(value, timestampFormats[i], this.timestampCultureInfo, DateTimeStyles.None, out var timestamp))
 									{
+										parsed = true;
 										logBuilder.Set(name, timestamp.ToBinary().ToString());
 										break;
 									}
 								}
+								if (!parsed && this.Application.IsDebugMode)
+									this.Logger.LogWarning($"Unable to parse '{value}' as date time with custom formats: {timestampFormats.ContentToString()}");
 							}
 							else
 								logBuilder.Set(name, value);
