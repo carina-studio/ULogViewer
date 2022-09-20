@@ -896,7 +896,9 @@ return null;</sys:String>
 	<sys:String x:Key="String/SessionView.SavingLogs">正在存储日志…</sys:String>
 	<sys:String x:Key="String/SessionView.ScrollToLatestLog">滚动至最新的日志</sys:String>
 	<sys:String x:Key="String/SessionView.SelectedLogAnalysisResultsAverageDuration">平均时距</sys:String>
+	<sys:String x:Key="String/SessionView.SelectedLogAnalysisResultsAverageQuantity">平均数量</sys:String>
 	<sys:String x:Key="String/SessionView.SelectedLogAnalysisResultsTotalDuration">总时距</sys:String>
+	<sys:String x:Key="String/SessionView.SelectedLogAnalysisResultsTotalQuantity">总数量</sys:String>
 	<sys:String x:Key="String/SessionView.SelectedLogCount">已选取 {0} 笔</sys:String>
 	<sys:String x:Key="String/SessionView.SelectedLogsDuration">选择的时长为 {0}</sys:String>
 	<sys:String x:Key="String/SessionView.SelectMarkedLogs">选择已标记的日志</sys:String>

@@ -57,9 +57,17 @@ class LogAnalysisViewModel : SessionComponent
     /// </summary>
     public static readonly ObservableProperty<TimeSpan?> SelectedAnalysisResultsAverageDurationProperty = ObservableProperty.Register<LogAnalysisViewModel, TimeSpan?>(nameof(SelectedAnalysisResultsAverageDuration));
     /// <summary>
+    /// Property of <see cref="SelectedAnalysisResultsAverageQuantity"/>.
+    /// </summary>
+    public static readonly ObservableProperty<double?> SelectedAnalysisResultsAverageQuantityProperty = ObservableProperty.Register<LogAnalysisViewModel, double?>(nameof(SelectedAnalysisResultsAverageQuantity));
+    /// <summary>
     /// Property of <see cref="SelectedAnalysisResultsTotalDuration"/>.
     /// </summary>
     public static readonly ObservableProperty<TimeSpan?> SelectedAnalysisResultsTotalDurationProperty = ObservableProperty.Register<LogAnalysisViewModel, TimeSpan?>(nameof(SelectedAnalysisResultsTotalDuration));
+    /// <summary>
+    /// Property of <see cref="SelectedAnalysisResultsTotalQuantity"/>.
+    /// </summary>
+    public static readonly ObservableProperty<long?> SelectedAnalysisResultsTotalQuantityProperty = ObservableProperty.Register<LogAnalysisViewModel, long?>(nameof(SelectedAnalysisResultsTotalQuantity));
 
 
     // Constants.
@@ -137,6 +145,8 @@ class LogAnalysisViewModel : SessionComponent
                 return;
             var durationResultCount = 0;
             var totalDuration = new TimeSpan();
+            var quantityCount = 0;
+            var totalQuantity = 0L;
             for (var i = this.selectedAnalysisResults.Count - 1; i >= 0; --i)
             {
                 var result = this.selectedAnalysisResults[i];
@@ -144,6 +154,11 @@ class LogAnalysisViewModel : SessionComponent
                 {
                     ++durationResultCount;
                     totalDuration += it;
+                });
+                result.Quantity?.Let(it =>
+                {
+                    ++quantityCount;
+                    totalQuantity += it;
                 });
             }
             if (durationResultCount == 0)
@@ -155,6 +170,16 @@ class LogAnalysisViewModel : SessionComponent
             {
                 this.SetValue(SelectedAnalysisResultsAverageDurationProperty, durationResultCount > 1 ? totalDuration / durationResultCount : null);
                 this.SetValue(SelectedAnalysisResultsTotalDurationProperty, totalDuration);
+            }
+            if (quantityCount == 0)
+            {
+                this.SetValue(SelectedAnalysisResultsAverageQuantityProperty, null);
+                this.SetValue(SelectedAnalysisResultsTotalQuantityProperty, null);
+            }
+            else
+            {
+                this.SetValue(SelectedAnalysisResultsAverageQuantityProperty, quantityCount > 1 ? totalQuantity / (double)quantityCount : null);
+                this.SetValue(SelectedAnalysisResultsTotalQuantityProperty, totalQuantity);
             }
         });
         this.updateKeyLogAnalysisAction = new(() =>
@@ -691,7 +716,19 @@ class LogAnalysisViewModel : SessionComponent
 
 
     /// <summary>
+    /// Get average quantity of selcted analysis results.
+    /// </summary>
+    public double? SelectedAnalysisResultsAverageQuantity { get => this.GetValue(SelectedAnalysisResultsAverageQuantityProperty); }
+
+
+    /// <summary>
     /// Get total duration of selcted analysis results.
     /// </summary>
     public TimeSpan? SelectedAnalysisResultsTotalDuration { get => this.GetValue(SelectedAnalysisResultsTotalDurationProperty); }
+
+
+    /// <summary>
+    /// Get total quantity of selcted analysis results.
+    /// </summary>
+    public long? SelectedAnalysisResultsTotalQuantity { get => this.GetValue(SelectedAnalysisResultsTotalQuantityProperty); }
 }
