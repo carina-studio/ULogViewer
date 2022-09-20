@@ -583,10 +583,10 @@
 								<Button Classes="ToolBar_Button" Command="{Binding $parent[UserControl].SwitchLogFiltersCombinationModeCommand}" Grid.Column="3" IsVisible="{Binding $parent[UserControl].CanFilterLogsByNonTextFilters}" ToolTip.Tip="{DynamicResource String/SessionView.LogFiltersCombinationMode}">
 									<Image Classes="Icon">
 										<ia:Interaction.Behaviors>
-											<iaCore:DataTriggerBehavior Binding="{Binding LogFiltersCombinationMode}" Value="Intersection">
+											<iaCore:DataTriggerBehavior Binding="{Binding LogFiltering.FiltersCombinationMode}" Value="Intersection">
 												<iaCore:ChangePropertyAction PropertyName="Source" Value="{StaticResource Image/Intersection}"/>
 											</iaCore:DataTriggerBehavior>
-											<iaCore:DataTriggerBehavior Binding="{Binding LogFiltersCombinationMode}" Value="Union">
+											<iaCore:DataTriggerBehavior Binding="{Binding LogFiltering.FiltersCombinationMode}" Value="Union">
 												<iaCore:ChangePropertyAction PropertyName="Source" Value="{StaticResource Image/Union}"/>
 											</iaCore:DataTriggerBehavior>
 										</ia:Interaction.Behaviors>
