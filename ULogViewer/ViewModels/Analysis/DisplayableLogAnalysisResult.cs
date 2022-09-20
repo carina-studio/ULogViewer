@@ -13,6 +13,7 @@ class DisplayableLogAnalysisResult : BaseApplicationObject<IULogViewerApplicatio
 {
     // Static fields.
     static readonly long DefaultMemorySize = (7 * IntPtr.Size) // Appliation, BeginningLog, EndingLog, Log, message, Analyzer, PropertyChanged
+        + (4 + 8) // ByteSize
         + (4 + 8) // Duration
         + 4 // Id
         + 4 // isMessageValid
@@ -54,6 +55,12 @@ class DisplayableLogAnalysisResult : BaseApplicationObject<IULogViewerApplicatio
 
 
     /// <summary>
+    /// Get size in bytes which is related to this result.
+    /// </summary>
+    public virtual long? ByteSize { get; }
+
+
+    /// <summary>
     /// Get <see cref="IBrush"/> of color indicator.
     /// </summary>
     public IBrush? ColorIndicatorBrush 
@@ -72,6 +79,12 @@ class DisplayableLogAnalysisResult : BaseApplicationObject<IULogViewerApplicatio
     /// Get ending <see cref="DisplayableLog"/> which relates to this result.
     /// </summary>
     public virtual DisplayableLog? EndingLog { get; }
+
+
+    /// <summary>
+    /// Check whether <see cref="ByteSize"/> is valid value or not.
+    /// </summary>
+    public bool HasByteSize { get => this.ByteSize.HasValue; }
 
 
     /// <summary>

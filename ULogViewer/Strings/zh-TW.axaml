@@ -843,6 +843,7 @@ return null;</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisPanel.Hint">點一下面板右上角的按鈕以選擇要套用的的分析規則集</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisProgress">分析日誌中…</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisResult">分析結果</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisResult.ByteSize">位元組大小</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisResult.Duration">時距</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisResult.Quantity">數量</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets">分析規則集</sys:String>

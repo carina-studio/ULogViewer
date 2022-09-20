@@ -348,6 +348,7 @@ public struct Result
     public Result(ResultType type, string message, ILog log)
     {
         this.BeginningLog = null;
+        this.ByteSize = null;
         this.Duration = null;
         this.EndingLog = null;
         this.Log = log;
@@ -367,6 +368,7 @@ public struct Result
     public Result(ResultType type, string message, ILog beginningLog, ILog endingLog)
     {
         this.BeginningLog = beginningLog;
+        this.ByteSize = null;
         this.Duration = null;
         this.EndingLog = endingLog;
         this.Log = null;
@@ -380,6 +382,12 @@ public struct Result
     /// Beginning log.
     /// </summary>
     public ILog? BeginningLog { get; set; }
+
+
+    /// <summary>
+    /// Size in byte which is related to result.
+    /// </summary>
+    public long? ByteSize { get; set; }
 
 
     /// <summary>
