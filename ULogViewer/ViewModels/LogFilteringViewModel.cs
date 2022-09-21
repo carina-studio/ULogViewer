@@ -365,6 +365,19 @@ class LogFilteringViewModel : SessionComponent
         {
             this.SetValue(ThreadIdFilterProperty, tid);
         }
+        if ((element.TryGetProperty("PredefinedLogTextFilters", out jsonValue) // Upgrade case
+            || element.TryGetProperty($"LogFiltering.{nameof(PredefinedTextFilters)}", out jsonValue))
+                && jsonValue.ValueKind == JsonValueKind.Array)
+        {
+            foreach (var jsonId in jsonValue.EnumerateArray())
+            {
+                jsonId.GetString()?.Let(id =>
+                {
+                    PredefinedLogTextFilterManager.Default.GetFilterOrDefault(id)?.Let(filter =>
+                        this.predefinedTextFilters.Add(filter));
+                });
+            }
+        }
     }
 
 

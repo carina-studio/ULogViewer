@@ -619,8 +619,8 @@ class LogAnalysisViewModel : SessionComponent
                     this.keyLogAnalysisRuleSets.Add(ruleSet);
             }
         }
-        if ((element.TryGetProperty(nameof(LogAnalysisScriptSet), out jsonValue) // for upgrade case
-            || element.TryGetProperty($"LogAnalysis.{nameof(LogAnalysisScriptSet)}", out jsonValue))
+        if ((element.TryGetProperty(nameof(LogAnalysisScriptSets), out jsonValue) // for upgrade case
+            || element.TryGetProperty($"LogAnalysis.{nameof(LogAnalysisScriptSets)}", out jsonValue))
                 && jsonValue.ValueKind == JsonValueKind.Array)
         {
             foreach (var jsonId in jsonValue.EnumerateArray())
