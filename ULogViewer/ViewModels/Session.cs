@@ -4214,6 +4214,18 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				{
 					this.LogThreadIdFilter = tid;
 				}
+				if (jsonState.TryGetProperty(nameof(PredefinedLogTextFilters), out jsonValue)
+					&& jsonValue.ValueKind == JsonValueKind.Array)
+				{
+					foreach (var jsonId in jsonValue.EnumerateArray())
+					{
+						jsonId.GetString()?.Let(id =>
+						{
+							PredefinedLogTextFilterManager.Default.GetFilterOrDefault(id)?.Let(filter =>
+								this.predefinedLogTextFilters.Add(filter));
+						});
+					}
+				}
 
 				// restore log analysis state
 				this.keyLogAnalysisRuleSets.Clear();
@@ -4230,7 +4242,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 							this.keyLogAnalysisRuleSets.Add(ruleSet);
 					}
 				}
-				if (jsonState.TryGetProperty(nameof(LogAnalysisScriptSet), out jsonValue) && jsonValue.ValueKind == JsonValueKind.Array)
+				if (jsonState.TryGetProperty(nameof(LogAnalysisScriptSets), out jsonValue) && jsonValue.ValueKind == JsonValueKind.Array)
 				{
 					foreach (var jsonId in jsonValue.EnumerateArray())
 					{

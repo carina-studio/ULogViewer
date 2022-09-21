@@ -4150,7 +4150,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when test button clicked.
 		void OnTestButtonClick(object? sender, RoutedEventArgs e)
 		{
-			//this.Application.Restart(AppSuite.AppSuiteApplication.RestoreMainWindowsArgument);
+			this.Application.Restart(AppSuite.AppSuiteApplication.RestoreMainWindowsArgument);
 		}
 
 
