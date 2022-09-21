@@ -1,6 +1,7 @@
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
+using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ViewModels;
 using CarinaStudio.Windows.Input;
 using Microsoft.Extensions.Logging;
@@ -61,7 +62,6 @@ class LogFilteringViewModel : SessionComponent
     readonly MutableObservableBoolean canClearPredefinedTextFilters = new();
     readonly IDisposable displayLogPropertiesObserverToken;
     readonly DisplayableLogFilter logFilter;
-    readonly IDisposable logProfileObserverToken;
     readonly Stopwatch logFilteringWatch = new Stopwatch();
     readonly ObservableList<PredefinedLogTextFilter> predefinedTextFilters;
     readonly ScheduledAction updateLogFilterAction;
@@ -135,18 +135,6 @@ class LogFilteringViewModel : SessionComponent
             if (!isInit)
                 this.logFilter.FilteringLogProperties = properties;
         });
-        this.logProfileObserverToken = session.GetValueAsObservable(Session.LogProfileProperty).Subscribe(logProfile =>
-        {
-            if (isInit)
-                return;
-            if (logProfile == null)
-            {
-                this.logFilter.FilteringLogProperties = Session.DisplayLogPropertiesProperty.DefaultValue;
-                this.updateLogFilterAction.Cancel();
-            }
-            else
-                this.updateLogFilterAction.Reschedule();
-        });
 
         // attach to self properties
         this.GetValueAsObservable(FiltersCombinationModeProperty).Subscribe(_ =>
@@ -201,7 +189,6 @@ class LogFilteringViewModel : SessionComponent
         // detach from session
         this.Session.AllLogReadersDisposed -= this.OnAllLogReaderDisposed;
         this.displayLogPropertiesObserverToken.Dispose();
-        this.logProfileObserverToken.Dispose();
 
         // call base
         base.Dispose(disposing);
@@ -313,6 +300,20 @@ class LogFilteringViewModel : SessionComponent
 
 
     /// <inheritdoc/>
+    protected override void OnLogProfileChanged(LogProfile? prevLogProfile, LogProfile? newLogProfile)
+    {
+        base.OnLogProfileChanged(prevLogProfile, newLogProfile);
+        if (newLogProfile == null)
+        {
+            this.logFilter.FilteringLogProperties = Session.DisplayLogPropertiesProperty.DefaultValue;
+            this.updateLogFilterAction.Cancel();
+        }
+        else
+            this.updateLogFilterAction.Reschedule();
+    }
+
+
+    /// <inheritdoc/>
     protected override void OnRestoreState(JsonElement element)
     {
         // call base
@@ -320,27 +321,27 @@ class LogFilteringViewModel : SessionComponent
 
         // restore filtering parameters
         if ((element.TryGetProperty("LogFiltersCombinationMode", out var jsonValue) // Upgrade case
-            || element.TryGetProperty(nameof(FiltersCombinationMode), out jsonValue))
+            || element.TryGetProperty($"LogFiltering.{nameof(FiltersCombinationMode)}", out jsonValue))
                 && jsonValue.ValueKind == JsonValueKind.String
                 && Enum.TryParse<FilterCombinationMode>(jsonValue.GetString(), out var combinationMode))
         {
             this.SetValue(FiltersCombinationModeProperty, combinationMode);
         }
         if ((element.TryGetProperty("LogLevelFilter", out jsonValue) // Upgrade case
-            || element.TryGetProperty(nameof(LevelFilter), out jsonValue))
+            || element.TryGetProperty($"LogFiltering.{nameof(LevelFilter)}", out jsonValue))
                 && jsonValue.ValueKind == JsonValueKind.String
                 && Enum.TryParse<Logs.LogLevel>(jsonValue.GetString(), out var level))
         {
             this.SetValue(LevelFilterProperty, level);
         }
         if ((element.TryGetProperty("LogProcessIdFilter", out jsonValue) // Upgrade case
-            || element.TryGetProperty(nameof(ProcessIdFilter), out jsonValue))
+            || element.TryGetProperty($"LogFiltering.{nameof(ProcessIdFilter)}", out jsonValue))
                 && jsonValue.TryGetInt32(out var pid))
         {
             this.SetValue(ProcessIdFilterProperty, pid);
         }
         if ((element.TryGetProperty("LogTextFilter", out jsonValue) // Upgrade case
-            || element.TryGetProperty(nameof(TextFilter), out jsonValue))
+            || element.TryGetProperty($"LogFiltering.{nameof(TextFilter)}", out jsonValue))
                 && jsonValue.ValueKind == JsonValueKind.Object
                 && jsonValue.TryGetProperty("Pattern", out var jsonPattern)
                 && jsonPattern.ValueKind == JsonValueKind.String)
@@ -359,7 +360,7 @@ class LogFilteringViewModel : SessionComponent
             }
         }
         if ((element.TryGetProperty("LogThreadIdFilter", out jsonValue) // Upgrade case
-            || element.TryGetProperty(nameof(ThreadIdFilter), out jsonValue))
+            || element.TryGetProperty($"LogFiltering.{nameof(ThreadIdFilter)}", out jsonValue))
                 && jsonValue.TryGetInt32(out var tid))
         {
             this.SetValue(ThreadIdFilterProperty, tid);
@@ -374,21 +375,21 @@ class LogFilteringViewModel : SessionComponent
         base.OnSaveState(writer);
 
         // save filtering parameters
-        writer.WriteString(nameof(FiltersCombinationMode), this.FiltersCombinationMode.ToString());
-        writer.WriteString(nameof(LevelFilter), this.LevelFilter.ToString());
-        this.GetValue(ProcessIdFilterProperty)?.Let(it => writer.WriteNumber(nameof(ProcessIdFilter), it));
+        writer.WriteString($"LogFiltering.{nameof(FiltersCombinationMode)}", this.FiltersCombinationMode.ToString());
+        writer.WriteString($"LogFiltering.{nameof(LevelFilter)}", this.LevelFilter.ToString());
+        this.GetValue(ProcessIdFilterProperty)?.Let(it => writer.WriteNumber($"LogFiltering.{nameof(ProcessIdFilter)}", it));
         this.GetValue(TextFilterProperty)?.Let(it =>
         {
-            writer.WritePropertyName(nameof(TextFilter));
+            writer.WritePropertyName($"LogFiltering.{nameof(TextFilter)}");
             writer.WriteStartObject();
             writer.WriteString("Pattern", it.ToString());
             writer.WriteNumber("Options", (int)it.Options);
             writer.WriteEndObject();
         });
-        this.GetValue(ThreadIdFilterProperty)?.Let(it => writer.WriteNumber(nameof(ThreadIdFilter), it));
+        this.GetValue(ThreadIdFilterProperty)?.Let(it => writer.WriteNumber($"LogFiltering.{nameof(ThreadIdFilter)}", it));
         if (this.predefinedTextFilters.IsNotEmpty())
         {
-            writer.WritePropertyName(nameof(PredefinedTextFilters));
+            writer.WritePropertyName($"LogFiltering.{nameof(PredefinedTextFilters)}");
             writer.WriteStartArray();
             foreach (var filter in this.predefinedTextFilters)
                 writer.WriteStringValue(filter.Id);

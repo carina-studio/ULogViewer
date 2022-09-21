@@ -1073,7 +1073,7 @@
 				</ToggleButton>
 
 				<!-- Timestamp categories -->
-				<ToggleButton Name="timestampCategoriesPanelButton" Classes="ToolBar_ToggleButton" IsChecked="{Binding IsTimestampCategoriesPanelVisible, Mode=TwoWay}" ToolTip.Tip="{DynamicResource String/SessionView.TimestampCategoriesPanel}">
+				<ToggleButton Name="timestampCategoriesPanelButton" Classes="ToolBar_ToggleButton" IsChecked="{Binding LogCategorizing.IsTimestampCategoriesPanelVisible, Mode=TwoWay}" ToolTip.Tip="{DynamicResource String/SessionView.TimestampCategoriesPanel}">
 					<Panel>
 						<Image Classes="Icon" Source="{StaticResource Image/Calendar}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
 						<Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}">
@@ -1118,7 +1118,7 @@
 					<Binding Path="LogAnalysis.IsPanelVisible"/>
 					<Binding Path="IsLogFilesPanelVisible"/>
 					<Binding Path="IsMarkedLogsPanelVisible"/>
-					<Binding Path="IsTimestampCategoriesPanelVisible"/>
+					<Binding Path="LogCategorizing.IsTimestampCategoriesPanelVisible"/>
 				</MultiBinding>
 			</Border.IsVisible>
 
@@ -1136,14 +1136,14 @@
 				</Grid>
 
 				<!-- Timestamp categories -->
-				<Grid HorizontalAlignment="Stretch" IsVisible="{Binding IsTimestampCategoriesPanelVisible}" RowDefinitions="Auto,*" VerticalAlignment="Stretch">
+				<Grid HorizontalAlignment="Stretch" IsVisible="{Binding LogCategorizing.IsTimestampCategoriesPanelVisible}" RowDefinitions="Auto,*" VerticalAlignment="Stretch">
 					<Border Classes="SessionView_SidePanel_Header">
 						<Grid ColumnDefinitions="Auto,*">
 							<TextBlock Classes="SessionView_SidePanel_Header_Left" Text="{DynamicResource String/SessionView.TimestampCategoriesPanel}"/>
 							<TextBlock Classes="SessionView_SidePanel_Header_Right" Grid.Column="1" Text="{Binding TimestampCategories.Count, StringFormat={} ({0})}"/>
 						</Grid>
 					</Border>
-					<asControls:ListBox Classes="Log" Name="timestampCategoryListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" Focusable="False" Grid.Row="1" Items="{Binding TimestampCategories}">
+					<asControls:ListBox Classes="Log" Name="timestampCategoryListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" Focusable="False" Grid.Row="1" Items="{Binding LogCategorizing.TimestampCategories}">
 						<asControls:ListBox.ItemTemplate>
 							<DataTemplate>
 								<Grid ColumnDefinitions="Auto,*">

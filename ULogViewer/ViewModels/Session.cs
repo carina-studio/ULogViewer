@@ -12,7 +12,6 @@ using CarinaStudio.ULogViewer.Logs;
 using CarinaStudio.ULogViewer.Logs.DataOutputs;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.ULogViewer.Logs.Profiles;
-using CarinaStudio.ULogViewer.ViewModels.Categorizing;
 using CarinaStudio.ViewModels;
 using CarinaStudio.Windows.Input;
 using Microsoft.Extensions.Logging;
@@ -216,10 +215,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsShowingMarkedLogsTemporarilyProperty = ObservableProperty.Register<Session, bool>(nameof(IsShowingMarkedLogsTemporarily));
 		/// <summary>
-		/// Property of <see cref="IsTimestampCategoriesPanelVisible"/>.
-		/// </summary>
-		public static readonly ObservableProperty<bool> IsTimestampCategoriesPanelVisibleProperty = ObservableProperty.Register<Session, bool>(nameof(IsTimestampCategoriesPanelVisible), false);
-		/// <summary>
 		/// Property of <see cref="IsUriNeeded"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsUriNeededProperty = ObservableProperty.Register<Session, bool>(nameof(IsUriNeeded));
@@ -284,23 +279,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Property of <see cref="MarkedLogsPanelSize"/>.
 		/// </summary>
 		public static readonly ObservableProperty<double> MarkedLogsPanelSizeProperty = ObservableProperty.Register<Session, double>(nameof(MarkedLogsPanelSize), (MinSidePanelSize + MaxSidePanelSize) / 2, 
-			coerce: (_, it) =>
-			{
-				if (it >= MaxSidePanelSize)
-					return MaxSidePanelSize;
-				if (it < MinSidePanelSize)
-					return MinSidePanelSize;
-				return it;
-			}, 
-			validate: it => double.IsFinite(it));
-		/// <summary>
-		/// Property of <see cref="TimestampCategories"/>.
-		/// </summary>
-		public static readonly ObservableProperty<IReadOnlyList<TimestampDisplayableLogCategory>> TimestampCategoriesProperty = ObservableProperty.Register<Session, IReadOnlyList<TimestampDisplayableLogCategory>>(nameof(TimestampCategories), new TimestampDisplayableLogCategory[0]);
-		/// <summary>
-		/// Property of <see cref="TimestampCategoriesPanelSize"/>.
-		/// </summary>
-		public static readonly ObservableProperty<double> TimestampCategoriesPanelSizeProperty = ObservableProperty.Register<Session, double>(nameof(TimestampCategoriesPanelSize), (MinSidePanelSize + MaxSidePanelSize) / 2, 
 			coerce: (_, it) =>
 			{
 				if (it >= MaxSidePanelSize)
@@ -531,7 +509,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		static readonly SettingKey<double> latestMarkedLogsPanelSizeKey = new SettingKey<double>("Session.LatestMarkedLogsPanelSize", MarkedLogsPanelSizeProperty.DefaultValue);
 		[Obsolete]
 		static readonly SettingKey<double> latestSidePanelSizeKey = new SettingKey<double>("Session.LatestSidePanelSize", MarkedLogsPanelSizeProperty.DefaultValue);
-		static readonly SettingKey<double> latestTimestampCategoriesPanelSizeKey = new SettingKey<double>("Session.LatestTimestampCategoriesPanelSize", TimestampCategoriesPanelSizeProperty.DefaultValue);
 		static long memoryThresholdToStartHibernation;
 		static ILogger? staticLogger;
 		static long totalLogsMemoryUsage;
@@ -699,7 +676,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly LinkedListNode<Session> activationHistoryListNode;
 		readonly List<IDisposable> activationTokens = new List<IDisposable>();
 		readonly SortedObservableList<DisplayableLog> allLogs;
-		readonly TimestampDisplayableLogCategorizer allLogsTimestampCategorizer;
 		readonly Dictionary<string, List<DisplayableLog>> allLogsByLogFilePath = new Dictionary<string, List<DisplayableLog>>(PathEqualityComparer.Default);
 		readonly HashSet<SessionComponent> attachedComponents = new();
 		ILogDataSourceProvider? attachedLogDataSourceProvider;
@@ -719,7 +695,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		Comparison<DisplayableLog?> compareDisplayableLogsDelegate;
 		DisplayableLogGroup? displayableLogGroup;
 		TaskFactory? fileLogsReadingTaskFactory;
-		readonly TimestampDisplayableLogCategorizer filteredLogsTimestampCategorizer;
 		bool hasLogDataSourceCreationFailure;
 		bool isRestoringState;
 		readonly Dictionary<LogReader, LogFileInfoImpl> logFileInfoMapByLogReader = new();
@@ -729,7 +704,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly Stopwatch logsReadingWatch = new Stopwatch();
 		readonly SortedObservableList<DisplayableLog> markedLogs;
 		readonly HashSet<string> markedLogsChangedFilePaths = new(PathEqualityComparer.Default);
-		readonly TimestampDisplayableLogCategorizer markedLogsTimestampCategorizer;
 		readonly ScheduledAction reloadLogsAction;
 		readonly ScheduledAction reloadLogsFullyAction;
 		readonly ScheduledAction reloadLogsWithRecreatingLogReadersAction;
@@ -803,6 +777,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.compareDisplayableLogsDelegate = CompareDisplayableLogsById;
 
 			// create components
+			this.LogCategorizing = new LogCategorizingViewModel(this).Also(it =>
+			{
+				this.AttachToComponent(it);
+			});
 			this.LogFiltering = new LogFilteringViewModel(this).Also(it =>
 			{
 				this.AttachToComponent(it);
@@ -818,12 +796,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			});
 			this.LogAnalysis = new LogAnalysisViewModel(this).Also(it =>
 				this.AttachToComponent(it));
-
-			// create categorizers
-			this.allLogsTimestampCategorizer = new TimestampDisplayableLogCategorizer(this.Application, this.allLogs, this.CompareDisplayableLogs);
-			this.filteredLogsTimestampCategorizer = new TimestampDisplayableLogCategorizer(this.Application, this.LogFiltering.FilteredLogs, this.CompareDisplayableLogs);
-			this.markedLogsTimestampCategorizer = new TimestampDisplayableLogCategorizer(this.Application, this.markedLogs, this.CompareDisplayableLogs);
-			this.SetValue(TimestampCategoriesProperty, this.allLogsTimestampCategorizer.Categories);
+			this.AllComponentsCreated?.Invoke();
 
 			// create scheduled actions
 			this.checkDataSourceErrorsAction = new ScheduledAction(() =>
@@ -886,10 +859,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				// report memory usage
 				var prevLogsMemoryUsage = this.LogsMemoryUsage;
 				var logsMemoryUsage = (this.displayableLogGroup?.MemorySize ?? 0L) 
-					+ (this.allLogs.Count + this.markedLogs.Count) * IntPtr.Size
-					+ this.allLogsTimestampCategorizer.MemorySize
-					+ this.filteredLogsTimestampCategorizer.MemorySize
-					+ this.markedLogsTimestampCategorizer.MemorySize;
+					+ (this.allLogs.Count + this.markedLogs.Count) * IntPtr.Size;
 				foreach (var component in this.attachedComponents)
 					logsMemoryUsage += component.MemorySize;
 				this.SetValue(LogsMemoryUsageProperty, logsMemoryUsage);
@@ -995,20 +965,17 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					{
 						this.SetValue(LogsProperty, this.MarkedLogs);
 						this.SetValue(HasLogsProperty, this.markedLogs.IsNotEmpty());
-						this.SetValue(TimestampCategoriesProperty, this.markedLogsTimestampCategorizer.Categories);
 						return;
 					}
 					if (this.LogFiltering.IsFilteringNeeded)
 					{
 						this.SetValue(LogsProperty, this.LogFiltering.FilteredLogs);
 						this.SetValue(HasLogsProperty, this.LogFiltering.FilteredLogs.IsNotEmpty());
-						this.SetValue(TimestampCategoriesProperty, this.filteredLogsTimestampCategorizer.Categories);
 						return;
 					}
 				}
 				this.SetValue(LogsProperty, this.AllLogs);
 				this.SetValue(HasLogsProperty, this.allLogs.IsNotEmpty());
-				this.SetValue(TimestampCategoriesProperty, this.allLogsTimestampCategorizer.Categories);
 				if (!this.LogFiltering.IsFilteringNeeded && this.Settings.GetValueOrDefault(SettingKeys.SaveMemoryAggressively))
 				{
 					this.Logger.LogDebug("Trigger GC after clearing log filters");
@@ -1144,13 +1111,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.PersistentState.ResetValue(latestSidePanelSizeKey);
 				this.SetValue(LogFilesPanelSizeProperty, sidePanelSize);
 				this.SetValue(MarkedLogsPanelSizeProperty, sidePanelSize);
-				this.SetValue(TimestampCategoriesPanelSizeProperty, sidePanelSize);
 			}
 			else
 			{
 				this.SetValue(LogFilesPanelSizeProperty, this.PersistentState.GetValueOrDefault(latestLogFilesPanelSizeKey));
 				this.SetValue(MarkedLogsPanelSizeProperty, this.PersistentState.GetValueOrDefault(latestMarkedLogsPanelSizeKey));
-				this.SetValue(TimestampCategoriesPanelSizeProperty, this.PersistentState.GetValueOrDefault(latestTimestampCategoriesPanelSizeKey));
 			}
 #pragma warning restore CS0612
 		}
@@ -1250,6 +1215,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		/// <remarks>Type of command parameter is <see cref="LogDataSourceParams{string}"/>.</remarks>
 		public ICommand AddLogFileCommand { get; }
+
+
+		/// <summary>
+		/// Raised when all instances of components are created.
+		/// </summary>
+		public event Action? AllComponentsCreated;
 
 
 		/// <summary>
@@ -1936,11 +1907,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.displayableLogGroup = this.displayableLogGroup.DisposeAndReturnNull();
 			this.checkLogsMemoryUsageAction.Cancel();
 
-			// release log categorizers
-			this.allLogsTimestampCategorizer.Dispose();
-			this.filteredLogsTimestampCategorizer.Dispose();
-			this.markedLogsTimestampCategorizer.Dispose();
-
 			// detach from log profile
 			this.LogProfile?.Let(it => it.PropertyChanged -= this.OnLogProfilePropertyChanged);
 
@@ -2444,16 +2410,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
-		/// Get or set whether panel of timestamp categories is visible or not.
-		/// </summary>
-		public bool IsTimestampCategoriesPanelVisible 
-		{
-			 get => this.GetValue(IsTimestampCategoriesPanelVisibleProperty);
-			 set => this.SetValue(IsTimestampCategoriesPanelVisibleProperty, value);
-		}
-
-
-		/// <summary>
 		/// Check whether URI is needed or not.
 		/// </summary>
 		public bool IsUriNeeded { get => this.GetValue(IsUriNeededProperty); }
@@ -2569,6 +2525,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Get view-model of log analysis.
 		/// </summary>
 		public LogAnalysisViewModel LogAnalysis { get; }
+
+
+		/// <summary>
+		/// Get view-model of log categorizing.
+		/// </summary>
+		/// <value></value>
+		public LogCategorizingViewModel LogCategorizing { get; }
 
 
 		/// <summary>
@@ -2989,14 +2952,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 							this.logReaders[0].RestartReadingDelay = TimeSpan.FromMilliseconds(profile.RestartReadingDelay);
 					});
 					break;
-				case nameof(LogProfile.TimestampCategoryGranularity):
-					(this.LogProfile?.TimestampCategoryGranularity)?.Let(it =>
-					{
-						this.allLogsTimestampCategorizer.Granularity = it;
-						this.filteredLogsTimestampCategorizer.Granularity = it;
-						this.markedLogsTimestampCategorizer.Granularity = it;
-					});
-					break;
 				case nameof(LogProfile.VisibleLogProperties):
 					this.ScheduleReloadingLogs(false, true);
 					break;
@@ -3189,11 +3144,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			{
 				if (!this.isRestoringState)
 					this.PersistentState.SetValue<double>(latestMarkedLogsPanelSizeKey, (double)newValue.AsNonNull());
-			}
-			else if (property == TimestampCategoriesPanelSizeProperty)
-			{
-				if (!this.isRestoringState)
-					this.PersistentState.SetValue<double>(latestTimestampCategoriesPanelSizeKey, (double)newValue.AsNonNull());
 			}
 			else if (property == UriProperty)
 				this.SetValue(HasUriProperty, newValue != null);
@@ -3684,8 +3634,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.SetValue(IsLogFilesPanelVisibleProperty, jsonValue.ValueKind != JsonValueKind.False);
 				if (jsonState.TryGetProperty(nameof(IsMarkedLogsPanelVisible), out jsonValue))
 					this.SetValue(IsMarkedLogsPanelVisibleProperty, jsonValue.ValueKind != JsonValueKind.False);
-				if (jsonState.TryGetProperty(nameof(IsTimestampCategoriesPanelVisible), out jsonValue))
-					this.SetValue(IsTimestampCategoriesPanelVisibleProperty, jsonValue.ValueKind != JsonValueKind.False);
 				if (jsonState.TryGetProperty(nameof(LogFilesPanelSize), out jsonValue) 
 					&& jsonValue.TryGetDouble(out var doubleValue)
 					&& LogFilesPanelSizeProperty.ValidationFunction(doubleValue) == true)
@@ -3697,12 +3645,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					&& MarkedLogsPanelSizeProperty.ValidationFunction(doubleValue) == true)
 				{
 					this.SetValue(MarkedLogsPanelSizeProperty, doubleValue);
-				}
-				if (jsonState.TryGetProperty(nameof(TimestampCategoriesPanelSize), out jsonValue) 
-					&& jsonValue.TryGetDouble(out doubleValue)
-					&& TimestampCategoriesPanelSizeProperty.ValidationFunction(doubleValue) == true)
-				{
-					this.SetValue(TimestampCategoriesPanelSizeProperty, doubleValue);
 				}
 
 				// raise event
@@ -4075,14 +4017,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// setup log comparer
 			this.UpdateDisplayableLogComparison();
 
-			// setup log categorizers
-			profile.TimestampCategoryGranularity.Let(it =>
-			{
-				this.allLogsTimestampCategorizer.Granularity = it;
-				this.filteredLogsTimestampCategorizer.Granularity = it;
-				this.markedLogsTimestampCategorizer.Granularity = it;
-			});
-
 			// update valid log levels
 			this.UpdateValidLogLevels();
 
@@ -4204,10 +4138,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				// save side panel state
 				jsonWriter.WriteBoolean(nameof(IsLogFilesPanelVisible), this.IsLogFilesPanelVisible);
 				jsonWriter.WriteBoolean(nameof(IsMarkedLogsPanelVisible), this.IsMarkedLogsPanelVisible);
-				jsonWriter.WriteBoolean(nameof(IsTimestampCategoriesPanelVisible), this.IsTimestampCategoriesPanelVisible);
 				jsonWriter.WriteNumber(nameof(LogFilesPanelSize), this.LogFilesPanelSize);
 				jsonWriter.WriteNumber(nameof(MarkedLogsPanelSize), this.MarkedLogsPanelSize);
-				jsonWriter.WriteNumber(nameof(TimestampCategoriesPanelSize), this.TimestampCategoriesPanelSize);
 
 				// raise event
 				this.SavingState?.Invoke(jsonWriter);
@@ -4386,22 +4318,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
-		/// Get list of log categories by timestamp.
-		/// </summary>
-		public IReadOnlyList<TimestampDisplayableLogCategory> TimestampCategories { get =>this.GetValue(TimestampCategoriesProperty); }
-
-
-		/// <summary>
-		/// Get or set size of panel of timestamp categories.
-		/// </summary>
-		public double TimestampCategoriesPanelSize
-		{
-			 get => this.GetValue(TimestampCategoriesPanelSizeProperty);
-			 set => this.SetValue(TimestampCategoriesPanelSizeProperty, value);
-		}
-
-
-		/// <summary>
 		/// Get title of session.
 		/// </summary>
 		public string? Title { get => this.GetValue(TitleProperty); }
@@ -4504,33 +4420,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				LogSortKey.Timestamp => CompareDisplayableLogsByTimestamp,
 				_ => ((Comparison<DisplayableLog?>)CompareDisplayableLogsById).Also(_ => sortedByTimestamp = false),
 			};
-			(profile.SortKey switch
-			{
-				LogSortKey.BeginningTimestamp => nameof(DisplayableLog.BinaryBeginningTimestamp),
-				LogSortKey.EndingTimestamp => nameof(DisplayableLog.BinaryEndingTimestamp),
-				LogSortKey.Timestamp => nameof(DisplayableLog.BinaryTimestamp),
-				_ => Global.Run(() =>
-				{
-					foreach (var property in this.DisplayLogProperties)
-					{
-						switch (property.Name)
-						{
-							case nameof(DisplayableLog.BeginningTimestampString):
-								return nameof(DisplayableLog.BinaryBeginningTimestamp);
-							case nameof(DisplayableLog.EndingTimestampString):
-								return nameof(DisplayableLog.BinaryEndingTimestamp);
-							case nameof(DisplayableLog.TimestampString):
-								return nameof(DisplayableLog.BinaryTimestamp);
-						}
-					}
-					return null;
-				}),
-			}).Let(propertyName =>
-			{
-				this.allLogsTimestampCategorizer.TimestampLogPropertyName = propertyName;
-				this.filteredLogsTimestampCategorizer.TimestampLogPropertyName = propertyName;
-				this.markedLogsTimestampCategorizer.TimestampLogPropertyName = propertyName;
-			});
 			if (profile.SortDirection == SortDirection.Descending)
 				this.compareDisplayableLogsDelegate = this.compareDisplayableLogsDelegate.Invert();
 			this.SetValue(AreLogsSortedByTimestampProperty, sortedByTimestamp);

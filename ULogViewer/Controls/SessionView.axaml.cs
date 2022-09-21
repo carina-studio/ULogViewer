@@ -571,12 +571,12 @@ namespace CarinaStudio.ULogViewer.Controls
 							if (session.LogAnalysis.IsPanelVisible 
 								|| session.IsLogFilesPanelVisible 
 								|| session.IsMarkedLogsPanelVisible
-								|| session.IsTimestampCategoriesPanelVisible)
+								|| session.LogCategorizing.IsTimestampCategoriesPanelVisible)
 							{
 								session.LogAnalysis.PanelSize = length.Value;
 								session.LogFilesPanelSize = length.Value;
 								session.MarkedLogsPanelSize = length.Value;
-								session.TimestampCategoriesPanelSize = length.Value;
+								session.LogCategorizing.TimestampCategoriesPanelSize = length.Value;
 							}
 						}
 					});
@@ -632,7 +632,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					session.LogAnalysis.IsPanelVisible = false;
 					session.IsLogFilesPanelVisible = false;
 					session.IsMarkedLogsPanelVisible = false;
-					session.IsTimestampCategoriesPanelVisible = false;
+					session.LogCategorizing.IsTimestampCategoriesPanelVisible = false;
 				}
 			});
 			this.autoSetIPEndPointAction = new ScheduledAction(() =>
@@ -869,10 +869,10 @@ namespace CarinaStudio.ULogViewer.Controls
 				if (!isAttaching)
 					this.UpdateSidePanelState(Session.IsMarkedLogsPanelVisibleProperty);
 			});
-			this.timestampCategoryPanelVisibilityObserverToken = session.GetValueAsObservable(Session.IsTimestampCategoriesPanelVisibleProperty).Subscribe(isVisible =>
+			this.timestampCategoryPanelVisibilityObserverToken = session.LogCategorizing.GetValueAsObservable(LogCategorizingViewModel.IsTimestampCategoriesPanelVisibleProperty).Subscribe(isVisible =>
 			{
 				if (!isAttaching)
-					this.UpdateSidePanelState(Session.IsTimestampCategoriesPanelVisibleProperty);
+					this.UpdateSidePanelState(LogCategorizingViewModel.IsTimestampCategoriesPanelVisibleProperty);
 			});
 			isAttaching = false;
 
@@ -958,13 +958,13 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (session.LogAnalysis.IsPanelVisible 
 				|| session.IsMarkedLogsPanelVisible 
 				|| session.IsLogFilesPanelVisible
-				|| session.IsTimestampCategoriesPanelVisible)
+				|| session.LogCategorizing.IsTimestampCategoriesPanelVisible)
 			{
 				sidePanelColumn.Width = new GridLength(new double[] {
 					session.LogAnalysis.PanelSize,
 					session.LogFilesPanelSize,
 					session.MarkedLogsPanelSize,
-					session.TimestampCategoriesPanelSize,
+					session.LogCategorizing.TimestampCategoriesPanelSize,
 				}.Max());
 				Grid.SetColumnSpan(this.logListBoxContainer, 1);
 			}
@@ -5213,7 +5213,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (session.LogAnalysis.IsPanelVisible
 				|| session.IsLogFilesPanelVisible 
 				|| session.IsMarkedLogsPanelVisible
-				|| session.IsTimestampCategoriesPanelVisible)
+				|| session.LogCategorizing.IsTimestampCategoriesPanelVisible)
 			{
 				if (changedProperty == LogAnalysisViewModel.IsPanelVisibleProperty)
 				{
@@ -5221,7 +5221,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					{
 						session.IsLogFilesPanelVisible = false;
 						session.IsMarkedLogsPanelVisible = false;
-						session.IsTimestampCategoriesPanelVisible = false;
+						session.LogCategorizing.IsTimestampCategoriesPanelVisible = false;
 
 						// show tutorial
 						this.ShowLogAnalysisRuleSetsTutorial();
@@ -5233,7 +5233,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					{
 						session.LogAnalysis.IsPanelVisible = false;
 						session.IsMarkedLogsPanelVisible = false;
-						session.IsTimestampCategoriesPanelVisible = false;
+						session.LogCategorizing.IsTimestampCategoriesPanelVisible = false;
 					}
 				}
 				else if (changedProperty == Session.IsMarkedLogsPanelVisibleProperty)
@@ -5242,12 +5242,12 @@ namespace CarinaStudio.ULogViewer.Controls
 					{
 						session.LogAnalysis.IsPanelVisible = false;
 						session.IsLogFilesPanelVisible = false;
-						session.IsTimestampCategoriesPanelVisible = false;
+						session.LogCategorizing.IsTimestampCategoriesPanelVisible = false;
 					}
 				}
-				else if (changedProperty == Session.IsTimestampCategoriesPanelVisibleProperty)
+				else if (changedProperty == LogCategorizingViewModel.IsTimestampCategoriesPanelVisibleProperty)
 				{
-					if (session.IsTimestampCategoriesPanelVisible)
+					if (session.LogCategorizing.IsTimestampCategoriesPanelVisible)
 					{
 						session.LogAnalysis.IsPanelVisible = false;
 						session.IsLogFilesPanelVisible = false;
@@ -5259,7 +5259,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					session.LogAnalysis.PanelSize,
 					session.LogFilesPanelSize,
 					session.MarkedLogsPanelSize,
-					session.TimestampCategoriesPanelSize,
+					session.LogCategorizing.TimestampCategoriesPanelSize,
 				}.Max());
 				Grid.SetColumnSpan(this.logListBoxContainer, 1);
 			}

@@ -15,6 +15,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Windows.Input;
+using CarinaStudio.ULogViewer.Logs.Profiles;
 
 namespace CarinaStudio.ULogViewer.ViewModels;
 
@@ -98,7 +99,6 @@ class LogAnalysisViewModel : SessionComponent
     readonly ObservableList<KeyLogAnalysisRuleSet> keyLogAnalysisRuleSets = new();
     readonly KeyLogDisplayableLogAnalyzer keyLogAnalyzer;
 	readonly ObservableList<LogAnalysisScriptSet> logAnalysisScriptSets = new();
-    readonly IDisposable logProfileObserverToken;
     readonly ObservableList<OperationDurationAnalysisRuleSet> operationDurationAnalysisRuleSets = new();
 	readonly OperationDurationDisplayableLogAnalyzer operationDurationAnalyzer;
     readonly ScheduledAction reportSelectedAnalysisResultsInfoAction;
@@ -280,16 +280,6 @@ class LogAnalysisViewModel : SessionComponent
             this.operationDurationAnalyzer.LogProperties.AddAll(properties);
             this.scriptLogAnalyzer.LogProperties.Clear();
             this.scriptLogAnalyzer.LogProperties.AddAll(properties);
-        });
-        this.logProfileObserverToken = session.GetValueAsObservable(Session.LogProfileProperty).Subscribe(_ =>
-        {
-            // reset log analysis rule sets
-			if (this.Settings.GetValueOrDefault(SettingKeys.ResetLogAnalysisRuleSetsAfterSettingLogProfile))
-			{
-				this.keyLogAnalysisRuleSets.Clear();
-				this.logAnalysisScriptSets.Clear();
-				this.operationDurationAnalysisRuleSets.Clear();
-			}
         });
 
         // restore state
@@ -590,6 +580,22 @@ class LogAnalysisViewModel : SessionComponent
 
 
     /// <inheritdoc/>
+    protected override void OnLogProfileChanged(LogProfile? prevLogProfile, LogProfile? newLogProfile)
+    {
+        // call base
+        base.OnLogProfileChanged(prevLogProfile, newLogProfile);
+
+        // reset log analysis rule sets
+        if (this.Settings.GetValueOrDefault(SettingKeys.ResetLogAnalysisRuleSetsAfterSettingLogProfile))
+        {
+            this.keyLogAnalysisRuleSets.Clear();
+            this.logAnalysisScriptSets.Clear();
+            this.operationDurationAnalysisRuleSets.Clear();
+        }
+    }
+
+
+    /// <inheritdoc/>
     protected override void OnRestoreState(JsonElement element)
     {
         // call base
@@ -600,7 +606,9 @@ class LogAnalysisViewModel : SessionComponent
         this.keyLogAnalysisRuleSets.Clear();
         this.operationDurationAnalysisRuleSets.Clear();
         this.logAnalysisScriptSets.Clear();
-        if (element.TryGetProperty(nameof(KeyLogAnalysisRuleSet), out var jsonValue) && jsonValue.ValueKind == JsonValueKind.Array)
+        if ((element.TryGetProperty(nameof(KeyLogAnalysisRuleSet), out var jsonValue) // for upgrade case
+            || element.TryGetProperty($"LogAnalysis.{nameof(KeyLogAnalysisRuleSet)}", out jsonValue))
+                && jsonValue.ValueKind == JsonValueKind.Array)
         {
             foreach (var jsonId in jsonValue.EnumerateArray())
             {
@@ -611,7 +619,9 @@ class LogAnalysisViewModel : SessionComponent
                     this.keyLogAnalysisRuleSets.Add(ruleSet);
             }
         }
-        if (element.TryGetProperty(nameof(LogAnalysisScriptSet), out jsonValue) && jsonValue.ValueKind == JsonValueKind.Array)
+        if ((element.TryGetProperty(nameof(LogAnalysisScriptSet), out jsonValue) // for upgrade case
+            || element.TryGetProperty($"LogAnalysis.{nameof(LogAnalysisScriptSet)}", out jsonValue))
+                && jsonValue.ValueKind == JsonValueKind.Array)
         {
             foreach (var jsonId in jsonValue.EnumerateArray())
             {
@@ -622,7 +632,9 @@ class LogAnalysisViewModel : SessionComponent
                     this.logAnalysisScriptSets.Add(scriptSet);
             }
         }
-        if (element.TryGetProperty(nameof(OperationDurationAnalysisRuleSets), out jsonValue) && jsonValue.ValueKind == JsonValueKind.Array)
+        if ((element.TryGetProperty(nameof(OperationDurationAnalysisRuleSets), out jsonValue) // for upgrade case
+            || element.TryGetProperty($"LogAnalysis.{nameof(OperationDurationAnalysisRuleSets)}", out jsonValue)) 
+                && jsonValue.ValueKind == JsonValueKind.Array)
         {
             foreach (var jsonId in jsonValue.EnumerateArray())
             {
@@ -636,12 +648,12 @@ class LogAnalysisViewModel : SessionComponent
 
         // restore panel state
         if (element.TryGetProperty("IsLogAnalysisPanelVisible", out jsonValue) // for upgrade case
-            || element.TryGetProperty(nameof(IsPanelVisible), out jsonValue))
+            || element.TryGetProperty($"LogAnalysis.{nameof(IsPanelVisible)}", out jsonValue))
         {
             this.SetValue(IsPanelVisibleProperty, jsonValue.ValueKind != JsonValueKind.False);
         }
         if ((element.TryGetProperty("LogAnalysisPanelSize", out jsonValue) // for upgrade case
-            || element.TryGetProperty(nameof(PanelSize), out jsonValue))
+            || element.TryGetProperty($"LogAnalysis.{nameof(PanelSize)}", out jsonValue))
                 && jsonValue.TryGetDouble(out var doubleValue)
                 && PanelSizeProperty.ValidationFunction(doubleValue) == true)
         {
@@ -660,7 +672,7 @@ class LogAnalysisViewModel : SessionComponent
         if (this.keyLogAnalysisRuleSets.IsNotEmpty())
         {
             var idSet = new HashSet<string>();
-            writer.WritePropertyName(nameof(KeyLogAnalysisRuleSet));
+            writer.WritePropertyName($"LogAnalysis.{nameof(KeyLogAnalysisRuleSet)}");
             writer.WriteStartArray();
             foreach (var ruleSet in this.keyLogAnalysisRuleSets)
             {
@@ -672,7 +684,7 @@ class LogAnalysisViewModel : SessionComponent
         if (this.logAnalysisScriptSets.IsNotEmpty())
         {
             var idSet = new HashSet<string>();
-            writer.WritePropertyName(nameof(LogAnalysisScriptSets));
+            writer.WritePropertyName($"LogAnalysis.{nameof(LogAnalysisScriptSets)}");
             writer.WriteStartArray();
             foreach (var scriptSet in this.logAnalysisScriptSets)
             {
@@ -684,7 +696,7 @@ class LogAnalysisViewModel : SessionComponent
         if (this.operationDurationAnalysisRuleSets.IsNotEmpty())
         {
             var idSet = new HashSet<string>();
-            writer.WritePropertyName(nameof(OperationDurationAnalysisRuleSets));
+            writer.WritePropertyName($"LogAnalysis.{nameof(OperationDurationAnalysisRuleSets)}");
             writer.WriteStartArray();
             foreach (var ruleSet in this.operationDurationAnalysisRuleSets)
             {
@@ -695,8 +707,8 @@ class LogAnalysisViewModel : SessionComponent
         }
 
         // save panel state
-        writer.WriteBoolean(nameof(IsPanelVisible), this.IsPanelVisible);
-        writer.WriteNumber(nameof(PanelSize), this.PanelSize);
+        writer.WriteBoolean($"LogAnalysis.{nameof(IsPanelVisible)}", this.IsPanelVisible);
+        writer.WriteNumber($"LogAnalysis.{nameof(PanelSize)}", this.PanelSize);
 
         // call base
         base.OnSaveState(writer);

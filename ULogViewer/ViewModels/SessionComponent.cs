@@ -1,4 +1,6 @@
+using System.ComponentModel;
 using CarinaStudio.Threading;
+using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -12,6 +14,11 @@ namespace CarinaStudio.ULogViewer.ViewModels;
 /// </summary>
 abstract class SessionComponent : ViewModel<IULogViewerApplication>
 {
+    // Fields.
+    LogProfile? attachedLogProfile;
+    readonly IDisposable logProfileObserverToken;
+
+
     /// <summary>
     /// Initialize new <see cref="SessionComponent"/> instance.
     /// </summary>
@@ -23,8 +30,17 @@ abstract class SessionComponent : ViewModel<IULogViewerApplication>
         this.Owner = session;
 
         // attach to session
+        session.AllComponentsCreated += this.OnAllComponentsCreated;
         (session.AllLogs as INotifyCollectionChanged)?.Let(it =>
             it.CollectionChanged += this.OnAllLogsChanged);
+        this.logProfileObserverToken = session.GetValueAsObservable(Session.LogProfileProperty).Subscribe(logProfile =>
+        {
+            var prevLogProfile = this.attachedLogProfile;
+            if (prevLogProfile == logProfile)
+                return;
+            this.attachedLogProfile = logProfile;
+            this.OnLogProfileChanged(prevLogProfile, logProfile);
+        });
         session.RestoringState += this.OnRestoreState;
         session.SavingState += this.OnSaveState;
     }
@@ -54,8 +70,10 @@ abstract class SessionComponent : ViewModel<IULogViewerApplication>
             this.VerifyAccess();
         
         // detach from session
+        this.Session.AllComponentsCreated -= this.OnAllComponentsCreated;
         (this.Session.AllLogs as INotifyCollectionChanged)?.Let(it =>
             it.CollectionChanged -= this.OnAllLogsChanged);
+        this.logProfileObserverToken.Dispose();
         this.Session.RestoringState -= this.OnRestoreState;
         this.Session.SavingState -= this.OnSaveState;
     }
@@ -80,9 +98,22 @@ abstract class SessionComponent : ViewModel<IULogViewerApplication>
 
 
     /// <summary>
+    /// Get current log profile.
+    /// </summary>
+    protected LogProfile? LogProfile { get => this.attachedLogProfile; }
+
+
+    /// <summary>
     /// Get current memory usage in bytes.
     /// </summary>
     public virtual long MemorySize { get => 0L; }
+
+
+    /// <summary>
+    /// Called when all instances of session components are created.
+    /// </summary>
+    protected virtual void OnAllComponentsCreated()
+    { }
 
 
     // Called when logs changed.
@@ -95,6 +126,33 @@ abstract class SessionComponent : ViewModel<IULogViewerApplication>
     /// </summary>
     /// <param name="e">Event data.</param>
     protected virtual void OnAllLogsChanged(NotifyCollectionChangedEventArgs e)
+    { }
+
+
+    /// <summary>
+    /// Called when log profile changed.
+    /// </summary>
+    /// <param name="prevLogProfile">Previous log profile.</param>
+    /// <param name="newLogProfile">New log profile.</param>
+    protected virtual void OnLogProfileChanged(LogProfile? prevLogProfile, LogProfile? newLogProfile)
+    {
+        if (prevLogProfile != null)
+            prevLogProfile.PropertyChanged -= this.OnLogProfilePropertyChanged;
+        if (newLogProfile != null)
+            newLogProfile.PropertyChanged += this.OnLogProfilePropertyChanged;
+    }
+
+
+    // Called when property of current log profile changed.
+    void OnLogProfilePropertyChanged(object? sender, PropertyChangedEventArgs e) =>
+        this.OnLogProfilePropertyChanged(e);
+
+
+    /// <summary>
+    /// Called when property of current log profile changed.
+    /// </summary>
+    /// <param name="e">Event data.</param>
+    protected virtual void OnLogProfilePropertyChanged(PropertyChangedEventArgs e)
     { }
 
 
