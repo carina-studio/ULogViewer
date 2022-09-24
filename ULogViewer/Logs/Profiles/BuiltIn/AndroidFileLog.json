@@ -22,17 +22,21 @@
 	},
 	"LogPatterns": [
 		{
-			"Regex": "^(?<Timestamp>[^\\s]+[\\s]+[^\\s]+)[\\s]+(?<ProcessId>[\\d]+)[\\s]+(?<ThreadId>[\\d]+)[\\s]+(?<Level>[\\w]+)[\\s]+(?<SourceName>([^\\s\\:]|([\\s]+[^\\s\\:])|([\\:]+[^\\s\\:]))*[\\:]*[\\s]*)\\:[\\s](?<Message>.*)$"
+			"Regex": "^(?<Timestamp>[^\\s]+[\\s]+[^\\s]+[^\\d]\\d{3,7})\\d*[\\s]+(?<ProcessId>[\\d]+)[\\s]+(?<ThreadId>[\\d]+)[\\s]+(?<Level>[\\w]+)[\\s]+(?<SourceName>([^\\s\\:]|([\\s]+[^\\s\\:])|([\\:]+[^\\s\\:]))*[\\:]*[\\s]*)\\:[\\s](?<Message>.*)$"
 		}
 	],
 	"LogWritingFormats": [
 		"{Timestamp} {ProcessId,5} {ThreadId,5} {Level} {SourceName}: {Message}"
 	],
 	"TimestampCategoryGranularity": "Minute",
-	"TimestampFormatForDisplaying": "MM/dd HH:mm:ss.fff",
+	"TimestampFormatForDisplaying": "MM/dd HH:mm:ss.ffffff",
 	"TimestampFormatsForReading": [
 		"MM-dd HH:mm:ss.fff",
-		"MM-dd HH:mm:ss.ffffff"
+		"MM-dd HH:mm:ss.ffffff",
+		"MM-dd HH:mm:ss.fffffff",
+		"MM-dd HH:mm:ss:fff",
+		"MM-dd HH:mm:ss:ffffff",
+		"MM-dd HH:mm:ss:fffffff"
 	],
 	"VisibleLogProperties": [
 		{
