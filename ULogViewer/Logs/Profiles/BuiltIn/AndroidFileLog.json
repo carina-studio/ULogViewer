@@ -30,6 +30,7 @@
 	],
 	"TimestampCategoryGranularity": "Minute",
 	"TimestampFormatForDisplaying": "MM/dd HH:mm:ss.ffffff",
+	"TimestampFormatForWriting": "MM-dd HH:mm:ss.ffffff",
 	"TimestampFormatsForReading": [
 		"MM-dd HH:mm:ss.fff",
 		"MM-dd HH:mm:ss.ffffff",
