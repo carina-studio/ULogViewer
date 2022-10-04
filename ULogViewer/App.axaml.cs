@@ -5,6 +5,7 @@ using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.Markup.Xaml.Styling;
 using Avalonia.Styling;
 using CarinaStudio.AppSuite;
+using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.ULogViewer.Logs.Profiles;
@@ -425,7 +426,7 @@ namespace CarinaStudio.ULogViewer
 			this.UpdateSplashWindowProgress(1);
 
 			// show main window
-			await Task.Delay(30);
+			await Task.Delay(300);
 			if (!this.IsRestoringMainWindowsRequested)
 				this.ShowMainWindow();
 		}
@@ -449,6 +450,15 @@ namespace CarinaStudio.ULogViewer
 #else
 			return base.OnSelectEnteringDebugMode();
 #endif
+        }
+
+
+		/// <inheritdoc/>
+        protected override void OnTryExitingBackgroundMode()
+        {
+            base.OnTryExitingBackgroundMode();
+			if (this.MainWindows.IsEmpty())
+				this.ShowMainWindow();
         }
 
 
