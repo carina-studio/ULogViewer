@@ -21,9 +21,6 @@ using CarinaStudio.VisualTree;
 using CarinaStudio.ULogViewer.Controls;
 using CarinaStudio.ULogViewer.ViewModels;
 using Microsoft.Extensions.Logging;
-#if WINDOWS_ONLY
-using Microsoft.WindowsAPICodePack.Taskbar;
-#endif
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -184,45 +181,39 @@ namespace CarinaStudio.ULogViewer
 				if (this.IsClosed)
 					return;
 
-#if WINDOWS_ONLY
-				// check platform
-				if (!TaskbarManager.IsPlatformSupported)
-					return;
-
 				// get session
 				var session = (this.DataContext as Workspace)?.ActiveSession;
 				if (session == null)
 				{
-					TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.NoProgress);
+					this.TaskbarIconProgressState = TaskbarIconProgressState.None;
 					return;
 				}
 
 				// update task bar
 				if (session.HasAllDataSourceErrors)
 				{
-					TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Error);
-					TaskbarManager.Instance.SetProgressValue(1, 1);
+					this.TaskbarIconProgressState = TaskbarIconProgressState.Error;
+					this.TaskbarIconProgress = Platform.IsWindows ? 1.0 : 0.0;
 				}
 				else if (session.IsProcessingLogs)
 				{
 					if (session.IsReadingLogs)
-						TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Indeterminate);
+						this.TaskbarIconProgressState = TaskbarIconProgressState.Indeterminate;
 					else if (double.IsFinite(session.LogFiltering.FilteringProgress))
 					{
-						TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Normal);
-						TaskbarManager.Instance.SetProgressValue((int)(session.LogFiltering.FilteringProgress * 100 + 0.5), 100);
+						this.TaskbarIconProgressState = TaskbarIconProgressState.Normal;
+						this.TaskbarIconProgress = session.LogFiltering.FilteringProgress;
 					}
 					else
-						TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.NoProgress);
+						this.TaskbarIconProgressState = TaskbarIconProgressState.None;
 				}
 				else if (session.IsLogsReadingPaused || session.IsWaitingForDataSources)
 				{
-					TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Paused);
-					TaskbarManager.Instance.SetProgressValue(1, 1);
+					this.TaskbarIconProgressState = TaskbarIconProgressState.Paused;
+					this.TaskbarIconProgress = Platform.IsWindows ? 1.0 : 0.0;
 				}
 				else
-					TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.NoProgress);
-#endif
+					this.TaskbarIconProgressState = TaskbarIconProgressState.None;
 			});
 			this.tabControlSelectionChangedAction = new(this.OnTabControlSelectionChanged);
 
@@ -1233,6 +1224,12 @@ namespace CarinaStudio.ULogViewer
 				it.SkippingAllTutorialRequested += (_, e) => requestSkippingAllTutorials?.Invoke();
 			}));
 		}
+
+
+#if WINDOWS_ONLY
+		/// <inheritdoc/>
+		protected override Type? TaskbarManagerType => typeof(Microsoft.WindowsAPICodePack.Taskbar.TaskbarManager);
+#endif
 
 
 		// Update menu items of tools.
