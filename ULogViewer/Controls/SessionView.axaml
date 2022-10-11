@@ -302,12 +302,12 @@
 
 		<!-- Other actions menu -->
 		<ContextMenu x:Key="otherActionsMenu" PlacementMode="Bottom">
-			<MenuItem Command="{Binding $parent[Window].ShowAppOptions}" Header="{DynamicResource String/SessionView.AppOptions}">
+			<MenuItem Command="{Binding $parent[UserControl].Application.ShowAppOptions}" Header="{DynamicResource String/SessionView.AppOptions}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Settings.Outline}"/>
 				</MenuItem.Icon>
 			</MenuItem>
-			<MenuItem Command="{Binding $parent[Window].CheckForApplicationUpdateAsync}" Header="{DynamicResource String/SessionView.CheckForAppUpdate}">
+			<MenuItem Command="{Binding $parent[UserControl].Application.CheckForApplicationUpdate}" Header="{DynamicResource String/SessionView.CheckForAppUpdate}">
 				<MenuItem.Icon>
 					<Panel>
 						<Image Classes="MenuItem_Icon" IsVisible="{Binding $parent[Window].Application.UpdateInfo, Converter={x:Static aConverters:ObjectConverters.IsNull}}" Source="{StaticResource Image/Icon.Update.Outline}"/>
@@ -365,7 +365,7 @@
 				</MenuItem>
 			</MenuItem>
 			<Separator/>
-			<MenuItem Command="{Binding $parent[Window].ShowApplicationInfoDialogAsync}" Header="{DynamicResource String/SessionView.AppInfo}">
+			<MenuItem Command="{Binding $parent[UserControl].Application.ShowApplicationInfoDialog}" Header="{DynamicResource String/SessionView.AppInfo}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Information.Outline}"/>
 				</MenuItem.Icon>

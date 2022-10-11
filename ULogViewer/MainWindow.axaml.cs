@@ -10,9 +10,7 @@ using Avalonia.Markup.Xaml.Templates;
 using Avalonia.Media;
 using Avalonia.VisualTree;
 using CarinaStudio.AppSuite.Controls;
-using CarinaStudio.AppSuite.Net;
 using CarinaStudio.AppSuite.Product;
-using CarinaStudio.AppSuite.ViewModels;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Input;
@@ -41,8 +39,6 @@ namespace CarinaStudio.ULogViewer
 
 		// Static fields.
 		static readonly AvaloniaProperty<bool> HasMultipleSessionsProperty = AvaloniaProperty.Register<MainWindow, bool>("HasMultipleSessions");
-		static bool IsNetworkConnForProductActivationNotified;
-		static bool IsReActivatingProVersionNeeded;
 		static readonly SettingKey<bool> IsUsingAddTabButtonToSelectLogProfileTutorialShownKey = new("MainWindow.IsUsingAddTabButtonToSelectLogProfileTutorialShown");
 		static MainWindow? MainWindowToActivateProVersion;
 
@@ -51,7 +47,6 @@ namespace CarinaStudio.ULogViewer
 		IDisposable? activeFilteringProgressObserverToken;
 		Session? attachedActiveSession;
 		readonly ScheduledAction focusOnTabItemContentAction;
-		bool isReActivatingProVersion;
 		readonly ScheduledAction notifyNetworkConnForProductActivationAction;
 		readonly ScheduledAction reActivateProVersionAction;
 		readonly ScheduledAction selectAndSetLogProfileAction;
@@ -133,47 +128,6 @@ namespace CarinaStudio.ULogViewer
 			{
 				((this.tabControl.SelectedItem as TabItem)?.Content as IControl)?.Focus();
 			});
-			this.notifyNetworkConnForProductActivationAction = new(() =>
-			{
-				if (IsNetworkConnForProductActivationNotified
-					|| NetworkManager.Default.IsNetworkConnected
-					|| this.Application.ProductManager.IsProductActivated(Products.Professional, true))
-				{
-					return;
-				}
-				IsNetworkConnForProductActivationNotified = true;
-				_ = new MessageDialog()
-				{
-					Icon = MessageDialogIcon.Information,
-					Message = new FormattedString().Also(it =>
-					{
-						it.Bind(FormattedString.Arg1Property, this.GetResourceObservable("String/Product.ULogViewer-Pro"));
-						it.Bind(FormattedString.FormatProperty, this.GetResourceObservable("String/MainWindow.NetworkConnectionNeededForProductActivation"));
-					}),
-				}.ShowDialog(this);
-			});
-			this.reActivateProVersionAction = new(async () =>
-			{
-				if (this.IsClosed || !IsReActivatingProVersionNeeded || this.HasDialogs || !this.IsActive || this.isReActivatingProVersion)
-					return;
-				IsReActivatingProVersionNeeded = false;
-				if (this.Application.ProductManager.TryGetProductState(Products.Professional, out var state)
-					&& state == ProductState.Deactivated)
-				{
-					await new MessageDialog()
-					{
-						Icon = MessageDialogIcon.Warning,
-						Message = new FormattedString().Also(it =>
-						{
-							it.Bind(FormattedString.Arg1Property, this.GetResourceObservable("String/Product.ULogViewer-Pro"));
-							it.Bind(FormattedString.FormatProperty, this.GetResourceObservable("String/MainWindow.ReActivateProductNeeded"));
-						}),
-					}.ShowDialog(this);
-					this.isReActivatingProVersion = true;
-					await this.Application.ProductManager.ActivateProductAsync(Products.Professional, this);
-					this.isReActivatingProVersion = false;
-				}
-			});
 			this.selectAndSetLogProfileAction = new(this.SelectAndSetLogProfile);
 			this.updateSysTaskBarAction = new(() =>
 			{
@@ -218,44 +172,15 @@ namespace CarinaStudio.ULogViewer
 			this.tabControlSelectionChangedAction = new(this.OnTabControlSelectionChanged);
 
 			// attach to property change
-			this.GetObservable(HasDialogsProperty).Subscribe(hasDialogs =>
-			{
-				if (!hasDialogs && IsReActivatingProVersionNeeded)
-					this.reActivateProVersionAction.Schedule();
-			});
 			this.GetObservable(IsActiveProperty).Subscribe(isActive =>
 			{
-				if (isActive)
-				{
-					if (FocusManager.Instance?.Current is not TextBox)
-						((this.tabControl.SelectedItem as TabItem)?.Content as Control)?.Focus();
-					if (IsReActivatingProVersionNeeded)
-						this.reActivateProVersionAction.Schedule();
-				}
+				if (isActive && FocusManager.Instance?.Current is not TextBox)
+					((this.tabControl.SelectedItem as TabItem)?.Content as Control)?.Focus();
 			});
 
 			// start stopwatch
 			if (this.Application.IsDebugMode)
 				this.stopwatch.Start();
-		}
-
-
-		/// <summary>
-		/// Activate Pro version.
-		/// </summary>
-		public async void ActivateProVersion()
-		{
-			this.VerifyAccess();
-			if (this.IsClosed)
-				return;
-			if (MainWindowToActivateProVersion != null)
-			{
-				MainWindowToActivateProVersion.Activate();
-				return;
-			}
-			MainWindowToActivateProVersion = this;
-			await this.Application.ProductManager.ActivateProductAsync(Products.Professional, this);
-			MainWindowToActivateProVersion = null;
 		}
 
 
@@ -569,19 +494,13 @@ namespace CarinaStudio.ULogViewer
 		protected override void OnClosed(EventArgs e)
 		{
 			// cancel scheduled actions
-			this.reActivateProVersionAction.Cancel();
 			this.tabControlSelectionChangedAction.Cancel();
 
 			// stop stopwatch
 			this.stopwatch.Stop();
 
 			// remove event handlers
-			NetworkManager.Default.PropertyChanged -= this.OnNetworkManagerPropertyChanged;
 			this.Application.ProductManager.ProductActivationChanged -= this.OnProductActivationChanged;
-			this.Application.ProductManager.ProductStateChanged -= this.OnProductStateChanged;
-
-			// stop checking network connection for product activation
-			this.notifyNetworkConnForProductActivationAction.Cancel();
 
 			// cancel activating Pro-version
 			if (MainWindowToActivateProVersion == this)
@@ -590,10 +509,6 @@ namespace CarinaStudio.ULogViewer
 			// call base
 			base.OnClosed(e);
 		}
-
-
-		/// <inheritdoc/>
-		protected override ApplicationInfo OnCreateApplicationInfo() => new AppInfo();
 
 
         // Detach from view-model.
@@ -850,23 +765,6 @@ namespace CarinaStudio.ULogViewer
 		}
 
 
-		// Called when property of network manager changed.
-		void OnNetworkManagerPropertyChanged(object? sender, PropertyChangedEventArgs e)
-		{
-			if (sender is NetworkManager networkManager 
-				&& e.PropertyName == nameof(NetworkManager.IsNetworkConnected))
-			{
-				if (networkManager.IsNetworkConnected)
-					this.notifyNetworkConnForProductActivationAction.Cancel();
-				else if (!this.Application.ProductManager.IsProductActivated(Products.Professional, true)
-					&& !IsNetworkConnForProductActivationNotified)
-				{
-					this.notifyNetworkConnForProductActivationAction.Reschedule(this.Configuration.GetValueOrDefault(ConfigurationKeys.TimeoutToNotifyNetworkConnectionForProductActivation));
-				}
-			}
-		}
-
-
 		/// <inheritdoc/>
 		protected override void OnOpened(EventArgs e)
 		{
@@ -874,19 +772,8 @@ namespace CarinaStudio.ULogViewer
 			base.OnOpened(e);
 
 			// add event handlers
-			NetworkManager.Default.PropertyChanged += this.OnNetworkManagerPropertyChanged;
 			this.Application.ProductManager.ProductActivationChanged += this.OnProductActivationChanged;
-			this.Application.ProductManager.ProductStateChanged += this.OnProductStateChanged;
-			this.OnProductStateChanged(this.Application.ProductManager, Products.Professional);
 			this.UpdateToolMenuItems();
-
-			// check network connection for product activation
-			if (!this.Application.ProductManager.IsProductActivated(Products.Professional, true)
-				&& !NetworkManager.Default.IsNetworkConnected
-				&& !IsNetworkConnForProductActivationNotified)
-			{
-				this.notifyNetworkConnForProductActivationAction.Schedule(this.Configuration.GetValueOrDefault(ConfigurationKeys.TimeoutToNotifyNetworkConnectionForProductActivation));
-			}
 
 			// setup for demo
 #if DEMO
@@ -918,38 +805,6 @@ namespace CarinaStudio.ULogViewer
 			if (productId != Products.Professional)
 				return;
 			this.UpdateToolMenuItems();
-		}
-
-
-		// Called when product state changed.
-		void OnProductStateChanged(IProductManager productManager, string productId)
-		{
-			if (productId != Products.Professional
-				|| !productManager.TryGetProductState(productId, out var state))
-			{
-				return;
-			}
-			switch (state)
-			{
-				case ProductState.Activated:
-					this.notifyNetworkConnForProductActivationAction.Cancel();
-					goto default;
-				case ProductState.Deactivated:
-					if (MainWindowToActivateProVersion == null
-						&& productManager.TryGetProductActivationFailure(productId, out var failure)
-						&& failure != ProductActivationFailure.NoNetworkConnection
-						&& !this.isReActivatingProVersion)
-					{
-						this.Logger.LogWarning($"Need to reactivate Pro-version because of {failure}");
-						IsReActivatingProVersionNeeded = true;
-						this.reActivateProVersionAction.Schedule();
-					}
-					break;
-				default:
-					IsReActivatingProVersionNeeded = false;
-					this.reActivateProVersionAction.Cancel();
-					break;
-			}
 		}
 
 
@@ -1086,18 +941,6 @@ namespace CarinaStudio.ULogViewer
 		}
 
 
-		/// <summary>
-		/// Purchase Pro version.
-		/// </summary>
-		public void PurchaseProVersion()
-		{
-			this.VerifyAccess();
-			if (this.IsClosed)
-				return;
-			this.Application.ProductManager.PurchaseProduct(Products.Professional, this);
-		}
-
-
 		// Select an active session if needed.
 		void SelectActiveSessionIfNeeded()
 		{
@@ -1165,28 +1008,6 @@ namespace CarinaStudio.ULogViewer
 
 			// set title
 			session.CustomTitle = title;
-		}
-
-
-		/// <summary>
-		/// Show application options.
-		/// </summary>
-		public async void ShowAppOptions()
-		{
-			switch (await new AppOptionsDialog().ShowDialog<AppSuite.Controls.ApplicationOptionsDialogResult>(this))
-			{
-				case AppSuite.Controls.ApplicationOptionsDialogResult.RestartApplicationNeeded:
-					this.Logger.LogWarning("Restart application");
-					if (this.Application.IsDebugMode)
-						this.Application.Restart($"{App.DebugArgument} {App.RestoreMainWindowsArgument}", this.Application.IsRunningAsAdministrator);
-					else
-						this.Application.Restart(App.RestoreMainWindowsArgument, this.Application.IsRunningAsAdministrator);
-					break;
-				case AppSuite.Controls.ApplicationOptionsDialogResult.RestartMainWindowsNeeded:
-					this.Logger.LogWarning("Restart main windows");
-					this.Application.RestartMainWindows();
-					break;
-			}
 		}
 
 

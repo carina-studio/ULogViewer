@@ -5,8 +5,13 @@ using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.Markup.Xaml.Styling;
 using Avalonia.Styling;
 using CarinaStudio.AppSuite;
+using CarinaStudio.AppSuite.Controls;
+using CarinaStudio.AppSuite.Net;
+using CarinaStudio.AppSuite.Product;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
+using CarinaStudio.Controls;
+using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ULogViewer.ViewModels;
@@ -17,6 +22,7 @@ using CarinaStudio.ViewModels;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -28,6 +34,14 @@ namespace CarinaStudio.ULogViewer
 	/// </summary>
 	class App : AppSuite.AppSuiteApplication, IULogViewerApplication
 	{
+		// Info of main window.
+		class MainWindowInfo
+		{
+			public IDisposable? HasDalogsObserverToken;
+			public IDisposable? IsActiveObserverToken;
+		}
+
+
 		// Constants.
 		const string InitialLogProfileKey = "InitialLogProfile";
 
@@ -41,6 +55,14 @@ namespace CarinaStudio.ULogViewer
 		IResourceProvider? compactResources;
 		IDisposable? compactResourcesToken;
 		ExternalDependency[] externalDependencies = new ExternalDependency[0];
+		bool isActivatingProVersion;
+		bool isNetworkConnForProductActivationNotified;
+		bool isReActivatingProVersion;
+		bool isReActivatingProVersionNeeded;
+		readonly Dictionary<CarinaStudio.Controls.Window, MainWindowInfo> mainWindowInfoMap = new();
+		ScheduledAction? notifyNetworkConnForProductActivationAction;
+		NativeMenuItem? proVersionNativeMenuItem;
+		ScheduledAction? reActivateProVersionAction;
 
 
 		// Constructor.
@@ -55,9 +77,44 @@ namespace CarinaStudio.ULogViewer
 		}
 
 
+		/// <summary>
+		/// Activate Pro version.
+		/// </summary>
+		public void ActivateProVersion() =>
+			_ = this.ActivateProVersionAsync(this.LatestActiveMainWindow);
+
+
+		/// <summary>
+		/// Activate Pro version.
+		/// </summary>
+		public async Task ActivateProVersionAsync(Avalonia.Controls.Window? window)
+		{
+			this.VerifyAccess();
+			if (this.isActivatingProVersion)
+				return;
+			this.isActivatingProVersion = true;
+			await this.ProductManager.ActivateProductAsync(Products.Professional, window);
+			this.isActivatingProVersion = false;
+		}
+
+
 		/// <inheritdoc/>
 		protected override bool AllowMultipleMainWindows => true;
 
+
+		/// <inheritdoc/>
+		public void CheckForApplicationUpdate() =>
+			_ = this.CheckForApplicationUpdateAsync(this.LatestActiveMainWindow, true);
+
+
+		/// <inheritdoc/>
+        public override AppSuite.ViewModels.ApplicationInfo CreateApplicationInfoViewModel() => 
+			new ViewModels.AppInfo();
+
+
+        /// <inheritdoc/>
+        public override AppSuite.ViewModels.ApplicationOptions CreateApplicationOptionsViewModel() =>
+			new ViewModels.AppOptions();
 
 
 		/// <summary>
@@ -115,7 +172,38 @@ namespace CarinaStudio.ULogViewer
 
 
 		// Create main window.
-        protected override CarinaStudio.Controls.Window OnCreateMainWindow() => new MainWindow();
+        protected override CarinaStudio.Controls.Window OnCreateMainWindow() => new MainWindow().Also(it =>
+		{
+			var info = new MainWindowInfo()
+			{
+				HasDalogsObserverToken = it.GetObservable(CarinaStudio.Controls.Window.HasDialogsProperty).Subscribe(hasDialogs =>
+				{
+					if (!hasDialogs)
+					{
+						if (!this.isNetworkConnForProductActivationNotified)
+							this.notifyNetworkConnForProductActivationAction?.Schedule();
+						if (this.isReActivatingProVersionNeeded)
+							this.reActivateProVersionAction?.Schedule();
+					}
+				}),
+				IsActiveObserverToken = it.GetObservable(CarinaStudio.Controls.Window.IsActiveProperty).Subscribe(isActive =>
+				{
+					if (isActive)
+					{
+						if (this.notifyNetworkConnForProductActivationAction?.IsScheduled == false
+							&& !this.ProductManager.IsProductActivated(Products.Professional, true)
+							&& !NetworkManager.Default.IsNetworkConnected
+							&& !this.isNetworkConnForProductActivationNotified)
+						{
+							this.notifyNetworkConnForProductActivationAction?.Schedule(this.Configuration.GetValueOrDefault(ConfigurationKeys.TimeoutToNotifyNetworkConnectionForProductActivation));
+						}
+						if (this.isReActivatingProVersionNeeded)
+							this.reActivateProVersionAction?.Schedule();
+					}
+				}),
+			};
+			this.mainWindowInfoMap.Add(it, info);
+		});
 
 
 		// Create view-model for main window.
@@ -256,6 +344,17 @@ namespace CarinaStudio.ULogViewer
         // Called when main window closed.
         protected override async Task OnMainWindowClosedAsync(CarinaStudio.Controls.Window mainWindow, ViewModel viewModel)
         {
+			// detach from main window
+			if (this.mainWindowInfoMap.Remove(mainWindow, out var info))
+			{
+				info.HasDalogsObserverToken?.Dispose();
+				info.IsActiveObserverToken?.Dispose();
+			}
+
+			// cancel notification for network connection
+			if (this.MainWindows.IsEmpty())
+				this.notifyNetworkConnForProductActivationAction?.Cancel();
+
 			// wait for I/O completion of log analysis rules
 			await KeyLogAnalysisRuleSetManager.Default.WaitForIOTaskCompletion();
 			await LogAnalysisScriptSetManager.Default.WaitForIOTaskCompletion();
@@ -281,17 +380,34 @@ namespace CarinaStudio.ULogViewer
 			switch ((sender as NativeMenuItem)?.CommandParameter as string)
 			{
 				case "AppInfo":
-					(this.LatestActiveMainWindow as MainWindow)?.ShowApplicationInfoDialogAsync();
+					this.ShowApplicationInfoDialog();
 					break;
 				case "AppOptions":
-					(this.LatestActiveMainWindow as MainWindow)?.ShowAppOptions();
+					this.ShowApplicationOptionsDialog();
 					break;
 				case "CheckForUpdate":
-					(this.LatestActiveMainWindow as MainWindow)?.CheckForApplicationUpdateAsync();
+					this.CheckForApplicationUpdate();
 					break;
 				case "Shutdown":
 					this.Shutdown();
 					break;
+			}
+		}
+
+
+		// Called when property of network manager changed.
+		void OnNetworkManagerPropertyChanged(object? sender, PropertyChangedEventArgs e)
+		{
+			if (sender is NetworkManager networkManager 
+				&& e.PropertyName == nameof(NetworkManager.IsNetworkConnected))
+			{
+				if (networkManager.IsNetworkConnected)
+					this.notifyNetworkConnForProductActivationAction?.Cancel();
+				else if (!this.ProductManager.IsProductActivated(Products.Professional, true)
+					&& !this.isNetworkConnForProductActivationNotified)
+				{
+					this.notifyNetworkConnForProductActivationAction?.Reschedule(this.Configuration.GetValueOrDefault(ConfigurationKeys.TimeoutToNotifyNetworkConnectionForProductActivation));
+				}
 			}
 		}
 
@@ -373,8 +489,64 @@ namespace CarinaStudio.ULogViewer
 					it.Add(new ExecutableExternalDependency(this, "XRandR", ExternalDependencyPriority.Optional, "xrandr", new Uri("https://www.x.org/wiki/Projects/XRandR/"), new Uri("https://command-not-found.com/xrandr")));
 			}).ToArray();
 
+			// setup scheduled actions
+			this.notifyNetworkConnForProductActivationAction = new(() =>
+			{
+				var window = this.LatestActiveMainWindow;
+				if (window == null 
+					|| !window.IsActive
+					|| window.HasDialogs
+					|| this.isNetworkConnForProductActivationNotified
+					|| NetworkManager.Default.IsNetworkConnected
+					|| this.ProductManager.IsProductActivated(Products.Professional, true))
+				{
+					return;
+				}
+				this.isNetworkConnForProductActivationNotified = true;
+				_ = new MessageDialog()
+				{
+					Icon = MessageDialogIcon.Information,
+					Message = new FormattedString().Also(it =>
+					{
+						it.Bind(FormattedString.Arg1Property, this.GetResourceObservable("String/Product.ULogViewer-Pro"));
+						it.Bind(FormattedString.FormatProperty, this.GetResourceObservable("String/MainWindow.NetworkConnectionNeededForProductActivation"));
+					}),
+				}.ShowDialog(window);
+			});
+			this.reActivateProVersionAction = new(async () =>
+			{
+				var window = this.LatestActiveMainWindow;
+				if (!this.isReActivatingProVersionNeeded 
+					|| window == null 
+					|| window.HasDialogs 
+					|| !window.IsActive 
+					|| this.isActivatingProVersion
+					|| this.isReActivatingProVersion)
+				{
+					return;
+				}
+				this.isReActivatingProVersionNeeded = false;
+				if (this.ProductManager.TryGetProductState(Products.Professional, out var state)
+					&& state == ProductState.Deactivated)
+				{
+					await new MessageDialog()
+					{
+						Icon = MessageDialogIcon.Warning,
+						Message = new FormattedString().Also(it =>
+						{
+							it.Bind(FormattedString.Arg1Property, this.GetResourceObservable("String/Product.ULogViewer-Pro"));
+							it.Bind(FormattedString.FormatProperty, this.GetResourceObservable("String/MainWindow.ReActivateProductNeeded"));
+						}),
+					}.ShowDialog(this.LatestActiveMainWindow);
+					this.isReActivatingProVersion = true;
+					await this.ActivateProVersionAsync(this.LatestActiveMainWindow);
+					this.isReActivatingProVersion = false;
+				}
+			});
+
 			// call base
 			await base.OnPrepareStartingAsync();
+			this.UpdateSplashWindowProgress(0.1);
 
 			// find menu items
 			if (Platform.IsMacOS)
@@ -403,6 +575,12 @@ namespace CarinaStudio.ULogViewer
 					}
 				});
 			}
+
+			// attach to network manager
+			NetworkManager.Default.PropertyChanged += this.OnNetworkManagerPropertyChanged;
+
+			// setup Pro version menu items
+			this.proVersionNativeMenuItem = this.Resources["NativeMenuItem/App.ProVersion"] as NativeMenuItem;
 
 			// initialize log data source providers
 			this.UpdateSplashWindowMessage(this.GetStringNonNull("SplashWindow.InitializeLogProfiles"));
@@ -519,6 +697,44 @@ namespace CarinaStudio.ULogViewer
 
 		// Version of settings.
 		protected override int SettingsVersion => 3;
+
+
+		/// <summary>
+		/// Show application info dialog.
+		/// </summary>
+		public void ShowApplicationInfoDialog() =>
+			_ = this.ShowApplicationInfoDialogAsync(this.LatestActiveMainWindow);
+
+
+		/// <summary>
+		/// Show application options dialog.
+		/// </summary>
+		public void ShowApplicationOptionsDialog() =>
+			_ = this.ShowApplicationOptionsDialogAsync(this.LatestActiveMainWindow);
+
+
+		/// <inheritdoc/>
+        public override async Task ShowApplicationOptionsDialogAsync(Avalonia.Controls.Window? owner, string? section = null)
+		{
+			owner?.ActivateAndBringToFront();
+			var result = await (owner != null
+				? new Controls.AppOptionsDialog().ShowDialog<AppSuite.Controls.ApplicationOptionsDialogResult>(owner)
+				: new Controls.AppOptionsDialog().ShowDialog<AppSuite.Controls.ApplicationOptionsDialogResult>());
+			switch (result)
+			{
+				case AppSuite.Controls.ApplicationOptionsDialogResult.RestartApplicationNeeded:
+					this.Logger.LogWarning("Restart application");
+					if (this.IsDebugMode)
+						this.Restart($"{App.DebugArgument} {App.RestoreMainWindowsArgument}", this.IsRunningAsAdministrator);
+					else
+						this.Restart(App.RestoreMainWindowsArgument, this.IsRunningAsAdministrator);
+					break;
+				case AppSuite.Controls.ApplicationOptionsDialogResult.RestartMainWindowsNeeded:
+					this.Logger.LogWarning("Restart main windows");
+					this.RestartMainWindows();
+					break;
+			}
+		}
 
 
 		/// <inheritdoc/>
