@@ -567,8 +567,6 @@ return false;</sys:String>
 
 	<!-- MainWindow -->
 	<sys:String x:Key="String/MainWindow.ClearCustomSessionTitle">重设页面标题</sys:String>
-	<sys:String x:Key="String/MainWindow.NetworkConnectionNeededForProductActivation">请连接至互联网以启用「{0}」，否则「{0}」将会在一段时间后暂时被停用。</sys:String>
-	<sys:String x:Key="String/MainWindow.ReActivateProductNeeded">无法启用「{0}」，请尝试再次启用。</sys:String>
 	<sys:String x:Key="String/MainWindow.Session.AllLogCount">总共 {0} 笔</sys:String>
 	<sys:String x:Key="String/MainWindow.Session.Hibernated">休眠中以节省资源</sys:String>
 	<sys:String x:Key="String/MainWindow.Session.LogsMemoryUsage">内存使用 {0}</sys:String>
