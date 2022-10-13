@@ -1,0 +1,67 @@
+{
+  "AllowMultipleFiles": true,
+  "DataSource": {
+    "Name": "File",
+    "Options": {}
+  },
+  "ColorIndicator": "None",
+  "Icon": "Server",
+  "LogPatterns": [
+    {
+      "Regex": "(?<SourceName>[\\d\\.]+)\\s+(?<UserId>[^\\s]+)\\s+(?<UserName>[^\\s]+)\\s+\\[(?<Timestamp>\\d+/\\w+/[\\d\\:]+\\s+[\\+\\-]\\d+)\\]\\s+\\\"(?<Extra1>[^\\\"]*)\\\"\\s+(?<Extra2>\\d+)\\s+(?<Extra3>\\d+)\\s+\\\"(?<Extra4>[^\\\"]*)\\\"\\s+\\\"(?<Extra5>[^\\\"]*)\\\"",
+      "IgnoreCase": true
+    }
+  ],
+  "LogStringEncodingForReading": "Plane",
+  "LogStringEncodingForWriting": "Plane",
+  "SortDirection": "Ascending",
+  "SortKey": "Timestamp",
+  "TimeSpanEncodingForReading": "Custom",
+  "TimestampCategoryGranularity": "Day",
+  "TimestampEncodingForReading": "Custom",
+  "TimestampFormatsForReading": [
+    "dd/MMM/yyyy:HH:mm:ss K"
+  ],
+  "VisibleLogProperties": [
+    {
+      "Name": "Timestamp",
+      "Width": 180
+    },
+    {
+      "Name": "SourceName",
+      "Width": 150
+    },
+    {
+      "Name": "UserId",
+      "Width": 50
+    },
+    {
+      "Name": "UserName",
+      "Width": 50
+    },
+    {
+      "DisplayName": "Request",
+      "Name": "Extra1",
+      "Width": 300
+    },
+    {
+      "DisplayName": "Status",
+      "Name": "Extra2",
+      "Width": 100
+    },
+    {
+      "DisplayName": "Size",
+      "Name": "Extra3",
+      "Width": 100
+    },
+    {
+      "DisplayName": "Referer",
+      "Name": "Extra4",
+      "Width": 100
+    },
+    {
+      "DisplayName": "UserAgent",
+      "Name": "Extra5"
+    }
+  ]
+}
