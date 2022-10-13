@@ -10,11 +10,13 @@
 
 			<!-- Icon -->
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Apple" Color="#888888"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Automation" Color="#497dcc"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Battery" Color="#ccbb28"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Checklist" Color="#79b37a"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Cloud" Color="#a0a0a0"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Database" Color="#cca600"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Debug" Color="#007f7f"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Game" Color="#40b398"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Inspiration" Color="#d8b400"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Layers" Color="#9561cc"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Linux_Fedora" Color="#294072"/>

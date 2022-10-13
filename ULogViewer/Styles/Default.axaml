@@ -16,6 +16,7 @@
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Android" Color="#9fc037"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Apple" Color="#ffffff"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Audio" Color="#3ebdcd"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Automation" Color="#5794f2"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.AWS" Color="#ff9900"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Azure" Color="#0171cc"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Battery" Color="#d9c72a"/>
@@ -29,6 +30,7 @@
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Experiment" Color="#007f0e"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Flag" Color="#20b37c"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Folder" Color="#d8b400"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Game" Color="#49ccae"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Image" Color="#4289d9"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Inspiration" Color="#e6d16d"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Launch" Color="#ff3f00"/>

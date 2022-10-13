@@ -28,6 +28,10 @@ enum LogProfileIcon
 	/// </summary>
 	Audio,
 	/// <summary>
+	/// Automation.
+	/// </summary>
+	Automation,
+	/// <summary>
 	/// AWS.
 	/// </summary>
 	AWS,
@@ -99,6 +103,10 @@ enum LogProfileIcon
 	/// Folder.
 	/// </summary>
 	Folder,
+	/// <summary>
+	/// Game.
+	/// </summary>
+	Game,
 	/// <summary>
 	/// Google Cloud Platform.
 	/// </summary>
@@ -191,6 +199,10 @@ enum LogProfileIcon
 	/// Screen.
 	/// </summary>
 	Screen,
+	/// <summary>
+	/// Script.
+	/// </summary>
+	Script,
 	/// <summary>
 	/// Security.
 	/// </summary>

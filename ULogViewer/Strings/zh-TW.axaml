@@ -322,6 +322,7 @@ return false;</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Analysis">分析</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.ArtificialIntelligence">人工智慧</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Audio">音訊</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Automation">自動化</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Battery">電池</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Book">書籍</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Checklist">核對列表</sys:String>
@@ -338,6 +339,7 @@ return false;</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.File">檔案</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Flag">旗幟</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Folder">資料夾</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Game">遊戲</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Image">影像</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Information">資訊</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Inspiration">靈感</sys:String>
@@ -353,6 +355,7 @@ return false;</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Power">電力</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.RAM">記憶體</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Screen">螢幕</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Script">腳本</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Security">安全性</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Server">伺服器</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Signal">訊號</sys:String>

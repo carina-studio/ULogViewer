@@ -338,6 +338,7 @@ return false;</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Apple">Apple</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.ArtificialIntelligence">Artificial Intelligence</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Audio">Audio</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Automation">Automation</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.AWS">Amazon Web Services (AWS)</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Azure">Azure</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Battery">Battery</sys:String>
@@ -356,6 +357,7 @@ return false;</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.File">File</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Flag">Flag</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Folder">Folder</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Game">Game</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.GCP">Google Cloud Platform (GCP)</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Image">Image</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Information">Information</sys:String>
@@ -379,6 +381,7 @@ return false;</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Power">Power</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.RAM">Memory</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Screen">Screen</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Script">Script</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Security">Security</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Server">Server</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Signal">Signal</sys:String>
