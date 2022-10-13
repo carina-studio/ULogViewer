@@ -72,6 +72,58 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Add new rule after given rule.
+		public async void AddRuleAfter(OperationDurationAnalysisRuleSet.Rule rule)
+		{
+			// edit rule
+			var newRule = await new OperationDurationAnalysisRuleEditorDialog()
+			{
+				DefaultBeginningConditions = rule.EndingConditions,
+				DefaultBeginningPattern = rule.EndingPattern,
+				DefaultBeginningPostActions = rule.EndingPostActions,
+				DefaultBeginningPreActions = rule.EndingPreActions,
+				DefaultResultType = rule.ResultType,
+			}.ShowDialog<OperationDurationAnalysisRuleSet.Rule?>(this);
+
+			// insert rule
+			if (newRule == null)
+				return;
+			var index = this.rules.IndexOf(rule);
+			if (index >= 0)
+				this.rules.Insert(index + 1, newRule);
+			else
+				this.rules.Add(newRule);
+			this.ruleListBox.SelectedItem = newRule;
+			this.ruleListBox.Focus();
+		}
+
+
+		// Add new rule before given rule.
+		public async void AddRuleBefore(OperationDurationAnalysisRuleSet.Rule rule)
+		{
+			// edit rule
+			var newRule = await new OperationDurationAnalysisRuleEditorDialog()
+			{
+				DefaultEndingConditions = rule.BeginningConditions,
+				DefaultEndingPattern = rule.BeginningPattern,
+				DefaultEndingPostActions = rule.BeginningPostActions,
+				DefaultEndingPreActions = rule.BeginningPreActions,
+				DefaultResultType = rule.ResultType,
+			}.ShowDialog<OperationDurationAnalysisRuleSet.Rule?>(this);
+
+			// insert rule
+			if (newRule == null)
+				return;
+			var index = this.rules.IndexOf(rule);
+			if (index >= 0)
+				this.rules.Insert(index - 1, newRule);
+			else
+				this.rules.Add(newRule);
+			this.ruleListBox.SelectedItem = newRule;
+			this.ruleListBox.Focus();
+		}
+
+
 		/// <summary>
 		/// Class all dialogs which are editing the given rule set.
 		/// </summary>
@@ -120,10 +172,9 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Copy rule.
-		async void CopyRule(ListBoxItem item)
+		async void CopyRule(OperationDurationAnalysisRuleSet.Rule rule)
 		{
 			// get rule
-			var rule = (OperationDurationAnalysisRuleSet.Rule)item.DataContext.AsNonNull();
 			var index = this.rules.IndexOf(rule);
 			if (index < 0)
 				return;
@@ -159,11 +210,6 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Edit rule.
-		void EditRule(ListBoxItem item)
-		{
-			if (item.DataContext is OperationDurationAnalysisRuleSet.Rule rule)
-				this.EditRule(rule);
-		}
 		async void EditRule(OperationDurationAnalysisRuleSet.Rule rule)
 		{
 			var index = this.rules.IndexOf(rule);
@@ -253,10 +299,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		
 
 		// Remove rule.
-		void RemoveRule(ListBoxItem item)
+		void RemoveRule(OperationDurationAnalysisRuleSet.Rule rule)
 		{
-			if (item.DataContext is not OperationDurationAnalysisRuleSet.Rule rule)
-				return;
 			this.rules.Remove(rule);
 			this.ruleListBox.Focus();
 		}

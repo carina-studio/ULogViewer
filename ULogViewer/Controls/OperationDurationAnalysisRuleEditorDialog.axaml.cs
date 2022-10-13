@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
@@ -110,6 +111,46 @@ namespace CarinaStudio.ULogViewer.Controls
 		IList<ContextualBasedAnalysisAction> BeginningPreActions { get => this.beginningPreActions; }
 
 
+		// Default beginning conditions.
+		public IList<ContextualBasedAnalysisCondition>? DefaultBeginningConditions { get; set; }
+
+
+		// Default pattern of beginning of operation.
+		public Regex? DefaultBeginningPattern { get; set; }
+
+
+		// Default post-actions for beginning of operation.
+		public IList<ContextualBasedAnalysisAction>? DefaultBeginningPostActions { get; set; }
+
+		
+		// Default pre-actions for beginning of operation.
+		public IList<ContextualBasedAnalysisAction>? DefaultBeginningPreActions { get; set; }
+
+
+		// Default beginning conditions.
+		public IList<ContextualBasedAnalysisCondition>? DefaultEndingConditions { get; set; }
+
+
+		// Default pattern of ending of operation.
+		public Regex? DefaultEndingPattern { get; set; }
+
+
+		// Default post-actions for ending of operation.
+		public IList<ContextualBasedAnalysisAction>? DefaultEndingPostActions { get; set; }
+
+
+		// Default pre-actions for ending of operation.
+		public IList<ContextualBasedAnalysisAction>? DefaultEndingPreActions { get; set; }
+
+
+		// Default name of operation.
+		public string? DefaultOperationName { get; set; }
+
+
+		// Default type of analysis result.
+		public DisplayableLogAnalysisResultType DefaultResultType { get; set; } = DisplayableLogAnalysisResultType.TimeSpan;
+
+
 		// Edit ending variable.
 		void EditEndingVariable(ListBoxItem item) =>
 			this.EditEndingVariable((string)item.DataContext.AsNonNull());
@@ -201,8 +242,23 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			else
 			{
-				this.resultTypeComboBox.SelectedItem = DisplayableLogAnalysisResultType.TimeSpan;
+				this.operationNameTextBox.Text = this.DefaultOperationName;
+				this.resultTypeComboBox.SelectedItem = this.DefaultResultType;
+				if (this.DefaultBeginningConditions != null)
+					this.beginningConditions.AddAll(this.DefaultBeginningConditions);
+				this.beginningPatternEditor.Pattern = this.DefaultBeginningPattern;
+				if (this.DefaultBeginningPreActions != null)
+					this.beginningPreActions.AddAll(this.DefaultBeginningPreActions);
+				if (this.DefaultBeginningPostActions != null)
+					this.beginningPostActions.AddAll(this.DefaultBeginningPostActions);
+				if (this.DefaultEndingConditions != null)
+					this.endingConditions.AddAll(this.DefaultEndingConditions);
 				this.endingModeComboBox.SelectedItem = OperationEndingMode.FirstInFirstOut;
+				this.endingPatternEditor.Pattern = this.DefaultEndingPattern;
+				if (this.DefaultEndingPreActions != null)
+					this.endingPreActions.AddAll(this.DefaultEndingPreActions);
+				if (this.DefaultEndingPostActions != null)
+					this.endingPostActions.AddAll(this.DefaultEndingPostActions);
 			}
 			this.SynchronizationContext.Post(() =>
 			{

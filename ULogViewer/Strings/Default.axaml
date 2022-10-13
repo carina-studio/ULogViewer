@@ -657,6 +657,8 @@ return false;</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.Title">Edit operation duration analysis rule</sys:String>
 
 	<!-- OperationDurationAnalysisRuleSetEditorDialog -->
+	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.AddRuleAfter">Add rule which begins from this rule</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.AddRuleBefore">Add rule which is ended with this rule</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.CannotAddMoreRuleSetWithoutProVersion">Cannot create more rule set before activating Pro version.</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.Icon">Icon</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.IconColor">Color of icon</sys:String>

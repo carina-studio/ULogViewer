@@ -623,6 +623,8 @@ return false;</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.Title">编辑动作时距分析规则</sys:String>
 
 	<!-- OperationDurationAnalysisRuleSetEditorDialog -->
+	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.AddRuleAfter">新增接续在此规则后之规则</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.AddRuleBefore">新增结束于此规则之规则</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.CannotAddMoreRuleSetWithoutProVersion">在启用专业版之前，您无法建立更多的规则集。</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.Icon">图标</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.IconColor">图标色彩</sys:String>
