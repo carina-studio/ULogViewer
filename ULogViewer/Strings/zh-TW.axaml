@@ -58,6 +58,8 @@
 	<sys:String x:Key="String/BuiltInProfile.AndroidKernelLogFile.Description">在一個或多個檔案中的 Android 核心日誌。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidTraceFile">Android 系統追蹤檔案</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidTraceFile.Description">用以追蹤及分析 Android 系統及應用程式效能的檔案 (*.html)。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.ApacheAccessLogFile">Apache 伺服器存取日誌檔案</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.ApacheAccessLogFile.Description">由 Apache 產生之檔案，其中包括傳送至伺服器之請求資訊。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AzureWebappLogFile">Azure Webapp 日誌檔案</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AzureWebappLogFile.Description">從 Azure 下載之 Webapp 日誌檔案。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AzureWebappLogStream">Azure Webapp 即時日誌</sys:String>
@@ -474,6 +476,7 @@ return false;</sys:String>
 	<sys:String x:Key="String/LogProperty.Content">內容</sys:String>
 	<sys:String x:Key="String/LogProperty.Count">個數</sys:String>
 	<sys:String x:Key="String/LogProperty.Cpu">處理器</sys:String>
+	<sys:String x:Key="String/LogProperty.DestinationName">目的</sys:String>
 	<sys:String x:Key="String/LogProperty.DeviceId">裝置 ID</sys:String>
 	<sys:String x:Key="String/LogProperty.DeviceName">裝置名稱</sys:String>
 	<sys:String x:Key="String/LogProperty.Duration">歷時</sys:String>
@@ -481,6 +484,7 @@ return false;</sys:String>
 	<sys:String x:Key="String/LogProperty.EndingTimeSpan">結束時距</sys:String>
 	<sys:String x:Key="String/LogProperty.EndingTimestamp">結束時間</sys:String>
 	<sys:String x:Key="String/LogProperty.EndingValue">結束值</sys:String>
+	<sys:String x:Key="String/LogProperty.EndPoint">端點</sys:String>
 	<sys:String x:Key="String/LogProperty.Event">事件</sys:String>
 	<sys:String x:Key="String/LogProperty.Extra1">附加資料 1</sys:String>
 	<sys:String x:Key="String/LogProperty.Extra10">附加資料 10</sys:String>
@@ -498,17 +502,24 @@ return false;</sys:String>
 	<sys:String x:Key="String/LogProperty.LineNumber">行號</sys:String>
 	<sys:String x:Key="String/LogProperty.Message">訊息</sys:String>
 	<sys:String x:Key="String/LogProperty.Name">名稱</sys:String>
+	<sys:String x:Key="String/LogProperty.Node">節點</sys:String>
 	<sys:String x:Key="String/LogProperty.Number">編號</sys:String>
 	<sys:String x:Key="String/LogProperty.Parent">父代</sys:String>
 	<sys:String x:Key="String/LogProperty.Path">路徑</sys:String>
 	<sys:String x:Key="String/LogProperty.ProcessName">處理程序</sys:String>
 	<sys:String x:Key="String/LogProperty.RawData">原始資料</sys:String>
+	<sys:String x:Key="String/LogProperty.Referer">參照位址</sys:String>
 	<sys:String x:Key="String/LogProperty.RelativeBeginningTimestamp">相對起始時間</sys:String>
 	<sys:String x:Key="String/LogProperty.RelativeEndingTimestamp">相對結束時間</sys:String>
 	<sys:String x:Key="String/LogProperty.RelativeTimestamp">相對時間</sys:String>
+	<sys:String x:Key="String/LogProperty.Request">請求</sys:String>
+	<sys:String x:Key="String/LogProperty.Response">回應</sys:String>
+	<sys:String x:Key="String/LogProperty.Result">結果</sys:String>
 	<sys:String x:Key="String/LogProperty.ShortName">簡短名稱</sys:String>
+	<sys:String x:Key="String/LogProperty.Size">大小</sys:String>
 	<sys:String x:Key="String/LogProperty.SourceName">來源</sys:String>
 	<sys:String x:Key="String/LogProperty.Start">開始</sys:String>
+	<sys:String x:Key="String/LogProperty.Status">狀態</sys:String>
 	<sys:String x:Key="String/LogProperty.Summary">摘要</sys:String>
 	<sys:String x:Key="String/LogProperty.Tag">標籤</sys:String>
 	<sys:String x:Key="String/LogProperty.Tags">標籤組</sys:String>
@@ -520,6 +531,7 @@ return false;</sys:String>
 	<sys:String x:Key="String/LogProperty.Title">標題</sys:String>
 	<sys:String x:Key="String/LogProperty.Type">類型</sys:String>
 	<sys:String x:Key="String/LogProperty.Uri">網址</sys:String>
+	<sys:String x:Key="String/LogProperty.UserAgent">使用者媒介</sys:String>
 	<sys:String x:Key="String/LogProperty.UserName">使用者</sys:String>
 	<sys:String x:Key="String/LogProperty.Value">值</sys:String>
 
