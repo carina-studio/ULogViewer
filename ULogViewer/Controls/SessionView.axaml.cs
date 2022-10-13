@@ -3360,7 +3360,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			// sync log header offset
 			var logScrollViewer = this.logScrollViewer;
 			if (logScrollViewer != null)
-				this.logHeaderContainer.Margin = new Thickness(-logScrollViewer.Offset.X, 0, logScrollViewer.Offset.X, 0);
+				this.logHeaderContainer.Margin = new Thickness(-logScrollViewer.Offset.X, 0, Math.Min(0, logScrollViewer.Offset.X + logScrollViewer.Viewport.Width - logScrollViewer.Extent.Width), 0);
 		}
 
 
