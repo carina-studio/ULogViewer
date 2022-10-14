@@ -106,12 +106,14 @@ class TimestampDisplayableLogCategory : DisplayableLogCategory
     /// <inheritdoc/>
     protected override string? OnUpdateName()
     {
-        var baseFormat = this.Log?.Group?.LogProfile?.Let(profile =>
-            profile.TimestampFormatForDisplaying ?? profile.TimestampFormatsForReading.FirstOrDefault());
-        var format = baseFormat?.Let(this.GetTimestampFormat);
+        var format = this.Log?.Group?.LogProfile?.TimestampFormatForDisplaying?.Let(this.GetTimestampFormat);
         if (format != null)
             return this.Timestamp.ToString(format);
-        return this.Timestamp.ToLongTimeString();
+        return this.Granularity switch
+        {
+            TimestampDisplayableLogCategoryGranularity.Day => this.Timestamp.ToShortDateString(),
+            _ => this.Timestamp.ToShortTimeString(),
+        };
     }
 
 
