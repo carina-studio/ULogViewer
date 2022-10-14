@@ -47,8 +47,6 @@ namespace CarinaStudio.ULogViewer
 		IDisposable? activeFilteringProgressObserverToken;
 		Session? attachedActiveSession;
 		readonly ScheduledAction focusOnTabItemContentAction;
-		readonly ScheduledAction notifyNetworkConnForProductActivationAction;
-		readonly ScheduledAction reActivateProVersionAction;
 		readonly ScheduledAction selectAndSetLogProfileAction;
 		readonly DataTemplate sessionTabItemHeaderTemplate;
 		readonly Stopwatch stopwatch = new Stopwatch();

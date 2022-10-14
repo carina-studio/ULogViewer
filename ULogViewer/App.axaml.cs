@@ -6,12 +6,9 @@ using Avalonia.Markup.Xaml.Styling;
 using Avalonia.Styling;
 using CarinaStudio.AppSuite;
 using CarinaStudio.AppSuite.Controls;
-using CarinaStudio.AppSuite.Net;
-using CarinaStudio.AppSuite.Product;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Controls;
-using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ULogViewer.ViewModels;
@@ -22,7 +19,6 @@ using CarinaStudio.ViewModels;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Globalization;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -53,7 +49,6 @@ namespace CarinaStudio.ULogViewer
 		IDisposable? compactResourcesToken;
 		ExternalDependency[] externalDependencies = new ExternalDependency[0];
 		readonly Dictionary<CarinaStudio.Controls.Window, MainWindowInfo> mainWindowInfoMap = new();
-		NativeMenuItem? proVersionNativeMenuItem;
 
 
 		// Constructor.
@@ -439,9 +434,6 @@ namespace CarinaStudio.ULogViewer
 					}
 				});
 			}
-
-			// setup Pro version menu items
-			this.proVersionNativeMenuItem = this.Resources["NativeMenuItem/App.ProVersion"] as NativeMenuItem;
 
 			// initialize log data source providers
 			this.UpdateSplashWindowMessage(this.GetStringNonNull("SplashWindow.InitializeLogProfiles"));
