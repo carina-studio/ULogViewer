@@ -14,11 +14,15 @@
   ],
   "LogStringEncodingForReading": "Plane",
   "LogStringEncodingForWriting": "Plane",
+  "LogWritingFormats": [
+		"{SourceName} {UserId} {UserName} [{Timestamp}] \"{Extra1}\" {Extra2} {Extra3} \"{Extra4}\" \"{Extra5}\""
+	],
   "SortDirection": "Ascending",
   "SortKey": "Timestamp",
   "TimeSpanEncodingForReading": "Custom",
   "TimestampCategoryGranularity": "Day",
   "TimestampEncodingForReading": "Custom",
+  "TimestampFormatForWriting": "dd/MMM/yyyy:HH:mm:ss K",
   "TimestampFormatsForReading": [
     "dd/MMM/yyyy:HH:mm:ss K"
   ],
