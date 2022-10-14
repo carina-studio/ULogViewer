@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -105,7 +106,9 @@ class TimestampDisplayableLogCategory : DisplayableLogCategory
     /// <inheritdoc/>
     protected override string? OnUpdateName()
     {
-        var format = this.Log?.Group?.LogProfile?.TimestampFormatForDisplaying?.Let(this.GetTimestampFormat);
+        var baseFormat = this.Log?.Group?.LogProfile?.Let(profile =>
+            profile.TimestampFormatForDisplaying ?? profile.TimestampFormatsForReading.FirstOrDefault());
+        var format = baseFormat?.Let(this.GetTimestampFormat);
         if (format != null)
             return this.Timestamp.ToString(format);
         return this.Timestamp.ToLongTimeString();
