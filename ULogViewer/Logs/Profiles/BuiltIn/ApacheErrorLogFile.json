@@ -1,0 +1,60 @@
+{
+  "AllowMultipleFiles": true,
+  "DataSource": {
+    "Name": "File",
+    "Options": {}
+  },
+  "ColorIndicator": "None",
+  "Icon": "Server",
+  "LogLevelMapForReading": {
+    "alert": "Error",
+    "crit": "Fatal",
+    "debug": "Debug",
+    "emerg": "Fatal",
+		"error": "Error",
+    "info": "Info",
+		"notice": "Info",
+		"warn": "Warn"
+	},
+	"LogLevelMapForWriting": {
+    "Debug": "debug",
+		"Error": "error",
+    "Fatal": "crit",
+		"Info": "info",
+		"Warn": "warn"
+	},
+  "LogPatterns": [
+    {
+      "Regex": "\\[(?<Timestamp>[^\\]]+)\\]\\s+\\[(?<Level>\\w+)\\](\\s+\\[client\\s*(?<SourceName>[a-zA-Z\\d\\.\\:]+)\\])?\\s(?<Message>.*)",
+      "IgnoreCase": true
+    }
+  ],
+  "LogStringEncodingForReading": "Plane",
+  "LogStringEncodingForWriting": "Plane",
+  "LogWritingFormats": [
+		"[{Timestamp}] [{Level}] [client {SourceName}] {Message}",
+    "[{Timestamp}] [{Level}] {Message}"
+	],
+  "SortDirection": "Ascending",
+  "SortKey": "Timestamp",
+  "TimeSpanEncodingForReading": "Custom",
+  "TimestampCategoryGranularity": "Day",
+  "TimestampEncodingForReading": "Custom",
+  "TimestampFormatForWriting": "ddd MMM dd HH:mm:ss yyyy",
+  "TimestampFormatsForReading": [
+    "ddd MMM dd HH:mm:ss yyyy"
+  ],
+  "VisibleLogProperties": [
+    {
+      "Name": "Timestamp",
+      "Width": 180
+    },
+    {
+      "Name": "SourceName",
+      "Width": 150
+    },
+    {
+      "Name": "Message"
+    }
+  ]
+}

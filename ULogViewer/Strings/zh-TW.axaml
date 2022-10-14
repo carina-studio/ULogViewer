@@ -60,6 +60,8 @@
 	<sys:String x:Key="String/BuiltInProfile.AndroidTraceFile.Description">用以追蹤及分析 Android 系統及應用程式效能的檔案 (*.html)。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.ApacheAccessLogFile">Apache 伺服器存取日誌檔案</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.ApacheAccessLogFile.Description">由 Apache 產生之檔案，其中包括傳送至伺服器之請求資訊。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.ApacheErrorLogFile">Apache 伺服器錯誤日誌檔案</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.ApacheErrorLogFile.Description">由 Apache 產生之檔案，其中包括伺服器所發生之錯誤資訊。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AzureWebappLogFile">Azure Webapp 日誌檔案</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AzureWebappLogFile.Description">從 Azure 下載之 Webapp 日誌檔案。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AzureWebappLogStream">Azure Webapp 即時日誌</sys:String>

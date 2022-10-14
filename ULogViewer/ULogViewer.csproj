@@ -122,6 +122,7 @@
     <EmbeddedResource Include="Logs/Profiles/BuiltIn/AndroidKernelLogFile.json" />
     <EmbeddedResource Include="Logs/Profiles/BuiltIn/AndroidTraceFile.json" />
     <EmbeddedResource Include="Logs/Profiles/BuiltIn/ApacheAccessLogFile.json" />
+    <EmbeddedResource Include="Logs/Profiles/BuiltIn/ApacheErrorLogFile.json" />
     <EmbeddedResource Include="Logs/Profiles/BuiltIn/AzureWebappLogFile.json" />
     <EmbeddedResource Include="Logs/Profiles/BuiltIn/DummyLog.json" />
     <EmbeddedResource Include="Logs/Profiles/BuiltIn/GitLog.json" />

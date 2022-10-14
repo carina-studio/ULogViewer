@@ -26,6 +26,7 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
         "AndroidKernelLogFile",
         "AndroidTraceFile",
         "ApacheAccessLogFile",
+        "ApacheErrorLogFile",
         "AzureWebappLogFile",
 #if DEBUG
         "DummyLog",
