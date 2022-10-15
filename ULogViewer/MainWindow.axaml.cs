@@ -246,7 +246,7 @@ namespace CarinaStudio.ULogViewer
 		/// Show new main window.
 		/// </summary>
 		public void CreateMainWindow() =>
-			this.Application.ShowMainWindow();
+			this.Application.ShowMainWindowAsync();
 
 
 		// Create new TabItem for given session.
@@ -407,14 +407,14 @@ namespace CarinaStudio.ULogViewer
 
 
 		// Move given session to new workspace.
-		void MoveSessionToNewWorkspace(TabItem tabItem)
+		async void MoveSessionToNewWorkspace(TabItem tabItem)
         {
 			// check state
 			if (tabItem.DataContext is not Session session)
 				return;
 
 			// create new window
-			if (!this.Application.ShowMainWindow(newWindow =>
+			if (!await this.Application.ShowMainWindowAsync(newWindow =>
             {
 				if (newWindow.DataContext is Workspace newWorkspace)
 					this.MoveSessionToNewWorkspace(session, newWorkspace);

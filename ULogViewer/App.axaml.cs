@@ -333,7 +333,7 @@ namespace CarinaStudio.ULogViewer
             base.OnNewInstanceLaunched(launchOptions);
 
 			// show main window
-			this.ShowMainWindow();
+			_ = this.ShowMainWindowAsync();
 		}
 
 
@@ -454,21 +454,19 @@ namespace CarinaStudio.ULogViewer
 			await KeyLogAnalysisRuleSetManager.InitializeAsync(this);
 			await LogAnalysisScriptSetManager.InitializeAsync(this);
 			await OperationDurationAnalysisRuleSetManager.InitializeAsync(this);
-			this.UpdateSplashWindowProgress(1);
 
 			// show main window
-			await Task.Delay(300);
 			if (!this.IsRestoringMainWindowsRequested)
-				this.ShowMainWindow();
+				_ = this.ShowMainWindowAsync();
 		}
 
 
 		/// <inheritdoc/>
-        protected override bool OnRestoreMainWindows()
+        protected override async Task<bool> OnRestoreMainWindowsAsync()
         {
-            if (base.OnRestoreMainWindows())
+            if (await base.OnRestoreMainWindowsAsync())
 				return true;
-			this.ShowMainWindow();
+			await this.ShowMainWindowAsync();
 			return false;
         }
 
@@ -485,11 +483,13 @@ namespace CarinaStudio.ULogViewer
 
 
 		/// <inheritdoc/>
-        protected override void OnTryExitingBackgroundMode()
+        protected override bool OnTryExitingBackgroundMode()
         {
-            base.OnTryExitingBackgroundMode();
+            if (base.OnTryExitingBackgroundMode())
+				return true;
 			if (this.MainWindows.IsEmpty())
-				this.ShowMainWindow();
+				_ = this.ShowMainWindowAsync();
+			return true;
         }
 
 
@@ -570,7 +570,7 @@ namespace CarinaStudio.ULogViewer
 					break;
 				case AppSuite.Controls.ApplicationOptionsDialogResult.RestartMainWindowsNeeded:
 					this.Logger.LogWarning("Restart main windows");
-					this.RestartMainWindows();
+					_ = this.RestartMainWindowsAsync();
 					break;
 			}
 		}
