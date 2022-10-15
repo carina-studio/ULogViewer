@@ -415,7 +415,7 @@ return false;</sys:String>
 	<!-- LogProfileEditorDialog -->
 	<sys:String x:Key="String/LogProfileEditorDialog.AllowMultipleFiles">Allow multiple files</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.ColorIndicator">Color indicator</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.ColorIndicator.Description">Way of grouping to show color block on the left hand side of each log</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.ColorIndicator.Description">Way of grouping to show color block on the left hand side of each log.</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Common">Common</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.DataSourceProvider">Data source</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.DataSourceProvider.ProVersionOnly">(Pro)</sys:String>
@@ -427,18 +427,18 @@ return false;</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.InvalidDataSourceOptions">Need to set valid options</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.IsAdministratorNeeded">Administrator role needed</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.IsContinuousReading">Continuous reading</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.IsContinuousReading.Description">Restart reading logs automatically when reaching end of data source</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.IsContinuousReading.Description">Restart reading logs automatically when reaching end of data source.</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.IsTemplate">Set as template</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.IsTemplate.Description">Template cannot be used directly but can be cloned as new log profile with partial parameters.</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.IsWorkingDirectoryNeeded">Need to select working directory</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LearnAboutLogsReadingAndParsingFirst">Do you want to learn about 《How does ULogViewer read and parse logs》 to help you to create log profile?</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogDisplaying">Log Displaying</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogLevelMapForReading">Mapping of log level</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LogLevelMapForReading.Description">Convert specific text in raw log into log level</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogLevelMapForReading.Description">Convert from raw value of property specified by "Name of property of raw log level" into actual log level.</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogLevelMapForWriting">Mapping of log level</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LogLevelMapForWriting.Description">Convert log level into specific text</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogLevelMapForWriting.Description">Convert log level into specific text.</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogPatterns">Log line patterns</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LogPatterns.Description">Pattern to parse each line of raw log</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogPatterns.Description">Pattern to parse each line of raw log.</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogPatternsWithoutVisibleLogProperties">You defined 'Log line patterns' without defining 'Log properties to show' which may cause logs shown incorrectly. Do you want to define 'Log properties to show'?</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogReading">Log Reading</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogStringEncodingForReading">Encoding of text in log for reading</sys:String>
@@ -448,6 +448,8 @@ return false;</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogWritingFormats.Description">The format will be used for logs copying and saving. For each log, the first format which contains all valid log properties will be used from list. Otherwise, the first format in list will be used.</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Name">Name (required)</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.ProVersionOnly">Upgrade to Pro version needed</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.RawLogLevelPropertyName">Name of property of raw log level</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.RawLogLevelPropertyName.Description">The property will be used for providing raw value of log level.</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.RestartReadingDelay">Delay before restarting log reading (ms)</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.ScriptLogDataSourceProviders">Manage log data source scripts…</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.SortDirection">Sort direction of log</sys:String>
@@ -467,7 +469,7 @@ return false;</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Title.Create">Create new log profile</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Title.Edit">Edit log profile</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.VisibleLogProperties">Log properties to show</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.VisibleLogProperties.Description">Specify which properties of log can be seen in viewer</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.VisibleLogProperties.Description">Specify which properties of log can be seen in viewer.</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.VisibleLogPropertiesWithoutLogPatterns">You defined 'Log properties to show' without defining 'Log line patterns' which may cause logs shown incorrectly. Do you want to define 'Log line patterns'?</sys:String>
 
 	<!-- LogProfileSelectionDialog -->

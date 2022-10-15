@@ -1682,6 +1682,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					it.RestartReadingDelay = TimeSpan.FromMilliseconds(profile.RestartReadingDelay);
 				}
 				it.Precondition = precondition;
+				it.RawLogLevelPropertyName = profile.RawLogLevelPropertyName;
 				it.TimeSpanCultureInfo = profile.TimeSpanCultureInfoForReading;
 				it.TimeSpanEncoding = profile.TimeSpanEncodingForReading;
 				it.TimeSpanFormats = profile.TimeSpanFormatsForReading;
@@ -2933,6 +2934,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					break;
 				case nameof(LogProfile.LogPatterns):
 				case nameof(LogProfile.LogStringEncodingForReading):
+				case nameof(LogProfile.RawLogLevelPropertyName):
 				case nameof(LogProfile.SortDirection):
 				case nameof(LogProfile.SortKey):
 				case nameof(LogProfile.TimeSpanCultureInfoForReading):

@@ -49,6 +49,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		object? pendingLogsReadingToken;
 		readonly SingleThreadSynchronizationContext pendingLogsSyncContext = new SingleThreadSynchronizationContext();
 		LogReadingPrecondition precondition;
+		string? rawLogLevelPropertyName;
 		readonly IDictionary<string, LogLevel> readOnlyLogLevelMap;
 		readonly TaskFactory readingTaskFactory;
 		TimeSpan restartReadingDelay;
@@ -731,6 +732,25 @@ namespace CarinaStudio.ULogViewer.Logs
 		}
 
 
+		/// <summary>
+		/// Get or set name of property which represents raw (unmapped) level of log.
+		/// </summary>
+		public string? RawLogLevelPropertyName
+		{
+			get => this.rawLogLevelPropertyName;
+			set
+			{
+				this.VerifyAccess();
+				if (this.state != LogReaderState.Preparing)
+					throw new InvalidOperationException($"Cannot change {nameof(RawLogLevelPropertyName)} when state is {this.state}.");
+				if (this.rawLogLevelPropertyName == value)
+					return;
+				this.rawLogLevelPropertyName = value;
+				this.OnPropertyChanged(nameof(RawLogLevelPropertyName));
+			}
+		}
+
+
 		// Read single line of log.
 		void ReadLog(LogBuilder logBuilder, Match match, StringPool stringPool, string[]? timeSpanFormats, string[]? timestampFormats)
 		{
@@ -878,13 +898,14 @@ namespace CarinaStudio.ULogViewer.Logs
 							break;
 					}
 				}
-				else if (name == nameof(Log.Level))
-				{
-					if (this.logLevelMap.TryGetValue(value, out var level))
-						logBuilder.Set(name, level.ToString());
-				}
 				else
 					logBuilder.Set(name, value);
+				if ((this.rawLogLevelPropertyName == null && name == nameof(Log.Level))
+					|| this.rawLogLevelPropertyName == name)
+				{
+					if (this.logLevelMap.TryGetValue(value, out var level))
+						logBuilder.Set(nameof(Log.Level), level.ToString());
+				}
 			}
 		}
 

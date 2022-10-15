@@ -55,6 +55,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		LogStringEncoding logStringEncodingForReading = LogStringEncoding.Plane;
 		LogStringEncoding logStringEncodingForWriting = LogStringEncoding.Plane;
 		IList<string> logWritingFormats = new string[0];
+		string rawLogLevelPropertyName = nameof(Log.Level);
 		IDictionary<string, LogLevel> readOnlyLogLevelMapForReading;
 		IDictionary<LogLevel, string> readOnlyLogLevelMapForWriting;
 		long restartReadingDelay;
@@ -120,6 +121,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			this.logStringEncodingForWriting = template.logStringEncodingForWriting;
 			this.logWritingFormats = template.logWritingFormats;
 			this.Name = template.Name;
+			this.rawLogLevelPropertyName = template.rawLogLevelPropertyName;
 			this.sortDirection = template.sortDirection;
 			this.sortKey = template.sortKey;
 			this.timeSpanCultureInfoForReading = template.timeSpanCultureInfoForReading;
@@ -844,6 +846,11 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 						else
 							this.Name = jsonProperty.Value.GetString();
 						break;
+					case nameof(RawLogLevelPropertyName):
+						this.rawLogLevelPropertyName = jsonProperty.Value.ToString() ?? "";
+						if (!Log.HasProperty(this.rawLogLevelPropertyName))
+							this.rawLogLevelPropertyName = nameof(Log.Level);
+						break;
 					case nameof(RestartReadingDelay):
 						this.restartReadingDelay = Math.Max(0, jsonProperty.Value.GetInt64());
 						break;
@@ -959,6 +966,8 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				writer.WriteEndArray();
 			}
 			writer.WriteString(nameof(Name), this.Name);
+			if (this.rawLogLevelPropertyName != nameof(Log.Level))
+				writer.WriteString(nameof(RawLogLevelPropertyName), this.rawLogLevelPropertyName);
 			writer.WriteNumber(nameof(RestartReadingDelay), this.restartReadingDelay);
 			writer.WriteString(nameof(SortDirection), this.sortDirection.ToString());
 			writer.WriteString(nameof(SortKey), this.sortKey.ToString());
@@ -992,6 +1001,24 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			writer.WritePropertyName(nameof(VisibleLogProperties));
 			this.SaveVisibleLogPropertiesToJson(writer);
 			writer.WriteEndObject();
+		}
+
+
+		/// <summary>
+		/// Get of set name of log property which represents raw (unmapped) level of log.
+		/// </summary>
+		public string RawLogLevelPropertyName
+		{
+			get => this.rawLogLevelPropertyName;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (this.rawLogLevelPropertyName == value)
+					return;
+				this.rawLogLevelPropertyName = value;
+				this.OnPropertyChanged(nameof(RawLogLevelPropertyName));
+			}
 		}
 
 

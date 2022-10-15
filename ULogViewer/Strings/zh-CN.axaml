@@ -387,7 +387,7 @@ return false;</sys:String>
 	<!-- LogProfileEditorDialog -->
 	<sys:String x:Key="String/LogProfileEditorDialog.AllowMultipleFiles">允许加入多个档案</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.ColorIndicator">色彩指示</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.ColorIndicator.Description">显示于日志左侧的色块分组方式</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.ColorIndicator.Description">显示于日志左侧的色块分组方式。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Common">一般设定</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.DataSourceProvider">数据来源</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.DataSourceProvider.ProVersionOnly">(专业版)</sys:String>
@@ -399,19 +399,19 @@ return false;</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.InvalidDataSourceOptions">需要有效的参数</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.IsAdministratorNeeded">需要系统管理员身份</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.IsContinuousReading">连续读取</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.IsContinuousReading.Description">读取至资料末端时将自动重新开始读取日志</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.IsContinuousReading.Description">读取至资料末端时将自动重新开始读取日志。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.IsTemplate">指定为模板</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.IsTemplate.Description">模板无法被直接使用，但可以用于包含部分参数并复制成为新的日志类型。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.IsWorkingDirectoryNeeded">必须选择工作目录</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LearnAboutLogsReadingAndParsingFirst">您是否想要先了解 《ULogViewer 如何读取及解析日志》 以帮助您建立日志类型？</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogDisplaying">日志显示設定</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogLevelMapForReading">日志等级对照表</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LogLevelMapForReading.Description">将原始日志中的特定文字对应至日志等级</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogLevelMapForReading.Description">将「原始日志等级属性」所指定之属性值对应至日志等级。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogLevelMapForWriting">日志等级对照表</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LogLevelMapForWriting.Description">将日志等级转换为特定的文字</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogLevelMapForWriting.Description">将日志等级转换为特定的文字。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogPatterns">日志行格式</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LogPatterns.Description">分析原始日志每一行的格式</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LogPatternsWithoutVisibleLogProperties">您定义了 '日志行格式' 但没有定义 '显示的日志属性'，这可能导致日志显示错误。您是否要定义 '显示的日志属性'？</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogPatterns.Description">分析原始日志每一行的格式。</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogPatternsWithoutVisibleLogProperties">您定义了「日志行格式」但没有定义「显示的日志属性」，这可能导致日志显示错误。您是否要定义「显示的日志属性」？</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogReading">日志读取设定</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogStringEncodingForReading">日志文字读取编码方式</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogStringEncodingForWriting">日志文字输出编码方式</sys:String>
@@ -420,6 +420,8 @@ return false;</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogWritingFormats.Description">此格式将用于日志复制与存储。对于每笔日志，将从列表中选出第一个包含所有有效日志属性的格式使用，否则使用列表中的第一个格式。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Name">名称 (必要)</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.ProVersionOnly">需要升级至专业版</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.RawLogLevelPropertyName">原始日志等级属性</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.RawLogLevelPropertyName.Description">该日志属性将用于提供日志等级的原始值。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.RestartReadingDelay">重新开始读取日志的延迟(毫秒)</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.ScriptLogDataSourceProviders">管理日志资料来源脚本…</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.SortDirection">日志排序方向</sys:String>
@@ -439,7 +441,7 @@ return false;</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Title.Create">建立新的日志类型</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Title.Edit">编辑日志类型</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.VisibleLogProperties">显示的日志类型</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.VisibleLogProperties.Description">指定有哪些日志属性可以编辑器中看到</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.VisibleLogProperties.Description">指定有哪些日志属性可以编辑器中看到。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.VisibleLogPropertiesWithoutLogPatterns">您定义了 '显示的日志属性' 但没有定义 '日志行格式'，这可能导致日志显示错误。您是否要定义 '日志行格式'？</sys:String>
 
 	<!-- LogProfileSelectionDialog -->

@@ -73,6 +73,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly Avalonia.Controls.ListBox logWritingFormatListBox;
 		readonly ObservableList<string> logWritingFormats = new();
 		readonly TextBox nameTextBox;
+		readonly ComboBox rawLogLevelPropertyComboBox;
 		readonly IntegerTextBox restartReadingDelayTextBox;
 		readonly ComboBox sortDirectionComboBox;
 		readonly ComboBox sortKeyComboBox;
@@ -149,6 +150,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.logStringEncodingForWritingComboBox = this.Get<ComboBox>("logStringEncodingForWritingComboBox");
 			this.logWritingFormatListBox = this.Get<Avalonia.Controls.ListBox>(nameof(logWritingFormatListBox));
 			this.nameTextBox = this.Get<TextBox>("nameTextBox");
+			this.rawLogLevelPropertyComboBox = this.Get<ComboBox>(nameof(rawLogLevelPropertyComboBox));
 			this.restartReadingDelayTextBox = this.Get<IntegerTextBox>(nameof(restartReadingDelayTextBox));
 			this.sortDirectionComboBox = this.Get<ComboBox>("sortDirectionComboBox");
 			this.sortKeyComboBox = this.Get<ComboBox>("sortKeyComboBox");
@@ -527,6 +529,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			logProfile.LogStringEncodingForWriting = (LogStringEncoding)this.logStringEncodingForWritingComboBox.SelectedItem.AsNonNull();
 			logProfile.LogWritingFormats = this.logWritingFormats;
 			logProfile.Name = this.nameTextBox.Text.AsNonNull();
+			logProfile.RawLogLevelPropertyName = (string)this.rawLogLevelPropertyComboBox.SelectedItem.AsNonNull();
 			logProfile.RestartReadingDelay = this.restartReadingDelayTextBox.Value.GetValueOrDefault();
 			logProfile.SortDirection = (SortDirection)this.sortDirectionComboBox.SelectedItem.AsNonNull();
 			logProfile.SortKey = (LogSortKey)this.sortKeyComboBox.SelectedItem.AsNonNull();
@@ -760,6 +763,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.iconComboBox.SelectedItem = LogProfileIcon.File;
 				this.logStringEncodingForReadingComboBox.SelectedItem = LogStringEncoding.Plane;
 				this.logStringEncodingForWritingComboBox.SelectedItem = LogStringEncoding.Plane;
+				this.rawLogLevelPropertyComboBox.SelectedItem = nameof(Log.Level);
 				this.sortDirectionComboBox.SelectedItem = SortDirection.Ascending;
 				this.sortKeyComboBox.SelectedItem = LogSortKey.Timestamp;
 				this.timeSpanEncodingForReadingComboBox.SelectedItem = LogTimeSpanEncoding.Custom;
@@ -786,6 +790,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.logStringEncodingForWritingComboBox.SelectedItem = profile.LogStringEncodingForWriting;
 				this.logWritingFormats.AddAll(profile.LogWritingFormats);
 				this.nameTextBox.Text = profile.Name;
+				this.rawLogLevelPropertyComboBox.SelectedItem = profile.RawLogLevelPropertyName;
 				this.restartReadingDelayTextBox.Value = profile.RestartReadingDelay;
 				this.sortDirectionComboBox.SelectedItem = profile.SortDirection;
 				this.sortKeyComboBox.SelectedItem = profile.SortKey;

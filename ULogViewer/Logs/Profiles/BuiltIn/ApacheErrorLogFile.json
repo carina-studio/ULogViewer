@@ -16,25 +16,19 @@
 		"notice": "Info",
 		"warn": "Warn"
 	},
-	"LogLevelMapForWriting": {
-    "Debug": "debug",
-		"Error": "error",
-    "Fatal": "crit",
-		"Info": "info",
-		"Warn": "warn"
-	},
   "LogPatterns": [
     {
-      "Regex": "\\[(?<Timestamp>[^\\]]+)\\]\\s+\\[(?<Level>\\w+)\\](\\s+\\[client\\s*(?<SourceName>[a-zA-Z\\d\\.\\:]+)\\])?\\s(?<Message>.*)",
+      "Regex": "\\[(?<Timestamp>[^\\]]+)\\]\\s+\\[(?<Extra1>\\w+)\\](\\s+\\[client\\s*(?<SourceName>[a-zA-Z\\d\\.\\:]+)\\])?\\s(?<Message>.*)",
       "IgnoreCase": true
     }
   ],
   "LogStringEncodingForReading": "Plane",
   "LogStringEncodingForWriting": "Plane",
   "LogWritingFormats": [
-		"[{Timestamp}] [{Level}] [client {SourceName}] {Message}",
-    "[{Timestamp}] [{Level}] {Message}"
+		"[{Timestamp}] [{Extra1}] [client {SourceName}] {Message}",
+    "[{Timestamp}] [{Extra1}] {Message}"
 	],
+  "RawLogLevelPropertyName": "Extra1",
   "SortDirection": "Ascending",
   "SortKey": "Timestamp",
   "TimeSpanEncodingForReading": "Custom",
