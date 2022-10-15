@@ -11,7 +11,7 @@
 	<!-- AppOptionsDialog -->
 	<sys:String x:Key="String/AppOptionsDialog.ContinuousLogReadingUpdateInterval">连续读取时的日志更新时距 (毫秒)</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs">在重新载入日志后滚动到最新的日志</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs.Description">仅适用于连续读取日志</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs.Description">仅适用于连续读取日志。</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.IgnoreCaseOfLogTextFilter">文字筛选忽略大小写</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.InitialLogProfile">启动时的初始化日志类型</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.LogAnalysis">日志分析</sys:String>
@@ -63,7 +63,7 @@
 	<sys:String x:Key="String/BuiltInProfile.ApacheErrorLogFile">Apache 服务器错误日志文件</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.ApacheErrorLogFile.Description">由 Apache 产生之文件，其中包括服务器所发生之错误信息。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AzureWebappLogFile">Azure Webapp 日志文件</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.AzureWebappLogFile.Description">從 Azure 下载之 Webapp 日志文件</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AzureWebappLogFile.Description">從 Azure 下载之 Webapp 日志文件。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AzureWebappLogStream">Azure Webapp 实时日志</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AzureWebappLogStream.Description">位於 Azure 上特定 Webapp 之实时日志。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.Empty">无</sys:String>
@@ -206,7 +206,7 @@
 	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Level">日志等级</sys:String>
 	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Level.Description">只有符合指定等级的日志才会被选择以输出结果。</sys:String>
 	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Message">分析结果信息 (必要)</sys:String>
-	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Message.Description">您可以使用插值语法 "{}" 以将日志属性或格式中的自定义分组输出至消息</sys:String>
+	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Message.Description">您可以使用插值语法 "{}" 以将日志属性或格式中的自定义分组输出至消息。</sys:String>
 	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Pattern">格式 (必要)</sys:String>
 	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Pattern.Description">您可以使用 \$\$ 表示文字属性分隔线。例如您想找到使用者为 "John" 且 信息为 "Hello" 的日志，就可以使用 "John\$\$Hello" 作为格式。文字属性的排列顺序和日志类型所定义与可见日志属性相同。</sys:String>
 	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.ResultType">分析结果类型</sys:String>
@@ -544,7 +544,7 @@ return false;</sys:String>
 	<sys:String x:Key="String/LogReadingPreconditionDialog.EndingTimestamp">至 (不包含此时间戳)</sys:String>
 	<sys:String x:Key="String/LogReadingPreconditionDialog.InvalidTimestampRange">结束时间戳必须晚于起始时间戳</sys:String>
 	<sys:String x:Key="String/LogReadingPreconditionDialog.PreconditionTimestamps">读取时间戳介于</sys:String>
-	<sys:String x:Key="String/LogReadingPreconditionDialog.SelectPreconditionBeforeReadingLogs.Description">您也可以在应用程序选项中变更此设置</sys:String>
+	<sys:String x:Key="String/LogReadingPreconditionDialog.SelectPreconditionBeforeReadingLogs.Description">您也可以在应用程序选项中变更此设置。</sys:String>
 	<sys:String x:Key="String/LogReadingPreconditionDialog.Title">日志读取前置条件</sys:String>
 
 	<!-- LogSortKey -->

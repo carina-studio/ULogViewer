@@ -8,7 +8,7 @@
 	<!-- AppOptionsDialog -->
 	<sys:String x:Key="String/AppOptionsDialog.ContinuousLogReadingUpdateInterval">Log update interval when continuous reading (milliseconds)</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs">Scroll to latest log after reloading logs</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs.Description">Only for continuous logs reading</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs.Description">Only for continuous logs reading.</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.IgnoreCaseOfLogTextFilter">Ignore case of text filter</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.InitialLogProfile">Initial log profile when startup</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.LogAnalysis">Log Analysis</sys:String>
@@ -576,7 +576,7 @@ return false;</sys:String>
 	<sys:String x:Key="String/LogReadingPreconditionDialog.EndingTimestamp">to (exclusive)</sys:String>
 	<sys:String x:Key="String/LogReadingPreconditionDialog.InvalidTimestampRange">The ending timestamp should be later than beginning timestamp</sys:String>
 	<sys:String x:Key="String/LogReadingPreconditionDialog.PreconditionTimestamps">Read with timestamp between</sys:String>
-	<sys:String x:Key="String/LogReadingPreconditionDialog.SelectPreconditionBeforeReadingLogs.Description">You can also change the setting in Options</sys:String>
+	<sys:String x:Key="String/LogReadingPreconditionDialog.SelectPreconditionBeforeReadingLogs.Description">You can also change the setting in Options.</sys:String>
 	<sys:String x:Key="String/LogReadingPreconditionDialog.Title">Precondition of log reading</sys:String>
 
 	<!-- LogSortKey -->
