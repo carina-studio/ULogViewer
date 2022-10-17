@@ -94,7 +94,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.Group = group;
 			this.Log = log;
 			this.LogReader = reader;
-			this.TrackingNode = new LinkedListNode<DisplayableLog>(this);
 
 			// check extras
 			var extraCount = group.MaxLogExtraNumber;
@@ -842,6 +841,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Next tracked instance.
+		/// </summary>
+		internal DisplayableLog? Next;
+
+
+		/// <summary>
 		/// Called when application string resources updated.
 		/// </summary>
 		internal void OnApplicationStringsUpdated()
@@ -933,6 +938,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TimestampString)));
 			}
 		}
+
+
+		/// <summary>
+		/// Previous tracked instance.
+		/// </summary>
+		internal DisplayableLog? Previous;
 
 
 		/// <summary>
@@ -1254,12 +1265,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Get title of log.
 		/// </summary>
 		public string? Title { get => this.Log.Title; }
-
-
-		/// <summary>
-		/// Node for tracking instance.
-		/// </summary>
-		public LinkedListNode<DisplayableLog> TrackingNode { get; }
 
 
 #pragma warning disable CS8600

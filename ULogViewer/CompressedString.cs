@@ -36,47 +36,47 @@ namespace CarinaStudio.ULogViewer
 		}
 
 
+		// Constants.
+		const uint FLAGS_COMPRESSED_MASK = 0x80000000;
+		const int FLAGS_COMPRESSED_SHIFT_COUNT = 31;
+		const uint FLAGS_UTF8_ENCODING_SIZE_MASK = 0x7fffffff;
+
+
 		// Static fields.
 		[ThreadStatic]
 		static MemoryStream? CompressionMemoryStream;
 		[ThreadStatic]
 		static MemoryStream? DecompressionMemoryStream;
-		static readonly byte[] EmptyData = new byte[0];
 
 
 		// Fields.
-		readonly byte[] data;
-		readonly bool isCompressed;
-		readonly string? originalString;
-		readonly int utf8EncodingSize;
+		readonly object? data;
+		readonly uint flags;
 
 
 		// Constructor.
 		CompressedString(string value, Level level)
 		{
 			if (level == Level.None || value.Length < 4)
-			{
-				this.data = EmptyData;
-				this.originalString = value;
-			}
+				this.data = value;
 			else
 			{
-				this.data = Encoding.UTF8.GetBytes(value);
-				this.utf8EncodingSize = this.data.Length;
+				var utf8Bytes = Encoding.UTF8.GetBytes(value);
+				this.data = utf8Bytes;
+				this.flags = ((uint)utf8Bytes.Length & FLAGS_UTF8_ENCODING_SIZE_MASK);
 				if (level == Level.Optimal && value.Length >= 64)
 				{
-					if (CompressionMemoryStream == null)
-						CompressionMemoryStream = new MemoryStream();
+					CompressionMemoryStream ??= new();
 					using (var stream = new DeflateStream(CompressionMemoryStream, CompressionMode.Compress, true))
-						stream.Write(this.data, 0, this.data.Length);
-					if (CompressionMemoryStream.Position < this.utf8EncodingSize)
+						stream.Write(utf8Bytes, 0, utf8Bytes.Length);
+					if (CompressionMemoryStream.Position < utf8Bytes.Length)
 					{
-						this.data = CompressionMemoryStream.ToArray();
-						this.isCompressed = true;
+						var compressedData = CompressionMemoryStream.ToArray();
+						this.data = compressedData;
+						this.flags |= (1u << FLAGS_COMPRESSED_SHIFT_COUNT);
 					}
 					CompressionMemoryStream.SetLength(0);
 				}
-				this.originalString = null;
 			}
 		}
 
@@ -100,29 +100,38 @@ namespace CarinaStudio.ULogViewer
 		/// <summary>
 		/// Get size of compressed string in bytes.
 		/// </summary>
-		public int Size { get => this.originalString?.Let(it => it.Length << 1) ?? this.data.Length; }
+		public int Size 
+		{ 
+			get => this.data switch
+			{
+				string str => str.Length << 1,
+				byte[] bytes => bytes.Length,
+				_ => 0,
+			} 
+			+ IntPtr.Size // reference to data
+			+ sizeof(uint); // flags
+		}
 
 
 		// Decompress to string.
 		public override string ToString()
 		{
-			if (this.originalString != null)
-				return this.originalString;
-			var data = this.data;
-			if (this.isCompressed)
+			if (this.data is string str)
+				return str;
+			if (this.data is not byte[] bytes)
+				return "";
+			if ((this.flags & FLAGS_COMPRESSED_MASK) != 0)
 			{
-				if (DecompressionMemoryStream == null)
-					DecompressionMemoryStream = new MemoryStream();
-				DecompressionMemoryStream.Write(data, 0, data.Length);
+				DecompressionMemoryStream ??= new();
+				DecompressionMemoryStream.Write(bytes, 0, bytes.Length);
 				DecompressionMemoryStream.Position = 0;
-				data = new byte[this.utf8EncodingSize];
+				var utf8Bytes = new byte[(int)(this.flags & FLAGS_UTF8_ENCODING_SIZE_MASK)];
 				using (var stream = new DeflateStream(DecompressionMemoryStream, CompressionMode.Decompress, true))
-				
-					stream.Read(data, 0, data.Length);
+					stream.Read(utf8Bytes, 0, utf8Bytes.Length);
 				DecompressionMemoryStream.SetLength(0);
+				return Encoding.UTF8.GetString(utf8Bytes);
 			}
-			var value = Encoding.UTF8.GetString(data);
-			return value;
+			return Encoding.UTF8.GetString(bytes);
 		}
 	}
 }
