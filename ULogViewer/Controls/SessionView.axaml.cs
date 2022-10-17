@@ -236,6 +236,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ToolBarScrollViewer toolBarScrollViewer;
 		readonly ScheduledAction updateLogAnalysisAction;
 		readonly ScheduledAction updateLogFiltersAction;
+		readonly ScheduledAction updateLogHeaderContainerMarginAction;
 		readonly ScheduledAction updateStatusBarStateAction;
 		readonly SortedObservableList<Logs.LogLevel> validLogLevels = new SortedObservableList<Logs.LogLevel>((x, y) => (int)x - (int)y);
 		readonly ToggleButton workingDirectoryActionsButton;
@@ -746,6 +747,12 @@ namespace CarinaStudio.ULogViewer.Controls
 				session.LogFiltering.TextFilter = this.logTextFilterTextBox.Object;
 				session.LogFiltering.PredefinedTextFilters.Clear();
 				session.LogFiltering.PredefinedTextFilters.AddAll(this.selectedPredefinedLogTextFilters);
+			});
+			this.updateLogHeaderContainerMarginAction = new(() =>
+			{
+				var logScrollViewer = this.logScrollViewer;
+				if (logScrollViewer != null)
+					this.logHeaderContainer.Margin = new Thickness(-logScrollViewer.Offset.X, 0, Math.Min(0, logScrollViewer.Offset.X + logScrollViewer.Viewport.Width - logScrollViewer.Extent.Width), 0);
 			});
 			this.updateStatusBarStateAction = new ScheduledAction(() =>
 			{
@@ -3358,9 +3365,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 
 			// sync log header offset
-			var logScrollViewer = this.logScrollViewer;
-			if (logScrollViewer != null)
-				this.logHeaderContainer.Margin = new Thickness(-logScrollViewer.Offset.X, 0, Math.Min(0, logScrollViewer.Offset.X + logScrollViewer.Viewport.Width - logScrollViewer.Extent.Width), 0);
+			if (Math.Abs(e.OffsetDelta.X) > 0.1 || Math.Abs(e.ExtentDelta.X) > 0.1)
+				this.updateLogHeaderContainerMarginAction.Schedule();
 		}
 
 
@@ -4279,7 +4285,10 @@ namespace CarinaStudio.ULogViewer.Controls
 				var headerColumn = this.logHeaderColumns[columnIndex];
 				var headerColumnWidth = this.logHeaderWidths[columnIndex];
 				if (headerColumnWidth.Value.GridUnitType == GridUnitType.Pixel || columnIndex < lastLogPropertyIndex)
-					headerColumnWidth.Update(new GridLength(headerColumn.ActualWidth, GridUnitType.Pixel));
+				{
+					if (Math.Abs(headerColumnWidth.Value.Value - headerColumn.ActualWidth) > 0.5)
+						headerColumnWidth.Update(new GridLength(headerColumn.ActualWidth, GridUnitType.Pixel));
+				}
 			}
 		}
 
