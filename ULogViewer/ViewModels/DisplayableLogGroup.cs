@@ -25,7 +25,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		// Fields.
 		readonly Dictionary<string, IBrush> colorIndicatorBrushes = new Dictionary<string, IBrush>();
 		Func<DisplayableLog, string>? colorIndicatorKeyGetter;
-		readonly LinkedList<DisplayableLog> displayableLogs = new LinkedList<DisplayableLog>();
+		DisplayableLog? displayableLogsHead;
 		readonly Dictionary<string, IBrush> levelBrushes = new Dictionary<string, IBrush>();
 		int maxDisplayLineCount;
 		readonly Random random = new Random();
@@ -251,11 +251,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.SynchronizationContext.Post(() =>
 				{
 					this.UpdateLevelBrushes();
-					var node = this.displayableLogs.First;
-					while (node != null)
+					var log = this.displayableLogsHead;
+					while (log != null)
 					{
-						node.Value.OnStyleResourcesUpdated();
-						node = node.Next;
+						log.OnStyleResourcesUpdated();
+						log = log.Next;
 					}
 				});
 			}
@@ -265,11 +265,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		// Called when application string resources updated.
 		void OnApplicationStringsUpdated(object? sender, EventArgs e)
 		{
-			var node = this.displayableLogs.First;
-			while (node != null)
+			var log = this.displayableLogsHead;
+			while (log != null)
 			{
-				node.Value.OnApplicationStringsUpdated();
-				node = node.Next;
+				log.OnApplicationStringsUpdated();
+				log = log.Next;
 			}
 		}
 
@@ -280,7 +280,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <param name="log"><see cref="DisplayableLog"/>.</param>
 		internal void OnDisplayableLogCreated(DisplayableLog log)
 		{
-			this.displayableLogs.AddLast(log.TrackingNode);
+			if (this.displayableLogsHead != null)
+			{
+				log.Next = this.displayableLogsHead;
+				this.displayableLogsHead.Previous = log;
+			}
+			this.displayableLogsHead = log;
 			this.MemorySize += log.MemorySize;
 		}
 
@@ -291,7 +296,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <param name="log"><see cref="DisplayableLog"/>.</param>
 		internal void OnDisplayableLogDisposed(DisplayableLog log)
 		{
-			this.displayableLogs.Remove(log.TrackingNode);
+			if (log.Previous != null)
+				log.Previous.Next = log.Next;
+			if (log.Next != null)
+				log.Next.Previous = log.Previous;
+			if (this.displayableLogsHead == log)
+				this.displayableLogsHead = log.Next;
+			log.Next = null;
+			log.Previous = null;
 			this.MemorySize -= log.MemorySize;
 		}
 
@@ -315,11 +327,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				case nameof(LogProfile.ColorIndicator):
 					{
 						this.UpdateColorIndicatorBrushes();
-						var node = this.displayableLogs.First;
-						while (node != null)
+						var log = this.displayableLogsHead;
+						while (log != null)
 						{
-							node.Value.OnStyleResourcesUpdated();
-							node = node.Next;
+							log.OnStyleResourcesUpdated();
+							log = log.Next;
 						}
 					}
 					break;
@@ -328,21 +340,21 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					break;
 				case nameof(LogProfile.TimeSpanFormatForDisplaying):
 					{
-						var node = this.displayableLogs.First;
-						while (node != null)
+						var log = this.displayableLogsHead;
+						while (log != null)
 						{
-							node.Value.OnTimeSpanFormatChanged();
-							node = node.Next;
+							log.OnTimeSpanFormatChanged();
+							log = log.Next;
 						}
 					}
 					break;
 				case nameof(LogProfile.TimestampFormatForDisplaying):
 					{
-						var node = this.displayableLogs.First;
-						while (node != null)
+						var log = this.displayableLogsHead;
+						while (log != null)
 						{
-							node.Value.OnTimestampFormatChanged();
-							node = node.Next;
+							log.OnTimestampFormatChanged();
+							log = log.Next;
 						}
 					}
 					break;
@@ -356,11 +368,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			if (e.Key == SettingKeys.MaxDisplayLineCountForEachLog)
 			{
 				this.maxDisplayLineCount = (int)e.Value;
-				var node = this.displayableLogs.First;
-				while (node != null)
+				var log = this.displayableLogsHead;
+				while (log != null)
 				{
-					node.Value.OnMaxDisplayLineCountChanged();
-					node = node.Next;
+					log.OnMaxDisplayLineCountChanged();
+					log = log.Next;
 				}
 			}
 			else if (e.Key == SettingKeys.SaveMemoryAggressively)
@@ -378,11 +390,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.VerifyAccess();
 #endif
 			this.VerifyDisposed();
-			var node = this.displayableLogs.First;
-			while (node != null)
+			var log = this.displayableLogsHead;
+			while (log != null)
 			{
-				node.Value.RemoveAnalysisResults(analyzer);
-				node = node.Next;
+				log.RemoveAnalysisResults(analyzer);
+				log = log.Next;
 			}
 		}
 
