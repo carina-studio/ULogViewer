@@ -44,11 +44,11 @@ class OperationDurationAnalysisRuleSet : BaseProfile<IULogViewerApplication>, IL
             DisplayableLogAnalysisResultType resultType,
             Regex beginningPattern, 
             IEnumerable<ContextualBasedAnalysisAction> beginningPreActions,
-            IEnumerable<ContextualBasedAnalysisCondition> beginningConditions, 
+            IEnumerable<DisplayableLogAnalysisCondition> beginningConditions, 
             IEnumerable<ContextualBasedAnalysisAction> beginningPostActions,
             Regex endingPattern, 
             IEnumerable<ContextualBasedAnalysisAction> endingPreActions,
-            IEnumerable<ContextualBasedAnalysisCondition> endingConditions, 
+            IEnumerable<DisplayableLogAnalysisCondition> endingConditions, 
             IEnumerable<ContextualBasedAnalysisAction> endingPostActions,
             OperationEndingMode endingMode,
             IEnumerable<string> endingVars,
@@ -118,7 +118,7 @@ class OperationDurationAnalysisRuleSet : BaseProfile<IULogViewerApplication>, IL
         /// <summary>
         /// Get list of conditions for beginning of operation log after text matched.
         /// </summary>
-        public IList<ContextualBasedAnalysisCondition> BeginningConditions { get; }
+        public IList<DisplayableLogAnalysisCondition> BeginningConditions { get; }
 
         /// <summary>
         /// Get pattern to match text of beginning of operation log.
@@ -143,7 +143,7 @@ class OperationDurationAnalysisRuleSet : BaseProfile<IULogViewerApplication>, IL
         /// <summary>
         /// Get list of conditions for ending of operation log after text matched.
         /// </summary>
-        public IList<ContextualBasedAnalysisCondition> EndingConditions { get; }
+        public IList<DisplayableLogAnalysisCondition> EndingConditions { get; }
 
         /// <summary>
         /// Get mode of ending operation.

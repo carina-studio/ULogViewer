@@ -20,12 +20,12 @@ namespace CarinaStudio.ULogViewer.Controls
 	partial class OperationDurationAnalysisRuleEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
 	{
 		// Fields.
-		readonly ObservableList<ContextualBasedAnalysisCondition> beginningConditions = new();
+		readonly ObservableList<DisplayableLogAnalysisCondition> beginningConditions = new();
 		readonly PatternEditor beginningPatternEditor;
 		readonly ObservableList<ContextualBasedAnalysisAction> beginningPostActions = new();
 		readonly ObservableList<ContextualBasedAnalysisAction> beginningPreActions = new();
 		readonly TextBox customMessageTextBox;
-		readonly ObservableList<ContextualBasedAnalysisCondition> endingConditions = new();
+		readonly ObservableList<DisplayableLogAnalysisCondition> endingConditions = new();
 		readonly ComboBox endingModeComboBox;
 		readonly PatternEditor endingPatternEditor;
 		readonly ObservableList<ContextualBasedAnalysisAction> endingPostActions = new();
@@ -100,7 +100,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Beginning conditions.
-		IList<ContextualBasedAnalysisCondition> BeginningConditions { get => this.beginningConditions; }
+		IList<DisplayableLogAnalysisCondition> BeginningConditions { get => this.beginningConditions; }
 
 
 		// Post-actions for beginning of operation.
@@ -112,7 +112,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Default beginning conditions.
-		public IList<ContextualBasedAnalysisCondition>? DefaultBeginningConditions { get; set; }
+		public IList<DisplayableLogAnalysisCondition>? DefaultBeginningConditions { get; set; }
 
 
 		// Default pattern of beginning of operation.
@@ -128,7 +128,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Default beginning conditions.
-		public IList<ContextualBasedAnalysisCondition>? DefaultEndingConditions { get; set; }
+		public IList<DisplayableLogAnalysisCondition>? DefaultEndingConditions { get; set; }
 
 
 		// Default pattern of ending of operation.
@@ -177,7 +177,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Ending conditions.
-		IList<ContextualBasedAnalysisCondition> EndingConditions { get => this.endingConditions; }
+		IList<DisplayableLogAnalysisCondition> EndingConditions { get => this.endingConditions; }
 
 
 		// Post-actions for ending of operation.

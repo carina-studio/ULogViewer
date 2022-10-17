@@ -1,9 +1,9 @@
-using System.Reflection;
-using System.Collections.Concurrent;
 using System;
+using System.Collections.Concurrent;
+using System.Reflection;
 using System.Text.Json;
 
-namespace CarinaStudio.ULogViewer.ViewModels.Analysis.ContextualBased;
+namespace CarinaStudio.ULogViewer.ViewModels.Analysis;
 
 /// <summary>
 /// Type of value comparison.
@@ -38,11 +38,11 @@ enum ComparisonType
 
 
 /// <summary>
-/// Condition of contextual-based log analysis.
+/// Condition of log analysis.
 /// </summary>
 #pragma warning disable CS0659
 #pragma warning disable CS0661
-abstract class ContextualBasedAnalysisCondition : IEquatable<ContextualBasedAnalysisCondition>
+abstract class DisplayableLogAnalysisCondition : IEquatable<DisplayableLogAnalysisCondition>
 #pragma warning restore CS0659
 #pragma warning restore CS0661
 {
@@ -51,12 +51,12 @@ abstract class ContextualBasedAnalysisCondition : IEquatable<ContextualBasedAnal
 
 
     /// <inheritdoc/>
-    public abstract bool Equals(ContextualBasedAnalysisCondition? condition);
+    public abstract bool Equals(DisplayableLogAnalysisCondition? condition);
 
 
     /// <inheritdoc/>
     public override bool Equals(object? obj) =>
-        obj is ContextualBasedAnalysisCondition condition
+        obj is DisplayableLogAnalysisCondition condition
         && this.Equals(condition);
 
 
@@ -67,19 +67,20 @@ abstract class ContextualBasedAnalysisCondition : IEquatable<ContextualBasedAnal
     /// <param name="log">Log.</param>
     /// <param name="parameters">List of parameters.</param>
     /// <returns>True if condition matched.</returns>
-    public abstract bool Match(ContextualBasedAnalysisContext context, DisplayableLog log, params object?[] parameters);
+    public abstract bool Match(DisplayableLogAnalysisContext context, DisplayableLog log, params object?[] parameters);
+
 
     /// <summary>
     /// Equality operator.
     /// </summary>
-    public static bool operator ==(ContextualBasedAnalysisCondition? lhs, ContextualBasedAnalysisCondition? rhs) =>
-        lhs?.Equals(rhs) ?? object.ReferenceEquals(rhs, null);
+    public static bool operator ==(DisplayableLogAnalysisCondition? lhs, DisplayableLogAnalysisCondition? rhs) =>
+        lhs?.Equals(rhs) ?? rhs is null;
     
     /// <summary>
     /// Inequality operator.
     /// </summary>
-    public static bool operator !=(ContextualBasedAnalysisCondition? lhs, ContextualBasedAnalysisCondition? rhs) =>
-        object.ReferenceEquals(lhs, null) ? !object.ReferenceEquals(rhs, null) : !lhs.Equals(rhs);
+    public static bool operator !=(DisplayableLogAnalysisCondition? lhs, DisplayableLogAnalysisCondition? rhs) =>
+        lhs is null ? rhs is not null : !lhs.Equals(rhs);
     
 
     /// <summary>
@@ -95,7 +96,7 @@ abstract class ContextualBasedAnalysisCondition : IEquatable<ContextualBasedAnal
     /// <param name="jsonElement">JSON element.</param>
     /// <param name="condition">Loaded condition.</param>
     /// <returns>True if condition loaded successfully.</returns>
-    public static bool TryLoad(JsonElement jsonElement, out ContextualBasedAnalysisCondition? condition)
+    public static bool TryLoad(JsonElement jsonElement, out DisplayableLogAnalysisCondition? condition)
     {
         condition = null;
         return false;
@@ -106,7 +107,7 @@ abstract class ContextualBasedAnalysisCondition : IEquatable<ContextualBasedAnal
 /// <summary>
 /// Condition based-on comparison of values.
 /// </summary>
-abstract class ValuesComparisonCondition : ContextualBasedAnalysisCondition
+abstract class ValuesComparisonCondition : DisplayableLogAnalysisCondition
 {
     /// <summary>
     /// Initialize new <see cref="ValuesComparisonCondition"/> instance.
@@ -125,7 +126,7 @@ abstract class ValuesComparisonCondition : ContextualBasedAnalysisCondition
 
 
     /// <inheritdoc/>
-    public sealed override bool Match(ContextualBasedAnalysisContext context, DisplayableLog log, params object?[] parameters)
+    public sealed override bool Match(DisplayableLogAnalysisContext context, DisplayableLog log, params object?[] parameters)
     {
         return false;
     }
@@ -140,7 +141,7 @@ abstract class ValuesComparisonCondition : ContextualBasedAnalysisCondition
     /// <param name="lhs">Value as left hand side.</param>
     /// <param name="rhs">Value as right hand side.</param>
     /// <returns>True if values are got successfully.</returns>
-    protected abstract bool TryGetValues(ContextualBasedAnalysisContext context, DisplayableLog log, object?[] parameters, out string lhs, out string rhs);
+    protected abstract bool TryGetValues(DisplayableLogAnalysisContext context, DisplayableLog log, object?[] parameters, out string? lhs, out string? rhs);
 }
 
 
@@ -169,7 +170,7 @@ class VariableAndConstantComparisonCondition : ValuesComparisonCondition
 
 
     /// <inheritdoc/>
-    public override bool Equals(ContextualBasedAnalysisCondition? condition) =>
+    public override bool Equals(DisplayableLogAnalysisCondition? condition) =>
         condition is VariableAndConstantComparisonCondition vccCondition
         && vccCondition.ComparisonType == this.ComparisonType
         && vccCondition.Variable == this.Variable
@@ -207,7 +208,7 @@ class VariableAndConstantComparisonCondition : ValuesComparisonCondition
 
 
     /// <inheritdoc/>
-    protected override bool TryGetValues(ContextualBasedAnalysisContext context, DisplayableLog log, object?[] parameters, out string lhs, out string rhs)
+    protected override bool TryGetValues(DisplayableLogAnalysisContext context, DisplayableLog log, object?[] parameters, out string? lhs, out string? rhs)
     {
         lhs = context.GetVariable(this.Variable);
         rhs = this.Constant;
@@ -241,7 +242,7 @@ class VariablesComparisonCondition : ValuesComparisonCondition
 
 
     /// <inheritdoc/>
-    public override bool Equals(ContextualBasedAnalysisCondition? condition) =>
+    public override bool Equals(DisplayableLogAnalysisCondition? condition) =>
         condition is VariablesComparisonCondition vcCondition
         && vcCondition.ComparisonType == this.ComparisonType
         && vcCondition.LhsVariable == this.LhsVariable
@@ -291,7 +292,7 @@ class VariablesComparisonCondition : ValuesComparisonCondition
 
 
     /// <inheritdoc/>
-    protected override bool TryGetValues(ContextualBasedAnalysisContext context, DisplayableLog log, object?[] parameters, out string lhs, out string rhs)
+    protected override bool TryGetValues(DisplayableLogAnalysisContext context, DisplayableLog log, object?[] parameters, out string? lhs, out string? rhs)
     {
         lhs = context.GetVariable(this.LhsVariable);
         rhs = context.GetVariable(this.RhsVariable);

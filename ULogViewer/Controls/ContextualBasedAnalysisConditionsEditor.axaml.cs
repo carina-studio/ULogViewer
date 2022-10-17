@@ -4,7 +4,7 @@ using Avalonia.Controls.Primitives;
 using Avalonia.LogicalTree;
 using Avalonia.Markup.Xaml;
 using CarinaStudio.Threading;
-using CarinaStudio.ULogViewer.ViewModels.Analysis.ContextualBased;
+using CarinaStudio.ULogViewer.ViewModels.Analysis;
 using System;
 using System.Collections.Generic;
 
@@ -18,7 +18,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// <summary>
 		/// Property of <see cref="Conditions"/>.
 		/// </summary>
-		public static readonly AvaloniaProperty<IList<ContextualBasedAnalysisCondition>> ConditionsProperty = AvaloniaProperty.Register<ContextualBasedAnalysisConditionsEditor, IList<ContextualBasedAnalysisCondition>>(nameof(Conditions));
+		public static readonly AvaloniaProperty<IList<DisplayableLogAnalysisCondition>> ConditionsProperty = AvaloniaProperty.Register<ContextualBasedAnalysisConditionsEditor, IList<DisplayableLogAnalysisCondition>>(nameof(Conditions));
 		/// <summary>
 		/// Property of <see cref="VerticalScrollBarVisibility"/>.
 		/// </summary>
@@ -61,7 +61,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			});
 			this.conditionListBox = this.Get<AppSuite.Controls.ListBox>(nameof(conditionListBox)).Also(it =>
 			{
-				it.DoubleClickOnItem += (_, e) => this.EditCondition((ContextualBasedAnalysisCondition)e.Item);
+				it.DoubleClickOnItem += (_, e) => this.EditCondition((DisplayableLogAnalysisCondition)e.Item);
 				it.GetObservable(ScrollViewer.VerticalScrollBarVisibilityProperty).Subscribe(visibility =>
 				{
 					this.SetAndRaise<ScrollBarVisibility>(VerticalScrollBarVisibilityProperty, ref this.verticalScrollBarVisibility, visibility);
@@ -71,7 +71,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Add condition.
-		void AddCondition(ContextualBasedAnalysisCondition? condition)
+		void AddCondition(DisplayableLogAnalysisCondition? condition)
 		{
 			var conditions = this.Conditions;
 			if (conditions == null || condition == null)
@@ -87,7 +87,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (this.window == null)
 				return;
-			this.AddCondition(await new VarAndConstComparisonEditorDialog().ShowDialog<ContextualBasedAnalysisCondition?>(this.window));
+			this.AddCondition(await new VarAndConstComparisonEditorDialog().ShowDialog<DisplayableLogAnalysisCondition?>(this.window));
 		}
 
 
@@ -96,27 +96,27 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (this.window == null)
 				return;
-			this.AddCondition(await new VarsComparisonEditorDialog().ShowDialog<ContextualBasedAnalysisCondition?>(this.window));
+			this.AddCondition(await new VarsComparisonEditorDialog().ShowDialog<DisplayableLogAnalysisCondition?>(this.window));
 		}
 
 
 		/// <summary>
 		/// Get of set list of conditions to be edited.
 		/// </summary>
-		public IList<ContextualBasedAnalysisCondition> Conditions
+		public IList<DisplayableLogAnalysisCondition> Conditions
 		{
-			get => this.GetValue<IList<ContextualBasedAnalysisCondition>>(ConditionsProperty);
-			set => this.SetValue<IList<ContextualBasedAnalysisCondition>>(ConditionsProperty, value);
+			get => this.GetValue<IList<DisplayableLogAnalysisCondition>>(ConditionsProperty);
+			set => this.SetValue<IList<DisplayableLogAnalysisCondition>>(ConditionsProperty, value);
 		}
 
 
 		// Edit condition.
 		void EditCondition(ListBoxItem item)
 		{
-			if (item.DataContext is ContextualBasedAnalysisCondition condition)
+			if (item.DataContext is DisplayableLogAnalysisCondition condition)
 				this.EditCondition(condition);
 		}
-		async void EditCondition(ContextualBasedAnalysisCondition condition)
+		async void EditCondition(DisplayableLogAnalysisCondition condition)
 		{
 			// find position
 			if (this.window == null)
@@ -131,11 +131,11 @@ namespace CarinaStudio.ULogViewer.Controls
 			// edit
 			var newCondition = condition switch
 			{
-				VariableAndConstantComparisonCondition vaccCondition => await new VarAndConstComparisonEditorDialog() { Condition = vaccCondition }.ShowDialog<ContextualBasedAnalysisCondition?>(this.window),
-				VariablesComparisonCondition vcCondition => await new VarsComparisonEditorDialog() { Condition = vcCondition }.ShowDialog<ContextualBasedAnalysisCondition?>(this.window),
+				VariableAndConstantComparisonCondition vaccCondition => await new VarAndConstComparisonEditorDialog() { Condition = vaccCondition }.ShowDialog<DisplayableLogAnalysisCondition?>(this.window),
+				VariablesComparisonCondition vcCondition => await new VarsComparisonEditorDialog() { Condition = vcCondition }.ShowDialog<DisplayableLogAnalysisCondition?>(this.window),
 				_ => throw new NotImplementedException(),
 			};
-			if (newCondition == null || newCondition == condition)
+			if (newCondition is null || newCondition == condition)
 				return;
 			
 			// update
@@ -165,7 +165,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		void RemoveCondition(ListBoxItem item)
 		{
 			var conditions = this.Conditions;
-			if (conditions == null || item.DataContext is not ContextualBasedAnalysisCondition condition)
+			if (conditions == null || item.DataContext is not DisplayableLogAnalysisCondition condition)
 				return;
 			conditions.Remove(condition);
 			this.conditionListBox.SelectedItem = null;

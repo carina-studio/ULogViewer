@@ -2,7 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using CarinaStudio.Threading;
-using CarinaStudio.ULogViewer.ViewModels.Analysis.ContextualBased;
+using CarinaStudio.ULogViewer.ViewModels.Analysis;
 using System;
 using System.Threading.Tasks;
 using System.Threading;
