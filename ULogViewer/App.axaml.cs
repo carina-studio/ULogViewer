@@ -289,6 +289,7 @@ namespace CarinaStudio.ULogViewer
 			// wait for I/O completion of log analysis rules
 			await KeyLogAnalysisRuleSetManager.Default.WaitForIOTaskCompletion();
 			await LogAnalysisScriptSetManager.Default.WaitForIOTaskCompletion();
+			await OperationCountingAnalysisRuleSetManager.Default.WaitForIOTaskCompletion();
 			await OperationDurationAnalysisRuleSetManager.Default.WaitForIOTaskCompletion();
 
 			// wait for I/O completion of log text filters
@@ -453,6 +454,7 @@ namespace CarinaStudio.ULogViewer
 			this.UpdateSplashWindowMessage(this.GetStringNonNull("SplashWindow.InitializeLogAnalysisRules"));
 			await KeyLogAnalysisRuleSetManager.InitializeAsync(this);
 			await LogAnalysisScriptSetManager.InitializeAsync(this);
+			await OperationCountingAnalysisRuleSetManager.InitializeAsync(this);
 			await OperationDurationAnalysisRuleSetManager.InitializeAsync(this);
 
 			// show main window
