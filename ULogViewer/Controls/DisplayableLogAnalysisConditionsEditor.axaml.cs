@@ -11,18 +11,18 @@ using System.Collections.Generic;
 namespace CarinaStudio.ULogViewer.Controls
 {
 	/// <summary>
-	/// Dialog to edit <see cref="ContextualBasedAnalysisCondition"/>s.
+	/// Dialog to edit <see cref="DisplayableLogAnalysisCondition"/>s.
 	/// </summary>
-	partial class ContextualBasedAnalysisConditionsEditor : CarinaStudio.Controls.UserControl<IULogViewerApplication>
+	partial class DisplayableLogAnalysisConditionsEditor : CarinaStudio.Controls.UserControl<IULogViewerApplication>
 	{
 		/// <summary>
 		/// Property of <see cref="Conditions"/>.
 		/// </summary>
-		public static readonly AvaloniaProperty<IList<DisplayableLogAnalysisCondition>> ConditionsProperty = AvaloniaProperty.Register<ContextualBasedAnalysisConditionsEditor, IList<DisplayableLogAnalysisCondition>>(nameof(Conditions));
+		public static readonly AvaloniaProperty<IList<DisplayableLogAnalysisCondition>> ConditionsProperty = AvaloniaProperty.Register<DisplayableLogAnalysisConditionsEditor, IList<DisplayableLogAnalysisCondition>>(nameof(Conditions));
 		/// <summary>
 		/// Property of <see cref="VerticalScrollBarVisibility"/>.
 		/// </summary>
-		public static readonly AvaloniaProperty<ScrollBarVisibility> VerticalScrollBarVisibilityProperty = AvaloniaProperty.RegisterDirect<ContextualBasedAnalysisConditionsEditor, ScrollBarVisibility>(nameof(VerticalScrollBarVisibility), 
+		public static readonly AvaloniaProperty<ScrollBarVisibility> VerticalScrollBarVisibilityProperty = AvaloniaProperty.RegisterDirect<DisplayableLogAnalysisConditionsEditor, ScrollBarVisibility>(nameof(VerticalScrollBarVisibility), 
 			c => c.verticalScrollBarVisibility,
 			(c, v) => ScrollViewer.SetVerticalScrollBarVisibility(c.conditionListBox, v));
 
@@ -36,9 +36,9 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		/// <summary>
-		/// Initialize new <see cref="ContextualBasedAnalysisConditionsEditor"/> instance.
+		/// Initialize new <see cref="DisplayableLogAnalysisConditionsEditor"/> instance.
 		/// </summary>
-		public ContextualBasedAnalysisConditionsEditor()
+		public DisplayableLogAnalysisConditionsEditor()
 		{
 			AvaloniaXamlLoader.Load(this);
 			this.addConditionButton = this.Get<ToggleButton>(nameof(addConditionButton));

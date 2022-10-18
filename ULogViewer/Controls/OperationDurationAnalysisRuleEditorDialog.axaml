@@ -20,7 +20,7 @@
 		<Style Selector="appControls|ContextualBasedAnalysisActionsEditor">
 			<Setter Property="VerticalScrollBarVisibility" Value="Disabled"/>
 		</Style>
-		<Style Selector="appControls|ContextualBasedAnalysisConditionsEditor">
+		<Style Selector="appControls|DisplayableLogAnalysisConditionsEditor">
 			<Setter Property="VerticalScrollBarVisibility" Value="Disabled"/>
 		</Style>
 	</Window.Styles>
@@ -86,7 +86,7 @@
 
 					<!-- Beginning conditions -->
 					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.Conditions}"/>
-					<appControls:ContextualBasedAnalysisConditionsEditor Conditions="{Binding $parent[Window].BeginningConditions}"/>
+					<appControls:DisplayableLogAnalysisConditionsEditor Conditions="{Binding $parent[Window].BeginningConditions}"/>
 					<Separator Classes="Dialog_Separator"/>
 
 					<!-- Beginning post-actions -->
@@ -111,7 +111,7 @@
 
 					<!-- Ending conditions -->
 					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.Conditions}"/>
-					<appControls:ContextualBasedAnalysisConditionsEditor Conditions="{Binding $parent[Window].EndingConditions}"/>
+					<appControls:DisplayableLogAnalysisConditionsEditor Conditions="{Binding $parent[Window].EndingConditions}"/>
 					<Separator Classes="Dialog_Separator"/>
 
 					<!-- Ending post-actions -->

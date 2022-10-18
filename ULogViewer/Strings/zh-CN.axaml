@@ -130,10 +130,6 @@
 	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Stack">堆栈名称 (必要)</sys:String>
 	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Variable">变量名称 (必要)</sys:String>
 
-	<!-- ContextualBasedAnalysisConditionsEditor -->
-	<sys:String x:Key="String/ContextualBasedAnalysisConditionsEditor.VarAndConstComparisonCondition.WithDialog">比较变量与常量…</sys:String>
-	<sys:String x:Key="String/ContextualBasedAnalysisConditionsEditor.VarsComparisonCondition.WithDialog">比较变量…</sys:String>
-
 	<!-- CopyVarEditorDialog -->
 	<sys:String x:Key="String/CopyVarEditorDialog.SourceVariable">来源变量 (必要)</sys:String>
 	<sys:String x:Key="String/CopyVarEditorDialog.TargetVariable">目标变量 (必要)</sys:String>
@@ -158,6 +154,10 @@
 
 	<!-- DequeueToVariableAction -->
 	<sys:String x:Key="String/DequeueToVariableAction">從队列「{0}」取出值至 {{{1}}}</sys:String>
+
+	<!-- DisplayableLogAnalysisConditionsEditor -->
+	<sys:String x:Key="String/DisplayableLogAnalysisConditionsEditor.VarAndConstComparisonCondition.WithDialog">比较变量与常量…</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisConditionsEditor.VarsComparisonCondition.WithDialog">比较变量…</sys:String>
 
 	<!-- DisplayableLogAnalysisResultType -->
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Checkpoint">检查点</sys:String>

@@ -4,13 +4,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="CarinaStudio.ULogViewer.Controls.ContextualBasedAnalysisConditionsEditor">
+        x:Class="CarinaStudio.ULogViewer.Controls.DisplayableLogAnalysisConditionsEditor">
 	
 	<UserControl.Resources>
 
 		<ContextMenu x:Key="addConditionMenu" PlacementMode="Bottom">
-			<MenuItem Command="{Binding $parent[UserControl].AddVarAndConstComparisonCondition}" Header="{DynamicResource String/ContextualBasedAnalysisConditionsEditor.VarAndConstComparisonCondition.WithDialog}"/>
-			<MenuItem Command="{Binding $parent[UserControl].AddVarsComparisonCondition}" Header="{DynamicResource String/ContextualBasedAnalysisConditionsEditor.VarsComparisonCondition.WithDialog}">
+			<MenuItem Command="{Binding $parent[UserControl].AddVarAndConstComparisonCondition}" Header="{DynamicResource String/DisplayableLogAnalysisConditionsEditor.VarAndConstComparisonCondition.WithDialog}"/>
+			<MenuItem Command="{Binding $parent[UserControl].AddVarsComparisonCondition}" Header="{DynamicResource String/DisplayableLogAnalysisConditionsEditor.VarsComparisonCondition.WithDialog}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Variable}"/>
 				</MenuItem.Icon>

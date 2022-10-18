@@ -130,10 +130,6 @@
 	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Stack">堆疊名稱 (必要)</sys:String>
 	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Variable">變數名稱 (必要)</sys:String>
 
-	<!-- ContextualBasedAnalysisConditionsEditor -->
-	<sys:String x:Key="String/ContextualBasedAnalysisConditionsEditor.VarAndConstComparisonCondition.WithDialog">比較變數與常數…</sys:String>
-	<sys:String x:Key="String/ContextualBasedAnalysisConditionsEditor.VarsComparisonCondition.WithDialog">比較變數…</sys:String>
-
 	<!-- CopyVarEditorDialog -->
 	<sys:String x:Key="String/CopyVarEditorDialog.SourceVariable">來源變數 (必要)</sys:String>
 	<sys:String x:Key="String/CopyVarEditorDialog.TargetVariable">目標變數 (必要)</sys:String>
@@ -158,6 +154,10 @@
 
 	<!-- DequeueToVariableAction -->
 	<sys:String x:Key="String/DequeueToVariableAction">從佇列「{0}」取出值至 {{{1}}}</sys:String>
+
+	<!-- DisplayableLogAnalysisConditionsEditor -->
+	<sys:String x:Key="String/DisplayableLogAnalysisConditionsEditor.VarAndConstComparisonCondition.WithDialog">比較變數與常數…</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisConditionsEditor.VarsComparisonCondition.WithDialog">比較變數…</sys:String>
 
 	<!-- DisplayableLogAnalysisResultType -->
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Checkpoint">檢查點</sys:String>
