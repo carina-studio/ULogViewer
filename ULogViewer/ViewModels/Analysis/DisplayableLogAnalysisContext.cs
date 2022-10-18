@@ -12,6 +12,16 @@ class DisplayableLogAnalysisContext
 
 
     /// <summary>
+    /// Clear all variables.
+    /// </summary>
+    public void ClearVariables()
+    {
+        lock (this.variables)
+            this.variables.Clear();
+    }
+
+
+    /// <summary>
     /// Get named variable.
     /// </summary>
     /// <param name="name">Name.</param>

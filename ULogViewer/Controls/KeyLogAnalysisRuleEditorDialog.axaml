@@ -28,53 +28,60 @@
 			</Border>
 
 			<!-- Content -->
-			<StackPanel Classes="Dialog_ContentPanel">
+			<ScrollViewer MaxHeight="{StaticResource Double/OperationDurationAnalysisRuleEditorDialog.Content.MaxHeight}">
+				<StackPanel Classes="Dialog_ContentPanel">
 
-				<!-- Pattern -->
-				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/KeyLogAnalysisRuleEditorDialog.Pattern}"/>
-				<appControls:PatternEditor Name="patternEditor" IsCapturingGroupsEnabled="True" MinHeight="{DynamicResource Double/KeyLogAnalysisRuleEditorDialog.PatternInput.Height}"/>
-				<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/KeyLogAnalysisRuleEditorDialog.Pattern.Description}"/>
-				<Separator Classes="Dialog_Separator"/>
+					<!-- Pattern -->
+					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/KeyLogAnalysisRuleEditorDialog.Pattern}"/>
+					<appControls:PatternEditor Name="patternEditor" IsCapturingGroupsEnabled="True" MinHeight="{DynamicResource Double/KeyLogAnalysisRuleEditorDialog.PatternInput.Height}"/>
+					<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/KeyLogAnalysisRuleEditorDialog.Pattern.Description}"/>
+					<Separator Classes="Dialog_Separator"/>
 
-				<!-- Level -->
-				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/KeyLogAnalysisRuleEditorDialog.Level}"/>
-				<ComboBox Name="levelComboBox" Classes="Dialog_ComboBox" Items="{Binding $parent[Window].LogLevels}">
-					<ComboBox.ItemTemplate>
-						<DataTemplate>
-							<Grid ColumnDefinitions="Auto,*">
-								<Border Classes="ComboBoxItem_Icon" Background="{Binding Converter={x:Static appConverters:LogLevelBrushConverter.Default}}" BorderBrush="{DynamicResource ComboBoxItemForeground}" BorderThickness="1"/>
-								<TextBlock Classes="ComboBoxItem_TextBlock" Grid.Column="1" Text="{Binding Converter={x:Static appControls:SessionView.LogLevelNameConverter}}"/>
-							</Grid>
-						</DataTemplate>
-					</ComboBox.ItemTemplate>
-				</ComboBox>
-				<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/KeyLogAnalysisRuleEditorDialog.Level.Description}"/>
-				<Separator Classes="Dialog_Separator"/>
+					<!-- Level -->
+					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/KeyLogAnalysisRuleEditorDialog.Level}"/>
+					<ComboBox Name="levelComboBox" Classes="Dialog_ComboBox" Items="{Binding $parent[Window].LogLevels}">
+						<ComboBox.ItemTemplate>
+							<DataTemplate>
+								<Grid ColumnDefinitions="Auto,*">
+									<Border Classes="ComboBoxItem_Icon" Background="{Binding Converter={x:Static appConverters:LogLevelBrushConverter.Default}}" BorderBrush="{DynamicResource ComboBoxItemForeground}" BorderThickness="1"/>
+									<TextBlock Classes="ComboBoxItem_TextBlock" Grid.Column="1" Text="{Binding Converter={x:Static appControls:SessionView.LogLevelNameConverter}}"/>
+								</Grid>
+							</DataTemplate>
+						</ComboBox.ItemTemplate>
+					</ComboBox>
+					<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/KeyLogAnalysisRuleEditorDialog.Level.Description}"/>
+					<Separator Classes="Dialog_Separator"/>
 
-				<!-- Result type -->
-				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/KeyLogAnalysisRuleEditorDialog.ResultType}"/>
-				<ComboBox Name="resultTypeComboBox" Classes="Dialog_ComboBox" Items="{Binding $parent[Window].ResultTypes}">
-					<ComboBox.ItemTemplate>
-						<DataTemplate>
-							<Grid ColumnDefinitions="Auto,*">
-								<Panel Classes="ComboBoxItem_Icon">
-									<Image Classes="Icon" IsVisible="{Binding $parent[ComboBoxItem].IsSelected}" Source="{Binding Converter={x:Static appConverters:DisplayableLogAnalysisResultIconConverter.Default}, ConverterParameter=Light}"/>
-									<Image Classes="Icon" IsVisible="{Binding !$parent[ComboBoxItem].IsSelected}" Source="{Binding Converter={x:Static appConverters:DisplayableLogAnalysisResultIconConverter.Default}}"/>
-								</Panel>
-								<TextBlock Classes="ComboBoxItem_TextBlock" Grid.Column="1" Text="{Binding Converter={x:Static appConverters:EnumConverters.DisplayableLogAnalysisResultType}}"/>
-							</Grid>
-						</DataTemplate>
-					</ComboBox.ItemTemplate>
-				</ComboBox>
-				<Separator Classes="Dialog_Separator"/>
+					<!-- Conditions -->
+					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/KeyLogAnalysisRuleEditorDialog.Conditions}"/>
+					<appControls:DisplayableLogAnalysisConditionsEditor Conditions="{Binding $parent[Window].Conditions}" VerticalScrollBarVisibility="Disabled"/>
+					<Separator Classes="Dialog_Separator"/>
 
-				<!-- Message -->
-				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/KeyLogAnalysisRuleEditorDialog.Message}"/>
-				<asControls:StringInterpolationFormatTextBox Name="messageTextBox" Classes="Dialog_TextBox" Height="{StaticResource Double/KeyLogAnalysisRuleEditorDialog.MessageInput.Height}"/>
-				<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/KeyLogAnalysisRuleEditorDialog.Message.Description}"/>
-				<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.FormatDescription}" Uri="{x:Static app:Uris.StringInterpolationReference}"/>
-				
-			</StackPanel>
+					<!-- Result type -->
+					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/KeyLogAnalysisRuleEditorDialog.ResultType}"/>
+					<ComboBox Name="resultTypeComboBox" Classes="Dialog_ComboBox" Items="{Binding $parent[Window].ResultTypes}">
+						<ComboBox.ItemTemplate>
+							<DataTemplate>
+								<Grid ColumnDefinitions="Auto,*">
+									<Panel Classes="ComboBoxItem_Icon">
+										<Image Classes="Icon" IsVisible="{Binding $parent[ComboBoxItem].IsSelected}" Source="{Binding Converter={x:Static appConverters:DisplayableLogAnalysisResultIconConverter.Default}, ConverterParameter=Light}"/>
+										<Image Classes="Icon" IsVisible="{Binding !$parent[ComboBoxItem].IsSelected}" Source="{Binding Converter={x:Static appConverters:DisplayableLogAnalysisResultIconConverter.Default}}"/>
+									</Panel>
+									<TextBlock Classes="ComboBoxItem_TextBlock" Grid.Column="1" Text="{Binding Converter={x:Static appConverters:EnumConverters.DisplayableLogAnalysisResultType}}"/>
+								</Grid>
+							</DataTemplate>
+						</ComboBox.ItemTemplate>
+					</ComboBox>
+					<Separator Classes="Dialog_Separator"/>
+
+					<!-- Message -->
+					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/KeyLogAnalysisRuleEditorDialog.Message}"/>
+					<asControls:StringInterpolationFormatTextBox Name="messageTextBox" Classes="Dialog_TextBox" Height="{StaticResource Double/KeyLogAnalysisRuleEditorDialog.MessageInput.Height}"/>
+					<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/KeyLogAnalysisRuleEditorDialog.Message.Description}"/>
+					<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.FormatDescription}" Uri="{x:Static app:Uris.StringInterpolationReference}"/>
+					
+				</StackPanel>
+			</ScrollViewer>
 			
 		</DockPanel>
 		<asControls:FullWindowTutorialPresenter Name="tutorialPresenter"/>

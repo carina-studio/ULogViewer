@@ -214,6 +214,7 @@
 	<sys:String x:Key="String/JsonLogsSavingOptionsDialog.Title">JSON options</sys:String>
 
 	<!-- KeyLogAnalysisRuleEditorDialog -->
+	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Conditions">Extra conditions</sys:String>
 	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Level">Log level</sys:String>
 	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Level.Description">Only logs with given level will be selected to generate results.</sys:String>
 	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Message">Message of analysis result (required)</sys:String>

@@ -203,6 +203,7 @@
 	<sys:String x:Key="String/JsonLogsSavingOptionsDialog.Title">JSON 選項</sys:String>
 
 	<!-- KeyLogAnalysisRuleEditorDialog -->
+	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Conditions">額外條件</sys:String>
 	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Level">日誌等級</sys:String>
 	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Level.Description">只有符合指定等級的日誌才會被選擇以輸出結果。</sys:String>
 	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Message">分析結果訊息 (必要)</sys:String>

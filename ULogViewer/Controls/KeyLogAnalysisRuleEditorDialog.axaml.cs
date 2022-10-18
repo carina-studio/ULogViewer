@@ -4,10 +4,12 @@ using Avalonia.Data;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using CarinaStudio.AppSuite.Controls;
+using CarinaStudio.Collections;
 using CarinaStudio.ULogViewer.Logs;
 using CarinaStudio.ULogViewer.ViewModels.Analysis;
 using CarinaStudio.Threading;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Threading;
 
@@ -19,6 +21,7 @@ namespace CarinaStudio.ULogViewer.Controls;
 partial class KeyLogAnalysisRuleEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
 {
 	// Fields.
+	readonly ObservableList<DisplayableLogAnalysisCondition> conditions = new();
 	readonly ComboBox levelComboBox;
 	readonly StringInterpolationFormatTextBox messageTextBox;
 	readonly PatternEditor patternEditor;
@@ -57,11 +60,18 @@ partial class KeyLogAnalysisRuleEditorDialog : AppSuite.Controls.InputDialog<IUL
 	}
 
 
+	/// <summary>
+	/// Conditions to match log.
+	/// </summary>
+	public IList<DisplayableLogAnalysisCondition> Conditions { get => this.conditions; }
+
+
 	// Generate result.
 	protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken)
 	{
 		var rule = new KeyLogAnalysisRuleSet.Rule(this.patternEditor.Pattern.AsNonNull(), 
 			(Logs.LogLevel)this.levelComboBox.SelectedItem!,
+			this.conditions,
 			(DisplayableLogAnalysisResultType)this.resultTypeComboBox.SelectedItem!, 
 			this.messageTextBox.Text.AsNonNull());
 		if (rule.Equals(this.Rule))
@@ -86,6 +96,7 @@ partial class KeyLogAnalysisRuleEditorDialog : AppSuite.Controls.InputDialog<IUL
 		}
 		else
 		{
+			this.conditions.AddAll(rule.Conditions);
 			this.levelComboBox.SelectedItem = rule.Level;
 			this.messageTextBox.Text = rule.Message;
 			this.patternEditor.Pattern = rule.Pattern;

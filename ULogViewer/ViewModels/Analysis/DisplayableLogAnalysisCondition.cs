@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Text.Json;
 
@@ -96,7 +97,7 @@ abstract class DisplayableLogAnalysisCondition : IEquatable<DisplayableLogAnalys
     /// <param name="jsonElement">JSON element.</param>
     /// <param name="condition">Loaded condition.</param>
     /// <returns>True if condition loaded successfully.</returns>
-    public static bool TryLoad(JsonElement jsonElement, out DisplayableLogAnalysisCondition? condition)
+    public static bool TryLoad(JsonElement jsonElement, [NotNullWhen(true)] out DisplayableLogAnalysisCondition? condition)
     {
         condition = null;
         return false;

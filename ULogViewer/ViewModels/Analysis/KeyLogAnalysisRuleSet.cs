@@ -28,19 +28,29 @@ class KeyLogAnalysisRuleSet : BaseProfile<IULogViewerApplication>, ILogProfileIc
         /// </summary>
         /// <param name="pattern">Pattern to match log.</param>
         /// <param name="level">Level to match log.</param>
+        /// <param name="conditions">Conditions to match log.</param>
         /// <param name="resultType">Type of analysis result to be generated when pattern matched.</param>
         /// <param name="message">Formatted message to be generated when pattern matched.</param>
-        public Rule(Regex pattern, Logs.LogLevel level, DisplayableLogAnalysisResultType resultType, string message)
+        public Rule(Regex pattern, Logs.LogLevel level, IEnumerable<DisplayableLogAnalysisCondition> conditions, DisplayableLogAnalysisResultType resultType, string message)
         {
+            this.Conditions = conditions is IList<DisplayableLogAnalysisCondition> list
+                ? list.AsReadOnly()
+                : conditions.ToArray().AsReadOnly();
             this.Level = level;
             this.Message = message;
             this.Pattern = pattern;
             this.ResultType = resultType;
         }
 
+        /// <summary>
+        /// Conditions to match log.
+        /// </summary>
+        public IList<DisplayableLogAnalysisCondition> Conditions { get; }
+
         /// <inheritdoc/>
         public bool Equals(Rule? rule) =>
             rule != null
+            && rule.Conditions.SequenceEqual(this.Conditions)
             && rule.Level == this.Level
             && rule.Message == this.Message
             && rule.Pattern.ToString() == this.Pattern.ToString()
@@ -242,13 +252,23 @@ class KeyLogAnalysisRuleSet : BaseProfile<IULogViewerApplication>, ILogProfileIc
                                 && Enum.TryParse<Logs.LogLevel>(jsonLevel.GetString(), out var candLevel)
                                     ? candLevel
                                     : Logs.LogLevel.Undefined;
+                            var conditions = jsonValue.TryGetProperty(nameof(Rule.Conditions), out var conditionsProperty) && conditionsProperty.ValueKind == JsonValueKind.Array
+                                ? new List<DisplayableLogAnalysisCondition>().Also(it =>
+                                {
+                                    foreach (var conditionElement in conditionsProperty.EnumerateArray())
+                                    {
+                                        if (DisplayableLogAnalysisCondition.TryLoad(conditionElement, out var condition))
+                                            it.Add(condition);
+                                    }
+                                }).AsReadOnly()
+                                : (IList<DisplayableLogAnalysisCondition>)new DisplayableLogAnalysisCondition[0];
                             var formattedMessage = jsonValue.GetProperty(nameof(Rule.Message)).GetString().AsNonNull();
                             var resultType = jsonValue.TryGetProperty(nameof(Rule.ResultType), out var resultTypeValue) 
                                 && resultTypeValue.ValueKind == JsonValueKind.String
                                 && Enum.TryParse<DisplayableLogAnalysisResultType>(resultTypeValue.GetString(), out var type)
                                     ? type
                                     : DisplayableLogAnalysisResultType.Information;
-                            patterns.Add(new(regex, level, resultType, formattedMessage));
+                            patterns.Add(new(regex, level, conditions, resultType, formattedMessage));
                         }
                     }).AsReadOnly();
                     break;
@@ -291,6 +311,14 @@ class KeyLogAnalysisRuleSet : BaseProfile<IULogViewerApplication>, ILogProfileIc
                 });
                 if (rule.Level != Logs.LogLevel.Undefined)
                     writer.WriteString(nameof(Rule.Level), rule.Level.ToString());
+                if (rule.Conditions.IsNotEmpty())
+                {
+                    writer.WritePropertyName(nameof(Rule.Conditions));
+                    writer.WriteStartArray();
+                    foreach (var condition in rule.Conditions)
+                        condition.Save(writer);
+                    writer.WriteEndArray();
+                }
                 writer.WriteString(nameof(Rule.Message), rule.Message);
                 writer.WriteString(nameof(Rule.ResultType), rule.ResultType.ToString());
                 writer.WriteEndObject();

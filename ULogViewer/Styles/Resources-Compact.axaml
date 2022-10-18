@@ -2,8 +2,14 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
+	<!-- KeyLogAnalysisRuleEditorDialog -->
+	<sys:Double x:Key="Double/KeyLogAnalysisRuleEditorDialog.Content.MaxHeight">450</sys:Double>
+
 	<!-- KeyLogAnalysisRuleSetEditorDialog -->
 	<sys:Double x:Key="Double/KeyLogAnalysisRuleSetEditorDialog.RuleListBox.Height">300</sys:Double>
+
+	<!-- LogDataSourceOptionsDialog -->
+	<sys:Double x:Key="Double/LogDataSourceOptionsDialog.Content.MaxHeight">450</sys:Double>
 
 	<!-- LogProfileEditorDialog -->
 	<sys:Double x:Key="Double/LogProfileEditorDialog.Content.MaxHeight">500</sys:Double>
@@ -25,6 +31,9 @@
 	<Thickness x:Key="Thickness/LogProfileSelectionDialog.LogProfile.Name.Margin">0,0,5,3</Thickness>
 	<Thickness x:Key="Thickness/LogProfileSelectionDialog.LogProfile.Padding">10,5,10,5</Thickness>
 	<Thickness x:Key="Thickness/LogProfileSelectionDialog.LogProfile.ProVersionIcon.Margin">5,0,5,3</Thickness>
+
+	<!-- OperationDurationAnalysisRuleEditorDialog -->
+	<sys:Double x:Key="Double/OperationDurationAnalysisRuleEditorDialog.Content.MaxHeight">450</sys:Double>
 
 	<!-- SessionView -->
 	<CornerRadius x:Key="CornerRadius/SessionView.LogListBox.Item.Column.Border">0</CornerRadius>
