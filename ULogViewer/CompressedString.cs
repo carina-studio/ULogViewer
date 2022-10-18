@@ -43,6 +43,7 @@ namespace CarinaStudio.ULogViewer
 
 
 		// Static fields.
+		static readonly long BaseSize = typeof(CompressedString).EstimateInstanceSize();
 		[ThreadStatic]
 		static MemoryStream? CompressionMemoryStream;
 		[ThreadStatic]
@@ -100,16 +101,14 @@ namespace CarinaStudio.ULogViewer
 		/// <summary>
 		/// Get size of compressed string in bytes.
 		/// </summary>
-		public int Size 
+		public long Size 
 		{ 
 			get => this.data switch
 			{
-				string str => str.Length << 1,
-				byte[] bytes => bytes.Length,
+				string str => TypeExtensions.EstimateArrayInstanceSize(sizeof(char), str.Length),
+				byte[] bytes => TypeExtensions.EstimateArrayInstanceSize(sizeof(byte), bytes.Length),
 				_ => 0,
-			} 
-			+ IntPtr.Size // reference to data
-			+ sizeof(uint); // flags
+			} + BaseSize;
 		}
 
 

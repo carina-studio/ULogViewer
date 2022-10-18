@@ -46,8 +46,7 @@ abstract class BaseDisplayableLogCategorizer<TProcessingToken, TCategory> : Base
     public override long MemorySize 
     { 
         get => base.MemorySize 
-            + (this.categories.Count + 1) * IntPtr.Size // categories
-            + 8 // categoryMemorySize
+            + TypeExtensions.EstimateCollectionInstanceSize(IntPtr.Size, this.categories.Count)
             + this.categoryMemorySize; 
     }
 

@@ -28,7 +28,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			for (var i = it.Length - 1; i >= 0; --i)
 				it[i] = Log.CreatePropertyGetter<string?>($"Extra{i + 1}");
 		});
-		static readonly long instanceFieldMemorySize;
+		static readonly long instanceFieldMemorySize = typeof(DisplayableLog).EstimateInstanceSize();
 		static volatile bool isPropertyMapReady;
 		static Dictionary<string, PropertyInfo> propertyMap = new Dictionary<string, PropertyInfo>();
 
@@ -49,30 +49,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		int summaryLineCount = -1;
 		CompressedString? timeSpanString;
 		CompressedString? timestampString;
-
-
-		// Statc initializer.
-		static DisplayableLog()
-        {
-			foreach (var field in typeof(DisplayableLog).GetFields(BindingFlags.Instance | BindingFlags.NonPublic))
-			{
-				var type = field.FieldType;
-				if (type.IsEnum)
-					type = type.GetEnumUnderlyingType();
-				if (!type.IsValueType)
-					instanceFieldMemorySize += IntPtr.Size;
-				else if (type == typeof(byte))
-					instanceFieldMemorySize += 1;
-				else if (type == typeof(short) || type == typeof(ushort))
-					instanceFieldMemorySize += 2;
-				else if (type == typeof(int) || type == typeof(uint))
-					instanceFieldMemorySize += 4;
-				else if (type == typeof(long) || type == typeof(ulong))
-					instanceFieldMemorySize += 8;
-				else
-					throw new NotSupportedException();
-			}
-		}
 
 
 		/// <summary>
@@ -110,7 +86,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// estimate memory usage
 			long memorySize = log.MemorySize + instanceFieldMemorySize;
-			memorySize += this.extraLineCount.Length * sizeof(int);
+			memorySize += TypeExtensions.EstimateArrayInstanceSize(sizeof(int), this.extraLineCount.Length);
 			if (log.BeginningTimeSpan.HasValue)
 				memorySize += estimatedTimeSpanSize;
 			if (log.EndingTimeSpan.HasValue)
@@ -149,7 +125,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			if (currentResultCount == 0)
 			{
 				this.analysisResults = new[] { result };
-				memorySizeDiff += (2 * IntPtr.Size) + 4;
+				memorySizeDiff = TypeExtensions.EstimateArrayInstanceSize(IntPtr.Size, 1);
 			}
 			else
 			{
@@ -984,7 +960,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					{
 						this.analysisResults = emptyAnalysisResults;
 						this.readOnlyAnalysisResults = emptyAnalysisResults;
-						memorySizeDiff -= (2 * IntPtr.Size) + 4;
+						memorySizeDiff -= TypeExtensions.EstimateArrayInstanceSize(IntPtr.Size, 1);
 					}
 					else if (i == 0)
 					{
@@ -1069,7 +1045,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					{
 						this.analysisResults = emptyAnalysisResults;
 						this.readOnlyAnalysisResults = emptyAnalysisResults;
-						memorySizeDiff -= (2 * IntPtr.Size) + 4;
+						memorySizeDiff -= TypeExtensions.EstimateArrayInstanceSize(IntPtr.Size, 1);
 					}
 					else if (i == 0)
 					{

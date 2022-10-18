@@ -1,4 +1,3 @@
-using System;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
@@ -7,6 +6,7 @@ using Avalonia.Rendering;
 using Avalonia.Visuals.Media.Imaging;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.Controls;
+using System;
 using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer;

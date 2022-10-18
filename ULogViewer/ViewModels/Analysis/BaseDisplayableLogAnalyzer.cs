@@ -67,7 +67,8 @@ abstract class BaseDisplayableLogAnalyzer<TProcessingToken, TResult> : BaseDispl
     public override long MemorySize
     {
         get => base.MemorySize 
-            + (this.analysisResults.Count + 1) * IntPtr.Size // analysisResults
+            + TypeExtensions.EstimateCollectionInstanceSize(IntPtr.Size, this.analysisResults.Count)
+            + TypeExtensions.EstimateCollectionInstanceSize(IntPtr.Size, this.tempResults.Capacity)
             + this.analysisResultsMemorySize;
     }
 
@@ -216,10 +217,6 @@ abstract class BaseDisplayableLogAnalyzer<TProcessingToken> : BaseDisplayableLog
     /// Get empty list of <see cref="DisplayableLogAnalysisResult"/>.
     /// </summary>
     protected IList<DisplayableLogAnalysisResult> EmptyResults { get; }
-
-
-    /// <inheritdoc/>
-    public override long MemorySize { get => base.MemorySize + IntPtr.Size + 4; }
 }
 
 

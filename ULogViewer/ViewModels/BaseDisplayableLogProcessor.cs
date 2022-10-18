@@ -54,6 +54,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
     // Fields.
     DisplayableLogGroup? attachedLogGroup; // currently only supports attaching to single group
     LogProfile? attachedLogProfile; // currently only supports attaching to single profile
+    readonly long baseMemorySize;
     ProcessingParams? currentProcessingParams;
     readonly Comparison<DisplayableLog> logComparison;
     readonly ScheduledAction processNextChunkAction;
@@ -81,6 +82,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
         this.unprocessedLogs = new SortedObservableList<DisplayableLog>(comparison.Invert());
 
         // setup properties
+        this.baseMemorySize = this.GetType().EstimateInstanceSize();
         this.ChunkSize = priority switch
         {
             DisplayableLogProcessingPriority.Background => this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.DisplayableLogChunkProcessingSizeBackground),
@@ -384,7 +386,12 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
     /// <summary>
     /// Get size of memory currently used by the instance directly in bytes.
     /// </summary>
-    public virtual long MemorySize { get => this.unprocessedLogs.Count * IntPtr.Size + this.sourceLogVersions.Capacity; }
+    public virtual long MemorySize 
+    { 
+        get => this.baseMemorySize 
+            + TypeExtensions.EstimateCollectionInstanceSize(IntPtr.Size, this.unprocessedLogs.Count) 
+            + TypeExtensions.EstimateCollectionInstanceSize(sizeof(byte), this.sourceLogVersions.Capacity); 
+    }
 
 
     // Obtain an list of log for internal usage.

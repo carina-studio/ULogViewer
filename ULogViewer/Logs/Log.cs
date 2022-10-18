@@ -58,8 +58,8 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		// Static fields.
+		static readonly long baseMemorySize = typeof(Log).EstimateInstanceSize();
 		static readonly HashSet<string> dateTimePropertyNameSet = new HashSet<string>();
-		static readonly int instanceFieldMemorySize;
 		static volatile bool isPropertyMapReady;
 		static long nextId = 0;
 		static readonly Dictionary<string, int> propertyIndices = new Dictionary<string, int>();
@@ -87,22 +87,6 @@ namespace CarinaStudio.ULogViewer.Logs
 		{
 			for (var i = propertyNames.Count - 1; i >= 0; --i)
 				propertyIndices[propertyNames[i]] = i;
-			foreach (var field in typeof(Log).GetFields(BindingFlags.Instance | BindingFlags.NonPublic))
-			{
-				var type = field.FieldType;
-				if (!type.IsValueType)
-					instanceFieldMemorySize += IntPtr.Size;
-				else if (type == typeof(byte))
-					instanceFieldMemorySize += 1;
-				else if (type == typeof(short))
-					instanceFieldMemorySize += 2;
-				else if (type == typeof(int))
-					instanceFieldMemorySize += 4;
-				else if (type == typeof(long))
-					instanceFieldMemorySize += 8;
-				else
-					throw new NotSupportedException();
-			}
 		}
 
 
@@ -144,7 +128,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			this.Id = Interlocked.Increment(ref nextId);
 
 			// calculate memory size
-			this.MemorySize = instanceFieldMemorySize + propertyMemorySize + this.propertyValueIndices.Length + (this.propertyValues.Length * IntPtr.Size);
+			this.MemorySize = baseMemorySize + propertyMemorySize + TypeExtensions.EstimateArrayInstanceSize(sizeof(byte), this.propertyValueIndices.Length) + TypeExtensions.EstimateArrayInstanceSize(IntPtr.Size, this.propertyValues.Length);
 		}
 
 

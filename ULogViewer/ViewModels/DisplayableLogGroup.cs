@@ -8,6 +8,7 @@ using CarinaStudio.ULogViewer.ViewModels.Analysis;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
 
@@ -20,6 +21,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 	{
 		// Static fields.
 		static readonly Regex ExtraCaptureRegex = new Regex(@"\(\?\<Extra(?<Number>[\d]+)\>");
+
+
+		// Static fields.
+		static readonly long BaseMemorySize = typeof(DisplayableLogGroup).EstimateInstanceSize();
 
 
 		// Fields.
@@ -41,6 +46,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.Application = profile.Application;
 			this.LogProfile = profile;
 			this.maxDisplayLineCount = Math.Max(1, this.Application.Settings.GetValueOrDefault(SettingKeys.MaxDisplayLineCountForEachLog));
+			this.MemorySize = BaseMemorySize;
 			this.SaveMemoryAgressively = this.Application.Settings.GetValueOrDefault(SettingKeys.SaveMemoryAggressively);
 			this.CheckMaxLogExtraNumber();
 

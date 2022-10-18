@@ -266,7 +266,7 @@ class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.Fi
 
 
     /// <inheritdoc/>
-    public override long MemorySize => base.MemorySize + (this.filteredLogs.Count * IntPtr.Size);
+    public override long MemorySize => base.MemorySize + TypeExtensions.EstimateCollectionInstanceSize(IntPtr.Size, this.filteredLogs.Count);
 
 
     /// <inheritdoc/>
