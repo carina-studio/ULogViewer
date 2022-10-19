@@ -15,7 +15,7 @@ namespace CarinaStudio.ULogViewer.ViewModels.Analysis.ContextualBased;
 /// <summary>
 /// Rule set of operation duration analysis.
 /// </summary>
-class OperationDurationAnalysisRuleSet : BaseProfile<IULogViewerApplication>, ILogProfileIconSource
+class OperationDurationAnalysisRuleSet : DisplayableLogAnalysisRuleSet<OperationDurationAnalysisRuleSet.Rule>
 {
     /// <summary>
     /// A rule of operation duration analysis.
@@ -232,18 +232,12 @@ class OperationDurationAnalysisRuleSet : BaseProfile<IULogViewerApplication>, IL
     }
 
 
-    // Fields.
-    LogProfileIcon icon = LogProfileIcon.Analysis;
-    LogProfileIconColor iconColor = LogProfileIconColor.Default;
-    IList<Rule> rules = new Rule[0];
-
-
     /// <summary>
     /// Initialize new <see cref="OperationDurationAnalysisRuleSet"/> instance.
     /// </summary>
     /// <param name="app">Application.</param>
     /// <param name="name">Name of rule set.</param>
-    public OperationDurationAnalysisRuleSet(IULogViewerApplication app, string name) : base(app, OperationDurationAnalysisRuleSetManager.Default.GenerateProfileId(), false)
+    public OperationDurationAnalysisRuleSet(IULogViewerApplication app, string name) : base(app, OperationDurationAnalysisRuleSetManager.Default.GenerateProfileId())
     {
         this.Name = name;
     }
@@ -254,12 +248,8 @@ class OperationDurationAnalysisRuleSet : BaseProfile<IULogViewerApplication>, IL
     /// </summary>
     /// <param name="template">Template rule set.</param>
     /// <param name="name">Name.</param>
-    public OperationDurationAnalysisRuleSet(OperationDurationAnalysisRuleSet template, string name) : this(template.Application, name)
-    {
-        this.icon = template.icon;
-        this.iconColor = template.iconColor;
-        this.rules = template.rules;
-    }
+    public OperationDurationAnalysisRuleSet(OperationDurationAnalysisRuleSet template, string name) : base(template, name, OperationDurationAnalysisRuleSetManager.Default.GenerateProfileId())
+    { }
 
 
     // Constructor.
@@ -268,58 +258,8 @@ class OperationDurationAnalysisRuleSet : BaseProfile<IULogViewerApplication>, IL
 
 
     // Change ID.
-    internal void ChangeId() =>
+    internal override void ChangeId() =>
         this.Id = OperationDurationAnalysisRuleSetManager.Default.GenerateProfileId();
-
-
-    /// <inheritdoc/>
-    public override bool Equals(IProfile<IULogViewerApplication>? profile) =>
-        profile is OperationDurationAnalysisRuleSet ruleSet
-        && this.Id == ruleSet.Id
-        && this.Name == ruleSet.Name
-        && this.icon == ruleSet.icon
-        && this.iconColor == ruleSet.iconColor
-        && this.rules.SequenceEqual(ruleSet.rules);
-    
-
-    /// <summary>
-    /// Get or set icon of rule set.
-    /// </summary>
-    public LogProfileIcon Icon
-    {
-        get => this.icon;
-        set
-        {
-            this.VerifyAccess();
-            this.VerifyBuiltIn();
-            if (this.icon == value)
-                return;
-            this.icon = value;
-            this.OnPropertyChanged(nameof(Icon));
-        }
-    }
-
-
-    /// <summary>
-    /// Get or set color of icon of rule sets.
-    /// </summary>
-    public LogProfileIconColor IconColor
-    {
-        get => this.iconColor;
-        set
-        {
-            this.VerifyAccess();
-            this.VerifyBuiltIn();
-            if (this.iconColor == value)
-                return;
-            this.iconColor = value;
-            this.OnPropertyChanged(nameof(IconColor));
-        }
-    }
-
-
-    // Check whether data has been upgraded when loading or not.
-    internal bool IsDataUpgraded { get; private set; }
     
 
     /// <summary>
@@ -371,24 +311,6 @@ class OperationDurationAnalysisRuleSet : BaseProfile<IULogViewerApplication>, IL
     /// <inheritdoc/>
     protected override void OnSave(Utf8JsonWriter writer, bool includeId)
     {
-    }
-
-
-    /// <summary>
-    /// Get or set rules to analyze operation durations.
-    /// </summary>
-    public IList<Rule> Rules
-    {
-        get => this.rules;
-        set
-        {
-            this.VerifyAccess();
-            this.VerifyBuiltIn();
-            if (this.rules.SequenceEqual(value))
-                return;
-            this.rules = value.ToArray().AsReadOnly();
-            this.OnPropertyChanged(nameof(Rules));
-        }
     }
 }
 

@@ -15,7 +15,7 @@ namespace CarinaStudio.ULogViewer.ViewModels.Analysis;
 /// <summary>
 /// Rule set of operation counting analysis,
 /// </summary>
-class OperationCountingAnalysisRuleSet : BaseProfile<IULogViewerApplication>, ILogProfileIconSource
+class OperationCountingAnalysisRuleSet : DisplayableLogAnalysisRuleSet<OperationCountingAnalysisRuleSet.Rule>
 {
     /// <summary>
     /// Analysis rule.
@@ -96,14 +96,8 @@ class OperationCountingAnalysisRuleSet : BaseProfile<IULogViewerApplication>, IL
     }
 
 
-    // Fields.
-    LogProfileIcon icon = LogProfileIcon.Analysis;
-    LogProfileIconColor iconColor = LogProfileIconColor.Default;
-    IList<Rule> rules = new Rule[0];
-
-
     // Constructor.
-    OperationCountingAnalysisRuleSet(IULogViewerApplication app, string id) : base(app, id, false)
+    OperationCountingAnalysisRuleSet(IULogViewerApplication app, string id) : base(app, id)
     { }
 
 
@@ -111,7 +105,7 @@ class OperationCountingAnalysisRuleSet : BaseProfile<IULogViewerApplication>, IL
     /// Initialize new <see cref="OperationCountingAnalysisRuleSet"/> instance.
     /// </summary>
     /// <param name="app">Application.</param>
-    public OperationCountingAnalysisRuleSet(IULogViewerApplication app) : this(app, OperationCountingAnalysisRuleSetManager.Default.GenerateProfileId())
+    public OperationCountingAnalysisRuleSet(IULogViewerApplication app) : base(app, OperationCountingAnalysisRuleSetManager.Default.GenerateProfileId())
     { }
 
 
@@ -120,68 +114,13 @@ class OperationCountingAnalysisRuleSet : BaseProfile<IULogViewerApplication>, IL
     /// </summary>
     /// <param name="template">Template rule set.</param>
     /// <param name="name">Name.</param>
-    public OperationCountingAnalysisRuleSet(OperationCountingAnalysisRuleSet template, string name) : this(template.Application)
-    {
-        this.icon = template.icon;
-        this.iconColor = template.iconColor;
-        this.Name = name;
-        this.rules = template.rules;
-    }
-
-
-    // Change ID.
-    internal void ChangeId() =>
-        this.Id = KeyLogAnalysisRuleSetManager.Default.GenerateProfileId();
+    public OperationCountingAnalysisRuleSet(OperationCountingAnalysisRuleSet template, string name) : base(template, name, OperationCountingAnalysisRuleSetManager.Default.GenerateProfileId())
+    { }
 
 
     /// <inheritdoc/>
-    public override bool Equals(IProfile<IULogViewerApplication>? profile) =>
-        profile is OperationCountingAnalysisRuleSet ruleSet
-        && this.Id == ruleSet.Id
-        && this.icon == ruleSet.icon
-        && this.iconColor == ruleSet.iconColor
-        && this.Name == ruleSet.Name
-        && this.rules.SequenceEqual(ruleSet.rules);
-    
-
-    /// <summary>
-    /// Get or set icon of rule sets.
-    /// </summary>
-    public LogProfileIcon Icon
-    {
-        get => this.icon;
-        set
-        {
-            this.VerifyAccess();
-            this.VerifyBuiltIn();
-            if (this.icon == value)
-                return;
-            this.icon = value;
-            this.OnPropertyChanged(nameof(Icon));
-        }
-    }
-
-
-    /// <summary>
-    /// Get or set color of icon of rule sets.
-    /// </summary>
-    public LogProfileIconColor IconColor
-    {
-        get => this.iconColor;
-        set
-        {
-            this.VerifyAccess();
-            this.VerifyBuiltIn();
-            if (this.iconColor == value)
-                return;
-            this.iconColor = value;
-            this.OnPropertyChanged(nameof(IconColor));
-        }
-    }
-
-
-    // Check whether data has been upgraded when loading or not.
-    internal bool IsDataUpgraded { get; private set; }
+    internal override void ChangeId() =>
+        this.Id = OperationCountingAnalysisRuleSetManager.Default.GenerateProfileId();
     
 
     /// <summary>
@@ -215,7 +154,7 @@ class OperationCountingAnalysisRuleSet : BaseProfile<IULogViewerApplication>, IL
         // get ID
         var id = element.TryGetProperty(nameof(Id), out var jsonProperty) && jsonProperty.ValueKind == JsonValueKind.String
             ? jsonProperty.GetString().AsNonNull()
-            : KeyLogAnalysisRuleSetManager.Default.GenerateProfileId();
+            : OperationCountingAnalysisRuleSetManager.Default.GenerateProfileId();
         
         // load
         var profile = new OperationCountingAnalysisRuleSet(app, id);
@@ -233,23 +172,5 @@ class OperationCountingAnalysisRuleSet : BaseProfile<IULogViewerApplication>, IL
     /// <inheritdoc/>
     protected override void OnSave(Utf8JsonWriter writer, bool includeId)
     {
-    }
-
-
-    /// <summary>
-    /// Get or set list of rule for this set.
-    /// </summary>
-    public IList<Rule> Rules
-    {
-        get => this.rules;
-        set
-        {
-            this.VerifyAccess();
-            this.VerifyBuiltIn();
-            if (this.rules.SequenceEqual(value))
-                return;
-            this.rules = value.AsReadOnly();
-            this.OnPropertyChanged(nameof(Rules));
-        }
     }
 }

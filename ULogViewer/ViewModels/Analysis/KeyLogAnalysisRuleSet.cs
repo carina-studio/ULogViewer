@@ -1,7 +1,6 @@
 using CarinaStudio.AppSuite.Data;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
-using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using System;
 using System.Collections.Generic;
@@ -16,7 +15,7 @@ namespace CarinaStudio.ULogViewer.ViewModels.Analysis;
 /// <summary>
 /// Set of rule for key log analysis.
 /// </summary>
-class KeyLogAnalysisRuleSet : BaseProfile<IULogViewerApplication>, ILogProfileIconSource
+class KeyLogAnalysisRuleSet : DisplayableLogAnalysisRuleSet<KeyLogAnalysisRuleSet.Rule>
 {
     /// <summary>
     /// Analysis rule.
@@ -87,14 +86,8 @@ class KeyLogAnalysisRuleSet : BaseProfile<IULogViewerApplication>, ILogProfileIc
     }
 
 
-    // Fields.
-    LogProfileIcon icon = LogProfileIcon.Analysis;
-    LogProfileIconColor iconColor = LogProfileIconColor.Default;
-    IList<Rule> rules = new Rule[0];
-
-
     // Constructor.
-    KeyLogAnalysisRuleSet(IULogViewerApplication app, string id) : base(app, id, false)
+    KeyLogAnalysisRuleSet(IULogViewerApplication app, string id) : base(app, id)
     { }
 
 
@@ -102,7 +95,7 @@ class KeyLogAnalysisRuleSet : BaseProfile<IULogViewerApplication>, ILogProfileIc
     /// Initialize new <see cref="KeyLogAnalysisRuleSet"/> instance.
     /// </summary>
     /// <param name="app">Application.</param>
-    public KeyLogAnalysisRuleSet(IULogViewerApplication app) : this(app, KeyLogAnalysisRuleSetManager.Default.GenerateProfileId())
+    public KeyLogAnalysisRuleSet(IULogViewerApplication app) : base(app, KeyLogAnalysisRuleSetManager.Default.GenerateProfileId())
     { }
 
 
@@ -111,68 +104,13 @@ class KeyLogAnalysisRuleSet : BaseProfile<IULogViewerApplication>, ILogProfileIc
     /// </summary>
     /// <param name="template">Template rule set.</param>
     /// <param name="name">Name.</param>
-    public KeyLogAnalysisRuleSet(KeyLogAnalysisRuleSet template, string name) : this(template.Application)
-    {
-        this.icon = template.icon;
-        this.iconColor = template.iconColor;
-        this.Name = name;
-        this.rules = template.rules;
-    }
-
-
-    // Change ID.
-    internal void ChangeId() =>
-        this.Id = KeyLogAnalysisRuleSetManager.Default.GenerateProfileId();
+    public KeyLogAnalysisRuleSet(KeyLogAnalysisRuleSet template, string name) : base(template, name, KeyLogAnalysisRuleSetManager.Default.GenerateProfileId())
+    { }
 
 
     /// <inheritdoc/>
-    public override bool Equals(IProfile<IULogViewerApplication>? profile) =>
-        profile is KeyLogAnalysisRuleSet ruleSet
-        && this.Id == ruleSet.Id
-        && this.icon == ruleSet.icon
-        && this.iconColor == ruleSet.iconColor
-        && this.Name == ruleSet.Name
-        && this.rules.SequenceEqual(ruleSet.rules);
-    
-
-    /// <summary>
-    /// Get or set icon of rule sets.
-    /// </summary>
-    public LogProfileIcon Icon
-    {
-        get => this.icon;
-        set
-        {
-            this.VerifyAccess();
-            this.VerifyBuiltIn();
-            if (this.icon == value)
-                return;
-            this.icon = value;
-            this.OnPropertyChanged(nameof(Icon));
-        }
-    }
-
-
-    /// <summary>
-    /// Get or set color of icon of rule sets.
-    /// </summary>
-    public LogProfileIconColor IconColor
-    {
-        get => this.iconColor;
-        set
-        {
-            this.VerifyAccess();
-            this.VerifyBuiltIn();
-            if (this.iconColor == value)
-                return;
-            this.iconColor = value;
-            this.OnPropertyChanged(nameof(IconColor));
-        }
-    }
-
-
-    // Check whether data has been upgraded when loading or not.
-    internal bool IsDataUpgraded { get; private set; }
+    internal override void ChangeId() =>
+        this.Id = KeyLogAnalysisRuleSetManager.Default.GenerateProfileId();
     
 
     /// <summary>
@@ -224,12 +162,18 @@ class KeyLogAnalysisRuleSet : BaseProfile<IULogViewerApplication>, ILogProfileIc
             switch (jsonProperty.Name)
             {
                 case nameof(Icon):
-                    if (jsonProperty.Value.ValueKind == JsonValueKind.String)
-                        Enum.TryParse<LogProfileIcon>(jsonProperty.Value.GetString(), out this.icon);
+                    if (jsonProperty.Value.ValueKind == JsonValueKind.String
+                        && Enum.TryParse<LogProfileIcon>(jsonProperty.Value.GetString(), out var icon))
+                    {
+                        this.Icon = icon;
+                    }
                     break;
                 case nameof(IconColor):
-                    if (jsonProperty.Value.ValueKind == JsonValueKind.String)
-                        Enum.TryParse<LogProfileIconColor>(jsonProperty.Value.GetString(), out this.iconColor);
+                    if (jsonProperty.Value.ValueKind == JsonValueKind.String
+                        && Enum.TryParse<LogProfileIconColor>(jsonProperty.Value.GetString(), out var iconColor))
+                    {
+                        this.IconColor = iconColor;
+                    }
                     break;
                 case nameof(Id):
                     break;
@@ -237,7 +181,7 @@ class KeyLogAnalysisRuleSet : BaseProfile<IULogViewerApplication>, ILogProfileIc
                     this.Name = jsonProperty.Value.GetString();
                     break;
                 case nameof(Rules):
-                    this.rules = new List<Rule>().Also(patterns =>
+                    this.Rules = new List<Rule>().Also(patterns =>
                     {
                         var useCompiledRegex = this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.UseCompiledRegex);
                         foreach (var jsonValue in jsonProperty.Value.EnumerateArray())
@@ -270,7 +214,7 @@ class KeyLogAnalysisRuleSet : BaseProfile<IULogViewerApplication>, ILogProfileIc
                                     : DisplayableLogAnalysisResultType.Information;
                             patterns.Add(new(regex, level, conditions, resultType, formattedMessage));
                         }
-                    }).AsReadOnly();
+                    });
                     break;
                 case "Type":
                     if (jsonProperty.Value.GetString() != nameof(KeyLogAnalysisRuleSet))
@@ -289,18 +233,18 @@ class KeyLogAnalysisRuleSet : BaseProfile<IULogViewerApplication>, ILogProfileIc
     {
         writer.WriteStartObject();
         writer.WriteString("Type", nameof(KeyLogAnalysisRuleSet));
-        writer.WriteString(nameof(Icon), this.icon.ToString());
-        if (this.iconColor != LogProfileIconColor.Default)
-            writer.WriteString(nameof(IconColor), this.iconColor.ToString());
+        writer.WriteString(nameof(Icon), this.Icon.ToString());
+        if (this.IconColor != LogProfileIconColor.Default)
+            writer.WriteString(nameof(IconColor), this.IconColor.ToString());
         if (includeId)
             writer.WriteString(nameof(Id), this.Id);
         this.Name?.Let(it =>
             writer.WriteString(nameof(Name), it));
-        if (this.rules.IsNotEmpty())
+        if (this.Rules.IsNotEmpty())
         {
             writer.WritePropertyName(nameof(Rules));
             writer.WriteStartArray();
-            foreach (var rule in this.rules)
+            foreach (var rule in this.Rules)
             {
                 writer.WriteStartObject();
                 rule.Pattern.Let(it =>
@@ -326,23 +270,5 @@ class KeyLogAnalysisRuleSet : BaseProfile<IULogViewerApplication>, ILogProfileIc
             writer.WriteEndArray();
         }
         writer.WriteEndObject();
-    }
-
-
-    /// <summary>
-    /// Get or set list of rule for this set.
-    /// </summary>
-    public IList<Rule> Rules
-    {
-        get => this.rules;
-        set
-        {
-            this.VerifyAccess();
-            this.VerifyBuiltIn();
-            if (this.rules.SequenceEqual(value))
-                return;
-            this.rules = value.AsReadOnly();
-            this.OnPropertyChanged(nameof(Rules));
-        }
     }
 }
