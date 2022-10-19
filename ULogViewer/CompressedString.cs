@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CarinaStudio.Diagnostics;
+using System;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
@@ -43,7 +44,7 @@ namespace CarinaStudio.ULogViewer
 
 
 		// Static fields.
-		static readonly long BaseSize = typeof(CompressedString).EstimateInstanceSize();
+		static readonly long BaseSize = Memory.EstimateInstanceSize<CompressedString>();
 		[ThreadStatic]
 		static MemoryStream? CompressionMemoryStream;
 		[ThreadStatic]
@@ -105,8 +106,8 @@ namespace CarinaStudio.ULogViewer
 		{ 
 			get => this.data switch
 			{
-				string str => TypeExtensions.EstimateArrayInstanceSize(sizeof(char), str.Length),
-				byte[] bytes => TypeExtensions.EstimateArrayInstanceSize(sizeof(byte), bytes.Length),
+				string str => Memory.EstimateArrayInstanceSize(sizeof(char), str.Length),
+				byte[] bytes => Memory.EstimateArrayInstanceSize(sizeof(byte), bytes.Length),
 				_ => 0,
 			} + BaseSize;
 		}

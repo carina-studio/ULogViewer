@@ -1,5 +1,6 @@
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
+using CarinaStudio.Diagnostics;
 using CarinaStudio.Threading;
 using System;
 using System.Collections.Generic;
@@ -266,7 +267,7 @@ class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.Fi
 
 
     /// <inheritdoc/>
-    public override long MemorySize => base.MemorySize + TypeExtensions.EstimateCollectionInstanceSize(IntPtr.Size, this.filteredLogs.Count);
+    public override long MemorySize => base.MemorySize + Memory.EstimateCollectionInstanceSize(IntPtr.Size, this.filteredLogs.Count);
 
 
     /// <inheritdoc/>

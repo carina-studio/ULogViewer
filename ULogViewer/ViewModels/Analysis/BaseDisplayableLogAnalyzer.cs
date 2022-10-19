@@ -1,4 +1,5 @@
 using CarinaStudio.Collections;
+using CarinaStudio.Diagnostics;
 using CarinaStudio.Threading;
 using System;
 using System.Collections.Generic;
@@ -67,8 +68,8 @@ abstract class BaseDisplayableLogAnalyzer<TProcessingToken, TResult> : BaseDispl
     public override long MemorySize
     {
         get => base.MemorySize 
-            + TypeExtensions.EstimateCollectionInstanceSize(IntPtr.Size, this.analysisResults.Count)
-            + TypeExtensions.EstimateCollectionInstanceSize(IntPtr.Size, this.tempResults.Capacity)
+            + Memory.EstimateCollectionInstanceSize(IntPtr.Size, this.analysisResults.Count)
+            + Memory.EstimateCollectionInstanceSize(IntPtr.Size, this.tempResults.Capacity)
             + this.analysisResultsMemorySize;
     }
 

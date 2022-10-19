@@ -1,5 +1,6 @@
 ﻿using Avalonia.Media;
 using CarinaStudio.Configuration;
+using CarinaStudio.Diagnostics;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Converters;
 using CarinaStudio.ULogViewer.Logs;
@@ -24,7 +25,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		// Static fields.
-		static readonly long BaseMemorySize = typeof(DisplayableLogGroup).EstimateInstanceSize();
+		static readonly long BaseMemorySize = Memory.EstimateInstanceSize<DisplayableLogGroup>();
 
 
 		// Fields.

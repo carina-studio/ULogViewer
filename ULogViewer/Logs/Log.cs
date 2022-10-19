@@ -1,4 +1,5 @@
 ﻿using CarinaStudio.Collections;
+using CarinaStudio.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -58,7 +59,7 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		// Static fields.
-		static readonly long baseMemorySize = typeof(Log).EstimateInstanceSize();
+		static readonly long baseMemorySize = Memory.EstimateInstanceSize<Log>();
 		static readonly HashSet<string> dateTimePropertyNameSet = new HashSet<string>();
 		static volatile bool isPropertyMapReady;
 		static long nextId = 0;
@@ -128,7 +129,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			this.Id = Interlocked.Increment(ref nextId);
 
 			// calculate memory size
-			this.MemorySize = baseMemorySize + propertyMemorySize + TypeExtensions.EstimateArrayInstanceSize(sizeof(byte), this.propertyValueIndices.Length) + TypeExtensions.EstimateArrayInstanceSize(IntPtr.Size, this.propertyValues.Length);
+			this.MemorySize = baseMemorySize + propertyMemorySize + Memory.EstimateArrayInstanceSize(sizeof(byte), this.propertyValueIndices.Length) + Memory.EstimateArrayInstanceSize(IntPtr.Size, this.propertyValues.Length);
 		}
 
 

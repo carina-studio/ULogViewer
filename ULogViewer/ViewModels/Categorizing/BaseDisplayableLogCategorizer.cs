@@ -1,4 +1,5 @@
 using CarinaStudio.Collections;
+using CarinaStudio.Diagnostics;
 using System;
 using System.Collections.Generic;
 
@@ -46,7 +47,7 @@ abstract class BaseDisplayableLogCategorizer<TProcessingToken, TCategory> : Base
     public override long MemorySize 
     { 
         get => base.MemorySize 
-            + TypeExtensions.EstimateCollectionInstanceSize(IntPtr.Size, this.categories.Count)
+            + Memory.EstimateCollectionInstanceSize(IntPtr.Size, this.categories.Count)
             + this.categoryMemorySize; 
     }
 

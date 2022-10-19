@@ -1,5 +1,6 @@
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
+using CarinaStudio.Diagnostics;
 using CarinaStudio.Threading;
 using CarinaStudio.Threading.Tasks;
 using CarinaStudio.ULogViewer.Logs.Profiles;
@@ -82,7 +83,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
         this.unprocessedLogs = new SortedObservableList<DisplayableLog>(comparison.Invert());
 
         // setup properties
-        this.baseMemorySize = this.GetType().EstimateInstanceSize();
+        this.baseMemorySize = Memory.EstimateInstanceSize(this.GetType());
         this.ChunkSize = priority switch
         {
             DisplayableLogProcessingPriority.Background => this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.DisplayableLogChunkProcessingSizeBackground),
@@ -389,8 +390,8 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
     public virtual long MemorySize 
     { 
         get => this.baseMemorySize 
-            + TypeExtensions.EstimateCollectionInstanceSize(IntPtr.Size, this.unprocessedLogs.Count) 
-            + TypeExtensions.EstimateCollectionInstanceSize(sizeof(byte), this.sourceLogVersions.Capacity); 
+            + Memory.EstimateCollectionInstanceSize(IntPtr.Size, this.unprocessedLogs.Count) 
+            + Memory.EstimateCollectionInstanceSize(sizeof(byte), this.sourceLogVersions.Capacity); 
     }
 
 
