@@ -2,14 +2,13 @@ using CarinaStudio.Collections;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.ComponentModel;
 
 namespace CarinaStudio.ULogViewer.ViewModels.Analysis;
 
 /// <summary>
 /// Analyzer to find key logs.
 /// </summary>
-class KeyLogDisplayableLogAnalyzer : BaseDisplayableLogAnalyzer<KeyLogDisplayableLogAnalyzer.AnalyzingToken>
+class KeyLogDisplayableLogAnalyzer : RuleBasedDisplayableLogAnalyzer<KeyLogDisplayableLogAnalyzer.AnalyzingToken, KeyLogAnalysisRuleSet.Rule>
 {
     /// <summary>
     /// Token of analyzing.
@@ -19,9 +18,7 @@ class KeyLogDisplayableLogAnalyzer : BaseDisplayableLogAnalyzer<KeyLogDisplayabl
 
 
     // Fields.
-    readonly List<KeyLogAnalysisRuleSet> attachedRuleSets = new();
-    readonly ObservableList<DisplayableLogProperty> logProperties = new(); 
-    readonly ObservableList<KeyLogAnalysisRuleSet> ruleSets = new();
+    readonly ObservableList<DisplayableLogProperty> logProperties = new();
 
 
     /// <summary>
@@ -33,7 +30,6 @@ class KeyLogDisplayableLogAnalyzer : BaseDisplayableLogAnalyzer<KeyLogDisplayabl
     public KeyLogDisplayableLogAnalyzer(IULogViewerApplication app, IList<DisplayableLog> sourceLogs, Comparison<DisplayableLog> comparison) : base(app, sourceLogs, comparison)
     { 
         this.logProperties.CollectionChanged += this.OnLogPropertiesChanged;
-        this.ruleSets.CollectionChanged += this.OnRuleSetsChanged;
     }
 
 
@@ -62,20 +58,4 @@ class KeyLogDisplayableLogAnalyzer : BaseDisplayableLogAnalyzer<KeyLogDisplayabl
         result = this.EmptyResults;
         return false;
     }
-
-
-    // Called when rule set changed.
-    void OnRuleSetPropertyChanged(object? sender, PropertyChangedEventArgs e)
-    { }
-
-
-    // Called when list of rule sets changed.
-    void OnRuleSetsChanged(object? sender, NotifyCollectionChangedEventArgs e)
-    { }
-
-
-    /// <summary>
-    /// Get list of rule sets for analysis.
-    /// </summary>
-    public IList<KeyLogAnalysisRuleSet> RuleSets { get => this.ruleSets; }
 }
