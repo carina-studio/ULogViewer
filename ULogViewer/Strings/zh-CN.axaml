@@ -169,6 +169,25 @@
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.TimeSpan">时距</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Warning">警告</sys:String>
 
+	<!-- DisplayableLogAnalysisRuleEditorDialog -->
+	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Conditions">额外条件</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Level">日志等级</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Level.Description">只有符合指定等级的日志才会被选择以输出结果。</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Message">分析结果信息</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Message.Description">您可以使用插值语法 "{}" 以将日志属性或格式中的自定义分组输出至消息。</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Message.Required">分析结果信息 (必要)</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Pattern">格式 (必要)</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Pattern.Description">您可以使用 \$\$ 表示文字属性分隔线。例如您想找到使用者为 "John" 且 信息为 "Hello" 的日志，就可以使用 "John\$\$Hello" 作为格式。文字属性的排列顺序和日志类型所定义与可见日志属性相同。</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.ResultType">分析结果类型</sys:String>
+
+	<!-- DisplayableLogAnalysisRuleSetEditorDialog -->
+	<sys:String x:Key="String/DisplayableLogAnalysisRuleSetEditorDialog.CannotAddMoreRuleSetWithoutProVersion">在启用专业版之前，您无法建立更多的规则集。</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisRuleSetEditorDialog.Icon">图标</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisRuleSetEditorDialog.IconColor">图标色彩</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisRuleSetEditorDialog.Name">名称 (必要)</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisRuleSetEditorDialog.RestrictionsOfNonProVersion">在启用专业版之前，您只能建立 1 个规则集，且在关闭 ULogViewer 后不会被保留。</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisRuleSetEditorDialog.Rules">规则 (必要)</sys:String>
+
 	<!-- EnqueueVarEditorDialog -->
 	<sys:String x:Key="String/EnqueueVarEditorDialog.Title">将变量值加入队列</sys:String>
 
@@ -203,23 +222,9 @@
 	<sys:String x:Key="String/JsonLogsSavingOptionsDialog.Title">JSON 选项</sys:String>
 
 	<!-- KeyLogAnalysisRuleEditorDialog -->
-	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Conditions">额外条件</sys:String>
-	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Level">日志等级</sys:String>
-	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Level.Description">只有符合指定等级的日志才会被选择以输出结果。</sys:String>
-	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Message">分析结果信息 (必要)</sys:String>
-	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Message.Description">您可以使用插值语法 "{}" 以将日志属性或格式中的自定义分组输出至消息。</sys:String>
-	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Pattern">格式 (必要)</sys:String>
-	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Pattern.Description">您可以使用 \$\$ 表示文字属性分隔线。例如您想找到使用者为 "John" 且 信息为 "Hello" 的日志，就可以使用 "John\$\$Hello" 作为格式。文字属性的排列顺序和日志类型所定义与可见日志属性相同。</sys:String>
-	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.ResultType">分析结果类型</sys:String>
 	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Title">编辑关键日志分析规则</sys:String>
 
 	<!-- KeyLogAnalysisRuleSetEditorDialog -->
-	<sys:String x:Key="String/KeyLogAnalysisRuleSetEditorDialog.CannotAddMoreRuleSetWithoutProVersion">在启用专业版之前，您无法建立更多的规则集。</sys:String>
-	<sys:String x:Key="String/KeyLogAnalysisRuleSetEditorDialog.Icon">图标</sys:String>
-	<sys:String x:Key="String/KeyLogAnalysisRuleSetEditorDialog.IconColor">图标色彩</sys:String>
-	<sys:String x:Key="String/KeyLogAnalysisRuleSetEditorDialog.Name">名称 (必要)</sys:String>
-	<sys:String x:Key="String/KeyLogAnalysisRuleSetEditorDialog.RestrictionsOfNonProVersion">在启用专业版之前，您只能建立 1 个规则集，且在关闭 ULogViewer 后不会被保留。</sys:String>
-	<sys:String x:Key="String/KeyLogAnalysisRuleSetEditorDialog.Rules">规则 (必要)</sys:String>
 	<sys:String x:Key="String/KeyLogAnalysisRuleSetEditorDialog.Title">编辑关键日志分析规则集</sys:String>
 
 	<!-- LogAnalysisScriptSetEditorDialog -->
@@ -621,9 +626,6 @@ return false;</sys:String>
 	<!-- OperationDurationAnalysisRuleEditorDialog -->
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog">动作起始日志</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.Common">一般</sys:String>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.Conditions">额外条件</sys:String>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.CustomMessage">自订分析结果讯息</sys:String>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.CustomMessage.Description">您可以使用插值语法 "{}" 以将变量值输出至讯息。</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingLog">动作结束日志</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingMode">动作结束方式</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingVariable">比对的变量</sys:String>
@@ -633,21 +635,13 @@ return false;</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.MinMaxDuration.Description">只有在指定时距区间内的动作才会被用以输出结果。若没有上/下限则留白。</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.OperationName">动作名称</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.Other">其他</sys:String>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.Pattern">文字格式 (必要)</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.PostActions">额外条件符合后执行动作</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.PreActions">文字格式符合后执行动作</sys:String>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.ResultType">分析结果类型</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.Title">编辑动作时距分析规则</sys:String>
 
 	<!-- OperationDurationAnalysisRuleSetEditorDialog -->
 	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.AddRuleAfter">新增接续在此规则后之规则</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.AddRuleBefore">新增结束于此规则之规则</sys:String>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.CannotAddMoreRuleSetWithoutProVersion">在启用专业版之前，您无法建立更多的规则集。</sys:String>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.Icon">图标</sys:String>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.IconColor">图标色彩</sys:String>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.Name">名称 (必要)</sys:String>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.RestrictionsOfNonProVersion">在启用专业版之前，您只能建立 1 个规则集，且在关闭 ULogViewer 后不会被保留。</sys:String>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.Rules">规则 (必要)</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.Title">编辑动作时距分析规则集</sys:String>
 
 	<!-- OperationEndingMode -->
@@ -680,7 +674,7 @@ return false;</sys:String>
 	<!-- PredefinedLogTextFilterEditorDialog -->
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Name">名称 (必要)</sys:String>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Regex">格式 (必要)</sys:String>
-	<StaticResourceExtension x:Key="String/PredefinedLogTextFilterEditorDialog.Regex.Description" ResourceKey="String/KeyLogAnalysisRuleEditorDialog.Pattern.Description"/>
+	<StaticResourceExtension x:Key="String/PredefinedLogTextFilterEditorDialog.Regex.Description" ResourceKey="String/DisplayableLogAnalysisRuleEditorDialog.Pattern.Description"/>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Title.Create">创建文字过滤器</sys:String>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Title.Edit">编辑文字过滤器</sys:String>
 
@@ -887,7 +881,7 @@ return null;</sys:String>
 	<sys:String x:Key="String/SessionView.LogsDurationStartingPoint">最早日志时间/最小日志间距</sys:String>
 	<sys:String x:Key="String/SessionView.LogsFilteringProgress">筛选日志中…</sys:String>
 	<sys:String x:Key="String/SessionView.LogsMemoryUsage">此页面日志内存使用量</sys:String>
-	<StaticResource x:Key="String/SessionView.LogTextFilter.ToolTip" ResourceKey="String/KeyLogAnalysisRuleEditorDialog.Pattern.Description"/>
+	<StaticResource x:Key="String/SessionView.LogTextFilter.ToolTip" ResourceKey="String/DisplayableLogAnalysisRuleEditorDialog.Pattern.Description"/>
 	<sys:String x:Key="String/SessionView.LogTextFilter.Watermark">文字筛选 (正则表达式)</sys:String>
 	<sys:String x:Key="String/SessionView.LogThreadIdFilter.Description">使用线程ID (Thread ID) 筛选日志</sys:String>
 	<sys:String x:Key="String/SessionView.MarkedLogsPanel">已标记日志</sys:String>

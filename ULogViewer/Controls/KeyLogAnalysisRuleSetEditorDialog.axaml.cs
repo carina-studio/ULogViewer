@@ -123,7 +123,7 @@ partial class KeyLogAnalysisRuleSetEditorDialog : AppSuite.Controls.Window<IULog
 				await new MessageDialog()
 				{
 					Icon = MessageDialogIcon.Warning,
-					Message = this.GetResourceObservable("String/KeyLogAnalysisRuleSetEditorDialog.CannotAddMoreRuleSetWithoutProVersion"),
+					Message = this.GetResourceObservable("String/DisplayableLogAnalysisRuleSetEditorDialog.CannotAddMoreRuleSetWithoutProVersion"),
 				}.ShowDialog(this);
 				return;
 			}
@@ -222,7 +222,7 @@ partial class KeyLogAnalysisRuleSetEditorDialog : AppSuite.Controls.Window<IULog
 						await new MessageDialog()
 						{
 							Icon = MessageDialogIcon.Warning,
-							Message = this.GetResourceObservable("String/KeyLogAnalysisRuleSetEditorDialog.CannotAddMoreRuleSetWithoutProVersion"),
+							Message = this.GetResourceObservable("String/DisplayableLogAnalysisRuleSetEditorDialog.CannotAddMoreRuleSetWithoutProVersion"),
 						}.ShowDialog(this);
 						this.Close();
 					}
@@ -232,7 +232,7 @@ partial class KeyLogAnalysisRuleSetEditorDialog : AppSuite.Controls.Window<IULog
 						{
 							DoNotAskOrShowAgain = false,
 							Icon = MessageDialogIcon.Information,
-							Message = this.GetResourceObservable("String/KeyLogAnalysisRuleSetEditorDialog.RestrictionsOfNonProVersion"),
+							Message = this.GetResourceObservable("String/DisplayableLogAnalysisRuleSetEditorDialog.RestrictionsOfNonProVersion"),
 						};
 						await messageDialog.ShowDialog(this);
 						if (messageDialog.DoNotAskOrShowAgain == true)

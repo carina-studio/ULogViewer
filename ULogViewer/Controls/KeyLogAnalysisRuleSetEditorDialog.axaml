@@ -32,26 +32,26 @@
 		<StackPanel Classes="Dialog_ContentPanel">
 
 			<!-- Name -->
-			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/KeyLogAnalysisRuleSetEditorDialog.Name}"/>
+			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/DisplayableLogAnalysisRuleSetEditorDialog.Name}"/>
 			<TextBox Name="nameTextBox" Classes="Dialog_TextBox" MaxLength="256"/>
 			<Separator Classes="Dialog_Separator"/>
 
 			<!-- Icon -->
 			<Grid ColumnDefinitions="*,Auto,*" HorizontalAlignment="Stretch">
 				<StackPanel>
-					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/KeyLogAnalysisRuleSetEditorDialog.Icon}"/>
+					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/DisplayableLogAnalysisRuleSetEditorDialog.Icon}"/>
 					<appControls:LogProfileIconComboBox Name="iconComboBox" Classes="Dialog_ComboBox" IconColor="{Binding #iconColorComboBox.SelectedItem}"/>
 				</StackPanel>
 				<Separator Classes="Dialog_Separator_Small" Grid.Column="1"/>
 				<StackPanel Grid.Column="2">
-					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/KeyLogAnalysisRuleSetEditorDialog.IconColor}"/>
+					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/DisplayableLogAnalysisRuleSetEditorDialog.IconColor}"/>
 					<appControls:LogProfileIconColorComboBox Name="iconColorComboBox" Classes="Dialog_ComboBox"/>
 				</StackPanel>
 			</Grid>
 			<Separator Classes="Dialog_Separator"/>
 
 			<!-- Rules -->
-			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/KeyLogAnalysisRuleSetEditorDialog.Rules}"/>
+			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/DisplayableLogAnalysisRuleSetEditorDialog.Rules}"/>
 			<Grid ColumnDefinitions="*,Auto">
 				<asControls:ListBox Name="ruleListBox" Height="{StaticResource Double/KeyLogAnalysisRuleSetEditorDialog.RuleListBox.Height}" Items="{Binding $parent[Window].Rules}">
 					<asControls:ListBox.ItemTemplate>

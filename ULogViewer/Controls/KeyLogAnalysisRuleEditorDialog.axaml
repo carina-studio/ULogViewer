@@ -32,13 +32,13 @@
 				<StackPanel Classes="Dialog_ContentPanel">
 
 					<!-- Pattern -->
-					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/KeyLogAnalysisRuleEditorDialog.Pattern}"/>
+					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Pattern}"/>
 					<appControls:PatternEditor Name="patternEditor" IsCapturingGroupsEnabled="True" MinHeight="{DynamicResource Double/KeyLogAnalysisRuleEditorDialog.PatternInput.Height}"/>
-					<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/KeyLogAnalysisRuleEditorDialog.Pattern.Description}"/>
+					<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Pattern.Description}"/>
 					<Separator Classes="Dialog_Separator"/>
 
 					<!-- Level -->
-					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/KeyLogAnalysisRuleEditorDialog.Level}"/>
+					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Level}"/>
 					<ComboBox Name="levelComboBox" Classes="Dialog_ComboBox" Items="{Binding $parent[Window].LogLevels}">
 						<ComboBox.ItemTemplate>
 							<DataTemplate>
@@ -49,16 +49,16 @@
 							</DataTemplate>
 						</ComboBox.ItemTemplate>
 					</ComboBox>
-					<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/KeyLogAnalysisRuleEditorDialog.Level.Description}"/>
+					<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Level.Description}"/>
 					<Separator Classes="Dialog_Separator"/>
 
 					<!-- Conditions -->
-					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/KeyLogAnalysisRuleEditorDialog.Conditions}"/>
+					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Conditions}"/>
 					<appControls:DisplayableLogAnalysisConditionsEditor Conditions="{Binding $parent[Window].Conditions}" VerticalScrollBarVisibility="Disabled"/>
 					<Separator Classes="Dialog_Separator"/>
 
 					<!-- Result type -->
-					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/KeyLogAnalysisRuleEditorDialog.ResultType}"/>
+					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.ResultType}"/>
 					<ComboBox Name="resultTypeComboBox" Classes="Dialog_ComboBox" Items="{Binding $parent[Window].ResultTypes}">
 						<ComboBox.ItemTemplate>
 							<DataTemplate>
@@ -75,9 +75,9 @@
 					<Separator Classes="Dialog_Separator"/>
 
 					<!-- Message -->
-					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/KeyLogAnalysisRuleEditorDialog.Message}"/>
+					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Message.Required}"/>
 					<asControls:StringInterpolationFormatTextBox Name="messageTextBox" Classes="Dialog_TextBox" Height="{StaticResource Double/KeyLogAnalysisRuleEditorDialog.MessageInput.Height}"/>
-					<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/KeyLogAnalysisRuleEditorDialog.Message.Description}"/>
+					<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Message.Description}"/>
 					<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.FormatDescription}" Uri="{x:Static app:Uris.StringInterpolationReference}"/>
 					
 				</StackPanel>

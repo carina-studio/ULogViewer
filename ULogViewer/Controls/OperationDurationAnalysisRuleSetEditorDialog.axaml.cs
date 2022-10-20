@@ -159,7 +159,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					await new MessageDialog()
 					{
 						Icon = MessageDialogIcon.Warning,
-						Message = this.GetResourceObservable("String/OperationDurationAnalysisRuleSetEditorDialog.CannotAddMoreRuleSetWithoutProVersion"),
+						Message = this.GetResourceObservable("String/DisplayableLogAnalysisRuleSetEditorDialog.CannotAddMoreRuleSetWithoutProVersion"),
 					}.ShowDialog(this);
 					return;
 				}
@@ -264,7 +264,7 @@ namespace CarinaStudio.ULogViewer.Controls
 							await new MessageDialog()
 							{
 								Icon = MessageDialogIcon.Warning,
-								Message = this.GetResourceObservable("String/OperationDurationAnalysisRuleSetEditorDialog.CannotAddMoreRuleSetWithoutProVersion"),
+								Message = this.GetResourceObservable("String/DisplayableLogAnalysisRuleSetEditorDialog.CannotAddMoreRuleSetWithoutProVersion"),
 							}.ShowDialog(this);
 							this.Close();
 						}
@@ -274,7 +274,7 @@ namespace CarinaStudio.ULogViewer.Controls
 							{
 								DoNotAskOrShowAgain = false,
 								Icon = MessageDialogIcon.Information,
-								Message = this.GetResourceObservable("String/OperationDurationAnalysisRuleSetEditorDialog.RestrictionsOfNonProVersion"),
+								Message = this.GetResourceObservable("String/DisplayableLogAnalysisRuleSetEditorDialog.RestrictionsOfNonProVersion"),
 							};
 							await messageDialog.ShowDialog(this);
 							if (messageDialog.DoNotAskOrShowAgain == true)
