@@ -213,6 +213,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly Avalonia.Controls.ListBox markedLogListBox;
 		IDisposable markedLogsPanelVisibilityObserverToken = EmptyDisposable.Default;
 		readonly double minLogListBoxSizeToCloseSidePanel;
+		readonly Avalonia.Controls.ListBox operationCountingAnalysisRuleSetListBox;
 		readonly Avalonia.Controls.ListBox operationDurationAnalysisRuleSetListBox;
 		readonly ToggleButton otherActionsButton;
 		readonly ContextMenu otherActionsMenu;
@@ -226,6 +227,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ToggleButton selectAndSetLogProfileDropDownButton;
 		readonly HashSet<KeyLogAnalysisRuleSet> selectedKeyLogAnalysisRuleSets = new();
 		readonly HashSet<LogAnalysisScriptSet> selectedLogAnalysisScriptSets = new();
+		readonly HashSet<OperationCountingAnalysisRuleSet> selectedOperationCountingAnalysisRuleSets = new();
 		readonly HashSet<OperationDurationAnalysisRuleSet> selectedOperationDurationAnalysisRuleSets = new();
 		readonly HashSet<PredefinedLogTextFilter> selectedPredefinedLogTextFilters = new();
 		readonly MenuItem showLogPropertyMenuItem;
@@ -527,6 +529,10 @@ namespace CarinaStudio.ULogViewer.Controls
 					(this.Application as AppSuite.AppSuiteApplication)?.EnsureClosingToolTipIfWindowIsInactive(it);
 			});
 			this.markedLogListBox = this.Get<Avalonia.Controls.ListBox>(nameof(markedLogListBox));
+			this.operationCountingAnalysisRuleSetListBox = this.Get<Avalonia.Controls.ListBox>(nameof(operationCountingAnalysisRuleSetListBox)).Also(it =>
+			{
+				it.SelectionChanged += this.OnLogAnalysisRuleSetListBoxSelectionChanged;
+			});
 			this.operationDurationAnalysisRuleSetListBox = this.Get<Avalonia.Controls.ListBox>(nameof(operationDurationAnalysisRuleSetListBox)).Also(it =>
 			{
 				it.SelectionChanged += this.OnLogAnalysisRuleSetListBoxSelectionChanged;
@@ -719,12 +725,15 @@ namespace CarinaStudio.ULogViewer.Controls
 				if (this.DataContext is not Session session)
 					return;
 				var selectedKlaRuleSets = this.selectedKeyLogAnalysisRuleSets.ToArray();
+				var selectedOcaRuleSets = this.selectedOperationCountingAnalysisRuleSets.ToArray();
 				var selectedOdaRuleSets = this.selectedOperationDurationAnalysisRuleSets.ToArray();
 				var selectedLaScriptSets = this.selectedLogAnalysisScriptSets.ToArray();
 				session.LogAnalysis.KeyLogAnalysisRuleSets.Clear();
 				session.LogAnalysis.KeyLogAnalysisRuleSets.AddAll(selectedKlaRuleSets);
 				session.LogAnalysis.OperationDurationAnalysisRuleSets.Clear();
 				session.LogAnalysis.OperationDurationAnalysisRuleSets.AddAll(selectedOdaRuleSets);
+				session.LogAnalysis.OperationCountingAnalysisRuleSets.Clear();
+				session.LogAnalysis.OperationCountingAnalysisRuleSets.AddAll(selectedOcaRuleSets);
 				session.LogAnalysis.LogAnalysisScriptSets.Clear();
 				session.LogAnalysis.LogAnalysisScriptSets.AddAll(selectedLaScriptSets);
 			});
@@ -953,6 +962,12 @@ namespace CarinaStudio.ULogViewer.Controls
 				foreach (var scriptSet in session.LogAnalysis.LogAnalysisScriptSets)
 					it.Add(scriptSet);
 			});
+			this.operationCountingAnalysisRuleSetListBox.SelectedItems.Let(it =>
+			{
+				it.Clear();
+				foreach (var ruleSet in session.LogAnalysis.OperationCountingAnalysisRuleSets)
+					it.Add(ruleSet);
+			});
 			this.operationDurationAnalysisRuleSetListBox.SelectedItems.Let(it =>
 			{
 				it.Clear();
@@ -999,6 +1014,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			this.keyLogAnalysisRuleSetListBox.SelectedItems.Clear();
 			this.logAnalysisScriptSetListBox.SelectedItems.Clear();
+			this.operationCountingAnalysisRuleSetListBox.SelectedItems.Clear();
 			this.operationDurationAnalysisRuleSetListBox.SelectedItems.Clear();
 			this.updateLogAnalysisAction.Reschedule();
 		}
@@ -1272,6 +1288,28 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Command to copy log text.
 		ICommand CopyLogTextCommand { get; }
+
+
+		// Copy selected log analysis rule set.
+		void CopyOperationCountingAnalysisRuleSet(OperationCountingAnalysisRuleSet ruleSet)
+		{
+			if (this.attachedWindow == null)
+				return;
+			var baseName = BaseNameRegex.Match(ruleSet.Name ?? "").Let(it =>
+				it.Success ? it.Groups["Name"].Value : ruleSet.Name ?? "");
+			var newName = baseName;
+			for (var n = 2; n <= 10; ++n)
+			{
+				var candidateName = $"{baseName} ({n})";
+				if (OperationCountingAnalysisRuleSetManager.Default.RuleSets.FirstOrDefault(it => it.Name == candidateName) == null)
+				{
+					newName = candidateName;
+					break;
+				}
+			}
+			var newRuleSet = new OperationCountingAnalysisRuleSet(ruleSet, newName);
+			OperationCountingAnalysisRuleSetEditorDialog.Show(this.attachedWindow, newRuleSet);
+		}
 
 
 		// Copy selected log analysis rule set.
@@ -1825,6 +1863,14 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Create new operation counting analysis rule set.
+		void CreateOperationCountingAnalysisRuleSet()
+		{
+			if (this.attachedWindow != null)
+				OperationCountingAnalysisRuleSetEditorDialog.Show(this.attachedWindow, null);
+		}
+
+
 		// Create new operation duration analysis rule set.
 		void CreateOperationDurationAnalysisRuleSet()
 		{
@@ -2181,6 +2227,15 @@ namespace CarinaStudio.ULogViewer.Controls
 		ICommand EditLogProfileCommand { get; }
 
 
+		// Edit given operation counting analysis rule set.
+		void EditOperationCountingAnalysisRuleSet(OperationCountingAnalysisRuleSet? ruleSet)
+		{
+			if (ruleSet == null || this.attachedWindow == null)
+				return;
+			OperationCountingAnalysisRuleSetEditorDialog.Show(this.attachedWindow, ruleSet);
+		}
+
+
 		// Edit given operation duration analysis rule set.
 		void EditOperationDurationAnalysisRuleSet(OperationDurationAnalysisRuleSet? ruleSet)
 		{
@@ -2254,6 +2309,31 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				this.Logger.LogError(ex, $"Failed to export log analysis script set '{scriptSet.Id}' to '{fileName}'");
 				this.OnExportLogAnalysisRuleSetFailed(scriptSet.Name, fileName);
+			}
+		}
+
+
+		// Export given operation counting analysis rule set.
+		async void ExportOperationCountingAnalysisRuleSet(OperationCountingAnalysisRuleSet? ruleSet)
+		{
+			// check state
+			if (ruleSet == null || this.attachedWindow == null)
+				return;
+			
+			// select file
+			var fileName = await this.SelectFileToExportLogAnalysisRuleSetAsync();
+			if (string.IsNullOrEmpty(fileName))
+				return;
+			
+			// export
+			try
+			{
+				await ruleSet.SaveAsync(fileName, false);
+			}
+			catch (Exception ex)
+			{
+				this.Logger.LogError(ex, $"Failed to export operation counting analysis rule set '{ruleSet.Id}' to '{fileName}'");
+				this.OnExportLogAnalysisRuleSetFailed(ruleSet.Name, fileName);
 			}
 		}
 
@@ -3168,6 +3248,8 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.selectedKeyLogAnalysisRuleSets.Remove(klaRuleSets);
 				else if (ruleSet is LogAnalysisScriptSet laScriptSet)
 					this.selectedLogAnalysisScriptSets.Remove(laScriptSet);
+				else if (ruleSet is OperationCountingAnalysisRuleSet ocaRuleSets)
+					this.selectedOperationCountingAnalysisRuleSets.Remove(ocaRuleSets);
 				else if (ruleSet is OperationDurationAnalysisRuleSet odaRuleSets)
 					this.selectedOperationDurationAnalysisRuleSets.Remove(odaRuleSets);
 				else if (ruleSet != null)
@@ -3179,6 +3261,8 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.selectedKeyLogAnalysisRuleSets.Add(klaRuleSets);
 				else if (ruleSet is LogAnalysisScriptSet laScriptSet)
 					this.selectedLogAnalysisScriptSets.Add(laScriptSet);
+				else if (ruleSet is OperationCountingAnalysisRuleSet ocaRuleSets)
+					this.selectedOperationCountingAnalysisRuleSets.Add(ocaRuleSets);
 				else if (ruleSet is OperationDurationAnalysisRuleSet odaRuleSets)
 					this.selectedOperationDurationAnalysisRuleSets.Add(odaRuleSets);
 				else if (ruleSet != null)
@@ -3193,7 +3277,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				if (listBox == this.keyLogAnalysisRuleSetListBox)
 				{
 					selectedRuleSetCount = this.selectedKeyLogAnalysisRuleSets.Count;
-					if (this.selectedKeyLogAnalysisRuleSets.Count != listBox.SelectedItems.Count)
+					if (selectedRuleSetCount != listBox.SelectedItems.Count)
 					{
 						copiedSelectedRuleSets = this.selectedKeyLogAnalysisRuleSets.ToArray();
 						return true;
@@ -3203,9 +3287,19 @@ namespace CarinaStudio.ULogViewer.Controls
 				else if (listBox == this.logAnalysisScriptSetListBox)
 				{
 					selectedRuleSetCount = this.selectedLogAnalysisScriptSets.Count;
-					if (this.selectedLogAnalysisScriptSets.Count != listBox.SelectedItems.Count)
+					if (selectedRuleSetCount != listBox.SelectedItems.Count)
 					{
 						copiedSelectedRuleSets = this.selectedLogAnalysisScriptSets.ToArray();
+						return true;
+					}
+					return false;
+				}
+				else if (listBox == this.operationCountingAnalysisRuleSetListBox)
+				{
+					selectedRuleSetCount = this.selectedOperationCountingAnalysisRuleSets.Count;
+					if (selectedRuleSetCount != listBox.SelectedItems.Count)
+					{
+						copiedSelectedRuleSets = this.selectedOperationCountingAnalysisRuleSets.ToArray();
 						return true;
 					}
 					return false;
@@ -3213,7 +3307,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				else if (listBox == this.operationDurationAnalysisRuleSetListBox)
 				{
 					selectedRuleSetCount = this.selectedOperationDurationAnalysisRuleSets.Count;
-					if (this.selectedOperationDurationAnalysisRuleSets.Count != listBox.SelectedItems.Count)
+					if (selectedRuleSetCount != listBox.SelectedItems.Count)
 					{
 						copiedSelectedRuleSets = this.selectedOperationDurationAnalysisRuleSets.ToArray();
 						return true;
@@ -3982,6 +4076,8 @@ namespace CarinaStudio.ULogViewer.Controls
 					return this.keyLogAnalysisRuleSetListBox.SelectedItems;
 				else if (sender == session.LogAnalysis.LogAnalysisScriptSets)
 					return this.logAnalysisScriptSetListBox.SelectedItems;
+				else if (sender == session.LogAnalysis.OperationCountingAnalysisRuleSets)
+					return this.operationCountingAnalysisRuleSetListBox.SelectedItems;
 				else if (sender == session.LogAnalysis.OperationDurationAnalysisRuleSets)
 					return this.operationDurationAnalysisRuleSetListBox.SelectedItems;
 				else
@@ -4248,6 +4344,19 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				LogAnalysisScriptSetEditorDialog.CloseAll(scriptSet);
 				LogAnalysisScriptSetManager.Default.RemoveScriptSet(scriptSet);
+			}
+		}
+
+
+		// Remove given operation counting analysis rule set.
+		async void RemoveOperationCountingAnalysisRuleSet(OperationCountingAnalysisRuleSet? ruleSet)
+		{
+			if (ruleSet == null || this.attachedWindow == null)
+				return;
+			if (await this.ConfirmRemovingLogAnalysisRuleSetAsync(ruleSet.Name, false))
+			{
+				OperationCountingAnalysisRuleSetEditorDialog.CloseAll(ruleSet);
+				OperationCountingAnalysisRuleSetManager.Default.RemoveRuleSet(ruleSet);
 			}
 		}
 

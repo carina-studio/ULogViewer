@@ -99,6 +99,8 @@ class LogAnalysisViewModel : SessionComponent
     readonly ObservableList<KeyLogAnalysisRuleSet> keyLogAnalysisRuleSets = new();
     readonly KeyLogDisplayableLogAnalyzer keyLogAnalyzer;
 	readonly ObservableList<LogAnalysisScriptSet> logAnalysisScriptSets = new();
+    readonly ObservableList<OperationCountingAnalysisRuleSet> operationCountingAnalysisRuleSets = new();
+    readonly OperationCountingAnalyzer operationCountingAnalyzer;
     readonly ObservableList<OperationDurationAnalysisRuleSet> operationDurationAnalysisRuleSets = new();
 	readonly OperationDurationDisplayableLogAnalyzer operationDurationAnalyzer;
     readonly ScheduledAction reportSelectedAnalysisResultsInfoAction;
@@ -106,6 +108,7 @@ class LogAnalysisViewModel : SessionComponent
     readonly SortedObservableList<DisplayableLogAnalysisResult> selectedAnalysisResults;
     readonly ScheduledAction updateAnalysisStateAction;
     readonly ScheduledAction updateKeyLogAnalysisAction;
+    readonly ScheduledAction updateOperationCountingAnalysisAction;
     readonly ScheduledAction updateOperationDurationAnalysisAction;
     readonly ScheduledAction updateScriptLogAnalysis;
     
@@ -136,6 +139,10 @@ class LogAnalysisViewModel : SessionComponent
             this.AttachToAnalyzer(it));
         this.logAnalysisScriptSets.CollectionChanged += (_, e) =>
             this.updateScriptLogAnalysis?.Schedule(this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogAnalysisParamsUpdateDelay));
+        this.operationCountingAnalysisRuleSets.CollectionChanged += (_, e) => 
+            this.updateOperationCountingAnalysisAction?.Schedule(this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogAnalysisParamsUpdateDelay));
+        this.operationCountingAnalyzer = new OperationCountingAnalyzer(this.Application, this.AllLogs, this.CompareLogs).Also(it =>
+            this.AttachToAnalyzer(it));
         this.operationDurationAnalysisRuleSets.CollectionChanged += (_, e) => 
             this.updateOperationDurationAnalysisAction?.Schedule(this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogAnalysisParamsUpdateDelay));
         this.operationDurationAnalyzer = new OperationDurationDisplayableLogAnalyzer(this.Application, this.AllLogs, this.CompareLogs).Also(it =>
@@ -242,6 +249,16 @@ class LogAnalysisViewModel : SessionComponent
                 this.SetValue(AnalysisProgressProperty, 0);
             }
         });
+        this.updateOperationCountingAnalysisAction = new(() =>
+        {
+            if (this.IsDisposed)
+                return;
+            if (!this.operationCountingAnalyzer.RuleSets.SequenceEqual(this.operationCountingAnalysisRuleSets))
+            {
+                this.operationCountingAnalyzer.RuleSets.Clear();
+                this.operationCountingAnalyzer.RuleSets.AddAll(this.operationCountingAnalysisRuleSets);
+            }
+        });
         this.updateOperationDurationAnalysisAction = new(() =>
         {
             if (this.IsDisposed)
@@ -276,6 +293,8 @@ class LogAnalysisViewModel : SessionComponent
         {
             this.keyLogAnalyzer.LogProperties.Clear();
             this.keyLogAnalyzer.LogProperties.AddAll(properties);
+            this.operationCountingAnalyzer.LogProperties.Clear();
+            this.operationCountingAnalyzer.LogProperties.AddAll(properties);
             this.operationDurationAnalyzer.LogProperties.Clear();
             this.operationDurationAnalyzer.LogProperties.AddAll(properties);
             this.scriptLogAnalyzer.LogProperties.Clear();
@@ -502,6 +521,7 @@ class LogAnalysisViewModel : SessionComponent
         if (this.IsDisposed)
             return;
         this.updateKeyLogAnalysisAction.Reschedule();
+        this.updateOperationCountingAnalysisAction.Reschedule();
         this.updateOperationDurationAnalysisAction.Reschedule();
         this.updateScriptLogAnalysis.Reschedule();
     }
@@ -632,6 +652,18 @@ class LogAnalysisViewModel : SessionComponent
                     this.logAnalysisScriptSets.Add(scriptSet);
             }
         }
+        if (element.TryGetProperty($"LogAnalysis.{nameof(OperationCountingAnalysisRuleSets)}", out jsonValue)
+                && jsonValue.ValueKind == JsonValueKind.Array)
+        {
+            foreach (var jsonId in jsonValue.EnumerateArray())
+            {
+                var ruleSet = jsonId.ValueKind == JsonValueKind.String
+                    ? OperationCountingAnalysisRuleSetManager.Default.GetRuleSetOrDefault(jsonId.GetString()!)
+                    : null;
+                if (ruleSet != null)
+                    this.operationCountingAnalysisRuleSets.Add(ruleSet);
+            }
+        }
         if ((element.TryGetProperty(nameof(OperationDurationAnalysisRuleSets), out jsonValue) // for upgrade case
             || element.TryGetProperty($"LogAnalysis.{nameof(OperationDurationAnalysisRuleSets)}", out jsonValue)) 
                 && jsonValue.ValueKind == JsonValueKind.Array)
@@ -693,6 +725,18 @@ class LogAnalysisViewModel : SessionComponent
             }
             writer.WriteEndArray();
         }
+        if (this.operationCountingAnalysisRuleSets.IsNotEmpty())
+        {
+            var idSet = new HashSet<string>();
+            writer.WritePropertyName($"LogAnalysis.{nameof(OperationCountingAnalysisRuleSets)}");
+            writer.WriteStartArray();
+            foreach (var ruleSet in this.operationCountingAnalysisRuleSets)
+            {
+                if (idSet.Add(ruleSet.Id))
+                    writer.WriteStringValue(ruleSet.Id);
+            }
+            writer.WriteEndArray();
+        }
         if (this.operationDurationAnalysisRuleSets.IsNotEmpty())
         {
             var idSet = new HashSet<string>();
@@ -722,6 +766,12 @@ class LogAnalysisViewModel : SessionComponent
         if (!this.IsDisposed)
             this.SetValue(HasSelectedAnalysisResultsProperty, this.selectedAnalysisResults.IsNotEmpty());
     }
+
+
+    /// <summary>
+    /// Get list of <see cref="OperationCountingAnalysisRuleSet"/> for log analysis.
+    /// </summary>
+    public IList<OperationCountingAnalysisRuleSet> OperationCountingAnalysisRuleSets { get => this.operationCountingAnalysisRuleSets; }
 
 
     /// <summary>

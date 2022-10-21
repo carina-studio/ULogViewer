@@ -626,10 +626,10 @@ return false;</sys:String>
 	<!-- OperationCountingAnalysisRuleEditorDialog -->
 	<sys:String x:Key="String/OperationCountingAnalysisRuleEditorDialog.Interval">计数时间间距</sys:String>
 	<sys:String x:Key="String/OperationCountingAnalysisRuleEditorDialog.OperationName">动作名称</sys:String>
-	<sys:String x:Key="String/OperationCountingAnalysisRuleEditorDialog.Title">编辑动作计数规则</sys:String>
+	<sys:String x:Key="String/OperationCountingAnalysisRuleEditorDialog.Title">编辑动作计数分析规则</sys:String>
 
 	<!-- OperationCountingAnalysisRuleSetEditorDialog -->
-	<sys:String x:Key="String/OperationCountingAnalysisRuleSetEditorDialog.Title">编辑动作计数规则集</sys:String>
+	<sys:String x:Key="String/OperationCountingAnalysisRuleSetEditorDialog.Title">编辑动作计数分析规则集</sys:String>
 
 	<!-- OperationDurationAnalysisRuleEditorDialog -->
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog">动作起始日志</sys:String>
@@ -871,6 +871,7 @@ return null;</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.Disabled">(已停用)</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.KeyLogAnalysisRuleSet">关键日志分析</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.LogAnalysisScriptSet">日志分析脚本</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.OperationCountingAnalysisRuleSet">动作计数分析</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.OperationDurationAnalysisRuleSet">动作时距分析</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSetsPopup.Header">套用的分析规则集 (可多选)</sys:String>
 	<sys:String x:Key="String/SessionView.LogCountInLogFile">日志个数：</sys:String>

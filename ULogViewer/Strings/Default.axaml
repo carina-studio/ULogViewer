@@ -660,10 +660,10 @@ return false;</sys:String>
 	<!-- OperationCountingAnalysisRuleEditorDialog -->
 	<sys:String x:Key="String/OperationCountingAnalysisRuleEditorDialog.Interval">Interval to count operation</sys:String>
 	<sys:String x:Key="String/OperationCountingAnalysisRuleEditorDialog.OperationName">Name of operation</sys:String>
-	<sys:String x:Key="String/OperationCountingAnalysisRuleEditorDialog.Title">Edit operation counting rule</sys:String>
+	<sys:String x:Key="String/OperationCountingAnalysisRuleEditorDialog.Title">Edit operation counting analysis rule</sys:String>
 
 	<!-- OperationCountingAnalysisRuleSetEditorDialog -->
-	<sys:String x:Key="String/OperationCountingAnalysisRuleSetEditorDialog.Title">Edit operation counting rule set</sys:String>
+	<sys:String x:Key="String/OperationCountingAnalysisRuleSetEditorDialog.Title">Edit operation counting analysis rule set</sys:String>
 
 	<!-- OperationDurationAnalysisRuleEditorDialog -->
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog">Log of beginning of operation</sys:String>
@@ -906,6 +906,7 @@ return null;</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.Disabled">(Disabled)</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.KeyLogAnalysisRuleSet">Key log analysis</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.LogAnalysisScriptSet">Log analysis script</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.OperationCountingAnalysisRuleSet">Operation counting analysis</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.OperationDurationAnalysisRuleSet">Operation duration analysis</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSetsPopup.Header">Analysis rule sets to apply (multi-selectable)</sys:String>
 	<sys:String x:Key="String/SessionView.LogCountInLogFile">Log count:</sys:String>
