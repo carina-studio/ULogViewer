@@ -623,6 +623,14 @@ return false;</sys:String>
 	<!-- MySqlDatabaseLogDataSourceProvider -->
 	<sys:String x:Key="String/MySqlDatabaseLogDataSourceProvider.DisplayName">MySQL 资料库</sys:String>
 
+	<!-- OperationCountingAnalysisRuleEditorDialog -->
+	<sys:String x:Key="String/OperationCountingAnalysisRuleEditorDialog.Interval">计数时间间距</sys:String>
+	<sys:String x:Key="String/OperationCountingAnalysisRuleEditorDialog.OperationName">动作名称</sys:String>
+	<sys:String x:Key="String/OperationCountingAnalysisRuleEditorDialog.Title">编辑动作计数规则</sys:String>
+
+	<!-- OperationCountingAnalysisRuleSetEditorDialog -->
+	<sys:String x:Key="String/OperationCountingAnalysisRuleSetEditorDialog.Title">编辑动作计数规则集</sys:String>
+
 	<!-- OperationDurationAnalysisRuleEditorDialog -->
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog">动作起始日志</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.Common">一般</sys:String>

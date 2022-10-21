@@ -115,6 +115,15 @@
 	<Thickness x:Key="Thickness/MainWindow.TabItem.ToolTip.Icon.Margin">0,0,3,0</Thickness>
 	<Thickness x:Key="Thickness/MainWindow.TabItem.ToolTip.Padding">5</Thickness>
 
+	<!-- OperationCountingAnalysisRuleEditorDialog -->
+	<sys:Double x:Key="Double/OperationCountingAnalysisRuleEditorDialog.Content.MaxHeight">500</sys:Double>
+	<sys:Double x:Key="Double/OperationCountingAnalysisRuleEditorDialog.PatternTextBox.Height">100</sys:Double>
+	<sys:Double x:Key="Double/OperationCountingAnalysisRuleEditorDialog.Width">500</sys:Double>
+
+	<!-- OperationCountingAnalysisRuleSetEditorDialog -->
+	<sys:Double x:Key="Double/OperationCountingAnalysisRuleSetEditorDialog.RuleListBox.Height">300</sys:Double>
+	<sys:Double x:Key="Double/OperationCountingAnalysisRuleSetEditorDialog.Width">500</sys:Double>
+
 	<!-- OperationDurationAnalysisRuleEditorDialog -->
 	<sys:Double x:Key="Double/OperationDurationAnalysisRuleEditorDialog.Content.MaxHeight">500</sys:Double>
 	<sys:Double x:Key="Double/OperationDurationAnalysisRuleEditorDialog.CustomMessageTextBox.Height">100</sys:Double>

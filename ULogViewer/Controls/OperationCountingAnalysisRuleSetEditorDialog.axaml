@@ -1,0 +1,102 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
+		xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
+		xmlns:appCtxlBased="using:CarinaStudio.ULogViewer.ViewModels.Analysis.ContextualBased"
+        xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="CarinaStudio.ULogViewer.Controls.OperationCountingAnalysisRuleSetEditorDialog"
+        Classes="Dialog"
+		Icon="/ULogViewer.ico"
+		ShowInTaskbar="True"
+        Title="{DynamicResource String/OperationCountingAnalysisRuleSetEditorDialog.Title}"
+        Width="{DynamicResource Double/OperationCountingAnalysisRuleSetEditorDialog.Width}">
+
+	<DockPanel>
+
+		<!-- Control buttons -->
+		<Border Classes="Dialog_ControlButtonsPanel">
+			<StackPanel Classes="Dialog_ControlButtonsPanel">
+				<Button Classes="Dialog_IconControlButton" Command="{Binding $parent[Window].OpenDocumentation}" ToolTip.Tip="{DynamicResource String/Common.Help}">
+					<Image Classes="Dialog_IconControlButton_Icon" Source="{StaticResource Image/Icon.Question}"/>
+				</Button>
+				<Separator Classes="Dialog_Separator_Small"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].CompleteEditing}" Content="{DynamicResource String/Common.OK}" IsEnabled="{Binding $parent[Window].AreValidParameters}"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].Close}" Content="{DynamicResource String/Common.Cancel}"/>
+			</StackPanel>
+		</Border>
+
+		<!-- Content -->
+		<StackPanel Classes="Dialog_ContentPanel">
+			
+			<!-- Name -->
+			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/DisplayableLogAnalysisRuleSetEditorDialog.Name}"/>
+			<TextBox Name="nameTextBox" Classes="Dialog_TextBox" MaxLength="256"/>
+			<Separator Classes="Dialog_Separator"/>
+
+			<!-- Icon -->
+			<Grid ColumnDefinitions="*,Auto,*" HorizontalAlignment="Stretch">
+				<StackPanel>
+					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/DisplayableLogAnalysisRuleSetEditorDialog.Icon}"/>
+					<appControls:LogProfileIconComboBox Name="iconComboBox" Classes="Dialog_ComboBox" IconColor="{Binding #iconColorComboBox.SelectedItem}"/>
+				</StackPanel>
+				<Separator Classes="Dialog_Separator_Small" Grid.Column="1"/>
+				<StackPanel Grid.Column="2">
+					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/DisplayableLogAnalysisRuleSetEditorDialog.IconColor}"/>
+					<appControls:LogProfileIconColorComboBox Name="iconColorComboBox" Classes="Dialog_ComboBox"/>
+				</StackPanel>
+			</Grid>
+			<Separator Classes="Dialog_Separator"/>
+
+			<!-- Rules -->
+			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/DisplayableLogAnalysisRuleSetEditorDialog.Rules}"/>
+			<Grid ColumnDefinitions="*,Auto">
+				<asControls:ListBox Name="ruleListBox" Classes="Dialog_ListBox" Height="{StaticResource Double/OperationCountingAnalysisRuleSetEditorDialog.RuleListBox.Height}" Items="{Binding $parent[Window].Rules}">
+					<asControls:ListBox.ItemTemplate>
+						<DataTemplate>
+							<Grid ColumnDefinitions="Auto,*,Auto">
+								<Panel Classes="ListBoxItem_Icon">
+									<Image Classes="Icon" IsVisible="{Binding $parent[ListBoxItem].IsSelected}" Source="{Binding ResultType, Converter={x:Static appConverters:DisplayableLogAnalysisResultIconConverter.Default}, ConverterParameter=Light}"/>
+									<Image Classes="Icon" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}" Source="{Binding ResultType, Converter={x:Static appConverters:DisplayableLogAnalysisResultIconConverter.Default}}"/>
+								</Panel>
+								<TextBlock Classes="ListBoxItem_TextBlock" Grid.Column="1" Text="{Binding OperationName}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+								<Border Classes="InPlaceAction_Reserved" Grid.Column="1"/>
+								<StackPanel Grid.Column="2" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
+									<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveRule}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
+										<asControls:Image Classes="InPlaceAction_Icon">
+											<DrawingImage>
+												<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
+											</DrawingImage>
+										</asControls:Image>
+									</Button>
+									<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].CopyRule}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Copy}">
+										<asControls:Image Classes="InPlaceAction_Icon">
+											<DrawingImage>
+												<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Copy}"/>
+											</DrawingImage>
+										</asControls:Image>
+									</Button>
+									<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditRule}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
+										<asControls:Image Classes="InPlaceAction_Icon">
+											<DrawingImage>
+												<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
+											</DrawingImage>
+										</asControls:Image>
+									</Button>
+								</StackPanel>
+							</Grid>
+						</DataTemplate>
+					</asControls:ListBox.ItemTemplate>
+				</asControls:ListBox>
+				<Button Classes="BrowseButton" Command="{Binding $parent[Window].AddRule}" Grid.Column="1" ToolTip.Tip="{DynamicResource String/Common.Add}" VerticalAlignment="Top">
+					<Image Classes="BrowseButtonIcon" Source="{StaticResource Image/Icon.Add}"/>
+				</Button>
+			</Grid>
+
+		</StackPanel>
+		
+	</DockPanel>
+	
+</Window>

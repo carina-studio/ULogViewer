@@ -46,6 +46,21 @@ class OperationCountingAnalysisRuleSet : DisplayableLogAnalysisRuleSet<Operation
         }
 
         /// <summary>
+        /// Initialize new <see cref="Rule"/> instance.
+        /// </summary>
+        /// <param name="template">Template rule.</param>
+        /// <param name="operationName">Name of operation.</param>
+        public Rule(Rule template, string operationName)
+        {
+            this.Conditions = template.Conditions;
+            this.Interval = template.Interval;
+            this.Level = template.Level;
+            this.OperationName = operationName;
+            this.Pattern = template.Pattern;
+            this.ResultType = template.ResultType;
+        }
+
+        /// <summary>
         /// Conditions to match log.
         /// </summary>
         public IList<DisplayableLogAnalysisCondition> Conditions { get; }

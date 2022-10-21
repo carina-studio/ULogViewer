@@ -32,6 +32,9 @@
 	<Thickness x:Key="Thickness/LogProfileSelectionDialog.LogProfile.Padding">10,5,10,5</Thickness>
 	<Thickness x:Key="Thickness/LogProfileSelectionDialog.LogProfile.ProVersionIcon.Margin">5,0,5,3</Thickness>
 
+	<!-- OperationCountingAnalysisRuleEditorDialog -->
+	<sys:Double x:Key="Double/OperationCountingAnalysisRuleEditorDialog.Content.MaxHeight">450</sys:Double>
+
 	<!-- OperationDurationAnalysisRuleEditorDialog -->
 	<sys:Double x:Key="Double/OperationDurationAnalysisRuleEditorDialog.Content.MaxHeight">450</sys:Double>
 

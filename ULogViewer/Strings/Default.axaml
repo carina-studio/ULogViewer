@@ -657,14 +657,13 @@ return false;</sys:String>
 	<!-- MySqlDatabaseLogDataSourceProvider -->
 	<sys:String x:Key="String/MySqlDatabaseLogDataSourceProvider.DisplayName">MySQL Database</sys:String>
 
-	<!-- OperationCountingRuleSetEditorDialog -->
-	<sys:String x:Key="String/OperationCountingRuleSetEditorDialog.CannotAddMoreRuleSetWithoutProVersion">Cannot create more rule set before activating Pro version.</sys:String>
-	<sys:String x:Key="String/OperationCountingRuleSetEditorDialog.Icon">Icon</sys:String>
-	<sys:String x:Key="String/OperationCountingRuleSetEditorDialog.IconColor">Color of icon</sys:String>
-	<sys:String x:Key="String/OperationCountingRuleSetEditorDialog.Name">Name (required)</sys:String>
-	<sys:String x:Key="String/OperationCountingRuleSetEditorDialog.RestrictionsOfNonProVersion">Before activating Pro version, you can have only 1 rule set and rule set won't be kept after closing ULogViewer.</sys:String>
-	<sys:String x:Key="String/OperationCountingRuleSetEditorDialog.Rules">Rules (required)</sys:String>
-	<sys:String x:Key="String/OperationCountingRuleSetEditorDialog.Title">Edit key log analysis rule set</sys:String>
+	<!-- OperationCountingAnalysisRuleEditorDialog -->
+	<sys:String x:Key="String/OperationCountingAnalysisRuleEditorDialog.Interval">Interval to count operation</sys:String>
+	<sys:String x:Key="String/OperationCountingAnalysisRuleEditorDialog.OperationName">Name of operation</sys:String>
+	<sys:String x:Key="String/OperationCountingAnalysisRuleEditorDialog.Title">Edit operation counting rule</sys:String>
+
+	<!-- OperationCountingAnalysisRuleSetEditorDialog -->
+	<sys:String x:Key="String/OperationCountingAnalysisRuleSetEditorDialog.Title">Edit operation counting rule set</sys:String>
 
 	<!-- OperationDurationAnalysisRuleEditorDialog -->
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog">Log of beginning of operation</sys:String>
