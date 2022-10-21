@@ -80,26 +80,30 @@ abstract class BaseDisplayableLogAnalyzer<TProcessingToken, TResult> : BaseDispl
         var count = logs.Count;
         if (count == 0)
             return;
+        var sourceLogs = this.SourceLogs;
         for (var i = 0; i < count; ++i)
         {
             var resultList = results[i];
             for (var j = resultList.Count - 1; j >= 0; --j)
             {
                 var result = resultList[j];
+                var beginningLog = result.BeginningLog;
+                var endingLog = result.EndingLog;
+                var log = result.Log;
+                if (beginningLog != null && !sourceLogs.Contains(beginningLog))
+                    continue;
+                if (endingLog != null && !sourceLogs.Contains(endingLog))
+                    continue;
+                if (log != null && !sourceLogs.Contains(log))
+                    continue;
                 this.analysisResultsMemorySize += result.MemorySize;
-                result.Log?.AddAnalysisResult(result);
-                result.BeginningLog?.Let(it =>
-                {
-                    if (it != result.Log)
-                        it.AddAnalysisResult(result);
-                });
-                result.EndingLog?.Let(it =>
-                {
-                    if (it != result.Log && it != result.BeginningLog)
-                        it.AddAnalysisResult(result);
-                });
+                this.tempResults.Add(result);
+                log?.AddAnalysisResult(result);
+                if (beginningLog != null && beginningLog != log)
+                    beginningLog.AddAnalysisResult(result);
+                if (endingLog != null && endingLog != log && endingLog != beginningLog)
+                    endingLog.AddAnalysisResult(result);
             }
-            this.tempResults.AddRange(resultList);
         }
         this.analysisResults.AddAll(this.tempResults);
         this.tempResults.Clear();
