@@ -3786,7 +3786,6 @@ namespace CarinaStudio.ULogViewer.Controls
 										this.predefinedLogTextFilterListBox.SelectLastItem();
 									else
 										this.logListBox.SelectLastItem();
-									e.Handled = true;
 								}
 								break;
 							case Avalonia.Input.Key.Escape:
@@ -3795,17 +3794,12 @@ namespace CarinaStudio.ULogViewer.Controls
 									if (this.Application.IsDebugMode)
 										this.Logger.LogTrace($"[KeyUp] {e.Key} on text box");
 									this.logListBox.Focus();
-									e.Handled = true;
 								}
 								else if (this.predefinedLogTextFiltersPopup.IsOpen)
-								{
 									this.predefinedLogTextFiltersPopup.IsOpen = false;
-									e.Handled = true;
-								}
 								break;
 							case Avalonia.Input.Key.F5:
 								this.ReloadLogs();
-								e.Handled = true;
 								break;
 							case Avalonia.Input.Key.Home:
 								if (e.Source is not TextBox)
@@ -3814,29 +3808,19 @@ namespace CarinaStudio.ULogViewer.Controls
 										this.predefinedLogTextFilterListBox.SelectFirstItem();
 									else
 										this.logListBox.SelectFirstItem();
-									e.Handled = true;
 								}
 								break;
 							case Avalonia.Input.Key.M:
 								if (e.Source is not TextBox)
-								{
 									this.MarkUnmarkSelectedLogs();
-									e.Handled = true;
-								}
 								break;
 							case Avalonia.Input.Key.P:
 								if (e.Source is not TextBox)
-								{
 									(this.DataContext as Session)?.PauseResumeLogsReadingCommand?.TryExecute();
-									e.Handled = true;
-								}
 								break;
 							case Avalonia.Input.Key.S:
 								if (e.Source is not TextBox && !this.isSelectingFileToSaveLogs)
-								{
 									this.SelectMarkedLogs();
-									e.Handled = true;
-								}
 								break;
 						}
 					}
