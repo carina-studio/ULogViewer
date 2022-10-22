@@ -610,6 +610,7 @@ class LogAnalysisViewModel : SessionComponent
         {
             this.keyLogAnalysisRuleSets.Clear();
             this.logAnalysisScriptSets.Clear();
+            this.operationCountingAnalysisRuleSets.Clear();
             this.operationDurationAnalysisRuleSets.Clear();
         }
     }
@@ -624,6 +625,7 @@ class LogAnalysisViewModel : SessionComponent
 
         // restore rule sets
         this.keyLogAnalysisRuleSets.Clear();
+        this.operationCountingAnalysisRuleSets.Clear();
         this.operationDurationAnalysisRuleSets.Clear();
         this.logAnalysisScriptSets.Clear();
         if ((element.TryGetProperty(nameof(KeyLogAnalysisRuleSet), out var jsonValue) // for upgrade case
