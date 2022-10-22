@@ -631,6 +631,9 @@ return false;</sys:String>
 	<!-- OperationCountingAnalysisRuleSetEditorDialog -->
 	<sys:String x:Key="String/OperationCountingAnalysisRuleSetEditorDialog.Title">编辑动作计数分析规则集</sys:String>
 
+	<!-- OperationCountingAnalyzer -->
+	<sys:String x:Key="String/OperationCountingAnalyzer.NoOperation">(没有动作)</sys:String>
+
 	<!-- OperationDurationAnalysisRuleEditorDialog -->
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog">动作起始日志</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.Common">一般</sys:String>

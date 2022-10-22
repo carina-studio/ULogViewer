@@ -665,6 +665,9 @@ return false;</sys:String>
 	<!-- OperationCountingAnalysisRuleSetEditorDialog -->
 	<sys:String x:Key="String/OperationCountingAnalysisRuleSetEditorDialog.Title">Edit operation counting analysis rule set</sys:String>
 
+	<!-- OperationCountingAnalyzer -->
+	<sys:String x:Key="String/OperationCountingAnalyzer.NoOperation">(No operation)</sys:String>
+
 	<!-- OperationDurationAnalysisRuleEditorDialog -->
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog">Log of beginning of operation</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.Common">Common</sys:String>
