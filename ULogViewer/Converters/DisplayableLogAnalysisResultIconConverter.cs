@@ -40,30 +40,11 @@ class DisplayableLogAnalysisResultIconConverter : BaseValueConverter<object?, II
         if (type.HasValue)
         {
             var image = (IImage?)null;
-            switch (type.Value)
-            {
-                case DisplayableLogAnalysisResultType.Checkpoint:
-                case DisplayableLogAnalysisResultType.OperationEnd:
-                case DisplayableLogAnalysisResultType.OperationStart:
-                case DisplayableLogAnalysisResultType.Performance:
-                    if ((parameter as string) != "Light")
-                        app.TryGetResource<IImage>($"Image/{type.Value}.Outline.Colored", out image);
-                    else
-                        app.TryGetResource<IImage>($"Image/{type.Value}.Outline.Light", out image);
-                    return image;
-                case DisplayableLogAnalysisResultType.TimeSpan:
-                    if ((parameter as string) != "Light")
-                        app.TryGetResource<IImage>($"Image/Clock.Outline.Colored", out image);
-                    else
-                        app.TryGetResource<IImage>($"Image/Clock.Outline.Light", out image);
-                    return image;
-                default:
-                    if ((parameter as string) != "Light")
-                        app.TryGetResource<IImage>($"Image/Icon.{type.Value}.Outline.Colored", out image);
-                    else
-                        app.TryGetResource<IImage>($"Image/Icon.{type.Value}.Outline.Light", out image);
-                    return image;
-            }
+            if ((parameter as string) != "Light")
+                app.TryGetResource<IImage>($"Image/DisplayableLogAnalysisResult.{type.Value}.Colored", out image);
+            else
+                app.TryGetResource<IImage>($"Image/DisplayableLogAnalysisResult.{type.Value}.Light", out image);
+            return image;
         }
         return null;
     }

@@ -2,8 +2,6 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
 	<!-- Geometries -->
-	<Geometry x:Key="Geometry/AddRuleAfter">M0,1.831E-007 L12,1.831E-007 L12,2 L0,2 z M5,4 L5,10 L0,10 L6,16 L12,10 L7,10 L7,4 z</Geometry>
-	<Geometry x:Key="Geometry/AddRuleBefore">M0,14 L12,14 L12,16 L0,16 z M5,1.831E-007 L5,6 L0,6 L6,12 L12,6 L7,6 L7,1.831E-007 z</Geometry>
 	<GeometryGroup x:Key="Geometry/ArtificialIntelligence">
 		<Geometry>F1 M391.363 335.511C428.662 335.511 458.863 305.312 458.863 268.011C458.863 230.711 428.663 200.511 391.363 200.511C354.063 200.511 323.863 230.711 323.863 268.011C323.863 305.211 354.063 335.511 391.363 335.511Z</Geometry>
 		<Geometry>F1 M173.563 783.311L173.563 873.711C173.563 887.511 184.763 898.711 198.563 898.711L550.263 898.711C564.063 898.711 575.263 887.511 575.263 873.711L575.263 785.611L673.463 785.611C712.763 785.611 744.862 753.51 744.862 714.211L744.862 589.211L802.362 588.111C825.162 587.711 839.562 563.31 828.862 543.211L766.062 424.811C752.062 398.412 744.762 369.011 744.762 339.211L744.762 339.211L744.762 339.211C744.762 150.911 591.362 -1.48901 402.661 0.0109863C214.562 1.51099 64.362 154.612 66.262 342.711C66.862 396.911 80.162 448.111 103.262 493.311C149.363 583.211 173.563 682.511 173.563 783.311ZM211.663 256.312C211.663 249.912 215.463 244.211 221.363 241.711L258.363 225.911C262.263 224.211 265.363 221.011 266.964 217.111C267.163 216.611 267.363 216.211 267.464 215.711C269.064 211.812 269.064 207.511 267.464 203.611L252.264 166.711C249.864 160.812 251.163 153.911 255.764 149.411L272.663 132.511C277.163 128.011 283.964 126.612 289.863 129.011L327.363 144.112C331.163 145.612 335.464 145.612 339.363 144.112C339.663 144.011 340.063 143.812 340.363 143.712C344.363 142.112 347.563 139.012 349.263 135.012L364.763 97.912C367.263 92.012 373.063 88.112 379.463 88.112L403.362 88.112C409.762 88.112 415.463 91.912 417.963 97.812L433.963 135.312C435.662 139.211 438.763 142.211 442.662 143.812C442.862 143.912 443.062 144.011 443.263 144.011C447.162 145.612 451.563 145.711 455.463 144.011L492.862 128.612C498.762 126.212 505.662 127.511 510.162 132.112L527.062 149.011C531.562 153.511 532.962 160.312 530.562 166.211L515.362 204.211C513.862 208.111 513.862 212.411 515.463 216.211C515.463 216.312 515.563 216.411 515.563 216.511C517.163 220.511 520.263 223.711 524.263 225.411L561.863 241.111C567.763 243.611 571.663 249.411 571.663 255.811L571.663 279.71C571.663 286.11 567.863 291.811 561.964 294.311L524.163 310.411C520.264 312.111 517.163 315.211 515.563 319.211L515.363 319.711C513.863 323.511 513.863 327.812 515.464 331.611L531.064 369.211C533.564 375.111 532.164 382.011 527.564 386.511L510.664 403.411C506.164 407.911 499.364 409.31 493.465 406.911L455.465 391.711C451.664 390.211 447.364 390.211 443.465 391.811C443.265 391.912 442.965 392.011 442.765 392.112C438.865 393.712 435.765 396.811 434.065 400.712L418.665 438.212C416.165 444.112 410.365 448.012 403.966 448.012L380.066 448.012C373.666 448.012 367.966 444.212 365.466 438.312L349.566 401.113C347.866 397.113 344.566 394.012 340.566 392.512C340.266 392.412 339.866 392.212 339.566 392.113C335.666 390.613 331.366 390.613 327.566 392.113L290.466 407.413C284.566 409.812 277.665 408.513 273.165 403.913L256.266 387.013C251.766 382.513 250.366 375.713 252.766 369.813L267.766 332.513C269.366 328.614 269.266 324.314 267.665 320.413C267.466 319.913 267.266 319.513 267.065 319.013C265.465 315.013 262.365 311.814 258.365 310.213L221.565 294.913C215.665 292.413 211.765 286.613 211.765 280.213L211.765 256.314L211.663 256.314L211.663 256.312Z</Geometry>
@@ -14,6 +12,7 @@
 	<Geometry x:Key="Geometry/AWS">M13.43,4.305 C13.21,4.303 12.99,4.28 12.78,4.237 L12.8,4.241 C12.58,4.193 12.38,4.13 12.2,4.049 L12.22,4.057 L12.08,4.025 L11.98,4.025 Q11.86,4.025 11.86,4.193 L11.86,4.458 C11.86,4.481 11.85,4.507 11.85,4.534 C11.85,4.561 11.86,4.587 11.86,4.612 L11.86,4.61 C11.9,4.676 11.96,4.728 12.03,4.761 L12.03,4.762 C12.21,4.853 12.41,4.925 12.63,4.968 L12.64,4.971 C12.88,5.031 13.16,5.066 13.44,5.067 L13.44,5.067 C13.46,5.068 13.49,5.068 13.51,5.068 C13.78,5.068 14.03,5.027 14.26,4.95 L14.24,4.955 C14.47,4.895 14.67,4.792 14.83,4.656 L14.83,4.658 C14.99,4.533 15.12,4.378 15.22,4.201 L15.22,4.193 C15.31,4.014 15.36,3.804 15.36,3.582 C15.36,3.577 15.36,3.572 15.36,3.567 L15.36,3.567 C15.36,3.563 15.36,3.559 15.36,3.554 C15.36,3.278 15.27,3.024 15.12,2.818 L15.12,2.821 C14.91,2.584 14.64,2.406 14.33,2.311 L14.32,2.308 L13.55,2.068 C13.33,2.008 13.13,1.909 12.97,1.776 L12.97,1.779 C12.87,1.684 12.81,1.55 12.81,1.403 C12.81,1.402 12.81,1.402 12.81,1.402 L12.81,1.402 C12.81,1.392 12.81,1.381 12.81,1.37 C12.81,1.181 12.91,1.016 13.06,0.9219 L13.06,0.9206 C13.24,0.8283 13.46,0.7742 13.69,0.7742 C13.72,0.7742 13.75,0.775 13.78,0.7764 L13.77,0.7762 C13.79,0.7758 13.81,0.7756 13.83,0.7756 C14.18,0.7756 14.51,0.8527 14.8,0.9907 L14.79,0.9848 C14.85,1.016 14.92,1.039 15,1.049 L15,1.049 C15.08,1.049 15.12,0.9848 15.12,0.8725 L15.12,0.5838 C15.12,0.5803 15.12,0.5762 15.12,0.572 C15.12,0.5108 15.1,0.4539 15.07,0.4061 L15.07,0.4073 C15.03,0.3533 14.97,0.3099 14.91,0.2801 L14.91,0.279 C14.85,0.243 14.77,0.2104 14.69,0.1852 L14.69,0.1827 C14.61,0.1529 14.5,0.1226 14.4,0.0982 L14.38,0.09452 L14.03,0.01431 C13.97,0.009794 13.9,0.007219 13.83,0.007219 C13.76,0.007219 13.69,0.009794 13.63,0.01485 L13.64,0.01431 C13.62,0.0141 13.61,0.01397 13.6,0.01397 C13.37,0.01397 13.16,0.04632 12.95,0.1066 L12.97,0.1025 C12.75,0.1662 12.57,0.2622 12.4,0.3864 L12.41,0.3833 C12.25,0.4978 12.13,0.6426 12.03,0.8096 L12.03,0.8164 C11.94,0.9816 11.89,1.179 11.89,1.388 C11.89,1.396 11.89,1.403 11.89,1.411 L11.89,1.41 C11.89,1.416 11.89,1.424 11.89,1.431 C11.89,1.726 11.99,1.998 12.15,2.215 L12.15,2.212 C12.37,2.471 12.66,2.663 12.99,2.755 L13,2.757 L13.8,2.998 C14.01,3.048 14.19,3.142 14.34,3.272 L14.34,3.271 C14.43,3.365 14.49,3.493 14.49,3.634 C14.49,3.639 14.49,3.644 14.49,3.648 L14.49,3.648 C14.49,3.651 14.49,3.654 14.49,3.657 C14.49,3.867 14.37,4.05 14.21,4.151 L14.2,4.153 C14.01,4.252 13.79,4.309 13.55,4.309 C13.51,4.309 13.47,4.308 13.43,4.305 L13.43,4.305 z M8.775,0.4153 C8.762,0.3335 8.724,0.262 8.67,0.2067 L8.671,0.2068 C8.622,0.1706 8.561,0.1489 8.494,0.1489 C8.483,0.1489 8.472,0.1495 8.461,0.1508 L8.462,0.1506 L8.021,0.1506 C8.015,0.1503 8.008,0.1501 8.002,0.1501 C7.931,0.1501 7.866,0.1712 7.811,0.2076 L7.812,0.2068 C7.756,0.2601 7.717,0.3325 7.708,0.4138 L7.708,0.4153 L6.906,3.944 L5.992,0.4153 C5.976,0.3327 5.936,0.2612 5.88,0.2069 L5.879,0.2068 C5.823,0.1523 5.775,0.1506 5.671,0.1506 L5.15,0.1506 C5.061,0.1506 5.021,0.1987 5.021,0.287 C5.03,0.3673 5.047,0.4406 5.071,0.5103 L5.069,0.5035 L6.321,4.626 C6.338,4.703 6.371,4.771 6.418,4.827 L6.417,4.827 C6.469,4.857 6.532,4.876 6.599,4.876 C6.608,4.876 6.617,4.875 6.627,4.875 L6.625,4.875 L7.082,4.875 C7.09,4.875 7.1,4.876 7.109,4.876 C7.179,4.876 7.244,4.857 7.301,4.826 L7.299,4.827 C7.348,4.767 7.382,4.693 7.395,4.613 L7.395,4.61 L8.197,1.177 L8.999,4.618 C9.007,4.7 9.042,4.772 9.096,4.827 L9.096,4.827 C9.147,4.863 9.211,4.884 9.279,4.884 C9.291,4.884 9.302,4.884 9.314,4.883 L9.312,4.883 L9.769,4.883 C9.774,4.883 9.78,4.883 9.785,4.883 C9.854,4.883 9.918,4.862 9.971,4.826 L9.97,4.827 C10.03,4.773 10.07,4.701 10.08,4.62 L10.08,4.618 L11.37,0.4955 C11.38,0.4762 11.38,0.4539 11.38,0.4313 C11.38,0.4087 11.38,0.3864 11.37,0.3645 L11.37,0.3672 C11.37,0.3539 11.38,0.3386 11.38,0.3231 C11.38,0.3075 11.37,0.2922 11.37,0.2771 L11.37,0.2789 C11.37,0.2738 11.37,0.2678 11.37,0.2616 C11.37,0.1952 11.32,0.1413 11.25,0.1413 C11.25,0.1413 11.24,0.1418 11.24,0.1427 L11.24,0.1426 L10.74,0.1426 C10.74,0.1424 10.73,0.1423 10.73,0.1423 C10.65,0.1423 10.59,0.1633 10.53,0.1996 L10.53,0.1987 C10.48,0.2572 10.45,0.3271 10.43,0.4035 L10.43,0.4073 L9.625,4.025 z M3.024,2.124 C2.855,2.1 2.658,2.086 2.457,2.084 L2.455,2.084 C2.424,2.082 2.389,2.081 2.353,2.081 C1.895,2.081 1.475,2.239 1.143,2.504 L1.147,2.501 C0.8514,2.755 0.6652,3.13 0.6652,3.548 C0.6652,3.566 0.6655,3.584 0.6662,3.602 L0.6661,3.599 C0.665,3.62 0.6644,3.643 0.6644,3.667 C0.6644,4.041 0.8152,4.38 1.059,4.626 L1.059,4.626 C1.318,4.866 1.667,5.013 2.049,5.013 C2.076,5.013 2.103,5.012 2.13,5.011 L2.126,5.011 C2.143,5.012 2.163,5.012 2.183,5.012 C2.806,5.012 3.362,4.725 3.727,4.277 L3.73,4.273 C3.784,4.397 3.838,4.5 3.897,4.599 L3.89,4.586 C3.951,4.679 4.015,4.76 4.084,4.836 L4.083,4.835 C4.121,4.873 4.173,4.897 4.231,4.897 C4.289,4.897 4.342,4.873 4.38,4.835 L4.38,4.835 L4.716,4.61 C4.772,4.575 4.811,4.518 4.821,4.451 L4.821,4.45 C4.827,4.43 4.83,4.408 4.83,4.385 C4.83,4.363 4.827,4.34 4.82,4.32 L4.821,4.321 C4.763,4.217 4.707,4.093 4.659,3.964 L4.652,3.944 C4.616,3.817 4.595,3.671 4.595,3.52 C4.595,3.5 4.595,3.48 4.596,3.46 L4.596,3.463 L4.596,1.771 C4.6,1.728 4.602,1.679 4.602,1.629 C4.602,1.178 4.432,0.7657 4.153,0.4537 L4.155,0.4554 C3.82,0.1722 3.383,1.836E-007 2.906,1.836E-007 C2.823,1.836E-007 2.742,0.00517 2.662,0.01521 L2.671,0.01423 C2.671,0.01423 2.67,0.01423 2.67,0.01423 C2.385,0.01423 2.109,0.05228 1.847,0.1236 L1.869,0.1185 C1.613,0.1789 1.388,0.2615 1.177,0.3673 L1.195,0.3591 C1.137,0.3851 1.089,0.4233 1.052,0.4706 L1.051,0.4714 C1.042,0.4989 1.036,0.5306 1.036,0.5636 C1.036,0.5966 1.042,0.6283 1.052,0.658 L1.051,0.6559 L1.051,0.9206 C1.051,1.033 1.051,1.081 1.163,1.081 C1.177,1.084 1.192,1.086 1.207,1.086 C1.223,1.086 1.238,1.084 1.253,1.081 L1.252,1.081 L1.436,1.017 C1.576,0.9458 1.744,0.8778 1.917,0.823 L1.941,0.8163 C2.114,0.7711 2.313,0.7448 2.518,0.7441 L2.519,0.7441 C2.556,0.7399 2.6,0.7376 2.644,0.7376 C2.925,0.7376 3.183,0.8337 3.388,0.9947 L3.385,0.9928 C3.544,1.191 3.64,1.445 3.64,1.722 C3.64,1.765 3.638,1.807 3.633,1.848 L3.634,1.843 L3.634,2.236 z M3.65,2.845 L3.65,3.062 C3.65,3.064 3.65,3.067 3.65,3.07 C3.65,3.232 3.629,3.39 3.591,3.54 L3.594,3.527 C3.557,3.661 3.494,3.777 3.408,3.873 L3.409,3.872 C3.278,4.026 3.106,4.143 2.912,4.207 L2.904,4.209 C2.742,4.268 2.554,4.303 2.359,4.305 L2.358,4.305 C2.342,4.307 2.322,4.307 2.302,4.307 C2.108,4.307 1.93,4.233 1.796,4.112 L1.797,4.113 C1.676,3.982 1.601,3.806 1.601,3.612 C1.601,3.588 1.602,3.564 1.605,3.54 L1.604,3.543 C1.604,3.531 1.603,3.516 1.603,3.501 C1.603,3.273 1.706,3.07 1.868,2.935 L1.869,2.934 C2.064,2.796 2.307,2.713 2.569,2.713 C2.605,2.713 2.641,2.714 2.676,2.718 L2.671,2.717 L3.168,2.717 C3.363,2.758 3.524,2.802 3.682,2.855 L3.65,2.846 z M14.24,7.233 C12.46,8.005 10.38,8.458 8.193,8.468 L8.189,8.468 C8.188,8.468 8.187,8.468 8.186,8.468 C5.267,8.468 2.53,7.688 0.1717,6.325 L0.249,6.366 C0.05651,6.246 -0.09588,6.447 0.07255,6.599 C2.152,8.485 4.925,9.639 7.968,9.639 C7.987,9.639 8.005,9.639 8.024,9.639 L8.021,9.639 C8.029,9.639 8.039,9.639 8.049,9.639 C10.46,9.639 12.7,8.898 14.56,7.632 L14.52,7.658 C14.79,7.409 14.54,7.08 14.24,7.233 z M13.14,6.479 C12.99,6.591 13.01,6.743 13.18,6.719 C13.75,6.647 15.01,6.503 15.23,6.792 C15.46,7.08 14.98,8.259 14.77,8.789 C14.7,8.949 14.85,9.013 14.99,8.893 C15.61,8.319 16,7.501 16,6.592 C16,6.459 15.99,6.327 15.98,6.199 L15.98,6.214 C15.63,6.075 15.24,5.994 14.82,5.994 C14.2,5.994 13.61,6.175 13.13,6.486 L13.14,6.479 z</Geometry>
 	<Geometry x:Key="Geometry/Azure">M14.92,15.12 A1.08,1.08 0 0 0 15.94,13.7 L15.94,13.7 L11.57,0.7353 A1.08,1.08 0 0 0 10.54,-3.497E-009 L5.456,-3.497E-009 A1.08,1.08 0 0 0 4.433,0.7353 L0.05693,13.7 A1.08,1.08 0 0 0 1.081,15.12 L4.242,15.12 A1.08,1.08 0 0 0 5.265,14.39 L5.916,12.46 L9.214,14.91 C9.401,15.05 9.626,15.12 9.858,15.12  M7.802,6.77 L10.22,13.93 A0.36,0.36 0 0 1 9.878,14.4 L9.878,14.4 L9.858,14.4 A0.36,0.36 0 0 1 9.644,14.33 L3.452,9.733 L6.688,9.733  M10.9,14.4 C10.97,14.19 10.98,13.94 10.9,13.7 L6.526,0.7353 A1.148,1.148 0 0 0 6.522,0.722 L10.54,0.722 A0.36,0.36 0 0 1 10.89,0.966 L15.26,13.93 A0.36,0.36 0 0 1 15.03,14.39</Geometry>
 	<Geometry x:Key="Geometry/Battery">M3.2,1.6 L3.2,0.8 A0.8,-0.8 0 0 1 4,0 L7.2,0 A0.8,-0.8 0 0 1 8,0.8 L8,1.6 L10.4,1.6 A0.8,-0.8 0 0 1 11.2,2.4 L11.2,15.2 A0.8,-0.8 0 0 1 10.4,16 L0.8,16 A0.8,-0.8 0 0 1 0,15.2 L0,2.4 A0.8,-0.8 0 0 1 0.8,1.6 L3.2,1.6 z M6.4,8 L6.4,4 L2.4,9.6 L4.8,9.6 L4.8,13.6 L8.8,8 L6.4,8 z</Geometry>
+	<Geometry x:Key="Geometry/BeginFrom">M0,1.831E-007 L12,1.831E-007 L12,2 L0,2 z M5,4 L5,10 L0,10 L6,16 L12,10 L7,10 L7,4 z</Geometry>
 	<Geometry x:Key="Geometry/Calendar">M9,10V12H7V10H9M13,10V12H11V10H13M17,10V12H15V10H17M19,3A2,2 0 0,1 21,5V19A2,2 0 0,1 19,21H5C3.89,21 3,20.1 3,19V5A2,2 0 0,1 5,3H6V1H8V3H16V1H18V3H19M19,19V8H5V19H19M9,14V16H7V14H9M13,14V16H11V14H13M17,14V16H15V14H17Z</Geometry>
 	<Geometry x:Key="Geometry/Checklist">M11.95,15.36 L9.6,12.8 L10.59,11.81 L11.95,13.17 L15.01,10.1 L16,11.31  M8.363,15.36 L1.707,15.36 C0.7595,15.36 0,14.59 0,13.65 L0,1.707 C0,0.7595 0.7595,0 1.707,0 L13.65,0 A1.707,1.707 0 0 1 15.36,1.707 L15.36,8.363 C14.61,7.927 13.73,7.68 12.8,7.68 L11.95,7.748 L11.95,6.827 L3.413,6.827 L3.413,8.533 L9.975,8.533 C8.593,9.446 7.68,11.02 7.68,12.8 C7.68,13.73 7.927,14.61 8.363,15.36  M7.68,10.24 L3.413,10.24 L3.413,11.95 L7.68,11.95  M11.95,3.413 L3.413,3.413 L3.413,5.12 L11.95,5.12</Geometry>
 	<Geometry x:Key="Geometry/Checklist.Outline">M11.95,15.36 L9.6,12.8 L10.59,11.81 L11.95,13.17 L15.01,10.1 L16,11.31  M8.363,15.36 L1.707,15.36 C0.7595,15.36 0,14.6 0,13.65 L0,1.707 C0,0.7595 0.7595,0 1.707,0 L13.65,0 C14.6,0 15.36,0.7595 15.36,1.707 L15.36,8.363 C14.84,8.064 14.27,7.851 13.65,7.748 L13.65,1.707 L1.707,1.707 L1.707,13.65 L7.748,13.65 C7.851,14.27 8.064,14.84 8.363,15.36  M7.68,11.95 L3.413,11.95 L3.413,10.24 L7.68,10.24  M9.967,8.533 L3.413,8.533 L3.413,6.827 L11.95,6.827 L11.95,7.748 C11.22,7.868 10.56,8.141 9.967,8.533  M11.95,5.12 L3.413,5.12 L3.413,3.413 L11.95,3.413</Geometry>
@@ -21,6 +20,7 @@
 	<Geometry x:Key="Geometry/Clock.Outline">F1M75,-118.75C76.0790634155273,-118.75,77.1581268310547,-118.470886230469,78.125,-117.912658691406C80.0587539672852,-116.796203613281,81.25,-114.73291015625,81.25,-112.5L81.25,-81.25 106.25,-81.25C109.701782226563,-81.25,112.5,-78.4517822265625,112.5,-75C112.5,-71.5482177734375,109.701782226563,-68.75,106.25,-68.75L75,-68.75C71.5482177734375,-68.75,68.75,-71.5482177734375,68.75,-75L68.75,-112.5C68.75,-114.73291015625,69.9412460327148,-116.796203613281,71.875,-117.912658691406C72.8418731689453,-118.470886230469,73.9209365844727,-118.75,75,-118.75z M75,-125C47.3857612609863,-125,25,-102.614234924316,25,-75C25,-47.3857574462891,47.3857612609863,-25,75,-25C92.86328125,-25 109.36962890625,-34.5299491882324 118.30126953125,-50 127.23291015625,-65.4700546264648 127.23291015625,-84.5299530029297 118.30126953125,-100.000007629395C109.36962890625,-115.470054626465,92.86328125,-125,75,-125z M75,-137.5C109.518753051758,-137.5 137.5,-109.518753051758 137.5,-75 137.5,-40.4812507629395 109.518753051758,-12.5 75,-12.5 40.4812507629395,-12.5 12.5,-40.4812507629395 12.5,-75 12.5,-109.518753051758 40.4812507629395,-137.5 75,-137.5z</Geometry>
 	<Geometry x:Key="Geometry/Diagnostic">M11.6,0 C14.03,0 16,2 16,4.8 C16,10.4 10,13.6 8,14.8 C6.418,13.85 2.333,11.65 0.6944,8 L4.453,8 L5.2,6.755 L7.6,10.76 L9.253,8 L12,8 L12,6.4 L8.347,6.4 L7.6,7.645 L5.2,3.645 L3.547,6.4 L0.168,6.4 C0.0592,5.89 0,5.357 0,4.8 C0,2 2,0 4.4,0 C5.888,0 7.2,0.8 8,1.6 C8.8,0.8 10.11,0 11.6,0 z</Geometry>
 	<Geometry x:Key="Geometry/Drawer">M3.662E-06,8.8 L14.4,8.8 L14.4,15.2 C14.4,15.64 14.04,16 13.61,16 L0.7944,16 A0.796,-0.796 0 0 1 3.662E-06,15.2 L3.662E-06,8.8 z M3.662E-06,0.7984 C3.662E-06,0.3576 0.356,0 0.7944,0 L13.61,0 C14.04,0 14.4,0.3568 14.4,0.7984 L14.4,7.2 L3.662E-06,7.2 L3.662E-06,0.7984 z M4.8,2.4 L4.8,4 L9.6,4 L9.6,2.4 L4.8,2.4 z M4.8,11.2 L4.8,12.8 L9.6,12.8 L9.6,11.2 L4.8,11.2 z</Geometry>
+	<Geometry x:Key="Geometry/EndTo">M0,14 L12,14 L12,16 L0,16 z M5,1.831E-007 L5,6 L0,6 L6,12 L12,6 L7,6 L7,1.831E-007 z</Geometry>
 	<Geometry x:Key="Geometry/Filter">M487.976 0H24.028C2.71 0-8.047 25.866 7.058 40.971L192 225.941V432c0 7.831 3.821 15.17 10.237 19.662l80 55.98C298.02 518.69 320 507.493 320 487.98V225.941l184.947-184.97C520.021 25.896 509.338 0 487.976 0z</Geometry>
 	<Geometry x:Key="Geometry/Filter.Outline">M15,19.88C15.04,20.18 14.94,20.5 14.71,20.71C14.32,21.1 13.69,21.1 13.3,20.71L9.29,16.7C9.06,16.47 8.96,16.16 9,15.87V10.75L4.21,4.62C3.87,4.19 3.95,3.56 4.38,3.22C4.57,3.08 4.78,3 5,3V3H19V3C19.22,3 19.43,3.08 19.62,3.22C20.05,3.56 20.13,4.19 19.79,4.62L15,10.75V19.88M7.04,5L11,10.06V15.58L13,17.58V10.05L16.96,5H7.04Z</Geometry>
 	<Geometry x:Key="Geometry/Filters">M11 11L16.76 3.62A1 1 0 0 0 16.59 2.22A1 1 0 0 0 16 2H2A1 1 0 0 0 1.38 2.22A1 1 0 0 0 1.21 3.62L7 11V16.87A1 1 0 0 0 7.29 17.7L9.29 19.7A1 1 0 0 0 10.7 19.7A1 1 0 0 0 11 18.87V11M13 16L18 21L23 16Z</Geometry>
@@ -60,8 +60,6 @@
 	<Geometry x:Key="Geometry/MarkedOnly.Outline">M9.47 9.65L8.06 11.07L11 14L16.19 8.82L14.78 7.4L11 11.18M17 3H7C5.9 3 5 3.9 5 5L5 21L12 18L19 21V5C19 3.9 18.1 3 17 3M17 18L12 15.82L7 18V5H17Z</Geometry>
 	<Geometry x:Key="Geometry/Marks">M15,5A2,2 0 0,1 17,7V23L10,20L3,23V7C3,5.89 3.9,5 5,5H15M9,1H19A2,2 0 0,1 21,3V19L19,18.13V3H7A2,2 0 0,1 9,1Z</Geometry>
 	<Geometry x:Key="Geometry/Marks.Outline">M9,1H19A2,2 0 0,1 21,3V19L19,18.13V3H7A2,2 0 0,1 9,1M15,20V7H5V20L10,17.82L15,20M15,5C16.11,5 17,5.9 17,7V23L10,20L3,23V7A2,2 0 0,1 5,5H15Z</Geometry>
-	<Geometry x:Key="Geometry/OperationEnd.Outline">M504 256C504 119 393 8 256 8S8 119 8 256s111 248 248 248 248-111 248-248zm-448 0c0-110.5 89.5-200 200-200s200 89.5 200 200-89.5 200-200 200S56 366.5 56 256zm296-80v160c0 8.8-7.2 16-16 16H176c-8.8 0-16-7.2-16-16V176c0-8.8 7.2-16 16-16h160c8.8 0 16 7.2 16 16z</Geometry>
-	<Geometry x:Key="Geometry/OperationStart.Outline">M371.7 238l-176-107c-15.8-8.8-35.7 2.5-35.7 21v208c0 18.4 19.8 29.8 35.7 21l176-101c16.4-9.1 16.4-32.8 0-42zM504 256C504 119 393 8 256 8S8 119 8 256s111 248 248 248 248-111 248-248zm-448 0c0-110.5 89.5-200 200-200s200 89.5 200 200-89.5 200-200 200S56 366.5 56 256z</Geometry>
 	<Geometry x:Key="Geometry/Peek">M14.12,14.12 A1.569,1.569 0 0 1 12.55,15.69 L1.569,15.69 A1.569,1.569 0 0 1 0,14.12 L0,3.137 A1.569,1.569 0 0 1 1.569,1.569 L5.882,1.569 C5.647,2.196 5.49,2.824 5.49,3.529 C5.49,6.353 7.765,8.627 10.59,8.627 C11.22,8.627 11.76,8.549 12.24,8.314 L14.12,10.2 L14.12,14.12  M13.57,5.412 C13.88,4.863 14.12,4.235 14.12,3.529 C14.12,1.569 12.55,0 10.59,0 C8.627,0 7.059,1.569 7.059,3.529 C7.059,5.49 8.627,7.059 10.59,7.059 C11.29,7.059 11.92,6.824 12.47,6.51 L14.9,8.941 L16,7.843 L13.57,5.412  M10.59,5.49 C9.49,5.49 8.627,4.627 8.627,3.529 C8.627,2.431 9.49,1.569 10.59,1.569 C11.69,1.569 12.55,2.431 12.55,3.529 C12.55,4.627 11.69,5.49 10.59,5.49 z</Geometry>
 	<Geometry x:Key="Geometry/Peek.Outline">M10.59,0 C8.627,0 7.059,1.569 7.059,3.529 C7.059,5.49 8.627,7.059 10.59,7.059 C11.29,7.059 11.92,6.824 12.47,6.51 L14.9,8.941 L16,7.843 L13.57,5.412 C13.88,4.863 14.12,4.235 14.12,3.529 C14.12,1.569 12.55,0 10.59,0  M1.569,1.569 A1.569,1.569 0 0 0 0,3.137 L0,14.12 A1.569,1.569 0 0 0 1.569,15.69 L12.55,15.69 A1.569,1.569 0 0 0 14.12,14.12 L14.12,10.2 L12.55,8.627 L12.55,14.12 L1.569,14.12 L1.569,3.137 L5.514,3.137 C5.561,2.588 5.694,2.078 5.882,1.569 L1.569,1.569  M10.59,1.569 C11.69,1.569 12.55,2.431 12.55,3.529 C12.55,4.627 11.69,5.49 10.59,5.49 C9.49,5.49 8.627,4.627 8.627,3.529 C8.627,2.431 9.49,1.569 10.59,1.569 z</Geometry>
 	<Geometry x:Key="Geometry/Power">M10.22,8.03 L6.453,5.845 L8.354,1.284 C8.413,1.165 8.445,1.03 8.445,0.8896 C8.445,0.3989 8.051,0 7.56,0 C7.338,0.004267 7.153,0.07467 7.007,0.1899 L6.943,0.2432 L0.2768,6.554 C0.07413,6.748 -0.02614,7.025 0.00586,7.302 C0.03786,7.582 0.2,7.829 0.4411,7.97 L4.213,10.16 L2.291,14.77 C2.126,15.16 2.261,15.61 2.604,15.84 C2.758,15.95 2.935,16 3.11,16 C3.332,16 3.551,15.92 3.722,15.76 L10.39,9.444 C10.59,9.25 10.69,8.973 10.66,8.695 C10.63,8.416 10.47,8.171 10.22,8.03 z</Geometry>
@@ -146,6 +144,12 @@
 	<DrawingImage x:Key="Image/Average">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/Average}"/>
 	</DrawingImage>
+	<DrawingImage x:Key="Image/BeginFrom">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/BeginFrom}"/>
+	</DrawingImage>
+	<DrawingImage x:Key="Image/BeginFrom.Light">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/BeginFrom}"/>
+	</DrawingImage>
 	<DrawingImage x:Key="Image/Calendar" Drawing="{StaticResource Drawing/Calendar}"/>
 	<DrawingImage x:Key="Image/Checklist">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/Checklist}"/>
@@ -156,27 +160,9 @@
 	<DrawingImage x:Key="Image/Checklist.Outline">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/Checklist.Outline}"/>
 	</DrawingImage>
-	<DrawingImage x:Key="Image/Checkpoint.Outline">
-		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{DynamicResource Geometry/Icon.OK.Outline}"/>
-	</DrawingImage>
-	<DrawingImage x:Key="Image/Checkpoint.Outline.Colored">
-		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{DynamicResource Geometry/Icon.OK.Outline}"/>
-	</DrawingImage>
-	<DrawingImage x:Key="Image/Checkpoint.Outline.Light">
-		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{DynamicResource Geometry/Icon.OK.Outline}"/>
-	</DrawingImage>
 	<DrawingImage x:Key="Image/ClearFilters" Drawing="{StaticResource Drawing/ClearFilters}"/>
 	<DrawingImage x:Key="Image/ClearSelection">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/ClearSelection}"/>
-	</DrawingImage>
-	<DrawingImage x:Key="Image/Clock.Outline">
-		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{DynamicResource Geometry/Clock.Outline}"/>
-	</DrawingImage>
-	<DrawingImage x:Key="Image/Clock.Outline.Colored">
-		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Question}" Geometry="{DynamicResource Geometry/Clock.Outline}"/>
-	</DrawingImage>
-	<DrawingImage x:Key="Image/Clock.Outline.Light">
-		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{DynamicResource Geometry/Clock.Outline}"/>
 	</DrawingImage>
 	<DrawingImage x:Key="Image/Code">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/LogProfile.Code}"/>
@@ -191,7 +177,79 @@
 	<DrawingImage x:Key="Image/Database.Light">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/LogProfile.Database}"/>
 	</DrawingImage>
+	<DrawingImage x:Key="Image/DisplayableLogAnalysisResult.Checkpoint.Colored">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.DisplayableLogAnalysisResult.Checkpoint}" Geometry="{DynamicResource Geometry/Icon.Flag.Outline}"/>
+	</DrawingImage>
+	<DrawingImage x:Key="Image/DisplayableLogAnalysisResult.Checkpoint.Light">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{DynamicResource Geometry/Icon.Flag.Outline}"/>
+	</DrawingImage>
+	<DrawingImage x:Key="Image/DisplayableLogAnalysisResult.Error.Colored">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Error}" Geometry="{DynamicResource Geometry/Icon.Error.Outline}"/>
+	</DrawingImage>
+	<DrawingImage x:Key="Image/DisplayableLogAnalysisResult.Error.Light">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{DynamicResource Geometry/Icon.Error.Outline}"/>
+	</DrawingImage>
+	<DrawingImage x:Key="Image/DisplayableLogAnalysisResult.Frequency.Colored">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.DisplayableLogAnalysisResult.Frequency}" Geometry="{StaticResource Geometry/Layers.Outline}"/>
+	</DrawingImage>
+	<DrawingImage x:Key="Image/DisplayableLogAnalysisResult.Frequency.Light">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/Layers.Outline}"/>
+	</DrawingImage>
+	<DrawingImage x:Key="Image/DisplayableLogAnalysisResult.Information.Colored">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Information}" Geometry="{DynamicResource Geometry/Icon.Information.Outline}"/>
+	</DrawingImage>
+	<DrawingImage x:Key="Image/DisplayableLogAnalysisResult.Information.Light">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{DynamicResource Geometry/Icon.Information.Outline}"/>
+	</DrawingImage>
+	<DrawingImage x:Key="Image/DisplayableLogAnalysisResult.OperationEnd.Colored">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/EndTo}"/>
+	</DrawingImage>
+	<DrawingImage x:Key="Image/DisplayableLogAnalysisResult.OperationEnd.Light">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/EndTo}"/>
+	</DrawingImage>
+	<DrawingImage x:Key="Image/DisplayableLogAnalysisResult.OperationStart.Colored">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/BeginFrom}"/>
+	</DrawingImage>
+	<DrawingImage x:Key="Image/DisplayableLogAnalysisResult.OperationStart.Light">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/BeginFrom}"/>
+	</DrawingImage>
+	<DrawingImage x:Key="Image/DisplayableLogAnalysisResult.Performance.Colored">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.LogProfile.Performance}" Geometry="{DynamicResource Geometry/Icon.Speed.Outline}"/>
+	</DrawingImage>
+	<DrawingImage x:Key="Image/DisplayableLogAnalysisResult.Performance.Light">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{DynamicResource Geometry/Icon.Speed.Outline}"/>
+	</DrawingImage>
+	<DrawingImage x:Key="Image/DisplayableLogAnalysisResult.SkippedOperation.Colored">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.DisplayableLogAnalysisResult.SkippedOperation}" Geometry="{DynamicResource Geometry/Icon.TransferDown.Outline}"/>
+	</DrawingImage>
+	<DrawingImage x:Key="Image/DisplayableLogAnalysisResult.SkippedOperation.Light">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{DynamicResource Geometry/Icon.TransferDown.Outline}"/>
+	</DrawingImage>
+	<DrawingImage x:Key="Image/DisplayableLogAnalysisResult.TimeSpan.Colored">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.DisplayableLogAnalysisResult.TimeSpan}" Geometry="{StaticResource Geometry/Clock.Outline}"/>
+	</DrawingImage>
+	<DrawingImage x:Key="Image/DisplayableLogAnalysisResult.TimeSpan.Light">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/Clock.Outline}"/>
+	</DrawingImage>
+	<DrawingImage x:Key="Image/DisplayableLogAnalysisResult.Trend.Colored">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.DisplayableLogAnalysisResult.Trend}" Geometry="{StaticResource Geometry/Statistic}"/>
+	</DrawingImage>
+	<DrawingImage x:Key="Image/DisplayableLogAnalysisResult.Trend.Light">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/Statistic}"/>
+	</DrawingImage>
+	<DrawingImage x:Key="Image/DisplayableLogAnalysisResult.Warning.Colored">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Warning}" Geometry="{DynamicResource Geometry/Icon.Warning.Outline}"/>
+	</DrawingImage>
+	<DrawingImage x:Key="Image/DisplayableLogAnalysisResult.Warning.Light">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{DynamicResource Geometry/Icon.Warning.Outline}"/>
+	</DrawingImage>
 	<DrawingImage x:Key="Image/EditLogProfile" Drawing="{StaticResource Drawing/EditLogProfile}"/>
+	<DrawingImage x:Key="Image/EndTo">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/EndTo}"/>
+	</DrawingImage>
+	<DrawingImage x:Key="Image/EndTo.Light">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/EndTo}"/>
+	</DrawingImage>
 	<DrawingImage x:Key="Image/Filter" Drawing="{StaticResource Drawing/Filter}"/>
 	<DrawingImage x:Key="Image/Filter.Active" Drawing="{StaticResource Drawing/Filter.Active}"/>
 	<DrawingImage x:Key="Image/Filter.Light" Drawing="{StaticResource Drawing/Filter.Light}"/>
@@ -649,38 +707,11 @@
 	<DrawingImage x:Key="Image/Marks.Outline.Light">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/Marks.Outline}"/>
 	</DrawingImage>
-	<DrawingImage x:Key="Image/OperationEnd.Outline">
-		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{DynamicResource Geometry/OperationEnd.Outline}"/>
-	</DrawingImage>
-	<DrawingImage x:Key="Image/OperationEnd.Outline.Colored">
-		<GeometryDrawing Brush="{DynamicResource Brush/Icon.OK}" Geometry="{DynamicResource Geometry/OperationEnd.Outline}"/>
-	</DrawingImage>
-	<DrawingImage x:Key="Image/OperationEnd.Outline.Light">
-		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{DynamicResource Geometry/OperationEnd.Outline}"/>
-	</DrawingImage>
-	<DrawingImage x:Key="Image/OperationStart.Outline">
-		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{DynamicResource Geometry/OperationStart.Outline}"/>
-	</DrawingImage>
-	<DrawingImage x:Key="Image/OperationStart.Outline.Colored">
-		<GeometryDrawing Brush="{DynamicResource Brush/Icon.OK}" Geometry="{DynamicResource Geometry/OperationStart.Outline}"/>
-	</DrawingImage>
-	<DrawingImage x:Key="Image/OperationStart.Outline.Light">
-		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{DynamicResource Geometry/OperationStart.Outline}"/>
-	</DrawingImage>
 	<DrawingImage x:Key="Image/Peek">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/Peek}"/>
 	</DrawingImage>
 	<DrawingImage x:Key="Image/Peek.Outline">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/Peek.Outline}"/>
-	</DrawingImage>
-	<DrawingImage x:Key="Image/Performance.Outline">
-		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{DynamicResource Geometry/Icon.Speed.Outline}"/>
-	</DrawingImage>
-	<DrawingImage x:Key="Image/Performance.Outline.Colored">
-		<GeometryDrawing Brush="{DynamicResource Brush/Icon.LogProfile.Performance}" Geometry="{DynamicResource Geometry/Icon.Speed.Outline}"/>
-	</DrawingImage>
-	<DrawingImage x:Key="Image/Performance.Outline.Light">
-		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{DynamicResource Geometry/Icon.Speed.Outline}"/>
 	</DrawingImage>
 	<DrawingImage x:Key="Image/Resource">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/Resource}"/>

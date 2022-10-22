@@ -162,11 +162,14 @@
 	<!-- DisplayableLogAnalysisResultType -->
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Checkpoint">检查点</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Error">错误</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Frequency">频率</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Information">咨询</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.OperationEnd">操作结束</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.OperationStart">操作开始</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Performance">性能</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisResultType.SkippedOperation">已略过动作</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.TimeSpan">时距</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Trend">趋势</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Warning">警告</sys:String>
 
 	<!-- DisplayableLogAnalysisRuleEditorDialog -->

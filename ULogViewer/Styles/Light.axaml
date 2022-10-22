@@ -9,6 +9,11 @@
 		<ResourceDictionary>
 
 			<!-- Icon -->
+			<SolidColorBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.Checkpoint" Color="#e65e53"/>
+			<SolidColorBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.Frequency" Color="#94bf00"/>
+			<SolidColorBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.SkippedOperation" Color="#b3b3b3"/>
+			<SolidColorBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.TimeSpan" Color="#4accb0"/>
+			<SolidColorBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.Trend" Color="#8f69d9"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Apple" Color="#888888"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Automation" Color="#497dcc"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Battery" Color="#ccbb28"/>

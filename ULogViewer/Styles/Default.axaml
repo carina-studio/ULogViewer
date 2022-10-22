@@ -12,6 +12,11 @@
 			<Color x:Key="Color/Accent">#912fbf</Color>
 
 			<!-- Icon -->
+			<SolidColorBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.Checkpoint" Color="#f26357"/>
+			<SolidColorBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.Frequency" Color="#a7d800"/>
+			<SolidColorBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.SkippedOperation" Color="#bfbfbf"/>
+			<SolidColorBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.TimeSpan" Color="#53e6c6"/>
+			<SolidColorBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.Trend" Color="#a87cff"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile" Color="{DynamicResource SystemAccentColorLight1}"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Android" Color="#9fc037"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Apple" Color="#ffffff"/>

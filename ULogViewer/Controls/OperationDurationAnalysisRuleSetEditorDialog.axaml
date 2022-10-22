@@ -81,14 +81,14 @@
 									<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].AddRuleBefore}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/OperationDurationAnalysisRuleSetEditorDialog.AddRuleBefore}">
 										<asControls:Image Classes="InPlaceAction_Icon">
 											<DrawingImage>
-												<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/AddRuleBefore}"/>
+												<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/EndTo}"/>
 											</DrawingImage>
 										</asControls:Image>
 									</Button>
 									<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].AddRuleAfter}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/OperationDurationAnalysisRuleSetEditorDialog.AddRuleAfter}">
 										<asControls:Image Classes="InPlaceAction_Icon">
 											<DrawingImage>
-												<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/AddRuleAfter}"/>
+												<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/BeginFrom}"/>
 											</DrawingImage>
 										</asControls:Image>
 									</Button>

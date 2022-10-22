@@ -243,7 +243,19 @@ enum DisplayableLogAnalysisResultType : uint
     /// </summary>
     Performance = 0x40,
     /// <summary>
+    /// Frequency.
+    /// </summary>
+    Frequency = 0x80,
+    /// <summary>
+    /// Trend.
+    /// </summary>
+    Trend = 0x100,
+    /// <summary>
     /// Information.
     /// </summary>
-    Information = 0x80,
+    Information = 0x200,
+    /// <summary>
+    /// Skipped operation.
+    /// </summary>
+    SkippedOperation = 0x400,
 }
