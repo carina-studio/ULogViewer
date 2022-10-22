@@ -94,7 +94,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				this.intervalTextBox.Value = TimeSpan.FromSeconds(1);
 				this.levelComboBox.SelectedItem = Logs.LogLevel.Undefined;
-				this.resultTypeComboBox.SelectedItem = DisplayableLogAnalysisResultType.TimeSpan;
+				this.resultTypeComboBox.SelectedItem = DisplayableLogAnalysisResultType.Frequency;
 			}
 			this.SynchronizationContext.Post(() =>
 			{
