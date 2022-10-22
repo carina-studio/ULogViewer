@@ -714,7 +714,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				// scroll to latest log
 				try
 				{
-					this.logListBox.ScrollIntoView(logIndex);
+					this.ScrollToLog(logIndex);
 					this.scrollToLatestLogAction?.Schedule(ScrollingToLatestLogInterval);
 				}
 				catch
@@ -3226,7 +3226,7 @@ namespace CarinaStudio.ULogViewer.Controls
 							// select log
 							this.logListBox.SelectedItems.Clear();
 							this.logListBox.SelectedItem = log;
-							this.logListBox.ScrollIntoView(log);
+							this.ScrollToLog(log);
 							this.IsScrollingToLatestLogNeeded = false;
 						}));
 					}
@@ -3347,7 +3347,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.IsScrollingToLatestLogNeeded = false;
 				this.logListBox.SelectedItems.Clear();
 				this.logListBox.SelectedItem = log;
-				this.logListBox.ScrollIntoView(log);
+				this.ScrollToLog(log);
 			});
 			this.SynchronizationContext.Post(() =>
 			{
@@ -3547,7 +3547,7 @@ namespace CarinaStudio.ULogViewer.Controls
 							&& oldStartIndex + oldItems.Count <= firstVisibleItemIndex)
 						{
 							firstVisibleItemIndex -= oldItems.Count;
-							this.logListBox.ScrollIntoView(firstVisibleItemIndex);
+							this.ScrollToLog(firstVisibleItemIndex);
 						}
 					}
 				}
@@ -3712,10 +3712,10 @@ namespace CarinaStudio.ULogViewer.Controls
 									{
 										var latestSelectedItem = selectedItems[selectedItems.Count - 1];
 										selectedItems.Clear(); // [Workaround] clear selection first to prevent performance issue of de-selecting multiple items
-										if (latestSelectedItem != null)
+										if (latestSelectedItem is DisplayableLog log)
 										{
-											selectedItems.Add(latestSelectedItem);
-											this.logListBox.ScrollIntoView(latestSelectedItem);
+											selectedItems.Add(log);
+											this.ScrollToLog(log);
 										}
 									}
 									this.logListBox.SelectNextItem();
@@ -3735,10 +3735,10 @@ namespace CarinaStudio.ULogViewer.Controls
 									{
 										var latestSelectedItem = selectedItems[selectedItems.Count - 1];
 										selectedItems.Clear(); // [Workaround] clear selection first to prevent performance issue of de-selecting multiple items
-										if (latestSelectedItem != null)
+										if (latestSelectedItem is DisplayableLog log)
 										{
-											selectedItems.Add(latestSelectedItem);
-											this.logListBox.ScrollIntoView(latestSelectedItem);
+											selectedItems.Add(log);
+											this.ScrollToLog(log);
 										}
 									}
 									this.logListBox.SelectPreviousItem();
@@ -3878,7 +3878,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				if (index >= 0)
 				{
 					it.SelectedIndex = index;
-					it.ScrollIntoView(index);
+					this.ScrollToLog(index);
 				}
 				else
 					this.SynchronizationContext.Post(() => this.markedLogListBox.SelectedItems.Clear());
@@ -4524,6 +4524,38 @@ namespace CarinaStudio.ULogViewer.Controls
 		ICommand SaveLogsCommand { get; }
 
 
+		// Scroll to specific log.
+		void ScrollToLog(DisplayableLog log)
+		{
+			if (this.DataContext is not Session session)
+				return;
+			this.ScrollToLog(session, session.Logs.IndexOf(log));
+		}
+		void ScrollToLog(int index)
+		{
+			if (this.DataContext is not Session session)
+				return;
+			this.ScrollToLog(session, index);
+		}
+		void ScrollToLog(Session session, int index)
+		{
+			if (index < 0 || index >= session.Logs.Count)
+				return;
+			this.logScrollViewer?.Let(scrollViewer => // [Workaround] Move closer to log first to make sure the scroll bar position will be correct
+			{
+				var extentHeight = scrollViewer.Extent.Height;
+				var viewportHeight = scrollViewer.Viewport.Height;
+				var offset = extentHeight * (index + 0.5) / session.Logs.Count + (viewportHeight / 2);
+				if (offset < 0)
+					offset = 0;
+				else if (offset + viewportHeight > extentHeight)
+					offset = extentHeight - viewportHeight;
+				scrollViewer.Offset = new(scrollViewer.Offset.X, offset);
+			});
+			this.logListBox.ScrollIntoView(index);
+		}
+
+
 		// Select and set IP endpoint.
 		async void SelectAndSetIPEndPoint()
 		{
@@ -4719,7 +4751,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.logListBox.SelectedItems.Add(log);
 			}
 			if (this.logListBox.SelectedItems.Count > 0)
-				this.logListBox.ScrollIntoView(this.logListBox.SelectedItems[0].AsNonNull());
+				this.ScrollToLog((DisplayableLog)this.logListBox.SelectedItems[0].AsNonNull());
 		}
 
 
@@ -4758,7 +4790,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (log != null)
 			{
 				this.logListBox.SelectedItems.Add(log);
-				this.logListBox.ScrollIntoView(log);
+				this.ScrollToLog(log);
 				this.logListBox.Focus();
 				this.IsScrollingToLatestLogNeeded = false;
 			}
