@@ -115,13 +115,9 @@ namespace CarinaStudio.ULogViewer.Logs
 				if (value is CompressedString compressedString)
 					propertyMemorySize += compressedString.Size;
 				else if (value is string str)
-					propertyMemorySize += (str.Length << 1);
-				else if (value is int || value is Enum)
-					propertyMemorySize += 4;
-				else if (value is DateTime || value is TimeSpan)
-					propertyMemorySize += 8;
+					propertyMemorySize += Memory.EstimateArrayInstanceSize(sizeof(char), str.Length);
 				else
-					throw new NotSupportedException();
+					propertyMemorySize += Memory.EstimateInstanceSize(value);
 			}
 			this.propertyValues = propertyValues;
 

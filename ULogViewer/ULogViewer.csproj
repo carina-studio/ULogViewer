@@ -7,6 +7,7 @@
     <DebugType>embedded</DebugType>
     <RootNamespace>CarinaStudio.ULogViewer</RootNamespace>
     <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
     <Authors>Carina Studio</Authors>
     <Company>Carina Studio</Company>

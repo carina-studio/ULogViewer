@@ -21,7 +21,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 	{
 		// Static fields.
 		static readonly DisplayableLogAnalysisResult[] emptyAnalysisResults = new DisplayableLogAnalysisResult[0];
-		static readonly int[] emptyInt32Array = new int[0];
+		static readonly byte[] emptyByteArray = new byte[0];
 		static readonly long estimatedTimeSpanSize = System.TimeSpan.FromDays(1.23456).ToString().Length << 1;
 		static readonly long estimatedTimestampSize = DateTime.Now.ToString().Length << 1;
 		static readonly Func<Log, string?>[] extraGetters = new Func<Log, string?>[Log.ExtraCapacity].Also(it =>
@@ -42,7 +42,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		CompressedString? beginningTimestampString;
 		CompressedString? endingTimeSpanString;
 		CompressedString? endingTimestampString;
-		readonly int[] extraLineCount;
+		readonly byte[] extraLineCount;
 		MarkColor markedColor;
 		long memorySize;
 		int messageLineCount = -1;
@@ -75,19 +75,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// check extras
 			var extraCount = group.MaxLogExtraNumber;
 			if (extraCount > 0)
-			{
-				this.extraLineCount = new int[extraCount].Also(it =>
-				{
-					for (var i = it.Length - 1; i >= 0; --i)
-						it[i] = -1;
-				});
-			}
+				this.extraLineCount = new byte[extraCount];
 			else
-				this.extraLineCount = emptyInt32Array;
+				this.extraLineCount = emptyByteArray;
 
 			// estimate memory usage
 			long memorySize = log.MemorySize + instanceFieldMemorySize;
-			memorySize += Memory.EstimateArrayInstanceSize(sizeof(int), this.extraLineCount.Length);
+			if (extraCount > 0)
+				memorySize += Memory.EstimateArrayInstanceSize(sizeof(byte), extraCount);
 			if (log.BeginningTimeSpan.HasValue)
 				memorySize += estimatedTimeSpanSize;
 			if (log.EndingTimeSpan.HasValue)
@@ -259,15 +254,24 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		// Calculate line count.
-		static int CalculateLineCount(string? text)
+		static unsafe byte CalculateLineCount(string? text)
 		{
 			if (text == null)
 				return 0;
-			var lineCount = 1;
-			for (var i = text.Length - 1; i >= 0; --i)
+			var lineCount = (byte)1;
+			fixed (char* p = text.AsSpan())
 			{
-				if (text[i] == '\n')
-					++lineCount;
+				char* charPtr = (p + text.Length - 1);
+				while (charPtr >= p)
+				{
+					if (*charPtr == '\n')
+					{
+						++lineCount;
+						if (lineCount == byte.MaxValue)
+							break;
+					}
+					--charPtr;
+				}
 			}
 			return lineCount;
 		}
@@ -568,7 +572,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			if (index >= this.extraLineCount.Length)
 				return 0;
-			if (this.extraLineCount[index] < 0)
+			if (this.extraLineCount[index] == 0)
 				this.extraLineCount[index] = CalculateLineCount(extraGetters[index](this.Log));
 			return this.extraLineCount[index];
 		}
@@ -843,7 +847,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// check extra line count
 			for (var i = this.extraLineCount.Length - 1; i >= 0; --i)
 			{
-				if (this.extraLineCount[i] >= 0)
+				if (this.extraLineCount[i] > 0)
 					propertyChangedHandlers(this, new PropertyChangedEventArgs($"HasExtraLinesOfExtra{i + 1}"));
 			}
 
