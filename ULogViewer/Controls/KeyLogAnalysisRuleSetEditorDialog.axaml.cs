@@ -185,10 +185,6 @@ partial class KeyLogAnalysisRuleSetEditorDialog : AppSuite.Controls.Window<IULog
 	}
 
 
-	// Get available icons.
-	LogProfileIcon[] Icons { get; } = Enum.GetValues<LogProfileIcon>();
-
-
 	/// <inheritdoc/>
 	protected override void OnClosed(EventArgs e)
 	{

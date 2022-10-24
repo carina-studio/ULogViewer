@@ -175,10 +175,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Available icons.
-		LogProfileIcon[] Icons { get; } = Enum.GetValues<LogProfileIcon>();
-
-
 		/// <inheritdoc/>
 		protected override void OnClosed(EventArgs e)
 		{
