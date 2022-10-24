@@ -258,10 +258,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			if (text == null)
 				return 0;
+			var textLength = text.Length;
+			if (textLength == 0)
+				return 1;
 			var lineCount = (byte)1;
 			fixed (char* p = text.AsSpan())
 			{
-				char* charPtr = (p + text.Length - 1);
+				char* charPtr = (p + textLength - 1);
 				while (charPtr >= p)
 				{
 					if (*charPtr == '\n')
