@@ -106,7 +106,7 @@ namespace CarinaStudio.ULogViewer
 		{ 
 			get => this.data switch
 			{
-				string str => Memory.EstimateArrayInstanceSize(sizeof(char), str.Length),
+				string str => Memory.EstimateInstanceSize(typeof(string), str.Length),
 				byte[] bytes => Memory.EstimateArrayInstanceSize(sizeof(byte), bytes.Length),
 				_ => 0,
 			} + BaseSize;

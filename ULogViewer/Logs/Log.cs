@@ -115,7 +115,7 @@ namespace CarinaStudio.ULogViewer.Logs
 				if (value is CompressedString compressedString)
 					propertyMemorySize += compressedString.Size;
 				else if (value is string str)
-					propertyMemorySize += Memory.EstimateArrayInstanceSize(sizeof(char), str.Length);
+					propertyMemorySize += Memory.EstimateInstanceSize(typeof(string), str.Length);
 				else
 					propertyMemorySize += Memory.EstimateInstanceSize(value);
 			}
