@@ -3,7 +3,7 @@
 set APP_NAME=ULogViewer
 set RID_LIST=linux-arm64 linux-x64
 set CONFIG=Release
-set FRAMEWORK=net6.0
+set FRAMEWORK=net7.0
 set ERRORLEVEL=0
 
 echo ********** Start building %APP_NAME% **********
@@ -69,7 +69,7 @@ REM Build packages
     )
 
     REM Build project
-    dotnet publish %APP_NAME% -c %CONFIG% -r %%r --self-contained true -p:PublishTrimmed=true
+    dotnet publish %APP_NAME% -c %CONFIG% -r %%r --self-contained true -p:PublishTrimmed=false
     if %ERRORLEVEL% neq 0 (
         echo Failed to build project: %ERRORLEVEL%
         del /Q Packages\Packaging.txt

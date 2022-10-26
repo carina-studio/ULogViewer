@@ -3,7 +3,7 @@
 set APP_NAME=ULogViewer
 set RID_LIST=win-arm64 win-x64 win-x86
 set CONFIG=Release-Windows
-set FRAMEWORK=net6.0-windows10.0.17763.0
+set FRAMEWORK=net7.0-windows10.0.17763.0
 set ERRORLEVEL=0
 
 echo ********** Start building %APP_NAME% **********
