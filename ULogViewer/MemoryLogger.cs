@@ -14,12 +14,12 @@ namespace CarinaStudio.ULogViewer
 		class LogHolder
 		{
 			public readonly long Index;
-			public readonly string Log;
+			public readonly CompressedString? Log;
 			public volatile LogHolder? Next;
 			public LogHolder(long index, string log)
 			{
 				this.Index = index;
-				this.Log = log;
+				this.Log = CompressedString.Create(log, CompressedString.Level.Optimal);
 			}
 		}
 
@@ -28,10 +28,11 @@ namespace CarinaStudio.ULogViewer
 		class LogHolderEnumerator : IEnumerable<string>, IEnumerator<string>
 		{
 			// Fields.
+			string? current;
 			public volatile LogHolder? CurrentLogHolder;
 
 			// Implementations.
-			public string Current => this.CurrentLogHolder.AsNonNull().Log;
+			public string Current { get => this.current ?? throw new InvalidOperationException(); }
 			public void Dispose()
 			{
 				this.CurrentLogHolder = null;
@@ -44,6 +45,7 @@ namespace CarinaStudio.ULogViewer
 			{
 				lock (logHolderLock)
 				{
+					this.current = null;
 					while (true)
 					{
 						if (this.CurrentLogHolder == null)
@@ -65,19 +67,23 @@ namespace CarinaStudio.ULogViewer
 							Monitor.Wait(logHolderLock);
 					}
 				}
+				this.current = this.CurrentLogHolder.Log?.ToString() ?? "";
 				return true;
 			}
 			public void Reset()
 			{
 				lock (logHolderLock)
+				{
+					this.current = null;
 					this.CurrentLogHolder = null;
+				}
 			}
 		}
 
 
 		// Constants.
-		const int LogHolderCapacity = 100000;
-		const int LogHolderDropCount = 10000;
+		const int LogHolderCapacity = 10000;
+		const int LogHolderDropCount = 1000;
 
 
 		// Fields.
