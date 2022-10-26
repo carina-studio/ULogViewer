@@ -188,6 +188,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		}
 
 
+		/// <summary>
+		/// Policy of memory usage.
+		/// </summary>
+		public MemoryUsagePolicy MemoryUsagePolicy
+		{
+			get => this.Settings.GetValueOrDefault(SettingKeys.MemoryUsagePolicy);
+			set => this.Settings.SetValue<MemoryUsagePolicy>(SettingKeys.MemoryUsagePolicy, value);
+		}
+
+
 		// Called when list of log profiles changed.
 		void OnLogProfilesChanged(object? sender, NotifyCollectionChangedEventArgs e)
 		{
@@ -228,10 +238,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.OnPropertyChanged(nameof(MaxContinuousLogCount));
 			else if (key == SettingKeys.MaxDisplayLineCountForEachLog)
 				this.OnPropertyChanged(nameof(MaxDisplayLineCountForEachLog));
+			else if (key == SettingKeys.MemoryUsagePolicy)
+				this.OnPropertyChanged(nameof(MemoryUsagePolicy));
 			else if (key == SettingKeys.ResetLogAnalysisRuleSetsAfterSettingLogProfile)
 				this.OnPropertyChanged(nameof(ResetLogAnalysisRuleSetsAfterSettingLogProfile));
-			else if (key == SettingKeys.SaveMemoryAggressively)
-				this.OnPropertyChanged(nameof(SaveMemoryAggressively));
 			else if (key == SettingKeys.SelectIPEndPointWhenNeeded)
 				this.OnPropertyChanged(nameof(SelectIPEndPointWhenNeeded));
 			else if (key == SettingKeys.SelectLogFilesWhenNeeded)
@@ -270,16 +280,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Get <see cref="FontFamily"/> for sample log text.
 		/// </summary>
 		public FontFamily SampleLogFontFamily { get; private set; }
-
-
-		/// <summary>
-		/// Get or set whether application need to keep memory usage as low as possible.
-		/// </summary>
-		public bool SaveMemoryAggressively
-		{
-			get => this.Settings.GetValueOrDefault(SettingKeys.SaveMemoryAggressively);
-			set => this.Settings.SetValue<bool>(SettingKeys.SaveMemoryAggressively, value);
-		}
 
 
 		/// <summary>

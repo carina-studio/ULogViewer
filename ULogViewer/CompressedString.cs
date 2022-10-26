@@ -59,7 +59,7 @@ namespace CarinaStudio.ULogViewer
 		// Constructor.
 		CompressedString(string value, Level level)
 		{
-			if (level == Level.None || value.Length < 4)
+			if (level == Level.None || value.Length < 32)
 				this.data = value;
 			else
 			{

@@ -445,6 +445,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			if (displayableLogsToDispose.IsEmpty())
 				return;
+			var isDebugMode = App.CurrentOrNull?.IsDebugMode == true;
 			var logCount = displayableLogsToDispose.Count;
 			if (logCount <= DisplayableLogDisposingChunkSize)
 			{
@@ -453,10 +454,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				displayableLogsToDispose.Clear();
 				staticLogger?.LogTrace($"Disposed {logCount} displayable logs");
 				staticLogger?.LogTrace($"All displayable logs were disposed, trigger GC");
-				if (App.Current.Settings.GetValueOrDefault(SettingKeys.SaveMemoryAggressively))
-					GC.Collect();
-				else
-					GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced, false);
+				TriggerGC();
 			}
 			else
 			{
@@ -466,6 +464,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				disposeDisplayableLogsAction?.Schedule(DisposeDisplayableLogsInterval);
 				staticLogger?.LogTrace($"Disposed {DisplayableLogDisposingChunkSize} displayable logs, {displayableLogsToDispose.Count} remains");
 			}
+		});
+		static readonly Stopwatch gcPerformanceWatch = new Stopwatch().Also(it =>
+		{
+			if (App.CurrentOrNull?.IsDebugMode == true)
+				it.Start();
 		});
 		static readonly ScheduledAction hibernateSessionsAction = new ScheduledAction(() =>
 		{
@@ -976,10 +979,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				}
 				this.SetValue(LogsProperty, this.AllLogs);
 				this.SetValue(HasLogsProperty, this.allLogs.IsNotEmpty());
-				if (!this.LogFiltering.IsFilteringNeeded && this.Settings.GetValueOrDefault(SettingKeys.SaveMemoryAggressively))
+				if (!this.LogFiltering.IsFilteringNeeded)
 				{
 					this.Logger.LogDebug("Trigger GC after clearing log filters");
-					GC.Collect();
+					TriggerGC();
 				}
 			});
 			this.updateIsReadingLogsAction = new ScheduledAction(() =>
@@ -1014,10 +1017,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						if (this.LogProfile?.IsContinuousReading != true)
 							this.SetValue(LastLogsReadingDurationProperty, TimeSpan.FromMilliseconds(this.logsReadingWatch.ElapsedMilliseconds));
 					}
-					if (wasReadingLogs && this.Settings.GetValueOrDefault(SettingKeys.SaveMemoryAggressively))
+					if (wasReadingLogs)
 					{
 						this.Logger.LogDebug("Trigger GC after reading logs");
-						GC.Collect();
+						TriggerGC();
 					}
 				}
 			});
@@ -1862,7 +1865,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.logReaders.First().UpdateInterval = this.ContinuousLogReadingUpdateInterval;
 
 				// hibernate
-				if (this.Settings.GetValueOrDefault(SettingKeys.SaveMemoryAggressively))
+				if (this.Settings.GetValueOrDefault(SettingKeys.MemoryUsagePolicy) == MemoryUsagePolicy.LessMemoryUsage)
 					this.Hibernate();
 			}
 		}
@@ -4373,6 +4376,42 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Get size of total memory usage of logs by all <see cref="Session"/> instances in bytes.
 		/// </summary>
 		public long TotalLogsMemoryUsage { get => this.GetValue(TotalLogsMemoryUsageProperty); }
+
+
+		// Trigger GC if needed.
+		static void TriggerGC()
+		{
+			var app = App.CurrentOrNull;
+			if (app == null)
+				return;
+			var isDebugMode = app.IsDebugMode;
+			var collectionCount = 0;
+			var gcStartTime = isDebugMode ? gcPerformanceWatch!.ElapsedMilliseconds : 0;
+			switch (app.Settings.GetValueOrDefault(SettingKeys.MemoryUsagePolicy))
+			{
+				case MemoryUsagePolicy.Balance:
+					GC.Collect(0, GCCollectionMode.Forced);
+					if (isDebugMode)
+						collectionCount = GC.CollectionCount(0);
+					break;
+				case MemoryUsagePolicy.LessMemoryUsage:
+					GC.Collect();
+					if (isDebugMode)
+					{
+						for (var i = GC.MaxGeneration; i >= 0; --i)
+							collectionCount += GC.CollectionCount(i);
+					}
+					break;
+				default:
+					staticLogger.LogDebug("Skip triggering GC");
+					return;
+			}
+			if (isDebugMode)
+			{
+				var duration = gcPerformanceWatch!.ElapsedMilliseconds - gcStartTime;
+				staticLogger.LogDebug($"[Performance] Took {duration} ms to collect {collectionCount} object(s)");
+			}
+		}
 
 
 		// Unmark logs.

@@ -936,9 +936,12 @@ namespace CarinaStudio.ULogViewer.Logs
 			});
 			var logBuilder = new LogBuilder()
 			{
-				StringCompressionLevel = this.Application.Settings.GetValueOrDefault(SettingKeys.SaveMemoryAggressively)
-					? CompressedString.Level.Optimal
-					: CompressedString.Level.None,
+				StringCompressionLevel = this.Application.Settings.GetValueOrDefault(SettingKeys.MemoryUsagePolicy) switch
+				{
+					MemoryUsagePolicy.Balance => CompressedString.Level.Fast,
+					MemoryUsagePolicy.LessMemoryUsage => CompressedString.Level.Optimal,
+					_ => CompressedString.Level.None,
+				}
 			};
 			var syncContext = this.SynchronizationContext;
 			var isContinuousReading = this.isContinuousReading;

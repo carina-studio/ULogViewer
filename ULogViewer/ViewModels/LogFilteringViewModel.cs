@@ -282,11 +282,6 @@ class LogFilteringViewModel : SessionComponent
                     this.logFilteringWatch.Stop();
                     this.SetValue(IsFilteringProperty, false);
                     this.SetValue(LastFilteringDurationProperty, TimeSpan.FromMilliseconds(this.logFilteringWatch.ElapsedMilliseconds));
-                    if (this.Settings.GetValueOrDefault(SettingKeys.SaveMemoryAggressively))
-                    {
-                        this.Logger.LogDebug("Trigger GC after filtering logs");
-                        GC.Collect();
-                    }
                 }
                 break;
             case nameof(DisplayableLogFilter.IsProcessingNeeded):

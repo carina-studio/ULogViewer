@@ -42,6 +42,7 @@ namespace CarinaStudio.ULogViewer
 		// Static fields.
 		static readonly SettingKey<string> LegacyCultureSettingKey = new SettingKey<string>("Culture", "");
 		static readonly SettingKey<string> LegacyThemeModeSettingKey = new SettingKey<string>("ThemeMode", "");
+		static readonly SettingKey<bool> LegacySaveMemoryAggressivelySettingKey = new SettingKey<bool>("SaveMemoryAggressively", false);
 
 
 		// Fields.
@@ -527,6 +528,13 @@ namespace CarinaStudio.ULogViewer
 						settings.SetValue<AppSuite.ThemeMode>(AppSuite.SettingKeys.ThemeMode, themeMode);
 				});
 			}
+
+			// upgrade memory usage policy
+			if (oldVersion < 4)
+			{
+				if (settings.GetValueOrDefault(LegacySaveMemoryAggressivelySettingKey))
+					settings.SetValue<MemoryUsagePolicy>(SettingKeys.MemoryUsagePolicy, MemoryUsagePolicy.LessMemoryUsage);
+			}
 		}
 
 
@@ -551,7 +559,7 @@ namespace CarinaStudio.ULogViewer
 
 
 		// Version of settings.
-		protected override int SettingsVersion => 3;
+		protected override int SettingsVersion => 4;
 
 
 		/// <inheritdoc/>

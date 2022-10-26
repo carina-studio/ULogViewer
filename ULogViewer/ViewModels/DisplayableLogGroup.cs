@@ -48,7 +48,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.LogProfile = profile;
 			this.maxDisplayLineCount = Math.Max(1, this.Application.Settings.GetValueOrDefault(SettingKeys.MaxDisplayLineCountForEachLog));
 			this.MemorySize = BaseMemorySize;
-			this.SaveMemoryAgressively = this.Application.Settings.GetValueOrDefault(SettingKeys.SaveMemoryAggressively);
+			this.MemoryUsagePolicy = this.Application.Settings.GetValueOrDefault(SettingKeys.MemoryUsagePolicy);
 			this.CheckMaxLogExtraNumber();
 
 			// add event handlers
@@ -235,6 +235,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Policy of memory usage.
+		/// </summary>
+		public MemoryUsagePolicy MemoryUsagePolicy { get; private set; }
+
+
+		/// <summary>
 		/// Called when a set of analysis result has been added to a log.
 		/// </summary>
 		/// <param name="log">Log.</param>
@@ -382,8 +388,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					log = log.Next;
 				}
 			}
-			else if (e.Key == SettingKeys.SaveMemoryAggressively)
-				this.SaveMemoryAgressively = (bool)e.Value;
+			else if (e.Key == SettingKeys.MemoryUsagePolicy)
+				this.MemoryUsagePolicy = (MemoryUsagePolicy)e.Value;
 		}
 
 
@@ -404,12 +410,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				log = log.Next;
 			}
 		}
-
-
-		/// <summary>
-		/// Check whether <see cref="DisplayableLog"/> need to keep memory usage as low as possible or not.
-		/// </summary>
-		public bool SaveMemoryAgressively { get; private set; }
 
 
 		// Update color indicator brushes.

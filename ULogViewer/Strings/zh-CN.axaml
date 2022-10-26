@@ -21,6 +21,7 @@
 	<sys:String x:Key="String/AppOptionsDialog.LogOperations">日志操作</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.MaxContinuousLogCount">连续读取时的最大日志个数</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.MaxDisplayLineCountForEachLog">每笔日志最大显示行数</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.MemoryUsagePolicy">内存使用策略</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ResetLogAnalysisRuleSetsAfterSettingLogProfile">变更日志类型后重设套用的规则集</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SaveMemoryAggressively">节省内存</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SaveMemoryAggressively.Description">尽量只加载较少内容，这将会使日志载入及筛选速度下降，也会影响界面操作流畅度。</sys:String>
@@ -619,6 +620,11 @@ return false;</sys:String>
 
 	<!-- MemoryLoggerLogDataSourceProvider -->
 	<sys:String x:Key="String/MemoryLoggerLogDataSourceProvider.DisplayName">ULogViewer 实时日志</sys:String>
+
+	<!-- MemoryUsagePolicy -->
+	<sys:String x:Key="String/MemoryUsagePolicy.Balance">平衡</sys:String>
+	<sys:String x:Key="String/MemoryUsagePolicy.BetterPerformance">更好的效能</sys:String>
+	<sys:String x:Key="String/MemoryUsagePolicy.LessMemoryUsage">较少的内存用量</sys:String>
 
 	<!-- MySqlDatabaseLogDataSource -->
 	<sys:String x:Key="String/MySqlDatabaseLogDataSource.FailedToUpdateFirewallRules">无法更新 MySQL 服务器的防火墙规则。</sys:String>

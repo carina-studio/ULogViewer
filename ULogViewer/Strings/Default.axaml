@@ -18,6 +18,7 @@
 	<sys:String x:Key="String/AppOptionsDialog.LogOperations">Log Operations</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.MaxContinuousLogCount">Maximum number of logs when continuous reading</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.MaxDisplayLineCountForEachLog">Maximum number of lines to display for each log</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.MemoryUsagePolicy">Policy of memory usage</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ResetLogAnalysisRuleSetsAfterSettingLogProfile">Reset applied rule sets after changing log profile</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SaveMemoryAggressively">Save memory usage aggressively</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SaveMemoryAggressively.Description">Keep memory usage as low as possible. It will reduce speed of logs reading/filtering and UI smoothness.</sys:String>
@@ -653,6 +654,11 @@ return false;</sys:String>
 
 	<!-- MemoryLoggerLogDataSourceProvider -->
 	<sys:String x:Key="String/MemoryLoggerLogDataSourceProvider.DisplayName">ULogViewer realtime log</sys:String>
+
+	<!-- MemoryUsagePolicy -->
+	<sys:String x:Key="String/MemoryUsagePolicy.Balance">Balance</sys:String>
+	<sys:String x:Key="String/MemoryUsagePolicy.BetterPerformance">Better performance</sys:String>
+	<sys:String x:Key="String/MemoryUsagePolicy.LessMemoryUsage">Less memory usage</sys:String>
 
 	<!-- MySqlDatabaseLogDataSource -->
 	<sys:String x:Key="String/MySqlDatabaseLogDataSource.FailedToUpdateFirewallRules">Failed to update firewall rules of MySQL Server.</sys:String>

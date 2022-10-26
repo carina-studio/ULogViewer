@@ -533,7 +533,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		// Format timestamp to string.
 		CompressedString FormatTimeSpan(TimeSpan? timeSpan)
 		{
-			var level = this.Group.SaveMemoryAgressively ? CompressedString.Level.Fast : CompressedString.Level.None;
+			var level = this.Group.MemoryUsagePolicy switch
+			{
+				MemoryUsagePolicy.Balance => CompressedString.Level.Fast,
+				MemoryUsagePolicy.LessMemoryUsage => CompressedString.Level.Optimal,
+				_ => CompressedString.Level.None,
+			};
 			var format = this.Group.LogProfile.TimeSpanFormatForDisplaying;
 			if (timeSpan == null)
 				return CompressedString.Empty;
@@ -553,7 +558,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		// Format timestamp to string.
 		CompressedString FormatTimestamp(DateTime? timestamp)
 		{
-			var level = this.Group.SaveMemoryAgressively ? CompressedString.Level.Fast : CompressedString.Level.None;
+			var level = this.Group.MemoryUsagePolicy switch
+			{
+				MemoryUsagePolicy.Balance => CompressedString.Level.Fast,
+				MemoryUsagePolicy.LessMemoryUsage => CompressedString.Level.Optimal,
+				_ => CompressedString.Level.None,
+			};
 			var format = this.Group.LogProfile.TimestampFormatForDisplaying;
 			if (timestamp == null)
 				return CompressedString.Empty;

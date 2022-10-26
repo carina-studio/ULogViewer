@@ -42,13 +42,13 @@ namespace CarinaStudio.ULogViewer
 		/// </summary>
 		public static readonly SettingKey<int> MaxDisplayLineCountForEachLog = new(nameof(MaxDisplayLineCountForEachLog), 5);
 		/// <summary>
+		/// Policy of memory usage.
+		/// </summary>
+		public static readonly SettingKey<MemoryUsagePolicy> MemoryUsagePolicy = new(nameof(MemoryUsagePolicy), ULogViewer.MemoryUsagePolicy.Balance);
+		/// <summary>
 		/// Reset all log analysis rule sets after setting log profile.
 		/// </summary>
 		public static readonly SettingKey<bool> ResetLogAnalysisRuleSetsAfterSettingLogProfile = new(nameof(ResetLogAnalysisRuleSetsAfterSettingLogProfile), true);
-		/// <summary>
-		/// Keep memory usage as low as possible.
-		/// </summary>
-		public static readonly SettingKey<bool> SaveMemoryAggressively = new(nameof(SaveMemoryAggressively), false);
 		/// <summary>
 		/// Font family of script editor.
 		/// </summary>
