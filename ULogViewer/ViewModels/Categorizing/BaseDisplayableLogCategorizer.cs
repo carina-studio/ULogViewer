@@ -25,7 +25,7 @@ abstract class BaseDisplayableLogCategorizer<TProcessingToken, TCategory> : Base
     protected BaseDisplayableLogCategorizer(IULogViewerApplication app, IList<DisplayableLog> sourceLogs, Comparison<DisplayableLog> comparison, DisplayableLogProcessingPriority priority = DisplayableLogProcessingPriority.Realtime) : base(app, sourceLogs, comparison, priority)
     { 
         this.categories = new((lhs, rhs) => this.CompareSourceLogs(lhs.Log, rhs.Log));
-        this.Categories = (IReadOnlyList<TCategory>)this.categories.AsReadOnly();
+        this.Categories = (IReadOnlyList<TCategory>)ListExtensions.AsReadOnly(this.categories);
     }
 
 

@@ -47,7 +47,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 	class JsonLogsSavingOptions : LogsSavingOptions
 	{
 		// Static fields.
-		static readonly IDictionary<string, string> EmptyLogPropertyMap = new Dictionary<string, string>().AsReadOnly();
+		static readonly IDictionary<string, string> EmptyLogPropertyMap = DictionaryExtensions.AsReadOnly(new Dictionary<string, string>());
 
 
 		// Fields.
@@ -68,7 +68,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public IDictionary<string, string> LogPropertyMap
 		{
 			get => this.logPropertyMap;
-			set => this.logPropertyMap = new Dictionary<string, string>(value).AsReadOnly();
+			set => this.logPropertyMap = DictionaryExtensions.AsReadOnly(new Dictionary<string, string>(value));
 		}
 	}
 }

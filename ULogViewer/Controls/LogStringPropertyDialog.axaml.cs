@@ -77,7 +77,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			public HighlightingRuleSet MainRuleSet => this.mainRuleSet;
 			public string Name => "LogMessage";
 			public IEnumerable<HighlightingColor> NamedHighlightingColors => new HighlightingColor[] { this.highlightingColor };
-			public IDictionary<string, string> Properties => this.properties.AsReadOnly();
+			public IDictionary<string, string> Properties => DictionaryExtensions.AsReadOnly(this.properties);
 		}
 
 

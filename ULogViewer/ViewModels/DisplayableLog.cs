@@ -131,7 +131,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.analysisResults = newList;
 				memorySizeDiff += IntPtr.Size;
 			}
-			this.readOnlyAnalysisResults = this.analysisResults.AsReadOnly();
+			this.readOnlyAnalysisResults = ListExtensions.AsReadOnly(this.analysisResults);
 
 			// select active type
 			if (this.activeAnalysisResultType == 0 || this.activeAnalysisResultType > result.Type)
@@ -975,7 +975,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						var newList = new DisplayableLogAnalysisResult[currentResultCount - 1];
 						Array.Copy(this.analysisResults, 1, newList, 0, currentResultCount - 1);
 						this.analysisResults = newList;
-						this.readOnlyAnalysisResults = newList.AsReadOnly();
+						this.readOnlyAnalysisResults = ListExtensions.AsReadOnly(newList);
 						memorySizeDiff -= IntPtr.Size;
 					}
 					else if (i == currentResultCount - 1)
@@ -983,7 +983,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						var newList = new DisplayableLogAnalysisResult[currentResultCount - 1];
 						Array.Copy(this.analysisResults, 0, newList, 0, currentResultCount - 1);
 						this.analysisResults = newList;
-						this.readOnlyAnalysisResults = newList.AsReadOnly();
+						this.readOnlyAnalysisResults = ListExtensions.AsReadOnly(newList);
 						memorySizeDiff -= IntPtr.Size;
 					}
 					else
@@ -992,7 +992,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						Array.Copy(this.analysisResults, 0, newList, 0, i);
 						Array.Copy(this.analysisResults, i + 1, newList, i, currentResultCount - i - 1);
 						this.analysisResults = newList;
-						this.readOnlyAnalysisResults = newList.AsReadOnly();
+						this.readOnlyAnalysisResults = ListExtensions.AsReadOnly(newList);
 						memorySizeDiff -= IntPtr.Size;
 					}
 					break;

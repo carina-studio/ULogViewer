@@ -88,7 +88,7 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
     { 
         this.EmptyProfile = LogProfile.CreateEmptyBuiltInProfile(app);
         this.pinnedProfiles = new(this.CompareProfiles);
-        this.PinnedProfiles = (IReadOnlyList<LogProfile>)this.pinnedProfiles.AsReadOnly();
+        this.PinnedProfiles = (IReadOnlyList<LogProfile>)ListExtensions.AsReadOnly(this.pinnedProfiles);
         app.StringsUpdated += this.OnApplicationStringsUpdated;
     }
 

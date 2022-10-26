@@ -151,7 +151,7 @@ class LogAnalysisViewModel : SessionComponent
             this.AttachToAnalyzer(it));
         
         // setup properties
-        this.AnalysisResults = this.analysisResults.AsReadOnly();
+        this.AnalysisResults = ListExtensions.AsReadOnly(this.analysisResults);
 
         // create scheduled actions
         this.reportSelectedAnalysisResultsInfoAction = new(() =>

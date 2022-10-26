@@ -33,8 +33,8 @@ class KeyLogAnalysisRuleSet : DisplayableLogAnalysisRuleSet<KeyLogAnalysisRuleSe
         public Rule(Regex pattern, Logs.LogLevel level, IEnumerable<DisplayableLogAnalysisCondition> conditions, DisplayableLogAnalysisResultType resultType, string message)
         {
             this.Conditions = conditions is IList<DisplayableLogAnalysisCondition> list
-                ? list.AsReadOnly()
-                : conditions.ToArray().AsReadOnly();
+                ? ListExtensions.AsReadOnly(list)
+                : ListExtensions.AsReadOnly(conditions.ToArray());
             this.Level = level;
             this.Message = message;
             this.Pattern = pattern;

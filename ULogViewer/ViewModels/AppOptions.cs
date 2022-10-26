@@ -28,7 +28,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// setup properties
 			this.logProfiles.Add(LogProfileManager.Default.EmptyProfile);
 			this.logProfiles.AddAll(LogProfileManager.Default.Profiles.Where(it => !it.IsTemplate));
-			this.LogProfiles = this.logProfiles.AsReadOnly();
+			this.LogProfiles = ListExtensions.AsReadOnly(this.logProfiles);
 			this.SampleLogFontFamily = new FontFamily(this.LogFontFamily);
 
 			// add event handlers

@@ -48,9 +48,9 @@ namespace CarinaStudio.ULogViewer.Controls
 		public LogProfileSelectionDialog()
 		{
 			// setup properties
-			this.OtherLogProfiles = this.otherLogProfiles.AsReadOnly();
-			this.PinnedLogProfiles = this.pinnedLogProfiles.AsReadOnly();
-			this.TemplateLogProfiles = this.templateLogProfiles.AsReadOnly();
+			this.OtherLogProfiles = ListExtensions.AsReadOnly(this.otherLogProfiles);
+			this.PinnedLogProfiles = ListExtensions.AsReadOnly(this.pinnedLogProfiles);
+			this.TemplateLogProfiles = ListExtensions.AsReadOnly(this.templateLogProfiles);
 
 			// initialize
 			this.InitializeComponent();

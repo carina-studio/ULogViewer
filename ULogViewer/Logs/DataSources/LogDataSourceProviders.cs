@@ -47,7 +47,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// <summary>
 		/// Get all providers.
 		/// </summary>
-		public static IList<ILogDataSourceProvider> All { get; } = providers.AsReadOnly();
+		public static IList<ILogDataSourceProvider> All { get; } = ListExtensions.AsReadOnly(providers);
 
 
 		/// <summary>
@@ -128,7 +128,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// <summary>
 		/// Get all <see cref="ScriptLogDataSourceProvider"/>s.
 		/// </summary>
-		public static IList<ScriptLogDataSourceProvider> ScriptProviders { get; } = scriptProviders.AsReadOnly();
+		public static IList<ScriptLogDataSourceProvider> ScriptProviders { get; } = ListExtensions.AsReadOnly(scriptProviders);
 
 
 		/// <summary>

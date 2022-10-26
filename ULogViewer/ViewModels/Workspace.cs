@@ -39,7 +39,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public Workspace(JsonElement? savedState) : base()
 		{
 			// setup properties
-			this.Sessions = this.sessions.AsReadOnly();
+			this.Sessions = ListExtensions.AsReadOnly(this.sessions);
 
 			// restore
 			savedState?.Let(savedState => this.RestoreState(savedState));

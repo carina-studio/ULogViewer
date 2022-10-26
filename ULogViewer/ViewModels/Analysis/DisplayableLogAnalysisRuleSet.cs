@@ -114,7 +114,7 @@ abstract class DisplayableLogAnalysisRuleSet<TRule> : BaseProfile<IULogViewerApp
             this.VerifyBuiltIn();
             if (this.rules.SequenceEqual(value))
                 return;
-            this.rules = value.AsReadOnly();
+            this.rules = ListExtensions.AsReadOnly(value);
             this.OnPropertyChanged(nameof(Rules));
         }
     }

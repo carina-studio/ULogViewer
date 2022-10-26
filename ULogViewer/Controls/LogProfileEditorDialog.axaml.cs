@@ -99,19 +99,19 @@ namespace CarinaStudio.ULogViewer.Controls
 		public LogProfileEditorDialog()
 		{
 			// setup properties
-			this.LogLevelMapEntriesForReading = this.logLevelMapEntriesForReading.AsReadOnly();
-			this.LogLevelMapEntriesForWriting = this.logLevelMapEntriesForWriting.AsReadOnly();
-			this.LogPatterns = this.logPatterns.Also(it =>
+			this.LogLevelMapEntriesForReading = ListExtensions.AsReadOnly(this.logLevelMapEntriesForReading);
+			this.LogLevelMapEntriesForWriting = ListExtensions.AsReadOnly(this.logLevelMapEntriesForWriting);
+			this.LogPatterns = ListExtensions.AsReadOnly(this.logPatterns.Also(it =>
 			{
 				it.CollectionChanged += (_, e) => this.InvalidateInput();
-			}).AsReadOnly();
-			this.LogWritingFormats = this.logWritingFormats.AsReadOnly();
-			this.TimeSpanFormatsForReading = this.timeSpanFormatsForReading.AsReadOnly();
-			this.TimestampFormatsForReading = this.timestampFormatsForReading.AsReadOnly();
-			this.VisibleLogProperties = this.visibleLogProperties.Also(it =>
+			}));
+			this.LogWritingFormats = ListExtensions.AsReadOnly(this.logWritingFormats);
+			this.TimeSpanFormatsForReading = ListExtensions.AsReadOnly(this.timeSpanFormatsForReading);
+			this.TimestampFormatsForReading = ListExtensions.AsReadOnly(this.timestampFormatsForReading);
+			this.VisibleLogProperties = ListExtensions.AsReadOnly(this.visibleLogProperties.Also(it =>
 			{
 				it.CollectionChanged += (_, e) => this.InvalidateInput();
-			}).AsReadOnly();
+			}));
 
 			// initialize.
 			AvaloniaXamlLoader.Load(this);

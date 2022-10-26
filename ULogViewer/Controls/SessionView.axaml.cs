@@ -346,7 +346,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			// setup properties
 			this.SetValue<bool>(IsProcessInfoVisibleProperty, this.Settings.GetValueOrDefault(AppSuite.SettingKeys.ShowProcessInfo));
 			this.SetValue<int>(MaxDisplayLineCountForEachLogProperty, Math.Max(1, this.Settings.GetValueOrDefault(SettingKeys.MaxDisplayLineCountForEachLog)));
-			this.ValidLogLevels = this.validLogLevels.AsReadOnly();
+			this.ValidLogLevels = ListExtensions.AsReadOnly(this.validLogLevels);
 
 			// initialize
 			this.IsToolsMenuItemVisible = this.Application.IsDebugMode || AppSuite.Controls.PathEnvVarEditorDialog.IsSupported;

@@ -743,7 +743,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				this.VerifyBuiltIn();
 				if (this.logWritingFormats.SequenceEqual(value))
 					return;
-				this.logWritingFormats = value.ToArray().AsReadOnly();
+				this.logWritingFormats = ListExtensions.AsReadOnly(value.ToArray());
 				this.OnPropertyChanged(nameof(LogWritingFormats));
 			}
 		}
@@ -1256,7 +1256,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				this.VerifyBuiltIn();
 				if (this.timeSpanFormatsForReading.SequenceEqual(value))
 					return;
-				this.timeSpanFormatsForReading = value.ToArray().AsReadOnly();
+				this.timeSpanFormatsForReading = ListExtensions.AsReadOnly(value.ToArray());
 				this.OnPropertyChanged(nameof(TimeSpanFormatsForReading));
 			}
 		}
@@ -1382,7 +1382,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				this.VerifyBuiltIn();
 				if (this.timestampFormatsForReading.SequenceEqual(value))
 					return;
-				this.timestampFormatsForReading = value.ToArray().AsReadOnly();
+				this.timestampFormatsForReading = ListExtensions.AsReadOnly(value.ToArray());
 				this.OnPropertyChanged(nameof(TimestampFormatsForReading));
 			}
 		}

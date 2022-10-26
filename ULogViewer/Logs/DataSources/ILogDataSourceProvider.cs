@@ -501,7 +501,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 					return;
 				foreach (var propertyInfo in typeof(LogDataSourceOptions).GetProperties(BindingFlags.Instance | BindingFlags.Public))
 					optionPropertyInfoMap[propertyInfo.Name] = propertyInfo;
-				optionNames = optionPropertyInfoMap.Keys.ToArray().AsReadOnly();
+				optionNames = ListExtensions.AsReadOnly(optionPropertyInfoMap.Keys.ToArray());
 				isOptionPropertyInfoMapReady = true;
 			}
 		}

@@ -56,7 +56,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// </summary>
 		public RegexEditorDialog()
 		{
-			this.CapturedGroups = this.capturedGroups.AsReadOnly();
+			this.CapturedGroups = ListExtensions.AsReadOnly(this.capturedGroups);
 			AvaloniaXamlLoader.Load(this);
 			this.regexTextBox = this.FindControl<RegexTextBox>(nameof(regexTextBox))!.Also(it =>
 			{

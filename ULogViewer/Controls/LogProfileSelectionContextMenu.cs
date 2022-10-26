@@ -45,7 +45,7 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
     {
         this.items = new(this.CompareItems);
         base.Items = this.items;
-        this.Items = this.items.AsReadOnly();
+        this.Items = ListExtensions.AsReadOnly(this.items);
         this.MenuClosed += (_, e) =>
         {
             Avalonia.Threading.Dispatcher.UIThread.Post(() =>

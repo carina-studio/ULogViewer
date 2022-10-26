@@ -35,8 +35,8 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <param name="dataOutput">Data output.</param>
 		public JsonLogWriter(ILogDataOutput dataOutput) : base(dataOutput)
 		{
-			this.readOnlyLogLevelMap = this.logLevelMap.AsReadOnly();
-			this.readOnlyLogPropertyMap = this.logPropertyMap.AsReadOnly();
+			this.readOnlyLogLevelMap = DictionaryExtensions.AsReadOnly(this.logLevelMap);
+			this.readOnlyLogPropertyMap = DictionaryExtensions.AsReadOnly(this.logPropertyMap);
 		}
 
 

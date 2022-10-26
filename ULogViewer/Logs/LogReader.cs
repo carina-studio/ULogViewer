@@ -1568,7 +1568,7 @@ namespace CarinaStudio.ULogViewer.Logs
 				this.VerifyDisposed();
 				if (this.timeSpanFormats.SequenceEqual(value))
 					return;
-				this.timeSpanFormats = value.ToArray().AsReadOnly();
+				this.timeSpanFormats = ListExtensions.AsReadOnly(value.ToArray());
 				this.OnPropertyChanged(nameof(TimeSpanFormats));
 			}
 		}
@@ -1622,7 +1622,7 @@ namespace CarinaStudio.ULogViewer.Logs
 				this.VerifyDisposed();
 				if (this.timestampFormats.SequenceEqual(value))
 					return;
-				this.timestampFormats = value.ToArray().AsReadOnly();
+				this.timestampFormats = ListExtensions.AsReadOnly(value.ToArray());
 				this.OnPropertyChanged(nameof(TimestampFormats));
 			}
 		}

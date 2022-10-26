@@ -17,7 +17,7 @@ class AzureCliLogDataSourceProvider : BaseLogDataSourceProvider
     /// <param name="app">Application.</param>
     public AzureCliLogDataSourceProvider(IULogViewerApplication app) : base(app)
     { 
-        this.ExternalDependencies = app.ExternalDependencies.Where(it => it.Id == "AzureCLI").ToArray().AsReadOnly();
+        this.ExternalDependencies = ListExtensions.AsReadOnly(app.ExternalDependencies.Where(it => it.Id == "AzureCLI").ToArray());
     }
 
 

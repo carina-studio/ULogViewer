@@ -47,9 +47,9 @@ namespace CarinaStudio.ULogViewer.Logs
 		public RawLogWriter(ILogDataOutput output) : base(output)
 		{
 			// setup properties.
-			this.LineNumbers = this.lineNumbers.AsReadOnly();
-			this.readOnlyLogLevelMap = this.logLevelMap.AsReadOnly();
-			this.readOnlyLogsToGetLineNumbers = this.logsToGetLineNumber.AsReadOnly();
+			this.LineNumbers = DictionaryExtensions.AsReadOnly(this.lineNumbers);
+			this.readOnlyLogLevelMap = DictionaryExtensions.AsReadOnly(this.logLevelMap);
+			this.readOnlyLogsToGetLineNumbers = SetExtensions.AsReadOnly(this.logsToGetLineNumber);
 		}
 
 
@@ -71,7 +71,7 @@ namespace CarinaStudio.ULogViewer.Logs
 				this.VerifyPreparing();
 				if (this.logFormats.SequenceEqual(value))
 					return;
-				this.logFormats = value.ToArray().AsReadOnly();
+				this.logFormats = ListExtensions.AsReadOnly(value.ToArray());
 				this.OnPropertyChanged(nameof(LogFormats));
 			}
 		}

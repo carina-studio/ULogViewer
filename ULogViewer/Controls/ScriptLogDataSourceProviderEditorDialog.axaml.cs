@@ -76,7 +76,7 @@ partial class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.In
 	/// </summary>
 	public ScriptLogDataSourceProviderEditorDialog()
 	{
-		this.SupportedSourceOptions = this.supportedSourceOptions.AsReadOnly();
+		this.SupportedSourceOptions = ListExtensions.AsReadOnly(this.supportedSourceOptions);
 		AvaloniaXamlLoader.Load(this);
 		if (Platform.IsLinux)
 			this.WindowStartupLocation = WindowStartupLocation.Manual;
