@@ -72,10 +72,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// All log levels.
-		Logs.LogLevel[] LogLevels { get; } = Enum.GetValues<Logs.LogLevel>();
-
-
 		// Dialog opened.
 		protected override void OnOpened(EventArgs e)
 		{
@@ -111,10 +107,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			&& this.intervalTextBox.IsTextValid
 			&& !string.IsNullOrWhiteSpace(this.operationNameTextBox.Text)
 			&& this.patternEditor.Pattern != null;
-
-
-		// Available result types.
-		DisplayableLogAnalysisResultType[] ResultTypes { get; } = Enum.GetValues<DisplayableLogAnalysisResultType>();
 		
 
 		/// <summary>

@@ -295,10 +295,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.endingVariableListBox.SelectedItem = null;
 			this.endingVariableListBox.Focus();
 		}
-
-
-		// Available result types.
-		DisplayableLogAnalysisResultType[] ResultTypes { get; } = Enum.GetValues<DisplayableLogAnalysisResultType>();
 		
 
 		/// <summary>

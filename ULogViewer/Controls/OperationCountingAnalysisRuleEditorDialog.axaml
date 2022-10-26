@@ -8,7 +8,7 @@
 		xmlns:appAnalysis="using:CarinaStudio.ULogViewer.ViewModels.Analysis"
 		xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
 		xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
-		xmlns:appCtxlBased="using:CarinaStudio.ULogViewer.ViewModels.Analysis.ContextualBased"
+		xmlns:appLogs="using:CarinaStudio.ULogViewer.Logs"
         xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.OperationCountingAnalysisRuleEditorDialog"
@@ -46,7 +46,7 @@
 
 					<!-- Level -->
 					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Level}"/>
-					<ComboBox Name="levelComboBox" Classes="Dialog_ComboBox" Items="{Binding $parent[Window].LogLevels}">
+					<ComboBox Name="levelComboBox" Classes="Dialog_ComboBox" Items="{Binding Source={x:Type appLogs:LogLevel}, Converter={x:Static abConverters:EnumConverters.Values}}">
 						<ComboBox.ItemTemplate>
 							<DataTemplate>
 								<Grid ColumnDefinitions="Auto,*">
@@ -72,7 +72,7 @@
 
 					<!-- Result type -->
 					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.ResultType}"/>
-					<ComboBox Name="resultTypeComboBox" Classes="Dialog_ComboBox" Items="{Binding $parent[Window].ResultTypes}">
+					<ComboBox Name="resultTypeComboBox" Classes="Dialog_ComboBox" Items="{Binding Source={x:Type appAnalysis:DisplayableLogAnalysisResultType}, Converter={x:Static abConverters:EnumConverters.Values}}">
 						<ComboBox.ItemTemplate>
 							<DataTemplate>
 								<Grid ColumnDefinitions="Auto,*">

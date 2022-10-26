@@ -80,10 +80,6 @@ partial class KeyLogAnalysisRuleEditorDialog : AppSuite.Controls.InputDialog<IUL
 	}
 
 
-	// All log levels.
-	Logs.LogLevel[] LogLevels { get; } = Enum.GetValues<Logs.LogLevel>();
-
-
 	/// <inheritdoc/>
 	protected override void OnOpened(EventArgs e)
 	{
@@ -113,10 +109,6 @@ partial class KeyLogAnalysisRuleEditorDialog : AppSuite.Controls.InputDialog<IUL
 	/// <inheritdoc/>
     protected override bool OnValidateInput() =>
 		base.OnValidateInput() && this.patternEditor.Pattern != null && !string.IsNullOrEmpty(this.messageTextBox.Text);
-	
-
-	// Available result types.
-	DisplayableLogAnalysisResultType[] ResultTypes { get; } = Enum.GetValues<DisplayableLogAnalysisResultType>();
 	
 
 	/// <summary>

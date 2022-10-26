@@ -54,7 +54,7 @@
 
 					<!-- Result type -->
 					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.ResultType}"/>
-					<ComboBox Name="resultTypeComboBox" Classes="Dialog_ComboBox" Items="{Binding $parent[Window].ResultTypes}">
+					<ComboBox Name="resultTypeComboBox" Classes="Dialog_ComboBox" Items="{Binding Source={x:Type appAnalysis:DisplayableLogAnalysisResultType}, Converter={x:Static abConverters:EnumConverters.Values}}">
 						<ComboBox.ItemTemplate>
 							<DataTemplate>
 								<Grid ColumnDefinitions="Auto,*">
