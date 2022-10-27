@@ -58,6 +58,10 @@ namespace CarinaStudio.ULogViewer.Logs
 		}
 
 
+		// Constants.
+		const int PropertyValueIndicesPoolCapacity = 1 << 18;
+
+
 		// Static fields.
 		static readonly long baseMemorySize = Memory.EstimateInstanceSize<Log>();
 		static readonly HashSet<string> dateTimePropertyNameSet = new HashSet<string>();
@@ -65,6 +69,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		static long nextId = 0;
 		static readonly Dictionary<string, int> propertyIndices = new Dictionary<string, int>();
 		static readonly Dictionary<string, PropertyInfo> propertyMap = new Dictionary<string, PropertyInfo>();
+		static readonly int propertyNameCount;
 		static readonly IList<string> propertyNames = Enum.GetValues<PropertyName>().Let(propertyNames =>
 		{
 			var propertyCount = propertyNames.Length;
@@ -74,12 +79,14 @@ namespace CarinaStudio.ULogViewer.Logs
 					it.Add(propertyNames[i].ToString());
 			}).AsReadOnly();
 		});
+		static readonly byte[][] propertyValueIndicesPool = new byte[PropertyValueIndicesPoolCapacity][];
+		static volatile int propertyValueIndicesPoolSize;
 		static readonly HashSet<string> stringPropertyNameSet = new HashSet<string>();
 		static readonly HashSet<string> timeSpanPropertyNameSet = new HashSet<string>();
 
 
 		// Fields.
-		readonly byte[] propertyValueIndices = new byte[propertyNames.Count];
+		readonly byte[] propertyValueIndices;
 		readonly object?[] propertyValues;
 
 
@@ -88,6 +95,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		{
 			for (var i = propertyNames.Count - 1; i >= 0; --i)
 				propertyIndices[propertyNames[i]] = i;
+			propertyNameCount = propertyNames.Count;
 		}
 
 
@@ -99,7 +107,17 @@ namespace CarinaStudio.ULogViewer.Logs
 		{
 			// prepare
 			var propertyCount = builder.PropertyCount;
-			var propertyValueIndices = this.propertyValueIndices;
+			var propertyValueIndices = propertyValueIndicesPool.Lock(() =>
+			{
+				if (propertyValueIndicesPoolSize > 0)
+				{
+					--propertyValueIndicesPoolSize;
+					var array = propertyValueIndicesPool[propertyValueIndicesPoolSize];
+					Array.Clear(array);
+					return array;
+				}
+				return new byte[propertyNameCount];
+			});
 			var propertyValues = new object?[propertyCount];
 			var index = 0;
 			long propertyMemorySize = 0;
@@ -119,13 +137,28 @@ namespace CarinaStudio.ULogViewer.Logs
 				else
 					propertyMemorySize += Memory.EstimateInstanceSize(value);
 			}
+			this.propertyValueIndices = propertyValueIndices;
 			this.propertyValues = propertyValues;
 
 			// get ID
 			this.Id = Interlocked.Increment(ref nextId);
 
 			// calculate memory size
-			this.MemorySize = baseMemorySize + propertyMemorySize + Memory.EstimateArrayInstanceSize(sizeof(byte), this.propertyValueIndices.Length) + Memory.EstimateArrayInstanceSize(IntPtr.Size, this.propertyValues.Length);
+			this.MemorySize = baseMemorySize + propertyMemorySize + Memory.EstimateArrayInstanceSize(sizeof(byte), propertyValueIndices.Length) + Memory.EstimateArrayInstanceSize(IntPtr.Size, this.propertyValues.Length);
+		}
+
+
+		// Finalizer.
+		~Log()
+		{
+			if (this.propertyValueIndices != null)
+			{
+				lock (propertyValueIndicesPool)
+				{
+					if (propertyValueIndicesPoolSize < PropertyValueIndicesPoolCapacity)
+						propertyValueIndicesPool[propertyValueIndicesPoolSize++] = this.propertyValueIndices;
+				}
+			}
 		}
 
 

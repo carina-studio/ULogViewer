@@ -182,6 +182,28 @@ namespace CarinaStudio.ULogViewer
 			}
 		});
 
+		
+		/// <inheritdoc/>
+		protected override void OnBackgroundModeEntered()
+		{
+			base.OnBackgroundModeEntered();
+			this.SynchronizationContext.PostDelayed(() =>
+			{
+				if (this.IsBackgroundMode)
+				{
+					this.Logger.LogWarning("Trigger full GC in background mode");
+					GC.Collect();
+					if (this.IsDebugMode)
+					{
+						var collectionCount = 0;
+						for (var i = GC.MaxGeneration; i >= 0; --i)
+							collectionCount += GC.CollectionCount(i);
+						this.Logger.LogDebug($"{collectionCount} object(s) collected");
+					}
+				}
+			}, 1000);
+		}
+
 
 		// Load default string resource.
         protected override IResourceProvider? OnLoadDefaultStringResource()
