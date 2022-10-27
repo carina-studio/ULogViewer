@@ -4385,22 +4385,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			if (app == null)
 				return;
 			var isDebugMode = app.IsDebugMode;
-			var collectionCount = 0;
 			var gcStartTime = isDebugMode ? gcPerformanceWatch!.ElapsedMilliseconds : 0;
 			switch (app.Settings.GetValueOrDefault(SettingKeys.MemoryUsagePolicy))
 			{
 				case MemoryUsagePolicy.Balance:
 					GC.Collect(0, GCCollectionMode.Forced);
-					if (isDebugMode)
-						collectionCount = GC.CollectionCount(0);
 					break;
 				case MemoryUsagePolicy.LessMemoryUsage:
 					GC.Collect();
-					if (isDebugMode)
-					{
-						for (var i = GC.MaxGeneration; i >= 0; --i)
-							collectionCount += GC.CollectionCount(i);
-					}
 					break;
 				default:
 					staticLogger.LogDebug("Skip triggering GC");
@@ -4409,7 +4401,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			if (isDebugMode)
 			{
 				var duration = gcPerformanceWatch!.ElapsedMilliseconds - gcStartTime;
-				staticLogger.LogDebug($"[Performance] Took {duration} ms to collect {collectionCount} object(s)");
+				staticLogger.LogDebug($"[Performance] Took {duration} ms to perform GC");
 			}
 		}
 

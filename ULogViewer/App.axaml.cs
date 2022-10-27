@@ -9,6 +9,7 @@ using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Controls;
+using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ULogViewer.ViewModels;
@@ -19,6 +20,7 @@ using CarinaStudio.ViewModels;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -50,6 +52,7 @@ namespace CarinaStudio.ULogViewer
 		IDisposable? compactResourcesToken;
 		ExternalDependency[] externalDependencies = new ExternalDependency[0];
 		readonly Dictionary<CarinaStudio.Controls.Window, MainWindowInfo> mainWindowInfoMap = new();
+		readonly Stopwatch stopwatch = new();
 
 
 		// Constructor.
@@ -192,14 +195,10 @@ namespace CarinaStudio.ULogViewer
 				if (this.IsBackgroundMode)
 				{
 					this.Logger.LogWarning("Trigger full GC in background mode");
+					var time = this.IsDebugMode ? this.stopwatch.ElapsedMilliseconds : 0L;
 					GC.Collect();
 					if (this.IsDebugMode)
-					{
-						var collectionCount = 0;
-						for (var i = GC.MaxGeneration; i >= 0; --i)
-							collectionCount += GC.CollectionCount(i);
-						this.Logger.LogDebug($"{collectionCount} object(s) collected");
-					}
+						this.Logger.LogDebug($"[Performance] Took {this.stopwatch.ElapsedMilliseconds - time} ms to perform full GC in background");
 				}
 			}, 1000);
 		}
@@ -406,6 +405,10 @@ namespace CarinaStudio.ULogViewer
 			else
 				NLog.LogManager.Configuration.AddRuleForAllLevels("methodCall");
 			NLog.LogManager.ReconfigExistingLoggers();
+
+			// start timer
+			if (this.IsDebugMode)
+				this.stopwatch.Start();
 
 			// prepare platform specific resources
 			if (Platform.IsMacOS)
