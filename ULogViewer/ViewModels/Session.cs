@@ -3,6 +3,7 @@ using Avalonia.Media;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Data.Converters;
+using CarinaStudio.Diagnostics;
 using CarinaStudio.IO;
 using CarinaStudio.Threading;
 using CarinaStudio.Threading.Tasks;
@@ -861,8 +862,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 				// report memory usage
 				var prevLogsMemoryUsage = this.LogsMemoryUsage;
-				var logsMemoryUsage = (this.displayableLogGroup?.MemorySize ?? 0L) 
-					+ (this.allLogs.Count + this.markedLogs.Count) * IntPtr.Size;
+				var logsMemoryUsage = (this.displayableLogGroup?.MemorySize).GetValueOrDefault()
+					+ Memory.EstimateCollectionInstanceSize(IntPtr.Size, this.allLogs.Count + this.markedLogs.Count);
 				foreach (var component in this.attachedComponents)
 					logsMemoryUsage += component.MemorySize;
 				this.SetValue(LogsMemoryUsageProperty, logsMemoryUsage);

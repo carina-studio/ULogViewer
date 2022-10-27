@@ -1,9 +1,7 @@
 ﻿using Avalonia.Media;
 using CarinaStudio.Collections;
-using CarinaStudio.Data.Converters;
 using CarinaStudio.Diagnostics;
 using CarinaStudio.Threading;
-using CarinaStudio.ULogViewer.Converters;
 using CarinaStudio.ULogViewer.Logs;
 using CarinaStudio.ULogViewer.ViewModels.Analysis;
 using System;
@@ -22,8 +20,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		// Static fields.
 		static readonly DisplayableLogAnalysisResult[] emptyAnalysisResults = new DisplayableLogAnalysisResult[0];
 		static readonly byte[] emptyByteArray = new byte[0];
-		static readonly long estimatedTimeSpanSize = System.TimeSpan.FromDays(1.23456).ToString().Length << 1;
-		static readonly long estimatedTimestampSize = DateTime.Now.ToString().Length << 1;
 		static readonly Func<Log, string?>[] extraGetters = new Func<Log, string?>[Log.ExtraCapacity].Also(it =>
 		{
 			for (var i = it.Length - 1; i >= 0; --i)
@@ -36,18 +32,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 		// Fields.
 		DisplayableLogAnalysisResultType activeAnalysisResultType;
-		IImage? analysisResultIndicatorIcon;
-		DisplayableLogAnalysisResult[] analysisResults = emptyAnalysisResults;
+		IList<DisplayableLogAnalysisResult> analysisResults = emptyAnalysisResults;
 		CompressedString? beginningTimeSpanString;
 		CompressedString? beginningTimestampString;
 		CompressedString? endingTimeSpanString;
 		CompressedString? endingTimestampString;
 		readonly byte[] extraLineCount;
 		MarkColor markedColor;
-		long memorySize;
-		int messageLineCount = -1;
-		IList<DisplayableLogAnalysisResult> readOnlyAnalysisResults = emptyAnalysisResults;
-		int summaryLineCount = -1;
+		short memorySize;
+		byte messageLineCount;
+		byte summaryLineCount;
 		CompressedString? timeSpanString;
 		CompressedString? timestampString;
 
@@ -61,7 +55,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		internal DisplayableLog(DisplayableLogGroup group, LogReader reader, Log log)
 		{
 			// setup properties
-			this.Application = group.Application;
 			this.BinaryBeginningTimeSpan = (long)(log.BeginningTimeSpan?.TotalMilliseconds ?? 0);
 			this.BinaryBeginningTimestamp = log.BeginningTimestamp?.ToBinary() ?? 0L;
 			this.BinaryEndingTimeSpan = (long)(log.EndingTimeSpan?.TotalMilliseconds ?? 0);
@@ -83,19 +76,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			long memorySize = log.MemorySize + instanceFieldMemorySize;
 			if (extraCount > 0)
 				memorySize += Memory.EstimateArrayInstanceSize(sizeof(byte), extraCount);
-			if (log.BeginningTimeSpan.HasValue)
-				memorySize += estimatedTimeSpanSize;
-			if (log.EndingTimeSpan.HasValue)
-				memorySize += estimatedTimeSpanSize;
-			if (log.TimeSpan.HasValue)
-				memorySize += estimatedTimeSpanSize;
-			if (log.BeginningTimestamp.HasValue)
-				memorySize += estimatedTimestampSize;
-			if (log.EndingTimestamp.HasValue)
-				memorySize += estimatedTimestampSize;
-			if (log.Timestamp.HasValue)
-				memorySize += estimatedTimestampSize;
-			this.memorySize = memorySize;
+			this.memorySize = (short)memorySize;
 
 			// notify group
 			group.OnDisplayableLogCreated(this);
@@ -117,34 +98,32 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			
 			// add to list
 			var memorySizeDiff = 0L;
-			var currentResultCount = this.analysisResults.Length;
+			var currentResultCount = this.analysisResults.Count;
 			if (currentResultCount == 0)
 			{
-				this.analysisResults = new[] { result };
-				memorySizeDiff = Memory.EstimateArrayInstanceSize(IntPtr.Size, 1);
+				this.analysisResults = ListExtensions.AsReadOnly(new[] { result });
+				memorySizeDiff = Memory.EstimateArrayInstanceSize(IntPtr.Size, 1) + Memory.EstimateCollectionInstanceSize(IntPtr.Size, 0);
 			}
 			else
 			{
 				var newList = new DisplayableLogAnalysisResult[currentResultCount + 1];
-				Array.Copy(this.analysisResults, newList, currentResultCount);
+				this.analysisResults.CopyTo(newList, 0);
 				newList[currentResultCount] = result;
-				this.analysisResults = newList;
+				this.analysisResults = ListExtensions.AsReadOnly(newList);
 				memorySizeDiff += IntPtr.Size;
 			}
-			this.readOnlyAnalysisResults = ListExtensions.AsReadOnly(this.analysisResults);
 
 			// select active type
 			if (this.activeAnalysisResultType == 0 || this.activeAnalysisResultType > result.Type)
 			{
 				this.activeAnalysisResultType = result.Type;
-				this.analysisResultIndicatorIcon = null;
 				this.PropertyChanged?.Invoke(this, new(nameof(AnalysisResultIndicatorIcon)));
 			}
 			if (currentResultCount == 0)
 				this.PropertyChanged?.Invoke(this, new(nameof(HasAnalysisResult)));
 			
 			// update memory usage
-			this.memorySize += memorySizeDiff;
+			this.memorySize += (short)memorySizeDiff;
 			this.Group.OnAnalysisResultAdded(this);
 			this.Group.OnDisplayableLogMemorySizeChanged(this, memorySizeDiff);
 		}
@@ -153,28 +132,19 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get icon for analysis result indicator.
 		/// </summary>
-		public IImage? AnalysisResultIndicatorIcon 
-		{ 
-			get 
-			{
-				if (this.analysisResultIndicatorIcon != null || this.activeAnalysisResultType == 0)
-					return this.analysisResultIndicatorIcon;
-				this.analysisResultIndicatorIcon = DisplayableLogAnalysisResultIconConverter.Default.Convert<IImage?>(this.activeAnalysisResultType);
-				return this.analysisResultIndicatorIcon;
-			}
-		}
+		public IImage? AnalysisResultIndicatorIcon  { get => this.Group.GetAnalysisResultIndicatorIcon(this.activeAnalysisResultType); }
 
 
 		/// <summary>
 		/// Get all <see cref="DisplayableLogAnalysisResult"/>s which were added to this log.
 		/// </summary>
-		public IList<DisplayableLogAnalysisResult> AnalysisResults { get => this.readOnlyAnalysisResults; }
+		public IList<DisplayableLogAnalysisResult> AnalysisResults { get => this.analysisResults; }
 
 
 		/// <summary>
 		/// Get <see cref="IULogViewerApplication"/> instance.
 		/// </summary>
-		public IULogViewerApplication Application { get; }
+		public IULogViewerApplication Application { get => this.Group.Application; }
 
 
 		/// <summary>
@@ -190,8 +160,18 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			get
 			{
+				if (this.Group.MemoryUsagePolicy == MemoryUsagePolicy.LessMemoryUsage)
+					return this.FormatTimeSpan(this.Log.BeginningTimeSpan);
 				if (this.beginningTimeSpanString == null)
-					this.beginningTimeSpanString = this.FormatTimeSpan(this.Log.BeginningTimeSpan);
+				{
+					this.beginningTimeSpanString = this.FormatTimeSpanCompressed(this.Log.BeginningTimeSpan);
+					if (this.beginningTimeSpanString != CompressedString.Empty)
+					{
+						var memorySizeDiff = this.beginningTimeSpanString.Size;
+						this.memorySize += (short)memorySizeDiff;
+						this.Group.OnDisplayableLogMemorySizeChanged(this, memorySizeDiff);
+					}
+				}
 				return this.beginningTimeSpanString.ToString();
 			}
 		}
@@ -210,8 +190,18 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			get
 			{
+				if (this.Group.MemoryUsagePolicy == MemoryUsagePolicy.LessMemoryUsage)
+					return this.FormatTimestamp(this.Log.BeginningTimestamp);
 				if (this.beginningTimestampString == null)
-					this.beginningTimestampString = this.FormatTimestamp(this.Log.BeginningTimestamp);
+				{
+					this.beginningTimestampString = this.FormatTimestampCompressed(this.Log.BeginningTimestamp);
+					if (this.beginningTimestampString != CompressedString.Empty)
+					{
+						var memorySizeDiff = this.beginningTimestampString.Size;
+						this.memorySize += (short)memorySizeDiff;
+						this.Group.OnDisplayableLogMemorySizeChanged(this, memorySizeDiff);
+					}
+				}
 				return this.beginningTimestampString.ToString();
 			}
 		}
@@ -371,8 +361,18 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			get
 			{
+				if (this.Group.MemoryUsagePolicy == MemoryUsagePolicy.LessMemoryUsage)
+					return this.FormatTimeSpan(this.Log.EndingTimeSpan);
 				if (this.endingTimeSpanString == null)
-					this.endingTimeSpanString = this.FormatTimeSpan(this.Log.EndingTimeSpan);
+				{
+					this.endingTimeSpanString = this.FormatTimeSpanCompressed(this.Log.EndingTimeSpan);
+					if (this.endingTimeSpanString != CompressedString.Empty)
+					{
+						var memorySizeDiff = this.endingTimeSpanString.Size;
+						this.memorySize += (short)memorySizeDiff;
+						this.Group.OnDisplayableLogMemorySizeChanged(this, memorySizeDiff);
+					}
+				}
 				return this.endingTimeSpanString.ToString();
 			}
 		}
@@ -391,8 +391,18 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			get
 			{
+				if (this.Group.MemoryUsagePolicy == MemoryUsagePolicy.LessMemoryUsage)
+					return this.FormatTimestamp(this.Log.EndingTimestamp);
 				if (this.endingTimestampString == null)
-					this.endingTimestampString = this.FormatTimestamp(this.Log.EndingTimestamp);
+				{
+					this.endingTimestampString = this.FormatTimestampCompressed(this.Log.EndingTimestamp);
+					if (this.endingTimestampString != CompressedString.Empty)
+					{
+						var memorySizeDiff = this.endingTimestampString.Size;
+						this.memorySize += (short)memorySizeDiff;
+						this.Group.OnDisplayableLogMemorySizeChanged(this, memorySizeDiff);
+					}
+				}
 				return this.endingTimestampString.ToString();
 			}
 		}
@@ -531,52 +541,72 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		// Format timestamp to string.
-		CompressedString FormatTimeSpan(TimeSpan? timeSpan)
+		string FormatTimeSpan(TimeSpan? timeSpan)
 		{
-			var level = this.Group.MemoryUsagePolicy switch
-			{
-				MemoryUsagePolicy.Balance => CompressedString.Level.Fast,
-				MemoryUsagePolicy.LessMemoryUsage => CompressedString.Level.Optimal,
-				_ => CompressedString.Level.None,
-			};
-			var format = this.Group.LogProfile.TimeSpanFormatForDisplaying;
 			if (timeSpan == null)
-				return CompressedString.Empty;
+				return string.Empty;
 			try
 			{
+				var format = this.Group.LogProfile.TimeSpanFormatForDisplaying;
 				if (format != null)
-					return CompressedString.Create(timeSpan.Value.ToString(format), level).AsNonNull();
-				return CompressedString.Create(timeSpan.Value.ToString(), level).AsNonNull();
+					return timeSpan.Value.ToString(format);
+				return timeSpan.Value.ToString();
 			}
 			catch
 			{
-				return CompressedString.Empty;
+				return string.Empty;
 			}
 		}
 
 
-		// Format timestamp to string.
-		CompressedString FormatTimestamp(DateTime? timestamp)
+		// Format timestamp to compressed string.
+		CompressedString FormatTimeSpanCompressed(TimeSpan? timeSpan)
 		{
+			var s = this.FormatTimeSpan(timeSpan);
+			if (s.Length == 0)
+				return CompressedString.Empty;
 			var level = this.Group.MemoryUsagePolicy switch
 			{
 				MemoryUsagePolicy.Balance => CompressedString.Level.Fast,
 				MemoryUsagePolicy.LessMemoryUsage => CompressedString.Level.Optimal,
 				_ => CompressedString.Level.None,
 			};
-			var format = this.Group.LogProfile.TimestampFormatForDisplaying;
+			return CompressedString.Create(s, level)!;
+		}
+
+
+		// Format timestamp to string.
+		string FormatTimestamp(DateTime? timestamp)
+		{
 			if (timestamp == null)
-				return CompressedString.Empty;
+				return string.Empty;
 			try
 			{
+				var format = this.Group.LogProfile.TimestampFormatForDisplaying;
 				if (format != null)
-					return CompressedString.Create(timestamp.Value.ToString(format), level).AsNonNull();
-				return CompressedString.Create(timestamp.Value.ToString(), level).AsNonNull();
+					return timestamp.Value.ToString(format);
+				return timestamp.Value.ToString();
 			}
 			catch
 			{
-				return CompressedString.Empty;
+				return string.Empty;
 			}
+		}
+
+
+		// Format timestamp to compressed string.
+		CompressedString FormatTimestampCompressed(DateTime? timestamp)
+		{
+			var s = this.FormatTimestamp(timestamp);
+			if (s.Length == 0)
+				return CompressedString.Empty;
+			var level = this.Group.MemoryUsagePolicy switch
+			{
+				MemoryUsagePolicy.Balance => CompressedString.Level.Fast,
+				MemoryUsagePolicy.LessMemoryUsage => CompressedString.Level.Optimal,
+				_ => CompressedString.Level.None,
+			};
+			return CompressedString.Create(s, level)!;
 		}
 
 
@@ -827,7 +857,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			get
 			{
-				if (this.messageLineCount < 0)
+				if (this.messageLineCount == 0)
 					this.messageLineCount = CalculateLineCount(this.Log.Message);
 				return this.messageLineCount;
 			}
@@ -875,6 +905,60 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Called when policy of memory usage changed.
+		/// </summary>
+		/// <param name="policy">New policy.</param>
+		internal void OnMemoryUsagePolicyChanged(MemoryUsagePolicy policy)
+		{
+			if (policy == MemoryUsagePolicy.LessMemoryUsage)
+			{
+				var memorySizeDiff = 0L;
+				if (this.beginningTimeSpanString != null)
+				{
+					if (this.beginningTimeSpanString != CompressedString.Empty)
+						memorySizeDiff -= this.beginningTimeSpanString.Size;
+					this.beginningTimeSpanString = null;
+				}
+				if (this.beginningTimestampString != null)
+				{
+					if (this.beginningTimestampString != CompressedString.Empty)
+						memorySizeDiff -= this.beginningTimestampString.Size;
+					this.beginningTimestampString = null;
+				}
+				if (this.endingTimeSpanString != null)
+				{
+					if (this.endingTimeSpanString != CompressedString.Empty)
+						memorySizeDiff -= this.endingTimeSpanString.Size;
+					this.endingTimeSpanString = null;
+				}
+				if (this.endingTimestampString != null)
+				{
+					if (this.endingTimestampString != CompressedString.Empty)
+						memorySizeDiff -= this.endingTimestampString.Size;
+					this.endingTimestampString = null;
+				}
+				if (this.timeSpanString != null)
+				{
+					if (this.timeSpanString != CompressedString.Empty)
+						memorySizeDiff -= this.timeSpanString.Size;
+					this.timeSpanString = null;
+				}
+				if (this.timestampString != null)
+				{
+					if (this.timestampString != CompressedString.Empty)
+						memorySizeDiff -= this.timestampString.Size;
+					this.timestampString = null;
+				}
+				if (memorySizeDiff != 0)
+				{
+					this.memorySize += (short)memorySizeDiff;
+					this.Group.OnDisplayableLogMemorySizeChanged(this, memorySizeDiff);
+				}
+			}
+		}
+
+
+		/// <summary>
 		/// Called when style related resources has been updated.
 		/// </summary>
 		internal void OnStyleResourcesUpdated()
@@ -882,6 +966,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			var propertyChangedHandlers = this.PropertyChanged;
 			if (propertyChangedHandlers == null)
 				return;
+			if (this.analysisResults != null)
+				propertyChangedHandlers?.Invoke(this, new PropertyChangedEventArgs(nameof(AnalysisResultIndicatorIcon)));
 			propertyChangedHandlers?.Invoke(this, new PropertyChangedEventArgs(nameof(ColorIndicatorBrush)));
 			propertyChangedHandlers?.Invoke(this, new PropertyChangedEventArgs(nameof(LevelBrush)));
 			propertyChangedHandlers?.Invoke(this, new PropertyChangedEventArgs(nameof(LevelBrushForPointerOver)));
@@ -964,7 +1050,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 #endif
 			if (this.IsDisposed)
 				return;
-			var currentResultCount = this.analysisResults.Length;
+			var currentResultCount = this.analysisResults.Count;
 			if (currentResultCount == 0)
 				return;
 			
@@ -977,32 +1063,30 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					if (currentResultCount == 1)
 					{
 						this.analysisResults = emptyAnalysisResults;
-						this.readOnlyAnalysisResults = emptyAnalysisResults;
-						memorySizeDiff -= Memory.EstimateArrayInstanceSize(IntPtr.Size, 1);
-					}
-					else if (i == 0)
-					{
-						var newList = new DisplayableLogAnalysisResult[currentResultCount - 1];
-						Array.Copy(this.analysisResults, 1, newList, 0, currentResultCount - 1);
-						this.analysisResults = newList;
-						this.readOnlyAnalysisResults = ListExtensions.AsReadOnly(newList);
-						memorySizeDiff -= IntPtr.Size;
-					}
-					else if (i == currentResultCount - 1)
-					{
-						var newList = new DisplayableLogAnalysisResult[currentResultCount - 1];
-						Array.Copy(this.analysisResults, 0, newList, 0, currentResultCount - 1);
-						this.analysisResults = newList;
-						this.readOnlyAnalysisResults = ListExtensions.AsReadOnly(newList);
-						memorySizeDiff -= IntPtr.Size;
+						memorySizeDiff -= Memory.EstimateArrayInstanceSize(IntPtr.Size, 1) + Memory.EstimateCollectionInstanceSize(IntPtr.Size, 0);
 					}
 					else
 					{
+						var oldList = this.analysisResults;
 						var newList = new DisplayableLogAnalysisResult[currentResultCount - 1];
-						Array.Copy(this.analysisResults, 0, newList, 0, i);
-						Array.Copy(this.analysisResults, i + 1, newList, i, currentResultCount - i - 1);
+						if (i == 0)
+						{
+							for (var j = currentResultCount - 1; j > 0; --j)
+								newList[j - 1] = oldList[j];
+						}
+						else if (i == currentResultCount - 1)
+						{
+							for (var j = currentResultCount - 2; j >= 0; --j)
+								newList[j] = oldList[j];
+						}
+						else
+						{
+							for (var j = 0; j < i; ++j)
+								newList[j] = oldList[j];
+							for (var j = currentResultCount - 1; j > i; --j)
+								newList[j - 1] = oldList[j];
+						}
 						this.analysisResults = newList;
-						this.readOnlyAnalysisResults = ListExtensions.AsReadOnly(newList);
 						memorySizeDiff -= IntPtr.Size;
 					}
 					break;
@@ -1022,16 +1106,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						this.activeAnalysisResultType = type;
 				}
 				if (this.activeAnalysisResultType > result.Type)
-				{
-					this.analysisResultIndicatorIcon = null;
 					this.PropertyChanged?.Invoke(this, new(nameof(AnalysisResultIndicatorIcon)));
-				}
 				if (currentResultCount == 1)
 					this.PropertyChanged?.Invoke(this, new(nameof(HasAnalysisResult)));
 			}
 			
 			// update memory usage
-			this.memorySize += memorySizeDiff;
+			this.memorySize += (short)memorySizeDiff;
 			this.Group.OnAnalysisResultRemoved(this);
 			this.Group.OnDisplayableLogMemorySizeChanged(this, memorySizeDiff);
 		}
@@ -1049,7 +1130,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 #endif
 			if (this.IsDisposed)
 				return;
-			var currentResultCount = this.analysisResults.Length;
+			var currentResultCount = this.analysisResults.Count;
 			if (currentResultCount == 0)
 				return;
 			
@@ -1062,28 +1143,31 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					if (currentResultCount == 1)
 					{
 						this.analysisResults = emptyAnalysisResults;
-						this.readOnlyAnalysisResults = emptyAnalysisResults;
-						memorySizeDiff -= Memory.EstimateArrayInstanceSize(IntPtr.Size, 1);
-					}
-					else if (i == 0)
-					{
-						var newList = new DisplayableLogAnalysisResult[currentResultCount - 1];
-						Array.Copy(this.analysisResults, 1, newList, 0, currentResultCount - 1);
-						this.analysisResults = newList;
-						memorySizeDiff -= IntPtr.Size;
-					}
-					else if (i == currentResultCount - 1)
-					{
-						var newList = new DisplayableLogAnalysisResult[currentResultCount - 1];
-						Array.Copy(this.analysisResults, 0, newList, 0, currentResultCount - 1);
-						this.analysisResults = newList;
-						memorySizeDiff -= IntPtr.Size;
+						memorySizeDiff -= Memory.EstimateArrayInstanceSize(IntPtr.Size, 1) + Memory.EstimateCollectionInstanceSize(IntPtr.Size, 0);
+						currentResultCount = 0;
+						break;
 					}
 					else
 					{
+						var oldList = this.analysisResults;
 						var newList = new DisplayableLogAnalysisResult[currentResultCount - 1];
-						Array.Copy(this.analysisResults, 0, newList, 0, i);
-						Array.Copy(this.analysisResults, i + 1, newList, i, currentResultCount - i - 1);
+						if (i == 0)
+						{
+							for (var j = currentResultCount - 1; j > 0; --j)
+								newList[j - 1] = oldList[j];
+						}
+						else if (i == currentResultCount - 1)
+						{
+							for (var j = currentResultCount - 2; j >= 0; --j)
+								newList[j] = oldList[j];
+						}
+						else
+						{
+							for (var j = 0; j < i; ++j)
+								newList[j] = oldList[j];
+							for (var j = currentResultCount - 1; j > i; --j)
+								newList[j - 1] = oldList[j];
+						}
 						this.analysisResults = newList;
 						memorySizeDiff -= IntPtr.Size;
 					}
@@ -1103,15 +1187,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.activeAnalysisResultType = type;
 			}
 			if (this.activeAnalysisResultType > currentActiveResultType)
-			{
-				this.analysisResultIndicatorIcon = null;
 				this.PropertyChanged?.Invoke(this, new(nameof(AnalysisResultIndicatorIcon)));
-			}
 			if (currentResultCount == 0)
 				this.PropertyChanged?.Invoke(this, new(nameof(HasAnalysisResult)));
 			
 			// update memory usage
-			this.memorySize += memorySizeDiff;
+			this.memorySize += (short)memorySizeDiff;
 			this.Group.OnAnalysisResultRemoved(this);
 			this.Group.OnDisplayableLogMemorySizeChanged(this, memorySizeDiff);
 		}
@@ -1190,7 +1271,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			get
 			{
-				if (this.summaryLineCount < 0)
+				if (this.summaryLineCount == 0)
 					this.summaryLineCount = CalculateLineCount(this.Log.Summary);
 				return this.summaryLineCount;
 			}
@@ -1228,8 +1309,18 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			get
 			{
+				if (this.Group.MemoryUsagePolicy == MemoryUsagePolicy.LessMemoryUsage)
+					return this.FormatTimeSpan(this.Log.TimeSpan);
 				if (this.timeSpanString == null)
-					this.timeSpanString = this.FormatTimeSpan(this.Log.TimeSpan);
+				{
+					this.timeSpanString = this.FormatTimeSpanCompressed(this.Log.TimeSpan);
+					if (this.timeSpanString != CompressedString.Empty)
+					{
+						var memorySizeDiff = this.timeSpanString.Size;
+						this.memorySize += (short)memorySizeDiff;
+						this.Group.OnDisplayableLogMemorySizeChanged(this, memorySizeDiff);
+					}
+				}
 				return this.timeSpanString.ToString();
 			}
 		}
@@ -1248,8 +1339,18 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			get
 			{
+				if (this.Group.MemoryUsagePolicy == MemoryUsagePolicy.LessMemoryUsage)
+					return this.FormatTimestamp(this.Log.Timestamp);
 				if (this.timestampString == null)
-					this.timestampString = this.FormatTimestamp(this.Log.Timestamp);
+				{
+					this.timestampString = this.FormatTimestampCompressed(this.Log.Timestamp);
+					if (this.timestampString != CompressedString.Empty)
+					{
+						var memorySizeDiff = this.timestampString.Size;
+						this.memorySize += (short)memorySizeDiff;
+						this.Group.OnDisplayableLogMemorySizeChanged(this, memorySizeDiff);
+					}
+				}
 				return this.timestampString.ToString();
 			}
 		}

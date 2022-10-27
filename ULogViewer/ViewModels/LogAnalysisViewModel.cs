@@ -1,6 +1,7 @@
 using System;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
+using CarinaStudio.Diagnostics;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.ViewModels.Analysis;
 using CarinaStudio.ULogViewer.ViewModels.Analysis.ContextualBased;
@@ -507,7 +508,7 @@ class LogAnalysisViewModel : SessionComponent
     {
         get
         {
-            var size = (long)(this.analysisResults.Count * IntPtr.Size);
+            var size = Memory.EstimateCollectionInstanceSize(IntPtr.Size, this.analysisResults.Count);
             foreach (var analyzer in this.attachedAnalyzers)
                 size += analyzer.MemorySize;
             return size;

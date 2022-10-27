@@ -1,5 +1,6 @@
 ﻿using Avalonia.Media;
 using CarinaStudio.Configuration;
+using CarinaStudio.Data.Converters;
 using CarinaStudio.Diagnostics;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Converters;
@@ -9,7 +10,6 @@ using CarinaStudio.ULogViewer.ViewModels.Analysis;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
 
@@ -29,6 +29,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		// Fields.
+		readonly Dictionary<DisplayableLogAnalysisResultType, IImage> analysisResultIndicatorIcons = new();
 		readonly Dictionary<string, IBrush> colorIndicatorBrushes = new Dictionary<string, IBrush>();
 		Func<DisplayableLog, string>? colorIndicatorKeyGetter;
 		DisplayableLog? displayableLogsHead;
@@ -140,6 +141,22 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// clear resources
 			this.colorIndicatorBrushes.Clear();
 			this.levelBrushes.Clear();
+		}
+
+
+		/// <summary>
+		/// Get icon for analysis result indicator.
+		/// </summary>
+		/// <param name="type">Type of analysis result.</param>
+		/// <returns>Icon for analysis result indicator.</returns>
+		internal IImage? GetAnalysisResultIndicatorIcon(DisplayableLogAnalysisResultType type)
+		{
+			if (this.analysisResultIndicatorIcons.TryGetValue(type, out var icon))
+				return icon;
+			icon = DisplayableLogAnalysisResultIconConverter.Default.Convert<IImage?>(type);
+			if (icon != null)
+				this.analysisResultIndicatorIcons[type] = icon;
+			return icon;
 		}
 
 
@@ -263,6 +280,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			{
 				this.SynchronizationContext.Post(() =>
 				{
+					this.analysisResultIndicatorIcons.Clear();
 					this.UpdateLevelBrushes();
 					var log = this.displayableLogsHead;
 					while (log != null)
@@ -389,7 +407,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				}
 			}
 			else if (e.Key == SettingKeys.MemoryUsagePolicy)
-				this.MemoryUsagePolicy = (MemoryUsagePolicy)e.Value;
+			{
+				var newPolicy = (MemoryUsagePolicy)e.Value;
+				this.MemoryUsagePolicy = newPolicy;
+				var log = this.displayableLogsHead;
+				while (log != null)
+				{
+					log.OnMemoryUsagePolicyChanged(newPolicy);
+					log = log.Next;
+				}
+			}
 		}
 
 
