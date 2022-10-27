@@ -739,7 +739,7 @@
 			</Border>
 
 			<!-- Progress bar -->
-			<ProgressBar Background="{x:Null}" CornerRadius="0" Grid.ColumnSpan="3" Grid.Row="1" IsIndeterminate="True" IsVisible="{Binding IsProcessingLogs}" MaxHeight="{StaticResource Double/SessionView.LogsProgessingBar.Height}" MinHeight="{StaticResource Double/SessionView.LogsProgessingBar.Height}" VerticalAlignment="Bottom"/>
+			<ProgressBar Background="{x:Null}" CornerRadius="0" Grid.ColumnSpan="3" Grid.Row="1" IsIndeterminate="{Binding IsProcessingLogs}" IsVisible="{Binding IsProcessingLogs}" MaxHeight="{StaticResource Double/SessionView.LogsProgessingBar.Height}" MinHeight="{StaticResource Double/SessionView.LogsProgessingBar.Height}" VerticalAlignment="Bottom"/>
 			
 		</Panel>
 
