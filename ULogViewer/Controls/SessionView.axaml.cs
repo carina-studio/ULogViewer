@@ -111,6 +111,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		static readonly AvaloniaProperty<bool> IsProcessInfoVisibleProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(IsProcessInfoVisible), false);
 		static readonly AvaloniaProperty<bool> IsProVersionActivatedProperty = AvaloniaProperty.RegisterDirect<SessionView, bool>("IsProVersionActivated", c => c.isProVersionActivated);
 		static readonly AvaloniaProperty<bool> IsScrollingToLatestLogNeededProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(IsScrollingToLatestLogNeeded), true);
+		static readonly AvaloniaProperty<bool> IsScrollingToLatestLogAnalysisResultNeededProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(IsScrollingToLatestLogAnalysisResultNeeded), true);
 		static readonly SettingKey<bool> IsCopyLogTextTutorialShownKey = new("SessionView.IsCopyLogTextTutorialShown");
 		static readonly SettingKey<bool> IsLogAnalysisPanelTutorialShownKey = new("SessionView.IsLogAnalysisPanelTutorialShown");
 		static readonly SettingKey<bool> IsLogFilesPanelTutorialShownKey = new("SessionView.IsLogFilesPanelTutorialShown");
@@ -174,6 +175,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		bool isIPEndPointNeededAfterLogProfileSet;
 		bool isLogFileNeededAfterLogProfileSet;
 		bool isPidLogPropertyVisible;
+		bool isPointerPressedOnLogAnalysisResultListBox;
 		bool isPointerPressedOnLogListBox;
 		bool isProVersionActivated;
 		bool isRestartingAsAdminConfirmed;
@@ -187,6 +189,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ContextMenu logActionMenu;
 		IDisposable logAnalysisPanelVisibilityObserverToken = EmptyDisposable.Default;
 		readonly Avalonia.Controls.ListBox logAnalysisResultListBox;
+		ScrollViewer? logAnalysisResultScrollViewer;
 		readonly ToggleButton logAnalysisRuleSetsButton;
 		readonly Popup logAnalysisRuleSetsPopup;
 		readonly Avalonia.Controls.ListBox logAnalysisScriptSetListBox;
@@ -224,6 +227,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly HashSet<Avalonia.Input.Key> pressedKeys = new HashSet<Avalonia.Input.Key>();
 		readonly ScheduledAction reportSelectedLogsTimeInfoAction;
 		readonly ScheduledAction scrollToLatestLogAction;
+		readonly ScheduledAction scrollToLatestLogAnalysisResultAction;
 		readonly ToggleButton selectAndSetLogProfileDropDownButton;
 		readonly HashSet<KeyLogAnalysisRuleSet> selectedKeyLogAnalysisRuleSets = new();
 		readonly HashSet<LogAnalysisScriptSet> selectedLogAnalysisScriptSets = new();
@@ -407,6 +411,15 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				it.DoubleClickOnItem += this.OnLogAnalysisResultListBoxDoubleClickOnItem;
 				it.AddHandler(PointerPressedEvent, this.OnLogAnalysisResultListBoxPointerPressed, RoutingStrategies.Tunnel);
+				it.AddHandler(PointerReleasedEvent, this.OnLogAnalysisResultListBoxPointerReleased, RoutingStrategies.Tunnel);
+				it.AddHandler(PointerWheelChangedEvent, this.OnLogAnalysisResultListBoxPointerWheelChanged, RoutingStrategies.Tunnel);
+				it.GetObservable(Avalonia.Controls.ListBox.ScrollProperty).Subscribe(_ =>
+				{
+					this.logAnalysisResultScrollViewer = (it.Scroll as ScrollViewer)?.Also(scrollViewer =>
+					{
+						scrollViewer.ScrollChanged += this.OnLogAnalysisResultListBoxScrollChanged;
+					});
+				});
 				it.SelectionChanged += this.OnLogAnalysisResultListBoxSelectionChanged;
 			});
 			this.logAnalysisRuleSetsButton = this.Get<ToggleButton>(nameof(logAnalysisRuleSetsButton)).Also(it =>
@@ -708,17 +721,51 @@ namespace CarinaStudio.ULogViewer.Controls
 					return;
 				}
 
-				// find log index
-				var logIndex = session.LogProfile.SortDirection == SortDirection.Ascending ? session.Logs.Count - 1 : 0;
-
 				// scroll to latest log
-				try
+				this.logScrollViewer?.Let(scrollViewer =>
 				{
-					this.ScrollToLog(logIndex);
-					this.scrollToLatestLogAction?.Schedule(ScrollingToLatestLogInterval);
+					var extent = scrollViewer.Extent;
+					var viewport = scrollViewer.Viewport;
+					if (extent.Height > viewport.Height)
+					{
+						var currentOffset = scrollViewer.Offset;
+						var newOffset = session.LogProfile.SortDirection == SortDirection.Ascending
+							? new Point(currentOffset.X, extent.Height - viewport.Height)
+							: new Point(currentOffset.X, 0);
+						scrollViewer.Offset = newOffset;
+					}
+				});
+				this.scrollToLatestLogAction!.Schedule(ScrollingToLatestLogInterval);
+			});
+			this.scrollToLatestLogAnalysisResultAction = new(() =>
+			{
+				// check state
+				if (!this.IsScrollingToLatestLogAnalysisResultNeeded)
+					return;
+				if (this.DataContext is not Session session)
+					return;
+				if (session.LogAnalysis.AnalysisResults.IsEmpty() || session.LogProfile == null || !session.IsActivated)
+					return;
+				
+				// cancel scrolling
+				if (this.logAnalysisResultListBox.ContextMenu?.IsOpen == true || this.logMarkingMenu.IsOpen)
+				{
+					this.IsScrollingToLatestLogAnalysisResultNeeded = false;
+					return;
 				}
-				catch
-				{ }
+
+				// scroll to latest analysis result
+				this.logAnalysisResultScrollViewer?.Let(scrollViewer =>
+				{
+					var extent = scrollViewer.Extent;
+					var viewport = scrollViewer.Viewport;
+					if (extent.Height > viewport.Height)
+					{
+						var currentOffset = scrollViewer.Offset;
+						scrollViewer.Offset = new Point(currentOffset.X, extent.Height - viewport.Height);
+					}
+				});
+				this.scrollToLatestLogAnalysisResultAction!.Schedule(ScrollingToLatestLogInterval);
 			});
 			this.updateLogAnalysisAction = new(() =>
 			{
@@ -861,9 +908,13 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.attachedLogs = session.Logs as INotifyCollectionChanged;
 			if (this.attachedLogs != null)
 				this.attachedLogs.CollectionChanged += this.OnLogsChanged;
+			(session.LogAnalysis.AnalysisResults as INotifyCollectionChanged)?.Let(it =>
+				it.CollectionChanged += this.OnLogAnalysisResultsChanged);
 			(session.LogAnalysis.KeyLogAnalysisRuleSets as INotifyCollectionChanged)?.Let(it =>
 				it.CollectionChanged += this.OnSessionLogAnalysisRuleSetsChanged);
 			(session.LogAnalysis.LogAnalysisScriptSets as INotifyCollectionChanged)?.Let(it =>
+				it.CollectionChanged += this.OnSessionLogAnalysisRuleSetsChanged);
+			(session.LogAnalysis.OperationCountingAnalysisRuleSets as INotifyCollectionChanged)?.Let(it =>
 				it.CollectionChanged += this.OnSessionLogAnalysisRuleSetsChanged);
 			(session.LogAnalysis.OperationDurationAnalysisRuleSets as INotifyCollectionChanged)?.Let(it =>
 				it.CollectionChanged += this.OnSessionLogAnalysisRuleSetsChanged);
@@ -929,6 +980,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			});
 			if (session.HasLogs && this.IsScrollingToLatestLogNeeded)
 				this.scrollToLatestLogAction.Schedule(ScrollingToLatestLogInterval);
+			if (session.LogAnalysis.AnalysisResults.IsNotEmpty() && this.IsScrollingToLatestLogAnalysisResultNeeded)
+				this.scrollToLatestLogAnalysisResultAction.Schedule(ScrollingToLatestLogInterval);
 
 			// sync log filters to UI
 			this.logProcessIdFilterTextBox.Value = session.LogFiltering.ProcessIdFilter;
@@ -1017,6 +1070,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.operationCountingAnalysisRuleSetListBox.SelectedItems.Clear();
 			this.operationDurationAnalysisRuleSetListBox.SelectedItems.Clear();
 			this.updateLogAnalysisAction.Reschedule();
+			this.IsScrollingToLatestLogAnalysisResultNeeded = true;
 		}
 
 
@@ -1907,9 +1961,13 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.attachedLogs.CollectionChanged -= this.OnLogsChanged;
 				this.attachedLogs = null;
 			}
+			(session.LogAnalysis.AnalysisResults as INotifyCollectionChanged)?.Let(it =>
+				it.CollectionChanged -= this.OnLogAnalysisResultsChanged);
 			(session.LogAnalysis.KeyLogAnalysisRuleSets as INotifyCollectionChanged)?.Let(it =>
 				it.CollectionChanged -= this.OnSessionLogAnalysisRuleSetsChanged);
 			(session.LogAnalysis.LogAnalysisScriptSets as INotifyCollectionChanged)?.Let(it =>
+				it.CollectionChanged -= this.OnSessionLogAnalysisRuleSetsChanged);
+			(session.LogAnalysis.OperationCountingAnalysisRuleSets as INotifyCollectionChanged)?.Let(it =>
 				it.CollectionChanged -= this.OnSessionLogAnalysisRuleSetsChanged);
 			(session.LogAnalysis.OperationDurationAnalysisRuleSets as INotifyCollectionChanged)?.Let(it =>
 				it.CollectionChanged -= this.OnSessionLogAnalysisRuleSetsChanged);
@@ -1939,6 +1997,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// stop auto scrolling
 			this.scrollToLatestLogAction.Cancel();
+			this.scrollToLatestLogAnalysisResultAction.Cancel();
 
 			// update UI
 			this.OnDisplayLogPropertiesChanged();
@@ -2535,10 +2594,18 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Get or set whether scrolling to latest log is needed or not.
-		bool IsScrollingToLatestLogNeeded
+		public bool IsScrollingToLatestLogNeeded
 		{
 			get => this.GetValue<bool>(IsScrollingToLatestLogNeededProperty);
 			set => this.SetValue<bool>(IsScrollingToLatestLogNeededProperty, value);
+		}
+
+
+		// Get or set whether scrolling to latest log analysis result is needed or not.
+		public bool IsScrollingToLatestLogAnalysisResultNeeded
+		{
+			get => this.GetValue<bool>(IsScrollingToLatestLogAnalysisResultNeededProperty);
+			set => this.SetValue<bool>(IsScrollingToLatestLogAnalysisResultNeededProperty, value);
 		}
 
 
@@ -3119,6 +3186,36 @@ namespace CarinaStudio.ULogViewer.Controls
 				// [Workaround] Clear selection first to prevent performance issue of changing selection from multiple items
 				this.logAnalysisResultListBox.SelectedItems.Clear();
 			}
+			this.isPointerPressedOnLogAnalysisResultListBox = point.Properties.IsLeftButtonPressed;
+		}
+
+
+		// Called when pointer released on log analysis result list box.
+		void OnLogAnalysisResultListBoxPointerReleased(object? sender, PointerReleasedEventArgs e)
+		{
+			if (e.InitialPressMouseButton == MouseButton.Left)
+				this.isPointerPressedOnLogAnalysisResultListBox = false;
+		}
+
+
+		// Called when pointer wheel change on log analysis result list box.
+		void OnLogAnalysisResultListBoxPointerWheelChanged(object? sender, PointerWheelEventArgs e)
+		{
+			this.SynchronizationContext.Post(() => this.UpdateIsScrollingToLatestLogAnalysisResultNeeded(-e.Delta.Y));
+		}
+
+
+		// Called when log analysis result list box scrolled.
+		void OnLogAnalysisResultListBoxScrollChanged(object? sender, ScrollChangedEventArgs e)
+		{
+			if (this.isPointerPressedOnLogAnalysisResultListBox 
+				|| this.pressedKeys.Contains(Avalonia.Input.Key.Down)
+				|| this.pressedKeys.Contains(Avalonia.Input.Key.Up)
+				|| this.pressedKeys.Contains(Avalonia.Input.Key.Home)
+				|| this.pressedKeys.Contains(Avalonia.Input.Key.End))
+			{
+				this.UpdateIsScrollingToLatestLogAnalysisResultNeeded(e.OffsetDelta.Y);
+			}
 		}
 
 
@@ -3230,10 +3327,38 @@ namespace CarinaStudio.ULogViewer.Controls
 							this.IsScrollingToLatestLogNeeded = false;
 						}));
 					}
+
+					// cancel auto scrolling
+					this.IsScrollingToLatestLogAnalysisResultNeeded = false;
 				}
 				this.canCopySelectedLogAnalysisResults.Update(true);
 				this.logListBox.Focus();
 			});
+		}
+
+
+		// Called when collection of log analysis results has been changed.
+		void OnLogAnalysisResultsChanged(object? sender, NotifyCollectionChangedEventArgs e)
+		{
+			if (this.DataContext is not Session session)
+				return;
+			switch (e.Action)
+			{
+				case NotifyCollectionChangedAction.Add:
+					if (this.IsScrollingToLatestLogAnalysisResultNeeded)
+						this.scrollToLatestLogAnalysisResultAction.Schedule(ScrollingToLatestLogInterval);
+					break;
+				case NotifyCollectionChangedAction.Remove:
+					if (session.LogAnalysis.AnalysisResults.IsEmpty())
+						this.scrollToLatestLogAnalysisResultAction.Cancel();
+					break;
+				case NotifyCollectionChangedAction.Reset:
+					if (session.LogAnalysis.AnalysisResults.IsEmpty())
+						this.scrollToLatestLogAnalysisResultAction.Cancel();
+					else
+						this.scrollToLatestLogAnalysisResultAction.Schedule(ScrollingToLatestLogInterval);
+					break;
+			}
 		}
 
 
@@ -4028,7 +4153,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			else if (property == IsScrollingToLatestLogNeededProperty)
 			{
-				if (this.IsScrollingToLatestLogNeeded)
+				if ((bool)(object)change.NewValue.Value!)
 				{
 					var logProfile = (this.DataContext as Session)?.LogProfile;
 					if (logProfile != null && !logProfile.IsContinuousReading)
@@ -4041,6 +4166,13 @@ namespace CarinaStudio.ULogViewer.Controls
 				}
 				else
 					this.scrollToLatestLogAction.Cancel();
+			}
+			else if (property == IsScrollingToLatestLogAnalysisResultNeededProperty)
+			{
+				if ((bool)(object)change.NewValue.Value!)
+					this.scrollToLatestLogAnalysisResultAction.Schedule(ScrollingToLatestLogInterval);
+				else
+					this.scrollToLatestLogAnalysisResultAction.Cancel();
 			}
 			else if (property == SelectedLogsDurationProperty)
 				this.SetValue<bool>(HasSelectedLogsDurationProperty, change.NewValue.Value != null);
@@ -4133,12 +4265,20 @@ namespace CarinaStudio.ULogViewer.Controls
 					break;
 				case nameof(Session.IsActivated):
 					if (!session.IsActivated)
+					{
 						this.scrollToLatestLogAction.Cancel();
+						this.scrollToLatestLogAnalysisResultAction.Cancel();
+					}
 					else
 					{
 						this.ShowLogAnalysisRuleSetsTutorial();
-						if (this.HasLogProfile && session.LogProfile?.IsContinuousReading == true && this.IsScrollingToLatestLogNeeded)
-							this.scrollToLatestLogAction.Schedule(ScrollingToLatestLogInterval);
+						if (this.HasLogProfile)
+						{
+							if (session.LogProfile?.IsContinuousReading == true && this.IsScrollingToLatestLogNeeded)
+								this.scrollToLatestLogAction.Schedule(ScrollingToLatestLogInterval);
+							if (session.LogAnalysis.AnalysisResults.IsNotEmpty() && this.IsScrollingToLatestLogAnalysisResultNeeded)
+								this.scrollToLatestLogAnalysisResultAction.Schedule(ScrollingToLatestLogInterval);
+						}
 					}
 					break;
 				case nameof(Session.IsLogsReadingPaused):
@@ -5309,6 +5449,37 @@ namespace CarinaStudio.ULogViewer.Controls
 						this.Logger.LogDebug("Start auto scrolling because of user scrolling up");
 						this.IsScrollingToLatestLogNeeded = true;
 					}
+				}
+			}
+		}
+
+
+		// Update auto scrolling state according to user scrolling state.
+		void UpdateIsScrollingToLatestLogAnalysisResultNeeded(double userScrollingDelta)
+		{
+			var scrollViewer = this.logAnalysisResultScrollViewer;
+			if (scrollViewer == null)
+				return;
+			var logProfile = (this.HasLogProfile ? (this.DataContext as Session)?.LogProfile : null);
+			if (logProfile == null)
+				return;
+			var offset = scrollViewer.Offset;
+			if (Math.Abs(offset.Y) < 0.5 && offset.Y + scrollViewer.Viewport.Height >= scrollViewer.Extent.Height)
+				return;
+			if (this.IsScrollingToLatestLogAnalysisResultNeeded)
+			{
+				if (userScrollingDelta < 0)
+				{
+					this.Logger.LogDebug("Cancel auto scrolling of log analysis result because of user scrolling up");
+					this.IsScrollingToLatestLogAnalysisResultNeeded = false;
+				}
+			}
+			else
+			{
+				if (userScrollingDelta > 0 && ((scrollViewer.Offset.Y + scrollViewer.Viewport.Height) / (double)scrollViewer.Extent.Height) >= 0.999)
+				{
+					this.Logger.LogDebug("Start auto scrolling of log analysis result because of user scrolling down");
+					this.IsScrollingToLatestLogAnalysisResultNeeded = true;
 				}
 			}
 		}
