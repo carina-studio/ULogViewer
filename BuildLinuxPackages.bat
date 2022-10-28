@@ -69,7 +69,7 @@ REM Build packages
     )
 
     REM Build project
-    dotnet publish %APP_NAME% -c %CONFIG% -r %%r --self-contained true -p:PublishTrimmed=false
+    dotnet publish %APP_NAME% -c %CONFIG% -r %%r --self-contained true -p:PublishTrimmed=true
     if %ERRORLEVEL% neq 0 (
         echo Failed to build project: %ERRORLEVEL%
         del /Q Packages\Packaging.txt

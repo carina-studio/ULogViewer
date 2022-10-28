@@ -45,7 +45,7 @@ for i in "${!RID_LIST[@]}"; do
     fi
     
     # build
-    dotnet publish $APP_NAME -c $CONFIG -r $RID --self-contained true -p:PublishTrimmed=false
+    dotnet publish $APP_NAME -c $CONFIG -r $RID --self-contained true -p:PublishTrimmed=true
     if [ "$?" != "0" ]; then
         exit
     fi
