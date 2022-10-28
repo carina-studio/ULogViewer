@@ -1040,8 +1040,21 @@ namespace CarinaStudio.ULogViewer
 					dismissed?.Invoke();
 				};
 				it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb.Colored");
-				it.SkippingAllTutorialRequested += (_, e) => requestSkippingAllTutorials?.Invoke();
+				it.SkippingAllTutorialRequested += (_, e) => 
+				{
+					this.SkipAllTutorials();
+					requestSkippingAllTutorials?.Invoke();
+				};
 			}));
+		}
+
+
+		/// <summary>
+		/// Request skipping all tutorials.
+		/// </summary>
+		public void SkipAllTutorials()
+		{
+			this.PersistentState.SetValue<bool>(IsUsingAddTabButtonToSelectLogProfileTutorialShownKey, true);
 		}
 
 
