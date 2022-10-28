@@ -36,6 +36,14 @@ class LogFilteringViewModel : SessionComponent
     /// </summary>
     public static ObservableProperty<bool> IsFilteringNeededProperty = ObservableProperty.Register<LogFilteringViewModel, bool>(nameof(IsFilteringNeeded));
     /// <summary>
+    /// Property of <see cref="IsProcessIdFilterEnabled"/>.
+    /// </summary>
+    public static ObservableProperty<bool> IsProcessIdFilterEnabledProperty = ObservableProperty.Register<LogFilteringViewModel, bool>(nameof(IsProcessIdFilterEnabled), false);
+    /// <summary>
+    /// Property of <see cref="IsThreadIdFilterEnabled"/>.
+    /// </summary>
+    public static ObservableProperty<bool> IsThreadIdFilterEnabledProperty = ObservableProperty.Register<LogFilteringViewModel, bool>(nameof(IsThreadIdFilterEnabled), false);
+    /// <summary>
     /// Property of <see cref="LastFilteringDuration"/>.
     /// </summary>
     public static ObservableProperty<TimeSpan?> LastFilteringDurationProperty = ObservableProperty.Register<LogFilteringViewModel, TimeSpan?>(nameof(LastFilteringDuration));
@@ -113,8 +121,12 @@ class LogFilteringViewModel : SessionComponent
             this.logFilter.Level = this.GetValue(LevelFilterProperty);
 
             // setup PID and TID
-            this.logFilter.ProcessId = this.GetValue(ProcessIdFilterProperty);
-            this.logFilter.ThreadId = this.GetValue(ThreadIdFilterProperty);
+            this.logFilter.ProcessId = this.GetValue(IsProcessIdFilterEnabledProperty) 
+                ? this.GetValue(ProcessIdFilterProperty) 
+                : null;
+            this.logFilter.ThreadId = this.GetValue(IsThreadIdFilterEnabledProperty) 
+                ? this.GetValue(ThreadIdFilterProperty)
+                : null;
 
             // setup combination mode
             this.logFilter.CombinationMode = this.GetValue(FiltersCombinationModeProperty);
@@ -197,6 +209,38 @@ class LogFilteringViewModel : SessionComponent
     }
 
 
+    // Update state by checking visible log properties.
+    void CheckVisibleLogProperties()
+    {
+        var hasPid = false;
+        var hasTid = false;
+        this.LogProfile?.VisibleLogProperties?.Let(it =>
+        {
+            foreach (var property in it)
+            {
+                if (property.Name == nameof(DisplayableLog.ProcessId))
+                    hasPid = true;
+                else if (property.Name == nameof(DisplayableLog.ThreadId))
+                    hasTid = true;
+            }
+        });
+        if (hasPid)
+            this.SetValue(IsProcessIdFilterEnabledProperty, true);
+        else
+        {
+            this.ResetValue(IsProcessIdFilterEnabledProperty);
+            this.ResetValue(ProcessIdFilterProperty);
+        }
+        if (hasTid)
+            this.SetValue(IsThreadIdFilterEnabledProperty, true);
+        else
+        {
+            this.ResetValue(IsThreadIdFilterEnabledProperty);
+            this.ResetValue(ThreadIdFilterProperty);
+        }
+    }
+
+
     /// <summary>
     /// Command to clear all predefined log text filters.
     /// </summary>
@@ -267,6 +311,18 @@ class LogFilteringViewModel : SessionComponent
 
 
     /// <summary>
+    /// Check whether <see cref="ProcessIdFilter"/> is valid to filter logs in current log profile or not.
+    /// </summary>
+    public bool IsProcessIdFilterEnabled { get => this.GetValue(IsProcessIdFilterEnabledProperty); }
+
+
+    /// <summary>
+    /// Check whether <see cref="ThreadIdFilter"/> is valid to filter logs in current log profile or not.
+    /// </summary>
+    public bool IsThreadIdFilterEnabled { get => this.GetValue(IsThreadIdFilterEnabledProperty); }
+
+
+    /// <summary>
     /// Get duration of last log filtering.
     /// </summary>
     public TimeSpan? LastFilteringDuration { get => this.GetValue(LastFilteringDurationProperty); }
@@ -331,10 +387,24 @@ class LogFilteringViewModel : SessionComponent
         {
             this.logFilter.FilteringLogProperties = Session.DisplayLogPropertiesProperty.DefaultValue;
             this.updateLogFilterAction.Cancel();
+            this.ResetValue(IsProcessIdFilterEnabledProperty);
+            this.ResetValue(IsThreadIdFilterEnabledProperty);
         }
         else
+        {
             this.updateLogFilterAction.Reschedule();
+            this.CheckVisibleLogProperties();
+        }
         this.ResetFilters();
+    }
+
+
+    /// <inheritdoc/>
+    protected override void OnLogProfilePropertyChanged(PropertyChangedEventArgs e)
+    {
+        base.OnLogProfilePropertyChanged(e);
+        if (e.PropertyName == nameof(LogProfile.VisibleLogProperties))
+            this.CheckVisibleLogProperties();
     }
 
 
@@ -457,11 +527,12 @@ class LogFilteringViewModel : SessionComponent
     {
         this.VerifyAccess();
         this.VerifyDisposed();
-        this.SetValue<Logs.LogLevel>(LevelFilterProperty, Logs.LogLevel.Undefined);
-        this.SetValue<int?>(ProcessIdFilterProperty, null);
-        this.SetValue<int?>(ThreadIdFilterProperty, null);
-        this.SetValue<Regex?>(TextFilterProperty, null);
+        this.ResetValue(LevelFilterProperty);
+        this.ResetValue(ProcessIdFilterProperty);
+        this.ResetValue(ThreadIdFilterProperty);
+        this.ResetValue(TextFilterProperty);
         this.predefinedTextFilters.Clear();
+        this.updateLogFilterAction.Execute();
     }
 
 

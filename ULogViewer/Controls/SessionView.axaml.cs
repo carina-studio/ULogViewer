@@ -174,13 +174,11 @@ namespace CarinaStudio.ULogViewer.Controls
 		bool isAttachedToLogicalTree;
 		bool isIPEndPointNeededAfterLogProfileSet;
 		bool isLogFileNeededAfterLogProfileSet;
-		bool isPidLogPropertyVisible;
 		bool isPointerPressedOnLogAnalysisResultListBox;
 		bool isPointerPressedOnLogListBox;
 		bool isProVersionActivated;
 		bool isRestartingAsAdminConfirmed;
 		bool isSelectingFileToSaveLogs;
-		bool isTidLogPropertyVisible;
 		bool isUriNeededAfterLogProfileSet;
 		bool isWorkingDirNeededAfterLogProfileSet;
 		bool keepSidePanelVisible;
@@ -205,14 +203,12 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly Panel logListBoxContainer;
 		readonly ContextMenu logMarkingMenu;
 		readonly IntegerTextBox logProcessIdFilterTextBox;
-		readonly Panel logProcessIdFilterTextBoxPanel;
 		readonly ContextMenu logProfileSelectionMenu;
 		readonly ToggleButton logsSavingButton;
 		readonly ContextMenu logsSavingMenu;
 		ScrollViewer? logScrollViewer;
 		readonly RegexTextBox logTextFilterTextBox;
 		readonly IntegerTextBox logThreadIdFilterTextBox;
-		readonly Panel logThreadIdFilterTextBoxPanel;
 		readonly Avalonia.Controls.ListBox markedLogListBox;
 		IDisposable markedLogsPanelVisibilityObserverToken = EmptyDisposable.Default;
 		readonly double minLogListBoxSizeToCloseSidePanel;
@@ -364,7 +360,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				it.GetObservable(BoundsProperty).Subscribe(_ => this.autoCloseSidePanelAction?.Schedule());
 			});
-			this.logThreadIdFilterTextBoxPanel = this.Get<Panel>(nameof(logThreadIdFilterTextBoxPanel));
 			var toolBarContainer = this.Get<Control>("toolBarContainer").Also(it =>
 			{
 				it.AddHandler(Control.PointerReleasedEvent, this.OnToolBarPointerReleased, RoutingStrategies.Tunnel);
@@ -512,8 +507,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.selectAndSetLogProfileDropDownButton!.IsChecked = true;
 				});
 			});
-			this.logProcessIdFilterTextBoxPanel = this.Get<Panel>(nameof(logProcessIdFilterTextBoxPanel));
-			this.logProcessIdFilterTextBox = this.logProcessIdFilterTextBoxPanel.FindControl<IntegerTextBox>(nameof(logProcessIdFilterTextBox))!.Also(it =>
+			this.logProcessIdFilterTextBox = toolBarContainer.FindControl<IntegerTextBox>(nameof(logProcessIdFilterTextBox))!.Also(it =>
 			{
 				if (Platform.IsMacOS)
 					(this.Application as AppSuite.AppSuiteApplication)?.EnsureClosingToolTipIfWindowIsInactive(it);
@@ -535,7 +529,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				if (Platform.IsMacOS)
 					(this.Application as AppSuite.AppSuiteApplication)?.EnsureClosingToolTipIfWindowIsInactive(it);
 			});
-			this.logThreadIdFilterTextBox = this.logThreadIdFilterTextBoxPanel.FindControl<IntegerTextBox>(nameof(logThreadIdFilterTextBox)).AsNonNull().Also(it =>
+			this.logThreadIdFilterTextBox = toolBarContainer.FindControl<IntegerTextBox>(nameof(logThreadIdFilterTextBox)).AsNonNull().Also(it =>
 			{
 				if (Platform.IsMacOS)
 					(this.Application as AppSuite.AppSuiteApplication)?.EnsureClosingToolTipIfWindowIsInactive(it);
@@ -2967,38 +2961,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			// build item template for marked log list box
 			this.markedLogListBox.ItemTemplate = this.CreateMarkedLogItemTemplate(profile, logProperties);
 
-			// check visible properties
-			this.isPidLogPropertyVisible = false;
-			this.isTidLogPropertyVisible = false;
-			foreach (var logProperty in logProperties)
-			{
-				switch (logProperty.Name)
-				{
-					case nameof(DisplayableLog.ProcessId):
-						this.isPidLogPropertyVisible = true;
-						break;
-					case nameof(DisplayableLog.ThreadId):
-						this.isTidLogPropertyVisible = true;
-						break;
-				}
-			}
-
-			// show/hide log filters UI
-			if (this.isPidLogPropertyVisible)
-				this.logProcessIdFilterTextBoxPanel.IsVisible = true;
-			else
-			{
-				this.logProcessIdFilterTextBoxPanel.IsVisible = false;
-				this.logProcessIdFilterTextBox.Value = null;
-			}
-			if (this.isTidLogPropertyVisible)
-				this.logThreadIdFilterTextBoxPanel.IsVisible = true;
-			else
-			{
-				this.logThreadIdFilterTextBoxPanel.IsVisible = false;
-				this.logThreadIdFilterTextBox.Value = null;
-			}
-
 			// update filter availability
 			this.UpdateCanFilterLogsByNonTextFilters();
 		}
@@ -3591,8 +3553,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.canCopyLogText.Update(hasSingleSelectedItem);
 				this.canCopySelectedLogs.Update(hasSelectedItems && session.CopyLogsCommand.CanExecute(null) && selectionCount <= MaxLogCountForCopying);
 				this.canCopySelectedLogsWithFileNames.Update(hasSelectedItems && session.CopyLogsWithFileNamesCommand.CanExecute(null) && selectionCount <= MaxLogCountForCopying);
-				this.canFilterLogsByPid.Update(hasSingleSelectedItem && this.isPidLogPropertyVisible);
-				this.canFilterLogsByTid.Update(hasSingleSelectedItem && this.isTidLogPropertyVisible);
+				this.canFilterLogsByPid.Update(hasSingleSelectedItem && session.LogFiltering.IsProcessIdFilterEnabled);
+				this.canFilterLogsByTid.Update(hasSingleSelectedItem && session.LogFiltering.IsThreadIdFilterEnabled);
 				this.canMarkSelectedLogs.Update(hasSelectedItems && session.MarkLogsCommand.CanExecute(null));
 				this.canMarkUnmarkSelectedLogs.Update(hasSelectedItems && session.MarkUnmarkLogsCommand.CanExecute(null));
 				this.canShowFileInExplorer.Update(hasSelectedItems && session.IsLogFileNeeded);
@@ -5357,7 +5319,14 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Update CanFilterLogsByNonTextFilters property.
 		void UpdateCanFilterLogsByNonTextFilters()
 		{
-			this.SetValue<bool>(CanFilterLogsByNonTextFiltersProperty, this.validLogLevels.Count > 1 || this.isPidLogPropertyVisible || this.isTidLogPropertyVisible);
+			if (this.DataContext is Session session)
+			{
+				this.SetValue(CanFilterLogsByNonTextFiltersProperty, this.validLogLevels.Count > 1 
+					|| session.LogFiltering.IsProcessIdFilterEnabled 
+					|| session.LogFiltering.IsThreadIdFilterEnabled);
+			}
+			else
+				this.SetValue(CanFilterLogsByNonTextFiltersProperty, false);
 		}
 
 
