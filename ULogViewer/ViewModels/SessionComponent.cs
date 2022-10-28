@@ -43,6 +43,7 @@ abstract class SessionComponent : ViewModel<IULogViewerApplication>
         });
         session.RestoringState += this.OnRestoreState;
         session.SavingState += this.OnSaveState;
+        session.SelectedLogsChanged += this.OnSelectedLogsChanged;
     }
 
 
@@ -76,6 +77,7 @@ abstract class SessionComponent : ViewModel<IULogViewerApplication>
         this.logProfileObserverToken.Dispose();
         this.Session.RestoringState -= this.OnRestoreState;
         this.Session.SavingState -= this.OnSaveState;
+        this.Session.SelectedLogsChanged -= this.OnSelectedLogsChanged;
     }
 
 
@@ -179,6 +181,24 @@ abstract class SessionComponent : ViewModel<IULogViewerApplication>
     /// <param name="writer">Writer.</param>
     protected virtual void OnSaveState(Utf8JsonWriter writer)
     { }
+
+
+    // Called when selected logs changed.
+    void OnSelectedLogsChanged(object? sender, EventArgs e) =>
+        this.OnSelectedLogsChanged();
+
+
+    /// <summary>
+    /// Called when selected logs changed.
+    /// </summary>
+    protected virtual void OnSelectedLogsChanged()
+    { }
+
+
+    /// <summary>
+    /// Get selected logs.
+    /// </summary>
+    protected IList<DisplayableLog> SelectedLogs { get => this.Session.SelectedLogs; }
 
 
     /// <summary>
