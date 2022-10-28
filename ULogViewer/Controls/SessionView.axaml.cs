@@ -3276,7 +3276,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			});
 			if (hitControl == null)
 				this.SynchronizationContext.Post(() => this.logListBox.SelectedItems.Clear());
-			else if (hitControl is ListBoxItem && (e.KeyModifiers & KeyModifiers.Control) == 0 && point.Properties.IsLeftButtonPressed)
+			else if (hitControl is ListBoxItem && (e.KeyModifiers & (KeyModifiers.Control | KeyModifiers.Shift)) == 0 && point.Properties.IsLeftButtonPressed)
 			{
 				// [Workaround] Clear selection first to prevent performance issue of changing selection from multiple items
 				this.logListBox.SelectedItems.Clear();
@@ -3420,11 +3420,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.pressedKeys.Add(e.Key);
 			if (!e.Handled && !logAnalysisRuleSetsPopup.IsOpen)
 			{
-				var isCmdPressed = Platform.IsMacOS && (this.pressedKeys.Contains(Avalonia.Input.Key.LWin) || this.pressedKeys.Contains(Avalonia.Input.Key.RWin));
-				var isCtrlPressed = Platform.IsMacOS ? isCmdPressed : (e.KeyModifiers & KeyModifiers.Control) != 0;
 				if (this.Application.IsDebugMode && e.Source is not TextBox)
-					this.Logger.LogTrace($"[KeyDown] {e.Key}, Ctrl/Cmd: {isCtrlPressed}, Shift: {(e.KeyModifiers & KeyModifiers.Shift) != 0}, Alt: {(e.KeyModifiers & KeyModifiers.Alt) != 0}");
-				if (isCtrlPressed || isCmdPressed)
+					this.Logger.LogTrace($"[KeyDown] {e.Key}, Modifiers: {e.KeyModifiers}");
+				if ((e.KeyModifiers & (KeyModifiers.Control | KeyModifiers.Meta)) != 0)
 				{
 					var isAltPressed = ((e.KeyModifiers & KeyModifiers.Alt) != 0);
 					switch (e.Key)
@@ -3630,11 +3628,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				if (!logAnalysisRuleSetsPopup.IsOpen)
 				{
-					var isCmdPressed = Platform.IsMacOS && (this.pressedKeys.Contains(Avalonia.Input.Key.LWin) || this.pressedKeys.Contains(Avalonia.Input.Key.RWin));
-					var isCtrlPressed = Platform.IsMacOS ? isCmdPressed : (e.KeyModifiers & KeyModifiers.Control) != 0;
 					if (this.Application.IsDebugMode && e.Source is not TextBox)
-						this.Logger.LogTrace($"[KeyUp] {e.Key}, Ctrl/Cmd: {isCmdPressed}, Shift: {(e.KeyModifiers & KeyModifiers.Shift) != 0}, Alt: {(e.KeyModifiers & KeyModifiers.Alt) != 0}");
-					if (!isCmdPressed && e.KeyModifiers == 0)
+						this.Logger.LogTrace($"[KeyUp] {e.Key}, Modifiers: {e.KeyModifiers}");
+					if (e.KeyModifiers == 0)
 					{
 						switch (e.Key)
 						{
@@ -3702,6 +3698,17 @@ namespace CarinaStudio.ULogViewer.Controls
         protected override void OnLostFocus(RoutedEventArgs e)
         {
 			this.Logger.LogTrace("Lost focus");
+			if (this.pressedKeys.IsNotEmpty())
+			{
+				if (this.Application.IsDebugMode)
+				{
+					foreach (var key in this.pressedKeys)
+						this.Logger.LogWarning($"Drop pressed key {key}");
+				}
+				else
+					this.Logger.LogWarning($"Drop {this.pressedKeys.Count} pressed keys");
+				this.pressedKeys.Clear();
+			}
             base.OnLostFocus(e);
         }
 
@@ -3814,12 +3821,15 @@ namespace CarinaStudio.ULogViewer.Controls
 			// [Workaround] It will take long time to select all items by list box itself
 			if (!e.Handled 
 				&& e.Source is not TextBox
-				&& (e.KeyModifiers & KeyModifiers.Control) != 0 
+				&& (e.KeyModifiers & (Platform.IsMacOS ? KeyModifiers.Meta : KeyModifiers.Control)) != 0 
 				&& e.Key == Avalonia.Input.Key.A
 				&& this.DataContext is Session session)
 			{
 				// intercept
-				this.Logger.LogTrace("Intercept Ctrl+A");
+				if (Platform.IsMacOS)
+					this.Logger.LogTrace("Intercept Cmd+A");
+				else
+					this.Logger.LogTrace("Intercept Ctrl+A");
 				e.Handled = true;
 
 				// confirm selection
