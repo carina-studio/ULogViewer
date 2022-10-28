@@ -325,7 +325,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.MarkSelectedLogsCommand = new Command<MarkColor>(this.MarkSelectedLogs, this.canMarkSelectedLogs);
 			this.MarkUnmarkSelectedLogsCommand = new Command(this.MarkUnmarkSelectedLogs, this.canMarkUnmarkSelectedLogs);
 			this.ReloadLogsCommand = new Command(this.ReloadLogs, this.canReloadLogs);
-			this.ResetLogFiltersCommand = new Command(this.ResetLogFilters, this.GetObservable<bool>(HasLogProfileProperty));
 			this.RestartAsAdministratorCommand = new Command(this.RestartAsAdministrator, this.canRestartAsAdmin);
 			this.SaveAllLogsCommand = new Command(() => this.SaveLogs(true), this.canSaveLogs);
 			this.SaveLogsCommand = new Command(() => this.SaveLogs(false), this.canSaveLogs);
@@ -790,17 +789,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				if (this.DataContext is not Session session)
 					return;
 
-				// set level 
-				session.LogFiltering.LevelFilter = this.logLevelFilterComboBox.SelectedItem is Logs.LogLevel logLevel ? logLevel : Logs.LogLevel.Undefined;
-
-				// set PID
-				session.LogFiltering.ProcessIdFilter = (int?)this.logProcessIdFilterTextBox.Value;
-
-				// set TID
-				session.LogFiltering.ThreadIdFilter = (int?)this.logThreadIdFilterTextBox.Value;
-
 				// update text filters
-				session.LogFiltering.TextFilter = this.logTextFilterTextBox.Object;
 				session.LogFiltering.PredefinedTextFilters.Clear();
 				session.LogFiltering.PredefinedTextFilters.AddAll(this.selectedPredefinedLogTextFilters);
 			});
@@ -984,10 +973,6 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.scrollToLatestLogAnalysisResultAction.Schedule(ScrollingToLatestLogInterval);
 
 			// sync log filters to UI
-			this.logProcessIdFilterTextBox.Value = session.LogFiltering.ProcessIdFilter;
-			this.logTextFilterTextBox.Object = session.LogFiltering.TextFilter;
-			this.logThreadIdFilterTextBox.Value = session.LogFiltering.ThreadIdFilter;
-			this.logLevelFilterComboBox.SelectedItem = session.LogFiltering.LevelFilter;
 			if (session.LogFiltering.PredefinedTextFilters.IsNotEmpty())
 			{
 				this.SynchronizationContext.Post(() =>
@@ -2438,9 +2423,8 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// filter
 			if (resetOtherFilters)
-				this.ResetLogFilters();
+				(this.DataContext as Session)?.LogFiltering?.ResetFiltersCommand?.TryExecute();
 			this.logProcessIdFilterTextBox.Value = pid;
-			this.updateLogFiltersAction.Reschedule();
 		}
 
 
@@ -2464,9 +2448,8 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// filter
 			if (resetOtherFilters)
-				this.ResetLogFilters();
+				(this.DataContext as Session)?.LogFiltering?.ResetFiltersCommand?.TryExecute();
 			this.logThreadIdFilterTextBox.Value = tid;
-			this.updateLogFiltersAction.Reschedule();
 		}
 
 
@@ -3510,10 +3493,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Called when selected log level filter has been changed.
-		void OnLogLevelFilterComboBoxSelectionChanged(object? sender, SelectionChangedEventArgs e) => this.updateLogFiltersAction?.Reschedule();
-
-
 		// Called when double click on log list box.
 		void OnLogListBoxDoubleClickOnItem(object? sender, ListBoxItemEventArgs e)
 		{
@@ -4526,22 +4505,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Reset all log filters.
-		void ResetLogFilters()
-		{
-			this.logLevelFilterComboBox.SelectedIndex = 0;
-			this.logProcessIdFilterTextBox.Value = null;
-			this.logTextFilterTextBox.Object = null;
-			this.logThreadIdFilterTextBox.Value = null;
-			this.predefinedLogTextFilterListBox.SelectedItems.Clear();
-			this.updateLogFiltersAction.Execute();
-		}
-
-
-		// Command to reset all log filters.
-		ICommand ResetLogFiltersCommand { get; }
-
-
 		// Restart application as administrator role.
 		void RestartAsAdministrator()
 		{
@@ -4947,9 +4910,6 @@ namespace CarinaStudio.ULogViewer.Controls
 					return false;
 				}
 			}
-
-			// reset log filters
-			this.ResetLogFilters();
 
 			// reset log profile
 			this.isIPEndPointNeededAfterLogProfileSet = false;

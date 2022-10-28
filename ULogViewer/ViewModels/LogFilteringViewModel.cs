@@ -1,5 +1,4 @@
 using CarinaStudio.Collections;
-using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ViewModels;
@@ -60,6 +59,7 @@ class LogFilteringViewModel : SessionComponent
 
     // Fields.
     readonly MutableObservableBoolean canClearPredefinedTextFilters = new();
+    readonly MutableObservableBoolean canResetFilters = new();
     readonly IDisposable displayLogPropertiesObserverToken;
     readonly DisplayableLogFilter logFilter;
     readonly Stopwatch logFilteringWatch = new Stopwatch();
@@ -78,6 +78,7 @@ class LogFilteringViewModel : SessionComponent
 
         // create command
         this.ClearPredefinedTextFiltersCommand = new Command(() => this.predefinedTextFilters?.Clear(), this.canClearPredefinedTextFilters);
+        this.ResetFiltersCommand = new Command(this.ResetFilters, this.canResetFilters);
 
         // create collection
         this.predefinedTextFilters = new ObservableList<PredefinedLogTextFilter>().Also(it =>
@@ -88,6 +89,10 @@ class LogFilteringViewModel : SessionComponent
                     return;
                 this.canClearPredefinedTextFilters.Update(it.IsNotEmpty());
                 this.updateLogFilterAction?.Reschedule();
+                if (it.IsNotEmpty())
+                    this.canResetFilters.Update(true);
+                else
+                    this.UpdateCanResetFilters();
             };
         });
 
@@ -142,25 +147,49 @@ class LogFilteringViewModel : SessionComponent
             if (!isInit)
                 this.updateLogFilterAction.Schedule();
         });
-        this.GetValueAsObservable(LevelFilterProperty).Subscribe(_ =>
+        this.GetValueAsObservable(LevelFilterProperty).Subscribe(level =>
         {
             if (!isInit)
+            {
                 this.updateLogFilterAction.Schedule();
+                if (level != Logs.LogLevel.Undefined)
+                    this.canResetFilters.Update(true);
+                else
+                    this.UpdateCanResetFilters();
+            }
         });
-        this.GetValueAsObservable(ProcessIdFilterProperty).Subscribe(_ =>
+        this.GetValueAsObservable(ProcessIdFilterProperty).Subscribe(pid =>
         {
             if (!isInit)
+            {
                 this.updateLogFilterAction.Schedule();
+                if (pid.HasValue)
+                    this.canResetFilters.Update(true);
+                else
+                    this.UpdateCanResetFilters();
+            }
         });
-        this.GetValueAsObservable(TextFilterProperty).Subscribe(_ =>
+        this.GetValueAsObservable(TextFilterProperty).Subscribe(pattern =>
         {
             if (!isInit)
+            {
                 this.updateLogFilterAction.Schedule();
+                if (pattern != null)
+                    this.canResetFilters.Update(true);
+                else
+                    this.UpdateCanResetFilters();
+            }
         });
-        this.GetValueAsObservable(ThreadIdFilterProperty).Subscribe(_ =>
+        this.GetValueAsObservable(ThreadIdFilterProperty).Subscribe(tid =>
         {
             if (!isInit)
+            {
                 this.updateLogFilterAction.Schedule();
+                if (tid.HasValue)
+                    this.canResetFilters.Update(true);
+                else
+                    this.UpdateCanResetFilters();
+            }
         });
 
         // complete initialization
@@ -305,6 +334,7 @@ class LogFilteringViewModel : SessionComponent
         }
         else
             this.updateLogFilterAction.Reschedule();
+        this.ResetFilters();
     }
 
 
@@ -422,6 +452,25 @@ class LogFilteringViewModel : SessionComponent
     }
 
 
+    // Reset all filters.
+    void ResetFilters()
+    {
+        this.VerifyAccess();
+        this.VerifyDisposed();
+        this.SetValue<Logs.LogLevel>(LevelFilterProperty, Logs.LogLevel.Undefined);
+        this.SetValue<int?>(ProcessIdFilterProperty, null);
+        this.SetValue<int?>(ThreadIdFilterProperty, null);
+        this.SetValue<Regex?>(TextFilterProperty, null);
+        this.predefinedTextFilters.Clear();
+    }
+
+
+    /// <summary>
+    /// Command to reset all filters.
+    /// </summary>
+    public ICommand ResetFiltersCommand { get; }
+
+
     /// <summary>
     /// Get or set <see cref="Regex"/> for log text filtering.
     /// </summary>
@@ -439,5 +488,17 @@ class LogFilteringViewModel : SessionComponent
     {
         get => this.GetValue(ThreadIdFilterProperty);
         set => this.SetValue(ThreadIdFilterProperty, value);
+    }
+
+
+    // Update can reset filters state.
+    void UpdateCanResetFilters()
+    {
+        this.canResetFilters.Update(this.GetValue<Logs.LogLevel>(LevelFilterProperty) != Logs.LogLevel.Undefined
+            || this.GetValue<int?>(ProcessIdFilterProperty).HasValue
+            || this.GetValue<int?>(ThreadIdFilterProperty).HasValue
+            || this.GetValue<Regex?>(TextFilterProperty) != null
+            || this.predefinedTextFilters.IsNotEmpty()
+        );
     }
 }
