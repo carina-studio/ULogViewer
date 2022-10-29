@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Windows.Input;
@@ -67,6 +68,8 @@ class LogFilteringViewModel : SessionComponent
 
     // Fields.
     readonly MutableObservableBoolean canClearPredefinedTextFilters = new();
+    readonly MutableObservableBoolean canFilterBySelectedPid = new();
+	readonly MutableObservableBoolean canFilterBySelectedTid = new();
     readonly MutableObservableBoolean canResetFilters = new();
     readonly IDisposable displayLogPropertiesObserverToken;
     readonly DisplayableLogFilter logFilter;
@@ -86,6 +89,8 @@ class LogFilteringViewModel : SessionComponent
 
         // create command
         this.ClearPredefinedTextFiltersCommand = new Command(() => this.predefinedTextFilters?.Clear(), this.canClearPredefinedTextFilters);
+        this.FilterBySelectedProcessIdCommand = new Command<bool>(this.FilterBySelectedProcessId, this.canFilterBySelectedPid);
+        this.FilterBySelectedThreadIdCommand = new Command<bool>(this.FilterBySelectedThreadId, this.canFilterBySelectedTid);
         this.ResetFiltersCommand = new Command(this.ResetFilters, this.canResetFilters);
 
         // create collection
@@ -238,6 +243,7 @@ class LogFilteringViewModel : SessionComponent
             this.ResetValue(IsThreadIdFilterEnabledProperty);
             this.ResetValue(ThreadIdFilterProperty);
         }
+        this.OnSelectedLogsChanged(null, EventArgs.Empty);
     }
 
 
@@ -262,10 +268,53 @@ class LogFilteringViewModel : SessionComponent
         // detach from session
         this.Session.AllLogReadersDisposed -= this.OnAllLogReaderDisposed;
         this.displayLogPropertiesObserverToken.Dispose();
+        this.Session.LogSelection.SelectedLogsChanged -= this.OnSelectedLogsChanged;
 
         // call base
         base.Dispose(disposing);
     }
+
+
+    // Filter by selected process ID.
+    void FilterBySelectedProcessId(bool resetOtherFilters)
+    {
+        this.VerifyAccess();
+        this.VerifyDisposed();
+        var pid = this.Session.LogSelection.SelectedLogs.FirstOrDefault()?.ProcessId;
+        if (pid == null)
+            return;
+        if (resetOtherFilters)
+            this.ResetFilters();
+        this.SetValue(ProcessIdFilterProperty, pid);
+    }
+
+
+    /// <summary>
+    /// Command to use process ID of selected log as filter.
+    /// </summary>
+    /// <remarks>The type of parameter is <see cref="bool"/> which indicates whether to reset other filters or not.</remarks>
+    public ICommand FilterBySelectedProcessIdCommand { get; }
+
+
+    // Filter by selected thread ID.
+    void FilterBySelectedThreadId(bool resetOtherFilters)
+    {
+        this.VerifyAccess();
+        this.VerifyDisposed();
+        var tid = this.Session.LogSelection.SelectedLogs.FirstOrDefault()?.ThreadId;
+        if (tid == null)
+            return;
+        if (resetOtherFilters)
+            this.ResetFilters();
+        this.SetValue(ThreadIdFilterProperty, tid);
+    }
+
+
+    /// <summary>
+    /// Command to use thread ID of selected log as filter.
+    /// </summary>
+    /// <remarks>The type of parameter is <see cref="bool"/> which indicates whether to reset other filters or not.</remarks>
+    public ICommand FilterBySelectedThreadIdCommand { get; }
 
 
     /// <summary>
@@ -342,6 +391,14 @@ class LogFilteringViewModel : SessionComponent
     public override long MemorySize => base.MemorySize + this.logFilter.MemorySize;
 
 
+    /// <inheritdoc/>
+    protected override void OnAllComponentsCreated()
+    {
+        base.OnAllComponentsCreated();
+        this.Session.LogSelection.SelectedLogsChanged += this.OnSelectedLogsChanged;
+    }
+
+
     // Called when all log reader have been disposed.
     void OnAllLogReaderDisposed()
     {
@@ -391,10 +448,8 @@ class LogFilteringViewModel : SessionComponent
             this.ResetValue(IsThreadIdFilterEnabledProperty);
         }
         else
-        {
             this.updateLogFilterAction.Reschedule();
-            this.CheckVisibleLogProperties();
-        }
+        this.CheckVisibleLogProperties();
         this.ResetFilters();
     }
 
@@ -503,6 +558,50 @@ class LogFilteringViewModel : SessionComponent
                 writer.WriteStringValue(filter.Id);
             writer.WriteEndArray();
         }
+    }
+
+
+    // Called when selected logs changed.
+    void OnSelectedLogsChanged(object? sender, EventArgs e)
+    {
+        var selectedLogs = this.Session.LogSelection.SelectedLogs;
+        var selectionCount = selectedLogs.Count;
+        var canFilterByPid = false;
+        var canFilterByTid = false;
+        if (selectionCount >= 1 && selectionCount <= 64)
+        {
+            var isPidFilterEnabled = this.GetValue(IsProcessIdFilterEnabledProperty);
+            var isTidFilterEnabled = this.GetValue(IsThreadIdFilterEnabledProperty);
+            if (isPidFilterEnabled || isTidFilterEnabled)
+            {
+                canFilterByPid = true;
+                canFilterByTid = true;
+                var pid = (int?)null;
+                var tid = (int?)null;
+                for (var i = selectionCount - 1; i >= 0; --i)
+                {
+                    var log = selectedLogs[i];
+                    var localPid = log.ProcessId;
+                    var localTid = log.ThreadId;
+                    if (localPid != pid)
+                    {
+                        if (pid.HasValue)
+                            canFilterByPid = false;
+                        else
+                            pid = localPid;
+                    }
+                    if (localTid != tid)
+                    {
+                        if (tid.HasValue)
+                            canFilterByTid = false;
+                        else
+                            tid = localTid;
+                    }
+                }
+            }
+        }
+        this.canFilterBySelectedPid.Update(canFilterByPid);
+        this.canFilterBySelectedTid.Update(canFilterByTid);
     }
 
 

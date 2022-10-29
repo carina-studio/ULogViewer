@@ -138,8 +138,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly MutableObservableBoolean canCopyLogProperty = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canCopyLogText = new();
 		readonly MutableObservableBoolean canEditLogProfile = new MutableObservableBoolean();
-		readonly MutableObservableBoolean canFilterLogsByPid = new MutableObservableBoolean();
-		readonly MutableObservableBoolean canFilterLogsByTid = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canMarkSelectedLogs = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canMarkUnmarkSelectedLogs = new MutableObservableBoolean();
 		readonly ObservableCommandState canReloadLogs = new();
@@ -304,8 +302,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.CopyLogPropertyCommand = new Command(this.CopyLogProperty, this.canCopyLogProperty);
 			this.CopyLogTextCommand = new Command(this.CopyLogText, this.canCopyLogText);
 			this.EditLogProfileCommand = new Command(this.EditLogProfile, this.canEditLogProfile);
-			this.FilterLogsByProcessIdCommand = new Command<bool>(this.FilterLogsByProcessId, this.canFilterLogsByPid);
-			this.FilterLogsByThreadIdCommand = new Command<bool>(this.FilterLogsByThreadId, this.canFilterLogsByTid);
 			this.MarkSelectedLogsCommand = new Command<MarkColor>(this.MarkSelectedLogs, this.canMarkSelectedLogs);
 			this.MarkUnmarkSelectedLogsCommand = new Command(this.MarkUnmarkSelectedLogs, this.canMarkUnmarkSelectedLogs);
 			this.ReloadLogsCommand = new Command(this.ReloadLogs, this.canReloadLogs);
@@ -2325,56 +2321,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Filter logs by process ID.
-		void FilterLogsByProcessId(bool resetOtherFilters)
-		{
-			// check state
-			this.VerifyAccess();
-			if (!this.canFilterLogsByPid.Value)
-				return;
-			if (this.logListBox.SelectedItems.Count != 1)
-				return;
-			var log = (DisplayableLog)this.logListBox.SelectedItem.AsNonNull();
-			var pid = log.ProcessId;
-			if (pid == null)
-				return;
-
-			// filter
-			if (resetOtherFilters)
-				(this.DataContext as Session)?.LogFiltering?.ResetFiltersCommand?.TryExecute();
-			this.logProcessIdFilterTextBox.Value = pid;
-		}
-
-
-		// Command to filter logs by selected PID.
-		ICommand FilterLogsByProcessIdCommand { get; }
-
-
-		// Filter logs by thread ID.
-		void FilterLogsByThreadId(bool resetOtherFilters)
-		{
-			// check state
-			this.VerifyAccess();
-			if (!this.canFilterLogsByTid.Value)
-				return;
-			if (this.logListBox.SelectedItems.Count != 1)
-				return;
-			var log = (DisplayableLog)this.logListBox.SelectedItem.AsNonNull();
-			var tid = log.ThreadId;
-			if (tid == null)
-				return;
-
-			// filter
-			if (resetOtherFilters)
-				(this.DataContext as Session)?.LogFiltering?.ResetFiltersCommand?.TryExecute();
-			this.logThreadIdFilterTextBox.Value = tid;
-		}
-
-
-		// Command to filter logs by selected TID.
-		ICommand FilterLogsByThreadIdCommand { get; }
-
-
 		// Check whether log profile has been set or not.
 		bool HasLogProfile { get => this.GetValue<bool>(HasLogProfileProperty); }
 
@@ -3468,8 +3414,6 @@ namespace CarinaStudio.ULogViewer.Controls
 				// update command states
 				this.canCopyLogProperty.Update(hasSingleSelectedItem && logProperty != null);
 				this.canCopyLogText.Update(hasSingleSelectedItem);
-				this.canFilterLogsByPid.Update(hasSingleSelectedItem && session.LogFiltering.IsProcessIdFilterEnabled);
-				this.canFilterLogsByTid.Update(hasSingleSelectedItem && session.LogFiltering.IsThreadIdFilterEnabled);
 				this.canMarkSelectedLogs.Update(hasSelectedItems && session.MarkLogsCommand.CanExecute(null));
 				this.canMarkUnmarkSelectedLogs.Update(hasSelectedItems && session.MarkUnmarkLogsCommand.CanExecute(null));
 				this.canShowFileInExplorer.Update(hasSelectedItems && session.IsLogFileNeeded);

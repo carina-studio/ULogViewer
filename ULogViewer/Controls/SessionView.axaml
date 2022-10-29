@@ -160,7 +160,7 @@
 				</MenuItem.Icon>
 			</MenuItem>
 			<Separator/>
-			<MenuItem Command="{Binding $parent[UserControl].FilterLogsByProcessIdCommand}" Header="{DynamicResource String/SessionView.FilterLogsBySelectedProcessId}">
+			<MenuItem Command="{Binding LogFiltering.FilterBySelectedProcessIdCommand}" Header="{DynamicResource String/SessionView.FilterLogsBySelectedProcessId}">
 				<MenuItem.CommandParameter>
 					<sys:Boolean>False</sys:Boolean>
 				</MenuItem.CommandParameter>
@@ -168,7 +168,7 @@
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Filter.Outline}"/>
 				</MenuItem.Icon>
 			</MenuItem>
-			<MenuItem Command="{Binding $parent[UserControl].FilterLogsByProcessIdCommand}" Header="{DynamicResource String/SessionView.FilterLogsBySelectedProcessIdOnly}">
+			<MenuItem Command="{Binding LogFiltering.FilterBySelectedProcessIdCommand}" Header="{DynamicResource String/SessionView.FilterLogsBySelectedProcessIdOnly}">
 				<MenuItem.CommandParameter>
 					<sys:Boolean>True</sys:Boolean>
 				</MenuItem.CommandParameter>
@@ -176,7 +176,7 @@
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Filter.Outline}"/>
 				</MenuItem.Icon>
 			</MenuItem>
-			<MenuItem Command="{Binding $parent[UserControl].FilterLogsByThreadIdCommand}" Header="{DynamicResource String/SessionView.FilterLogsBySelectedThreadId}">
+			<MenuItem Command="{Binding LogFiltering.FilterBySelectedThreadIdCommand}" Header="{DynamicResource String/SessionView.FilterLogsBySelectedThreadId}">
 				<MenuItem.CommandParameter>
 					<sys:Boolean>False</sys:Boolean>
 				</MenuItem.CommandParameter>
@@ -184,7 +184,7 @@
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Filter.Outline}"/>
 				</MenuItem.Icon>
 			</MenuItem>
-			<MenuItem Command="{Binding $parent[UserControl].FilterLogsByThreadIdCommand}" Header="{DynamicResource String/SessionView.FilterLogsBySelectedThreadIdOnly}">
+			<MenuItem Command="{Binding LogFiltering.FilterBySelectedThreadIdCommand}" Header="{DynamicResource String/SessionView.FilterLogsBySelectedThreadIdOnly}">
 				<MenuItem.CommandParameter>
 					<sys:Boolean>True</sys:Boolean>
 				</MenuItem.CommandParameter>
