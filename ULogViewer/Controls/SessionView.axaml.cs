@@ -102,10 +102,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Static fields.
 		static readonly Regex BaseNameRegex = new("^(?<Name>.+)\\s+\\(\\d+\\)\\s*$");
 		static readonly AvaloniaProperty<bool> CanFilterLogsByNonTextFiltersProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(CanFilterLogsByNonTextFilters), false);
-		static readonly AvaloniaProperty<DateTime?> EarliestSelectedLogTimestampProperty = AvaloniaProperty.Register<SessionView, DateTime?>(nameof(EarliestSelectedLogTimestamp));
 		static readonly AvaloniaProperty<bool> EnableRunningScriptProperty = AvaloniaProperty.Register<SessionView, bool>("EnableRunningScript", false);
 		static readonly AvaloniaProperty<bool> HasLogProfileProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(HasLogProfile), false);
-		static readonly AvaloniaProperty<bool> HasSelectedLogsDurationProperty = AvaloniaProperty.Register<SessionView, bool>("HasSelectedLogsDuration", false);
 		static readonly SettingKey<bool> IsCancelShowingMarkedLogsForLogAnalysisResultTutorialShownKey = new("SessionView.IsCancelShowingMarkedLogsForLogAnalysisResultTutorialShown");
 		static readonly AvaloniaProperty<bool> IsProcessInfoVisibleProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(IsProcessInfoVisible), false);
 		static readonly AvaloniaProperty<bool> IsProVersionActivatedProperty = AvaloniaProperty.RegisterDirect<SessionView, bool>("IsProVersionActivated", c => c.isProVersionActivated);
@@ -120,11 +118,9 @@ namespace CarinaStudio.ULogViewer.Controls
 		static readonly SettingKey<bool> IsShowAllLogsForLogAnalysisResultTutorialShownKey = new("SessionView.IsShowAllLogsForLogAnalysisResultTutorialShown");
 		static readonly SettingKey<bool> IsSwitchingSidePanelsTutorialShownKey = new("SessionView.IsSwitchingSidePanelsTutorialShown");
 		static readonly SettingKey<bool> IsTimestampCategoriesPanelTutorialShownKey = new("SessionView.IsTimestampCategoriesPanelTutorialShown");
-		static readonly AvaloniaProperty<DateTime?> LatestSelectedLogTimestampProperty = AvaloniaProperty.Register<SessionView, DateTime?>(nameof(LatestSelectedLogTimestamp));
 		static readonly AvaloniaProperty<FontFamily> LogFontFamilyProperty = AvaloniaProperty.Register<SessionView, FontFamily>(nameof(LogFontFamily));
 		static readonly AvaloniaProperty<double> LogFontSizeProperty = AvaloniaProperty.Register<SessionView, double>(nameof(LogFontSize), 10.0);
 		static readonly AvaloniaProperty<int> MaxDisplayLineCountForEachLogProperty = AvaloniaProperty.Register<SessionView, int>(nameof(MaxDisplayLineCountForEachLog), 1);
-		static readonly AvaloniaProperty<TimeSpan?> SelectedLogsDurationProperty = AvaloniaProperty.Register<SessionView, TimeSpan?>(nameof(SelectedLogsDuration));
 		static readonly AvaloniaProperty<SessionViewStatusBarState> StatusBarStateProperty = AvaloniaProperty.Register<SessionView, SessionViewStatusBarState>(nameof(StatusBarState), SessionViewStatusBarState.None);
 
 
@@ -141,9 +137,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ObservableCommandState canAddLogFiles = new();
 		readonly MutableObservableBoolean canCopyLogProperty = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canCopyLogText = new();
-		readonly MutableObservableBoolean canCopySelectedLogAnalysisResults = new();
-		readonly MutableObservableBoolean canCopySelectedLogs = new MutableObservableBoolean();
-		readonly MutableObservableBoolean canCopySelectedLogsWithFileNames = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canEditLogProfile = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canFilterLogsByPid = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canFilterLogsByTid = new MutableObservableBoolean();
@@ -153,7 +146,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ObservableCommandState canResetLogProfileToSession = new();
 		readonly MutableObservableBoolean canRestartAsAdmin = new MutableObservableBoolean(RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && !App.Current.IsRunningAsAdministrator);
 		readonly ObservableCommandState canSaveLogs = new();
-		readonly MutableObservableBoolean canSelectMarkedLogs = new MutableObservableBoolean();
 		readonly ObservableCommandState canSetIPEndPoint = new();
 		readonly ForwardedObservableBoolean canSetLogProfile;
 		readonly ObservableCommandState canSetLogProfileToSession = new();
@@ -220,7 +212,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ToggleButton predefinedLogTextFiltersButton;
 		readonly Popup predefinedLogTextFiltersPopup;
 		readonly HashSet<Avalonia.Input.Key> pressedKeys = new HashSet<Avalonia.Input.Key>();
-		readonly ScheduledAction reportSelectedLogsTimeInfoAction;
 		readonly ScheduledAction scrollToLatestLogAction;
 		readonly ScheduledAction scrollToLatestLogAnalysisResultAction;
 		readonly ToggleButton selectAndSetLogProfileDropDownButton;
@@ -312,8 +303,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.AddLogFilesCommand = new Command(this.AddLogFiles, this.canAddLogFiles);
 			this.CopyLogPropertyCommand = new Command(this.CopyLogProperty, this.canCopyLogProperty);
 			this.CopyLogTextCommand = new Command(this.CopyLogText, this.canCopyLogText);
-			this.CopySelectedLogsCommand = new Command(this.CopySelectedLogs, this.canCopySelectedLogs);
-			this.CopySelectedLogsWithFileNamesCommand = new Command(this.CopySelectedLogsWithFileNames, this.canCopySelectedLogsWithFileNames);
 			this.EditLogProfileCommand = new Command(this.EditLogProfile, this.canEditLogProfile);
 			this.FilterLogsByProcessIdCommand = new Command<bool>(this.FilterLogsByProcessId, this.canFilterLogsByPid);
 			this.FilterLogsByThreadIdCommand = new Command<bool>(this.FilterLogsByThreadId, this.canFilterLogsByTid);
@@ -327,7 +316,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.SelectAndSetLogProfileCommand = new Command(this.SelectAndSetLogProfileAsync, this.canSetLogProfile);
 			this.SelectAndSetUriCommand = new Command(this.SelectAndSetUri, this.canSetUri);
 			this.SelectAndSetWorkingDirectoryCommand = new Command(this.SelectAndSetWorkingDirectory, this.canSetWorkingDirectory);
-			this.SelectMarkedLogsCommand = new Command(this.SelectMarkedLogs, this.canSelectMarkedLogs);
 			this.ShowFileInExplorerCommand = new Command(this.ShowFileInExplorer, this.canShowFileInExplorer);
 			this.ShowLogStringPropertyCommand = new Command(() => this.ShowLogStringProperty(), this.canShowLogProperty);
 			this.ShowWorkingDirectoryInExplorerCommand = new Command(this.ShowWorkingDirectoryInExplorer, this.canShowWorkingDirectoryInExplorer);
@@ -665,37 +653,6 @@ namespace CarinaStudio.ULogViewer.Controls
 					return;
 				this.SelectAndSetWorkingDirectory();
 			});
-			this.reportSelectedLogsTimeInfoAction = new ScheduledAction(() =>
-			{
-				var session = (this.DataContext as Session);
-				var firstLog = (DisplayableLog?)null;
-				var lastLog = (DisplayableLog?)null;
-				session?.FindFirstAndLastLog(this.logListBox.SelectedItems.Cast<DisplayableLog>(), out firstLog, out lastLog);
-				if (firstLog == null || lastLog == null)
-				{
-					this.SetValue<TimeSpan?>(SelectedLogsDurationProperty, null);
-					this.SetValue<DateTime?>(EarliestSelectedLogTimestampProperty, null);
-					this.SetValue<DateTime?>(LatestSelectedLogTimestampProperty, null);
-					return;
-				}
-				var earliestTimestamp = (DateTime?)null;
-				var latestTimestamp = (DateTime?)null;
-				var minTimeSpan = (TimeSpan?)null;
-				var maxTimeSpan = (TimeSpan?)null;
-				var duration = session?.CalculateDurationBetweenLogs(firstLog, lastLog, out minTimeSpan, out maxTimeSpan, out earliestTimestamp, out latestTimestamp);
-				if (duration != null)
-				{
-					this.SetValue<TimeSpan?>(SelectedLogsDurationProperty, duration);
-					this.SetValue<DateTime?>(EarliestSelectedLogTimestampProperty, earliestTimestamp);
-					this.SetValue<DateTime?>(LatestSelectedLogTimestampProperty, latestTimestamp);
-				}
-				else
-				{
-					this.SetValue<TimeSpan?>(SelectedLogsDurationProperty, null);
-					this.SetValue<DateTime?>(EarliestSelectedLogTimestampProperty, null);
-					this.SetValue<DateTime?>(LatestSelectedLogTimestampProperty, null);
-				}
-			});
 			this.scrollToLatestLogAction = new ScheduledAction(() =>
 			{
 				// check state
@@ -947,7 +904,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.canReloadLogs.Bind(session.ReloadLogsCommand);
 			this.canResetLogProfileToSession.Bind(session.ResetLogProfileCommand);
 			this.canSaveLogs.Bind(session.SaveLogsCommand);
-			this.canSelectMarkedLogs.Update(session.HasMarkedLogs);
 			this.canSetIPEndPoint.Bind(session.SetIPEndPointCommand);
 			this.canSetLogProfileToSession.Bind(session.SetLogProfileCommand);
 			this.canSetUri.Bind(session.SetUriCommand);
@@ -1386,32 +1342,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			var newFilter = new PredefinedLogTextFilter(this.Application, newName, filter.Regex);
 			PredefinedLogTextFilterEditorDialog.Show(this.attachedWindow, newFilter, null);
 		}
-
-
-		// Copy selected logs.
-		void CopySelectedLogs()
-		{
-			if (this.DataContext is not Session session || !this.canCopySelectedLogs.Value)
-				return;
-			session.CopyLogsCommand.TryExecute(this.logListBox.SelectedItems.Cast<DisplayableLog>().ToArray());
-		}
-
-
-		// Command to copy selected logs.
-		ICommand CopySelectedLogsCommand { get; }
-
-
-		// Copy selected logs with file names.
-		void CopySelectedLogsWithFileNames()
-		{
-			if (this.DataContext is not Session session || !this.canCopySelectedLogsWithFileNames.Value)
-				return;
-			session.CopyLogsWithFileNamesCommand.TryExecute(this.logListBox.SelectedItems.Cast<DisplayableLog>().ToArray());
-		}
-
-
-		// Command to copy selected logs with file names.
-		ICommand CopySelectedLogsWithFileNamesCommand { get; }
 
 
 		// Create new key log analysis rule set.
@@ -1962,7 +1892,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.canResetLogProfileToSession.Unbind();
 			this.canSetIPEndPoint.Unbind();
 			this.canSaveLogs.Unbind();
-			this.canSelectMarkedLogs.Update(false);
 			this.canSetLogProfileToSession.Unbind();
 			this.canSetUri.Unbind();
 			this.canSetWorkingDirectory.Unbind();
@@ -2215,10 +2144,6 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.IsHandlingDragAndDrop = false;
 			}
 		}
-
-
-		// Earliest timestamp of selected log.
-		DateTime? EarliestSelectedLogTimestamp { get => this.GetValue<DateTime?>(EarliestSelectedLogTimestampProperty); }
 
 
 		// Edit given key log analysis rule set.
@@ -2588,10 +2513,6 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Whether "Tools" menu item is visible or not.
 		bool IsToolsMenuItemVisible { get; }
-
-
-		// Latest timestamp of selected log.
-		DateTime? LatestSelectedLogTimestamp { get => this.GetValue<DateTime?>(LatestSelectedLogTimestampProperty); }
 
 
 		// Get font family of log.
@@ -3178,10 +3099,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				var count = this.logAnalysisResultListBox.SelectedItems.Count;
 				if (count == 0)
-				{
-					this.canCopySelectedLogAnalysisResults.Update(false);
 					return;
-				}
 				if (count == 1 
 					&& this.logAnalysisResultListBox.SelectedItem is DisplayableLogAnalysisResult result
 					&& this.DataContext is Session session)
@@ -3276,7 +3194,6 @@ namespace CarinaStudio.ULogViewer.Controls
 					// cancel auto scrolling
 					this.IsScrollingToLatestLogAnalysisResultNeeded = false;
 				}
-				this.canCopySelectedLogAnalysisResults.Update(true);
 				this.logListBox.Focus();
 			});
 		}
@@ -3551,8 +3468,6 @@ namespace CarinaStudio.ULogViewer.Controls
 				// update command states
 				this.canCopyLogProperty.Update(hasSingleSelectedItem && logProperty != null);
 				this.canCopyLogText.Update(hasSingleSelectedItem);
-				this.canCopySelectedLogs.Update(hasSelectedItems && session.CopyLogsCommand.CanExecute(null) && selectionCount <= MaxLogCountForCopying);
-				this.canCopySelectedLogsWithFileNames.Update(hasSelectedItems && session.CopyLogsWithFileNamesCommand.CanExecute(null) && selectionCount <= MaxLogCountForCopying);
 				this.canFilterLogsByPid.Update(hasSingleSelectedItem && session.LogFiltering.IsProcessIdFilterEnabled);
 				this.canFilterLogsByTid.Update(hasSingleSelectedItem && session.LogFiltering.IsThreadIdFilterEnabled);
 				this.canMarkSelectedLogs.Update(hasSelectedItems && session.MarkLogsCommand.CanExecute(null));
@@ -3560,9 +3475,6 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.canShowFileInExplorer.Update(hasSelectedItems && session.IsLogFileNeeded);
 				this.canShowLogProperty.Update(hasSingleSelectedItem && logProperty != null && DisplayableLog.HasStringProperty(logProperty.Name));
 				this.canUnmarkSelectedLogs.Update(hasSelectedItems && session.UnmarkLogsCommand.CanExecute(null));
-
-				// report time information
-				this.reportSelectedLogsTimeInfoAction.Schedule();
 
 				// select single marked log
 				if (hasSingleSelectedItem && this.logListBox.SelectedItem is DisplayableLog log && log.IsMarked)
@@ -3575,6 +3487,10 @@ namespace CarinaStudio.ULogViewer.Controls
 				}
 				else
 					this.SynchronizationContext.Post(() => this.markedLogListBox.SelectedItems.Clear());
+				
+				// scroll to selected log
+				if (!session.LogSelection.IsAllLogsSelectionRequested)
+					this.ScrollToSelectedLog();
 			});
 		}
 
@@ -3641,9 +3557,9 @@ namespace CarinaStudio.ULogViewer.Controls
 							if (e.Source is not TextBox)
 							{
 								if ((e.KeyModifiers & KeyModifiers.Shift) != 0)
-									this.CopySelectedLogsWithFileNames();
+									(this.DataContext as Session)?.LogSelection?.CopySelectedLogsWithFileNames();
 								else
-									this.CopySelectedLogs();
+									(this.DataContext as Session)?.LogSelection?.CopySelectedLogs();
 							}
 							break;
 						case Avalonia.Input.Key.D0:
@@ -3882,7 +3798,7 @@ namespace CarinaStudio.ULogViewer.Controls
 								break;
 							case Avalonia.Input.Key.S:
 								if (e.Source is not TextBox && !this.isSelectingFileToSaveLogs)
-									this.SelectMarkedLogs();
+									(this.DataContext as Session)?.LogSelection?.SelectMarkedLogs();
 								break;
 						}
 					}
@@ -4058,7 +3974,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				}
 
 				// select all logs
-				session.SelectAllLogsCommand.TryExecute();
+				session.LogSelection.SelectAllLogs();
 			}
 		}
 
@@ -4123,8 +4039,6 @@ namespace CarinaStudio.ULogViewer.Controls
 				else
 					this.scrollToLatestLogAnalysisResultAction.Cancel();
 			}
-			else if (property == SelectedLogsDurationProperty)
-				this.SetValue<bool>(HasSelectedLogsDurationProperty, change.NewValue.Value != null);
 		}
 
 
@@ -4205,9 +4119,6 @@ namespace CarinaStudio.ULogViewer.Controls
 						this.scrollToLatestLogAction.Cancel();
 					else if (this.IsScrollingToLatestLogNeeded)
 						this.scrollToLatestLogAction.Schedule(ScrollingToLatestLogInterval);
-					break;
-				case nameof(Session.HasMarkedLogs):
-					this.canSelectMarkedLogs.Update(session.HasMarkedLogs);
 					break;
 				case nameof(Session.HasWorkingDirectory):
 					this.canShowWorkingDirectoryInExplorer.Update(Platform.IsOpeningFileManagerSupported && session.HasWorkingDirectory);
@@ -4598,6 +4509,12 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (index < 0 || index >= session.Logs.Count)
 				return;
+			var itemContainerGenerator = this.logListBox.ItemContainerGenerator;
+			foreach (var container in itemContainerGenerator.Containers)
+			{
+				if (container.Index == index)
+					return;
+			}
 			this.logScrollViewer?.Let(scrollViewer => // [Workaround] Move closer to log first to make sure the scroll bar position will be correct
 			{
 				var extentHeight = scrollViewer.Extent.Height;
@@ -4610,6 +4527,23 @@ namespace CarinaStudio.ULogViewer.Controls
 				scrollViewer.Offset = new(scrollViewer.Offset.X, offset);
 			});
 			this.logListBox.ScrollIntoView(index);
+		}
+
+
+		// Scroll to first selected log.
+		void ScrollToSelectedLog()
+		{
+			if (this.DataContext is not Session session)
+				return;
+			var selectedItems = this.logListBox.SelectedItems;
+			if (selectedItems.Count == 0)
+				return;
+			this.ScrollToLog((DisplayableLog)selectedItems[0]!);
+			this.logScrollViewer?.Let(scrollViewer =>
+			{
+				if (scrollViewer.Extent.Height > scrollViewer.Viewport.Height)
+					this.IsScrollingToLatestLogNeeded = false;
+			});
 		}
 
 
@@ -4751,10 +4685,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		ICommand SelectAndSetWorkingDirectoryCommand { get; }
 
 
-		// Duration of selected logs.
-		TimeSpan? SelectedLogsDuration { get => this.GetValue<TimeSpan?>(SelectedLogsDurationProperty); }
-
-
 		// Show UI for user to select file to export log analysis rule set.
 		async Task<string?> SelectFileToExportLogAnalysisRuleSetAsync()
 		{
@@ -4793,29 +4723,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Select all marked logs.
-		void SelectMarkedLogs()
-		{
-			if (this.DataContext is not Session session)
-				return;
-			if (!this.canSelectMarkedLogs.Value)
-				return;
-			var logs = session.Logs;
-			this.logListBox.SelectedItems.Clear();
-			foreach (var log in session.MarkedLogs)
-			{
-				if (logs.Contains(log))
-					this.logListBox.SelectedItems.Add(log);
-			}
-			if (this.logListBox.SelectedItems.Count > 0)
-				this.ScrollToLog((DisplayableLog)this.logListBox.SelectedItems[0].AsNonNull());
-		}
-
-
-		// Command to select marked logs.
-		ICommand SelectMarkedLogsCommand { get; }
-
-
 		// Select log by timestamp.
 		async void SelectNearestLogByTimestamp()
         {
@@ -4832,25 +4739,16 @@ namespace CarinaStudio.ULogViewer.Controls
 			// select timestamp
 			var timestamp = await new DateTimeSelectionDialog().Also(it =>
 			{
-				it.InitialDateTime = this.EarliestSelectedLogTimestamp ?? session.EarliestLogTimestamp;
+				it.InitialDateTime = session.LogSelection.EarliestSelectedLogTimestamp ?? session.EarliestLogTimestamp;
 				it.Message = this.Application.GetString("SessionView.SelectNearestLogByTimestamp.Message");
 				it.Bind(Avalonia.Controls.Window.TitleProperty, this.GetResourceObservable("String/SessionView.SelectNearestLogByTimestamp.Title"));
 			}).ShowDialog<DateTime?>(this.attachedWindow);
 			if (timestamp == null)
 				return;
 
-			// clear selection
-			this.logListBox.SelectedItems.Clear();
-
-			// find and select log
-			var log = session.FindNearestLog(timestamp.Value);
-			if (log != null)
-			{
-				this.logListBox.SelectedItems.Add(log);
-				this.ScrollToLog(log);
-				this.logListBox.Focus();
-				this.IsScrollingToLatestLogNeeded = false;
-			}
+			// select log
+			if (session.LogSelection.SelectNearestLog(timestamp.Value) == null)
+				this.logListBox.SelectedItems.Clear();
         }
 
 

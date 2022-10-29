@@ -708,7 +708,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly Stopwatch logsReadingWatch = new Stopwatch();
 		readonly SortedObservableList<DisplayableLog> markedLogs;
 		readonly HashSet<string> markedLogsChangedFilePaths = new(PathEqualityComparer.Default);
-		readonly ScheduledAction notifySelectedLogsChangedAction;
 		readonly ScheduledAction reloadLogsAction;
 		readonly ScheduledAction reloadLogsFullyAction;
 		readonly ScheduledAction reloadLogsWithRecreatingLogReadersAction;
@@ -716,7 +715,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly ScheduledAction reportLogsTimeInfoAction;
 		readonly List<LogReaderOptions> savedLogReaderOptions = new();
 		readonly ScheduledAction saveMarkedLogsAction;
-		readonly SortedObservableList<DisplayableLog> selectedLogs;
 		readonly ScheduledAction selectLogsToReportActions;
 		readonly List<MarkedLogInfo> unmatchedMarkedLogInfos = new();
 		readonly ScheduledAction updateIsReadingLogsAction;
@@ -755,7 +753,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.RemoveLogFileCommand = new Command<string?>(this.RemoveLogFile, this.canClearLogFiles);
 			this.ResetLogProfileCommand = new Command(this.ResetLogProfile, this.canResetLogProfile);
 			this.SaveLogsCommand = new Command<LogsSavingOptions>(this.SaveLogs, this.canSaveLogs);
-			this.SelectAllLogsCommand = new Command(this.SelectAllLogs, this.GetValueAsObservable(HasLogsProperty));
 			this.SetIPEndPointCommand = new Command<IPEndPoint?>(this.SetIPEndPoint, this.GetValueAsObservable(IsIPEndPointNeededProperty));
 			this.SetLogProfileCommand = new Command<LogProfile?>(this.SetLogProfile, this.canSetLogProfile);
 			this.SetUriCommand = new Command<Uri?>(this.SetUri, this.GetValueAsObservable(IsUriNeededProperty));
@@ -773,10 +770,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.markedLogs = new SortedObservableList<DisplayableLog>(this.CompareDisplayableLogs).Also(it =>
 			{
 				it.CollectionChanged += this.OnMarkedLogsChanged;
-			});
-			this.selectedLogs = new SortedObservableList<DisplayableLog>(this.CompareDisplayableLogs).Also(it =>
-			{
-				it.CollectionChanged += this.OnSelectedLogsChanged;
 			});
 
 			// setup properties
@@ -806,6 +799,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				});
 			});
 			this.LogAnalysis = new LogAnalysisViewModel(this).Also(it =>
+				this.AttachToComponent(it));
+			this.LogSelection = new LogSelectionViewModel(this).Also(it =>
 				this.AttachToComponent(it));
 			this.AllComponentsCreated?.Invoke();
 
@@ -883,8 +878,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				// schedule next checking
 				this.checkLogsMemoryUsageAction?.Schedule(LogsMemoryUsageCheckInterval);
 			});
-			this.notifySelectedLogsChangedAction = new(() =>
-				this.SelectedLogsChanged?.Invoke(this, EventArgs.Empty));
 			this.reloadLogsAction = new(() => this.ReloadLogs(false, false));
 			this.reloadLogsFullyAction= new(() => this.ReloadLogs(true, true));
 			this.reloadLogsWithRecreatingLogReadersAction = new(() => this.ReloadLogs(true, false));
@@ -2577,6 +2570,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Get view-model of log selection.
+		/// </summary>
+		public LogSelectionViewModel LogSelection { get; }
+
+
+		/// <summary>
 		/// Get duration of <see cref="Logs"/>.
 		/// </summary>
 		public TimeSpan? LogsDuration { get => this.GetValue(LogsDurationProperty); }
@@ -3162,16 +3161,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			}
 			else if (property == UriProperty)
 				this.SetValue(HasUriProperty, newValue != null);
-		}
-
-
-		// Called when selected logs changed.
-		void OnSelectedLogsChanged(object? sender, NotifyCollectionChangedEventArgs e)
-		{
-			if (e.Action == NotifyCollectionChangedAction.Reset)
-				this.notifySelectedLogsChangedAction.Execute();
-			else
-				this.notifySelectedLogsChangedAction.Schedule();
 		}
 
 
@@ -3946,34 +3935,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			});
 			_ = this.WaitForNecessaryTaskAsync(task);
 		}
-
-
-		/// <summary>
-		/// Get list of selected logs.
-		/// </summary>
-		public IList<DisplayableLog> SelectedLogs { get => this.selectedLogs; }
-
-
-		/// <summary>
-		/// Raised when <see cref="SelectedLogs"/> changed.
-		/// </summary>
-		public event EventHandler? SelectedLogsChanged;
-
-
-		// Select all logs.
-		void SelectAllLogs()
-		{
-			this.VerifyAccess();
-			this.VerifyDisposed();
-			this.selectedLogs.Clear();
-			this.selectedLogs.AddAll(this.Logs, true);
-		}
-
-
-		/// <summary>
-		/// Command to select all logs.
-		/// </summary>
-		public ICommand SelectAllLogsCommand { get; }
 
 
 		// Set IP endpoint.
