@@ -36,6 +36,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		}
 
 
+		/// <summary>
+		/// Accuracy of filtering logs by specific property of selected log.
+		/// </summary>
+		public Accuracy AccuracyOfFilteringBySelectedLogProperty
+		{
+			get => this.Settings.GetValueOrDefault(SettingKeys.AccuracyOfFilteringBySelectedLogProperty);
+			set => this.Settings.SetValue<Accuracy>(SettingKeys.AccuracyOfFilteringBySelectedLogProperty, value);
+		}
+
+
 		// Compare log profiles.
 		static int CompareLogProfiles(LogProfile? x, LogProfile? y)
 		{

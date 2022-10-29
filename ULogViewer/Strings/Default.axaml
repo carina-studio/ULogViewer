@@ -2,10 +2,16 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 	
+	<!-- Accuracy -->
+	<sys:String x:Key="String/Accuracy.High">High accuracy</sys:String>
+	<sys:String x:Key="String/Accuracy.Low">Low accuracy</sys:String>
+	<sys:String x:Key="String/Accuracy.Normal">Normal</sys:String>
+	
 	<!-- App -->
 	<sys:String x:Key="String/App.Shutdown">Exit</sys:String>
 
 	<!-- AppOptionsDialog -->
+	<sys:String x:Key="String/AppOptionsDialog.AccuracyOfFilteringBySelectedLogProperty">Accuracy of filtering by value of log property</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ContinuousLogReadingUpdateInterval">Log update interval when continuous reading (milliseconds)</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs">Scroll to latest log after reloading logs</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs.Description">Only for continuous logs reading.</sys:String>
@@ -894,6 +900,8 @@ return null;</sys:String>
 	<sys:String x:Key="String/SessionView.EditPersistentState">Edit internal persistent state…</sys:String>
 	<sys:String x:Key="String/SessionView.FailedToExportLogAnalysisRuleSet">Unable to export rule set '{0}' to '{1}'.</sys:String>
 	<sys:String x:Key="String/SessionView.FailedToImportLogAnalysisRuleSet">Unable to import rule set from '{0}'.</sys:String>
+	<sys:String x:Key="String/SessionView.FilterByLogProperty">Filter by '{0}'</sys:String>
+	<sys:String x:Key="String/SessionView.FilterByLogProperty.Disabled">Filter by value of log property</sys:String>
 	<sys:String x:Key="String/SessionView.FilteredLogCount">, Filtered: {0}</sys:String>
 	<sys:String x:Key="String/SessionView.FilterLogsBySelectedProcessId">Filter by selected PID</sys:String>
 	<sys:String x:Key="String/SessionView.FilterLogsBySelectedProcessIdOnly">Filter by selected PID only</sys:String>

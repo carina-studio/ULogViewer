@@ -2,6 +2,11 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
+	<!-- Accuracy -->
+	<sys:String x:Key="String/Accuracy.High">高精确度</sys:String>
+	<sys:String x:Key="String/Accuracy.Low">低精确度</sys:String>
+	<sys:String x:Key="String/Accuracy.Normal">一般</sys:String>
+	
 	<!-- App -->
 	<sys:String x:Key="String/App.Shutdown">结束</sys:String>
 
@@ -9,6 +14,7 @@
 	<sys:String x:Key="String/AppCulture.System">自动</sys:String>
 
 	<!-- AppOptionsDialog -->
+	<sys:String x:Key="String/AppOptionsDialog.AccuracyOfFilteringBySelectedLogProperty">以日志属性值筛选之精确度</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ContinuousLogReadingUpdateInterval">连续读取时的日志更新时距 (毫秒)</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs">在重新载入日志后滚动到最新的日志</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs.Description">仅适用于连续读取日志。</sys:String>
@@ -859,6 +865,8 @@ return null;</sys:String>
 	<sys:String x:Key="String/SessionView.EditPersistentState">编辑內部存储的状态…</sys:String>
 	<sys:String x:Key="String/SessionView.FailedToExportLogAnalysisRuleSet">无法将规则集「{0}」导出至 '{1}'。</sys:String>
 	<sys:String x:Key="String/SessionView.FailedToImportLogAnalysisRuleSet">无法从 '{0}' 导入規則集。</sys:String>
+	<sys:String x:Key="String/SessionView.FilterByLogProperty">使用「{0}」筛选</sys:String>
+	<sys:String x:Key="String/SessionView.FilterByLogProperty.Disabled">使用日志属性值筛选</sys:String>
 	<sys:String x:Key="String/SessionView.FilteredLogCount">，已筛选 {0} 笔</sys:String>
 	<sys:String x:Key="String/SessionView.FilterLogsBySelectedProcessId">使用选择的 PID 筛选</sys:String>
 	<sys:String x:Key="String/SessionView.FilterLogsBySelectedProcessIdOnly">只使用选择的 PID 筛选</sys:String>

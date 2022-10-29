@@ -1,4 +1,5 @@
 using CarinaStudio.Collections;
+using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ViewModels;
@@ -9,6 +10,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Windows.Input;
@@ -66,9 +68,33 @@ class LogFilteringViewModel : SessionComponent
     public static readonly ObservableProperty<int?> ThreadIdFilterProperty = ObservableProperty.Register<LogFilteringViewModel, int?>(nameof(ThreadIdFilter));
 
 
+    // Constants.
+    const string DecimalNumberGroupName = "DecimalNumber";
+    const string DecimalNumberPattern = "[0-9]+";
+    const string HexNumberGroupName = "HexNumber";
+    const string HexNumberPattern = "(0x[a-f0-9]+|[0-9]*[a-f][0-9]+[a-f0-9]+)";
+    const string SymbolGroupName = "Symbol";
+    const string VaryingWordGroupName = "VaryingWord";
+    const string WordGroupName = "Word";
+
+
+    // Static fields.
+    static readonly Regex PropertyValueTokenRegex;
+    static readonly HashSet<char> RegexReservedChars = new()
+    {
+        '(', ')',
+        '[', ']',
+        '{', '}',
+        '<', '>',
+        '+', '-', '*', '.', ',', '\\',
+        '?', '!', '^', '$', '#',
+    };
+
+
     // Fields.
     readonly MutableObservableBoolean canClearPredefinedTextFilters = new();
     readonly MutableObservableBoolean canFilterBySelectedPid = new();
+    readonly MutableObservableBoolean canFilterBySelectedProperty = new();
 	readonly MutableObservableBoolean canFilterBySelectedTid = new();
     readonly MutableObservableBoolean canResetFilters = new();
     readonly IDisposable displayLogPropertiesObserverToken;
@@ -76,6 +102,24 @@ class LogFilteringViewModel : SessionComponent
     readonly Stopwatch logFilteringWatch = new Stopwatch();
     readonly ObservableList<PredefinedLogTextFilter> predefinedTextFilters;
     readonly ScheduledAction updateLogFilterAction;
+
+
+    // Static initializer.
+    static LogFilteringViewModel()
+    {
+        var patternBuffer = new StringBuilder();
+        patternBuffer.Append($"(?<{HexNumberGroupName}>{HexNumberPattern})");
+        patternBuffer.Append($"|(?<{DecimalNumberGroupName}>{DecimalNumberPattern})");
+        patternBuffer.Append($"|(?<{VaryingWordGroupName}>'[^']*')");
+        patternBuffer.Append($"|(?<{VaryingWordGroupName}>\"[^\"]*\")");
+        patternBuffer.Append($"|(?<{VaryingWordGroupName}>\\([^\\)]*\\))");
+        patternBuffer.Append($"|(?<{VaryingWordGroupName}>\\[[^\\]]*\\])");
+        patternBuffer.Append($"|(?<{VaryingWordGroupName}>\\{{[^\\}}]*\\}})");
+        patternBuffer.Append($"|(?<{VaryingWordGroupName}>\\<[^\\>]*\\>)");
+        patternBuffer.Append($"|(?<{WordGroupName}>\\w+)");
+        patternBuffer.Append($"|(?<{SymbolGroupName}>[^\\s])");
+        PropertyValueTokenRegex = new(patternBuffer.ToString(), RegexOptions.IgnoreCase);
+    }
 
 
     /// <summary>
@@ -90,8 +134,9 @@ class LogFilteringViewModel : SessionComponent
         // create command
         this.ClearPredefinedTextFiltersCommand = new Command(() => this.predefinedTextFilters?.Clear(), this.canClearPredefinedTextFilters);
         this.FilterBySelectedProcessIdCommand = new Command<bool>(this.FilterBySelectedProcessId, this.canFilterBySelectedPid);
+        this.FilterBySelectedPropertyCommand = new Command<DisplayableLogProperty>(this.FilterBySelectedProperty, this.canFilterBySelectedProperty);
         this.FilterBySelectedThreadIdCommand = new Command<bool>(this.FilterBySelectedThreadId, this.canFilterBySelectedTid);
-        this.ResetFiltersCommand = new Command(this.ResetFilters, this.canResetFilters);
+        this.ResetFiltersCommand = new Command(() => this.ResetFilters(true), this.canResetFilters);
 
         // create collection
         this.predefinedTextFilters = new ObservableList<PredefinedLogTextFilter>().Also(it =>
@@ -284,7 +329,7 @@ class LogFilteringViewModel : SessionComponent
         if (pid == null)
             return;
         if (resetOtherFilters)
-            this.ResetFilters();
+            this.ResetFilters(false);
         this.SetValue(ProcessIdFilterProperty, pid);
     }
 
@@ -296,6 +341,85 @@ class LogFilteringViewModel : SessionComponent
     public ICommand FilterBySelectedProcessIdCommand { get; }
 
 
+    // Filter by specific property of selected log.
+    void FilterBySelectedProperty(DisplayableLogProperty property)
+    {
+        // check state
+        this.VerifyAccess();
+        this.VerifyDisposed();
+
+        // get template value
+        var propertyValue = this.Session.LogSelection.SelectedLogs.Let(it =>
+        {
+            if (it.Count != 1)
+                return null;
+            if (it[0].TryGetProperty<object?>(property.Name, out var value))
+                return value?.ToString();
+            return null;
+        });
+        if (string.IsNullOrWhiteSpace(propertyValue))
+        {
+            this.Logger.LogDebug("No property value to be used as text filter");
+            return;
+        }
+
+        // generate pattern
+        var accuracy = this.Settings.GetValueOrDefault(SettingKeys.AccuracyOfFilteringBySelectedLogProperty);
+        var patternBuffer = new StringBuilder();
+        var remainingTokenCount = accuracy == Accuracy.High ? 10 : 5;
+        var prevGroups = (GroupCollection?)null;
+        var match = PropertyValueTokenRegex.Match(propertyValue);
+        while (match.Success && remainingTokenCount > 0)
+        {
+            var groups = match.Groups;
+            if (groups[HexNumberGroupName].Success)
+                patternBuffer.Append(@$"\s*{HexNumberPattern}");
+            else if (groups[DecimalNumberGroupName].Success)
+                patternBuffer.Append(@$"\s*{DecimalNumberPattern}");
+            else if (groups[VaryingWordGroupName].Success)
+            {
+                var value = groups[VaryingWordGroupName].Value;
+                var startSymbol = value[0];
+                var endSymbol = value[value.Length - 1];
+                if (RegexReservedChars.Contains(startSymbol))
+                    patternBuffer.Append(@$"\s*\{startSymbol}[^\{endSymbol}]*\{endSymbol}");
+                else
+                    patternBuffer.Append(@$"\s*{startSymbol}[^{endSymbol}]*{endSymbol}");
+            }
+            else if (groups[WordGroupName].Success)
+            {
+                var word = accuracy == Accuracy.Low ? "\\w+" : groups[WordGroupName].Value;
+                if (prevGroups == null || !prevGroups[WordGroupName].Success)
+                    patternBuffer.Append(@$"\s*{word}");
+                else
+                    patternBuffer.Append(@$"\s+{word}");
+            }
+            else if (groups[SymbolGroupName].Success)
+            {
+                var symbol = groups[SymbolGroupName].Value[0];
+                if (RegexReservedChars.Contains(symbol))
+                    patternBuffer.Append(@$"\s*\{symbol}");
+                else
+                    patternBuffer.Append(@$"\s*{symbol}");
+                ++remainingTokenCount;
+            }
+            --remainingTokenCount;
+            prevGroups = groups;
+            match = match.NextMatch();
+        }
+        this.SetValue(FiltersCombinationModeProperty, FilterCombinationMode.Intersection);
+        this.ResetFilters(false);
+        this.SetValue(TextFilterProperty, new Regex(patternBuffer.ToString(), this.Settings.GetValueOrDefault(SettingKeys.IgnoreCaseOfLogTextFilter) ? RegexOptions.IgnoreCase : RegexOptions.None));
+    }
+
+
+    /// <summary>
+    /// Command to use value of property of selected log as text filter.
+    /// </summary>
+    /// <remarks>The type of parameter is <see cref="DisplayableLogProperty"/> to specify the property.</remarks>
+    public ICommand FilterBySelectedPropertyCommand { get; }
+
+
     // Filter by selected thread ID.
     void FilterBySelectedThreadId(bool resetOtherFilters)
     {
@@ -305,7 +429,7 @@ class LogFilteringViewModel : SessionComponent
         if (tid == null)
             return;
         if (resetOtherFilters)
-            this.ResetFilters();
+            this.ResetFilters(false);
         this.SetValue(ThreadIdFilterProperty, tid);
     }
 
@@ -568,6 +692,7 @@ class LogFilteringViewModel : SessionComponent
         var selectionCount = selectedLogs.Count;
         var canFilterByPid = false;
         var canFilterByTid = false;
+        var canFilterByProperty = selectionCount == 1;
         if (selectionCount >= 1 && selectionCount <= 64)
         {
             var isPidFilterEnabled = this.GetValue(IsProcessIdFilterEnabledProperty);
@@ -601,6 +726,7 @@ class LogFilteringViewModel : SessionComponent
             }
         }
         this.canFilterBySelectedPid.Update(canFilterByPid);
+        this.canFilterBySelectedProperty.Update(canFilterByProperty);
         this.canFilterBySelectedTid.Update(canFilterByTid);
     }
 
@@ -622,7 +748,7 @@ class LogFilteringViewModel : SessionComponent
 
 
     // Reset all filters.
-    void ResetFilters()
+    void ResetFilters(bool updateImmediately = true)
     {
         this.VerifyAccess();
         this.VerifyDisposed();
@@ -631,7 +757,8 @@ class LogFilteringViewModel : SessionComponent
         this.ResetValue(ThreadIdFilterProperty);
         this.ResetValue(TextFilterProperty);
         this.predefinedTextFilters.Clear();
-        this.updateLogFilterAction.Execute();
+        if (updateImmediately)
+            this.updateLogFilterAction.Execute();
     }
 
 

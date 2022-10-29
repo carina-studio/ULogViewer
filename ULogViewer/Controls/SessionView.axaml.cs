@@ -138,6 +138,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly MutableObservableBoolean canCopyLogProperty = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canCopyLogText = new();
 		readonly MutableObservableBoolean canEditLogProfile = new MutableObservableBoolean();
+		readonly MutableObservableBoolean canFilterByLogProperty = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canMarkSelectedLogs = new MutableObservableBoolean();
 		readonly MutableObservableBoolean canMarkUnmarkSelectedLogs = new MutableObservableBoolean();
 		readonly ObservableCommandState canReloadLogs = new();
@@ -157,6 +158,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ToggleButton createLogAnalysisRuleSetButton;
 		readonly ContextMenu createLogAnalysisRuleSetMenu;
 		readonly Border dragDropReceiverBorder;
+		readonly MenuItem filterByLogPropertyMenuItem;
 		IDisposable? hasDialogsObserverToken;
 		IDisposable? isActiveObserverToken;
 		bool isAltKeyPressed;
@@ -302,6 +304,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.CopyLogPropertyCommand = new Command(this.CopyLogProperty, this.canCopyLogProperty);
 			this.CopyLogTextCommand = new Command(this.CopyLogText, this.canCopyLogText);
 			this.EditLogProfileCommand = new Command(this.EditLogProfile, this.canEditLogProfile);
+			this.FilterByLogPropertyCommand = new Command(this.FilterByLogProperty, this.canFilterByLogProperty);
 			this.MarkSelectedLogsCommand = new Command<MarkColor>(this.MarkSelectedLogs, this.canMarkSelectedLogs);
 			this.MarkUnmarkSelectedLogsCommand = new Command(this.MarkUnmarkSelectedLogs, this.canMarkUnmarkSelectedLogs);
 			this.ReloadLogsCommand = new Command(this.ReloadLogs, this.canReloadLogs);
@@ -361,6 +364,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				});
 			});
 			this.dragDropReceiverBorder = this.Get<Border>(nameof(dragDropReceiverBorder));
+			this.filterByLogPropertyMenuItem = this.Get<MenuItem>(nameof(filterByLogPropertyMenuItem));
 			this.keyLogAnalysisRuleSetListBox = this.Get<Avalonia.Controls.ListBox>(nameof(keyLogAnalysisRuleSetListBox)).Also(it =>
 			{
 				it.SelectionChanged += this.OnLogAnalysisRuleSetListBoxSelectionChanged;
@@ -372,14 +376,26 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.IsScrollingToLatestLogNeeded = false;
 					if (this.showLogPropertyMenuItem == null)
 						return;
-					if (this.lastClickedLogPropertyView?.Tag is DisplayableLogProperty property)
+					var log = this.logListBox!.SelectedItems.Count == 1 
+						? (this.logListBox.SelectedItems[0] as DisplayableLog)
+						: null;
+					if (log != null && this.lastClickedLogPropertyView?.Tag is DisplayableLogProperty property)
 					{
+						var propertyValue = DisplayableLog.HasStringProperty(property.Name) && log.TryGetProperty<string?>(property.Name, out var s)
+							? s
+							: null;
+						if (propertyValue == null)
+							propertyValue = property.Name;
+						else if (propertyValue.Length > 16)
+							propertyValue = $"{propertyValue.Substring(0, 16)}…";
 						this.copyLogPropertyMenuItem.Header = this.Application.GetFormattedString("SessionView.CopyLogProperty", property.DisplayName);
+						this.filterByLogPropertyMenuItem.Header = this.Application.GetFormattedString("SessionView.FilterByLogProperty", propertyValue);
 						this.showLogPropertyMenuItem.Header = this.Application.GetFormattedString("SessionView.ShowLogProperty", property.DisplayName);
 					}
 					else
 					{
 						this.copyLogPropertyMenuItem.Header = this.Application.GetString("SessionView.CopyLogProperty.Disabled");
+						this.filterByLogPropertyMenuItem.Header = this.Application.GetString("SessionView.FilterByLogProperty.Disabled");
 						this.showLogPropertyMenuItem.Header = this.Application.GetString("SessionView.ShowLogProperty.Disabled");
 					}
 				};
@@ -2321,6 +2337,19 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Filter by property of selected log.
+		void FilterByLogProperty()
+		{
+			if (this.lastClickedLogPropertyView?.Tag is not DisplayableLogProperty property)
+				return;
+			(this.DataContext as Session)?.LogFiltering?.FilterBySelectedPropertyCommand?.TryExecute(property);
+		}
+
+
+		// Command to filter by property of selected log.
+		ICommand FilterByLogPropertyCommand { get; }
+
+
 		// Check whether log profile has been set or not.
 		bool HasLogProfile { get => this.GetValue<bool>(HasLogProfileProperty); }
 
@@ -3414,6 +3443,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				// update command states
 				this.canCopyLogProperty.Update(hasSingleSelectedItem && logProperty != null);
 				this.canCopyLogText.Update(hasSingleSelectedItem);
+				this.canFilterByLogProperty.Update(logProperty != null && DisplayableLog.HasStringProperty(logProperty.Name));
 				this.canMarkSelectedLogs.Update(hasSelectedItems && session.MarkLogsCommand.CanExecute(null));
 				this.canMarkUnmarkSelectedLogs.Update(hasSelectedItems && session.MarkUnmarkLogsCommand.CanExecute(null));
 				this.canShowFileInExplorer.Update(hasSelectedItems && session.IsLogFileNeeded);

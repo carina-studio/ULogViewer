@@ -160,6 +160,11 @@
 				</MenuItem.Icon>
 			</MenuItem>
 			<Separator/>
+			<MenuItem Name="filterByLogPropertyMenuItem" Command="{Binding $parent[UserControl].FilterByLogPropertyCommand}" Header="{DynamicResource String/SessionView.FilterByLogProperty.Disabled}">
+				<MenuItem.Icon>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Filter.Outline}"/>
+				</MenuItem.Icon>
+			</MenuItem>
 			<MenuItem Command="{Binding LogFiltering.FilterBySelectedProcessIdCommand}" Header="{DynamicResource String/SessionView.FilterLogsBySelectedProcessId}">
 				<MenuItem.CommandParameter>
 					<sys:Boolean>False</sys:Boolean>
