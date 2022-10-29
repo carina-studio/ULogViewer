@@ -31,6 +31,10 @@ class LogFilteringViewModel : SessionComponent
     /// </summary>
     public static readonly ObservableProperty<FilterCombinationMode> FiltersCombinationModeProperty = ObservableProperty.Register<LogFilteringViewModel, FilterCombinationMode>(nameof(FiltersCombinationMode), FilterCombinationMode.Intersection);
     /// <summary>
+    /// Property of <see cref="IgnoreTextFilterCase"/>.
+    /// </summary>
+    public static ObservableProperty<bool> IgnoreTextFilterCaseProperty = ObservableProperty.Register<LogFilteringViewModel, bool>(nameof(IgnoreTextFilterCase), true);
+    /// <summary>
     /// Property of <see cref="IsFiltering"/>.
     /// </summary>
     public static ObservableProperty<bool> IsFilteringProperty = ObservableProperty.Register<LogFilteringViewModel, bool>(nameof(IsFiltering));
@@ -154,6 +158,9 @@ class LogFilteringViewModel : SessionComponent
             };
         });
 
+        // setup properties
+        this.SetValue(IgnoreTextFilterCaseProperty, this.Settings.GetValueOrDefault(SettingKeys.IgnoreCaseOfLogTextFilter));
+
         // create log filter
         this.logFilter = new DisplayableLogFilter(this.Application, this.AllLogs, this.CompareLogs).Also(it =>
         {
@@ -183,7 +190,29 @@ class LogFilteringViewModel : SessionComponent
 
             // setup text regex
             List<Regex> textRegexList = new List<Regex>();
-            this.TextFilter?.Let(it => textRegexList.Add(it));
+            this.TextFilter?.Let(it => 
+            {
+                var options = it.Options;
+                if ((options & RegexOptions.IgnoreCase) == 0)
+                {
+                    if (this.GetValue(IgnoreTextFilterCaseProperty))
+                    {
+                        it = new(it.ToString(), options | RegexOptions.IgnoreCase);
+                        this.SetValue(TextFilterProperty, it);
+                        this.updateLogFilterAction!.Cancel();
+                    }
+                }
+                else
+                {
+                    if (!this.GetValue(IgnoreTextFilterCaseProperty))
+                    {
+                        it = new(it.ToString(), options & ~RegexOptions.IgnoreCase);
+                        this.SetValue(TextFilterProperty, it);
+                        this.updateLogFilterAction!.Cancel();
+                    }
+                }
+                textRegexList.Add(it);
+            });
             foreach (var filter in this.predefinedTextFilters)
                 textRegexList.Add(filter.Regex);
             this.logFilter.TextRegexList = textRegexList;
@@ -208,6 +237,11 @@ class LogFilteringViewModel : SessionComponent
         {
             if (!isInit)
                 this.updateLogFilterAction.Schedule();
+        });
+        this.GetValueAsObservable(IgnoreTextFilterCaseProperty).Subscribe(_ =>
+        {
+            if (!isInit && this.GetValue(TextFilterProperty) != null)
+                this.updateLogFilterAction.Execute();
         });
         this.GetValueAsObservable(LevelFilterProperty).Subscribe(level =>
         {
@@ -464,6 +498,16 @@ class LogFilteringViewModel : SessionComponent
 
 
     /// <summary>
+    /// Get or set whether case of <see cref="TextFilter"/> should be ignored or not.
+    /// </summary>
+    public bool IgnoreTextFilterCase
+    {
+        get => this.GetValue(IgnoreTextFilterCaseProperty);
+        set => this.SetValue(IgnoreTextFilterCaseProperty, value);
+    }
+
+
+    /// <summary>
     /// Notify that given log was updated and should be processed again.
     /// </summary>
     /// <param name="log">Log to be processed again.</param>
@@ -601,6 +645,8 @@ class LogFilteringViewModel : SessionComponent
         {
             this.SetValue(FiltersCombinationModeProperty, combinationMode);
         }
+        if (element.TryGetProperty($"LogFiltering.{nameof(IgnoreTextFilterCase)}", out jsonValue))
+            this.SetValue(IgnoreTextFilterCaseProperty, jsonValue.ValueKind != JsonValueKind.False);
         if ((element.TryGetProperty("LogLevelFilter", out jsonValue) // Upgrade case
             || element.TryGetProperty($"LogFiltering.{nameof(LevelFilter)}", out jsonValue))
                 && jsonValue.ValueKind == JsonValueKind.String
@@ -663,6 +709,8 @@ class LogFilteringViewModel : SessionComponent
 
         // save filtering parameters
         writer.WriteString($"LogFiltering.{nameof(FiltersCombinationMode)}", this.FiltersCombinationMode.ToString());
+        if (!this.GetValue(IgnoreTextFilterCaseProperty))
+            writer.WriteBoolean($"LogFiltering.{nameof(IgnoreTextFilterCase)}", false);
         writer.WriteString($"LogFiltering.{nameof(LevelFilter)}", this.LevelFilter.ToString());
         this.GetValue(ProcessIdFilterProperty)?.Let(it => writer.WriteNumber($"LogFiltering.{nameof(ProcessIdFilter)}", it));
         this.GetValue(TextFilterProperty)?.Let(it =>

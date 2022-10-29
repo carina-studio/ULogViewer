@@ -11,11 +11,11 @@
 	<sys:String x:Key="String/App.Shutdown">Exit</sys:String>
 
 	<!-- AppOptionsDialog -->
-	<sys:String x:Key="String/AppOptionsDialog.AccuracyOfFilteringBySelectedLogProperty">Accuracy of filtering by value of log property</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.AccuracyOfFilteringBySelectedLogProperty">Accuracy of filtering by value of property</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ContinuousLogReadingUpdateInterval">Log update interval when continuous reading (milliseconds)</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs">Scroll to latest log after reloading logs</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs.Description">Only for continuous logs reading.</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.IgnoreCaseOfLogTextFilter">Ignore case of text filter</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.IgnoreCaseOfLogTextFilter">Ignore case of text filter by default</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.InitialLogProfile">Initial log profile when startup</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.LogAnalysis">Log Analysis</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.LogFiltering">Log Filtering</sys:String>
@@ -913,6 +913,7 @@ return null;</sys:String>
 	<sys:String x:Key="String/SessionView.Hint.NoLogToShow">No log to show</sys:String>
 	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.Section1">Click</sys:String>
 	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.Section2">on toolbar to select log profile to start</sys:String>
+	<sys:String x:Key="String/SessionView.IgnoreLogTextFilterCase">Ignore case of text filter</sys:String>
 	<sys:String x:Key="String/SessionView.LastLogsFilteringDuration">Filtering took {0}</sys:String>
 	<sys:String x:Key="String/SessionView.LastLogsReadingDuration">Reading took {0}</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisPanel">Log Analysis</sys:String>

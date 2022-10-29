@@ -14,11 +14,11 @@
 	<sys:String x:Key="String/AppCulture.System">自動</sys:String>
 
 	<!-- AppOptionsDialog -->
-	<sys:String x:Key="String/AppOptionsDialog.AccuracyOfFilteringBySelectedLogProperty">以日誌屬性值篩選之精確度</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.AccuracyOfFilteringBySelectedLogProperty">以屬性值篩選之精確度</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ContinuousLogReadingUpdateInterval">連續讀取時的日誌更新時距 (毫秒)</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs">在重新載入日誌後捲動至最新的日誌</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs.Description">僅適用於連續讀取日誌。</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.IgnoreCaseOfLogTextFilter">文字篩選忽略大小寫</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.IgnoreCaseOfLogTextFilter">預設忽略文字篩選大小寫</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.InitialLogProfile">啟動時的初始日誌類型</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.LogAnalysis">日誌分析</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.LogFiltering">日誌篩選</sys:String>
@@ -879,6 +879,7 @@ return null;</sys:String>
 	<sys:String x:Key="String/SessionView.Hint.NoLogToShow">沒有日誌可以顯示</sys:String>
 	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.Section1">點一下工具列的</sys:String>
 	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.Section2">來選取日誌類型以開始使用</sys:String>
+	<sys:String x:Key="String/SessionView.IgnoreLogTextFilterCase">忽略文字篩選的大小寫</sys:String>
 	<sys:String x:Key="String/SessionView.LastLogsFilteringDuration">篩選耗時 {0}</sys:String>
 	<sys:String x:Key="String/SessionView.LastLogsReadingDuration">讀取耗時 {0}</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisPanel">日誌分析</sys:String>

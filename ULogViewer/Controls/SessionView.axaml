@@ -442,7 +442,7 @@
 
 					<!-- Log actions and filters -->
 					<asControls:ToolBarScrollViewer Name="toolBarScrollViewer">
-						<Grid Background="{x:Static Brushes.Transparent}" ColumnDefinitions="Auto,*,Auto">
+						<Grid Background="{x:Static Brushes.Transparent}" ColumnDefinitions="Auto,*">
 
 							<!-- Log actions and filters -->
 							<StackPanel Orientation="Horizontal">
@@ -607,7 +607,7 @@
 
 							<!-- Text filter -->
 							<Panel Name="logTextFilterTextBoxPanel" Grid.Column="1" HorizontalAlignment="Stretch" Margin="{StaticResource Thickness/ToolBar.Item.Margin}" MinWidth="{StaticResource Double/SessionView.ToolBar.LogTextFilter.MinWidth}" VerticalAlignment="Center">
-								<asControls:RegexTextBox Name="logTextFilterTextBox" Classes="RegexTextBox_InvalidText" GotFocus="OnLogFilterTextBoxGotFocus" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" Object="{Binding LogFiltering.TextFilter, Mode=TwoWay}" Padding="{StaticResource Thickness/TextBox.Padding.WithInPlaceAction}" ToolTip.Tip="{DynamicResource String/SessionView.LogTextFilter.ToolTip}" Watermark="{DynamicResource String/SessionView.LogTextFilter.Watermark}"/>
+								<asControls:RegexTextBox Name="logTextFilterTextBox" Classes="RegexTextBox_InvalidText" GotFocus="OnLogFilterTextBoxGotFocus" IgnoreCase="{Binding LogFiltering.IgnoreTextFilterCase}" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" Object="{Binding LogFiltering.TextFilter, Mode=TwoWay}" Padding="{StaticResource Thickness/TextBox.Padding.WithInPlaceAction}" ToolTip.Tip="{DynamicResource String/SessionView.LogTextFilter.ToolTip}" Watermark="{DynamicResource String/SessionView.LogTextFilter.Watermark}"/>
 								<StackPanel HorizontalAlignment="Right" Orientation="Horizontal" VerticalAlignment="Center">
 									<Button Name="clearLogTextFilterButton" Classes="TextBox_InPlaceAction" Command="{Binding #logTextFilterTextBox.Clear}" IsVisible="{Binding #logTextFilterTextBox.Text, Converter={x:Static aConverters:StringConverters.IsNotNullOrEmpty}}" ToolTip.Tip="{DynamicResource String/Common.Clear}">
 										<Image Classes="Icon" Source="{StaticResource Image/Icon.Close}"/>
@@ -623,6 +623,14 @@
 
 					<!-- Filter actions -->
 					<StackPanel Grid.Column="1" Orientation="Horizontal">
+
+						<!-- Ignore case of text filter -->
+						<ToggleButton Classes="ToolBar_ToggleButton" IsChecked="{Binding LogFiltering.IgnoreTextFilterCase, Mode=TwoWay}" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" ToolTip.Tip="{DynamicResource String/SessionView.IgnoreLogTextFilterCase}">
+							<Panel>
+								<Image Classes="Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/IgnoreCase}"/>
+								<Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/IgnoreCase.Light}"/>
+							</Panel>
+						</ToggleButton>
 
 						<!-- Predefined text filters -->
 						<ToggleButton Name="predefinedLogTextFiltersButton" Classes="ToolBar_ToggleButton" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" ToolTip.Tip="{DynamicResource String/SessionView.PredefinedLogTextFilters}">

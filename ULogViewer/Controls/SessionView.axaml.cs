@@ -523,7 +523,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			});
 			this.logTextFilterTextBox = this.Get<RegexTextBox>(nameof(logTextFilterTextBox)).Also(it =>
 			{
-				it.IgnoreCase = this.Settings.GetValueOrDefault(SettingKeys.IgnoreCaseOfLogTextFilter);
 				it.ValidationDelay = this.UpdateLogFilterParamsDelay;
 				if (Platform.IsMacOS)
 					(this.Application as AppSuite.AppSuiteApplication)?.EnsureClosingToolTipIfWindowIsInactive(it);
@@ -4167,8 +4166,6 @@ namespace CarinaStudio.ULogViewer.Controls
 				if (!isEnabled)
 					this.logAnalysisScriptSetListBox.SelectedItems.Clear();
 			}
-			else if (e.Key == SettingKeys.IgnoreCaseOfLogTextFilter)
-				this.logTextFilterTextBox.IgnoreCase = (bool)e.Value;
 			else if (e.Key == SettingKeys.LogFontFamily)
 				this.UpdateLogFontFamily();
 			else if (e.Key == SettingKeys.LogFontSize)
