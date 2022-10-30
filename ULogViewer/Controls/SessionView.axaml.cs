@@ -381,11 +381,13 @@ namespace CarinaStudio.ULogViewer.Controls
 						: null;
 					if (log != null && this.lastClickedLogPropertyView?.Tag is DisplayableLogProperty property)
 					{
-						var propertyValue = DisplayableLog.HasStringProperty(property.Name) && log.TryGetProperty<string?>(property.Name, out var s)
-							? s
-							: null;
+						var propertyValue = DisplayableLog.HasStringProperty(property.Name) 
+							&& !property.Name.EndsWith("String")
+							&& log.TryGetProperty<string?>(property.Name, out var s)
+								? s
+								: null;
 						if (propertyValue == null)
-							propertyValue = property.Name;
+							propertyValue = property.DisplayName;
 						else if (propertyValue.Length > 16)
 							propertyValue = $"{propertyValue.Substring(0, 16)}…";
 						this.copyLogPropertyMenuItem.Header = this.Application.GetFormattedString("SessionView.CopyLogProperty", property.DisplayName);
@@ -3442,7 +3444,10 @@ namespace CarinaStudio.ULogViewer.Controls
 				// update command states
 				this.canCopyLogProperty.Update(hasSingleSelectedItem && logProperty != null);
 				this.canCopyLogText.Update(hasSingleSelectedItem);
-				this.canFilterByLogProperty.Update(logProperty != null && DisplayableLog.HasStringProperty(logProperty.Name));
+				this.canFilterByLogProperty.Update(logProperty != null 
+					&& DisplayableLog.HasStringProperty(logProperty.Name)
+					&& !logProperty.Name.EndsWith("String")
+				);
 				this.canMarkSelectedLogs.Update(hasSelectedItems && session.MarkLogsCommand.CanExecute(null));
 				this.canMarkUnmarkSelectedLogs.Update(hasSelectedItems && session.MarkUnmarkLogsCommand.CanExecute(null));
 				this.canShowFileInExplorer.Update(hasSelectedItems && session.IsLogFileNeeded);

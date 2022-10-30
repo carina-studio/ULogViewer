@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
@@ -72,18 +73,27 @@ class LogFilteringViewModel : SessionComponent
     public static readonly ObservableProperty<int?> ThreadIdFilterProperty = ObservableProperty.Register<LogFilteringViewModel, int?>(nameof(ThreadIdFilter));
 
 
+    // Type of token.
+    enum TokenType
+    {
+        HexNumber,
+        DecimalNumber,
+        VaryingString,
+        CjkPhrese,
+        Phrase,
+        Symbol,
+    }
+
+
     // Constants.
-    const string DecimalNumberGroupName = "DecimalNumber";
+    const string CjkCharacterPattern = @"(\p{IsCJKRadicalsSupplement}|\p{IsCJKSymbolsandPunctuation}|\p{IsEnclosedCJKLettersandMonths}|\p{IsCJKCompatibility}|\p{IsCJKUnifiedIdeographsExtensionA}|\p{IsCJKUnifiedIdeographs}|\p{IsCJKCompatibilityIdeographs}|\p{IsCJKCompatibilityForms})";
+    const string CjkPhrasePattern = $"{CjkCharacterPattern}+";
     const string DecimalNumberPattern = "[0-9]+";
-    const string HexNumberGroupName = "HexNumber";
     const string HexNumberPattern = "(0x[a-f0-9]+|[0-9]*[a-f][0-9]+[a-f0-9]+)";
-    const string SymbolGroupName = "Symbol";
-    const string VaryingWordGroupName = "VaryingWord";
-    const string WordGroupName = "Word";
+    const string PhrasePattern = @"[\p{L}\p{IsArabic}\p{IsCyrillic}\p{IsDevanagari}\-_]+";
 
 
     // Static fields.
-    static readonly Regex PropertyValueTokenRegex;
     static readonly HashSet<char> RegexReservedChars = new()
     {
         '(', ')',
@@ -93,6 +103,19 @@ class LogFilteringViewModel : SessionComponent
         '+', '-', '*', '.', ',', '\\',
         '?', '!', '^', '$', '#',
     };
+    static readonly HashSet<string> SpecialPhrases = new(StringComparer.Create(CultureInfo.InvariantCulture, true))
+    {
+        "at",
+        "between",
+        "by",
+        "from",
+        "in",
+        "of",
+        "through",
+        "to",
+        "via",
+    };
+    static readonly Regex TokenRegex;
 
 
     // Fields.
@@ -112,17 +135,18 @@ class LogFilteringViewModel : SessionComponent
     static LogFilteringViewModel()
     {
         var patternBuffer = new StringBuilder();
-        patternBuffer.Append($"(?<{HexNumberGroupName}>{HexNumberPattern})");
-        patternBuffer.Append($"|(?<{DecimalNumberGroupName}>{DecimalNumberPattern})");
-        patternBuffer.Append($"|(?<{VaryingWordGroupName}>'[^']*')");
-        patternBuffer.Append($"|(?<{VaryingWordGroupName}>\"[^\"]*\")");
-        patternBuffer.Append($"|(?<{VaryingWordGroupName}>\\([^\\)]*\\))");
-        patternBuffer.Append($"|(?<{VaryingWordGroupName}>\\[[^\\]]*\\])");
-        patternBuffer.Append($"|(?<{VaryingWordGroupName}>\\{{[^\\}}]*\\}})");
-        patternBuffer.Append($"|(?<{VaryingWordGroupName}>\\<[^\\>]*\\>)");
-        patternBuffer.Append($"|(?<{WordGroupName}>\\w+)");
-        patternBuffer.Append($"|(?<{SymbolGroupName}>[^\\s])");
-        PropertyValueTokenRegex = new(patternBuffer.ToString(), RegexOptions.IgnoreCase);
+        patternBuffer.Append($"(?<{nameof(TokenType.HexNumber)}>{HexNumberPattern})");
+        patternBuffer.Append($"|(?<{nameof(TokenType.DecimalNumber)}>{DecimalNumberPattern})");
+        patternBuffer.Append($"|(?<{nameof(TokenType.VaryingString)}>'[^']*')");
+        patternBuffer.Append($"|(?<{nameof(TokenType.VaryingString)}>\"[^\"]*\")");
+        patternBuffer.Append($"|(?<{nameof(TokenType.VaryingString)}>\\([^\\)]*\\))");
+        patternBuffer.Append($"|(?<{nameof(TokenType.VaryingString)}>\\[[^\\]]*\\])");
+        patternBuffer.Append($"|(?<{nameof(TokenType.VaryingString)}>\\{{[^\\}}]*\\}})");
+        patternBuffer.Append($"|(?<{nameof(TokenType.VaryingString)}>\\<[^\\>]*\\>)");
+        patternBuffer.Append($"|(?<{nameof(TokenType.CjkPhrese)}>{CjkPhrasePattern})");
+        patternBuffer.Append($"|(?<{nameof(TokenType.Phrase)}>{PhrasePattern})");
+        patternBuffer.Append($"|(?<{nameof(TokenType.Symbol)}>[^\\s])");
+        TokenRegex = new(patternBuffer.ToString(), RegexOptions.Compiled | RegexOptions.IgnoreCase);
     }
 
 
@@ -393,55 +417,114 @@ class LogFilteringViewModel : SessionComponent
         });
         if (string.IsNullOrWhiteSpace(propertyValue))
         {
-            this.Logger.LogDebug("No property value to be used as text filter");
+            this.Logger.LogDebug("No property value to filter");
             return;
         }
 
-        // generate pattern
+        // parse template value
         var accuracy = this.Settings.GetValueOrDefault(SettingKeys.AccuracyOfFilteringBySelectedLogProperty);
-        var patternBuffer = new StringBuilder();
-        var remainingTokenCount = accuracy == Accuracy.High ? 10 : 5;
-        var prevGroups = (GroupCollection?)null;
-        var match = PropertyValueTokenRegex.Match(propertyValue);
-        while (match.Success && remainingTokenCount > 0)
+        var tokens = new List<(TokenType, string)>();
+        var tokenTypes = Enum.GetValues<TokenType>();
+        while (true)
         {
-            var groups = match.Groups;
-            if (groups[HexNumberGroupName].Success)
-                patternBuffer.Append(@$"\s*{HexNumberPattern}");
-            else if (groups[DecimalNumberGroupName].Success)
-                patternBuffer.Append(@$"\s*{DecimalNumberPattern}");
-            else if (groups[VaryingWordGroupName].Success)
+            var remainingTokenCount = accuracy == Accuracy.High ? 10 : 5;
+            var match = TokenRegex.Match(propertyValue);
+            while (match.Success && remainingTokenCount > 0)
             {
-                var value = groups[VaryingWordGroupName].Value;
-                var startSymbol = value[0];
-                var endSymbol = value[value.Length - 1];
-                if (RegexReservedChars.Contains(startSymbol))
-                    patternBuffer.Append(@$"\s*\{startSymbol}[^\{endSymbol}]*\{endSymbol}");
-                else
-                    patternBuffer.Append(@$"\s*{startSymbol}[^{endSymbol}]*{endSymbol}");
+                var groups = match.Groups;
+                foreach (var tokenType in tokenTypes)
+                {
+                    var name = tokenType.ToString();
+                    if (groups[name].Success)
+                    {
+                        tokens.Add((tokenType, groups[name].Value));
+                        if (tokenType != TokenType.Symbol)
+                            --remainingTokenCount;
+                        break;
+                    }
+                }
+                match = match.NextMatch();
             }
-            else if (groups[WordGroupName].Success)
+            if (tokens.Count == 1 && tokens[0].Item1 == TokenType.VaryingString)
             {
-                var word = accuracy == Accuracy.Low ? "\\w+" : groups[WordGroupName].Value;
-                if (prevGroups == null || !prevGroups[WordGroupName].Success)
-                    patternBuffer.Append(@$"\s*{word}");
-                else
-                    patternBuffer.Append(@$"\s+{word}");
+                propertyValue = propertyValue.Trim().Let(it => it.Substring(1, it.Length - 2));
+                tokens.Clear();
+                continue;
             }
-            else if (groups[SymbolGroupName].Success)
+            break;
+        }
+
+        // generate pattern
+        var patternBuffer = new StringBuilder();
+        var tokenCount = tokens.Count;
+        if (tokenCount == 0)
+        {
+            this.Logger.LogWarning("No token parsed from property value to filter");
+            return;
+        }
+        if (tokenCount == 1)
+        {
+            (var tokenType, var value) = tokens[0];
+            if (tokenType != TokenType.Symbol || !RegexReservedChars.Contains(value[0]))
+                patternBuffer.Append(value);
+            else
+                patternBuffer.Append(@$"\{value}");
+        }
+        else
+        {
+            var prevTokenType = default(TokenType);
+            var prevToken = "";
+            for (var i = 0; i < tokenCount; ++i)
             {
-                var symbol = groups[SymbolGroupName].Value[0];
-                if (RegexReservedChars.Contains(symbol))
-                    patternBuffer.Append(@$"\s*\{symbol}");
-                else
-                    patternBuffer.Append(@$"\s*{symbol}");
-                ++remainingTokenCount;
+                (var tokenType, var value) = tokens[i];
+                if (tokenType == TokenType.HexNumber)
+                    patternBuffer.Append(@$"\s*{HexNumberPattern}");
+                else if (tokenType == TokenType.DecimalNumber)
+                    patternBuffer.Append(@$"\s*{DecimalNumberPattern}");
+                else if (tokenType == TokenType.VaryingString)
+                {
+                    var startSymbol = value[0];
+                    var endSymbol = value[value.Length - 1];
+                    if (RegexReservedChars.Contains(startSymbol))
+                        patternBuffer.Append(@$"\s*\{startSymbol}[^\{endSymbol}]*\{endSymbol}");
+                    else
+                        patternBuffer.Append(@$"\s*{startSymbol}[^{endSymbol}]*{endSymbol}");
+                }
+                else if (tokenType == TokenType.CjkPhrese)
+                    patternBuffer.Append(@$"\s*{CjkPhrasePattern}");
+                else if (tokenType == TokenType.Phrase)
+                {
+                    var phrasePattern = value;
+                    if (!SpecialPhrases.Contains(value))
+                    {
+                        if (accuracy == Accuracy.Low
+                            || (i > 0 && prevTokenType == TokenType.Phrase && SpecialPhrases.Contains(prevToken))
+                            || (i < tokenCount - 1 && tokens[i + 1].Item1 == TokenType.Phrase && SpecialPhrases.Contains(tokens[i + 1].Item2)))
+                        {
+                            phrasePattern = @"[\S\D]+";
+                        }
+                        else
+                            phrasePattern = value.Replace("-", "\\-");
+                    }
+                    if (i > 0 && prevTokenType == TokenType.Phrase)
+                        patternBuffer.Append(@$"\s+{phrasePattern}");
+                    else
+                        patternBuffer.Append(@$"\s*{phrasePattern}");
+                }
+                else if (tokenType == TokenType.Symbol)
+                {
+                    var symbol = value[0];
+                    if (RegexReservedChars.Contains(symbol))
+                        patternBuffer.Append(@$"\s*\{symbol}");
+                    else
+                        patternBuffer.Append(@$"\s*{symbol}");
+                }
+                prevTokenType = tokenType;
+                prevToken = value;
             }
-            --remainingTokenCount;
-            prevGroups = groups;
-            match = match.NextMatch();
         }
         this.SetValue(FiltersCombinationModeProperty, FilterCombinationMode.Intersection);
+        this.SetValue(IgnoreTextFilterCaseProperty, true);
         this.ResetFilters(false);
         this.SetValue(TextFilterProperty, new Regex(patternBuffer.ToString(), this.Settings.GetValueOrDefault(SettingKeys.IgnoreCaseOfLogTextFilter) ? RegexOptions.IgnoreCase : RegexOptions.None));
     }
