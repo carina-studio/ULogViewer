@@ -32,7 +32,12 @@
 
 			<!-- Content -->
 			<ScrollViewer MaxHeight="{StaticResource Double/OperationDurationAnalysisRuleEditorDialog.Content.MaxHeight}">
-				<StackPanel Classes="Dialog_ContentPanel">
+				<StackPanel Classes="Dialog_ContentPanel_WithHeader">
+
+					<!-- Common -->
+					<Border Classes="Dialog_TextBlock_Header1">
+						<TextBlock Classes="Dialog_TextBlock_Header1" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Common}"/>
+					</Border>
 
 					<!-- Pattern -->
 					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Pattern}"/>
@@ -58,7 +63,12 @@
 					<!-- Conditions -->
 					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Conditions}"/>
 					<appControls:DisplayableLogAnalysisConditionsEditor Conditions="{Binding $parent[Window].Conditions}" VerticalScrollBarVisibility="Disabled"/>
-					<Separator Classes="Dialog_Separator"/>
+					<Separator Classes="Dialog_Separator_Large"/>
+
+					<!-- Result -->
+					<Border Classes="Dialog_TextBlock_Header1">
+						<TextBlock Classes="Dialog_TextBlock_Header1" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Result}"/>
+					</Border>
 
 					<!-- Result type -->
 					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.ResultType}"/>

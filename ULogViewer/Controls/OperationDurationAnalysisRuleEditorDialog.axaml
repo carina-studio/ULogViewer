@@ -44,7 +44,7 @@
 
 					<!-- Common -->
 					<Border Classes="Dialog_TextBlock_Header1">
-						<TextBlock Classes="Dialog_TextBlock_Header1" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.Common}"/>
+						<TextBlock Classes="Dialog_TextBlock_Header1" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Common}"/>
 					</Border>
 					
 					<!-- Operation name -->
@@ -121,7 +121,7 @@
 
 					<!-- Other -->
 					<Border Classes="Dialog_TextBlock_Header1">
-						<TextBlock Classes="Dialog_TextBlock_Header1" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.Other}"/>
+						<TextBlock Classes="Dialog_TextBlock_Header1" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Other}"/>
 					</Border>
 
 					<!-- Ending mode -->
