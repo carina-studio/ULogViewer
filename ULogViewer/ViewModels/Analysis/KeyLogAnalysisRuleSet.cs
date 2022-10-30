@@ -1,6 +1,7 @@
 using CarinaStudio.AppSuite.Data;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
+using CarinaStudio.ULogViewer.IO;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using System;
 using System.Collections.Generic;
@@ -25,35 +26,69 @@ class KeyLogAnalysisRuleSet : DisplayableLogAnalysisRuleSet<KeyLogAnalysisRuleSe
         /// <summary>
         /// Initialize new <see cref="Rule"/> instance.
         /// </summary>
-        /// <param name="pattern">Pattern to match log.</param>
-        /// <param name="level">Level to match log.</param>
-        /// <param name="conditions">Conditions to match log.</param>
-        /// <param name="resultType">Type of analysis result to be generated when pattern matched.</param>
-        /// <param name="message">Formatted message to be generated when pattern matched.</param>
-        public Rule(Regex pattern, Logs.LogLevel level, IEnumerable<DisplayableLogAnalysisCondition> conditions, DisplayableLogAnalysisResultType resultType, string message)
+        public Rule(Regex pattern, 
+            Logs.LogLevel level, 
+            IEnumerable<DisplayableLogAnalysisCondition> conditions, 
+            DisplayableLogAnalysisResultType resultType, 
+            string message,
+            string? byteSizeVarName,
+            FileSizeUnit byteSizeUnit,
+            string? durationVarName,
+            TimeSpanUnit durationUnit,
+            string? quantityVarName)
         {
+            this.ByteSizeUnit = byteSizeUnit;
+            this.ByteSizeVariableName = string.IsNullOrWhiteSpace(byteSizeVarName) ? null : byteSizeVarName;
             this.Conditions = conditions is IList<DisplayableLogAnalysisCondition> list
                 ? ListExtensions.AsReadOnly(list)
                 : ListExtensions.AsReadOnly(conditions.ToArray());
+            this.DurationUnit = durationUnit;
+            this.DurationVariableName = string.IsNullOrWhiteSpace(durationVarName) ? null : durationVarName;
             this.Level = level;
             this.Message = message;
             this.Pattern = pattern;
+            this.QuantityVariableName = string.IsNullOrWhiteSpace(quantityVarName) ? null : quantityVarName;
             this.ResultType = resultType;
         }
+
+        /// <summary>
+        /// Unit to parse byte size of result.
+        /// </summary>
+        public FileSizeUnit ByteSizeUnit { get; }
+
+        /// <summary>
+        /// Name of variable to be treat as byte size of result.
+        /// </summary>
+        public string? ByteSizeVariableName { get; }
 
         /// <summary>
         /// Conditions to match log.
         /// </summary>
         public IList<DisplayableLogAnalysisCondition> Conditions { get; }
 
+        /// <summary>
+        /// Unit to parse duration of result.
+        /// </summary>
+        public TimeSpanUnit DurationUnit { get; }
+
+        /// <summary>
+        /// Name of variable to be treat as duration of result.
+        /// </summary>
+        public string? DurationVariableName { get; }
+
         /// <inheritdoc/>
         public bool Equals(Rule? rule) =>
             rule != null
+            && rule.ByteSizeUnit == this.ByteSizeUnit
+            && rule.ByteSizeVariableName == this.ByteSizeVariableName
             && rule.Conditions.SequenceEqual(this.Conditions)
+            && rule.DurationUnit == this.DurationUnit
+            && rule.DurationVariableName == this.DurationVariableName
             && rule.Level == this.Level
             && rule.Message == this.Message
             && rule.Pattern.ToString() == this.Pattern.ToString()
             && rule.Pattern.Options == this.Pattern.Options
+            && rule.QuantityVariableName == this.QuantityVariableName
             && rule.ResultType == this.ResultType;
 
         /// <inheritdoc/>
@@ -78,6 +113,11 @@ class KeyLogAnalysisRuleSet : DisplayableLogAnalysisRuleSet<KeyLogAnalysisRuleSe
         /// Get pattern to match log.
         /// </summary>
         public Regex Pattern { get; }
+
+        /// <summary>
+        /// Name of variable to be treat as quantity of result.
+        /// </summary>
+        public string? QuantityVariableName { get; }
 
         /// <summary>
         /// Get type of analysis result to be generated when pattern matched.
@@ -212,7 +252,29 @@ class KeyLogAnalysisRuleSet : DisplayableLogAnalysisRuleSet<KeyLogAnalysisRuleSe
                                 && Enum.TryParse<DisplayableLogAnalysisResultType>(resultTypeValue.GetString(), out var type)
                                     ? type
                                     : DisplayableLogAnalysisResultType.Information;
-                            patterns.Add(new(regex, level, conditions, resultType, formattedMessage));
+                            var byteSizeUnit = jsonValue.TryGetProperty(nameof(Rule.ByteSizeUnit), out var byteSizeUnitValue) 
+                                && resultTypeValue.ValueKind == JsonValueKind.String
+                                && Enum.TryParse<FileSizeUnit>(byteSizeUnitValue.GetString(), out var fileSizeUnit)
+                                    ? fileSizeUnit
+                                    : default;
+                            var byteSizeVarName = jsonValue.TryGetProperty(nameof(Rule.ByteSizeVariableName), out var varNameValue)
+                                && varNameValue.ValueKind == JsonValueKind.String
+                                    ? varNameValue.GetString()
+                                    : null;
+                            var durationUnit = jsonValue.TryGetProperty(nameof(Rule.DurationUnit), out var durationUnitValue) 
+                                && resultTypeValue.ValueKind == JsonValueKind.String
+                                && Enum.TryParse<TimeSpanUnit>(durationUnitValue.GetString(), out var timeSpanUnit)
+                                    ? timeSpanUnit
+                                    : default;
+                            var durationVarName = jsonValue.TryGetProperty(nameof(Rule.DurationVariableName), out varNameValue)
+                                && varNameValue.ValueKind == JsonValueKind.String
+                                    ? varNameValue.GetString()
+                                    : null;
+                            var quantityVarName = jsonValue.TryGetProperty(nameof(Rule.QuantityVariableName), out varNameValue)
+                                && varNameValue.ValueKind == JsonValueKind.String
+                                    ? varNameValue.GetString()
+                                    : null;
+                            patterns.Add(new(regex, level, conditions, resultType, formattedMessage, byteSizeVarName, byteSizeUnit, durationVarName, durationUnit, quantityVarName));
                         }
                     });
                     break;
@@ -265,6 +327,16 @@ class KeyLogAnalysisRuleSet : DisplayableLogAnalysisRuleSet<KeyLogAnalysisRuleSe
                 }
                 writer.WriteString(nameof(Rule.Message), rule.Message);
                 writer.WriteString(nameof(Rule.ResultType), rule.ResultType.ToString());
+                if (rule.ByteSizeUnit != default)
+                    writer.WriteString(nameof(Rule.ByteSizeUnit), rule.ByteSizeUnit.ToString());
+                if (rule.ByteSizeVariableName != null)
+                    writer.WriteString(nameof(rule.ByteSizeVariableName), rule.ByteSizeVariableName);
+                if (rule.DurationUnit != default)
+                    writer.WriteString(nameof(Rule.DurationUnit), rule.DurationUnit.ToString());
+                if (rule.DurationVariableName != null)
+                    writer.WriteString(nameof(rule.DurationVariableName), rule.DurationVariableName);
+                if (rule.QuantityVariableName != null)
+                    writer.WriteString(nameof(rule.QuantityVariableName), rule.QuantityVariableName);
                 writer.WriteEndObject();
             }
             writer.WriteEndArray();

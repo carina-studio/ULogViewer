@@ -10,6 +10,7 @@
 		xmlns:appAnalysis="using:CarinaStudio.ULogViewer.ViewModels.Analysis"
 		xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
 		xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
+		xmlns:appIO="using:CarinaStudio.ULogViewer.IO"
 		xmlns:appLogs="using:CarinaStudio.ULogViewer.Logs"
 		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
@@ -81,6 +82,31 @@
 					<asControls:StringInterpolationFormatTextBox Name="messageTextBox" Classes="Dialog_TextBox" Height="{StaticResource Double/KeyLogAnalysisRuleEditorDialog.MessageInput.Height}"/>
 					<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Message.Description}"/>
 					<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.FormatDescription}" Uri="{x:Static app:Uris.StringInterpolationReference}"/>
+					<Separator Classes="Dialog_Separator"/>
+
+					<!-- Byte size variable -->
+					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.ByteSizeVariableName}"/>
+					<TextBox Name="byteSizeVarNameTextBox" Classes="Dialog_TextBox" MaxLength="256"/>
+					<Separator Classes="Dialog_Separator"/>
+
+					<!-- Byte size unit -->
+					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.ByteSizeUnit}"/>
+					<asControls:EnumComboBox Name="byteSizeUnitComboBox" Classes="Dialog_ComboBox" EnumType="{x:Type appIO:FileSizeUnit}"/>
+					<Separator Classes="Dialog_Separator"/>
+
+					<!-- Duration variable -->
+					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.DurationVariableName}"/>
+					<TextBox Name="durationVarNameTextBox" Classes="Dialog_TextBox" MaxLength="256"/>
+					<Separator Classes="Dialog_Separator"/>
+
+					<!-- Duration unit -->
+					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.DurationUnit}"/>
+					<asControls:EnumComboBox Name="durationUnitComboBox" Classes="Dialog_ComboBox" EnumType="{x:Type app:TimeSpanUnit}"/>
+					<Separator Classes="Dialog_Separator"/>
+
+					<!-- Quantity variable -->
+					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.QuantityVariableName}"/>
+					<TextBox Name="quantityVarNameTextBox" Classes="Dialog_TextBox" MaxLength="256"/>
 					
 				</StackPanel>
 			</ScrollViewer>

@@ -21,10 +21,15 @@ namespace CarinaStudio.ULogViewer.Controls;
 partial class KeyLogAnalysisRuleEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
 {
 	// Fields.
+	readonly ComboBox byteSizeUnitComboBox;
+	readonly TextBox byteSizeVarNameTextBox;
 	readonly ObservableList<DisplayableLogAnalysisCondition> conditions = new();
+	readonly ComboBox durationUnitComboBox;
+	readonly TextBox durationVarNameTextBox;
 	readonly ComboBox levelComboBox;
 	readonly StringInterpolationFormatTextBox messageTextBox;
 	readonly PatternEditor patternEditor;
+	readonly TextBox quantityVarNameTextBox;
 	readonly ComboBox resultTypeComboBox;
 
 
@@ -34,6 +39,10 @@ partial class KeyLogAnalysisRuleEditorDialog : AppSuite.Controls.InputDialog<IUL
 	public KeyLogAnalysisRuleEditorDialog()
 	{
 		AvaloniaXamlLoader.Load(this);
+		this.byteSizeUnitComboBox = this.Get<ComboBox>(nameof(byteSizeUnitComboBox));
+		this.byteSizeVarNameTextBox = this.Get<TextBox>(nameof(byteSizeVarNameTextBox));
+		this.durationUnitComboBox = this.Get<ComboBox>(nameof(durationUnitComboBox));
+		this.durationVarNameTextBox = this.Get<TextBox>(nameof(durationVarNameTextBox));
 		this.levelComboBox = this.Get<ComboBox>(nameof(levelComboBox));
 		this.messageTextBox = this.Get<StringInterpolationFormatTextBox>(nameof(messageTextBox)).Also(it =>
 		{
@@ -56,6 +65,7 @@ partial class KeyLogAnalysisRuleEditorDialog : AppSuite.Controls.InputDialog<IUL
 		{
 			it.GetObservable(PatternEditor.PatternProperty).Subscribe(_ => this.InvalidateInput());
 		});
+		this.quantityVarNameTextBox = this.Get<TextBox>(nameof(quantityVarNameTextBox));
 		this.resultTypeComboBox = this.Get<ComboBox>(nameof(resultTypeComboBox));
 	}
 
@@ -73,7 +83,12 @@ partial class KeyLogAnalysisRuleEditorDialog : AppSuite.Controls.InputDialog<IUL
 			(Logs.LogLevel)this.levelComboBox.SelectedItem!,
 			this.conditions,
 			(DisplayableLogAnalysisResultType)this.resultTypeComboBox.SelectedItem!, 
-			this.messageTextBox.Text.AsNonNull());
+			this.messageTextBox.Text.AsNonNull(),
+			this.byteSizeVarNameTextBox.Text,
+			(IO.FileSizeUnit)this.byteSizeUnitComboBox.SelectedItem!,
+			this.durationVarNameTextBox.Text,
+			(TimeSpanUnit)this.durationUnitComboBox.SelectedItem!,
+			this.quantityVarNameTextBox.Text);
 		if (rule.Equals(this.Rule))
 			return Task.FromResult<object?>(this.Rule);
 		return Task.FromResult<object?>(rule);
@@ -87,15 +102,22 @@ partial class KeyLogAnalysisRuleEditorDialog : AppSuite.Controls.InputDialog<IUL
 		var rule = this.Rule;
 		if (rule == null)
 		{
+			this.byteSizeUnitComboBox.SelectedItem = default(IO.FileSizeUnit);
+			this.durationUnitComboBox.SelectedItem = default(TimeSpanUnit);
 			this.levelComboBox.SelectedItem = Logs.LogLevel.Undefined;
 			this.resultTypeComboBox.SelectedItem = DisplayableLogAnalysisResultType.Information;
 		}
 		else
 		{
+			this.byteSizeUnitComboBox.SelectedItem = rule.ByteSizeUnit;
+			this.byteSizeVarNameTextBox.Text = rule.ByteSizeVariableName;
 			this.conditions.AddAll(rule.Conditions);
+			this.durationUnitComboBox.SelectedItem = rule.DurationUnit;
+			this.durationVarNameTextBox.Text = rule.DurationVariableName;
 			this.levelComboBox.SelectedItem = rule.Level;
 			this.messageTextBox.Text = rule.Message;
 			this.patternEditor.Pattern = rule.Pattern;
+			this.quantityVarNameTextBox.Text = rule.QuantityVariableName;
 			this.resultTypeComboBox.SelectedItem = rule.ResultType;
 		}
 		this.SynchronizationContext.Post(() =>

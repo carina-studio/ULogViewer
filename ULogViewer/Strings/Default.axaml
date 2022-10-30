@@ -195,7 +195,11 @@
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Warning">Warning</sys:String>
 
 	<!-- DisplayableLogAnalysisRuleEditorDialog -->
+	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.ByteSizeUnit">Unit to parse byte size of analysis result</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.ByteSizeVariableName">Variable to parse byte size of analysis result</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Conditions">Extra conditions</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.DurationUnit">Unit to parse duration of analysis result</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.DurationVariableName">Variable to parse duration of analysis result</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Level">Log level</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Level.Description">Only logs with given level will be selected to generate results.</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Message">Message of analysis result</sys:String>
@@ -203,6 +207,7 @@
 	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Message.Required">Message of analysis result (required)</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Pattern">Pattern (required)</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Pattern.Description">You can use \$\$ as separator between text properties. For example, if you want to find log with user name "John" and message "Hello" then you can use pattern "John\$\$Hello". The order of text properties are same as visible log properties defined by log profile.</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.QuantityVariableName">Variable to parse quantity of analysis result</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.ResultType">Type of analysis result</sys:String>
 
 	<!-- DisplayableLogAnalysisRuleSetEditorDialog -->
