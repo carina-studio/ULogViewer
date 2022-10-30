@@ -1,7 +1,6 @@
 using CarinaStudio.AppSuite.Data;
 using CarinaStudio.Collections;
-using CarinaStudio.Threading;
-using CarinaStudio.ULogViewer.Logs.Profiles;
+using CarinaStudio.ULogViewer.IO;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -25,21 +24,6 @@ class OperationDurationAnalysisRuleSet : DisplayableLogAnalysisRuleSet<Operation
         /// <summary>
         /// Initialize new <see cref="Rule"/> instance.
         /// </summary>
-        /// <param name="operationName">Name of operation.</param>
-        /// <param name="resultType">Type of generated result.</param>
-        /// <param name="beginningPattern">Pattern to match text of beginning of operation log.</param>
-        /// <param name="beginningPreActions">Actions to perform before all matching beginning conditions.</param>
-        /// <param name="beginningConditions">Conditions for beginning of operation log after text matched.</param>
-        /// <param name="beginningPostActions">Actions to perform after all beginning conditions matched.</param>
-        /// <param name="endingPattern">Pattern to match text of ending of operation log.</param>
-        /// <param name="endingPreActions">Actions to perform before all matching ending conditions.</param>
-        /// <param name="endingConditions">Conditions for ending of operation log after text matched.</param>
-        /// <param name="endingPostActions">Actions to perform after all ending conditions matched.</param>
-        /// <param name="endingMode">Mode of ending operation.</param>
-        /// <param name="endingVars">variables to compare when <paramref name="endingMode"/> is <see cref="OperationEndingMode.CompareVariables"/>.</param>
-        /// <param name="minDuration">The lower bound of duration to generate result.</param>
-        /// <param name="maxDuration">The upper bound of duration to generate result.</param>
-        /// <param name="customMessage">Custom formatted message.</param>
         public Rule(string operationName, 
             DisplayableLogAnalysisResultType resultType,
             Regex beginningPattern, 
@@ -54,7 +38,10 @@ class OperationDurationAnalysisRuleSet : DisplayableLogAnalysisRuleSet<Operation
             IEnumerable<string> endingVars,
             TimeSpan? minDuration,
             TimeSpan? maxDuration,
-            string? customMessage)
+            string? customMessage,
+            string? byteSizeVarName,
+            FileSizeUnit byteSizeUnit,
+            string? quantityVarName)
         {
             minDuration?.Let(min =>
             {
@@ -78,6 +65,8 @@ class OperationDurationAnalysisRuleSet : DisplayableLogAnalysisRuleSet<Operation
             this.BeginningPattern = beginningPattern;
             this.BeginningPostActions = ListExtensions.AsReadOnly(beginningPostActions.ToArray());
             this.BeginningPreActions = ListExtensions.AsReadOnly(beginningPreActions.ToArray());
+            this.ByteSizeUnit = byteSizeUnit;
+            this.ByteSizeVariableName = string.IsNullOrWhiteSpace(byteSizeVarName) ? null : byteSizeVarName;
             this.CustomMessage = customMessage;
             this.EndingConditions = ListExtensions.AsReadOnly(endingConditions.ToArray());
             this.EndingMode = endingMode;
@@ -88,6 +77,7 @@ class OperationDurationAnalysisRuleSet : DisplayableLogAnalysisRuleSet<Operation
             this.MaxDuration = maxDuration;
             this.MinDuration = minDuration;
             this.OperationName = operationName;
+            this.QuantityVariableName = string.IsNullOrWhiteSpace(quantityVarName) ? null : quantityVarName;
             this.ResultType = resultType;
         }
 
@@ -102,6 +92,8 @@ class OperationDurationAnalysisRuleSet : DisplayableLogAnalysisRuleSet<Operation
             this.BeginningPattern = template.BeginningPattern;
             this.BeginningPostActions = template.BeginningPostActions;
             this.BeginningPreActions = template.BeginningPreActions;
+            this.ByteSizeUnit = template.ByteSizeUnit;
+            this.ByteSizeVariableName = template.ByteSizeVariableName;
             this.CustomMessage = template.CustomMessage;
             this.EndingConditions = template.EndingConditions;
             this.EndingMode = template.EndingMode;
@@ -112,6 +104,7 @@ class OperationDurationAnalysisRuleSet : DisplayableLogAnalysisRuleSet<Operation
             this.MaxDuration = template.MaxDuration;
             this.MinDuration = template.MinDuration;
             this.OperationName = operationName;
+            this.QuantityVariableName = template.QuantityVariableName;
             this.ResultType = template.ResultType;
         }
 
@@ -134,6 +127,16 @@ class OperationDurationAnalysisRuleSet : DisplayableLogAnalysisRuleSet<Operation
         /// Get list of actions to perform before all matching beginning conditions.
         /// </summary>
         public IList<ContextualBasedAnalysisAction> BeginningPreActions { get; }
+
+        /// <summary>
+        /// Unit to parse byte size of result.
+        /// </summary>
+        public FileSizeUnit ByteSizeUnit { get; }
+
+        /// <summary>
+        /// Name of variable to be treat as byte size of result.
+        /// </summary>
+        public string? ByteSizeVariableName { get; }
 
         /// <summary>
         /// Get custom formatted message.
@@ -179,6 +182,8 @@ class OperationDurationAnalysisRuleSet : DisplayableLogAnalysisRuleSet<Operation
             && rule.BeginningConditions.SequenceEqual(this.BeginningConditions)
             && rule.BeginningPreActions.SequenceEqual(this.BeginningPreActions)
             && rule.BeginningPostActions.SequenceEqual(this.BeginningPostActions)
+            && rule.ByteSizeUnit == this.ByteSizeUnit
+            && rule.ByteSizeVariableName == this.ByteSizeVariableName
             && rule.CustomMessage == this.CustomMessage
             && rule.EndingPattern.ToString() == this.EndingPattern.ToString()
             && rule.EndingPattern.Options == this.EndingPattern.Options
@@ -188,6 +193,7 @@ class OperationDurationAnalysisRuleSet : DisplayableLogAnalysisRuleSet<Operation
             && rule.EndingVariables.SequenceEqual(this.EndingVariables)
             && rule.MaxDuration == this.MaxDuration
             && rule.MinDuration == this.MinDuration
+            && rule.QuantityVariableName == this.QuantityVariableName
             && rule.ResultType == this.ResultType;
 
         /// <inheritdoc/>
@@ -224,6 +230,11 @@ class OperationDurationAnalysisRuleSet : DisplayableLogAnalysisRuleSet<Operation
         /// </summary>
         public static bool operator !=(Rule? lhs, Rule? rhs) =>
             object.ReferenceEquals(lhs, null) ? !object.ReferenceEquals(rhs, null) : !lhs.Equals(rhs);
+        
+        /// <summary>
+        /// Name of variable to be treat as quantity of result.
+        /// </summary>
+        public string? QuantityVariableName { get; }
         
         /// <summary>
         /// Get result type.

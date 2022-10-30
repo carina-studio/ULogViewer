@@ -1,9 +1,6 @@
 using CarinaStudio.Collections;
-using CarinaStudio.ULogViewer.Logs;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace CarinaStudio.ULogViewer.ViewModels.Analysis.ContextualBased;
 
@@ -35,15 +32,19 @@ class OperationDurationDisplayableLogAnalyzer : RuleBasedDisplayableLogAnalyzer<
         readonly string operationName;
 
         // Constructor.
-        public Result(OperationDurationDisplayableLogAnalyzer analyzer, string operationName, DisplayableLogAnalysisResultType resultType, DisplayableLog beginningLog, DisplayableLog endingLog, TimeSpan duration, string? customMessage) : base(analyzer, resultType, beginningLog)
+        public Result(OperationDurationDisplayableLogAnalyzer analyzer, string operationName, DisplayableLogAnalysisResultType resultType, DisplayableLog beginningLog, DisplayableLog endingLog, TimeSpan duration, string? customMessage, long? byteSize, long? quantity) : base(analyzer, resultType, beginningLog)
         {
             this.customMessage = customMessage;
             this.Duration = duration;
             this.operationName = operationName;
+            this.Quantity = quantity;
         }
 
         // Beginning log.
         public override DisplayableLog? BeginningLog { get; }
+
+        /// <inheritdoc/>
+        public override long? ByteSize { get; }
 
         // Duration.
         public override TimeSpan? Duration { get; }
@@ -62,6 +63,9 @@ class OperationDurationDisplayableLogAnalyzer : RuleBasedDisplayableLogAnalyzer<
                 return this.operationName;
             return this.customMessage;
         }
+
+        /// <inheritdoc/>
+        public override long? Quantity { get; }
     }
 
 

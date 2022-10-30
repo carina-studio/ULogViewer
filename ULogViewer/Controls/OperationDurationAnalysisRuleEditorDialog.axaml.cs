@@ -24,6 +24,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly PatternEditor beginningPatternEditor;
 		readonly ObservableList<ContextualBasedAnalysisAction> beginningPostActions = new();
 		readonly ObservableList<ContextualBasedAnalysisAction> beginningPreActions = new();
+		readonly ComboBox byteSizeUnitComboBox;
+		readonly TextBox byteSizeVarNameTextBox;
 		readonly TextBox customMessageTextBox;
 		readonly ObservableList<DisplayableLogAnalysisCondition> endingConditions = new();
 		readonly ComboBox endingModeComboBox;
@@ -35,6 +37,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly CarinaStudio.Controls.TimeSpanTextBox maxDurationTextBox;
 		readonly CarinaStudio.Controls.TimeSpanTextBox minDurationTextBox;
 		readonly TextBox operationNameTextBox;
+		readonly TextBox quantityVarNameTextBox;
 		readonly ComboBox resultTypeComboBox;
 
 
@@ -48,6 +51,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				it.GetObservable(PatternEditor.PatternProperty).Subscribe(_ => this.InvalidateInput());
 			});
+			this.byteSizeUnitComboBox = this.Get<ComboBox>(nameof(byteSizeUnitComboBox));
+			this.byteSizeVarNameTextBox = this.Get<TextBox>(nameof(byteSizeVarNameTextBox));
 			this.customMessageTextBox = this.Get<TextBox>(nameof(customMessageTextBox));
 			this.endingModeComboBox = this.Get<ComboBox>(nameof(endingModeComboBox));
 			this.endingPatternEditor = this.Get<PatternEditor>(nameof(endingPatternEditor)).Also(it =>
@@ -72,6 +77,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				it.GetObservable(TextBox.TextProperty).Subscribe(_ => this.InvalidateInput());
 			});
+			this.quantityVarNameTextBox = this.Get<TextBox>(nameof(quantityVarNameTextBox));
 			this.resultTypeComboBox = this.Get<ComboBox>(nameof(resultTypeComboBox));
 		}
 
@@ -210,7 +216,10 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.endingVariables,
 				this.minDurationTextBox.Value,
 				this.maxDurationTextBox.Value,
-				this.customMessageTextBox.Text);
+				this.customMessageTextBox.Text,
+				this.byteSizeVarNameTextBox.Text,
+				(IO.FileSizeUnit)this.byteSizeUnitComboBox.SelectedItem!,
+				this.quantityVarNameTextBox.Text);
 			if (rule == newRule)
 				return Task.FromResult<object?>(rule);
 			return Task.FromResult<object?>(newRule);
@@ -230,6 +239,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.beginningPatternEditor.Pattern = rule.BeginningPattern;
 				this.beginningPreActions.AddAll(rule.BeginningPreActions);
 				this.beginningPostActions.AddAll(rule.BeginningPostActions);
+				this.byteSizeUnitComboBox.SelectedItem = rule.ByteSizeUnit;
+				this.byteSizeVarNameTextBox.Text = rule.ByteSizeVariableName;
 				this.customMessageTextBox.Text = rule.CustomMessage;
 				this.endingConditions.AddAll(rule.EndingConditions);
 				this.endingModeComboBox.SelectedItem = rule.EndingMode;
@@ -239,6 +250,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.endingVariables.AddAll(rule.EndingVariables);
 				this.minDurationTextBox.Value = rule.MinDuration;
 				this.maxDurationTextBox.Value = rule.MaxDuration;
+				this.quantityVarNameTextBox.Text = rule.QuantityVariableName;
 			}
 			else
 			{
@@ -251,6 +263,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.beginningPreActions.AddAll(this.DefaultBeginningPreActions);
 				if (this.DefaultBeginningPostActions != null)
 					this.beginningPostActions.AddAll(this.DefaultBeginningPostActions);
+				this.byteSizeUnitComboBox.SelectedItem = default(IO.FileSizeUnit);
 				if (this.DefaultEndingConditions != null)
 					this.endingConditions.AddAll(this.DefaultEndingConditions);
 				this.endingModeComboBox.SelectedItem = OperationEndingMode.FirstInFirstOut;
