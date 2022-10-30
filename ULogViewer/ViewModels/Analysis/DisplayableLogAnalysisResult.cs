@@ -217,45 +217,69 @@ enum DisplayableLogAnalysisResultType : uint
     /// <summary>
     /// Error.
     /// </summary>
-    Error = 0x1,
+    Error,
     /// <summary>
     /// Warning.
     /// </summary>
-    Warning = 0x2,
+    Warning,
     /// <summary>
     /// Start of operation.
     /// </summary>
-    OperationStart = 0x4,
+    OperationStart,
     /// <summary>
     /// End of operation.
     /// </summary>
-    OperationEnd = 0x8,
+    OperationEnd,
+    /// <summary>
+    /// Increase.
+    /// </summary>
+    Increase,
+    /// <summary>
+    /// Decrease.
+    /// </summary>
+    Decrease,
+    /// <summary>
+    /// Steady.
+    /// </summary>
+    Steady,
+    /// <summary>
+    /// Fast.
+    /// </summary>
+    Fast,
+    /// <summary>
+    /// Slow.
+    /// </summary>
+    Slow,
     /// <summary>
     /// Checkpoint.
     /// </summary>
-    Checkpoint = 0x10,
+    Checkpoint,
     /// <summary>
     /// Time span.
     /// </summary>
-    TimeSpan = 0x20,
+    TimeSpan,
     /// <summary>
     /// Performance.
     /// </summary>
-    Performance = 0x40,
+    Performance,
     /// <summary>
     /// Frequency.
     /// </summary>
-    Frequency = 0x80,
+    Frequency,
     /// <summary>
     /// Trend.
     /// </summary>
-    Trend = 0x100,
+    Trend,
     /// <summary>
     /// Information.
     /// </summary>
-    Information = 0x200,
+    Information,
     /// <summary>
     /// Skipped operation.
     /// </summary>
-    SkippedOperation = 0x400,
+    SkippedOperation,
+    /// <summary>
+    /// Debug.
+    /// </summary>
+    Debug,
 }

@@ -168,13 +168,19 @@
 
 	<!-- DisplayableLogAnalysisResultType -->
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Checkpoint">檢查點</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Debug">偵錯</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Decrease">下降</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Error">錯誤</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Fast">快速</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Frequency">頻率</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Increase">上升</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Information">資訊</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.OperationEnd">動作結束</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.OperationStart">動作開始</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Performance">效能</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.SkippedOperation">已略過動作</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Slow">慢速</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Steady">持平</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.TimeSpan">時距</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Trend">趨勢</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Warning">警告</sys:String>

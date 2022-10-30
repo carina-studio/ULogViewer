@@ -13,8 +13,13 @@
 
 			<!-- Icon -->
 			<SolidColorBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.Checkpoint" Color="#f26357"/>
+			<SolidColorBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.Decrease" Color="#ff0000"/>
 			<SolidColorBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.Frequency" Color="#a7d800"/>
+			<SolidColorBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.Increase" Color="#00ff00"/>
+			<SolidColorBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.OperationEnd" Color="#e6c700"/>
+			<SolidColorBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.OperationStart" Color="#009bd9"/>
 			<SolidColorBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.SkippedOperation" Color="#bfbfbf"/>
+			<SolidColorBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.Slow" Color="#bfbfbf"/>
 			<SolidColorBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.TimeSpan" Color="#53e6c6"/>
 			<SolidColorBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.Trend" Color="#a87cff"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile" Color="{DynamicResource SystemAccentColorLight1}"/>

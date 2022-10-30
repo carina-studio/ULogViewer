@@ -10,9 +10,13 @@
 
 			<!-- Icon -->
 			<SolidColorBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.Checkpoint" Color="#e65e53"/>
+			<SolidColorBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.Decrease" Color="#cc0000"/>
 			<SolidColorBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.Frequency" Color="#94bf00"/>
-			<SolidColorBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.SkippedOperation" Color="#b3b3b3"/>
-			<SolidColorBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.TimeSpan" Color="#4accb0"/>
+			<SolidColorBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.Increase" Color="#00cc00"/>
+			<SolidColorBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.OperationStart" Color="#0092cc"/>
+			<SolidColorBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.SkippedOperation" Color="#808080"/>
+			<SolidColorBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.Slow" Color="#808080"/>
+			<SolidColorBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.TimeSpan" Color="#45bfa5"/>
 			<SolidColorBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.Trend" Color="#8f69d9"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Apple" Color="#888888"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Automation" Color="#497dcc"/>
