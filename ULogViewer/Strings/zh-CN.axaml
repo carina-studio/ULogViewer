@@ -227,6 +227,13 @@
 	<!-- FileLogDataSourceProvider -->
 	<sys:String x:Key="String/FileLogDataSourceProvider.DisplayName">档案</sys:String>
 
+	<!-- FileSizeUnit -->
+	<sys:String x:Key="String/FileSizeUnit.Bits">位</sys:String>
+	<sys:String x:Key="String/FileSizeUnit.Bytes">字节</sys:String>
+	<sys:String x:Key="String/FileSizeUnit.Gigabytes">GB (千兆字节)</sys:String>
+	<sys:String x:Key="String/FileSizeUnit.Kilobytes">KB (千字节)</sys:String>
+	<sys:String x:Key="String/FileSizeUnit.Megabytes">MB (兆字节)</sys:String>
+
 	<!-- IPEndPointInputDialog -->
 	<sys:String x:Key="String/IPEndPointInputDialog.Address">IP 地址</sys:String>
 	<sys:String x:Key="String/IPEndPointInputDialog.Port">端口</sys:String>
@@ -1026,6 +1033,15 @@ return null;</sys:String>
 
 	<!-- TimeSpanFormatInputDialog -->
 	<sys:String x:Key="String/TimeSpanFormatInputDialog.Message">时距格式</sys:String>
+
+	<!-- TimeSpanUnit -->
+	<sys:String x:Key="String/TimeSpanUnit.Days">日</sys:String>
+	<sys:String x:Key="String/TimeSpanUnit.Hours">小时</sys:String>
+	<sys:String x:Key="String/TimeSpanUnit.Microseconds">微秒</sys:String>
+	<sys:String x:Key="String/TimeSpanUnit.Milliseconds">毫秒</sys:String>
+	<sys:String x:Key="String/TimeSpanUnit.Minutes">分钟</sys:String>
+	<sys:String x:Key="String/TimeSpanUnit.Nanoseconds">纳秒</sys:String>
+	<sys:String x:Key="String/TimeSpanUnit.Seconds">秒</sys:String>
 
 	<!-- TimestampDisplayableLogCategoryGranularity -->
 	<sys:String x:Key="String/TimestampDisplayableLogCategoryGranularity.Day">日</sys:String>

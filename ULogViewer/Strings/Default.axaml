@@ -238,6 +238,15 @@
 	<!-- FileLogDataSourceProvider -->
 	<sys:String x:Key="String/FileLogDataSourceProvider.DisplayName">File</sys:String>
 
+	<!-- FileSizeUnit -->
+	<sys:String x:Key="String/FileSizeUnit.Bits">Bits</sys:String>
+	<sys:String x:Key="String/FileSizeUnit.Bytes">Bytes</sys:String>
+	<sys:String x:Key="String/FileSizeUnit.Gigabytes">GB</sys:String>
+	<sys:String x:Key="String/FileSizeUnit.Kilobytes">KB</sys:String>
+	<sys:String x:Key="String/FileSizeUnit.Megabytes">MB</sys:String>
+	<sys:String x:Key="String/FileSizeUnit.Petabytes">PB</sys:String>
+	<sys:String x:Key="String/FileSizeUnit.Terabytes">TB</sys:String>
+
 	<!-- IPEndPointInputDialog -->
 	<sys:String x:Key="String/IPEndPointInputDialog.Address">IP address</sys:String>
 	<sys:String x:Key="String/IPEndPointInputDialog.Port">Port</sys:String>
@@ -1060,6 +1069,15 @@ return null;</sys:String>
 
 	<!-- TimeSpanFormatInputDialog -->
 	<sys:String x:Key="String/TimeSpanFormatInputDialog.Message">Time span format</sys:String>
+
+	<!-- TimeSpanUnit -->
+	<sys:String x:Key="String/TimeSpanUnit.Days">Days</sys:String>
+	<sys:String x:Key="String/TimeSpanUnit.Hours">Hours</sys:String>
+	<sys:String x:Key="String/TimeSpanUnit.Microseconds">Microseconds</sys:String>
+	<sys:String x:Key="String/TimeSpanUnit.Milliseconds">Milliseconds</sys:String>
+	<sys:String x:Key="String/TimeSpanUnit.Minutes">Minutes</sys:String>
+	<sys:String x:Key="String/TimeSpanUnit.Nanoseconds">Nanoseconds</sys:String>
+	<sys:String x:Key="String/TimeSpanUnit.Seconds">Seconds</sys:String>
 
 	<!-- TimestampDisplayableLogCategoryGranularity -->
 	<sys:String x:Key="String/TimestampDisplayableLogCategoryGranularity.Day">Day</sys:String>
