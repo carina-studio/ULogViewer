@@ -31,7 +31,12 @@
 
 			<!-- Content -->
 			<ScrollViewer MaxHeight="{StaticResource Double/OperationCountingAnalysisRuleEditorDialog.Content.MaxHeight}">
-				<StackPanel Classes="Dialog_ContentPanel">
+				<StackPanel Classes="Dialog_ContentPanel_WithHeader">
+
+					<!-- Common -->
+					<Border Classes="Dialog_TextBlock_Header1">
+						<TextBlock Classes="Dialog_TextBlock_Header1" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Common}"/>
+					</Border>
 					
 					<!-- Operation name -->
 					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/OperationCountingAnalysisRuleEditorDialog.OperationName}"/>
@@ -68,7 +73,12 @@
 					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/OperationCountingAnalysisRuleEditorDialog.Interval}"/>
 					<abControls:TimeSpanTextBox Name="intervalTextBox" Classes="Dialog_TextBox"/>
 					<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/TimeSpanTextBox.FormatDescription}" TextWrapping="Wrap"/>
-					<Separator Classes="Dialog_Separator"/>
+					<Separator Classes="Dialog_Separator_Large"/>
+
+					<!-- Result -->
+					<Border Classes="Dialog_TextBlock_Header1">
+						<TextBlock Classes="Dialog_TextBlock_Header1" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Result}"/>
+					</Border>
 
 					<!-- Result type -->
 					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.ResultType}"/>
@@ -85,7 +95,6 @@
 							</DataTemplate>
 						</ComboBox.ItemTemplate>
 					</ComboBox>
-					<Separator Classes="Dialog_Separator"/>
 					
 				</StackPanel>
 			</ScrollViewer>
