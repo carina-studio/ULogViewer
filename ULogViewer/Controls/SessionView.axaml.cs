@@ -3035,7 +3035,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when pointer released on log analysis result list box.
 		void OnLogAnalysisResultListBoxPointerReleased(object? sender, PointerReleasedEventArgs e)
 		{
-			if (e.InitialPressMouseButton == MouseButton.Left)
+			if (e.InitialPressMouseButton == Avalonia.Input.MouseButton.Left)
 				this.isPointerPressedOnLogAnalysisResultListBox = false;
 		}
 
