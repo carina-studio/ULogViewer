@@ -1544,15 +1544,18 @@
 										</Grid.IsVisible>
 										
 										<!-- Duration -->
-										<Image 
+										<asControls:Image 
 											Classes="Icon" 
 											Grid.Row="0" 
 											Height="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.Icon.Size}" 
 											IsVisible="{Binding HasDuration}" 
-											Margin="{StaticResource Thickness/SessionView.LogAnalysisResult.SubInfo.Icon.Margin}" 
-											Source="{StaticResource Image/Timer.Outline}" 
+											Margin="{StaticResource Thickness/SessionView.LogAnalysisResult.SubInfo.Icon.Margin}"
 											VerticalAlignment="Center" 
-											Width="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.Icon.Size}"/>
+											Width="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.Icon.Size}">
+											<DrawingImage>
+												<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Timer.Outline}"/>
+											</DrawingImage>
+										</asControls:Image>
 										<TextBlock 
 											FontSize="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.FontSize}" 
 											Grid.Column="1" 
@@ -1564,15 +1567,18 @@
 											VerticalAlignment="Center"/>
 										
 										<!-- ByteSize -->
-										<Image 
+										<asControls:Image 
 											Classes="Icon" 
 											Grid.Row="1" 
 											Height="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.Icon.Size}" 
 											IsVisible="{Binding HasByteSize}" 
-											Margin="{StaticResource Thickness/SessionView.LogAnalysisResult.SubInfo.Icon.Margin}" 
-											Source="{StaticResource Image/Icon.Memory.Outline}" 
+											Margin="{StaticResource Thickness/SessionView.LogAnalysisResult.SubInfo.Icon.Margin}"
 											VerticalAlignment="Center" 
-											Width="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.Icon.Size}"/>
+											Width="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.Icon.Size}">
+											<DrawingImage>
+												<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{DynamicResource Geometry/Icon.Memory.Outline}"/>
+											</DrawingImage>
+										</asControls:Image>
 										<Grid 
 											ColumnDefinitions="Auto,Auto,*"
 											Grid.Column="1" 
@@ -1599,15 +1605,18 @@
 										</Grid>
 										
 										<!-- Quantity -->
-										<Image 
+										<asControls:Image 
 											Classes="Icon" 
 											Grid.Row="2" 
 											Height="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.Icon.Size}" 
 											IsVisible="{Binding HasQuantity}" 
-											Margin="{StaticResource Thickness/SessionView.LogAnalysisResult.SubInfo.Icon.Margin}" 
-											Source="{StaticResource Image/Layers.Outline}" 
+											Margin="{StaticResource Thickness/SessionView.LogAnalysisResult.SubInfo.Icon.Margin}"
 											VerticalAlignment="Center" 
-											Width="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.Icon.Size}"/>
+											Width="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.Icon.Size}">
+											<DrawingImage>
+												<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Layers.Outline}"/>
+											</DrawingImage>
+										</asControls:Image>
 										<TextBlock 
 											FontSize="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.FontSize}" 
 											Grid.Column="1" 
@@ -1642,7 +1651,7 @@
 								<Binding Path="IsVisible" ElementName="selectedLogAnalysisResultsQuantityPanel"/>
 							</MultiBinding>
 						</Border.IsVisible>
-						<StackPanel VerticalAlignment="Center">
+						<StackPanel TextBlock.Foreground="{DynamicResource TextControlForeground}" VerticalAlignment="Center">
 
 							<!-- Duration -->
 							<Grid Name="selectedLogAnalysisResultsDurationPanel" ColumnDefinitions="Auto,Auto,Auto,*" IsVisible="{Binding LogAnalysis.SelectedAnalysisResultsTotalDuration, Converter={x:Static aConverters:ObjectConverters.IsNotNull}}">
