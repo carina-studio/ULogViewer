@@ -5146,6 +5146,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Skip all tutorials.
 		void SkipAllTutorials()
 		{
+			(this.attachedWindow as MainWindow)?.SkipAllTutorials();
 			if (this.areAllTutorialsShown)
 				return;
 			this.PersistentState.Let(it =>
@@ -5157,7 +5158,6 @@ namespace CarinaStudio.ULogViewer.Controls
 				it.SetValue<bool>(IsSwitchingSidePanelsTutorialShownKey, true);
 				it.SetValue<bool>(IsTimestampCategoriesPanelTutorialShownKey, true);
 			});
-			(this.attachedWindow as MainWindow)?.SkipAllTutorials();
 			this.SetAndRaise<bool>(AreAllTutorialsShownProperty, ref this.areAllTutorialsShown, true);
 		}
 
