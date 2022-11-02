@@ -4,6 +4,7 @@ using CarinaStudio.Diagnostics;
 using CarinaStudio.Threading;
 using CarinaStudio.Threading.Tasks;
 using CarinaStudio.ULogViewer.Logs.Profiles;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -36,28 +37,13 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
     }
 
 
-    // Constants.
-    const int ListPoolCapacity = 32;
-
-
-    // Static fields.
-    static readonly Stack<List<DisplayableLog>> InternalDisplayableLogListPool = new();
-    static readonly Stack<List<byte>> InternalDisplayableLogVersionListPool = new();
-    static int MaxProcessingConcurrencyLevelBackground = 1;
-    static int MaxProcessingConcurrencyLevelDefault = 2;
-    static int MaxProcessingConcurrencyLevelRealtime = Math.Min(4, Math.Max(1, Environment.ProcessorCount >> 1));
-    static volatile TaskFactory? ProcessingTaskFactoryBackground;
-    static volatile TaskFactory? ProcessingTaskFactoryDefault;
-    static volatile TaskFactory? ProcessingTaskFactoryRealtime;
-    static readonly object ProcessingTaskFactorySyncLock = new();
-
-
     // Fields.
     DisplayableLogGroup? attachedLogGroup; // currently only supports attaching to single group
     LogProfile? attachedLogProfile; // currently only supports attaching to single profile
     readonly long baseMemorySize;
     ProcessingParams? currentProcessingParams;
     readonly Comparison<DisplayableLog> logComparison;
+    volatile ILogger? logger;
     readonly ScheduledAction processNextChunkAction;
     Comparison<DisplayableLog> sourceLogComparison;
     IList<DisplayableLog> sourceLogs;
@@ -75,6 +61,9 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
     /// <param name="priority">Priority of logs processing.</param>
     protected BaseDisplayableLogProcessor(IULogViewerApplication app, IList<DisplayableLog> sourceLogs, Comparison<DisplayableLog> comparison, DisplayableLogProcessingPriority priority = DisplayableLogProcessingPriority.Default) : base(app)
     {
+        // get ID
+        this.Id = BaseDisplayableLogProcessors.GetNextId();
+
         // create lists
         this.sourceLogVersions = sourceLogs.Count.Let(it =>
         {
@@ -92,6 +81,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
         };
         this.logComparison = comparison;
         this.ProcessingPriority = priority;
+        this.ProcessingTaskFactory = BaseDisplayableLogProcessors.GetProcessingTaskFactory(priority);
         this.sourceLogComparison = comparison;
         this.sourceLogs = sourceLogs;
 
@@ -120,6 +110,10 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
         var processingParams = this.currentProcessingParams;
         if (processingParams == null)
             return;
+        
+        // log
+        if (this.Application.IsDebugMode)
+            this.Logger.LogTrace($"Cancel current processing, unprocessed logs: {this.unprocessedLogs.Count}");
 
         // cancel all chunk processing
         lock (processingParams.ProcessingChunkLock)
@@ -242,16 +236,9 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
 
 
     /// <summary>
-    /// Get maximum supported concurrency level of logs processing.
+    /// Get unique ID of the processor instance.
     /// </summary>
-    /// <param name="priority">Priority of processing.</param>
-    /// <returns>Maximum concurrency level.</returns>
-    public static int GetMaxConcurrencyLevel(DisplayableLogProcessingPriority priority) => priority switch
-    {
-        DisplayableLogProcessingPriority.Default => MaxProcessingConcurrencyLevelDefault,
-        DisplayableLogProcessingPriority.Realtime => MaxProcessingConcurrencyLevelRealtime,
-        _ => MaxProcessingConcurrencyLevelBackground,
-    };
+    protected int Id { get; }
 
 
     /// <summary>
@@ -353,6 +340,8 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
             DisplayableLogProcessingPriority.Realtime => 0,
             _ => this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.DisplayableLogProcessinDelayBackground),
         };
+        if (this.Application.IsDebugMode && this.currentProcessingParams != null)
+            this.Logger.LogTrace("Invalidate current processing");
         this.startProcessingLogsAction.Schedule(delay);
     }
 
@@ -379,6 +368,18 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
 
 
     /// <summary>
+    /// Get logger.
+    /// </summary>
+    protected ILogger Logger
+    {
+        get => this.logger ?? this.Application.LoggerFactory.CreateLogger($"{this.GetType().Name}-{this.Id}").Also(it =>
+        {
+            this.logger = it;
+        });
+    }
+
+
+    /// <summary>
     /// Get maximum concurrency level of processing.
     /// </summary>
     protected virtual int MaxConcurrencyLevel { get => 1; }
@@ -392,46 +393,6 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
         get => this.baseMemorySize 
             + Memory.EstimateCollectionInstanceSize(IntPtr.Size, this.unprocessedLogs.Count) 
             + Memory.EstimateCollectionInstanceSize(sizeof(byte), this.sourceLogVersions.Capacity); 
-    }
-
-
-    // Obtain an list of log for internal usage.
-    static List<DisplayableLog> ObtainInternalDisplayableLogList(IEnumerable<DisplayableLog>? elements = null)
-    {
-        var list = InternalDisplayableLogListPool.Lock(it =>
-        {
-            it.TryPop(out var list);
-            return list;
-        });
-        if (list != null)
-        {
-            if (elements != null)
-                list.AddRange(elements);
-            return list;
-        }
-        if (elements != null)
-            return new List<DisplayableLog>(elements);
-        return new List<DisplayableLog>();
-    }
-
-
-    // Obtain an list of version of log for internal usage.
-    static List<byte> ObtainInternalDisplayableLogVersionList(IEnumerable<byte>? elements = null)
-    {
-        var list = InternalDisplayableLogVersionListPool.Lock(it =>
-        {
-            it.TryPop(out var list);
-            return list;
-        });
-        if (list != null)
-        {
-            if (elements != null)
-                list.AddRange(elements);
-            return list;
-        }
-        if (elements != null)
-            return new List<byte>(elements);
-        return new List<byte>();
     }
 
 
@@ -519,7 +480,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
         }
 
         // recycle list
-        RecyceInternalDisplayableLogVersionList(logVersions);
+        BaseDisplayableLogProcessors.RecyceInternalDisplayableLogVersionList(logVersions);
 
         // handle processing result
         this.OnChunkProcessed(processingParams.Token, logs, results);
@@ -684,7 +645,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
         logVersions.Reverse(); // Reverse back to same order as source list
 
         // recycle list
-        RecyceInternalDisplayableLogList(logs);
+        BaseDisplayableLogProcessors.RecyceInternalDisplayableLogList(logs);
 
         // wait for previous chunks
         var paddingInterval = this.ProcessingPriority switch
@@ -721,38 +682,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
     /// <summary>
     /// Get <see cref="TaskFactory"/> of processing tasks.
     /// </summary>
-    protected TaskFactory ProcessingTaskFactory
-    { 
-        get
-        {
-            var taskFactory = this.ProcessingPriority switch
-            {
-                DisplayableLogProcessingPriority.Default => ProcessingTaskFactoryDefault,
-                DisplayableLogProcessingPriority.Realtime => ProcessingTaskFactoryRealtime,
-                _ => ProcessingTaskFactoryBackground,
-            };
-            if (taskFactory != null)
-                return taskFactory;
-            return ProcessingTaskFactorySyncLock.Lock(_ => 
-            {
-                switch (this.ProcessingPriority)
-                {
-                    case DisplayableLogProcessingPriority.Default:
-                        if (ProcessingTaskFactoryDefault == null)
-                            ProcessingTaskFactoryDefault = new(new FixedThreadsTaskScheduler(MaxProcessingConcurrencyLevelDefault << 1));
-                        return ProcessingTaskFactoryDefault;
-                    case DisplayableLogProcessingPriority.Realtime:
-                        if (ProcessingTaskFactoryRealtime == null)
-                            ProcessingTaskFactoryRealtime = new(new FixedThreadsTaskScheduler(MaxProcessingConcurrencyLevelRealtime << 1));
-                        return ProcessingTaskFactoryRealtime;
-                    default:
-                        if (ProcessingTaskFactoryBackground == null)
-                            ProcessingTaskFactoryBackground = new(new FixedThreadsTaskScheduler(MaxProcessingConcurrencyLevelBackground << 1));
-                        return ProcessingTaskFactoryBackground;
-                }
-            });
-        }   
-    }
+    protected TaskFactory ProcessingTaskFactory { get; }
 
 
     // Start processing next chunk.
@@ -809,19 +739,19 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
         {
             if (it.Count <= chunkSize)
             {
-                var list = ObtainInternalDisplayableLogList(it);
+                var list = BaseDisplayableLogProcessors.ObtainInternalDisplayableLogList(it);
                 it.Clear();
                 return list;
             }
             else
             {
                 var index = it.Count - chunkSize;
-                var list = ObtainInternalDisplayableLogList(it.GetRangeView(index, chunkSize));
+                var list = BaseDisplayableLogProcessors.ObtainInternalDisplayableLogList(it.GetRangeView(index, chunkSize));
                 it.RemoveRange(index, chunkSize);
                 return list;
             }
         });
-        var logVersions = ObtainInternalDisplayableLogVersionList().Also(it => // The order will be reverse order of source list
+        var logVersions = BaseDisplayableLogProcessors.ObtainInternalDisplayableLogVersionList().Also(it => // The order will be reverse order of source list
         {
             var sourceLogs = this.sourceLogs;
             var sourceLogVersions = this.sourceLogVersions;
@@ -872,30 +802,6 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
 
     /// <inheritdoc/>
     public event PropertyChangedEventHandler? PropertyChanged;
-
-
-    // Recycle the list of log for internal usage.
-    static void RecyceInternalDisplayableLogList(List<DisplayableLog> list)
-    {
-        list.Clear();
-        lock (InternalDisplayableLogListPool)
-        {
-            if (InternalDisplayableLogListPool.Count < ListPoolCapacity)
-                InternalDisplayableLogListPool.Push(list);
-        }
-    }
-
-
-    // Recycle the list of version of log for internal usage.
-    static void RecyceInternalDisplayableLogVersionList(List<byte> list)
-    {
-        list.Clear();
-        lock (InternalDisplayableLogVersionListPool)
-        {
-            if (InternalDisplayableLogVersionListPool.Count < ListPoolCapacity)
-                InternalDisplayableLogVersionListPool.Push(list);
-        }
-    }
 
 
     /// <inheritdoc/>
@@ -956,6 +862,8 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
         // no need to process
         if (!isProcessingNeeded)
         {
+            if (this.Application.IsDebugMode)
+                this.Logger.LogTrace("No need to processing logs");
             this.Progress = 0;
             this.OnPropertyChanged(nameof(Progress));
             if (this.IsProcessing)
@@ -970,6 +878,8 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
             }
             return;
         }
+        if (this.Application.IsDebugMode)
+            this.Logger.LogTrace($"Start processing {this.sourceLogs.Count} logs");
 
         // start processing
         if (!this.IsProcessingNeeded)
@@ -979,10 +889,181 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
         }
         this.currentProcessingParams = new ProcessingParams(processingToken).Also(it => 
         {
-            it.MaxConcurrencyLevel = Math.Min(GetMaxConcurrencyLevel(this.ProcessingPriority), Math.Max(1, this.MaxConcurrencyLevel));
+            it.MaxConcurrencyLevel = Math.Min(BaseDisplayableLogProcessors.GetMaxConcurrencyLevel(this.ProcessingPriority), Math.Max(1, this.MaxConcurrencyLevel));
         });
         this.unprocessedLogs.AddAll(this.sourceLogs.Reverse(), true);
         for (var i = this.currentProcessingParams.MaxConcurrencyLevel; i > 0; --i)
             this.ProcessNextChunk(this.currentProcessingParams);
+    }
+
+
+    /// <inheritdoc/>
+    public override string ToString() =>
+        $"{this.GetType().Name}-{this.Id}";
+}
+
+
+/// <summary>
+/// Shared resources of <see cref="BaseDisplayableLogProcessor{TProcessingToken, TProcessingResult}"/>.
+/// </summary>
+static class BaseDisplayableLogProcessors
+{
+    /// <summary>
+    /// Max concurrency level of processing with background priority.
+    /// </summary>
+    public static int MaxProcessingConcurrencyLevelBackground = 1;
+    /// <summary>
+    /// Max concurrency level of processing with default priority.
+    /// </summary>
+    public static int MaxProcessingConcurrencyLevelDefault = 2;
+    /// <summary>
+    /// Max concurrency level of processing with realtime priority.
+    /// </summary>
+    public static int MaxProcessingConcurrencyLevelRealtime = Math.Min(4, Math.Max(1, Environment.ProcessorCount >> 1));
+
+
+    // Constants.
+    const int ListPoolCapacity = 32;
+
+
+    // Static fields.
+    static readonly Stack<List<DisplayableLog>> InternalDisplayableLogListPool = new();
+    static readonly Stack<List<byte>> InternalDisplayableLogVersionListPool = new();
+    static int NextId;
+    static volatile TaskFactory? ProcessingTaskFactoryBackground;
+    static volatile TaskFactory? ProcessingTaskFactoryDefault;
+    static volatile TaskFactory? ProcessingTaskFactoryRealtime;
+    static readonly object ProcessingTaskFactorySyncLock = new();
+
+
+    /// <summary>
+    /// Get maximum supported concurrency level of logs processing.
+    /// </summary>
+    /// <param name="priority">Priority of processing.</param>
+    /// <returns>Maximum concurrency level.</returns>
+    public static int GetMaxConcurrencyLevel(DisplayableLogProcessingPriority priority) => priority switch
+    {
+        DisplayableLogProcessingPriority.Default => MaxProcessingConcurrencyLevelDefault,
+        DisplayableLogProcessingPriority.Realtime => MaxProcessingConcurrencyLevelRealtime,
+        _ => MaxProcessingConcurrencyLevelBackground,
+    };
+
+
+    /// <summary>
+    /// Get next unique ID for processor instance.
+    /// </summary>
+    /// <returns>ID.</returns>
+    public static int GetNextId() => 
+        Interlocked.Increment(ref NextId);
+    
+
+    /// <summary>
+    /// Get <see cref="TaskFactory"/> for processing logs.
+    /// </summary>
+    /// <param name="priority">Priority.</param>
+    /// <returns><see cref="TaskFactory"/>.</returns>
+    public static TaskFactory GetProcessingTaskFactory(DisplayableLogProcessingPriority priority)
+    {
+        var taskFactory = priority switch
+        {
+            DisplayableLogProcessingPriority.Default => ProcessingTaskFactoryDefault,
+            DisplayableLogProcessingPriority.Realtime => ProcessingTaskFactoryRealtime,
+            _ => ProcessingTaskFactoryBackground,
+        };
+        if (taskFactory != null)
+            return taskFactory;
+        return ProcessingTaskFactorySyncLock.Lock(_ => 
+        {
+            switch (priority)
+            {
+                case DisplayableLogProcessingPriority.Default:
+                    ProcessingTaskFactoryDefault ??= new(new FixedThreadsTaskScheduler(MaxProcessingConcurrencyLevelDefault << 1));
+                    return ProcessingTaskFactoryDefault;
+                case DisplayableLogProcessingPriority.Realtime:
+                    ProcessingTaskFactoryRealtime ??= new(new FixedThreadsTaskScheduler(MaxProcessingConcurrencyLevelRealtime << 1));
+                    return ProcessingTaskFactoryRealtime;
+                default:
+                    ProcessingTaskFactoryBackground ??= new(new FixedThreadsTaskScheduler(MaxProcessingConcurrencyLevelBackground << 1));
+                    return ProcessingTaskFactoryBackground;
+            }
+        });
+    }
+    
+
+    /// <summary>
+    /// Obtain an list of log for internal usage.
+    /// </summary>
+    /// <param name="elements">Initial elements.</param>
+    /// <returns>List.</returns>
+    public static List<DisplayableLog> ObtainInternalDisplayableLogList(IEnumerable<DisplayableLog>? elements = null)
+    {
+        var list = InternalDisplayableLogListPool.Lock(it =>
+        {
+            it.TryPop(out var list);
+            return list;
+        });
+        if (list != null)
+        {
+            if (elements != null)
+                list.AddRange(elements);
+            return list;
+        }
+        if (elements != null)
+            return new List<DisplayableLog>(elements);
+        return new List<DisplayableLog>();
+    }
+
+
+    /// <summary>
+    /// Obtain an list of version of log for internal usage.
+    /// </summary>
+    /// <param name="elements">Initial elements.</param>
+    /// <returns>List.</returns>
+    public static List<byte> ObtainInternalDisplayableLogVersionList(IEnumerable<byte>? elements = null)
+    {
+        var list = InternalDisplayableLogVersionListPool.Lock(it =>
+        {
+            it.TryPop(out var list);
+            return list;
+        });
+        if (list != null)
+        {
+            if (elements != null)
+                list.AddRange(elements);
+            return list;
+        }
+        if (elements != null)
+            return new List<byte>(elements);
+        return new List<byte>();
+    }
+    
+
+    /// <summary>
+    /// Recycle the list of log for internal usage.
+    /// </summary>
+    /// <param name="list">List to recycle.</param>
+    public static void RecyceInternalDisplayableLogList(List<DisplayableLog> list)
+    {
+        list.Clear();
+        lock (InternalDisplayableLogListPool)
+        {
+            if (InternalDisplayableLogListPool.Count < ListPoolCapacity)
+                InternalDisplayableLogListPool.Push(list);
+        }
+    }
+
+
+    /// <summary>
+    /// Recycle the list of version of log for internal usage.
+    /// </summary>
+    /// <param name="list">List to recycle.</param>
+    public static void RecyceInternalDisplayableLogVersionList(List<byte> list)
+    {
+        list.Clear();
+        lock (InternalDisplayableLogVersionListPool)
+        {
+            if (InternalDisplayableLogVersionListPool.Count < ListPoolCapacity)
+                InternalDisplayableLogVersionListPool.Push(list);
+        }
     }
 }

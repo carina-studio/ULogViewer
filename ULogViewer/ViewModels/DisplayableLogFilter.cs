@@ -263,7 +263,7 @@ class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.Fi
 
 
     /// <inheritdoc/>
-    protected override int MaxConcurrencyLevel => GetMaxConcurrencyLevel(this.ProcessingPriority);
+    protected override int MaxConcurrencyLevel => BaseDisplayableLogProcessors.GetMaxConcurrencyLevel(this.ProcessingPriority);
 
 
     /// <inheritdoc/>

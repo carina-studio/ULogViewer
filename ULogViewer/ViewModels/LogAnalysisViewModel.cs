@@ -135,17 +135,53 @@ class LogAnalysisViewModel : SessionComponent
 
         // create analyzers
         this.keyLogAnalysisRuleSets.CollectionChanged += (_, e) => 
+        {
+            if (this.Application.IsDebugMode)
+            {
+                if (this.keyLogAnalysisRuleSets.IsEmpty())
+                    this.Logger.LogTrace("Clear key log analysis rule sets");
+                else
+                    this.Logger.LogTrace($"Change key log analysis rule sets: {this.keyLogAnalysisRuleSets.Count}");
+            }
             this.updateKeyLogAnalysisAction?.Schedule(this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogAnalysisParamsUpdateDelay));
+        };
         this.keyLogAnalyzer = new KeyLogDisplayableLogAnalyzer(this.Application, this.AllLogs, this.CompareLogs).Also(it =>
             this.AttachToAnalyzer(it));
         this.logAnalysisScriptSets.CollectionChanged += (_, e) =>
+        {
+            if (this.Application.IsDebugMode)
+            {
+                if (this.logAnalysisScriptSets.IsEmpty())
+                    this.Logger.LogTrace("Clear log analysis script sets");
+                else
+                    this.Logger.LogTrace($"Change log analysis script sets: {this.logAnalysisScriptSets.Count}");
+            }
             this.updateScriptLogAnalysis?.Schedule(this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogAnalysisParamsUpdateDelay));
+        };
         this.operationCountingAnalysisRuleSets.CollectionChanged += (_, e) => 
+        {
+            if (this.Application.IsDebugMode)
+            {
+                if (this.operationCountingAnalysisRuleSets.IsEmpty())
+                    this.Logger.LogTrace("Clear operation counting analysis rule sets");
+                else
+                    this.Logger.LogTrace($"Change operation counting analysis rule sets: {this.operationCountingAnalysisRuleSets.Count}");
+            }
             this.updateOperationCountingAnalysisAction?.Schedule(this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogAnalysisParamsUpdateDelay));
+        };
         this.operationCountingAnalyzer = new OperationCountingAnalyzer(this.Application, this.AllLogs, this.CompareLogs).Also(it =>
             this.AttachToAnalyzer(it));
         this.operationDurationAnalysisRuleSets.CollectionChanged += (_, e) => 
+        {
+            if (this.Application.IsDebugMode)
+            {
+                if (this.operationCountingAnalysisRuleSets.IsEmpty())
+                    this.Logger.LogTrace("Clear operation duration analysis rule sets");
+                else
+                    this.Logger.LogTrace($"Change operation duration analysis rule sets: {this.operationCountingAnalysisRuleSets.Count}");
+            }
             this.updateOperationDurationAnalysisAction?.Schedule(this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogAnalysisParamsUpdateDelay));
+        };
         this.operationDurationAnalyzer = new OperationDurationDisplayableLogAnalyzer(this.Application, this.AllLogs, this.CompareLogs).Also(it =>
             this.AttachToAnalyzer(it));
         this.scriptLogAnalyzer = new ScriptDisplayableLogAnalyzer(this.Application, this.AllLogs, this.CompareLogs).Also(it =>
@@ -221,6 +257,8 @@ class LogAnalysisViewModel : SessionComponent
                 return;
             if (!this.keyLogAnalyzer.RuleSets.SequenceEqual(this.keyLogAnalysisRuleSets))
             {
+                if (this.Application.IsDebugMode)
+                    this.Logger.LogTrace($"Update key log analysis with {this.keyLogAnalysisRuleSets.Count} rule sets");
                 this.keyLogAnalyzer.RuleSets.Clear();
                 this.keyLogAnalyzer.RuleSets.AddAll(this.keyLogAnalysisRuleSets);
             }
@@ -256,6 +294,8 @@ class LogAnalysisViewModel : SessionComponent
                 return;
             if (!this.operationCountingAnalyzer.RuleSets.SequenceEqual(this.operationCountingAnalysisRuleSets))
             {
+                if (this.Application.IsDebugMode)
+                    this.Logger.LogTrace($"Update operation counting analysis with {this.operationCountingAnalysisRuleSets.Count} rule sets");
                 this.operationCountingAnalyzer.RuleSets.Clear();
                 this.operationCountingAnalyzer.RuleSets.AddAll(this.operationCountingAnalysisRuleSets);
             }
@@ -266,6 +306,8 @@ class LogAnalysisViewModel : SessionComponent
                 return;
             if (!this.operationDurationAnalyzer.RuleSets.SequenceEqual(this.operationDurationAnalysisRuleSets))
             {
+                if (this.Application.IsDebugMode)
+                    this.Logger.LogTrace($"Update operation duration analysis with {this.operationDurationAnalysisRuleSets.Count} rule sets");
                 this.operationDurationAnalyzer.RuleSets.Clear();
                 this.operationDurationAnalyzer.RuleSets.AddAll(this.operationDurationAnalysisRuleSets);
             }
@@ -276,6 +318,8 @@ class LogAnalysisViewModel : SessionComponent
                 return;
             if (!this.scriptLogAnalyzer.ScriptSets.SequenceEqual(this.logAnalysisScriptSets))
             {
+                if (this.Application.IsDebugMode)
+                    this.Logger.LogTrace($"Update log analysis with {this.logAnalysisScriptSets.Count} script sets");
                 this.scriptLogAnalyzer.ScriptSets.Clear();
                 this.scriptLogAnalyzer.ScriptSets.AddAll(this.logAnalysisScriptSets);
             }
@@ -333,6 +377,10 @@ class LogAnalysisViewModel : SessionComponent
         // add to set
         if (!this.attachedAnalyzers.Add(analyzer))
             return;
+        
+        // log
+        if (this.Application.IsDebugMode)
+            this.Logger.LogDebug($"Attach to analyzer {analyzer}");
         
         // add handlers
         if (analyzer.AnalysisResults is INotifyCollectionChanged notifyCollectionChanged)
@@ -442,6 +490,10 @@ class LogAnalysisViewModel : SessionComponent
         // remove from set
         if (!this.attachedAnalyzers.Remove(analyzer))
             return;
+        
+        // log
+        if (this.Application.IsDebugMode)
+            this.Logger.LogDebug($"Detach from analyzer {analyzer}");
 
         // remove handlers
         if (analyzer.AnalysisResults is INotifyCollectionChanged notifyCollectionChanged)

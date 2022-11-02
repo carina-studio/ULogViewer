@@ -176,9 +176,17 @@ class LogFilteringViewModel : SessionComponent
                 this.canClearPredefinedTextFilters.Update(it.IsNotEmpty());
                 this.updateLogFilterAction?.Reschedule();
                 if (it.IsNotEmpty())
+                {
+                    if (this.Application.IsDebugMode)
+                        this.Logger.LogTrace("Clear predefined text filters");
                     this.canResetFilters.Update(true);
+                }
                 else
+                {
+                    if (this.Application.IsDebugMode)
+                        this.Logger.LogTrace($"Change predefined text filters: {it.Count}");
                     this.UpdateCanResetFilters();
+                }
             };
         });
 
@@ -190,6 +198,8 @@ class LogFilteringViewModel : SessionComponent
         {
             it.PropertyChanged += this.OnLogFilterPropertyChanged;
         });
+        if (this.Application.IsDebugMode)
+            this.Logger.LogDebug($"Create log filter {this.logFilter}");
 
         // create scheduled action
         this.updateLogFilterAction = new ScheduledAction(() =>
@@ -241,6 +251,16 @@ class LogFilteringViewModel : SessionComponent
                 textRegexList.Add(filter.Regex);
             this.logFilter.TextRegexList = textRegexList;
 
+            // print log
+            if (this.Application.IsDebugMode)
+            {
+                this.Logger.LogDebug("Update log filter:");
+                this.Logger.LogDebug($"  Level: {this.logFilter.Level}");
+                this.Logger.LogDebug($"  PID: " + this.logFilter.ProcessId.Let(pid => pid.HasValue ? pid.ToString() : "Null"));
+                this.Logger.LogDebug($"  TID: " + this.logFilter.ThreadId.Let(tid => tid.HasValue ? tid.ToString() : "Null"));
+                this.Logger.LogDebug($"  Text filters: {textRegexList.Count}");
+            }
+
             // cancel showing all/marked logs
             if (this.Session.IsShowingAllLogsTemporarily)
                 this.Session.ToggleShowingAllLogsTemporarilyCommand.TryExecute();
@@ -257,20 +277,35 @@ class LogFilteringViewModel : SessionComponent
         });
 
         // attach to self properties
-        this.GetValueAsObservable(FiltersCombinationModeProperty).Subscribe(_ =>
+        this.GetValueAsObservable(FiltersCombinationModeProperty).Subscribe(mode =>
         {
             if (!isInit)
+            {
+                if (this.Application.IsDebugMode)
+                    this.Logger.LogTrace($"Change filters combination mode to {mode}");
                 this.updateLogFilterAction.Schedule();
+            }
         });
-        this.GetValueAsObservable(IgnoreTextFilterCaseProperty).Subscribe(_ =>
+        this.GetValueAsObservable(IgnoreTextFilterCaseProperty).Subscribe(ignoreCase =>
         {
-            if (!isInit && this.GetValue(TextFilterProperty) != null)
-                this.updateLogFilterAction.Execute();
+            if (!isInit)
+            {
+                if (this.GetValue(TextFilterProperty) != null)
+                {
+                    if (this.Application.IsDebugMode)
+                        this.Logger.LogTrace($"Change ignoring case to {ignoreCase} with text filter");
+                    this.updateLogFilterAction.Execute();
+                }
+                else if (this.Application.IsDebugMode)
+                    this.Logger.LogTrace($"Change ignoring case to {ignoreCase} without text filter");
+            }
         });
         this.GetValueAsObservable(LevelFilterProperty).Subscribe(level =>
         {
             if (!isInit)
             {
+                if (this.Application.IsDebugMode)
+                    this.Logger.LogTrace($"Change level filter to {level}");
                 this.updateLogFilterAction.Schedule();
                 if (level != Logs.LogLevel.Undefined)
                     this.canResetFilters.Update(true);
@@ -282,6 +317,13 @@ class LogFilteringViewModel : SessionComponent
         {
             if (!isInit)
             {
+                if (this.Application.IsDebugMode)
+                {
+                    if (pid.HasValue)
+                        this.Logger.LogTrace($"Change PID filter to {pid}");
+                    else
+                        this.Logger.LogTrace($"Clear PID filter");
+                }
                 this.updateLogFilterAction.Schedule();
                 if (pid.HasValue)
                     this.canResetFilters.Update(true);
@@ -295,15 +337,30 @@ class LogFilteringViewModel : SessionComponent
             {
                 this.updateLogFilterAction.Schedule();
                 if (pattern != null)
+                {
+                    if (this.Application.IsDebugMode)
+                        this.Logger.LogTrace($"Change text filter");
                     this.canResetFilters.Update(true);
+                }
                 else
+                {
+                    if (this.Application.IsDebugMode)
+                        this.Logger.LogTrace($"Clear text filter");
                     this.UpdateCanResetFilters();
+                }
             }
         });
         this.GetValueAsObservable(ThreadIdFilterProperty).Subscribe(tid =>
         {
             if (!isInit)
             {
+                if (this.Application.IsDebugMode)
+                {
+                    if (tid.HasValue)
+                        this.Logger.LogTrace($"Change TID filter to {tid}");
+                    else
+                        this.Logger.LogTrace($"Clear TID filter");
+                }
                 this.updateLogFilterAction.Schedule();
                 if (tid.HasValue)
                     this.canResetFilters.Update(true);
@@ -366,6 +423,8 @@ class LogFilteringViewModel : SessionComponent
         this.logFilteringWatch.Stop();
 
         // detach from log filter
+        if (this.Application.IsDebugMode)
+            this.Logger.LogDebug($"Detach from log filter {this.logFilter}");
         this.logFilter.PropertyChanged -= this.OnLogFilterPropertyChanged;
 
         // detach from session
