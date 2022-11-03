@@ -969,17 +969,23 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				{
 					if (this.IsShowingMarkedLogsTemporarily)
 					{
+						if (this.Application.IsDebugMode)
+							this.Logger.LogTrace("Show marked logs");
 						this.SetValue(LogsProperty, this.MarkedLogs);
 						this.SetValue(HasLogsProperty, this.markedLogs.IsNotEmpty());
 						return;
 					}
 					if (this.LogFiltering.IsFilteringNeeded)
 					{
+						if (this.Application.IsDebugMode)
+							this.Logger.LogTrace("Show filtered logs");
 						this.SetValue(LogsProperty, this.LogFiltering.FilteredLogs);
 						this.SetValue(HasLogsProperty, this.LogFiltering.FilteredLogs.IsNotEmpty());
 						return;
 					}
 				}
+				if (this.Application.IsDebugMode)
+					this.Logger.LogTrace("Show all logs");
 				this.SetValue(LogsProperty, this.AllLogs);
 				this.SetValue(HasLogsProperty, this.allLogs.IsNotEmpty());
 				if (!this.LogFiltering.IsFilteringNeeded)
