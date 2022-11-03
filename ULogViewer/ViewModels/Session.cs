@@ -486,7 +486,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// check logs memory usage
 			var logsMemoryUsage = totalLogsMemoryUsage;
-			staticLogger.LogTrace($"Total logs memory usage: {AppSuite.Converters.FileSizeConverter.Default.Convert<string>(logsMemoryUsage)}, threshold: {AppSuite.Converters.FileSizeConverter.Default.Convert<string>(memoryThresholdToStartHibernation)}");
+			staticLogger?.LogTrace($"Total logs memory usage: {AppSuite.Converters.FileSizeConverter.Default.Convert<string>(logsMemoryUsage)}, threshold: {AppSuite.Converters.FileSizeConverter.Default.Convert<string>(memoryThresholdToStartHibernation)}");
 			if (logsMemoryUsage <= memoryThresholdToStartHibernation)
 				return;
 
@@ -730,8 +730,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public Session(IULogViewerApplication app) : base(app)
 		{
 			// create static logger
-			if (staticLogger == null)
-				staticLogger = app.LoggerFactory.CreateLogger(nameof(Session));
+			staticLogger ??= app.LoggerFactory.CreateLogger(nameof(Session));
 
 			// create node for activation history
 			this.activationHistoryListNode = new LinkedListNode<Session>(this);
@@ -4410,13 +4409,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					GC.Collect();
 					break;
 				default:
-					staticLogger.LogDebug("Skip triggering GC");
+					staticLogger?.LogDebug("Skip triggering GC");
 					return;
 			}
 			if (isDebugMode)
 			{
 				var duration = gcPerformanceWatch!.ElapsedMilliseconds - gcStartTime;
-				staticLogger.LogDebug($"[Performance] Took {duration} ms to perform GC");
+				staticLogger?.LogDebug($"[Performance] Took {duration} ms to perform GC");
 			}
 		}
 
