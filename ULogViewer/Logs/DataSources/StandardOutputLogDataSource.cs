@@ -18,6 +18,10 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 	/// </summary>
 	class StandardOutputLogDataSource : BaseLogDataSource
 	{
+		// Constants.
+		const int DeleteTempWorkingDirRetryingCount = 10;
+
+
 		// Fields.
 		volatile string? arguments;
 		volatile string? commandFileOnReady;
@@ -33,6 +37,31 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// <param name="options"><see cref="LogDataSourceOptions"/> to create source.</param>
 		public StandardOutputLogDataSource(StandardOutputLogDataSourceProvider provider, LogDataSourceOptions options) : base(provider, options)
 		{ }
+
+
+		// Delete temporary working directory.
+		void DeleteTempWorkingDirectory(string path) => Task.Run(() =>
+		{
+			for (var i = DeleteTempWorkingDirRetryingCount; i > 0; --i)
+			{
+				try
+				{
+					Directory.Delete(path, true);
+					this.Logger.LogTrace($"Temp working directory '{path}' deleted");
+					break;
+				}
+				catch (Exception ex)
+				{
+					if (i > 1)
+					{
+						this.Logger.LogWarning(ex, $"Failed to delete temp working directory '{path}', try again later");
+						Thread.Sleep(1000);
+					}
+					else
+						this.Logger.LogError(ex, $"Failed to delete temp working directory '{path}'");
+				}
+			}
+		});
 
 
 		// Execute command and wait for exit.
@@ -103,7 +132,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 					if (tempWorkingDirectory != null)
 					{
 						this.Logger.LogTrace($"Delete temp working directory '{tempWorkingDirectory}' after completing teardown commands");
-						Global.RunWithoutErrorAsync(() => Directory.Delete(tempWorkingDirectory, true));
+						this.DeleteTempWorkingDirectory(tempWorkingDirectory);
 						this.tempWorkingDirectory = null;
 					}
 					this.teardownCommandsTask = null;
@@ -113,7 +142,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			else if (tempWorkingDirectory != null)
 			{
 				this.Logger.LogTrace($"Delete temp working directory '{tempWorkingDirectory}' after closing reader");
-				Global.RunWithoutErrorAsync(() => Directory.Delete(tempWorkingDirectory, true));
+				this.DeleteTempWorkingDirectory(tempWorkingDirectory);
 				this.tempWorkingDirectory = null;
 			}
 		}
@@ -151,7 +180,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 						var path = this.tempWorkingDirectory;
 						this.tempWorkingDirectory = null;
 						this.Logger.LogTrace($"Delete temp working directory '{path}' because of cancellation has been requested");
-						Global.RunWithoutError(() => Directory.Delete(path, true));
+						this.DeleteTempWorkingDirectory(path);
 						throw new TaskCanceledException();
 					}
 					return this.tempWorkingDirectory;
@@ -171,8 +200,8 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 							this.tempWorkingDirectory?.Let(it =>
 							{
 								this.Logger.LogTrace($"Delete temp working directory '{it}' because of failure of executing setup command");
+								this.DeleteTempWorkingDirectory(it);
 								this.tempWorkingDirectory = null;
-								Global.RunWithoutError(() => Directory.Delete(it, true));
 							});
 							return false;
 						}
@@ -181,8 +210,8 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 							this.tempWorkingDirectory?.Let(it =>
 							{
 								this.Logger.LogTrace($"Delete temp working directory '{it}' because of cancellation has been requested");
+								this.DeleteTempWorkingDirectory(it);
 								this.tempWorkingDirectory = null;
-								Global.RunWithoutError(() => Directory.Delete(it, true));
 							});
 							throw new TaskCanceledException();
 						}
@@ -212,8 +241,8 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 					this.tempWorkingDirectory?.Let(it =>
 					{
 						this.Logger.LogTrace($"Delete temp working directory '{it}' because of failure of starting process");
+						this.DeleteTempWorkingDirectory(it);
 						this.tempWorkingDirectory = null;
-						Global.RunWithoutError(() => Directory.Delete(it, true));
 					});
 					return (LogDataSourceState.SourceNotFound, null);
 				}
@@ -223,8 +252,8 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				this.tempWorkingDirectory?.Let(it =>
 				{
 					this.Logger.LogTrace($"Delete temp working directory '{it}' because of failure of starting process");
+					this.DeleteTempWorkingDirectory(it);
 					this.tempWorkingDirectory = null;
-					Global.RunWithoutError(() => Directory.Delete(it, true));
 				});
 				return (LogDataSourceState.SourceNotFound, null);
 			}
