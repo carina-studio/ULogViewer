@@ -505,6 +505,8 @@ namespace CarinaStudio.ULogViewer
 #if DEBUG
 			return true;
 #else
+			if (this.ReleasingType == AppSuite.ApplicationReleasingType.Development)
+				return true;
 			return base.OnSelectEnteringDebugMode();
 #endif
         }
