@@ -2775,7 +2775,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			}
 			if (!this.IsDisposed)
 			{
-				if ((!this.LogFiltering.IsFiltering && !this.IsShowingMarkedLogsTemporarily) || this.IsShowingAllLogsTemporarily)
+				if ((!this.LogFiltering.IsFilteringNeeded && !this.IsShowingMarkedLogsTemporarily) || this.IsShowingAllLogsTemporarily)
 				{
 					this.SetValue(HasLogsProperty, this.allLogs.IsNotEmpty());
 					this.reportLogsTimeInfoAction.Schedule(LogsTimeInfoReportingInterval);
