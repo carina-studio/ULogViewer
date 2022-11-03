@@ -88,6 +88,10 @@
     <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
   </ItemGroup>
 
+  <ItemGroup Condition="$(TargetFramework.Contains('windows'))">
+    <TrimmerRootAssembly Include="System.Management" />
+  </ItemGroup>
+
   <ItemGroup Condition="$(RuntimeIdentifier.Contains('osx'))">
     <Content Include="../SQLite/1.0.116/$(RuntimeIdentifier)/System.Data.SQLite.dll" Link="System.Data.SQLite.dll">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
