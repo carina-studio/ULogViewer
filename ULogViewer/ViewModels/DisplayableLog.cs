@@ -18,8 +18,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 	class DisplayableLog : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 	{
 		// Static fields.
-		static readonly DisplayableLogAnalysisResult[] emptyAnalysisResults = new DisplayableLogAnalysisResult[0];
-		static readonly byte[] emptyByteArray = new byte[0];
+		static readonly DisplayableLogAnalysisResult[] emptyAnalysisResults = Array.Empty<DisplayableLogAnalysisResult>();
+		static readonly byte[] emptyByteArray = Array.Empty<byte>();
 		static readonly Func<Log, string?>[] extraGetters = new Func<Log, string?>[Log.ExtraCapacity].Also(it =>
 		{
 			for (var i = it.Length - 1; i >= 0; --i)
@@ -27,7 +27,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		});
 		static readonly long instanceFieldMemorySize = Memory.EstimateInstanceSize<DisplayableLog>();
 		static volatile bool isPropertyMapReady;
-		static Dictionary<string, PropertyInfo> propertyMap = new Dictionary<string, PropertyInfo>();
+		static readonly Dictionary<string, PropertyInfo> propertyMap = new();
 
 
 		// Fields.
@@ -1203,7 +1203,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			if (!isPropertyMapReady)
 			{
-				lock (typeof(DisplayableLog))
+				var type = typeof(DisplayableLog);
+				lock (type)
 				{
 					if (!isPropertyMapReady)
 					{
@@ -1214,7 +1215,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 								: propertyName;
 							try
 							{
-								typeof(DisplayableLog).GetProperty(convertedName)?.Let(it =>
+								type.GetProperty(convertedName)?.Let(it =>
 								{
 									propertyMap[convertedName] = it;
 								});
@@ -1222,29 +1223,26 @@ namespace CarinaStudio.ULogViewer.ViewModels
 							catch
 							{ }
 						}
-						typeof(DisplayableLog).Let(type =>
+						var specificPropertyNames = new string[]
 						{
-							var specificPropertyNames = new string[]
-							{
-								nameof(BeginningTimeSpanString),
-								nameof(BeginningTimestampString),
-								nameof(BinaryBeginningTimeSpan),
-								nameof(BinaryBeginningTimestamp),
-								nameof(BinaryEndingTimeSpan),
-								nameof(BinaryEndingTimestamp),
-								nameof(BinaryTimeSpan),
-								nameof(BinaryEndingTimestamp),
-								nameof(EndingTimeSpanString),
-								nameof(EndingTimestampString),
-								nameof(TimeSpanString),
-								nameof(TimestampString),
-							};
-							foreach (var propertyName in specificPropertyNames)
-							{
-								type.GetProperty(propertyName)?.Let(it =>
-									propertyMap[propertyName] = it);
-							}
-						});
+							nameof(BeginningTimeSpanString),
+							nameof(BeginningTimestampString),
+							nameof(BinaryBeginningTimeSpan),
+							nameof(BinaryBeginningTimestamp),
+							nameof(BinaryEndingTimeSpan),
+							nameof(BinaryEndingTimestamp),
+							nameof(BinaryTimeSpan),
+							nameof(BinaryEndingTimestamp),
+							nameof(EndingTimeSpanString),
+							nameof(EndingTimestampString),
+							nameof(TimeSpanString),
+							nameof(TimestampString),
+						};
+						foreach (var propertyName in specificPropertyNames)
+						{
+							type.GetProperty(propertyName)?.Let(it =>
+								propertyMap[propertyName] = it);
+						}
 						isPropertyMapReady = true;
 					}
 				}
