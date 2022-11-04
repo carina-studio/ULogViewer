@@ -214,13 +214,19 @@ partial class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.In
 		base.OnValidateInput() && !string.IsNullOrWhiteSpace(this.displayNameTextBox.Text);
 
 
-	// Open online documentation.
-	void OpenDocumentation() =>
+	/// <summary>
+	/// Open online documentation.
+	/// </summary>
+#pragma warning disable CA1822
+	public void OpenDocumentation() =>
 		Platform.OpenLink("https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource");
+#pragma warning restore CA1822
 
 
-	// Remove supported source option.
-	void RemoveSupportedSourceOption(SupportedSourceOption option)
+	/// <summary>
+	/// Remove supported source option.
+	/// </summary>
+	public void RemoveSupportedSourceOption(SupportedSourceOption option)
 	{
 		if (this.supportedSourceOptions.Remove(option))
 		{
@@ -238,11 +244,15 @@ partial class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.In
 	public ScriptLogDataSourceProvider? Provider { get; set; }
 
 
-	// Show menu of adding supported log data source options.
-	void ShowAddSupportedSourceOptionMenu() =>
+	/// <summary>
+	/// Show menu of adding supported log data source options.
+	/// </summary>
+	public void ShowAddSupportedSourceOptionMenu() =>
 		this.addSupportedSourceOptionMenu.Open(this.addSupportedSourceOptionButton);
 
 
-	// Get supported log data source options.
-	IList<SupportedSourceOption> SupportedSourceOptions { get; }
+	/// <summary>
+	/// Get supported log data source options.
+	/// </summary>
+	public IList<SupportedSourceOption> SupportedSourceOptions { get; }
 }

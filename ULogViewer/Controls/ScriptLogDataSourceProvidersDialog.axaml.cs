@@ -41,8 +41,10 @@ partial class ScriptLogDataSourceProvidersDialog : CarinaStudio.Controls.Dialog<
 	}
 
 
-	// Add new provider.
-	async void AddProvider()
+	/// <summary>
+	/// Add new provider.
+	/// </summary>
+	public async void AddProvider()
 	{
 		// check Pro version
 		if (!this.Application.ProductManager.IsProductActivated(Products.Professional)
@@ -65,8 +67,10 @@ partial class ScriptLogDataSourceProvidersDialog : CarinaStudio.Controls.Dialog<
 	}
 
 
-	// Copy provider.
-	async void CopyProvider(ScriptLogDataSourceProvider provider)
+	/// <summary>
+	/// Copy provider.
+	/// </summary>
+	public async void CopyProvider(ScriptLogDataSourceProvider provider)
 	{
 		// check Pro version
 		if (!this.Application.ProductManager.IsProductActivated(Products.Professional)
@@ -119,8 +123,10 @@ partial class ScriptLogDataSourceProvidersDialog : CarinaStudio.Controls.Dialog<
 	}
 
 
-	// Export provider.
-	async void ExportProvider(ScriptLogDataSourceProvider provider)
+	/// <summary>
+	/// Export provider.
+	/// </summary>
+	public async void ExportProvider(ScriptLogDataSourceProvider provider)
 	{
 		// select file
 		var fileName = await new SaveFileDialog().Also(dialog =>
@@ -141,7 +147,7 @@ partial class ScriptLogDataSourceProvidersDialog : CarinaStudio.Controls.Dialog<
 		}
 		catch (Exception ex)
 		{
-			this.Logger.LogError(ex, $"Failed to export script log data source provider to '{fileName}'");
+			this.Logger.LogError(ex, "Failed to export script log data source provider to '{fileName}'", fileName);
 			_ = new MessageDialog()
 			{
 				Icon = MessageDialogIcon.Error,
@@ -156,8 +162,10 @@ partial class ScriptLogDataSourceProvidersDialog : CarinaStudio.Controls.Dialog<
 	}
 
 
-	// Import provider.
-	async void ImportProvider()
+	/// <summary>
+	/// Import provider.
+	/// </summary>
+	public async void ImportProvider()
 	{
 		// check Pro version
 		if (!this.Application.ProductManager.IsProductActivated(Products.Professional)
@@ -190,7 +198,7 @@ partial class ScriptLogDataSourceProvidersDialog : CarinaStudio.Controls.Dialog<
 		}, 
 		ex =>
 		{
-			this.Logger.LogError(ex, $"Failed to import script log data source provider from '{fileNames[0]}'");
+			this.Logger.LogError(ex, "Failed to import script log data source provider from '{fileName}'", fileNames[0]);
 			_ = new MessageDialog()
 			{
 				Icon = MessageDialogIcon.Error,
@@ -257,13 +265,19 @@ partial class ScriptLogDataSourceProvidersDialog : CarinaStudio.Controls.Dialog<
 	}
 
 
-	// Open online documentation.
-	void OpenDocumentation() =>
+	/// <summary>
+	/// Open online documentation.
+	/// </summary>
+#pragma warning disable CA1822
+	public void OpenDocumentation() =>
 		Platform.OpenLink("https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource");
+#pragma warning restore CA1822
 	
 
-	// Remove provider.
-	async void RemoveProvider(ScriptLogDataSourceProvider provider)
+	/// <summary>
+	/// Remove provider.
+	/// </summary>
+	public async void RemoveProvider(ScriptLogDataSourceProvider provider)
 	{
 		var logProfileCount = LogProfileManager.Default.Profiles.Count(it => it.DataSourceProvider == provider);
 		var result = await new MessageDialog()

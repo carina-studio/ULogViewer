@@ -37,13 +37,13 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// <summary>
 		/// URI of 'How ULogViewer read and parse logs' page.
 		/// </summary>
-		public static readonly Uri LogsReadingAndParsingPageUri = new Uri("https://carinastudio.azurewebsites.net/ULogViewer/HowToReadAndParseLogs");
+		public static readonly Uri LogsReadingAndParsingPageUri = new("https://carinastudio.azurewebsites.net/ULogViewer/HowToReadAndParseLogs");
 
 
 		// Static fields.
 		static readonly Dictionary<LogProfile, LogProfileEditorDialog> NonBlockingDialogs = new();
 		static readonly AvaloniaProperty<bool> HasDataSourceOptionsProperty = AvaloniaProperty.Register<LogProfileEditorDialog, bool>("HasDataSourceOptions");
-		static readonly SettingKey<bool> HasLearnAboutLogsReadingAndParsingHintShown = new SettingKey<bool>($"{nameof(LogProfileEditorDialog)}.{nameof(HasLearnAboutLogsReadingAndParsingHintShown)}");
+		static readonly SettingKey<bool> HasLearnAboutLogsReadingAndParsingHintShown = new($"{nameof(LogProfileEditorDialog)}.{nameof(HasLearnAboutLogsReadingAndParsingHintShown)}");
 		static readonly AvaloniaProperty<bool> IsProVersionActivatedProperty = AvaloniaProperty.Register<LogProfileEditorDialog, bool>("IsProVersionActivated");
 		static readonly AvaloniaProperty<bool> IsValidDataSourceOptionsProperty = AvaloniaProperty.Register<LogProfileEditorDialog, bool>(nameof(IsValidDataSourceOptions), true);
 		static readonly AvaloniaProperty<bool> IsWorkingDirectorySupportedProperty = AvaloniaProperty.Register<LogProfileEditorDialog, bool>("IsWorkingDirectorySupported");
@@ -62,12 +62,12 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly LogProfileIconColorComboBox iconColorComboBox;
 		readonly LogProfileIconComboBox iconComboBox;
 		readonly ToggleSwitch isTemplateSwitch;
-		readonly SortedObservableList<KeyValuePair<string, LogLevel>> logLevelMapEntriesForReading = new SortedObservableList<KeyValuePair<string, LogLevel>>((x, y) => x.Key.CompareTo(y.Key));
-		readonly SortedObservableList<KeyValuePair<LogLevel, string>> logLevelMapEntriesForWriting = new SortedObservableList<KeyValuePair<LogLevel, string>>((x, y) => x.Key.CompareTo(y.Key));
+		readonly SortedObservableList<KeyValuePair<string, LogLevel>> logLevelMapEntriesForReading = new((x, y) => x.Key.CompareTo(y.Key));
+		readonly SortedObservableList<KeyValuePair<LogLevel, string>> logLevelMapEntriesForWriting = new((x, y) => x.Key.CompareTo(y.Key));
 		readonly AppSuite.Controls.ListBox logLevelMapForReadingListBox;
 		readonly AppSuite.Controls.ListBox logLevelMapForWritingListBox;
 		readonly AppSuite.Controls.ListBox logPatternListBox;
-		readonly ObservableList<LogPattern> logPatterns = new ObservableList<LogPattern>();
+		readonly ObservableList<LogPattern> logPatterns = new();
 		readonly ComboBox logStringEncodingForReadingComboBox;
 		readonly ComboBox logStringEncodingForWritingComboBox;
 		readonly Avalonia.Controls.ListBox logWritingFormatListBox;
@@ -80,16 +80,16 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ComboBox timeSpanEncodingForReadingComboBox;
 		readonly TextBox timeSpanFormatForDisplayingTextBox;
 		readonly TextBox timeSpanFormatForWritingTextBox;
-		readonly ObservableList<string> timeSpanFormatsForReading = new ObservableList<string>();
+		readonly ObservableList<string> timeSpanFormatsForReading = new();
 		readonly AppSuite.Controls.ListBox timeSpanFormatsForReadingListBox;
 		readonly ComboBox timestampCategoryGranularityComboBox;
 		readonly ComboBox timestampEncodingForReadingComboBox;
 		readonly TextBox timestampFormatForDisplayingTextBox;
 		readonly TextBox timestampFormatForWritingTextBox;
-		readonly ObservableList<string> timestampFormatsForReading = new ObservableList<string>();
+		readonly ObservableList<string> timestampFormatsForReading = new();
 		readonly AppSuite.Controls.ListBox timestampFormatsForReadingListBox;
 		readonly AppSuite.Controls.ListBox visibleLogPropertyListBox;
-		readonly ObservableList<LogProperty> visibleLogProperties = new ObservableList<LogProperty>();
+		readonly ObservableList<LogProperty> visibleLogProperties = new();
 		readonly ToggleSwitch workingDirNeededSwitch;
 
 
@@ -890,9 +890,13 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Open online documentation.
-		void OpenDocumentation() =>
+		/// <summary>
+		/// Open online documentation.
+		/// </summary>
+#pragma warning disable CA1822
+		public void OpenDocumentation() =>
 			Platform.OpenLink("https://carinastudio.azurewebsites.net/ULogViewer/HowToReadAndParseLogs");
+#pragma warning restore CA1822
 
 
 		// Remove log level map entry.

@@ -82,8 +82,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Add condition.
-		async void AddVarAndConstComparisonCondition()
+		/// <summary>
+		/// Add condition.
+		/// </summary>
+		public async void AddVarAndConstComparisonCondition()
 		{
 			if (this.window == null)
 				return;
@@ -91,8 +93,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Add condition.
-		async void AddVarsComparisonCondition()
+		/// <summary>
+		/// Add condition.
+		/// </summary>
+		public async void AddVarsComparisonCondition()
 		{
 			if (this.window == null)
 				return;
@@ -110,12 +114,17 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Edit condition.
-		void EditCondition(ListBoxItem item)
+		/// <summary>
+		/// Edit condition.
+		/// </summary>
+		public void EditCondition(ListBoxItem item)
 		{
 			if (item.DataContext is DisplayableLogAnalysisCondition condition)
 				this.EditCondition(condition);
 		}
+
+
+		// Edit condition.
 		async void EditCondition(DisplayableLogAnalysisCondition condition)
 		{
 			// find position
@@ -161,8 +170,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Remove condition.
-		void RemoveCondition(ListBoxItem item)
+		/// <summary>
+		/// Remove condition.
+		/// </summary>
+		public void RemoveCondition(ListBoxItem item)
 		{
 			var conditions = this.Conditions;
 			if (conditions == null || item.DataContext is not DisplayableLogAnalysisCondition condition)
@@ -173,8 +184,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// show menu for adding condition.
-		void ShowAddConditionMenu() =>
+		/// <summary>
+		/// Show menu for adding condition.
+		/// </summary>
+		public void ShowAddConditionMenu() =>
 			this.addConditionMenu.Open(this.addConditionButton);
 		
 

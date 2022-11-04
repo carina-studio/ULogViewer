@@ -96,9 +96,9 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 	readonly IntegerTextBox portTextBox;
 	readonly TextBox queryStringTextBox;
 	readonly ScheduledAction saveCommandTextBoxSelectionAction;
-	readonly ObservableList<string> setupCommands = new ObservableList<string>();
+	readonly ObservableList<string> setupCommands = new();
 	readonly AppSuite.Controls.ListBox setupCommandsListBox;
-	readonly ObservableList<string> teardownCommands = new ObservableList<string>();
+	readonly ObservableList<string> teardownCommands = new();
 	readonly AppSuite.Controls.ListBox teardownCommandsListBox;
 	readonly UriTextBox uriTextBox;
 	readonly TextBox userNameTextBox;
@@ -160,8 +160,10 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 	}
 
 
-	// Add setup command.
-	async void AddSetupCommand()
+	/// <summary>
+	/// Add setup command.
+	/// </summary>
+	public async void AddSetupCommand()
 	{
 		var command = (await new TextInputDialog()
 		{
@@ -176,8 +178,10 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 	}
 
 
-	// Add teardown command.
-	async void AddTeardownCommand()
+	/// <summary>
+	/// Add teardown command.
+	/// </summary>
+	public async void AddTeardownCommand()
 	{
 		var command = (await new TextInputDialog()
 		{
@@ -202,8 +206,10 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 	}
 
 
-	// All encodings.
-	IList<Encoding> Encodings { get; } = Encoding.GetEncodings().Let(it =>
+	/// <summary>
+	/// All encodings.
+	/// </summary>
+	public IList<Encoding> Encodings { get; } = Encoding.GetEncodings().Let(it =>
 	{
 		var array = new Encoding[it.Length];
 		for (var i = it.Length - 1; i >= 0; --i)
@@ -212,8 +218,10 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 	});
 
 
-	// Edit given setup or teardown command.
-	async void EditSetupTeardownCommand(ListBoxItem item)
+	/// <summary>
+	/// Edit given setup or teardown command.
+	/// </summary>
+	public async void EditSetupTeardownCommand(ListBoxItem item)
 	{
 		// find index of command
 		var listBox = (Avalonia.Controls.ListBox)item.Parent.AsNonNull();
@@ -320,8 +328,10 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 	}
 
 
-	// Move given setup or teardown command down.
-	void MoveSetupTeardownCommandDown(ListBoxItem item)
+	/// <summary>
+	/// Move given setup or teardown command down.
+	/// </summary>
+	public void MoveSetupTeardownCommandDown(ListBoxItem item)
 	{
 		// find index of command
 		var listBox = (Avalonia.Controls.ListBox)item.Parent.AsNonNull();
@@ -340,8 +350,10 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 	}
 
 
-	// Move given setup or teardown command up.
-	void MoveSetupTeardownCommandUp(ListBoxItem item)
+	/// <summary>
+	/// Move given setup or teardown command up.
+	/// </summary>
+	public void MoveSetupTeardownCommandUp(ListBoxItem item)
 	{
 		// find index of command
 		var listBox = (Avalonia.Controls.ListBox)item.Parent.AsNonNull();
@@ -643,8 +655,10 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 	}
 
 
-	// Remove given setup or teardown command.
-	void RemoveSetupTeardownCommand(ListBoxItem item)
+	/// <summary>
+	/// Remove given setup or teardown command.
+	/// </summary>
+	public void RemoveSetupTeardownCommand(ListBoxItem item)
 	{
 		// find index of command
 		var listBox = (Avalonia.Controls.ListBox)item.Parent.AsNonNull();
@@ -661,8 +675,10 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 	}
 
 
-	// Select file name.
-	async void SelectFileName()
+	/// <summary>
+	/// Select file name.
+	/// </summary>
+	public async void SelectFileName()
 	{
 		var fileNames = await new OpenFileDialog()
 		{
@@ -689,8 +705,10 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 	}
 
 
-	// Select working directory.
-	async void SelectWorkingDirectory()
+	/// <summary>
+	/// Select working directory.
+	/// </summary>
+	public async void SelectWorkingDirectory()
 	{
 		var dirPath = await new OpenFolderDialog()
 		{
@@ -701,10 +719,14 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 	}
 
 
-	// Setup commands.
-	IList<string> SetupCommands { get => this.setupCommands; }
+	/// <summary>
+	/// Setup commands.
+	/// </summary>
+	public IList<string> SetupCommands { get => this.setupCommands; }
 
 
-	// Teardown commands.
-	IList<string> TeardownCommands { get => this.teardownCommands; }
+	/// <summary>
+	/// Teardown commands.
+	/// </summary>
+	public IList<string> TeardownCommands { get => this.teardownCommands; }
 }

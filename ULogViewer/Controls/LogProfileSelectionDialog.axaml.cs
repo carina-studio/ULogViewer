@@ -32,14 +32,14 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Fields.
-		readonly HashSet<LogProfile> attachedLogProfiles = new HashSet<LogProfile>();
+		readonly HashSet<LogProfile> attachedLogProfiles = new();
 		readonly Avalonia.Controls.ListBox otherLogProfileListBox;
-		readonly SortedObservableList<LogProfile> otherLogProfiles = new SortedObservableList<LogProfile>(CompareLogProfiles);
+		readonly SortedObservableList<LogProfile> otherLogProfiles = new(CompareLogProfiles);
 		readonly Avalonia.Controls.ListBox pinnedLogProfileListBox;
-		readonly SortedObservableList<LogProfile> pinnedLogProfiles = new SortedObservableList<LogProfile>(CompareLogProfiles);
+		readonly SortedObservableList<LogProfile> pinnedLogProfiles = new(CompareLogProfiles);
 		readonly ScrollViewer scrollViewer;
 		readonly Avalonia.Controls.ListBox templateLogProfileListBox;
-		readonly SortedObservableList<LogProfile> templateLogProfiles = new SortedObservableList<LogProfile>(CompareLogProfiles);
+		readonly SortedObservableList<LogProfile> templateLogProfiles = new(CompareLogProfiles);
 
 
 		/// <summary>
@@ -67,8 +67,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Add log profile.
-		async void AddLogProfile()
+		/// <summary>
+		/// Add log profile.
+		/// </summary>
+		public async void AddLogProfile()
 		{
 			// create new profile
 			var profile = await new LogProfileEditorDialog().ShowDialog<LogProfile>(this);
@@ -96,8 +98,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Copy log profile.
-		async void CopyLogProfile(LogProfile? logProfile)
+		/// <summary>
+		/// Copy log profile.
+		/// </summary>
+		public async void CopyLogProfile(LogProfile? logProfile)
 		{
 			// check state
 			if (logProfile == null)
@@ -117,8 +121,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Edit log profile.
-		async void EditLogProfile(LogProfile? logProfile)
+		/// <summary>
+		/// Edit log profile.
+		/// </summary>
+		public async void EditLogProfile(LogProfile? logProfile)
 		{
 			if (logProfile == null)
 				return;
@@ -132,8 +138,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Export log profile.
-		async void ExportLogProfile(LogProfile? logProfile)
+		/// <summary>
+		/// Export log profile.
+		/// </summary>
+		public async void ExportLogProfile(LogProfile? logProfile)
 		{
 			// check parameter
 			if (logProfile == null)
@@ -159,7 +167,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			catch (Exception ex)
 			{
-				this.Logger.LogError(ex, $"Unable to export log profile '{copiedProfile.Name}' to '{fileName}'");
+				this.Logger.LogError(ex, "Unable to export log profile '{copiedProfileName}' to '{fileName}'", copiedProfile.Name, fileName);
 				_ = new AppSuite.Controls.MessageDialog()
 				{
 					Icon = AppSuite.Controls.MessageDialogIcon.Error,
@@ -186,15 +194,16 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Generate result.
 		protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken)
 		{
-			var logProfile = this.otherLogProfileListBox.SelectedItem as LogProfile;
-			if (logProfile == null)
-				logProfile = this.pinnedLogProfileListBox.SelectedItem as LogProfile;
+			var logProfile = this.otherLogProfileListBox.SelectedItem as LogProfile
+				?? this.pinnedLogProfileListBox.SelectedItem as LogProfile;
 			return Task.FromResult((object?)logProfile);
 		}
 
 
-		// Import log profile.
-		async void ImportLogProfile()
+		/// <summary>
+		/// Import log profile.
+		/// </summary>
+		public async void ImportLogProfile()
 		{
 			// select file
 			var fileNames = await new OpenFileDialog().Also(it =>
@@ -217,7 +226,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			catch (Exception ex)
 			{
-				this.Logger.LogError(ex, $"Unable to load log profile from '{fileName}'");
+				this.Logger.LogError(ex, "Unable to load log profile from '{fileName}'", fileName);
 				_ = new AppSuite.Controls.MessageDialog()
 				{
 					Icon = AppSuite.Controls.MessageDialogIcon.Error,
@@ -484,27 +493,29 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (!base.OnValidateInput())
 				return false;
-			var profile = (this.pinnedLogProfileListBox.SelectedItem ?? this.otherLogProfileListBox.SelectedItem) as LogProfile;
-			if (profile == null)
+			var selectedItem = (this.pinnedLogProfileListBox.SelectedItem ?? this.otherLogProfileListBox.SelectedItem);
+			if (selectedItem is not LogProfile logProfile)
 				return false;
-			return !profile.DataSourceProvider.IsProVersionOnly || this.GetValue<bool>(IsProVersionActivatedProperty);
+			return !logProfile.DataSourceProvider.IsProVersionOnly || this.GetValue<bool>(IsProVersionActivatedProperty);
 		}
 
 
 		/// <summary>
 		/// Get other log profiles.
 		/// </summary>
-		IList<LogProfile> OtherLogProfiles { get; }
+		public IList<LogProfile> OtherLogProfiles { get; }
 
 
 		/// <summary>
 		/// Get pinned log profiles.
 		/// </summary>
-		IList<LogProfile> PinnedLogProfiles { get; }
+		public IList<LogProfile> PinnedLogProfiles { get; }
 
 
-		// Pin/Unpin log profile.
-		void PinUnpinLogProfile(LogProfile? logProfile)
+		/// <summary>
+		/// Pin/Unpin log profile.
+		/// </summary>
+		public void PinUnpinLogProfile(LogProfile? logProfile)
 		{
 			if (logProfile == null)
 				return;
@@ -564,8 +575,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Remove log profile.
-		async void RemoveLogProfile(LogProfile? logProfile)
+		/// <summary>
+		/// Remove log profile.
+		/// </summary>
+		public async void RemoveLogProfile(LogProfile? logProfile)
 		{
 			if (logProfile == null)
 				return;
@@ -591,21 +604,12 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				// find list box item
 				var listBoxItem = (ListBoxItem?)null;
-				var logProfile = this.pinnedLogProfileListBox.SelectedItem as LogProfile;
-				if (logProfile != null)
-					this.pinnedLogProfileListBox.TryFindListBoxItem(logProfile, out listBoxItem);
-				else
-				{
-					logProfile = this.otherLogProfileListBox.SelectedItem as LogProfile;
-					if (logProfile != null)
-						this.otherLogProfileListBox.TryFindListBoxItem(logProfile, out listBoxItem);
-					else
-					{
-						logProfile = this.templateLogProfileListBox.SelectedItem as LogProfile;
-						if (logProfile != null)
-							this.templateLogProfileListBox.TryFindListBoxItem(logProfile, out listBoxItem);
-					}
-				}
+				if (this.pinnedLogProfileListBox.SelectedItem is LogProfile pinnedLogProfile)
+					this.pinnedLogProfileListBox.TryFindListBoxItem(pinnedLogProfile, out listBoxItem);
+				else if (this.otherLogProfileListBox.SelectedItem is LogProfile otherLogProfile)
+					this.otherLogProfileListBox.TryFindListBoxItem(otherLogProfile, out listBoxItem);
+				else if (this.templateLogProfileListBox.SelectedItem is LogProfile templateLogProfile)
+					this.templateLogProfileListBox.TryFindListBoxItem(templateLogProfile, out listBoxItem);
 				if (listBoxItem == null)
 					return;
 
@@ -631,6 +635,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// <summary>
 		/// Get template log profiles.
 		/// </summary>
-		IList<LogProfile> TemplateLogProfiles { get; }
+		public IList<LogProfile> TemplateLogProfiles { get; }
 	}
 }

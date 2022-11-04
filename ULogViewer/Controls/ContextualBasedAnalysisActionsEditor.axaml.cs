@@ -93,49 +93,64 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Add action.
-		async void AddCopyVarAction()
+		/// <summary>
+		/// Add action.
+		/// </summary>
+		public async void AddCopyVarAction()
 		{
 			if (this.window != null)
 				this.AddAction(await new CopyVarEditorDialog().ShowDialog<ContextualBasedAnalysisAction?>(this.window));
 		}
 
 
-		// Add action.
-		async void AddDequeueToVarAction()
+		/// <summary>
+		/// Add action.
+		/// </summary>
+		public async void AddDequeueToVarAction()
 		{
 			if (this.window != null)
 				this.AddAction(await new DequeueToVarEditorDialog().ShowDialog<ContextualBasedAnalysisAction?>(this.window));
 		}
 
 
-		// Add action.
-		async void AddEnqueueVarAction()
+		/// <summary>
+		/// Add action.
+		/// </summary>
+		public async void AddEnqueueVarAction()
 		{
 			if (this.window != null)
 				this.AddAction(await new EnqueueVarEditorDialog().ShowDialog<ContextualBasedAnalysisAction?>(this.window));
 		}
 
 
-		// Add action.
-		async void AddPopToVarAction()
+		/// <summary>
+		/// Add action.
+		/// </summary>
+		public async void AddPopToVarAction()
 		{
 			if (this.window != null)
 				this.AddAction(await new PopToVarEditorDialog().ShowDialog<ContextualBasedAnalysisAction?>(this.window));
 		}
 
 
-		// Add action.
-		async void AddPushVarAction()
+		/// <summary>
+		/// Add action.
+		/// </summary>
+		public async void AddPushVarAction()
 		{
 			if (this.window != null)
 				this.AddAction(await new PushVarEditorDialog().ShowDialog<ContextualBasedAnalysisAction?>(this.window));
 		}
 
 
-		// Edit action.
-		void EditAction(ListBoxItem item) =>
+		/// <summary>
+		/// Edit action.
+		/// </summary>
+		public void EditAction(ListBoxItem item) =>
 			this.EditAction((ContextualBasedAnalysisAction)item.DataContext.AsNonNull());
+		
+
+		// Edit action.
 		async void EditAction(ContextualBasedAnalysisAction action)
 		{
 			// find action
@@ -168,8 +183,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Move action down.
-		void MoveActionDown(ListBoxItem item)
+		/// <summary>
+		/// Move action down.
+		/// </summary>
+		public void MoveActionDown(ListBoxItem item)
 		{
 			var actions = this.Actions;
 			if (actions == null)
@@ -190,8 +207,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Move action up.
-		void MoveActionUp(ListBoxItem item)
+		/// <summary>
+		/// Move action up.
+		/// </summary>
+		public void MoveActionUp(ListBoxItem item)
 		{
 			var actions = this.Actions;
 			if (actions == null)
@@ -228,8 +247,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Remove action.
-		void RemoveAction(ListBoxItem item)
+		/// <summary>
+		/// Remove action.
+		/// </summary>
+		public void RemoveAction(ListBoxItem item)
 		{
 			var actions = this.Actions;
 			if (actions == null)
@@ -243,8 +264,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// show menu for adding action.
-		void ShowAddActionMenu() =>
+		/// <summary>
+		/// Show menu for adding action.
+		/// </summary>
+		public void ShowAddActionMenu() =>
 			this.addActionMenu.Open(this.addActionButton);
 		
 

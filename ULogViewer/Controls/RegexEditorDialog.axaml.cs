@@ -101,8 +101,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// List of captured groups.
-		IList<Tuple<string, string>> CapturedGroups { get; }
+		/// <summary>
+		/// List of captured groups.
+		/// </summary>
+		public IList<Tuple<string, string>> CapturedGroups { get; }
 
 
 		// Generate result.
