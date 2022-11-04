@@ -60,8 +60,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Add rule.
-		async void AddRule()
+		/// <summary>
+		/// Add rule.
+		/// </summary>
+		public async void AddRule()
 		{
 			var rule = await new OperationCountingAnalysisRuleEditorDialog().ShowDialog<OperationCountingAnalysisRuleSet.Rule?>(this);
 			if (rule == null)
@@ -83,8 +85,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Complete editing.
-		async void CompleteEditing()
+		/// <summary>
+		/// Complete editing.
+		/// </summary>
+		public async void CompleteEditing()
 		{
 			// validate parameters
 			this.validateParametersAction.ExecuteIfScheduled();
@@ -119,8 +123,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Copy rule.
-		async void CopyRule(OperationCountingAnalysisRuleSet.Rule rule)
+		/// <summary>
+		/// Copy rule.
+		/// </summary>
+		public async void CopyRule(OperationCountingAnalysisRuleSet.Rule rule)
 		{
 			// get rule
 			var index = this.rules.IndexOf(rule);
@@ -237,21 +243,29 @@ namespace CarinaStudio.ULogViewer.Controls
 			WindowTransparencyLevel.None;
 		
 
-		// Open online documentation.
-		void OpenDocumentation() =>
+		/// <summary>
+		/// Open online documentation.
+		/// </summary>
+#pragma warning disable CA1822
+		public void OpenDocumentation() =>
 			Platform.OpenLink("https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#OperationDurationAnalysis");
+#pragma warning restore CA1822
 		
 
-		// Remove rule.
-		void RemoveRule(OperationCountingAnalysisRuleSet.Rule rule)
+		/// <summary>
+		/// Remove rule.
+		/// </summary>
+		public void RemoveRule(OperationCountingAnalysisRuleSet.Rule rule)
 		{
 			this.rules.Remove(rule);
 			this.ruleListBox.Focus();
 		}
 		
 
-		// Rules.
-		IList<OperationCountingAnalysisRuleSet.Rule> Rules { get => this.rules; }
+		/// <summary>
+		/// Rules.
+		/// </summary>
+		public IList<OperationCountingAnalysisRuleSet.Rule> Rules { get => this.rules; }
 
 
 		/// <summary>

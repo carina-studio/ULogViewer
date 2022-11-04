@@ -23,7 +23,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			// Fields.
 			readonly TDataReader dataReader;
 			int lineIndex = 0;
-			readonly List<string> lines = new List<string>();
+			readonly List<string> lines = new();
 
 			// Constructor.
 			public ReaderImpl(TDataReader dataReader) => this.dataReader = dataReader;
@@ -74,7 +74,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 						else if (value is byte[] bytes)
 							lines.Add($"<{name}>{Convert.ToBase64String(bytes)}</{name}>");
 						else if (value is DateTime dateTime)
-							lines.Add($"<{name}>{dateTime.ToString("yyyy/MM/dd HH:mm:ss.ffffff")}</{name}>");
+							lines.Add($"<{name}>{dateTime:yyyy/MM/dd HH:mm:ss.ffffff}</{name}>");
 						else if (value is string str)
 						{
 							lineBuffer.Append($"<{name}>");
@@ -159,7 +159,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			catch (Exception ex)
 			{
 				this.Logger.LogError(ex, "Unable to create data reader");
-				_ = this.TaskFactory.StartNew(() => Global.RunWithoutError(connection.Close));
+				_ = this.TaskFactory.StartNew(() => Global.RunWithoutError(connection.Close), CancellationToken.None);
 				return (LogDataSourceState.UnclassifiedError, null);
 			}
 

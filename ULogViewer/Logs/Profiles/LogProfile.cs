@@ -46,25 +46,25 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		bool isAdministratorNeeded;
 		bool isContinuousReading;
 		bool isPinned;
-		SettingKey<bool>? isPinnedSettingKey;
+		readonly SettingKey<bool>? isPinnedSettingKey;
 		bool isTemplate;
 		bool isWorkingDirectoryNeeded;
-		Dictionary<string, LogLevel> logLevelMapForReading = new Dictionary<string, LogLevel>();
-		Dictionary<LogLevel, string> logLevelMapForWriting = new Dictionary<LogLevel, string>();
-		IList<LogPattern> logPatterns = new LogPattern[0];
+		readonly Dictionary<string, LogLevel> logLevelMapForReading = new();
+		readonly Dictionary<LogLevel, string> logLevelMapForWriting = new();
+		IList<LogPattern> logPatterns = Array.Empty<LogPattern>();
 		LogStringEncoding logStringEncodingForReading = LogStringEncoding.Plane;
 		LogStringEncoding logStringEncodingForWriting = LogStringEncoding.Plane;
-		IList<string> logWritingFormats = new string[0];
+		IList<string> logWritingFormats = Array.Empty<string>();
 		string rawLogLevelPropertyName = nameof(Log.Level);
-		IDictionary<string, LogLevel> readOnlyLogLevelMapForReading;
-		IDictionary<LogLevel, string> readOnlyLogLevelMapForWriting;
+		readonly IDictionary<string, LogLevel> readOnlyLogLevelMapForReading;
+		readonly IDictionary<LogLevel, string> readOnlyLogLevelMapForWriting;
 		long restartReadingDelay;
 		SortDirection sortDirection = SortDirection.Ascending;
 		LogSortKey sortKey = LogSortKey.Timestamp;
 		CultureInfo timeSpanCultureInfoForReading = defaultTimestampCultureInfoForReading;
 		CultureInfo timeSpanCultureInfoForWriting = defaultTimestampCultureInfoForReading;
 		LogTimeSpanEncoding timeSpanEncodingForReading = LogTimeSpanEncoding.Custom;
-		IList<string> timeSpanFormatsForReading = new string[0];
+		IList<string> timeSpanFormatsForReading = Array.Empty<string>();
 		string? timeSpanFormatForDisplaying;
 		string? timeSpanFormatForWriting;
 		TimestampDisplayableLogCategoryGranularity timestampCategoryGranularity = TimestampDisplayableLogCategoryGranularity.Hour;
@@ -73,8 +73,8 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		LogTimestampEncoding timestampEncodingForReading = LogTimestampEncoding.Custom;
 		string? timestampFormatForDisplaying;
 		string? timestampFormatForWriting;
-		IList<string> timestampFormatsForReading = new string[0];
-		IList<LogProperty> visibleLogProperties = new LogProperty[0];
+		IList<string> timestampFormatsForReading = Array.Empty<string>();
+		IList<LogProperty> visibleLogProperties = Array.Empty<LogProperty>();
 
 
 		// Constructor.
@@ -193,7 +193,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// </summary>
 		/// <param name="app">Application.</param>
 		/// <returns>Built-in empty log profile.</returns>
-		internal static LogProfile CreateEmptyBuiltInProfile(IULogViewerApplication app) => new LogProfile(app, EmptyId, true);
+		internal static LogProfile CreateEmptyBuiltInProfile(IULogViewerApplication app) => new(app, EmptyId, true);
 
 
 		/// <summary>
@@ -486,7 +486,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		void LoadDataSourceFromJson(JsonElement dataSourceElement)
 		{
 			// find provider
-			var providerName = dataSourceElement.GetProperty("Name").GetString() ?? throw new ArgumentException("No name of data source.");
+			var providerName = dataSourceElement.GetProperty(nameof(ILogDataSourceProvider.Name)).GetString() ?? throw new ArgumentException("No name of data source.");
 			if (!LogDataSourceProviders.TryFindProviderByName(providerName, out var provider) || provider == null)
 				throw new ArgumentException($"Cannot find data source '{providerName}'.");
 
@@ -552,7 +552,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 								options.WorkingDirectory = jsonProperty.Value.GetString();
 								break;
 							default:
-								this.Logger.LogWarning($"Unknown property of DataSource: {jsonProperty.Name}");
+								this.Logger.LogWarning("Unknown property of DataSource: {name}", jsonProperty.Name);
 								continue;
 						}
 						this.IsDataUpgraded = true;
@@ -625,12 +625,12 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			var logProperties = new List<LogProperty>();
 			foreach (var logPropertyElement in visibleLogPropertiesElement.EnumerateArray())
 			{
-				var name = logPropertyElement.GetProperty("Name").GetString().AsNonNull();
+				var name = logPropertyElement.GetProperty(nameof(LogProperty.Name)).GetString().AsNonNull();
 				var displayName = (string?)null;
 				var width = (int?)null;
-				if (logPropertyElement.TryGetProperty("DisplayName", out var jsonElement))
+				if (logPropertyElement.TryGetProperty(nameof(LogProperty.DisplayName), out var jsonElement))
 					displayName = jsonElement.GetString();
-				if (logPropertyElement.TryGetProperty("Width", out jsonElement))
+				if (logPropertyElement.TryGetProperty(nameof(LogProperty.Width), out jsonElement))
 					width = jsonElement.GetInt32();
 				logProperties.Add(new LogProperty(name, displayName, width));
 			}
@@ -918,7 +918,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 						this.LoadVisibleLogPropertiesFromJson(jsonProperty.Value);
 						break;
 					default:
-						this.Logger.LogWarning($"Unknown property of profile: {jsonProperty.Name}");
+						this.Logger.LogWarning("Unknown property of profile: {name}", jsonProperty.Name);
 						break;
 				}
 			}
@@ -1037,7 +1037,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				if (!this.isContinuousReading)
 					return;
 				if (value < 0)
-					throw new ArgumentOutOfRangeException();
+					throw new ArgumentOutOfRangeException(nameof(value));
 				this.restartReadingDelay = value;
 				this.OnPropertyChanged(nameof(RestartReadingDelay));
 			}
@@ -1050,7 +1050,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			var provider = this.dataSourceProvider;
 			var options = this.dataSourceOptions;
 			writer.WriteStartObject();
-			writer.WriteString("Name", provider.Name);
+			writer.WriteString(nameof(ILogDataSourceProvider.Name), provider.Name);
 			writer.WritePropertyName("Options");
 			options.Save(writer);
 			writer.WriteEndObject();
@@ -1412,21 +1412,22 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		// Check whether properties of profile is valid or not.
 		void Validate()
 		{
-			var isValid = this.dataSourceProvider is not EmptyLogDataSourceProvider 
-				&& !this.isTemplate
-					? this.logPatterns.IsNotEmpty()
-						&& this.visibleLogProperties.Let(it =>
+			var isValid = this.dataSourceProvider is not EmptyLogDataSourceProvider;
+			if (isValid && !this.isTemplate)
+			{
+				isValid = this.logPatterns.IsNotEmpty()
+					&& this.visibleLogProperties.Let(it =>
+					{
+						if (it.IsEmpty())
+							return false;
+						foreach (var property in it)
 						{
-							if (it.IsEmpty())
+							if (!Log.HasProperty(property.Name))
 								return false;
-							foreach (var property in it)
-							{
-								if (!Log.HasProperty(property.Name))
-									return false;
-							}
-							return true;
-						})
-					: true;
+						}
+						return true;
+					});
+			}
 			if (this.IsValid == isValid)
 				return;
 			this.IsValid = isValid;

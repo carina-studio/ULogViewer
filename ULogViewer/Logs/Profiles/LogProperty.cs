@@ -53,13 +53,13 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// <summary>
 		/// Equality operator.
 		/// </summary>
-		public static bool operator ==(LogProperty? x, LogProperty? y) => (x?.Equals(y) ?? object.ReferenceEquals(y, null));
+		public static bool operator ==(LogProperty? x, LogProperty? y) => x?.Equals(y) ?? y is null;
 
 
 		/// <summary>
 		/// Inquality operator.
 		/// </summary>
-		public static bool operator !=(LogProperty? x, LogProperty? y) => !(x?.Equals(y) ?? object.ReferenceEquals(y, null));
+		public static bool operator !=(LogProperty? x, LogProperty? y) => !(x?.Equals(y) ?? y is null);
 
 
 		// Get readable string.

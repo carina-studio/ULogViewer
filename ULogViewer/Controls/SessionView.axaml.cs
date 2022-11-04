@@ -95,7 +95,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Constants.
 		const int AutoAddLogFilesDelay = 0;
-		const int MaxLogCountForCopying = 65536;
+		const int UpdateLogAnalysisParamsDelay = 500;
 		const int ScrollingToLatestLogInterval = 200;
 
 
@@ -135,25 +135,25 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ScheduledAction autoSetWorkingDirectoryAction;
 		INotifyCollectionChanged? attachedLogs;
 		readonly ObservableCommandState canAddLogFiles = new();
-		readonly MutableObservableBoolean canCopyLogProperty = new MutableObservableBoolean();
+		readonly MutableObservableBoolean canCopyLogProperty = new();
 		readonly MutableObservableBoolean canCopyLogText = new();
-		readonly MutableObservableBoolean canEditLogProfile = new MutableObservableBoolean();
-		readonly MutableObservableBoolean canFilterByLogProperty = new MutableObservableBoolean();
-		readonly MutableObservableBoolean canMarkSelectedLogs = new MutableObservableBoolean();
-		readonly MutableObservableBoolean canMarkUnmarkSelectedLogs = new MutableObservableBoolean();
+		readonly MutableObservableBoolean canEditLogProfile = new();
+		readonly MutableObservableBoolean canFilterByLogProperty = new();
+		readonly MutableObservableBoolean canMarkSelectedLogs = new();
+		readonly MutableObservableBoolean canMarkUnmarkSelectedLogs = new();
 		readonly ObservableCommandState canReloadLogs = new();
 		readonly ObservableCommandState canResetLogProfileToSession = new();
-		readonly MutableObservableBoolean canRestartAsAdmin = new MutableObservableBoolean(RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && !App.Current.IsRunningAsAdministrator);
+		readonly MutableObservableBoolean canRestartAsAdmin = new(Platform.IsWindows && !App.Current.IsRunningAsAdministrator);
 		readonly ObservableCommandState canSaveLogs = new();
 		readonly ObservableCommandState canSetIPEndPoint = new();
 		readonly ForwardedObservableBoolean canSetLogProfile;
 		readonly ObservableCommandState canSetLogProfileToSession = new();
 		readonly ObservableCommandState canSetUri = new();
 		readonly ObservableCommandState canSetWorkingDirectory = new();
-		readonly MutableObservableBoolean canShowFileInExplorer = new MutableObservableBoolean();
-		readonly MutableObservableBoolean canShowLogProperty = new MutableObservableBoolean();
-		readonly MutableObservableBoolean canShowWorkingDirectoryInExplorer = new MutableObservableBoolean();
-		readonly MutableObservableBoolean canUnmarkSelectedLogs = new MutableObservableBoolean();
+		readonly MutableObservableBoolean canShowFileInExplorer = new();
+		readonly MutableObservableBoolean canShowLogProperty = new();
+		readonly MutableObservableBoolean canShowWorkingDirectoryInExplorer = new();
+		readonly MutableObservableBoolean canUnmarkSelectedLogs = new();
 		readonly MenuItem copyLogPropertyMenuItem;
 		readonly ToggleButton createLogAnalysisRuleSetButton;
 		readonly ContextMenu createLogAnalysisRuleSetMenu;
@@ -185,10 +185,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ContextMenu logFileActionMenu;
 		readonly AppSuite.Controls.ListBox logFileListBox;
 		IDisposable logFilesPanelVisibilityObserverToken = EmptyDisposable.Default;
-		readonly List<ColumnDefinition> logHeaderColumns = new List<ColumnDefinition>();
+		readonly List<ColumnDefinition> logHeaderColumns = new();
 		readonly Control logHeaderContainer;
 		readonly Grid logHeaderGrid;
-		readonly List<MutableObservableValue<GridLength>> logHeaderWidths = new List<MutableObservableValue<GridLength>>();
+		readonly List<MutableObservableValue<GridLength>> logHeaderWidths = new();
 		readonly ComboBox logLevelFilterComboBox;
 		readonly Avalonia.Controls.ListBox logListBox;
 		readonly Panel logListBoxContainer;
@@ -211,7 +211,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly SortedObservableList<PredefinedLogTextFilter> predefinedLogTextFilters;
 		readonly ToggleButton predefinedLogTextFiltersButton;
 		readonly Popup predefinedLogTextFiltersPopup;
-		readonly HashSet<Avalonia.Input.Key> pressedKeys = new HashSet<Avalonia.Input.Key>();
+		readonly HashSet<Avalonia.Input.Key> pressedKeys = new();
 		readonly ScheduledAction scrollToLatestLogAction;
 		readonly ScheduledAction scrollToLatestLogAnalysisResultAction;
 		readonly ToggleButton selectAndSetLogProfileDropDownButton;
@@ -230,7 +230,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ScheduledAction updateLogFiltersAction;
 		readonly ScheduledAction updateLogHeaderContainerMarginAction;
 		readonly ScheduledAction updateStatusBarStateAction;
-		readonly SortedObservableList<Logs.LogLevel> validLogLevels = new SortedObservableList<Logs.LogLevel>((x, y) => (int)x - (int)y);
+		readonly SortedObservableList<Logs.LogLevel> validLogLevels = new((x, y) => (int)x - (int)y);
 		readonly ToggleButton workingDirectoryActionsButton;
 		readonly ContextMenu workingDirectoryActionsMenu;
 
@@ -389,7 +389,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						if (propertyValue == null)
 							propertyValue = property.DisplayName;
 						else if (propertyValue.Length > 16)
-							propertyValue = $"{propertyValue.Substring(0, 16)}…";
+							propertyValue = $"{propertyValue[0..16]}…";
 						this.copyLogPropertyMenuItem.Header = this.Application.GetFormattedString("SessionView.CopyLogProperty", property.DisplayName);
 						this.filterByLogPropertyMenuItem.Header = this.Application.GetFormattedString("SessionView.FilterByLogProperty", propertyValue);
 						this.showLogPropertyMenuItem.Header = this.Application.GetFormattedString("SessionView.ShowLogProperty", property.DisplayName);
@@ -836,8 +836,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Command to add log files.
-		ICommand AddLogFilesCommand { get; }
+		/// <summary>
+		/// Command to add log files.
+		/// </summary>
+		public ICommand AddLogFilesCommand { get; }
 
 
 		/// <summary>
@@ -1009,8 +1011,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		bool CanFilterLogsByNonTextFilters { get => this.GetValue<bool>(CanFilterLogsByNonTextFiltersProperty); }
 
 
-		// Clear log analysis rule set selection.
-		void ClearLogAnalysisRuleSetSelection()
+		/// <summary>
+		/// Clear log analysis rule set selection.
+		/// </summary>
+		public void ClearLogAnalysisRuleSetSelection()
 		{
 			this.keyLogAnalysisRuleSetListBox.SelectedItems.Clear();
 			this.logAnalysisScriptSetListBox.SelectedItems.Clear();
@@ -1021,8 +1025,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Clear predefined log text fliter selection.
-		void ClearPredefinedLogTextFilterSelection()
+		/// <summary>
+		/// Clear predefined log text fliter selection.
+		/// </summary>
+		public void ClearPredefinedLogTextFilterSelection()
 		{
 			this.predefinedLogTextFilterListBox.SelectedItems.Clear();
 			this.updateLogFiltersAction.Reschedule();
@@ -1090,7 +1096,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						if (await this.ConfirmRestartingAsAdmin(profile))
 							this.RestartAsAdministrator();
 						else
-							this.Logger.LogWarning($"Unable to use profile '{profile.Name}' because application is not running as administrator");
+							this.Logger.LogWarning("Unable to use profile '{profileName}' because application is not running as administrator", profile.Name);
 					}
 				}, 1000); // Delay to make sure that owner window has been shown
 			}
@@ -1116,16 +1122,18 @@ namespace CarinaStudio.ULogViewer.Controls
 			}.ShowDialog(this.attachedWindow);
 			if (result == MessageDialogResult.Yes)
 			{
-				this.Logger.LogWarning($"User agreed to restart as administrator for '{profile.Name}'");
+				this.Logger.LogWarning("User agreed to restart as administrator for '{profileName}'", profile.Name);
 				return true;
 			}
-			this.Logger.LogWarning($"User denied to restart as administrator for '{profile.Name}'");
+			this.Logger.LogWarning("User denied to restart as administrator for '{profileName}'", profile.Name);
 			return false;
 		}
 
 
-		// Copy selected log analysis rule set.
-		void CopyKeyLogAnalysisRuleSet(KeyLogAnalysisRuleSet ruleSet)
+		/// <summary>
+		/// Copy selected log analysis rule set.
+		/// </summary>
+		public void CopyKeyLogAnalysisRuleSet(KeyLogAnalysisRuleSet ruleSet)
 		{
 			if (this.attachedWindow == null)
 				return;
@@ -1146,8 +1154,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Copy selected log analysis script set.
-		void CopyLogAnalysisScriptSet(LogAnalysisScriptSet scriptSet)
+		/// <summary>
+		/// Copy selected log analysis script set.
+		/// </summary>
+		public void CopyLogAnalysisScriptSet(LogAnalysisScriptSet scriptSet)
 		{
 			if (this.attachedWindow == null)
 				return;
@@ -1168,8 +1178,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Copy file name of log file.
-		void CopyLogFileName(string filePath)
+		/// <summary>
+		/// Copy file name of log file.
+		/// </summary>
+		public void CopyLogFileName(string filePath)
 		{
 			try
 			{
@@ -1182,8 +1194,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Copy file path of log file.
-		void CopyLogFilePath(string filePath)
+		/// <summary>
+		/// Copy file path of log file.
+		/// </summary>
+		public void CopyLogFilePath(string filePath)
 		{
 			try
 			{
@@ -1234,8 +1248,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Command to copy property of log.
-		ICommand CopyLogPropertyCommand { get; }
+		/// <summary>
+		/// Command to copy property of log.
+		/// </summary>
+		public ICommand CopyLogPropertyCommand { get; }
 
 
 		// Copy text value of selected log.
@@ -1287,12 +1303,16 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Command to copy log text.
-		ICommand CopyLogTextCommand { get; }
+		/// <summary>
+		/// Command to copy log text.
+		/// </summary>
+		public ICommand CopyLogTextCommand { get; }
 
 
-		// Copy selected log analysis rule set.
-		void CopyOperationCountingAnalysisRuleSet(OperationCountingAnalysisRuleSet ruleSet)
+		/// <summary>
+		/// Copy selected log analysis rule set.
+		/// </summary>
+		public void CopyOperationCountingAnalysisRuleSet(OperationCountingAnalysisRuleSet ruleSet)
 		{
 			if (this.attachedWindow == null)
 				return;
@@ -1313,8 +1333,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Copy selected log analysis rule set.
-		void CopyOperationDurationAnalysisRuleSet(OperationDurationAnalysisRuleSet ruleSet)
+		/// <summary>
+		/// Copy selected log analysis rule set.
+		/// </summary>
+		public void CopyOperationDurationAnalysisRuleSet(OperationDurationAnalysisRuleSet ruleSet)
 		{
 			if (this.attachedWindow == null)
 				return;
@@ -1335,8 +1357,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Copy selected predefined log text filter.
-		void CopyPredefinedLogTextFilter(PredefinedLogTextFilter filter)
+		/// <summary>
+		/// Copy selected predefined log text filter.
+		/// </summary>
+		public void CopyPredefinedLogTextFilter(PredefinedLogTextFilter filter)
 		{
 			if (this.attachedWindow == null)
 				return;
@@ -1357,21 +1381,27 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Create new key log analysis rule set.
-		void CreateKeyLogAnalysisRuleSet()
+		/// <summary>
+		/// Create new key log analysis rule set.
+		/// </summary>
+		public void CreateKeyLogAnalysisRuleSet()
 		{
 			if (this.attachedWindow != null)
 				KeyLogAnalysisRuleSetEditorDialog.Show(this.attachedWindow, null);
 		}
 
 
-		// Create new log analysis rule set.
-		void CreateLogAnalysisRuleSet() =>
+		/// <summary>
+		/// Create new log analysis rule set.
+		/// </summary>
+		public void CreateLogAnalysisRuleSet() =>
 			this.createLogAnalysisRuleSetMenu.Open(this.createLogAnalysisRuleSetButton);
 		
 
-		// Create new log analysis script set.
-		void CreateLogAnalysisScriptSet()
+		/// <summary>
+		/// Create new log analysis script set.
+		/// </summary>
+		public void CreateLogAnalysisScriptSet()
 		{
 			if (this.attachedWindow != null)
 				LogAnalysisScriptSetEditorDialog.Show(this.attachedWindow, null);
@@ -1838,24 +1868,30 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Create new operation counting analysis rule set.
-		void CreateOperationCountingAnalysisRuleSet()
+		/// <summary>
+		/// Create new operation counting analysis rule set.
+		/// </summary>
+		public void CreateOperationCountingAnalysisRuleSet()
 		{
 			if (this.attachedWindow != null)
 				OperationCountingAnalysisRuleSetEditorDialog.Show(this.attachedWindow, null);
 		}
 
 
-		// Create new operation duration analysis rule set.
-		void CreateOperationDurationAnalysisRuleSet()
+		/// <summary>
+		/// Create new operation duration analysis rule set.
+		/// </summary>
+		public void CreateOperationDurationAnalysisRuleSet()
 		{
 			if (this.attachedWindow != null)
 				OperationDurationAnalysisRuleSetEditorDialog.Show(this.attachedWindow, null);
 		}
 
 
-		// Create predefined log text fliter.
-		void CreatePredefinedLogTextFilter()
+		/// <summary>
+		/// Create predefined log text fliter.
+		/// </summary>
+		public void CreatePredefinedLogTextFilter()
 		{
 			if (this.attachedWindow == null)
 				return;
@@ -2159,8 +2195,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Edit given key log analysis rule set.
-		void EditKeyLogAnalysisRuleSet(KeyLogAnalysisRuleSet? ruleSet)
+		/// <summary>
+		/// Edit given key log analysis rule set.
+		/// </summary>
+		public void EditKeyLogAnalysisRuleSet(KeyLogAnalysisRuleSet? ruleSet)
 		{
 			if (ruleSet == null || this.attachedWindow == null)
 				return;
@@ -2168,8 +2206,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Edit given log analysis script set.
-		void EditLogAnalysisScriptSet(LogAnalysisScriptSet? scriptSet)
+		/// <summary>
+		/// Edit given log analysis script set.
+		/// </summary>
+		public void EditLogAnalysisScriptSet(LogAnalysisScriptSet? scriptSet)
 		{
 			if (scriptSet == null || this.attachedWindow == null)
 				return;
@@ -2198,12 +2238,16 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Command of editing current log profile.
-		ICommand EditLogProfileCommand { get; }
+		/// <summary>
+		/// Command of editing current log profile.
+		/// </summary>
+		public ICommand EditLogProfileCommand { get; }
 
 
-		// Edit given operation counting analysis rule set.
-		void EditOperationCountingAnalysisRuleSet(OperationCountingAnalysisRuleSet? ruleSet)
+		/// <summary>
+		/// Edit given operation counting analysis rule set.
+		/// </summary>
+		public void EditOperationCountingAnalysisRuleSet(OperationCountingAnalysisRuleSet? ruleSet)
 		{
 			if (ruleSet == null || this.attachedWindow == null)
 				return;
@@ -2211,8 +2255,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Edit given operation duration analysis rule set.
-		void EditOperationDurationAnalysisRuleSet(OperationDurationAnalysisRuleSet? ruleSet)
+		/// <summary>
+		/// Edit given operation duration analysis rule set.
+		/// </summary>
+		public void EditOperationDurationAnalysisRuleSet(OperationDurationAnalysisRuleSet? ruleSet)
 		{
 			if (ruleSet == null || this.attachedWindow == null)
 				return;
@@ -2220,8 +2266,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Edit PATH environment variable.
-		void EditPathEnvVar()
+		/// <summary>
+		/// Edit PATH environment variable.
+		/// </summary>
+		public void EditPathEnvVar()
 		{
 			if (!PathEnvVarEditorDialog.IsSupported || this.attachedWindow == null)
 				return;
@@ -2229,8 +2277,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Edit given predefined log text filter.
-		void EditPredefinedLogTextFilter(PredefinedLogTextFilter? filter)
+		/// <summary>
+		/// Edit given predefined log text filter.
+		/// </summary>		
+		public void EditPredefinedLogTextFilter(PredefinedLogTextFilter? filter)
 		{
 			if (filter == null || this.attachedWindow == null)
 				return;
@@ -2238,8 +2288,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Export given key log analysis rule set.
-		async void ExportKeyLogAnalysisRuleSet(KeyLogAnalysisRuleSet? ruleSet)
+		/// <summary>
+		/// Export given key log analysis rule set.
+		/// </summary>
+		public async void ExportKeyLogAnalysisRuleSet(KeyLogAnalysisRuleSet? ruleSet)
 		{
 			// check state
 			if (ruleSet == null || this.attachedWindow == null)
@@ -2257,14 +2309,16 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			catch (Exception ex)
 			{
-				this.Logger.LogError(ex, $"Failed to export key log analysis rule set '{ruleSet.Id}' to '{fileName}'");
+				this.Logger.LogError(ex, "Failed to export key log analysis rule set '{ruleSetId}' to '{fileName}'", ruleSet.Id, fileName);
 				this.OnExportLogAnalysisRuleSetFailed(ruleSet.Name, fileName);
 			}
 		}
 
 
-		// Export given log analysis script set.
-		async void ExportLogAnalysisScriptSet(LogAnalysisScriptSet? scriptSet)
+		/// <summary>
+		/// Export given log analysis script set.
+		/// </summary>
+		public async void ExportLogAnalysisScriptSet(LogAnalysisScriptSet? scriptSet)
 		{
 			// check state
 			if (scriptSet == null || this.attachedWindow == null)
@@ -2282,14 +2336,16 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			catch (Exception ex)
 			{
-				this.Logger.LogError(ex, $"Failed to export log analysis script set '{scriptSet.Id}' to '{fileName}'");
+				this.Logger.LogError(ex, "Failed to export log analysis script set '{scriptSetId}' to '{fileName}'", scriptSet.Id, fileName);
 				this.OnExportLogAnalysisRuleSetFailed(scriptSet.Name, fileName);
 			}
 		}
 
 
-		// Export given operation counting analysis rule set.
-		async void ExportOperationCountingAnalysisRuleSet(OperationCountingAnalysisRuleSet? ruleSet)
+		/// <summary>
+		/// Export given operation counting analysis rule set.
+		/// </summary>
+		public async void ExportOperationCountingAnalysisRuleSet(OperationCountingAnalysisRuleSet? ruleSet)
 		{
 			// check state
 			if (ruleSet == null || this.attachedWindow == null)
@@ -2307,14 +2363,16 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			catch (Exception ex)
 			{
-				this.Logger.LogError(ex, $"Failed to export operation counting analysis rule set '{ruleSet.Id}' to '{fileName}'");
+				this.Logger.LogError(ex, "Failed to export operation counting analysis rule set '{ruleSetId}' to '{fileName}'", ruleSet.Id,  fileName);
 				this.OnExportLogAnalysisRuleSetFailed(ruleSet.Name, fileName);
 			}
 		}
 
 
-		// Export given operation duration analysis rule set.
-		async void ExportOperationDurationAnalysisRuleSet(OperationDurationAnalysisRuleSet? ruleSet)
+		/// <summary>
+		/// Export given operation duration analysis rule set.
+		/// </summary>
+		public async void ExportOperationDurationAnalysisRuleSet(OperationDurationAnalysisRuleSet? ruleSet)
 		{
 			// check state
 			if (ruleSet == null || this.attachedWindow == null)
@@ -2332,7 +2390,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			catch (Exception ex)
 			{
-				this.Logger.LogError(ex, $"Failed to export operation duration analysis rule set '{ruleSet.Id}' to '{fileName}'");
+				this.Logger.LogError(ex, "Failed to export operation duration analysis rule set '{ruleSetId}' to '{fileName}'", ruleSet.Id, fileName);
 				this.OnExportLogAnalysisRuleSetFailed(ruleSet.Name, fileName);
 			}
 		}
@@ -2347,16 +2405,22 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Command to filter by property of selected log.
-		ICommand FilterByLogPropertyCommand { get; }
+		/// <summary>
+		/// Command to filter by property of selected log.
+		/// </summary>
+		public ICommand FilterByLogPropertyCommand { get; }
 
 
-		// Check whether log profile has been set or not.
-		bool HasLogProfile { get => this.GetValue<bool>(HasLogProfileProperty); }
+		/// <summary>
+		/// Check whether log profile has been set or not.
+		/// </summary>
+		public bool HasLogProfile { get => this.GetValue<bool>(HasLogProfileProperty); }
 
 
-		// Import log analysis rule set.
-		async void ImportLogAnalysisRuleSet()
+		/// <summary>
+		/// Import log analysis rule set.
+		/// </summary>
+		public async void ImportLogAnalysisRuleSet()
 		{
 			// check state
 			if (this.attachedWindow == null)
@@ -2487,8 +2551,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Whether "Tools" menu item is visible or not.
-		bool IsToolsMenuItemVisible { get; }
+		/// <summary>
+		/// Whether "Tools" menu item is visible or not.
+		/// </summary>
+		public bool IsToolsMenuItemVisible { get; }
 
 
 		// Get font family of log.
@@ -2499,14 +2565,18 @@ namespace CarinaStudio.ULogViewer.Controls
 		double LogFontSize { get => this.GetValue<double>(LogFontSizeProperty); }
 
 
-		// Log in to Azure.
-		void LoginToAzure()
+		/// <summary>
+		/// Log in to Azure.
+		/// </summary>
+		public void LoginToAzure()
 		{
 		}
 
 
-		// Log out from Azure.
-		void LogoutFromAzure()
+		/// <summary>
+		/// Log out from Azure.
+		/// </summary>
+		public void LogoutFromAzure()
 		{
 		}
 
@@ -2528,8 +2598,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Command to mark selected logs with given color.
-		ICommand MarkSelectedLogsCommand { get; }
+		/// <summary>
+		/// Command to mark selected logs with given color.
+		/// </summary>
+		public ICommand MarkSelectedLogsCommand { get; }
 
 
 		// Mark or unmark selected logs.
@@ -2553,8 +2625,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Command to mark or unmark selected logs.
-		ICommand MarkUnmarkSelectedLogsCommand { get; }
+		/// <summary>
+		/// Command to mark or unmark selected logs.
+		/// </summary>
+		public ICommand MarkUnmarkSelectedLogsCommand { get; }
 
 
 		// Max line count to display for each log.
@@ -3084,8 +3158,9 @@ namespace CarinaStudio.ULogViewer.Controls
 					var log = this.isAltKeyPressed
 						? (result.EndingLog ?? result.Log ?? result.BeginningLog)
 						: (result.BeginningLog ?? result.Log ?? result.EndingLog);
-					var isLogSelected = log != null && this.logListBox.SelectedItems.Count == 1
-						? Global.Run(() =>
+					var isLogSelected = log != null 
+						&& this.logListBox.SelectedItems.Count == 1
+						&& Global.Run(() =>
 						{
 							var selectedLog = this.logListBox.SelectedItem as DisplayableLog;
 							if (result.Log != null && result.Log == selectedLog)
@@ -3095,8 +3170,7 @@ namespace CarinaStudio.ULogViewer.Controls
 							if (result.EndingLog != null && result.EndingLog == selectedLog)
 								return true;
 							return false;
-						})
-						: false;
+						});
 
 					// focus on log
 					if (log != null && (forceReSelection || !isLogSelected))
@@ -3234,7 +3308,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// sync back to UI if needed
 			var selectedRuleSetCount = 0;
-			var copiedSelectedRuleSets = (IEnumerable)new object[0];
+			var copiedSelectedRuleSets = (IEnumerable)Array.Empty<object>();
 			var syncBackToUI = Global.Run(() =>
 			{
 				if (listBox == this.keyLogAnalysisRuleSetListBox)
@@ -3296,7 +3370,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				}
 			}
 			else
-				this.updateLogAnalysisAction.Reschedule(this.UpdateLogAnalysisParamsDelay);
+				this.updateLogAnalysisAction.Reschedule(UpdateLogAnalysisParamsDelay);
 		}
 
 
@@ -3522,7 +3596,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (!e.Handled && !logAnalysisRuleSetsPopup.IsOpen)
 			{
 				if (this.Application.IsDebugMode && e.Source is not TextBox)
-					this.Logger.LogTrace($"[KeyDown] {e.Key}, Modifiers: {e.KeyModifiers}");
+					this.Logger.LogTrace("[KeyDown] {key}, Modifiers: {keyModifiers}", e.Key, e.KeyModifiers);
 				if ((e.KeyModifiers & (KeyModifiers.Control | KeyModifiers.Meta)) != 0)
 				{
 					var isAltPressed = ((e.KeyModifiers & KeyModifiers.Alt) != 0);
@@ -3708,7 +3782,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				}
 			}
 			else if (this.Application.IsDebugMode && e.Source is not TextBox)
-				this.Logger.LogTrace($"[KeyDown] {e.Key} was handled by another component");
+				this.Logger.LogTrace("[KeyDown] {key} was handled by another component", e.Key);
 			base.OnKeyDown(e);
 		}
 
@@ -3720,7 +3794,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			// check whether key down was received or not
 			if (!this.pressedKeys.Contains(e.Key))
 			{
-				this.Logger.LogTrace($"[KeyUp] Key down of {e.Key} was not received");
+				this.Logger.LogTrace("[KeyUp] Key down of {key} was not received", e.Key);
 				return;
 			}
 
@@ -3730,7 +3804,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				if (!logAnalysisRuleSetsPopup.IsOpen)
 				{
 					if (this.Application.IsDebugMode && e.Source is not TextBox)
-						this.Logger.LogTrace($"[KeyUp] {e.Key}, Modifiers: {e.KeyModifiers}");
+						this.Logger.LogTrace("[KeyUp] {key}, Modifiers: {keyModifiers}", e.Key, e.KeyModifiers);
 					if (!this.IsMultiSelectionKeyPressed(e.KeyModifiers))
 					{
 						switch (e.Key)
@@ -3748,7 +3822,7 @@ namespace CarinaStudio.ULogViewer.Controls
 								if (e.Source is TextBox)
 								{
 									if (this.Application.IsDebugMode)
-										this.Logger.LogTrace($"[KeyUp] {e.Key} on text box");
+										this.Logger.LogTrace("[KeyUp] {key} on text box", e.Key);
 									this.logListBox.Focus();
 								}
 								else if (this.predefinedLogTextFiltersPopup.IsOpen)
@@ -3785,7 +3859,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.logAnalysisRuleSetsPopup.Close();
 			}
 			else if (this.Application.IsDebugMode && e.Source is not TextBox)
-				this.Logger.LogTrace($"[KeyUp] {e.Key} was handled by another component");
+				this.Logger.LogTrace("[KeyUp] {key} was handled by another component", e.Key);
 
 			// stop tracking key
 			this.pressedKeys.Remove(e.Key);
@@ -3801,10 +3875,10 @@ namespace CarinaStudio.ULogViewer.Controls
 				if (this.Application.IsDebugMode)
 				{
 					foreach (var key in this.pressedKeys)
-						this.Logger.LogWarning($"Drop pressed key {key}");
+						this.Logger.LogWarning("Drop pressed key {key}", key);
 				}
 				else
-					this.Logger.LogWarning($"Drop {this.pressedKeys.Count} pressed keys");
+					this.Logger.LogWarning("Drop {pressedKeyCount} pressed keys", this.pressedKeys.Count);
 				this.pressedKeys.Clear();
 			}
             base.OnLostFocus(e);
@@ -3918,7 +3992,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			
 			// log event
 #if DEBUG
-			this.Logger.LogTrace($"[PreviewKeyDown] {e.Key}, Modifiers: {e.KeyModifiers}");
+			this.Logger.LogTrace("[PreviewKeyDown] {key}, Modifiers: {keyModifiers}", e.Key, e.KeyModifiers);
 #endif
 
 			// [Workaround] It will take long time to select all items by list box itself
@@ -3962,7 +4036,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			// log event
 #if DEBUG
-			this.Logger.LogTrace($"[PreviewKeyUp] {e.Key}, Modifiers: {e.KeyModifiers}");
+			this.Logger.LogTrace("[PreviewKeyUp] {key}, Modifiers: {keyModifiers}", e.Key, e.KeyModifiers);
 #endif
 			
 			// check modifier keys
@@ -4069,7 +4143,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						selectedItems.Add(ruleSet);
 					break;
 				default:
-					this.Logger.LogError($"Unsupported change of key log analysis rule sets: {e.Action}");
+					this.Logger.LogError("Unsupported change of key log analysis rule sets: {action}", e.Action);
 					break;
 			}
 			if (syncBack && !isUpdateShceduled)
@@ -4208,29 +4282,43 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Open online documentation.
-		void OpenLogAnalysisDocumentation() =>
+		/// <summary>
+		/// Open online documentation.
+		/// </summary>
+#pragma warning disable CA1822
+		public void OpenLogAnalysisDocumentation() =>
 			Platform.OpenLink("https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis");
+#pragma warning restore CA1822
 		
 
-		// Open online documentation.
-		void OpenLogFilteringDocumentation() =>
+		/// <summary>
+		/// Open online documentation.
+		/// </summary>
+#pragma warning disable CA1822
+		public void OpenLogFilteringDocumentation() =>
 			Platform.OpenLink("https://carinastudio.azurewebsites.net/ULogViewer/LogFiltering");
-		
+#pragma warning restore CA1822
 
-		// Open online documentation.
-		void OpenPredefinedTextFiltersDocumentation() =>
+
+		/// <summary>
+		/// Open online documentation.
+		/// </summary>
+#pragma warning disable CA1822
+		public void OpenPredefinedTextFiltersDocumentation() =>
 			Platform.OpenLink("https://carinastudio.azurewebsites.net/ULogViewer/LogFiltering#PredefinedTextFilters");
+#pragma warning restore CA1822
 
 
-		// Sorted predefined log text filters.
-		IList<PredefinedLogTextFilter> PredefinedLogTextFilters { get => this.predefinedLogTextFilters; }
+		/// <summary>
+		/// Sorted predefined log text filters.
+		/// </summary>
+		public IList<PredefinedLogTextFilter> PredefinedLogTextFilters { get => this.predefinedLogTextFilters; }
 
 
 		// Rebuild log header views and template of log item.
 		void RecreateLogHeadersAndItemTemplate()
 		{
-			if (this.DataContext is not Session session)
+			if (this.DataContext is not Session)
 				return;
 			this.logListBox.Items = null;
 			this.OnDisplayLogPropertiesChanged();
@@ -4238,14 +4326,18 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Reload log file.
-		void ReloadLogFile(string? fileName)
+		/// <summary>
+		/// Reload log file.
+		/// </summary>
+		public void ReloadLogFile(string? fileName)
 		{
 		}
 
 
-		// Reload log file without reading precondition.
-		void ReloadLogFileWithoutLogReadingPrecondition(string? fileName)
+		/// <summary>
+		/// Reload log file without reading precondition.
+		/// </summary>
+		public void ReloadLogFileWithoutLogReadingPrecondition(string? fileName)
 		{
 		}
 
@@ -4278,12 +4370,16 @@ namespace CarinaStudio.ULogViewer.Controls
         }
 
 
-		// Command to reload logs.
-		ICommand ReloadLogsCommand { get; }
+		/// <summary>
+		/// Command to reload logs.
+		/// </summary>
+		public ICommand ReloadLogsCommand { get; }
 
 
-		// Remove given key log analysis rule set.
-		async void RemoveKeyLogAnalysisRuleSet(KeyLogAnalysisRuleSet? ruleSet)
+		/// <summary>
+		/// Remove given key log analysis rule set.
+		/// </summary>
+		public async void RemoveKeyLogAnalysisRuleSet(KeyLogAnalysisRuleSet? ruleSet)
 		{
 			if (ruleSet == null || this.attachedWindow == null)
 				return;
@@ -4295,8 +4391,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Remove given log analysis script set.
-		async void RemoveLogAnalysisScriptSet(LogAnalysisScriptSet? scriptSet)
+		/// <summary>
+		/// Remove given log analysis script set.
+		/// </summary>
+		public async void RemoveLogAnalysisScriptSet(LogAnalysisScriptSet? scriptSet)
 		{
 			if (scriptSet == null || this.attachedWindow == null)
 				return;
@@ -4308,8 +4406,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Remove given operation counting analysis rule set.
-		async void RemoveOperationCountingAnalysisRuleSet(OperationCountingAnalysisRuleSet? ruleSet)
+		/// <summary>
+		/// Remove given operation counting analysis rule set.
+		/// </summary>
+		public async void RemoveOperationCountingAnalysisRuleSet(OperationCountingAnalysisRuleSet? ruleSet)
 		{
 			if (ruleSet == null || this.attachedWindow == null)
 				return;
@@ -4321,8 +4421,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Remove given operation duration analysis rule set.
-		async void RemoveOperationDurationAnalysisRuleSet(OperationDurationAnalysisRuleSet? ruleSet)
+		/// <summary>
+		/// Remove given operation duration analysis rule set.
+		/// </summary>
+		public async void RemoveOperationDurationAnalysisRuleSet(OperationDurationAnalysisRuleSet? ruleSet)
 		{
 			if (ruleSet == null || this.attachedWindow == null)
 				return;
@@ -4334,13 +4436,17 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Remove given predefined log text filter.
-		void RemovePredefinedLogTextFilter(PredefinedLogTextFilter? filter)
+		/// <summary>
+		/// Remove given predefined log text filter.
+		/// </summary>
+#pragma warning disable CA1822
+		public void RemovePredefinedLogTextFilter(PredefinedLogTextFilter? filter)
 		{
 			if (filter == null)
 				return;
 			PredefinedLogTextFilterManager.Default.RemoveFilter(filter);
 		}
+#pragma warning restore CA1822
 
 
 		// Report width of each log header so that items in log list box can change width of each column.
@@ -4375,12 +4481,16 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Command to restart application as administrator role.
-		ICommand RestartAsAdministratorCommand { get; }
+		/// <summary>
+		/// Command to restart application as administrator role.
+		/// </summary>
+		public ICommand RestartAsAdministratorCommand { get; }
 
 
-		// Command to save all logs to file.
-		ICommand SaveAllLogsCommand { get; }
+		/// <summary>
+		/// Command to save all logs to file.
+		/// </summary>
+		public ICommand SaveAllLogsCommand { get; }
 
 
 		// Save logs to file.
@@ -4464,8 +4574,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Command to save logs to file.
-		ICommand SaveLogsCommand { get; }
+		/// <summary>
+		/// Command to save logs to file.
+		/// </summary>
+		public ICommand SaveLogsCommand { get; }
 
 
 		// Scroll to specific log.
@@ -4556,8 +4668,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Commandto select and set IP endpoint.
-		ICommand SelectAndSetIPEndPointCommand { get; }
+		/// <summary>
+		/// Command to select and set IP endpoint.
+		/// </summary>
+		public ICommand SelectAndSetIPEndPointCommand { get; }
 
 
 		/// <summary>
@@ -4583,8 +4697,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Command to set log profile.
-		ICommand SelectAndSetLogProfileCommand { get; }
+		/// <summary>
+		/// Command to set log profile.
+		/// </summary>
+		public ICommand SelectAndSetLogProfileCommand { get; }
 
 
 		// Select and set URI.
@@ -4621,8 +4737,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Commandto select and set URI.
-		ICommand SelectAndSetUriCommand { get; }
+		/// <summary>
+		/// Command to select and set URI.
+		/// </summary>
+		public ICommand SelectAndSetUriCommand { get; }
 
 
 		// Select and set working directory.
@@ -4657,8 +4775,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Command to set working directory.
-		ICommand SelectAndSetWorkingDirectoryCommand { get; }
+		/// <summary>
+		/// Command to set working directory.
+		/// </summary>
+		public ICommand SelectAndSetWorkingDirectoryCommand { get; }
 
 
 		// Show UI for user to select file to export log analysis rule set.
@@ -4699,8 +4819,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Select log by timestamp.
-		async void SelectNearestLogByTimestamp()
+		/// <summary>
+		/// Select log by timestamp.
+		/// </summary>
+		public async void SelectNearestLogByTimestamp()
         {
 			// check state
 			if (this.DataContext is not Session session)
@@ -4750,7 +4872,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					isRestartingAsAdminNeeded = true;
 				else
 				{
-					this.Logger.LogWarning($"Unable to use profile '{logProfile.Name}' ({logProfile.Id}) because application is not running as administrator");
+					this.Logger.LogWarning("Unable to use profile '{logProfileName}' ({logProfileId}) because application is not running as administrator", logProfile.Name, logProfile.Id);
 					return false;
 				}
 			}
@@ -4769,7 +4891,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			// set log profile
 			if (!session.SetLogProfileCommand.TryExecute(logProfile))
 			{
-				this.Logger.LogError($"Unable to set log profile '{logProfile.Name}' ({logProfile.Id}) to session");
+				this.Logger.LogError("Unable to set log profile '{logProfileName}' ({logProfileId}) to session", logProfile.Name, logProfile.Id);
 				return false;
 			}
 			if (session.IsIPEndPointNeeded)
@@ -4863,8 +4985,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Command to show file in system file explorer.
-		ICommand ShowFileInExplorerCommand { get; }
+		/// <summary>
+		/// Command to show file in system file explorer.
+		/// </summary>
+		public ICommand ShowFileInExplorerCommand { get; }
 
 
 		// Show tutorial of log analysis rule sets if needed.
@@ -4893,8 +5017,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Show log file action menu.
-		void ShowLogFileActionMenu(Control anchor)
+		/// <summary>
+		/// Show log file action menu.
+		/// </summary>
+		public void ShowLogFileActionMenu(Control anchor)
 		{
 			// select log file
 			anchor.DataContext?.Let(it =>
@@ -4907,18 +5033,26 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Show single log file in system file manager.
-		void ShowLogFileInExplorer(string filePath) => 
+		/// <summary>
+		/// Show single log file in system file manager.
+		/// </summary>
+#pragma warning disable CA1822
+		public void ShowLogFileInExplorer(string filePath) => 
 			Platform.OpenFileManager(filePath);
+#pragma warning restore CA1822
 		
 
-		// Show menu to select log profile.
+		/// <summary>
+		/// Show menu to select log profile.
+		/// </summary>
 		public void ShowLogProfileSelectionMenu() =>
 			this.logProfileSelectionMenu.Open(this.selectAndSetLogProfileDropDownButton);
 
 
-		// Show menu for saving logs.
-		void ShowLogsSavingMenu() =>
+		/// <summary>
+		/// Show menu for saving logs.
+		/// </summary>
+		public void ShowLogsSavingMenu() =>
 			this.logsSavingMenu.Open(this.logsSavingButton);
 
 
@@ -4959,8 +5093,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Command to show string log property.
-		ICommand ShowLogStringPropertyCommand { get; }
+		/// <summary>
+		/// Command to show string log property.
+		/// </summary>
+		public ICommand ShowLogStringPropertyCommand { get; }
 
 
 		// Show next tutorial is available.
@@ -4969,9 +5105,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			// check state
 			if (this.areAllTutorialsShown)
 				return false;
-			var window = this.attachedWindow as CarinaStudio.AppSuite.Controls.Window;
-			if (window == null 
-				|| (window as MainWindow)?.AreInitialDialogsClosed == false
+			if (this.attachedWindow is not CarinaStudio.AppSuite.Controls.Window window)
+				return false;
+			if ((window as MainWindow)?.AreInitialDialogsClosed == false
 				|| window.HasDialogs
 				|| window.CurrentTutorial != null)
 			{
@@ -5095,8 +5231,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Show UI of other actions.
-		void ShowOtherActions()
+		/// <summary>
+		/// Show UI of other actions.
+		/// </summary>
+		public void ShowOtherActions()
 		{
 			if (this.otherActionsMenu.PlacementTarget == null)
 				this.otherActionsMenu.PlacementTarget = this.otherActionsButton;
@@ -5104,16 +5242,20 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Show dialog to manage script log data source providers.
-		void ShowScriptLogDataSourceProvidersDialog()
+		/// <summary>
+		/// Show dialog to manage script log data source providers.
+		/// </summary>
+		public void ShowScriptLogDataSourceProvidersDialog()
 		{
 			if (this.attachedWindow != null)
 				_ = new ScriptLogDataSourceProvidersDialog().ShowDialog(this.attachedWindow);
 		}
 
 
-		// Show working directory actions menu.
-		void ShowWorkingDirectoryActions()
+		/// <summary>
+		/// Show working directory actions menu.
+		/// </summary>
+		public void ShowWorkingDirectoryActions()
         {
 			if (this.workingDirectoryActionsMenu.PlacementTarget == null)
 				this.workingDirectoryActionsMenu.PlacementTarget = this.workingDirectoryActionsButton;
@@ -5139,8 +5281,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Command to show working directory in system file explorer.
-		ICommand ShowWorkingDirectoryInExplorerCommand { get; }
+		/// <summary>
+		/// Command to show working directory in system file explorer.
+		/// </summary>
+		public ICommand ShowWorkingDirectoryInExplorerCommand { get; }
 
 
 		// Skip all tutorials.
@@ -5179,8 +5323,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Command to switch combination mode of log filters.
-		ICommand SwitchLogFiltersCombinationModeCommand { get; }
+		/// <summary>
+		/// Command to switch combination mode of log filters.
+		/// </summary>
+		public ICommand SwitchLogFiltersCombinationModeCommand { get; }
 
 
 		// Unmark logs.
@@ -5194,8 +5340,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Command to unmark selected logs.
-		ICommand UnmarkSelectedLogsCommand { get; }
+		/// <summary>
+		/// Command to unmark selected logs.
+		/// </summary>
+		public ICommand UnmarkSelectedLogsCommand { get; }
 
 
 		// Update CanFilterLogsByNonTextFilters property.
@@ -5296,10 +5444,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Get delay of updating log analysis.
-		int UpdateLogAnalysisParamsDelay { get => 500; }
-
-
 		// Update font family of log.
 		void UpdateLogFontFamily()
 		{
@@ -5395,7 +5539,9 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// LIst of log levels defined by log profile.
-		IList<Logs.LogLevel> ValidLogLevels { get; }
+		/// <summary>
+		/// List of log levels defined by log profile.
+		/// </summary>
+		public IList<Logs.LogLevel> ValidLogLevels { get; }
 	}
 }
