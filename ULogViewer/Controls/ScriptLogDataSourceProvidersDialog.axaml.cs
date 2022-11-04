@@ -216,13 +216,16 @@ partial class ScriptLogDataSourceProvidersDialog : CarinaStudio.Controls.Dialog<
 		var baseName = BaseNameRegex.Match(provider.DisplayName ?? "").Let(it =>
 			it.Success ? it.Groups["Name"].Value : provider.DisplayName ?? "");
 		var newName = baseName;
-		for (var n = 2; n <= 10; ++n)
+		if (LogDataSourceProviders.ScriptProviders.FirstOrDefault(it => it.DisplayName == newName) != null)
 		{
-			var candidateName = $"{baseName} ({n})";
-			if (LogDataSourceProviders.ScriptProviders.FirstOrDefault(it => it.DisplayName == candidateName) == null)
+			for (var n = 2; n <= 10; ++n)
 			{
-				newName = candidateName;
-				break;
+				var candidateName = $"{baseName} ({n})";
+				if (LogDataSourceProviders.ScriptProviders.FirstOrDefault(it => it.DisplayName == candidateName) == null)
+				{
+					newName = candidateName;
+					break;
+				}
 			}
 		}
 		
