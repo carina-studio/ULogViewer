@@ -775,6 +775,26 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Check whether process ID of log has been selected by user or not.
+		/// </summary>
+		public bool IsProcessIdSelected 
+		{ 
+			get => this.Log.ProcessId.Let(it =>
+				it.HasValue && it.Value == this.Group.SelectedProcessId); 
+		}
+
+
+		/// <summary>
+		/// Check whether thread ID of log has been selected by user or not.
+		/// </summary>
+		public bool IsThreadIdSelected 
+		{ 
+			get => this.Log.ThreadId.Let(it =>
+				it.HasValue && it.Value == this.Group.SelectedThreadId); 
+		}
+
+
+		/// <summary>
 		/// Get level of log.
 		/// </summary>
 		public LogLevel Level { get => this.Log.Level; }
@@ -958,6 +978,24 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.Group.OnDisplayableLogMemorySizeChanged(memorySizeDiff);
 				}
 			}
+		}
+
+
+		// Called when user selected process ID changed.
+		internal void OnSelectedProcessIdChanged()
+		{
+			var propertyChangedHandlers = this.PropertyChanged;
+			if (propertyChangedHandlers != null && this.Log.ProcessId.HasValue)
+				propertyChangedHandlers(this, new(nameof(IsProcessIdSelected)));
+		}
+
+
+		// Called when user selected tread ID changed.
+		internal void OnSelectedThreadIdChanged()
+		{
+			var propertyChangedHandlers = this.PropertyChanged;
+			if (propertyChangedHandlers != null && this.Log.ThreadId.HasValue)
+				propertyChangedHandlers(this, new(nameof(IsThreadIdSelected)));
 		}
 
 

@@ -36,6 +36,14 @@ class LogSelectionViewModel : SessionComponent
     /// Property of <see cref="SelectedLogsDuration"/>.
     /// </summary>
     public static readonly ObservableProperty<TimeSpan?> SelectedLogsDurationProperty = ObservableProperty.Register<LogSelectionViewModel, TimeSpan?>(nameof(SelectedLogsDuration));
+    /// <summary>
+    /// Property of <see cref="SelectedProcessId"/>.
+    /// </summary>
+    public static readonly ObservableProperty<int?> SelectedProcessIdProperty = ObservableProperty.Register<LogSelectionViewModel, int?>(nameof(SelectedProcessId));
+    /// <summary>
+    /// Property of <see cref="SelectedThreadId"/>.
+    /// </summary>
+    public static readonly ObservableProperty<int?> SelectedThreadIdProperty = ObservableProperty.Register<LogSelectionViewModel, int?>(nameof(SelectedThreadId));
 
 
     // Constant.
@@ -237,9 +245,10 @@ class LogSelectionViewModel : SessionComponent
             return;
         
         // update state
-        if (this.selectedLogs.IsEmpty())
+        var selectionCount = this.selectedLogs.Count;
+        if (selectionCount == 0)
             this.ResetValue(HasSelectedLogsProperty);
-        else if (e.Action == NotifyCollectionChangedAction.Add && this.selectedLogs.Count == e.NewItems!.Count)
+        else if (e.Action == NotifyCollectionChangedAction.Add && selectionCount == e.NewItems!.Count)
             this.SetValue(HasSelectedLogsProperty, true);
 
         // raise event and report time information
@@ -254,6 +263,49 @@ class LogSelectionViewModel : SessionComponent
             this.notifySelectedLogsChangedAction.Schedule();
             this.reportSelectedLogsTimeInfoAction.Schedule(SelectedLogsTimeInfoReportingDelay);
         }
+
+        // collect selected PID and TID
+        var selectedPid = (int?)null;
+        var selectedTid = (int?)null;
+        if (selectionCount > 0 && selectionCount <= 64)
+        {
+            var samePid = true;
+            var sameTid = true;
+            for (var i = selectionCount - 1; i >= 0; --i)
+            {
+                var log = this.selectedLogs[i];
+                if (samePid)
+                {
+                    var pid = log.ProcessId;
+                    if (pid.HasValue)
+                    {
+                        if (!selectedPid.HasValue)
+                            selectedPid = pid;
+                        else if (pid != selectedPid)
+                        {
+                            selectedPid = null;
+                            samePid = false;
+                        }
+                    }
+                }
+                if (sameTid)
+                {
+                    var tid = log.ThreadId;
+                    if (tid.HasValue)
+                    {
+                        if (!selectedTid.HasValue)
+                            selectedTid = tid;
+                        else if (tid != selectedTid)
+                        {
+                            selectedTid = null;
+                            sameTid = false;
+                        }
+                    }
+                }
+            }
+        }
+        this.SetValue(SelectedProcessIdProperty, selectedPid);
+        this.SetValue(SelectedThreadIdProperty, selectedTid);
     }
 
 
@@ -346,4 +398,16 @@ class LogSelectionViewModel : SessionComponent
         }
         return log;
     }
+
+
+    /// <summary>
+    /// Get process ID of logs which has been selected by user.
+    /// </summary>
+    public int? SelectedProcessId { get => this.GetValue(SelectedProcessIdProperty); }
+
+
+    /// <summary>
+    /// Get thread ID of logs which has been selected by user.
+    /// </summary>
+    public int? SelectedThreadId { get => this.GetValue(SelectedThreadIdProperty); }
 }

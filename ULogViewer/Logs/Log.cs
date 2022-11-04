@@ -64,11 +64,11 @@ namespace CarinaStudio.ULogViewer.Logs
 
 		// Static fields.
 		static readonly long baseMemorySize = Memory.EstimateInstanceSize<Log>();
-		static readonly HashSet<string> dateTimePropertyNameSet = new HashSet<string>();
+		static readonly HashSet<string> dateTimePropertyNameSet = new();
 		static volatile bool isPropertyMapReady;
 		static long nextId = 0;
-		static readonly Dictionary<string, int> propertyIndices = new Dictionary<string, int>();
-		static readonly Dictionary<string, PropertyInfo> propertyMap = new Dictionary<string, PropertyInfo>();
+		static readonly Dictionary<string, int> propertyIndices = new();
+		static readonly Dictionary<string, PropertyInfo> propertyMap = new();
 		static readonly int propertyNameCount;
 		static readonly IList<string> propertyNames = Enum.GetValues<PropertyName>().Let(propertyNames =>
 		{
@@ -81,8 +81,8 @@ namespace CarinaStudio.ULogViewer.Logs
 		});
 		static readonly byte[][] propertyValueIndicesPool = new byte[PropertyValueIndicesPoolCapacity][];
 		static volatile int propertyValueIndicesPoolSize;
-		static readonly HashSet<string> stringPropertyNameSet = new HashSet<string>();
-		static readonly HashSet<string> timeSpanPropertyNameSet = new HashSet<string>();
+		static readonly HashSet<string> stringPropertyNameSet = new();
+		static readonly HashSet<string> timeSpanPropertyNameSet = new();
 
 
 		// Fields.

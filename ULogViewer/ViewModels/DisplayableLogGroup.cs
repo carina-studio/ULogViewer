@@ -7,9 +7,11 @@ using CarinaStudio.ULogViewer.Converters;
 using CarinaStudio.ULogViewer.Logs;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ULogViewer.ViewModels.Analysis;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Threading;
 
@@ -26,6 +28,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 		// Static fields.
 		static readonly long BaseMemorySize = Memory.EstimateInstanceSize<DisplayableLogGroup>();
+		static int NextId = 1;
 
 
 		// Fields.
@@ -34,8 +37,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		Func<DisplayableLog, string>? colorIndicatorKeyGetter;
 		DisplayableLog? displayableLogsHead;
 		readonly Dictionary<string, IBrush> levelBrushes = new();
+		readonly ILogger logger;
 		int maxDisplayLineCount;
 		readonly Random random = new();
+		int? selectedProcessId;
+		int? selectedThreadId;
+		readonly Stopwatch stopwatch = new();
 
 
 		/// <summary>
@@ -44,18 +51,29 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <param name="profile">Log profile.</param>
 		public DisplayableLogGroup(LogProfile profile)
 		{
+			// get ID
+			this.Id = NextId++;
+
+			// start watch
+			var app = profile.Application;
+			if (app.IsDebugMode)
+				this.stopwatch.Start();
+			
+			// create logger
+			this.logger = app.LoggerFactory.CreateLogger($"{nameof(DisplayableLogGroup)}-{this.Id}");
+			
 			// setup properties
-			this.Application = profile.Application;
+			this.Application = app;
 			this.LogProfile = profile;
-			this.maxDisplayLineCount = Math.Max(1, this.Application.Settings.GetValueOrDefault(SettingKeys.MaxDisplayLineCountForEachLog));
+			this.maxDisplayLineCount = Math.Max(1, app.Settings.GetValueOrDefault(SettingKeys.MaxDisplayLineCountForEachLog));
 			this.MemorySize = BaseMemorySize;
-			this.MemoryUsagePolicy = this.Application.Settings.GetValueOrDefault(SettingKeys.MemoryUsagePolicy);
+			this.MemoryUsagePolicy = app.Settings.GetValueOrDefault(SettingKeys.MemoryUsagePolicy);
 			this.CheckMaxLogExtraNumber();
 
 			// add event handlers
-			this.Application.Settings.SettingChanged += this.OnSettingChanged;
-			this.Application.PropertyChanged += this.OnApplicationPropertyChanged;
-			this.Application.StringsUpdated += this.OnApplicationStringsUpdated;
+			app.Settings.SettingChanged += this.OnSettingChanged;
+			app.PropertyChanged += this.OnApplicationPropertyChanged;
+			app.StringsUpdated += this.OnApplicationStringsUpdated;
 			profile.PropertyChanged += this.OnLogProfilePropertyChanged;
 
 			// setup brushes
@@ -141,6 +159,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// clear resources
 			this.colorIndicatorBrushes.Clear();
 			this.levelBrushes.Clear();
+
+			// stop watch
+			this.stopwatch.Stop();
 		}
 
 
@@ -221,10 +242,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				return brush.AsNonNull();
 			if (this.levelBrushes.TryGetValue(log.Level.ToString(), out brush))
 				return brush.AsNonNull();
-			if (this.levelBrushes.TryGetValue(nameof(LogLevel.Undefined), out brush))
+			if (this.levelBrushes.TryGetValue(nameof(Logs.LogLevel.Undefined), out brush))
 				return brush.AsNonNull();
 			throw new ArgumentException($"Cannot get brush for log level {log.Level}.");
 		}
+
+
+		/// <summary>
+		/// Get unique ID of group.
+		/// </summary>
+		public int Id { get; }
 
 
 		/// <summary>
@@ -438,6 +465,61 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		}
 
 
+		/// <summary>
+		/// Get or set process ID which is currently selected by user.
+		/// </summary>
+		public int? SelectedProcessId
+		{
+			get => this.selectedProcessId;
+			set
+			{
+				this.VerifyAccess();
+				if (this.selectedProcessId == value)
+					return;
+				this.selectedProcessId = value;
+				var time = this.Application.IsDebugMode ? this.stopwatch.ElapsedMilliseconds : 0L;
+				var log = this.displayableLogsHead;
+				while (log != null)
+				{
+					log.OnSelectedProcessIdChanged();
+					log = log.Next;
+				}
+				if (time > 0)
+					this.logger.LogTrace("[Performance] Took {duration} ms to update selected PID", this.stopwatch.ElapsedMilliseconds - time);
+			}
+		}
+
+
+		/// <summary>
+		/// Get or set process ID which is currently selected by user.
+		/// </summary>
+		public int? SelectedThreadId
+		{
+			get => this.selectedThreadId;
+			set
+			{
+				this.VerifyAccess();
+				if (this.selectedThreadId == value)
+					return;
+				this.selectedThreadId = value;
+				var time = this.Application.IsDebugMode ? this.stopwatch.ElapsedMilliseconds : 0L;
+				var log = this.displayableLogsHead;
+				while (log != null)
+				{
+					log.OnSelectedThreadIdChanged();
+					log = log.Next;
+				}
+				if (time > 0)
+					this.logger.LogTrace("[Performance] Took {duration} ms to update selected TID", this.stopwatch.ElapsedMilliseconds - time);
+			}
+		}
+
+
+		/// <inheritdoc/>
+		public override string ToString() =>
+			$"{nameof(DisplayableLogGroup)}-{this.Id}";
+
+
 		// Update color indicator brushes.
 		void UpdateColorIndicatorBrushes()
 		{
@@ -467,7 +549,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			this.levelBrushes.Clear();
 			var converter = LogLevelBrushConverter.Default;
-			foreach (var level in (LogLevel[])Enum.GetValues(typeof(LogLevel)))
+			foreach (var level in (Logs.LogLevel[])Enum.GetValues(typeof(Logs.LogLevel)))
 			{
 				if (converter.Convert(level, typeof(IBrush), null, this.Application.CultureInfo) is IBrush brush)
 					this.levelBrushes[level.ToString()] = brush;

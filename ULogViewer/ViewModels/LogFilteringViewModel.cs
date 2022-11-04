@@ -128,6 +128,8 @@ class LogFilteringViewModel : SessionComponent
     readonly DisplayableLogFilter logFilter;
     readonly Stopwatch logFilteringWatch = new();
     readonly ObservableList<PredefinedLogTextFilter> predefinedTextFilters;
+    IDisposable? selectedPidObserverToken;
+    IDisposable? selectedTidObserverToken;
     readonly ScheduledAction updateLogFilterAction;
 
 
@@ -413,6 +415,10 @@ class LogFilteringViewModel : SessionComponent
             this.Logger.LogDebug("Detach from log filter {logFilter}", this.logFilter);
         this.logFilter.PropertyChanged -= this.OnLogFilterPropertyChanged;
 
+        // detach from log selection
+        this.selectedPidObserverToken?.Dispose();
+        this.selectedTidObserverToken?.Dispose();
+
         // detach from session
         this.Session.AllLogReadersDisposed -= this.OnAllLogReaderDisposed;
         this.displayLogPropertiesObserverToken.Dispose();
@@ -690,8 +696,22 @@ class LogFilteringViewModel : SessionComponent
     /// <inheritdoc/>
     protected override void OnAllComponentsCreated()
     {
+        // call base
         base.OnAllComponentsCreated();
-        this.Session.LogSelection.SelectedLogsChanged += this.OnSelectedLogsChanged;
+
+        // attach to log selection
+        this.Session.LogSelection.Let(it =>
+        {
+            it.SelectedLogsChanged += this.OnSelectedLogsChanged;
+            this.selectedPidObserverToken = it.GetValueAsObservable(LogSelectionViewModel.SelectedProcessIdProperty).Subscribe(pid =>
+            {
+                this.canFilterBySelectedPid.Update(pid.HasValue);
+            });
+            this.selectedTidObserverToken = it.GetValueAsObservable(LogSelectionViewModel.SelectedThreadIdProperty).Subscribe(tid =>
+            {
+                this.canFilterBySelectedTid.Update(tid.HasValue);
+            });
+        });
     }
 
 
@@ -864,46 +884,7 @@ class LogFilteringViewModel : SessionComponent
     // Called when selected logs changed.
     void OnSelectedLogsChanged(object? sender, EventArgs e)
     {
-        var selectedLogs = this.Session.LogSelection.SelectedLogs;
-        var selectionCount = selectedLogs.Count;
-        var canFilterByPid = false;
-        var canFilterByTid = false;
-        var canFilterByProperty = selectionCount == 1;
-        if (selectionCount >= 1 && selectionCount <= 64)
-        {
-            var isPidFilterEnabled = this.GetValue(IsProcessIdFilterEnabledProperty);
-            var isTidFilterEnabled = this.GetValue(IsThreadIdFilterEnabledProperty);
-            if (isPidFilterEnabled || isTidFilterEnabled)
-            {
-                canFilterByPid = true;
-                canFilterByTid = true;
-                var pid = (int?)null;
-                var tid = (int?)null;
-                for (var i = selectionCount - 1; i >= 0; --i)
-                {
-                    var log = selectedLogs[i];
-                    var localPid = log.ProcessId;
-                    var localTid = log.ThreadId;
-                    if (localPid != pid)
-                    {
-                        if (pid.HasValue)
-                            canFilterByPid = false;
-                        else
-                            pid = localPid;
-                    }
-                    if (localTid != tid)
-                    {
-                        if (tid.HasValue)
-                            canFilterByTid = false;
-                        else
-                            tid = localTid;
-                    }
-                }
-            }
-        }
-        this.canFilterBySelectedPid.Update(canFilterByPid);
-        this.canFilterBySelectedProperty.Update(canFilterByProperty);
-        this.canFilterBySelectedTid.Update(canFilterByTid);
+        this.canFilterBySelectedProperty.Update(this.Session.LogSelection.SelectedLogs.Count == 1);
     }
 
 

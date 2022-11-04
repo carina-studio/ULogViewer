@@ -802,7 +802,19 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.LogAnalysis = new LogAnalysisViewModel(this).Also(it =>
 				this.AttachToComponent(it));
 			this.LogSelection = new LogSelectionViewModel(this).Also(it =>
-				this.AttachToComponent(it));
+			{
+				this.AttachToComponent(it);
+				it.GetValueAsObservable(LogSelectionViewModel.SelectedProcessIdProperty).Subscribe(pid =>
+				{
+					if (this.displayableLogGroup != null)
+						this.displayableLogGroup.SelectedProcessId = pid;
+				});
+				it.GetValueAsObservable(LogSelectionViewModel.SelectedThreadIdProperty).Subscribe(tid =>
+				{
+					if (this.displayableLogGroup != null)
+						this.displayableLogGroup.SelectedThreadId = tid;
+				});
+			});
 			this.AllComponentsCreated?.Invoke();
 
 			// create scheduled actions
@@ -1664,12 +1676,15 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			{
 				this.displayableLogGroup = new DisplayableLogGroup(profile).Also(it =>
 				{
+					this.Logger.LogDebug("Create displayable log group '{group}'", it);
 					it.ColorIndicatorBrushesUpdated += (_, e) =>
 					{
 						foreach (var fileInfo in this.logFileInfoMapByLogReader.Values)
 							fileInfo.UpdateColorIndicatorBrush();
 					};
 				});
+				this.displayableLogGroup.SelectedProcessId = this.LogSelection.SelectedProcessId;
+				this.displayableLogGroup.SelectedThreadId = this.LogSelection.SelectedThreadId;
 			}
 
 			// select logs reading task factory
@@ -1920,6 +1935,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// release log group
 			totalLogsMemoryUsage -= this.displayableLogGroup?.MemorySize ?? 0L;
+			this.Logger.LogDebug("Dispose displayable log group '{group}'", this.displayableLogGroup);
 			this.displayableLogGroup = this.displayableLogGroup.DisposeAndReturnNull();
 			this.checkLogsMemoryUsageAction.Cancel();
 
