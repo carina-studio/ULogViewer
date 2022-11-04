@@ -21,7 +21,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 	class DisplayableLogGroup : BaseDisposable, IApplicationObject
 	{
 		// Static fields.
-		static readonly Regex ExtraCaptureRegex = new Regex(@"\(\?\<Extra(?<Number>[\d]+)\>");
+		static readonly Regex ExtraCaptureRegex = new(@"\(\?\<Extra(?<Number>[\d]+)\>");
 
 
 		// Static fields.
@@ -30,12 +30,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 		// Fields.
 		readonly Dictionary<DisplayableLogAnalysisResultType, IImage> analysisResultIndicatorIcons = new();
-		readonly Dictionary<string, IBrush> colorIndicatorBrushes = new Dictionary<string, IBrush>();
+		readonly Dictionary<string, IBrush> colorIndicatorBrushes = new();
 		Func<DisplayableLog, string>? colorIndicatorKeyGetter;
 		DisplayableLog? displayableLogsHead;
-		readonly Dictionary<string, IBrush> levelBrushes = new Dictionary<string, IBrush>();
+		readonly Dictionary<string, IBrush> levelBrushes = new();
 		int maxDisplayLineCount;
-		readonly Random random = new Random();
+		readonly Random random = new();
 
 
 		/// <summary>
@@ -342,9 +342,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Called when memory size of <see cref="DisplayableLog"/> has been changed.
 		/// </summary>
-		/// <param name="log"><see cref="DisplayableLog"/>.</param>
 		/// <param name="diff">Difference of memory size.</param>
-		internal void OnDisplayableLogMemorySizeChanged(DisplayableLog log, long diff)
+		internal void OnDisplayableLogMemorySizeChanged(long diff)
 		{
 			this.MemorySize += diff;
 		}
@@ -470,12 +469,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			var converter = LogLevelBrushConverter.Default;
 			foreach (var level in (LogLevel[])Enum.GetValues(typeof(LogLevel)))
 			{
-				var brush = converter.Convert(level, typeof(IBrush), null, this.Application.CultureInfo) as IBrush;
-				if (brush != null)
+				if (converter.Convert(level, typeof(IBrush), null, this.Application.CultureInfo) is IBrush brush)
 					this.levelBrushes[level.ToString()] = brush;
-				brush = converter.Convert(level, typeof(IBrush), "PointerOver", this.Application.CultureInfo) as IBrush;
-				if (brush != null)
-					this.levelBrushes[$"{level}.PointerOver"] = brush;
+				if (converter.Convert(level, typeof(IBrush), "PointerOver", this.Application.CultureInfo) is IBrush pointerOverBrush)
+					this.levelBrushes[$"{level}.PointerOver"] = pointerOverBrush;
 			}
 		}
 

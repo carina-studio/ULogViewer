@@ -125,7 +125,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// update memory usage
 			this.memorySize += (short)memorySizeDiff;
 			this.Group.OnAnalysisResultAdded(this);
-			this.Group.OnDisplayableLogMemorySizeChanged(this, memorySizeDiff);
+			this.Group.OnDisplayableLogMemorySizeChanged(memorySizeDiff);
 		}
 
 
@@ -169,7 +169,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					{
 						var memorySizeDiff = this.beginningTimeSpanString.Size;
 						this.memorySize += (short)memorySizeDiff;
-						this.Group.OnDisplayableLogMemorySizeChanged(this, memorySizeDiff);
+						this.Group.OnDisplayableLogMemorySizeChanged(memorySizeDiff);
 					}
 				}
 				return this.beginningTimeSpanString.ToString();
@@ -199,7 +199,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					{
 						var memorySizeDiff = this.beginningTimestampString.Size;
 						this.memorySize += (short)memorySizeDiff;
-						this.Group.OnDisplayableLogMemorySizeChanged(this, memorySizeDiff);
+						this.Group.OnDisplayableLogMemorySizeChanged(memorySizeDiff);
 					}
 				}
 				return this.beginningTimestampString.ToString();
@@ -370,7 +370,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					{
 						var memorySizeDiff = this.endingTimeSpanString.Size;
 						this.memorySize += (short)memorySizeDiff;
-						this.Group.OnDisplayableLogMemorySizeChanged(this, memorySizeDiff);
+						this.Group.OnDisplayableLogMemorySizeChanged(memorySizeDiff);
 					}
 				}
 				return this.endingTimeSpanString.ToString();
@@ -400,7 +400,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					{
 						var memorySizeDiff = this.endingTimestampString.Size;
 						this.memorySize += (short)memorySizeDiff;
-						this.Group.OnDisplayableLogMemorySizeChanged(this, memorySizeDiff);
+						this.Group.OnDisplayableLogMemorySizeChanged(memorySizeDiff);
 					}
 				}
 				return this.endingTimestampString.ToString();
@@ -874,7 +874,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Called when application string resources updated.
 		/// </summary>
 		internal void OnApplicationStringsUpdated()
-		{ }
+		{ 
+			this.OnTimeSpanFormatChanged();
+			this.OnTimestampFormatChanged();
+		}
 
 
 		/// <summary>
@@ -952,7 +955,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				if (memorySizeDiff != 0)
 				{
 					this.memorySize += (short)memorySizeDiff;
-					this.Group.OnDisplayableLogMemorySizeChanged(this, memorySizeDiff);
+					this.Group.OnDisplayableLogMemorySizeChanged(memorySizeDiff);
 				}
 			}
 		}
@@ -967,10 +970,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			if (propertyChangedHandlers == null)
 				return;
 			if (this.analysisResults != null)
-				propertyChangedHandlers?.Invoke(this, new PropertyChangedEventArgs(nameof(AnalysisResultIndicatorIcon)));
-			propertyChangedHandlers?.Invoke(this, new PropertyChangedEventArgs(nameof(ColorIndicatorBrush)));
-			propertyChangedHandlers?.Invoke(this, new PropertyChangedEventArgs(nameof(LevelBrush)));
-			propertyChangedHandlers?.Invoke(this, new PropertyChangedEventArgs(nameof(LevelBrushForPointerOver)));
+				propertyChangedHandlers(this, new PropertyChangedEventArgs(nameof(AnalysisResultIndicatorIcon)));
+			propertyChangedHandlers(this, new PropertyChangedEventArgs(nameof(ColorIndicatorBrush)));
+			propertyChangedHandlers(this, new PropertyChangedEventArgs(nameof(LevelBrush)));
+			propertyChangedHandlers(this, new PropertyChangedEventArgs(nameof(LevelBrushForPointerOver)));
 		}
 
 
@@ -979,20 +982,30 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		internal void OnTimeSpanFormatChanged()
 		{
-			if (this.Log.BeginningTimeSpan.HasValue)
+			var propertyChangedHandlers = this.PropertyChanged;
+			if (propertyChangedHandlers == null)
 			{
 				this.beginningTimeSpanString = null;
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(BeginningTimeSpanString)));
-			}
-			if (this.Log.EndingTimeSpan.HasValue)
-			{
 				this.endingTimeSpanString = null;
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(EndingTimeSpanString)));
-			}
-			if (this.Log.TimeSpan.HasValue)
-			{
 				this.timeSpanString = null;
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TimeSpanString)));
+			}
+			else
+			{
+				if (this.Log.BeginningTimeSpan.HasValue)
+				{
+					this.beginningTimeSpanString = null;
+					propertyChangedHandlers(this, new PropertyChangedEventArgs(nameof(BeginningTimeSpanString)));
+				}
+				if (this.Log.EndingTimeSpan.HasValue)
+				{
+					this.endingTimeSpanString = null;
+					propertyChangedHandlers(this, new PropertyChangedEventArgs(nameof(EndingTimeSpanString)));
+				}
+				if (this.Log.TimeSpan.HasValue)
+				{
+					this.timeSpanString = null;
+					propertyChangedHandlers(this, new PropertyChangedEventArgs(nameof(TimeSpanString)));
+				}
 			}
 		}
 
@@ -1002,20 +1015,30 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		internal void OnTimestampFormatChanged()
 		{
-			if (this.Log.BeginningTimestamp.HasValue)
+			var propertyChangedHandlers = this.PropertyChanged;
+			if (propertyChangedHandlers == null)
 			{
 				this.beginningTimestampString = null;
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(BeginningTimestampString)));
-			}
-			if (this.Log.EndingTimestamp.HasValue)
-			{
 				this.endingTimestampString = null;
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(EndingTimestampString)));
-			}
-			if (this.Log.Timestamp.HasValue)
-			{
 				this.timestampString = null;
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TimestampString)));
+			}
+			else
+			{
+				if (this.Log.BeginningTimestamp.HasValue)
+				{
+					this.beginningTimestampString = null;
+					propertyChangedHandlers(this, new PropertyChangedEventArgs(nameof(BeginningTimestampString)));
+				}
+				if (this.Log.EndingTimestamp.HasValue)
+				{
+					this.endingTimestampString = null;
+					propertyChangedHandlers(this, new PropertyChangedEventArgs(nameof(EndingTimestampString)));
+				}
+				if (this.Log.Timestamp.HasValue)
+				{
+					this.timestampString = null;
+					propertyChangedHandlers(this, new PropertyChangedEventArgs(nameof(TimestampString)));
+				}
 			}
 		}
 
@@ -1114,7 +1137,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// update memory usage
 			this.memorySize += (short)memorySizeDiff;
 			this.Group.OnAnalysisResultRemoved(this);
-			this.Group.OnDisplayableLogMemorySizeChanged(this, memorySizeDiff);
+			this.Group.OnDisplayableLogMemorySizeChanged(memorySizeDiff);
 		}
 
 
@@ -1194,7 +1217,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// update memory usage
 			this.memorySize += (short)memorySizeDiff;
 			this.Group.OnAnalysisResultRemoved(this);
-			this.Group.OnDisplayableLogMemorySizeChanged(this, memorySizeDiff);
+			this.Group.OnDisplayableLogMemorySizeChanged(memorySizeDiff);
 		}
 
 
@@ -1316,7 +1339,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					{
 						var memorySizeDiff = this.timeSpanString.Size;
 						this.memorySize += (short)memorySizeDiff;
-						this.Group.OnDisplayableLogMemorySizeChanged(this, memorySizeDiff);
+						this.Group.OnDisplayableLogMemorySizeChanged(memorySizeDiff);
 					}
 				}
 				return this.timeSpanString.ToString();
@@ -1346,7 +1369,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					{
 						var memorySizeDiff = this.timestampString.Size;
 						this.memorySize += (short)memorySizeDiff;
-						this.Group.OnDisplayableLogMemorySizeChanged(this, memorySizeDiff);
+						this.Group.OnDisplayableLogMemorySizeChanged(memorySizeDiff);
 					}
 				}
 				return this.timestampString.ToString();
