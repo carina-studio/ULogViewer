@@ -214,6 +214,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly HashSet<Avalonia.Input.Key> pressedKeys = new();
 		readonly ScheduledAction scrollToLatestLogAction;
 		readonly ScheduledAction scrollToLatestLogAnalysisResultAction;
+		IBrush? selectableValueLogItemBackgroundBrush;
+		readonly IMultiValueConverter selectableValueLogItemBackgroundConverter;
 		readonly ToggleButton selectAndSetLogProfileDropDownButton;
 		readonly HashSet<KeyLogAnalysisRuleSet> selectedKeyLogAnalysisRuleSets = new();
 		readonly HashSet<LogAnalysisScriptSet> selectedLogAnalysisScriptSets = new();
@@ -332,6 +334,21 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.SetValue<bool>(IsProcessInfoVisibleProperty, this.Settings.GetValueOrDefault(AppSuite.SettingKeys.ShowProcessInfo));
 			this.SetValue<int>(MaxDisplayLineCountForEachLogProperty, Math.Max(1, this.Settings.GetValueOrDefault(SettingKeys.MaxDisplayLineCountForEachLog)));
 			this.ValidLogLevels = ListExtensions.AsReadOnly(this.validLogLevels);
+
+			// create value converters
+			this.selectableValueLogItemBackgroundConverter = new FuncMultiValueConverter<bool, IBrush?>(values =>
+			{
+				if (values is not IList<bool> list)
+					list = values?.ToArray() ?? Array.Empty<bool>();
+				if (list.Count >= 2 
+					&& list[0] /* IsValueSelected */ 
+					&& !list[1] /* IsLisrBoxItemSelected */)
+				{
+					this.selectableValueLogItemBackgroundBrush ??= this.Application.FindResourceOrDefault<IBrush>("Brush/SessionView.LogListBox.Item.Background.SelectedValue");
+					return this.selectableValueLogItemBackgroundBrush ?? Brushes.Transparent;
+				}
+				return Brushes.Transparent;
+			});
 
 			// initialize
 			this.IsToolsMenuItemVisible = this.Application.IsDebugMode || AppSuite.Controls.PathEnvVarEditorDialog.IsSupported;
@@ -1573,6 +1590,37 @@ namespace CarinaStudio.ULogViewer.Controls
 							});
 						}
 					});
+					switch (logProperty.Name)
+					{
+						case nameof(DisplayableLog.ProcessId):
+						case nameof(DisplayableLog.ThreadId):
+							propertyView = new Border().Also(it =>
+							{
+								var isSelectedValuePropertyName = logProperty.Name switch
+								{
+									nameof(DisplayableLog.ProcessId) => nameof(DisplayableLog.IsProcessIdSelected),
+									nameof(DisplayableLog.ThreadId) => nameof(DisplayableLog.IsThreadIdSelected),
+									_ => "",
+								};
+								it.Bind(Border.BackgroundProperty, new MultiBinding().Also(binding =>
+								{
+									binding.Converter = this.selectableValueLogItemBackgroundConverter;
+									binding.Bindings.Add(new Binding() { Path = isSelectedValuePropertyName });
+									binding.Bindings.Add(new Binding()
+									{ 
+										Path = nameof(ListBoxItem.IsSelected), 
+										RelativeSource = new(RelativeSourceMode.FindAncestor) { AncestorType = typeof(ListBoxItem) } 
+									});
+									binding.Bindings.Add(new Binding()
+									{ 
+										Path = nameof(ListBoxItem.IsPointerOver), 
+										RelativeSource = new(RelativeSourceMode.FindAncestor) { AncestorType = typeof(ListBoxItem) } 
+									});
+								}));
+								it.Child = propertyView;
+							});
+							break;
+					}
 					Grid.SetColumn(propertyView, logPropertyIndex * 2);
 					itemGrid.Children.Add(propertyView);
 				}

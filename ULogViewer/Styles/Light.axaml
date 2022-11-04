@@ -76,6 +76,7 @@
 			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Background.Pressed" Color="{DynamicResource Color/Accent}" Opacity="0.1"/>
 			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Background.Selected" Color="{DynamicResource Color/Accent}" Opacity="0.2"/>
 			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Background.Selected.PointerOver" Color="{DynamicResource Color/Accent}" Opacity="0.3"/>
+			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Background.SelectedValue" Color="{DynamicResource Color/Accent}" Opacity="0.1"/>
 			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Column.Border.PointerOver">#7f000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.SelectionIndicator.Background">#20000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.PredefinedLogTextFilterListBox.Background">#ffffff</SolidColorBrush>
