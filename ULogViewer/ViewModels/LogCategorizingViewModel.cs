@@ -22,7 +22,7 @@ class LogCategorizingViewModel : SessionComponent
     /// <summary>
     /// Property of <see cref="TimestampCategories"/>.
     /// </summary>
-    public static readonly ObservableProperty<IReadOnlyList<TimestampDisplayableLogCategory>> TimestampCategoriesProperty = ObservableProperty.Register<LogCategorizingViewModel, IReadOnlyList<TimestampDisplayableLogCategory>>(nameof(TimestampCategories), new TimestampDisplayableLogCategory[0]);
+    public static readonly ObservableProperty<IReadOnlyList<TimestampDisplayableLogCategory>> TimestampCategoriesProperty = ObservableProperty.Register<LogCategorizingViewModel, IReadOnlyList<TimestampDisplayableLogCategory>>(nameof(TimestampCategories), Array.Empty<TimestampDisplayableLogCategory>());
     /// <summary>
     /// Property of <see cref="TimestampCategoriesPanelSize"/>.
     /// </summary>
@@ -40,8 +40,8 @@ class LogCategorizingViewModel : SessionComponent
 
     // Static fields.
     [Obsolete]
-	static readonly SettingKey<double> latestSidePanelSizeKey = new SettingKey<double>("Session.LatestSidePanelSize", Session.MarkedLogsPanelSizeProperty.DefaultValue);
-    static readonly SettingKey<double> latestTimestampCategoriesPanelSizeKey = new SettingKey<double>("Session.LatestTimestampCategoriesPanelSize", TimestampCategoriesPanelSizeProperty.DefaultValue);
+	static readonly SettingKey<double> latestSidePanelSizeKey = new("Session.LatestSidePanelSize", Session.MarkedLogsPanelSizeProperty.DefaultValue);
+    static readonly SettingKey<double> latestTimestampCategoriesPanelSizeKey = new("Session.LatestTimestampCategoriesPanelSize", TimestampCategoriesPanelSizeProperty.DefaultValue);
         
     
     // Fields.

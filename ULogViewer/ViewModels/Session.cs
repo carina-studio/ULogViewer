@@ -66,7 +66,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Property of <see cref="DisplayLogProperties"/>.
 		/// </summary>
-		public static readonly ObservableProperty<IList<DisplayableLogProperty>> DisplayLogPropertiesProperty = ObservableProperty.Register<Session, IList<DisplayableLogProperty>>(nameof(DisplayLogProperties), new DisplayableLogProperty[0]);
+		public static readonly ObservableProperty<IList<DisplayableLogProperty>> DisplayLogPropertiesProperty = ObservableProperty.Register<Session, IList<DisplayableLogProperty>>(nameof(DisplayLogProperties), Array.Empty<DisplayableLogProperty>());
 		/// <summary>
 		/// Property of <see cref="EarliestLogTimestamp"/>.
 		/// </summary>
@@ -263,7 +263,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Property of <see cref="Logs"/>.
 		/// </summary>
-		public static readonly ObservableProperty<IList<DisplayableLog>> LogsProperty = ObservableProperty.Register<Session, IList<DisplayableLog>>(nameof(Logs), new DisplayableLog[0]);
+		public static readonly ObservableProperty<IList<DisplayableLog>> LogsProperty = ObservableProperty.Register<Session, IList<DisplayableLog>>(nameof(Logs), Array.Empty<DisplayableLog>());
 		/// <summary>
 		/// Property of <see cref="LogsDuration"/>.
 		/// </summary>
@@ -304,7 +304,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Property of <see cref="ValidLogLevels"/>.
 		/// </summary>
-		public static readonly ObservableProperty<IList<Logs.LogLevel>> ValidLogLevelsProperty = ObservableProperty.Register<Session, IList<Logs.LogLevel>>(nameof(ValidLogLevels), new Logs.LogLevel[0]);
+		public static readonly ObservableProperty<IList<Logs.LogLevel>> ValidLogLevelsProperty = ObservableProperty.Register<Session, IList<Logs.LogLevel>>(nameof(ValidLogLevels), Array.Empty<Logs.LogLevel>());
 		/// <summary>
 		/// Property of <see cref="WorkingDirectoryName"/>.
 		/// </summary>
@@ -425,7 +425,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			/// <summary>
 			/// Get or set logs to be marked.
 			/// </summary>
-			public IEnumerable<DisplayableLog> Logs { get; set; } = new DisplayableLog[0];
+			public IEnumerable<DisplayableLog> Logs { get; set; } = Array.Empty<DisplayableLog>();
         }
 
 
@@ -439,10 +439,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		// Static fields.
-		static readonly LinkedList<Session> activationHistoryList = new LinkedList<Session>();
-		static readonly TaskFactory defaultLogsReadingTaskFactory = new TaskFactory(TaskScheduler.Default);
-		static readonly List<DisplayableLog> displayableLogsToDispose = new List<DisplayableLog>();
-		static readonly ScheduledAction disposeDisplayableLogsAction = new ScheduledAction(App.Current, () =>
+		static readonly LinkedList<Session> activationHistoryList = new();
+		static readonly TaskFactory defaultLogsReadingTaskFactory = new(TaskScheduler.Default);
+		static readonly List<DisplayableLog> displayableLogsToDispose = new();
+		static readonly ScheduledAction disposeDisplayableLogsAction = new(App.Current, () =>
 		{
 			if (displayableLogsToDispose.IsEmpty())
 				return;
@@ -453,7 +453,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				foreach (var log in displayableLogsToDispose)
 					log.Dispose();
 				displayableLogsToDispose.Clear();
-				staticLogger?.LogTrace($"Disposed {logCount} displayable logs");
+				staticLogger?.LogTrace("Disposed {disposed} displayable logs", logCount);
 				staticLogger?.LogTrace($"All displayable logs were disposed, trigger GC");
 				TriggerGC();
 			}
@@ -463,7 +463,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					displayableLogsToDispose[i].Dispose();
 				displayableLogsToDispose.RemoveRange(logCount - DisplayableLogDisposingChunkSize, DisplayableLogDisposingChunkSize);
 				disposeDisplayableLogsAction?.Schedule(DisposeDisplayableLogsInterval);
-				staticLogger?.LogTrace($"Disposed {DisplayableLogDisposingChunkSize} displayable logs, {displayableLogsToDispose.Count} remains");
+				staticLogger?.LogTrace("Disposed {disposed} displayable logs, {remaining} remains", DisplayableLogDisposingChunkSize, displayableLogsToDispose.Count);
 			}
 		});
 		static readonly Stopwatch gcPerformanceWatch = new Stopwatch().Also(it =>
@@ -471,7 +471,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			if (App.CurrentOrNull?.IsDebugMode == true)
 				it.Start();
 		});
-		static readonly ScheduledAction hibernateSessionsAction = new ScheduledAction(() =>
+		static readonly ScheduledAction hibernateSessionsAction = new(() =>
 		{
 			// setup threshold
 			if (memoryThresholdToStartHibernation <= 0)
@@ -486,7 +486,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// check logs memory usage
 			var logsMemoryUsage = totalLogsMemoryUsage;
-			staticLogger?.LogTrace($"Total logs memory usage: {AppSuite.Converters.FileSizeConverter.Default.Convert<string>(logsMemoryUsage)}, threshold: {AppSuite.Converters.FileSizeConverter.Default.Convert<string>(memoryThresholdToStartHibernation)}");
+			staticLogger?.LogTrace("Total logs memory usage: {memoryUsage}, threshold: {threshold}", 
+				AppSuite.Converters.FileSizeConverter.Default.Convert<string>(logsMemoryUsage),
+				AppSuite.Converters.FileSizeConverter.Default.Convert<string>(memoryThresholdToStartHibernation));
 			if (logsMemoryUsage <= memoryThresholdToStartHibernation)
 				return;
 
@@ -506,13 +508,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				}
 				node = node.Previous;
 			}
-			staticLogger?.LogWarning($"Hibernate {hibernatedSessionCount} session(s) to release {AppSuite.Converters.FileSizeConverter.Default.Convert<string>(releasedMemory)} memory");
+			staticLogger?.LogWarning("Hibernate {hibernatedSessionCount} session(s) to release {releasedMemory} memory", hibernatedSessionCount, AppSuite.Converters.FileSizeConverter.Default.Convert<string>(releasedMemory));
 		});
-		static readonly TaskFactory ioTaskFactory = new TaskFactory(new FixedThreadsTaskScheduler(1));
-		static readonly SettingKey<double> latestLogFilesPanelSizeKey = new SettingKey<double>("Session.LatestLogFilesPanelSize", LogFilesPanelSizeProperty.DefaultValue);
-		static readonly SettingKey<double> latestMarkedLogsPanelSizeKey = new SettingKey<double>("Session.LatestMarkedLogsPanelSize", MarkedLogsPanelSizeProperty.DefaultValue);
+		static readonly TaskFactory ioTaskFactory = new(new FixedThreadsTaskScheduler(1));
+		static readonly SettingKey<double> latestLogFilesPanelSizeKey = new("Session.LatestLogFilesPanelSize", LogFilesPanelSizeProperty.DefaultValue);
+		static readonly SettingKey<double> latestMarkedLogsPanelSizeKey = new("Session.LatestMarkedLogsPanelSize", MarkedLogsPanelSizeProperty.DefaultValue);
 		[Obsolete]
-		static readonly SettingKey<double> latestSidePanelSizeKey = new SettingKey<double>("Session.LatestSidePanelSize", MarkedLogsPanelSizeProperty.DefaultValue);
+		static readonly SettingKey<double> latestSidePanelSizeKey = new("Session.LatestSidePanelSize", MarkedLogsPanelSizeProperty.DefaultValue);
 		static long memoryThresholdToStartHibernation;
 		static ILogger? staticLogger;
 		static long totalLogsMemoryUsage;
@@ -678,21 +680,21 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 		// Fields.
 		readonly LinkedListNode<Session> activationHistoryListNode;
-		readonly List<IDisposable> activationTokens = new List<IDisposable>();
+		readonly List<IDisposable> activationTokens = new ();
 		readonly SortedObservableList<DisplayableLog> allLogs;
-		readonly Dictionary<string, List<DisplayableLog>> allLogsByLogFilePath = new Dictionary<string, List<DisplayableLog>>(PathEqualityComparer.Default);
+		readonly Dictionary<string, List<DisplayableLog>> allLogsByLogFilePath = new(PathEqualityComparer.Default);
 		readonly HashSet<SessionComponent> attachedComponents = new();
 		ILogDataSourceProvider? attachedLogDataSourceProvider;
-		readonly MutableObservableBoolean canClearLogFiles = new MutableObservableBoolean();
-		readonly MutableObservableBoolean canCopyLogs = new MutableObservableBoolean();
-		readonly MutableObservableBoolean canCopyLogsWithFileNames = new MutableObservableBoolean();
-		readonly MutableObservableBoolean canMarkUnmarkLogs = new MutableObservableBoolean();
-		readonly MutableObservableBoolean canPauseResumeLogsReading = new MutableObservableBoolean();
-		readonly MutableObservableBoolean canReloadLogs = new MutableObservableBoolean();
-		readonly MutableObservableBoolean canResetLogProfile = new MutableObservableBoolean();
-		readonly MutableObservableBoolean canSaveLogs = new MutableObservableBoolean();
-		readonly MutableObservableBoolean canSetLogProfile = new MutableObservableBoolean();
-		readonly MutableObservableBoolean canShowAllLogsTemporarily = new MutableObservableBoolean();
+		readonly MutableObservableBoolean canClearLogFiles = new();
+		readonly MutableObservableBoolean canCopyLogs = new();
+		readonly MutableObservableBoolean canCopyLogsWithFileNames = new();
+		readonly MutableObservableBoolean canMarkUnmarkLogs = new();
+		readonly MutableObservableBoolean canPauseResumeLogsReading = new();
+		readonly MutableObservableBoolean canReloadLogs = new();
+		readonly MutableObservableBoolean canResetLogProfile = new();
+		readonly MutableObservableBoolean canSaveLogs = new();
+		readonly MutableObservableBoolean canSetLogProfile = new();
+		readonly MutableObservableBoolean canShowAllLogsTemporarily = new();
 		readonly ScheduledAction checkDataSourceErrorsAction;
 		readonly ScheduledAction checkIsWaitingForDataSourcesAction;
 		readonly ScheduledAction checkLogsMemoryUsageAction;
@@ -704,8 +706,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly Dictionary<LogReader, LogFileInfoImpl> logFileInfoMapByLogReader = new();
 		readonly SortedObservableList<LogFileInfo> logFileInfoList = new((lhs, rhs) =>
 			PathComparer.Default.Compare(lhs?.FileName, rhs?.FileName));
-		readonly List<LogReader> logReaders = new List<LogReader>();
-		readonly Stopwatch logsReadingWatch = new Stopwatch();
+		readonly List<LogReader> logReaders = new();
+		readonly Stopwatch logsReadingWatch = new();
 		readonly SortedObservableList<DisplayableLog> markedLogs;
 		readonly HashSet<string> markedLogsChangedFilePaths = new(PathEqualityComparer.Default);
 		readonly ScheduledAction reloadLogsAction;
@@ -897,9 +899,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					var minTimeSpan = (TimeSpan?)null;
 					var maxTimeSpan = (TimeSpan?)null;
 					if (profile.SortDirection == SortDirection.Ascending)
-						duration = this.CalculateDurationBetweenLogs(firstLog, lastLog, out minTimeSpan, out maxTimeSpan, out earliestTimestamp, out latestTimestamp);
+						duration = CalculateDurationBetweenLogs(firstLog, lastLog, out minTimeSpan, out maxTimeSpan, out earliestTimestamp, out latestTimestamp);
 					else
-						duration = this.CalculateDurationBetweenLogs(lastLog, firstLog, out minTimeSpan, out maxTimeSpan, out earliestTimestamp, out latestTimestamp);
+						duration = CalculateDurationBetweenLogs(lastLog, firstLog, out minTimeSpan, out maxTimeSpan, out earliestTimestamp, out latestTimestamp);
 					this.SetValue(LogsDurationProperty, duration);
 					this.SetValue(EarliestLogTimestampProperty, earliestTimestamp);
 					this.SetValue(LatestLogTimestampProperty, latestTimestamp);
@@ -1164,7 +1166,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				// restore from hibernation
 				if (this.IsHibernated)
 				{
-					this.Logger.LogWarning($"Leave hibernation with {this.savedLogReaderOptions.Count} log reader(s)");
+					this.Logger.LogWarning("Leave hibernation with {savedLogReaderOptionsCount} log reader(s)", this.savedLogReaderOptions.Count);
 
 					// restore log readers
 					this.RestoreLogReaders();
@@ -1188,10 +1190,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				throw new ArgumentNullException(nameof(param));
 			var fileName = param.Source;
 			if (fileName == null)
-				throw new ArgumentNullException(nameof(fileName));
+				throw new ArgumentException("No file name specified.");
 			if (PathEqualityComparer.Default.Equals(Path.GetExtension(fileName), MarkedFileExtension))
 			{
-				this.Logger.LogWarning($"Ignore adding marked logs info file '{fileName}'");
+				this.Logger.LogWarning("Ignore adding marked logs info file '{fileName}'", fileName);
 				return;
 			}
 			var profile = this.LogProfile ?? throw new InternalStateCorruptedException("No log profile to add log file.");
@@ -1200,12 +1202,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				throw new InternalStateCorruptedException($"Cannot add log file because file name is already specified.");
 			if (this.logFileInfoList.BinarySearch<LogFileInfo, string>(fileName, it => it.FileName, PathComparer.Default.Compare) >= 0)
 			{
-				this.Logger.LogWarning($"File '{fileName}' is already added");
+				this.Logger.LogWarning("File '{fileName}' is already added", fileName);
 				return;
 			}
 			this.logFileInfoList.Add(new LogFileInfoImpl(this, fileName, param.Precondition));
 
-			this.Logger.LogDebug($"Add log file '{fileName}'");
+			this.Logger.LogDebug("Add log file '{fileName}'", fileName);
 
 			// create data source
 			dataSourceOptions.FileName = fileName;
@@ -1283,12 +1285,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <param name="earliestTimestamp">Earliest timestamp of <paramref name="x"/> and <paramref name="y"/>.</param>
 		/// <param name="latestTimestamp">Latest timestamp of <paramref name="x"/> and <paramref name="y"/>.</param>
 		/// <returns>Duration between these logs.</returns>
-		public TimeSpan? CalculateDurationBetweenLogs(DisplayableLog x, DisplayableLog y, out TimeSpan? minTimeSpan, out TimeSpan? maxTimeSpan, out DateTime? earliestTimestamp, out DateTime? latestTimestamp) =>
-			this.CalculateDurationBetweenLogs(x.Log, y.Log, out minTimeSpan, out maxTimeSpan, out earliestTimestamp, out latestTimestamp);
+		public static TimeSpan? CalculateDurationBetweenLogs(DisplayableLog x, DisplayableLog y, out TimeSpan? minTimeSpan, out TimeSpan? maxTimeSpan, out DateTime? earliestTimestamp, out DateTime? latestTimestamp) =>
+			CalculateDurationBetweenLogs(x.Log, y.Log, out minTimeSpan, out maxTimeSpan, out earliestTimestamp, out latestTimestamp);
 
 
 		// Calculate duration between two logs.
-		TimeSpan? CalculateDurationBetweenLogs(Log x, Log y, out TimeSpan? minTimeSpan, out TimeSpan? maxTimeSpan, out DateTime? earliestTimestamp, out DateTime? latestTimestamp)
+		static TimeSpan? CalculateDurationBetweenLogs(Log x, Log y, out TimeSpan? minTimeSpan, out TimeSpan? maxTimeSpan, out DateTime? earliestTimestamp, out DateTime? latestTimestamp)
 		{
 			// get timestamps
 			earliestTimestamp = x.SelectEarliestTimestamp();
@@ -1702,7 +1704,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				it.TimestampFormats = profile.TimestampFormatsForReading;
 			});
 			this.logReaders.Add(logReader);
-			this.Logger.LogDebug($"Log reader '{logReader.Id} created");
+			this.Logger.LogDebug("Log reader '{logReaderId} created", logReader.Id);
 
 			// add event handlers
 			dataSource.MessageGenerated += this.OnLogDataSourceMessageGenerated;
@@ -1796,53 +1798,55 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// check state
 			var profile = this.LogProfile ?? throw new InternalStateCorruptedException("No log profile.");
 			var app = this.Application as App ?? throw new InternalStateCorruptedException("No application.");
-			var writingFormats = profile.LogWritingFormats ?? new string[0];
+			var writingFormats = profile.LogWritingFormats ?? Array.Empty<string>();
 
 			// prepare log writer
-			var logWriter = new RawLogWriter(dataOutput);
-			logWriter.LogFormats = writingFormats.IsEmpty()
-				? new StringBuilder().Let(it =>
-				{
-					foreach (var property in this.DisplayLogProperties)
+			var logWriter = new RawLogWriter(dataOutput)
+			{
+				LogFormats = writingFormats.IsEmpty()
+					? new StringBuilder().Let(it =>
 					{
-						if (it.Length > 0)
-							it.Append(' ');
-						var propertyName = property.Name;
-						switch (propertyName)
+						foreach (var property in this.DisplayLogProperties)
 						{
-							case nameof(DisplayableLog.BeginningTimeSpanString):
-							case nameof(DisplayableLog.EndingTimeSpanString):
-							case nameof(DisplayableLog.TimeSpanString):
-								it.Append($"{{{propertyName.Substring(0, propertyName.Length - 6)}}}");
-								break;
-							case nameof(DisplayableLog.BeginningTimestampString):
-							case nameof(DisplayableLog.EndingTimestampString):
-							case nameof(DisplayableLog.TimestampString):
-								it.Append($"{{{propertyName.Substring(0, propertyName.Length - 6)}}}");
-								break;
-							case nameof(DisplayableLog.LineNumber):
-							case nameof(DisplayableLog.ProcessId):
-							case nameof(DisplayableLog.ThreadId):
-								it.Append($"{{{propertyName},-5}}");
-								break;
-							default:
-								it.Append($"{{{propertyName}}}");
-								break;
+							if (it.Length > 0)
+								it.Append(' ');
+							var propertyName = property.Name;
+							switch (propertyName)
+							{
+								case nameof(DisplayableLog.BeginningTimeSpanString):
+								case nameof(DisplayableLog.EndingTimeSpanString):
+								case nameof(DisplayableLog.TimeSpanString):
+									it.Append($"{{{propertyName.AsSpan(0, propertyName.Length - 6)}}}");
+									break;
+								case nameof(DisplayableLog.BeginningTimestampString):
+								case nameof(DisplayableLog.EndingTimestampString):
+								case nameof(DisplayableLog.TimestampString):
+									it.Append($"{{{propertyName.AsSpan(0, propertyName.Length - 6)}}}");
+									break;
+								case nameof(DisplayableLog.LineNumber):
+								case nameof(DisplayableLog.ProcessId):
+								case nameof(DisplayableLog.ThreadId):
+									it.Append($"{{{propertyName},-5}}");
+									break;
+								default:
+									it.Append($"{{{propertyName}}}");
+									break;
+							}
 						}
-					}
-					return new string[] { it.ToString() };
-				})
-				: writingFormats;
-			logWriter.LogLevelMap = profile.LogLevelMapForWriting;
-			logWriter.LogStringEncoding = profile.LogStringEncodingForWriting;
-			logWriter.TimeSpanCultureInfo = profile.TimeSpanCultureInfoForWriting;
-			logWriter.TimeSpanFormat = string.IsNullOrEmpty(profile.TimeSpanFormatForWriting)
-				? profile.TimeSpanFormatsForReading.IsEmpty() ? profile.TimeSpanFormatForDisplaying : profile.TimeSpanFormatsForReading[0]
-				: profile.TimeSpanFormatForWriting;
-			logWriter.TimestampCultureInfo = profile.TimestampCultureInfoForWriting;
-			logWriter.TimestampFormat = string.IsNullOrEmpty(profile.TimestampFormatForWriting)
-				? profile.TimestampFormatsForReading.IsEmpty() ? profile.TimestampFormatForDisplaying : profile.TimestampFormatsForReading[0]
-				: profile.TimestampFormatForWriting;
+						return new string[] { it.ToString() };
+					})
+					: writingFormats,
+				LogLevelMap = profile.LogLevelMapForWriting,
+				LogStringEncoding = profile.LogStringEncodingForWriting,
+				TimeSpanCultureInfo = profile.TimeSpanCultureInfoForWriting,
+				TimeSpanFormat = string.IsNullOrEmpty(profile.TimeSpanFormatForWriting)
+					? profile.TimeSpanFormatsForReading.IsEmpty() ? profile.TimeSpanFormatForDisplaying : profile.TimeSpanFormatsForReading[0]
+					: profile.TimeSpanFormatForWriting,
+				TimestampCultureInfo = profile.TimestampCultureInfoForWriting,
+				TimestampFormat = string.IsNullOrEmpty(profile.TimestampFormatForWriting)
+					? profile.TimestampFormatsForReading.IsEmpty() ? profile.TimestampFormatForDisplaying : profile.TimestampFormatsForReading[0]
+					: profile.TimestampFormatForWriting,
+			};
 			return logWriter;
 		}
 
@@ -1992,7 +1996,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// dispose data source and log reader
 			logReader.Dispose();
 			dataSource.Dispose();
-			this.Logger.LogDebug($"Log reader '{logReader.Id} disposed");
+			this.Logger.LogDebug("Log reader '{logReaderId}' disposed", logReader.Id);
 
 			// check data source error
 			this.checkDataSourceErrorsAction.Schedule();
@@ -2274,7 +2278,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			if (profile == null || profile.IsContinuousReading)
 				return false;
 
-			this.Logger.LogWarning($"Hibernate with {this.logReaders.Count} log reader(s) and {this.AllLogCount} log(s)");
+			this.Logger.LogWarning("Hibernate with {logReaderCount} log reader(s) and {allLogCount} log(s)", this.logReaders.Count, this.AllLogCount);
 
 			// update state
 			this.SetValue(IsHibernatedProperty, true);
@@ -2460,7 +2464,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		// Load marked logs from file.
 		async void LoadMarkedLogs(string fileName)
 		{
-			this.Logger.LogTrace($"Request loading marked log(s) of '{fileName}'");
+			this.Logger.LogTrace("Request loading marked log(s) of '{fileName}'", fileName);
 
 			// load marked logs from file
 			var markedLogInfos = await ioTaskFactory.StartNew(() =>
@@ -2469,15 +2473,15 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				var markedFileName = fileName + MarkedFileExtension;
 				if (!System.IO.File.Exists(markedFileName))
 				{
-					this.Logger.LogTrace($"Marked log file '{markedFileName}' not found");
+					this.Logger.LogTrace("Marked log file '{markedFileName}' not found", markedFileName);
 					return Array.Empty<MarkedLogInfo>();
 				}
 				try
 				{
-					this.Logger.LogTrace($"Start loading marked log file '{markedFileName}'");
+					this.Logger.LogTrace("Start loading marked log file '{markedFileName}'", markedFileName);
 					if (!CarinaStudio.IO.File.TryOpenRead(markedFileName, DefaultFileOpeningTimeout, out var stream) || stream == null)
 					{
-						this.Logger.LogError($"Unable to open marked file to load: {markedFileName}");
+						this.Logger.LogError("Unable to open marked file to load: {markedFileName}", markedFileName);
 						return Array.Empty<MarkedLogInfo>();
 					}
 					using (stream)
@@ -2493,8 +2497,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 											foreach (var jsonObject in jsonProperty.Value.EnumerateArray())
 											{
 												var color = MarkColor.Default;
-												if (jsonObject.TryGetProperty("MarkedColor", out var colorProperty) && colorProperty.ValueKind == JsonValueKind.String)
-													Enum.TryParse(colorProperty.GetString(), out color);
+												if (jsonObject.TryGetProperty("MarkedColor", out var colorProperty) 
+													&& colorProperty.ValueKind == JsonValueKind.String
+													&& Enum.TryParse<MarkColor>(colorProperty.GetString(), out var parsedColor))
+												{
+													color = parsedColor;
+												}
 												var lineNumber = jsonObject.GetProperty("MarkedLineNumber").GetInt32();
 												var timestamp = (DateTime?)null;
 												if (jsonObject.TryGetProperty("MarkedTimestamp", out var timestampElement))
@@ -2508,11 +2516,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 							return 0;
 						});
 					}
-					this.Logger.LogTrace($"Complete loading marked log file '{markedFileName}', {markedLogInfos.Count} marked log(s) found");
+					this.Logger.LogTrace("Complete loading marked log file '{markedFileName}', {markedLogInfoCount} marked log(s) found", markedFileName, markedLogInfos.Count);
 				}
 				catch (Exception ex)
 				{
-					this.Logger.LogError(ex, $"Unable to load marked log file: {markedFileName}");
+					this.Logger.LogError(ex, "Unable to load marked log file: {markedFileName}", markedFileName);
 					return Array.Empty<MarkedLogInfo>();
 				}
 				return markedLogInfos.ToArray();
@@ -2755,7 +2763,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			if (this.unmatchedMarkedLogInfos.IsEmpty())
 				this.Logger.LogTrace("All marked logs are matched");
 			else
-				this.Logger.LogTrace($"{this.unmatchedMarkedLogInfos.Count} marked log(s) are unmatched");
+				this.Logger.LogTrace("{unmatchedMarkedLogInfoCount} marked log(s) are unmatched", this.unmatchedMarkedLogInfos.Count);
 		}
 
 
@@ -2840,7 +2848,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		// Called when property of log data source provider changed.
 		void OnLogDataSourceProviderPropertyChanged(object? sender, PropertyChangedEventArgs e)
 		{
-			if (sender is ScriptLogDataSourceProvider scriptProvider)
+			if (sender is ScriptLogDataSourceProvider)
 			{
 				switch (e.PropertyName)
 				{
@@ -2876,7 +2884,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					{
 						if (!LogProfileManager.Default.Profiles.Contains(profile))
 						{
-							this.Logger.LogWarning($"Log profile '{profile.Name}' ({profile.Id}) has been removed, reset log profile");
+							this.Logger.LogWarning("Log profile '{profileName}' ({profileId}) has been removed, reset log profile", profile.Name, profile.Id);
 							this.ResetLogProfile();
 						}
 					});
@@ -2938,7 +2946,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					{
 						if (it.IsTemplate)
 						{
-							this.Logger.LogWarning($"Log profile '{it.Name}' has been set as template, reset log profile");
+							this.Logger.LogWarning("Log profile '{profileName}' has been set as template, reset log profile", it.Name);
 							this.ResetLogProfile();
 						}
 					});
@@ -3082,7 +3090,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						{
 							if (logFileInfo?.IsRemoving == true)
 							{
-								this.Logger.LogDebug($"All logs cleared, remove log file '{logFileInfo.FileName}'");
+								this.Logger.LogDebug("All logs cleared, remove log file '{logFileInfoFileName}'", logFileInfo.FileName);
 								this.logFileInfoList.Remove(logFileInfo);
 								this.DisposeLogReader(reader, false);
 							}
@@ -3240,7 +3248,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			if (logReader.Precondition == param.Precondition)
 				return;
 
-			this.Logger.LogDebug($"Request refreshing log file '{fileName}'");
+			this.Logger.LogDebug("Request refreshing log file '{fileName}'", fileName);
 
 			// save marked logs to file immediately
 			this.saveMarkedLogsAction.ExecuteIfScheduled();
@@ -3284,24 +3292,26 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			{
 				foreach (var logReader in this.logReaders)
 					logReader.ClearLogs();
-				this.Logger.LogWarning($"Clear logs in {this.logReaders.Count} log reader(s)");
+				this.Logger.LogWarning("Clear logs in {logReaderCount} log reader(s)", this.logReaders.Count);
 			}
 			else
 			{
 				// save log readers
 				this.SaveLogReaders();
 
-				this.Logger.LogWarning($"Reload logs with {this.savedLogReaderOptions.Count} log reader(s)");
+				this.Logger.LogWarning("Reload logs with {savedLogReaderOptionCount} log reader(s)", this.savedLogReaderOptions.Count);
 
 				// dispose log readers
 				this.DisposeLogReaders();
 
 				// reset log file info
+#pragma warning disable IDE0220
 				foreach (LogFileInfoImpl logFileInfo in this.logFileInfoList)
 				{
 					logFileInfo.UpdateLogCount(0);
 					logFileInfo.UpdateLogReaderState(LogReaderState.Preparing);
 				}
+#pragma warning restore IDE0220
 			}
 
 			// update display log properties
@@ -3341,7 +3351,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			if (this.logFileInfoMapByLogReader.TryGetValue(logReader, out var logFileInfo) && logFileInfo.IsPredefined == true)
 				return;
 
-			this.Logger.LogDebug($"Request removing log file '{fileName}'");
+			this.Logger.LogDebug("Request removing log file '{fileName}'", fileName);
 			
 			// clear logs directly
 			if (this.logReaders.Count == 1)
@@ -3414,7 +3424,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.UpdateValidLogLevels();
 
 			// clear profile
-			this.Logger.LogWarning($"Reset log profile '{profile.Name}'");
+			this.Logger.LogWarning("Reset log profile '{profileName}'", profile.Name);
 			this.SetValue(LogProfileProperty, null);
 
 			// dispose log readers
@@ -3447,12 +3457,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			var profile = this.LogProfile;
 			if (profile == null)
 			{
-				this.Logger.LogError($"No log profile to restore {this.savedLogReaderOptions.Count} log reader(s)");
+				this.Logger.LogError("No log profile to restore {savedLogReaderOptionCount} log reader(s)", this.savedLogReaderOptions.Count);
 				this.savedLogReaderOptions.Clear();
 				return;
 			}
 
-			this.Logger.LogWarning($"Start restoring {this.savedLogReaderOptions.Count} log reader(s)");
+			this.Logger.LogWarning("Start restoring {savedLogReaderOptionCount} log reader(s)", this.savedLogReaderOptions.Count);
 
 			// dispose current log readers
 			this.DisposeLogReaders();
@@ -3557,7 +3567,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			}
 			this.savedLogReaderOptions.Clear();
 
-			this.Logger.LogWarning($"Complete restoring {this.logReaders.Count} log reader(s)");
+			this.Logger.LogWarning("Complete restoring {logReaderCount} log reader(s)", this.logReaders.Count);
 		}
 
 
@@ -3595,7 +3605,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				var profile = LogProfileManager.Default.GetProfileOrDefault(jsonValue.GetString()!);
 				if (profile == null)
 				{
-					this.Logger.LogWarning($"Unable to find log profile '{jsonValue.GetString()}' to restore state");
+					this.Logger.LogWarning("Unable to find log profile '{jsonValueString}' to restore state", jsonValue.GetString());
 					return;
 				}
 				this.SetLogProfile(profile, false);
@@ -3637,7 +3647,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						if (dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName)))
 							this.logFileInfoList.Add(new LogFileInfoImpl(this, dataSourceOptions.FileName.AsNonNull(), logReaderOptions.Precondition));
 					}
-					this.Logger.LogTrace($"{this.savedLogReaderOptions.Count} log reader(s) can be restored");
+					this.Logger.LogTrace("{savedLogReaderOptionCount} log reader(s) can be restored", this.savedLogReaderOptions.Count);
 
 					// restore log readers
 					if (!this.IsHibernated)
@@ -3697,7 +3707,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				return;
 			}
 
-			this.Logger.LogWarning($"Start saving {this.logReaders.Count} log reader(s)");
+			this.Logger.LogWarning("Start saving {logReaderCount} log reader(s)", this.logReaders.Count);
 
 			// save marked logs
 			this.saveMarkedLogsAction.ExecuteIfScheduled();
@@ -3713,7 +3723,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				});
 			}
 
-			this.Logger.LogWarning($"Complete saving {this.savedLogReaderOptions.Count} log reader(s)");
+			this.Logger.LogWarning("Complete saving {savedLogReaderOptionCount} log reader(s)", this.savedLogReaderOptions.Count);
 		}
 
 
@@ -3884,14 +3894,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						++count;
 						markedLogInfos.Add(unmatchedMarkedLogInfos[unmatchedInfoIndex--]);
 					} while (unmatchedInfoIndex >= 0 && pathComparer.Equals(unmatchedMarkedLogInfos[unmatchedInfoIndex].FileName, logFileName));
-					this.Logger.LogTrace($"Include {count} unmatched marked info of '{logFileName}'");
+					this.Logger.LogTrace("Include {count} unmatched marked info of '{logFileName}'", count,  logFileName);
 				}
 			});
 			this.SaveMarkedLogs(logFileName, markedLogInfos);
 		}
 		void SaveMarkedLogs(string logFileName, IList<MarkedLogInfo> markedLogInfos)
 		{
-			this.Logger.LogTrace($"Request saving {markedLogInfos.Count} marked log(s) of '{logFileName}'");
+			this.Logger.LogTrace("Request saving {markedLogInfoCount} marked log(s) of '{logFileName}'", markedLogInfos.Count, logFileName);
 
 			// save or delete marked file
 			var task = ioTaskFactory.StartNew(() =>
@@ -3899,17 +3909,17 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				var markedFileName = logFileName + MarkedFileExtension;
 				if (markedLogInfos.IsEmpty())
 				{
-					this.Logger.LogTrace($"Delete marked log file '{markedFileName}'");
+					this.Logger.LogTrace("Delete marked log file '{markedFileName}'", markedFileName);
 					Global.RunWithoutError(() => System.IO.File.Delete(markedFileName));
 				}
 				else
 				{
-					this.Logger.LogTrace($"Start saving {markedLogInfos.Count} marked log(s) to '{markedFileName}'");
+					this.Logger.LogTrace("Start saving {markedLogInfoCount} marked log(s) to '{markedFileName}'", markedLogInfos.Count, markedFileName);
 					try
 					{
 						if (!CarinaStudio.IO.File.TryOpenReadWrite(markedFileName, DefaultFileOpeningTimeout, out var stream) || stream == null)
 						{
-							this.Logger.LogError($"Unable to open marked file to save: {markedFileName}");
+							this.Logger.LogError("Unable to open marked file to save: {markedFileName}", markedFileName);
 							return;
 						}
 						using (stream)
@@ -3933,9 +3943,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					}
 					catch (Exception ex)
 					{
-						this.Logger.LogError(ex, $"Unable to save marked file: {markedFileName}");
+						this.Logger.LogError(ex, "Unable to save marked file: {markedFileName}", markedFileName);
 					}
-					this.Logger.LogTrace($"Complete saving {markedLogInfos.Count} marked log(s) to '{markedFileName}'");
+					this.Logger.LogTrace("Complete saving {markedLogInfoCount} marked log(s) to '{markedFileName}'", markedLogInfos.Count, markedFileName);
 				}
 			});
 			_ = this.WaitForNecessaryTaskAsync(task);
@@ -3970,7 +3980,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// dispose current log readers
 			this.DisposeLogReaders();
 
-			this.Logger.LogDebug($"Set IP endpoint to {endPoint.Address} ({endPoint.Port})");
+			this.Logger.LogDebug("Set IP endpoint to {address} ({port})", endPoint.Address, endPoint.Port);
 
 			// create data source
 			dataSourceOptions.IPEndPoint = endPoint;
@@ -4008,17 +4018,17 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				throw new InternalStateCorruptedException("Already set another log profile.");
 			if (profile.IsTemplate)
 			{
-				this.Logger.LogError($"Cannot use template log profile '{profile.Name}'");
+				this.Logger.LogError("Cannot use template log profile '{profileName}'", profile.Name);
 				return;
 			}
 			if (profile.DataSourceProvider.IsProVersionOnly && !this.Application.ProductManager.IsProductActivated(Products.Professional))
 			{
-				this.Logger.LogError($"Cannot use log profile '{profile.Name}' with Pro-version only data source '{profile.DataSourceProvider.Name}'");
+				this.Logger.LogError("Cannot use log profile '{profileName}' with Pro-version only data source '{profileDataSourceProviderName}'", profile.Name, profile.DataSourceProvider.Name);
 				return;
 			}
 
 			// set profile
-			this.Logger.LogWarning($"Set profile '{profile.Name}'");
+			this.Logger.LogWarning("Set profile '{profileName}'", profile.Name);
 			this.canSetLogProfile.Update(false);
 			this.SetValue(IsReadingLogsContinuouslyProperty, profile.IsContinuousReading);
 			this.SetValue(LogProfileProperty, profile);
@@ -4092,7 +4102,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			}
 			if (startReadingLogs)
 			{
-				this.Logger.LogDebug($"Start reading logs for source '{dataSourceProvider.Name}'");
+				this.Logger.LogDebug("Start reading logs for source '{dataSourceProviderName}'", dataSourceProvider.Name);
 				var dataSource = this.CreateLogDataSourceOrNull(dataSourceProvider, dataSourceOptions);
 				if (dataSource != null)
 					this.CreateLogReader(dataSource, new());
@@ -4250,7 +4260,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// dispose current log readers
 			this.DisposeLogReaders();
 
-			this.Logger.LogDebug($"Set URI to '{uri}'");
+			this.Logger.LogDebug("Set URI to '{uri}'", uri);
 
 			// create data source
 			dataSourceOptions.Uri = uri;
@@ -4303,7 +4313,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// dispose current log readers
 			this.DisposeLogReaders();
 
-			this.Logger.LogDebug($"Set working directory to '{directory}'");
+			this.Logger.LogDebug("Set working directory to '{directory}'", directory);
 
 			// create data source
 			dataSourceOptions.WorkingDirectory = directory;
@@ -4325,15 +4335,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		/// <remarks>Type of command parameter is <see cref="string"/>.</remarks>
 		public ICommand SetWorkingDirectoryCommand { get; }
-
-
-		/// <summary>
-		/// For internal test only.
-		/// </summary>
-		internal void Test()
-		{
-			//
-		}
 
 
 		/// <summary>
@@ -4415,7 +4416,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			if (isDebugMode)
 			{
 				var duration = gcPerformanceWatch!.ElapsedMilliseconds - gcStartTime;
-				staticLogger?.LogDebug($"[Performance] Took {duration} ms to perform GC");
+				staticLogger?.LogDebug("[Performance] Took {duration} ms to perform GC", duration);
 			}
 		}
 
@@ -4526,7 +4527,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			var profile = this.LogProfile;
 			if (profile == null)
-				this.SetValue(ValidLogLevelsProperty, new Logs.LogLevel[0]);
+				this.SetValue(ValidLogLevelsProperty, Array.Empty<Logs.LogLevel>());
 			else
 			{
 				var logLevels = new HashSet<Logs.LogLevel>(profile.LogLevelMapForReading.Values).Also(it => it.Add(ULogViewer.Logs.LogLevel.Undefined));

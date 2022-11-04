@@ -44,7 +44,7 @@ class LogSelectionViewModel : SessionComponent
 
     // Fields.
     INotifyCollectionChanged? attachedLogs;
-    IDisposable logsObserverToken;
+    readonly IDisposable logsObserverToken;
     readonly ScheduledAction notifySelectedLogsChangedAction;
     readonly ScheduledAction reportSelectedLogsTimeInfoAction;
     readonly SortedObservableList<DisplayableLog> selectedLogs;
@@ -91,7 +91,7 @@ class LogSelectionViewModel : SessionComponent
             var latestTimestamp = (DateTime?)null;
             var minTimeSpan = (TimeSpan?)null;
             var maxTimeSpan = (TimeSpan?)null;
-            var duration = this.Session.CalculateDurationBetweenLogs(firstLog, lastLog, out minTimeSpan, out maxTimeSpan, out earliestTimestamp, out latestTimestamp);
+            var duration = Session.CalculateDurationBetweenLogs(firstLog, lastLog, out minTimeSpan, out maxTimeSpan, out earliestTimestamp, out latestTimestamp);
             if (duration.HasValue)
             {
                 this.SetValue(SelectedLogsDurationProperty, duration);
