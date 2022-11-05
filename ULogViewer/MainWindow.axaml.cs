@@ -49,12 +49,11 @@ namespace CarinaStudio.ULogViewer
 		readonly ScheduledAction focusOnTabItemContentAction;
 		readonly ScheduledAction selectAndSetLogProfileAction;
 		readonly DataTemplate sessionTabItemHeaderTemplate;
-		readonly Stopwatch stopwatch = new Stopwatch();
+		readonly Stopwatch stopwatch = new();
 		readonly ScheduledAction updateSysTaskBarAction;
 		readonly AppSuite.Controls.TabControl tabControl;
 		readonly ScheduledAction tabControlSelectionChangedAction;
-		readonly ObservableList<TabItem> tabItems = new ObservableList<TabItem>();
-		NativeMenuItem? toolsNativeMenuItem;
+		readonly ObservableList<TabItem> tabItems = new();
 
 
 		/// <summary>
@@ -94,7 +93,6 @@ namespace CarinaStudio.ULogViewer
 						switch (menuItem.CommandParameter as string)
 						{
 							case "Tools":
-								this.toolsNativeMenuItem = menuItem;
 								for (var j = menuItem.Menu.Items.Count - 1; j >= 0; --j)
 								{
 									if (menuItem.Menu.Items[j] is not NativeMenuItem subMenuItem)
@@ -196,17 +194,23 @@ namespace CarinaStudio.ULogViewer
 		}
 
 
-		// Reset title of current session.
-		void ClearCurrentCustomSessionTitle() =>
+		/// <summary>
+		/// Reset title of current session.
+		/// </summary>
+		public void ClearCurrentCustomSessionTitle() =>
 			(this.tabControl.SelectedItem as TabItem)?.Let(it => this.ClearCustomSessionTitle(it));
 
 
-		// Reset title of session.
-		void ClearCustomSessionTitle(TabItem tabItem)
+		/// <summary>
+		/// Reset title of session.
+		/// </summary>
+#pragma warning disable CA1822
+		public void ClearCustomSessionTitle(TabItem tabItem)
 		{
 			if (tabItem.DataContext is Session session)
 				session.CustomTitle = null;
 		}
+#pragma warning restore CA1822
 
 
 		// Close current session tab item.
@@ -318,13 +322,13 @@ namespace CarinaStudio.ULogViewer
 			if (startTime > 0)
             {
 				var time = this.stopwatch.ElapsedMilliseconds;
-				this.Logger.LogTrace($"Take {time - startTime} ms to detach session from tab item");
+				this.Logger.LogTrace("[Performance] Took {duration} ms to detach session from tab item", time - startTime);
 				startTime = time;
             }
 			(tabItem.Content as IControl)?.Let(it => it.DataContext = null);
 			(tabItem.Header as IControl)?.Let(it => it.DataContext = null);
 			if (startTime > 0)
-				this.Logger.LogTrace($"Take {this.stopwatch.ElapsedMilliseconds - startTime} ms to detach session from session view and header");
+				this.Logger.LogTrace("[Performance] Took {duration} ms to detach session from session view and header", this.stopwatch.ElapsedMilliseconds - startTime);
 		}
 
 
@@ -343,8 +347,10 @@ namespace CarinaStudio.ULogViewer
 		}
 
 
-		// Edit PATH environment variable.
-		void EditPathEnvironmentVariable() =>
+		/// <summary>
+		/// Edit PATH environment variable.
+		/// </summary>
+		public void EditPathEnvironmentVariable() =>
 			_ = new AppSuite.Controls.PathEnvVarEditorDialog().ShowDialog(this);
 
 
@@ -381,28 +387,14 @@ namespace CarinaStudio.ULogViewer
 
 
 		// Find SessionView for specific session.
-		public SessionView? FindSessionView(Session session) => this.FindSessionTabItem(session)?.Content as SessionView;
+		public SessionView? FindSessionView(Session session) => 
+			this.FindSessionTabItem(session)?.Content as SessionView;
 
 
-		// Find index of tab item by dragging position on window.
-		int FindTabItemIndex(DragEventArgs e)
-		{
-			for (var i = this.tabItems.Count - 1; i >= 0; --i)
-			{
-				var header = this.tabItems[i].Header as Control;
-				if (header == null)
-					continue;
-				var position = e.GetPosition(header);
-				var bounds = header.Bounds;
-				if (position.X >= 0 && position.Y >= 0 && position.X <= bounds.Width && position.Y <= bounds.Height)
-					return i;
-			}
-			return -1;
-		}
-
-
-		// Move current session to new workspace.
-		void MoveCurrentSessionToNewWorkspace() =>
+		/// <summary>
+		/// Move current session to new workspace.
+		/// </summary>
+		public void MoveCurrentSessionToNewWorkspace() =>
 			(this.tabControl.SelectedItem as TabItem)?.Let(it => this.MoveSessionToNewWorkspace(it));
 
 
@@ -417,14 +409,19 @@ namespace CarinaStudio.ULogViewer
 			if (!await this.Application.ShowMainWindowAsync(newWindow =>
             {
 				if (newWindow.DataContext is Workspace newWorkspace)
-					this.MoveSessionToNewWorkspace(session, newWorkspace);
+					MoveSessionToNewWorkspace(session, newWorkspace);
 			}))
 			{
 				this.Logger.LogError("Unable to create new main window for session to be moved");
 				return;
 			}
         }
-		void MoveSessionToNewWorkspace(Session session, Workspace newWorkspace)
+
+
+		/// <summary>
+		/// Move given session to new workspace.
+		/// </summary>
+		public static void MoveSessionToNewWorkspace(Session session, Workspace newWorkspace)
 		{
 			// find empty session
 			var emptySession = newWorkspace.Sessions.FirstOrDefault();
@@ -752,15 +749,17 @@ namespace CarinaStudio.ULogViewer
 
 
 		// Called when user selected a log profile.
-		void OnLogProfileSelected(LogProfileSelectionContextMenu sender, Logs.Profiles.LogProfile logProfile)
+#pragma warning disable IDE0051
+		void OnLogProfileSelected(LogProfileSelectionContextMenu _, Logs.Profiles.LogProfile logProfile)
 		{
 			if (this.DataContext is not Workspace workspace)
 				return;
 			var session = workspace.CreateAndAttachSession();
 			var sessionView = this.FindSessionView(session);
 			workspace.ActiveSession = session;
-			_ = sessionView?.SetLogProfileAsync(logProfile);
+			sessionView?.SetLogProfileAsync(logProfile);
 		}
+#pragma warning restore IDE0051
 
 
 		/// <inheritdoc/>
@@ -834,7 +833,7 @@ namespace CarinaStudio.ULogViewer
 							var startTime = this.stopwatch.IsRunning ? this.stopwatch.ElapsedMilliseconds : 0;
 							this.tabItems.RemoveAt(startIndex + i);
 							if (startTime > 0)
-								this.Logger.LogTrace($"Take {this.stopwatch.ElapsedMilliseconds - startTime} ms to remove tab from position {startIndex + i}");
+								this.Logger.LogTrace("[Performance ] Took {duration} ms to remove tab from position {index}", this.stopwatch.ElapsedMilliseconds - startTime, startIndex + i);
 						}
 						if (workspace.Sessions.IsEmpty() && this.HasMultipleMainWindows)
 						{
@@ -903,8 +902,7 @@ namespace CarinaStudio.ULogViewer
 				return;
 
 			// get session
-			var session = (e.Item as TabItem)?.DataContext as Session;
-			if (session == null)
+			if ((e.Item as TabItem)?.DataContext is not Session session)
 				return;
 			
 			// prepare dragging data
@@ -982,8 +980,10 @@ namespace CarinaStudio.ULogViewer
 		}
 
 
-		// Set title of current session.
-		void SetCurrentCustomSessionTitle() =>
+		/// <summary>
+		/// Set title of current session.
+		/// </summary>
+		public void SetCurrentCustomSessionTitle() =>
 			(this.tabControl.SelectedItem as TabItem)?.Let(it => this.SetCustomSessionTitle(it));
 
 
@@ -1009,8 +1009,10 @@ namespace CarinaStudio.ULogViewer
 		}
 
 
-		// Show dialog to manage script log data source providers.
-		void ShowScriptLogDataSourceProvidersDialog() =>
+		/// <summary>
+		/// Show dialog to manage script log data source providers.
+		/// </summary>
+		public void ShowScriptLogDataSourceProvidersDialog() =>
 			_ = new ScriptLogDataSourceProvidersDialog().ShowDialog(this);
 		
 
@@ -1027,8 +1029,7 @@ namespace CarinaStudio.ULogViewer
 				return false;
 			if (this.tabItems.IsEmpty())
 				return false;
-			var button = this.tabItems.Last().Header as Control;
-			if (button == null)
+			if (this.tabItems.Last().Header is not Control button)
 				return false;
 			return this.ShowTutorial(new Tutorial().Also(it =>
 			{

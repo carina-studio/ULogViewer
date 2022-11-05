@@ -42,15 +42,15 @@ namespace CarinaStudio.ULogViewer
 
 
 		// Static fields.
-		static readonly SettingKey<string> LegacyCultureSettingKey = new SettingKey<string>("Culture", "");
-		static readonly SettingKey<string> LegacyThemeModeSettingKey = new SettingKey<string>("ThemeMode", "");
-		static readonly SettingKey<bool> LegacySaveMemoryAggressivelySettingKey = new SettingKey<bool>("SaveMemoryAggressively", false);
+		static readonly SettingKey<string> LegacyCultureSettingKey = new("Culture", "");
+		static readonly SettingKey<string> LegacyThemeModeSettingKey = new("ThemeMode", "");
+		static readonly SettingKey<bool> LegacySaveMemoryAggressivelySettingKey = new("SaveMemoryAggressively", false);
 
 
 		// Fields.
 		IResourceProvider? compactResources;
 		IDisposable? compactResourcesToken;
-		ExternalDependency[] externalDependencies = new ExternalDependency[0];
+		ExternalDependency[] externalDependencies = Array.Empty<ExternalDependency>();
 		readonly Dictionary<CarinaStudio.Controls.Window, MainWindowInfo> mainWindowInfoMap = new();
 		readonly Stopwatch stopwatch = new();
 
@@ -63,7 +63,7 @@ namespace CarinaStudio.ULogViewer
 
 			// check Linux distribution
 			if (Platform.IsLinux)
-				this.Logger.LogDebug($"Linux distribution: {Platform.LinuxDistribution}");
+				this.Logger.LogDebug("Linux distribution: {linuxDistribution}", Platform.LinuxDistribution);
 		}
 
 
@@ -162,10 +162,10 @@ namespace CarinaStudio.ULogViewer
 					var profile = LogProfileManager.Default.GetProfileOrDefault(it);
 					if (profile != null)
 					{
-						this.Logger.LogWarning($"Initial log profile is '{profile?.Name}'");
+						this.Logger.LogWarning("Initial log profile is '{profileName}'", profile?.Name);
 						return profile;
 					}
-					this.Logger.LogError($"Cannot find initial log profile by ID '{it}'");
+					this.Logger.LogError("Cannot find initial log profile by ID '{id}'", it);
 					return null;
 				}) ?? this.Settings.GetValueOrDefault(SettingKeys.InitialLogProfile).Let(it =>
 				{
@@ -174,10 +174,10 @@ namespace CarinaStudio.ULogViewer
 					var profile = LogProfileManager.Default.GetProfileOrDefault(it);
 					if (profile != null)
 					{
-						this.Logger.LogWarning($"Initial log profile is '{profile?.Name}'");
+						this.Logger.LogWarning("Initial log profile is '{profileName}'", profile?.Name);
 						return profile;
 					}
-					this.Logger.LogError($"Cannot find initial log profile by ID '{it}'");
+					this.Logger.LogError("Cannot find initial log profile by ID '{id}'", it);
 					return null;
 				});
 				if (initialProfile != null)
@@ -198,7 +198,7 @@ namespace CarinaStudio.ULogViewer
 					var time = this.IsDebugMode ? this.stopwatch.ElapsedMilliseconds : 0L;
 					GC.Collect();
 					if (this.IsDebugMode)
-						this.Logger.LogDebug($"[Performance] Took {this.stopwatch.ElapsedMilliseconds - time} ms to perform full GC in background");
+						this.Logger.LogDebug("[Performance] Took {duration} ms to perform full GC in background", this.stopwatch.ElapsedMilliseconds - time);
 				}
 			}, 1000);
 		}
@@ -234,7 +234,7 @@ namespace CarinaStudio.ULogViewer
 			var resources = this.LoadStringResource(new Uri($"avares://ULogViewer/Strings/{cultureInfo}.axaml"));
 			if (resources == null)
 			{
-				this.Logger.LogWarning($"No string resources for {cultureInfo}");
+				this.Logger.LogWarning("No string resources for {cultureInfo}", cultureInfo);
 				return null;
 			}
 			if (Platform.IsLinux)
@@ -249,7 +249,7 @@ namespace CarinaStudio.ULogViewer
 					});
 				}
 				else
-					this.Logger.LogWarning($"No platform-specific string resources for {cultureInfo}");
+					this.Logger.LogWarning("No platform-specific string resources for {cultureInfo}", cultureInfo);
 			}
 			else if (Platform.IsMacOS)
 			{
@@ -263,7 +263,7 @@ namespace CarinaStudio.ULogViewer
 					});
 				}
 				else
-					this.Logger.LogWarning($"No platform-specific string resources for {cultureInfo}");
+					this.Logger.LogWarning("No platform-specific string resources for {cultureInfo}", cultureInfo);
 			}
 			return resources;
 		}
@@ -303,10 +303,7 @@ namespace CarinaStudio.ULogViewer
         protected override async Task OnMainWindowClosedAsync(CarinaStudio.Controls.Window mainWindow, ViewModel viewModel)
         {
 			// detach from main window
-			if (this.mainWindowInfoMap.Remove(mainWindow, out var info))
-			{
-				//
-			}
+			this.mainWindowInfoMap.Remove(mainWindow);
 
 			// wait for I/O completion of log analysis rules
 			await KeyLogAnalysisRuleSetManager.Default.WaitForIOTaskCompletion();
@@ -578,7 +575,7 @@ namespace CarinaStudio.ULogViewer
 
 
 		/// <inheritdoc/>
-		public override Version? PrivacyPolicyVersion => new Version(1, 3);
+		public override Version? PrivacyPolicyVersion => new(1, 3);
 
 
         // Releasing type.
@@ -614,7 +611,7 @@ namespace CarinaStudio.ULogViewer
 
 
 		/// <inheritdoc/>
-		public override Version? UserAgreementVersion => new Version(1, 5);
+		public override Version? UserAgreementVersion => new(1, 5);
 
 
 #if WINDOWS_ONLY
