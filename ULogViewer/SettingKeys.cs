@@ -18,6 +18,17 @@ namespace CarinaStudio.ULogViewer
 		/// </summary>
 		public static readonly SettingKey<int> ContinuousLogReadingUpdateInterval = new(nameof(ContinuousLogReadingUpdateInterval), 100);
 		/// <summary>
+		/// Default text shell to be used by ULogViewer.
+		/// </summary>
+		public static readonly SettingKey<TextShell> DefaultTextShell = new(nameof(TextShell), Global.Run(() =>
+		{
+			if (Platform.IsWindows)
+				return TextShell.PowerShell;
+			if (Platform.IsMacOS)
+				return TextShell.ZShell;
+			return TextShell.BourneAgainShell;
+		}));
+		/// <summary>
 		/// Enable scrolling to latest log automatically after reloading logs.
 		/// </summary>
 		public static readonly SettingKey<bool> EnableScrollingToLatestLogAfterReloadingLogs = new(nameof(EnableScrollingToLatestLogAfterReloadingLogs), true);

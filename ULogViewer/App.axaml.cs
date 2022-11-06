@@ -459,6 +459,9 @@ namespace CarinaStudio.ULogViewer
 				});
 			}
 
+			// start initializing text shell manager
+			var initTextShellManagerTask = TextShellManager.InitializeAsync(this);
+
 			// initialize log data source providers
 			this.UpdateSplashWindowMessage(this.GetStringNonNull("SplashWindow.InitializeLogProfiles"));
 			await LogDataSourceProviders.InitializeAsync(this);
@@ -479,6 +482,9 @@ namespace CarinaStudio.ULogViewer
 			await LogAnalysisScriptSetManager.InitializeAsync(this);
 			await OperationCountingAnalysisRuleSetManager.InitializeAsync(this);
 			await OperationDurationAnalysisRuleSetManager.InitializeAsync(this);
+
+			// complete initializing text shell manager
+			await initTextShellManagerTask;
 
 			// show main window
 			if (!this.IsRestoringMainWindowsRequested)

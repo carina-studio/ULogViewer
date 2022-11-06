@@ -1074,6 +1074,9 @@ return None</sys:String>
 	<!-- TcpServerLogDataSourceProvider -->
 	<sys:String x:Key="String/TcpServerLogDataSourceProvider.DisplayName">TCP 服务器</sys:String>
 
+	<!-- TextShell -->
+	<sys:String x:Key="String/String.CommandPrompt">Cmd (Windows 命令提示符)</sys:String>
+
 	<!-- TimeSpanFormatInputDialog -->
 	<sys:String x:Key="String/TimeSpanFormatInputDialog.Message">时距格式</sys:String>
 

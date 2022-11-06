@@ -1110,6 +1110,15 @@ return None</sys:String>
 	<!-- TcpServerLogDataSourceProvider -->
 	<sys:String x:Key="String/TcpServerLogDataSourceProvider.DisplayName">TCP Server</sys:String>
 
+	<!-- TextShell -->
+	<sys:String x:Key="String/String.BourneAgainShell">bash (Bourne-Again Shell)</sys:String>
+	<sys:String x:Key="String/String.BourneShell">sh (Bourne Shell)</sys:String>
+	<sys:String x:Key="String/String.CommandPrompt">Cmd (Windows Command Prompt)</sys:String>
+	<sys:String x:Key="String/String.CShell">csh (C Shell)</sys:String>
+	<sys:String x:Key="String/String.FriendlyInteractiveShell">fish (Friendly Interactive Shell)</sys:String>
+	<sys:String x:Key="String/String.PowerShell">PowerShell</sys:String>
+	<sys:String x:Key="String/String.ZShell">zsh (Z Shell)</sys:String>
+
 	<!-- TimeSpanFormatInputDialog -->
 	<sys:String x:Key="String/TimeSpanFormatInputDialog.Message">Time span format</sys:String>
 
