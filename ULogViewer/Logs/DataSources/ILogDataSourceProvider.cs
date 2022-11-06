@@ -97,10 +97,10 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 	public struct LogDataSourceOptions
 	{
 		// Static fields.
-		static readonly IList<string> emptyCommands = new string[0];
+		static readonly IList<string> emptyCommands = Array.Empty<string>();
 		static volatile bool isOptionPropertyInfoMapReady;
-		static volatile IList<string> optionNames = new string[0];
-		static readonly Dictionary<string, PropertyInfo> optionPropertyInfoMap = new Dictionary<string, PropertyInfo>();
+		static volatile IList<string> optionNames = Array.Empty<string>();
+		static readonly Dictionary<string, PropertyInfo> optionPropertyInfoMap = new();
 
 
 		// Fields.
@@ -151,6 +151,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 					&& this.QueryString == options.QueryString
 					&& this.SetupCommands.SequenceEqual(options.SetupCommands)
 					&& this.TeardownCommands.SequenceEqual(options.TeardownCommands)
+					&& this.UseTextShell == options.UseTextShell
 					&& this.Uri == options.Uri
 					&& this.UserName == options.UserName
 					&& this.WorkingDirectory == options.WorkingDirectory;
@@ -338,7 +339,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 						case nameof(SetupCommands):
 							if (jsonProperty.Value.ValueKind == JsonValueKind.Array)
 							{
-								List<string> commands = new List<string>();
+								var commands = new List<string>();
 								foreach (var jsonValue in jsonProperty.Value.EnumerateArray())
 									commands.Add(jsonValue.GetString().AsNonNull());
 								options.setupCommands = commands.AsReadOnly();
@@ -349,7 +350,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 						case nameof(TeardownCommands):
 							if (jsonProperty.Value.ValueKind == JsonValueKind.Array)
 							{
-								List<string> commands = new List<string>();
+								var commands = new List<string>();
 								foreach (var jsonValue in jsonProperty.Value.EnumerateArray())
 									commands.Add(jsonValue.GetString().AsNonNull());
 								options.teardownCommands = commands.AsReadOnly();
@@ -364,6 +365,9 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 							if (crypto == null)
 								crypto = new Crypto(App.Current);
 							options.UserName = crypto.Decrypt(jsonProperty.Value.GetString().AsNonNull());
+							break;
+						case nameof(UseTextShell):
+							options.UseTextShell = jsonProperty.Value.ValueKind == JsonValueKind.True;
 							break;
 						case nameof(WorkingDirectory):
 							options.WorkingDirectory = jsonProperty.Value.GetString();
@@ -470,6 +474,8 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 						crypto = new Crypto(App.Current);
 					jsonWriter.WriteString(nameof(UserName), crypto.Encrypt(it));
 				});
+				if (this.UseTextShell)
+					jsonWriter.WriteBoolean(nameof(UseTextShell), true);
 				this.WorkingDirectory?.Let(it => jsonWriter.WriteString(nameof(WorkingDirectory), it));
 				jsonWriter.WriteEndObject();
 			}
@@ -521,6 +527,12 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// Get or set user name.
 		/// </summary>
 		public string? UserName { get; set; }
+
+
+		/// <summary>
+		/// Get or set whether using text shell to run command or not.
+		/// </summary>
+		public bool UseTextShell { get; set; }
 
 
 		/// <summary>

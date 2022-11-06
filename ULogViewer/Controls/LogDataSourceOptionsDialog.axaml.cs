@@ -74,6 +74,7 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 	static readonly AvaloniaProperty<bool> IsTeardownCommandsSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsTeardownCommandsSupported));
 	static readonly AvaloniaProperty<bool> IsTemplateProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsTemplate));
 	static readonly AvaloniaProperty<bool> IsUriSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsUriSupported));
+	static readonly AvaloniaProperty<bool> IsUseTextShellSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>("IsUseTextShellSupported");
 	static readonly AvaloniaProperty<bool> IsUserNameRequiredProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsUserNameRequired));
 	static readonly AvaloniaProperty<bool> IsUserNameSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsUserNameSupported));
 	static readonly AvaloniaProperty<bool> IsWorkingDirectorySupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsWorkingDirectorySupported));
@@ -102,6 +103,7 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 	readonly AppSuite.Controls.ListBox teardownCommandsListBox;
 	readonly UriTextBox uriTextBox;
 	readonly TextBox userNameTextBox;
+	readonly ToggleSwitch useTextShellSwitch;
 	readonly TextBox workingDirectoryTextBox;
 
 
@@ -156,6 +158,7 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 		this.teardownCommandsListBox = this.Get<AppSuite.Controls.ListBox>(nameof(teardownCommandsListBox));
 		this.uriTextBox = this.Get<UriTextBox>(nameof(uriTextBox));
 		this.userNameTextBox = this.Get<TextBox>(nameof(userNameTextBox));
+		this.useTextShellSwitch = this.Get<ToggleSwitch>(nameof(useTextShellSwitch));
 		this.workingDirectoryTextBox = this.Get<TextBox>(nameof(workingDirectoryTextBox));
 	}
 
@@ -290,6 +293,8 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 			options.Uri = this.uriTextBox.Object;
 		if (this.IsUserNameSupported)
 			options.UserName = this.userNameTextBox.Text?.Trim();
+		if (this.GetValue<bool>(IsUseTextShellSupportedProperty))
+			options.UseTextShell = this.useTextShellSwitch.IsChecked.GetValueOrDefault();
 		if (this.IsWorkingDirectorySupported)
 			options.WorkingDirectory = this.workingDirectoryTextBox.Text?.Trim();
 		return Task.FromResult((object?)options);
@@ -496,6 +501,11 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 			this.setupCommands.AddRange(options.SetupCommands);
 			firstEditor ??= this.setupCommandsListBox;
 		}
+		if (this.GetValue<bool>(IsUseTextShellSupportedProperty))
+		{
+			this.useTextShellSwitch.IsChecked = options.UseTextShell;
+			firstEditor ??= this.useTextShellSwitch;
+		}
 		if (this.IsTeardownCommandsSupported)
 		{
 			this.teardownCommands.AddRange(options.TeardownCommands);
@@ -616,6 +626,7 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 			this.SetValue<bool>(IsUriSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.Uri)));
 			this.SetValue<bool>(IsUserNameRequiredProperty, !isTemplate && provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.UserName)));
 			this.SetValue<bool>(IsUserNameSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.UserName)));
+			this.SetValue<bool>(IsUseTextShellSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.UseTextShell)));
 			this.SetValue<bool>(IsWorkingDirectorySupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.WorkingDirectory)));
 			this.SetValue<Uri?>(QueryStringReferenceUriProperty, provider.GetSourceOptionReferenceUri(nameof(LogDataSourceOptions.QueryString)));
 		}
@@ -648,7 +659,8 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 			this.SetValue<bool>(IsTeardownCommandsSupportedProperty, false);
 			this.SetValue<bool>(IsUriSupportedProperty, false);
 			this.SetValue<bool>(IsUserNameRequiredProperty, false);
-			this.SetValue<bool>(IsUserNameSupportedProperty, false);
+			this.SetValue<bool>(IsUserNameRequiredProperty, false);
+			this.SetValue<bool>(IsUseTextShellSupportedProperty, false);
 			this.SetValue<bool>(IsWorkingDirectorySupportedProperty, false);
 			this.SetValue<Uri?>(QueryStringReferenceUriProperty, null);
 		}
@@ -723,6 +735,13 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 	/// Setup commands.
 	/// </summary>
 	public IList<string> SetupCommands { get => this.setupCommands; }
+
+
+	/// <summary>
+	/// Show options dialog of default text shell.
+	/// </summary>
+	public void ShowDefaultTextShellOptions() =>
+		this.Application.ShowApplicationOptionsDialogAsync(this, AppOptionsDialog.DefaultTextShellSection);
 
 
 	/// <summary>

@@ -13,6 +13,7 @@
 	<!-- AppOptionsDialog -->
 	<sys:String x:Key="String/AppOptionsDialog.AccuracyOfFilteringBySelectedLogProperty">Accuracy of filtering by value of property</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ContinuousLogReadingUpdateInterval">Log update interval when continuous reading (milliseconds)</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.DefaultTextShell">Default Command-line Shell to run commands</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs">Scroll to latest log after reloading logs</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs.Description">Only for continuous logs reading.</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.IgnoreCaseOfLogTextFilter">Ignore case of text filter by default</sys:String>
@@ -350,6 +351,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.TeardownCommands">Commands after reading logs</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.Uri">URI</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.UserName">User name</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.UseTextShell">Use Command-line Shell to run commands</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.WorkingDirectory">Working directory</sys:String>
 
 	<!-- LogDataSourceOptionsDialog -->
@@ -1111,13 +1113,13 @@ return None</sys:String>
 	<sys:String x:Key="String/TcpServerLogDataSourceProvider.DisplayName">TCP Server</sys:String>
 
 	<!-- TextShell -->
-	<sys:String x:Key="String/String.BourneAgainShell">bash (Bourne-Again Shell)</sys:String>
-	<sys:String x:Key="String/String.BourneShell">sh (Bourne Shell)</sys:String>
-	<sys:String x:Key="String/String.CommandPrompt">Cmd (Windows Command Prompt)</sys:String>
-	<sys:String x:Key="String/String.CShell">csh (C Shell)</sys:String>
-	<sys:String x:Key="String/String.FriendlyInteractiveShell">fish (Friendly Interactive Shell)</sys:String>
-	<sys:String x:Key="String/String.PowerShell">PowerShell</sys:String>
-	<sys:String x:Key="String/String.ZShell">zsh (Z Shell)</sys:String>
+	<sys:String x:Key="String/TextShell.BourneAgainShell">bash (Bourne-Again Shell)</sys:String>
+	<sys:String x:Key="String/TextShell.BourneShell">sh (Bourne Shell)</sys:String>
+	<sys:String x:Key="String/TextShell.CommandPrompt">Cmd (Windows Command Prompt)</sys:String>
+	<sys:String x:Key="String/TextShell.CShell">csh (C Shell)</sys:String>
+	<sys:String x:Key="String/TextShell.FriendlyInteractiveShell">fish (Friendly Interactive Shell)</sys:String>
+	<sys:String x:Key="String/TextShell.PowerShell">PowerShell</sys:String>
+	<sys:String x:Key="String/TextShell.ZShell">zsh (Z Shell)</sys:String>
 
 	<!-- TimeSpanFormatInputDialog -->
 	<sys:String x:Key="String/TimeSpanFormatInputDialog.Message">Time span format</sys:String>

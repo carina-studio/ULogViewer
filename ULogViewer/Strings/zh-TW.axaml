@@ -16,6 +16,7 @@
 	<!-- AppOptionsDialog -->
 	<sys:String x:Key="String/AppOptionsDialog.AccuracyOfFilteringBySelectedLogProperty">以屬性值篩選之精確度</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ContinuousLogReadingUpdateInterval">連續讀取時的日誌更新時距 (毫秒)</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.DefaultTextShell">預設執行指令之命令列殼層 (Command-line Shell)</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs">在重新載入日誌後捲動至最新的日誌</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs.Description">僅適用於連續讀取日誌。</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.IgnoreCaseOfLogTextFilter">預設忽略文字篩選大小寫</sys:String>
@@ -331,6 +332,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.TeardownCommands">日誌讀取後指令</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.Uri">URI</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.UserName">使用者名稱</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.UseTextShell">使用命令列殼層 (Command-line Shell) 執行指令</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.WorkingDirectory">工作目錄</sys:String>
 
 	<!-- LogDataSourceOptionsDialog -->
@@ -1073,7 +1075,7 @@ return None</sys:String>
 	<sys:String x:Key="String/TcpServerLogDataSourceProvider.DisplayName">TCP 伺服器</sys:String>
 
 	<!-- TextShell -->
-	<sys:String x:Key="String/String.CommandPrompt">Cmd (Windows 命令提示字元)</sys:String>
+	<sys:String x:Key="String/TextShell.CommandPrompt">Cmd (Windows 命令提示字元)</sys:String>
 
 	<!-- TimeSpanFormatInputDialog -->
 	<sys:String x:Key="String/TimeSpanFormatInputDialog.Message">時距格式</sys:String>

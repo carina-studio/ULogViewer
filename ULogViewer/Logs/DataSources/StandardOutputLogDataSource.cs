@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -25,7 +26,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		// Fields.
 		volatile string? arguments;
 		volatile string? commandFileOnReady;
-		static readonly Regex regex = new("^(?<ExecutableCommand>([^\\s\"]*)|\"([^\\s])*\")[\\s$]");
+		static readonly Regex regex = new("^(?<ExecutableCommand>([^\\s\"]*)|\"([^\\s])*\")(\\s|$)");
 		Task? teardownCommandsTask;
 		string? tempWorkingDirectory;
 
@@ -67,7 +68,10 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		// Execute command and wait for exit.
 		bool ExecuteCommandAndWaitForExit(string command, string? workingDirectory, int timeoutMillis = 10000)
 		{
-			if (!ParseCommand(command, workingDirectory, out var executablePath, out var args))
+			var useTextShell = this.CreationOptions.UseTextShell;
+			var executablePath = (string?)null;
+			var args = (string?)null;
+			if (!useTextShell && !ParseCommand(command, workingDirectory, out executablePath, out args))
 			{
 				if (TryGettingExecutableCommand(command, out var exe))
 					this.GenerateMessage(LogDataSourceMessageType.Error, this.Application.GetFormattedString("StandardOutputLogDataSource.CommandNotFound", exe));
@@ -79,8 +83,17 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				{
 					process.StartInfo.Let(it =>
 					{
-						it.Arguments = args ?? "";
-						it.FileName = executablePath.AsNonNull();
+						if (useTextShell && TextShellManager.Default.TryGetDefaultTextShellPath(out var shell, out var shellPath))
+						{
+							it.Arguments = PrepareTextShellArguments(shell, command);
+							it.FileName = shellPath;
+							it.RedirectStandardInput = true;
+						}
+						else
+						{
+							it.Arguments = args ?? "";
+							it.FileName = executablePath.AsNonNull();
+						}
 						it.CreateNoWindow = true;
 						it.UseShellExecute = false;
 						it.WorkingDirectory = workingDirectory ?? "";
@@ -268,7 +281,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		// Parse command.
-		static bool ParseCommand(string? command, string? workingDirectory, out string? executablePath, out string? arguments)
+		static bool ParseCommand(string? command, string? workingDirectory, [NotNullWhen(true)] out string? executablePath, [NotNullWhen(true)] out string? arguments)
 		{
 			// check command
 			executablePath = null;
@@ -351,9 +364,32 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		}
 
 
+		// Prepare arguments for running command by text shell.
+		static string PrepareTextShellArguments(TextShell shell, string command) => shell switch
+		{
+			TextShell.CommandPrompt => $"/c /q {command}",
+			TextShell.PowerShell => $"-NoLogo -Command {command}",
+			_ => $"-c \"{command}\"",
+		};
+
+
 		// Prepare core.
 		protected override Task<LogDataSourceState> PrepareCoreAsync(CancellationToken cancellationToken) => this.TaskFactory.StartNew(() =>
 		{
+			if (this.CreationOptions.UseTextShell)
+			{
+				if (TextShellManager.Default.TryGetDefaultTextShellPath(out var shell, out var shellPath))
+				{
+					this.commandFileOnReady = shellPath;
+					this.arguments = PrepareTextShellArguments(shell, this.CreationOptions.Command.AsNonNull());
+					return LogDataSourceState.ReadyToOpenReader;
+				}
+				else
+				{
+					this.Logger.LogError("No text shell on system to run commands");
+					return LogDataSourceState.SourceNotFound;
+				}
+			}
 			if (!ParseCommand(this.CreationOptions.Command, this.CreationOptions.WorkingDirectory, out var executablePath, out var arguments))
 			{
 				this.Logger.LogError("Unable to locate executable for command: {command}", this.CreationOptions.Command);

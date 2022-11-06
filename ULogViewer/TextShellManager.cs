@@ -197,6 +197,19 @@ class TextShellManager
     /// <returns>True if path got successfully.</returns>
     public bool TryGetDefaultTextShellPath([NotNullWhen(true)] out string? path) =>
         this.textShellExePaths.TryGetValue(this.app.Settings.GetValueOrDefault(SettingKeys.DefaultTextShell), out path);
+    
+
+    /// <summary>
+    /// Try getting executable path of default text shell.
+    /// </summary>
+    /// <param name="defaultTextShell">Default text shell.</param>
+    /// <param name="path">Path of executable path of default text shell.</param>
+    /// <returns>True if path got successfully.</returns>
+    public bool TryGetDefaultTextShellPath(out TextShell defaultTextShell, [NotNullWhen(true)] out string? path)
+    {
+        defaultTextShell = this.app.Settings.GetValueOrDefault(SettingKeys.DefaultTextShell);
+        return this.textShellExePaths.TryGetValue(defaultTextShell, out path);
+    }
 
 
     // Update list of text shells installed on system.

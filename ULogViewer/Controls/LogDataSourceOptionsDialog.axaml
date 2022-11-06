@@ -115,6 +115,14 @@
 						<ToggleSwitch Name="includeStderrSwitch" Classes="Dialog_ToggleSwitch"/>
 						<Separator Classes="Dialog_Separator"/>
 					</StackPanel>
+
+					<!-- Use text shell -->
+					<StackPanel IsVisible="{Binding $parent[Window].IsUseTextShellSupported}" Orientation="Vertical">
+						<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogDataSourceOptions.UseTextShell}"/>
+						<ToggleSwitch Name="useTextShellSwitch" Classes="Dialog_ToggleSwitch"/>
+						<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Command="{Binding $parent[Window].ShowDefaultTextShellOptions}" Text="{DynamicResource String/Common.Options.WithDialog}"/>
+						<Separator Classes="Dialog_Separator"/>
+					</StackPanel>
 					
 					<!-- File name -->
 					<StackPanel IsVisible="{Binding $parent[Window].IsFileNameSupported}" Orientation="Vertical">

@@ -33,6 +33,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			nameof(LogDataSourceOptions.IncludeStandardError),
 			nameof(LogDataSourceOptions.SetupCommands),
 			nameof(LogDataSourceOptions.TeardownCommands),
+			nameof(LogDataSourceOptions.UseTextShell),
 			nameof(LogDataSourceOptions.WorkingDirectory),
 		}.AsReadOnly();
 	}

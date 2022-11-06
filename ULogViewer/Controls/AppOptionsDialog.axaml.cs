@@ -1,4 +1,6 @@
 using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Data.Converters;
 using Avalonia.Markup.Xaml;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.AppSuite.ViewModels;
@@ -14,6 +16,18 @@ namespace CarinaStudio.ULogViewer.Controls;
 /// </summary>
 partial class AppOptionsDialog : BaseApplicationOptionsDialog
 {
+	/// <summary>
+	/// Name of section of default text shell.
+	/// </summary>
+	public const string DefaultTextShellSection = "DefaultTextShell";
+
+
+	/// <summary>
+	/// Converter to convert from <see cref="TextShell"/> to string.
+	/// </summary>
+	public static readonly IValueConverter TextShellConverter = new AppSuite.Converters.EnumConverter(App.CurrentOrNull, typeof(TextShell));
+
+
 	// Fields.
 	readonly ScheduledAction refreshDataContextAction;
 
@@ -33,6 +47,12 @@ partial class AppOptionsDialog : BaseApplicationOptionsDialog
 			this.DataContext = dataContext;
 		});
 	}
+
+
+	/// <summary>
+	/// Get or set name of initial section to be shown.
+	/// </summary>
+	public string? InitSectionName { get; set; }
 
 
 	// Called when application property changed.
@@ -72,6 +92,33 @@ partial class AppOptionsDialog : BaseApplicationOptionsDialog
 	protected override ApplicationOptions OnCreateViewModel() => new AppOptions();
 
 
+	/// <inheritdoc/>
+	protected override void OnOpened(EventArgs e)
+	{
+		// call base
+		base.OnOpened(e);
+
+		// scroll to given section
+		var initControl = this.InitSectionName switch
+		{
+			DefaultTextShellSection => this.Get<Control>("defaultTextShellComboBox"),
+			_ => null,
+		};
+		if (initControl != null)
+		{
+			var scrollViewer = this.Get<ScrollViewer>("rootScrollViewer");
+			scrollViewer.Opacity = 0;
+			this.SynchronizationContext.Post(() =>
+			{
+				scrollViewer.ScrollIntoView(initControl);
+				scrollViewer.LineDown();
+				scrollViewer.Opacity = 1;
+				initControl.Focus();
+			});
+		}
+	}
+
+
     /// <inheritdoc/>
     protected override void OnPropertyChanged<T>(AvaloniaPropertyChangedEventArgs<T> change)
     {
@@ -87,7 +134,9 @@ partial class AppOptionsDialog : BaseApplicationOptionsDialog
     }
 
 
-	// Show dialog of external dependencies.
-	void ShowExternalDependenciesDialog() =>
+	/// <summary>
+	/// Show dialog of external dependencies.
+	/// </summary>
+	public void ShowExternalDependenciesDialog() =>
 		_ = new ExternalDependenciesDialog().ShowDialog(this);
 }

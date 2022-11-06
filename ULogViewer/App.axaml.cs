@@ -596,9 +596,13 @@ namespace CarinaStudio.ULogViewer
         public override async Task ShowApplicationOptionsDialogAsync(Avalonia.Controls.Window? owner, string? section = null)
 		{
 			owner?.ActivateAndBringToFront();
+			var dialog = new Controls.AppOptionsDialog()
+			{
+				InitSectionName = section,
+			};
 			var result = await (owner != null
-				? new Controls.AppOptionsDialog().ShowDialog<AppSuite.Controls.ApplicationOptionsDialogResult>(owner)
-				: new Controls.AppOptionsDialog().ShowDialog<AppSuite.Controls.ApplicationOptionsDialogResult>());
+				? dialog.ShowDialog<ApplicationOptionsDialogResult>(owner)
+				: dialog.ShowDialog<ApplicationOptionsDialogResult>());
 			switch (result)
 			{
 				case AppSuite.Controls.ApplicationOptionsDialogResult.RestartApplicationNeeded:

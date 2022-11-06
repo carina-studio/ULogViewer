@@ -3569,6 +3569,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				newDataSourceOptions.Encoding = defaultDataSourceOptions.Encoding;
 				newDataSourceOptions.QueryString = defaultDataSourceOptions.QueryString;
 				newDataSourceOptions.SetupCommands = defaultDataSourceOptions.SetupCommands;
+				newDataSourceOptions.UseTextShell = defaultDataSourceOptions.UseTextShell;
 				newDataSourceOptions.TeardownCommands = defaultDataSourceOptions.TeardownCommands;
 
 				// create data source and reader

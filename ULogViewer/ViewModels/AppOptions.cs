@@ -33,6 +33,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// add event handlers
 			((INotifyCollectionChanged)LogProfileManager.Default.Profiles).CollectionChanged += this.OnLogProfilesChanged;
+
+			// refresh installed text shells
+			TextShellManager.Default.RefreshInstalledTextShellsAsync();
 		}
 
 
@@ -76,6 +79,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			get => this.Settings.GetValueOrDefault(SettingKeys.ContinuousLogReadingUpdateInterval);
 			set => this.Settings.SetValue<int>(SettingKeys.ContinuousLogReadingUpdateInterval, value);
+		}
+
+
+		/// <summary>
+		/// Get or set default text shell to run commands.
+		/// </summary>
+		public TextShell DefaultTextShell
+		{
+			get => this.Settings.GetValueOrDefault(SettingKeys.DefaultTextShell);
+			set => this.Settings.SetValue<TextShell>(SettingKeys.DefaultTextShell, value);
 		}
 
 
@@ -230,6 +243,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			var key = e.Key;
 			if (key == SettingKeys.ContinuousLogReadingUpdateInterval)
 				this.OnPropertyChanged(nameof(ContinuousLogReadingUpdateInterval));
+			else if (key == SettingKeys.DefaultTextShell)
+				this.OnPropertyChanged(nameof(DefaultTextShell));
 			else if (key == SettingKeys.EnableScrollingToLatestLogAfterReloadingLogs)
 				this.OnPropertyChanged(nameof(EnableScrollingToLatestLogAfterReloadingLogs));
 			else if (key == SettingKeys.IgnoreCaseOfLogTextFilter)
