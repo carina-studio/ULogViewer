@@ -25,7 +25,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		// Fields.
 		volatile string? arguments;
 		volatile string? commandFileOnReady;
-		static readonly Regex regex = new Regex("^(?<ExecutableCommand>([^\\s\"]*)|\"([^\\s])*\")[\\s$]");
+		static readonly Regex regex = new("^(?<ExecutableCommand>([^\\s\"]*)|\"([^\\s])*\")[\\s$]");
 		Task? teardownCommandsTask;
 		string? tempWorkingDirectory;
 
@@ -47,18 +47,18 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				try
 				{
 					Directory.Delete(path, true);
-					this.Logger.LogTrace($"Temp working directory '{path}' deleted");
+					this.Logger.LogTrace("Temp working directory '{path}' deleted", path);
 					break;
 				}
 				catch (Exception ex)
 				{
 					if (i > 1)
 					{
-						this.Logger.LogWarning(ex, $"Failed to delete temp working directory '{path}', try again later");
+						this.Logger.LogWarning(ex, "Failed to delete temp working directory '{path}', try again later", path);
 						Thread.Sleep(1000);
 					}
 					else
-						this.Logger.LogError(ex, $"Failed to delete temp working directory '{path}'");
+						this.Logger.LogError(ex, "Failed to delete temp working directory '{path}'", path);
 				}
 			}
 		});
@@ -67,7 +67,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		// Execute command and wait for exit.
 		bool ExecuteCommandAndWaitForExit(string command, string? workingDirectory, int timeoutMillis = 10000)
 		{
-			if (!this.ParseCommand(command, workingDirectory, out var executablePath, out var args))
+			if (!ParseCommand(command, workingDirectory, out var executablePath, out var args))
 			{
 				if (TryGettingExecutableCommand(command, out var exe))
 					this.GenerateMessage(LogDataSourceMessageType.Error, this.Application.GetFormattedString("StandardOutputLogDataSource.CommandNotFound", exe));
@@ -88,7 +88,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				});
 				if (!process.Start())
 				{
-					this.Logger.LogWarning($"Unable to execute command: {command}");
+					this.Logger.LogWarning("Unable to execute command: {command}", command);
 					if (TryGettingExecutableCommand(command, out var exe))
 						this.GenerateMessage(LogDataSourceMessageType.Error, this.Application.GetFormattedString("StandardOutputLogDataSource.FailedToExecuteCommand", exe));
 					return false;
@@ -99,7 +99,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			}
 			catch(Exception ex)
 			{
-				this.Logger.LogWarning(ex, $"Unable to execute command: {command}");
+				this.Logger.LogWarning(ex, "Unable to execute command: {command}", command);
 				if (TryGettingExecutableCommand(command, out var exe))
 					this.GenerateMessage(LogDataSourceMessageType.Error, this.Application.GetFormattedString("StandardOutputLogDataSource.FailedToExecuteCommand", exe));
 				return false;
@@ -131,7 +131,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 					this.Logger.LogWarning("Complete executing teardown commands");
 					if (tempWorkingDirectory != null)
 					{
-						this.Logger.LogTrace($"Delete temp working directory '{tempWorkingDirectory}' after completing teardown commands");
+						this.Logger.LogTrace("Delete temp working directory '{tempWorkingDirectory}' after completing teardown commands", tempWorkingDirectory);
 						this.DeleteTempWorkingDirectory(tempWorkingDirectory);
 						this.tempWorkingDirectory = null;
 					}
@@ -141,7 +141,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			}
 			else if (tempWorkingDirectory != null)
 			{
-				this.Logger.LogTrace($"Delete temp working directory '{tempWorkingDirectory}' after closing reader");
+				this.Logger.LogTrace("Delete temp working directory '{tempWorkingDirectory}' after closing reader", tempWorkingDirectory);
 				this.DeleteTempWorkingDirectory(tempWorkingDirectory);
 				this.tempWorkingDirectory = null;
 			}
@@ -171,7 +171,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 					this.tempWorkingDirectory = await this.TaskFactory.StartNew(() =>
 					{
 						var path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-						this.Logger.LogTrace($"Create temp working directory '{path}'");
+						this.Logger.LogTrace("Create temp working directory '{path}'", path);
 						Directory.CreateDirectory(path);
 						return path;
 					});
@@ -179,7 +179,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 					{
 						var path = this.tempWorkingDirectory;
 						this.tempWorkingDirectory = null;
-						this.Logger.LogTrace($"Delete temp working directory '{path}' because of cancellation has been requested");
+						this.Logger.LogTrace("Delete temp working directory '{path}' because of cancellation has been requested", path);
 						this.DeleteTempWorkingDirectory(path);
 						throw new TaskCanceledException();
 					}
@@ -196,10 +196,10 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 					{
 						if (!this.ExecuteCommandAndWaitForExit(command, workingDirectory))
 						{
-							this.Logger.LogError($"Unable to execute setup command: {command}");
+							this.Logger.LogError("Unable to execute setup command: {command}", command);
 							this.tempWorkingDirectory?.Let(it =>
 							{
-								this.Logger.LogTrace($"Delete temp working directory '{it}' because of failure of executing setup command");
+								this.Logger.LogTrace("Delete temp working directory '{directory}' because of failure of executing setup command", it);
 								this.DeleteTempWorkingDirectory(it);
 								this.tempWorkingDirectory = null;
 							});
@@ -209,7 +209,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 						{
 							this.tempWorkingDirectory?.Let(it =>
 							{
-								this.Logger.LogTrace($"Delete temp working directory '{it}' because of cancellation has been requested");
+								this.Logger.LogTrace("Delete temp working directory '{directory}' because of cancellation has been requested", it);
 								this.DeleteTempWorkingDirectory(it);
 								this.tempWorkingDirectory = null;
 							});
@@ -240,7 +240,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				{
 					this.tempWorkingDirectory?.Let(it =>
 					{
-						this.Logger.LogTrace($"Delete temp working directory '{it}' because of failure of starting process");
+						this.Logger.LogTrace("Delete temp working directory '{directory}' because of failure of starting process", it);
 						this.DeleteTempWorkingDirectory(it);
 						this.tempWorkingDirectory = null;
 					});
@@ -251,7 +251,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			{
 				this.tempWorkingDirectory?.Let(it =>
 				{
-					this.Logger.LogTrace($"Delete temp working directory '{it}' because of failure of starting process");
+					this.Logger.LogTrace("Delete temp working directory '{directory}' because of failure of starting process", it);
 					this.DeleteTempWorkingDirectory(it);
 					this.tempWorkingDirectory = null;
 				});
@@ -268,7 +268,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		// Parse command.
-		bool ParseCommand(string? command, string? workingDirectory, out string? executablePath, out string? arguments)
+		static bool ParseCommand(string? command, string? workingDirectory, out string? executablePath, out string? arguments)
 		{
 			// check command
 			executablePath = null;
@@ -281,8 +281,8 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			if (!match.Success)
 				return false;
 			var commandGroup = match.Groups["ExecutableCommand"];
-			executablePath = command.Substring(0, commandGroup.Length);
-			arguments = command.Substring(commandGroup.Length);
+			executablePath = command[0..commandGroup.Length];
+			arguments = command[commandGroup.Length..^0];
 			if (Platform.IsWindows && !executablePath.ToLower().EndsWith(".exe"))
 				executablePath += ".exe";
 			if (Path.IsPathRooted(executablePath))
@@ -354,14 +354,14 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		// Prepare core.
 		protected override Task<LogDataSourceState> PrepareCoreAsync(CancellationToken cancellationToken) => this.TaskFactory.StartNew(() =>
 		{
-			if (!this.ParseCommand(this.CreationOptions.Command, this.CreationOptions.WorkingDirectory, out var executablePath, out var arguments))
+			if (!ParseCommand(this.CreationOptions.Command, this.CreationOptions.WorkingDirectory, out var executablePath, out var arguments))
 			{
-				this.Logger.LogError($"Unable to locate executable for command: {this.CreationOptions.Command}");
+				this.Logger.LogError("Unable to locate executable for command: {command}", this.CreationOptions.Command);
 				if (TryGettingExecutableCommand(this.CreationOptions.Command, out var exe))
 					this.GenerateMessage(LogDataSourceMessageType.Error, this.Application.GetFormattedString("StandardOutputLogDataSource.CommandNotFound", exe));
 				return LogDataSourceState.SourceNotFound;
 			}
-			this.Logger.LogDebug($"Executable found: {executablePath}");
+			this.Logger.LogDebug("Executable found: {executablePath}", executablePath);
 			this.commandFileOnReady = executablePath;
 			this.arguments = arguments;
 			return LogDataSourceState.ReadyToOpenReader;

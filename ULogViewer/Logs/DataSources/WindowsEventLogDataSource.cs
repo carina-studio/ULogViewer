@@ -17,7 +17,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		{
 			// Fields.
 			int entryLineIndex = 0;
-			readonly List<string> entryLines = new List<string>();
+			readonly List<string> entryLines = new();
 			readonly EventLogEntryCollection entries;
 			int entryIndex;
 
@@ -26,7 +26,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			{
 				this.entries = eventLog.Entries;
 				this.entryIndex = this.entries.Count;
-				source.Logger.LogDebug($"{this.entries.Count} entries found in '{eventLog.Log}'");
+				source.Logger.LogDebug("{count} entries found in '{log}'",this.entries.Count, eventLog.Log);
 			}
 
 			// Implementations.
@@ -61,7 +61,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 					this.entryLines.Let(it =>
 					{
 						it.Clear();
-						it.Add($"<Timestamp>{timestamp.ToString("yyyy/MM/dd HH:mm:ss")}</Timestamp>");
+						it.Add($"<Timestamp>{timestamp:yyyy/MM/dd HH:mm:ss}</Timestamp>");
 						it.Add($"<EventId>{eventId}</EventId>");
 						it.Add($"<Level>{level}</Level>");
 						it.Add($"<Source>{WebUtility.HtmlEncode(sourceName)}</Source>");
@@ -157,7 +157,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			if (cancellationToken.IsCancellationRequested)
 			{
 				if (eventLog != null)
-					_ = this.TaskFactory.StartNew(eventLog.Dispose);
+					_ = this.TaskFactory.StartNew(eventLog.Dispose, CancellationToken.None);
 				throw new TaskCanceledException();
 			}
 

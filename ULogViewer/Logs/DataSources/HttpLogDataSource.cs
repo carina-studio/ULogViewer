@@ -104,21 +104,21 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			try
 			{
 #if DEBUG
-				this.Logger.LogDebug($"Start getting response from {uri}");
+				this.Logger.LogDebug("Start getting response from {uri}", uri);
 #endif
 				response = await httpClient.GetAsync(uri, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
 #if DEBUG
-				this.Logger.LogDebug($"Complete getting response from {uri}");
+				this.Logger.LogDebug("Complete getting response from {uri}", uri);
 #endif
 			}
 			catch (Exception ex)
 			{
 				if (cancellationToken.IsCancellationRequested)
 				{
-					this.Logger.LogWarning(ex, $"Getting response from {uri} has been cancelled");
+					this.Logger.LogWarning(ex, "Getting response from {uri} has been cancelled", uri);
 					return (LogDataSourceState.UnclassifiedError, null);
 				}
-				this.Logger.LogError(ex, $"Failed to get response from {uri}");
+				this.Logger.LogError(ex, "Failed to get response from {uri}", uri);
 				if (ex is HttpRequestException httpException && httpException.StatusCode == HttpStatusCode.NotFound)
 					return (LogDataSourceState.SourceNotFound, null);
 				return (LogDataSourceState.UnclassifiedError, null);

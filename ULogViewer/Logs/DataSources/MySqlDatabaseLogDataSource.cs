@@ -13,11 +13,10 @@ class MySqlDatabaseLogDataSource : DatabaseLogDataSource<MySqlConnection, MySqlD
     // Constructor.
     internal MySqlDatabaseLogDataSource(MySqlDatabaseLogDataSourceProvider provider, LogDataSourceOptions options) : base(provider, options)
     {
-        if (!options.IsOptionSet(nameof(LogDataSourceOptions.ConnectionString))
-            || !options.IsOptionSet(nameof(LogDataSourceOptions.QueryString)))
-        {
-            throw new ArgumentException();
-        }
+        if (!options.IsOptionSet(nameof(LogDataSourceOptions.ConnectionString)))
+            throw new ArgumentException("No connection string specified.");
+        if (!options.IsOptionSet(nameof(LogDataSourceOptions.QueryString)))
+            throw new ArgumentException("No query string specified.");
     }
 
 

@@ -21,11 +21,11 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			readonly Encoding encoding;
 			volatile bool hasNewLine;
 			volatile bool isDisposed;
-			readonly object readingLock = new object();
+			readonly object readingLock = new();
 			readonly UdpClient udpClient;
 			readonly IPEndPoint serverEndPoint;
 			readonly UdpServerLogDataSource source;
-			readonly StringBuilder stringBuffer = new StringBuilder();
+			readonly StringBuilder stringBuffer = new();
 
 			// Constructor.
 			public ReaderImpl(UdpServerLogDataSource source, UdpClient udpClient, IPEndPoint serverEndPoint, Encoding encoding)
@@ -47,7 +47,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 					this.isDisposed = true;
 					Monitor.PulseAll(this.readingLock);
 				}
-				this.source.Logger.LogWarning($"Stop receiving from {this.serverEndPoint}");
+				this.source.Logger.LogWarning("Stop receiving from {serverEndPoint}", this.serverEndPoint);
 				Global.RunWithoutError(this.udpClient.Dispose);
 				this.stringBuffer.Remove(0, this.stringBuffer.Length);
 				base.Dispose(disposing);
@@ -67,7 +67,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				{
 					if (this.isDisposed)
 						return;
-					this.source.Logger.LogError(ex, $"Failed to receive data from {this.serverEndPoint}");
+					this.source.Logger.LogError(ex, "Failed to receive data from {serverEndPoint}", this.serverEndPoint);
 				}
 				if (data != null)
 				{
@@ -95,7 +95,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 					}
 					catch (Exception ex)
 					{
-						this.source.Logger.LogError(ex, $"Failed to start receiving data from {this.serverEndPoint}");
+						this.source.Logger.LogError(ex, "Failed to start receiving data from {serverEndPoint}", this.serverEndPoint);
 					}
 				}
 			}

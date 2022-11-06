@@ -18,11 +18,10 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// <param name="options">Options.</param>
 		public SQLiteLogDataSource(SQLiteLogDataSourceProvider provider, LogDataSourceOptions options) : base(provider, options)
 		{
-			if (!options.IsOptionSet(nameof(LogDataSourceOptions.FileName)) 
-				|| !options.IsOptionSet(nameof(LogDataSourceOptions.QueryString)))
-			{
-				throw new ArgumentException();
-			}
+			if (!options.IsOptionSet(nameof(LogDataSourceOptions.FileName)))
+				throw new ArgumentException("No file nsme specified.");
+			if (!options.IsOptionSet(nameof(LogDataSourceOptions.QueryString)))
+				throw new ArgumentException("No query string specified.");
 		}
 
 
@@ -35,7 +34,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				connectionString.Append(options.Uri.ToString());
 			else
 				connectionString.Append(options.FileName);
-			connectionString.Append("'");
+			connectionString.Append('\'');
 
 			// password
 			options.Password?.Let(it =>
@@ -44,7 +43,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				{
 					connectionString.Append(";Password='");
 					connectionString.Append(it);
-					connectionString.Append("'");
+					connectionString.Append('\'');
 				}
 			});
 

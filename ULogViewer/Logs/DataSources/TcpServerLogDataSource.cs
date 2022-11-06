@@ -43,7 +43,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				}
 				if (this.isListenerStarted)
 				{
-					this.source.Logger.LogWarning($"Stop listening {this.listener.LocalEndpoint}");
+					this.source.Logger.LogWarning("Stop listening {localEndpoint}", this.listener.LocalEndpoint);
 					Global.RunWithoutError(this.listener.Stop);
 				}
 				base.Dispose(disposing);
@@ -55,7 +55,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				// wait for client
 				if (!this.isListenerStarted)
 				{
-					this.source.Logger.LogWarning($"Start listening {this.listener.LocalEndpoint}");
+					this.source.Logger.LogWarning("Start listening {localEndpoint}", this.listener.LocalEndpoint);
 					this.isListenerStarted = true;
 					try
 					{

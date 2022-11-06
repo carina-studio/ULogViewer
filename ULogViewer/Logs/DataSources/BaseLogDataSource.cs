@@ -50,7 +50,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		// Static fields.
-		static readonly TaskFactory defaultTaskFactory = new TaskFactory();
+		static readonly TaskFactory defaultTaskFactory = new();
 		static int nextId = 1;
 
 
@@ -89,10 +89,10 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			if (prevState == state)
 				return state;
 			this.state = state;
-			this.Logger.LogDebug($"Change state from {prevState} to {state}");
+			this.Logger.LogDebug("Change state from {prevState} to {state}", prevState, state);
 			this.OnPropertyChanged(nameof(State));
 			if (this.Application.IsDebugMode)
-				this.Logger.LogTrace($"Complete changing state from {prevState} to {state}");
+				this.Logger.LogTrace("Complete changing state from {prevState} to {state}", prevState, state);
 			return this.state;
 		}
 
@@ -200,7 +200,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				return;
 			if (this.state != LogDataSourceState.ReaderOpened)
 			{
-				this.Logger.LogWarning($"Reader closed when state is {this.state}");
+				this.Logger.LogWarning("Reader closed when state is {state}", this.state);
 				return;
 			}
 			else if (this.ChangeState(LogDataSourceState.ClosingReader) != LogDataSourceState.ClosingReader)
@@ -251,7 +251,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			}
 			if (this.state != LogDataSourceState.OpeningReader)
 			{
-				this.Logger.LogWarning($"State has been changed to {this.state} when opening reader");
+				this.Logger.LogWarning("State has been changed to {state} when opening reader", this.state);
 				Global.RunWithoutErrorAsync(() => reader?.Close());
 				if (this.IsDisposed)
 					throw new InvalidOperationException("Source has been disposed when opening reader.");
@@ -321,7 +321,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				case LogDataSourceState.UnclassifiedError:
 					break;
 				default:
-					this.Logger.LogWarning($"Cannot start preparation when state is {this.state}");
+					this.Logger.LogWarning("Cannot start preparation when state is {state}", this.state);
 					return;
 			}
 
@@ -337,7 +337,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 					return;
 				if (extDep.State != ExternalDependencyState.Available)
 				{
-					this.Logger.LogError($"External dependency '{extDep.Id}' is unavailable");
+					this.Logger.LogError("External dependency '{id}' is unavailable", extDep.Id);
 					this.ChangeState(LogDataSourceState.ExternalDependencyNotFound);
 					return;
 				}

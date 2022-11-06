@@ -16,7 +16,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		class ReaderImpl : TextReader
 		{
 			int nextMessageId = 1;
-			readonly Random random = new Random();
+			readonly Random random = new();
 			public override string? ReadLine()
 			{
 				// simulate end of data

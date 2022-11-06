@@ -14,7 +14,7 @@ class SqlServerDatabaseLogDataSource : DatabaseLogDataSource<SqlConnection, SqlD
     internal SqlServerDatabaseLogDataSource(SqlServerDatabaseLogDataSourceProvider provider, LogDataSourceOptions options) : base(provider, options)
     { 
         if (!options.IsOptionSet(nameof(LogDataSourceOptions.ConnectionString)))
-            throw new ArgumentException();
+            throw new ArgumentException("");
     }
 
 
