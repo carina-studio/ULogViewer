@@ -243,7 +243,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 						|| commandToCheck == "powershell"
 						|| commandToCheck == "powershell.exe")
 					{
-						startInfo.StandardErrorEncoding = CultureInfo.CurrentCulture.ToString().Let(name =>
+						startInfo.StandardErrorEncoding = CultureInfo.InstalledUICulture.ToString().Let(name =>
 						{
 							if (name.StartsWith("zh-"))
 							{
