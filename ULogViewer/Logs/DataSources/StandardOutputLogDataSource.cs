@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -238,15 +239,30 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 			// start process
 			var process = new Process();
-			process.StartInfo.FileName = commandFileOnReady;
-			process.StartInfo.WorkingDirectory = workingDirectory;
-			if (this.arguments != null)
-				process.StartInfo.Arguments = this.arguments;
-			process.StartInfo.UseShellExecute = false;
-			process.StartInfo.RedirectStandardError = true;
-			process.StartInfo.RedirectStandardOutput = true;
-			process.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
-			process.StartInfo.CreateNoWindow = true;
+			process.StartInfo.Let(startInfo =>
+			{
+				startInfo.FileName = commandFileOnReady;
+				startInfo.WorkingDirectory = workingDirectory;
+				if (this.arguments != null)
+					startInfo.Arguments = this.arguments;
+				startInfo.UseShellExecute = false;
+				startInfo.RedirectStandardError = true;
+				startInfo.RedirectStandardOutput = true;
+				startInfo.StandardErrorEncoding = (Platform.IsWindows && string.Equals(commandFileOnReady, "cmd", StringComparison.OrdinalIgnoreCase))
+					? CultureInfo.CurrentCulture.ToString().Let(name =>
+					{
+						if (name.StartsWith("zh-"))
+						{
+							if (name.EndsWith("TW"))
+								return System.Text.CodePagesEncodingProvider.Instance.GetEncoding(950); // Big5
+							return System.Text.CodePagesEncodingProvider.Instance.GetEncoding(936); // GB2312
+						}
+						return System.Text.Encoding.UTF8;
+					})
+					: System.Text.Encoding.UTF8;
+				startInfo.StandardOutputEncoding = startInfo.StandardErrorEncoding;
+				startInfo.CreateNoWindow = true;
+			});
 			try
 			{
 				if (!process.Start())

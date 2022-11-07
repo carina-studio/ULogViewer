@@ -82,6 +82,7 @@
     <PackageReference Include="System.Diagnostics.EventLog" Version="6.0.0" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
     <PackageReference Include="System.Runtime.InteropServices.WindowsRuntime" Version="4.3.0" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="7.0.0-rc.2.22472.3" />
   </ItemGroup>
 
   <ItemGroup Condition="$(TargetFramework.Contains('windows'))">
