@@ -383,7 +383,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		// Prepare arguments for running command by text shell.
 		static string PrepareTextShellArguments(TextShell shell, string command) => shell switch
 		{
-			TextShell.CommandPrompt => $"/c /q {command}",
+			TextShell.CommandPrompt => $"/c {command}",
 			TextShell.PowerShell => $"-NoLogo -Command {command}",
 			_ => $"-c \"{command}\"",
 		};

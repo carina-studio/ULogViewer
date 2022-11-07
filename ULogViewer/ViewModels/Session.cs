@@ -3202,6 +3202,17 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				if (this.LogProfile?.IsContinuousReading == true && this.logReaders.IsNotEmpty())
 					this.logReaders.First().UpdateInterval = this.ContinuousLogReadingUpdateInterval;
 			}
+			else if (e.Key == SettingKeys.DefaultTextShell)
+			{
+				this.LogProfile?.Let(profile =>
+				{
+					if (profile.DataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.UseTextShell))
+						&& profile.DataSourceOptions.UseTextShell)
+					{
+						this.ReloadLogs(true, false);
+					}
+				});
+			}
 			else if (e.Key == SettingKeys.MaxContinuousLogCount)
 			{
 				if (this.LogProfile?.IsContinuousReading == true && this.logReaders.IsNotEmpty())

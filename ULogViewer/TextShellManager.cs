@@ -3,6 +3,7 @@ using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using Microsoft.Extensions.Logging;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -92,7 +93,7 @@ class TextShellManager
 
 
     // Get all installed text shells and its path.
-    static Dictionary<TextShell, string> GetInstalledTextShells()
+    Dictionary<TextShell, string> GetInstalledTextShells()
     {
         var shellMap = new Dictionary<TextShell, string>();
         if (Platform.IsWindows)
@@ -101,46 +102,97 @@ class TextShellManager
             shellMap[TextShell.CommandPrompt] = "cmd";
 
             // PowerShell
-            //
+#pragma warning disable CA1416
+            try
+            {
+                using var key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\PowerShell\\1\\ShellIds\\Microsoft.PowerShell");
+                if (key != null)
+                {
+                    key.GetValue("Path")?.ToString()?.Let(path =>
+                    {
+                        shellMap[TextShell.PowerShell] = path;
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                this.logger.LogError(ex, "Error occurred while checking existence of PowerShell");
+            }
+#pragma warning restore CA1416
         }
         else
         {
             // sh
-            if (File.Exists("/bin/sh"))
-                shellMap[TextShell.BourneShell] = "/bin/sh";
-            else if (File.Exists("/usr/bin/sh"))
-                shellMap[TextShell.BourneShell] = "/usr/bin/sh";
+            try
+            {
+                if (File.Exists("/bin/sh"))
+                    shellMap[TextShell.BourneShell] = "/bin/sh";
+                else if (File.Exists("/usr/bin/sh"))
+                    shellMap[TextShell.BourneShell] = "/usr/bin/sh";
+            }
+            catch (Exception ex)
+            {
+                this.logger.LogError(ex, "Error occurred while checking existence of sh");
+            }
 
             // bash
-            if (File.Exists("/bin/bash"))
-                shellMap[TextShell.BourneAgainShell] = "/bin/bash";
-            else if (File.Exists("/usr/bin/bash"))
-                shellMap[TextShell.BourneShell] = "/usr/bin/bash";
+            try
+            {
+                if (File.Exists("/bin/bash"))
+                    shellMap[TextShell.BourneAgainShell] = "/bin/bash";
+                else if (File.Exists("/usr/bin/bash"))
+                    shellMap[TextShell.BourneShell] = "/usr/bin/bash";
+            }
+            catch (Exception ex)
+            {
+                this.logger.LogError(ex, "Error occurred while checking existence of bash");
+            }
 
             // csh
-            if (File.Exists("/bin/csh"))
-                shellMap[TextShell.CShell] = "/bin/csh";
-            else if (File.Exists("/usr/bin/csh"))
-                shellMap[TextShell.CShell] = "/usr/bin/csh";
+            try
+            {
+                if (File.Exists("/bin/csh"))
+                    shellMap[TextShell.CShell] = "/bin/csh";
+                else if (File.Exists("/usr/bin/csh"))
+                    shellMap[TextShell.CShell] = "/usr/bin/csh";
+            }
+            catch (Exception ex)
+            {
+                this.logger.LogError(ex, "Error occurred while checking existence of csh");
+            }
 
             // fish
-            if (Platform.IsMacOS && File.Exists("/opt/homebrew/bin/fish"))
-                shellMap[TextShell.FriendlyInteractiveShell] = "/opt/homebrew/bin/fish";
-            if (!shellMap.ContainsKey(TextShell.FriendlyInteractiveShell))
+            try
             {
-                if (File.Exists("/usr/bin/fish"))
-                    shellMap[TextShell.FriendlyInteractiveShell] = "/usr/bin/fish";
-                if (File.Exists("/usr/local/bin/fish"))
-                    shellMap[TextShell.FriendlyInteractiveShell] = "/usr/local/bin/fish";
+                if (Platform.IsMacOS && File.Exists("/opt/homebrew/bin/fish"))
+                    shellMap[TextShell.FriendlyInteractiveShell] = "/opt/homebrew/bin/fish";
+                if (!shellMap.ContainsKey(TextShell.FriendlyInteractiveShell))
+                {
+                    if (File.Exists("/usr/bin/fish"))
+                        shellMap[TextShell.FriendlyInteractiveShell] = "/usr/bin/fish";
+                    if (File.Exists("/usr/local/bin/fish"))
+                        shellMap[TextShell.FriendlyInteractiveShell] = "/usr/local/bin/fish";
+                }
+            }
+            catch (Exception ex)
+            {
+                this.logger.LogError(ex, "Error occurred while checking existence of fish");
             }
 
             // zsh
-            if (File.Exists("/bin/zsh"))
-                shellMap[TextShell.ZShell] = "/bin/zsh";
-            else if (File.Exists("/usr/bin/zsh"))
-                shellMap[TextShell.ZShell] = "/usr/bin/zsh";
-            else if (File.Exists("/usr/local/bin/zsh"))
-                shellMap[TextShell.ZShell] = "/usr/local/bin/zsh";
+            try
+            {
+                if (File.Exists("/bin/zsh"))
+                    shellMap[TextShell.ZShell] = "/bin/zsh";
+                else if (File.Exists("/usr/bin/zsh"))
+                    shellMap[TextShell.ZShell] = "/usr/bin/zsh";
+                else if (File.Exists("/usr/local/bin/zsh"))
+                    shellMap[TextShell.ZShell] = "/usr/local/bin/zsh";
+            }
+            catch (Exception ex)
+            {
+                this.logger.LogError(ex, "Error occurred while checking existence of zsh");
+            }
 
             // PowerShell
             //
@@ -218,7 +270,7 @@ class TextShellManager
         this.logger.LogTrace("Update installed text shells [start]");
 
         // update installed shells
-        var shellMap = await Task.Run(() => GetInstalledTextShells());
+        var shellMap = await Task.Run(() => this.GetInstalledTextShells());
         var installedTextShells = this.installedTextShells;
         for (var i = installedTextShells.Count - 1; i >= 0; --i)
         {
