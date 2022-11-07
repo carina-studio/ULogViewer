@@ -177,7 +177,7 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
         var profiles = new List<LogProfile>();
         foreach (var id in builtInProfileIDs)
         {
-            this.Logger.LogDebug($"Load '{id}'");
+            this.Logger.LogDebug("Load '{id}'", id);
             profiles.Add(await LogProfile.LoadBuiltInAsync(this.Application, id));
         }
         return profiles;

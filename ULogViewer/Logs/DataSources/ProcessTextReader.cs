@@ -21,9 +21,9 @@ class ProcessTextReader : TextReader
     volatile bool isReadingLine;
     readonly ILogger logger;
     readonly Process process;
-    readonly object stderrReadingLock = new object();
+    readonly object stderrReadingLock = new();
     readonly TextReader? stdoutReader;
-    readonly object stdoutReadingLock = new object();
+    readonly object stdoutReadingLock = new();
     readonly object syncLock = new();
 
 
@@ -101,7 +101,7 @@ class ProcessTextReader : TextReader
                 var line = this.bufferedLineFromStderr;
                 if (line.Length > 0)
                 {
-                    this.bufferedLineFromStderr = line.Substring(1);
+                    this.bufferedLineFromStderr = line[1..^0];
                     return line[0];
                 }
                 this.bufferedLineFromStderr = null;
@@ -112,7 +112,7 @@ class ProcessTextReader : TextReader
                 var line = this.bufferedLineFromStdout;
                 if (line.Length > 0)
                 {
-                    this.bufferedLineFromStdout = line.Substring(1);
+                    this.bufferedLineFromStdout = line[1..^0];
                     return line[0];
                 }
                 this.bufferedLineFromStdout = null;
@@ -137,7 +137,7 @@ class ProcessTextReader : TextReader
                 var line = this.bufferedLineFromStderr;
                 if (line.Length > 0)
                 {
-                    this.bufferedLineFromStderr = line.Substring(1);
+                    this.bufferedLineFromStderr = line[1..^0];
                     return line[0];
                 }
                 this.bufferedLineFromStderr = null;
@@ -148,7 +148,7 @@ class ProcessTextReader : TextReader
                 var line = this.bufferedLineFromStdout;
                 if (line.Length > 0)
                 {
-                    this.bufferedLineFromStdout = line.Substring(1);
+                    this.bufferedLineFromStdout = line[1..^0];
                     return line[0];
                 }
                 this.bufferedLineFromStdout = null;
@@ -212,7 +212,7 @@ class ProcessTextReader : TextReader
     void ReadLinesFromProcess(string name, Action beginReadLineAction, EventInfo lineReadEvent, ref string? bufferedLine, object readingLock)
     {
         // setup event handler to receive read line
-        this.logger.LogTrace($"Start reading lines from {name}");
+        this.logger.LogTrace("Start reading lines from {name}", name);
         var lineQueue = new Queue<string?>();
         var lineReadHandler = new DataReceivedEventHandler((_, e) =>
         {
@@ -231,7 +231,7 @@ class ProcessTextReader : TextReader
         }
         catch (Exception ex)
         {
-            this.logger.LogError(ex, $"Failed to start reading lines from {name}");
+            this.logger.LogError(ex, "Failed to start reading lines from {name}", name);
             lock (this.syncLock)
                 Monitor.PulseAll(this.syncLock);
             return;
@@ -260,7 +260,7 @@ class ProcessTextReader : TextReader
             try
             {
                 if (isReadingFirstLine)
-                    this.logger.LogTrace($"Wait for first line from {name}");
+                    this.logger.LogTrace("Wait for first line from {name}", name);
                 lock (readingLock)
                 {
                     if (!lineQueue.TryDequeue(out line))
@@ -271,7 +271,7 @@ class ProcessTextReader : TextReader
                     if (isReadingFirstLine)
                     {
                         isReadingFirstLine = false;
-                        this.logger.LogTrace($"First line read from {name}");
+                        this.logger.LogTrace("First line read from {name}", name);
                     }
                 }
             }
@@ -287,7 +287,7 @@ class ProcessTextReader : TextReader
             if (line == null)
                 break;
         }
-        this.logger.LogTrace($"Complete reading lines from {name}");
+        this.logger.LogTrace("Complete reading lines from {name}", name);
     }
 
 

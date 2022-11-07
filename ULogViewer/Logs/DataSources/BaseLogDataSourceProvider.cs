@@ -56,7 +56,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		/// <inheritdoc/>
-		public virtual IEnumerable<ExternalDependency> ExternalDependencies { get; } = new ExternalDependency[0];
+		public virtual IEnumerable<ExternalDependency> ExternalDependencies { get; } = Array.Empty<ExternalDependency>();
 
 
 		/// <inheritdoc/>
@@ -95,7 +95,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// <param name="source"></param>
 		protected virtual void OnSourceDisposed(ILogDataSource source)
 		{
-			this.Logger.LogDebug($"Source {source} disposed, active source count: {this.activeSources.Count}");
+			this.Logger.LogDebug("Source {source} disposed, active source count: {count}", source, this.activeSources.Count);
 			this.OnPropertyChanged(nameof(ActiveSourceCount));
 		}
 
@@ -119,7 +119,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			return this.CreateSourceCore(options).Also((it) =>
 			{
 				this.activeSources.Add(it);
-				this.Logger.LogDebug($"Source {it} created, active source count: {this.activeSources.Count}");
+				this.Logger.LogDebug("Source {it} created, active source count: {count}", it, this.activeSources.Count);
 				this.OnPropertyChanged(nameof(ActiveSourceCount));
 			});
 		}
