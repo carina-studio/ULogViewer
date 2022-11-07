@@ -248,18 +248,30 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				startInfo.UseShellExecute = false;
 				startInfo.RedirectStandardError = true;
 				startInfo.RedirectStandardOutput = true;
-				startInfo.StandardErrorEncoding = (Platform.IsWindows && string.Equals(commandFileOnReady, "cmd", StringComparison.OrdinalIgnoreCase))
-					? CultureInfo.CurrentCulture.ToString().Let(name =>
+				if (Platform.IsWindows)
+				{
+					var commandToCheck = Path.GetFileName(commandFileOnReady)?.ToLower();
+					if (commandToCheck == "cmd"
+						|| commandToCheck == "cmd.exe"
+						|| commandToCheck == "powershell"
+						|| commandToCheck == "powershell.exe")
 					{
-						if (name.StartsWith("zh-"))
+						startInfo.StandardErrorEncoding = CultureInfo.CurrentCulture.ToString().Let(name =>
 						{
-							if (name.EndsWith("TW"))
-								return System.Text.CodePagesEncodingProvider.Instance.GetEncoding(950); // Big5
-							return System.Text.CodePagesEncodingProvider.Instance.GetEncoding(936); // GB2312
-						}
-						return System.Text.Encoding.UTF8;
-					})
-					: System.Text.Encoding.UTF8;
+							if (name.StartsWith("zh-"))
+							{
+								if (name.EndsWith("TW"))
+									return System.Text.CodePagesEncodingProvider.Instance.GetEncoding(950); // Big5
+								return System.Text.CodePagesEncodingProvider.Instance.GetEncoding(936); // GB2312
+							}
+							return System.Text.Encoding.UTF8;
+						});
+					}
+					else
+						startInfo.StandardErrorEncoding = System.Text.Encoding.UTF8;
+				}
+				else
+					startInfo.StandardErrorEncoding = System.Text.Encoding.UTF8;
 				startInfo.StandardOutputEncoding = startInfo.StandardErrorEncoding;
 				startInfo.CreateNoWindow = true;
 			});
