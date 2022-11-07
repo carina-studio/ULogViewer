@@ -279,11 +279,16 @@ class ProcessTextReader : TextReader
             { }
 
             // notify
-            lock (this.syncLock)
+            Monitor.Enter(this.syncLock);
+            bufferedLine = line;
+            if (line == null)
             {
-                bufferedLine = line;
-                Monitor.PulseAll(this.syncLock);
+                Monitor.Exit(this.syncLock);
+                Thread.Sleep(500); // [Workaround] Report text read from other stream first
+                Monitor.Enter(this.syncLock);
             }
+            Monitor.PulseAll(this.syncLock);
+            Monitor.Exit(this.syncLock);
             if (line == null)
                 break;
         }
