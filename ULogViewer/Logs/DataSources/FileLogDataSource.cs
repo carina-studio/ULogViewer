@@ -15,6 +15,10 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 	/// </summary>
 	class FileLogDataSource : BaseLogDataSource
 	{
+		// Fields.
+		volatile string? tempFilePath;
+
+
 		/// <summary>
 		/// Initialize new <see cref="FileLogDataSource"/> instance.
 		/// </summary>
@@ -24,6 +28,35 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		{
 			if (options.FileName == null)
 				throw new ArgumentException("No file name specified.");
+		}
+
+
+		// Delete temp file.
+		void DeleteTempFile()
+		{
+			var filePath = Interlocked.Exchange(ref this.tempFilePath, null);
+			if (filePath == null)
+				return;
+			this.TaskFactory.StartNew(() => 
+			{
+				this.Logger.LogDebug("Delete temp file '{fileName}'", filePath);
+				try
+				{
+					File.Delete(filePath);
+				}
+				catch (Exception ex)
+				{
+					this.Logger.LogWarning(ex, "Failed to delete temp file '{fileName}'", filePath);
+				}
+			}, CancellationToken.None);
+		}
+
+
+		/// <inheritdoc/>
+		protected override void OnReaderClosed()
+		{
+			this.DeleteTempFile();
+			base.OnReaderClosed();
 		}
 
 
@@ -37,6 +70,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			var reader = await this.TaskFactory.StartNew(() =>
 			{
 				var stopwatch = new Stopwatch().Also(it => it.Start());
+				var tempFilePath = (string?)null;
 				try
 				{
 					while (true)
@@ -45,9 +79,11 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 						{
 							if (cancellationToken.IsCancellationRequested)
 								return null;
-							return new FileStream(fileName, FileMode.Open, FileAccess.Read).Let(stream =>
+							if (tempFilePath != null)
+								this.Logger.LogWarning("Use temp file '{tempFilePath}'", tempFilePath);
+							return new FileStream(tempFilePath ?? fileName, FileMode.Open, FileAccess.Read).Let(stream =>
 							{
-								var reader = Path.GetExtension(options.FileName)?.ToLower() switch
+								var reader = Path.GetExtension(fileName)?.ToLower() switch
 								{
 									".gz" => new GZipStream(stream, CompressionMode.Decompress).Let(gzipStream =>
 										new StreamReader(gzipStream, encoding)),
@@ -58,13 +94,14 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 								};
 								if (this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.ReadRawLogLinesConcurrently))
 									reader = new IO.ConcurrentTextReader(reader);
+								this.tempFilePath = tempFilePath;
 								result = LogDataSourceState.ReaderOpened;
 								return reader;
 							});
 						}
 						catch (FileNotFoundException)
 						{
-							this.Logger.LogError("File '{fileName}' not found", options.FileName);
+							this.Logger.LogError("File '{fileName}' not found", fileName);
 							result = LogDataSourceState.SourceNotFound;
 							return null;
 						}
@@ -72,12 +109,40 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 						{
 							if (stopwatch.ElapsedMilliseconds < 5000)
 							{
-								this.Logger.LogWarning(ex, "Unable to open file '{fileName}', try again later", options.FileName);
-								Thread.Sleep(100);
+								this.Logger.LogWarning(ex, "Unable to open file '{fileName}', try again later", fileName);
+								Thread.Sleep(300);
+							}
+							else if (tempFilePath == null)
+							{
+								// get file size
+								var fileSize = Global.RunOrDefault(() => new FileInfo(fileName).Length, -1L);
+								if (fileSize < 0)
+								{
+									this.Logger.LogError(ex, "Unable to open file '{fileName}' and failed to check size of file either", fileName);
+									return null;
+								}
+								if (fileSize > (4L << 20))
+								{
+									this.Logger.LogError(ex, "Unable to open file '{fileName}' and size of file is too large: {size}", fileName, fileSize);
+									return null;
+								}
+								try
+								{
+									tempFilePath = Path.GetTempFileName();
+									this.Logger.LogWarning(ex, "Unable to open file '{fileName}', try copying to '{tempFilePath}'", fileName, tempFilePath);
+									File.Copy(fileName, tempFilePath, true);
+								}
+								catch (Exception ex2)
+								{
+									this.Logger.LogError(ex2, "Failed to copy file '{fileName}' to '{tempFilePath}'", fileName, tempFilePath);
+									if (tempFilePath != null)
+										Global.RunWithoutError(() => File.Delete(tempFilePath));
+									return null;
+								}
 							}
 							else
 							{
-								this.Logger.LogError(ex, "Unable to open file '{fileName}'", options.FileName);
+								this.Logger.LogError(ex, "Unable to open file '{fileName}'", fileName);
 								return null;
 							}
 						}
@@ -92,6 +157,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			{
 				if (reader != null)
 					_ = this.TaskFactory.StartNew(reader.Close, CancellationToken.None);
+				this.DeleteTempFile();
 				throw new TaskCanceledException();
 			}
 			return (result, reader);
