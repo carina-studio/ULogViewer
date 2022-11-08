@@ -83,9 +83,14 @@ class LogSelectionViewModel : SessionComponent
 
         // create actions
         this.notifySelectedLogsChangedAction = new(() =>
-			this.SelectedLogsChanged?.Invoke(this, EventArgs.Empty));
+        {
+            if (!this.IsDisposed)
+			    this.SelectedLogsChanged?.Invoke(this, EventArgs.Empty);
+        });
         this.reportSelectedLogsTimeInfoAction = new ScheduledAction(() =>
         {
+            if (this.IsDisposed)
+                return;
             var firstLog = this.selectedLogs.FirstOrDefault();
             var lastLog = this.selectedLogs.LastOrDefault();
             if (firstLog == null || lastLog == null || firstLog == lastLog)
