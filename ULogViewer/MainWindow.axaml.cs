@@ -259,7 +259,7 @@ namespace CarinaStudio.ULogViewer
 			if (this.DataContext is not Workspace workspace)
 				return;
 			workspace.ActiveSession = workspace.CreateAndAttachSession();
-			this.selectAndSetLogProfileAction.Reschedule(300);
+			this.selectAndSetLogProfileAction.Schedule();
 		}
 		TabItem CreateSessionTabItem(Session session)
 		{
