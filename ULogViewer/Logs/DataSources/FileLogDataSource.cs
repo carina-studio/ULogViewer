@@ -1,7 +1,7 @@
 ﻿using CarinaStudio.Configuration;
-using CarinaStudio.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
@@ -15,10 +15,6 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 	/// </summary>
 	class FileLogDataSource : BaseLogDataSource
 	{
-		// Static fields.
-		static readonly TaskFactory taskFactory = new TaskFactory(new FixedThreadsTaskScheduler(2));
-
-
 		/// <summary>
 		/// Initialize new <see cref="FileLogDataSource"/> instance.
 		/// </summary>
@@ -35,49 +31,70 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		protected override async Task<(LogDataSourceState, TextReader?)> OpenReaderCoreAsync(CancellationToken cancellationToken)
 		{
 			var options = this.CreationOptions;
-			try
+			var fileName = options.FileName.AsNonNull();
+			var encoding = options.Encoding ?? Encoding.UTF8;
+			var result = LogDataSourceState.UnclassifiedError;
+			var reader = await this.TaskFactory.StartNew(() =>
 			{
-				var fileName = options.FileName.AsNonNull();
-				var encoding = options.Encoding ?? Encoding.UTF8;
-				var reader = await this.TaskFactory.StartNew(() =>
+				var stopwatch = new Stopwatch().Also(it => it.Start());
+				try
 				{
-					return new FileStream(fileName, FileMode.Open, FileAccess.Read).Let(stream =>
+					while (true)
 					{
-						var reader = Path.GetExtension(options.FileName)?.ToLower() switch
+						try
 						{
-							".gz" => new GZipStream(stream, CompressionMode.Decompress).Let(gzipStream =>
-								new StreamReader(gzipStream, encoding)),
-							".json" => options.FormatJsonData
-								? new FormattedJsonTextReader(new StreamReader(stream, encoding))
-								: new StreamReader(stream, encoding),
-							_ => (TextReader)new StreamReader(stream, encoding),
-						};
-						if (this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.ReadRawLogLinesConcurrently))
-							reader = new IO.ConcurrentTextReader(reader);
-						return reader;
-					});
-				});
-				if (cancellationToken.IsCancellationRequested)
-				{
-					_ = this.TaskFactory.StartNew(() => Global.RunWithoutError(reader.Close));
-					throw new TaskCanceledException();
+							if (cancellationToken.IsCancellationRequested)
+								return null;
+							return new FileStream(fileName, FileMode.Open, FileAccess.Read).Let(stream =>
+							{
+								var reader = Path.GetExtension(options.FileName)?.ToLower() switch
+								{
+									".gz" => new GZipStream(stream, CompressionMode.Decompress).Let(gzipStream =>
+										new StreamReader(gzipStream, encoding)),
+									".json" => options.FormatJsonData
+										? new FormattedJsonTextReader(new StreamReader(stream, encoding))
+										: new StreamReader(stream, encoding),
+									_ => (TextReader)new StreamReader(stream, encoding),
+								};
+								if (this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.ReadRawLogLinesConcurrently))
+									reader = new IO.ConcurrentTextReader(reader);
+								result = LogDataSourceState.ReaderOpened;
+								return reader;
+							});
+						}
+						catch (FileNotFoundException)
+						{
+							this.Logger.LogError("File '{fileName}' not found", options.FileName);
+							result = LogDataSourceState.SourceNotFound;
+							return null;
+						}
+						catch (Exception ex)
+						{
+							if (stopwatch.ElapsedMilliseconds < 5000)
+							{
+								this.Logger.LogWarning(ex, "Unable to open file '{fileName}', try again later", options.FileName);
+								Thread.Sleep(100);
+							}
+							else
+							{
+								this.Logger.LogError(ex, "Unable to open file '{fileName}'", options.FileName);
+								return null;
+							}
+						}
+					}
 				}
-				return (LogDataSourceState.ReaderOpened, reader);
-			}
-			catch (TaskCanceledException)
+				finally 
+				{
+					stopwatch.Stop();
+				}
+			});
+			if (cancellationToken.IsCancellationRequested)
 			{
-				throw;
+				if (reader != null)
+					_ = this.TaskFactory.StartNew(reader.Close, CancellationToken.None);
+				throw new TaskCanceledException();
 			}
-			catch (FileNotFoundException)
-			{
-				this.Logger.LogError($"File '{options.FileName}' not found");
-				return (LogDataSourceState.SourceNotFound, null);
-			}
-			catch (Exception ex)
-			{
-				this.Logger.LogError(ex, $"Unable to open file '{options.FileName}'");
-				return (LogDataSourceState.UnclassifiedError, null);
-			}
+			return (result, reader);
 		}
 
 
