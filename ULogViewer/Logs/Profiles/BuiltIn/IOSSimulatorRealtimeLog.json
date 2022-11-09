@@ -1,0 +1,73 @@
+﻿{
+	"DataSource": {
+		"Name": "StandardOutput",
+		"Options": {
+			"Command": "xcrun simctl spawn {device-id} log stream"
+		}
+	},
+	"Icon": "MobileDevices",
+	"IsContinuousReading": true,
+	"IsTemplate": true,
+	"LogPatterns": [
+		{
+			"Regex": "^(?<Timestamp>[\\d\\-]+[\\s]+[\\d\\:\\.]+)([\\+\\-][\\d]+)?[\\s]+(?<ThreadId>[\\w\\d]+)[\\s]+(?<Level>[\\w]+)[\\s]+(?<Extra1>[^\\s]+)[\\s]+(?<ProcessId>[\\d]+)[\\s]+(?<Extra2>[^\\s]+)[\\s]+(?<SourceName>[^\\:]*)\\:[\\s](?<Message>.*)$"
+		},
+		{
+			"Regex": "^[\\t](?<Message>.*)$",
+			"IsRepeatable": true,
+			"IsSkippable": true
+		}
+	],
+	"LogLevelMapForReading": {
+		"Debug": "Debug",
+		"Error": "Error",
+		"Info": "Info"
+	},
+	"LogLevelMapForWriting": {
+		"Debug": "Debug",
+		"Error": "Error",
+		"Info": "Info",
+		"Undefined": "Default"
+	},
+	"LogWritingFormats": [
+		"{Timestamp} 0x{ThreadId,-8:x} {Level,-7} {Extra1,-10} {ProcessId,-6} {Extra2,-5} {SourceName}: {Message}"
+	],
+	"SortKey": "Id",
+	"TimestampCategoryGranularity": "Minute",
+	"TimestampFormatForDisplaying": "yyyy/MM/dd HH:mm:ss.ffffff",
+	"TimestampFormatsForReading": [
+		"yyyy-MM-dd HH:mm:ss.ffffff"
+	],
+	"TimestampFormatForWriting": "yyyy-MM-dd HH:mm:ss.ffffff",
+	"VisibleLogProperties": [
+		{
+			"Name": "Timestamp",
+			"Width": 220
+		},
+		{
+			"Name": "ProcessId",
+			"Width": 80
+		},
+		{
+			"Name": "ThreadId",
+			"Width": 80
+		},
+		{
+			"DisplayName": "Activity",
+			"Name": "Extra1",
+			"Width": 80
+		},
+		{
+			"DisplayName": "TTL",
+			"Name": "Extra2",
+			"Width": 50
+		},
+		{
+			"Name": "SourceName",
+			"Width": 100
+		},
+		{
+			"Name": "Message"
+		}
+	]
+}

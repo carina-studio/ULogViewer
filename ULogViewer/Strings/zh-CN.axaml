@@ -74,11 +74,15 @@
 	<sys:String x:Key="String/BuiltInProfile.AzureWebappLogFile.Description">從 Azure 下载之 Webapp 日志文件。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AzureWebappLogStream">Azure Webapp 实时日志</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AzureWebappLogStream.Description">位於 Azure 上特定 Webapp 之实时日志。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.BootedIOSSimulatorsRealtimeLog">iOS/watchOS 模拟器实时日志</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.BootedIOSSimulatorsRealtimeLog.Description">由所有已启动之 iOS/watchOS 模拟器产生的实时全局系统日志。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.Empty">无</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.GitLog">Git 提交记录</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.GitLog.Description">显示指定仓库中的 Git 提交列表。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.GitLogSimple">Git 提交记录 (精简)</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.GitLogSimple.Description">以较少内容显示指定仓库中的 Git 提交列表。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.IOSSimulatorRealtimeLog">特定 iOS/watchOS 模拟器实时日志</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.IOSSimulatorRealtimeLog.Description">由特定 iOS/watchOS 模拟器产生的实时全局系统日志。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.LinuxKernelLog">Linux 核心日志</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.LinuxKernelLog.Description">在 Linux 上产生的核心日志的最新部分。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.LinuxKernelLogFile">Linux 核心日志档案</sys:String>

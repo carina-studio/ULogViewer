@@ -77,6 +77,8 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
         else if (Platform.IsMacOS)
         {
             builtInProfileIDs.Add("AndroidDeviceTrace");
+            builtInProfileIDs.Add("BootedIOSSimulatorsRealtimeLog");
+            builtInProfileIDs.Add("IOSSimulatorRealtimeLog");
             builtInProfileIDs.Add("MacOSInstallationLog");
             builtInProfileIDs.Add("MacOSRealtimeLog");
         }
