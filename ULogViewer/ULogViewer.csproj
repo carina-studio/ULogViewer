@@ -1,79 +1,79 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <AssemblyVersion>3.0.0.1107</AssemblyVersion>
-    <Version>3.0.0.1107</Version>
-    <OutputType>WinExe</OutputType>
-    <DebugType>embedded</DebugType>
-    <RootNamespace>CarinaStudio.ULogViewer</RootNamespace>
-    <Nullable>enable</Nullable>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
-    <TrimMode>partial</TrimMode>
-    <Authors>Carina Studio</Authors>
-    <Company>Carina Studio</Company>
-    <Copyright>©2021 Carina Studio</Copyright>
-    <StartupObject>CarinaStudio.ULogViewer.App</StartupObject>
-    <ApplicationIcon>ULogViewer.ico</ApplicationIcon>
-    <NoWin32Manifest>true</NoWin32Manifest>
-    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
-    <Configurations>Debug;Release;Debug-Windows;Release-Windows</Configurations>
-  </PropertyGroup>
+	<PropertyGroup>
+		<AssemblyVersion>3.0.0.1108</AssemblyVersion>
+		<Version>3.0.0.1108</Version>
+		<OutputType>WinExe</OutputType>
+		<DebugType>embedded</DebugType>
+		<RootNamespace>CarinaStudio.ULogViewer</RootNamespace>
+		<Nullable>enable</Nullable>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+		<TrimMode>partial</TrimMode>
+		<Authors>Carina Studio</Authors>
+		<Company>Carina Studio</Company>
+		<Copyright>©2021 Carina Studio</Copyright>
+		<StartupObject>CarinaStudio.ULogViewer.App</StartupObject>
+		<ApplicationIcon>ULogViewer.ico</ApplicationIcon>
+		<NoWin32Manifest>true</NoWin32Manifest>
+		<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+		<Configurations>Debug;Release;Debug-Windows;Release-Windows</Configurations>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
-    <TargetFramework>net7.0</TargetFramework>
-    <RuntimeIdentifiers>win-x86;win-x64;win-arm64;linux-x64;linux-arm64;osx-x64;osx.11.0-arm64</RuntimeIdentifiers>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)'=='Debug'">
+		<TargetFramework>net7.0</TargetFramework>
+		<RuntimeIdentifiers>win-x86;win-x64;win-arm64;linux-x64;linux-arm64;osx-x64;osx.11.0-arm64</RuntimeIdentifiers>
+		<DefineConstants>DEBUG;TRACE</DefineConstants>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)'=='Debug-Windows'">
-    <TargetFramework>net7.0-windows10.0.17763.0</TargetFramework>
-    <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
-    <CsWinRTIncludes>Windows</CsWinRTIncludes>
-    <DefineConstants>DEBUG;TRACE;WINDOWS_ONLY</DefineConstants>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)'=='Debug-Windows'">
+		<TargetFramework>net7.0-windows10.0.17763.0</TargetFramework>
+		<RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
+		<CsWinRTIncludes>Windows</CsWinRTIncludes>
+		<DefineConstants>DEBUG;TRACE;WINDOWS_ONLY</DefineConstants>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)'=='Release'">
-    <TargetFramework>net7.0</TargetFramework>
-    <RuntimeIdentifiers>win-x86;win-x64;win-arm64;linux-x64;linux-arm64;osx-x64;osx.11.0-arm64</RuntimeIdentifiers>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)'=='Release'">
+		<TargetFramework>net7.0</TargetFramework>
+		<RuntimeIdentifiers>win-x86;win-x64;win-arm64;linux-x64;linux-arm64;osx-x64;osx.11.0-arm64</RuntimeIdentifiers>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)'=='Release-Windows'">
-    <TargetFramework>net7.0-windows10.0.17763.0</TargetFramework>
-    <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
-    <CsWinRTIncludes>Windows</CsWinRTIncludes>
-    <DefineConstants>WINDOWS_ONLY</DefineConstants>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)'=='Release-Windows'">
+		<TargetFramework>net7.0-windows10.0.17763.0</TargetFramework>
+		<RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
+		<CsWinRTIncludes>Windows</CsWinRTIncludes>
+		<DefineConstants>WINDOWS_ONLY</DefineConstants>
+	</PropertyGroup>
 
-  <PropertyGroup>
-    <CFBundleName>ULogViewer</CFBundleName>
-    <CFBundleExecutable>ULogViewer</CFBundleExecutable>
-    <CFBundleIdentifier>com.carina-studio.ulogviewer</CFBundleIdentifier>
-    <CFBundleShortVersionString>$(Version)</CFBundleShortVersionString>
-    <CFBundleIconFile>ULogViewer.icns</CFBundleIconFile>
-    <CFBundlePackageType>APPL</CFBundlePackageType>
-    <NSPrincipalClass>NSApplication</NSPrincipalClass>
-    <NSHighResolutionCapable>True</NSHighResolutionCapable>
-    <NSHumanReadableCopyright>©2022 Carina Studio</NSHumanReadableCopyright>
-  </PropertyGroup>
+	<PropertyGroup>
+		<CFBundleName>ULogViewer</CFBundleName>
+		<CFBundleExecutable>ULogViewer</CFBundleExecutable>
+		<CFBundleIdentifier>com.carina-studio.ulogviewer</CFBundleIdentifier>
+		<CFBundleShortVersionString>$(Version)</CFBundleShortVersionString>
+		<CFBundleIconFile>ULogViewer.icns</CFBundleIconFile>
+		<CFBundlePackageType>APPL</CFBundlePackageType>
+		<NSPrincipalClass>NSApplication</NSPrincipalClass>
+		<NSHighResolutionCapable>True</NSHighResolutionCapable>
+		<NSHumanReadableCopyright>©2022 Carina Studio</NSHumanReadableCopyright>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <AvaloniaResource Include="SplashWindowBackground.jpg" />
-    <AvaloniaResource Include="Strings/Default.axaml" />
-    <AvaloniaResource Include="Strings/Default-Linux.axaml" />
-    <AvaloniaResource Include="Strings/Default-OSX.axaml" />
-    <AvaloniaResource Include="Strings/zh-TW.axaml" />
-    <AvaloniaResource Include="Strings/zh-TW-Linux.axaml" />
-    <AvaloniaResource Include="Strings/zh-TW-OSX.axaml" />
-    <AvaloniaResource Include="Strings/zh-CN.axaml" />
-    <AvaloniaResource Include="Strings/zh-CN-Linux.axaml" />
-    <AvaloniaResource Include="Strings/zh-CN-OSX.axaml" />
-    <AvaloniaResource Include="ULogViewer.ico" />
-  </ItemGroup>
+	<ItemGroup>
+		<AvaloniaResource Include="SplashWindowBackground.jpg" />
+		<AvaloniaResource Include="Strings/Default.axaml" />
+		<AvaloniaResource Include="Strings/Default-Linux.axaml" />
+		<AvaloniaResource Include="Strings/Default-OSX.axaml" />
+		<AvaloniaResource Include="Strings/zh-TW.axaml" />
+		<AvaloniaResource Include="Strings/zh-TW-Linux.axaml" />
+		<AvaloniaResource Include="Strings/zh-TW-OSX.axaml" />
+		<AvaloniaResource Include="Strings/zh-CN.axaml" />
+		<AvaloniaResource Include="Strings/zh-CN-Linux.axaml" />
+		<AvaloniaResource Include="Strings/zh-CN-OSX.axaml" />
+		<AvaloniaResource Include="ULogViewer.ico" />
+	</ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Avalonia.AvaloniaEdit" Version="0.10.12.2" />
-    <PackageReference Include="CarinaStudio.AppSuite.Core" Version="2.0.19.1107-preview" />
+    <PackageReference Include="CarinaStudio.AppSuite.Core" Version="2.0.20.1108-preview" />
     <PackageReference Include="Dotnet.Bundle" Version="0.9.13" />
     <PackageReference Include="Microsoft.Win32.Registry" Version="6.0.0-preview.5.21301.5" />
     <PackageReference Include="MySql.Data" Version="8.0.29" />
@@ -86,36 +86,44 @@
     <PackageReference Include="System.Text.Encoding.CodePages" Version="7.0.0-rc.2.22472.3" />
   </ItemGroup>
 
+  <ItemGroup>
+		<ProjectReference Include="..\TextShellHost\TextShellHost.csproj" />
+	</ItemGroup>
+
   <ItemGroup Condition="$(TargetFramework.Contains('windows'))">
     <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
   </ItemGroup>
 
-  <ItemGroup Condition="$(TargetFramework.Contains('windows'))">
-    <TrimmerRootAssembly Include="System.Management" />
-  </ItemGroup>
+	<ItemGroup Condition="$(TargetFramework.Contains('windows'))">
+		<PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
+	</ItemGroup>
 
-  <ItemGroup Condition="$(RuntimeIdentifier.Contains('osx'))">
-    <Content Include="../SQLite/1.0.116/$(RuntimeIdentifier)/System.Data.SQLite.dll" Link="System.Data.SQLite.dll">
+	<ItemGroup Condition="$(TargetFramework.Contains('windows'))">
+		<TrimmerRootAssembly Include="System.Management" />
+	</ItemGroup>
+
+	<ItemGroup Condition="$(RuntimeIdentifier.Contains('osx'))">
+		<Content Include="../SQLite/1.0.116/$(RuntimeIdentifier)/System.Data.SQLite.dll" Link="System.Data.SQLite.dll">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
-    <Content Include="../SQLite/1.0.116/$(RuntimeIdentifier)/SQLite.Interop.dll" Link="SQLite.Interop.dll">
+		<Content Include="../SQLite/1.0.116/$(RuntimeIdentifier)/SQLite.Interop.dll" Link="SQLite.Interop.dll">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 			<ExcludeFromSingleFile>True</ExcludeFromSingleFile>
 		</Content>
-  </ItemGroup>
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Update="ULogViewer.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </None>
-  </ItemGroup>
+	<ItemGroup>
+		<None Update="ULogViewer.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+		</None>
+	</ItemGroup>
 
-  <ItemGroup>
-    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
-        <_Parameter1>$(AssemblyName).Tests</_Parameter1>
-    </AssemblyAttribute>
-  </ItemGroup>
+	<ItemGroup>
+		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+			<_Parameter1>$(AssemblyName).Tests</_Parameter1>
+		</AssemblyAttribute>
+	</ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="ChangeList.json" />

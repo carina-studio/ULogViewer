@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31229.75
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33103.184
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ULogViewer", "ULogViewer\ULogViewer.csproj", "{86027AF0-5E0F-470C-A8E0-742FCED672BC}"
 EndProject
@@ -13,6 +13,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		PackageManifest-Preview.json = PackageManifest-Preview.json
 		README.md = README.md
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TextShellHost", "TextShellHost\TextShellHost.csproj", "{974006F6-326F-4F53-A4D7-7B8428470732}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -38,6 +40,14 @@ Global
 		{EA17FC0A-4838-49BB-A5B7-8D8CD957709C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EA17FC0A-4838-49BB-A5B7-8D8CD957709C}.Release-Windows|Any CPU.ActiveCfg = Release-Windows|Any CPU
 		{EA17FC0A-4838-49BB-A5B7-8D8CD957709C}.Release-Windows|Any CPU.Build.0 = Release-Windows|Any CPU
+		{974006F6-326F-4F53-A4D7-7B8428470732}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{974006F6-326F-4F53-A4D7-7B8428470732}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{974006F6-326F-4F53-A4D7-7B8428470732}.Debug-Windows|Any CPU.ActiveCfg = Debug|Any CPU
+		{974006F6-326F-4F53-A4D7-7B8428470732}.Debug-Windows|Any CPU.Build.0 = Debug|Any CPU
+		{974006F6-326F-4F53-A4D7-7B8428470732}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{974006F6-326F-4F53-A4D7-7B8428470732}.Release|Any CPU.Build.0 = Release|Any CPU
+		{974006F6-326F-4F53-A4D7-7B8428470732}.Release-Windows|Any CPU.ActiveCfg = Release|Any CPU
+		{974006F6-326F-4F53-A4D7-7B8428470732}.Release-Windows|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

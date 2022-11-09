@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<AssemblyVersion>3.0.0.1108</AssemblyVersion>
+		<Version>3.0.0.1108</Version>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net7.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<Authors>Carina Studio</Authors>
+		<Company>Carina Studio</Company>
+		<Copyright>©2021 Carina Studio</Copyright>
+		<StartupObject>CarinaStudio.ULogViewer.TextShellHost</StartupObject>
+		<NoWin32Manifest>true</NoWin32Manifest>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="CarinaStudio.AppSuite.Core" Version="2.0.20.1108-preview" />
+		<PackageReference Include="System.Text.Encoding.CodePages" Version="7.0.0-rc.2.22472.3" />
+	</ItemGroup>
+
+</Project>
