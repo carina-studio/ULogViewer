@@ -139,12 +139,12 @@
     <EmbeddedResource Include="Logs/Profiles/BuiltIn/AndroidTraceFile.json" />
     <EmbeddedResource Include="Logs/Profiles/BuiltIn/ApacheAccessLogFile.json" />
     <EmbeddedResource Include="Logs/Profiles/BuiltIn/ApacheErrorLogFile.json" />
+    <EmbeddedResource Include="Logs/Profiles/BuiltIn/AppleDeviceSimulatorRealtimeLog.json" />
     <EmbeddedResource Include="Logs/Profiles/BuiltIn/AzureWebappLogFile.json" />
-    <EmbeddedResource Include="Logs/Profiles/BuiltIn/BootedIOSSimulatorsRealtimeLog.json" />
+    <EmbeddedResource Include="Logs/Profiles/BuiltIn/BootedAppleDeviceSimulatorsRealtimeLog.json" />
     <EmbeddedResource Include="Logs/Profiles/BuiltIn/DummyLog.json" />
     <EmbeddedResource Include="Logs/Profiles/BuiltIn/GitLog.json" />
     <EmbeddedResource Include="Logs/Profiles/BuiltIn/GitLogSimple.json" />
-    <EmbeddedResource Include="Logs/Profiles/BuiltIn/IOSSimulatorRealtimeLog.json" />
     <EmbeddedResource Include="Logs/Profiles/BuiltIn/LinuxKernelLog.json" />
     <EmbeddedResource Include="Logs/Profiles/BuiltIn/LinuxKernelLogFile.json" />
     <EmbeddedResource Include="Logs/Profiles/BuiltIn/LinuxRealtimeLog.json" />
