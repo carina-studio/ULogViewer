@@ -398,6 +398,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Login">登入</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Logout">登出</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Mark">標記</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.MobileDevices">行動裝置</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Network">網路</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Performance">效能</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Phone">手機</sys:String>
@@ -410,8 +411,10 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Signal">訊號</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Statistic">統計</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Table">表格</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.TabletDevice">平板裝置</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Temperature">溫度</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Terminal">終端機</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Tools">工具</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.VersionControl">版本控制</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Video">視訊</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Warning">警告</sys:String>

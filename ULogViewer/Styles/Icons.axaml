@@ -65,6 +65,7 @@
 	<Geometry x:Key="Geometry/MarkedOnly.Outline">M9.47 9.65L8.06 11.07L11 14L16.19 8.82L14.78 7.4L11 11.18M17 3H7C5.9 3 5 3.9 5 5L5 21L12 18L19 21V5C19 3.9 18.1 3 17 3M17 18L12 15.82L7 18V5H17Z</Geometry>
 	<Geometry x:Key="Geometry/Marks">M15,5A2,2 0 0,1 17,7V23L10,20L3,23V7C3,5.89 3.9,5 5,5H15M9,1H19A2,2 0 0,1 21,3V19L19,18.13V3H7A2,2 0 0,1 9,1Z</Geometry>
 	<Geometry x:Key="Geometry/Marks.Outline">M9,1H19A2,2 0 0,1 21,3V19L19,18.13V3H7A2,2 0 0,1 9,1M15,20V7H5V20L10,17.82L15,20M15,5C16.11,5 17,5.9 17,7V23L10,20L3,23V7A2,2 0 0,1 5,5H15Z</Geometry>
+	<Geometry x:Key="Geometry/MobileDevices">M12.8,4 L8.797,4 C7.915,4 7.2,4.715 7.2,5.597 L7.2,14.4 C7.2,15.28 7.915,16 8.797,16 L12.8,16 C13.68,16 14.4,15.28 14.4,14.4 L14.4,5.597 C14.4,4.715 13.68,4 12.8,4 z M10.8,15.2 C10.25,15.2 9.8,14.84 9.8,14.4 C9.8,13.96 10.25,13.6 10.8,13.6 C11.35,13.6 11.8,13.96 11.8,14.4 C11.8,14.84 11.35,15.2 10.8,15.2 z M12.8,12.8 L8.8,12.8 L8.8,5.6 L12.8,5.6 L12.8,12.8 z M5.6,12.8 L1.6,12.8 L1.6,1.6 L11.2,1.6 L11.2,2.4 L12.8,2.4 L12.8,1.6 C12.8,0.7191 12.08,0 11.2,0 L1.6,0 C0.7203,0 0,0.7191 0,1.6 L0,14.4 C0,15.28 0.7203,16 1.6,16 L6.044,16 C5.769,15.53 5.6,14.99 5.6,14.4 L5.6,12.8 z</Geometry>
 	<Geometry x:Key="Geometry/Peek">M14.12,14.12 A1.569,1.569 0 0 1 12.55,15.69 L1.569,15.69 A1.569,1.569 0 0 1 0,14.12 L0,3.137 A1.569,1.569 0 0 1 1.569,1.569 L5.882,1.569 C5.647,2.196 5.49,2.824 5.49,3.529 C5.49,6.353 7.765,8.627 10.59,8.627 C11.22,8.627 11.76,8.549 12.24,8.314 L14.12,10.2 L14.12,14.12  M13.57,5.412 C13.88,4.863 14.12,4.235 14.12,3.529 C14.12,1.569 12.55,0 10.59,0 C8.627,0 7.059,1.569 7.059,3.529 C7.059,5.49 8.627,7.059 10.59,7.059 C11.29,7.059 11.92,6.824 12.47,6.51 L14.9,8.941 L16,7.843 L13.57,5.412  M10.59,5.49 C9.49,5.49 8.627,4.627 8.627,3.529 C8.627,2.431 9.49,1.569 10.59,1.569 C11.69,1.569 12.55,2.431 12.55,3.529 C12.55,4.627 11.69,5.49 10.59,5.49 z</Geometry>
 	<Geometry x:Key="Geometry/Peek.Outline">M10.59,0 C8.627,0 7.059,1.569 7.059,3.529 C7.059,5.49 8.627,7.059 10.59,7.059 C11.29,7.059 11.92,6.824 12.47,6.51 L14.9,8.941 L16,7.843 L13.57,5.412 C13.88,4.863 14.12,4.235 14.12,3.529 C14.12,1.569 12.55,0 10.59,0  M1.569,1.569 A1.569,1.569 0 0 0 0,3.137 L0,14.12 A1.569,1.569 0 0 0 1.569,15.69 L12.55,15.69 A1.569,1.569 0 0 0 14.12,14.12 L14.12,10.2 L12.55,8.627 L12.55,14.12 L1.569,14.12 L1.569,3.137 L5.514,3.137 C5.561,2.588 5.694,2.078 5.882,1.569 L1.569,1.569  M10.59,1.569 C11.69,1.569 12.55,2.431 12.55,3.529 C12.55,4.627 11.69,5.49 10.59,5.49 C9.49,5.49 8.627,4.627 8.627,3.529 C8.627,2.431 9.49,1.569 10.59,1.569 z</Geometry>
 	<Geometry x:Key="Geometry/Power">M10.22,8.03 L6.453,5.845 L8.354,1.284 C8.413,1.165 8.445,1.03 8.445,0.8896 C8.445,0.3989 8.051,0 7.56,0 C7.338,0.004267 7.153,0.07467 7.007,0.1899 L6.943,0.2432 L0.2768,6.554 C0.07413,6.748 -0.02614,7.025 0.00586,7.302 C0.03786,7.582 0.2,7.829 0.4411,7.97 L4.213,10.16 L2.291,14.77 C2.126,15.16 2.261,15.61 2.604,15.84 C2.758,15.95 2.935,16 3.11,16 C3.332,16 3.551,15.92 3.722,15.76 L10.39,9.444 C10.59,9.25 10.69,8.973 10.66,8.695 C10.63,8.416 10.47,8.171 10.22,8.03 z</Geometry>
@@ -79,6 +80,7 @@
 	<Geometry x:Key="Geometry/Statistic">M1.905,12.57 L1.905,6.095 L4.952,6.095 L4.952,12.57 L1.905,12.57 z M5.714,12.57 L5.714,1.143 L8.381,1.143 L8.381,12.57 L5.714,12.57 z M9.143,12.57 L9.143,8.381 L12.19,8.381 L12.19,12.57 L9.143,12.57 z M12.95,12.57 L12.95,3.81 L16,3.81 L16,12.57 L12.95,12.57 z M0,0 L1.143,0 L1.143,13.33 L16,13.33 L16,14.48 L0,14.48 L0,0 z</Geometry>
 	<Geometry x:Key="Geometry/Steady">M0,1.6 C0,0.7164 0.7164,0 1.6,0 L14.4,0 C15.28,0 16,0.7164 16,1.6 C16,2.484 15.28,3.2 14.4,3.2 L1.6,3.2 C0.7164,3.2 0,2.484 0,1.6 z</Geometry>
 	<Geometry x:Key="Geometry/Table">M14.5,0 L1.5,0 C0.6716,0 0,0.6716 0,1.5 L0,12.5 C0,13.33 0.6716,14 1.5,14 L14.5,14 C15.33,14 16,13.33 16,12.5 L16,1.5 C16,0.6716 15.33,0 14.5,0 z M7,12 L2,12 L2,9 L7,9 L7,12 z M7,7 L2,7 L2,4 L7,4 L7,7 z M14,12 L9,12 L9,9 L14,9 L14,12 z M14,7 L9,7 L9,4 L14,4 L14,7 z</Geometry>
+	<Geometry x:Key="Geometry/TabletDevice">M11.2,0 L1.6,0 C0.72,0 0,0.7192 0,1.6 L0,14.4 C0,15.28 0.72,16 1.6,16 L11.2,16 C12.08,16 12.8,15.28 12.8,14.4 L12.8,1.6 C12.8,0.7192 12.08,0 11.2,0 z M6.4,15.2 C5.848,15.2 5.4,14.84 5.4,14.4 C5.4,13.96 5.848,13.6 6.4,13.6 C6.951,13.6 7.4,13.96 7.4,14.4 C7.4,14.84 6.951,15.2 6.4,15.2 z M11.2,12.8 L1.6,12.8 L1.6,1.6 L11.2,1.6 L11.2,12.8 z</Geometry>
 	<Geometry x:Key="Geometry/Temperature">M13,0 C11.35,0 10,1.347 10,3 C10,4.653 11.35,6 13,6 C14.65,6 16,4.653 16,3 C16,1.347 14.65,0 13,0 z M13,4 C12.45,4 12,3.553 12,3 C12,2.447 12.45,2 13,2 C13.55,2 14,2.447 14,3 C14,3.553 13.55,4 13,4 z M8,3.5 C8,1.566 6.434,0 4.5,0 C2.566,0 1,1.566 1,3.5 L1,8.703 C0.3844,9.475 0,10.44 0,11.5 C0,13.98 2.016,16 4.5,16 C6.984,16 9,13.98 9,11.5 C9,10.44 8.616,9.472 8,8.703 L8,3.5 z M4.5,14 C3.122,14 2,12.88 2,11.5 C2,10.7 2.381,9.972 3,9.506 L3,3.5 C3,2.672 3.672,2 4.5,2 C5.328,2 6,2.672 6,3.5 L6,9.506 C6.619,9.969 7,10.7 7,11.5 C7,12.88 5.878,14 4.5,14 z M5,10.09 L5,3.5 C5,3.225 4.775,3 4.5,3 C4.225,3 4,3.225 4,3.5 L4,10.09 C3.419,10.3 3,10.85 3,11.5 C3,12.33 3.672,13 4.5,13 C5.328,13 6,12.33 6,11.5 C6,10.85 5.581,10.3 5,10.09 z</Geometry>
 	<Geometry x:Key="Geometry/Timer">M11.14,3.785 L12.24,2.678 L13.32,3.756 L12.21,4.863 A6.857,-6.857 0 1 1 11.14,3.785 z M6.095,5.333 L6.095,9.905 L7.619,9.905 L7.619,5.333 L6.095,5.333 z M3.809,0 L9.905,0 L9.905,1.524 L3.809,1.524 L3.809,0 z</Geometry>
 	<Geometry x:Key="Geometry/Timer.Outline">M6.857,14.5 C9.821,14.5 12.18,12.11 12.18,9.143 C12.18,6.179 9.821,3.821 6.857,3.821 C3.893,3.821 1.536,6.179 1.536,9.143 C1.536,12.11 3.893,14.5 6.857,14.5 z M12.21,4.893 C13.14,6.071 13.71,7.536 13.71,9.143 C13.71,12.93 10.64,16 6.857,16 C3.071,16 0,12.93 0,9.143 C0,5.357 3.071,2.286 6.857,2.286 C8.464,2.286 9.964,2.893 11.14,3.821 L12.21,2.714 C12.61,3.036 12.96,3.393 13.29,3.786 z M6.107,9.929 L6.107,5.357 L7.607,5.357 L7.607,9.929 L6.107,9.929 z M9.143,0 L9.143,1.536 L4.571,1.536 L4.571,0 L9.143,0 z</Geometry>
@@ -617,6 +619,12 @@
 	<DrawingImage x:Key="Image/LogProfile.Mark.Light">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/Mark}"/>
 	</DrawingImage>
+	<DrawingImage x:Key="Image/LogProfile.MobileDevices">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.LogProfile.MobileDevices}" Geometry="{StaticResource Geometry/MobileDevices}"/>
+	</DrawingImage>
+	<DrawingImage x:Key="Image/LogProfile.MobileDevices.Light">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/MobileDevices}"/>
+	</DrawingImage>
 	<DrawingImage x:Key="Image/LogProfile.Network" Drawing="{StaticResource Drawing/LogProfile.Network}"/>
 	<DrawingImage x:Key="Image/LogProfile.Network.Light" Drawing="{StaticResource Drawing/LogProfile.Network.Light}"/>
 	<DrawingImage x:Key="Image/LogProfile.Performance">
@@ -681,6 +689,12 @@
 	<DrawingImage x:Key="Image/LogProfile.Table.Light">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/Table}"/>
 	</DrawingImage>
+	<DrawingImage x:Key="Image/LogProfile.TabletDevice">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.LogProfile.TabletDevice}" Geometry="{StaticResource Geometry/TabletDevice}"/>
+	</DrawingImage>
+	<DrawingImage x:Key="Image/LogProfile.TabletDevice.Light">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/TabletDevice}"/>
+	</DrawingImage>
 	<DrawingImage x:Key="Image/LogProfile.Temperature">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon.LogProfile.Temperature}" Geometry="{StaticResource Geometry/Temperature}"/>
 	</DrawingImage>
@@ -689,6 +703,12 @@
 	</DrawingImage>
 	<DrawingImage x:Key="Image/LogProfile.Terminal" Drawing="{StaticResource Drawing/LogProfile.Terminal}"/>
 	<DrawingImage x:Key="Image/LogProfile.Terminal.Light" Drawing="{StaticResource Drawing/LogProfile.Terminal.Light}"/>
+	<DrawingImage x:Key="Image/LogProfile.Tools">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.LogProfile.Tools}" Geometry="{DynamicResource Geometry/Icon.Tool.Outline}"/>
+	</DrawingImage>
+	<DrawingImage x:Key="Image/LogProfile.Tools.Light">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{DynamicResource Geometry/Icon.Tool.Outline}"/>
+	</DrawingImage>
 	<DrawingImage x:Key="Image/LogProfile.Usb" Drawing="{StaticResource Drawing/LogProfile.Usb}"/>
 	<DrawingImage x:Key="Image/LogProfile.Usb.Light" Drawing="{StaticResource Drawing/LogProfile.Usb.Light}"/>
 	<DrawingImage x:Key="Image/LogProfile.VersionControl" Drawing="{StaticResource Drawing/LogProfile.VersionControl}"/>

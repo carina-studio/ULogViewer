@@ -35,6 +35,7 @@
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Network" Color="#0077cc"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Power" Color="#d9c567"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Security" Color="#007f7f"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Tools" Color="#e6ce00"/>
 
 			<!-- LogLevel -->
 			<SolidColorBrush x:Key="Brush/LogLevel.Debug">#288dcc</SolidColorBrush>

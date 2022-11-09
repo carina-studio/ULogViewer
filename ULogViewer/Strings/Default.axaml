@@ -429,6 +429,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Login">Login</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Logout">Logout</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Mark">Mark</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.MobileDevices">Mobile devices</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Network">Network</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Performance">Performance</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Phone">Mobile phone</sys:String>
@@ -441,8 +442,10 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Signal">Signal</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Statistic">Statistic</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Table">Table</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.TabletDevice">Tablet device</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Temperature">Temperature</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Terminal">Terminal</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Tools">Tools</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Usb">USB</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.VersionControl">Version control</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Video">Video</sys:String>

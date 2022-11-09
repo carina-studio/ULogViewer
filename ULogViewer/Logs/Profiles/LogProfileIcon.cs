@@ -176,6 +176,10 @@ enum LogProfileIcon
 	/// </summary>
 	Mark,
 	/// <summary>
+	/// Mobile Devices.
+	/// </summary>
+	MobileDevices,
+	/// <summary>
 	/// Network.
 	/// </summary>
 	Network,
@@ -224,6 +228,10 @@ enum LogProfileIcon
 	/// </summary>
 	Table,
 	/// <summary>
+	/// Tablet Device.
+	/// </summary>
+	TabletDevice,
+	/// <summary>
 	/// Temperature.
 	/// </summary>
 	Temperature,
@@ -231,6 +239,10 @@ enum LogProfileIcon
 	/// Terminal.
 	/// </summary>
 	Terminal,
+	/// <summary>
+	/// Tools.
+	/// </summary>
+	Tools,
 	/// <summary>
 	/// USB.
 	/// </summary>

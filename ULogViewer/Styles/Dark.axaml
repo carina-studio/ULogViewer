@@ -13,8 +13,10 @@
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Book" Color="#b24700"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Code" Color="#909090"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Experiment" Color="#00990f"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.MobileDevices" Color="#909090"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Phone" Color="#909090"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Statistic" Color="#8332ff"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.TabletDevice" Color="#909090"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Terminal" Color="#909090"/>
 
 			<!-- LogLevel -->

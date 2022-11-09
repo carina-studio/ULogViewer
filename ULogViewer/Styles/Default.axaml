@@ -53,6 +53,7 @@
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Location" Color="#cd3e3e"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Login" Color="#53be25"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Logout" Color="#53be25"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.MobileDevices" Color="#000000"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Network" Color="#0094ff"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Performance" Color="#ff3f00"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Phone" Color="#000000"/>
@@ -61,8 +62,10 @@
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Security" Color="#00bfbf"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Signal" Color="#317fff"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Statistic" Color="#5200cd"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.TabletDevice" Color="#000000"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Temperature" Color="#e64329"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Terminal" Color="#000000"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Tools" Color="#f2d900"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.VersionControl" Color="#ff6600"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Video" Color="#89cc3e"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Website" Color="#016abf"/>
