@@ -1,0 +1,62 @@
+﻿{
+	"DataSource": {
+		"Name": "StandardOutput",
+		"Options": {
+			"Command": "idevicesyslog --no-colors"
+		}
+	},
+	"Icon": "MobileDevices",
+	"IsContinuousReading": true,
+	"LogPatterns": [
+		{
+			"Regex": "^(?<Timestamp>\\w+\\s+\\d+\\s+[\\d\\:\\.]+)\\s+(?<SourceName>.*)\\[(?<ProcessId>\\d+)\\]\\s+\\<(?<Level>\\w+)\\>:\\s(?<Message>.*)$"
+		},
+		{
+			"Regex": "^[\\t](?<Message>.*)$",
+			"IsRepeatable": true,
+			"IsSkippable": true
+		}
+	],
+	"LogLevelMapForReading": {
+		"Debug": "Debug",
+		"Error": "Error",
+		"Fault": "Fatal",
+		"Info": "Info",
+		"Notice": "Verbose"
+	},
+	"LogLevelMapForWriting": {
+		"Debug": "Debug",
+		"Error": "Error",
+		"Fatal": "Fault",
+		"Info": "Info",
+		"Undefined": "Notice",
+		"Verbose": "Notice"
+	},
+	"LogWritingFormats": [
+		"{Timestamp} {SourceName}[{ProcessId}] <{Level}>: {Message}"
+	],
+	"SortKey": "Id",
+	"TimestampCategoryGranularity": "Minute",
+	"TimestampFormatForDisplaying": "yyyy/MM/dd HH:mm:ss",
+	"TimestampFormatsForReading": [
+		"MMM dd HH:mm:ss"
+	],
+	"TimestampFormatForWriting": "MMM dd HH:mm:ss",
+	"VisibleLogProperties": [
+		{
+			"Name": "Timestamp",
+			"Width": 180
+		},
+		{
+			"Name": "ProcessId",
+			"Width": 50
+		},
+		{
+			"Name": "SourceName",
+			"Width": 150
+		},
+		{
+			"Name": "Message"
+		}
+	]
+}

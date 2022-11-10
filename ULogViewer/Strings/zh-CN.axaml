@@ -70,13 +70,13 @@
 	<sys:String x:Key="String/BuiltInProfile.ApacheAccessLogFile.Description">由 Apache 产生之文件，其中包括传送至服务器之请求信息。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.ApacheErrorLogFile">Apache 服务器错误日志文件</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.ApacheErrorLogFile.Description">由 Apache 产生之文件，其中包括服务器所发生之错误信息。</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.AppleDeviceSimulatorRealtimeLog">特定 Apple 设备模拟器实时日志</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.AppleDeviceSimulatorRealtimeLog.Description">由特定 Apple 设备模拟器产生的实时全局系统日志。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AppleDevicesLog">Apple 设备日志</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AppleDevicesLog.Description">由所有已连线之 Apple 设备产生的实时全局系统日志。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AzureWebappLogFile">Azure Webapp 日志文件</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AzureWebappLogFile.Description">從 Azure 下载之 Webapp 日志文件。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AzureWebappLogStream">Azure Webapp 实时日志</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AzureWebappLogStream.Description">位於 Azure 上特定 Webapp 之实时日志。</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.BootedAppleDeviceSimulatorsRealtimeLog">Apple 设备模拟器实时日志</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.BootedAppleDeviceSimulatorsRealtimeLog">Apple 设备模拟器日志</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.BootedAppleDeviceSimulatorsRealtimeLog.Description">由所有已启动之 Apple 设备模拟器产生的实时全局系统日志。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.Empty">无</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.GitLog">Git 提交记录</sys:String>
@@ -105,6 +105,10 @@
 	<sys:String x:Key="String/BuiltInProfile.RawHttp.Description">送出 HTTP/HTTPS 请求并读取未分析的响应内容。通常用于测试及调试时使用。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.RawTcpServer">TCP 客户端原始内容</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.RawTcpServer.Description">建立 TCP 服务器并读取来自 TCP 客户端传输的内原始文字内容。通常用于测试及调试时使用。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.SpecificAppleDeviceLog">特定 Apple 设备日志</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.SpecificAppleDeviceLog.Description">由特定之 Apple 设备产生的实时全局系统日志。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.SpecificAppleDeviceSimulatorLog">特定 Apple 设备模拟器日志</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.SpecificAppleDeviceSimulatorLog.Description">由特定 Apple 设备模拟器产生的实时全局系统日志。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.TcpNLog.Description">使用 NLog 以 'NLogViewer' 格式输出，并通过 TCP 传输实时日志。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.ULogViewerLog">ULogViewer 日志档案</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.ULogViewerLog.Description">由 ULogViewer 或其他 Carina Studio 应用程序输出的日志档案。</sys:String>
