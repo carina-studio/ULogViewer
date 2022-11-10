@@ -95,7 +95,7 @@ namespace CarinaStudio.ULogViewer
 
 
 		/// <inheritdoc/>
-		public override int ExternalDependenciesVersion => 2;
+		public override int ExternalDependenciesVersion => 3;
 
 
 		// Accept update for testing purpose.
@@ -281,8 +281,7 @@ namespace CarinaStudio.ULogViewer
 				{
 					Source = new Uri("avares://ULogViewer/Styles/Resources-Compact.axaml")
 				};
-				if (this.compactResourcesToken == null)
-					this.compactResourcesToken = this.AddCustomResource(this.compactResources);
+				this.compactResourcesToken ??= this.AddCustomResource(this.compactResources);
 			}
 
 			// load styles
@@ -425,6 +424,11 @@ namespace CarinaStudio.ULogViewer
 					it.Add(new ExecutableExternalDependency(this, "TraceConv", ExternalDependencyPriority.RequiredByFeatures, "traceconv", new Uri("https://perfetto.dev/docs/quickstart/traceconv"), new Uri("https://perfetto.dev/docs/quickstart/traceconv#setup")));
 				if (Platform.IsLinux)
 					it.Add(new ExecutableExternalDependency(this, "XRandR", ExternalDependencyPriority.Optional, "xrandr", new Uri("https://www.x.org/wiki/Projects/XRandR/"), new Uri("https://command-not-found.com/xrandr")));
+				if (Platform.IsMacOS)
+				{
+					it.Add(new ExecutableExternalDependency(this, "LibIMobileDevice", ExternalDependencyPriority.Optional, "idevicesyslog", new Uri("https://libimobiledevice.org/"), new Uri("https://formulae.brew.sh/formula/libimobiledevice")));
+					it.Add(new ExecutableExternalDependency(this, "XcodeCommandLineTools", ExternalDependencyPriority.Optional, "xcrun", new Uri("https://developer.apple.com/xcode/"), new Uri("https://developer.apple.com/download/all/?q=xcode")));
+				}
 			}).ToArray();
 
 			// call base

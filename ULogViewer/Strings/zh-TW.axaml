@@ -234,8 +234,11 @@
 	<sys:String x:Key="String/ExternalDependency.AzureCLI.Description">「Azure CLI」、「MySQL 資料庫」及「SQL Server 資料庫」資料來源使用 Azure 命令列介面 (CLI) 讀取日誌資料或存取 Azure 功能。對於 Windows/Linux 使用者，請將包含 'az' 指令之資料夾路徑加至 PATH 環境變數。對於 macOS 使用者，請將包含 'az' 指令之資料夾路徑加至 '/etc/paths'。</sys:String>
 	<sys:String x:Key="String/ExternalDependency.Git">Git</sys:String>
 	<sys:String x:Key="String/ExternalDependency.Git.Description">「Git 提交紀錄」及「Git 提交紀錄 (精簡)」內建日誌類型會使用 Git 讀取提交紀錄。</sys:String>
+	<sys:String x:Key="String/ExternalDependency.LibIMobileDevice.Description">「Apple 裝置日誌」及「特定 Apple 裝置日誌」內建日誌類型會使用 libimobiledevice 中的 idevicesyslog 工具與裝置聯繫並取得日誌。</sys:String>
 	<sys:String x:Key="String/ExternalDependency.TraceConv">Trace 轉換工具</sys:String>
 	<sys:String x:Key="String/ExternalDependency.TraceConv.Description">「Android 裝置系統追蹤」內建日誌類型使用由 Perfetto 提供的 Trace 轉換工具將自裝置擷取的資料轉換成為 Android 系統追蹤格式。對於 Linux 使用者，請將包含 'traceconv' 指令之資料夾路徑加至 PATH 環境變數。對於 macOS 使用者，請將包含 'traceconv' 指令之資料夾路徑加至 '/etc/paths'。</sys:String>
+	<sys:String x:Key="String/ExternalDependency.XcodeCommandLineTools">Xcode 命令列工具</sys:String>
+	<sys:String x:Key="String/ExternalDependency.XcodeCommandLineTools.Description">「Apple 裝置模擬器日誌」及「特定 Apple 裝置模擬器日誌」內建日誌類型會使用 Xcode 命令列工具與模擬器聯繫並取得日誌。您可以選擇安裝 Xcode 或直接安裝 Xcode 命令列工具。</sys:String>
 
 	<!-- FileFormat -->
 	<sys:String x:Key="String/FileFormat.Json">JSON 檔案</sys:String>
