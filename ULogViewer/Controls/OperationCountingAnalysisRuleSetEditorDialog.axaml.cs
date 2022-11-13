@@ -7,10 +7,12 @@ using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ULogViewer.ViewModels.Analysis;
+using CarinaStudio.Windows.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Windows.Input;
 
 namespace CarinaStudio.ULogViewer.Controls
 {
@@ -20,7 +22,7 @@ namespace CarinaStudio.ULogViewer.Controls
 	partial class OperationCountingAnalysisRuleSetEditorDialog : AppSuite.Controls.Window<IULogViewerApplication>
 	{
 		// Static fields.
-		static readonly AvaloniaProperty<bool> AreValidParametersProperty = AvaloniaProperty.Register<OperationDurationAnalysisRuleSetEditorDialog, bool>("AreValidParameters");
+		static readonly StyledProperty<bool> AreValidParametersProperty = AvaloniaProperty.Register<OperationDurationAnalysisRuleSetEditorDialog, bool>("AreValidParameters");
 		static readonly Dictionary<OperationCountingAnalysisRuleSet, OperationCountingAnalysisRuleSetEditorDialog> DialogWithEditingRuleSets = new();
 		static readonly SettingKey<bool> DonotShowRestrictionsWithNonProVersionKey = new("OperationCountingAnalysisRuleSetEditorDialog.DonotShowRestrictionsWithNonProVersion");
 		static readonly Regex OriginalOperationNameRegex = new("^(?<Name>.+)\\s\\(\\d+\\)$");
@@ -41,6 +43,9 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// </summary>
 		public OperationCountingAnalysisRuleSetEditorDialog()
 		{
+			this.CopyRuleCommand = new Command<OperationCountingAnalysisRuleSet.Rule>(this.CopyRule);
+			this.EditRuleCommand = new Command<OperationCountingAnalysisRuleSet.Rule>(this.EditRule);
+			this.RemoveRuleCommand = new Command<OperationCountingAnalysisRuleSet.Rule>(this.RemoveRule);
 			AvaloniaXamlLoader.Load(this);
 			this.iconColorComboBox = this.Get<LogProfileIconColorComboBox>(nameof(iconColorComboBox));
 			this.iconComboBox = this.Get<LogProfileIconComboBox>(nameof(iconComboBox));
@@ -123,10 +128,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		/// <summary>
-		/// Copy rule.
-		/// </summary>
-		public async void CopyRule(OperationCountingAnalysisRuleSet.Rule rule)
+		// Copy rule.
+		async void CopyRule(OperationCountingAnalysisRuleSet.Rule rule)
 		{
 			// get rule
 			var index = this.rules.IndexOf(rule);
@@ -163,6 +166,12 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		/// <summary>
+		/// Command to copy rule.
+		/// </summary>
+		public ICommand CopyRuleCommand { get; }
+
+
 		// Edit rule.
 		async void EditRule(OperationCountingAnalysisRuleSet.Rule rule)
 		{
@@ -179,6 +188,12 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.ruleListBox.SelectedItem = newRule;
 			this.ruleListBox.Focus();
 		}
+
+
+		/// <summary>
+		/// Command to edit rule.
+		/// </summary>
+		public ICommand EditRuleCommand { get; }
 
 
 		/// <inheritdoc/>
@@ -252,14 +267,18 @@ namespace CarinaStudio.ULogViewer.Controls
 #pragma warning restore CA1822
 		
 
-		/// <summary>
-		/// Remove rule.
-		/// </summary>
-		public void RemoveRule(OperationCountingAnalysisRuleSet.Rule rule)
+		// Remove rule.
+		void RemoveRule(OperationCountingAnalysisRuleSet.Rule rule)
 		{
 			this.rules.Remove(rule);
 			this.ruleListBox.Focus();
 		}
+
+
+		/// <summary>
+		/// Command to remove rule.
+		/// </summary>
+		public ICommand RemoveRuleCommand { get; }
 		
 
 		/// <summary>

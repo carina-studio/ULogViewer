@@ -1,3 +1,4 @@
+using System.Windows.Input;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
@@ -27,8 +28,8 @@ namespace CarinaStudio.ULogViewer.Controls
 	partial class LogProfileSelectionDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
 	{
 		// Static fields.
-		static readonly AvaloniaProperty<Predicate<LogProfile>?> FilterProperty = AvaloniaProperty.Register<LogProfileEditorDialog, Predicate<LogProfile>?>(nameof(Filter));
-		static readonly AvaloniaProperty<bool> IsProVersionActivatedProperty = AvaloniaProperty.Register<LogProfileSelectionDialog, bool>("IsProVersionActivated");
+		static readonly StyledProperty<Predicate<LogProfile>?> FilterProperty = AvaloniaProperty.Register<LogProfileEditorDialog, Predicate<LogProfile>?>(nameof(Filter));
+		static readonly StyledProperty<bool> IsProVersionActivatedProperty = AvaloniaProperty.Register<LogProfileSelectionDialog, bool>("IsProVersionActivated");
 
 
 		// Fields.
@@ -52,8 +53,15 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.PinnedLogProfiles = ListExtensions.AsReadOnly(this.pinnedLogProfiles);
 			this.TemplateLogProfiles = ListExtensions.AsReadOnly(this.templateLogProfiles);
 
+			// setup commands
+			this.CopyLogProfileCommand = new Command<LogProfile?>(this.CopyLogProfile);
+			this.EditLogProfileCommand = new Command<LogProfile?>(this.EditLogProfile);
+			this.ExportLogProfileCommand = new Command<LogProfile?>(this.ExportLogProfile);
+			this.PinUnpinLogProfileCommand = new Command<LogProfile?>(this.PinUnpinLogProfile);
+			this.RemoveLogProfileCommand = new Command<LogProfile?>(this.RemoveLogProfile);
+
 			// initialize
-			this.InitializeComponent();
+			AvaloniaXamlLoader.Load(this);
 
 			// setup controls
 			this.otherLogProfileListBox = this.Get<Avalonia.Controls.ListBox>(nameof(otherLogProfileListBox));
@@ -98,10 +106,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		/// <summary>
-		/// Copy log profile.
-		/// </summary>
-		public async void CopyLogProfile(LogProfile? logProfile)
+		// Copy log profile.
+		async void CopyLogProfile(LogProfile? logProfile)
 		{
 			// check state
 			if (logProfile == null)
@@ -122,9 +128,13 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		/// <summary>
-		/// Edit log profile.
+		/// Command to copy log profile.
 		/// </summary>
-		public async void EditLogProfile(LogProfile? logProfile)
+		public ICommand CopyLogProfileCommand { get; }
+
+
+		// Edit log profile.
+		async void EditLogProfile(LogProfile? logProfile)
 		{
 			if (logProfile == null)
 				return;
@@ -139,9 +149,13 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		/// <summary>
-		/// Export log profile.
+		/// Command to edit log profile.
 		/// </summary>
-		public async void ExportLogProfile(LogProfile? logProfile)
+		public ICommand EditLogProfileCommand { get; }
+
+
+		// Export log profile.
+		async void ExportLogProfile(LogProfile? logProfile)
 		{
 			// check parameter
 			if (logProfile == null)
@@ -179,6 +193,12 @@ namespace CarinaStudio.ULogViewer.Controls
 				}.ShowDialog(this);
 			}
 		}
+
+
+		/// <summary>
+		/// Command to export log profile.
+		/// </summary>
+		public ICommand ExportLogProfileCommand { get; }
 
 
 		/// <summary>
@@ -271,10 +291,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Initialize Avalonia components.
-		private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
-
-
 		// Called when list of all log profiles changed.
 		void OnAllLogProfilesChanged(object? sender, NotifyCollectionChangedEventArgs e)
 		{
@@ -333,7 +349,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Called when double tapped on item of log profile.
-		void OnLogProfileItemDoubleTapped(object? sender, RoutedEventArgs e) => this.GenerateResultCommand.TryExecute();
+		void OnLogProfileItemDoubleTapped(object? sender, Avalonia.Input.TappedEventArgs e) => this.GenerateResultCommand.TryExecute();
 
 
 		// Called when property of log profile has been changed.
@@ -467,7 +483,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Called when property changed.
-		protected override void OnPropertyChanged<T>(AvaloniaPropertyChangedEventArgs<T> change)
+		protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
 		{
 			base.OnPropertyChanged(change);
 			if (change.Property == FilterProperty)
@@ -512,16 +528,20 @@ namespace CarinaStudio.ULogViewer.Controls
 		public IList<LogProfile> PinnedLogProfiles { get; }
 
 
-		/// <summary>
-		/// Pin/Unpin log profile.
-		/// </summary>
-		public void PinUnpinLogProfile(LogProfile? logProfile)
+		// Pin/Unpin log profile.
+		void PinUnpinLogProfile(LogProfile? logProfile)
 		{
 			if (logProfile == null)
 				return;
 			logProfile.IsPinned = !logProfile.IsPinned;
 			this.SelectLogProfile(logProfile);
 		}
+
+
+		/// <summary>
+		/// Command to pin/unpin log profile.
+		/// </summary>
+		public ICommand PinUnpinLogProfileCommand { get; }
 
 
 		// Refresh log profiles.
@@ -575,10 +595,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		/// <summary>
-		/// Remove log profile.
-		/// </summary>
-		public async void RemoveLogProfile(LogProfile? logProfile)
+		// Remove log profile.
+		async void RemoveLogProfile(LogProfile? logProfile)
 		{
 			if (logProfile == null)
 				return;
@@ -595,6 +613,12 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (result == MessageDialogResult.Yes)
 				LogProfileManager.Default.RemoveProfile(logProfile);
 		}
+		
+
+		/// <summary>
+		/// Command to remove log profile.
+		/// </summary>
+		public ICommand RemoveLogProfileCommand { get; }
 
 
 		// Scroll to selected log profile.

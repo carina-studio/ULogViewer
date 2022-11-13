@@ -1,11 +1,12 @@
+using System.Globalization;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
+using Avalonia.Media.TextFormatting;
 using AvaloniaEdit;
 using AvaloniaEdit.Highlighting;
 using AvaloniaEdit.Rendering;
-using AvaloniaEdit.Text;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.Collections;
 using CarinaStudio.ULogViewer.Converters;
@@ -30,8 +31,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			// Fields.
 			Regex? filter;
 			readonly HighlightingColor highlightingColor;
-			readonly HighlightingRuleSet mainRuleSet = new HighlightingRuleSet();
-			readonly Dictionary<string, string> properties = new Dictionary<string, string>();
+			readonly HighlightingRuleSet mainRuleSet = new();
+			readonly Dictionary<string, string> properties = new();
 
 			// Constructor.
 			public HighlightingDefinitionImpl(IULogViewerApplication app)
@@ -96,8 +97,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 
 			// Fields.
-			double[] charWidths = new double[0];
-			readonly FormattedText formattedText = new FormattedText();
+			double[] charWidths = Array.Empty<double>();
+			readonly FormattedText formattedText = new("", CultureInfo.InvariantCulture, FlowDirection.LeftToRight, Typeface.Default, 10, null);
 			readonly TextEditor textEditor;
 			double viewWidth;
 			public bool WrapText = true;
@@ -123,12 +124,12 @@ namespace CarinaStudio.ULogViewer.Controls
 						var charCount = it.Length;
 						this.charWidths = new double[charCount].Also(charWidths =>
 						{
-							this.formattedText.FontSize = textRunProperties.FontSize;
-							this.formattedText.Typeface = textRunProperties.Typeface;
+							this.formattedText.SetFontSize(textRunProperties.FontRenderingEmSize);
+							this.formattedText.SetFontFamily(textRunProperties.Typeface.FontFamily);
 							for (var i = charCount - 1; i >= 0; --i)
 							{
-								this.formattedText.Text = document.GetText(it.Offset + i, 1);
-								charWidths[i] = this.formattedText.Bounds.Width;
+								//this.formattedText.Text = document.GetText(it.Offset + i, 1);
+								charWidths[i] = this.formattedText.Width;
 							}
 						});
 						this.viewWidth = this.textEditor.ViewportWidth;
@@ -159,8 +160,8 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Static fields.
-		static readonly AvaloniaProperty<bool> IsPropertyValueTextEditorFocusedProperty = AvaloniaProperty.Register<LogStringPropertyDialog, bool>(nameof(IsPropertyValueTextEditorFocused), false);
-		static readonly AvaloniaProperty<string> LogPropertyDisplayNameProperty = AvaloniaProperty.Register<LogStringPropertyDialog, string>(nameof(LogPropertyDisplayName), "");
+		static readonly StyledProperty<bool> IsPropertyValueTextEditorFocusedProperty = AvaloniaProperty.Register<LogStringPropertyDialog, bool>(nameof(IsPropertyValueTextEditorFocused), false);
+		static readonly StyledProperty<string> LogPropertyDisplayNameProperty = AvaloniaProperty.Register<LogStringPropertyDialog, string>(nameof(LogPropertyDisplayName), "");
 
 
 		// Fields.
@@ -292,6 +293,6 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Command to set text wrapping.
-		ICommand SetTextWrappingCommand { get; }
+		public ICommand SetTextWrappingCommand { get; }
 	}
 }

@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
+using Avalonia.Platform.Storage;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
@@ -11,6 +12,7 @@ using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Text;
 using System.Threading;
@@ -42,43 +44,43 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 	/// <summary>
 	/// Property of <see cref="DataSourceProvider"/>.
 	/// </summary>
-	public static readonly AvaloniaProperty<ILogDataSourceProvider?> DataSourceProviderProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, ILogDataSourceProvider?>(nameof(DataSourceProvider));
+	public static readonly StyledProperty<ILogDataSourceProvider?> DataSourceProviderProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, ILogDataSourceProvider?>(nameof(DataSourceProvider));
 
 
 	// Static fields.
-	static readonly AvaloniaProperty<Uri?> CategoryReferenceUriProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, Uri?>("CategoryReferenceUri");
-	static readonly AvaloniaProperty<Uri?> CommandReferenceUriProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, Uri?>("CommandReferenceUri");
-	static readonly AvaloniaProperty<Uri?> ConnectionStringReferenceUriProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, Uri?>("ConnectionStringReferenceUri");
-	static readonly AvaloniaProperty<bool> IsAzureRelatedDataSourceProviderProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>("IsAzureRelatedDataSourceProvider");
-	static readonly AvaloniaProperty<bool> IsCategoryRequiredProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsCategoryRequired));
-	static readonly AvaloniaProperty<bool> IsCategorySupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsCategorySupported));
-	static readonly AvaloniaProperty<bool> IsCommandRequiredProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsCommandRequired));
-	static readonly AvaloniaProperty<bool> IsCommandSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsCommandSupported));
-	static readonly AvaloniaProperty<bool> IsConnectionStringRequiredProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>("IsConnectionStringRequired");
-	static readonly AvaloniaProperty<bool> IsConnectionStringSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>("IsConnectionStringSupported");
-	static readonly AvaloniaProperty<bool> IsEncodingSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsEncodingSupported));
-	static readonly AvaloniaProperty<bool> IsFileNameSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsFileNameSupported));
-	static readonly AvaloniaProperty<bool> IsFormatJsonDataSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>("IsFormatJsonDataSupported");
-	static readonly AvaloniaProperty<bool> IsFormatXmlDataSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>("IsFormatXmlDataSupported");
-	static readonly AvaloniaProperty<bool> IsIncludeStandardErrorSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>("IsIncludeStandardErrorSupported");
-	static readonly AvaloniaProperty<bool> IsIPEndPointSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsIPEndPointSupported));
-	static readonly AvaloniaProperty<bool> IsPasswordRequiredProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsPasswordRequired));
-	static readonly AvaloniaProperty<bool> IsPasswordSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsPasswordSupported));
-	static readonly AvaloniaProperty<bool> IsQueryStringRequiredProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsQueryStringRequired));
-	static readonly AvaloniaProperty<bool> IsQueryStringSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsQueryStringSupported));
-	static readonly AvaloniaProperty<bool> IsResourceOnAzureSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>("IsResourceOnAzureSupported");
+	static readonly StyledProperty<Uri?> CategoryReferenceUriProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, Uri?>("CategoryReferenceUri");
+	static readonly StyledProperty<Uri?> CommandReferenceUriProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, Uri?>("CommandReferenceUri");
+	static readonly StyledProperty<Uri?> ConnectionStringReferenceUriProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, Uri?>("ConnectionStringReferenceUri");
+	static readonly StyledProperty<bool> IsAzureRelatedDataSourceProviderProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>("IsAzureRelatedDataSourceProvider");
+	static readonly StyledProperty<bool> IsCategoryRequiredProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsCategoryRequired));
+	static readonly StyledProperty<bool> IsCategorySupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsCategorySupported));
+	static readonly StyledProperty<bool> IsCommandRequiredProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsCommandRequired));
+	static readonly StyledProperty<bool> IsCommandSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsCommandSupported));
+	static readonly StyledProperty<bool> IsConnectionStringRequiredProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>("IsConnectionStringRequired");
+	static readonly StyledProperty<bool> IsConnectionStringSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>("IsConnectionStringSupported");
+	static readonly StyledProperty<bool> IsEncodingSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsEncodingSupported));
+	static readonly StyledProperty<bool> IsFileNameSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsFileNameSupported));
+	static readonly StyledProperty<bool> IsFormatJsonDataSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>("IsFormatJsonDataSupported");
+	static readonly StyledProperty<bool> IsFormatXmlDataSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>("IsFormatXmlDataSupported");
+	static readonly StyledProperty<bool> IsIncludeStandardErrorSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>("IsIncludeStandardErrorSupported");
+	static readonly StyledProperty<bool> IsIPEndPointSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsIPEndPointSupported));
+	static readonly StyledProperty<bool> IsPasswordRequiredProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsPasswordRequired));
+	static readonly StyledProperty<bool> IsPasswordSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsPasswordSupported));
+	static readonly StyledProperty<bool> IsQueryStringRequiredProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsQueryStringRequired));
+	static readonly StyledProperty<bool> IsQueryStringSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsQueryStringSupported));
+	static readonly StyledProperty<bool> IsResourceOnAzureSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>("IsResourceOnAzureSupported");
 	static readonly SettingKey<bool> IsSelectAzureResourcesTutorialShownKey = new("LogDataSourceOptionsDialog.IsSelectAzureResourcesTutorialShown");
-	static readonly AvaloniaProperty<bool> IsSetupCommandsRequiredProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsSetupCommandsRequired));
-	static readonly AvaloniaProperty<bool> IsSetupCommandsSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsSetupCommandsSupported));
-	static readonly AvaloniaProperty<bool> IsTeardownCommandsRequiredProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsTeardownCommandsRequired));
-	static readonly AvaloniaProperty<bool> IsTeardownCommandsSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsTeardownCommandsSupported));
-	static readonly AvaloniaProperty<bool> IsTemplateProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsTemplate));
-	static readonly AvaloniaProperty<bool> IsUriSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsUriSupported));
-	static readonly AvaloniaProperty<bool> IsUseTextShellSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>("IsUseTextShellSupported");
-	static readonly AvaloniaProperty<bool> IsUserNameRequiredProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsUserNameRequired));
-	static readonly AvaloniaProperty<bool> IsUserNameSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsUserNameSupported));
-	static readonly AvaloniaProperty<bool> IsWorkingDirectorySupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsWorkingDirectorySupported));
-	static readonly AvaloniaProperty<Uri?> QueryStringReferenceUriProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, Uri?>("QueryStringReferenceUri");
+	static readonly StyledProperty<bool> IsSetupCommandsRequiredProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsSetupCommandsRequired));
+	static readonly StyledProperty<bool> IsSetupCommandsSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsSetupCommandsSupported));
+	static readonly StyledProperty<bool> IsTeardownCommandsRequiredProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsTeardownCommandsRequired));
+	static readonly StyledProperty<bool> IsTeardownCommandsSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsTeardownCommandsSupported));
+	static readonly StyledProperty<bool> IsTemplateProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsTemplate));
+	static readonly StyledProperty<bool> IsUriSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsUriSupported));
+	static readonly StyledProperty<bool> IsUseTextShellSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>("IsUseTextShellSupported");
+	static readonly StyledProperty<bool> IsUserNameRequiredProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsUserNameRequired));
+	static readonly StyledProperty<bool> IsUserNameSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsUserNameSupported));
+	static readonly StyledProperty<bool> IsWorkingDirectorySupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsWorkingDirectorySupported));
+	static readonly StyledProperty<Uri?> QueryStringReferenceUriProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, Uri?>("QueryStringReferenceUri");
 
 
 	// Fields.
@@ -409,7 +411,7 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 	{
 		if (sender is not Avalonia.Controls.ListBox listBox)
 			return;
-		listBox.SelectedItems.Clear();
+		listBox.SelectedItems?.Clear();
 	}
 
 
@@ -547,7 +549,7 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 
 
 	// Called when property changed.
-	protected override void OnPropertyChanged<T>(AvaloniaPropertyChangedEventArgs<T> change)
+	protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
 	{
 		base.OnPropertyChanged(change);
 		if (change.Property == DataSourceProviderProperty
@@ -692,13 +694,19 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 	/// </summary>
 	public async void SelectFileName()
 	{
-		var fileNames = await new OpenFileDialog()
+		var fileName = (await this.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions().Also(options =>
 		{
-			InitialFileName = this.fileNameTextBox.Text?.Trim()
-		}.ShowAsync(this);
-		if (fileNames == null || fileNames.IsEmpty())
-			return;
-		this.fileNameTextBox.Text = fileNames[0];
+			Path.GetDirectoryName(this.fileNameTextBox.Text?.Trim())?.Let(path =>
+			{
+				options.SuggestedStartLocation = new Avalonia.Platform.Storage.FileIO.BclStorageFolder(path);
+			});
+		})))?.Let(it =>
+		{
+			if (it.Count != 0 || !it[0].TryGetUri(out var uri))
+				return null;
+			return uri.LocalPath;
+		});
+		this.fileNameTextBox.Text = fileName;
 	}
 
 
@@ -707,7 +715,7 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 	{
 		this.SynchronizationContext.Post(() =>
 		{
-			listBox.SelectedItems.Clear();
+			listBox.SelectedItems?.Clear();
 			if (index < 0 || index >= listBox.GetItemCount())
 				return;
 			listBox.Focus();
@@ -722,16 +730,24 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 	/// </summary>
 	public async void SelectWorkingDirectory()
 	{
-		var dirPath = await new OpenFolderDialog()
+		var dirPath = (await this.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions().Also(options =>
 		{
-			Directory = this.workingDirectoryTextBox.Text?.Trim()
-		}.ShowAsync(this);
+			this.workingDirectoryTextBox.Text?.Trim()?.Let(path =>
+			{
+				options.SuggestedStartLocation = new Avalonia.Platform.Storage.FileIO.BclStorageFolder(path);
+			});
+		})))?.Let(it =>
+		{
+			if (it.Count != 1 || !it[0].TryGetUri(out var uri))
+				return null;
+			return uri.LocalPath;
+		});
 		if (!string.IsNullOrEmpty(dirPath))
 			this.workingDirectoryTextBox.Text = dirPath;
 	}
 
 
-	/// <summary>
+	/// <summary>x
 	/// Setup commands.
 	/// </summary>
 	public IList<string> SetupCommands { get => this.setupCommands; }

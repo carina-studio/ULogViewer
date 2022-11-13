@@ -22,19 +22,15 @@ namespace CarinaStudio.ULogViewer.Controls
         // Constructor.
         public IPEndPointInputDialog()
         {
-            InitializeComponent();
-            this.ipAddressTextBox = this.FindControl<IPAddressTextBox>(nameof(ipAddressTextBox)).AsNonNull();
-            this.portTextBox = this.FindControl<IntegerTextBox>(nameof(portTextBox));
+            AvaloniaXamlLoader.Load(this);
+            this.ipAddressTextBox = this.Get<IPAddressTextBox>(nameof(ipAddressTextBox));
+            this.portTextBox = this.Get<IntegerTextBox>(nameof(portTextBox));
         }
 
 
         // Generate result.
         protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken) =>
             Task.FromResult((object?)new IPEndPoint(this.ipAddressTextBox.Object.AsNonNull(), (int)this.portTextBox.Value.GetValueOrDefault()));
-
-
-        // Initialize.
-        private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
 
 
         // Initial IP endpoint to show,

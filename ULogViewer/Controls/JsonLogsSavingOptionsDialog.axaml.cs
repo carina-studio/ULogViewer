@@ -1,4 +1,3 @@
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
@@ -7,11 +6,13 @@ using CarinaStudio.Controls;
 using CarinaStudio.ULogViewer.Converters;
 using CarinaStudio.ULogViewer.ViewModels;
 using CarinaStudio.Threading;
+using CarinaStudio.Windows.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Threading;
+using System.Windows.Input;
 
 namespace CarinaStudio.ULogViewer.Controls
 {
@@ -21,7 +22,7 @@ namespace CarinaStudio.ULogViewer.Controls
 	partial class JsonLogsSavingOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
 	{
 		// Fields.
-		readonly ObservableList<KeyValuePair<string, string>> logPropertyMap = new ObservableList<KeyValuePair<string, string>>();
+		readonly ObservableList<KeyValuePair<string, string>> logPropertyMap = new();
 		readonly ListBox logPropertyMapListBox;
 
 
@@ -30,18 +31,24 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// </summary>
 		public JsonLogsSavingOptionsDialog()
 		{
-			InitializeComponent();
+			this.EditLogPropertyMapEntryCommand = new Command<ListBoxItem>(this.EditLogPropertyMapEntry);
+			this.RemoveLogPropertyMapEntryCommand = new Command<ListBoxItem>(this.RemoveLogPropertyMapEntry);
+			AvaloniaXamlLoader.Load(this);
 			this.logPropertyMap.CollectionChanged += (_, e) => this.InvalidateInput();
 			this.logPropertyMapListBox = this.FindControl<ListBox>(nameof(logPropertyMapListBox)).AsNonNull();
 		}
 
 
-		// Add log property map entry.
-		void AddLogPropertyMapEntry() => this.EditLogPropertyMapEntry(new KeyValuePair<string, string>("", ""));
+		/// <summary>
+		/// Add log property map entry.
+		/// </summary>
+		public void AddLogPropertyMapEntry() => 
+			this.EditLogPropertyMapEntry(new KeyValuePair<string, string>("", ""));
 
 
 		// Edit log property map entry.
-		void EditLogPropertyMapEntry(ListBoxItem item) => this.EditLogPropertyMapEntry((KeyValuePair<string, string>)item.DataContext.AsNonNull());
+		void EditLogPropertyMapEntry(ListBoxItem item) => 
+			this.EditLogPropertyMapEntry((KeyValuePair<string, string>)item.DataContext.AsNonNull());
 		async void EditLogPropertyMapEntry(KeyValuePair<string, string> entry)
 		{
 			var index = this.logPropertyMap.IndexOf(entry);
@@ -89,6 +96,12 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		/// <summary>
+		/// Command to edit log property map entry.
+		/// </summary>
+		public ICommand EditLogPropertyMapEntryCommand { get; }
+
+
 		// Generate result.
 		protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken)
 		{
@@ -105,12 +118,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Initialize.
-		private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
-
-
-		// Log properties to be written.
-		IList<KeyValuePair<string, string>> LogPropertyMap { get => this.logPropertyMap; }
+		/// <summary>
+		/// Log properties to be written.
+		/// </summary>
+		public IList<KeyValuePair<string, string>> LogPropertyMap { get => this.logPropertyMap; }
 
 
 		/// <summary>
@@ -120,7 +131,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Called when double-tapped on list box.
-		void OnListBoxDoubleTapped(object? sender, RoutedEventArgs e)
+		void OnListBoxDoubleTapped(object? sender, Avalonia.Input.TappedEventArgs e)
 		{
 			if (sender is not ListBox listBox)
 				return;
@@ -142,7 +153,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (sender is not ListBox listBox)
 				return;
-			listBox.SelectedItems.Clear();
+			listBox.SelectedItems?.Clear();
 		}
 
 
@@ -189,12 +200,18 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		/// <summary>
+		/// Command to remove log property map entry.
+		/// </summary>
+		public ICommand RemoveLogPropertyMapEntryCommand { get; }
+
+
 		// Select given item in list box.
 		void SelectListBoxItem(ListBox listBox, int index)
 		{
 			this.SynchronizationContext.Post(() =>
 			{
-				listBox.SelectedItems.Clear();
+				listBox.SelectedItems?.Clear();
 				if (index < 0 || index >= listBox.GetItemCount())
 					return;
 				listBox.Focus();

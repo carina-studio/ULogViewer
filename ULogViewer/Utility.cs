@@ -2,8 +2,8 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
+using Avalonia.Platform.Storage;
 using Avalonia.Rendering;
-using Avalonia.Visuals.Media.Imaging;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.Controls;
 using System;
@@ -93,14 +93,21 @@ static class Utility
         }
 
         // select file
-        var fileName = await new SaveFileDialog().Also(dialog =>
+        var fileName = (await window.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions().Also(options =>
         {
-            dialog.Filters?.Add(new FileDialogFilter().Also(it =>
+            options.FileTypeChoices = new FilePickerFileType[]
             {
-                it.Extensions.Add("png");
-                it.Name = App.Current.GetString("FileFormat.Png");
-            }));
-        }).ShowAsync(window);
+                new FilePickerFileType(App.Current.GetStringNonNull("FileFormat.Png")).Also(it =>
+                {
+                    it.Patterns = new string[] { "*.png" };
+                })
+            };
+        })))?.Let(file =>
+        {
+            if (file.TryGetUri(out var uri))
+                return uri.LocalPath;
+            return null;
+        });
         if (string.IsNullOrEmpty(fileName))
             return false;
 

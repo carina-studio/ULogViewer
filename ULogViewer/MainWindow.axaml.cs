@@ -64,7 +64,7 @@ namespace CarinaStudio.ULogViewer
 			// initialize.
 			AvaloniaXamlLoader.Load(this);
 			if (Platform.IsMacOS)
-				NativeMenu.SetMenu(this, this.Resources["nativeMenu"] as NativeMenu);
+				NativeMenu.SetMenu(this, (NativeMenu)this.Resources["nativeMenu"].AsNonNull());
 
 			// find templates
 			this.sessionTabItemHeaderTemplate = (DataTemplate)this.DataTemplates.First(it => it is DataTemplate dt && dt.DataType == typeof(Session));
@@ -78,7 +78,7 @@ namespace CarinaStudio.ULogViewer
 					this.tabControlSelectionChangedAction?.Schedule(); // Should not call OnTabControlSelectionChanged() directly because of timing issue that SelectedIndex will be changed temporarily when attaching to Workspace
 				});
 			});
-			this.tabItems.AddRange(this.tabControl.Items.Cast<TabItem>());
+			this.tabItems.AddRange(this.tabControl.Items!.Cast<TabItem>());
 			this.tabControl.Items = this.tabItems;
 
 			// setup native menu items
@@ -93,9 +93,9 @@ namespace CarinaStudio.ULogViewer
 						switch (menuItem.CommandParameter as string)
 						{
 							case "Tools":
-								for (var j = menuItem.Menu.Items.Count - 1; j >= 0; --j)
+								for (var j = (menuItem.Menu?.Items?.Count).GetValueOrDefault() - 1; j >= 0; --j)
 								{
-									if (menuItem.Menu.Items[j] is not NativeMenuItem subMenuItem)
+									if (menuItem.Menu!.Items[j] is not NativeMenuItem subMenuItem)
 										continue;
 									switch (subMenuItem.CommandParameter as string)
 									{

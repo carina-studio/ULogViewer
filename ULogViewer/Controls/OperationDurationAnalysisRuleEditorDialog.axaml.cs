@@ -7,10 +7,12 @@ using CarinaStudio.Collections;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.ViewModels.Analysis;
 using CarinaStudio.ULogViewer.ViewModels.Analysis.ContextualBased;
+using CarinaStudio.Windows.Input;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Threading;
+using System.Windows.Input;
 
 namespace CarinaStudio.ULogViewer.Controls
 {
@@ -46,6 +48,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// </summary>
 		public OperationDurationAnalysisRuleEditorDialog()
 		{
+			this.EditEndingVariableCommand = new Command<ListBoxItem>(this.EditEndingVariable);
+			this.RemoveEndingVariableCommand = new Command<ListBoxItem>(this.RemoveEndingVariable);
 			AvaloniaXamlLoader.Load(this);
 			this.beginningPatternEditor = this.Get<PatternEditor>(nameof(beginningPatternEditor)).Also(it =>
 			{
@@ -82,8 +86,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Add ending variable.
-		async void AddEndingVariable()
+		/// <summary>
+		/// Add ending variable.
+		/// </summary>
+		public async void AddEndingVariable()
 		{
 			var variable = await new TextInputDialog()
 			{
@@ -105,19 +111,27 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Beginning conditions.
-		IList<DisplayableLogAnalysisCondition> BeginningConditions { get => this.beginningConditions; }
+		/// <summary>
+		/// Beginning conditions.
+		/// </summary>
+		public IList<DisplayableLogAnalysisCondition> BeginningConditions { get => this.beginningConditions; }
 
 
-		// Post-actions for beginning of operation.
-		IList<ContextualBasedAnalysisAction> BeginningPostActions { get => this.beginningPostActions; }
+		/// <summary>
+		/// Post-actions for beginning of operation.
+		/// </summary>
+		public IList<ContextualBasedAnalysisAction> BeginningPostActions { get => this.beginningPostActions; }
 
 
-		// Pre-actions for beginning of operation.
-		IList<ContextualBasedAnalysisAction> BeginningPreActions { get => this.beginningPreActions; }
+		/// <summary>
+		/// Pre-actions for beginning of operation.
+		/// </summary>
+		public IList<ContextualBasedAnalysisAction> BeginningPreActions { get => this.beginningPreActions; }
 
 
-		// Default beginning conditions.
+		/// <summary>
+		/// Default beginning conditions.
+		/// </summary>
 		public IList<DisplayableLogAnalysisCondition>? DefaultBeginningConditions { get; set; }
 
 
@@ -182,20 +196,34 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Ending conditions.
-		IList<DisplayableLogAnalysisCondition> EndingConditions { get => this.endingConditions; }
+		/// <summary>
+		/// Command to edit ending variable.
+		/// </summary>
+		public ICommand EditEndingVariableCommand { get; }
 
 
-		// Post-actions for ending of operation.
-		IList<ContextualBasedAnalysisAction> EndingPostActions { get => this.endingPostActions; }
+		/// <summary>
+		/// Ending conditions.
+		/// </summary>
+		public IList<DisplayableLogAnalysisCondition> EndingConditions { get => this.endingConditions; }
 
 
-		// Pre-actions for ending of operation.
-		IList<ContextualBasedAnalysisAction> EndingPreActions { get => this.endingPreActions; }
+		/// <summary>
+		/// Post-actions for ending of operation.
+		/// </summary>
+		public IList<ContextualBasedAnalysisAction> EndingPostActions { get => this.endingPostActions; }
 
 
-		// Ending variables.
-		IList<string> EndingVariables { get => this.endingVariables; }
+		/// <summary>
+		/// Pre-actions for ending of operation.
+		/// </summary>
+		public IList<ContextualBasedAnalysisAction> EndingPreActions { get => this.endingPreActions; }
+
+
+		/// <summary>
+		/// Ending variables.
+		/// </summary>
+		public IList<string> EndingVariables { get => this.endingVariables; }
 
 
 		// Generate result.
@@ -308,6 +336,12 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.endingVariableListBox.SelectedItem = null;
 			this.endingVariableListBox.Focus();
 		}
+
+
+		/// <summary>
+		/// Command to remove ending variable.
+		/// </summary>
+		public ICommand RemoveEndingVariableCommand { get; }
 		
 
 		/// <summary>

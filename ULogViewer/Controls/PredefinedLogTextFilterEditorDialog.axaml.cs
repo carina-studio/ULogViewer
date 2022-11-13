@@ -2,7 +2,6 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using CarinaStudio.AppSuite.Controls;
-using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.ViewModels;
 using System;
@@ -18,7 +17,7 @@ namespace CarinaStudio.ULogViewer.Controls
 	partial class PredefinedLogTextFilterEditorDialog : AppSuite.Controls.Window<IULogViewerApplication>
 	{
 		// Static fields.
-		static readonly AvaloniaProperty<bool> AreValidParametersProperty = AvaloniaProperty.Register<PredefinedLogTextFilterEditorDialog, bool>("AreValidParameters");
+		static readonly StyledProperty<bool> AreValidParametersProperty = AvaloniaProperty.Register<PredefinedLogTextFilterEditorDialog, bool>("AreValidParameters");
 		static readonly Dictionary<PredefinedLogTextFilter, PredefinedLogTextFilterEditorDialog> DialogWithEditingRuleSets = new();
 
 
@@ -59,8 +58,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Complete editing.
-		void CompleteEditing()
+		/// <summary>
+		/// Complete editing.
+		/// </summary>
+		public void CompleteEditing()
 		{
 			// validate parameters
 			this.validateParametersAction.ExecuteIfScheduled();
@@ -68,7 +69,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 			
 			// edit or add filter
-			var name = this.nameTextBox.Text;
+			var name = this.nameTextBox.Text.AsNonNull();
 			var regex = this.patternEditor.Pattern.AsNonNull();
 			var filter = this.editingFilter;
 			if (filter != null)

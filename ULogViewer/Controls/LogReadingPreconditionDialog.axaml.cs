@@ -16,8 +16,8 @@ namespace CarinaStudio.ULogViewer.Controls
     partial class LogReadingPreconditionDialog : AppSuite.Controls.InputDialog
     {
         // Static fields.
-        static readonly AvaloniaProperty<bool> IsCancellationAllowedProperty = AvaloniaProperty.Register<LogReadingPreconditionDialog, bool>(nameof(IsCancellationAllowed), true);
-        static readonly AvaloniaProperty<bool> IsReadingFromFilesProperty = AvaloniaProperty.Register<LogReadingPreconditionDialog, bool>(nameof(IsReadingFromFiles), false);
+        static readonly StyledProperty<bool> IsCancellationAllowedProperty = AvaloniaProperty.Register<LogReadingPreconditionDialog, bool>(nameof(IsCancellationAllowed), true);
+        static readonly StyledProperty<bool> IsReadingFromFilesProperty = AvaloniaProperty.Register<LogReadingPreconditionDialog, bool>(nameof(IsReadingFromFiles), false);
 
 
         // Fields.
@@ -32,18 +32,18 @@ namespace CarinaStudio.ULogViewer.Controls
         public LogReadingPreconditionDialog()
         {
             AvaloniaXamlLoader.Load(this);
-            this.beginningTimestampTextBox = this.FindControl<DateTimeTextBox>(nameof(beginningTimestampTextBox)).Also(it =>
+            this.beginningTimestampTextBox = this.Get<DateTimeTextBox>(nameof(beginningTimestampTextBox)).Also(it =>
             {
                 it.GetObservable(DateTimeTextBox.IsTextValidProperty).Subscribe(_ => this.InvalidateInput());
                 it.GetObservable(DateTimeTextBox.ValueProperty).Subscribe(_ => this.InvalidateInput());
             });
-            this.endingTimestampTextBox = this.FindControl<DateTimeTextBox>(nameof(endingTimestampTextBox)).Also(it =>
+            this.endingTimestampTextBox = this.Get<DateTimeTextBox>(nameof(endingTimestampTextBox)).Also(it =>
             {
                 it.GetObservable(DateTimeTextBox.IsTextValidProperty).Subscribe(_ => this.InvalidateInput());
                 it.GetObservable(DateTimeTextBox.ValueProperty).Subscribe(_ => this.InvalidateInput());
             });
-            this.invalidTimestampRangeTextBlock = this.FindControl<Avalonia.Controls.TextBlock>(nameof(invalidTimestampRangeTextBlock)).AsNonNull();
-            this.timestampsCheckBox = this.FindControl<CheckBox>(nameof(timestampsCheckBox)).Also(it =>
+            this.invalidTimestampRangeTextBlock = this.Get<Avalonia.Controls.TextBlock>(nameof(invalidTimestampRangeTextBlock));
+            this.timestampsCheckBox = this.Get<CheckBox>(nameof(timestampsCheckBox)).Also(it =>
             {
                 it.GetObservable(RadioButton.IsCheckedProperty).Subscribe(isChecked => 
                 {

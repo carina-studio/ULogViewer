@@ -23,8 +23,8 @@ namespace CarinaStudio.ULogViewer.Controls
         /// </summary>
         public DateTimeSelectionDialog()
         {
-            InitializeComponent();
-            this.dateTimeTextBox = this.FindControl<DateTimeTextBox>(nameof(dateTimeTextBox));
+            AvaloniaXamlLoader.Load(this);
+            this.dateTimeTextBox = this.Get<DateTimeTextBox>(nameof(dateTimeTextBox));
         }
 
 
@@ -35,10 +35,6 @@ namespace CarinaStudio.ULogViewer.Controls
 
         // Initial date time to show.
         public DateTime? InitialDateTime { get; set; }
-
-
-        // Initialize.
-        private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
 
 
         // Message to show.

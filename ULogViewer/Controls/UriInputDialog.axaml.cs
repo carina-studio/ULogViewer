@@ -16,7 +16,7 @@ namespace CarinaStudio.ULogViewer.Controls
     partial class UriInputDialog : AppSuite.Controls.InputDialog
     {
         // Static fields.
-        static readonly AvaloniaProperty<string?> DefaultSchemeProperty = AvaloniaProperty.Register<UriInputDialog, string?>(nameof(DefaultScheme));
+        static readonly StyledProperty<string?> DefaultSchemeProperty = AvaloniaProperty.Register<UriInputDialog, string?>(nameof(DefaultScheme));
 
 
         // Fields.

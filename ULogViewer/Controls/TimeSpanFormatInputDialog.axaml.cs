@@ -22,8 +22,8 @@ namespace CarinaStudio.ULogViewer.Controls
         // Constructor.
         public TimeSpanFormatInputDialog()
         {
-            InitializeComponent();
-            this.formatTextBox = this.FindControl<TextBox>(nameof(formatTextBox));
+            AvaloniaXamlLoader.Load(this);
+            this.formatTextBox = this.Get<TextBox>(nameof(formatTextBox));
         }
 
 
@@ -34,10 +34,6 @@ namespace CarinaStudio.ULogViewer.Controls
 
         // Initial datetime format to show.
         public string? InitialFormat { get; set; }
-
-
-        // Initialize.
-        private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
 
 
         // Property of format textbox changed.

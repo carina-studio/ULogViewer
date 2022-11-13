@@ -61,7 +61,7 @@ class LogProfileIconColorComboBox : ComboBox, IStyleable
                     Grid.SetColumn(textBlock, 1);
                     rootPanel.Children.Add(textBlock);
                 });
-				return new ControlTemplateResult(rootPanel, null);
+				return new ControlTemplateResult(rootPanel, this.FindNameScope().AsNonNull());
             }),
             DataType = typeof(LogProfileIconColor),
         });

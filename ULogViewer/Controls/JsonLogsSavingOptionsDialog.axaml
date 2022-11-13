@@ -40,14 +40,14 @@
 									</TextBlock.Text>
 								</TextBlock>
 								<StackPanel Grid.Column="2" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
-									<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveLogPropertyMapEntry}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
+									<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveLogPropertyMapEntryCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
 										<asControls:Image Classes="InPlaceAction_Icon">
 											<DrawingImage>
 												<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
 											</DrawingImage>
 										</asControls:Image>
 									</Button>
-									<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditLogPropertyMapEntry}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
+									<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditLogPropertyMapEntryCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
 										<asControls:Image Classes="InPlaceAction_Icon">
 											<DrawingImage>
 												<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit}"/>

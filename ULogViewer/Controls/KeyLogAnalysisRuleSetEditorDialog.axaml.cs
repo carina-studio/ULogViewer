@@ -8,9 +8,11 @@ using CarinaStudio.Configuration;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ULogViewer.ViewModels.Analysis;
 using CarinaStudio.Threading;
+using CarinaStudio.Windows.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Input;
 
 namespace CarinaStudio.ULogViewer.Controls;
 
@@ -20,7 +22,7 @@ namespace CarinaStudio.ULogViewer.Controls;
 partial class KeyLogAnalysisRuleSetEditorDialog : AppSuite.Controls.Window<IULogViewerApplication>
 {
 	// Static fields.
-	static readonly AvaloniaProperty<bool> AreValidParametersProperty = AvaloniaProperty.Register<KeyLogAnalysisRuleSetEditorDialog, bool>("AreValidParameters");
+	static readonly StyledProperty<bool> AreValidParametersProperty = AvaloniaProperty.Register<KeyLogAnalysisRuleSetEditorDialog, bool>("AreValidParameters");
 	static readonly Dictionary<KeyLogAnalysisRuleSet, KeyLogAnalysisRuleSetEditorDialog> DialogWithEditingRuleSets = new();
 	static readonly SettingKey<bool> DonotShowRestrictionsWithNonProVersionKey = new("KeyLogAnalysisRuleSetEditorDialog.DonotShowRestrictionsWithNonProVersion");
 
@@ -40,6 +42,9 @@ partial class KeyLogAnalysisRuleSetEditorDialog : AppSuite.Controls.Window<IULog
 	/// </summary>
 	public KeyLogAnalysisRuleSetEditorDialog()
 	{
+		this.CopyRuleCommand = new Command<ListBoxItem>(this.CopyRule);
+		this.EditRuleCommand = new Command<ListBoxItem>(this.EditRule);
+		this.RemoveRuleCommand = new Command<ListBoxItem>(this.RemoveRule);
 		AvaloniaXamlLoader.Load(this);
 		this.iconColorComboBox = this.Get<LogProfileIconColorComboBox>(nameof(iconColorComboBox));
 		this.iconComboBox = this.Get<LogProfileIconComboBox>(nameof(iconComboBox));
@@ -75,8 +80,10 @@ partial class KeyLogAnalysisRuleSetEditorDialog : AppSuite.Controls.Window<IULog
 	}
 
 
-	// Add rule.
-	async void AddRule()
+	/// <summary>
+	/// Add rule.
+	/// </summary>
+	public async void AddRule()
 	{
 		var rule = await new KeyLogAnalysisRuleEditorDialog().ShowDialog<KeyLogAnalysisRuleSet.Rule?>(this);
 		if (rule != null)
@@ -99,8 +106,10 @@ partial class KeyLogAnalysisRuleSetEditorDialog : AppSuite.Controls.Window<IULog
 	}
 
 
-	// Complete editing.
-	async void CompleteEditing()
+	/// <summary>
+	/// Complete editing.
+	/// </summary>
+	public async void CompleteEditing()
 	{
 		// validate parameters
 		this.validateParametersAction.ExecuteIfScheduled();
@@ -160,6 +169,12 @@ partial class KeyLogAnalysisRuleSetEditorDialog : AppSuite.Controls.Window<IULog
 	}
 
 
+	/// <summary>
+	/// Command to copy rule.
+	/// </summary>
+	public ICommand CopyRuleCommand { get; }
+
+
 	// Edit rule.
 	void EditRule(ListBoxItem item)
 	{
@@ -183,6 +198,12 @@ partial class KeyLogAnalysisRuleSetEditorDialog : AppSuite.Controls.Window<IULog
 			this.ruleListBox.Focus();
 		}
 	}
+
+
+	/// <summary>
+	/// Command to edit rule.
+	/// </summary>
+	public ICommand EditRuleCommand { get; }
 
 
 	/// <inheritdoc/>
@@ -247,10 +268,14 @@ partial class KeyLogAnalysisRuleSetEditorDialog : AppSuite.Controls.Window<IULog
 		WindowTransparencyLevel.None;
 	
 
-	// Open online documentation.
-	void OpenDocumentation() =>
+	/// <summary>
+	/// Open online documentation.
+	/// </summary>
+#pragma warning disable CA1822
+	public void OpenDocumentation() =>
 		Platform.OpenLink("https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#KeyLogAnalysis");
-	
+#pragma warning restore CA1822
+
 
 	// Remove rule.
 	void RemoveRule(ListBoxItem item)
@@ -267,8 +292,17 @@ partial class KeyLogAnalysisRuleSetEditorDialog : AppSuite.Controls.Window<IULog
 	}
 
 
-	// Rules.
-	IList<KeyLogAnalysisRuleSet.Rule> Rules { get => this.rules; }
+	/// <summary>
+	/// Command to remove rule.
+	/// </summary>
+	/// <value></value>
+	public ICommand RemoveRuleCommand { get; }
+
+
+	/// <summary>
+	/// Rules.
+	/// </summary>
+	public IList<KeyLogAnalysisRuleSet.Rule> Rules { get => this.rules; }
 
 
 	/// <summary>

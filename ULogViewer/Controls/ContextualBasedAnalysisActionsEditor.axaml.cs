@@ -19,11 +19,11 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// <summary>
 		/// Property of <see cref="Actions"/>.
 		/// </summary>
-		public static readonly AvaloniaProperty<IList<ContextualBasedAnalysisAction>> ActionsProperty = AvaloniaProperty.Register<ContextualBasedAnalysisActionsEditor, IList<ContextualBasedAnalysisAction>>(nameof(Actions));
+		public static readonly StyledProperty<IList<ContextualBasedAnalysisAction>> ActionsProperty = AvaloniaProperty.Register<ContextualBasedAnalysisActionsEditor, IList<ContextualBasedAnalysisAction>>(nameof(Actions));
 		/// <summary>
 		/// Property of <see cref="VerticalScrollBarVisibility"/>.
 		/// </summary>
-		public static readonly AvaloniaProperty<ScrollBarVisibility> VerticalScrollBarVisibilityProperty = AvaloniaProperty.RegisterDirect<ContextualBasedAnalysisActionsEditor, ScrollBarVisibility>(nameof(VerticalScrollBarVisibility), 
+		public static readonly DirectProperty<ContextualBasedAnalysisActionsEditor, ScrollBarVisibility> VerticalScrollBarVisibilityProperty = AvaloniaProperty.RegisterDirect<ContextualBasedAnalysisActionsEditor, ScrollBarVisibility>(nameof(VerticalScrollBarVisibility), 
 			c => c.verticalScrollBarVisibility, 
 			(c, v) => ScrollViewer.SetVerticalScrollBarVisibility(c.actionListBox, v));
 

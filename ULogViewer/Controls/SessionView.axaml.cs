@@ -40,7 +40,6 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -56,7 +55,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// <summary>
 		/// Property of <see cref="AreAllTutorialsShown"/>.
 		/// </summary>
-		public static readonly AvaloniaProperty<bool> AreAllTutorialsShownProperty = AvaloniaProperty.RegisterDirect<SessionView, bool>(nameof(AreAllTutorialsShown), v => v.areAllTutorialsShown);
+		public static readonly DirectProperty<SessionView, bool> AreAllTutorialsShownProperty = AvaloniaProperty.RegisterDirect<SessionView, bool>(nameof(AreAllTutorialsShown), v => v.areAllTutorialsShown);
 		/// <summary>
 		/// <see cref="IValueConverter"/> to convert log level to readable name.
 		/// </summary>
@@ -101,14 +100,14 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Static fields.
 		static readonly Regex BaseNameRegex = new("^(?<Name>.+)\\s+\\(\\d+\\)\\s*$");
-		static readonly AvaloniaProperty<bool> CanFilterLogsByNonTextFiltersProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(CanFilterLogsByNonTextFilters), false);
-		static readonly AvaloniaProperty<bool> EnableRunningScriptProperty = AvaloniaProperty.Register<SessionView, bool>("EnableRunningScript", false);
-		static readonly AvaloniaProperty<bool> HasLogProfileProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(HasLogProfile), false);
+		static readonly StyledProperty<bool> CanFilterLogsByNonTextFiltersProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(CanFilterLogsByNonTextFilters), false);
+		static readonly StyledProperty<bool> EnableRunningScriptProperty = AvaloniaProperty.Register<SessionView, bool>("EnableRunningScript", false);
+		static readonly StyledProperty<bool> HasLogProfileProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(HasLogProfile), false);
 		static readonly SettingKey<bool> IsCancelShowingMarkedLogsForLogAnalysisResultTutorialShownKey = new("SessionView.IsCancelShowingMarkedLogsForLogAnalysisResultTutorialShown");
-		static readonly AvaloniaProperty<bool> IsProcessInfoVisibleProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(IsProcessInfoVisible), false);
-		static readonly AvaloniaProperty<bool> IsProVersionActivatedProperty = AvaloniaProperty.RegisterDirect<SessionView, bool>("IsProVersionActivated", c => c.isProVersionActivated);
-		static readonly AvaloniaProperty<bool> IsScrollingToLatestLogNeededProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(IsScrollingToLatestLogNeeded), true);
-		static readonly AvaloniaProperty<bool> IsScrollingToLatestLogAnalysisResultNeededProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(IsScrollingToLatestLogAnalysisResultNeeded), true);
+		static readonly StyledProperty<bool> IsProcessInfoVisibleProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(IsProcessInfoVisible), false);
+		static readonly DirectProperty<SessionView, bool> IsProVersionActivatedProperty = AvaloniaProperty.RegisterDirect<SessionView, bool>("IsProVersionActivated", c => c.isProVersionActivated);
+		static readonly StyledProperty<bool> IsScrollingToLatestLogNeededProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(IsScrollingToLatestLogNeeded), true);
+		static readonly StyledProperty<bool> IsScrollingToLatestLogAnalysisResultNeededProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(IsScrollingToLatestLogAnalysisResultNeeded), true);
 		static readonly SettingKey<bool> IsCopyLogTextTutorialShownKey = new("SessionView.IsCopyLogTextTutorialShown");
 		static readonly SettingKey<bool> IsLogAnalysisPanelTutorialShownKey = new("SessionView.IsLogAnalysisPanelTutorialShown");
 		static readonly SettingKey<bool> IsLogFilesPanelTutorialShownKey = new("SessionView.IsLogFilesPanelTutorialShown");
@@ -118,10 +117,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		static readonly SettingKey<bool> IsShowAllLogsForLogAnalysisResultTutorialShownKey = new("SessionView.IsShowAllLogsForLogAnalysisResultTutorialShown");
 		static readonly SettingKey<bool> IsSwitchingSidePanelsTutorialShownKey = new("SessionView.IsSwitchingSidePanelsTutorialShown");
 		static readonly SettingKey<bool> IsTimestampCategoriesPanelTutorialShownKey = new("SessionView.IsTimestampCategoriesPanelTutorialShown");
-		static readonly AvaloniaProperty<FontFamily> LogFontFamilyProperty = AvaloniaProperty.Register<SessionView, FontFamily>(nameof(LogFontFamily));
-		static readonly AvaloniaProperty<double> LogFontSizeProperty = AvaloniaProperty.Register<SessionView, double>(nameof(LogFontSize), 10.0);
-		static readonly AvaloniaProperty<int> MaxDisplayLineCountForEachLogProperty = AvaloniaProperty.Register<SessionView, int>(nameof(MaxDisplayLineCountForEachLog), 1);
-		static readonly AvaloniaProperty<SessionViewStatusBarState> StatusBarStateProperty = AvaloniaProperty.Register<SessionView, SessionViewStatusBarState>(nameof(StatusBarState), SessionViewStatusBarState.None);
+		static readonly StyledProperty<FontFamily> LogFontFamilyProperty = AvaloniaProperty.Register<SessionView, FontFamily>(nameof(LogFontFamily));
+		static readonly StyledProperty<double> LogFontSizeProperty = AvaloniaProperty.Register<SessionView, double>(nameof(LogFontSize), 10.0);
+		static readonly StyledProperty<int> MaxDisplayLineCountForEachLogProperty = AvaloniaProperty.Register<SessionView, int>(nameof(MaxDisplayLineCountForEachLog), 1);
+		static readonly StyledProperty<SessionViewStatusBarState> StatusBarStateProperty = AvaloniaProperty.Register<SessionView, SessionViewStatusBarState>(nameof(StatusBarState), SessionViewStatusBarState.None);
 
 
 		// Fields.
@@ -369,7 +368,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			});
 
 			// setup controls
-			this.copyLogPropertyMenuItem = this.Get<MenuItem>(nameof(copyLogPropertyMenuItem));
 			this.createLogAnalysisRuleSetButton = this.Get<ToggleButton>(nameof(createLogAnalysisRuleSetButton));
 			this.createLogAnalysisRuleSetMenu = ((ContextMenu)this.Resources[nameof(createLogAnalysisRuleSetMenu)].AsNonNull()).Also(it =>
 			{
@@ -381,43 +379,9 @@ namespace CarinaStudio.ULogViewer.Controls
 				});
 			});
 			this.dragDropReceiverBorder = this.Get<Border>(nameof(dragDropReceiverBorder));
-			this.filterByLogPropertyMenuItem = this.Get<MenuItem>(nameof(filterByLogPropertyMenuItem));
 			this.keyLogAnalysisRuleSetListBox = this.Get<Avalonia.Controls.ListBox>(nameof(keyLogAnalysisRuleSetListBox)).Also(it =>
 			{
 				it.SelectionChanged += this.OnLogAnalysisRuleSetListBoxSelectionChanged;
-			});
-			this.logActionMenu = ((ContextMenu)this.Resources[nameof(logActionMenu)].AsNonNull()).Also(it =>
-			{
-				it.MenuOpened += (_, e) =>
-				{
-					this.IsScrollingToLatestLogNeeded = false;
-					if (this.showLogPropertyMenuItem == null)
-						return;
-					var log = this.logListBox!.SelectedItems.Count == 1 
-						? (this.logListBox.SelectedItems[0] as DisplayableLog)
-						: null;
-					if (log != null && this.lastClickedLogPropertyView?.Tag is DisplayableLogProperty property)
-					{
-						var propertyValue = DisplayableLog.HasStringProperty(property.Name) 
-							&& !property.Name.EndsWith("String")
-							&& log.TryGetProperty<string?>(property.Name, out var s)
-								? s
-								: null;
-						if (propertyValue == null)
-							propertyValue = property.DisplayName;
-						else if (propertyValue.Length > 16)
-							propertyValue = $"{propertyValue[0..16]}…";
-						this.copyLogPropertyMenuItem.Header = this.Application.GetFormattedString("SessionView.CopyLogProperty", property.DisplayName);
-						this.filterByLogPropertyMenuItem.Header = this.Application.GetFormattedString("SessionView.FilterByLogProperty", propertyValue);
-						this.showLogPropertyMenuItem.Header = this.Application.GetFormattedString("SessionView.ShowLogProperty", property.DisplayName);
-					}
-					else
-					{
-						this.copyLogPropertyMenuItem.Header = this.Application.GetString("SessionView.CopyLogProperty.Disabled");
-						this.filterByLogPropertyMenuItem.Header = this.Application.GetString("SessionView.FilterByLogProperty.Disabled");
-						this.showLogPropertyMenuItem.Header = this.Application.GetString("SessionView.ShowLogProperty.Disabled");
-					}
-				};
 			});
 			this.logAnalysisResultListBox = this.Get<AppSuite.Controls.ListBox>(nameof(logAnalysisResultListBox)).Also(it =>
 			{
@@ -462,24 +426,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				it.SelectionChanged += this.OnLogAnalysisRuleSetListBoxSelectionChanged;
 			});
-			this.logFileActionMenu = ((ContextMenu)this.Resources[nameof(logFileActionMenu)].AsNonNull()).Also(it =>
-			{
-				it.MenuClosed += (_, e) =>
-				{
-					if (it.PlacementTarget is ToggleButton button)
-						SynchronizationContext.Post(() => button.IsChecked = false);
-					it.DataContext = null;
-					it.PlacementTarget = null;
-				};
-				it.MenuOpened += (_, e) =>
-				{
-					if (it.PlacementTarget is ToggleButton button)
-					{
-						it.DataContext = button.DataContext;
-						SynchronizationContext.Post(() => button.IsChecked = true);
-					}
-				};
-			});
 			this.logFileListBox = this.Get<AppSuite.Controls.ListBox>(nameof(logFileListBox));
 			this.logHeaderContainer = this.Get<Control>(nameof(logHeaderContainer));
 			this.logHeaderGrid = this.Get<Grid>(nameof(logHeaderGrid)).Also(it =>
@@ -505,41 +451,12 @@ namespace CarinaStudio.ULogViewer.Controls
 					});
 				});
 			});
-			this.logMarkingMenu = ((ContextMenu)this.Resources[nameof(logMarkingMenu)].AsNonNull()).Also(it =>
-			{
-				it.MenuOpened += (_, e) =>
-				{
-					this.IsScrollingToLatestLogNeeded = false;
-				};
-			});
-			this.logProfileSelectionMenu = ((LogProfileSelectionContextMenu)this.Resources[nameof(logProfileSelectionMenu)].AsNonNull()).Also(it =>
-			{
-				it.LogProfileSelected += async (_, logProfile) => 
-				{
-					await this.SetLogProfileAsync(logProfile);
-				};
-				it.MenuClosed += (_, e) => this.SynchronizationContext.Post(() => this.selectAndSetLogProfileDropDownButton!.IsChecked = false);
-				it.MenuOpened += (_, e) => this.SynchronizationContext.Post(() =>
-				{
-					ToolTip.SetIsOpen(this.selectAndSetLogProfileDropDownButton!, false);
-					this.selectAndSetLogProfileDropDownButton!.IsChecked = true;
-				});
-			});
 			this.logProcessIdFilterTextBox = toolBarContainer.FindControl<IntegerTextBox>(nameof(logProcessIdFilterTextBox))!.Also(it =>
 			{
 				if (Platform.IsMacOS)
 					(this.Application as AppSuite.AppSuiteApplication)?.EnsureClosingToolTipIfWindowIsInactive(it);
 			});
 			this.logsSavingButton = this.Get<ToggleButton>(nameof(logsSavingButton));
-			this.logsSavingMenu = ((ContextMenu)this.Resources[nameof(logsSavingMenu)].AsNonNull()).Also(it =>
-			{
-				it.MenuClosed += (_, e) => this.SynchronizationContext.Post(() => this.logsSavingButton.IsChecked = false);
-				it.MenuOpened += (_, e) => this.SynchronizationContext.Post(() => 
-				{
-					ToolTip.SetIsOpen(this.logsSavingButton, false);
-					this.logsSavingButton.IsChecked = true;
-				});
-			});
 			this.logTextFilterTextBox = this.Get<RegexTextBox>(nameof(logTextFilterTextBox)).Also(it =>
 			{
 				it.ValidationDelay = this.UpdateLogFilterParamsDelay;
@@ -561,15 +478,6 @@ namespace CarinaStudio.ULogViewer.Controls
 				it.SelectionChanged += this.OnLogAnalysisRuleSetListBoxSelectionChanged;
 			});
 			this.otherActionsButton = this.Get<ToggleButton>(nameof(otherActionsButton));
-			this.otherActionsMenu = ((ContextMenu)this.Resources[nameof(otherActionsMenu)].AsNonNull()).Also(it =>
-			{
-				it.MenuClosed += (_, e) => this.SynchronizationContext.Post(() => this.otherActionsButton.IsChecked = false);
-				it.MenuOpened += (_, e) => this.SynchronizationContext.Post(() => 
-				{
-					ToolTip.SetIsOpen(this.otherActionsButton, false);
-					this.otherActionsButton.IsChecked = true;
-				});
-			});
 			this.predefinedLogTextFilterListBox = this.Get<Avalonia.Controls.ListBox>(nameof(predefinedLogTextFilterListBox));
 			this.predefinedLogTextFiltersButton = this.Get<ToggleButton>(nameof(predefinedLogTextFiltersButton));
 			this.predefinedLogTextFiltersPopup = this.Get<Popup>(nameof(predefinedLogTextFiltersPopup)).Also(it =>
@@ -589,7 +497,6 @@ namespace CarinaStudio.ULogViewer.Controls
 				});
 			});
 			this.selectAndSetLogProfileDropDownButton = toolBarContainer.FindControl<ToggleButton>(nameof(selectAndSetLogProfileDropDownButton)).AsNonNull();
-			this.showLogPropertyMenuItem = this.Get<MenuItem>(nameof(showLogPropertyMenuItem));
 			this.sidePanelColumn = this.Get<Grid>("RootGrid").Let(grid =>
 			{
 				return grid.ColumnDefinitions[2].Also(it =>
@@ -623,6 +530,97 @@ namespace CarinaStudio.ULogViewer.Controls
 			});
 			this.toolBarScrollViewer = this.Get<ToolBarScrollViewer>(nameof(toolBarScrollViewer));
 			this.workingDirectoryActionsButton = this.Get<ToggleButton>(nameof(workingDirectoryActionsButton));
+
+			// setup menus
+			this.logActionMenu = ((ContextMenu)this.Resources[nameof(logActionMenu)].AsNonNull()).Also(it =>
+			{
+				it.MenuOpened += (_, e) =>
+				{
+					this.IsScrollingToLatestLogNeeded = false;
+					if (this.showLogPropertyMenuItem == null)
+						return;
+					var log = (this.logListBox?.SelectedItems)?.Count == 1 
+						? (this.logListBox.SelectedItems[0] as DisplayableLog)
+						: null;
+					if (log != null && this.lastClickedLogPropertyView?.Tag is DisplayableLogProperty property)
+					{
+						var propertyValue = DisplayableLog.HasStringProperty(property.Name) 
+							&& !property.Name.EndsWith("String")
+							&& log.TryGetProperty<string?>(property.Name, out var s)
+								? s
+								: null;
+						if (propertyValue == null)
+							propertyValue = property.DisplayName;
+						else if (propertyValue.Length > 16)
+							propertyValue = $"{propertyValue[0..16]}…";
+						this.copyLogPropertyMenuItem!.Header = this.Application.GetFormattedString("SessionView.CopyLogProperty", property.DisplayName);
+						this.filterByLogPropertyMenuItem!.Header = this.Application.GetFormattedString("SessionView.FilterByLogProperty", propertyValue);
+						this.showLogPropertyMenuItem.Header = this.Application.GetFormattedString("SessionView.ShowLogProperty", property.DisplayName);
+					}
+					else
+					{
+						this.copyLogPropertyMenuItem!.Header = this.Application.GetString("SessionView.CopyLogProperty.Disabled");
+						this.filterByLogPropertyMenuItem!.Header = this.Application.GetString("SessionView.FilterByLogProperty.Disabled");
+						this.showLogPropertyMenuItem.Header = this.Application.GetString("SessionView.ShowLogProperty.Disabled");
+					}
+				};
+			});
+			this.logFileActionMenu = ((ContextMenu)this.Resources[nameof(logFileActionMenu)].AsNonNull()).Also(it =>
+			{
+				it.MenuClosed += (_, e) =>
+				{
+					if (it.PlacementTarget is ToggleButton button)
+						SynchronizationContext.Post(() => button.IsChecked = false);
+					it.DataContext = null;
+					it.PlacementTarget = null;
+				};
+				it.MenuOpened += (_, e) =>
+				{
+					if (it.PlacementTarget is ToggleButton button)
+					{
+						it.DataContext = button.DataContext;
+						SynchronizationContext.Post(() => button.IsChecked = true);
+					}
+				};
+			});
+			this.logMarkingMenu = ((ContextMenu)this.Resources[nameof(logMarkingMenu)].AsNonNull()).Also(it =>
+			{
+				it.MenuOpened += (_, e) =>
+				{
+					this.IsScrollingToLatestLogNeeded = false;
+				};
+			});
+			this.logProfileSelectionMenu = ((LogProfileSelectionContextMenu)this.Resources[nameof(logProfileSelectionMenu)].AsNonNull()).Also(it =>
+			{
+				it.LogProfileSelected += async (_, logProfile) => 
+				{
+					await this.SetLogProfileAsync(logProfile);
+				};
+				it.MenuClosed += (_, e) => this.SynchronizationContext.Post(() => this.selectAndSetLogProfileDropDownButton!.IsChecked = false);
+				it.MenuOpened += (_, e) => this.SynchronizationContext.Post(() =>
+				{
+					ToolTip.SetIsOpen(this.selectAndSetLogProfileDropDownButton!, false);
+					this.selectAndSetLogProfileDropDownButton.IsChecked = true;
+				});
+			});
+			this.logsSavingMenu = ((ContextMenu)this.Resources[nameof(logsSavingMenu)].AsNonNull()).Also(it =>
+			{
+				it.MenuClosed += (_, e) => this.SynchronizationContext.Post(() => this.logsSavingButton.IsChecked = false);
+				it.MenuOpened += (_, e) => this.SynchronizationContext.Post(() => 
+				{
+					ToolTip.SetIsOpen(this.logsSavingButton, false);
+					this.logsSavingButton!.IsChecked = true;
+				});
+			});
+			this.otherActionsMenu = ((ContextMenu)this.Resources[nameof(otherActionsMenu)].AsNonNull()).Also(it =>
+			{
+				it.MenuClosed += (_, e) => this.SynchronizationContext.Post(() => this.otherActionsButton!.IsChecked = false);
+				it.MenuOpened += (_, e) => this.SynchronizationContext.Post(() => 
+				{
+					ToolTip.SetIsOpen(this.otherActionsButton, false);
+					this.otherActionsButton.IsChecked = true;
+				});
+			});
 			this.workingDirectoryActionsMenu = ((ContextMenu)this.Resources[nameof(workingDirectoryActionsMenu)].AsNonNull()).Also(it =>
 			{
 				it.MenuClosed += (_, e) => this.SynchronizationContext.Post(() => this.workingDirectoryActionsButton.IsChecked = false);
@@ -632,18 +630,25 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.workingDirectoryActionsButton.IsChecked = true;
 				});
 			});
-
-			// find menu items
-			var toolsMenuItem = this.otherActionsMenu.Items.Let(it =>
+			foreach (Control item in this.logActionMenu.Items!)
 			{
-				foreach (var item in it)
+				switch (item.Name)
 				{
-					if (item is MenuItem menuItem && menuItem.Name == "toolsMenuItem")
-						return menuItem;
+					case nameof(copyLogPropertyMenuItem):
+						this.copyLogPropertyMenuItem = (MenuItem)item;
+						break;
+					case nameof(filterByLogPropertyMenuItem):
+						this.filterByLogPropertyMenuItem = (MenuItem)item;
+						break;
+					case nameof(showLogPropertyMenuItem):
+						this.showLogPropertyMenuItem = (MenuItem)item;
+						break;
 				}
-				return null;
-			}).AsNonNull();
-
+			}
+			this.copyLogPropertyMenuItem.AsNonNull();
+			this.filterByLogPropertyMenuItem.AsNonNull();
+			this.showLogPropertyMenuItem.AsNonNull();
+			
 			// create scheduled actions
 			this.autoAddLogFilesAction = new ScheduledAction(() =>
 			{
@@ -960,7 +965,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				{
 					foreach (var textFilter in session.LogFiltering.PredefinedTextFilters)
 					{
-						this.predefinedLogTextFilterListBox.SelectedItems.Add(textFilter);
+						this.predefinedLogTextFilterListBox.SelectedItems!.Add(textFilter);
 						this.selectedPredefinedLogTextFilters.Add(textFilter);
 					}
 					this.updateLogFiltersAction.Cancel();
@@ -971,25 +976,25 @@ namespace CarinaStudio.ULogViewer.Controls
 			// sync log analysis rule sets to UI
 			this.keyLogAnalysisRuleSetListBox.SelectedItems.Let(it =>
 			{
-				it.Clear();
+				it!.Clear();
 				foreach (var ruleSet in session.LogAnalysis.KeyLogAnalysisRuleSets)
 					it.Add(ruleSet);
 			});
 			this.logAnalysisScriptSetListBox.SelectedItems.Let(it =>
 			{
-				it.Clear();
+				it!.Clear();
 				foreach (var scriptSet in session.LogAnalysis.LogAnalysisScriptSets)
 					it.Add(scriptSet);
 			});
 			this.operationCountingAnalysisRuleSetListBox.SelectedItems.Let(it =>
 			{
-				it.Clear();
+				it!.Clear();
 				foreach (var ruleSet in session.LogAnalysis.OperationCountingAnalysisRuleSets)
 					it.Add(ruleSet);
 			});
 			this.operationDurationAnalysisRuleSetListBox.SelectedItems.Let(it =>
 			{
-				it.Clear();
+				it!.Clear();
 				foreach (var ruleSet in session.LogAnalysis.OperationDurationAnalysisRuleSets)
 					it.Add(ruleSet);
 			});
@@ -1033,10 +1038,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// </summary>
 		public void ClearLogAnalysisRuleSetSelection()
 		{
-			this.keyLogAnalysisRuleSetListBox.SelectedItems.Clear();
-			this.logAnalysisScriptSetListBox.SelectedItems.Clear();
-			this.operationCountingAnalysisRuleSetListBox.SelectedItems.Clear();
-			this.operationDurationAnalysisRuleSetListBox.SelectedItems.Clear();
+			this.keyLogAnalysisRuleSetListBox.SelectedItems!.Clear();
+			this.logAnalysisScriptSetListBox.SelectedItems!.Clear();
+			this.operationCountingAnalysisRuleSetListBox.SelectedItems!.Clear();
+			this.operationDurationAnalysisRuleSetListBox.SelectedItems!.Clear();
 			this.updateLogAnalysisAction.Reschedule();
 			this.IsScrollingToLatestLogAnalysisResultNeeded = true;
 		}
@@ -1047,7 +1052,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// </summary>
 		public void ClearPredefinedLogTextFilterSelection()
 		{
-			this.predefinedLogTextFilterListBox.SelectedItems.Clear();
+			this.predefinedLogTextFilterListBox.SelectedItems?.Clear();
 			this.updateLogFiltersAction.Reschedule();
 		}
 
@@ -1233,7 +1238,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			// check state
 			if (!this.canCopyLogProperty.Value)
 				return;
-			if (this.logListBox.SelectedItems.Count != 1)
+			if (this.logListBox.SelectedItems?.Count != 1)
 				return;
 
 			// find property and log
@@ -1275,7 +1280,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		void CopyLogText()
 		{
 			// check state
-			if (this.logListBox.SelectedItems.Count != 1)
+			if (this.logListBox.SelectedItems?.Count != 1)
 				return;
 			if (this.logListBox.SelectedItem is not DisplayableLog log)
 				return;
@@ -1571,7 +1576,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						it.PointerPressed += (_, e) =>
 						{
 							this.lastClickedLogPropertyView = it;
-							if (this.logListBox.SelectedItems.Count == 1)
+							if (this.logListBox.SelectedItems?.Count == 1)
 							{
 								this.canCopyLogProperty.Update(true);
 								if (isStringProperty)
@@ -1692,8 +1697,8 @@ namespace CarinaStudio.ULogViewer.Controls
 						}));
 						panel.Cursor = new Avalonia.Input.Cursor(StandardCursorType.Hand);
 						panel.HorizontalAlignment = HorizontalAlignment.Left;
-						panel.PointerEnter += (_, e) => emptyMarker.IsVisible = true;
-						panel.PointerLeave += (_, e) => emptyMarker.IsVisible = isMenuOpen;
+						panel.PointerEntered += (_, e) => emptyMarker.IsVisible = true;
+						panel.PointerExited += (_, e) => emptyMarker.IsVisible = isMenuOpen;
 						panel.PointerPressed += (_, e) =>
 						{
 							var properties = e.GetCurrentPoint(panel).Properties;
@@ -1780,7 +1785,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				}));
 
 				// complete
-				return new ControlTemplateResult(itemPanel, null);
+				return new ControlTemplateResult(itemPanel, this.FindNameScope().AsNonNull());
 			});
 			return new DataTemplate()
 			{
@@ -1906,7 +1911,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						itemPanel.Children.Add(it);
 					});
 				}
-				return new ControlTemplateResult(itemPanel, null);
+				return new ControlTemplateResult(itemPanel, this.FindNameScope().AsNonNull());
 			});
 			return new DataTemplate()
 			{
@@ -1955,7 +1960,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		void DetachFromSession(Session session)
 		{
 			// [Workaround] clear selection to prevent performance issue of de-select multiple items
-			this.logListBox.SelectedItems.Clear();
+			this.logListBox.SelectedItems?.Clear();
 
 			// remove event handler
 			session.ErrorMessageGenerated -= this.OnErrorMessageGeneratedBySession;
@@ -2641,7 +2646,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			session.MarkLogsCommand.TryExecute(new Session.MarkingLogsParams()
 			{
 				Color = color,
-				Logs = this.logListBox.SelectedItems.Cast<DisplayableLog>().ToArray(),
+				Logs = this.logListBox.SelectedItems!.Cast<DisplayableLog>().ToArray(),
 			});
 		}
 
@@ -2659,7 +2664,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 			if (this.DataContext is not Session session)
 				return;
-			var logs = this.logListBox.SelectedItems.Cast<DisplayableLog>().ToArray();
+			var logs = this.logListBox.SelectedItems!.Cast<DisplayableLog>().ToArray();
 			foreach (var log in logs)
 			{
 				if (log.MarkedColor == MarkColor.None)
@@ -2880,7 +2885,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					{
 						image.Classes.Add("Icon");
 						if (app.TryFindResource("Image/Mark", out rawResource))
-							image.Source = (rawResource as IImage);
+							image.Source = (IImage)rawResource!;
 					});
 					border.Height = markIndicatorSize;
 					border.Margin = markIndicatorMargin;
@@ -2902,7 +2907,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					{
 						image.Classes.Add("Icon");
 						if (app.TryFindResource("Image/Icon.Analysis", out rawResource))
-							image.Source = (rawResource as IImage);
+							image.Source = (IImage)rawResource!;
 					});
 					border.Height = analysisResultIndicatorSize;
 					border.Margin = analysisResultIndicatorMargin;
@@ -3115,7 +3120,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (this.DataContext is not Session session)
 				return;
 			var firstResult = (DisplayableLogAnalysisResult?)null;
-			this.logAnalysisResultListBox.SelectedItems.Clear();
+			this.logAnalysisResultListBox.SelectedItems!.Clear();
 			foreach (var result in log.AnalysisResults)
 			{
 				firstResult ??= result;
@@ -3144,11 +3149,11 @@ namespace CarinaStudio.ULogViewer.Controls
 				return it.FindAncestorOfType<ScrollBar>(true);
 			});
 			if (hitControl == null)
-				this.SynchronizationContext.Post(() => this.logAnalysisResultListBox.SelectedItems.Clear());
+				this.SynchronizationContext.Post(() => this.logAnalysisResultListBox.SelectedItems!.Clear());
 			else if (hitControl is ListBoxItem && !this.IsMultiSelectionKeyPressed(e.KeyModifiers) && point.Properties.IsLeftButtonPressed)
 			{
 				// [Workaround] Clear selection first to prevent performance issue of changing selection from multiple items
-				this.logAnalysisResultListBox.SelectedItems.Clear();
+				this.logAnalysisResultListBox.SelectedItems!.Clear();
 			}
 			this.isPointerPressedOnLogAnalysisResultListBox = point.Properties.IsLeftButtonPressed;
 		}
@@ -3195,7 +3200,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			this.SynchronizationContext.Post(() =>
 			{
-				var count = this.logAnalysisResultListBox.SelectedItems.Count;
+				var count = this.logAnalysisResultListBox.SelectedItems!.Count;
 				if (count == 0)
 					return;
 				if (count == 1 
@@ -3207,7 +3212,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						? (result.EndingLog ?? result.Log ?? result.BeginningLog)
 						: (result.BeginningLog ?? result.Log ?? result.EndingLog);
 					var isLogSelected = log != null 
-						&& this.logListBox.SelectedItems.Count == 1
+						&& this.logListBox.SelectedItems!.Count == 1
 						&& Global.Run(() =>
 						{
 							var selectedLog = this.logListBox.SelectedItem as DisplayableLog;
@@ -3282,7 +3287,7 @@ namespace CarinaStudio.ULogViewer.Controls
 							}
 
 							// select log
-							this.logListBox.SelectedItems.Clear();
+							this.logListBox.SelectedItems!.Clear();
 							this.logListBox.SelectedItem = log;
 							this.ScrollToLog(log);
 							this.IsScrollingToLatestLogNeeded = false;
@@ -3362,7 +3367,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				if (listBox == this.keyLogAnalysisRuleSetListBox)
 				{
 					selectedRuleSetCount = this.selectedKeyLogAnalysisRuleSets.Count;
-					if (selectedRuleSetCount != listBox.SelectedItems.Count)
+					if (selectedRuleSetCount != listBox.SelectedItems!.Count)
 					{
 						copiedSelectedRuleSets = this.selectedKeyLogAnalysisRuleSets.ToArray();
 						return true;
@@ -3372,7 +3377,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				else if (listBox == this.logAnalysisScriptSetListBox)
 				{
 					selectedRuleSetCount = this.selectedLogAnalysisScriptSets.Count;
-					if (selectedRuleSetCount != listBox.SelectedItems.Count)
+					if (selectedRuleSetCount != listBox.SelectedItems!.Count)
 					{
 						copiedSelectedRuleSets = this.selectedLogAnalysisScriptSets.ToArray();
 						return true;
@@ -3382,7 +3387,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				else if (listBox == this.operationCountingAnalysisRuleSetListBox)
 				{
 					selectedRuleSetCount = this.selectedOperationCountingAnalysisRuleSets.Count;
-					if (selectedRuleSetCount != listBox.SelectedItems.Count)
+					if (selectedRuleSetCount != listBox.SelectedItems!.Count)
 					{
 						copiedSelectedRuleSets = this.selectedOperationCountingAnalysisRuleSets.ToArray();
 						return true;
@@ -3392,7 +3397,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				else if (listBox == this.operationDurationAnalysisRuleSetListBox)
 				{
 					selectedRuleSetCount = this.selectedOperationDurationAnalysisRuleSets.Count;
-					if (selectedRuleSetCount != listBox.SelectedItems.Count)
+					if (selectedRuleSetCount != listBox.SelectedItems!.Count)
 					{
 						copiedSelectedRuleSets = this.selectedOperationDurationAnalysisRuleSets.ToArray();
 						return true;
@@ -3409,7 +3414,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					var isScheduled = this.updateLogAnalysisAction?.IsScheduled ?? false;
 					this.SynchronizationContext.Post(() =>
 					{
-						listBox.SelectedItems.Clear();
+						listBox.SelectedItems!.Clear();
 						foreach (var ruleSet in copiedSelectedRuleSets)
 							listBox.SelectedItems.Add(ruleSet);
 						if (!isScheduled)
@@ -3430,7 +3435,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			category.Log?.Let(log =>
 			{
 				this.IsScrollingToLatestLogNeeded = false;
-				this.logListBox.SelectedItems.Clear();
+				this.logListBox.SelectedItems!.Clear();
 				this.logListBox.SelectedItem = log;
 				this.ScrollToLog(log);
 			});
@@ -3497,11 +3502,11 @@ namespace CarinaStudio.ULogViewer.Controls
 				return it.FindAncestorOfType<ScrollBar>(true);
 			});
 			if (hitControl == null)
-				this.SynchronizationContext.Post(() => this.logListBox.SelectedItems.Clear());
+				this.SynchronizationContext.Post(() => this.logListBox.SelectedItems!.Clear());
 			else if (hitControl is ListBoxItem && !this.IsMultiSelectionKeyPressed(e.KeyModifiers) && point.Properties.IsLeftButtonPressed)
 			{
 				// [Workaround] Clear selection first to prevent performance issue of changing selection from multiple items
-				this.logListBox.SelectedItems.Clear();
+				this.logListBox.SelectedItems!.Clear();
 			}
 
 			// reset clicked log property
@@ -3556,7 +3561,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				// check state
 				if (this.DataContext is not Session session)
 					return;
-				var selectionCount = this.logListBox.SelectedItems.Count;
+				var selectionCount = this.logListBox.SelectedItems!.Count;
 				var hasSelectedItems = (selectionCount > 0);
 				var hasSingleSelectedItem = (selectionCount == 1);
 				var logProperty = hasSingleSelectedItem
@@ -3586,7 +3591,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					});
 				}
 				else
-					this.SynchronizationContext.Post(() => this.markedLogListBox.SelectedItems.Clear());
+					this.SynchronizationContext.Post(() => this.markedLogListBox.SelectedItems!.Clear());
 				
 				// scroll to selected log
 				if (!session.LogSelection.IsAllLogsSelectionRequested)
@@ -3788,7 +3793,7 @@ namespace CarinaStudio.ULogViewer.Controls
 								else
 								{
 									var selectedItems = this.logListBox.SelectedItems;
-									if (selectedItems.Count > 1)
+									if (selectedItems!.Count > 1)
 									{
 										var latestSelectedItem = selectedItems[selectedItems.Count - 1];
 										selectedItems.Clear(); // [Workaround] clear selection first to prevent performance issue of de-selecting multiple items
@@ -3811,7 +3816,7 @@ namespace CarinaStudio.ULogViewer.Controls
 								else
 								{
 									var selectedItems = this.logListBox.SelectedItems;
-									if (selectedItems.Count > 1)
+									if (selectedItems!.Count > 1)
 									{
 										var latestSelectedItem = selectedItems[selectedItems.Count - 1];
 										selectedItems.Clear(); // [Workaround] clear selection first to prevent performance issue of de-selecting multiple items
@@ -3944,14 +3949,14 @@ namespace CarinaStudio.ULogViewer.Controls
 			var index = session.Logs.IndexOf(log);
 			this.logListBox.Let(it =>
 			{
-				it.SelectedItems.Clear();
+				it.SelectedItems!.Clear();
 				if (index >= 0)
 				{
 					it.SelectedIndex = index;
 					this.ScrollToLog(index);
 				}
 				else
-					this.SynchronizationContext.Post(() => this.markedLogListBox.SelectedItems.Clear());
+					this.SynchronizationContext.Post(() => this.markedLogListBox.SelectedItems!.Clear());
 				it.Focus();
 			});
 			this.IsScrollingToLatestLogNeeded = false;
@@ -3965,7 +3970,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.selectedPredefinedLogTextFilters.Remove(filter);
 			foreach (var filter in e.AddedItems.Cast<PredefinedLogTextFilter>())
 				this.selectedPredefinedLogTextFilters.Add(filter);
-			if (this.selectedPredefinedLogTextFilters.Count != this.predefinedLogTextFilterListBox.SelectedItems.Count)
+			if (this.selectedPredefinedLogTextFilters.Count != this.predefinedLogTextFilterListBox.SelectedItems!.Count)
 			{
 				// [Workaround] Need to sync selection back to control because selection will be cleared when popup opened
 				if (this.selectedPredefinedLogTextFilters.IsNotEmpty())
@@ -3975,7 +3980,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					{
 						this.SynchronizationContext.Post(() =>
 						{
-							this.predefinedLogTextFilterListBox.SelectedItems.Clear();
+							this.predefinedLogTextFilterListBox.SelectedItems!.Clear();
 							foreach (var filter in it)
 								this.predefinedLogTextFilterListBox.SelectedItems.Add(filter);
 							if (!isScheduled)
@@ -4000,7 +4005,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.predefinedLogTextFilters.Sort(filter);
 					break;
 				case nameof(PredefinedLogTextFilter.Regex):
-					if (this.predefinedLogTextFilterListBox.SelectedItems.Contains(filter))
+					if (this.predefinedLogTextFilterListBox.SelectedItems!.Contains(filter))
 						this.updateLogFiltersAction.Reschedule();
 					break;
 			}
@@ -4107,18 +4112,18 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Property changed.
-		protected override void OnPropertyChanged<T>(AvaloniaPropertyChangedEventArgs<T> change)
+		protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
 		{
 			base.OnPropertyChanged(change);
 			var property = change.Property;
 			if (property == DataContextProperty)
 			{
-				(change.OldValue.Value as Session)?.Let(session => this.DetachFromSession(session));
-				(change.NewValue.Value as Session)?.Let(session => this.AttachToSession(session));
+				(change.OldValue as Session)?.Let(session => this.DetachFromSession(session));
+				(change.NewValue as Session)?.Let(session => this.AttachToSession(session));
 			}
 			else if (property == IsScrollingToLatestLogNeededProperty)
 			{
-				if ((bool)(object)change.NewValue.Value!)
+				if ((bool)change.NewValue!)
 				{
 					var logProfile = (this.DataContext as Session)?.LogProfile;
 					if (logProfile != null && !logProfile.IsContinuousReading)
@@ -4134,7 +4139,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			else if (property == IsScrollingToLatestLogAnalysisResultNeededProperty)
 			{
-				if ((bool)(object)change.NewValue.Value!)
+				if ((bool)change.NewValue!)
 					this.scrollToLatestLogAnalysisResultAction.Schedule(ScrollingToLatestLogInterval);
 				else
 					this.scrollToLatestLogAnalysisResultAction.Cancel();
@@ -4167,7 +4172,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				case NotifyCollectionChangedAction.Add:
 					foreach (var ruleSet in e.NewItems!)
 					{
-						if (!selectedItems.Contains(ruleSet))
+						if (!selectedItems!.Contains(ruleSet))
 						{
 							syncBack = true;
 							selectedItems.Add(ruleSet);
@@ -4177,7 +4182,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				case NotifyCollectionChangedAction.Remove:
 					foreach (var ruleSet in e.OldItems!)
 					{
-						if (selectedItems.Contains(ruleSet))
+						if (selectedItems!.Contains(ruleSet))
 						{
 							syncBack = true;
 							selectedItems.Remove(ruleSet);
@@ -4186,7 +4191,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					break;
 				case NotifyCollectionChangedAction.Reset:
 					syncBack = true;
-					selectedItems.Clear();
+					selectedItems!.Clear();
 					foreach (var ruleSet in (IList)sender.AsNonNull())
 						selectedItems.Add(ruleSet);
 					break;
@@ -4291,7 +4296,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				var isEnabled = (bool)e.Value;
 				this.SetValue<bool>(EnableRunningScriptProperty, isEnabled);
 				if (!isEnabled)
-					this.logAnalysisScriptSetListBox.SelectedItems.Clear();
+					this.logAnalysisScriptSetListBox.SelectedItems!.Clear();
 			}
 			else if (e.Key == SettingKeys.LogFontFamily)
 				this.UpdateLogFontFamily();
@@ -4399,7 +4404,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 
 			// reload logs
-			var hasSelectedLogs = this.logListBox.SelectedItems.Count > 0;
+			var hasSelectedLogs = this.logListBox.SelectedItems!.Count > 0;
 			if (!session.ReloadLogsCommand.TryExecute())
 				return;
 			
@@ -4672,7 +4677,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (this.DataContext is not Session session)
 				return;
 			var selectedItems = this.logListBox.SelectedItems;
-			if (selectedItems.Count == 0)
+			if (selectedItems!.Count == 0)
 				return;
 			this.ScrollToLog((DisplayableLog)selectedItems[0]!);
 			this.logScrollViewer?.Let(scrollViewer =>
@@ -4894,7 +4899,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// select log
 			if (session.LogSelection.SelectNearestLog(timestamp.Value) == null)
-				this.logListBox.SelectedItems.Clear();
+				this.logListBox.SelectedItems!.Clear();
         }
 
 
@@ -5005,7 +5010,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			var comparer = CarinaStudio.IO.PathEqualityComparer.Default;
 			var filePath = (string?)null;
 			var dirPathSet = new HashSet<string>(comparer);
-			foreach (DisplayableLog log in this.logListBox.SelectedItems)
+			foreach (DisplayableLog log in this.logListBox.SelectedItems!)
 			{
 				var fileName = log.FileName;
 				if (string.IsNullOrEmpty(fileName))
@@ -5108,7 +5113,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		bool ShowLogStringProperty()
 		{
 			// check state
-			if (this.logListBox.SelectedItems.Count != 1)
+			if (this.logListBox.SelectedItems!.Count != 1)
 				return false;
 
 			// find property and log
@@ -5305,8 +5310,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// </summary>
 		public void ShowWorkingDirectoryActions()
         {
-			if (this.workingDirectoryActionsMenu.PlacementTarget == null)
-				this.workingDirectoryActionsMenu.PlacementTarget = this.workingDirectoryActionsButton;
+			this.workingDirectoryActionsMenu.PlacementTarget ??= this.workingDirectoryActionsButton;
 			this.workingDirectoryActionsMenu.Open(this.workingDirectoryActionsButton);
         }
 
@@ -5384,7 +5388,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 			if (this.DataContext is not Session session)
 				return;
-			session.UnmarkLogsCommand.TryExecute(this.logListBox.SelectedItems.Cast<DisplayableLog>().ToArray());
+			session.UnmarkLogsCommand.TryExecute(this.logListBox.SelectedItems!.Cast<DisplayableLog>().ToArray());
 		}
 
 

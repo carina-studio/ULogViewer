@@ -13,11 +13,13 @@ using CarinaStudio.ULogViewer.Logs;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ULogViewer.ViewModels.Categorizing;
+using CarinaStudio.Windows.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace CarinaStudio.ULogViewer.Controls
 {
@@ -42,11 +44,11 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Static fields.
 		static readonly Dictionary<LogProfile, LogProfileEditorDialog> NonBlockingDialogs = new();
-		static readonly AvaloniaProperty<bool> HasDataSourceOptionsProperty = AvaloniaProperty.Register<LogProfileEditorDialog, bool>("HasDataSourceOptions");
+		static readonly StyledProperty<bool> HasDataSourceOptionsProperty = AvaloniaProperty.Register<LogProfileEditorDialog, bool>("HasDataSourceOptions");
 		static readonly SettingKey<bool> HasLearnAboutLogsReadingAndParsingHintShown = new($"{nameof(LogProfileEditorDialog)}.{nameof(HasLearnAboutLogsReadingAndParsingHintShown)}");
-		static readonly AvaloniaProperty<bool> IsProVersionActivatedProperty = AvaloniaProperty.Register<LogProfileEditorDialog, bool>("IsProVersionActivated");
-		static readonly AvaloniaProperty<bool> IsValidDataSourceOptionsProperty = AvaloniaProperty.Register<LogProfileEditorDialog, bool>(nameof(IsValidDataSourceOptions), true);
-		static readonly AvaloniaProperty<bool> IsWorkingDirectorySupportedProperty = AvaloniaProperty.Register<LogProfileEditorDialog, bool>("IsWorkingDirectorySupported");
+		static readonly StyledProperty<bool> IsProVersionActivatedProperty = AvaloniaProperty.Register<LogProfileEditorDialog, bool>("IsProVersionActivated");
+		static readonly StyledProperty<bool> IsValidDataSourceOptionsProperty = AvaloniaProperty.Register<LogProfileEditorDialog, bool>(nameof(IsValidDataSourceOptions), true);
+		static readonly StyledProperty<bool> IsWorkingDirectorySupportedProperty = AvaloniaProperty.Register<LogProfileEditorDialog, bool>("IsWorkingDirectorySupported");
 		
 
 		// Fields.
@@ -113,13 +115,34 @@ namespace CarinaStudio.ULogViewer.Controls
 				it.CollectionChanged += (_, e) => this.InvalidateInput();
 			}));
 
+			// create commands
+			this.EditLogLevelMapEntryForReadingCommand = new Command<KeyValuePair<string, LogLevel>>(this.EditLogLevelMapEntryForReading);
+			this.EditLogLevelMapEntryForWritingCommand = new Command<KeyValuePair<LogLevel, string>>(this.EditLogLevelMapEntryForWriting);
+			this.EditLogPatternCommand = new Command<ListBoxItem>(this.EditLogPattern);
+			this.EditLogWritingFormatCommand = new Command<ListBoxItem>(this.EditLogWritingFormat);
+			this.EditTimeSpanFormatForReadingCommand = new Command<ListBoxItem>(this.EditTimeSpanFormatForReading);
+			this.EditTimestampFormatForReadingCommand = new Command<ListBoxItem>(this.EditTimestampFormatForReading);
+			this.EditVisibleLogPropertyCommand = new Command<ListBoxItem>(this.EditVisibleLogProperty);
+			this.MoveLogPatternDownCommand = new Command<ListBoxItem>(this.MoveLogPatternDown);
+			this.MoveLogPatternUpCommand = new Command<ListBoxItem>(this.MoveLogPatternUp);
+			this.MoveLogWritingFormatDownCommand = new Command<ListBoxItem>(this.MoveLogWritingFormatDown);
+			this.MoveLogWritingFormatUpCommand = new Command<ListBoxItem>(this.MoveLogWritingFormatUp);
+			this.MoveVisibleLogPropertyDownCommand = new Command<ListBoxItem>(this.MoveVisibleLogPropertyDown);
+			this.MoveVisibleLogPropertyUpCommand = new Command<ListBoxItem>(this.MoveVisibleLogPropertyUp);
+			this.RemoveLogLevelMapEntryCommand = new Command<object>(this.RemoveLogLevelMapEntry);
+			this.RemoveLogPatternCommand = new Command<ListBoxItem>(this.RemoveLogPattern);
+			this.RemoveLogWritingFormatCommand = new Command<ListBoxItem>(this.RemoveLogWritingFormat);
+			this.RemoveTimeSpanFormatForReadingCommand = new Command<ListBoxItem>(this.RemoveTimeSpanFormatForReading);
+			this.RemoveTimestampFormatForReadingCommand = new Command<ListBoxItem>(this.RemoveTimestampFormatForReading);
+			this.RemoveVisibleLogPropertyCommand = new Command<ListBoxItem>(this.RemoveVisibleLogProperty);
+
 			// initialize.
 			AvaloniaXamlLoader.Load(this);
 
 			// setup controls
 			this.adminNeededSwitch = this.Get<ToggleSwitch>("adminNeededSwitch");
 			this.allowMultipleFilesPanel = this.Get<Panel>(nameof(allowMultipleFilesPanel));
-			this.allowMultipleFilesSwitch = this.allowMultipleFilesPanel.FindControl<ToggleSwitch>(nameof(allowMultipleFilesSwitch));
+			this.allowMultipleFilesSwitch = this.allowMultipleFilesPanel.FindControl<ToggleSwitch>(nameof(allowMultipleFilesSwitch)).AsNonNull();
 			this.baseScrollViewer = this.Get<ScrollViewer>("baseScrollViewer");
 			this.colorIndicatorComboBox = this.Get<ComboBox>("colorIndicatorComboBox");
 			this.continuousReadingSwitch = this.Get<ToggleSwitch>("continuousReadingSwitch");
@@ -168,8 +191,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Add log level map entry.
-		async void AddLogLevelMapEntryForReading()
+		/// <summary>
+		/// Add log level map entry.
+		/// </summary>
+		public async void AddLogLevelMapEntryForReading()
 		{
 			var entry = (KeyValuePair<string, LogLevel>?)null;
 			while (true)
@@ -201,8 +226,11 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Add log level map entry.
-		async void AddLogLevelMapEntryForWriting()
+		/// <summary>
+		/// Add log level map entry.
+		/// </summary>
+		/// <returns></returns>
+		public async void AddLogLevelMapEntryForWriting()
 		{
 			var entry = (KeyValuePair<LogLevel, string>?)null;
 			while (true)
@@ -234,8 +262,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Add log pattern.
-		async void AddLogPattern()
+		/// <summary>
+		/// Add log pattern.
+		/// </summary>
+		public async void AddLogPattern()
 		{
 			var logPattern = await new LogPatternEditorDialog().ShowDialog<LogPattern>(this);
 			if (logPattern != null)
@@ -246,8 +276,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Add log writing format.
-		async void AddLogWritingFormat()
+		/// <summary>
+		/// Add log writing format.
+		/// </summary>
+		public async void AddLogWritingFormat()
 		{
 			var format = await new LogWritingFormatEditorDialog().ShowDialog<string?>(this);
 			if (format != null)
@@ -258,8 +290,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Add time span format for reading log.
-		async void AddTimeSpanFormatForReading()
+		/// <summary>
+		/// Add time span format for reading log.
+		/// </summary>
+		public async void AddTimeSpanFormatForReading()
 		{
 			var format = await new TimeSpanFormatInputDialog().Also(it =>
 			{
@@ -273,8 +307,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Add timestamp format for reading log.
-		async void AddTimestampFormatForReading()
+		/// <summary>
+		/// Add timestamp format for reading log.
+		/// </summary>
+		public async void AddTimestampFormatForReading()
         {
 			var format = await new DateTimeFormatInputDialog().Also(it =>
 			{
@@ -288,8 +324,10 @@ namespace CarinaStudio.ULogViewer.Controls
         }
 
 
-		// Add visible log property.
-		async void AddVisibleLogProperty()
+		/// <summary>
+		/// Add visible log property.
+		/// </summary>
+		public async void AddVisibleLogProperty()
 		{
 			var logProperty = await new VisibleLogPropertyEditorDialog().ShowDialog<LogProperty>(this);
 			if (logProperty != null)
@@ -335,6 +373,12 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		/// <summary>
+		/// Command to edit log level map entry.
+		/// </summary>
+		public ICommand EditLogLevelMapEntryForReadingCommand { get; }
+
+
 		// Edit log level map entry.
 		async void EditLogLevelMapEntryForWriting(KeyValuePair<LogLevel, string> entry)
 		{
@@ -370,6 +414,12 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		/// <summary>
+		/// Command to edit log level map entry.
+		/// </summary>
+		public ICommand EditLogLevelMapEntryForWritingCommand { get; }
+
+
 		// Edit log pattern.
 		async void EditLogPattern(ListBoxItem item)
 		{
@@ -388,6 +438,12 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.SelectListBoxItem(this.logPatternListBox, index);
 			}
 		}
+
+
+		/// <summary>
+		/// Command to edit log pattern.
+		/// </summary>
+		public ICommand EditLogPatternCommand { get; }
 
 
 		// Edit log writing format.
@@ -410,6 +466,12 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		/// <summary>
+		/// Command to edit log writing format.
+		/// </summary>
+		public ICommand EditLogWritingFormatCommand { get; }
+
+
 		// Edit time span format for reading logs.
 		async void EditTimeSpanFormatForReading(ListBoxItem item)
 		{
@@ -428,6 +490,12 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.SelectListBoxItem(this.timeSpanFormatsForReadingListBox, index);
 			}
 		}
+
+
+		/// <summary>
+		/// Command to edit time span format for reading logs.
+		/// </summary>
+		public ICommand EditTimeSpanFormatForReadingCommand { get; }
 
 
 		// Edit timestamp format for reading logs.
@@ -450,6 +518,12 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		/// <summary>
+		/// Command to edit timestamp format for reading logs.
+		/// </summary>
+		public ICommand EditTimestampFormatForReadingCommand { get; }
+
+
 		// Edit visible log property.
 		async void EditVisibleLogProperty(ListBoxItem item)
 		{
@@ -468,6 +542,12 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.SelectListBoxItem(this.visibleLogPropertyListBox, index);
 			}
 		}
+
+
+		/// <summary>
+		/// Command to edit visible log property.
+		/// </summary>
+		public ICommand EditVisibleLogPropertyCommand { get; }
 
 
 		// Generate result.
@@ -588,6 +668,12 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		/// <summary>
+		/// Command to move log pattern down.
+		/// </summary>
+		public ICommand MoveLogPatternDownCommand { get; }
+
+
 		// Move log pattern up.
 		void MoveLogPatternUp(ListBoxItem item)
 		{
@@ -601,6 +687,12 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			this.SelectListBoxItem(this.logPatternListBox, index);
 		}
+
+
+		/// <summary>
+		/// Command to move log pattern up.
+		/// </summary>
+		public ICommand MoveLogPatternUpCommand { get; }
 
 
 		// Move log writing format down.
@@ -618,6 +710,12 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		/// <summary>
+		/// Command to move log writing format down.
+		/// </summary>
+		public ICommand MoveLogWritingFormatDownCommand { get; }
+
+
 		// Move log writing format up.
 		void MoveLogWritingFormatUp(ListBoxItem item)
 		{
@@ -631,6 +729,12 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			this.SelectListBoxItem(this.logWritingFormatListBox, index);
 		}
+
+
+		/// <summary>
+		/// Command to move log writing format up.
+		/// </summary>
+		public ICommand MoveLogWritingFormatUpCommand { get; }
 
 
 		// Move visible log property down.
@@ -648,6 +752,12 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		/// <summary>
+		/// Command to move visible log property down.
+		/// </summary>
+		public ICommand MoveVisibleLogPropertyDownCommand { get; }
+
+
 		// Move visible log property up.
 		void MoveVisibleLogPropertyUp(ListBoxItem item)
 		{
@@ -661,6 +771,12 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			this.SelectListBoxItem(this.visibleLogPropertyListBox, index);
 		}
+
+
+		/// <summary>
+		/// Command to move visible log property up.
+		/// </summary>
+		public ICommand MoveVisibleLogPropertyUpCommand { get; }
 
 
 		/// <inheritdoc/>
@@ -728,7 +844,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (sender is not Avalonia.Controls.ListBox listBox)
 				return;
-			listBox.SelectedItems.Clear();
+			listBox.SelectedItems?.Clear();
 		}
 
 
@@ -915,6 +1031,12 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		/// <summary>
+		/// Command to remove log level map entry.
+		/// </summary>
+		public ICommand RemoveLogLevelMapEntryCommand { get; }
+
+
 		// Remove log pattern.
 		void RemoveLogPattern(ListBoxItem item)
 		{
@@ -924,6 +1046,12 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.logPatterns.RemoveAt(index);
 			this.SelectListBoxItem(this.logPatternListBox, -1);
 		}
+
+
+		/// <summary>
+		/// Command to remove log pattern.
+		/// </summary>
+		public ICommand RemoveLogPatternCommand { get; }
 
 
 		// Remove log writing format.
@@ -937,6 +1065,12 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		/// <summary>
+		/// Command to remove log writing format.
+		/// </summary>
+		public ICommand RemoveLogWritingFormatCommand { get; }
+
+
 		// Remove time span format for reading.
 		void RemoveTimeSpanFormatForReading(ListBoxItem item)
 		{
@@ -946,6 +1080,12 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.timeSpanFormatsForReading.RemoveAt(index);
 			this.SelectListBoxItem(this.timeSpanFormatsForReadingListBox, -1);
 		}
+
+
+		/// <summary>
+		/// Command to remove log time span format for reading.
+		/// </summary>
+		public ICommand RemoveTimeSpanFormatForReadingCommand { get; }
 
 
 		// Remove timestamp format for reading.
@@ -959,6 +1099,12 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		/// <summary>
+		/// Command to remove timestamp format for reading.
+		/// </summary>
+		public ICommand RemoveTimestampFormatForReadingCommand { get; }
+
+
 		// Remove visible log property.
 		void RemoveVisibleLogProperty(ListBoxItem item)
 		{
@@ -970,12 +1116,18 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		/// <summary>
+		/// Command to remove visible log property.
+		/// </summary>
+		public ICommand RemoveVisibleLogPropertyCommand { get; }
+
+
 		// Select given item in list box.
 		void SelectListBoxItem(Avalonia.Controls.ListBox listBox, int index)
 		{
 			this.SynchronizationContext.Post(() =>
 			{
-				listBox.SelectedItems.Clear();
+				listBox.SelectedItems?.Clear();
 				if (index < 0 || index >= listBox.GetItemCount())
 					return;
 				listBox.Focus();
@@ -985,8 +1137,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Set log data source options.
-		async void SetDataSourceOptions()
+		/// <summary>
+		/// Set log data source options.
+		/// </summary>
+		public async void SetDataSourceOptions()
 		{
 			var dataSourceProvider = (this.dataSourceProviderComboBox.SelectedItem as ILogDataSourceProvider);
 			if (dataSourceProvider == null)
@@ -1023,7 +1177,10 @@ namespace CarinaStudio.ULogViewer.Controls
 			};
 			if (logProfile != null)
 				NonBlockingDialogs[logProfile] = dialog;
-			dialog.Show(parent);
+			if (parent != null)
+				dialog.Show(parent);
+			else
+				dialog.Show();
 		} 
 
 

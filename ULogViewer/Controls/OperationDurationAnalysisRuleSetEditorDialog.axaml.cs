@@ -7,10 +7,12 @@ using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ULogViewer.ViewModels.Analysis.ContextualBased;
+using CarinaStudio.Windows.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Windows.Input;
 
 namespace CarinaStudio.ULogViewer.Controls
 {
@@ -20,7 +22,7 @@ namespace CarinaStudio.ULogViewer.Controls
 	partial class OperationDurationAnalysisRuleSetEditorDialog : AppSuite.Controls.Window<IULogViewerApplication>
 	{
 		// Static fields.
-		static readonly AvaloniaProperty<bool> AreValidParametersProperty = AvaloniaProperty.Register<OperationDurationAnalysisRuleSetEditorDialog, bool>("AreValidParameters");
+		static readonly StyledProperty<bool> AreValidParametersProperty = AvaloniaProperty.Register<OperationDurationAnalysisRuleSetEditorDialog, bool>("AreValidParameters");
 		static readonly Dictionary<OperationDurationAnalysisRuleSet, OperationDurationAnalysisRuleSetEditorDialog> DialogWithEditingRuleSets = new();
 		static readonly SettingKey<bool> DonotShowRestrictionsWithNonProVersionKey = new("OperationDurationAnalysisRuleSetEditorDialog.DonotShowRestrictionsWithNonProVersion");
 		static readonly Regex OriginalOperationNameRegex = new("^(?<Name>.+)\\s\\(\\d+\\)$");
@@ -41,6 +43,11 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// </summary>
 		public OperationDurationAnalysisRuleSetEditorDialog()
 		{
+			this.AddRuleAfterCommand = new Command<OperationDurationAnalysisRuleSet.Rule>(this.AddRuleAfter);
+			this.AddRuleBeforeCommand = new Command<OperationDurationAnalysisRuleSet.Rule>(this.AddRuleBefore);
+			this.CopyRuleCommand = new Command<OperationDurationAnalysisRuleSet.Rule>(this.CopyRule);
+			this.EditRuleCommand = new Command<OperationDurationAnalysisRuleSet.Rule>(this.EditRule);
+			this.RemoveRuleCommand = new Command<OperationDurationAnalysisRuleSet.Rule>(this.RemoveRule);
 			AvaloniaXamlLoader.Load(this);
 			this.iconColorComboBox = this.Get<LogProfileIconColorComboBox>(nameof(iconColorComboBox));
 			this.iconComboBox = this.Get<LogProfileIconComboBox>(nameof(iconComboBox));
@@ -60,8 +67,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Add rule.
-		async void AddRule()
+		/// <summary>
+		/// Add rule.
+		/// </summary>
+		public async void AddRule()
 		{
 			var rule = await new OperationDurationAnalysisRuleEditorDialog().ShowDialog<OperationDurationAnalysisRuleSet.Rule?>(this);
 			if (rule == null)
@@ -73,7 +82,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Add new rule after given rule.
-		public async void AddRuleAfter(OperationDurationAnalysisRuleSet.Rule rule)
+		async void AddRuleAfter(OperationDurationAnalysisRuleSet.Rule rule)
 		{
 			// edit rule
 			var newRule = await new OperationDurationAnalysisRuleEditorDialog()
@@ -98,8 +107,14 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		/// <summary>
+		/// Command to add new rule after given rule.
+		/// </summary>
+		public ICommand AddRuleAfterCommand { get; }
+
+
 		// Add new rule before given rule.
-		public async void AddRuleBefore(OperationDurationAnalysisRuleSet.Rule rule)
+		async void AddRuleBefore(OperationDurationAnalysisRuleSet.Rule rule)
 		{
 			// edit rule
 			var newRule = await new OperationDurationAnalysisRuleEditorDialog()
@@ -125,6 +140,12 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		/// <summary>
+		/// Command to add new rule before given rule.
+		/// </summary>
+		public ICommand AddRuleBeforeCommand { get; }
+
+
+		/// <summary>
 		/// Class all dialogs which are editing the given rule set.
 		/// </summary>
 		/// <param name="ruleSet">Rule set.</param>
@@ -135,8 +156,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Complete editing.
-		async void CompleteEditing()
+		/// <summary>
+		/// Complete editing.
+		/// </summary>
+		public async void CompleteEditing()
 		{
 			// validate parameters
 			this.validateParametersAction.ExecuteIfScheduled();
@@ -209,6 +232,12 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		/// <summary>
+		/// Command to copy rule.
+		/// </summary>
+		public ICommand CopyRuleCommand { get; }
+
+
 		// Edit rule.
 		async void EditRule(OperationDurationAnalysisRuleSet.Rule rule)
 		{
@@ -225,6 +254,12 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.ruleListBox.SelectedItem = newRule;
 			this.ruleListBox.Focus();
 		}
+
+
+		/// <summary>
+		/// Command to edit rule.
+		/// </summary>
+		public ICommand EditRuleCommand { get; }
 
 
 		/// <inheritdoc/>
@@ -289,10 +324,14 @@ namespace CarinaStudio.ULogViewer.Controls
 			WindowTransparencyLevel.None;
 		
 
-		// Open online documentation.
-		void OpenDocumentation() =>
+		/// <summary>
+		/// Open online documentation.
+		/// </summary>
+#pragma warning disable CA1822
+		public void OpenDocumentation() =>
 			Platform.OpenLink("https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#OperationDurationAnalysis");
-		
+#pragma warning restore CA1822
+
 
 		// Remove rule.
 		void RemoveRule(OperationDurationAnalysisRuleSet.Rule rule)
@@ -300,10 +339,18 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.rules.Remove(rule);
 			this.ruleListBox.Focus();
 		}
+
+
+		/// <summary>
+		/// Command to remove rule.
+		/// </summary>
+		public ICommand RemoveRuleCommand { get; }
 		
 
-		// Rules.
-		IList<OperationDurationAnalysisRuleSet.Rule> Rules { get => this.rules; }
+		/// <summary>
+		/// Rules.
+		/// </summary>
+		public IList<OperationDurationAnalysisRuleSet.Rule> Rules { get => this.rules; }
 
 
 		/// <summary>

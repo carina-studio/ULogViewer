@@ -64,8 +64,10 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Window<IU
 	}
 
 
-	// Complete editing.
-	async void CompleteEditing()
+	/// <summary>
+	/// Complete editing.
+	/// </summary>
+	public async void CompleteEditing()
 	{
 		var scriptSet = this.scriptSetToEdit ?? new(this.Application);
 		scriptSet.Name = this.nameTextBox.Text?.Trim();
@@ -109,16 +111,16 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Window<IU
 		base.OnOpened(e);
 
 		// setup initial window size and position
-		(this.Screens.ScreenFromWindow(this.PlatformImpl) ?? this.Screens.Primary)?.Let(screen =>
+		(this.Screens.ScreenFromWindow(this.PlatformImpl.AsNonNull()) ?? this.Screens.Primary)?.Let(screen =>
 		{
 			var workingArea = screen.WorkingArea;
 			var widthRatio = this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogAnalysisScriptSetEditorDialogInitWidthRatio);
 			var heightRatio = this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogAnalysisScriptSetEditorDialogInitHeightRatio);
-			var pixelDensity = Platform.IsMacOS ? 1.0 : screen.PixelDensity;
+			var scaling = Platform.IsMacOS ? 1.0 : screen.Scaling;
 			var left = (workingArea.TopLeft.X + workingArea.Width * (1 - widthRatio) / 2); // in device pixels
 			var top = (workingArea.TopLeft.Y + workingArea.Height * (1 - heightRatio) / 2); // in device pixels
-			var width = (workingArea.Width * widthRatio) / pixelDensity;
-			var height = (workingArea.Height * heightRatio) / pixelDensity;
+			var width = (workingArea.Width * widthRatio) / scaling;
+			var height = (workingArea.Height * heightRatio) / scaling;
 			var sysDecorSize = this.GetSystemDecorationSizes();
 			this.Position = new((int)(left + 0.5), (int)(top + 0.5));
 			this.Width = width;
@@ -195,9 +197,13 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Window<IU
 	}
 
 
-	// Open online documentation.
-	void OpenDocumentation() =>
+	/// <summary>
+	/// Open online documentation.
+	/// </summary>
+#pragma warning disable CA1822
+	public void OpenDocumentation() =>
 		Platform.OpenLink("https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#LogAnalysisScript");
+#pragma warning restore CA1822
 
 
 	/// <summary>

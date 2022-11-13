@@ -4,7 +4,6 @@ using Avalonia.Data;
 using Avalonia.Markup.Xaml;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.Collections;
-using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs;
 using System;
@@ -37,11 +36,11 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Static fields.
 		static readonly Regex DefaultRegexGroupNameRegex = new("^[\\d]+$");
-		static readonly AvaloniaProperty<bool> HasTestResultProperty = AvaloniaProperty.Register<RegexEditorDialog, bool>("HasTestResult");
-		static readonly AvaloniaProperty<bool> IsCapturingGroupsEnabledProperty = AvaloniaProperty.Register<RegexEditorDialog, bool>(nameof(IsCapturingGroupsEnabled));
-		static readonly AvaloniaProperty<bool> IsCapturingLogPropertiesEnabledProperty = AvaloniaProperty.Register<RegexEditorDialog, bool>(nameof(IsCapturingLogPropertiesEnabled));
-		static readonly AvaloniaProperty<string?> TestLogLineProperty = AvaloniaProperty.Register<RegexEditorDialog, string?>("TestLogLine");
-		static readonly AvaloniaProperty<bool> TestResultProperty = AvaloniaProperty.Register<RegexEditorDialog, bool>("TestResult");
+		static readonly StyledProperty<bool> HasTestResultProperty = AvaloniaProperty.Register<RegexEditorDialog, bool>("HasTestResult");
+		static readonly StyledProperty<bool> IsCapturingGroupsEnabledProperty = AvaloniaProperty.Register<RegexEditorDialog, bool>(nameof(IsCapturingGroupsEnabled));
+		static readonly StyledProperty<bool> IsCapturingLogPropertiesEnabledProperty = AvaloniaProperty.Register<RegexEditorDialog, bool>(nameof(IsCapturingLogPropertiesEnabled));
+		static readonly StyledProperty<string?> TestLogLineProperty = AvaloniaProperty.Register<RegexEditorDialog, string?>("TestLogLine");
+		static readonly StyledProperty<bool> TestResultProperty = AvaloniaProperty.Register<RegexEditorDialog, bool>("TestResult");
 
 
 		// Fields.
@@ -183,7 +182,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Property changed.
-        protected override void OnPropertyChanged<T>(AvaloniaPropertyChangedEventArgs<T> change)
+        protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
         {
             base.OnPropertyChanged(change);
 			if (change.Property == TestLogLineProperty)

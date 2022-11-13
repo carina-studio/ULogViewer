@@ -18,11 +18,11 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// <summary>
 		/// Property of <see cref="Conditions"/>.
 		/// </summary>
-		public static readonly AvaloniaProperty<IList<DisplayableLogAnalysisCondition>> ConditionsProperty = AvaloniaProperty.Register<DisplayableLogAnalysisConditionsEditor, IList<DisplayableLogAnalysisCondition>>(nameof(Conditions));
+		public static readonly StyledProperty<IList<DisplayableLogAnalysisCondition>> ConditionsProperty = AvaloniaProperty.Register<DisplayableLogAnalysisConditionsEditor, IList<DisplayableLogAnalysisCondition>>(nameof(Conditions));
 		/// <summary>
 		/// Property of <see cref="VerticalScrollBarVisibility"/>.
 		/// </summary>
-		public static readonly AvaloniaProperty<ScrollBarVisibility> VerticalScrollBarVisibilityProperty = AvaloniaProperty.RegisterDirect<DisplayableLogAnalysisConditionsEditor, ScrollBarVisibility>(nameof(VerticalScrollBarVisibility), 
+		public static readonly DirectProperty<DisplayableLogAnalysisConditionsEditor, ScrollBarVisibility> VerticalScrollBarVisibilityProperty = AvaloniaProperty.RegisterDirect<DisplayableLogAnalysisConditionsEditor, ScrollBarVisibility>(nameof(VerticalScrollBarVisibility), 
 			c => c.verticalScrollBarVisibility,
 			(c, v) => ScrollViewer.SetVerticalScrollBarVisibility(c.conditionListBox, v));
 

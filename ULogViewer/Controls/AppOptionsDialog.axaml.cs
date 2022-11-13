@@ -120,13 +120,13 @@ partial class AppOptionsDialog : BaseApplicationOptionsDialog
 
 
     /// <inheritdoc/>
-    protected override void OnPropertyChanged<T>(AvaloniaPropertyChangedEventArgs<T> change)
+    protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
         base.OnPropertyChanged(change);
 		if (change.Property == DataContextProperty)
 		{
-			(change.OldValue.Value as AppOptions)?.Let(it => it.PropertyChanged -= this.OnAppOptionsPropertyChanged);
-			(change.NewValue.Value as AppOptions)?.Let(it => 
+			(change.OldValue as AppOptions)?.Let(it => it.PropertyChanged -= this.OnAppOptionsPropertyChanged);
+			(change.NewValue as AppOptions)?.Let(it => 
 			{
 				it.PropertyChanged += this.OnAppOptionsPropertyChanged;
 			});

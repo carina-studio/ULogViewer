@@ -121,14 +121,14 @@
 											</MultiBinding>
 										</MultiBinding>
 									</StackPanel.IsVisible>
-									<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveLogProfile}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" IsVisible="{Binding !IsBuiltIn}" ToolTip.Tip="{DynamicResource String/LogProfileSelectionDialog.RemoveLogProfile}">
+									<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveLogProfileCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" IsVisible="{Binding !IsBuiltIn}" ToolTip.Tip="{DynamicResource String/LogProfileSelectionDialog.RemoveLogProfile}">
 										<asControls:Image Classes="InPlaceAction_Icon">
 											<DrawingImage>
 												<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
 											</DrawingImage>
 										</asControls:Image>
 									</Button>
-									<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].ExportLogProfile}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/LogProfileSelectionDialog.ExportLogProfile}">
+									<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].ExportLogProfileCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/LogProfileSelectionDialog.ExportLogProfile}">
 										<asControls:Image Classes="InPlaceAction_Icon">
 											<DrawingImage>
 												<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Export}"/>
@@ -136,14 +136,14 @@
 										</asControls:Image>
 									</Button>
 									<StackPanel IsVisible="{Binding $parent[Window].Filter, Converter={x:Static aConverters:ObjectConverters.IsNull}}" Orientation="Horizontal">
-										<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].CopyLogProfile}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Copy}">
+										<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].CopyLogProfileCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Copy}">
 											<asControls:Image Classes="InPlaceAction_Icon">
 												<DrawingImage>
 													<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Copy}"/>
 												</DrawingImage>
 											</asControls:Image>
 										</Button>
-										<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditLogProfile}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" IsVisible="{Binding !IsBuiltIn}" ToolTip.Tip="{DynamicResource String/LogProfileSelectionDialog.EditLogProfile}">
+										<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditLogProfileCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" IsVisible="{Binding !IsBuiltIn}" ToolTip.Tip="{DynamicResource String/LogProfileSelectionDialog.EditLogProfile}">
 											<asControls:Image Classes="InPlaceAction_Icon">
 												<DrawingImage>
 													<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
@@ -151,7 +151,7 @@
 											</asControls:Image>
 										</Button>
 									</StackPanel>
-									<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].PinUnpinLogProfile}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" IsVisible="{Binding !IsTemplate}" ToolTip.Tip="{DynamicResource String/LogProfileSelectionDialog.PinUnpinLogProfile}">
+									<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].PinUnpinLogProfileCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" IsVisible="{Binding !IsTemplate}" ToolTip.Tip="{DynamicResource String/LogProfileSelectionDialog.PinUnpinLogProfile}">
 										<asControls:Image Classes="InPlaceAction_Icon">
 											<DrawingImage>
 												<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Pin}"/>

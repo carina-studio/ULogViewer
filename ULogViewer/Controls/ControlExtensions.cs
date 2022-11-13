@@ -19,8 +19,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (control is ContentControl contentControl)
 			{
-				var child = contentControl.Content as IControl;
-				if (child == null)
+				if (contentControl.Content is not IControl child)
 					return null;
 				if (child.Name == name)
 					return (T)child;
@@ -29,9 +28,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			else if (control is Decorator decorator)
 			{
 				var child = decorator.Child;
-				if (child.Name == name)
+				if (child?.Name == name)
 					return (T)child;
-				return child.FindChildControl<T>(name);
+				return child?.FindChildControl<T>(name);
 			}
 			else if (control is Panel panel)
 			{
