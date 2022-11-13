@@ -6,10 +6,12 @@ using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.ULogViewer.Logs.Profiles;
+using CarinaStudio.Windows.Input;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Windows.Input;
 
 namespace CarinaStudio.ULogViewer.Controls;
 
@@ -32,6 +34,10 @@ partial class ScriptLogDataSourceProvidersDialog : CarinaStudio.Controls.Dialog<
 	/// </summary>
 	public ScriptLogDataSourceProvidersDialog()
 	{
+		this.CopyProviderCommand = new Command<ScriptLogDataSourceProvider>(this.CopyProvider);
+		this.EditProviderCommand = new Command<ScriptLogDataSourceProvider>(this.EditProvider);
+		this.ExportProviderCommand = new Command<ScriptLogDataSourceProvider>(this.ExportProvider);
+		this.RemoveProviderCommand = new Command<ScriptLogDataSourceProvider>(this.RemoveProvider);
 		AvaloniaXamlLoader.Load(this);
 		this.providerListBox = this.Get<AppSuite.Controls.ListBox>(nameof(providerListBox)).Also(it =>
 		{
@@ -66,10 +72,8 @@ partial class ScriptLogDataSourceProvidersDialog : CarinaStudio.Controls.Dialog<
 	}
 
 
-	/// <summary>
-	/// Copy provider.
-	/// </summary>
-	public async void CopyProvider(ScriptLogDataSourceProvider provider)
+	// Copy provider.
+	async void CopyProvider(ScriptLogDataSourceProvider provider)
 	{
 		// check Pro version
 		if (!this.Application.ProductManager.IsProductActivated(Products.Professional)
@@ -109,6 +113,12 @@ partial class ScriptLogDataSourceProvidersDialog : CarinaStudio.Controls.Dialog<
 	}
 
 
+	/// <summary>
+	/// Command to copy provider.
+	/// </summary>
+	public ICommand CopyProviderCommand { get; }
+
+
 	// Edit provider.
 	async void EditProvider(ScriptLogDataSourceProvider provider)
 	{
@@ -123,9 +133,13 @@ partial class ScriptLogDataSourceProvidersDialog : CarinaStudio.Controls.Dialog<
 
 
 	/// <summary>
-	/// Export provider.
+	/// Command to edit provider.
 	/// </summary>
-	public async void ExportProvider(ScriptLogDataSourceProvider provider)
+	public ICommand EditProviderCommand { get; }
+
+
+	// Export provider.
+	async void ExportProvider(ScriptLogDataSourceProvider provider)
 	{
 		// select file
 		var fileName = (await this.StorageProvider.SaveFilePickerAsync(new()
@@ -164,6 +178,12 @@ partial class ScriptLogDataSourceProvidersDialog : CarinaStudio.Controls.Dialog<
 			}.ShowDialog(this);
 		}
 	}
+
+
+	/// <summary>
+	/// Command to export provider.
+	/// </summary>
+	public ICommand ExportProviderCommand { get; }
 
 
 	/// <summary>
@@ -287,10 +307,8 @@ partial class ScriptLogDataSourceProvidersDialog : CarinaStudio.Controls.Dialog<
 #pragma warning restore CA1822
 	
 
-	/// <summary>
-	/// Remove provider.
-	/// </summary>
-	public async void RemoveProvider(ScriptLogDataSourceProvider provider)
+	// Remove provider.
+	async void RemoveProvider(ScriptLogDataSourceProvider provider)
 	{
 		var logProfileCount = LogProfileManager.Default.Profiles.Count(it => it.DataSourceProvider == provider);
 		var result = await new MessageDialog()
@@ -316,4 +334,10 @@ partial class ScriptLogDataSourceProvidersDialog : CarinaStudio.Controls.Dialog<
 		this.providerListBox.SelectedItem = null;
 		this.providerListBox.Focus();
 	}
+
+
+	/// <summary>
+	/// Command to remove provider.
+	/// </summary>
+	public ICommand RemoveProviderCommand { get; }
 }

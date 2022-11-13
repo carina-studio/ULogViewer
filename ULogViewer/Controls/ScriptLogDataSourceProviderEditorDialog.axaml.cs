@@ -8,12 +8,14 @@ using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.DataSources;
+using CarinaStudio.Windows.Input;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace CarinaStudio.ULogViewer.Controls;
 
@@ -76,6 +78,7 @@ partial class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.In
 	/// </summary>
 	public ScriptLogDataSourceProviderEditorDialog()
 	{
+		this.RemoveSupportedSourceOptionCommand = new Command<SupportedSourceOption>(this.RemoveSupportedSourceOption);
 		this.SupportedSourceOptions = ListExtensions.AsReadOnly(this.supportedSourceOptions);
 		AvaloniaXamlLoader.Load(this);
 		if (Platform.IsLinux)
@@ -223,10 +226,8 @@ partial class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.In
 #pragma warning restore CA1822
 
 
-	/// <summary>
-	/// Remove supported source option.
-	/// </summary>
-	public void RemoveSupportedSourceOption(SupportedSourceOption option)
+	// Remove supported source option.
+	void RemoveSupportedSourceOption(SupportedSourceOption option)
 	{
 		if (this.supportedSourceOptions.Remove(option))
 		{
@@ -236,6 +237,12 @@ partial class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.In
 		this.supportedSourceOptionListBox.SelectedItem = null;
 		this.supportedSourceOptionListBox.Focus();
 	}
+
+
+	/// <summary>
+	/// Command to remove supported source option.
+	/// </summary>
+	public ICommand RemoveSupportedSourceOptionCommand { get; }
 
 
 	/// <summary>

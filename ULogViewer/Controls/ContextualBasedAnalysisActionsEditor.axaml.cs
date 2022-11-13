@@ -6,8 +6,10 @@ using Avalonia.Markup.Xaml;
 using CarinaStudio.Collections;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.ViewModels.Analysis.ContextualBased;
+using CarinaStudio.Windows.Input;
 using System;
 using System.Collections.Generic;
+using System.Windows.Input;
 
 namespace CarinaStudio.ULogViewer.Controls
 {
@@ -41,6 +43,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// </summary>
 		public ContextualBasedAnalysisActionsEditor()
 		{
+			this.EditActionCommand = new Command<ListBoxItem>(this.EditAction);
+			this.MoveActionDownCommand = new Command<ListBoxItem>(this.MoveActionDown);
+			this.MoveActionUpCommand = new Command<ListBoxItem>(this.MoveActionUp);
+			this.RemoveActionCommand = new Command<ListBoxItem>(this.RemoveAction);
 			AvaloniaXamlLoader.Load(this);
 			this.actionListBox = this.Get<AppSuite.Controls.ListBox>(nameof(actionListBox)).Also(it =>
 			{
@@ -143,10 +149,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		/// <summary>
-		/// Edit action.
-		/// </summary>
-		public void EditAction(ListBoxItem item) =>
+		// Edit action.
+		void EditAction(ListBoxItem item) =>
 			this.EditAction((ContextualBasedAnalysisAction)item.DataContext.AsNonNull());
 		
 
@@ -184,9 +188,13 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		/// <summary>
-		/// Move action down.
+		/// Command to edit action.
 		/// </summary>
-		public void MoveActionDown(ListBoxItem item)
+		public ICommand EditActionCommand { get; }
+
+
+		// Move action down.
+		void MoveActionDown(ListBoxItem item)
 		{
 			var actions = this.Actions;
 			if (actions == null)
@@ -208,9 +216,13 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		/// <summary>
-		/// Move action up.
+		/// Command to move action down.
 		/// </summary>
-		public void MoveActionUp(ListBoxItem item)
+		public ICommand MoveActionDownCommand { get; }
+
+
+		// Move action up.
+		void MoveActionUp(ListBoxItem item)
 		{
 			var actions = this.Actions;
 			if (actions == null)
@@ -229,6 +241,12 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.actionListBox.SelectedIndex = index - 1;
 			this.actionListBox.Focus();
 		}
+
+
+		/// <summary>
+		/// Command to move action up.
+		/// </summary>
+		public ICommand MoveActionUpCommand { get; }
 		
 
 		/// <inheritdoc/>
@@ -247,10 +265,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		/// <summary>
-		/// Remove action.
-		/// </summary>
-		public void RemoveAction(ListBoxItem item)
+		// Remove action.
+		void RemoveAction(ListBoxItem item)
 		{
 			var actions = this.Actions;
 			if (actions == null)
@@ -262,6 +278,12 @@ namespace CarinaStudio.ULogViewer.Controls
 			actions.RemoveAt(index);
 			this.actionListBox.Focus();
 		}
+
+
+		/// <summary>
+		/// Command to remove action.
+		/// </summary>
+		public ICommand RemoveActionCommand { get; }
 
 
 		/// <summary>

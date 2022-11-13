@@ -62,7 +62,7 @@
 											<CheckBox Content="{DynamicResource String/ScriptLogDataSourceProviderEditorDialog.SupportedSourceOptions.Required}" IsChecked="{Binding IsRequired}" IsEnabled="{Binding CanBeRequired}" MinHeight="0" VerticalAlignment="Center"/>
 										</Border>
 										<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
-											<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveSupportedSourceOption}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
+											<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveSupportedSourceOptionCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
 												<asControls:Image Classes="InPlaceAction_Icon">
 													<DrawingImage>
 														<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>

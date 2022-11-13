@@ -5,8 +5,10 @@ using Avalonia.LogicalTree;
 using Avalonia.Markup.Xaml;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.ViewModels.Analysis;
+using CarinaStudio.Windows.Input;
 using System;
 using System.Collections.Generic;
+using System.Windows.Input;
 
 namespace CarinaStudio.ULogViewer.Controls
 {
@@ -40,6 +42,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// </summary>
 		public DisplayableLogAnalysisConditionsEditor()
 		{
+			this.EditConditionCommand = new Command<ListBoxItem>(this.EditCondition);
+			this.RemoveConditionCommand = new Command<ListBoxItem>(this.RemoveCondition);
 			AvaloniaXamlLoader.Load(this);
 			this.addConditionButton = this.Get<ToggleButton>(nameof(addConditionButton));
 			this.addConditionMenu = ((ContextMenu)this.Resources[nameof(addConditionMenu)].AsNonNull()).Also(it =>
@@ -114,10 +118,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		/// <summary>
-		/// Edit condition.
-		/// </summary>
-		public void EditCondition(ListBoxItem item)
+		// Edit condition.
+		void EditCondition(ListBoxItem item)
 		{
 			if (item.DataContext is DisplayableLogAnalysisCondition condition)
 				this.EditCondition(condition);
@@ -152,6 +154,12 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.conditionListBox.SelectedItem = newCondition;
 			this.conditionListBox.Focus();
 		}
+
+
+		/// <summary>
+		/// Command to edit condition.
+		/// </summary>
+		public ICommand EditConditionCommand { get; }
 		
 
 		/// <inheritdoc/>
@@ -170,10 +178,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		/// <summary>
-		/// Remove condition.
-		/// </summary>
-		public void RemoveCondition(ListBoxItem item)
+		// Remove condition.
+		void RemoveCondition(ListBoxItem item)
 		{
 			var conditions = this.Conditions;
 			if (conditions == null || item.DataContext is not DisplayableLogAnalysisCondition condition)
@@ -182,6 +188,12 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.conditionListBox.SelectedItem = null;
 			this.conditionListBox.Focus();
 		}
+
+
+		/// <summary>
+		/// Command to remove condition.
+		/// </summary>
+		public ICommand RemoveConditionCommand { get; }
 
 
 		/// <summary>

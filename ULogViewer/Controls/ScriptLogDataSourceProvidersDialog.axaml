@@ -42,28 +42,28 @@
 							<TextBlock Classes="ListBoxItem_TextBlock" Grid.Column="1" Text="{Binding DisplayName}"/>
 							<Border Classes="InPlaceAction_Reserved" Grid.Column="1"/>
 							<StackPanel Grid.Column="2" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
-								<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveProvider}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
+								<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveProviderCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
 									<asControls:Image Classes="InPlaceAction_Icon">
 										<DrawingImage>
 											<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
 										</DrawingImage>
 									</asControls:Image>
 								</Button>
-								<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].ExportProvider}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Export}">
+								<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].ExportProviderCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Export}">
 									<asControls:Image Classes="InPlaceAction_Icon">
 										<DrawingImage>
 											<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Export}"/>
 										</DrawingImage>
 									</asControls:Image>
 								</Button>
-								<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].CopyProvider}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Copy}">
+								<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].CopyProviderCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Copy}">
 									<asControls:Image Classes="InPlaceAction_Icon">
 										<DrawingImage>
 											<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Copy}"/>
 										</DrawingImage>
 									</asControls:Image>
 								</Button>
-								<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditProvider}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
+								<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditProviderCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
 									<asControls:Image Classes="InPlaceAction_Icon">
 										<DrawingImage>
 											<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit}"/>

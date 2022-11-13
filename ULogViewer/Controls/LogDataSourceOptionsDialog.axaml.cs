@@ -10,6 +10,7 @@ using CarinaStudio.Configuration;
 using CarinaStudio.Controls;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.DataSources;
+using CarinaStudio.Windows.Input;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,6 +18,7 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace CarinaStudio.ULogViewer.Controls;
 
@@ -114,6 +116,10 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 	/// </summary>
 	public LogDataSourceOptionsDialog()
 	{
+		this.EditSetupTeardownCommandCommand = new Command<ListBoxItem>(this.EditSetupTeardownCommand);
+		this.MoveSetupTeardownCommandDownCommand = new Command<ListBoxItem>(this.MoveSetupTeardownCommandDown);
+		this.MoveSetupTeardownCommandUpCommand = new Command<ListBoxItem>(this.MoveSetupTeardownCommandUp);
+		this.RemoveSetupTeardownCommandCommand = new Command<ListBoxItem>(this.RemoveSetupTeardownCommand);
 		AvaloniaXamlLoader.Load(this);
 		this.categoryTextBox = this.Get<TextBox>(nameof(categoryTextBox));
 		this.commandTextBox = this.Get<TextBox>(nameof(commandTextBox)).Also(it =>
@@ -223,10 +229,8 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 	});
 
 
-	/// <summary>
-	/// Edit given setup or teardown command.
-	/// </summary>
-	public async void EditSetupTeardownCommand(ListBoxItem item)
+	// Edit given setup or teardown command.
+	async void EditSetupTeardownCommand(ListBoxItem item)
 	{
 		// find index of command
 		var listBox = (Avalonia.Controls.ListBox)item.Parent.AsNonNull();
@@ -252,6 +256,12 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 			this.teardownCommands[index] = newCommand;
 		this.SelectListBoxItem((Avalonia.Controls.ListBox)item.Parent.AsNonNull(), index);
 	}
+
+
+	/// <summary>
+	/// Comand to edit setup/teardown command.
+	/// </summary>
+	public ICommand EditSetupTeardownCommandCommand { get; }
 
 
 	// Generate valid result.
@@ -335,10 +345,8 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 	}
 
 
-	/// <summary>
-	/// Move given setup or teardown command down.
-	/// </summary>
-	public void MoveSetupTeardownCommandDown(ListBoxItem item)
+	// Move given setup or teardown command down.
+	void MoveSetupTeardownCommandDown(ListBoxItem item)
 	{
 		// find index of command
 		var listBox = (Avalonia.Controls.ListBox)item.Parent.AsNonNull();
@@ -358,9 +366,13 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 
 
 	/// <summary>
-	/// Move given setup or teardown command up.
+	/// Command to move given setup or teardown command down.
 	/// </summary>
-	public void MoveSetupTeardownCommandUp(ListBoxItem item)
+	public ICommand MoveSetupTeardownCommandDownCommand { get; }
+
+
+	// Move given setup or teardown command up.
+	void MoveSetupTeardownCommandUp(ListBoxItem item)
 	{
 		// find index of command
 		var listBox = (Avalonia.Controls.ListBox)item.Parent.AsNonNull();
@@ -377,6 +389,12 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 		}
 		this.SelectListBoxItem(listBox, index);
 	}
+
+
+	/// <summary>
+	/// Command to move given setup or teardown command up.
+	/// </summary>
+	public ICommand MoveSetupTeardownCommandUpCommand { get; }
 
 
 	// Called when property of editor control changed.
@@ -669,10 +687,8 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 	}
 
 
-	/// <summary>
-	/// Remove given setup or teardown command.
-	/// </summary>
-	public void RemoveSetupTeardownCommand(ListBoxItem item)
+	// Remove given setup or teardown command.
+	void RemoveSetupTeardownCommand(ListBoxItem item)
 	{
 		// find index of command
 		var listBox = (Avalonia.Controls.ListBox)item.Parent.AsNonNull();
@@ -687,6 +703,12 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 			this.teardownCommands.RemoveAt(index);
 		this.SelectListBoxItem(listBox, -1);
 	}
+
+
+	/// <summary>
+	/// Command to remove given setup or teardown command.
+	/// </summary>
+	public ICommand RemoveSetupTeardownCommandCommand { get; }
 
 
 	/// <summary>

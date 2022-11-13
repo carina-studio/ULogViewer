@@ -27,14 +27,14 @@
 						<TextBlock Grid.Column="0" Text="{Binding}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
 						<Border Classes="InPlaceAction_Reserved"/>
 						<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
-							<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].RemoveCondition}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
+							<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].RemoveConditionCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
 								<asControls:Image Classes="InPlaceAction_Icon">
 									<DrawingImage>
 										<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
 									</DrawingImage>
 								</asControls:Image>
 							</Button>
-							<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].EditCondition}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
+							<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].EditConditionCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
 								<asControls:Image Classes="InPlaceAction_Icon">
 									<DrawingImage>
 										<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
