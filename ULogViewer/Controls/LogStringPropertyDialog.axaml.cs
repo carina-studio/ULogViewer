@@ -1,4 +1,3 @@
-using System.Globalization;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
@@ -40,9 +39,9 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.highlightingColor = new HighlightingColor().Also(it => 
 				{
 					var res = (object?)null;
-					if ((app as App)?.TryFindResource("Brush/LogStringPropertyDialog.FoundText.Background", out res) == true && res is SolidColorBrush background)
+					if ((app as App)?.TryFindResource("Brush/LogStringPropertyDialog.FoundText.Background", out res) == true && res is ISolidColorBrush background)
 						it.Background = new SimpleHighlightingBrush(background.Color);
-					if ((app as App)?.TryFindResource("Brush/LogStringPropertyDialog.FoundText.Foreground", out res) == true && res is SolidColorBrush foreground)
+					if ((app as App)?.TryFindResource("Brush/LogStringPropertyDialog.FoundText.Foreground", out res) == true && res is ISolidColorBrush foreground)
 						it.Foreground = new SimpleHighlightingBrush(foreground.Color);
 				});
 				this.mainRuleSet.Let(mainRuleSet =>
@@ -98,7 +97,6 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// Fields.
 			double[] charWidths = Array.Empty<double>();
-			readonly FormattedText formattedText = new("", CultureInfo.InvariantCulture, FlowDirection.LeftToRight, Typeface.Default, 10, null);
 			readonly TextEditor textEditor;
 			double viewWidth;
 			public bool WrapText = true;
@@ -124,12 +122,11 @@ namespace CarinaStudio.ULogViewer.Controls
 						var charCount = it.Length;
 						this.charWidths = new double[charCount].Also(charWidths =>
 						{
-							this.formattedText.SetFontSize(textRunProperties.FontRenderingEmSize);
-							this.formattedText.SetFontFamily(textRunProperties.Typeface.FontFamily);
+							var textFormatter = TextFormatter.Current;
 							for (var i = charCount - 1; i >= 0; --i)
 							{
-								//this.formattedText.Text = document.GetText(it.Offset + i, 1);
-								charWidths[i] = this.formattedText.Width;
+								var textLine = FormattedTextElement.PrepareText(textFormatter, document.GetText(it.Offset + i, 1), textRunProperties);
+								charWidths[i] = textLine.Width;
 							}
 						});
 						this.viewWidth = this.textEditor.ViewportWidth;
@@ -149,7 +146,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				while (offset < lineLength)
 				{
 					var charWidth = this.charWidths[offset];
-					if (textWidth + charWidth > viewWidth - 10)
+					if (textWidth + charWidth > viewWidth - 20)
 						return documentLine.Offset + offset;
 					textWidth += charWidth;
 					++offset;
@@ -177,7 +174,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		public LogStringPropertyDialog()
 		{
 			this.SetTextWrappingCommand = new Command<bool>(this.SetTextWrapping);
-			InitializeComponent();
+			AvaloniaXamlLoader.Load(this);
 			this.findTextTextBox = this.FindControl<RegexTextBox>("findTextTextBox").AsNonNull();
 			this.highlightingDefinition = new HighlightingDefinitionImpl(this.Application);
 			this.propertyValueTextEditor = this.FindControl<TextEditor>("propertyValueTextEditor").AsNonNull().Also(it =>
@@ -223,10 +220,6 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 			this.Resources["Brush/TextArea.Selection.Background"] = new SolidColorBrush(Color.FromArgb(0x70, accentColor.R, accentColor.G, accentColor.B));
         }
-
-
-		// Initialize.
-		private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
 
 
 		// Check whether propertyValueTextEditor is focused or not.
