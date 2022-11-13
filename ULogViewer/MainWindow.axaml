@@ -29,16 +29,16 @@
 			<Grid ColumnDefinitions="*,Auto" Background="{x:Static Brushes.Transparent}">
 				<Grid.ContextMenu>
 					<ContextMenu PlacementMode="Bottom">
-						<MenuItem Command="{Binding $parent[Window].SetCustomSessionTitle}" CommandParameter="{Binding $parent[TabItem]}" Header="{DynamicResource String/MainWindow.SetCustomSessionTitle}">
+						<MenuItem Command="{Binding $parent[Window].SetCustomSessionTitleCommand}" CommandParameter="{Binding $parent[TabItem]}" Header="{DynamicResource String/MainWindow.SetCustomSessionTitle}">
 							<MenuItem.Icon>
 								<Border Classes="MenuItem_Icon">
 									<Image Classes="Icon" Source="{StaticResource Image/Icon.Edit}"/>
 								</Border>
 							</MenuItem.Icon>
 						</MenuItem>
-						<MenuItem Command="{Binding $parent[Window].ClearCustomSessionTitle}" CommandParameter="{Binding $parent[TabItem]}" Header="{DynamicResource String/MainWindow.ClearCustomSessionTitle}" IsEnabled="{Binding HasCustomTitle}"/>
+						<MenuItem Command="{Binding $parent[Window].ClearCustomSessionTitleCommand}" CommandParameter="{Binding $parent[TabItem]}" Header="{DynamicResource String/MainWindow.ClearCustomSessionTitle}" IsEnabled="{Binding HasCustomTitle}"/>
 						<Separator/>
-						<MenuItem Command="{Binding $parent[Window].MoveSessionToNewWorkspace}" CommandParameter="{Binding $parent[TabItem]}" Header="{DynamicResource String/Common.OpenInNewWindow}" IsEnabled="{Binding $parent[Window].HasMultipleSessions}">
+						<MenuItem Command="{Binding $parent[Window].MoveSessionToNewWorkspaceCommand}" CommandParameter="{Binding $parent[TabItem]}" Header="{DynamicResource String/Common.OpenInNewWindow}" IsEnabled="{Binding $parent[Window].HasMultipleSessions}">
 							<MenuItem.Icon>
 								<Border Classes="MenuItem_Icon">
 									<Image Classes="Icon" Source="{StaticResource Image/Icon.AddWindow}"/>
@@ -46,7 +46,7 @@
 							</MenuItem.Icon>
 						</MenuItem>
 						<Separator/>
-						<MenuItem Command="{Binding $parent[Window].CloseSessionTabItem}" CommandParameter="{Binding $parent[TabItem]}" Header="{DynamicResource String/Common.CloseTab}" InputGesture="Ctrl+W">
+						<MenuItem Command="{Binding $parent[Window].CloseSessionTabItemCommand}" CommandParameter="{Binding $parent[TabItem]}" Header="{DynamicResource String/Common.CloseTab}" InputGesture="Ctrl+W">
 							<MenuItem.Icon>
 								<Border Classes="MenuItem_Icon">
 									<Image Classes="Icon" Source="{StaticResource Image/Icon.Close}"/>
@@ -99,7 +99,7 @@
 					<Image Classes="TabItem_Icon" IsEnabled="{Binding !IsHibernated}" Source="{Binding Icon}"/>
 					<TextBlock Name="titleTextBlock" Classes="TabItem_TextBlock" Grid.Column="1" Text="{Binding Title}"/>
 				</Grid>
-				<Button Classes="TabItem_Button" Command="{Binding $parent[Window].CloseSessionTabItem}" CommandParameter="{Binding $parent[TabItem]}" Grid.Column="1" ToolTip.Tip="{DynamicResource String/Common.CloseTab.WithGesture}">
+				<Button Classes="TabItem_Button" Command="{Binding $parent[Window].CloseSessionTabItemCommand}" CommandParameter="{Binding $parent[TabItem]}" Grid.Column="1" ToolTip.Tip="{DynamicResource String/Common.CloseTab.WithGesture}">
 					<Image Classes="Icon" Source="{StaticResource Image/Icon.Close}"/>
 				</Button>
 			</Grid>

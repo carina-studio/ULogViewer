@@ -631,16 +631,22 @@ namespace CarinaStudio.ULogViewer.Controls
 		bool IsValidDataSourceOptions { get => this.GetValue<bool>(IsValidDataSourceOptionsProperty); }
 
 
-		// Entries of log level map.
-		IList<KeyValuePair<string, LogLevel>> LogLevelMapEntriesForReading { get; }
+		/// <summary>
+		/// Entries of log level map.
+		/// </summary>
+		public IList<KeyValuePair<string, LogLevel>> LogLevelMapEntriesForReading { get; }
 
 
-		// Entries of log level map.
-		IList<KeyValuePair<LogLevel, string>> LogLevelMapEntriesForWriting { get; }
+		/// <summary>
+		/// Entries of log level map.
+		/// </summary>
+		public IList<KeyValuePair<LogLevel, string>> LogLevelMapEntriesForWriting { get; }
 
 
-		// Log patterns.
-		IList<LogPattern> LogPatterns { get; }
+		/// <summary>
+		/// Log patterns.
+		/// </summary>
+		public IList<LogPattern> LogPatterns { get; }
 
 
 		/// <summary>
@@ -1184,20 +1190,28 @@ namespace CarinaStudio.ULogViewer.Controls
 		} 
 
 
-		// Show dialog to manage script log data source providers.
-		void ShowScriptLogDataSourceProvidersDialog() =>
+		/// <summary>
+		/// Show dialog to manage script log data source providers.
+		/// </summary>
+		public void ShowScriptLogDataSourceProvidersDialog() =>
 			_ = new ScriptLogDataSourceProvidersDialog().ShowDialog(this);
 
 
-		// List of time span format to read logs.
-		IList<string> TimeSpanFormatsForReading { get; }
+		/// <summary>
+		/// List of time span format to read logs.
+		/// </summary>
+		public IList<string> TimeSpanFormatsForReading { get; }
 
 
-		// List of timestamp format to read logs.
-		IList<string> TimestampFormatsForReading { get; }
+		/// <summary>
+		/// List of timestamp format to read logs.
+		/// </summary>
+		public IList<string> TimestampFormatsForReading { get; }
 
 
-		// List of visible log properties.
-		IList<LogProperty> VisibleLogProperties { get; }
+		/// <summary>
+		/// List of visible log properties.
+		/// </summary>
+		public IList<LogProperty> VisibleLogProperties { get; }
 	}
 }

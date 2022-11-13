@@ -57,7 +57,7 @@
 				</Panel>
 			</StackPanel>
 			<ListBox Classes="Dialog_ListBox" Height="{DynamicResource Double/RegexEditorDialog.CapturedGroups.Height}" IsVisible="{Binding $parent[Window].IsCapturingGroupsEnabled}" Items="{Binding $parent[Window].CapturedGroups}">
-				<ListBox.DataTemplates>
+				<ListBox.ItemTemplate>
 					<DataTemplate>
 						<TextBlock>
 							<TextBlock.Text>
@@ -68,7 +68,7 @@
 							</TextBlock.Text>
 						</TextBlock>
 					</DataTemplate>
-				</ListBox.DataTemplates>
+				</ListBox.ItemTemplate>
 			</ListBox>
 			<TextBlock Classes="Dialog_TextBlock_Description" IsVisible="{Binding !$parent[Window].IsCapturingGroupsEnabled}" Text="{DynamicResource String/RegexEditorDialog.CapturingGroupsDisabled}"/>
 			

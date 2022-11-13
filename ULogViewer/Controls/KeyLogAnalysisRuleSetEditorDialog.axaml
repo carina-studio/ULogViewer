@@ -65,21 +65,21 @@
 								<TextBlock Classes="ListBoxItem_TextBlock" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="1" Margin="{StaticResource Thickness/KeyLogAnalysisRuleSetEditorDialog.RuleListBox.Item.Message.Margin}" Opacity="{StaticResource Double/KeyLogAnalysisRuleSetEditorDialog.RuleListBox.Item.Message.Opacity}" Text="{Binding Message}"/>
 								<Border Classes="InPlaceAction_Reserved"/>
 								<StackPanel Grid.Column="2" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
-									<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveRule}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
+									<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveRuleCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
 										<asControls:Image Classes="InPlaceAction_Icon">
 											<DrawingImage>
 												<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
 											</DrawingImage>
 										</asControls:Image>
 									</Button>
-									<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].CopyRule}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Copy}">
+									<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].CopyRuleCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Copy}">
 										<asControls:Image Classes="InPlaceAction_Icon">
 											<DrawingImage>
 												<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Copy}"/>
 											</DrawingImage>
 										</asControls:Image>
 									</Button>
-									<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditRule}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
+									<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditRuleCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
 										<asControls:Image Classes="InPlaceAction_Icon">
 											<DrawingImage>
 												<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit}"/>

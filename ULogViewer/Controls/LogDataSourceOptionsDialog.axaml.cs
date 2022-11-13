@@ -702,7 +702,7 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 			});
 		})))?.Let(it =>
 		{
-			if (it.Count != 0 || !it[0].TryGetUri(out var uri))
+			if (it.Count != 1 || !it[0].TryGetUri(out var uri))
 				return null;
 			return uri.LocalPath;
 		});

@@ -18,6 +18,7 @@ using CarinaStudio.Threading;
 using CarinaStudio.VisualTree;
 using CarinaStudio.ULogViewer.Controls;
 using CarinaStudio.ULogViewer.ViewModels;
+using CarinaStudio.Windows.Input;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -25,6 +26,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Windows.Input;
 
 namespace CarinaStudio.ULogViewer
 {
@@ -38,7 +40,7 @@ namespace CarinaStudio.ULogViewer
 
 
 		// Static fields.
-		static readonly AvaloniaProperty<bool> HasMultipleSessionsProperty = AvaloniaProperty.Register<MainWindow, bool>("HasMultipleSessions");
+		static readonly StyledProperty<bool> HasMultipleSessionsProperty = AvaloniaProperty.Register<MainWindow, bool>("HasMultipleSessions");
 		static readonly SettingKey<bool> IsUsingAddTabButtonToSelectLogProfileTutorialShownKey = new("MainWindow.IsUsingAddTabButtonToSelectLogProfileTutorialShown");
 		static MainWindow? MainWindowToActivateProVersion;
 
@@ -61,6 +63,12 @@ namespace CarinaStudio.ULogViewer
 		/// </summary>
 		public MainWindow()
 		{
+			// create commands
+			this.ClearCustomSessionTitleCommand = new Command<TabItem>(this.ClearCustomSessionTitle);
+			this.CloseSessionTabItemCommand = new Command<TabItem>(this.CloseSessionTabItem);
+			this.MoveSessionToNewWorkspaceCommand = new Command<TabItem>(this.MoveSessionToNewWorkspace);
+			this.SetCustomSessionTitleCommand = new Command<TabItem>(this.SetCustomSessionTitle);
+
 			// initialize.
 			AvaloniaXamlLoader.Load(this);
 			if (Platform.IsMacOS)
@@ -201,11 +209,9 @@ namespace CarinaStudio.ULogViewer
 			(this.tabControl.SelectedItem as TabItem)?.Let(it => this.ClearCustomSessionTitle(it));
 
 
-		/// <summary>
-		/// Reset title of session.
-		/// </summary>
+		// Reset title of session.
 #pragma warning disable CA1822
-		public void ClearCustomSessionTitle(TabItem tabItem)
+		void ClearCustomSessionTitle(TabItem tabItem)
 		{
 			if (tabItem.DataContext is Session session)
 				session.CustomTitle = null;
@@ -213,8 +219,14 @@ namespace CarinaStudio.ULogViewer
 #pragma warning restore CA1822
 
 
+		/// <summary>
+		/// Command to reset title of session.
+		/// </summary>
+		public ICommand ClearCustomSessionTitleCommand { get; }
+
+
 		// Close current session tab item.
-		void CloseCurrentSessionTabItem() =>
+		public void CloseCurrentSessionTabItem() =>
 			(this.tabControl.SelectedItem as TabItem)?.Let(it => this.CloseSessionTabItem(it));
 
 
@@ -247,20 +259,31 @@ namespace CarinaStudio.ULogViewer
 
 
 		/// <summary>
+		/// Command to close session tab.
+		/// </summary>
+		public ICommand CloseSessionTabItemCommand { get; }
+
+
+		/// <summary>
 		/// Show new main window.
 		/// </summary>
 		public void CreateMainWindow() =>
 			this.Application.ShowMainWindowAsync();
 
 
-		// Create new TabItem for given session.
-		void CreateSessionTabItem()
+		/// <summary>
+		/// Create new TabItem for given session.
+		/// </summary>
+		public void CreateSessionTabItem()
 		{
 			if (this.DataContext is not Workspace workspace)
 				return;
 			workspace.ActiveSession = workspace.CreateAndAttachSession();
 			this.selectAndSetLogProfileAction.Schedule();
 		}
+
+
+		// Create new TabItem for given session.
 		TabItem CreateSessionTabItem(Session session)
 		{
 			// create header
@@ -434,6 +457,12 @@ namespace CarinaStudio.ULogViewer
 			if (emptySession != null)
 				newWorkspace.DetachAndCloseSession(emptySession);
 		}
+
+
+		/// <summary>
+		/// Command to move given session to new workspace.
+		/// </summary>
+		public ICommand MoveSessionToNewWorkspaceCommand { get; }
 
 
 		// Called when property of active session changed.
@@ -1007,6 +1036,13 @@ namespace CarinaStudio.ULogViewer
 			// set title
 			session.CustomTitle = title;
 		}
+
+
+		/// <summary>
+		/// Command to set title of session.
+		/// </summary>
+		/// 
+		public ICommand SetCustomSessionTitleCommand { get; }
 
 
 		/// <summary>
