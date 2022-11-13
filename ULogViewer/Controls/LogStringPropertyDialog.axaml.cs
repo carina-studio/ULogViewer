@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using AvaloniaEdit;
@@ -203,11 +204,15 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.SetValue<string>(LogPropertyDisplayNameProperty, LogPropertyNameConverter.Default.Convert(nameof(Log.Message)));
 			this.AddHandler(KeyDownEvent, (_, e) =>
 			{
-				if (e.Key == Avalonia.Input.Key.F && (e.KeyModifiers & Avalonia.Input.KeyModifiers.Control) != 0)
+				if (e.Key == Key.F)
 				{
-					this.findTextTextBox.Focus();
-					this.findTextTextBox.SelectAll();
-					e.Handled = true;
+					var modifier = Platform.IsMacOS ? KeyModifiers.Meta : KeyModifiers.Control;
+					if ((e.KeyModifiers & modifier) != 0)
+					{
+						this.findTextTextBox.Focus();
+						this.findTextTextBox.SelectAll();
+						e.Handled = true;
+					}
 				}
 			}, Avalonia.Interactivity.RoutingStrategies.Tunnel);
 			this.ApplySystemAccentColor();
