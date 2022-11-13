@@ -1,8 +1,7 @@
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using Avalonia.Platform.Storage;
 using CarinaStudio.AppSuite.Controls;
-using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.DataSources;
@@ -129,14 +128,19 @@ partial class ScriptLogDataSourceProvidersDialog : CarinaStudio.Controls.Dialog<
 	public async void ExportProvider(ScriptLogDataSourceProvider provider)
 	{
 		// select file
-		var fileName = await new SaveFileDialog().Also(dialog =>
+		var fileName = (await this.StorageProvider.SaveFilePickerAsync(new()
 		{
-			dialog.Filters?.Add(new FileDialogFilter().Also(filter =>
+			FileTypeChoices = new FilePickerFileType[]
 			{
-				filter.Extensions.Add("json");
-				filter.Name = this.Application.GetString("FileFormat.Json");
-			}));
-		}).ShowAsync(this);
+				new FilePickerFileType(this.Application.GetStringNonNull("FileFormat.Json"))
+				{
+					Patterns = new string[] { "*.json" }
+				}
+			}
+		}))?.Let(it =>
+		{
+			return it.TryGetUri(out var uri) ? uri.LocalPath : null;
+		});
 		if (string.IsNullOrEmpty(fileName))
 			return;
 		
@@ -180,31 +184,37 @@ partial class ScriptLogDataSourceProvidersDialog : CarinaStudio.Controls.Dialog<
 		}
 
 		// select file
-		var fileNames = await new OpenFileDialog().Also(dialog =>
+		var fileName = (await this.StorageProvider.OpenFilePickerAsync(new()
 		{
-			dialog.Filters?.Add(new FileDialogFilter().Also(filter =>
+			FileTypeFilter = new FilePickerFileType[]
 			{
-				filter.Extensions.Add("json");
-				filter.Name = this.Application.GetString("FileFormat.Json");
-			}));
-		}).ShowAsync(this);
-		if (fileNames == null || fileNames.IsEmpty())
+				new FilePickerFileType(this.Application.GetStringNonNull("FileFormat.Json"))
+				{
+					Patterns = new string[] { "*.json" }
+				}
+			}
+		}))?.Let(it =>
+		{
+			return it.Count == 1 && it[0].TryGetUri(out var uri)
+				? uri.LocalPath : null;
+		});
+		if (string.IsNullOrEmpty(fileName))
 			return;
 		
 		// load provider
 		var provider = await Global.RunOrDefaultAsync(async () =>
 		{
-			return await ScriptLogDataSourceProvider.LoadAsync(fileNames[0]);
+			return await ScriptLogDataSourceProvider.LoadAsync(fileName);
 		}, 
 		ex =>
 		{
-			this.Logger.LogError(ex, "Failed to import script log data source provider from '{fileName}'", fileNames[0]);
+			this.Logger.LogError(ex, "Failed to import script log data source provider from '{fileName}'", fileName);
 			_ = new MessageDialog()
 			{
 				Icon = MessageDialogIcon.Error,
 				Message = new FormattedString().Also(it =>
 				{
-					it.Arg1 = fileNames[0];
+					it.Arg1 = fileName;
 					it.Bind(FormattedString.FormatProperty, this.GetResourceObservable("String/ScriptLogDataSourceProvidersDialog.FailedToImportProvider"));
 				})
 			}.ShowDialog(this);

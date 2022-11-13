@@ -1,8 +1,7 @@
-using System.Windows.Input;
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using Avalonia.Platform.Storage;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.AppSuite.Data;
 using CarinaStudio.AppSuite.Product;
@@ -19,6 +18,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace CarinaStudio.ULogViewer.Controls
 {
@@ -162,14 +162,19 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 
 			// select file
-			var fileName = await new SaveFileDialog().Also(it =>
+			var fileName = (await this.StorageProvider.SaveFilePickerAsync(new()
 			{
-				it.Filters!.Add(new FileDialogFilter().Also(filter =>
+				FileTypeChoices = new FilePickerFileType[]
 				{
-					filter.Extensions.Add("json");
-					filter.Name = this.Application.GetString("FileFormat.Json");
-				}));
-			}).ShowAsync(this);
+					new FilePickerFileType(this.Application.GetStringNonNull("FileFormat.Json"))
+					{
+						Patterns = new string[] { "*.json" }
+					}
+				}
+			}))?.Let(it =>
+			{
+				return it.TryGetUri(out var uri) ? uri.LocalPath : null;
+			});
 			if (string.IsNullOrEmpty(fileName))
 				return;
 
@@ -226,19 +231,24 @@ namespace CarinaStudio.ULogViewer.Controls
 		public async void ImportLogProfile()
 		{
 			// select file
-			var fileNames = await new OpenFileDialog().Also(it =>
+			var fileName = (await this.StorageProvider.OpenFilePickerAsync(new()
 			{
-				it.Filters!.Add(new FileDialogFilter().Also(filter =>
+				FileTypeFilter = new FilePickerFileType[]
 				{
-					filter.Extensions.Add("json");
-					filter.Name = this.Application.GetString("FileFormat.Json");
-				}));
-			}).ShowAsync(this);
-			if (fileNames == null || fileNames.IsEmpty())
+					new FilePickerFileType(this.Application.GetStringNonNull("FileFormat.Json"))
+					{
+						Patterns = new string[] { "*.json" }
+					}
+				}
+			}))?.Let(it =>
+			{
+				return it.Count == 1 && it[0].TryGetUri(out var uri)
+					? uri.LocalPath : null;
+			});
+			if (string.IsNullOrEmpty(fileName))
 				return;
 
 			// load log profile
-			var fileName = fileNames[0];
 			var logProfile = (LogProfile?)null;
 			try
 			{
