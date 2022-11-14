@@ -71,28 +71,24 @@
 		<AvaloniaResource Include="ULogViewer.ico" />
 	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Avalonia.AvaloniaEdit" Version="11.0.0-preview1" />
-    <PackageReference Include="CarinaStudio.AppSuite.Core" Version="2.1.2.1114-preview" />
-    <PackageReference Include="Dotnet.Bundle" Version="0.9.13" />
-    <PackageReference Include="Microsoft.Win32.Registry" Version="6.0.0-preview.5.21301.5" />
-    <PackageReference Include="MySql.Data" Version="8.0.29" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="System.Data.Common" Version="4.3.0" />
-    <PackageReference Include="System.Data.SQLite" Version="1.0.116" />
-    <PackageReference Include="System.Diagnostics.EventLog" Version="6.0.0" />
-    <PackageReference Include="System.Net.Http" Version="4.3.4" />
-    <PackageReference Include="System.Runtime.InteropServices.WindowsRuntime" Version="4.3.0" />
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="7.0.0-rc.2.22472.3" />
-  </ItemGroup>
-
-  <ItemGroup>
-		<ProjectReference Include="..\TextShellHost\TextShellHost.csproj" />
+	<ItemGroup>
+		<PackageReference Include="Avalonia.AvaloniaEdit" Version="11.0.0-preview1" />
+		<PackageReference Include="CarinaStudio.AppSuite.Core" Version="2.1.2.1114-preview" />
+		<PackageReference Include="Dotnet.Bundle" Version="0.9.13" />
+		<PackageReference Include="Microsoft.Win32.Registry" Version="6.0.0-preview.5.21301.5" />
+		<PackageReference Include="MySql.Data" Version="8.0.31" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+		<PackageReference Include="System.Data.Common" Version="4.3.0" />
+		<PackageReference Include="System.Data.SQLite" Version="1.0.116" />
+		<PackageReference Include="System.Diagnostics.EventLog" Version="6.0.0" />
+		<PackageReference Include="System.Net.Http" Version="4.3.4" />
+		<PackageReference Include="System.Runtime.InteropServices.WindowsRuntime" Version="4.3.0" />
+		<PackageReference Include="System.Text.Encoding.CodePages" Version="7.0.0-rc.2.22472.3" />
 	</ItemGroup>
 
-  <ItemGroup Condition="$(TargetFramework.Contains('windows'))">
-    <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\TextShellHost\TextShellHost.csproj" />
+	</ItemGroup>
 
 	<ItemGroup Condition="$(TargetFramework.Contains('windows'))">
 		<PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
@@ -125,46 +121,46 @@
 		</AssemblyAttribute>
 	</ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Include="ChangeList.json" />
-    <EmbeddedResource Include="ChangeList-zh-CN.json" />
-    <EmbeddedResource Include="ChangeList-zh-TW.json" />
-    <EmbeddedResource Include="Cryptography/AesIV" />
-    <EmbeddedResource Include="Cryptography/AesKey" />
-    <EmbeddedResource Include="Logs/Profiles/BuiltIn/AndroidDeviceEventLog.json" />
-    <EmbeddedResource Include="Logs/Profiles/BuiltIn/AndroidDeviceLog.json" />
-    <EmbeddedResource Include="Logs/Profiles/BuiltIn/AndroidDeviceTrace.json" />
-    <EmbeddedResource Include="Logs/Profiles/BuiltIn/AndroidFileLog.json" />
-    <EmbeddedResource Include="Logs/Profiles/BuiltIn/AndroidKernelLogFile.json" />
-    <EmbeddedResource Include="Logs/Profiles/BuiltIn/AndroidTraceFile.json" />
-    <EmbeddedResource Include="Logs/Profiles/BuiltIn/ApacheAccessLogFile.json" />
-    <EmbeddedResource Include="Logs/Profiles/BuiltIn/ApacheErrorLogFile.json" />
-    <EmbeddedResource Include="Logs/Profiles/BuiltIn/AppleDevicesLog.json" />
-    <EmbeddedResource Include="Logs/Profiles/BuiltIn/AzureWebappLogFile.json" />
-    <EmbeddedResource Include="Logs/Profiles/BuiltIn/BootedAppleDeviceSimulatorsRealtimeLog.json" />
-    <EmbeddedResource Include="Logs/Profiles/BuiltIn/DummyLog.json" />
-    <EmbeddedResource Include="Logs/Profiles/BuiltIn/GitLog.json" />
-    <EmbeddedResource Include="Logs/Profiles/BuiltIn/GitLogSimple.json" />
-    <EmbeddedResource Include="Logs/Profiles/BuiltIn/LinuxKernelLog.json" />
-    <EmbeddedResource Include="Logs/Profiles/BuiltIn/LinuxKernelLogFile.json" />
-    <EmbeddedResource Include="Logs/Profiles/BuiltIn/LinuxRealtimeLog.json" />
-    <EmbeddedResource Include="Logs/Profiles/BuiltIn/LinuxSystemLog.json" />
-    <EmbeddedResource Include="Logs/Profiles/BuiltIn/LinuxSystemLogFile.json" />
-    <EmbeddedResource Include="Logs/Profiles/BuiltIn/MacOSInstallationLog.json" />
-    <EmbeddedResource Include="Logs/Profiles/BuiltIn/MacOSRealtimeLog.json" />
-    <EmbeddedResource Include="Logs/Profiles/BuiltIn/MacOSSystemLogFile.json" />
-    <EmbeddedResource Include="Logs/Profiles/BuiltIn/RawFile.json" />
-    <EmbeddedResource Include="Logs/Profiles/BuiltIn/RawHttp.json" />
-    <EmbeddedResource Include="Logs/Profiles/BuiltIn/RawTcpServer.json" />
-    <EmbeddedResource Include="Logs/Profiles/BuiltIn/TcpNLog.json" />
-	<EmbeddedResource Include="Logs/Profiles/BuiltIn/SpecificAppleDeviceLog.json" />
-    <EmbeddedResource Include="Logs/Profiles/BuiltIn/SpecificAppleDeviceSimulatorLog.json" />
-    <EmbeddedResource Include="Logs/Profiles/BuiltIn/ULogViewerLog.json" />
-    <EmbeddedResource Include="Logs/Profiles/BuiltIn/ULogViewerMemoryLog.json" />
-    <EmbeddedResource Include="Logs/Profiles/BuiltIn/WindowsApplicationEventLogs.json" />
-    <EmbeddedResource Include="Logs/Profiles/BuiltIn/WindowsSecurityEventLogs.json" />
-    <EmbeddedResource Include="Logs/Profiles/BuiltIn/WindowsSetupEventLogs.json" />
-    <EmbeddedResource Include="Logs/Profiles/BuiltIn/WindowsSystemEventLogs.json" />
-  </ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="ChangeList.json" />
+		<EmbeddedResource Include="ChangeList-zh-CN.json" />
+		<EmbeddedResource Include="ChangeList-zh-TW.json" />
+		<EmbeddedResource Include="Cryptography/AesIV" />
+		<EmbeddedResource Include="Cryptography/AesKey" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/AndroidDeviceEventLog.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/AndroidDeviceLog.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/AndroidDeviceTrace.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/AndroidFileLog.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/AndroidKernelLogFile.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/AndroidTraceFile.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/ApacheAccessLogFile.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/ApacheErrorLogFile.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/AppleDevicesLog.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/AzureWebappLogFile.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/BootedAppleDeviceSimulatorsRealtimeLog.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/DummyLog.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/GitLog.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/GitLogSimple.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/LinuxKernelLog.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/LinuxKernelLogFile.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/LinuxRealtimeLog.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/LinuxSystemLog.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/LinuxSystemLogFile.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/MacOSInstallationLog.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/MacOSRealtimeLog.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/MacOSSystemLogFile.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/RawFile.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/RawHttp.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/RawTcpServer.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/TcpNLog.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/SpecificAppleDeviceLog.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/SpecificAppleDeviceSimulatorLog.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/ULogViewerLog.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/ULogViewerMemoryLog.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/WindowsApplicationEventLogs.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/WindowsSecurityEventLogs.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/WindowsSetupEventLogs.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/WindowsSystemEventLogs.json" />
+	</ItemGroup>
 
 </Project>
