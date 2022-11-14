@@ -519,8 +519,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 							case "Name":
 								continue;
 							case nameof(LogDataSourceOptions.Password):
-								if (crypto == null)
-									crypto = new Crypto(this.Application);
+								crypto ??= new Crypto(this.Application);
 								options.Password = crypto.Decrypt(jsonProperty.Value.GetString().AsNonNull());
 								break;
 							case nameof(LogDataSourceOptions.QueryString):
@@ -544,8 +543,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 								options.Uri = new Uri(jsonProperty.Value.GetString().AsNonNull());
 								break;
 							case nameof(LogDataSourceOptions.UserName):
-								if (crypto == null)
-									crypto = new Crypto(this.Application);
+								crypto ??= new Crypto(this.Application);
 								options.UserName = crypto.Decrypt(jsonProperty.Value.GetString().AsNonNull());
 								break;
 							case nameof(LogDataSourceOptions.WorkingDirectory):

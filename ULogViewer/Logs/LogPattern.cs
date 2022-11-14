@@ -70,13 +70,13 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <summary>
 		/// Equality operator.
 		/// </summary>
-		public static bool operator ==(LogPattern? x, LogPattern? y) => x?.Equals(y) ?? object.ReferenceEquals(y, null);
+		public static bool operator ==(LogPattern? x, LogPattern? y) => x?.Equals(y) ?? y is null;
 
 
 		/// <summary>
 		/// Inequality operator.
 		/// </summary>
-		public static bool operator !=(LogPattern? x, LogPattern? y) => !(x?.Equals(y) ?? object.ReferenceEquals(y, null));
+		public static bool operator !=(LogPattern? x, LogPattern? y) => !(x?.Equals(y) ?? y is null);
 
 
 		/// <summary>

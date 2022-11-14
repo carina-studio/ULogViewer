@@ -9,7 +9,6 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,15 +20,11 @@ namespace CarinaStudio.ULogViewer.Logs
 	/// </summary>
 	class RawLogWriter : BaseLogWriter
 	{
-		// Static fields.
-		static readonly string newLineString = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "\r\n" : "\n";
-
-
 		// Fields.
-		IList<string> logFormats = new string[0];
-		readonly Dictionary<Log, int> lineNumbers = new Dictionary<Log, int>();
-		readonly HashSet<Log> logsToGetLineNumber = new HashSet<Log>();
-		readonly Dictionary<LogLevel, string> logLevelMap = new Dictionary<LogLevel, string>();
+		IList<string> logFormats = Array.Empty<string>();
+		readonly Dictionary<Log, int> lineNumbers = new();
+		readonly HashSet<Log> logsToGetLineNumber = new();
+		readonly Dictionary<LogLevel, string> logLevelMap = new();
 		LogStringEncoding logStringEncoding = LogStringEncoding.Plane;
 		readonly IDictionary<LogLevel, string> readOnlyLogLevelMap;
 		readonly ISet<Log> readOnlyLogsToGetLineNumbers;
@@ -403,7 +398,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			}
 
 			// start writing
-			await Task.Run(() => this.WriteLogs(writer, formatters, logPropertyGetters, cancellationToken));
+			await Task.Run(() => this.WriteLogs(writer, formatters, logPropertyGetters, cancellationToken), CancellationToken.None);
 		}
 	}
 }

@@ -37,17 +37,17 @@ namespace CarinaStudio.ULogViewer.Logs
 		bool isContinuousReading;
 		bool isRestarting;
 		bool isWaitingForDataSource;
-		readonly Dictionary<string, LogLevel> logLevelMap = new Dictionary<string, LogLevel>();
-		IList<LogPattern> logPatterns = new LogPattern[0];
-		readonly ObservableList<Log> logs = new ObservableList<Log>();
+		readonly Dictionary<string, LogLevel> logLevelMap = new();
+		IList<LogPattern> logPatterns = Array.Empty<LogPattern>();
+		readonly ObservableList<Log> logs = new();
 		CancellationTokenSource? logsReadingCancellationTokenSource;
-		object logsReadingToken = new object();
+		object logsReadingToken = new();
 		LogStringEncoding logStringEncoding = LogStringEncoding.Plane;
 		int maxLogCount = -1;
 		CancellationTokenSource? openingReaderCancellationSource;
-		readonly List<Log> pendingLogs = new List<Log>();
+		readonly List<Log> pendingLogs = new ();
 		object? pendingLogsReadingToken;
-		readonly SingleThreadSynchronizationContext pendingLogsSyncContext = new SingleThreadSynchronizationContext();
+		readonly SingleThreadSynchronizationContext pendingLogsSyncContext = new();
 		LogReadingPrecondition precondition;
 		string? rawLogLevelPropertyName;
 		readonly IDictionary<string, LogLevel> readOnlyLogLevelMap;
@@ -58,10 +58,10 @@ namespace CarinaStudio.ULogViewer.Logs
 		LogReaderState stateBeforeClearingLogs;
 		CultureInfo timeSpanCultureInfo = defaultTimestampCultureInfo;
 		LogTimeSpanEncoding timeSpanEncoding = LogTimeSpanEncoding.Custom;
-		IList<string> timeSpanFormats = new string[0];
+		IList<string> timeSpanFormats = Array.Empty<string>();
 		CultureInfo timestampCultureInfo = defaultTimestampCultureInfo;
 		LogTimestampEncoding timestampEncoding = LogTimestampEncoding.Custom;
-		IList<string> timestampFormats = new string[0];
+		IList<string> timestampFormats = Array.Empty<string>();
 		int? updateInterval;
 
 
@@ -123,7 +123,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			// attach to log list
 			this.logs.CollectionChanged += (_, e) => this.LogsChanged?.Invoke(this, e);
 
-			this.Logger.LogDebug($"Create with data source: {dataSource}");
+			this.Logger.LogDebug("Create with data source: {dataSource}", dataSource);
 		}
 
 
@@ -155,7 +155,7 @@ namespace CarinaStudio.ULogViewer.Logs
 
 			// change state
 			this.state = state;
-			this.Logger.LogDebug($"Change state from {prevState} to {state}");
+			this.Logger.LogDebug("Change state from {prevState} to {state}", prevState, state);
 			this.OnPropertyChanged(nameof(State));
 
 			// update data source waiting state
@@ -309,7 +309,7 @@ namespace CarinaStudio.ULogViewer.Logs
 				this.VerifyAccess();
 				this.VerifyDisposed();
 				if (value == 0)
-					throw new ArgumentOutOfRangeException();
+					throw new ArgumentOutOfRangeException(nameof(value));
 				if (this.dropLogCount == value)
 					return;
 				this.dropLogCount = value;
@@ -492,7 +492,7 @@ namespace CarinaStudio.ULogViewer.Logs
 				this.VerifyAccess();
 				this.VerifyDisposed();
 				if (value == 0)
-					throw new ArgumentOutOfRangeException();
+					throw new ArgumentOutOfRangeException(nameof(value));
 				if (this.maxLogCount == value)
 					return;
 				this.maxLogCount = value;
@@ -548,7 +548,7 @@ namespace CarinaStudio.ULogViewer.Logs
 						case LogReaderState.Paused:
 							if (this.DataSource.IsErrorState())
 							{
-								this.Logger.LogWarning($"Data source state changed to {state}, cancel reading logs");
+								this.Logger.LogWarning("Data source state changed to {state}, cancel reading logs", state);
 								this.OnLogsReadingCompleted(null);
 							}
 							break;
@@ -630,7 +630,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			if (this.IsContinuousReading)
 			{
 				var readingToken = (object?)null;
-				var logs = new Log[0];
+				var logs = Array.Empty<Log>();
 				this.pendingLogsSyncContext.Send(() =>
 				{
 					this.flushPendingLogsAction.Cancel();
@@ -649,7 +649,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			{
 				if (this.DataSource.IsErrorState())
 				{
-					this.Logger.LogError($"Data source state is {this.DataSource.State} when completing reading logs");
+					this.Logger.LogError("Data source state is {state} when completing reading logs", this.DataSource.State);
 					this.ChangeState(LogReaderState.DataSourceError);
 				}
 				else if (ex == null)
@@ -663,7 +663,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			var delay = this.restartReadingDelay;
 			if (delay.TotalMilliseconds > 0)
 			{
-				this.Logger.LogWarning($"Restart reading logs {(int)delay.TotalMilliseconds} ms later");
+				this.Logger.LogWarning("Restart reading logs {ms} ms later", (int)delay.TotalMilliseconds);
 				this.startReadingLogsAction.Reschedule(delay);
 			}
 			else
@@ -708,7 +708,7 @@ namespace CarinaStudio.ULogViewer.Logs
 					}
 					return this.ChangeState(LogReaderState.Paused);
 				default:
-					this.Logger.LogWarning($"Cannot pause logs reading when state is {this.state}");
+					this.Logger.LogWarning("Cannot pause logs reading when state is {state}", this.state);
 					return false;
 			}
 		}
@@ -754,7 +754,9 @@ namespace CarinaStudio.ULogViewer.Logs
 		// Read single line of log.
 		void ReadLog(LogBuilder logBuilder, Match match, StringPool stringPool, string[]? timeSpanFormats, string[]? timestampFormats)
 		{
+#pragma warning disable IDE0220
 			foreach (Group group in match.Groups)
+#pragma warning restore IDE0220
 			{
 				if (!group.Success)
 					continue;
@@ -814,7 +816,7 @@ namespace CarinaStudio.ULogViewer.Logs
 									}
 								}
 								if (!parsed && this.Application.IsDebugMode)
-									this.Logger.LogWarning($"Unable to parse '{value}' as date time with custom formats: {timestampFormats.ContentToString()}");
+									this.Logger.LogWarning("Unable to parse '{value}' as date time with custom formats: {timestampFormats}", value, timestampFormats.ContentToString());
 							}
 							else
 								logBuilder.Set(name, value);
@@ -1103,7 +1105,7 @@ namespace CarinaStudio.ULogViewer.Logs
 							else
 							{
 #if DEBUG
-								this.Logger.LogTrace($"'{logLine}' Cannot be matched by pattern '{logPattern.Regex}'");
+								this.Logger.LogTrace("'{logLine}' Cannot be matched by pattern '{logPattern}'", logLine, logPattern.Regex);
 #endif
 							}
 							ReadNextLine();
@@ -1209,7 +1211,7 @@ namespace CarinaStudio.ULogViewer.Logs
 								if (prevLogPattern != logPattern)
 								{
 #if DEBUG
-									this.Logger.LogTrace($"'{logLine}' Cannot be matched as 1st line of repeatable pattern '{logPattern.Regex}'");
+									this.Logger.LogTrace("'{logLine}' Cannot be matched as 1st line of repeatable pattern '{logPattern}'", logLine, logPattern.Regex);
 #endif
 
 									// drop log
@@ -1254,7 +1256,7 @@ namespace CarinaStudio.ULogViewer.Logs
 							else
 							{
 #if DEBUG
-								this.Logger.LogTrace($"'{logLine}' cannot be matched by pattern '{logPattern.Regex}'");
+								this.Logger.LogTrace("'{logLine}' cannot be matched by pattern '{logPattern}'", logLine, logPattern.Regex);
 #endif
 
 								// drop log
@@ -1366,7 +1368,7 @@ namespace CarinaStudio.ULogViewer.Logs
 				if (this.restartReadingDelay == value)
 					return;
 				if (value.TotalMilliseconds < 0)
-					throw new ArgumentOutOfRangeException();
+					throw new ArgumentOutOfRangeException(nameof(value));
 				this.restartReadingDelay = value;
 				if (this.startReadingLogsAction.IsScheduled)
 					this.startReadingLogsAction.Reschedule(value);
@@ -1392,7 +1394,7 @@ namespace CarinaStudio.ULogViewer.Logs
 				case LogReaderState.Paused:
 					return this.ChangeState(LogReaderState.ReadingLogs);
 				default:
-					this.Logger.LogWarning($"Cannot resume logs reading when state is {this.state}");
+					this.Logger.LogWarning("Cannot resume logs reading when state is {state}", this.state);
 					return false;
 			}
 		}
@@ -1443,7 +1445,7 @@ namespace CarinaStudio.ULogViewer.Logs
 				case LogReaderState.StartingWhenPaused:
 					break;
 				default:
-					this.Logger.LogError($"Cannot start readong logs when state is {this.state}");
+					this.Logger.LogError("Cannot start readong logs when state is {state}", this.state);
 					return;
 			}
 
@@ -1452,7 +1454,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			{
 				if (this.DataSource.IsErrorState())
 				{
-					this.Logger.LogError($"Data source state is {this.DataSource.State} when starting reading logs");
+					this.Logger.LogError("Data source state is {state} when starting reading logs", this.DataSource.State);
 					this.ChangeState(LogReaderState.DataSourceError);
 				}
 				else
@@ -1503,7 +1505,7 @@ namespace CarinaStudio.ULogViewer.Logs
 					}
 					break;
 				default:
-					this.Logger.LogWarning($"State has been changed to {this.state} when opening reader");
+					this.Logger.LogWarning("State has been changed to {state} when opening reader", this.state);
 					Global.RunWithoutErrorAsync(() => reader?.Close());
 					return;
 			}
@@ -1642,7 +1644,7 @@ namespace CarinaStudio.ULogViewer.Logs
 				this.VerifyAccess();
 				this.VerifyDisposed();
 				if (value.GetValueOrDefault() < 0)
-					throw new ArgumentOutOfRangeException();
+					throw new ArgumentOutOfRangeException(nameof(value));
 				if (this.updateInterval == value)
 					return;
 				this.updateInterval = value;

@@ -19,8 +19,8 @@ namespace CarinaStudio.ULogViewer.Logs
 	class JsonLogWriter : BaseLogWriter
 	{
 		// Fields.
-		readonly Dictionary<LogLevel, string> logLevelMap = new Dictionary<LogLevel, string>();
-		readonly Dictionary<string, string> logPropertyMap = new Dictionary<string, string>();
+		readonly Dictionary<LogLevel, string> logLevelMap = new();
+		readonly Dictionary<string, string> logPropertyMap = new();
 		readonly IDictionary<LogLevel, string> readOnlyLogLevelMap;
 		readonly IDictionary<string, string> readOnlyLogPropertyMap;
 		CultureInfo timeSpanCultureInfo = CultureInfo.GetCultureInfo("en-US");
@@ -247,7 +247,7 @@ namespace CarinaStudio.ULogViewer.Logs
 					if (!string.IsNullOrEmpty(tempFilePath))
 						File.Delete(tempFilePath);
 				}
-			});
+			}, CancellationToken.None);
 		}
 	}
 }

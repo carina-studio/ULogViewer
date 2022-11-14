@@ -21,9 +21,9 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		// Fields.
-		IList<Log> logs = new Log[0];
+		IList<Log> logs = Array.Empty<Log>();
 		LogWriterState state = LogWriterState.Preparing;
-		CancellationTokenSource writingLogsCancellationTokenSource = new CancellationTokenSource();
+		readonly CancellationTokenSource writingLogsCancellationTokenSource = new();
 
 
 		/// <summary>
@@ -61,7 +61,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			if (prevState == state)
 				return true;
 			this.state = state;
-			this.Logger.LogDebug($"Change state from {prevState} to {state}");
+			this.Logger.LogDebug("Change state from {prevState} to {state}", prevState, state);
 			this.OnPropertyChanged(nameof(State));
 			return (this.state == state);
 		}
@@ -111,7 +111,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			{
 				this.VerifyAccess();
 				this.VerifyPreparing();
-				this.logs = value.IsNotEmpty() ? new List<Log>(value).AsReadOnly() : new Log[0];
+				this.logs = value.IsNotEmpty() ? new List<Log>(value).AsReadOnly() : Array.Empty<Log>();
 				this.OnPropertyChanged(nameof(Logs));
 			}
 		}
@@ -179,7 +179,7 @@ namespace CarinaStudio.ULogViewer.Logs
 					break;
 				case LogDataOutputState.TargetNotFound:
 				case LogDataOutputState.UnclassifiedError:
-					this.Logger.LogError($"Unable to start writing logs because of data output state is {this.DataOutput.State}");
+					this.Logger.LogError("Unable to start writing logs because of data output state is {state}", this.DataOutput.State);
 					this.ChangeState(LogWriterState.DataOutputError);
 					return;
 				default:

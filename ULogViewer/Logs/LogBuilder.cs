@@ -10,7 +10,7 @@ namespace CarinaStudio.ULogViewer.Logs
 	class LogBuilder
 	{
 		// Fields.
-		readonly Dictionary<string, string> properties = new Dictionary<string, string>();
+		readonly Dictionary<string, string> properties = new();
 
 
 		/// <summary>
@@ -52,7 +52,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// Build new <see cref="Log"/> instance.
 		/// </summary>
 		/// <returns><see cref="Log"/>.</returns>
-		public Log Build() => new Log(this);
+		public Log Build() => new(this);
 
 
 		/// <summary>
@@ -114,10 +114,10 @@ namespace CarinaStudio.ULogViewer.Logs
 		{
 			if (this.properties.TryGetValue(propertyName, out var str))
 			{
-				var value = 0;
+				int value;
 				if (str.StartsWith("0x"))
 				{
-					if (int.TryParse(str.Substring(2), NumberStyles.AllowHexSpecifier, null, out value))
+					if (int.TryParse(str[2..^0], NumberStyles.AllowHexSpecifier, null, out value))
 						return value;
 				}
 				else if (int.TryParse(str, out value))
@@ -136,10 +136,10 @@ namespace CarinaStudio.ULogViewer.Logs
 		{
 			if (this.properties.TryGetValue(propertyName, out var str))
 			{
-				var value = 0L;
+				long value;
 				if (str.StartsWith("0x"))
 				{
-					str = str.EndsWith("L") ? str.Substring(2, str.Length - 3) : str.Substring(2);
+					str = str.EndsWith("L") ? str[2..^1] : str[2..^0];
 					if (long.TryParse(str, NumberStyles.AllowHexSpecifier, null, out value))
 						return value;
 				}
