@@ -35,6 +35,7 @@
 	"LogWritingFormats": [
 		"{Timestamp} {SourceName}[{ProcessId}] <{Level}>: {Message}"
 	],
+	"RestartReadingDelay": 1500,
 	"SortKey": "Id",
 	"TimestampCategoryGranularity": "Minute",
 	"TimestampFormatForDisplaying": "yyyy/MM/dd HH:mm:ss",

@@ -88,6 +88,10 @@ sealed class ConfigurationKeys
     /// </summary>
     public static readonly SettingKey<int> ProgressiveLogClearingInterval = new(nameof(ProgressiveLogClearingInterval), 60);
     /// <summary>
+    /// Interval of restarting continuous log reading when there is no log read yet.
+    /// </summary>
+    public static readonly SettingKey<long> RestartContinuousLogReadingWhenNoLogReadDelay = new(nameof(RestartContinuousLogReadingWhenNoLogReadDelay), 2000);
+    /// <summary>
     /// Try reading raw log lines concurrently.
     /// </summary>
     public static readonly SettingKey<bool> ReadRawLogLinesConcurrently = new(nameof(ReadRawLogLinesConcurrently), false);

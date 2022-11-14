@@ -660,11 +660,13 @@ namespace CarinaStudio.ULogViewer.Logs
 			}
 
 			// restart reading
-			var delay = this.restartReadingDelay;
-			if (delay.TotalMilliseconds > 0)
+			var delayMillis = (long)this.restartReadingDelay.TotalMilliseconds;
+			if (this.isContinuousReading && this.logs.IsEmpty())
+				delayMillis = Math.Max(delayMillis, this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.RestartContinuousLogReadingWhenNoLogReadDelay));
+			if (delayMillis > 0)
 			{
-				this.Logger.LogWarning("Restart reading logs {ms} ms later", (int)delay.TotalMilliseconds);
-				this.startReadingLogsAction.Reschedule(delay);
+				this.Logger.LogWarning("Restart reading logs {ms} ms later", delayMillis);
+				this.startReadingLogsAction.Reschedule((int)delayMillis);
 			}
 			else
 			{
