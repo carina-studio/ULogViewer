@@ -204,7 +204,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.SetValue<string>(LogPropertyDisplayNameProperty, LogPropertyNameConverter.Default.Convert(nameof(Log.Message)));
 			this.AddHandler(KeyDownEvent, (_, e) =>
 			{
-				if (e.Key == Key.F)
+				if (e.Key == Avalonia.Input.Key.F)
 				{
 					var modifier = Platform.IsMacOS ? KeyModifiers.Meta : KeyModifiers.Control;
 					if ((e.KeyModifiers & modifier) != 0)
