@@ -178,7 +178,7 @@ namespace CarinaStudio.ULogViewer
 			// attach to property change
 			this.GetObservable(IsActiveProperty).Subscribe(isActive =>
 			{
-				if (isActive && FocusManager.Instance?.Current is not TextBox)
+				if (isActive && Avalonia.Input.FocusManager.Instance?.Current is not TextBox)
 					((this.tabControl.SelectedItem as TabItem)?.Content as Control)?.Focus();
 			});
 
@@ -721,28 +721,28 @@ namespace CarinaStudio.ULogViewer
 
 
         // Called when key down.
-        protected override void OnKeyDown(KeyEventArgs e)
+        protected override void OnKeyDown(Avalonia.Input.KeyEventArgs e)
 		{
 			// handle key event for combo keys
 			if (!e.Handled && (e.KeyModifiers & KeyModifiers.Control) != 0)
 			{
 				switch (e.Key)
 				{
-					case Key.N:
+					case Avalonia.Input.Key.N:
 						if (!Platform.IsMacOS)
 						{
 							this.CreateMainWindow();
 							e.Handled = true;
 						}
 						break;
-					case Key.T:
+					case Avalonia.Input.Key.T:
 						if (!Platform.IsMacOS)
 						{
 							this.CreateSessionTabItem();
 							e.Handled = true;
 						}
 						break;
-					case Key.Tab:
+					case Avalonia.Input.Key.Tab:
 						if (this.tabItems.Count > 2)
 						{
 							var index = this.tabControl.SelectedIndex;
@@ -762,7 +762,7 @@ namespace CarinaStudio.ULogViewer
 						}
 						e.Handled = true;
 						break;
-					case Key.W:
+					case Avalonia.Input.Key.W:
 						if (!Platform.IsMacOS)
 						{
 							this.CloseCurrentSessionTabItem();
