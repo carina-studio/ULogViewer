@@ -239,6 +239,8 @@
 	<sys:String x:Key="String/ExternalDependency.TraceConv.Description">「Android 设备系统追踪」内建日志类型使用由 Perfetto 提供的 Trace 转换工具将自设备撷取的资料转换成为 Android 系统追踪格式。對於 Linux 使用者，請將包含 'traceconv' 指令之資料夾路徑加至 PATH 環境變數。對於 macOS 使用者，請將包含 'traceconv' 指令之資料夾路徑加至 '/etc/paths'。</sys:String>
 	<sys:String x:Key="String/ExternalDependency.XcodeCommandLineTools">Xcode 命令行工具</sys:String>
 	<sys:String x:Key="String/ExternalDependency.XcodeCommandLineTools.Description">「Apple 设备模拟器日志」及「特定 Apple 设备模拟器日志」内建日志类型会使用 Xcode 命令行工具与模拟器联系并取得日志。您可以选择安装 Xcode 或直接安装 Xcode 命令行工具。</sys:String>
+	<sys:String x:Key="String/ExternalDependency.XcodeCommandLineToolsSetting">設定 Xcode 命令行工具</sys:String>
+	<sys:String x:Key="String/ExternalDependency.XcodeCommandLineToolsSetting.Description">若您透过安装 Xcode 以安装 Xcode 命令行工具后，您需要将「Xcode > Settings > Locations > Command Line Tools」设定为「Xcode」来启用。</sys:String>
 
 	<!-- FileFormat -->
 	<sys:String x:Key="String/FileFormat.Json">JSON 档案</sys:String>

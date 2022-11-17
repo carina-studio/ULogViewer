@@ -251,6 +251,8 @@
 	<sys:String x:Key="String/ExternalDependency.TraceConv.Description">'Android Device System Trace' built-in log profile uses Trace Conversion Tool provided by Perfetto to convert captured data into Android Systrace format. For Linux user please add path of folder contains 'traceconv' command to PATH environment variable. For macOS user please add path of folder contains 'traceconv' command to '/etc/paths'.</sys:String>
 	<sys:String x:Key="String/ExternalDependency.XcodeCommandLineTools">Command-Line Tools for Xcode</sys:String>
 	<sys:String x:Key="String/ExternalDependency.XcodeCommandLineTools.Description">'Apple Device Simulators Log' and 'Specific Apple Device Simulator Log' built-in log profiles use command-line tools for Xcode to contact simulators and get logs. You can either install Xcode or command-line tools for Xcode directly.</sys:String>
+	<sys:String x:Key="String/ExternalDependency.XcodeCommandLineToolsSetting">Setup Command-Line Tools for Xcode</sys:String>
+	<sys:String x:Key="String/ExternalDependency.XcodeCommandLineToolsSetting.Description">If you install Command-Line Tools for Xcode with Xcode, you need to enable it by setting 'Xcode > Settings > Locations > Command Line Tools' to 'Xcode'.</sys:String>
 	
 	<!-- FileFormat -->
 	<sys:String x:Key="String/FileFormat.Json">JSON File</sys:String>

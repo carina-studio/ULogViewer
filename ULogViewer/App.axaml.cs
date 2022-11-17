@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer
@@ -35,6 +36,40 @@ namespace CarinaStudio.ULogViewer
 		// Info of main window.
 		class MainWindowInfo
 		{ }
+
+
+		// External dependency of Xcode command-line tools settings.
+		class XcodeCmdLineToolsSettingExtDependency : ExternalDependency
+		{
+			// Constructor.
+			public XcodeCmdLineToolsSettingExtDependency(App app) : base(app, "XcodeCommandLineToolsSetting", ExternalDependencyType.Configuration, ExternalDependencyPriority.RequiredByFeatures)
+			{ }
+
+			/// <inheritdoc/>
+			protected override async Task<bool> OnCheckAvailabilityAsync() => await Task.Run(() =>
+			{
+				try
+				{
+					using var process = Process.Start(new ProcessStartInfo()
+					{
+						Arguments = "simctl help",
+						CreateNoWindow = true,
+						FileName = "xcrun",
+						UseShellExecute = false,
+					});
+					if (process != null)
+					{
+						process.WaitForExit();
+						return process.ExitCode == 0;
+					}
+					return false;
+				}
+				catch
+				{
+					return false;
+				}
+			}, CancellationToken.None);
+		}
 
 
 		// Constants.
@@ -95,7 +130,7 @@ namespace CarinaStudio.ULogViewer
 
 
 		/// <inheritdoc/>
-		public override int ExternalDependenciesVersion => 3;
+		public override int ExternalDependenciesVersion => 4;
 
 
 		// Accept update for testing purpose.
@@ -426,8 +461,9 @@ namespace CarinaStudio.ULogViewer
 					it.Add(new ExecutableExternalDependency(this, "XRandR", ExternalDependencyPriority.Optional, "xrandr", new Uri("https://www.x.org/wiki/Projects/XRandR/"), new Uri("https://command-not-found.com/xrandr")));
 				if (Platform.IsMacOS)
 				{
-					it.Add(new ExecutableExternalDependency(this, "LibIMobileDevice", ExternalDependencyPriority.Optional, "idevicesyslog", new Uri("https://libimobiledevice.org/"), new Uri("https://formulae.brew.sh/formula/libimobiledevice")));
-					it.Add(new ExecutableExternalDependency(this, "XcodeCommandLineTools", ExternalDependencyPriority.Optional, "xcrun", new Uri("https://developer.apple.com/xcode/"), new Uri("https://developer.apple.com/download/all/?q=xcode")));
+					it.Add(new ExecutableExternalDependency(this, "LibIMobileDevice", ExternalDependencyPriority.RequiredByFeatures, "idevicesyslog", new Uri("https://libimobiledevice.org/"), new Uri("https://formulae.brew.sh/formula/libimobiledevice")));
+					it.Add(new ExecutableExternalDependency(this, "XcodeCommandLineTools", ExternalDependencyPriority.RequiredByFeatures, "xcrun", new Uri("https://developer.apple.com/xcode/"), new Uri("https://developer.apple.com/download/all/?q=xcode")));
+					it.Add(new XcodeCmdLineToolsSettingExtDependency(this));
 				}
 			}).ToArray();
 
