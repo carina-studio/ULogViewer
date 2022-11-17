@@ -10,7 +10,6 @@ using CarinaStudio.Windows.Input;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Windows.Input;
 
 namespace CarinaStudio.ULogViewer.Controls;
@@ -21,7 +20,6 @@ namespace CarinaStudio.ULogViewer.Controls;
 partial class ScriptLogDataSourceProvidersDialog : CarinaStudio.Controls.Dialog<IULogViewerApplication>
 {
 	// Static fields.
-	static readonly Regex BaseNameRegex = new("^(?<Name>.+)\\s+\\(\\d+\\)\\s*$");
 	static readonly SettingKey<bool> DonotShowRestrictionsWithNonProVersionKey = new("ScriptLogDataSourceProvidersDialog.DonotShowRestrictionsWithNonProVersion");
 
 
@@ -88,18 +86,8 @@ partial class ScriptLogDataSourceProvidersDialog : CarinaStudio.Controls.Dialog<
 		}
 
 		// find new name for provider
-		var baseName = BaseNameRegex.Match(provider.DisplayName ?? "").Let(it =>
-			it.Success ? it.Groups["Name"].Value : provider.DisplayName ?? "");
-		var newName = baseName;
-		for (var n = 2; n <= 10; ++n)
-		{
-			var candidateName = $"{baseName} ({n})";
-			if (LogDataSourceProviders.ScriptProviders.FirstOrDefault(it => it.DisplayName == candidateName) == null)
-			{
-				newName = candidateName;
-				break;
-			}
-		}
+		var newName = Utility.GenerateName(provider.DisplayName, name => 
+			LogDataSourceProviders.ScriptProviders.FirstOrDefault(it => it.DisplayName == name) != null);
 
 		// copy provider
 		var newProvider = await new ScriptLogDataSourceProviderEditorDialog()
@@ -243,21 +231,8 @@ partial class ScriptLogDataSourceProvidersDialog : CarinaStudio.Controls.Dialog<
 			return;
 		
 		// select new display name
-		var baseName = BaseNameRegex.Match(provider.DisplayName ?? "").Let(it =>
-			it.Success ? it.Groups["Name"].Value : provider.DisplayName ?? "");
-		var newName = baseName;
-		if (LogDataSourceProviders.ScriptProviders.FirstOrDefault(it => it.DisplayName == newName) != null)
-		{
-			for (var n = 2; n <= 10; ++n)
-			{
-				var candidateName = $"{baseName} ({n})";
-				if (LogDataSourceProviders.ScriptProviders.FirstOrDefault(it => it.DisplayName == candidateName) == null)
-				{
-					newName = candidateName;
-					break;
-				}
-			}
-		}
+		var newName = Utility.GenerateName(provider.DisplayName, name =>
+			LogDataSourceProviders.ScriptProviders.FirstOrDefault(it => it.DisplayName == name) != null);
 		
 		// edit provider and import
 		var newProvider = await new ScriptLogDataSourceProviderEditorDialog()

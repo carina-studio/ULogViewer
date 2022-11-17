@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Globalization;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -116,7 +117,11 @@ namespace CarinaStudio.ULogViewer.Controls
 			// copy and edit log profile
 			var newProfile = await new LogProfileEditorDialog()
 			{
-				LogProfile = new LogProfile(logProfile).Also(it => it.Name = $"{logProfile.Name} (2)"),
+				LogProfile = new LogProfile(logProfile)
+				{
+					Name = Utility.GenerateName(logProfile.Name, name =>
+						LogProfileManager.Default.Profiles.FirstOrDefault(it => it.Name == name) != null),
+				},
 			}.ShowDialog<LogProfile>(this);
 			if (newProfile == null)
 				return;

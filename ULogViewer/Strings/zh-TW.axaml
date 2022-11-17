@@ -921,9 +921,11 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.ClearLogAnalysisRuleSetsSelection">清除選取</sys:String>
 	<sys:String x:Key="String/SessionView.ClearLogFiles">清除所有已加入的日誌檔案</sys:String>
 	<sys:String x:Key="String/SessionView.ClearPredefinedLogTextFiltersSelection">清除選取</sys:String>
+	<sys:String x:Key="String/SessionView.ConfirmEditingBuiltInLogProfile">「{0}」是一個內建日誌類型，編輯完成後將建立新的日誌類型。</sys:String>
 	<sys:String x:Key="String/SessionView.ConfirmRemovingLogAnalysisRuleSet">您是否確定要移除規則集「{0}」？</sys:String>
 	<sys:String x:Key="String/SessionView.ConfirmRemovingLogAnalysisScriptSet">您是否確定要移除腳本「{0}」？</sys:String>
 	<sys:String x:Key="String/SessionView.ConfirmSelectingAllLogs">選取大量日誌會使用一些時間。是否要繼續選取？</sys:String>
+	<sys:String x:Key="String/SessionView.ConfirmSwitchingToCopiedLogProfile">您是否要立即切換至「{0}」？</sys:String>
 	<sys:String x:Key="String/SessionView.CopyLogFileName">複製檔案名稱</sys:String>
 	<sys:String x:Key="String/SessionView.CopyLogFilePath">複製完整檔案路徑</sys:String>
 	<sys:String x:Key="String/SessionView.CopyLogProperty">複製日誌屬性「{0}」</sys:String>

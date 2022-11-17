@@ -7,6 +7,7 @@ using Avalonia.Rendering;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.Controls;
 using System;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer;
@@ -14,8 +15,13 @@ namespace CarinaStudio.ULogViewer;
 /// <summary>
 /// Provide utility functions.
 /// </summary>
-static class Utility
+static partial class Utility
 {
+    // Create regular expression for parsing base name.
+    [GeneratedRegex("^(?<Name>.+)\\s+\\(\\d+\\)\\s*$")]
+    private static partial Regex CreateBaseNameRegex();
+
+    
     /// <summary>
     /// Export image to file.
     /// </summary>
@@ -151,5 +157,28 @@ static class Utility
         {
             return false;
         }
+    }
+
+
+    /// <summary>
+    /// Generate a new which doesn't exist.
+    /// </summary>
+    /// <param name="baseName">Base name.</param>
+    /// <param name="existingNameChecking">Function to check whether given name is existing or not.</param>
+    /// <returns>Generated name.</returns>
+    public static string GenerateName(string? baseName, Predicate<string> existingNameChecking)
+    {
+        baseName ??= "";
+        baseName = CreateBaseNameRegex().Match(baseName).Let(it =>
+            it.Success ? it.Groups["Name"].Value : baseName);
+        if (!existingNameChecking(baseName))
+            return baseName;
+        for (var n = 2; n <= 100; ++n)
+        {
+            var candidateName = $"{baseName} ({n})";
+            if (!existingNameChecking(candidateName))
+                return candidateName;
+        }
+        return baseName;
     }
 }

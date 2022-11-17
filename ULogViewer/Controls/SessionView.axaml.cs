@@ -42,7 +42,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -100,7 +99,6 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Static fields.
-		static readonly Regex BaseNameRegex = new("^(?<Name>.+)\\s+\\(\\d+\\)\\s*$");
 		static readonly StyledProperty<bool> CanFilterLogsByNonTextFiltersProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(CanFilterLogsByNonTextFilters), false);
 		static readonly StyledProperty<bool> EnableRunningScriptProperty = AvaloniaProperty.Register<SessionView, bool>("EnableRunningScript", false);
 		static readonly StyledProperty<bool> HasLogProfileProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(HasLogProfile), false);
@@ -958,7 +956,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			var profile = session.LogProfile;
 			if (profile != null)
 			{
-				this.canEditLogProfile.Update(!profile.IsBuiltIn);
+				this.canEditLogProfile.Update(true);
 				this.SetValue<bool>(HasLogProfileProperty, true);
 				if (session.IsIPEndPointNeeded)
 					this.isIPEndPointNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(SettingKeys.SelectIPEndPointWhenNeeded);
@@ -1192,18 +1190,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (this.attachedWindow == null)
 				return;
-			var baseName = BaseNameRegex.Match(ruleSet.Name ?? "").Let(it =>
-				it.Success ? it.Groups["Name"].Value : ruleSet.Name ?? "");
-			var newName = baseName;
-			for (var n = 2; n <= 10; ++n)
-			{
-				var candidateName = $"{baseName} ({n})";
-				if (KeyLogAnalysisRuleSetManager.Default.RuleSets.FirstOrDefault(it => it.Name == candidateName) == null)
-				{
-					newName = candidateName;
-					break;
-				}
-			}
+			var newName = Utility.GenerateName(ruleSet.Name, name => 
+				KeyLogAnalysisRuleSetManager.Default.RuleSets.FirstOrDefault(it => it.Name == name) != null);
 			var newRuleSet = new KeyLogAnalysisRuleSet(ruleSet, newName);
 			KeyLogAnalysisRuleSetEditorDialog.Show(this.attachedWindow, newRuleSet);
 		}
@@ -1220,18 +1208,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (this.attachedWindow == null)
 				return;
-			var baseName = BaseNameRegex.Match(scriptSet.Name ?? "").Let(it =>
-				it.Success ? it.Groups["Name"].Value : scriptSet.Name ?? "");
-			var newName = baseName;
-			for (var n = 2; n <= 10; ++n)
-			{
-				var candidateName = $"{baseName} ({n})";
-				if (LogAnalysisScriptSetManager.Default.ScriptSets.FirstOrDefault(it => it.Name == candidateName) == null)
-				{
-					newName = candidateName;
-					break;
-				}
-			}
+			var newName = Utility.GenerateName(scriptSet.Name, name => 
+				LogAnalysisScriptSetManager.Default.ScriptSets.FirstOrDefault(it => it.Name == name) != null);
 			var newScriptSet = new LogAnalysisScriptSet(scriptSet, newName);
 			LogAnalysisScriptSetEditorDialog.Show(this.attachedWindow, newScriptSet);
 		}
@@ -1387,18 +1365,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (this.attachedWindow == null)
 				return;
-			var baseName = BaseNameRegex.Match(ruleSet.Name ?? "").Let(it =>
-				it.Success ? it.Groups["Name"].Value : ruleSet.Name ?? "");
-			var newName = baseName;
-			for (var n = 2; n <= 10; ++n)
-			{
-				var candidateName = $"{baseName} ({n})";
-				if (OperationCountingAnalysisRuleSetManager.Default.RuleSets.FirstOrDefault(it => it.Name == candidateName) == null)
-				{
-					newName = candidateName;
-					break;
-				}
-			}
+			var newName = Utility.GenerateName(ruleSet.Name, name => 
+				OperationCountingAnalysisRuleSetManager.Default.RuleSets.FirstOrDefault(it => it.Name == name) != null);
 			var newRuleSet = new OperationCountingAnalysisRuleSet(ruleSet, newName);
 			OperationCountingAnalysisRuleSetEditorDialog.Show(this.attachedWindow, newRuleSet);
 		}
@@ -1417,18 +1385,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (this.attachedWindow == null)
 				return;
-			var baseName = BaseNameRegex.Match(ruleSet.Name ?? "").Let(it =>
-				it.Success ? it.Groups["Name"].Value : ruleSet.Name ?? "");
-			var newName = baseName;
-			for (var n = 2; n <= 10; ++n)
-			{
-				var candidateName = $"{baseName} ({n})";
-				if (OperationDurationAnalysisRuleSetManager.Default.RuleSets.FirstOrDefault(it => it.Name == candidateName) == null)
-				{
-					newName = candidateName;
-					break;
-				}
-			}
+			var newName = Utility.GenerateName(ruleSet.Name, name => 
+				OperationDurationAnalysisRuleSetManager.Default.RuleSets.FirstOrDefault(it => it.Name == name) != null);
 			var newRuleSet = new OperationDurationAnalysisRuleSet(ruleSet, newName);
 			OperationDurationAnalysisRuleSetEditorDialog.Show(this.attachedWindow, newRuleSet);
 		}
@@ -1445,18 +1403,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (this.attachedWindow == null)
 				return;
-			var baseName = BaseNameRegex.Match(filter.Name ?? "").Let(it =>
-				it.Success ? it.Groups["Name"].Value : filter.Name ?? "");
-			var newName = baseName;
-			for (var n = 2; n <= 10; ++n)
-			{
-				var candidateName = $"{baseName} ({n})";
-				if (PredefinedLogTextFilterManager.Default.Filters.FirstOrDefault(it => it.Name == candidateName) == null)
-				{
-					newName = candidateName;
-					break;
-				}
-			}
+			var newName = Utility.GenerateName(filter.Name, name => 
+				PredefinedLogTextFilterManager.Default.Filters.FirstOrDefault(it => it.Name == name) != null);
 			var newFilter = new PredefinedLogTextFilter(this.Application, newName, filter.Regex);
 			PredefinedLogTextFilterEditorDialog.Show(this.attachedWindow, newFilter, null);
 		}
@@ -2344,11 +2292,9 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Edit current log profile.
-		void EditLogProfile()
+		async void EditLogProfile()
 		{
 			// check state
-			if (!this.canEditLogProfile.Value)
-				return;
 			if (this.attachedWindow == null)
 				return;
 
@@ -2358,9 +2304,54 @@ namespace CarinaStudio.ULogViewer.Controls
 			var profile = session.LogProfile;
 			if (profile == null)
 				return;
+			
+			// copy or edit log profile
+			if (profile.IsBuiltIn)
+			{
+				// show message
+				await new MessageDialog()
+				{
+					Icon = MessageDialogIcon.Information,
+					Message = new FormattedString().Also(it =>
+					{
+						it.Arg1 = profile.Name;
+						it.Bind(FormattedString.FormatProperty, this.Application.GetObservableString("SessionView.ConfirmEditingBuiltInLogProfile"));
+					}),
+					Title = this.Application.GetObservableString("LogProfileSelectionDialog.EditLogProfile"),
+				}.ShowDialog(this.attachedWindow);
+				if (this.attachedWindow == null)
+					return;
 
-			// edit log profile
-			LogProfileEditorDialog.Show(this.attachedWindow, profile);
+				// copy log profile
+				var newProfile = await new LogProfileEditorDialog()
+				{
+					LogProfile = new LogProfile(profile)
+					{
+						Name = Utility.GenerateName(profile.Name, name =>
+							LogProfileManager.Default.Profiles.FirstOrDefault(it => it.Name == name) != null),
+					},
+				}.ShowDialog<LogProfile>(this.attachedWindow);
+				if (newProfile == null || this.attachedWindow == null)
+					return;
+				LogProfileManager.Default.AddProfile(newProfile);
+				
+				// switch to new log profile
+				var result = await new MessageDialog()
+				{
+					Buttons = MessageDialogButtons.YesNo,
+					Icon = MessageDialogIcon.Question,
+					Message = new FormattedString().Also(it =>
+					{
+						it.Arg1 = newProfile.Name;
+						it.Bind(FormattedString.FormatProperty, this.Application.GetObservableString("SessionView.ConfirmSwitchingToCopiedLogProfile"));
+					}),
+					Title = this.Application.GetObservableString("LogProfileSelectionDialog.EditLogProfile"),
+				}.ShowDialog(this.attachedWindow);
+				if (result == MessageDialogResult.Yes)
+					await this.SetLogProfileAsync(newProfile);
+			}
+			else
+				LogProfileEditorDialog.Show(this.attachedWindow, profile);
 		}
 
 
@@ -4362,7 +4353,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					{
 						if (profile != null)
 						{
-							this.canEditLogProfile.Update(!profile.IsBuiltIn);
+							this.canEditLogProfile.Update(true);
 							this.SetValue<bool>(HasLogProfileProperty, true);
 							if (!profile.IsContinuousReading)
 								this.IsScrollingToLatestLogNeeded = false;

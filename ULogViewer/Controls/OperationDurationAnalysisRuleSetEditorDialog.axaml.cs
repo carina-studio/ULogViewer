@@ -11,7 +11,6 @@ using CarinaStudio.Windows.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Windows.Input;
 
 namespace CarinaStudio.ULogViewer.Controls
@@ -25,7 +24,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		static readonly StyledProperty<bool> AreValidParametersProperty = AvaloniaProperty.Register<OperationDurationAnalysisRuleSetEditorDialog, bool>("AreValidParameters");
 		static readonly Dictionary<OperationDurationAnalysisRuleSet, OperationDurationAnalysisRuleSetEditorDialog> DialogWithEditingRuleSets = new();
 		static readonly SettingKey<bool> DonotShowRestrictionsWithNonProVersionKey = new("OperationDurationAnalysisRuleSetEditorDialog.DonotShowRestrictionsWithNonProVersion");
-		static readonly Regex OriginalOperationNameRegex = new("^(?<Name>.+)\\s\\(\\d+\\)$");
 
 		
 		// Fields.
@@ -202,21 +200,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (index < 0)
 				return;
 			
-			// find proper name
-			var match = OriginalOperationNameRegex.Match(rule.OperationName);
-			var baseOperationName = match.Success ? match.Groups["Name"].Value : rule.OperationName;
-			var selectedOperationName = baseOperationName;
-			for (var i = 2; i <= 99; ++i)
-			{
-				var operationName = $"{baseOperationName} ({i})";
-				if (this.rules.FirstOrDefault(it => it.OperationName == operationName) == null)
-				{
-					selectedOperationName = operationName;
-					break;
-				}
-			}
-
 			// edit rule
+			var selectedOperationName = Utility.GenerateName(rule.OperationName, name =>
+				this.rules.FirstOrDefault(it => it.OperationName == name) != null);
 			var newRule = await new OperationDurationAnalysisRuleEditorDialog()
 			{
 				Rule = new OperationDurationAnalysisRuleSet.Rule(rule, selectedOperationName),
