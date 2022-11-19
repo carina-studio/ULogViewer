@@ -132,14 +132,14 @@
 					</Button>
 				</Grid>
 				<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Command="{Binding $parent[Window].ShowScriptLogDataSourceProvidersDialog}" Text="{DynamicResource String/LogProfileEditorDialog.ScriptLogDataSourceProviders}"/>
-				<Grid ColumnDefinitions="Auto,*" Margin="{StaticResource Thickness/Dialog.TextBlock.Margin.Description}">
+				<Grid Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*">
 					<Grid.IsVisible>
 						<MultiBinding Converter="{x:Static aConverters:BoolConverters.And}">
 							<Binding Path="!IsValidDataSourceOptions" ElementName="window"/>
 						</MultiBinding>
 					</Grid.IsVisible>
 					<Image Classes="Dialog_Icon" Source="{StaticResource Image/Icon.Error.Outline.Colored}"/>
-					<TextBlock Classes="Dialog_Icon_TextBlock" Foreground="{DynamicResource Brush/Dialog.TextBlock.Foreground.Error}" Grid.Column="1" Text="{DynamicResource String/LogProfileEditorDialog.InvalidDataSourceOptions}"/>
+					<TextBlock Classes="Dialog_Icon_TextBlock_Description_Error" Grid.Column="1" Text="{DynamicResource String/LogProfileEditorDialog.InvalidDataSourceOptions}"/>
 				</Grid>
 				<Separator Classes="Dialog_Separator"/>
 
