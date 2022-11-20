@@ -83,6 +83,7 @@ namespace CarinaStudio.ULogViewer
 
 
 		// Fields.
+		Controls.AppOptionsDialog? appOptionsDialog;
 		IResourceProvider? compactResources;
 		IDisposable? compactResourcesToken;
 		ExternalDependency[] externalDependencies = Array.Empty<ExternalDependency>();
@@ -633,14 +634,31 @@ namespace CarinaStudio.ULogViewer
 		/// <inheritdoc/>
         public override async Task ShowApplicationOptionsDialogAsync(Avalonia.Controls.Window? owner, string? section = null)
 		{
+			// wait for current dialog
+			if (this.appOptionsDialog != null)
+			{
+				this.appOptionsDialog.ActivateAndBringToFront();
+				await this.appOptionsDialog.WaitForClosingDialogAsync();
+				return;
+			}
+
+			// show dialog
 			owner?.ActivateAndBringToFront();
-			var dialog = new Controls.AppOptionsDialog()
+			this.appOptionsDialog = new Controls.AppOptionsDialog()
 			{
 				InitSectionName = section,
 			};
-			var result = await (owner != null
-				? dialog.ShowDialog<ApplicationOptionsDialogResult>(owner)
-				: dialog.ShowDialog<ApplicationOptionsDialogResult>());
+			ApplicationOptionsDialogResult result;
+			try
+			{
+				result = await (owner != null
+					? this.appOptionsDialog.ShowDialog<ApplicationOptionsDialogResult>(owner)
+					: this.appOptionsDialog.ShowDialog<ApplicationOptionsDialogResult>());
+			}
+			finally
+			{
+				this.appOptionsDialog = null;
+			}
 			switch (result)
 			{
 				case AppSuite.Controls.ApplicationOptionsDialogResult.RestartApplicationNeeded:
