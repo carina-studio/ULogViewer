@@ -101,20 +101,16 @@ partial class AppOptionsDialog : BaseApplicationOptionsDialog
 		// scroll to given section
 		var initControl = this.InitSectionName switch
 		{
-			DefaultTextShellSection => this.Get<Control>("defaultTextShellComboBox"),
+			DefaultTextShellSection => this.Get<Control>("defaultTextShellLabel"),
 			_ => null,
 		};
 		if (initControl != null)
 		{
-			var scrollViewer = this.Get<ScrollViewer>("rootScrollViewer");
-			scrollViewer.Opacity = 0;
-			this.SynchronizationContext.Post(() =>
-			{
-				scrollViewer.ScrollIntoView(initControl);
-				scrollViewer.LineDown();
-				scrollViewer.Opacity = 1;
-				initControl.Focus();
-			});
+			this.ScrollToControl(initControl);
+			if (initControl is TextBlock textBlock)
+				this.AnimateTextBlock(textBlock);
+			else if (initControl is Border headerBorder)
+				this.AnimateHeader(headerBorder);
 		}
 	}
 
