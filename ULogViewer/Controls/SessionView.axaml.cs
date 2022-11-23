@@ -4422,6 +4422,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when test button clicked.
 		void OnTestButtonClick(object? sender, RoutedEventArgs e)
 		{
+			new TestDialog().ShowDialog(this.attachedWindow!);
 			//this.Application.Restart(AppSuite.AppSuiteApplication.RestoreMainWindowsArgument);
 		}
 
