@@ -15,6 +15,7 @@ using Avalonia.Platform.Storage;
 using Avalonia.VisualTree;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.AppSuite.Data;
+using CarinaStudio.AppSuite.Media;
 using CarinaStudio.AppSuite.Product;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
@@ -5642,7 +5643,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			var name = this.Settings.GetValueOrDefault(SettingKeys.LogFontFamily);
 			if (string.IsNullOrEmpty(name))
 				name = SettingKeys.DefaultLogFontFamily;
-			this.SetValue<FontFamily>(LogFontFamilyProperty, new FontFamily(name));
+			var builtInFontFamily = BuiltInFonts.FontFamilies.FirstOrDefault(it => it.FamilyNames.Contains(name));
+			this.SetValue<FontFamily>(LogFontFamilyProperty, builtInFontFamily ?? new FontFamily(name));
 		}
 
 

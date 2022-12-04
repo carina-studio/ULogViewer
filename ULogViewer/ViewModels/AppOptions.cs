@@ -1,4 +1,5 @@
 ﻿using Avalonia.Media;
+using CarinaStudio.AppSuite.Media;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.ULogViewer.Logs.Profiles;
@@ -17,7 +18,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 	{
 		// Fields.
 		bool isSettingsModified;
-		readonly SortedObservableList<LogProfile> logProfiles = new SortedObservableList<LogProfile>(CompareLogProfiles);
+		readonly SortedObservableList<LogProfile> logProfiles = new(CompareLogProfiles);
 
 
 		/// <summary>
@@ -26,10 +27,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public AppOptions() : base()
 		{
 			// setup properties
+			var familyName = this.LogFontFamily;
 			this.logProfiles.Add(LogProfileManager.Default.EmptyProfile);
 			this.logProfiles.AddAll(LogProfileManager.Default.Profiles.Where(it => !it.IsTemplate));
 			this.LogProfiles = ListExtensions.AsReadOnly(this.logProfiles);
-			this.SampleLogFontFamily = new FontFamily(this.LogFontFamily);
+			this.SampleLogFontFamily = BuiltInFonts.FontFamilies.FirstOrDefault(it => it.FamilyNames.Contains(familyName)) ?? new FontFamily(familyName);
 
 			// add event handlers
 			((INotifyCollectionChanged)LogProfileManager.Default.Profiles).CollectionChanged += this.OnLogProfilesChanged;
@@ -157,6 +159,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public IList<string> InstalledFontFamilies { get; } = new List<string>(FontManager.Current.GetInstalledFontFamilyNames()).Also(it =>
 		{
 			it.Sort();
+			foreach (var builtInFontFamily in BuiltInFonts.FontFamilies)
+			{
+				var familyName = builtInFontFamily.FamilyNames[0];
+				var index = it.BinarySearch(familyName);
+				if (index < 0)
+					it.Insert(~index, familyName);
+			}
 		}).AsReadOnly();
 
 
@@ -253,8 +262,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.OnPropertyChanged(nameof(InitialLogProfile));
 			else if (key == SettingKeys.LogFontFamily)
 			{
+				var familyName = this.LogFontFamily;
 				this.OnPropertyChanged(nameof(LogFontFamily));
-				this.SampleLogFontFamily = new FontFamily(this.LogFontFamily);
+				this.SampleLogFontFamily = BuiltInFonts.FontFamilies.FirstOrDefault(it => it.FamilyNames.Contains(familyName)) ?? new FontFamily(familyName);
 				this.OnPropertyChanged(nameof(SampleLogFontFamily));
 			}
 			else if (key == SettingKeys.LogFontSize)

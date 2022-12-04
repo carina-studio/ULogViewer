@@ -8,7 +8,9 @@ using AvaloniaEdit;
 using AvaloniaEdit.Highlighting;
 using AvaloniaEdit.Rendering;
 using CarinaStudio.AppSuite.Controls;
+using CarinaStudio.AppSuite.Media;
 using CarinaStudio.Collections;
+using CarinaStudio.Configuration;
 using CarinaStudio.ULogViewer.Converters;
 using CarinaStudio.ULogViewer.ViewModels;
 using CarinaStudio.Windows.Input;
@@ -213,7 +215,9 @@ namespace CarinaStudio.ULogViewer.Controls
 					}
 				}
 			}, Avalonia.Interactivity.RoutingStrategies.Tunnel);
+			this.Settings.SettingChanged += this.OnSettingChanged;
 			this.ApplySystemAccentColor();
+			this.UpdateLogFontFamily();
 		}
 
 
@@ -253,6 +257,14 @@ namespace CarinaStudio.ULogViewer.Controls
 		public string LogPropertyName { get; set; } = nameof(Logs.Log.Message);
 
 
+		/// <inheritdoc/>
+		protected override void OnClosed(EventArgs e)
+		{
+			this.Settings.SettingChanged -= this.OnSettingChanged;
+			base.OnClosed(e);
+		}
+
+
 		// Called when property of find text text box changed.
 		void OnFindTextTextBoxPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
 		{
@@ -279,6 +291,14 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Called when setting changed.
+		void OnSettingChanged(object? sender, SettingChangedEventArgs e)
+		{
+			if (e.Key == SettingKeys.LogFontFamily)
+				this.UpdateLogFontFamily();
+		}
+
+
         // set text wrapping.
         void SetTextWrapping(bool wrap)
 		{
@@ -292,5 +312,16 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Command to set text wrapping.
 		public ICommand SetTextWrappingCommand { get; }
+
+
+		// Update font family of log.
+		void UpdateLogFontFamily()
+		{
+			var name = this.Settings.GetValueOrDefault(SettingKeys.LogFontFamily);
+			if (string.IsNullOrEmpty(name))
+				name = SettingKeys.DefaultLogFontFamily;
+			var builtInFontFamily = BuiltInFonts.FontFamilies.FirstOrDefault(it => it.FamilyNames.Contains(name));
+			this.propertyValueTextEditor.FontFamily = builtInFontFamily ?? new FontFamily(name);
+		}
 	}
 }

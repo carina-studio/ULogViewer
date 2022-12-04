@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Avalonia.Media;
+﻿using CarinaStudio.AppSuite.Media;
 using CarinaStudio.Configuration;
 
 namespace CarinaStudio.ULogViewer
@@ -143,21 +142,6 @@ namespace CarinaStudio.ULogViewer
 		/// <summary>
 		/// Default font family of log.
 		/// </summary>
-		public static string DefaultLogFontFamily { get; } = Global.Run(() =>
-		{
-			var targetFontFamilies = Global.Run(() =>
-			{
-				if (Platform.IsMacOS)
-					return new string[] { "Menlo", "Monaco", "Courier New" };
-				return new string[] { "Consolas", "Courier New" };
-			});
-			var installedFontFamilyNames = new HashSet<string>(FontManager.Current.GetInstalledFontFamilyNames());
-			foreach (var targetFontFamily in targetFontFamilies)
-			{
-				if (installedFontFamilyNames.Contains(targetFontFamily))
-					return targetFontFamily;
-			}
-			return FontManager.Current.DefaultFontFamilyName;
-		});
+		public static string DefaultLogFontFamily { get=> BuiltInFonts.RobotoMono.FamilyNames[0]; }
 	}
 }
