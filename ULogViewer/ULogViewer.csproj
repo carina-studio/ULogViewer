@@ -73,7 +73,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="CarinaStudio.AvaloniaEdit" Version="11.0.0.1121-preview" />
-		<PackageReference Include="CarinaStudio.AppSuite.Core" Version="2.1.11.1204-preview" />
+		<PackageReference Include="CarinaStudio.AppSuite.Core" Version="2.1.13.1206-preview" />
 		<PackageReference Include="Dotnet.Bundle" Version="0.9.13" />
 		<PackageReference Include="Microsoft.Win32.Registry" Version="6.0.0-preview.5.21301.5" />
 		<PackageReference Include="MySql.Data" Version="8.0.31" />
