@@ -4,6 +4,7 @@ using Avalonia.Data.Converters;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using CarinaStudio.AppSuite.Controls;
+using CarinaStudio.AppSuite.Controls.Highlighting;
 using CarinaStudio.AppSuite.Product;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
@@ -135,6 +136,10 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.RemoveTimeSpanFormatForReadingCommand = new Command<ListBoxItem>(this.RemoveTimeSpanFormatForReading);
 			this.RemoveTimestampFormatForReadingCommand = new Command<ListBoxItem>(this.RemoveTimestampFormatForReading);
 			this.RemoveVisibleLogPropertyCommand = new Command<ListBoxItem>(this.RemoveVisibleLogProperty);
+
+			// create syntax highlighting definition sets
+			this.LogWritingFormatSyntaxHighlightingDefinitionSet = StringInterpolationFormatSyntaxHighlighting.CreateDefinitionSet(this.Application);
+			this.RegexSyntaxHighlightingDefinitionSet = RegexSyntaxHighlighting.CreateDefinitionSet(this.Application);
 
 			// initialize.
 			AvaloniaXamlLoader.Load(this);
@@ -659,6 +664,12 @@ namespace CarinaStudio.ULogViewer.Controls
 		public IList<string> LogWritingFormats { get; }
 
 
+		/// <summary>
+		/// Definition set of log writing format syntax highlighting.
+		/// </summary>
+		public SyntaxHighlightingDefinitionSet LogWritingFormatSyntaxHighlightingDefinitionSet { get; }
+
+
 		// Move log pattern down.
 		void MoveLogPatternDown(ListBoxItem item)
 		{
@@ -1019,6 +1030,12 @@ namespace CarinaStudio.ULogViewer.Controls
 		public void OpenDocumentation() =>
 			Platform.OpenLink("https://carinastudio.azurewebsites.net/ULogViewer/HowToReadAndParseLogs");
 #pragma warning restore CA1822
+
+
+		/// <summary>
+		/// Definition set of regex syntax highlighting.
+		/// </summary>
+		public SyntaxHighlightingDefinitionSet RegexSyntaxHighlightingDefinitionSet { get; }
 
 
 		// Remove log level map entry.

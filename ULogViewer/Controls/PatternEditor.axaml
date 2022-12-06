@@ -3,11 +3,13 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:aConverters="using:Avalonia.Data.Converters"
+		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
+		xmlns:asMedia="using:CarinaStudio.AppSuite.Media"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.PatternEditor">
 
 	<Grid ColumnDefinitions="*,Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-		<TextBox Name="patternTextBox" Classes="Dialog_TextBox" Focusable="False" IsReadOnly="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled" TextWrapping="Wrap"/>
+		<asControls:SyntaxHighlightingTextBox Name="patternTextBox" Classes="Dialog_TextBox" DefinitionSet="{Binding $parent[UserControl].RegexSyntaxHighlightingDefinitionSet}" Focusable="False" FontFamily="{x:Static asMedia:BuiltInFonts.SourceCodePro}" IsReadOnly="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled" TextWrapping="Wrap"/>
 		<StackPanel Grid.Column="1" VerticalAlignment="Top">
 			<Button Name="editPatternButton" Classes="BrowseButton" Command="{Binding $parent[UserControl].EditPattern}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
 				<Image Classes="BrowseButtonIcon" Source="{DynamicResource Image/Icon.Edit}"/>

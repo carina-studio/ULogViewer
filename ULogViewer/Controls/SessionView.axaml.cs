@@ -14,6 +14,7 @@ using Avalonia.Media;
 using Avalonia.Platform.Storage;
 using Avalonia.VisualTree;
 using CarinaStudio.AppSuite.Controls;
+using CarinaStudio.AppSuite.Controls.Highlighting;
 using CarinaStudio.AppSuite.Data;
 using CarinaStudio.AppSuite.Media;
 using CarinaStudio.AppSuite.Product;
@@ -373,6 +374,9 @@ namespace CarinaStudio.ULogViewer.Controls
 				}
 				return Brushes.Transparent;
 			});
+
+			// create syntax highlighting definitions
+			this.RegexSyntaxHighlightingDefinitionSet = RegexSyntaxHighlighting.CreateDefinitionSet(this.Application);
 
 			// initialize
 			this.IsToolsMenuItemVisible = this.Application.IsDebugMode || AppSuite.Controls.PathEnvVarEditorDialog.IsSupported;
@@ -4478,6 +4482,12 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.OnDisplayLogPropertiesChanged();
 			this.logListBox.Bind(Avalonia.Controls.ListBox.ItemsProperty, new Binding() { Path = nameof(Session.Logs)} );
 		}
+
+
+		/// <summary>
+		/// Definition set of regex syntax highlighting.
+		/// </summary>
+		public SyntaxHighlightingDefinitionSet RegexSyntaxHighlightingDefinitionSet { get; }
 
 
 		// Reload log file.

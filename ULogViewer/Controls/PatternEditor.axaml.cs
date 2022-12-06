@@ -5,6 +5,7 @@ using Avalonia.LogicalTree;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using CarinaStudio.AppSuite.Controls;
+using CarinaStudio.AppSuite.Controls.Highlighting;
 using CarinaStudio.Configuration;
 using CarinaStudio.Input.Platform;
 using CarinaStudio.Threading;
@@ -56,6 +57,7 @@ partial class PatternEditor : CarinaStudio.Controls.UserControl<IULogViewerAppli
 	/// </summary>
 	public PatternEditor()
 	{
+		this.RegexSyntaxHighlightingDefinitionSet = RegexSyntaxHighlighting.CreateDefinitionSet(this.Application);
 		AvaloniaXamlLoader.Load(this);
 		this.editPatternButton = this.Get<Button>(nameof(editPatternButton));
 		this.patternTextBox = this.Get<TextBox>(nameof(patternTextBox)).Also(it =>
@@ -256,6 +258,12 @@ partial class PatternEditor : CarinaStudio.Controls.UserControl<IULogViewerAppli
 			this.SetAndRaise<Regex?>(PatternProperty, ref this.pattern, value);
 		}
 	}
+
+
+	/// <summary>
+	/// Definition set of regex syntax highlighting.
+	/// </summary>
+	public SyntaxHighlightingDefinitionSet RegexSyntaxHighlightingDefinitionSet { get; }
 
 	
 	/// <summary>

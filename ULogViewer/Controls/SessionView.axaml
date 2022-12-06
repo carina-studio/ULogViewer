@@ -11,6 +11,7 @@
 			 xmlns:as="using:CarinaStudio.AppSuite"
 			 xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
 			 xmlns:asConverters="using:CarinaStudio.AppSuite.Converters"
+			 xmlns:asMedia="using:CarinaStudio.AppSuite.Media"
 			 xmlns:app="using:CarinaStudio.ULogViewer"
 			 xmlns:appAnalysis="using:CarinaStudio.ULogViewer.ViewModels.Analysis"
 			 xmlns:appAnalysisScripting="using:CarinaStudio.ULogViewer.ViewModels.Analysis.Scripting"
@@ -648,40 +649,44 @@
 												<ListBox Name="predefinedLogTextFilterListBox" Background="{DynamicResource Brush/SessionView.PredefinedLogTextFilterListBox.Background}" Items="{Binding $parent[UserControl].PredefinedLogTextFilters}" MaxHeight="{StaticResource Double/SessionView.PredefinedLogTextFilterListBox.MaxHeight}" MinHeight="{StaticResource Double/SessionView.PredefinedLogTextFilterListBox.MinHeight}" SelectionChanged="OnPredefinedLogTextFilterListBoxSelectionChanged" SelectionMode="Multiple">
 													<ListBox.ItemTemplate>
 														<DataTemplate DataType="{x:Type appViewModels:PredefinedLogTextFilter}">
-															<Grid ColumnDefinitions="*,Auto">
-																<TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
-																<Border Classes="InPlaceAction_Reserved"/>
-																<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal" VerticalAlignment="Center">
-																	<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].RemovePredefinedLogTextFilterCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
-																		<asControls:Image Classes="InPlaceAction_Icon">
-																			<DrawingImage>
-																				<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
-																			</DrawingImage>
-																		</asControls:Image>
-																	</Button>
-																	<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].CopyPredefinedLogTextFilterCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Copy}">
-																		<asControls:Image Classes="InPlaceAction_Icon">
-																			<DrawingImage>
-																				<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Copy}"/>
-																			</DrawingImage>
-																		</asControls:Image>
-																	</Button>
-																	<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].EditPredefinedLogTextFilterCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
-																		<asControls:Image Classes="InPlaceAction_Icon">
-																			<DrawingImage>
-																				<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
-																			</DrawingImage>
-																		</asControls:Image>
-																	</Button>
-																</StackPanel>
-															</Grid>
+															<Border Background="{x:Static Brushes.Transparent}" Padding="{StaticResource Thickness/SessionView.PredefinedLogTextFilterListBox.Item.Padding}">
+																<ToolTip.Tip>
+																	<asControls:SyntaxHighlightingTextBlock DefinitionSet="{Binding $parent[UserControl].RegexSyntaxHighlightingDefinitionSet}" FontFamily="{x:Static asMedia:BuiltInFonts.SourceCodePro}" Text="{Binding Regex}"/>
+																</ToolTip.Tip>
+																<Grid ColumnDefinitions="*,Auto">
+																	<TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
+																	<Border Classes="InPlaceAction_Reserved"/>
+																	<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal" VerticalAlignment="Center">
+																		<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].RemovePredefinedLogTextFilterCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
+																			<asControls:Image Classes="InPlaceAction_Icon">
+																				<DrawingImage>
+																					<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
+																				</DrawingImage>
+																			</asControls:Image>
+																		</Button>
+																		<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].CopyPredefinedLogTextFilterCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Copy}">
+																			<asControls:Image Classes="InPlaceAction_Icon">
+																				<DrawingImage>
+																					<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Copy}"/>
+																				</DrawingImage>
+																			</asControls:Image>
+																		</Button>
+																		<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].EditPredefinedLogTextFilterCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
+																			<asControls:Image Classes="InPlaceAction_Icon">
+																				<DrawingImage>
+																					<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
+																				</DrawingImage>
+																			</asControls:Image>
+																		</Button>
+																	</StackPanel>
+																</Grid>
+															</Border>
 														</DataTemplate>
 													</ListBox.ItemTemplate>
 													<ListBox.Styles>
 														<Style Selector="ListBoxItem">
 															<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-															<Setter Property="Padding" Value="{StaticResource Thickness/SessionView.PredefinedLogTextFilterListBox.Item.Padding}"/>
-															<Setter Property="ToolTip.Tip" Value="{Binding Regex}"/>
+															<Setter Property="Padding" Value="0"/>
 														</Style>
 													</ListBox.Styles>
 												</ListBox>

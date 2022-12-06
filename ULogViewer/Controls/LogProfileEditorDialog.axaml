@@ -8,6 +8,7 @@
 		xmlns:abControls="using:CarinaStudio.Controls"
 		xmlns:aConverters="using:Avalonia.Data.Converters"
 		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
+		xmlns:asMedia="using:CarinaStudio.AppSuite.Media"
         xmlns:app="clr-namespace:CarinaStudio.ULogViewer;assembly=ULogViewer"
 		xmlns:appCategorizing="using:CarinaStudio.ULogViewer.ViewModels.Categorizing"
         xmlns:appControls="clr-namespace:CarinaStudio.ULogViewer.Controls;assembly=ULogViewer"
@@ -249,7 +250,7 @@
 						<asControls:ListBox.ItemTemplate>
 							<DataTemplate DataType="{x:Type appLogs:LogPattern}">
 								<Grid ColumnDefinitions="*,Auto">
-									<TextBlock Text="{Binding Regex}" TextTrimming="CharacterEllipsis"/>
+									<asControls:SyntaxHighlightingTextBlock DefinitionSet="{Binding $parent[Window].RegexSyntaxHighlightingDefinitionSet}" FontFamily="{x:Static asMedia:BuiltInFonts.SourceCodePro}" Text="{Binding Regex}" TextTrimming="None"/>
 									<Border Classes="InPlaceAction_Reserved"/>
 									<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
 										<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveLogPatternCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
@@ -501,7 +502,7 @@
 						<asControls:ListBox.ItemTemplate>
 							<DataTemplate>
 								<Grid ColumnDefinitions="*,Auto">
-									<TextBlock Text="{Binding}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
+									<asControls:SyntaxHighlightingTextBlock DefinitionSet="{Binding $parent[Window].LogWritingFormatSyntaxHighlightingDefinitionSet}" FontFamily="{x:Static asMedia:BuiltInFonts.SourceCodePro}" Text="{Binding}" TextWrapping="NoWrap" TextTrimming="None"/>
 									<Border Classes="InPlaceAction_Reserved"/>
 									<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
 										<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveLogWritingFormatCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">

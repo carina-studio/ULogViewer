@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using CarinaStudio.AppSuite.Controls;
+using CarinaStudio.AppSuite.Controls.Highlighting;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.ULogViewer.Logs.Profiles;
@@ -15,6 +16,7 @@ using System.Linq;
 using System.Windows.Input;
 
 namespace CarinaStudio.ULogViewer.Controls;
+
 
 /// <summary>
 /// Dialog to edit <see cref="KeyLogAnalysisRuleSet"/>.
@@ -42,9 +44,12 @@ partial class KeyLogAnalysisRuleSetEditorDialog : AppSuite.Controls.Window<IULog
 	/// </summary>
 	public KeyLogAnalysisRuleSetEditorDialog()
 	{
+		var b = this.FindResource("TextControlForeground");
 		this.CopyRuleCommand = new Command<ListBoxItem>(this.CopyRule);
 		this.EditRuleCommand = new Command<ListBoxItem>(this.EditRule);
 		this.RemoveRuleCommand = new Command<ListBoxItem>(this.RemoveRule);
+		this.MessageSyntaxHighlightingDefinitionSet = StringInterpolationFormatSyntaxHighlighting.CreateDefinitionSet(this.Application);
+		this.RegexSyntaxHighlightingDefinitionSet = RegexSyntaxHighlighting.CreateDefinitionSet(this.Application);
 		AvaloniaXamlLoader.Load(this);
 		this.iconColorComboBox = this.Get<LogProfileIconColorComboBox>(nameof(iconColorComboBox));
 		this.iconComboBox = this.Get<LogProfileIconComboBox>(nameof(iconComboBox));
@@ -206,6 +211,12 @@ partial class KeyLogAnalysisRuleSetEditorDialog : AppSuite.Controls.Window<IULog
 	public ICommand EditRuleCommand { get; }
 
 
+	/// <summary>
+	/// Definition set of message syntax highlighting.
+	/// </summary>
+	public SyntaxHighlightingDefinitionSet MessageSyntaxHighlightingDefinitionSet { get; }
+
+
 	/// <inheritdoc/>
 	protected override void OnClosed(EventArgs e)
 	{
@@ -275,6 +286,12 @@ partial class KeyLogAnalysisRuleSetEditorDialog : AppSuite.Controls.Window<IULog
 	public void OpenDocumentation() =>
 		Platform.OpenLink("https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#KeyLogAnalysis");
 #pragma warning restore CA1822
+
+
+	/// <summary>
+	/// Definition set of regex syntax highlighting.
+	/// </summary>
+	public SyntaxHighlightingDefinitionSet RegexSyntaxHighlightingDefinitionSet { get; }
 
 
 	// Remove rule.
