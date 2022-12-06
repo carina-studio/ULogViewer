@@ -58,8 +58,8 @@
 			<SolidColorBrush x:Key="Brush/LogProfileSelectionDialog.Label.Border">#808080</SolidColorBrush>
 
 			<!-- LogStringPropertyDialog -->
-			<SolidColorBrush x:Key="Brush/LogStringPropertyDialog.FoundText.Background">#303030</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/LogStringPropertyDialog.FoundText.Foreground">#ffffff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/LogStringPropertyDialog.FoundText.Background">#20000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/LogStringPropertyDialog.FoundText.Foreground">#bf2626</SolidColorBrush>
 
 			<!-- SessionView -->
 			<SolidColorBrush x:Key="Brush/SessionView.LogAnalysisRuleSetListBox.Background">#ffffff</SolidColorBrush>

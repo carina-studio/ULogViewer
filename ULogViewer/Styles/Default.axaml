@@ -1,7 +1,5 @@
 ﻿<Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:ae="using:AvaloniaEdit"
-        xmlns:aee="using:AvaloniaEdit.Editing"
 		xmlns:appControls="using:CarinaStudio.ULogViewer.Controls">
 
 	<!-- Resources -->
@@ -98,8 +96,8 @@
 			<SolidColorBrush x:Key="Brush/LogProfileSelectionDialog.Label.Border">#00000000</SolidColorBrush>
 
 			<!-- LogStringPropertyDialog -->
-			<SolidColorBrush x:Key="Brush/LogStringPropertyDialog.FoundText.Background">#ffffff</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/LogStringPropertyDialog.FoundText.Foreground">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/LogStringPropertyDialog.FoundText.Background">#30ffffff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/LogStringPropertyDialog.FoundText.Foreground">#ff4d4d</SolidColorBrush>
 
 			<!-- SessionView -->
 			<SolidColorBrush x:Key="Brush/SessionView.LogAnalysisRuleSetListBox.Background">#00000000</SolidColorBrush>
@@ -137,27 +135,11 @@
 			<SolidColorBrush x:Key="Brush/SessionView.StatusBar.Background.Paused">#000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.StatusBar.Background.Warning">#ca5100</SolidColorBrush>
 
-			<!-- SyntaxHighlighting -->
-			<Color x:Key="Color/SyntaxHighlighting.Comment">#5b9b4c</Color>
-			<Color x:Key="Color/SyntaxHighlighting.CompilerDirective">#7b7b7b</Color>
-			<Color x:Key="Color/SyntaxHighlighting.Keyword">#389edb</Color>
-			<Color x:Key="Color/SyntaxHighlighting.Keyword.ControlFlow">#d081c3</Color>
-			<Color x:Key="Color/SyntaxHighlighting.Number">#afcfa4</Color>
-			<Color x:Key="Color/SyntaxHighlighting.String">#d98d74</Color>
-			<Color x:Key="Color/SyntaxHighlighting.String.EscapeCharacter">#ddb974</Color>
-			<Color x:Key="Color/SyntaxHighlighting.Type">#00ccaf</Color>
-
-			<!-- TextArea -->
-			<SolidColorBrush x:Key="Brush/TextArea.Selection.Background">#3f0078d7</SolidColorBrush>
-
 			<!-- TextBox -->
 			<SolidColorBrush x:Key="Brush/TextBox.Foreground.Error">#ff0000</SolidColorBrush>
 
 		</ResourceDictionary>
 	</Styles.Resources>
-
-	<!-- External controls -->
-	<StyleInclude Source="avares://AvaloniaEdit/AvaloniaEdit.xaml" />
 
 	<!-- LogProfileSelectionDialog -->
 	<Style Selector="Border.LogProfileSelectionDialog_LogProfile_Label">
@@ -207,19 +189,6 @@
 		<Setter Property="TextWrapping" Value="NoWrap"/>
 		<Setter Property="TextTrimming" Value="CharacterEllipsis"/>
 		<Setter Property="VerticalAlignment" Value="Center"/>
-	</Style>
-
-	<!-- TextArea -->
-	<Style Selector="aee|TextArea">
-		<Setter Property="SelectionBrush" Value="{DynamicResource Brush/TextArea.Selection.Background}"/>
-		<Setter Property="SelectionCornerRadius" Value="0"/>
-	</Style>
-
-	<!-- TextEditor -->
-	<Style Selector="ae|TextEditor">
-		<Setter Property="Background" Value="{DynamicResource TextControlBackgroundBrush}"/>
-		<Setter Property="FontFamily" Value="{DynamicResource FontFamily/TextBox.FallbackFontFamilies}"/>
-		<Setter Property="Padding" Value="{DynamicResource TextControlThemePadding}"/>
 	</Style>
 
 	<!-- TextShellView -->

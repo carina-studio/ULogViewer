@@ -3,162 +3,34 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
-using Avalonia.Media.TextFormatting;
-using AvaloniaEdit;
-using AvaloniaEdit.Highlighting;
-using AvaloniaEdit.Rendering;
 using CarinaStudio.AppSuite.Controls;
+using CarinaStudio.AppSuite.Controls.Highlighting;
 using CarinaStudio.AppSuite.Media;
-using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
+using CarinaStudio.Controls;
 using CarinaStudio.ULogViewer.Converters;
 using CarinaStudio.ULogViewer.ViewModels;
 using CarinaStudio.Windows.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Windows.Input;
 
 namespace CarinaStudio.ULogViewer.Controls
 {
+	class DebugTextBox : SyntaxHighlightingTextBox
+	{
+		public DebugTextBox()
+		{
+			//
+		}
+	}
+
 	/// <summary>
 	/// Dialog to show message of log.
 	/// </summary>
 	partial class LogStringPropertyDialog : AppSuite.Controls.Dialog<IULogViewerApplication>
 	{
-		// Definition of syntax highlighting.
-		class HighlightingDefinitionImpl : IHighlightingDefinition
-		{
-			// Fields.
-			Regex? filter;
-			readonly HighlightingColor highlightingColor;
-			readonly HighlightingRuleSet mainRuleSet = new();
-			readonly Dictionary<string, string> properties = new();
-
-			// Constructor.
-			public HighlightingDefinitionImpl(IULogViewerApplication app)
-			{
-				this.highlightingColor = new HighlightingColor().Also(it => 
-				{
-					var res = (object?)null;
-					if ((app as App)?.TryFindResource("Brush/LogStringPropertyDialog.FoundText.Background", out res) == true && res is ISolidColorBrush background)
-						it.Background = new SimpleHighlightingBrush(background.Color);
-					if ((app as App)?.TryFindResource("Brush/LogStringPropertyDialog.FoundText.Foreground", out res) == true && res is ISolidColorBrush foreground)
-						it.Foreground = new SimpleHighlightingBrush(foreground.Color);
-				});
-				this.mainRuleSet.Let(mainRuleSet =>
-				{
-					mainRuleSet.Name = "MainRules";
-				});
-			}
-
-			// Filter.
-			public Regex? Filter
-			{
-				get => this.filter;
-				set
-				{
-					this.filter = value;
-					this.mainRuleSet.Rules.Clear();
-					if (value != null)
-					{
-						mainRuleSet.Rules.Add(new HighlightingRule()
-						{
-							Color = this.highlightingColor,
-							Regex = value,
-						});
-					}
-				}
-			}
-
-			// Implementations.
-			public HighlightingColor? GetNamedColor(string name) => name == "MatchedText"
-				? this.highlightingColor
-				: null;
-			public HighlightingRuleSet? GetNamedRuleSet(string name) => null;
-			public HighlightingRuleSet MainRuleSet => this.mainRuleSet;
-			public string Name => "LogMessage";
-			public IEnumerable<HighlightingColor> NamedHighlightingColors => new HighlightingColor[] { this.highlightingColor };
-			public IDictionary<string, string> Properties => DictionaryExtensions.AsReadOnly(this.properties);
-		}
-
-
-		// Visual line element generator for text wrapping.
-		class VisualLineElementGeneratorImpl : VisualLineElementGenerator
-		{
-			// Element for line break.
-			class LineBreakElement : VisualLineElement
-			{
-				// Constructor.
-				public LineBreakElement() : base(1, 0)
-				{ }
-
-				// Create text run
-				public override TextRun CreateTextRun(int startVisualColumn, ITextRunConstructionContext context) => new TextEndOfLine(1);
-			}
-
-			// Fields.
-			double[] charWidths = Array.Empty<double>();
-			readonly TextEditor textEditor;
-			double viewWidth;
-			public bool WrapText = true;
-
-			// Constructor.
-			public VisualLineElementGeneratorImpl(TextEditor textEditor) => this.textEditor = textEditor;
-
-			// Implementations.
-			public override VisualLineElement ConstructElement(int offset) => new LineBreakElement();
-			public override int GetFirstInterestedOffset(int startOffset)
-			{
-				// check state
-				if (!this.WrapText)
-					return -1;
-
-				// calculate size of each character.
-				var document = this.CurrentContext.Document;
-				var documentLine = document.GetLineByOffset(startOffset).Let(it =>
-				{
-					if (startOffset == it.Offset)
-					{
-						var textRunProperties = this.CurrentContext.GlobalTextRunProperties;
-						var charCount = it.Length;
-						this.charWidths = new double[charCount].Also(charWidths =>
-						{
-							var textFormatter = TextFormatter.Current;
-							for (var i = charCount - 1; i >= 0; --i)
-							{
-								var textLine = FormattedTextElement.PrepareText(textFormatter, document.GetText(it.Offset + i, 1), textRunProperties);
-								charWidths[i] = textLine.Width;
-							}
-						});
-						this.viewWidth = this.textEditor.ViewportWidth;
-					}
-					return it;
-				});
-
-				// find position to break line
-				var lineLength = documentLine.Length;
-				if (lineLength <= 0)
-					return -1;
-				var viewWidth = this.viewWidth;
-				var offset = (startOffset - documentLine.Offset);
-				if (offset >= lineLength)
-					return -1;
-				var textWidth = this.charWidths[offset++];
-				while (offset < lineLength)
-				{
-					var charWidth = this.charWidths[offset];
-					if (textWidth + charWidth > viewWidth - 20)
-						return documentLine.Offset + offset;
-					textWidth += charWidth;
-					++offset;
-				}
-				return -1;
-			}
-		}
-
-
 		// Static fields.
 		static readonly StyledProperty<bool> IsPropertyValueTextEditorFocusedProperty = AvaloniaProperty.Register<LogStringPropertyDialog, bool>(nameof(IsPropertyValueTextEditorFocused), false);
 		static readonly StyledProperty<string> LogPropertyDisplayNameProperty = AvaloniaProperty.Register<LogStringPropertyDialog, string>(nameof(LogPropertyDisplayName), "");
@@ -166,9 +38,8 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Fields.
 		readonly RegexTextBox findTextTextBox;
-		readonly HighlightingDefinitionImpl highlightingDefinition;
-		readonly TextEditor propertyValueTextEditor;
-		readonly VisualLineElementGeneratorImpl visualLineElementGenerator;
+		readonly SyntaxHighlightingTextBox propertyValueTextBox;
+		readonly SyntaxHighlightingToken propertyValueHighlightingToken = new();
 
 
 		/// <summary>
@@ -178,30 +49,19 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			this.SetTextWrappingCommand = new Command<bool>(this.SetTextWrapping);
 			AvaloniaXamlLoader.Load(this);
-			this.findTextTextBox = this.FindControl<RegexTextBox>("findTextTextBox").AsNonNull();
-			this.highlightingDefinition = new HighlightingDefinitionImpl(this.Application);
-			this.propertyValueTextEditor = this.FindControl<TextEditor>("propertyValueTextEditor").AsNonNull().Also(it =>
+			this.findTextTextBox = this.Get<RegexTextBox>(nameof(findTextTextBox));
+			this.propertyValueTextBox = this.Get<SyntaxHighlightingTextBox>(nameof(propertyValueTextBox)).Also(it =>
 			{
-				it.PropertyChanged += (_, e) =>
+				it.GetObservable(BoundsProperty).Subscribe(_ =>
+					it.Margin = default);
+				it.DefinitionSet = new SyntaxHighlightingDefinitionSet("Found text").Also(definitionSet =>
 				{
-					if (e.Property == TextBox.BoundsProperty && this.propertyValueTextEditor != null)
-					{
-						this.SynchronizationContext.Post(_ => this.propertyValueTextEditor.TextArea.TextView.Redraw(), null); // [Workaround] Force redraw to apply text wrapping.
-						this.propertyValueTextEditor.Margin = new Thickness(0); // [Workaround] Relayout completed, restore to correct margin.
-					}
-				};
-				it.SyntaxHighlighting = this.highlightingDefinition;
-				it.TextArea.Let(textArea =>
-				{
-					textArea.GotFocus += (sender, e) => this.SetValue<bool>(IsPropertyValueTextEditorFocusedProperty, true);
-					textArea.LostFocus += (sender, e) => this.SetValue<bool>(IsPropertyValueTextEditorFocusedProperty, false);
-					textArea.Options.EnableEmailHyperlinks = false;
-					textArea.Options.EnableHyperlinks = false;
-					textArea.TextView.ElementGenerators.Add(new VisualLineElementGeneratorImpl(it));
+					this.propertyValueHighlightingToken.Background = this.FindResourceOrDefault<IBrush>("Brush/LogStringPropertyDialog.FoundText.Background", Brushes.LightGray);
+					this.propertyValueHighlightingToken.Foreground = this.FindResourceOrDefault<IBrush>("Brush/LogStringPropertyDialog.FoundText.Foreground", Brushes.Red);
+					definitionSet.TokenDefinitions.Add(this.propertyValueHighlightingToken);
 				});
 			});
-			this.visualLineElementGenerator = (VisualLineElementGeneratorImpl)this.propertyValueTextEditor.TextArea.TextView.ElementGenerators.First(it => it is VisualLineElementGeneratorImpl);
-			this.SetValue<string>(LogPropertyDisplayNameProperty, LogPropertyNameConverter.Default.Convert(nameof(Log.Message)));
+			this.SetValue(LogPropertyDisplayNameProperty, LogPropertyNameConverter.Default.Convert(nameof(Log.Message)));
 			this.AddHandler(KeyDownEvent, (_, e) =>
 			{
 				if (e.Key == Avalonia.Input.Key.F)
@@ -270,8 +130,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (e.Property == RegexTextBox.ObjectProperty)
 			{
-				this.highlightingDefinition.Filter = this.findTextTextBox.Object;
-				this.propertyValueTextEditor.TextArea.TextView.Redraw();
+				this.propertyValueHighlightingToken.Pattern = this.findTextTextBox.Object;
+				this.propertyValueTextBox.Margin = new(1);
 			}
 		}
 
@@ -279,13 +139,12 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when opened.
 		protected override void OnOpened(EventArgs e)
 		{
-			this.propertyValueTextEditor.Text = this.LogPropertyName.Let(propertyName =>
+			this.propertyValueTextBox.Text = this.LogPropertyName.Let(propertyName =>
 			{
 				var value = "";
 				this.Log?.TryGetProperty(this.LogPropertyName, out value);
 				return value;
 			});
-			this.propertyValueTextEditor.HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Hidden; // [Workaround] Use 'Hidden' for text wrapping to prevent unexpected text aligmnent.
 			this.findTextTextBox.Focus();
 			base.OnOpened(e);
 		}
@@ -302,11 +161,11 @@ namespace CarinaStudio.ULogViewer.Controls
         // set text wrapping.
         void SetTextWrapping(bool wrap)
 		{
-			if (this.propertyValueTextEditor == null)
+			if (this.propertyValueTextBox == null)
 				return;
-			this.visualLineElementGenerator.WrapText = wrap;
-			this.propertyValueTextEditor.HorizontalScrollBarVisibility = wrap ? Avalonia.Controls.Primitives.ScrollBarVisibility.Hidden : Avalonia.Controls.Primitives.ScrollBarVisibility.Auto; // [Workaround] Use 'Hidden' for text wrapping to prevent unexpected text aligmnent.
-			this.propertyValueTextEditor.Margin = new Thickness(1); // [Workaround] Force relayout to apply text wrapping.
+			ScrollViewer.SetHorizontalScrollBarVisibility(this.propertyValueTextBox, wrap ? Avalonia.Controls.Primitives.ScrollBarVisibility.Disabled : Avalonia.Controls.Primitives.ScrollBarVisibility.Auto);
+			this.propertyValueTextBox.Margin = new(1);
+			this.propertyValueTextBox.TextWrapping = wrap ? TextWrapping.Wrap : TextWrapping.NoWrap;
 		}
 
 
@@ -321,7 +180,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (string.IsNullOrEmpty(name))
 				name = SettingKeys.DefaultLogFontFamily;
 			var builtInFontFamily = BuiltInFonts.FontFamilies.FirstOrDefault(it => it.FamilyNames.Contains(name));
-			this.propertyValueTextEditor.FontFamily = builtInFontFamily ?? new FontFamily(name);
+			this.propertyValueTextBox.FontFamily = builtInFontFamily ?? new FontFamily(name);
 		}
 	}
 }

@@ -3,7 +3,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:sys="using:System"
-        xmlns:ae="using:AvaloniaEdit"
         xmlns:ia="using:Avalonia.Xaml.Interactivity"
         xmlns:iaCore="using:Avalonia.Xaml.Interactions.Core"
         xmlns:ma="using:Markdown.Avalonia"
@@ -45,12 +44,7 @@
 
 			<!-- Property value -->
 			<TextBlock Classes="Dialog_TextBlock" Grid.Row="1" Text="{Binding $parent[Window].LogPropertyDisplayName}"/>
-			<Panel Grid.Row="2" VerticalAlignment="Stretch">
-				<Border Background="{DynamicResource TextControlBackground}" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{DynamicResource Thickness/Control.Border}" CornerRadius="{DynamicResource ControlCornerRadius}" IsVisible="{Binding !#propertyValueTextEditor.IsPointerOver}"/>
-				<Border Background="{DynamicResource TextControlBackgroundPointerOver}" BorderBrush="{DynamicResource TextControlBorderBrushPointerOver}" BorderThickness="{DynamicResource Thickness/Control.Border}" CornerRadius="{DynamicResource ControlCornerRadius}" IsVisible="{Binding #propertyValueTextEditor.IsPointerOver}"/>
-				<Border Background="{DynamicResource TextControlBackgroundFocused}" BorderBrush="{DynamicResource TextControlBorderBrushFocused}" BorderThickness="{DynamicResource Thickness/Control.Border.Focused}" CornerRadius="{DynamicResource ControlCornerRadius}" IsVisible="{Binding $parent[Window].IsPropertyValueTextEditorFocused}"/>
-				<ae:TextEditor Name="propertyValueTextEditor" HorizontalAlignment="Stretch" IsReadOnly="True" HorizontalScrollBarVisibility="Disabled"/>
-			</Panel>
+			<asControls:SyntaxHighlightingTextBox Name="propertyValueTextBox" Grid.Row="2" HorizontalAlignment="Stretch" IsReadOnly="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled" TextWrapping="Wrap" VerticalAlignment="Stretch"/>
 			<Separator Classes="Dialog_Separator" Grid.Row="3"/>
 
 			<!-- Wrap text -->
