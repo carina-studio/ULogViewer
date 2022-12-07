@@ -472,6 +472,10 @@ namespace CarinaStudio.ULogViewer
 			await base.OnPrepareStartingAsync();
 			this.UpdateSplashWindowProgress(0.1);
 
+			// initialize syntax highlighting service
+			await SyntaxHighlighting.InitializeAsync(this);
+			this.UpdateSplashWindowProgress(0.15);
+
 			// find menu items
 			if (Platform.IsMacOS)
 			{
