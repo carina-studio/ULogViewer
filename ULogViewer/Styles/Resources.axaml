@@ -2,6 +2,9 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
+	<!-- AppOptionsDialog -->
+	<sys:Double x:Key="Double/AppOptionsDialog.FontFamily.ExtraInfo.Opacity">0.5</sys:Double>
+
 	<!-- AzureResourcesDialog -->
 	<sys:Double x:Key="Double/AzureResourcesDialog.ResourceTreeView.Height">400</sys:Double>
 	<sys:Double x:Key="Double/AzureResourcesDialog.ResourceTreeView.Item.Type.Opacity">0.5</sys:Double>

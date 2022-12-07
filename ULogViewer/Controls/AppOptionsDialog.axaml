@@ -109,7 +109,17 @@
 				<!-- Log font -->
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/AppOptionsDialog.LogFont}"/>
 				<Grid ColumnDefinitions="*,Auto,*">
-					<ComboBox Classes="Dialog_ComboBox" Items="{Binding InstalledFontFamilies}" SelectedItem="{Binding LogFontFamily, Mode=TwoWay}"/>
+					<ComboBox Classes="Dialog_ComboBox" Items="{Binding InstalledFontFamilies}" SelectedItem="{Binding LogFontFamily, Mode=TwoWay}">
+						<ComboBox.ItemTemplate>
+							<DataTemplate>
+								<Grid ColumnDefinitions="*,Auto,Auto">
+									<TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+									<Separator Classes="Dialog_Separator_Small" Grid.Column="1" IsVisible="{Binding IsBuiltIn}"/>
+									<abControls:FormattedTextBlock Arg1="{DynamicResource String/Common.BuiltIn}" Format="({0})" Grid.Column="2" IsVisible="{Binding IsBuiltIn}" Opacity="{StaticResource Double/AppOptionsDialog.FontFamily.ExtraInfo.Opacity}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+								</Grid>
+							</DataTemplate>
+						</ComboBox.ItemTemplate>
+					</ComboBox>
 					<Separator Background="{x:Null}" Grid.Column="1" Width="{DynamicResource Double/Dialog.Separator.Height.Small}"/>
 					<abControls:IntegerTextBox Classes="Dialog_TextBox" Maximum="30" Minimum="10" Value="{Binding LogFontSize, Mode=TwoWay}" Grid.Column="2"/>
 				</Grid>

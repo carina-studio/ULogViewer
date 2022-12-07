@@ -1,4 +1,5 @@
-﻿using Avalonia.Media;
+﻿using System;
+using Avalonia.Media;
 using CarinaStudio.AppSuite.Media;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
@@ -16,6 +17,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 	/// </summary>
 	class AppOptions : AppSuite.ViewModels.ApplicationOptions
 	{
+		/// <summary>
+		/// Information of font family.
+		/// </summary>
+		public record class FontFamilyInfo(string Name, bool IsBuiltIn);
+
+
 		// Fields.
 		bool isSettingsModified;
 		readonly SortedObservableList<LogProfile> logProfiles = new(CompareLogProfiles);
@@ -27,7 +34,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public AppOptions() : base()
 		{
 			// setup properties
-			var familyName = this.LogFontFamily;
+			var familyName = this.LogFontFamily.Name;
 			this.logProfiles.Add(LogProfileManager.Default.EmptyProfile);
 			this.logProfiles.AddAll(LogProfileManager.Default.Profiles.Where(it => !it.IsTemplate));
 			this.LogProfiles = ListExtensions.AsReadOnly(this.logProfiles);
@@ -156,15 +163,25 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get all installed font families.
 		/// </summary>
-		public IList<string> InstalledFontFamilies { get; } = new List<string>(FontManager.Current.GetInstalledFontFamilyNames()).Also(it =>
+		public IList<FontFamilyInfo> InstalledFontFamilies { get; } = new List<FontFamilyInfo>().Also(it =>
 		{
-			it.Sort();
+			// get installed fonts
+			foreach (var familyName in FontManager.Current.GetInstalledFontFamilyNames())
+				it.Add(new(familyName, false));
+			
+			// sort
+			var comparison = new Comparison<FontFamilyInfo>((lhs, rhs) => string.Compare(lhs.Name, rhs.Name));
+			it.Sort(comparison);
+
+			// add built-in fonts
 			foreach (var builtInFontFamily in BuiltInFonts.FontFamilies)
 			{
-				var familyName = builtInFontFamily.FamilyNames[0];
-				var index = it.BinarySearch(familyName);
+				var fontFamilyInfo = new FontFamilyInfo(builtInFontFamily.FamilyNames[0], true);
+				var index = it.BinarySearch(fontFamilyInfo, comparison);
 				if (index < 0)
-					it.Insert(~index, familyName);
+					it.Insert(~index, fontFamilyInfo);
+				else
+					it[index] = fontFamilyInfo;
 			}
 		}).AsReadOnly();
 
@@ -172,15 +189,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get or set font family of log.
 		/// </summary>
-		public string LogFontFamily
+		public FontFamilyInfo LogFontFamily
 		{
 			get => this.Settings.GetValueOrDefault(SettingKeys.LogFontFamily).Let(it =>
 			{
-				if (string.IsNullOrEmpty(it))
-					return SettingKeys.DefaultLogFontFamily;
-				return it;
+				var familyName = string.IsNullOrEmpty(it)
+					? SettingKeys.DefaultLogFontFamily
+					: it;
+				return this.InstalledFontFamilies.FirstOrDefault(it => it.Name == familyName) ?? new(familyName, false);
 			});
-			set => this.Settings.SetValue<string>(SettingKeys.LogFontFamily, value);
+			set => this.Settings.SetValue<string>(SettingKeys.LogFontFamily, value.Name);
 		}
 
 
@@ -262,7 +280,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.OnPropertyChanged(nameof(InitialLogProfile));
 			else if (key == SettingKeys.LogFontFamily)
 			{
-				var familyName = this.LogFontFamily;
+				var familyName = this.LogFontFamily.Name;
 				this.OnPropertyChanged(nameof(LogFontFamily));
 				this.SampleLogFontFamily = BuiltInFonts.FontFamilies.FirstOrDefault(it => it.FamilyNames.Contains(familyName)) ?? new FontFamily(familyName);
 				this.OnPropertyChanged(nameof(SampleLogFontFamily));
