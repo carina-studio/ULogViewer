@@ -96,6 +96,7 @@
 	</ItemGroup>
 
 	<ItemGroup Condition="$(TargetFramework.Contains('windows'))">
+		<TrimmerRootAssembly Include="Microsoft.Windows.SDK.NET" />
 		<TrimmerRootAssembly Include="System.Management" />
 	</ItemGroup>
 
