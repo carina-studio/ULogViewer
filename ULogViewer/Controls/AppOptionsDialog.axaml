@@ -112,10 +112,9 @@
 					<ComboBox Classes="Dialog_ComboBox" Items="{Binding InstalledFontFamilies}" SelectedItem="{Binding LogFontFamily, Mode=TwoWay}">
 						<ComboBox.ItemTemplate>
 							<DataTemplate>
-								<Grid ColumnDefinitions="*,Auto,Auto">
+								<Grid ColumnDefinitions="*,Auto">
 									<TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
-									<Separator Classes="Dialog_Separator_Small" Grid.Column="1" IsVisible="{Binding IsBuiltIn}"/>
-									<abControls:FormattedTextBlock Arg1="{DynamicResource String/Common.BuiltIn}" Format="({0})" Grid.Column="2" IsVisible="{Binding IsBuiltIn}" Opacity="{StaticResource Double/AppOptionsDialog.FontFamily.ExtraInfo.Opacity}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+									<abControls:FormattedTextBlock Arg1="{DynamicResource String/Common.BuiltIn}" Format="({0})" Grid.Column="1" IsVisible="{Binding IsBuiltIn}" Margin="{StaticResource Thickness/AppOptionsDialog.FontFamily.ExtraInfo.Margin}" Opacity="{StaticResource Double/AppOptionsDialog.FontFamily.ExtraInfo.Opacity}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
 								</Grid>
 							</DataTemplate>
 						</ComboBox.ItemTemplate>
