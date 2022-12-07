@@ -41,6 +41,7 @@ namespace CarinaStudio.ULogViewer
 
 		// Static fields.
 		static readonly StyledProperty<bool> HasMultipleSessionsProperty = AvaloniaProperty.Register<MainWindow, bool>("HasMultipleSessions");
+		static readonly SettingKey<bool> IsBuiltInFontSuggestionShownKey = new("MainWindow.IsBuiltInFontSuggestionShown");
 		static readonly SettingKey<bool> IsUsingAddTabButtonToSelectLogProfileTutorialShownKey = new("MainWindow.IsUsingAddTabButtonToSelectLogProfileTutorialShown");
 		static MainWindow? MainWindowToActivateProVersion;
 
@@ -713,10 +714,38 @@ namespace CarinaStudio.ULogViewer
 
 
 		// Called when all initial dialogs of AppSuite closed.
-        protected override void OnInitialDialogsClosed()
+        protected override async void OnInitialDialogsClosed()
         {
             base.OnInitialDialogsClosed();
-			this.selectAndSetLogProfileAction.Schedule();
+			if (this.PersistentState.GetValueOrDefault(IsBuiltInFontSuggestionShownKey))
+				this.selectAndSetLogProfileAction.Schedule();
+			else
+			{
+				this.PersistentState.SetValue<bool>(IsBuiltInFontSuggestionShownKey, true);
+				if (this.Application.IsFirstLaunch 
+					|| string.IsNullOrEmpty(this.Settings.GetValueOrDefault(SettingKeys.LogFontFamily))
+					|| this.Settings.GetValueOrDefault(SettingKeys.LogFontFamily) == SettingKeys.DefaultLogFontFamily)
+				{
+					this.selectAndSetLogProfileAction.Schedule();
+				}
+				else
+				{
+					var result = await new MessageDialog()
+					{
+						Buttons = MessageDialogButtons.YesNo,
+						CustomIcon = this.FindResource("Image/Icon.Fonts") as IImage,
+						Icon = MessageDialogIcon.Custom,
+						Message = new FormattedString().Also(it =>
+						{
+							it.Arg1 = SettingKeys.DefaultLogFontFamily;
+							it.Bind(FormattedString.FormatProperty, this.GetResourceObservable("String/MainWindow.ConfirmUsingBuiltInFontAsLogFont"));
+						}),
+					}.ShowDialog(this);
+					if (result == MessageDialogResult.Yes)
+						this.Settings.ResetValue(SettingKeys.LogFontFamily);
+					this.selectAndSetLogProfileAction.Schedule();
+				}
+			}
         }
 
 

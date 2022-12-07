@@ -198,7 +198,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					: it;
 				return this.InstalledFontFamilies.FirstOrDefault(it => it.Name == familyName) ?? new(familyName, false);
 			});
-			set => this.Settings.SetValue<string>(SettingKeys.LogFontFamily, value.Name);
+			set 
+			{
+				if (value.Name == SettingKeys.DefaultLogFontFamily)
+					this.Settings.ResetValue(SettingKeys.LogFontFamily);
+				else
+					this.Settings.SetValue<string>(SettingKeys.LogFontFamily, value.Name);
+			}
 		}
 
 

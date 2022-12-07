@@ -687,6 +687,7 @@ return False</sys:String>
 
 	<!-- MainWindow -->
 	<sys:String x:Key="String/MainWindow.ClearCustomSessionTitle">Reset title of this tab</sys:String>
+	<sys:String x:Key="String/MainWindow.ConfirmUsingBuiltInFontAsLogFont">Do you want to use built-in font '{0}' for logs? You can see more built-in fonts or change the log font in Options dialog.</sys:String>
 	<sys:String x:Key="String/MainWindow.Session.AllLogCount">Total: {0}</sys:String>
 	<sys:String x:Key="String/MainWindow.Session.Hibernated">Hibernated to save resources</sys:String>
 	<sys:String x:Key="String/MainWindow.Session.LogsMemoryUsage">Memory usage: {0}</sys:String>
