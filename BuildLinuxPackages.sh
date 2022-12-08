@@ -1,7 +1,8 @@
 APP_NAME="ULogViewer"
 RID_LIST=("linux-x64" "linux-arm64")
 CONFIG="Release"
-
+TRIM_ASSEMBLIES="true"
+READY_TO_RUN="false"
 echo "********** Start building $APP_NAME **********"
 
 # Get application version
@@ -45,7 +46,7 @@ for i in "${!RID_LIST[@]}"; do
     fi
     
     # build
-    dotnet publish $APP_NAME -c $CONFIG -r $RID --self-contained true -p:PublishTrimmed=true
+    dotnet publish $APP_NAME -c $CONFIG -r $RID --self-contained true -p:PublishTrimmed=$TRIM_ASSEMBLIES -p:PublishReadyToRun=$READY_TO_RUN
     if [ "$?" != "0" ]; then
         exit
     fi

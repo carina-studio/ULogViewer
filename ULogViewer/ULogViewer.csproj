@@ -18,6 +18,8 @@
 		<NoWin32Manifest>true</NoWin32Manifest>
 		<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
 		<Configurations>Debug;Release;Debug-Windows;Release-Windows</Configurations>
+		<PublishReadyToRun>false</PublishReadyToRun>
+		<PublishReadyToRunEmitSymbols>false</PublishReadyToRunEmitSymbols>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)'=='Debug'">
@@ -98,6 +100,38 @@
 	<ItemGroup Condition="$(TargetFramework.Contains('windows'))">
 		<TrimmerRootAssembly Include="Microsoft.Windows.SDK.NET" />
 		<TrimmerRootAssembly Include="System.Management" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PublishReadyToRunExclude Include="AvaloniaEdit.dll" />
+		<PublishReadyToRunExclude Include="Avalonia.Controls.DataGrid.dll" />
+		<PublishReadyToRunExclude Include="BouncyCastle.Crypto.dll" />
+		<PublishReadyToRunExclude Include="EntityFramework.dll" />
+		<PublishReadyToRunExclude Include="EntityFramework.SqlServer.dll" />
+		<PublishReadyToRunExclude Include="Esprima.dll" />
+		<PublishReadyToRunExclude Include="Google.Protobuf.dll" />
+		<PublishReadyToRunExclude Include="IronPython.dll" />
+		<PublishReadyToRunExclude Include="IronPython.Modules.dll" />
+		<PublishReadyToRunExclude Include="IronPython.SQLite.dll" />
+		<PublishReadyToRunExclude Include="Jint.dll" />
+		<PublishReadyToRunExclude Include="Microsoft.CodeAnalysis.dll" />
+		<PublishReadyToRunExclude Include="Microsoft.CodeAnalysis.CSharp.dll" />
+		<PublishReadyToRunExclude Include="Microsoft.Dynamic.dll" />
+		<PublishReadyToRunExclude Include="MySql.Data.dll" />
+		<PublishReadyToRunExclude Include="Newtonsoft.Json.dll" />
+		<PublishReadyToRunExclude Include="SQLite.Interop.dll" />
+		<PublishReadyToRunExclude Include="System.Data.Common.dll" />
+		<PublishReadyToRunExclude Include="System.Data.SqlClient.dll" />
+		<PublishReadyToRunExclude Include="System.Private.dll" />
+	</ItemGroup>
+
+	<ItemGroup Condition="$(TargetFramework.Contains('windows'))">
+		<PublishReadyToRunExclude Include="Microsoft.Windows.SDK.NET.dll" />
+		<PublishReadyToRunExclude Include="PresentationCore.dll" />
+		<PublishReadyToRunExclude Include="PresentationFramework.dll" />
+		<PublishReadyToRunExclude Include="System.Drawing.Common.dll" />
+		<PublishReadyToRunExclude Include="WindowsBase.dll" />
+		<PublishReadyToRunExclude Include="WinRT.Runtime.dll" />
 	</ItemGroup>
 
 	<!-- TextShellHost -->

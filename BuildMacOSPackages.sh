@@ -2,6 +2,8 @@ APP_NAME="ULogViewer"
 RID_LIST=("osx-x64" "osx.11.0-arm64")
 PUB_PLATFORM_LIST=("osx-x64" "osx-arm64")
 CONFIG="Release"
+TRIM_ASSEMBLIES="true"
+READY_TO_RUN="false"
 CERT_NAME="" # Name of certification to sign the application
 
 echo "********** Start building $APP_NAME **********"
@@ -50,7 +52,7 @@ for i in "${!RID_LIST[@]}"; do
     if [ "$?" != "0" ]; then
         exit
     fi
-    dotnet publish TextShellHost -p:SelfContained=true -p:PublishTrimmed=true -p:RuntimeIdentifier=$RID
+    dotnet publish TextShellHost -p:SelfContained=true -p:PublishTrimmed=$TRIM_ASSEMBLIES -p:RuntimeIdentifier=$RID
     if [ "$?" != "0" ]; then
         exit
     fi
@@ -64,7 +66,7 @@ for i in "${!RID_LIST[@]}"; do
     fi
     
     # build
-    dotnet msbuild $APP_NAME -t:BundleApp -property:Configuration=$CONFIG -p:SelfContained=true -p:PublishSingleFile=false -p:PublishTrimmed=true -p:RuntimeIdentifier=$RID
+    dotnet msbuild $APP_NAME -t:BundleApp -property:Configuration=$CONFIG -p:SelfContained=true -p:PublishSingleFile=false -p:PublishTrimmed=$TRIM_ASSEMBLIES -p:RuntimeIdentifier=$RID -p:PublishReadyToRun=$READY_TO_RUN
     if [ "$?" != "0" ]; then
         exit
     fi
