@@ -25,17 +25,6 @@ if [[ ! -d "./Packages/$VERSION" ]]; then
     fi
 fi
 
-# Build native libraries
-echo " " 
-echo "Build native libraries"
-echo " "
-cd ./TextShellHost
-. BuildMacOSNativeLibraries.sh
-if [ "$?" != "0" ]; then
-    exit
-fi
-cd ..
-
 # Build packages
 for i in "${!RID_LIST[@]}"; do
     RID=${RID_LIST[$i]}
@@ -44,18 +33,6 @@ for i in "${!RID_LIST[@]}"; do
     echo " " 
     echo "[$PUB_PLATFORM ($RID)]"
     echo " "
-
-    # Build TextShellHost
-    rm -r ./TextShellHost/bin/$CONFIG/net7.0/$RID
-    dotnet clean TextShellHost
-    dotnet restore TextShellHost
-    if [ "$?" != "0" ]; then
-        exit
-    fi
-    dotnet publish TextShellHost -p:SelfContained=true -p:PublishTrimmed=$TRIM_ASSEMBLIES -p:RuntimeIdentifier=$RID
-    if [ "$?" != "0" ]; then
-        exit
-    fi
 
     # clean
     rm -r ./$APP_NAME/bin/$CONFIG/net7.0/$RID

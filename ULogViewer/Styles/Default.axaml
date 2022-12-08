@@ -191,10 +191,4 @@
 		<Setter Property="VerticalAlignment" Value="Center"/>
 	</Style>
 
-	<!-- TextShellView -->
-	<Style Selector="appControls|TextShellView">
-		<Setter Property="Background" Value="{DynamicResource TextControlBackgroundBrush}"/>
-		<Setter Property="BorderThickness" Value="0"/>
-	</Style>
-
 </Styles>

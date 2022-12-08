@@ -20,7 +20,7 @@
 
 		<!-- Content -->
 		<Grid Classes="Dialog_ContentPanel">
-			<appControls:TextShellView Name="textShellView"/>
+			
 		</Grid>
 
 	</DockPanel>

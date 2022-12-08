@@ -134,11 +134,6 @@
 		<PublishReadyToRunExclude Include="WinRT.Runtime.dll" />
 	</ItemGroup>
 
-	<!-- TextShellHost -->
-	<ItemGroup>
-		<ProjectReference Include="../TextShellHost/TextShellHost.csproj" />
-	</ItemGroup>
-
 	<!-- SQLite -->
 	<ItemGroup Condition="$(RuntimeIdentifier.Contains('osx'))">
 		<Content Include="../SQLite/1.0.116/$(RuntimeIdentifier)/System.Data.SQLite.dll" Link="System.Data.SQLite.dll">
