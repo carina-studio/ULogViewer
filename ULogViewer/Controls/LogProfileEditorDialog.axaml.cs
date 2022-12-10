@@ -10,6 +10,7 @@ using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Controls;
 using CarinaStudio.Threading;
+using CarinaStudio.ULogViewer.Controls.Highlighting;
 using CarinaStudio.ULogViewer.Logs;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.ULogViewer.Logs.Profiles;
@@ -138,6 +139,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.RemoveVisibleLogPropertyCommand = new Command<ListBoxItem>(this.RemoveVisibleLogProperty);
 
 			// create syntax highlighting definition sets
+			this.DateTimeFormatSyntaxHighlightingDefinitionSet = DateTimeFormatSyntaxHighlighting.CreateDefinitionSet(this.Application);
 			this.LogWritingFormatSyntaxHighlightingDefinitionSet = StringInterpolationFormatSyntaxHighlighting.CreateDefinitionSet(this.Application);
 			this.RegexSyntaxHighlightingDefinitionSet = RegexSyntaxHighlighting.CreateDefinitionSet(this.Application);
 
@@ -341,6 +343,12 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.SelectListBoxItem(this.visibleLogPropertyListBox, this.visibleLogProperties.Count - 1);
 			}
 		}
+
+
+		/// <summary>
+		/// Definition set of date time format syntax highlighting.
+		/// </summary>
+		public SyntaxHighlightingDefinitionSet DateTimeFormatSyntaxHighlightingDefinitionSet { get; }
 
 
 		// Edit log level map entry.

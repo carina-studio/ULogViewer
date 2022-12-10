@@ -318,7 +318,7 @@
 						<asControls:ListBox.ItemTemplate>
 							<DataTemplate>
 								<Grid ColumnDefinitions="*,Auto">
-									<TextBlock Text="{Binding}" TextTrimming="CharacterEllipsis"/>
+									<asControls:SyntaxHighlightingTextBlock DefinitionSet="{Binding $parent[Window].DateTimeFormatSyntaxHighlightingDefinitionSet}" FontFamily="{x:Static asMedia:BuiltInFonts.SourceCodePro}" Text="{Binding}" TextTrimming="None"/>
 									<Border Classes="InPlaceAction_Reserved"/>
 									<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
 										<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveTimestampFormatForReadingCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
@@ -459,7 +459,7 @@
 
 				<!-- Timestamp format for displaying -->
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogProfileEditorDialog.TimestampFormatForDisplaying}"/>
-				<TextBox Name="timestampFormatForDisplayingTextBox" Classes="Dialog_TextBox" MaxLength="256"/>
+				<asControls:SyntaxHighlightingTextBox Name="timestampFormatForDisplayingTextBox" Classes="Dialog_TextBox" DefinitionSet="{Binding $parent[Window].DateTimeFormatSyntaxHighlightingDefinitionSet}" FontFamily="{x:Static asMedia:BuiltInFonts.SourceCodePro}" MaxLength="256"/>
 				<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.FormatDescription}" Uri="{x:Static app:Uris.DateTimeFormatReference}"/>
 				<Separator Classes="Dialog_Separator"/>
 
@@ -594,7 +594,7 @@
 
 				<!-- Timestamp format for writing -->
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogProfileEditorDialog.TimestampFormatForWriting}"/>
-				<TextBox Name="timestampFormatForWritingTextBox" Classes="Dialog_TextBox" MaxLength="256" Watermark="{DynamicResource String/LogProfileEditorDialog.TimestampFormatForWriting.Watermark}"/>
+				<asControls:SyntaxHighlightingTextBox Name="timestampFormatForWritingTextBox" Classes="Dialog_TextBox" DefinitionSet="{Binding $parent[Window].DateTimeFormatSyntaxHighlightingDefinitionSet}" FontFamily="{x:Static asMedia:BuiltInFonts.SourceCodePro}" MaxLength="256" Watermark="{DynamicResource String/LogProfileEditorDialog.TimestampFormatForWriting.Watermark}"/>
 				<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.FormatDescription}" Uri="{x:Static app:Uris.DateTimeFormatReference}"/>
 				<Separator Classes="Dialog_Separator"/>
 

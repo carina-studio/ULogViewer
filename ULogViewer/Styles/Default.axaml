@@ -9,6 +9,23 @@
 			<!-- Accent -->
 			<Color x:Key="Color/Accent">#912fbf</Color>
 
+			<!-- DateTimeFormatSyntaxHighlighting -->
+			<SolidColorBrush x:Key="Brush/DateTimeFormatSyntaxHighlighting.AmPmDesignator">#ff40d0</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/DateTimeFormatSyntaxHighlighting.DayOfMonth">#c9ff4d</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/DateTimeFormatSyntaxHighlighting.DayOfWeek">#c9ff4d</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/DateTimeFormatSyntaxHighlighting.Era">#ff40d0</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/DateTimeFormatSyntaxHighlighting.EscapeCharacter">#ff40d0</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/DateTimeFormatSyntaxHighlighting.Hour">#56cc3e</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/DateTimeFormatSyntaxHighlighting.Minute">#3ecc90</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/DateTimeFormatSyntaxHighlighting.MonthName">#e6d95d</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/DateTimeFormatSyntaxHighlighting.Month">#e6d95d</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/DateTimeFormatSyntaxHighlighting.Second">#3ebccc</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/DateTimeFormatSyntaxHighlighting.Separator">#ff40d0</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/DateTimeFormatSyntaxHighlighting.SubSecond">#4688e5</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/DateTimeFormatSyntaxHighlighting.TimeZone">#ff4d4c</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/DateTimeFormatSyntaxHighlighting.TimeZoneOffset">#ff4d4c</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/DateTimeFormatSyntaxHighlighting.Year">#cc8f65</SolidColorBrush>
+
 			<!-- Icon -->
 			<SolidColorBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.Checkpoint" Color="#f26357"/>
 			<SolidColorBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.Decrease" Color="#ff0000"/>

@@ -3,6 +3,8 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using CarinaStudio.AppSuite.Controls;
+using CarinaStudio.AppSuite.Controls.Highlighting;
+using CarinaStudio.ULogViewer.Controls.Highlighting;
 using CarinaStudio.Windows.Input;
 using System;
 using System.Threading;
@@ -22,9 +24,16 @@ namespace CarinaStudio.ULogViewer.Controls
         // Constructor.
         public DateTimeFormatInputDialog()
         {
+			this.DateTimeFormatSyntaxHighlightingDefinitionSet = DateTimeFormatSyntaxHighlighting.CreateDefinitionSet(this.Application);
             AvaloniaXamlLoader.Load(this);
             this.formatTextBox = this.Get<TextBox>(nameof(formatTextBox));
         }
+
+
+        /// <summary>
+		/// Definition set of date time format syntax highlighting.
+		/// </summary>
+		public SyntaxHighlightingDefinitionSet DateTimeFormatSyntaxHighlightingDefinitionSet { get; }
 
 
         // Generate result.
