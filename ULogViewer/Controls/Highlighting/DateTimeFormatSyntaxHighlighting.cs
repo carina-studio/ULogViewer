@@ -145,7 +145,7 @@ static partial class DateTimeFormatSyntaxHighlighting
     private static partial Regex CreateDayOfWeekPattern();
     [GeneratedRegex(@"(?<!g)g{1,2}")]
     private static partial Regex CreateEraPattern();
-    [GeneratedRegex(@"\\[\S]")]
+    [GeneratedRegex(@"\\.")]
     private static partial Regex CreateEscapeCharacterPattern();
     [GeneratedRegex(@"(?<!h)h{1,2}|(?<!H)H{1,2}")]
     private static partial Regex CreateHourPattern();
