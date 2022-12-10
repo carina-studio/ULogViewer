@@ -45,12 +45,13 @@
 				<Grid Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*">
 					<Grid.IsVisible>
 						<MultiBinding Converter="{x:Static aConverters:BoolConverters.And}">
-							<Binding Path="IsRestartingMainWindowsNeeded"/>
+							<Binding Path="IsRestartingRootWindowsNeeded"/>
 							<Binding Path="IsThemeModeChanged"/>
 						</MultiBinding>
 					</Grid.IsVisible>
 					<Image Classes="Dialog_Icon" Source="{StaticResource Image/Icon.Warning.Outline.Colored}"/>
-					<TextBlock Classes="Dialog_Icon_TextBlock_Description_Warning" Grid.Column="1" Text="{DynamicResource String/ApplicationOptions.WillRestartMainWindowsToTakeEffect}"/>
+					<TextBlock Classes="Dialog_Icon_TextBlock_Description_Warning" Grid.Column="1" IsVisible="{Binding !HasMainWindows}" Text="{DynamicResource String/ApplicationOptions.WillCloseAllWindowsToTakeEffect}"/>
+					<TextBlock Classes="Dialog_Icon_TextBlock_Description_Warning" Grid.Column="1" IsVisible="{Binding HasMainWindows}" Text="{DynamicResource String/ApplicationOptions.WillRestartMainWindowsToTakeEffect}"/>
 				</Grid>
 				<Separator Classes="Dialog_Separator"/>
 
@@ -68,12 +69,13 @@
 				<Grid Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*">
 					<Grid.IsVisible>
 						<MultiBinding Converter="{x:Static aConverters:BoolConverters.And}">
-							<Binding Path="IsRestartingMainWindowsNeeded"/>
+							<Binding Path="IsRestartingRootWindowsNeeded"/>
 							<Binding Path="IsUseCompactUserInterfaceChanged"/>
 						</MultiBinding>
 					</Grid.IsVisible>
 					<Image Classes="Dialog_Icon" Source="{StaticResource Image/Icon.Warning.Outline.Colored}"/>
-					<TextBlock Classes="Dialog_Icon_TextBlock_Description_Warning" Grid.Column="1" Text="{DynamicResource String/ApplicationOptions.WillRestartMainWindowsToTakeEffect}"/>
+					<TextBlock Classes="Dialog_Icon_TextBlock_Description_Warning" Grid.Column="1" IsVisible="{Binding !HasMainWindows}" Text="{DynamicResource String/ApplicationOptions.WillCloseAllWindowsToTakeEffect}"/>
+					<TextBlock Classes="Dialog_Icon_TextBlock_Description_Warning" Grid.Column="1" IsVisible="{Binding HasMainWindows}" Text="{DynamicResource String/ApplicationOptions.WillRestartMainWindowsToTakeEffect}"/>
 				</Grid>
 				<Separator Classes="Dialog_Separator"/>
 
