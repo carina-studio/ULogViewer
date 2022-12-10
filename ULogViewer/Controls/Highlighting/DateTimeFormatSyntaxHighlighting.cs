@@ -137,34 +137,34 @@ static partial class DateTimeFormatSyntaxHighlighting
 
 
     // Create patterns
-    [GeneratedRegex(@"(?<!t)t{1,2}")]
+    [GeneratedRegex(@"(?<!(^|[^\\])(\\\\)*t)t{1,2}")]
     private static partial Regex CreateAmPmDesignatorPattern();
-    [GeneratedRegex(@"(?<!d)d{1,2}")]
+    [GeneratedRegex(@"(?<!(^|[^\\])(\\\\)*d)d{1,2}")]
     private static partial Regex CreateDayOfMonthPattern();
-    [GeneratedRegex(@"(?<!d)d{3,4}")]
+    [GeneratedRegex(@"(?<!(^|[^\\])(\\\\)*d)d{3,4}")]
     private static partial Regex CreateDayOfWeekPattern();
-    [GeneratedRegex(@"(?<!g)g{1,2}")]
+    [GeneratedRegex(@"(?<!(^|[^\\])(\\\\)*g)g{1,2}")]
     private static partial Regex CreateEraPattern();
     [GeneratedRegex(@"\\.")]
     private static partial Regex CreateEscapeCharacterPattern();
-    [GeneratedRegex(@"(?<!h)h{1,2}|(?<!H)H{1,2}")]
+    [GeneratedRegex(@"(?<!(^|[^\\])(\\\\)*h)h{1,2}|(?<!(^|[^\\])(\\\\)*H)H{1,2}")]
     private static partial Regex CreateHourPattern();
-    [GeneratedRegex(@"(?<!m)m{1,2}")]
+    [GeneratedRegex(@"(?<!(^|[^\\])(\\\\)*m)m{1,2}")]
     private static partial Regex CreateMinutePattern();
-    [GeneratedRegex(@"(?<!M)M{3,4}")]
+    [GeneratedRegex(@"(?<!(^|[^\\])(\\\\)*M)M{3,4}")]
     private static partial Regex CreateMonthNamePattern();
-    [GeneratedRegex(@"(?<!M)M{1,2}")]
+    [GeneratedRegex(@"(?<!(^|[^\\])(\\\\)*M)M{1,2}")]
     private static partial Regex CreateMonthPattern();
-    [GeneratedRegex(@"(?<!s)s{1,2}")]
+    [GeneratedRegex(@"(?<!(^|[^\\])(\\\\)*s)s{1,2}")]
     private static partial Regex CreateSecondPattern();
     [GeneratedRegex(@"[:/]")]
     private static partial Regex CreateSeparatorPattern();
-    [GeneratedRegex(@"(?<!f)f{1,7}|(?<!F)F{1,7}")]
+    [GeneratedRegex(@"(?<!(^|[^\\])(\\\\)*f)f{1,7}|(?<!(^|[^\\])(\\\\)*F)F{1,7}")]
     private static partial Regex CreateSubSecondPattern();
-    [GeneratedRegex(@"(?<!z)z{1,3}")]
+    [GeneratedRegex(@"(?<!(^|[^\\])(\\\\)*z)z{1,3}")]
     private static partial Regex CreateTimeZoneOffsetPattern();
-    [GeneratedRegex(@"(?<!K)K")]
+    [GeneratedRegex(@"(?<!(^|[^\\])(\\\\)*K)K")]
     private static partial Regex CreateTimeZonePattern();
-    [GeneratedRegex(@"(?<!y)y{1,5}")]
+    [GeneratedRegex(@"(?<!(^|[^\\])(\\\\)*y)y{1,5}")]
     private static partial Regex CreateYearPattern();
 }

@@ -95,22 +95,22 @@ static partial class TimeSpanFormatSyntaxHighlighting
 
 
     // Create patterns.
-    [GeneratedRegex(@"(?<!c)c")]
+    [GeneratedRegex(@"(?<!(^|[^\\])(\\\\)*c)c")]
     private static partial Regex CreateConstantFormatPattern();
-    [GeneratedRegex(@"(?<!d)d{1,8}")]
+    [GeneratedRegex(@"(?<!(^|[^\\])(\\\\)*d)d{1,8}")]
     private static partial Regex CreateDaysPattern();
     [GeneratedRegex(@"\\.")]
     private static partial Regex CreateEscapeCharacterPattern();
-    [GeneratedRegex(@"(?<!h)h{1,2}")]
+    [GeneratedRegex(@"(?<!(^|[^\\])(\\\\)*h)h{1,2}")]
     private static partial Regex CreateHoursPattern();
-    [GeneratedRegex(@"(?<!G)G")]
+    [GeneratedRegex(@"(?<!(^|[^\\])(\\\\)*G)G")]
     private static partial Regex CreateLongFormatPattern();
-    [GeneratedRegex(@"(?<!m)m{1,2}")]
+    [GeneratedRegex(@"(?<!(^|[^\\])(\\\\)*m)m{1,2}")]
     private static partial Regex CreateMinutesPattern();
-    [GeneratedRegex(@"(?<!s)s{1,2}")]
+    [GeneratedRegex(@"(?<!(^|[^\\])(\\\\)*s)s{1,2}")]
     private static partial Regex CreateSecondsPattern();
-    [GeneratedRegex(@"(?<!g)g")]
+    [GeneratedRegex(@"(?<!(^|[^\\])(\\\\)*g)g")]
     private static partial Regex CreateShortFormatPattern();
-    [GeneratedRegex(@"(?<!f)f{1,7}|(?<!F)F{1,7}")]
+    [GeneratedRegex(@"(?<!(^|[^\\])(\\\\)*f)f{1,7}|(?<!(^|[^\\])(\\\\)*F)F{1,7}")]
     private static partial Regex CreateSubSecondsPattern();
 }
