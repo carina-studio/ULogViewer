@@ -674,7 +674,7 @@ namespace CarinaStudio.ULogViewer
 					break;
 				case AppSuite.Controls.ApplicationOptionsDialogResult.RestartMainWindowsNeeded:
 					this.Logger.LogWarning("Restart main windows");
-					_ = this.RestartMainWindowsAsync();
+					_ = this.RestartRootWindowsAsync();
 					break;
 			}
 		}
