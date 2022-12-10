@@ -367,7 +367,7 @@
 						<asControls:ListBox.ItemTemplate>
 							<DataTemplate>
 								<Grid ColumnDefinitions="*,Auto">
-									<TextBlock Text="{Binding}" TextTrimming="CharacterEllipsis"/>
+									<asControls:SyntaxHighlightingTextBlock DefinitionSet="{Binding $parent[Window].TimeSpanFormatSyntaxHighlightingDefinitionSet}" FontFamily="{x:Static asMedia:BuiltInFonts.SourceCodePro}" Text="{Binding}" TextTrimming="None"/>
 									<Border Classes="InPlaceAction_Reserved"/>
 									<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
 										<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveTimeSpanFormatForReadingCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
@@ -465,7 +465,7 @@
 
 				<!-- Time span format for displaying -->
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogProfileEditorDialog.TimeSpanFormatForDisplaying}"/>
-				<TextBox Name="timeSpanFormatForDisplayingTextBox" Classes="Dialog_TextBox" MaxLength="256"/>
+				<asControls:SyntaxHighlightingTextBox Name="timeSpanFormatForDisplayingTextBox" Classes="Dialog_TextBox" DefinitionSet="{Binding $parent[Window].TimeSpanFormatSyntaxHighlightingDefinitionSet}" FontFamily="{x:Static asMedia:BuiltInFonts.SourceCodePro}" MaxLength="256"/>
 				<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.FormatDescription}" Uri="{x:Static app:Uris.TimeSpanFormatReference}"/>
 				<Separator Classes="Dialog_Separator"/>
 
@@ -600,7 +600,7 @@
 
 				<!-- Time span format for writing -->
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogProfileEditorDialog.TimeSpanFormatForWriting}"/>
-				<TextBox Name="timeSpanFormatForWritingTextBox" Classes="Dialog_TextBox" MaxLength="256" Watermark="{DynamicResource String/LogProfileEditorDialog.TimeSpanFormatForWriting.Watermark}"/>
+				<asControls:SyntaxHighlightingTextBox Name="timeSpanFormatForWritingTextBox" Classes="Dialog_TextBox" DefinitionSet="{Binding $parent[Window].TimeSpanFormatSyntaxHighlightingDefinitionSet}" FontFamily="{x:Static asMedia:BuiltInFonts.SourceCodePro}" MaxLength="256" Watermark="{DynamicResource String/LogProfileEditorDialog.TimeSpanFormatForWriting.Watermark}"/>
 				<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.FormatDescription}" Uri="{x:Static app:Uris.TimeSpanFormatReference}"/>
 
 			</StackPanel>

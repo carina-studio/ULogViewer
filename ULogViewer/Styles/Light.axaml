@@ -102,14 +102,16 @@
 			<SolidColorBrush x:Key="Brush/SessionView.StatusBar.Background.Inactive">#aaaaaa</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.StatusBar.Background.Paused">#aaaaaa</SolidColorBrush>
 
-			<!-- SyntaxHighlighting -->
-			<Color x:Key="Color/SyntaxHighlighting.Comment">#008200</Color>
-			<Color x:Key="Color/SyntaxHighlighting.Keyword">#0000ff</Color>
-			<Color x:Key="Color/SyntaxHighlighting.Keyword.ControlFlow">#bf00e3</Color>
-			<Color x:Key="Color/SyntaxHighlighting.Number">#008855</Color>
-			<Color x:Key="Color/SyntaxHighlighting.String">#b20002</Color>
-			<Color x:Key="Color/SyntaxHighlighting.String.EscapeCharacter">#ff0000</Color>
-			<Color x:Key="Color/SyntaxHighlighting.Type">#00819c</Color>
+			<!-- TimeSpanFormatSyntaxHighlighting -->
+			<SolidColorBrush x:Key="Brush/TimeSpanFormatSyntaxHighlighting.ConstantFormat">#008855</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/TimeSpanFormatSyntaxHighlighting.Days">#0000ff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/TimeSpanFormatSyntaxHighlighting.EscapeCharacter">#ff0000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/TimeSpanFormatSyntaxHighlighting.Hours">#0000ff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/TimeSpanFormatSyntaxHighlighting.LongFormat">#008855</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/TimeSpanFormatSyntaxHighlighting.Minutes">#0000ff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/TimeSpanFormatSyntaxHighlighting.Seconds">#0000ff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/TimeSpanFormatSyntaxHighlighting.ShortFormat">#008855</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/TimeSpanFormatSyntaxHighlighting.SubSeconds">#0000ff</SolidColorBrush>
 
 		</ResourceDictionary>
 	</Styles.Resources>

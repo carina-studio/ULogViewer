@@ -142,6 +142,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.DateTimeFormatSyntaxHighlightingDefinitionSet = DateTimeFormatSyntaxHighlighting.CreateDefinitionSet(this.Application);
 			this.LogWritingFormatSyntaxHighlightingDefinitionSet = StringInterpolationFormatSyntaxHighlighting.CreateDefinitionSet(this.Application);
 			this.RegexSyntaxHighlightingDefinitionSet = RegexSyntaxHighlighting.CreateDefinitionSet(this.Application);
+			this.TimeSpanFormatSyntaxHighlightingDefinitionSet = TimeSpanFormatSyntaxHighlighting.CreateDefinitionSet(this.Application);
 
 			// initialize.
 			AvaloniaXamlLoader.Load(this);
@@ -1226,6 +1227,12 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// List of time span format to read logs.
 		/// </summary>
 		public IList<string> TimeSpanFormatsForReading { get; }
+
+
+		/// <summary>
+		/// Definition set of time span format syntax highlighting.
+		/// </summary>
+		public SyntaxHighlightingDefinitionSet TimeSpanFormatSyntaxHighlightingDefinitionSet { get; }
 
 
 		/// <summary>

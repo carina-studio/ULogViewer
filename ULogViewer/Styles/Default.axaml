@@ -155,6 +155,17 @@
 			<!-- TextBox -->
 			<SolidColorBrush x:Key="Brush/TextBox.Foreground.Error">#ff0000</SolidColorBrush>
 
+			<!-- TimeSpanFormatSyntaxHighlighting -->
+			<SolidColorBrush x:Key="Brush/TimeSpanFormatSyntaxHighlighting.ConstantFormat">#00ccaf</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/TimeSpanFormatSyntaxHighlighting.Days">#389edb</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/TimeSpanFormatSyntaxHighlighting.EscapeCharacter">#ddb974</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/TimeSpanFormatSyntaxHighlighting.Hours">#389edb</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/TimeSpanFormatSyntaxHighlighting.LongFormat">#00ccaf</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/TimeSpanFormatSyntaxHighlighting.Minutes">#389edb</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/TimeSpanFormatSyntaxHighlighting.Seconds">#389edb</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/TimeSpanFormatSyntaxHighlighting.ShortFormat">#00ccaf</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/TimeSpanFormatSyntaxHighlighting.SubSeconds">#389edb</SolidColorBrush>
+
 		</ResourceDictionary>
 	</Styles.Resources>
 

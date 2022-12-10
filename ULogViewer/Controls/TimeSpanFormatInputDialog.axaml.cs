@@ -3,6 +3,8 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using CarinaStudio.AppSuite.Controls;
+using CarinaStudio.AppSuite.Controls.Highlighting;
+using CarinaStudio.ULogViewer.Controls.Highlighting;
 using CarinaStudio.Windows.Input;
 using System;
 using System.Threading;
@@ -22,6 +24,7 @@ namespace CarinaStudio.ULogViewer.Controls
         // Constructor.
         public TimeSpanFormatInputDialog()
         {
+            this.TimeSpanFormatSyntaxHighlightingDefinitionSet = TimeSpanFormatSyntaxHighlighting.CreateDefinitionSet(this.Application);
             AvaloniaXamlLoader.Load(this);
             this.formatTextBox = this.Get<TextBox>(nameof(formatTextBox));
         }
@@ -69,5 +72,11 @@ namespace CarinaStudio.ULogViewer.Controls
         // Validate input.
         protected override bool OnValidateInput() =>
             base.OnValidateInput() && !string.IsNullOrWhiteSpace(this.formatTextBox.Text);
+        
+
+        /// <summary>
+		/// Definition set of time span format syntax highlighting.
+		/// </summary>
+		public SyntaxHighlightingDefinitionSet TimeSpanFormatSyntaxHighlightingDefinitionSet { get; }
     }
 }
