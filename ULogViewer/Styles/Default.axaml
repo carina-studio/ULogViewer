@@ -9,23 +9,6 @@
 			<!-- Accent -->
 			<Color x:Key="Color/Accent">#912fbf</Color>
 
-			<!-- DateTimeFormatSyntaxHighlighting -->
-			<SolidColorBrush x:Key="Brush/DateTimeFormatSyntaxHighlighting.AmPmDesignator">#ff40d0</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/DateTimeFormatSyntaxHighlighting.DayOfMonth">#389edb</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/DateTimeFormatSyntaxHighlighting.DayOfWeek">#389edb</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/DateTimeFormatSyntaxHighlighting.Era">#ff40d0</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/DateTimeFormatSyntaxHighlighting.EscapeCharacter">#ddb974</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/DateTimeFormatSyntaxHighlighting.Hour">#00ccaf</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/DateTimeFormatSyntaxHighlighting.Minute">#00ccaf</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/DateTimeFormatSyntaxHighlighting.MonthName">#389edb</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/DateTimeFormatSyntaxHighlighting.Month">#389edb</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/DateTimeFormatSyntaxHighlighting.Second">#00ccaf</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/DateTimeFormatSyntaxHighlighting.Separator">#ff40d0</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/DateTimeFormatSyntaxHighlighting.SubSecond">#00ccaf</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/DateTimeFormatSyntaxHighlighting.TimeZone">#ff40d0</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/DateTimeFormatSyntaxHighlighting.TimeZoneOffset">#ff40d0</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/DateTimeFormatSyntaxHighlighting.Year">#389edb</SolidColorBrush>
-
 			<!-- Icon -->
 			<SolidColorBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.Checkpoint" Color="#f26357"/>
 			<SolidColorBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.Decrease" Color="#ff0000"/>
@@ -154,17 +137,6 @@
 
 			<!-- TextBox -->
 			<SolidColorBrush x:Key="Brush/TextBox.Foreground.Error">#ff0000</SolidColorBrush>
-
-			<!-- TimeSpanFormatSyntaxHighlighting -->
-			<SolidColorBrush x:Key="Brush/TimeSpanFormatSyntaxHighlighting.ConstantFormat">#00ccaf</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/TimeSpanFormatSyntaxHighlighting.Days">#389edb</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/TimeSpanFormatSyntaxHighlighting.EscapeCharacter">#ddb974</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/TimeSpanFormatSyntaxHighlighting.Hours">#389edb</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/TimeSpanFormatSyntaxHighlighting.LongFormat">#00ccaf</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/TimeSpanFormatSyntaxHighlighting.Minutes">#389edb</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/TimeSpanFormatSyntaxHighlighting.Seconds">#389edb</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/TimeSpanFormatSyntaxHighlighting.ShortFormat">#00ccaf</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/TimeSpanFormatSyntaxHighlighting.SubSeconds">#389edb</SolidColorBrush>
 
 		</ResourceDictionary>
 	</Styles.Resources>

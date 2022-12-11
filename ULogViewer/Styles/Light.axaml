@@ -8,23 +8,6 @@
 	<Styles.Resources>
 		<ResourceDictionary>
 
-			<!-- DateTimeFormatSyntaxHighlighting -->
-			<SolidColorBrush x:Key="Brush/DateTimeFormatSyntaxHighlighting.AmPmDesignator">#ff40d0</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/DateTimeFormatSyntaxHighlighting.DayOfMonth">#0000ff</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/DateTimeFormatSyntaxHighlighting.DayOfWeek">#0000ff</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/DateTimeFormatSyntaxHighlighting.Era">#ff40d0</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/DateTimeFormatSyntaxHighlighting.EscapeCharacter">#ff0000</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/DateTimeFormatSyntaxHighlighting.Hour">#008855</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/DateTimeFormatSyntaxHighlighting.Minute">#008855</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/DateTimeFormatSyntaxHighlighting.MonthName">#0000ff</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/DateTimeFormatSyntaxHighlighting.Month">#0000ff</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/DateTimeFormatSyntaxHighlighting.Second">#008855</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/DateTimeFormatSyntaxHighlighting.Separator">#ff40d0</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/DateTimeFormatSyntaxHighlighting.SubSecond">#008855</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/DateTimeFormatSyntaxHighlighting.TimeZone">#ff40d0</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/DateTimeFormatSyntaxHighlighting.TimeZoneOffset">#ff40d0</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/DateTimeFormatSyntaxHighlighting.Year">#0000ff</SolidColorBrush>
-
 			<!-- Icon -->
 			<SolidColorBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.Checkpoint" Color="#e65e53"/>
 			<SolidColorBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.Decrease" Color="#cc0000"/>
@@ -101,17 +84,6 @@
 			<SolidColorBrush x:Key="Brush/SessionView.MarkedLogListBox.Item.Border.Selected">#7f000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.StatusBar.Background.Inactive">#aaaaaa</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.StatusBar.Background.Paused">#aaaaaa</SolidColorBrush>
-
-			<!-- TimeSpanFormatSyntaxHighlighting -->
-			<SolidColorBrush x:Key="Brush/TimeSpanFormatSyntaxHighlighting.ConstantFormat">#008855</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/TimeSpanFormatSyntaxHighlighting.Days">#0000ff</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/TimeSpanFormatSyntaxHighlighting.EscapeCharacter">#ff0000</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/TimeSpanFormatSyntaxHighlighting.Hours">#0000ff</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/TimeSpanFormatSyntaxHighlighting.LongFormat">#008855</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/TimeSpanFormatSyntaxHighlighting.Minutes">#0000ff</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/TimeSpanFormatSyntaxHighlighting.Seconds">#0000ff</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/TimeSpanFormatSyntaxHighlighting.ShortFormat">#008855</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/TimeSpanFormatSyntaxHighlighting.SubSeconds">#0000ff</SolidColorBrush>
 
 		</ResourceDictionary>
 	</Styles.Resources>

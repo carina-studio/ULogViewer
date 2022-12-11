@@ -169,6 +169,7 @@
 
 	<!-- DateTimeFormatInputDialog -->
 	<sys:String x:Key="String/DateTimeFormatInputDialog.Message">Timestamp format</sys:String>
+	<sys:String x:Key="String/DateTimeFormatInputDialog.SampleResult">Sample result: {0}</sys:String>
 
 	<!-- DateTimeSelectionDialog -->
 	<sys:String x:Key="String/DateTimeSelectionDialog.DateTime">Date and time:</sys:String>
@@ -1143,6 +1144,7 @@ return None</sys:String>
 
 	<!-- TimeSpanFormatInputDialog -->
 	<sys:String x:Key="String/TimeSpanFormatInputDialog.Message">Time span format</sys:String>
+	<sys:String x:Key="String/TimeSpanFormatInputDialog.SampleResult">Sample result: {0}</sys:String>
 
 	<!-- TimeSpanUnit -->
 	<sys:String x:Key="String/TimeSpanUnit.Days">Days</sys:String>

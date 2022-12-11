@@ -5,7 +5,6 @@
 		xmlns:app="using:CarinaStudio.ULogViewer"
 		xmlns:abControls="using:CarinaStudio.Controls"
 		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
-		xmlns:asMedia="using:CarinaStudio.AppSuite.Media"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.DateTimeFormatInputDialog"
 		Classes="Dialog"
@@ -25,7 +24,8 @@
 		<StackPanel Classes="Dialog_ContentPanel">
 
 			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/DateTimeFormatInputDialog.Message}"/>
-			<asControls:SyntaxHighlightingTextBox Name="formatTextBox" Classes="Dialog_TextBox" DefinitionSet="{Binding $parent[Window].DateTimeFormatSyntaxHighlightingDefinitionSet}" FontFamily="{x:Static asMedia:BuiltInFonts.SourceCodePro}" MaxLength="1024" PropertyChanged="OnFormatTextBoxPropertyChanged"/>
+			<asControls:DateTimeFormatTextBox Name="formatTextBox" Classes="Dialog_TextBox" MaxLength="1024" PropertyChanged="OnFormatTextBoxPropertyChanged"/>
+			<abControls:FormattedTextBlock Classes="Dialog_TextBlock_Description" Arg1="{Binding $parent[Window].SampleResult}" Format="{DynamicResource String/TimeSpanFormatInputDialog.SampleResult}" IsVisible="{Binding $parent[Window].SampleResult, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
 			<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.FormatDescription}" Uri="{x:Static app:Uris.DateTimeFormatReference}"/>
 
 		</StackPanel>

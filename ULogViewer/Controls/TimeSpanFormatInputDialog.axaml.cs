@@ -3,8 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using CarinaStudio.AppSuite.Controls;
-using CarinaStudio.AppSuite.Controls.Highlighting;
-using CarinaStudio.ULogViewer.Controls.Highlighting;
+using CarinaStudio.Threading;
 using CarinaStudio.Windows.Input;
 using System;
 using System.Threading;
@@ -17,16 +16,30 @@ namespace CarinaStudio.ULogViewer.Controls
     /// </summary>
     partial class TimeSpanFormatInputDialog : InputDialog
     {
+        // Static fields.
+        static readonly DirectProperty<TimeSpanFormatInputDialog, string?> SampleResultProperty = AvaloniaProperty.RegisterDirect<TimeSpanFormatInputDialog, string?>("SampleResult", d => d.sampleResult);
+        static readonly TimeSpan SampleTimeSpan = new(7, 12, 34, 56, 123, 456);
+
+
         // Fields.
-        readonly TextBox formatTextBox;
+        readonly TimeSpanFormatTextBox formatTextBox;
+        string? sampleResult;
+        readonly ScheduledAction updateSampleResultAction;
 
 
         // Constructor.
         public TimeSpanFormatInputDialog()
         {
-            this.TimeSpanFormatSyntaxHighlightingDefinitionSet = TimeSpanFormatSyntaxHighlighting.CreateDefinitionSet(this.Application);
             AvaloniaXamlLoader.Load(this);
-            this.formatTextBox = this.Get<TextBox>(nameof(formatTextBox));
+            this.formatTextBox = this.Get<TimeSpanFormatTextBox>(nameof(formatTextBox));
+            this.updateSampleResultAction = new(() =>
+            {
+                var format = this.formatTextBox.Object;
+                if (!this.formatTextBox.IsTextValid || string.IsNullOrEmpty(format))
+                    this.SetAndRaise(SampleResultProperty, ref this.sampleResult, null);
+                else
+                    this.SetAndRaise(SampleResultProperty, ref this.sampleResult, SampleTimeSpan.ToString(format));
+            });
         }
 
 
@@ -42,8 +55,12 @@ namespace CarinaStudio.ULogViewer.Controls
         // Property of format textbox changed.
         void OnFormatTextBoxPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
         {
-            if (e.Property == TextBox.TextProperty)
+            if (e.Property == TimeSpanFormatTextBox.IsTextValidProperty
+                || e.Property == TimeSpanFormatTextBox.ObjectProperty)
+            {
                 this.InvalidateInput();
+                this.updateSampleResultAction.Schedule();
+            }
         }
 
 
@@ -61,6 +78,7 @@ namespace CarinaStudio.ULogViewer.Controls
         {
             base.OnOpened(e);
             this.formatTextBox.Text = this.InitialFormat;
+            this.updateSampleResultAction.Execute();
             this.SynchronizationContext.Post(_ =>
             {
                 this.formatTextBox.Focus();
@@ -71,12 +89,8 @@ namespace CarinaStudio.ULogViewer.Controls
 
         // Validate input.
         protected override bool OnValidateInput() =>
-            base.OnValidateInput() && !string.IsNullOrWhiteSpace(this.formatTextBox.Text);
-        
-
-        /// <summary>
-		/// Definition set of time span format syntax highlighting.
-		/// </summary>
-		public SyntaxHighlightingDefinitionSet TimeSpanFormatSyntaxHighlightingDefinitionSet { get; }
+            base.OnValidateInput() 
+            && this.formatTextBox.IsTextValid
+            && !string.IsNullOrEmpty(this.formatTextBox.Object);
     }
 }

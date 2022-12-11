@@ -160,6 +160,7 @@
 
 	<!-- DateTimeFormatInputDialog -->
 	<sys:String x:Key="String/DateTimeFormatInputDialog.Message">時間戳格式</sys:String>
+	<sys:String x:Key="String/DateTimeFormatInputDialog.SampleResult">結果範例：{0}</sys:String>
 
 	<!-- DateTimeSelectionDialog -->
 	<sys:String x:Key="String/DateTimeSelectionDialog.DateTime">日期與時間：</sys:String>
@@ -1098,6 +1099,7 @@ return None</sys:String>
 
 	<!-- TimeSpanFormatInputDialog -->
 	<sys:String x:Key="String/TimeSpanFormatInputDialog.Message">時距格式</sys:String>
+	<sys:String x:Key="String/TimeSpanFormatInputDialog.SampleResult">結果範例：{0}</sys:String>
 
 	<!-- TimeSpanUnit -->
 	<sys:String x:Key="String/TimeSpanUnit.Days">日</sys:String>
