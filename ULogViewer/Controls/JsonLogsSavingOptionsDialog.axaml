@@ -2,6 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:abControls="using:CarinaStudio.Controls"
         xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
 		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
@@ -26,19 +27,18 @@
 			<!-- Log properties -->
 			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/JsonLogsSavingOptionsDialog.LogProperties}"/>
 			<Grid ColumnDefinitions="*,Auto">
-				<ListBox Name="logPropertyMapListBox" Background="{DynamicResource TextControlBackground}" DoubleTapped="OnListBoxDoubleTapped" Height="{DynamicResource Double/JsonLogsSavingOptionsDialog.ListBox.Height}" Items="{Binding $parent[Window].LogPropertyMap}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
+				<ListBox Name="logPropertyMapListBox" Background="{DynamicResource TextControlBackground}" DoubleTapped="OnListBoxDoubleTapped" Height="{DynamicResource Double/JsonLogsSavingOptionsDialog.ListBox.Height}" Grid.IsSharedSizeScope="True" Items="{Binding $parent[Window].LogPropertyMap}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
 					<ListBox.ItemTemplate>
 						<DataTemplate>
-							<Grid ColumnDefinitions="Auto,*,Auto">
+							<Grid>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="Auto" SharedSizeGroup="Value"/>
+									<ColumnDefinition Width="*"/>
+									<ColumnDefinition Width="Auto"/>
+								</Grid.ColumnDefinitions>
 								<TextBlock Text="{Binding Value}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
 								<Border Classes="InPlaceAction_Reserved"/>
-								<TextBlock Grid.Column="1" Opacity="0.3" TextTrimming="CharacterEllipsis" VerticalAlignment="Center">
-									<TextBlock.Text>
-										<MultiBinding StringFormat="{} ({0})">
-											<Binding Path="Key"/>
-										</MultiBinding>
-									</TextBlock.Text>
-								</TextBlock>
+								<abControls:FormattedTextBlock Arg1="{Binding Key}" Format="({0})" Grid.Column="1" Margin="{StaticResource Thickness/JsonLogsSavingOptionsDialog.ListBox.Key.Margin}" Opacity="{StaticResource Double/JsonLogsSavingOptionsDialog.ListBox.Key.Opacity}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
 								<StackPanel Grid.Column="2" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
 									<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveLogPropertyMapEntryCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
 										<asControls:Image Classes="InPlaceAction_Icon">

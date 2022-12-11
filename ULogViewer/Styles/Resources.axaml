@@ -33,7 +33,9 @@
 
 	<!-- JsonLogsSavingOptionsDialog -->
 	<sys:Double x:Key="Double/JsonLogsSavingOptionsDialog.ListBox.Height">200</sys:Double>
+	<sys:Double x:Key="Double/JsonLogsSavingOptionsDialog.ListBox.Key.Opacity">0.5</sys:Double>
 	<sys:Double x:Key="Double/JsonLogsSavingOptionsDialog.Width">450</sys:Double>
+	<Thickness x:Key="Thickness/JsonLogsSavingOptionsDialog.ListBox.Key.Margin">20,0,0,0</Thickness>
 
 	<!-- KeyLogAnalysisRuleEditorDialog -->
 	<sys:Double x:Key="Double/KeyLogAnalysisRuleEditorDialog.Content.MaxHeight">500</sys:Double>
@@ -73,7 +75,9 @@
 	<!-- LogProfileEditorDialog -->
 	<sys:Double x:Key="Double/LogProfileEditorDialog.Content.MaxHeight">600</sys:Double>
 	<sys:Double x:Key="Double/LogProfileEditorDialog.LogWritingFormatTextBox.Height">100</sys:Double>
+	<sys:Double x:Key="Double/LogProfileEditorDialog.VisibleLogPropertyListBox.Name.Opacity">0.5</sys:Double>
 	<sys:Double x:Key="Double/LogProfileEditorDialog.Width">500</sys:Double>
+	<Thickness x:Key="Thickness/LogProfileEditorDialog.VisibleLogPropertyListBox.Name.Margin">20,0,0,0</Thickness>
 
 	<!-- LogProfileIconColorComboBox -->
 	<CornerRadius x:Key="CornerRadius/LogProfileIconColorComboBox.Icon">2</CornerRadius>
@@ -253,13 +257,17 @@
 	<Thickness x:Key="Thickness/SessionView.SidePanel.Header.Text.Right.Margin">0,5,5,5</Thickness>
 	
 	<!-- StringLogPropertyMapEntryEditorDialog -->
+	<sys:Double x:Key="Double/StringLogPropertyMapEntryEditorDialog.LogPropertyComboBox.Name.Opacity">0.5</sys:Double>
 	<sys:Double x:Key="Double/StringLogPropertyMapEntryEditorDialog.Width">400</sys:Double>
+	<Thickness x:Key="Thickness/StringLogPropertyMapEntryEditorDialog.LogPropertyComboBox.Name.Margin">20,0,0,0</Thickness>
 
 	<!-- VarAndConstComparisonEditorDialog -->
 	<sys:Double x:Key="Double/VarAndConstComparisonEditorDialog.ComparisonType.MinWidth">100</sys:Double>
 	<sys:Double x:Key="Double/VarAndConstComparisonEditorDialog.Width">600</sys:Double>
 
 	<!-- VisibleLogPropertyEditorDialog -->
+	<sys:Double x:Key="Double/VisibleLogPropertyEditorDialog.NameComboBox.Name.Opacity">0.5</sys:Double>
 	<sys:Double x:Key="Double/VisibleLogPropertyEditorDialog.Width">400</sys:Double>
+	<Thickness x:Key="Thickness/VisibleLogPropertyEditorDialog.NameComboBox.Name.Margin">20,0,0,0</Thickness>
 	
 </ResourceDictionary>

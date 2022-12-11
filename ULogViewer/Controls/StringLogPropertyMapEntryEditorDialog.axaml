@@ -2,6 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:abControls="using:CarinaStudio.Controls"
         xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
         xmlns:appLogs="using:CarinaStudio.ULogViewer.Logs"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
@@ -9,6 +10,14 @@
         Classes="Dialog"
         Title="{DynamicResource String/StringLogPropertyMapEntryEditorDialog.Title}"
         Width="{DynamicResource Double/StringLogPropertyMapEntryEditorDialog.Width}">
+	
+	<Window.Styles>
+
+		<Style Selector="ComboBox.Dialog_ComboBox /template/ ContentControl#ContentPresenter">
+			<Setter Property="Grid.IsSharedSizeScope" Value="True"/>
+		</Style>
+
+	</Window.Styles>
 
 	<DockPanel>
 
@@ -25,19 +34,17 @@
 
 			<!-- Name -->
 			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/StringLogPropertyMapEntryEditorDialog.Name}"/>
-			<ComboBox Name="nameComboBox" Classes="Dialog_ComboBox" Items="{x:Static appLogs:Log.PropertyNames}" PropertyChanged="OnEditorControlPropertyChanged">
+			<ComboBox Name="nameComboBox" Classes="Dialog_ComboBox" Items="{x:Static appLogs:Log.PropertyNames}" Grid.IsSharedSizeScope="True" PropertyChanged="OnEditorControlPropertyChanged">
 				<ComboBox.ItemTemplate>
 					<DataTemplate>
-						<StackPanel Orientation="Horizontal">
+						<Grid>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto" SharedSizeGroup="DisplayName"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
 							<TextBlock Text="{Binding Converter={x:Static appConverters:LogPropertyNameConverter.Default}}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
-							<TextBlock Opacity="0.3" TextTrimming="CharacterEllipsis" VerticalAlignment="Center">
-								<TextBlock.Text>
-									<MultiBinding StringFormat="{} ({0})">
-										<Binding/>
-									</MultiBinding>
-								</TextBlock.Text>
-							</TextBlock>
-						</StackPanel>
+							<abControls:FormattedTextBlock Arg1="{Binding}" Format="({0})" Grid.Column="1" Margin="{StaticResource Thickness/StringLogPropertyMapEntryEditorDialog.LogPropertyComboBox.Name.Margin}" Opacity="{StaticResource Double/StringLogPropertyMapEntryEditorDialog.LogPropertyComboBox.Name.Opacity}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+						</Grid>
 					</DataTemplate>
 				</ComboBox.ItemTemplate>
 			</ComboBox>
