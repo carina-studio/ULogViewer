@@ -21,7 +21,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
                 this.Badges = new IImage[] { icon.AsNonNull() };
             }
             else
-                this.Badges = new IImage[0];
+                this.Badges = Array.Empty<IImage>();
         }
 
 
@@ -30,21 +30,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
         // URI of GitHub project.
-        public override Uri? GitHubProjectUri => new Uri("https://github.com/carina-studio/ULogViewer");
-
-
-        // URI of privacy policy.
-        public override Uri? PrivacyPolicyUri => this.Application.PrivacyPolicyVersion?.Let(it =>
-            new Uri($"https://carinastudio.azurewebsites.net/Documents/ULogViewer/PrivacyPolicy?version={it.Major}.{it.Minor}"));
-
-
-        // URI of user agreement.
-        public override Uri? UserAgreementUri => this.Application.UserAgreementVersion?.Let(it =>
-            new Uri($"https://carinastudio.azurewebsites.net/Documents/ULogViewer/UserAgreement?version={it.Major}.{it.Minor}"));
+        public override Uri? GitHubProjectUri => new("https://github.com/carina-studio/ULogViewer");
 
 
         // URI of website.
         public override Uri? WebsiteUri =>
-            new Uri($"https://carinastudio.azurewebsites.net/ULogViewer/");
+            new($"https://carinastudio.azurewebsites.net/ULogViewer/");
     }
 }

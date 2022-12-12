@@ -72,6 +72,7 @@ for i in "${!RID_LIST[@]}"; do
     rm ./Packages/$VERSION/$PUB_PLATFORM/$APP_NAME.app/Contents/MacOS/libMono*.dylib
     rm ./Packages/$VERSION/$PUB_PLATFORM/$APP_NAME.app/Contents/MacOS/*.png
     rm ./Packages/$VERSION/$PUB_PLATFORM/$APP_NAME.app/Contents/MacOS/*.pdb
+    rm -r ./Packages/$VERSION/$PUB_PLATFORM/$APP_NAME.app/Contents/MacOS/XRandR
 
     # sign application
     find "./Packages/$VERSION/$PUB_PLATFORM/$APP_NAME.app/Contents/MacOS/" | while read FILE_NAME; do

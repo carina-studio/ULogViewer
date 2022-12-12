@@ -78,6 +78,9 @@ REM Build packages
     if exist %APP_NAME%\bin\%CONFIG%\%FRAMEWORK%\%%r\publish\System.Windows.Forms.Design.dll (
         del /Q %APP_NAME%\bin\%CONFIG%\%FRAMEWORK%\%%r\publish\System.Windows.Forms.Design.dll
     )
+    if exist %APP_NAME%\bin\%CONFIG%\%FRAMEWORK%\%%r\publish\XRandR (
+        del /Q %APP_NAME%\bin\%CONFIG%\%FRAMEWORK%\%%r\publish\XRandR
+    )
 
     REM Generate package
     start /Wait PowerShell -NoLogo -Command Compress-Archive -Force -Path %APP_NAME%\bin\%CONFIG%\%FRAMEWORK%\%%r\publish\* -DestinationPath Packages\%CURRENT_VERSION%\%APP_NAME%-%CURRENT_VERSION%-%%r.zip

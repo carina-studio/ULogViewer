@@ -622,6 +622,10 @@ namespace CarinaStudio.ULogViewer
 
 
 		/// <inheritdoc/>
+		public override DocumentSource? PrivacyPolicy { get; }
+
+
+		/// <inheritdoc/>
 		public override Version? PrivacyPolicyVersion => new(1, 3);
 
 
@@ -676,6 +680,10 @@ namespace CarinaStudio.ULogViewer
 					break;
 			}
 		}
+
+
+		/// <inheritdoc/>
+		public override DocumentSource? UserAgreement { get; }
 
 
 		/// <inheritdoc/>
