@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.Reflection;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -36,6 +37,33 @@ namespace CarinaStudio.ULogViewer
 		// Info of main window.
 		class MainWindowInfo
 		{ }
+
+
+		// Source of document of Privacy Policy.
+		class PrivacyPolicySource : DocumentSource
+		{
+			public PrivacyPolicySource(App app) : base(app)
+			{ 
+				var cultureName = app.CultureInfo.Name;
+				if (cultureName.StartsWith("zh-")
+					&& cultureName.EndsWith("TW"))
+				{
+					this.Culture = ApplicationCulture.ZH_TW;
+				}
+				else
+					this.Culture = ApplicationCulture.EN_US;
+			}
+			public override IList<ApplicationCulture> SupportedCultures => new ApplicationCulture[]
+			{
+				ApplicationCulture.EN_US,
+				ApplicationCulture.ZH_TW,
+			};
+			public override Uri Uri => this.Culture switch
+			{
+				ApplicationCulture.ZH_TW => new($"avares://{Assembly.GetExecutingAssembly().GetName().Name}/Resources/PrivacyPolicy-zh-TW.md"),
+				_ => new($"avares://{Assembly.GetExecutingAssembly().GetName().Name}/Resources/PrivacyPolicy.md"),
+			};
+		}
 
 
 		// External dependency of Xcode command-line tools settings.
@@ -622,7 +650,7 @@ namespace CarinaStudio.ULogViewer
 
 
 		/// <inheritdoc/>
-		public override DocumentSource? PrivacyPolicy { get; }
+		public override DocumentSource? PrivacyPolicy { get => new PrivacyPolicySource(this); }
 
 
 		/// <inheritdoc/>
