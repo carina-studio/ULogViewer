@@ -60,7 +60,8 @@ class LogCategorizingViewModel : SessionComponent
     /// Initialize new <see cref="LogCategorizingViewModel"/> instance.
     /// </summary>
     /// <param name="session">Session.</param>
-    public LogCategorizingViewModel(Session session) : base(session)
+    /// <param name="internalAccessor">Accessor to internal state of session.</param>
+    public LogCategorizingViewModel(Session session, ISessionInternalAccessor internalAccessor) : base(session, internalAccessor)
     {
         // start initialization
         var isInit = true;

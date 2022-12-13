@@ -156,7 +156,8 @@ class LogFilteringViewModel : SessionComponent
     /// Initialize new <see cref="LogFilteringViewModel"/> instance.
     /// </summary>
     /// <param name="session">Session.</param>
-    public LogFilteringViewModel(Session session) : base(session)
+    /// <param name="internalAccessor">Accessor to internal state of session.</param>
+    public LogFilteringViewModel(Session session, ISessionInternalAccessor internalAccessor) : base(session, internalAccessor)
     {
         // start initialization
         var isInit = true; 
@@ -249,6 +250,8 @@ class LogFilteringViewModel : SessionComponent
             foreach (var filter in this.predefinedTextFilters)
                 textRegexList.Add(filter.Regex);
             this.logFilter.TextRegexList = textRegexList;
+            this.DisplayableLogGroup?.Let(it =>
+                it.ActiveTextFilters = textRegexList);
 
             // print log
             if (this.Application.IsDebugMode)

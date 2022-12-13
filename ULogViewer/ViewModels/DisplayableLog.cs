@@ -1,4 +1,5 @@
 ﻿using Avalonia.Media;
+using CarinaStudio.AppSuite.Controls.Highlighting;
 using CarinaStudio.Collections;
 using CarinaStudio.Diagnostics;
 using CarinaStudio.Threading;
@@ -1341,6 +1342,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Get tags of log.
 		/// </summary>
 		public string? Tags { get => this.Log.Tags; }
+
+
+		/// <summary>
+		/// Get definition set of text highlighting.
+		/// </summary>
+		public SyntaxHighlightingDefinitionSet TextHighlightingDefinitionSet { get => this.Group.TextHighlightingDefinitionSet; }
 
 
 		/// <summary>

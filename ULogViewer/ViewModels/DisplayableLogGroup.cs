@@ -1,5 +1,8 @@
 ﻿using Avalonia.Media;
+using CarinaStudio.AppSuite.Controls.Highlighting;
+using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
+using CarinaStudio.Controls;
 using CarinaStudio.Data.Converters;
 using CarinaStudio.Diagnostics;
 using CarinaStudio.Threading;
@@ -20,10 +23,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 	/// <summary>
 	/// Group of <see cref="DisplayableLog"/>.
 	/// </summary>
-	class DisplayableLogGroup : BaseDisposable, IApplicationObject
+	partial class DisplayableLogGroup : BaseDisposable, IApplicationObject
 	{
 		// Static fields.
-		static readonly Regex ExtraCaptureRegex = new(@"\(\?\<Extra(?<Number>[\d]+)\>");
+		static readonly Regex ExtraCaptureRegex = CreateExtraCaptureRegex();
 
 
 		// Static fields.
@@ -32,6 +35,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		// Fields.
+		IList<Regex> activeTextFilters = Array.Empty<Regex>();
 		readonly Dictionary<DisplayableLogAnalysisResultType, IImage> analysisResultIndicatorIcons = new();
 		readonly Dictionary<string, IBrush> colorIndicatorBrushes = new();
 		Func<DisplayableLog, string>? colorIndicatorKeyGetter;
@@ -43,6 +47,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		int? selectedProcessId;
 		int? selectedThreadId;
 		readonly Stopwatch stopwatch = new();
+		IBrush? textHighlightingBackground;
+		IBrush? textHighlightingForeground;
+		readonly ScheduledAction updateTextHighlightingDefSetAction;
 
 
 		/// <summary>
@@ -68,7 +75,41 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.maxDisplayLineCount = Math.Max(1, app.Settings.GetValueOrDefault(SettingKeys.MaxDisplayLineCountForEachLog));
 			this.MemorySize = BaseMemorySize;
 			this.MemoryUsagePolicy = app.Settings.GetValueOrDefault(SettingKeys.MemoryUsagePolicy);
+			this.TextHighlightingDefinitionSet = new($"Text Highlighting of {this}");
 			this.CheckMaxLogExtraNumber();
+
+			// setup actions
+			this.updateTextHighlightingDefSetAction = new(() =>
+			{
+				var definitions = this.TextHighlightingDefinitionSet.TokenDefinitions;
+				definitions.Clear();
+				if (this.activeTextFilters.IsNotEmpty())
+				{
+					var areTextFiltersValid = true;
+					foreach (var textFilter in this.activeTextFilters)
+					{
+						if (Utility.IsAllMatchingRegex(textFilter))
+						{
+							areTextFiltersValid = false;
+							break;
+						}
+					}
+					if (areTextFiltersValid)
+					{
+						this.textHighlightingBackground ??= this.Application.FindResourceOrDefault<IBrush>("Brush/SessionView.LogListBox.Item.HighlightedText.Background", Brushes.LightGray);
+						this.textHighlightingForeground ??= this.Application.FindResourceOrDefault<IBrush>("Brush/SessionView.LogListBox.Item.HighlightedText.Foreground", Brushes.Yellow);
+						foreach (var textFilter in this.activeTextFilters)
+						{
+							definitions.Add(new()
+							{
+								Background = this.textHighlightingBackground,
+								Foreground = this.textHighlightingForeground,
+								Pattern = textFilter,
+							});
+						}
+					}
+				}
+			});
 
 			// add event handlers
 			app.Settings.SettingChanged += this.OnSettingChanged;
@@ -79,6 +120,24 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// setup brushes
 			this.UpdateColorIndicatorBrushes();
 			this.UpdateLevelBrushes();
+		}
+
+
+		/// <summary>
+		/// Get or set list of text filters which are applied on the group.
+		/// </summary>
+		public IList<Regex> ActiveTextFilters
+		{
+			get => this.activeTextFilters;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyDisposed();
+				this.activeTextFilters = value.IsNullOrEmpty() 
+					? Array.Empty<Regex>() 
+					: new List<Regex>(value).AsReadOnly();
+				this.updateTextHighlightingDefSetAction.Schedule();
+			}
 		}
 
 
@@ -140,6 +199,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		}
 
 
+		// Create regex to find extra capture in pattern of raw log line.
+		[GeneratedRegex(@"\(\?\<Extra(?<Number>[\d]+)\>")]
+		private static partial Regex CreateExtraCaptureRegex();
+
+
 		// Dispose.
 		protected override void Dispose(bool disposing)
 		{
@@ -159,6 +223,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// clear resources
 			this.colorIndicatorBrushes.Clear();
 			this.levelBrushes.Clear();
+
+			// cancel updating text highlighting
+			this.updateTextHighlightingDefSetAction.Cancel();
 
 			// stop watch
 			this.stopwatch.Stop();
@@ -308,7 +375,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.SynchronizationContext.Post(() =>
 				{
 					this.analysisResultIndicatorIcons.Clear();
+					this.textHighlightingBackground = null;
+					this.textHighlightingForeground = null;
 					this.UpdateLevelBrushes();
+					this.updateTextHighlightingDefSetAction.Execute();
 					var log = this.displayableLogsHead;
 					while (log != null)
 					{
@@ -513,6 +583,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.logger.LogTrace("[Performance] Took {duration} ms to update selected TID", this.stopwatch.ElapsedMilliseconds - time);
 			}
 		}
+
+
+		/// <summary>
+		/// Get definition set of text highlighting.
+		/// </summary>
+		public SyntaxHighlightingDefinitionSet TextHighlightingDefinitionSet { get; }
 
 
 		/// <inheritdoc/>

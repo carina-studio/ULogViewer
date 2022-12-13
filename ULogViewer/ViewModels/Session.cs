@@ -529,6 +529,22 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		}
 
 
+		// Implementation of ISessionInternalAccessor.
+		class InternalAccessorImpl : ISessionInternalAccessor
+		{
+			// Fields.
+			readonly Session session;
+
+			// Constructor.
+			public InternalAccessorImpl(Session session) =>
+				this.session = session;
+			
+			/// <inheritdoc/>
+			public DisplayableLogGroup? DisplayableLogGroup =>
+				this.session.displayableLogGroup;
+		}
+
+
 		// Implementation of LogFileInfo.
 		class LogFileInfoImpl : LogFileInfo
 		{
@@ -782,11 +798,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.compareDisplayableLogsDelegate = CompareDisplayableLogsById;
 
 			// create components
-			this.LogCategorizing = new LogCategorizingViewModel(this).Also(it =>
+			var internalAccessor = new InternalAccessorImpl(this);
+			this.LogCategorizing = new LogCategorizingViewModel(this, internalAccessor).Also(it =>
 			{
 				this.AttachToComponent(it);
 			});
-			this.LogFiltering = new LogFilteringViewModel(this).Also(it =>
+			this.LogFiltering = new LogFilteringViewModel(this, internalAccessor).Also(it =>
 			{
 				this.AttachToComponent(it);
 				(it.FilteredLogs as INotifyCollectionChanged)?.Let(it =>
@@ -799,22 +816,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.selectLogsToReportActions?.Schedule();
 				});
 			});
-			this.LogAnalysis = new LogAnalysisViewModel(this).Also(it =>
+			this.LogAnalysis = new LogAnalysisViewModel(this, internalAccessor).Also(it =>
 				this.AttachToComponent(it));
-			this.LogSelection = new LogSelectionViewModel(this).Also(it =>
-			{
-				this.AttachToComponent(it);
-				it.GetValueAsObservable(LogSelectionViewModel.SelectedProcessIdProperty).Subscribe(pid =>
-				{
-					if (this.displayableLogGroup != null)
-						this.displayableLogGroup.SelectedProcessId = pid;
-				});
-				it.GetValueAsObservable(LogSelectionViewModel.SelectedThreadIdProperty).Subscribe(tid =>
-				{
-					if (this.displayableLogGroup != null)
-						this.displayableLogGroup.SelectedThreadId = tid;
-				});
-			});
+			this.LogSelection = new LogSelectionViewModel(this, internalAccessor).Also(it =>
+				this.AttachToComponent(it));
 			this.AllComponentsCreated?.Invoke();
 
 			// create scheduled actions

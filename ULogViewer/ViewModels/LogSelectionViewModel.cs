@@ -62,7 +62,8 @@ class LogSelectionViewModel : SessionComponent
     /// Initialize new <see cref="LogSelectionViewModel"/> instance.
     /// </summary>
     /// <param name="session">Session.</param>
-    public LogSelectionViewModel(Session session) : base(session)
+    /// <param name="internalAccessor">Accessor to internal state of session.</param>
+    public LogSelectionViewModel(Session session, ISessionInternalAccessor internalAccessor) : base(session, internalAccessor)
     {
         // create command
         var hasSelectedLogsObservable = this.GetValueAsObservable(HasSelectedLogsProperty);
@@ -311,6 +312,11 @@ class LogSelectionViewModel : SessionComponent
         }
         this.SetValue(SelectedProcessIdProperty, selectedPid);
         this.SetValue(SelectedThreadIdProperty, selectedTid);
+        this.DisplayableLogGroup?.Let(it =>
+        {
+            it.SelectedProcessId = selectedPid;
+            it.SelectedThreadId = selectedTid;
+        });
     }
 
 

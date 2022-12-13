@@ -7,6 +7,7 @@ using Avalonia.Rendering;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.Controls;
 using System;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -17,6 +18,11 @@ namespace CarinaStudio.ULogViewer;
 /// </summary>
 static partial class Utility
 {
+    // Create pattern to check whether the given regex can match all text or not.
+    [GeneratedRegex(@"^\.[\*\+]{0,1}$")]
+    private static partial Regex CreateAllMatchingPatternRegex();
+
+
     // Create regular expression for parsing base name.
     [GeneratedRegex("^(?<Name>.+)\\s+\\(\\d+\\)\\s*$")]
     private static partial Regex CreateBaseNameRegex();
@@ -180,5 +186,59 @@ static partial class Utility
                 return candidateName;
         }
         return baseName;
+    }
+
+
+    /// <summary>
+    /// Check whether given regex can match all strings or not.
+    /// </summary>
+    /// <param name="regex">Regex.</param>
+    /// <returns>True if given regex can match all strings.</returns>
+    public static bool IsAllMatchingRegex(Regex regex)
+    {
+        var pattern = regex.ToString();
+        var patternLength = pattern.Length;
+        var patternStart = 0;
+        var subPatternBuffer = new StringBuilder();
+        var bracketCount = 0;
+        var allMatchingPatternRegex = default(Regex);
+        while (patternStart < patternLength)
+        {
+            var c = pattern[patternStart++];
+            switch (c)
+            {
+                case '|':
+                    if (bracketCount == 0)
+                    {
+                        allMatchingPatternRegex ??= CreateAllMatchingPatternRegex();
+                        if (subPatternBuffer.Length == 0 || allMatchingPatternRegex.IsMatch(subPatternBuffer.ToString()))
+                            return true;
+                        subPatternBuffer.Clear();
+                        break;
+                    }
+                    goto default;
+                case '\\':
+                    subPatternBuffer.Append(c);
+                    if (patternStart >= patternLength)
+                        break;
+                    c = pattern[patternStart++];
+                    goto default;
+                case '(':
+                    ++bracketCount;
+                    goto default;
+                case ')':
+                    --bracketCount;
+                    goto default;
+                default:
+                    subPatternBuffer.Append(c);
+                    break;
+            }
+        }
+        if (bracketCount == 0)
+        {
+            allMatchingPatternRegex ??= CreateAllMatchingPatternRegex();
+            return (subPatternBuffer.Length == 0 || allMatchingPatternRegex.IsMatch(subPatternBuffer.ToString()));
+        }
+        return false;
     }
 }

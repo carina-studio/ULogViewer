@@ -118,7 +118,8 @@ class LogAnalysisViewModel : SessionComponent
     /// Initialize new <see cref="LogAnalysisViewModel"/> instance.
     /// </summary>
     /// <param name="session">Session.</param>
-    public LogAnalysisViewModel(Session session) : base(session)
+    /// <param name="internalAccessor">Accessor to internal state of session.</param>
+    public LogAnalysisViewModel(Session session, ISessionInternalAccessor internalAccessor) : base(session, internalAccessor)
     { 
         // start initialization
         bool isInit = true;

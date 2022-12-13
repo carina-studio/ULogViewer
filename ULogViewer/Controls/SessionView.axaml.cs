@@ -1528,18 +1528,19 @@ namespace CarinaStudio.ULogViewer.Controls
 					var isMultiLineProperty = DisplayableLog.HasMultiLineStringProperty(logProperty.Name);
 					var propertyView = logProperty.Name switch
 					{
-						_ => (Control)new CarinaStudio.Controls.TextBlock().Also(it =>
+						_ => (Control)new CarinaStudio.AppSuite.Controls.SyntaxHighlightingTextBlock().Also(it =>
 						{
-							it.Bind(CarinaStudio.Controls.TextBlock.FontFamilyProperty, new Binding() { Path = nameof(LogFontFamily), Source = this });
-							it.Bind(CarinaStudio.Controls.TextBlock.FontSizeProperty, new Binding() { Path = nameof(LogFontSize), Source = this });
-							//it.Bind(TextBlock.ForegroundProperty, new Binding() { Path = nameof(DisplayableLog.LevelBrush) });
+							it.Bind(CarinaStudio.AppSuite.Controls.SyntaxHighlightingTextBlock.DefinitionSetProperty, new Binding() { Path = nameof(DisplayableLog.TextHighlightingDefinitionSet) });
+							it.Bind(Avalonia.Controls.TextBlock.FontFamilyProperty, new Binding() { Path = nameof(LogFontFamily), Source = this });
+							it.Bind(Avalonia.Controls.TextBlock.FontSizeProperty, new Binding() { Path = nameof(LogFontSize), Source = this });
+							it.Bind(Avalonia.Controls.TextBlock.ForegroundProperty, new Binding() { Path = nameof(DisplayableLog.LevelBrush) });
 							if (isMultiLineProperty)
-								it.Bind(CarinaStudio.Controls.TextBlock.MaxLinesProperty, new Binding() { Path = nameof(MaxDisplayLineCountForEachLog), Source = this });
+								it.Bind(Avalonia.Controls.TextBlock.MaxLinesProperty, new Binding() { Path = nameof(MaxDisplayLineCountForEachLog), Source = this });
 							else
 								it.MaxLines = 1;
 							it.MaxWidth = itemMaxWidth;
 							it.Padding = propertyPadding;
-							it.Bind(CarinaStudio.Controls.TextBlock.TextProperty, new Binding().Also(binding =>
+							it.Bind(Avalonia.Controls.TextBlock.TextProperty, new Binding().Also(binding =>
 							{
 								if (logProperty.Name == nameof(DisplayableLog.Level))
 									binding.Converter = Converters.EnumConverters.LogLevel;
@@ -1578,6 +1579,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						it.CornerRadius = itemCornerRadius;
 						it.Tag = logProperty;
 						it.VerticalAlignment = VerticalAlignment.Stretch;
+						/*
 						it.GetObservable(Control.IsPointerOverProperty).Subscribe(new Observer<bool>(isPointerOver =>
 						{
 							if (isPointerOver)
@@ -1591,6 +1593,7 @@ namespace CarinaStudio.ULogViewer.Controls
 								it.Bind(Avalonia.Controls.TextBlock.ForegroundProperty, new Binding() { Path = nameof(DisplayableLog.LevelBrush) });
 							}
 						}));
+						*/
 						it.PointerPressed += (_, e) =>
 						{
 							this.lastClickedLogPropertyView = it;

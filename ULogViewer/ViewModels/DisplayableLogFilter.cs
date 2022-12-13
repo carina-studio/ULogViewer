@@ -14,7 +14,7 @@ namespace CarinaStudio.ULogViewer.ViewModels;
 /// <summary>
 /// Filter of <see cref="DisplayableLog"/>.
 /// </summary>
-class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.FilteringToken, byte>, IDisplayableLogFilter
+partial class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.FilteringToken, byte>, IDisplayableLogFilter
 {
     // Token of filtering.
     public class FilteringToken
@@ -27,15 +27,14 @@ class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.Fi
         public bool IncludeMarkedLogs;
         public volatile bool IsTextRegexListReady;
         public Logs.LogLevel Level;
-        public IList<Func<DisplayableLog, string?>> LogTextPropertyGetters = new Func<DisplayableLog, string?>[0];
+        public IList<Func<DisplayableLog, string?>> LogTextPropertyGetters = Array.Empty<Func<DisplayableLog, string?>>();
         public int? ProcessId;
         public int? ThreadId;
-        public Regex[] TextRegexList = new Regex[0];
+        public Regex[] TextRegexList = Array.Empty<Regex>();
     }
 
 
     // Static fields.
-	static readonly Regex allMatchingPatternRegex = new Regex(@"^\.[\*\+]{0,1}$");
     [ThreadStatic]
     static StringBuilder? logTextToMatchBuilder;
 
@@ -43,11 +42,11 @@ class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.Fi
     // Fields.
     FilterCombinationMode combinationMode = FilterCombinationMode.Intersection;
     readonly SortedObservableList<DisplayableLog> filteredLogs;
-    IList<DisplayableLogProperty> filteringLogProperties = new DisplayableLogProperty[0];
+    IList<DisplayableLogProperty> filteringLogProperties = Array.Empty<DisplayableLogProperty>();
     bool includeMarkedLogs = true;
     Logs.LogLevel level = Logs.LogLevel.Undefined;
     int? processId;
-    IList<Regex> textRegexList = new Regex[0];
+    IList<Regex> textRegexList = Array.Empty<Regex>();
     int? threadId;
 
 
@@ -118,7 +117,7 @@ class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.Fi
             {
                 foreach (var regex in this.textRegexList)
                 {
-                    if (this.IsAllMatchingRegex(regex))
+                    if (Utility.IsAllMatchingRegex(regex))
                     {
                         isProcessingNeeded = false;
                         break;
@@ -195,51 +194,6 @@ class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.Fi
             this.InvalidateProcessing();
             this.OnPropertyChanged(nameof(IncludeMarkedLogs));
         }
-    }
-
-
-    // Check whether given regex can match all strings or not.
-    bool IsAllMatchingRegex(Regex regex)
-    {
-        var pattern = regex.ToString();
-        var patternLength = pattern.Length;
-        var patternStart = 0;
-        var subPatternBuffer = new StringBuilder();
-        var bracketCount = 0;
-        while (patternStart < patternLength)
-        {
-            var c = pattern[patternStart++];
-            switch (c)
-            {
-                case '|':
-                    if (bracketCount == 0)
-                    {
-                        if (subPatternBuffer.Length == 0 || allMatchingPatternRegex.IsMatch(subPatternBuffer.ToString()))
-                            return true;
-                        subPatternBuffer.Clear();
-                        break;
-                    }
-                    goto default;
-                case '\\':
-                    subPatternBuffer.Append(c);
-                    if (patternStart >= patternLength)
-                        break;
-                    c = pattern[patternStart++];
-                    goto default;
-                case '(':
-                    ++bracketCount;
-                    goto default;
-                case ')':
-                    --bracketCount;
-                    goto default;
-                default:
-                    subPatternBuffer.Append(c);
-                    break;
-            }
-        }
-        if (bracketCount == 0)
-            return (subPatternBuffer.Length == 0 || allMatchingPatternRegex.IsMatch(subPatternBuffer.ToString()));
-        return false;
     }
 
 

@@ -16,6 +16,7 @@ abstract class SessionComponent : ViewModel<IULogViewerApplication>
 {
     // Fields.
     LogProfile? attachedLogProfile;
+    readonly ISessionInternalAccessor internalAccessor;
     readonly IDisposable logProfileObserverToken;
 
 
@@ -23,9 +24,11 @@ abstract class SessionComponent : ViewModel<IULogViewerApplication>
     /// Initialize new <see cref="SessionComponent"/> instance.
     /// </summary>
     /// <param name="app">Application.</param>
-    protected SessionComponent(Session session) : base(session.Application)
+    /// <param name="internalAccessor">Accessor to internal state of session.</param>
+    protected SessionComponent(Session session, ISessionInternalAccessor internalAccessor) : base(session.Application)
     { 
         // setup fields and properties
+        this.internalAccessor = internalAccessor;
         this.Session = session;
         this.Owner = session;
 
@@ -60,6 +63,12 @@ abstract class SessionComponent : ViewModel<IULogViewerApplication>
     /// <returns>Comparison result.</returns>
     protected int CompareLogs(DisplayableLog? lhs, DisplayableLog? rhs) =>
         this.Session.CompareDisplayableLogs(lhs, rhs);
+    
+
+    /// <summary>
+    /// Get group of displayable logs.
+    /// </summary>
+    protected DisplayableLogGroup? DisplayableLogGroup { get => this.internalAccessor.DisplayableLogGroup; }
 
 
     /// <inheritdoc/>
