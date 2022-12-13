@@ -36,8 +36,8 @@ ULogViewer 為基於開放原始碼專案之軟體，以下所指 ULogViewer **�
 + **裝置名稱** 與 **MAC 位址** 將以 **密文** 形式儲存於部署在 [Azure](https://azure.microsoft.com/en-us/) 之產品資料庫中。
 + **電子信箱位址** 將以 **密文** 形式儲存於您電腦中的 ULogViewer 目錄內，也將以 **明文** 形式儲存於部署在 [Azure](https://azure.microsoft.com/en-us/) 之 Carina Studio 網站日誌及產品資料庫中。
 + **檔案名稱**、**IP 位址**及**網址 (URI)** 可能會被儲存至位於您電腦中 ULogViewer 目錄內的日誌檔案。
-+ **檔案名稱**、**IP 位址**及**網址 (URI)** 將以 **明文** 形式儲存至位於您電腦中 ULogViewer 目錄內的 *.json 檔案。
-+ 日誌類型所需之**使用者名稱及密碼**將以 **密文** 形式儲存至位於您電腦中 ULogViewer 目錄內的 *.json 檔案。
++ **檔案名稱**、**IP 位址**及**網址 (URI)** 將以 **明文** 形式儲存至位於您電腦中 ULogViewer 目錄內的 \*.json 檔案。
++ 日誌類型所需之**使用者名稱及密碼**將以 **密文** 形式儲存至位於您電腦中 ULogViewer 目錄內的 \*.json 檔案。
 + 應用程式錯誤的詳細資訊將會被儲存至位於您電腦中 ULogViewer 目錄內的日誌檔案。
 
 ## 個人資訊之使用

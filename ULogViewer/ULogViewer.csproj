@@ -62,6 +62,8 @@
 	<ItemGroup>
 		<AvaloniaResource Include="Resources/PrivacyPolicy.md" />
 		<AvaloniaResource Include="Resources/PrivacyPolicy-zh-TW.md" />
+		<AvaloniaResource Include="Resources/UserAgreement.md" />
+		<AvaloniaResource Include="Resources/UserAgreement-zh-TW.md" />
 		<AvaloniaResource Include="SplashWindowBackground.jpg" />
 		<AvaloniaResource Include="Strings/Default.axaml" />
 		<AvaloniaResource Include="Strings/Default-Linux.axaml" />

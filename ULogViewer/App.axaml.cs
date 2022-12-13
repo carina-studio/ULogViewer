@@ -66,6 +66,33 @@ namespace CarinaStudio.ULogViewer
 		}
 
 
+		// Source of document of User Agreement.
+		class UserAgreementSource : DocumentSource
+		{
+			public UserAgreementSource(App app) : base(app)
+			{ 
+				var cultureName = app.CultureInfo.Name;
+				if (cultureName.StartsWith("zh-")
+					&& cultureName.EndsWith("TW"))
+				{
+					this.Culture = ApplicationCulture.ZH_TW;
+				}
+				else
+					this.Culture = ApplicationCulture.EN_US;
+			}
+			public override IList<ApplicationCulture> SupportedCultures => new ApplicationCulture[]
+			{
+				ApplicationCulture.EN_US,
+				ApplicationCulture.ZH_TW,
+			};
+			public override Uri Uri => this.Culture switch
+			{
+				ApplicationCulture.ZH_TW => new($"avares://{Assembly.GetExecutingAssembly().GetName().Name}/Resources/UserAgreement-zh-TW.md"),
+				_ => new($"avares://{Assembly.GetExecutingAssembly().GetName().Name}/Resources/UserAgreement.md"),
+			};
+		}
+
+
 		// External dependency of Xcode command-line tools settings.
 		class XcodeCmdLineToolsSettingExtDependency : ExternalDependency
 		{
@@ -711,7 +738,7 @@ namespace CarinaStudio.ULogViewer
 
 
 		/// <inheritdoc/>
-		public override DocumentSource? UserAgreement { get; }
+		public override DocumentSource? UserAgreement { get => new UserAgreementSource(this); }
 
 
 		/// <inheritdoc/>

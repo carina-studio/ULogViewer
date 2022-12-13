@@ -36,8 +36,8 @@ We **DO** collect the following data which may relate to your personal data:
 + **Device name** and **MAC address** will be stored as encrypted text in database of product deployed on [Azure](https://azure.microsoft.com/en-us/).
 + **Email address** will be stored as encrypted text inside the directory of ULogViewer in your computer, will also be stored as clear text in log of website of Carina Studio and database of product deployed on [Azure](https://azure.microsoft.com/en-us/).
 + **Path/Name of files**, **IP addresses** and **URI** may be written to the log file inside the directory of ULogViewer in your computer.
-+ **Path/Name of files**, **IP addresses** and **URI** you set in log profiles will be saved as clear text in *.json files inside the directory of ULogViewer in your computer.
-+ **User name and password** you set in log profiles will be saved as encrypted text in *.json files inside the directory of ULogViewer in your computer.
++ **Path/Name of files**, **IP addresses** and **URI** you set in log profiles will be saved as clear text in \*.json files inside the directory of ULogViewer in your computer.
++ **User name and password** you set in log profiles will be saved as encrypted text in \*.json files inside the directory of ULogViewer in your computer.
 + Information of application crashing will be written to the log file inside the directory of ULogViewer in your computer.
 
 ## Using Your Personal Data
