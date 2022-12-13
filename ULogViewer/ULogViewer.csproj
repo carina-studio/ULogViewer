@@ -76,11 +76,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="CarinaStudio.AppSuite.Core" Version="2.2.7.1212-preview">
+		<PackageReference Include="CarinaStudio.AppSuite.Core" Version="2.2.9.1213-preview">
 			<IncludeAssets>compile;contentFiles;native;runtime</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="CarinaStudio.AppSuite.Fonts" Version="2.2.7.1212-preview" />
-		<PackageReference Include="CarinaStudio.AppSuite.SyntaxHighlighting" Version="2.2.7.1212-preview" />
+		<PackageReference Include="CarinaStudio.AppSuite.Fonts" Version="2.2.9.1213-preview" />
+		<PackageReference Include="CarinaStudio.AppSuite.SyntaxHighlighting" Version="2.2.9.1213-preview" />
 		<PackageReference Include="Dotnet.Bundle" Version="0.9.13" />
 		<PackageReference Include="Microsoft.Win32.Registry" Version="6.0.0-preview.5.21301.5" />
 		<PackageReference Include="MySql.Data" Version="8.0.31" />
