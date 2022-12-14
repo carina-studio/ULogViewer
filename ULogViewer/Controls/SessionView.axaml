@@ -439,120 +439,125 @@
 
 			<!-- Toolbar -->
 			<Border Name="toolBarContainer" Classes="ToolBar">
-				<Grid ColumnDefinitions="*,Auto,Auto">
+				<Grid ColumnDefinitions="Auto,*,Auto,Auto">
 
-					<!-- Log actions and filters -->
-					<asControls:ToolBarScrollViewer Name="toolBarScrollViewer">
+					<!-- Log actions -->
+					<StackPanel Orientation="Horizontal">
+
+						<!-- Select log profiles -->
+						<Button Name="selectAndSetLogProfileButton" Classes="ToolBar_Button_WithDropDownButton" Command="{Binding $parent[UserControl].SelectAndSetLogProfileCommand}" ToolTip.Tip="{DynamicResource String/SessionView.SetLogProfile}">
+							<Image Classes="Icon" Source="{StaticResource Image/LogProfile}"/>
+						</Button>
+						<ToggleButton Name="selectAndSetLogProfileDropDownButton" Classes="ToolBar_DropDownButton" Command="{Binding $parent[UserControl].ShowLogProfileSelectionMenu}" IsEnabled="{Binding #selectAndSetLogProfileButton.IsEnabled}" ToolTip.Tip="{DynamicResource String/SessionView.SetLogProfile}">
+							<Panel>
+								<Image Classes="ToolBar_DropDownButtonIcon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.MoveDown}"/>
+								<Image Classes="ToolBar_DropDownButtonIcon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.MoveDown.Light}"/>
+							</Panel>
+						</ToggleButton>
+
+						<!-- Edit log profile -->
+						<Button Classes="ToolBar_Button" Command="{Binding $parent[UserControl].EditLogProfileCommand}" IsVisible="{Binding $parent[UserControl].HasLogProfile}" ToolTip.Tip="{DynamicResource String/LogProfileSelectionDialog.EditLogProfile}">
+							<Image Classes="Icon" Source="{StaticResource Image/EditLogProfile}"/>
+						</Button>
+
+						<!-- Set working directory -->
+						<Button Classes="ToolBar_Button" Command="{Binding $parent[UserControl].SelectAndSetWorkingDirectoryCommand}" IsVisible="{Binding IsWorkingDirectoryNeeded}" ToolTip.Tip="{DynamicResource String/SessionView.SetWorkingDirectory}">
+							<Image Classes="Icon" Source="{StaticResource Image/Icon.Folder}"/>
+						</Button>
+
+						<!-- Add files -->
+						<Button Classes="ToolBar_Button" Command="{Binding $parent[UserControl].AddLogFilesCommand}" IsVisible="{Binding AreFileBasedLogs}" ToolTip.Tip="{DynamicResource String/SessionView.AddLogFiles.WithShortcut}">
+							<Image Classes="Icon" Source="{StaticResource Image/Icon.AddFile}"/>
+						</Button>
+
+						<!-- Set URI -->
+						<Button Classes="ToolBar_Button" Command="{Binding $parent[UserControl].SelectAndSetUriCommand}" IsVisible="{Binding IsUriNeeded}" ToolTip.Tip="{DynamicResource String/SessionView.SetUri}">
+							<Image Classes="Icon">
+								<DrawingImage>
+									<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/LogProfile.Network}"/>
+								</DrawingImage>
+							</Image>
+						</Button>
+
+						<!-- Set IP endpoint -->
+						<Button Classes="ToolBar_Button" Command="{Binding $parent[UserControl].SelectAndSetIPEndPointCommand}" IsVisible="{Binding IsIPEndPointNeeded}" ToolTip.Tip="{DynamicResource String/SessionView.SetIPEndPoint}">
+							<Image Classes="Icon">
+								<DrawingImage>
+									<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/LogProfile.Network}"/>
+								</DrawingImage>
+							</Image>
+						</Button>
+
+						<!-- Save logs -->
+						<ToggleButton Name="logsSavingButton" Classes="ToolBar_ToggleButton" Command="{Binding $parent[UserControl].ShowLogsSavingMenu}" IsVisible="{Binding HasLogProfile}" ToolTip.Tip="{DynamicResource String/SessionView.SaveLogs}">
+							<ia:Interaction.Behaviors>
+								<iaCore:DataTriggerBehavior Binding="{Binding $self.IsChecked}" Value="True">
+									<iaCore:ChangePropertyAction PropertyName="ToolTip.Tip" Value="{x:Null}"/>
+								</iaCore:DataTriggerBehavior>
+							</ia:Interaction.Behaviors>
+							<Panel>
+								<Image Classes="Icon" Source="{StaticResource Image/Icon.Save.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
+								<Image Classes="Icon" Source="{StaticResource Image/Icon.Save}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
+							</Panel>
+						</ToggleButton>
+
+						<!-- Clear files -->
+						<Button Classes="ToolBar_Button" Command="{Binding ClearLogFilesCommand}" IsVisible="{Binding AreFileBasedLogs}" ToolTip.Tip="{DynamicResource String/SessionView.ClearLogFiles}">
+							<Image Classes="Icon" Source="{StaticResource Image/Icon.Delete}"/>
+						</Button>
+
+						<!-- Separator -->
+						<Separator Classes="ToolBar_Separator"/>
+
+						<!-- Reload logs -->
+						<Button Classes="ToolBar_Button" Command="{Binding $parent[UserControl].ReloadLogsCommand}" ToolTip.Tip="{DynamicResource String/SessionView.ReloadLogs}">
+							<Image Classes="Icon" Source="{StaticResource Image/Icon.Refresh}"/>
+						</Button>
+
+						<!-- Scroll to latest log -->
+						<ToggleButton Classes="ToolBar_ToggleButton" IsChecked="{Binding $parent[UserControl].IsScrollingToLatestLogNeeded, Mode=TwoWay}" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" ToolTip.Tip="{DynamicResource String/SessionView.ScrollToLatestLog}">
+							<Panel>
+								<Panel Name="scrollToBottomLogIconPanel" IsVisible="{Binding LogProfile.SortDirection, Converter={x:Static abConverters:ObjectConverters.IsEquivalentTo}, ConverterParameter={x:Static app:SortDirection.Ascending}}">
+									<Image Classes="Icon" Source="{StaticResource Image/ToBottom}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
+									<Image Classes="Icon" Source="{StaticResource Image/ToBottom.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
+								</Panel>
+								<Panel IsVisible="{Binding !#scrollToBottomLogIconPanel.IsVisible}">
+									<Image Classes="Icon" Source="{StaticResource Image/ToTop}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
+									<Image Classes="Icon" Source="{StaticResource Image/ToTop.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
+								</Panel>
+							</Panel>
+						</ToggleButton>
+
+						<!-- Select log by timestamp -->
+						<Button Classes="ToolBar_Button" Command="{Binding $parent[UserControl].SelectNearestLogByTimestamp}" IsEnabled="{Binding HasLogs}" IsVisible="{Binding AreLogsSortedByTimestamp}" ToolTip.Tip="{DynamicResource String/SessionView.SelectNearestLogByTimestamp}">
+							<Image Classes="Icon" Source="{StaticResource Image/FindDate}"/>
+						</Button>
+
+						<!-- Pause/resume -->
+						<Button Classes="ToolBar_Button" Command="{Binding PauseResumeLogsReadingCommand}" IsVisible="{Binding IsReadingLogsContinuously}" ToolTip.Tip="{DynamicResource String/SessionView.PauseResumeLogsReading}">
+							<Image Classes="Icon">
+								<ia:Interaction.Behaviors>
+									<iaCore:DataTriggerBehavior Binding="{Binding IsLogsReadingPaused}" Value="True">
+										<iaCore:ChangePropertyAction PropertyName="Source" Value="{StaticResource Image/Icon.PlayMedia}"/>
+									</iaCore:DataTriggerBehavior>
+									<iaCore:DataTriggerBehavior Binding="{Binding IsLogsReadingPaused}" Value="False">
+										<iaCore:ChangePropertyAction PropertyName="Source" Value="{StaticResource Image/Icon.PauseMedia}"/>
+									</iaCore:DataTriggerBehavior>
+								</ia:Interaction.Behaviors>
+							</Image>
+						</Button>
+
+						<!-- Separator -->
+						<Separator Classes="ToolBar_Separator"/>
+
+					</StackPanel>
+
+					<!-- Log filters -->
+					<asControls:ToolBarScrollViewer Name="toolBarScrollViewer" Grid.Column="1">
 						<Grid Background="{x:Static Brushes.Transparent}" ColumnDefinitions="Auto,*">
 
-							<!-- Log actions and filters -->
+							<!-- Log filters -->
 							<StackPanel Orientation="Horizontal">
-
-								<!-- Select log profiles -->
-								<Button Name="selectAndSetLogProfileButton" Classes="ToolBar_Button_WithDropDownButton" Command="{Binding $parent[UserControl].SelectAndSetLogProfileCommand}" ToolTip.Tip="{DynamicResource String/SessionView.SetLogProfile}">
-									<Image Classes="Icon" Source="{StaticResource Image/LogProfile}"/>
-								</Button>
-								<ToggleButton Name="selectAndSetLogProfileDropDownButton" Classes="ToolBar_DropDownButton" Command="{Binding $parent[UserControl].ShowLogProfileSelectionMenu}" IsEnabled="{Binding #selectAndSetLogProfileButton.IsEnabled}" ToolTip.Tip="{DynamicResource String/SessionView.SetLogProfile}">
-									<Panel>
-										<Image Classes="ToolBar_DropDownButtonIcon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.MoveDown}"/>
-										<Image Classes="ToolBar_DropDownButtonIcon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.MoveDown.Light}"/>
-									</Panel>
-								</ToggleButton>
-
-								<!-- Edit log profile -->
-								<Button Classes="ToolBar_Button" Command="{Binding $parent[UserControl].EditLogProfileCommand}" IsVisible="{Binding $parent[UserControl].HasLogProfile}" ToolTip.Tip="{DynamicResource String/LogProfileSelectionDialog.EditLogProfile}">
-									<Image Classes="Icon" Source="{StaticResource Image/EditLogProfile}"/>
-								</Button>
-
-								<!-- Set working directory -->
-								<Button Classes="ToolBar_Button" Command="{Binding $parent[UserControl].SelectAndSetWorkingDirectoryCommand}" IsVisible="{Binding IsWorkingDirectoryNeeded}" ToolTip.Tip="{DynamicResource String/SessionView.SetWorkingDirectory}">
-									<Image Classes="Icon" Source="{StaticResource Image/Icon.Folder}"/>
-								</Button>
-
-								<!-- Add files -->
-								<Button Classes="ToolBar_Button" Command="{Binding $parent[UserControl].AddLogFilesCommand}" IsVisible="{Binding AreFileBasedLogs}" ToolTip.Tip="{DynamicResource String/SessionView.AddLogFiles.WithShortcut}">
-									<Image Classes="Icon" Source="{StaticResource Image/Icon.AddFile}"/>
-								</Button>
-
-								<!-- Set URI -->
-								<Button Classes="ToolBar_Button" Command="{Binding $parent[UserControl].SelectAndSetUriCommand}" IsVisible="{Binding IsUriNeeded}" ToolTip.Tip="{DynamicResource String/SessionView.SetUri}">
-									<Image Classes="Icon">
-										<DrawingImage>
-											<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/LogProfile.Network}"/>
-										</DrawingImage>
-									</Image>
-								</Button>
-
-								<!-- Set IP endpoint -->
-								<Button Classes="ToolBar_Button" Command="{Binding $parent[UserControl].SelectAndSetIPEndPointCommand}" IsVisible="{Binding IsIPEndPointNeeded}" ToolTip.Tip="{DynamicResource String/SessionView.SetIPEndPoint}">
-									<Image Classes="Icon">
-										<DrawingImage>
-											<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/LogProfile.Network}"/>
-										</DrawingImage>
-									</Image>
-								</Button>
-
-								<!-- Save logs -->
-								<ToggleButton Name="logsSavingButton" Classes="ToolBar_ToggleButton" Command="{Binding $parent[UserControl].ShowLogsSavingMenu}" IsVisible="{Binding HasLogProfile}" ToolTip.Tip="{DynamicResource String/SessionView.SaveLogs}">
-									<ia:Interaction.Behaviors>
-										<iaCore:DataTriggerBehavior Binding="{Binding $self.IsChecked}" Value="True">
-											<iaCore:ChangePropertyAction PropertyName="ToolTip.Tip" Value="{x:Null}"/>
-										</iaCore:DataTriggerBehavior>
-									</ia:Interaction.Behaviors>
-									<Panel>
-										<Image Classes="Icon" Source="{StaticResource Image/Icon.Save.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
-										<Image Classes="Icon" Source="{StaticResource Image/Icon.Save}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
-									</Panel>
-								</ToggleButton>
-
-								<!-- Clear files -->
-								<Button Classes="ToolBar_Button" Command="{Binding ClearLogFilesCommand}" IsVisible="{Binding AreFileBasedLogs}" ToolTip.Tip="{DynamicResource String/SessionView.ClearLogFiles}">
-									<Image Classes="Icon" Source="{StaticResource Image/Icon.Delete}"/>
-								</Button>
-
-								<!-- Separator -->
-								<Separator Classes="ToolBar_Separator"/>
-
-								<!-- Reload logs -->
-								<Button Classes="ToolBar_Button" Command="{Binding $parent[UserControl].ReloadLogsCommand}" ToolTip.Tip="{DynamicResource String/SessionView.ReloadLogs}">
-									<Image Classes="Icon" Source="{StaticResource Image/Icon.Refresh}"/>
-								</Button>
-
-								<!-- Scroll to latest log -->
-								<ToggleButton Classes="ToolBar_ToggleButton" IsChecked="{Binding $parent[UserControl].IsScrollingToLatestLogNeeded, Mode=TwoWay}" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" ToolTip.Tip="{DynamicResource String/SessionView.ScrollToLatestLog}">
-									<Panel>
-										<Panel Name="scrollToBottomLogIconPanel" IsVisible="{Binding LogProfile.SortDirection, Converter={x:Static abConverters:ObjectConverters.IsEquivalentTo}, ConverterParameter={x:Static app:SortDirection.Ascending}}">
-											<Image Classes="Icon" Source="{StaticResource Image/ToBottom}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
-											<Image Classes="Icon" Source="{StaticResource Image/ToBottom.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
-										</Panel>
-										<Panel IsVisible="{Binding !#scrollToBottomLogIconPanel.IsVisible}">
-											<Image Classes="Icon" Source="{StaticResource Image/ToTop}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
-											<Image Classes="Icon" Source="{StaticResource Image/ToTop.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
-										</Panel>
-									</Panel>
-								</ToggleButton>
-
-								<!-- Select log by timestamp -->
-								<Button Classes="ToolBar_Button" Command="{Binding $parent[UserControl].SelectNearestLogByTimestamp}" IsEnabled="{Binding HasLogs}" IsVisible="{Binding AreLogsSortedByTimestamp}" ToolTip.Tip="{DynamicResource String/SessionView.SelectNearestLogByTimestamp}">
-									<Image Classes="Icon" Source="{StaticResource Image/FindDate}"/>
-								</Button>
-
-								<!-- Pause/resume -->
-								<Button Classes="ToolBar_Button" Command="{Binding PauseResumeLogsReadingCommand}" IsVisible="{Binding IsReadingLogsContinuously}" ToolTip.Tip="{DynamicResource String/SessionView.PauseResumeLogsReading}">
-									<Image Classes="Icon">
-										<ia:Interaction.Behaviors>
-											<iaCore:DataTriggerBehavior Binding="{Binding IsLogsReadingPaused}" Value="True">
-												<iaCore:ChangePropertyAction PropertyName="Source" Value="{StaticResource Image/Icon.PlayMedia}"/>
-											</iaCore:DataTriggerBehavior>
-											<iaCore:DataTriggerBehavior Binding="{Binding IsLogsReadingPaused}" Value="False">
-												<iaCore:ChangePropertyAction PropertyName="Source" Value="{StaticResource Image/Icon.PauseMedia}"/>
-											</iaCore:DataTriggerBehavior>
-										</ia:Interaction.Behaviors>
-									</Image>
-								</Button>
-
-								<!-- Separator -->
-								<Separator Classes="ToolBar_Separator"/>
 
 								<!-- Level filter -->
 								<ComboBox Name="logLevelFilterComboBox" Classes="ToolBar_ComboBox" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" IsVisible="false" Items="{Binding $parent[UserControl].ValidLogLevels}" SelectedItem="{Binding LogFiltering.LevelFilter, Mode=TwoWay}" ToolTip.Tip="{DynamicResource String/SessionView.LogLevelFilter.Description}" VerticalAlignment="Center" Width="{StaticResource Double/SessionView.ToolBar.LogLevelFilter.Width}">
@@ -623,7 +628,7 @@
 					</asControls:ToolBarScrollViewer>
 
 					<!-- Filter actions -->
-					<StackPanel Grid.Column="1" Orientation="Horizontal">
+					<StackPanel Grid.Column="2" Orientation="Horizontal">
 
 						<!-- Ignore case of text filter -->
 						<ToggleButton Classes="ToolBar_ToggleButton" IsChecked="{Binding LogFiltering.IgnoreTextFilterCase, Mode=TwoWay}" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" ToolTip.Tip="{DynamicResource String/SessionView.IgnoreLogTextFilterCase}">
@@ -735,7 +740,7 @@
 					</StackPanel>
 
 					<!-- Test and other actions -->
-					<StackPanel Grid.Column="2" IsVisible="{x:Static cs:Platform.IsNotMacOS}" Orientation="Horizontal">
+					<StackPanel Grid.Column="3" IsVisible="{x:Static cs:Platform.IsNotMacOS}" Orientation="Horizontal">
 
 						<!-- Separator -->
 						<Separator Classes="ToolBar_Separator"/>
