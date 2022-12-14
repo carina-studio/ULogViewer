@@ -25,24 +25,6 @@
              x:Class="CarinaStudio.ULogViewer.Controls.SessionView"
 			 Name="root">
 
-	<!-- Data templates -->
-	<UserControl.DataTemplates>
-
-		<!-- Log header -->
-		<DataTemplate DataType="{x:Type appViewModels:DisplayableLogProperty}">
-			<Border Background="{x:Static Brushes.Transparent}" BorderBrush="{DynamicResource Brush/SessionView.LogHeader.Separator}" BorderThickness="1,0,0,0" HorizontalAlignment="Stretch" Margin="{StaticResource Thickness/SessionView.LogHeader.Margin}" Padding="{StaticResource Thickness/SessionView.LogHeader.Padding}">
-				<ToolTip.Tip>
-					<StackPanel Orientation="Horizontal">
-						<TextBlock Text="{DynamicResource String/SessionView.LogPropertyName}" VerticalAlignment="Center"/>
-						<TextBlock Text="{Binding NameForLogProperty}" VerticalAlignment="Center"/>
-					</StackPanel>
-				</ToolTip.Tip>
-				<TextBlock Text="{Binding DisplayName}" HorizontalAlignment="Stretch" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"/>
-			</Border>
-		</DataTemplate>
-		
-	</UserControl.DataTemplates>
-
 	<!-- Resources -->
 	<UserControl.Resources>
 
@@ -242,6 +224,19 @@
 			</MenuItem>
 		</ContextMenu>
 
+		<!-- Log header  template-->
+		<DataTemplate x:Key="logHeaderTemplate">
+			<Border Background="{x:Static Brushes.Transparent}" BorderBrush="{DynamicResource Brush/SessionView.LogHeader.Separator}" BorderThickness="1,0,0,0" HorizontalAlignment="Stretch" Margin="{StaticResource Thickness/SessionView.LogHeader.Margin}" Padding="{StaticResource Thickness/SessionView.LogHeader.Padding}">
+				<ToolTip.Tip>
+					<StackPanel Orientation="Horizontal">
+						<TextBlock Text="{DynamicResource String/SessionView.LogPropertyName}" VerticalAlignment="Center"/>
+						<TextBlock Text="{Binding NameForLogProperty}" VerticalAlignment="Center"/>
+					</StackPanel>
+				</ToolTip.Tip>
+				<TextBlock Text="{Binding DisplayName}" HorizontalAlignment="Stretch" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"/>
+			</Border>
+		</DataTemplate>
+
 		<!-- Log marking menu -->
 		<ContextMenu x:Key="logMarkingMenu">
 			<ContextMenu.Styles>
@@ -304,6 +299,11 @@
 
 		<!-- Log profile selection menu -->
 		<appControls:LogProfileSelectionContextMenu x:Key="logProfileSelectionMenu" PlacementMode="Bottom"/>
+
+		<!-- Log property tool tip template -->
+		<DataTemplate x:Key="logPropertyToolTipTemplate">
+			<TextBlock FontFamily="{Binding $parent[UserControl].LogFontFamily}" MaxLines="8" Text="{Binding}" TextWrapping="Wrap"/>
+		</DataTemplate>
 
 		<!-- Logs saving menu -->
 		<ContextMenu x:Key="logsSavingMenu" PlacementMode="Bottom">
@@ -774,6 +774,9 @@
 
 			<!-- ListBox -->
 			<asControls:ListBox Classes="Log" Name="logListBox" AutoScrollToSelectedItem="False" Background="{DynamicResource Brush/WorkingArea.Background}" BorderThickness="0" ContextMenu="{StaticResource logActionMenu}" CornerRadius="0" DoubleClickOnItem="OnLogListBoxDoubleClickOnItem" Grid.Row="1" HorizontalAlignment="Stretch" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" Items="{Binding Logs}" ScrollViewer.HorizontalScrollBarVisibility="Visible" SelectedItems="{Binding LogSelection.SelectedLogs}" SelectionChanged="OnLogListBoxSelectionChanged" SelectionMode="Multiple" VirtualizationMode="Simple">
+				<asControls:ListBox.Resources>
+					<sys:Double x:Key="ToolTipContentMaxWidth">400</sys:Double>
+				</asControls:ListBox.Resources>
 				<asControls:ListBox.Styles>
 					<Style Selector="ListBoxItem">
 						<Setter Property="Margin" Value="0,0,20,0"/>

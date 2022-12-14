@@ -1453,6 +1453,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			var app = (App)this.Application;
 			var logPropertyCount = logProperties.Count;
+			var toolTipTemplate = (DataTemplate)this.Resources["logPropertyToolTipTemplate"].AsNonNull();
 			var colorIndicatorBorderBrush = app.FindResourceOrDefault<IBrush?>("Brush/WorkingArea.Background");
 			var colorIndicatorBorderThickness = app.FindResourceOrDefault<Thickness>("Thickness/SessionView.LogListBox.ColorIndicator.Border");
 			var colorIndicatorWidth = app.FindResourceOrDefault<double>("Double/SessionView.LogListBox.ColorIndicator.Width");
@@ -1548,6 +1549,7 @@ namespace CarinaStudio.ULogViewer.Controls
 							}));
 							it.TextTrimming = TextTrimming.CharacterEllipsis;
 							it.TextWrapping = TextWrapping.NoWrap;
+							it.ToolTipTemplate = toolTipTemplate;
 							it.VerticalAlignment = VerticalAlignment.Top;
 						}),
 					};
@@ -2973,7 +2975,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			var minHeaderWidth = app.TryFindResource("Double/SessionView.LogHeader.MinWidth", out rawResource) ? (double)rawResource! : default;
 			var itemPadding = app.TryFindResource("Thickness/SessionView.LogListBox.Item.Padding", out rawResource) ? (Thickness)rawResource! : default;
 			var colorIndicatorWidth = app.TryFindResource("Double/SessionView.LogListBox.ColorIndicator.Width", out rawResource) ? (double)rawResource! : default;
-			var headerTemplate = (DataTemplate)this.DataTemplates.First(it => it is DataTemplate dt && dt.DataType == typeof(DisplayableLogProperty));
+			var headerTemplate = (DataTemplate)this.Resources["logHeaderTemplate"].AsNonNull();
 			var columIndexOffset = 0;
 			if (profile.ColorIndicator != LogColorIndicator.None)
 			{
