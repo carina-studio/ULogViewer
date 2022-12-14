@@ -142,10 +142,10 @@
 
 	<!-- SQLite -->
 	<ItemGroup Condition="$(RuntimeIdentifier.Contains('osx'))">
-		<Content Include="../SQLite/1.0.116/$(RuntimeIdentifier)/System.Data.SQLite.dll" Link="System.Data.SQLite.dll">
+		<Content Include="../SQLite/1.0.117/$(RuntimeIdentifier)/System.Data.SQLite.dll" Link="System.Data.SQLite.dll">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
-		<Content Include="../SQLite/1.0.116/$(RuntimeIdentifier)/SQLite.Interop.dll" Link="SQLite.Interop.dll">
+		<Content Include="../SQLite/1.0.117/$(RuntimeIdentifier)/SQLite.Interop.dll" Link="SQLite.Interop.dll">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 			<ExcludeFromSingleFile>True</ExcludeFromSingleFile>
 		</Content>
