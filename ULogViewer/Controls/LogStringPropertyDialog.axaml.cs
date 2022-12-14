@@ -8,6 +8,7 @@ using CarinaStudio.AppSuite.Controls.Highlighting;
 using CarinaStudio.AppSuite.Media;
 using CarinaStudio.Configuration;
 using CarinaStudio.Controls;
+using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Converters;
 using CarinaStudio.ULogViewer.ViewModels;
 using CarinaStudio.Windows.Input;
@@ -18,14 +19,6 @@ using System.Windows.Input;
 
 namespace CarinaStudio.ULogViewer.Controls
 {
-	class DebugTextBox : SyntaxHighlightingTextBox
-	{
-		public DebugTextBox()
-		{
-			//
-		}
-	}
-
 	/// <summary>
 	/// Dialog to show message of log.
 	/// </summary>
@@ -139,14 +132,22 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when opened.
 		protected override void OnOpened(EventArgs e)
 		{
+			base.OnOpened(e);
 			this.propertyValueTextBox.Text = this.LogPropertyName.Let(propertyName =>
 			{
 				var value = "";
 				this.Log?.TryGetProperty(this.LogPropertyName, out value);
 				return value;
 			});
-			this.findTextTextBox.Focus();
-			base.OnOpened(e);
+			this.SynchronizationContext.Post(this.findTextTextBox.Focus);
+
+			// [Workaround] Reduce possibility of showing with min height on Linux.
+			if (Platform.IsLinux)
+			{
+				var height = this.FindResourceOrDefault<double>("Double/LogStringPropertyDialog.Height", 500);
+				this.SynchronizationContext.PostDelayed(() => this.Height = height, 50);
+				this.SynchronizationContext.PostDelayed(() => this.Height = height, 150);
+			}
 		}
 
 

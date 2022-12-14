@@ -108,7 +108,7 @@
 
 	<!-- LogStringPropertyDialog -->
 	<sys:Double x:Key="Double/LogStringPropertyDialog.Height">500</sys:Double>
-	<sys:Double x:Key="Double/LogStringPropertyDialog.MinHeight">300</sys:Double>
+	<sys:Double x:Key="Double/LogStringPropertyDialog.MinHeight">350</sys:Double>
 	<sys:Double x:Key="Double/LogStringPropertyDialog.MinWidth">300</sys:Double>
 	<sys:Double x:Key="Double/LogStringPropertyDialog.Width">600</sys:Double>
 
