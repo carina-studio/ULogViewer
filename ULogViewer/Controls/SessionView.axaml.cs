@@ -1581,21 +1581,19 @@ namespace CarinaStudio.ULogViewer.Controls
 						it.CornerRadius = itemCornerRadius;
 						it.Tag = logProperty;
 						it.VerticalAlignment = VerticalAlignment.Stretch;
-						/*
 						it.GetObservable(Control.IsPointerOverProperty).Subscribe(new Observer<bool>(isPointerOver =>
 						{
 							if (isPointerOver)
 							{
-								it.BorderBrush = this.TryFindResource("Brush/SessionView.LogListBox.Item.Column.Border.PointerOver", out var res).Let(_ => res as IBrush);
-								it.Bind(Avalonia.Controls.TextBlock.ForegroundProperty, new Binding() { Path = nameof(DisplayableLog.LevelBrushForPointerOver) });
+								it.BorderBrush = this.FindResourceOrDefault<IBrush>("Brush/SessionView.LogListBox.Item.Column.Border.PointerOver");
+								//it.Bind(Avalonia.Controls.TextBlock.ForegroundProperty, new Binding() { Path = nameof(DisplayableLog.LevelBrushForPointerOver) });
 							}
 							else
 							{
 								it.BorderBrush = null;
-								it.Bind(Avalonia.Controls.TextBlock.ForegroundProperty, new Binding() { Path = nameof(DisplayableLog.LevelBrush) });
+								//it.Bind(Avalonia.Controls.TextBlock.ForegroundProperty, new Binding() { Path = nameof(DisplayableLog.LevelBrush) });
 							}
 						}));
-						*/
 						it.PointerPressed += (_, e) =>
 						{
 							this.lastClickedLogPropertyView = it;
