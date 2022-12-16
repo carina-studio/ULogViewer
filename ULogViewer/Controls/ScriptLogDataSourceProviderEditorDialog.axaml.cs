@@ -11,6 +11,7 @@ using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.Windows.Input;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
@@ -63,10 +64,21 @@ partial class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.In
 	}
 
 
+	// Constants.
+	const int InitSizeSetDelay = 100;
+	const int InitSizeSetTimeout = 1000;
+
+
 	// Fields.
 	readonly ToggleButton addSupportedSourceOptionButton;
 	readonly ContextMenu addSupportedSourceOptionMenu;
+	readonly ScheduledAction completeSettingInitSizeAction;
 	readonly TextBox displayNameTextBox;
+	Size? expectedInitSize;
+	readonly IDisposable initBoundsObserverToken;
+	readonly IDisposable initHeightObserverToken;
+	readonly Stopwatch initSizeSetStopWatch = new();
+	readonly IDisposable initWidthObserverToken;
 	readonly Avalonia.Controls.ListBox supportedSourceOptionListBox;
 	readonly SortedObservableList<SupportedSourceOption> supportedSourceOptions = new((lhs, rhs) => string.Compare(lhs.Name, rhs.Name, true, CultureInfo.InvariantCulture));
 	readonly SortedObservableList<MenuItem> unsupportedSourceOptionMenuItems = new((lhs, rhs) => string.Compare(lhs.DataContext as string, rhs.DataContext as string, true, CultureInfo.InvariantCulture));
@@ -94,10 +106,37 @@ partial class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.In
 				this.SynchronizationContext.Post(() => this.addSupportedSourceOptionButton.IsChecked = true);
 			};
 		});
+		this.completeSettingInitSizeAction = new(() =>
+		{
+			if (!this.expectedInitSize.HasValue)
+				return;
+			var expectedSize = this.expectedInitSize.Value;
+			if (this.IsOpened && this.initSizeSetStopWatch.ElapsedMilliseconds <= InitSizeSetTimeout)
+			{
+				if (Math.Abs(this.Bounds.Width - expectedSize.Width) > 10
+					|| Math.Abs(this.Bounds.Height - expectedSize.Height) > 10)
+				{
+					this.completeSettingInitSizeAction!.Schedule(InitSizeSetDelay);
+					return;
+				}
+			}
+			this.initSizeSetStopWatch.Stop();
+			this.initBoundsObserverToken!.Dispose();
+			this.initHeightObserverToken!.Dispose();
+			this.initWidthObserverToken!.Dispose();
+			this.OnInitialSizeSet();
+		});
 		this.displayNameTextBox = this.Get<TextBox>(nameof(displayNameTextBox)).Also(it =>
 		{
 			it.GetObservable(TextBox.TextProperty).Subscribe(_ => this.InvalidateInput());
 		});
+		this.initBoundsObserverToken = this.GetObservable(BoundsProperty).Subscribe(bounds =>
+		{
+			this.OnInitialWidthChanged(bounds.Width);
+			this.OnInitialHeightChanged(bounds.Height);
+		});
+		this.initHeightObserverToken = this.GetObservable(HeightProperty).Subscribe(this.OnInitialHeightChanged);
+		this.initWidthObserverToken = this.GetObservable(WidthProperty).Subscribe(this.OnInitialWidthChanged);
 		this.supportedSourceOptionListBox = this.Get<Avalonia.Controls.ListBox>(nameof(supportedSourceOptionListBox));
 	}
 
@@ -146,6 +185,56 @@ partial class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.In
 
 
 	/// <inheritdoc/>
+	protected override void OnClosed(EventArgs e)
+	{
+		this.completeSettingInitSizeAction.ExecuteIfScheduled();
+		base.OnClosed(e);
+	}
+
+
+	// Called when initial height of window changed.
+	void OnInitialHeightChanged(double height)
+	{
+		if (!this.IsOpened || !this.expectedInitSize.HasValue)
+			return;
+		var expectedHeight = this.expectedInitSize.Value.Height;
+		if (Math.Abs(expectedHeight - height) <= 1 && Math.Abs(expectedHeight - this.Bounds.Height) <= 1)
+			this.completeSettingInitSizeAction.Schedule(InitSizeSetDelay);
+		else
+		{
+			this.Height = expectedHeight;
+			this.completeSettingInitSizeAction.Reschedule(InitSizeSetDelay);
+		}
+	}
+
+
+	// Called when initial size of window has been set.
+	async void OnInitialSizeSet()
+	{
+		if (this.IsClosed)
+			return;
+		await this.RequestEnablingRunningScriptAsync();
+		this.displayNameTextBox.Focus();
+	}
+
+
+	// Called when initial width of window changed.
+	void OnInitialWidthChanged(double width)
+	{
+		if (!this.IsOpened || !this.expectedInitSize.HasValue)
+			return;
+		var expectedWidth = this.expectedInitSize.Value.Width;
+		if (Math.Abs(expectedWidth - width) <= 1 && Math.Abs(expectedWidth - this.Bounds.Width) <= 1)
+			this.completeSettingInitSizeAction.Schedule(InitSizeSetDelay);
+		else
+		{
+			this.Width = expectedWidth;
+			this.completeSettingInitSizeAction.Reschedule(InitSizeSetDelay);
+		}
+	}
+
+
+	/// <inheritdoc/>
 	protected override void OnOpened(EventArgs e)
 	{
 		// call base
@@ -164,9 +253,14 @@ partial class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.In
 			var height = (workingArea.Height * heightRatio) / scaling;
 			var sysDecorSize = this.GetSystemDecorationSizes();
 			this.Position = new((int)(left + 0.5), (int)(top + 0.5));
-			this.Width = width;
-			this.Height = (height - sysDecorSize.Top - sysDecorSize.Bottom);
+			this.expectedInitSize = new(width, height - sysDecorSize.Top - sysDecorSize.Bottom);
+			this.expectedInitSize.Value.Let(it =>
+			{
+				this.Width = it.Width;
+				this.Height = it.Height;
+			});
 		});
+		this.completeSettingInitSizeAction.Schedule(InitSizeSetDelay);
 
 		// show provider
 		var provider = this.Provider;
@@ -188,27 +282,6 @@ partial class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.In
 			this.Get<ScrollViewer>("contentScrollViewer").ScrollToHome();
 			this.displayNameTextBox.Focus();
 		});
-
-		// enable script running
-		if (!this.Settings.GetValueOrDefault(AppSuite.SettingKeys.EnableRunningScript))
-		{
-			this.SynchronizationContext.PostDelayed(async () =>
-			{
-				if (this.Settings.GetValueOrDefault(AppSuite.SettingKeys.EnableRunningScript) || this.IsClosed)
-					return;
-				var result = await new MessageDialog()
-				{
-					Buttons = AppSuite.Controls.MessageDialogButtons.YesNo,
-					DefaultResult = AppSuite.Controls.MessageDialogResult.No,
-					Icon = AppSuite.Controls.MessageDialogIcon.Warning,
-					Message = this.GetResourceObservable("String/ApplicationOptions.EnableRunningScript.ConfirmEnabling"),
-				}.ShowDialog(this);
-				if (result == AppSuite.Controls.MessageDialogResult.Yes)
-					this.Settings.SetValue<bool>(AppSuite.SettingKeys.EnableRunningScript, true);
-				else
-					this.Close();
-			}, 300);
-		}
 	}
 
 
@@ -243,6 +316,28 @@ partial class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.In
 	/// Command to remove supported source option.
 	/// </summary>
 	public ICommand RemoveSupportedSourceOptionCommand { get; }
+
+
+	// Request running script.
+	async Task RequestEnablingRunningScriptAsync()
+	{
+		if (!this.IsOpened || this.Settings.GetValueOrDefault(AppSuite.SettingKeys.EnableRunningScript))
+			return;
+		var result = await new MessageDialog()
+		{
+			Buttons = AppSuite.Controls.MessageDialogButtons.YesNo,
+			DefaultResult = AppSuite.Controls.MessageDialogResult.No,
+			Icon = AppSuite.Controls.MessageDialogIcon.Warning,
+			Message = this.GetResourceObservable("String/ApplicationOptions.EnableRunningScript.ConfirmEnabling"),
+		}.ShowDialog(this);
+		if (result == AppSuite.Controls.MessageDialogResult.Yes)
+			this.Settings.SetValue<bool>(AppSuite.SettingKeys.EnableRunningScript, true);
+		else
+		{
+			this.IsEnabled = false;
+			this.SynchronizationContext.PostDelayed(this.Close, 300); // [Workaround] Prevent crashing on macOS.
+		}
+	}
 
 
 	/// <summary>

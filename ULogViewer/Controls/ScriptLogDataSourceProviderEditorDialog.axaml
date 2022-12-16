@@ -19,7 +19,8 @@
         MinWidth="{DynamicResource Double/ScriptLogDataSourceProviderEditorDialog.MinWidth}"
 		SizeToContent="Manual"
         Title="{DynamicResource String/ScriptLogDataSourceProviderEditorDialog.Title}"
-        Width="{DynamicResource Double/ScriptLogDataSourceProviderEditorDialog.Width}">
+        Width="{DynamicResource Double/ScriptLogDataSourceProviderEditorDialog.Width}"
+		WindowStartupLocation="Manual">
 	
 	<Window.Resources>
 		<ContextMenu x:Key="addSupportedSourceOptionMenu" PlacementMode="Bottom"/>
