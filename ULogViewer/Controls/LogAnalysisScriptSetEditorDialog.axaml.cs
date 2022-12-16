@@ -8,7 +8,9 @@ using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ULogViewer.ViewModels.Analysis.Scripting;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.Controls;
 
@@ -17,6 +19,11 @@ namespace CarinaStudio.ULogViewer.Controls;
 /// </summary>
 partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.ApplicationWindow<IULogViewerApplication>
 {
+	// Constants.
+	const int InitSizeSetDelay = 100;
+	const int InitSizeSetTimeout = 1000;
+
+
 	// Static fields.
 	static readonly AvaloniaProperty<bool> AreValidParametersProperty = AvaloniaProperty.RegisterDirect<LogAnalysisScriptSetEditorDialog, bool>("AreValidParameters", d => d.areValidParameters);
 	static readonly Dictionary<LogAnalysisScriptSet, LogAnalysisScriptSetEditorDialog> Dialogs = new();
@@ -25,8 +32,14 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Applicati
 
 	// Fields.
 	bool areValidParameters;
+	readonly ScheduledAction completeSettingInitSizeAction;
+	Size? expectedInitSize;
 	readonly LogProfileIconColorComboBox iconColorComboBox;
 	readonly LogProfileIconComboBox iconComboBox;
+	readonly IDisposable initBoundsObserverToken;
+	readonly IDisposable initHeightObserverToken;
+	readonly Stopwatch initSizeSetStopWatch = new();
+	readonly IDisposable initWidthObserverToken;
 	readonly TextBox nameTextBox;
 	LogAnalysisScriptSet? scriptSetToEdit;
 	readonly ScheduledAction validateParametersAction;
@@ -40,8 +53,35 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Applicati
 		AvaloniaXamlLoader.Load(this);
 		if (Platform.IsLinux)
 			this.WindowStartupLocation = WindowStartupLocation.Manual;
+		this.completeSettingInitSizeAction = new(() =>
+		{
+			if (!this.expectedInitSize.HasValue)
+				return;
+			var expectedSize = this.expectedInitSize.Value;
+			if (this.IsOpened && this.initSizeSetStopWatch.ElapsedMilliseconds <= InitSizeSetTimeout)
+			{
+				if (Math.Abs(this.Bounds.Width - expectedSize.Width) > 10
+					|| Math.Abs(this.Bounds.Height - expectedSize.Height) > 10)
+				{
+					this.completeSettingInitSizeAction!.Schedule(InitSizeSetDelay);
+					return;
+				}
+			}
+			this.initSizeSetStopWatch.Stop();
+			this.initBoundsObserverToken!.Dispose();
+			this.initHeightObserverToken!.Dispose();
+			this.initWidthObserverToken!.Dispose();
+			this.OnInitialSizeSet();
+		});
 		this.iconColorComboBox = this.Get<LogProfileIconColorComboBox>(nameof(iconColorComboBox));
 		this.iconComboBox = this.Get<LogProfileIconComboBox>(nameof(iconComboBox));
+		this.initBoundsObserverToken = this.GetObservable(BoundsProperty).Subscribe(bounds =>
+		{
+			this.OnInitialWidthChanged(bounds.Width);
+			this.OnInitialHeightChanged(bounds.Height);
+		});
+		this.initHeightObserverToken = this.GetObservable(HeightProperty).Subscribe(this.OnInitialHeightChanged);
+		this.initWidthObserverToken = this.GetObservable(WidthProperty).Subscribe(this.OnInitialWidthChanged);
 		this.nameTextBox = this.Get<TextBox>(nameof(nameTextBox)).Also(it =>
 		{
 			it.GetObservable(TextBox.TextProperty).Subscribe(_ => this.validateParametersAction?.Schedule());
@@ -100,7 +140,76 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Applicati
 		{
 			Dialogs.Remove(this.scriptSetToEdit);
 		}
+		this.completeSettingInitSizeAction.ExecuteIfScheduled();
 		base.OnClosed(e);
+	}
+
+
+	// Called when initial height of window changed.
+	void OnInitialHeightChanged(double height)
+	{
+		if (!this.IsOpened || !this.expectedInitSize.HasValue)
+			return;
+		var expectedHeight = this.expectedInitSize.Value.Height;
+		if (Math.Abs(expectedHeight - height) <= 1 && Math.Abs(expectedHeight - this.Bounds.Height) <= 1)
+			this.completeSettingInitSizeAction.Schedule(InitSizeSetDelay);
+		else
+		{
+			this.Height = expectedHeight;
+			this.completeSettingInitSizeAction.Reschedule(InitSizeSetDelay);
+		}
+	}
+
+
+	// Called when initial size of window has been set.
+	async void OnInitialSizeSet()
+	{
+		if (this.IsClosed)
+			return;
+		if (this.scriptSetToEdit == null
+			&& !this.Application.ProductManager.IsProductActivated(Products.Professional))
+		{
+			if (!LogAnalysisScriptSetManager.Default.CanAddScriptSet)
+			{
+				await new MessageDialog()
+				{
+					Icon = MessageDialogIcon.Warning,
+					Message = this.GetResourceObservable("String/LogAnalysisScriptSetEditorDialog.CannotAddMoreScriptSetWithoutProVersion"),
+				}.ShowDialog(this);
+				this.Close();
+				return;
+			}
+			if (!this.PersistentState.GetValueOrDefault(DonotShowRestrictionsWithNonProVersionKey))
+			{
+				var messageDialog = new MessageDialog()
+				{
+					DoNotAskOrShowAgain = false,
+					Icon = MessageDialogIcon.Information,
+					Message = this.GetResourceObservable("String/LogAnalysisScriptSetEditorDialog.RestrictionsOfNonProVersion"),
+				};
+				await messageDialog.ShowDialog(this);
+				if (messageDialog.DoNotAskOrShowAgain == true)
+					this.PersistentState.SetValue<bool>(DonotShowRestrictionsWithNonProVersionKey, true);
+			}
+		}
+		await this.RequestEnablingRunningScriptAsync();
+		this.nameTextBox.Focus();
+	}
+
+
+	// Called when initial width of window changed.
+	void OnInitialWidthChanged(double width)
+	{
+		if (!this.IsOpened || !this.expectedInitSize.HasValue)
+			return;
+		var expectedWidth = this.expectedInitSize.Value.Width;
+		if (Math.Abs(expectedWidth - width) <= 1 && Math.Abs(expectedWidth - this.Bounds.Width) <= 1)
+			this.completeSettingInitSizeAction.Schedule(InitSizeSetDelay);
+		else
+		{
+			this.Width = expectedWidth;
+			this.completeSettingInitSizeAction.Reschedule(InitSizeSetDelay);
+		}
 	}
 
 
@@ -111,6 +220,7 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Applicati
 		base.OnOpened(e);
 
 		// setup initial window size and position
+		this.initSizeSetStopWatch.Start();
 		(this.Screens.ScreenFromWindow(this.PlatformImpl.AsNonNull()) ?? this.Screens.Primary)?.Let(screen =>
 		{
 			var workingArea = screen.WorkingArea;
@@ -123,9 +233,14 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Applicati
 			var height = (workingArea.Height * heightRatio) / scaling;
 			var sysDecorSize = this.GetSystemDecorationSizes();
 			this.Position = new((int)(left + 0.5), (int)(top + 0.5));
-			this.Width = width;
-			this.Height = (height - sysDecorSize.Top - sysDecorSize.Bottom);
+			this.expectedInitSize = new Size(width, height - sysDecorSize.Top - sysDecorSize.Bottom);
+			this.expectedInitSize.Value.Let(it =>
+			{
+				this.Width = it.Width;
+				this.Height = it.Height;
+			});
 		});
+		this.completeSettingInitSizeAction.Schedule(InitSizeSetDelay);
 
 		// show script
 		var scriptSet = this.scriptSetToEdit;
@@ -138,33 +253,6 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Applicati
 		else
 		{
 			this.iconComboBox.SelectedItem = LogProfileIcon.Analysis;
-			if (!this.Application.ProductManager.IsProductActivated(Products.Professional))
-			{
-				this.SynchronizationContext.PostDelayed(async () =>
-				{
-					if (!LogAnalysisScriptSetManager.Default.CanAddScriptSet)
-					{
-						await new MessageDialog()
-						{
-							Icon = MessageDialogIcon.Warning,
-							Message = this.GetResourceObservable("String/LogAnalysisScriptSetEditorDialog.CannotAddMoreScriptSetWithoutProVersion"),
-						}.ShowDialog(this);
-						this.Close();
-					}
-					else if (!this.PersistentState.GetValueOrDefault(DonotShowRestrictionsWithNonProVersionKey))
-					{
-						var messageDialog = new MessageDialog()
-						{
-							DoNotAskOrShowAgain = false,
-							Icon = MessageDialogIcon.Information,
-							Message = this.GetResourceObservable("String/LogAnalysisScriptSetEditorDialog.RestrictionsOfNonProVersion"),
-						};
-						await messageDialog.ShowDialog(this);
-						if (messageDialog.DoNotAskOrShowAgain == true)
-							this.PersistentState.SetValue<bool>(DonotShowRestrictionsWithNonProVersionKey, true);
-					}
-				}, 300);
-			}
 		}
 
 		// setup initial focus
@@ -173,27 +261,6 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Applicati
 			this.Get<ScrollViewer>("contentScrollViewer").ScrollToHome();
 			this.nameTextBox.Focus();
 		});
-
-		// enable script running
-		if (!this.Settings.GetValueOrDefault(AppSuite.SettingKeys.EnableRunningScript))
-		{
-			this.SynchronizationContext.PostDelayed(async () =>
-			{
-				if (this.Settings.GetValueOrDefault(AppSuite.SettingKeys.EnableRunningScript) || this.IsClosed)
-					return;
-				var result = await new MessageDialog()
-				{
-					Buttons = AppSuite.Controls.MessageDialogButtons.YesNo,
-					DefaultResult = AppSuite.Controls.MessageDialogResult.No,
-					Icon = AppSuite.Controls.MessageDialogIcon.Warning,
-					Message = this.GetResourceObservable("String/ApplicationOptions.EnableRunningScript.ConfirmEnabling"),
-				}.ShowDialog(this);
-				if (result == AppSuite.Controls.MessageDialogResult.Yes)
-					this.Settings.SetValue<bool>(AppSuite.SettingKeys.EnableRunningScript, true);
-				else
-					this.Close();
-			}, 300);
-		}
 	}
 
 
@@ -204,6 +271,25 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Applicati
 	public void OpenDocumentation() =>
 		Platform.OpenLink("https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#LogAnalysisScript");
 #pragma warning restore CA1822
+
+
+	// Request running script.
+	async Task RequestEnablingRunningScriptAsync()
+	{
+		if (!this.IsOpened || this.Settings.GetValueOrDefault(AppSuite.SettingKeys.EnableRunningScript))
+			return;
+		var result = await new MessageDialog()
+		{
+			Buttons = AppSuite.Controls.MessageDialogButtons.YesNo,
+			DefaultResult = AppSuite.Controls.MessageDialogResult.No,
+			Icon = AppSuite.Controls.MessageDialogIcon.Warning,
+			Message = this.GetResourceObservable("String/ApplicationOptions.EnableRunningScript.ConfirmEnabling"),
+		}.ShowDialog(this);
+		if (result == AppSuite.Controls.MessageDialogResult.Yes)
+			this.Settings.SetValue<bool>(AppSuite.SettingKeys.EnableRunningScript, true);
+		else
+			this.Close();
+	}
 
 
 	/// <summary>

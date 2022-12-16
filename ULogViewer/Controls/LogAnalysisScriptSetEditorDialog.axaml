@@ -20,7 +20,8 @@
         MinWidth="{DynamicResource Double/LogAnalysisScriptSetEditorDialog.MinWidth}"
 		SizeToContent="Manual"
         Title="{DynamicResource String/LogAnalysisScriptSetEditorDialog.Title}"
-        Width="{DynamicResource Double/LogAnalysisScriptSetEditorDialog.Width}">
+        Width="{DynamicResource Double/LogAnalysisScriptSetEditorDialog.Width}"
+		WindowStartupLocation="Manual">
 
 	<DockPanel>
 
