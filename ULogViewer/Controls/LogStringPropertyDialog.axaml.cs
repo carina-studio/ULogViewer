@@ -140,14 +140,6 @@ namespace CarinaStudio.ULogViewer.Controls
 				return value;
 			});
 			this.SynchronizationContext.Post(this.findTextTextBox.Focus);
-
-			// [Workaround] Reduce possibility of showing with min height on Linux.
-			if (Platform.IsLinux)
-			{
-				var height = this.FindResourceOrDefault<double>("Double/LogStringPropertyDialog.Height", 500);
-				this.SynchronizationContext.PostDelayed(() => this.Height = height, 50);
-				this.SynchronizationContext.PostDelayed(() => this.Height = height, 150);
-			}
 		}
 
 
