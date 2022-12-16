@@ -176,7 +176,8 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Applicati
 					Icon = MessageDialogIcon.Warning,
 					Message = this.GetResourceObservable("String/LogAnalysisScriptSetEditorDialog.CannotAddMoreScriptSetWithoutProVersion"),
 				}.ShowDialog(this);
-				this.Close();
+				this.IsEnabled = false;
+				this.SynchronizationContext.PostDelayed(this.Close, 300); // [Workaround] Prevent crashing on macOS.
 				return;
 			}
 			if (!this.PersistentState.GetValueOrDefault(DonotShowRestrictionsWithNonProVersionKey))
@@ -288,7 +289,10 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Applicati
 		if (result == AppSuite.Controls.MessageDialogResult.Yes)
 			this.Settings.SetValue<bool>(AppSuite.SettingKeys.EnableRunningScript, true);
 		else
-			this.Close();
+		{
+			this.IsEnabled = false;
+			this.SynchronizationContext.PostDelayed(this.Close, 300); // [Workaround] Prevent crashing on macOS.
+		}
 	}
 
 
