@@ -30,8 +30,6 @@
 	<sys:String x:Key="String/AppOptionsDialog.MaxDisplayLineCountForEachLog">每筆日誌最大顯示行數</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.MemoryUsagePolicy">記憶體使用策略</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ResetLogAnalysisRuleSetsAfterSettingLogProfile">變更日誌類型後重設套用的規則集</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.SaveMemoryAggressively">節省記憶體使用</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.SaveMemoryAggressively.Description">盡量使用較少的記憶體，這將會使日誌載入及篩選速度下降，也會影響使用者介面的順暢度。</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectIPEndPointWhenNeeded">當需要 IP 端點時立即顯示輸入介面</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectLogFilesWhenNeeded">當需要日誌檔案時立即開啟檔案選取介面</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectLogProfileForNewSession">建立新分頁後開啟日誌類型選取介面</sys:String>
