@@ -93,10 +93,6 @@
 		<PackageReference Include="System.Text.Encoding.CodePages" Version="7.0.0" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\TextShellHost\TextShellHost.csproj" />
-	</ItemGroup>
-
 	<ItemGroup Condition="$(TargetFramework.Contains('windows'))">
 		<PackageReference Include="Microsoft.Win32.Registry" Version="6.0.0-preview.5.21301.5" />
 		<PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
