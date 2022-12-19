@@ -1,7 +1,7 @@
 # ULogViewer 使用者協議
  ---
-+ 版本：1.5
-+ 更新時間：2022/8/16
++ 版本：2.0
++ 更新時間：2022/12/19
 
 這是 ULogViewer 的使用者協議，您應該要在使用 ULogViewer 之前詳細閱讀本協議。 使用者協議可能會在未來有所更新，您可以在 ULogViewer 網站中查看。 當您開始使用 ULogViewer 表示您同意本使用者協議。
 
@@ -12,11 +12,11 @@ ULogViewer 為基於開放原始碼專案之軟體，以下所指 ULogViewer **�
 + [ULogViewer 網站](https://carinastudio.azurewebsites.net/ULogViewer/)
 + [GitHub 上之 ULogViewer 專案頁面及各版本釋出頁面](https://github.com/carina-studio/ULogViewer)
 
-本使用者協議適用於您使用 ULogViewer 2.0 及下一份使用者協議所指定之版本之間 (但不包括) 的所有版本。
+本使用者協議適用於您使用 ULogViewer 3.0 及下一份使用者協議所指定之版本之間 (但不包括) 的所有版本。
 
 
 ## 偵錯模式
-ULogViewer 包含預設關閉的內建偵錯模式，您可以透過啟動 ULogViewer 時加上 **-debug** 參數以手動開啟偵錯模式。
+ULogViewer 包含預設關閉的內建偵錯模式，您可以透過 **「關於 ULogViewer > 以偵錯模式重新啟動」** 啟用偵錯模式。
 
 
 ## 外部相依性
@@ -33,30 +33,63 @@ ULogViewer 包含預設關閉的內建偵錯模式，您可以透過啟動 ULogV
 ### Trace 轉換工具
 若要在 **macOS/Linux** 上使用 **「Android 裝置系統追蹤」** 日誌類型，您必須先安裝 [Trace 轉換工具](https://perfetto.dev/docs/quickstart/traceconv)。
 
+### Xcode 命令列工具
+若要在 **macOS** 上使用 **「Apple 裝置模擬器日誌」** 及 **「特定 Apple 裝置模擬器日誌」** 日誌類型，您必須先安裝 [Xcode 命令列工具](https://developer.apple.com/xcode/)。若您透過安裝 Xcode 以安裝 Xcode 命令列工具，您需要將 **「Xcode > Settings > Locations > Command Line Tools」** 設定為 **「Xcode」** 來啟用。
+
 ### X 視窗系統調整及旋轉延伸工具 (XRandR)
-在 **Linux** 上偵測顯示設定及套用使用者介面縮放比例。安裝完成後需重新啟動應用程式。
+ULogViewer 內建預先編譯之 XRandR 以在 **Linux** 上偵測顯示設定及套用使用者介面縮放比例。萬一內建之 XRandR 無法正常使用，您將需要自行安裝 XRandR，安裝完成後需重新啟動應用程式。
 
 
 ## 檔案存取
-除了系統檔案之外，所有 ULogViewer 所需之檔案皆存放於 ULogViewer 目錄內（若您有安裝 .NET 則亦包含 .NET 執行期間 之目錄）。當執行 ULogViewer 且未載入任何日誌時不需要額外的檔案存取，除了下列之外：
+除了系統檔案之外，所有 ULogViewer 所需之檔案皆存放於 ULogViewer 目錄內。當執行 ULogViewer 且未載入/匯入/儲存/匯出資料至/從 ULogViewer 時不需要額外的檔案存取，除了下列之外：
 
 + 讀取 **/proc/meminfo** 以在 Linux 上取得記憶體資訊。
 + 讀取 **/etc/paths** 以在 macOS 上取得全域路徑列表。
 + 讀/寫系統之暫存目錄以存放執行期間所需資源。
 + 其餘由 .NET 或第三方程式庫之必要檔案存取。
 
-### 日誌載入時之檔案存取
+### 日誌載入
 + 包含原始日誌內容之檔案將以 **讀取** 模式開啟。
 + 與日誌檔案位於相同目錄之 \*.ulvmark 檔案將以 **讀取** 模式開啟。
 
-### 日誌檢視時檔案存取
+### 日誌檢視
 + 與日誌檔案位於相同目錄之 \*.ulvmark 檔案將以 **讀寫** 模式開啟。
 
-### 日誌儲存時之檔案存取
+### 日誌儲存
 + 寫入日誌內容之檔案將以 **讀寫** 模式開啟。
 + 與日誌檔案位於相同目錄之 \*.ulvmark 檔案將以 **讀寫** 模式開啟。
 
-### 自我升級時之檔案存取
+### 匯入日誌類型
++ 日誌類型之 \*.json 檔案將以 **讀取** 模式開啟。
+
+### 匯入已定義之文字篩選
++ 已定義文字篩選之 \*.json 檔案將以 **讀取** 模式開啟。
+
+### 匯入日誌分析規則集
++ 日誌分析規則集之 \*.json 檔案將以 **讀取** 模式開啟。
+
+### 匯入日誌分析腳本
++ 日誌分析腳本之 \*.json 檔案將以 **讀取** 模式開啟。
+
+### 匯入日誌資料來源腳本
++ 日誌資料來源腳本之 \*.json 檔案將以 **讀取** 模式開啟。
+
+### 匯出日誌類型
++ 包含匯出日誌類型之 \*.json 檔案將以 **讀寫** 模式開啟。
+
+### 匯出已定義之文字篩選
++ 包含匯出已定義文字篩選之 \*.json 檔案將以 **讀寫** 模式開啟。
+
+### 匯出日誌分析規則集
++ 包含匯出日誌分析規則集之 \*.json 檔案將以 **讀寫** 模式開啟。
+
+### 匯出日誌分析腳本
++ 包含匯出日誌分析腳本之 \*.json 檔案將以 **讀寫** 模式開啟。
+
+### 匯出日誌資料來源腳本
++ 包含匯出日誌資料來源腳本之 \*.json 檔案將以 **讀寫** 模式開啟。
+
+### 自我升級
 + 下載的升級檔案及應用程式備份將存放於系統之暫存目錄內。
 
 其他由 ULogViewer 執行檔以外的檔案存取不受本協議之約束。
@@ -76,6 +109,24 @@ ULogViewer 將會在下列狀況存取網路：
 + **UDP 伺服器**。
 + **檔案** 且指定之檔案不位於本機。
 + 會存取網路之 **日誌資料來源腳本**。
+
+### 網路連線測試
+ULogViewer 會連線至下列伺服器以確認網路連線狀態：
+
++ [Cloudflare](https://www.cloudflare.com/)
++ [Google DNS](https://dns.google/)
++ [OpenDNS](https://www.opendns.com/)
+
+ULogViewer 會連線至下列伺服器以確認裝置的公開 [IP 位址](https://zh.wikipedia.org/wiki/IP%E5%9C%B0%E5%9D%80)：
+
++ [https://ipv4.icanhazip.com](https://ipv4.icanhazip.com/)
++ [http://checkip.dyndns.org](http://checkip.dyndns.org/)
+
+### 啟用 ULogViewer 專業版
+ULogViewer 會在下列情況與 [Carina Studio](https://carinastudio.azurewebsites.net/) 伺服器連線：
+
++ 啟用 ULogViewer 專業版。
++ 當您完成啟用 ULogViewer 專業版且使用 ULogViewer 時。
 
 ### 檢查應用程式更新
 ULogViewer 會定期從 ULogViewer 網站下載資訊清單以檢查是否有新的應用程式更新。
@@ -102,9 +153,9 @@ ULogViewer 會定期從 ULogViewer 網站下載資訊清單以檢查是否有新
 + 執行 **gnome-shell** 以在 Linux 上確認圖形化介面環境。
 + 執行 **cmd** 以在必要時更新 Windows 上的 PATH 環境變數。
 + 執行 **osascript** 以在必要時更新 macOS 上的 /etc/paths。
-+ 執行 **xrandr** 以在 Linux 上偵測顯示設定及套用使用者介面縮放比例。
++ 當內建之 **xrandr** 無法使用時，執行已安裝之 **xrandr** 以在 Linux 上偵測顯示設定及套用使用者介面縮放比例。
 
-除了上述必要情況外，當日誌來源為 **「Azure 命令列介面 (CLI)」** 或 **「標準輸出 (stdout)」** 時將執行外部命令。您可以在編輯日誌類型之 **資料來源** 時在 **資料來源參數** 對話方塊中檢視完整的指令及參數列表。
+除了上述必要情況外，當日誌來源為 **「Azure 命令列介面 (CLI)」** 或 **「標準輸出 (stdout)」** 時將執行外部命令。您可以在編輯日誌類型之 **「資料來源」** 時在 **「資料來源參數」** 對話方塊中檢視完整的指令及參數列表。
 
 請注意，我們 **不保證** 執行外部指令後的結果，這完全依賴於外部指令及執行檔之行為。這部分必須由您自行確認。
 
