@@ -14,7 +14,7 @@ namespace CarinaStudio.ULogViewer
 		/// <summary>
 		/// <see cref="CompressedString"/> represent empty string.
 		/// </summary>
-		public static readonly CompressedString Empty = new CompressedString("", Level.None);
+		public static readonly CompressedString Empty = new("", Level.None);
 
 
 		/// <summary>
@@ -54,6 +54,7 @@ namespace CarinaStudio.ULogViewer
 		// Fields.
 		readonly object? data;
 		readonly uint flags;
+		readonly int length;
 
 
 		// Constructor.
@@ -80,6 +81,7 @@ namespace CarinaStudio.ULogViewer
 					CompressionMemoryStream.SetLength(0);
 				}
 			}
+			this.length = value.Length;
 		}
 
 
@@ -99,6 +101,56 @@ namespace CarinaStudio.ULogViewer
 		}
 
 
+		// Decompress to UTF-8 bytes.
+		byte[] Decompress(byte[] bytes)
+		{
+			DecompressionMemoryStream ??= new();
+			DecompressionMemoryStream.Write(bytes, 0, bytes.Length);
+			DecompressionMemoryStream.Position = 0;
+			var utf8Bytes = new byte[(int)(this.flags & FLAGS_UTF8_ENCODING_SIZE_MASK)];
+			using (var stream = new DeflateStream(DecompressionMemoryStream, CompressionMode.Decompress, true))
+				stream.Read(utf8Bytes, 0, utf8Bytes.Length);
+			DecompressionMemoryStream.SetLength(0);
+			return utf8Bytes;
+		}
+
+
+		/// <summary>
+		/// Get original string and put directly into given buffer.
+		/// </summary>
+		/// <param name="buffer">Buffer.</param>
+		/// <param name="offset">Offset in buffer to put first character.</param>
+		/// <returns>Number of characters in original string, or 1's complement of number of characters if size of buffer is insufficient.</returns>
+		public int GetString(Span<char> buffer, int offset = 0)
+		{
+			var length = this.length;
+			if (length == 0)
+				return 0;
+			if (offset < 0)
+				throw new ArgumentOutOfRangeException(nameof(offset));
+			if (offset + length > buffer.Length)
+				return ~length;
+			var data = this.data;
+			if (data is string str)
+				str.AsSpan().CopyTo(offset == 0 ? buffer : buffer[offset..^0]);
+			else if (data is byte[] bytes)
+			{
+				if ((this.flags & FLAGS_COMPRESSED_MASK) != 0)
+					bytes = this.Decompress(bytes);
+				Encoding.UTF8.GetDecoder().GetChars(bytes.AsSpan(), offset == 0 ? buffer : buffer[offset..^0], true);
+			}
+			else
+				return 0;
+			return length;
+		}
+
+
+		/// <summary>
+		/// Get number of characters of original string.
+		/// </summary>
+		public int Length { get => this.length; }
+
+
 		/// <summary>
 		/// Get size of compressed string in bytes.
 		/// </summary>
@@ -116,21 +168,13 @@ namespace CarinaStudio.ULogViewer
 		// Decompress to string.
 		public override string ToString()
 		{
-			if (this.data is string str)
+			var data = this.data;
+			if (data is string str)
 				return str;
-			if (this.data is not byte[] bytes)
+			if (data is not byte[] bytes)
 				return "";
 			if ((this.flags & FLAGS_COMPRESSED_MASK) != 0)
-			{
-				DecompressionMemoryStream ??= new();
-				DecompressionMemoryStream.Write(bytes, 0, bytes.Length);
-				DecompressionMemoryStream.Position = 0;
-				var utf8Bytes = new byte[(int)(this.flags & FLAGS_UTF8_ENCODING_SIZE_MASK)];
-				using (var stream = new DeflateStream(DecompressionMemoryStream, CompressionMode.Decompress, true))
-					stream.Read(utf8Bytes, 0, utf8Bytes.Length);
-				DecompressionMemoryStream.SetLength(0);
-				return Encoding.UTF8.GetString(utf8Bytes);
-			}
+				return Encoding.UTF8.GetString(this.Decompress(bytes));
 			return Encoding.UTF8.GetString(bytes);
 		}
 	}

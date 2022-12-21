@@ -200,6 +200,26 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		/// <summary>
+		/// Create delegate of getting specific string property of log.
+		/// </summary>
+		/// <param name="propertyName">Name of property.</param>
+		/// <returns>Getter of specific string property.</returns>
+		public static LogStringPropertyGetter CreateStringPropertyGetter(string propertyName)
+		{
+			if (propertyIndices.TryGetValue(propertyName, out var propertyIndex))
+			{
+				return (log, buffer, offset) =>
+				{
+					if (log.GetProperty((PropertyName)propertyIndex) is CompressedString compressedString)
+						return compressedString.GetString(buffer, offset);
+					return 0;
+				};
+			}
+			return (log, buffer, offset) => 0;
+		}
+
+
+		/// <summary>
 		/// Get ID of device which generates log.
 		/// </summary>
 		public string? DeviceId { get => this.GetProperty(PropertyName.DeviceId)?.ToString(); }
@@ -701,4 +721,14 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// </summary>
 		public string? UserName { get => this.GetProperty(PropertyName.UserName)?.ToString(); }
 	}
+
+
+	/// <summary>
+	/// Delegate to get value of string property of log.
+	/// </summary>
+	/// <param name="log">Log.</param>
+	/// <param name="buffer">Buffer.</param>
+	/// <param name="offset">Offset in buffer to put first character.</param>
+	/// <returns>Number of characters in original string, or 1's complement of number of characters if size of buffer is insufficient.</returns>
+	delegate int LogStringPropertyGetter(Log log, Span<char> buffer, int offset = 0);
 }

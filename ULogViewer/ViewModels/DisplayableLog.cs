@@ -325,6 +325,59 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Create delegate for getting specific string log property.
+		/// </summary>
+		/// <param name="propertyName">Name of property.</param>
+		/// <returns>Delegate for getting specific string log property.</returns>
+		public static DisplayableLogStringPropertyGetter CreateLogStringPropertyGetter(string propertyName)
+		{
+			Func<DisplayableLog, CompressedString?> backedValueGetter;
+			switch (propertyName)
+			{
+				case nameof(BeginningTimeSpanString):
+					backedValueGetter = log => log.beginningTimeSpanString;
+					break;
+				case nameof(BeginningTimestampString):
+					backedValueGetter = log => log.beginningTimestampString;
+					break;
+				case nameof(EndingTimeSpanString):
+					backedValueGetter = log => log.endingTimestampString;
+					break;
+				case nameof(EndingTimestampString):
+					backedValueGetter = log => log.endingTimestampString;
+					break;
+				case nameof(TimeSpanString):
+					backedValueGetter = log => log.timeSpanString;
+					break;
+				case nameof(TimestampString):
+					backedValueGetter = log => log.timestampString;
+					break;
+				default:
+					return Log.CreateStringPropertyGetter(propertyName).Let(getter =>
+					{
+						return new DisplayableLogStringPropertyGetter((log, buffer, offset) => getter(log.Log, buffer, offset));
+					});
+			}
+			return (log, buffer, offset) =>
+			{
+				var backedValue = backedValueGetter(log);
+				if (backedValue != null)
+					return backedValue.GetString(buffer, offset);
+				if (log.TryGetProperty<string>(propertyName, out var s))
+				{
+					if (offset < 0)
+						throw new ArgumentOutOfRangeException(nameof(offset));
+					if (offset + s.Length > buffer.Length)
+						return ~s.Length;
+					s.AsSpan().CopyTo(offset == 0 ? buffer : buffer[offset..^0]);
+					return s.Length;
+				}
+				return 0;
+			};
+		}
+
+
+		/// <summary>
 		/// Get ID of device which generates log.
 		/// </summary>
 		public string? DeviceId { get => this.Log.DeviceId; }
@@ -1478,6 +1531,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 	/// Delegate of direct event handler for <see cref="DisplayableLog"/>.
 	/// </summary>
 	delegate void DirectDisplayableLogEventHandler(DisplayableLogGroup group, DisplayableLog log);
+
+
+	/// <summary>
+	/// Delegate to get value of string property of log.
+	/// </summary>
+	/// <param name="log">Log.</param>
+	/// <param name="buffer">Buffer.</param>
+	/// <param name="offset">Offset in buffer to put first character.</param>
+	/// <returns>Number of characters in original string, or 1's complement of number of characters if size of buffer is insufficient.</returns>
+	delegate int DisplayableLogStringPropertyGetter(DisplayableLog log, Span<char> buffer, int offset = 0);
 
 
 	/// <summary>
