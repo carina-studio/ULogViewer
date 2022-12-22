@@ -81,6 +81,8 @@ namespace CarinaStudio.ULogViewer.Logs
 		});
 		static readonly byte[][] propertyValueIndicesPool = new byte[PropertyValueIndicesPoolCapacity][];
 		static volatile int propertyValueIndicesPoolSize;
+		[ThreadStatic]
+		static Dictionary<string, LogStringPropertyGetter>? stringPropertyGetters;
 		static readonly HashSet<string> stringPropertyNameSet = new();
 		static readonly HashSet<string> timeSpanPropertyNameSet = new();
 
@@ -206,14 +208,21 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <returns>Getter of specific string property.</returns>
 		public static LogStringPropertyGetter CreateStringPropertyGetter(string propertyName)
 		{
+			LogStringPropertyGetter? getter;
+			if (stringPropertyGetters == null)
+				stringPropertyGetters = new();
+			else if (stringPropertyGetters.TryGetValue(propertyName, out getter))
+				return getter;
 			if (propertyIndices.TryGetValue(propertyName, out var propertyIndex))
 			{
-				return (log, buffer, offset) =>
+				getter = (log, buffer, offset) =>
 				{
 					if (log.GetProperty((PropertyName)propertyIndex) is CompressedString compressedString)
 						return compressedString.GetString(buffer, offset);
 					return 0;
 				};
+				stringPropertyGetters[propertyName] = getter;
+				return getter;
 			}
 			return (log, buffer, offset) => 0;
 		}

@@ -28,6 +28,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		});
 		static readonly long instanceFieldMemorySize = Memory.EstimateInstanceSize<DisplayableLog>();
 		static volatile bool isPropertyMapReady;
+		[ThreadStatic]
+		static Dictionary<string, DisplayableLogStringPropertyGetter>? logStringPropertyGetters;
 		static readonly Dictionary<string, PropertyInfo> propertyMap = new();
 
 
@@ -331,6 +333,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <returns>Delegate for getting specific string log property.</returns>
 		public static DisplayableLogStringPropertyGetter CreateLogStringPropertyGetter(string propertyName)
 		{
+			// use cached getter
+			DisplayableLogStringPropertyGetter? getter;
+			if (logStringPropertyGetters == null)
+				logStringPropertyGetters = new();
+			else if (logStringPropertyGetters.TryGetValue(propertyName, out getter))
+				return getter;
+			
+			// create getter
 			Func<DisplayableLog, CompressedString?> backedValueGetter;
 			switch (propertyName)
 			{
@@ -353,12 +363,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					backedValueGetter = log => log.timestampString;
 					break;
 				default:
-					return Log.CreateStringPropertyGetter(propertyName).Let(getter =>
+					getter = Log.CreateStringPropertyGetter(propertyName).Let(getter =>
 					{
 						return new DisplayableLogStringPropertyGetter((log, buffer, offset) => getter(log.Log, buffer, offset));
 					});
+					logStringPropertyGetters[propertyName] = getter;
+					return getter;
 			}
-			return (log, buffer, offset) =>
+			getter = (log, buffer, offset) =>
 			{
 				var backedValue = backedValueGetter(log);
 				if (backedValue != null)
@@ -374,6 +386,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				}
 				return 0;
 			};
+			logStringPropertyGetters[propertyName] = getter;
+			return getter;
 		}
 
 
