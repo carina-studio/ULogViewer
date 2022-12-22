@@ -28,7 +28,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
         public int ConcurrencyLevel;
         public int MaxConcurrencyLevel = 1;
         public int NextChunkId = 1;
-        public readonly object ProcessingChunkLock = new object();
+        public readonly object ProcessingChunkLock = new();
         public readonly TProcessingToken Token;
 
         // Constructor.
@@ -113,7 +113,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
         
         // log
         if (this.Application.IsDebugMode)
-            this.Logger.LogTrace($"Cancel current processing, unprocessed logs: {this.unprocessedLogs.Count}");
+            this.Logger.LogTrace("Cancel current processing, unprocessed logs: {unprocessedLogsCount}", this.unprocessedLogs.Count);
 
         // cancel all chunk processing
         lock (processingParams.ProcessingChunkLock)
@@ -879,7 +879,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
             return;
         }
         if (this.Application.IsDebugMode)
-            this.Logger.LogTrace($"Start processing {this.sourceLogs.Count} logs");
+            this.Logger.LogTrace("Start processing {sourceLogCount} logs", this.sourceLogs.Count);
 
         // start processing
         if (!this.IsProcessingNeeded)

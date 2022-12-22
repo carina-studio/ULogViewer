@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace CarinaStudio.ULogViewer.ViewModels;
@@ -27,7 +26,7 @@ partial class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogF
         public bool IncludeMarkedLogs;
         public volatile bool IsTextRegexListReady;
         public Logs.LogLevel Level;
-        public IList<Func<DisplayableLog, string?>> LogTextPropertyGetters = Array.Empty<Func<DisplayableLog, string?>>();
+        public IList<DisplayableLogStringPropertyGetter> LogTextPropertyGetters = Array.Empty<DisplayableLogStringPropertyGetter>();
         public int? ProcessId;
         public int? ThreadId;
         public Regex[] TextRegexList = Array.Empty<Regex>();
@@ -36,7 +35,7 @@ partial class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogF
 
     // Static fields.
     [ThreadStatic]
-    static StringBuilder? logTextToMatchBuilder;
+    static char[]? logTextBufferToMatch;
 
 
     // Fields.
@@ -98,12 +97,12 @@ partial class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogF
         // check log properties
         isProcessingNeeded = false;
         var filteringToken = new FilteringToken();
-        var textPropertyGetters = new List<Func<DisplayableLog, string?>>();
+        var textPropertyGetters = new List<DisplayableLogStringPropertyGetter>();
         foreach (var logProperty in this.filteringLogProperties)
         {
             if (DisplayableLog.HasStringProperty(logProperty.Name))
             {
-                textPropertyGetters.Add(DisplayableLog.CreateLogPropertyGetter<string?>(logProperty.Name));
+                textPropertyGetters.Add(DisplayableLog.CreateLogStringPropertyGetter(logProperty.Name));
                 isProcessingNeeded = true;
             }
             else if (logProperty.Name == nameof(DisplayableLog.ProcessId))
@@ -197,6 +196,17 @@ partial class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogF
     }
 
 
+    // Increase size of text buffer.
+    static void IncreaseTextBuffer(ref char[] buffer)
+    {
+        var newBuffer = buffer.Length <= 1024
+            ? new char[buffer.Length << 1]
+            : new char[buffer.Length + 1024];
+        Array.Copy(buffer, 0, newBuffer, 0, buffer.Length);
+        buffer = newBuffer;
+    }
+
+
     /// <summary>
     /// Get or set level of log to be filtered.
     /// </summary>
@@ -285,22 +295,46 @@ partial class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogF
                 }
             }
             var textPropertyCount = token.LogTextPropertyGetters.Count;
-            var textToMatchBuilder = logTextToMatchBuilder ?? new StringBuilder().Also(it => logTextToMatchBuilder = it);
+            ref var textBufferToMatch = ref logTextBufferToMatch;
+            var textBufferLength = 0;
+            textBufferToMatch ??= new char[512];
+            var textBufferCapacity = textBufferToMatch.Length;
+            var textSpanToMatch = textBufferToMatch.AsSpan();
             for (var j = 0; j < textPropertyCount; ++j)
             {
                 if (j > 0)
-                    textToMatchBuilder.Append("$$"); // special separator between text properties
-                textToMatchBuilder.Append(token.LogTextPropertyGetters[j](log));
+                {
+                    if (textBufferLength + 2 > textBufferCapacity)
+                    {
+                        IncreaseTextBuffer(ref textBufferToMatch);
+                        textBufferCapacity = textBufferToMatch.Length;
+                        textSpanToMatch = textBufferToMatch.AsSpan();
+                    }
+                    textBufferToMatch[textBufferLength++] = '$'; // special separator between text properties
+                    textBufferToMatch[textBufferLength++] = '$';
+                }
+                while (true)
+                {
+                    var valueLength = token.LogTextPropertyGetters[j](log, textSpanToMatch, textBufferLength);
+                    if (valueLength >= 0)
+                    {
+                        textBufferLength += valueLength;
+                        break;
+                    }
+                    IncreaseTextBuffer(ref textBufferToMatch);
+                    textBufferCapacity = textBufferToMatch.Length;
+                    textSpanToMatch = textBufferToMatch.AsSpan();
+                }
             }
             for (var j = textRegexCount - 1; j >= 0; --j)
             {
-                if (textRegexList[j].IsMatch(textToMatchBuilder.ToString()))
+                var e = textRegexList[j].EnumerateMatches(textSpanToMatch[0..^textBufferLength]);
+                if (e.MoveNext())
                 {
                     isTextRegexMatched = true;
                     break;
                 }
             }
-            textToMatchBuilder.Remove(0, textToMatchBuilder.Length);
         }
         if (isTextRegexMatched && isTextFilteringNeeded && combinationMode == FilterCombinationMode.Union)
             return true;
