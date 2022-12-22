@@ -203,6 +203,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly Avalonia.Controls.ListBox markedLogListBox;
 		IDisposable markedLogsPanelVisibilityObserverToken = EmptyDisposable.Default;
 		readonly double minLogListBoxSizeToCloseSidePanel;
+		readonly double minLogTextFilterItemsPanelWidth;
 		readonly Avalonia.Controls.ListBox operationCountingAnalysisRuleSetListBox;
 		readonly Avalonia.Controls.ListBox operationDurationAnalysisRuleSetListBox;
 		readonly ToggleButton otherActionsButton;
@@ -227,7 +228,11 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly Control sidePanelContainer;
 		readonly AppSuite.Controls.ListBox timestampCategoryListBox;
 		IDisposable timestampCategoryPanelVisibilityObserverToken = EmptyDisposable.Default;
-		readonly ToolBarScrollViewer toolBarScrollViewer;
+		readonly Border toolBarContainer;
+		readonly Panel toolBarLogActionItemsPanel;
+		readonly Panel toolBarLogTextFilterItemsPanel;
+		readonly Panel toolBarOtherItemsPanel;
+		readonly Panel toolBarOtherLogFilterItemsPanel;
 		readonly ScheduledAction updateLogAnalysisAction;
 		readonly ScheduledAction updateLogFiltersAction;
 		readonly ScheduledAction updateLogHeaderContainerMarginAction;
@@ -385,13 +390,14 @@ namespace CarinaStudio.ULogViewer.Controls
 			// load resources
 			if (this.Application.TryGetResource<double>("Double/SessionView.LogListBox.MinSizeToCloseSidePanel", out var doubleRes))
 				this.minLogListBoxSizeToCloseSidePanel = doubleRes.GetValueOrDefault();
+			this.minLogTextFilterItemsPanelWidth = this.FindResourceOrDefault<double>("Double/SessionView.ToolBar.LogTextFilterItemsPanel.MinWidth", 300);
 
 			// setup containers
 			this.logListBoxContainer = this.Get<Panel>(nameof(logListBoxContainer)).Also(it =>
 			{
 				it.GetObservable(BoundsProperty).Subscribe(_ => this.autoCloseSidePanelAction?.Schedule());
 			});
-			var toolBarContainer = this.Get<Control>("toolBarContainer").Also(it =>
+			this.toolBarContainer = this.Get<Border>(nameof(toolBarContainer)).Also(it =>
 			{
 				it.AddHandler(Control.PointerReleasedEvent, this.OnToolBarPointerReleased, RoutingStrategies.Tunnel);
 			});
@@ -557,7 +563,56 @@ namespace CarinaStudio.ULogViewer.Controls
 				it.GetObservable(Avalonia.Controls.ListBox.SelectedItemProperty).Subscribe(item =>
 					this.OnLogCategoryListBoxSelectedItemChanged(it, item as DisplayableLogCategory));
 			});
-			this.toolBarScrollViewer = this.Get<ToolBarScrollViewer>(nameof(toolBarScrollViewer));
+			this.toolBarLogActionItemsPanel = this.toolBarContainer.FindControl<Panel>(nameof(toolBarLogActionItemsPanel)).AsNonNull();
+			this.toolBarLogTextFilterItemsPanel = this.toolBarContainer.FindControl<Panel>(nameof(toolBarLogTextFilterItemsPanel)).AsNonNull().Also(it =>
+			{
+				var lastCheckingToolBarWidth = 0.0;
+				it.LayoutUpdated += (_, e) =>
+				{
+					// get toolbar size
+					var toolBarPadding = this.toolBarContainer.Padding;
+					var toolBarWidth = this.toolBarContainer.Bounds.Width - toolBarPadding.Left - toolBarPadding.Right;
+					if (Math.Abs(lastCheckingToolBarWidth - toolBarWidth) <= 0.5)
+						return;
+					
+					// update panel size
+					var minItemsPanelWidth = this.minLogTextFilterItemsPanelWidth;
+					var itemsPanelWidth = minItemsPanelWidth;
+					var currentItemsPanelWidth = it.Width;
+					if (toolBarWidth > minItemsPanelWidth)
+					{
+						var prevItemsPanelWidth1 = (this.toolBarLogActionItemsPanel?.Bounds).GetValueOrDefault().Width;
+						var prevItemsPanelWidth2 = (this.toolBarOtherLogFilterItemsPanel?.Bounds).GetValueOrDefault().Width;
+						var nextItemsPanelWidth1 = (this.toolBarOtherItemsPanel?.Bounds).GetValueOrDefault().Width;
+						var remainingWidth = toolBarWidth
+							- prevItemsPanelWidth1
+							- prevItemsPanelWidth2
+							- nextItemsPanelWidth1;
+						if (remainingWidth >= minItemsPanelWidth)
+							itemsPanelWidth = remainingWidth;
+						else
+						{
+							var prevRemainingWidth = toolBarWidth - prevItemsPanelWidth1;
+							if (prevRemainingWidth >= prevItemsPanelWidth2)
+								prevRemainingWidth -= prevItemsPanelWidth2;
+							else
+								prevRemainingWidth = toolBarWidth - prevItemsPanelWidth2;
+							var nextRemainingWidth = toolBarWidth - nextItemsPanelWidth1;
+							remainingWidth = Math.Max(prevRemainingWidth, nextRemainingWidth);
+							itemsPanelWidth = Math.Max(remainingWidth, minItemsPanelWidth);
+						}
+					}
+					if (double.IsNaN(currentItemsPanelWidth)
+						|| currentItemsPanelWidth > itemsPanelWidth + 0.1
+						|| currentItemsPanelWidth < itemsPanelWidth + 1)
+					{
+						it.Width = itemsPanelWidth;
+					}
+					lastCheckingToolBarWidth = toolBarWidth;
+				};
+			});
+			this.toolBarOtherItemsPanel = this.toolBarContainer.FindControl<Panel>(nameof(toolBarOtherItemsPanel)).AsNonNull();
+			this.toolBarOtherLogFilterItemsPanel = this.toolBarContainer.FindControl<Panel>(nameof(toolBarOtherLogFilterItemsPanel)).AsNonNull();
 			this.workingDirectoryActionsButton = this.Get<ToggleButton>(nameof(workingDirectoryActionsButton));
 
 			// setup menus
@@ -3563,14 +3618,6 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// check administrator role
 			this.ConfirmRestartingAsAdmin();
-		}
-
-
-		// Called when log filter text box got focus.
-		void OnLogFilterTextBoxGotFocus(object? sender, GotFocusEventArgs e)
-		{
-			if (sender is IVisual textBox)
-				this.toolBarScrollViewer.ScrollIntoView(textBox);
 		}
 
 

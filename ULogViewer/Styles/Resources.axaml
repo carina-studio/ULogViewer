@@ -199,9 +199,9 @@
 	<sys:Double x:Key="Double/SessionView.SidePanel.Header.Button.Size">24</sys:Double>
 	<sys:Double x:Key="Double/SessionView.SidePanel.Header.FontSize">14</sys:Double>
 	<sys:Double x:Key="Double/SessionView.SidePanel.Header.Icon.Size">16</sys:Double>
-	<sys:Double x:Key="Double/SessionView.ToolBar.LogLevelFilter.Width">150</sys:Double>
+	<sys:Double x:Key="Double/SessionView.ToolBar.LogLevelFilter.Width">140</sys:Double>
 	<sys:Double x:Key="Double/SessionView.ToolBar.LogProcessIdFilter.Width">85</sys:Double>
-	<sys:Double x:Key="Double/SessionView.ToolBar.LogTextFilter.MinWidth">200</sys:Double>
+	<sys:Double x:Key="Double/SessionView.ToolBar.LogTextFilterItemsPanel.MinWidth">250</sys:Double>
 	<KeyGesture x:Key="KeyGesture/SessionView.CopyLogs">Ctrl+C</KeyGesture>
 	<KeyGesture x:Key="KeyGesture/SessionView.CopyLogsWithFileNames">Ctrl+Shift+C</KeyGesture>
 	<KeyGesture x:Key="KeyGesture/SessionView.MarkLogs.Blue">Ctrl+Alt+D5</KeyGesture>
