@@ -742,7 +742,7 @@ namespace CarinaStudio.ULogViewer
 
 
 		/// <inheritdoc/>
-		public override Version? UserAgreementVersion => new(1, 5);
+		public override Version? UserAgreementVersion => new(2, 0);
 
 
 #if WINDOWS_ONLY

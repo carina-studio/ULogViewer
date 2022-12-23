@@ -1,7 +1,7 @@
 # ULogViewer 使用者協議
  ---
 + 版本：2.0
-+ 更新時間：2022/12/19
++ 更新時間：2022/12/23
 
 這是 ULogViewer 的使用者協議，您應該要在使用 ULogViewer 之前詳細閱讀本協議。 使用者協議可能會在未來有所更新，您可以在 ULogViewer 網站中查看。 當您開始使用 ULogViewer 表示您同意本使用者協議。
 
@@ -184,6 +184,8 @@ ULogViewer 將會以 **管理員** 權限啟動 **osascript** 指令以更新 /e
 ULogViewer 是 Carina Studio 在 [MIT](https://github.com/carina-studio/ULogViewer/blob/master/LICENSE) 授權之下的開放原始碼專案。除了應用程式圖示外，所有圖示皆在 [MIT](https://github.com/carina-studio/ULogViewer/blob/master/LICENSE) 或 [CC 4.0](https://en.wikipedia.org/wiki/Creative_Commons_license) 授權下使用。您可以在 [MahApps.Metro.IconPacks](https://github.com/MahApps/MahApps.Metro.IconPacks) 了解更多圖示相關資訊與授權。
 
 應用程式圖示由 [Freepik](https://www.freepik.com/) 提供並發布於 [Flaticon](https://www.flaticon.com/)。
+
+內建字型 **「Roboto」** 及 **「Roboto Mono」** 在 [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0) 授權下使用及發佈，**「IBM Plex Mono」** 及 **「Source Code Pro」** 在 [Open Font License](https://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL) 授權下使用及發佈。
 
 載入至 ULogViewer 或由 ULogViewer 儲存之日誌的授權與著作權不受本協議之約束。您必須自行注意及負責日誌的授權與著作權。
 
