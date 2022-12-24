@@ -34,6 +34,26 @@ namespace CarinaStudio.ULogViewer
 	/// </summary>
 	class App : AppSuite.AppSuiteApplication, IULogViewerApplication
 	{
+		// Source of change list.
+		class ChangeListSource : DocumentSource
+		{
+			public ChangeListSource(App app) : base(app)
+			{ }
+			public override IList<ApplicationCulture> SupportedCultures => new ApplicationCulture[]
+			{
+				ApplicationCulture.EN_US,
+				ApplicationCulture.ZH_CN,
+				ApplicationCulture.ZH_TW,
+			};
+			public override Uri Uri => this.Culture switch
+			{
+				ApplicationCulture.ZH_CN => this.Application.CreateAvaloniaResourceUri("/ChangeList-zh-CN.md"),
+				ApplicationCulture.ZH_TW => this.Application.CreateAvaloniaResourceUri("/ChangeList-zh-TW.md"),
+				_ => this.Application.CreateAvaloniaResourceUri("/ChangeList.md"),
+			};
+		}
+
+
 		// Info of main window.
 		class MainWindowInfo
 		{ }
@@ -44,14 +64,7 @@ namespace CarinaStudio.ULogViewer
 		{
 			public PrivacyPolicySource(App app) : base(app)
 			{ 
-				var cultureName = app.CultureInfo.Name;
-				if (cultureName.StartsWith("zh-")
-					&& cultureName.EndsWith("TW"))
-				{
-					this.Culture = ApplicationCulture.ZH_TW;
-				}
-				else
-					this.Culture = ApplicationCulture.EN_US;
+				this.SetToCurrentCulture();
 			}
 			public override IList<ApplicationCulture> SupportedCultures => new ApplicationCulture[]
 			{
@@ -60,8 +73,8 @@ namespace CarinaStudio.ULogViewer
 			};
 			public override Uri Uri => this.Culture switch
 			{
-				ApplicationCulture.ZH_TW => new($"avares://{Assembly.GetExecutingAssembly().GetName().Name}/Resources/PrivacyPolicy-zh-TW.md"),
-				_ => new($"avares://{Assembly.GetExecutingAssembly().GetName().Name}/Resources/PrivacyPolicy.md"),
+				ApplicationCulture.ZH_TW => this.Application.CreateAvaloniaResourceUri("/Resources/PrivacyPolicy-zh-TW.md"),
+				_ => this.Application.CreateAvaloniaResourceUri("/Resources/PrivacyPolicy.md"),
 			};
 		}
 
@@ -71,14 +84,7 @@ namespace CarinaStudio.ULogViewer
 		{
 			public UserAgreementSource(App app) : base(app)
 			{ 
-				var cultureName = app.CultureInfo.Name;
-				if (cultureName.StartsWith("zh-")
-					&& cultureName.EndsWith("TW"))
-				{
-					this.Culture = ApplicationCulture.ZH_TW;
-				}
-				else
-					this.Culture = ApplicationCulture.EN_US;
+				this.SetToCurrentCulture();
 			}
 			public override IList<ApplicationCulture> SupportedCultures => new ApplicationCulture[]
 			{
@@ -87,8 +93,8 @@ namespace CarinaStudio.ULogViewer
 			};
 			public override Uri Uri => this.Culture switch
 			{
-				ApplicationCulture.ZH_TW => new($"avares://{Assembly.GetExecutingAssembly().GetName().Name}/Resources/UserAgreement-zh-TW.md"),
-				_ => new($"avares://{Assembly.GetExecutingAssembly().GetName().Name}/Resources/UserAgreement.md"),
+				ApplicationCulture.ZH_TW => this.Application.CreateAvaloniaResourceUri("/Resources/UserAgreement-zh-TW.md"),
+				_ => this.Application.CreateAvaloniaResourceUri("/Resources/UserAgreement.md"),
 			};
 		}
 
@@ -160,6 +166,10 @@ namespace CarinaStudio.ULogViewer
 
 		/// <inheritdoc/>
 		protected override bool AllowMultipleMainWindows => true;
+
+
+		/// <inheritdoc/>
+		public override DocumentSource? ChangeList => new ChangeListSource(this);
 
 
 		/// <inheritdoc/>

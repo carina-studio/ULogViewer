@@ -60,6 +60,9 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<AvaloniaResource Include="ChangeList.md" />
+		<AvaloniaResource Include="ChangeList-zh-CN.md" />
+		<AvaloniaResource Include="ChangeList-zh-TW.md" />
 		<AvaloniaResource Include="Resources/PrivacyPolicy.md" />
 		<AvaloniaResource Include="Resources/PrivacyPolicy-zh-TW.md" />
 		<AvaloniaResource Include="Resources/UserAgreement.md" />
@@ -78,7 +81,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="CarinaStudio.AppSuite.Core" Version="2.2.13.1217-dev">
+		<PackageReference Include="CarinaStudio.AppSuite.Core" Version="2.2.14.1224-dev">
 			<IncludeAssets>compile;contentFiles;native;runtime</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="CarinaStudio.AppSuite.Fonts" Version="2.2.10.1214-dev" />
@@ -162,9 +165,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<EmbeddedResource Include="ChangeList.json" />
-		<EmbeddedResource Include="ChangeList-zh-CN.json" />
-		<EmbeddedResource Include="ChangeList-zh-TW.json" />
 		<EmbeddedResource Include="Cryptography/AesIV" />
 		<EmbeddedResource Include="Cryptography/AesKey" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/AndroidDeviceEventLog.json" />
