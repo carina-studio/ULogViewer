@@ -328,7 +328,7 @@ partial class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogF
             }
             for (var j = textRegexCount - 1; j >= 0; --j)
             {
-                var e = textRegexList[j].EnumerateMatches(textSpanToMatch[0..^textBufferLength]);
+                var e = textRegexList[j].EnumerateMatches(textSpanToMatch[0..textBufferLength]);
                 if (e.MoveNext())
                 {
                     isTextRegexMatched = true;
