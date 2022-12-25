@@ -175,6 +175,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		bool keepSidePanelVisible;
 		readonly Avalonia.Controls.ListBox keyLogAnalysisRuleSetListBox;
 		Control? lastClickedLogPropertyView;
+		double lastToolBarWidthWhenLayoutItems;
 		readonly ContextMenu logActionMenu;
 		IDisposable logAnalysisPanelVisibilityObserverToken = EmptyDisposable.Default;
 		readonly Avalonia.Controls.ListBox logAnalysisResultListBox;
@@ -399,6 +400,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			});
 			this.toolBarContainer = this.Get<Border>(nameof(toolBarContainer)).Also(it =>
 			{
+				it.GetObservable(BoundsProperty).Subscribe(_ => this.UpdateToolBarItemsLayout());
 				it.AddHandler(Control.PointerReleasedEvent, this.OnToolBarPointerReleased, RoutingStrategies.Tunnel);
 			});
 
@@ -564,53 +566,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.OnLogCategoryListBoxSelectedItemChanged(it, item as DisplayableLogCategory));
 			});
 			this.toolBarLogActionItemsPanel = this.toolBarContainer.FindControl<Panel>(nameof(toolBarLogActionItemsPanel)).AsNonNull();
-			this.toolBarLogTextFilterItemsPanel = this.toolBarContainer.FindControl<Panel>(nameof(toolBarLogTextFilterItemsPanel)).AsNonNull().Also(it =>
-			{
-				var lastCheckingToolBarWidth = 0.0;
-				it.LayoutUpdated += (_, e) =>
-				{
-					// get toolbar size
-					var toolBarPadding = this.toolBarContainer.Padding;
-					var toolBarWidth = this.toolBarContainer.Bounds.Width - toolBarPadding.Left - toolBarPadding.Right;
-					if (Math.Abs(lastCheckingToolBarWidth - toolBarWidth) <= 0.5)
-						return;
-					
-					// update panel size
-					var minItemsPanelWidth = this.minLogTextFilterItemsPanelWidth;
-					var itemsPanelWidth = minItemsPanelWidth;
-					var currentItemsPanelWidth = it.Width;
-					if (toolBarWidth > minItemsPanelWidth)
-					{
-						var prevItemsPanelWidth1 = (this.toolBarLogActionItemsPanel?.Bounds).GetValueOrDefault().Width;
-						var prevItemsPanelWidth2 = (this.toolBarOtherLogFilterItemsPanel?.Bounds).GetValueOrDefault().Width;
-						var nextItemsPanelWidth1 = (this.toolBarOtherItemsPanel?.Bounds).GetValueOrDefault().Width;
-						var remainingWidth = toolBarWidth
-							- prevItemsPanelWidth1
-							- prevItemsPanelWidth2
-							- nextItemsPanelWidth1;
-						if (remainingWidth >= minItemsPanelWidth)
-							itemsPanelWidth = remainingWidth;
-						else
-						{
-							var prevRemainingWidth = toolBarWidth - prevItemsPanelWidth1;
-							if (prevRemainingWidth >= prevItemsPanelWidth2)
-								prevRemainingWidth -= prevItemsPanelWidth2;
-							else
-								prevRemainingWidth = toolBarWidth - prevItemsPanelWidth2;
-							var nextRemainingWidth = toolBarWidth - nextItemsPanelWidth1;
-							remainingWidth = Math.Max(prevRemainingWidth, nextRemainingWidth);
-							itemsPanelWidth = Math.Max(remainingWidth, minItemsPanelWidth);
-						}
-					}
-					if (double.IsNaN(currentItemsPanelWidth)
-						|| currentItemsPanelWidth > itemsPanelWidth + 0.1
-						|| currentItemsPanelWidth < itemsPanelWidth + 1)
-					{
-						it.Width = itemsPanelWidth;
-					}
-					lastCheckingToolBarWidth = toolBarWidth;
-				};
-			});
+			this.toolBarLogTextFilterItemsPanel = this.toolBarContainer.FindControl<Panel>(nameof(toolBarLogTextFilterItemsPanel)).AsNonNull();
 			this.toolBarOtherItemsPanel = this.toolBarContainer.FindControl<Panel>(nameof(toolBarOtherItemsPanel)).AsNonNull();
 			this.toolBarOtherLogFilterItemsPanel = this.toolBarContainer.FindControl<Panel>(nameof(toolBarOtherLogFilterItemsPanel)).AsNonNull();
 			this.workingDirectoryActionsButton = this.Get<ToggleButton>(nameof(workingDirectoryActionsButton));
@@ -5694,6 +5650,56 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.IsScrollingToLatestLogAnalysisResultNeeded = true;
 				}
 			}
+		}
+
+
+		// Update layout of items on toolbar.
+		void UpdateToolBarItemsLayout()
+		{
+			// check state
+			if (this.toolBarLogTextFilterItemsPanel == null)
+				return;
+			
+			// get toolbar size
+			var toolBarPadding = this.toolBarContainer.Padding;
+			var toolBarWidth = this.toolBarContainer.Bounds.Width - toolBarPadding.Left - toolBarPadding.Right - 1;
+			if (Math.Abs(this.lastToolBarWidthWhenLayoutItems - toolBarWidth) <= 0.01)
+				return;
+			
+			// update panel size
+			var minItemsPanelWidth = this.minLogTextFilterItemsPanelWidth;
+			var itemsPanelWidth = minItemsPanelWidth;
+			var currentItemsPanelWidth = this.toolBarLogTextFilterItemsPanel.Width;
+			if (toolBarWidth > minItemsPanelWidth)
+			{
+				var prevItemsPanelWidth1 = (this.toolBarLogActionItemsPanel?.Bounds).GetValueOrDefault().Width;
+				var prevItemsPanelWidth2 = (this.toolBarOtherLogFilterItemsPanel?.Bounds).GetValueOrDefault().Width;
+				var nextItemsPanelWidth1 = (this.toolBarOtherItemsPanel?.Bounds).GetValueOrDefault().Width;
+				var remainingWidth = toolBarWidth
+					- prevItemsPanelWidth1
+					- prevItemsPanelWidth2
+					- nextItemsPanelWidth1;
+				if (remainingWidth >= minItemsPanelWidth)
+					itemsPanelWidth = remainingWidth;
+				else
+				{
+					var prevRemainingWidth = toolBarWidth - prevItemsPanelWidth1;
+					if (prevRemainingWidth >= prevItemsPanelWidth2)
+						prevRemainingWidth -= prevItemsPanelWidth2;
+					else
+						prevRemainingWidth = toolBarWidth - prevItemsPanelWidth2;
+					var nextRemainingWidth = toolBarWidth - nextItemsPanelWidth1;
+					remainingWidth = Math.Max(prevRemainingWidth, nextRemainingWidth);
+					itemsPanelWidth = Math.Max(remainingWidth, minItemsPanelWidth);
+				}
+			}
+			if (double.IsNaN(currentItemsPanelWidth)
+				|| currentItemsPanelWidth > itemsPanelWidth + 0.01
+				|| currentItemsPanelWidth < itemsPanelWidth + 1)
+			{
+				this.toolBarLogTextFilterItemsPanel.Width = itemsPanelWidth;
+			}
+			this.lastToolBarWidthWhenLayoutItems = toolBarWidth;
 		}
 
 
