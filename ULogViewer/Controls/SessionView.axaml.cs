@@ -565,10 +565,31 @@ namespace CarinaStudio.ULogViewer.Controls
 				it.GetObservable(Avalonia.Controls.ListBox.SelectedItemProperty).Subscribe(item =>
 					this.OnLogCategoryListBoxSelectedItemChanged(it, item as DisplayableLogCategory));
 			});
-			this.toolBarLogActionItemsPanel = this.toolBarContainer.FindControl<Panel>(nameof(toolBarLogActionItemsPanel)).AsNonNull();
+			this.toolBarLogActionItemsPanel = this.toolBarContainer.FindControl<Panel>(nameof(toolBarLogActionItemsPanel)).AsNonNull().Also(it =>
+			{
+				it.SizeChanged += (_, e) => 
+				{
+					this.lastToolBarWidthWhenLayoutItems = default;
+					this.UpdateToolBarItemsLayout();
+				};
+			});
 			this.toolBarLogTextFilterItemsPanel = this.toolBarContainer.FindControl<Panel>(nameof(toolBarLogTextFilterItemsPanel)).AsNonNull();
-			this.toolBarOtherItemsPanel = this.toolBarContainer.FindControl<Panel>(nameof(toolBarOtherItemsPanel)).AsNonNull();
-			this.toolBarOtherLogFilterItemsPanel = this.toolBarContainer.FindControl<Panel>(nameof(toolBarOtherLogFilterItemsPanel)).AsNonNull();
+			this.toolBarOtherItemsPanel = this.toolBarContainer.FindControl<Panel>(nameof(toolBarOtherItemsPanel)).AsNonNull().Also(it =>
+			{
+				it.SizeChanged += (_, e) => 
+				{
+					this.lastToolBarWidthWhenLayoutItems = default;
+					this.UpdateToolBarItemsLayout();
+				};
+			});
+			this.toolBarOtherLogFilterItemsPanel = this.toolBarContainer.FindControl<Panel>(nameof(toolBarOtherLogFilterItemsPanel)).AsNonNull().Also(it =>
+			{
+				it.SizeChanged += (_, e) => 
+				{
+					this.lastToolBarWidthWhenLayoutItems = default;
+					this.UpdateToolBarItemsLayout();
+				};
+			});
 			this.workingDirectoryActionsButton = this.Get<ToggleButton>(nameof(workingDirectoryActionsButton));
 
 			// setup menus
