@@ -7,6 +7,7 @@
 		xmlns:abControls="using:CarinaStudio.Controls"
 		xmlns:aConverters="using:Avalonia.Data.Converters"
 		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
+		xmlns:asMedia="using:CarinaStudio.AppSuite.Media"
         xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.LogDataSourceOptionsDialog"
@@ -217,7 +218,7 @@
 							<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogDataSourceOptions.QueryString}" VerticalAlignment="Center"/>
 							<TextBlock Classes="Dialog_TextBlock" IsVisible="{Binding $parent[Window].IsQueryStringRequired}" Text="{DynamicResource String/LogDataSourceOptionsDialog.Required}" VerticalAlignment="Center"/>
 						</StackPanel>
-						<TextBox Name="queryStringTextBox" Classes="Dialog_TextBox" AcceptsReturn="True" AcceptsTab="True" Height="{StaticResource Double/LogDataSourceOptionsDialog.QueryStringTextBox.Height}" PropertyChanged="OnEditorControlPropertyChanged" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+						<asControls:SyntaxHighlightingTextBox Name="queryStringTextBox" Classes="Dialog_TextBox" AcceptsReturn="True" AcceptsTab="True" DefinitionSet="{Binding $parent[Window].SqlSyntaxHighlightingDefinitionSet}" FontFamily="{x:Static asMedia:BuiltInFonts.SourceCodePro}" Height="{StaticResource Double/LogDataSourceOptionsDialog.QueryStringTextBox.Height}" PropertyChanged="OnEditorControlPropertyChanged" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
 						<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" IsVisible="{Binding $parent[Window].QueryStringReferenceUri, Converter={x:Static aConverters:ObjectConverters.IsNotNull}}" Text="{DynamicResource String/Common.References}" Uri="{Binding $parent[Window].QueryStringReferenceUri}"/>
 						<Separator Classes="Dialog_Separator"/>
 					</StackPanel>

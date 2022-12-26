@@ -137,6 +137,14 @@
 			<SolidColorBrush x:Key="Brush/SessionView.StatusBar.Background.Paused">#000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.StatusBar.Background.Warning">#ca5100</SolidColorBrush>
 
+			<!-- SqlSyntaxHighlighting -->
+			<SolidColorBrush x:Key="Brush/SqlSyntaxHighlighting.Bracket">#ffe800</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SqlSyntaxHighlighting.EscapeCharacter">#ddb974</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SqlSyntaxHighlighting.Keyword">#389edb</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SqlSyntaxHighlighting.Operator">#91cf7c</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SqlSyntaxHighlighting.SpecialCharacter">#ff40d0</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SqlSyntaxHighlighting.String">#d98d74</SolidColorBrush>
+
 			<!-- TextBox -->
 			<SolidColorBrush x:Key="Brush/TextBox.Foreground.Error">#ff0000</SolidColorBrush>
 

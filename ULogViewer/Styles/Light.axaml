@@ -87,6 +87,14 @@
 			<SolidColorBrush x:Key="Brush/SessionView.StatusBar.Background.Inactive">#aaaaaa</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.StatusBar.Background.Paused">#aaaaaa</SolidColorBrush>
 
+			<!-- SqlSyntaxHighlighting -->
+			<SolidColorBrush x:Key="Brush/SqlSyntaxHighlighting.Bracket">#b34c00</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SqlSyntaxHighlighting.EscapeCharacter">#ff0000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SqlSyntaxHighlighting.Keyword">#0000ff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SqlSyntaxHighlighting.Operator">#008855</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SqlSyntaxHighlighting.SpecialCharacter">#ff40d0</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SqlSyntaxHighlighting.String">#b20002</SolidColorBrush>
+
 		</ResourceDictionary>
 	</Styles.Resources>
 	

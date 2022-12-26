@@ -5,6 +5,7 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
 using CarinaStudio.AppSuite.Controls;
+using CarinaStudio.AppSuite.Controls.Highlighting;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Controls;
@@ -120,6 +121,7 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 		this.MoveSetupTeardownCommandDownCommand = new Command<ListBoxItem>(this.MoveSetupTeardownCommandDown);
 		this.MoveSetupTeardownCommandUpCommand = new Command<ListBoxItem>(this.MoveSetupTeardownCommandUp);
 		this.RemoveSetupTeardownCommandCommand = new Command<ListBoxItem>(this.RemoveSetupTeardownCommand);
+		this.SqlSyntaxHighlightingDefinitionSet = Highlighting.SqlSyntaxHighlighting.CreateDefinitionSet(this.Application);
 		AvaloniaXamlLoader.Load(this);
 		this.categoryTextBox = this.Get<TextBox>(nameof(categoryTextBox));
 		this.commandTextBox = this.Get<TextBox>(nameof(commandTextBox)).Also(it =>
@@ -780,6 +782,12 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 	/// </summary>
 	public void ShowDefaultTextShellOptions() =>
 		this.Application.ShowApplicationOptionsDialogAsync(this, AppOptionsDialog.DefaultTextShellSection);
+	
+
+	/// <summary>
+	/// Syntax highlighting definition set for SQL.
+	/// </summary>
+	public SyntaxHighlightingDefinitionSet SqlSyntaxHighlightingDefinitionSet { get; }
 
 
 	/// <summary>
