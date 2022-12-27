@@ -170,6 +170,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		bool isProVersionActivated;
 		bool isRestartingAsAdminConfirmed;
 		bool isSelectingFileToSaveLogs;
+		bool isUpdatingLogFilters;
 		bool isUriNeededAfterLogProfileSet;
 		bool isWorkingDirNeededAfterLogProfileSet;
 		bool keepSidePanelVisible;
@@ -836,8 +837,10 @@ namespace CarinaStudio.ULogViewer.Controls
 					return;
 
 				// update text filters
+				this.isUpdatingLogFilters = true;
 				session.LogFiltering.PredefinedTextFilters.Clear();
 				session.LogFiltering.PredefinedTextFilters.AddAll(this.selectedPredefinedLogTextFilters);
+				this.isUpdatingLogFilters = false;
 			});
 			this.updateLogHeaderContainerMarginAction = new(() =>
 			{
@@ -964,6 +967,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				it.CollectionChanged += this.OnSessionLogAnalysisRuleSetsChanged);
 			(session.LogAnalysis.OperationDurationAnalysisRuleSets as INotifyCollectionChanged)?.Let(it =>
 				it.CollectionChanged += this.OnSessionLogAnalysisRuleSetsChanged);
+			(session.LogFiltering.PredefinedTextFilters as INotifyCollectionChanged)?.Let(it =>
+				it.CollectionChanged += this.OnSelectedPredefinedLogTextFiltersChanged);
 			
 			// attach to properties
 			var isAttaching = true;
@@ -2034,6 +2039,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				it.CollectionChanged -= this.OnSessionLogAnalysisRuleSetsChanged);
 			(session.LogAnalysis.OperationDurationAnalysisRuleSets as INotifyCollectionChanged)?.Let(it =>
 				it.CollectionChanged -= this.OnSessionLogAnalysisRuleSetsChanged);
+			(session.LogFiltering.PredefinedTextFilters as INotifyCollectionChanged)?.Let(it =>
+				it.CollectionChanged -= this.OnSelectedPredefinedLogTextFiltersChanged);
 			
 			// detach from properties
 			this.logAnalysisPanelVisibilityObserverToken.Dispose();
@@ -4274,6 +4281,49 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.scrollToLatestLogAnalysisResultAction.Schedule(ScrollingToLatestLogInterval);
 				else
 					this.scrollToLatestLogAnalysisResultAction.Cancel();
+			}
+		}
+
+
+		// Called when selection of predefined log text filters has been changed.
+		void OnSelectedPredefinedLogTextFiltersChanged(object? sender, NotifyCollectionChangedEventArgs e)
+		{
+			if (this.isUpdatingLogFilters)
+				return;
+			var isUpdateFilterScheduled = this.updateLogFiltersAction.IsScheduled;
+			switch (e.Action)
+			{
+				case NotifyCollectionChangedAction.Add:
+					this.predefinedLogTextFilterListBox.SelectedItems?.Let(selectedItems =>
+					{
+						foreach (var filter in e.NewItems!.Cast<PredefinedLogTextFilter>())
+							selectedItems.Add(filter);
+					});
+					if (!isUpdateFilterScheduled)
+						this.updateLogFiltersAction.Cancel();
+					break;
+				case NotifyCollectionChangedAction.Remove:
+					this.predefinedLogTextFilterListBox.SelectedItems?.Let(selectedItems =>
+					{
+						foreach (var filter in e.OldItems!.Cast<PredefinedLogTextFilter>())
+							selectedItems.Remove(filter);
+					});
+					if (!isUpdateFilterScheduled)
+						this.updateLogFiltersAction.Cancel();
+					break;
+				case NotifyCollectionChangedAction.Reset:
+					this.predefinedLogTextFilterListBox.SelectedItems?.Let(selectedItems =>
+					{
+						selectedItems.Clear();
+						if (sender is IEnumerable<PredefinedLogTextFilter> filters)
+						{
+							foreach (var filter in filters)
+								selectedItems.Add(filter);
+						}
+					});
+					if (!isUpdateFilterScheduled)
+						this.updateLogFiltersAction.Cancel();
+					break;
 			}
 		}
 
