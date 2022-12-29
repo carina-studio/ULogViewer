@@ -121,6 +121,7 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 		this.MoveSetupTeardownCommandDownCommand = new Command<ListBoxItem>(this.MoveSetupTeardownCommandDown);
 		this.MoveSetupTeardownCommandUpCommand = new Command<ListBoxItem>(this.MoveSetupTeardownCommandUp);
 		this.RemoveSetupTeardownCommandCommand = new Command<ListBoxItem>(this.RemoveSetupTeardownCommand);
+		this.CommandSyntaxHighlightingDefinitionSet = Highlighting.TextShellCommandSyntaxHighlighting.CreateDefinitionSet(this.Application);
 		this.SqlSyntaxHighlightingDefinitionSet = Highlighting.SqlSyntaxHighlighting.CreateDefinitionSet(this.Application);
 		AvaloniaXamlLoader.Load(this);
 		this.categoryTextBox = this.Get<TextBox>(nameof(categoryTextBox));
@@ -207,6 +208,12 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 			this.SelectListBoxItem(this.teardownCommandsListBox, this.teardownCommands.Count - 1);
 		}
 	}
+
+
+	/// <summary>
+	/// Syntax highlighting definition set for text-shell command.
+	/// </summary>
+	public SyntaxHighlightingDefinitionSet CommandSyntaxHighlightingDefinitionSet { get; }
 
 
 	/// <summary>
