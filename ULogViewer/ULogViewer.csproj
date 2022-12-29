@@ -81,9 +81,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="CarinaStudio.AppSuite.Core" Version="2.2.15.1225-dev">
-			<IncludeAssets>compile;contentFiles;native;runtime</IncludeAssets>
-		</PackageReference>
+		<PackageReference Include="CarinaStudio.AppSuite.Core" Version="2.2.16.1229-dev" />
 		<PackageReference Include="CarinaStudio.AppSuite.Fonts" Version="2.2.10.1214-dev" />
 		<PackageReference Include="CarinaStudio.AppSuite.SyntaxHighlighting" Version="2.2.10.1214-dev" />
 		<PackageReference Include="Dotnet.Bundle" Version="0.9.13" />
