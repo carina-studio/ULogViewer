@@ -148,6 +148,12 @@
 			<!-- TextBox -->
 			<SolidColorBrush x:Key="Brush/TextBox.Foreground.Error">#ff0000</SolidColorBrush>
 
+			<!-- TextShellCommandSyntaxHighlighting -->
+			<SolidColorBrush x:Key="Brush/TextShellCommandSyntaxHighlighting.IORedirection">#91cf7c</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/TextShellCommandSyntaxHighlighting.Option">#389edb</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/TextShellCommandSyntaxHighlighting.Pipe">#ffe800</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/TextShellCommandSyntaxHighlighting.QuotedArgument">#d98d74</SolidColorBrush>
+
 		</ResourceDictionary>
 	</Styles.Resources>
 
