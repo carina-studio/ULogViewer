@@ -96,6 +96,7 @@
 			<SolidColorBrush x:Key="Brush/SqlSyntaxHighlighting.String">#b20002</SolidColorBrush>
 
 			<!-- TextShellCommandSyntaxHighlighting -->
+			<SolidColorBrush x:Key="Brush/TextShellCommandSyntaxHighlighting.FilePath">#b20002</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/TextShellCommandSyntaxHighlighting.IORedirection">#008855</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/TextShellCommandSyntaxHighlighting.Option">#0000ff</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/TextShellCommandSyntaxHighlighting.Pipe">#b34c00</SolidColorBrush>

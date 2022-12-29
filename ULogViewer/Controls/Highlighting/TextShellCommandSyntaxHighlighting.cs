@@ -13,6 +13,7 @@ static partial class TextShellCommandSyntaxHighlighting
     // Fields.
     static Regex? DqArgEndPattern;
     static Regex? DqArgStartPattern;
+    static Regex? FilePathPattern;
     static Regex? IORedirectPattern;
     static Regex? OptionPattern;
     static Regex? PipePattern;
@@ -30,6 +31,7 @@ static partial class TextShellCommandSyntaxHighlighting
         // create patterns
         DqArgEndPattern ??= CreateDqArgEndPattern();
         DqArgStartPattern ??= CreateDqArgStartPattern();
+        FilePathPattern ??= CreateFilePathPattern();
         IORedirectPattern ??= CreateIORedirectPattern();
         OptionPattern ??= CreateOptionPattern();
         PipePattern ??= CreatePipePattern();
@@ -38,6 +40,13 @@ static partial class TextShellCommandSyntaxHighlighting
 
         // create definition set
         var definitionSet = new SyntaxHighlightingDefinitionSet("Text-Shell Command");
+
+        // file path
+        definitionSet.TokenDefinitions.Add(new(name: "File Path")
+        {
+            Foreground = app.FindResourceOrDefault<IBrush>("Brush/TextShellCommandSyntaxHighlighting.FilePath", Brushes.Brown),
+            Pattern = FilePathPattern,
+        });
 
         // I/O redirect
         definitionSet.TokenDefinitions.Add(new(name: "I/O Redirection")
@@ -84,9 +93,11 @@ static partial class TextShellCommandSyntaxHighlighting
     private static partial Regex CreateDqArgEndPattern();
     [GeneratedRegex("\"")]
     private static partial Regex CreateDqArgStartPattern();
+    [GeneratedRegex(@"(?<=^|[\s\|\<\>:;])(\.{1,2}|~|[a-z]:[/\\])?[/\\][^\s\|\<\>:;]*(?=$|[\s\|\<\>:;])", RegexOptions.IgnoreCase)]
+    private static partial Regex CreateFilePathPattern();
     [GeneratedRegex(@"(?<=(^|[^\<]))\<(?=($|[^\<]))|(?<=(^|[^\>]))\>{1,2}(?=($|[^\>]))")]
     private static partial Regex CreateIORedirectPattern();
-    [GeneratedRegex(@"(?<=\S\s+)(\-{1,2}\S+|/[^/\s]+)(?=$|\s)")]
+    [GeneratedRegex(@"(?<=\S\s+)\-{1,2}\S+(?=$|\s)")]
     private static partial Regex CreateOptionPattern();
     [GeneratedRegex(@"(?<=(^|[^\|]))\|(?=($|[^\|]))")]
     private static partial Regex CreatePipePattern();
