@@ -179,11 +179,7 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 	/// </summary>
 	public async void AddSetupCommand()
 	{
-		var command = (await new TextInputDialog()
-		{
-			Message = this.Application.GetString("LogDataSourceOptionsDialog.Command"),
-			Title = this.Application.GetString("LogDataSourceOptionsDialog.SetupCommands"),
-		}.ShowDialog(this))?.Trim();
+		var command = (await new TextShellCommandInputDialog().ShowDialog<string?>(this))?.Trim();
 		if (!string.IsNullOrWhiteSpace(command))
 		{
 			this.setupCommands.Add(command);
@@ -197,11 +193,7 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 	/// </summary>
 	public async void AddTeardownCommand()
 	{
-		var command = (await new TextInputDialog()
-		{
-			Message = this.Application.GetString("LogDataSourceOptionsDialog.Command"),
-			Title = this.Application.GetString("LogDataSourceOptionsDialog.TeardownCommands"),
-		}.ShowDialog(this))?.Trim();
+		var command = (await new TextShellCommandInputDialog().ShowDialog<string?>(this))?.Trim();
 		if (!string.IsNullOrWhiteSpace(command))
 		{
 			this.teardownCommands.Add(command);
@@ -249,12 +241,10 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 			return;
 
 		// edit
-		var newCommand = (await new AppSuite.Controls.TextInputDialog()
+		var newCommand = (await new TextShellCommandInputDialog()
 		{
-			InitialText = (item.DataContext as string),
-			Message = this.Application.GetString("LogDataSourceOptionsDialog.Command"),
-			Title = this.Application.GetString(isSetupCommand ? "LogDataSourceOptionsDialog.SetupCommands" : "LogDataSourceOptionsDialog.TeardownCommands"),
-		}.ShowDialog(this))?.Trim();
+			InitialCommand = (item.DataContext as string),
+		}.ShowDialog<string?>(this))?.Trim();
 		if (string.IsNullOrEmpty(newCommand))
 			return;
 

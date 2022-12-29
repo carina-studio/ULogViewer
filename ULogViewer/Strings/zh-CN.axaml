@@ -1097,6 +1097,9 @@ return None</sys:String>
 	<!-- TextShell -->
 	<sys:String x:Key="String/TextShell.CommandPrompt">Cmd (Windows 命令提示符)</sys:String>
 
+	<!-- TextShellCommandInputDialog -->
+	<sys:String x:Key="String/TextShellCommandInputDialog.Message">欲执行之指令</sys:String>
+
 	<!-- TimeSpanFormatInputDialog -->
 	<sys:String x:Key="String/TimeSpanFormatInputDialog.Message">时距格式</sys:String>
 	<sys:String x:Key="String/TimeSpanFormatInputDialog.SampleResult">结果示范：{0}</sys:String>

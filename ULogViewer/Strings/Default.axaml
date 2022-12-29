@@ -1140,6 +1140,9 @@ return None</sys:String>
 	<sys:String x:Key="String/TextShell.PowerShell">PowerShell</sys:String>
 	<sys:String x:Key="String/TextShell.ZShell">zsh (Z Shell)</sys:String>
 
+	<!-- TextShellCommandInputDialog -->
+	<sys:String x:Key="String/TextShellCommandInputDialog.Message">Command to execute</sys:String>
+
 	<!-- TimeSpanFormatInputDialog -->
 	<sys:String x:Key="String/TimeSpanFormatInputDialog.Message">Time span format</sys:String>
 	<sys:String x:Key="String/TimeSpanFormatInputDialog.SampleResult">Sample result: {0}</sys:String>
