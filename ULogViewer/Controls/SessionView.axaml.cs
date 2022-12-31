@@ -179,7 +179,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly Panel logListBoxContainer;
 		readonly ContextMenu logMarkingMenu;
 		readonly IntegerTextBox logProcessIdFilterTextBox;
-		readonly ContextMenu logProfileSelectionMenu;
+		readonly LogProfileSelectionContextMenu logProfileSelectionMenu;
 		readonly ToggleButton logsSavingButton;
 		readonly ContextMenu logsSavingMenu;
 		ScrollViewer? logScrollViewer;
@@ -296,7 +296,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.CopyPredefinedLogTextFilterCommand = new Command<PredefinedLogTextFilter>(this.CopyPredefinedLogTextFilter);
 			this.EditKeyLogAnalysisRuleSetCommand = new Command<KeyLogAnalysisRuleSet>(this.EditKeyLogAnalysisRuleSet);
 			this.EditLogAnalysisScriptSetCommand = new Command<LogAnalysisScriptSet>(this.EditLogAnalysisScriptSet);
-			this.EditLogProfileCommand = new Command(this.EditLogProfile, this.canEditLogProfile);
 			this.EditOperationCountingAnalysisRuleSetCommand = new Command<OperationCountingAnalysisRuleSet>(this.EditOperationCountingAnalysisRuleSet);
 			this.EditOperationDurationAnalysisRuleSetCommand = new Command<OperationDurationAnalysisRuleSet>(this.EditOperationDurationAnalysisRuleSet);
 			this.EditPredefinedLogTextFilterCommand = new Command<PredefinedLogTextFilter>(this.EditPredefinedLogTextFilter);
@@ -629,6 +628,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			});
 			this.logProfileSelectionMenu = ((LogProfileSelectionContextMenu)this.Resources[nameof(logProfileSelectionMenu)].AsNonNull()).Also(it =>
 			{
+				it.LogProfileCreated += (_, logProfile) =>
+					this.OnLogProfileCreatedByLogProfileSelectionMenu(logProfile);
 				it.LogProfileSelected += async (_, logProfile) => 
 				{
 					await this.SetLogProfileAsync(logProfile);
@@ -1063,6 +1064,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// update properties
 			this.validLogLevels.AddAll(session.ValidLogLevels);
+			this.logProfileSelectionMenu.CurrentLogProfile = session.LogProfile;
 
 			// update UI
 			this.OnDisplayLogPropertiesChanged();
@@ -1956,6 +1958,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.canEditLogProfile.Update(false);
 			this.SetValue<bool>(HasLogProfileProperty, false);
 			this.validLogLevels.Clear();
+			this.logProfileSelectionMenu.CurrentLogProfile = null;
 
 			// stop auto scrolling
 			this.scrollToLatestLogAction.Cancel();
@@ -2199,76 +2202,6 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.IsHandlingDragAndDrop = false;
 			}
 		}
-
-
-		// Edit current log profile.
-		async void EditLogProfile()
-		{
-			// check state
-			if (this.attachedWindow == null)
-				return;
-
-			// get profile
-			if (this.DataContext is not Session session)
-				return;
-			var profile = session.LogProfile;
-			if (profile == null)
-				return;
-			
-			// copy or edit log profile
-			if (profile.IsBuiltIn)
-			{
-				// show message
-				await new MessageDialog()
-				{
-					Icon = MessageDialogIcon.Information,
-					Message = new FormattedString().Also(it =>
-					{
-						it.Arg1 = profile.Name;
-						it.Bind(FormattedString.FormatProperty, this.Application.GetObservableString("SessionView.ConfirmEditingBuiltInLogProfile"));
-					}),
-					Title = this.Application.GetObservableString("LogProfileSelectionDialog.EditLogProfile"),
-				}.ShowDialog(this.attachedWindow);
-				if (this.attachedWindow == null)
-					return;
-
-				// copy log profile
-				var newProfile = await new LogProfileEditorDialog()
-				{
-					LogProfile = new LogProfile(profile)
-					{
-						Name = Utility.GenerateName(profile.Name, name =>
-							LogProfileManager.Default.Profiles.FirstOrDefault(it => it.Name == name) != null),
-					},
-				}.ShowDialog<LogProfile>(this.attachedWindow);
-				if (newProfile == null || this.attachedWindow == null)
-					return;
-				LogProfileManager.Default.AddProfile(newProfile);
-				
-				// switch to new log profile
-				var result = await new MessageDialog()
-				{
-					Buttons = MessageDialogButtons.YesNo,
-					Icon = MessageDialogIcon.Question,
-					Message = new FormattedString().Also(it =>
-					{
-						it.Arg1 = newProfile.Name;
-						it.Bind(FormattedString.FormatProperty, this.Application.GetObservableString("SessionView.ConfirmSwitchingToCopiedLogProfile"));
-					}),
-					Title = this.Application.GetObservableString("LogProfileSelectionDialog.EditLogProfile"),
-				}.ShowDialog(this.attachedWindow);
-				if (result == MessageDialogResult.Yes)
-					await this.SetLogProfileAsync(newProfile);
-			}
-			else
-				LogProfileEditorDialog.Show(this.attachedWindow, profile);
-		}
-
-
-		/// <summary>
-		/// Command of editing current log profile.
-		/// </summary>
-		public ICommand EditLogProfileCommand { get; }
 
 
 		/// <summary>
@@ -3023,6 +2956,32 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Called when new log profile created by log profile selection menu.
+		async void OnLogProfileCreatedByLogProfileSelectionMenu(LogProfile logProfile)
+		{
+			// check state
+			if (this.attachedWindow == null)
+				return;
+			if (this.DataContext is not Session session)
+				return;
+			
+			// switch to new log profile
+			var result = await new MessageDialog()
+			{
+				Buttons = MessageDialogButtons.YesNo,
+				Icon = MessageDialogIcon.Question,
+				Message = new FormattedString().Also(it =>
+				{
+					it.Arg1 = logProfile.Name;
+					it.Bind(FormattedString.FormatProperty, this.Application.GetObservableString("SessionView.ConfirmSwitchingToCopiedLogProfile"));
+				}),
+				Title = this.Application.GetObservableString("LogProfileSelectionDialog.EditLogProfile"),
+			}.ShowDialog(this.attachedWindow);
+			if (result == MessageDialogResult.Yes)
+				await this.SetLogProfileAsync(logProfile);
+		}
+
+
 		// Called when list of logs changed.
 		void OnLogsChanged(object? sender, NotifyCollectionChangedEventArgs e)
 		{
@@ -3673,6 +3632,7 @@ namespace CarinaStudio.ULogViewer.Controls
 							this.canEditLogProfile.Update(false);
 							this.SetValue<bool>(HasLogProfileProperty, false);
 						}
+						this.logProfileSelectionMenu.CurrentLogProfile = profile;
 					});
 					break;
 				case nameof(Session.Logs):

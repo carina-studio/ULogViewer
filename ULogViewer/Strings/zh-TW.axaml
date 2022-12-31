@@ -504,6 +504,11 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.VisibleLogProperties.Description">指定有哪些日誌屬性可以在檢視器中看見。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.VisibleLogPropertiesWithoutLogPatterns">您定義了 '顯示的日誌屬性' 但沒有定義 '日誌行格式'，這可能導致日誌顯示錯誤。您是否要定義 '日誌行格式'？</sys:String>
 
+	<!-- LogProfileSelectionContextMenu -->
+	<sys:String x:Key="String/LogProfileSelectionContextMenu.ConfirmEditingBuiltInLogProfile">「{0}」是一個內建日誌類型，編輯完成後將建立新的日誌類型。</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionContextMenu.CurrentLogProfile">(目前使用)</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionContextMenu.EditCurrentLogProfile">編輯「{0}」</sys:String>
+
 	<!-- LogProfileSelectionDialog -->
 	<sys:String x:Key="String/LogProfileSelectionDialog.AddLogProfile">建立…</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.AllLogProfiles">所有日誌類型</sys:String>
@@ -925,7 +930,6 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.ClearLogAnalysisRuleSetsSelection">清除選取</sys:String>
 	<sys:String x:Key="String/SessionView.ClearLogFiles">清除所有已加入的日誌檔案</sys:String>
 	<sys:String x:Key="String/SessionView.ClearPredefinedLogTextFiltersSelection">清除選取</sys:String>
-	<sys:String x:Key="String/SessionView.ConfirmEditingBuiltInLogProfile">「{0}」是一個內建日誌類型，編輯完成後將建立新的日誌類型。</sys:String>
 	<sys:String x:Key="String/SessionView.ConfirmRemovingLogAnalysisRuleSet">您是否確定要移除規則集「{0}」？</sys:String>
 	<sys:String x:Key="String/SessionView.ConfirmRemovingLogAnalysisScriptSet">您是否確定要移除腳本「{0}」？</sys:String>
 	<sys:String x:Key="String/SessionView.ConfirmSelectingAllLogs">選取大量日誌會使用一些時間。是否要繼續選取？</sys:String>

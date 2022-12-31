@@ -538,6 +538,11 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.VisibleLogProperties.Description">Specify which properties of log can be seen in viewer.</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.VisibleLogPropertiesWithoutLogPatterns">You defined 'Log properties to show' without defining 'Log line patterns' which may cause logs shown incorrectly. Do you want to define 'Log line patterns'?</sys:String>
 
+	<!-- LogProfileSelectionContextMenu -->
+	<sys:String x:Key="String/LogProfileSelectionContextMenu.ConfirmEditingBuiltInLogProfile">'{0}' is a built-in log profile, new log profile will be created after editing.</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionContextMenu.CurrentLogProfile">(Current)</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionContextMenu.EditCurrentLogProfile">Edit '{0}'</sys:String>
+
 	<!-- LogProfileSelectionDialog -->
 	<sys:String x:Key="String/LogProfileSelectionDialog.AddLogProfile">Create…</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.AllLogProfiles">All profiles</sys:String>
@@ -965,7 +970,6 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.ClearLogAnalysisRuleSetsSelection">Clear selection</sys:String>
 	<sys:String x:Key="String/SessionView.ClearLogFiles">Clear all added log files</sys:String>
 	<sys:String x:Key="String/SessionView.ClearPredefinedLogTextFiltersSelection">Create…</sys:String>
-	<sys:String x:Key="String/SessionView.ConfirmEditingBuiltInLogProfile">'{0}' is a built-in log profile, new log profile will be created after editing.</sys:String>
 	<sys:String x:Key="String/SessionView.ConfirmRemovingLogAnalysisRuleSet">Are you sure to remove the rule set '{0}'?</sys:String>
 	<sys:String x:Key="String/SessionView.ConfirmRemovingLogAnalysisScriptSet">Are you sure to remove the script '{0}'?</sys:String>
 	<sys:String x:Key="String/SessionView.ConfirmSelectingAllLogs">It will take some time to select large amount of logs. Do you want to continue selection?</sys:String>

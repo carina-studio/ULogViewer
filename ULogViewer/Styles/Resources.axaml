@@ -79,6 +79,9 @@
 	<sys:Double x:Key="Double/LogProfileEditorDialog.Width">500</sys:Double>
 	<Thickness x:Key="Thickness/LogProfileEditorDialog.VisibleLogPropertyListBox.Name.Margin">20,0,0,0</Thickness>
 
+	<!-- LogProfileSelectionContextMenu -->
+	<sys:Double x:Key="Double/LogProfileSelectionContextMenu.CurrentLogProfile.Opacity">0.5</sys:Double>
+
 	<!-- LogProfileIconColorComboBox -->
 	<CornerRadius x:Key="CornerRadius/LogProfileIconColorComboBox.Icon">2</CornerRadius>
 	<Thickness x:Key="Thickness/LogProfileIconColorComboBox.Icon.Border">1</Thickness>

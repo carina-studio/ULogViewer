@@ -455,11 +455,6 @@
 							</Panel>
 						</ToggleButton>
 
-						<!-- Edit log profile -->
-						<Button Classes="ToolBar_Button" Command="{Binding $parent[UserControl].EditLogProfileCommand}" IsVisible="{Binding $parent[UserControl].HasLogProfile}" ToolTip.Tip="{DynamicResource String/LogProfileSelectionDialog.EditLogProfile}">
-							<Image Classes="Icon" Source="{StaticResource Image/EditLogProfile}"/>
-						</Button>
-
 						<!-- Set working directory -->
 						<Button Classes="ToolBar_Button" Command="{Binding $parent[UserControl].SelectAndSetWorkingDirectoryCommand}" IsVisible="{Binding IsWorkingDirectoryNeeded}" ToolTip.Tip="{DynamicResource String/SessionView.SetWorkingDirectory}">
 							<Image Classes="Icon" Source="{StaticResource Image/Icon.Folder}"/>
