@@ -33,6 +33,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.app = app;
 			this.displayNameId = displayName ?? name;
 			this.DisplayName = LogPropertyNameConverter.Default.Convert(this.displayNameId);
+			this.ForegroundColor = LogPropertyForegroundColor.Level;
 			this.Name = name;
 			this.NameForLogProperty = name switch
 			{
@@ -70,6 +71,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			};
 			this.NameForLogProperty = logProperty.Name;
 			this.DisplayName = LogPropertyNameConverter.Default.Convert(this.displayNameId);
+			this.ForegroundColor = logProperty.ForegroundColor;
 			this.Width = logProperty.Width;
 			app.StringsUpdated += this.OnApplicationStringsUpdated;
 		}
@@ -88,51 +90,48 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			get
 			{
-				if (displayNames == null)
+				displayNames ??= new List<string>(Log.PropertyNames).Also(it =>
 				{
-					displayNames = new List<string>(Log.PropertyNames).Also(it =>
-					{
-						it.Add("Author");
-						it.Add("BeginningValue");
-						it.Add("Child");
-						it.Add("Children");
-						it.Add("Code");
-						it.Add("Commit");
-						it.Add("Content");
-						it.Add("Count");
-						it.Add("Cpu");
-						it.Add("DestinationName");
-						it.Add("Duration");
-						it.Add("End");
-						it.Add("EndingValue");
-						it.Add("EndPoint");
-						it.Add("ID");
-						it.Add("Key");
-						it.Add("Name");
-						it.Add("Node");
-						it.Add("Number");
-						it.Add("Parent");
-						it.Add("Path");
-						it.Add("RawData");
-						it.Add("Referer");
-						it.Add("RelativeBeginningTimestamp");
-						it.Add("RelativeEndingTimestamp");
-						it.Add("RelativeTimestamp");
-						it.Add("Request");
-						it.Add("Response");
-						it.Add("Result");
-						it.Add("ShortName");
-						it.Add("Size");
-						it.Add("Start");
-						it.Add("Status");
-						it.Add("Tag");
-						it.Add("Type");
-						it.Add("Uri");
-						it.Add("UserAgent");
-						it.Add("Value");
-						it.Sort();
-					}).AsReadOnly();
-				}
+					it.Add("Author");
+					it.Add("BeginningValue");
+					it.Add("Child");
+					it.Add("Children");
+					it.Add("Code");
+					it.Add("Commit");
+					it.Add("Content");
+					it.Add("Count");
+					it.Add("Cpu");
+					it.Add("DestinationName");
+					it.Add("Duration");
+					it.Add("End");
+					it.Add("EndingValue");
+					it.Add("EndPoint");
+					it.Add("ID");
+					it.Add("Key");
+					it.Add("Name");
+					it.Add("Node");
+					it.Add("Number");
+					it.Add("Parent");
+					it.Add("Path");
+					it.Add("RawData");
+					it.Add("Referer");
+					it.Add("RelativeBeginningTimestamp");
+					it.Add("RelativeEndingTimestamp");
+					it.Add("RelativeTimestamp");
+					it.Add("Request");
+					it.Add("Response");
+					it.Add("Result");
+					it.Add("ShortName");
+					it.Add("Size");
+					it.Add("Start");
+					it.Add("Status");
+					it.Add("Tag");
+					it.Add("Type");
+					it.Add("Uri");
+					it.Add("UserAgent");
+					it.Add("Value");
+					it.Sort();
+				}).AsReadOnly();
 				return displayNames;
 			}
 		}
@@ -143,6 +142,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			this.app.StringsUpdated -= this.OnApplicationStringsUpdated;
 		}
+
+
+		/// <summary>
+		/// Get foreground color.
+		/// </summary>
+		public LogPropertyForegroundColor ForegroundColor { get; }
 
 
 		/// <summary>
@@ -180,7 +185,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <param name="resolveDisplayName">True to resolve display name to readable value.</param>
 		/// <returns><see cref="LogProperty"/>.</returns>
 		public LogProperty ToLogProperty(bool resolveDisplayName = true) =>
-			new LogProperty(this.NameForLogProperty, resolveDisplayName ? this.DisplayName : this.displayNameId, this.Width);
+			new(this.NameForLogProperty, resolveDisplayName ? this.DisplayName : this.displayNameId, this.ForegroundColor, this.Width);
 
 
 		/// <summary>

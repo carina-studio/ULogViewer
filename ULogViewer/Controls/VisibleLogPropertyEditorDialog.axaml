@@ -5,7 +5,9 @@
 		xmlns:abControls="using:CarinaStudio.Controls"
         xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
         xmlns:appLogs="using:CarinaStudio.ULogViewer.Logs"
+		xmlns:appProfiles="using:CarinaStudio.ULogViewer.Logs.Profiles"
         xmlns:appViewModels="using:CarinaStudio.ULogViewer.ViewModels"
+		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.VisibleLogPropertyEditorDialog"
         Classes="Dialog"
@@ -73,6 +75,11 @@
 			<!-- Custom display name -->
 			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/VisibleLogPropertyEditorDialog.CustomDisplayName}"/>
 			<ToggleSwitch Name="customDisplayNameSwitch" Classes="Dialog_ToggleSwitch" PropertyChanged="OnEditorControlPropertyChanged"/>
+			<Separator Classes="Dialog_Separator"/>
+
+			<!-- Foreground color -->
+			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/VisibleLogPropertyEditorDialog.ForegroundColor}"/>
+			<asControls:EnumComboBox Name="foregroundColorComboBox" Classes="Dialog_ComboBox" EnumType="{x:Type appProfiles:LogPropertyForegroundColor}"/>
 			<Separator Classes="Dialog_Separator"/>
 
 			<!-- Width -->

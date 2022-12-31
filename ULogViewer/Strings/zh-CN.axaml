@@ -602,6 +602,10 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProperty.UserName">使用者</sys:String>
 	<sys:String x:Key="String/LogProperty.Value">值</sys:String>
 
+	<!-- LogPropertyForegroundColor -->
+	<sys:String x:Key="String/LogPropertyForegroundColor.Level">日志等级</sys:String>
+	<sys:String x:Key="String/LogPropertyForegroundColor.None">无</sys:String>
+
 	<!-- LogReadingPreconditionDialog -->
 	<sys:String x:Key="String/LogReadingPreconditionDialog.Description">您可以为即将读取的日志指定前置读取条件，它不会影响已经或正在读取的日志。</sys:String>
 	<sys:String x:Key="String/LogReadingPreconditionDialog.EndingTimestamp">至 (不包含此时间戳)</sys:String>
@@ -1134,6 +1138,7 @@ return None</sys:String>
 	<!-- VisibleLogPropertyEditorDialog -->
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.CustomDisplayName">手动输入显示名称</sys:String>
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.DisplayName">显示名称</sys:String>
+	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.ForegroundColor">文字色彩</sys:String>
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.Name">属性</sys:String>
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.SpecifyWidth">指定列宽</sys:String>
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.Title">显示的日志属性</sys:String>

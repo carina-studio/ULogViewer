@@ -624,13 +624,26 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			foreach (var logPropertyElement in visibleLogPropertiesElement.EnumerateArray())
 			{
 				var name = logPropertyElement.GetProperty(nameof(LogProperty.Name)).GetString().AsNonNull();
-				var displayName = (string?)null;
-				var width = (int?)null;
-				if (logPropertyElement.TryGetProperty(nameof(LogProperty.DisplayName), out var jsonElement))
+				var displayName = default(string);
+				var foregroundColor = LogPropertyForegroundColor.Level;
+				var width = default(int?);
+				if (logPropertyElement.TryGetProperty(nameof(LogProperty.DisplayName), out var jsonElement)
+					&& jsonElement.ValueKind == JsonValueKind.String)
+				{
 					displayName = jsonElement.GetString();
-				if (logPropertyElement.TryGetProperty(nameof(LogProperty.Width), out jsonElement))
+				}
+				if (logPropertyElement.TryGetProperty(nameof(LogProperty.ForegroundColor), out jsonElement)
+					&& jsonElement.ValueKind == JsonValueKind.String
+					&& Enum.TryParse<LogPropertyForegroundColor>(jsonElement.GetString(), out var fColor))
+				{
+					foregroundColor = fColor;
+				}
+				if (logPropertyElement.TryGetProperty(nameof(LogProperty.Width), out jsonElement)
+					&& jsonElement.ValueKind == JsonValueKind.Number)
+				{
 					width = jsonElement.GetInt32();
-				logProperties.Add(new LogProperty(name, displayName, width));
+				}
+				logProperties.Add(new LogProperty(name, displayName, foregroundColor, width));
 			}
 			this.visibleLogProperties = logProperties.AsReadOnly();
 		}
@@ -1109,6 +1122,11 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				if (property.DisplayName != property.Name)
 					writer.WriteString(nameof(LogProperty.DisplayName), property.DisplayName);
 				writer.WriteString(nameof(LogProperty.Name), property.Name);
+				property.ForegroundColor.Let(it =>
+				{
+					if (it != LogPropertyForegroundColor.Level)
+						writer.WriteString(nameof(LogProperty.ForegroundColor), it.ToString());
+				});
 				property.Width?.Let(it => writer.WriteNumber(nameof(LogProperty.Width), it));
 				writer.WriteEndObject();
 			}

@@ -1496,7 +1496,8 @@ namespace CarinaStudio.ULogViewer.Controls
 							it.Bind(CarinaStudio.AppSuite.Controls.SyntaxHighlightingTextBlock.DefinitionSetProperty, new Binding() { Path = nameof(DisplayableLog.TextHighlightingDefinitionSet) });
 							it.Bind(Avalonia.Controls.TextBlock.FontFamilyProperty, new Binding() { Path = nameof(LogFontFamily), Source = this });
 							it.Bind(Avalonia.Controls.TextBlock.FontSizeProperty, new Binding() { Path = nameof(LogFontSize), Source = this });
-							it.Bind(Avalonia.Controls.TextBlock.ForegroundProperty, new Binding() { Path = nameof(DisplayableLog.LevelBrush) });
+							if (logProperty.ForegroundColor == LogPropertyForegroundColor.Level)
+								it.Bind(Avalonia.Controls.TextBlock.ForegroundProperty, new Binding() { Path = nameof(DisplayableLog.LevelBrush) });
 							if (isMultiLineProperty)
 								it.Bind(Avalonia.Controls.TextBlock.MaxLinesProperty, new Binding() { Path = nameof(MaxDisplayLineCountForEachLog), Source = this });
 							else
@@ -1782,29 +1783,29 @@ namespace CarinaStudio.ULogViewer.Controls
 		DataTemplate CreateMarkedLogItemTemplate(LogProfile profile, IList<DisplayableLogProperty> logProperties)
 		{
 			// check visible properties
-			var hasMessage = false;
-			var hasSourceName = false;
-			var hasSummary = false;
-			var hasTimestamp = false;
-			var hasTitle = false;
+			var messageProperty = default(DisplayableLogProperty);
+			var sourceNameProperty = default(DisplayableLogProperty);
+			var summaryProperty = default(DisplayableLogProperty);
+			var timestampStringProperty = default(DisplayableLogProperty);
+			var titleProperty = default(DisplayableLogProperty);
 			foreach (var logProperty in logProperties)
 			{
 				switch (logProperty.Name)
 				{
 					case nameof(DisplayableLog.Message):
-						hasMessage = true;
+						messageProperty = logProperty;
 						break;
 					case nameof(DisplayableLog.SourceName):
-						hasSourceName = true;
+						sourceNameProperty = logProperty;
 						break;
 					case nameof(DisplayableLog.Summary):
-						hasSummary = true;
+						summaryProperty = logProperty;
 						break;
 					case nameof(DisplayableLog.TimestampString):
-						hasTimestamp = true;
+						timestampStringProperty = logProperty;
 						break;
 					case nameof(DisplayableLog.Title):
-						hasTitle = true;
+						titleProperty = logProperty;
 						break;
 				}
 			}
@@ -1812,17 +1813,12 @@ namespace CarinaStudio.ULogViewer.Controls
 			// build item template for marked log list box
 			var propertyInMarkedItem = Global.Run(() =>
 			{
-				if (hasMessage)
-					return nameof(DisplayableLog.Message);
-				if (hasSummary)
-					return nameof(DisplayableLog.Summary);
-				if (hasTitle)
-					return nameof(DisplayableLog.Title);
-				if (hasSourceName)
-					return nameof(DisplayableLog.SourceName);
-				if (hasTimestamp)
-					return nameof(DisplayableLog.TimestampString);
-				return nameof(DisplayableLog.LogId);
+				return messageProperty
+					?? summaryProperty
+					?? titleProperty
+					?? sourceNameProperty
+					?? timestampStringProperty
+					?? new DisplayableLogProperty(this.Application, nameof(DisplayableLog.LogId), null, null);
 			});
 			var app = (App)this.Application;
 			var colorIndicatorBorderBrush = app.FindResourceOrDefault<IBrush?>("Brush/WorkingArea.Panel.Background");
@@ -1857,15 +1853,16 @@ namespace CarinaStudio.ULogViewer.Controls
 				{
 					it.Bind(Avalonia.Controls.TextBlock.FontFamilyProperty, new Binding() { Path = nameof(LogFontFamily), Source = this });
 					it.Bind(Avalonia.Controls.TextBlock.FontSizeProperty, new Binding() { Path = nameof(LogFontSize), Source = this });
-					it.Bind(Avalonia.Controls.TextBlock.ForegroundProperty, new Binding() { Path = nameof(DisplayableLog.LevelBrush) });
-					it.Bind(Avalonia.Controls.TextBlock.TextProperty, new Binding() { Path = propertyInMarkedItem });
+					if (propertyInMarkedItem.ForegroundColor == LogPropertyForegroundColor.Level)
+						it.Bind(Avalonia.Controls.TextBlock.ForegroundProperty, new Binding() { Path = nameof(DisplayableLog.LevelBrush) });
+					it.Bind(Avalonia.Controls.TextBlock.TextProperty, new Binding() { Path = propertyInMarkedItem.Name });
 					it.Margin = itemPadding;
 					it.MaxLines = 1;
 					it.TextTrimming = TextTrimming.CharacterEllipsis;
 					it.TextWrapping = TextWrapping.NoWrap;
 					it.VerticalAlignment = VerticalAlignment.Top;
-					if (hasTimestamp)
-						it.Bind(ToolTip.TipProperty, new Binding() { Path = nameof(DisplayableLog.TimestampString) });
+					if (timestampStringProperty != null)
+						it.Bind(ToolTip.TipProperty, new Binding() { Path = timestampStringProperty.Name });
 				});
 				itemPanel.Children.Add(propertyView);
 				itemPanel.Children.Add(new Border().Also(border =>

@@ -637,6 +637,10 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProperty.UserName">User</sys:String>
 	<sys:String x:Key="String/LogProperty.Value">Value</sys:String>
 
+	<!-- LogPropertyForegroundColor -->
+	<sys:String x:Key="String/LogPropertyForegroundColor.Level">Level of log</sys:String>
+	<sys:String x:Key="String/LogPropertyForegroundColor.None">None</sys:String>
+
 	<!-- LogReadingPreconditionDialog -->
 	<sys:String x:Key="String/LogReadingPreconditionDialog.Description">You can set the precondition of logs to be read. It won't affect logs which were being or already read.</sys:String>
 	<sys:String x:Key="String/LogReadingPreconditionDialog.EndingTimestamp">to (exclusive)</sys:String>
@@ -1183,6 +1187,7 @@ return None</sys:String>
 	<!-- VisibleLogPropertyEditorDialog -->
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.CustomDisplayName">Custom display name</sys:String>
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.DisplayName">Display name</sys:String>
+	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.ForegroundColor">Color of text</sys:String>
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.Name">Property</sys:String>
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.SpecifyWidth">Speficy the column width</sys:String>
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.Title">Visible log property</sys:String>
