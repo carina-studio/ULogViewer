@@ -1,7 +1,7 @@
 # User Agreement of ULogViewer
  ---
 + Version: 2.0
-+ Update: 2022/12/23
++ Update: 2022/12/31
 
 This is the User Agreement of ULogViewer which you need to read before you using ULogViewer. The User Agreement may be updated in the future and you can check it on the website of ULogViewer. It means that you have agreed this User Agreement once you start using ULogViewer.
 
@@ -35,9 +35,6 @@ In order to use **'Android Device System Trace'** built-in log profile on **macO
 
 ### Command-Line Tools for Xcode
 In order to use **'Apple Device Simulators Log'** and **'Specific Apple Device Simulator Log'** built-in log profile on **macOS**, you need to install [Command-Line Tools for Xcode](https://developer.apple.com/xcode/). If you install Command-Line Tools for Xcode with Xcode, you need to enable it by setting **'Xcode > Settings > Locations > Command Line Tools'** to **'Xcode'**.
-
-### Resize and Rotate Extension for X Window System (XRandR)
-Prebuilt XRandR is distributed with ULogViewer by default in order to detect display settings and apply user interface scale factor on **Linux**. You may need to install XRandR manually in case of failure of using prebuilt one. You need to restart application to take effect after installation.
 
 
 ## File Access
@@ -150,10 +147,8 @@ There are some necessary external command execution when running ULogViewer:
 + Run **open** to open Finder on mscOS.
 + Run **defaults** to check system language and theme mode on macOS.
 + Run **nautilus** or **xdg-open** to open File Manager on Linux.
-+ Run **gnome-shell** to check GUI environment on Linux.
 + Run **cmd** to update PATH environment variable on Windows if needed.
-+ Run **osascript** to update /etc/paths on macOS if needed.
-+ Run installed **xrandr** if failed to run prebuilt **xrandr** to detect display settings and apply user interface scale factor on Linux.
++ Run **osascript** to update /etc/paths on macOS if needed.interface scale factor on Linux.
 
 Except for necessary cases above, external command execution will happen when the source of logs is **'Azure CLI'** or **'Standard Output (stdout)'**. You can check the list of commands and arguments in the **'Data source'** options dialog when editing **'Data Source'** of log profile.
 

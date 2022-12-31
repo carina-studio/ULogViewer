@@ -1,7 +1,7 @@
 # ULogViewer 使用者協議
  ---
 + 版本：2.0
-+ 更新時間：2022/12/23
++ 更新時間：2022/12/31
 
 這是 ULogViewer 的使用者協議，您應該要在使用 ULogViewer 之前詳細閱讀本協議。 使用者協議可能會在未來有所更新，您可以在 ULogViewer 網站中查看。 當您開始使用 ULogViewer 表示您同意本使用者協議。
 
@@ -35,9 +35,6 @@ ULogViewer 包含預設關閉的內建偵錯模式，您可以透過 **「關於
 
 ### Xcode 命令列工具
 若要在 **macOS** 上使用 **「Apple 裝置模擬器日誌」** 及 **「特定 Apple 裝置模擬器日誌」** 日誌類型，您必須先安裝 [Xcode 命令列工具](https://developer.apple.com/xcode/)。若您透過安裝 Xcode 以安裝 Xcode 命令列工具，您需要將 **「Xcode > Settings > Locations > Command Line Tools」** 設定為 **「Xcode」** 來啟用。
-
-### X 視窗系統調整及旋轉延伸工具 (XRandR)
-ULogViewer 內建預先編譯之 XRandR 以在 **Linux** 上偵測顯示設定及套用使用者介面縮放比例。萬一內建之 XRandR 無法正常使用，您將需要自行安裝 XRandR，安裝完成後需重新啟動應用程式。
 
 
 ## 檔案存取
@@ -150,10 +147,8 @@ ULogViewer 會定期從 ULogViewer 網站下載資訊清單以檢查是否有新
 + 執行 **open** macOS 上開啟 Finder。
 + 執行 **defaults** 以確認在 macOS 上的系統語系與佈景設定。
 + 執行 **nautilus** 或 **xdg-open** 以在 Linux 上開啟檔案管理器。
-+ 執行 **gnome-shell** 以在 Linux 上確認圖形化介面環境。
 + 執行 **cmd** 以在必要時更新 Windows 上的 PATH 環境變數。
 + 執行 **osascript** 以在必要時更新 macOS 上的 /etc/paths。
-+ 當內建之 **xrandr** 無法使用時，執行已安裝之 **xrandr** 以在 Linux 上偵測顯示設定及套用使用者介面縮放比例。
 
 除了上述必要情況外，當日誌來源為 **「Azure 命令列介面 (CLI)」** 或 **「標準輸出 (stdout)」** 時將執行外部命令。您可以在編輯日誌類型之 **「資料來源」** 時在 **「資料來源參數」** 對話方塊中檢視完整的指令及參數列表。
 
