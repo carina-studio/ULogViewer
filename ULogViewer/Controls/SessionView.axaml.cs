@@ -154,6 +154,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly Border dragDropReceiverBorder;
 		readonly MenuItem filterByLogPropertyMenuItem;
 		IDisposable? hasDialogsObserverToken;
+		readonly Button ignoreLogTextFilterCaseButton;
 		IDisposable? isActiveObserverToken;
 		bool isAltKeyPressed;
 		bool isAttachedToLogicalTree;
@@ -402,6 +403,11 @@ namespace CarinaStudio.ULogViewer.Controls
 				});
 			});
 			this.dragDropReceiverBorder = this.Get<Border>(nameof(dragDropReceiverBorder));
+			this.ignoreLogTextFilterCaseButton = this.toolBarContainer.FindControl<Button>(nameof(ignoreLogTextFilterCaseButton)).AsNonNull().Also(it =>
+			{
+				it.GetObservable(IsVisibleProperty).Subscribe(_ =>
+					this.updateLogTextFilterTextBoxClassesAction?.Schedule());
+			});
 			this.keyLogAnalysisRuleSetListBox = this.Get<Avalonia.Controls.ListBox>(nameof(keyLogAnalysisRuleSetListBox)).Also(it =>
 			{
 				it.SelectionChanged += this.OnLogAnalysisRuleSetListBoxSelectionChanged;
@@ -838,6 +844,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				var visibleActions = 0;
 				if (this.clearLogTextFilterButton.IsEffectivelyVisible)
+					++visibleActions;
+				if (this.ignoreLogTextFilterCaseButton.IsEffectivelyVisible)
 					++visibleActions;
 				if (this.logFilteringHelpButton.IsEffectivelyVisible)
 					++visibleActions;

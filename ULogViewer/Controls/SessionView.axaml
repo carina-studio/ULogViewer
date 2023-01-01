@@ -541,9 +541,7 @@
 								</ia:Interaction.Behaviors>
 							</Image>
 						</Button>
-
-						<!-- Separator -->
-						<Separator Classes="ToolBar_Separator"/>
+						
 					</StackPanel>
 
 					<!-- Other log filters -->
@@ -606,7 +604,7 @@
 					</StackPanel>
 
 					<!-- Log text filters -->
-					<Grid Name="toolBarLogTextFilterItemsPanel" ColumnDefinitions="*,Auto,Auto">
+					<Grid Name="toolBarLogTextFilterItemsPanel" ColumnDefinitions="*,Auto">
 
 						<!-- Text filter -->
 						<Panel Name="logTextFilterTextBoxPanel" HorizontalAlignment="Stretch" Margin="{StaticResource Thickness/ToolBar.Item.Margin}" VerticalAlignment="Center">
@@ -615,22 +613,20 @@
 								<Button Name="clearLogTextFilterButton" Classes="TextBox_InPlaceAction" Command="{Binding #logTextFilterTextBox.Clear}" IsVisible="{Binding #logTextFilterTextBox.Text, Converter={x:Static aConverters:StringConverters.IsNotNullOrEmpty}}" ToolTip.Tip="{DynamicResource String/Common.Clear}">
 									<Image Classes="Icon" Source="{StaticResource Image/Icon.Close}"/>
 								</Button>
+								<ToggleButton Name="ignoreLogTextFilterCaseButton" Classes="TextBox_InPlaceAction" IsChecked="{Binding LogFiltering.IgnoreTextFilterCase, Mode=TwoWay}" IsVisible="{Binding $parent[UserControl].HasLogProfile}" ToolTip.Tip="{DynamicResource String/SessionView.IgnoreLogTextFilterCase}">
+									<Panel>
+										<Image Classes="Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/IgnoreCase}"/>
+										<Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/IgnoreCase.Light}"/>
+									</Panel>
+								</ToggleButton>
 								<Button Name="logFilteringHelpButton" Classes="TextBox_InPlaceAction" Command="{Binding $parent[UserControl].OpenLogFilteringDocumentation}" IsVisible="{Binding $parent[UserControl].ShowHelpButtonOnLogTextFilter}" ToolTip.Tip="{DynamicResource String/Common.Help}">
 									<Image Classes="Icon" Source="{StaticResource Image/Icon.Question}"/>
 								</Button>
 							</StackPanel>
 						</Panel>
 
-						<!-- Ignore case of text filter -->
-						<ToggleButton Classes="ToolBar_ToggleButton" Grid.Column="1" IsChecked="{Binding LogFiltering.IgnoreTextFilterCase, Mode=TwoWay}" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" ToolTip.Tip="{DynamicResource String/SessionView.IgnoreLogTextFilterCase}">
-							<Panel>
-								<Image Classes="Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/IgnoreCase}"/>
-								<Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/IgnoreCase.Light}"/>
-							</Panel>
-						</ToggleButton>
-
 						<!-- Predefined text filters -->
-						<ToggleButton Name="predefinedLogTextFiltersButton" Classes="ToolBar_ToggleButton" Grid.Column="2" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" ToolTip.Tip="{DynamicResource String/SessionView.PredefinedLogTextFilters}">
+						<ToggleButton Name="predefinedLogTextFiltersButton" Classes="ToolBar_ToggleButton" Grid.Column="1" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" ToolTip.Tip="{DynamicResource String/SessionView.PredefinedLogTextFilters}">
 							<Panel>
 								<Panel>
 									<Image Classes="Icon" Source="{StaticResource Image/Filters}" IsVisible="{Binding ElementName=predefinedLogTextFilterListBox, Path=!SelectedItems.Count}"/>
