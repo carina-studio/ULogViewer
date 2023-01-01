@@ -228,6 +228,11 @@
 				<ToggleSwitch Classes="Dialog_ToggleSwitch" IsChecked="{Binding IgnoreCaseOfLogTextFilter, Mode=TwoWay}"/>
 				<Separator Classes="Dialog_Separator"/>
 
+				<!-- Show help button -->
+				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/AppOptionsDialog.ShowHelpButtonOnLogTextFilter}"/>
+				<ToggleSwitch Classes="Dialog_ToggleSwitch" IsChecked="{Binding ShowHelpButtonOnLogTextFilter, Mode=TwoWay}"/>
+				<Separator Classes="Dialog_Separator"/>
+
 				<!-- Accuracy of filtering by log property -->
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/AppOptionsDialog.AccuracyOfFilteringBySelectedLogProperty}"/>
 				<asControls:EnumComboBox Classes="Dialog_ComboBox" EnumType="{x:Type app:Accuracy}" SelectedItem="{Binding AccuracyOfFilteringBySelectedLogProperty, Mode=TwoWay}"/>

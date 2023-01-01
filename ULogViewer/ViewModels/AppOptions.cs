@@ -313,6 +313,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.OnPropertyChanged(nameof(SelectUriWhenNeeded));
 			else if (key == SettingKeys.SelectWorkingDirectoryWhenNeeded)
 				this.OnPropertyChanged(nameof(SelectWorkingDirectoryWhenNeeded));
+			else if (key == SettingKeys.ShowHelpButtonOnLogTextFilter)
+				this.OnPropertyChanged(nameof(ShowHelpButtonOnLogTextFilter));
 			else if (key == AppSuite.SettingKeys.ShowProcessInfo)
 				this.OnPropertyChanged(nameof(ShowProcessInfo));
 			else if (key == SettingKeys.UpdateLogFilterDelay)
@@ -398,6 +400,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			get => this.Settings.GetValueOrDefault(SettingKeys.SelectWorkingDirectoryWhenNeeded);
 			set => this.Settings.SetValue<bool>(SettingKeys.SelectWorkingDirectoryWhenNeeded, value);
+		}
+
+
+		/// <summary>
+		/// Get or set visibility of help button on log text filter.
+		/// </summary>
+		public bool ShowHelpButtonOnLogTextFilter
+		{
+			get => this.Settings.GetValueOrDefault(SettingKeys.ShowHelpButtonOnLogTextFilter);
+			set => this.Settings.SetValue<bool>(SettingKeys.ShowHelpButtonOnLogTextFilter, value);
 		}
 
 

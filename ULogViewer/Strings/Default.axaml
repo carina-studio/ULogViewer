@@ -33,6 +33,7 @@
 	<sys:String x:Key="String/AppOptionsDialog.SelectLogReadingPreconditionForFiles">Specify precondition before reading logs from files if available</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectUriWhenNeeded">Show URI input when URI is needed</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectWorkingDirectoryWhenNeeded">Show directory selector when working directory is needed</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.ShowHelpButtonOnLogTextFilter">Show 'Help' button on input field of text filter</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ShowProcessInfo">Show CPU/memory usage on status bar</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.UpdateLogFilterDelay">Delay between changing conditions and start filtering (milliseconds)</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.UseSystemAccentColor">Apply system accent color</sys:String>
@@ -973,6 +974,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.ConfirmRemovingLogAnalysisRuleSet">Are you sure to remove the rule set '{0}'?</sys:String>
 	<sys:String x:Key="String/SessionView.ConfirmRemovingLogAnalysisScriptSet">Are you sure to remove the script '{0}'?</sys:String>
 	<sys:String x:Key="String/SessionView.ConfirmSelectingAllLogs">It will take some time to select large amount of logs. Do you want to continue selection?</sys:String>
+	<sys:String x:Key="String/SessionView.ConfirmShowingHelpButtonOnLogTextFilter">Do you want to keep 'Help' button on input field of text filter? You can change the setting in 'Options' dialog.</sys:String>
 	<sys:String x:Key="String/SessionView.ConfirmSwitchingToCopiedLogProfile">Do you want to switch to '{0}' now?</sys:String>
 	<sys:String x:Key="String/SessionView.CopyLogFileName">Copy file name</sys:String>
 	<sys:String x:Key="String/SessionView.CopyLogFilePath">Copy full path</sys:String>

@@ -36,6 +36,7 @@
 	<sys:String x:Key="String/AppOptionsDialog.SelectLogReadingPreconditionForFiles">在从档案读取日志前指定前置读取条件（当条件支持时）</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectUriWhenNeeded">当需要 URI 时立即显示输入界面</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectWorkingDirectoryWhenNeeded">当需要工作目录时立即开启目录选择界面</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.ShowHelpButtonOnLogTextFilter">在文字筛选栏位中显示「说明」按钮</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ShowProcessInfo">在状态栏中显示CPU以及内存使用量</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.UpdateLogFilterDelay">条件改变至开始筛选的延迟时间（毫秒）</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.UseSystemAccentColor">使用系统强调色彩</sys:String>
@@ -935,6 +936,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.ConfirmRemovingLogAnalysisRuleSet">您是否确定要移除规则集「{0}」？</sys:String>
 	<sys:String x:Key="String/SessionView.ConfirmRemovingLogAnalysisScriptSet">您是否确定要移除脚本「{0}」？</sys:String>
 	<sys:String x:Key="String/SessionView.ConfirmSelectingAllLogs">选择大量日志会使用一些时间，是否继续选择？</sys:String>
+	<sys:String x:Key="String/SessionView.ConfirmShowingHelpButtonOnLogTextFilter">您是否要继续在文字筛选栏位中显示「说明」按钮？您可以在「应用程序选项」中变更此设置。</sys:String>
 	<sys:String x:Key="String/SessionView.ConfirmSwitchingToCopiedLogProfile">您是否要立即切换至「{0}」？</sys:String>
 	<sys:String x:Key="String/SessionView.CopyLogFileName">复制档案名称</sys:String>
 	<sys:String x:Key="String/SessionView.CopyLogFilePath">复制完整档案路径</sys:String>

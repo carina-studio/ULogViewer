@@ -96,6 +96,10 @@ namespace CarinaStudio.ULogViewer
 		/// </summary>
 		public static readonly SettingKey<bool> SelectWorkingDirectoryWhenNeeded = new(nameof(SelectWorkingDirectoryWhenNeeded), true);
 		/// <summary>
+		/// Show help button on inupt field of log text filter.
+		/// </summary>
+		public static readonly SettingKey<bool> ShowHelpButtonOnLogTextFilter = new(nameof(ShowHelpButtonOnLogTextFilter), true);
+		/// <summary>
 		/// Delay of updating log filter after changing related parameters in milliseconds.
 		/// </summary>
 		public static readonly SettingKey<int> UpdateLogFilterDelay = new(nameof(UpdateLogFilterDelay), 500);

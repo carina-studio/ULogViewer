@@ -610,12 +610,12 @@
 
 						<!-- Text filter -->
 						<Panel Name="logTextFilterTextBoxPanel" HorizontalAlignment="Stretch" Margin="{StaticResource Thickness/ToolBar.Item.Margin}" VerticalAlignment="Center">
-							<asControls:RegexTextBox Name="logTextFilterTextBox" Classes="RegexTextBox_InvalidText" IgnoreCase="{Binding LogFiltering.IgnoreTextFilterCase}" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" Object="{Binding LogFiltering.TextFilter, Mode=TwoWay}" Padding="{StaticResource Thickness/TextBox.Padding.WithInPlaceAction.1}" ToolTip.Tip="{DynamicResource String/SessionView.LogTextFilter.ToolTip}" Watermark="{DynamicResource String/SessionView.LogTextFilter.Watermark}"/>
+							<asControls:RegexTextBox Name="logTextFilterTextBox" Classes="RegexTextBox_InvalidText" IgnoreCase="{Binding LogFiltering.IgnoreTextFilterCase}" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" Object="{Binding LogFiltering.TextFilter, Mode=TwoWay}" ToolTip.Tip="{DynamicResource String/SessionView.LogTextFilter.ToolTip}" Watermark="{DynamicResource String/SessionView.LogTextFilter.Watermark}"/>
 							<StackPanel Classes="TextBox_InPlaceActions">
 								<Button Name="clearLogTextFilterButton" Classes="TextBox_InPlaceAction" Command="{Binding #logTextFilterTextBox.Clear}" IsVisible="{Binding #logTextFilterTextBox.Text, Converter={x:Static aConverters:StringConverters.IsNotNullOrEmpty}}" ToolTip.Tip="{DynamicResource String/Common.Clear}">
 									<Image Classes="Icon" Source="{StaticResource Image/Icon.Close}"/>
 								</Button>
-								<Button Classes="TextBox_InPlaceAction" Command="{Binding $parent[UserControl].OpenLogFilteringDocumentation}" IsVisible="{Binding !#clearLogTextFilterButton.IsVisible}" ToolTip.Tip="{DynamicResource String/Common.Help}">
+								<Button Name="logFilteringHelpButton" Classes="TextBox_InPlaceAction" Command="{Binding $parent[UserControl].OpenLogFilteringDocumentation}" IsVisible="{Binding $parent[UserControl].ShowHelpButtonOnLogTextFilter}" ToolTip.Tip="{DynamicResource String/Common.Help}">
 									<Image Classes="Icon" Source="{StaticResource Image/Icon.Question}"/>
 								</Button>
 							</StackPanel>

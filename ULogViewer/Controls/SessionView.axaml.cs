@@ -109,11 +109,13 @@ namespace CarinaStudio.ULogViewer.Controls
 		static readonly SettingKey<bool> IsLogFilesPanelTutorialShownKey = new("SessionView.IsLogFilesPanelTutorialShown");
 		static readonly SettingKey<bool> IsMarkedLogsPanelTutorialShownKey = new("SessionView.IsMarkedLogsPanelTutorialShown");
 		static readonly SettingKey<bool> IsSelectingLogProfileToStartTutorialShownKey = new("SessionView.IsSelectingLogProfileToStartTutorialShown");
+		static readonly SettingKey<bool> IsShowingHelpButtonOnLogTextFilterConfirmedKey = new("SessionView.IsShowingHelpButtonOnLogTextFilterConfirmed");
 		static readonly SettingKey<bool> IsSwitchingSidePanelsTutorialShownKey = new("SessionView.IsSwitchingSidePanelsTutorialShown");
 		static readonly SettingKey<bool> IsTimestampCategoriesPanelTutorialShownKey = new("SessionView.IsTimestampCategoriesPanelTutorialShown");
 		static readonly StyledProperty<FontFamily> LogFontFamilyProperty = AvaloniaProperty.Register<SessionView, FontFamily>(nameof(LogFontFamily));
 		static readonly StyledProperty<double> LogFontSizeProperty = AvaloniaProperty.Register<SessionView, double>(nameof(LogFontSize), 10.0);
 		static readonly StyledProperty<int> MaxDisplayLineCountForEachLogProperty = AvaloniaProperty.Register<SessionView, int>(nameof(MaxDisplayLineCountForEachLog), 1);
+		static readonly StyledProperty<bool> ShowHelpButtonOnLogTextFilterProperty = AvaloniaProperty.Register<SessionView, bool>("ShowHelpButtonOnLogTextFilter");
 		static readonly StyledProperty<SessionViewStatusBarState> StatusBarStateProperty = AvaloniaProperty.Register<SessionView, SessionViewStatusBarState>(nameof(StatusBarState), SessionViewStatusBarState.None);
 
 
@@ -147,6 +149,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly MutableObservableBoolean canShowLogProperty = new();
 		readonly MutableObservableBoolean canShowWorkingDirectoryInExplorer = new();
 		readonly MutableObservableBoolean canUnmarkSelectedLogs = new();
+		readonly Button clearLogTextFilterButton;
 		readonly MenuItem copyLogPropertyMenuItem;
 		readonly Border dragDropReceiverBorder;
 		readonly MenuItem filterByLogPropertyMenuItem;
@@ -159,6 +162,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		bool isPointerPressedOnLogListBox;
 		bool isProVersionActivated;
 		bool isRestartingAsAdminConfirmed;
+		bool isShowingHelpButtonOnLogTextFilterConfirmationNeeded;
 		bool isSelectingFileToSaveLogs;
 		bool isUpdatingLogFilters;
 		bool isUriNeededAfterLogProfileSet;
@@ -170,6 +174,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ContextMenu logFileActionMenu;
 		readonly AppSuite.Controls.ListBox logFileListBox;
 		IDisposable logFilesPanelVisibilityObserverToken = EmptyDisposable.Default;
+		readonly Button logFilteringHelpButton;
 		readonly List<ColumnDefinition> logHeaderColumns = new();
 		readonly Control logHeaderContainer;
 		readonly Grid logHeaderGrid;
@@ -213,6 +218,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly Panel toolBarOtherLogFilterItemsPanel;
 		readonly ScheduledAction updateLogFiltersAction;
 		readonly ScheduledAction updateLogHeaderContainerMarginAction;
+		readonly ScheduledAction updateLogTextFilterTextBoxClassesAction;
 		readonly ScheduledAction updateStatusBarStateAction;
 		readonly SortedObservableList<Logs.LogLevel> validLogLevels = new((x, y) => (int)x - (int)y);
 		readonly ToggleButton workingDirectoryActionsButton;
@@ -380,6 +386,11 @@ namespace CarinaStudio.ULogViewer.Controls
 			});
 
 			// setup controls
+			this.clearLogTextFilterButton = this.toolBarContainer.FindControl<Button>(nameof(clearLogTextFilterButton)).AsNonNull().Also(it =>
+			{
+				it.GetObservable(IsVisibleProperty).Subscribe(_ =>
+					this.updateLogTextFilterTextBoxClassesAction?.Schedule());
+			});
 			this.createLogAnalysisRuleSetButton = this.Get<ToggleButton>(nameof(createLogAnalysisRuleSetButton));
 			this.createLogAnalysisRuleSetMenu = ((ContextMenu)this.Resources[nameof(createLogAnalysisRuleSetMenu)].AsNonNull()).Also(it =>
 			{
@@ -439,6 +450,11 @@ namespace CarinaStudio.ULogViewer.Controls
 				it.SelectionChanged += this.OnLogAnalysisRuleSetListBoxSelectionChanged;
 			});
 			this.logFileListBox = this.Get<AppSuite.Controls.ListBox>(nameof(logFileListBox));
+			this.logFilteringHelpButton = this.toolBarContainer.FindControl<Button>(nameof(logFilteringHelpButton)).AsNonNull().Also(it =>
+			{
+				it.GetObservable(IsVisibleProperty).Subscribe(_ =>
+					this.updateLogTextFilterTextBoxClassesAction?.Schedule());
+			});
 			this.logHeaderContainer = this.Get<Control>(nameof(logHeaderContainer));
 			this.logHeaderGrid = this.Get<Grid>(nameof(logHeaderGrid)).Also(it =>
 			{
@@ -818,6 +834,27 @@ namespace CarinaStudio.ULogViewer.Controls
 				session.LogFiltering.PredefinedTextFilters.AddAll(this.selectedPredefinedLogTextFilters);
 				this.isUpdatingLogFilters = false;
 			});
+			this.updateLogTextFilterTextBoxClassesAction = new(() =>
+			{
+				var visibleActions = 0;
+				if (this.clearLogTextFilterButton.IsEffectivelyVisible)
+					++visibleActions;
+				if (this.logFilteringHelpButton.IsEffectivelyVisible)
+					++visibleActions;
+				var className = visibleActions switch
+				{
+					0 => null,
+					1 => "WithInPlaceAction",
+					_ => $"With{visibleActions}InPlaceActions",
+				};
+				if (className == null)
+					this.logTextFilterTextBox.Classes.Clear();
+				else if (!this.logTextFilterTextBox.Classes.Contains(className))
+				{
+					this.logTextFilterTextBox.Classes.Clear();
+					this.logTextFilterTextBox.Classes.Add(className);
+				}
+			});
 			this.updateLogHeaderContainerMarginAction = new(() =>
 			{
 				var logScrollViewer = this.logScrollViewer;
@@ -841,6 +878,9 @@ namespace CarinaStudio.ULogViewer.Controls
 					return SessionViewStatusBarState.None;
 				}));
 			});
+
+			// perform initial actions
+			this.updateLogTextFilterTextBoxClassesAction.Schedule();
 		}
 
 
@@ -1178,6 +1218,26 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			this.Logger.LogWarning("User denied to restart as administrator for '{profileName}'", profile.Name);
 			return false;
+		}
+
+
+		// Confirm whether keep showing help button on log text filter or not.
+		async void ConfirmShowingHelpButtonOnLogTextFilter()
+		{
+			if (this.PersistentState.GetValueOrDefault(IsShowingHelpButtonOnLogTextFilterConfirmedKey))
+				return;
+			if (this.attachedWindow == null)
+				return;
+			var dialog = new MessageDialog()
+			{
+				Buttons = MessageDialogButtons.YesNo,
+				DoNotAskOrShowAgain = true,
+				Icon = MessageDialogIcon.Question,
+				Message = this.Application.GetObservableString("SessionView.ConfirmShowingHelpButtonOnLogTextFilter"),
+			};
+			var result = await dialog.ShowDialog(this.attachedWindow);
+			this.Settings.SetValue<bool>(SettingKeys.ShowHelpButtonOnLogTextFilter, result == MessageDialogResult.Yes);
+			this.PersistentState.SetValue<bool>(IsShowingHelpButtonOnLogTextFilterConfirmedKey, dialog.DoNotAskOrShowAgain.GetValueOrDefault());
 		}
 
 
@@ -2425,7 +2485,17 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.isActiveObserverToken = window.GetObservable(Avalonia.Controls.Window.IsActiveProperty).Subscribe(isActive =>
 				{
 					if (isActive)
-						this.SynchronizationContext.Post(() => this.ShowLogAnalysisRuleSetsTutorial());
+					{
+						this.SynchronizationContext.Post(() => 
+						{
+							this.ShowLogAnalysisRuleSetsTutorial();
+							if (this.isShowingHelpButtonOnLogTextFilterConfirmationNeeded)
+							{
+								this.isShowingHelpButtonOnLogTextFilterConfirmationNeeded = false;
+								this.ConfirmShowingHelpButtonOnLogTextFilter();
+							}
+						});
+					}
 				});
 			});
 
@@ -2439,6 +2509,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.AddHandler(DragDrop.DropEvent, this.OnDrop);
 			this.AddHandler(KeyDownEvent, this.OnPreviewKeyDown, RoutingStrategies.Tunnel);
 			this.AddHandler(KeyUpEvent, this.OnPreviewKeyUp, RoutingStrategies.Tunnel);
+
+			// check settings
+			this.SetValue(ShowHelpButtonOnLogTextFilterProperty, this.Settings.GetValueOrDefault(SettingKeys.ShowHelpButtonOnLogTextFilter));
 
 			// check product state
 			this.SetAndRaise<bool>(IsProVersionActivatedProperty, ref this.isProVersionActivated, this.Application.ProductManager.IsProductActivated(Products.Professional));
@@ -3663,7 +3736,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (e.Key == AppSuite.SettingKeys.EnableRunningScript)
 			{
 				var isEnabled = (bool)e.Value;
-				this.SetValue<bool>(EnableRunningScriptProperty, isEnabled);
+				this.SetValue(EnableRunningScriptProperty, isEnabled);
 				if (!isEnabled)
 					this.logAnalysisScriptSetListBox.SelectedItems!.Clear();
 			}
@@ -3673,8 +3746,19 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.UpdateLogFontSize();
 			else if (e.Key == SettingKeys.MaxDisplayLineCountForEachLog)
 				this.SetValue<int>(MaxDisplayLineCountForEachLogProperty, Math.Max(1, (int)e.Value));
+			else if (e.Key == SettingKeys.ShowHelpButtonOnLogTextFilter)
+			{
+				if ((bool)e.Value)
+					this.SetValue(ShowHelpButtonOnLogTextFilterProperty, true);
+				else
+				{
+					this.SetValue(ShowHelpButtonOnLogTextFilterProperty, false);
+					this.isShowingHelpButtonOnLogTextFilterConfirmationNeeded = false;
+					this.PersistentState.SetValue<bool>(IsShowingHelpButtonOnLogTextFilterConfirmedKey, true);
+				}
+			}
 			else if (e.Key == AppSuite.SettingKeys.ShowProcessInfo)
-				this.SetValue<bool>(IsProcessInfoVisibleProperty, (bool)e.Value);
+				this.SetValue(IsProcessInfoVisibleProperty, (bool)e.Value);
 			else if (e.Key == SettingKeys.UpdateLogFilterDelay)
 				this.logTextFilterTextBox.ValidationDelay = this.UpdateLogFilterParamsDelay;
 		}
@@ -3708,10 +3792,21 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// <summary>
 		/// Open online documentation.
 		/// </summary>
-#pragma warning disable CA1822
-		public void OpenLogFilteringDocumentation() =>
-			Platform.OpenLink("https://carinastudio.azurewebsites.net/ULogViewer/LogFiltering");
-#pragma warning restore CA1822
+		public void OpenLogFilteringDocumentation()
+		{
+			if (!Platform.OpenLink("https://carinastudio.azurewebsites.net/ULogViewer/LogFiltering"))
+				return;
+			this.SynchronizationContext.PostDelayed(() =>
+			{
+				if (this.attachedWindow?.IsActive == true)
+				{
+					this.isShowingHelpButtonOnLogTextFilterConfirmationNeeded = false;
+					this.ConfirmShowingHelpButtonOnLogTextFilter();
+				}
+				else
+					this.isShowingHelpButtonOnLogTextFilterConfirmationNeeded = true;
+			}, 1000);
+		}
 
 
 		/// <summary>
