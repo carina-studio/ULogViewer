@@ -572,17 +572,21 @@
 						<!-- PID filter -->
 						<Panel Name="logProcessIdFilterTextBoxPanel" Grid.Column="1" IsVisible="{Binding LogFiltering.IsProcessIdFilterEnabled}" Width="{StaticResource Double/SessionView.ToolBar.LogProcessIdFilter.Width}">
 							<abControls:IntegerTextBox Name="logProcessIdFilterTextBox" Classes="ToolBar_TextBox_WithInPlaceAction" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" Maximum="2147483647" Minimum="0" ToolTip.Tip="{DynamicResource String/SessionView.LogProcessIdFilter.Description}" Value="{Binding LogFiltering.ProcessIdFilter, Mode=TwoWay}" VerticalAlignment="Center" Watermark="{DynamicResource String/LogProperty.ProcessId}"/>
-							<Button Classes="TextBox_InPlaceAction" Command="{Binding #logProcessIdFilterTextBox.Clear}" IsVisible="{Binding #logProcessIdFilterTextBox.Text, Converter={x:Static aConverters:StringConverters.IsNotNullOrEmpty}}" ToolTip.Tip="{DynamicResource String/Common.Clear}">
-								<Image Classes="Icon" Source="{StaticResource Image/Icon.Close}"/>
-							</Button>
+							<Panel Classes="TextBox_InPlaceActions">
+								<Button Classes="TextBox_InPlaceAction" Command="{Binding #logProcessIdFilterTextBox.Clear}" IsVisible="{Binding #logProcessIdFilterTextBox.Text, Converter={x:Static aConverters:StringConverters.IsNotNullOrEmpty}}" ToolTip.Tip="{DynamicResource String/Common.Clear}">
+									<Image Classes="Icon" Source="{StaticResource Image/Icon.Close}"/>
+								</Button>
+							</Panel>
 						</Panel>
 
 						<!-- TID filter -->
 						<Panel Name="logThreadIdFilterTextBoxPanel" Grid.Column="1" IsVisible="{Binding LogFiltering.IsThreadIdFilterEnabled}" Width="{StaticResource Double/SessionView.ToolBar.LogProcessIdFilter.Width}">
 							<abControls:IntegerTextBox Name="logThreadIdFilterTextBox" Classes="ToolBar_TextBox_WithInPlaceAction" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" Maximum="2147483647" Minimum="0" ToolTip.Tip="{DynamicResource String/SessionView.LogThreadIdFilter.Description}" Value="{Binding LogFiltering.ThreadIdFilter, Mode=TwoWay}" VerticalAlignment="Center" Watermark="{DynamicResource String/LogProperty.ThreadId}"/>
-							<Button Classes="TextBox_InPlaceAction" Command="{Binding #logThreadIdFilterTextBox.Clear}" IsVisible="{Binding #logThreadIdFilterTextBox.Text, Converter={x:Static aConverters:StringConverters.IsNotNullOrEmpty}}" ToolTip.Tip="{DynamicResource String/Common.Clear}">
-								<Image Classes="Icon" Source="{StaticResource Image/Icon.Close}"/>
-							</Button>
+							<Panel Classes="TextBox_InPlaceActions">
+								<Button Classes="TextBox_InPlaceAction" Command="{Binding #logThreadIdFilterTextBox.Clear}" IsVisible="{Binding #logThreadIdFilterTextBox.Text, Converter={x:Static aConverters:StringConverters.IsNotNullOrEmpty}}" ToolTip.Tip="{DynamicResource String/Common.Clear}">
+									<Image Classes="Icon" Source="{StaticResource Image/Icon.Close}"/>
+								</Button>
+							</Panel>
 						</Panel>
 
 						<!-- Filters combinatin mode -->
@@ -606,8 +610,8 @@
 
 						<!-- Text filter -->
 						<Panel Name="logTextFilterTextBoxPanel" HorizontalAlignment="Stretch" Margin="{StaticResource Thickness/ToolBar.Item.Margin}" VerticalAlignment="Center">
-							<asControls:RegexTextBox Name="logTextFilterTextBox" Classes="RegexTextBox_InvalidText" IgnoreCase="{Binding LogFiltering.IgnoreTextFilterCase}" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" Object="{Binding LogFiltering.TextFilter, Mode=TwoWay}" Padding="{StaticResource Thickness/TextBox.Padding.WithInPlaceAction}" ToolTip.Tip="{DynamicResource String/SessionView.LogTextFilter.ToolTip}" Watermark="{DynamicResource String/SessionView.LogTextFilter.Watermark}"/>
-							<StackPanel HorizontalAlignment="Right" Orientation="Horizontal" VerticalAlignment="Center">
+							<asControls:RegexTextBox Name="logTextFilterTextBox" Classes="RegexTextBox_InvalidText" IgnoreCase="{Binding LogFiltering.IgnoreTextFilterCase}" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" Object="{Binding LogFiltering.TextFilter, Mode=TwoWay}" Padding="{StaticResource Thickness/TextBox.Padding.WithInPlaceAction.1}" ToolTip.Tip="{DynamicResource String/SessionView.LogTextFilter.ToolTip}" Watermark="{DynamicResource String/SessionView.LogTextFilter.Watermark}"/>
+							<StackPanel Classes="TextBox_InPlaceActions">
 								<Button Name="clearLogTextFilterButton" Classes="TextBox_InPlaceAction" Command="{Binding #logTextFilterTextBox.Clear}" IsVisible="{Binding #logTextFilterTextBox.Text, Converter={x:Static aConverters:StringConverters.IsNotNullOrEmpty}}" ToolTip.Tip="{DynamicResource String/Common.Clear}">
 									<Image Classes="Icon" Source="{StaticResource Image/Icon.Close}"/>
 								</Button>
