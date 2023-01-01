@@ -452,7 +452,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.DataSourceProvider">資料來源</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.DataSourceProvider.ProVersionOnly">(專業版)</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Description">描述</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.DuplicateLogLevelMapEntry">已經定義從 '{0}' 的轉換。</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.DuplicateLogLevelMapEntry">已經定義從「{0}」的轉換。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.FormatDescription">格式說明</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Icon">圖示</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.IconColor">圖示色彩</sys:String>
@@ -502,7 +502,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Title.Edit">編輯日誌類型</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.VisibleLogProperties">顯示的日誌屬性</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.VisibleLogProperties.Description">指定有哪些日誌屬性可以在檢視器中看見。</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.VisibleLogPropertiesWithoutLogPatterns">您定義了 '顯示的日誌屬性' 但沒有定義 '日誌行格式'，這可能導致日誌顯示錯誤。您是否要定義 '日誌行格式'？</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.VisibleLogPropertiesWithoutLogPatterns">您定義了「顯示的日誌屬性」但沒有定義「日誌行格式」，這可能導致日誌顯示錯誤。您是否要定義「日誌行格式」？</sys:String>
 
 	<!-- LogProfileSelectionContextMenu -->
 	<sys:String x:Key="String/LogProfileSelectionContextMenu.ConfirmEditingBuiltInLogProfile">「{0}」是一個內建日誌類型，編輯完成後將建立新的日誌類型。</sys:String>

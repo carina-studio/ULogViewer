@@ -455,7 +455,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.DataSourceProvider">数据来源</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.DataSourceProvider.ProVersionOnly">(专业版)</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Description">描述</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.DuplicateLogLevelMapEntry">已经定义从 '{0}' 的转换。</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.DuplicateLogLevelMapEntry">已经定义从「{0}」的转换。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.FormatDescription">格式说明</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Icon">图标</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.IconColor">图标色彩</sys:String>
@@ -505,7 +505,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Title.Edit">编辑日志类型</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.VisibleLogProperties">显示的日志类型</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.VisibleLogProperties.Description">指定有哪些日志属性可以编辑器中看到。</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.VisibleLogPropertiesWithoutLogPatterns">您定义了 '显示的日志属性' 但没有定义 '日志行格式'，这可能导致日志显示错误。您是否要定义 '日志行格式'？</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.VisibleLogPropertiesWithoutLogPatterns">您定义了「显示的日志属性」但没有定义「日志行格式」，这可能导致日志显示错误。您是否要定义「日志行格式」？</sys:String>
 
 	<!-- LogProfileSelectionContextMenu -->
 	<sys:String x:Key="String/LogProfileSelectionContextMenu.ConfirmEditingBuiltInLogProfile">「{0}」是一个内建日志类型，编辑完成后将建立新的日志类型。</sys:String>
@@ -520,7 +520,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.ConfirmRemovingLogProfile">您是否确定要移除日志类型「{0}」？</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.EditLogProfile">编辑日志类型</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.ExportLogProfile">导出日志类型</sys:String>
-	<sys:String x:Key="String/LogProfileSelectionDialog.FailedToExportLogProfile">无法输出日志类型至'{0}'。</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionDialog.FailedToExportLogProfile">无法输出日志类型至 '{0}'。</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.FailedToImportLogProfile">无法从 '{0}' 输出日志类型。</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.ImportLogProfile">导入…</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.IsAdministratorNeeded">需要系统管理员身份</sys:String>
