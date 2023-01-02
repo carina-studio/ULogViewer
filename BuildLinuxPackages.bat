@@ -54,9 +54,9 @@ REM Build packages
     echo .
 
     REM Clear project
-    if exist %APP_NAME%\bin\%CONFIG%\%FRAMEWORK%\%%r\publish (
+    if exist %APP_NAME%\bin\%CONFIG%\%FRAMEWORK%\%%r\publish\ (
         echo Delete output directory '%APP_NAME%\bin\%CONFIG%\%FRAMEWORK%\%%r\publish'
-        del /Q %APP_NAME%\bin\%CONFIG%\%FRAMEWORK%\%%r\publish
+        rmdir %APP_NAME%\bin\%CONFIG%\%FRAMEWORK%\%%r\publish /s /q
     )
     dotnet restore %APP_NAME% -r %%r
     if %ERRORLEVEL% neq 0 ( 

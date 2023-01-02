@@ -54,9 +54,9 @@ REM Build packages
     echo .
 
     REM Clear project
-    if exist %APP_NAME%\bin\%CONFIG%\%FRAMEWORK%\%%r\publish (
+    if exist %APP_NAME%\bin\%CONFIG%\%FRAMEWORK%\%%r\publish\ (
         echo Delete output directory '%APP_NAME%\bin\%CONFIG%\%FRAMEWORK%\%%r\publish'
-        del /Q %APP_NAME%\bin\%CONFIG%\%FRAMEWORK%\%%r\publish
+        rmdir %APP_NAME%\bin\%CONFIG%\%FRAMEWORK%\%%r\publish /s /q
     )
 
     REM Build project
@@ -77,9 +77,6 @@ REM Build packages
     )
     if exist %APP_NAME%\bin\%CONFIG%\%FRAMEWORK%\%%r\publish\System.Windows.Forms.Design.dll (
         del /Q %APP_NAME%\bin\%CONFIG%\%FRAMEWORK%\%%r\publish\System.Windows.Forms.Design.dll
-    )
-    if exist %APP_NAME%\bin\%CONFIG%\%FRAMEWORK%\%%r\publish\XRandR (
-        del /Q %APP_NAME%\bin\%CONFIG%\%FRAMEWORK%\%%r\publish\XRandR
     )
 
     REM Generate package
