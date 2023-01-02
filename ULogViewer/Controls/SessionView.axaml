@@ -822,6 +822,15 @@
 			<Border Background="{DynamicResource Brush/SessionView.LogHeader.Background}" Classes="StatusBar" Grid.Row="2" IsVisible="{Binding HasLogsDuration}">
 				<Grid ColumnDefinitions="*,Auto">
 
+					<Grid.Styles>
+						<Style Selector="Button.StatusBar_Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+							<Setter Property="TextBlock.Foreground" Value="{DynamicResource TextControlForeground}"/>
+						</Style>
+						<Style Selector="Button.StatusBar_Button:pressed /template/ ContentPresenter#PART_ContentPresenter">
+							<Setter Property="TextBlock.Foreground" Value="{DynamicResource TextControlForeground}"/>
+						</Style>
+					</Grid.Styles>
+
 					<!-- Logs -->
 					<StackPanel ClipToBounds="True" Orientation="Horizontal">
 
