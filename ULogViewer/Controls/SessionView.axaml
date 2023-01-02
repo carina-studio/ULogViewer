@@ -509,20 +509,6 @@
 							<Image Classes="Icon" Source="{StaticResource Image/Icon.Refresh}"/>
 						</Button>
 
-						<!-- Scroll to latest log -->
-						<ToggleButton Classes="ToolBar_ToggleButton" IsChecked="{Binding $parent[UserControl].IsScrollingToLatestLogNeeded, Mode=TwoWay}" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" ToolTip.Tip="{DynamicResource String/SessionView.ScrollToLatestLog}">
-							<Panel>
-								<Panel Name="scrollToBottomLogIconPanel" IsVisible="{Binding LogProfile.SortDirection, Converter={x:Static abConverters:ObjectConverters.IsEquivalentTo}, ConverterParameter={x:Static app:SortDirection.Ascending}}">
-									<Image Classes="Icon" Source="{StaticResource Image/ToBottom}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
-									<Image Classes="Icon" Source="{StaticResource Image/ToBottom.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
-								</Panel>
-								<Panel IsVisible="{Binding !#scrollToBottomLogIconPanel.IsVisible}">
-									<Image Classes="Icon" Source="{StaticResource Image/ToTop}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
-									<Image Classes="Icon" Source="{StaticResource Image/ToTop.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
-								</Panel>
-							</Panel>
-						</ToggleButton>
-
 						<!-- Select log by timestamp -->
 						<Button Classes="ToolBar_Button" Command="{Binding $parent[UserControl].SelectNearestLogByTimestamp}" IsEnabled="{Binding HasLogs}" IsVisible="{Binding AreLogsSortedByTimestamp}" ToolTip.Tip="{DynamicResource String/SessionView.SelectNearestLogByTimestamp}">
 							<Image Classes="Icon" Source="{StaticResource Image/FindDate}"/>
@@ -541,7 +527,7 @@
 								</ia:Interaction.Behaviors>
 							</Image>
 						</Button>
-						
+
 					</StackPanel>
 
 					<!-- Other log filters -->
@@ -757,12 +743,44 @@
 		<Grid Name="logListBoxContainer" Background="{x:Static Brushes.Transparent}" DragDrop.AllowDrop="True" Grid.Row="1" RowDefinitions="Auto,*,Auto">
 
 			<!-- Header -->
-			<Border Background="{DynamicResource Brush/SessionView.LogHeader.Background}">
+			<Panel Background="{DynamicResource Brush/SessionView.LogHeader.Background}">
+
+				<Panel.Styles>
+					<Style Selector="ToggleButton.ToolBar_ToggleButton">
+						<Setter Property="Height" Value="{StaticResource Double/SessionView.SidePanel.Header.Button.Size}"/>
+						<Setter Property="Margin" Value="1,0,0,0"/>
+						<Setter Property="Padding" Value="{StaticResource Thickness/SessionView.SidePanel.Header.Button.Padding}"/>
+						<Setter Property="Width" Value="{StaticResource Double/SessionView.SidePanel.Header.Button.Size}"/>
+					</Style>
+				</Panel.Styles>
+
+				<!-- Columns -->
 				<Grid Name="logHeaderContainer">
 					<TextBlock Margin="{StaticResource Thickness/SessionView.LogHeader.Margin}" Padding="{StaticResource Thickness/SessionView.LogHeader.Padding}" Text=" "/>
 					<Grid Name="logHeaderGrid"/>
 				</Grid>
-			</Border>
+
+				<!-- Actions -->
+				<Border Background="{DynamicResource Brush/SessionView.LogHeader.Background}" HorizontalAlignment="Right" VerticalAlignment="Center">
+					<StackPanel Margin="{StaticResource Thickness/SessionView.SidePanel.Header.Padding}" Orientation="Horizontal">
+
+						<!-- Scroll to latest log -->
+						<ToggleButton Classes="ToolBar_ToggleButton" IsChecked="{Binding $parent[UserControl].IsScrollingToLatestLogNeeded, Mode=TwoWay}" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" ToolTip.Tip="{DynamicResource String/SessionView.ScrollToLatestLog}">
+							<Panel>
+								<Panel Name="scrollToBottomLogIconPanel" IsVisible="{Binding LogProfile.SortDirection, Converter={x:Static abConverters:ObjectConverters.IsEquivalentTo}, ConverterParameter={x:Static app:SortDirection.Ascending}}">
+									<Image Classes="Icon" Source="{StaticResource Image/ToBottom}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
+									<Image Classes="Icon" Source="{StaticResource Image/ToBottom.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
+								</Panel>
+								<Panel IsVisible="{Binding !#scrollToBottomLogIconPanel.IsVisible}">
+									<Image Classes="Icon" Source="{StaticResource Image/ToTop}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
+									<Image Classes="Icon" Source="{StaticResource Image/ToTop.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
+								</Panel>
+							</Panel>
+						</ToggleButton>
+
+					</StackPanel>
+				</Border>
+			</Panel>
 
 			<!-- ListBox -->
 			<asControls:ListBox Classes="Log" Name="logListBox" AutoScrollToSelectedItem="False" Background="{DynamicResource Brush/WorkingArea.Background}" BorderThickness="0" ContextMenu="{StaticResource logActionMenu}" CornerRadius="0" DoubleClickOnItem="OnLogListBoxDoubleClickOnItem" Grid.Row="1" HorizontalAlignment="Stretch" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" Items="{Binding Logs}" ScrollViewer.HorizontalScrollBarVisibility="Visible" SelectedItems="{Binding LogSelection.SelectedLogs}" SelectionChanged="OnLogListBoxSelectionChanged" SelectionMode="Multiple" VirtualizationMode="Simple">
