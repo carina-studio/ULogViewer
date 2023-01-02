@@ -826,7 +826,7 @@
 						<Image Classes="StatusBar_IconWithText" Source="{StaticResource Image/Calendar}"/>
 
 						<!-- Starting point -->
-						<TextBlock Classes="StatusBar_TextBlock" Foreground="{DynamicResource TextControlForeground}" Text="{Binding LogsDurationStartingString}" ToolTip.Placement="Right" ToolTip.Tip="{DynamicResource String/SessionView.LogsDurationStartingPoint}"/>
+						<Button Classes="StatusBar_Button" Command="{Binding LogSelection.SelectLogDurationStartingLogCommand}" Content="{Binding LogsDurationStartingString}" Foreground="{DynamicResource TextControlForeground}" ToolTip.Placement="Right" ToolTip.Tip="{DynamicResource String/SessionView.LogsDurationStartingPoint}"/>
 
 						<!-- Duration -->
 						<Image Classes="StatusBar_Icon" Margin="{StaticResource Thickness/SessionView.LogsTimeInfoPanel.Arrow.Margin}" Source="{StaticResource Image/Icon.Forward}"/>
@@ -834,7 +834,7 @@
 						<Image Classes="StatusBar_Icon" Margin="{StaticResource Thickness/SessionView.LogsTimeInfoPanel.Arrow.Margin}" Source="{StaticResource Image/Icon.Forward}"/>
 
 						<!-- Ending point -->
-						<TextBlock Classes="StatusBar_TextBlock" Foreground="{DynamicResource TextControlForeground}" Text="{Binding LogsDurationEndingString}" ToolTip.Placement="Left" ToolTip.Tip="{DynamicResource String/SessionView.LogsDurationEndingPoint}"/>
+						<Button Classes="StatusBar_Button" Command="{Binding LogSelection.SelectLogDurationEndingLogCommand}" Content="{Binding LogsDurationEndingString}" Foreground="{DynamicResource TextControlForeground}" ToolTip.Placement="Left" ToolTip.Tip="{DynamicResource String/SessionView.LogsDurationEndingPoint}"/>
 
 					</StackPanel>
 

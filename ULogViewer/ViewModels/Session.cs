@@ -290,6 +290,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			}, 
 			validate: it => double.IsFinite(it));
 		/// <summary>
+		/// Property of <see cref="MaxLogTimeSpan"/>.
+		/// </summary>
+		public static readonly ObservableProperty<TimeSpan?> MaxLogTimeSpanProperty = ObservableProperty.Register<Session, TimeSpan?>(nameof(MaxLogTimeSpan));
+		/// <summary>
+		/// Property of <see cref="MinLogTimeSpan"/>.
+		/// </summary>
+		public static readonly ObservableProperty<TimeSpan?> MinLogTimeSpanProperty = ObservableProperty.Register<Session, TimeSpan?>(nameof(MinLogTimeSpan));
+		/// <summary>
 		/// Property of <see cref="Title"/>.
 		/// </summary>
 		public static readonly ObservableProperty<string?> TitleProperty = ObservableProperty.Register<Session, string?>(nameof(Title));
@@ -920,6 +928,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					else
 						duration = CalculateDurationBetweenLogs(lastLog, firstLog, out minTimeSpan, out maxTimeSpan, out earliestTimestamp, out latestTimestamp);
 					this.SetValue(LogsDurationProperty, duration);
+					this.SetValue(MinLogTimeSpanProperty, minTimeSpan);
+					this.SetValue(MaxLogTimeSpanProperty, maxTimeSpan);
 					this.SetValue(EarliestLogTimestampProperty, earliestTimestamp);
 					this.SetValue(LatestLogTimestampProperty, latestTimestamp);
 					try
@@ -2786,6 +2796,18 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			else
 				this.Logger.LogTrace("{unmatchedMarkedLogInfoCount} marked log(s) are unmatched", this.unmatchedMarkedLogInfos.Count);
 		}
+
+
+		/// <summary>
+		/// Get maximum time span of log in <see cref="Logs"/>.
+		/// </summary>
+		public TimeSpan? MaxLogTimeSpan { get => this.GetValue(MaxLogTimeSpanProperty); }
+
+
+		/// <summary>
+		/// Get minimum time span of log in <see cref="Logs"/>.
+		/// </summary>
+		public TimeSpan? MinLogTimeSpan { get => this.GetValue(MinLogTimeSpanProperty); }
 
 
 		// Called when logs in allLogs has been changed.

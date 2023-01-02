@@ -52,10 +52,17 @@ class LogSelectionViewModel : SessionComponent
 
     // Fields.
     INotifyCollectionChanged? attachedLogs;
+    readonly MutableObservableBoolean canSelectLogsDurationEndingLog = new();
+    readonly MutableObservableBoolean canSelectLogsDurationStartingLog = new();
+    readonly IDisposable earliestLogTimestampObserverToken;
+    readonly IDisposable latestLogTimestampObserverToken;
     readonly IDisposable logsObserverToken;
+    readonly IDisposable maxLogTimeSpanObserverToken;
+    readonly IDisposable minLogTimeSpanObserverToken;
     readonly ScheduledAction notifySelectedLogsChangedAction;
     readonly ScheduledAction reportSelectedLogsTimeInfoAction;
     readonly SortedObservableList<DisplayableLog> selectedLogs;
+    readonly ScheduledAction updateCanSelectLogsDurationStartingEndingLogsAction;
 
 
     /// <summary>
@@ -74,6 +81,8 @@ class LogSelectionViewModel : SessionComponent
             hasSelectedLogsObservable, 
             session.GetValueAsObservable(Session.AreFileBasedLogsProperty)));
         this.SelectAllLogsCommand = new Command(this.SelectAllLogs, session.GetValueAsObservable(Session.HasLogsProperty));
+        this.SelectLogDurationEndingLogCommand = new Command(this.SelectLogDurationEndingLog, this.canSelectLogsDurationEndingLog);
+        this.SelectLogDurationStartingLogCommand = new Command(this.SelectLogDurationStartingLog, this.canSelectLogsDurationStartingLog);
         this.SelectMarkedLogsCommand = new Command(this.SelectMarkedLogs, session.GetValueAsObservable(Session.HasMarkedLogsProperty));
 
         // create collection
@@ -119,8 +128,17 @@ class LogSelectionViewModel : SessionComponent
                 this.ResetValue(LatestSelectedLogTimestampProperty);
             }
         });
+        this.updateCanSelectLogsDurationStartingEndingLogsAction = new(() =>
+        {
+            this.canSelectLogsDurationEndingLog.Update(this.Session.LatestLogTimestamp.HasValue || this.Session.MaxLogTimeSpan.HasValue);
+            this.canSelectLogsDurationStartingLog.Update(this.Session.EarliestLogTimestamp.HasValue || this.Session.MinLogTimeSpan.HasValue);
+        });
         
         // attach to session
+        this.earliestLogTimestampObserverToken = session.GetValueAsObservable(Session.EarliestLogTimestampProperty).Subscribe(_ =>
+            this.updateCanSelectLogsDurationStartingEndingLogsAction.Schedule());
+        this.latestLogTimestampObserverToken = session.GetValueAsObservable(Session.LatestLogTimestampProperty).Subscribe(_ =>
+            this.updateCanSelectLogsDurationStartingEndingLogsAction.Schedule());
         this.logsObserverToken = session.GetValueAsObservable(Session.LogsProperty).Subscribe(logs =>
         {
             if (this.attachedLogs != null)
@@ -130,6 +148,10 @@ class LogSelectionViewModel : SessionComponent
             if (this.attachedLogs != null)
                 this.attachedLogs.CollectionChanged += this.OnLogsChanged;
         });
+        this.maxLogTimeSpanObserverToken = session.GetValueAsObservable(Session.MaxLogTimeSpanProperty).Subscribe(_ =>
+            this.updateCanSelectLogsDurationStartingEndingLogsAction.Schedule());
+        this.minLogTimeSpanObserverToken = session.GetValueAsObservable(Session.MinLogTimeSpanProperty).Subscribe(_ =>
+            this.updateCanSelectLogsDurationStartingEndingLogsAction.Schedule());
     }
 
 
@@ -186,7 +208,11 @@ class LogSelectionViewModel : SessionComponent
             this.attachedLogs.CollectionChanged -= this.OnLogsChanged;
             this.attachedLogs = null;
         }
+        this.earliestLogTimestampObserverToken.Dispose();
+        this.latestLogTimestampObserverToken.Dispose();
         this.logsObserverToken.Dispose();
+        this.maxLogTimeSpanObserverToken.Dispose();
+        this.minLogTimeSpanObserverToken.Dispose();
 
         // call base
         base.Dispose(disposing);
@@ -220,6 +246,9 @@ class LogSelectionViewModel : SessionComponent
     /// <inheritdoc/>
     public override long MemorySize => base.MemorySize
         + Memory.EstimateCollectionInstanceSize(IntPtr.Size, this.selectedLogs.Count);
+    
+
+    
     
 
     // Called when collection of visible logs changed.
@@ -361,6 +390,60 @@ class LogSelectionViewModel : SessionComponent
     /// Get duration between selected logs.
     /// </summary>
     public TimeSpan? SelectedLogsDuration { get => this.GetValue(SelectedLogsDurationProperty); }
+
+
+    // Select the log which represents the ending point of total duration of logs.
+    void SelectLogDurationEndingLog()
+    {
+        // check state
+        var session = this.Session;
+        var profile = this.LogProfile;
+        if (profile == null)
+            return;
+        var logs = session.Logs;
+        if (logs.IsEmpty())
+            return;
+        if (!session.MaxLogTimeSpan.HasValue && !session.LatestLogTimestamp.HasValue)
+            return;
+        this.selectedLogs.Clear();
+        if (profile.SortDirection == SortDirection.Ascending)
+            this.selectedLogs.Add(logs[^1]);
+        else
+            this.selectedLogs.Add(logs[0]);
+    }
+
+
+    /// <summary>
+    /// Command to select the log which represents the ending point of total duration of logs.
+    /// </summary>
+    public ICommand SelectLogDurationEndingLogCommand { get; }
+
+
+    // Select the log which represents the starting point of total duration of logs.
+    void SelectLogDurationStartingLog()
+    {
+        // check state
+        var session = this.Session;
+        var profile = this.LogProfile;
+        if (profile == null)
+            return;
+        var logs = session.Logs;
+        if (logs.IsEmpty())
+            return;
+        if (!session.MinLogTimeSpan.HasValue && !session.EarliestLogTimestamp.HasValue)
+            return;
+        this.selectedLogs.Clear();
+        if (profile.SortDirection == SortDirection.Ascending)
+            this.selectedLogs.Add(logs[0]);
+        else
+            this.selectedLogs.Add(logs[^1]);
+    }
+
+
+    /// <summary>
+    /// Command to select the log which represents the starting point of total duration of logs.
+    /// </summary>
+    public ICommand SelectLogDurationStartingLogCommand { get; }
 
 
     /// <summary>
