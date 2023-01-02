@@ -2,12 +2,13 @@
  ---
 
 ## New Features
-+ Syntax highlighting for **Regular Expression**, **Date and Time Format** and **Time Span Format**.
++ Syntax highlighting for **Regular Expression**, **Date and Time Format**, **Time Span Format**, **Query String (SQL)** and **Command-Line Shell Command**.
 + Highlighting text sequences in logs which are matched by text filter.
 + Highlighting PID and TID which are same as PID and TID of selected log.
 + Supporting running commands by specified command-line shell when using **'Standard Output (stdout)'** log data source.
 + Supporting right-clicking on **'Create new tab'** button to select log profile and set to new tab directly.
 + Adding button beside **'Select/Change log profile'** button for opening menu to select log profile quickly.
++ Supporting clicking on **'Earliest timestamp of log/Minimum time span of log'** or **'Latest timestamp of log/Maximum time span of log'** to select the log.
 + Supporting creating new operation duration analysis rule which begins from or is ended with another rule.
 + Supporting converting to log level from raw value of specified log property.
 + Supporting different colors for icons of log profile, log analysis rule set and log analysis script.
@@ -29,6 +30,7 @@
     + Roboto Mono
     + Source Code Pro
 
++ Supporting customizing text color of each visible log property.
 + Adding **'Use compact layout'** setting for device with small screen.
 + Supporting **Python 3.4** as script language.
 + Adding **'Quantity'** and **'Byte size'** to each result of log analysis.
