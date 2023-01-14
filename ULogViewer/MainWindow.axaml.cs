@@ -52,6 +52,7 @@ namespace CarinaStudio.ULogViewer
 		readonly ScheduledAction focusOnTabItemContentAction;
 		readonly ScheduledAction selectAndSetLogProfileAction;
 		readonly DataTemplate sessionTabItemHeaderTemplate;
+		readonly Dictionary<SessionView, List<IDisposable>> sessionViewPropertyObserverTokens = new();
 		readonly Stopwatch stopwatch = new();
 		readonly ScheduledAction updateSysTaskBarAction;
 		readonly AppSuite.Controls.TabControl tabControl;
@@ -304,14 +305,18 @@ namespace CarinaStudio.ULogViewer
 			// create session view
 			var sessionView = new SessionView().Also(it =>
 			{
-				it.GetObservable(SessionView.AreAllTutorialsShownProperty).Subscribe(shown =>
+				var propertyObserverTokens = new List<IDisposable>()
 				{
-					if (shown)
-						this.selectAndSetLogProfileAction.Schedule();
-				});
+					it.GetObservable(SessionView.AreAllTutorialsShownProperty).Subscribe(shown =>
+					{
+						if (shown)
+							this.selectAndSetLogProfileAction.Schedule();
+					}),
+				};
 				it.DataContext = session;
 				it.HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch;
 				it.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Stretch;
+				this.sessionViewPropertyObserverTokens[it] = propertyObserverTokens;
 			});
 
 			// create tab item
@@ -530,6 +535,14 @@ namespace CarinaStudio.ULogViewer
 			// cancel activating Pro-version
 			if (MainWindowToActivateProVersion == this)
 				MainWindowToActivateProVersion = null;
+			
+			// detach from all SessionViews
+			foreach (var tokens in this.sessionViewPropertyObserverTokens.Values)
+			{
+				foreach (var token in tokens)
+					token.Dispose();
+			}
+			this.sessionViewPropertyObserverTokens.Clear();
 
 			// call base
 			base.OnClosed(e);
@@ -889,6 +902,16 @@ namespace CarinaStudio.ULogViewer
 						{
 							this.DisposeSessionTabItem((TabItem)this.tabItems[startIndex + i].AsNonNull());
 							var startTime = this.stopwatch.IsRunning ? this.stopwatch.ElapsedMilliseconds : 0;
+							var tabItem = this.tabItems[startIndex + i];
+							if (tabItem.Content is SessionView sessionView)
+							{
+								if (this.sessionViewPropertyObserverTokens.TryGetValue(sessionView, out var tokens))
+								{
+									this.sessionViewPropertyObserverTokens.Remove(sessionView);
+									foreach (var token in tokens)
+										token.Dispose();
+								}
+							}
 							this.tabItems.RemoveAt(startIndex + i);
 							if (startTime > 0)
 								this.Logger.LogTrace("[Performance ] Took {duration} ms to remove tab from position {index}", this.stopwatch.ElapsedMilliseconds - startTime, startIndex + i);
