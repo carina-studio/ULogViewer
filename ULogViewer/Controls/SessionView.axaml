@@ -374,6 +374,11 @@
 						<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Tool.Outline}"/>
 					</MenuItem.Icon>
 				</MenuItem>
+				<MenuItem Command="{Binding $parent[Window].Application.ShowSelfTestingWindow}" Header="{DynamicResource String/Common.SelfTesting}" IsVisible="{Binding $parent[UserControl].Application.IsTestingMode}">
+					<MenuItem.Icon>
+						<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Lab}"/>
+					</MenuItem.Icon>
+				</MenuItem>
 			</MenuItem>
 			<Separator/>
 			<MenuItem Command="{Binding $parent[UserControl].Application.ShowApplicationInfoDialog}" Header="{DynamicResource String/SessionView.AppInfo}">
