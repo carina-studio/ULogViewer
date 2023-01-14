@@ -734,10 +734,7 @@ namespace CarinaStudio.ULogViewer
 			{
 				case AppSuite.Controls.ApplicationOptionsDialogResult.RestartApplicationNeeded:
 					this.Logger.LogWarning("Restart application");
-					if (this.IsDebugMode)
-						this.Restart($"{App.DebugArgument} {App.RestoreMainWindowsArgument}", this.IsRunningAsAdministrator);
-					else
-						this.Restart(App.RestoreMainWindowsArgument, this.IsRunningAsAdministrator);
+					this.Restart(this.IsRunningAsAdministrator);
 					break;
 				case AppSuite.Controls.ApplicationOptionsDialogResult.RestartMainWindowsNeeded:
 					this.Logger.LogWarning("Restart main windows");

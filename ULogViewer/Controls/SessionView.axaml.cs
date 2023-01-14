@@ -3947,12 +3947,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		void RestartAsAdministrator()
 		{
 			if (this.canRestartAsAdmin.Value)
-			{
-				if (this.Application.IsDebugMode)
-					this.Application.Restart($"{App.DebugArgument} {App.RestoreMainWindowsArgument}", true);
-				else
-					this.Application.Restart(App.RestoreMainWindowsArgument, true);
-			}
+				App.Current.Restart(true);
 		}
 
 
