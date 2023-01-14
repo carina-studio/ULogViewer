@@ -3827,6 +3827,13 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		/// <summary>
+		/// Perform full GC.
+		/// </summary>
+		public void PerformGC() =>
+			this.Application.PerformGC(GCCollectionMode.Forced);
+
+
+		/// <summary>
 		/// Sorted predefined log text filters.
 		/// </summary>
 		public IList<PredefinedLogTextFilter> PredefinedLogTextFilters { get => this.predefinedLogTextFilters; }

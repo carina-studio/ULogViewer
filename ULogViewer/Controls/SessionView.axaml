@@ -1051,6 +1051,13 @@
 							<TextBlock Classes="StatusBar_TextBlock" Text="/" VerticalAlignment="Center"/>
 							<TextBlock Classes="StatusBar_TextBlock" Background="{x:Static Brushes.Transparent}" Text="{Binding $parent[UserControl].Application.ProcessInfo.PrivateMemoryUsage, Converter={x:Static asConverters:FileSizeConverter.Default}}" ToolTip.Placement="Left" ToolTip.Tip="{DynamicResource String/SessionView.MemoryUsage}" VerticalAlignment="Center"/>
 						</StackPanel>
+						<Button Classes="StatusBar_Button" Command="{Binding $parent[UserControl].PerformGC}" IsVisible="{Binding $parent[UserControl].Application.IsDebugMode}" ToolTip.Placement="Left" ToolTip.Tip="{DynamicResource String/SessionView.PerformGC}">
+							<Image>
+								<DrawingImage>
+									<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Broom}"/>
+								</DrawingImage>
+							</Image>
+						</Button>
 					</StackPanel>
 
 				</Grid>

@@ -1009,6 +1009,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.NoFilePathDropped">請拖放有效的檔案。</sys:String>
 	<sys:String x:Key="String/SessionView.OtherActions">其他動作</sys:String>
 	<sys:String x:Key="String/SessionView.PauseResumeLogsReading">暫停/繼續讀取日誌 (P)</sys:String>
+	<sys:String x:Key="String/SessionView.PerformGC">強制垃圾收集 (GC)</sys:String>
 	<sys:String x:Key="String/SessionView.PredefinedLogTextFilters">已定義的文字篩選 (Ctrl+P)</sys:String>
 	<sys:String x:Key="String/SessionView.PredefinedLogTextFiltersPopup.Header">文字篩選 (可多選)</sys:String>
 	<sys:String x:Key="String/SessionView.ProVersionNeeded">需升級至專業版以啟用此功能</sys:String>
