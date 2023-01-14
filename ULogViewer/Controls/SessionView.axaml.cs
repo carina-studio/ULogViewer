@@ -2538,6 +2538,12 @@ namespace CarinaStudio.ULogViewer.Controls
 				});
 			});
 
+			// attach to predefined log text filter list
+			this.predefinedLogTextFilters.AddAll(PredefinedLogTextFilterManager.Default.Filters);
+			foreach (var filter in PredefinedLogTextFilterManager.Default.Filters)
+				this.AttachToPredefinedLogTextFilter(filter);
+			((INotifyCollectionChanged)PredefinedLogTextFilterManager.Default.Filters).CollectionChanged += this.OnPredefinedLogTextFiltersChanged;
+
 			// add event handlers
 			this.Application.StringsUpdated += this.OnApplicationStringsUpdated;
 			this.Application.ProductManager.ProductActivationChanged += this.OnProductActivationChanged;
@@ -2557,12 +2563,6 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// check script running
 			this.SetValue<bool>(EnableRunningScriptProperty, this.Settings.GetValueOrDefault(AppSuite.SettingKeys.EnableRunningScript));
-
-			// setup predefined log text filter list
-			this.predefinedLogTextFilters.AddAll(PredefinedLogTextFilterManager.Default.Filters);
-			foreach (var filter in PredefinedLogTextFilterManager.Default.Filters)
-				this.AttachToPredefinedLogTextFilter(filter);
-			((INotifyCollectionChanged)PredefinedLogTextFilterManager.Default.Filters).CollectionChanged += this.OnPredefinedLogTextFiltersChanged;
 
 			// select log files or working directory
 			if (this.canSetIPEndPoint.Value
