@@ -732,8 +732,8 @@ return False</sys:String>
 
 	<!-- PatternEditor -->
 	<sys:String x:Key="String/PatternEditor.ConfirmReplacingPattern">您是否确定要取代此格式？</sys:String>
-	<sys:String x:Key="String/PatternEditor.Tutorial.ClickButtonToEditPattern">点击这里编辑格式。</sys:String>
-	<sys:String x:Key="String/PatternEditor.Tutorial.DoubleClickToEditPattern">您也可以双击这里以编辑格式。</sys:String>
+	<sys:String x:Key="String/PatternEditor.EditDetailedly">详细编辑格式</sys:String>
+	<sys:String x:Key="String/PatternEditor.Tutorial.ClickButtonToEditPatternDetailedly">点击这里以详细编辑格式。</sys:String>
 
 	<!-- PeekQueueToVarEditorDialog -->
 	<sys:String x:Key="String/PeekQueueToVarEditorDialog.Title">从队列复制值至变量</sys:String>

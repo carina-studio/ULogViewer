@@ -1,11 +1,10 @@
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Input;
+using Avalonia.Data;
 using Avalonia.LogicalTree;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using CarinaStudio.AppSuite.Controls;
-using CarinaStudio.AppSuite.Controls.Highlighting;
 using CarinaStudio.Configuration;
 using CarinaStudio.Input.Platform;
 using CarinaStudio.Threading;
@@ -41,14 +40,14 @@ partial class PatternEditor : CarinaStudio.Controls.UserControl<IULogViewerAppli
 	// Static fields.
 	static readonly SettingKey<bool> IsClickButtonToEditPatternTutorialShownKey = new("PatternEditor.IsClickButtonToEditPatternTutorialShown");
 	static readonly SettingKey<bool> IsClickButtonToEditPatternTutorialShownLegacyKey = new("RegexEditorDialog.IsClickButtonToEditPatternTutorialShown");
-	static readonly SettingKey<bool> IsDoubleClickToEditPatternTutorialShownKey = new("PatternEditor.IsDoubleClickToEditPatternTutorialShown");
 
 
 	// Fields.
 	readonly Button editPatternButton;
 	bool hasDialog;
 	Regex? pattern;
-	readonly TextBox patternTextBox;
+	readonly RegexTextBox patternTextBox;
+	readonly ScheduledAction updatePredefinedCapturingGroupsAction;
 	Avalonia.Controls.Window? window;
 
 
@@ -57,41 +56,45 @@ partial class PatternEditor : CarinaStudio.Controls.UserControl<IULogViewerAppli
 	/// </summary>
 	public PatternEditor()
 	{
-		this.RegexSyntaxHighlightingDefinitionSet = RegexSyntaxHighlighting.CreateDefinitionSet(this.Application);
 		AvaloniaXamlLoader.Load(this);
 		this.editPatternButton = this.Get<Button>(nameof(editPatternButton));
-		this.patternTextBox = this.Get<TextBox>(nameof(patternTextBox)).Also(it =>
+		this.patternTextBox = this.Get<RegexTextBox>(nameof(patternTextBox)).Also(it =>
 		{
-			var isPointerPressed = false;
-			it.DoubleTapped += (_, e) => 
+			it.GetObservable(RegexTextBox.IsTextValidProperty).Subscribe(isValid =>
 			{
-				if (!isPointerPressed)
-					return;
-				this.SynchronizationContext.Post(it.ClearSelection);
-				this.SynchronizationContext.PostDelayed(() =>
-				{
-					if (!isPointerPressed)
-						this.EditPattern();
-				}, 300);
-			};
-			this.AddHandler(PointerPressedEvent, (object? sender, PointerPressedEventArgs e) =>
+				this.SetAndRaise(PatternProperty, ref this.pattern, isValid ? it.Object : null);
+			});
+			it.GetObservable(RegexTextBox.ObjectProperty).Subscribe(pattern =>
 			{
-				var point = e.GetCurrentPoint(it);
-				var position = point.Position;
-				var bounds = it.Bounds;
-				if (point.Properties.IsLeftButtonPressed
-					&& position.X >= 0 && position.Y >= 0
-					&& position.X < bounds.Width && position.Y < bounds.Height)
-				{
-					isPointerPressed = true;
-				}
-			}, Avalonia.Interactivity.RoutingStrategies.Tunnel);
-			this.AddHandler(PointerReleasedEvent, (object? sender, PointerReleasedEventArgs e) =>
-			{
-				if (e.InitialPressMouseButton == MouseButton.Left)
-					isPointerPressed = false;
-			}, Avalonia.Interactivity.RoutingStrategies.Tunnel);
+				this.SetAndRaise(PatternProperty, ref this.pattern, pattern);
+			});
 		});
+		this.updatePredefinedCapturingGroupsAction = new(() =>
+		{
+			if (this.IsCapturingGroupsEnabled && this.IsCapturingLogPropertiesEnabled)
+			{
+				foreach (var propertyName in RegexEditorDialog.LogPropertyNames)
+				{
+					var group = new RegexGroup().Also(group =>
+					{
+						group.Bind(RegexGroup.DisplayNameProperty, new Binding()
+						{
+							Converter = Converters.LogPropertyNameConverter.Default,
+							Path = nameof(RegexGroup.Name),
+							Source = group,
+						});
+						group.Name = propertyName;
+					});
+					this.patternTextBox.PredefinedGroups.Add(group);
+				}
+			}
+			else
+				this.patternTextBox.PredefinedGroups.Clear();
+		});
+		this.GetObservable(IsCapturingGroupsEnabledProperty).Subscribe(_ =>
+			this.updatePredefinedCapturingGroupsAction.Schedule());
+		this.GetObservable(IsCapturingLogPropertiesEnabledProperty).Subscribe(_ =>
+			this.updatePredefinedCapturingGroupsAction.Schedule());
 	}
 
 
@@ -102,14 +105,18 @@ partial class PatternEditor : CarinaStudio.Controls.UserControl<IULogViewerAppli
 	{
 		// check state
 		this.VerifyAccess();
-		if (this.pattern == null)
+		var patternText = this.patternTextBox.Text;
+		if (string.IsNullOrEmpty(patternText))
 			return;
 		
 		// copy
 		try
 		{
-			var data = BitConverter.GetBytes((int)pattern.Options);
-			_ = App.Current.Clipboard!.SetTextAndDataAsync(pattern.ToString(), RegexOptionsFormat, data);
+			var options = this.patternTextBox.IgnoreCase
+				? RegexOptions.IgnoreCase
+				: RegexOptions.None;
+			var data = BitConverter.GetBytes((int)options);
+			_ = App.Current.Clipboard!.SetTextAndDataAsync(patternText, RegexOptionsFormat, data);
 		}
 		catch
 		{ }
@@ -130,17 +137,24 @@ partial class PatternEditor : CarinaStudio.Controls.UserControl<IULogViewerAppli
 		this.hasDialog = true;
 		var regex = await new RegexEditorDialog()
 		{
-			InitialRegex = this.GetValue<Regex?>(PatternProperty),
+			IgnoreCase = this.patternTextBox.IgnoreCase,
+			InitialRegexText = this.patternTextBox.Text,
 			IsCapturingGroupsEnabled = this.GetValue<bool>(IsCapturingGroupsEnabledProperty),
 			IsCapturingLogPropertiesEnabled = this.GetValue<bool>(IsCapturingLogPropertiesEnabledProperty),
 		}.ShowDialog<Regex?>(this.window);
 		this.hasDialog = false;
 		if (regex == null)
+		{
+			this.patternTextBox.Focus();
 			return;
+		}
 		
 		// update pattern
-		this.patternTextBox.Text = regex.ToString();
-		this.SetAndRaise<Regex?>(PatternProperty, ref this.pattern, regex);
+		if (regex != null)
+			this.patternTextBox.IgnoreCase = (regex.Options & RegexOptions.IgnoreCase) != 0;
+		this.patternTextBox.Object = regex;
+		this.SetAndRaise(PatternProperty, ref this.pattern, regex);
+		this.patternTextBox.Focus();
 	}
 
 
@@ -197,7 +211,9 @@ partial class PatternEditor : CarinaStudio.Controls.UserControl<IULogViewerAppli
         var text = await clipboard.GetTextAsync();
         if (string.IsNullOrEmpty(text))
             return;
-		var options = RegexOptions.IgnoreCase;
+		var options = this.patternTextBox.IgnoreCase
+			? RegexOptions.IgnoreCase
+			: RegexOptions.None;
         try
         {
             (await clipboard.GetDataAsync(RegexOptionsFormat))?.Let(it => 
@@ -218,30 +234,23 @@ partial class PatternEditor : CarinaStudio.Controls.UserControl<IULogViewerAppli
             }.ShowDialog(window);
 			this.hasDialog = false;
             if (result == MessageDialogResult.No)
+			{
+				this.patternTextBox.Focus();
                 return;
+			}
         }
 
 		// update pattern
-		var pattern = (Regex?)null;
+		this.patternTextBox.IgnoreCase = (options & RegexOptions.IgnoreCase) != 0;
         try
         {
-            pattern = new Regex(text, options);
+            this.patternTextBox.Object = new Regex(text, options);
         }
         catch
         {
-			this.hasDialog = true;
-            pattern = await new RegexEditorDialog()
-			{
-				InitialRegexText = text,
-				IsCapturingGroupsEnabled = this.GetValue<bool>(IsCapturingGroupsEnabledProperty),
-				IsCapturingLogPropertiesEnabled = this.GetValue<bool>(IsCapturingLogPropertiesEnabledProperty),
-			}.ShowDialog<Regex?>(this.window);
-			this.hasDialog = false;
-			if (pattern == null)
-				return;
+			this.patternTextBox.Text = text;
         }
-		this.patternTextBox.Text = text;
-		this.SetAndRaise<Regex?>(PatternProperty, ref this.pattern, pattern);
+		this.patternTextBox.Focus();
 	}
 
 
@@ -254,16 +263,12 @@ partial class PatternEditor : CarinaStudio.Controls.UserControl<IULogViewerAppli
 		set
 		{
 			this.VerifyAccess();
-			this.patternTextBox.Text = value?.ToString();
-			this.SetAndRaise<Regex?>(PatternProperty, ref this.pattern, value);
+			if (value != null)
+				this.patternTextBox.IgnoreCase = (value.Options & RegexOptions.IgnoreCase) != 0;
+			this.patternTextBox.Object = value;
+			this.SetAndRaise(PatternProperty, ref this.pattern, value);
 		}
 	}
-
-
-	/// <summary>
-	/// Definition set of regex syntax highlighting.
-	/// </summary>
-	public SyntaxHighlightingDefinitionSet RegexSyntaxHighlightingDefinitionSet { get; }
 
 	
 	/// <summary>
@@ -292,29 +297,12 @@ partial class PatternEditor : CarinaStudio.Controls.UserControl<IULogViewerAppli
 			return presenter.ShowTutorial(new Tutorial().Also(it =>
 			{
 				it.Anchor = this.Get<Control>("editPatternButton");
-				it.Bind(Tutorial.DescriptionProperty, this.GetResourceObservable("String/PatternEditor.Tutorial.ClickButtonToEditPattern"));
+				it.Bind(Tutorial.DescriptionProperty, this.GetResourceObservable("String/PatternEditor.Tutorial.ClickButtonToEditPatternDetailedly"));
 				it.Dismissed += (_, e) =>
 				{
 					persistentState.SetValue<bool>(IsClickButtonToEditPatternTutorialShownKey, true);
 					if (!this.ShowTutorialIfNeeded(presenter, focusedControl))
 						(focusedControl ?? this.editPatternButton).Focus();
-				};
-				it.Icon = (IImage?)this.window.FindResource("Image/Icon.Lightbulb.Colored");
-				it.IsSkippingAllTutorialsAllowed = false;
-			}));
-		}
-		
-		// show second tutorial
-		if (!persistentState.GetValueOrDefault(IsDoubleClickToEditPatternTutorialShownKey))
-		{
-			return presenter.ShowTutorial(new Tutorial().Also(it =>
-			{
-				it.Anchor = this.patternTextBox;
-				it.Bind(Tutorial.DescriptionProperty, this.GetResourceObservable("String/PatternEditor.Tutorial.DoubleClickToEditPattern"));
-				it.Dismissed += (_, e) =>
-				{
-					persistentState.SetValue<bool>(IsDoubleClickToEditPatternTutorialShownKey, true);
-					(focusedControl ?? this.editPatternButton).Focus();
 				};
 				it.Icon = (IImage?)this.window.FindResource("Image/Icon.Lightbulb.Colored");
 				it.IsSkippingAllTutorialsAllowed = false;

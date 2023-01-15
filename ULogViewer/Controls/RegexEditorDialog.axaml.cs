@@ -109,6 +109,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Generate result.
 		protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken) =>
 			Task.FromResult<object?>(this.regexTextBox.Object);
+		
+
+		// Ignore case of pattern.
+		public bool? IgnoreCase { get; set; }
 
 
 		// Initial Regex.
@@ -167,16 +171,16 @@ namespace CarinaStudio.ULogViewer.Controls
 			var regex = this.InitialRegex;
 			if (regex != null)
 			{
-				this.regexTextBox.IgnoreCase = (regex.Options & RegexOptions.IgnoreCase) != 0;
+				this.regexTextBox.IgnoreCase = this.IgnoreCase ?? (regex.Options & RegexOptions.IgnoreCase) != 0;
 				this.regexTextBox.Object = regex;
 			}
 			else if (this.InitialRegexText != null)
 			{
-				this.regexTextBox.IgnoreCase = true;
+				this.regexTextBox.IgnoreCase = this.IgnoreCase ?? true;
 				this.regexTextBox.Text = this.InitialRegexText;
 			}
 			else
-				this.regexTextBox.IgnoreCase = true;
+				this.regexTextBox.IgnoreCase = this.IgnoreCase ?? true;
 			this.SynchronizationContext.Post(this.regexTextBox.Focus);
 		}
 

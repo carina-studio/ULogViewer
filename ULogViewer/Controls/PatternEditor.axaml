@@ -9,10 +9,10 @@
         x:Class="CarinaStudio.ULogViewer.Controls.PatternEditor">
 
 	<Grid ColumnDefinitions="*,Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-		<asControls:SyntaxHighlightingTextBox Name="patternTextBox" Classes="Dialog_TextBox" DefinitionSet="{Binding $parent[UserControl].RegexSyntaxHighlightingDefinitionSet}" Focusable="False" FontFamily="{x:Static asMedia:BuiltInFonts.SourceCodePro}" IsReadOnly="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled" TextWrapping="Wrap"/>
+		<asControls:RegexTextBox Name="patternTextBox" Classes="Dialog_TextBox" ScrollViewer.HorizontalScrollBarVisibility="Disabled" TextWrapping="Wrap"/>
 		<StackPanel Grid.Column="1" VerticalAlignment="Top">
-			<Button Name="editPatternButton" Classes="BrowseButton" Command="{Binding $parent[UserControl].EditPattern}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
-				<Image Classes="BrowseButtonIcon" Source="{DynamicResource Image/Icon.Edit}"/>
+			<Button Name="editPatternButton" Classes="BrowseButton" Command="{Binding $parent[UserControl].EditPattern}" ToolTip.Tip="{DynamicResource String/PatternEditor.EditDetailedly}">
+				<Image Classes="BrowseButtonIcon" Source="{DynamicResource Image/EditDetailedly}"/>
 			</Button>
 			<Separator Classes="Dialog_Separator_Small"/>
 			<Button Classes="BrowseButton" Command="{Binding $parent[UserControl].CopyPattern}" IsEnabled="{Binding #patternTextBox.Text, Converter={x:Static aConverters:StringConverters.IsNotNullOrEmpty}}" ToolTip.Tip="{DynamicResource String/Common.Copy}">

@@ -769,8 +769,8 @@ return False</sys:String>
 
 	<!-- PatternEditor -->
 	<sys:String x:Key="String/PatternEditor.ConfirmReplacingPattern">Are you sure to replace this pattern?</sys:String>
-	<sys:String x:Key="String/PatternEditor.Tutorial.ClickButtonToEditPattern">Click here to edit the pattern.</sys:String>
-	<sys:String x:Key="String/PatternEditor.Tutorial.DoubleClickToEditPattern">You can also double-click here to edit the pattern.</sys:String>
+	<sys:String x:Key="String/PatternEditor.EditDetailedly">Edit pattern detailedly</sys:String>
+	<sys:String x:Key="String/PatternEditor.Tutorial.ClickButtonToEditPatternDetailedly">Click here to edit pattern detailedly.</sys:String>
 
 	<!-- PeekQueueToVarEditorDialog -->
 	<sys:String x:Key="String/PeekQueueToVarEditorDialog.Title">Copy value from queue to variable</sys:String>
