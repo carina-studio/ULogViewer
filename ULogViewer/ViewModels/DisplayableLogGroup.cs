@@ -228,7 +228,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		// Create regex to find separator in text filter.
-		[GeneratedRegex(@"(\\\$){1,2}")]
+		[GeneratedRegex(@"(?<=(^|[^\\])(\\\\)*)(\\\$){1,2}")]
 		private static partial Regex CreateTextFilterSeparatorRegex();
 
 
