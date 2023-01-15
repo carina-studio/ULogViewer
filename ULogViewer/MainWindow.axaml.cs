@@ -995,7 +995,11 @@ namespace CarinaStudio.ULogViewer
 									foreach (var token in tokens)
 										token.Dispose();
 								}
+								sessionView.DataContext = null;
 							}
+							if (tabItem.Header is Control header)
+								header.DataContext = null;
+							tabItem.DataContext = null;
 							this.tabItems.RemoveAt(startIndex + i);
 							if (startTime > 0)
 								this.Logger.LogTrace($"Take {this.stopwatch.ElapsedMilliseconds - startTime} ms to remove tab from position {startIndex + i}");
