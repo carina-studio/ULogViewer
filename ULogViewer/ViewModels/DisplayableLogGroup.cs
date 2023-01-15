@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 
@@ -27,6 +28,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 	{
 		// Static fields.
 		static readonly Regex ExtraCaptureRegex = CreateExtraCaptureRegex();
+		static readonly Regex TextFilterSeparatorRegex = CreateTextFilterSeparatorRegex();
 
 
 		// Static fields.
@@ -100,11 +102,32 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						this.textHighlightingForeground ??= this.Application.FindResourceOrDefault<IBrush>("Brush/SessionView.LogListBox.Item.HighlightedText.Foreground", Brushes.Yellow);
 						foreach (var textFilter in this.activeTextFilters)
 						{
+							var patternRegex = textFilter;
+							var pattern = textFilter.ToString();
+							var match = TextFilterSeparatorRegex.Match(pattern);
+							if (match.Success)
+							{
+								var start = 0;
+								var patternBuffer = new StringBuilder();
+								while (match.Success)
+								{
+									if (match.Index > start)
+										patternBuffer.Append(pattern[start..match.Index]);
+									patternBuffer.Append('(');
+									patternBuffer.Append(match.Value);
+									patternBuffer.Append(")?");
+									start = match.Index + match.Length;
+									match = match.NextMatch();
+								}
+								if (start < pattern.Length)
+									patternBuffer.Append(pattern[start..^0]);
+								patternRegex = new(patternBuffer.ToString(), patternRegex.Options);
+							}
 							definitions.Add(new()
 							{
 								Background = this.textHighlightingBackground,
 								Foreground = this.textHighlightingForeground,
-								Pattern = textFilter,
+								Pattern = patternRegex,
 							});
 						}
 					}
@@ -202,6 +225,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		// Create regex to find extra capture in pattern of raw log line.
 		[GeneratedRegex(@"\(\?\<Extra(?<Number>[\d]+)\>")]
 		private static partial Regex CreateExtraCaptureRegex();
+
+
+		// Create regex to find separator in text filter.
+		[GeneratedRegex(@"(\\\$){1,2}")]
+		private static partial Regex CreateTextFilterSeparatorRegex();
 
 
 		// Dispose.
