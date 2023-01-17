@@ -110,15 +110,13 @@ namespace CarinaStudio.ULogViewer
 									switch (subMenuItem.CommandParameter as string)
 									{
 										case "EditConfiguration":
+										case "EditPersistentState":
 											if (!this.Application.IsDebugMode)
 												menuItem.Menu.Items.RemoveAt(j);
 											break;
-										case "EditPersistentState":
-											if (!this.Application.IsDebugMode)
-											{
+										case "SelfTesting":
+											if (!this.Application.IsTestingMode)
 												menuItem.Menu.Items.RemoveAt(j);
-												menuItem.Menu.Items.RemoveAt(--j); // separator
-											}
 											break;
 									}
 								}

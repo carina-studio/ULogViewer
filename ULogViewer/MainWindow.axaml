@@ -143,6 +143,7 @@
 						<NativeMenuItemSeparator/>
 						<NativeMenuItem Command="{Binding $self.EditConfiguration}" CommandParameter="EditConfiguration" Header="{DynamicResource String/SessionView.EditConfiguration}"/>
 						<NativeMenuItem Command="{Binding $self.EditPersistentState}" CommandParameter="EditPersistentState" Header="{DynamicResource String/SessionView.EditPersistentState}"/>
+						<NativeMenuItem Command="{Binding $self.Application.ShowSelfTestingWindow}" CommandParameter="SelfTesting" Header="{DynamicResource String/Common.SelfTesting}"/>
 					</NativeMenu>
 				</NativeMenuItem.Menu>
 			</NativeMenuItem>
