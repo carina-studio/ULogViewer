@@ -27,8 +27,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 	partial class DisplayableLogGroup : BaseDisposable, IApplicationObject
 	{
 		// Static fields.
-		static readonly Regex ExtraCaptureRegex = CreateExtraCaptureRegex();
-		static readonly Regex TextFilterSeparatorRegex = CreateTextFilterSeparatorRegex();
+		static Regex? ExtraCaptureRegex;
+		static Regex? TextFilterBracketAndSeparatorRegex;
 
 
 		// Static fields.
@@ -102,33 +102,83 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						this.textHighlightingForeground ??= this.Application.FindResourceOrDefault<IBrush>("Brush/SessionView.LogListBox.Item.HighlightedText.Foreground", Brushes.Yellow);
 						foreach (var textFilter in this.activeTextFilters)
 						{
-							var patternRegex = textFilter;
-							var pattern = textFilter.ToString();
-							var match = TextFilterSeparatorRegex.Match(pattern);
+							var originalPattern = textFilter.ToString();
+							while (originalPattern.Length >= 2 && originalPattern[0] == '(' && originalPattern[^1] == ')')
+								originalPattern = originalPattern[1..^1];
+							TextFilterBracketAndSeparatorRegex ??= CreateTextFilterBracketAndSeparatorRegex();
+							var match = TextFilterBracketAndSeparatorRegex.Match(originalPattern);
 							if (match.Success)
 							{
 								var start = 0;
-								var patternBuffer = new StringBuilder();
+								var bracketCount = 0;
+								var options = textFilter.Options;
+								var subPatternBuffer = new StringBuilder();
 								while (match.Success)
 								{
 									if (match.Index > start)
-										patternBuffer.Append(pattern[start..match.Index]);
-									patternBuffer.Append('(');
-									patternBuffer.Append(match.Value);
-									patternBuffer.Append(")?");
+										subPatternBuffer.Append(originalPattern[start..match.Index]);
 									start = match.Index + match.Length;
+									if (match.Groups["StartBracket"].Success)
+									{
+										++bracketCount;
+										subPatternBuffer.Append('(');
+									}
+									else if (match.Groups["EndBracket"].Success)
+									{
+										if (bracketCount > 0)
+										{
+											--bracketCount;
+											subPatternBuffer.Append(')');
+										}
+									}
+									else if (bracketCount == 0)
+									{
+										if (subPatternBuffer.Length > 0)
+										{
+											try
+											{
+												definitions.Add(new()
+												{
+													Background = this.textHighlightingBackground,
+													Foreground = this.textHighlightingForeground,
+													Pattern = new(subPatternBuffer.ToString(), options),
+												});
+											}
+											catch
+											{ }
+											subPatternBuffer.Clear();
+										}
+									}
+									else
+										subPatternBuffer.Append(match.Groups["Separator"].Value);
 									match = match.NextMatch();
 								}
-								if (start < pattern.Length)
-									patternBuffer.Append(pattern[start..^0]);
-								patternRegex = new(patternBuffer.ToString(), patternRegex.Options);
+								if (start < originalPattern.Length)
+									subPatternBuffer.Append(originalPattern[start..^0]);
+								if (subPatternBuffer.Length > 0)
+								{
+									try
+									{
+										definitions.Add(new()
+										{
+											Background = this.textHighlightingBackground,
+											Foreground = this.textHighlightingForeground,
+											Pattern = new(subPatternBuffer.ToString(), options),
+										});
+									}
+									catch
+									{ }
+								}
 							}
-							definitions.Add(new()
+							else
 							{
-								Background = this.textHighlightingBackground,
-								Foreground = this.textHighlightingForeground,
-								Pattern = patternRegex,
-							});
+								definitions.Add(new()
+								{
+									Background = this.textHighlightingBackground,
+									Foreground = this.textHighlightingForeground,
+									Pattern = textFilter,
+								});
+							}
 						}
 					}
 				}
@@ -186,6 +236,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		void CheckMaxLogExtraNumber()
 		{
 			var maxNumber = 0;
+			ExtraCaptureRegex ??= CreateExtraCaptureRegex();
 			foreach (var pattern in this.LogProfile.LogPatterns)
 			{
 				var match = ExtraCaptureRegex.Match(pattern.Regex.ToString());
@@ -227,9 +278,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		private static partial Regex CreateExtraCaptureRegex();
 
 
-		// Create regex to find separator in text filter.
-		[GeneratedRegex(@"(?<=(^|[^\\])(\\\\)*)(\\\$){1,2}")]
-		private static partial Regex CreateTextFilterSeparatorRegex();
+		// Create regex to find bracket and separator in text filter.
+		[GeneratedRegex(@"(?<=(^|[^\\])(\\\\)*)(?<StartBracket>\()|(?<=(^|[^\\])(\\\\)*)(?<Separator>(\\\$){1,2})|(?<=(^|[^\\])(\\\\)*)(?<EndBracket>\))")]
+		private static partial Regex CreateTextFilterBracketAndSeparatorRegex();
 
 
 		// Dispose.
