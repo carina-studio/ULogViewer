@@ -915,6 +915,15 @@ namespace CarinaStudio.ULogViewer.Controls
 			});
 			this.updateLogAnalysisAction.Cancel();
 
+			// show log analysis results
+			if (!session.IsRemovingLogFiles)
+			{
+				this.logAnalysisResultListBox.Bind(Avalonia.Controls.ListBox.ItemsProperty, new Binding()
+				{
+					Path = nameof(Session.LogAnalysisResults)
+				});
+			}
+
 			// sync side panel state
 			if (session.IsLogAnalysisPanelVisible 
 				|| session.IsMarkedLogsPanelVisible 
@@ -1856,6 +1865,9 @@ namespace CarinaStudio.ULogViewer.Controls
 				it.CollectionChanged -= this.OnSessionLogAnalysisRuleSetsChanged);
 			(session.OperationDurationAnalysisRuleSets as INotifyCollectionChanged)?.Let(it =>
 				it.CollectionChanged -= this.OnSessionLogAnalysisRuleSetsChanged);
+			
+			// remove log analysis results
+			this.logAnalysisResultListBox.Items = null;
 
 			// detach from commands
 			this.canAddLogFiles.Unbind();
@@ -4073,6 +4085,17 @@ namespace CarinaStudio.ULogViewer.Controls
 					break;
 				case nameof(Session.IsLogsReadingPaused):
 					this.updateStatusBarStateAction.Schedule();
+					break;
+				case nameof(Session.IsRemovingLogFiles):
+					if (session.IsRemovingLogFiles)
+						this.logAnalysisResultListBox.Items = null;
+					else
+					{
+						this.logAnalysisResultListBox.Bind(Avalonia.Controls.ListBox.ItemsProperty, new Binding()
+						{
+							Path = nameof(Session.LogAnalysisResults)
+						});
+					}
 					break;
 				case nameof(Session.LogProfile):
 					session.LogProfile.Let(profile =>

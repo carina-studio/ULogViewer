@@ -825,6 +825,7 @@ return null;</sys:String>
 	<sys:String x:Key="String/SessionView.LastLogsFilteringDuration">Filtering took {0}</sys:String>
 	<sys:String x:Key="String/SessionView.LastLogsReadingDuration">Reading took {0}</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisPanel">Log Analysis</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisPanel.DisabledWhenRemovingLogFiles">Log analysis is disabled temporarily when removing log file(s)</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisPanel.Hint">Click button on the top-right of panel to select analysis rule sets to apply</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisProgress">Analyzing logs…</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisResult">Analysis result</sys:String>

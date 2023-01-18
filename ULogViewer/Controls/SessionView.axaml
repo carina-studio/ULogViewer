@@ -1154,7 +1154,7 @@
 						<Grid ColumnDefinitions="Auto,*,Auto">
 							<TextBlock Classes="SessionView_SidePanel_Header_Left" Text="{DynamicResource String/SessionView.LogAnalysisPanel}"/>
 							<TextBlock Classes="SessionView_SidePanel_Header_Right" Grid.Column="1" Text="{Binding LogAnalysisResults.Count, StringFormat={} ({0})}"/>
-							<ToggleButton Name="logAnalysisRuleSetsButton" Classes="ToolBar_ToggleButton" Grid.Column="2" IsChecked="{Binding #logAnalysisRuleSetsPopup.IsOpen, Mode=TwoWay}" ToolTip.Tip="{DynamicResource String/SessionView.LogAnalysisRuleSets}">
+							<ToggleButton Name="logAnalysisRuleSetsButton" Classes="ToolBar_ToggleButton" Grid.Column="2" IsChecked="{Binding #logAnalysisRuleSetsPopup.IsOpen, Mode=TwoWay}" IsEnabled="{Binding !IsRemovingLogFiles}" ToolTip.Tip="{DynamicResource String/SessionView.LogAnalysisRuleSets}">
 								<Panel>
 									<Panel IsVisible="{Binding !$parent[ToggleButton].IsChecked}">
 										<Image Classes="Icon" IsVisible="{Binding !#logAnalysisRuleSetsActiveIcon.IsVisible}" Source="{StaticResource Image/Checklist}"/>
@@ -1439,6 +1439,7 @@
 					<Border Background="{x:Static Brushes.Transparent}" Grid.Row="1">
 						<Border.IsVisible>
 							<MultiBinding Converter="{x:Static aConverters:BoolConverters.And}">
+								<Binding Path="!IsRemovingLogFiles"/>
 								<Binding Path="LogAnalysisResults.Count" Converter="{x:Static abConverters:NumberConverters.IsZero}"/>
 								<Binding Path="SelectedItems.Count" Converter="{x:Static abConverters:NumberConverters.IsZero}" ElementName="keyLogAnalysisRuleSetListBox"/>
 								<Binding Path="SelectedItems.Count" Converter="{x:Static abConverters:NumberConverters.IsZero}" ElementName="operationDurationAnalysisRuleSetListBox"/>
@@ -1446,6 +1447,9 @@
 							</MultiBinding>
 						</Border.IsVisible>
 						<TextBlock Classes="SessionView_SidePanel_FullPanelHint" Text="{DynamicResource String/SessionView.LogAnalysisPanel.Hint}"/>
+					</Border>
+					<Border Background="{x:Static Brushes.Transparent}" Grid.Row="1" IsVisible="{Binding IsRemovingLogFiles}">
+						<TextBlock Classes="SessionView_SidePanel_FullPanelHint" Text="{DynamicResource String/SessionView.LogAnalysisPanel.DisabledWhenRemovingLogFiles}"/>
 					</Border>
 				</Grid>
 
