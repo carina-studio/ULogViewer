@@ -2,6 +2,7 @@ using CarinaStudio.Collections;
 using CarinaStudio.Diagnostics;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 
 namespace CarinaStudio.ULogViewer.ViewModels.Categorizing;
 
@@ -70,9 +71,8 @@ abstract class BaseDisplayableLogCategorizer<TProcessingToken, TCategory> : Base
         var index = this.categories.BinarySearch<TCategory, DisplayableLog?>(log, it => it.Log, this.CompareSourceLogs);
         if (index >= 0)
         {
-            this.categoryMemorySize -= this.categories[index].MemorySize;
-            this.categories.RemoveAt(index);
-            this.OnPropertyChanged(nameof(MemorySize));
+            this.RemoveCategory(index);
+            this.InvalidateProcessing();
         }
         return false;
     }
@@ -92,6 +92,37 @@ abstract class BaseDisplayableLogCategorizer<TProcessingToken, TCategory> : Base
     }
 
 
+    /// <inheritdoc/>
+    protected override void OnSourceLogsChanged(NotifyCollectionChangedEventArgs e)
+    {
+        base.OnSourceLogsChanged(e);
+        if (e.Action == NotifyCollectionChangedAction.Remove)
+        {
+            var categoriesRemoved = false;
+            foreach (var log in e.OldItems!.Cast<DisplayableLog>())
+            {
+                var index = this.categories.BinarySearch<TCategory, DisplayableLog?>(log, it => it.Log, this.CompareSourceLogs);
+                if (index >= 0)
+                {
+                    this.RemoveCategory(index);
+                    categoriesRemoved = true;
+                }
+            }
+            if (categoriesRemoved)
+                this.InvalidateProcessing();
+        }
+    }
+
+
+    // Remove category.
+    void RemoveCategory(int index)
+    {
+        this.categoryMemorySize -= this.categories[index].MemorySize;
+        this.categories.RemoveAt(index);
+        this.OnPropertyChanged(nameof(MemorySize));
+    }
+
+
     /// <summary>
     /// Remove existing category.
     /// </summary>
@@ -99,10 +130,10 @@ abstract class BaseDisplayableLogCategorizer<TProcessingToken, TCategory> : Base
     /// <returns>True if category has been removed successfully.</returns>
     protected bool RemoveCategory(TCategory category)
     {
-        if (this.categories.Remove(category))
+        var index = this.categories.IndexOf(category);
+        if (index >= 0)
         {
-            this.categoryMemorySize -= category.MemorySize;
-            this.OnPropertyChanged(nameof(MemorySize));
+            this.RemoveCategory(index);
             return true;
         }
         return false;
