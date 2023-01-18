@@ -410,7 +410,11 @@ class LogAnalysisViewModel : SessionComponent
             var lhsLog = lhsLogs[lhsLogIndex];
             var rhsLog = rhsLogs[rhsLogIndex];
             if (lhsLog == null)
+            {
                 ++lhsLogIndex;
+                if (rhsLog == null)
+                    ++rhsLogIndex;
+            }
             else if (rhsLog == null)
                 ++rhsLogIndex;
             else
@@ -424,7 +428,7 @@ class LogAnalysisViewModel : SessionComponent
         }
         
         // compare types
-        result = lhs.Type.CompareTo(rhs.Type);
+        result = (int)lhs.Type - (int)rhs.Type;
         if (result != 0)
             return result;
         
@@ -595,7 +599,13 @@ class LogAnalysisViewModel : SessionComponent
                 this.analysisResults.AddAll(e.NewItems!.Cast<DisplayableLogAnalysisResult>());
                 break;
             case NotifyCollectionChangedAction.Remove:
-                this.analysisResults.RemoveAll(e.OldItems!.Cast<DisplayableLogAnalysisResult>());
+                e.OldItems!.Cast<DisplayableLogAnalysisResult>().Let(removedResults =>
+                {
+                    if (removedResults.Count == 1)
+                        this.analysisResults.Remove(removedResults[0]);
+                    else
+                        this.analysisResults.RemoveAll(removedResults);
+                });
                 break;
             case NotifyCollectionChangedAction.Reset:
                 foreach (var analyzer in this.attachedAnalyzers)

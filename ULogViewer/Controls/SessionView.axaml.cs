@@ -15,7 +15,6 @@ using Avalonia.Platform.Storage;
 using Avalonia.VisualTree;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.AppSuite.Controls.Highlighting;
-using CarinaStudio.AppSuite.Data;
 using CarinaStudio.AppSuite.Media;
 using CarinaStudio.AppSuite.Product;
 using CarinaStudio.Collections;
@@ -1090,6 +1089,15 @@ namespace CarinaStudio.ULogViewer.Controls
 			});
 			this.updateLogAnalysisAction.Cancel();
 
+			// show log analysis results
+			if (!session.IsRemovingLogFiles)
+			{
+				this.logAnalysisResultListBox.Bind(Avalonia.Controls.ListBox.ItemsProperty, new Binding()
+				{
+					Path = $"{nameof(Session.LogAnalysis)}.{nameof(LogAnalysisViewModel.AnalysisResults)}"
+				});
+			}
+
 			// sync side panel state
 			if (session.LogAnalysis.IsPanelVisible 
 				|| session.IsMarkedLogsPanelVisible 
@@ -2004,6 +2012,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			(session.LogFiltering.PredefinedTextFilters as INotifyCollectionChanged)?.Let(it =>
 				it.CollectionChanged -= this.OnSelectedPredefinedLogTextFiltersChanged);
 			this.DetachFromLogAnalysis(session.LogAnalysis);
+
+			// remove log analysis results
+			this.logAnalysisResultListBox.Items = null;
 			
 			// detach from properties
 			this.logAnalysisPanelVisibilityObserverToken.Dispose();
@@ -3697,6 +3708,17 @@ namespace CarinaStudio.ULogViewer.Controls
 					break;
 				case nameof(Session.IsLogsReadingPaused):
 					this.updateStatusBarStateAction.Schedule();
+					break;
+				case nameof(Session.IsRemovingLogFiles):
+					if (session.IsRemovingLogFiles)
+						this.logAnalysisResultListBox.Items = null;
+					else
+					{
+						this.logAnalysisResultListBox.Bind(Avalonia.Controls.ListBox.ItemsProperty, new Binding()
+						{
+							Path = $"{nameof(Session.LogAnalysis)}.{nameof(LogAnalysisViewModel.AnalysisResults)}"
+						});
+					}
 					break;
 				case nameof(Session.LogProfile):
 					session.LogProfile.Let(profile =>

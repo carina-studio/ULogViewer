@@ -3088,7 +3088,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 							else
 							{
 								var removedLogs = new HashSet<Log>(oldItems.Cast<Log>());
-								this.allLogs.RemoveAll(it => removedLogs.Contains(it.Log));
+								this.allLogs.RemoveAll(it => it.LogReader == logReader && removedLogs.Contains(it.Log));
 							}
 						}
 						logReader.DataSource.CreationOptions.FileName?.Let(fileName =>
