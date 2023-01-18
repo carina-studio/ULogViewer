@@ -79,9 +79,11 @@ abstract class BaseDisplayableLogCategorizer<TProcessingToken, TCategory> : Base
 
 
     /// <inheritdoc/>
-    protected override void OnProcessingCancelled(TProcessingToken token)
+    protected override void OnProcessingCancelled(TProcessingToken token, bool willStartProcessing)
     {
         this.categories.Clear();
+        if (!willStartProcessing && this.MemoryUsagePolicy != MemoryUsagePolicy.BetterPerformance)
+            this.categories.TrimExcess();
         if (this.categoryMemorySize != 0L)
         {
             this.categoryMemorySize = 0L;

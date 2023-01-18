@@ -166,10 +166,12 @@ class TimestampDisplayableLogCategorizer : BaseDisplayableLogCategorizer<Timesta
 
 
     /// <inheritdoc/>
-    protected override void OnProcessingCancelled(ProcessingToken token)
+    protected override void OnProcessingCancelled(ProcessingToken token, bool willStartProcessing)
     {
         this.categoriesByTimestamp.Clear();
-        base.OnProcessingCancelled(token);
+        if (!willStartProcessing && this.MemoryUsagePolicy != MemoryUsagePolicy.BetterPerformance)
+            this.categoriesByTimestamp.TrimExcess();
+        base.OnProcessingCancelled(token, willStartProcessing);
     }
 
 

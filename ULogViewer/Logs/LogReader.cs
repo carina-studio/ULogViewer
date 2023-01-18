@@ -93,6 +93,8 @@ namespace CarinaStudio.ULogViewer.Logs
 				if (this.logs.Count <= chunkSize)
 				{
 					this.logs.RemoveRange(0, this.logs.Count);
+					if (this.Application.Settings.GetValueOrDefault(SettingKeys.MemoryUsagePolicy) != MemoryUsagePolicy.BetterPerformance)
+						this.logs.TrimExcess();
 					this.OnLogsClearingCompleted();
 				}
 				else
@@ -224,6 +226,8 @@ namespace CarinaStudio.ULogViewer.Logs
 			{
 				this.clearLogChunkAction.Cancel();
 				this.logs.Clear();
+				if (this.Application.Settings.GetValueOrDefault(SettingKeys.MemoryUsagePolicy) != MemoryUsagePolicy.BetterPerformance)
+					this.logs.TrimExcess();
 				this.OnLogsClearingCompleted();
 			}
 		}
@@ -291,6 +295,7 @@ namespace CarinaStudio.ULogViewer.Logs
 
 			// clear logs
 			this.logs.Clear();
+			this.logs.TrimExcess();
 
 			// dispose pending logs waiting thread
 			this.pendingLogsSyncContext.Dispose();

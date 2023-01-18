@@ -58,10 +58,6 @@ namespace CarinaStudio.ULogViewer.Logs
 		}
 
 
-		// Constants.
-		const int PropertyValueIndicesPoolCapacity = 1 << 18;
-
-
 		// Static fields.
 		static readonly long baseMemorySize = Memory.EstimateInstanceSize<Log>();
 		static readonly HashSet<string> dateTimePropertyNameSet = new();
@@ -79,8 +75,6 @@ namespace CarinaStudio.ULogViewer.Logs
 					it.Add(propertyNames[i].ToString());
 			}).AsReadOnly();
 		});
-		static readonly byte[][] propertyValueIndicesPool = new byte[PropertyValueIndicesPoolCapacity][];
-		static volatile int propertyValueIndicesPoolSize;
 		[ThreadStatic]
 		static Dictionary<string, LogStringPropertyGetter>? stringPropertyGetters;
 		static readonly HashSet<string> stringPropertyNameSet = new();
@@ -109,17 +103,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		{
 			// prepare
 			var propertyCount = builder.PropertyCount;
-			var propertyValueIndices = propertyValueIndicesPool.Lock(() =>
-			{
-				if (propertyValueIndicesPoolSize > 0)
-				{
-					--propertyValueIndicesPoolSize;
-					var array = propertyValueIndicesPool[propertyValueIndicesPoolSize];
-					Array.Clear(array);
-					return array;
-				}
-				return new byte[propertyNameCount];
-			});
+			var propertyValueIndices = new byte[propertyNameCount];
 			var propertyValues = new object?[propertyCount];
 			var index = 0;
 			long propertyMemorySize = 0;
@@ -147,20 +131,6 @@ namespace CarinaStudio.ULogViewer.Logs
 
 			// calculate memory size
 			this.MemorySize = baseMemorySize + propertyMemorySize + Memory.EstimateArrayInstanceSize(sizeof(byte), propertyValueIndices.Length) + Memory.EstimateArrayInstanceSize(IntPtr.Size, this.propertyValues.Length);
-		}
-
-
-		// Finalizer.
-		~Log()
-		{
-			if (this.propertyValueIndices != null)
-			{
-				lock (propertyValueIndicesPool)
-				{
-					if (propertyValueIndicesPoolSize < PropertyValueIndicesPoolCapacity)
-						propertyValueIndicesPool[propertyValueIndicesPoolSize++] = this.propertyValueIndices;
-				}
-			}
 		}
 
 

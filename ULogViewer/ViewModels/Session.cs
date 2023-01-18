@@ -461,6 +461,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				foreach (var log in displayableLogsToDispose)
 					log.Dispose();
 				displayableLogsToDispose.Clear();
+				if (App.Current.Settings.GetValueOrDefault(SettingKeys.MemoryUsagePolicy) != MemoryUsagePolicy.BetterPerformance)
+					displayableLogsToDispose.TrimExcess();
 				staticLogger?.LogTrace("Disposed {disposed} displayable logs", logCount);
 				staticLogger?.LogTrace($"All displayable logs were disposed, trigger GC");
 				TriggerGC();
@@ -473,11 +475,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				disposeDisplayableLogsAction?.Schedule(DisposeDisplayableLogsInterval);
 				staticLogger?.LogTrace("Disposed {disposed} displayable logs, {remaining} remains", DisplayableLogDisposingChunkSize, displayableLogsToDispose.Count);
 			}
-		});
-		static readonly Stopwatch gcPerformanceWatch = new Stopwatch().Also(it =>
-		{
-			if (App.CurrentOrNull?.IsDebugMode == true)
-				it.Start();
 		});
 		static readonly ScheduledAction hibernateSessionsAction = new(() =>
 		{
@@ -550,6 +547,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			/// <inheritdoc/>
 			public DisplayableLogGroup? DisplayableLogGroup =>
 				this.session.displayableLogGroup;
+			
+			/// <inheritdoc/>
+			public MemoryUsagePolicy MemoryUsagePolicy =>
+				this.session.memoryUsagePolicy;
 		}
 
 
@@ -734,6 +735,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly Stopwatch logsReadingWatch = new();
 		readonly SortedObservableList<DisplayableLog> markedLogs;
 		readonly HashSet<string> markedLogsChangedFilePaths = new(PathEqualityComparer.Default);
+		MemoryUsagePolicy memoryUsagePolicy;
 		readonly ScheduledAction reloadLogsAction;
 		readonly ScheduledAction reloadLogsFullyAction;
 		readonly ScheduledAction reloadLogsWithRecreatingLogReadersAction;
@@ -786,6 +788,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.ToggleShowingMarkedLogsTemporarilyCommand = new Command(this.ToggleShowingMarkedLogsTemporarily, this.GetValueAsObservable(HasMarkedLogsProperty));
 			this.UnmarkLogsCommand = new Command<IEnumerable<DisplayableLog>>(this.UnmarkLogs, this.canMarkUnmarkLogs);
 			this.canSetLogProfile.Update(true);
+
+			// get settings
+			this.memoryUsagePolicy = this.Settings.GetValueOrDefault(SettingKeys.MemoryUsagePolicy);
 
 			// create collections
 			this.allLogs = new SortedObservableList<DisplayableLog>(this.CompareDisplayableLogs).Also(it =>
@@ -1907,7 +1912,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.logReaders.First().UpdateInterval = this.ContinuousLogReadingUpdateInterval;
 
 				// hibernate
-				if (this.Settings.GetValueOrDefault(SettingKeys.MemoryUsagePolicy) == MemoryUsagePolicy.LessMemoryUsage)
+				if (this.memoryUsagePolicy == MemoryUsagePolicy.LessMemoryUsage)
 					this.Hibernate();
 			}
 		}
@@ -2818,10 +2823,15 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				case NotifyCollectionChangedAction.Remove:
 					this.markedLogs.RemoveAll(e.OldItems.AsNonNull().Cast<DisplayableLog>(), true);
 					DisposeDisplayableLogs(e.OldItems.AsNonNull().Cast<DisplayableLog>());
+					if (this.allLogs.IsEmpty() && this.memoryUsagePolicy != MemoryUsagePolicy.BetterPerformance)
+						this.allLogs.TrimExcess();
 					break;
 				case NotifyCollectionChangedAction.Reset:
 					this.markedLogs.Clear();
-					this.markedLogs.AddAll(this.allLogs.TakeWhile(it => it.MarkedColor != MarkColor.None));
+					if (this.allLogs.IsNotEmpty())
+						this.markedLogs.AddAll(this.allLogs.TakeWhile(it => it.MarkedColor != MarkColor.None));
+					else if (this.memoryUsagePolicy != MemoryUsagePolicy.BetterPerformance)
+						this.allLogs.TrimExcess();
 					break;
 			}
 			if (!this.IsDisposed)
@@ -3245,6 +3255,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				if (this.LogProfile?.IsContinuousReading == true && this.logReaders.IsNotEmpty())
 					this.logReaders.First().MaxLogCount = (int)e.Value;
 			}
+			else if (e.Key == SettingKeys.MemoryUsagePolicy)
+				this.memoryUsagePolicy = (MemoryUsagePolicy)e.Value;
 		}
 
 
@@ -4454,24 +4466,17 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			var app = App.CurrentOrNull;
 			if (app == null)
 				return;
-			var isDebugMode = app.IsDebugMode;
-			var gcStartTime = isDebugMode ? gcPerformanceWatch!.ElapsedMilliseconds : 0;
 			switch (app.Settings.GetValueOrDefault(SettingKeys.MemoryUsagePolicy))
 			{
 				case MemoryUsagePolicy.Balance:
-					GC.Collect(0, GCCollectionMode.Forced);
+					app.PerformGC(GCCollectionMode.Optimized);
 					break;
 				case MemoryUsagePolicy.LessMemoryUsage:
-					GC.Collect();
+					app.PerformGC(GCCollectionMode.Default);
 					break;
 				default:
 					staticLogger?.LogDebug("Skip triggering GC");
 					return;
-			}
-			if (isDebugMode)
-			{
-				var duration = gcPerformanceWatch!.ElapsedMilliseconds - gcStartTime;
-				staticLogger?.LogDebug("[Performance] Took {duration} ms to perform GC", duration);
 			}
 		}
 

@@ -9,4 +9,10 @@ interface ISessionInternalAccessor
     /// Get group of displayable logs.
     /// </summary>
     DisplayableLogGroup? DisplayableLogGroup { get; }
+
+
+    /// <summary>
+    /// Get memory usage policy.
+    /// </summary>
+    MemoryUsagePolicy MemoryUsagePolicy { get; }
 }

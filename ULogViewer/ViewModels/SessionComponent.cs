@@ -125,6 +125,12 @@ abstract class SessionComponent : ViewModel<IULogViewerApplication>
 
 
     /// <summary>
+    /// Get memory usage policy.
+    /// </summary>
+    protected MemoryUsagePolicy MemoryUsagePolicy { get => this.internalAccessor.MemoryUsagePolicy; }
+
+
+    /// <summary>
     /// Called when all instances of session components are created.
     /// </summary>
     protected virtual void OnAllComponentsCreated()

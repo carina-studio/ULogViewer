@@ -254,9 +254,11 @@ partial class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogF
 
 
     /// <inheritdoc/>
-    protected override void OnProcessingCancelled(FilteringToken token)
+    protected override void OnProcessingCancelled(FilteringToken token, bool willStartProcessing)
     {
         this.filteredLogs.Clear();
+        if (!willStartProcessing && this.MemoryUsagePolicy != MemoryUsagePolicy.BetterPerformance)
+            this.filteredLogs.TrimExcess();
     }
 
 

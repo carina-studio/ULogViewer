@@ -48,6 +48,12 @@ interface IDisplayableLogProcessor : IApplicationObject<IULogViewerApplication>,
 
 
     /// <summary>
+    /// Get memory usage policy.
+    /// </summary>
+    MemoryUsagePolicy MemoryUsagePolicy { get; }
+
+
+    /// <summary>
     /// Get priority of logs processing.
     /// </summary>
     DisplayableLogProcessingPriority ProcessingPriority { get; }

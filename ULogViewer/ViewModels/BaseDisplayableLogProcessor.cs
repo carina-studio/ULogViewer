@@ -44,6 +44,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
     ProcessingParams? currentProcessingParams;
     readonly Comparison<DisplayableLog> logComparison;
     volatile ILogger? logger;
+    MemoryUsagePolicy memoryUsagePolicy;
     readonly ScheduledAction processNextChunkAction;
     Comparison<DisplayableLog> sourceLogComparison;
     IList<DisplayableLog> sourceLogs;
@@ -92,6 +93,10 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
                 this.ProcessNextChunk(this.currentProcessingParams);
         });
         this.startProcessingLogsAction = new ScheduledAction(this.StartProcessingLogs);
+
+        // attach to settings
+        app.Settings.SettingChanged += this.OnSettingChanged;
+        this.memoryUsagePolicy = app.Settings.GetValueOrDefault(SettingKeys.MemoryUsagePolicy);
         
         // attach to source logs
         (sourceLogs as INotifyCollectionChanged)?.Let(it => 
@@ -103,7 +108,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
 
 
     // Cancel current processing.
-    void CancelProcessing()
+    void CancelProcessing(bool willStartProcessing)
     {
         // check state
         this.startProcessingLogsAction.Cancel();
@@ -125,9 +130,11 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
 
         // clear logs
         this.unprocessedLogs.Clear();
+        if (!willStartProcessing && this.memoryUsagePolicy != MemoryUsagePolicy.BetterPerformance)
+            this.unprocessedLogs.TrimExcess();
 
         // handle cancellation
-        this.OnProcessingCancelled(processingParams.Token);
+        this.OnProcessingCancelled(processingParams.Token, willStartProcessing);
 
         // update state
         if (this.IsProcessing)
@@ -202,8 +209,11 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
             this.attachedLogGroup = null;
         }
 
+        // detach from settings
+        this.Application.Settings.SettingChanged -= this.OnSettingChanged;
+
         // cancecl processing
-        this.CancelProcessing();
+        this.CancelProcessing(false);
     }
 
 
@@ -396,6 +406,10 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
     }
 
 
+    /// <inheritdoc/>
+    public MemoryUsagePolicy MemoryUsagePolicy { get => this.memoryUsagePolicy; }
+
+
     /// <summary>
     /// Called to attach to log group.
     /// </summary>
@@ -480,7 +494,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
         }
 
         // recycle list
-        BaseDisplayableLogProcessors.RecyceInternalDisplayableLogVersionList(logVersions);
+        this.RecyceInternalDisplayableLogVersionList(logVersions);
 
         // handle processing result
         this.OnChunkProcessed(processingParams.Token, logs, results);
@@ -540,10 +554,18 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
 
 
     /// <summary>
+    /// Called when <see cref="MemoryUsagePolicy"/> changed.
+    /// </summary>
+    protected virtual void OnMemoryUsagePolicyChanged()
+    { }
+
+
+    /// <summary>
     /// Called when current processing has been cancelled.
     /// </summary>
     /// <param name="token">Token of cancelled processing.</param>
-    protected abstract void OnProcessingCancelled(TProcessingToken token);
+    /// <param name="willStartProcessing">True if next processing will be started later.</param>
+    protected abstract void OnProcessingCancelled(TProcessingToken token, bool willStartProcessing);
 
 
     /// <summary>
@@ -562,6 +584,26 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
     /// <param name="propertyName">Property name.</param>
     protected virtual void OnPropertyChanged(string propertyName) => 
         this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    
+
+    // Called when application setting changed.
+    void OnSettingChanged(object? sender, SettingChangedEventArgs e) =>
+        this.OnSettingChanged(e);
+    
+
+    /// <summary>
+    /// Called when application setting changed.
+    /// </summary>
+    /// <param name="e">Event data.</param>
+    protected virtual void OnSettingChanged(SettingChangedEventArgs e)
+    {
+        if (e.Key == SettingKeys.MemoryUsagePolicy)
+        {
+            this.memoryUsagePolicy = (MemoryUsagePolicy)e.Value;
+            this.OnMemoryUsagePolicyChanged();
+            this.OnPropertyChanged(nameof(MemoryUsagePolicy));
+        }
+    }
     
 
     // Called when source logs changed.
@@ -595,11 +637,19 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
                 }
                 break;
             case NotifyCollectionChangedAction.Reset:
+            {
                 this.sourceLogVersions.Clear();
-                this.sourceLogVersions.AddRange(new byte[this.sourceLogs.Count]);
-                this.CancelProcessing();
-                this.startProcessingLogsAction.Reschedule();
+                if (this.sourceLogs.IsNotEmpty())
+                    this.sourceLogVersions.AddRange(new byte[this.sourceLogs.Count]);
+                else if (this.memoryUsagePolicy != MemoryUsagePolicy.BetterPerformance)
+                    this.sourceLogVersions.TrimExcess();
+                if (this.currentProcessingParams != null)
+                {
+                    this.CancelProcessing(true);
+                    this.startProcessingLogsAction.Reschedule();
+                }
                 break;
+            }
             default:
                 throw new InvalidOperationException($"Unsupported change of source log list: {e.Action}.");
         }
@@ -645,7 +695,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
         logVersions.Reverse(); // Reverse back to same order as source list
 
         // recycle list
-        BaseDisplayableLogProcessors.RecyceInternalDisplayableLogList(logs);
+        this.RecyceInternalDisplayableLogList(logs);
 
         // wait for previous chunks
         var paddingInterval = this.ProcessingPriority switch
@@ -739,19 +789,19 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
         {
             if (it.Count <= chunkSize)
             {
-                var list = BaseDisplayableLogProcessors.ObtainInternalDisplayableLogList(it);
+                var list = this.ObtainInternalDisplayableLogList(it);
                 it.Clear();
                 return list;
             }
             else
             {
                 var index = it.Count - chunkSize;
-                var list = BaseDisplayableLogProcessors.ObtainInternalDisplayableLogList(it.GetRangeView(index, chunkSize));
+                var list = this.ObtainInternalDisplayableLogList(it.GetRangeView(index, chunkSize));
                 it.RemoveRange(index, chunkSize);
                 return list;
             }
         });
-        var logVersions = BaseDisplayableLogProcessors.ObtainInternalDisplayableLogVersionList().Also(it => // The order will be reverse order of source list
+        var logVersions = this.ObtainInternalDisplayableLogVersionList().Also(it => // The order will be reverse order of source list
         {
             var sourceLogs = this.sourceLogs;
             var sourceLogVersions = this.sourceLogVersions;
@@ -817,7 +867,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
             this.sourceLogComparison = value;
             this.sourceLogVersions.Clear();
             this.sourceLogVersions.AddRange(new byte[this.sourceLogs.Count]);
-            this.CancelProcessing();
+            this.CancelProcessing(true);
             this.startProcessingLogsAction.Reschedule();
         }
     }
@@ -840,7 +890,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
             this.sourceLogs = value;
             this.sourceLogVersions.Clear();
             this.sourceLogVersions.AddRange(new byte[value.Count]);
-            this.CancelProcessing();
+            this.CancelProcessing(true);
             this.startProcessingLogsAction.Reschedule();
         }
     }
@@ -854,7 +904,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
             return;
 
         // cancel current processing
-        this.CancelProcessing();
+        this.CancelProcessing(true);
 
         // create token
         var processingToken = this.CreateProcessingToken(out var isProcessingNeeded);
@@ -995,7 +1045,9 @@ static class BaseDisplayableLogProcessors
     /// </summary>
     /// <param name="elements">Initial elements.</param>
     /// <returns>List.</returns>
-    public static List<DisplayableLog> ObtainInternalDisplayableLogList(IEnumerable<DisplayableLog>? elements = null)
+#pragma warning disable IDE0060
+    public static List<DisplayableLog> ObtainInternalDisplayableLogList(this IDisplayableLogProcessor processor, IEnumerable<DisplayableLog>? elements = null)
+#pragma warning restore IDE0060
     {
         var list = InternalDisplayableLogListPool.Lock(it =>
         {
@@ -1019,8 +1071,10 @@ static class BaseDisplayableLogProcessors
     /// </summary>
     /// <param name="elements">Initial elements.</param>
     /// <returns>List.</returns>
-    public static List<byte> ObtainInternalDisplayableLogVersionList(IEnumerable<byte>? elements = null)
+#pragma warning disable IDE0060
+    public static List<byte> ObtainInternalDisplayableLogVersionList(this IDisplayableLogProcessor processor, IEnumerable<byte>? elements = null)
     {
+#pragma warning restore IDE0060
         var list = InternalDisplayableLogVersionListPool.Lock(it =>
         {
             it.TryPop(out var list);
@@ -1042,12 +1096,14 @@ static class BaseDisplayableLogProcessors
     /// Recycle the list of log for internal usage.
     /// </summary>
     /// <param name="list">List to recycle.</param>
-    public static void RecyceInternalDisplayableLogList(List<DisplayableLog> list)
+    public static void RecyceInternalDisplayableLogList(this IDisplayableLogProcessor processor, List<DisplayableLog> list)
     {
         list.Clear();
         lock (InternalDisplayableLogListPool)
         {
-            if (InternalDisplayableLogListPool.Count < ListPoolCapacity)
+            if (processor.MemoryUsagePolicy == MemoryUsagePolicy.LessMemoryUsage)
+                InternalDisplayableLogListPool.Clear();
+            else if (InternalDisplayableLogListPool.Count < ListPoolCapacity)
                 InternalDisplayableLogListPool.Push(list);
         }
     }
@@ -1057,12 +1113,14 @@ static class BaseDisplayableLogProcessors
     /// Recycle the list of version of log for internal usage.
     /// </summary>
     /// <param name="list">List to recycle.</param>
-    public static void RecyceInternalDisplayableLogVersionList(List<byte> list)
+    public static void RecyceInternalDisplayableLogVersionList(this IDisplayableLogProcessor processor, List<byte> list)
     {
         list.Clear();
         lock (InternalDisplayableLogVersionListPool)
         {
-            if (InternalDisplayableLogVersionListPool.Count < ListPoolCapacity)
+            if (processor.MemoryUsagePolicy == MemoryUsagePolicy.LessMemoryUsage)
+                InternalDisplayableLogVersionListPool.Clear();
+            else if (InternalDisplayableLogVersionListPool.Count < ListPoolCapacity)
                 InternalDisplayableLogVersionListPool.Push(list);
         }
     }

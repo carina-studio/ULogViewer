@@ -1,4 +1,5 @@
 using CarinaStudio.Collections;
+using CarinaStudio.Configuration;
 using CarinaStudio.Diagnostics;
 using CarinaStudio.Threading;
 using System;
@@ -135,13 +136,15 @@ abstract class BaseDisplayableLogAnalyzer<TProcessingToken, TResult> : BaseDispl
 
 
     /// <inheritdoc/>
-    protected override void OnProcessingCancelled(TProcessingToken token)
+    protected override void OnProcessingCancelled(TProcessingToken token, bool willStartProcessing)
     {
         if (this.analysisResults.IsNotEmpty())
         {
             foreach (var log in this.SourceLogs)
                 log.RemoveAnalysisResults(this);
             this.analysisResults.Clear();
+            if (!willStartProcessing && this.Settings.GetValueOrDefault(SettingKeys.MemoryUsagePolicy) != MemoryUsagePolicy.BetterPerformance)
+                this.analysisResults.TrimExcess();
         }
         if (this.analysisResultsMemorySize != 0L)
         {
