@@ -29,6 +29,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly Dictionary<string, IBrush> levelBrushes = new Dictionary<string, IBrush>();
 		int maxDisplayLineCount;
 		readonly Random random = new Random();
+		long memorySize;
 
 
 		/// <summary>
@@ -224,7 +225,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get size of memory usage by the group in bytes.
 		/// </summary>
-		public long MemorySize { get; private set; }
+		public long MemorySize { get => this.memorySize; }
 
 
 		/// <summary>
@@ -286,7 +287,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.displayableLogsHead.Previous = log;
 			}
 			this.displayableLogsHead = log;
-			this.MemorySize += log.MemorySize;
+			Interlocked.Add(ref this.memorySize, log.MemorySize);
 		}
 
 
@@ -304,7 +305,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.displayableLogsHead = log.Next;
 			log.Next = null;
 			log.Previous = null;
-			this.MemorySize -= log.MemorySize;
+			Interlocked.Add(ref this.memorySize, -log.MemorySize);
 		}
 
 
@@ -313,10 +314,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		/// <param name="log"><see cref="DisplayableLog"/>.</param>
 		/// <param name="diff">Difference of memory size.</param>
-		internal void OnDisplayableLogMemorySizeChanged(DisplayableLog log, long diff)
-		{
-			this.MemorySize += diff;
-		}
+		internal void OnDisplayableLogMemorySizeChanged(DisplayableLog log, long diff) =>
+			Interlocked.Add(ref this.memorySize, diff);
 
 
 		// Called when property of log profile has been changed.
