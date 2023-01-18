@@ -95,6 +95,24 @@
 			<ExcludeFromSingleFile>True</ExcludeFromSingleFile>
 		</Content>
   </ItemGroup>
+  
+  <!-- Trimming options -->
+	<ItemGroup>
+		<TrimmerRootAssembly Include="IronPython" />
+		<TrimmerRootAssembly Include="IronPython.Modules" />
+		<TrimmerRootAssembly Include="IronPython.SQLite" />
+		<TrimmerRootAssembly Include="Jint" />
+		<TrimmerRootAssembly Include="netstandard" />
+		<TrimmerRootAssembly Include="NLog" />
+		<TrimmerRootAssembly Include="System.Console" />
+		<TrimmerRootAssembly Include="System.Private.Xml" />
+		<TrimmerRootAssembly Include="System.Private.CoreLib" />
+	</ItemGroup>
+
+	<ItemGroup Condition="$(TargetFramework.Contains('windows'))">
+		<TrimmerRootAssembly Include="Microsoft.Windows.SDK.NET" />
+		<TrimmerRootAssembly Include="System.Management" />
+	</ItemGroup>
 
   <ItemGroup>
     <None Update="ULogViewer.png">
