@@ -78,6 +78,9 @@ abstract class SessionComponent : ViewModel<IULogViewerApplication>
         if (disposing)
             this.VerifyAccess();
         
+        // detach from log profile
+        this.Session.LogProfile?.Let(it => it.PropertyChanged -= this.OnLogProfilePropertyChanged);
+        
         // detach from session
         this.Session.AllComponentsCreated -= this.OnAllComponentsCreated;
         (this.Session.AllLogs as INotifyCollectionChanged)?.Let(it =>
@@ -85,6 +88,9 @@ abstract class SessionComponent : ViewModel<IULogViewerApplication>
         this.logProfileObserverToken.Dispose();
         this.Session.RestoringState -= this.OnRestoreState;
         this.Session.SavingState -= this.OnSaveState;
+
+        // call base
+        base.Dispose(disposing);
     }
 
 
