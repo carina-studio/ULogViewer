@@ -366,7 +366,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			/// <summary>
 			/// Get brush of color indicator.
 			/// </summary>
-			public virtual IBrush? ColorIndicatorBrush { get => null; }
+			public virtual IBrush? ColorIndicatorBrush => null;
 
 			/// <summary>
 			/// Get name of log file.
@@ -454,7 +454,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			if (displayableLogsToDispose.IsEmpty())
 				return;
-			var isDebugMode = App.CurrentOrNull?.IsDebugMode == true;
 			var logCount = displayableLogsToDispose.Count;
 			if (logCount <= DisplayableLogDisposingChunkSize)
 			{
@@ -472,7 +471,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				for (var i = logCount - DisplayableLogDisposingChunkSize; i < logCount; ++i)
 					displayableLogsToDispose[i].Dispose();
 				displayableLogsToDispose.RemoveRange(logCount - DisplayableLogDisposingChunkSize, DisplayableLogDisposingChunkSize);
-				disposeDisplayableLogsAction?.Schedule(DisposeDisplayableLogsInterval);
+#pragma warning disable CS8602
+				disposeDisplayableLogsAction.Schedule(DisposeDisplayableLogsInterval);
+#pragma warning restore CS8602
 				staticLogger?.LogTrace("Disposed {disposed} displayable logs, {remaining} remains", DisplayableLogDisposingChunkSize, displayableLogsToDispose.Count);
 			}
 		});
@@ -575,28 +576,28 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			}
 
 			// Color indicator brush.
-			public override IBrush? ColorIndicatorBrush { get => this.session.displayableLogGroup?.GetColorIndicatorBrush(this.FileName); }
+			public override IBrush? ColorIndicatorBrush => this.session.displayableLogGroup?.GetColorIndicatorBrush(this.FileName);
 
 			// Has error.
-			public override bool HasError { get => this.hasError; }
+			public override bool HasError => this.hasError;
 
 			// Whether all logs are read or not.
-			public override bool IsLogsReadingCompleted { get => this.isLogsReadingCompleted; }
+			public override bool IsLogsReadingCompleted => this.isLogsReadingCompleted;
 
 			// Is predefined.
 			public override bool IsPredefined { get; }
 
 			// Is reading logs.
-			public override bool IsReadingLogs { get => this.isReadingLogs; }
+			public override bool IsReadingLogs => this.isReadingLogs;
 
 			// Whether file is being removed or not.
-			public override bool IsRemoving { get => this.isRemoving; }
+			public override bool IsRemoving => this.isRemoving;
 
 			// Log count.
-			public override int LogCount { get => this.logCount; }
+			public override int LogCount => this.logCount;
 
 			// Log reading precondition.
-			public override LogReadingPrecondition LogReadingPrecondition { get => this.readingPrecondition; }
+			public override LogReadingPrecondition LogReadingPrecondition => this.readingPrecondition;
 
 			// Update color indicator brush.
 			public void UpdateColorIndicatorBrush() =>
@@ -684,10 +685,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		// Class for marked log info.
 		class MarkedLogInfo
 		{
-			public MarkColor Color = MarkColor.None;
-			public string FileName;
-			public int LineNumber;
-			public DateTime? Timestamp;
+			public readonly MarkColor Color;
+			public readonly string FileName;
+			public readonly int LineNumber;
+			public readonly DateTime? Timestamp;
 			public MarkedLogInfo(string fileName, int lineNumber, DateTime? timestamp, MarkColor color)
 			{
 				this.Color = color;
@@ -730,7 +731,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		bool isRestoringState;
 		readonly Dictionary<LogReader, LogFileInfoImpl> logFileInfoMapByLogReader = new();
 		readonly SortedObservableList<LogFileInfo> logFileInfoList = new((lhs, rhs) =>
-			PathComparer.Default.Compare(lhs?.FileName, rhs?.FileName));
+			PathComparer.Default.Compare(lhs.FileName, rhs.FileName));
 		readonly List<LogReader> logReaders = new();
 		readonly Stopwatch logsReadingWatch = new();
 		readonly SortedObservableList<DisplayableLog> markedLogs;
@@ -1119,10 +1120,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					if (logProfile == null)
 					{
 						var res = (object?)null;
-						app?.Resources?.TryGetResource("Image/Icon.Tab", out res);
+						app?.Resources.TryGetResource("Image/Icon.Tab", out res);
 						return res as IImage;
 					}
-					else if (app != null)
+					if (app != null)
 						return LogProfileIconConverter.Default.Convert(logProfile, typeof(IImage), null, app.CultureInfo) as IImage;
 					return null;
 				});
@@ -1258,7 +1259,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Command to add log file.
 		/// </summary>
-		/// <remarks>Type of command parameter is <see cref="LogDataSourceParams{string}"/>.</remarks>
+		/// <remarks>Type of command parameter is <see cref="LogDataSourceParams{String}"/>.</remarks>
 		public ICommand AddLogFileCommand { get; }
 
 
@@ -1271,7 +1272,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get number of all read logs.
 		/// </summary>
-		public int AllLogCount { get => this.GetValue(AllLogCountProperty); }
+		public int AllLogCount => 
+			this.GetValue(AllLogCountProperty);
 
 
 		/// <summary>
@@ -1289,13 +1291,15 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Check whether logs are based-on one or more files or not.
 		/// </summary>
-		public bool AreFileBasedLogs { get => this.GetValue(AreFileBasedLogsProperty); }
+		public bool AreFileBasedLogs => 
+			this.GetValue(AreFileBasedLogsProperty);
 
 
 		/// <summary>
 		/// Check whether logs are sorted by one of <see cref="Log.BeginningTimestamp"/>, <see cref="Log.EndingTimestamp"/>, <see cref="Log.Timestamp"/> or not.
 		/// </summary>
-		public bool AreLogsSortedByTimestamp { get => this.GetValue(AreLogsSortedByTimestampProperty); }
+		public bool AreLogsSortedByTimestamp => 
+			this.GetValue(AreLogsSortedByTimestampProperty);
 
 
 		// Attach to given component.
@@ -1697,7 +1701,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.displayableLogGroup = new DisplayableLogGroup(profile).Also(it =>
 				{
 					this.Logger.LogDebug("Create displayable log group '{group}'", it);
-					it.ColorIndicatorBrushesUpdated += (_, e) =>
+					it.ColorIndicatorBrushesUpdated += (_, _) =>
 					{
 						foreach (var fileInfo in this.logFileInfoMapByLogReader.Values)
 							fileInfo.UpdateColorIndicatorBrush();
@@ -1722,7 +1726,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				if (profile.LogPatterns.IsNotEmpty())
 					it.LogPatterns = profile.LogPatterns;
 				else
-					it.LogPatterns = new LogPattern[] { new LogPattern("^(?<Message>.*)", false, false) };
+					it.LogPatterns = new[] { new LogPattern("^(?<Message>.*)", false, false) };
 				it.LogStringEncoding = profile.LogStringEncodingForReading;
 				if (profile.IsContinuousReading)
 				{
@@ -1832,8 +1836,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			// check state
 			var profile = this.LogProfile ?? throw new InternalStateCorruptedException("No log profile.");
-			var app = this.Application as App ?? throw new InternalStateCorruptedException("No application.");
-			var writingFormats = profile.LogWritingFormats ?? Array.Empty<string>();
+			var writingFormats = profile.LogWritingFormats;
 
 			// prepare log writer
 			var logWriter = new RawLogWriter(dataOutput)
@@ -1868,7 +1871,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 									break;
 							}
 						}
-						return new string[] { it.ToString() };
+						return new[] { it.ToString() };
 					})
 					: writingFormats,
 				LogLevelMap = profile.LogLevelMapForWriting,
@@ -1921,7 +1924,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get list of property of <see cref="DisplayableLog"/> needed to be shown on UI.
 		/// </summary>
-		public IList<DisplayableLogProperty> DisplayLogProperties { get => this.GetValue(DisplayLogPropertiesProperty); }
+		public IList<DisplayableLogProperty> DisplayLogProperties => 
+			this.GetValue(DisplayLogPropertiesProperty);
 
 
 		// Dispose.
@@ -2105,7 +2109,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get earliest timestamp of log in <see cref="Logs"/>.
 		/// </summary>
-		public DateTime? EarliestLogTimestamp { get => this.GetValue(EarliestLogTimestampProperty); }
+		public DateTime? EarliestLogTimestamp => 
+			this.GetValue(EarliestLogTimestampProperty);
 
 
 		/// <summary>
@@ -2123,7 +2128,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get number of filtered logs.
 		/// </summary>
-		public int FilteredLogCount { get => this.GetValue(FilteredLogCountProperty); }
+		public int FilteredLogCount => 
+			this.GetValue(FilteredLogCountProperty);
 
 
 		/// <summary>
@@ -2182,13 +2188,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// prepare comparison
 			var timestampGetter = profile.SortKey switch
 			{
-				LogSortKey.BeginningTimestamp => 
-					new Func<DisplayableLog, long>(log => log.BinaryBeginningTimestamp),
-				LogSortKey.EndingTimestamp =>
-					new Func<DisplayableLog, long>(log => log.BinaryEndingTimestamp),
-				LogSortKey.Timestamp =>
-					new Func<DisplayableLog, long>(log => log.BinaryTimestamp),
-				_ => null,
+				LogSortKey.BeginningTimestamp => log => log.BinaryBeginningTimestamp,
+				LogSortKey.EndingTimestamp => log => log.BinaryEndingTimestamp,
+				LogSortKey.Timestamp => log => log.BinaryTimestamp,
+				_ => default(Func<DisplayableLog, long>?),
 			};
 			if (timestampGetter == null)
 				return null;
@@ -2207,97 +2210,113 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Check whether errors are found in all data sources or not.
 		/// </summary>
-		public bool HasAllDataSourceErrors { get => this.GetValue(HasAllDataSourceErrorsProperty); }
+		public bool HasAllDataSourceErrors => 
+			this.GetValue(HasAllDataSourceErrorsProperty);
 
 
 		/// <summary>
 		/// Check whether <see cref="CustomTitle"/> has been set or not.
 		/// </summary>
-		public bool HasCustomTitle { get => this.GetValue(HasCustomTitleProperty); }
+		public bool HasCustomTitle => 
+			this.GetValue(HasCustomTitleProperty);
 
 
 		/// <summary>
 		/// Check whether <see cref="IPEndPoint"/> is non-null or not.
 		/// </summary>
-		public bool HasIPEndPoint { get => this.GetValue(HasIPEndPointProperty); }
+		public bool HasIPEndPoint => 
+			this.GetValue(HasIPEndPointProperty);
 
 
 		/// <summary>
 		/// Check whether <see cref="LastLogsReadingDuration"/> is valid or not.
 		/// </summary>
-		public bool HasLastLogsReadingDuration { get => this.GetValue(HasLastLogsReadingDurationProperty); }
+		public bool HasLastLogsReadingDuration => 
+			this.GetValue(HasLastLogsReadingDurationProperty);
 
 
 		/// <summary>
 		/// Check whether color indicator of log is needed or not.
 		/// </summary>
-		public bool HasLogColorIndicator { get => this.GetValue(HasLogColorIndicatorProperty); }
+		public bool HasLogColorIndicator => 
+			this.GetValue(HasLogColorIndicatorProperty);
 
 
 		/// <summary>
 		/// Check whether color indicator of log by file name is needed or not.
 		/// </summary>
-		public bool HasLogColorIndicatorByFileName { get => this.GetValue(HasLogColorIndicatorByFileNameProperty); }
+		public bool HasLogColorIndicatorByFileName => 
+			this.GetValue(HasLogColorIndicatorByFileNameProperty);
 
 
 		/// <summary>
 		/// Check whether at least one log file was added to session or not.
 		/// </summary>
-		public bool HasLogFiles { get => this.GetValue(HasLogFilesProperty); }
+		public bool HasLogFiles => 
+			this.GetValue(HasLogFilesProperty);
 
 
 		/// <summary>
 		/// Check whether <see cref="LogProfile"/> is valid or not.
 		/// </summary>
-		public bool HasLogProfile { get => this.GetValue(HasLogProfileProperty); }
+		public bool HasLogProfile => 
+			this.GetValue(HasLogProfileProperty);
 
 
 		/// <summary>
 		/// Check whether at least one log reader created or not.
 		/// </summary>
-		public bool HasLogReaders { get => this.GetValue(HasLogReadersProperty); }
+		public bool HasLogReaders => 
+			this.GetValue(HasLogReadersProperty);
 
 
 		/// <summary>
 		/// Check whether at least one log is read or not.
 		/// </summary>
-		public bool HasLogs { get => this.GetValue(HasLogsProperty); }
+		public bool HasLogs => 
+			this.GetValue(HasLogsProperty);
 
 
 		/// <summary>
 		/// Check whether <see cref="LogsDuration"/> is valid or not.
 		/// </summary>
-		public bool HasLogsDuration { get => this.GetValue(HasLogsDurationProperty); }
+		public bool HasLogsDuration => 
+			this.GetValue(HasLogsDurationProperty);
 
 
 		/// <summary>
 		/// Check whether at least one log has been marked or not.
 		/// </summary>
-		public bool HasMarkedLogs { get => this.GetValue(HasMarkedLogsProperty); }
+		public bool HasMarkedLogs => 
+			this.GetValue(HasMarkedLogsProperty);
 
 
 		/// <summary>
 		/// Check whether errors are found in some of data sources or not.
 		/// </summary>
-		public bool HasPartialDataSourceErrors { get => this.GetValue(HasPartialDataSourceErrorsProperty); }
+		public bool HasPartialDataSourceErrors =>
+			this.GetValue(HasPartialDataSourceErrorsProperty);
 
 
 		/// <summary>
 		/// Check whether URI has been set or not.
 		/// </summary>
-		public bool HasUri { get => this.GetValue(HasUriProperty); }
+		public bool HasUri =>
+			this.GetValue(HasUriProperty);
 
 
 		/// <summary>
 		/// Check whether at least one property of <see cref="DisplayableLog"/> which represents timestamp will be shown in UI or not.
 		/// </summary>
-		public bool HasTimestampDisplayableLogProperty { get => this.GetValue(HasTimestampDisplayableLogPropertyProperty); }
+		public bool HasTimestampDisplayableLogProperty => 
+			this.GetValue(HasTimestampDisplayableLogPropertyProperty);
 
 
 		/// <summary>
 		/// Check whether working directory has been set or not.
 		/// </summary>
-		public bool HasWorkingDirectory { get => this.GetValue(HasWorkingDirectoryProperty); }
+		public bool HasWorkingDirectory => 
+			this.GetValue(HasWorkingDirectoryProperty);
 
 
 		// Hibernate the session.
@@ -2333,43 +2352,50 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get icon of session.
 		/// </summary>
-		public IImage? Icon { get => this.GetValue(IconProperty); }
+		public IImage? Icon => 
+			this.GetValue(IconProperty);
 
 
 		/// <summary>
 		/// Get current <see cref="IPEndPoint"/> to read logs from.
 		/// </summary>
-		public IPEndPoint? IPEndPoint { get => this.GetValue(IPEndPointProperty); }
+		public IPEndPoint? IPEndPoint => 
+			this.GetValue(IPEndPointProperty);
 
 
 		/// <summary>
 		/// Check whether session has been activated or not.
 		/// </summary>
-		public bool IsActivated { get => this.GetValue(IsActivatedProperty); }
+		public bool IsActivated => 
+			this.GetValue(IsActivatedProperty);
 
 
 		/// <summary>
 		/// Check whether logs are being analyzed or not.
 		/// </summary>
-		public bool IsAnalyzingLogs { get => this.GetValue(IsAnalyzingLogsProperty); }
+		public bool IsAnalyzingLogs => 
+			this.GetValue(IsAnalyzingLogsProperty);
 
 
 		/// <summary>
 		/// Check whether logs copying is on-going or not.
 		/// </summary>
-		public bool IsCopyingLogs { get => this.GetValue(IsCopyingLogsProperty); }
+		public bool IsCopyingLogs => 
+			this.GetValue(IsCopyingLogsProperty);
 
 
 		/// <summary>
 		/// Check whether session is hibernated or not.
 		/// </summary>
-		public bool IsHibernated { get => this.GetValue(IsHibernatedProperty); }
+		public bool IsHibernated => 
+			this.GetValue(IsHibernatedProperty);
 
 
 		/// <summary>
 		/// Check whether IP endpoint is needed or not.
 		/// </summary>
-		public bool IsIPEndPointNeeded { get => this.GetValue(IsIPEndPointNeededProperty); }
+		public bool IsIPEndPointNeeded => 
+			this.GetValue(IsIPEndPointNeededProperty);
 
 
 		/// <summary>
@@ -2384,7 +2410,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Check whether logs file is needed or not.
 		/// </summary>
-		public bool IsLogFileNeeded { get => this.GetValue(IsLogFileNeededProperty); }
+		public bool IsLogFileNeeded => 
+			this.GetValue(IsLogFileNeededProperty);
 
 
 		/// <summary>
@@ -2400,13 +2427,15 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Check whether logs file is supported or not.
 		/// </summary>
-		public bool IsLogFileSupported { get => this.GetValue(IsLogFileSupportedProperty); }
+		public bool IsLogFileSupported => 
+			this.GetValue(IsLogFileSupportedProperty);
 
 
 		/// <summary>
 		/// Check whether logs reading has been paused or not.
 		/// </summary>
-		public bool IsLogsReadingPaused { get => this.GetValue(IsLogsReadingPausedProperty); }
+		public bool IsLogsReadingPaused => 
+			this.GetValue(IsLogsReadingPausedProperty);
 
 
 		/// <summary>
@@ -2422,79 +2451,92 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Check whether logs are being processed or not.
 		/// </summary>
-		public bool IsProcessingLogs { get => this.GetValue(IsProcessingLogsProperty); }
+		public bool IsProcessingLogs => 
+			this.GetValue(IsProcessingLogsProperty);
 
 
 		/// <summary>
 		/// Check whether logs are being read or not.
 		/// </summary>
-		public bool IsReadingLogs { get => this.GetValue(IsReadingLogsProperty); }
+		public bool IsReadingLogs => 
+			this.GetValue(IsReadingLogsProperty);
 
 
 		/// <summary>
 		/// Check whether logs are being read continuously or not.
 		/// </summary>
-		public bool IsReadingLogsContinuously { get => this.GetValue(IsReadingLogsContinuouslyProperty); }
+		public bool IsReadingLogsContinuously =>
+			this.GetValue(IsReadingLogsContinuouslyProperty);
 
 
 		/// <summary>
 		/// Check whether one or more log files are being removed or not.
 		/// </summary>
-		public bool IsRemovingLogFiles { get => this.GetValue(IsRemovingLogFilesProperty); }
+		public bool IsRemovingLogFiles =>
+			this.GetValue(IsRemovingLogFilesProperty);
 
 
 		/// <summary>
 		/// Check whether logs saving is on-going or not.
 		/// </summary>
-		public bool IsSavingLogs { get => this.GetValue(IsSavingLogsProperty); }
+		public bool IsSavingLogs => 
+			this.GetValue(IsSavingLogsProperty);
 
 
 		/// <summary>
 		/// Check whether all logs are shown temporarily.
 		/// </summary>
-		public bool IsShowingAllLogsTemporarily { get => this.GetValue(IsShowingAllLogsTemporarilyProperty); }
+		public bool IsShowingAllLogsTemporarily => 
+			this.GetValue(IsShowingAllLogsTemporarilyProperty);
 
 
 		/// <summary>
 		/// Check whether showing marked logs temporarily or not.
 		/// </summary>
-		public bool IsShowingMarkedLogsTemporarily { get => this.GetValue(IsShowingMarkedLogsTemporarilyProperty); }
+		public bool IsShowingMarkedLogsTemporarily =>
+			this.GetValue(IsShowingMarkedLogsTemporarilyProperty);
 
 
 		/// <summary>
 		/// Check whether URI is needed or not.
 		/// </summary>
-		public bool IsUriNeeded { get => this.GetValue(IsUriNeededProperty); }
+		public bool IsUriNeeded => 
+			this.GetValue(IsUriNeededProperty);
 
 
 		/// <summary>
 		/// Check data sources are not ready for reading logs.
 		/// </summary>
-		public bool IsWaitingForDataSources { get => this.GetValue(IsWaitingForDataSourcesProperty); }
+		public bool IsWaitingForDataSources =>
+			this.GetValue(IsWaitingForDataSourcesProperty);
 
 
 		/// <summary>
 		/// Check whether working directory is needed or not.
 		/// </summary>
-		public bool IsWorkingDirectoryNeeded { get => this.GetValue(IsWorkingDirectoryNeededProperty); }
+		public bool IsWorkingDirectoryNeeded => 
+			this.GetValue(IsWorkingDirectoryNeededProperty);
 
 
 		/// <summary>
 		/// Get the last precondition of log reading.
 		/// </summary>
-		public LogReadingPrecondition LastLogReadingPrecondition { get => this.GetValue(LastLogReadingPreconditionProperty); }
+		public LogReadingPrecondition LastLogReadingPrecondition => 
+			this.GetValue(LastLogReadingPreconditionProperty);
 
 
 		/// <summary>
 		/// Get the duration of last logs reading.
 		/// </summary>
-		public TimeSpan? LastLogsReadingDuration { get => this.GetValue(LastLogsReadingDurationProperty); }
+		public TimeSpan? LastLogsReadingDuration =>
+			this.GetValue(LastLogsReadingDurationProperty);
 
 
 		/// <summary>
 		/// Get latest timestamp of log in <see cref="Logs"/>.
 		/// </summary>
-		public DateTime? LatestLogTimestamp { get => this.GetValue(LatestLogTimestampProperty); }
+		public DateTime? LatestLogTimestamp => 
+			this.GetValue(LatestLogTimestampProperty);
 
 
 		// Load marked logs from file.
@@ -2609,13 +2651,15 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get current log profile.
 		/// </summary>
-		public LogProfile? LogProfile { get => this.GetValue(LogProfileProperty); }
+		public LogProfile? LogProfile => 
+			this.GetValue(LogProfileProperty);
 
 
 		/// <summary>
 		/// Get list of <see cref="DisplayableLog"/>s to display.
 		/// </summary>
-		public IList<DisplayableLog> Logs { get => this.GetValue(LogsProperty); }
+		public IList<DisplayableLog> Logs => 
+			this.GetValue(LogsProperty);
 
 
 		/// <summary>
@@ -2627,25 +2671,29 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get duration of <see cref="Logs"/>.
 		/// </summary>
-		public TimeSpan? LogsDuration { get => this.GetValue(LogsDurationProperty); }
+		public TimeSpan? LogsDuration => 
+			this.GetValue(LogsDurationProperty);
 
 
 		/// <summary>
 		/// Get string to describe ending point of <see cref="LogsDuration"/>.
 		/// </summary>
-		public string? LogsDurationEndingString { get => this.GetValue(LogsDurationEndingStringProperty); }
+		public string? LogsDurationEndingString => 
+			this.GetValue(LogsDurationEndingStringProperty);
 
 
 		/// <summary>
 		/// Get string to describe starting point of <see cref="LogsDuration"/>.
 		/// </summary>
-		public string? LogsDurationStartingString { get => this.GetValue(LogsDurationStartingStringProperty); }
+		public string? LogsDurationStartingString => 
+			this.GetValue(LogsDurationStartingStringProperty);
 
 
 		/// <summary>
 		/// Get size of memory usage of logs by the <see cref="Session"/> instance in bytes.
 		/// </summary>
-		public long LogsMemoryUsage { get => this.GetValue(LogsMemoryUsageProperty); }
+		public long LogsMemoryUsage => 
+			this.GetValue(LogsMemoryUsageProperty);
 
 
 		/// <summary>
@@ -2698,7 +2746,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Command to mark logs.
 		/// </summary>
-		/// <remarks>Type of parmeter is <see cref="MarkingLogsParams"/>.</remarks>
+		/// <remarks>Type of parameter is <see cref="MarkingLogsParams"/>.</remarks>
 		public ICommand MarkLogsCommand { get; }
 
 
@@ -2756,7 +2804,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
-		/// Command to mark or ummark logs.
+		/// Command to mark or unmark logs.
 		/// </summary>
 		/// <remarks>Type of parameter is <see cref="IEnumerable{DisplayableLog}"/></remarks>
 		public ICommand MarkUnmarkLogsCommand { get; }
@@ -2806,13 +2854,15 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get maximum time span of log in <see cref="Logs"/>.
 		/// </summary>
-		public TimeSpan? MaxLogTimeSpan { get => this.GetValue(MaxLogTimeSpanProperty); }
+		public TimeSpan? MaxLogTimeSpan => 
+			this.GetValue(MaxLogTimeSpanProperty);
 
 
 		/// <summary>
 		/// Get minimum time span of log in <see cref="Logs"/>.
 		/// </summary>
-		public TimeSpan? MinLogTimeSpan { get => this.GetValue(MinLogTimeSpanProperty); }
+		public TimeSpan? MinLogTimeSpan => 
+			this.GetValue(MinLogTimeSpanProperty);
 
 
 		// Called when logs in allLogs has been changed.
@@ -3112,7 +3162,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					throw new InvalidOperationException($"Unsupported logs change action: {e.Action}.");
 			}
 			if (this.logFileInfoMapByLogReader.TryGetValue(logReader, out var logFileInfo))
-				logFileInfo?.UpdateLogCount(logReader.Logs.Count);
+				logFileInfo.UpdateLogCount(logReader.Logs.Count);
 		}
 
 
@@ -3309,7 +3359,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				return;
 			
 			// check state
-			if (this.logFileInfoMapByLogReader.TryGetValue(logReader, out var logFileInfo) && logFileInfo.IsPredefined == true)
+			if (this.logFileInfoMapByLogReader.TryGetValue(logReader, out var logFileInfo) && logFileInfo.IsPredefined)
 				return;
 			if (logReader.Precondition == param.Precondition)
 				return;
@@ -3329,7 +3379,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Command to reload added log file.
 		/// </summary>
-		/// <remarks>Type of parameter is <see cref="LogDataSourceParams{string}"/>.</remarks>
+		/// <remarks>Type of parameter is <see cref="LogDataSourceParams{String}"/>.</remarks>
 		public ICommand ReloadLogFileCommand { get; }
 
 
@@ -3414,7 +3464,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				return;
 			
 			// check state
-			if (this.logFileInfoMapByLogReader.TryGetValue(logReader, out var logFileInfo) && logFileInfo.IsPredefined == true)
+			if (this.logFileInfoMapByLogReader.TryGetValue(logReader, out var logFileInfo) && logFileInfo.IsPredefined)
 				return;
 
 			this.Logger.LogDebug("Request removing log file '{fileName}'", fileName);
@@ -3732,13 +3782,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.SetValue(IsMarkedLogsPanelVisibleProperty, jsonValue.ValueKind != JsonValueKind.False);
 				if (jsonState.TryGetProperty(nameof(LogFilesPanelSize), out jsonValue) 
 					&& jsonValue.TryGetDouble(out var doubleValue)
-					&& LogFilesPanelSizeProperty.ValidationFunction(doubleValue) == true)
+					&& LogFilesPanelSizeProperty.ValidationFunction(doubleValue))
 				{
 					this.SetValue(LogFilesPanelSizeProperty, doubleValue);
 				}
 				if (jsonState.TryGetProperty(nameof(MarkedLogsPanelSize), out jsonValue) 
 					&& jsonValue.TryGetDouble(out doubleValue)
-					&& MarkedLogsPanelSizeProperty.ValidationFunction(doubleValue) == true)
+					&& MarkedLogsPanelSizeProperty.ValidationFunction(doubleValue))
 				{
 					this.SetValue(MarkedLogsPanelSizeProperty, doubleValue);
 				}
@@ -3903,8 +3953,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					{
 						foreach (var pair in rawLogWriter.LineNumbers)
 						{
-							var color = MarkColor.None;
-							markedColorMap.TryGetValue(pair.Key, out color);
+							if (!markedColorMap.TryGetValue(pair.Key, out var color))
+								color = MarkColor.None;
 							markedLogInfos.Add(new MarkedLogInfo(fileName, pair.Value, pair.Key.Timestamp, color));
 						}
 					});
@@ -4407,7 +4457,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get title of session.
 		/// </summary>
-		public string? Title { get => this.GetValue(TitleProperty); }
+		public string? Title => 
+			this.GetValue(TitleProperty);
 
 
 		// Enable or disable showing all logs temporarily.
@@ -4457,7 +4508,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get size of total memory usage of logs by all <see cref="Session"/> instances in bytes.
 		/// </summary>
-		public long TotalLogsMemoryUsage { get => this.GetValue(TotalLogsMemoryUsageProperty); }
+		public long TotalLogsMemoryUsage => 
+			this.GetValue(TotalLogsMemoryUsageProperty);
 
 
 		// Trigger GC if needed.
@@ -4509,7 +4561,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Command to unmark logs.
 		/// </summary>
-		/// <remarks>Type of parmeter is <see cref="IEnumerable{DisplayableLog}"/>.</remarks>
+		/// <remarks>Type of parameter is <see cref="IEnumerable{DisplayableLog}"/>.</remarks>
 		public ICommand UnmarkLogsCommand { get; }
 
 
@@ -4599,13 +4651,15 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get current URI to read logs from.
 		/// </summary>
-		public Uri? Uri { get => this.GetValue(UriProperty); }
+		public Uri? Uri =>
+			this.GetValue(UriProperty);
 
 
 		/// <summary>
-		/// Get list of valid <see cref="Logs.LogLevel"/> defined by log profile including <see cref="Logs.LogLevel.Undefined"/>.
+		/// Get list of valid <see cref="ULogViewer.Logs.LogLevel"/> defined by log profile including <see cref="ULogViewer.Logs.LogLevel.Undefined"/>.
 		/// </summary>
-		public IList<Logs.LogLevel> ValidLogLevels { get => this.GetValue(ValidLogLevelsProperty); }
+		public IList<Logs.LogLevel> ValidLogLevels =>
+			this.GetValue(ValidLogLevelsProperty);
 
 
 		// Wait for all necessary tasks.
@@ -4619,12 +4673,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get name of current working directory.
 		/// </summary>
-		public string? WorkingDirectoryName { get => this.GetValue(WorkingDirectoryNameProperty); }
+		public string? WorkingDirectoryName =>
+			this.GetValue(WorkingDirectoryNameProperty);
 
 
 		/// <summary>
 		/// Get path of current working directory.
 		/// </summary>
-		public string? WorkingDirectoryPath { get => this.GetValue(WorkingDirectoryPathProperty); }
+		public string? WorkingDirectoryPath =>
+			this.GetValue(WorkingDirectoryPathProperty);
 	}
 }

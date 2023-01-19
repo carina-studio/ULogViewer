@@ -353,7 +353,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.selectableValueLogItemBackgroundConverter = new FuncMultiValueConverter<bool, IBrush?>(values =>
 			{
 				if (values is not IList<bool> list)
-					list = values.ToArray();
+					list = values.ToArray() ?? Array.Empty<bool>();
 				if (list.Count >= 2 
 					&& list[0] /* IsValueSelected */ 
 					&& !list[1] /* IsListBoxItemSelected */)
