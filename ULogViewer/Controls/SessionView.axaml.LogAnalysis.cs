@@ -352,14 +352,14 @@ partial class SessionView
         // select file
         var fileName = (await this.attachedWindow.StorageProvider.OpenFilePickerAsync(new()
         {
-            FileTypeFilter = new FilePickerFileType[]
+            FileTypeFilter = new[]
             {
                 new FilePickerFileType(this.Application.GetStringNonNull("FileFormat.Json"))
                 {
-                    Patterns = new string[] { "*.json" }
+                    Patterns = new[] { "*.json" }
                 }
             }
-        }))?.Let(it =>
+        })).Let(it =>
         {
             if (it.Count == 1 && it[0].TryGetUri(out var uri))
                 return uri.LocalPath;
@@ -369,33 +369,13 @@ partial class SessionView
             return;
         
         // try loading rule set
-        var klaRuleSet = (KeyLogAnalysisRuleSet?)null;
-        try
-        {
-            klaRuleSet = await KeyLogAnalysisRuleSet.LoadAsync(this.Application, fileName, true);
-        }
-        catch
-        { }
-        var laScriptSet = (LogAnalysisScriptSet?)null;
-        if (klaRuleSet == null)
-        {
-            try
-            {
-                laScriptSet = await LogAnalysisScriptSet.LoadAsync(this.Application, fileName);
-            }
-            catch
-            { }
-        }
-        var odaRuleSet = (OperationDurationAnalysisRuleSet?)null;
-        if (klaRuleSet == null && laScriptSet == null)
-        {
-            try
-            {
-                odaRuleSet = await OperationDurationAnalysisRuleSet.LoadAsync(this.Application, fileName, true);
-            }
-            catch
-            { }
-        }
+        var klaRuleSet = await Global.RunOrDefaultAsync(async () => await KeyLogAnalysisRuleSet.LoadAsync(this.Application, fileName, true));
+        var laScriptSet = klaRuleSet == null
+            ? await Global.RunOrDefaultAsync(async () => await LogAnalysisScriptSet.LoadAsync(this.Application, fileName))
+            : null;
+        var odaRuleSet = klaRuleSet == null && laScriptSet == null
+            ? await Global.RunOrDefaultAsync(async () => await OperationDurationAnalysisRuleSet.LoadAsync(this.Application, fileName, true))
+            : null;
         if (this.attachedWindow == null)
             return;
         if (klaRuleSet == null 
@@ -590,7 +570,7 @@ partial class SessionView
                                     {
                                         it.Anchor = this.FindControl<Control>("showMarkedLogsOnlyButton");
                                         it.Bind(Tutorial.DescriptionProperty, this.GetResourceObservable("String/SessionView.Tutorial.CancelShowingMarkedLogsOnlyForSelectingLogAnalysisResult"));
-                                        it.Dismissed += (_, e) =>
+                                        it.Dismissed += (_, _) =>
                                             this.PersistentState.SetValue<bool>(IsCancelShowingMarkedLogsForLogAnalysisResultTutorialShownKey, true);
                                         it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb.Colored");
                                         it.IsSkippingAllTutorialsAllowed = false;
@@ -614,7 +594,7 @@ partial class SessionView
                                     {
                                         it.Anchor = this.FindControl<Control>("showAllLogsTemporarilyButton");
                                         it.Bind(Tutorial.DescriptionProperty, this.GetResourceObservable("String/SessionView.Tutorial.ShowAllLogsTemporarilyForSelectingLogAnalysisResult"));
-                                        it.Dismissed += (_, e) =>
+                                        it.Dismissed += (_, _) =>
                                             this.PersistentState.SetValue<bool>(IsShowAllLogsForLogAnalysisResultTutorialShownKey, true);
                                         it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb.Colored");
                                         it.IsSkippingAllTutorialsAllowed = false;
@@ -669,7 +649,7 @@ partial class SessionView
     {
         // update selected rule sets
         var listBox = (Avalonia.Controls.ListBox)sender.AsNonNull();
-        foreach (var ruleSet in e.RemovedItems!)
+        foreach (var ruleSet in e.RemovedItems)
         {
             if (ruleSet is KeyLogAnalysisRuleSet klaRuleSets)
                 this.selectedKeyLogAnalysisRuleSets.Remove(klaRuleSets);
@@ -682,7 +662,7 @@ partial class SessionView
             else if (ruleSet != null)
                 throw new NotImplementedException();
         }
-        foreach (var ruleSet in e.AddedItems!)
+        foreach (var ruleSet in e.AddedItems)
         {
             if (ruleSet is KeyLogAnalysisRuleSet klaRuleSets)
                 this.selectedKeyLogAnalysisRuleSets.Add(klaRuleSets);
@@ -711,7 +691,7 @@ partial class SessionView
                 }
                 return false;
             }
-            else if (listBox == this.logAnalysisScriptSetListBox)
+            if (listBox == this.logAnalysisScriptSetListBox)
             {
                 selectedRuleSetCount = this.selectedLogAnalysisScriptSets.Count;
                 if (selectedRuleSetCount != listBox.SelectedItems!.Count)
@@ -721,7 +701,7 @@ partial class SessionView
                 }
                 return false;
             }
-            else if (listBox == this.operationCountingAnalysisRuleSetListBox)
+            if (listBox == this.operationCountingAnalysisRuleSetListBox)
             {
                 selectedRuleSetCount = this.selectedOperationCountingAnalysisRuleSets.Count;
                 if (selectedRuleSetCount != listBox.SelectedItems!.Count)
@@ -731,7 +711,7 @@ partial class SessionView
                 }
                 return false;
             }
-            else if (listBox == this.operationDurationAnalysisRuleSetListBox)
+            if (listBox == this.operationDurationAnalysisRuleSetListBox)
             {
                 selectedRuleSetCount = this.selectedOperationDurationAnalysisRuleSets.Count;
                 if (selectedRuleSetCount != listBox.SelectedItems!.Count)
@@ -769,7 +749,7 @@ partial class SessionView
     {
         if (this.DataContext is not Session session)
             return;
-        var isUpdateShceduled = this.updateLogAnalysisAction.IsScheduled;
+        var isUpdateScheduled = this.updateLogAnalysisAction.IsScheduled;
         var syncBack = false;
         var selectedItems = Global.Run(() =>
         {
@@ -816,7 +796,7 @@ partial class SessionView
                 this.Logger.LogError("Unsupported change of key log analysis rule sets: {action}", e.Action);
                 break;
         }
-        if (syncBack && !isUpdateShceduled)
+        if (syncBack && !isUpdateScheduled)
             this.updateLogAnalysisAction.Cancel();
     }
 
@@ -914,9 +894,9 @@ partial class SessionView
         return (await this.attachedWindow.StorageProvider.SaveFilePickerAsync(new ()
         {
             DefaultExtension = ".json",
-            FileTypeChoices = new FilePickerFileType[]
+            FileTypeChoices = new[]
             {
-                new FilePickerFileType(this.Application.GetStringNonNull("FileFormat.Json")) { Patterns = new string[] { "*.json" }}
+                new FilePickerFileType(this.Application.GetStringNonNull("FileFormat.Json")) { Patterns = new[] { "*.json" }}
             }
         }))?.Let(it =>
         {
@@ -948,7 +928,7 @@ partial class SessionView
         {
             it.Anchor = this.logAnalysisRuleSetsButton;
             it.Bind(Tutorial.DescriptionProperty, this.GetResourceObservable("String/SessionView.Tutorial.SelectLogAnalysisRuleSets"));
-            it.Dismissed += (_, e) => 
+            it.Dismissed += (_, _) => 
                 this.PersistentState.SetValue<bool>(IsSelectLogAnalysisRuleSetsTutorialShownKey, true);
             it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb.Colored");
             it.IsSkippingAllTutorialsAllowed = false;
@@ -978,7 +958,7 @@ partial class SessionView
         }
         else
         {
-            if (userScrollingDelta > 0 && ((scrollViewer.Offset.Y + scrollViewer.Viewport.Height) / (double)scrollViewer.Extent.Height) >= 0.999)
+            if (userScrollingDelta > 0 && ((scrollViewer.Offset.Y + scrollViewer.Viewport.Height) / scrollViewer.Extent.Height) >= 0.999)
             {
                 this.Logger.LogDebug("Start auto scrolling of log analysis result because of user scrolling down");
                 this.IsScrollingToLatestLogAnalysisResultNeeded = true;
