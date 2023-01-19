@@ -1514,6 +1514,13 @@ namespace CarinaStudio.ULogViewer.Controls
 								this.canCopyLogProperty.Update(true);
 								if (isStringProperty)
 									this.canShowLogProperty.Update(true);
+								else
+									this.canShowLogProperty.Update(false);
+							}
+							else
+							{
+								this.canCopyLogProperty.Update(false);
+								this.canShowLogProperty.Update(false);
 							}
 						};
 						if (actualPropertyView is CarinaStudio.Controls.TextBlock textBlock 
