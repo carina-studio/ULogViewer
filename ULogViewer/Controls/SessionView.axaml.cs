@@ -2432,7 +2432,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// <summary>
 		/// Whether "Tools" menu item is visible or not.
 		/// </summary>
-		public bool IsToolsMenuItemVisible => false;
+		public bool IsToolsMenuItemVisible { get; }
 
 
 		// Get font family of log.
