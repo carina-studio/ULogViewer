@@ -1,7 +1,10 @@
+.idea
+.run
 .vs
 obj
 bin
 ULogViewer.csproj.user
+ULogViewer.sln.DotSettings.user
 /ULogViewer/Properties/PublishProfiles/*.user
 /ULogViewer/Properties/launchSettings.json
 /AutoUpdater/AutoUpdater.csproj.user
