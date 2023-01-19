@@ -42,7 +42,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly Dictionary<string, IBrush> colorIndicatorBrushes = new();
 		Func<DisplayableLog, string>? colorIndicatorKeyGetter;
 		DisplayableLog? displayableLogsHead;
-		readonly Dictionary<string, IBrush> levelBrushes = new();
+		readonly Dictionary<string, IBrush> levelBackgroundBrushes = new();
+		readonly Dictionary<string, IBrush> levelForegroundBrushes = new();
 		readonly ILogger logger;
 		int maxDisplayLineCount;
 		long memorySize = BaseMemorySize;
@@ -301,7 +302,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// clear resources
 			this.colorIndicatorBrushes.Clear();
-			this.levelBrushes.Clear();
+			this.levelBackgroundBrushes.Clear();
+			this.levelForegroundBrushes.Clear();
 
 			// cancel updating text highlighting
 			this.updateTextHighlightingDefSetAction.Cancel();
@@ -376,21 +378,40 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
-		/// Get <see cref="IBrush"/> for given log.
+		/// Get background <see cref="IBrush"/> for given log.
 		/// </summary>
 		/// <param name="log"><see cref="DisplayableLog"/>.</param>
 		/// <returns><see cref="IBrush"/> for given log.</returns>
-		internal IBrush GetLevelBrush(DisplayableLog log, string? state = null)
+		internal IBrush GetLevelBackgroundBrush(DisplayableLog log, string? state = null)
 		{
 			if (this.IsDisposed)
 				return Brushes.Transparent;
-			if(!string.IsNullOrEmpty(state) && this.levelBrushes.TryGetValue($"{log.Level}.{state}", out var brush))
+			if(!string.IsNullOrEmpty(state) && this.levelBackgroundBrushes.TryGetValue($"{log.Level}.{state}", out var brush))
 				return brush.AsNonNull();
-			if (this.levelBrushes.TryGetValue(log.Level.ToString(), out brush))
+			if (this.levelBackgroundBrushes.TryGetValue(log.Level.ToString(), out brush))
 				return brush.AsNonNull();
-			if (this.levelBrushes.TryGetValue(nameof(Logs.LogLevel.Undefined), out brush))
+			if (this.levelBackgroundBrushes.TryGetValue(nameof(Logs.LogLevel.Undefined), out brush))
 				return brush.AsNonNull();
-			throw new ArgumentException($"Cannot get brush for log level {log.Level}.");
+			throw new ArgumentException($"Cannot get background brush for log level {log.Level}.");
+		}
+
+
+		/// <summary>
+		/// Get foreground <see cref="IBrush"/> for given log.
+		/// </summary>
+		/// <param name="log"><see cref="DisplayableLog"/>.</param>
+		/// <returns><see cref="IBrush"/> for given log.</returns>
+		internal IBrush GetLevelForegroundBrush(DisplayableLog log, string? state = null)
+		{
+			if (this.IsDisposed)
+				return Brushes.Transparent;
+			if(!string.IsNullOrEmpty(state) && this.levelForegroundBrushes.TryGetValue($"{log.Level}.{state}", out var brush))
+				return brush.AsNonNull();
+			if (this.levelForegroundBrushes.TryGetValue(log.Level.ToString(), out brush))
+				return brush.AsNonNull();
+			if (this.levelForegroundBrushes.TryGetValue(nameof(Logs.LogLevel.Undefined), out brush))
+				return brush.AsNonNull();
+			throw new ArgumentException($"Cannot get foreground brush for log level {log.Level}.");
 		}
 
 
@@ -700,14 +721,18 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		// Update level brushes.
 		void UpdateLevelBrushes()
 		{
-			this.levelBrushes.Clear();
-			var converter = LogLevelBrushConverter.Default;
+			this.levelBackgroundBrushes.Clear();
+			this.levelForegroundBrushes.Clear();
+			var bgConverter = LogLevelBrushConverter.Background;
+			var fgConverter = LogLevelBrushConverter.Foreground;
 			foreach (var level in (Logs.LogLevel[])Enum.GetValues(typeof(Logs.LogLevel)))
 			{
-				if (converter.Convert(level, typeof(IBrush), null, this.Application.CultureInfo) is IBrush brush)
-					this.levelBrushes[level.ToString()] = brush;
-				if (converter.Convert(level, typeof(IBrush), "PointerOver", this.Application.CultureInfo) is IBrush pointerOverBrush)
-					this.levelBrushes[$"{level}.PointerOver"] = pointerOverBrush;
+				if (bgConverter.Convert(level, typeof(IBrush), null, this.Application.CultureInfo) is IBrush bgBrush)
+					this.levelBackgroundBrushes[level.ToString()] = bgBrush;
+				if (fgConverter.Convert(level, typeof(IBrush), null, this.Application.CultureInfo) is IBrush fgBrush)
+					this.levelForegroundBrushes[level.ToString()] = fgBrush;
+				if (fgConverter.Convert(level, typeof(IBrush), "PointerOver", this.Application.CultureInfo) is IBrush pointerOverBrush)
+					this.levelForegroundBrushes[$"{level}.PointerOver"] = pointerOverBrush;
 			}
 		}
 

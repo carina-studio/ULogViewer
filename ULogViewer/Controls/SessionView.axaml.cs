@@ -603,18 +603,21 @@ namespace CarinaStudio.ULogViewer.Controls
 						: null;
 					if (log != null && this.lastClickedLogPropertyView?.Tag is DisplayableLogProperty property)
 					{
+						var displayName = property.DisplayName;
+						if (string.IsNullOrWhiteSpace(displayName))
+							displayName = Converters.LogPropertyNameConverter.Default.Convert(property.Name);
 						var propertyValue = DisplayableLog.HasStringProperty(property.Name) 
 							&& !property.Name.EndsWith("String")
 							&& log.TryGetProperty<string?>(property.Name, out var s)
 								? s
 								: null;
 						if (propertyValue == null)
-							propertyValue = property.DisplayName;
+							propertyValue = displayName;
 						else if (propertyValue.Length > 16)
 							propertyValue = $"{propertyValue[0..16]}…";
-						this.copyLogPropertyMenuItem!.Header = this.Application.GetFormattedString("SessionView.CopyLogProperty", property.DisplayName);
+						this.copyLogPropertyMenuItem!.Header = this.Application.GetFormattedString("SessionView.CopyLogProperty", displayName);
 						this.filterByLogPropertyMenuItem!.Header = this.Application.GetFormattedString("SessionView.FilterByLogProperty", propertyValue);
-						this.showLogPropertyMenuItem.Header = this.Application.GetFormattedString("SessionView.ShowLogProperty", property.DisplayName);
+						this.showLogPropertyMenuItem.Header = this.Application.GetFormattedString("SessionView.ShowLogProperty", displayName);
 					}
 					else
 					{
@@ -1576,8 +1579,14 @@ namespace CarinaStudio.ULogViewer.Controls
 							it.Bind(CarinaStudio.AppSuite.Controls.SyntaxHighlightingTextBlock.DefinitionSetProperty, new Binding() { Path = nameof(DisplayableLog.TextHighlightingDefinitionSet) });
 							it.Bind(Avalonia.Controls.TextBlock.FontFamilyProperty, new Binding() { Path = nameof(LogFontFamily), Source = this });
 							it.Bind(Avalonia.Controls.TextBlock.FontSizeProperty, new Binding() { Path = nameof(LogFontSize), Source = this });
-							if (logProperty.ForegroundColor == LogPropertyForegroundColor.Level)
-								it.Bind(Avalonia.Controls.TextBlock.ForegroundProperty, new Binding() { Path = nameof(DisplayableLog.LevelBrush) });
+							if (logProperty.Name == nameof(DisplayableLog.LevelString))
+							{
+								it.Bind(Avalonia.Controls.TextBlock.BackgroundProperty, new Binding() { Path = nameof(DisplayableLog.LevelBackgroundBrush) });
+								it.Bind(Avalonia.Controls.TextBlock.ForegroundProperty, this.GetResourceObservable("Brush/SessionView.LogListBox.Item.Level.Foreground"));
+								it.TextAlignment = TextAlignment.Center;
+							}
+							else if (logProperty.ForegroundColor == LogPropertyForegroundColor.Level)
+								it.Bind(Avalonia.Controls.TextBlock.ForegroundProperty, new Binding() { Path = nameof(DisplayableLog.LevelForegroundBrush) });
 							if (isMultiLineProperty)
 								it.Bind(Avalonia.Controls.TextBlock.MaxLinesProperty, new Binding() { Path = nameof(MaxDisplayLineCountForEachLog), Source = this });
 							else
@@ -1934,7 +1943,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					it.Bind(Avalonia.Controls.TextBlock.FontFamilyProperty, new Binding() { Path = nameof(LogFontFamily), Source = this });
 					it.Bind(Avalonia.Controls.TextBlock.FontSizeProperty, new Binding() { Path = nameof(LogFontSize), Source = this });
 					if (propertyInMarkedItem.ForegroundColor == LogPropertyForegroundColor.Level)
-						it.Bind(Avalonia.Controls.TextBlock.ForegroundProperty, new Binding() { Path = nameof(DisplayableLog.LevelBrush) });
+						it.Bind(Avalonia.Controls.TextBlock.ForegroundProperty, new Binding() { Path = nameof(DisplayableLog.LevelForegroundBrush) });
 					it.Bind(Avalonia.Controls.TextBlock.TextProperty, new Binding() { Path = propertyInMarkedItem.Name });
 					it.Margin = itemPadding;
 					it.MaxLines = 1;

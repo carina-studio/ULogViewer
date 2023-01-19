@@ -1,6 +1,7 @@
 ﻿using Avalonia.Media;
 using CarinaStudio.AppSuite.Controls.Highlighting;
 using CarinaStudio.Collections;
+using CarinaStudio.Data.Converters;
 using CarinaStudio.Diagnostics;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs;
@@ -28,6 +29,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		});
 		static readonly long instanceFieldMemorySize = Memory.EstimateInstanceSize<DisplayableLog>();
 		static volatile bool isPropertyMapReady;
+		static AppSuite.Converters.EnumConverter? levelConverter;
 		[ThreadStatic]
 		static Dictionary<string, DisplayableLogStringPropertyGetter>? logStringPropertyGetters;
 		static readonly Dictionary<string, PropertyInfo> propertyMap = new();
@@ -315,6 +317,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				nameof(BinaryTimestamp) => (it => (T)(object)it.BinaryTimestamp),
 				nameof(EndingTimeSpanString) => (it => (T)(object)it.EndingTimeSpanString),
 				nameof(EndingTimestampString) => (it => (T)(object)it.EndingTimestampString),
+				nameof(LevelString) => (it => (T)(object)it.LevelString),
 				nameof(LogId) => (it => (T)(object)it.LogId),
 				nameof(TimeSpanString) => (it => (T)(object)it.TimeSpanString),
 				nameof(TimestampString) => (it => (T)(object)it.TimestampString),
@@ -356,6 +359,19 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				case nameof(EndingTimestampString):
 					backedValueGetter = log => log.endingTimestampString;
 					break;
+				case nameof(LevelString):
+					getter = (log, buffer, offset) =>
+					{
+						if (offset < 0)
+							throw new ArgumentOutOfRangeException(nameof(offset));
+						var s = log.LevelString;
+						if (offset + s.Length > buffer.Length)
+							return ~s.Length;
+						s.AsSpan().CopyTo(offset == 0 ? buffer : buffer[offset..^0]);
+						return s.Length;
+					};
+					logStringPropertyGetters[propertyName] = getter;
+					return getter;
 				case nameof(TimeSpanString):
 					backedValueGetter = log => log.timeSpanString;
 					break;
@@ -830,6 +846,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			or nameof(BeginningTimestampString)
 			or nameof(EndingTimeSpanString)
 			or nameof(EndingTimestampString)
+			or nameof(LevelString)
 			or nameof(TimeSpanString)
 			or nameof(TimestampString) => true,
 			_ => Log.HasStringProperty(propertyName),
@@ -869,15 +886,39 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
-		/// Get <see cref="IBrush"/> according to level of log.
+		/// Get foreground <see cref="IBrush"/> according to level of log.
 		/// </summary>
-		public IBrush LevelBrush { get => this.Group.GetLevelBrush(this); }
+		public IBrush LevelBackgroundBrush { get => this.Group.GetLevelBackgroundBrush(this); }
 
 
 		/// <summary>
-		/// Get <see cref="IBrush"/> for pointer-over according to level of log.
+		/// Get foreground <see cref="IBrush"/> according to level of log.
 		/// </summary>
-		public IBrush LevelBrushForPointerOver { get => this.Group.GetLevelBrush(this, "PointerOver"); }
+		public IBrush LevelForegroundBrush { get => this.Group.GetLevelForegroundBrush(this); }
+
+
+		/// <summary>
+		/// Get foreground <see cref="IBrush"/> for pointer-over according to level of log.
+		/// </summary>
+		public IBrush LevelForegroundBrushForPointerOver { get => this.Group.GetLevelForegroundBrush(this, "PointerOver"); }
+
+
+		/// <summary>
+		/// Get string representation of <see cref="Level"/>.
+		/// </summary>
+		public string LevelString
+		{
+			get
+			{
+				var level = this.Log.Level;
+				if (level == LogLevel.Undefined)
+					return "";
+				if (this.Group.LogProfile.LogLevelMapForWriting.TryGetValue(level, out var s))
+					return s;
+				levelConverter ??= new(this.Application, typeof(LogLevel));
+				return levelConverter.Convert<string?>(level) ?? level.ToString();
+			}
+		}
 
 
 		/// <summary>
@@ -963,6 +1004,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		internal void OnApplicationStringsUpdated()
 		{ 
+			if (this.Log.Level != LogLevel.Undefined)
+				this.PropertyChanged?.Invoke(this, new(nameof(LevelString)));
 			this.OnTimeSpanFormatChanged();
 			this.OnTimestampFormatChanged();
 		}
@@ -1078,8 +1121,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			if (this.analysisResults != null)
 				propertyChangedHandlers(this, new PropertyChangedEventArgs(nameof(AnalysisResultIndicatorIcon)));
 			propertyChangedHandlers(this, new PropertyChangedEventArgs(nameof(ColorIndicatorBrush)));
-			propertyChangedHandlers(this, new PropertyChangedEventArgs(nameof(LevelBrush)));
-			propertyChangedHandlers(this, new PropertyChangedEventArgs(nameof(LevelBrushForPointerOver)));
+			propertyChangedHandlers(this, new PropertyChangedEventArgs(nameof(LevelBackgroundBrush)));
+			propertyChangedHandlers(this, new PropertyChangedEventArgs(nameof(LevelForegroundBrush)));
+			propertyChangedHandlers(this, new PropertyChangedEventArgs(nameof(LevelForegroundBrushForPointerOver)));
 		}
 
 
@@ -1364,6 +1408,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 							nameof(BinaryEndingTimestamp),
 							nameof(EndingTimeSpanString),
 							nameof(EndingTimestampString),
+							nameof(LevelString),
 							nameof(TimeSpanString),
 							nameof(TimestampString),
 						};

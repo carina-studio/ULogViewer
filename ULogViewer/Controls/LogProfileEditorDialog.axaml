@@ -228,7 +228,7 @@
 											</Button>
 										</StackPanel>
 										<Grid ColumnDefinitions="Auto,*">
-											<Border Classes="ListBoxItem_Icon" Background="{Binding Value, Converter={x:Static appConverters:LogLevelBrushConverter.Default}}" BorderBrush="{DynamicResource ComboBoxItemForeground}" BorderThickness="1"/>
+											<Border Classes="ListBoxItem_Icon" Background="{Binding Value, Converter={x:Static appConverters:LogLevelBrushConverter.Background}}" BorderBrush="{DynamicResource ComboBoxItemForeground}" BorderThickness="1"/>
 											<TextBlock Classes="ListBoxItem_TextBlock" Grid.Column="1" Text="{Binding Value, Converter={x:Static appControls:SessionView.LogLevelNameConverter}}"/>
 										</Grid>
 									</DockPanel>
@@ -412,7 +412,8 @@
 										<ColumnDefinition Width="*"/>
 										<ColumnDefinition Width="Auto"/>
 									</Grid.ColumnDefinitions>
-									<TextBlock Text="{Binding DisplayName, Converter={x:Static appConverters:LogPropertyNameConverter.Default}}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+									<TextBlock Name="displayNameTextBlock" Text="{Binding DisplayName, Converter={x:Static appConverters:LogPropertyNameConverter.Default}}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+									<abControls:FormattedTextBlock Arg1="{DynamicResource String/Common.Empty}" Format="({0})" IsVisible="{Binding #displayNameTextBlock.Text, Converter={x:Static StringConverters.IsNullOrEmpty}}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
 									<Border Classes="InPlaceAction_Reserved"/>
 									<abControls:FormattedTextBlock Arg1="{Binding Name}" Format="({0})" Grid.Column="1" Margin="{StaticResource Thickness/LogProfileEditorDialog.VisibleLogPropertyListBox.Name.Margin}" Opacity="{StaticResource Double/LogProfileEditorDialog.VisibleLogPropertyListBox.Name.Opacity}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
 									<StackPanel Grid.Column="2" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
@@ -552,7 +553,7 @@
 							<DataTemplate>
 								<Grid ColumnDefinitions="*,*">
 									<Grid ColumnDefinitions="Auto,*">
-										<Border Classes="ListBoxItem_Icon" Background="{Binding Key, Converter={x:Static appConverters:LogLevelBrushConverter.Default}}" BorderBrush="{DynamicResource ComboBoxItemForeground}" BorderThickness="1"/>
+										<Border Classes="ListBoxItem_Icon" Background="{Binding Key, Converter={x:Static appConverters:LogLevelBrushConverter.Background}}" BorderBrush="{DynamicResource ComboBoxItemForeground}" BorderThickness="1"/>
 										<TextBlock Classes="ListBoxItem_TextBlock" Grid.Column="1" Text="{Binding Key, Converter={x:Static appControls:SessionView.LogLevelNameConverter}}"/>
 									</Grid>
 									<Border Classes="InPlaceAction_Reserved"/>

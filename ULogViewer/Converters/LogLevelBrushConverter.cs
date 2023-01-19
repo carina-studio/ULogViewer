@@ -12,19 +12,25 @@ namespace CarinaStudio.ULogViewer.Converters
 	class LogLevelBrushConverter : IValueConverter
 	{
 		/// <summary>
-		/// Default instance.
+		/// Default instance for background.
 		/// </summary>
-		public static readonly LogLevelBrushConverter Default = new LogLevelBrushConverter(App.Current);
+		public static readonly LogLevelBrushConverter Background = new(App.Current, "Background");
+		/// <summary>
+		/// Default instance for foreground.
+		/// </summary>
+		public static readonly LogLevelBrushConverter Foreground = new(App.Current, "Foreground");
 
 
 		// Fields.
 		readonly App app;
+		readonly string prefix;
 
 
 		// Constructor.
-		LogLevelBrushConverter(App app)
+		LogLevelBrushConverter(App app, string prefix)
 		{
 			this.app = app;
+			this.prefix = prefix;
 		}
 
 
@@ -34,11 +40,11 @@ namespace CarinaStudio.ULogViewer.Converters
 			if (value is LogLevel level && targetType == typeof(IBrush))
 			{
 				var state = parameter as string;
-				var brush = (object?)null;
+				object? brush;
 				if (string.IsNullOrEmpty(state))
-					this.app.Styles.TryGetResource($"Brush/LogLevel.{level}", out brush);
+					this.app.Styles.TryGetResource($"Brush/LogLevel.{level}.{this.prefix}", out brush);
 				else
-					this.app.Styles.TryGetResource($"Brush/LogLevel.{level}.{state}", out brush);
+					this.app.Styles.TryGetResource($"Brush/LogLevel.{level}.{this.prefix}.{state}", out brush);
 				return brush as IBrush;
 			}
 			return null;

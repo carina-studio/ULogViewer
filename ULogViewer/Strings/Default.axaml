@@ -603,6 +603,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProperty.ID">ID</sys:String>
 	<sys:String x:Key="String/LogProperty.Key">Key</sys:String>
 	<sys:String x:Key="String/LogProperty.Level">Level</sys:String>
+	<sys:String x:Key="String/LogProperty.LevelString">Level</sys:String>
 	<sys:String x:Key="String/LogProperty.LineNumber">Line Number</sys:String>
 	<sys:String x:Key="String/LogProperty.Message">Message</sys:String>
 	<sys:String x:Key="String/LogProperty.Name">Name</sys:String>

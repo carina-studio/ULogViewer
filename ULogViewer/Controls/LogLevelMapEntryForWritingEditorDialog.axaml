@@ -42,7 +42,7 @@
 				<ComboBox.ItemTemplate>
 					<DataTemplate>
 						<Grid ColumnDefinitions="Auto,*">
-							<Border Classes="ListBoxItem_Icon" Background="{Binding Converter={x:Static appConverters:LogLevelBrushConverter.Default}}" BorderBrush="{DynamicResource ComboBoxItemForeground}" BorderThickness="1"/>
+							<Border Classes="ListBoxItem_Icon" Background="{Binding Converter={x:Static appConverters:LogLevelBrushConverter.Background}}" BorderBrush="{DynamicResource ComboBoxItemForeground}" BorderThickness="1"/>
 							<TextBlock Classes="ListBoxItem_TextBlock" Grid.Column="1" Text="{Binding Converter={x:Static appControls:SessionView.LogLevelNameConverter}}"/>
 						</Grid>
 					</DataTemplate>

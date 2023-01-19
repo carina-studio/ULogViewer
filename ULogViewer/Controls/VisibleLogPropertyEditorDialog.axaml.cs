@@ -39,7 +39,10 @@ partial class VisibleLogPropertyEditorDialog : AppSuite.Controls.InputDialog<IUL
 		this.foregroundColorComboBox = this.Get<ComboBox>(nameof(foregroundColorComboBox));
 		this.nameComboBox = this.Get<ComboBox>(nameof(nameComboBox));
 		this.specifyWidthSwitch = this.Get<ToggleSwitch>(nameof(specifyWidthSwitch));
-		this.widthTextBox = this.Get<IntegerTextBox>(nameof(widthTextBox));
+		this.widthTextBox = this.Get<IntegerTextBox>(nameof(widthTextBox)).Also(it =>
+		{
+			it.Minimum = (int)(this.FindResourceOrDefault<double>("Double/SessionView.LogHeader.MinWidth", 10) + 0.5);
+		});
 	}
 
 
@@ -47,7 +50,7 @@ partial class VisibleLogPropertyEditorDialog : AppSuite.Controls.InputDialog<IUL
 	protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken)
 	{
 		var displayName = this.customDisplayNameSwitch.IsChecked.GetValueOrDefault()
-				? this.customDisplayNameTextBox.Text.AsNonNull().Trim()
+				? this.customDisplayNameTextBox.Text?.Trim() ?? ""
 				: (string)this.displayNameComboBox.SelectedItem.AsNonNull();
 		var width = this.specifyWidthSwitch.IsChecked.GetValueOrDefault() ? (int?)this.widthTextBox.Value : null;
 		return Task.FromResult((object?)new LogProperty((string)this.nameComboBox.SelectedItem.AsNonNull(), displayName, (LogPropertyForegroundColor)this.foregroundColorComboBox.SelectedItem!, width));
@@ -99,7 +102,7 @@ partial class VisibleLogPropertyEditorDialog : AppSuite.Controls.InputDialog<IUL
 			else
 			{
 				this.customDisplayNameSwitch.IsChecked = true;
-				this.customDisplayNameTextBox.Text = property.DisplayName;
+				this.customDisplayNameTextBox.Text = property.DisplayName.Trim();
 			}
 			this.foregroundColorComboBox.SelectedItem = property.ForegroundColor;
 			property.Width.Let(it =>
@@ -109,16 +112,5 @@ partial class VisibleLogPropertyEditorDialog : AppSuite.Controls.InputDialog<IUL
 			});
 		}
 		this.SynchronizationContext.Post(this.nameComboBox.Focus);
-	}
-
-
-	// Validate input.
-	protected override bool OnValidateInput()
-	{
-		if (!base.OnValidateInput())
-			return false;
-		if (this.customDisplayNameSwitch.IsChecked.GetValueOrDefault())
-			return !string.IsNullOrWhiteSpace(this.customDisplayNameTextBox.Text);
-		return true;
 	}
 }

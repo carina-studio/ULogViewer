@@ -20,16 +20,26 @@
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Terminal" Color="#909090"/>
 
 			<!-- LogLevel -->
-			<SolidColorBrush x:Key="Brush/LogLevel.Debug">#32aaff</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/LogLevel.Error">#ff3232</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/LogLevel.Failure">#ff3f3f</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/LogLevel.Fatal">#ff3f3f</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/LogLevel.Info">#4cff00</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/LogLevel.Success">#4cff00</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/LogLevel.Trace">#32aaff</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/LogLevel.Undefined">#ffffff</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/LogLevel.Verbose">#ffffff</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/LogLevel.Warn">#ff8432</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/LogLevel.Debug.Background">#66c0ff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/LogLevel.Debug.Foreground">#32aaff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/LogLevel.Error.Background">#ff6666</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/LogLevel.Error.Foreground">#ff3232</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/LogLevel.Failure.Background">#ff5959</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/LogLevel.Failure.Foreground">#ff3f3f</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/LogLevel.Fatal.Background">#ff5959</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/LogLevel.Fatal.Foreground">#ff3f3f</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/LogLevel.Info.Background">#94ff66</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/LogLevel.Info.Foreground">#4cff00</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/LogLevel.Success.Background">#94ff66</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/LogLevel.Success.Foreground">#4cff00</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/LogLevel.Trace.Background">#66c0ff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/LogLevel.Trace.Foreground">#32aaff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/LogLevel.Undefined.Background">#cccccc</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/LogLevel.Undefined.Foreground">#ffffff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/LogLevel.Verbose.Background">#cccccc</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/LogLevel.Verbose.Foreground">#ffffff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/LogLevel.Warn.Background">#ffa366</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/LogLevel.Warn.Foreground">#ff8432</SolidColorBrush>
 
 			<!-- LogProfileSelectionDialog -->
 			<SolidColorBrush x:Key="Brush/LogProfileSelectionDialog.Label.Background">#000000</SolidColorBrush>

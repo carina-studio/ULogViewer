@@ -568,6 +568,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProperty.FileName">檔案</sys:String>
 	<sys:String x:Key="String/LogProperty.Key">鍵值</sys:String>
 	<sys:String x:Key="String/LogProperty.Level">等級</sys:String>
+	<sys:String x:Key="String/LogProperty.LevelString">等級</sys:String>
 	<sys:String x:Key="String/LogProperty.LineNumber">行號</sys:String>
 	<sys:String x:Key="String/LogProperty.Message">訊息</sys:String>
 	<sys:String x:Key="String/LogProperty.Name">名稱</sys:String>
@@ -1144,13 +1145,13 @@ return None</sys:String>
 	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Variable">變數名稱 (必要)</sys:String>
 
 	<!-- VisibleLogPropertyEditorDialog -->
-	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.CustomDisplayName">手動輸入顯示名稱</sys:String>
+	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.CustomDisplayName">自訂顯示名稱</sys:String>
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.DisplayName">顯示名稱</sys:String>
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.ForegroundColor">文字色彩</sys:String>
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.Name">屬性</sys:String>
-	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.SpecifyWidth">指定列寬</sys:String>
+	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.SpecifyWidth">指定欄位寬度</sys:String>
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.Title">顯示的日誌屬性</sys:String>
-	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.Width">列寬</sys:String>
+	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.Width">欄位寬度</sys:String>
 
 	<!-- WindowsEventLogDataSourceProvider -->
 	<sys:String x:Key="String/WindowsEventLogDataSourceProvider.DisplayName">Windows 事件紀錄</sys:String>
