@@ -143,10 +143,14 @@
 				</MenuItem.Icon>
 			</MenuItem>
 			<Separator/>
-			<MenuItem Name="filterByLogPropertyMenuItem" Command="{Binding $parent[UserControl].FilterByLogPropertyCommand}" Header="{DynamicResource String/SessionView.FilterByLogProperty.Disabled}">
+			<MenuItem Name="filterByLogPropertyMenuItem" Header="{DynamicResource String/SessionView.FilterByLogProperty.Disabled}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Filter.Outline}"/>
 				</MenuItem.Icon>
+				<MenuItem Command="{Binding $parent[UserControl].FilterByLogPropertyCommand}" Header="{DynamicResource String/SessionView.FilterByLogProperty.NormalAccuracy}"/>
+				<Separator/>
+				<MenuItem Command="{Binding $parent[UserControl].FilterByLogPropertyWithHighAccuracyCommand}" Header="{DynamicResource String/SessionView.FilterByLogProperty.HighAccuracy}"/>
+				<MenuItem Command="{Binding $parent[UserControl].FilterByLogPropertyWithLowAccuracyCommand}" Header="{DynamicResource String/SessionView.FilterByLogProperty.LowAccuracy}"/>
 			</MenuItem>
 			<MenuItem Command="{Binding LogFiltering.FilterBySelectedProcessIdCommand}" Header="{DynamicResource String/SessionView.FilterLogsBySelectedProcessId}">
 				<MenuItem.CommandParameter>

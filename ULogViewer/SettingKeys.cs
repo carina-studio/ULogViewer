@@ -9,10 +9,6 @@ namespace CarinaStudio.ULogViewer
 	static class SettingKeys
 	{
 		/// <summary>
-		/// Accuracy of filtering logs by specific property of selected log.
-		/// </summary>
-		public static readonly SettingKey<Accuracy> AccuracyOfFilteringBySelectedLogProperty = new(nameof(AccuracyOfFilteringBySelectedLogProperty), Accuracy.Normal);
-		/// <summary>
 		/// Interval of updating logs for continuous reading.
 		/// </summary>
 		public static readonly SettingKey<int> ContinuousLogReadingUpdateInterval = new(nameof(ContinuousLogReadingUpdateInterval), 100);

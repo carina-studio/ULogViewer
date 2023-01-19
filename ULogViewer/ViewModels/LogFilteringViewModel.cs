@@ -165,7 +165,9 @@ class LogFilteringViewModel : SessionComponent
         // create command
         this.ClearPredefinedTextFiltersCommand = new Command(() => this.predefinedTextFilters?.Clear(), this.canClearPredefinedTextFilters);
         this.FilterBySelectedProcessIdCommand = new Command<bool>(this.FilterBySelectedProcessId, this.canFilterBySelectedPid);
-        this.FilterBySelectedPropertyCommand = new Command<DisplayableLogProperty>(this.FilterBySelectedProperty, this.canFilterBySelectedProperty);
+        this.FilterBySelectedPropertyCommand = new Command<DisplayableLogProperty>(p => this.FilterBySelectedProperty(p, Accuracy.Normal), this.canFilterBySelectedProperty);
+        this.FilterBySelectedPropertyWithHighAccuracyCommand = new Command<DisplayableLogProperty>(p => this.FilterBySelectedProperty(p, Accuracy.High), this.canFilterBySelectedProperty);
+        this.FilterBySelectedPropertyWithLowAccuracyCommand = new Command<DisplayableLogProperty>(p => this.FilterBySelectedProperty(p, Accuracy.Low), this.canFilterBySelectedProperty);
         this.FilterBySelectedThreadIdCommand = new Command<bool>(this.FilterBySelectedThreadId, this.canFilterBySelectedTid);
         this.ResetFiltersCommand = new Command(() => this.ResetFilters(true), this.canResetFilters);
 
@@ -454,7 +456,7 @@ class LogFilteringViewModel : SessionComponent
 
 
     // Filter by specific property of selected log.
-    void FilterBySelectedProperty(DisplayableLogProperty property)
+    void FilterBySelectedProperty(DisplayableLogProperty property, Accuracy accuracy)
     {
         // check state
         this.VerifyAccess();
@@ -476,7 +478,6 @@ class LogFilteringViewModel : SessionComponent
         }
 
         // parse template value
-        var accuracy = this.Settings.GetValueOrDefault(SettingKeys.AccuracyOfFilteringBySelectedLogProperty);
         var tokens = new List<(TokenType, string)>();
         var tokenTypes = Enum.GetValues<TokenType>();
         while (true)
@@ -589,6 +590,20 @@ class LogFilteringViewModel : SessionComponent
     /// </summary>
     /// <remarks>The type of parameter is <see cref="DisplayableLogProperty"/> to specify the property.</remarks>
     public ICommand FilterBySelectedPropertyCommand { get; }
+
+
+    /// <summary>
+    /// Command to use value of property of selected log as text filter with high accuracy.
+    /// </summary>
+    /// <remarks>The type of parameter is <see cref="DisplayableLogProperty"/> to specify the property.</remarks>
+    public ICommand FilterBySelectedPropertyWithHighAccuracyCommand { get; }
+
+
+    /// <summary>
+    /// Command to use value of property of selected log as text filter with low accuracy.
+    /// </summary>
+    /// <remarks>The type of parameter is <see cref="DisplayableLogProperty"/> to specify the property.</remarks>
+    public ICommand FilterBySelectedPropertyWithLowAccuracyCommand { get; }
 
 
     // Filter by selected thread ID.

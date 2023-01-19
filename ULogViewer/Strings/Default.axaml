@@ -11,7 +11,6 @@
 	<sys:String x:Key="String/App.Shutdown">Exit</sys:String>
 
 	<!-- AppOptionsDialog -->
-	<sys:String x:Key="String/AppOptionsDialog.AccuracyOfFilteringBySelectedLogProperty">Accuracy of filtering by value of property</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ContinuousLogReadingUpdateInterval">Log update interval when continuous reading (milliseconds)</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.DefaultTextShell">Default Command-line Shell to run commands</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs">Scroll to latest log after reloading logs</sys:String>
@@ -991,6 +990,9 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.FailedToImportLogAnalysisRuleSet">Unable to import rule set from '{0}'.</sys:String>
 	<sys:String x:Key="String/SessionView.FilterByLogProperty">Filter by '{0}'</sys:String>
 	<sys:String x:Key="String/SessionView.FilterByLogProperty.Disabled">Filter by value of log property</sys:String>
+	<sys:String x:Key="String/SessionView.FilterByLogProperty.HighAccuracy">High accuracy</sys:String>
+	<sys:String x:Key="String/SessionView.FilterByLogProperty.LowAccuracy">Low accuracy</sys:String>
+	<sys:String x:Key="String/SessionView.FilterByLogProperty.NormalAccuracy">Standard accuracy</sys:String>
 	<sys:String x:Key="String/SessionView.FilteredLogCount">, Filtered: {0}</sys:String>
 	<sys:String x:Key="String/SessionView.FilterLogsBySelectedProcessId">Filter by selected PID</sys:String>
 	<sys:String x:Key="String/SessionView.FilterLogsBySelectedProcessIdOnly">Filter by selected PID only</sys:String>

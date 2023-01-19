@@ -14,7 +14,6 @@
 	<sys:String x:Key="String/AppCulture.System">自动</sys:String>
 
 	<!-- AppOptionsDialog -->
-	<sys:String x:Key="String/AppOptionsDialog.AccuracyOfFilteringBySelectedLogProperty">以属性值筛选之精确度</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ContinuousLogReadingUpdateInterval">连续读取时的日志更新时距 (毫秒)</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.DefaultTextShell">预设执行指令之命令列壳层 (Command-line Shell)</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs">在重新载入日志后滚动到最新的日志</sys:String>
@@ -953,6 +952,9 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.FailedToImportLogAnalysisRuleSet">无法从 '{0}' 导入規則集。</sys:String>
 	<sys:String x:Key="String/SessionView.FilterByLogProperty">使用「{0}」筛选</sys:String>
 	<sys:String x:Key="String/SessionView.FilterByLogProperty.Disabled">使用日志属性值筛选</sys:String>
+	<sys:String x:Key="String/SessionView.FilterByLogProperty.HighAccuracy">高精确度</sys:String>
+	<sys:String x:Key="String/SessionView.FilterByLogProperty.LowAccuracy">低精确度</sys:String>
+	<sys:String x:Key="String/SessionView.FilterByLogProperty.NormalAccuracy">标准精确度</sys:String>
 	<sys:String x:Key="String/SessionView.FilteredLogCount">，已筛选 {0} 笔</sys:String>
 	<sys:String x:Key="String/SessionView.FilterLogsBySelectedProcessId">使用选择的 PID 筛选</sys:String>
 	<sys:String x:Key="String/SessionView.FilterLogsBySelectedProcessIdOnly">只使用选择的 PID 筛选</sys:String>

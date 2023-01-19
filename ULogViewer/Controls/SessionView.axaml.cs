@@ -309,7 +309,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.ExportLogAnalysisScriptSetCommand = new Command<LogAnalysisScriptSet>(this.ExportLogAnalysisScriptSet);
 			this.ExportOperationCountingAnalysisRuleSetCommand = new Command<OperationCountingAnalysisRuleSet>(this.ExportOperationCountingAnalysisRuleSet);
 			this.ExportOperationDurationAnalysisRuleSetCommand = new Command<OperationDurationAnalysisRuleSet>(this.ExportOperationDurationAnalysisRuleSet);
-			this.FilterByLogPropertyCommand = new Command(this.FilterByLogProperty, this.canFilterByLogProperty);
+			this.FilterByLogPropertyCommand = new Command(() => this.FilterByLogProperty(Accuracy.Normal), this.canFilterByLogProperty);
+			this.FilterByLogPropertyWithHighAccuracyCommand = new Command(() => this.FilterByLogProperty(Accuracy.High), this.canFilterByLogProperty);
+			this.FilterByLogPropertyWithLowAccuracyCommand = new Command(() => this.FilterByLogProperty(Accuracy.Low), this.canFilterByLogProperty);
 			this.MarkSelectedLogsCommand = new Command<MarkColor>(this.MarkSelectedLogs, this.canMarkSelectedLogs);
 			this.MarkUnmarkSelectedLogsCommand = new Command(this.MarkUnmarkSelectedLogs, this.canMarkUnmarkSelectedLogs);
 			this.ReloadLogFileCommand = new Command<string>(this.ReloadLogFile);
@@ -2310,11 +2312,25 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Filter by property of selected log.
-		void FilterByLogProperty()
+		void FilterByLogProperty(Accuracy accuracy)
 		{
 			if (this.lastClickedLogPropertyView?.Tag is not DisplayableLogProperty property)
 				return;
-			(this.DataContext as Session)?.LogFiltering?.FilterBySelectedPropertyCommand?.TryExecute(property);
+			(this.DataContext as Session)?.LogFiltering?.Let(it =>
+			{
+				switch (accuracy)
+				{
+					case Accuracy.High:
+						it.FilterBySelectedPropertyWithHighAccuracyCommand.TryExecute(property);
+						break;
+					case Accuracy.Low:
+						it.FilterBySelectedPropertyWithLowAccuracyCommand.TryExecute(property);
+						break;
+					default:
+						it.FilterBySelectedPropertyCommand.TryExecute(property);
+						break;
+				}
+			});
 		}
 
 
@@ -2322,6 +2338,18 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// Command to filter by property of selected log.
 		/// </summary>
 		public ICommand FilterByLogPropertyCommand { get; }
+
+
+		/// <summary>
+		/// Command to filter by property of selected log with high accuracy.
+		/// </summary>
+		public ICommand FilterByLogPropertyWithHighAccuracyCommand { get; }
+
+
+		/// <summary>
+		/// Command to filter by property of selected log with low accuracy.
+		/// </summary>
+		public ICommand FilterByLogPropertyWithLowAccuracyCommand { get; }
 
 
 		/// <summary>
