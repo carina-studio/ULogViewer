@@ -1653,7 +1653,21 @@ namespace CarinaStudio.ULogViewer.Controls
 							{
 								this.canCopyLogProperty.Update(true);
 								if (isStringProperty)
+								{
+									this.canFilterByLogProperty.Update(!logProperty.Name.EndsWith("String"));
 									this.canShowLogProperty.Update(true);
+								}
+								else
+								{
+									this.canFilterByLogProperty.Update(false);
+									this.canShowLogProperty.Update(false);
+								}
+							}
+							else
+							{
+								this.canCopyLogProperty.Update(false);
+								this.canFilterByLogProperty.Update(false);
+								this.canShowLogProperty.Update(false);
 							}
 						};
 						if (actualPropertyView is CarinaStudio.Controls.TextBlock textBlock 
