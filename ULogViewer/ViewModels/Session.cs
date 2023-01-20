@@ -1604,7 +1604,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				var lhsLog = lhsLogs[lhsLogIndex];
 				var rhsLog = rhsLogs[rhsLogIndex];
 				if (lhsLog == null)
+				{
 					++lhsLogIndex;
+					if (rhsLog == null)
+						++rhsLogIndex;
+				}
 				else if (rhsLog == null)
 					++rhsLogIndex;
 				else
@@ -1618,7 +1622,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			}
 			
 			// compare types
-			result = lhs.Type.CompareTo(rhs.Type);
+			result = (int)lhs.Type - (int)rhs.Type;
 			if (result != 0)
 				return result;
 			
@@ -3217,7 +3221,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.logAnalysisResults.AddAll(e.NewItems!.Cast<DisplayableLogAnalysisResult>());
 					break;
 				case NotifyCollectionChangedAction.Remove:
-					this.logAnalysisResults.RemoveAll(e.OldItems!.Cast<DisplayableLogAnalysisResult>());
+					e.OldItems!.Cast<DisplayableLogAnalysisResult>().Let(removedResults =>
+					{
+						if (removedResults.Count == 1)
+							this.logAnalysisResults.Remove(removedResults[0]);
+						else
+							this.logAnalysisResults.RemoveAll(removedResults);
+					});
 					break;
 				case NotifyCollectionChangedAction.Reset:
 					foreach (var analyzer in this.attachedLogAnalyzers)
