@@ -98,10 +98,6 @@
 
   <!-- Trimming options -->
 	<ItemGroup>
-		<TrimmerRootAssembly Include="IronPython" />
-		<TrimmerRootAssembly Include="IronPython.Modules" />
-		<TrimmerRootAssembly Include="IronPython.SQLite" />
-		<TrimmerRootAssembly Include="Jint" />
 		<TrimmerRootAssembly Include="netstandard" />
 		<TrimmerRootAssembly Include="NLog" />
 		<TrimmerRootAssembly Include="System.Console" />
