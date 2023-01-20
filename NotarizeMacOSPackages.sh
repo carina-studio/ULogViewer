@@ -1,9 +1,10 @@
 APP_NAME="ULogViewer"
-APP_BUNDLE_ID="com.carina-studio.ulogviewer"
 RID_LIST=("osx-x64" "osx.11.0-arm64")
 PUB_PLATFORM_LIST=("osx-x64" "osx-arm64")
+KEY_ID="" # App Store Connect API Key ID
 USERNAME="" # Apple Developer ID
 PASSWORD="" # Application specific password
+TEAM_ID=""
 
 echo "********** Start notarizing $APP_NAME **********"
 
@@ -25,7 +26,7 @@ for i in "${!RID_LIST[@]}"; do
     echo " "
 
     # notarize
-    xcrun altool --notarize-app -f "./Packages/$VERSION/$APP_NAME-$VERSION-$PUB_PLATFORM.zip" --primary-bundle-id "$APP_BUNDLE_ID" -u "$USERNAME" -p "$PASSWORD"
+    xcrun notarytool submit "./Packages/$VERSION/$APP_NAME-$VERSION-$PUB_PLATFORM.zip" --key-id "$KEY_ID" --apple-id "$USERNAME" --password "$PASSWORD" --team-id "$TEAM_ID"
     if [ "$?" != "0" ]; then
         exit
     fi
