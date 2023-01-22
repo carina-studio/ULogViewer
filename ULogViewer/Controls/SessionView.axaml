@@ -412,6 +412,12 @@
 			</MenuItem>
 		</ContextMenu>
 
+		<!-- Test menu -->
+		<ContextMenu x:Key="testMenu" PlacementMode="Left">
+			<MenuItem Command="{Binding $parent[UserControl].TestCommand}" CommandParameter="RestartApp" Header="Restart application"/>
+			<MenuItem Command="{Binding $parent[UserControl].TestCommand}" CommandParameter="RestartRootWindows" Header="Restart root windows"/>
+		</ContextMenu>
+
 		<!-- Working directory menu -->
 		<ContextMenu x:Key="workingDirectoryActionsMenu" PlacementMode="Top">
 			<MenuItem Command="{Binding $parent[UserControl].ShowWorkingDirectoryInExplorerCommand}" Header="{DynamicResource String/SessionView.ShowWorkingDirectoryInExplorer}">
@@ -1146,9 +1152,16 @@
 			<StackPanel Name="sidePanelBoolBarItemsPanel" VerticalAlignment="Top">
 
 				<!-- Test -->
-				<Button Name="testButton" Classes="ToolBar_Button" Click="OnTestButtonClick" ToolTip.Tip="Test">
-					<Image Classes="Icon" Source="{StaticResource Image/Icon.Lab}"/>
-				</Button>
+				<ToggleButton Name="testButton" Classes="ToolBar_ToggleButton" Command="{Binding $parent[UserControl].ShowTestMenu}" ToolTip.Tip="Test">
+					<Panel>
+						<Image Classes="Icon" Source="{StaticResource Image/Icon.Lab}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
+						<Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}">
+							<DrawingImage>
+								<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/Icon.Lab}"/>
+							</DrawingImage>
+						</Image>
+					</Panel>
+				</ToggleButton>
 
 				<!-- Marked logs -->
 				<ToggleButton Name="markedLogsPanelButton" Classes="ToolBar_ToggleButton" IsChecked="{Binding IsMarkedLogsPanelVisible, Mode=TwoWay}" ToolTip.Tip="{DynamicResource String/SessionView.MarkedLogsPanel}">

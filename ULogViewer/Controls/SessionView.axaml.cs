@@ -224,6 +224,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly MenuItem showLogPropertyMenuItem;
 		readonly ColumnDefinition sidePanelColumn;
 		readonly Control sidePanelContainer;
+		readonly ToggleButton testButton;
+		readonly ContextMenu testMenu;
 		readonly AppSuite.Controls.ListBox timestampCategoryListBox;
 		IDisposable timestampCategoryPanelVisibilityObserverToken = EmptyDisposable.Default;
 		readonly Border toolBarContainer;
@@ -349,6 +351,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.ShowLogFileInExplorerCommand = new Command<string>(this.ShowLogFileInExplorer);
 			this.ShowLogStringPropertyCommand = new Command(() => this.ShowLogStringProperty(), this.canShowLogProperty);
 			this.ShowWorkingDirectoryInExplorerCommand = new Command(this.ShowWorkingDirectoryInExplorer, this.canShowWorkingDirectoryInExplorer);
+			this.TestCommand = new Command<string>(this.Test);
 			this.UnmarkSelectedLogsCommand = new Command(this.UnmarkSelectedLogs, this.canUnmarkSelectedLogs);
 
 			// create collections
@@ -582,6 +585,16 @@ namespace CarinaStudio.ULogViewer.Controls
 #if !DEBUG
 			this.Get<Button>("testButton").IsVisible = false;
 #endif
+			this.testButton = toolBarContainer.FindControl<ToggleButton>(nameof(testButton)).AsNonNull();
+			this.testMenu = ((ContextMenu)this.Resources[nameof(testMenu)].AsNonNull()).Also(it =>
+			{
+				it.MenuClosed += (_, _) => this.SynchronizationContext.Post(() => this.testButton.IsChecked = false);
+				it.MenuOpened += (_, _) => this.SynchronizationContext.Post(() => 
+				{
+					ToolTip.SetIsOpen(this.testButton, false);
+					this.testButton.IsChecked = true;
+				});
+			});
 			this.timestampCategoryListBox = this.Get<AppSuite.Controls.ListBox>(nameof(timestampCategoryListBox)).Also(it =>
 			{
 				it.GetObservable(Avalonia.Controls.ListBox.SelectedItemProperty).Subscribe(item =>
@@ -3860,14 +3873,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Called when test button clicked.
-		void OnTestButtonClick(object? sender, RoutedEventArgs e)
-		{
-			//new TestDialog().ShowDialog(this.attachedWindow!);
-			//App.Current.Restart();
-		}
-
-
 		// Called when pointer released on tool bar.
 		void OnToolBarPointerReleased(object? sender, PointerReleasedEventArgs e)
 		{
@@ -4778,6 +4783,17 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		/// <summary>
+		/// Show test menu.
+		/// </summary>
+		public void ShowTestMenu()
+		{
+			if (!this.Application.IsDebugMode)
+				return;
+			this.testMenu.Open(this.testButton);
+		}
+
+
+		/// <summary>
 		/// Show working directory actions menu.
 		/// </summary>
 		public void ShowWorkingDirectoryActions()
@@ -4834,6 +4850,30 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// Get current state of status bar.
 		/// </summary>
 		public SessionViewStatusBarState StatusBarState => this.GetValue(StatusBarStateProperty);
+
+
+		// Test functions.
+		void Test(string command)
+		{
+			if (!this.Application.IsDebugMode)
+				return;
+			switch (command)
+			{
+				case "RestartApp":
+					App.CurrentOrNull?.Restart();
+					break;
+				case "RestartRootWindows":
+					this.Application.RestartRootWindowsAsync();
+					break;
+			}
+		}
+
+
+		/// <summary>
+		/// Command to perform test command.
+		/// </summary>
+		/// <remarks>Type of parameter is <see cref="String"/>.</remarks>
+		public ICommand TestCommand { get; }
 
 
 		// Unmark logs.
