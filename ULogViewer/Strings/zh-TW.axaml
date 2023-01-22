@@ -512,7 +512,8 @@ return False</sys:String>
 	<!-- LogProfileSelectionContextMenu -->
 	<sys:String x:Key="String/LogProfileSelectionContextMenu.ConfirmEditingBuiltInLogProfile">「{0}」是一個內建日誌類型，編輯完成後將建立新的日誌類型。</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionContextMenu.CurrentLogProfile">(目前使用)</sys:String>
-	<sys:String x:Key="String/LogProfileSelectionContextMenu.EditCurrentLogProfile">編輯「{0}」</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionContextMenu.EditCurrentLogProfile">編輯「{0}」…</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionContextMenu.ExportCurrentLogProfile">匯出「{0}」…</sys:String>
 
 	<!-- LogProfileSelectionDialog -->
 	<sys:String x:Key="String/LogProfileSelectionDialog.AddLogProfile">建立…</sys:String>

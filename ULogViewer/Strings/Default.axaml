@@ -546,7 +546,8 @@ return False</sys:String>
 	<!-- LogProfileSelectionContextMenu -->
 	<sys:String x:Key="String/LogProfileSelectionContextMenu.ConfirmEditingBuiltInLogProfile">'{0}' is a built-in log profile, new log profile will be created after editing.</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionContextMenu.CurrentLogProfile">(Current)</sys:String>
-	<sys:String x:Key="String/LogProfileSelectionContextMenu.EditCurrentLogProfile">Edit '{0}'</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionContextMenu.EditCurrentLogProfile">Edit '{0}'…</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionContextMenu.ExportCurrentLogProfile">Export '{0}'…</sys:String>
 
 	<!-- LogProfileSelectionDialog -->
 	<sys:String x:Key="String/LogProfileSelectionDialog.AddLogProfile">Create…</sys:String>

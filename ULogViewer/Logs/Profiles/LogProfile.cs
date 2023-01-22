@@ -1,4 +1,6 @@
-﻿using CarinaStudio.AppSuite.Data;
+﻿using Avalonia.Controls;
+using Avalonia.Platform.Storage;
+using CarinaStudio.AppSuite.Data;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
@@ -259,6 +261,53 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// <inheritdoc/>
 		public override bool Equals(IProfile<IULogViewerApplication>? profile) =>
 			this.Id == profile?.Id;
+		
+
+		/// <summary>
+		/// Export the profile asynchronously.
+		/// </summary>
+		/// <param name="window">Window.</param>
+		/// <returns>Task of exporting. The result will be True if profile has been exported successfully.</returns>
+		public async Task<bool> ExportAsync(Avalonia.Controls.Window window)
+		{
+			// select file
+			var fileName = (await window.StorageProvider.SaveFilePickerAsync(new()
+			{
+				FileTypeChoices = new[]
+				{
+					new FilePickerFileType(this.Application.GetStringNonNull("FileFormat.Json"))
+					{
+						Patterns = new string[] { "*.json" }
+					}
+				}
+			}))?.Let(it =>
+			{
+				return it.TryGetUri(out var uri) ? uri.LocalPath : null;
+			});
+			if (string.IsNullOrEmpty(fileName))
+				return false;
+
+			// copy profile and save
+			var copiedProfile = new LogProfile(this);
+			try
+			{
+				await copiedProfile.SaveAsync(fileName, false);
+			}
+			catch (Exception ex)
+			{
+				this.Logger.LogError(ex, "Unable to export log profile '{name}' to '{fileName}'", this.Name, fileName);
+				_ = new AppSuite.Controls.MessageDialog()
+				{
+					Icon = AppSuite.Controls.MessageDialogIcon.Error,
+					Message = new FormattedString().Also(it =>
+					{
+						it.Arg1 = fileName;
+						it.Bind(FormattedString.FormatProperty, window.GetResourceObservable("String/LogProfileSelectionDialog.FailedToExportLogProfile"));
+					}),
+				}.ShowDialog(window);
+			}
+			return true;
+		}
 
 
 		/// <summary>

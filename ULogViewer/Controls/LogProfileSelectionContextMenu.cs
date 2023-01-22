@@ -25,13 +25,13 @@ namespace CarinaStudio.ULogViewer.Controls;
 class LogProfileSelectionContextMenu : ContextMenu, IStyleable
 {
     /// <summary>
-    /// Property of <see cref="AllowEditingCurrentLogProfile"/>.
-    /// </summary>
-    public static readonly StyledProperty<bool> AllowEditingCurrentLogProfileProperty = AvaloniaProperty.Register<LogProfileSelectionContextMenu, bool>(nameof(AllowEditingCurrentLogProfile), true);
-    /// <summary>
     /// Property of <see cref="CurrentLogProfile"/>.
     /// </summary>
     public static readonly StyledProperty<LogProfile?> CurrentLogProfileProperty = AvaloniaProperty.Register<LogProfileSelectionContextMenu, LogProfile?>(nameof(CurrentLogProfile));
+    /// <summary>
+    /// Property of <see cref="EnableActionsOnCurrentLogProfile"/>.
+    /// </summary>
+    public static readonly StyledProperty<bool> EnableActionsOnCurrentLogProfileProperty = AvaloniaProperty.Register<LogProfileSelectionContextMenu, bool>(nameof(EnableActionsOnCurrentLogProfile), true);
     /// <summary>
     /// Property of <see cref="ShowPinnedLogProfiles"/>.
     /// </summary>
@@ -43,8 +43,9 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
 
 
     // Fields.
+    Separator? actionsOnCurrentLogProfileSeparator;
     MenuItem? editCurrentLogProfileMenuItem;
-    Separator? editCurrentLogProfileSeparator;
+    MenuItem? exportCurrentLogProfileMenuItem;
     bool isAttachedToLogicalTree;
     readonly SortedObservableList<object> items;
     readonly HashSet<LogProfile> pinnedLogProfiles = new();
@@ -68,13 +69,13 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
                     this.ScrollIntoView(0);
             }, Avalonia.Threading.DispatcherPriority.Normal);
         };
-        this.GetObservable(AllowEditingCurrentLogProfileProperty).Subscribe(_ =>
+        this.GetObservable(EnableActionsOnCurrentLogProfileProperty).Subscribe(_ =>
         {
-            this.UpdateEditCurrentLogProfileMenuItemVisibility();
+            this.UpdateActionOnCurrentLogProfileMenuItemsVisibility();
         });
         this.GetObservable(CurrentLogProfileProperty).Subscribe(currentLogProfile =>
         {
-            this.UpdateEditCurrentLogProfileMenuItemVisibility();
+            this.UpdateActionOnCurrentLogProfileMenuItemsVisibility();
             foreach (var item in this.items)
             {
                 if (item is not MenuItem menuItem || menuItem.Header is not Panel panel)
@@ -104,16 +105,6 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
     }
 
 
-    /// <summary>
-    /// Get or set whether item of editing current log profile is visible or not.
-    /// </summary>
-    public bool AllowEditingCurrentLogProfile
-    {
-        get => this.GetValue<bool>(AllowEditingCurrentLogProfileProperty);
-        set => this.SetValue<bool>(AllowEditingCurrentLogProfileProperty, value);
-    }
-
-
     // Compare menu items.
     int CompareItems(object? lhs, object? rhs)
     {
@@ -123,13 +114,16 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
             {
                 if (lhs == rhs)
                     return 0;
-                if (lhs == this.editCurrentLogProfileSeparator)
+                if (lhs == this.actionsOnCurrentLogProfileSeparator)
                     return -1;
                 return 1;
             }
-            if (rhs == this.editCurrentLogProfileMenuItem)
+            if (rhs == this.editCurrentLogProfileMenuItem
+                || rhs == this.exportCurrentLogProfileMenuItem)
+            {
                 return 1;
-            if (lhs == this.editCurrentLogProfileSeparator)
+            }
+            if (lhs == this.actionsOnCurrentLogProfileSeparator)
                 return -1;
             if (((rhs as MenuItem)?.DataContext as LogProfile)?.IsPinned == true)
                 return 1;
@@ -137,9 +131,12 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
         }
         if (rhs is Separator)
         {
-            if (lhs == this.editCurrentLogProfileMenuItem)
+            if (lhs == this.editCurrentLogProfileMenuItem
+                || lhs == this.exportCurrentLogProfileMenuItem)
+            {
                 return -1;
-            if (rhs == this.editCurrentLogProfileSeparator)
+            }
+            if (rhs == this.actionsOnCurrentLogProfileSeparator)
                 return 1;
             if (((lhs as MenuItem)?.DataContext as LogProfile)?.IsPinned == true)
                 return -1;
@@ -148,6 +145,10 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
         if (lhs == this.editCurrentLogProfileMenuItem)
             return -1;
         if (rhs == this.editCurrentLogProfileMenuItem)
+            return 1;
+        if (lhs == this.exportCurrentLogProfileMenuItem)
+            return -1;
+        if (rhs == this.exportCurrentLogProfileMenuItem)
             return 1;
         var lhsLogProfile = (LogProfile)((MenuItem)lhs!).DataContext!;
         var rhsLogProfile = (LogProfile)((MenuItem)rhs!).DataContext!;
@@ -203,6 +204,27 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
         {
             icon.Classes.Add("MenuItem_Icon");
             icon.Source = this.FindResourceOrDefault<IImage>("Image/Icon.Edit");
+        });
+    });
+
+
+    // Create menu item for exporting current log profile.
+    MenuItem CreateExportCurrentLogProfileMenuItem() => new MenuItem().Also(menuItem =>
+    {
+        menuItem.Command = new CarinaStudio.Windows.Input.Command(this.ExportCurrentLogProfile);
+        menuItem.Header = new FormattedTextBlock().Also(it =>
+        {
+            it.Bind(FormattedTextBlock.Arg1Property, new Binding()
+            {
+                Path = $"{nameof(CurrentLogProfile)}.{nameof(LogProfile.Name)}",
+                Source = this,
+            });
+            it.Bind(FormattedTextBlock.FormatProperty, this.GetResourceObservable("String/LogProfileSelectionContextMenu.ExportCurrentLogProfile"));
+        });
+        menuItem.Icon = new Avalonia.Controls.Image().Also(icon =>
+        {
+            icon.Classes.Add("MenuItem_Icon");
+            icon.Source = this.FindResourceOrDefault<IImage>("Image/Icon.Export");
         });
     });
 
@@ -338,6 +360,27 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
     }
 
 
+    /// <summary>
+    /// Get or set whether item of editing current log profile is visible or not.
+    /// </summary>
+    public bool EnableActionsOnCurrentLogProfile
+    {
+        get => this.GetValue<bool>(EnableActionsOnCurrentLogProfileProperty);
+        set => this.SetValue<bool>(EnableActionsOnCurrentLogProfileProperty, value);
+    }
+
+
+    // Export current log profile.
+    void ExportCurrentLogProfile()
+    {
+        var logProfile = this.CurrentLogProfile;
+        var window = this.FindLogicalAncestorOfType<CarinaStudio.Controls.Window>();
+        if (logProfile == null || window == null)
+            return;
+        _ = logProfile.ExportAsync(window);
+    } 
+
+
     /// <inheritdoc/>
     Type IStyleable.StyleKey => typeof(ContextMenu);
 
@@ -369,12 +412,14 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
             it.CollectionChanged += this.OnLogProfilesChanged);
         this.items.AddAll(new List<object>().Also(it =>
         {
-            if (this.CurrentLogProfile != null && this.AllowEditingCurrentLogProfile)
+            if (this.CurrentLogProfile != null && this.EnableActionsOnCurrentLogProfile)
             {
                 this.editCurrentLogProfileMenuItem ??= this.CreateEditCurrentLogProfileMenuItem();
-                this.editCurrentLogProfileSeparator ??= new();
+                this.exportCurrentLogProfileMenuItem ??= this.CreateExportCurrentLogProfileMenuItem();
+                this.actionsOnCurrentLogProfileSeparator ??= new();
                 it.Add(this.editCurrentLogProfileMenuItem);
-                it.Add(this.editCurrentLogProfileSeparator);
+                it.Add(this.exportCurrentLogProfileMenuItem);
+                it.Add(this.actionsOnCurrentLogProfileSeparator);
             }
             foreach (var logProfile in LogProfileManager.Default.Profiles)
             {
@@ -535,27 +580,31 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
     }
 
 
-    // Update visibility of editing current log profile.
-    void UpdateEditCurrentLogProfileMenuItemVisibility()
+    // Update visibility of actions on current log profile.
+    void UpdateActionOnCurrentLogProfileMenuItemsVisibility()
     {
         if (this.isAttachedToLogicalTree)
         {
-            if (this.CurrentLogProfile != null && this.AllowEditingCurrentLogProfile)
+            if (this.CurrentLogProfile != null && this.EnableActionsOnCurrentLogProfile)
             {
                 this.editCurrentLogProfileMenuItem ??= this.CreateEditCurrentLogProfileMenuItem();
-                this.editCurrentLogProfileSeparator ??= new();
-                if (!this.items.Contains(this.editCurrentLogProfileMenuItem))
+                this.exportCurrentLogProfileMenuItem ??= this.CreateExportCurrentLogProfileMenuItem();
+                this.actionsOnCurrentLogProfileSeparator ??= new();
+                if (!this.items.Contains(this.actionsOnCurrentLogProfileSeparator))
                 {
                     this.items.Add(this.editCurrentLogProfileMenuItem);
-                    this.items.Add(this.editCurrentLogProfileSeparator);
+                    this.items.Add(this.exportCurrentLogProfileMenuItem);
+                    this.items.Add(this.actionsOnCurrentLogProfileSeparator);
                 }
             }
             else
             {
                 if (this.editCurrentLogProfileMenuItem != null)
                     this.items.Remove(this.editCurrentLogProfileMenuItem);
-                if (this.editCurrentLogProfileSeparator != null)
-                    this.items.Remove(this.editCurrentLogProfileSeparator);
+                if (this.exportCurrentLogProfileMenuItem != null)
+                    this.items.Remove(this.exportCurrentLogProfileMenuItem);
+                if (this.actionsOnCurrentLogProfileSeparator != null)
+                    this.items.Remove(this.actionsOnCurrentLogProfileSeparator);
             }
         }
     }
