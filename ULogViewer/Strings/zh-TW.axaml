@@ -252,6 +252,11 @@
 	<sys:String x:Key="String/FileSizeUnit.Bits">位元</sys:String>
 	<sys:String x:Key="String/FileSizeUnit.Bytes">位元組</sys:String>
 
+	<!-- FilterCombinationMode -->
+	<sys:String x:Key="String/FilterCombinationMode.Auto">自動選擇</sys:String>
+	<sys:String x:Key="String/FilterCombinationMode.Intersection">交集</sys:String>
+	<sys:String x:Key="String/FilterCombinationMode.Union">聯集</sys:String>
+
 	<!-- IPEndPointInputDialog -->
 	<sys:String x:Key="String/IPEndPointInputDialog.Address">IP 位址</sys:String>
 	<sys:String x:Key="String/IPEndPointInputDialog.Port">連接埠</sys:String>
@@ -986,7 +991,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.LogCountInLogFile">日誌個數：</sys:String>
 	<sys:String x:Key="String/SessionView.LogFileIsUnsupported">目前的日誌類型不支援使用檔案</sys:String>
 	<sys:String x:Key="String/SessionView.LogFilesPanel">已加入的日誌檔案</sys:String>
-	<sys:String x:Key="String/SessionView.LogFiltersCombinationMode">篩選條件運算方式 (交集/聯集)</sys:String>
+	<sys:String x:Key="String/SessionView.LogFiltersCombinationMode">篩選條件組合方式</sys:String>
 	<sys:String x:Key="String/SessionView.LoginToAzure">登入 Azure</sys:String>
 	<sys:String x:Key="String/SessionView.LoginToAzure.WithProVersion">登入 Azure (專業版)</sys:String>
 	<sys:String x:Key="String/SessionView.LogLevelFilter.Description">使用等級篩選日誌</sys:String>

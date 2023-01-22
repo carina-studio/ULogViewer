@@ -269,6 +269,11 @@
 	<sys:String x:Key="String/FileSizeUnit.Petabytes">PB</sys:String>
 	<sys:String x:Key="String/FileSizeUnit.Terabytes">TB</sys:String>
 
+	<!-- FilterCombinationMode -->
+	<sys:String x:Key="String/FilterCombinationMode.Auto">Auto</sys:String>
+	<sys:String x:Key="String/FilterCombinationMode.Intersection">Intersection</sys:String>
+	<sys:String x:Key="String/FilterCombinationMode.Union">Union</sys:String>
+
 	<!-- IPEndPointInputDialog -->
 	<sys:String x:Key="String/IPEndPointInputDialog.Address">IP address</sys:String>
 	<sys:String x:Key="String/IPEndPointInputDialog.Port">Port</sys:String>
@@ -1026,7 +1031,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.LogCountInLogFile">Log count:</sys:String>
 	<sys:String x:Key="String/SessionView.LogFileIsUnsupported">File is unsupported in current log profile</sys:String>
 	<sys:String x:Key="String/SessionView.LogFilesPanel">Added log files</sys:String>
-	<sys:String x:Key="String/SessionView.LogFiltersCombinationMode">Way to combine conditions (Intersect/Union)</sys:String>
+	<sys:String x:Key="String/SessionView.LogFiltersCombinationMode">Way to combine conditions</sys:String>
 	<sys:String x:Key="String/SessionView.LoginToAzure">Login to Azure</sys:String>
 	<sys:String x:Key="String/SessionView.LoginToAzure.WithProVersion">Login to Azure (Pro)</sys:String>
 	<sys:String x:Key="String/SessionView.LogLevelFilter.Description">Use level filter logs</sys:String>

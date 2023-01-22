@@ -30,7 +30,7 @@ class LogFilteringViewModel : SessionComponent
     /// <summary>
     /// Property of <see cref="FiltersCombinationMode"/>.
     /// </summary>
-    public static readonly ObservableProperty<FilterCombinationMode> FiltersCombinationModeProperty = ObservableProperty.Register<LogFilteringViewModel, FilterCombinationMode>(nameof(FiltersCombinationMode), FilterCombinationMode.Intersection);
+    public static readonly ObservableProperty<FilterCombinationMode> FiltersCombinationModeProperty = ObservableProperty.Register<LogFilteringViewModel, FilterCombinationMode>(nameof(FiltersCombinationMode), FilterCombinationMode.Auto);
     /// <summary>
     /// Property of <see cref="IgnoreTextFilterCase"/>.
     /// </summary>
@@ -170,6 +170,7 @@ class LogFilteringViewModel : SessionComponent
         this.FilterBySelectedPropertyWithLowAccuracyCommand = new Command<DisplayableLogProperty>(p => this.FilterBySelectedProperty(p, Accuracy.Low), this.canFilterBySelectedProperty);
         this.FilterBySelectedThreadIdCommand = new Command<bool>(this.FilterBySelectedThreadId, this.canFilterBySelectedTid);
         this.ResetFiltersCommand = new Command(() => this.ResetFilters(true), this.canResetFilters);
+        this.SetFilterCombinationModeCommand = new Command<FilterCombinationMode>(mode => this.FiltersCombinationMode = mode);
 
         // create collection
         this.predefinedTextFilters = new ObservableList<PredefinedLogTextFilter>().Also(it =>
@@ -941,6 +942,13 @@ class LogFilteringViewModel : SessionComponent
     /// Command to reset all filters.
     /// </summary>
     public ICommand ResetFiltersCommand { get; }
+
+
+    /// <summary>
+    /// Command to set <see cref="LogFilteringViewModel.FilterCombinationMode"/>.
+    /// </summary>
+    /// <value>The type of parameter is <see cref="FilterCombinationMode"/>.</value>
+    public ICommand SetFilterCombinationModeCommand { get; }
 
 
     /// <summary>

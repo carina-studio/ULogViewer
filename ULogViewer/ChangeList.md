@@ -7,6 +7,7 @@
 + Highlight PID and TID which are same as PID and TID of selected log.
 + Support running commands by specified command-line shell when using **'Standard Output (stdout)'** log data source.
 + Support filtering logs with given accuracy by text of selected log property.
++ Support selecting intersection/union of filter conditions dynamically according to current conditions.
 + Support right-clicking on **'Create new tab'** button to select log profile and set to new tab directly.
 + Add button beside **'Select/Change log profile'** button for opening menu to select log profile quickly.
 + Support clicking on **'Earliest timestamp of log/Minimum time span of log'** or **'Latest timestamp of log/Maximum time span of log'** to select the log.

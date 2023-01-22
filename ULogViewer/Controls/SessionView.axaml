@@ -228,7 +228,27 @@
 			</MenuItem>
 		</ContextMenu>
 
-		<!-- Log header  template-->
+		<!-- Log filter combination mode menu -->
+		<ContextMenu x:Key="logFilterCombinationModeMenu" PlacementMode="Bottom">
+			<MenuItem Command="{Binding LogFiltering.SetFilterCombinationModeCommand}" CommandParameter="{x:Static appViewModels:FilterCombinationMode.Auto}" Header="{DynamicResource String/FilterCombinationMode.Auto}">
+				<MenuItem.Icon>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/FilterCombinationMode.Auto.Outline}"/>
+				</MenuItem.Icon>
+			</MenuItem>
+			<Separator/>
+			<MenuItem Command="{Binding LogFiltering.SetFilterCombinationModeCommand}" CommandParameter="{x:Static appViewModels:FilterCombinationMode.Intersection}" Header="{DynamicResource String/FilterCombinationMode.Intersection}">
+				<MenuItem.Icon>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Intersection}"/>
+				</MenuItem.Icon>
+			</MenuItem>
+			<MenuItem Command="{Binding LogFiltering.SetFilterCombinationModeCommand}" CommandParameter="{x:Static appViewModels:FilterCombinationMode.Union}" Header="{DynamicResource String/FilterCombinationMode.Union}">
+				<MenuItem.Icon>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Union}"/>
+				</MenuItem.Icon>
+			</MenuItem>
+		</ContextMenu>
+
+		<!-- Log header template-->
 		<DataTemplate x:Key="logHeaderTemplate">
 			<Border Background="{x:Static Brushes.Transparent}" BorderBrush="{DynamicResource Brush/SessionView.LogHeader.Separator}" BorderThickness="1,0,0,0" HorizontalAlignment="Stretch" Margin="{StaticResource Thickness/SessionView.LogHeader.Margin}" Padding="{StaticResource Thickness/SessionView.LogHeader.Padding}">
 				<ToolTip.Tip>
@@ -575,18 +595,20 @@
 						</Panel>
 
 						<!-- Filters combinatin mode -->
-						<Button Classes="ToolBar_Button" Command="{Binding $parent[UserControl].SwitchLogFiltersCombinationModeCommand}" Grid.Column="3" IsVisible="{Binding $parent[UserControl].CanFilterLogsByNonTextFilters}" ToolTip.Tip="{DynamicResource String/SessionView.LogFiltersCombinationMode}">
-							<Image Classes="Icon">
-								<ia:Interaction.Behaviors>
-									<iaCore:DataTriggerBehavior Binding="{Binding LogFiltering.FiltersCombinationMode}" Value="Intersection">
-										<iaCore:ChangePropertyAction PropertyName="Source" Value="{StaticResource Image/Intersection}"/>
-									</iaCore:DataTriggerBehavior>
-									<iaCore:DataTriggerBehavior Binding="{Binding LogFiltering.FiltersCombinationMode}" Value="Union">
-										<iaCore:ChangePropertyAction PropertyName="Source" Value="{StaticResource Image/Union}"/>
-									</iaCore:DataTriggerBehavior>
-								</ia:Interaction.Behaviors>
-							</Image>
-						</Button>
+						<ToggleButton Name="logFilterCombinationModeButton" Classes="ToolBar_ToggleButton" Command="{Binding $parent[UserControl].ShowLogFiltersCombinationModeMenu}" Grid.Column="3" IsVisible="{Binding $parent[UserControl].CanFilterLogsByNonTextFilters}" ToolTip.Tip="{DynamicResource String/SessionView.LogFiltersCombinationMode}">
+							<Panel>
+								<Image Classes="Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}">
+									<DrawingImage>
+										<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{Binding LogFiltering.FiltersCombinationMode, Converter={x:Static appControls:SessionView.LogFilterCombinationModeIconConverter}}"/>
+									</DrawingImage>
+								</Image>
+								<Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}">
+									<DrawingImage>
+										<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{Binding LogFiltering.FiltersCombinationMode, Converter={x:Static appControls:SessionView.LogFilterCombinationModeIconConverter}}"/>
+									</DrawingImage>
+								</Image>
+							</Panel>
+						</ToggleButton>
 						
 					</StackPanel>
 

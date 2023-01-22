@@ -57,6 +57,19 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// </summary>
 		public static readonly DirectProperty<SessionView, bool> AreAllTutorialsShownProperty = AvaloniaProperty.RegisterDirect<SessionView, bool>(nameof(AreAllTutorialsShown), v => v.areAllTutorialsShown);
 		/// <summary>
+		/// <see cref="IValueConverter"/> to convert from <see cref="FilterCombinationMode"/> to <see cref="Geometry"/> for toolbar icon.
+		/// </summary>
+		public static readonly IValueConverter LogFilterCombinationModeIconConverter = new FuncValueConverter<FilterCombinationMode, Geometry?>(mode =>
+		{
+			var app = App.CurrentOrNull;
+			return mode switch
+			{
+				FilterCombinationMode.Intersection => app?.FindResourceOrDefault<Geometry>("Geometry/Intersection"),
+				FilterCombinationMode.Union => app?.FindResourceOrDefault<Geometry>("Geometry/Union"),
+				_ => app?.FindResourceOrDefault<Geometry>("Geometry/FilterCombinationMode.Auto"),
+			};
+		});
+		/// <summary>
 		/// <see cref="IValueConverter"/> to convert log level to readable name.
 		/// </summary>
 		public static readonly IValueConverter LogLevelNameConverter = new LogLevelNameConverterImpl(App.Current);
@@ -174,6 +187,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ContextMenu logFileActionMenu;
 		readonly AppSuite.Controls.ListBox logFileListBox;
 		IDisposable logFilesPanelVisibilityObserverToken = EmptyDisposable.Default;
+		readonly ToggleButton logFilterCombinationModeButton;
+		readonly ContextMenu logFilterCombinationModeMenu;
 		readonly Button logFilteringHelpButton;
 		readonly List<ColumnDefinition> logHeaderColumns = new();
 		readonly Control logHeaderContainer;
@@ -334,7 +349,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.ShowLogFileInExplorerCommand = new Command<string>(this.ShowLogFileInExplorer);
 			this.ShowLogStringPropertyCommand = new Command(() => this.ShowLogStringProperty(), this.canShowLogProperty);
 			this.ShowWorkingDirectoryInExplorerCommand = new Command(this.ShowWorkingDirectoryInExplorer, this.canShowWorkingDirectoryInExplorer);
-			this.SwitchLogFiltersCombinationModeCommand = new Command(this.SwitchLogFiltersCombinationMode, this.GetObservable(HasLogProfileProperty));
 			this.UnmarkSelectedLogsCommand = new Command(this.UnmarkSelectedLogs, this.canUnmarkSelectedLogs);
 
 			// create collections
@@ -466,6 +480,16 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.logHeaderGrid = this.Get<Grid>(nameof(logHeaderGrid)).Also(it =>
 			{
 				it.GetObservable(BoundsProperty).Subscribe(_ => this.ReportLogHeaderColumnWidths());
+			});
+			this.logFilterCombinationModeButton = toolBarContainer.FindControl<ToggleButton>(nameof(logFilterCombinationModeButton)).AsNonNull();
+			this.logFilterCombinationModeMenu = ((ContextMenu)this.Resources[nameof(logFilterCombinationModeMenu)].AsNonNull()).Also(it =>
+			{
+				it.MenuClosed += (_, _) => this.SynchronizationContext.Post(() => this.logFilterCombinationModeButton.IsChecked = false);
+				it.MenuOpened += (_, _) => this.SynchronizationContext.Post(() => 
+				{
+					ToolTip.SetIsOpen(this.logFilterCombinationModeButton, false);
+					this.logFilterCombinationModeButton.IsChecked = true;
+				});
 			});
 			this.logLevelFilterComboBox = this.Get<ComboBox>(nameof(logLevelFilterComboBox)).Also(it =>
 			{
@@ -3839,8 +3863,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when test button clicked.
 		void OnTestButtonClick(object? sender, RoutedEventArgs e)
 		{
-			new TestDialog().ShowDialog(this.attachedWindow!);
-			//this.Application.Restart(AppSuite.AppSuiteApplication.RestoreMainWindowsArgument);
+			//new TestDialog().ShowDialog(this.attachedWindow!);
+			//App.Current.Restart();
 		}
 
 
@@ -4535,6 +4559,13 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// Command to show single log file in system file manager.
 		/// </summary>
 		public ICommand ShowLogFileInExplorerCommand { get; }
+
+
+		/// <summary>
+		/// Show menu to select log filter combination mode.
+		/// </summary>
+		public void ShowLogFiltersCombinationModeMenu() =>
+			this.logFilterCombinationModeMenu.Open(this.logFilterCombinationModeButton);
 		
 
 		/// <summary>
@@ -4803,25 +4834,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// Get current state of status bar.
 		/// </summary>
 		public SessionViewStatusBarState StatusBarState => this.GetValue(StatusBarStateProperty);
-
-
-		// Switch filters combination mode.
-		void SwitchLogFiltersCombinationMode()
-		{
-			if (this.DataContext is not Session session)
-				return;
-			session.LogFiltering.FiltersCombinationMode = session.LogFiltering.FiltersCombinationMode switch
-			{
-				FilterCombinationMode.Intersection => FilterCombinationMode.Union,
-				_ => FilterCombinationMode.Intersection,
-			};
-		}
-
-
-		/// <summary>
-		/// Command to switch combination mode of log filters.
-		/// </summary>
-		public ICommand SwitchLogFiltersCombinationModeCommand { get; }
 
 
 		// Unmark logs.

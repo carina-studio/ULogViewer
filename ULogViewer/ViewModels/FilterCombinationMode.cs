@@ -8,6 +8,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 	enum FilterCombinationMode
 	{
 		/// <summary>
+		/// Combine filtered items automatically.
+		/// </summary>
+		Auto,
+		/// <summary>
 		/// Get intersection of filtered items.
 		/// </summary>
 		Intersection,

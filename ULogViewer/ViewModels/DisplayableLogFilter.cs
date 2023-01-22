@@ -39,7 +39,7 @@ partial class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogF
 
 
     // Fields.
-    FilterCombinationMode combinationMode = FilterCombinationMode.Intersection;
+    FilterCombinationMode combinationMode = FilterCombinationMode.Auto;
     readonly SortedObservableList<DisplayableLog> filteredLogs;
     IList<DisplayableLogProperty> filteringLogProperties = Array.Empty<DisplayableLogProperty>();
     bool includeMarkedLogs = true;
@@ -138,7 +138,16 @@ partial class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogF
             return filteringToken;
         
         // setup token
-        filteringToken.CombinationMode = this.combinationMode;
+        filteringToken.CombinationMode = this.combinationMode.Let(it =>
+        {
+            if (it != FilterCombinationMode.Auto)
+                return it;
+            if (textRegexList.IsEmpty())
+                return FilterCombinationMode.Intersection;
+            if (this.processId.HasValue || this.threadId.HasValue)
+                return FilterCombinationMode.Union;
+            return FilterCombinationMode.Intersection;
+        });
         filteringToken.HasLogTextPropertyGetter = textPropertyGetters.IsNotEmpty();
         filteringToken.HasTextRegex = this.textRegexList.IsNotEmpty();
         filteringToken.IncludeMarkedLogs = this.includeMarkedLogs;
@@ -338,7 +347,7 @@ partial class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogF
                 }
             }
         }
-        if (isTextRegexMatched && isTextFilteringNeeded && combinationMode == FilterCombinationMode.Union)
+        if (isTextRegexMatched && isTextFilteringNeeded && token.CombinationMode == FilterCombinationMode.Union)
             return true;
 
         // check level
@@ -353,7 +362,7 @@ partial class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogF
         // filter
         if (areOtherConditionsMatched)
         {
-            if (!isTextFilteringNeeded || isTextRegexMatched || combinationMode == FilterCombinationMode.Union)
+            if (!isTextFilteringNeeded || isTextRegexMatched || token.CombinationMode == FilterCombinationMode.Union)
                 return true;
         }
         return false;
