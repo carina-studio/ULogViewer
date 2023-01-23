@@ -1772,8 +1772,11 @@ namespace CarinaStudio.ULogViewer.Controls
 			var messageProperty = default(DisplayableLogProperty);
 			var sourceNameProperty = default(DisplayableLogProperty);
 			var summaryProperty = default(DisplayableLogProperty);
+			var timeSpanStringProperty = default(DisplayableLogProperty);
 			var timestampStringProperty = default(DisplayableLogProperty);
 			var titleProperty = default(DisplayableLogProperty);
+			var userIdProperty = default(DisplayableLogProperty);
+			var userNameProperty = default(DisplayableLogProperty);
 			foreach (var logProperty in logProperties)
 			{
 				switch (logProperty.Name)
@@ -1787,11 +1790,20 @@ namespace CarinaStudio.ULogViewer.Controls
 					case nameof(DisplayableLog.Summary):
 						summaryProperty = logProperty;
 						break;
+					case nameof(DisplayableLog.TimeSpanString):
+						timeSpanStringProperty = logProperty;
+						break;
 					case nameof(DisplayableLog.TimestampString):
 						timestampStringProperty = logProperty;
 						break;
 					case nameof(DisplayableLog.Title):
 						titleProperty = logProperty;
+						break;
+					case nameof(DisplayableLog.UserId):
+						userIdProperty = logProperty;
+						break;
+					case nameof(DisplayableLog.UserName):
+						userNameProperty = logProperty;
 						break;
 				}
 			}
@@ -1803,7 +1815,10 @@ namespace CarinaStudio.ULogViewer.Controls
 					?? summaryProperty
 					?? titleProperty
 					?? sourceNameProperty
+					?? userNameProperty
+					?? userIdProperty
 					?? timestampStringProperty
+					?? timeSpanStringProperty
 					?? new DisplayableLogProperty(this.Application, nameof(DisplayableLog.LogId), null, null);
 			});
 			var app = (App)this.Application;
