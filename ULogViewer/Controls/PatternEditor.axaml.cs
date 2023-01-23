@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Data;
+using Avalonia.Input;
 using Avalonia.LogicalTree;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
@@ -191,6 +192,15 @@ partial class PatternEditor : CarinaStudio.Controls.UserControl<IULogViewerAppli
 	{
 		this.window = null;
 		base.OnDetachedFromLogicalTree(e);
+	}
+
+
+	/// <inheritdoc/>
+	protected override void OnGotFocus(GotFocusEventArgs e)
+	{
+		base.OnGotFocus(e);
+		if (e.Source is not Button)
+			this.patternTextBox.Focus();
 	}
 
 

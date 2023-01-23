@@ -53,7 +53,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		public LogPattern? LogPattern { get; set; }
 
 
-		// Called when opened.
+		/// <inheritdoc/>
 		protected override void OnOpened(EventArgs e)
 		{
 			base.OnOpened(e);
@@ -66,7 +66,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			this.SynchronizationContext.Post(() =>
 			{
-				if (!this.patternEditor.ShowTutorialIfNeeded(this.Get<TutorialPresenter>("tutorialPresenter")))
+				if (!this.patternEditor.ShowTutorialIfNeeded(this.Get<TutorialPresenter>("tutorialPresenter"), this.patternEditor))
 					this.patternEditor.Focus();
 			});
 		}

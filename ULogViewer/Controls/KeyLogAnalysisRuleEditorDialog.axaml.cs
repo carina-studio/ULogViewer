@@ -122,7 +122,7 @@ partial class KeyLogAnalysisRuleEditorDialog : AppSuite.Controls.InputDialog<IUL
 		}
 		this.SynchronizationContext.Post(() =>
 		{
-			if (!this.patternEditor.ShowTutorialIfNeeded(this.Get<TutorialPresenter>("tutorialPresenter")))
+			if (!this.patternEditor.ShowTutorialIfNeeded(this.Get<TutorialPresenter>("tutorialPresenter"), this.patternEditor))
 				this.patternEditor.Focus();
 		});
 	}
