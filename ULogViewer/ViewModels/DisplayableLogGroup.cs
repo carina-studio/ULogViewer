@@ -26,14 +26,15 @@ namespace CarinaStudio.ULogViewer.ViewModels
 	/// </summary>
 	partial class DisplayableLogGroup : BaseDisposable, IApplicationObject
 	{
-		// Static fields.
-		static Regex? ExtraCaptureRegex;
-		static Regex? TextFilterBracketAndSeparatorRegex;
+		// Constants.
+		const int RecentlyUsedColorIndicatorColorCount = 8;
 
 
 		// Static fields.
 		static readonly long BaseMemorySize = Memory.EstimateInstanceSize<DisplayableLogGroup>();
+		static Regex? ExtraCaptureRegex;
 		static int NextId = 1;
+		static Regex? TextFilterBracketAndSeparatorRegex;
 
 
 		// Fields.
@@ -48,6 +49,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		int maxDisplayLineCount;
 		long memorySize = BaseMemorySize;
 		readonly Random random = new();
+		readonly Queue<Color> recentlyUsedColorIndicatorColors = new(RecentlyUsedColorIndicatorColorCount);
 		int? selectedProcessId;
 		int? selectedThreadId;
 		readonly Stopwatch stopwatch = new();
@@ -304,6 +306,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.colorIndicatorBrushes.Clear();
 			this.levelBackgroundBrushes.Clear();
 			this.levelForegroundBrushes.Clear();
+			this.recentlyUsedColorIndicatorColors.Clear();
 
 			// cancel updating text highlighting
 			this.updateTextHighlightingDefSetAction.Cancel();
@@ -361,9 +364,41 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			if (this.IsDisposed)
 				return null;
 			if (this.colorIndicatorBrushes.TryGetValue(key, out var brush))
-				return brush.AsNonNull();
-			brush = new SolidColorBrush(Color.FromArgb(255, (byte)this.random.Next(100, 201), (byte)this.random.Next(100, 201), (byte)this.random.Next(100, 201)));
+				return brush;
+			var color = Colors.Transparent;
+			for (var i = RecentlyUsedColorIndicatorColorCount << 1; i > 0; --i)
+			{
+				color = Color.FromArgb(255, 
+					(byte)(this.random.Next(32, 101) << 1), 
+					(byte)(this.random.Next(32, 101) << 1), 
+					(byte)(this.random.Next(32, 101) << 1)
+				);
+				var closeToRuColors = false;
+				foreach (var ruColor in this.recentlyUsedColorIndicatorColors)
+				{
+					var rDistance = Math.Abs(color.R - ruColor.R);
+					var gDistance = Math.Abs(color.G - ruColor.G);
+					var bDistance = Math.Abs(color.B - ruColor.B);
+					var mDistance = Math.Max(Math.Max(rDistance, gDistance), bDistance);
+					if (mDistance <= 48)
+					{
+						closeToRuColors = true;
+						break;
+					}
+					if (rDistance <= 32 && gDistance <= 32 && bDistance <= 32)
+					{
+						closeToRuColors = true;
+						break;
+					}
+				}
+				if (!closeToRuColors)
+					break;
+			}
+			brush = new SolidColorBrush(color);
 			this.colorIndicatorBrushes[key] = brush;
+			while (this.recentlyUsedColorIndicatorColors.Count >= RecentlyUsedColorIndicatorColorCount)
+				this.recentlyUsedColorIndicatorColors.Dequeue();
+			this.recentlyUsedColorIndicatorColors.Enqueue(color);
 			return brush;
 		}
 
