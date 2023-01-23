@@ -57,19 +57,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// </summary>
 		public static readonly DirectProperty<SessionView, bool> AreAllTutorialsShownProperty = AvaloniaProperty.RegisterDirect<SessionView, bool>(nameof(AreAllTutorialsShown), v => v.areAllTutorialsShown);
 		/// <summary>
-		/// <see cref="IValueConverter"/> to convert from <see cref="FilterCombinationMode"/> to <see cref="Geometry"/> for toolbar icon.
-		/// </summary>
-		public static readonly IValueConverter LogFilterCombinationModeIconConverter = new FuncValueConverter<FilterCombinationMode, Geometry?>(mode =>
-		{
-			var app = App.CurrentOrNull;
-			return mode switch
-			{
-				FilterCombinationMode.Intersection => app?.FindResourceOrDefault<Geometry>("Geometry/Intersection"),
-				FilterCombinationMode.Union => app?.FindResourceOrDefault<Geometry>("Geometry/Union"),
-				_ => app?.FindResourceOrDefault<Geometry>("Geometry/FilterCombinationMode.Auto"),
-			};
-		});
-		/// <summary>
 		/// <see cref="IValueConverter"/> to convert log level to readable name.
 		/// </summary>
 		public static readonly IValueConverter LogLevelNameConverter = new LogLevelNameConverterImpl(App.Current);
@@ -111,7 +98,6 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Static fields.
-		static readonly StyledProperty<bool> CanFilterLogsByNonTextFiltersProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(CanFilterLogsByNonTextFilters), false);
 		static readonly StyledProperty<bool> EnableRunningScriptProperty = AvaloniaProperty.Register<SessionView, bool>("EnableRunningScript", false);
 		static readonly StyledProperty<bool> HasLogProfileProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(HasLogProfile), false);
 		static readonly StyledProperty<bool> IsProcessInfoVisibleProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(IsProcessInfoVisible), false);
@@ -121,13 +107,11 @@ namespace CarinaStudio.ULogViewer.Controls
 		static readonly SettingKey<bool> IsLogFilesPanelTutorialShownKey = new("SessionView.IsLogFilesPanelTutorialShown");
 		static readonly SettingKey<bool> IsMarkedLogsPanelTutorialShownKey = new("SessionView.IsMarkedLogsPanelTutorialShown");
 		static readonly SettingKey<bool> IsSelectingLogProfileToStartTutorialShownKey = new("SessionView.IsSelectingLogProfileToStartTutorialShown");
-		static readonly SettingKey<bool> IsShowingHelpButtonOnLogTextFilterConfirmedKey = new("SessionView.IsShowingHelpButtonOnLogTextFilterConfirmed");
 		static readonly SettingKey<bool> IsSwitchingSidePanelsTutorialShownKey = new("SessionView.IsSwitchingSidePanelsTutorialShown");
 		static readonly SettingKey<bool> IsTimestampCategoriesPanelTutorialShownKey = new("SessionView.IsTimestampCategoriesPanelTutorialShown");
 		static readonly StyledProperty<FontFamily> LogFontFamilyProperty = AvaloniaProperty.Register<SessionView, FontFamily>(nameof(LogFontFamily));
 		static readonly StyledProperty<double> LogFontSizeProperty = AvaloniaProperty.Register<SessionView, double>(nameof(LogFontSize), 10.0);
 		static readonly StyledProperty<int> MaxDisplayLineCountForEachLogProperty = AvaloniaProperty.Register<SessionView, int>(nameof(MaxDisplayLineCountForEachLog), 1);
-		static readonly StyledProperty<bool> ShowHelpButtonOnLogTextFilterProperty = AvaloniaProperty.Register<SessionView, bool>("ShowHelpButtonOnLogTextFilter");
 		static readonly StyledProperty<SessionViewStatusBarState> StatusBarStateProperty = AvaloniaProperty.Register<SessionView, SessionViewStatusBarState>(nameof(StatusBarState), SessionViewStatusBarState.None);
 
 
@@ -145,7 +129,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly MutableObservableBoolean canCopyLogProperty = new();
 		readonly MutableObservableBoolean canCopyLogText = new();
 		readonly MutableObservableBoolean canEditLogProfile = new();
-		readonly MutableObservableBoolean canFilterByLogProperty = new();
 		readonly MutableObservableBoolean canMarkSelectedLogs = new();
 		readonly MutableObservableBoolean canMarkUnmarkSelectedLogs = new();
 		readonly ObservableCommandState canReloadLogs = new();
@@ -161,12 +144,9 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly MutableObservableBoolean canShowLogProperty = new();
 		readonly MutableObservableBoolean canShowWorkingDirectoryInExplorer = new();
 		readonly MutableObservableBoolean canUnmarkSelectedLogs = new();
-		readonly Button clearLogTextFilterButton;
 		readonly MenuItem copyLogPropertyMenuItem;
 		readonly Border dragDropReceiverBorder;
-		readonly MenuItem filterByLogPropertyMenuItem;
 		IDisposable? hasDialogsObserverToken;
-		readonly Button ignoreLogTextFilterCaseButton;
 		IDisposable? isActiveObserverToken;
 		bool isAltKeyPressed;
 		bool isAttachedToLogicalTree;
@@ -175,9 +155,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		bool isPointerPressedOnLogListBox;
 		bool isProVersionActivated;
 		bool isRestartingAsAdminConfirmed;
-		bool isShowingHelpButtonOnLogTextFilterConfirmationNeeded;
 		bool isSelectingFileToSaveLogs;
-		bool isUpdatingLogFilters;
 		bool isUriNeededAfterLogProfileSet;
 		bool isWorkingDirNeededAfterLogProfileSet;
 		bool keepSidePanelVisible;
@@ -187,40 +165,28 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ContextMenu logFileActionMenu;
 		readonly AppSuite.Controls.ListBox logFileListBox;
 		IDisposable logFilesPanelVisibilityObserverToken = EmptyDisposable.Default;
-		readonly ToggleButton logFilterCombinationModeButton;
-		readonly ContextMenu logFilterCombinationModeMenu;
-		readonly Button logFilteringHelpButton;
 		readonly List<ColumnDefinition> logHeaderColumns = new();
 		readonly Control logHeaderContainer;
 		readonly Grid logHeaderGrid;
 		readonly List<MutableObservableValue<GridLength>> logHeaderWidths = new();
-		readonly ComboBox logLevelFilterComboBox;
 		readonly Avalonia.Controls.ListBox logListBox;
 		readonly Panel logListBoxContainer;
 		readonly ContextMenu logMarkingMenu;
-		readonly IntegerTextBox logProcessIdFilterTextBox;
 		readonly LogProfileSelectionContextMenu logProfileSelectionMenu;
 		readonly ToggleButton logsSavingButton;
 		readonly ContextMenu logsSavingMenu;
 		ScrollViewer? logScrollViewer;
-		readonly RegexTextBox logTextFilterTextBox;
-		readonly IntegerTextBox logThreadIdFilterTextBox;
 		readonly Avalonia.Controls.ListBox markedLogListBox;
 		IDisposable markedLogsPanelVisibilityObserverToken = EmptyDisposable.Default;
 		readonly double minLogListBoxSizeToCloseSidePanel;
 		readonly double minLogTextFilterItemsPanelWidth;
 		readonly ToggleButton otherActionsButton;
 		readonly ContextMenu otherActionsMenu;
-		readonly Avalonia.Controls.ListBox predefinedLogTextFilterListBox;
-		readonly SortedObservableList<PredefinedLogTextFilter> predefinedLogTextFilters;
-		readonly ToggleButton predefinedLogTextFiltersButton;
-		readonly Popup predefinedLogTextFiltersPopup;
 		readonly HashSet<Avalonia.Input.Key> pressedKeys = new();
 		readonly ScheduledAction scrollToLatestLogAction;
 		IBrush? selectableValueLogItemBackgroundBrush;
 		readonly IMultiValueConverter selectableValueLogItemBackgroundConverter;
 		readonly ToggleButton selectAndSetLogProfileDropDownButton;
-		readonly HashSet<PredefinedLogTextFilter> selectedPredefinedLogTextFilters = new();
 		readonly MenuItem showLogPropertyMenuItem;
 		readonly ColumnDefinition sidePanelColumn;
 		readonly Control sidePanelContainer;
@@ -233,9 +199,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly Panel toolBarLogTextFilterItemsPanel;
 		readonly Panel toolBarOtherItemsPanel;
 		readonly Panel toolBarOtherLogFilterItemsPanel;
-		readonly ScheduledAction updateLogFiltersAction;
 		readonly ScheduledAction updateLogHeaderContainerMarginAction;
-		readonly ScheduledAction updateLogTextFilterTextBoxClassesAction;
 		readonly ScheduledAction updateStatusBarStateAction;
 		readonly SortedObservableList<Logs.LogLevel> validLogLevels = new((x, y) => (int)x - (int)y);
 		readonly ToggleButton workingDirectoryActionsButton;
@@ -521,7 +485,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.logsSavingButton = this.Get<ToggleButton>(nameof(logsSavingButton));
 			this.logTextFilterTextBox = this.Get<RegexTextBox>(nameof(logTextFilterTextBox)).Also(it =>
 			{
-				it.ValidationDelay = this.UpdateLogFilterParamsDelay;
+				it.ValidationDelay = this.CommitLogFilterParamsDelay;
 				if (Platform.IsMacOS)
 					(this.Application as AppSuite.AppSuiteApplication)?.EnsureClosingToolTipIfWindowIsInactive(it);
 			});
@@ -869,41 +833,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				session.LogAnalysis.LogAnalysisScriptSets.Clear();
 				session.LogAnalysis.LogAnalysisScriptSets.AddAll(selectedLaScriptSets);
 			});
-			this.updateLogFiltersAction = new ScheduledAction(() =>
-			{
-				// get session
-				if (this.DataContext is not Session session)
-					return;
-
-				// update text filters
-				this.isUpdatingLogFilters = true;
-				session.LogFiltering.PredefinedTextFilters.Clear();
-				session.LogFiltering.PredefinedTextFilters.AddAll(this.selectedPredefinedLogTextFilters);
-				this.isUpdatingLogFilters = false;
-			});
-			this.updateLogTextFilterTextBoxClassesAction = new(() =>
-			{
-				var visibleActions = 0;
-				if (this.clearLogTextFilterButton.IsEffectivelyVisible)
-					++visibleActions;
-				if (this.ignoreLogTextFilterCaseButton.IsEffectivelyVisible)
-					++visibleActions;
-				if (this.logFilteringHelpButton.IsEffectivelyVisible)
-					++visibleActions;
-				var className = visibleActions switch
-				{
-					0 => null,
-					1 => "WithInPlaceAction",
-					_ => $"With{visibleActions}InPlaceActions",
-				};
-				if (className == null)
-					this.logTextFilterTextBox.Classes.Clear();
-				else if (!this.logTextFilterTextBox.Classes.Contains(className))
-				{
-					this.logTextFilterTextBox.Classes.Clear();
-					this.logTextFilterTextBox.Classes.Add(className);
-				}
-			});
+			this.commitLogFiltersAction = new ScheduledAction(this.CommitLogFilters);
+			this.updateLogTextFilterTextBoxClassesAction = new(this.UpdateLogTextFilterTextBoxClasses);
 			this.updateLogHeaderContainerMarginAction = new(() =>
 			{
 				var logScrollViewer = this.logScrollViewer;
@@ -1008,10 +939,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		public bool AreAllTutorialsShown { get => this.areAllTutorialsShown; }
 
 
-		// Attach to predefined log text filter
-		void AttachToPredefinedLogTextFilter(PredefinedLogTextFilter filter) => filter.PropertyChanged += this.OnPredefinedLogTextFilterPropertyChanged;
-
-
 		// Attach to session.
 		void AttachToSession(Session session)
 		{
@@ -1090,19 +1017,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.scrollToLatestLogAnalysisResultAction.Schedule(ScrollingToLatestLogInterval);
 
 			// sync log filters to UI
-			if (session.LogFiltering.PredefinedTextFilters.IsNotEmpty())
-			{
-				this.SynchronizationContext.Post(() =>
-				{
-					foreach (var textFilter in session.LogFiltering.PredefinedTextFilters)
-					{
-						this.predefinedLogTextFilterListBox.SelectedItems!.Add(textFilter);
-						this.selectedPredefinedLogTextFilters.Add(textFilter);
-					}
-					this.updateLogFiltersAction.Cancel();
-				});
-			}
-			this.updateLogFiltersAction.Cancel();
+			this.SyncLogTextFiltersBack();
+			this.commitLogFiltersAction.Cancel();
 
 			// sync log analysis rule sets to UI
 			this.keyLogAnalysisRuleSetListBox.SelectedItems.Let(it =>
@@ -1167,39 +1083,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			// update UI
 			this.OnDisplayLogPropertiesChanged();
 			this.updateStatusBarStateAction.Schedule();
-		}
-
-
-		// Check whether at least one non-text log filter is supported or not.
-		public bool CanFilterLogsByNonTextFilters => 
-			this.GetValue(CanFilterLogsByNonTextFiltersProperty);
-
-
-		/// <summary>
-		/// Clear predefined log text filter selection.
-		/// </summary>
-		public void ClearPredefinedLogTextFilterSelection()
-		{
-			this.predefinedLogTextFilterListBox.SelectedItems?.Clear();
-			this.updateLogFiltersAction.Reschedule();
-		}
-
-
-		// Compare predefined log text filters.
-		static int ComparePredefinedLogTextFilters(PredefinedLogTextFilter? x, PredefinedLogTextFilter? y)
-		{
-			if (x == null)
-			{
-				if (y == null)
-					return 0;
-				return -1;
-			}
-			if (y == null)
-				return 1;
-			var result = string.Compare(x.Name, y.Name, true, CultureInfo.InvariantCulture);
-			if (result != 0)
-				return result;
-			return x.GetHashCode() - y.GetHashCode();
 		}
 
 
@@ -1277,26 +1160,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			this.Logger.LogWarning("User denied to restart as administrator for '{profileName}'", profile.Name);
 			return false;
-		}
-
-
-		// Confirm whether keep showing help button on log text filter or not.
-		async void ConfirmShowingHelpButtonOnLogTextFilter()
-		{
-			if (this.PersistentState.GetValueOrDefault(IsShowingHelpButtonOnLogTextFilterConfirmedKey))
-				return;
-			if (this.attachedWindow == null)
-				return;
-			var dialog = new MessageDialog()
-			{
-				Buttons = MessageDialogButtons.YesNo,
-				DoNotAskOrShowAgain = true,
-				Icon = MessageDialogIcon.Question,
-				Message = this.Application.GetObservableString("SessionView.ConfirmShowingHelpButtonOnLogTextFilter"),
-			};
-			var result = await dialog.ShowDialog(this.attachedWindow);
-			this.Settings.SetValue<bool>(SettingKeys.ShowHelpButtonOnLogTextFilter, result == MessageDialogResult.Yes);
-			this.PersistentState.SetValue<bool>(IsShowingHelpButtonOnLogTextFilterConfirmedKey, dialog.DoNotAskOrShowAgain.GetValueOrDefault());
 		}
 
 
@@ -1511,24 +1374,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// Command to copy selected log analysis rule set.
 		/// </summary>
 		public ICommand CopyOperationDurationAnalysisRuleSetCommand { get; }
-
-
-		// Copy selected predefined log text filter.
-		void CopyPredefinedLogTextFilter(PredefinedLogTextFilter filter)
-		{
-			if (this.attachedWindow == null)
-				return;
-			var newName = Utility.GenerateName(filter.Name, name => 
-				PredefinedLogTextFilterManager.Default.Filters.FirstOrDefault(it => it.Name == name) != null);
-			var newFilter = new PredefinedLogTextFilter(this.Application, newName, filter.Regex);
-			PredefinedLogTextFilterEditorDialog.Show(this.attachedWindow, newFilter, null);
-		}
-
-
-		/// <summary>
-		/// Command to copy predefined log text filter.
-		/// </summary>
-		public ICommand CopyPredefinedLogTextFilterCommand { get; }
 
 
 		// Create item template for item of log list box.
@@ -2042,21 +1887,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		/// <summary>
-		/// Create predefined log text filter.
-		/// </summary>
-		public void CreatePredefinedLogTextFilter()
-		{
-			if (this.attachedWindow == null)
-				return;
-			PredefinedLogTextFilterEditorDialog.Show(this.attachedWindow, null, this.logTextFilterTextBox.Object);
-		}
-
-
-		// Detach from predefined log text filter
-		void DetachFromPredefinedLogTextFilter(PredefinedLogTextFilter filter) => filter.PropertyChanged -= this.OnPredefinedLogTextFilterPropertyChanged;
-
-
 		// Detach from session.
 		void DetachFromSession(Session session)
 		{
@@ -2355,62 +2185,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Edit given predefined log text filter.
-		void EditPredefinedLogTextFilter(PredefinedLogTextFilter? filter)
-		{
-			if (filter == null || this.attachedWindow == null)
-				return;
-			PredefinedLogTextFilterEditorDialog.Show(this.attachedWindow, filter, null);
-		}
-
-
-		/// <summary>
-		/// Command to edit given predefined log text filter.
-		/// </summary>
-		public ICommand EditPredefinedLogTextFilterCommand { get; }
-
-
-		// Filter by property of selected log.
-		void FilterByLogProperty(Accuracy accuracy)
-		{
-			if (this.lastClickedLogPropertyView?.Tag is not DisplayableLogProperty property)
-				return;
-			(this.DataContext as Session)?.LogFiltering?.Let(it =>
-			{
-				switch (accuracy)
-				{
-					case Accuracy.High:
-						it.FilterBySelectedPropertyWithHighAccuracyCommand.TryExecute(property);
-						break;
-					case Accuracy.Low:
-						it.FilterBySelectedPropertyWithLowAccuracyCommand.TryExecute(property);
-						break;
-					default:
-						it.FilterBySelectedPropertyCommand.TryExecute(property);
-						break;
-				}
-			});
-		}
-
-
-		/// <summary>
-		/// Command to filter by property of selected log.
-		/// </summary>
-		public ICommand FilterByLogPropertyCommand { get; }
-
-
-		/// <summary>
-		/// Command to filter by property of selected log with high accuracy.
-		/// </summary>
-		public ICommand FilterByLogPropertyWithHighAccuracyCommand { get; }
-
-
-		/// <summary>
-		/// Command to filter by property of selected log with low accuracy.
-		/// </summary>
-		public ICommand FilterByLogPropertyWithLowAccuracyCommand { get; }
-
-
 		/// <summary>
 		/// Check whether log profile has been set or not.
 		/// </summary>
@@ -2553,16 +2327,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when application string resources updated.
 		void OnApplicationStringsUpdated(object? sender, EventArgs e)
 		{
-			// [Workaround] Force update content shown in controls
-			var isScheduled = this.updateLogFiltersAction.IsScheduled;
-			var selectedIndex = this.logLevelFilterComboBox.SelectedIndex;
-			if (selectedIndex > 0)
-				this.logLevelFilterComboBox.SelectedIndex = 0;
-			else
-				this.logLevelFilterComboBox.SelectedIndex = 1;
-			this.logLevelFilterComboBox.SelectedIndex = selectedIndex;
-			if (!isScheduled)
-				this.updateLogFiltersAction.Cancel();
+			this.UpdateLogLevelFilterComboBoxStrings();
 		}
 
 
@@ -2606,10 +2371,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			});
 
 			// attach to predefined log text filter list
-			this.predefinedLogTextFilters.AddAll(PredefinedLogTextFilterManager.Default.Filters);
-			foreach (var filter in PredefinedLogTextFilterManager.Default.Filters)
-				this.AttachToPredefinedLogTextFilter(filter);
-			((INotifyCollectionChanged)PredefinedLogTextFilterManager.Default.Filters).CollectionChanged += this.OnPredefinedLogTextFiltersChanged;
+			this.AttachToPredefinedLogTextFilters();
 
 			// add event handlers
 			this.Application.StringsUpdated += this.OnApplicationStringsUpdated;
@@ -2686,10 +2448,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.RemoveHandler(KeyUpEvent, this.OnPreviewKeyUp);
 
 			// release predefined log text filter list
-			((INotifyCollectionChanged)PredefinedLogTextFilterManager.Default.Filters).CollectionChanged -= this.OnPredefinedLogTextFiltersChanged;
-			foreach (var filter in this.predefinedLogTextFilters)
-				this.DetachFromPredefinedLogTextFilter(filter);
-			this.predefinedLogTextFilters.Clear();
+			this.DetachFromPredefinedLogTextFilters();
 			this.selectedPredefinedLogTextFilters.Clear();
 
 			// detach from window
@@ -3516,79 +3275,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Called when selection of list box of predefined log text filter has been changed.
-		void OnPredefinedLogTextFilterListBoxSelectionChanged(object? sender, SelectionChangedEventArgs e)
-		{
-			foreach (var filter in e.RemovedItems.Cast<PredefinedLogTextFilter>())
-				this.selectedPredefinedLogTextFilters.Remove(filter);
-			foreach (var filter in e.AddedItems.Cast<PredefinedLogTextFilter>())
-				this.selectedPredefinedLogTextFilters.Add(filter);
-			if (this.selectedPredefinedLogTextFilters.Count != this.predefinedLogTextFilterListBox.SelectedItems!.Count)
-			{
-				// [Workaround] Need to sync selection back to control because selection will be cleared when popup opened
-				if (this.selectedPredefinedLogTextFilters.IsNotEmpty())
-				{
-					var isScheduled = this.updateLogFiltersAction?.IsScheduled ?? false;
-					this.selectedPredefinedLogTextFilters.ToArray().Let(it =>
-					{
-						this.SynchronizationContext.Post(() =>
-						{
-							this.predefinedLogTextFilterListBox.SelectedItems!.Clear();
-							foreach (var filter in it)
-								this.predefinedLogTextFilterListBox.SelectedItems.Add(filter);
-							if (!isScheduled)
-								this.updateLogFiltersAction?.Cancel();
-						});
-					});
-				}
-			}
-			else
-				this.updateLogFiltersAction.Reschedule(this.UpdateLogFilterParamsDelay);
-		}
-
-
-		// Called when property of predefined log text filter has been changed.
-		void OnPredefinedLogTextFilterPropertyChanged(object? sender, PropertyChangedEventArgs e)
-		{
-			if (sender is not PredefinedLogTextFilter filter)
-				return;
-			switch (e.PropertyName)
-			{
-				case nameof(PredefinedLogTextFilter.Name):
-					this.predefinedLogTextFilters.Sort(filter);
-					break;
-				case nameof(PredefinedLogTextFilter.Regex):
-					if (this.predefinedLogTextFilterListBox.SelectedItems!.Contains(filter))
-						this.updateLogFiltersAction.Reschedule();
-					break;
-			}
-		}
-
-
-		// Called when list of predefined log text filters has been changed.
-		void OnPredefinedLogTextFiltersChanged(object? sender, NotifyCollectionChangedEventArgs e)
-		{
-			switch (e.Action)
-			{
-				case NotifyCollectionChangedAction.Add:
-					foreach (var filter in e.NewItems.AsNonNull().Cast<PredefinedLogTextFilter>())
-					{
-						this.AttachToPredefinedLogTextFilter(filter);
-						this.predefinedLogTextFilters.Add(filter);
-					}
-					break;
-				case NotifyCollectionChangedAction.Remove:
-					foreach (var filter in e.OldItems.AsNonNull().Cast<PredefinedLogTextFilter>())
-					{
-						this.DetachFromPredefinedLogTextFilter(filter);
-						this.predefinedLogTextFilters.Remove(filter);
-						this.selectedPredefinedLogTextFilters.Remove(filter);
-					}
-					break;
-			}
-		}
-
-
 		// Called to handle key-down before all children.
 		async void OnPreviewKeyDown(object? sender, Avalonia.Input.KeyEventArgs e)
 		{
@@ -3696,49 +3382,6 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.scrollToLatestLogAnalysisResultAction.Schedule(ScrollingToLatestLogInterval);
 				else
 					this.scrollToLatestLogAnalysisResultAction.Cancel();
-			}
-		}
-
-
-		// Called when selection of predefined log text filters has been changed.
-		void OnSelectedPredefinedLogTextFiltersChanged(object? sender, NotifyCollectionChangedEventArgs e)
-		{
-			if (this.isUpdatingLogFilters)
-				return;
-			var isUpdateFilterScheduled = this.updateLogFiltersAction.IsScheduled;
-			switch (e.Action)
-			{
-				case NotifyCollectionChangedAction.Add:
-					this.predefinedLogTextFilterListBox.SelectedItems?.Let(selectedItems =>
-					{
-						foreach (var filter in e.NewItems!.Cast<PredefinedLogTextFilter>())
-							selectedItems.Add(filter);
-					});
-					if (!isUpdateFilterScheduled)
-						this.updateLogFiltersAction.Cancel();
-					break;
-				case NotifyCollectionChangedAction.Remove:
-					this.predefinedLogTextFilterListBox.SelectedItems?.Let(selectedItems =>
-					{
-						foreach (var filter in e.OldItems!.Cast<PredefinedLogTextFilter>())
-							selectedItems.Remove(filter);
-					});
-					if (!isUpdateFilterScheduled)
-						this.updateLogFiltersAction.Cancel();
-					break;
-				case NotifyCollectionChangedAction.Reset:
-					this.predefinedLogTextFilterListBox.SelectedItems?.Let(selectedItems =>
-					{
-						selectedItems.Clear();
-						if (sender is IEnumerable<PredefinedLogTextFilter> filters)
-						{
-							foreach (var filter in filters)
-								selectedItems.Add(filter);
-						}
-					});
-					if (!isUpdateFilterScheduled)
-						this.updateLogFiltersAction.Cancel();
-					break;
 			}
 		}
 
@@ -3856,20 +3499,11 @@ namespace CarinaStudio.ULogViewer.Controls
 			else if (e.Key == SettingKeys.MaxDisplayLineCountForEachLog)
 				this.SetValue(MaxDisplayLineCountForEachLogProperty, Math.Max(1, (int)e.Value));
 			else if (e.Key == SettingKeys.ShowHelpButtonOnLogTextFilter)
-			{
-				if ((bool)e.Value)
-					this.SetValue(ShowHelpButtonOnLogTextFilterProperty, true);
-				else
-				{
-					this.SetValue(ShowHelpButtonOnLogTextFilterProperty, false);
-					this.isShowingHelpButtonOnLogTextFilterConfirmationNeeded = false;
-					this.PersistentState.SetValue<bool>(IsShowingHelpButtonOnLogTextFilterConfirmedKey, true);
-				}
-			}
+				this.OnShowHelpButtonOnLogTextFilterSettingChanged((bool)e.Value);
 			else if (e.Key == AppSuite.SettingKeys.ShowProcessInfo)
 				this.SetValue(IsProcessInfoVisibleProperty, (bool)e.Value);
 			else if (e.Key == SettingKeys.UpdateLogFilterDelay)
-				this.logTextFilterTextBox.ValidationDelay = this.UpdateLogFilterParamsDelay;
+				this.OnUpdateLogFilterDelaySettingChanged();
 		}
 
 
@@ -3879,35 +3513,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (Avalonia.Input.FocusManager.Instance?.Current is not TextBox)
 				this.SynchronizationContext.Post(() => this.logListBox.Focus());
 		}
-		
-
-		/// <summary>
-		/// Open online documentation.
-		/// </summary>
-		public void OpenLogFilteringDocumentation()
-		{
-			if (!Platform.OpenLink("https://carinastudio.azurewebsites.net/ULogViewer/LogFiltering"))
-				return;
-			this.SynchronizationContext.PostDelayed(() =>
-			{
-				if (this.attachedWindow?.IsActive == true)
-				{
-					this.isShowingHelpButtonOnLogTextFilterConfirmationNeeded = false;
-					this.ConfirmShowingHelpButtonOnLogTextFilter();
-				}
-				else
-					this.isShowingHelpButtonOnLogTextFilterConfirmationNeeded = true;
-			}, 1000);
-		}
-
-
-		/// <summary>
-		/// Open online documentation.
-		/// </summary>
-#pragma warning disable CA1822
-		public void OpenPredefinedTextFiltersDocumentation() =>
-			Platform.OpenLink("https://carinastudio.azurewebsites.net/ULogViewer/LogFiltering#PredefinedTextFilters");
-#pragma warning restore CA1822
 
 
 		/// <summary>
@@ -3915,12 +3520,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// </summary>
 		public void PerformGC() =>
 			this.Application.PerformGC(GCCollectionMode.Forced);
-
-
-		/// <summary>
-		/// Sorted predefined log text filters.
-		/// </summary>
-		public IList<PredefinedLogTextFilter> PredefinedLogTextFilters { get => this.predefinedLogTextFilters; }
 
 
 		// Rebuild log header views and template of log item.
@@ -3932,12 +3531,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.OnDisplayLogPropertiesChanged();
 			this.logListBox.Bind(Avalonia.Controls.ListBox.ItemsProperty, new Binding() { Path = nameof(Session.Logs)} );
 		}
-
-
-		/// <summary>
-		/// Definition set of regex syntax highlighting.
-		/// </summary>
-		public SyntaxHighlightingDefinitionSet RegexSyntaxHighlightingDefinitionSet { get; }
 
 
 		// Reload log file.
@@ -3996,23 +3589,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// Command to reload logs.
 		/// </summary>
 		public ICommand ReloadLogsCommand { get; }
-
-
-		// Remove given predefined log text filter.
-#pragma warning disable CA1822
-		void RemovePredefinedLogTextFilter(PredefinedLogTextFilter? filter)
-		{
-			if (filter == null)
-				return;
-			PredefinedLogTextFilterManager.Default.RemoveFilter(filter);
-		}
-#pragma warning restore CA1822
-
-
-		/// <summary>
-		/// Command to remove given predefined log text filter.
-		/// </summary>
-		public ICommand RemovePredefinedLogTextFilterCommand { get; }
 
 
 		// Report width of each log header so that items in log list box can change width of each column.
@@ -4564,13 +4140,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// Command to show single log file in system file manager.
 		/// </summary>
 		public ICommand ShowLogFileInExplorerCommand { get; }
-
-
-		/// <summary>
-		/// Show menu to select log filter combination mode.
-		/// </summary>
-		public void ShowLogFiltersCombinationModeMenu() =>
-			this.logFilterCombinationModeMenu.Open(this.logFilterCombinationModeButton);
 		
 
 		/// <summary>
@@ -4893,20 +4462,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		public ICommand UnmarkSelectedLogsCommand { get; }
 
 
-		// Update CanFilterLogsByNonTextFilters property.
-		void UpdateCanFilterLogsByNonTextFilters()
-		{
-			if (this.DataContext is Session session)
-			{
-				this.SetValue(CanFilterLogsByNonTextFiltersProperty, this.validLogLevels.Count > 1 
-					|| session.LogFiltering.IsProcessIdFilterEnabled 
-					|| session.LogFiltering.IsThreadIdFilterEnabled);
-			}
-			else
-				this.SetValue(CanFilterLogsByNonTextFiltersProperty, false);
-		}
-
-
 		// Update auto scrolling state according to user scrolling state.
 		void UpdateIsScrollingToLatestLogNeeded(double userScrollingDelta)
 		{
@@ -5027,10 +4582,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			var size = Math.Max(Math.Min(this.Settings.GetValueOrDefault(SettingKeys.LogFontSize), SettingKeys.MaxLogFontSize), SettingKeys.MinLogFontSize);
 			this.SetValue(LogFontSizeProperty, size);
 		}
-
-
-		// Get delay of updating log filter.
-		int UpdateLogFilterParamsDelay { get => Math.Max(SettingKeys.MinUpdateLogFilterDelay, Math.Min(SettingKeys.MaxUpdateLogFilterDelay, this.Settings.GetValueOrDefault(SettingKeys.UpdateLogFilterDelay))); }
 
 
 		// Update state of side panel.
