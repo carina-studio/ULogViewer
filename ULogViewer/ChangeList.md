@@ -51,6 +51,7 @@
 + Improve layout of items on toolbar.
 + More icons for log profile.
 + Improve UX of text pattern editing.
++ Improve distribution of color of color indicator.
 + Support showing progress on dock tile icon on **macOS**.
 + Improve performance and memory usage.
 + Improve displaying of Chinese.
