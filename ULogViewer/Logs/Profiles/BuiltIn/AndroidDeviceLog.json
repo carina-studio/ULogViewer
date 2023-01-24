@@ -28,7 +28,7 @@
 	},
 	"LogPatterns": [
 		{
-			"Regex": "^(?<Timestamp>[^\\s]+[\\s]+[^\\s]+[^\\d]\\d{3,7})\\d*[\\s]+(?<ProcessId>[\\d]+)[\\s]+(?<ThreadId>[\\d]+)[\\s]+(?<Level>[\\w]+)[\\s]+(?<SourceName>([^\\s\\:]|([\\s]+[^\\s\\:])|([\\:]+[^\\s\\:]))*[\\:]*[\\s]*)\\:[\\s](?<Message>.*)$"
+			"Regex": "^(?<Timestamp>[^\\s]+[\\s]+[^\\s]+[^\\d]\\d{3,7})\\d*[\\s]+(?<ProcessId>[\\d]+)[\\s]+(?<ThreadId>[\\d]+)[\\s]+(?<Level>[\\w]+)[\\s]+(?<SourceName>([^\\s\\:]|([\\s]+[^\\s\\:])|([\\:]+[^\\s\\:]))*[\\:]*[\\s]*)\\:[\\s](\\e\\[[^m]+m)*(?<Message>.*?)(\\e\\[[^m]+m)*$"
 		}
 	],
 	"LogWritingFormats": [
