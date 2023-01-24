@@ -986,6 +986,11 @@ namespace CarinaStudio.ULogViewer.Logs
 			var readLineSyncLock = new object();
 			try
 			{
+				if (this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.ReadRawLogLinesConcurrently))
+				{
+					this.Logger.LogDebug("Use concurrent reader");
+					reader = new IO.ConcurrentTextReader(this.Application, reader);
+				}
 				var prevLogPattern = (LogPattern?)null;
 				var logPatternIndex = 0;
 				var logPattern = logPatterns[0];

@@ -1,3 +1,7 @@
+using CarinaStudio.AppSuite;
+using CarinaStudio.Configuration;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 
@@ -8,47 +12,46 @@ namespace CarinaStudio.ULogViewer.IO;
 /// </summary>
 class ConcurrentTextReader : TextReader
 {
-    class BufferedLines
-    {
-        public volatile bool AreLinesReady;
-        public volatile int End;
-        public readonly string?[] Lines = new string?[BufferedLineCount];
-        public volatile int Start;
-    }
-
-
-    // Constants.
-    const int BufferedLineCount = 8;
-    const int RemainingLinesToStartReading = BufferedLineCount >> 1;
+    // Static fields.
+    static readonly SettingKey<int> BufferedCharactersThresholdKey = new("ConcurrentTextReader.BufferedCharactersThreshold", 32768);
 
 
     // Fields.
-    volatile BufferedLines bufferedLines;
-    readonly BufferedLines bufferedLines1 = new();
-    readonly BufferedLines bufferedLines2 = new();
+    volatile int bufferedCharCount;
+    readonly int bufferedCharThreshold;
+    readonly Queue<string> bufferedLines;
+    volatile string? currentLine;
+    volatile int currentLineStart;
     volatile bool endOfStream;
     readonly bool ownsReader;
     readonly TextReader reader;
+    readonly object syncLock = new();
 
 
     /// <summary>
     /// Initialize new <see cref="ConcurrentTextReader"/> instance.
     /// </summary>
+    /// <param name="app">Application.</param>
     /// <param name="reader"><see cref="TextReader"/> to read text.</param>
     /// <param name="ownsReader">True to own <paramref name="reader"/> by this instance.</param>
-    public ConcurrentTextReader(TextReader reader, bool ownsReader = true)
+    public ConcurrentTextReader(IAppSuiteApplication app, TextReader reader, bool ownsReader = true)
     {
+        this.bufferedCharThreshold = app.Configuration.GetValueOrDefault(BufferedCharactersThresholdKey);
+        this.bufferedLines = new(Math.Min(512, this.bufferedCharThreshold / 1024));
         this.ownsReader = ownsReader;
         this.reader = reader;
-        this.bufferedLines = this.bufferedLines1;
-        ThreadPool.QueueUserWorkItem(this.ReadLines, this.bufferedLines);
+        ThreadPool.QueueUserWorkItem(this.ReadLines, null);
     }
 
 
     /// <inheritdoc/>
     protected override void Dispose(bool disposing)
     {
-        this.endOfStream = true;
+        lock (this.syncLock)
+        {
+            this.endOfStream = true;
+            Monitor.PulseAll(this.syncLock);
+        }
         if (this.ownsReader)
             this.reader.Dispose();
         base.Dispose(disposing);
@@ -58,100 +61,127 @@ class ConcurrentTextReader : TextReader
     /// <inheritdoc/>
     public override int Read()
     {
-        if (this.endOfStream)
-            return -1;
-        var bufferedLines = this.bufferedLines;
-        if (!bufferedLines.AreLinesReady)
+        // wait and get current line
+        if (this.currentLine == null)
         {
-            lock (bufferedLines)
+            if (this.bufferedLines.Count == 0)
+                Thread.Yield();
+            lock (this.syncLock)
             {
-                if (!bufferedLines.AreLinesReady)
-                    Monitor.Wait(bufferedLines);
+                string? line;
+                while (!this.bufferedLines.TryDequeue(out line))
+                {
+                    if (this.endOfStream)
+                        return -1;
+                    Monitor.Wait(this.syncLock);
+                }
+                this.bufferedCharCount -= line.Length + 1;
+                Monitor.PulseAll(this.syncLock);
+                this.currentLine = line;
             }
         }
-        if (bufferedLines.Start < bufferedLines.End)
+
+        // get character from current line
+        lock (this.syncLock)
         {
-            var line = bufferedLines.Lines[bufferedLines.Start];
-            if (!string.IsNullOrEmpty(line))
-            {
-                var c = line[0];
-                bufferedLines.Lines[bufferedLines.Start] = line.Substring(1);
-                return c;
-            }
-            ++bufferedLines.Start;
-            var remaining = bufferedLines.End - bufferedLines.Start;
-            if (remaining <= 0)
-                this.bufferedLines = bufferedLines == this.bufferedLines1 ? this.bufferedLines2 : this.bufferedLines1;
-            else if (remaining == RemainingLinesToStartReading)
-            {
-                var nextBufferedLines = bufferedLines == this.bufferedLines1 ? this.bufferedLines2 : this.bufferedLines1;
-                nextBufferedLines.AreLinesReady = false;
-                ThreadPool.QueueUserWorkItem(this.ReadLines, nextBufferedLines);
-            }
+            if (this.currentLineStart < this.currentLine.Length)
+                return this.currentLine[this.currentLineStart++];
+            this.currentLine = null;
+            this.currentLineStart = 0;
             return '\n';
         }
-        this.endOfStream = true;
-        return -1;
     }
 
     
+    /// <inheritdoc/>
     public override string? ReadLine()
     {
-        if (this.endOfStream)
-            return null;
-        var bufferedLines = this.bufferedLines;
-        if (!bufferedLines.AreLinesReady)
+        // use current line
+        string? line;
+        if (this.currentLine != null)
         {
-            lock (bufferedLines)
+            lock (this.syncLock)
             {
-                if (!bufferedLines.AreLinesReady)
-                    Monitor.Wait(bufferedLines);
+                if (this.currentLine != null)
+                {
+                    line = this.currentLine;
+                    if (this.currentLineStart > 0)
+                        line = line[this.currentLineStart..^0];
+                    this.currentLine = null;
+                    this.currentLineStart = 0;
+                    return line;
+                }
             }
         }
-        if (bufferedLines.Start < bufferedLines.End)
+
+        // dequeue line from buffer
+        if (this.bufferedLines.Count == 0)
+            Thread.Yield();
+        lock (this.syncLock)
         {
-            var line = bufferedLines.Lines[bufferedLines.Start++];
-            var remaining = bufferedLines.End - bufferedLines.Start;
-            if (remaining <= 0)
-                this.bufferedLines = bufferedLines == this.bufferedLines1 ? this.bufferedLines2 : this.bufferedLines1;
-            else if (remaining == RemainingLinesToStartReading)
+            while (!this.bufferedLines.TryDequeue(out line))
             {
-                var nextBufferedLines = bufferedLines == this.bufferedLines1 ? this.bufferedLines2 : this.bufferedLines1;
-                nextBufferedLines.AreLinesReady = false;
-                ThreadPool.QueueUserWorkItem(this.ReadLines, nextBufferedLines);
+                if (this.endOfStream)
+                    return null;
+                Monitor.Wait(this.syncLock);
             }
-            return line;
+            this.bufferedCharCount -= line.Length + 1;
+            Monitor.PulseAll(this.syncLock);
         }
-        this.endOfStream = true;
-        return null;
+        return line;
     }
 
 
     // Read lines in background.
     void ReadLines(object? state)
     {
-        var bufferedLines = (BufferedLines)state.AsNonNull();
+        ref var bufferedCharCount = ref this.bufferedCharCount;
+        var bufferedCharThreshold = this.bufferedCharThreshold;
+        var bufferedLines = this.bufferedLines;
+        ref var endOfStream = ref this.endOfStream;
+        var reader = this.reader;
+        var syncLock = this.syncLock;
         try
         {
-            bufferedLines.Start = 0;
-            bufferedLines.End = 0;
-            var line = this.reader.ReadLine();
-            while (line != null)
+            while (true)
             {
-                bufferedLines.Lines[bufferedLines.End++] = line;
-                if (bufferedLines.End >= BufferedLineCount)
+                // read next line
+                if (endOfStream)
                     break;
-                line = this.reader.ReadLine();
+                var line = reader.ReadLine();
+                if (line == null)
+                    break;
+                
+                // add to queue and wait
+                lock (syncLock)
+                {
+                    bufferedCharCount += line.Length + 1;
+                    bufferedLines.Enqueue(line);
+                    Monitor.PulseAll(syncLock);
+                }
+                if (bufferedCharCount >= bufferedCharThreshold)
+                {
+                    Thread.Yield();
+                    lock (syncLock)
+                    {
+                        while (bufferedCharCount >= bufferedCharThreshold)
+                        {
+                            Monitor.Wait(syncLock);
+                            if (endOfStream)
+                                break;
+                        }
+                    }
+                }
             }
         }
         catch
         { }
         finally
         {
-            lock (bufferedLines)
+            lock (syncLock)
             {
-                bufferedLines.AreLinesReady = true;
-                Monitor.PulseAll(bufferedLines);
+                endOfStream = true;
+                Monitor.PulseAll(syncLock);
             }
         }
     }

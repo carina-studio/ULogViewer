@@ -92,8 +92,6 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 										: new StreamReader(stream, encoding),
 									_ => (TextReader)new StreamReader(stream, encoding),
 								};
-								if (this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.ReadRawLogLinesConcurrently))
-									reader = new IO.ConcurrentTextReader(reader);
 								this.tempFilePath = tempFilePath;
 								result = LogDataSourceState.ReaderOpened;
 								return reader;
