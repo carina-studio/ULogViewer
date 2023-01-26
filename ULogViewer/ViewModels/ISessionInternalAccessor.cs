@@ -1,3 +1,5 @@
+using System;
+
 namespace CarinaStudio.ULogViewer.ViewModels;
 
 /// <summary>
@@ -9,6 +11,12 @@ interface ISessionInternalAccessor
     /// Get group of displayable logs.
     /// </summary>
     DisplayableLogGroup? DisplayableLogGroup { get; }
+
+
+    /// <summary>
+    /// Raised when group of displayable log created.
+    /// </summary>
+    event EventHandler? DisplayableLogGroupCreated;
 
 
     /// <summary>

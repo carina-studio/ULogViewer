@@ -248,7 +248,16 @@ class LogSelectionViewModel : SessionComponent
         + Memory.EstimateCollectionInstanceSize(IntPtr.Size, this.selectedLogs.Count);
     
 
-    
+    /// <inheritdoc/>
+    protected override void OnDisplayableLogGroupCreated()
+    {
+        base.OnDisplayableLogGroupCreated();
+        this.DisplayableLogGroup?.Let(it =>
+        {
+            it.SelectedProcessId = this.GetValue(SelectedProcessIdProperty);
+            it.SelectedThreadId = this.GetValue(SelectedThreadIdProperty);
+        });
+    }
     
 
     // Called when collection of visible logs changed.

@@ -550,6 +550,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.session.displayableLogGroup;
 			
 			/// <inheritdoc/>
+			public event EventHandler? DisplayableLogGroupCreated
+			{
+				add => this.session.DisplayableLogGroupCreated += value;
+				remove => this.session.DisplayableLogGroupCreated -= value;
+			}
+			
+			/// <inheritdoc/>
 			public MemoryUsagePolicy MemoryUsagePolicy =>
 				this.session.memoryUsagePolicy;
 		}
@@ -1707,8 +1714,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 							fileInfo.UpdateColorIndicatorBrush();
 					};
 				});
-				this.displayableLogGroup.SelectedProcessId = this.LogSelection.SelectedProcessId;
-				this.displayableLogGroup.SelectedThreadId = this.LogSelection.SelectedThreadId;
+				this.DisplayableLogGroupCreated?.Invoke(this, EventArgs.Empty);
 			}
 
 			// select logs reading task factory
@@ -1919,6 +1925,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.Hibernate();
 			}
 		}
+
+
+		// Raised when group of displayable log created.
+		event EventHandler? DisplayableLogGroupCreated;
 
 
 		/// <summary>

@@ -742,6 +742,17 @@ class LogFilteringViewModel : SessionComponent
     }
 
 
+    /// <inheritdoc/>
+    protected override void OnDisplayableLogGroupCreated()
+    {
+        base.OnDisplayableLogGroupCreated();
+        this.DisplayableLogGroup?.Let(it =>
+        {
+            it.ActiveTextFilters = this.logFilter.TextRegexList;
+        });
+    }
+
+
     // Called when property of log filter changed.
     void OnLogFilterPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {

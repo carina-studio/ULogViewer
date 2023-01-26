@@ -36,6 +36,7 @@ abstract class SessionComponent : ViewModel<IULogViewerApplication>
         session.AllComponentsCreated += this.OnAllComponentsCreated;
         (session.AllLogs as INotifyCollectionChanged)?.Let(it =>
             it.CollectionChanged += this.OnAllLogsChanged);
+        internalAccessor.DisplayableLogGroupCreated += this.OnDisplayableLogGroupCreated;
         this.logProfileObserverToken = session.GetValueAsObservable(Session.LogProfileProperty).Subscribe(logProfile =>
         {
             var prevLogProfile = this.attachedLogProfile;
@@ -85,6 +86,7 @@ abstract class SessionComponent : ViewModel<IULogViewerApplication>
         this.Session.AllComponentsCreated -= this.OnAllComponentsCreated;
         (this.Session.AllLogs as INotifyCollectionChanged)?.Let(it =>
             it.CollectionChanged -= this.OnAllLogsChanged);
+        this.internalAccessor.DisplayableLogGroupCreated -= this.OnDisplayableLogGroupCreated;
         this.logProfileObserverToken.Dispose();
         this.Session.RestoringState -= this.OnRestoreState;
         this.Session.SavingState -= this.OnSaveState;
@@ -147,6 +149,18 @@ abstract class SessionComponent : ViewModel<IULogViewerApplication>
     /// </summary>
     /// <param name="e">Event data.</param>
     protected virtual void OnAllLogsChanged(NotifyCollectionChangedEventArgs e)
+    { }
+
+
+    // Called when new group of displayable logs created.
+    void OnDisplayableLogGroupCreated(object? sender, EventArgs e) =>
+        this.OnDisplayableLogGroupCreated();
+
+
+    /// <summary>
+    /// Called when new group of displayable logs created.
+    /// </summary>
+    protected virtual void OnDisplayableLogGroupCreated()
     { }
 
 
