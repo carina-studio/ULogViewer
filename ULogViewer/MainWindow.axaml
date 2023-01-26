@@ -6,6 +6,7 @@
 		xmlns:abConverters="using:CarinaStudio.Data.Converters"
 		xmlns:aConverters="using:Avalonia.Data.Converters"
         xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
+		xmlns:appInput="using:CarinaStudio.ULogViewer.Input"
         xmlns:appViewModels="using:CarinaStudio.ULogViewer.ViewModels"
 		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
 		xmlns:asConverters="using:CarinaStudio.AppSuite.Converters"
@@ -46,7 +47,7 @@
 							</MenuItem.Icon>
 						</MenuItem>
 						<Separator/>
-						<MenuItem Command="{Binding $parent[Window].CloseSessionTabItemCommand}" CommandParameter="{Binding $parent[TabItem]}" Header="{DynamicResource String/Common.CloseTab}" InputGesture="Ctrl+W">
+						<MenuItem Command="{Binding $parent[Window].CloseSessionTabItemCommand}" CommandParameter="{Binding $parent[TabItem]}" Header="{DynamicResource String/Common.CloseTab}" InputGesture="{x:Static appInput:KeyGestures.CloseTab}">
 							<MenuItem.Icon>
 								<Border Classes="MenuItem_Icon">
 									<Image Classes="Icon" Source="{StaticResource Image/Icon.Close}"/>

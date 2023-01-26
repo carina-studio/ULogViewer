@@ -507,15 +507,6 @@ namespace CarinaStudio.ULogViewer
 			if (this.IsDebugMode)
 				this.stopwatch.Start();
 
-			// prepare platform specific resources
-			if (Platform.IsMacOS)
-			{
-				this.Resources.MergedDictionaries.Add(new ResourceInclude()
-				{
-					Source = new Uri("avares://ULogViewer/Styles/Resources-OSX.axaml")
-				});
-			}
-
 			// setup external dependencies
 			this.externalDependencies = new List<ExternalDependency>().Also(it =>
 			{
