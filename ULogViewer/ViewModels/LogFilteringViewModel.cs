@@ -124,13 +124,18 @@ class LogFilteringViewModel : SessionComponent
     readonly MutableObservableBoolean canFilterBySelectedProperty = new();
 	readonly MutableObservableBoolean canFilterBySelectedTid = new();
     readonly MutableObservableBoolean canResetFilters = new();
+    readonly MutableObservableBoolean canUseNextTextFilterOfHistory = new();
+    readonly MutableObservableBoolean canUsePreviousTextFilterOfHistory = new();
+    readonly ScheduledAction commitFiltersAction;
     readonly IDisposable displayLogPropertiesObserverToken;
+    int indexOfTextFilterOnHistory = -1;
+    bool isMaxTextFilterHistoryHit;
     readonly DisplayableLogFilter logFilter;
     readonly Stopwatch logFilteringWatch = new();
     readonly ObservableList<PredefinedLogTextFilter> predefinedTextFilters;
     IDisposable? selectedPidObserverToken;
     IDisposable? selectedTidObserverToken;
-    readonly ScheduledAction updateLogFilterAction;
+    readonly ObservableList<string> textFilterHistory = new();
 
 
     // Static initializer.
@@ -171,6 +176,8 @@ class LogFilteringViewModel : SessionComponent
         this.FilterBySelectedThreadIdCommand = new Command<bool>(this.FilterBySelectedThreadId, this.canFilterBySelectedTid);
         this.ResetFiltersCommand = new Command(() => this.ResetFilters(true), this.canResetFilters);
         this.SetFilterCombinationModeCommand = new Command<FilterCombinationMode>(mode => this.FiltersCombinationMode = mode);
+        this.UseNextTextFilterOhHistoryCommand = new Command(this.UseNextTextFilterOhHistory, this.canUseNextTextFilterOfHistory);
+        this.UsePreviousTextFilterOhHistoryCommand = new Command(this.UsePreviousTextFilterOhHistory, this.canUsePreviousTextFilterOfHistory);
 
         // create collection
         this.predefinedTextFilters = new ObservableList<PredefinedLogTextFilter>().Also(it =>
@@ -180,7 +187,7 @@ class LogFilteringViewModel : SessionComponent
                 if (this.IsDisposed)
                     return;
                 this.canClearPredefinedTextFilters.Update(it.IsNotEmpty());
-                this.updateLogFilterAction?.Reschedule();
+                this.commitFiltersAction?.Reschedule();
                 if (it.IsNotEmpty())
                 {
                     this.Logger.LogTrace("Clear predefined text filters");
@@ -193,6 +200,7 @@ class LogFilteringViewModel : SessionComponent
                 }
             };
         });
+        this.TextFilterHistory = ListExtensions.AsReadOnly(this.textFilterHistory);
 
         // setup properties
         this.SetValue(IgnoreTextFilterCaseProperty, this.Settings.GetValueOrDefault(SettingKeys.IgnoreCaseOfLogTextFilter));
@@ -205,73 +213,10 @@ class LogFilteringViewModel : SessionComponent
         this.Logger.LogDebug("Create log filter {logFilter}", this.logFilter);
 
         // create scheduled action
-        this.updateLogFilterAction = new ScheduledAction(() =>
-        {
-            // check state
-            if (this.IsDisposed || this.Session.LogProfile == null)
-                return;
+        this.commitFiltersAction = new ScheduledAction(this.CommitFilters);
 
-            // setup level
-            this.logFilter.Level = this.GetValue(LevelFilterProperty);
-
-            // setup PID and TID
-            this.logFilter.ProcessId = this.GetValue(IsProcessIdFilterEnabledProperty) 
-                ? this.GetValue(ProcessIdFilterProperty) 
-                : null;
-            this.logFilter.ThreadId = this.GetValue(IsThreadIdFilterEnabledProperty) 
-                ? this.GetValue(ThreadIdFilterProperty)
-                : null;
-
-            // setup combination mode
-            this.logFilter.CombinationMode = this.GetValue(FiltersCombinationModeProperty);
-
-            // setup text regex
-            var textRegexList = new List<Regex>();
-            this.TextFilter?.Let(it => 
-            {
-                var options = it.Options;
-                if ((options & RegexOptions.IgnoreCase) == 0)
-                {
-                    if (this.GetValue(IgnoreTextFilterCaseProperty))
-                    {
-                        it = new(it.ToString(), options | RegexOptions.IgnoreCase);
-                        this.SetValue(TextFilterProperty, it);
-                        this.updateLogFilterAction!.Cancel();
-                    }
-                }
-                else
-                {
-                    if (!this.GetValue(IgnoreTextFilterCaseProperty))
-                    {
-                        it = new(it.ToString(), options & ~RegexOptions.IgnoreCase);
-                        this.SetValue(TextFilterProperty, it);
-                        this.updateLogFilterAction!.Cancel();
-                    }
-                }
-                textRegexList.Add(it);
-            });
-            foreach (var filter in this.predefinedTextFilters)
-                textRegexList.Add(filter.Regex);
-            this.logFilter.TextRegexList = textRegexList;
-            this.DisplayableLogGroup?.Let(it =>
-                it.ActiveTextFilters = textRegexList);
-
-            // print log
-            if (this.Application.IsDebugMode)
-            {
-                this.Logger.LogDebug("Update log filter:");
-                this.Logger.LogDebug("  Level: {level}", this.logFilter.Level);
-                this.Logger.LogDebug("  PID: {pid}", this.logFilter.ProcessId.Let(pid => pid.HasValue ? pid.ToString() : "Null"));
-                this.Logger.LogDebug("  TID: {tid}", this.logFilter.ThreadId.Let(tid => tid.HasValue ? tid.ToString() : "Null"));
-                this.Logger.LogDebug("  Text filters: {textRegexListCount}", textRegexList.Count);
-            }
-
-            // cancel showing all/marked logs
-            if (this.Session.IsShowingAllLogsTemporarily)
-                this.Session.ToggleShowingAllLogsTemporarilyCommand.TryExecute();
-            if (this.Session.IsShowingMarkedLogsTemporarily)
-                this.Session.ToggleShowingMarkedLogsTemporarilyCommand.TryExecute();
-        });
+        // attach to configuration
+        this.Application.Configuration.SettingChanged += this.OnConfigurationChanged;
 
         // attach to session
         session.AllLogReadersDisposed += this.OnAllLogReaderDisposed;
@@ -287,7 +232,7 @@ class LogFilteringViewModel : SessionComponent
             if (!isInit)
             {
                 this.Logger.LogTrace("Change filters combination mode to {mode}", mode);
-                this.updateLogFilterAction.Schedule();
+                this.commitFiltersAction.Schedule();
             }
         });
         this.GetValueAsObservable(IgnoreTextFilterCaseProperty).Subscribe(ignoreCase =>
@@ -297,7 +242,7 @@ class LogFilteringViewModel : SessionComponent
                 if (this.GetValue(TextFilterProperty) != null)
                 {
                     this.Logger.LogTrace("Change ignoring case to {ignoreCase} with text filter", ignoreCase);
-                    this.updateLogFilterAction.Execute();
+                    this.commitFiltersAction.Execute();
                 }
                 else
                     this.Logger.LogTrace("Change ignoring case to {ignoreCase} without text filter", ignoreCase);
@@ -308,7 +253,7 @@ class LogFilteringViewModel : SessionComponent
             if (!isInit)
             {
                 this.Logger.LogTrace("Change level filter to {level}", level);
-                this.updateLogFilterAction.Schedule();
+                this.commitFiltersAction.Schedule();
                 if (level != Logs.LogLevel.Undefined)
                     this.canResetFilters.Update(true);
                 else
@@ -323,7 +268,7 @@ class LogFilteringViewModel : SessionComponent
                     this.Logger.LogTrace("Change PID filter to {pid}", pid);
                 else
                     this.Logger.LogTrace("Clear PID filter");
-                this.updateLogFilterAction.Schedule();
+                this.commitFiltersAction.Schedule();
                 if (pid.HasValue)
                     this.canResetFilters.Update(true);
                 else
@@ -334,7 +279,7 @@ class LogFilteringViewModel : SessionComponent
         {
             if (!isInit)
             {
-                this.updateLogFilterAction.Schedule();
+                this.commitFiltersAction.Schedule();
                 if (pattern != null)
                 {
                     this.Logger.LogTrace($"Change text filter");
@@ -355,7 +300,7 @@ class LogFilteringViewModel : SessionComponent
                     this.Logger.LogTrace("Change TID filter to {tid}", tid);
                 else
                     this.Logger.LogTrace("Clear TID filter");
-                this.updateLogFilterAction.Schedule();
+                this.commitFiltersAction.Schedule();
                 if (tid.HasValue)
                     this.canResetFilters.Update(true);
                 else
@@ -407,11 +352,82 @@ class LogFilteringViewModel : SessionComponent
     public ICommand ClearPredefinedTextFiltersCommand { get; }
 
 
+    // Commit filters to log filter.
+    void CommitFilters()
+    {
+        // check state
+        if (this.IsDisposed || this.Session.LogProfile == null)
+            return;
+
+        // setup level
+        this.logFilter.Level = this.GetValue(LevelFilterProperty);
+
+        // setup PID and TID
+        this.logFilter.ProcessId = this.GetValue(IsProcessIdFilterEnabledProperty) 
+            ? this.GetValue(ProcessIdFilterProperty) 
+            : null;
+        this.logFilter.ThreadId = this.GetValue(IsThreadIdFilterEnabledProperty) 
+            ? this.GetValue(ThreadIdFilterProperty)
+            : null;
+
+        // setup combination mode
+        this.logFilter.CombinationMode = this.GetValue(FiltersCombinationModeProperty);
+
+        // setup text regex
+        var textRegexList = new List<Regex>();
+        var textFilter = this.TextFilter;
+        if (textFilter != null)
+        {
+            var options = textFilter.Options;
+            if ((options & RegexOptions.IgnoreCase) == 0)
+            {
+                if (this.GetValue(IgnoreTextFilterCaseProperty))
+                {
+                    textFilter = new(textFilter.ToString(), options | RegexOptions.IgnoreCase);
+                    this.SetValue(TextFilterProperty, textFilter);
+                    this.commitFiltersAction!.Cancel();
+                }
+            }
+            else
+            {
+                if (!this.GetValue(IgnoreTextFilterCaseProperty))
+                {
+                    textFilter = new(textFilter.ToString(), options & ~RegexOptions.IgnoreCase);
+                    this.SetValue(TextFilterProperty, textFilter);
+                    this.commitFiltersAction!.Cancel();
+                }
+            }
+            textRegexList.Add(textFilter);
+        }
+        foreach (var filter in this.predefinedTextFilters)
+            textRegexList.Add(filter.Regex);
+        this.logFilter.TextRegexList = textRegexList;
+        this.DisplayableLogGroup?.Let(it =>
+            it.ActiveTextFilters = textRegexList);
+
+        // print log
+        if (this.Application.IsDebugMode)
+        {
+            this.Logger.LogDebug("Update log filter:");
+            this.Logger.LogDebug("  Level: {level}", this.logFilter.Level);
+            this.Logger.LogDebug("  PID: {pid}", this.logFilter.ProcessId.Let(pid => pid.HasValue ? pid.ToString() : "Null"));
+            this.Logger.LogDebug("  TID: {tid}", this.logFilter.ThreadId.Let(tid => tid.HasValue ? tid.ToString() : "Null"));
+            this.Logger.LogDebug("  Text filters: {textRegexListCount}", textRegexList.Count);
+        }
+
+        // cancel showing all/marked logs
+        if (this.Session.IsShowingAllLogsTemporarily)
+            this.Session.ToggleShowingAllLogsTemporarilyCommand.TryExecute();
+        if (this.Session.IsShowingMarkedLogsTemporarily)
+            this.Session.ToggleShowingMarkedLogsTemporarilyCommand.TryExecute();
+    }
+
+
     /// <inheritdoc/>
     protected override void Dispose(bool disposing)
     {
         // cancel filtering
-        this.updateLogFilterAction.Cancel();
+        this.commitFiltersAction.Cancel();
 
         // stop watch
         this.logFilteringWatch.Stop();
@@ -429,6 +445,9 @@ class LogFilteringViewModel : SessionComponent
         this.Session.AllLogReadersDisposed -= this.OnAllLogReaderDisposed;
         this.displayLogPropertiesObserverToken.Dispose();
         this.Session.LogSelection.SelectedLogsChanged -= this.OnSelectedLogsChanged;
+
+        // detach from configuration
+        this.Application.Configuration.SettingChanged -= this.OnConfigurationChanged;
 
         // call base
         base.Dispose(disposing);
@@ -582,7 +601,7 @@ class LogFilteringViewModel : SessionComponent
         this.SetValue(FiltersCombinationModeProperty, FilterCombinationMode.Intersection);
         this.SetValue(IgnoreTextFilterCaseProperty, true);
         this.ResetFilters(false);
-        this.SetValue(TextFilterProperty, new Regex(patternBuffer.ToString(), this.Settings.GetValueOrDefault(SettingKeys.IgnoreCaseOfLogTextFilter) ? RegexOptions.IgnoreCase : RegexOptions.None));
+        this.TextFilter = new Regex(patternBuffer.ToString(), this.Settings.GetValueOrDefault(SettingKeys.IgnoreCaseOfLogTextFilter) ? RegexOptions.IgnoreCase : RegexOptions.None); // Use setter to update history of text filter
     }
 
 
@@ -742,6 +761,21 @@ class LogFilteringViewModel : SessionComponent
     }
 
 
+    // Called when configuration changed.
+    void OnConfigurationChanged(object? sender, SettingChangedEventArgs e)
+    {
+        if (e.Key == ConfigurationKeys.LogTextFilterHistoryCount)
+        {
+            var newCount = Math.Max(1, (int)e.Value);
+            if (this.textFilterHistory.Count >= newCount)
+            {
+                this.isMaxTextFilterHistoryHit = true;
+                this.textFilterHistory.RemoveRange(newCount, this.textFilterHistory.Count - newCount);
+            }
+        }
+    }
+
+
     /// <inheritdoc/>
     protected override void OnDisplayableLogGroupCreated()
     {
@@ -789,12 +823,12 @@ class LogFilteringViewModel : SessionComponent
         if (newLogProfile == null)
         {
             this.logFilter.FilteringLogProperties = Session.DisplayLogPropertiesProperty.DefaultValue;
-            this.updateLogFilterAction.Cancel();
+            this.commitFiltersAction.Cancel();
             this.ResetValue(IsProcessIdFilterEnabledProperty);
             this.ResetValue(IsThreadIdFilterEnabledProperty);
         }
         else
-            this.updateLogFilterAction.Reschedule();
+            this.commitFiltersAction.Reschedule();
         this.CheckVisibleLogProperties();
         this.ResetFilters();
     }
@@ -876,6 +910,24 @@ class LogFilteringViewModel : SessionComponent
                 });
             }
         }
+        if (element.TryGetProperty($"LogFiltering.{nameof(TextFilterHistory)}", out jsonValue)
+            && jsonValue.ValueKind == JsonValueKind.Array)
+        {
+            foreach (var jsonFilter in jsonValue.EnumerateArray())
+                this.textFilterHistory.Add(jsonFilter.GetString() ?? "");
+        }
+        if (element.TryGetProperty("LogFiltering.IsMaxTextFilterHistoryHit", out jsonValue)
+            && jsonValue.ValueKind == JsonValueKind.True)
+        {
+            this.isMaxTextFilterHistoryHit = true;
+        }
+        if (element.TryGetProperty("LogFiltering.IndexOfTextFilterOnHistory", out jsonValue)
+            && jsonValue.ValueKind == JsonValueKind.Number
+            && jsonValue.TryGetInt32(out var index))
+        {
+            this.indexOfTextFilterOnHistory = index;
+        }
+        this.UpdateCanUseTextFilterOnHistory();
     }
 
 
@@ -908,6 +960,18 @@ class LogFilteringViewModel : SessionComponent
                 writer.WriteStringValue(filter.Id);
             writer.WriteEndArray();
         }
+        if (this.textFilterHistory.IsNotEmpty())
+        {
+            writer.WritePropertyName($"LogFiltering.{nameof(TextFilterHistory)}");
+            writer.WriteStartArray();
+            foreach (var filter in this.textFilterHistory)
+                writer.WriteStringValue(filter);
+            writer.WriteEndArray();
+        }
+        if (this.isMaxTextFilterHistoryHit)
+            writer.WriteBoolean("LogFiltering.IsMaxTextFilterHistoryHit", true);
+        if (this.indexOfTextFilterOnHistory >= 0)
+            writer.WriteNumber("LogFiltering.IndexOfTextFilterOnHistory", this.indexOfTextFilterOnHistory);
     }
 
 
@@ -942,10 +1006,10 @@ class LogFilteringViewModel : SessionComponent
         this.ResetValue(LevelFilterProperty);
         this.ResetValue(ProcessIdFilterProperty);
         this.ResetValue(ThreadIdFilterProperty);
-        this.ResetValue(TextFilterProperty);
+        this.TextFilter = null; // Need to use setter to update history of text filter
         this.predefinedTextFilters.Clear();
         if (updateImmediately)
-            this.updateLogFilterAction.Execute();
+            this.commitFiltersAction.Execute();
     }
 
 
@@ -968,8 +1032,38 @@ class LogFilteringViewModel : SessionComponent
     public Regex? TextFilter
     {
         get => this.GetValue(TextFilterProperty);
-        set => this.SetValue(TextFilterProperty, value);
+        set 
+        {
+            // get current filter
+            var prevPattern = this.GetValue(TextFilterProperty)?.ToString();
+
+            // update filter
+            this.SetValue(TextFilterProperty, value);
+
+            // update filter history
+            var pattern = value?.ToString();
+            if (prevPattern != pattern)
+            {
+                if (this.indexOfTextFilterOnHistory > 0)
+                    this.textFilterHistory.RemoveRange(0, this.indexOfTextFilterOnHistory);
+                var historySize = Math.Max(1, this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogTextFilterHistoryCount));
+                if (this.textFilterHistory.Count >= historySize)
+                {
+                    this.isMaxTextFilterHistoryHit = true;
+                    this.textFilterHistory.RemoveRange(historySize - 1, this.textFilterHistory.Count - historySize + 1);
+                }
+                this.textFilterHistory.Insert(0, pattern ?? "");
+                this.indexOfTextFilterOnHistory = 0;
+                this.UpdateCanUseTextFilterOnHistory();
+            }
+        }
     }
+
+
+    /// <summary>
+    /// Histroy of applied <see cref="TextFilter"/>.
+    /// </summary>
+    public IList<string> TextFilterHistory { get; }
 
 
     /// <summary>
@@ -985,11 +1079,79 @@ class LogFilteringViewModel : SessionComponent
     // Update can reset filters state.
     void UpdateCanResetFilters()
     {
-        this.canResetFilters.Update(this.GetValue<Logs.LogLevel>(LevelFilterProperty) != Logs.LogLevel.Undefined
-            || this.GetValue<int?>(ProcessIdFilterProperty).HasValue
-            || this.GetValue<int?>(ThreadIdFilterProperty).HasValue
-            || this.GetValue<Regex?>(TextFilterProperty) != null
+        this.canResetFilters.Update(this.GetValue(LevelFilterProperty) != Logs.LogLevel.Undefined
+            || this.GetValue(ProcessIdFilterProperty).HasValue
+            || this.GetValue(ThreadIdFilterProperty).HasValue
+            || this.GetValue(TextFilterProperty) != null
             || this.predefinedTextFilters.IsNotEmpty()
         );
     }
+
+
+    // Update can use text filter of history.
+    void UpdateCanUseTextFilterOnHistory()
+    {
+        if (this.textFilterHistory.IsEmpty())
+        {
+            this.canUseNextTextFilterOfHistory.Update(false);
+            this.canUsePreviousTextFilterOfHistory.Update(false);
+            this.indexOfTextFilterOnHistory = -1;
+            return;
+        }
+        this.canUseNextTextFilterOfHistory.Update(this.indexOfTextFilterOnHistory > 0);
+        if (this.isMaxTextFilterHistoryHit)
+            this.canUsePreviousTextFilterOfHistory.Update(this.indexOfTextFilterOnHistory < this.textFilterHistory.Count - 1);
+        else
+            this.canUsePreviousTextFilterOfHistory.Update(this.indexOfTextFilterOnHistory < this.textFilterHistory.Count);
+    }
+
+
+    // Use next text filter of history.
+    void UseNextTextFilterOhHistory()
+    {
+        --this.indexOfTextFilterOnHistory;
+        if (this.indexOfTextFilterOnHistory < 0)
+        {
+            this.indexOfTextFilterOnHistory = 0;
+            this.UpdateCanUseTextFilterOnHistory();
+            return;
+        }
+        this.UpdateCanUseTextFilterOnHistory();
+        var options = this.GetValue(IgnoreTextFilterCaseProperty) ? RegexOptions.IgnoreCase : RegexOptions.None;
+        this.SetValue(TextFilterProperty, new(this.textFilterHistory[this.indexOfTextFilterOnHistory], options));
+    }
+
+
+    /// <summary>
+    /// Command to use next text filter of history.
+    /// </summary>
+    public ICommand UseNextTextFilterOhHistoryCommand { get; }
+
+
+    // Use previous text filter of history.
+    void UsePreviousTextFilterOhHistory()
+    {
+        ++this.indexOfTextFilterOnHistory;
+        if (this.indexOfTextFilterOnHistory >= this.textFilterHistory.Count)
+        {
+            if (this.isMaxTextFilterHistoryHit)
+                --this.indexOfTextFilterOnHistory;
+            else
+            {
+                this.indexOfTextFilterOnHistory = this.textFilterHistory.Count;
+                this.SetValue(TextFilterProperty, null);
+            }
+            this.UpdateCanUseTextFilterOnHistory();
+            return;
+        }
+        this.UpdateCanUseTextFilterOnHistory();
+        var options = this.GetValue(IgnoreTextFilterCaseProperty) ? RegexOptions.IgnoreCase : RegexOptions.None;
+        this.SetValue(TextFilterProperty, new(this.textFilterHistory[this.indexOfTextFilterOnHistory], options));
+    }
+
+
+    /// <summary>
+    /// Command to use previous text filter of history.
+    /// </summary>
+    public ICommand UsePreviousTextFilterOhHistoryCommand { get; }
 }

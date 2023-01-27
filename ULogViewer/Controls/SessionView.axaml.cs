@@ -3303,38 +3303,71 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.Logger.LogTrace("[PreviewKeyDown] {key}, Modifiers: {keyModifiers}", e.Key, e.KeyModifiers);
 #endif
 
-			// [Workaround] It will take long time to select all items by list box itself
-			if (!e.Handled 
-				&& e.Source is not TextBox
-				&& (e.KeyModifiers & (Platform.IsMacOS ? KeyModifiers.Meta : KeyModifiers.Control)) != 0
-				&& e.Key == Avalonia.Input.Key.A
-				&& this.DataContext is Session session)
+			// handle key event
+			var primaryKeyModifiers = Platform.IsMacOS ? KeyModifiers.Meta : KeyModifiers.Control;
+			if (this.DataContext is Session session && !e.Handled && (e.KeyModifiers & primaryKeyModifiers) != 0)
 			{
-				// intercept
-				if (Platform.IsMacOS)
-					this.Logger.LogTrace("Intercept Cmd+A");
-				else
-					this.Logger.LogTrace("Intercept Ctrl+A");
-				e.Handled = true;
-
-				// confirm selection
-				if (session.Logs.Count >= 500000)
+				switch (e.Key)
 				{
-					if (this.attachedWindow != null)
-					{
-						var result = await new MessageDialog()
+					case Avalonia.Input.Key.A:
+						// [Workaround] It will take long time to select all items by list box itself
+						if (e.Source is not TextBox)
 						{
-							Buttons = MessageDialogButtons.YesNo,
-							Icon = MessageDialogIcon.Question,
-							Message = this.GetResourceObservable("String/SessionView.ConfirmSelectingAllLogs"),
-						}.ShowDialog(this.attachedWindow);
-						if (result == MessageDialogResult.No)
-							return;
-					}
-				}
+							// intercept
+							if (Platform.IsMacOS)
+								this.Logger.LogTrace("Intercept Cmd+A");
+							else
+								this.Logger.LogTrace("Intercept Ctrl+A");
+							e.Handled = true;
 
-				// select all logs
-				session.LogSelection.SelectAllLogs();
+							// confirm selection
+							if (session.Logs.Count >= 500000)
+							{
+								if (this.attachedWindow != null)
+								{
+									var result = await new MessageDialog()
+									{
+										Buttons = MessageDialogButtons.YesNo,
+										Icon = MessageDialogIcon.Question,
+										Message = this.GetResourceObservable("String/SessionView.ConfirmSelectingAllLogs"),
+									}.ShowDialog(this.attachedWindow);
+									if (result == MessageDialogResult.No)
+										return;
+								}
+							}
+
+							// select all logs
+							session.LogSelection.SelectAllLogs();
+						}
+						break;
+					case Avalonia.Input.Key.Y:
+						if (e.Source == this.logTextFilterTextBox && Platform.IsNotMacOS)
+						{
+							if ((e.KeyModifiers & KeyModifiers.Shift) == 0)
+							{
+								if (session.LogFiltering.UseNextTextFilterOhHistoryCommand.TryExecute())
+									this.SynchronizationContext.Post(this.logTextFilterTextBox.SelectAll);
+							}
+							e.Handled = true;
+						}
+						break;
+					case Avalonia.Input.Key.Z:
+						if (e.Source == this.logTextFilterTextBox)
+						{
+							if ((e.KeyModifiers & KeyModifiers.Shift) == 0)
+							{
+								if (session.LogFiltering.UsePreviousTextFilterOhHistoryCommand.TryExecute())
+									this.SynchronizationContext.Post(this.logTextFilterTextBox.SelectAll);
+							}
+							else if (Platform.IsMacOS)
+							{
+								if (session.LogFiltering.UseNextTextFilterOhHistoryCommand.TryExecute())
+									this.SynchronizationContext.Post(this.logTextFilterTextBox.SelectAll);
+							}
+							e.Handled = true;
+						}
+						break;
+				}
 			}
 		}
 

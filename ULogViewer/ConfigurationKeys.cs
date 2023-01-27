@@ -68,6 +68,10 @@ sealed class ConfigurationKeys
     /// </summary>
     public static readonly SettingKey<double> LogAnalysisScriptSetEditorDialogInitWidthRatio = new(nameof(LogAnalysisScriptSetEditorDialogInitWidthRatio), 0.6);
     /// <summary>
+    /// Maximum number of log text filter to be kept in history queue.
+    /// </summary>
+    public static readonly SettingKey<int> LogTextFilterHistoryCount = new(nameof(LogTextFilterHistoryCount), 16);
+    /// <summary>
     /// Size of chunk of non-continuous logs reading.
     /// </summary>
     public static readonly SettingKey<int> NonContinuousLogsReadingUpdateChunkSize = new(nameof(NonContinuousLogsReadingUpdateChunkSize), 32768);
