@@ -2975,9 +2975,10 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.pressedKeys.Add(e.Key);
 			if (!e.Handled && !logAnalysisRuleSetsPopup.IsOpen)
 			{
+				var primaryKeyModifiers = Platform.IsMacOS ? KeyModifiers.Meta : KeyModifiers.Control;
 				if (this.Application.IsDebugMode && e.Source is not TextBox)
 					this.Logger.LogTrace("[KeyDown] {key}, Modifiers: {keyModifiers}", e.Key, e.KeyModifiers);
-				if ((e.KeyModifiers & (KeyModifiers.Control | KeyModifiers.Meta)) != 0)
+				if ((e.KeyModifiers & primaryKeyModifiers) != 0)
 				{
 					var isAltPressed = ((e.KeyModifiers & KeyModifiers.Alt) != 0);
 					switch (e.Key)
