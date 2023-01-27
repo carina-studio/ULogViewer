@@ -39,7 +39,7 @@
 	"VisibleLogProperties": [
 		{
 			"Name": "Timestamp",
-			"Width": 200
+			"Width": 210
 		},
 		{
 			"Name": "ProcessId",
