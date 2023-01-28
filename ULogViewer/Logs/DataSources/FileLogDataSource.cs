@@ -81,7 +81,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 								return null;
 							if (tempFilePath != null)
 								this.Logger.LogWarning("Use temp file '{tempFilePath}'", tempFilePath);
-							return new FileStream(tempFilePath ?? fileName, FileMode.Open, FileAccess.Read).Let(stream =>
+							return new FileStream(tempFilePath ?? fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite).Let(stream =>
 							{
 								var reader = Path.GetExtension(fileName)?.ToLower() switch
 								{
