@@ -915,6 +915,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					return "";
 				if (this.Group.LogProfile.LogLevelMapForWriting.TryGetValue(level, out var s))
 					return s;
+				var propertyName = this.Group.LogProfile.RawLogLevelPropertyName;
+				if (propertyName != nameof(Level) && this.TryGetProperty(propertyName, out s) && s != null)
+					return s;
 				levelConverter ??= new(this.Application, typeof(LogLevel));
 				return levelConverter.Convert<string?>(level) ?? level.ToString();
 			}
