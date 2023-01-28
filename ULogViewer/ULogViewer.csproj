@@ -118,6 +118,10 @@
 		<TrimmerRootAssembly Include="System.Management" />
 	</ItemGroup>
 
+	<ItemGroup Condition="$(TargetFramework.Contains('linux'))">
+		<TrimmerRootAssembly Include="Tmds.DBus" />
+	</ItemGroup>
+
 	<!-- ReadyToRun options -->
 	<ItemGroup>
 		<PublishReadyToRunExclude Include="AvaloniaEdit.dll" />
