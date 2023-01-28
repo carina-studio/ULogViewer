@@ -47,6 +47,7 @@
 + Allow editing built-in log profile and new log profile will be created automatically.
 + Select proper scale factor of screen on **Linux** automatically.
 + Show **Level** log property in special way.
++ Improve control of history of log text filter.
 + Show sample result when typing Date and Time Format.
 + Improve layout of items on toolbar.
 + More icons for log profile.
@@ -59,6 +60,7 @@
 + Other UI/UX Improvement.
 
 ## Behavior Changes
++ Change **'Save memory usage aggressively'** setting to **'Policy of memory usage'** to provide better control of balance of CPU/memory usage. 
 + Use **⌘** key for multi-selection of items on **macOS** instead of using **Ctrl**.
 + Align application activation/deactivation behavior on **macOS**.
 + Allow using empty display name for log property.
