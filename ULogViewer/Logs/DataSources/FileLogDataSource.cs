@@ -40,7 +40,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				var encoding = options.Encoding ?? Encoding.UTF8;
 				var reader = await this.TaskFactory.StartNew(() =>
 				{
-					return new FileStream(fileName, FileMode.Open, FileAccess.Read).Let(stream =>
+					return new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite).Let(stream =>
 					{
 						return Path.GetExtension(options.FileName)?.ToLower() switch
 						{
