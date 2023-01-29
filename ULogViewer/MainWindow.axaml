@@ -27,7 +27,7 @@
 	<!-- Data templates -->
 	<Window.DataTemplates>
 		<DataTemplate DataType="{x:Type appViewModels:Session}">
-			<Grid ColumnDefinitions="*,Auto" Background="{x:Static Brushes.Transparent}">
+			<Grid ColumnDefinitions="*,Auto" Background="{x:Static Brushes.Transparent}" HorizontalAlignment="Stretch">
 				<Grid.ContextMenu>
 					<ContextMenu PlacementMode="Bottom">
 						<MenuItem Command="{Binding $parent[Window].SetCustomSessionTitleCommand}" CommandParameter="{Binding $parent[TabItem]}" Header="{DynamicResource String/MainWindow.SetCustomSessionTitle}">
