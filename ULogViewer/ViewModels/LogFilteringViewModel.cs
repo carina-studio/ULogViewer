@@ -598,10 +598,22 @@ class LogFilteringViewModel : SessionComponent
                 prevToken = value;
             }
         }
+        var prevTextFilter = this.GetValue(TextFilterProperty);
+        var textFilter = new Regex(patternBuffer.ToString(), RegexOptions.IgnoreCase);
         this.SetValue(FiltersCombinationModeProperty, FilterCombinationMode.Intersection);
         this.SetValue(IgnoreTextFilterCaseProperty, true);
         this.ResetFilters(false);
-        this.TextFilter = new Regex(patternBuffer.ToString(), this.Settings.GetValueOrDefault(SettingKeys.IgnoreCaseOfLogTextFilter) ? RegexOptions.IgnoreCase : RegexOptions.None); // Use setter to update history of text filter
+        if (string.IsNullOrEmpty(prevTextFilter?.ToString()))
+            this.TextFilter = textFilter; // Use setter to update history of text filter
+        else
+        {
+            this.SetValue(TextFilterProperty, textFilter);
+            if (this.textFilterHistory.IsNotEmpty()) // Need to replace empty text filter on top of history queue
+            {
+                this.textFilterHistory[0] = textFilter.ToString();
+                this.UpdateCanUseTextFilterOnHistory();
+            }
+        }
     }
 
 
@@ -830,7 +842,7 @@ class LogFilteringViewModel : SessionComponent
         else
             this.commitFiltersAction.Reschedule();
         this.CheckVisibleLogProperties();
-        this.ResetFilters();
+        this.ResetFilters(true);
     }
 
 
@@ -999,7 +1011,7 @@ class LogFilteringViewModel : SessionComponent
 
 
     // Reset all filters.
-    void ResetFilters(bool updateImmediately = true)
+    void ResetFilters(bool updateImmediately)
     {
         this.VerifyAccess();
         this.VerifyDisposed();
@@ -1046,13 +1058,16 @@ class LogFilteringViewModel : SessionComponent
             {
                 if (this.indexOfTextFilterOnHistory > 0)
                     this.textFilterHistory.RemoveRange(0, this.indexOfTextFilterOnHistory);
-                var historySize = Math.Max(1, this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogTextFilterHistoryCount));
-                if (this.textFilterHistory.Count >= historySize)
+                if (this.textFilterHistory.IsEmpty() || this.textFilterHistory[0] != pattern)
                 {
-                    this.isMaxTextFilterHistoryHit = true;
-                    this.textFilterHistory.RemoveRange(historySize - 1, this.textFilterHistory.Count - historySize + 1);
+                    var historySize = Math.Max(1, this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogTextFilterHistoryCount));
+                    if (this.textFilterHistory.Count >= historySize)
+                    {
+                        this.isMaxTextFilterHistoryHit = true;
+                        this.textFilterHistory.RemoveRange(historySize - 1, this.textFilterHistory.Count - historySize + 1);
+                    }
+                    this.textFilterHistory.Insert(0, pattern ?? "");
                 }
-                this.textFilterHistory.Insert(0, pattern ?? "");
                 this.indexOfTextFilterOnHistory = 0;
                 this.UpdateCanUseTextFilterOnHistory();
             }
@@ -1117,8 +1132,14 @@ class LogFilteringViewModel : SessionComponent
             return;
         }
         this.UpdateCanUseTextFilterOnHistory();
-        var options = this.GetValue(IgnoreTextFilterCaseProperty) ? RegexOptions.IgnoreCase : RegexOptions.None;
-        this.SetValue(TextFilterProperty, new(this.textFilterHistory[this.indexOfTextFilterOnHistory], options));
+        var pattern = this.textFilterHistory[this.indexOfTextFilterOnHistory];
+        if (!string.IsNullOrEmpty(pattern))
+        {
+            var options = this.GetValue(IgnoreTextFilterCaseProperty) ? RegexOptions.IgnoreCase : RegexOptions.None;
+            this.SetValue(TextFilterProperty, new(pattern, options));
+        }
+        else
+            this.ResetValue(TextFilterProperty);
     }
 
 
@@ -1145,8 +1166,14 @@ class LogFilteringViewModel : SessionComponent
             return;
         }
         this.UpdateCanUseTextFilterOnHistory();
-        var options = this.GetValue(IgnoreTextFilterCaseProperty) ? RegexOptions.IgnoreCase : RegexOptions.None;
-        this.SetValue(TextFilterProperty, new(this.textFilterHistory[this.indexOfTextFilterOnHistory], options));
+        var pattern = this.textFilterHistory[this.indexOfTextFilterOnHistory];
+        if (!string.IsNullOrEmpty(pattern))
+        {
+            var options = this.GetValue(IgnoreTextFilterCaseProperty) ? RegexOptions.IgnoreCase : RegexOptions.None;
+            this.SetValue(TextFilterProperty, new(pattern, options));
+        }
+        else
+            this.ResetValue(TextFilterProperty);
     }
 
 
