@@ -101,6 +101,12 @@
 					<TextBlock Name="titleTextBlock" Classes="TabItem_TextBlock" Grid.Column="1" Text="{Binding Title}"/>
 				</Grid>
 				<Button Classes="TabItem_Button" Command="{Binding $parent[Window].CloseSessionTabItemCommand}" CommandParameter="{Binding $parent[TabItem]}" Grid.Column="1" ToolTip.Tip="{DynamicResource String/Common.CloseTab.WithGesture}">
+					<Button.IsVisible>
+						<MultiBinding Converter="{x:Static BoolConverters.Or}">
+							<Binding Path="IsSelected" RelativeSource="{RelativeSource AncestorType={x:Type TabItem}}"/>
+							<Binding Path="IsPointerOver" RelativeSource="{RelativeSource AncestorType={x:Type TabItem}}"/>
+						</MultiBinding>
+					</Button.IsVisible>
 					<Image Classes="Icon" Source="{StaticResource Image/Icon.Close}"/>
 				</Button>
 			</Grid>
