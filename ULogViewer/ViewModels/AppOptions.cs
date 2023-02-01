@@ -34,11 +34,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public AppOptions() : base()
 		{
 			// setup properties
-			var familyName = this.LogFontFamily.Name;
+			var logFontFamilyName = this.LogFontFamily.Name;
+			var patternFontFamilyName = this.PatternFontFamily.Name;
 			this.logProfiles.Add(LogProfileManager.Default.EmptyProfile);
 			this.logProfiles.AddAll(LogProfileManager.Default.Profiles.Where(it => !it.IsTemplate));
 			this.LogProfiles = ListExtensions.AsReadOnly(this.logProfiles);
-			this.SampleLogFontFamily = BuiltInFonts.FontFamilies.FirstOrDefault(it => it.FamilyNames.Contains(familyName)) ?? new FontFamily(familyName);
+			this.SampleLogFontFamily = BuiltInFonts.FontFamilies.FirstOrDefault(it => it.FamilyNames.Contains(logFontFamilyName)) ?? new FontFamily(logFontFamilyName);
+			this.SamplePatternFontFamily = BuiltInFonts.FontFamilies.FirstOrDefault(it => it.FamilyNames.Contains(patternFontFamilyName)) ?? new FontFamily(patternFontFamilyName);
 
 			// add event handlers
 			((INotifyCollectionChanged)LogProfileManager.Default.Profiles).CollectionChanged += this.OnLogProfilesChanged;
@@ -289,6 +291,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.OnPropertyChanged(nameof(MaxDisplayLineCountForEachLog));
 			else if (key == SettingKeys.MemoryUsagePolicy)
 				this.OnPropertyChanged(nameof(MemoryUsagePolicy));
+			else if (key == SettingKeys.PatternFontFamily)
+			{
+				var familyName = this.PatternFontFamily.Name;
+				this.OnPropertyChanged(nameof(PatternFontFamily));
+				this.SamplePatternFontFamily = BuiltInFonts.FontFamilies.FirstOrDefault(it => it.FamilyNames.Contains(familyName)) ?? new FontFamily(familyName);
+				this.OnPropertyChanged(nameof(SamplePatternFontFamily));
+			}
 			else if (key == SettingKeys.ResetLogAnalysisRuleSetsAfterSettingLogProfile)
 				this.OnPropertyChanged(nameof(ResetLogAnalysisRuleSetsAfterSettingLogProfile));
 			else if (key == SettingKeys.SelectIPEndPointWhenNeeded)
@@ -318,6 +327,28 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Get or set font family of pattern.
+		/// </summary>
+		public FontFamilyInfo PatternFontFamily
+		{
+			get => this.Settings.GetValueOrDefault(SettingKeys.PatternFontFamily).Let(it =>
+			{
+				var familyName = string.IsNullOrEmpty(it)
+					? SettingKeys.DefaultPatternFontFamily
+					: it;
+				return this.InstalledFontFamilies.FirstOrDefault(it => it.Name == familyName) ?? new(familyName, false);
+			});
+			set 
+			{
+				if (value.Name == SettingKeys.DefaultPatternFontFamily)
+					this.Settings.ResetValue(SettingKeys.PatternFontFamily);
+				else
+					this.Settings.SetValue<string>(SettingKeys.PatternFontFamily, value.Name);
+			}
+		}
+
+
+		/// <summary>
 		/// Reset all log analysis rule sets after setting log profile.
 		/// </summary>
 		public bool ResetLogAnalysisRuleSetsAfterSettingLogProfile
@@ -331,6 +362,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Get <see cref="FontFamily"/> for sample log text.
 		/// </summary>
 		public FontFamily SampleLogFontFamily { get; private set; }
+
+
+		/// <summary>
+		/// Get <see cref="FontFamily"/> for sample pattern text.
+		/// </summary>
+		public FontFamily SamplePatternFontFamily { get; private set; }
 
 
 		/// <summary>

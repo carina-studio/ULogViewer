@@ -31,7 +31,7 @@
 
 			<!-- Regex -->
 			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/RegexEditorDialog.Regex}"/>
-			<asControls:RegexTextBox Name="regexTextBox" Height="{DynamicResource Double/RegexEditorDialog.RegexInput.Height}" IgnoreCase="False" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" TextWrapping="Wrap"/>
+			<asControls:RegexTextBox Name="regexTextBox" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Height="{DynamicResource Double/RegexEditorDialog.RegexInput.Height}" IgnoreCase="False" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" TextWrapping="Wrap"/>
 			<Panel IsVisible="{Binding $parent[Window].IsCapturingGroupsEnabled}">
 				<TextBlock Classes="Dialog_TextBlock_Description" IsVisible="{Binding !$parent[Window].IsCapturingLogPropertiesEnabled}" Text="{DynamicResource String/RegexEditorDialog.Regex.Description.CapturingGroups}"/>
 				<TextBlock Classes="Dialog_TextBlock_Description" IsVisible="{Binding $parent[Window].IsCapturingLogPropertiesEnabled}" Text="{DynamicResource String/RegexEditorDialog.Regex.Description.CapturingLogProperties}"/>

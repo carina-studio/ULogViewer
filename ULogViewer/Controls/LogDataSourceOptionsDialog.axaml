@@ -23,7 +23,7 @@
 				<Setter.Value>
 					<DataTemplate>
 						<Grid ColumnDefinitions="*,Auto">
-							<asControls:SyntaxHighlightingTextBlock DefinitionSet="{Binding $parent[Window].CommandSyntaxHighlightingDefinitionSet}" FontFamily="{x:Static asMedia:BuiltInFonts.SourceCodePro}" Text="{Binding}" TextTrimming="None" TextWrapping="NoWrap" VerticalAlignment="Center"/>
+							<asControls:SyntaxHighlightingTextBlock DefinitionSet="{Binding $parent[Window].CommandSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Text="{Binding}" TextTrimming="None" TextWrapping="NoWrap" VerticalAlignment="Center"/>
 							<Border Classes="InPlaceAction_Reserved"/>
 							<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
 								<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveSetupTeardownCommandCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
@@ -101,7 +101,7 @@
 							<TextBlock Classes="Dialog_TextBlock" IsVisible="{Binding $parent[Window].IsCommandRequired}" Text="{DynamicResource String/LogDataSourceOptionsDialog.Required}" VerticalAlignment="Center"/>
 						</StackPanel>
 						<Grid ColumnDefinitions="*,Auto">
-							<asControls:SyntaxHighlightingTextBox Name="commandTextBox" Classes="Dialog_TextBox" DefinitionSet="{Binding $parent[Window].CommandSyntaxHighlightingDefinitionSet}" FontFamily="{x:Static asMedia:BuiltInFonts.SourceCodePro}" PropertyChanged="OnEditorControlPropertyChanged" VerticalAlignment="Center"/>
+							<asControls:SyntaxHighlightingTextBox Name="commandTextBox" Classes="Dialog_TextBox" DefinitionSet="{Binding $parent[Window].CommandSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" PropertyChanged="OnEditorControlPropertyChanged" VerticalAlignment="Center"/>
 							<Button Name="selectAzureResourcesButton" Classes="BrowseButton" Command="{Binding $parent[Window].SelectAzureResources}" Grid.Column="1" IsVisible="{Binding $parent[Window].IsAzureRelatedDataSourceProvider}" ToolTip.Tip="{DynamicResource String/LogDataSourceOptionsDialog.SelectAzureResources}">
 								<Image Classes="BrowseButtonIcon" Source="{StaticResource Image/Resource}"/>
 							</Button>
@@ -199,7 +199,7 @@
 							<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogDataSourceOptions.ConnectionString}" VerticalAlignment="Center"/>
 							<TextBlock Classes="Dialog_TextBlock" IsVisible="{Binding $parent[Window].IsConnectionStringRequired}" Text="{DynamicResource String/LogDataSourceOptionsDialog.Required}" VerticalAlignment="Center"/>
 						</StackPanel>
-						<TextBox Name="connectionStringStringTextBox" Classes="Dialog_TextBox" AcceptsReturn="True" AcceptsTab="True" FontFamily="{x:Static asMedia:BuiltInFonts.SourceCodePro}" Height="{StaticResource Double/LogDataSourceOptionsDialog.ConnectionStringTextBox.Height}" PropertyChanged="OnEditorControlPropertyChanged" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+						<TextBox Name="connectionStringStringTextBox" Classes="Dialog_TextBox" AcceptsReturn="True" AcceptsTab="True" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Height="{StaticResource Double/LogDataSourceOptionsDialog.ConnectionStringTextBox.Height}" PropertyChanged="OnEditorControlPropertyChanged" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
 						<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" IsVisible="{Binding $parent[Window].ConnectionStringReferenceUri, Converter={x:Static aConverters:ObjectConverters.IsNotNull}}" Text="{DynamicResource String/Common.References}" Uri="{Binding $parent[Window].ConnectionStringReferenceUri}"/>
 						<Separator Classes="Dialog_Separator"/>
 					</StackPanel>
@@ -218,7 +218,7 @@
 							<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogDataSourceOptions.QueryString}" VerticalAlignment="Center"/>
 							<TextBlock Classes="Dialog_TextBlock" IsVisible="{Binding $parent[Window].IsQueryStringRequired}" Text="{DynamicResource String/LogDataSourceOptionsDialog.Required}" VerticalAlignment="Center"/>
 						</StackPanel>
-						<asControls:SyntaxHighlightingTextBox Name="queryStringTextBox" Classes="Dialog_TextBox" AcceptsReturn="True" AcceptsTab="True" DefinitionSet="{Binding $parent[Window].SqlSyntaxHighlightingDefinitionSet}" FontFamily="{x:Static asMedia:BuiltInFonts.SourceCodePro}" Height="{StaticResource Double/LogDataSourceOptionsDialog.QueryStringTextBox.Height}" PropertyChanged="OnEditorControlPropertyChanged" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+						<asControls:SyntaxHighlightingTextBox Name="queryStringTextBox" Classes="Dialog_TextBox" AcceptsReturn="True" AcceptsTab="True" DefinitionSet="{Binding $parent[Window].SqlSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Height="{StaticResource Double/LogDataSourceOptionsDialog.QueryStringTextBox.Height}" PropertyChanged="OnEditorControlPropertyChanged" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
 						<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" IsVisible="{Binding $parent[Window].QueryStringReferenceUri, Converter={x:Static aConverters:ObjectConverters.IsNotNull}}" Text="{DynamicResource String/Common.References}" Uri="{Binding $parent[Window].QueryStringReferenceUri}"/>
 						<Separator Classes="Dialog_Separator"/>
 					</StackPanel>

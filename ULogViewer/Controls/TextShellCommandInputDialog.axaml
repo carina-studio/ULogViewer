@@ -3,6 +3,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:app="using:CarinaStudio.ULogViewer"
+		xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
 		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
 		xmlns:asMedia="using:CarinaStudio.AppSuite.Media"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
@@ -24,7 +25,7 @@
 		<StackPanel Classes="Dialog_ContentPanel">
 
 			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/TextShellCommandInputDialog.Message}"/>
-			<asControls:SyntaxHighlightingTextBox Name="commandTextBox" Classes="Dialog_TextBox" DefinitionSet="{Binding $parent[Window].SyntaxHighlightingDefinitionSet}" FontFamily="{x:Static asMedia:BuiltInFonts.SourceCodePro}" MaxLength="1024"/>
+			<asControls:SyntaxHighlightingTextBox Name="commandTextBox" Classes="Dialog_TextBox" DefinitionSet="{Binding $parent[Window].SyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" MaxLength="1024"/>
 
 		</StackPanel>
 

@@ -530,6 +530,9 @@ namespace CarinaStudio.ULogViewer
 			await SyntaxHighlighting.InitializeAsync(this);
 			this.UpdateSplashWindowProgress(0.15);
 
+			// initialize control fonts
+			Controls.ControlFonts.Initialize(this);
+
 			// find menu items
 			if (Platform.IsMacOS)
 			{
