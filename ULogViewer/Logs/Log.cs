@@ -2,6 +2,7 @@
 using CarinaStudio.Diagnostics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Reflection;
 
@@ -437,146 +438,6 @@ namespace CarinaStudio.ULogViewer.Logs
 		public static IList<string> PropertyNames { get => propertyNames; }
 
 
-		/// <summary>
-		/// Select timestamp which is the earliest one.
-		/// </summary>
-		/// <returns>Selected timestamp.</returns>
-		public DateTime? SelectEarliestTimestamp()
-		{
-			var timestamp = this.Timestamp;
-			var beginningTimestamp = this.BeginningTimestamp;
-			if (timestamp != null && beginningTimestamp != null)
-			{
-				if (timestamp.Value <= beginningTimestamp.Value)
-					return timestamp;
-				return beginningTimestamp;
-			}
-			var endingTimestamp = this.EndingTimestamp;
-			if (endingTimestamp != null)
-			{
-				if (beginningTimestamp != null)
-				{
-					if (beginningTimestamp.Value <= endingTimestamp.Value)
-						return beginningTimestamp;
-				}
-				else
-				{
-					if (timestamp.GetValueOrDefault() <= endingTimestamp.Value)
-						return timestamp;
-				}
-				return endingTimestamp;
-			}
-			else if (beginningTimestamp != null)
-				return beginningTimestamp;
-			return timestamp;
-		}
-
-
-		/// <summary>
-		/// Select timestamp which is the latest one.
-		/// </summary>
-		/// <returns>Selected timestamp.</returns>
-		public DateTime? SelectLatestTimestamp()
-		{
-			var timestamp = this.Timestamp;
-			var endingTimestamp = this.EndingTimestamp;
-			if (timestamp != null && endingTimestamp != null)
-			{
-				if (timestamp.Value >= endingTimestamp.Value)
-					return timestamp;
-				return endingTimestamp;
-			}
-			var beginningTimestamp = this.BeginningTimestamp;
-			if (beginningTimestamp != null)
-			{
-				if (endingTimestamp != null)
-				{
-					if (endingTimestamp.Value >= beginningTimestamp.Value)
-						return endingTimestamp;
-				}
-				else
-				{
-					if (timestamp.GetValueOrDefault() >= beginningTimestamp.Value)
-						return timestamp;
-				}
-				return beginningTimestamp;
-			}
-			else if (endingTimestamp != null)
-				return endingTimestamp;
-			return timestamp;
-		}
-
-
-		/// <summary>
-		/// Select time span which is the maximum one.
-		/// </summary>
-		/// <returns>Selected time span.</returns>
-		public TimeSpan? SelectMaxTimeSpan()
-		{
-			var timeSpan = this.TimeSpan;
-			var endingTimeSpan = this.EndingTimeSpan;
-			if (timeSpan != null && endingTimeSpan != null)
-			{
-				if (timeSpan.Value >= endingTimeSpan.Value)
-					return timeSpan;
-				return endingTimeSpan;
-			}
-			var beginningTimeSpan = this.BeginningTimeSpan;
-			if (beginningTimeSpan != null)
-			{
-				if (endingTimeSpan != null)
-				{
-					if (endingTimeSpan.Value >= beginningTimeSpan.Value)
-						return endingTimeSpan;
-				}
-				else
-				{
-					if (timeSpan.GetValueOrDefault() >= beginningTimeSpan.Value)
-						return timeSpan;
-				}
-				return beginningTimeSpan;
-			}
-			else if (endingTimeSpan != null)
-				return endingTimeSpan;
-			return timeSpan;
-		}
-
-
-		/// <summary>
-		/// Select time span which is the minimum one.
-		/// </summary>
-		/// <returns>Selected time span.</returns>
-		public TimeSpan? SelectMinTimeSpan()
-		{
-			var timeSpan = this.TimeSpan;
-			var beginningTimeSpan = this.BeginningTimeSpan;
-			if (timeSpan != null && beginningTimeSpan != null)
-			{
-				if (timeSpan.Value <= beginningTimeSpan.Value)
-					return timeSpan;
-				return beginningTimeSpan;
-			}
-			var endingTimeSpan = this.EndingTimeSpan;
-			if (endingTimeSpan != null)
-			{
-				if (beginningTimeSpan != null)
-				{
-					if (beginningTimeSpan.Value <= endingTimeSpan.Value)
-						return beginningTimeSpan;
-				}
-				else
-				{
-					if (timeSpan.GetValueOrDefault() <= endingTimeSpan.Value)
-						return timeSpan;
-				}
-				return endingTimeSpan;
-			}
-			else if (beginningTimeSpan != null)
-				return beginningTimeSpan;
-			return timeSpan;
-		}
-
-
 		// Setup property map.
 		static void SetupPropertyMap()
 		{
@@ -655,6 +516,35 @@ namespace CarinaStudio.ULogViewer.Logs
 		public string? Title { get => this.GetProperty(PropertyName.Title)?.ToString(); }
 
 
+		/// Try getting the earliest/latest timestamp from <see cref="BeginningTimestamp"/>, <see cref="EndingTimestamp"/> and <see cref="Timestamp"/>.
+		/// </summary>
+		/// <param name="earliestTimestamp">The earliest timestamp.</param>
+		/// <param name="latestTimestamp">The latest timestamp.</param>
+		/// <returns>True if the earliest/latest timestamp are valid.</returns>
+		public unsafe bool TryGetEarliestAndLatestTimestamp([NotNullWhen(true)] out DateTime? earliestTimestamp, [NotNullWhen(true)] out DateTime? latestTimestamp)
+		{
+			var timestamps = stackalloc DateTime?[]
+			{
+				this.BeginningTimestamp,
+				this.EndingTimestamp,
+				this.Timestamp
+			};
+			earliestTimestamp = default;
+			latestTimestamp = default;
+			for (var i = 2; i >= 0; --i)
+			{
+				var timestamp = timestamps[i];
+				if (!timestamp.HasValue)
+					continue;
+				if (!earliestTimestamp.HasValue || earliestTimestamp > timestamp)
+					earliestTimestamp = timestamp;
+				if (!latestTimestamp.HasValue || latestTimestamp < timestamp)
+					latestTimestamp = timestamp;
+			}
+			return earliestTimestamp.HasValue;
+		}
+
+
 #pragma warning disable CS8601
 		/// <summary>
 		/// Get get property of log by name.
@@ -687,6 +577,35 @@ namespace CarinaStudio.ULogViewer.Logs
 			return true;
 		}
 #pragma warning restore CS8601
+
+
+		/// Try getting the smallest/largest time span from <see cref="BeginningTimeSpan"/>, <see cref="EndingTimeSpan"/> and <see cref="TimeSpan"/>.
+		/// </summary>
+		/// <param name="smallestTimeSpan">The smallest time span.</param>
+		/// <param name="largestTimeSpan">The largest time span.</param>
+		/// <returns>True if the smallest/largest time span are valid.</returns>
+		public unsafe bool TryGetSmallestAndLargestTimeSpan([NotNullWhen(true)] out TimeSpan? smallestTimeSpan, [NotNullWhen(true)] out TimeSpan? largestTimeSpan)
+		{
+			var timeSpans = stackalloc TimeSpan?[]
+			{
+				this.BeginningTimeSpan,
+				this.EndingTimeSpan,
+				this.TimeSpan
+			};
+			smallestTimeSpan = default;
+			largestTimeSpan = default;
+			for (var i = 2; i >= 0; --i)
+			{
+				var timeSpan = timeSpans[i];
+				if (!timeSpan.HasValue)
+					continue;
+				if (!smallestTimeSpan.HasValue || smallestTimeSpan > timeSpan)
+					smallestTimeSpan = timeSpan;
+				if (!largestTimeSpan.HasValue || largestTimeSpan < timeSpan)
+					largestTimeSpan = timeSpan;
+			}
+			return smallestTimeSpan.HasValue;
+		}
 
 
 		/// <summary>

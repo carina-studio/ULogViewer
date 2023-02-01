@@ -9,6 +9,7 @@ using CarinaStudio.ULogViewer.ViewModels.Analysis;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Threading;
 
@@ -1543,6 +1544,15 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public string? Title { get => this.Log.Title; }
 
 
+		/// Try getting the earliest/latest timestamp from <see cref="BeginningTimestamp"/>, <see cref="EndingTimestamp"/> and <see cref="Timestamp"/>.
+		/// </summary>
+		/// <param name="earliestTimestamp">The earliest timestamp.</param>
+		/// <param name="latestTimestamp">The latest timestamp.</param>
+		/// <returns>True if the earliest/latest timestamp are valid.</returns>
+		public unsafe bool TryGetEarliestAndLatestTimestamp([NotNullWhen(true)] out DateTime? earliestTimestamp, [NotNullWhen(true)] out DateTime? latestTimestamp) =>
+			this.Log.TryGetEarliestAndLatestTimestamp(out earliestTimestamp, out latestTimestamp);
+
+
 #pragma warning disable CS8600
 #pragma warning disable CS8601
 		/// <summary>
@@ -1567,6 +1577,15 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		}
 #pragma warning restore CS8600
 #pragma warning restore CS8601
+
+
+		/// Try getting the smallest/largest time span from <see cref="BeginningTimeSpan"/>, <see cref="EndingTimeSpan"/> and <see cref="TimeSpan"/>.
+		/// </summary>
+		/// <param name="smallestTimeSpan">The smallest time span.</param>
+		/// <param name="largestTimeSpan">The largest time span.</param>
+		/// <returns>True if the smallest/largest time span are valid.</returns>
+		public unsafe bool TryGetSmallestAndLargestTimeSpan([NotNullWhen(true)] out TimeSpan? smallestTimeSpan, [NotNullWhen(true)] out TimeSpan? largestTimeSpan) =>
+			this.Log.TryGetSmallestAndLargestTimeSpan(out smallestTimeSpan, out largestTimeSpan);
 
 
 		/// <summary>

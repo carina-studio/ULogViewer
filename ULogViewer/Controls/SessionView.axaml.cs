@@ -95,6 +95,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Constants.
 		const int AutoAddLogFilesDelay = 0;
 		const int ScrollingToLatestLogInterval = 200;
+		const int ScrollingToTargetLogRangeInterval = 200;
 
 
 		// Static fields.
@@ -103,6 +104,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		static readonly StyledProperty<bool> IsProcessInfoVisibleProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(IsProcessInfoVisible), false);
 		static readonly DirectProperty<SessionView, bool> IsProVersionActivatedProperty = AvaloniaProperty.RegisterDirect<SessionView, bool>("IsProVersionActivated", c => c.isProVersionActivated);
 		static readonly StyledProperty<bool> IsScrollingToLatestLogNeededProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(IsScrollingToLatestLogNeeded), true);
+		static readonly StyledProperty<bool> IsScrollingToTargetLogRangeProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(IsScrollingToTargetLogRange));
 		static readonly SettingKey<bool> IsCopyLogTextTutorialShownKey = new("SessionView.IsCopyLogTextTutorialShown");
 		static readonly SettingKey<bool> IsLogFilesPanelTutorialShownKey = new("SessionView.IsLogFilesPanelTutorialShown");
 		static readonly SettingKey<bool> IsMarkedLogsPanelTutorialShownKey = new("SessionView.IsMarkedLogsPanelTutorialShown");
@@ -161,6 +163,9 @@ namespace CarinaStudio.ULogViewer.Controls
 		bool keepSidePanelVisible;
 		Control? lastClickedLogPropertyView;
 		double lastToolBarWidthWhenLayoutItems;
+		int latestDisplayedLogCount;
+		DisplayableLog[]? latestDisplayedLogRange;
+		readonly List<DisplayableLog> latestDisplayedMarkedLogs = new();
 		readonly ContextMenu logActionMenu;
 		readonly ContextMenu logFileActionMenu;
 		readonly AppSuite.Controls.ListBox logFileListBox;
@@ -184,12 +189,15 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ContextMenu otherActionsMenu;
 		readonly HashSet<Avalonia.Input.Key> pressedKeys = new();
 		readonly ScheduledAction scrollToLatestLogAction;
+		readonly ScheduledAction scrollToTargetLogRangeAction;
 		IBrush? selectableValueLogItemBackgroundBrush;
 		readonly IMultiValueConverter selectableValueLogItemBackgroundConverter;
 		readonly ToggleButton selectAndSetLogProfileDropDownButton;
 		readonly MenuItem showLogPropertyMenuItem;
 		readonly ColumnDefinition sidePanelColumn;
 		readonly Control sidePanelContainer;
+		DisplayableLog[]? targetLogRangeToScrollTo;
+		readonly List<DisplayableLog> targetMarkedLogsToScrollTo = new();
 		readonly ToggleButton testButton;
 		readonly ContextMenu testMenu;
 		readonly AppSuite.Controls.ListBox timestampCategoryListBox;
@@ -199,6 +207,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly Panel toolBarLogTextFilterItemsPanel;
 		readonly Panel toolBarOtherItemsPanel;
 		readonly Panel toolBarOtherLogFilterItemsPanel;
+		readonly ScheduledAction updateLatestDisplayedLogRangeAction;
 		readonly ScheduledAction updateLogHeaderContainerMarginAction;
 		readonly ScheduledAction updateStatusBarStateAction;
 		readonly SortedObservableList<Logs.LogLevel> validLogLevels = new((x, y) => (int)x - (int)y);
@@ -816,6 +825,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				});
 				this.scrollToLatestLogAnalysisResultAction!.Schedule(ScrollingToLatestLogInterval);
 			});
+			this.scrollToTargetLogRangeAction = new(this.ScrollToTargetLogRange);
 			this.updateLogAnalysisAction = new(() =>
 			{
 				if (this.DataContext is not Session session)
@@ -835,6 +845,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			});
 			this.commitLogFiltersAction = new ScheduledAction(this.CommitLogFilters);
 			this.updateLogTextFilterTextBoxClassesAction = new(this.UpdateLogTextFilterTextBoxClasses);
+			this.updateLatestDisplayedLogRangeAction = new(this.UpdateLatestDisplayedLogRange);
 			this.updateLogHeaderContainerMarginAction = new(() =>
 			{
 				var logScrollViewer = this.logScrollViewer;
@@ -949,6 +960,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.attachedLogs = session.Logs as INotifyCollectionChanged;
 			if (this.attachedLogs != null)
 				this.attachedLogs.CollectionChanged += this.OnLogsChanged;
+			(session.MarkedLogs as INotifyCollectionChanged)?.Let(it =>
+				it.CollectionChanged += this.OnMarkedLogsChanged);
 			(session.LogFiltering.PredefinedTextFilters as INotifyCollectionChanged)?.Let(it =>
 				it.CollectionChanged += this.OnSelectedPredefinedLogTextFiltersChanged);
 			this.AttachToLogAnalysis(session.LogAnalysis);
@@ -1083,6 +1096,19 @@ namespace CarinaStudio.ULogViewer.Controls
 			// update UI
 			this.OnDisplayLogPropertiesChanged();
 			this.updateStatusBarStateAction.Schedule();
+		}
+
+
+		// Clear target log range to scroll to.
+		void ClearTargetLogRangeToScrollTo()
+		{
+			if (this.targetLogRangeToScrollTo == null)
+				return;
+			this.Logger.LogWarning("Clear target range of log to scroll to");
+			this.targetLogRangeToScrollTo = null;
+			this.targetMarkedLogsToScrollTo.Clear();
+			this.scrollToTargetLogRangeAction.Cancel();
+			this.SetValue(IsScrollingToTargetLogRangeProperty, false);
 		}
 
 
@@ -1917,6 +1943,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.attachedLogs.CollectionChanged -= this.OnLogsChanged;
 				this.attachedLogs = null;
 			}
+			(session.MarkedLogs as INotifyCollectionChanged)?.Let(it =>
+				it.CollectionChanged -= this.OnMarkedLogsChanged);
 			(session.LogFiltering.PredefinedTextFilters as INotifyCollectionChanged)?.Let(it =>
 				it.CollectionChanged -= this.OnSelectedPredefinedLogTextFiltersChanged);
 			this.DetachFromLogAnalysis(session.LogAnalysis);
@@ -1946,6 +1974,12 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.SetValue(HasLogProfileProperty, false);
 			this.validLogLevels.Clear();
 			this.logProfileSelectionMenu.CurrentLogProfile = null;
+
+			// clear target range of log to scroll to
+			this.ClearTargetLogRangeToScrollTo();
+
+			// reset displayed log range info
+			this.updateLatestDisplayedLogRangeAction.Execute();
 
 			// stop auto scrolling
 			this.scrollToLatestLogAction.Cancel();
@@ -2253,6 +2287,11 @@ namespace CarinaStudio.ULogViewer.Controls
 			get => this.GetValue(IsScrollingToLatestLogNeededProperty);
 			set => this.SetValue(IsScrollingToLatestLogNeededProperty, value);
 		}
+
+
+		// Check whether auto scrolling to target range of log is on-going or not.
+		public bool IsScrollingToTargetLogRange => 
+			this.GetValue(IsScrollingToTargetLogRangeProperty);
 
 
 		/// <summary>
@@ -2828,6 +2867,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when pointer wheel change on log list box.
 		void OnLogListBoxPointerWheelChanged(object? sender, PointerWheelEventArgs e)
 		{
+			this.ClearTargetLogRangeToScrollTo();
 			this.SynchronizationContext.Post(() => this.UpdateIsScrollingToLatestLogNeeded(-e.Delta.Y));
 		}
 
@@ -2843,7 +2883,15 @@ namespace CarinaStudio.ULogViewer.Controls
 				|| this.pressedKeys.Contains(Avalonia.Input.Key.End))
 			{
 				this.UpdateIsScrollingToLatestLogNeeded(e.OffsetDelta.Y);
+				this.ClearTargetLogRangeToScrollTo();
 			}
+
+			// keep current log time info
+			this.updateLatestDisplayedLogRangeAction.Execute();
+
+			// scroll to target
+			if (this.targetLogRangeToScrollTo != null)
+				this.scrollToTargetLogRangeAction.Schedule(ScrollingToTargetLogRangeInterval);
 
 			// sync log header offset
 			if (Math.Abs(e.OffsetDelta.X) > 0.1 || Math.Abs(e.ExtentDelta.X) > 0.1)
@@ -2930,7 +2978,12 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when list of logs changed.
 		void OnLogsChanged(object? sender, NotifyCollectionChangedEventArgs e)
 		{
-			if (e.Action == NotifyCollectionChangedAction.Remove)
+			if (e.Action == NotifyCollectionChangedAction.Add)
+			{
+				if (this.targetLogRangeToScrollTo != null)
+					this.scrollToTargetLogRangeAction.Schedule(ScrollingToTargetLogRangeInterval);
+			}
+			else if (e.Action == NotifyCollectionChangedAction.Remove)
 			{
 				// [Workaround] Force updating item containers
 				if (this.logScrollViewer != null)
@@ -3291,6 +3344,11 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Called when marked logs changed.
+		void OnMarkedLogsChanged(object? sender, NotifyCollectionChangedEventArgs e) =>
+			this.updateLatestDisplayedLogRangeAction.Schedule();
+
+
 		// Called to handle key-down before all children.
 		async void OnPreviewKeyDown(object? sender, Avalonia.Input.KeyEventArgs e)
 		{
@@ -3421,6 +3479,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					}
 					else
 						this.scrollToLatestLogAction.Schedule(ScrollingToLatestLogInterval);
+					this.ClearTargetLogRangeToScrollTo();
 				}
 				else
 					this.scrollToLatestLogAction.Cancel();
@@ -3510,8 +3569,30 @@ namespace CarinaStudio.ULogViewer.Controls
 					});
 					break;
 				case nameof(Session.Logs):
-					// [Workaround] SelectionChange may not be fired after changing items
-					this.SynchronizationContext.Post(this.OnLogListBoxSelectionChanged);
+					// prepare scrolling to log around current position
+					if (!this.IsScrollingToLatestLogNeeded)
+					{
+						this.targetLogRangeToScrollTo = this.latestDisplayedLogRange?.Clone() as DisplayableLog[];
+						this.targetMarkedLogsToScrollTo.Clear();
+						this.targetMarkedLogsToScrollTo.AddRange(this.latestDisplayedMarkedLogs);
+						if (this.targetLogRangeToScrollTo != null)
+						{
+							this.Logger.LogTrace("Setup target range of log to scroll to, marked log(s): {count}", this.targetMarkedLogsToScrollTo.Count);
+							this.SetValue(IsScrollingToTargetLogRangeProperty, true);
+						}
+					}
+
+					// update time and selection info
+					this.SynchronizationContext.Post(() =>
+					{
+						// update displayed log range and start scrolling to target range
+						this.updateLatestDisplayedLogRangeAction.Execute();
+						if (this.targetLogRangeToScrollTo != null)
+							this.scrollToTargetLogRangeAction.Schedule(ScrollingToTargetLogRangeInterval);
+
+						// [Workaround] SelectionChange may not be fired after changing items
+						this.OnLogListBoxSelectionChanged();
+					});
 					
 					// attach to new list of logs
 					if (this.attachedLogs != null)
@@ -3775,6 +3856,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (index < 0 || index >= session.Logs.Count)
 				return;
+			this.ClearTargetLogRangeToScrollTo();
 			var itemContainerGenerator = this.logListBox.ItemContainerGenerator;
 			foreach (var container in itemContainerGenerator.Containers)
 			{
@@ -3810,6 +3892,60 @@ namespace CarinaStudio.ULogViewer.Controls
 				if (scrollViewer.Extent.Height > scrollViewer.Viewport.Height)
 					this.IsScrollingToLatestLogNeeded = false;
 			});
+		}
+
+
+		// Scroll to target log range if available.
+		void ScrollToTargetLogRange()
+		{
+			// check state
+			if (this.targetLogRangeToScrollTo == null || this.latestDisplayedLogRange == null)
+				return;
+			if (this.DataContext is not Session session)
+				return;
+			var logs = session.Logs;
+			if (logs.IsEmpty())
+				return;
+			
+			// find target range in current list
+			var targetStartIndex = logs.BinarySearch(this.targetLogRangeToScrollTo[0], session.CompareDisplayableLogs);
+			if (targetStartIndex < 0)
+				targetStartIndex = ~targetStartIndex;
+			var targetEndIndex = logs.BinarySearch(this.targetLogRangeToScrollTo[1], session.CompareDisplayableLogs);
+			if (targetEndIndex < 0)
+				targetEndIndex = ~targetEndIndex;
+			var targetCenterIndex = this.targetMarkedLogsToScrollTo.IsEmpty() 
+				? (targetStartIndex + targetEndIndex) >> 1
+				: logs.BinarySearch(this.targetMarkedLogsToScrollTo[this.targetMarkedLogsToScrollTo.Count >> 1], session.CompareDisplayableLogs).Let(it =>
+					it >= 0 ? it : ~it);
+
+			// find current range in list
+			var displayedStartIndex = logs.BinarySearch(this.latestDisplayedLogRange[0], session.CompareDisplayableLogs);
+			var displayedEndIndex = logs.BinarySearch(this.latestDisplayedLogRange[1], session.CompareDisplayableLogs);
+			var displayedCenterIndex = (displayedStartIndex + displayedEndIndex) >> 1;
+			this.Logger.LogTrace("Displayed log range: [{displayedStartIndex}, {displayedEndIndex}], center: {displayedCenterIndex}", displayedStartIndex, displayedEndIndex, displayedCenterIndex);
+			
+			// complete scrolling
+			if (Math.Abs(targetCenterIndex - displayedCenterIndex) <= 2)
+			{
+				this.Logger.LogTrace("Complete scrolling to target log range: [{targetStartIndex}, {targetEndIndex}], center: {targetCenterIndex}", targetStartIndex, targetEndIndex, targetCenterIndex);
+				this.ClearTargetLogRangeToScrollTo();
+				return;
+			}
+
+			// scroll to target range
+			var indexToScrollTo = 0;
+			if (targetCenterIndex >= displayedCenterIndex)
+			{
+				indexToScrollTo = Math.Min(logs.Count - 1, targetCenterIndex + (this.latestDisplayedLogCount >> 1));
+				this.Logger.LogTrace("Scroll down to target log at index {index}, target range: [{targetStartIndex}, {targetEndIndex}], center: {targetCenterIndex}", indexToScrollTo, targetStartIndex, targetEndIndex, targetCenterIndex);
+			}
+			else
+			{
+				indexToScrollTo = Math.Max(0, targetCenterIndex - (this.latestDisplayedLogCount >> 1));
+				this.Logger.LogTrace("Scroll up to target log at index {index}, target range: [{targetStartIndex}, {targetEndIndex}], center: {targetCenterIndex}", indexToScrollTo, targetStartIndex, targetEndIndex, targetCenterIndex);
+			}
+			this.logListBox.ScrollIntoView(indexToScrollTo);
 		}
 
 
@@ -4560,6 +4696,56 @@ namespace CarinaStudio.ULogViewer.Controls
 						this.IsScrollingToLatestLogNeeded = true;
 					}
 				}
+			}
+		}
+
+
+		// Get and keep range of logs which are currently displayed.
+		void UpdateLatestDisplayedLogRange()
+		{
+			if (this.logListBox.GetItemCount() <= 0 || this.DataContext is not Session session)
+			{
+				this.SynchronizationContext.Post(() =>
+				{
+					if (this.logListBox.GetItemCount() <= 0 || this.DataContext is not Session)
+					{
+						this.Logger.LogInformation("Clear range of latest displayed logs");
+						this.latestDisplayedLogRange = null;
+						this.latestDisplayedLogCount = 0;
+						this.latestDisplayedMarkedLogs.Clear();
+					}
+				});
+				return;
+			}
+			var firstLog = default(DisplayableLog);
+			var lastLog = default(DisplayableLog);
+			var logCount = 0;
+			this.latestDisplayedMarkedLogs.Clear();
+			foreach (var itemContainer in this.logListBox.ItemContainerGenerator.Containers)
+			{
+				if (itemContainer?.Item is not DisplayableLog log)
+					continue;
+				++logCount;
+				if (firstLog == null || session.CompareDisplayableLogs(log, firstLog) < 0)
+					firstLog = log;
+				if (lastLog == null || session.CompareDisplayableLogs(log, lastLog) > 0)
+					lastLog = log;
+				if (log.MarkedColor != MarkColor.None)
+					this.latestDisplayedMarkedLogs.Add(log);
+			}
+			if (firstLog != null)
+			{
+				this.latestDisplayedLogRange ??= new DisplayableLog[2];
+				this.latestDisplayedLogRange[0] = firstLog;
+				this.latestDisplayedLogRange[1] = lastLog!;
+				this.latestDisplayedLogCount = logCount;
+				this.latestDisplayedMarkedLogs.Sort(session.CompareDisplayableLogs);
+			}
+			else
+			{
+				this.Logger.LogInformation("Clear range of latest displayed logs");
+				this.latestDisplayedLogRange = null;
+				this.latestDisplayedLogCount = 0;
 			}
 		}
 

@@ -1328,52 +1328,43 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <param name="earliestTimestamp">Earliest timestamp of <paramref name="x"/> and <paramref name="y"/>.</param>
 		/// <param name="latestTimestamp">Latest timestamp of <paramref name="x"/> and <paramref name="y"/>.</param>
 		/// <returns>Duration between these logs.</returns>
-		public static TimeSpan? CalculateDurationBetweenLogs(DisplayableLog x, DisplayableLog y, out TimeSpan? minTimeSpan, out TimeSpan? maxTimeSpan, out DateTime? earliestTimestamp, out DateTime? latestTimestamp) =>
-			CalculateDurationBetweenLogs(x.Log, y.Log, out minTimeSpan, out maxTimeSpan, out earliestTimestamp, out latestTimestamp);
-
-
-		// Calculate duration between two logs.
-		static TimeSpan? CalculateDurationBetweenLogs(Log x, Log y, out TimeSpan? minTimeSpan, out TimeSpan? maxTimeSpan, out DateTime? earliestTimestamp, out DateTime? latestTimestamp)
+		public static TimeSpan? CalculateDurationBetweenLogs(DisplayableLog x, DisplayableLog y, out TimeSpan? minTimeSpan, out TimeSpan? maxTimeSpan, out DateTime? earliestTimestamp, out DateTime? latestTimestamp)
 		{
-			// get timestamps
-			earliestTimestamp = x.SelectEarliestTimestamp();
-			latestTimestamp = y.SelectLatestTimestamp();
-
-			// get time spans
-			minTimeSpan = x.SelectMinTimeSpan();
-			maxTimeSpan = y.SelectMaxTimeSpan();
-
-			// calculate duration
-			if (earliestTimestamp != null && latestTimestamp != null
-				&& earliestTimestamp.Value <= latestTimestamp.Value)
+			// calculate duration by timestamps
+			if (x.TryGetEarliestAndLatestTimestamp(out var eTimestampX, out var lTimestampX)
+				&& y.TryGetEarliestAndLatestTimestamp(out var eTimestampY, out var lTimestampY))
 			{
-				return latestTimestamp.Value - earliestTimestamp.Value;
+				minTimeSpan = null;
+				maxTimeSpan = null;
+				if (eTimestampX <= lTimestampY)
+				{
+					earliestTimestamp = eTimestampX;
+					latestTimestamp = lTimestampY;
+					return lTimestampY.Value - eTimestampX.Value;
+				}
+				earliestTimestamp = eTimestampY;
+				latestTimestamp = lTimestampX;
+				return lTimestampX.Value - eTimestampY.Value;
 			}
-			if (minTimeSpan != null && maxTimeSpan != null
-				&& minTimeSpan.Value <= maxTimeSpan.Value)
+			
+			// calculate by time spans
+			if (x.TryGetSmallestAndLargestTimeSpan(out var sTimeSpanX, out var lTimeSpanX)
+				&& y.TryGetSmallestAndLargestTimeSpan(out var sTimeSpanY, out var lTimeSpanY))
 			{
-				return (maxTimeSpan.Value - minTimeSpan.Value);
+				earliestTimestamp = null;
+				latestTimestamp = null;
+				if (sTimeSpanX <= lTimeSpanY)
+				{
+					minTimeSpan = sTimeSpanX;
+					maxTimeSpan = lTimeSpanY;
+					return lTimeSpanY.Value - sTimeSpanX.Value;
+				}
+				minTimeSpan = sTimeSpanY;
+				maxTimeSpan = lTimeSpanX;
+				return lTimeSpanX.Value - sTimeSpanY.Value;
 			}
 
-			// get inverse timestamps
-			earliestTimestamp = y.SelectEarliestTimestamp();
-			latestTimestamp = x.SelectLatestTimestamp();
-
-			// get inverse time spans
-			minTimeSpan = y.SelectMinTimeSpan();
-			maxTimeSpan = x.SelectMaxTimeSpan();
-
-			// calculate duration
-			if (earliestTimestamp != null && latestTimestamp != null
-				&& earliestTimestamp.Value <= latestTimestamp.Value)
-			{
-				return latestTimestamp.Value - earliestTimestamp.Value;
-			}
-			if (minTimeSpan != null && maxTimeSpan != null
-				&& minTimeSpan.Value <= maxTimeSpan.Value)
-			{
-				return (maxTimeSpan.Value - minTimeSpan.Value);
-			}
+			// no duration available
 			earliestTimestamp = null;
 			latestTimestamp = null;
 			minTimeSpan = null;
