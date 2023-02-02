@@ -24,6 +24,8 @@ class ControlFonts : BaseApplicationObject<IULogViewerApplication>, INotifyPrope
     {
         var settings = app.Settings;
         settings.SettingChanged += this.OnSettingChanged;
+        this.LogFontSize = Math.Max(Math.Min(SettingKeys.MaxLogFontSize, settings.GetValueOrDefault(SettingKeys.LogFontSize)), SettingKeys.MinLogFontSize);
+        this.UpdateLogFontFamily(false);
         this.UpdatePatternFontFamily(false);
     }
 
@@ -44,10 +46,26 @@ class ControlFonts : BaseApplicationObject<IULogViewerApplication>, INotifyPrope
     }
 
 
+    // Font family of log.
+    public FontFamily LogFontFamily { get; private set; }
+
+
+    // Get font size of log.
+	public double LogFontSize { get; private set; }
+
+
     // Called when setting changed.
     void OnSettingChanged(object? sender, SettingChangedEventArgs e)
     {
-        if (e.Key == SettingKeys.PatternFontFamily)
+        var key = e.Key;
+        if (key == SettingKeys.LogFontFamily)
+            this.UpdateLogFontFamily(true);
+        else if (key == SettingKeys.LogFontSize)
+        {
+            this.LogFontSize = Math.Max(Math.Min(SettingKeys.MaxLogFontSize, (int)e.Value), SettingKeys.MinLogFontSize);
+            this.PropertyChanged?.Invoke(this, new(nameof(LogFontSize)));
+        }
+        else if (key == SettingKeys.PatternFontFamily)
             this.UpdatePatternFontFamily(true);
     }
 
@@ -58,6 +76,21 @@ class ControlFonts : BaseApplicationObject<IULogViewerApplication>, INotifyPrope
 
     /// <inheritdoc/>
     public event PropertyChangedEventHandler? PropertyChanged;
+
+
+    // Update log font.
+    [MemberNotNull(nameof(LogFontFamily))]
+    void UpdateLogFontFamily(bool notifyPropertyChanged)
+    {
+        this.LogFontFamily = this.Application.Settings.GetValueOrDefault(SettingKeys.LogFontFamily).Let(it =>
+        {
+            if (string.IsNullOrEmpty(it))
+                it = SettingKeys.DefaultLogFontFamily;
+            return BuiltInFonts.FontFamilies.FirstOrDefault(font => font.FamilyNames.Contains(it)) ?? new(it);
+        });
+        if (notifyPropertyChanged)
+            this.PropertyChanged?.Invoke(this, new(nameof(LogFontFamily)));
+    }
 
 
     // Update pattern font.

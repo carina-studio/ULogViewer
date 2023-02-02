@@ -15,7 +15,6 @@ using Avalonia.Platform.Storage;
 using Avalonia.VisualTree;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.AppSuite.Controls.Highlighting;
-using CarinaStudio.AppSuite.Media;
 using CarinaStudio.AppSuite.Product;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
@@ -111,8 +110,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		static readonly SettingKey<bool> IsSelectingLogProfileToStartTutorialShownKey = new("SessionView.IsSelectingLogProfileToStartTutorialShown");
 		static readonly SettingKey<bool> IsSwitchingSidePanelsTutorialShownKey = new("SessionView.IsSwitchingSidePanelsTutorialShown");
 		static readonly SettingKey<bool> IsTimestampCategoriesPanelTutorialShownKey = new("SessionView.IsTimestampCategoriesPanelTutorialShown");
-		static readonly StyledProperty<FontFamily> LogFontFamilyProperty = AvaloniaProperty.Register<SessionView, FontFamily>(nameof(LogFontFamily));
-		static readonly StyledProperty<double> LogFontSizeProperty = AvaloniaProperty.Register<SessionView, double>(nameof(LogFontSize), 10.0);
 		static readonly StyledProperty<int> MaxDisplayLineCountForEachLogProperty = AvaloniaProperty.Register<SessionView, int>(nameof(MaxDisplayLineCountForEachLog), 1);
 		static readonly StyledProperty<SessionViewStatusBarState> StatusBarStateProperty = AvaloniaProperty.Register<SessionView, SessionViewStatusBarState>(nameof(StatusBarState), SessionViewStatusBarState.None);
 
@@ -329,10 +326,6 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// create collections
 			this.predefinedLogTextFilters = new SortedObservableList<PredefinedLogTextFilter>(ComparePredefinedLogTextFilters);
-
-			// setup log font
-			this.UpdateLogFontFamily();
-			this.UpdateLogFontSize();
 
 			// setup properties
 			this.SetValue(IsProcessInfoVisibleProperty, this.Settings.GetValueOrDefault(AppSuite.SettingKeys.ShowProcessInfo));
@@ -1452,8 +1445,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				new Avalonia.Controls.TextBlock().Let(it =>
 				{
 					// empty view to reserve height of item
-					it.Bind(Avalonia.Controls.TextBlock.FontFamilyProperty, new Binding() { Path = nameof(LogFontFamily), Source = this });
-					it.Bind(Avalonia.Controls.TextBlock.FontSizeProperty, new Binding() { Path = nameof(LogFontSize), Source = this });
+					it.Bind(Avalonia.Controls.TextBlock.FontFamilyProperty, new Binding() { Path = nameof(ControlFonts.LogFontFamily), Source = ControlFonts.Default });
+					it.Bind(Avalonia.Controls.TextBlock.FontSizeProperty, new Binding() { Path = nameof(ControlFonts.LogFontSize), Source = ControlFonts.Default });
 					it.Opacity = 0;
 					it.Padding = propertyPadding;
 					it.Text = " ";
@@ -1486,8 +1479,8 @@ namespace CarinaStudio.ULogViewer.Controls
 						_ => (Control)new SyntaxHighlightingTextBlock().Also(it =>
 						{
 							it.Bind(SyntaxHighlightingTextBlock.DefinitionSetProperty, new Binding() { Path = nameof(DisplayableLog.TextHighlightingDefinitionSet) });
-							it.Bind(Avalonia.Controls.TextBlock.FontFamilyProperty, new Binding() { Path = nameof(LogFontFamily), Source = this });
-							it.Bind(Avalonia.Controls.TextBlock.FontSizeProperty, new Binding() { Path = nameof(LogFontSize), Source = this });
+							it.Bind(Avalonia.Controls.TextBlock.FontFamilyProperty, new Binding() { Path = nameof(ControlFonts.LogFontFamily), Source = ControlFonts.Default });
+							it.Bind(Avalonia.Controls.TextBlock.FontSizeProperty, new Binding() { Path = nameof(ControlFonts.LogFontSize), Source = ControlFonts.Default });
 							if (logProperty.Name == nameof(DisplayableLog.LevelString))
 							{
 								it.Bind(Avalonia.Controls.TextBlock.BackgroundProperty, new Binding() { Path = nameof(DisplayableLog.LevelBackgroundBrush) });
@@ -1869,8 +1862,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				new Avalonia.Controls.TextBlock().Let(it =>
 				{
 					// empty view to reserve height of item
-					it.Bind(Avalonia.Controls.TextBlock.FontFamilyProperty, new Binding() { Path = nameof(LogFontFamily), Source = this });
-					it.Bind(Avalonia.Controls.TextBlock.FontSizeProperty, new Binding() { Path = nameof(LogFontSize), Source = this });
+					it.Bind(Avalonia.Controls.TextBlock.FontFamilyProperty, new Binding() { Path = nameof(ControlFonts.LogFontFamily), Source = ControlFonts.Default });
+					it.Bind(Avalonia.Controls.TextBlock.FontSizeProperty, new Binding() { Path = nameof(ControlFonts.LogFontSize), Source = ControlFonts.Default });
 					it.Margin = itemPadding;
 					it.Opacity = 0;
 					it.Text = " ";
@@ -1878,8 +1871,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				});
 				var propertyView = new Avalonia.Controls.TextBlock().Also(it =>
 				{
-					it.Bind(Avalonia.Controls.TextBlock.FontFamilyProperty, new Binding() { Path = nameof(LogFontFamily), Source = this });
-					it.Bind(Avalonia.Controls.TextBlock.FontSizeProperty, new Binding() { Path = nameof(LogFontSize), Source = this });
+					it.Bind(Avalonia.Controls.TextBlock.FontFamilyProperty, new Binding() { Path = nameof(ControlFonts.LogFontFamily), Source = ControlFonts.Default });
+					it.Bind(Avalonia.Controls.TextBlock.FontSizeProperty, new Binding() { Path = nameof(ControlFonts.LogFontSize), Source = ControlFonts.Default });
 					if (propertyInMarkedItem.ForegroundColor == LogPropertyForegroundColor.Level)
 						it.Bind(Avalonia.Controls.TextBlock.ForegroundProperty, new Binding() { Path = nameof(DisplayableLog.LevelForegroundBrush) });
 					it.Bind(Avalonia.Controls.TextBlock.TextProperty, new Binding() { Path = propertyInMarkedItem.Name });
@@ -2298,14 +2291,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// Whether "Tools" menu item is visible or not.
 		/// </summary>
 		public bool IsToolsMenuItemVisible { get; }
-
-
-		// Get font family of log.
-		FontFamily LogFontFamily { get => this.GetValue(LogFontFamilyProperty); }
-
-
-		// Get font size of log.
-		double LogFontSize { get => this.GetValue(LogFontSizeProperty); }
 
 
 		/// <summary>
@@ -3622,10 +3607,6 @@ namespace CarinaStudio.ULogViewer.Controls
 				if (!isEnabled)
 					this.logAnalysisScriptSetListBox.SelectedItems!.Clear();
 			}
-			else if (e.Key == SettingKeys.LogFontFamily)
-				this.UpdateLogFontFamily();
-			else if (e.Key == SettingKeys.LogFontSize)
-				this.UpdateLogFontSize();
 			else if (e.Key == SettingKeys.MaxDisplayLineCountForEachLog)
 				this.SetValue(MaxDisplayLineCountForEachLogProperty, Math.Max(1, (int)e.Value));
 			else if (e.Key == SettingKeys.ShowHelpButtonOnLogTextFilter)
@@ -4709,7 +4690,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				{
 					if (this.logListBox.GetItemCount() <= 0 || this.DataContext is not Session)
 					{
-						this.Logger.LogInformation("Clear range of latest displayed logs");
+						this.Logger.LogTrace("Clear range of latest displayed logs");
 						this.latestDisplayedLogRange = null;
 						this.latestDisplayedLogCount = 0;
 						this.latestDisplayedMarkedLogs.Clear();
@@ -4797,25 +4778,6 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.toolBarLogTextFilterItemsPanel.Width = itemsPanelWidth;
 			}
 			this.lastToolBarWidthWhenLayoutItems = toolBarWidth;
-		}
-
-
-		// Update font family of log.
-		void UpdateLogFontFamily()
-		{
-			var name = this.Settings.GetValueOrDefault(SettingKeys.LogFontFamily);
-			if (string.IsNullOrEmpty(name))
-				name = SettingKeys.DefaultLogFontFamily;
-			var builtInFontFamily = BuiltInFonts.FontFamilies.FirstOrDefault(it => it.FamilyNames.Contains(name));
-			this.SetValue(LogFontFamilyProperty, builtInFontFamily ?? new FontFamily(name));
-		}
-
-
-		// Update font size of log.
-		void UpdateLogFontSize()
-		{
-			var size = Math.Max(Math.Min(this.Settings.GetValueOrDefault(SettingKeys.LogFontSize), SettingKeys.MaxLogFontSize), SettingKeys.MinLogFontSize);
-			this.SetValue(LogFontSizeProperty, size);
 		}
 
 
