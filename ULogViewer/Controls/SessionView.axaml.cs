@@ -4686,16 +4686,22 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (this.logListBox.GetItemCount() <= 0 || this.DataContext is not Session session)
 			{
-				this.SynchronizationContext.Post(() =>
+				if (this.latestDisplayedLogRange != null)
 				{
-					if (this.logListBox.GetItemCount() <= 0 || this.DataContext is not Session)
+					this.SynchronizationContext.Post(() =>
 					{
-						this.Logger.LogTrace("Clear range of latest displayed logs");
-						this.latestDisplayedLogRange = null;
-						this.latestDisplayedLogCount = 0;
-						this.latestDisplayedMarkedLogs.Clear();
-					}
-				});
+						if (this.logListBox.GetItemCount() <= 0 || this.DataContext is not Session)
+						{
+							if (this.latestDisplayedLogRange != null)
+							{
+								this.Logger.LogTrace("Clear range of latest displayed logs");
+								this.latestDisplayedLogRange = null;
+								this.latestDisplayedLogCount = 0;
+								this.latestDisplayedMarkedLogs.Clear();
+							}
+						}
+					});
+				}
 				return;
 			}
 			var firstLog = default(DisplayableLog);
