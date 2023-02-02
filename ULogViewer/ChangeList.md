@@ -36,6 +36,7 @@
 + Support customizing text color of each visible log property.
 + Support specifying font for **Regular Expression**, **Date and Time Format**, **Time Span Format**, **Query String (SQL)** and **Command-Line Shell Command**.
 + Add **'Use compact layout'** setting for device with small screen.
++ Try keeping view position of logs after changing view of logs.
 + Support **Python 3.4** as script language.
 + Add **Operation Counting** log analysis to extract number of operations in each time frame.
 + Add **'Quantity'** and **'Byte size'** to each result of log analysis.
