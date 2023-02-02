@@ -286,24 +286,6 @@ namespace CarinaStudio.ULogViewer
 			}
 		});
 
-		
-		/// <inheritdoc/>
-		protected override void OnBackgroundModeEntered()
-		{
-			base.OnBackgroundModeEntered();
-			this.SynchronizationContext.PostDelayed(() =>
-			{
-				if (this.IsBackgroundMode)
-				{
-					this.Logger.LogWarning("Trigger full GC in background mode");
-					var time = this.IsDebugMode ? this.stopwatch.ElapsedMilliseconds : 0L;
-					GC.Collect();
-					if (this.IsDebugMode)
-						this.Logger.LogDebug("[Performance] Took {duration} ms to perform full GC in background", this.stopwatch.ElapsedMilliseconds - time);
-				}
-			}, 1000);
-		}
-
 
 		// Load default string resource.
         protected override IResourceProvider? OnLoadDefaultStringResource()
