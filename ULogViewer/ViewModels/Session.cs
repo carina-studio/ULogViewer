@@ -4525,7 +4525,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					app.PerformGC(GCCollectionMode.Optimized);
 					break;
 				case MemoryUsagePolicy.LessMemoryUsage:
-					app.PerformGC(GCCollectionMode.Default);
+					app.PerformGC(GCCollectionMode.Forced);
 					break;
 				default:
 					staticLogger?.LogDebug("Skip triggering GC");

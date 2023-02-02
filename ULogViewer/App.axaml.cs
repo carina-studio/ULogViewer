@@ -1,3 +1,4 @@
+using System.Runtime;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
@@ -508,6 +509,9 @@ namespace CarinaStudio.ULogViewer
 			await base.OnPrepareStartingAsync();
 			this.UpdateSplashWindowProgress(0.1);
 
+			// setup GC settings
+			this.UpdateGCSettings();
+
 			// initialize syntax highlighting service
 			await SyntaxHighlighting.InitializeAsync(this);
 			this.UpdateSplashWindowProgress(0.15);
@@ -595,6 +599,15 @@ namespace CarinaStudio.ULogViewer
 			return base.OnSelectEnteringDebugMode();
 #endif
         }
+
+
+		/// <inheritdoc/>
+		protected override void OnSettingChanged(SettingChangedEventArgs e)
+		{
+			base.OnSettingChanged(e);
+			if (e.Key == SettingKeys.MemoryUsagePolicy)
+				this.UpdateGCSettings();
+		}
 
 
 		/// <inheritdoc/>
@@ -728,6 +741,21 @@ namespace CarinaStudio.ULogViewer
 					_ = this.RestartRootWindowsAsync();
 					break;
 			}
+		}
+
+
+		// Update GC settings.
+		void UpdateGCSettings()
+		{
+			// latency mode
+			var latencyMode = this.Settings.GetValueOrDefault(SettingKeys.MemoryUsagePolicy) switch
+			{
+				MemoryUsagePolicy.LessMemoryUsage => GCLatencyMode.Batch,
+				MemoryUsagePolicy.BetterPerformance => GCLatencyMode.LowLatency,
+				_ => GCLatencyMode.Interactive,
+			};
+			this.Logger.LogDebug("Set GC latency mode to {mode}", latencyMode);
+			GCSettings.LatencyMode = latencyMode;
 		}
 
 
