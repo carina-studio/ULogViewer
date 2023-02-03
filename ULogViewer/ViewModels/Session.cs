@@ -735,6 +735,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		DisplayableLogGroup? displayableLogGroup;
 		TaskFactory? fileLogsReadingTaskFactory;
 		bool hasLogDataSourceCreationFailure;
+		bool isInitLogProfile;
 		bool isRestoringState;
 		readonly Dictionary<LogReader, LogFileInfoImpl> logFileInfoMapByLogReader = new();
 		readonly SortedObservableList<LogFileInfo> logFileInfoList = new((lhs, rhs) =>
@@ -763,7 +764,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Initialize new <see cref="Session"/> instance.
 		/// </summary>
 		/// <param name="app">Application.</param>
-		public Session(IULogViewerApplication app) : base(app)
+		public Session(IULogViewerApplication app) : this(app, null)
+		{ }
+
+
+		/// <summary>
+		/// Initialize new <see cref="Session"/> instance.
+		/// </summary>
+		/// <param name="app">Application.</param>
+		/// <param name="initLogProfile">Initial log profile.</param>
+		public Session(IULogViewerApplication app, LogProfile? initLogProfile) : base(app)
 		{
 			// create static logger
 			staticLogger ??= app.LoggerFactory.CreateLogger(nameof(Session));
@@ -1171,6 +1181,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.SetValue(MarkedLogsPanelSizeProperty, this.PersistentState.GetValueOrDefault(latestMarkedLogsPanelSizeKey));
 			}
 #pragma warning restore CS0612
+
+			// set initial log profile
+			if (initLogProfile != null)
+			{
+				this.Logger.LogWarning("Initial lop profile: '{name}' [{id}]", initLogProfile.Name, initLogProfile.Id);
+				this.SetLogProfile(initLogProfile, true, true);
+			}
 		}
 
 
@@ -3726,7 +3743,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.Logger.LogWarning("Unable to find log profile '{jsonValueString}' to restore state", jsonValue.GetString());
 					return;
 				}
-				this.SetLogProfile(profile, false);
+				var isInitLogProfile = jsonState.TryGetProperty("IsInitLogProfile", out jsonValue)
+					&& jsonValue.ValueKind == JsonValueKind.True;
+				this.SetLogProfile(profile, isInitLogProfile, false);
 
 				// restore log reading precondition
 				if (jsonState.TryGetProperty(nameof(LastLogReadingPrecondition), out jsonValue))
@@ -4122,8 +4141,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		// Set log profile.
-		void SetLogProfile(LogProfile? profile) => this.SetLogProfile(profile, true);
-		void SetLogProfile(LogProfile? profile, bool startReadingLogs)
+		void SetLogProfile(LogProfile? profile) => 
+			this.SetLogProfile(profile, false, true);
+		void SetLogProfile(LogProfile? profile, bool isInit, bool startReadingLogs)
 		{
 			// check parameter and state
 			this.VerifyAccess();
@@ -4150,6 +4170,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.canSetLogProfile.Update(false);
 			this.SetValue(IsReadingLogsContinuouslyProperty, profile.IsContinuousReading);
 			this.SetValue(LogProfileProperty, profile);
+			this.isInitLogProfile = isInit;
+			if (!isInit)
+				LogProfileManager.Default.SetAsRecentlyUsed(profile);
 
 			// attach to log profile
 			profile.PropertyChanged += this.OnLogProfilePropertyChanged;
@@ -4261,6 +4284,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 				// save log profile
 				jsonWriter.WriteString(nameof(LogProfile), profile.Id);
+				if (this.isInitLogProfile)
+					jsonWriter.WriteBoolean("IsInitLogProfile", true);
 
 				// save log readers
 				if (this.savedLogReaderOptions.IsEmpty())

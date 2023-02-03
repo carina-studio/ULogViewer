@@ -111,12 +111,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				throw new ArgumentOutOfRangeException();
 
 			// create session
-			var session = new Session(this.Application);
+			var session = new Session(this.Application, logProfile);
 			this.AttachSession(index, session);
-
-			// set log profile
-			if (logProfile != null && !session.SetLogProfileCommand.TryExecute(logProfile))
-				this.Logger.LogWarning($"Unable to set initial log profile '{logProfile.Name}' to session '{session}'");
 
 			// complete
 			return session;
