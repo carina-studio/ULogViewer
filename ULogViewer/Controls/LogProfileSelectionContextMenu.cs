@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Globalization;
 
@@ -32,10 +33,12 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
     /// Property of <see cref="EnableActionsOnCurrentLogProfile"/>.
     /// </summary>
     public static readonly StyledProperty<bool> EnableActionsOnCurrentLogProfileProperty = AvaloniaProperty.Register<LogProfileSelectionContextMenu, bool>(nameof(EnableActionsOnCurrentLogProfile), true);
-    /// <summary>
-    /// Property of <see cref="ShowPinnedLogProfiles"/>.
-    /// </summary>
-    public static readonly StyledProperty<bool> ShowPinnedLogProfilesProperty = AvaloniaProperty.Register<LogProfileSelectionContextMenu, bool>(nameof(ShowPinnedLogProfiles), true);
+
+    
+    // Constants.
+    const int ActionsOnCurrentLogProfileTag = 0;
+    const int PinnedLogProfilesTag = 1;
+    const int RecentlyUsedLogProfilesTag = 2;
 
 
     // Static fields.
@@ -48,8 +51,17 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
     MenuItem? exportCurrentLogProfileMenuItem;
     bool isAttachedToLogicalTree;
     readonly SortedObservableList<object> items;
+    readonly LogProfileManager logProfileManager = LogProfileManager.Default;
     readonly HashSet<LogProfile> pinnedLogProfiles = new();
-    readonly Separator pinnedLogProfilesSeparator = new();
+    readonly Separator pinnedLogProfilesSeparator = new()
+    {
+        Tag = PinnedLogProfilesTag,
+    };
+    readonly HashSet<LogProfile> recentlyUsedLogProfiles = new(); // Excluding pinned log profiles
+    readonly Separator recentlyUsedLogProfilesSeparator = new()
+    {
+        Tag = RecentlyUsedLogProfilesTag,
+    };
 
 
     /// <summary>
@@ -87,37 +99,18 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
                     it.IsVisible = isCurrentLogProfile);
             }
         });
-        this.GetObservable(ShowPinnedLogProfilesProperty).Subscribe(show =>
-        {
-            if (!this.isAttachedToLogicalTree)
-                return;
-            var items = new List<object>(this.items);
-            if (show)
-            {
-                if (this.pinnedLogProfiles.IsNotEmpty())
-                    items.Add(this.pinnedLogProfilesSeparator);
-            }
-            else
-                items.Remove(this.pinnedLogProfilesSeparator);
-            this.items.Clear();
-            this.items.AddAll(items);
-        });
     }
 
 
     // Compare menu items.
     int CompareItems(object? lhs, object? rhs)
     {
-        if (lhs is Separator)
+        LogProfile lhsLogProfile;
+        LogProfile rhsLogProfile;
+        if (lhs is Separator lSeparator)
         {
-            if (rhs is Separator)
-            {
-                if (lhs == rhs)
-                    return 0;
-                if (lhs == this.actionsOnCurrentLogProfileSeparator)
-                    return -1;
-                return 1;
-            }
+            if (rhs is Separator rSeparator)
+                return (int)lSeparator.Tag! - (int)rSeparator.Tag!;
             if (rhs == this.editCurrentLogProfileMenuItem
                 || rhs == this.exportCurrentLogProfileMenuItem)
             {
@@ -125,9 +118,14 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
             }
             if (lhs == this.actionsOnCurrentLogProfileSeparator)
                 return -1;
-            if (((rhs as MenuItem)?.DataContext as LogProfile)?.IsPinned == true)
+            rhsLogProfile = (LogProfile)((MenuItem)rhs!).DataContext!;
+            if (rhsLogProfile.IsPinned)
                 return 1;
-            return -1;
+            if (lhs == this.pinnedLogProfilesSeparator)
+                return -1;
+            if (this.logProfileManager.RecentlyUsedProfiles.Contains(rhsLogProfile))
+                return 1;
+            return -1; // this.recentlyUsedLogProfilesSeparator
         }
         if (rhs is Separator)
         {
@@ -138,9 +136,14 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
             }
             if (rhs == this.actionsOnCurrentLogProfileSeparator)
                 return 1;
-            if (((lhs as MenuItem)?.DataContext as LogProfile)?.IsPinned == true)
+            lhsLogProfile = (LogProfile)((MenuItem)lhs!).DataContext!;
+            if (lhsLogProfile.IsPinned)
                 return -1;
-            return 1;
+            if (rhs == this.pinnedLogProfilesSeparator)
+                return 1;
+            if (this.logProfileManager.RecentlyUsedProfiles.Contains(lhsLogProfile))
+                return -1;
+            return 1; // this.recentlyUsedLogProfilesSeparator
         }
         if (lhs == this.editCurrentLogProfileMenuItem)
             return -1;
@@ -150,19 +153,25 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
             return -1;
         if (rhs == this.exportCurrentLogProfileMenuItem)
             return 1;
-        var lhsLogProfile = (LogProfile)((MenuItem)lhs!).DataContext!;
-        var rhsLogProfile = (LogProfile)((MenuItem)rhs!).DataContext!;
-        if (this.GetValue<bool>(ShowPinnedLogProfilesProperty))
+        lhsLogProfile = (LogProfile)((MenuItem)lhs!).DataContext!;
+        rhsLogProfile = (LogProfile)((MenuItem)rhs!).DataContext!;
+        if (lhsLogProfile.IsPinned)
         {
-            if (lhsLogProfile.IsPinned)
-            {
-                if (rhsLogProfile.IsPinned)
-                    return CompareLogProfiles(lhsLogProfile, rhsLogProfile);
-                return -1;
-            }
             if (rhsLogProfile.IsPinned)
-                return 1;
+                return CompareLogProfiles(lhsLogProfile, rhsLogProfile);
+            return -1;
         }
+        else if (rhsLogProfile.IsPinned)
+            return 1;
+        if (this.recentlyUsedLogProfiles.Contains(lhsLogProfile))
+        {
+            var lhsRsLogProfileIndex = this.logProfileManager.RecentlyUsedProfiles.IndexOf(lhsLogProfile);
+            if (this.recentlyUsedLogProfiles.Contains(rhsLogProfile))
+                return lhsRsLogProfileIndex - this.logProfileManager.RecentlyUsedProfiles.IndexOf(rhsLogProfile);
+            return -1;
+        }
+        if (this.recentlyUsedLogProfiles.Contains(rhsLogProfile))
+            return 1;
         return CompareLogProfiles(lhsLogProfile, rhsLogProfile);
     }
 
@@ -365,8 +374,8 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
     /// </summary>
     public bool EnableActionsOnCurrentLogProfile
     {
-        get => this.GetValue<bool>(EnableActionsOnCurrentLogProfileProperty);
-        set => this.SetValue<bool>(EnableActionsOnCurrentLogProfileProperty, value);
+        get => this.GetValue(EnableActionsOnCurrentLogProfileProperty);
+        set => this.SetValue(EnableActionsOnCurrentLogProfileProperty, value);
     }
 
 
@@ -410,17 +419,23 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
         this.isAttachedToLogicalTree = true;
         (LogProfileManager.Default.Profiles as INotifyCollectionChanged)?.Let(it =>
             it.CollectionChanged += this.OnLogProfilesChanged);
+        (LogProfileManager.Default.RecentlyUsedProfiles as INotifyCollectionChanged)?.Let(it =>
+            it.CollectionChanged += this.OnRecentlyUsedLogProfilesChanged);
         this.items.AddAll(new List<object>().Also(it =>
         {
             if (this.CurrentLogProfile != null && this.EnableActionsOnCurrentLogProfile)
             {
                 this.editCurrentLogProfileMenuItem ??= this.CreateEditCurrentLogProfileMenuItem();
                 this.exportCurrentLogProfileMenuItem ??= this.CreateExportCurrentLogProfileMenuItem();
-                this.actionsOnCurrentLogProfileSeparator ??= new();
+                this.actionsOnCurrentLogProfileSeparator ??= new()
+                {
+                    Tag = ActionsOnCurrentLogProfileTag,
+                };
                 it.Add(this.editCurrentLogProfileMenuItem);
                 it.Add(this.exportCurrentLogProfileMenuItem);
                 it.Add(this.actionsOnCurrentLogProfileSeparator);
             }
+            var recentlyUsedLogProfiles = LogProfileManager.Default.RecentlyUsedProfiles;
             foreach (var logProfile in LogProfileManager.Default.Profiles)
             {
                 logProfile.PropertyChanged += this.OnLogProfilePropertyChanged;
@@ -428,18 +443,22 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
                     continue;
                 if (logProfile.IsPinned)
                     this.pinnedLogProfiles.Add(logProfile);
+                else if (recentlyUsedLogProfiles.Contains(logProfile))
+                    this.recentlyUsedLogProfiles.Add(logProfile);
                 it.Add(this.CreateMenuItem(logProfile));
             }
-            if (this.GetValue<bool>(ShowPinnedLogProfilesProperty) && this.pinnedLogProfiles.IsNotEmpty())
+            if (this.pinnedLogProfiles.IsNotEmpty())
                 it.Add(this.pinnedLogProfilesSeparator);
+            if (this.recentlyUsedLogProfiles.IsNotEmpty())
+                it.Add(this.recentlyUsedLogProfilesSeparator);
         }));
         App.Current.ProductManager.Let(it =>
         {
             if (it.IsMock)
-                this.SetValue<bool>(IsProVersionActivatedProperty, false);
+                this.SetValue(IsProVersionActivatedProperty, false);
             else
             {
-                this.SetValue<bool>(IsProVersionActivatedProperty, it.IsProductActivated(Products.Professional));
+                this.SetValue(IsProVersionActivatedProperty, it.IsProductActivated(Products.Professional));
                 it.ProductActivationChanged += this.OnProductActivationChanged;
             }
         });
@@ -452,10 +471,13 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
         this.isAttachedToLogicalTree = false;
         (LogProfileManager.Default.Profiles as INotifyCollectionChanged)?.Let(it =>
             it.CollectionChanged -= this.OnLogProfilesChanged);
+        (LogProfileManager.Default.RecentlyUsedProfiles as INotifyCollectionChanged)?.Let(it =>
+            it.CollectionChanged -= this.OnRecentlyUsedLogProfilesChanged);
         foreach (var logProfile in LogProfileManager.Default.Profiles)
             logProfile.PropertyChanged -= this.OnLogProfilePropertyChanged;
         this.items.Clear();
         this.pinnedLogProfiles.Clear();
+        this.recentlyUsedLogProfiles.Clear();
         App.Current.ProductManager.ProductActivationChanged -= this.OnProductActivationChanged;
         base.OnDetachedFromLogicalTree(e);
     }
@@ -472,17 +494,29 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
                 if (logProfile.IsPinned)
                 {
                     if (this.pinnedLogProfiles.Add(logProfile)
-                        && this.pinnedLogProfiles.Count == 1
-                        && this.GetValue<bool>(ShowPinnedLogProfilesProperty))
+                        && this.pinnedLogProfiles.Count == 1)
                     {
                         this.items.Add(this.pinnedLogProfilesSeparator);
                     }
+                    if (this.recentlyUsedLogProfiles.Remove(logProfile)
+                        && this.recentlyUsedLogProfiles.IsEmpty())
+                    {
+                        this.items.Remove(this.recentlyUsedLogProfilesSeparator);
+                    }
                 }
-                else if (this.pinnedLogProfiles.Remove(logProfile)
-                    && this.pinnedLogProfiles.IsEmpty()
-                    && this.GetValue<bool>(ShowPinnedLogProfilesProperty))
+                else
                 {
-                    this.items.Remove(this.pinnedLogProfilesSeparator);
+                    if (this.pinnedLogProfiles.Remove(logProfile)
+                        && this.pinnedLogProfiles.IsEmpty())
+                    {
+                        this.items.Remove(this.pinnedLogProfilesSeparator);
+                    }
+                    if (LogProfileManager.Default.RecentlyUsedProfiles.Contains(logProfile)
+                        && this.recentlyUsedLogProfiles.Add(logProfile)
+                        && this.recentlyUsedLogProfiles.Count == 1)
+                    {
+                        this.items.Add(this.recentlyUsedLogProfilesSeparator);
+                    }
                 }
                 break;
             case nameof(LogProfile.IsTemplate):
@@ -491,31 +525,41 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
                     this.items.RemoveAll(it =>
                         it is MenuItem menuItem && menuItem.DataContext == logProfile);
                     if (this.pinnedLogProfiles.Remove(logProfile)
-                        && this.pinnedLogProfiles.IsEmpty()
-                        && this.GetValue<bool>(ShowPinnedLogProfilesProperty))
+                        && this.pinnedLogProfiles.IsEmpty())
                     {
                         this.items.Remove(this.pinnedLogProfilesSeparator);
+                    }
+                    if (this.recentlyUsedLogProfiles.Remove(logProfile)
+                        && this.recentlyUsedLogProfiles.IsEmpty())
+                    {
+                        this.items.Remove(this.recentlyUsedLogProfilesSeparator);
                     }
                 }
                 else
                 {
                     this.items.Add(this.CreateMenuItem(logProfile));
-                    if (logProfile.IsPinned 
-                        && this.pinnedLogProfiles.Add(logProfile)
-                        && this.pinnedLogProfiles.Count == 1
-                        && this.GetValue<bool>(ShowPinnedLogProfilesProperty))
+                    if (logProfile.IsPinned)
                     {
-                        this.items.Add(this.pinnedLogProfilesSeparator);
+                        if (this.pinnedLogProfiles.Add(logProfile)
+                            && this.pinnedLogProfiles.Count == 1)
+                        {
+                            this.items.Add(this.pinnedLogProfilesSeparator);
+                        }
+                    }
+                    else
+                    {
+                        if (LogProfileManager.Default.RecentlyUsedProfiles.Contains(logProfile)
+                            && this.recentlyUsedLogProfiles.Add(logProfile)
+                            && this.recentlyUsedLogProfiles.Count == 1)
+                        {
+                            this.items.Add(this.recentlyUsedLogProfilesSeparator);
+                        }
                     }
                 }
                 break;
             case nameof(LogProfile.Name):
-                this.items.FirstOrDefault(it =>
-                {
-                    if (it is not MenuItem menuItem)
-                        return false;
-                    return menuItem.DataContext == logProfile;
-                })?.Let(it => this.items.Sort(it));
+                if (this.TryFindMenuItem(logProfile, out var menuItem))
+                    this.items.Sort(menuItem);
                 break;
         }
     }
@@ -524,8 +568,9 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
     // Called when list of all log profiles changed.
     void OnLogProfilesChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
-        var isPinnedLogProfileSeparatorShown = this.pinnedLogProfiles.IsNotEmpty()
-            && this.GetValue<bool>(ShowPinnedLogProfilesProperty);
+        var isPinnedLogProfileSeparatorShown = this.pinnedLogProfiles.IsNotEmpty();
+        var isRecentlyUsedLogProfilesSeparatorShown = this.recentlyUsedLogProfiles.IsNotEmpty();
+        var recentlyUsedLogProfiles = LogProfileManager.Default.RecentlyUsedProfiles;
         switch (e.Action)
         {
             case NotifyCollectionChangedAction.Add:
@@ -536,14 +581,17 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
                         continue;
                     if (logProfile.IsPinned)
                         this.pinnedLogProfiles.Add(logProfile);
+                    else if (recentlyUsedLogProfiles.Contains(logProfile))
+                        this.recentlyUsedLogProfiles.Add(logProfile);
                     this.items.Add(this.CreateMenuItem(logProfile));
                 }
                 if (!isPinnedLogProfileSeparatorShown
-                    && this.pinnedLogProfiles.IsNotEmpty()
-                    && this.GetValue<bool>(ShowPinnedLogProfilesProperty))
+                    && this.pinnedLogProfiles.IsNotEmpty())
                 {
                     this.items.Add(this.pinnedLogProfilesSeparator);
                 }
+                if (!isRecentlyUsedLogProfilesSeparatorShown && this.recentlyUsedLogProfiles.IsNotEmpty())
+                    this.items.Add(this.recentlyUsedLogProfilesSeparator);
                 break;
             case NotifyCollectionChangedAction.Remove:
                 foreach (var logProfile in e.OldItems!.Cast<LogProfile>())
@@ -552,9 +600,12 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
                     this.items.RemoveAll(it =>
                         it is MenuItem menuItem && menuItem.DataContext == logProfile);
                     this.pinnedLogProfiles.Remove(logProfile);
+                    this.recentlyUsedLogProfiles.Remove(logProfile);
                 }
                 if (isPinnedLogProfileSeparatorShown && this.pinnedLogProfiles.IsEmpty())
                     this.items.Remove(this.pinnedLogProfilesSeparator);
+                if (isRecentlyUsedLogProfilesSeparatorShown && this.recentlyUsedLogProfiles.IsEmpty())
+                    this.items.Remove(this.recentlyUsedLogProfilesSeparator);
                 break;
             default:
                 throw new NotSupportedException($"Unsupported action of change of log profile list: {e.Action}");
@@ -566,17 +617,75 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
     void OnProductActivationChanged(IProductManager productManager, string productId, bool isActivated)
     {
         if (productId == Products.Professional)
-            this.SetValue<bool>(IsProVersionActivatedProperty, isActivated);
+            this.SetValue(IsProVersionActivatedProperty, isActivated);
     }
 
 
-    /// <summary>
-    /// Get or set whether pinned log profiles should be shown or not.
-    /// </summary>
-    public bool ShowPinnedLogProfiles
+     // Called when list of recently used log profiles changed.
+    void OnRecentlyUsedLogProfilesChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
-        get => this.GetValue<bool>(ShowPinnedLogProfilesProperty);
-        set => this.SetValue<bool>(ShowPinnedLogProfilesProperty, value);
+        var isRecentlyUsedLogProfilesSeparatorShown = this.recentlyUsedLogProfiles.IsNotEmpty();
+        switch (e.Action)
+        {
+            case NotifyCollectionChangedAction.Add:
+                foreach (var logProfile in e.NewItems!.Cast<LogProfile>())
+                {
+                    if (logProfile.IsTemplate || logProfile.IsPinned)
+                        continue;
+                    if (this.recentlyUsedLogProfiles.Add(logProfile)
+                        && this.TryFindMenuItem(logProfile, out var menuItem))
+                    {
+                        this.items.Sort(menuItem);
+                    }
+                }
+                if (!isRecentlyUsedLogProfilesSeparatorShown && this.recentlyUsedLogProfiles.IsNotEmpty())
+                    this.items.Add(this.recentlyUsedLogProfilesSeparator);
+                break;
+            case NotifyCollectionChangedAction.Remove:
+                foreach (var logProfile in e.OldItems!.Cast<LogProfile>())
+                {
+                    if (this.recentlyUsedLogProfiles.Remove(logProfile)
+                        && this.TryFindMenuItem(logProfile, out var menuItem))
+                    {
+                        this.items.Sort(menuItem);
+                    }
+                }
+                if (isRecentlyUsedLogProfilesSeparatorShown && this.recentlyUsedLogProfiles.IsEmpty())
+                    this.items.Remove(this.recentlyUsedLogProfilesSeparator);
+                break;
+            case NotifyCollectionChangedAction.Reset:
+                var recentlyUsedLogProfiles = LogProfileManager.Default.RecentlyUsedProfiles;
+                foreach (var logProfile in this.recentlyUsedLogProfiles.ToArray())
+                {
+                    if (recentlyUsedLogProfiles.Contains(logProfile) && !logProfile.IsTemplate && !logProfile.IsPinned)
+                        continue;
+                    this.recentlyUsedLogProfiles.Remove(logProfile);
+                    if (this.TryFindMenuItem(logProfile, out var menuItem))
+                        this.items.Sort(menuItem);
+                }
+                foreach (var logProfile in LogProfileManager.Default.Profiles)
+                {
+                    if (!logProfile.IsTemplate && !logProfile.IsPinned && recentlyUsedLogProfiles.Contains(logProfile))
+                        this.recentlyUsedLogProfiles.Add(logProfile);
+                    if (this.TryFindMenuItem(logProfile, out var menuItem))
+                        this.items.Sort(menuItem);
+                }
+                if (this.recentlyUsedLogProfiles.IsEmpty())
+                    this.items.Remove(this.recentlyUsedLogProfilesSeparator);
+                else if (!isRecentlyUsedLogProfilesSeparatorShown)
+                    this.items.Add(this.recentlyUsedLogProfilesSeparator);
+                break;
+            default:
+                throw new NotSupportedException();
+        }
+    }
+
+
+    // Try find menu item for given log profile.
+    bool TryFindMenuItem(LogProfile logProfile, [NotNullWhen(true)] out MenuItem? menuItem)
+    {
+        menuItem = this.items.FirstOrDefault(it => it is MenuItem menuItem && menuItem.DataContext == logProfile) as MenuItem;
+        return menuItem != null;
     }
 
 
@@ -589,7 +698,10 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
             {
                 this.editCurrentLogProfileMenuItem ??= this.CreateEditCurrentLogProfileMenuItem();
                 this.exportCurrentLogProfileMenuItem ??= this.CreateExportCurrentLogProfileMenuItem();
-                this.actionsOnCurrentLogProfileSeparator ??= new();
+                this.actionsOnCurrentLogProfileSeparator ??= new()
+                {
+                    Tag = ActionsOnCurrentLogProfileTag,
+                };
                 if (!this.items.Contains(this.actionsOnCurrentLogProfileSeparator))
                 {
                     this.items.Add(this.editCurrentLogProfileMenuItem);
