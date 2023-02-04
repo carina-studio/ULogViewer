@@ -537,6 +537,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.PinnedLogProfiles">已釘選</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.PinUnpinLogProfile">釘選/移除釘選日誌類型</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.ProVersionOnly">需要升級至專業版</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionDialog.RecentlyUsedLogProfiles">最近使用的日誌類型</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.RemoveLogProfile">刪除日誌類型</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.TemplateLogProfiles">範本</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.Title">選擇日誌類型</sys:String>

@@ -540,6 +540,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.PinnedLogProfiles">已订选</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.PinUnpinLogProfile">订选/移除订选日志类型</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.ProVersionOnly">需要升级至专业版</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionDialog.RecentlyUsedLogProfiles">最近使用的日志类型</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.RemoveLogProfile">删除日志类型</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.TemplateLogProfiles">模板</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.Title">选择日志类型</sys:String>

@@ -34,10 +34,13 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Fields.
 		readonly HashSet<LogProfile> attachedLogProfiles = new();
+		readonly LogProfileManager logProfileManager = LogProfileManager.Default;
 		readonly Avalonia.Controls.ListBox otherLogProfileListBox;
 		readonly SortedObservableList<LogProfile> otherLogProfiles = new(CompareLogProfiles);
 		readonly Avalonia.Controls.ListBox pinnedLogProfileListBox;
 		readonly SortedObservableList<LogProfile> pinnedLogProfiles = new(CompareLogProfiles);
+		readonly Avalonia.Controls.ListBox recentlyUsedLogProfileListBox;
+		readonly SortedObservableList<LogProfile> recentlyUsedLogProfiles;
 		readonly ScrollViewer scrollViewer;
 		readonly Avalonia.Controls.ListBox templateLogProfileListBox;
 		readonly SortedObservableList<LogProfile> templateLogProfiles = new(CompareLogProfiles);
@@ -51,6 +54,13 @@ namespace CarinaStudio.ULogViewer.Controls
 			// setup properties
 			this.OtherLogProfiles = ListExtensions.AsReadOnly(this.otherLogProfiles);
 			this.PinnedLogProfiles = ListExtensions.AsReadOnly(this.pinnedLogProfiles);
+			this.recentlyUsedLogProfiles = new((lhs, rhs) =>
+			{
+				var lIndex = this.logProfileManager.RecentlyUsedProfiles.IndexOf(lhs);
+				var rIndex = this.logProfileManager.RecentlyUsedProfiles.IndexOf(rhs);
+				return lIndex - rIndex;
+			});
+			this.RecentlyUsedLogProfiles = ListExtensions.AsReadOnly(this.recentlyUsedLogProfiles);
 			this.TemplateLogProfiles = ListExtensions.AsReadOnly(this.templateLogProfiles);
 
 			// setup commands
@@ -66,11 +76,13 @@ namespace CarinaStudio.ULogViewer.Controls
 			// setup controls
 			this.otherLogProfileListBox = this.Get<Avalonia.Controls.ListBox>(nameof(otherLogProfileListBox));
 			this.pinnedLogProfileListBox = this.Get<Avalonia.Controls.ListBox>(nameof(pinnedLogProfileListBox));
+			this.recentlyUsedLogProfileListBox = this.Get<Avalonia.Controls.ListBox>(nameof(recentlyUsedLogProfileListBox));
 			this.scrollViewer = this.Get<ScrollViewer>(nameof(scrollViewer));
 			this.templateLogProfileListBox = this.Get<Avalonia.Controls.ListBox>(nameof(templateLogProfileListBox));
 
 			// attach to log profiles
-			((INotifyCollectionChanged)LogProfileManager.Default.Profiles).CollectionChanged += this.OnAllLogProfilesChanged;
+			((INotifyCollectionChanged)this.logProfileManager.Profiles).CollectionChanged += this.OnAllLogProfilesChanged;
+			((INotifyCollectionChanged)this.logProfileManager.RecentlyUsedProfiles).CollectionChanged += this.OnRecentlyUsedLogProfilesChanged;
 			this.RefreshLogProfiles();
 		}
 
@@ -183,7 +195,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken)
 		{
 			var logProfile = this.otherLogProfileListBox.SelectedItem as LogProfile
-				?? this.pinnedLogProfileListBox.SelectedItem as LogProfile;
+				?? this.pinnedLogProfileListBox.SelectedItem as LogProfile
+				?? this.recentlyUsedLogProfileListBox.SelectedItem as LogProfile;
 			return Task.FromResult((object?)logProfile);
 		}
 
@@ -267,6 +280,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when list of all log profiles changed.
 		void OnAllLogProfilesChanged(object? sender, NotifyCollectionChangedEventArgs e)
 		{
+			var logProfileManager = this.logProfileManager;
 			switch(e.Action)
 			{
 				case NotifyCollectionChangedAction.Add:
@@ -284,6 +298,8 @@ namespace CarinaStudio.ULogViewer.Controls
 						}
 						else if (logProfile.IsPinned)
 							this.pinnedLogProfiles.Add(logProfile);
+						else if (logProfileManager.RecentlyUsedProfiles.Contains(logProfile))
+							this.recentlyUsedLogProfiles.Add(logProfile);
 						else
 							this.otherLogProfiles.Add(logProfile);
 						logProfile.PropertyChanged += this.OnLogProfilePropertyChanged;
@@ -297,6 +313,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						logProfile.PropertyChanged -= this.OnLogProfilePropertyChanged;
 						this.otherLogProfiles.Remove(logProfile);
 						this.pinnedLogProfiles.Remove(logProfile);
+						this.recentlyUsedLogProfiles.Remove(logProfile);
 						this.templateLogProfiles.Remove(logProfile);
 					}
 					break;
@@ -308,7 +325,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		protected override void OnClosed(EventArgs e)
 		{
 			// detach from log profiles
-			((INotifyCollectionChanged)LogProfileManager.Default.Profiles).CollectionChanged -= this.OnAllLogProfilesChanged;
+			((INotifyCollectionChanged)this.logProfileManager.Profiles).CollectionChanged -= this.OnAllLogProfilesChanged;
+			((INotifyCollectionChanged)this.logProfileManager.RecentlyUsedProfiles).CollectionChanged -= this.OnRecentlyUsedLogProfilesChanged;
 			foreach (var profile in this.attachedLogProfiles)
 				profile.PropertyChanged -= this.OnLogProfilePropertyChanged;
 			this.attachedLogProfiles.Clear();
@@ -339,6 +357,8 @@ namespace CarinaStudio.ULogViewer.Controls
 							return this.templateLogProfiles;
 						if (profile.IsPinned)
 							return pinnedLogProfiles;
+						if (this.recentlyUsedLogProfiles.Contains(profile))
+							return recentlyUsedLogProfiles;
 						return otherLogProfiles;
 					}).Let(it =>
 					{
@@ -352,12 +372,16 @@ namespace CarinaStudio.ULogViewer.Controls
 						if (profile.IsPinned)
 						{
 							this.otherLogProfiles.Remove(profile);
+							this.recentlyUsedLogProfiles.Remove(profile);
 							this.pinnedLogProfiles.Add(profile);
 						}
 						else
 						{
 							this.pinnedLogProfiles.Remove(profile);
-							this.otherLogProfiles.Add(profile);
+							if (this.logProfileManager.RecentlyUsedProfiles.Contains(profile))
+								this.recentlyUsedLogProfiles.Add(profile);
+							else
+								this.otherLogProfiles.Add(profile);
 						}
 					}
 					break;
@@ -366,6 +390,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					{
 						this.otherLogProfiles.Remove(profile);
 						this.pinnedLogProfiles.Remove(profile);
+						this.recentlyUsedLogProfiles.Remove(profile);
 						if (this.Filter == null)
 							this.templateLogProfiles.Add(profile);
 						profile.IsPinned = false;
@@ -374,6 +399,11 @@ namespace CarinaStudio.ULogViewer.Controls
 					{
 						this.templateLogProfiles.Remove(profile);
 						this.pinnedLogProfiles.Add(profile);
+					}
+					else if (this.logProfileManager.RecentlyUsedProfiles.Contains(profile))
+					{
+						this.templateLogProfiles.Remove(profile);
+						this.recentlyUsedLogProfiles.Add(profile);
 					}
 					else
 					{
@@ -408,6 +438,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				if (pinnedLogProfiles.IsNotEmpty())
 					this.pinnedLogProfileListBox.Focus();
+				else if (this.recentlyUsedLogProfiles.IsNotEmpty())
+					this.recentlyUsedLogProfileListBox.Focus();
 				else if (this.otherLogProfiles.IsNotEmpty())
 					this.otherLogProfileListBox.Focus();
 				else if (this.templateLogProfiles.IsNotEmpty())
@@ -424,6 +456,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (this.otherLogProfileListBox.SelectedIndex >= 0)
 			{
 				this.pinnedLogProfileListBox.SelectedIndex = -1;
+				this.recentlyUsedLogProfileListBox.SelectedIndex = -1;
 				this.templateLogProfileListBox.SelectedIndex = -1;
 			}
 			this.InvalidateInput();
@@ -437,6 +470,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (this.pinnedLogProfileListBox.SelectedIndex >= 0)
 			{
 				this.otherLogProfileListBox.SelectedIndex = -1;
+				this.recentlyUsedLogProfileListBox.SelectedIndex = -1;
 				this.templateLogProfileListBox.SelectedIndex = -1;
 			}
 			this.InvalidateInput();
@@ -464,6 +498,65 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Called when list of recently used log profiles changed.
+		void OnRecentlyUsedLogProfilesChanged(object? sender, NotifyCollectionChangedEventArgs e)
+		{
+			switch(e.Action)
+			{
+				case NotifyCollectionChangedAction.Add:
+					var filter = this.Filter;
+					foreach (LogProfile logProfile in e.NewItems!)
+					{
+						if (filter?.Invoke(logProfile) == false)
+							continue;
+						if (!this.attachedLogProfiles.Contains(logProfile) || logProfile.IsTemplate || logProfile.IsPinned)
+							continue;
+						this.otherLogProfiles.Remove(logProfile);
+						this.recentlyUsedLogProfiles.Add(logProfile);
+					}
+					break;
+				case NotifyCollectionChangedAction.Remove:
+					foreach (LogProfile logProfile in e.OldItems.AsNonNull())
+					{
+						var index = this.recentlyUsedLogProfiles.Let(it =>
+						{
+							for (var i = it.Count - 1; i >= 0; --i)
+							{
+								if (it[i] == logProfile)
+									return i;
+							}
+							return -1;
+						});
+						if (index >= 0)
+						{
+							this.recentlyUsedLogProfiles.RemoveAt(index);
+							if (logProfile.IsTemplate)
+								this.templateLogProfiles.Add(logProfile);
+							else if (logProfile.IsPinned)
+								this.pinnedLogProfiles.Add(logProfile);
+							else
+								this.otherLogProfiles.Add(logProfile);
+						}
+					}
+					break;
+			}
+		}
+
+
+		// Called when selection in recently used log profiles changed.
+		void OnRecentlyUsedLogProfilesSelectionChanged(object? sender, SelectionChangedEventArgs e)
+		{
+			if (this.recentlyUsedLogProfileListBox.SelectedIndex >= 0)
+			{
+				this.otherLogProfileListBox.SelectedIndex = -1;
+				this.pinnedLogProfileListBox.SelectedIndex = -1;
+				this.templateLogProfileListBox.SelectedIndex = -1;
+			}
+			this.InvalidateInput();
+			this.ScrollToSelectedLogProfile();
+		}
+
+
 		// Called when selection in template log profiles changed.
 		void OnTemplateLogProfilesSelectionChanged(object? sender, SelectionChangedEventArgs e)
 		{
@@ -471,6 +564,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				this.otherLogProfileListBox.SelectedIndex = -1;
 				this.pinnedLogProfileListBox.SelectedIndex = -1;
+				this.recentlyUsedLogProfileListBox.SelectedIndex = -1;
 			}
 			this.InvalidateInput();
 			this.ScrollToSelectedLogProfile();
@@ -482,7 +576,9 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (!base.OnValidateInput())
 				return false;
-			var selectedItem = (this.pinnedLogProfileListBox.SelectedItem ?? this.otherLogProfileListBox.SelectedItem);
+			var selectedItem = (this.pinnedLogProfileListBox.SelectedItem 
+				?? this.recentlyUsedLogProfileListBox.SelectedItem
+				?? this.otherLogProfileListBox.SelectedItem);
 			if (selectedItem is not LogProfile logProfile)
 				return false;
 			return !logProfile.DataSourceProvider.IsProVersionOnly || this.GetValue<bool>(IsProVersionActivatedProperty);
@@ -517,15 +613,22 @@ namespace CarinaStudio.ULogViewer.Controls
 		public ICommand PinUnpinLogProfileCommand { get; }
 
 
+		/// <summary>
+		/// Get recently used log profiles.
+		/// </summary>
+		public IList<LogProfile> RecentlyUsedLogProfiles { get; }
+
+
 		// Refresh log profiles.
 		void RefreshLogProfiles()
 		{
 			if (this.IsClosed)
 				return;
 			var filter = this.Filter;
+			var logProfileManager = this.logProfileManager;
 			if (filter == null)
 			{
-				foreach (var profile in LogProfileManager.Default.Profiles)
+				foreach (var profile in logProfileManager.Profiles)
 				{
 					if (!this.attachedLogProfiles.Add(profile))
 						continue;
@@ -533,6 +636,8 @@ namespace CarinaStudio.ULogViewer.Controls
 						this.templateLogProfiles.Add(profile);
 					else if (profile.IsPinned)
 						this.pinnedLogProfiles.Add(profile);
+					else if (logProfileManager.RecentlyUsedProfiles.Contains(profile))
+						this.recentlyUsedLogProfiles.Add(profile);
 					else
 						this.otherLogProfiles.Add(profile);
 					profile.PropertyChanged += this.OnLogProfilePropertyChanged;
@@ -547,6 +652,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						this.attachedLogProfiles.Remove(profile);
 						this.otherLogProfiles.Remove(profile);
 						this.pinnedLogProfiles.Remove(profile);
+						this.recentlyUsedLogProfiles.Remove(profile);
 						this.templateLogProfiles.Remove(profile);
 						profile.PropertyChanged -= this.OnLogProfilePropertyChanged;
 					}
@@ -559,6 +665,8 @@ namespace CarinaStudio.ULogViewer.Controls
 					{
 						if (profile.IsPinned)
 							this.pinnedLogProfiles.Add(profile);
+						else if (logProfileManager.RecentlyUsedProfiles.Contains(profile))
+							this.recentlyUsedLogProfiles.Add(profile);
 						else
 							this.otherLogProfiles.Add(profile);
 					}
@@ -603,6 +711,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				var listBoxItem = (ListBoxItem?)null;
 				if (this.pinnedLogProfileListBox.SelectedItem is LogProfile pinnedLogProfile)
 					this.pinnedLogProfileListBox.TryFindListBoxItem(pinnedLogProfile, out listBoxItem);
+				else if (this.recentlyUsedLogProfileListBox.SelectedItem is LogProfile recentlyUsedLogProfile)
+					this.recentlyUsedLogProfileListBox.TryFindListBoxItem(recentlyUsedLogProfile, out listBoxItem);
 				else if (this.otherLogProfileListBox.SelectedItem is LogProfile otherLogProfile)
 					this.otherLogProfileListBox.TryFindListBoxItem(otherLogProfile, out listBoxItem);
 				else if (this.templateLogProfileListBox.SelectedItem is LogProfile templateLogProfile)
@@ -623,6 +733,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.templateLogProfileListBox.SelectedItem = profile;
 			else if (profile.IsPinned)
 				this.pinnedLogProfileListBox.SelectedItem = profile;
+			else if (this.recentlyUsedLogProfiles.Contains(profile))
+				this.recentlyUsedLogProfileListBox.SelectedItem = profile;
 			else
 				this.otherLogProfileListBox.SelectedItem = profile;
 			this.ScrollToSelectedLogProfile();

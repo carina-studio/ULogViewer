@@ -206,6 +206,23 @@
 					</ListBox>
 					<Separator Classes="Dialog_Separator"/>
 				</StackPanel>
+
+				<!-- Recently used profiles -->
+				<StackPanel HorizontalAlignment="Stretch" IsVisible="{Binding $parent[Window].RecentlyUsedLogProfiles.Count}" Orientation="Vertical">
+					<Border Classes="Dialog_TextBlock_Header1" Margin="{DynamicResource Thickness/LogProfileSelectionDialog.Label.Margin}">
+						<TextBlock Classes="Dialog_TextBlock_Header1" Text="{DynamicResource String/LogProfileSelectionDialog.RecentlyUsedLogProfiles}"/>
+					</Border>
+					<ListBox Name="recentlyUsedLogProfileListBox" Classes="LogProfiles" Items="{Binding $parent[Window].RecentlyUsedLogProfiles}" SelectionChanged="OnRecentlyUsedLogProfilesSelectionChanged">
+						<ListBox.Styles>
+							<Style Selector="ListBoxItem">
+								<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+								<Setter Property="Margin" Value="{DynamicResource Thickness/LogProfileSelectionDialog.LogProfile.Margin}"/>
+								<Setter Property="Padding" Value="0"/>
+							</Style>
+						</ListBox.Styles>
+					</ListBox>
+					<Separator Classes="Dialog_Separator"/>
+				</StackPanel>
 				
 				<!-- Other profiles -->
 				<StackPanel HorizontalAlignment="Stretch" IsVisible="{Binding $parent[Window].OtherLogProfiles.Count}" Orientation="Vertical">
