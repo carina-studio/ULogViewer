@@ -4,6 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ia="using:Avalonia.Xaml.Interactivity"
         xmlns:iaCore="using:Avalonia.Xaml.Interactions.Core"
+		xmlns:abControls="using:CarinaStudio.Controls"
 		xmlns:aConverters="using:Avalonia.Data.Converters"
         xmlns:appControls="clr-namespace:CarinaStudio.ULogViewer.Controls;assembly=ULogViewer"
         xmlns:appConverters="clr-namespace:CarinaStudio.ULogViewer.Converters;assembly=ULogViewer"
@@ -81,7 +82,7 @@
 											<Binding Path="!DataSourceProvider.IsProVersionOnly"/>
 										</MultiBinding>
 									</Panel.IsEnabled>
-									<TextBlock FontSize="{DynamicResource Double/LogProfileSelectionDialog.LogProfile.Description.FontSize}" IsVisible="{Binding HasDescription}" MaxLines="5" Opacity="{DynamicResource Double/LogProfileSelectionDialog.LogProfile.Description.Opacity}" Text="{Binding Description}" TextTrimming="CharacterEllipsis" TextWrapping="Wrap"/>
+									<abControls:TextBlock FontSize="{DynamicResource Double/LogProfileSelectionDialog.LogProfile.Description.FontSize}" IsVisible="{Binding HasDescription}" MaxLines="5" Opacity="{DynamicResource Double/LogProfileSelectionDialog.LogProfile.Description.Opacity}" Text="{Binding Description}" TextTrimming="CharacterEllipsis" TextWrapping="WrapWithOverflow"/>
 									<TextBlock FontSize="{DynamicResource Double/LogProfileSelectionDialog.LogProfile.Description.FontSize}" IsVisible="{Binding !HasDescription}" Opacity="{DynamicResource Double/LogProfileSelectionDialog.LogProfile.Description.Opacity}" Text="{DynamicResource String/LogProfileSelectionDialog.NoDescription}" TextTrimming="CharacterEllipsis"/>
 								</Panel>
 
@@ -191,7 +192,9 @@
 
 				<!-- Pinned profiles -->
 				<StackPanel HorizontalAlignment="Stretch" IsVisible="{Binding $parent[Window].PinnedLogProfiles.Count}" Orientation="Vertical">
-					<TextBlock Classes="Dialog_TextBlock_Header1" Margin="{DynamicResource Thickness/LogProfileSelectionDialog.Label.Margin}" Text="{DynamicResource String/LogProfileSelectionDialog.PinnedLogProfiles}"/>
+					<Border Classes="Dialog_TextBlock_Header1" Margin="{DynamicResource Thickness/LogProfileSelectionDialog.Label.Margin}">
+						<TextBlock Classes="Dialog_TextBlock_Header1" Text="{DynamicResource String/LogProfileSelectionDialog.PinnedLogProfiles}"/>
+					</Border>
 					<ListBox Name="pinnedLogProfileListBox" Classes="LogProfiles" Items="{Binding $parent[Window].PinnedLogProfiles}" SelectionChanged="OnPinnedLogProfilesSelectionChanged">
 						<ListBox.Styles>
 							<Style Selector="ListBoxItem">
@@ -206,8 +209,12 @@
 				
 				<!-- Other profiles -->
 				<StackPanel HorizontalAlignment="Stretch" IsVisible="{Binding $parent[Window].OtherLogProfiles.Count}" Orientation="Vertical">
-					<TextBlock Classes="Dialog_TextBlock_Header1" IsVisible="{Binding $parent[Window].PinnedLogProfiles.Count}" Margin="{DynamicResource Thickness/LogProfileSelectionDialog.Label.Margin}" Text="{DynamicResource String/LogProfileSelectionDialog.OtherLogProfiles}"/>
-					<TextBlock Classes="Dialog_TextBlock_Header1" IsVisible="{Binding !$parent[Window].PinnedLogProfiles.Count}" Margin="{DynamicResource Thickness/LogProfileSelectionDialog.Label.Margin}" Text="{DynamicResource String/LogProfileSelectionDialog.AllLogProfiles}"/>
+					<Border Classes="Dialog_TextBlock_Header1" Margin="{DynamicResource Thickness/LogProfileSelectionDialog.Label.Margin}">
+						<Panel>
+							<TextBlock Classes="Dialog_TextBlock_Header1" IsVisible="{Binding $parent[Window].PinnedLogProfiles.Count}" Text="{DynamicResource String/LogProfileSelectionDialog.OtherLogProfiles}"/>
+							<TextBlock Classes="Dialog_TextBlock_Header1" IsVisible="{Binding !$parent[Window].PinnedLogProfiles.Count}" Text="{DynamicResource String/LogProfileSelectionDialog.AllLogProfiles}"/>
+						</Panel>
+					</Border>
 					<ListBox Name="otherLogProfileListBox" Classes="LogProfiles" Items="{Binding $parent[Window].OtherLogProfiles}" SelectionChanged="OnOtherLogProfilesSelectionChanged">
 						<ListBox.Styles>
 							<Style Selector="ListBoxItem">
@@ -222,7 +229,9 @@
 
 				<!-- Template profiles -->
 				<StackPanel HorizontalAlignment="Stretch" IsVisible="{Binding $parent[Window].TemplateLogProfiles.Count}" Orientation="Vertical">
-					<TextBlock Classes="Dialog_TextBlock_Header1" Margin="{DynamicResource Thickness/LogProfileSelectionDialog.Label.Margin}" Text="{DynamicResource String/LogProfileSelectionDialog.TemplateLogProfiles}"/>
+					<Border Classes="Dialog_TextBlock_Header1" Margin="{DynamicResource Thickness/LogProfileSelectionDialog.Label.Margin}">
+						<TextBlock Classes="Dialog_TextBlock_Header1" Text="{DynamicResource String/LogProfileSelectionDialog.TemplateLogProfiles}"/>
+					</Border>
 					<ListBox Name="templateLogProfileListBox" Classes="LogProfiles" Items="{Binding $parent[Window].TemplateLogProfiles}" SelectionChanged="OnTemplateLogProfilesSelectionChanged">
 						<ListBox.Styles>
 							<Style Selector="ListBoxItem">
