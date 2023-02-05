@@ -151,4 +151,8 @@ static class SettingKeys
 	/// Default font family of pattern.
 	/// </summary>
 	public static string DefaultPatternFontFamily => BuiltInFonts.SourceCodePro.FamilyNames[0];
+	/// <summary>
+	/// Default font family of script editor.
+	/// </summary>
+	public static string DefaultScriptEditorFontFamily => BuiltInFonts.SourceCodePro.FamilyNames[0];
 }

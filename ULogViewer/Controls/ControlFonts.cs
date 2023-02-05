@@ -25,8 +25,10 @@ class ControlFonts : BaseApplicationObject<IULogViewerApplication>, INotifyPrope
         var settings = app.Settings;
         settings.SettingChanged += this.OnSettingChanged;
         this.LogFontSize = Math.Max(Math.Min(SettingKeys.MaxLogFontSize, settings.GetValueOrDefault(SettingKeys.LogFontSize)), SettingKeys.MinLogFontSize);
+        this.ScriptEditorFontSize = Math.Max(Math.Min(SettingKeys.MaxScriptEditorFontSize, settings.GetValueOrDefault(SettingKeys.ScriptEditorFontSize)), SettingKeys.MinScriptEditorFontSize);
         this.UpdateLogFontFamily(false);
         this.UpdatePatternFontFamily(false);
+        this.UpdateScriptEditorFontFamily(false);
     }
 
 
@@ -67,6 +69,13 @@ class ControlFonts : BaseApplicationObject<IULogViewerApplication>, INotifyPrope
         }
         else if (key == SettingKeys.PatternFontFamily)
             this.UpdatePatternFontFamily(true);
+        else if (key == SettingKeys.ScriptEditorFontFamily)
+            this.UpdateScriptEditorFontFamily(true);
+        else if (key == SettingKeys.ScriptEditorFontSize)
+        {
+            this.ScriptEditorFontSize = Math.Max(Math.Min(SettingKeys.MaxScriptEditorFontSize, (int)e.Value), SettingKeys.MinScriptEditorFontSize);
+            this.PropertyChanged?.Invoke(this, new(nameof(ScriptEditorFontSize)));
+        }
     }
 
 
@@ -76,6 +85,14 @@ class ControlFonts : BaseApplicationObject<IULogViewerApplication>, INotifyPrope
 
     /// <inheritdoc/>
     public event PropertyChangedEventHandler? PropertyChanged;
+
+
+    // Font family of script editor.
+    public FontFamily ScriptEditorFontFamily { get; private set; }
+
+
+    // Get font size of script editor.
+	public double ScriptEditorFontSize { get; private set; }
 
 
     // Update log font.
@@ -105,5 +122,20 @@ class ControlFonts : BaseApplicationObject<IULogViewerApplication>, INotifyPrope
         });
         if (notifyPropertyChanged)
             this.PropertyChanged?.Invoke(this, new(nameof(PatternFontFamily)));
+    }
+
+
+    // Update script editor font.
+    [MemberNotNull(nameof(ScriptEditorFontFamily))]
+    void UpdateScriptEditorFontFamily(bool notifyPropertyChanged)
+    {
+        this.ScriptEditorFontFamily = this.Application.Settings.GetValueOrDefault(SettingKeys.ScriptEditorFontFamily).Let(it =>
+        {
+            if (string.IsNullOrEmpty(it))
+                it = SettingKeys.DefaultScriptEditorFontFamily;
+            return BuiltInFonts.FontFamilies.FirstOrDefault(font => font.FamilyNames.Contains(it)) ?? new(it);
+        });
+        if (notifyPropertyChanged)
+            this.PropertyChanged?.Invoke(this, new(nameof(ScriptEditorFontFamily)));
     }
 }

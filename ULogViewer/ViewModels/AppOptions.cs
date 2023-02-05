@@ -36,11 +36,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// setup properties
 			var logFontFamilyName = this.LogFontFamily.Name;
 			var patternFontFamilyName = this.PatternFontFamily.Name;
+			var scriptEditorFontFamilyName = this.ScriptEditorFontFamily.Name;
 			this.logProfiles.Add(LogProfileManager.Default.EmptyProfile);
 			this.logProfiles.AddAll(LogProfileManager.Default.Profiles.Where(it => !it.IsTemplate));
 			this.LogProfiles = ListExtensions.AsReadOnly(this.logProfiles);
 			this.SampleLogFontFamily = BuiltInFonts.FontFamilies.FirstOrDefault(it => it.FamilyNames.Contains(logFontFamilyName)) ?? new FontFamily(logFontFamilyName);
 			this.SamplePatternFontFamily = BuiltInFonts.FontFamilies.FirstOrDefault(it => it.FamilyNames.Contains(patternFontFamilyName)) ?? new FontFamily(patternFontFamilyName);
+			this.SampleScriptEditorFontFamily = BuiltInFonts.FontFamilies.FirstOrDefault(it => it.FamilyNames.Contains(scriptEditorFontFamilyName)) ?? new FontFamily(scriptEditorFontFamilyName);
 
 			// add event handlers
 			((INotifyCollectionChanged)LogProfileManager.Default.Profiles).CollectionChanged += this.OnLogProfilesChanged;
@@ -300,6 +302,15 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			}
 			else if (key == SettingKeys.ResetLogAnalysisRuleSetsAfterSettingLogProfile)
 				this.OnPropertyChanged(nameof(ResetLogAnalysisRuleSetsAfterSettingLogProfile));
+			else if (key == SettingKeys.ScriptEditorFontFamily)
+			{
+				var familyName = this.ScriptEditorFontFamily.Name;
+				this.OnPropertyChanged(nameof(ScriptEditorFontFamily));
+				this.SampleScriptEditorFontFamily = BuiltInFonts.FontFamilies.FirstOrDefault(it => it.FamilyNames.Contains(familyName)) ?? new FontFamily(familyName);
+				this.OnPropertyChanged(nameof(SampleScriptEditorFontFamily));
+			}
+			else if (key == SettingKeys.ScriptEditorFontSize)
+				this.OnPropertyChanged(nameof(ScriptEditorFontSize));
 			else if (key == SettingKeys.SelectIPEndPointWhenNeeded)
 				this.OnPropertyChanged(nameof(SelectIPEndPointWhenNeeded));
 			else if (key == SettingKeys.SelectLogFilesWhenNeeded)
@@ -368,6 +379,44 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Get <see cref="FontFamily"/> for sample pattern text.
 		/// </summary>
 		public FontFamily SamplePatternFontFamily { get; private set; }
+
+
+		/// <summary>
+		/// Get <see cref="FontFamily"/> for sample script.
+		/// </summary>
+		public FontFamily SampleScriptEditorFontFamily { get; private set; }
+
+
+		/// <summary>
+		/// Get or set font family of script editor.
+		/// </summary>
+		public FontFamilyInfo ScriptEditorFontFamily
+		{
+			get => this.Settings.GetValueOrDefault(SettingKeys.ScriptEditorFontFamily).Let(it =>
+			{
+				var familyName = string.IsNullOrEmpty(it)
+					? SettingKeys.DefaultScriptEditorFontFamily
+					: it;
+				return this.InstalledFontFamilies.FirstOrDefault(it => it.Name == familyName) ?? new(familyName, false);
+			});
+			set 
+			{
+				if (value.Name == SettingKeys.DefaultScriptEditorFontFamily)
+					this.Settings.ResetValue(SettingKeys.ScriptEditorFontFamily);
+				else
+					this.Settings.SetValue<string>(SettingKeys.ScriptEditorFontFamily, value.Name);
+			}
+		}
+
+
+		/// <summary>
+		/// Get or set font size of script editor.
+		/// </summary>
+		public int ScriptEditorFontSize
+		{
+			get => this.Settings.GetValueOrDefault(SettingKeys.ScriptEditorFontSize);
+			set => this.Settings.SetValue<int>(SettingKeys.ScriptEditorFontSize, value);
+		}
 
 
 		/// <summary>
