@@ -10,6 +10,7 @@
 + Support selecting intersection/union of filter conditions dynamically according to current conditions.
 + Support right-clicking on **'Create new tab'** button to select log profile and set to new tab directly.
 + Add button beside **'Select/Change log profile'** button for opening menu to select log profile quickly.
++ Track recently used log profiles and list in log profile selection dialog and menu.
 + Support clicking on **'Earliest timestamp of log/Minimum time span of log'** or **'Latest timestamp of log/Maximum time span of log'** to select the log.
 + Support creating new operation duration analysis rule which begins from or is ended with another rule.
 + Support converting to log level from raw value of specified log property.
