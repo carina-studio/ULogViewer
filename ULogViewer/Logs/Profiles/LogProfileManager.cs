@@ -297,20 +297,39 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
     }
 
 
+    /// <summary>
+    /// Reset and clear recently used log profiles.
+    /// </summary>
+    public void ResetRecentlyUsedProfiles()
+    {
+        this.VerifyAccess();
+        if (this.recentlyUsedProfiles.IsNotEmpty())
+        {
+            this.recentlyUsedProfiles.Clear();
+            this.SaveRecentlyUsedProfiles();
+        }
+    }
+
+
     // Save list of recently used lgo profiles to persistent state.
     void SaveRecentlyUsedProfiles()
     {
-        this.PersistentState.SetValue<string>(recentlyUsedProfilesKey, new MemoryStream().Use(stream =>
+        if (this.recentlyUsedProfiles.IsEmpty())
+            this.PersistentState.ResetValue(recentlyUsedProfilesKey);
+        else
         {
-            using (var jsonWriter = new Utf8JsonWriter(stream))
+            this.PersistentState.SetValue<string>(recentlyUsedProfilesKey, new MemoryStream().Use(stream =>
             {
-                jsonWriter.WriteStartArray();
-                foreach (var rsProfile in this.recentlyUsedProfiles)
-                    jsonWriter.WriteStringValue(rsProfile.Id);
-                jsonWriter.WriteEndArray();
-            }
-            return Encoding.UTF8.GetString(stream.ToArray());
-        }));
+                using (var jsonWriter = new Utf8JsonWriter(stream))
+                {
+                    jsonWriter.WriteStartArray();
+                    foreach (var rsProfile in this.recentlyUsedProfiles)
+                        jsonWriter.WriteStringValue(rsProfile.Id);
+                    jsonWriter.WriteEndArray();
+                }
+                return Encoding.UTF8.GetString(stream.ToArray());
+            }));
+        }
     }
     
 

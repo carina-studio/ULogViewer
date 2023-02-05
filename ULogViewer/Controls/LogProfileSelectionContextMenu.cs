@@ -123,7 +123,7 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
                 return 1;
             if (lhs == this.pinnedLogProfilesSeparator)
                 return -1;
-            if (this.logProfileManager.RecentlyUsedProfiles.Contains(rhsLogProfile))
+            if (this.recentlyUsedLogProfiles.Contains(rhsLogProfile))
                 return 1;
             return -1; // this.recentlyUsedLogProfilesSeparator
         }
@@ -141,7 +141,7 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
                 return -1;
             if (rhs == this.pinnedLogProfilesSeparator)
                 return 1;
-            if (this.logProfileManager.RecentlyUsedProfiles.Contains(lhsLogProfile))
+            if (this.recentlyUsedLogProfiles.Contains(lhsLogProfile))
                 return -1;
             return 1; // this.recentlyUsedLogProfilesSeparator
         }

@@ -573,6 +573,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.ProVersionOnly">Upgrade to Pro version needed</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.RecentlyUsedLogProfiles">Recently used profiles</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.RemoveLogProfile">Delete profile</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionDialog.ResetRecentlyUsedLogProfiles">Clear history</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.TemplateLogProfiles">Template</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.Title">Select log profile</sys:String>
 

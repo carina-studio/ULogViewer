@@ -103,6 +103,39 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Categorize log profile.
+		void CategorizeLogProfile(LogProfile logProfile) =>
+			this.CategorizeLogProfile(logProfile, null);
+		void CategorizeLogProfile(LogProfile logProfile, IList<LogProfile>? categoryToExclude)
+		{
+			if (logProfile.IsTemplate)
+			{
+				if (categoryToExclude != this.templateLogProfiles && this.Filter == null)
+					this.templateLogProfiles.Add(logProfile);
+				return;
+			}
+			if (this.Filter?.Invoke(logProfile) == false)
+				return;
+			if (logProfile.IsPinned)
+			{
+				if (categoryToExclude != this.pinnedLogProfiles)
+					this.pinnedLogProfiles.Add(logProfile);
+			}
+			else if (categoryToExclude != this.recentlyUsedLogProfiles)
+			{
+				if (this.logProfileManager.RecentlyUsedProfiles.Contains(logProfile))
+					this.recentlyUsedLogProfiles.Add(logProfile);
+				else if (categoryToExclude != this.otherLogProfiles)
+					this.otherLogProfiles.Add(logProfile);
+			}
+			else
+			{
+				if (categoryToExclude != this.otherLogProfiles)
+					this.otherLogProfiles.Add(logProfile);
+			}
+		}
+
+
 		// Compare log profiles.
 		static int CompareLogProfiles(LogProfile? x, LogProfile? y)
 		{
@@ -291,17 +324,7 @@ namespace CarinaStudio.ULogViewer.Controls
 							continue;
 						if (!this.attachedLogProfiles.Add(logProfile))
 							continue;
-						if (logProfile.IsTemplate)
-						{
-							if (this.Filter == null)
-								this.templateLogProfiles.Add(logProfile);
-						}
-						else if (logProfile.IsPinned)
-							this.pinnedLogProfiles.Add(logProfile);
-						else if (logProfileManager.RecentlyUsedProfiles.Contains(logProfile))
-							this.recentlyUsedLogProfiles.Add(logProfile);
-						else
-							this.otherLogProfiles.Add(logProfile);
+						this.CategorizeLogProfile(logProfile);
 						logProfile.PropertyChanged += this.OnLogProfilePropertyChanged;
 					}
 					break;
@@ -311,10 +334,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						if (!this.attachedLogProfiles.Remove(logProfile))
 							continue;
 						logProfile.PropertyChanged -= this.OnLogProfilePropertyChanged;
-						this.otherLogProfiles.Remove(logProfile);
-						this.pinnedLogProfiles.Remove(logProfile);
-						this.recentlyUsedLogProfiles.Remove(logProfile);
-						this.templateLogProfiles.Remove(logProfile);
+						this.UncategorizeLogProfile(logProfile);
 					}
 					break;
 			}
@@ -351,65 +371,26 @@ namespace CarinaStudio.ULogViewer.Controls
 			switch (e.PropertyName)
 			{
 				case nameof(LogProfile.IconColor):
-					Global.Run(() =>
-					{
-						if (profile.IsTemplate)
-							return this.templateLogProfiles;
-						if (profile.IsPinned)
-							return pinnedLogProfiles;
-						if (this.recentlyUsedLogProfiles.Contains(profile))
-							return recentlyUsedLogProfiles;
-						return otherLogProfiles;
-					}).Let(it =>
+					this.SelectLogProfileCategory(profile).Let(it =>
 					{
 						it.Remove(profile);
-						it.Add(profile);
+						this.CategorizeLogProfile(profile);
 					});
 					break;
 				case nameof(LogProfile.IsPinned):
-					if (!profile.IsTemplate)
+					if (profile.IsPinned)
 					{
-						if (profile.IsPinned)
-						{
-							this.otherLogProfiles.Remove(profile);
-							this.recentlyUsedLogProfiles.Remove(profile);
-							this.pinnedLogProfiles.Add(profile);
-						}
-						else
-						{
-							this.pinnedLogProfiles.Remove(profile);
-							if (this.logProfileManager.RecentlyUsedProfiles.Contains(profile))
-								this.recentlyUsedLogProfiles.Add(profile);
-							else
-								this.otherLogProfiles.Add(profile);
-						}
+						this.UncategorizeLogProfile(profile);
+						this.CategorizeLogProfile(profile);
 					}
+					else if (this.pinnedLogProfiles.Remove(profile))
+						this.CategorizeLogProfile(profile, this.pinnedLogProfiles);
 					break;
 				case nameof(LogProfile.IsTemplate):
 					if (profile.IsTemplate)
-					{
-						this.otherLogProfiles.Remove(profile);
-						this.pinnedLogProfiles.Remove(profile);
-						this.recentlyUsedLogProfiles.Remove(profile);
-						if (this.Filter == null)
-							this.templateLogProfiles.Add(profile);
 						profile.IsPinned = false;
-					}
-					else if (profile.IsPinned)
-					{
-						this.templateLogProfiles.Remove(profile);
-						this.pinnedLogProfiles.Add(profile);
-					}
-					else if (this.logProfileManager.RecentlyUsedProfiles.Contains(profile))
-					{
-						this.templateLogProfiles.Remove(profile);
-						this.recentlyUsedLogProfiles.Add(profile);
-					}
-					else
-					{
-						this.templateLogProfiles.Remove(profile);
-						this.otherLogProfiles.Add(profile);
-					}
+					this.UncategorizeLogProfile(profile);
+					this.CategorizeLogProfile(profile);
 					break;
 				case nameof(LogProfile.Name):
 					this.otherLogProfiles.Sort(profile);
@@ -501,18 +482,22 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when list of recently used log profiles changed.
 		void OnRecentlyUsedLogProfilesChanged(object? sender, NotifyCollectionChangedEventArgs e)
 		{
+			var filter = this.Filter;
 			switch(e.Action)
 			{
 				case NotifyCollectionChangedAction.Add:
-					var filter = this.Filter;
 					foreach (LogProfile logProfile in e.NewItems!)
 					{
-						if (filter?.Invoke(logProfile) == false)
+						if (filter?.Invoke(logProfile) == false || !this.attachedLogProfiles.Contains(logProfile))
 							continue;
-						if (!this.attachedLogProfiles.Contains(logProfile) || logProfile.IsTemplate || logProfile.IsPinned)
-							continue;
-						this.otherLogProfiles.Remove(logProfile);
-						this.recentlyUsedLogProfiles.Add(logProfile);
+						this.SelectLogProfileCategory(logProfile).Let(it =>
+						{
+							if (it == this.recentlyUsedLogProfiles)
+							{
+								this.UncategorizeLogProfile(logProfile);
+								it.Add(logProfile);
+							}
+						});
 					}
 					break;
 				case NotifyCollectionChangedAction.Remove:
@@ -530,15 +515,42 @@ namespace CarinaStudio.ULogViewer.Controls
 						if (index >= 0)
 						{
 							this.recentlyUsedLogProfiles.RemoveAt(index);
-							if (logProfile.IsTemplate)
-								this.templateLogProfiles.Add(logProfile);
-							else if (logProfile.IsPinned)
-								this.pinnedLogProfiles.Add(logProfile);
-							else
-								this.otherLogProfiles.Add(logProfile);
+							this.CategorizeLogProfile(logProfile, this.recentlyUsedLogProfiles);
 						}
 					}
 					break;
+				case NotifyCollectionChangedAction.Reset:
+					this.logProfileManager.RecentlyUsedProfiles.Let(it =>
+					{
+						for (var i = this.recentlyUsedLogProfiles.Count - 1; i >= 0; --i)
+						{
+							var logProfile = this.recentlyUsedLogProfiles[i];
+							if (!it.Contains(logProfile))
+							{
+								this.recentlyUsedLogProfiles.RemoveAt(i);
+								this.CategorizeLogProfile(logProfile, this.recentlyUsedLogProfiles);
+							}
+						}
+						foreach (var logProfile in it)
+						{
+							if (this.attachedLogProfiles.Contains(logProfile) 
+								&& !this.recentlyUsedLogProfiles.Contains(logProfile)
+								&& filter?.Invoke(logProfile) != false)
+							{
+								this.SelectLogProfileCategory(logProfile).Let(category =>
+								{
+									if (category == this.recentlyUsedLogProfiles)
+									{
+										this.UncategorizeLogProfile(logProfile);
+										category.Add(logProfile);
+									}
+								});
+							}
+						}
+					});
+					break;
+				default:
+					throw new NotSupportedException();
 			}
 		}
 
@@ -576,9 +588,9 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (!base.OnValidateInput())
 				return false;
-			var selectedItem = (this.pinnedLogProfileListBox.SelectedItem 
+			var selectedItem = this.pinnedLogProfileListBox.SelectedItem 
 				?? this.recentlyUsedLogProfileListBox.SelectedItem
-				?? this.otherLogProfileListBox.SelectedItem);
+				?? this.otherLogProfileListBox.SelectedItem;
 			if (selectedItem is not LogProfile logProfile)
 				return false;
 			return !logProfile.DataSourceProvider.IsProVersionOnly || this.GetValue<bool>(IsProVersionActivatedProperty);
@@ -632,14 +644,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				{
 					if (!this.attachedLogProfiles.Add(profile))
 						continue;
-					if (profile.IsTemplate)
-						this.templateLogProfiles.Add(profile);
-					else if (profile.IsPinned)
-						this.pinnedLogProfiles.Add(profile);
-					else if (logProfileManager.RecentlyUsedProfiles.Contains(profile))
-						this.recentlyUsedLogProfiles.Add(profile);
-					else
-						this.otherLogProfiles.Add(profile);
+					this.CategorizeLogProfile(profile);
 					profile.PropertyChanged += this.OnLogProfilePropertyChanged;
 				}
 			}
@@ -650,26 +655,15 @@ namespace CarinaStudio.ULogViewer.Controls
 					if (!filter(profile) || profile.IsTemplate)
 					{
 						this.attachedLogProfiles.Remove(profile);
-						this.otherLogProfiles.Remove(profile);
-						this.pinnedLogProfiles.Remove(profile);
-						this.recentlyUsedLogProfiles.Remove(profile);
-						this.templateLogProfiles.Remove(profile);
+						this.UncategorizeLogProfile(profile);
 						profile.PropertyChanged -= this.OnLogProfilePropertyChanged;
 					}
 				}
 				foreach (var profile in LogProfileManager.Default.Profiles)
 				{
-					if (!filter(profile) || !this.attachedLogProfiles.Add(profile))
+					if (!this.attachedLogProfiles.Add(profile))
 						continue;
-					if (!profile.IsTemplate)
-					{
-						if (profile.IsPinned)
-							this.pinnedLogProfiles.Add(profile);
-						else if (logProfileManager.RecentlyUsedProfiles.Contains(profile))
-							this.recentlyUsedLogProfiles.Add(profile);
-						else
-							this.otherLogProfiles.Add(profile);
-					}
+					this.CategorizeLogProfile(profile);
 					profile.PropertyChanged += this.OnLogProfilePropertyChanged;
 				}
 			}
@@ -741,9 +735,32 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Select proper category for given log profile.
+		IList<LogProfile> SelectLogProfileCategory(LogProfile logProfile)
+		{
+			if (logProfile.IsTemplate)
+				return this.templateLogProfiles;
+			if (logProfile.IsPinned)
+				return this.pinnedLogProfiles;
+			if (this.logProfileManager.RecentlyUsedProfiles.Contains(logProfile))
+				return this.recentlyUsedLogProfiles;
+			return this.otherLogProfiles;
+		}
+
+
 		/// <summary>
 		/// Get template log profiles.
 		/// </summary>
 		public IList<LogProfile> TemplateLogProfiles { get; }
+
+
+		// Remove log profile from all categories.
+		void UncategorizeLogProfile(LogProfile logProfile)
+		{
+			this.otherLogProfiles.Remove(logProfile);
+			this.pinnedLogProfiles.Remove(logProfile);
+			this.recentlyUsedLogProfiles.Remove(logProfile);
+			this.templateLogProfiles.Remove(logProfile);
+		}
 	}
 }

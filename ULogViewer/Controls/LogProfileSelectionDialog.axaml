@@ -210,7 +210,12 @@
 				<!-- Recently used profiles -->
 				<StackPanel HorizontalAlignment="Stretch" IsVisible="{Binding $parent[Window].RecentlyUsedLogProfiles.Count}" Orientation="Vertical">
 					<Border Classes="Dialog_TextBlock_Header1" Margin="{DynamicResource Thickness/LogProfileSelectionDialog.Label.Margin}">
-						<TextBlock Classes="Dialog_TextBlock_Header1" Text="{DynamicResource String/LogProfileSelectionDialog.RecentlyUsedLogProfiles}"/>
+						<Grid ColumnDefinitions="*,Auto">
+							<TextBlock Classes="Dialog_TextBlock_Header1" Text="{DynamicResource String/LogProfileSelectionDialog.RecentlyUsedLogProfiles}"/>
+							<Button Classes="InPlaceAction_Button" Command="{Binding ResetRecentlyUsedProfiles, Source={x:Static appProfiles:LogProfileManager.Default}}" Grid.Column="1" ToolTip.Tip="{DynamicResource String/LogProfileSelectionDialog.ResetRecentlyUsedLogProfiles}">
+								<Image Classes="InPlaceAction_Icon" Source="{StaticResource Image/Icon.Delete}"/>
+							</Button>
+						</Grid>
 					</Border>
 					<ListBox Name="recentlyUsedLogProfileListBox" Classes="LogProfiles" Items="{Binding $parent[Window].RecentlyUsedLogProfiles}" SelectionChanged="OnRecentlyUsedLogProfilesSelectionChanged">
 						<ListBox.Styles>
