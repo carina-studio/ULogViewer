@@ -512,6 +512,9 @@ namespace CarinaStudio.ULogViewer
 			// setup GC settings
 			this.UpdateGCSettings();
 
+			// setup internal test cases
+			this.SetupTestCases();
+
 			// initialize syntax highlighting service
 			await SyntaxHighlighting.InitializeAsync(this);
 			this.UpdateSplashWindowProgress(0.15);
@@ -597,6 +600,17 @@ namespace CarinaStudio.ULogViewer
 			return true;
 #else
 			return base.OnSelectEnteringDebugMode();
+#endif
+        }
+
+
+		// Select whether to enter testing mode or not.
+        protected override bool OnSelectEnteringTestingMode()
+        {
+#if DEBUG
+			return true;
+#else
+			return base.OnSelectEnteringTestingMode();
 #endif
         }
 
@@ -700,6 +714,19 @@ namespace CarinaStudio.ULogViewer
 
 		// Version of settings.
 		protected override int SettingsVersion => 4;
+
+
+		// Setup internal test cases.
+		void SetupTestCases()
+		{
+			if (!this.IsTestingMode)
+				return;
+			AppSuite.Testing.TestManager.Default.Let(it =>
+			{
+				// Sessions
+				it.AddTestCase(typeof(Testing.Sessions.SessionLeakageTest));
+			});
+		}
 
 
 		/// <inheritdoc/>
