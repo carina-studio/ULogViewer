@@ -7,7 +7,7 @@
 		<ResourceDictionary>
 
 			<!-- Accent -->
-			<Color x:Key="Color/Accent">#912fbf</Color>
+			<Color x:Key="Color/Accent">#8a5ce6</Color>
 
 			<!-- Icon -->
 			<SolidColorBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.Checkpoint" Color="#f26357"/>
