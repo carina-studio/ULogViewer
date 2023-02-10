@@ -1957,6 +1957,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.DetachFromLogAnalysis(session.LogAnalysis);
 
 			// remove log analysis results
+			this.logAnalysisResultListBox.SelectedItems?.Clear();
 			this.logAnalysisResultListBox.Items = null;
 			
 			// detach from properties
