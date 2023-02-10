@@ -436,6 +436,7 @@ class LogFilteringViewModel : SessionComponent
         if (this.Application.IsDebugMode)
             this.Logger.LogDebug("Detach from log filter {logFilter}", this.logFilter);
         this.logFilter.PropertyChanged -= this.OnLogFilterPropertyChanged;
+        this.logFilter.Dispose();
 
         // detach from log selection
         this.selectedPidObserverToken?.Dispose();

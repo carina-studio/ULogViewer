@@ -474,7 +474,7 @@ class LogAnalysisViewModel : SessionComponent
 
 
     // Detach from given log analyzer.
-    void DetachFromAnalyzer(IDisplayableLogAnalyzer<DisplayableLogAnalysisResult> analyzer)
+    void DetachFromAnalyzer(IDisplayableLogAnalyzer<DisplayableLogAnalysisResult> analyzer, bool isDisposing)
     {
         // remove from set
         if (!this.attachedAnalyzers.Remove(analyzer))
@@ -491,10 +491,12 @@ class LogAnalysisViewModel : SessionComponent
         analyzer.PropertyChanged -= this.OnAnalyzerPropertyChanged;
 
         // remove analysis results
-        this.analysisResults.RemoveAll(analyzer.AnalysisResults);
+        if (!isDisposing)
+            this.analysisResults.RemoveAll(analyzer.AnalysisResults);
 
         // report state
-        this.updateAnalysisStateAction?.Schedule();
+        if (!isDisposing)
+            this.updateAnalysisStateAction?.Schedule();
     }
 
 
@@ -504,6 +506,20 @@ class LogAnalysisViewModel : SessionComponent
         // detach from session
         this.Session.AllLogReadersDisposed -= this.OnAllLogReadersDisposed;
         this.displayLogPropertiesObserverToken.Dispose();
+
+        // detach from analyzers
+        this.DetachFromAnalyzer(this.keyLogAnalyzer, true);
+        this.DetachFromAnalyzer(this.operationCountingAnalyzer, true);
+        this.DetachFromAnalyzer(this.operationDurationAnalyzer, true);
+        this.DetachFromAnalyzer(this.scriptLogAnalyzer, true);
+        this.keyLogAnalyzer.Dispose();
+        this.operationCountingAnalyzer.Dispose();
+        this.operationDurationAnalyzer.Dispose();
+        this.scriptLogAnalyzer.Dispose();
+
+        // clear analysis results
+        this.analysisResults.Clear();
+        this.updateAnalysisStateAction.Cancel();
 
         // call base
         base.Dispose(disposing);
