@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<AssemblyVersion>3.0.1.129</AssemblyVersion>
-		<Version>3.0.1.129</Version>
+		<AssemblyVersion>3.0.1.210</AssemblyVersion>
+		<Version>3.0.1.210</Version>
 		<OutputType>WinExe</OutputType>
 		<DebugType>embedded</DebugType>
 		<RootNamespace>CarinaStudio.ULogViewer</RootNamespace>
