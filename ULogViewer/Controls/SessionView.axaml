@@ -328,7 +328,7 @@
 
 		<!-- Log property tool tip template -->
 		<DataTemplate x:Key="logPropertyToolTipTemplate">
-			<TextBlock FontFamily="{Binding $parent[UserControl].LogFontFamily}" MaxLines="8" Text="{Binding}" TextWrapping="Wrap"/>
+			<TextBlock FontFamily="{Binding LogFontFamily, Source={x:Static appControls:ControlFonts.Default}}" MaxLines="8" Text="{Binding}" TextWrapping="Wrap"/>
 		</DataTemplate>
 
 		<!-- Logs saving menu -->
@@ -1249,7 +1249,7 @@
 							<DataTemplate>
 								<Grid ColumnDefinitions="Auto,*">
 									<Border Background="{Binding Log.ColorIndicatorBrush}" BorderBrush="{DynamicResource Brush/WorkingArea.Panel.Background}" BorderThickness="{StaticResource Thickness/SessionView.LogListBox.ColorIndicator.Border}" IsVisible="{Binding $parent[UserControl].DataContext.HasLogColorIndicator}" ToolTip.Tip="{Binding Log.ColorIndicatorTip}" Width="{StaticResource Double/SessionView.LogListBox.ColorIndicator.Width}"/>
-									<TextBlock FontFamily="{Binding $parent[UserControl].LogFontFamily}" FontSize="{Binding $parent[UserControl].LogFontSize}" Grid.Column="1" Margin="{StaticResource Thickness/SessionView.MarkedLogListBox.Item.Padding}" Text="{Binding Name}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+									<TextBlock FontFamily="{Binding LogFontFamily, Source={x:Static appControls:ControlFonts.Default}}" FontSize="{Binding LogFontSize, Source={x:Static appControls:ControlFonts.Default}}" Grid.Column="1" Margin="{StaticResource Thickness/SessionView.MarkedLogListBox.Item.Padding}" Text="{Binding Name}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
 								</Grid>
 							</DataTemplate>
 						</asControls:ListBox.ItemTemplate>
@@ -1616,7 +1616,7 @@
 											</iaCore:DataTriggerBehavior>
 										</ia:Interaction.Behaviors>
 									</Image>
-									<abControls:TextBlock Name="messageTextBlock" FontFamily="{Binding $parent[UserControl].LogFontFamily}" FontSize="{Binding $parent[UserControl].LogFontSize}" Grid.Column="2" Margin="{StaticResource Thickness/SessionView.MarkedLogListBox.Item.Padding}" Text="{Binding Message}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+									<abControls:TextBlock Name="messageTextBlock" FontFamily="{Binding LogFontFamily, Source={x:Static appControls:ControlFonts.Default}}" FontSize="{Binding LogFontSize, Source={x:Static appControls:ControlFonts.Default}}" Grid.Column="2" Margin="{StaticResource Thickness/SessionView.MarkedLogListBox.Item.Padding}" Text="{Binding Message}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
 									<Grid ColumnDefinitions="Auto,*" Grid.Column="2" Grid.Row="1" Margin="{StaticResource Thickness/SessionView.LogAnalysisResult.SubInfoPanel.Padding}" RowDefinitions="Auto,Auto,Auto" VerticalAlignment="Center">
 										<Grid.IsVisible>
 											<MultiBinding Converter="{x:Static aConverters:BoolConverters.Or}">

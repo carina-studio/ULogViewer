@@ -1521,7 +1521,7 @@ namespace CarinaStudio.ULogViewer.Controls
 										this.ShowLogStringProperty(log, logProperty);
 								});
 								viewDetails.HorizontalAlignment = HorizontalAlignment.Left;
-								viewDetails.Bind(LinkTextBlock.IsVisibleProperty, new Binding() { Path = $"HasExtraLinesOf{logProperty.Name}" });
+								viewDetails.Bind(IsVisibleProperty, new Binding() { Path = $"HasExtraLinesOf{logProperty.Name}" });
 								viewDetails.Bind(LinkTextBlock.TextProperty, viewDetails.GetResourceObservable("String/SessionView.ViewFullLogMessage"));
 							}));
 							it.Orientation = Orientation.Vertical;
@@ -1635,6 +1635,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				}
 
 				// indicators
+				var markIndicatorSelectionBackground = default(Border);
 				itemPanel.Children.Add(new Panel().Also(indicatorsPanel =>
 				{
 					// setup panel
@@ -1649,15 +1650,11 @@ namespace CarinaStudio.ULogViewer.Controls
 						var isLeftPointerDown = false;
 						var isRightPointerDown = false;
 						var isMenuOpen = false;
-						panel.Children.Add(new Border().Also(selectionBackgroundBorder =>
+						markIndicatorSelectionBackground = new Border().Also(selectionBackgroundBorder =>
 						{
 							selectionBackgroundBorder.Bind(Border.BackgroundProperty, this.GetResourceObservable("Brush/SessionView.LogListBox.Item.SelectionIndicator.Background"));
-							selectionBackgroundBorder.Bind(Border.IsVisibleProperty, new Binding()
-							{
-								RelativeSource = new RelativeSource(RelativeSourceMode.FindAncestor) { AncestorType = typeof(ListBoxItem) },
-								Path = nameof(ListBoxItem.IsSelected)
-							});
-						}));
+						});
+						panel.Children.Add(markIndicatorSelectionBackground);
 						var emptyMarker = new Border().Also(border =>
 						{
 							border.Bind(Border.BorderBrushProperty, this.GetResourceObservable("Brush/Icon"));
@@ -1679,7 +1676,7 @@ namespace CarinaStudio.ULogViewer.Controls
 							border.BorderThickness = markIndicatorBorderThickness;
 							border.CornerRadius = markIndicatorCornerRadius;
 							border.Height = markIndicatorSize;
-							border.Bind(Avalonia.Controls.Image.IsVisibleProperty, new Binding() { Path = nameof(DisplayableLog.IsMarked) });
+							border.Bind(IsVisibleProperty, new Binding() { Path = nameof(DisplayableLog.IsMarked) });
 							border.Margin = markIndicatorMargin;
 							border.VerticalAlignment = VerticalAlignment.Center;
 							border.Width = markIndicatorSize;
@@ -1751,7 +1748,7 @@ namespace CarinaStudio.ULogViewer.Controls
 							var isLeftPointerDown = false;
 							background.Background = Brushes.Transparent;
 							background.Cursor = new Avalonia.Input.Cursor(StandardCursorType.Hand);
-							background.Bind(Border.IsVisibleProperty, new Binding() { Path = "HasAnalysisResult" });
+							background.Bind(IsVisibleProperty, new Binding() { Path = nameof(DisplayableLog.HasAnalysisResult) });
 							background.PointerPressed += (_, e) =>
 								isLeftPointerDown = e.GetCurrentPoint(background).Properties.IsLeftButtonPressed;
 							background.AddHandler(PointerReleasedEvent, (_, _) =>
@@ -1767,11 +1764,28 @@ namespace CarinaStudio.ULogViewer.Controls
 						panel.Children.Add(new Avalonia.Controls.Image().Also(image =>
 						{
 							image.Classes.Add("Icon");
-							image.Bind(Avalonia.Controls.Image.IsVisibleProperty, new Binding() { Path = nameof(DisplayableLog.HasAnalysisResult) });
+							image.Bind(IsVisibleProperty, new Binding() { Path = nameof(DisplayableLog.HasAnalysisResult) });
 							image.Bind(Avalonia.Controls.Image.SourceProperty, new Binding() { Path = nameof(DisplayableLog.AnalysisResultIndicatorIcon) });
 						}));
 					}));
 				}));
+
+				// update according to selection of list box item
+				var isSelectedObserverToken = EmptyDisposable.Default;
+				itemPanel.AttachedToLogicalTree += (_, _) =>
+				{
+					if (itemPanel.Parent is ListBoxItem listBoxItem)
+					{
+						isSelectedObserverToken = listBoxItem.GetObservable(ListBoxItem.IsSelectedProperty).Subscribe(isSelected =>
+						{
+							markIndicatorSelectionBackground!.IsVisible = isSelected;
+						});
+					}
+				};
+				itemPanel.DetachedFromLogicalTree += (_, _) =>
+				{
+					isSelectedObserverToken.Dispose();
+				};
 
 				// complete
 				return new ControlTemplateResult(itemPanel, this.FindNameScope().AsNonNull());
