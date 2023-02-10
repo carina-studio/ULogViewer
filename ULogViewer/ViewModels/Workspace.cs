@@ -28,8 +28,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 		// Fields.
 		IDisposable? sessionActivationToken;
-		readonly ObservableCollection<Session> sessions = new ObservableCollection<Session>();
-		readonly Stopwatch stopwatch = new Stopwatch();
+		readonly ObservableCollection<Session> sessions = new();
+		readonly Stopwatch stopwatch = new();
 
 
 		/// <summary>
@@ -71,7 +71,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.VerifyAccess();
 			this.VerifyDisposed();
 			if (index < 0 || index > this.sessions.Count)
-				throw new ArgumentOutOfRangeException();
+				throw new ArgumentOutOfRangeException(nameof(index));
 			if (session.Owner == this)
 				return;
 			
@@ -79,7 +79,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			(session.Owner as Workspace)?.DetachSession(session);
 
 			// attach
-			this.Logger.LogDebug($"Attach {session} at position {index}, count: {this.sessions.Count + 1}");
+			this.Logger.LogDebug("Attach {session} at position {index}, count: {count}", session, index, this.sessions.Count + 1);
 			session.Owner = this;
 			session.PropertyChanged += this.OnSessionPropertyChanged;
 			this.sessions.Insert(index, session);
@@ -108,7 +108,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// check parameter
 			if (index < 0 || index > this.sessions.Count)
-				throw new ArgumentOutOfRangeException();
+				throw new ArgumentOutOfRangeException(nameof(index));
 
 			// create session
 			var session = new Session(this.Application, logProfile);
@@ -151,7 +151,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				};
 				if (!session.AddLogFileCommand.TryExecute(param))
 				{
-					this.Logger.LogWarning($"Unable to add log file '{filePath}' to session '{session}'");
+					this.Logger.LogWarning("Unable to add log file '{filePath}' to session '{session}'", filePath , session);
 					break;
 				}
 			}
@@ -186,7 +186,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// set working directory
 			if (!session.SetWorkingDirectoryCommand.TryExecute(directory))
-				this.Logger.LogWarning($"Unable to set working directory '{directory}' to session '{session}'");
+				this.Logger.LogWarning("Unable to set working directory '{directory}' to session '{session}'", directory, session);
 
 			// complete
 			return session;
@@ -208,7 +208,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// detach
 			this.DetachSession(session);
 
-			this.Logger.LogDebug($"Close {session}");
+			this.Logger.LogDebug("Close {session}", session);
 
 			// wait for task completion
 			var startTime = this.stopwatch.IsRunning ? this.stopwatch.ElapsedMilliseconds : 0;
@@ -216,14 +216,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			if (startTime > 0)
 			{
 				var time = this.stopwatch.ElapsedMilliseconds;
-				this.Logger.LogTrace($"Take {time - startTime} ms to wait for necessary tasks of {session}");
+				this.Logger.LogTrace("Take {duration} ms to wait for necessary tasks of {session}", time - startTime, session);
 				startTime = time;
 			}
 
 			// dispose
 			session.Dispose();
 			if (startTime > 0)
-				this.Logger.LogTrace($"Take {this.stopwatch.ElapsedMilliseconds - startTime} ms to dispose {session}");
+				this.Logger.LogTrace("Take {duration} ms to dispose {session}", this.stopwatch.ElapsedMilliseconds - startTime, session);
 		}
 
 
@@ -244,7 +244,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				return;
 			
 			// detach
-			this.Logger.LogDebug($"Detach {session} at position {index}, count: {this.sessions.Count - 1}");
+			this.Logger.LogDebug("Detach {session} at position {index}, count: {count}", session, index, this.sessions.Count - 1);
 			this.sessions.RemoveAt(index);
 			session.PropertyChanged -= this.OnSessionPropertyChanged;
 			session.Owner = null;
@@ -293,9 +293,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			this.VerifyAccess();
 			if (index < 0 || index >= this.sessions.Count)
-				throw new ArgumentOutOfRangeException();
+				throw new ArgumentOutOfRangeException(nameof(index));
 			if (newIndex < 0 || newIndex >= this.sessions.Count)
-				throw new ArgumentOutOfRangeException();
+				throw new ArgumentOutOfRangeException(nameof(newIndex));
 			if (index == newIndex)
 				return;
 			this.sessions.Move(index, newIndex);
@@ -376,7 +376,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.DetachAndCloseSession(session);
 
 			// restore sessions
-			if (jsonState.TryGetProperty("Sessions", out var jsonSessions) && jsonSessions.ValueKind == JsonValueKind.Array)
+			if (jsonState.TryGetProperty(nameof(Sessions), out var jsonSessions) && jsonSessions.ValueKind == JsonValueKind.Array)
 			{
 				foreach (var jsonSession in jsonSessions.EnumerateArray())
 				{
@@ -387,7 +387,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					}
 					catch (Exception ex)
 					{
-						this.Logger.LogError(ex, $"Failed to restore state of session at position {this.sessions.Count - 1}");
+						this.Logger.LogError(ex, "Failed to restore state of session at position {position}", this.sessions.Count - 1);
 					}
 				}
 			}
@@ -420,7 +420,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				jsonWriter.WriteNumber(nameof(ActiveSession), activeSessionIndex);
 
 			// save sessions state
-			jsonWriter.WritePropertyName("Sessions");
+			jsonWriter.WritePropertyName(nameof(Sessions));
 			jsonWriter.WriteStartArray();
 			foreach (var session in this.sessions)
 				session.SaveState(jsonWriter);
