@@ -1389,6 +1389,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (profile.ColorIndicator != LogColorIndicator.None)
 				itemStartingContentWidth += colorIndicatorWidth + colorIndicatorBorderThickness.Left + colorIndicatorBorderThickness.Right;
 			itemPadding = new Thickness(itemPadding.Left + itemStartingContentWidth, itemPadding.Top, itemPadding.Right, itemPadding.Bottom);
+			var levelForegroundBrush = app.FindResourceOrDefault<IBrush>("Brush/SessionView.LogListBox.Item.Level.Foreground");
+			var selectionIndicatorBrush = app.FindResourceOrDefault<IBrush>("Brush/SessionView.LogListBox.Item.SelectionIndicator.Background");
+			var iconBrush = app.FindResourceOrDefault<IBrush>("Brush/Icon");
 			var itemTemplateContent = new Func<IServiceProvider, object>(_ =>
 			{
 				var itemPanel = new Panel().Also(it =>
@@ -1409,16 +1412,22 @@ namespace CarinaStudio.ULogViewer.Controls
 				});
 
 				// property views
-				new Avalonia.Controls.TextBlock().Let(it =>
+				var reservedView = new Avalonia.Controls.TextBlock().Also(it =>
 				{
 					// empty view to reserve height of item
-					it.Bind(Avalonia.Controls.TextBlock.FontFamilyProperty, new Binding() { Path = nameof(LogFontFamily), Source = this });
-					it.Bind(Avalonia.Controls.TextBlock.FontSizeProperty, new Binding() { Path = nameof(LogFontSize), Source = this });
 					it.Opacity = 0;
 					it.Padding = propertyPadding;
 					it.Text = " ";
 					itemGrid.Children.Add(it);
 				});
+				var reservedViewBindingTokens = new IDisposable?[2];
+				var propertyColumns = new ColumnDefinition[logPropertyCount];
+				var propertyColumnWidthBindingTokens = new IDisposable?[logPropertyCount];
+				var isMultiLineProperties = new bool[logPropertyCount];
+				var propertyViews = new Avalonia.Controls.TextBlock?[logPropertyCount];
+				var propertyViewBindingTokens = new IDisposable?[logPropertyCount][];
+				var viewDetailsTextBlocks = new Avalonia.Controls.TextBlock?[logPropertyCount];
+				var viewDetailsTextBingingTokens = new IDisposable?[logPropertyCount];
 				for (var i = 0; i < logPropertyCount; ++i)
 				{
 					// define splitter column
@@ -1433,9 +1442,8 @@ namespace CarinaStudio.ULogViewer.Controls
 					{
 						if (width == null && logPropertyIndex == logPropertyCount - 1)
 							it.Width = new GridLength(1, GridUnitType.Star);
-						else
-							it.Bind(ColumnDefinition.WidthProperty, this.logHeaderWidths[logPropertyIndex]);
 					});
+					propertyColumns[logPropertyIndex] = propertyColumn;
 					itemGrid.ColumnDefinitions.Add(propertyColumn);
 
 					// create property view
@@ -1445,12 +1453,8 @@ namespace CarinaStudio.ULogViewer.Controls
 					{
 						_ => (Control)new CarinaStudio.Controls.TextBlock().Also(it =>
 						{
-							it.Bind(CarinaStudio.Controls.TextBlock.FontFamilyProperty, new Binding() { Path = nameof(LogFontFamily), Source = this });
-							it.Bind(CarinaStudio.Controls.TextBlock.FontSizeProperty, new Binding() { Path = nameof(LogFontSize), Source = this });
 							//it.Bind(TextBlock.ForegroundProperty, new Binding() { Path = nameof(DisplayableLog.LevelBrush) });
-							if (isMultiLineProperty)
-								it.Bind(CarinaStudio.Controls.TextBlock.MaxLinesProperty, new Binding() { Path = nameof(MaxDisplayLineCountForEachLog), Source = this });
-							else
+							if (!isMultiLineProperty)
 								it.MaxLines = 1;
 							it.MaxWidth = itemMaxWidth;
 							it.Padding = propertyPadding;
@@ -1463,8 +1467,10 @@ namespace CarinaStudio.ULogViewer.Controls
 							it.TextTrimming = TextTrimming.CharacterEllipsis;
 							it.TextWrapping = TextWrapping.NoWrap;
 							it.VerticalAlignment = VerticalAlignment.Top;
+							propertyViews[logPropertyIndex] = it;
 						}),
 					};
+					isMultiLineProperties[logPropertyIndex] = isMultiLineProperty;
 					var actualPropertyView = propertyView;
 					if (isMultiLineProperty)
 					{
@@ -1473,14 +1479,14 @@ namespace CarinaStudio.ULogViewer.Controls
 							it.Children.Add(propertyView);
 							it.Children.Add(new LinkTextBlock().Also(viewDetails =>
 							{
+								viewDetailsTextBlocks[logPropertyIndex] = viewDetails;
 								viewDetails.Command = new Command(() =>
 								{
 									if (viewDetails.FindLogicalAncestorOfType<ListBoxItem>()?.DataContext is DisplayableLog log)
 										this.ShowLogStringProperty(log, logProperty);
 								});
 								viewDetails.HorizontalAlignment = HorizontalAlignment.Left;
-								viewDetails.Bind(LinkTextBlock.IsVisibleProperty, new Binding() { Path = $"HasExtraLinesOf{logProperty.Name}" });
-								viewDetails.Bind(LinkTextBlock.TextProperty, viewDetails.GetResourceObservable("String/SessionView.ViewFullLogMessage"));
+								viewDetails.Bind(IsVisibleProperty, new Binding() { Path = $"HasExtraLinesOf{logProperty.Name}" });
 							}));
 							it.Orientation = Orientation.Vertical;
 						});
@@ -1555,6 +1561,9 @@ namespace CarinaStudio.ULogViewer.Controls
 				}
 
 				// indicators
+				var markIndicatorPanel = default(Panel);
+				var markIndicatorPanelTipBindingToken = default(IDisposable);
+				var markIndicatorSelectionBackground = default(Border);
 				itemPanel.Children.Add(new Panel().Also(indicatorsPanel =>
 				{
 					// setup panel
@@ -1569,18 +1578,15 @@ namespace CarinaStudio.ULogViewer.Controls
 						var isLeftPointerDown = false;
 						var isRightPointerDown = false;
 						var isMenuOpen = false;
-						panel.Children.Add(new Border().Also(selectionBackgroundBorder =>
+						markIndicatorPanel = panel;
+						markIndicatorSelectionBackground = new Border().Also(selectionBackgroundBorder =>
 						{
-							selectionBackgroundBorder.Bind(Border.BackgroundProperty, this.GetResourceObservable("Brush/SessionView.LogListBox.Item.SelectionIndicator.Background"));
-							selectionBackgroundBorder.Bind(Border.IsVisibleProperty, new Binding()
-							{
-								RelativeSource = new RelativeSource(RelativeSourceMode.FindAncestor) { AncestorType = typeof(ListBoxItem) },
-								Path = nameof(ListBoxItem.IsSelected)
-							});
-						}));
+							selectionBackgroundBorder.Background = selectionIndicatorBrush;
+						});
+						panel.Children.Add(markIndicatorSelectionBackground);
 						var emptyMarker = new Border().Also(border =>
 						{
-							border.Bind(Border.BorderBrushProperty, this.GetResourceObservable("Brush/Icon"));
+							border.BorderBrush = iconBrush;
 							border.BorderThickness = markIndicatorBorderThickness;
 							border.CornerRadius = markIndicatorCornerRadius;
 							border.Height = markIndicatorSize;
@@ -1595,7 +1601,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						panel.Children.Add(new Border().Also(border =>
 						{
 							border.Bind(Border.BackgroundProperty, new Binding() { Path = nameof(DisplayableLog.MarkedColor), Converter = Converters.MarkColorToIndicatorConverter.Default });
-							border.Bind(Border.BorderBrushProperty, this.GetResourceObservable("Brush/Icon"));
+							border.BorderBrush = iconBrush;
 							border.BorderThickness = markIndicatorBorderThickness;
 							border.CornerRadius = markIndicatorCornerRadius;
 							border.Height = markIndicatorSize;
@@ -1653,7 +1659,6 @@ namespace CarinaStudio.ULogViewer.Controls
 							isLeftPointerDown = false;
 							isRightPointerDown = false;
 						}, RoutingStrategies.Tunnel);
-						panel.Bind(ToolTip.TipProperty, this.GetResourceObservable("String/SessionView.MarkUnmarkLog"));
 						panel.VerticalAlignment = VerticalAlignment.Stretch;
 						panel.Width = markIndicatorWidth;
 					}));
@@ -1692,6 +1697,73 @@ namespace CarinaStudio.ULogViewer.Controls
 						}));
 					}));
 				}));
+
+				// update according to selection of list box item
+				var isSelectedObserverToken = EmptyDisposable.Default;
+				itemPanel.AttachedToLogicalTree += (_, _) =>
+				{
+					// bind to ListBoxItem
+					if (itemPanel.Parent is ListBoxItem listBoxItem)
+					{
+						isSelectedObserverToken = listBoxItem.GetObservable(ListBoxItem.IsSelectedProperty).Subscribe(isSelected =>
+						{
+							markIndicatorSelectionBackground!.IsVisible = isSelected;
+						});
+					}
+
+					// bind to column widths
+					for (var i = logPropertyCount - 1; i >= 0; --i)
+					{
+						if (logProperties[i].Width.HasValue || i != logPropertyCount - 1)
+							propertyColumnWidthBindingTokens[i] = propertyColumns[i].Bind(ColumnDefinition.WidthProperty, this.logHeaderWidths[i]);
+					}
+
+					// bind to fonts
+					reservedViewBindingTokens[0] = reservedView.Bind(Avalonia.Controls.TextBlock.FontFamilyProperty, new Binding() { Path = nameof(LogFontFamily), Source = this });
+					reservedViewBindingTokens[1] = reservedView.Bind(Avalonia.Controls.TextBlock.FontSizeProperty, new Binding() { Path = nameof(LogFontSize), Source = this });
+					for (var i = logPropertyCount - 1; i >= 0; --i)
+					{
+						propertyViews[i]?.Let(it =>
+						{
+							propertyViewBindingTokens[i] ??= new IDisposable?[3];
+						 	propertyViewBindingTokens[i][0] = it.Bind(CarinaStudio.Controls.TextBlock.FontFamilyProperty, new Binding() { Path = nameof(LogFontFamily), Source = this });
+							propertyViewBindingTokens[i][1] = it.Bind(CarinaStudio.Controls.TextBlock.FontSizeProperty, new Binding() { Path = nameof(LogFontSize), Source = this });
+							if (isMultiLineProperties[i])
+								propertyViewBindingTokens[i][2] = it.Bind(CarinaStudio.Controls.TextBlock.MaxLinesProperty, new Binding() { Path = nameof(MaxDisplayLineCountForEachLog), Source = this });
+						});
+					}
+
+					// bind to strings
+					markIndicatorPanelTipBindingToken = markIndicatorPanel?.Bind(ToolTip.TipProperty, this.GetResourceObservable("String/SessionView.MarkUnmarkLog"));
+					for (var i = logPropertyCount - 1; i >= 0; --i)
+						viewDetailsTextBingingTokens[i] = viewDetailsTextBlocks[i]?.Bind(Avalonia.Controls.TextBlock.TextProperty, this.GetResourceObservable("String/SessionView.ViewFullLogMessage"));
+				};
+				itemPanel.DetachedFromLogicalTree += (_, _) =>
+				{
+					// clear binding from ListBoxItem
+					isSelectedObserverToken.Dispose();
+
+					// clear bindings to column widths
+					for (var i = propertyColumnWidthBindingTokens.Length - 1; i >= 0; --i)
+						propertyColumnWidthBindingTokens[i] = propertyColumnWidthBindingTokens[i].DisposeAndReturnNull();
+					
+					// clear bindings from fonts
+					for (var i = reservedViewBindingTokens.Length - 1; i >= 0; --i)
+						reservedViewBindingTokens[i] = reservedViewBindingTokens[i].DisposeAndReturnNull();
+					for (var i = logPropertyCount - 1; i >= 0; --i)
+					{
+						propertyViewBindingTokens[i]?.Let(it =>
+						{
+							for (var j = it.Length - 1; j >= 0; --j)
+								it[j] = it[j].DisposeAndReturnNull();
+						});
+					}
+					
+					// clear bindings to strings
+					markIndicatorPanelTipBindingToken = markIndicatorPanelTipBindingToken.DisposeAndReturnNull();
+					for (var i = logPropertyCount - 1; i >= 0; --i)
+						viewDetailsTextBingingTokens[i] = viewDetailsTextBingingTokens[i].DisposeAndReturnNull();
+				};
 
 				// complete
 				return new ControlTemplateResult(itemPanel, null);
@@ -1757,6 +1829,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			var itemPadding = app.FindResourceOrDefault<Thickness>("Thickness/SessionView.MarkedLogListBox.Item.Padding");
 			if (profile.ColorIndicator != LogColorIndicator.None)
 				itemPadding = new Thickness(itemPadding.Left + colorIndicatorWidth, itemPadding.Top, itemPadding.Right, itemPadding.Bottom);
+			var itemBorderBrush = app.FindResourceOrDefault<IBrush>("Brush/SessionView.MarkedLogListBox.Item.Border.Selected");
+			var itemBorderThickness = app.FindResourceOrDefault<Thickness>("Thickness/SessionView.MarkedLogListBox.Item.Border.Selected");
+			var itemCornerRadius = app.FindResourceOrDefault<CornerRadius>("CornerRadius/SessionView.MarkedLogListBox.Item.Border");
 			var itemTemplateContent = new Func<IServiceProvider, object>(_ =>
 			{
 				var itemPanel = new Panel();
@@ -1796,9 +1871,9 @@ namespace CarinaStudio.ULogViewer.Controls
 				itemPanel.Children.Add(propertyView);
 				itemPanel.Children.Add(new Border().Also(border =>
 				{
-					border.Bind(Border.BorderBrushProperty, this.GetResourceObservable("Brush/SessionView.MarkedLogListBox.Item.Border.Selected"));
-					border.Bind(Border.BorderThicknessProperty, this.GetResourceObservable("Thickness/SessionView.MarkedLogListBox.Item.Border.Selected"));
-					border.Bind(Border.CornerRadiusProperty, this.GetResourceObservable("CornerRadius/SessionView.MarkedLogListBox.Item.Border"));
+					border.BorderBrush = itemBorderBrush;
+					border.BorderThickness = itemBorderThickness;
+					border.CornerRadius = itemCornerRadius;
 					border.Bind(Border.IsVisibleProperty, new Binding()
 					{
 						RelativeSource = new RelativeSource(RelativeSourceMode.FindAncestor) { AncestorType = typeof(ListBoxItem) },
