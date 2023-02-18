@@ -1118,12 +1118,12 @@ namespace CarinaStudio.ULogViewer.Controls
 					? new FormattedString().Also(it =>
 					{
 						it.Arg1 = ruleSetName;
-						it.Bind(FormattedString.FormatProperty, this.GetResourceObservable("String/SessionView.ConfirmRemovingLogAnalysisScriptSet"));
+						it.Bind(FormattedString.FormatProperty, this.Application.GetObservableString("SessionView.ConfirmRemovingLogAnalysisScriptSet"));
 					})
 					: new FormattedString().Also(it =>
 					{
 						it.Arg1 = ruleSetName;
-						it.Bind(FormattedString.FormatProperty, this.GetResourceObservable("String/SessionView.ConfirmRemovingLogAnalysisRuleSet"));
+						it.Bind(FormattedString.FormatProperty, this.Application.GetObservableString("SessionView.ConfirmRemovingLogAnalysisRuleSet"));
 					}),
 			}.ShowDialog(this.attachedWindow);
 			return (result == MessageDialogResult.Yes);
@@ -1169,7 +1169,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				Message = new FormattedString().Also(it =>
 				{
 					it.Bind(FormattedString.Arg1Property, new Binding() { Path = nameof(LogProfile.Name), Source = profile });
-					it.Bind(FormattedString.FormatProperty, this.GetResourceObservable("String/SessionView.NeedToRestartAsAdministrator"));
+					it.Bind(FormattedString.FormatProperty, this.Application.GetObservableString("SessionView.NeedToRestartAsAdministrator"));
 				}),
 			}.ShowDialog(this.attachedWindow);
 			if (result == MessageDialogResult.Yes)
@@ -1324,7 +1324,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				_ = new MessageDialog()
 				{
 					Icon = MessageDialogIcon.Information,
-					Message = this.GetResourceObservable("String/SessionView.Tutorial.CopyLogText"),
+					Message = this.Application.GetObservableString("SessionView.Tutorial.CopyLogText"),
 				}.ShowDialog(this.attachedWindow);
 			}
 			
@@ -1457,8 +1457,6 @@ namespace CarinaStudio.ULogViewer.Controls
 				});
 				var propertyColumns = new ColumnDefinition[logPropertyCount];
 				var propertyColumnWidthBindingTokens = new IDisposable?[logPropertyCount];
-				var viewDetailsTextBlocks = new Avalonia.Controls.TextBlock?[logPropertyCount];
-				var viewDetailsTextBingingTokens = new IDisposable?[logPropertyCount];
 				for (var i = 0; i < logPropertyCount; ++i)
 				{
 					// define splitter column
@@ -1531,7 +1529,6 @@ namespace CarinaStudio.ULogViewer.Controls
 							it.Children.Add(propertyView);
 							it.Children.Add(new LinkTextBlock().Also(viewDetails =>
 							{
-								viewDetailsTextBlocks[logPropertyIndex] = viewDetails;
 								viewDetails.Command = new Command(() =>
 								{
 									if (viewDetails.FindLogicalAncestorOfType<ListBoxItem>()?.DataContext is DisplayableLog log)
@@ -1539,6 +1536,7 @@ namespace CarinaStudio.ULogViewer.Controls
 								});
 								viewDetails.HorizontalAlignment = HorizontalAlignment.Left;
 								viewDetails.Bind(IsVisibleProperty, new Binding() { Path = $"HasExtraLinesOf{logProperty.Name}" });
+								viewDetails.BindToResource(Avalonia.Controls.TextBlock.TextProperty, "String/SessionView.ViewFullLogMessage");
 							}));
 							it.Orientation = Orientation.Vertical;
 						});
@@ -1651,8 +1649,6 @@ namespace CarinaStudio.ULogViewer.Controls
 				}
 
 				// indicators
-				var markIndicatorPanel = default(Panel);
-				var markIndicatorPanelTipBindingToken = default(IDisposable);
 				var markIndicatorSelectionBackground = default(Border);
 				itemPanel.Children.Add(new Panel().Also(indicatorsPanel =>
 				{
@@ -1668,7 +1664,6 @@ namespace CarinaStudio.ULogViewer.Controls
 						var isLeftPointerDown = false;
 						var isRightPointerDown = false;
 						var isMenuOpen = false;
-						markIndicatorPanel = panel;
 						markIndicatorSelectionBackground = new Border().Also(selectionBackgroundBorder =>
 						{
 							selectionBackgroundBorder.Background = selectionIndicatorBrush;
@@ -1749,6 +1744,7 @@ namespace CarinaStudio.ULogViewer.Controls
 							isLeftPointerDown = false;
 							isRightPointerDown = false;
 						}, RoutingStrategies.Tunnel);
+						panel.BindToResource(ToolTip.TipProperty, "String/SessionView.MarkUnmarkLog");
 						panel.VerticalAlignment = VerticalAlignment.Stretch;
 						panel.Width = markIndicatorWidth;
 					}));
@@ -1812,11 +1808,6 @@ namespace CarinaStudio.ULogViewer.Controls
 						if (logProperties[i].Width.HasValue || i != logPropertyCount - 1)
 							propertyColumnWidthBindingTokens[i] = propertyColumns[i].Bind(ColumnDefinition.WidthProperty, this.logHeaderWidths[i]);
 					}
-
-					// bind to strings
-					markIndicatorPanelTipBindingToken = markIndicatorPanel?.Bind(ToolTip.TipProperty, app.GetObservableString("SessionView.MarkUnmarkLog"));
-					for (var i = logPropertyCount - 1; i >= 0; --i)
-						viewDetailsTextBingingTokens[i] = viewDetailsTextBlocks[i]?.Bind(Avalonia.Controls.TextBlock.TextProperty, app.GetObservableString("SessionView.ViewFullLogMessage"));
 				};
 				itemPanel.DetachedFromLogicalTree += (_, _) =>
 				{
@@ -1826,11 +1817,6 @@ namespace CarinaStudio.ULogViewer.Controls
 					// clear bindings to column widths
 					for (var i = propertyColumnWidthBindingTokens.Length - 1; i >= 0; --i)
 						propertyColumnWidthBindingTokens[i] = propertyColumnWidthBindingTokens[i].DisposeAndReturnNull();
-					
-					// clear bindings to strings
-					markIndicatorPanelTipBindingToken = markIndicatorPanelTipBindingToken.DisposeAndReturnNull();
-					for (var i = logPropertyCount - 1; i >= 0; --i)
-						viewDetailsTextBingingTokens[i] = viewDetailsTextBingingTokens[i].DisposeAndReturnNull();
 					
 					// [Workaround] Clear reference to DataContext in case of view is dropped by ListBox
 					itemPanel.DataContext?.Let(it => 
@@ -2115,7 +2101,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						_ = new MessageDialog()
 						{
 							Icon = MessageDialogIcon.Information,
-							Message = this.GetResourceObservable("String/SessionView.NoFilePathDropped")
+							Message = this.Application.GetObservableString("SessionView.NoFilePathDropped")
 						}.ShowDialog(this.attachedWindow);
 						return false;
 					}
@@ -2126,7 +2112,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						_ = new MessageDialog()
 						{
 							Icon = MessageDialogIcon.Information,
-							Message = this.GetResourceObservable("String/SessionView.TooManyDirectoryPathsDropped")
+							Message = this.Application.GetObservableString("SessionView.TooManyDirectoryPathsDropped")
 						}.ShowDialog(this.attachedWindow);
 						return false;
 					}
@@ -2162,7 +2148,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						{
 							if (!session.IsLogFileNeeded || filePaths.Count > 1)
 							{
-								warningMessage = this.GetResourceObservable("String/SessionView.MultipleFilesAreNotAllowed");
+								warningMessage = this.Application.GetObservableString("SessionView.MultipleFilesAreNotAllowed");
 								return true;
 							}
 						}
@@ -2633,7 +2619,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					});
 					border.Height = markIndicatorSize;
 					border.Margin = markIndicatorMargin;
-					border.Bind(ToolTip.TipProperty, this.GetResourceObservable("String/SessionView.MarkLog"));
+					border.BindToResource(ToolTip.TipProperty, "String/SessionView.MarkLog");
 					border.Width = markIndicatorSize;
 					border.VerticalAlignment = VerticalAlignment.Center;
 				}));
@@ -2655,7 +2641,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					});
 					border.Height = analysisResultIndicatorSize;
 					border.Margin = analysisResultIndicatorMargin;
-					border.Bind(ToolTip.TipProperty, this.GetResourceObservable("String/SessionView.LogAnalysisResult"));
+					border.BindToResource(ToolTip.TipProperty, "String/SessionView.LogAnalysisResult");
 					border.Width = analysisResultIndicatorSize;
 					border.VerticalAlignment = VerticalAlignment.Center;
 				}));
@@ -3443,7 +3429,7 @@ namespace CarinaStudio.ULogViewer.Controls
 									{
 										Buttons = MessageDialogButtons.YesNo,
 										Icon = MessageDialogIcon.Question,
-										Message = this.GetResourceObservable("String/SessionView.ConfirmSelectingAllLogs"),
+										Message = this.Application.GetObservableString("SessionView.ConfirmSelectingAllLogs"),
 									}.ShowDialog(this.attachedWindow);
 									if (result == MessageDialogResult.No)
 										return;
@@ -4020,7 +4006,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			var endPoint = await new IPEndPointInputDialog().Also(it =>
 			{
 				it.InitialIPEndPoint = session.IPEndPoint;
-				it.Bind(Avalonia.Controls.Window.TitleProperty, this.GetResourceObservable("String/SessionView.SetIPEndPoint"));
+				it.BindToResource(Avalonia.Controls.Window.TitleProperty, "String/SessionView.SetIPEndPoint");
 			}).ShowDialog<IPEndPoint?>(this.attachedWindow);
 			if (endPoint == null)
 				return;
@@ -4089,7 +4075,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				it.DefaultScheme = session.LogProfile?.DataSourceProvider.Name == "Http" ? "https" : null;
 				it.InitialUri = session.Uri;
-				it.Bind(Avalonia.Controls.Window.TitleProperty, this.GetResourceObservable("String/SessionView.SetUri"));
+				it.BindToResource(Avalonia.Controls.Window.TitleProperty, "String/SessionView.SetUri");
 			}).ShowDialog<Uri?>(this.attachedWindow);
 			if (uri == null)
 				return;
@@ -4194,7 +4180,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				it.InitialDateTime = session.LogSelection.EarliestSelectedLogTimestamp ?? session.EarliestLogTimestamp;
 				it.Message = this.Application.GetString("SessionView.SelectNearestLogByTimestamp.Message");
-				it.Bind(Avalonia.Controls.Window.TitleProperty, this.GetResourceObservable("String/SessionView.SelectNearestLogByTimestamp.Title"));
+				it.BindToResource(Avalonia.Controls.Window.TitleProperty, "String/SessionView.SelectNearestLogByTimestamp.Title");
 			}).ShowDialog<DateTime?>(this.attachedWindow);
 			if (timestamp == null)
 				return;
@@ -4467,7 +4453,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					return window.ShowTutorial(new Tutorial().Also(it =>
 					{
 						it.Anchor = this.FindControl<Control>("selectAndSetLogProfileButton");
-						it.Bind(Tutorial.DescriptionProperty, this.GetResourceObservable("String/SessionView.Tutorial.SelectLogProfileToStart"));
+						it.Bind(Tutorial.DescriptionProperty, this.Application.GetObservableString("SessionView.Tutorial.SelectLogProfileToStart"));
 						it.Dismissed += (_, _) => 
 						{
 							persistentState.SetValue<bool>(IsSelectingLogProfileToStartTutorialShownKey, true);
@@ -4489,7 +4475,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				return window.ShowTutorial(new Tutorial().Also(it =>
 				{
 					it.Anchor = this.FindControl<Control>("sidePanelBoolBarItemsPanel");
-					it.Bind(Tutorial.DescriptionProperty, this.GetResourceObservable("String/SessionView.Tutorial.SwitchSidePanels"));
+					it.Bind(Tutorial.DescriptionProperty, this.Application.GetObservableString("SessionView.Tutorial.SwitchSidePanels"));
 					it.Dismissed += (_, _) => 
 					{
 						persistentState.SetValue<bool>(IsSwitchingSidePanelsTutorialShownKey, true);
@@ -4506,7 +4492,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				return window.ShowTutorial(new Tutorial().Also(it =>
 				{
 					it.Anchor = this.FindControl<Control>("markedLogsPanelButton");
-					it.Bind(Tutorial.DescriptionProperty, this.GetResourceObservable("String/SessionView.Tutorial.MarkedLogsPanel"));
+					it.Bind(Tutorial.DescriptionProperty, this.Application.GetObservableString("SessionView.Tutorial.MarkedLogsPanel"));
 					it.Dismissed += (_, _) => 
 					{
 						persistentState.SetValue<bool>(IsMarkedLogsPanelTutorialShownKey, true);
@@ -4521,7 +4507,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				return window.ShowTutorial(new Tutorial().Also(it =>
 				{
 					it.Anchor = this.FindControl<Control>("timestampCategoriesPanelButton");
-					it.Bind(Tutorial.DescriptionProperty, this.GetResourceObservable("String/SessionView.Tutorial.TimestampCategoriesPanel"));
+					it.Bind(Tutorial.DescriptionProperty, this.Application.GetObservableString("SessionView.Tutorial.TimestampCategoriesPanel"));
 					it.Dismissed += (_, _) => 
 					{
 						persistentState.SetValue<bool>(IsTimestampCategoriesPanelTutorialShownKey, true);
@@ -4536,7 +4522,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				return window.ShowTutorial(new Tutorial().Also(it =>
 				{
 					it.Anchor = this.FindControl<Control>("logAnalysisPanelButton");
-					it.Bind(Tutorial.DescriptionProperty, this.GetResourceObservable("String/SessionView.Tutorial.LogAnalysisPanel"));
+					it.Bind(Tutorial.DescriptionProperty, this.Application.GetObservableString("SessionView.Tutorial.LogAnalysisPanel"));
 					it.Dismissed += (_, _) => 
 					{
 						persistentState.SetValue<bool>(IsLogAnalysisPanelTutorialShownKey, true);
@@ -4551,7 +4537,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				return window.ShowTutorial(new Tutorial().Also(it =>
 				{
 					it.Anchor = this.FindControl<Control>("logFilesPanelButton");
-					it.Bind(Tutorial.DescriptionProperty, this.GetResourceObservable("String/SessionView.Tutorial.LogFilesPanel"));
+					it.Bind(Tutorial.DescriptionProperty, this.Application.GetObservableString("SessionView.Tutorial.LogFilesPanel"));
 					it.Dismissed += (_, _) => 
 					{
 						persistentState.SetValue<bool>(IsLogFilesPanelTutorialShownKey, true);
