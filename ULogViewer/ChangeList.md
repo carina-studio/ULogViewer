@@ -16,6 +16,7 @@
 + Support converting to log level from raw value of specified log property.
 + Support different colors for icons of log profile, log analysis rule set and log analysis script.
 + Support specifying text color for each log property.
++ Add **'Timestamp of reading log'** property for log and support using it as key of log sorting.
 + Add new built-in log profiles: 
     + Apache Access Log Files
     + Apache Error Log Files
@@ -48,6 +49,7 @@
 
 ## Improvement
 + Allow editing pattern (Regular Expression) directly in text area. You can still edit pattern detailedly by clicking the button at right hand side of text area.
++ Automatically use log level mapping of log reading if specific log level is undefined in log level mapping of log writing.
 + Allow editing built-in log profile and new log profile will be created automatically.
 + Select proper scale factor of screen on **Linux** automatically.
 + Show **Level** log property in special way.
