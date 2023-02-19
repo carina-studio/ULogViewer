@@ -35,5 +35,9 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// Sort by instance ID.
 		/// </summary>
 		Id,
+		/// <summary>
+		/// Sort by timestamp of reading log.
+		/// </summary>
+		ReadTime,
 	}
 }

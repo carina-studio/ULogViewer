@@ -46,6 +46,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			Message,
 			ProcessId,
 			ProcessName,
+			ReadTime,
 			SourceName,
 			Summary,
 			Tags,
@@ -103,17 +104,17 @@ namespace CarinaStudio.ULogViewer.Logs
 		internal Log(LogBuilder builder)
 		{
 			// prepare
-			var propertyCount = builder.PropertyCount;
 			var propertyValueIndices = new byte[propertyNameCount];
-			var propertyValues = new object?[propertyCount];
+			var propertyValues = new object?[builder.PropertyCount + 1]; // Including ReadTime
 			var index = 0;
+			int propertyIndex;
 			long propertyMemorySize = 0;
 			foreach (var propertyName in builder.PropertyNames)
 			{
 				var value = GetPropertyFromBuilder(builder, propertyName);
 				if (value == null)
 					continue;
-				if (!propertyIndices.TryGetValue(propertyName, out var propertyIndex))
+				if (!propertyIndices.TryGetValue(propertyName, out propertyIndex))
 					continue;
 				propertyValueIndices[propertyIndex] = (byte)(index + 1);
 				propertyValues[index++] = value;
@@ -129,6 +130,14 @@ namespace CarinaStudio.ULogViewer.Logs
 
 			// get ID
 			this.Id = Interlocked.Increment(ref nextId);
+
+			// setup reading time
+			if (propertyIndices.TryGetValue(nameof(ReadTime), out propertyIndex))
+			{
+				propertyValueIndices[propertyIndex] = (byte)(index + 1);
+				propertyValues[index++] = DateTime.Now;
+				propertyMemorySize += Memory.EstimateInstanceSize<DateTime>();
+			}
 
 			// calculate memory size
 			this.MemorySize = baseMemorySize + propertyMemorySize + Memory.EstimateArrayInstanceSize(sizeof(byte), propertyValueIndices.Length) + Memory.EstimateArrayInstanceSize(IntPtr.Size, this.propertyValues.Length);
@@ -438,16 +447,22 @@ namespace CarinaStudio.ULogViewer.Logs
 		public static IList<string> PropertyNames { get => propertyNames; }
 
 
+		/// <summary>
+		/// Get the timestamp of this log was read.
+		/// </summary>
+		public DateTime ReadTime => (DateTime)this.GetProperty(PropertyName.ReadTime).AsNonNull();
+
+
 		// Setup property map.
 		static void SetupPropertyMap()
 		{
 			if (!isPropertyMapReady)
 			{
-				lock (typeof(Log))
+				var logType = typeof(Log);
+				lock (logType)
 				{
 					if (!isPropertyMapReady)
 					{
-						var logType = typeof(Log);
 						foreach (var propertyName in propertyNames)
 						{
 							var propertyInfo = logType.GetProperty(propertyName);

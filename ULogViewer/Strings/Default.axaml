@@ -629,6 +629,8 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProperty.ProcessId">PID</sys:String>
 	<sys:String x:Key="String/LogProperty.ProcessName">Process</sys:String>
 	<sys:String x:Key="String/LogProperty.RawData">Raw Data</sys:String>
+	<sys:String x:Key="String/LogProperty.ReadTime">Timestamp of Reading Log</sys:String>
+	<sys:String x:Key="String/LogProperty.ReadTimeString">Timestamp of Reading Log</sys:String>
 	<sys:String x:Key="String/LogProperty.Referer">Referer</sys:String>
 	<sys:String x:Key="String/LogProperty.RelativeBeginningTimestamp">Relative Beginning Timestamp</sys:String>
 	<sys:String x:Key="String/LogProperty.RelativeEndingTimestamp">Relative Ending Timestamp</sys:String>
@@ -676,6 +678,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogSortKey.EndingTimeSpan">Ending time span of log</sys:String>
 	<sys:String x:Key="String/LogSortKey.EndingTimestamp">Ending timestamp of log</sys:String>
 	<sys:String x:Key="String/LogSortKey.Id">Incremental ID of log</sys:String>
+	<sys:String x:Key="String/LogSortKey.ReadTime">Timestamp of reading log</sys:String>
 	<sys:String x:Key="String/LogSortKey.TimeSpan">Time span of log</sys:String>
 	<sys:String x:Key="String/LogSortKey.Timestamp">Timestamp of log</sys:String>
 

@@ -47,6 +47,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		MarkColor markedColor;
 		short memorySize;
 		byte messageLineCount;
+		CompressedString? readTimeString;
 		byte summaryLineCount;
 		CompressedString? timeSpanString;
 		CompressedString? timestampString;
@@ -65,6 +66,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.BinaryBeginningTimestamp = log.BeginningTimestamp?.ToBinary() ?? 0L;
 			this.BinaryEndingTimeSpan = (long)(log.EndingTimeSpan?.TotalMilliseconds ?? 0);
 			this.BinaryEndingTimestamp = log.EndingTimestamp?.ToBinary() ?? 0L;
+			this.BinaryReadTime = log.ReadTime.ToBinary();
 			this.BinaryTimeSpan = (long)(log.TimeSpan?.TotalMilliseconds ?? 0);
 			this.BinaryTimestamp = log.Timestamp?.ToBinary() ?? 0L;
 			this.Group = group;
@@ -238,6 +240,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Get the timestamp of this log was read in binary format..
+		/// </summary>
+		public long BinaryReadTime { get; }
+
+
+		/// <summary>
 		/// Get time span of log in binary format.
 		/// </summary>
 		public long BinaryTimeSpan { get; }
@@ -320,6 +328,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				nameof(EndingTimestampString) => (it => (T)(object)it.EndingTimestampString),
 				nameof(LevelString) => (it => (T)(object)it.LevelString),
 				nameof(LogId) => (it => (T)(object)it.LogId),
+				nameof(ReadTimeString) => (it => (T)(object)it.ReadTimeString),
 				nameof(TimeSpanString) => (it => (T)(object)it.TimeSpanString),
 				nameof(TimestampString) => (it => (T)(object)it.TimestampString),
 				_ => Log.CreatePropertyGetter<T>(propertyName).Let(getter =>
@@ -373,6 +382,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					};
 					logStringPropertyGetters[propertyName] = getter;
 					return getter;
+				case nameof(ReadTimeString):
+					backedValueGetter = log => log.readTimeString;
+					break;
 				case nameof(TimeSpanString):
 					backedValueGetter = log => log.timeSpanString;
 					break;
@@ -848,6 +860,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			or nameof(EndingTimeSpanString)
 			or nameof(EndingTimestampString)
 			or nameof(LevelString)
+			or nameof(ReadTimeString)
 			or nameof(TimeSpanString)
 			or nameof(TimestampString) => true,
 			_ => Log.HasStringProperty(propertyName),
@@ -1216,6 +1229,36 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Get the timestamp of this log was read.
+		/// </summary>
+		public DateTime ReadTime => this.Log.ReadTime;
+
+
+		/// <summary>
+		/// Get timestamp of this log was read in string format.
+		/// </summary>
+		public string ReadTimeString
+		{
+			get
+			{
+				if (this.Group.MemoryUsagePolicy == MemoryUsagePolicy.LessMemoryUsage)
+					return this.FormatTimestamp(this.Log.ReadTime);
+				if (this.readTimeString == null)
+				{
+					this.readTimeString = this.FormatTimestampCompressed(this.Log.ReadTime);
+					if (this.readTimeString != CompressedString.Empty)
+					{
+						var memorySizeDiff = this.readTimeString.Size;
+						this.memorySize += (short)memorySizeDiff;
+						this.Group.OnDisplayableLogMemorySizeChanged(memorySizeDiff);
+					}
+				}
+				return this.readTimeString.ToString();
+			}
+		}
+
+
+		/// <summary>
 		/// Remove <see cref="DisplayableLogAnalysisResult"/> from this log.
 		/// </summary>
 		/// <param name="result">Result to remove.</param>
@@ -1413,6 +1456,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 							nameof(EndingTimeSpanString),
 							nameof(EndingTimestampString),
 							nameof(LevelString),
+							nameof(ReadTimeString),
 							nameof(TimeSpanString),
 							nameof(TimestampString),
 						};

@@ -593,6 +593,8 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProperty.Path">路径</sys:String>
 	<sys:String x:Key="String/LogProperty.ProcessName">进程名称</sys:String>
 	<sys:String x:Key="String/LogProperty.RawData">原始数据</sys:String>
+	<sys:String x:Key="String/LogProperty.ReadTime">日志读取时间</sys:String>
+	<sys:String x:Key="String/LogProperty.ReadTimeString">日志读取时间</sys:String>
 	<sys:String x:Key="String/LogProperty.Referer">参照地址</sys:String>
 	<sys:String x:Key="String/LogProperty.RelativeBeginningTimestamp">相对起始时间</sys:String>
 	<sys:String x:Key="String/LogProperty.RelativeEndingTimestamp">相对结束时间</sys:String>
@@ -638,6 +640,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogSortKey.EndingTimeSpan">日志结束时距</sys:String>
 	<sys:String x:Key="String/LogSortKey.EndingTimestamp">日志结束时间</sys:String>
 	<sys:String x:Key="String/LogSortKey.Id">日志流水编号</sys:String>
+	<sys:String x:Key="String/LogSortKey.ReadTime">日志读取时间</sys:String>
 	<sys:String x:Key="String/LogSortKey.TimeSpan">日志时距</sys:String>
 	<sys:String x:Key="String/LogSortKey.Timestamp">日志时间</sys:String>
 

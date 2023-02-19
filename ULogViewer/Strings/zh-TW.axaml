@@ -590,6 +590,8 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProperty.Path">路徑</sys:String>
 	<sys:String x:Key="String/LogProperty.ProcessName">處理程序</sys:String>
 	<sys:String x:Key="String/LogProperty.RawData">原始資料</sys:String>
+	<sys:String x:Key="String/LogProperty.ReadTime">日誌讀取時間</sys:String>
+	<sys:String x:Key="String/LogProperty.ReadTimeString">日誌讀取時間</sys:String>
 	<sys:String x:Key="String/LogProperty.Referer">參照位址</sys:String>
 	<sys:String x:Key="String/LogProperty.RelativeBeginningTimestamp">相對起始時間</sys:String>
 	<sys:String x:Key="String/LogProperty.RelativeEndingTimestamp">相對結束時間</sys:String>
@@ -635,6 +637,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogSortKey.EndingTimeSpan">日誌結束時距</sys:String>
 	<sys:String x:Key="String/LogSortKey.EndingTimestamp">日誌結束時間</sys:String>
 	<sys:String x:Key="String/LogSortKey.Id">日誌流水編號</sys:String>
+	<sys:String x:Key="String/LogSortKey.ReadTime">日誌讀取時間</sys:String>
 	<sys:String x:Key="String/LogSortKey.TimeSpan">日誌時距</sys:String>
 	<sys:String x:Key="String/LogSortKey.Timestamp">日誌時間</sys:String>
 
