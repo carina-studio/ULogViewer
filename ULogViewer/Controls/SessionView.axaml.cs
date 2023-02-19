@@ -2687,12 +2687,9 @@ namespace CarinaStudio.ULogViewer.Controls
 				{
 					var splitter = new GridSplitter().Also(it =>
 					{
-						it.Background = Brushes.Transparent;
 						it.DragDelta += (_, _) => this.ReportLogHeaderColumnWidths();
-						it.HorizontalAlignment = HorizontalAlignment.Stretch;
 						it.IsEnabled = this.logHeaderColumns[logPropertyIndex - 1].Width.GridUnitType == GridUnitType.Pixel
 							|| headerColumn.Width.GridUnitType == GridUnitType.Pixel;
-						it.VerticalAlignment = VerticalAlignment.Stretch;
 					});
 					Grid.SetColumn(splitter, logPropertyIndex * 2 - 1 + columIndexOffset);
 					this.logHeaderGrid.Children.Add(splitter);

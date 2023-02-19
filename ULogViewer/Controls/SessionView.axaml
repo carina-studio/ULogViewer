@@ -793,6 +793,24 @@
 
 				<!-- Columns -->
 				<Grid Name="logHeaderContainer">
+					<Grid.Styles>
+						<Style Selector="GridSplitter">
+							<Setter Property="Background" Value="{x:Static Brushes.Transparent}"/>
+							<Setter Property="HorizontalAlignment" Value="Stretch"/>
+							<Setter Property="VerticalAlignment" Value="Stretch"/>
+						</Style>
+						<Style Selector="GridSplitter /template/ Border#PART_Root">
+							<Setter Property="Transitions" Value="{x:Null}"/>
+						</Style>
+						<Style Selector="GridSplitter:pointerover /template/ Border#PART_Root">
+							<Setter Property="Background" Value="{x:Static Brushes.Transparent}"/>
+							<Setter Property="Transitions" Value="{x:Null}"/>
+						</Style>
+						<Style Selector="GridSplitter:pressed /template/ Border#PART_Root">
+							<Setter Property="Background" Value="{x:Static Brushes.Transparent}"/>
+							<Setter Property="Transitions" Value="{x:Null}"/>
+						</Style>
+					</Grid.Styles>
 					<TextBlock Margin="{StaticResource Thickness/SessionView.LogHeader.Margin}" Padding="{StaticResource Thickness/SessionView.LogHeader.Padding}" Text=" "/>
 					<Grid Name="logHeaderGrid"/>
 				</Grid>
