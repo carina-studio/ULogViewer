@@ -346,6 +346,26 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		/// <summary>
+		/// Copy the given log pattern.
+		/// </summary>
+		/// <param name="parameter"><see cref="LogPattern"/> to be copied.</param>
+		public async void CopyLogPattern(object? parameter)
+		{
+			if (parameter is not LogPattern logPattern)
+				return;
+			var newLogPattern = await new LogPatternEditorDialog()
+			{
+				LogPattern = logPattern,
+			}.ShowDialog<LogPattern>(this);
+			if (newLogPattern != null)
+			{
+				this.logPatterns.Add(newLogPattern);
+				this.SelectListBoxItem(this.logPatternListBox, this.logPatterns.Count - 1);
+			}
+		}
+
+
+		/// <summary>
 		/// Definition set of date time format syntax highlighting.
 		/// </summary>
 		public SyntaxHighlightingDefinitionSet DateTimeFormatSyntaxHighlightingDefinitionSet { get; }

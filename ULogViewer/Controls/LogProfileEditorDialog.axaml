@@ -260,6 +260,13 @@
 												</DrawingImage>
 											</asControls:Image>
 										</Button>
+										<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].CopyLogPattern}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Copy}">
+											<asControls:Image Classes="InPlaceAction_Icon">
+												<DrawingImage>
+													<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Copy}"/>
+												</DrawingImage>
+											</asControls:Image>
+										</Button>
 										<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditLogPatternCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
 											<asControls:Image Classes="InPlaceAction_Icon">
 												<DrawingImage>
