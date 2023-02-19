@@ -480,7 +480,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogLevelMapForReading">日志等级对照表</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogLevelMapForReading.Description">将「原始日志等级属性」所指定之属性值对应至日志等级。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogLevelMapForWriting">日志等级对照表</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LogLevelMapForWriting.Description">将日志等级转换为特定的文字。</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogLevelMapForWriting.Description">将日志等级转换为特定的文字。若特定的等级无法转换，则改为使用日志读取所使用的对照表。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogPatterns">日志行格式</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogPatterns.Description">分析原始日志每一行的格式。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogPatternsWithoutVisibleLogProperties">您定义了「日志行格式」但没有定义「显示的日志属性」，这可能导致日志显示错误。您是否要定义「显示的日志属性」？</sys:String>

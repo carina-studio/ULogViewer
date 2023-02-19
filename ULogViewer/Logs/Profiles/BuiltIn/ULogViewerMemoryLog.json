@@ -12,13 +12,6 @@
 		"TRACE": "Trace",
 		"WARN": "Warn"
 	},
-	"LogLevelMapForWriting": {
-		"Debug": "DEBUG",
-		"Error": "ERROR",
-		"Info": "INFO",
-		"Trace": "TRACE",
-		"Warn": "WARN"
-	},
 	"LogPatterns": [
 		{
 			"Regex": "^(?<Timestamp>[^\\s]+[\\s]+[^\\s]+)[\\s]+(?<ProcessId>[\\d]+)[\\s]+(?<ThreadId>[\\d]+)[\\s]+(?<Level>[\\w]+)[\\s]+(?<SourceName>[^\\:]*)\\:[\\s](?<Message>.*)$"

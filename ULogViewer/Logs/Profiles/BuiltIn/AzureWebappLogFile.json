@@ -9,15 +9,8 @@
     "Debug": "Debug",
     "Error": "Error",
     "Information": "Info",
-    "Trace": "Debug",
-    "WARNING": "Warn"
-  },
-  "LogLevelMapForWriting": {
     "Trace": "Trace",
-    "Debug": "Trace",
-    "Info": "Information",
-    "Warn": "WARNING",
-    "Error": "Error"
+    "WARNING": "Warn"
   },
   "LogPatterns": [
     {

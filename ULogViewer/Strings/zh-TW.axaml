@@ -477,7 +477,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogLevelMapForReading">日誌等級對照表</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogLevelMapForReading.Description">將「原始日誌等級屬性」所指定之屬性值對應至日誌等級。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogLevelMapForWriting">日誌等級對照表</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LogLevelMapForWriting.Description">將日誌等級轉換為特定的文字。</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogLevelMapForWriting.Description">將日誌等級轉換為特定的文字。若特定的等級無法轉換，則改為使用日誌讀取所使用的對照表。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogPatterns">日誌行格式</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogPatterns.Description">分析原始日誌每一行的格式。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogPatternsWithoutVisibleLogProperties">您定義了「日誌行格式」但沒有定義「顯示的日誌屬性」，這可能導致日誌顯示錯誤。您是否要定義「顯示的日誌屬性」？</sys:String>

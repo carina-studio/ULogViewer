@@ -12,14 +12,6 @@
 		"V": "Verbose",
 		"W": "Warn"
 	},
-	"LogLevelMapForWriting": {
-		"Debug": "D",
-		"Error": "E",
-		"Fatal": "F",
-		"Info": "I",
-		"Verbose": "V",
-		"Warn": "W"
-	},
 	"LogPatterns": [
 		{
 			"Regex": "^(?<Timestamp>[^\\s]+[\\s]+[^\\s]+)[\\s]+[\\d]+[\\s]+[\\d]+[\\s]+(?<Level>[\\w]+)[\\s]+(\\:)?[\\s]*(\\[(?<Timestamp>[\\d]+_[\\d\\:\\.]+)\\](\\@[\\d]+)?[\\s]*)?((?<SourceName>([^\\s\\:]|([\\s]+[^\\s\\:])|([\\:]+[^\\s\\:]))*[\\:]*[\\s]*)\\:)?[\\s](?<Message>.*)$"

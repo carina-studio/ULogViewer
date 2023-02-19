@@ -25,12 +25,7 @@
 		"Notice": "Verbose"
 	},
 	"LogLevelMapForWriting": {
-		"Debug": "Debug",
-		"Error": "Error",
-		"Fatal": "Fault",
-		"Info": "Info",
-		"Undefined": "Notice",
-		"Verbose": "Notice"
+		"Undefined": "Notice"
 	},
 	"LogWritingFormats": [
 		"{Timestamp} {SourceName}[{ProcessId}] <{Level}>: {Message}"

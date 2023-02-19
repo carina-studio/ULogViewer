@@ -1911,7 +1911,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						return new[] { it.ToString() };
 					})
 					: writingFormats,
-				LogLevelMap = profile.LogLevelMapForWriting,
+				LogLevelMap = new Dictionary<Logs.LogLevel, string>().Also(it =>
+				{
+					foreach ((var s, var level) in profile.LogLevelMapForReading)
+						it.TryAdd(level, s);
+					foreach ((var level, var s) in profile.LogLevelMapForWriting)
+						it[level] = s;
+				}),
 				LogStringEncoding = profile.LogStringEncodingForWriting,
 				TimeSpanCultureInfo = profile.TimeSpanCultureInfoForWriting,
 				TimeSpanFormat = string.IsNullOrEmpty(profile.TimeSpanFormatForWriting)
@@ -3911,7 +3917,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			{
 				JsonLogsSavingOptions jsonSavingOptions => new JsonLogWriter(dataOutput).Also(it =>
 				{
-					it.LogLevelMap = profile.LogLevelMapForWriting;
+					it.LogLevelMap = new Dictionary<Logs.LogLevel, string>().Also(it =>
+					{
+						foreach ((var s, var level) in profile.LogLevelMapForReading)
+							it.TryAdd(level, s);
+						foreach ((var level, var s) in profile.LogLevelMapForWriting)
+							it[level] = s;
+					});
 					it.LogPropertyMap = jsonSavingOptions.LogPropertyMap;
 					it.TimeSpanCultureInfo = profile.TimeSpanCultureInfoForWriting;
 					it.TimeSpanFormat = string.IsNullOrEmpty(profile.TimeSpanFormatForWriting)
@@ -3922,7 +3934,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						? profile.TimestampFormatsForReading.IsEmpty() ? profile.TimestampFormatForDisplaying : profile.TimestampFormatsForReading[0]
 						: profile.TimestampFormatForWriting;
 				}),
-				_ => (ILogWriter)(this.CreateRawLogWriter(dataOutput).Also(it =>
+				_ => (ILogWriter)this.CreateRawLogWriter(dataOutput).Also(it =>
 				{
 					var markedLogs = this.markedLogs;
 					it.LogsToGetLineNumber = new HashSet<Log>().Also(it =>
@@ -3935,7 +3947,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						}
 					});
 					it.WriteFileNames = false;
-				})),
+				}),
 			};
 			logWriter.Logs = new Log[logs.Count].Also(it =>
 			{

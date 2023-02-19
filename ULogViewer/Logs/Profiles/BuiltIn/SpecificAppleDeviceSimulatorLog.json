@@ -24,9 +24,6 @@
 		"Info": "Info"
 	},
 	"LogLevelMapForWriting": {
-		"Debug": "Debug",
-		"Error": "Error",
-		"Info": "Info",
 		"Undefined": "Default"
 	},
 	"LogWritingFormats": [

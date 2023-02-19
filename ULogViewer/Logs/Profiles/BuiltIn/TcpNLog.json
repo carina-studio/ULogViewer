@@ -13,13 +13,7 @@
 		"WARN": "Warn"
 	},
 	"LogLevelMapForWriting": {
-		"Debug": "DEBUG",
-		"Error": "ERROR",
-		"Fatal": "FATAL",
-		"Info": "INFO",
-		"Trace": "TRACE",
-		"Undefined": "",
-		"Warn": "WARN"
+		"Undefined": ""
 	},
 	"LogPatterns": [
 		{

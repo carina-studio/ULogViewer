@@ -18,14 +18,6 @@
 		"V": "Verbose",
 		"W": "Warn"
 	},
-	"LogLevelMapForWriting": {
-		"Debug": "D",
-		"Error": "E",
-		"Fatal": "F",
-		"Info": "I",
-		"Verbose": "V",
-		"Warn": "W"
-	},
 	"LogPatterns": [
 		{
 			"Regex": "^(?<Timestamp>[^\\s]+[\\s]+[^\\s]+[^\\d]\\d{3,7})\\d*[\\s]+(?<ProcessId>[\\d]+)[\\s]+(?<ThreadId>[\\d]+)[\\s]+(?<Level>[\\w]+)[\\s]+(?<SourceName>([^\\s\\:]|([\\s]+[^\\s\\:])|([\\:]+[^\\s\\:]))*[\\:]*[\\s]*)\\:[\\s](\\e\\[[^m]+m)*(?<Message>.*?)(\\e\\[[^m]+m)*$"
