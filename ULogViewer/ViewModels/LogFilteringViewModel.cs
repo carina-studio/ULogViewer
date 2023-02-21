@@ -2,6 +2,7 @@ using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.Profiles;
+using CarinaStudio.ULogViewer.Text;
 using CarinaStudio.ViewModels;
 using CarinaStudio.Windows.Input;
 using Microsoft.Extensions.Logging;
@@ -73,26 +74,6 @@ class LogFilteringViewModel : SessionComponent
     public static readonly ObservableProperty<int?> ThreadIdFilterProperty = ObservableProperty.Register<LogFilteringViewModel, int?>(nameof(ThreadIdFilter));
 
 
-    // Type of token.
-    enum TokenType
-    {
-        HexNumber,
-        DecimalNumber,
-        VaryingString,
-        CjkPhrese,
-        Phrase,
-        Symbol,
-    }
-
-
-    // Constants.
-    const string CjkCharacterPattern = @"(\p{IsCJKRadicalsSupplement}|\p{IsCJKSymbolsandPunctuation}|\p{IsEnclosedCJKLettersandMonths}|\p{IsCJKCompatibility}|\p{IsCJKUnifiedIdeographsExtensionA}|\p{IsCJKUnifiedIdeographs}|\p{IsCJKCompatibilityIdeographs}|\p{IsCJKCompatibilityForms})";
-    const string CjkPhrasePattern = $"{CjkCharacterPattern}+";
-    const string DecimalNumberPattern = "[0-9]+";
-    const string HexNumberPattern = "(0x[a-f0-9]+|[0-9]*[a-f][0-9]+[a-f0-9]+)";
-    const string PhrasePattern = @"[\p{L}\p{IsArabic}\p{IsCyrillic}\p{IsDevanagari}\-_]+";
-
-
     // Static fields.
     static readonly HashSet<char> RegexReservedChars = new()
     {
@@ -115,7 +96,6 @@ class LogFilteringViewModel : SessionComponent
         "to",
         "via",
     };
-    static readonly Regex TokenRegex;
 
 
     // Fields.
@@ -136,25 +116,6 @@ class LogFilteringViewModel : SessionComponent
     IDisposable? selectedPidObserverToken;
     IDisposable? selectedTidObserverToken;
     readonly ObservableList<string> textFilterHistory = new();
-
-
-    // Static initializer.
-    static LogFilteringViewModel()
-    {
-        var patternBuffer = new StringBuilder();
-        patternBuffer.Append($"(?<{nameof(TokenType.HexNumber)}>{HexNumberPattern})");
-        patternBuffer.Append($"|(?<{nameof(TokenType.DecimalNumber)}>{DecimalNumberPattern})");
-        patternBuffer.Append($"|(?<{nameof(TokenType.VaryingString)}>'[^']*')");
-        patternBuffer.Append($"|(?<{nameof(TokenType.VaryingString)}>\"[^\"]*\")");
-        patternBuffer.Append($"|(?<{nameof(TokenType.VaryingString)}>\\([^\\)]*\\))");
-        patternBuffer.Append($"|(?<{nameof(TokenType.VaryingString)}>\\[[^\\]]*\\])");
-        patternBuffer.Append($"|(?<{nameof(TokenType.VaryingString)}>\\{{[^\\}}]*\\}})");
-        patternBuffer.Append($"|(?<{nameof(TokenType.VaryingString)}>\\<[^\\>]*\\>)");
-        patternBuffer.Append($"|(?<{nameof(TokenType.CjkPhrese)}>{CjkPhrasePattern})");
-        patternBuffer.Append($"|(?<{nameof(TokenType.Phrase)}>{PhrasePattern})");
-        patternBuffer.Append($"|(?<{nameof(TokenType.Symbol)}>[^\\s])");
-        TokenRegex = new(patternBuffer.ToString(), RegexOptions.Compiled | RegexOptions.IgnoreCase);
-    }
 
 
     /// <summary>
@@ -500,26 +461,18 @@ class LogFilteringViewModel : SessionComponent
 
         // parse template value
         var tokens = new List<(TokenType, string)>();
-        var tokenTypes = Enum.GetValues<TokenType>();
         while (true)
         {
             var remainingTokenCount = accuracy == Accuracy.High ? 10 : 5;
-            var match = TokenRegex.Match(propertyValue);
-            while (match.Success && remainingTokenCount > 0)
+            foreach (var token in new Tokenizer(propertyValue))
             {
-                var groups = match.Groups;
-                foreach (var tokenType in tokenTypes)
+                tokens.Add((token.Type, new string(token.Value)));
+                if (token.Type != TokenType.Symbol)
                 {
-                    var name = tokenType.ToString();
-                    if (groups[name].Success)
-                    {
-                        tokens.Add((tokenType, groups[name].Value));
-                        if (tokenType != TokenType.Symbol)
-                            --remainingTokenCount;
+                    --remainingTokenCount;
+                    if (remainingTokenCount <= 0)
                         break;
-                    }
                 }
-                match = match.NextMatch();
             }
             if (tokens.Count == 1 && tokens[0].Item1 == TokenType.VaryingString)
             {
@@ -554,20 +507,20 @@ class LogFilteringViewModel : SessionComponent
             {
                 (var tokenType, var value) = tokens[i];
                 if (tokenType == TokenType.HexNumber)
-                    patternBuffer.Append(@$"\s*{HexNumberPattern}");
+                    patternBuffer.Append(@$"\s*({Tokenizer.HexNumberPattern})");
                 else if (tokenType == TokenType.DecimalNumber)
-                    patternBuffer.Append(@$"\s*{DecimalNumberPattern}");
+                    patternBuffer.Append(@$"\s*({Tokenizer.DecimalNumberPattern})");
                 else if (tokenType == TokenType.VaryingString)
                 {
                     var startSymbol = value[0];
                     var endSymbol = value[^1];
                     if (RegexReservedChars.Contains(startSymbol))
-                        patternBuffer.Append(@$"\s*\{startSymbol}[^\{endSymbol}]*\{endSymbol}");
+                        patternBuffer.Append(@$"\s*(\{startSymbol}[^\{endSymbol}]*\{endSymbol})");
                     else
-                        patternBuffer.Append(@$"\s*{startSymbol}[^{endSymbol}]*{endSymbol}");
+                        patternBuffer.Append(@$"\s*({startSymbol}[^{endSymbol}]*{endSymbol})");
                 }
                 else if (tokenType == TokenType.CjkPhrese)
-                    patternBuffer.Append(@$"\s*{CjkPhrasePattern}");
+                    patternBuffer.Append(@$"\s*({Tokenizer.CjkPhrasePattern})");
                 else if (tokenType == TokenType.Phrase)
                 {
                     var phrasePattern = value;
@@ -583,9 +536,9 @@ class LogFilteringViewModel : SessionComponent
                             phrasePattern = value.Replace("-", "\\-");
                     }
                     if (i > 0 && prevTokenType == TokenType.Phrase)
-                        patternBuffer.Append(@$"\s+{phrasePattern}");
+                        patternBuffer.Append(@$"\s+({phrasePattern})");
                     else
-                        patternBuffer.Append(@$"\s*{phrasePattern}");
+                        patternBuffer.Append(@$"\s*({phrasePattern})");
                 }
                 else if (tokenType == TokenType.Symbol)
                 {
