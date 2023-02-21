@@ -1911,13 +1911,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						return new[] { it.ToString() };
 					})
 					: writingFormats,
-				LogLevelMap = new Dictionary<Logs.LogLevel, string>().Also(it =>
-				{
-					foreach ((var s, var level) in profile.LogLevelMapForReading)
-						it.TryAdd(level, s);
-					foreach ((var level, var s) in profile.LogLevelMapForWriting)
-						it[level] = s;
-				}),
+				LogLevelMap = this.displayableLogGroup?.LevelMapForDisplaying ?? profile.LogLevelMapForWriting,
 				LogStringEncoding = profile.LogStringEncodingForWriting,
 				TimeSpanCultureInfo = profile.TimeSpanCultureInfoForWriting,
 				TimeSpanFormat = string.IsNullOrEmpty(profile.TimeSpanFormatForWriting)
@@ -3917,13 +3911,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			{
 				JsonLogsSavingOptions jsonSavingOptions => new JsonLogWriter(dataOutput).Also(it =>
 				{
-					it.LogLevelMap = new Dictionary<Logs.LogLevel, string>().Also(it =>
-					{
-						foreach ((var s, var level) in profile.LogLevelMapForReading)
-							it.TryAdd(level, s);
-						foreach ((var level, var s) in profile.LogLevelMapForWriting)
-							it[level] = s;
-					});
+					it.LogLevelMap = this.displayableLogGroup?.LevelMapForDisplaying ?? profile.LogLevelMapForWriting;
 					it.LogPropertyMap = jsonSavingOptions.LogPropertyMap;
 					it.TimeSpanCultureInfo = profile.TimeSpanCultureInfoForWriting;
 					it.TimeSpanFormat = string.IsNullOrEmpty(profile.TimeSpanFormatForWriting)

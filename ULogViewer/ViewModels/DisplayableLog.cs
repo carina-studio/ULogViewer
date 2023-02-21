@@ -927,7 +927,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				var level = this.Log.Level;
 				if (level == LogLevel.Undefined)
 					return "";
-				if (this.Group.LogProfile.LogLevelMapForWriting.TryGetValue(level, out var s))
+				if (this.Group.LevelMapForDisplaying.TryGetValue(level, out var s))
 					return s;
 				var propertyName = this.Group.LogProfile.RawLogLevelPropertyName;
 				if (propertyName != nameof(Level) && this.TryGetProperty(propertyName, out s) && s != null)
@@ -1020,12 +1020,18 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Called when application string resources updated.
 		/// </summary>
 		internal void OnApplicationStringsUpdated()
-		{ 
-			if (this.Log.Level != LogLevel.Undefined)
-				this.PropertyChanged?.Invoke(this, new(nameof(LevelString)));
+		{
 			this.OnTimeSpanFormatChanged();
 			this.OnTimestampFormatChanged();
+			this.PropertyChanged?.Invoke(this, new(nameof(LevelString)));
 		}
+
+
+		/// <summary>
+		/// Called when log level map has been changed.
+		/// </summary>
+		internal void OnLevelMapForDisplayingChanged() =>
+			this.PropertyChanged?.Invoke(this, new(nameof(LevelString)));
 
 
 		/// <summary>

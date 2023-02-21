@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -55,6 +56,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly Stopwatch stopwatch = new();
 		IBrush? textHighlightingBackground;
 		IBrush? textHighlightingForeground;
+		readonly ScheduledAction updateLevelMapAction;
 		readonly ScheduledAction updateTextHighlightingDefSetAction;
 
 
@@ -82,6 +84,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.MemoryUsagePolicy = app.Settings.GetValueOrDefault(SettingKeys.MemoryUsagePolicy);
 			this.TextHighlightingDefinitionSet = new($"Text Highlighting of {this}");
 			this.CheckMaxLogExtraNumber();
+			this.UpdateLevelMapForDisplaying();
 
 			// setup actions
 			this.updateTextHighlightingDefSetAction = new(() =>
@@ -186,6 +189,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					}
 				}
 			});
+			this.updateLevelMapAction = new(this.UpdateLevelMapForDisplaying);
 
 			// add event handlers
 			app.Settings.SettingChanged += this.OnSettingChanged;
@@ -308,7 +312,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.levelForegroundBrushes.Clear();
 			this.recentlyUsedColorIndicatorColors.Clear();
 
-			// cancel updating text highlighting
+			// cancel actions
+			this.updateLevelMapAction.Cancel();
 			this.updateTextHighlightingDefSetAction.Cancel();
 
 			// stop watch
@@ -457,6 +462,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Get map of converting from <see cref="Logs.LogLevel"/> to string.
+		/// </summary>
+		public IDictionary<Logs.LogLevel, string> LevelMapForDisplaying { get; private set; }
+
+
+		/// <summary>
 		/// Get related log profile.
 		/// </summary>
 		public LogProfile LogProfile { get; }
@@ -594,6 +605,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 							log = log.Next;
 						}
 					}
+					break;
+				case nameof(LogProfile.LogLevelMapForReading):
+				case nameof(LogProfile.LogLevelMapForWriting):
+					this.updateLevelMapAction.Schedule();
 					break;
 				case nameof(LogProfile.LogPatterns):
 					this.CheckMaxLogExtraNumber();
@@ -768,6 +783,25 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.levelForegroundBrushes[level.ToString()] = fgBrush;
 				if (fgConverter.Convert(level, typeof(IBrush), "PointerOver", this.Application.CultureInfo) is IBrush pointerOverBrush)
 					this.levelForegroundBrushes[$"{level}.PointerOver"] = pointerOverBrush;
+			}
+		}
+
+
+		[MemberNotNull(nameof(LevelMapForDisplaying))]
+		void UpdateLevelMapForDisplaying()
+		{
+			this.LevelMapForDisplaying = new Dictionary<Logs.LogLevel, string>().Also(it =>
+			{
+				foreach ((var s, var level) in this.LogProfile.LogLevelMapForReading)
+					it.TryAdd(level, s);
+				foreach ((var level, var s) in this.LogProfile.LogLevelMapForWriting)
+					it[level] = s;
+			});
+			var log = this.displayableLogsHead;
+			while (log != null)
+			{
+				log.OnLevelMapForDisplayingChanged();
+				log = log.Next;
 			}
 		}
 
