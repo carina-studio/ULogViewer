@@ -1088,6 +1088,8 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.SavingLogs">Saving logs…</sys:String>
 	<sys:String x:Key="String/SessionView.ScrollToLatestLog">Scroll to latest log</sys:String>
 	<sys:String x:Key="String/SessionView.ScrollToLatestLogAnalysisResult">Scroll to latest analysis result</sys:String>
+	<sys:String x:Key="String/SessionView.SearchLogPropertyOnInternet">Search '{1}' on {0}</sys:String>
+	<sys:String x:Key="String/SessionView.SearchLogPropertyOnInternet.Disabled">Search value of log property on {0}</sys:String>
 	<sys:String x:Key="String/SessionView.SelectedLogAnalysisResultsAverageByteSize">Average size in bytes</sys:String>
 	<sys:String x:Key="String/SessionView.SelectedLogAnalysisResultsAverageDuration">Average duration</sys:String>
 	<sys:String x:Key="String/SessionView.SelectedLogAnalysisResultsAverageQuantity">Average quantity</sys:String>

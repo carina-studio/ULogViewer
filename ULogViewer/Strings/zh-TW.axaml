@@ -1045,6 +1045,8 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.SavingLogs">正在儲存日誌…</sys:String>
 	<sys:String x:Key="String/SessionView.ScrollToLatestLog">捲動至最新的日誌</sys:String>
 	<sys:String x:Key="String/SessionView.ScrollToLatestLogAnalysisResult">捲動至最新的分析結果</sys:String>
+	<sys:String x:Key="String/SessionView.SearchLogPropertyOnInternet">使用 {0} 搜尋「{1}」</sys:String>
+	<sys:String x:Key="String/SessionView.SearchLogPropertyOnInternet.Disabled">使用 {0} 搜尋日誌屬性值</sys:String>
 	<sys:String x:Key="String/SessionView.SelectedLogAnalysisResultsAverageByteSize">平均位元組大小</sys:String>
 	<sys:String x:Key="String/SessionView.SelectedLogAnalysisResultsAverageDuration">平均時距</sys:String>
 	<sys:String x:Key="String/SessionView.SelectedLogAnalysisResultsAverageQuantity">平均數量</sys:String>

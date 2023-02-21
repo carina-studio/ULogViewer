@@ -726,6 +726,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly MutableObservableBoolean canReloadLogs = new();
 		readonly MutableObservableBoolean canResetLogProfile = new();
 		readonly MutableObservableBoolean canSaveLogs = new();
+		readonly MutableObservableBoolean canSearchLogPropertyOnInternet = new();
 		readonly MutableObservableBoolean canSetLogProfile = new();
 		readonly MutableObservableBoolean canShowAllLogsTemporarily = new();
 		readonly ScheduledAction checkDataSourceErrorsAction;
@@ -798,6 +799,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.RemoveLogFileCommand = new Command<string?>(this.RemoveLogFile, this.canClearLogFiles);
 			this.ResetLogProfileCommand = new Command(this.ResetLogProfile, this.canResetLogProfile);
 			this.SaveLogsCommand = new Command<LogsSavingOptions>(this.SaveLogs, this.canSaveLogs);
+			this.SearchLogPropertyOnInternetCommand = new Command<DisplayableLogProperty>(this.SearchLogPropertyOnInternet, this.canSearchLogPropertyOnInternet);
 			this.SetIPEndPointCommand = new Command<IPEndPoint?>(this.SetIPEndPoint, this.GetValueAsObservable(IsIPEndPointNeededProperty));
 			this.SetLogProfileCommand = new Command<LogProfile?>(this.SetLogProfile, this.canSetLogProfile);
 			this.SetUriCommand = new Command<Uri?>(this.SetUri, this.GetValueAsObservable(IsUriNeededProperty));
@@ -850,7 +852,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.LogAnalysis = new LogAnalysisViewModel(this, internalAccessor).Also(it =>
 				this.AttachToComponent(it));
 			this.LogSelection = new LogSelectionViewModel(this, internalAccessor).Also(it =>
-				this.AttachToComponent(it));
+			{
+				this.AttachToComponent(it);
+				(it.SelectedLogs as INotifyCollectionChanged)?.Let(it =>
+					it.CollectionChanged += (_, _) => this.canSearchLogPropertyOnInternet.Update(this.LogSelection!.SelectedLogs.Count == 1));
+			});
 			this.AllComponentsCreated?.Invoke();
 
 			// create scheduled actions
@@ -4110,6 +4116,80 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			});
 			_ = this.WaitForNecessaryTaskAsync(task);
 		}
+
+
+		// Search value of log property on the Internet.
+		void SearchLogPropertyOnInternet(DisplayableLogProperty property)
+		{
+			// check state
+			this.VerifyAccess();
+			this.VerifyDisposed();
+
+			// get property value
+			var propertyValue = this.LogSelection.SelectedLogs.Let(it =>
+			{
+				if (it.Count != 1)
+					return null;
+				if (it[0].TryGetProperty<object?>(property.Name, out var value))
+					return value?.ToString();
+				return null;
+			});
+			if (string.IsNullOrWhiteSpace(propertyValue))
+				return;
+			
+			// parse template value
+			var tokens = new List<(Text.TokenType, string)>();
+			while (true)
+			{
+				var actualTokenCount = 0;
+				foreach (var token in new Text.Tokenizer(propertyValue))
+				{
+					++actualTokenCount;
+					switch (token.Type)
+					{
+						case Text.TokenType.CjkPhrese:
+						case Text.TokenType.Phrase:
+						case Text.TokenType.VaryingString:
+							tokens.Add((token.Type, new string(token.Value)));
+							break;
+					}
+				}
+				if (tokens.IsEmpty())
+				{
+					if (actualTokenCount == 0)
+						return;
+					foreach (var token in new Text.Tokenizer(propertyValue))
+					{
+						++actualTokenCount;
+						switch (token.Type)
+						{
+							case Text.TokenType.DecimalNumber:
+							case Text.TokenType.HexNumber:
+								tokens.Add((token.Type, new string(token.Value)));
+								break;
+						}
+					}
+				}
+				else if (tokens.Count == 1 && tokens[0].Item1 == Text.TokenType.VaryingString)
+				{
+					propertyValue = propertyValue.Trim().Let(it => it[1..^1]);
+					tokens.Clear();
+					continue;
+				}
+				break;
+			}
+
+			// search
+			if (Net.SearchProviderManager.Default.DefaultProvider.TryCreateSearchUri(tokens.Select(it => it.Item2).ToArray(), out var uri))
+				Platform.OpenLink(uri);
+		}
+
+
+		/// <summary>
+		/// Command to search value of log property on the Internet.
+		/// </summary>
+		/// <remarks>The type of parameter is <see cref="DisplayableLogProperty"/>.</remarks>
+		public ICommand SearchLogPropertyOnInternetCommand { get; }
 
 
 		// Set IP endpoint.

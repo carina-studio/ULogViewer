@@ -134,6 +134,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ObservableCommandState canResetLogProfileToSession = new();
 		readonly MutableObservableBoolean canRestartAsAdmin = new(Platform.IsWindows && !App.Current.IsRunningAsAdministrator);
 		readonly ObservableCommandState canSaveLogs = new();
+		readonly MutableObservableBoolean canSearchLogPropertyOnInternet = new();
 		readonly ObservableCommandState canSetIPEndPoint = new();
 		readonly ForwardedObservableBoolean canSetLogProfile;
 		readonly ObservableCommandState canSetLogProfileToSession = new();
@@ -187,6 +188,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly HashSet<Avalonia.Input.Key> pressedKeys = new();
 		readonly ScheduledAction scrollToLatestLogAction;
 		readonly ScheduledAction scrollToTargetLogRangeAction;
+		readonly MenuItem searchLogPropertyOnInternetMenuItem;
 		IBrush? selectableValueLogItemBackgroundBrush;
 		readonly IMultiValueConverter selectableValueLogItemBackgroundConverter;
 		readonly ToggleButton selectAndSetLogProfileDropDownButton;
@@ -312,6 +314,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.RestartAsAdministratorCommand = new Command(this.RestartAsAdministrator, this.canRestartAsAdmin);
 			this.SaveAllLogsCommand = new Command(() => this.SaveLogs(true), this.canSaveLogs);
 			this.SaveLogsCommand = new Command(() => this.SaveLogs(false), this.canSaveLogs);
+			this.SearchSelectedLogPropertyOnInternetCommand = new Command(this.SearchSelectedLogPropertyOnInternet, this.canSearchLogPropertyOnInternet);
 			this.SelectAndSetIPEndPointCommand = new Command(this.SelectAndSetIPEndPoint, this.canSetIPEndPoint);
 			this.SelectAndSetLogProfileCommand = new Command(this.SelectAndSetLogProfileAsync, this.canSetLogProfile);
 			this.SelectAndSetUriCommand = new Command(this.SelectAndSetUri, this.canSetUri);
@@ -620,12 +623,14 @@ namespace CarinaStudio.ULogViewer.Controls
 							propertyValue = $"{propertyValue[0..16]}…";
 						this.copyLogPropertyMenuItem!.Header = this.Application.GetFormattedString("SessionView.CopyLogProperty", displayName);
 						this.filterByLogPropertyMenuItem!.Header = this.Application.GetFormattedString("SessionView.FilterByLogProperty", propertyValue);
+						this.searchLogPropertyOnInternetMenuItem!.Header = this.Application.GetFormattedString("SessionView.SearchLogPropertyOnInternet", Net.SearchProviderManager.Default.DefaultProvider.Name, propertyValue);
 						this.showLogPropertyMenuItem.Header = this.Application.GetFormattedString("SessionView.ShowLogProperty", displayName);
 					}
 					else
 					{
 						this.copyLogPropertyMenuItem!.Header = this.Application.GetString("SessionView.CopyLogProperty.Disabled");
 						this.filterByLogPropertyMenuItem!.Header = this.Application.GetString("SessionView.FilterByLogProperty.Disabled");
+						this.searchLogPropertyOnInternetMenuItem!.Header = this.Application.GetFormattedString("SessionView.SearchLogPropertyOnInternet.Disabled", Net.SearchProviderManager.Default.DefaultProvider.Name);
 						this.showLogPropertyMenuItem.Header = this.Application.GetString("SessionView.ShowLogProperty.Disabled");
 					}
 				};
@@ -707,6 +712,9 @@ namespace CarinaStudio.ULogViewer.Controls
 					case nameof(filterByLogPropertyMenuItem):
 						this.filterByLogPropertyMenuItem = (MenuItem)item;
 						break;
+					case nameof(searchLogPropertyOnInternetMenuItem):
+						this.searchLogPropertyOnInternetMenuItem = (MenuItem)item;
+						break;
 					case nameof(showLogPropertyMenuItem):
 						this.showLogPropertyMenuItem = (MenuItem)item;
 						break;
@@ -714,6 +722,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			this.copyLogPropertyMenuItem.AsNonNull();
 			this.filterByLogPropertyMenuItem.AsNonNull();
+			this.searchLogPropertyOnInternetMenuItem.AsNonNull();
 			this.showLogPropertyMenuItem.AsNonNull();
 			
 			// create scheduled actions
@@ -1571,11 +1580,13 @@ namespace CarinaStudio.ULogViewer.Controls
 								if (isStringProperty)
 								{
 									this.canFilterByLogProperty.Update(!logProperty.Name.EndsWith("String"));
+									this.canSearchLogPropertyOnInternet.Update(!logProperty.Name.EndsWith("String"));
 									this.canShowLogProperty.Update(true);
 								}
 								else
 								{
 									this.canFilterByLogProperty.Update(false);
+									this.canSearchLogPropertyOnInternet.Update(false);
 									this.canShowLogProperty.Update(false);
 								}
 							}
@@ -1583,6 +1594,7 @@ namespace CarinaStudio.ULogViewer.Controls
 							{
 								this.canCopyLogProperty.Update(false);
 								this.canFilterByLogProperty.Update(false);
+								this.canSearchLogPropertyOnInternet.Update(false);
 								this.canShowLogProperty.Update(false);
 							}
 						};
@@ -2965,6 +2977,10 @@ namespace CarinaStudio.ULogViewer.Controls
 				);
 				this.canMarkSelectedLogs.Update(hasSelectedItems && session.MarkLogsCommand.CanExecute(null));
 				this.canMarkUnmarkSelectedLogs.Update(hasSelectedItems && session.MarkUnmarkLogsCommand.CanExecute(null));
+				this.canSearchLogPropertyOnInternet.Update(logProperty != null 
+					&& DisplayableLog.HasStringProperty(logProperty.Name)
+					&& !logProperty.Name.EndsWith("String")
+				);
 				this.canShowFileInExplorer.Update(hasSelectedItems && session.IsLogFileNeeded);
 				this.canShowLogProperty.Update(hasSingleSelectedItem && logProperty != null && DisplayableLog.HasStringProperty(logProperty.Name));
 				this.canUnmarkSelectedLogs.Update(hasSelectedItems && session.UnmarkLogsCommand.CanExecute(null));
@@ -3872,6 +3888,21 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// Command to save logs to file.
 		/// </summary>
 		public ICommand SaveLogsCommand { get; }
+
+
+		// Search value of selected log property on the Internet.
+		void SearchSelectedLogPropertyOnInternet()
+		{
+			if (this.lastClickedLogPropertyView?.Tag is not DisplayableLogProperty property)
+            	return;
+			(this.DataContext as Session)?.SearchLogPropertyOnInternetCommand.TryExecute(property);
+		}
+
+
+		/// <summary>
+		/// Command to search value of selected log property on the Internet.
+		/// </summary>
+		public ICommand SearchSelectedLogPropertyOnInternetCommand { get; }
 
 
 		// Scroll to specific log.

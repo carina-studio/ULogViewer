@@ -13,6 +13,10 @@ static class SettingKeys
 	/// </summary>
 	public static readonly SettingKey<int> ContinuousLogReadingUpdateInterval = new(nameof(ContinuousLogReadingUpdateInterval), 100);
 	/// <summary>
+	/// ID of default internet search provider.
+	/// </summary>
+	public static readonly SettingKey<string> DefaultSearchProvider = new(nameof(DefaultSearchProvider), "");
+	/// <summary>
 	/// Default text shell to be used by ULogViewer.
 	/// </summary>
 	public static readonly SettingKey<TextShell> DefaultTextShell = new(nameof(TextShell), Global.Run(() =>

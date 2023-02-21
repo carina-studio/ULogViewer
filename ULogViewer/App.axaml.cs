@@ -522,6 +522,9 @@ namespace CarinaStudio.ULogViewer
 			// initialize control fonts
 			Controls.ControlFonts.Initialize(this);
 
+			// initialize search providers
+			Net.SearchProviderManager.Initialize(this);
+
 			// find menu items
 			if (Platform.IsMacOS)
 			{
