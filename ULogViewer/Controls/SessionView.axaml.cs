@@ -614,14 +614,14 @@ namespace CarinaStudio.ULogViewer.Controls
 							propertyValue = $"{propertyValue[0..16]}…";
 						this.copyLogPropertyMenuItem!.Header = this.Application.GetFormattedString("SessionView.CopyLogProperty", displayName);
 						this.filterByLogPropertyMenuItem!.Header = this.Application.GetFormattedString("SessionView.FilterByLogProperty", propertyValue);
-						this.searchLogPropertyOnInternetMenuItem!.Header = this.Application.GetFormattedString("SessionView.SearchLogPropertyOnInternet", Net.SearchProviderManager.Default.DefaultProvider.Name, propertyValue);
+						this.searchLogPropertyOnInternetMenuItem!.Header = this.Application.GetFormattedString("SessionView.SearchLogPropertyOnInternet", propertyValue);
 						this.showLogPropertyMenuItem.Header = this.Application.GetFormattedString("SessionView.ShowLogProperty", displayName);
 					}
 					else
 					{
 						this.copyLogPropertyMenuItem!.Header = this.Application.GetString("SessionView.CopyLogProperty.Disabled");
 						this.filterByLogPropertyMenuItem!.Header = this.Application.GetString("SessionView.FilterByLogProperty.Disabled");
-						this.searchLogPropertyOnInternetMenuItem!.Header = this.Application.GetFormattedString("SessionView.SearchLogPropertyOnInternet.Disabled", Net.SearchProviderManager.Default.DefaultProvider.Name);
+						this.searchLogPropertyOnInternetMenuItem!.Header = this.Application.GetString("SessionView.SearchLogPropertyOnInternet.Disabled");
 						this.showLogPropertyMenuItem.Header = this.Application.GetString("SessionView.ShowLogProperty.Disabled");
 					}
 				};
@@ -704,7 +704,41 @@ namespace CarinaStudio.ULogViewer.Controls
 						this.filterByLogPropertyMenuItem = (MenuItem)item;
 						break;
 					case nameof(searchLogPropertyOnInternetMenuItem):
-						this.searchLogPropertyOnInternetMenuItem = (MenuItem)item;
+						this.searchLogPropertyOnInternetMenuItem = ((MenuItem)item).Also(it =>
+						{
+							var providers = Net.SearchProviderManager.Default.Providers;
+							var subItems = new MenuItem[providers.Count];
+							for (var i = 0; i < providers.Count; ++i)
+							{
+								var provider = providers[i];
+								var commandBindingToken = default(IDisposable);
+								var headerBindingToken = default(IDisposable);
+								var iconBindingToken = default(IDisposable);
+								subItems[i] = new MenuItem().Also(subItem =>
+								{
+									var iconImage = new Avalonia.Controls.Image().Also(it =>
+									{
+										it.Classes.Add("MenuItem_Icon");
+									});
+									subItem.CommandParameter = provider;
+									subItem.Icon = iconImage;
+									subItem.AttachedToLogicalTree += (_, _) =>
+									{
+										if (this.DataContext is Session session)
+											commandBindingToken = subItem.Bind(MenuItem.CommandProperty, new Binding() { Path = nameof(Session.SearchLogPropertyOnInternetCommand), Source = session });
+										headerBindingToken = subItem.Bind(MenuItem.HeaderProperty, new Binding() { Path = nameof(Net.SearchProvider.Name), Source = provider });
+										iconBindingToken = iconImage.Bind(Avalonia.Controls.Image.SourceProperty, new Binding() { Source = provider, Converter = Converters.SearchProviderIconConverters.Default });
+									};
+									subItem.DetachedFromLogicalTree += (_, _) =>
+									{
+										commandBindingToken = commandBindingToken.DisposeAndReturnNull();
+										headerBindingToken = headerBindingToken.DisposeAndReturnNull();
+										iconBindingToken = iconBindingToken.DisposeAndReturnNull();
+									};
+								});
+							}
+							it.Items = subItems;
+						});
 						break;
 					case nameof(showLogPropertyMenuItem):
 						this.showLogPropertyMenuItem = (MenuItem)item;

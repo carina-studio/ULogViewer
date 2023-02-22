@@ -188,7 +188,7 @@
 				</MenuItem.Icon>
 			</MenuItem>
 			<Separator/>
-			<MenuItem Name="searchLogPropertyOnInternetMenuItem" Command="{Binding SearchLogPropertyOnInternetCommand}" CommandParameter="{Binding DefaultProvider, Source={x:Static appNet:SearchProviderManager.Default}}">
+			<MenuItem Name="searchLogPropertyOnInternetMenuItem">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Search}"/>
 				</MenuItem.Icon>
