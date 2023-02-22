@@ -23,8 +23,11 @@ class SearchProviderManager : BaseApplicationObject<IULogViewerApplication>, INo
     {
         this.Providers = ListExtensions.AsReadOnly(new SearchProvider[]
         {
+            new BaiduSearchProvider(app),
             new BingSearchProvider(app),
             new GoogleSearchProvider(app),
+            new StackOverflowSearchProvider(app),
+            new ZhihuSearchProvider(app),
         });
         this.UpdateDefaultProvider(this.Settings.GetValueOrDefault(SettingKeys.DefaultSearchProvider), false);
         this.Settings.SettingChanged += (_, e) =>

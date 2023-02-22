@@ -934,6 +934,12 @@ return None</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.RestrictionsOfNonProVersion">在启用专业版之前，您只能建立 1 个日志资料来源脚本，且在关闭 ULogViewer 后不会被保留。</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.Title">管理日志资料来源脚本</sys:String>
 
+	<!-- SearchProvider -->
+	<sys:String x:Key="String/SearchProvider.Baidu">百度</sys:String>
+	<sys:String x:Key="String/SearchProvider.Bing">必应</sys:String>
+	<sys:String x:Key="String/SearchProvider.Google">谷歌</sys:String>
+	<sys:String x:Key="String/SearchProvider.Zhihu">知乎</sys:String>
+
 	<!-- Session -->
 	<sys:String x:Key="String/Session.Empty">空白页面</sys:String>
 	
