@@ -3,6 +3,7 @@ using CarinaStudio.Diagnostics;
 using CarinaStudio.Threading;
 using CarinaStudio.ViewModels;
 using CarinaStudio.Windows.Input;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -33,9 +34,26 @@ class LogSelectionViewModel : SessionComponent
     /// </summary>
     public static readonly ObservableProperty<DateTime?> LatestSelectedLogTimestampProperty = ObservableProperty.Register<LogSelectionViewModel, DateTime?>(nameof(LatestSelectedLogTimestamp));
     /// <summary>
+    /// Property of <see cref="SelectedLogProperty"/>.
+    /// </summary>
+    public static readonly ObservableProperty<DisplayableLogProperty?> SelectedLogPropertyProperty = ObservableProperty.Register<LogSelectionViewModel, DisplayableLogProperty?>(nameof(SelectedLogProperty), coerce: (vm, p) =>
+    {
+        if (p == null)
+            return null;
+        return vm.Session.DisplayLogProperties.FirstOrDefault(it => it == p);
+    });
+    /// <summary>
+    /// Property of <see cref="SelectedLogPropertyValue"/>.
+    /// </summary>
+    public static readonly ObservableProperty<object?> SelectedLogPropertyValueProperty = ObservableProperty.Register<LogSelectionViewModel, object?>(nameof(SelectedLogPropertyValue));
+    /// <summary>
     /// Property of <see cref="SelectedLogsDuration"/>.
     /// </summary>
     public static readonly ObservableProperty<TimeSpan?> SelectedLogsDurationProperty = ObservableProperty.Register<LogSelectionViewModel, TimeSpan?>(nameof(SelectedLogsDuration));
+    /// <summary>
+    /// Property of <see cref="SelectedLogStringPropertyValue"/>.
+    /// </summary>
+    public static readonly ObservableProperty<string?> SelectedLogStringPropertyValueProperty = ObservableProperty.Register<LogSelectionViewModel, string?>(nameof(SelectedLogStringPropertyValue));
     /// <summary>
     /// Property of <see cref="SelectedProcessId"/>.
     /// </summary>
@@ -54,6 +72,7 @@ class LogSelectionViewModel : SessionComponent
     INotifyCollectionChanged? attachedLogs;
     readonly MutableObservableBoolean canSelectLogsDurationEndingLog = new();
     readonly MutableObservableBoolean canSelectLogsDurationStartingLog = new();
+    readonly IDisposable displayableLogPropertiesObserverToken;
     readonly IDisposable earliestLogTimestampObserverToken;
     readonly IDisposable latestLogTimestampObserverToken;
     readonly IDisposable logsObserverToken;
@@ -135,6 +154,12 @@ class LogSelectionViewModel : SessionComponent
         });
         
         // attach to session
+        this.displayableLogPropertiesObserverToken = session.GetValueAsObservable(Session.DisplayLogPropertiesProperty).Subscribe(properties =>
+        {
+            var selectedProperty = this.GetValue(SelectedLogPropertyProperty);
+            if (selectedProperty != null && !properties.Contains(selectedProperty))
+                this.ResetValue(SelectedLogPropertyProperty);
+        });
         this.earliestLogTimestampObserverToken = session.GetValueAsObservable(Session.EarliestLogTimestampProperty).Subscribe(_ =>
             this.updateCanSelectLogsDurationStartingEndingLogsAction.Schedule());
         this.latestLogTimestampObserverToken = session.GetValueAsObservable(Session.LatestLogTimestampProperty).Subscribe(_ =>
@@ -152,6 +177,9 @@ class LogSelectionViewModel : SessionComponent
             this.updateCanSelectLogsDurationStartingEndingLogsAction.Schedule());
         this.minLogTimeSpanObserverToken = session.GetValueAsObservable(Session.MinLogTimeSpanProperty).Subscribe(_ =>
             this.updateCanSelectLogsDurationStartingEndingLogsAction.Schedule());
+        
+        // attach to self
+        this.GetValueAsObservable(SelectedLogPropertyProperty).Subscribe(this.ReportSelectedLogPropertyValue);
     }
 
 
@@ -208,6 +236,7 @@ class LogSelectionViewModel : SessionComponent
             this.attachedLogs.CollectionChanged -= this.OnLogsChanged;
             this.attachedLogs = null;
         }
+        this.displayableLogPropertiesObserverToken.Dispose();
         this.earliestLogTimestampObserverToken.Dispose();
         this.latestLogTimestampObserverToken.Dispose();
         this.logsObserverToken.Dispose();
@@ -355,6 +384,37 @@ class LogSelectionViewModel : SessionComponent
             it.SelectedProcessId = selectedPid;
             it.SelectedThreadId = selectedTid;
         });
+
+        // report selected value of property
+        this.ReportSelectedLogPropertyValue();
+    }
+
+
+    // Report the value of selected log property.
+    void ReportSelectedLogPropertyValue()
+    {
+        if (this.IsDisposed)
+            return;
+        var property = this.GetValue(SelectedLogPropertyProperty);
+        this.Logger.LogInformation("Selection count: {count}, selected property: {property}", this.selectedLogs.Count, property?.Name);
+        if (this.selectedLogs.Count != 1 || property == null)
+        {
+            this.ResetValue(SelectedLogPropertyValueProperty);
+            this.ResetValue(SelectedLogStringPropertyValueProperty);
+            return;
+        }
+        if (DisplayableLog.HasStringProperty(property.Name) && !property.Name.EndsWith("String"))
+        {
+            this.selectedLogs[0].TryGetProperty<string?>(property.Name, out var value);
+            this.SetValue(SelectedLogPropertyValueProperty, value);
+            this.SetValue(SelectedLogStringPropertyValueProperty, value);
+        }
+        else
+        {
+            this.selectedLogs[0].TryGetProperty<object?>(property.Name, out var value);
+            this.SetValue(SelectedLogPropertyValueProperty, value);
+            this.ResetValue(SelectedLogStringPropertyValueProperty);
+        }
     }
 
 
@@ -384,6 +444,22 @@ class LogSelectionViewModel : SessionComponent
 
 
     /// <summary>
+    /// Get or set the log property which is currently selected.
+    /// </summary>
+    public DisplayableLogProperty? SelectedLogProperty
+    {
+        get => this.GetValue(SelectedLogPropertyProperty);
+        set => this.SetValue(SelectedLogPropertyProperty, value);
+    }
+
+
+    /// <summary>
+    /// Get value of selected log property.
+    /// </summary>
+    public object? SelectedLogPropertyValue => this.GetValue(SelectedLogPropertyValueProperty);
+
+
+    /// <summary>
     /// Get list of selected logs.
     /// </summary>
     public IList<DisplayableLog> SelectedLogs { get => this.selectedLogs; }
@@ -399,6 +475,12 @@ class LogSelectionViewModel : SessionComponent
     /// Get duration between selected logs.
     /// </summary>
     public TimeSpan? SelectedLogsDuration { get => this.GetValue(SelectedLogsDurationProperty); }
+
+
+    /// <summary>
+    /// Get value of selected log property with string value.
+    /// </summary>
+    public string? SelectedLogStringPropertyValue => this.GetValue(SelectedLogStringPropertyValueProperty);
 
 
     // Select the log which represents the ending point of total duration of logs.

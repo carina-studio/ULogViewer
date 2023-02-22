@@ -45,7 +45,6 @@ partial class SessionView
 
 
     // Fields.
-    readonly MutableObservableBoolean canFilterByLogProperty = new();
     readonly Button clearLogTextFilterButton;
     readonly ScheduledAction commitLogFiltersAction;
     readonly MenuItem filterByLogPropertyMenuItem;
@@ -209,47 +208,6 @@ partial class SessionView
     /// Command to edit given predefined log text filter.
     /// </summary>
     public ICommand EditPredefinedLogTextFilterCommand { get; }
-
-
-    // Filter by property of selected log.
-    void FilterByLogProperty(Accuracy accuracy)
-    {
-        if (this.lastClickedLogPropertyView?.Tag is not DisplayableLogProperty property)
-            return;
-        (this.DataContext as Session)?.LogFiltering?.Let(it =>
-        {
-            switch (accuracy)
-            {
-                case Accuracy.High:
-                    it.FilterBySelectedPropertyWithHighAccuracyCommand.TryExecute(property);
-                    break;
-                case Accuracy.Low:
-                    it.FilterBySelectedPropertyWithLowAccuracyCommand.TryExecute(property);
-                    break;
-                default:
-                    it.FilterBySelectedPropertyCommand.TryExecute(property);
-                    break;
-            }
-        });
-    }
-
-
-    /// <summary>
-    /// Command to filter by property of selected log.
-    /// </summary>
-    public ICommand FilterByLogPropertyCommand { get; }
-
-
-    /// <summary>
-    /// Command to filter by property of selected log with high accuracy.
-    /// </summary>
-    public ICommand FilterByLogPropertyWithHighAccuracyCommand { get; }
-
-
-    /// <summary>
-    /// Command to filter by property of selected log with low accuracy.
-    /// </summary>
-    public ICommand FilterByLogPropertyWithLowAccuracyCommand { get; }
 
 
     // Called when selection of list box of predefined log text filter has been changed.

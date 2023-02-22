@@ -799,7 +799,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.RemoveLogFileCommand = new Command<string?>(this.RemoveLogFile, this.canClearLogFiles);
 			this.ResetLogProfileCommand = new Command(this.ResetLogProfile, this.canResetLogProfile);
 			this.SaveLogsCommand = new Command<LogsSavingOptions>(this.SaveLogs, this.canSaveLogs);
-			this.SearchLogPropertyOnInternetCommand = new Command<DisplayableLogProperty>(this.SearchLogPropertyOnInternet, this.canSearchLogPropertyOnInternet);
+			this.SearchLogPropertyOnInternetCommand = new Command<Net.SearchProvider>(this.SearchLogPropertyOnInternet, this.canSearchLogPropertyOnInternet);
 			this.SetIPEndPointCommand = new Command<IPEndPoint?>(this.SetIPEndPoint, this.GetValueAsObservable(IsIPEndPointNeededProperty));
 			this.SetLogProfileCommand = new Command<LogProfile?>(this.SetLogProfile, this.canSetLogProfile);
 			this.SetUriCommand = new Command<Uri?>(this.SetUri, this.GetValueAsObservable(IsUriNeededProperty));
@@ -854,8 +854,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.LogSelection = new LogSelectionViewModel(this, internalAccessor).Also(it =>
 			{
 				this.AttachToComponent(it);
-				(it.SelectedLogs as INotifyCollectionChanged)?.Let(it =>
-					it.CollectionChanged += (_, _) => this.canSearchLogPropertyOnInternet.Update(this.LogSelection!.SelectedLogs.Count == 1));
+				it.GetValueAsObservable(LogSelectionViewModel.SelectedLogStringPropertyValueProperty).Subscribe(value =>
+					this.canSearchLogPropertyOnInternet.Update(!string.IsNullOrWhiteSpace(value)));
 			});
 			this.AllComponentsCreated?.Invoke();
 
@@ -4119,21 +4119,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		// Search value of log property on the Internet.
-		void SearchLogPropertyOnInternet(DisplayableLogProperty property)
+		void SearchLogPropertyOnInternet(Net.SearchProvider searchProvider)
 		{
 			// check state
 			this.VerifyAccess();
 			this.VerifyDisposed();
 
 			// get property value
-			var propertyValue = this.LogSelection.SelectedLogs.Let(it =>
-			{
-				if (it.Count != 1)
-					return null;
-				if (it[0].TryGetProperty<object?>(property.Name, out var value))
-					return value?.ToString();
-				return null;
-			});
+			var propertyValue = this.LogSelection.SelectedLogStringPropertyValue;
 			if (string.IsNullOrWhiteSpace(propertyValue))
 				return;
 			
@@ -4180,7 +4173,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			}
 
 			// search
-			if (Net.SearchProviderManager.Default.DefaultProvider.TryCreateSearchUri(tokens.Select(it => it.Item2).ToArray(), out var uri))
+			if (searchProvider.TryCreateSearchUri(tokens.Select(it => it.Item2).ToArray(), out var uri))
 				Platform.OpenLink(uri);
 		}
 
@@ -4188,7 +4181,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Command to search value of log property on the Internet.
 		/// </summary>
-		/// <remarks>The type of parameter is <see cref="DisplayableLogProperty"/>.</remarks>
+		/// <remarks>The type of parameter is <see cref="Net.SearchProvider"/>.</remarks>
 		public ICommand SearchLogPropertyOnInternetCommand { get; }
 
 

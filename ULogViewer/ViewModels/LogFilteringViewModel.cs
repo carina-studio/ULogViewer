@@ -113,6 +113,7 @@ class LogFilteringViewModel : SessionComponent
     readonly DisplayableLogFilter logFilter;
     readonly Stopwatch logFilteringWatch = new();
     readonly ObservableList<PredefinedLogTextFilter> predefinedTextFilters;
+    IDisposable? selectedLogStringPropertyValueObserverToken;
     IDisposable? selectedPidObserverToken;
     IDisposable? selectedTidObserverToken;
     readonly ObservableList<string> textFilterHistory = new();
@@ -131,9 +132,7 @@ class LogFilteringViewModel : SessionComponent
         // create command
         this.ClearPredefinedTextFiltersCommand = new Command(() => this.predefinedTextFilters?.Clear(), this.canClearPredefinedTextFilters);
         this.FilterBySelectedProcessIdCommand = new Command<bool>(this.FilterBySelectedProcessId, this.canFilterBySelectedPid);
-        this.FilterBySelectedPropertyCommand = new Command<DisplayableLogProperty>(p => this.FilterBySelectedProperty(p, Accuracy.Normal), this.canFilterBySelectedProperty);
-        this.FilterBySelectedPropertyWithHighAccuracyCommand = new Command<DisplayableLogProperty>(p => this.FilterBySelectedProperty(p, Accuracy.High), this.canFilterBySelectedProperty);
-        this.FilterBySelectedPropertyWithLowAccuracyCommand = new Command<DisplayableLogProperty>(p => this.FilterBySelectedProperty(p, Accuracy.Low), this.canFilterBySelectedProperty);
+        this.FilterBySelectedPropertyCommand = new Command<Accuracy>(this.FilterBySelectedProperty, this.canFilterBySelectedProperty);
         this.FilterBySelectedThreadIdCommand = new Command<bool>(this.FilterBySelectedThreadId, this.canFilterBySelectedTid);
         this.ResetFiltersCommand = new Command(() => this.ResetFilters(true), this.canResetFilters);
         this.SetFilterCombinationModeCommand = new Command<FilterCombinationMode>(mode => this.FiltersCombinationMode = mode);
@@ -303,7 +302,6 @@ class LogFilteringViewModel : SessionComponent
             this.ResetValue(IsThreadIdFilterEnabledProperty);
             this.ResetValue(ThreadIdFilterProperty);
         }
-        this.OnSelectedLogsChanged(null, EventArgs.Empty);
     }
 
 
@@ -400,13 +398,13 @@ class LogFilteringViewModel : SessionComponent
         this.logFilter.Dispose();
 
         // detach from log selection
+        this.selectedLogStringPropertyValueObserverToken?.Dispose();
         this.selectedPidObserverToken?.Dispose();
         this.selectedTidObserverToken?.Dispose();
 
         // detach from session
         this.Session.AllLogReadersDisposed -= this.OnAllLogReaderDisposed;
         this.displayLogPropertiesObserverToken.Dispose();
-        this.Session.LogSelection.SelectedLogsChanged -= this.OnSelectedLogsChanged;
 
         // detach from configuration
         this.Application.Configuration.SettingChanged -= this.OnConfigurationChanged;
@@ -438,21 +436,14 @@ class LogFilteringViewModel : SessionComponent
 
 
     // Filter by specific property of selected log.
-    void FilterBySelectedProperty(DisplayableLogProperty property, Accuracy accuracy)
+    void FilterBySelectedProperty(Accuracy accuracy)
     {
         // check state
         this.VerifyAccess();
         this.VerifyDisposed();
 
         // get template value
-        var propertyValue = this.Session.LogSelection.SelectedLogs.Let(it =>
-        {
-            if (it.Count != 1)
-                return null;
-            if (it[0].TryGetProperty<object?>(property.Name, out var value))
-                return value?.ToString();
-            return null;
-        });
+        var propertyValue = this.Session.LogSelection.SelectedLogStringPropertyValue;
         if (string.IsNullOrWhiteSpace(propertyValue))
         {
             this.Logger.LogDebug("No property value to filter");
@@ -574,22 +565,8 @@ class LogFilteringViewModel : SessionComponent
     /// <summary>
     /// Command to use value of property of selected log as text filter.
     /// </summary>
-    /// <remarks>The type of parameter is <see cref="DisplayableLogProperty"/> to specify the property.</remarks>
+    /// <remarks>The type of parameter is <see cref="Accuracy"/>.</remarks>
     public ICommand FilterBySelectedPropertyCommand { get; }
-
-
-    /// <summary>
-    /// Command to use value of property of selected log as text filter with high accuracy.
-    /// </summary>
-    /// <remarks>The type of parameter is <see cref="DisplayableLogProperty"/> to specify the property.</remarks>
-    public ICommand FilterBySelectedPropertyWithHighAccuracyCommand { get; }
-
-
-    /// <summary>
-    /// Command to use value of property of selected log as text filter with low accuracy.
-    /// </summary>
-    /// <remarks>The type of parameter is <see cref="DisplayableLogProperty"/> to specify the property.</remarks>
-    public ICommand FilterBySelectedPropertyWithLowAccuracyCommand { get; }
 
 
     // Filter by selected thread ID.
@@ -706,7 +683,10 @@ class LogFilteringViewModel : SessionComponent
         // attach to log selection
         this.Session.LogSelection.Let(it =>
         {
-            it.SelectedLogsChanged += this.OnSelectedLogsChanged;
+            this.selectedLogStringPropertyValueObserverToken = it.GetValueAsObservable(LogSelectionViewModel.SelectedLogStringPropertyValueProperty).Subscribe(value =>
+            {
+                this.canFilterBySelectedProperty.Update(!string.IsNullOrWhiteSpace(value));
+            });
             this.selectedPidObserverToken = it.GetValueAsObservable(LogSelectionViewModel.SelectedProcessIdProperty).Subscribe(pid =>
             {
                 this.canFilterBySelectedPid.Update(pid.HasValue);
@@ -938,13 +918,6 @@ class LogFilteringViewModel : SessionComponent
             writer.WriteBoolean("LogFiltering.IsMaxTextFilterHistoryHit", true);
         if (this.indexOfTextFilterOnHistory >= 0)
             writer.WriteNumber("LogFiltering.IndexOfTextFilterOnHistory", this.indexOfTextFilterOnHistory);
-    }
-
-
-    // Called when selected logs changed.
-    void OnSelectedLogsChanged(object? sender, EventArgs e)
-    {
-        this.canFilterBySelectedProperty.Update(this.Session.LogSelection.SelectedLogs.Count == 1);
     }
 
 

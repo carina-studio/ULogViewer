@@ -21,6 +21,7 @@
 			 xmlns:appCtxlBased="using:CarinaStudio.ULogViewer.ViewModels.Analysis.ContextualBased"
 			 xmlns:appInput="using:CarinaStudio.ULogViewer.Input"
              xmlns:appLogs="using:CarinaStudio.ULogViewer.Logs"
+			 xmlns:appNet="using:CarinaStudio.ULogViewer.Net"
              xmlns:appViewModels="using:CarinaStudio.ULogViewer.ViewModels"
 			 xmlns:cs="using:CarinaStudio"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
@@ -149,10 +150,10 @@
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Filter.Outline}"/>
 				</MenuItem.Icon>
-				<MenuItem Command="{Binding $parent[UserControl].FilterByLogPropertyCommand}" Header="{DynamicResource String/SessionView.FilterByLogProperty.NormalAccuracy}"/>
+				<MenuItem Command="{Binding LogFiltering.FilterBySelectedPropertyCommand}" CommandParameter="{x:Static app:Accuracy.Normal}" Header="{DynamicResource String/SessionView.FilterByLogProperty.NormalAccuracy}"/>
 				<Separator/>
-				<MenuItem Command="{Binding $parent[UserControl].FilterByLogPropertyWithHighAccuracyCommand}" Header="{DynamicResource String/SessionView.FilterByLogProperty.HighAccuracy}"/>
-				<MenuItem Command="{Binding $parent[UserControl].FilterByLogPropertyWithLowAccuracyCommand}" Header="{DynamicResource String/SessionView.FilterByLogProperty.LowAccuracy}"/>
+				<MenuItem Command="{Binding LogFiltering.FilterBySelectedPropertyCommand}" CommandParameter="{x:Static app:Accuracy.High}" Header="{DynamicResource String/SessionView.FilterByLogProperty.HighAccuracy}"/>
+				<MenuItem Command="{Binding LogFiltering.FilterBySelectedPropertyCommand}" CommandParameter="{x:Static app:Accuracy.Low}" Header="{DynamicResource String/SessionView.FilterByLogProperty.LowAccuracy}"/>
 			</MenuItem>
 			<MenuItem Command="{Binding LogFiltering.FilterBySelectedProcessIdCommand}" Header="{DynamicResource String/SessionView.FilterLogsBySelectedProcessId}">
 				<MenuItem.CommandParameter>
@@ -187,7 +188,7 @@
 				</MenuItem.Icon>
 			</MenuItem>
 			<Separator/>
-			<MenuItem Name="searchLogPropertyOnInternetMenuItem" Command="{Binding $parent[UserControl].SearchSelectedLogPropertyOnInternetCommand}">
+			<MenuItem Name="searchLogPropertyOnInternetMenuItem" Command="{Binding SearchLogPropertyOnInternetCommand}" CommandParameter="{Binding DefaultProvider, Source={x:Static appNet:SearchProviderManager.Default}}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Search}"/>
 				</MenuItem.Icon>
