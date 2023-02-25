@@ -14,5 +14,5 @@ static class SearchProviderIconConverters
     /// Default instance.
     /// </summary>
     public static readonly IValueConverter Default = new FuncValueConverter<SearchProvider, IImage?>(provider =>
-        provider != null ? App.CurrentOrNull?.FindResourceOrDefault<IImage>($"Image/SearchProvider.{provider.Id}") : null);
+        provider != null ? App.CurrentOrNull?.FindResourceOrDefault<IImage>($"Image/SearchProvider.{provider.Id}.Colored") : null);
 }
