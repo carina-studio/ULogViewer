@@ -8,6 +8,7 @@
         xmlns:ma="using:Markdown.Avalonia"
 		xmlns:abControls="using:CarinaStudio.Controls"
 		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
+		xmlns:asInput="using:CarinaStudio.AppSuite.Input"
         xmlns:app="using:CarinaStudio.ULogViewer"
         xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
         xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
@@ -44,7 +45,24 @@
 
 			<!-- Property value -->
 			<TextBlock Classes="Dialog_TextBlock" Grid.Row="1" Text="{Binding $parent[Window].LogPropertyDisplayName}"/>
-			<asControls:SyntaxHighlightingTextBox Name="propertyValueTextBox" Grid.Row="2" HorizontalAlignment="Stretch" IsReadOnly="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled" TextWrapping="Wrap" VerticalAlignment="Stretch"/>
+			<asControls:SyntaxHighlightingTextBox Name="propertyValueTextBox" Grid.Row="2" HorizontalAlignment="Stretch" IsReadOnly="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled" TextWrapping="Wrap" VerticalAlignment="Stretch">
+				<asControls:SyntaxHighlightingTextBox.ContextMenu>
+					<ContextMenu>
+						<MenuItem Command="{Binding $parent[TextBox].Copy}" Header="{DynamicResource String/Common.Copy}" IsEnabled="{Binding $parent[TextBox].CanCopy}" InputGesture="{x:Static asInput:KeyGestures.Copy}">
+							<MenuItem.Icon>
+								<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Copy.Outline}"/>
+							</MenuItem.Icon>
+						</MenuItem>
+						<MenuItem Command="{Binding $parent[TextBox].SelectAll}" Header="{DynamicResource String/Common.SelectAll}" IsEnabled="{Binding $parent[TextBox].Text, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" InputGesture="{x:Static asInput:KeyGestures.SelectAll}"/>
+						<Separator/>
+						<MenuItem Name="searchOnInternetMenuItem" Header="{DynamicResource String/LogStringPropertyDialog.SearchOnInternet}" IsEnabled="{Binding $parent[Window].CanSearchOnInternet}">
+							<MenuItem.Icon>
+								<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Search}"/>
+							</MenuItem.Icon>
+						</MenuItem>
+					</ContextMenu>
+				</asControls:SyntaxHighlightingTextBox.ContextMenu>
+			</asControls:SyntaxHighlightingTextBox>
 			<Separator Classes="Dialog_Separator" Grid.Row="3"/>
 
 			<!-- Wrap text -->

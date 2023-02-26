@@ -642,6 +642,7 @@ return False</sys:String>
 
 	<!-- LogStringPropertyDialog -->
 	<sys:String x:Key="String/LogStringPropertyDialog.FindText">搜尋文字</sys:String>
+	<sys:String x:Key="String/LogStringPropertyDialog.SearchOnInternet">在網路上搜尋</sys:String>
 	<sys:String x:Key="String/LogStringPropertyDialog.WrapText">自動換行</sys:String>
 	<sys:String x:Key="String/LogStringPropertyDialog.Title">檢視日誌屬性</sys:String>
 

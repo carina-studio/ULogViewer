@@ -685,6 +685,7 @@ return False</sys:String>
 
 	<!-- LogStringPropertyDialog -->
 	<sys:String x:Key="String/LogStringPropertyDialog.FindText">Find text</sys:String>
+	<sys:String x:Key="String/LogStringPropertyDialog.SearchOnInternet">Search on the Internet</sys:String>
 	<sys:String x:Key="String/LogStringPropertyDialog.WrapText">Wrap automatically</sys:String>
 	<sys:String x:Key="String/LogStringPropertyDialog.Title">View log property</sys:String>
 

@@ -649,6 +649,7 @@ return False</sys:String>
 
 	<!-- LogStringPropertyDialog -->
 	<sys:String x:Key="String/LogStringPropertyDialog.FindText">搜索文字</sys:String>
+	<sys:String x:Key="String/LogStringPropertyDialog.SearchOnInternet">在互联网上搜索</sys:String>
 	<sys:String x:Key="String/LogStringPropertyDialog.WrapText">自动换行</sys:String>
 	<sys:String x:Key="String/LogStringPropertyDialog.Title">检查日志属性</sys:String>
 
@@ -1044,8 +1045,8 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.SavingLogs">正在存储日志…</sys:String>
 	<sys:String x:Key="String/SessionView.ScrollToLatestLog">滚动至最新的日志</sys:String>
 	<sys:String x:Key="String/SessionView.ScrollToLatestLogAnalysisResult">滚动至最新的分析结果</sys:String>
-	<sys:String x:Key="String/SessionView.SearchLogPropertyOnInternet">在互联网搜寻「{0}」</sys:String>
-	<sys:String x:Key="String/SessionView.SearchLogPropertyOnInternet.Disabled">在互联网搜寻日志属性值</sys:String>
+	<sys:String x:Key="String/SessionView.SearchLogPropertyOnInternet">在互联网搜索「{0}」</sys:String>
+	<sys:String x:Key="String/SessionView.SearchLogPropertyOnInternet.Disabled">在互联网搜索日志属性值</sys:String>
 	<sys:String x:Key="String/SessionView.SelectedLogAnalysisResultsAverageByteSize">平均字节大小</sys:String>
 	<sys:String x:Key="String/SessionView.SelectedLogAnalysisResultsAverageDuration">平均时距</sys:String>
 	<sys:String x:Key="String/SessionView.SelectedLogAnalysisResultsAverageQuantity">平均数量</sys:String>
