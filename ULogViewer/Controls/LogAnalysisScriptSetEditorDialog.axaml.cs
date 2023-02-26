@@ -25,9 +25,10 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Applicati
 
 
 	// Static fields.
-	static readonly AvaloniaProperty<bool> AreValidParametersProperty = AvaloniaProperty.RegisterDirect<LogAnalysisScriptSetEditorDialog, bool>("AreValidParameters", d => d.areValidParameters);
+	static readonly DirectProperty<LogAnalysisScriptSetEditorDialog, bool> AreValidParametersProperty = AvaloniaProperty.RegisterDirect<LogAnalysisScriptSetEditorDialog, bool>("AreValidParameters", d => d.areValidParameters);
 	static readonly Dictionary<LogAnalysisScriptSet, LogAnalysisScriptSetEditorDialog> Dialogs = new();
 	static readonly SettingKey<bool> DonotShowRestrictionsWithNonProVersionKey = new("LogAnalysisScriptSetEditorDialog.DonotShowRestrictionsWithNonProVersion");
+	static readonly StyledProperty<bool> IsEmbeddedScriptSetProperty = AvaloniaProperty.Register<LogAnalysisScriptSetEditorDialog, bool>(nameof(IsEmbeddedScriptSet));
 
 
 	// Fields.
@@ -88,8 +89,9 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Applicati
 		});
 		this.validateParametersAction = new(() =>
 		{
-			this.SetAndRaise<bool>(AreValidParametersProperty, ref this.areValidParameters, !string.IsNullOrWhiteSpace(this.nameTextBox.Text));
+			this.SetAndRaise(AreValidParametersProperty, ref this.areValidParameters, this.IsEmbeddedScriptSet || !string.IsNullOrWhiteSpace(this.nameTextBox.Text));
 		});
+		this.GetObservable(IsEmbeddedScriptSetProperty).Subscribe(_ => this.validateParametersAction.Schedule());
 	}
 
 
@@ -128,6 +130,16 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Applicati
 			LogAnalysisScriptSetManager.Default.AddScriptSet(scriptSet);
 		}
 		this.Close(scriptSet);
+	}
+
+
+	/// <summary>
+	/// Get or set whether the script set is embedded in another container or not.
+	/// </summary>
+	public bool IsEmbeddedScriptSet
+	{
+		get => this.GetValue(IsEmbeddedScriptSetProperty);
+		set => this.SetValue(IsEmbeddedScriptSetProperty, value);
 	}
 
 
@@ -247,9 +259,12 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Applicati
 		var scriptSet = this.scriptSetToEdit;
 		if (scriptSet != null)
 		{
-			this.iconColorComboBox.SelectedItem = scriptSet.IconColor;
-			this.iconComboBox.SelectedItem = scriptSet.Icon;
-			this.nameTextBox.Text = scriptSet.Name;
+			if (!this.IsEmbeddedScriptSet)
+			{
+				this.iconColorComboBox.SelectedItem = scriptSet.IconColor;
+				this.iconComboBox.SelectedItem = scriptSet.Icon;
+				this.nameTextBox.Text = scriptSet.Name;
+			}
 		}
 		else
 		{
@@ -257,10 +272,14 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Applicati
 		}
 
 		// setup initial focus
+		var scrollViewer = this.Get<ScrollViewer>("contentScrollViewer");
+		(scrollViewer.Content as Control)?.Let(it => it.Opacity = 0);
 		this.SynchronizationContext.Post(() =>
 		{
-			this.Get<ScrollViewer>("contentScrollViewer").ScrollToHome();
-			this.nameTextBox.Focus();
+			scrollViewer.ScrollToHome();
+			if (!this.IsEmbeddedScriptSet)
+				this.nameTextBox.Focus();
+			(scrollViewer.Content as Control)?.Let(it => it.Opacity = 1);
 		});
 	}
 

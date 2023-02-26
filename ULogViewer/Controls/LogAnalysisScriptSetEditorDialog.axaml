@@ -41,33 +41,38 @@
 		<ScrollViewer Name="contentScrollViewer" HorizontalScrollBarVisibility="Disabled">
 			<StackPanel Classes="Dialog_ContentPanel">
 				
-				<!-- Name -->
-				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.Name}"/>
-				<TextBox Name="nameTextBox" Classes="Dialog_TextBox" MaxLength="256"/>
-				<Separator Classes="Dialog_Separator"/>
+				<!-- Name and Icon -->
+				<StackPanel IsVisible="{Binding !$parent[Window].IsEmbeddedScriptSet}">
 
-				<!-- Icon -->
-				<Grid ColumnDefinitions="*,Auto,*" HorizontalAlignment="Stretch">
-					<StackPanel>
-						<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.Icon}"/>
-						<appControls:LogProfileIconComboBox Name="iconComboBox" Classes="Dialog_ComboBox" IconColor="{Binding #iconColorComboBox.SelectedItem}"/>
-					</StackPanel>
-					<Separator Classes="Dialog_Separator_Small" Grid.Column="1"/>
-					<StackPanel Grid.Column="2">
-						<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.IconColor}"/>
-						<appControls:LogProfileIconColorComboBox Name="iconColorComboBox" Classes="Dialog_ComboBox"/>
-					</StackPanel>
-				</Grid>
+					<!-- Name -->
+					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.Name}"/>
+					<TextBox Name="nameTextBox" Classes="Dialog_TextBox" MaxLength="256"/>
+					<Separator Classes="Dialog_Separator"/>
+
+					<!-- Icon -->
+					<Grid ColumnDefinitions="*,Auto,*" HorizontalAlignment="Stretch">
+						<StackPanel>
+							<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.Icon}"/>
+							<appControls:LogProfileIconComboBox Name="iconComboBox" Classes="Dialog_ComboBox" IconColor="{Binding #iconColorComboBox.SelectedItem}"/>
+						</StackPanel>
+						<Separator Classes="Dialog_Separator_Small" Grid.Column="1"/>
+						<StackPanel Grid.Column="2">
+							<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.IconColor}"/>
+							<appControls:LogProfileIconColorComboBox Name="iconColorComboBox" Classes="Dialog_ComboBox"/>
+						</StackPanel>
+					</Grid>
+					<Separator Classes="Dialog_Separator"/>
+
+				</StackPanel>
+
+				<!-- Setup script -->
+				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.SetupScript}"/>
+				<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.SetupScript.Description}"/>
 				<Separator Classes="Dialog_Separator"/>
 
 				<!-- Analysis script -->
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.AnalysisScript}"/>
 				<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Description}"/>
-				<Separator Classes="Dialog_Separator"/>
-
-				<!-- Setup script -->
-				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.SetupScript}"/>
-				<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.SetupScript.Description}"/>
 				
 			</StackPanel>
 		</ScrollViewer>

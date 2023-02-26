@@ -45,9 +45,11 @@
 			<StackPanel Classes="Dialog_ContentPanel">
 				
 				<!-- Display Name -->
-				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/ScriptLogDataSourceProviderEditorDialog.DisplayName}"/>
-				<TextBox Name="displayNameTextBox" Classes="Dialog_TextBox" MaxLength="256"/>
-				<Separator Classes="Dialog_Separator"/>
+				<StackPanel IsVisible="{Binding !$parent[Window].IsEmbeddedProvider}">
+					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/ScriptLogDataSourceProviderEditorDialog.DisplayName}"/>
+					<TextBox Name="displayNameTextBox" Classes="Dialog_TextBox" MaxLength="256"/>
+					<Separator Classes="Dialog_Separator"/>
+				</StackPanel>
 
 				<!-- Supported source options -->
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/ScriptLogDataSourceProviderEditorDialog.SupportedSourceOptions}"/>

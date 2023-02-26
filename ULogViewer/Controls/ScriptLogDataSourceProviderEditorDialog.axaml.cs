@@ -69,6 +69,10 @@ partial class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.In
 	const int InitSizeSetTimeout = 1000;
 
 
+	// Static fields.
+	static readonly StyledProperty<bool> IsEmbeddedProviderProperty = AvaloniaProperty.Register<ScriptLogDataSourceProviderEditorDialog, bool>(nameof(IsEmbeddedProvider));
+
+
 	// Fields.
 	readonly ToggleButton addSupportedSourceOptionButton;
 	readonly ContextMenu addSupportedSourceOptionMenu;
@@ -184,6 +188,16 @@ partial class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.In
 	}
 
 
+	/// <summary>
+	/// Get or set whether the provider is embedded in another container or not.
+	/// </summary>
+	public bool IsEmbeddedProvider
+	{
+		get => this.GetValue(IsEmbeddedProviderProperty);
+		set => this.SetValue(IsEmbeddedProviderProperty, value);
+	}
+
+
 	/// <inheritdoc/>
 	protected override void OnClosed(EventArgs e)
 	{
@@ -266,7 +280,8 @@ partial class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.In
 		var provider = this.Provider;
 		if (provider != null)
 		{
-			this.displayNameTextBox.Text = provider.DisplayName;
+			if (!this.IsEmbeddedProvider)
+				this.displayNameTextBox.Text = provider.DisplayName;
 			foreach (var option in provider.SupportedSourceOptions)
 			{
 				this.unsupportedSourceOptions.Remove(option);
@@ -277,17 +292,23 @@ partial class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.In
 			this.unsupportedSourceOptionMenuItems.Add(this.CreateUnsupportedSourceOptionMenuItem(option));
 
 		// setup initial focus
+		var scrollViewer = this.Get<ScrollViewer>("contentScrollViewer");
+		(scrollViewer.Content as Control)?.Let(it => it.Opacity = 0);
 		this.SynchronizationContext.Post(() =>
 		{
-			this.Get<ScrollViewer>("contentScrollViewer").ScrollToHome();
-			this.displayNameTextBox.Focus();
+			scrollViewer.ScrollToHome();
+			if (this.IsEmbeddedProvider)
+				this.supportedSourceOptionListBox.Focus();
+			else
+				this.displayNameTextBox.Focus();
+			(scrollViewer.Content as Control)?.Let(it => it.Opacity = 1);
 		});
 	}
 
 
 	/// <inheritdoc/>
 	protected override bool OnValidateInput() =>
-		base.OnValidateInput() && !string.IsNullOrWhiteSpace(this.displayNameTextBox.Text);
+		base.OnValidateInput() && (this.IsEmbeddedProvider || !string.IsNullOrWhiteSpace(this.displayNameTextBox.Text));
 
 
 	/// <summary>
