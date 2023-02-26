@@ -301,7 +301,7 @@
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript">Script to analyze log</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Description">The script will be run for each log to analyze. The type of return value is boolean to indicate whether analysis results of the log should be taken or not.</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Template.CSharp">/*
- * Namespaces are imported automatically for types and functions for log analysis. For ex, ILog and ResultType.
+ * Types are imported automatically for log analysis. For ex, ILog and ResultType.
  * Please refer to https://carinastudio.azurewebsites.net/ULogViewer/Scripting
  * and https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#LogAnalysisScript for more information.
  */
@@ -311,7 +311,7 @@
  */
 return false;</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Template.JavaScript">/*
- * Namespaces are imported automatically for types and functions for log analysis. For ex, csUlvScripting.ILog and csUlvScripting.ResultType.
+ * Types are imported automatically for log analysis. For ex, ILog and ResultType.
  * Please refer to https://carinastudio.azurewebsites.net/ULogViewer/Scripting
  * and https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#LogAnalysisScript for more information.
  */
@@ -320,13 +320,9 @@ return false;</sys:String>
  * Return True to take results added by context.addResult(), or False to ignore current log and results.
  */
 return false;</sys:String>
-	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Template.Python"># Namespaces are imported automatically for types and functions for log analysis.
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Template.Python"># Types are imported automatically for log analysis. For ex, ILog and ResultType.
 # Please refer to https://carinastudio.azurewebsites.net/ULogViewer/Scripting
 # and https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#LogAnalysisScript for more information.
-
-from CarinaStudio.ULogViewer.Logs import LogLevel
-from CarinaStudio.ULogViewer.ViewModels.Analysis.Scripting import Result
-from CarinaStudio.ULogViewer.ViewModels.Analysis.Scripting import ResultType
 
 # Return True to take results added by context.AddResult(), or False to ignore current log and results.
 return False</sys:String>
@@ -872,23 +868,23 @@ At line {2} column {3}.
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript">Script to close raw log reader</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Description">The script will be run one time when closing raw log reader. There is no return value needed.</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Template.CSharp">/*
- * Namespaces are imported automatically for types and functions for log reading. For ex, FileStream.
+ * Types are imported automatically for log reading. For ex, FileStream.
  * Please refer to https://carinastudio.azurewebsites.net/ULogViewer/Scripting
  * and https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource for more information.
  */</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Template.JavaScript">/*
- * Namespaces are imported automatically for types and functions for log reading. For ex, sysIO.FileStream.
+ * Types are imported automatically for log reading. For ex, FileStream.
  * Please refer to https://carinastudio.azurewebsites.net/ULogViewer/Scripting
  * and https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource for more information.
  */</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Template.Python"># Namespaces are imported automatically for types and functions for log reading.
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Template.Python"># Types are imported automatically for log reading. For ex, FileStream.
 # Please refer to https://carinastudio.azurewebsites.net/ULogViewer/Scripting
 # and https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource for more information.</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.DisplayName">Name (required)</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript">Script to open raw log reader</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Description">The script will be run one time when opening raw log reader. The returned value should be LogDataSourceState.ReaderOpened if succeeded, or failure if returning other values.</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Template.CSharp">/*
- * Namespaces are imported automatically for types and functions for log reading. For ex, FileStream and LogDataSourceState.
+ * Types are imported automatically for log reading. For ex, FileStream and LogDataSourceState.
  * Please refer to https://carinastudio.azurewebsites.net/ULogViewer/Scripting
  * and https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource for more information.
  */
@@ -902,7 +898,7 @@ At line {2} column {3}.
  */
 return LogDataSourceState.UnclassifiedError;</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Template.JavaScript">/*
- * Namespaces are imported automatically for types and functions for log reading. For ex, sysIO.FileStream and csUlvDataSources.LogDataSourceState.
+ * Types are imported automatically for log reading. For ex, FileStream and LogDataSourceState.
  * Please refer to https://carinastudio.azurewebsites.net/ULogViewer/Scripting
  * and https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource for more information.
  */
@@ -914,15 +910,10 @@ return LogDataSourceState.UnclassifiedError;</sys:String>
  *   * LogDataSourceState.sourceNotFound
  *   * LogDataSourceState.unclassifiedError
  */
-return csUlvDataSources.LogDataSourceState.unclassifiedError;</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Template.Python"># Namespaces are imported automatically for types and functions for log reading.
+return LogDataSourceState.unclassifiedError;</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Template.Python"># Types are imported automatically for log reading. For ex, FileStream and LogDataSourceState.
 # Please refer to https://carinastudio.azurewebsites.net/ULogViewer/Scripting
 # and https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource for more information.
-
-from CarinaStudio.ULogViewer.Logs.DataSources import LogDataSourceState
-from System.IO import StreamReader
-from System.IO import TextReader
-from System.Text import Encoding
 
 # Return LogDataSourceState.ReaderOpened if reader has been opened successfully.
 # Or you can return one of the following values for failure cases:
@@ -933,7 +924,7 @@ return LogDataSourceState.UnclassifiedError</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript">Script to read raw log line</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Description">The script will be run for reading each raw log line. The returned value should be String or Null.</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Template.CSharp">/*
- * Namespaces are imported automatically for types and functions for log reading. For ex, FileStream.
+ * Types are imported automatically for log reading. For ex, FileStream.
  * Please refer to https://carinastudio.azurewebsites.net/ULogViewer/Scripting
  * and https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource for more information.
  */
@@ -943,7 +934,7 @@ return LogDataSourceState.UnclassifiedError</sys:String>
  */
 return null;</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Template.JavaScript">/*
- * Namespaces are imported automatically for types and functions for log reading. For ex, sysIO.FileStream.
+ * Types are imported automatically for log reading. For ex, FileStream.
  * Please refer to https://carinastudio.azurewebsites.net/ULogViewer/Scripting
  * and https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource for more information.
  */
@@ -952,13 +943,9 @@ return null;</sys:String>
  * Return a raw log line (string) read from source, or Null if there is no more raw log line can be read.
  */
 return null;</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Template.Python"># Namespaces are imported automatically for types and functions for log reading.
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Template.Python"># Types are imported automatically for log reading. For ex, FileStream.
 # Please refer to https://carinastudio.azurewebsites.net/ULogViewer/Scripting
 # and https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource for more information.
-
-from System.IO import StreamReader
-from System.IO import TextReader
-from System.Text import Encoding
 
 # Return a raw log line (string) read from source, or None if there is no more raw log line can be read.
 return None</sys:String>
