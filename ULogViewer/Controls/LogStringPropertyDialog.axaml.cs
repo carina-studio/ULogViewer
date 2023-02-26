@@ -18,6 +18,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Input;
 
 namespace CarinaStudio.ULogViewer.Controls
@@ -132,6 +133,11 @@ namespace CarinaStudio.ULogViewer.Controls
         }
 
 
+		// Generate regex to split text into keywords.
+		[GeneratedRegex(@"\s+")]
+		private static partial Regex CreateTextSplitterRegex();
+
+
 		// Check whether propertyValueTextEditor is focused or not.
 		bool IsPropertyValueTextEditorFocused { get => this.GetValue<bool>(IsPropertyValueTextEditorFocusedProperty); }
 
@@ -210,9 +216,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			var text = this.propertyValueTextBox.SelectedText?.Trim();
 			if (string.IsNullOrEmpty(text))
 				return;
-			var keywords = new List<string>();
-			foreach (var token in new Text.Tokenizer(text))
-				keywords.Add(new string(token.Value));
+			var keywords = CreateTextSplitterRegex().Split(text);
 			if (provider.TryCreateSearchUri(keywords, out var uri))
 				Platform.OpenLink(uri);
 		}
