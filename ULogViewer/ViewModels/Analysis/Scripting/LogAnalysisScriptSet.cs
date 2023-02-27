@@ -156,7 +156,7 @@ class LogAnalysisScriptSet : BaseProfile<IULogViewerApplication>, ILogProfileIco
         // get ID
         var id = element.TryGetProperty(nameof(Id), out var jsonProperty) && jsonProperty.ValueKind == JsonValueKind.String
             ? jsonProperty.GetString().AsNonNull()
-            : KeyLogAnalysisRuleSetManager.Default.GenerateProfileId();
+            : LogAnalysisScriptSetManager.Default.GenerateProfileId();
         
         // load
         var scriptSet = new LogAnalysisScriptSet(app, id);

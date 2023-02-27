@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Data.Converters;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using Avalonia.Platform.Storage;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.AppSuite.Controls.Highlighting;
 using CarinaStudio.AppSuite.Product;
@@ -13,6 +14,7 @@ using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.ULogViewer.Logs.Profiles;
+using CarinaStudio.ULogViewer.ViewModels.Analysis.Scripting;
 using CarinaStudio.ULogViewer.ViewModels.Categorizing;
 using CarinaStudio.Windows.Input;
 using System;
@@ -45,6 +47,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Static fields.
 		static readonly Dictionary<LogProfile, LogProfileEditorDialog> NonBlockingDialogs = new();
+		static readonly StyledProperty<bool> HasCooperativeLogAnalysisScriptSetProperty = AvaloniaProperty.Register<LogProfileEditorDialog, bool>("HasCooperativeLogAnalysisScriptSet");
 		static readonly StyledProperty<bool> HasDataSourceOptionsProperty = AvaloniaProperty.Register<LogProfileEditorDialog, bool>("HasDataSourceOptions");
 		static readonly SettingKey<bool> HasLearnAboutLogsReadingAndParsingHintShown = new($"{nameof(LogProfileEditorDialog)}.{nameof(HasLearnAboutLogsReadingAndParsingHintShown)}");
 		static readonly StyledProperty<bool> IsProVersionActivatedProperty = AvaloniaProperty.Register<LogProfileEditorDialog, bool>("IsProVersionActivated");
@@ -52,13 +55,13 @@ namespace CarinaStudio.ULogViewer.Controls
 		static readonly StyledProperty<bool> IsWorkingDirectorySupportedProperty = AvaloniaProperty.Register<LogProfileEditorDialog, bool>("IsWorkingDirectorySupported");
 		
 
-		// Fields.
 		readonly ToggleSwitch adminNeededSwitch;
 		readonly Panel allowMultipleFilesPanel;
 		readonly ToggleSwitch allowMultipleFilesSwitch;
 		readonly ScrollViewer baseScrollViewer;
 		readonly ComboBox colorIndicatorComboBox;
 		readonly ToggleSwitch continuousReadingSwitch;
+		LogAnalysisScriptSet? cooperativeLogAnalysisScriptSet;
 		LogDataSourceOptions dataSourceOptions;
 		readonly ComboBox dataSourceProviderComboBox;
 		readonly TextBox descriptionTextBox;
@@ -366,9 +369,41 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		/// <summary>
+		/// Create cooperative log analysis script.
+		/// </summary>
+		public async void CreateCooperativeLogAnalysisScript()
+		{
+			var scriptSet = await new LogAnalysisScriptSetEditorDialog()
+			{
+				IsEmbeddedScriptSet = true,
+			}.ShowDialog<LogAnalysisScriptSet?>(this);
+			if (scriptSet == null || this.IsClosed)
+				return;
+			this.cooperativeLogAnalysisScriptSet = scriptSet;
+			this.SetValue(HasCooperativeLogAnalysisScriptSetProperty, true);
+		}
+
+
+		/// <summary>
 		/// Definition set of date time format syntax highlighting.
 		/// </summary>
 		public SyntaxHighlightingDefinitionSet DateTimeFormatSyntaxHighlightingDefinitionSet { get; }
+
+
+		/// <summary>
+		/// Edit cooperative log analysis script.
+		/// </summary>
+		public async void EditCooperativeLogAnalysisScript()
+		{
+			var scriptSet = await new LogAnalysisScriptSetEditorDialog()
+			{
+				IsEmbeddedScriptSet = true,
+				ScriptSetToEdit = this.cooperativeLogAnalysisScriptSet,
+			}.ShowDialog<LogAnalysisScriptSet?>(this);
+			if (scriptSet == null || this.IsClosed)
+				return;
+			this.cooperativeLogAnalysisScriptSet = scriptSet;
+		}
 
 
 		// Edit log level map entry.
@@ -626,6 +661,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			var logProfile = this.LogProfile ?? new LogProfile(this.Application);
 			logProfile.AllowMultipleFiles = this.allowMultipleFilesSwitch.IsChecked.GetValueOrDefault();
 			logProfile.ColorIndicator = (LogColorIndicator)this.colorIndicatorComboBox.SelectedItem.AsNonNull();
+			logProfile.CooperativeLogAnalysisScriptSet = this.cooperativeLogAnalysisScriptSet;
 			logProfile.DataSourceOptions = this.dataSourceOptions;
 			logProfile.DataSourceProvider = (ILogDataSourceProvider)this.dataSourceProviderComboBox.SelectedItem.AsNonNull();
 			logProfile.Description = this.descriptionTextBox.Text;
@@ -657,6 +693,84 @@ namespace CarinaStudio.ULogViewer.Controls
 			logProfile.TimestampFormatsForReading = this.timestampFormatsForReading;
 			logProfile.VisibleLogProperties = this.visibleLogProperties;
 			return logProfile;
+		}
+
+
+		/// <summary>
+		/// Import cooperative log analysis script from file.
+		/// </summary>
+		public async void ImportCooperativeLogAnalysisScriptFromFile()
+		{
+			// select file
+			var fileName = (await this.StorageProvider.OpenFilePickerAsync(new()
+			{
+				FileTypeFilter = new[]
+				{
+					new FilePickerFileType(this.Application.GetStringNonNull("FileFormat.Json"))
+					{
+						Patterns = new[] { "*.json" }
+					}
+				}
+			})).Let(it =>
+			{
+				if (it.Count == 1 && it[0].TryGetUri(out var uri))
+					return uri.LocalPath;
+				return null;
+			});
+			if (string.IsNullOrEmpty(fileName))
+				return;
+			
+			// try loading script set
+			var scriptSet = await Global.RunOrDefaultAsync(async () => await LogAnalysisScriptSet.LoadAsync(this.Application, fileName));
+			if (scriptSet == null)
+			{
+				_ = new MessageDialog()
+				{
+					Icon = MessageDialogIcon.Error,
+					Message = new FormattedString().Also(it =>
+					{
+						it.Arg1 = fileName;
+						it.Bind(FormattedString.FormatProperty, this.Application.GetObservableString("SessionView.FailedToImportLogAnalysisRuleSet"));
+					}),
+				}.ShowDialog(this);
+				return;
+			}
+
+			// edit script set and replace
+			scriptSet = await new LogAnalysisScriptSetEditorDialog()
+			{
+				IsEmbeddedScriptSet = true,
+				ScriptSetToEdit = scriptSet,
+			}.ShowDialog<LogAnalysisScriptSet?>(this);
+			if (scriptSet != null)
+			{
+				this.cooperativeLogAnalysisScriptSet = scriptSet;
+				this.SetValue(HasCooperativeLogAnalysisScriptSetProperty, true);
+			}
+		}
+
+
+		/// <summary>
+		/// Import existing cooperative log analysis script.
+		/// </summary>
+		public async void ImportExistingCooperativeLogAnalysisScript()
+		{
+			// select script set
+			var scriptSet = await new LogAnalysisScriptSetSelectionDialog().ShowDialog<LogAnalysisScriptSet?>(this);
+			if (scriptSet == null)
+				return;
+
+			// edit script set and replace
+			scriptSet = await new LogAnalysisScriptSetEditorDialog()
+			{
+				IsEmbeddedScriptSet = true,
+				ScriptSetToEdit = scriptSet,
+			}.ShowDialog<LogAnalysisScriptSet?>(this);
+			if (scriptSet != null)
+			{
+				this.cooperativeLogAnalysisScriptSet = scriptSet;
+				this.SetValue(HasCooperativeLogAnalysisScriptSetProperty, true);
+			}
 		}
 
 
@@ -937,6 +1051,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.adminNeededSwitch.IsChecked = profile.IsAdministratorNeeded;
 				this.allowMultipleFilesSwitch.IsChecked = profile.AllowMultipleFiles;
 				this.colorIndicatorComboBox.SelectedItem = profile.ColorIndicator;
+				this.cooperativeLogAnalysisScriptSet = profile.CooperativeLogAnalysisScriptSet;
 				this.dataSourceOptions = profile.DataSourceOptions;
 				this.dataSourceProviderComboBox.SelectedItem = profile.DataSourceProvider;
 				this.descriptionTextBox.Text = profile.Description;
@@ -969,7 +1084,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			else
 				this.SynchronizationContext.Post(this.Close);
-			this.nameTextBox.Focus();
+			
+			// update state
+			this.SetValue(HasCooperativeLogAnalysisScriptSetProperty, this.cooperativeLogAnalysisScriptSet != null);
 
 			// call base
 			base.OnOpened(e);
@@ -989,8 +1106,13 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.PersistentState.SetValue<bool>(HasLearnAboutLogsReadingAndParsingHintShown, true);
 					if (result == MessageDialogResult.Yes)
 						Platform.OpenLink(LogsReadingAndParsingPageUri);
+					else
+						this.nameTextBox.Focus();
 				}
 			}
+
+			// setup initial focus
+			this.SynchronizationContext.Post(this.nameTextBox.Focus);
 		}
 
 
@@ -1064,6 +1186,28 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// Definition set of regex syntax highlighting.
 		/// </summary>
 		public SyntaxHighlightingDefinitionSet RegexSyntaxHighlightingDefinitionSet { get; }
+
+
+		/// <summary>
+		/// Remove cooperative log analysis script.
+		/// </summary>
+		public async void RemoveCooperativeLogAnalysisScript()
+		{
+			if (this.cooperativeLogAnalysisScriptSet == null)
+				return;
+			var result = await new MessageDialog()
+			{
+				Buttons = MessageDialogButtons.YesNo,
+				DefaultResult = MessageDialogResult.No,
+				Icon = MessageDialogIcon.Question,
+				Message = this.Application.GetObservableString("LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.ConfirmDeletion"),
+			}.ShowDialog(this);
+			if (result == MessageDialogResult.Yes)
+			{
+				this.cooperativeLogAnalysisScriptSet = null;
+				this.SetValue(HasCooperativeLogAnalysisScriptSetProperty, false);
+			}
+		}
 
 
 		// Remove log level map entry.

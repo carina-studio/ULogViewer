@@ -342,6 +342,9 @@ return False</sys:String>
 # and https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#LogAnalysisScript for more information.</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.Title">Edit log analysis script</sys:String>
 
+	<!-- LogAnalysisScriptSetSelectionDialog -->
+	<sys:String x:Key="String/LogAnalysisScriptSetSelectionDialog.Title">Select log analysis script</sys:String>
+
 	<!-- LogAnalysisViewModel -->
 	<sys:String x:Key="String/LogAnalysisViewModel.FailedToCopySelectedAnalysisResults">Unable to copy selected log analysis results.</sys:String>
 
@@ -491,6 +494,14 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.ColorIndicator">Color indicator</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.ColorIndicator.Description">Way of grouping to show color block on the left hand side of each log.</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Common">Common</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet">Cooperative log analysis script</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.ConfirmDeletion">Are you sure to delete log analysis script?</sys:String>
+	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.Create" ResourceKey="String/Common.Create.WithDialog"/>
+	<sys:String x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.Description">The log analysis script will be run automatically when using this profile.</sys:String>
+	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.Edit" ResourceKey="String/Common.Edit.WithDialog"/>
+	<sys:String x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.ImportExisting">Import existing script…</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.ImportFromFile">Import from file…</sys:String>
+	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.Remove" ResourceKey="String/Common.Remove"/>
 	<sys:String x:Key="String/LogProfileEditorDialog.DataSourceProvider">Data source</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.DataSourceProvider.ProVersionOnly">(Pro)</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Description">Description</sys:String>
@@ -506,6 +517,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.IsTemplate.Description">Template cannot be used directly but can be cloned as new log profile with partial parameters.</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.IsWorkingDirectoryNeeded">Need to select working directory</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LearnAboutLogsReadingAndParsingFirst">Do you want to learn about 《How does ULogViewer read and parse logs》 to help you to create log profile?</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogAnalysis">Log Analysis</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogDisplaying">Log Displaying</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogLevelMapForReading">Mapping of log level</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogLevelMapForReading.Description">Convert from raw value of property specified by "Name of property of raw log level" into actual log level.</sys:String>
@@ -996,8 +1008,8 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.EditConfiguration">Edit internal configuration…</sys:String>
 	<sys:String x:Key="String/SessionView.EditPathEnvVar">Edit PATH environment variable…</sys:String>
 	<sys:String x:Key="String/SessionView.EditPersistentState">Edit internal persistent state…</sys:String>
-	<sys:String x:Key="String/SessionView.FailedToExportLogAnalysisRuleSet">Unable to export rule set '{0}' to '{1}'.</sys:String>
-	<sys:String x:Key="String/SessionView.FailedToImportLogAnalysisRuleSet">Unable to import rule set from '{0}'.</sys:String>
+	<sys:String x:Key="String/SessionView.FailedToExportLogAnalysisRuleSet">Unable to export rule set or script '{0}' to '{1}'.</sys:String>
+	<sys:String x:Key="String/SessionView.FailedToImportLogAnalysisRuleSet">Unable to import rule set or script from '{0}'.</sys:String>
 	<sys:String x:Key="String/SessionView.FilterByLogProperty">Filter by '{0}'</sys:String>
 	<sys:String x:Key="String/SessionView.FilterByLogProperty.Disabled">Filter by value of log property</sys:String>
 	<sys:String x:Key="String/SessionView.FilterByLogProperty.HighAccuracy">High accuracy</sys:String>

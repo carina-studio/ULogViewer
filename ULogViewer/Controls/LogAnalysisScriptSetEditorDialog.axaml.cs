@@ -115,7 +115,7 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Applicati
 		scriptSet.Name = this.nameTextBox.Text?.Trim();
 		scriptSet.Icon = this.iconComboBox.SelectedItem.GetValueOrDefault();
 		scriptSet.IconColor = this.iconColorComboBox.SelectedItem.GetValueOrDefault();
-		if (!LogAnalysisScriptSetManager.Default.ScriptSets.Contains(scriptSet))
+		if (!this.IsEmbeddedScriptSet && !LogAnalysisScriptSetManager.Default.ScriptSets.Contains(scriptSet))
 		{
 			if (!this.Application.ProductManager.IsProductActivated(Products.Professional)
 				&& !LogAnalysisScriptSetManager.Default.CanAddScriptSet)
@@ -311,6 +311,22 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Applicati
 		{
 			this.IsEnabled = false;
 			this.SynchronizationContext.PostDelayed(this.Close, 300); // [Workaround] Prevent crashing on macOS.
+		}
+	}
+
+
+	/// <summary>
+	/// Get or set log analysis script set to be edited.
+	/// </summary>
+	public LogAnalysisScriptSet? ScriptSetToEdit
+	{
+		get => this.scriptSetToEdit;
+		set
+		{
+			this.VerifyAccess();
+			if (this.IsOpened)
+				throw new InvalidOperationException();
+			this.scriptSetToEdit = value;
 		}
 	}
 

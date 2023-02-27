@@ -58,6 +58,10 @@
 	<Thickness x:Key="Thickness/LogAnalysisScriptSetEditorDialog.ScriptCompilationResults.Item.Padding">3</Thickness>
 	<Thickness x:Key="Thickness/LogAnalysisScriptSetEditorDialog.ScriptCompilationResults.Margin">-3,0,-3,0</Thickness>
 
+	<!-- LogAnalysisScriptSetSelectionDialog -->
+	<sys:Double x:Key="Double/LogAnalysisScriptSetSelectionDialog.MaxHeight">600</sys:Double>
+	<sys:Double x:Key="Double/LogAnalysisScriptSetSelectionDialog.Width">400</sys:Double>
+
 	<!-- LogDataSourceOptionsDialog -->
 	<sys:Double x:Key="Double/LogDataSourceOptionsDialog.CommandListBox.Height">150</sys:Double>
 	<sys:Double x:Key="Double/LogDataSourceOptionsDialog.ConnectionStringTextBox.Height">150</sys:Double>
@@ -76,7 +80,7 @@
 	<sys:Double x:Key="Double/LogProfileEditorDialog.Content.MaxHeight">600</sys:Double>
 	<sys:Double x:Key="Double/LogProfileEditorDialog.LogWritingFormatTextBox.Height">100</sys:Double>
 	<sys:Double x:Key="Double/LogProfileEditorDialog.VisibleLogPropertyListBox.Name.Opacity">0.5</sys:Double>
-	<sys:Double x:Key="Double/LogProfileEditorDialog.Width">500</sys:Double>
+	<sys:Double x:Key="Double/LogProfileEditorDialog.Width">550</sys:Double>
 	<Thickness x:Key="Thickness/LogProfileEditorDialog.VisibleLogPropertyListBox.Name.Margin">20,0,0,0</Thickness>
 
 	<!-- LogProfileSelectionContextMenu -->

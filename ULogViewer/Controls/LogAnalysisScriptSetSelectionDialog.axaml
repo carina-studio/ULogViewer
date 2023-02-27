@@ -1,0 +1,44 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:appAnalysisScripting="using:CarinaStudio.ULogViewer.ViewModels.Analysis.Scripting"
+		xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
+		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="CarinaStudio.ULogViewer.Controls.LogAnalysisScriptSetSelectionDialog"
+        Classes="Dialog"
+		MaxHeight="{DynamicResource Double/LogAnalysisScriptSetSelectionDialog.MaxHeight}"
+        Title="{DynamicResource String/LogAnalysisScriptSetSelectionDialog.Title}"
+        Width="{DynamicResource Double/LogAnalysisScriptSetSelectionDialog.Width}">
+
+	<DockPanel>
+
+		<!-- Control buttons -->
+		<Border Classes="Dialog_ControlButtonsPanel">
+			<StackPanel Classes="Dialog_ControlButtonsPanel">
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].GenerateResult}" Content="{DynamicResource String/Common.OK}"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].Close}" Content="{DynamicResource String/Common.Cancel}"/>
+			</StackPanel>
+		</Border>
+
+		<!-- Content -->
+		<Panel Classes="Dialog_ContentPanel">
+			<asControls:ListBox Name="scriptSetListBox" Items="{Binding ScriptSets, Source={x:Static appAnalysisScripting:LogAnalysisScriptSetManager.Default}}">
+				<asControls:ListBox.ItemTemplate>
+					<DataTemplate>
+						<Grid ColumnDefinitions="Auto,*">
+							<Panel VerticalAlignment="Center">
+								<Image Classes="ListBoxItem_Icon" Source="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}, ConverterParameter=Light}" IsVisible="{Binding $parent[ListBoxItem].IsSelected}"/>
+								<Image Classes="ListBoxItem_Icon" Source="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}}" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}"/>
+							</Panel>
+							<TextBlock Classes="ListBoxItem_TextBlock" Grid.Column="1" Text="{Binding Name}"/>
+						</Grid>
+					</DataTemplate>
+				</asControls:ListBox.ItemTemplate>
+			</asControls:ListBox>
+		</Panel>
+		
+	</DockPanel>
+	
+</Window>
