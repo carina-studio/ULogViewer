@@ -373,13 +373,17 @@ partial class SessionView
         var laScriptSet = klaRuleSet == null
             ? await Global.RunOrDefaultAsync(async () => await LogAnalysisScriptSet.LoadAsync(this.Application, fileName))
             : null;
-        var odaRuleSet = klaRuleSet == null && laScriptSet == null
+        var ocaRuleSet = klaRuleSet == null && laScriptSet == null
+            ? await Global.RunOrDefaultAsync(async () => await OperationCountingAnalysisRuleSet.LoadAsync(this.Application, fileName, true))
+            : null;
+        var odaRuleSet = klaRuleSet == null && laScriptSet == null && ocaRuleSet == null
             ? await Global.RunOrDefaultAsync(async () => await OperationDurationAnalysisRuleSet.LoadAsync(this.Application, fileName, true))
             : null;
         if (this.attachedWindow == null)
             return;
         if (klaRuleSet == null 
             && laScriptSet == null
+            && ocaRuleSet == null
             && odaRuleSet == null)
         {
             _ = new MessageDialog()
@@ -388,7 +392,7 @@ partial class SessionView
                 Message = new FormattedString().Also(it =>
                 {
                     it.Arg1 = fileName;
-                    it.Bind(FormattedString.FormatProperty, this.GetResourceObservable("String/SessionView.FailedToImportLogAnalysisRuleSet"));
+                    it.Bind(FormattedString.FormatProperty, this.Application.GetObservableString("SessionView.FailedToImportLogAnalysisRuleSet"));
                 }),
             }.ShowDialog(this.attachedWindow);
             return;
@@ -399,6 +403,8 @@ partial class SessionView
             KeyLogAnalysisRuleSetEditorDialog.Show(this.attachedWindow, klaRuleSet);
         else if (laScriptSet != null)
             LogAnalysisScriptSetEditorDialog.Show(this.attachedWindow, laScriptSet);
+        else if (ocaRuleSet != null)
+            OperationCountingAnalysisRuleSetEditorDialog.Show(this.attachedWindow, ocaRuleSet);
         else if (odaRuleSet != null)
             OperationDurationAnalysisRuleSetEditorDialog.Show(this.attachedWindow, odaRuleSet);
     }
