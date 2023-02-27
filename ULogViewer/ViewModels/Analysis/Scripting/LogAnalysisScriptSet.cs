@@ -150,6 +150,21 @@ class LogAnalysisScriptSet : BaseProfile<IULogViewerApplication>, ILogProfileIco
     }
 
 
+    // Load script set from JSON data.
+    internal static LogAnalysisScriptSet Load(IULogViewerApplication app, JsonElement element)
+    {
+        // get ID
+        var id = element.TryGetProperty(nameof(Id), out var jsonProperty) && jsonProperty.ValueKind == JsonValueKind.String
+            ? jsonProperty.GetString().AsNonNull()
+            : KeyLogAnalysisRuleSetManager.Default.GenerateProfileId();
+        
+        // load
+        var scriptSet = new LogAnalysisScriptSet(app, id);
+        scriptSet.Load(element);
+        return scriptSet;
+    }
+
+
     /// <summary>
     /// Load script set from file.
     /// </summary>
@@ -168,15 +183,8 @@ class LogAnalysisScriptSet : BaseProfile<IULogViewerApplication>, ILogProfileIco
         if (element.ValueKind != JsonValueKind.Object)
             throw new ArgumentException("Root element must be an object.");
         
-        // get ID
-        var id = element.TryGetProperty(nameof(Id), out var jsonProperty) && jsonProperty.ValueKind == JsonValueKind.String
-            ? jsonProperty.GetString().AsNonNull()
-            : KeyLogAnalysisRuleSetManager.Default.GenerateProfileId();
-        
         // load
-        var scriptSet = new LogAnalysisScriptSet(app, id);
-        scriptSet.Load(element);
-        return scriptSet;
+        return Load(app, element);
     }
 
 
@@ -192,6 +200,11 @@ class LogAnalysisScriptSet : BaseProfile<IULogViewerApplication>, ILogProfileIco
     {
         throw new NotImplementedException();
     }
+
+
+    // Save script set in JSON format.
+    internal void Save(Utf8JsonWriter writer) =>
+        this.OnSave(writer, false);
 
 
     /// <summary>

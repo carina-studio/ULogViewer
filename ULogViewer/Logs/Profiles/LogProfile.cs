@@ -6,6 +6,7 @@ using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Cryptography;
 using CarinaStudio.ULogViewer.Logs.DataSources;
+using CarinaStudio.ULogViewer.ViewModels.Analysis.Scripting;
 using CarinaStudio.ULogViewer.ViewModels.Categorizing;
 using Microsoft.Extensions.Logging;
 using System;
@@ -39,6 +40,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		bool allowMultipleFiles = true;
 		string builtInName = "";
 		LogColorIndicator colorIndicator = LogColorIndicator.None;
+		LogAnalysisScriptSet? cooprativeLogAnalysisScriptSet;
 		LogDataSourceOptions dataSourceOptions;
 		ILogDataSourceProvider dataSourceProvider = LogDataSourceProviders.Empty;
 		string? description;
@@ -106,6 +108,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		{
 			this.allowMultipleFiles = template.allowMultipleFiles;
 			this.colorIndicator = template.colorIndicator;
+			this.cooprativeLogAnalysisScriptSet = template.cooprativeLogAnalysisScriptSet;
 			this.dataSourceOptions = template.dataSourceOptions;
 			this.dataSourceProvider = template.dataSourceProvider;
 			this.description = template.description;
@@ -186,6 +189,24 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 					return;
 				this.colorIndicator = value;
 				this.OnPropertyChanged(nameof(ColorIndicator));
+			}
+		}
+
+
+		/// <summary>
+		/// Get or set the log analysis script set which will be used when using this profile.
+		/// </summary>
+		public LogAnalysisScriptSet? CooperativeLogAnalysisScriptSet
+		{
+			get => this.cooprativeLogAnalysisScriptSet;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (this.cooprativeLogAnalysisScriptSet?.Equals(value) == true)
+					return;
+				this.cooprativeLogAnalysisScriptSet = value;
+				this.OnPropertyChanged(nameof(CooperativeLogAnalysisScriptSet));
 			}
 		}
 
@@ -841,6 +862,16 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 					case nameof(ColorIndicator):
 						this.colorIndicator = Enum.Parse<LogColorIndicator>(jsonProperty.Value.GetString().AsNonNull());
 						break;
+					case nameof(CooperativeLogAnalysisScriptSet):
+						try
+						{
+							this.cooprativeLogAnalysisScriptSet = LogAnalysisScriptSet.Load(this.Application, jsonProperty.Value);
+						}
+						catch (Exception ex)
+						{
+							this.Logger.LogError(ex, "Failed to load cooperative log analysis script set");
+						}
+						break;
 					case nameof(Description):
 						this.description = jsonProperty.Value.GetString();
 						if (string.IsNullOrWhiteSpace(this.description))
@@ -993,6 +1024,11 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			writer.WritePropertyName("DataSource");
 			this.SaveDataSourceToJson(writer);
 			writer.WriteString(nameof(ColorIndicator), this.colorIndicator.ToString());
+			this.cooprativeLogAnalysisScriptSet?.Let(scriptSet =>
+			{
+				writer.WritePropertyName(nameof(CooperativeLogAnalysisScriptSet));
+				scriptSet.Save(writer);
+			});
 			writer.WriteString(nameof(Description), this.description);
 			writer.WriteString(nameof(Icon), this.icon.ToString());
 			if (this.iconColor != LogProfileIconColor.Default)
