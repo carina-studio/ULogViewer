@@ -1038,6 +1038,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisResult.Duration">Duration</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisResult.Quantity">Quantity</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets">Rule sets of analysis</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.CooperativeLogAnalysisScriptSet">Cooperative log analysis script</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.Disabled">(Disabled)</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.KeyLogAnalysisRuleSet">Key log analysis</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.LogAnalysisScriptSet">Log analysis script</sys:String>

@@ -764,7 +764,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			scriptSet = await new LogAnalysisScriptSetEditorDialog()
 			{
 				IsEmbeddedScriptSet = true,
-				ScriptSetToEdit = scriptSet,
+				ScriptSetToEdit = new(scriptSet, ""),
 			}.ShowDialog<LogAnalysisScriptSet?>(this);
 			if (scriptSet != null)
 			{

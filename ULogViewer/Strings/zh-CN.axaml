@@ -1004,6 +1004,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisResult.Duration">时距</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisResult.Quantity">数量</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets">分析规则集</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.CooperativeLogAnalysisScriptSet">协同日志分析脚本</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.Disabled">(已停用)</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.KeyLogAnalysisRuleSet">关键日志分析</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.LogAnalysisScriptSet">日志分析脚本</sys:String>

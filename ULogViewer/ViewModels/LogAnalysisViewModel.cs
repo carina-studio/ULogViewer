@@ -30,6 +30,10 @@ class LogAnalysisViewModel : SessionComponent
     /// </summary>
     public static readonly ObservableProperty<double> AnalysisProgressProperty = ObservableProperty.Register<LogAnalysisViewModel, double>(nameof(AnalysisProgress));
     /// <summary>
+    /// Property of <see cref="HasCooperativeLogAnalysisScriptSet"/>.
+    /// </summary>
+    public static readonly ObservableProperty<bool> HasCooperativeLogAnalysisScriptSetProperty = ObservableProperty.Register<LogAnalysisViewModel, bool>(nameof(HasCooperativeLogAnalysisScriptSet));
+    /// <summary>
     /// Property of <see cref="HasSelectedAnalysisResults"/>.
     /// </summary>
     public static readonly ObservableProperty<bool> HasSelectedAnalysisResultsProperty = ObservableProperty.Register<LogAnalysisViewModel, bool>(nameof(HasSelectedAnalysisResults));
@@ -37,6 +41,10 @@ class LogAnalysisViewModel : SessionComponent
     /// Property of <see cref="IsAnalyzing"/>.
     /// </summary>
     public static readonly ObservableProperty<bool> IsAnalyzingProperty = ObservableProperty.Register<LogAnalysisViewModel, bool>(nameof(IsAnalyzing));
+    /// <summary>
+    /// Property of <see cref="IsCooperativeLogAnalysisScriptSetEnabled"/>.
+    /// </summary>
+    public static readonly ObservableProperty<bool> IsCooperativeLogAnalysisScriptSetEnabledProperty = ObservableProperty.Register<LogAnalysisViewModel, bool>(nameof(IsCooperativeLogAnalysisScriptSetEnabled), true);
     /// <summary>
     /// Property of <see cref="IsPanelVisible"/>.
     /// </summary>
@@ -95,6 +103,7 @@ class LogAnalysisViewModel : SessionComponent
     readonly DisplayableLog?[] analysisResultComparisonTempLogs2 = new DisplayableLog?[3];
     readonly SortedObservableList<DisplayableLogAnalysisResult> analysisResults;
     readonly HashSet<IDisplayableLogAnalyzer<DisplayableLogAnalysisResult>> attachedAnalyzers = new();
+    readonly ScriptDisplayableLogAnalyzer coopScriptLogAnalyzer;
     readonly IDisposable displayLogPropertiesObserverToken;
     bool isRestoringState;
     readonly ObservableList<KeyLogAnalysisRuleSet> keyLogAnalysisRuleSets = new();
@@ -108,10 +117,11 @@ class LogAnalysisViewModel : SessionComponent
     readonly ScriptDisplayableLogAnalyzer scriptLogAnalyzer;
     readonly SortedObservableList<DisplayableLogAnalysisResult> selectedAnalysisResults;
     readonly ScheduledAction updateAnalysisStateAction;
+    readonly ScheduledAction updateCoopScriptLogAnalysisAction;
     readonly ScheduledAction updateKeyLogAnalysisAction;
     readonly ScheduledAction updateOperationCountingAnalysisAction;
     readonly ScheduledAction updateOperationDurationAnalysisAction;
-    readonly ScheduledAction updateScriptLogAnalysis;
+    readonly ScheduledAction updateScriptLogAnalysisAction;
     
 
     /// <summary>
@@ -135,6 +145,8 @@ class LogAnalysisViewModel : SessionComponent
             it.CollectionChanged += this.OnSelectedAnalysisResultsChanged);
 
         // create analyzers
+        this.coopScriptLogAnalyzer = new ScriptDisplayableLogAnalyzer(this.Application, this.AllLogs, this.CompareLogs).Also(it =>
+            this.AttachToAnalyzer(it));
         this.keyLogAnalysisRuleSets.CollectionChanged += (_, e) => 
         {
             if (this.keyLogAnalysisRuleSets.IsEmpty())
@@ -151,7 +163,7 @@ class LogAnalysisViewModel : SessionComponent
                 this.Logger.LogTrace("Clear log analysis script sets");
             else
                 this.Logger.LogTrace("Change log analysis script sets: {scriptSetsCount}", this.logAnalysisScriptSets.Count);
-            this.updateScriptLogAnalysis?.Schedule(this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogAnalysisParamsUpdateDelay));
+            this.updateScriptLogAnalysisAction?.Schedule(this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogAnalysisParamsUpdateDelay));
         };
         this.operationCountingAnalysisRuleSets.CollectionChanged += (_, e) => 
         {
@@ -240,6 +252,25 @@ class LogAnalysisViewModel : SessionComponent
                 this.SetValue(SelectedAnalysisResultsTotalQuantityProperty, totalQuantity);
             }
         });
+        this.updateCoopScriptLogAnalysisAction = new(() =>
+        {
+            if (this.IsDisposed)
+                return;
+            this.coopScriptLogAnalyzer.ScriptSets.Clear();
+            if (this.GetValue(IsCooperativeLogAnalysisScriptSetEnabledProperty))
+            {
+                var scriptSet = this.LogProfile?.CooperativeLogAnalysisScriptSet;
+                if (scriptSet != null)
+                {
+                    this.Logger.LogTrace("Apply cooperative log analysis script set");
+                    this.LogProfile?.CooperativeLogAnalysisScriptSet?.Let(it => this.coopScriptLogAnalyzer.ScriptSets.Add(it));
+                }
+                else
+                    this.Logger.LogTrace("Clear cooperative log analysis script set");
+            }
+            else
+                this.Logger.LogTrace("Cooperative log analysis script set has been disabled");
+        });
         this.updateKeyLogAnalysisAction = new(() =>
         {
             if (this.IsDisposed)
@@ -298,7 +329,7 @@ class LogAnalysisViewModel : SessionComponent
                 this.operationDurationAnalyzer.RuleSets.AddAll(this.operationDurationAnalysisRuleSets);
             }
         });
-        this.updateScriptLogAnalysis = new(() =>
+        this.updateScriptLogAnalysisAction = new(() =>
         {
             if (this.IsDisposed)
                 return;
@@ -311,6 +342,15 @@ class LogAnalysisViewModel : SessionComponent
         });
 
         // attach to self properties
+        this.GetValueAsObservable(IsCooperativeLogAnalysisScriptSetEnabledProperty).Subscribe(isEnabled =>
+        {
+            if (isInit)
+                return;
+            if (isEnabled)
+                this.updateCoopScriptLogAnalysisAction.Schedule();
+            else
+                this.updateCoopScriptLogAnalysisAction.Execute();
+        });
         this.GetValueAsObservable(PanelSizeProperty).Subscribe(size =>
         {
             if (!isInit && !this.isRestoringState)
@@ -321,6 +361,8 @@ class LogAnalysisViewModel : SessionComponent
         session.AllLogReadersDisposed += this.OnAllLogReadersDisposed;
         this.displayLogPropertiesObserverToken = session.GetValueAsObservable(Session.DisplayLogPropertiesProperty).Subscribe(properties =>
         {
+            this.coopScriptLogAnalyzer.LogProperties.Clear();
+            this.coopScriptLogAnalyzer.LogProperties.AddAll(properties);
             this.keyLogAnalyzer.LogProperties.Clear();
             this.keyLogAnalyzer.LogProperties.AddAll(properties);
             this.operationCountingAnalyzer.LogProperties.Clear();
@@ -388,7 +430,7 @@ class LogAnalysisViewModel : SessionComponent
 
 
     // Compare log analysis results.
-    int CompareAnalysisResults(DisplayableLogAnalysisResult? lhs, DisplayableLogAnalysisResult? rhs)
+    unsafe int CompareAnalysisResults(DisplayableLogAnalysisResult? lhs, DisplayableLogAnalysisResult? rhs)
     {
         // get logs
         var lhsLogs = this.analysisResultComparisonTempLogs1;
@@ -508,10 +550,12 @@ class LogAnalysisViewModel : SessionComponent
         this.displayLogPropertiesObserverToken.Dispose();
 
         // detach from analyzers
+        this.DetachFromAnalyzer(this.coopScriptLogAnalyzer, true);
         this.DetachFromAnalyzer(this.keyLogAnalyzer, true);
         this.DetachFromAnalyzer(this.operationCountingAnalyzer, true);
         this.DetachFromAnalyzer(this.operationDurationAnalyzer, true);
         this.DetachFromAnalyzer(this.scriptLogAnalyzer, true);
+        this.coopScriptLogAnalyzer.Dispose();
         this.keyLogAnalyzer.Dispose();
         this.operationCountingAnalyzer.Dispose();
         this.operationDurationAnalyzer.Dispose();
@@ -527,6 +571,12 @@ class LogAnalysisViewModel : SessionComponent
 
 
     /// <summary>
+    /// Check whether cooperative log analysis script set has been set to current log profile or not.
+    /// </summary>
+    public bool HasCooperativeLogAnalysisScriptSet { get => this.GetValue(HasCooperativeLogAnalysisScriptSetProperty); }
+
+
+    /// <summary>
     /// Check whether at least one analysis result is selected or not.
     /// </summary>
     public bool HasSelectedAnalysisResults { get => this.GetValue(HasSelectedAnalysisResultsProperty); }
@@ -536,6 +586,16 @@ class LogAnalysisViewModel : SessionComponent
     /// Check whether logs are being analyzed or not.
     /// </summary>
     public bool IsAnalyzing { get => this.GetValue(IsAnalyzingProperty); }
+
+
+    /// <summary>
+    /// Get or set whether cooperative log analysis script set of current log profile is enabled or not.
+    /// </summary>
+    public bool IsCooperativeLogAnalysisScriptSetEnabled 
+    { 
+        get => this.GetValue(IsCooperativeLogAnalysisScriptSetEnabledProperty); 
+        set => this.SetValue(IsCooperativeLogAnalysisScriptSetEnabledProperty, value);
+    }
 
 
     /// <summary>
@@ -581,7 +641,7 @@ class LogAnalysisViewModel : SessionComponent
         this.updateKeyLogAnalysisAction.Reschedule();
         this.updateOperationCountingAnalysisAction.Reschedule();
         this.updateOperationDurationAnalysisAction.Reschedule();
-        this.updateScriptLogAnalysis.Reschedule();
+        this.updateScriptLogAnalysisAction.Reschedule();
     }
 
 
@@ -669,6 +729,24 @@ class LogAnalysisViewModel : SessionComponent
         // call base
         base.OnLogProfileChanged(prevLogProfile, newLogProfile);
 
+        // reset cooperative log analysis script set
+        this.coopScriptLogAnalyzer.ScriptSets.Clear();
+        if (newLogProfile?.CooperativeLogAnalysisScriptSet == null)
+        {
+            if (newLogProfile != null)
+                this.Logger.LogDebug("No cooperative log analysis script set found in log profile '{name}' ({id})", newLogProfile.Name, newLogProfile.Id);
+            this.ResetValue(HasCooperativeLogAnalysisScriptSetProperty);
+            if (this.GetValue(IsCooperativeLogAnalysisScriptSetEnabledProperty))
+                this.updateCoopScriptLogAnalysisAction.Execute();
+        }
+        else
+        {
+            this.Logger.LogDebug("Cooperative log analysis script set found in log profile '{name}' ({id})", newLogProfile.Name, newLogProfile.Id);
+            this.SetValue(HasCooperativeLogAnalysisScriptSetProperty, true);
+            if (this.GetValue(IsCooperativeLogAnalysisScriptSetEnabledProperty))
+                this.updateCoopScriptLogAnalysisAction.Schedule();
+        }
+
         // reset log analysis rule sets
         if (this.Settings.GetValueOrDefault(SettingKeys.ResetLogAnalysisRuleSetsAfterSettingLogProfile))
         {
@@ -681,18 +759,52 @@ class LogAnalysisViewModel : SessionComponent
 
 
     /// <inheritdoc/>
+    protected override void OnLogProfilePropertyChanged(PropertyChangedEventArgs e)
+    {
+        base.OnLogProfilePropertyChanged(e);
+        if (e.PropertyName == nameof(LogProfile.CooperativeLogAnalysisScriptSet))
+        {
+            var logProfile = this.LogProfile;
+            if (logProfile?.CooperativeLogAnalysisScriptSet == null)
+            {
+                this.Logger.LogDebug("Cooperative log analysis script set of log profile '{name}' ({id}) has been cleared", logProfile?.Name, logProfile?.Id);
+                this.ResetValue(HasCooperativeLogAnalysisScriptSetProperty);
+                if (this.GetValue(IsCooperativeLogAnalysisScriptSetEnabledProperty))
+                    this.updateCoopScriptLogAnalysisAction.Execute();
+            }
+            else
+            {
+                if (this.GetValue(HasCooperativeLogAnalysisScriptSetProperty))
+                    this.Logger.LogDebug("Cooperative log analysis script set of log profile '{name}' ({id}) has been changed", logProfile.Name, logProfile.Id);
+                else
+                {
+                    this.Logger.LogDebug("Cooperative log analysis script set of log profile '{name}' ({id}) has been set", logProfile.Name, logProfile.Id);
+                    this.SetValue(HasCooperativeLogAnalysisScriptSetProperty, true);
+                }
+                if (this.GetValue(IsCooperativeLogAnalysisScriptSetEnabledProperty))
+                    this.updateCoopScriptLogAnalysisAction.Schedule();
+            }
+        }
+    }
+
+
+    /// <inheritdoc/>
     protected override void OnRestoreState(JsonElement element)
     {
         // call base
         this.isRestoringState = true;
         base.OnRestoreState(element);
 
+        // restore cooperative log analysis script set state
+        if (element.TryGetProperty($"LogAnalysis.{nameof(IsCooperativeLogAnalysisScriptSetEnabled)}", out var jsonValue))
+            this.SetValue(IsCooperativeLogAnalysisScriptSetEnabledProperty, jsonValue.ValueKind != JsonValueKind.False);
+
         // restore rule sets
         this.keyLogAnalysisRuleSets.Clear();
         this.operationCountingAnalysisRuleSets.Clear();
         this.operationDurationAnalysisRuleSets.Clear();
         this.logAnalysisScriptSets.Clear();
-        if ((element.TryGetProperty(nameof(KeyLogAnalysisRuleSet), out var jsonValue) // for upgrade case
+        if ((element.TryGetProperty(nameof(KeyLogAnalysisRuleSet), out jsonValue) // for upgrade case
             || element.TryGetProperty($"LogAnalysis.{nameof(KeyLogAnalysisRuleSet)}", out jsonValue))
                 && jsonValue.ValueKind == JsonValueKind.Array)
         {
@@ -766,6 +878,9 @@ class LogAnalysisViewModel : SessionComponent
     /// <inheritdoc/>
     protected override void OnSaveState(Utf8JsonWriter writer)
     {
+        // save cooperative log analysis script set state
+        writer.WriteBoolean($"LogAnalysis.{nameof(IsCooperativeLogAnalysisScriptSetEnabled)}", this.GetValue(IsCooperativeLogAnalysisScriptSetEnabledProperty));
+
         // save rule sets
         if (this.keyLogAnalysisRuleSets.IsNotEmpty())
         {

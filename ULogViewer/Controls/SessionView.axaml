@@ -1306,11 +1306,15 @@
 										<Image Classes="Icon" IsVisible="{Binding !#logAnalysisRuleSetsActiveIcon.IsVisible}" Source="{StaticResource Image/Checklist}"/>
 										<Image Name="logAnalysisRuleSetsActiveIcon" Classes="Icon">
 											<Image.IsVisible>
-												<MultiBinding Converter="{x:Static aConverters:BoolConverters.Or}">
+												<MultiBinding Converter="{x:Static BoolConverters.Or}">
 													<Binding Path="LogAnalysis.KeyLogAnalysisRuleSets.Count" Converter="{x:Static abConverters:NumberConverters.IsNonZero}"/>
 													<Binding Path="LogAnalysis.OperationDurationAnalysisRuleSets.Count" Converter="{x:Static abConverters:NumberConverters.IsNonZero}"/>
 													<Binding Path="LogAnalysis.OperationCountingAnalysisRuleSets.Count" Converter="{x:Static abConverters:NumberConverters.IsNonZero}"/>
 													<Binding Path="LogAnalysis.LogAnalysisScriptSets.Count" Converter="{x:Static abConverters:NumberConverters.IsNonZero}"/>
+													<MultiBinding Converter="{x:Static BoolConverters.And}">
+														<Binding Path="LogAnalysis.HasCooperativeLogAnalysisScriptSet"/>
+														<Binding Path="LogAnalysis.IsCooperativeLogAnalysisScriptSetEnabled"/>
+													</MultiBinding>
 												</MultiBinding>
 											</Image.IsVisible>
 											<DrawingImage>
@@ -1324,6 +1328,13 @@
 							<Popup Name="logAnalysisRuleSetsPopup" IsLightDismissEnabled="True" PlacementMode="Bottom" PlacementTarget="{Binding #logAnalysisRuleSetsButton}" Width="{StaticResource Double/SessionView.LogAnalysisRuleSetsPopup.Width}" WindowManagerAddShadowHint="True">
 								<Border Background="{DynamicResource ComboBoxDropDownBackground}" BorderBrush="{DynamicResource ComboBoxDropDownBorderBrush}" BorderThickness="{DynamicResource Thickness/SessionView.LogAnalysisRuleSetsPopup.Border}" CornerRadius="{DynamicResource OverlayCornerRadius}" Padding="{StaticResource Thickness/SessionView.LogAnalysisRuleSetsPopup.Padding}">
 									<StackPanel>
+
+										<!-- Cooperative log analysis script set -->
+										<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/SessionView.LogAnalysisRuleSets.CooperativeLogAnalysisScriptSet}"/>
+										<ToggleSwitch Classes="Dialog_ToggleSwitch" IsChecked="{Binding LogAnalysis.IsCooperativeLogAnalysisScriptSetEnabled}" IsEnabled="{Binding LogAnalysis.HasCooperativeLogAnalysisScriptSet}"/>
+										<Separator Classes="Dialog_Separator"/>
+										
+										<!-- Rule sets and script sets -->
 										<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/SessionView.LogAnalysisRuleSetsPopup.Header}"/>
 										<Grid ColumnDefinitions="*,Auto">
 											<Border Background="{DynamicResource Brush/SessionView.LogAnalysisRuleSetListBox.Background}" BorderBrush="{DynamicResource Brush/Control.Border}" BorderThickness="{DynamicResource Thickness/Control.Border}" CornerRadius="{DynamicResource ControlCornerRadius}">
