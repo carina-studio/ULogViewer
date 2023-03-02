@@ -19,8 +19,8 @@ class OperationDurationDisplayableLogAnalyzer : RuleBasedDisplayableLogAnalyzer<
         public readonly Dictionary<OperationDurationAnalysisRuleSet.Rule, StringFormatter> CustomMessageFormatters = new();
         public Func<DisplayableLog, TimeSpan?>? EndingTimeSpanGetter;
         public Func<DisplayableLog, DateTime?>? EndingTimestampGetter;
-        public OperationDurationAnalysisRuleSet[] RuleSets = new OperationDurationAnalysisRuleSet[0];
-        public Func<DisplayableLog, string?>[] TextPropertyGetters = new Func<DisplayableLog, string?>[0];
+        public OperationDurationAnalysisRuleSet[] RuleSets = Array.Empty<OperationDurationAnalysisRuleSet>();
+        public Func<DisplayableLog, string?>[] TextPropertyGetters = Array.Empty<Func<DisplayableLog, string?>>();
     }
 
 

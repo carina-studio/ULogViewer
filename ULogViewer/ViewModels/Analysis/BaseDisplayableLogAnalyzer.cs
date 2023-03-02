@@ -217,7 +217,7 @@ abstract class BaseDisplayableLogAnalyzer<TProcessingToken> : BaseDisplayableLog
     /// <param name="priority">Priority of logs processing.</param>
     protected BaseDisplayableLogAnalyzer(IULogViewerApplication app, IList<DisplayableLog> sourceLogs, Comparison<DisplayableLog> comparison, DisplayableLogProcessingPriority priority = DisplayableLogProcessingPriority.Default) : base(app, sourceLogs, comparison, priority)
     { 
-        this.EmptyResults = new DisplayableLogAnalysisResult[0];
+        this.EmptyResults = Array.Empty<DisplayableLogAnalysisResult>();
     }
 
 
