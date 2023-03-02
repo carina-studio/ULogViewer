@@ -3680,12 +3680,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		void OnSettingChanged(object? sender, SettingChangedEventArgs e)
 		{
 			if (e.Key == AppSuite.SettingKeys.EnableRunningScript)
-			{
-				var isEnabled = (bool)e.Value;
-				this.SetValue(EnableRunningScriptProperty, isEnabled);
-				if (!isEnabled)
-					this.logAnalysisScriptSetListBox.SelectedItems!.Clear();
-			}
+				this.SetValue(EnableRunningScriptProperty, (bool)e.Value);
 			else if (e.Key == SettingKeys.MaxDisplayLineCountForEachLog)
 				this.SetValue(MaxDisplayLineCountForEachLogProperty, Math.Max(1, (int)e.Value));
 			else if (e.Key == SettingKeys.ShowHelpButtonOnLogTextFilter)

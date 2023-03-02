@@ -1314,6 +1314,7 @@
 													<MultiBinding Converter="{x:Static BoolConverters.And}">
 														<Binding Path="LogAnalysis.HasCooperativeLogAnalysisScriptSet"/>
 														<Binding Path="LogAnalysis.IsCooperativeLogAnalysisScriptSetEnabled"/>
+														<Binding Path="EnableRunningScript" ElementName="root"/>
 													</MultiBinding>
 												</MultiBinding>
 											</Image.IsVisible>
@@ -1330,8 +1331,19 @@
 									<StackPanel>
 
 										<!-- Cooperative log analysis script set -->
-										<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/SessionView.LogAnalysisRuleSets.CooperativeLogAnalysisScriptSet}"/>
-										<ToggleSwitch Classes="Dialog_ToggleSwitch" IsChecked="{Binding LogAnalysis.IsCooperativeLogAnalysisScriptSetEnabled}" IsEnabled="{Binding LogAnalysis.HasCooperativeLogAnalysisScriptSet}"/>
+										<StackPanel Orientation="Horizontal">
+											<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/SessionView.LogAnalysisRuleSets.CooperativeLogAnalysisScriptSet}"/>
+											<Separator Classes="Dialog_Separator_Small" IsVisible="{Binding !$parent[UserControl].EnableRunningScript}"/>
+											<TextBlock Classes="Dialog_TextBlock" IsVisible="{Binding !$parent[UserControl].EnableRunningScript}" Text="{DynamicResource String/SessionView.LogAnalysisRuleSets.Disabled}" TextTrimming="CharacterEllipsis"/>
+										</StackPanel>
+										<ToggleSwitch Classes="Dialog_ToggleSwitch" IsChecked="{Binding LogAnalysis.IsCooperativeLogAnalysisScriptSetEnabled}">
+											<ToggleSwitch.IsEnabled>
+												<MultiBinding Converter="{x:Static BoolConverters.And}">
+													<Binding Path="LogAnalysis.HasCooperativeLogAnalysisScriptSet"/>
+													<Binding Path="$parent[UserControl].EnableRunningScript"/>
+												</MultiBinding>
+											</ToggleSwitch.IsEnabled>
+										</ToggleSwitch>
 										<Separator Classes="Dialog_Separator"/>
 										
 										<!-- Rule sets and script sets -->

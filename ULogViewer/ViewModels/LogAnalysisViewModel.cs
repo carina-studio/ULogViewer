@@ -257,7 +257,7 @@ class LogAnalysisViewModel : SessionComponent
             if (this.IsDisposed)
                 return;
             this.coopScriptLogAnalyzer.ScriptSets.Clear();
-            if (this.GetValue(IsCooperativeLogAnalysisScriptSetEnabledProperty))
+            if (this.GetValue(IsCooperativeLogAnalysisScriptSetEnabledProperty) && this.Settings.GetValueOrDefault(AppSuite.SettingKeys.EnableRunningScript))
             {
                 var scriptSet = this.LogProfile?.CooperativeLogAnalysisScriptSet;
                 if (scriptSet != null)
@@ -335,9 +335,14 @@ class LogAnalysisViewModel : SessionComponent
                 return;
             if (!this.scriptLogAnalyzer.ScriptSets.SequenceEqual(this.logAnalysisScriptSets))
             {
-                this.Logger.LogTrace("Update log analysis with {scriptSetsCount} script sets", this.logAnalysisScriptSets.Count);
                 this.scriptLogAnalyzer.ScriptSets.Clear();
-                this.scriptLogAnalyzer.ScriptSets.AddAll(this.logAnalysisScriptSets);
+                if (this.Settings.GetValueOrDefault(AppSuite.SettingKeys.EnableRunningScript))
+                {
+                    this.Logger.LogTrace("Update log analysis with {scriptSetsCount} script sets", this.logAnalysisScriptSets.Count);
+                    this.scriptLogAnalyzer.ScriptSets.AddAll(this.logAnalysisScriptSets);
+                }
+                else
+                    this.Logger.LogTrace("Update log analysis with 0 script sets");
             }
         });
 
@@ -946,6 +951,24 @@ class LogAnalysisViewModel : SessionComponent
         this.reportSelectedAnalysisResultsInfoAction.Schedule();
         if (!this.IsDisposed)
             this.SetValue(HasSelectedAnalysisResultsProperty, this.selectedAnalysisResults.IsNotEmpty());
+    }
+
+
+    /// <inheritdoc/>
+    protected override void OnSettingChanged(SettingChangedEventArgs e)
+    {
+        base.OnSettingChanged(e);
+        if (e.Key == AppSuite.SettingKeys.EnableRunningScript)
+        {
+            if ((bool)e.Value)
+                this.updateCoopScriptLogAnalysisAction.Schedule();
+            else
+            {
+                this.logAnalysisScriptSets.Clear();
+                this.updateCoopScriptLogAnalysisAction.Execute();
+                this.updateScriptLogAnalysisAction.Execute();
+            }
+        }
     }
 
 
