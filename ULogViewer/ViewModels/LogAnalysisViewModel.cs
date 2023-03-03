@@ -1,4 +1,4 @@
-using System;
+using CarinaStudio.AppSuite.Product;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Diagnostics;
@@ -9,6 +9,7 @@ using CarinaStudio.ULogViewer.ViewModels.Analysis.Scripting;
 using CarinaStudio.ViewModels;
 using CarinaStudio.Windows.Input;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -257,7 +258,9 @@ class LogAnalysisViewModel : SessionComponent
             if (this.IsDisposed)
                 return;
             this.coopScriptLogAnalyzer.ScriptSets.Clear();
-            if (this.GetValue(IsCooperativeLogAnalysisScriptSetEnabledProperty) && this.Settings.GetValueOrDefault(AppSuite.SettingKeys.EnableRunningScript))
+            if (this.GetValue(IsCooperativeLogAnalysisScriptSetEnabledProperty) 
+                && this.Settings.GetValueOrDefault(AppSuite.SettingKeys.EnableRunningScript)
+                && ProductManager.Default.IsProductActivated(Products.Professional))
             {
                 var scriptSet = this.LogProfile?.CooperativeLogAnalysisScriptSet;
                 if (scriptSet != null)
@@ -336,7 +339,8 @@ class LogAnalysisViewModel : SessionComponent
             if (!this.scriptLogAnalyzer.ScriptSets.SequenceEqual(this.logAnalysisScriptSets))
             {
                 this.scriptLogAnalyzer.ScriptSets.Clear();
-                if (this.Settings.GetValueOrDefault(AppSuite.SettingKeys.EnableRunningScript))
+                if (this.Settings.GetValueOrDefault(AppSuite.SettingKeys.EnableRunningScript) 
+                    && ProductManager.Default.IsProductActivated(Products.Professional))
                 {
                     this.Logger.LogTrace("Update log analysis with {scriptSetsCount} script sets", this.logAnalysisScriptSets.Count);
                     this.scriptLogAnalyzer.ScriptSets.AddAll(this.logAnalysisScriptSets);
@@ -377,6 +381,9 @@ class LogAnalysisViewModel : SessionComponent
             this.scriptLogAnalyzer.LogProperties.Clear();
             this.scriptLogAnalyzer.LogProperties.AddAll(properties);
         });
+
+        // attach to product manager
+        ProductManager.Default.ProductActivationChanged += this.OnProductActivationChanged;
 
         // restore state
 #pragma warning disable CS0612
@@ -550,6 +557,9 @@ class LogAnalysisViewModel : SessionComponent
     /// <inheritdoc/>
     protected override void Dispose(bool disposing)
     {
+        // detach from product manager
+        ProductManager.Default.ProductActivationChanged -= this.OnProductActivationChanged;
+
         // detach from session
         this.Session.AllLogReadersDisposed -= this.OnAllLogReadersDisposed;
         this.displayLogPropertiesObserverToken.Dispose();
@@ -789,6 +799,17 @@ class LogAnalysisViewModel : SessionComponent
                 if (this.GetValue(IsCooperativeLogAnalysisScriptSetEnabledProperty))
                     this.updateCoopScriptLogAnalysisAction.Schedule();
             }
+        }
+    }
+
+
+    // Called when activation state of product changed.
+    void OnProductActivationChanged(IProductManager productManager, string productId, bool isActivated)
+    {
+        if (productId == Products.Professional && isActivated)
+        {
+            this.updateCoopScriptLogAnalysisAction.Schedule();
+            this.updateScriptLogAnalysisAction.Schedule();
         }
     }
 

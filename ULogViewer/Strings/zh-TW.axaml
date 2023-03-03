@@ -997,11 +997,12 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisResult.Quantity">數量</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets">分析規則集</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.CooperativeLogAnalysisScriptSet">協同日誌分析腳本</sys:String>
-	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.Disabled">(已停用)</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.Disabled">已停用</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.KeyLogAnalysisRuleSet">關鍵日誌分析</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.LogAnalysisScriptSet">日誌分析腳本</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.OperationCountingAnalysisRuleSet">動作計數分析</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.OperationDurationAnalysisRuleSet">動作時距分析</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.ProVersionOnly">限專業版</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSetsPopup.Header">套用的分析規則集 (可多選)</sys:String>
 	<sys:String x:Key="String/SessionView.LogCountInLogFile">日誌個數：</sys:String>
 	<sys:String x:Key="String/SessionView.LogFileIsUnsupported">目前的日誌類型不支援使用檔案</sys:String>

@@ -1005,11 +1005,12 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisResult.Quantity">数量</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets">分析规则集</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.CooperativeLogAnalysisScriptSet">协同日志分析脚本</sys:String>
-	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.Disabled">(已停用)</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.Disabled">已停用</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.KeyLogAnalysisRuleSet">关键日志分析</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.LogAnalysisScriptSet">日志分析脚本</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.OperationCountingAnalysisRuleSet">动作计数分析</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.OperationDurationAnalysisRuleSet">动作时距分析</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.ProVersionOnly">限专业版</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSetsPopup.Header">套用的分析规则集 (可多选)</sys:String>
 	<sys:String x:Key="String/SessionView.LogCountInLogFile">日志个数：</sys:String>
 	<sys:String x:Key="String/SessionView.LogFileIsUnsupported">当前的日志类型不支持使用档案</sys:String>

@@ -1315,6 +1315,7 @@
 														<Binding Path="LogAnalysis.HasCooperativeLogAnalysisScriptSet"/>
 														<Binding Path="LogAnalysis.IsCooperativeLogAnalysisScriptSetEnabled"/>
 														<Binding Path="EnableRunningScript" ElementName="root"/>
+														<Binding Path="IsProVersionActivated" ElementName="root"/>
 													</MultiBinding>
 												</MultiBinding>
 											</Image.IsVisible>
@@ -1333,14 +1334,23 @@
 										<!-- Cooperative log analysis script set -->
 										<StackPanel Orientation="Horizontal">
 											<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/SessionView.LogAnalysisRuleSets.CooperativeLogAnalysisScriptSet}"/>
-											<Separator Classes="Dialog_Separator_Small" IsVisible="{Binding !$parent[UserControl].EnableRunningScript}"/>
-											<TextBlock Classes="Dialog_TextBlock" IsVisible="{Binding !$parent[UserControl].EnableRunningScript}" Text="{DynamicResource String/SessionView.LogAnalysisRuleSets.Disabled}" TextTrimming="CharacterEllipsis"/>
+											<Separator Classes="Dialog_Separator_Small"/>
+											<abControls:FormattedTextBlock Classes="Dialog_TextBlock" Arg1="{DynamicResource String/SessionView.LogAnalysisRuleSets.Disabled}" Format="({0})" IsVisible="{Binding !$parent[UserControl].EnableRunningScript}" TextTrimming="CharacterEllipsis"/>
+											<abControls:FormattedTextBlock Classes="Dialog_TextBlock" Arg1="{DynamicResource String/SessionView.LogAnalysisRuleSets.ProVersionOnly}" Format="({0})" TextTrimming="CharacterEllipsis">
+												<abControls:FormattedTextBlock.IsVisible>
+													<MultiBinding Converter="{x:Static BoolConverters.And}">
+														<Binding Path="!IsProVersionActivated" ElementName="root"/>
+														<Binding Path="EnableRunningScript" ElementName="root"/>
+													</MultiBinding>
+												</abControls:FormattedTextBlock.IsVisible>
+											</abControls:FormattedTextBlock>
 										</StackPanel>
 										<ToggleSwitch Classes="Dialog_ToggleSwitch" IsChecked="{Binding LogAnalysis.IsCooperativeLogAnalysisScriptSetEnabled}">
 											<ToggleSwitch.IsEnabled>
 												<MultiBinding Converter="{x:Static BoolConverters.And}">
 													<Binding Path="LogAnalysis.HasCooperativeLogAnalysisScriptSet"/>
-													<Binding Path="$parent[UserControl].EnableRunningScript"/>
+													<Binding Path="EnableRunningScript" ElementName="root"/>
+													<Binding Path="IsProVersionActivated" ElementName="root"/>
 												</MultiBinding>
 											</ToggleSwitch.IsEnabled>
 										</ToggleSwitch>
@@ -1544,7 +1554,7 @@
 																<StackPanel Orientation="Horizontal">
 																	<TextBlock FontWeight="Bold" Text="{DynamicResource String/SessionView.LogAnalysisRuleSets.LogAnalysisScriptSet}" TextTrimming="CharacterEllipsis"/>
 																	<Separator Classes="Dialog_Separator_Small" IsVisible="{Binding !$parent[UserControl].EnableRunningScript}"/>
-																	<TextBlock IsVisible="{Binding !$parent[UserControl].EnableRunningScript}" Text="{DynamicResource String/SessionView.LogAnalysisRuleSets.Disabled}" TextTrimming="CharacterEllipsis"/>
+																	<abControls:FormattedTextBlock Arg1="{DynamicResource String/SessionView.LogAnalysisRuleSets.Disabled}" Format="({0})" IsVisible="{Binding !$parent[UserControl].EnableRunningScript}" TextTrimming="CharacterEllipsis"/>
 																</StackPanel>
 															</Border>
 															<ListBox Name="logAnalysisScriptSetListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" IsEnabled="{Binding $parent[UserControl].EnableRunningScript}" IsVisible="{Binding ScriptSets.Count, Source={x:Static appAnalysisScripting:LogAnalysisScriptSetManager.Default}}" Items="{Binding ScriptSets, Source={x:Static appAnalysisScripting:LogAnalysisScriptSetManager.Default}}" SelectionMode="Multiple" VirtualizationMode="None">
