@@ -264,7 +264,7 @@ class LogAnalysisViewModel : SessionComponent
             this.coopScriptLogAnalyzer.ScriptSets.Clear();
             if (this.GetValue(IsCooperativeLogAnalysisScriptSetEnabledProperty) 
                 && this.Settings.GetValueOrDefault(AppSuite.SettingKeys.EnableRunningScript)
-                && ProductManager.Default.IsProductActivated(Products.Professional))
+                && this.Application.ProductManager.IsProductActivated(Products.Professional))
             {
                 var scriptSet = this.LogProfile?.CooperativeLogAnalysisScriptSet;
                 if (scriptSet != null)
@@ -344,7 +344,7 @@ class LogAnalysisViewModel : SessionComponent
             {
                 this.scriptLogAnalyzer.ScriptSets.Clear();
                 if (this.Settings.GetValueOrDefault(AppSuite.SettingKeys.EnableRunningScript) 
-                    && ProductManager.Default.IsProductActivated(Products.Professional))
+                    && this.Application.ProductManager.IsProductActivated(Products.Professional))
                 {
                     this.Logger.LogTrace("Update log analysis with {scriptSetsCount} script sets", this.logAnalysisScriptSets.Count);
                     this.scriptLogAnalyzer.ScriptSets.AddAll(this.logAnalysisScriptSets);
@@ -392,7 +392,7 @@ class LogAnalysisViewModel : SessionComponent
         });
 
         // attach to product manager
-        ProductManager.Default.ProductActivationChanged += this.OnProductActivationChanged;
+        this.Application.ProductManager.ProductActivationChanged += this.OnProductActivationChanged;
 
         // restore state
 #pragma warning disable CS0612
@@ -567,7 +567,7 @@ class LogAnalysisViewModel : SessionComponent
     protected override void Dispose(bool disposing)
     {
         // detach from product manager
-        ProductManager.Default.ProductActivationChanged -= this.OnProductActivationChanged;
+        this.Application.ProductManager.ProductActivationChanged -= this.OnProductActivationChanged;
 
         // detach from session
         this.Session.AllLogReadersDisposed -= this.OnAllLogReadersDisposed;
