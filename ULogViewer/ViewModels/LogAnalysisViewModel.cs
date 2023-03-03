@@ -35,6 +35,10 @@ class LogAnalysisViewModel : SessionComponent
     /// </summary>
     public static readonly ObservableProperty<bool> HasCooperativeLogAnalysisScriptSetProperty = ObservableProperty.Register<LogAnalysisViewModel, bool>(nameof(HasCooperativeLogAnalysisScriptSet));
     /// <summary>
+    /// Property of <see cref="HasNewAnalysisResultsInBackground"/>.
+    /// </summary>
+    public static readonly ObservableProperty<bool> HasNewAnalysisResultsInBackgroundProperty = ObservableProperty.Register<LogAnalysisViewModel, bool>(nameof(HasNewAnalysisResultsInBackground));
+    /// <summary>
     /// Property of <see cref="HasSelectedAnalysisResults"/>.
     /// </summary>
     public static readonly ObservableProperty<bool> HasSelectedAnalysisResultsProperty = ObservableProperty.Register<LogAnalysisViewModel, bool>(nameof(HasSelectedAnalysisResults));
@@ -360,6 +364,11 @@ class LogAnalysisViewModel : SessionComponent
             else
                 this.updateCoopScriptLogAnalysisAction.Execute();
         });
+        this.GetValueAsObservable(IsPanelVisibleProperty).Subscribe(isVisible =>
+        {
+            if (!isInit && isVisible)
+                this.ResetValue(HasNewAnalysisResultsInBackgroundProperty);
+        });
         this.GetValueAsObservable(PanelSizeProperty).Subscribe(size =>
         {
             if (!isInit && !this.isRestoringState)
@@ -592,6 +601,12 @@ class LogAnalysisViewModel : SessionComponent
 
 
     /// <summary>
+    /// Check whether at least one new analysis result has been generated in background or not.
+    /// </summary>
+    public bool HasNewAnalysisResultsInBackground { get => this.GetValue(HasNewAnalysisResultsInBackgroundProperty); }
+
+
+    /// <summary>
     /// Check whether at least one analysis result is selected or not.
     /// </summary>
     public bool HasSelectedAnalysisResults { get => this.GetValue(HasSelectedAnalysisResultsProperty); }
@@ -687,7 +702,12 @@ class LogAnalysisViewModel : SessionComponent
         switch (e.Action)
         {
             case NotifyCollectionChangedAction.Add:
-                this.analysisResults.AddAll(e.NewItems!.Cast<DisplayableLogAnalysisResult>());
+                e.NewItems!.Cast<DisplayableLogAnalysisResult>().Let(addedResults =>
+                {
+                    this.analysisResults.AddAll(e.NewItems!.Cast<DisplayableLogAnalysisResult>());
+                    if (addedResults.IsNotEmpty() && !this.GetValue(IsPanelVisibleProperty))
+                        this.SetValue(HasNewAnalysisResultsInBackgroundProperty, true);
+                });
                 break;
             case NotifyCollectionChangedAction.Remove:
                 e.OldItems!.Cast<DisplayableLogAnalysisResult>().Let(removedResults =>
@@ -717,6 +737,8 @@ class LogAnalysisViewModel : SessionComponent
                 break;
 #endif
         }
+        if (this.analysisResults.IsEmpty())
+            this.ResetValue(HasNewAnalysisResultsInBackgroundProperty);
     }
 
 

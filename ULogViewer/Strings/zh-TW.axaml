@@ -989,6 +989,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.LastLogsReadingDuration">讀取耗時 {0}</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisPanel">日誌分析</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisPanel.DisabledWhenRemovingLogFiles">移除日誌檔案時暫時無法使用日誌分析</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisPanel.HasNewAnalysisResults">有新的結果</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisPanel.Hint">點一下面板右上角的按鈕以選擇要套用的的分析規則集</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisProgress">日誌分析進度</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisResult">分析結果</sys:String>

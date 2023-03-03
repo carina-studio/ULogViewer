@@ -761,7 +761,7 @@
 								<Image Classes="Icon" Source="{StaticResource Image/Icon.More}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
 								<Image Classes="Icon" Source="{StaticResource Image/Icon.More.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
 								<Border Classes="ToolBar_NotificationIndicator" IsVisible="{Binding $parent[Window].Application.UpdateInfo, Converter={x:Static aConverters:ObjectConverters.IsNotNull}}">
-									<Image Classes="ToolBar_NotificationIndicator" Source="{StaticResource Image/Icon.Update.Colored}"/>
+									<Image Classes="ToolBar_NotificationIndicator" Source="{StaticResource Image/Icon.NotificationIndicator.Information}"/>
 								</Border>
 							</Panel>
 						</ToggleButton>
@@ -1216,6 +1216,9 @@
 								<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/Icon.Analysis}"/>
 							</DrawingImage>
 						</Image>
+						<Border Classes="ToolBar_NotificationIndicator" IsVisible="{Binding LogAnalysis.HasNewAnalysisResultsInBackground}">
+							<Image Classes="ToolBar_NotificationIndicator" Source="{StaticResource Image/Icon.NotificationIndicator.Information}"/>
+						</Border>
 					</Panel>
 				</ToggleButton>
 
