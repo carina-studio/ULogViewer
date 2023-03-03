@@ -923,7 +923,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// setup properties
 			this.AllLogs = new SafeReadOnlyList<DisplayableLog>(this.allLogs);
-			this.LogAnalysisResults = this.logAnalysisResults.AsReadOnly();
+			this.LogAnalysisResults = new Collections.SafeReadOnlyList<DisplayableLogAnalysisResult>(this.logAnalysisResults);
 			this.SetValue(LogsProperty, this.AllLogs);
 			this.MarkedLogs = new SafeReadOnlyList<DisplayableLog>(this.markedLogs);
 
