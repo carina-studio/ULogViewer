@@ -955,13 +955,12 @@
 					<!-- Filtering progress -->
 					<StackPanel Name="filterProgressStatusBarItem" Grid.Column="0" IsVisible="{Binding LogFiltering.IsFiltering}" Orientation="Horizontal">
 						<Separator Classes="StatusBar_Separator"/>
-						<Image Classes="StatusBar_IconWithText">
+						<Image Classes="StatusBar_IconWithText" ToolTip.Placement="Left" ToolTip.Tip="{DynamicResource String/SessionView.LogsFilteringProgress}">
 							<DrawingImage>
 								<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Filter.Outline}"/>
 							</DrawingImage>
 						</Image>
-						<TextBlock Classes="StatusBar_TextBlock" Text="{DynamicResource String/SessionView.LogsFilteringProgress}"/>
-						<Panel VerticalAlignment="Center">
+						<Panel ToolTip.Placement="Left" ToolTip.Tip="{DynamicResource String/SessionView.LogsFilteringProgress}" VerticalAlignment="Center">
 							<TextBlock Classes="StatusBar_TextBlock" Text="00.0%" Opacity="0"/>
 							<TextBlock Classes="StatusBar_TextBlock" HorizontalAlignment="Left" Text="{Binding LogFiltering.FilteringProgress, Converter={x:Static appViewModels:Session.LogsOperationProgressConverter}}"/>
 						</Panel>
@@ -976,13 +975,12 @@
 							</MultiBinding>
 						</StackPanel.IsVisible>
 						<Separator Classes="StatusBar_Separator"/>
-						<Image Classes="StatusBar_IconWithText">
+						<Image Classes="StatusBar_IconWithText" ToolTip.Placement="Left" ToolTip.Tip="{DynamicResource String/SessionView.LogAnalysisProgress}">
 							<DrawingImage>
 								<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Analysis.Outline}"/>
 							</DrawingImage>
 						</Image>
-						<TextBlock Classes="StatusBar_TextBlock" Text="{DynamicResource String/SessionView.LogAnalysisProgress}"/>
-						<Panel VerticalAlignment="Center">
+						<Panel ToolTip.Placement="Left" ToolTip.Tip="{DynamicResource String/SessionView.LogAnalysisProgress}" VerticalAlignment="Center">
 							<TextBlock Classes="StatusBar_TextBlock" Text="00.0%" Opacity="0"/>
 							<TextBlock Classes="StatusBar_TextBlock" HorizontalAlignment="Left" Text="{Binding LogAnalysis.AnalysisProgress, Converter={x:Static appViewModels:Session.LogsOperationProgressConverter}}"/>
 						</Panel>

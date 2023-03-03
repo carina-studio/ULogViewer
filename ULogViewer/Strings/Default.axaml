@@ -1032,7 +1032,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisPanel">Log Analysis</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisPanel.DisabledWhenRemovingLogFiles">Log analysis is disabled temporarily when removing log file(s)</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisPanel.Hint">Click button on the top-right of panel to select analysis rule sets to apply</sys:String>
-	<sys:String x:Key="String/SessionView.LogAnalysisProgress">Analyzing logs…</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisProgress">Progress of log analyzing</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisResult">Analysis result</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisResult.ByteSize">Size in bytes</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisResult.Duration">Duration</sys:String>
@@ -1060,7 +1060,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.LogsDuration">Duration of logs</sys:String>
 	<sys:String x:Key="String/SessionView.LogsDurationEndingPoint">Latest timestamp of log/Maximum time span of log (Click to select the log)</sys:String>
 	<sys:String x:Key="String/SessionView.LogsDurationStartingPoint">Earliest timestamp of log/Minimum time span of log (Click to select the log)</sys:String>
-	<sys:String x:Key="String/SessionView.LogsFilteringProgress">Filtering logs…</sys:String>
+	<sys:String x:Key="String/SessionView.LogsFilteringProgress">Progress of log filtering</sys:String>
 	<sys:String x:Key="String/SessionView.LogsMemoryUsage">Logs memory usage of this tab</sys:String>
 	<StaticResource x:Key="String/SessionView.LogTextFilter.ToolTip" ResourceKey="String/DisplayableLogAnalysisRuleEditorDialog.Pattern.Description"/>
 	<sys:String x:Key="String/SessionView.LogTextFilter.Watermark">Text filter (Regular Expression)</sys:String>

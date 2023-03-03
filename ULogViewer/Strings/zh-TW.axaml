@@ -990,7 +990,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisPanel">日誌分析</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisPanel.DisabledWhenRemovingLogFiles">移除日誌檔案時暫時無法使用日誌分析</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisPanel.Hint">點一下面板右上角的按鈕以選擇要套用的的分析規則集</sys:String>
-	<sys:String x:Key="String/SessionView.LogAnalysisProgress">分析日誌中…</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisProgress">日誌分析進度</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisResult">分析結果</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisResult.ByteSize">位元組大小</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisResult.Duration">時距</sys:String>
@@ -1018,7 +1018,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.LogsDuration">日誌時間長度</sys:String>
 	<sys:String x:Key="String/SessionView.LogsDurationEndingPoint">最晚日誌時間/最大日誌時距 (點一下以選取該日誌)</sys:String>
 	<sys:String x:Key="String/SessionView.LogsDurationStartingPoint">最早日誌時間/最小日誌時距 (點一下以選取該日誌)</sys:String>
-	<sys:String x:Key="String/SessionView.LogsFilteringProgress">篩選日誌中…</sys:String>
+	<sys:String x:Key="String/SessionView.LogsFilteringProgress">日誌篩選進度</sys:String>
 	<sys:String x:Key="String/SessionView.LogsMemoryUsage">此分頁日誌記憶體使用量</sys:String>
 	<StaticResource x:Key="String/SessionView.LogTextFilter.ToolTip" ResourceKey="String/DisplayableLogAnalysisRuleEditorDialog.Pattern.Description"/>
 	<sys:String x:Key="String/SessionView.LogTextFilter.Watermark">文字篩選 (正規表示式)</sys:String>
