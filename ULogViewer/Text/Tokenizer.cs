@@ -12,7 +12,7 @@ ref struct Tokenizer
     /// <summary>
     /// Pattern of decimal number.
     /// </summary>
-    public static readonly string DecimalNumberPattern = "[0-9]+(\\.[0-9]+)?|\\.[0-9]+";
+    public static readonly string DecimalNumberPattern = "([0-9]+(\\.[0-9]+)?|\\.[0-9]+)";
     /// <summary>
     /// Pattern of phrase consist of CJK characters.
     /// </summary>
@@ -20,7 +20,7 @@ ref struct Tokenizer
     /// <summary>
     /// Pattern of hexadecimal number.
     /// </summary>
-    public static readonly string HexNumberPattern = "((0x|#|u+)[a-f0-9]+|&#x[a-f0-9]+;|[a-f0-9]+h|[0-9]*[a-f][0-9]+[a-f0-9]+)";
+    public static readonly string HexNumberPattern = "((0x|#|u+)[a-f0-9]+|&#x[a-f0-9]+;|[a-f0-9]+h(?=$|\\W)|[0-9]*[a-f][0-9]+[a-f0-9]+)";
     /// <summary>
     /// Pattern of phrase consist of non-CJK characters.
     /// </summary>
