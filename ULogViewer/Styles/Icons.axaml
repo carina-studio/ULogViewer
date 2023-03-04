@@ -814,6 +814,8 @@
 	</DrawingImage>
 	<DrawingImage x:Key="Image/Scrolling" Drawing="{StaticResource Drawing/Scrolling}"/>
 	<DrawingImage x:Key="Image/Scrolling.Light" Drawing="{StaticResource Drawing/Scrolling.Light}"/>
+	<StaticResourceExtension x:Key="Image/SearchProvider.AppleDeveloper.Colored" ResourceKey="Image/Icon.Company.Apple.Colored"/>
+	<StaticResourceExtension x:Key="Image/SearchProvider.AppleDeveloperForums.Colored" ResourceKey="Image/Icon.Company.Apple.Colored"/>
 
 	<!-- MIT License, https://www.svgrepo.com/page/licensing#MIT -->
 	<DrawingImage x:Key="Image/SearchProvider.Baidu.Colored">
@@ -828,7 +830,24 @@
 			<GeometryDrawing Brush="#349DF9" Geometry="F1 M0 0L4.795 1.686L4.795 18.56L11.548 14.66L8.238 13.105L6.148 7.905L16.788 11.643L16.788 17.078L4.795 24L-0.00499821 21.33L-0.00499821 0L0 0Z" />
 		</DrawingGroup>
 	</DrawingImage>
+	
+	<StaticResourceExtension x:Key="Image/SearchProvider.GitHubIssues.Colored" ResourceKey="Image/Icon.GitHub"/>
 	<StaticResourceExtension x:Key="Image/SearchProvider.Google.Colored" ResourceKey="Image/Icon.Company.Google.Colored"/>
+
+	<!-- Logo License, https://www.svgrepo.com/page/licensing#Logo -->
+	<DrawingImage x:Key="Image/SearchProvider.GoogleDevelopers.Colored">
+		<DrawingGroup>
+			<GeometryDrawing Brush="#FABC05" Geometry="F1 M184.315 67.7045C197.784 59.9685 211.217 52.1695 224.732 44.5135C237.56 37.2455 252.653 43.9485 255.561 58.0925C257.244 66.2745 253.591 75.1135 246.204 79.4185C221.986 93.5315 197.733 107.588 173.359 121.43C165.815 125.714 158.044 124.926 151.169 119.676C144.185 114.346 141.984 106.994 143.622 98.4375C145.492 91.9235 149.772 87.5685 155.609 84.3105C165.26 78.9245 174.754 73.2545 184.315 67.7045" />
+			<GeometryDrawing Brush="#109D58" Geometry="F1 M194.203 62.079C180.768 54.283 167.299 46.548 153.911 38.673C141.202 31.197 139.462 14.775 150.256 5.18296C156.5 -0.364041 165.981 -1.62104 173.403 2.62396C197.735 16.541 222.035 30.517 246.209 44.704C253.691 49.095 256.893 56.22 255.786 64.799C254.661 73.511 249.395 79.093 241.166 81.954C234.589 83.592 228.678 82.062 222.938 78.636C213.447 72.971 203.79 67.583 194.203 62.079" />
+			<GeometryDrawing Brush="#E94436" Geometry="F1 M71.7518 56.5629C63.1308 61.4609 54.5048 66.3499 45.8928 71.2629C40.8548 74.1369 35.8728 77.1089 30.8088 79.9349C20.6058 85.6299 8.48381 82.2919 2.69881 72.2609C-2.82219 62.6889 0.35081 50.2789 10.1768 44.5429C34.2018 30.5199 58.2888 16.5989 82.4628 2.83386C89.8768 -1.38814 97.5688 -0.857141 104.425 4.18986C111.661 9.51686 114.03 17.0129 112.405 25.8009C111.397 27.9269 110.795 30.4199 109.286 32.0949C106.831 34.8199 104.041 37.4289 100.935 39.3449C91.3228 45.2719 81.4958 50.8499 71.7518 56.5629" />
+			<GeometryDrawing Brush="#4385F3" Geometry="F1 M61.867 62.057C70.42 67.073 78.967 72.1 87.528 77.102C92.535 80.028 97.6 82.857 102.579 85.828C112.613 91.818 115.784 103.984 109.989 114.009C104.459 123.577 92.126 127.035 82.245 121.392C58.088 107.597 33.989 93.699 9.98101 79.646C2.61801 75.336 -0.76799 68.409 0.17501 59.948C1.17001 51.017 6.47701 45.218 14.9 42.231C17.245 42.042 19.705 41.316 21.911 41.786C25.498 42.55 29.153 43.661 32.365 45.393C42.304 50.753 52.048 56.475 61.867 62.057" />
+		</DrawingGroup>
+	</DrawingImage>
+
+	<StaticResourceExtension x:Key="Image/SearchProvider.MicrosoftForums.Colored" ResourceKey="Image/Icon.Company.Microsoft.Colored"/>
+	<StaticResourceExtension x:Key="Image/SearchProvider.MicrosoftLearn.Colored" ResourceKey="Image/Icon.Company.Microsoft.Colored"/>
+
+	<!-- MIT License, https://www.svgrepo.com/page/licensing#MIT -->
 	<DrawingImage x:Key="Image/SearchProvider.StackOverflow.Colored">
 		<DrawingGroup>
 			<GeometryDrawing Brush="#F48024" Geometry="F1 M16 2C8.27812 2 2 8.27812 2 16C2 23.7219 8.27812 30 16 30C23.7219 30 30 23.7219 30 16C30 8.27812 23.7219 2 16 2Z" />
@@ -838,6 +857,14 @@
 			<GeometryDrawing Brush="#FFFFFF" Geometry="F1 M17.37 7.80615L18.521 6.9292L22.851 12.7391L21.7 13.6161L17.37 7.80615Z" />
 			<GeometryDrawing Brush="#FFFFFF" Geometry="F1 M19.5624 20.5221L11.889 20.5221L11.889 18.8778L19.5624 18.8778L19.5624 20.5221Z" />
 			<GeometryDrawing Brush="#FFFFFF" Geometry="F1 M20.6586 17.2334L20.6586 21.6182L10.7927 21.6182L10.7927 17.2334L9.14844 17.2334L9.14844 23.2625L22.3029 23.2625L22.3029 17.2334L20.6586 17.2334Z" />
+		</DrawingGroup>
+	</DrawingImage>
+	<DrawingImage x:Key="Image/SearchProvider.StackExchange.Colored">
+		<DrawingGroup>
+			<GeometryDrawing Brush="#91D8F4" Geometry="F1 M156 71Q106 71 106 121L106 137L406 137L406 121Q406 71 356 71" />
+			<GeometryDrawing Brush="#4CA2DA" Geometry="F1 M106 157L106 217L406 217L406 157" />
+			<GeometryDrawing Brush="#376DB6" Geometry="F1 M106 239L106 299L406 299L406 239" />
+			<GeometryDrawing Brush="#1E5397" Geometry="F1 M406 319L106 319L106 335Q106 385 156 385L279 385L279 450L344 385L356 385Q406 385 406 335" />
 		</DrawingGroup>
 	</DrawingImage>
 	<DrawingImage x:Key="Image/SearchProvider.Zhihu.Colored">

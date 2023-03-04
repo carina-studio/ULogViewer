@@ -976,6 +976,13 @@ return None</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.Title">Manage log data source scripts</sys:String>
 
 	<!-- SearchProvider -->
+	<sys:String x:Key="String/SearchProvider.AppleDeveloper">Apple Developer</sys:String>
+	<sys:String x:Key="String/SearchProvider.AppleDeveloperForums">Apple Developer Forums</sys:String>
+	<sys:String x:Key="String/SearchProvider.GitHubIssues">GitHub Issues</sys:String>
+	<sys:String x:Key="String/SearchProvider.GoogleDevelopers">Google Developers</sys:String>
+	<sys:String x:Key="String/SearchProvider.MicrosoftForums">Microsoft Forums</sys:String>
+	<sys:String x:Key="String/SearchProvider.MicrosoftLearn">Microsoft Learn</sys:String>
+	<sys:String x:Key="String/SearchProvider.StackExchange">Stack Exchange</sys:String>
 	<sys:String x:Key="String/SearchProvider.StackOverflow">Stack Overflow</sys:String>
 
 	<!-- Session -->

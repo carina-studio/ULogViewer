@@ -23,9 +23,16 @@ class SearchProviderManager : BaseApplicationObject<IULogViewerApplication>, INo
     {
         this.Providers = ListExtensions.AsReadOnly(new SearchProvider[]
         {
+            new AppleDeveloperSearchProvider(app),
+            new AppleDeveloperForumsSearchProvider(app),
             new BaiduSearchProvider(app),
             new BingSearchProvider(app),
+            new GitHubIssuesSearchProvider(app),
             new GoogleSearchProvider(app),
+            new GoogleDevelopersSearchProvider(app),
+            new MicrosoftForumsSearchProvider(app),
+            new MicrosoftLearnSearchProvider(app),
+            new StackExchangeSearchProvider(app),
             new StackOverflowSearchProvider(app),
             new ZhihuSearchProvider(app),
         });

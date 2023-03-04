@@ -933,7 +933,9 @@ return None</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.Title">管理日誌資料來源腳本</sys:String>
 
 	<!-- SearchProvider -->
+	<sys:String x:Key="String/SearchProvider.AppleDeveloperForums">Apple Developer 論壇</sys:String>
 	<sys:String x:Key="String/SearchProvider.Baidu">百度</sys:String>
+	<sys:String x:Key="String/SearchProvider.MicrosoftForums">Microsoft 論壇</sys:String>
 	<sys:String x:Key="String/SearchProvider.Zhihu">知乎</sys:String>
 
 	<!-- Session -->

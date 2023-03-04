@@ -939,9 +939,13 @@ return None</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.Title">管理日志资料来源脚本</sys:String>
 
 	<!-- SearchProvider -->
+	<sys:String x:Key="String/SearchProvider.AppleDeveloper">Apple 开发者</sys:String>
+	<sys:String x:Key="String/SearchProvider.AppleDeveloperForums">Apple 开发者论坛</sys:String>
 	<sys:String x:Key="String/SearchProvider.Baidu">百度</sys:String>
 	<sys:String x:Key="String/SearchProvider.Bing">必应</sys:String>
 	<sys:String x:Key="String/SearchProvider.Google">谷歌</sys:String>
+	<sys:String x:Key="String/SearchProvider.GoogleDevelopers">谷歌开发者</sys:String>
+	<sys:String x:Key="String/SearchProvider.MicrosoftForums">微软论坛</sys:String>
 	<sys:String x:Key="String/SearchProvider.Zhihu">知乎</sys:String>
 
 	<!-- Session -->
