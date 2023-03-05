@@ -298,16 +298,7 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Applicati
 	{
 		if (!this.IsOpened || this.Settings.GetValueOrDefault(AppSuite.SettingKeys.EnableRunningScript))
 			return;
-		var result = await new MessageDialog()
-		{
-			Buttons = AppSuite.Controls.MessageDialogButtons.YesNo,
-			DefaultResult = AppSuite.Controls.MessageDialogResult.No,
-			Icon = AppSuite.Controls.MessageDialogIcon.Warning,
-			Message = this.GetResourceObservable("String/ApplicationOptions.EnableRunningScript.ConfirmEnabling"),
-		}.ShowDialog(this);
-		if (result == AppSuite.Controls.MessageDialogResult.Yes)
-			this.Settings.SetValue<bool>(AppSuite.SettingKeys.EnableRunningScript, true);
-		else
+		if (!await new EnableRunningScriptDialog().ShowDialog(this))
 		{
 			this.IsEnabled = false;
 			this.SynchronizationContext.PostDelayed(this.Close, 300); // [Workaround] Prevent crashing on macOS.
