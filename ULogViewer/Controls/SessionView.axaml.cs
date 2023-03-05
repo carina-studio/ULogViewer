@@ -1139,6 +1139,30 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Enable script running if needed.
+		async Task<bool> ConfirmEnablingRunningScript(LogProfile logProfile)
+		{
+			if (logProfile.DataSourceProvider is not ScriptLogDataSourceProvider)
+				return true;
+			if (this.Settings.GetValueOrDefault(AppSuite.SettingKeys.EnableRunningScript))
+				return true;
+			if (this.attachedWindow == null)
+				return false;
+			await new MessageDialog()
+			{
+				Icon = MessageDialogIcon.Information,
+				Message = new FormattedString().Also(it =>
+				{
+					it.Arg1 = logProfile.Name;
+					it.Bind(FormattedString.FormatProperty, this.Application.GetObservableString("SessionView.NeedToEnableRunningScript"));
+				}),
+			}.ShowDialog(this.attachedWindow);
+			if (this.attachedWindow == null)
+				return false;
+			return await new EnableRunningScriptDialog().ShowDialog(this.attachedWindow);
+		}
+
+
 		// Show UI to confirm removing log analysis rule set.
 		async Task<bool> ConfirmRemovingLogAnalysisRuleSetAsync(string? ruleSetName, bool isScriptSet)
 		{
@@ -4233,6 +4257,13 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.Logger.LogWarning("Unable to use profile '{logProfileName}' ({logProfileId}) because application is not running as administrator", logProfile.Name, logProfile.Id);
 					return false;
 				}
+			}
+
+			// enable running script
+			if (!await this.ConfirmEnablingRunningScript(logProfile))
+			{
+				this.Logger.LogWarning("Unable to use profile '{logProfileName}' ({logProfileId}) because script running is not enabled yet", logProfile.Name, logProfile.Id);
+				return false;
 			}
 
 			// reset log profile

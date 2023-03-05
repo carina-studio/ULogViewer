@@ -804,35 +804,27 @@ return False</sys:String>
 
 	<!-- ScriptDisplayableLogAnalyzer -->
 	<sys:String x:Key="String/ScriptDisplayableLogAnalyzer.AnalysisScript.ErrorOccurred">執行「{0}」之腳本以分析日誌時發生錯誤：
-{1}
-	</sys:String>
+{1}</sys:String>
 	<sys:String x:Key="String/ScriptDisplayableLogAnalyzer.AnalysisScript.ErrorOccurred.WithLocation">執行「{0}」之腳本以分析日誌時發生錯誤：
 {1}
-位於第 {2} 行第 {3} 欄。
-	</sys:String>
+位於第 {2} 行第 {3} 字元。</sys:String>
 	<sys:String x:Key="String/ScriptDisplayableLogAnalyzer.SetupScript.ErrorOccurred">執行「{0}」之腳本以初始化分析時發生錯誤：
-{1}
-	</sys:String>
+{1}</sys:String>
 	<sys:String x:Key="String/ScriptDisplayableLogAnalyzer.SetupScript.ErrorOccurred.WithLocation">執行「{0}」之腳本以初始化分析時發生錯誤：
 {1}
-位於第 {2} 行第 {3} 欄。
-	</sys:String>
+位於第 {2} 行第 {3} 字元。</sys:String>
 
 	<!-- ScriptLogDataSource -->
 	<sys:String x:Key="String/ScriptLogDataSource.OpeningReaderScript.ErrorOccurred">執行「{0}」之腳本以開啟原始日誌行讀取器時發生錯誤：
-{1}
-	</sys:String>
+{1}</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSource.OpeningReaderScript.ErrorOccurred.WithLocation">執行「{0}」之腳本以開啟原始日誌行讀取器時發生錯誤：
 {1}
-位於第 {2} 行第 {3} 欄。
-	</sys:String>
+位於第 {2} 行第 {3} 字元。</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSource.ReadingLineScript.ErrorOccurred">執行「{0}」之腳本以讀取原始日誌行時發生錯誤：
-{1}
-	</sys:String>
+{1}</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSource.ReadingLineScript.ErrorOccurred.WithLocation">執行「{0}」之腳本以讀取原始日誌行時發生錯誤：
 {1}
-位於第 {2} 行第 {3} 欄。
-	</sys:String>
+位於第 {2} 行第 {3} 字元。</sys:String>
 
 	<!-- ScriptLogDataSourceProviderEditorDialog -->
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript">原始日誌行讀取器關閉腳本</sys:String>
@@ -1033,6 +1025,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.MarkUnmarkLogs">標記/解除標記日誌</sys:String>
 	<sys:String x:Key="String/SessionView.MemoryUsage">私有記憶體使用量</sys:String>
 	<sys:String x:Key="String/SessionView.MultipleFilesAreNotAllowed">目前的日誌類型不允許加入多個檔案。</sys:String>
+	<sys:String x:Key="String/SessionView.NeedToEnableRunningScript">「{0}」需要腳本執行功能，您需要在使用之前啟用腳本執行。</sys:String>
 	<sys:String x:Key="String/SessionView.NeedToRestartAsAdministrator">「{0}」需要系統管理員身分，是否要以系統管理員身分重新啟動應用程式並使用此日誌類型？</sys:String>
 	<sys:String x:Key="String/SessionView.NoFilePathDropped">請拖放有效的檔案。</sys:String>
 	<sys:String x:Key="String/SessionView.OtherActions">其他動作</sys:String>

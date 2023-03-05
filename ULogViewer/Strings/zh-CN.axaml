@@ -811,34 +811,27 @@ return False</sys:String>
 
 	<!-- ScriptDisplayableLogAnalyzer -->
 	<sys:String x:Key="String/ScriptDisplayableLogAnalyzer.AnalysisScript.ErrorOccurred">执行「{0}」之脚本以分析日志时发生错误：
-{1}
-	</sys:String>
+{1}</sys:String>
 	<sys:String x:Key="String/ScriptDisplayableLogAnalyzer.AnalysisScript.ErrorOccurred.WithLocation">执行「{0}」之脚本以分析日志时发生错误：
 {1}
-位于第 {2} 行第 {3} 栏。
-	</sys:String>
+位于第 {2} 行第 {3} 字符。</sys:String>
 	<sys:String x:Key="String/ScriptDisplayableLogAnalyzer.SetupScript.ErrorOccurred">执行「{0}」之脚本以初始化分析时发生错误：
-{1}
-	</sys:String>
+{1}</sys:String>
 	<sys:String x:Key="String/ScriptDisplayableLogAnalyzer.SetupScript.ErrorOccurred.WithLocation">执行「{0}」之脚本以初始化分析时发生错误：
 {1}
-位于第 {2} 行第 {3} 栏。
-	</sys:String>
+位于第 {2} 行第 {3} 字符。</sys:String>
 
+	<!-- ScriptLogDataSource -->
 	<sys:String x:Key="String/ScriptLogDataSource.OpeningReaderScript.ErrorOccurred">执行「{0}」之脚本以开启原始日志行读取器时发生错误：
-{1}
-	</sys:String>
+{1}</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSource.OpeningReaderScript.ErrorOccurred.WithLocation">执行「{0}」之脚本以开启原始日志行读取器时发生错误：
 {1}
-位于第 {2} 行第 {3} 栏。
-	</sys:String>
+位于第 {2} 行第 {3} 字符。</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSource.ReadingLineScript.ErrorOccurred">执行「{0}」之脚本以读取原始日志行时发生错误：
-{1}
-	</sys:String>
+{1}</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSource.ReadingLineScript.ErrorOccurred.WithLocation">执行「{0}」之脚本以读取原始日志行时发生错误：
 {1}
-位于第 {2} 行第 {3} 栏。
-	</sys:String>
+位于第 {2} 行第 {3} 字符。</sys:String>
 
 	<!-- ScriptLogDataSourceProviderEditorDialog -->
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript">原始日志行读取器关闭脚本</sys:String>
@@ -1043,6 +1036,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.MarkUnmarkLogs">标记/解除标记日志</sys:String>
 	<sys:String x:Key="String/SessionView.MemoryUsage">私有内存使用量</sys:String>
 	<sys:String x:Key="String/SessionView.MultipleFilesAreNotAllowed">目前的日志类型不允许加入多个档案。</sys:String>
+	<sys:String x:Key="String/SessionView.NeedToEnableRunningScript">「{0}」需要脚本执行功能，您需要在使用之前启用脚本执行。</sys:String>
 	<sys:String x:Key="String/SessionView.NeedToRestartAsAdministrator">「{0}」需要系统管理员身份，是否要以系统管理员身份重新启动应用程序并使用此日志类型？</sys:String>
 	<sys:String x:Key="String/SessionView.NoFilePathDropped">请拖放有效的档案。</sys:String>
 	<sys:String x:Key="String/SessionView.OtherActions">其他动作</sys:String>

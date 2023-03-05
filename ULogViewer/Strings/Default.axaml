@@ -847,35 +847,27 @@ return False</sys:String>
 
 	<!-- ScriptDisplayableLogAnalyzer -->
 	<sys:String x:Key="String/ScriptDisplayableLogAnalyzer.AnalysisScript.ErrorOccurred">Error occurred while running script of '{0}' to analyze log:
-{1}
-	</sys:String>
+{1}</sys:String>
 	<sys:String x:Key="String/ScriptDisplayableLogAnalyzer.AnalysisScript.ErrorOccurred.WithLocation">Error occurred while running script of '{0}' to analyze log:
 {1}
-At line {2} column {3}.
-	</sys:String>
+At line {2} column {3}.</sys:String>
 	<sys:String x:Key="String/ScriptDisplayableLogAnalyzer.SetupScript.ErrorOccurred">Error occurred while running script of '{0}' to setup analysis:
-{1}
-	</sys:String>
+{1}</sys:String>
 	<sys:String x:Key="String/ScriptDisplayableLogAnalyzer.SetupScript.ErrorOccurred.WithLocation">Error occurred while running script of '{0}' to setup analysis:
 {1}
-At line {2} column {3}.
-	</sys:String>
+At line {2} column {3}.</sys:String>
 
 	<!-- ScriptLogDataSource -->
 	<sys:String x:Key="String/ScriptLogDataSource.OpeningReaderScript.ErrorOccurred">Error occurred while running script of '{0}' to open raw log reader:
-{1}
-	</sys:String>
+{1}</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSource.OpeningReaderScript.ErrorOccurred.WithLocation">Error occurred while running script of '{0}' to open raw log reader:
 {1}
-At line {2} column {3}.
-	</sys:String>
+At line {2} column {3}.</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSource.ReadingLineScript.ErrorOccurred">Error occurred while running script of '{0}' to read raw log line:
-{1}
-	</sys:String>
+{1}</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSource.ReadingLineScript.ErrorOccurred.WithLocation">Error occurred while running script of '{0}' to read raw log line:
 {1}
-At line {2} column {3}.
-	</sys:String>
+At line {2} column {3}.</sys:String>
 
 	<!-- ScriptLogDataSourceProviderEditorDialog -->
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript">Script to close raw log reader</sys:String>
@@ -1080,6 +1072,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.MarkUnmarkLogs">Mark/Unmark logs</sys:String>
 	<sys:String x:Key="String/SessionView.MemoryUsage">Private memory usage</sys:String>
 	<sys:String x:Key="String/SessionView.MultipleFilesAreNotAllowed">Multiple files are not allowed by current log profile.</sys:String>
+	<sys:String x:Key="String/SessionView.NeedToEnableRunningScript">Script running is needed by '{0}'. You need to enable script running before using it.</sys:String>
 	<sys:String x:Key="String/SessionView.NeedToRestartAsAdministrator">Administrator role is needed for '{0}'. Do you want to restart application as Administrator and use this profile?</sys:String>
 	<sys:String x:Key="String/SessionView.NoFilePathDropped">Please drag and drop valid files.</sys:String>
 	<sys:String x:Key="String/SessionView.OtherActions">Other actions</sys:String>
