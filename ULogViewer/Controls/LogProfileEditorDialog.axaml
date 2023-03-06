@@ -97,7 +97,7 @@
 				<!-- DataSource -->
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogProfileEditorDialog.DataSourceProvider}"/>
 				<Grid ColumnDefinitions="*,Auto">
-					<ComboBox Name="dataSourceProviderComboBox" HorizontalAlignment="Stretch" Items="{x:Static appDataSources:LogDataSourceProviders.All}" SelectionChanged="OnDataSourceProviderComboBoxSelectionChanged" VerticalAlignment="Center">
+					<ComboBox Name="dataSourceProviderComboBox" HorizontalAlignment="Stretch" Items="{Binding $parent[Window].DataSourceProviders}" VerticalAlignment="Center">
 						<ComboBox.ItemTemplate>
 							<DataTemplate>
 								<Grid ColumnDefinitions="Auto,Auto,Auto,*">

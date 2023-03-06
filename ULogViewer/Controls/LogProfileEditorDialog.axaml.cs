@@ -17,8 +17,10 @@ using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ULogViewer.ViewModels.Analysis.Scripting;
 using CarinaStudio.ULogViewer.ViewModels.Categorizing;
 using CarinaStudio.Windows.Input;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -48,6 +50,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Static fields.
 		static readonly Dictionary<LogProfile, LogProfileEditorDialog> NonBlockingDialogs = new();
 		static readonly StyledProperty<bool> HasCooperativeLogAnalysisScriptSetProperty = AvaloniaProperty.Register<LogProfileEditorDialog, bool>("HasCooperativeLogAnalysisScriptSet");
+		static readonly StyledProperty<bool> HasEmbeddedScriptLogDataSourceProviderProperty = AvaloniaProperty.Register<LogProfileEditorDialog, bool>("HasEmbeddedScriptLogDataSourceProvider");
 		static readonly StyledProperty<bool> HasDataSourceOptionsProperty = AvaloniaProperty.Register<LogProfileEditorDialog, bool>("HasDataSourceOptions");
 		static readonly SettingKey<bool> HasLearnAboutLogsReadingAndParsingHintShown = new($"{nameof(LogProfileEditorDialog)}.{nameof(HasLearnAboutLogsReadingAndParsingHintShown)}");
 		static readonly StyledProperty<bool> IsProVersionActivatedProperty = AvaloniaProperty.Register<LogProfileEditorDialog, bool>("IsProVersionActivated");
@@ -64,12 +67,14 @@ namespace CarinaStudio.ULogViewer.Controls
 		LogAnalysisScriptSet? cooperativeLogAnalysisScriptSet;
 		LogDataSourceOptions dataSourceOptions;
 		readonly ComboBox dataSourceProviderComboBox;
+		readonly ObservableList<ILogDataSourceProvider> dataSourceProviders = new();
 		readonly TextBox descriptionTextBox;
+		EmbeddedScriptLogDataSourceProvider? embeddedScriptLogDataSourceProvider;
 		readonly LogProfileIconColorComboBox iconColorComboBox;
 		readonly LogProfileIconComboBox iconComboBox;
 		readonly ToggleSwitch isTemplateSwitch;
-		readonly SortedObservableList<KeyValuePair<string, LogLevel>> logLevelMapEntriesForReading = new((x, y) => x.Key.CompareTo(y.Key));
-		readonly SortedObservableList<KeyValuePair<LogLevel, string>> logLevelMapEntriesForWriting = new((x, y) => x.Key.CompareTo(y.Key));
+		readonly SortedObservableList<KeyValuePair<string, Logs.LogLevel>> logLevelMapEntriesForReading = new((x, y) => x.Key.CompareTo(y.Key));
+		readonly SortedObservableList<KeyValuePair<Logs.LogLevel, string>> logLevelMapEntriesForWriting = new((x, y) => x.Key.CompareTo(y.Key));
 		readonly AppSuite.Controls.ListBox logLevelMapForReadingListBox;
 		readonly AppSuite.Controls.ListBox logLevelMapForWritingListBox;
 		readonly AppSuite.Controls.ListBox logPatternListBox;
@@ -105,6 +110,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		public LogProfileEditorDialog()
 		{
 			// setup properties
+			this.DataSourceProviders = ListExtensions.AsReadOnly(this.dataSourceProviders);
 			this.LogLevelMapEntriesForReading = ListExtensions.AsReadOnly(this.logLevelMapEntriesForReading);
 			this.LogLevelMapEntriesForWriting = ListExtensions.AsReadOnly(this.logLevelMapEntriesForWriting);
 			this.LogPatterns = ListExtensions.AsReadOnly(this.logPatterns.Also(it =>
@@ -120,8 +126,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			}));
 
 			// create commands
-			this.EditLogLevelMapEntryForReadingCommand = new Command<KeyValuePair<string, LogLevel>>(this.EditLogLevelMapEntryForReading);
-			this.EditLogLevelMapEntryForWritingCommand = new Command<KeyValuePair<LogLevel, string>>(this.EditLogLevelMapEntryForWriting);
+			this.EditLogLevelMapEntryForReadingCommand = new Command<KeyValuePair<string, Logs.LogLevel>>(this.EditLogLevelMapEntryForReading);
+			this.EditLogLevelMapEntryForWritingCommand = new Command<KeyValuePair<Logs.LogLevel, string>>(this.EditLogLevelMapEntryForWriting);
 			this.EditLogPatternCommand = new Command<ListBoxItem>(this.EditLogPattern);
 			this.EditLogWritingFormatCommand = new Command<ListBoxItem>(this.EditLogWritingFormat);
 			this.EditTimeSpanFormatForReadingCommand = new Command<ListBoxItem>(this.EditTimeSpanFormatForReading);
@@ -159,13 +165,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.dataSourceProviderComboBox = this.Get<ComboBox>("dataSourceProviderComboBox").Also(it =>
 			{
 				it.GetObservable(ComboBox.SelectedItemProperty).Subscribe(item =>
-				{
-					if (item is not ILogDataSourceProvider provider)
-						return;
-					this.SetValue<bool>(HasDataSourceOptionsProperty, provider.SupportedSourceOptions.IsNotEmpty());
-					this.SetValue<bool>(IsWorkingDirectorySupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.WorkingDirectory))
-						&& !provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.WorkingDirectory)));
-				});
+					this.OnSelectedDataSourceChanged());
 			});
 			this.descriptionTextBox = this.Get<TextBox>(nameof(descriptionTextBox));
 			this.iconColorComboBox = this.Get<LogProfileIconColorComboBox>(nameof(iconColorComboBox));
@@ -198,6 +198,13 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.timestampFormatsForReadingListBox = this.Get<AppSuite.Controls.ListBox>(nameof(timestampFormatsForReadingListBox));
 			this.visibleLogPropertyListBox = this.Get<AppSuite.Controls.ListBox>("visibleLogPropertyListBox");
 			this.workingDirNeededSwitch = this.Get<ToggleSwitch>("workingDirNeededSwitch");
+
+			// attach to log data source providers
+			LogDataSourceProviders.All.Let(allProviders =>
+			{
+				this.dataSourceProviders.AddAll(allProviders);
+				(allProviders as INotifyCollectionChanged)?.Let(it => it.CollectionChanged += this.OnAllLogDataSourceProvidersChanged);
+			});
 		}
 
 
@@ -206,13 +213,13 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// </summary>
 		public async void AddLogLevelMapEntryForReading()
 		{
-			var entry = (KeyValuePair<string, LogLevel>?)null;
+			var entry = (KeyValuePair<string, Logs.LogLevel>?)null;
 			while (true)
 			{
 				entry = await new LogLevelMapEntryForReadingEditorDialog()
 				{
 					Entry = entry
-				}.ShowDialog<KeyValuePair<string, LogLevel>?>(this);
+				}.ShowDialog<KeyValuePair<string, Logs.LogLevel>?>(this);
 				if (entry == null)
 					return;
 				if (this.logLevelMapEntriesForReading.Contains(entry.Value))
@@ -242,13 +249,13 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// <returns></returns>
 		public async void AddLogLevelMapEntryForWriting()
 		{
-			var entry = (KeyValuePair<LogLevel, string>?)null;
+			var entry = (KeyValuePair<Logs.LogLevel, string>?)null;
 			while (true)
 			{
 				entry = await new LogLevelMapEntryForWritingEditorDialog()
 				{
 					Entry = entry
-				}.ShowDialog<KeyValuePair<LogLevel, string>?>(this);
+				}.ShowDialog<KeyValuePair<Logs.LogLevel, string>?>(this);
 				if (entry == null)
 					return;
 				if (this.logLevelMapEntriesForWriting.Contains(entry.Value))
@@ -385,6 +392,29 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		/// <summary>
+		/// Create log data source script.
+		/// </summary>
+		public async void CreateEmbeddedScriptLogDataSourceProvider()
+		{
+			var provider = await new ScriptLogDataSourceProviderEditorDialog()
+			{
+				IsEmbeddedProvider = true,
+			}.ShowDialog<ScriptLogDataSourceProvider?>(this);
+			if (provider == null || this.IsClosed)
+				return;
+			this.embeddedScriptLogDataSourceProvider = new(provider);
+			this.dataSourceProviders.Add(provider);
+			this.SetValue(HasEmbeddedScriptLogDataSourceProviderProperty, true);
+		}
+
+
+		/// <summary>
+		/// Get list of available log data source providers.
+		/// </summary>
+		public IList<ILogDataSourceProvider> DataSourceProviders { get; }
+
+
+		/// <summary>
 		/// Definition set of date time format syntax highlighting.
 		/// </summary>
 		public SyntaxHighlightingDefinitionSet DateTimeFormatSyntaxHighlightingDefinitionSet { get; }
@@ -406,16 +436,33 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Edit log level map entry.
-		async void EditLogLevelMapEntryForReading(KeyValuePair<string, LogLevel> entry)
+		/// <summary>
+		/// Edit embedded log data source script.
+		/// </summary>
+		public async void EditEmbeddedScriptLogDataSourceProvider()
 		{
-			var newEntry = (KeyValuePair<string, LogLevel>?)entry;
+			var provider = await new ScriptLogDataSourceProviderEditorDialog()
+			{
+				IsEmbeddedProvider = true,
+				Provider = this.embeddedScriptLogDataSourceProvider,
+			}.ShowDialog<ScriptLogDataSourceProvider?>(this);
+			if (provider == null || this.IsClosed)
+				return;
+			if (this.dataSourceProviderComboBox.SelectedItem is EmbeddedScriptLogDataSourceProvider)
+				this.OnSelectedDataSourceChanged();
+		}
+
+
+		// Edit log level map entry.
+		async void EditLogLevelMapEntryForReading(KeyValuePair<string, Logs.LogLevel> entry)
+		{
+			var newEntry = (KeyValuePair<string, Logs.LogLevel>?)entry;
 			while (true)
 			{
 				newEntry = await new LogLevelMapEntryForReadingEditorDialog()
 				{
 					Entry = newEntry
-				}.ShowDialog<KeyValuePair<string, LogLevel>?>(this);
+				}.ShowDialog<KeyValuePair<string, Logs.LogLevel>?>(this);
 				if (newEntry == null || newEntry.Value.Equals(entry))
 					return;
 				var checkingEntry = this.logLevelMapEntriesForReading.FirstOrDefault(it => it.Key == newEntry.Value.Key);
@@ -448,15 +495,15 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Edit log level map entry.
-		async void EditLogLevelMapEntryForWriting(KeyValuePair<LogLevel, string> entry)
+		async void EditLogLevelMapEntryForWriting(KeyValuePair<Logs.LogLevel, string> entry)
 		{
-			var newEntry = (KeyValuePair<LogLevel, string>?)entry;
+			var newEntry = (KeyValuePair<Logs.LogLevel, string>?)entry;
 			while (true)
 			{
 				newEntry = await new LogLevelMapEntryForWritingEditorDialog()
 				{
 					Entry = newEntry
-				}.ShowDialog<KeyValuePair<LogLevel, string>?>(this);
+				}.ShowDialog<KeyValuePair<Logs.LogLevel, string>?>(this);
 				if (newEntry == null || newEntry.Value.Equals(entry))
 					return;
 				var checkingEntry = this.logLevelMapEntriesForWriting.FirstOrDefault(it => it.Key == newEntry.Value.Key);
@@ -665,14 +712,15 @@ namespace CarinaStudio.ULogViewer.Controls
 			logProfile.DataSourceOptions = this.dataSourceOptions;
 			logProfile.DataSourceProvider = (ILogDataSourceProvider)this.dataSourceProviderComboBox.SelectedItem.AsNonNull();
 			logProfile.Description = this.descriptionTextBox.Text;
+			logProfile.EmbeddedScriptLogDataSourceProvider = this.embeddedScriptLogDataSourceProvider;
 			logProfile.Icon = this.iconComboBox.SelectedItem.GetValueOrDefault();
 			logProfile.IconColor = this.iconColorComboBox.SelectedItem.GetValueOrDefault();
 			logProfile.IsAdministratorNeeded = this.adminNeededSwitch.IsChecked.GetValueOrDefault();
 			logProfile.IsContinuousReading = this.continuousReadingSwitch.IsChecked.GetValueOrDefault();
 			logProfile.IsTemplate = isTemplate;
 			logProfile.IsWorkingDirectoryNeeded = this.workingDirNeededSwitch.IsChecked.GetValueOrDefault();
-			logProfile.LogLevelMapForReading = new Dictionary<string, LogLevel>(this.logLevelMapEntriesForReading);
-			logProfile.LogLevelMapForWriting = new Dictionary<LogLevel, string>(this.logLevelMapEntriesForWriting);
+			logProfile.LogLevelMapForReading = new Dictionary<string, Logs.LogLevel>(this.logLevelMapEntriesForReading);
+			logProfile.LogLevelMapForWriting = new Dictionary<Logs.LogLevel, string>(this.logLevelMapEntriesForWriting);
 			logProfile.LogPatterns = this.logPatterns;
 			logProfile.LogStringEncodingForReading = (LogStringEncoding)this.logStringEncodingForReadingComboBox.SelectedItem.AsNonNull();
 			logProfile.LogStringEncodingForWriting = (LogStringEncoding)this.logStringEncodingForWritingComboBox.SelectedItem.AsNonNull();
@@ -751,6 +799,76 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		/// <summary>
+		/// Import embedded log data source script from file.
+		/// </summary>
+		public async void ImportEmbeddedScriptLogDataSourceProviderFromFile()
+		{
+			// select file
+			var fileName = (await this.StorageProvider.OpenFilePickerAsync(new()
+			{
+				FileTypeFilter = new[]
+				{
+					new FilePickerFileType(this.Application.GetStringNonNull("FileFormat.Json"))
+					{
+						Patterns = new[] { "*.json" }
+					}
+				}
+			})).Let(it =>
+			{
+				if (it.Count == 1 && it[0].TryGetUri(out var uri))
+					return uri.LocalPath;
+				return null;
+			});
+			if (string.IsNullOrEmpty(fileName))
+				return;
+			
+			// try loading provider
+			var provider = await Global.RunOrDefaultAsync(async () => await ScriptLogDataSourceProvider.LoadAsync(this.Application, fileName));
+			if (provider == null)
+			{
+				_ = new MessageDialog()
+				{
+					Icon = MessageDialogIcon.Error,
+					Message = new FormattedString().Also(it =>
+					{
+						it.Arg1 = fileName;
+						it.Bind(FormattedString.FormatProperty, this.Application.GetObservableString("ScriptLogDataSourceProvidersDialog.FailedToImportProvider"));
+					}),
+				}.ShowDialog(this);
+				return;
+			}
+
+			// edit provider and replace
+			provider = await new ScriptLogDataSourceProviderEditorDialog()
+			{
+				IsEmbeddedProvider = true,
+				Provider = provider,
+			}.ShowDialog<ScriptLogDataSourceProvider?>(this);
+			if (provider != null)
+			{
+				provider = new EmbeddedScriptLogDataSourceProvider(provider);
+				if (this.dataSourceProviderComboBox.SelectedItem is EmbeddedScriptLogDataSourceProvider)
+				{
+					var index = this.dataSourceProviderComboBox.SelectedIndex;
+					this.dataSourceProviders[index] = provider;
+					this.dataSourceProviderComboBox.SelectedIndex = index;
+					this.InvalidateInput();
+				}
+				else
+				{
+					var index = this.dataSourceProviders.Count - 1;
+					if (index >= 0 && this.dataSourceProviders[index] is EmbeddedScriptLogDataSourceProvider)
+						this.dataSourceProviders[index] = provider;
+					else
+						this.dataSourceProviders.Add(provider);
+					this.embeddedScriptLogDataSourceProvider = new(provider);
+					this.SetValue(HasEmbeddedScriptLogDataSourceProviderProperty, true);
+				}
+			}
+		}
+
+
+		/// <summary>
 		/// Import existing cooperative log analysis script.
 		/// </summary>
 		public async void ImportExistingCooperativeLogAnalysisScript()
@@ -774,6 +892,47 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		/// <summary>
+		/// Import existing embedded log data source script.
+		/// </summary>
+		public async void ImportExistingEmbeddedScriptLogDataSourceProvider()
+		{
+			// select provider
+			var provider = await new ScriptLogDataSourceProviderSelectionDialog().ShowDialog<ScriptLogDataSourceProvider>(this);
+			if (provider == null)
+				return;
+			
+			// edit provider and replace
+			provider = await new ScriptLogDataSourceProviderEditorDialog()
+			{
+				IsEmbeddedProvider = true,
+				Provider = new EmbeddedScriptLogDataSourceProvider(provider),
+			}.ShowDialog<ScriptLogDataSourceProvider?>(this);
+			if (provider != null)
+			{
+				if (provider is not EmbeddedScriptLogDataSourceProvider)
+					provider = new EmbeddedScriptLogDataSourceProvider(provider);
+				if (this.dataSourceProviderComboBox.SelectedItem is EmbeddedScriptLogDataSourceProvider)
+				{
+					var index = this.dataSourceProviderComboBox.SelectedIndex;
+					this.dataSourceProviders[index] = provider;
+					this.dataSourceProviderComboBox.SelectedIndex = index;
+					this.InvalidateInput();
+				}
+				else
+				{
+					var index = this.dataSourceProviders.Count - 1;
+					if (index >= 0 && this.dataSourceProviders[index] is EmbeddedScriptLogDataSourceProvider)
+						this.dataSourceProviders[index] = provider;
+					else
+						this.dataSourceProviders.Add(provider);
+					this.embeddedScriptLogDataSourceProvider = new(provider);
+					this.SetValue(HasEmbeddedScriptLogDataSourceProviderProperty, true);
+				}
+			}
+		}
+
+
 		// Check whether log data source options is valid or not.
 		bool IsValidDataSourceOptions { get => this.GetValue<bool>(IsValidDataSourceOptionsProperty); }
 
@@ -781,13 +940,13 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// <summary>
 		/// Entries of log level map.
 		/// </summary>
-		public IList<KeyValuePair<string, LogLevel>> LogLevelMapEntriesForReading { get; }
+		public IList<KeyValuePair<string, Logs.LogLevel>> LogLevelMapEntriesForReading { get; }
 
 
 		/// <summary>
 		/// Entries of log level map.
 		/// </summary>
-		public IList<KeyValuePair<LogLevel, string>> LogLevelMapEntriesForWriting { get; }
+		public IList<KeyValuePair<Logs.LogLevel, string>> LogLevelMapEntriesForWriting { get; }
 
 
 		/// <summary>
@@ -938,6 +1097,33 @@ namespace CarinaStudio.ULogViewer.Controls
 		public ICommand MoveVisibleLogPropertyUpCommand { get; }
 
 
+		// Called when list of all log data source providers changed.
+		void OnAllLogDataSourceProvidersChanged(object? sender, NotifyCollectionChangedEventArgs e)
+		{
+			switch (e.Action)
+			{
+				case NotifyCollectionChangedAction.Add:
+					e.NewItems!.Cast<ILogDataSourceProvider>().Let(it => this.dataSourceProviders.InsertRange(e.NewStartingIndex, it));
+					break;
+				case NotifyCollectionChangedAction.Remove:
+					e.OldItems!.Cast<ILogDataSourceProvider>().Let(it => 
+					{
+						if (it.Contains(this.dataSourceProviderComboBox.SelectedItem))
+							this.SelectDefaultDataSource();
+						this.dataSourceProviders.RemoveRange(e.OldStartingIndex, it.Count);
+					});
+					break;
+				default:
+#if DEBUG
+					throw new NotSupportedException("Unsupported change of log data source providers: " + e.Action);
+#else
+					this.Logger.LogError("Unsupported change of log data source providers: {action}", e.Action);
+#endif
+					break;
+			}
+		}
+
+
 		/// <inheritdoc/>
 		protected override void OnClosed(EventArgs e)
 		{
@@ -951,15 +1137,11 @@ namespace CarinaStudio.ULogViewer.Controls
 			// detach fron product manager
 			this.Application.ProductManager.ProductStateChanged -= this.OnProductStateChanged;
 
+			// detach from log data source providers
+			(LogDataSourceProviders.All as INotifyCollectionChanged)?.Let(it => it.CollectionChanged -= this.OnAllLogDataSourceProvidersChanged);
+
 			// call base
 			base.OnClosed(e);
-		}
-
-
-		// Called when selection of data source provider changed.
-		void OnDataSourceProviderComboBoxSelectionChanged(object? sender, SelectionChangedEventArgs e)
-		{
-			this.InvalidateInput();
 		}
 
 
@@ -982,9 +1164,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (!listBox.TryFindListBoxItem(e.Item, out var listBoxItem) || listBoxItem == null)
 				return;
 			if (listBox == this.logLevelMapForReadingListBox)
-				this.EditLogLevelMapEntryForReading((KeyValuePair<string, LogLevel>)e.Item);
+				this.EditLogLevelMapEntryForReading((KeyValuePair<string, Logs.LogLevel>)e.Item);
 			else if (listBox == this.logLevelMapForWritingListBox)
-				this.EditLogLevelMapEntryForWriting((KeyValuePair<LogLevel, string>)e.Item);
+				this.EditLogLevelMapEntryForWriting((KeyValuePair<Logs.LogLevel, string>)e.Item);
 			else if (listBox == this.logPatternListBox)
 				this.EditLogPattern(listBoxItem);
 			else if (listBox == this.logWritingFormatListBox)
@@ -1034,7 +1216,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.Bind(TitleProperty, this.GetResourceObservable("String/LogProfileEditorDialog.Title.Create"));
 				this.allowMultipleFilesSwitch.IsChecked = true;
 				this.colorIndicatorComboBox.SelectedItem = LogColorIndicator.None;
-				this.dataSourceProviderComboBox.SelectedItem = LogDataSourceProviders.All.FirstOrDefault(it => it is FileLogDataSourceProvider);
+				this.SelectDefaultDataSource();
 				this.iconComboBox.SelectedItem = LogProfileIcon.File;
 				this.logStringEncodingForReadingComboBox.SelectedItem = LogStringEncoding.Plane;
 				this.logStringEncodingForWritingComboBox.SelectedItem = LogStringEncoding.Plane;
@@ -1053,8 +1235,11 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.colorIndicatorComboBox.SelectedItem = profile.ColorIndicator;
 				this.cooperativeLogAnalysisScriptSet = profile.CooperativeLogAnalysisScriptSet;
 				this.dataSourceOptions = profile.DataSourceOptions;
-				this.dataSourceProviderComboBox.SelectedItem = profile.DataSourceProvider;
 				this.descriptionTextBox.Text = profile.Description;
+				this.embeddedScriptLogDataSourceProvider = profile.EmbeddedScriptLogDataSourceProvider;
+				if (this.embeddedScriptLogDataSourceProvider != null)
+					this.dataSourceProviders.Add(this.embeddedScriptLogDataSourceProvider);
+				this.dataSourceProviderComboBox.SelectedItem = profile.DataSourceProvider;
 				this.iconColorComboBox.SelectedItem = profile.IconColor;
 				this.iconComboBox.SelectedItem = profile.Icon;
 				this.isTemplateSwitch.IsChecked = profile.IsTemplate;
@@ -1087,6 +1272,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			
 			// update state
 			this.SetValue(HasCooperativeLogAnalysisScriptSetProperty, this.cooperativeLogAnalysisScriptSet != null);
+			this.SetValue(HasEmbeddedScriptLogDataSourceProviderProperty, this.embeddedScriptLogDataSourceProvider != null);
 
 			// call base
 			base.OnOpened(e);
@@ -1127,6 +1313,18 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Called when selected log data source provider changed.
+		void OnSelectedDataSourceChanged()
+		{
+			if (this.dataSourceProviderComboBox?.SelectedItem is not ILogDataSourceProvider provider)
+				return;
+			this.SetValue<bool>(HasDataSourceOptionsProperty, provider.SupportedSourceOptions.IsNotEmpty());
+			this.SetValue<bool>(IsWorkingDirectorySupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.WorkingDirectory))
+				&& !provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.WorkingDirectory)));
+			this.InvalidateInput();
+		}
+
+
 		// Validate input.
 		protected override bool OnValidateInput()
 		{
@@ -1148,7 +1346,10 @@ namespace CarinaStudio.ULogViewer.Controls
 					{
 						case nameof(LogDataSourceOptions.Category):
 						case nameof(LogDataSourceOptions.Command):
+						case nameof(LogDataSourceOptions.ConnectionString):
+						case nameof(LogDataSourceOptions.Password):
 						case nameof(LogDataSourceOptions.QueryString):
+						case nameof(LogDataSourceOptions.UserName):
 							if (!this.dataSourceOptions.IsOptionSet(optionName))
 							{
 								this.SetValue<bool>(IsValidDataSourceOptionsProperty, false);
@@ -1210,15 +1411,40 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		/// <summary>
+		/// Remove embedded log data source script.
+		/// </summary>
+		public async void RemoveEmbeddedScriptLogDataSourceProvider()
+		{
+			if (this.embeddedScriptLogDataSourceProvider == null)
+				return;
+			var result = await new MessageDialog()
+			{
+				Buttons = MessageDialogButtons.YesNo,
+				DefaultResult = MessageDialogResult.No,
+				Icon = MessageDialogIcon.Question,
+				Message = this.Application.GetObservableString("LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.ConfirmDeletion"),
+			}.ShowDialog(this);
+			if (result == MessageDialogResult.Yes)
+			{
+				if (this.dataSourceProviderComboBox.SelectedItem == this.embeddedScriptLogDataSourceProvider)
+					this.SelectDefaultDataSource();
+				this.dataSourceProviders.Remove(this.embeddedScriptLogDataSourceProvider);
+				this.embeddedScriptLogDataSourceProvider = null;
+				this.SetValue(HasEmbeddedScriptLogDataSourceProviderProperty, false);
+			}
+		}
+
+
 		// Remove log level map entry.
 		void RemoveLogLevelMapEntry(object entry)
 		{
-			if (entry is KeyValuePair<string, LogLevel> readingEntry)
+			if (entry is KeyValuePair<string, Logs.LogLevel> readingEntry)
 			{
 				this.logLevelMapEntriesForReading.Remove(readingEntry);
 				this.SelectListBoxItem(this.logLevelMapForReadingListBox, -1);
 			}
-			else if (entry is KeyValuePair<LogLevel, string> writingEntry)
+			else if (entry is KeyValuePair<Logs.LogLevel, string> writingEntry)
 			{
 				this.logLevelMapEntriesForWriting.Remove(writingEntry);
 				this.SelectListBoxItem(this.logLevelMapForWritingListBox, -1);
@@ -1315,6 +1541,11 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// Command to remove visible log property.
 		/// </summary>
 		public ICommand RemoveVisibleLogPropertyCommand { get; }
+
+
+		// Select default log data source provider.
+		void SelectDefaultDataSource() =>
+			this.dataSourceProviderComboBox.SelectedItem = this.dataSourceProviders.FirstOrDefault(it => it is FileLogDataSourceProvider);
 
 
 		// Select given item in list box.

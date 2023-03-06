@@ -509,6 +509,14 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.DataSourceProvider.ProVersionOnly">(Pro)</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Description">Description</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.DuplicateLogLevelMapEntry">Conversion from '{0}' is already defined.</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider">Embedded log data source script</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.ConfirmDeletion">Are you sure to delete log data source script?</sys:String>
+	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.Create" ResourceKey="String/Common.Create.WithDialog"/>
+	<sys:String x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.Description">You can set embedded log data source script as 'Data source' of the profile.</sys:String>
+	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.Edit" ResourceKey="String/Common.Edit.WithDialog"/>
+	<sys:String x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.ImportExisting">Import existing script…</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.ImportFromFile">Import from file…</sys:String>
+	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.Remove" ResourceKey="String/Common.Remove"/>
 	<sys:String x:Key="String/LogProfileEditorDialog.FormatDescription">Format description</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Icon">Icon</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.IconColor">Color of icon</sys:String>
@@ -969,6 +977,9 @@ return None</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.FailedToImportProvider">Unable to import data source script from '{0}'.</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.RestrictionsOfNonProVersion">Before activating Pro version, you can have only 1 log data source script and script won't be kept after closing ULogViewer.</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.Title">Manage log data source scripts</sys:String>
+
+	<!-- ScriptLogDataSourceProviderSelectionDialog -->
+	<sys:String x:Key="String/ScriptLogDataSourceProviderSelectionDialog.Title">Select log data source script</sys:String>
 
 	<!-- SearchProvider -->
 	<sys:String x:Key="String/SearchProvider.AppleDeveloper">Apple Developer</sys:String>

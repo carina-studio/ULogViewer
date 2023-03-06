@@ -462,16 +462,18 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Common">一般設定</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet">協同日誌分析腳本</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.ConfirmDeletion">您是否確定要刪除日誌分析腳本？</sys:String>
-	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.Create" ResourceKey="String/Common.Create.WithDialog"/>
 	<sys:String x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.Description">當使用此日誌類型時將自動執行此日誌分析腳本。</sys:String>
-	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.Edit" ResourceKey="String/Common.Edit.WithDialog"/>
 	<sys:String x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.ImportExisting">匯入現有的日誌分析腳本…</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.ImportFromFile">從檔案匯入…</sys:String>
-	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.Remove" ResourceKey="String/Common.Remove"/>
 	<sys:String x:Key="String/LogProfileEditorDialog.DataSourceProvider">資料來源</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.DataSourceProvider.ProVersionOnly">(專業版)</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Description">描述</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.DuplicateLogLevelMapEntry">已經定義從「{0}」的轉換。</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider">內嵌日誌資料來源腳本</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.ConfirmDeletion">您是否確定要刪除日誌資料來源腳本？</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.Description">您可以將內嵌日誌資料來源腳本設定為此日誌類型的「資料來源」。</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.ImportExisting">匯入現有的日誌資料來源腳本…</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.ImportFromFile">從檔案匯入…</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.FormatDescription">格式說明</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Icon">圖示</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.IconColor">圖示色彩</sys:String>
@@ -926,6 +928,9 @@ return None</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.FailedToImportProvider">無法自檔案 '{0}' 匯入日誌資料來源腳本。</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.RestrictionsOfNonProVersion">在啟用專業版之前，您只能建立 1 個日誌資料來源腳本，且在關閉 ULogViewer 後不會被儲存。</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.Title">管理日誌資料來源腳本</sys:String>
+
+	<!-- ScriptLogDataSourceProviderSelectionDialog -->
+	<sys:String x:Key="String/ScriptLogDataSourceProviderSelectionDialog.Title">選擇日誌資料來源腳本</sys:String>
 
 	<!-- SearchProvider -->
 	<sys:String x:Key="String/SearchProvider.AppleDeveloperForums">Apple Developer 論壇</sys:String>

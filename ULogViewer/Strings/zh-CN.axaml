@@ -469,16 +469,18 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Common">一般设定</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet">协同日志分析脚本</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.ConfirmDeletion">您是否确定要删除日志分析脚本？</sys:String>
-	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.Create" ResourceKey="String/Common.Create.WithDialog"/>
 	<sys:String x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.Description">当使用此日志类型时将自动执行此日志分析脚本。</sys:String>
-	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.Edit" ResourceKey="String/Common.Edit.WithDialog"/>
 	<sys:String x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.ImportExisting">导入现有的日志分析脚本…</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.ImportFromFile">从文件导入…</sys:String>
-	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.Remove" ResourceKey="String/Common.Remove"/>
-	<sys:String x:Key="String/LogProfileEditorDialog.DataSourceProvider">数据来源</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.DataSourceProvider">资料来源</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.DataSourceProvider.ProVersionOnly">(专业版)</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Description">描述</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.DuplicateLogLevelMapEntry">已经定义从「{0}」的转换。</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider">内嵌日志资料来源脚本</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.ConfirmDeletion">您是否确定要删除日志资料来源脚本？</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.Description">您可以将内嵌日志资料来源脚本设为此日志类型的「资料来源」。</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.ImportExisting">导入现有的日志资料来源脚本…</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.ImportFromFile">从文件导入…</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.FormatDescription">格式说明</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Icon">图标</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.IconColor">图标色彩</sys:String>
@@ -933,6 +935,9 @@ return None</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.FailedToImportProvider">无法自文件 '{0}' 导入日志资料来源脚本。</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.RestrictionsOfNonProVersion">在启用专业版之前，您只能建立 1 个日志资料来源脚本，且在关闭 ULogViewer 后不会被保留。</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.Title">管理日志资料来源脚本</sys:String>
+
+	<!-- ScriptLogDataSourceProviderSelectionDialog -->
+	<sys:String x:Key="String/ScriptLogDataSourceProviderSelectionDialog.Title">选择日志资料来源脚本</sys:String>
 
 	<!-- SearchProvider -->
 	<sys:String x:Key="String/SearchProvider.AppleDeveloper">Apple 开发者</sys:String>
