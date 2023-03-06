@@ -236,6 +236,9 @@
 	<sys:String x:Key="String/DisplayableLogAnalysisRuleSetEditorDialog.RestrictionsOfNonProVersion">Before activating Pro version, you can have only 1 rule set and rule set won't be kept after closing ULogViewer.</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisRuleSetEditorDialog.Rules">Rules (required)</sys:String>
 
+	<!-- EmbeddedScriptLogDataSourceProvider -->
+	<sys:String x:Key="String/EmbeddedScriptLogDataSourceProvider.DisplayName">Embedded log data source script</sys:String>
+
 	<!-- EnqueueVarEditorDialog -->
 	<sys:String x:Key="String/EnqueueVarEditorDialog.Queue">Name of queue (required)</sys:String>
 	<sys:String x:Key="String/EnqueueVarEditorDialog.Title">Enqueue value of variable to queue</sys:String>

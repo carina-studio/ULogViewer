@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Threading.Tasks;
 
@@ -137,7 +138,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// <param name="name">Name of provider.</param>
 		/// <param name="provider">Found provider.</param>
 		/// <returns>True if provider found.</returns>
-		public static bool TryFindProviderByName(string name, out ILogDataSourceProvider? provider)
+		public static bool TryFindProviderByName(string name, [NotNullWhen(true)] out ILogDataSourceProvider? provider)
 		{
 			foreach (var candidate in providers)
 			{

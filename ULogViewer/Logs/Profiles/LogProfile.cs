@@ -44,6 +44,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		LogDataSourceOptions dataSourceOptions;
 		ILogDataSourceProvider dataSourceProvider = LogDataSourceProviders.Empty;
 		string? description;
+		EmbeddedScriptLogDataSourceProvider? embeddedScriptLogDataSourceProvider;
 		bool hasDescription;
 		LogProfileIcon icon = LogProfileIcon.File;
 		LogProfileIconColor iconColor = LogProfileIconColor.Default;
@@ -112,6 +113,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			this.dataSourceOptions = template.dataSourceOptions;
 			this.dataSourceProvider = template.dataSourceProvider;
 			this.description = template.description;
+			this.embeddedScriptLogDataSourceProvider = template.embeddedScriptLogDataSourceProvider?.Let(it => new EmbeddedScriptLogDataSourceProvider(it));
 			this.hasDescription = template.hasDescription;
 			this.icon = template.icon;
 			this.iconColor = template.iconColor;
@@ -275,6 +277,24 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				this.description = value;
 				this.HasDescription = (value != null);
 				this.OnPropertyChanged(nameof(Description));
+			}
+		}
+
+
+		/// <summary>
+		/// Get or set the script log data source provider which is embedded in the profile.
+		/// </summary>
+		public EmbeddedScriptLogDataSourceProvider? EmbeddedScriptLogDataSourceProvider
+		{
+			get => this.embeddedScriptLogDataSourceProvider;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (this.embeddedScriptLogDataSourceProvider == value)
+					return;
+				this.embeddedScriptLogDataSourceProvider = value;
+				this.OnPropertyChanged(nameof(EmbeddedScriptLogDataSourceProvider));
 			}
 		}
 
@@ -553,11 +573,13 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 
 
 		// Load ILogDataSourceProvider from JSON element.
-		void LoadDataSourceFromJson(JsonElement dataSourceElement)
+		void LoadDataSourceFromJson(JsonElement dataSourceElement, out bool isEmbedded)
 		{
 			// find provider
 			var providerName = dataSourceElement.GetProperty(nameof(ILogDataSourceProvider.Name)).GetString() ?? throw new ArgumentException("No name of data source.");
-			if (!LogDataSourceProviders.TryFindProviderByName(providerName, out var provider) || provider == null)
+			var provider = default(ILogDataSourceProvider);
+			isEmbedded = (providerName == "Embedded");
+			if (!isEmbedded && !LogDataSourceProviders.TryFindProviderByName(providerName, out provider))
 				throw new ArgumentException($"Cannot find data source '{providerName}'.");
 
 			// get opetions
@@ -634,7 +656,8 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 
 			// complete
 			this.dataSourceOptions = options;
-			this.dataSourceProvider = provider;
+			if (!isEmbedded)
+				this.dataSourceProvider = provider.AsNonNull();
 		}
 
 
@@ -849,6 +872,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// <inheritdoc/>
 		protected override void OnLoad(JsonElement element)
 		{
+			var useEmbeddedDataSourceProvifer = false;
 			foreach (var jsonProperty in element.EnumerateObject())
 			{
 				switch (jsonProperty.Name)
@@ -857,7 +881,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 						this.allowMultipleFiles = jsonProperty.Value.ValueKind != JsonValueKind.False;
 						break;
 					case "DataSource":
-						this.LoadDataSourceFromJson(jsonProperty.Value);
+						this.LoadDataSourceFromJson(jsonProperty.Value, out useEmbeddedDataSourceProvifer);
 						break;
 					case nameof(ColorIndicator):
 						this.colorIndicator = Enum.Parse<LogColorIndicator>(jsonProperty.Value.GetString().AsNonNull());
@@ -877,6 +901,17 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 						if (string.IsNullOrWhiteSpace(this.description))
 							this.description = null;
 						this.hasDescription = (this.description != null);
+						break;
+					case nameof(EmbeddedScriptLogDataSourceProvider):
+						try
+						{
+							this.embeddedScriptLogDataSourceProvider = ScriptLogDataSourceProvider.Load(this.Application, jsonProperty.Value).Exchange(it =>
+								new EmbeddedScriptLogDataSourceProvider(it));
+						}
+						catch (Exception ex)
+						{
+							this.Logger.LogError(ex, "Failed to load embedded script log data source provider");
+						}
 						break;
 					case nameof(Icon):
 						if (Enum.TryParse<LogProfileIcon>(jsonProperty.Value.GetString(), out var profileIcon))
@@ -1013,6 +1048,12 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 						break;
 				}
 			}
+			if (useEmbeddedDataSourceProvifer)
+			{
+				if (this.embeddedScriptLogDataSourceProvider == null)
+					throw new ArgumentException("Embedded script log data source not found.");
+				this.dataSourceProvider = this.embeddedScriptLogDataSourceProvider;
+			}
 		}
 
 
@@ -1030,6 +1071,11 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				scriptSet.Save(writer);
 			});
 			writer.WriteString(nameof(Description), this.description);
+			this.embeddedScriptLogDataSourceProvider?.Let(it =>
+			{
+				writer.WritePropertyName(nameof(EmbeddedScriptLogDataSourceProvider));
+				it.Save(writer);
+			});
 			writer.WriteString(nameof(Icon), this.icon.ToString());
 			if (this.iconColor != LogProfileIconColor.Default)
 				writer.WriteString(nameof(IconColor), this.iconColor.ToString());
@@ -1146,7 +1192,10 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			var provider = this.dataSourceProvider;
 			var options = this.dataSourceOptions;
 			writer.WriteStartObject();
-			writer.WriteString(nameof(ILogDataSourceProvider.Name), provider.Name);
+			if (provider != this.embeddedScriptLogDataSourceProvider)
+				writer.WriteString(nameof(ILogDataSourceProvider.Name), provider.Name);
+			else
+				writer.WriteString(nameof(ILogDataSourceProvider.Name), "Embedded");
 			writer.WritePropertyName("Options");
 			options.Save(writer);
 			writer.WriteEndObject();

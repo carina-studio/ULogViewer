@@ -212,7 +212,7 @@ partial class ScriptLogDataSourceProvidersDialog : CarinaStudio.Controls.Dialog<
 		// load provider
 		var provider = await Global.RunOrDefaultAsync(async () =>
 		{
-			return await ScriptLogDataSourceProvider.LoadAsync(fileName);
+			return await ScriptLogDataSourceProvider.LoadAsync(this.Application, fileName);
 		}, 
 		ex =>
 		{

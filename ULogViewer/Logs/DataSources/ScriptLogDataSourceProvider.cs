@@ -4,6 +4,7 @@ using CarinaStudio.Threading;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.Logs.DataSources;
@@ -145,11 +146,24 @@ class ScriptLogDataSourceProvider : BaseLogDataSourceProvider, IDisposable, ILog
 
 
     /// <summary>
+    /// Load provifer from JSON data.
+    /// </summary>
+    /// <param name="app">Application.</param>
+    /// <param name="element">JSON element which contains information of provider.</param>
+    /// <returns>Loaded provider.</returns>
+    public static ScriptLogDataSourceProvider Load(IULogViewerApplication app, JsonElement element)
+    {
+        throw new NotImplementedException();
+    }
+
+
+    /// <summary>
     /// Load provider from file asynchronously.
     /// </summary>
+    /// <param name="app">Application.</param>
     /// <param name="fileName">File name.</param>
     /// <returns>Task of loading provider.</returns>
-    public static Task<ScriptLogDataSourceProvider> LoadAsync(string fileName)
+    public static async Task<ScriptLogDataSourceProvider> LoadAsync(IULogViewerApplication app, string fileName)
     {
         throw new NotImplementedException();
     }
@@ -195,6 +209,51 @@ class ScriptLogDataSourceProvider : BaseLogDataSourceProvider, IDisposable, ILog
 
     /// <inheritdoc/>
     public override ISet<string> RequiredSourceOptions => throw new NotImplementedException();
+
+
+    /// <summary>
+    /// Save provider in JSON format.
+    /// </summary>
+    /// <param name="writer">JSON data writer.</param>
+    public void Save(Utf8JsonWriter writer)
+    {
+        writer.WriteStartObject();
+        writer.WriteString("TypeId", "ScriptLogDataSourceProvider");
+        writer.WriteString(nameof(Name), this.Name);
+        this.displayName?.Let(it => writer.WriteString(nameof(DisplayName), it));
+        if (!this.supportedSourceOptions.IsEmpty())
+        {
+            writer.WritePropertyName(nameof(SupportedSourceOptions));
+            writer.WriteStartArray();
+            foreach (var option in this.supportedSourceOptions)
+                writer.WriteStringValue(option);
+            writer.WriteEndArray();
+        }
+        if (!this.requiredSourceOptions.IsEmpty())
+        {
+            writer.WritePropertyName(nameof(RequiredSourceOptions));
+            writer.WriteStartArray();
+            foreach (var option in this.requiredSourceOptions)
+                writer.WriteStringValue(option);
+            writer.WriteEndArray();
+        }
+        this.openingReaderScript?.Let(it =>
+        {
+            writer.WritePropertyName(nameof(OpeningReaderScript));
+            ScriptManager.Default.SaveScript(it, writer);
+        });
+        this.readingLineScript?.Let(it =>
+        {
+            writer.WritePropertyName(nameof(ReadingLineScript));
+            ScriptManager.Default.SaveScript(it, writer);
+        });
+        this.closingReaderScript?.Let(it =>
+        {
+            writer.WritePropertyName(nameof(ClosingReaderScript));
+            ScriptManager.Default.SaveScript(it, writer);
+        });
+        writer.WriteEndObject();
+    }
 
 
     /// <summary>

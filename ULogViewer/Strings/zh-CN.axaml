@@ -224,6 +224,9 @@
 	<sys:String x:Key="String/DisplayableLogAnalysisRuleSetEditorDialog.RestrictionsOfNonProVersion">在启用专业版之前，您只能建立 1 个规则集，且在关闭 ULogViewer 后不会被保留。</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisRuleSetEditorDialog.Rules">规则 (必要)</sys:String>
 
+	<!-- EmbeddedScriptLogDataSourceProvider -->
+	<sys:String x:Key="String/EmbeddedScriptLogDataSourceProvider.DisplayName">内嵌日志资料来源脚本</sys:String>
+
 	<!-- EnqueueVarEditorDialog -->
 	<sys:String x:Key="String/EnqueueVarEditorDialog.Title">将变量值加入队列</sys:String>
 
