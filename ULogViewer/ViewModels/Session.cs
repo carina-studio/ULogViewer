@@ -3315,6 +3315,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 								this.reloadLogsWithRecreatingLogReadersAction.Schedule();
 						}
 						break;
+					case nameof(ILogDataSourceProvider.RequiredSourceOptions):
+					case nameof(ILogDataSourceProvider.SupportedSourceOptions):
+						this.DisposeLogReaders();
+						this.UpdateDataSourceRelatedStates();
+						this.StartReadingLogs();
+						break;
 				}
 			}
 		}
@@ -3415,7 +3421,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.attachedLogDataSourceProvider = (sender as LogProfile)?.DataSourceProvider;
 					if (this.attachedLogDataSourceProvider != null)
 						this.attachedLogDataSourceProvider.PropertyChanged += this.OnLogDataSourceProviderPropertyChanged;
-					this.ScheduleReloadingLogs(true, true);
+					this.DisposeLogReaders();
+					this.UpdateDataSourceRelatedStates();
+					this.StartReadingLogs();
 					break;
 				case nameof(LogProfile.Icon):
 				case nameof(LogProfile.Name):
@@ -4694,64 +4702,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.SetValue(HasLogColorIndicatorByFileNameProperty, profile.ColorIndicator == LogColorIndicator.FileName);
 			this.ResetValue(LastLogReadingPreconditionProperty);
 
-			// read logs or wait for more actions
-			var dataSourceOptions = profile.DataSourceOptions;
-			var dataSourceProvider = profile.DataSourceProvider;
-			if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.FileName)))
-			{
-				this.SetValue(AreFileBasedLogsProperty, true);
-				this.SetValue(IsLogFileSupportedProperty, true);
-				if (dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName)))
-					this.logFileInfoList.Add(new LogFileInfoImpl(this, dataSourceOptions.FileName.AsNonNull(), new(), true));
-				else
-				{
-					this.Logger.LogDebug("No file name specified, waiting for adding file");
-					this.SetValue(IsLogFileNeededProperty, true);
-					startReadingLogs = false;
-				}
-			}
-			else
-				this.SetValue(IsLogFileSupportedProperty, dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.FileName)));
-			if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.IPEndPoint)))
-			{
-				if (!dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.IPEndPoint)))
-				{
-					this.Logger.LogDebug("No IP endpoint specified, waiting for setting IP endpoint");
-					this.SetValue(IsIPEndPointNeededProperty, true);
-					startReadingLogs = false;
-				}
-			}
-			if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.Uri)))
-			{
-				if (!dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.Uri)))
-				{
-					this.Logger.LogDebug("Need URI, waiting for setting URI");
-					this.SetValue(IsUriNeededProperty, true);
-					startReadingLogs = false;
-				}
-			}
-			if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.WorkingDirectory))
-				|| profile.IsWorkingDirectoryNeeded)
-			{
-				if (!dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.WorkingDirectory)))
-				{
-					this.Logger.LogDebug("Need working directory, waiting for setting working directory");
-					this.SetValue(IsWorkingDirectoryNeededProperty, true);
-					startReadingLogs = false;
-				}
-			}
+			// update state
+			this.UpdateDataSourceRelatedStates();
+
+			// start reading logs
 			if (startReadingLogs)
-			{
-				this.Logger.LogDebug($"Start reading logs for source '{dataSourceProvider.Name}'");
-				var dataSource = this.CreateLogDataSourceOrNull(dataSourceProvider, dataSourceOptions);
-				if (dataSource != null)
-					this.CreateLogReader(dataSource, new());
-				else
-				{
-					this.hasLogDataSourceCreationFailure = true;
-					this.checkDataSourceErrorsAction.Schedule();
-				}
-			}
+				this.StartReadingLogs();
 
 			// update title
 			this.updateTitleAndIconAction.Schedule();
@@ -5035,6 +4991,83 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public ICommand SetWorkingDirectoryCommand { get; }
 
 
+		// Start reading logs if available.
+		void StartReadingLogs()
+		{
+			// check state
+			var profile = this.LogProfile;
+			if (profile == null)
+				return;
+			if (this.logReaders.IsNotEmpty())
+				return;
+
+			// start reading or wait for more actions
+			var canStartReading = true;
+			var dataSourceOptions = profile.DataSourceOptions;
+			var dataSourceProvider = profile.DataSourceProvider;
+			if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.FileName)))
+			{
+				if (dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName)))
+				{
+					this.ResetValue(IsLogFileNeededProperty);
+					this.logFileInfoList.Add(new LogFileInfoImpl(this, dataSourceOptions.FileName.AsNonNull(), new(), true));
+				}
+				else
+				{
+					this.Logger.LogDebug("No file name specified, waiting for adding file");
+					this.SetValue(IsLogFileNeededProperty, true);
+					canStartReading = false;
+				}
+			}
+			if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.IPEndPoint)))
+			{
+				if (dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.IPEndPoint)))
+					this.ResetValue(IsIPEndPointNeededProperty);
+				else
+				{
+					this.Logger.LogDebug("No IP endpoint specified, waiting for setting IP endpoint");
+					this.SetValue(IsIPEndPointNeededProperty, true);
+					canStartReading = false;
+				}
+			}
+			if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.Uri)))
+			{
+				if (dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.Uri)))
+					this.ResetValue(IsUriNeededProperty);
+				else
+				{
+					this.Logger.LogDebug("Need URI, waiting for setting URI");
+					this.SetValue(IsUriNeededProperty, true);
+					canStartReading = false;
+				}
+			}
+			if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.WorkingDirectory))
+				|| profile.IsWorkingDirectoryNeeded)
+			{
+				if (dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.WorkingDirectory)))
+					this.ResetValue(IsWorkingDirectoryNeededProperty);
+				else
+				{
+					this.Logger.LogDebug("Need working directory, waiting for setting working directory");
+					this.SetValue(IsWorkingDirectoryNeededProperty, true);
+					canStartReading = false;
+				}
+			}
+			if (canStartReading)
+			{
+				this.Logger.LogDebug("Start reading logs for source '{dataSourceProviderName}'", dataSourceProvider.Name);
+				var dataSource = this.CreateLogDataSourceOrNull(dataSourceProvider, dataSourceOptions);
+				if (dataSource != null)
+					this.CreateLogReader(dataSource, new());
+				else
+				{
+					this.hasLogDataSourceCreationFailure = true;
+					this.checkDataSourceErrorsAction.Schedule();
+				}
+			}
+		}
+
+
 		/// <summary>
 		/// For internal test only.
 		/// </summary>
@@ -5146,6 +5179,25 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		/// <remarks>Type of parmeter is <see cref="IEnumerable{DisplayableLog}"/>.</remarks>
 		public ICommand UnmarkLogsCommand { get; }
+
+
+		// Update log data source related states.
+		void UpdateDataSourceRelatedStates()
+		{
+			var dataSourceProvider = this.LogProfile?.DataSourceProvider;
+			if (dataSourceProvider == null)
+				return;
+			if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.FileName)))
+			{
+				this.SetValue(AreFileBasedLogsProperty, true);
+				this.SetValue(IsLogFileSupportedProperty, true);
+			}
+			else
+			{
+				this.ResetValue(AreFileBasedLogsProperty);
+				this.SetValue(IsLogFileSupportedProperty, dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.FileName)));
+			}
+		}
 
 
 		// Update comparison for displayable logs.
