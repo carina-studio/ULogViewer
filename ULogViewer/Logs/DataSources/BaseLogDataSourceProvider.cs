@@ -14,8 +14,10 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 	abstract class BaseLogDataSourceProvider : ILogDataSourceProvider
 	{
 		// Fields.
-		string displayName = "";
 		readonly ICollection<ILogDataSource> activeSources = new List<ILogDataSource>();
+		readonly IDisposable appStringsUpdatedHandlerToken;
+		string displayName = "";
+		int isDisposed;
 
 
 		/// <summary>
@@ -26,8 +28,9 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		{
 			app.VerifyAccess();
 			this.Application = app;
+			this.appStringsUpdatedHandlerToken = app.AddWeakEventHandler(nameof(IApplication.StringsUpdated), (_, _) =>
+				this.DisplayName = this.OnUpdateDisplayName());
 			this.Logger = app.LoggerFactory.CreateLogger(this.GetType().Name);
-			app.StringsUpdated += (_, e) => this.DisplayName = this.OnUpdateDisplayName();
 			this.SynchronizationContext.Post(() => this.DisplayName = this.OnUpdateDisplayName());
 		}
 
@@ -86,7 +89,11 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// Raise <see cref="PropertyChanged"/> event.
 		/// </summary>
 		/// <param name="propertyName">Name of changed property.</param>
-		protected virtual void OnPropertyChanged(string propertyName) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+		protected virtual void OnPropertyChanged(string propertyName)
+		{
+			if (this.isDisposed == 0)
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+		}
 
 
 		/// <summary>
@@ -104,16 +111,15 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// Called to update <see cref="DisplayName"/>.
 		/// </summary>
 		/// <returns>Display name.</returns>
-		protected virtual string OnUpdateDisplayName()
-		{
-			return this.Application.GetStringNonNull($"{this.GetType().Name}.DisplayName", this.GetType().Name);
-		}
+		protected virtual string OnUpdateDisplayName() =>
+			this.Application.GetStringNonNull($"{this.GetType().Name}.DisplayName", this.GetType().Name);
 
 
 		// Create source.
 		public ILogDataSource CreateSource(LogDataSourceOptions options)
 		{
 			this.VerifyAccess();
+			this.VerifyDisposed();
 			if (!this.AllowMultipleSources && this.activeSources.Count == 1)
 				throw new InvalidOperationException("Mutiple active sources is not allowed.");
 			return this.CreateSourceCore(options).Also((it) =>
@@ -131,6 +137,31 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// <param name="options">Options.</param>
 		/// <returns><see cref="ILogDataSource"/> instance.</returns>
 		protected abstract ILogDataSource CreateSourceCore(LogDataSourceOptions options);
+
+
+		/// <summary>
+		/// Dispose the provider.
+		/// </summary>
+		/// <param name="disposing">True to release managed resources.</param>
+		protected virtual void Dispose(bool disposing)
+		{
+			if (Interlocked.Exchange(ref this.isDisposed, 1) != 0)
+				return;
+			if (disposing)
+			{
+				this.VerifyAccess();
+				this.appStringsUpdatedHandlerToken.Dispose();
+#pragma warning disable CA1816
+				GC.SuppressFinalize(this);
+#pragma warning restore CA1816
+			}
+		}
+
+
+		/// <summary>
+		/// Check whether the provider has been disposed or not.
+		/// </summary>
+		protected bool IsDisposed => this.isDisposed != 0;
 
 
 		/// <summary>
@@ -158,6 +189,16 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 					return false;
 			}
 			return true;
+		}
+
+
+		/// <summary>
+		/// Throw <see cref="ObjectDisposedException"/> if the provider has been disposed.
+		/// </summary>
+		protected void VerifyDisposed()
+		{
+			if (this.isDisposed != 0)
+				throw new ObjectDisposedException(this.GetType().Name);
 		}
 
 

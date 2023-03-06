@@ -286,6 +286,7 @@ partial class ScriptLogDataSourceProvidersDialog : CarinaStudio.Controls.Dialog<
 		if (result != AppSuite.Controls.MessageDialogResult.Yes)
 			return;
 		LogDataSourceProviders.RemoveScriptProvider(provider);
+		provider.Dispose();
 		this.providerListBox.SelectedItem = null;
 		this.providerListBox.Focus();
 	}
