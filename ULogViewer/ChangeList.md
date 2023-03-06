@@ -2,6 +2,8 @@
  ---
 
 ## New Features
++ Support setting **'Cooperative log analysis script'** which is embedded in log profile, and will be run automatically when using the log profile.
++ Support embedding **Log data source script** into log profile and set it as data source of log profile.
 + Syntax highlighting for **Regular Expression**, **Date and Time Format**, **Time Span Format**, **Query String (SQL)** and **Command-Line Shell Command**.
 + Highlight text sequences in logs which are matched by text filter.
 + Highlight PID and TID which are same as PID and TID of selected log.
@@ -46,14 +48,18 @@
 + Automatically generate statistic of **'Duration'**, **'Quantity'** and **'Byte size'** of selected results of log analysis.
 + Support selecting the log with earliest/latest timestamp (time span) by clicking **'Earliest/Latest timestamp of log'** button at bottom of log viewer.
 + Add directory of [**Homebrew**](https://brew.sh/) as default path on **macOS** to search command.
++ Add **'Script log output window'** for better script debugging experience.
++ Support searching selected property of log on the Internet.
 
 ## Improvement
 + Allow editing pattern (Regular Expression) directly in text area. You can still edit pattern detailedly by clicking the button at right hand side of text area.
 + Automatically use log level mapping of log reading if specific log level is undefined in log level mapping of log writing.
 + Allow editing built-in log profile and new log profile will be created automatically.
++ No need to import related types and namespaces manually in script of log analysis and log data source.
 + Select proper scale factor of screen on **Linux** automatically.
 + Show **Level** log property in special way.
 + Improve control of history of log text filter.
++ Show indicator on toolbar when new log analysis result has been generated in backgroud.
 + Show sample result when typing Date and Time Format.
 + Improve layout of items on toolbar.
 + More icons for log profile.
