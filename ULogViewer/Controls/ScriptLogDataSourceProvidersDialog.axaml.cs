@@ -56,7 +56,7 @@ partial class ScriptLogDataSourceProvidersDialog : CarinaStudio.Controls.Dialog<
 			await new MessageDialog()
 			{
 				Icon = MessageDialogIcon.Warning,
-				Message = this.GetResourceObservable("String/ScriptLogDataSourceProvidersDialog.CannotAddMoreProviderWithoutProVersion"),
+				Message = this.Application.GetObservableString("ScriptLogDataSourceProvidersDialog.CannotAddMoreProviderWithoutProVersion"),
 			}.ShowDialog(this);
 			return;
 		}
@@ -80,7 +80,7 @@ partial class ScriptLogDataSourceProvidersDialog : CarinaStudio.Controls.Dialog<
 			await new MessageDialog()
 			{
 				Icon = MessageDialogIcon.Warning,
-				Message = this.GetResourceObservable("String/ScriptLogDataSourceProvidersDialog.CannotAddMoreProviderWithoutProVersion"),
+				Message = this.Application.GetObservableString("ScriptLogDataSourceProvidersDialog.CannotAddMoreProviderWithoutProVersion"),
 			}.ShowDialog(this);
 			return;
 		}
@@ -161,7 +161,7 @@ partial class ScriptLogDataSourceProvidersDialog : CarinaStudio.Controls.Dialog<
 				{
 					it.Arg1 = provider.DisplayName;
 					it.Arg2 = fileName;
-					it.Bind(FormattedString.FormatProperty, this.GetResourceObservable("String/ScriptLogDataSourceProvidersDialog.FailedToExportProvider"));
+					it.Bind(FormattedString.FormatProperty, this.Application.GetObservableString("ScriptLogDataSourceProvidersDialog.FailedToExportProvider"));
 				})
 			}.ShowDialog(this);
 		}
@@ -186,7 +186,7 @@ partial class ScriptLogDataSourceProvidersDialog : CarinaStudio.Controls.Dialog<
 			await new MessageDialog()
 			{
 				Icon = MessageDialogIcon.Warning,
-				Message = this.GetResourceObservable("String/ScriptLogDataSourceProvidersDialog.CannotAddMoreProviderWithoutProVersion"),
+				Message = this.Application.GetObservableString("ScriptLogDataSourceProvidersDialog.CannotAddMoreProviderWithoutProVersion"),
 			}.ShowDialog(this);
 			return;
 		}
@@ -223,7 +223,7 @@ partial class ScriptLogDataSourceProvidersDialog : CarinaStudio.Controls.Dialog<
 				Message = new FormattedString().Also(it =>
 				{
 					it.Arg1 = fileName;
-					it.Bind(FormattedString.FormatProperty, this.GetResourceObservable("String/ScriptLogDataSourceProvidersDialog.FailedToImportProvider"));
+					it.Bind(FormattedString.FormatProperty, this.Application.GetObservableString("ScriptLogDataSourceProvidersDialog.FailedToImportProvider"));
 				})
 			}.ShowDialog(this);
 		});
@@ -261,7 +261,7 @@ partial class ScriptLogDataSourceProvidersDialog : CarinaStudio.Controls.Dialog<
 					{
 						DoNotAskOrShowAgain = false,
 						Icon = MessageDialogIcon.Information,
-						Message = this.GetResourceObservable("String/ScriptLogDataSourceProvidersDialog.RestrictionsOfNonProVersion"),
+						Message = this.Application.GetObservableString("ScriptLogDataSourceProvidersDialog.RestrictionsOfNonProVersion"),
 					};
 					await messageDialog.ShowDialog(this);
 					if (messageDialog.DoNotAskOrShowAgain == true)
@@ -295,17 +295,18 @@ partial class ScriptLogDataSourceProvidersDialog : CarinaStudio.Controls.Dialog<
 				{
 					it.Arg1 = provider.DisplayName;
 					it.Arg2 = logProfileCount;
-					it.Bind(FormattedString.FormatProperty, this.GetResourceObservable("String/ScriptLogDataSourceProvidersDialog.ConfirmDeletingProvider.WithLogProfiles"));
+					it.Bind(FormattedString.FormatProperty, this.Application.GetObservableString("ScriptLogDataSourceProvidersDialog.ConfirmDeletingProvider.WithLogProfiles"));
 				})
 				: new FormattedString().Also(it =>
 				{
 					it.Arg1 = provider.DisplayName;
-					it.Bind(FormattedString.FormatProperty, this.GetResourceObservable("String/ScriptLogDataSourceProvidersDialog.ConfirmDeletingProvider"));
+					it.Bind(FormattedString.FormatProperty, this.Application.GetObservableString("ScriptLogDataSourceProvidersDialog.ConfirmDeletingProvider"));
 				}),
 		}.ShowDialog(this);
 		if (result != AppSuite.Controls.MessageDialogResult.Yes)
 			return;
 		LogDataSourceProviders.RemoveScriptProvider(provider);
+		provider.Dispose();
 		this.providerListBox.SelectedItem = null;
 		this.providerListBox.Focus();
 	}

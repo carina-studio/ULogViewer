@@ -11,7 +11,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources;
 /// <summary>
 /// Provider of <see cref="ScriptLogDataSource"/>.
 /// </summary>
-class ScriptLogDataSourceProvider : BaseLogDataSourceProvider, ILogDataSourceProvider
+class ScriptLogDataSourceProvider : BaseLogDataSourceProvider, IDisposable, ILogDataSourceProvider
 {
     /// <summary>
     /// Options for sub scripts.
@@ -45,7 +45,7 @@ class ScriptLogDataSourceProvider : BaseLogDataSourceProvider, ILogDataSourcePro
 
 
     /// <summary>
-    /// Initialize new <see cref=""/> instance.
+    /// Initialize new <see cref="ScriptLogDataSourceProvider"/> instance.
     /// </summary>
     /// <param name="app">Application.</param>
     public ScriptLogDataSourceProvider(IULogViewerApplication app) : this(app, GenerateName())
@@ -53,7 +53,7 @@ class ScriptLogDataSourceProvider : BaseLogDataSourceProvider, ILogDataSourcePro
 
 
     /// <summary>
-    /// Initialize new <see cref=""/> instance.
+    /// Initialize new <see cref="ScriptLogDataSourceProvider"/> instance.
     /// </summary>
     /// <param name="template">Template provider.</param>
     /// <param name="displayName">Display name.</param>
@@ -71,6 +71,11 @@ class ScriptLogDataSourceProvider : BaseLogDataSourceProvider, ILogDataSourcePro
     {
         this.Name = name;
     }
+
+
+    // Finalizer.
+    ~ScriptLogDataSourceProvider() =>
+        this.Dispose(false);
 
 
     /// <summary>
@@ -130,6 +135,13 @@ class ScriptLogDataSourceProvider : BaseLogDataSourceProvider, ILogDataSourcePro
 
     /// <inheritdoc/>
     string ILogDataSourceProvider.DisplayName { get => this.displayName ?? ""; }
+
+
+#pragma warning disable CA1816
+    /// <inheritdoc/>
+    public void Dispose() =>
+        this.Dispose(true);
+#pragma warning restore CA1816
 
 
     /// <summary>
