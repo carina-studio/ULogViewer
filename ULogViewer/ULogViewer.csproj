@@ -14,7 +14,7 @@
     <StartupObject>CarinaStudio.ULogViewer.App</StartupObject>
     <ApplicationIcon>ULogViewer.ico</ApplicationIcon>
     <NoWin32Manifest>true</NoWin32Manifest>
-    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <SatelliteResourceLanguages>en;zh-Hans;zh-Hant</SatelliteResourceLanguages>
     <Configurations>Debug;Release;Debug-Windows;Release-Windows</Configurations>
   </PropertyGroup>
 
