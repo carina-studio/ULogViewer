@@ -570,7 +570,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.VisibleLogPropertiesWithoutLogPatterns">You defined 'Log properties to show' without defining 'Log line patterns' which may cause logs shown incorrectly. Do you want to define 'Log line patterns'?</sys:String>
 
 	<!-- LogProfileSelectionContextMenu -->
-	<sys:String x:Key="String/LogProfileSelectionContextMenu.ConfirmEditingBuiltInLogProfile">'{0}' is a built-in log profile, new log profile will be created after editing.</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionContextMenu.CopyCurrentLogProfile">Copy '{0}'…</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionContextMenu.CurrentLogProfile">(Current)</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionContextMenu.EditCurrentLogProfile">Edit '{0}'…</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionContextMenu.ExportCurrentLogProfile">Export '{0}'…</sys:String>

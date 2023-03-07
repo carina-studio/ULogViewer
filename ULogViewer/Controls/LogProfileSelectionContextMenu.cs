@@ -36,9 +36,12 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
 
     
     // Constants.
-    const int ActionsOnCurrentLogProfileTag = 0;
-    const int PinnedLogProfilesTag = 1;
-    const int RecentlyUsedLogProfilesTag = 2;
+    const int ActionsOnCurrentLogProfileTag = 3;
+    const int CopyCurrentLogProfileTag = 1;
+    const int EditCurrentLogProfileTag = 0;
+    const int ExportCurrentLogProfileTag = 2;
+    const int PinnedLogProfilesTag = 4;
+    const int RecentlyUsedLogProfilesTag = 5;
 
 
     // Static fields.
@@ -47,6 +50,7 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
 
     // Fields.
     Separator? actionsOnCurrentLogProfileSeparator;
+    MenuItem? copyCurrentLogProfileMenuItem;
     MenuItem? editCurrentLogProfileMenuItem;
     MenuItem? exportCurrentLogProfileMenuItem;
     bool isAttachedToLogicalTree;
@@ -105,53 +109,49 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
     // Compare menu items.
     int CompareItems(object? lhs, object? rhs)
     {
+        var lTag = ((lhs as Control)?.Tag as int?) ?? -1;
+        var rTag = ((rhs as Control)?.Tag as int?) ?? -1;
+        if (lTag >= 0 && rTag >= 0)
+            return lTag - rTag;
         LogProfile lhsLogProfile;
         LogProfile rhsLogProfile;
-        if (lhs is Separator lSeparator)
+        if (lhs is Separator)
         {
-            if (rhs is Separator rSeparator)
-                return (int)lSeparator.Tag! - (int)rSeparator.Tag!;
-            if (rhs == this.editCurrentLogProfileMenuItem
-                || rhs == this.exportCurrentLogProfileMenuItem)
-            {
-                return 1;
-            }
-            if (lhs == this.actionsOnCurrentLogProfileSeparator)
-                return -1;
             rhsLogProfile = (LogProfile)((MenuItem)rhs!).DataContext!;
             if (rhsLogProfile.IsPinned)
+            {
+                if (lTag <= ActionsOnCurrentLogProfileTag)
+                    return -1;
                 return 1;
-            if (lhs == this.pinnedLogProfilesSeparator)
-                return -1;
+            }
             if (this.recentlyUsedLogProfiles.Contains(rhsLogProfile))
+            {
+                if (lTag <= PinnedLogProfilesTag)
+                    return -1;
                 return 1;
-            return -1; // this.recentlyUsedLogProfilesSeparator
+            }
+            return -1;
         }
         if (rhs is Separator)
         {
-            if (lhs == this.editCurrentLogProfileMenuItem
-                || lhs == this.exportCurrentLogProfileMenuItem)
-            {
-                return -1;
-            }
-            if (rhs == this.actionsOnCurrentLogProfileSeparator)
-                return 1;
             lhsLogProfile = (LogProfile)((MenuItem)lhs!).DataContext!;
             if (lhsLogProfile.IsPinned)
+            {
+                if (rTag <= ActionsOnCurrentLogProfileTag)
+                    return 1;
                 return -1;
-            if (rhs == this.pinnedLogProfilesSeparator)
-                return 1;
+            }
             if (this.recentlyUsedLogProfiles.Contains(lhsLogProfile))
+            {
+                if (rTag <= PinnedLogProfilesTag)
+                    return 1;
                 return -1;
-            return 1; // this.recentlyUsedLogProfilesSeparator
-        }
-        if (lhs == this.editCurrentLogProfileMenuItem)
-            return -1;
-        if (rhs == this.editCurrentLogProfileMenuItem)
+            }
             return 1;
-        if (lhs == this.exportCurrentLogProfileMenuItem)
+        }
+        if (lTag >= 0)
             return -1;
-        if (rhs == this.exportCurrentLogProfileMenuItem)
+        if (rTag >= 0)
             return 1;
         lhsLogProfile = (LogProfile)((MenuItem)lhs!).DataContext!;
         rhsLogProfile = (LogProfile)((MenuItem)rhs!).DataContext!;
@@ -186,6 +186,32 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
     }
 
 
+    // Copy current log profile.
+    async void CopyCurrentLogProfile()
+    {
+        // get state
+        var logProfile = this.CurrentLogProfile;
+        var window = this.FindLogicalAncestorOfType<CarinaStudio.Controls.Window>();
+        var app = App.CurrentOrNull;
+        if (logProfile == null || window == null || app == null)
+            return;
+        
+        // copy log profile
+        var newProfile = await new LogProfileEditorDialog()
+        {
+            LogProfile = new LogProfile(logProfile)
+            {
+                Name = Utility.GenerateName(logProfile.Name, name =>
+                    LogProfileManager.Default.Profiles.FirstOrDefault(it => it.Name == name) != null),
+            },
+        }.ShowDialog<LogProfile>(window);
+        if (newProfile == null || window.IsClosed)
+            return;
+        LogProfileManager.Default.AddProfile(newProfile);
+        this.LogProfileCreated?.Invoke(this, newProfile);
+    }
+
+
     /// <summary>
     /// Get or set current log profile.
     /// </summary>
@@ -194,6 +220,28 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
         get => this.GetValue(CurrentLogProfileProperty);
         set => this.SetValue(CurrentLogProfileProperty, value);
     }
+
+
+    // Create menu item for copying current log profile.
+    MenuItem CreateCopyCurrentLogProfileMenuItem() => new MenuItem().Also(menuItem =>
+    {
+        menuItem.Command = new CarinaStudio.Windows.Input.Command(this.CopyCurrentLogProfile);
+        menuItem.Header = new FormattedTextBlock().Also(it =>
+        {
+            it.Bind(FormattedTextBlock.Arg1Property, new Binding()
+            {
+                Path = $"{nameof(CurrentLogProfile)}.{nameof(LogProfile.Name)}",
+                Source = this,
+            });
+            it.Bind(FormattedTextBlock.FormatProperty, this.GetResourceObservable("String/LogProfileSelectionContextMenu.CopyCurrentLogProfile"));
+        });
+        menuItem.Icon = new Avalonia.Controls.Image().Also(icon =>
+        {
+            icon.Classes.Add("MenuItem_Icon");
+            icon.Source = this.FindResourceOrDefault<IImage>("Image/Icon.Copy.Outline");
+        });
+        menuItem.Tag = CopyCurrentLogProfileTag;
+    });
 
 
     // Create menu item for editing current log profile.
@@ -214,6 +262,12 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
             icon.Classes.Add("MenuItem_Icon");
             icon.Source = this.FindResourceOrDefault<IImage>("Image/Icon.Edit");
         });
+        menuItem.Bind(IsEnabledProperty, new Binding() 
+        { 
+            Path = $"!{nameof(CurrentLogProfile)}.{nameof(LogProfile.IsBuiltIn)}",
+            Source = this,
+        });
+        menuItem.Tag = EditCurrentLogProfileTag;
     });
 
 
@@ -235,6 +289,7 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
             icon.Classes.Add("MenuItem_Icon");
             icon.Source = this.FindResourceOrDefault<IImage>("Image/Icon.Export");
         });
+        menuItem.Tag = ExportCurrentLogProfileTag;
     });
 
 
@@ -324,48 +379,17 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
 
 
     // Edit current log profile.
-    async void EditCurrentLogProfile()
+    void EditCurrentLogProfile()
     {
         // get state
         var logProfile = this.CurrentLogProfile;
         var window = this.FindLogicalAncestorOfType<CarinaStudio.Controls.Window>();
         var app = App.CurrentOrNull;
-        if (logProfile == null || window == null || app == null)
+        if (logProfile == null || window == null || app == null || logProfile.IsBuiltIn)
             return;
         
-        // copy or edit log profile
-        if (logProfile.IsBuiltIn)
-        {
-            // show message
-            await new MessageDialog()
-            {
-                Icon = MessageDialogIcon.Information,
-                Message = new FormattedString().Also(it =>
-                {
-                    it.Arg1 = logProfile.Name;
-                    it.Bind(FormattedString.FormatProperty, app.GetObservableString("LogProfileSelectionContextMenu.ConfirmEditingBuiltInLogProfile"));
-                }),
-                Title = app.GetObservableString("LogProfileSelectionDialog.EditLogProfile"),
-            }.ShowDialog(window);
-            if (window.IsClosed)
-                return;
-
-            // copy log profile
-            var newProfile = await new LogProfileEditorDialog()
-            {
-                LogProfile = new LogProfile(logProfile)
-                {
-                    Name = Utility.GenerateName(logProfile.Name, name =>
-                        LogProfileManager.Default.Profiles.FirstOrDefault(it => it.Name == name) != null),
-                },
-            }.ShowDialog<LogProfile>(window);
-            if (newProfile == null || window.IsClosed)
-                return;
-            LogProfileManager.Default.AddProfile(newProfile);
-            this.LogProfileCreated?.Invoke(this, newProfile);
-        }
-        else
-            LogProfileEditorDialog.Show(window, logProfile);
+        // edit log profile
+        LogProfileEditorDialog.Show(window, logProfile);
     }
 
 
@@ -425,6 +449,7 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
         {
             if (this.CurrentLogProfile != null && this.EnableActionsOnCurrentLogProfile)
             {
+                this.copyCurrentLogProfileMenuItem ??= this.CreateCopyCurrentLogProfileMenuItem();
                 this.editCurrentLogProfileMenuItem ??= this.CreateEditCurrentLogProfileMenuItem();
                 this.exportCurrentLogProfileMenuItem ??= this.CreateExportCurrentLogProfileMenuItem();
                 this.actionsOnCurrentLogProfileSeparator ??= new()
@@ -432,6 +457,7 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
                     Tag = ActionsOnCurrentLogProfileTag,
                 };
                 it.Add(this.editCurrentLogProfileMenuItem);
+                it.Add(this.copyCurrentLogProfileMenuItem);
                 it.Add(this.exportCurrentLogProfileMenuItem);
                 it.Add(this.actionsOnCurrentLogProfileSeparator);
             }
@@ -696,6 +722,7 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
         {
             if (this.CurrentLogProfile != null && this.EnableActionsOnCurrentLogProfile)
             {
+                this.copyCurrentLogProfileMenuItem ??= this.CreateCopyCurrentLogProfileMenuItem();
                 this.editCurrentLogProfileMenuItem ??= this.CreateEditCurrentLogProfileMenuItem();
                 this.exportCurrentLogProfileMenuItem ??= this.CreateExportCurrentLogProfileMenuItem();
                 this.actionsOnCurrentLogProfileSeparator ??= new()
@@ -705,12 +732,15 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
                 if (!this.items.Contains(this.actionsOnCurrentLogProfileSeparator))
                 {
                     this.items.Add(this.editCurrentLogProfileMenuItem);
+                    this.items.Add(this.copyCurrentLogProfileMenuItem);
                     this.items.Add(this.exportCurrentLogProfileMenuItem);
                     this.items.Add(this.actionsOnCurrentLogProfileSeparator);
                 }
             }
             else
             {
+                if (this.copyCurrentLogProfileMenuItem != null)
+                    this.items.Remove(this.copyCurrentLogProfileMenuItem);
                 if (this.editCurrentLogProfileMenuItem != null)
                     this.items.Remove(this.editCurrentLogProfileMenuItem);
                 if (this.exportCurrentLogProfileMenuItem != null)

@@ -534,7 +534,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.VisibleLogPropertiesWithoutLogPatterns">您定义了「显示的日志属性」但没有定义「日志行格式」，这可能导致日志显示错误。您是否要定义「日志行格式」？</sys:String>
 
 	<!-- LogProfileSelectionContextMenu -->
-	<sys:String x:Key="String/LogProfileSelectionContextMenu.ConfirmEditingBuiltInLogProfile">「{0}」是一个内建日志类型，编辑完成后将建立新的日志类型。</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionContextMenu.CopyCurrentLogProfile">复制「{0}」…</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionContextMenu.CurrentLogProfile">(目前使用)</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionContextMenu.EditCurrentLogProfile">编辑「{0}」…</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionContextMenu.ExportCurrentLogProfile">导出「{0}」…</sys:String>

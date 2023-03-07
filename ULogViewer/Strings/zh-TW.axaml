@@ -527,7 +527,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.VisibleLogPropertiesWithoutLogPatterns">您定義了「顯示的日誌屬性」但沒有定義「日誌行格式」，這可能導致日誌顯示錯誤。您是否要定義「日誌行格式」？</sys:String>
 
 	<!-- LogProfileSelectionContextMenu -->
-	<sys:String x:Key="String/LogProfileSelectionContextMenu.ConfirmEditingBuiltInLogProfile">「{0}」是一個內建日誌類型，編輯完成後將建立新的日誌類型。</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionContextMenu.CopyCurrentLogProfile">複製「{0}」…</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionContextMenu.CurrentLogProfile">(目前使用)</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionContextMenu.EditCurrentLogProfile">編輯「{0}」…</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionContextMenu.ExportCurrentLogProfile">匯出「{0}」…</sys:String>
