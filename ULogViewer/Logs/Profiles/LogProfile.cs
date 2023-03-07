@@ -113,7 +113,12 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			this.dataSourceOptions = template.dataSourceOptions;
 			this.dataSourceProvider = template.dataSourceProvider;
 			this.description = template.description;
-			this.embeddedScriptLogDataSourceProvider = template.embeddedScriptLogDataSourceProvider?.Let(it => new EmbeddedScriptLogDataSourceProvider(it));
+			if (template.embeddedScriptLogDataSourceProvider != null)
+			{
+				this.embeddedScriptLogDataSourceProvider = new(template.embeddedScriptLogDataSourceProvider);
+				if (template.dataSourceProvider == template.embeddedScriptLogDataSourceProvider)
+					this.dataSourceProvider = this.embeddedScriptLogDataSourceProvider;
+			}
 			this.hasDescription = template.hasDescription;
 			this.icon = template.icon;
 			this.iconColor = template.iconColor;
