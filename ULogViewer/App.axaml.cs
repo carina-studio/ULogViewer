@@ -796,11 +796,5 @@ namespace CarinaStudio.ULogViewer
 
 		/// <inheritdoc/>
 		public override Version? UserAgreementVersion => new(2, 0);
-
-
-#if WINDOWS_ONLY
-		/// <inheritdoc/>
-		protected override System.Reflection.Assembly WindowsSdkAssembly => typeof(global::Windows.UI.Color).Assembly;
-#endif
     }
 }

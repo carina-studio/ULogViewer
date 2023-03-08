@@ -102,7 +102,6 @@ class TextShellManager
             shellMap[TextShell.CommandPrompt] = "cmd";
 
             // PowerShell
-#if WINDOWS_ONLY
 #pragma warning disable CA1416
             try
             {
@@ -120,7 +119,6 @@ class TextShellManager
                 this.logger.LogError(ex, "Error occurred while checking existence of PowerShell");
             }
 #pragma warning restore CA1416
-#endif
         }
         else
         {
