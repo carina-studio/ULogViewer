@@ -212,21 +212,6 @@ namespace CarinaStudio.ULogViewer
 		protected override bool IsMultipleProcessesSupported => false;
 
 
-        /// <summary>
-        /// Check whether using system accent color is supported on current platform or not.
-        /// </summary>
-        public bool IsSystemAccentColorSupported { get; } = Global.Run(() =>
-		{
-#if WINDOWS_ONLY
-			/*
-			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-				return Environment.OSVersion.Version >= new Version(10, 0, 17763);
-			*/
-#endif
-			return false;
-		});
-
-
 		/// <inheritdoc/>
 		public bool IsTesting => false;
 

@@ -3,10 +3,9 @@
 set APP_NAME=ULogViewer
 set RID_LIST=win-x64 win-x86 win-arm64
 set CONFIG=Release-Windows
-set FRAMEWORK=net7.0-windows10.0.17763.0
+set FRAMEWORK=net7.0
 set SELF_CONTAINED=true
 set TRIM_ASSEMBLIES=true
-set READY_TO_RUN=false
 set ERRORLEVEL=0
 
 echo ********** Start building %APP_NAME% **********
@@ -60,7 +59,7 @@ REM Build packages
     )
 
     REM Build project
-    dotnet publish %APP_NAME% -c %CONFIG% -r %%r --self-contained %SELF_CONTAINED% -p:PublishTrimmed=%TRIM_ASSEMBLIES% -p:PublishReadyToRun=%READY_TO_RUN%
+    dotnet publish %APP_NAME% -c %CONFIG% -r %%r --self-contained %SELF_CONTAINED% -p:PublishTrimmed=%TRIM_ASSEMBLIES%
     if %ERRORLEVEL% neq 0 (
         echo Failed to build project: %ERRORLEVEL%
         del /Q Packages\Packaging.txt
@@ -68,15 +67,6 @@ REM Build packages
     )
     if exist %APP_NAME%\bin\%CONFIG%\%FRAMEWORK%\%%r\publish\ULogViewer.png (
         del /Q %APP_NAME%\bin\%CONFIG%\%FRAMEWORK%\%%r\publish\ULogViewer.png
-    )
-    if exist %APP_NAME%\bin\%CONFIG%\%FRAMEWORK%\%%r\publish\System.Windows.Forms.dll (
-        del /Q %APP_NAME%\bin\%CONFIG%\%FRAMEWORK%\%%r\publish\System.Windows.Forms.dll
-    )
-    if exist %APP_NAME%\bin\%CONFIG%\%FRAMEWORK%\%%r\publish\System.Windows.Controls.Ribbon.dll (
-        del /Q %APP_NAME%\bin\%CONFIG%\%FRAMEWORK%\%%r\publish\System.Windows.Controls.Ribbon.dll
-    )
-    if exist %APP_NAME%\bin\%CONFIG%\%FRAMEWORK%\%%r\publish\System.Windows.Forms.Design.dll (
-        del /Q %APP_NAME%\bin\%CONFIG%\%FRAMEWORK%\%%r\publish\System.Windows.Forms.Design.dll
     )
 
     REM Generate package

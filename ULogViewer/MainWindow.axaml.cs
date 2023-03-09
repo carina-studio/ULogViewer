@@ -1159,12 +1159,6 @@ namespace CarinaStudio.ULogViewer
 		}
 
 
-#if WINDOWS_ONLY
-		/// <inheritdoc/>
-		protected override Type? TaskbarManagerType => typeof(Microsoft.WindowsAPICodePack.Taskbar.TaskbarManager);
-#endif
-
-
 		// Update menu items of tools.
 		void UpdateToolMenuItems()
 		{

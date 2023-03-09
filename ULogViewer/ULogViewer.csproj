@@ -10,6 +10,8 @@
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
 		<TrimMode>partial</TrimMode>
+		<TargetFramework>net7.0</TargetFramework>
+		<RuntimeIdentifiers>win-x86;win-x64;win-arm64;linux-x64;linux-arm64;osx-x64;osx.11.0-arm64</RuntimeIdentifiers>
 		<Authors>Carina Studio</Authors>
 		<Company>Carina Studio</Company>
 		<Copyright>©2021 Carina Studio</Copyright>
@@ -17,34 +19,13 @@
 		<ApplicationIcon>ULogViewer.ico</ApplicationIcon>
 		<NoWin32Manifest>true</NoWin32Manifest>
 		<SatelliteResourceLanguages>en;zh-Hans;zh-Hant</SatelliteResourceLanguages>
-		<Configurations>Debug;Release;Debug-Windows;Release-Windows</Configurations>
+		<Configurations>Debug;Release</Configurations>
 		<PublishReadyToRun>false</PublishReadyToRun>
 		<PublishReadyToRunEmitSymbols>false</PublishReadyToRunEmitSymbols>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)'=='Debug'">
-		<TargetFramework>net7.0</TargetFramework>
-		<RuntimeIdentifiers>win-x86;win-x64;win-arm64;linux-x64;linux-arm64;osx-x64;osx.11.0-arm64</RuntimeIdentifiers>
 		<DefineConstants>DEBUG;TRACE</DefineConstants>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)'=='Debug-Windows'">
-		<TargetFramework>net7.0-windows10.0.17763.0</TargetFramework>
-		<RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
-		<CsWinRTIncludes>Windows</CsWinRTIncludes>
-		<DefineConstants>DEBUG;TRACE;WINDOWS_ONLY</DefineConstants>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)'=='Release'">
-		<TargetFramework>net7.0</TargetFramework>
-		<RuntimeIdentifiers>win-x86;win-x64;win-arm64;linux-x64;linux-arm64;osx-x64;osx.11.0-arm64</RuntimeIdentifiers>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)'=='Release-Windows'">
-		<TargetFramework>net7.0-windows10.0.17763.0</TargetFramework>
-		<RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
-		<CsWinRTIncludes>Windows</CsWinRTIncludes>
-		<DefineConstants>WINDOWS_ONLY</DefineConstants>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -81,7 +62,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="CarinaStudio.AppSuite.Core" Version="2.2.49.308-dev" />
+		<PackageReference Include="CarinaStudio.AppSuite.Core" Version="2.2.51.308-dev" />
 		<PackageReference Include="CarinaStudio.AppSuite.Fonts" Version="2.2.19.107-dev" />
 		<PackageReference Include="CarinaStudio.AppSuite.SyntaxHighlighting" Version="2.2.32.202-dev" />
 		<PackageReference Include="Dotnet.Bundle" Version="0.9.13" />
@@ -94,11 +75,6 @@
 		<PackageReference Include="System.Text.Encoding.CodePages" Version="7.0.0" />
 	</ItemGroup>
 
-	<ItemGroup Condition="$(TargetFramework.Contains('windows'))">
-		<PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
-		<PackageReference Include="System.Runtime.InteropServices.WindowsRuntime" Version="4.3.0" />
-	</ItemGroup>
-
 	<!-- Trimming options -->
 	<ItemGroup>
 		<TrimmerRootAssembly Include="IronPython" />
@@ -108,23 +84,18 @@
 		<TrimmerRootAssembly Include="netstandard" />
 		<TrimmerRootAssembly Include="NLog" />
 		<TrimmerRootAssembly Include="System.Console" />
+		<TrimmerRootAssembly Include="System.Management" />
 		<TrimmerRootAssembly Include="System.Private.Xml" />
 		<TrimmerRootAssembly Include="System.Private.CoreLib" />
 	</ItemGroup>
 
-	<ItemGroup Condition="$(TargetFramework.Contains('windows'))">
-		<TrimmerRootAssembly Include="Microsoft.Windows.SDK.NET" />
-		<TrimmerRootAssembly Include="System.Management" />
-	</ItemGroup>
-
-	<ItemGroup Condition="$(TargetFramework.Contains('linux'))">
+	<ItemGroup Condition="$(RuntimeIdentifier.Contains('linux'))">
 		<TrimmerRootAssembly Include="Tmds.DBus" />
 	</ItemGroup>
 
 	<!-- ReadyToRun options -->
 	<ItemGroup>
 		<PublishReadyToRunExclude Include="AvaloniaEdit.dll" />
-		<PublishReadyToRunExclude Include="Avalonia.Controls.DataGrid.dll" />
 		<PublishReadyToRunExclude Include="BouncyCastle.Crypto.dll" />
 		<PublishReadyToRunExclude Include="EntityFramework.dll" />
 		<PublishReadyToRunExclude Include="EntityFramework.SqlServer.dll" />
@@ -139,19 +110,11 @@
 		<PublishReadyToRunExclude Include="Microsoft.Dynamic.dll" />
 		<PublishReadyToRunExclude Include="MySql.Data.dll" />
 		<PublishReadyToRunExclude Include="Newtonsoft.Json.dll" />
+		<PublishReadyToRunExclude Include="nunit.framework.dll" />
 		<PublishReadyToRunExclude Include="SQLite.Interop.dll" />
 		<PublishReadyToRunExclude Include="System.Data.Common.dll" />
 		<PublishReadyToRunExclude Include="System.Data.SqlClient.dll" />
 		<PublishReadyToRunExclude Include="System.Private.dll" />
-	</ItemGroup>
-
-	<ItemGroup Condition="$(TargetFramework.Contains('windows'))">
-		<PublishReadyToRunExclude Include="Microsoft.Windows.SDK.NET.dll" />
-		<PublishReadyToRunExclude Include="PresentationCore.dll" />
-		<PublishReadyToRunExclude Include="PresentationFramework.dll" />
-		<PublishReadyToRunExclude Include="System.Drawing.Common.dll" />
-		<PublishReadyToRunExclude Include="WindowsBase.dll" />
-		<PublishReadyToRunExclude Include="WinRT.Runtime.dll" />
 	</ItemGroup>
 
 	<!-- SQLite -->

@@ -6,7 +6,6 @@ set CONFIG=Release
 set FRAMEWORK=net7.0
 set SELF_CONTAINED=true
 set TRIM_ASSEMBLIES=true
-set READY_TO_RUN=false
 set ERRORLEVEL=0
 
 echo ********** Start building %APP_NAME% **********
@@ -72,7 +71,7 @@ REM Build packages
     )
 
     REM Build project
-    dotnet publish %APP_NAME% -c %CONFIG% -r %%r --self-contained %SELF_CONTAINED% -p:PublishTrimmed=%TRIM_ASSEMBLIES% -p:PublishReadyToRun=%READY_TO_RUN%
+    dotnet publish %APP_NAME% -c %CONFIG% -r %%r --self-contained %SELF_CONTAINED% -p:PublishTrimmed=%TRIM_ASSEMBLIES%
     if %ERRORLEVEL% neq 0 (
         echo Failed to build project: %ERRORLEVEL%
         del /Q Packages\Packaging.txt
