@@ -25,8 +25,7 @@ class EmbeddedScriptLogDataSourceProvider : ScriptLogDataSourceProvider, ILogDat
     /// <inheritdoc/>
     protected override void Dispose(bool disposing)
     {
-        if (disposing)
-            this.appStringsUpdatedHandlerToken.Dispose();
+        this.appStringsUpdatedHandlerToken.Dispose();
         base.Dispose(disposing);
     }
 
