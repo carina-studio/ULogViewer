@@ -10,7 +10,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="CarinaStudio.AppSuite.Packaging" Version="1.0.0.802" />
+		<PackageReference Include="CarinaStudio.AppSuite.Packaging" Version="1.0.3.312" />
 	</ItemGroup>
 
 </Project>
