@@ -1,4 +1,5 @@
 using CarinaStudio.Collections;
+using CarinaStudio.Threading;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -22,6 +23,7 @@ class ScriptDisplayableLogAnalyzer : BaseDisplayableLogAnalyzer<ScriptDisplayabl
 
     // Fields.
     readonly List<LogAnalysisScriptSet> attachedScriptSets = new();
+    bool isCooperativeLogAnalysis;
     readonly ObservableList<DisplayableLogProperty> logProperties = new();
     readonly ObservableList<LogAnalysisScriptSet> scriptSets = new();
 
@@ -37,6 +39,25 @@ class ScriptDisplayableLogAnalyzer : BaseDisplayableLogAnalyzer<ScriptDisplayabl
     { 
         this.logProperties.CollectionChanged += this.OnLogPropertiesChanged;
         this.scriptSets.CollectionChanged += this.OnScriptSetsChanged;
+    }
+
+
+    /// <summary>
+    /// Get or set whether <see cref="ScriptSets"/> are cooperative log analysis script sets of one or more log profiles or not.
+    /// </summary>
+    public bool IsCooperativeLogAnalysis 
+    { 
+        get => this.isCooperativeLogAnalysis;
+        set
+        {
+            this.VerifyAccess();
+            this.VerifyDisposed();
+            if (this.isCooperativeLogAnalysis == value)
+                return;
+            this.isCooperativeLogAnalysis = value;
+            this.InvalidateProcessing();
+            this.OnPropertyChanged(nameof(IsCooperativeLogAnalysis));
+        }
     }
 
 

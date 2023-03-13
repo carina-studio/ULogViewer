@@ -461,19 +461,25 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.ColorIndicator.Description">顯示於日誌左側的色塊分組方式。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Common">一般設定</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet">協同日誌分析腳本</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.ConfirmDeletion">您是否確定要刪除日誌分析腳本？</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.ConfirmDeletion">腳本刪除後將無法復原，您是否確定要刪除日誌分析腳本？</sys:String>
+	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.Create" ResourceKey="String/Common.Create.WithDialog"/>
 	<sys:String x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.Description">當使用此日誌類型時將自動執行此日誌分析腳本。</sys:String>
+	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.Edit" ResourceKey="String/Common.Edit.WithDialog"/>
 	<sys:String x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.ImportExisting">匯入現有的日誌分析腳本…</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.ImportFromFile">從檔案匯入…</sys:String>
+	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.Remove" ResourceKey="String/Common.Remove"/>
 	<sys:String x:Key="String/LogProfileEditorDialog.DataSourceProvider">資料來源</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.DataSourceProvider.ProVersionOnly">(專業版)</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Description">描述</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.DuplicateLogLevelMapEntry">已經定義從「{0}」的轉換。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider">內嵌日誌資料來源腳本</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.ConfirmDeletion">您是否確定要刪除日誌資料來源腳本？</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.ConfirmDeletion">腳本刪除後將無法復原，您是否確定要刪除日誌資料來源腳本？</sys:String>
+	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.Create" ResourceKey="String/Common.Create.WithDialog"/>
 	<sys:String x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.Description">您可以將內嵌日誌資料來源腳本設定為此日誌類型的「資料來源」。</sys:String>
+	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.Edit" ResourceKey="String/Common.Edit.WithDialog"/>
 	<sys:String x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.ImportExisting">匯入現有的日誌資料來源腳本…</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.ImportFromFile">從檔案匯入…</sys:String>
+	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.Remove" ResourceKey="String/Common.Remove"/>
 	<sys:String x:Key="String/LogProfileEditorDialog.FormatDescription">格式說明</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Icon">圖示</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.IconColor">圖示色彩</sys:String>
@@ -813,6 +819,7 @@ return False</sys:String>
 	<sys:String x:Key="String/ScriptDisplayableLogAnalyzer.AnalysisScript.ErrorOccurred.WithLocation">執行「{0}」之腳本以分析日誌時發生錯誤：
 {1}
 位於第 {2} 行第 {3} 字元。</sys:String>
+	<sys:String x:Key="String/ScriptDisplayableLogAnalyzer.CooperativeLogAnalysis">協同日誌分析</sys:String>
 	<sys:String x:Key="String/ScriptDisplayableLogAnalyzer.SetupScript.ErrorOccurred">執行「{0}」之腳本以初始化分析時發生錯誤：
 {1}</sys:String>
 	<sys:String x:Key="String/ScriptDisplayableLogAnalyzer.SetupScript.ErrorOccurred.WithLocation">執行「{0}」之腳本以初始化分析時發生錯誤：

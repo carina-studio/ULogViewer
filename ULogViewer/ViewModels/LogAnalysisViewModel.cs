@@ -151,7 +151,10 @@ class LogAnalysisViewModel : SessionComponent
 
         // create analyzers
         this.coopScriptLogAnalyzer = new ScriptDisplayableLogAnalyzer(this.Application, this.AllLogs, this.CompareLogs).Also(it =>
-            this.AttachToAnalyzer(it));
+        {
+            it.IsCooperativeLogAnalysis = true;
+            this.AttachToAnalyzer(it);
+        });
         this.keyLogAnalysisRuleSets.CollectionChanged += (_, e) => 
         {
             if (this.keyLogAnalysisRuleSets.IsEmpty())
