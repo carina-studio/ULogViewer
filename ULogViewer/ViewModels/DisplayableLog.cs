@@ -322,6 +322,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				nameof(BinaryBeginningTimestamp) => (it => (T)(object)it.BinaryBeginningTimestamp),
 				nameof(BinaryEndingTimeSpan) => (it => (T)(object)it.BinaryEndingTimeSpan),
 				nameof(BinaryEndingTimestamp) => (it => (T)(object)it.BinaryEndingTimestamp),
+				nameof(BinaryReadTime) => (it => (T)(object)it.BinaryReadTime),
 				nameof(BinaryTimeSpan) => (it => (T)(object)it.BinaryTimeSpan),
 				nameof(BinaryTimestamp) => (it => (T)(object)it.BinaryTimestamp),
 				nameof(EndingTimeSpanString) => (it => (T)(object)it.EndingTimeSpanString),
@@ -822,6 +823,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			or nameof(BinaryBeginningTimestamp)
 			or nameof(BinaryEndingTimeSpan)
 			or nameof(BinaryEndingTimestamp)
+			or nameof(BinaryReadTime)
 			or nameof(BinaryTimeSpan)
 			or nameof(BinaryTimestamp) => true,
 			_ => false,

@@ -277,7 +277,7 @@ class LogCategorizingViewModel : SessionComponent
         {
             LogSortKey.BeginningTimestamp => nameof(DisplayableLog.BinaryBeginningTimestamp),
             LogSortKey.EndingTimestamp => nameof(DisplayableLog.BinaryEndingTimestamp),
-            LogSortKey.ReadTime => nameof(DisplayableLog.ReadTime),
+            LogSortKey.ReadTime => nameof(DisplayableLog.BinaryReadTime),
             LogSortKey.Timestamp => nameof(DisplayableLog.BinaryTimestamp),
             _ => Global.Run(() =>
             {
@@ -291,8 +291,8 @@ class LogCategorizingViewModel : SessionComponent
                             return nameof(DisplayableLog.BinaryEndingTimestamp);
                         case nameof(DisplayableLog.TimestampString):
                             return nameof(DisplayableLog.BinaryTimestamp);
-                        case nameof(DisplayableLog.ReadTime):
-                            return nameof(DisplayableLog.ReadTimeString);
+                        case nameof(DisplayableLog.ReadTimeString):
+                            return nameof(DisplayableLog.BinaryReadTime);
                     }
                 }
                 return null;
