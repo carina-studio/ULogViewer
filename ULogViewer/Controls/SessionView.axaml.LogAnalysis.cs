@@ -80,6 +80,33 @@ partial class SessionView
 
 
     /// <summary>
+    /// Create cooperative log analysis script set for current log profile.
+    /// </summary>
+    public async void CreateCooperativeLogAnalysisScriptSet()
+    {
+        // check state
+        if (this.DataContext is not Session session)
+            return;
+        var profile = session.LogProfile;
+        if (profile == null || profile.CooperativeLogAnalysisScriptSet != null)
+            return;
+        if (this.attachedWindow == null)
+            return;
+        
+        // create script set
+        var scriptSet = await new LogAnalysisScriptSetEditorDialog()
+        {
+            IsEmbeddedScriptSet = true,
+        }.ShowDialog<LogAnalysisScriptSet?>(this.attachedWindow);
+        if (scriptSet == null)
+            return;
+        if (this.DataContext != session || session.LogProfile != profile)
+            return;
+        profile.CooperativeLogAnalysisScriptSet = scriptSet;
+    }
+
+
+    /// <summary>
     /// Clear log analysis rule set selection.
     /// </summary>
     public void ClearLogAnalysisRuleSetSelection()
@@ -153,6 +180,34 @@ partial class SessionView
             it.CollectionChanged -= this.OnSessionLogAnalysisRuleSetsChanged);
         (logAnalysis.OperationDurationAnalysisRuleSets as INotifyCollectionChanged)?.Let(it =>
             it.CollectionChanged -= this.OnSessionLogAnalysisRuleSetsChanged);
+    }
+
+
+    /// <summary>
+    /// Edit cooperative log analysis script set for current log profile.
+    /// </summary>
+    public async void EditCooperativeLogAnalysisScriptSet()
+    {
+        // check state
+        if (this.DataContext is not Session session)
+            return;
+        var profile = session.LogProfile;
+        if (profile == null || profile.CooperativeLogAnalysisScriptSet == null)
+            return;
+        if (this.attachedWindow == null)
+            return;
+        
+        // create script set
+        var scriptSet = await new LogAnalysisScriptSetEditorDialog()
+        {
+            IsEmbeddedScriptSet = true,
+            ScriptSetToEdit = new LogAnalysisScriptSet(profile.CooperativeLogAnalysisScriptSet, ""),
+        }.ShowDialog<LogAnalysisScriptSet?>(this.attachedWindow);
+        if (scriptSet == null)
+            return;
+        if (this.DataContext != session || session.LogProfile != profile)
+            return;
+        profile.CooperativeLogAnalysisScriptSet = scriptSet;
     }
 
 

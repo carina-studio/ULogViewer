@@ -1355,6 +1355,24 @@
 												</MultiBinding>
 											</ToggleSwitch.IsEnabled>
 										</ToggleSwitch>
+										<StackPanel>
+											<StackPanel.IsVisible>
+												<MultiBinding Converter="{x:Static BoolConverters.And}">
+													<Binding Path="HasLogProfile"/>
+													<Binding Path="!IsBuiltInLogProfile"/>
+													<Binding Path="IsProVersionActivated"/>
+												</MultiBinding>
+											</StackPanel.IsVisible>
+											<Separator Classes="Dialog_Separator_Small"/>
+											<StackPanel IsVisible="{Binding !LogAnalysis.HasCooperativeLogAnalysisScriptSet}" Orientation="Horizontal">
+												<Image Classes="Dialog_Icon" Source="{StaticResource Image/Icon.Add}"/>
+												<abControls:LinkTextBlock Classes="Dialog_Icon_LinkTextBlock" Command="{Binding #root.CreateCooperativeLogAnalysisScriptSet}" Text="{DynamicResource String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.Create}"/>
+											</StackPanel>
+											<StackPanel IsVisible="{Binding LogAnalysis.HasCooperativeLogAnalysisScriptSet}" Orientation="Horizontal">
+												<Image Classes="Dialog_Icon" Source="{StaticResource Image/Icon.Edit.Outline}"/>
+												<abControls:LinkTextBlock Classes="Dialog_Icon_LinkTextBlock" Command="{Binding #root.EditCooperativeLogAnalysisScriptSet}" Text="{DynamicResource String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.Edit}"/>
+											</StackPanel>
+										</StackPanel>
 										<Separator Classes="Dialog_Separator"/>
 										
 										<!-- Rule sets and script sets -->
