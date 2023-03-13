@@ -260,7 +260,7 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
         menuItem.Icon = new Avalonia.Controls.Image().Also(icon =>
         {
             icon.Classes.Add("MenuItem_Icon");
-            icon.Source = this.FindResourceOrDefault<IImage>("Image/Icon.Edit");
+            icon.Source = this.FindResourceOrDefault<IImage>("Image/Icon.Edit.Outline");
         });
         menuItem.Bind(IsEnabledProperty, new Binding() 
         { 
