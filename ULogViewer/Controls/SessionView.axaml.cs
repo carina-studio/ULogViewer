@@ -101,7 +101,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		static readonly StyledProperty<bool> EnableRunningScriptProperty = AvaloniaProperty.Register<SessionView, bool>("EnableRunningScript", false);
 		static readonly StyledProperty<bool> HasLogProfileProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(HasLogProfile), false);
 		static readonly StyledProperty<bool> IsProcessInfoVisibleProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(IsProcessInfoVisible), false);
-		static readonly DirectProperty<SessionView, bool> IsProVersionActivatedProperty = AvaloniaProperty.RegisterDirect<SessionView, bool>("IsProVersionActivated", c => c.isProVersionActivated);
 		static readonly StyledProperty<bool> IsScrollingToLatestLogNeededProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(IsScrollingToLatestLogNeeded), true);
 		static readonly StyledProperty<bool> IsScrollingToTargetLogRangeProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(IsScrollingToTargetLogRange));
 		static readonly SettingKey<bool> IsCopyLogTextTutorialShownKey = new("SessionView.IsCopyLogTextTutorialShown");
@@ -152,7 +151,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		bool isIPEndPointNeededAfterLogProfileSet;
 		bool isLogFileNeededAfterLogProfileSet;
 		bool isPointerPressedOnLogListBox;
-		bool isProVersionActivated;
 		bool isRestartingAsAdminConfirmed;
 		bool isSelectingFileToSaveLogs;
 		bool isUriNeededAfterLogProfileSet;
@@ -2523,7 +2521,6 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// add event handlers
 			this.Application.StringsUpdated += this.OnApplicationStringsUpdated;
-			this.Application.ProductManager.ProductActivationChanged += this.OnProductActivationChanged;
 			this.Settings.SettingChanged += this.OnSettingChanged;
 			this.AddHandler(DragDrop.DragEnterEvent, this.OnDragEnter);
 			this.AddHandler(DragDrop.DragLeaveEvent, this.OnDragLeave);
@@ -2536,8 +2533,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.SetValue(ShowHelpButtonOnLogTextFilterProperty, this.Settings.GetValueOrDefault(SettingKeys.ShowHelpButtonOnLogTextFilter));
 
 			// check product state
-			this.SetAndRaise(IsProVersionActivatedProperty, ref this.isProVersionActivated, this.Application.ProductManager.IsProductActivated(Products.Professional));
-			if (this.isProVersionActivated)
+			if ((this.DataContext as Session)?.IsProVersionActivated == true)
 				this.RecreateLogHeadersAndItemTemplate();
 			this.UpdateToolsMenuItems();
 
@@ -2586,7 +2582,6 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// remove event handlers
 			this.Application.StringsUpdated -= this.OnApplicationStringsUpdated;
-			this.Application.ProductManager.ProductActivationChanged -= this.OnProductActivationChanged;
 			this.Settings.SettingChanged -= this.OnSettingChanged;
 			this.RemoveHandler(DragDrop.DragEnterEvent, this.OnDragEnter);
 			this.RemoveHandler(DragDrop.DragLeaveEvent, this.OnDragLeave);
@@ -3532,19 +3527,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Called when product state changed.
-		void OnProductActivationChanged(IProductManager productManager, string productId, bool isActivated)
-		{
-			// update state
-			if (productId != Products.Professional)
-				return;
-			this.SetAndRaise(IsProVersionActivatedProperty, ref this.isProVersionActivated, isActivated);
-			
-			// update UI
-			this.UpdateToolsMenuItems();
-		}
-
-
 		// Property changed.
 		protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
 		{
@@ -3626,6 +3608,9 @@ namespace CarinaStudio.ULogViewer.Controls
 					break;
 				case nameof(Session.IsLogsReadingPaused):
 					this.updateStatusBarStateAction.Schedule();
+					break;
+				case nameof(Session.IsProVersionActivated):
+					this.UpdateToolsMenuItems();
 					break;
 				case nameof(Session.IsRemovingLogFiles):
 					if (session.IsRemovingLogFiles)

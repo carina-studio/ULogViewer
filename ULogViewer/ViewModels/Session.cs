@@ -1,5 +1,6 @@
 ﻿using Avalonia.Data.Converters;
 using Avalonia.Media;
+using CarinaStudio.AppSuite.Product;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Data.Converters;
@@ -156,6 +157,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsAnalyzingLogsProperty = ObservableProperty.Register<Session, bool>(nameof(IsAnalyzingLogs));
 		/// <summary>
+		/// Property of <see cref="IsBuiltInLogProfile"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> IsBuiltInLogProfileProperty = ObservableProperty.Register<Session, bool>(nameof(IsBuiltInLogProfile));
+		/// <summary>
 		/// Property of <see cref="IsCopyingLogs"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsCopyingLogsProperty = ObservableProperty.Register<Session, bool>(nameof(IsCopyingLogs));
@@ -191,6 +196,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Property of <see cref="IsProcessingLogs"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsProcessingLogsProperty = ObservableProperty.Register<Session, bool>(nameof(IsProcessingLogs));
+		/// <summary>
+		/// Property of <see cref="IsProVersionActivated"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> IsProVersionActivatedProperty = ObservableProperty.Register<Session, bool>(nameof(IsProVersionActivated));
 		/// <summary>
 		/// Property of <see cref="IsReadingLogs"/>.
 		/// </summary>
@@ -1172,6 +1181,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// attach to log profile manager
 			(LogProfileManager.Default.Profiles as INotifyCollectionChanged)?.Let(it =>
 				it.CollectionChanged += this.OnLogProfilesChanged);
+			
+			// attach to ptoduct manager
+			this.SetValue(IsProVersionActivatedProperty, app.ProductManager.IsProductActivated(Products.Professional));
+			app.ProductManager.ProductActivationChanged += this.OnProductActivationChanged;
 
 			// restore state
 #pragma warning disable CS0612
@@ -2023,6 +2036,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// detach from log profile manager
 			(LogProfileManager.Default.Profiles as INotifyCollectionChanged)?.Let(it =>
 				it.CollectionChanged -= this.OnLogProfilesChanged);
+			
+			// detach from ptoduct manager
+			this.Application.ProductManager.ProductActivationChanged -= this.OnProductActivationChanged;
 
 			// stop watches
 			this.logsReadingWatch.Stop();
@@ -2425,6 +2441,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Check whether current log profile is a built-in log profile or not.
+		/// </summary>
+		public bool IsBuiltInLogProfile => 
+			this.GetValue(IsBuiltInLogProfileProperty);
+
+
+		/// <summary>
 		/// Check whether logs copying is on-going or not.
 		/// </summary>
 		public bool IsCopyingLogs => 
@@ -2500,6 +2523,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public bool IsProcessingLogs => 
 			this.GetValue(IsProcessingLogsProperty);
+		
+
+		/// <summary>
+		/// Check whether Pro-version is activated or not.
+		/// </summary>
+		public bool IsProVersionActivated => 
+			this.GetValue(IsProVersionActivatedProperty);
 
 
 		/// <summary>
@@ -3279,6 +3309,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		}
 
 
+		// Called when product state changed.
+		void OnProductActivationChanged(IProductManager productManager, string productId, bool isActivated)
+		{
+			if (productId == Products.Professional)
+				this.SetValue(IsProVersionActivatedProperty, isActivated);
+		}
+
+
 		// Called when property changed.
 		protected override void OnPropertyChanged(ObservableProperty property, object? oldValue, object? newValue)
 		{
@@ -3322,7 +3360,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			else if (property == LogsDurationProperty)
 				this.SetValue(HasLogsDurationProperty, newValue != null);
 			else if (property == LogProfileProperty)
+			{
 				this.SetValue(HasLogProfileProperty, newValue != null);
+				this.SetValue(IsBuiltInLogProfileProperty, (newValue as LogProfile)?.IsBuiltIn == true);
+			}
 			else if (property == LogsProperty)
 				this.reportLogsTimeInfoAction?.Reschedule();
 			else if (property == MarkedLogsPanelSizeProperty)
