@@ -857,17 +857,7 @@ return False</sys:String>
 	<sys:String x:Key="String/RegexEditorDialog.Title">Edit pattern</sys:String>
 
 	<!-- ScriptDisplayableLogAnalyzer -->
-	<sys:String x:Key="String/ScriptDisplayableLogAnalyzer.AnalysisScript.ErrorOccurred">Error occurred while running script of '{0}' to analyze log:
-{1}</sys:String>
-	<sys:String x:Key="String/ScriptDisplayableLogAnalyzer.AnalysisScript.ErrorOccurred.WithLocation">Error occurred while running script of '{0}' to analyze log:
-{1}
-At line {2} column {3}.</sys:String>
 	<sys:String x:Key="String/ScriptDisplayableLogAnalyzer.CooperativeLogAnalysis">Cooperative log analysis</sys:String>
-	<sys:String x:Key="String/ScriptDisplayableLogAnalyzer.SetupScript.ErrorOccurred">Error occurred while running script of '{0}' to setup analysis:
-{1}</sys:String>
-	<sys:String x:Key="String/ScriptDisplayableLogAnalyzer.SetupScript.ErrorOccurred.WithLocation">Error occurred while running script of '{0}' to setup analysis:
-{1}
-At line {2} column {3}.</sys:String>
 
 	<!-- ScriptLogDataSource -->
 	<sys:String x:Key="String/ScriptLogDataSource.OpeningReaderScript.ErrorOccurred">Error occurred while running script of '{0}' to open raw log reader:
@@ -1061,6 +1051,23 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.OperationDurationAnalysisRuleSet">Operation duration analysis</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.ProVersionOnly">Pro version only</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSetsPopup.Header">Analysis rule sets to apply (multi-selectable)</sys:String>
+	<StaticResourceExtension x:Key="String/SessionView.LogAnalysisScript.CooperativeLogAnalysis" ResourceKey="String/ScriptDisplayableLogAnalyzer.CooperativeLogAnalysis"/>
+	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.AnalysisScript">Error occurred while running script of '{0}' to analyze log:
+{1}</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.AnalysisScript.WithLine">Error occurred while running script of '{0}' to analyze log:
+{1}
+At line {2}.</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.AnalysisScript.WithLineColumn">Error occurred while running script of '{0}' to analyze log:
+{1}
+At line {2} column {3}.</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.SetupScript">Error occurred while running script of '{0}' to setup analysis:
+{1}</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.SetupScript.WithLine">Error occurred while running script of '{0}' to setup analysis:
+{1}
+At line {2}.</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.SetupScript.WithLineColumn">Error occurred while running script of '{0}' to setup analysis:
+{1}
+At line {2} column {3}.</sys:String>
 	<sys:String x:Key="String/SessionView.LogCountInLogFile">Log count:</sys:String>
 	<sys:String x:Key="String/SessionView.LogFileIsUnsupported">File is unsupported in current log profile</sys:String>
 	<sys:String x:Key="String/SessionView.LogFilesPanel">Added log files</sys:String>

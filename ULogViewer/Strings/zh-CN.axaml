@@ -821,17 +821,7 @@ return False</sys:String>
 	<sys:String x:Key="String/RegexEditorDialog.Title">编辑格式</sys:String>
 
 	<!-- ScriptDisplayableLogAnalyzer -->
-	<sys:String x:Key="String/ScriptDisplayableLogAnalyzer.AnalysisScript.ErrorOccurred">执行「{0}」之脚本以分析日志时发生错误：
-{1}</sys:String>
-	<sys:String x:Key="String/ScriptDisplayableLogAnalyzer.AnalysisScript.ErrorOccurred.WithLocation">执行「{0}」之脚本以分析日志时发生错误：
-{1}
-位于第 {2} 行第 {3} 字符。</sys:String>
 	<sys:String x:Key="String/ScriptDisplayableLogAnalyzer.CooperativeLogAnalysis">协同日志分析</sys:String>
-	<sys:String x:Key="String/ScriptDisplayableLogAnalyzer.SetupScript.ErrorOccurred">执行「{0}」之脚本以初始化分析时发生错误：
-{1}</sys:String>
-	<sys:String x:Key="String/ScriptDisplayableLogAnalyzer.SetupScript.ErrorOccurred.WithLocation">执行「{0}」之脚本以初始化分析时发生错误：
-{1}
-位于第 {2} 行第 {3} 字符。</sys:String>
 
 	<!-- ScriptLogDataSource -->
 	<sys:String x:Key="String/ScriptLogDataSource.OpeningReaderScript.ErrorOccurred">执行「{0}」之脚本以开启原始日志行读取器时发生错误：
@@ -1025,6 +1015,23 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.OperationDurationAnalysisRuleSet">动作时距分析</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.ProVersionOnly">限专业版</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSetsPopup.Header">套用的分析规则集 (可多选)</sys:String>
+	<StaticResourceExtension x:Key="String/SessionView.LogAnalysisScript.CooperativeLogAnalysis" ResourceKey="String/ScriptDisplayableLogAnalyzer.CooperativeLogAnalysis"/>
+	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.AnalysisScript">执行「{0}」之脚本以分析日志时发生错误：
+{1}</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.AnalysisScript.WithLine">执行「{0}」之脚本以分析日志时发生错误：
+{1}
+位于第 {2} 行。</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.AnalysisScript.WithLineColumn">执行「{0}」之脚本以分析日志时发生错误：
+{1}
+位于第 {2} 行第 {3} 字符。</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.SetupScript">执行「{0}」之脚本以初始化分析时发生错误：
+{1}</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.SetupScript.WithLine">执行「{0}」之脚本以初始化分析时发生错误：
+{1}
+位于第 {2} 行。</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.SetupScript.WithLineColumn">执行「{0}」之脚本以初始化分析时发生错误：
+{1}
+位于第 {2} 行第 {3} 字符。</sys:String>
 	<sys:String x:Key="String/SessionView.LogCountInLogFile">日志个数：</sys:String>
 	<sys:String x:Key="String/SessionView.LogFileIsUnsupported">当前的日志类型不支持使用档案</sys:String>
 	<sys:String x:Key="String/SessionView.LogFilesPanel">已加入的日志档案</sys:String>
