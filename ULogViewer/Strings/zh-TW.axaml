@@ -816,18 +816,6 @@ return False</sys:String>
 	<!-- ScriptDisplayableLogAnalyzer -->
 	<sys:String x:Key="String/ScriptDisplayableLogAnalyzer.CooperativeLogAnalysis">協同日誌分析</sys:String>
 
-	<!-- ScriptLogDataSource -->
-	<sys:String x:Key="String/ScriptLogDataSource.OpeningReaderScript.ErrorOccurred">執行「{0}」之腳本以開啟原始日誌行讀取器時發生錯誤：
-{1}</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSource.OpeningReaderScript.ErrorOccurred.WithLocation">執行「{0}」之腳本以開啟原始日誌行讀取器時發生錯誤：
-{1}
-位於第 {2} 行第 {3} 字元。</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSource.ReadingLineScript.ErrorOccurred">執行「{0}」之腳本以讀取原始日誌行時發生錯誤：
-{1}</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSource.ReadingLineScript.ErrorOccurred.WithLocation">執行「{0}」之腳本以讀取原始日誌行時發生錯誤：
-{1}
-位於第 {2} 行第 {3} 字元。</sys:String>
-
 	<!-- ScriptLogDataSourceProviderEditorDialog -->
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript">原始日誌行讀取器關閉腳本</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Description">腳本將在關閉原始日誌行讀取器時執行。此腳本不需要回傳值。</sys:String>
@@ -1007,7 +995,12 @@ return None</sys:String>
 	<StaticResourceExtension x:Key="String/SessionView.LogAnalysisScript.CooperativeLogAnalysis" ResourceKey="String/ScriptDisplayableLogAnalyzer.CooperativeLogAnalysis"/>
 	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.AnalysisScript">執行「{0}」之腳本以分析日誌時發生錯誤：</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.SetupScript">執行「{0}」之腳本以初始化分析時發生錯誤：</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.UnknownScript">執行「{0}」之腳本時發生錯誤：</sys:String>
 	<sys:String x:Key="String/SessionView.LogCountInLogFile">日誌個數：</sys:String>
+	<sys:String x:Key="String/SessionView.LogDataSourceScript.RuntimeError.ClosingReaderScript">執行「{0}」之腳本以關閉原始日誌行讀取器時發生錯誤：</sys:String>
+	<sys:String x:Key="String/SessionView.LogDataSourceScript.RuntimeError.OpeningReaderScript">執行「{0}」之腳本以開啟原始日誌行讀取器時發生錯誤：</sys:String>
+	<sys:String x:Key="String/SessionView.LogDataSourceScript.RuntimeError.ReadingLineScript">執行「{0}」之腳本以讀取原始日誌行時發生錯誤：</sys:String>
+	<sys:String x:Key="String/SessionView.LogDataSourceScript.RuntimeError.UnknownScript">執行「{0}」之腳本時發生錯誤：</sys:String>
 	<sys:String x:Key="String/SessionView.LogFileIsUnsupported">目前的日誌類型不支援使用檔案</sys:String>
 	<sys:String x:Key="String/SessionView.LogFilesPanel">已加入的日誌檔案</sys:String>
 	<sys:String x:Key="String/SessionView.LogFiltersCombinationMode">篩選條件組合方式</sys:String>

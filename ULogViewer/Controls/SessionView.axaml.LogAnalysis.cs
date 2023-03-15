@@ -821,7 +821,7 @@ partial class SessionView
         else if (scriptSet.SetupScript == e.Script)
             scriptType = "SetupScript";
         else
-            return;
+            scriptType = "UnknownScript";
         
         // generate message
         var message = new FormattedString();
@@ -829,7 +829,6 @@ partial class SessionView
             message.Bind(FormattedString.Arg1Property, this.Application.GetObservableString("SessionView.LogAnalysisScript.CooperativeLogAnalysis"));
         else
             message.Arg1 = scriptSet.Name;
-        message.Arg2 = e.Error.Message;
         message.Bind(FormattedString.FormatProperty, this.Application.GetObservableString($"SessionView.LogAnalysisScript.RuntimeError.{scriptType}"));
 
         // show dialog

@@ -1,4 +1,6 @@
+using CarinaStudio.AppSuite;
 using CarinaStudio.AppSuite.Scripting;
+using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,11 +10,25 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources;
 /// <summary>
 /// Script-based implementation of <see cref="ILogDataSource"/>.
 /// </summary>
-class ScriptLogDataSource : BaseLogDataSource
+class ScriptLogDataSource : BaseLogDataSource, IScriptRunningHost
 {
     // Constructor.
     internal ScriptLogDataSource(ScriptLogDataSourceProvider provider, LogDataSourceOptions options) : base(provider, options)
     { }
+
+
+    /// <inheritdoc/>
+    IAppSuiteApplication IApplicationObject<IAppSuiteApplication>.Application => this.Application;
+
+
+    /// <inheritdoc/>
+    bool IScriptRunningHost.IsRunningScripts => this.State switch
+    {
+        LogDataSourceState.OpeningReader
+        or LogDataSourceState.ReaderOpened
+        or LogDataSourceState.ClosingReader => true,
+        _ => false,
+    };
 
 
     /// <inheritdoc/>
@@ -34,6 +50,10 @@ class ScriptLogDataSource : BaseLogDataSource
     {
         throw new System.NotImplementedException();
     }
+
+
+    /// <inheritdoc/>
+    public event EventHandler<ScriptRuntimeErrorEventArgs>? ScriptRuntimeErrorOccurred;
 }
 
 

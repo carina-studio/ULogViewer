@@ -15,7 +15,7 @@ using Avalonia.Platform.Storage;
 using Avalonia.VisualTree;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.AppSuite.Controls.Highlighting;
-using CarinaStudio.AppSuite.Product;
+using CarinaStudio.AppSuite.Scripting;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Controls;
@@ -981,6 +981,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			// add event handler
 			session.ErrorMessageGenerated += this.OnErrorMessageGeneratedBySession;
 			session.ExternalDependencyNotFound += this.OnExternalDependencyNotFound;
+			session.LogDataSourceScriptRuntimeErrorOccurred += this.OnLogDataSourceScriptRuntimeErrorOccurred;
 			session.PropertyChanged += this.OnSessionPropertyChanged;
 			this.attachedLogs = session.Logs as INotifyCollectionChanged;
 			if (this.attachedLogs != null)
@@ -2037,6 +2038,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			// remove event handler
 			session.ErrorMessageGenerated -= this.OnErrorMessageGeneratedBySession;
 			session.ExternalDependencyNotFound -= this.OnExternalDependencyNotFound;
+			session.LogDataSourceScriptRuntimeErrorOccurred -= this.OnLogDataSourceScriptRuntimeErrorOccurred;
 			session.PropertyChanged -= this.OnSessionPropertyChanged;
 			if (this.attachedLogs != null)
 			{
@@ -2889,6 +2891,40 @@ namespace CarinaStudio.ULogViewer.Controls
 					listBox.SelectedItem = null;
 				this.logListBox.Focus();
 			});
+		}
+
+
+		// Called when runtime error occurred by script of log data source.
+		void OnLogDataSourceScriptRuntimeErrorOccurred(object? sender, ScriptRuntimeErrorEventArgs e)
+		{
+			// check state
+			if (this.attachedWindow == null)
+				return;
+			if (e.ScriptContainer is not ScriptLogDataSourceProvider provider)
+				return;
+			string scriptType;
+			if (provider.ClosingReaderScript == e.Script)
+				scriptType = "ClosingReaderScript";
+			else if (provider.OpeningReaderScript == e.Script)
+				scriptType = "OpeningReaderScript";
+			else if (provider.ReadingLineScript == e.Script)
+				scriptType = "ReadingLineScript";
+			else
+				scriptType = "UnknownScript";
+			
+			// generate message
+			var message = new FormattedString()
+			{
+				Arg1 = ((ILogDataSourceProvider)provider).DisplayName,
+			};
+			message.Bind(FormattedString.FormatProperty, this.Application.GetObservableString($"SessionView.LogDataSourceScript.RuntimeError.{scriptType}"));
+
+			// show dialog
+			_ = new ScriptRuntimeErrorDialog()
+			{
+				Error = e.Error,
+				Message = message,
+			}.ShowDialog(this.attachedWindow);
 		}
 
 

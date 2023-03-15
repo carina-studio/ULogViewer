@@ -1,6 +1,7 @@
 ﻿using Avalonia.Data.Converters;
 using Avalonia.Media;
 using CarinaStudio.AppSuite.Product;
+using CarinaStudio.AppSuite.Scripting;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Data.Converters;
@@ -1803,6 +1804,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// add event handlers
 			dataSource.MessageGenerated += this.OnLogDataSourceMessageGenerated;
 			dataSource.PropertyChanged += this.OnLogDataSourcePropertyChanged;
+			if (dataSource is IScriptRunningHost scriptRunningHost)
+				scriptRunningHost.ScriptRuntimeErrorOccurred += this.OnLogDataSourceScriptRuntimeErrorOccurred;
 			logReader.LogsChanged += this.OnLogReaderLogsChanged;
 			logReader.PropertyChanged += this.OnLogReaderPropertyChanged;
 
@@ -2086,6 +2089,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			var dataSource = logReader.DataSource;
 			dataSource.MessageGenerated -= this.OnLogDataSourceMessageGenerated;
 			dataSource.PropertyChanged -= this.OnLogDataSourcePropertyChanged;
+			if (dataSource is IScriptRunningHost scriptRunningHost)
+				scriptRunningHost.ScriptRuntimeErrorOccurred -= this.OnLogDataSourceScriptRuntimeErrorOccurred;
 			logReader.LogsChanged -= this.OnLogReaderLogsChanged;
 			logReader.PropertyChanged -= this.OnLogReaderPropertyChanged;
 
@@ -2710,6 +2715,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Raised when runtime error occurred by script of log data source.
+		/// </summary>
+		public event EventHandler<ScriptRuntimeErrorEventArgs>? LogDataSourceScriptRuntimeErrorOccurred;
+
+
+		/// <summary>
 		/// Get or set size of panel of added log files.
 		/// </summary>
 		public double LogFilesPanelSize
@@ -3056,6 +3067,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				}
 			}
 		}
+
+
+		// Called when runtime error occurred by script pf log data source.
+		void OnLogDataSourceScriptRuntimeErrorOccurred(object? sender, ScriptRuntimeErrorEventArgs e) =>
+			this.LogDataSourceScriptRuntimeErrorOccurred?.Invoke(this, e);
 
 
 		// Called when collection of log profiles changed.
