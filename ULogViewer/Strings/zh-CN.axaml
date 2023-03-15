@@ -470,7 +470,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet">协同日志分析脚本</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.ConfirmDeletion">脚本删除后将无法复原，您是否确定要删除日志分析脚本？</sys:String>
 	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.Create" ResourceKey="String/Common.Create.WithDialog"/>
-	<sys:String x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.Description">当使用此日志类型时将自动执行此日志分析脚本。</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.Description">当使用此日志类型时将自动运行此日志分析脚本。</sys:String>
 	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.Edit" ResourceKey="String/Common.Edit.WithDialog"/>
 	<sys:String x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.ImportExisting">导入现有的日志分析脚本…</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.ImportFromFile">从文件导入…</sys:String>
@@ -824,20 +824,20 @@ return False</sys:String>
 	<sys:String x:Key="String/ScriptDisplayableLogAnalyzer.CooperativeLogAnalysis">协同日志分析</sys:String>
 
 	<!-- ScriptLogDataSource -->
-	<sys:String x:Key="String/ScriptLogDataSource.OpeningReaderScript.ErrorOccurred">执行「{0}」之脚本以开启原始日志行读取器时发生错误：
+	<sys:String x:Key="String/ScriptLogDataSource.OpeningReaderScript.ErrorOccurred">运行「{0}」之脚本以开启原始日志行读取器时发生错误：
 {1}</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSource.OpeningReaderScript.ErrorOccurred.WithLocation">执行「{0}」之脚本以开启原始日志行读取器时发生错误：
+	<sys:String x:Key="String/ScriptLogDataSource.OpeningReaderScript.ErrorOccurred.WithLocation">运行「{0}」之脚本以开启原始日志行读取器时发生错误：
 {1}
 位于第 {2} 行第 {3} 字符。</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSource.ReadingLineScript.ErrorOccurred">执行「{0}」之脚本以读取原始日志行时发生错误：
+	<sys:String x:Key="String/ScriptLogDataSource.ReadingLineScript.ErrorOccurred">运行「{0}」之脚本以读取原始日志行时发生错误：
 {1}</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSource.ReadingLineScript.ErrorOccurred.WithLocation">执行「{0}」之脚本以读取原始日志行时发生错误：
+	<sys:String x:Key="String/ScriptLogDataSource.ReadingLineScript.ErrorOccurred.WithLocation">运行「{0}」之脚本以读取原始日志行时发生错误：
 {1}
 位于第 {2} 行第 {3} 字符。</sys:String>
 
 	<!-- ScriptLogDataSourceProviderEditorDialog -->
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript">原始日志行读取器关闭脚本</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Description">脚本将在关闭原始日志行读取器时执行。此脚本不需要返回值。</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Description">脚本将在关闭原始日志行读取器时运行。此脚本不需要返回值。</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Template.CSharp">/*
  * 相关型别已自动添加以提供日志读取所需，例如 FileStream。
  * 请参阅 https://carinastudio.azurewebsites.net/ULogViewer/Scripting
@@ -853,7 +853,7 @@ return False</sys:String>
 # 及 https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource 以取得更多信息。</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.DisplayName">名称 (必要)</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript">原始日志行读取器开启脚本</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Description">脚本将在开启原始日志行读取器时执行。需返回 LogDataSourceState.ReaderOpened 表示读取器开启成功，或其他值表示失败。</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Description">脚本将在开启原始日志行读取器时运行。需返回 LogDataSourceState.ReaderOpened 表示读取器开启成功，或其他值表示失败。</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Template.CSharp">/*
  * 相关型别已自动添加以提供日志读取所需，例如 FileStream 及 LogDataSourceState。
  * 请参阅 https://carinastudio.azurewebsites.net/ULogViewer/Scripting
@@ -893,7 +893,7 @@ return LogDataSourceState.unclassifiedError;</sys:String>
 #   * LogDataSourceState.UnclassifiedError
 return LogDataSourceState.UnclassifiedError</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript">原始日志行读取脚本</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Description">脚本将在每行原始日志行读取时执行。需返回字符串 (String) 或 Null 表示已读取至最后一行。</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Description">脚本将在每行原始日志行读取时运行。需返回字符串 (String) 或 Null 表示已读取至最后一行。</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Template.CSharp">/*
  * 相关型别已自动添加以提供日志读取所需，例如 FileStream。
  * 请参阅 https://carinastudio.azurewebsites.net/ULogViewer/Scripting
@@ -1016,22 +1016,8 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.ProVersionOnly">限专业版</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSetsPopup.Header">套用的分析规则集 (可多选)</sys:String>
 	<StaticResourceExtension x:Key="String/SessionView.LogAnalysisScript.CooperativeLogAnalysis" ResourceKey="String/ScriptDisplayableLogAnalyzer.CooperativeLogAnalysis"/>
-	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.AnalysisScript">执行「{0}」之脚本以分析日志时发生错误：
-{1}</sys:String>
-	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.AnalysisScript.WithLine">执行「{0}」之脚本以分析日志时发生错误：
-{1}
-位于第 {2} 行。</sys:String>
-	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.AnalysisScript.WithLineColumn">执行「{0}」之脚本以分析日志时发生错误：
-{1}
-位于第 {2} 行第 {3} 字符。</sys:String>
-	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.SetupScript">执行「{0}」之脚本以初始化分析时发生错误：
-{1}</sys:String>
-	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.SetupScript.WithLine">执行「{0}」之脚本以初始化分析时发生错误：
-{1}
-位于第 {2} 行。</sys:String>
-	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.SetupScript.WithLineColumn">执行「{0}」之脚本以初始化分析时发生错误：
-{1}
-位于第 {2} 行第 {3} 字符。</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.AnalysisScript">运行「{0}」之脚本以分析日志时发生错误：</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.SetupScript">运行「{0}」之脚本以初始化分析时发生错误：</sys:String>
 	<sys:String x:Key="String/SessionView.LogCountInLogFile">日志个数：</sys:String>
 	<sys:String x:Key="String/SessionView.LogFileIsUnsupported">当前的日志类型不支持使用档案</sys:String>
 	<sys:String x:Key="String/SessionView.LogFilesPanel">已加入的日志档案</sys:String>
@@ -1058,7 +1044,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.MarkUnmarkLogs">标记/解除标记日志</sys:String>
 	<sys:String x:Key="String/SessionView.MemoryUsage">私有内存使用量</sys:String>
 	<sys:String x:Key="String/SessionView.MultipleFilesAreNotAllowed">目前的日志类型不允许加入多个档案。</sys:String>
-	<sys:String x:Key="String/SessionView.NeedToEnableRunningScript">「{0}」需要脚本执行功能，您需要在使用之前启用脚本执行。</sys:String>
+	<sys:String x:Key="String/SessionView.NeedToEnableRunningScript">「{0}」需要脚本运行功能，您需要在使用之前启用脚本运行。</sys:String>
 	<sys:String x:Key="String/SessionView.NeedToRestartAsAdministrator">「{0}」需要系统管理员身份，是否要以系统管理员身份重新启动应用程序并使用此日志类型？</sys:String>
 	<sys:String x:Key="String/SessionView.NoFilePathDropped">请拖放有效的档案。</sys:String>
 	<sys:String x:Key="String/SessionView.OtherActions">其他动作</sys:String>

@@ -1,8 +1,11 @@
+using CarinaStudio.AppSuite;
 using CarinaStudio.AppSuite.Product;
+using CarinaStudio.AppSuite.Scripting;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Diagnostics;
 using CarinaStudio.Threading;
+using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ULogViewer.ViewModels.Analysis;
 using CarinaStudio.ULogViewer.ViewModels.Analysis.ContextualBased;
 using CarinaStudio.ULogViewer.ViewModels.Analysis.Scripting;
@@ -17,14 +20,13 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Windows.Input;
-using CarinaStudio.ULogViewer.Logs.Profiles;
 
 namespace CarinaStudio.ULogViewer.ViewModels;
 
 /// <summary>
 /// View-model of log analysis.
 /// </summary>
-class LogAnalysisViewModel : SessionComponent
+class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
 {
     /// <summary>
     /// Property of <see cref="AnalysisProgress"/>.
@@ -422,6 +424,10 @@ class LogAnalysisViewModel : SessionComponent
     public IList<DisplayableLogAnalysisResult> AnalysisResults { get; }
 
 
+    /// <inheritdoc/>
+    IAppSuiteApplication IApplicationObject<IAppSuiteApplication>.Application => this.Application;
+
+
     // Attach to given log analyzer.
     void AttachToAnalyzer(IDisplayableLogAnalyzer<DisplayableLogAnalysisResult> analyzer)
     {
@@ -438,6 +444,8 @@ class LogAnalysisViewModel : SessionComponent
             notifyCollectionChanged.CollectionChanged += this.OnAnalyzerAnalysisResultsChanged;
         analyzer.ErrorMessageGenerated += this.OnAnalyzerErrorMessageGenerated;
         analyzer.PropertyChanged += this.OnAnalyzerPropertyChanged;
+        if (analyzer is IScriptRunningHost scriptRunningHost)
+            scriptRunningHost.ScriptRuntimeErrorOccurred += this.OnAnalyzerScriptRuntimeErrorOccurred;
 
         // add analysis results
         this.analysisResults.AddAll(analyzer.AnalysisResults);
@@ -555,6 +563,8 @@ class LogAnalysisViewModel : SessionComponent
             notifyCollectionChanged.CollectionChanged -= this.OnAnalyzerAnalysisResultsChanged;
         analyzer.ErrorMessageGenerated -= this.OnAnalyzerErrorMessageGenerated;
         analyzer.PropertyChanged -= this.OnAnalyzerPropertyChanged;
+        if (analyzer is IScriptRunningHost scriptRunningHost)
+            scriptRunningHost.ScriptRuntimeErrorOccurred -= this.OnAnalyzerScriptRuntimeErrorOccurred;
 
         // remove analysis results
         if (!isDisposing)
@@ -641,10 +651,21 @@ class LogAnalysisViewModel : SessionComponent
     }
 
 
+    /// <inheritdoc/>
+    bool IScriptRunningHost.IsRunningScripts => ((IScriptRunningHost)this.coopScriptLogAnalyzer).IsRunningScripts
+                    || ((IScriptRunningHost)this.scriptLogAnalyzer).IsRunningScripts;
+
+
     /// <summary>
     /// Get list of <see cref="KeyLogAnalysisRuleSet"/> for log analysis.
     /// </summary>
     public IList<KeyLogAnalysisRuleSet> KeyLogAnalysisRuleSets { get => this.keyLogAnalysisRuleSets; }
+
+
+    /// <summary>
+    /// Runtime error was occurred in one of log analysis script.
+    /// </summary>
+    public event EventHandler<ScriptRuntimeErrorEventArgs>? LogAnalysisScriptRuntimeErrorOccurred;
 
 
     /// <summary>
@@ -761,6 +782,11 @@ class LogAnalysisViewModel : SessionComponent
                 break;
         }
     }
+
+
+    // Called when runtime error occurred by script running by analyzer.
+    void OnAnalyzerScriptRuntimeErrorOccurred(object? sender, ScriptRuntimeErrorEventArgs e) =>
+        this.LogAnalysisScriptRuntimeErrorOccurred?.Invoke(this, e);
 
 
     /// <inheritdoc/>
@@ -1037,6 +1063,14 @@ class LogAnalysisViewModel : SessionComponent
     {
         get => this.GetValue(PanelSizeProperty);
         set => this.SetValue(PanelSizeProperty, value);
+    }
+
+
+    /// <inheritdoc/>
+    event EventHandler<ScriptRuntimeErrorEventArgs>? IScriptRunningHost.ScriptRuntimeErrorOccurred
+    {
+        add => this.LogAnalysisScriptRuntimeErrorOccurred += value;
+        remove => this.LogAnalysisScriptRuntimeErrorOccurred -= value;
     }
 
 

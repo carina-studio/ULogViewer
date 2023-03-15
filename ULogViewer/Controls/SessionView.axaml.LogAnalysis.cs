@@ -7,6 +7,7 @@ using Avalonia.Platform.Storage;
 using Avalonia.VisualTree;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.AppSuite.Data;
+using CarinaStudio.AppSuite.Scripting;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.IO;
@@ -802,6 +803,41 @@ partial class SessionView
         }
         else
             this.updateLogAnalysisAction.Reschedule(UpdateLogAnalysisParamsDelay);
+    }
+
+
+    // Called when runtime error occurred by log analysis script.
+    void OnLogAnalysisScriptRuntimeErrorOccurred(object? sender, ScriptRuntimeErrorEventArgs e)
+    {
+        // check state
+        if (this.attachedWindow == null)
+            return;
+        if (e.ScriptContainer is not LogAnalysisScriptSet scriptSet)
+            return;
+        bool isCooperativeLogAnalysis = (this.DataContext as Session)?.LogProfile?.CooperativeLogAnalysisScriptSet == scriptSet;
+        string scriptType;
+        if (scriptSet.AnalysisScript == e.Script)
+            scriptType = "AnalysisScript";
+        else if (scriptSet.SetupScript == e.Script)
+            scriptType = "SetupScript";
+        else
+            return;
+        
+        // generate message
+        var message = new FormattedString();
+        if (isCooperativeLogAnalysis)
+            message.Bind(FormattedString.Arg1Property, this.Application.GetObservableString("SessionView.LogAnalysisScript.CooperativeLogAnalysis"));
+        else
+            message.Arg1 = scriptSet.Name;
+        message.Arg2 = e.Error.Message;
+        message.Bind(FormattedString.FormatProperty, this.Application.GetObservableString($"SessionView.LogAnalysisScript.RuntimeError.{scriptType}"));
+
+        // show dialog
+        _ = new ScriptRuntimeErrorDialog()
+        {
+            Error = e.Error,
+            Message = message,
+        }.ShowDialog(this.attachedWindow);
     }
 
 

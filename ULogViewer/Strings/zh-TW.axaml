@@ -1005,22 +1005,8 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.ProVersionOnly">限專業版</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSetsPopup.Header">套用的分析規則集 (可多選)</sys:String>
 	<StaticResourceExtension x:Key="String/SessionView.LogAnalysisScript.CooperativeLogAnalysis" ResourceKey="String/ScriptDisplayableLogAnalyzer.CooperativeLogAnalysis"/>
-	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.AnalysisScript">執行「{0}」之腳本以分析日誌時發生錯誤：
-{1}</sys:String>
-	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.AnalysisScript.WithLine">執行「{0}」之腳本以分析日誌時發生錯誤：
-{1}
-位於第 {2} 行。</sys:String>
-	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.AnalysisScript.WithLineColumn">執行「{0}」之腳本以分析日誌時發生錯誤：
-{1}
-位於第 {2} 行第 {3} 字元。</sys:String>
-	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.SetupScript">執行「{0}」之腳本以初始化分析時發生錯誤：
-{1}</sys:String>
-	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.SetupScript.WithLine">執行「{0}」之腳本以初始化分析時發生錯誤：
-{1}
-位於第 {2} 行。</sys:String>
-	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.SetupScript.WithLineColumn">執行「{0}」之腳本以初始化分析時發生錯誤：
-{1}
-位於第 {2} 行第 {3} 字元。</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.AnalysisScript">執行「{0}」之腳本以分析日誌時發生錯誤：</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.SetupScript">執行「{0}」之腳本以初始化分析時發生錯誤：</sys:String>
 	<sys:String x:Key="String/SessionView.LogCountInLogFile">日誌個數：</sys:String>
 	<sys:String x:Key="String/SessionView.LogFileIsUnsupported">目前的日誌類型不支援使用檔案</sys:String>
 	<sys:String x:Key="String/SessionView.LogFilesPanel">已加入的日誌檔案</sys:String>

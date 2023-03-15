@@ -987,6 +987,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.attachedLogs.CollectionChanged += this.OnLogsChanged;
 			(session.MarkedLogs as INotifyCollectionChanged)?.Let(it =>
 				it.CollectionChanged += this.OnMarkedLogsChanged);
+			session.LogAnalysis.LogAnalysisScriptRuntimeErrorOccurred += this.OnLogAnalysisScriptRuntimeErrorOccurred;
 			(session.LogFiltering.PredefinedTextFilters as INotifyCollectionChanged)?.Let(it =>
 				it.CollectionChanged += this.OnSelectedPredefinedLogTextFiltersChanged);
 			this.AttachToLogAnalysis(session.LogAnalysis);
@@ -2044,6 +2045,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			(session.MarkedLogs as INotifyCollectionChanged)?.Let(it =>
 				it.CollectionChanged -= this.OnMarkedLogsChanged);
+			session.LogAnalysis.LogAnalysisScriptRuntimeErrorOccurred -= this.OnLogAnalysisScriptRuntimeErrorOccurred;
 			(session.LogFiltering.PredefinedTextFilters as INotifyCollectionChanged)?.Let(it =>
 				it.CollectionChanged -= this.OnSelectedPredefinedLogTextFiltersChanged);
 			this.DetachFromLogAnalysis(session.LogAnalysis);

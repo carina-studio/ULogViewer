@@ -1,3 +1,5 @@
+using CarinaStudio.AppSuite;
+using CarinaStudio.AppSuite.Scripting;
 using CarinaStudio.Collections;
 using CarinaStudio.Threading;
 using System;
@@ -11,7 +13,7 @@ namespace CarinaStudio.ULogViewer.ViewModels.Analysis.Scripting;
 /// <summary>
 /// Log analyzer based-on user defined script.
 /// </summary>
-class ScriptDisplayableLogAnalyzer : BaseDisplayableLogAnalyzer<ScriptDisplayableLogAnalyzer.AnalysisToken>
+class ScriptDisplayableLogAnalyzer : BaseDisplayableLogAnalyzer<ScriptDisplayableLogAnalyzer.AnalysisToken>, IScriptRunningHost
 {
     /// <summary>
     /// Token of analysis.
@@ -42,6 +44,10 @@ class ScriptDisplayableLogAnalyzer : BaseDisplayableLogAnalyzer<ScriptDisplayabl
     }
 
 
+    /// <inheritdoc/>
+    IAppSuiteApplication IApplicationObject<IAppSuiteApplication>.Application => this.Application;
+
+
     /// <summary>
     /// Get or set whether <see cref="ScriptSets"/> are cooperative log analysis script sets of one or more log profiles or not.
     /// </summary>
@@ -59,6 +65,10 @@ class ScriptDisplayableLogAnalyzer : BaseDisplayableLogAnalyzer<ScriptDisplayabl
             this.OnPropertyChanged(nameof(IsCooperativeLogAnalysis));
         }
     }
+
+
+    /// <inheritdoc/>
+    bool IScriptRunningHost.IsRunningScripts => this.IsProcessing;
 
 
     /// <inheritdoc/>
@@ -148,6 +158,10 @@ class ScriptDisplayableLogAnalyzer : BaseDisplayableLogAnalyzer<ScriptDisplayabl
         }
         this.InvalidateProcessing();
     }
+
+
+    /// <inheritdoc/>
+    public event EventHandler<ScriptRuntimeErrorEventArgs>? ScriptRuntimeErrorOccurred;
 
 
     /// <summary>
