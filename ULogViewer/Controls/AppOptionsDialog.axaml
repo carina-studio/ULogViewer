@@ -55,13 +55,6 @@
 				</Grid>
 				<Separator Classes="Dialog_Separator"/>
 
-				<!-- Use system accent color -->
-				<StackPanel IsVisible="{Binding $parent[Window].Application.IsSystemAccentColorSupported}" Orientation="Vertical">
-					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/AppOptionsDialog.UseSystemAccentColor}"/>
-					<ToggleSwitch Classes="Dialog_ToggleSwitch" IsChecked="{Binding UseSystemAccentColor, Mode=TwoWay}"/>
-					<Separator Classes="Dialog_Separator"/>
-				</StackPanel>
-
 				<!-- Compact UI -->
 				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/ApplicationOptions.UseCompactUserInterface}"/>
 				<ToggleSwitch Classes="Dialog_ToggleSwitch" IsChecked="{Binding UseCompactUserInterface, Mode=TwoWay}"/>
