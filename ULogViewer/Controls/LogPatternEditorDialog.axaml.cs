@@ -39,10 +39,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Generate result.
 		protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken)
 		{
-			var editingLogPattern = this.LogPattern;
 			var newLogPattern = new LogPattern(this.patternEditor.Pattern.AsNonNull(), this.repeatableSwitch.IsChecked.GetValueOrDefault(), this.skippableSwitch.IsChecked.GetValueOrDefault());
-			if (editingLogPattern != null && editingLogPattern == newLogPattern)
-				return Task.FromResult((object?)editingLogPattern);
 			return Task.FromResult((object?)newLogPattern);
 		}
 

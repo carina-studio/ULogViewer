@@ -537,13 +537,14 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionContextMenu.CurrentLogProfile">(目前使用)</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionContextMenu.EditCurrentLogProfile">編輯「{0}」…</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionContextMenu.ExportCurrentLogProfile">匯出「{0}」…</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionContextMenu.RemoveCurrentLogProfile">刪除「{0}」…</sys:String>
 
 	<!-- LogProfileSelectionDialog -->
 	<sys:String x:Key="String/LogProfileSelectionDialog.AddLogProfile">建立…</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.AllLogProfiles">所有日誌類型</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.BuiltInLogProfile">內建</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.CannotImportProVersionOnlyLogProfile">無法從 '{0}' 匯入日誌類型因其包含專業版之參數。</sys:String>
-	<sys:String x:Key="String/LogProfileSelectionDialog.ConfirmRemovingLogProfile">您是否確定要移除日誌類型「{0}」？</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionDialog.ConfirmRemovingLogProfile">日誌類型刪除後將無法復原，您是否確定要刪除日誌類型「{0}」？</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.EditLogProfile">編輯日誌類型</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.ExportLogProfile">匯出日誌類型</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.FailedToExportLogProfile">無法匯出日誌類型至 '{0}'。</sys:String>
@@ -792,6 +793,10 @@ return False</sys:String>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Title.Create">建立文字篩選</sys:String>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Title.Edit">編輯文字篩選</sys:String>
 
+	<!-- Product -->
+	<sys:String x:Key="String/Product.ULogViewer-Pro">ULogViewer 專業版</sys:String>
+	<sys:String x:Key="String/Product.ULogViewer-Pro-Test">ULogViewer 專業版 (測試)</sys:String>
+
 	<!-- PushVarEditorDialog -->
 	<sys:String x:Key="String/PushVarEditorDialog.Title">將變數值加入堆疊</sys:String>
 
@@ -907,8 +912,8 @@ return None</sys:String>
 
 	<!-- ScriptLogDataSourceProvidersDialog -->
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.CannotAddMoreProviderWithoutProVersion">在啟用專業版之前，您無法建立更多的日誌資料來源腳本。</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.ConfirmDeletingProvider">您是否確定要刪除日誌資料來源腳本「{0}」？</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.ConfirmDeletingProvider.WithLogProfiles">您是否確定要刪除日誌資料來源腳本「{0}」以及相關的 {1} 個日誌類型？</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.ConfirmDeletingProvider">腳本刪除後將無法復原，您是否確定要刪除日誌資料來源腳本「{0}」？</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.ConfirmDeletingProvider.WithLogProfiles">腳本刪除後將無法復原，您是否確定要刪除日誌資料來源腳本「{0}」以及相關的 {1} 個日誌類型？</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.FailedToExportProvider">無法將日誌資料來源腳本「{0}」匯出至 '{1}'。</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.FailedToImportProvider">無法自檔案 '{0}' 匯入日誌資料來源腳本。</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.RestrictionsOfNonProVersion">在啟用專業版之前，您只能建立 1 個日誌資料來源腳本，且在關閉 ULogViewer 後不會被儲存。</sys:String>
@@ -937,8 +942,8 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.ClearLogAnalysisRuleSetsSelection">清除選取</sys:String>
 	<sys:String x:Key="String/SessionView.ClearLogFiles">清除所有已加入的日誌檔案</sys:String>
 	<sys:String x:Key="String/SessionView.ClearPredefinedLogTextFiltersSelection">清除選取</sys:String>
-	<sys:String x:Key="String/SessionView.ConfirmRemovingLogAnalysisRuleSet">您是否確定要移除規則集「{0}」？</sys:String>
-	<sys:String x:Key="String/SessionView.ConfirmRemovingLogAnalysisScriptSet">您是否確定要移除腳本「{0}」？</sys:String>
+	<sys:String x:Key="String/SessionView.ConfirmRemovingLogAnalysisRuleSet">規則集刪除後將無法復原，您是否確定要移除規則集「{0}」？</sys:String>
+	<sys:String x:Key="String/SessionView.ConfirmRemovingLogAnalysisScriptSet">腳本刪除後將無法復原，您是否確定要移除腳本「{0}」？</sys:String>
 	<sys:String x:Key="String/SessionView.ConfirmSelectingAllLogs">選取大量日誌會使用一些時間。是否要繼續選取？</sys:String>
 	<sys:String x:Key="String/SessionView.ConfirmShowingHelpButtonOnLogTextFilter">您是否要繼續在文字篩選欄位中顯示「說明」按鈕？您可以在「應用程式選項」中變更此設定。</sys:String>
 	<sys:String x:Key="String/SessionView.ConfirmSwitchingToCopiedLogProfile">您是否要立即切換至「{0}」？</sys:String>

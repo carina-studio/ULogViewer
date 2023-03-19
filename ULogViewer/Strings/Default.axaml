@@ -498,7 +498,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.ColorIndicator.Description">Way of grouping to show color block on the left hand side of each log.</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Common">Common</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet">Cooperative log analysis script</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.ConfirmDeletion">Are you sure to delete log analysis script?</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.ConfirmDeletion">It cannot be recovered once you delete the script. Are you sure to delete log analysis script?</sys:String>
 	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.Create" ResourceKey="String/Common.Create.WithDialog"/>
 	<sys:String x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.Description">The log analysis script will be run automatically when using this profile.</sys:String>
 	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.Edit" ResourceKey="String/Common.Edit.WithDialog"/>
@@ -510,7 +510,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Description">Description</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.DuplicateLogLevelMapEntry">Conversion from '{0}' is already defined.</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider">Embedded log data source script</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.ConfirmDeletion">Are you sure to delete log data source script?</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.ConfirmDeletion">It cannot be recovered once you delete the script. Are you sure to delete log data source script?</sys:String>
 	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.Create" ResourceKey="String/Common.Create.WithDialog"/>
 	<sys:String x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.Description">You can set embedded log data source script as 'Data source' of the profile.</sys:String>
 	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.Edit" ResourceKey="String/Common.Edit.WithDialog"/>
@@ -574,13 +574,14 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionContextMenu.CurrentLogProfile">(Current)</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionContextMenu.EditCurrentLogProfile">Edit '{0}'…</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionContextMenu.ExportCurrentLogProfile">Export '{0}'…</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionContextMenu.RemoveCurrentLogProfile">Delete '{0}'…</sys:String>
 
 	<!-- LogProfileSelectionDialog -->
 	<sys:String x:Key="String/LogProfileSelectionDialog.AddLogProfile">Create…</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.AllLogProfiles">All profiles</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.BuiltInLogProfile">Built-in</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.CannotImportProVersionOnlyLogProfile">Unable to import profile from '{0}' because of containing Pro version parameters.</sys:String>
-	<sys:String x:Key="String/LogProfileSelectionDialog.ConfirmRemovingLogProfile">Are you sure to remove log profile '{0}'?</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionDialog.ConfirmRemovingLogProfile">It cannot be recovered once you delete the log profile. Are you sure to remove log profile '{0}'?</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.EditLogProfile">Edit profile</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.ExportLogProfile">Export profile</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.FailedToExportLogProfile">Unable to export profile to '{0}'.</sys:String>
@@ -835,6 +836,10 @@ return False</sys:String>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Title.Create">Create text filter</sys:String>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Title.Edit">Edit text filter</sys:String>
 
+	<!-- Product -->
+	<sys:String x:Key="String/Product.ULogViewer-Pro">ULogViewer Pro</sys:String>
+	<sys:String x:Key="String/Product.ULogViewer-Pro-Test">ULogViewer Pro (Test)</sys:String>
+
 	<!-- PushVarEditorDialog -->
 	<sys:String x:Key="String/PushVarEditorDialog.Title">Push value of variable to stack</sys:String>
 
@@ -950,8 +955,8 @@ return None</sys:String>
 
 	<!-- ScriptLogDataSourceProvidersDialog -->
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.CannotAddMoreProviderWithoutProVersion">Cannot create more log data source script before activating Pro version.</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.ConfirmDeletingProvider">Are you sure to delete log data source script '{0}'?</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.ConfirmDeletingProvider.WithLogProfiles">Are you sure to delete log data source script '{0}' and {1} related log profile(s)?</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.ConfirmDeletingProvider">It cannot be recovered once you delete the script. Are you sure to delete log data source script '{0}'?</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.ConfirmDeletingProvider.WithLogProfiles">It cannot be recovered once you delete the script. Are you sure to delete log data source script '{0}' and {1} related log profile(s)?</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.FailedToExportProvider">Unable to export data source script '{0}' to '{1}'.</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.FailedToImportProvider">Unable to import data source script from '{0}'.</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.RestrictionsOfNonProVersion">Before activating Pro version, you can have only 1 log data source script and script won't be kept after closing ULogViewer.</sys:String>
@@ -984,8 +989,8 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.ClearLogAnalysisRuleSetsSelection">Clear selection</sys:String>
 	<sys:String x:Key="String/SessionView.ClearLogFiles">Clear all added log files</sys:String>
 	<sys:String x:Key="String/SessionView.ClearPredefinedLogTextFiltersSelection">Create…</sys:String>
-	<sys:String x:Key="String/SessionView.ConfirmRemovingLogAnalysisRuleSet">Are you sure to remove the rule set '{0}'?</sys:String>
-	<sys:String x:Key="String/SessionView.ConfirmRemovingLogAnalysisScriptSet">Are you sure to remove the script '{0}'?</sys:String>
+	<sys:String x:Key="String/SessionView.ConfirmRemovingLogAnalysisRuleSet">It cannot be recovered once you delete the rule set. Are you sure to remove the rule set '{0}'?</sys:String>
+	<sys:String x:Key="String/SessionView.ConfirmRemovingLogAnalysisScriptSet">It cannot be recovered once you delete the script. Are you sure to remove the script '{0}'?</sys:String>
 	<sys:String x:Key="String/SessionView.ConfirmSelectingAllLogs">It will take some time to select large amount of logs. Do you want to continue selection?</sys:String>
 	<sys:String x:Key="String/SessionView.ConfirmShowingHelpButtonOnLogTextFilter">Do you want to keep 'Help' button on input field of text filter? You can change the setting in 'Options' dialog.</sys:String>
 	<sys:String x:Key="String/SessionView.ConfirmSwitchingToCopiedLogProfile">Do you want to switch to '{0}' now?</sys:String>

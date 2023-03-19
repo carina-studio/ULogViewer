@@ -544,13 +544,14 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionContextMenu.CurrentLogProfile">(目前使用)</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionContextMenu.EditCurrentLogProfile">编辑「{0}」…</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionContextMenu.ExportCurrentLogProfile">导出「{0}」…</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionContextMenu.RemoveCurrentLogProfile">删除「{0}」…</sys:String>
 
 	<!-- LogProfileSelectionDialog -->
 	<sys:String x:Key="String/LogProfileSelectionDialog.AddLogProfile">建立…</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.AllLogProfiles">所有日志类型</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.BuiltInLogProfile">內建</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.CannotImportProVersionOnlyLogProfile">无法从 '{0}' 汇入日志类型因其包含专业版之参数。</sys:String>
-	<sys:String x:Key="String/LogProfileSelectionDialog.ConfirmRemovingLogProfile">您是否确定要移除日志类型「{0}」？</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionDialog.ConfirmRemovingLogProfile">日志类型删除后将无法复原，您是否确定要删除日志类型「{0}」？</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.EditLogProfile">编辑日志类型</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.ExportLogProfile">导出日志类型</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.FailedToExportLogProfile">无法输出日志类型至 '{0}'。</sys:String>
@@ -799,6 +800,10 @@ return False</sys:String>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Title.Create">创建文字过滤器</sys:String>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Title.Edit">编辑文字过滤器</sys:String>
 
+	<!-- Product -->
+	<sys:String x:Key="String/Product.ULogViewer-Pro">ULogViewer 专业版</sys:String>
+	<sys:String x:Key="String/Product.ULogViewer-Pro-Test">ULogViewer 专业版 (测试)</sys:String>
+
 	<!-- PushVarEditorDialog -->
 	<sys:String x:Key="String/PushVarEditorDialog.Title">将变量值加入堆栈</sys:String>
 
@@ -914,8 +919,8 @@ return None</sys:String>
 
 	<!-- ScriptLogDataSourceProvidersDialog -->
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.CannotAddMoreProviderWithoutProVersion">在启用专业版之前，您无法建立更多的日志资料来源脚本。</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.ConfirmDeletingProvider">您是否确定要删除日志资料来源脚本「{0}」？</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.ConfirmDeletingProvider.WithLogProfiles">您是否确定要删除日志资料来源脚本「{0}」以及相关的 {1} 个日志类型？</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.ConfirmDeletingProvider">脚本删除后将无法复原，您是否确定要删除日志资料来源脚本「{0}」？</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.ConfirmDeletingProvider.WithLogProfiles">脚本删除后将无法复原，您是否确定要删除日志资料来源脚本「{0}」以及相关的 {1} 个日志类型？</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.FailedToExportProvider">无法将日志资料来源脚本「{0}」导出至 '{1}'。</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.FailedToImportProvider">无法自文件 '{0}' 导入日志资料来源脚本。</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.RestrictionsOfNonProVersion">在启用专业版之前，您只能建立 1 个日志资料来源脚本，且在关闭 ULogViewer 后不会被保留。</sys:String>
@@ -948,8 +953,8 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.ClearLogAnalysisRuleSetsSelection">清除选择</sys:String>
 	<sys:String x:Key="String/SessionView.ClearLogFiles">清除所有已加入的日志档案</sys:String>
 	<sys:String x:Key="String/SessionView.ClearPredefinedLogTextFiltersSelection">清除选择</sys:String>
-	<sys:String x:Key="String/SessionView.ConfirmRemovingLogAnalysisRuleSet">您是否确定要移除规则集「{0}」？</sys:String>
-	<sys:String x:Key="String/SessionView.ConfirmRemovingLogAnalysisScriptSet">您是否确定要移除脚本「{0}」？</sys:String>
+	<sys:String x:Key="String/SessionView.ConfirmRemovingLogAnalysisRuleSet">规则集删除后将无法复原，您是否确定要移除规则集「{0}」？</sys:String>
+	<sys:String x:Key="String/SessionView.ConfirmRemovingLogAnalysisScriptSet">脚本删除后将无法复原，您是否确定要移除脚本「{0}」？</sys:String>
 	<sys:String x:Key="String/SessionView.ConfirmSelectingAllLogs">选择大量日志会使用一些时间，是否继续选择？</sys:String>
 	<sys:String x:Key="String/SessionView.ConfirmShowingHelpButtonOnLogTextFilter">您是否要继续在文字筛选栏位中显示「说明」按钮？您可以在「应用程序选项」中变更此设置。</sys:String>
 	<sys:String x:Key="String/SessionView.ConfirmSwitchingToCopiedLogProfile">您是否要立即切换至「{0}」？</sys:String>

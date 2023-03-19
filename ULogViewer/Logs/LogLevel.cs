@@ -5,7 +5,7 @@ namespace CarinaStudio.ULogViewer.Logs
 	/// <summary>
 	/// Level of log.
 	/// </summary>
-	enum LogLevel
+	public enum LogLevel
 	{
 		/// <summary>
 		/// Undefined.

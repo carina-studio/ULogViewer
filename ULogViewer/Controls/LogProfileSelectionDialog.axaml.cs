@@ -678,6 +678,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			var result = await new MessageDialog()
 			{
 				Buttons = MessageDialogButtons.YesNo,
+				DefaultResult = MessageDialogResult.No,
 				Icon = MessageDialogIcon.Question,
 				Message = new FormattedString().Also(it =>
 				{

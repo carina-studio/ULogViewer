@@ -3288,7 +3288,9 @@ namespace CarinaStudio.ULogViewer.Controls
 					switch (e.Key)
 					{
 						case Avalonia.Input.Key.Down:
-							if (e.Source is not TextBox)
+							if (e.Source == this.logTextFilterTextBox)
+								(this.DataContext as Session)?.LogFiltering?.UseNextTextFilterOhHistoryCommand?.TryExecute();
+							else if (e.Source is not TextBox)
 							{
 								if (this.predefinedLogTextFiltersPopup.IsOpen)
 									this.predefinedLogTextFilterListBox.SelectNextItem();
@@ -3311,7 +3313,9 @@ namespace CarinaStudio.ULogViewer.Controls
 							}
 							break;
 						case Avalonia.Input.Key.Up:
-							if (e.Source is not TextBox)
+							if (e.Source == this.logTextFilterTextBox)
+								(this.DataContext as Session)?.LogFiltering?.UsePreviousTextFilterOhHistoryCommand?.TryExecute();
+							else if (e.Source is not TextBox)
 							{
 								if (this.predefinedLogTextFiltersPopup.IsOpen)
 									this.predefinedLogTextFilterListBox.SelectPreviousItem();

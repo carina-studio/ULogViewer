@@ -36,12 +36,13 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
 
     
     // Constants.
-    const int ActionsOnCurrentLogProfileTag = 3;
+    const int ActionsOnCurrentLogProfileTag = 10;
     const int CopyCurrentLogProfileTag = 1;
     const int EditCurrentLogProfileTag = 0;
     const int ExportCurrentLogProfileTag = 2;
-    const int PinnedLogProfilesTag = 4;
-    const int RecentlyUsedLogProfilesTag = 5;
+    const int PinnedLogProfilesTag = 11;
+    const int RecentlyUsedLogProfilesTag = 12;
+    const int RemoveCurrentLogProfileTag = 3;
 
 
     // Static fields.
@@ -66,6 +67,7 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
     {
         Tag = RecentlyUsedLogProfilesTag,
     };
+    MenuItem? removeCurrentLogProfileMenuItem;
 
 
     /// <summary>
@@ -378,6 +380,33 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
     });
 
 
+    // Create menu item for removing current log profile.
+    MenuItem CreateRemoveCurrentLogProfileMenuItem() => new MenuItem().Also(menuItem =>
+    {
+        menuItem.Command = new CarinaStudio.Windows.Input.Command(this.RemoveCurrentLogProfile);
+        menuItem.Header = new FormattedTextBlock().Also(it =>
+        {
+            it.Bind(FormattedTextBlock.Arg1Property, new Binding()
+            {
+                Path = $"{nameof(CurrentLogProfile)}.{nameof(LogProfile.Name)}",
+                Source = this,
+            });
+            it.Bind(FormattedTextBlock.FormatProperty, this.GetResourceObservable("String/LogProfileSelectionContextMenu.RemoveCurrentLogProfile"));
+        });
+        menuItem.Icon = new Avalonia.Controls.Image().Also(icon =>
+        {
+            icon.Classes.Add("MenuItem_Icon");
+            icon.Source = this.FindResourceOrDefault<IImage>("Image/Icon.Delete.Outline");
+        });
+        menuItem.Bind(IsEnabledProperty, new Binding() 
+        { 
+            Path = $"!{nameof(CurrentLogProfile)}.{nameof(LogProfile.IsBuiltIn)}",
+            Source = this,
+        });
+        menuItem.Tag = RemoveCurrentLogProfileTag;
+    });
+
+
     // Edit current log profile.
     void EditCurrentLogProfile()
     {
@@ -431,6 +460,12 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
 
 
     /// <summary>
+    /// Raised when specific log profile has been removed.
+    /// </summary>
+    public event Action<LogProfileSelectionContextMenu, LogProfile>? LogProfileRemoved;
+
+
+    /// <summary>
     /// Raised when user selected a log profile.
     /// </summary>
     public event Action<LogProfileSelectionContextMenu, LogProfile>? LogProfileSelected;
@@ -452,6 +487,7 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
                 this.copyCurrentLogProfileMenuItem ??= this.CreateCopyCurrentLogProfileMenuItem();
                 this.editCurrentLogProfileMenuItem ??= this.CreateEditCurrentLogProfileMenuItem();
                 this.exportCurrentLogProfileMenuItem ??= this.CreateExportCurrentLogProfileMenuItem();
+                this.removeCurrentLogProfileMenuItem ??= this.CreateRemoveCurrentLogProfileMenuItem();
                 this.actionsOnCurrentLogProfileSeparator ??= new()
                 {
                     Tag = ActionsOnCurrentLogProfileTag,
@@ -459,6 +495,7 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
                 it.Add(this.editCurrentLogProfileMenuItem);
                 it.Add(this.copyCurrentLogProfileMenuItem);
                 it.Add(this.exportCurrentLogProfileMenuItem);
+                it.Add(this.removeCurrentLogProfileMenuItem);
                 it.Add(this.actionsOnCurrentLogProfileSeparator);
             }
             var recentlyUsedLogProfiles = LogProfileManager.Default.RecentlyUsedProfiles;
@@ -707,6 +744,37 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
     }
 
 
+    // Remove current log profile.
+    async void RemoveCurrentLogProfile()
+    {
+        // get state
+        var logProfile = this.CurrentLogProfile;
+        var window = this.FindLogicalAncestorOfType<CarinaStudio.Controls.Window>();
+        var app = App.CurrentOrNull;
+        if (logProfile == null || window == null || app == null || logProfile.IsBuiltIn)
+            return;
+        
+        // confirm
+        var result = await new MessageDialog()
+        {
+            Buttons = MessageDialogButtons.YesNo,
+            DefaultResult = MessageDialogResult.No,
+            Icon = MessageDialogIcon.Question,
+            Message = new FormattedString().Also(it =>
+            {
+                it.Arg1 = logProfile.Name;
+                it.Bind(FormattedString.FormatProperty, app.GetObservableString("LogProfileSelectionDialog.ConfirmRemovingLogProfile"));
+            }),
+        }.ShowDialog(window);
+        if (result == MessageDialogResult.No)
+            return;
+        
+        // remove log profile
+        LogProfileManager.Default.RemoveProfile(logProfile);
+        this.LogProfileRemoved?.Invoke(this, logProfile);
+    }
+
+
     // Try find menu item for given log profile.
     bool TryFindMenuItem(LogProfile logProfile, [NotNullWhen(true)] out MenuItem? menuItem)
     {
@@ -725,6 +793,7 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
                 this.copyCurrentLogProfileMenuItem ??= this.CreateCopyCurrentLogProfileMenuItem();
                 this.editCurrentLogProfileMenuItem ??= this.CreateEditCurrentLogProfileMenuItem();
                 this.exportCurrentLogProfileMenuItem ??= this.CreateExportCurrentLogProfileMenuItem();
+                this.removeCurrentLogProfileMenuItem ??= this.CreateRemoveCurrentLogProfileMenuItem();
                 this.actionsOnCurrentLogProfileSeparator ??= new()
                 {
                     Tag = ActionsOnCurrentLogProfileTag,
@@ -734,6 +803,7 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
                     this.items.Add(this.editCurrentLogProfileMenuItem);
                     this.items.Add(this.copyCurrentLogProfileMenuItem);
                     this.items.Add(this.exportCurrentLogProfileMenuItem);
+                    this.items.Add(this.removeCurrentLogProfileMenuItem);
                     this.items.Add(this.actionsOnCurrentLogProfileSeparator);
                 }
             }
@@ -745,6 +815,8 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
                     this.items.Remove(this.editCurrentLogProfileMenuItem);
                 if (this.exportCurrentLogProfileMenuItem != null)
                     this.items.Remove(this.exportCurrentLogProfileMenuItem);
+                if (this.removeCurrentLogProfileMenuItem != null)
+                    this.items.Remove(this.removeCurrentLogProfileMenuItem);
                 if (this.actionsOnCurrentLogProfileSeparator != null)
                     this.items.Remove(this.actionsOnCurrentLogProfileSeparator);
             }

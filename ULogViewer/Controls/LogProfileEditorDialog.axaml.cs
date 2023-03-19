@@ -1118,8 +1118,8 @@ namespace CarinaStudio.ULogViewer.Controls
 					throw new NotSupportedException("Unsupported change of log data source providers: " + e.Action);
 #else
 					this.Logger.LogError("Unsupported change of log data source providers: {action}", e.Action);
-#endif
 					break;
+#endif
 			}
 		}
 
