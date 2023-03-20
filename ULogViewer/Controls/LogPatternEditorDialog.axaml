@@ -28,23 +28,39 @@
 			</Border>
 	
 			<!-- Content -->
-			<StackPanel Classes="Dialog_ContentPanel">
+			<Border Classes="Dialog_ContentPanel_WithItemsGroups">
+				<Border Classes="Dialog_ItemsGroup_Container">
+					<StackPanel>
 	
-				<!-- Pattern -->
-				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogPatternEditorDialog.Regex}"/>
-				<appControls:PatternEditor Name="patternEditor" IsCapturingGroupsEnabled="True" IsCapturingLogPropertiesEnabled="True" MinHeight="{DynamicResource Double/LogPatternEditorDialog.RegexInput.Height}"/>
-				<Separator Classes="Dialog_Separator"/>
-	
-				<!-- Repeatable -->
-				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogPatternEditorDialog.IsRepeatable}"/>
-				<ToggleSwitch Name="repeatableSwitch" Classes="Dialog_ToggleSwitch"/>
-				<Separator Classes="Dialog_Separator"/>
-	
-				<!-- Skippable -->
-				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogPatternEditorDialog.IsSkippable}"/>
-				<ToggleSwitch Name="skippableSwitch" Classes="Dialog_ToggleSwitch"/>
-				
-			</StackPanel>
+						<!-- Pattern -->
+						<Border Classes="Dialog_Item_Container">
+							<StackPanel Classes="Dialog_Item_Text_Container">
+								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogPatternEditorDialog.Regex}"/>
+								<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogPatternEditorDialog.Regex.Description}"/>
+							</StackPanel>
+						</Border>
+						<Line Classes="Dialog_Item_Separator_Inner"/>
+						<appControls:PatternEditor Name="patternEditor" IsCapturingGroupsEnabled="True" IsCapturingLogPropertiesEnabled="True" MinHeight="{DynamicResource Double/LogPatternEditorDialog.RegexInput.Height}"/>
+						<Line Classes="Dialog_Item_Separator_Inner"/>
+						<SelectableTextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/RegexEditorDialog.Regex.Description.CapturingLogProperties}"/>
+						<Separator Classes="Dialog_Item_Separator"/>
+			
+						<!-- Repeatable -->
+						<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogPatternEditorDialog.IsRepeatable}"/>
+							<ToggleSwitch Name="repeatableSwitch" Classes="Dialog_Item_ToggleSwitch" Grid.Column="1"/>
+						</Grid>
+						<Separator Classes="Dialog_Item_Separator"/>
+			
+						<!-- Skippable -->
+						<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogPatternEditorDialog.IsSkippable}"/>
+							<ToggleSwitch Name="skippableSwitch" Classes="Dialog_Item_ToggleSwitch" Grid.Column="1"/>
+						</Grid>
+
+					</StackPanel>
+				</Border>
+			</Border>
 			
 		</DockPanel>
 		<asControls:FullWindowTutorialPresenter Name="tutorialPresenter"/>

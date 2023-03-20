@@ -17,20 +17,33 @@
 	<Grid RowDefinitions="*,Auto">
 
 		<!-- Content -->
-		<StackPanel Classes="Dialog_ContentPanel">
+		<Panel Classes="Dialog_ContentPanel_WithItemsGroups">
+			<Border Classes="Dialog_ItemsGroup_Container">
+				<StackPanel>
 
-			<!-- Name -->
-			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/PredefinedLogTextFilterEditorDialog.Name}"/>
-			<TextBox Name="nameTextBox" Classes="Dialog_TextBox" MaxLength="256"/>
-			<Separator Classes="Dialog_Separator"/>
+					<!-- Name -->
+					<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/PredefinedLogTextFilterEditorDialog.Name}"/>
+						<TextBox Name="nameTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" MaxLength="256"/>
+					</Grid>
+					<Separator Classes="Dialog_Item_Separator"/>
 
-			<!-- Pattern -->
-			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/PredefinedLogTextFilterEditorDialog.Regex}"/>
-			<appControls:PatternEditor Name="patternEditor" MinHeight="{DynamicResource Double/PredefinedLogTextFilterEditorDialog.RegexInput.Height}"/>
-			<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/PredefinedLogTextFilterEditorDialog.Regex.Description}"/>
-			<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/Common.RegularExpression.Reference}" Uri="{x:Static app:Uris.RegexReference}"/>
+					<!-- Pattern -->
+					<Border Classes="Dialog_Item_Container">
+						<StackPanel Classes="Dialog_Item_Text_Container">
+							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/PredefinedLogTextFilterEditorDialog.Regex}"/>
+							<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/RegexEditorDialog.Regex.Description}"/>
+						</StackPanel>
+					</Border>
+					<Line Classes="Dialog_Item_Separator_Inner"/>
+					<appControls:PatternEditor Name="patternEditor" MinHeight="{DynamicResource Double/PredefinedLogTextFilterEditorDialog.RegexInput.Height}"/>
+					<Line Classes="Dialog_Item_Separator_Inner"/>
+					<SelectableTextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/PredefinedLogTextFilterEditorDialog.Regex.Description}"/>
+					<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/Common.RegularExpression.Reference}" Uri="{x:Static app:Uris.RegexReference}"/>
 
-		</StackPanel>
+				</StackPanel>
+			</Border>
+		</Panel>
 
 		<!-- Control buttons -->
 		<Border Classes="Dialog_ControlButtonsPanel" Grid.Row="1">

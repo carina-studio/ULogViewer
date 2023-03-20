@@ -143,6 +143,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		protected override void OnOpened(EventArgs e)
 		{
 			base.OnOpened(e);
+			var testLogLineDescriptionTextBlock = this.Get<TextBlock>("testLogLineDescriptionTextBlock");
 			if (this.IsCapturingGroupsEnabled)
 			{
 				if (this.IsCapturingLogPropertiesEnabled)
@@ -161,13 +162,13 @@ namespace CarinaStudio.ULogViewer.Controls
 						});
 						this.regexTextBox.PredefinedGroups.Add(group);
 					}
-					this.testLogLineTextBox.Bind(TextBox.WatermarkProperty, this.GetResourceObservable("String/RegexEditorDialog.TestLogLine.Watermark.CapturingLogProperties"));
+					testLogLineDescriptionTextBlock.Bind(TextBlock.TextProperty, this.Application.GetObservableString("RegexEditorDialog.TestLogLine.Description.CapturingLogProperties"));
 				}
 				else
-					this.testLogLineTextBox.Bind(TextBox.WatermarkProperty, this.GetResourceObservable("String/RegexEditorDialog.TestLogLine.Watermark.CapturingGroups"));
+					testLogLineDescriptionTextBlock.Bind(TextBlock.TextProperty, this.Application.GetObservableString("RegexEditorDialog.TestLogLine.Description.CapturingGroups"));
 			}
 			else
-				this.testLogLineTextBox.Bind(TextBox.WatermarkProperty, this.GetResourceObservable("String/RegexEditorDialog.TestLogLine.Watermark"));
+				testLogLineDescriptionTextBlock.Bind(TextBlock.TextProperty, this.Application.GetObservableString("RegexEditorDialog.TestLogLine.Description"));
 			var regex = this.InitialRegex;
 			if (regex != null)
 			{

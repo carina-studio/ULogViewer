@@ -351,6 +351,8 @@ return False</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.IsResourceOnAzure">這是 Azure 上的資源</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.Password">密碼</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.QueryString">查詢字串</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.SelectFileName">選擇檔案…</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.SelectWorkingDirectory">選擇目錄…</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.SetupCommands">日誌讀取前指令</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.TeardownCommands">日誌讀取後指令</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.Uri">URI</sys:String>
@@ -387,7 +389,8 @@ return False</sys:String>
 	<!-- LogPatternEditorDialog -->
 	<sys:String x:Key="String/LogPatternEditorDialog.IsSkippable">此行可以被忽略</sys:String>
 	<sys:String x:Key="String/LogPatternEditorDialog.IsRepeatable">此行可以連續重複出現</sys:String>
-	<sys:String x:Key="String/LogPatternEditorDialog.Regex">格式 (必要)</sys:String>
+	<sys:String x:Key="String/LogPatternEditorDialog.Regex">格式</sys:String>
+	<sys:String x:Key="String/LogPatternEditorDialog.Regex.Description">用以比對單一原始日誌行的正規表示式。</sys:String>
 	<sys:String x:Key="String/LogPatternEditorDialog.Title">日誌行格式</sys:String>
 
 	<!-- LogProfileIcon -->
@@ -765,7 +768,7 @@ return False</sys:String>
 
 	<!-- PatternEditor -->
 	<sys:String x:Key="String/PatternEditor.ConfirmReplacingPattern">您是否確定要取代此格式？</sys:String>
-	<sys:String x:Key="String/PatternEditor.EditDetailedly">詳細編輯格式</sys:String>
+	<sys:String x:Key="String/PatternEditor.EditDetailedly">詳細編輯…</sys:String>
 	<sys:String x:Key="String/PatternEditor.Tutorial.ClickButtonToEditPatternDetailedly">點一下這裡以詳細編輯格式。</sys:String>
 
 	<!-- PeekQueueToVarEditorDialog -->
@@ -787,8 +790,8 @@ return False</sys:String>
 	<sys:String x:Key="String/PopToVariableAction">從堆疊「{0}」取出值至 {{{1}}}</sys:String>
 
 	<!-- PredefinedLogTextFilterEditorDialog -->
-	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Name">名稱 (必要)</sys:String>
-	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Regex">格式 (必要)</sys:String>
+	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Name">名稱</sys:String>
+	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Regex">格式</sys:String>
 	<StaticResourceExtension x:Key="String/PredefinedLogTextFilterEditorDialog.Regex.Description" ResourceKey="String/DisplayableLogAnalysisRuleEditorDialog.Pattern.Description"/>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Title.Create">建立文字篩選</sys:String>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Title.Edit">編輯文字篩選</sys:String>
@@ -806,16 +809,19 @@ return False</sys:String>
 	<!-- RegexEditorDialog -->
 	<sys:String x:Key="String/RegexEditorDialog.CapturingGroupsDisabled">分組在此格式中不被支援</sys:String>
 	<sys:String x:Key="String/RegexEditorDialog.IgnoreCase">忽略大小寫</sys:String>
-	<sys:String x:Key="String/RegexEditorDialog.Regex">格式 (必要)</sys:String>
+	<sys:String x:Key="String/RegexEditorDialog.Regex">格式</sys:String>
+	<sys:String x:Key="String/RegexEditorDialog.Regex.Description">用以比對文字的正規表示式。</sys:String>
 	<sys:String x:Key="String/RegexEditorDialog.Regex.Description.CapturingGroups">您可以使分組語法 "(?&lt;&gt;)" 以從文字中擷取特定的字串</sys:String>
 	<sys:String x:Key="String/RegexEditorDialog.Regex.Description.CapturingLogProperties">您可以使分組語法 "(?&lt;&gt;)" 以從文字中擷取對應的日誌屬性</sys:String>
-	<sys:String x:Key="String/RegexEditorDialog.TestLogLine">測試日誌行</sys:String>
-	<sys:String x:Key="String/RegexEditorDialog.TestLogLine.Watermark">用以驗證格式</sys:String>
-	<sys:String x:Key="String/RegexEditorDialog.TestLogLine.Watermark.CapturingGroups">用以驗證格式及擷取的分組字串</sys:String>
-	<sys:String x:Key="String/RegexEditorDialog.TestLogLine.Watermark.CapturingLogProperties">用以驗證格式及擷取的日誌屬性</sys:String>
+	<sys:String x:Key="String/RegexEditorDialog.TestLogLine">測試文字</sys:String>
+	<sys:String x:Key="String/RegexEditorDialog.TestLogLine.Description">用以驗證格式</sys:String>
+	<sys:String x:Key="String/RegexEditorDialog.TestLogLine.Description.CapturingGroups">用以驗證格式及擷取的分組字串</sys:String>
+	<sys:String x:Key="String/RegexEditorDialog.TestLogLine.Description.CapturingLogProperties">用以驗證格式及擷取的日誌屬性</sys:String>
 	<sys:String x:Key="String/RegexEditorDialog.TestResult">測試結果</sys:String>
-	<sys:String x:Key="String/RegexEditorDialog.TestResult.Failed">(不符合)</sys:String>
-	<sys:String x:Key="String/RegexEditorDialog.TestResult.Success">(符合)</sys:String>
+	<sys:String x:Key="String/RegexEditorDialog.TestResult.CapturedGroups">擷取的分組</sys:String>
+	<sys:String x:Key="String/RegexEditorDialog.TestResult.CapturedLogProperties">擷取的日誌屬性</sys:String>
+	<sys:String x:Key="String/RegexEditorDialog.TestResult.Failed">不符合</sys:String>
+	<sys:String x:Key="String/RegexEditorDialog.TestResult.Success">符合</sys:String>
 	<sys:String x:Key="String/RegexEditorDialog.Title">編輯格式</sys:String>
 
 	<!-- ScriptDisplayableLogAnalyzer -->

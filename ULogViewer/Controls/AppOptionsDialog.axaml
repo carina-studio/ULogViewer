@@ -126,7 +126,7 @@
 						<Border Classes="Dialog_Item_Container">
 							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.LogFont}"/>
 						</Border>
-						<Separator Classes="Dialog_Separator"/>
+						<Line Classes="Dialog_Item_Separator_Inner"/>
 						<Grid ColumnDefinitions="*,Auto,*">
 							<ComboBox Classes="Dialog_ComboBox" Items="{Binding InstalledFontFamilies}" SelectedItem="{Binding LogFontFamily, Mode=TwoWay}">
 								<ComboBox.ItemTemplate>
@@ -141,14 +141,13 @@
 							<Separator Classes="Dialog_Separator_Small" Grid.Column="1"/>
 							<NumericUpDown Classes="Dialog_NumericUpDown" FormatString="{}{0:F0}" Grid.Column="2" Maximum="30" Minimum="10" Value="{Binding LogFontSize, Mode=TwoWay}"/>
 						</Grid>
-						<Separator Classes="Dialog_Separator_Small"/>
-						<Border Background="{DynamicResource TextControlBackground}" BorderBrush="{DynamicResource Brush/Control.Border}" BorderThickness="{StaticResource Thickness/Control.Border}" CornerRadius="{StaticResource ControlCornerRadius}" HorizontalAlignment="Stretch" Padding="{StaticResource TextControlThemePadding}">
+						<Line Classes="Dialog_Item_Separator_Inner"/>
+						<Border HorizontalAlignment="Stretch" Padding="{StaticResource TextControlThemePadding}">
 							<Grid>
 								<TextBlock FontSize="20" HorizontalAlignment="Center" Opacity="0" Text="{DynamicResource String/AppOptionsDialog.LogFont.Sample}" VerticalAlignment="Center"/>
 								<TextBlock FontFamily="{Binding SampleLogFontFamily}" FontSize="{Binding LogFontSize}" HorizontalAlignment="Center" Text="{DynamicResource String/AppOptionsDialog.LogFont.Sample}" VerticalAlignment="Center"/>
 							</Grid>
 						</Border>
-						<Separator Classes="Dialog_Separator_Small"/>
 						<Separator Classes="Dialog_Item_Separator"/>
 
 						<!-- Pattern font -->
@@ -158,7 +157,7 @@
 								<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/AppOptionsDialog.PatternFont.Description}"/>
 							</StackPanel>
 						</Border>
-						<Separator Classes="Dialog_Separator"/>
+						<Line Classes="Dialog_Item_Separator_Inner"/>
 						<ComboBox Classes="Dialog_ComboBox" Items="{Binding InstalledFontFamilies}" SelectedItem="{Binding PatternFontFamily, Mode=TwoWay}">
 							<ComboBox.ItemTemplate>
 								<DataTemplate>
@@ -169,14 +168,13 @@
 								</DataTemplate>
 							</ComboBox.ItemTemplate>
 						</ComboBox>
-						<Separator Classes="Dialog_Separator_Small"/>
-						<Border Background="{DynamicResource TextControlBackground}" BorderBrush="{DynamicResource Brush/Control.Border}" BorderThickness="{StaticResource Thickness/Control.Border}" CornerRadius="{StaticResource ControlCornerRadius}" HorizontalAlignment="Stretch" Padding="{StaticResource TextControlThemePadding}">
+						<Line Classes="Dialog_Item_Separator_Inner"/>
+						<Border HorizontalAlignment="Stretch" Padding="{StaticResource TextControlThemePadding}">
 							<Grid>
 								<TextBlock FontSize="16" HorizontalAlignment="Center" Opacity="0" Text="{DynamicResource String/AppOptionsDialog.PatternFont.Sample}" VerticalAlignment="Center"/>
 								<TextBlock FontFamily="{Binding SamplePatternFontFamily}" HorizontalAlignment="Center" Text="{DynamicResource String/AppOptionsDialog.PatternFont.Sample}" VerticalAlignment="Center"/>
 							</Grid>
 						</Border>
-						<Separator Classes="Dialog_Separator_Small"/>
 						<Separator Classes="Dialog_Item_Separator"/>
 						
 						<!-- Max display line count for each log -->

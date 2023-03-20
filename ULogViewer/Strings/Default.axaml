@@ -374,6 +374,8 @@ return False</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.IsResourceOnAzure">This is the resource on Azure</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.Password">Password</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.QueryString">Query string</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.SelectFileName">Select file…</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.SelectWorkingDirectory">Select directory…</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.SetupCommands">Commands before reading logs</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.TeardownCommands">Commands after reading logs</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.Uri">URI</sys:String>
@@ -410,7 +412,8 @@ return False</sys:String>
 	<!-- LogPatternEditorDialog -->
 	<sys:String x:Key="String/LogPatternEditorDialog.IsSkippable">The line can be skipped</sys:String>
 	<sys:String x:Key="String/LogPatternEditorDialog.IsRepeatable">The line can be repeated continuously</sys:String>
-	<sys:String x:Key="String/LogPatternEditorDialog.Regex">Pattern (required)</sys:String>
+	<sys:String x:Key="String/LogPatternEditorDialog.Regex">Pattern</sys:String>
+	<sys:String x:Key="String/LogPatternEditorDialog.Regex.Description">Regular expression to match single raw log line.</sys:String>
 	<sys:String x:Key="String/LogPatternEditorDialog.Title">Pattern of log line</sys:String>
 
 	<!-- LogProfileIcon -->
@@ -808,7 +811,7 @@ return False</sys:String>
 
 	<!-- PatternEditor -->
 	<sys:String x:Key="String/PatternEditor.ConfirmReplacingPattern">Are you sure to replace this pattern?</sys:String>
-	<sys:String x:Key="String/PatternEditor.EditDetailedly">Edit pattern detailedly</sys:String>
+	<sys:String x:Key="String/PatternEditor.EditDetailedly">Edit detailedly…</sys:String>
 	<sys:String x:Key="String/PatternEditor.Tutorial.ClickButtonToEditPatternDetailedly">Click here to edit pattern detailedly.</sys:String>
 
 	<!-- PeekQueueToVarEditorDialog -->
@@ -830,8 +833,8 @@ return False</sys:String>
 	<sys:String x:Key="String/PopToVariableAction">Pop value from stack '{0}' to {{{1}}}</sys:String>
 
 	<!-- PredefinedLogTextFilterEditorDialog -->
-	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Name">Name (required)</sys:String>
-	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Regex">Pattern (required)</sys:String>
+	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Name">Name</sys:String>
+	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Regex">Pattern</sys:String>
 	<StaticResourceExtension x:Key="String/PredefinedLogTextFilterEditorDialog.Regex.Description" ResourceKey="String/DisplayableLogAnalysisRuleEditorDialog.Pattern.Description"/>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Title.Create">Create text filter</sys:String>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Title.Edit">Edit text filter</sys:String>
@@ -849,16 +852,19 @@ return False</sys:String>
 	<!-- RegexEditorDialog -->
 	<sys:String x:Key="String/RegexEditorDialog.CapturingGroupsDisabled">Grouping is unsupported for this pattern.</sys:String>
 	<sys:String x:Key="String/RegexEditorDialog.IgnoreCase">Ignore case</sys:String>
-	<sys:String x:Key="String/RegexEditorDialog.Regex">Pattern (required)</sys:String>
+	<sys:String x:Key="String/RegexEditorDialog.Regex">Pattern</sys:String>
+	<sys:String x:Key="String/RegexEditorDialog.Regex.Description">Regular expression to match text.</sys:String>
 	<sys:String x:Key="String/RegexEditorDialog.Regex.Description.CapturingGroups">You can use Grouping Syntax "(?&lt;&gt;)" to capture strings from text</sys:String>
 	<sys:String x:Key="String/RegexEditorDialog.Regex.Description.CapturingLogProperties">You can use Grouping Syntax "(?&lt;&gt;)" to capture log properties from text</sys:String>
-	<sys:String x:Key="String/RegexEditorDialog.TestLogLine">Test log line</sys:String>
-	<sys:String x:Key="String/RegexEditorDialog.TestLogLine.Watermark">Text to verify the pattern</sys:String>
-	<sys:String x:Key="String/RegexEditorDialog.TestLogLine.Watermark.CapturingGroups">Text to verify the pattern and captured group strings</sys:String>
-	<sys:String x:Key="String/RegexEditorDialog.TestLogLine.Watermark.CapturingLogProperties">Text to verify the pattern and captured log properties</sys:String>
+	<sys:String x:Key="String/RegexEditorDialog.TestLogLine">Test text</sys:String>
+	<sys:String x:Key="String/RegexEditorDialog.TestLogLine.Description">Text to verify the pattern</sys:String>
+	<sys:String x:Key="String/RegexEditorDialog.TestLogLine.Description.CapturingGroups">Text to verify the pattern and captured group strings</sys:String>
+	<sys:String x:Key="String/RegexEditorDialog.TestLogLine.Description.CapturingLogProperties">Text to verify the pattern and captured log properties</sys:String>
 	<sys:String x:Key="String/RegexEditorDialog.TestResult">Test result</sys:String>
-	<sys:String x:Key="String/RegexEditorDialog.TestResult.Failed">(Not matched)</sys:String>
-	<sys:String x:Key="String/RegexEditorDialog.TestResult.Success">(Matched)</sys:String>
+	<sys:String x:Key="String/RegexEditorDialog.TestResult.CapturedGroups">Captured groups</sys:String>
+	<sys:String x:Key="String/RegexEditorDialog.TestResult.CapturedLogProperties">Captured log properties</sys:String>
+	<sys:String x:Key="String/RegexEditorDialog.TestResult.Failed">Not matched</sys:String>
+	<sys:String x:Key="String/RegexEditorDialog.TestResult.Success">Matched</sys:String>
 	<sys:String x:Key="String/RegexEditorDialog.Title">Edit pattern</sys:String>
 
 	<!-- ScriptDisplayableLogAnalyzer -->

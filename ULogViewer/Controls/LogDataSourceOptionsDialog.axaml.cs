@@ -141,13 +141,6 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 				this.saveCommandTextBoxSelectionAction?.Schedule());
 		});
 		this.connectionStringStringTextBox = this.Get<TextBox>(nameof(connectionStringStringTextBox));
-		this.Get<Panel>("editorsPanel").Let(it =>
-		{
-			// remove empty space created by last separator
-			var separatorHeight = this.TryFindResource("Double/Dialog.Separator.Height", out var res) && res is double height ? height : 0.0;
-			var margin = it.Margin;
-			it.Margin = new Thickness(margin.Left, margin.Top, margin.Right, margin.Bottom - separatorHeight);
-		});
 		this.encodingComboBox = this.Get<ComboBox>(nameof(encodingComboBox));
 		this.fileNameTextBox = this.Get<TextBox>(nameof(fileNameTextBox));
 		this.formatJsonDataSwitch = this.Get<ToggleSwitch>(nameof(formatJsonDataSwitch));
@@ -445,6 +438,26 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 	// Called when opened.
 	protected override void OnOpened(EventArgs e)
 	{
+		// remove last visible separator
+		this.Get<Panel>("itemsPanel").Let(it =>
+		{
+			for (var i = it.Children.Count - 1; i >= 0; --i)
+			{
+				var child = it.Children[i];
+				if (!child.IsVisible)
+					continue;
+				if (child is Separator)
+					it.Children.RemoveAt(i);
+				else if (child is Panel itemPanel)
+				{
+					child = itemPanel.Children[^1];
+					if (child is Separator)
+						itemPanel.Children.RemoveAt(itemPanel.Children.Count - 1);
+				}
+				break;
+			}
+		});
+		
 		// put options to control, must keep same order as controls in window
 		var options = this.Options;
 		var firstEditor = (Control?)null;
