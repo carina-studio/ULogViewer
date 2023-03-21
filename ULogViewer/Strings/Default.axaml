@@ -173,7 +173,7 @@
 	<sys:String x:Key="String/DatabaseSourceType.Network">Network</sys:String>
 
 	<!-- DateTimeFormatInputDialog -->
-	<sys:String x:Key="String/DateTimeFormatInputDialog.Message">Timestamp format</sys:String>
+	<sys:String x:Key="String/DateTimeFormatInputDialog.Message">Timestamp format:</sys:String>
 	<sys:String x:Key="String/DateTimeFormatInputDialog.SampleResult">Sample result: {0}</sys:String>
 
 	<!-- DateTimeSelectionDialog -->
@@ -285,12 +285,12 @@
 	<sys:String x:Key="String/FilterCombinationMode.Union">Union</sys:String>
 
 	<!-- IPEndPointInputDialog -->
-	<sys:String x:Key="String/IPEndPointInputDialog.Address">IP address</sys:String>
-	<sys:String x:Key="String/IPEndPointInputDialog.Port">Port</sys:String>
+	<sys:String x:Key="String/IPEndPointInputDialog.Address">IPv4/IPv6 address:</sys:String>
+	<sys:String x:Key="String/IPEndPointInputDialog.Port">Port:</sys:String>
 	<sys:String x:Key="String/IPEndPointInputDialog.Title">IP endpoint</sys:String>
 
 	<!-- JsonLogsSavingOptionsDialog -->
-	<sys:String x:Key="String/JsonLogsSavingOptionsDialog.LogProperties">Properties of log to output</sys:String>
+	<sys:String x:Key="String/JsonLogsSavingOptionsDialog.LogProperties">Properties of log to output:</sys:String>
 	<sys:String x:Key="String/JsonLogsSavingOptionsDialog.LogProperties.Description">Properties will be sorted by name automatically.</sys:String>
 	<sys:String x:Key="String/JsonLogsSavingOptionsDialog.Title">JSON options</sys:String>
 
@@ -1178,8 +1178,8 @@ return None</sys:String>
 	<sys:String x:Key="String/StandardOutputLogDataSourceProvider.DisplayName">Standard output (stdout)</sys:String>
 
 	<!-- StringLogPropertyMapEntryEditorDialog -->
-	<sys:String x:Key="String/StringLogPropertyMapEntryEditorDialog.MappedName">Mapped name</sys:String>
-	<sys:String x:Key="String/StringLogPropertyMapEntryEditorDialog.Name">Property</sys:String>
+	<sys:String x:Key="String/StringLogPropertyMapEntryEditorDialog.MappedName">Mapped name:</sys:String>
+	<sys:String x:Key="String/StringLogPropertyMapEntryEditorDialog.Name">Property:</sys:String>
 	<sys:String x:Key="String/StringLogPropertyMapEntryEditorDialog.Title">Log property</sys:String>
 
 	<!-- TcpServerLogDataSourceProvider -->
@@ -1195,10 +1195,10 @@ return None</sys:String>
 	<sys:String x:Key="String/TextShell.ZShell">zsh (Z Shell)</sys:String>
 
 	<!-- TextShellCommandInputDialog -->
-	<sys:String x:Key="String/TextShellCommandInputDialog.Message">Command to execute</sys:String>
+	<sys:String x:Key="String/TextShellCommandInputDialog.Message">Command to execute:</sys:String>
 
 	<!-- TimeSpanFormatInputDialog -->
-	<sys:String x:Key="String/TimeSpanFormatInputDialog.Message">Time span format</sys:String>
+	<sys:String x:Key="String/TimeSpanFormatInputDialog.Message">Time span format:</sys:String>
 	<sys:String x:Key="String/TimeSpanFormatInputDialog.SampleResult">Sample result: {0}</sys:String>
 
 	<!-- TimeSpanUnit -->

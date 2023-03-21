@@ -90,7 +90,7 @@ partial class VisibleLogPropertyEditorDialog : AppSuite.Controls.InputDialog<IUL
 		if (property == null)
 		{
 			this.nameComboBox.SelectedItem = nameof(Log.Message);
-			this.specifyWidthSwitch.IsChecked = false;
+			this.specifyWidthSwitch.IsChecked = true;
 			this.foregroundColorComboBox.SelectedItem = LogPropertyForegroundColor.Level;
 			this.widthTextBox.Value = 100;
 		}

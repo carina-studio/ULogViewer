@@ -25,7 +25,7 @@
 		<StackPanel Classes="Dialog_ContentPanel">
 
 			<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/TextShellCommandInputDialog.Message}"/>
-			<asControls:SyntaxHighlightingTextBox Name="commandTextBox" Classes="Dialog_TextBox" DefinitionSet="{Binding $parent[Window].SyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" MaxLength="1024"/>
+			<asControls:SyntaxHighlightingTextBox Name="commandTextBox" Classes="Dialog_TextBox" DefinitionSet="{Binding $parent[Window].SyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Height="{StaticResource Double/TextShellCommandInputDialog.Command.Height}" MaxLength="1024" ScrollViewer.HorizontalScrollBarVisibility="Disabled" TextWrapping="Wrap"/>
 
 		</StackPanel>
 

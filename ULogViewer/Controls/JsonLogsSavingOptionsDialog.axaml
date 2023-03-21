@@ -16,6 +16,8 @@
 		<!-- Control buttons -->
 		<Border Classes="Dialog_ControlButtonsPanel">
 			<StackPanel Classes="Dialog_ControlButtonsPanel">
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].AddLogPropertyMapEntry}" Content="{DynamicResource String/Common.Add.WithDialog}"/>
+				<Separator Classes="Dialog_Separator_Small"/>
 				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].GenerateResultCommand}" Content="{DynamicResource String/Common.OK}"/>
 				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].Close}" Content="{DynamicResource String/Common.Cancel}"/>
 			</StackPanel>
@@ -25,50 +27,47 @@
 		<StackPanel Classes="Dialog_ContentPanel">
 
 			<!-- Log properties -->
-			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/JsonLogsSavingOptionsDialog.LogProperties}"/>
-			<Grid ColumnDefinitions="*,Auto">
-				<ListBox Name="logPropertyMapListBox" Background="{DynamicResource TextControlBackground}" DoubleTapped="OnListBoxDoubleTapped" Height="{DynamicResource Double/JsonLogsSavingOptionsDialog.ListBox.Height}" Grid.IsSharedSizeScope="True" Items="{Binding $parent[Window].LogPropertyMap}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
-					<ListBox.ItemTemplate>
-						<DataTemplate>
-							<Grid>
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="Auto" SharedSizeGroup="Value"/>
-									<ColumnDefinition Width="*"/>
-									<ColumnDefinition Width="Auto"/>
-								</Grid.ColumnDefinitions>
-								<TextBlock Text="{Binding Value}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
-								<Border Classes="InPlaceAction_Reserved"/>
-								<abControls:FormattedTextBlock Arg1="{Binding Key}" Format="({0})" Grid.Column="1" Margin="{StaticResource Thickness/JsonLogsSavingOptionsDialog.ListBox.Key.Margin}" Opacity="{StaticResource Double/JsonLogsSavingOptionsDialog.ListBox.Key.Opacity}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
-								<StackPanel Grid.Column="2" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
-									<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveLogPropertyMapEntryCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
-										<asControls:Image Classes="InPlaceAction_Icon">
-											<DrawingImage>
-												<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
-											</DrawingImage>
-										</asControls:Image>
-									</Button>
-									<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditLogPropertyMapEntryCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
-										<asControls:Image Classes="InPlaceAction_Icon">
-											<DrawingImage>
-												<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
-											</DrawingImage>
-										</asControls:Image>
-									</Button>
-								</StackPanel>
-							</Grid>
-						</DataTemplate>
-					</ListBox.ItemTemplate>
-					<ListBox.Styles>
-						<Style Selector="ListBoxItem">
-							<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-							<Setter Property="Padding" Value="{DynamicResource Thickness/Dialog.ListBox.Item.WithInPlaceActions.Padding}"/>
-						</Style>
-					</ListBox.Styles>
-				</ListBox>
-				<Button Classes="BrowseButton" Command="{Binding $parent[Window].AddLogPropertyMapEntry}" Grid.Column="1" ToolTip.Tip="{DynamicResource String/Common.Add}" VerticalAlignment="Top">
-					<Image Classes="BrowseButtonIcon" Source="{DynamicResource Image/Icon.Add}"/>
-				</Button>
-			</Grid>
+			<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/JsonLogsSavingOptionsDialog.LogProperties}"/>
+			<ListBox Name="logPropertyMapListBox" Background="{DynamicResource TextControlBackground}" DoubleTapped="OnListBoxDoubleTapped" Height="{DynamicResource Double/JsonLogsSavingOptionsDialog.ListBox.Height}" Grid.IsSharedSizeScope="True" Items="{Binding $parent[Window].LogPropertyMap}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
+				<ListBox.ItemTemplate>
+					<DataTemplate>
+						<Grid>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto" SharedSizeGroup="Value"/>
+								<ColumnDefinition Width="*"/>
+								<ColumnDefinition Width="Auto"/>
+							</Grid.ColumnDefinitions>
+							<TextBlock Text="{Binding Value}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+							<Border Classes="InPlaceAction_Reserved"/>
+							<abControls:FormattedTextBlock Arg1="{Binding Key}" Foreground="{DynamicResource Brush/Dialog.TextBlock.Foreground.Description}" Format="({0})" Grid.Column="1" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}" Margin="{StaticResource Thickness/JsonLogsSavingOptionsDialog.ListBox.Key.Margin}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+							<abControls:FormattedTextBlock Arg1="{Binding Key}" Format="({0})" Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsSelected}" Margin="{StaticResource Thickness/JsonLogsSavingOptionsDialog.ListBox.Key.Margin}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+							<StackPanel Grid.Column="2" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
+								<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveLogPropertyMapEntryCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
+									<asControls:Image Classes="InPlaceAction_Icon">
+										<DrawingImage>
+											<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
+										</DrawingImage>
+									</asControls:Image>
+								</Button>
+								<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditLogPropertyMapEntryCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
+									<asControls:Image Classes="InPlaceAction_Icon">
+										<DrawingImage>
+											<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
+										</DrawingImage>
+									</asControls:Image>
+								</Button>
+							</StackPanel>
+						</Grid>
+					</DataTemplate>
+				</ListBox.ItemTemplate>
+				<ListBox.Styles>
+					<Style Selector="ListBoxItem">
+						<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+						<Setter Property="Padding" Value="{DynamicResource Thickness/Dialog.ListBox.Item.WithInPlaceActions.Padding}"/>
+					</Style>
+				</ListBox.Styles>
+			</ListBox>
+			<Separator Classes="Dialog_Separator_Small"/>
 			<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/JsonLogsSavingOptionsDialog.LogProperties.Description}"/>
 			
 		</StackPanel>

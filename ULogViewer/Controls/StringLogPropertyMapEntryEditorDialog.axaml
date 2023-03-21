@@ -33,25 +33,21 @@
 		<StackPanel Classes="Dialog_ContentPanel">
 
 			<!-- Name -->
-			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/StringLogPropertyMapEntryEditorDialog.Name}"/>
-			<ComboBox Name="nameComboBox" Classes="Dialog_ComboBox" Items="{x:Static appLogs:Log.PropertyNames}" Grid.IsSharedSizeScope="True" PropertyChanged="OnEditorControlPropertyChanged">
+			<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/StringLogPropertyMapEntryEditorDialog.Name}"/>
+			<ComboBox Name="nameComboBox" Classes="Dialog_ComboBox" Items="{x:Static appLogs:Log.PropertyNames}" PropertyChanged="OnEditorControlPropertyChanged">
 				<ComboBox.ItemTemplate>
 					<DataTemplate>
-						<Grid>
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width="Auto" SharedSizeGroup="DisplayName"/>
-								<ColumnDefinition Width="*"/>
-							</Grid.ColumnDefinitions>
+						<Grid ColumnDefinitions="Auto,*">
 							<TextBlock Text="{Binding Converter={x:Static appConverters:LogPropertyNameConverter.Default}}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
-							<abControls:FormattedTextBlock Arg1="{Binding}" Format="({0})" Grid.Column="1" Margin="{StaticResource Thickness/StringLogPropertyMapEntryEditorDialog.LogPropertyComboBox.Name.Margin}" Opacity="{StaticResource Double/StringLogPropertyMapEntryEditorDialog.LogPropertyComboBox.Name.Opacity}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+							<abControls:FormattedTextBlock Arg1="{Binding}" Foreground="{DynamicResource Brush/Dialog.TextBlock.Foreground.Description}" Format="({0})" Grid.Column="1" HorizontalAlignment="Right" Margin="{StaticResource Thickness/StringLogPropertyMapEntryEditorDialog.LogPropertyComboBox.Name.Margin}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
 						</Grid>
 					</DataTemplate>
 				</ComboBox.ItemTemplate>
 			</ComboBox>
-			<Separator Classes="Dialog_Separator"/>
+			<Separator Classes="Dialog_Separator_Small"/>
 
 			<!-- Mapped name -->
-			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/StringLogPropertyMapEntryEditorDialog.MappedName}"/>
+			<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/StringLogPropertyMapEntryEditorDialog.MappedName}"/>
 			<TextBox Name="mappedNameTextBox" Classes="Dialog_TextBox" PropertyChanged="OnEditorControlPropertyChanged"/>
 
 		</StackPanel>

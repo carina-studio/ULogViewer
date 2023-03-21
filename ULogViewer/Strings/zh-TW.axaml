@@ -161,7 +161,7 @@
 	<sys:String x:Key="String/DatabaseSourceType.Network">網路</sys:String>
 
 	<!-- DateTimeFormatInputDialog -->
-	<sys:String x:Key="String/DateTimeFormatInputDialog.Message">時間戳格式</sys:String>
+	<sys:String x:Key="String/DateTimeFormatInputDialog.Message">時間戳格式：</sys:String>
 	<sys:String x:Key="String/DateTimeFormatInputDialog.SampleResult">結果範例：{0}</sys:String>
 
 	<!-- DateTimeSelectionDialog -->
@@ -265,12 +265,12 @@
 	<sys:String x:Key="String/FilterCombinationMode.Union">聯集</sys:String>
 
 	<!-- IPEndPointInputDialog -->
-	<sys:String x:Key="String/IPEndPointInputDialog.Address">IP 位址</sys:String>
-	<sys:String x:Key="String/IPEndPointInputDialog.Port">連接埠</sys:String>
+	<sys:String x:Key="String/IPEndPointInputDialog.Address">IPv4/IPv6 位址：</sys:String>
+	<sys:String x:Key="String/IPEndPointInputDialog.Port">連接埠：</sys:String>
 	<sys:String x:Key="String/IPEndPointInputDialog.Title">IP 端點</sys:String>
 
 	<!-- JsonLogsSavingOptionsDialog -->
-	<sys:String x:Key="String/JsonLogsSavingOptionsDialog.LogProperties">輸出的日誌屬性</sys:String>
+	<sys:String x:Key="String/JsonLogsSavingOptionsDialog.LogProperties">輸出的日誌屬性：</sys:String>
 	<sys:String x:Key="String/JsonLogsSavingOptionsDialog.LogProperties.Description">日誌屬性將根據名稱自動排序。</sys:String>
 	<sys:String x:Key="String/JsonLogsSavingOptionsDialog.Title">JSON 選項</sys:String>
 
@@ -1132,8 +1132,8 @@ return None</sys:String>
 	<sys:String x:Key="String/StandardOutputLogDataSourceProvider.DisplayName">標準輸出 (stdout)</sys:String>
 
 	<!-- StringLogPropertyMapEntryEditorDialog -->
-	<sys:String x:Key="String/StringLogPropertyMapEntryEditorDialog.MappedName">對應的名稱</sys:String>
-	<sys:String x:Key="String/StringLogPropertyMapEntryEditorDialog.Name">屬性</sys:String>
+	<sys:String x:Key="String/StringLogPropertyMapEntryEditorDialog.MappedName">對應的名稱：</sys:String>
+	<sys:String x:Key="String/StringLogPropertyMapEntryEditorDialog.Name">屬性：</sys:String>
 	<sys:String x:Key="String/StringLogPropertyMapEntryEditorDialog.Title">日誌屬性</sys:String>
 
 	<!-- TcpServerLogDataSourceProvider -->
@@ -1143,10 +1143,10 @@ return None</sys:String>
 	<sys:String x:Key="String/TextShell.CommandPrompt">Cmd (Windows 命令提示字元)</sys:String>
 
 	<!-- TextShellCommandInputDialog -->
-	<sys:String x:Key="String/TextShellCommandInputDialog.Message">欲執行之指令</sys:String>
+	<sys:String x:Key="String/TextShellCommandInputDialog.Message">欲執行之指令：</sys:String>
 
 	<!-- TimeSpanFormatInputDialog -->
-	<sys:String x:Key="String/TimeSpanFormatInputDialog.Message">時距格式</sys:String>
+	<sys:String x:Key="String/TimeSpanFormatInputDialog.Message">時距格式：</sys:String>
 	<sys:String x:Key="String/TimeSpanFormatInputDialog.SampleResult">結果範例：{0}</sys:String>
 
 	<!-- TimeSpanUnit -->

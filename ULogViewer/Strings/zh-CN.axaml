@@ -161,7 +161,7 @@
 	<sys:String x:Key="String/DatabaseSourceType.Network">网络</sys:String>
 
 	<!-- DateTimeFormatInputDialog -->
-	<sys:String x:Key="String/DateTimeFormatInputDialog.Message">时间戳格式</sys:String>
+	<sys:String x:Key="String/DateTimeFormatInputDialog.Message">时间戳格式：</sys:String>
 	<sys:String x:Key="String/DateTimeFormatInputDialog.SampleResult">结果示范：{0}</sys:String>
 
 	<!-- DateTimeSelectionDialog -->
@@ -268,12 +268,12 @@
 	<sys:String x:Key="String/FilterCombinationMode.Union">并集</sys:String>
 
 	<!-- IPEndPointInputDialog -->
-	<sys:String x:Key="String/IPEndPointInputDialog.Address">IP 地址</sys:String>
-	<sys:String x:Key="String/IPEndPointInputDialog.Port">端口</sys:String>
+	<sys:String x:Key="String/IPEndPointInputDialog.Address">IPv4/IPv6 地址：</sys:String>
+	<sys:String x:Key="String/IPEndPointInputDialog.Port">端口：</sys:String>
 	<sys:String x:Key="String/IPEndPointInputDialog.Title">IP 端点</sys:String>
 
 	<!-- JsonLogsSavingOptionsDialog -->
-	<sys:String x:Key="String/JsonLogsSavingOptionsDialog.LogProperties">输出的日志属性</sys:String>
+	<sys:String x:Key="String/JsonLogsSavingOptionsDialog.LogProperties">输出的日志属性：</sys:String>
 	<sys:String x:Key="String/JsonLogsSavingOptionsDialog.LogProperties.Description">日志属性将根据名称自动排序。</sys:String>
 	<sys:String x:Key="String/JsonLogsSavingOptionsDialog.Title">JSON 选项</sys:String>
 
@@ -1143,8 +1143,8 @@ return None</sys:String>
 	<sys:String x:Key="String/StandardOutputLogDataSourceProvider.DisplayName">标准输出 (stdout)</sys:String>
 
 	<!-- StringLogPropertyMapEntryEditorDialog -->
-	<sys:String x:Key="String/StringLogPropertyMapEntryEditorDialog.MappedName">对应的名称</sys:String>
-	<sys:String x:Key="String/StringLogPropertyMapEntryEditorDialog.Name">属性</sys:String>
+	<sys:String x:Key="String/StringLogPropertyMapEntryEditorDialog.MappedName">对应的名称：</sys:String>
+	<sys:String x:Key="String/StringLogPropertyMapEntryEditorDialog.Name">属性：</sys:String>
 	<sys:String x:Key="String/StringLogPropertyMapEntryEditorDialog.Title">日志属性</sys:String>
 
 	<!-- TcpServerLogDataSourceProvider -->
@@ -1154,10 +1154,10 @@ return None</sys:String>
 	<sys:String x:Key="String/TextShell.CommandPrompt">Cmd (Windows 命令提示符)</sys:String>
 
 	<!-- TextShellCommandInputDialog -->
-	<sys:String x:Key="String/TextShellCommandInputDialog.Message">欲执行之指令</sys:String>
+	<sys:String x:Key="String/TextShellCommandInputDialog.Message">欲执行之指令：</sys:String>
 
 	<!-- TimeSpanFormatInputDialog -->
-	<sys:String x:Key="String/TimeSpanFormatInputDialog.Message">时距格式</sys:String>
+	<sys:String x:Key="String/TimeSpanFormatInputDialog.Message">时距格式：</sys:String>
 	<sys:String x:Key="String/TimeSpanFormatInputDialog.SampleResult">结果示范：{0}</sys:String>
 
 	<!-- TimeSpanUnit -->
