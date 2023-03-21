@@ -55,7 +55,7 @@
 	<sys:String x:Key="String/AzureCliLogDataSourceProvider.DisplayName">Azure CLI</sys:String>
 
 	<!-- AzureResourcesDialog -->
-	<sys:String x:Key="String/AzureResourcesDialog.DoubleClickToSelectName">Double click item to use resource</sys:String>
+	<sys:String x:Key="String/AzureResourcesDialog.DoubleClickToSelectName">Double click item to use resource:</sys:String>
 	<sys:String x:Key="String/AzureResourcesDialog.Title">Resources on Azure</sys:String>
 
 	<!-- Built-in profile -->
@@ -332,7 +332,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.CannotAddMoreScriptSetWithoutProVersion">Cannot create more log analysis script before activating Pro version.</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.Icon">Icon</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.IconColor">Color of icon</sys:String>
-	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.Name">Name (required)</sys:String>
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.Name">Name</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.RestrictionsOfNonProVersion">Before activating Pro version, you can have only 1 log analysis script and script won't be kept after closing ULogViewer.</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript">Script to setup analysis</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript.Description">The script will be run one time before starting analysis process. There is no return value needed.</sys:String>
@@ -969,7 +969,8 @@ return None</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.Title">Manage log data source scripts</sys:String>
 
 	<!-- ScriptLogDataSourceProviderSelectionDialog -->
-	<sys:String x:Key="String/ScriptLogDataSourceProviderSelectionDialog.Title">Select log data source script</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProviderSelectionDialog.Message">Select a log data source script:</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProviderSelectionDialog.Title">Log data source scripts</sys:String>
 
 	<!-- SearchProvider -->
 	<sys:String x:Key="String/SearchProvider.AppleDeveloper">Apple Developer</sys:String>

@@ -52,7 +52,7 @@
 	<sys:String x:Key="String/Azure.LoggedOut">已登出 Azure。</sys:String>
 
 	<!-- AzureResourcesDialog -->
-	<sys:String x:Key="String/AzureResourcesDialog.DoubleClickToSelectName">點兩下項目以使用該資源</sys:String>
+	<sys:String x:Key="String/AzureResourcesDialog.DoubleClickToSelectName">點兩下項目以使用該資源：</sys:String>
 	<sys:String x:Key="String/AzureResourcesDialog.Title">Azure 上的資源</sys:String>
 
 	<!-- Built-in profile -->
@@ -312,7 +312,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.CannotAddMoreScriptSetWithoutProVersion">在啟用專業版之前，您無法建立更多的日誌分析腳本。</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.Icon">圖示</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.IconColor">圖示色彩</sys:String>
-	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.Name">名稱 (必要)</sys:String>
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.Name">名稱</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.RestrictionsOfNonProVersion">在啟用專業版之前，您只能建立 1 個日誌分析腳本，且在關閉 ULogViewer 後不會被儲存。</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript">分析初始化腳本</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript.Description">腳本將在分析流程開始前執行一次且不需要回傳值。</sys:String>
@@ -926,7 +926,8 @@ return None</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.Title">管理日誌資料來源腳本</sys:String>
 
 	<!-- ScriptLogDataSourceProviderSelectionDialog -->
-	<sys:String x:Key="String/ScriptLogDataSourceProviderSelectionDialog.Title">選擇日誌資料來源腳本</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProviderSelectionDialog.Message">選擇一個日誌資料來源腳本：</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProviderSelectionDialog.Title">日誌資料來源腳本</sys:String>
 
 	<!-- SearchProvider -->
 	<sys:String x:Key="String/SearchProvider.AppleDeveloperForums">Apple Developer 論壇</sys:String>

@@ -96,6 +96,7 @@ partial class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.In
 	{
 		this.RemoveSupportedSourceOptionCommand = new Command<SupportedSourceOption>(this.RemoveSupportedSourceOption);
 		this.SupportedSourceOptions = ListExtensions.AsReadOnly(this.supportedSourceOptions);
+		this.UnsupportedSourceOptions = ListExtensions.AsReadOnly(this.unsupportedSourceOptions);
 		AvaloniaXamlLoader.Load(this);
 		if (Platform.IsLinux)
 			this.WindowStartupLocation = WindowStartupLocation.Manual;
@@ -369,4 +370,10 @@ partial class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.In
 	/// Get supported log data source options.
 	/// </summary>
 	public IList<SupportedSourceOption> SupportedSourceOptions { get; }
+
+
+	/// <summary>
+	/// Get unsupported log data source options.
+	/// </summary>
+	public IList<string> UnsupportedSourceOptions { get; }
 }

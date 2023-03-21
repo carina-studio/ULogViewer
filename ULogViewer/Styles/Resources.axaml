@@ -7,10 +7,8 @@
 	<Thickness x:Key="Thickness/AppOptionsDialog.FontFamily.ExtraInfo.Margin">5,0,5,0</Thickness>
 
 	<!-- AzureResourcesDialog -->
-	<sys:Double x:Key="Double/AzureResourcesDialog.ResourceTreeView.Height">400</sys:Double>
-	<sys:Double x:Key="Double/AzureResourcesDialog.ResourceTreeView.Item.Type.Opacity">0.5</sys:Double>
+	<sys:Double x:Key="Double/AzureResourcesDialog.Height">450</sys:Double>
 	<sys:Double x:Key="Double/AzureResourcesDialog.Width">450</sys:Double>
-	<Thickness x:Key="Thickness/AzureResourcesDialog.ResourceTreeView.Item.Type.Margin">0,3,0,0</Thickness>
 
 	<!-- CopyVarEditorDialog -->
 	<sys:Double x:Key="Double/CopyVarEditorDialog.Width">300</sys:Double>
@@ -50,6 +48,7 @@
 	<Thickness x:Key="Thickness/KeyLogAnalysisRuleSetEditorDialog.RuleListBox.Item.Message.Margin">0,3,0,0</Thickness>
 
 	<!-- LogAnalysisScriptSetEditorDialog -->
+	<sys:Double x:Key="Double/LogAnalysisScriptSetEditorDialog.ScriptCompilationResults.MaxHeight">300</sys:Double>
 	<sys:Double x:Key="Double/LogAnalysisScriptSetEditorDialog.Height">550</sys:Double>
 	<sys:Double x:Key="Double/LogAnalysisScriptSetEditorDialog.MinHeight">400</sys:Double>
 	<sys:Double x:Key="Double/LogAnalysisScriptSetEditorDialog.MinWidth">300</sys:Double>
@@ -179,12 +178,12 @@
 	<sys:Double x:Key="Double/ScriptLogDataSourceProviderEditorDialog.Height">550</sys:Double>
 	<sys:Double x:Key="Double/ScriptLogDataSourceProviderEditorDialog.MinHeight">400</sys:Double>
 	<sys:Double x:Key="Double/ScriptLogDataSourceProviderEditorDialog.MinWidth">300</sys:Double>
+	<sys:Double x:Key="Double/ScriptLogDataSourceProviderEditorDialog.ScriptCompilationResults.MaxHeight">300</sys:Double>
 	<sys:Double x:Key="Double/ScriptLogDataSourceProviderEditorDialog.ScriptEditor.Height">300</sys:Double>
 	<sys:Double x:Key="Double/ScriptLogDataSourceProviderEditorDialog.Width">650</sys:Double>
 
 	<!-- ScriptLogDataSourceProvidersDialog -->
 	<sys:Double x:Key="Double/ScriptLogDataSourceProvidersDialog.ProviderListBox.Height">300</sys:Double>
-	<sys:Double x:Key="Double/ScriptLogDataSourceProvidersDialog.Width">400</sys:Double>
 	
 	<!-- SessionView -->
 	<CornerRadius x:Key="CornerRadius/SessionView.LogListBox.Item.Column.Border">0</CornerRadius>

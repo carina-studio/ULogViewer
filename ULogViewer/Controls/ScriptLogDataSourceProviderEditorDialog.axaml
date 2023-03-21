@@ -8,6 +8,7 @@
 		xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
 		xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
         xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
+		xmlns:asScripting="using:CarinaStudio.AppSuite.Scripting"
 		xmlns:sys="using:System"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.ScriptLogDataSourceProviderEditorDialog"
@@ -31,9 +32,7 @@
 		<!-- Control buttons -->
 		<Border Classes="Dialog_ControlButtonsPanel">
 			<StackPanel Classes="Dialog_ControlButtonsPanel">
-				<Button Classes="Dialog_IconControlButton" Command="{Binding $parent[Window].OpenDocumentation}" ToolTip.Tip="{DynamicResource String/Common.Help}">
-					<Image Classes="Dialog_IconControlButton_Icon" Source="{StaticResource Image/Icon.Question}"/>
-				</Button>
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].OpenDocumentation}" Content="{DynamicResource String/Common.Help}"/>
 				<Separator Classes="Dialog_Separator_Small"/>
 				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].GenerateResultCommand}" Content="{DynamicResource String/Common.OK}" IsEnabled="{Binding $parent[Window].AreValidParameters}"/>
 				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].Close}" Content="{DynamicResource String/Common.Cancel}"/>
@@ -42,65 +41,89 @@
 
 		<!-- Content -->
 		<ScrollViewer Name="contentScrollViewer" HorizontalScrollBarVisibility="Disabled">
-			<StackPanel Classes="Dialog_ContentPanel">
+			<StackPanel Classes="Dialog_ContentPanel_WithItemsGroups">
 				
-				<!-- Display Name -->
-				<StackPanel IsVisible="{Binding !$parent[Window].IsEmbeddedProvider}">
-					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/ScriptLogDataSourceProviderEditorDialog.DisplayName}"/>
-					<TextBox Name="displayNameTextBox" Classes="Dialog_TextBox" MaxLength="256"/>
-					<Separator Classes="Dialog_Separator"/>
-				</StackPanel>
+				<!-- Name and options -->
+				<Border Classes="Dialog_ItemsGroup_Container">
+					<StackPanel>
 
-				<!-- Supported source options -->
-				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/ScriptLogDataSourceProviderEditorDialog.SupportedSourceOptions}"/>
-				<Grid ColumnDefinitions="*,Auto">
-					<ListBox Name="supportedSourceOptionListBox" Items="{Binding $parent[Window].SupportedSourceOptions}" VirtualizationMode="None">
-						<ListBox.ItemTemplate>
-							<DataTemplate>
-								<Grid ColumnDefinitions="*,*">
-									<TextBlock Classes="ListBoxItem_TextBlock" Text="{Binding Name, Converter={x:Static appConverters:LogDataSourceOptionConverter.Default}}"/>
-									<Border Classes="InPlaceAction_Reserved"/>
-									<Grid Grid.Column="1" ColumnDefinitions="*,Auto" VerticalAlignment="Center">
-										<Border Height="20" ClipToBounds="True" Padding="0,-6,0,-6" VerticalAlignment="Center">
-											<CheckBox Content="{DynamicResource String/ScriptLogDataSourceProviderEditorDialog.SupportedSourceOptions.Required}" IsChecked="{Binding IsRequired}" IsEnabled="{Binding CanBeRequired}" MinHeight="0" VerticalAlignment="Center"/>
-										</Border>
-										<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
-											<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveSupportedSourceOptionCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
-												<asControls:Image Classes="InPlaceAction_Icon">
-													<DrawingImage>
-														<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
-													</DrawingImage>
-												</asControls:Image>
-											</Button>
-										</StackPanel>
+						<!-- Display Name -->
+						<StackPanel IsVisible="{Binding !$parent[Window].IsEmbeddedProvider}">
+							<Grid Classes="Dialog_Item_Container" ColumnDefinitions="Auto,*">
+								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/ScriptLogDataSourceProviderEditorDialog.DisplayName}"/>
+								<TextBox Name="displayNameTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" MaxLength="256"/>
+							</Grid>
+							<Separator Classes="Dialog_Item_Separator"/>
+						</StackPanel>
+
+						<!-- Supported source options -->
+						<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/ScriptLogDataSourceProviderEditorDialog.SupportedSourceOptions}"/>
+							<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !$parent[Window].SupportedSourceOptions.Count}" Text="{DynamicResource String/Common.None}"/>
+						</Grid>
+						<Line Classes="Dialog_Item_Separator_Inner"/>
+						<ListBox Name="supportedSourceOptionListBox" Classes="Dialog_Item_ListBox" Items="{Binding $parent[Window].SupportedSourceOptions}" VirtualizationMode="None">
+							<ListBox.ItemTemplate>
+								<DataTemplate>
+									<Grid ColumnDefinitions="*,*">
+										<TextBlock Classes="ListBoxItem_TextBlock" Text="{Binding Name, Converter={x:Static appConverters:LogDataSourceOptionConverter.Default}}"/>
+										<Border Classes="InPlaceAction_Reserved"/>
+										<Grid Grid.Column="1" ColumnDefinitions="*,Auto" VerticalAlignment="Center">
+											<Border Height="20" ClipToBounds="True" Padding="0,-6,0,-6" VerticalAlignment="Center">
+												<CheckBox Content="{DynamicResource String/ScriptLogDataSourceProviderEditorDialog.SupportedSourceOptions.Required}" IsChecked="{Binding IsRequired}" IsEnabled="{Binding CanBeRequired}" MinHeight="0" VerticalAlignment="Center"/>
+											</Border>
+											<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
+												<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveSupportedSourceOptionCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
+													<asControls:Image Classes="InPlaceAction_Icon">
+														<DrawingImage>
+															<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
+														</DrawingImage>
+													</asControls:Image>
+												</Button>
+											</StackPanel>
+										</Grid>
 									</Grid>
-								</Grid>
-							</DataTemplate>
-						</ListBox.ItemTemplate>
-					</ListBox>
-					<ToggleButton Name="addSupportedSourceOptionButton" Classes="BrowseButton" Command="{Binding $parent[Window].ShowAddSupportedSourceOptionMenu}" Grid.Column="1" IsEnabled="{Binding $parent[Window].UnsupportedSOurceOptions.Count}" ToolTip.Tip="{DynamicResource String/Common.Add}" VerticalAlignment="Top">
-						<Panel>
-							<Image Classes="BrowseButtonIcon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.Add.Light}"/>
-							<Image Classes="BrowseButtonIcon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.Add}"/>
-						</Panel>
-					</ToggleButton>
-				</Grid>
+								</DataTemplate>
+							</ListBox.ItemTemplate>
+						</ListBox>
+						<Separator Classes="Dialog_Separator_Small" IsVisible="{Binding $parent[Window].SupportedSourceOptions.Count}"/>
+						<ToggleButton Name="addSupportedSourceOptionButton" Classes="Dialog_Item_ToggleButton" Command="{Binding $parent[Window].ShowAddSupportedSourceOptionMenu}" Content="{DynamicResource String/Common.Add}" HorizontalAlignment="Right" IsEnabled="{Binding $parent[Window].UnsupportedSourceOptions.Count}"/>
+					</StackPanel>
+				</Border>
 				<Separator Classes="Dialog_Separator"/>
+				
+				<!-- Scripts -->
+				<Border Classes="Dialog_ItemsGroup_Container">
+					<StackPanel>
 
-				<!-- Opening reader script -->
-				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript}"/>
-				<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Description}"/>
-				<Separator Classes="Dialog_Separator"/>
+						<!-- Opening reader script -->
+						<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript}"/>
+							<asControls:EnumComboBox Classes="Dialog_Item_ComboBox" EnumType="{x:Type asScripting:ScriptLanguage}" Grid.Column="1" SelectedItem="{Binding #openingReaderScriptEditor.ScriptLanguage, Mode=TwoWay}"/>
+						</Grid>
+						<Line Classes="Dialog_Item_Separator_Inner"/>
+						<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Description}"/>
+						<Separator Classes="Dialog_Item_Separator"/>
 
-				<!-- Reading line script -->
-				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript}"/>
-				<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Description}"/>
-				<Separator Classes="Dialog_Separator"/>
+						<!-- Reading line script -->
+						<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript}"/>
+							<asControls:EnumComboBox Classes="Dialog_Item_ComboBox" EnumType="{x:Type asScripting:ScriptLanguage}" Grid.Column="1" SelectedItem="{Binding #readingLineScriptEditor.ScriptLanguage, Mode=TwoWay}"/>
+						</Grid>
+						<Line Classes="Dialog_Item_Separator_Inner"/>
+						<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Description}"/>
+						<Separator Classes="Dialog_Item_Separator"/>
 
-				<!-- Closing reader script -->
-				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript}"/>
-				<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Description}"/>
-				<Separator Classes="Dialog_Separator"/>
+						<!-- Closing reader script -->
+						<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript}"/>
+							<asControls:EnumComboBox Classes="Dialog_Item_ComboBox" EnumType="{x:Type asScripting:ScriptLanguage}" Grid.Column="1" SelectedItem="{Binding #closingReaderScriptEditor.ScriptLanguage, Mode=TwoWay}"/>
+						</Grid>
+						<Line Classes="Dialog_Item_Separator_Inner"/>
+						<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Description}"/>
+
+					</StackPanel>
+				</Border>
 				
 			</StackPanel>
 		</ScrollViewer>

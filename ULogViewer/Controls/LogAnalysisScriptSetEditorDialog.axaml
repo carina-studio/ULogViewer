@@ -9,6 +9,7 @@
 		xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
 		xmlns:appCtxlBased="using:CarinaStudio.ULogViewer.ViewModels.Analysis.ContextualBased"
         xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
+		xmlns:asScripting="using:CarinaStudio.AppSuite.Scripting"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.LogAnalysisScriptSetEditorDialog"
 		Name="window"
@@ -28,9 +29,7 @@
 		<!-- Control buttons -->
 		<Border Classes="Dialog_ControlButtonsPanel">
 			<StackPanel Classes="Dialog_ControlButtonsPanel">
-				<Button Classes="Dialog_IconControlButton" Command="{Binding $parent[Window].OpenDocumentation}" ToolTip.Tip="{DynamicResource String/Common.Help}">
-					<Image Classes="Dialog_IconControlButton_Icon" Source="{StaticResource Image/Icon.Question}"/>
-				</Button>
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].OpenDocumentation}" Content="{DynamicResource String/Common.Help}"/>
 				<Separator Classes="Dialog_Separator_Small"/>
 				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].CompleteEditing}" Content="{DynamicResource String/Common.OK}" IsEnabled="{Binding $parent[Window].AreValidParameters}"/>
 				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].Close}" Content="{DynamicResource String/Common.Cancel}"/>
@@ -39,41 +38,59 @@
 
 		<!-- Content -->
 		<ScrollViewer Name="contentScrollViewer" HorizontalScrollBarVisibility="Disabled">
-			<StackPanel Classes="Dialog_ContentPanel">
-				
+			<StackPanel Classes="Dialog_ContentPanel_WithItemsGroups">
+
 				<!-- Name and Icon -->
-				<StackPanel IsVisible="{Binding !$parent[Window].IsEmbeddedScriptSet}">
+				<Border Classes="Dialog_ItemsGroup_Container" IsVisible="{Binding !$parent[Window].IsEmbeddedScriptSet}">
+					<StackPanel>
 
-					<!-- Name -->
-					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.Name}"/>
-					<TextBox Name="nameTextBox" Classes="Dialog_TextBox" MaxLength="256"/>
-					<Separator Classes="Dialog_Separator"/>
+						<!-- Name -->
+						<Grid Classes="Dialog_Item_Container" ColumnDefinitions="Auto,*">
+							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.Name}"/>
+							<TextBox Name="nameTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" MaxLength="256"/>
+						</Grid>
+						<Separator Classes="Dialog_Item_Separator"/>
 
-					<!-- Icon -->
-					<Grid ColumnDefinitions="*,Auto,*" HorizontalAlignment="Stretch">
-						<StackPanel>
-							<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.Icon}"/>
-							<appControls:LogProfileIconComboBox Name="iconComboBox" Classes="Dialog_ComboBox" IconColor="{Binding #iconColorComboBox.SelectedItem}"/>
-						</StackPanel>
-						<Separator Classes="Dialog_Separator_Small" Grid.Column="1"/>
-						<StackPanel Grid.Column="2">
-							<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.IconColor}"/>
-							<appControls:LogProfileIconColorComboBox Name="iconColorComboBox" Classes="Dialog_ComboBox"/>
-						</StackPanel>
-					</Grid>
-					<Separator Classes="Dialog_Separator"/>
+						<!-- Icon -->
+						<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.Icon}"/>
+							<appControls:LogProfileIconComboBox Name="iconComboBox" Classes="Dialog_Item_ComboBox" IconColor="{Binding #iconColorComboBox.SelectedItem}" Grid.Column="1"/>
+						</Grid>
+						<Separator Classes="Dialog_Item_Separator"/>
 
-				</StackPanel>
+						<!-- Icon color -->
+						<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.IconColor}"/>
+							<appControls:LogProfileIconColorComboBox Name="iconColorComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1"/>
+						</Grid>
 
-				<!-- Setup script -->
-				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.SetupScript}"/>
-				<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.SetupScript.Description}"/>
-				<Separator Classes="Dialog_Separator"/>
+					</StackPanel>
+				</Border>
+				<Separator Classes="Dialog_Separator" IsVisible="{Binding !$parent[Window].IsEmbeddedScriptSet}"/>
 
-				<!-- Analysis script -->
-				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.AnalysisScript}"/>
-				<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Description}"/>
-				
+				<!-- Scripts -->
+				<Border Classes="Dialog_ItemsGroup_Container">
+					<StackPanel>
+
+						<!-- Setup script -->
+						<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.SetupScript}"/>
+							<asControls:EnumComboBox Classes="Dialog_Item_ComboBox" EnumType="{x:Type asScripting:ScriptLanguage}" Grid.Column="1" SelectedItem="{Binding #setupScriptEditor.ScriptLanguage, Mode=TwoWay}"/>
+						</Grid>
+						<Line Classes="Dialog_Item_Separator_Inner"/>
+						<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.SetupScript.Description}"/>
+						<Separator Classes="Dialog_Item_Separator"/>
+
+						<!-- Analysis script -->
+						<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.AnalysisScript}"/>
+							<asControls:EnumComboBox Classes="Dialog_Item_ComboBox" EnumType="{x:Type asScripting:ScriptLanguage}" Grid.Column="1" SelectedItem="{Binding #analysisScriptEditor.ScriptLanguage, Mode=TwoWay}"/>
+						</Grid>
+						<Line Classes="Dialog_Item_Separator_Inner"/>
+						<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Description}"/>
+
+					</StackPanel>
+				</Border>
 			</StackPanel>
 		</ScrollViewer>
 		

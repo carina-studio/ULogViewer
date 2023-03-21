@@ -13,25 +13,27 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.ScriptLogDataSourceProvidersDialog"
         Classes="Dialog"
-        Title="{DynamicResource String/ScriptLogDataSourceProvidersDialog.Title}"
-        Width="{DynamicResource Double/ScriptLogDataSourceProvidersDialog.Width}">
+		SizeToContent="WidthAndHeight"
+        Title="{DynamicResource String/ScriptLogDataSourceProvidersDialog.Title}">
 
 	<DockPanel>
 
 		<!-- Control buttons -->
 		<Border Classes="Dialog_ControlButtonsPanel">
 			<StackPanel Classes="Dialog_ControlButtonsPanel">
-				<Button Classes="Dialog_IconControlButton" Command="{Binding $parent[Window].OpenDocumentation}" ToolTip.Tip="{DynamicResource String/Common.Help}">
-					<Image Classes="Dialog_IconControlButton_Icon" Source="{StaticResource Image/Icon.Question}"/>
-				</Button>
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].OpenDocumentation}" Content="{DynamicResource String/Common.Help}"/>
 				<Separator Classes="Dialog_Separator_Small"/>
-				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].Close}" Content="{DynamicResource String/Common.OK}"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].AddProvider}" Content="{DynamicResource String/Common.Add.WithDialog}"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].ImportProvider}" Content="{DynamicResource String/Common.Import.WithDialog}"/>
+				<Separator Classes="Dialog_Separator_Small"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].Close}" Content="{DynamicResource String/Common.Close}"/>
 			</StackPanel>
 		</Border>
 
 		<!-- Content -->
-		<Grid Classes="Dialog_ContentPanel" ColumnDefinitions="*,Auto">
-			<asControls:ListBox Name="providerListBox" Height="{StaticResource Double/ScriptLogDataSourceProvidersDialog.ProviderListBox.Height}" Items="{x:Static appDataSources:LogDataSourceProviders.ScriptProviders}">
+		<StackPanel Classes="Dialog_ContentPanel">
+
+			<asControls:ListBox Name="providerListBox" Classes="Dialog_ListBox" Height="{StaticResource Double/ScriptLogDataSourceProvidersDialog.ProviderListBox.Height}" IsVisible="{Binding Count, Source={x:Static appDataSources:LogDataSourceProviders.ScriptProviders}}" Items="{x:Static appDataSources:LogDataSourceProviders.ScriptProviders}">
 				<asControls:ListBox.ItemTemplate>
 					<DataTemplate>
 						<Grid ColumnDefinitions="Auto,*,Auto">
@@ -75,16 +77,15 @@
 					</DataTemplate>
 				</asControls:ListBox.ItemTemplate>
 			</asControls:ListBox>
-			<StackPanel Grid.Column="1" VerticalAlignment="Top">
-				<Button Classes="BrowseButton" Command="{Binding $parent[Window].AddProvider}" ToolTip.Tip="{DynamicResource String/Common.Add}">
-					<Image Classes="BrowseButtonIcon" Source="{StaticResource Image/Icon.Add}"/>
-				</Button>
+			
+			<!--Separator Classes="Dialog_Separator_Small" IsVisible="{Binding #providerListBox.IsVisible}"/>
+			<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+				<Button Classes="Dialog_Item_Button" Command="{Binding $parent[Window].AddProvider}" Content="{DynamicResource String/Common.Add.WithDialog}"/>
 				<Separator Classes="Dialog_Separator_Small"/>
-				<Button Classes="BrowseButton" Command="{Binding $parent[Window].ImportProvider}" ToolTip.Tip="{DynamicResource String/Common.Import}">
-					<Image Classes="BrowseButtonIcon" Source="{StaticResource Image/Icon.Import}"/>
-				</Button>
-			</StackPanel>
-		</Grid>
+				<Button Classes="Dialog_Item_Button" Command="{Binding $parent[Window].ImportProvider}" Content="{DynamicResource String/Common.Import.WithDialog}"/>
+			</StackPanel-->
+
+		</StackPanel>
 		
 	</DockPanel>
 	
