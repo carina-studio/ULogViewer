@@ -86,27 +86,38 @@
 
 							<!-- Category -->
 							<Grid Name="categoryItemGrid" Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto" IsVisible="{Binding $parent[Window].IsCategorySupported}">
-								<StackPanel Classes="Dialog_Item_Text_Container">
-									<StackPanel Orientation="Horizontal">
-										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.Category}" VerticalAlignment="Center"/>
-										<TextBlock Classes="Dialog_TextBlock_Label" IsVisible="{Binding $parent[Window].IsCategoryRequired}" Text="{DynamicResource String/LogDataSourceOptionsDialog.Required}"/>
-									</StackPanel>
-									<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" IsVisible="{Binding $parent[Window].CategoryReferenceUri, Converter={x:Static ObjectConverters.IsNotNull}}" Text="{DynamicResource String/Common.References}" Uri="{Binding $parent[Window].CategoryReferenceUri}"/>
-								</StackPanel>
-								<TextBox Name="categoryTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" PropertyChanged="OnEditorControlPropertyChanged" Watermark="{DynamicResource String/Common.None}"/>
+								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.Category}"/>
+								<TextBox Name="categoryTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" PropertyChanged="OnEditorControlPropertyChanged" Watermark="{DynamicResource String/Common.None}">
+									<ia:Interaction.Behaviors>
+										<iaCore:DataTriggerBehavior Binding="{Binding $parent[Window].IsCategoryRequired}" ComparisonCondition="Equal" Value="True">
+											<iaCore:ChangePropertyAction PropertyName="Watermark" Value="{DynamicResource String/Common.Required}"/>
+										</iaCore:DataTriggerBehavior>
+										<iaCore:DataTriggerBehavior Binding="{Binding $parent[Window].IsCategoryRequired}" ComparisonCondition="Equal" Value="False">
+											<iaCore:ChangePropertyAction PropertyName="Watermark" Value="{DynamicResource String/Common.None}"/>
+										</iaCore:DataTriggerBehavior>
+									</ia:Interaction.Behaviors>
+								</TextBox>
 							</Grid>
+							<Line Classes="Dialog_ItemSeparator_Inner" IsVisible="{Binding $parent[Window].CategoryReferenceUri, Converter={x:Static ObjectConverters.IsNotNull}}"/>
+							<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" IsVisible="{Binding $parent[Window].CategoryReferenceUri, Converter={x:Static ObjectConverters.IsNotNull}}" Text="{DynamicResource String/Common.References}" Uri="{Binding $parent[Window].CategoryReferenceUri}"/>
 							<Separator Classes="Dialog_Item_Separator" IsVisible="{Binding #categoryItemGrid.IsVisible}"/>
 
 							<!-- Command -->
 							<StackPanel IsVisible="{Binding $parent[Window].IsCommandSupported}">
 								<Border Name="commandItemGrid" Classes="Dialog_Item_Container">
-									<StackPanel Orientation="Horizontal">
-										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.Command}" VerticalAlignment="Center"/>
-										<TextBlock Classes="Dialog_TextBlock_Label" IsVisible="{Binding $parent[Window].IsCommandRequired}" Text="{DynamicResource String/LogDataSourceOptionsDialog.Required}" VerticalAlignment="Center"/>
-									</StackPanel>
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.Command}"/>
 								</Border>
 								<Line Classes="Dialog_Item_Separator_Inner"/>
-								<asControls:SyntaxHighlightingTextBox Name="commandTextBox" Classes="Dialog_Item_TextBox" DefinitionSet="{Binding $parent[Window].CommandSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Height="{StaticResource Double/LogDataSourceOptionsDialog.Command.Height}" PropertyChanged="OnEditorControlPropertyChanged" TextAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Center" Watermark="{DynamicResource String/Common.None}"/>
+								<asControls:SyntaxHighlightingTextBox Name="commandTextBox" Classes="Dialog_Item_TextBox" DefinitionSet="{Binding $parent[Window].CommandSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Height="{StaticResource Double/LogDataSourceOptionsDialog.Command.Height}" PropertyChanged="OnEditorControlPropertyChanged" TextAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Center" Watermark="{DynamicResource String/Common.None}">
+									<ia:Interaction.Behaviors>
+										<iaCore:DataTriggerBehavior Binding="{Binding $parent[Window].IsCommandRequired}" ComparisonCondition="Equal" Value="True">
+											<iaCore:ChangePropertyAction PropertyName="Watermark" Value="{DynamicResource String/Common.Required}"/>
+										</iaCore:DataTriggerBehavior>
+										<iaCore:DataTriggerBehavior Binding="{Binding $parent[Window].IsCommandRequired}" ComparisonCondition="Equal" Value="False">
+											<iaCore:ChangePropertyAction PropertyName="Watermark" Value="{DynamicResource String/Common.None}"/>
+										</iaCore:DataTriggerBehavior>
+									</ia:Interaction.Behaviors>
+								</asControls:SyntaxHighlightingTextBox>
 								<Separator Classes="Dialog_Separator_Small" IsVisible="{Binding $parent[Window].IsAzureRelatedDataSourceProvider}"/>
 								<Button Name="selectAzureResourcesButton" Classes="Dialog_Item_Button" Command="{Binding $parent[Window].SelectAzureResources}" Content="{DynamicResource String/LogDataSourceOptionsDialog.SelectAzureResources}" HorizontalAlignment="Right" IsVisible="{Binding $parent[Window].IsAzureRelatedDataSourceProvider}"/>
 								<Line Classes="Dialog_Item_Separator_Inner" IsVisible="{Binding $parent[Window].CommandReferenceUri, Converter={x:Static ObjectConverters.IsNotNull}}"/>
@@ -213,13 +224,19 @@
 							<!-- Connection string -->
 							<StackPanel IsVisible="{Binding $parent[Window].IsConnectionStringSupported}">
 								<Border Classes="Dialog_Item_Container">
-									<StackPanel Orientation="Horizontal">
-										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.ConnectionString}" VerticalAlignment="Center"/>
-										<TextBlock Classes="Dialog_TextBlock_Label" IsVisible="{Binding $parent[Window].IsConnectionStringRequired}" Text="{DynamicResource String/LogDataSourceOptionsDialog.Required}" VerticalAlignment="Center"/>
-									</StackPanel>
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.ConnectionString}"/>
 								</Border>
 								<Line Classes="Dialog_Item_Separator_Inner"/>
-								<TextBox Name="connectionStringStringTextBox" Classes="Dialog_Item_TextBox" AcceptsReturn="True" AcceptsTab="True" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Height="{StaticResource Double/LogDataSourceOptionsDialog.ConnectionStringTextBox.Height}" PropertyChanged="OnEditorControlPropertyChanged" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" TextAlignment="Left" Watermark="{DynamicResource String/Common.None}"/>
+								<TextBox Name="connectionStringStringTextBox" Classes="Dialog_Item_TextBox" AcceptsReturn="True" AcceptsTab="True" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Height="{StaticResource Double/LogDataSourceOptionsDialog.ConnectionStringTextBox.Height}" PropertyChanged="OnEditorControlPropertyChanged" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" TextAlignment="Left" Watermark="{DynamicResource String/Common.None}">
+									<ia:Interaction.Behaviors>
+										<iaCore:DataTriggerBehavior Binding="{Binding $parent[Window].IsConnectionStringRequired}" ComparisonCondition="Equal" Value="True">
+											<iaCore:ChangePropertyAction PropertyName="Watermark" Value="{DynamicResource String/Common.Required}"/>
+										</iaCore:DataTriggerBehavior>
+										<iaCore:DataTriggerBehavior Binding="{Binding $parent[Window].IsConnectionStringRequired}" ComparisonCondition="Equal" Value="False">
+											<iaCore:ChangePropertyAction PropertyName="Watermark" Value="{DynamicResource String/Common.None}"/>
+										</iaCore:DataTriggerBehavior>
+									</ia:Interaction.Behaviors>
+								</TextBox>
 								<Line Classes="Dialog_Item_Separator_Inner" IsVisible="{Binding $parent[Window].ConnectionStringReferenceUri, Converter={x:Static ObjectConverters.IsNotNull}}"/>
 								<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" IsVisible="{Binding $parent[Window].ConnectionStringReferenceUri, Converter={x:Static ObjectConverters.IsNotNull}}" Text="{DynamicResource String/Common.References}" Uri="{Binding $parent[Window].ConnectionStringReferenceUri}"/>
 								<Separator Classes="Dialog_Item_Separator"/>
@@ -240,13 +257,19 @@
 							<!-- Query string -->
 							<StackPanel IsVisible="{Binding $parent[Window].IsQueryStringSupported}">
 								<Border Classes="Dialog_Item_Container">
-									<StackPanel Orientation="Horizontal">
-										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.QueryString}" VerticalAlignment="Center"/>
-										<TextBlock Classes="Dialog_TextBlock_Label" IsVisible="{Binding $parent[Window].IsQueryStringRequired}" Text="{DynamicResource String/LogDataSourceOptionsDialog.Required}" VerticalAlignment="Center"/>
-									</StackPanel>
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.QueryString}"/>
 								</Border>
 								<Line Classes="Dialog_Item_Separator_Inner"/>
-								<asControls:SyntaxHighlightingTextBox Name="queryStringTextBox" Classes="Dialog_Item_TextBox" AcceptsReturn="True" AcceptsTab="True" DefinitionSet="{Binding $parent[Window].SqlSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Height="{StaticResource Double/LogDataSourceOptionsDialog.QueryStringTextBox.Height}" PropertyChanged="OnEditorControlPropertyChanged" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" TextAlignment="Left" Watermark="{DynamicResource String/Common.None}"/>
+								<asControls:SyntaxHighlightingTextBox Name="queryStringTextBox" Classes="Dialog_Item_TextBox" AcceptsReturn="True" AcceptsTab="True" DefinitionSet="{Binding $parent[Window].SqlSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Height="{StaticResource Double/LogDataSourceOptionsDialog.QueryStringTextBox.Height}" PropertyChanged="OnEditorControlPropertyChanged" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" TextAlignment="Left" Watermark="{DynamicResource String/Common.None}">
+									<ia:Interaction.Behaviors>
+										<iaCore:DataTriggerBehavior Binding="{Binding $parent[Window].IsQueryStringRequired}" ComparisonCondition="Equal" Value="True">
+											<iaCore:ChangePropertyAction PropertyName="Watermark" Value="{DynamicResource String/Common.Required}"/>
+										</iaCore:DataTriggerBehavior>
+										<iaCore:DataTriggerBehavior Binding="{Binding $parent[Window].IsQueryStringRequired}" ComparisonCondition="Equal" Value="False">
+											<iaCore:ChangePropertyAction PropertyName="Watermark" Value="{DynamicResource String/Common.None}"/>
+										</iaCore:DataTriggerBehavior>
+									</ia:Interaction.Behaviors>
+								</asControls:SyntaxHighlightingTextBox>
 								<Line Classes="Dialog_Item_Separator_Inner" IsVisible="{Binding $parent[Window].QueryStringReferenceUri, Converter={x:Static ObjectConverters.IsNotNull}}"/>
 								<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" IsVisible="{Binding $parent[Window].QueryStringReferenceUri, Converter={x:Static ObjectConverters.IsNotNull}}" Text="{DynamicResource String/Common.References}" Uri="{Binding $parent[Window].QueryStringReferenceUri}"/>
 								<Separator Classes="Dialog_Item_Separator"/>
@@ -255,11 +278,17 @@
 							<!-- User name -->
 							<StackPanel IsVisible="{Binding $parent[Window].IsUserNameSupported}">
 								<Grid Classes="Dialog_Item_Container" ColumnDefinitions="Auto,*">
-									<StackPanel Orientation="Horizontal">
-										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.UserName}" VerticalAlignment="Center"/>
-										<TextBlock Classes="Dialog_TextBlock_Label" IsVisible="{Binding $parent[Window].IsUserNameRequired}" Text="{DynamicResource String/LogDataSourceOptionsDialog.Required}"/>
-									</StackPanel>
-									<TextBox Name="userNameTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" PropertyChanged="OnEditorControlPropertyChanged" Watermark="{DynamicResource String/Common.None}"/>
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.UserName}"/>
+									<TextBox Name="userNameTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" PropertyChanged="OnEditorControlPropertyChanged" Watermark="{DynamicResource String/Common.None}">
+										<ia:Interaction.Behaviors>
+											<iaCore:DataTriggerBehavior Binding="{Binding $parent[Window].IsUserNameRequired}" ComparisonCondition="Equal" Value="True">
+												<iaCore:ChangePropertyAction PropertyName="Watermark" Value="{DynamicResource String/Common.Required}"/>
+											</iaCore:DataTriggerBehavior>
+											<iaCore:DataTriggerBehavior Binding="{Binding $parent[Window].IsUserNameRequired}" ComparisonCondition="Equal" Value="False">
+												<iaCore:ChangePropertyAction PropertyName="Watermark" Value="{DynamicResource String/Common.None}"/>
+											</iaCore:DataTriggerBehavior>
+										</ia:Interaction.Behaviors>
+									</TextBox>
 								</Grid>
 								<Separator Classes="Dialog_Item_Separator"/>
 							</StackPanel>
@@ -267,11 +296,17 @@
 							<!-- Password -->
 							<StackPanel IsVisible="{Binding $parent[Window].IsPasswordSupported}">
 								<Grid Classes="Dialog_Item_Container" ColumnDefinitions="Auto,*">
-									<StackPanel Orientation="Horizontal">
-										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.Password}" VerticalAlignment="Center"/>
-										<TextBlock Classes="Dialog_TextBlock_Label" IsVisible="{Binding $parent[Window].IsPasswordRequired}" Text="{DynamicResource String/LogDataSourceOptionsDialog.Required}"/>
-									</StackPanel>
-									<TextBox Name="passwordTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" PasswordChar="●" PropertyChanged="OnEditorControlPropertyChanged" Watermark="{DynamicResource String/Common.None}"/>
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.Password}"/>
+									<TextBox Name="passwordTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" PasswordChar="●" PropertyChanged="OnEditorControlPropertyChanged" Watermark="{DynamicResource String/Common.None}">
+										<ia:Interaction.Behaviors>
+											<iaCore:DataTriggerBehavior Binding="{Binding $parent[Window].IsPasswordRequired}" ComparisonCondition="Equal" Value="True">
+												<iaCore:ChangePropertyAction PropertyName="Watermark" Value="{DynamicResource String/Common.Required}"/>
+											</iaCore:DataTriggerBehavior>
+											<iaCore:DataTriggerBehavior Binding="{Binding $parent[Window].IsPasswordRequired}" ComparisonCondition="Equal" Value="False">
+												<iaCore:ChangePropertyAction PropertyName="Watermark" Value="{DynamicResource String/Common.None}"/>
+											</iaCore:DataTriggerBehavior>
+										</ia:Interaction.Behaviors>
+									</TextBox>
 								</Grid>
 								<Separator Classes="Dialog_Item_Separator"/>
 							</StackPanel>
@@ -279,10 +314,7 @@
 							<!-- Setup commands -->
 							<StackPanel IsVisible="{Binding $parent[Window].IsSetupCommandsSupported}">
 								<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
-									<StackPanel Orientation="Horizontal">
-										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.SetupCommands}" VerticalAlignment="Center"/>
-										<TextBlock Classes="Dialog_TextBlock_Label" IsVisible="{Binding $parent[Window].IsSetupCommandsRequired}" Text="{DynamicResource String/LogDataSourceOptionsDialog.Required}" VerticalAlignment="Center"/>
-									</StackPanel>
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.SetupCommands}"/>
 									<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !#setupCommandsListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
 								</Grid>
 								<Line Classes="Dialog_Item_Separator_Inner"/>
@@ -295,10 +327,7 @@
 							<!-- Teardown commands -->
 							<StackPanel IsVisible="{Binding $parent[Window].IsTeardownCommandsSupported}">
 								<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
-									<StackPanel Orientation="Horizontal">
-										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.TeardownCommands}" VerticalAlignment="Center"/>
-										<TextBlock Classes="Dialog_TextBlock_Label" IsVisible="{Binding $parent[Window].IsTeardownCommandsRequired}" Text="{DynamicResource String/LogDataSourceOptionsDialog.Required}" VerticalAlignment="Center"/>
-									</StackPanel>
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.TeardownCommands}"/>
 									<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !#teardownCommandsListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
 								</Grid>
 								<Line Classes="Dialog_Item_Separator_Inner"/>

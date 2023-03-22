@@ -32,6 +32,10 @@ partial class PatternEditor : CarinaStudio.Controls.UserControl<IULogViewerAppli
 	/// Property of <see cref="Pattern"/>.
 	/// </summary>
 	public static readonly DirectProperty<PatternEditor, Regex?> PatternProperty = AvaloniaProperty.RegisterDirect<PatternEditor, Regex?>(nameof(Pattern), e => e.pattern, (e, p) => e.Pattern = p);
+	/// <summary>
+	/// Property of <see cref="Watermark"/>.
+	/// </summary>
+	public static readonly StyledProperty<string?> WatermarkProperty = AvaloniaProperty.Register<PatternEditor, string?>(nameof(Watermark));
 
 
 	// Constants.
@@ -164,8 +168,8 @@ partial class PatternEditor : CarinaStudio.Controls.UserControl<IULogViewerAppli
 	/// </summary>
 	public bool IsCapturingGroupsEnabled
 	{
-		get => this.GetValue<bool>(IsCapturingGroupsEnabledProperty);
-		set => this.SetValue<bool>(IsCapturingGroupsEnabledProperty, value);
+		get => this.GetValue(IsCapturingGroupsEnabledProperty);
+		set => this.SetValue(IsCapturingGroupsEnabledProperty, value);
 	}
 
 
@@ -174,8 +178,8 @@ partial class PatternEditor : CarinaStudio.Controls.UserControl<IULogViewerAppli
 	/// </summary>
 	public bool IsCapturingLogPropertiesEnabled
 	{
-		get => this.GetValue<bool>(IsCapturingLogPropertiesEnabledProperty);
-		set => this.SetValue<bool>(IsCapturingLogPropertiesEnabledProperty, value);
+		get => this.GetValue(IsCapturingLogPropertiesEnabledProperty);
+		set => this.SetValue(IsCapturingLogPropertiesEnabledProperty, value);
 	}
 	
 
@@ -321,5 +325,15 @@ partial class PatternEditor : CarinaStudio.Controls.UserControl<IULogViewerAppli
 
 		// no tutorial to show
 		return false;
+	}
+
+
+	/// <summary>
+	/// Get or set watermark to be shown in editor.
+	/// </summary>
+	public string? Watermark
+	{
+		get => this.GetValue(WatermarkProperty);
+		set => this.SetValue(WatermarkProperty, value);
 	}
 }

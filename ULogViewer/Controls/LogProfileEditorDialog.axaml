@@ -62,7 +62,7 @@
 						<!-- Name -->
 						<Grid Classes="Dialog_Item_Container" ColumnDefinitions="Auto,*">
 							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.Name}"/>
-							<TextBox Name="nameTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" MaxLength="256" PropertyChanged="OnEditorControlPropertyChanged" Watermark=""/>
+							<TextBox Name="nameTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" MaxLength="256" PropertyChanged="OnEditorControlPropertyChanged" Watermark="{DynamicResource String/Common.Required}"/>
 						</Grid>
 						<Separator Classes="Dialog_Item_Separator"/>
 

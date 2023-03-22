@@ -40,7 +40,7 @@
 							</StackPanel>
 						</Border>
 						<Line Classes="Dialog_Item_Separator_Inner"/>
-						<appControls:PatternEditor Name="patternEditor" IsCapturingGroupsEnabled="True" IsCapturingLogPropertiesEnabled="True" MinHeight="{DynamicResource Double/LogPatternEditorDialog.RegexInput.Height}"/>
+						<appControls:PatternEditor Name="patternEditor" IsCapturingGroupsEnabled="True" IsCapturingLogPropertiesEnabled="True" MinHeight="{DynamicResource Double/LogPatternEditorDialog.RegexInput.Height}" Watermark="{DynamicResource String/Common.Required}"/>
 						<Line Classes="Dialog_Item_Separator_Inner"/>
 						<SelectableTextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/RegexEditorDialog.Regex.Description.CapturingLogProperties}"/>
 						<Separator Classes="Dialog_Item_Separator"/>

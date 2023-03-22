@@ -212,20 +212,19 @@
 	<!-- DisplayableLogAnalysisRuleEditorDialog -->
 	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.ByteSizeUnit">Unit to parse byte size of analysis result</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.ByteSizeVariableName">Variable to parse byte size of analysis result</sys:String>
-	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Common">Common</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Conditions">Extra conditions</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Conditions.Description">Conditions to match log properties or variables captured by pattern.</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.DurationUnit">Unit to parse duration of analysis result</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.DurationVariableName">Variable to parse duration of analysis result</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Level">Log level</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Level.Description">Only logs with given level will be selected to generate results.</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Message">Message of analysis result</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Message.Description">You can use Interpolation Syntax "{}" to output log property or custom group in pattern to message.</sys:String>
-	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Message.Required">Message of analysis result (required)</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Other">Other</sys:String>
-	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Pattern">Pattern (required)</sys:String>
-	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Pattern.Description">You can use \$\$ as separator between text properties. For example, if you want to find log with user name "John" and message "Hello" then you can use pattern "John\$\$Hello". The order of text properties are same as visible log properties defined by log profile.</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Pattern">Pattern</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Pattern.Description">Regular expression to match text of log.</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Pattern.Description.Detailed">You can use \$\$ as separator between text properties. For example, if you want to find log with user name "John" and message "Hello" then you can use pattern "John\$\$Hello". The order of text properties are same as visible log properties defined by log profile.</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.QuantityVariableName">Variable to parse quantity of analysis result</sys:String>
-	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Result">Analysis result</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.ResultType">Type of analysis result</sys:String>
 
 	<!-- DisplayableLogAnalysisRuleSetEditorDialog -->
@@ -386,7 +385,6 @@ return False</sys:String>
 
 	<!-- LogDataSourceOptionsDialog -->
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.IsResourceOnAzure.Description">ULogViewer will setup environment automatically if it is the resource on Azure. For ex, logging in or updating firewall rules.</sys:String>
-	<sys:String x:Key="String/LogDataSourceOptionsDialog.Required"> (required)</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.SelectAzureResources">Select resources on Azure</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.Title">Data source options</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.Tutorial.SelectAzureResources">You can click here to view and select resources on Azure.</sys:String>

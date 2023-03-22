@@ -200,20 +200,19 @@
 	<!-- DisplayableLogAnalysisRuleEditorDialog -->
 	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.ByteSizeUnit">解析分析结果字节大小之单位</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.ByteSizeVariableName">解析分析结果字节大小之变量</sys:String>
-	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Common">一般</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Conditions">额外条件</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Conditions.Description">用以比对日志属性值或由格式提取之变量的条件。</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.DurationUnit">解析分析结果时距之单位</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.DurationVariableName">解析分析结果时距之变量</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Level">日志等级</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Level.Description">只有符合指定等级的日志才会被选择以输出结果。</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Message">分析结果信息</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Message.Description">您可以使用插值语法 "{}" 以将日志属性或格式中的自定义分组输出至消息。</sys:String>
-	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Message.Required">分析结果信息 (必要)</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Other">其他</sys:String>
-	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Pattern">格式 (必要)</sys:String>
-	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Pattern.Description">您可以使用 \$\$ 表示文字属性分隔线。例如您想找到使用者为 "John" 且 信息为 "Hello" 的日志，就可以使用 "John\$\$Hello" 作为格式。文字属性的排列顺序和日志类型所定义与可见日志属性相同。</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Pattern">格式</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Pattern.Description">用以比对日志文字正则表达式。</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Pattern.Description.Detailed">您可以使用 \$\$ 表示文字属性分隔线。例如您想找到使用者为 "John" 且 信息为 "Hello" 的日志，就可以使用 "John\$\$Hello" 作为格式。文字属性的排列顺序和日志类型所定义与可见日志属性相同。</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.QuantityVariableName">解析分析结果数量之变量</sys:String>
-	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Result">分析结果</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.ResultType">分析结果类型</sys:String>
 
 	<!-- DisplayableLogAnalysisRuleSetEditorDialog -->
@@ -370,7 +369,6 @@ return False</sys:String>
 
 	<!-- LogDataSourceOptionsDialog -->
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.IsResourceOnAzure.Description">若这是 Azure 上的资源则 ULogViewer 将自动设定相关环境，例如登录或更新防火墙规则。</sys:String>
-	<sys:String x:Key="String/LogDataSourceOptionsDialog.Required"> (必要)</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.SelectAzureResources">选取 Azure 上的资源</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.Title">资料来源参数</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.Tutorial.SelectAzureResources">您可以点击这里以列出并选取 Azure 上的资源。</sys:String>

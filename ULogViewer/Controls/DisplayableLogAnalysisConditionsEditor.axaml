@@ -4,7 +4,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="CarinaStudio.ULogViewer.Controls.DisplayableLogAnalysisConditionsEditor">
+        x:Class="CarinaStudio.ULogViewer.Controls.DisplayableLogAnalysisConditionsEditor"
+		HorizontalContentAlignment="Stretch"
+		VerticalContentAlignment="Stretch">
 	
 	<UserControl.Resources>
 
@@ -19,8 +21,8 @@
 
 	</UserControl.Resources>
 
-	<Grid ColumnDefinitions="*,Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-		<asControls:ListBox Name="conditionListBox" Classes="Dialog_ListBox" Items="{Binding $parent[UserControl].Conditions}" VerticalAlignment="Stretch" VirtualizationMode="None">
+	<Grid RowDefinitions="*,Auto,Auto">
+		<asControls:ListBox Name="conditionListBox" Classes="Dialog_Item_ListBox" IsVisible="{Binding $parent[UserControl].Conditions.Count}" Items="{Binding $parent[UserControl].Conditions}" VerticalAlignment="Stretch" VirtualizationMode="None">
 			<asControls:ListBox.ItemTemplate>
 				<DataTemplate>
 					<Grid ColumnDefinitions="*,Auto">
@@ -46,12 +48,8 @@
 				</DataTemplate>
 			</asControls:ListBox.ItemTemplate>
 		</asControls:ListBox>
-		<ToggleButton Name="addConditionButton" Classes="BrowseButton" Command="{Binding $parent[UserControl].ShowAddConditionMenu}" Grid.Column="1" ToolTip.Tip="{DynamicResource String/Common.Add}" VerticalAlignment="Top">
-			<Panel>
-				<Image Classes="BrowseButtonIcon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.Add.Light}"/>
-				<Image Classes="BrowseButtonIcon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.Add}"/>
-			</Panel>
-		</ToggleButton>
+		<Separator Classes="Dialog_Separator_Small" Grid.Row="1" IsVisible="{Binding #conditionListBox.IsVisible}"/>
+		<ToggleButton Name="addConditionButton" Classes="Dialog_Item_ToggleButton" Command="{Binding $parent[UserControl].ShowAddConditionMenu}" Content="{DynamicResource String/Common.Add.WithDialog}" Grid.Row="2" HorizontalAlignment="Right"/>
 	</Grid>
 	
 </UserControl>
