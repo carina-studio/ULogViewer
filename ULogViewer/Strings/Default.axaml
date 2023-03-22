@@ -156,13 +156,13 @@
 	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.PushVariableAction.WithDialog">Push variable to stack…</sys:String>
 
 	<!-- ContextualBasedAnalysisActionsEditorDialog -->
-	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Queue">Name of queue (required)</sys:String>
-	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Stack">Name of stack (required)</sys:String>
-	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Variable">Name of variable (required)</sys:String>
+	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Queue">Name of queue</sys:String>
+	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Stack">Name of stack</sys:String>
+	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Variable">Name of variable</sys:String>
 
 	<!-- CopyVarEditorDialog -->
-	<sys:String x:Key="String/CopyVarEditorDialog.SourceVariable">Name of source variable (required)</sys:String>
-	<sys:String x:Key="String/CopyVarEditorDialog.TargetVariable">Name of target variable (required)</sys:String>
+	<sys:String x:Key="String/CopyVarEditorDialog.SourceVariable">Name of source variable</sys:String>
+	<sys:String x:Key="String/CopyVarEditorDialog.TargetVariable">Name of target variable</sys:String>
 	<sys:String x:Key="String/CopyVarEditorDialog.Title">Copy value between variables</sys:String>
 
 	<!-- CopyVariableAction -->
@@ -231,17 +231,17 @@
 	<sys:String x:Key="String/DisplayableLogAnalysisRuleSetEditorDialog.CannotAddMoreRuleSetWithoutProVersion">Cannot create more rule set before activating Pro version.</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisRuleSetEditorDialog.Icon">Icon</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisRuleSetEditorDialog.IconColor">Color of icon</sys:String>
-	<sys:String x:Key="String/DisplayableLogAnalysisRuleSetEditorDialog.Name">Name (required)</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisRuleSetEditorDialog.Name">Name</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisRuleSetEditorDialog.RestrictionsOfNonProVersion">Before activating Pro version, you can have only 1 rule set and rule set won't be kept after closing ULogViewer.</sys:String>
-	<sys:String x:Key="String/DisplayableLogAnalysisRuleSetEditorDialog.Rules">Rules (required)</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisRuleSetEditorDialog.Rules">Rules</sys:String>
 
 	<!-- EmbeddedScriptLogDataSourceProvider -->
 	<sys:String x:Key="String/EmbeddedScriptLogDataSourceProvider.DisplayName">Embedded log data source script</sys:String>
 
 	<!-- EnqueueVarEditorDialog -->
-	<sys:String x:Key="String/EnqueueVarEditorDialog.Queue">Name of queue (required)</sys:String>
+	<sys:String x:Key="String/EnqueueVarEditorDialog.Queue">Name of queue</sys:String>
 	<sys:String x:Key="String/EnqueueVarEditorDialog.Title">Enqueue value of variable to queue</sys:String>
-	<sys:String x:Key="String/EnqueueVarEditorDialog.Variable">Name of variable (required)</sys:String>
+	<sys:String x:Key="String/EnqueueVarEditorDialog.Variable">Name of variable</sys:String>
 
 	<!-- EnqueueVariableAction -->
 	<sys:String x:Key="String/EnqueueVariableAction">Enqueue {{{0}}} to queue '{1}'</sys:String>
@@ -403,10 +403,10 @@ return False</sys:String>
 
 	<!-- LogLevelMapEntryEditor -->
 	<sys:String x:Key="String/LogLevelMapEntryEditor.Reading.LogLevel">Mapped log level</sys:String>
-	<sys:String x:Key="String/LogLevelMapEntryEditor.Reading.Text">Text (required)</sys:String>
+	<sys:String x:Key="String/LogLevelMapEntryEditor.Reading.Text">Text</sys:String>
 	<sys:String x:Key="String/LogLevelMapEntryEditor.Title">Mapping of log level</sys:String>
 	<sys:String x:Key="String/LogLevelMapEntryEditor.Writing.LogLevel">Log level</sys:String>
-	<sys:String x:Key="String/LogLevelMapEntryEditor.Writing.Text">Mapped text (required)</sys:String>
+	<sys:String x:Key="String/LogLevelMapEntryEditor.Writing.Text">Mapped text</sys:String>
 
 	<!-- LogPatternEditorDialog -->
 	<sys:String x:Key="String/LogPatternEditorDialog.IsSkippable">The line can be skipped</sys:String>
@@ -786,8 +786,22 @@ return False</sys:String>
 	<sys:String x:Key="String/OperationCountingAnalyzer.NoOperation">(No operation)</sys:String>
 
 	<!-- OperationDurationAnalysisRuleEditorDialog -->
-	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog">Log of beginning of operation</sys:String>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingLog">Log of ending of operation</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.Conditions">Conditions of beginning log</sys:String>
+	<StaticResourceExtension x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.Conditions.Description" ResourceKey="String/DisplayableLogAnalysisRuleEditorDialog.Conditions.Description"/>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.Pattern">Pattern of beginning log</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.Pattern.Description">Regular expression to match text of log which represents the beginning of operation.</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.PostActions">Post-actions of beginning log</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.PostActions.Description">Actions to perform after all conditions are matched.</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.PreActions">Pre-actions of beginning log</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.PreActions.Description">Actions to perform after text of log matched.</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingLog.Conditions">Conditions of ending log</sys:String>
+	<StaticResourceExtension x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingLog.Conditions.Description" ResourceKey="String/DisplayableLogAnalysisRuleEditorDialog.Conditions.Description"/>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingLog.Pattern">Pattern of ending log</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingLog.Pattern.Description">Regular expression to match text of log which represents the ending of operation.</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingLog.PostActions">Post-actions of ending log</sys:String>
+	<StaticResourceExtension x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingLog.PostActions.Description" ResourceKey="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.PostActions.Description"/>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingLog.PreActions">Pre-actions of ending log</sys:String>
+	<StaticResourceExtension x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingLog.PreActions.Description" ResourceKey="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.PreActions.Description"/>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingMode">Mode of ending operations</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingVariable">Variable to compare</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingVariables">Variables to compare</sys:String>
@@ -795,8 +809,6 @@ return False</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.MinMaxDuration">Effective duration of operation</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.MinMaxDuration.Description">Only operations with duration in the range will be selected to generate results. Leave it empty if there is no lower/upper bound.</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.OperationName">Name of operation</sys:String>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.PostActions">Actions to perform after extra conditions matched</sys:String>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.PreActions">Actions to perform after text matched</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.Title">Edit operation duration analysis rule</sys:String>
 
 	<!-- OperationDurationAnalysisRuleSetEditorDialog -->
@@ -885,7 +897,7 @@ return False</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Template.Python"># Types are imported automatically for log reading. For ex, FileStream.
 # Please refer to https://carinastudio.azurewebsites.net/ULogViewer/Scripting
 # and https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource for more information.</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.DisplayName">Name (required)</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.DisplayName">Name</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript">Script to open raw log reader</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Description">The script will be run one time when opening raw log reader. The returned value should be LogDataSourceState.ReaderOpened if succeeded, or failure if returning other values.</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Template.CSharp">/*
@@ -1223,9 +1235,9 @@ return None</sys:String>
 
 	<!-- VarAndConstComparisonEditorDialog -->
 	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.ComparisonType">Comparison</sys:String>
-	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Constant">Value (required)</sys:String>
+	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Constant">Value</sys:String>
 	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Title">Edit comparison condition</sys:String>
-	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Variable">Name of variable (required)</sys:String>
+	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Variable">Name of variable</sys:String>
 
 	<!-- VariableAndConstantComparisonCondition -->
 	<sys:String x:Key="String/VariableAndConstantComparisonCondition">{{{0}}} {1} '{2}'</sys:String>

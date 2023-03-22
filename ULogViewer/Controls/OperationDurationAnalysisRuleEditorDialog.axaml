@@ -41,170 +41,259 @@
 
 			<!-- Content -->
 			<ScrollViewer MaxHeight="{StaticResource Double/OperationDurationAnalysisRuleEditorDialog.Content.MaxHeight}">
-				<StackPanel Classes="Dialog_ContentPanel_WithHeader">
+				<StackPanel Classes="Dialog_ContentPanel_WithItemsGroups">
 
 					<!-- Common -->
-					<Border Classes="Dialog_TextBlock_Header1">
-						<TextBlock Classes="Dialog_TextBlock_Header1" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Common}"/>
-					</Border>
+					<Border Classes="Dialog_ItemsGroup_Container">
+						<StackPanel>
 					
-					<!-- Operation name -->
-					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.OperationName}"/>
-					<TextBox Name="operationNameTextBox" Classes="Dialog_TextBox" MaxLength="256"/>
-					<Separator Classes="Dialog_Separator_Large"/>
+							<!-- Operation name -->
+							<Grid Classes="Dialog_Item_Container" ColumnDefinitions="Auto,*">
+								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.OperationName}"/>
+								<TextBox Name="operationNameTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" MaxLength="256" Watermark="{DynamicResource String/Common.Required}"/>
+							</Grid>
+
+						</StackPanel>
+					</Border>
+					<Separator Classes="Dialog_Separator"/>
 
 					<!-- Beginning log -->
-					<Border Classes="Dialog_TextBlock_Header1">
-						<TextBlock Classes="Dialog_TextBlock_Header1" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.BeginningLog}"/>
+					<Border Classes="Dialog_ItemsGroup_Container">
+						<StackPanel>
+
+							<!-- Beginning pattern -->
+							<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+								<StackPanel Classes="Dialog_Item_Text_Container">
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.Pattern}"/>
+									<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.Pattern.Description}"/>
+								</StackPanel>
+							</Grid>
+							<Line Classes="Dialog_Item_Separator_Inner"/>
+							<appControls:PatternEditor Name="beginningPatternEditor" IsCapturingGroupsEnabled="True" MinHeight="{DynamicResource Double/OperationDurationAnalysisRuleEditorDialog.PatternTextBox.Height}" Watermark="{DynamicResource String/Common.Required}"/>
+							<Separator Classes="Dialog_Item_Separator"/>
+
+							<!-- Beginning pre-actions -->
+							<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+								<StackPanel Classes="Dialog_Item_Text_Container">
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.PreActions}"/>
+									<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.PreActions.Description}"/>
+								</StackPanel>
+								<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !$parent[Window].BeginningPreActions.Count}" Text="{DynamicResource String/Common.None}"/>
+							</Grid>
+							<Line Classes="Dialog_Item_Separator_Inner"/>
+							<appControls:ContextualBasedAnalysisActionsEditor Actions="{Binding $parent[Window].BeginningPreActions}"/>
+							<Separator Classes="Dialog_Item_Separator"/>
+
+							<!-- Beginning conditions -->
+							<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+								<StackPanel Classes="Dialog_Item_Text_Container">
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.Conditions}"/>
+									<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.Conditions.Description}"/>
+								</StackPanel>
+								<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !$parent[Window].BeginningConditions.Count}" Text="{DynamicResource String/Common.None}"/>
+							</Grid>
+							<Line Classes="Dialog_Item_Separator_Inner"/>
+							<appControls:DisplayableLogAnalysisConditionsEditor Conditions="{Binding $parent[Window].BeginningConditions}"/>
+							<Separator Classes="Dialog_Item_Separator"/>
+
+							<!-- Beginning post-actions -->
+							<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+								<StackPanel Classes="Dialog_Item_Text_Container">
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.PostActions}"/>
+									<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.PostActions.Description}"/>
+								</StackPanel>
+								<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !$parent[Window].BeginningPostActions.Count}" Text="{DynamicResource String/Common.None}"/>
+							</Grid>
+							<Line Classes="Dialog_Item_Separator_Inner"/>
+							<appControls:ContextualBasedAnalysisActionsEditor Actions="{Binding $parent[Window].BeginningPostActions}"/>
+
+						</StackPanel>
 					</Border>
-
-					<!-- Beginning pattern -->
-					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Pattern}"/>
-					<appControls:PatternEditor Name="beginningPatternEditor" IsCapturingGroupsEnabled="True" MinHeight="{DynamicResource Double/OperationDurationAnalysisRuleEditorDialog.PatternTextBox.Height}"/>
 					<Separator Classes="Dialog_Separator"/>
-
-					<!-- Beginning pre-actions -->
-					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.PreActions}"/>
-					<appControls:ContextualBasedAnalysisActionsEditor Actions="{Binding $parent[Window].BeginningPreActions}"/>
-					<Separator Classes="Dialog_Separator"/>
-
-					<!-- Beginning conditions -->
-					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Conditions}"/>
-					<appControls:DisplayableLogAnalysisConditionsEditor Conditions="{Binding $parent[Window].BeginningConditions}"/>
-					<Separator Classes="Dialog_Separator"/>
-
-					<!-- Beginning post-actions -->
-					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.PostActions}"/>
-					<appControls:ContextualBasedAnalysisActionsEditor Actions="{Binding $parent[Window].BeginningPostActions}"/>
-					<Separator Classes="Dialog_Separator_Large"/>
 
 					<!-- Ending log -->
-					<Border Classes="Dialog_TextBlock_Header1">
-						<TextBlock Classes="Dialog_TextBlock_Header1" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.EndingLog}"/>
+					<Border Classes="Dialog_ItemsGroup_Container">
+						<StackPanel>
+
+							<!-- Ending pattern -->
+							<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+								<StackPanel Classes="Dialog_Item_Text_Container">
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.EndingLog.Pattern}"/>
+									<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.EndingLog.Pattern.Description}"/>
+								</StackPanel>
+							</Grid>
+							<Line Classes="Dialog_Item_Separator_Inner"/>
+							<appControls:PatternEditor Name="endingPatternEditor" IsCapturingGroupsEnabled="True" MinHeight="{DynamicResource Double/OperationDurationAnalysisRuleEditorDialog.PatternTextBox.Height}" Watermark="{DynamicResource String/Common.Required}"/>
+							<Separator Classes="Dialog_Item_Separator"/>
+
+							<!-- Ending pre-actions -->
+							<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+								<StackPanel Classes="Dialog_Item_Text_Container">
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.EndingLog.PreActions}"/>
+									<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.EndingLog.PreActions.Description}"/>
+								</StackPanel>
+								<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !$parent[Window].EndingPreActions.Count}" Text="{DynamicResource String/Common.None}"/>
+							</Grid>
+							<Line Classes="Dialog_Item_Separator_Inner"/>
+							<appControls:ContextualBasedAnalysisActionsEditor Actions="{Binding $parent[Window].EndingPreActions}"/>
+							<Separator Classes="Dialog_Item_Separator"/>
+
+							<!-- Ending conditions -->
+							<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+								<StackPanel Classes="Dialog_Item_Text_Container">
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.EndingLog.Conditions}"/>
+									<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.EndingLog.Conditions.Description}"/>
+								</StackPanel>
+								<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !$parent[Window].EndingConditions.Count}" Text="{DynamicResource String/Common.None}"/>
+							</Grid>
+							<Line Classes="Dialog_Item_Separator_Inner"/>
+							<appControls:DisplayableLogAnalysisConditionsEditor Conditions="{Binding $parent[Window].EndingConditions}"/>
+							<Separator Classes="Dialog_Item_Separator"/>
+
+							<!-- Ending post-actions -->
+							<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+								<StackPanel Classes="Dialog_Item_Text_Container">
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.EndingLog.PostActions}"/>
+									<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.EndingLog.PostActions.Description}"/>
+								</StackPanel>
+								<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !$parent[Window].EndingPostActions.Count}" Text="{DynamicResource String/Common.None}"/>
+							</Grid>
+							<Line Classes="Dialog_Item_Separator_Inner"/>
+							<appControls:ContextualBasedAnalysisActionsEditor Actions="{Binding $parent[Window].EndingPostActions}"/>
+
+						</StackPanel>
 					</Border>
-
-					<!-- Ending pattern -->
-					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Pattern}"/>
-					<appControls:PatternEditor Name="endingPatternEditor" IsCapturingGroupsEnabled="True" MinHeight="{DynamicResource Double/OperationDurationAnalysisRuleEditorDialog.PatternTextBox.Height}"/>
 					<Separator Classes="Dialog_Separator"/>
-
-					<!-- Ending pre-actions -->
-					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.PreActions}"/>
-					<appControls:ContextualBasedAnalysisActionsEditor Actions="{Binding $parent[Window].EndingPreActions}"/>
-					<Separator Classes="Dialog_Separator"/>
-
-					<!-- Ending conditions -->
-					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Conditions}"/>
-					<appControls:DisplayableLogAnalysisConditionsEditor Conditions="{Binding $parent[Window].EndingConditions}"/>
-					<Separator Classes="Dialog_Separator"/>
-
-					<!-- Ending post-actions -->
-					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.PostActions}"/>
-					<appControls:ContextualBasedAnalysisActionsEditor Actions="{Binding $parent[Window].EndingPostActions}"/>
-					<Separator Classes="Dialog_Separator_Large"/>
 
 					<!-- Other -->
-					<Border Classes="Dialog_TextBlock_Header1">
-						<TextBlock Classes="Dialog_TextBlock_Header1" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Other}"/>
+					<Border Classes="Dialog_ItemsGroup_Container">
+						<StackPanel>
+
+							<!-- Ending mode -->
+							<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.EndingMode}"/>
+								<asControls:EnumComboBox Name="endingModeComboBox" Classes="Dialog_Item_ComboBox" EnumType="{x:Type appCtxlBased:OperationEndingMode}" Grid.Column="1"/>
+							</Grid>
+							<Separator Classes="Dialog_Item_Separator"/>
+
+							<!-- Ending variables -->
+							<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+								<StackPanel Classes="Dialog_Item_Text_Container">
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.EndingVariables}"/>
+									<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.EndingVariables.Description}"/>
+								</StackPanel>
+								<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !#endingVariableListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
+							</Grid>
+							<Line Classes="Dialog_Item_Separator_Inner"/>
+							<asControls:ListBox Name="endingVariableListBox" Classes="Dialog_Item_ListBox" IsVisible="{Binding $parent[Window].EndingVariables.Count}" Items="{Binding $parent[Window].EndingVariables}" ScrollViewer.VerticalScrollBarVisibility="Disabled" VirtualizationMode="None">
+								<asControls:ListBox.ItemTemplate>
+									<DataTemplate>
+										<Grid ColumnDefinitions="*,Auto">
+											<TextBlock Grid.Column="0" Text="{Binding, StringFormat={}{{{0}}}}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+											<Border Classes="InPlaceAction_Reserved"/>
+											<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
+												<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveEndingVariableCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
+													<asControls:Image Classes="InPlaceAction_Icon">
+														<DrawingImage>
+															<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
+														</DrawingImage>
+													</asControls:Image>
+												</Button>
+												<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditEndingVariableCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
+													<asControls:Image Classes="InPlaceAction_Icon">
+														<DrawingImage>
+															<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
+														</DrawingImage>
+													</asControls:Image>
+												</Button>
+											</StackPanel>
+										</Grid>
+									</DataTemplate>
+								</asControls:ListBox.ItemTemplate>
+							</asControls:ListBox>
+							<Separator Classes="Dialog_Separator_Small" IsVisible="{Binding #endingVariableListBox.IsVisible}"/>
+							<Button Classes="Dialog_Item_Button" Command="{Binding $parent[Window].AddEndingVariable}" Content="{DynamicResource String/Common.Add.WithDialog}" IsEnabled="{Binding #endingVariableListBox.IsEnabled}"/>
+							<Separator Classes="Dialog_Item_Separator"/>
+
+							<!-- Min/Max duration -->
+							<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+								<StackPanel Classes="Dialog_Item_Text_Container">
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.MinMaxDuration}"/>
+									<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.MinMaxDuration.Description}"/>
+								</StackPanel>
+							</Grid>
+							<Line Classes="Dialog_Item_Separator_Inner"/>
+							<Grid ColumnDefinitions="*,Auto,Auto,Auto,*">
+								<abControls:TimeSpanTextBox Name="minDurationTextBox" Classes="Dialog_Item_TextBox" Grid.Column="0" TextAlignment="Center"/>
+								<Separator Classes="Dialog_Separator_Small" Grid.Column="1"/>
+								<TextBlock Grid.Column="2" Text="{DynamicResource String/Common.To}" VerticalAlignment="Center"/>
+								<Separator Classes="Dialog_Separator_Small" Grid.Column="3"/>
+								<abControls:TimeSpanTextBox Name="maxDurationTextBox" Classes="Dialog_Item_TextBox" Grid.Column="4" TextAlignment="Center"/>
+							</Grid>
+							<Line Classes="Dialog_Item_Separator_Inner"/>
+							<SelectableTextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/TimeSpanTextBox.FormatDescription}" TextWrapping="Wrap"/>
+
+						</StackPanel>
 					</Border>
-
-					<!-- Ending mode -->
-					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.EndingMode}"/>
-					<asControls:EnumComboBox Name="endingModeComboBox" Classes="Dialog_ComboBox" EnumType="{x:Type appCtxlBased:OperationEndingMode}"/>
 					<Separator Classes="Dialog_Separator"/>
-
-					<!-- Ending variables -->
-					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.EndingVariables}"/>
-					<Grid ColumnDefinitions="*,Auto">
-						<asControls:ListBox Name="endingVariableListBox" Items="{Binding $parent[Window].EndingVariables}" ScrollViewer.VerticalScrollBarVisibility="Disabled" VirtualizationMode="None">
-							<asControls:ListBox.ItemTemplate>
-								<DataTemplate>
-									<Grid ColumnDefinitions="*,Auto">
-										<TextBlock Grid.Column="0" Text="{Binding, StringFormat={}{{{0}}}}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
-										<Border Classes="InPlaceAction_Reserved"/>
-										<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
-											<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveEndingVariableCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
-												<asControls:Image Classes="InPlaceAction_Icon">
-													<DrawingImage>
-														<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
-													</DrawingImage>
-												</asControls:Image>
-											</Button>
-											<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditEndingVariableCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
-												<asControls:Image Classes="InPlaceAction_Icon">
-													<DrawingImage>
-														<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
-													</DrawingImage>
-												</asControls:Image>
-											</Button>
-										</StackPanel>
-									</Grid>
-								</DataTemplate>
-							</asControls:ListBox.ItemTemplate>
-						</asControls:ListBox>
-						<Button Classes="BrowseButton" Command="{Binding $parent[Window].AddEndingVariable}" Grid.Column="1" IsEnabled="{Binding #endingVariableListBox.IsEnabled}" ToolTip.Tip="{DynamicResource String/Common.Add}" VerticalAlignment="Top">
-							<Image Classes="BrowseButtonIcon" Source="{StaticResource Image/Icon.Add}"/>
-						</Button>
-					</Grid>
-					<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.EndingVariables.Description}"/>
-					<Separator Classes="Dialog_Separator"/>
-
-					<!-- Min/Max duration -->
-					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.MinMaxDuration}"/>
-					<Grid ColumnDefinitions="*,Auto,Auto,Auto,*">
-						<abControls:TimeSpanTextBox Name="minDurationTextBox" Classes="Dialog_TextBox" Grid.Column="0"/>
-						<Separator Classes="Dialog_Separator_Small" Grid.Column="1"/>
-						<TextBlock Grid.Column="2" Text="{DynamicResource String/Common.To}" VerticalAlignment="Center"/>
-						<Separator Classes="Dialog_Separator_Small" Grid.Column="3"/>
-						<abControls:TimeSpanTextBox Name="maxDurationTextBox" Classes="Dialog_TextBox" Grid.Column="4"/>
-					</Grid>
-					<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.MinMaxDuration.Description}"/>
-					<Separator Classes="Dialog_Separator_Small"/>
-					<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/TimeSpanTextBox.FormatDescription}" TextWrapping="Wrap"/>
-					<Separator Classes="Dialog_Separator_Large"/>
 
 					<!-- Result -->
-					<Border Classes="Dialog_TextBlock_Header1">
-						<TextBlock Classes="Dialog_TextBlock_Header1" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Result}"/>
+					<Border Classes="Dialog_ItemsGroup_Container">
+						<StackPanel>
+
+							<!-- Result type -->
+							<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.ResultType}"/>
+								<ComboBox Name="resultTypeComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1" Items="{Binding Source={x:Type appAnalysis:DisplayableLogAnalysisResultType}, Converter={x:Static abConverters:EnumConverters.Values}}">
+									<ComboBox.ItemTemplate>
+										<DataTemplate>
+											<Grid ColumnDefinitions="Auto,*">
+												<Panel Classes="ComboBoxItem_Icon">
+													<Image Classes="Icon" IsVisible="{Binding $parent[ComboBoxItem].IsSelected}" Source="{Binding Converter={x:Static appConverters:DisplayableLogAnalysisResultIconConverter.Default}, ConverterParameter=Light}"/>
+													<Image Classes="Icon" IsVisible="{Binding !$parent[ComboBoxItem].IsSelected}" Source="{Binding Converter={x:Static appConverters:DisplayableLogAnalysisResultIconConverter.Default}}"/>
+												</Panel>
+												<TextBlock Classes="ComboBoxItem_TextBlock" Grid.Column="1" Text="{Binding Converter={x:Static appConverters:EnumConverters.DisplayableLogAnalysisResultType}}"/>
+											</Grid>
+										</DataTemplate>
+									</ComboBox.ItemTemplate>
+								</ComboBox>
+							</Grid>
+							<Separator Classes="Dialog_Item_Separator"/>
+
+							<!-- Custom message -->
+							<Border Classes="Dialog_Item_Container">
+								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Message}"/>
+							</Border>
+							<Line Classes="Dialog_Item_Separator_Inner"/>
+							<asControls:StringInterpolationFormatTextBox Name="customMessageTextBox" Classes="Dialog_Item_TextBox" Height="{StaticResource Double/OperationDurationAnalysisRuleEditorDialog.CustomMessageTextBox.Height}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" TextAlignment="Left" TextWrapping="Wrap" Watermark="{DynamicResource String/Common.None}"/>
+							<Line Classes="Dialog_Item_Separator_Inner"/>
+							<SelectableTextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Message.Description}"/>
+							<Separator Classes="Dialog_Separator_Small"/>
+							<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.FormatDescription}" Uri="{x:Static app:Uris.StringInterpolationReference}"/>
+							<Separator Classes="Dialog_Item_Separator"/>
+
+							<!-- Byte size variable -->
+							<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.ByteSizeVariableName}"/>
+								<TextBox Name="byteSizeVarNameTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" MaxLength="256" Watermark="{DynamicResource String/Common.None}"/>
+							</Grid>
+							<Separator Classes="Dialog_Item_Separator"/>
+
+							<!-- Byte size unit -->
+							<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.ByteSizeUnit}"/>
+								<asControls:EnumComboBox Name="byteSizeUnitComboBox" Classes="Dialog_Item_ComboBox" EnumType="{x:Type appIO:FileSizeUnit}" Grid.Column="1"/>
+							</Grid>
+							<Separator Classes="Dialog_Item_Separator"/>
+
+							<!-- Quantity variable -->
+							<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.QuantityVariableName}"/>
+								<TextBox Name="quantityVarNameTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" MaxLength="256" Watermark="{DynamicResource String/Common.None}"/>
+							</Grid>
+
+						</StackPanel>
 					</Border>
-
-					<!-- Result type -->
-					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.ResultType}"/>
-					<ComboBox Name="resultTypeComboBox" Classes="Dialog_ComboBox" Items="{Binding Source={x:Type appAnalysis:DisplayableLogAnalysisResultType}, Converter={x:Static abConverters:EnumConverters.Values}}">
-						<ComboBox.ItemTemplate>
-							<DataTemplate>
-								<Grid ColumnDefinitions="Auto,*">
-									<Panel Classes="ComboBoxItem_Icon">
-										<Image Classes="Icon" IsVisible="{Binding $parent[ComboBoxItem].IsSelected}" Source="{Binding Converter={x:Static appConverters:DisplayableLogAnalysisResultIconConverter.Default}, ConverterParameter=Light}"/>
-										<Image Classes="Icon" IsVisible="{Binding !$parent[ComboBoxItem].IsSelected}" Source="{Binding Converter={x:Static appConverters:DisplayableLogAnalysisResultIconConverter.Default}}"/>
-									</Panel>
-									<TextBlock Classes="ComboBoxItem_TextBlock" Grid.Column="1" Text="{Binding Converter={x:Static appConverters:EnumConverters.DisplayableLogAnalysisResultType}}"/>
-								</Grid>
-							</DataTemplate>
-						</ComboBox.ItemTemplate>
-					</ComboBox>
-					<Separator Classes="Dialog_Separator"/>
-
-					<!-- Custom message -->
-					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Message}"/>
-					<asControls:StringInterpolationFormatTextBox Name="customMessageTextBox" Classes="Dialog_TextBlock" Height="{StaticResource Double/OperationDurationAnalysisRuleEditorDialog.CustomMessageTextBox.Height}"/>
-					<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Message.Description}"/>
-					<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.FormatDescription}" Uri="{x:Static app:Uris.StringInterpolationReference}"/>
-					<Separator Classes="Dialog_Separator"/>
-
-					<!-- Byte size variable -->
-					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.ByteSizeVariableName}"/>
-					<TextBox Name="byteSizeVarNameTextBox" Classes="Dialog_TextBox" MaxLength="256"/>
-					<Separator Classes="Dialog_Separator"/>
-
-					<!-- Byte size unit -->
-					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.ByteSizeUnit}"/>
-					<asControls:EnumComboBox Name="byteSizeUnitComboBox" Classes="Dialog_ComboBox" EnumType="{x:Type appIO:FileSizeUnit}"/>
-					<Separator Classes="Dialog_Separator"/>
-
-					<!-- Quantity variable -->
-					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.QuantityVariableName}"/>
-					<TextBox Name="quantityVarNameTextBox" Classes="Dialog_TextBox" MaxLength="256"/>
 					
 				</StackPanel>
 			</ScrollViewer>

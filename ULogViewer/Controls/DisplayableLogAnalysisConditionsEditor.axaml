@@ -49,7 +49,7 @@
 			</asControls:ListBox.ItemTemplate>
 		</asControls:ListBox>
 		<Separator Classes="Dialog_Separator_Small" Grid.Row="1" IsVisible="{Binding #conditionListBox.IsVisible}"/>
-		<ToggleButton Name="addConditionButton" Classes="Dialog_Item_ToggleButton" Command="{Binding $parent[UserControl].ShowAddConditionMenu}" Content="{DynamicResource String/Common.Add.WithDialog}" Grid.Row="2" HorizontalAlignment="Right"/>
+		<ToggleButton Name="addConditionButton" Classes="Dialog_Item_ToggleButton" Command="{Binding $parent[UserControl].ShowAddConditionMenu}" Content="{DynamicResource String/Common.Add}" Grid.Row="2" HorizontalAlignment="Right"/>
 	</Grid>
 	
 </UserControl>

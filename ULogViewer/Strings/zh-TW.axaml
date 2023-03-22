@@ -144,13 +144,13 @@
 	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.PushVariableAction.WithDialog">將變數加入至堆疊…</sys:String>
 
 	<!-- ContextualBasedAnalysisActionsEditorDialog -->
-	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Queue">佇列名稱 (必要)</sys:String>
-	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Stack">堆疊名稱 (必要)</sys:String>
-	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Variable">變數名稱 (必要)</sys:String>
+	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Queue">佇列名稱</sys:String>
+	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Stack">堆疊名稱</sys:String>
+	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Variable">變數名稱</sys:String>
 
 	<!-- CopyVarEditorDialog -->
-	<sys:String x:Key="String/CopyVarEditorDialog.SourceVariable">來源變數 (必要)</sys:String>
-	<sys:String x:Key="String/CopyVarEditorDialog.TargetVariable">目標變數 (必要)</sys:String>
+	<sys:String x:Key="String/CopyVarEditorDialog.SourceVariable">來源變數</sys:String>
+	<sys:String x:Key="String/CopyVarEditorDialog.TargetVariable">目標變數</sys:String>
 	<sys:String x:Key="String/CopyVarEditorDialog.Title">複製變數值</sys:String>
 
 	<!-- CopyVariableAction -->
@@ -219,9 +219,9 @@
 	<sys:String x:Key="String/DisplayableLogAnalysisRuleSetEditorDialog.CannotAddMoreRuleSetWithoutProVersion">在啟用專業版之前，您無法建立更多的規則集。</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisRuleSetEditorDialog.Icon">圖示</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisRuleSetEditorDialog.IconColor">圖示色彩</sys:String>
-	<sys:String x:Key="String/DisplayableLogAnalysisRuleSetEditorDialog.Name">名稱 (必要)</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisRuleSetEditorDialog.Name">名稱</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisRuleSetEditorDialog.RestrictionsOfNonProVersion">在啟用專業版之前，您只能建立 1 個規則集，且在關閉 ULogViewer 後不會被儲存。</sys:String>
-	<sys:String x:Key="String/DisplayableLogAnalysisRuleSetEditorDialog.Rules">規則 (必要)</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisRuleSetEditorDialog.Rules">規則</sys:String>
 
 	<!-- EmbeddedScriptLogDataSourceProvider -->
 	<sys:String x:Key="String/EmbeddedScriptLogDataSourceProvider.DisplayName">內嵌日誌資料來源腳本</sys:String>
@@ -380,10 +380,10 @@ return False</sys:String>
 
 	<!-- LogLevelMapEntryEditor -->
 	<sys:String x:Key="String/LogLevelMapEntryEditor.Reading.LogLevel">對應的日誌等級</sys:String>
-	<sys:String x:Key="String/LogLevelMapEntryEditor.Reading.Text">文字 (必要)</sys:String>
+	<sys:String x:Key="String/LogLevelMapEntryEditor.Reading.Text">文字</sys:String>
 	<sys:String x:Key="String/LogLevelMapEntryEditor.Title">日誌等級對照</sys:String>
 	<sys:String x:Key="String/LogLevelMapEntryEditor.Writing.LogLevel">日誌等級</sys:String>
-	<sys:String x:Key="String/LogLevelMapEntryEditor.Writing.Text">對應的文字 (必要)</sys:String>
+	<sys:String x:Key="String/LogLevelMapEntryEditor.Writing.Text">對應的文字</sys:String>
 
 	<!-- LogPatternEditorDialog -->
 	<sys:String x:Key="String/LogPatternEditorDialog.IsSkippable">此行可以被忽略</sys:String>
@@ -743,8 +743,22 @@ return False</sys:String>
 	<sys:String x:Key="String/OperationCountingAnalyzer.NoOperation">(沒有動作)</sys:String>
 
 	<!-- OperationDurationAnalysisRuleEditorDialog -->
-	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog">動作起始日誌</sys:String>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingLog">動作結束日誌</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.Conditions">起始日誌條件</sys:String>
+	<StaticResourceExtension x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.Conditions.Description" ResourceKey="String/DisplayableLogAnalysisRuleEditorDialog.Conditions.Description"/>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.Pattern">起始日誌格式</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.Pattern.Description">用以比對代表動作起始之日誌文字的正規表示式。</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.PostActions">起始日誌的後置動作</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.PostActions.Description">條件符合後執行的動作。</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.PreActions">起始日誌的前置動作</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.PreActions.Description">日誌文字符合格式後執行的動作。</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingLog.Conditions">結束日條件</sys:String>
+	<StaticResourceExtension x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingLog.Conditions.Description" ResourceKey="String/DisplayableLogAnalysisRuleEditorDialog.Conditions.Description"/>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingLog.Pattern">結束日誌格式</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingLog.Pattern.Description">用以比對代表動作結束之日誌文字的正規表示式。</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingLog.PostActions">結束日誌的後置動作</sys:String>
+	<StaticResourceExtension x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingLog.PostActions.Description" ResourceKey="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.PostActions.Description"/>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingLog.PreActions">結束日誌的前置動作</sys:String>
+	<StaticResourceExtension x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingLog.PreActions.Description" ResourceKey="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.PreActions.Description"/>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingMode">動作結束方式</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingVariable">比對的變數</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingVariables">比對的變數</sys:String>
@@ -752,8 +766,6 @@ return False</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.MinMaxDuration">有效動作時距</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.MinMaxDuration.Description">只有在指定時距區間內的動作才會被用以輸出結果。若沒有上/下限則留白。</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.OperationName">動作名稱</sys:String>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.PostActions">額外條件符合後執行動作</sys:String>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.PreActions">文字格式符合後執行動作</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.Title">編輯動作時距分析規則</sys:String>
 
 	<!-- OperationDurationAnalysisRuleSetEditorDialog -->
@@ -842,7 +854,7 @@ return False</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Template.Python"># 相關型別已自動匯入以提供日誌讀取所需，例如 FileStream。
 # 請參閱 https://carinastudio.azurewebsites.net/ULogViewer/Scripting
 # 及 https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource 以取得更多資訊。</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.DisplayName">名稱 (必要)</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.DisplayName">名稱</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript">原始日誌行讀取器開啟腳本</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Description">腳本將在開啟原始日誌行讀取器時執行。需回傳 LogDataSourceState.ReaderOpened 表示讀取器開啟成功，或其他值表示失敗。</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Template.CSharp">/*
@@ -1171,9 +1183,9 @@ return None</sys:String>
 
 	<!-- VarAndConstComparisonEditorDialog -->
 	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.ComparisonType">比較方式</sys:String>
-	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Constant">值 (必要)</sys:String>
+	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Constant">值</sys:String>
 	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Title">編輯比較條件</sys:String>
-	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Variable">變數名稱 (必要)</sys:String>
+	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Variable">變數名稱</sys:String>
 
 	<!-- VisibleLogPropertyEditorDialog -->
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.CustomDisplayName">自訂顯示名稱</sys:String>

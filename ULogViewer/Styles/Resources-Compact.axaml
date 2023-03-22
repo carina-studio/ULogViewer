@@ -5,9 +5,6 @@
 	<!-- KeyLogAnalysisRuleEditorDialog -->
 	<sys:Double x:Key="Double/KeyLogAnalysisRuleEditorDialog.Content.MaxHeight">450</sys:Double>
 
-	<!-- KeyLogAnalysisRuleSetEditorDialog -->
-	<sys:Double x:Key="Double/KeyLogAnalysisRuleSetEditorDialog.RuleListBox.Height">300</sys:Double>
-
 	<!-- LogDataSourceOptionsDialog -->
 	<sys:Double x:Key="Double/LogDataSourceOptionsDialog.Content.MaxHeight">450</sys:Double>
 

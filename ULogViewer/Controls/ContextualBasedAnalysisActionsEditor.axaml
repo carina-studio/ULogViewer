@@ -4,7 +4,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="CarinaStudio.ULogViewer.Controls.ContextualBasedAnalysisActionsEditor">
+        x:Class="CarinaStudio.ULogViewer.Controls.ContextualBasedAnalysisActionsEditor"
+		HorizontalContentAlignment="Stretch"
+		VerticalContentAlignment="Stretch">
 	
 	<UserControl.Resources>
 
@@ -50,8 +52,8 @@
 
 	</UserControl.Resources>
 
-	<Grid ColumnDefinitions="*,Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-		<asControls:ListBox Name="actionListBox" Classes="Dialog_ListBox" Items="{Binding $parent[UserControl].Actions}" VerticalAlignment="Stretch" VirtualizationMode="None">
+	<Grid RowDefinitions="*,Auto,Auto">
+		<asControls:ListBox Name="actionListBox" Classes="Dialog_Item_ListBox" IsVisible="{Binding $parent[UserControl].Actions.Count}" Items="{Binding $parent[UserControl].Actions}" VirtualizationMode="None">
 			<asControls:ListBox.ItemTemplate>
 				<DataTemplate>
 					<Grid ColumnDefinitions="*,Auto">
@@ -91,12 +93,8 @@
 				</DataTemplate>
 			</asControls:ListBox.ItemTemplate>
 		</asControls:ListBox>
-		<ToggleButton Name="addActionButton" Classes="BrowseButton" Command="{Binding $parent[UserControl].ShowAddActionMenu}" Grid.Column="1" ToolTip.Tip="{DynamicResource String/Common.Add}" VerticalAlignment="Top">
-			<Panel>
-				<Image Classes="BrowseButtonIcon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.Add.Light}"/>
-				<Image Classes="BrowseButtonIcon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.Add}"/>
-			</Panel>
-		</ToggleButton>
+		<Separator Classes="Dialog_Separator_Small" Grid.Row="1" IsVisible="{Binding #actionListBox.IsVisible}"/>
+		<ToggleButton Name="addActionButton" Classes="Dialog_Item_ToggleButton" Command="{Binding $parent[UserControl].ShowAddActionMenu}" Content="{DynamicResource String/Common.Add}" Grid.Row="2"/>
 	</Grid>
 	
 </UserControl>

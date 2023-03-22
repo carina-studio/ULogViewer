@@ -31,70 +31,99 @@
 
 			<!-- Content -->
 			<ScrollViewer MaxHeight="{StaticResource Double/OperationCountingAnalysisRuleEditorDialog.Content.MaxHeight}">
-				<StackPanel Classes="Dialog_ContentPanel_WithHeader">
+				<StackPanel Classes="Dialog_ContentPanel_WithItemsGroups">
 
 					<!-- Common -->
-					<Border Classes="Dialog_TextBlock_Header1">
-						<TextBlock Classes="Dialog_TextBlock_Header1" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Common}"/>
-					</Border>
+					<Border Classes="Dialog_ItemsGroup_Container">
+						<StackPanel>
 					
-					<!-- Operation name -->
-					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/OperationCountingAnalysisRuleEditorDialog.OperationName}"/>
-					<TextBox Name="operationNameTextBox" Classes="Dialog_TextBox" MaxLength="256"/>
-					<Separator Classes="Dialog_Separator"/>
+							<!-- Operation name -->
+							<Grid Classes="Dialog_Item_Container" ColumnDefinitions="Auto,*">
+								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/OperationCountingAnalysisRuleEditorDialog.OperationName}"/>
+								<TextBox Name="operationNameTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" MaxLength="256" Watermark="{DynamicResource String/Common.Required}"/>
+							</Grid>
+							<Separator Classes="Dialog_Item_Separator"/>
 
-					<!-- Pattern -->
-					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Pattern}"/>
-					<appControls:PatternEditor Name="patternEditor" IsCapturingGroupsEnabled="True" MinHeight="{DynamicResource Double/KeyLogAnalysisRuleEditorDialog.PatternInput.Height}"/>
-					<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Pattern.Description}"/>
-					<Separator Classes="Dialog_Separator"/>
+							<!-- Pattern -->
+							<Border Classes="Dialog_Item_Container">
+								<StackPanel Classes="Dialog_Item_Text_Container">
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Pattern}"/>
+									<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Pattern.Description}"/>
+								</StackPanel>
+							</Border>
+							<Line Classes="Dialog_Item_Separator_Inner"/>
+							<appControls:PatternEditor Name="patternEditor" IsCapturingGroupsEnabled="True" MinHeight="{DynamicResource Double/KeyLogAnalysisRuleEditorDialog.PatternInput.Height}" Watermark="{DynamicResource String/Common.Required}"/>
+							<Line Classes="Dialog_Item_Separator_Inner"/>
+							<SelectableTextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Pattern.Description.Detailed}"/>
+							<Separator Classes="Dialog_Item_Separator"/>
 
-					<!-- Level -->
-					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Level}"/>
-					<ComboBox Name="levelComboBox" Classes="Dialog_ComboBox" Items="{Binding Source={x:Type appLogs:LogLevel}, Converter={x:Static abConverters:EnumConverters.Values}}">
-						<ComboBox.ItemTemplate>
-							<DataTemplate>
-								<Grid ColumnDefinitions="Auto,*">
-									<Border Classes="ComboBoxItem_Icon" Background="{Binding Converter={x:Static appConverters:LogLevelBrushConverter.Background}}" BorderBrush="{DynamicResource ComboBoxItemForeground}" BorderThickness="1"/>
-									<TextBlock Classes="ComboBoxItem_TextBlock" Grid.Column="1" Text="{Binding Converter={x:Static appControls:SessionView.LogLevelNameConverter}}"/>
-								</Grid>
-							</DataTemplate>
-						</ComboBox.ItemTemplate>
-					</ComboBox>
-					<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Level.Description}"/>
-					<Separator Classes="Dialog_Separator"/>
+							<!-- Level -->
+							<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+								<StackPanel Classes="Dialog_Item_Text_Container">
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Level}"/>
+									<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Level.Description}"/>
+								</StackPanel>
+								<ComboBox Name="levelComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1" Items="{Binding Source={x:Type appLogs:LogLevel}, Converter={x:Static abConverters:EnumConverters.Values}}">
+									<ComboBox.ItemTemplate>
+										<DataTemplate>
+											<Grid ColumnDefinitions="Auto,*">
+												<Border Classes="ComboBoxItem_Icon" Background="{Binding Converter={x:Static appConverters:LogLevelBrushConverter.Background}}" BorderBrush="{DynamicResource ComboBoxItemForeground}" BorderThickness="1"/>
+												<TextBlock Classes="ComboBoxItem_TextBlock" Grid.Column="1" Text="{Binding Converter={x:Static appControls:SessionView.LogLevelNameConverter}}"/>
+											</Grid>
+										</DataTemplate>
+									</ComboBox.ItemTemplate>
+								</ComboBox>
+							</Grid>
+							<Separator Classes="Dialog_Item_Separator"/>
 
-					<!-- Conditions -->
-					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Conditions}"/>
-					<appControls:DisplayableLogAnalysisConditionsEditor Conditions="{Binding $parent[Window].Conditions}" VerticalScrollBarVisibility="Disabled"/>
-					<Separator Classes="Dialog_Separator"/>
+							<!-- Conditions -->
+							<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+								<StackPanel Classes="Dialog_Item_Text_Container">
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Conditions}"/>
+									<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Conditions.Description}"/>
+								</StackPanel>
+								<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !$parent[Window].Conditions.Count}" Text="{DynamicResource String/Common.None}"/>
+							</Grid>
+							<Line Classes="Dialog_Item_Separator_Inner"/>
+							<appControls:DisplayableLogAnalysisConditionsEditor Conditions="{Binding $parent[Window].Conditions}" VerticalScrollBarVisibility="Disabled"/>
+							<Separator Classes="Dialog_Item_Separator"/>
 
-					<!-- Interval -->
-					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/OperationCountingAnalysisRuleEditorDialog.Interval}"/>
-					<abControls:TimeSpanTextBox Name="intervalTextBox" Classes="Dialog_TextBox"/>
-					<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/TimeSpanTextBox.FormatDescription}" TextWrapping="Wrap"/>
-					<Separator Classes="Dialog_Separator_Large"/>
+							<!-- Interval -->
+							<Grid Classes="Dialog_Item_Container" ColumnDefinitions="Auto,*">
+								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/OperationCountingAnalysisRuleEditorDialog.Interval}"/>
+								<abControls:TimeSpanTextBox Name="intervalTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" Watermark="{DynamicResource String/Common.Required}"/>
+							</Grid>
+							<Line Classes="Dialog_Item_Separator_Inner"/>
+							<SelectableTextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/TimeSpanTextBox.FormatDescription}" TextWrapping="Wrap"/>
+
+						</StackPanel>
+					</Border>
+					<Separator Classes="Dialog_Separator"/>
 
 					<!-- Result -->
-					<Border Classes="Dialog_TextBlock_Header1">
-						<TextBlock Classes="Dialog_TextBlock_Header1" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Result}"/>
-					</Border>
+					<Border Classes="Dialog_ItemsGroup_Container">
+						<StackPanel>
 
-					<!-- Result type -->
-					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.ResultType}"/>
-					<ComboBox Name="resultTypeComboBox" Classes="Dialog_ComboBox" Items="{Binding Source={x:Type appAnalysis:DisplayableLogAnalysisResultType}, Converter={x:Static abConverters:EnumConverters.Values}}">
-						<ComboBox.ItemTemplate>
-							<DataTemplate>
-								<Grid ColumnDefinitions="Auto,*">
-									<Panel Classes="ComboBoxItem_Icon">
-										<Image Classes="Icon" IsVisible="{Binding $parent[ComboBoxItem].IsSelected}" Source="{Binding Converter={x:Static appConverters:DisplayableLogAnalysisResultIconConverter.Default}, ConverterParameter=Light}"/>
-										<Image Classes="Icon" IsVisible="{Binding !$parent[ComboBoxItem].IsSelected}" Source="{Binding Converter={x:Static appConverters:DisplayableLogAnalysisResultIconConverter.Default}}"/>
-									</Panel>
-									<TextBlock Classes="ComboBoxItem_TextBlock" Grid.Column="1" Text="{Binding Converter={x:Static appConverters:EnumConverters.DisplayableLogAnalysisResultType}}"/>
-								</Grid>
-							</DataTemplate>
-						</ComboBox.ItemTemplate>
-					</ComboBox>
+							<!-- Result type -->
+							<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.ResultType}"/>
+								<ComboBox Name="resultTypeComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1" Items="{Binding Source={x:Type appAnalysis:DisplayableLogAnalysisResultType}, Converter={x:Static abConverters:EnumConverters.Values}}">
+									<ComboBox.ItemTemplate>
+										<DataTemplate>
+											<Grid ColumnDefinitions="Auto,*">
+												<Panel Classes="ComboBoxItem_Icon">
+													<Image Classes="Icon" IsVisible="{Binding $parent[ComboBoxItem].IsSelected}" Source="{Binding Converter={x:Static appConverters:DisplayableLogAnalysisResultIconConverter.Default}, ConverterParameter=Light}"/>
+													<Image Classes="Icon" IsVisible="{Binding !$parent[ComboBoxItem].IsSelected}" Source="{Binding Converter={x:Static appConverters:DisplayableLogAnalysisResultIconConverter.Default}}"/>
+												</Panel>
+												<TextBlock Classes="ComboBoxItem_TextBlock" Grid.Column="1" Text="{Binding Converter={x:Static appConverters:EnumConverters.DisplayableLogAnalysisResultType}}"/>
+											</Grid>
+										</DataTemplate>
+									</ComboBox.ItemTemplate>
+								</ComboBox>
+							</Grid>
+
+						</StackPanel>
+					</Border>
 					
 				</StackPanel>
 			</ScrollViewer>

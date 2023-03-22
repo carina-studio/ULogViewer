@@ -21,7 +21,7 @@ namespace CarinaStudio.ULogViewer.Controls
 	partial class OperationCountingAnalysisRuleSetEditorDialog : AppSuite.Controls.Window<IULogViewerApplication>
 	{
 		// Static fields.
-		static readonly StyledProperty<bool> AreValidParametersProperty = AvaloniaProperty.Register<OperationDurationAnalysisRuleSetEditorDialog, bool>("AreValidParameters");
+		static readonly StyledProperty<bool> AreValidParametersProperty = AvaloniaProperty.Register<OperationCountingAnalysisRuleSetEditorDialog, bool>("AreValidParameters");
 		static readonly Dictionary<OperationCountingAnalysisRuleSet, OperationCountingAnalysisRuleSetEditorDialog> DialogWithEditingRuleSets = new();
 		static readonly SettingKey<bool> DonotShowRestrictionsWithNonProVersionKey = new("OperationCountingAnalysisRuleSetEditorDialog.DonotShowRestrictionsWithNonProVersion");
 
