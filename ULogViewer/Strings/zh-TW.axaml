@@ -144,13 +144,13 @@
 	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.PushVariableAction.WithDialog">將變數加入至堆疊…</sys:String>
 
 	<!-- ContextualBasedAnalysisActionsEditorDialog -->
-	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Queue">佇列名稱</sys:String>
-	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Stack">堆疊名稱</sys:String>
-	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Variable">變數名稱</sys:String>
+	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Queue">佇列名稱：</sys:String>
+	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Stack">堆疊名稱：</sys:String>
+	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Variable">變數名稱：</sys:String>
 
 	<!-- CopyVarEditorDialog -->
-	<sys:String x:Key="String/CopyVarEditorDialog.SourceVariable">來源變數</sys:String>
-	<sys:String x:Key="String/CopyVarEditorDialog.TargetVariable">目標變數</sys:String>
+	<sys:String x:Key="String/CopyVarEditorDialog.SourceVariable">來源變數：</sys:String>
+	<sys:String x:Key="String/CopyVarEditorDialog.TargetVariable">目標變數：</sys:String>
 	<sys:String x:Key="String/CopyVarEditorDialog.Title">複製變數值</sys:String>
 
 	<!-- CopyVariableAction -->
@@ -379,11 +379,11 @@ return False</sys:String>
 	<sys:String x:Key="String/LogLevel.Warn">警告</sys:String>
 
 	<!-- LogLevelMapEntryEditor -->
-	<sys:String x:Key="String/LogLevelMapEntryEditor.Reading.LogLevel">對應的日誌等級</sys:String>
-	<sys:String x:Key="String/LogLevelMapEntryEditor.Reading.Text">文字</sys:String>
+	<sys:String x:Key="String/LogLevelMapEntryEditor.Reading.LogLevel">對應的日誌等級：</sys:String>
+	<sys:String x:Key="String/LogLevelMapEntryEditor.Reading.Text">文字：</sys:String>
 	<sys:String x:Key="String/LogLevelMapEntryEditor.Title">日誌等級對照</sys:String>
-	<sys:String x:Key="String/LogLevelMapEntryEditor.Writing.LogLevel">日誌等級</sys:String>
-	<sys:String x:Key="String/LogLevelMapEntryEditor.Writing.Text">對應的文字</sys:String>
+	<sys:String x:Key="String/LogLevelMapEntryEditor.Writing.LogLevel">日誌等級：</sys:String>
+	<sys:String x:Key="String/LogLevelMapEntryEditor.Writing.Text">對應的文字：</sys:String>
 
 	<!-- LogPatternEditorDialog -->
 	<sys:String x:Key="String/LogPatternEditorDialog.IsSkippable">此行可以被忽略</sys:String>
@@ -667,7 +667,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogStringEncoding.Plane">純文字</sys:String>
 
 	<!-- LogStringPropertyDialog -->
-	<sys:String x:Key="String/LogStringPropertyDialog.FindText">搜尋文字</sys:String>
+	<sys:String x:Key="String/LogStringPropertyDialog.FindText">搜尋文字 (正規表示式)</sys:String>
 	<sys:String x:Key="String/LogStringPropertyDialog.SearchOnInternet">在網路上搜尋</sys:String>
 	<sys:String x:Key="String/LogStringPropertyDialog.WrapText">自動換行</sys:String>
 	<sys:String x:Key="String/LogStringPropertyDialog.Title">檢視日誌屬性</sys:String>
@@ -688,7 +688,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogTimestampEncoding.UnixMilliseconds">Unix 時間戳記 (毫秒)</sys:String>
 
 	<!-- LogWritingFormatEditorDialog -->
-	<sys:String x:Key="String/LogWritingFormatEditorDialog.Format">格式</sys:String>
+	<sys:String x:Key="String/LogWritingFormatEditorDialog.Format">格式：</sys:String>
 	<sys:String x:Key="String/LogWritingFormatEditorDialog.Format.Description">您可以使用插值語法 "{}" 以將日誌屬性產生至輸出的日誌文字。</sys:String>
 	<sys:String x:Key="String/LogWritingFormatEditorDialog.Title">日誌輸出格式</sys:String>
 
@@ -701,7 +701,7 @@ return False</sys:String>
 	<sys:String x:Key="String/MainWindow.Session.Paused">已暫停</sys:String>
 	<sys:String x:Key="String/MainWindow.Session.WaitingForDataSources">正在等待資料來源</sys:String>
 	<sys:String x:Key="String/MainWindow.SetCustomSessionTitle">自訂分頁標題…</sys:String>
-	<sys:String x:Key="String/MainWindow.SetCustomSessionTitle.Message">分頁標題</sys:String>
+	<sys:String x:Key="String/MainWindow.SetCustomSessionTitle.Message">分頁標題：</sys:String>
 	<sys:String x:Key="String/MainWindow.Tabs">分頁</sys:String>
 	<sys:String x:Key="String/MainWindow.Tutorial.UseAddTabButtonToSelectLogProfile">您也可以在這裡按一下右鍵以選取日誌類型，並套用至新的分頁。</sys:String>
 	<sys:String x:Key="String/MainWindow.Windows">視窗</sys:String>
@@ -1182,10 +1182,10 @@ return None</sys:String>
 	<sys:String x:Key="String/UriInputDialog.Title">URI</sys:String>
 
 	<!-- VarAndConstComparisonEditorDialog -->
-	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.ComparisonType">比較方式</sys:String>
-	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Constant">值</sys:String>
+	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.ComparisonType">比較方式：</sys:String>
+	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Constant">值：</sys:String>
 	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Title">編輯比較條件</sys:String>
-	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Variable">變數名稱</sys:String>
+	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Variable">變數名稱：</sys:String>
 
 	<!-- VisibleLogPropertyEditorDialog -->
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.CustomDisplayName">自訂顯示名稱</sys:String>

@@ -156,13 +156,13 @@
 	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.PushVariableAction.WithDialog">Push variable to stack…</sys:String>
 
 	<!-- ContextualBasedAnalysisActionsEditorDialog -->
-	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Queue">Name of queue</sys:String>
-	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Stack">Name of stack</sys:String>
-	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Variable">Name of variable</sys:String>
+	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Queue">Name of queue:</sys:String>
+	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Stack">Name of stack:</sys:String>
+	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Variable">Name of variable:</sys:String>
 
 	<!-- CopyVarEditorDialog -->
-	<sys:String x:Key="String/CopyVarEditorDialog.SourceVariable">Name of source variable</sys:String>
-	<sys:String x:Key="String/CopyVarEditorDialog.TargetVariable">Name of target variable</sys:String>
+	<sys:String x:Key="String/CopyVarEditorDialog.SourceVariable">Name of source variable:</sys:String>
+	<sys:String x:Key="String/CopyVarEditorDialog.TargetVariable">Name of target variable:</sys:String>
 	<sys:String x:Key="String/CopyVarEditorDialog.Title">Copy value between variables</sys:String>
 
 	<!-- CopyVariableAction -->
@@ -402,11 +402,11 @@ return False</sys:String>
 	<sys:String x:Key="String/LogLevel.Warn">Warn</sys:String>
 
 	<!-- LogLevelMapEntryEditor -->
-	<sys:String x:Key="String/LogLevelMapEntryEditor.Reading.LogLevel">Mapped log level</sys:String>
-	<sys:String x:Key="String/LogLevelMapEntryEditor.Reading.Text">Text</sys:String>
+	<sys:String x:Key="String/LogLevelMapEntryEditor.Reading.LogLevel">Mapped log level:</sys:String>
+	<sys:String x:Key="String/LogLevelMapEntryEditor.Reading.Text">Text:</sys:String>
 	<sys:String x:Key="String/LogLevelMapEntryEditor.Title">Mapping of log level</sys:String>
-	<sys:String x:Key="String/LogLevelMapEntryEditor.Writing.LogLevel">Log level</sys:String>
-	<sys:String x:Key="String/LogLevelMapEntryEditor.Writing.Text">Mapped text</sys:String>
+	<sys:String x:Key="String/LogLevelMapEntryEditor.Writing.LogLevel">Log level:</sys:String>
+	<sys:String x:Key="String/LogLevelMapEntryEditor.Writing.Text">Mapped text:</sys:String>
 
 	<!-- LogPatternEditorDialog -->
 	<sys:String x:Key="String/LogPatternEditorDialog.IsSkippable">The line can be skipped</sys:String>
@@ -710,7 +710,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogStringEncoding.Xml">XML/HTML</sys:String>
 
 	<!-- LogStringPropertyDialog -->
-	<sys:String x:Key="String/LogStringPropertyDialog.FindText">Find text</sys:String>
+	<sys:String x:Key="String/LogStringPropertyDialog.FindText">Find text (Regular expression)</sys:String>
 	<sys:String x:Key="String/LogStringPropertyDialog.SearchOnInternet">Search on the Internet</sys:String>
 	<sys:String x:Key="String/LogStringPropertyDialog.WrapText">Wrap automatically</sys:String>
 	<sys:String x:Key="String/LogStringPropertyDialog.Title">View log property</sys:String>
@@ -731,7 +731,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogTimestampEncoding.UnixMilliseconds">Unix timestamp (milliseconds)</sys:String>
 
 	<!-- LogWritingFormatEditorDialog -->
-	<sys:String x:Key="String/LogWritingFormatEditorDialog.Format">Format</sys:String>
+	<sys:String x:Key="String/LogWritingFormatEditorDialog.Format">Format:</sys:String>
 	<sys:String x:Key="String/LogWritingFormatEditorDialog.Format.Description">You can use Interpolation Syntax "{}" to output log property to log text.</sys:String>
 	<sys:String x:Key="String/LogWritingFormatEditorDialog.Title">Log output format</sys:String>
 
@@ -744,7 +744,7 @@ return False</sys:String>
 	<sys:String x:Key="String/MainWindow.Session.Paused">Paused</sys:String>
 	<sys:String x:Key="String/MainWindow.Session.WaitingForDataSources">Waiting for data source</sys:String>
 	<sys:String x:Key="String/MainWindow.SetCustomSessionTitle">Set title of this tab…</sys:String>
-	<sys:String x:Key="String/MainWindow.SetCustomSessionTitle.Message">Title of tab</sys:String>
+	<sys:String x:Key="String/MainWindow.SetCustomSessionTitle.Message">Title of tab:</sys:String>
 	<sys:String x:Key="String/MainWindow.Tabs">Tabs</sys:String>
 	<sys:String x:Key="String/MainWindow.Tutorial.UseAddTabButtonToSelectLogProfile">You can also right-click on here to select log profile and set to new tab.</sys:String>
 	<sys:String x:Key="String/MainWindow.Windows">Windows</sys:String>
@@ -1234,10 +1234,10 @@ return None</sys:String>
 	<sys:String x:Key="String/UriInputDialog.Title">URI</sys:String>
 
 	<!-- VarAndConstComparisonEditorDialog -->
-	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.ComparisonType">Comparison</sys:String>
-	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Constant">Value</sys:String>
+	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.ComparisonType">Comparison:</sys:String>
+	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Constant">Value:</sys:String>
 	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Title">Edit comparison condition</sys:String>
-	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Variable">Name of variable</sys:String>
+	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Variable">Name of variable:</sys:String>
 
 	<!-- VariableAndConstantComparisonCondition -->
 	<sys:String x:Key="String/VariableAndConstantComparisonCondition">{{{0}}} {1} '{2}'</sys:String>

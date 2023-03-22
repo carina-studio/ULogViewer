@@ -33,19 +33,51 @@
 		</Border>
 
 		<!-- Content -->
-		<Grid Classes="Dialog_ContentPanel" RowDefinitions="Auto,Auto,*,Auto,Auto">
+		<Grid RowDefinitions="Auto,*">
 
-			<!-- Find text -->
-			<StackPanel Orientation="Vertical">
-				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogStringPropertyDialog.FindText}"/>
-				<asControls:RegexTextBox Name="findTextTextBox" Classes="Dialog_TextBox" PropertyChanged="OnFindTextTextBoxPropertyChanged"/>
-				<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/Common.RegularExpression.Reference}" Uri="{x:Static app:Uris.RegexReference}"/>
-				<Separator Classes="Dialog_Separator"/>
-			</StackPanel>
+			<!-- Toolbar -->
+			<Border Classes="ToolBar">
+				<Grid ColumnDefinitions="*,Auto,Auto">
+
+					<!-- Find text -->
+					<asControls:RegexTextBox Name="findTextTextBox" Classes="ToolBar_TextBox" HorizontalAlignment="Stretch" PropertyChanged="OnFindTextTextBoxPropertyChanged" Watermark="{DynamicResource String/LogStringPropertyDialog.FindText}"/>
+					<Separator Classes="Dialog_Separator_Small" Grid.Column="1"/>
+
+					<!-- Wrap text -->
+					<CheckBox Grid.Column="2" Content="{DynamicResource String/LogStringPropertyDialog.WrapText}" IsChecked="True" Margin="{StaticResource Thickness/ToolBar.Item.Margin}" VerticalAlignment="Center">
+						<ia:Interaction.Behaviors>
+							<iaCore:DataTriggerBehavior Binding="{Binding $self.IsChecked}" Value="True">
+								<iaCore:InvokeCommandAction Command="{Binding $parent[Window].SetTextWrappingCommand}">
+									<iaCore:InvokeCommandAction.CommandParameter>
+										<sys:Boolean>True</sys:Boolean>
+									</iaCore:InvokeCommandAction.CommandParameter>
+								</iaCore:InvokeCommandAction>
+							</iaCore:DataTriggerBehavior>
+							<iaCore:DataTriggerBehavior Binding="{Binding $self.IsChecked}" Value="False">
+								<iaCore:InvokeCommandAction Command="{Binding $parent[Window].SetTextWrappingCommand}">
+									<iaCore:InvokeCommandAction.CommandParameter>
+										<sys:Boolean>False</sys:Boolean>
+									</iaCore:InvokeCommandAction.CommandParameter>
+								</iaCore:InvokeCommandAction>
+							</iaCore:DataTriggerBehavior>
+						</ia:Interaction.Behaviors>
+					</CheckBox>
+
+				</Grid>
+			</Border>
 
 			<!-- Property value -->
-			<TextBlock Classes="Dialog_TextBlock" Grid.Row="1" Text="{Binding $parent[Window].LogPropertyDisplayName}"/>
-			<asControls:SyntaxHighlightingTextBox Name="propertyValueTextBox" Grid.Row="2" HorizontalAlignment="Stretch" IsReadOnly="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled" TextWrapping="Wrap" VerticalAlignment="Stretch">
+			<asControls:SyntaxHighlightingTextBox Name="propertyValueTextBox" BorderBrush="{x:Static Brushes.Transparent}" BorderThickness="0" Grid.Row="1" HorizontalAlignment="Stretch" IsReadOnly="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled" TextWrapping="Wrap" VerticalAlignment="Stretch">
+				<asControls:SyntaxHighlightingTextBox.Styles>
+					<Style Selector=":is(TextBox):focus /template/ Border#PART_BorderElement">
+						<Setter Property="Background" Value="{DynamicResource TextControlBackground}"/>
+						<Setter Property="BorderBrush" Value="{x:Static Brushes.Transparent}"/>
+					</Style>
+					<Style Selector=":is(TextBox):pointerover /template/ Border#PART_BorderElement">
+						<Setter Property="Background" Value="{DynamicResource TextControlBackground}"/>
+						<Setter Property="BorderBrush" Value="{x:Static Brushes.Transparent}"/>
+					</Style>
+				</asControls:SyntaxHighlightingTextBox.Styles>
 				<asControls:SyntaxHighlightingTextBox.ContextMenu>
 					<ContextMenu>
 						<MenuItem Command="{Binding $parent[TextBox].Copy}" Header="{DynamicResource String/Common.Copy}" IsEnabled="{Binding $parent[TextBox].CanCopy}" InputGesture="{x:Static asInput:KeyGestures.Copy}">
@@ -63,30 +95,6 @@
 					</ContextMenu>
 				</asControls:SyntaxHighlightingTextBox.ContextMenu>
 			</asControls:SyntaxHighlightingTextBox>
-			<Separator Classes="Dialog_Separator" Grid.Row="3"/>
-
-			<!-- Wrap text -->
-			<StackPanel Grid.Row="4" Orientation="Vertical">
-				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogStringPropertyDialog.WrapText}"/>
-				<ToggleSwitch Name="wrapTextSwitch" Classes="Dialog_ToggleSwitch" IsChecked="True">
-					<ia:Interaction.Behaviors>
-						<iaCore:DataTriggerBehavior Binding="{Binding $self.IsChecked}" Value="True">
-							<iaCore:InvokeCommandAction Command="{Binding $parent[Window].SetTextWrappingCommand}">
-								<iaCore:InvokeCommandAction.CommandParameter>
-									<sys:Boolean>True</sys:Boolean>
-								</iaCore:InvokeCommandAction.CommandParameter>
-							</iaCore:InvokeCommandAction>
-						</iaCore:DataTriggerBehavior>
-						<iaCore:DataTriggerBehavior Binding="{Binding $self.IsChecked}" Value="False">
-							<iaCore:InvokeCommandAction Command="{Binding $parent[Window].SetTextWrappingCommand}">
-								<iaCore:InvokeCommandAction.CommandParameter>
-									<sys:Boolean>False</sys:Boolean>
-								</iaCore:InvokeCommandAction.CommandParameter>
-							</iaCore:InvokeCommandAction>
-						</iaCore:DataTriggerBehavior>
-					</ia:Interaction.Behaviors>
-				</ToggleSwitch>
-			</StackPanel>
 			
 		</Grid>
 		

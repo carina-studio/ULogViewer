@@ -27,12 +27,12 @@
 		<StackPanel Classes="Dialog_ContentPanel">
 
 			<!-- Text -->
-			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogLevelMapEntryEditor.Reading.Text}"/>
+			<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogLevelMapEntryEditor.Reading.Text}"/>
 			<TextBox Name="textBox" Classes="Dialog_TextBox" MaxLength="256" PropertyChanged="OnTextBoxPropertyChanged"/>
-			<Separator Classes="Dialog_Separator"/>
+			<Separator Classes="Dialog_Separator_Small"/>
 
 			<!-- Log level -->
-			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogLevelMapEntryEditor.Reading.LogLevel}"/>
+			<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogLevelMapEntryEditor.Reading.LogLevel}"/>
 			<ComboBox Name="logLevelComboBox" Classes="Dialog_ComboBox">
 				<appLogs:LogLevel>Info</appLogs:LogLevel>
 				<appLogs:LogLevel>Success</appLogs:LogLevel>

@@ -24,9 +24,11 @@
 		<!-- Content -->
 		<StackPanel Classes="Dialog_ContentPanel">
 
-			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogWritingFormatEditorDialog.Format}"/>
+			<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogWritingFormatEditorDialog.Format}"/>
 			<asControls:StringInterpolationFormatTextBox Name="formatTextBox" Classes="Dialog_TextBox" Height="{StaticResource Double/LogWritingFormatEditorDialog.FormatTextBox.Height}" MaxLength="1024" TextWrapping="Wrap"/>
-			<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogWritingFormatEditorDialog.Format.Description}"/>
+			<Separator Classes="Dialog_Separator_Small"/>
+			<SelectableTextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogWritingFormatEditorDialog.Format.Description}"/>
+			<Separator Classes="Dialog_Separator_Small"/>
 			<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.FormatDescription}" Uri="{x:Static app:Uris.StringInterpolationReference}"/>
 
 		</StackPanel>

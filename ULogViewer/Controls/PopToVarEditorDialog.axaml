@@ -24,12 +24,12 @@
 		<StackPanel Classes="Dialog_ContentPanel">
 			
 			<!-- Stack -->
-			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/ContextualBasedAnalysisActionsEditorDialog.Stack}"/>
+			<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/ContextualBasedAnalysisActionsEditorDialog.Stack}"/>
 			<TextBox Name="stackTextBox" Classes="Dialog_TextBox" MaxLength="256"/>
-			<Separator Classes="Dialog_Separator"/>
+			<Separator Classes="Dialog_Separator_Small"/>
 
 			<!-- Variable -->
-			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/ContextualBasedAnalysisActionsEditorDialog.Variable}"/>
+			<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/ContextualBasedAnalysisActionsEditorDialog.Variable}"/>
 			<TextBox Name="varTextBox" Classes="Dialog_TextBox" MaxLength="256"/>
 			
 		</StackPanel>

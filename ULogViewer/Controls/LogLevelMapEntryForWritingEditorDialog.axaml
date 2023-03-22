@@ -27,7 +27,7 @@
 		<StackPanel Classes="Dialog_ContentPanel">
 
 			<!-- Log level -->
-			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogLevelMapEntryEditor.Writing.LogLevel}"/>
+			<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogLevelMapEntryEditor.Writing.LogLevel}"/>
 			<ComboBox Name="logLevelComboBox" Classes="Dialog_ComboBox">
 				<appLogs:LogLevel>Undefined</appLogs:LogLevel>
 				<appLogs:LogLevel>Info</appLogs:LogLevel>
@@ -48,10 +48,10 @@
 					</DataTemplate>
 				</ComboBox.ItemTemplate>
 			</ComboBox>
-			<Separator Classes="Dialog_Separator"/>
+			<Separator Classes="Dialog_Separator_Small"/>
 			
 			<!-- Text -->
-			<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogLevelMapEntryEditor.Writing.Text}"/>
+			<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogLevelMapEntryEditor.Writing.Text}"/>
 			<TextBox Name="textBox" Classes="Dialog_TextBox" MaxLength="256" PropertyChanged="OnTextBoxPropertyChanged"/>
 
 		</StackPanel>

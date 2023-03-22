@@ -144,13 +144,13 @@
 	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.PushVariableAction.WithDialog">将变量加入至堆栈…</sys:String>
 
 	<!-- ContextualBasedAnalysisActionsEditorDialog -->
-	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Queue">队列名称</sys:String>
-	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Stack">堆栈名称</sys:String>
-	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Variable">变量名称</sys:String>
+	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Queue">队列名称：</sys:String>
+	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Stack">堆栈名称：</sys:String>
+	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Variable">变量名称：</sys:String>
 
 	<!-- CopyVarEditorDialog -->
-	<sys:String x:Key="String/CopyVarEditorDialog.SourceVariable">来源变量</sys:String>
-	<sys:String x:Key="String/CopyVarEditorDialog.TargetVariable">目标变量</sys:String>
+	<sys:String x:Key="String/CopyVarEditorDialog.SourceVariable">来源变量：</sys:String>
+	<sys:String x:Key="String/CopyVarEditorDialog.TargetVariable">目标变量：</sys:String>
 	<sys:String x:Key="String/CopyVarEditorDialog.Title">复制变量值</sys:String>
 
 	<!-- CopyVariableAction -->
@@ -386,11 +386,11 @@ return False</sys:String>
 	<sys:String x:Key="String/LogLevel.Warn">警告</sys:String>
 
 	<!-- LogLevelMapEntryEditor -->
-	<sys:String x:Key="String/LogLevelMapEntryEditor.Reading.LogLevel">对应的日志等级</sys:String>
-	<sys:String x:Key="String/LogLevelMapEntryEditor.Reading.Text">文字</sys:String>
+	<sys:String x:Key="String/LogLevelMapEntryEditor.Reading.LogLevel">对应的日志等级：</sys:String>
+	<sys:String x:Key="String/LogLevelMapEntryEditor.Reading.Text">文字：</sys:String>
 	<sys:String x:Key="String/LogLevelMapEntryEditor.Title">日志等级对照</sys:String>
-	<sys:String x:Key="String/LogLevelMapEntryEditor.Writing.LogLevel">日志等级</sys:String>
-	<sys:String x:Key="String/LogLevelMapEntryEditor.Writing.Text">对应的文字</sys:String>
+	<sys:String x:Key="String/LogLevelMapEntryEditor.Writing.LogLevel">日志等级：</sys:String>
+	<sys:String x:Key="String/LogLevelMapEntryEditor.Writing.Text">对应的文字：</sys:String>
 
 	<!-- LogPatternEditorDialog -->
 	<sys:String x:Key="String/LogPatternEditorDialog.IsSkippable">此行可以被忽略</sys:String>
@@ -674,10 +674,10 @@ return False</sys:String>
 	<sys:String x:Key="String/LogStringEncoding.Plane">纯文字</sys:String>
 
 	<!-- LogStringPropertyDialog -->
-	<sys:String x:Key="String/LogStringPropertyDialog.FindText">搜索文字</sys:String>
+	<sys:String x:Key="String/LogStringPropertyDialog.FindText">搜索文字 (正则表达式)</sys:String>
 	<sys:String x:Key="String/LogStringPropertyDialog.SearchOnInternet">在互联网上搜索</sys:String>
 	<sys:String x:Key="String/LogStringPropertyDialog.WrapText">自动换行</sys:String>
-	<sys:String x:Key="String/LogStringPropertyDialog.Title">检查日志属性</sys:String>
+	<sys:String x:Key="String/LogStringPropertyDialog.Title">查看日志属性</sys:String>
 
 	<!-- LogTimeSpanEncoding -->
 	<sys:String x:Key="String/LogTimeSpanEncoding.Custom">自定义格式</sys:String>
@@ -695,7 +695,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogTimestampEncoding.UnixMilliseconds">Unix 时间戳 (毫秒)</sys:String>
 
 	<!-- LogWritingFormatEditorDialog -->
-	<sys:String x:Key="String/LogWritingFormatEditorDialog.Format">格式</sys:String>
+	<sys:String x:Key="String/LogWritingFormatEditorDialog.Format">格式：</sys:String>
 	<sys:String x:Key="String/LogWritingFormatEditorDialog.Format.Description">您可以使用插值语法 "{}" 以将日志属性产生至输出的日志文字。</sys:String>
 	<sys:String x:Key="String/LogWritingFormatEditorDialog.Title">日志输出格式</sys:String>
 
@@ -708,7 +708,7 @@ return False</sys:String>
 	<sys:String x:Key="String/MainWindow.Session.Paused">已暂停</sys:String>
 	<sys:String x:Key="String/MainWindow.Session.WaitingForDataSources">正在等待资料来源</sys:String>
 	<sys:String x:Key="String/MainWindow.SetCustomSessionTitle">自定义页面标题…</sys:String>
-	<sys:String x:Key="String/MainWindow.SetCustomSessionTitle.Message">页面标题</sys:String>
+	<sys:String x:Key="String/MainWindow.SetCustomSessionTitle.Message">页面标题：</sys:String>
 	<sys:String x:Key="String/MainWindow.Tabs">选项卡</sys:String>
 	<sys:String x:Key="String/MainWindow.Tutorial.UseAddTabButtonToSelectLogProfile">您也可以在这里点击右键以选取日志类型，并套用至新的页面。</sys:String>
 	<sys:String x:Key="String/MainWindow.Windows">窗口</sys:String>
@@ -1102,8 +1102,8 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.SetWorkingDirectory">选择/变更工作目录</sys:String>
 	<sys:String x:Key="String/SessionView.ShowAllLogsTemporarily">暂时显示所有日志(Alt+A)</sys:String>
 	<sys:String x:Key="String/SessionView.ShowFileInExplorer">在档案管理中显示档案</sys:String>
-	<sys:String x:Key="String/SessionView.ShowLogProperty">显示日志属性「{0}」…</sys:String>
-	<sys:String x:Key="String/SessionView.ShowLogProperty.Disabled">显示日志属性…</sys:String>
+	<sys:String x:Key="String/SessionView.ShowLogProperty">查看日志属性「{0}」…</sys:String>
+	<sys:String x:Key="String/SessionView.ShowLogProperty.Disabled">查看日志属性…</sys:String>
 	<sys:String x:Key="String/SessionView.ShowMarkedLogsTemporarily">暂时只显示已标记的日志 (Alt+M)</sys:String>
 	<sys:String x:Key="String/SessionView.ShowWorkingDirectoryInExplorer">在档案管理中开启工作目录</sys:String>
 	<sys:String x:Key="String/SessionView.SidePanel">侧边面板</sys:String>
@@ -1193,10 +1193,10 @@ return None</sys:String>
 	<sys:String x:Key="String/UriInputDialog.Title">URI</sys:String>
 
 	<!-- VarAndConstComparisonEditorDialog -->
-	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.ComparisonType">比较方式</sys:String>
-	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Constant">值</sys:String>
+	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.ComparisonType">比较方式：</sys:String>
+	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Constant">值：</sys:String>
 	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Title">编辑比较条件</sys:String>
-	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Variable">变量名称</sys:String>
+	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Variable">变量名称：</sys:String>
 
 	<!-- VisibleLogPropertyEditorDialog -->
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.CustomDisplayName">自定义显示名称</sys:String>
