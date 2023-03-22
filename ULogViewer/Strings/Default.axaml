@@ -346,7 +346,8 @@ return False</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.Title">Edit log analysis script</sys:String>
 
 	<!-- LogAnalysisScriptSetSelectionDialog -->
-	<sys:String x:Key="String/LogAnalysisScriptSetSelectionDialog.Title">Select log analysis script</sys:String>
+	<sys:String x:Key="String/LogAnalysisScriptSetSelectionDialog.Message">Select a log analysis script:</sys:String>
+	<sys:String x:Key="String/LogAnalysisScriptSetSelectionDialog.Title">Log analysis script</sys:String>
 
 	<!-- LogAnalysisViewModel -->
 	<sys:String x:Key="String/LogAnalysisViewModel.FailedToCopySelectedAnalysisResults">Unable to copy selected log analysis results.</sys:String>
@@ -546,7 +547,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogWriting">Log Output</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogWritingFormats">Log output formats</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogWritingFormats.Description">The format will be used for logs copying and saving. For each log, the first format which contains all valid log properties will be used from list. Otherwise, the first format in list will be used.</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.Name">Name (required)</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.Name">Name</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.ProVersionOnly">Upgrade to Pro version needed</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.RawLogLevelPropertyName">Name of property of raw log level</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.RawLogLevelPropertyName.Description">The property will be used for providing raw value of log level.</sys:String>

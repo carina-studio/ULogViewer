@@ -326,7 +326,8 @@ return False</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.Title">編輯日誌分析腳本</sys:String>
 
 	<!-- LogAnalysisScriptSetSelectionDialog -->
-	<sys:String x:Key="String/LogAnalysisScriptSetSelectionDialog.Title">選擇日誌分析腳本</sys:String>
+	<sys:String x:Key="String/LogAnalysisScriptSetSelectionDialog.Message">選擇一個日誌分析腳本：</sys:String>
+	<sys:String x:Key="String/LogAnalysisScriptSetSelectionDialog.Title">日誌分析腳本</sys:String>
 
 	<!-- LogAnalysisViewModel -->
 	<sys:String x:Key="String/LogAnalysisViewModel.FailedToCopySelectedAnalysisResults">無法將選取的日誌分析結果複製至剪貼簿。</sys:String>
@@ -509,7 +510,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogWriting">日誌輸出設定</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogWritingFormats">日誌輸出格式</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogWritingFormats.Description">此格式將用於日誌複製與儲存。對於每筆日誌，將從列表中選出第一個包含所有有效日誌屬性的格式使用，否則使用列表中的第一個格式。</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.Name">名稱 (必要)</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.Name">名稱</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.ProVersionOnly">需要升級至專業版</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.RawLogLevelPropertyName">原始日誌等級屬性</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.RawLogLevelPropertyName.Description">該日誌屬性將用於提供日誌等級的原始值。</sys:String>

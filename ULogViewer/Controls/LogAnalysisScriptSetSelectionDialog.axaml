@@ -23,8 +23,9 @@
 		</Border>
 
 		<!-- Content -->
-		<Panel Classes="Dialog_ContentPanel">
-			<asControls:ListBox Name="scriptSetListBox" Items="{Binding ScriptSets, Source={x:Static appAnalysisScripting:LogAnalysisScriptSetManager.Default}}">
+		<StackPanel Classes="Dialog_ContentPanel">
+			<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogAnalysisScriptSetSelectionDialog.Message}"/>
+			<asControls:ListBox Name="scriptSetListBox" Classes="Dialog_ListBox" Items="{Binding ScriptSets, Source={x:Static appAnalysisScripting:LogAnalysisScriptSetManager.Default}}">
 				<asControls:ListBox.ItemTemplate>
 					<DataTemplate>
 						<Grid ColumnDefinitions="Auto,*">
@@ -37,7 +38,7 @@
 					</DataTemplate>
 				</asControls:ListBox.ItemTemplate>
 			</asControls:ListBox>
-		</Panel>
+		</StackPanel>
 		
 	</DockPanel>
 	

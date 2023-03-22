@@ -8,7 +8,7 @@
         x:Class="CarinaStudio.ULogViewer.Controls.ScriptLogDataSourceProviderSelectionDialog"
         Classes="Dialog"
         Title="{DynamicResource String/ScriptLogDataSourceProviderSelectionDialog.Title}"
-        Width="{DynamicResource Double/ScriptLogDataSourceProvidersDialog.Width}">
+        Width="{DynamicResource Double/ScriptLogDataSourceProviderSelectionDialog.Width}">
 
 	<DockPanel>
 

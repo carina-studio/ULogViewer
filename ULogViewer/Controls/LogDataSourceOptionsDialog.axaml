@@ -283,10 +283,11 @@
 										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.SetupCommands}" VerticalAlignment="Center"/>
 										<TextBlock Classes="Dialog_TextBlock_Label" IsVisible="{Binding $parent[Window].IsSetupCommandsRequired}" Text="{DynamicResource String/LogDataSourceOptionsDialog.Required}" VerticalAlignment="Center"/>
 									</StackPanel>
-									<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !$parent[Window].SetupCommands.Count}" Text="{DynamicResource String/Common.None}"/>
+									<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !#setupCommandsListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
 								</Grid>
-								<asControls:ListBox Name="setupCommandsListBox" Classes="Dialog_Item_ListBox Commands" DoubleClickOnItem="OnListBoxDoubleClickOnItem" Items="{Binding $parent[Window].SetupCommands}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged"/>
-								<Separator Classes="Dialog_Separator_Small"/>
+								<Line Classes="Dialog_Item_Separator_Inner"/>
+								<asControls:ListBox Name="setupCommandsListBox" Classes="Dialog_Item_ListBox Commands" DoubleClickOnItem="OnListBoxDoubleClickOnItem" IsVisible="{Binding $parent[Window].SetupCommands.Count}" Items="{Binding $parent[Window].SetupCommands}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged"/>
+								<Separator Classes="Dialog_Separator_Small" IsVisible="{Binding #setupCommandsListBox.IsVisible}"/>
 								<Button Classes="Dialog_Item_Button" Command="{Binding $parent[Window].AddSetupCommand}" Content="{DynamicResource String/Common.Add.WithDialog}" HorizontalAlignment="Right"/>
 								<Separator Classes="Dialog_Item_Separator"/>
 							</StackPanel>
@@ -298,10 +299,11 @@
 										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.TeardownCommands}" VerticalAlignment="Center"/>
 										<TextBlock Classes="Dialog_TextBlock_Label" IsVisible="{Binding $parent[Window].IsTeardownCommandsRequired}" Text="{DynamicResource String/LogDataSourceOptionsDialog.Required}" VerticalAlignment="Center"/>
 									</StackPanel>
-									<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !$parent[Window].TeardownCommands.Count}" Text="{DynamicResource String/Common.None}"/>
+									<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !#teardownCommandsListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
 								</Grid>
-								<asControls:ListBox Name="teardownCommandsListBox" Classes="Dialog_Item_ListBox Commands" DoubleClickOnItem="OnListBoxDoubleClickOnItem" Items="{Binding $parent[Window].TeardownCommands}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged"/>
-								<Separator Classes="Dialog_Separator_Small"/>
+								<Line Classes="Dialog_Item_Separator_Inner"/>
+								<asControls:ListBox Name="teardownCommandsListBox" Classes="Dialog_Item_ListBox Commands" DoubleClickOnItem="OnListBoxDoubleClickOnItem" IsVisible="{Binding $parent[Window].TeardownCommands.Count}" Items="{Binding $parent[Window].TeardownCommands}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged"/>
+								<Separator Classes="Dialog_Separator_Small" IsVisible="{Binding #teardownCommandsListBox.IsVisible}"/>
 								<Button Classes="Dialog_Item_Button" Command="{Binding $parent[Window].AddTeardownCommand}" Content="{DynamicResource String/Common.Add.WithDialog}" HorizontalAlignment="Right"/>
 								<Separator Classes="Dialog_Item_Separator"/>
 							</StackPanel>
