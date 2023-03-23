@@ -32,7 +32,11 @@
 					<Border Classes="Dialog_Item_Container">
 						<StackPanel Classes="Dialog_Item_Text_Container">
 							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/PredefinedLogTextFilterEditorDialog.Regex}"/>
-							<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/RegexEditorDialog.Regex.Description}"/>
+							<TextBlock Classes="Dialog_TextBlock_Description" IsVisible="{Binding #patternEditor.IsPatternTextValid}" Text="{DynamicResource String/RegexEditorDialog.Regex.Description}"/>
+							<Grid Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*" IsVisible="{Binding !#patternEditor.IsPatternTextValid}">
+								<Image Classes="Dialog_Icon_Description" Source="{StaticResource Image/Icon.Error.Outline.Colored}"/>
+								<TextBlock Classes="Dialog_TextBlock_Description_Error" Grid.Column="1" Text="{DynamicResource String/Common.InvalidFormat}"/>
+							</Grid>
 						</StackPanel>
 					</Border>
 					<Line Classes="Dialog_Item_Separator_Inner"/>

@@ -131,6 +131,7 @@
 	
 	<!-- Common -->
 	<sys:String x:Key="String/Common.ExternalDependencyNotFound">At least one required external dependency is not installed on device. Please install then try again.</sys:String>
+	<sys:String x:Key="String/Common.InvalidFormat">Invalid format</sys:String>
 	<sys:String x:Key="String/Common.MoveDown">Move down</sys:String>
 	<sys:String x:Key="String/Common.MoveUp">Move up</sys:String>
 	<sys:String x:Key="String/Common.NewLine">New line</sys:String>

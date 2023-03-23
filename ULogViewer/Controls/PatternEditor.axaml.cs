@@ -29,6 +29,10 @@ partial class PatternEditor : CarinaStudio.Controls.UserControl<IULogViewerAppli
 	/// </summary>
 	public static readonly StyledProperty<bool> IsCapturingLogPropertiesEnabledProperty = AvaloniaProperty.Register<PatternEditor, bool>(nameof(IsCapturingLogPropertiesEnabled));
 	/// <summary>
+	/// Property of <see cref="IsPatternTextValid"/>.
+	/// </summary>
+	public static readonly DirectProperty<PatternEditor, bool> IsPatternTextValidProperty = AvaloniaProperty.RegisterDirect<PatternEditor, bool>(nameof(IsPatternTextValid), e => e.isPatternTextValid);
+	/// <summary>
 	/// Property of <see cref="Pattern"/>.
 	/// </summary>
 	public static readonly DirectProperty<PatternEditor, Regex?> PatternProperty = AvaloniaProperty.RegisterDirect<PatternEditor, Regex?>(nameof(Pattern), e => e.pattern, (e, p) => e.Pattern = p);
@@ -50,6 +54,7 @@ partial class PatternEditor : CarinaStudio.Controls.UserControl<IULogViewerAppli
 	// Fields.
 	readonly Button editPatternButton;
 	bool hasDialog;
+	bool isPatternTextValid = true;
 	Regex? pattern;
 	readonly RegexTextBox patternTextBox;
 	readonly ScheduledAction updatePredefinedCapturingGroupsAction;
@@ -67,6 +72,7 @@ partial class PatternEditor : CarinaStudio.Controls.UserControl<IULogViewerAppli
 		{
 			it.GetObservable(RegexTextBox.IsTextValidProperty).Subscribe(isValid =>
 			{
+				this.SetAndRaise(IsPatternTextValidProperty, ref this.isPatternTextValid, isValid);
 				this.SetAndRaise(PatternProperty, ref this.pattern, isValid ? it.Object : null);
 			});
 			it.GetObservable(RegexTextBox.ObjectProperty).Subscribe(pattern =>
@@ -181,6 +187,12 @@ partial class PatternEditor : CarinaStudio.Controls.UserControl<IULogViewerAppli
 		get => this.GetValue(IsCapturingLogPropertiesEnabledProperty);
 		set => this.SetValue(IsCapturingLogPropertiesEnabledProperty, value);
 	}
+
+
+	/// <summary>
+	/// Check whether the text of pattern is valid or not.
+	/// </summary>
+	public bool IsPatternTextValid => this.isPatternTextValid;
 	
 
 	/// <inheritdoc/>
