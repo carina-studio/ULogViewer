@@ -659,9 +659,12 @@
 								<Popup Name="predefinedLogTextFiltersPopup" IsLightDismissEnabled="True" IsOpen="{Binding $parent[ToggleButton].IsChecked, Mode=TwoWay}" PlacementTarget="{Binding $parent[ToggleButton]}" Width="{StaticResource Double/SessionView.PredefinedLogTextFiltersPopup.Width}" WindowManagerAddShadowHint="True">
 									<Border Background="{DynamicResource ComboBoxDropDownBackground}" BorderBrush="{DynamicResource ComboBoxDropDownBorderBrush}" BorderThickness="{DynamicResource Thickness/SessionView.PredefinedLogTextFiltersPopup.Border}" CornerRadius="{DynamicResource OverlayCornerRadius}" Padding="{StaticResource Thickness/SessionView.PredefinedLogTextFiltersPopup.Padding}">
 										<StackPanel>
-											<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/SessionView.PredefinedLogTextFiltersPopup.Header}"/>
-											<Grid ColumnDefinitions="*,Auto">
-												<ListBox Name="predefinedLogTextFilterListBox" Background="{DynamicResource Brush/SessionView.PredefinedLogTextFilterListBox.Background}" Items="{Binding $parent[UserControl].PredefinedLogTextFilters}" MaxHeight="{StaticResource Double/SessionView.PredefinedLogTextFilterListBox.MaxHeight}" MinHeight="{StaticResource Double/SessionView.PredefinedLogTextFilterListBox.MinHeight}" SelectionChanged="OnPredefinedLogTextFilterListBoxSelectionChanged" SelectionMode="Multiple">
+											<Border Classes="Dialog_Item_Container_Small">
+												<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/SessionView.PredefinedLogTextFiltersPopup.Header}"/>
+											</Border>
+											<Line Classes="Dialog_Item_Separator_Inner"/>
+											<Grid RowDefinitions="*,Auto,Auto">
+												<ListBox Name="predefinedLogTextFilterListBox" Classes="Dialog_Item_ListBox" Items="{Binding $parent[UserControl].PredefinedLogTextFilters}" MaxHeight="{StaticResource Double/SessionView.PredefinedLogTextFilterListBox.MaxHeight}" MinHeight="{StaticResource Double/SessionView.PredefinedLogTextFilterListBox.MinHeight}" SelectionChanged="OnPredefinedLogTextFilterListBoxSelectionChanged" SelectionMode="Multiple">
 													<ListBox.ItemTemplate>
 														<DataTemplate DataType="{x:Type appViewModels:PredefinedLogTextFilter}">
 															<Border Background="{x:Static Brushes.Transparent}" Padding="{StaticResource Thickness/SessionView.PredefinedLogTextFilterListBox.Item.Padding}">
@@ -706,18 +709,13 @@
 													</ListBox.Styles>
 												</ListBox>
 												<TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" HorizontalAlignment="Center" IsVisible="{Binding !$parent[UserControl].PredefinedLogTextFilters.Count}" Margin="{StaticResource Thickness/SessionView.NoPredefinedLogTextFilterHint.Margin}" Text="{DynamicResource String/Common.Empty}" TextWrapping="Wrap" VerticalAlignment="Center"/>
-												<StackPanel Grid.Column="1" VerticalAlignment="Top">
-													<Button Classes="BrowseButton" Command="{Binding $parent[UserControl].CreatePredefinedLogTextFilter}" ToolTip.Tip="{DynamicResource String/Common.Create}">
-														<Image Classes="BrowseButtonIcon" Source="{StaticResource Image/Icon.Add}"/>
-													</Button>
-													<Separator Classes="Dialog_Separator_Small"/>
-													<Button Classes="BrowseButton" Command="{Binding $parent[UserControl].ClearPredefinedLogTextFilterSelection}" IsEnabled="{Binding ElementName=predefinedLogTextFilterListBox, Path=SelectedItems.Count}" ToolTip.Tip="{DynamicResource String/SessionView.ClearPredefinedLogTextFiltersSelection}">
-														<Image Classes="BrowseButtonIcon" Source="{StaticResource Image/ClearSelection}"/>
-													</Button>
+												<Separator Classes="Dialog_Separator_Small" Grid.Row="1"/>
+												<StackPanel Grid.Row="2" HorizontalAlignment="Right" Orientation="Horizontal">
+													<Button Classes="Dialog_Item_Button" Command="{Binding $parent[UserControl].OpenPredefinedTextFiltersDocumentation}" Content="{DynamicResource String/Common.Help}"/>
 													<Separator Classes="Dialog_Separator"/>
-													<Button Classes="BrowseButton" Command="{Binding $parent[UserControl].OpenPredefinedTextFiltersDocumentation}" ToolTip.Tip="{DynamicResource String/Common.Help}">
-														<Image Classes="BrowseButtonIcon" Source="{StaticResource Image/Icon.Question}"/>
-													</Button>
+													<Button Classes="Dialog_Item_Button" Command="{Binding $parent[UserControl].ClearPredefinedLogTextFilterSelection}" Content="{DynamicResource String/SessionView.ClearPredefinedLogTextFiltersSelection}" IsEnabled="{Binding ElementName=predefinedLogTextFilterListBox, Path=SelectedItems.Count}"/>
+													<Separator Classes="Dialog_Separator_Small"/>
+													<Button Classes="Dialog_Item_Button" Command="{Binding $parent[UserControl].CreatePredefinedLogTextFilter}" Content="{DynamicResource String/Common.Create.WithDialog}"/>
 												</StackPanel>
 											</Grid>
 										</StackPanel>

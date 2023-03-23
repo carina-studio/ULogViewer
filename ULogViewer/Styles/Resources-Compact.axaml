@@ -43,7 +43,7 @@
 	<sys:Double x:Key="Double/SessionView.LogFileInfo.Summary.FontSize">12</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogListBox.ColorIndicator.Width">6</sys:Double>
 	<Thickness x:Key="Thickness/SessionView.LogAnalysisRuleSetListBox.Header.Margin">3,3,3,0</Thickness>
-	<Thickness x:Key="Thickness/SessionView.LogAnalysisRuleSetListBox.Header.Padding">4,3,17,3</Thickness>
+	<Thickness x:Key="Thickness/SessionView.LogAnalysisRuleSetListBox.Header.Padding">2,3,17,3</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogAnalysisRuleSetListBox.Icon.Margin">0,0,5,0</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogAnalysisRuleSetListBox.Item.Padding">5,3,18,3</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogAnalysisRuleSetsPopup.Padding">5</Thickness>

@@ -225,7 +225,7 @@
 	<Thickness x:Key="Thickness/SessionView.LogAnalysisResult.SubInfo.Icon.Margin">0,1,5,1</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogAnalysisResult.SubInfoPanel.Padding">5,0,5,3</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogAnalysisRuleSetListBox.Header.Margin">3,3,3,0</Thickness>
-	<Thickness x:Key="Thickness/SessionView.LogAnalysisRuleSetListBox.Header.Padding">7,6,17,6</Thickness>
+	<Thickness x:Key="Thickness/SessionView.LogAnalysisRuleSetListBox.Header.Padding">3,6,17,6</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogAnalysisRuleSetListBox.Icon.Margin">0,0,8,0</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogAnalysisRuleSetListBox.Item.Padding">8,5,20,5</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogAnalysisRuleSetsPopup.Border">1</Thickness>

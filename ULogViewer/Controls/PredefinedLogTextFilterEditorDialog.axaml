@@ -24,7 +24,7 @@
 					<!-- Name -->
 					<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
 						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/PredefinedLogTextFilterEditorDialog.Name}"/>
-						<TextBox Name="nameTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" MaxLength="256"/>
+						<TextBox Name="nameTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" MaxLength="256" Watermark="{DynamicResource String/Common.Required}"/>
 					</Grid>
 					<Separator Classes="Dialog_Item_Separator"/>
 
@@ -36,9 +36,9 @@
 						</StackPanel>
 					</Border>
 					<Line Classes="Dialog_Item_Separator_Inner"/>
-					<appControls:PatternEditor Name="patternEditor" MinHeight="{DynamicResource Double/PredefinedLogTextFilterEditorDialog.RegexInput.Height}"/>
+					<appControls:PatternEditor Name="patternEditor" MinHeight="{DynamicResource Double/PredefinedLogTextFilterEditorDialog.RegexInput.Height}" Watermark="{DynamicResource String/Common.Required}"/>
 					<Line Classes="Dialog_Item_Separator_Inner"/>
-					<SelectableTextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/PredefinedLogTextFilterEditorDialog.Regex.Description}"/>
+					<SelectableTextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Pattern.Description.Detailed}"/>
 					<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/Common.RegularExpression.Reference}" Uri="{x:Static app:Uris.RegexReference}"/>
 
 				</StackPanel>

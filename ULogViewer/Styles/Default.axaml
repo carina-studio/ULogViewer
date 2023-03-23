@@ -110,7 +110,6 @@
 			<SolidColorBrush x:Key="Brush/LogStringPropertyDialog.FoundText.Foreground">#ff4d4d</SolidColorBrush>
 
 			<!-- SessionView -->
-			<SolidColorBrush x:Key="Brush/SessionView.LogAnalysisRuleSetListBox.Background">#00000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.LogHeader.Background">#0e0e0e</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.LogHeader.Separator">#000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Background.Marked.Blue">#0000ff</SolidColorBrush>
@@ -141,7 +140,6 @@
 			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.MarkIndicator.Red">#ff0000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.MarkIndicator.Yellow">#ffff00</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.MarkedLogListBox.Item.Border.Selected">#000000</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/SessionView.PredefinedLogTextFilterListBox.Background">#00000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.SidePanel.FullPanelHint.Background" Color="{DynamicResource Color/WorkingArea.Panel.Background}" Opacity="0.75"/>
 			<SolidColorBrush x:Key="Brush/SessionView.StatusBar.Background.Error">#ff3232</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.StatusBar.Background.Inactive">#000000</SolidColorBrush>
