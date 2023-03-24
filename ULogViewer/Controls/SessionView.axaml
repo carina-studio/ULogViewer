@@ -664,7 +664,7 @@
 											</Border>
 											<Line Classes="Dialog_Item_Separator_Inner"/>
 											<Grid RowDefinitions="*,Auto,Auto">
-												<ListBox Name="predefinedLogTextFilterListBox" Classes="Dialog_Item_ListBox" Items="{Binding $parent[UserControl].PredefinedLogTextFilters}" MaxHeight="{StaticResource Double/SessionView.PredefinedLogTextFilterListBox.MaxHeight}" MinHeight="{StaticResource Double/SessionView.PredefinedLogTextFilterListBox.MinHeight}" SelectionChanged="OnPredefinedLogTextFilterListBoxSelectionChanged" SelectionMode="Multiple">
+												<ListBox Name="predefinedLogTextFilterListBox" Classes="Dialog_Item_ListBox" IsVisible="{Binding $parent[UserControl].PredefinedLogTextFilters.Count}" Items="{Binding $parent[UserControl].PredefinedLogTextFilters}" MaxHeight="{StaticResource Double/SessionView.PredefinedLogTextFilterListBox.MaxHeight}" MinHeight="{StaticResource Double/SessionView.PredefinedLogTextFilterListBox.MinHeight}" SelectionChanged="OnPredefinedLogTextFilterListBoxSelectionChanged" SelectionMode="Multiple">
 													<ListBox.ItemTemplate>
 														<DataTemplate DataType="{x:Type appViewModels:PredefinedLogTextFilter}">
 															<Border Background="{x:Static Brushes.Transparent}" Padding="{StaticResource Thickness/SessionView.PredefinedLogTextFilterListBox.Item.Padding}">
