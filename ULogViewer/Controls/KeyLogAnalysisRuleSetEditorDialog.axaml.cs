@@ -6,6 +6,7 @@ using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.AppSuite.Controls.Highlighting;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
+using CarinaStudio.Controls;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ULogViewer.ViewModels.Analysis;
 using CarinaStudio.Threading;
@@ -237,6 +238,13 @@ partial class KeyLogAnalysisRuleSetEditorDialog : AppSuite.Controls.Window<IULog
 			this.iconComboBox.SelectedItem = ruleSet.Icon;
 			this.nameTextBox.Text = ruleSet.Name;
 			this.rules.AddRange(ruleSet.Rules);
+			// [Workaround] Prevent wrong initial position because of ListBox which shows rules
+			void OnLayoutUpdated(object? sender, EventArgs e)
+			{
+				this.LayoutUpdated -= OnLayoutUpdated;
+				this.MoveToCenterOfOwner();
+			};
+			this.LayoutUpdated += OnLayoutUpdated; 
 		}
 		else
 		{

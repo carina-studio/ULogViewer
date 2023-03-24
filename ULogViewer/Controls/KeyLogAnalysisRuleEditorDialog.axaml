@@ -31,7 +31,7 @@
 			</Border>
 
 			<!-- Content -->
-			<ScrollViewer MaxHeight="{StaticResource Double/OperationDurationAnalysisRuleEditorDialog.Content.MaxHeight}">
+			<ScrollViewer MaxHeight="{StaticResource Double/KeyLogAnalysisRuleSetEditorDialog.Content.MaxHeight}">
 				<StackPanel Classes="Dialog_ContentPanel_WithItemsGroups">
 
 					<!-- Common -->
