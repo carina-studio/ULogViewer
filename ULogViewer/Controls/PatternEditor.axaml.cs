@@ -46,11 +46,6 @@ partial class PatternEditor : CarinaStudio.Controls.UserControl<IULogViewerAppli
     const string RegexOptionsFormat = "PatternEditor.RegexOptions";
 
 
-	// Static fields.
-	static readonly SettingKey<bool> IsClickButtonToEditPatternTutorialShownKey = new("PatternEditor.IsClickButtonToEditPatternTutorialShown");
-	static readonly SettingKey<bool> IsClickButtonToEditPatternTutorialShownLegacyKey = new("RegexEditorDialog.IsClickButtonToEditPatternTutorialShown");
-
-
 	// Fields.
 	readonly Button editPatternButton;
 	bool hasDialog;
@@ -297,47 +292,18 @@ partial class PatternEditor : CarinaStudio.Controls.UserControl<IULogViewerAppli
 	}
 
 	
+#pragma warning disable CA1822
+#pragma warning disable IDE0060
 	/// <summary>
 	/// Show tutorial if needed.
 	/// </summary>
 	/// <param name="presenter">Presenter to show tutorial.</param>
 	/// <param name="focusedControl">Control to focus after closing tutorial.</param>
 	/// <returns>True if tutorial is being shown.</returns>
-	public bool ShowTutorialIfNeeded(ITutorialPresenter presenter, Control? focusedControl = null)
-	{
-		// check state
-		this.VerifyAccess();
-		if (this.window == null)
-			return false;
-		var persistentState = this.PersistentState;
-		persistentState.GetRawValue(IsClickButtonToEditPatternTutorialShownLegacyKey)?.Let(it =>
-		{
-			if (it is bool boolValue)
-				persistentState.SetValue<bool>(IsClickButtonToEditPatternTutorialShownKey, boolValue);
-			persistentState.ResetValue(IsClickButtonToEditPatternTutorialShownLegacyKey);
-		});
-
-		// show first tutorial
-		if (!persistentState.GetValueOrDefault(IsClickButtonToEditPatternTutorialShownKey))
-		{
-			return presenter.ShowTutorial(new Tutorial().Also(it =>
-			{
-				it.Anchor = this.Get<Control>("editPatternButton");
-				it.Bind(Tutorial.DescriptionProperty, this.GetResourceObservable("String/PatternEditor.Tutorial.ClickButtonToEditPatternDetailedly"));
-				it.Dismissed += (_, e) =>
-				{
-					persistentState.SetValue<bool>(IsClickButtonToEditPatternTutorialShownKey, true);
-					if (!this.ShowTutorialIfNeeded(presenter, focusedControl))
-						(focusedControl ?? this.editPatternButton).Focus();
-				};
-				it.Icon = (IImage?)this.window.FindResource("Image/Icon.Lightbulb.Colored");
-				it.IsSkippingAllTutorialsAllowed = false;
-			}));
-		}
-
-		// no tutorial to show
-		return false;
-	}
+	public bool ShowTutorialIfNeeded(ITutorialPresenter presenter, Control? focusedControl = null) =>
+		false;
+#pragma warning restore CA1822
+#pragma warning restore IDE0060
 
 
 	/// <summary>
