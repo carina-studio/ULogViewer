@@ -1,7 +1,7 @@
 # User Agreement of ULogViewer
  ---
 + Version: 2.0
-+ Update: 2023/2/8
++ Update: 2023/3/24
 
 This is the User Agreement of ULogViewer which you need to read before you using ULogViewer. The User Agreement may be updated in the future and you can check it on the website of ULogViewer. It means that you have agreed this User Agreement once you start using ULogViewer.
 
@@ -176,7 +176,7 @@ Scripts running in ULogViewer are allowed accessing .NET features including file
 
 
 ## License and Copyright
-ULogViewer is an Open Source Project of Carina Studio under [MIT](https://github.com/carina-studio/ULogViewer/blob/master/LICENSE) license. All icons except for application icon are distributed under [MIT](https://github.com/carina-studio/ULogViewer/blob/master/LICENSE) or [CC 4.0](https://en.wikipedia.org/wiki/Creative_Commons_license) license. Please refer to [MahApps.Metro.IconPacks](https://github.com/MahApps/MahApps.Metro.IconPacks) for more information of icons and its license.  
+ULogViewer is an Open Source Project of Carina Studio under [MIT](https://github.com/carina-studio/ULogViewer/blob/master/LICENSE) license. All icons except for application icon are distributed under [MIT](https://github.com/carina-studio/ULogViewer/blob/master/LICENSE) or [CC 4.0](https://en.wikipedia.org/wiki/Creative_Commons_license) license. Please refer to [MahApps.Metro.IconPacks](https://github.com/MahApps/MahApps.Metro.IconPacks) and [SVG Repo](https://www.svgrepo.com/) for more information of icons and their licenses.  
 
 Application icon is modified from icons made by [Freepik](https://www.freepik.com/) from [Flaticon](https://www.flaticon.com/).
 

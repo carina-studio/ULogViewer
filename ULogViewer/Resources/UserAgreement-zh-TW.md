@@ -1,7 +1,7 @@
 # ULogViewer 使用者協議
  ---
 + 版本：2.0
-+ 更新時間：2023/2/8
++ 更新時間：2023/3/24
 
 這是 ULogViewer 的使用者協議，您應該要在使用 ULogViewer 之前詳細閱讀本協議。 使用者協議可能會在未來有所更新，您可以在 ULogViewer 網站中查看。 當您開始使用 ULogViewer 表示您同意本使用者協議。
 
@@ -176,7 +176,7 @@ ULogViewer 將會以 **管理員** 權限啟動 **osascript** 指令以更新 /e
 
 
 ## 授權及著作權
-ULogViewer 是 Carina Studio 在 [MIT](https://github.com/carina-studio/ULogViewer/blob/master/LICENSE) 授權之下的開放原始碼專案。除了應用程式圖示外，所有圖示皆在 [MIT](https://github.com/carina-studio/ULogViewer/blob/master/LICENSE) 或 [CC 4.0](https://en.wikipedia.org/wiki/Creative_Commons_license) 授權下使用。您可以在 [MahApps.Metro.IconPacks](https://github.com/MahApps/MahApps.Metro.IconPacks) 了解更多圖示相關資訊與授權。
+ULogViewer 是 Carina Studio 在 [MIT](https://github.com/carina-studio/ULogViewer/blob/master/LICENSE) 授權之下的開放原始碼專案。除了應用程式圖示外，所有圖示皆在 [MIT](https://github.com/carina-studio/ULogViewer/blob/master/LICENSE) 或 [CC 4.0](https://en.wikipedia.org/wiki/Creative_Commons_license) 授權下使用。您可以在 [MahApps.Metro.IconPacks](https://github.com/MahApps/MahApps.Metro.IconPacks) 及 [SVG Repo](https://www.svgrepo.com/) 了解更多圖示相關資訊與授權。
 
 應用程式圖示修改自 [Freepik](https://www.freepik.com/) 提供並發布於 [Flaticon](https://www.flaticon.com/) 之圖示。
 
