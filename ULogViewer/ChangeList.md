@@ -69,6 +69,7 @@
 + Improve performance and memory usage.
 + Improve displaying of Chinese.
 + Update internal script running flow.
++ Redesigned dialogs.
 + Other UI/UX Improvement.
 
 ## Behavior Changes
