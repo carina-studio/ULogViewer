@@ -988,6 +988,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.EditConfiguration">编辑內部配置…</sys:String>
 	<sys:String x:Key="String/SessionView.EditPathEnvVar">编辑 PATH 环境变量…</sys:String>
 	<sys:String x:Key="String/SessionView.EditPersistentState">编辑內部存储的状态…</sys:String>
+	<sys:String x:Key="String/SessionView.EnableRunningScript">允许运行脚本…</sys:String>
 	<sys:String x:Key="String/SessionView.FailedToExportLogAnalysisRuleSet">无法将规则集或脚本「{0}」导出至 '{1}'。</sys:String>
 	<sys:String x:Key="String/SessionView.FailedToImportLogAnalysisRuleSet">无法从 '{0}' 导入規則集或脚本。</sys:String>
 	<sys:String x:Key="String/SessionView.FilterByLogProperty">使用「{0}」筛选</sys:String>

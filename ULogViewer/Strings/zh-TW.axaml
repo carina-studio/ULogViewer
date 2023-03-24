@@ -977,6 +977,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.EditConfiguration">編輯內部組態…</sys:String>
 	<sys:String x:Key="String/SessionView.EditPathEnvVar">編輯 PATH 環境變數…</sys:String>
 	<sys:String x:Key="String/SessionView.EditPersistentState">編輯內部儲存的狀態…</sys:String>
+	<sys:String x:Key="String/SessionView.EnableRunningScript">允許執行腳本…</sys:String>
 	<sys:String x:Key="String/SessionView.FailedToExportLogAnalysisRuleSet">無法將規則集或腳本「{0}」匯出至 '{1}'。</sys:String>
 	<sys:String x:Key="String/SessionView.FailedToImportLogAnalysisRuleSet">無法從 '{0}' 匯入規則集或腳本。</sys:String>
 	<sys:String x:Key="String/SessionView.FilterByLogProperty">使用「{0}」篩選</sys:String>

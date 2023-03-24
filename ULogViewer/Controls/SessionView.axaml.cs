@@ -98,9 +98,9 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Static fields.
-		static readonly StyledProperty<bool> EnableRunningScriptProperty = AvaloniaProperty.Register<SessionView, bool>("EnableRunningScript", false);
 		static readonly StyledProperty<bool> HasLogProfileProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(HasLogProfile), false);
 		static readonly StyledProperty<bool> IsProcessInfoVisibleProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(IsProcessInfoVisible), false);
+		static readonly StyledProperty<bool> IsScriptRunningEnabledProperty = AvaloniaProperty.Register<SessionView, bool>("IsScriptRunningEnabled", false);
 		static readonly StyledProperty<bool> IsScrollingToLatestLogNeededProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(IsScrollingToLatestLogNeeded), true);
 		static readonly StyledProperty<bool> IsScrollingToTargetLogRangeProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(IsScrollingToTargetLogRange));
 		static readonly SettingKey<bool> IsCopyLogTextTutorialShownKey = new("SessionView.IsCopyLogTextTutorialShown");
@@ -2338,6 +2338,17 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Enable script running.
+		public async void EnableRunningScript()
+		{
+			if (this.Settings.GetValueOrDefault(AppSuite.SettingKeys.EnableRunningScript))
+				return;
+			if (this.attachedWindow == null)
+				return;
+			await new EnableRunningScriptDialog().ShowDialog(this.attachedWindow);
+		}
+
+
 		/// <summary>
 		/// Check whether log profile has been set or not.
 		/// </summary>
@@ -2542,7 +2553,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.UpdateToolsMenuItems();
 
 			// check script running
-			this.SetValue(EnableRunningScriptProperty, this.Settings.GetValueOrDefault(AppSuite.SettingKeys.EnableRunningScript));
+			this.SetValue(IsScriptRunningEnabledProperty, this.Settings.GetValueOrDefault(AppSuite.SettingKeys.EnableRunningScript));
 
 			// select log files or working directory
 			if (this.canSetIPEndPoint.Value
@@ -3731,7 +3742,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		void OnSettingChanged(object? sender, SettingChangedEventArgs e)
 		{
 			if (e.Key == AppSuite.SettingKeys.EnableRunningScript)
-				this.SetValue(EnableRunningScriptProperty, (bool)e.Value);
+				this.SetValue(IsScriptRunningEnabledProperty, (bool)e.Value);
 			else if (e.Key == SettingKeys.MaxDisplayLineCountForEachLog)
 				this.SetValue(MaxDisplayLineCountForEachLogProperty, Math.Max(1, (int)e.Value));
 			else if (e.Key == SettingKeys.ShowHelpButtonOnLogTextFilter)

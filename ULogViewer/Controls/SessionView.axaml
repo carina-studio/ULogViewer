@@ -1313,7 +1313,7 @@
 													<MultiBinding Converter="{x:Static BoolConverters.And}">
 														<Binding Path="LogAnalysis.HasCooperativeLogAnalysisScriptSet"/>
 														<Binding Path="LogAnalysis.IsCooperativeLogAnalysisScriptSetEnabled"/>
-														<Binding Path="EnableRunningScript" ElementName="root"/>
+														<Binding Path="IsScriptRunningEnabled" ElementName="root"/>
 														<Binding Path="IsProVersionActivated"/>
 													</MultiBinding>
 												</MultiBinding>
