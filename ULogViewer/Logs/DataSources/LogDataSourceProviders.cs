@@ -167,6 +167,11 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		static async Task LoadScriptLogDataSourceProvidersAsync()
 		{
 			// check Pro version
+			if (app?.IsCleanMode == true)
+			{
+				logger?.LogWarning("Skip loading script log data source providers in clean mode");
+				return;
+			}
 			if (app?.ProductManager?.IsProductActivated(Products.Professional) != true)
 			{
 				logger?.LogWarning("Skip loading script log data source providers");
