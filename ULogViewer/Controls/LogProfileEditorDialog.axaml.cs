@@ -1613,8 +1613,11 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// <summary>
 		/// Show dialog to manage script log data source providers.
 		/// </summary>
-		public void ShowScriptLogDataSourceProvidersDialog() =>
-			_ = new ScriptLogDataSourceProvidersDialog().ShowDialog(this);
+		public async void ShowScriptLogDataSourceProvidersDialog()
+		{
+			await new ScriptLogDataSourceProvidersDialog().ShowDialog(this);
+			this.OnSelectedDataSourceChanged();
+		}
 
 
 		/// <summary>
