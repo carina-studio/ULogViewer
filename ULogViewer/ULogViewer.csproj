@@ -72,7 +72,7 @@
     <PackageReference Include="Avalonia.AvaloniaEdit" Version="0.10.12.2" />
     <PackageReference Include="CarinaStudio.AppSuite.Core" Version="1.9.27.1102" />
     <PackageReference Include="Dotnet.Bundle" Version="0.9.13" />
-    <PackageReference Include="MySql.Data" Version="8.0.29" />
+    <PackageReference Include="MySqlConnector" Version="2.2.5" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="System.Data.Common" Version="4.3.0" />
     <PackageReference Include="System.Data.SQLite" Version="1.0.116" />
