@@ -2894,7 +2894,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.IsScrollingToLatestLogNeeded = false;
 				this.logListBox.SelectedItems!.Clear();
 				this.logListBox.SelectedItem = log;
-				this.ScrollToLog(log);
+				this.ScrollToLog(log, true);
 			});
 			this.SynchronizationContext.Post(() =>
 			{
@@ -3149,6 +3149,14 @@ namespace CarinaStudio.ULogViewer.Controls
 							this.ScrollToLog(firstVisibleItemIndex);
 						}
 					}
+				}
+
+				// cancel scrolling to target log range
+				if (this.targetLogRangeToScrollTo != null)
+				{
+					var removedLogs = e.OldItems.AsNonNull();
+					if (removedLogs.Contains(this.targetLogRangeToScrollTo[0]) || removedLogs.Contains(this.targetLogRangeToScrollTo[1]))
+						this.ClearTargetLogRangeToScrollTo();
 				}
 			}
 		}
@@ -3470,7 +3478,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				if (index >= 0)
 				{
 					it.SelectedIndex = index;
-					this.ScrollToLog(index);
+					this.ScrollToLog(session, index, log, true);
 				}
 				else
 					this.SynchronizationContext.Post(() => this.markedLogListBox.SelectedItems!.Clear());
@@ -3664,6 +3672,10 @@ namespace CarinaStudio.ULogViewer.Controls
 					break;
 				case nameof(Session.IsProVersionActivated):
 					this.UpdateToolsMenuItems();
+					break;
+				case nameof(Session.IsReadingLogs):
+					if (session.IsReadingLogs)
+						this.ClearTargetLogRangeToScrollTo();
 					break;
 				case nameof(Session.IsRemovingLogFiles):
 					if (session.IsRemovingLogFiles)
@@ -3957,41 +3969,58 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Scroll to specific log.
-		void ScrollToLog(DisplayableLog log)
+		void ScrollToLog(DisplayableLog log, bool moveToCenter = false)
 		{
 			if (this.DataContext is not Session session)
 				return;
-			this.ScrollToLog(session, session.Logs.IndexOf(log));
+			var index = session.Logs.IndexOf(log);
+			if (index < 0)
+				return;
+			this.ScrollToLog(session, index, log, moveToCenter);
 		}
-		void ScrollToLog(int index)
+		void ScrollToLog(int index, bool moveToCenter = false)
 		{
 			if (this.DataContext is not Session session)
 				return;
-			this.ScrollToLog(session, index);
-		}
-		void ScrollToLog(Session session, int index)
-		{
 			if (index < 0 || index >= session.Logs.Count)
 				return;
+			this.ScrollToLog(session, index, session.Logs[index], moveToCenter);
+		}
+		void ScrollToLog(Session session, int index, DisplayableLog log, bool moveToCenter)
+		{
 			this.ClearTargetLogRangeToScrollTo();
-			var itemContainerGenerator = this.logListBox.ItemContainerGenerator;
-			foreach (var container in itemContainerGenerator.Containers)
+			bool isLogVisible = this.logListBox.ItemContainerGenerator.Let(it =>
 			{
-				if (container.Index == index)
+				foreach (var container in it.Containers)
+				{
+					if (container.Index == index)
+						return true;
+				}
+				return false;
+			});
+			if (isLogVisible)
+			{
+				if (!moveToCenter)
 					return;
 			}
-			this.logScrollViewer?.Let(scrollViewer => // [Workaround] Move closer to log first to make sure the scroll bar position will be correct
+			else
 			{
-				var extentHeight = scrollViewer.Extent.Height;
-				var viewportHeight = scrollViewer.Viewport.Height;
-				var offset = extentHeight * (index + 0.5) / session.Logs.Count + (viewportHeight / 2);
-				if (offset < 0)
-					offset = 0;
-				else if (offset + viewportHeight > extentHeight)
-					offset = extentHeight - viewportHeight;
-				scrollViewer.Offset = new(scrollViewer.Offset.X, offset);
-			});
-			this.logListBox.ScrollIntoView(index);
+				this.logScrollViewer?.Let(scrollViewer => // [Workaround] Move closer to log first to make sure the scroll bar position will be correct
+				{
+					var extentHeight = scrollViewer.Extent.Height;
+					var viewportHeight = scrollViewer.Viewport.Height;
+					var offset = extentHeight * (index + 0.5) / session.Logs.Count + (viewportHeight / 2);
+					if (offset < 0)
+						offset = 0;
+					else if (offset + viewportHeight > extentHeight)
+						offset = extentHeight - viewportHeight;
+					scrollViewer.Offset = new(scrollViewer.Offset.X, offset);
+				});
+			}
+			this.targetLogRangeToScrollTo = new[] { log, log };
+			this.Logger.LogTrace("Start scrolling to log at position {index}", index);
+			this.SetValue(IsScrollingToTargetLogRangeProperty, true);
+			this.scrollToTargetLogRangeAction.Execute();
 		}
 
 
@@ -4055,12 +4084,24 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (targetCenterIndex >= displayedCenterIndex)
 			{
 				indexToScrollTo = Math.Min(logs.Count - 1, targetCenterIndex + (this.latestDisplayedLogCount >> 1));
-				this.Logger.LogTrace("Scroll down to target log at index {index}, target range: [{targetStartIndex}, {targetEndIndex}], center: {targetCenterIndex}", indexToScrollTo, targetStartIndex, targetEndIndex, targetCenterIndex);
+				this.Logger.LogTrace("Scroll down to target log at position {index}, target range: [{targetStartIndex}, {targetEndIndex}], center: {targetCenterIndex}", indexToScrollTo, targetStartIndex, targetEndIndex, targetCenterIndex);
+				if (displayedEndIndex == logs.Count - 1 && !session.LogFiltering.IsFiltering)
+				{
+					this.Logger.LogTrace("Cannot scroll down anymore");
+					this.ClearTargetLogRangeToScrollTo();
+					return;
+				}
 			}
 			else
 			{
 				indexToScrollTo = Math.Max(0, targetCenterIndex - (this.latestDisplayedLogCount >> 1));
-				this.Logger.LogTrace("Scroll up to target log at index {index}, target range: [{targetStartIndex}, {targetEndIndex}], center: {targetCenterIndex}", indexToScrollTo, targetStartIndex, targetEndIndex, targetCenterIndex);
+				this.Logger.LogTrace("Scroll up to target log at position {index}, target range: [{targetStartIndex}, {targetEndIndex}], center: {targetCenterIndex}", indexToScrollTo, targetStartIndex, targetEndIndex, targetCenterIndex);
+				if (displayedStartIndex == 0 && !session.LogFiltering.IsFiltering)
+				{
+					this.Logger.LogTrace("Cannot scroll up anymore");
+					this.ClearTargetLogRangeToScrollTo();
+					return;
+				}
 			}
 			this.logListBox.ScrollIntoView(indexToScrollTo);
 		}

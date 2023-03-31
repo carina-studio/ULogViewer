@@ -668,7 +668,7 @@ partial class SessionView
                         // select log
                         this.logListBox.SelectedItems!.Clear();
                         this.logListBox.SelectedItem = log;
-                        this.ScrollToLog(log);
+                        this.ScrollToLog(log, true);
                         this.IsScrollingToLatestLogNeeded = false;
                     }));
                 }
