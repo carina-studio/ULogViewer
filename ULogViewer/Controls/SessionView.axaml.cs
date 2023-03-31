@@ -3808,14 +3808,27 @@ namespace CarinaStudio.ULogViewer.Controls
         }
 
 
+		// Called when double clicked on item of marked log list box.
+		void OnMarkedLogListBoxDoubleClickOnItem(object? sender, ListBoxItemEventArgs e)
+		{
+			if (e.Item is DisplayableLog log)
+				this.OnMarkedLogSelected(log);
+		}
+
+
         // Called when selection in marked log list box has been changed.
         void OnMarkedLogListBoxSelectionChanged(object? sender, SelectionChangedEventArgs e)
 		{
-			if (this.DataContext is not Session session 
-				|| this.markedLogListBox.SelectedItem is not DisplayableLog log)
-			{
+			if (this.markedLogListBox.SelectedItem is DisplayableLog log)
+				this.OnMarkedLogSelected(log);
+		}
+		
+
+		// Called when selecting a marked log.
+		void OnMarkedLogSelected(DisplayableLog log)
+		{
+			if (this.DataContext is not Session session)
 				return;
-			}
 			var index = session.Logs.IndexOf(log);
 			this.logListBox.Let(it =>
 			{
