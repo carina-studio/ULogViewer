@@ -112,7 +112,7 @@ Except for log filtering, you can also define rule sets or write scripts to anal
 ## 📔 Other Topics
 - [How Does ULogViewer Read and Parse Logs](https://carinastudio.azurewebsites.net/ULogViewer/HowToReadAndParseLogs)
 - [Log Filtering](https://carinastudio.azurewebsites.net/ULogViewer/LogFiltering)
-- [Scripting in ULogViewer](https://carinastudio.azurewebsites.net/ULogViewer/Scripting)
+- [Scripting in Carina Studio Application](https://carinastudio.azurewebsites.net/Scripting)
 - [Log Analysis](https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis)
 - [Log Data Source Script](https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource)
 
@@ -123,7 +123,9 @@ Except for log filtering, you can also define rule sets or write scripts to anal
 - [Avalonia](https://github.com/AvaloniaUI/Avalonia)
 - [AvaloniaEdit](https://github.com/AvaloniaUI/AvaloniaEdit)
 - [Avalonia XAML Behaviors](https://github.com/wieslawsoltes/AvaloniaBehaviors)
+- [IronPython 3](https://github.com/IronLanguages/ironpython3)
 - [Jint](https://github.com/sebastienros/jint)
 - [NLog](https://github.com/NLog/NLog)
 - [NUnit](https://github.com/nunit/nunit)
+- [Roslyn](https://github.com/dotnet/roslyn)
 - [System.Data.SQLite](https://system.data.sqlite.org/)
