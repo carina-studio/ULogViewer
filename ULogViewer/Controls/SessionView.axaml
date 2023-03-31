@@ -1256,7 +1256,7 @@
 							<TextBlock Classes="SessionView_SidePanel_Header_Right" Grid.Column="1" Text="{Binding MarkedLogs.Count, StringFormat={} ({0})}"/>
 						</Grid>
 					</Border>
-					<ListBox Classes="Log" Name="markedLogListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" Focusable="False" Grid.Row="1" IsVisible="{Binding HasMarkedLogs}" Items="{Binding MarkedLogs}" SelectionChanged="OnMarkedLogListBoxSelectionChanged" SelectionMode="Single"/>
+					<asControls:ListBox Classes="Log" Name="markedLogListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" Focusable="False" Grid.Row="1" DoubleClickOnItem="OnMarkedLogListBoxDoubleClickOnItem" IsVisible="{Binding HasMarkedLogs}" Items="{Binding MarkedLogs}" SelectionChanged="OnMarkedLogListBoxSelectionChanged" SelectionMode="Single"/>
 				</Grid>
 
 				<!-- Timestamp categories -->
