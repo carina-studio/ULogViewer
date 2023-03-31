@@ -4617,6 +4617,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					canStartReading = false;
 				}
 			}
+			else
+				this.ResetValue(IsLogFileNeededProperty);
 			if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.IPEndPoint)))
 			{
 				if (dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.IPEndPoint)))
@@ -4628,6 +4630,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					canStartReading = false;
 				}
 			}
+			else
+				this.ResetValue(IsIPEndPointNeededProperty);
 			if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.Uri)))
 			{
 				if (dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.Uri)))
@@ -4639,6 +4643,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					canStartReading = false;
 				}
 			}
+			else
+				this.ResetValue(IsUriNeededProperty);
 			if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.WorkingDirectory))
 				|| profile.IsWorkingDirectoryNeeded)
 			{
@@ -4651,6 +4657,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					canStartReading = false;
 				}
 			}
+			else
+				this.ResetValue(IsWorkingDirectoryNeededProperty);
 			if (canStartReading)
 			{
 				this.Logger.LogDebug("Start reading logs for source '{dataSourceProviderName}'", dataSourceProvider.Name);
