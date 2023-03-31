@@ -125,6 +125,7 @@ Except for log filtering, you can also define rule sets or write scripts to anal
 - [Avalonia XAML Behaviors](https://github.com/wieslawsoltes/AvaloniaBehaviors)
 - [IronPython 3](https://github.com/IronLanguages/ironpython3)
 - [Jint](https://github.com/sebastienros/jint)
+- [MySqlConnector](https://github.com/mysql-net/MySqlConnector)
 - [NLog](https://github.com/NLog/NLog)
 - [NUnit](https://github.com/nunit/nunit)
 - [Roslyn](https://github.com/dotnet/roslyn)
