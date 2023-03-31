@@ -1565,10 +1565,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.saveMarkedLogsAction.ExecuteIfScheduled();
 
 			// dispose log readers
-			this.DisposeLogReaders();
-
-			// clear file name table
-			this.logFileInfoList.Clear();
+			this.DisposeLogReaders(true);
 
 			// update title
 			this.updateTitleAndIconAction.Schedule();
@@ -2198,7 +2195,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.saveMarkedLogsAction.ExecuteIfScheduled();
 
 			// dispose log readers
-			this.DisposeLogReaders();
+			this.DisposeLogReaders(true);
 
 			// release log group
 			totalLogsMemoryUsage -= this.displayableLogGroup?.MemorySize ?? 0L;
@@ -2324,7 +2321,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		// Dispose all log readers.
-		void DisposeLogReaders()
+		void DisposeLogReaders(bool clearLogFileInfos = false)
 		{
 			// dispose log readers
 			foreach (var logReader in this.logReaders.ToArray())
@@ -2338,6 +2335,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			DisposeDisplayableLogs(this.allLogs);
 			this.allLogs.Clear();
 			this.allLogsByLogFilePath.Clear();
+
+			// remove log file infos
+			if (clearLogFileInfos)
+				this.logFileInfoList.Clear();
 
 			// release log group
 			if (this.IsDisposed)
@@ -3317,7 +3318,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						break;
 					case nameof(ILogDataSourceProvider.RequiredSourceOptions):
 					case nameof(ILogDataSourceProvider.SupportedSourceOptions):
-						this.DisposeLogReaders();
+						this.DisposeLogReaders(true);
 						this.UpdateDataSourceRelatedStates();
 						this.StartReadingLogs();
 						break;
@@ -3421,7 +3422,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.attachedLogDataSourceProvider = (sender as LogProfile)?.DataSourceProvider;
 					if (this.attachedLogDataSourceProvider != null)
 						this.attachedLogDataSourceProvider.PropertyChanged += this.OnLogDataSourceProviderPropertyChanged;
-					this.DisposeLogReaders();
+					this.DisposeLogReaders(true);
 					this.UpdateDataSourceRelatedStates();
 					this.StartReadingLogs();
 					break;
@@ -3961,10 +3962,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.updateLogFilterAction.Cancel();
 
 			// dispose log readers
-			this.DisposeLogReaders();
-
-			// clear file name table
-			this.logFileInfoList.Clear();
+			this.DisposeLogReaders(true);
 
 			// clear display log properties
 			this.UpdateDisplayLogProperties();
@@ -4610,7 +4608,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			}
 
 			// dispose current log readers
-			this.DisposeLogReaders();
+			this.DisposeLogReaders(true);
 
 			this.Logger.LogDebug($"Set IP endpoint to {endPoint.Address} ({endPoint.Port})");
 
@@ -4912,7 +4910,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			}
 
 			// dispose current log readers
-			this.DisposeLogReaders();
+			this.DisposeLogReaders(true);
 
 			this.Logger.LogDebug($"Set URI to '{uri}'");
 
@@ -4965,7 +4963,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			}
 
 			// dispose current log readers
-			this.DisposeLogReaders();
+			this.DisposeLogReaders(true);
 
 			this.Logger.LogDebug($"Set working directory to '{directory}'");
 
