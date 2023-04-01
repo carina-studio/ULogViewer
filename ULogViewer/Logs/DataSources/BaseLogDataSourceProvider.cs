@@ -15,6 +15,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 	{
 		// Fields.
 		readonly ICollection<ILogDataSource> activeSources = new List<ILogDataSource>();
+		readonly EventHandler appStringsUpdatedHandler;
 		readonly IDisposable appStringsUpdatedHandlerToken;
 		string displayName = "";
 		int isDisposed;
@@ -28,8 +29,9 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		{
 			app.VerifyAccess();
 			this.Application = app;
-			this.appStringsUpdatedHandlerToken = app.AddWeakEventHandler(nameof(IApplication.StringsUpdated), (_, _) =>
-				this.DisplayName = this.OnUpdateDisplayName());
+			this.appStringsUpdatedHandler = (_, _) =>
+				this.DisplayName = this.OnUpdateDisplayName();
+			this.appStringsUpdatedHandlerToken = app.AddWeakEventHandler(nameof(IApplication.StringsUpdated), this.appStringsUpdatedHandler);
 			this.Logger = app.LoggerFactory.CreateLogger(this.GetType().Name);
 			this.SynchronizationContext.Post(() => this.DisplayName = this.OnUpdateDisplayName());
 		}
