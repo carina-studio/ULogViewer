@@ -118,6 +118,8 @@
 	<sys:String x:Key="String/BuiltInProfile.ULogViewerMemoryLog.Description">来自 ULogViewer 位于内存中的实时日志。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.WindowsApplicationEventLogs">Windows 事件记录 (应用程序)</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.WindowsApplicationEventLogs.Description">位于本机上分类为 'Application' 的 Windows 事件记录。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.WindowsEventLogFiles">Windows 事件记录文件</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.WindowsEventLogFiles.Description">存放在一个或多个 Windows XML 事件记录格式 (*.evtx) 之文件中的 Windows 事件纪录。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.WindowsSecurityEventLogs">Windows 事件记录 (安全性)</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.WindowsSecurityEventLogs.Description">位于本机上分类为 'Security' 的 Windows 事件记录。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.WindowsSetupEventLogs">Windows 事件记录 (安装)</sys:String>
@@ -1213,5 +1215,8 @@ return None</sys:String>
 
 	<!-- WindowsEventLogDataSourceProvider -->
 	<sys:String x:Key="String/WindowsEventLogDataSourceProvider.DisplayName">Windows 事件记录</sys:String>
+
+	<!-- WindowsEventLogFileDataSourceProvider -->
+	<sys:String x:Key="String/WindowsEventLogFileDataSourceProvider.DisplayName">Windows 事件记录文件</sys:String>
 	
 </ResourceDictionary>

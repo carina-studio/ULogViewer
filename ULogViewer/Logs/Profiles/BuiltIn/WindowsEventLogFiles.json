@@ -1,0 +1,97 @@
+﻿{
+	"DataSource": {
+		"Name": "WindowsEventLogFile"
+	},
+	"Icon": "Windows",
+	"LogLevelMapForReading": {
+		"e": "Error",
+		"i": "Info",
+		"v": "Verbose",
+		"w": "Warn"
+	},
+	"LogLevelMapForWriting": {
+		"Error": "E",
+		"Info": "I",
+		"Undefined": "U",
+		"Verbose": "V",
+		"Warn": "W"
+	},
+	"LogPatterns": [
+		{
+			"Regex": "^\\<Timestamp\\>(?<Timestamp>[^\\<]+)\\</Timestamp\\>"
+		},
+		{
+			"Regex": "^\\<Computer\\>(?<DeviceName>[^\\<]*)\\</Computer\\>"
+		},
+		{
+			"Regex": "^\\<UserName\\>(?<UserName>[^\\<]*)\\</UserName\\>"
+		},
+		{
+			"Regex": "^\\<Category\\>(?<Category>[^\\<]*)\\</Category\\>"
+		},
+		{
+			"Regex": "^\\<ProcessId\\>(?<ProcessId>\\d+)\\</ProcessId\\>"
+		},
+		{
+			"Regex": "^\\<ThreadId\\>(?<ThreadId>\\d+)\\</ThreadId\\>"
+		},
+		{
+			"Regex": "^\\<EventId\\>(?<Event>[^\\<]*)\\</EventId\\>"
+		},
+		{
+			"Regex": "^\\<Level\\>(?<Level>[^\\<]+)\\</Level\\>"
+		},
+		{
+			"Regex": "^\\<SourceName\\>(?<SourceName>[^\\<]*)\\</SourceName\\>"
+		},
+		{
+			"Regex": "^\\<Message\\>"
+		},
+		{
+			"Regex": "^(?<Message>($|[^\\<]+))",
+			"IsRepeatable": true,
+			"IsSkippable": true
+		},
+		{
+			"Regex": "^\\</Message\\>"
+		}
+	],
+	"LogStringEncodingForReading": "Xml",
+	"LogWritingFormats": [
+		"[{Level}] {Timestamp} {DeviceName} {ProcessId,5} {ThreadId,5} {Event,5} {SourceName}:{NewLine}{Message}{NewLine}"
+	],
+	"SortDirection": "Descending",
+	"TimestampFormatForDisplaying": "yyyy/MM/dd HH:mm:ss",
+	"TimestampFormatsForReading": [
+		"yyyy/MM/dd HH:mm:ss"
+	],
+	"VisibleLogProperties": [
+		{
+			"Name": "Timestamp",
+			"Width": 180
+		},
+		{
+			"Name": "DeviceName",
+			"Width": 150
+		},
+		{
+			"Name": "ProcessId",
+			"Width": 80
+		},
+		{
+			"Name": "ThreadId",
+			"Width": 80
+		},
+		{
+			"Name": "SourceName",
+			"Width": 200
+		},
+		{
+			"Name": "Event",
+			"Width": 80
+		},
+		{
+			"Name": "Message"
+		}
+	]
+}

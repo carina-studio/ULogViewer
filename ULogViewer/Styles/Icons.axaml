@@ -404,6 +404,12 @@
 	<DrawingImage x:Key="Image/LogDataSourceProvider.UDP Server.Light">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/LogProfile.Network}"/>
 	</DrawingImage>
+	<DrawingImage x:Key="Image/LogDataSourceProvider.WindowsEventLogFile">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/LogProfile.Windows}"/>
+	</DrawingImage>
+	<DrawingImage x:Key="Image/LogDataSourceProvider.WindowsEventLogFile.Light">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/LogProfile.Windows}"/>
+	</DrawingImage>
 	<DrawingImage x:Key="Image/LogDataSourceProvider.WindowsEventLogs">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/LogProfile.Windows}"/>
 	</DrawingImage>

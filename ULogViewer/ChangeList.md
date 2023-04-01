@@ -19,6 +19,7 @@
 + Support different colors for icons of log profile, log analysis rule set and log analysis script.
 + Support specifying text color for each log property.
 + Add **'Timestamp of reading log'** property for log and support using it as key of log sorting.
++ Add **'Windows Event Log File'** log data source to support reading data from **Windows XML Event Log** (*.evtx) files.
 + Add new built-in log profiles: 
     + Apache Access Log Files
     + Apache Error Log Files
@@ -26,6 +27,7 @@
     + Apple Device Simulators Log
     + Specific Apple Device Log
     + Specific Apple Device Simulator Log
+    + Windows Event Log Files
 
 + Add new built-in log profile templates: 
     + Specific Apple Device Log

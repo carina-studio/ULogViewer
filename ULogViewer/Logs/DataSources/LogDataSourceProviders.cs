@@ -149,6 +149,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			providers.Add(new UdpServerLogDataSourceProvider(app));
 			if (Platform.IsWindows)
 				providers.Add(new WindowsEventLogDataSourceProvider(app));
+			providers.Add(new WindowsEventLogFileDataSourceProvider(app));
 			foreach (var provider in providers)
 				providersByName[provider.Name] = provider;
 

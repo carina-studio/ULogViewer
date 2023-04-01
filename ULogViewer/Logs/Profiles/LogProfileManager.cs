@@ -49,6 +49,7 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
         "TcpNLog",
         "ULogViewerLog",
         "ULogViewerMemoryLog",
+        "WindowsEventLogFiles",
     };
     static LogProfileManager? defaultInstance;
     static readonly SettingKey<string> recentlyUsedProfilesKey = new("LogProfileManager.RecentlyUsedProfiles", "");
