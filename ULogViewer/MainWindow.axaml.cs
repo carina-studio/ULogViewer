@@ -26,6 +26,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace CarinaStudio.ULogViewer
@@ -43,6 +44,8 @@ namespace CarinaStudio.ULogViewer
 		static readonly StyledProperty<bool> HasMultipleSessionsProperty = AvaloniaProperty.Register<MainWindow, bool>("HasMultipleSessions");
 		static readonly SettingKey<bool> IsBuiltInFontSuggestionShownKey = new("MainWindow.IsBuiltInFontSuggestionShown");
 		static readonly SettingKey<bool> IsUsingAddTabButtonToSelectLogProfileTutorialShownKey = new("MainWindow.IsUsingAddTabButtonToSelectLogProfileTutorialShown");
+		static bool IsReactivatingProVersionHintDialogShown;
+		static bool IsRefreshingAppIconOnMacOSHintDialogShown;
 		static MainWindow? MainWindowToActivateProVersion;
 
 
@@ -735,38 +738,10 @@ namespace CarinaStudio.ULogViewer
 
 
 		// Called when all initial dialogs of AppSuite closed.
-        protected override async void OnInitialDialogsClosed()
+        protected override void OnInitialDialogsClosed()
         {
             base.OnInitialDialogsClosed();
-			if (this.PersistentState.GetValueOrDefault(IsBuiltInFontSuggestionShownKey))
-				this.selectAndSetLogProfileAction.Schedule();
-			else
-			{
-				this.PersistentState.SetValue<bool>(IsBuiltInFontSuggestionShownKey, true);
-				if (this.Application.IsFirstLaunch 
-					|| string.IsNullOrEmpty(this.Settings.GetValueOrDefault(SettingKeys.LogFontFamily))
-					|| this.Settings.GetValueOrDefault(SettingKeys.LogFontFamily) == SettingKeys.DefaultLogFontFamily)
-				{
-					this.selectAndSetLogProfileAction.Schedule();
-				}
-				else
-				{
-					var result = await new MessageDialog()
-					{
-						Buttons = MessageDialogButtons.YesNo,
-						CustomIcon = this.FindResource("Image/Icon.Fonts") as IImage,
-						Icon = MessageDialogIcon.Custom,
-						Message = new FormattedString().Also(it =>
-						{
-							it.Arg1 = SettingKeys.DefaultLogFontFamily;
-							it.Bind(FormattedString.FormatProperty, this.GetResourceObservable("String/MainWindow.ConfirmUsingBuiltInFontAsLogFont"));
-						}),
-					}.ShowDialog(this);
-					if (result == MessageDialogResult.Yes)
-						this.Settings.ResetValue(SettingKeys.LogFontFamily);
-					this.selectAndSetLogProfileAction.Schedule();
-				}
-			}
+			this.ShowULogViewerInitialDialogs();
         }
 
 
@@ -839,6 +814,14 @@ namespace CarinaStudio.ULogViewer
 			sessionView?.SetLogProfileAsync(logProfile);
 		}
 #pragma warning restore IDE0051
+
+
+		/// <inheritdoc/>
+		protected override async Task OnNotifyReactivatingProVersionNeededAsync()
+		{
+			await this.ShowReactivatingProVersionHintDialogAsync();
+			await base.OnNotifyReactivatingProVersionNeededAsync();
+		}
 
 
 		/// <inheritdoc/>
@@ -1109,6 +1092,13 @@ namespace CarinaStudio.ULogViewer
 		public ICommand SetCustomSessionTitleCommand { get; }
 
 
+		// Show dialog to notify user that reactivating Pro-version may be needed.
+		async Task<bool> ShowReactivatingProVersionHintDialogAsync()
+		{
+			return false;
+		}
+
+
 		/// <summary>
 		/// Show dialog to manage script log data source providers.
 		/// </summary>
@@ -1147,6 +1137,72 @@ namespace CarinaStudio.ULogViewer
 					requestSkippingAllTutorials?.Invoke();
 				};
 			}));
+		}
+
+
+		// Show ULogViewer specific initial dialogs.
+		async void ShowULogViewerInitialDialogs()
+		{
+			// check state
+			if (this.IsClosed || this.Application.IsShutdownStarted)
+				return;
+			
+			// reactivating Pro-version needed
+			if (await this.ShowReactivatingProVersionHintDialogAsync())
+			{
+				this.SynchronizationContext.Post(this.ShowULogViewerInitialDialogs);
+				return;
+			}
+
+			// hint for refreshing application icon on macOS
+			var appVersion = this.Application.Assembly.GetName().Version;
+			if (appVersion?.Major == 3
+				&& (this.Application.PreviousVersion?.Major).GetValueOrDefault() < 3
+				&& !this.Application.IsFirstLaunch
+				&& !IsRefreshingAppIconOnMacOSHintDialogShown)
+			{
+				IsRefreshingAppIconOnMacOSHintDialogShown = true;
+				var result = await new MessageDialog()
+				{
+					Buttons = MessageDialogButtons.YesNo,
+					Icon = MessageDialogIcon.Information,
+					Message = this.Application.GetObservableString("MainWindow.RefreshingAppIconOnMacOSHint"),
+				}.ShowDialog(this);
+				if (result == MessageDialogResult.Yes)
+					Platform.OpenLink("https://carinastudio.azurewebsites.net/ULogViewer/InstallAndUpgrade#Upgrade");
+				this.SynchronizationContext.Post(this.ShowULogViewerInitialDialogs);
+					return;
+			}
+
+			// suggestion of using built-in font
+			if (!this.PersistentState.GetValueOrDefault(IsBuiltInFontSuggestionShownKey))
+			{
+				this.PersistentState.SetValue<bool>(IsBuiltInFontSuggestionShownKey, true);
+				var logFontFamily = this.Settings.GetValueOrDefault(SettingKeys.LogFontFamily);
+				if (!this.Application.IsFirstLaunch 
+					&& logFontFamily != SettingKeys.LogFontFamily.DefaultValue
+					&& logFontFamily != SettingKeys.DefaultLogFontFamily)
+				{
+					var result = await new MessageDialog()
+					{
+						Buttons = MessageDialogButtons.YesNo,
+						CustomIcon = this.FindResource("Image/Icon.Fonts") as IImage,
+						Icon = MessageDialogIcon.Custom,
+						Message = new FormattedString().Also(it =>
+						{
+							it.Arg1 = SettingKeys.DefaultLogFontFamily;
+							it.Bind(FormattedString.FormatProperty, this.GetResourceObservable("String/MainWindow.ConfirmUsingBuiltInFontAsLogFont"));
+						}),
+					}.ShowDialog(this);
+					if (result == MessageDialogResult.Yes)
+						this.Settings.ResetValue(SettingKeys.LogFontFamily);
+					this.SynchronizationContext.Post(this.ShowULogViewerInitialDialogs);
+					return;
+				}
+			}
+
+			// all dialogs were shown
+			this.selectAndSetLogProfileAction.Schedule();
 		}
 
 

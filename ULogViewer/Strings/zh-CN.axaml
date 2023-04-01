@@ -703,6 +703,8 @@ return False</sys:String>
 	<!-- MainWindow -->
 	<sys:String x:Key="String/MainWindow.ClearCustomSessionTitle">重设页面标题</sys:String>
 	<sys:String x:Key="String/MainWindow.ConfirmUsingBuiltInFontAsLogFont">您是否要使用内建的「{0}」字型来显示日志？您可以在应用程序选项中找到更多的内建字型，或是更改日志显示字型。</sys:String>
+	<sys:String x:Key="String/MainWindow.ReactivatingProVersionMayBeNeeded">升级至当前版本后可能需要重新启用「ULogViewer 专业版」。必要时您只需要将目前的设备从已启用的设备列表中移除，再重新启用「ULogViewer 专业版」即可。</sys:String>
+	<sys:String x:Key="String/MainWindow.RefreshingAppIconOnMacOSHint">针对 macOS 用户，您可能会发现升级之后在 Dock 及 Launchpad 中的应用程序图标没有刷新。您是否想了解如何刷新应用程序图标？</sys:String>
 	<sys:String x:Key="String/MainWindow.Session.AllLogCount">总共 {0} 笔</sys:String>
 	<sys:String x:Key="String/MainWindow.Session.Hibernated">休眠中以节省资源</sys:String>
 	<sys:String x:Key="String/MainWindow.Session.LogsMemoryUsage">内存使用 {0}</sys:String>
