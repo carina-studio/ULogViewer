@@ -4561,6 +4561,11 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (index < 0 || index >= session.Logs.Count)
 				return;
+			foreach (var container in this.logListBox.ItemContainerGenerator.Containers)
+			{
+				if (container.Index == index)
+					return;
+			}
 			this.logScrollViewer?.Let(scrollViewer => // [Workaround] Move closer to log first to make sure the scroll bar position will be correct
 			{
 				var extentHeight = scrollViewer.Extent.Height;
