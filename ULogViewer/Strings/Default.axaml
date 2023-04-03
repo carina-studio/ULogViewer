@@ -697,6 +697,10 @@ return False</sys:String>
 	<sys:String x:Key="String/LogReadingPreconditionDialog.SelectPreconditionBeforeReadingLogs.Description">You can also change the setting in Options.</sys:String>
 	<sys:String x:Key="String/LogReadingPreconditionDialog.Title">Precondition of log reading</sys:String>
 
+	<!-- LogReadingWindow -->
+	<sys:String x:Key="String/LogReadingWindow.EndOfDataSource">End of data source</sys:String>
+	<sys:String x:Key="String/LogReadingWindow.StartOfDataSource">Start of data source</sys:String>
+
 	<!-- LogSortKey -->
 	<sys:String x:Key="String/LogSortKey.BeginningTimeSpan">Beginning time span of log</sys:String>
 	<sys:String x:Key="String/LogSortKey.BeginningTimestamp">Beginning timestamp of log</sys:String>

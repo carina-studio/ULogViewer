@@ -52,6 +52,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		string? rawLogLevelPropertyName;
 		readonly IDictionary<string, LogLevel> readOnlyLogLevelMap;
 		readonly TaskFactory readingTaskFactory;
+		LogReadingWindow readingWindow = LogReadingWindow.StartOfDataSource;
 		TimeSpan restartReadingDelay;
 		readonly ScheduledAction startReadingLogsAction;
 		LogReaderState state = LogReaderState.Preparing;
@@ -758,6 +759,25 @@ namespace CarinaStudio.ULogViewer.Logs
 		}
 
 
+		/// <summary>
+		/// Get or set window of reading logs from data source.
+		/// </summary>
+		public LogReadingWindow ReadingWindow
+		{
+			get => this.readingWindow;
+			set
+			{
+				this.VerifyAccess();
+				if (this.state != LogReaderState.Preparing)
+					throw new InvalidOperationException($"Cannot change {nameof(ReadingWindow)} when state is {this.state}.");
+				if (this.readingWindow == value)
+					return;
+				this.readingWindow = value;
+				this.OnPropertyChanged(nameof(ReadingWindow));
+			}
+		}
+
+
 		// Read single line of log.
 		void ReadLog(LogBuilder logBuilder, Match match, StringPool stringPool, string[]? timeSpanFormats, string[]? timestampFormats)
 		{
@@ -928,6 +948,12 @@ namespace CarinaStudio.ULogViewer.Logs
 			var readLog = (Log?)null;
 			var precondition = this.precondition;
 			var hasPrecondition = !precondition.IsEmpty;
+			var isContinuousReading = this.isContinuousReading;
+			var maxLogCount = isContinuousReading ? -1 : this.maxLogCount;
+			var hasMaxLogCount = maxLogCount >= 0;
+			var logCount = 0;
+			var accumulatedLogCount = 0;
+			var readingWindow = this.readingWindow;
 			var logPatterns = this.logPatterns.ToArray().Also(it =>
 			{
 				if (this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.UseCompiledRegex))
@@ -953,7 +979,6 @@ namespace CarinaStudio.ULogViewer.Logs
 				}
 			};
 			var syncContext = this.SynchronizationContext;
-			var isContinuousReading = this.isContinuousReading;
 			void FlushContinuousReadingLog(int updateInterval)
 			{
 				var log = readLog;
@@ -1050,7 +1075,11 @@ namespace CarinaStudio.ULogViewer.Logs
 											if (isContinuousReading)
 												FlushContinuousReadingLog(updateInterval);
 											else
+											{
 												readLogs.Add(readLog);
+												++logCount;
+												++accumulatedLogCount;
+											}
 										}
 									}
 									logPatternIndex = 0;
@@ -1085,6 +1114,8 @@ namespace CarinaStudio.ULogViewer.Logs
 					var logPatternRegex = logPattern.Regex;
 					do
 					{
+						if (hasMaxLogCount && readingWindow == LogReadingWindow.StartOfDataSource && logCount >= maxLogCount)
+							break;
 						updateInterval = this.updateInterval ?? (isContinuousReading ? configuration.GetValueOrDefault(ConfigurationKeys.ContinuousLogsReadingUpdateInterval) : defaultNonContinuousUpdateInterval);
 						try
 						{
@@ -1110,7 +1141,11 @@ namespace CarinaStudio.ULogViewer.Logs
 										if (isContinuousReading)
 											FlushContinuousReadingLog(updateInterval);
 										else
+										{
 											readLogs.Add(readLog);
+											++logCount;
+											++accumulatedLogCount;
+										}
 									}
 								}
 							}
@@ -1126,18 +1161,20 @@ namespace CarinaStudio.ULogViewer.Logs
 						{
 							if (isContinuousReading)
 								FlushContinuousReadingLog(updateInterval);
-							else
+							else if (accumulatedLogCount >= nonContinuousChunkSize || (stopWatch.ElapsedMilliseconds - startReadingTime) >= updateInterval)
 							{
-								if (readLogs.Count >= nonContinuousChunkSize 
-									|| (stopWatch.ElapsedMilliseconds - startReadingTime) >= updateInterval)
+								if (!hasMaxLogCount || readingWindow == LogReadingWindow.StartOfDataSource)
 								{
 									if (nonContinuousPaddingInterval > 0)
 										Thread.Sleep(nonContinuousPaddingInterval);
 									var logArray = readLogs.ToArray();
 									readLogs.Clear();
-									startReadingTime = stopWatch.ElapsedMilliseconds;
 									syncContext.Post(() => this.OnLogsRead(readingToken, logArray));
 								}
+								else if (readLogs.Count > maxLogCount)
+									readLogs.RemoveRange(0, readLogs.Count - maxLogCount);
+								accumulatedLogCount = 0;
+								startReadingTime = stopWatch.ElapsedMilliseconds;
 							}
 						}
 					} while (logLine != null && !cancellationToken.IsCancellationRequested);
@@ -1146,6 +1183,8 @@ namespace CarinaStudio.ULogViewer.Logs
 				{
 					do
 					{
+						if (hasMaxLogCount && readingWindow == LogReadingWindow.StartOfDataSource && logCount >= maxLogCount)
+							break;
 						logPattern = logPatterns[logPatternIndex];
 						updateInterval = this.updateInterval ?? (isContinuousReading ? configuration.GetValueOrDefault(ConfigurationKeys.ContinuousLogsReadingUpdateInterval) : defaultNonContinuousUpdateInterval);
 						try
@@ -1176,7 +1215,11 @@ namespace CarinaStudio.ULogViewer.Logs
 												if (isContinuousReading)
 													FlushContinuousReadingLog(updateInterval);
 												else
+												{
 													readLogs.Add(readLog);
+													++logCount;
+													++accumulatedLogCount;
+												}
 											}
 										}
 										logPatternIndex = 0;
@@ -1206,7 +1249,11 @@ namespace CarinaStudio.ULogViewer.Logs
 										if (isContinuousReading)
 											FlushContinuousReadingLog(updateInterval);
 										else
+										{
 											readLogs.Add(readLog);
+											++logCount;
+											++accumulatedLogCount;
+										}
 									}
 								}
 
@@ -1254,7 +1301,11 @@ namespace CarinaStudio.ULogViewer.Logs
 										if (isContinuousReading)
 											FlushContinuousReadingLog(updateInterval);
 										else
+										{
 											readLogs.Add(readLog);
+											++logCount;
+											++accumulatedLogCount;
+										}
 									}
 								}
 
@@ -1286,18 +1337,20 @@ namespace CarinaStudio.ULogViewer.Logs
 						{
 							if (isContinuousReading)
 								FlushContinuousReadingLog(updateInterval);
-							else
+							else if (accumulatedLogCount >= nonContinuousChunkSize || (stopWatch.ElapsedMilliseconds - startReadingTime) >= updateInterval)
 							{
-								if (readLogs.Count >= nonContinuousChunkSize 
-									|| (stopWatch.ElapsedMilliseconds - startReadingTime) >= updateInterval)
+								if (!hasMaxLogCount || readingWindow == LogReadingWindow.StartOfDataSource)
 								{
 									if (nonContinuousPaddingInterval > 0)
 										Thread.Sleep(nonContinuousPaddingInterval);
 									var logArray = readLogs.ToArray();
 									readLogs.Clear();
-									startReadingTime = stopWatch.ElapsedMilliseconds;
 									syncContext.Post(() => this.OnLogsRead(readingToken, logArray));
 								}
+								else if (readLogs.Count > maxLogCount)
+									readLogs.RemoveRange(0, readLogs.Count - maxLogCount);
+								accumulatedLogCount = 0;
+								startReadingTime = stopWatch.ElapsedMilliseconds;
 							}
 							prevLogPattern = logPattern;
 						}
@@ -1317,7 +1370,11 @@ namespace CarinaStudio.ULogViewer.Logs
 
 				// send last chunk of logs
 				if (readLogs.IsNotEmpty())
+				{
+					if (hasMaxLogCount && readingWindow == LogReadingWindow.EndOfDataSource && readLogs.Count > maxLogCount)
+						readLogs.RemoveRange(0, readLogs.Count - maxLogCount);
 					syncContext.Post(() => this.OnLogsRead(readingToken, readLogs));
+				}
 
 				// close reader
 				Global.RunWithoutError(reader.Close);
@@ -1719,5 +1776,21 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// Disposed.
 		/// </summary>
 		Disposed,
+	}
+
+
+	/// <summary>
+	/// Window of reading logs from data source.
+	/// </summary>
+	enum LogReadingWindow
+	{
+		/// <summary>
+		/// Start of data source.
+		/// </summary>
+		StartOfDataSource,
+		/// <summary>
+		/// End of data source.
+		/// </summary>
+		EndOfDataSource,
 	}
 }

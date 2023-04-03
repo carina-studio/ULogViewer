@@ -663,6 +663,10 @@ return False</sys:String>
 	<sys:String x:Key="String/LogReadingPreconditionDialog.SelectPreconditionBeforeReadingLogs.Description">您也可以在应用程序选项中变更此设置。</sys:String>
 	<sys:String x:Key="String/LogReadingPreconditionDialog.Title">日志读取前置条件</sys:String>
 
+	<!-- LogReadingWindow -->
+	<sys:String x:Key="String/LogReadingWindow.EndOfDataSource">资料来源尾端</sys:String>
+	<sys:String x:Key="String/LogReadingWindow.StartOfDataSource">资料来源前端</sys:String>
+
 	<!-- LogSortKey -->
 	<sys:String x:Key="String/LogSortKey.BeginningTimeSpan">日志起始时距</sys:String>
 	<sys:String x:Key="String/LogSortKey.BeginningTimestamp">日志起始时间</sys:String>
