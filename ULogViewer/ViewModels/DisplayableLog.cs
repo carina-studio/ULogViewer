@@ -349,6 +349,15 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.isDisposed = 1;
 			if (DisplayableLogGroup.TryGetInstanceById(this.groupId, out var group))
 				group.OnDisplayableLogDisposed(this);
+			else
+			{
+				if (this.Previous != null)
+					this.Previous.Next = this.Next;
+				if (this.Next != null)
+					this.Next.Previous = this.Previous;
+				this.Previous = null;
+				this.Next = null;
+			}
 		}
 
 

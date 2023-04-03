@@ -135,7 +135,10 @@ partial class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogF
         
         // no need to filter
         if (!isProcessingNeeded)
+        {
+            this.filteredLogs.TrimExcess();
             return filteringToken;
+        }
         
         // setup token
         filteringToken.CombinationMode = this.combinationMode.Let(it =>

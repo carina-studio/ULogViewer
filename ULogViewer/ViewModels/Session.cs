@@ -3361,6 +3361,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		// Called when marked logs has been changed.
 		void OnMarkedLogsChanged(object? sender, NotifyCollectionChangedEventArgs e)
 		{
+			switch (e.Action)
+			{
+				case NotifyCollectionChangedAction.Remove:
+				case NotifyCollectionChangedAction.Reset:
+					if (this.markedLogs.IsEmpty() && this.memoryUsagePolicy != MemoryUsagePolicy.BetterPerformance)
+						this.markedLogs.TrimExcess();
+					break;
+			}
 			if (!this.IsDisposed)
 			{
 				var hasLogs = this.markedLogs.IsNotEmpty();

@@ -813,6 +813,8 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
             {
                 var list = this.ObtainInternalDisplayableLogList(it);
                 it.Clear();
+                if (this.memoryUsagePolicy != MemoryUsagePolicy.BetterPerformance)
+                    it.TrimExcess();
                 return list;
             }
             else
