@@ -352,6 +352,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 			/// <summary>
+			/// Maximum number of logs to be read from data source.
+			/// </summary>
+			public int? MaxLogReadingCount { get; set; }
+
+
+			/// <summary>
 			/// Source of log data.
 			/// </summary>
 			[System.Diagnostics.CodeAnalysis.AllowNull]
@@ -424,6 +430,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			/// Get precondition of reading logs from this file.
 			/// </summary>
 			public abstract LogReadingPrecondition LogReadingPrecondition { get; }
+
+			/// <summary>
+			/// Get maximum number of logs to be read from file.
+			/// </summary>
+			public abstract int? MaxLogReadingCount { get; }
 
 			/// <inheritdoc/>
 			public event PropertyChangedEventHandler? PropertyChanged;
@@ -581,13 +592,15 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			bool isReadingLogs = true;
 			bool isRemoving;
 			int logCount;
+			int? maxLogReadingCount;
 			LogReadingPrecondition readingPrecondition;
 			readonly Session session;
 
 			// Constructor.
-			public LogFileInfoImpl(Session session, string fileName, LogReadingPrecondition precondition, bool isPredefined = false) : base(fileName)
+			public LogFileInfoImpl(Session session, string fileName, LogReadingPrecondition precondition, int? maxLogReadingCount, bool isPredefined = false) : base(fileName)
 			{ 
 				this.IsPredefined = isPredefined;
+				this.maxLogReadingCount = maxLogReadingCount;
 				this.readingPrecondition = precondition;
 				this.session = session;
 			}
@@ -615,6 +628,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// Log reading precondition.
 			public override LogReadingPrecondition LogReadingPrecondition => this.readingPrecondition;
+
+			/// <inheritdoc/>
+			public override int? MaxLogReadingCount => this.maxLogReadingCount;
 
 			// Update color indicator brush.
 			public void UpdateColorIndicatorBrush() =>
@@ -685,6 +701,15 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.readingPrecondition = precondition;
 				this.OnPropertyChanged(nameof(LogReadingPrecondition));
 			}
+
+			// Update max log reading count.
+			public void UpdateMaxLogReadingCount(int? count)
+			{
+				if (this.maxLogReadingCount == count)
+					return;
+				this.maxLogReadingCount = count;
+				this.OnPropertyChanged(nameof(MaxLogReadingCount));
+			}
 		}
 
 
@@ -692,6 +717,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		class LogReaderOptions
 		{
 			public readonly LogDataSourceOptions DataSourceOptions;
+			public int? MaxLogReadingCount;
 			public LogReadingPrecondition Precondition;
 
 			public LogReaderOptions(LogDataSourceOptions dataSourceOptions) =>
@@ -1282,7 +1308,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.Logger.LogWarning("File '{fileName}' is already added", fileName);
 				return;
 			}
-			this.logFileInfoList.Add(new LogFileInfoImpl(this, fileName, param.Precondition));
+			this.logFileInfoList.Add(new LogFileInfoImpl(this, fileName, param.Precondition, null));
 
 			this.Logger.LogDebug("Add log file '{fileName}'", fileName);
 
@@ -1296,7 +1322,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.SetValue(LastLogReadingPreconditionProperty, param.Precondition);
 
 			// create log reader
-			this.CreateLogReader(dataSource, param.Precondition);
+			this.CreateLogReader(dataSource, param.Precondition, null);
 		}
 
 
@@ -1745,8 +1771,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		}
 
 
+#pragma warning disable IDE0060
 		// Create log reader.
-		void CreateLogReader(ILogDataSource dataSource, LogReadingPrecondition precondition)
+		void CreateLogReader(ILogDataSource dataSource, LogReadingPrecondition precondition, int? maxLogCount)
 		{
 			// prepare displayable log group
 			var profile = this.LogProfile ?? throw new InternalStateCorruptedException("No log profile to create log reader.");
@@ -1884,6 +1911,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			}
 			this.SetValue(HasLogReadersProperty, true);
 		}
+#pragma warning restore IDE0060
 
 
 		// Create raw log writer for current log profile.
@@ -3480,8 +3508,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				return;
 			
 			// check state
-			if (this.logFileInfoMapByLogReader.TryGetValue(logReader, out var logFileInfo) && logFileInfo.IsPredefined)
+			if (!this.logFileInfoMapByLogReader.TryGetValue(logReader, out var logFileInfo) || logFileInfo.IsPredefined)
 				return;
+			var profile = this.LogProfile;
+			if (profile == null)
+				return;
+			
+			// do nothing if all parameters are same
 			if (logReader.Precondition == param.Precondition)
 				return;
 
@@ -3491,7 +3524,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.saveMarkedLogsAction.ExecuteIfScheduled();
 
 			// reload logs
-			logFileInfo?.UpdateLogReadingPrecondition(param.Precondition);
+			logFileInfo.UpdateLogReadingPrecondition(param.Precondition);
 			logReader.Precondition = param.Precondition;
 			logReader.Restart();
 		}
@@ -3713,7 +3746,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				{
 					useDefaultDataSourceOptions = true;
 					this.logFileInfoList.Clear();
-					this.logFileInfoList.Add(new LogFileInfoImpl(this, defaultDataSourceOptions.FileName.AsNonNull(), new(), true));
+					this.logFileInfoList.Add(new LogFileInfoImpl(this, defaultDataSourceOptions.FileName.AsNonNull(), new(), null, true));
 					this.canClearLogFiles.Update(false);
 					this.SetValue(IsLogFileNeededProperty, false);
 				}
@@ -3769,12 +3802,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			if (useDefaultDataSourceOptions)
 			{
 				this.Logger.LogWarning("Restore log reader(s) using default data source options");
-				var precondition = this.savedLogReaderOptions.FirstOrDefault()?.Precondition ?? new();
 				this.savedLogReaderOptions.Clear();
-				this.savedLogReaderOptions.Add(new LogReaderOptions(defaultDataSourceOptions)
-				{
-					Precondition = precondition,
-				});
+				this.savedLogReaderOptions.Add(new(defaultDataSourceOptions));
 			}
 			foreach (var logReaderOption in this.savedLogReaderOptions)
 			{
@@ -3793,7 +3822,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				// create data source and reader
 				var dataSource = this.CreateLogDataSourceOrNull(dataSourceProvider, newDataSourceOptions);
 				if (dataSource != null)
-					this.CreateLogReader(dataSource, logReaderOption.Precondition);
+					this.CreateLogReader(dataSource, logReaderOption.Precondition, null);
 				else
 				{
 					this.hasLogDataSourceCreationFailure = true;
@@ -3882,7 +3911,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 						// check file paths
 						if (dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName)))
-							this.logFileInfoList.Add(new LogFileInfoImpl(this, dataSourceOptions.FileName.AsNonNull(), logReaderOptions.Precondition));
+							this.logFileInfoList.Add(new LogFileInfoImpl(this, dataSourceOptions.FileName.AsNonNull(), logReaderOptions.Precondition, null));
 					}
 					this.Logger.LogTrace("{savedLogReaderOptionCount} log reader(s) can be restored", this.savedLogReaderOptions.Count);
 
@@ -4297,7 +4326,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			}
 
 			// create log reader
-			this.CreateLogReader(dataSource, new());
+			this.CreateLogReader(dataSource, new(), null);
 		}
 
 
@@ -4531,7 +4560,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			}
 
 			// create log reader
-			this.CreateLogReader(dataSource, new());
+			this.CreateLogReader(dataSource, new(), null);
 		}
 
 
@@ -4584,7 +4613,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			}
 
 			// create log reader
-			this.CreateLogReader(dataSource, new());
+			this.CreateLogReader(dataSource, new(), null);
 		}
 
 
@@ -4614,7 +4643,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				if (dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName)))
 				{
 					this.ResetValue(IsLogFileNeededProperty);
-					this.logFileInfoList.Add(new LogFileInfoImpl(this, dataSourceOptions.FileName.AsNonNull(), new(), true));
+					this.logFileInfoList.Add(new LogFileInfoImpl(this, dataSourceOptions.FileName.AsNonNull(), new(), null, true));
 				}
 				else
 				{
@@ -4670,7 +4699,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.Logger.LogDebug("Start reading logs for source '{dataSourceProviderName}'", dataSourceProvider.Name);
 				var dataSource = this.CreateLogDataSourceOrNull(dataSourceProvider, dataSourceOptions);
 				if (dataSource != null)
-					this.CreateLogReader(dataSource, new());
+					this.CreateLogReader(dataSource, new(), null);
 				else
 				{
 					this.hasLogDataSourceCreationFailure = true;
