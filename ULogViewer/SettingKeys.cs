@@ -9,6 +9,10 @@ namespace CarinaStudio.ULogViewer;
 static class SettingKeys
 {
 	/// <summary>
+	/// Let user set the maximum log reading count if files are too large.
+	/// </summary>
+	public static readonly SettingKey<bool> ConfirmMaxLogReadingCountForLargeFiles = new(nameof(ConfirmMaxLogReadingCountForLargeFiles), true);
+	/// <summary>
 	/// Interval of updating logs for continuous reading.
 	/// </summary>
 	public static readonly SettingKey<int> ContinuousLogReadingUpdateInterval = new(nameof(ContinuousLogReadingUpdateInterval), 100);
@@ -31,6 +35,10 @@ static class SettingKeys
 	/// Enable scrolling to latest log automatically after reloading logs.
 	/// </summary>
 	public static readonly SettingKey<bool> EnableScrollingToLatestLogAfterReloadingLogs = new(nameof(EnableScrollingToLatestLogAfterReloadingLogs), true);
+	/// <summary>
+	/// Threshold of file size in MB to let user set the maximum log reading count.
+	/// </summary>
+	public static readonly SettingKey<long> FileSizeInMBToConfirmMaxLogReadingCount = new(nameof(FileSizeInMBToConfirmMaxLogReadingCount), 256);
 	/// <summary>
 	/// Ignore case of log text filter.
 	/// </summary>

@@ -1,9 +1,11 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Data.Converters;
+using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.AppSuite.ViewModels;
+using CarinaStudio.Controls;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.ViewModels;
 using System;
@@ -38,6 +40,19 @@ partial class AppOptionsDialog : BaseApplicationOptionsDialog
 	public AppOptionsDialog()
 	{
 		AvaloniaXamlLoader.Load(this);
+		static void CoerceValue(IntegerTextBox textBox)
+		{
+			if (!textBox.IsTextValid && int.TryParse(textBox.Text, out var size))
+				textBox.Value = Math.Max(Math.Min(textBox.Maximum, size), textBox.Minimum);
+		}
+		this.Get<IntegerTextBox>("continuousReadingUpdateIntervalTextBox").Also(it =>
+			it.LostFocus += (_, _) => CoerceValue(it));
+		this.Get<IntegerTextBox>("maxContinuousLogCountTextBox").Also(it =>
+			it.LostFocus += (_, _) => CoerceValue(it));
+		this.Get<IntegerTextBox>("maxDisplayLineCountTextBox").Also(it =>
+			it.LostFocus += (_, _) => CoerceValue(it));
+		this.Get<IntegerTextBox>("updateLogFilterDelayTextBox").Also(it =>
+			it.LostFocus += (_, _) => CoerceValue(it));
 		this.Application.PropertyChanged += this.OnApplicationPropertyChanged;
 		this.Application.StringsUpdated += this.OnApplicationStringsUpdated;
 		this.refreshDataContextAction = new ScheduledAction(() =>
@@ -107,7 +122,7 @@ partial class AppOptionsDialog : BaseApplicationOptionsDialog
 		if (initControl != null)
 		{
 			this.ScrollToControl(initControl);
-			if (initControl is TextBlock textBlock)
+			if (initControl is Avalonia.Controls.TextBlock textBlock)
 				this.AnimateTextBlock(textBlock);
 			else if (initControl is Border headerBorder)
 				this.AnimateHeader(headerBorder);

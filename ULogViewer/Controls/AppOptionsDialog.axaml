@@ -13,7 +13,14 @@
         xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
         xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="CarinaStudio.ULogViewer.Controls.AppOptionsDialog">
+        x:Class="CarinaStudio.ULogViewer.Controls.AppOptionsDialog"
+		Name="window">
+	
+	<Window.Styles>
+		<Style Selector="TextBox.Dialog_Item_TextBox">
+			<Setter Property="MinWidth" Value="0"/>
+		</Style>
+	</Window.Styles>
 
 	<DockPanel>
 
@@ -178,9 +185,9 @@
 						<Separator Classes="Dialog_Item_Separator"/>
 						
 						<!-- Max display line count for each log -->
-						<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+						<Grid Classes="Dialog_Item_Container" ColumnDefinitions="Auto,*">
 							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.MaxDisplayLineCountForEachLog}"/>
-							<abControls:IntegerTextBox Classes="Dialog_Item_TextBox" Grid.Column="1" Maximum="20" Minimum="1" Value="{Binding MaxDisplayLineCountForEachLog, Mode=TwoWay}"/>
+							<abControls:IntegerTextBox Name="maxDisplayLineCountTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" IsNullValueAllowed="False" Maximum="20" Minimum="1" Value="{Binding MaxDisplayLineCountForEachLog, Mode=TwoWay}"/>
 						</Grid>
 
 					</StackPanel>
@@ -266,16 +273,16 @@
 						<Separator Classes="Dialog_Item_Separator"/>
 
 						<!-- Max log count -->
-						<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+						<Grid Classes="Dialog_Item_Container" ColumnDefinitions="Auto,*">
 							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.MaxContinuousLogCount}"/>
-							<abControls:IntegerTextBox Classes="Dialog_Item_TextBox" Grid.Column="1" Maximum="10000000" Minimum="10000" Value="{Binding MaxContinuousLogCount, Mode=TwoWay}"/>
+							<abControls:IntegerTextBox Name="maxContinuousLogCountTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" IsNullValueAllowed="False" Maximum="10000000" Minimum="10000" Value="{Binding MaxContinuousLogCount, Mode=TwoWay}"/>
 						</Grid>
 						<Separator Classes="Dialog_Item_Separator"/>
 
 						<!-- Update interval -->
-						<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+						<Grid Classes="Dialog_Item_Container" ColumnDefinitions="Auto,*">
 							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.ContinuousLogReadingUpdateInterval}"/>
-							<abControls:IntegerTextBox Classes="Dialog_Item_TextBox" Grid.Column="1" Maximum="1000" Minimum="50" Value="{Binding ContinuousLogReadingUpdateInterval, Mode=TwoWay}"/>
+							<abControls:IntegerTextBox Name="continuousReadingUpdateIntervalTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" IsNullValueAllowed="False" Maximum="1000" Minimum="50" Value="{Binding ContinuousLogReadingUpdateInterval, Mode=TwoWay}"/>
 						</Grid>
 
 					</StackPanel>
@@ -304,9 +311,9 @@
 						<Separator Classes="Dialog_Item_Separator"/>
 
 						<!-- Log filter update delay -->
-						<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+						<Grid Classes="Dialog_Item_Container" ColumnDefinitions="Auto,*">
 							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.UpdateLogFilterDelay}"/>
-							<abControls:IntegerTextBox Classes="Dialog_Item_TextBox" Grid.Column="1" Maximum="1500" Minimum="300" Value="{Binding UpdateLogFilterDelay, Mode=TwoWay}"/>
+							<abControls:IntegerTextBox Name="updateLogFilterDelayTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" IsNullValueAllowed="False" Maximum="1500" Minimum="300" Value="{Binding UpdateLogFilterDelay, Mode=TwoWay}"/>
 						</Grid>
 
 					</StackPanel>

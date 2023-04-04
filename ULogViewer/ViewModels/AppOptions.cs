@@ -76,6 +76,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+        /// Let user set the maximum log reading count if files are too large.
+        /// </summary>
+        public bool ConfirmMaxLogReadingCountForLargeFiles
+        {
+            get => this.Settings.GetValueOrDefault(SettingKeys.ConfirmMaxLogReadingCountForLargeFiles);
+            set => this.Settings.SetValue<bool>(SettingKeys.ConfirmMaxLogReadingCountForLargeFiles, value);
+        }
+
+
+		/// <summary>
 		/// Get or set interval of updating logs for continuous reading.
 		/// </summary>
 		public int ContinuousLogReadingUpdateInterval
@@ -121,6 +131,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			get => this.Settings.GetValueOrDefault(SettingKeys.EnableScrollingToLatestLogAfterReloadingLogs);
 			set => this.Settings.SetValue<bool>(SettingKeys.EnableScrollingToLatestLogAfterReloadingLogs, value);
 		}
+
+
+		/// <summary>
+        /// Threshold of file size in MB to let user set the maximum log reading count.
+        /// </summary>
+        public long FileSizeInMBToConfirmMaxLogReadingCount
+        {
+            get => this.Settings.GetValueOrDefault(SettingKeys.FileSizeInMBToConfirmMaxLogReadingCount);
+            set => this.Settings.SetValue<long>(SettingKeys.FileSizeInMBToConfirmMaxLogReadingCount, Math.Max(1, value));
+        }
 
 
 		/// <summary>
@@ -268,12 +288,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			base.OnSettingChanged(e);
 			var key = e.Key;
-			if (key == SettingKeys.ContinuousLogReadingUpdateInterval)
+			if (key == SettingKeys.ConfirmMaxLogReadingCountForLargeFiles)
+				this.OnPropertyChanged(nameof(ConfirmMaxLogReadingCountForLargeFiles));
+			else if (key == SettingKeys.ContinuousLogReadingUpdateInterval)
 				this.OnPropertyChanged(nameof(ContinuousLogReadingUpdateInterval));
 			else if (key == SettingKeys.DefaultTextShell)
 				this.OnPropertyChanged(nameof(DefaultTextShell));
 			else if (key == SettingKeys.EnableScrollingToLatestLogAfterReloadingLogs)
 				this.OnPropertyChanged(nameof(EnableScrollingToLatestLogAfterReloadingLogs));
+			else if (key == SettingKeys.FileSizeInMBToConfirmMaxLogReadingCount)
+				this.OnPropertyChanged(nameof(FileSizeInMBToConfirmMaxLogReadingCount));
 			else if (key == SettingKeys.IgnoreCaseOfLogTextFilter)
 				this.OnPropertyChanged(nameof(IgnoreCaseOfLogTextFilter));
 			else if (key == SettingKeys.InitialLogProfile)
