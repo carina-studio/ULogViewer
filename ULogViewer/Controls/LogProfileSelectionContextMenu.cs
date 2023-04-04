@@ -656,12 +656,20 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
                 if (!isRecentlyUsedLogProfilesSeparatorShown && this.recentlyUsedLogProfiles.IsNotEmpty())
                     this.items.Add(this.recentlyUsedLogProfilesSeparator);
                 break;
+            case NotifyCollectionChangedAction.Move:
+                foreach (var logProfile in e.NewItems!.Cast<LogProfile>())
+                {
+                    if (logProfile.IsTemplate)
+                        continue;
+                    if (this.TryFindMenuItem(logProfile, out var item))
+                        this.items.Sort(item);
+                }
+                break;
             case NotifyCollectionChangedAction.Remove:
                 foreach (var logProfile in e.OldItems!.Cast<LogProfile>())
                 {
                     logProfile.PropertyChanged -= this.OnLogProfilePropertyChanged;
-                    this.items.RemoveAll(it =>
-                        it is MenuItem menuItem && menuItem.DataContext == logProfile);
+                    this.items.RemoveAll(it => it is MenuItem menuItem && menuItem.DataContext == logProfile);
                     this.pinnedLogProfiles.Remove(logProfile);
                     this.recentlyUsedLogProfiles.Remove(logProfile);
                 }
