@@ -57,9 +57,11 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		readonly Dictionary<string, LogLevel> logLevelMapForReading = new();
 		readonly Dictionary<LogLevel, string> logLevelMapForWriting = new();
 		IList<LogPattern> logPatterns = Array.Empty<LogPattern>();
+		LogReadingWindow logReadingWindow = LogReadingWindow.StartOfDataSource;
 		LogStringEncoding logStringEncodingForReading = LogStringEncoding.Plane;
 		LogStringEncoding logStringEncodingForWriting = LogStringEncoding.Plane;
 		IList<string> logWritingFormats = Array.Empty<string>();
+		int? maxLogReadingCount;
 		string rawLogLevelPropertyName = nameof(Log.Level);
 		readonly IDictionary<string, LogLevel> readOnlyLogLevelMapForReading;
 		readonly IDictionary<LogLevel, string> readOnlyLogLevelMapForWriting;
@@ -128,10 +130,12 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			this.isWorkingDirectoryNeeded = template.isWorkingDirectoryNeeded;
 			this.logLevelMapForReading.AddAll(template.logLevelMapForReading);
 			this.logLevelMapForWriting.AddAll(template.logLevelMapForWriting);
+			this.logReadingWindow = template.logReadingWindow;
 			this.logPatterns = template.logPatterns;
 			this.logStringEncodingForReading = template.logStringEncodingForReading;
 			this.logStringEncodingForWriting = template.logStringEncodingForWriting;
 			this.logWritingFormats = template.logWritingFormats;
+			this.maxLogReadingCount = template.maxLogReadingCount;
 			this.Name = template.Name;
 			this.rawLogLevelPropertyName = template.rawLogLevelPropertyName;
 			this.sortDirection = template.sortDirection;
@@ -805,6 +809,24 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 
 
 		/// <summary>
+		/// Get or set the window to read logs from each data source.
+		/// </summary>
+		public LogReadingWindow LogReadingWindow
+		{
+			get => this.logReadingWindow;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (this.logReadingWindow == value)
+					return;
+				this.logReadingWindow = value;
+				this.OnPropertyChanged(nameof(LogReadingWindow));
+			}
+		}
+
+
+		/// <summary>
 		/// Get of set string encoding of logs for reading.
 		/// </summary>
 		public LogStringEncoding LogStringEncodingForReading
@@ -854,6 +876,25 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 					return;
 				this.logWritingFormats = ListExtensions.AsReadOnly(value.ToArray());
 				this.OnPropertyChanged(nameof(LogWritingFormats));
+			}
+		}
+
+
+		/// <summary>
+		/// Get or set maximum number of logs to be read from each data source.
+		/// </summary>
+		public int? MaxLogReadingCount
+		{
+			get => this.maxLogReadingCount;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (this.maxLogReadingCount == value)
+					return;
+				this.maxLogReadingCount = value;
+				this.OnPropertyChanged(nameof(MaxLogReadingCount));
+				this.Validate();
 			}
 		}
 
@@ -952,6 +993,10 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 					case nameof(LogPatterns):
 						this.LoadLogPatternsFromJson(jsonProperty.Value);
 						break;
+					case nameof(LogReadingWindow):
+						if (Enum.TryParse<LogReadingWindow>(jsonProperty.Value.GetString(), out var window))
+							this.logReadingWindow = window;
+						break;
 					case nameof(LogStringEncodingForReading):
 						if (Enum.TryParse<LogStringEncoding>(jsonProperty.Value.GetString(), out var encoding))
 							this.logStringEncodingForReading = encoding;
@@ -970,6 +1015,10 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 							foreach (var jsonValue in jsonProperty.Value.EnumerateArray())
 								list.Add(jsonValue.GetString().AsNonNull());
 						}).AsReadOnly();
+						break;
+					case nameof(MaxLogReadingCount):
+						if (jsonProperty.Value.ValueKind == JsonValueKind.Number && jsonProperty.Value.TryGetInt32(out var count))
+							this.maxLogReadingCount = count;
 						break;
 					case nameof(Name):
 						if (this.IsBuiltIn)
@@ -1102,6 +1151,8 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			this.SaveLogLevelMapForWritingToJson(writer);
 			writer.WritePropertyName(nameof(LogPatterns));
 			this.SaveLogPatternsToJson(writer);
+			if (this.logReadingWindow != LogReadingWindow.StartOfDataSource)
+				writer.WriteString(nameof(LogReadingWindow), this.logReadingWindow.ToString());
 			writer.WriteString(nameof(LogStringEncodingForReading), this.logStringEncodingForReading.ToString());
 			writer.WriteString(nameof(LogStringEncodingForWriting), this.logStringEncodingForWriting.ToString());
 			if (logWritingFormats.IsNotEmpty())
@@ -1112,6 +1163,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 					writer.WriteStringValue(format);
 				writer.WriteEndArray();
 			}
+			this.maxLogReadingCount?.Let(it => writer.WriteNumber(nameof(MaxLogReadingCount), it));
 			writer.WriteString(nameof(Name), this.Name);
 			if (this.rawLogLevelPropertyName != nameof(Log.Level))
 				writer.WriteString(nameof(RawLogLevelPropertyName), this.rawLogLevelPropertyName);
@@ -1571,6 +1623,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			if (isValid && !this.isTemplate)
 			{
 				isValid = this.logPatterns.IsNotEmpty()
+					&& (!this.maxLogReadingCount.HasValue || this.maxLogReadingCount > 0)
 					&& this.visibleLogProperties.Let(it =>
 					{
 						if (it.IsEmpty())

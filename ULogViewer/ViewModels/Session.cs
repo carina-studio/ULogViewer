@@ -1786,6 +1786,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					it.MaxLogCount = this.Settings.GetValueOrDefault(SettingKeys.MaxContinuousLogCount);
 					it.RestartReadingDelay = TimeSpan.FromMilliseconds(profile.RestartReadingDelay);
 				}
+				else
+				{
+					it.ReadingWindow = profile.LogReadingWindow;
+					profile.MaxLogReadingCount?.Let(c => it.MaxLogCount = c);
+				}
 				it.Precondition = precondition;
 				it.RawLogLevelPropertyName = profile.RawLogLevelPropertyName;
 				it.TimeSpanCultureInfo = profile.TimeSpanCultureInfoForReading;
@@ -3176,6 +3181,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				case nameof(LogProfile.TimestampEncodingForReading):
 				case nameof(LogProfile.TimestampFormatsForReading):
 					this.ScheduleReloadingLogs(true, false);
+					break;
+				case nameof(LogProfile.LogReadingWindow):
+					if ((this.LogProfile?.MaxLogReadingCount).HasValue)
+						goto case nameof(LogProfile.MaxLogReadingCount);
+					break;
+				case nameof(LogProfile.MaxLogReadingCount):
+					if (this.LogProfile?.IsContinuousReading == false)
+						goto case nameof(LogProfile.LogPatterns);
 					break;
 				case nameof(LogProfile.RestartReadingDelay):
 					(sender as LogProfile)?.Let(profile =>
