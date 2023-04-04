@@ -1786,11 +1786,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					it.MaxLogCount = this.Settings.GetValueOrDefault(SettingKeys.MaxContinuousLogCount);
 					it.RestartReadingDelay = TimeSpan.FromMilliseconds(profile.RestartReadingDelay);
 				}
-				else
-				{
-					it.ReadingWindow = profile.LogReadingWindow;
-					profile.MaxLogReadingCount?.Let(c => it.MaxLogCount = c);
-				}
 				it.Precondition = precondition;
 				it.RawLogLevelPropertyName = profile.RawLogLevelPropertyName;
 				it.TimeSpanCultureInfo = profile.TimeSpanCultureInfoForReading;

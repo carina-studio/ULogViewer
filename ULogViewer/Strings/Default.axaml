@@ -543,11 +543,16 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogPatterns.Description">Pattern to parse each line of raw log.</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogPatternsWithoutVisibleLogProperties">You defined 'Log line patterns' without defining 'Log properties to show' which may cause logs shown incorrectly. Do you want to define 'Log properties to show'?</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogReading">Log Reading</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogReadingWindow">Reading position</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogReadingWindow.Description">The position to read logs from each data source.</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogStringEncodingForReading">Encoding of text in log for reading</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogStringEncodingForWriting">Encoding of text in log for output</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogWriting">Log Output</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogWritingFormats">Log output formats</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogWritingFormats.Description">The format will be used for logs copying and saving. For each log, the first format which contains all valid log properties will be used from list. Otherwise, the first format in list will be used.</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.MaxLogReadingCount">Maximum reading count</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.MaxLogReadingCount.Description">Maximum number of logs to be read from each data source.</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.MaxLogReadingCount.OutOfRange">The valid range of number is 1 to 2147483647 inclusively.</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Name">Name</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.ProVersionOnly">Upgrade to Pro version needed</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.RawLogLevelPropertyName">Name of property of raw log level</sys:String>
