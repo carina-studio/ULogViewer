@@ -18,14 +18,14 @@ namespace CarinaStudio.ULogViewer.Controls
         // Static fields.
         static readonly StyledProperty<bool> IsCancellationAllowedProperty = AvaloniaProperty.Register<LogReadingPreconditionDialog, bool>(nameof(IsCancellationAllowed), true);
         static readonly StyledProperty<bool> IsReadingFromFilesProperty = AvaloniaProperty.Register<LogReadingPreconditionDialog, bool>(nameof(IsReadingFromFiles), false);
+        static readonly StyledProperty<bool> IsTimestampRangeValidProperty = AvaloniaProperty.Register<LogReadingPreconditionDialog, bool>("IsTimestampRangeValid", true);
 
 
         // Fields.
         readonly DateTimeTextBox beginningTimestampTextBox;
         readonly DateTimeTextBox endingTimestampTextBox;
-        readonly Avalonia.Controls.TextBlock invalidTimestampRangeTextBlock;
         bool isResultGenerated;
-        readonly CheckBox timestampsCheckBox;
+        readonly ToggleSwitch timestampsSwitch;
 
 
         // Constructor.
@@ -42,17 +42,11 @@ namespace CarinaStudio.ULogViewer.Controls
                 it.GetObservable(DateTimeTextBox.IsTextValidProperty).Subscribe(_ => this.InvalidateInput());
                 it.GetObservable(DateTimeTextBox.ValueProperty).Subscribe(_ => this.InvalidateInput());
             });
-            this.invalidTimestampRangeTextBlock = this.Get<Avalonia.Controls.TextBlock>(nameof(invalidTimestampRangeTextBlock));
-            this.timestampsCheckBox = this.Get<CheckBox>(nameof(timestampsCheckBox)).Also(it =>
+            this.timestampsSwitch = this.Get<ToggleSwitch>(nameof(timestampsSwitch)).Also(it =>
             {
-                it.GetObservable(RadioButton.IsCheckedProperty).Subscribe(isChecked => 
+                it.GetObservable(ToggleSwitch.IsCheckedProperty).Subscribe(isChecked => 
                 {
                     this.InvalidateInput();
-                    if (isChecked == true)
-                    {
-                        this.beginningTimestampTextBox.Focus();
-                        this.beginningTimestampTextBox.SelectAll();
-                    }
                 });
             });
         }
@@ -64,7 +58,7 @@ namespace CarinaStudio.ULogViewer.Controls
             {
                 var precondition = new Logs.LogReadingPrecondition();
                 this.isResultGenerated = true;
-                if (this.timestampsCheckBox.IsChecked == true)
+                if (this.timestampsSwitch.IsChecked == true)
                     precondition.TimestampRange = (this.beginningTimestampTextBox.Value, this.endingTimestampTextBox.Value);
                 return precondition;
             }));
@@ -102,7 +96,7 @@ namespace CarinaStudio.ULogViewer.Controls
             var precondition = this.Precondition;
             if (!precondition.TimestampRange.IsUniversal)
             {
-                this.timestampsCheckBox.IsChecked = true;
+                this.timestampsSwitch.IsChecked = true;
                 this.beginningTimestampTextBox.Value = precondition.TimestampRange.Start;
                 this.endingTimestampTextBox.Value = precondition.TimestampRange.End;
             }
@@ -116,30 +110,17 @@ namespace CarinaStudio.ULogViewer.Controls
         // Validate input.
         protected override bool OnValidateInput()
         {
-            if (this.invalidTimestampRangeTextBlock != null)
-                this.invalidTimestampRangeTextBlock.IsVisible = false;
-            if (!base.OnValidateInput())
-                return false;
-            if (this.timestampsCheckBox.IsChecked == true)
+            if (this.beginningTimestampTextBox.IsTextValid && this.beginningTimestampTextBox.Value.HasValue
+                && this.endingTimestampTextBox.IsTextValid && this.endingTimestampTextBox.Value.HasValue
+                && this.beginningTimestampTextBox.Value.Value >= this.endingTimestampTextBox.Value.Value)
             {
-                if (this.beginningTimestampTextBox.IsTextValid && this.beginningTimestampTextBox.Value.HasValue)
-                {
-                    if (this.endingTimestampTextBox.IsTextValid && this.endingTimestampTextBox.Value.HasValue)
-                    {
-                        if (this.beginningTimestampTextBox.Value.Value >= this.endingTimestampTextBox.Value.Value)
-                        {
-                            if (this.invalidTimestampRangeTextBlock != null)
-                                this.invalidTimestampRangeTextBlock.IsVisible = true;
-                            return false;
-                        }
-                    }
-                    return true;
-                }
-                else if (this.endingTimestampTextBox.IsTextValid && this.endingTimestampTextBox.Value.HasValue)
-                    return true;
-                return false;
+                this.SetValue(IsTimestampRangeValidProperty, false);
+                if (this.timestampsSwitch.IsChecked == true)
+                    return false;
             }
-            return true;
+            else
+                this.SetValue(IsTimestampRangeValidProperty, true);
+            return base.OnValidateInput();
         }
         
 

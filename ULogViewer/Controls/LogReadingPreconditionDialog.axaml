@@ -3,9 +3,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:abControls="using:CarinaStudio.Controls"
-		xmlns:aConverters="using:Avalonia.Data.Converters"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.LogReadingPreconditionDialog"
+		Name="window"
 		Classes="Dialog"
         Title="{DynamicResource String/LogReadingPreconditionDialog.Title}"
 		Width="{DynamicResource Double/LogReadingPreconditionDialog.Width}">
@@ -21,58 +21,93 @@
 		</Border>
 
 		<!-- Content -->
-		<StackPanel Classes="Dialog_ContentPanel">
+		<Border Classes="Dialog_ContentPanel_WithItemsGroups">
+			<Border Classes="Dialog_ItemsGroup_Container">
+				<StackPanel>
 			
-			<!-- Description -->
-			<Grid ColumnDefinitions="Auto,*">
-				<Image Classes="Dialog_Icon" Source="{DynamicResource Image/Icon.Information.Colored}"/>
-				<TextBlock Classes="Dialog_Icon_TextBlock" Grid.Column="1" Text="{DynamicResource String/LogReadingPreconditionDialog.Description}" TextWrapping="Wrap"/>
-			</Grid>
-			<Separator Classes="Dialog_Separator_Large"/>
+					<!-- Description -->
+					<Border Classes="Dialog_Item_Container">
+						<Grid ColumnDefinitions="Auto,*">
+							<Image Classes="Dialog_Icon" Source="{DynamicResource Image/Icon.Information.Colored}"/>
+							<TextBlock Classes="Dialog_Icon_TextBlock" Grid.Column="1" Text="{DynamicResource String/LogReadingPreconditionDialog.Description}" TextWrapping="Wrap"/>
+						</Grid>
+					</Border>
+					<Separator Classes="Dialog_Item_Separator"/>
 
-			<!-- Timestamps -->
-			<CheckBox Name="timestampsCheckBox" Classes="Dialog_CheckBox" Content="{DynamicResource String/LogReadingPreconditionDialog.PreconditionTimestamps}"/>
-			<StackPanel Classes="Dialog_ContentPanel_Indented" IsEnabled="{Binding #timestampsCheckBox.IsChecked}">
-				<abControls:DateTimeTextBox Name="beginningTimestampTextBox" Classes="Dialog_TextBox"/>
-				<StackPanel Orientation="Horizontal">
-					<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/DateTimeSelectionDialog.DateTime}" VerticalAlignment="Center"/>
-					<TextBlock Classes="Dialog_TextBlock_Description" Text="{Binding #beginningTimestampTextBox.Value}" VerticalAlignment="Center"/>
+					<!-- Timestamps -->
+					<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+						<StackPanel Classes="Dialog_Item_Text_Container">
+							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogReadingPreconditionDialog.PreconditionTimestamps}"/>
+							<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogReadingPreconditionDialog.PreconditionTimestamps.Description}">
+								<TextBlock.IsVisible>
+									<MultiBinding Converter="{x:Static BoolConverters.And}">
+										<Binding Path="!IsVisible" ElementName="invalidTimestampFormatDescGrid"/>
+										<Binding Path="!IsVisible" ElementName="invalidTimestampRangeDescGrid"/>
+									</MultiBinding>
+								</TextBlock.IsVisible>
+							</TextBlock>
+							<Grid Name="invalidTimestampFormatDescGrid" Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*">
+								<Grid.IsVisible>
+									<MultiBinding Converter="{x:Static BoolConverters.And}">
+										<Binding Path="IsChecked" ElementName="timestampsSwitch"/>
+										<MultiBinding Converter="{x:Static BoolConverters.Or}">
+											<Binding Path="!IsTextValid" ElementName="beginningTimestampTextBox"/>
+											<Binding Path="!IsTextValid" ElementName="endingTimestampTextBox"/>
+										</MultiBinding>
+									</MultiBinding>
+								</Grid.IsVisible>
+								<Image Classes="Dialog_Icon_Description" Source="{StaticResource Image/Icon.Error.Outline.Colored}"/>
+								<TextBlock Classes="Dialog_TextBlock_Description_Error" Grid.Column="1" Text="{DynamicResource String/Common.InvalidFormat}"/>
+							</Grid>
+							<Grid Name="invalidTimestampRangeDescGrid" Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*">
+								<Grid.IsVisible>
+									<MultiBinding Converter="{x:Static BoolConverters.And}">
+										<Binding Path="IsChecked" ElementName="timestampsSwitch"/>
+										<Binding Path="!IsTimestampRangeValid" ElementName="window"/>
+										<Binding Path="!IsVisible" ElementName="invalidTimestampFormatDescGrid"/>
+									</MultiBinding>
+								</Grid.IsVisible>
+								<Image Classes="Dialog_Icon_Description" Source="{StaticResource Image/Icon.Error.Outline.Colored}"/>
+								<TextBlock Name="invalidTimestampRangeTextBlock" Classes="Dialog_TextBlock_Description_Error" Grid.Column="1" Text="{DynamicResource String/LogReadingPreconditionDialog.InvalidTimestampRange}"/>
+							</Grid>
+						</StackPanel>
+						<ToggleSwitch Name="timestampsSwitch" Classes="Dialog_Item_ToggleSwitch" Grid.Column="1"/>
+					</Grid>
+					<Line Classes="Dialog_Item_Separator_Inner"/>
+					<Grid ColumnDefinitions="*,Auto,*" IsEnabled="{Binding #timestampsSwitch.IsChecked}">
+						<abControls:DateTimeTextBox Name="beginningTimestampTextBox" Classes="Dialog_Item_TextBox" TextAlignment="Center"/>
+						<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" Text="{DynamicResource String/LogReadingPreconditionDialog.EndingTimestamp}"/>
+						<abControls:DateTimeTextBox Name="endingTimestampTextBox" Classes="Dialog_Item_TextBox" Grid.Column="2" TextAlignment="Center"/>
+					</Grid>
+					<Line Classes="Dialog_Item_Separator_Inner"/>
+					<SelectableTextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/DateTimeTextBox.FormatDescription}"/>
+					<!--TextBlock Classes="Dialog_TextBlock_Description" Text="{Binding #beginningTimestampTextBox.Value}" VerticalAlignment="Center"/-->
+					<!--TextBlock Classes="Dialog_TextBlock_Description" Text="{Binding #endingTimestampTextBox.Value}" VerticalAlignment="Center"/-->
+
+					<!-- Select precondition before reading logs -->
+					<StackPanel>
+						<Separator Classes="Dialog_Item_Separator"/>
+						<StackPanel.IsVisible>
+							<MultiBinding Converter="{x:Static BoolConverters.Or}">
+								<Binding Path="IsReadingFromFiles" ElementName="window"/>
+							</MultiBinding>
+						</StackPanel.IsVisible>
+
+						<!-- Files -->
+						<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto" IsVisible="{Binding #window.IsReadingFromFiles}">
+							<StackPanel Classes="Dialog_Item_Text_Container">
+								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.SelectLogReadingPreconditionForFiles}"/>
+								<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogReadingPreconditionDialog.SelectPreconditionBeforeReadingLogs.Description}"/>
+							</StackPanel>
+							<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" IsChecked="{Binding $parent[Window].SelectPreconditionForFiles, Mode=TwoWay}" Grid.Column="1"/>
+						</Grid>
+
+					</StackPanel>
+
 				</StackPanel>
-				<Separator Classes="Dialog_Separator_Small"/>
-				<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/LogReadingPreconditionDialog.EndingTimestamp}"/>
-				<abControls:DateTimeTextBox Name="endingTimestampTextBox" Classes="Dialog_TextBox"/>
-				<StackPanel Orientation="Horizontal">
-					<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/DateTimeSelectionDialog.DateTime}" VerticalAlignment="Center"/>
-					<TextBlock Classes="Dialog_TextBlock_Description" Text="{Binding #endingTimestampTextBox.Value}" VerticalAlignment="Center"/>
-				</StackPanel>
-				<TextBlock Name="invalidTimestampRangeTextBlock" Classes="Dialog_TextBlock_Description_Error" IsVisible="False" Text="{DynamicResource String/LogReadingPreconditionDialog.InvalidTimestampRange}"/>
-				<Separator Classes="Dialog_Separator_Small"/>
-				<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/DateTimeTextBox.FormatDescription}"/>
-			</StackPanel>
+			</Border>
 
-			<!-- Select precondition before reading logs -->
-			<StackPanel>
-
-				<StackPanel.IsVisible>
-					<MultiBinding Converter="{x:Static aConverters:BoolConverters.Or}">
-						<Binding Path="IsReadingFromFiles" RelativeSource="{RelativeSource AncestorType={x:Type Window}}"/>
-					</MultiBinding>
-				</StackPanel.IsVisible>
-
-				<Separator Classes="Dialog_Separator_Large"/>
-
-				<!-- Files -->
-				<StackPanel IsVisible="{Binding $parent[Window].IsReadingFromFiles}">
-					<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/AppOptionsDialog.SelectLogReadingPreconditionForFiles}"/>
-					<ToggleSwitch Classes="Dialog_ToggleSwitch" IsChecked="{Binding $parent[Window].SelectPreconditionForFiles, Mode=TwoWay}"/>
-				</StackPanel>
-
-				<!-- Description -->
-				<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogReadingPreconditionDialog.SelectPreconditionBeforeReadingLogs.Description}"/>
-
-			</StackPanel>
-
-		</StackPanel>
+		</Border>
 
 	</DockPanel>
 	

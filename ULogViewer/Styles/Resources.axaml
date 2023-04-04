@@ -109,7 +109,7 @@
 	<Thickness x:Key="Thickness/LogProfileSelectionDialog.LogProfile.ProVersionIcon.Margin">5,0,5,5</Thickness>
 
 	<!-- LogReadingPreconditionDialog -->
-	<sys:Double x:Key="Double/LogReadingPreconditionDialog.Width">500</sys:Double>
+	<sys:Double x:Key="Double/LogReadingPreconditionDialog.Width">600</sys:Double>
 
 	<!-- LogStringPropertyDialog -->
 	<sys:Double x:Key="Double/LogStringPropertyDialog.Height">500</sys:Double>
