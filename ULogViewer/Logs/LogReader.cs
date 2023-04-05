@@ -768,8 +768,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			set
 			{
 				this.VerifyAccess();
-				if (this.state != LogReaderState.Preparing)
-					throw new InvalidOperationException($"Cannot change {nameof(ReadingWindow)} when state is {this.state}.");
+				this.VerifyDisposed();
 				if (this.readingWindow == value)
 					return;
 				this.readingWindow = value;
