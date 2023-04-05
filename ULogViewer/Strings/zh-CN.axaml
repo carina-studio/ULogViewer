@@ -33,6 +33,7 @@
 	<sys:String x:Key="String/AppOptionsDialog.PatternFont">格式字体</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.PatternFont.Description">所有格式文字使用之字体，包括正则表达式、日期时间格式、时距格式等。</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.PatternFont.Sample">Sample [0-9] \s \d HH:mm:ss 中文</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.ProVersionOnly">需要升级至专业版</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ResetLogAnalysisRuleSetsAfterSettingLogProfile">变更日志类型后重设套用的规则集</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ScriptEditorFont">脚本编辑器字体及大小</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectIPEndPointWhenNeeded">当需要 IP 端点时显示输入界面</sys:String>
