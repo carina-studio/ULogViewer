@@ -1,3 +1,4 @@
+using System.Threading;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
@@ -123,7 +124,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ScheduledAction autoSetUriAction;
 		readonly ScheduledAction autoSetWorkingDirectoryAction;
 		INotifyCollectionChanged? attachedLogs;
-		readonly ObservableCommandState canAddLogFiles = new();
+		readonly ForwardedObservableBoolean canAddLogFiles;
+		readonly ObservableCommandState canAddLogFilesToSession = new();
 		readonly MutableObservableBoolean canCopyLogProperty = new();
 		readonly MutableObservableBoolean canCopyLogText = new();
 		readonly MutableObservableBoolean canEditLogProfile = new();
@@ -150,6 +152,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		bool isAttachedToLogicalTree;
 		bool isIPEndPointNeededAfterLogProfileSet;
 		bool isLogFileNeededAfterLogProfileSet;
+		readonly MutableObservableBoolean isNotAddingLogFiles = new(true);
 		bool isPointerPressedOnLogListBox;
 		bool isRestartingAsAdminConfirmed;
 		bool isSelectingFileToSaveLogs;
@@ -228,7 +231,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// </summary>
 		public SessionView()
 		{
-			// prepare command state observables
+			// prepare command states
+			this.canAddLogFiles = new(ForwardedObservableBoolean.CombinationMode.And, false, this.canAddLogFilesToSession, this.isNotAddingLogFiles);
 			this.canAddLogFiles.Subscribe(value =>
 			{
 				if (value 
@@ -909,56 +913,72 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.Logger.LogError("Unable to add log files without attaching to window");
 				return;
 			}
+			if (!this.isNotAddingLogFiles.Value)
+				return;
 
 			// cancel scheduled action
 			this.autoAddLogFilesAction.Cancel();
 
-			// select files
-			var fileNames = (await this.attachedWindow.StorageProvider.OpenFilePickerAsync(new()
+			// update state
+			this.isNotAddingLogFiles.Update(false);
+
+			// select and add files
+			try
 			{
-				AllowMultiple = true,
-				Title = this.Application.GetString("SessionView.AddLogFiles"),
-			})).Let(it =>
-			{
-				var fileNameList = new List<string>();
-				foreach (var file in it)
+				// select files
+				var fileNames = (await this.attachedWindow.StorageProvider.OpenFilePickerAsync(new()
 				{
-					if (file.TryGetUri(out var uri))
-						fileNameList.Add(uri.LocalPath);
-				}
-				return fileNameList;
-			});
-			if (fileNames.IsNullOrEmpty())
-				return;
-
-			// check state
-			if (this.DataContext is not Session session)
-				return;
-			if (!this.canAddLogFiles.Value)
-				return;
-			
-			// exclude added files
-			var fileNameList = new List<string>(fileNames);
-			fileNameList.RemoveAll(session.IsLogFileAdded);
-			if (fileNameList.IsEmpty())
-				return;
-			
-			// select precondition
-			var precondition = this.Settings.GetValueOrDefault(SettingKeys.SelectLogReadingPreconditionForFiles) 
-				? (await this.SelectLogReadingPreconditionAsync(LogDataSourceType.File, session.LastLogReadingPrecondition, false)).GetValueOrDefault()
-				: new Logs.LogReadingPrecondition();
-
-			// sort file names
-			fileNameList.Sort();
-
-			// add log files
-			foreach (var fileName in fileNameList)
-			{
-				session.AddLogFileCommand.Execute(new Session.LogDataSourceParams<string>()
+					AllowMultiple = true,
+					Title = this.Application.GetString("SessionView.AddLogFiles"),
+				})).Let(it =>
 				{
-					Precondition = precondition,
-					Source = fileName,
+					var fileNameList = new List<string>();
+					foreach (var file in it)
+					{
+						if (file.TryGetUri(out var uri))
+							fileNameList.Add(uri.LocalPath);
+					}
+					return fileNameList;
 				});
+				if (fileNames.IsNullOrEmpty())
+					return;
+
+				// check state
+				if (this.DataContext is not Session session)
+					return;
+				
+				// exclude added files
+				var fileNameList = new List<string>(fileNames);
+				fileNameList.RemoveAll(session.IsLogFileAdded);
+
+				// exclude .ulvmark files
+				fileNameList.RemoveAll(it => it.EndsWith(".ulvmark", Platform.IsWindows, CultureInfo.InvariantCulture));
+				if (fileNameList.IsEmpty())
+					return;
+				
+				// sort file names
+				fileNameList.Sort();
+				
+				// select precondition
+				var precondition = this.Settings.GetValueOrDefault(SettingKeys.SelectLogReadingPreconditionForFiles) 
+					? (await this.SelectLogReadingPreconditionAsync(LogDataSourceType.File, session.LastLogReadingPrecondition, false)).GetValueOrDefault()
+					: new Logs.LogReadingPrecondition();
+				if (this.attachedWindow == null || this.DataContext != session)
+					return;
+
+				// add log files
+				foreach (var fileName in fileNameList)
+				{
+					session.AddLogFileCommand.Execute(new Session.LogDataSourceParams<string>()
+					{
+						Precondition = precondition,
+						Source = fileName,
+					});
+				}
+			}
+			finally
+			{
+				this.isNotAddingLogFiles.Update(true);
 			}
 		}
 
@@ -1035,7 +1055,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 
 			// attach to command
-			this.canAddLogFiles.Bind(session.AddLogFileCommand);
+			this.canAddLogFilesToSession.Bind(session.AddLogFileCommand);
 			this.canReloadLogs.Bind(session.ReloadLogsCommand);
 			this.canResetLogProfileToSession.Bind(session.ResetLogProfileCommand);
 			this.canSaveLogs.Bind(session.SaveLogsCommand);
@@ -2063,7 +2083,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.timestampCategoryPanelVisibilityObserverToken.Dispose();
 
 			// detach from commands
-			this.canAddLogFiles.Unbind();
+			this.canAddLogFilesToSession.Unbind();
 			this.canReloadLogs.Unbind();
 			this.canResetLogProfileToSession.Unbind();
 			this.canSetIPEndPoint.Unbind();

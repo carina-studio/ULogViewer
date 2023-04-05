@@ -143,6 +143,7 @@
 	<sys:String x:Key="String/Common.References">References</sys:String>
 	<sys:String x:Key="String/Common.RegularExpression.Reference">Syntax reference</sys:String>
 	<sys:String x:Key="String/Common.To">To</sys:String>
+	<sys:String x:Key="String/Common.UnableToCalculateFileSize">Unable to collect size of one or more files.</sys:String>
 
 	<!-- ComparisonType -->
 	<sys:String x:Key="String/ComparisonType.Equivalent">=</sys:String>
@@ -1034,6 +1035,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.ClearLogAnalysisRuleSetsSelection">Clear selection</sys:String>
 	<sys:String x:Key="String/SessionView.ClearLogFiles">Clear all added log files</sys:String>
 	<sys:String x:Key="String/SessionView.ClearPredefinedLogTextFiltersSelection">Clear selection</sys:String>
+	<sys:String x:Key="String/SessionView.ConfirmMaxLogReadingCountForLargeFiles">One or more large files will be added ({0} total). You can limit the maximum number of logs to be read in order to reduce memory usage.</sys:String>
 	<sys:String x:Key="String/SessionView.ConfirmRemovingLogAnalysisRuleSet">It cannot be recovered once you delete the rule set. Are you sure to remove the rule set '{0}'?</sys:String>
 	<sys:String x:Key="String/SessionView.ConfirmRemovingLogAnalysisScriptSet">It cannot be recovered once you delete the script. Are you sure to remove the script '{0}'?</sys:String>
 	<sys:String x:Key="String/SessionView.ConfirmSelectingAllLogs">It will take some time to select large amount of logs. Do you want to continue selection?</sys:String>
