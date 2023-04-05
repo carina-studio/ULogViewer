@@ -271,11 +271,13 @@
 	<!-- FilesMaxLogReadingCountDialog -->
 	<StaticResourceExtension x:Key="String/FilesMaxLogReadingCountDialog.ConfirmMaxLogReadingCountForLargeFiles" ResourceKey="String/AppOptionsDialog.ConfirmMaxLogReadingCountForLargeFiles"/>
 	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.ConfirmMaxLogReadingCountForLargeFiles.Description">您也可以在应用程序选项中变更此设置。</sys:String>
-	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.MaxLogReadingCount">最大日志读取数量</sys:String>
-	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.MaxLogReadingCount.Description">从每个文件中所读取的最大日志数量。</sys:String>
+	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.LogReadingWindow">读取位置</sys:String>
+	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.LogReadingWindow.Description">从每个文件的特定位置读取日志。</sys:String>
+	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.MaxLogReadingCount">最大读取数量</sys:String>
+	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.MaxLogReadingCount.Description">从每个文件 (资料来源) 中所读取的最大日志数量。</sys:String>
 	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.MaxLogReadingCount.OutOfRange">数量的有效范围为 1 至 {0} (包含)。</sys:String>
 	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.MaxLogReadingCountOfLogProfile">日志类型所定义之最大日志读取数量</sys:String>
-	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.Title">最大日志读取数量</sys:String>
+	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.Title">日志读取设置</sys:String>
 
 	<!-- FilterCombinationMode -->
 	<sys:String x:Key="String/FilterCombinationMode.Auto">自动选择</sys:String>
@@ -526,14 +528,14 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogPatterns.Description">分析原始日志每一行的格式。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogPatternsWithoutVisibleLogProperties">您定义了「日志行格式」但没有定义「显示的日志属性」，这可能导致日志显示错误。您是否要定义「显示的日志属性」？</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogReading">日志读取设定</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LogReadingWindow">读取位置</sys:String>
+	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.LogReadingWindow" ResourceKey="String/FilesMaxLogReadingCountDialog.LogReadingWindow"/>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogReadingWindow.Description">从每个资料来源的特定位置读取日志。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogStringEncodingForReading">日志文字读取编码方式</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogStringEncodingForWriting">日志文字输出编码方式</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogWriting">日志输出设定</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogWritingFormats">日志输出格式</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogWritingFormats.Description">此格式将用于日志复制与存储。对于每笔日志，将从列表中选出第一个包含所有有效日志属性的格式使用，否则使用列表中的第一个格式。</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.MaxLogReadingCount">最大读取数量</sys:String>
+	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.MaxLogReadingCount" ResourceKey="String/FilesMaxLogReadingCountDialog.MaxLogReadingCount"/>
 	<sys:String x:Key="String/LogProfileEditorDialog.MaxLogReadingCount.Description">从每个资料来源中所读取的最大日志数量。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.MaxLogReadingCount.OutOfRange">数量的有效范围为 1 至 2147483647 (包含)。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Name">名称</sys:String>
