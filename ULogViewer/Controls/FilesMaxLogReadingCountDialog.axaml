@@ -1,0 +1,76 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:abControls="using:CarinaStudio.Controls"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="CarinaStudio.ULogViewer.Controls.FilesMaxLogReadingCountDialog"
+		Name="window"
+        Classes="Dialog"
+        Title="{DynamicResource String/FilesMaxLogReadingCountDialog.Title}"
+        Width="{DynamicResource Double/FilesMaxLogReadingCountDialog.Width}">
+
+	<DockPanel>
+
+		<!-- Control buttons -->
+		<Border Classes="Dialog_ControlButtonsPanel">
+			<StackPanel Classes="Dialog_ControlButtonsPanel">
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].GenerateResultCommand}" Content="{DynamicResource String/Common.OK}"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].Close}" Content="{DynamicResource String/Common.Cancel}"/>
+			</StackPanel>
+		</Border>
+
+		<!-- Content -->
+		<Border Classes="Dialog_ContentPanel_WithItemsGroups">
+			<Border Classes="Dialog_ItemsGroup_Container">
+				<StackPanel>
+
+					<!-- Message -->
+					<StackPanel IsVisible="{Binding #window.Message, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+						<Border Classes="Dialog_Item_Container">
+							<Grid ColumnDefinitions="Auto,*">
+								<Image Classes="Dialog_Icon" Source="{DynamicResource Image/Icon.Information.Colored}"/>
+								<TextBlock Classes="Dialog_Icon_TextBlock" Grid.Column="1" Text="{Binding #window.Message}" TextWrapping="Wrap"/>
+							</Grid>
+						</Border>
+						<Separator Classes="Dialog_Item_Separator"/>
+					</StackPanel>
+
+					<!-- Max log reading count -->
+					<Grid Classes="Dialog_Item_Container" ColumnDefinitions="Auto,*">
+						<StackPanel Classes="Dialog_Item_Text_Container">
+							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/FilesMaxLogReadingCountDialog.MaxLogReadingCount}"/>
+							<TextBlock Classes="Dialog_TextBlock_Description" IsVisible="{Binding #maxLogReadingCountTextBox.IsTextValid}" Text="{DynamicResource String/FilesMaxLogReadingCountDialog.MaxLogReadingCount.Description}"/>
+							<Grid Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*" IsVisible="{Binding !#maxLogReadingCountTextBox.IsTextValid}">
+								<Image Classes="Dialog_Icon_Description" Source="{StaticResource Image/Icon.Error.Outline.Colored}"/>
+								<abControls:FormattedTextBlock Classes="Dialog_Icon_TextBlock_Description_Error" Arg1="{Binding #maxLogReadingCountTextBox.Maximum}" Format="{DynamicResource String/FilesMaxLogReadingCountDialog.MaxLogReadingCount.OutOfRange}" Grid.Column="1" TextWrapping="NoWrap"/>
+							</Grid>
+						</StackPanel>
+						<abControls:IntegerTextBox Name="maxLogReadingCountTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" IsNullValueAllowed="True" MinWidth="0" Watermark="{DynamicResource String/Common.None}"/>
+					</Grid>
+					<Line Classes="Dialog_Item_Separator_Inner"/>
+
+					<!-- Max log reading count defined in log profile -->
+					<Grid Classes="Dialog_Item_Container" ColumnDefinitions="Auto,*">
+						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/FilesMaxLogReadingCountDialog.MaxLogReadingCountOfLogProfile}"/>
+						<SelectableTextBlock Grid.Column="1" IsVisible="{Binding #window.MaxLogReadingCountOfLogProfile, Converter={x:Static ObjectConverters.IsNotNull}}" Text="{Binding #window.MaxLogReadingCountOfLogProfile}" TextAlignment="Right" VerticalAlignment="Center"/>
+						<TextBlock Grid.Column="1" IsVisible="{Binding #window.MaxLogReadingCountOfLogProfile, Converter={x:Static ObjectConverters.IsNull}}" Text="{DynamicResource String/Common.None}" TextAlignment="Right" VerticalAlignment="Center"/>
+					</Grid>
+					<Separator Classes="Dialog_Item_Separator"/>
+					
+					<!-- Confirm for large files -->
+					<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+						<StackPanel Classes="Dialog_Item_Text_Container">
+							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/FilesMaxLogReadingCountDialog.ConfirmMaxLogReadingCountForLargeFiles}"/>
+							<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/FilesMaxLogReadingCountDialog.ConfirmMaxLogReadingCountForLargeFiles.Description}"/>
+						</StackPanel>
+						<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" Grid.Column="1" IsChecked="{Binding #window.ConfirmMaxLogReadingCountForLargeFiles, Mode=TwoWay}"/>
+					</Grid>
+
+				</StackPanel>
+			</Border>
+		</Border>
+		
+	</DockPanel>
+	
+</Window>

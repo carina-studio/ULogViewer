@@ -284,6 +284,15 @@
 	<sys:String x:Key="String/FileSizeUnit.Petabytes">PB</sys:String>
 	<sys:String x:Key="String/FileSizeUnit.Terabytes">TB</sys:String>
 
+	<!-- FilesMaxLogReadingCountDialog -->
+	<StaticResourceExtension x:Key="String/FilesMaxLogReadingCountDialog.ConfirmMaxLogReadingCountForLargeFiles" ResourceKey="String/AppOptionsDialog.ConfirmMaxLogReadingCountForLargeFiles"/>
+	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.ConfirmMaxLogReadingCountForLargeFiles.Description">You can also change the setting in Options.</sys:String>
+	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.MaxLogReadingCount">Max log reading count</sys:String>
+	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.MaxLogReadingCount.Description">Maximum number of logs to be read from each file.</sys:String>
+	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.MaxLogReadingCount.OutOfRange">The valid range of number is 1 to {0} inclusively.</sys:String>
+	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.MaxLogReadingCountOfLogProfile">Max log reading count defined by log profile</sys:String>
+	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.Title">Max log reading count</sys:String>
+
 	<!-- FilterCombinationMode -->
 	<sys:String x:Key="String/FilterCombinationMode.Auto">Auto</sys:String>
 	<sys:String x:Key="String/FilterCombinationMode.Intersection">Intersection</sys:String>

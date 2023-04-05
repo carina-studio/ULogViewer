@@ -264,6 +264,15 @@
 	<sys:String x:Key="String/FileSizeUnit.Bits">位元</sys:String>
 	<sys:String x:Key="String/FileSizeUnit.Bytes">位元組</sys:String>
 
+	<!-- FilesMaxLogReadingCountDialog -->
+	<StaticResourceExtension x:Key="String/FilesMaxLogReadingCountDialog.ConfirmMaxLogReadingCountForLargeFiles" ResourceKey="String/AppOptionsDialog.ConfirmMaxLogReadingCountForLargeFiles"/>
+	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.ConfirmMaxLogReadingCountForLargeFiles.Description">您也可以在應用程式選項中變更此設定。</sys:String>
+	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.MaxLogReadingCount">最大日誌讀取數量</sys:String>
+	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.MaxLogReadingCount.Description">從每個檔案中所讀取的最大日誌數量。</sys:String>
+	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.MaxLogReadingCount.OutOfRange">數量的有效範圍為 1 至 {0} (包含)。</sys:String>
+	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.MaxLogReadingCountOfLogProfile">日誌類型所定義之最大日誌讀取數量</sys:String>
+	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.Title">最大日誌讀取數量</sys:String>
+
 	<!-- FilterCombinationMode -->
 	<sys:String x:Key="String/FilterCombinationMode.Auto">自動選擇</sys:String>
 	<sys:String x:Key="String/FilterCombinationMode.Intersection">交集</sys:String>
