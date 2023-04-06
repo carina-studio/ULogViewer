@@ -1137,7 +1137,9 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.PredefinedLogTextFilters">Defined text filters (Ctrl+P)</sys:String>
 	<sys:String x:Key="String/SessionView.PredefinedLogTextFiltersPopup.Header">Text filters (multi-selectable)</sys:String>
 	<sys:String x:Key="String/SessionView.ProVersionNeeded">Need to upgrade to Pro version to enable the feature</sys:String>
-	<sys:String x:Key="String/SessionView.ReloadLogFile">Change precondition of log reading…</sys:String>
+	<sys:String x:Key="String/SessionView.ReloadLogFile">Reload logs</sys:String>
+	<sys:String x:Key="String/SessionView.ReloadLogFile.WithNewLogReadingPrecondition">Change precondition of log reading…</sys:String>
+	<sys:String x:Key="String/SessionView.ReloadLogFile.WithNewMaxLogReadingCount">Change options of log reading…</sys:String>
 	<sys:String x:Key="String/SessionView.ReloadLogFile.WithoutLogReadingPrecondition">Clear precondition of log reading</sys:String>
 	<sys:String x:Key="String/SessionView.ReloadLogs">Reload logs (F5)</sys:String>
 	<sys:String x:Key="String/SessionView.RemoveLogFile">Remove log file</sys:String>

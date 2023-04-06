@@ -301,7 +301,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.ExportOperationDurationAnalysisRuleSetCommand = new Command<OperationDurationAnalysisRuleSet>(this.ExportOperationDurationAnalysisRuleSet);
 			this.MarkSelectedLogsCommand = new Command<MarkColor>(this.MarkSelectedLogs, this.canMarkSelectedLogs);
 			this.MarkUnmarkSelectedLogsCommand = new Command(this.MarkUnmarkSelectedLogs, this.canMarkUnmarkSelectedLogs);
-			this.ReloadLogFileCommand = new Command<string>(this.ReloadLogFile);
+			this.ReloadLogFileWithNewMaxLogReadingCountCommand = new Command<string>(this.ReloadLogFileWithNewMaxLogReadingCount);
+			this.ReloadLogFileWithNewPreconditionCommand = new Command<string>(this.ReloadLogFileWithNewPrecondition);
 			this.ReloadLogFileWithoutLogReadingPreconditionCommand = new Command<string>(this.ReloadLogFileWithoutLogReadingPrecondition);
 			this.ReloadLogsCommand = new Command(this.ReloadLogs, this.canReloadLogs);
 			this.RemoveKeyLogAnalysisRuleSetCommand = new Command<KeyLogAnalysisRuleSet>(this.RemoveKeyLogAnalysisRuleSet);
@@ -3856,15 +3857,34 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Reload log file.
-		void ReloadLogFile(string? fileName)
+		bool ReloadLogFile(Session.LogFileInfo logFileInfo, Logs.LogReadingPrecondition precondition, Logs.LogReadingWindow? readingWindow, int? maxLogReadingCount)
+		{
+			return false;
+		}
+
+
+		// Reload log file.
+		async void ReloadLogFileWithNewMaxLogReadingCount(string? fileName)
 		{
 		}
 
 
 		/// <summary>
-		/// Command to reload log file.
+		/// Command to reload log file with maximum log reading count.
 		/// </summary>
-		public ICommand ReloadLogFileCommand { get; }
+		public ICommand ReloadLogFileWithNewMaxLogReadingCountCommand { get; }
+
+
+		// Reload log file.
+		async void ReloadLogFileWithNewPrecondition(string? fileName)
+		{
+		}
+
+
+		/// <summary>
+		/// Command to reload log file with new precondition.
+		/// </summary>
+		public ICommand ReloadLogFileWithNewPreconditionCommand { get; }
 
 
 		// Reload log file without reading precondition.

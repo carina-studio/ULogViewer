@@ -213,7 +213,12 @@
 				</MenuItem.Icon>
 			</MenuItem>
 			<Separator/>
-			<MenuItem Command="{Binding $parent[UserControl].ReloadLogFileCommand}" CommandParameter="{Binding FileName}" Header="{DynamicResource String/SessionView.ReloadLogFile}">
+			<MenuItem Command="{Binding $parent[UserControl].ReloadLogFileWithNewMaxLogReadingCountCommand}" CommandParameter="{Binding FileName}" Header="{DynamicResource String/SessionView.ReloadLogFile.WithNewMaxLogReadingCount}">
+				<MenuItem.Icon>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Refresh}"/>
+				</MenuItem.Icon>
+			</MenuItem>
+			<MenuItem Command="{Binding $parent[UserControl].ReloadLogFileWithNewPreconditionCommand}" CommandParameter="{Binding FileName}" Header="{DynamicResource String/SessionView.ReloadLogFile.WithNewLogReadingPrecondition}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Refresh}"/>
 				</MenuItem.Icon>
