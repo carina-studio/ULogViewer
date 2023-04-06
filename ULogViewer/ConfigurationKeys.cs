@@ -100,6 +100,10 @@ sealed class ConfigurationKeys
     /// </summary>
     public static readonly SettingKey<bool> ReadRawLogLinesConcurrently = new(nameof(ReadRawLogLinesConcurrently), false);
     /// <summary>
+    /// Timeout before calaulating size of one or more files.
+    /// </summary>
+    public static readonly SettingKey<int> TimeoutToCancelFileSizeCalculation = new(nameof(TimeoutToCancelFileSizeCalculation), 5 * 1000);
+    /// <summary>
     /// Timeout before notifying user that network connection is needed for product activation.
     /// </summary>
     public static readonly SettingKey<int> TimeoutToNotifyNetworkConnectionForProductActivation = new(nameof(TimeoutToNotifyNetworkConnectionForProductActivation), 3 * 60 * 1000);

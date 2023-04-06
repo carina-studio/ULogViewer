@@ -919,34 +919,52 @@ namespace CarinaStudio.ULogViewer.Controls
 			// cancel scheduled action
 			this.autoAddLogFilesAction.Cancel();
 
+			// select files
+			var fileNames = (await this.attachedWindow.StorageProvider.OpenFilePickerAsync(new()
+			{
+				AllowMultiple = true,
+				Title = this.Application.GetString("SessionView.AddLogFiles"),
+			})).Let(it =>
+			{
+				var fileNameList = new List<string>();
+				foreach (var file in it)
+				{
+					if (file.TryGetUri(out var uri))
+						fileNameList.Add(uri.LocalPath);
+				}
+				return fileNameList;
+			});
+			if (fileNames.IsNullOrEmpty())
+				return;
+			
+			// add log files
+			await this.AddLogFilesAsync(fileNames);
+		}
+
+
+		// Add log files.
+		async Task<bool> AddLogFilesAsync(IEnumerable<string> fileNames)
+		{
+			// check state
+			if (this.attachedWindow == null)
+			{
+				this.Logger.LogError("Unable to add log files without attaching to window");
+				return false;
+			}
+			if (!this.isNotAddingLogFiles.Value)
+				return false;
+			if (this.DataContext is not Session session)
+				return false;
+
+			// cancel scheduled action
+			this.autoAddLogFilesAction.Cancel();
+
 			// update state
 			this.isNotAddingLogFiles.Update(false);
 
-			// select and add files
+			// add files
 			try
 			{
-				// select files
-				var fileNames = (await this.attachedWindow.StorageProvider.OpenFilePickerAsync(new()
-				{
-					AllowMultiple = true,
-					Title = this.Application.GetString("SessionView.AddLogFiles"),
-				})).Let(it =>
-				{
-					var fileNameList = new List<string>();
-					foreach (var file in it)
-					{
-						if (file.TryGetUri(out var uri))
-							fileNameList.Add(uri.LocalPath);
-					}
-					return fileNameList;
-				});
-				if (fileNames.IsNullOrEmpty())
-					return;
-
-				// check state
-				if (this.DataContext is not Session session)
-					return;
-				
 				// exclude added files
 				var fileNameList = new List<string>(fileNames);
 				fileNameList.RemoveAll(session.IsLogFileAdded);
@@ -954,7 +972,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				// exclude .ulvmark files
 				fileNameList.RemoveAll(it => it.EndsWith(".ulvmark", Platform.IsWindows, CultureInfo.InvariantCulture));
 				if (fileNameList.IsEmpty())
-					return;
+					return false;
 				
 				// sort file names
 				fileNameList.Sort();
@@ -964,7 +982,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					? (await this.SelectLogReadingPreconditionAsync(LogDataSourceType.File, session.LastLogReadingPrecondition, false)).GetValueOrDefault()
 					: new Logs.LogReadingPrecondition();
 				if (this.attachedWindow == null || this.DataContext != session)
-					return;
+					return false;
 
 				// add log files
 				foreach (var fileName in fileNameList)
@@ -975,6 +993,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						Source = fileName,
 					});
 				}
+				return true;
 			}
 			finally
 			{
@@ -1146,6 +1165,25 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Calculate file size.
+		static Task<long> CalculateTotalFileSizeAsync(IEnumerable<string> fileNames, CancellationToken cancellationToken) => Task.Run(() =>
+		{
+			long size = 0;
+			foreach (var fileName in fileNames)
+			{
+				if (cancellationToken.IsCancellationRequested)
+					throw new TaskCanceledException();
+				try
+				{
+					size += new FileInfo(fileName).Length;
+				}
+				catch
+				{ }
+			}
+			return size;
+		}, cancellationToken);
+
+
 		// Clear target log range to scroll to.
 		void ClearTargetLogRangeToScrollTo()
 		{
@@ -1180,6 +1218,13 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (this.attachedWindow == null)
 				return false;
 			return await new EnableRunningScriptDialog().ShowDialog(this.attachedWindow);
+		}
+
+
+		// Confirm log reading window and limitation.
+		async Task<(bool, Logs.LogReadingWindow, int?)> ConfirmMaxLogReadingCountFromLargeFilesAsync(long fileSize)
+		{
+			return default;
 		}
 
 
@@ -2320,22 +2365,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				if (session.SetWorkingDirectoryCommand.CanExecute(null))
 					session.SetWorkingDirectoryCommand.TryExecute(dirPaths[0]);
 				else if (session.AddLogFileCommand.CanExecute(null))
-				{
-					// select precondition
-					var precondition = this.Settings.GetValueOrDefault(SettingKeys.SelectLogReadingPreconditionForFiles) 
-						? (await this.SelectLogReadingPreconditionAsync(LogDataSourceType.File, session.LastLogReadingPrecondition, false)).GetValueOrDefault()
-						: new Logs.LogReadingPrecondition();
-
-					// add files
-					foreach (var filePath in filePaths)
-					{
-						session.AddLogFileCommand.TryExecute(new Session.LogDataSourceParams<string>()
-						{
-							Precondition = precondition,
-							Source = filePath,
-						});
-					}
-				}
+					return await this.AddLogFilesAsync(filePaths);
 
 				// complete
 				return true;

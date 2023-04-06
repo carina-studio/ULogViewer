@@ -269,9 +269,9 @@
 	<StaticResourceExtension x:Key="String/FilesMaxLogReadingCountDialog.ConfirmMaxLogReadingCountForLargeFiles" ResourceKey="String/AppOptionsDialog.ConfirmMaxLogReadingCountForLargeFiles"/>
 	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.ConfirmMaxLogReadingCountForLargeFiles.Description">您也可以在應用程式選項中變更此設定。</sys:String>
 	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.LogReadingWindow">讀取位置</sys:String>
-	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.LogReadingWindow.Description">從每個檔案的特定位置讀取日誌。</sys:String>
+	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.LogReadingWindow.Description">從每個檔案 (資料來源) 的特定位置讀取日誌。</sys:String>
 	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.MaxLogReadingCount">最大讀取數量</sys:String>
-	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.MaxLogReadingCount.Description">從每個檔案 (資料來源) 中所讀取的最大日誌數量。</sys:String>
+	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.MaxLogReadingCount.Description">從每個檔案中所讀取的最大日誌數量。</sys:String>
 	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.MaxLogReadingCount.OutOfRange">數量的有效範圍為 1 至 {0} (包含)。</sys:String>
 	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.MaxLogReadingCountOfLogProfile">日誌類型所定義之最大日誌讀取數量</sys:String>
 	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.Title">日誌讀取選項</sys:String>
