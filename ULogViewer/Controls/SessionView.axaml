@@ -1382,12 +1382,17 @@
 													<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
 														<StackPanel>
 
-															<StackPanel.Styles>
-																<Style Selector="ListBoxItem">
-																	<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-																	<Setter Property="Padding" Value="{StaticResource Thickness/SessionView.LogAnalysisRuleSetListBox.Item.Padding}"/>
-																</Style>
-															</StackPanel.Styles>
+														<StackPanel.Styles>
+															<Style Selector="ListBox">
+																<Setter Property="Background" Value="{x:Static Brushes.Transparent}"/>
+																<Setter Property="BorderThickness" Value="0"/>
+																<Setter Property="Padding" Value="0"/>
+															</Style>
+															<Style Selector="ListBoxItem">
+																<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+																<Setter Property="Padding" Value="{StaticResource Thickness/SessionView.LogAnalysisRuleSetListBox.Item.Padding}"/>
+															</Style>
+														</StackPanel.Styles>
 
 															<!-- Key log analysis -->
 															<Border Background="{DynamicResource Brush/Dialog.TextBlock.Background.Header1}" CornerRadius="{StaticResource CornerRadius/ListBoxItem}" IsVisible="{Binding #keyLogAnalysisRuleSetListBox.IsVisible}" Margin="{StaticResource Thickness/SessionView.LogAnalysisRuleSetListBox.Header.Margin}" Padding="{StaticResource Thickness/SessionView.LogAnalysisRuleSetListBox.Header.Padding}">
