@@ -8,6 +8,7 @@ using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Controls;
 using CarinaStudio.Threading;
+using CarinaStudio.ULogViewer.IO;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using System;
 using System.Collections.Generic;
@@ -68,6 +69,8 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 	static readonly AvaloniaProperty<bool> IsQueryStringSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsQueryStringSupported));
 	static readonly AvaloniaProperty<bool> IsResourceOnAzureSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>("IsResourceOnAzureSupported");
 	static readonly SettingKey<bool> IsSelectAzureResourcesTutorialShownKey = new("LogDataSourceOptionsDialog.IsSelectAzureResourcesTutorialShown");
+	static readonly StyledProperty<bool> IsSelectingFileNameProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsSelectingFileName));
+	static readonly StyledProperty<bool> IsSelectingWorkingDirectoryProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsSelectingWorkingDirectory));
 	static readonly AvaloniaProperty<bool> IsSetupCommandsRequiredProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsSetupCommandsRequired));
 	static readonly AvaloniaProperty<bool> IsSetupCommandsSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsSetupCommandsSupported));
 	static readonly AvaloniaProperty<bool> IsTeardownCommandsRequiredProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsTeardownCommandsRequired));
@@ -308,6 +311,18 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 	bool IsUserNameSupported { get => this.GetValue<bool>(IsUserNameSupportedProperty); }
 	bool IsUriSupported { get => this.GetValue<bool>(IsUriSupportedProperty); }
 	bool IsWorkingDirectorySupported { get => this.GetValue<bool>(IsWorkingDirectorySupportedProperty); }
+
+
+	/// <summary>
+	/// Check whether file name selection is on-going or not.
+	/// </summary>
+	public bool IsSelectingFileName => this.GetValue(IsSelectingFileNameProperty);
+
+
+	/// <summary>
+	/// Check whether working directory selection is on-going or not.
+	/// </summary>
+	public bool IsSelectingWorkingDirectory => this.GetValue(IsSelectingWorkingDirectoryProperty);
 
 
 	/// <summary>
@@ -664,13 +679,22 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 	// Select file name.
 	async void SelectFileName()
 	{
+		if (this.IsSelectingFileName)
+			return;
+		this.SetValue(IsSelectingFileNameProperty, true);
+		var initFileName = await (this.fileNameTextBox.Text?.Trim()).LetAsync(async it =>
+		{
+			if (it.IsValidFilePath() && await Task.Run(() => System.IO.File.Exists(it)))
+				return it;
+			return null;
+		});
 		var fileNames = await new OpenFileDialog()
 		{
-			InitialFileName = this.fileNameTextBox.Text?.Trim()
+			InitialFileName = initFileName
 		}.ShowAsync(this);
-		if (fileNames == null || fileNames.IsEmpty())
-			return;
-		this.fileNameTextBox.Text = fileNames[0];
+		if (fileNames.IsNotEmpty())
+			this.fileNameTextBox.Text = fileNames[0];
+		this.SetValue(IsSelectingFileNameProperty, false);
 	}
 
 
@@ -692,12 +716,22 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 	// Select working directory.
 	async void SelectWorkingDirectory()
 	{
+		if (this.IsSelectingWorkingDirectory)
+			return;
+		this.SetValue(IsSelectingWorkingDirectoryProperty, true);
+		var initDirectory = await (this.workingDirectoryTextBox.Text?.Trim()).LetAsync(async it =>
+		{
+			if (it.IsValidFilePath() && await Task.Run(() => System.IO.Directory.Exists(it)))
+				return it;
+			return null;
+		});
 		var dirPath = await new OpenFolderDialog()
 		{
-			Directory = this.workingDirectoryTextBox.Text?.Trim()
+			Directory = initDirectory
 		}.ShowAsync(this);
 		if (!string.IsNullOrEmpty(dirPath))
 			this.workingDirectoryTextBox.Text = dirPath;
+		this.SetValue(IsSelectingWorkingDirectoryProperty, false);
 	}
 
 
