@@ -1009,11 +1009,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				{
 					var firstLog = logs[0];
 					var lastLog = logs.Last();
-					var duration = (TimeSpan?)null;
-					var earliestTimestamp = (DateTime?)null;
-					var latestTimestamp = (DateTime?)null;
-					var minTimeSpan = (TimeSpan?)null;
-					var maxTimeSpan = (TimeSpan?)null;
+					TimeSpan? duration;
+					DateTime? earliestTimestamp;
+					DateTime? latestTimestamp;
+					TimeSpan? minTimeSpan;
+					TimeSpan? maxTimeSpan;
 					if (profile.SortDirection == SortDirection.Ascending)
 						duration = CalculateDurationBetweenLogs(firstLog, lastLog, out minTimeSpan, out maxTimeSpan, out earliestTimestamp, out latestTimestamp);
 					else
@@ -3602,11 +3602,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 				// reset log file info
 #pragma warning disable IDE0220
+				// ReSharper disable PossibleInvalidCastExceptionInForeachLoop
 				foreach (LogFileInfoImpl logFileInfo in this.logFileInfoList)
 				{
 					logFileInfo.UpdateLogCount(0);
 					logFileInfo.UpdateLogReaderState(LogReaderState.Preparing);
 				}
+				// ReSharper restore PossibleInvalidCastExceptionInForeachLoop
 #pragma warning restore IDE0220
 			}
 
@@ -3764,11 +3766,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			var dataSourceProvider = profile.DataSourceProvider;
 			var defaultDataSourceOptions = profile.DataSourceOptions;
 			var useDefaultDataSourceOptions = false;
-			if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.FileName)))
+			var isFileNameRequired = dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.FileName));
+			var isFileNameSet = isFileNameRequired && defaultDataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName));
+			if (isFileNameRequired)
 			{
 				this.SetValue(AreFileBasedLogsProperty, true);
 				this.SetValue(IsLogFileSupportedProperty, true);
-				if (defaultDataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName)))
+				if (isFileNameSet)
 				{
 					useDefaultDataSourceOptions = true;
 					this.logFileInfoList.Clear();
@@ -3844,6 +3848,23 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				newDataSourceOptions.SetupCommands = defaultDataSourceOptions.SetupCommands;
 				newDataSourceOptions.UseTextShell = defaultDataSourceOptions.UseTextShell;
 				newDataSourceOptions.TeardownCommands = defaultDataSourceOptions.TeardownCommands;
+				
+				// update log file info
+				if (isFileNameRequired && !isFileNameSet && newDataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName)))
+				{
+					for (var i = this.logFileInfoList.Count - 1; i >= 0; --i)
+					{
+						var logFileInfo = this.logFileInfoList[i];
+						if (!PathEqualityComparer.Default.Equals(logFileInfo.FileName, newDataSourceOptions.FileName))
+							continue;
+						if (logFileInfo.IsPredefined)
+						{
+							this.logFileInfoList.RemoveAt(i);
+							this.logFileInfoList.Add(new LogFileInfoImpl(this, logFileInfo.FileName, logFileInfo.LogReadingPrecondition, logFileInfo.LogReadingWindow, logFileInfo.MaxLogReadingCount));
+						}
+						break;
+					}
+				}
 
 				// create data source and reader
 				var dataSource = this.CreateLogDataSourceOrNull(dataSourceProvider, newDataSourceOptions);
@@ -4227,7 +4248,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 								if (markedLog.Color != MarkColor.None && markedLog.Color != MarkColor.Default)
 									writer.WriteString("MarkedColor", markedLog.Color.ToString());
 								writer.WriteNumber("MarkedLineNumber", markedLog.LineNumber);
+								// ReSharper disable AccessToDisposedClosure
 								markedLog.Timestamp?.Let(it => writer.WriteString("MarkedTimestamp", it));
+								// ReSharper restore AccessToDisposedClosure
 								writer.WriteEndObject();
 							}
 							writer.WriteEndArray();
